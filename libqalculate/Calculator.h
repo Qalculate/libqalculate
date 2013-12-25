@@ -51,7 +51,7 @@
 * For a simple program use pkg-config on the command line:
 * \code c++ `pkg-config --cflags --libs libqalculate` hello.c -o hello \endcode
 *
-* If the program uses autoconf, put the following in configure.in:
+* If the program uses autoconf, put the following in configure.ac:
 * \code PKG_CHECK_MODULES(QALCULATE, [
 *	libqalculate >= 0.9.11
 *	])
