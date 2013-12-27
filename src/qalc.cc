@@ -22,6 +22,7 @@
 #include <vector>
 #include <list>
 #include <glib.h>
+#include <glib/gstdio.h>
 #ifdef HAVE_LIBREADLINE
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -3622,7 +3623,7 @@ void load_preferences() {
 #ifdef HAVE_LIBREADLINE
 		oldhistoryfile = g_build_filename(getOldLocalDir().c_str(), "qalc.history", NULL);
 #endif
-		mkdir(getLocalDir().c_str(), S_IRWXU);
+		g_mkdir(getLocalDir().c_str(), S_IRWXU);
 	}
 	
 #ifdef HAVE_LIBREADLINE
@@ -3840,7 +3841,7 @@ void load_preferences() {
 bool save_preferences(bool mode)
 {
 	FILE *file = NULL;
-	mkdir(getLocalDir().c_str(), S_IRWXU);
+	g_mkdir(getLocalDir().c_str(), S_IRWXU);
 #ifdef HAVE_LIBREADLINE	
 	gchar *historyfile = g_build_filename(getLocalDir().c_str(), "qalc.history", NULL);
 	write_history(historyfile);

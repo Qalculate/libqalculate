@@ -35,6 +35,7 @@
 #include <dirent.h>
 #include <queue>
 #include <glib.h>
+#include <glib/gstdio.h>
 //#include <dlfcn.h>
 
 #include <cln/cln.h>
@@ -5896,9 +5897,9 @@ bool Calculator::loadLocalDefinitions() {
 		gchar *homedir_old = g_build_filename(getOldLocalDir().c_str(), "definitions", NULL);
 		if(g_file_test(homedir_old, G_FILE_TEST_IS_DIR)) {
 			if(!g_file_test(getLocalDataDir().c_str(), G_FILE_TEST_IS_DIR)) {
-				mkdir(getLocalDataDir().c_str(), S_IRWXU);
+				g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
 			}
-			if(mkdir(homedir, S_IRWXU) == 0) {
+			if(g_mkdir(homedir, S_IRWXU) == 0) {
 				list<string> eps_old;
 				struct dirent *ep_old;	
 				DIR *dp_old = opendir(homedir_old);
@@ -5923,8 +5924,8 @@ bool Calculator::loadLocalDefinitions() {
 					g_free(old_filename);
 					g_free(new_filename);
 				}
-				if(rmdir(homedir_old) == 0) {
-					rmdir(getOldLocalDir().c_str());
+				if(g_rmdir(homedir_old) == 0) {
+					g_rmdir(getOldLocalDir().c_str());
 				}
 			}
 		}
@@ -7765,9 +7766,9 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 }
 bool Calculator::saveDefinitions() {
 
-	mkdir(getLocalDataDir().c_str(), S_IRWXU);
+	g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
 	gchar *homedir = g_build_filename(getLocalDataDir().c_str(), "definitions", NULL);
-	mkdir(homedir, S_IRWXU);
+	g_mkdir(homedir, S_IRWXU);
 	bool b = true;
 	gchar *filename = g_build_filename(homedir, "functions.xml", NULL);
 	if(!saveFunctions(filename)) {
@@ -8948,9 +8949,9 @@ bool Calculator::loadExchangeRates() {
 		if(g_file_test(filename_old, G_FILE_TEST_EXISTS)) {
 			doc = xmlParseFile(filename_old);
 			if(doc) {
-				mkdir(getLocalDataDir().c_str(), S_IRWXU);
+				g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
 				move_file(filename_old, filename);
-				rmdir(getOldLocalDir().c_str());
+				g_rmdir(getOldLocalDir().c_str());
 			}
 		}
 		g_free(filename_old);
@@ -9066,7 +9067,7 @@ string Calculator::getExchangeRatesUrl() {
 }
 bool Calculator::fetchExchangeRates(int timeout, string wget_args) {
 	int status = 0;
-	mkdir(getLocalDataDir().c_str(), S_IRWXU);	
+	g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
 	string cmdline;
 	gchar *filename = g_build_filename(getLocalDataDir().c_str(), "eurofxref-daily.xml", NULL);
 	if(hasGVFS()) {
@@ -9205,7 +9206,7 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent) {
 
 	string homedir = getLocalTmpDir();
-	mkdir(homedir.c_str(), S_IRWXU);
+	g_mkdir(homedir.c_str(), S_IRWXU);
 
 	string commandline_extra;
 	string title;
