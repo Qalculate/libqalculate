@@ -9102,11 +9102,13 @@ bool Calculator::canPlot() {
 	}
 	fputs("show version\n", pipe);
 	return pclose(pipe) == 0;*/
+#ifdef __unix__
 	gchar *gstr = g_find_program_in_path("gnuplot");
 	if(gstr) {
 		g_free(gstr);
 		return true;
 	}
+#endif
 	return false;
 }
 MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po) {
@@ -9490,6 +9492,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 	
 	return invokeGnuplot(plot, commandline_extra, persistent);
 }
+#ifdef __unix__
 bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
 	FILE *pipe = NULL;
 	if(!b_gnuplot_open || !gnuplot_pipe || persistent || commandline_extra != gnuplot_cmdline) {
@@ -9543,4 +9546,15 @@ bool Calculator::closeGnuplot() {
 bool Calculator::gnuplotOpen() {
 	return b_gnuplot_open && gnuplot_pipe;
 }
+#else
+bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
+	return false;
+}
+bool Calculator::closeGnuplot() {
+	return true;
+}
+bool Calculator::gnuplotOpen() {
+	return false;
+}
+#endif
 
