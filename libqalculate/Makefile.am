@@ -24,7 +24,7 @@ libqalculate_la_LIBADD = \
 	@GLIB_LIBS@
 
 AM_CPPFLAGS = \
-	-I../ \
+	-I$(top_srcdir) \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 	@GLIB_CFLAGS@

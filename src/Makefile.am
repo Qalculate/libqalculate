@@ -5,7 +5,7 @@
 AM_CPPFLAGS = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-	-I../libqalculate \
+	-I$(top_srcdir)/libqalculate \
 	@GLIB_CFLAGS@
 
 bin_PROGRAMS = @QALCULATE_TEXT@

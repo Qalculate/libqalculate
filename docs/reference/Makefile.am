@@ -3,8 +3,14 @@
 #
 
 referencedir = $(docdir)/reference/html
-reference_DATA = html/*.png html/*.html html/*.css
+reference_DATA = \
+		$(top_srcdir)/docs/reference/html/*.png
+		$(top_srcdir)/docs/reference/html/*.html
+		$(top_srcdir)/docs/reference/html/*.css
 
-EXTRA_DIST = html/*.png html/*.html html/*.css
+EXTRA_DIST = \
+		$(top_srcdir)/docs/reference/html/*.png
+		$(top_srcdir)/docs/reference/html/*.html
+		$(top_srcdir)/docs/reference/html/*.css
 
 
