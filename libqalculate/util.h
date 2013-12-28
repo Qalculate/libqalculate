@@ -13,6 +13,13 @@
 #define UTIL_H
 
 #include <libqalculate/includes.h>
+/* threads */
+#ifdef HAVE_PTHREADS
+#	include <pthread.h>
+#	include <unistd.h>
+#else
+#	error "No thread support available on this platform"
+#endif
 
 /** @file */
 
@@ -89,5 +96,42 @@ string getLocalDir();
 string getLocalDataDir();
 string getLocalTmpDir();
 bool move_file(const char *from_file, const char *to_file);
+
+class Thread {
+public:
+	Thread();
+	virtual ~Thread();
+	bool start();
+	bool cancel();
+	template <class T> void write(T data) {
+#ifdef HAVE_PTHREADS
+		fwrite(&data, sizeof(T), 1, m_pipe_w);
+		fflush(m_pipe_w);
+#endif
+	}
+
+	// FIXME: this is technically wrong -- needs memory barriers (std::atomic?)
+	volatile bool running;
+
+protected:
+	virtual void run() = 0;
+	template <class T> T read() {
+		T x;
+#ifdef HAVE_PTHREADS
+		fread(&x, sizeof(T), 1, m_pipe_r);
+#endif
+		return x;
+	}
+
+private:
+#ifdef HAVE_PTHREADS
+	static void doCleanup(void *data);
+	static void *doRun(void *data);
+
+	pthread_t m_thread;
+	pthread_attr_t m_thread_attr;
+	FILE *m_pipe_r, *m_pipe_w;
+#endif
+};
 
 #endif

@@ -811,3 +811,54 @@ bool move_file(const char *from_file, const char *to_file) {
 	
 }
 
+
+#ifdef HAVE_PTHREADS
+Thread::Thread() :
+	running(false),
+	m_pipe_r(NULL),
+	m_pipe_w(NULL)
+{
+	pthread_attr_init(&m_thread_attr);
+	int pipe_wr[] = {0, 0};
+	pipe(pipe_wr);
+	m_pipe_r = fdopen(pipe_wr[0], "r");
+	m_pipe_w = fdopen(pipe_wr[1], "w");
+}
+
+Thread::~Thread() {
+	fclose(m_pipe_r);
+	fclose(m_pipe_w);
+	pthread_attr_destroy(&m_thread_attr);
+}
+
+void Thread::doCleanup(void *data) {
+	Thread *thread = (Thread *) data;
+	thread->running = false;
+}
+
+void *Thread::doRun(void *data) {
+	pthread_cleanup_push(&Thread::doCleanup, data);
+
+	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+
+	Thread *thread = (Thread *) data;
+	thread->run();
+
+	pthread_cleanup_pop(1);
+	return NULL;
+}
+
+bool Thread::start() {
+	int ret = pthread_create(&m_thread, &m_thread_attr, &Thread::doRun, this);
+	running = (ret == 0);
+	return (ret == 0);
+}
+
+bool Thread::cancel() {
+	int ret = pthread_cancel(m_thread);
+	running = (ret != 0);
+	return !running;
+}
+
+#endif
