@@ -17,11 +17,17 @@
 
 #include <glib.h>
 #include <time.h>
-#include <utime.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <fstream>
+#ifdef __unix__
+#	include <utime.h>
+#	include <sys/types.h>
+#	include <sys/stat.h>
+#	include <unistd.h>
+#	include <pwd.h>
+#elif defined(_WIN32)
+#	include <windows.h>
+#	include <shlobj.h>
+#endif
 
 
 bool eqstr::operator()(const char *s1, const char *s2) const {
@@ -812,7 +818,8 @@ bool move_file(const char *from_file, const char *to_file) {
 }
 
 
-#ifdef HAVE_PTHREADS
+#ifdef __unix__
+
 Thread::Thread() :
 	running(false),
 	m_pipe_r(NULL),
@@ -852,7 +859,7 @@ void *Thread::doRun(void *data) {
 bool Thread::start() {
 	int ret = pthread_create(&m_thread, &m_thread_attr, &Thread::doRun, this);
 	running = (ret == 0);
-	return (ret == 0);
+	return running;
 }
 
 bool Thread::cancel() {
@@ -860,5 +867,52 @@ bool Thread::cancel() {
 	running = (ret != 0);
 	return !running;
 }
+
+#elif defined(_WIN32)
+
+
+Thread::Thread() :
+	running(false),
+	m_thread(NULL),
+	m_threadReadyEvent(NULL),
+	m_threadID(0)
+{
+	m_threadReadyEvent = CreateEvent(NULL, false, false, NULL);
+}
+
+Thread::~Thread() {
+	CloseHandle(m_threadReadyEvent);
+}
+
+DWORD WINAPI Thread::doRun(void *data) {
+	// create thread message queue
+	MSG msg;
+	PeekMessage(&msg, NULL, WM_USER, WM_USER, PM_NOREMOVE);
+
+	Thread *thread = (Thread *) data;
+	SetEvent(thread->m_threadReadyEvent);
+	thread->run();
+	return 0;
+}
+
+bool Thread::start() {
+	m_thread = CreateThread(NULL, 0, Thread::doRun, this, 0, &m_threadID);
+	if (m_thread == NULL) return false;
+	WaitForSingleObject(m_threadReadyEvent, INFINITE);
+	running = (m_thread != NULL);
+	return running;
+}
+
+bool Thread::cancel() {
+	// FIXME: this is dangerous
+	int ret = TerminateThread(m_thread, 0);
+	if (ret == 0) return false;
+	CloseHandle(m_thread);
+	m_thread = NULL;
+	m_threadID = 0;
+	running = false;
+	return true;
+}
+
 
 #endif
