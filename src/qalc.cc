@@ -14,8 +14,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <time.h>
-#include <sys/time.h>
-#include <pthread.h>
 #include <dirent.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,6 +26,16 @@
 #include <readline/history.h>
 #endif
 
+class ViewThread : public Thread {
+protected:
+	virtual void run();
+};
+
+class CommandThread : public Thread {
+protected:
+	virtual void run();
+};
+
 MathStructure *mstruct, *parsed_mstruct;
 KnownVariable *vans[5];
 string result_text, parsed_text;
@@ -38,11 +46,9 @@ EvaluationOptions evalops, saved_evalops;
 AssumptionType saved_assumption_type;
 AssumptionSign saved_assumption_sign;
 int saved_precision;
-FILE *view_pipe_r, *view_pipe_w, *command_pipe_r, *command_pipe_w;
-pthread_t view_thread, command_thread;
-pthread_attr_t view_thread_attr, command_thread_attr;
-bool command_aborted = false, command_thread_started;
-bool b_busy = false;
+Thread *view_thread, *command_thread;
+bool command_aborted = false;
+volatile bool b_busy = false;
 string expression_str;
 bool expression_executed = false;
 bool avoid_recalculation = false;
@@ -59,9 +65,7 @@ struct timeval timeout;
 
 static char buffer[1000];
 
-void *view_proc(void *pipe);
 void setResult(Prefix *prefix = NULL, bool update_parse = false, bool goto_input = true, size_t stack_index = 0, bool register_moved = false, bool noprint = false);
-void *command_proc(void *pipe);
 void execute_expression(bool goto_input = true, bool do_mathoperation = false, MathOperation op = OPERATION_ADD, MathFunction *f = NULL, bool do_stack = false, size_t stack_index = 0);
 void execute_command(int command_type, bool show_result = true);
 void load_preferences();
@@ -299,7 +303,7 @@ void handle_exit() {
 			save_defs();
 		}
 	}
-	pthread_cancel(view_thread);
+	view_thread->cancel();
 	CALCULATOR->terminateThreads();
 }
 
@@ -1133,19 +1137,9 @@ int main(int argc, char *argv[]) {
 	result_text = "0";
 	parsed_text = "0";
 	
-	int pipe_wr[] = {0, 0};
-	pipe(pipe_wr);
-	view_pipe_r = fdopen(pipe_wr[0], "r");
-	view_pipe_w = fdopen(pipe_wr[1], "w");
-	pthread_attr_init(&view_thread_attr);
-	pthread_create(&view_thread, &view_thread_attr, view_proc, view_pipe_r);
-	
-	int pipe_wr2[] = {0, 0};
-	pipe(pipe_wr2);
-	command_pipe_r = fdopen(pipe_wr2[0], "r");
-	command_pipe_w = fdopen(pipe_wr2[1], "w");
-	pthread_attr_init(&command_thread_attr);
-	command_thread_started = false;
+	view_thread = new ViewThread;
+	view_thread->start();
+	command_thread = new CommandThread;
 	
 	timeout.tv_sec = 0;
 	timeout.tv_usec = 100000;
@@ -1158,7 +1152,7 @@ int main(int argc, char *argv[]) {
 			if(!cfile) {
 				printf(_("Could not open \"%s\".\n"), command_file.c_str());
 				if(!interactive_mode) {
-					pthread_cancel(view_thread);
+					view_thread->cancel();
 					CALCULATOR->terminateThreads();
 					return 0;
 				}
@@ -1186,7 +1180,7 @@ int main(int argc, char *argv[]) {
 			execute_expression(interactive_mode);
 		}
 		if(!interactive_mode) {
-			pthread_cancel(view_thread);
+			view_thread->cancel();
 			CALCULATOR->terminateThreads();
 			return 0;
 		}
@@ -2790,20 +2784,13 @@ void on_abort_display() {
 }
 
 
-void *view_proc(void *pipe) {
-
-	//pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	FILE *view_pipe = (FILE*) pipe;
-	
+void ViewThread::run() {
 	while(true) {
 	
-		//pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
-		void *x = NULL;
-		fread(&x, sizeof(void*), 1, view_pipe);
+		void *x = read<void *>();
 		MathStructure m(*((MathStructure*) x));
-		bool b_stack = false;
-		fread(&b_stack, sizeof(bool), 1, view_pipe);
-		fread(&x, sizeof(void*), 1, view_pipe);
+		bool b_stack = read<bool>();
+		x = read<void *>();
 		if(x) {
 			PrintOptions po;
 			po.preserve_format = true;
@@ -2821,7 +2808,7 @@ void *view_proc(void *pipe) {
 			po.restrict_to_parent_precision = false;
 			po.spell_out_logical_operators = printops.spell_out_logical_operators;
 			MathStructure mp(*((MathStructure*) x));
-			fread(&po.is_approximate, sizeof(bool*), 1, view_pipe);
+			po.is_approximate = read<bool *>();
 			mp.format(po);
 			parsed_text = mp.print(po);
 		}
@@ -2835,7 +2822,6 @@ void *view_proc(void *pipe) {
 		}
 		b_busy = false;
 	}
-	return NULL;
 }
 
 
@@ -2871,22 +2857,20 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 	bool parsed_approx = false;
 	if(stack_index == 0) {
-		fwrite(&mstruct, sizeof(void*), 1, view_pipe_w);
+		view_thread->write((void*) mstruct);
 	} else {
 		MathStructure *mreg = CALCULATOR->getRPNRegister(stack_index + 1);
-		fwrite(&mreg, sizeof(void*), 1, view_pipe_w);
+		view_thread->write((void*) mreg);
 	}
 	bool b_stack = stack_index != 0;
-	fwrite(&b_stack, sizeof(bool), 1, view_pipe_w);
+	view_thread->write(b_stack);
 	if(update_parse) {
-		fwrite(&parsed_mstruct, sizeof(void*), 1, view_pipe_w);
+		view_thread->write((void *) parsed_mstruct);
 		bool *parsed_approx_p = &parsed_approx;
-		fwrite(&parsed_approx_p, sizeof(void*), 1, view_pipe_w);
+		view_thread->write(parsed_approx_p);
 	} else {
-		void *x = NULL;
-		fwrite(&x, sizeof(void*), 1, view_pipe_w);
+		view_thread->write((void *) NULL);
 	}
-	fflush(view_pipe_w);
 
 	struct timespec rtime;
 	rtime.tv_sec = 0;
@@ -3028,26 +3012,18 @@ void expression_format_updated(bool reparse) {
 }
 
 void on_abort_command() {
-	pthread_cancel(command_thread);
+	command_thread->cancel();
 	CALCULATOR->restoreState();
 	CALCULATOR->clearBuffers();
 	b_busy = false;
 	command_aborted = true;
-	command_thread_started = false;
 }
 
-void *command_proc(void *pipe) {
-
-	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);	
-	FILE *command_pipe = (FILE*) pipe;
-	
+void CommandThread::run() {
 	while(true) {
 	
-		void *x = NULL;
-		int command_type;
-		fread(&command_type, sizeof(int), 1, command_pipe);
-		fread(&x, sizeof(void*), 1, command_pipe);
+		int command_type = read<int>();
+		void *x = read<void *>();
 		switch(command_type) {
 			case COMMAND_FACTORIZE: {
 				if(!((MathStructure*) x)->integerFactorize()) {
@@ -3063,7 +3039,6 @@ void *command_proc(void *pipe) {
 		b_busy = false;
 		
 	}
-	return NULL;
 }
 
 void execute_command(int command_type, bool show_result) {
@@ -3072,17 +3047,13 @@ void execute_command(int command_type, bool show_result) {
 	command_aborted = false;
 	CALCULATOR->saveState();
 
-	if(!command_thread_started) {
-		pthread_create(&command_thread, &command_thread_attr, command_proc, command_pipe_r);
-		command_thread_started = true;
+	if(!command_thread->running) {
+		command_thread->start();
 	}
 
-
-	fwrite(&command_type, sizeof(int), 1, command_pipe_w);
+	command_thread->write(command_type);
 	MathStructure *mfactor = new MathStructure(*mstruct);
-	fwrite(&mfactor, sizeof(void*), 1, command_pipe_w);
-	
-	fflush(command_pipe_w);
+	command_thread->write((void *) mfactor);
 
 	struct timespec rtime;
 	rtime.tv_sec = 0;
