@@ -23,6 +23,10 @@
 #	error "No thread support available on this platform"
 #endif
 
+#ifdef _WIN32
+	#define srand48 srand
+#endif
+
 /** @file */
 
 /// \cond
