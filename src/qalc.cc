@@ -57,7 +57,7 @@ bool result_only;
 fd_set in_set;
 struct timeval timeout;
 
-char buffer[1000];
+static char buffer[1000];
 
 void *view_proc(void *pipe);
 void setResult(Prefix *prefix = NULL, bool update_parse = false, bool goto_input = true, size_t stack_index = 0, bool register_moved = false, bool noprint = false);
