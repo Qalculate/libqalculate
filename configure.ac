@@ -121,7 +121,7 @@ LN_QALCULATE=""
 USE_READLINE="yes"
 READLINE_LIBS=""
 if test "x$enable_textport" = "xyes" ; then
-  QALCULATE_TEXT="qalc"
+  QALCULATE_TEXT="qalc$EXEEXT"
   LN_QALCULATE="qalc"
 
   AC_MSG_CHECKING([whether to use readline])
@@ -206,7 +206,7 @@ AC_SUBST(LN_QALCULATE)
 
 QALCULATE_DEFS2DOC=""
 if test "x$enable_defs2doc" = "xyes" ; then
-	QALCULATE_DEFS2DOC="defs2doc"
+	QALCULATE_DEFS2DOC="defs2doc$EXEEXT"
 fi
 AC_SUBST(QALCULATE_DEFS2DOC)
 
