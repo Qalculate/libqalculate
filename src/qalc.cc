@@ -1117,7 +1117,7 @@ int main(int argc, char *argv[]) {
 		if(load_functions && !CALCULATOR->loadGlobalFunctions()) b = false;
 		if(load_datasets && !CALCULATOR->loadGlobalDataSets()) b = false;
 		if(load_variables && !CALCULATOR->loadGlobalVariables()) b = false;
-		if(!b) {PUTS_UNICODE(_("Failed to load global definitions!"))};
+		if(!b) {PUTS_UNICODE(_("Failed to load global definitions!"));}
 	}
 
 	//load local definitions
