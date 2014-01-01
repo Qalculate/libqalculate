@@ -817,6 +817,35 @@ bool move_file(const char *from_file, const char *to_file) {
 	
 }
 
+string getPackageDataDir() {
+#ifdef USE_ABSOLUTE_PACKAGE_PATHS
+	string datadir(PACKAGE_DATA_DIR);
+	return datadir;
+#else
+	char exepath[MAX_PATH];
+	GetModuleFileName(NULL, exepath, MAX_PATH);
+	string datadir(exepath);
+	datadir.resize(datadir.find_last_of('\\'));
+	if (datadir.substr(datadir.length() - 3) == "bin") {
+		datadir.resize(datadir.find_last_of('\\'));
+	}
+	datadir += "\\share";
+	return datadir;
+#endif
+}
+
+string getPackageLocaleDir() {
+#ifdef USE_ABSOLUTE_PACKAGE_PATHS
+	string localedir(PACKAGE_LOCALE_DIR);
+	return localedir;
+#else
+	gchar *dir = g_build_filename(getPackageDataDir().c_str(), "locale", NULL);
+	string localeDir(dir);
+	g_free(dir);
+	return localeDir;
+#endif
+}
+
 
 #ifdef __unix__
 

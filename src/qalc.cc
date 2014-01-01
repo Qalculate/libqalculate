@@ -941,7 +941,7 @@ int main(int argc, char *argv[]) {
 	
 	
 #ifdef ENABLE_NLS
-	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+	bindtextdomain (GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 #endif

@@ -280,7 +280,7 @@ class Calculator_p {
 Calculator::Calculator() {	
 
 #ifdef ENABLE_NLS
-	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+	bindtextdomain (GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 #endif
 
@@ -5810,7 +5810,7 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 }
 
 bool Calculator::loadGlobalDefinitions() {
-	gchar *dirname = g_build_filename(PACKAGE_DATA_DIR, "qalculate", NULL);
+	gchar *dirname = g_build_filename(getPackageDataDir().c_str(), "qalculate", NULL);
 	gchar *filename = g_build_filename(dirname, "prefixes.xml", NULL);
 	bool b = true;
 	if(!loadDefinitions(filename, false)) {
@@ -5846,7 +5846,7 @@ bool Calculator::loadGlobalDefinitions() {
 	return b;
 }
 bool Calculator::loadGlobalDefinitions(string filename) {
-	gchar *filepath = g_build_filename(PACKAGE_DATA_DIR, "qalculate", filename.c_str(), NULL);
+	gchar *filepath = g_build_filename(getPackageDataDir().c_str(), "qalculate", filename.c_str(), NULL);
 	bool b = loadDefinitions(filepath, false);
 	g_free(filepath);
 	return b;
