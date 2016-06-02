@@ -1,0 +1,423 @@
+<?xml version="1.0"?>
+<QALCULATE version="0.9.4">
+  <category>
+    <_title>Small Numbers</_title>
+    <variable>
+      <_title>Per Mille</_title>
+      <_names>r:permille,au:&#x2030;</_names>
+      <value>1/1000</value>
+    </variable>
+    <variable>
+      <_title>Per Myriad</_title>
+      <_names>r:permyriad,au:&#x2031;</_names>
+      <value>1/10000</value>
+    </variable>
+    <variable>
+      <_title>Percent</_title>
+      <_names>a:%,r:percent</_names>
+      <value>1/100</value>
+    </variable>
+  </category>
+  <category>
+    <_title>Large Numbers</_title>
+    <variable>
+      <_title>Googolplex</_title>
+      <_names>r:googolplex</_names>
+      <value>10^(10^100)</value>
+    </variable>
+    <variable>
+      <_title>Googol</_title>
+      <_names>r:googol</_names>
+      <value>10^100</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Centillion</_title>
+      <_names>-r:centillion</_names>
+      <value>1E303</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Vigintillion</_title>
+      <_names>-r:vigintillion</_names>
+      <value>1E63</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Novemdecillion</_title>
+      <_names>-r:novemdecillion</_names>
+      <value>1E60</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Octodecillion</_title>
+      <_names>-r:octodecillion</_names>
+      <value>1E57</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Septendecillion</_title>
+      <_names>-r:septendecillion</_names>
+      <value>1E54</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Sexdecillion</_title>
+      <_names>-r:sexdecillion</_names>
+      <value>1E51</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Quindecillion</_title>
+      <_names>-r:quindecillion</_names>
+      <value>1E48</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Quattuordecillion</_title>
+      <_names>-r:quattuordecillion</_names>
+      <value>1E45</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Tredecillion</_title>
+      <_names>-r:tredecillion</_names>
+      <value>1E42</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Duodecillion</_title>
+      <_names>-r:duodecillion</_names>
+      <value>1E39</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Undecillion</_title>
+      <_names>-r:undecillion</_names>
+      <value>1E36</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Decillion</_title>
+      <_names>-r:decillion</_names>
+      <value>1E33</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Nonillion</_title>
+      <_names>-r:nonillion</_names>
+      <value>1E30</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Octillion</_title>
+      <_names>-r:octillion</_names>
+      <value>1E27</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Septillion</_title>
+      <_names>-r:septillion</_names>
+      <value>1E24</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Sextillion</_title>
+      <_names>-r:sextillion</_names>
+      <value>1E21</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Quintillion</_title>
+      <_names>-r:quintillion</_names>
+      <value>1E18</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Quadrillion</_title>
+      <_names>-r:quadrillion</_names>
+      <value>1E15</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Trillion</_title>
+      <_names>-r:trillion</_names>
+      <value>1E12</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Billion</_title>
+      <_names>-r:billion</_names>
+      <value>1E9</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Million</_title>
+      <_names>-r:million</_names>
+      <value>1E6</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Thousand</_title>
+      <_names>-r:thousand</_names>
+      <value>1E3</value>
+    </variable>
+    <variable require_translation="true">
+      <_title>Hundred</_title>
+      <_names>-r:hundred</_names>
+      <value>1E2</value>
+    </variable>
+  </category>
+  <category>
+    <_title>Physical Constants</_title>
+    <category>
+      <_title>Universal Constants</_title>
+      <variable>
+        <_title>Speed of Light in Vacuum</_title>
+        <_names>ar:c,speed_of_light</_names>
+        <value>299792458*m*s^(-1)</value>
+      </variable>
+      <variable>
+        <_title>Planck Time</_title>
+        <_names>r:planck_time,ais:t_P</_names>
+        <value approximate="true" precision="3">5.39116E-44*s</value>
+      </variable>
+      <variable>
+        <_title>Planck Temperature</_title>
+        <_names>r:planck_temperature,ais:T_P</_names>
+        <value approximate="true" precision="4">1.416808E32*K</value>
+      </variable>
+      <variable>
+        <_title>Planck Mass</_title>
+        <_names>r:planck_mass,ais:m_P</_names>
+        <value approximate="true" precision="4">2.176470E-5*g</value>
+      </variable>
+      <variable>
+        <_title>Planck Length</_title>
+        <_names>r:planck_length,ais:l_P</_names>
+        <value approximate="true" precision="4">1.616229E-35*m</value>
+      </variable>
+      <variable>
+        <_title>Planck Constant</_title>
+        <_names>r:planck</_names>
+        <value approximate="true" precision="7">6.626070040E-34*J*s</value>
+      </variable>
+      <variable>
+        <_title>Planck Constant over 2 pi</_title>
+        <_names>r:planck2pi</_names>
+        <value>planck/(2*pi)</value>
+      </variable>
+      <variable>
+        <_title>Newtonian Constant of Gravitation</_title>
+        <_names>r:newtonian_constant,a:G</_names>
+        <value approximate="true" precision="3">6.67408E-11*m^3*kg^(-1)*s^(-2)</value>
+      </variable>
+      <variable>
+        <_title>Electric Constant (Permittivity of Free Space)</_title>
+        <_names>r:electric_constant,aisu:&#x3B5;_0</_names>
+        <value>1/(4E-7*pi*299792458^2)*F*m^(-1)</value>
+      </variable>
+      <variable>
+        <_title>Magnetic Constant (Permeability of Free Space)</_title>
+        <_names>r:magnetic_constant,aisu:&#x3BC;_0</_names>
+        <value>4E-7*pi*N*A^(-2)</value>
+      </variable>
+      <variable>
+        <_title>Characteristic Impedance of Vacuum</_title>
+        <_names>r:characteristic_impedance,ais:Z_0</_names>
+        <value>4E-7*pi*299792458*ohm</value>
+      </variable>
+    </category>
+    <category>
+      <_title>Electromagnetic Constants</_title>
+      <variable>
+        <_title>Bohr Magneton</_title>
+        <_names>r:bohr_magneton,aisu:&#x3BC;_B</_names>
+        <value approximate="true" precision="6">927.4009994E-26*J*T^(-1)</value>
+      </variable>
+      <variable>
+        <_title>Conductance Quantum</_title>
+        <_names>r:conductance_quantum,ais:G_0</_names>
+        <value approximate="true" precision="8">7.7480917310E-5*S</value>
+      </variable>
+      <variable>
+        <_title>Elementary Charge</_title>
+        <_names>r:elementary_charge,ais:e_charge</_names>
+        <value approximate="true" precision="8">1.6021766208E-19*C</value>
+      </variable>
+      <variable>
+        <_title>Josephson Constant</_title>
+        <_names>r:josephson,ais:K_J</_names>
+        <value approximate="true" precision="7">483597.8525E9*Hz*V^(-1)</value>
+      </variable>
+      <variable>
+        <_title>Magnetic Flux Quantum</_title>
+        <_names>r:magnetic_flux_quantum,aisu:&#x3A6;_0</_names>
+        <value approximate="true" precision="7">2.067833831E-15*Wb</value>
+      </variable>
+      <variable>
+        <_title>Nuclear Magneton</_title>
+        <_names>r:nuclear_magneton,aisu:&#x3BC;_N</_names>
+        <value approximate="true" precision="7">5.050783699E-27*J*T^(-1)</value>
+      </variable>
+      <variable>
+        <_title>von Klitzing Constant</_title>
+        <_names>r:klitzing,ais:R_K</_names>
+        <value approximate="true" precision="8">25812.8074555*ohm</value>
+      </variable>
+    </category>
+    <category>
+      <_title>Atomic and Nuclear Constants</_title>
+      <variable>
+        <_title>Alpha Particle Mass</_title>
+        <_names>r:alpha_particle_mass,aisu:m_&#x3B1;</_names>
+        <value approximate="true" precision="5">6.6446565E-24*g</value>
+      </variable>
+      <variable>
+        <_title>Bohr Radius</_title>
+        <_names>r:bohr_radius,ais:a_o</_names>
+        <value approximate="true" precision="7">0.5291772108E-10*m</value>
+      </variable>
+      <variable>
+        <_title>Classical Electron Radius</_title>
+        <_names>r:classical_electron_radius,ais:r_e</_names>
+        <value approximate="true" precision="7">2.817940325E-15*m</value>
+      </variable>
+      <variable>
+        <_title>Compton Wavelength</_title>
+        <_names>r:compton_wavelength,aisu:&#x3BB;_C</_names>
+        <value approximate="true" precision="7">2.426310238E-12*m</value>
+      </variable>
+      <variable>
+        <_title>Electron Mass</_title>
+        <_names>r:electron_mass,ais:m_e</_names>
+        <value approximate="true" precision="5">9.1093826E-28*g</value>
+      </variable>
+      <variable>
+        <_title>Helion Mass</_title>
+        <_names>r:helion_mass,ais:m_h</_names>
+        <value approximate="true" precision="6">5.00641214E-24*g</value>
+      </variable>
+      <variable>
+        <_title>Neutron Mass</_title>
+        <_names>r:neutron_mass,ais:m_n</_names>
+        <value approximate="true" precision="6">1.67492728E-24*g</value>
+      </variable>
+      <variable>
+        <_title>Proton Mass</_title>
+        <_names>r:proton_mass,ais:m_p</_names>
+        <value approximate="true" precision="6">1.67262171E-24*g</value>
+      </variable>
+      <variable>
+        <_title>Rydberg Constant</_title>
+        <_names>r:rydberg,aisu:R_&#x221E;</_names>
+        <value approximate="true" precision="11">10973731.568525*m^(-1)</value>
+      </variable>
+      <variable>
+        <_title>Tau Mass</_title>
+        <_names>r:tau_mass,aisu:m_&#x3C4;</_names>
+        <value approximate="true" precision="3">3.16777E-24*g</value>
+      </variable>
+    </category>
+    <category>
+      <_title>Physico-Chemical Constants</_title>
+      <variable>
+        <_title>Atomic Mass Constant</_title>
+        <_names>r:atomic_mass,ais:m_u</_names>
+        <value approximate="true" precision="6">1.66053886E-24*g</value>
+      </variable>
+      <variable>
+        <_title>Avogadro Constant</_title>
+        <_names>r:avogadro,ais:N_A</_names>
+        <value approximate="true" precision="5">6.0221415E23*mol^(-1)</value>
+      </variable>
+      <variable>
+        <_title>Boltzmann Constant</_title>
+        <_names>r:boltzmann</_names>
+        <value approximate="true" precision="5">1.3806505E-23*J*K^(-1)</value>
+      </variable>
+      <variable>
+        <_title>Faraday Constant</_title>
+        <_names>r:faraday</_names>
+        <value approximate="true" precision="6">96485.3383*C*mol^(-1)</value>
+      </variable>
+      <variable>
+        <_title>First Radiation Constant</_title>
+        <_names>r:first_radiation,ais:c_1</_names>
+        <value approximate="true" precision="6">3.74177138E-16*W*m^2</value>
+      </variable>
+      <variable>
+        <_title>Ideal Gas Constant</_title>
+        <_names>r:ideal_gas</_names>
+        <value approximate="true" precision="4">8.314472*J*K^(-1)*mol^(-1)</value>
+      </variable>
+      <variable>
+        <_title>Second Radiation Constant</_title>
+        <_names>r:second_radiation,ais:c_2</_names>
+        <value approximate="true" precision="5">1.4387752E-2*m*K</value>
+      </variable>
+    </category>
+  </category>
+  <category>
+    <_title>Basic Constants</_title>
+    <variable>
+      <_title>Golden Ratio</_title>
+      <_names>r:golden,au:&#x3C6;</_names>
+      <value>(1+sqrt(5))/2</value>
+    </variable>
+    <variable>
+      <_title>Omega Constant</_title>
+      <_names>r:omega</_names>
+      <value>lambertw(1)</value>
+    </variable>
+    <variable>
+      <_title>Pythagoras' Constant (sqrt 2)</_title>
+      <_names>r:pythagoras</_names>
+      <value>sqrt(2)</value>
+    </variable>
+    <variable>
+      <_title>Apery's Constant</_title>
+      <_names>r:apery</_names>
+      <value>zeta(3)</value>
+    </variable>
+    <builtin_variable name="e">
+      <_title>Base of Natural Logarithms (e)</_title>
+      <_names>r:e</_names>
+    </builtin_variable>
+    <builtin_variable name="pi">
+      <_title>Archimedes' Constant (pi)</_title>
+      <_names>au:&#x3C0;,r:pi</_names>
+    </builtin_variable>
+    <builtin_variable name="euler">
+      <_title>Euler's Constant</_title>
+      <_names>au:&#x3B3;,r:euler</_names>
+    </builtin_variable>
+    <builtin_variable name="catalan">
+      <_title>Catalan's Constant</_title>
+      <_names>r:catalan</_names>
+    </builtin_variable>
+  </category>
+  <category>
+    <_title>Special Numbers</_title>
+    <builtin_variable name="i">
+      <_title>Imaginary i (sqrt -1)</_title>
+      <_names>r:i</_names>
+    </builtin_variable>
+    <builtin_variable name="infinity">
+      <_title>Infinity</_title>
+      <_names>a:&#x221E;,r:infinity</_names>
+    </builtin_variable>
+    <builtin_variable name="plus_infinity">
+      <_title>Positive Infinity</_title>
+      <_names>r:plus_infinity</_names>
+    </builtin_variable>
+    <builtin_variable name="minus_infinity">
+      <_title>Negative Infinity</_title>
+      <_names>r:minus_infinity</_names>
+    </builtin_variable>
+    <builtin_variable name="undefined">
+      <_title>Undefined</_title>
+      <_names>r:undefined</_names>
+    </builtin_variable>
+    <variable>
+      <_title>False</_title>
+      <_names>r:false,r:no</_names>
+      <value>0</value>
+    </variable>
+    <variable>
+      <_title>True</_title>
+      <_names>r:true,r:yes</_names>
+      <value>1</value>
+    </variable>
+  </category>
+  <category>
+    <_title>Unknowns</_title>
+    <unknown>
+      <_names>r:x</_names>
+    </unknown>
+    <unknown>
+      <_names>r:y</_names>
+    </unknown>
+    <unknown>
+      <_names>r:z</_names>
+    </unknown>
+  </category>
+</QALCULATE>

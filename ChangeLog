@@ -1,0 +1,2528 @@
+2016-05-27 Hanna Knutsson <hanna_k@fmgirl.com>
+	
+	* Allow special "to" commands directly in expression
+	* New "to" commands: factors and fraction
+	* Fix segmentation fault when aborting non-interactive qalc (do not use readline)
+
+2016-05-26 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* to bin, oct, hex, bases commands in qalc
+
+2016-05-25 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use ? or 0 in front of unit expression to control if missing prefix should be set
+
+2016-05-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use MULTIPLICATION_SIGN_X by default
+	* Use prefix for more units, add centigrades name for celsius, add Dalton unit and move units to new Atomic Mass category
+
+2016-05-23 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add unicode signs for powers 0 and 4-9, and cube root
+
+2016-05-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Redesigned parsing of spaces in multiplication and division and new parse options to ignore whitespace 
+	  or not treat implicit multiplication differently from explicit
+
+2016-05-19 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix stack editing
+
+2016-05-17 Hanna Knutsson <hanna_k@fmgirl.com>
+	
+	* New print safer abort/timeout system
+
+2016-05-15 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add thread cancellation point in factorize number function to make crash less likely
+	* Attempt to make print thread cancellation less crash prone
+
+2016-05-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not add default angle unit if one is already present
+	* Disable inclomplete uncertainty propagation support for now
+
+2016-05-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not keep zero radians
+	* Always simplify before integration
+
+2016-05-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix bug #108 by not checking for x in function arguments when isolating x, thus stopping infinite loop
+	* Fix sqrt(x)*sqrt(x)
+
+2016-05-05 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix endless loops in gcd functions (solves bug #64)
+
+2016-05-03 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use standard location for data and configuration (~/.local and ~/.conf)
+
+2016-05-02 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* An attempt to solve the convert to unit issues:
+	  - Transform Kelvin, Celsius, Farenheit to builtin units. 
+	  - Convert to kelvin when parsing, to make the conversion visible to the user, after implicit multiplication.
+	  - Fix s/g to kg = s*kg/g^2.
+	  - Do not set new prefix when converting to unit expression without prefix.
+	* Add Hartree and Rydberg units
+
+2016-04-30 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update build files and increment version number
+
+2016-04-29 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update currencies (fix currencies recently recplaced by euro, add new currencies
+	  and add additional unicode signs)
+	* Allow decimals in sexagesimal numbers (request #26)
+
+2016-04-28 Hanna Knutsson <hanna_k@fmgirl.com>
+	
+	* Catch CLN exceptions (fixes various bugs)
+	* Fix bug #79 and #127
+	* Option to ignore commas
+	* Apply most of the portability patch in bug #124
+
+2016-04-26 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix preservation of case sensitivity in translated names
+	* Do not append zeroes to decimals if number is approximate or is shown approximately
+
+2016-04-25 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Clarify how "Payment for a loan" works
+	* Fix "function" function when argument vector is too small
+	* Fix result for unsuccessful integration with limits 
+	* Fix self-referencing in save function
+
+2016-04-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix fibonacci function. Remove from program code and use the golden ratio.
+
+2016-04-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix conversion to unit with prefix (bug #150)
+	* Fix conversion from unit with prefix (bug #97 and #104)
+
+2016-04-19 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Introduce use_with_prefix property for units, to not use prefixes by defaults
+	  for units outside SI and CGS systems (solves bug #66)
+	* Partially revert commit [83fe08]
+	* Warn about bad integrate function
+	* Fix abbreviation for Rydberg constant (bug #140)
+
+2016-04-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Include <algorithm> for std::sort()
+	* Use unordered_map instead of hash_map for new gcc versions
+	* Fix warnings (including bug #143)
+	* Provide a proper fix for bug 3020050 / #121 (without removing valid warning messages)
+	* Fix parsing of (0xff) (bug #102)
+	* Warn when raising zero by imaginary power (bug #141)
+	* Fix incorrect factorization (bug #130)
+	
+2009-01-05 Jonathan Stickel <jjstickel@vcn.com>
+
+	* General build updates and bug fixes, including the ability to build against
+	  cln >= 1.2.
+	* Bug fix for segfaults with some uses of integrate() (bug 2537772).
+
+2008-03-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix reduction of vector size. Fixes bug 1913388.
+
+2007-08-27 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Begin work on propagation of uncertainties
+	* Allow parentheses for vectors (a bit stricter parsing)
+	* brackets_as_parentheses parse option
+
+2007-08-23 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* 2/5m = 2/(5m); 2/5 m = (2/5)*m
+
+2007-08-22 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Make DataSet::calculate virtual
+	* dataset.object.property and object.property (with parse_options.default_dataset set) syntax
+
+2007-08-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix crash with unsupported operator in RPN syntax (bug 1778267)
+
+2007-08-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* New Simplified Chinese translation (Roy Qu <royqh1979@gmail.com>)
+
+2007-06-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Miscellaneous fixes before release
+
+2007-04-27 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* New functions: addTime(), isNumber(), isReal(), isRational(), isInteger(),
+	  representsNumber(), representsReal(), representsRational(), representsInteger()
+	* Show argument name instead of \x in argument condition
+
+2007-04-26 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use Lambert W to solve equations
+	* Fix infinite loop when solving some equations
+	* New functions: addDays(), addMonths(), addYear()
+
+2007-04-19 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Enhance lambertw()
+	* Add the Omega constant
+
+2007-04-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Implement the Lambert W function
+
+2007-04-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Avoid floating point underflow by, in approximate mode, 
+	  checking against the value of pi in sin() and cos()
+	* Add more exact values for sin() and cos()
+
+2007-04-15 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix simplification of (1-1/x)^3 and similar
+
+2007-03-31 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add grams of TNT (gTNT/gramTNT) and tons of TNT (tTNT/tonTNT) units
+
+2007-03-29 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix parsing of unit expressions (when converting) such as W/(m K)
+	* Expand data on elements
+
+2007-03-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix clumsy mistakes in setPrefixes() leading to crashes
+	* Add typographic units
+	* Add some old french length units
+	* Add alternative name "variations" for permutations
+	* Fix atomic mass unit being put in second density category
+
+2006-12-16 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* New French translation (Nicolas Laug <Nicolas.Laug@polymtl.ca>)
+
+2006-11-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update Swedish translation
+
+2006-11-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update Dutch translation (Jaap Woldringh <jjh.woldringh@planet.nl>)
+
+2006-11-02 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use "name := value" as shortcut for save(value; name)
+	* Return value in save()
+
+2006-09-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Group integer factors in powers
+
+2006-09-05 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Integer factorization
+	* Heaviside Step Function, Rectangular Function, Triangular Function, and Ramp Function
+	* Kronecker Delta, Sigmoid, and Logit Transformation
+
+2006-08-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Generate API docs from autogen.sh
+	* Radius instead of diameter as argument for circumference()
+
+2006-07-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Interpret 0x[0-9,a-f] as hexadecimal number (do not require first digit to be 0-9)
+
+2006-07-03 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add optional upper and lower limit arguments to integrate() for definite integrals
+	* Add cross() function
+	* Handle powers with multiplication as base when setting prefixes
+	* Split powers with units when placing units separately
+	* Increment version number
+
+2006-06-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix parsing of "x!)!"
+	* Use Julian year for light-year value
+
+2006-06-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use "Display units separately" also for quantities with multiple terms
+
+2006-06-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add base 3 exponent mode
+	* Add "Engineering" display mode
+
+2006-06-06 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Unevaluated arguments were used when checking for numerical arguments in
+	   logn(), which caused log2(16/2) to first be evaluated to ln(16/2)/ln(2).
+
+2006-06-01 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Polishing before 0.9.4 release
+
+2006-05-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix libqalculate.so unresolved symbols with patch from 
+	  Thomas de Grenier de Latour, add GLIB_LIBS to LIBADD
+
+2006-05-09 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add additional localization options for use in KDE GUI
+
+2006-05-03 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update API documentation
+	* Clean up Unit API
+	* More function descriptions
+	* tetrahedron(), tetrahedron_sa(), tetrahedron_height(), sqpyramid(), sqpyramid_sa() and sqpyramid_height() functions
+	* Do not update the stack until the calculation is finished
+	* stack() and register() functions
+	* Add true RPN mode to qalc
+	* Add "rpn", "stack" and "clear stack" commands, and "lowercase e", "lowercase numbers", "spell out logical", "dot as separator"
+	   and "rpn" set command options in qalc
+	* Update Swedish translation
+
+2006-04-28 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update API documentation
+	* equation => formula in MathFunction
+	* Do less in setFormula() if formula is empty
+
+2006-04-27 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix parsed expression for RPN operation
+	* Remove capitalization from argument titles
+
+2006-04-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix bug #1475373 ("1 kg m/s" was simplified to "1000 m/s")
+
+2006-04-23 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* README.translate with information for translators
+	* Update Swedish translation
+
+2006-04-22 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Prepend !category! to strings, which might have different translations in different contexts, in data files
+
+2006-04-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add the completed Dutch translation
+	* New name format in data files
+	* Update Dutch translation to new name format
+
+2006-04-13 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix horrible, horrible bug that caused all number arguments to require numbers to be rational
+
+2006-04-09 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Ignore definition names beginning with colon, for plural names where the original name does not differ
+	* Set vectors and matrices as the first argument by default
+	* Add more function descriptions
+
+2006-04-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Options to use dot as thousands separator when it is not the default decimal sign
+	* require_translation property for definitions, used in the large numbers category
+
+2006-04-06 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update RPN functions
+	* Update API documentation
+	* Change usecs argument to msecs
+
+2006-04-04 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Plugins
+	* True RPN mode
+
+2006-04-03 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Set min and max in argument definition for zeta()
+	* Set exact value for zeta with argument 2, 4, 6, 8 or 10 and set infinity for 1
+
+2006-04-02 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Symmetric matrix => Square matrix
+	* Some text string changes
+	* Accept vectors in elements function
+
+2006-04-01 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Interpret 0x..., 0o... and 0b... as hexadecimal, octal and binary numbers, respectively, when base is decimal
+
+2006-03-29 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Remove deleted data set from the data set list, not only the function list (fix crash on delete and update list view)
+
+2006-03-28 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix contains... functions (and thereby integration)
+
+2006-03-25 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Ignore commas in numbers
+	* Start API documentation
+
+2006-03-13 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Approximate comparison fixes
+	* Add PrintOptions->restrict_to_parent_precision (default true)
+	* Do not produce a result with multiplications inside multiplications (fixes prefixes with simplification)
+
+2006-02-26 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Approximate comparison
+	* Avoid floating point overflow and underflow by not lowering precision in comparison
+	  and always using long floats
+	* Use floating point raise more often in approximate mode
+
+2006-02-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix show ending zeroes when max decimals is set to off by a max value below zero
+
+2006-02-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not use "Read Precision" in plot
+
+2005-01-30 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* isodate(), localdate(), timestamp(), stamptodate() functions
+
+2005-01-27 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* cos(x*pi*rad) equals 1 if x is even, not -1
+
+2005-12-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Warn about denominators assumed non-zero option
+
+2005-12-19 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Various fixes and enhancements
+	* Update Swedish translation
+
+2005-12-14 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix ln(e^x)
+	* Isolate x in log(x) for inequalities
+	* Factorize x^2-y^2 and x^3-y^3
+
+2005-12-13 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Isolate x fixes
+	* Fix merging of common factor with multiplication
+
+2005-12-12 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Assume that simple unit relations do not negate	
+	* Fix ?+(+infinity)
+
+2005-12-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix non-commutative multiplication (multiplication with possible matrices)
+
+2005-12-09 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix isolate x with "x^2 > -5" and similar
+	* Do not calculate y in "x && y" and "x || y" if x is false or true, respectively
+
+2005-12-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* New assumption type "non-matrix" for unknowns with commutative multiplication
+	* Finish isolate x / solve changes
+
+2005-12-06 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Isolate x and solve fixes
+	* Fix matrix multiplication
+
+2005-12-04 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Isolate x updates
+	* Put AND within OR (to get nicer inequalities)
+
+2005-12-03 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Isolate x using AND and OR instead of vector
+	* Enhanced inequalities handling in isolate x
+	* Simplify AND and OR with comparisons (ex x < 5 && x < 3 = x < 3)
+	* Display "x < 3 && x > 1" as "1 < x < 3"
+
+2005-12-01 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Incorporate ginac sqrfree updates between version 1.2.3 and 1.3.3
+	* Assorted fixes
+
+2005-11-30 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Only treat e as E if preceded by number
+	* Do not test float number for infinite series
+	* Check factorized numerators and denominators for negative powers
+
+2005-11-29 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Parse -x/y as (-x)/y instead of -(x/y)
+	* Print multiplication in negation with parentheses when excessive parentheses is on
+	* Do not display (x)(y)^z with multiplication sign
+	* Sort x^2*y^3 + 10xy - 3x + 8 instead of x^2*y^3 - 3x + 10xy + 8
+
+2005-11-28 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Updated function arguments parsing ignoring space after function name and not stopping parsing of
+	  single argument without parentheses until space or right parenthesis without corresponding left parenthesis
+	* Be more strict with 0/x if x is not non-zero
+	* Fix 1E-1 = 1e-1
+	* Calculate as float when 1.0001 > base < 0.9999 and exponent is greater than 10000 or less than -10000
+
+2005-11-27 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Unknown variable with sign non-negative or non-positive represents real number
+	* Update assumption type after setting sign and vice versa
+	* Assume again when dividing that units do not convert to zero
+	* "Einstein per Meter per Second" => "Einstein per Meter Squared per Second"
+
+2005-11-26 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Be more restrictive with unknown variables/symbols with unknown type (might be unit or vector)
+
+2005-11-25 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update qalc with new factorization and some more
+	* Option for qalc to read commands from a file first
+	* Fix unit comparisons
+	* Fix handling of units with function in relation saved in approximate variable
+
+2005-11-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Sort out some power transformations
+
+2005-11-23 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* More fixes (I'm not very good at keeping track of them)
+
+2005-11-22 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Preserve factorization print option (for (3/4*(x+1))/(y+1))
+
+2005-11-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Lots of evaluation and factorization fixes
+	* Pass parent to some functions so the reference can be replaced for the whole child
+	* New MathStructure sorting algorithm using the fact that the structure usually already is well sorted,
+	  reducing the time to factorize (x+y)^50 to a third
+
+2005-11-19 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add rational polynomial parameter to arguments
+	* Add rational number parameter to number arguments
+	* Add polynomial functions -- coeff(), lcoeff(), pcontent(), degree(), etc.
+	* Fix lcoefficient (confused by l in ldegree mening low and l in coefficient leading)
+	* A more efficient differentiate function for sqrfree
+
+2005-11-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fixes
+	* Determinant from GiNaC
+	* Only use the new inverse function for numeric matrices
+
+2005-11-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* "borrow" sqrfree factorization and related functions from GiNaC
+	* Make evaluation more efficient (avoid recalculations)
+
+2005-11-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* MathStructure gcd() and lcm()
+	* New simplification using factorization and factorization combing denominators
+	* Increment library soname number (QALCULATE_CURRENT)
+
+2005-11-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Much more efficient determinant calculation
+	* Fix x*y^-1*y^-1+x*y^-1
+	* Fix cases when (x-1)^-1*(x-1)^-1 not returned (x-1)^-2
+	* Much more efficient inverse matrix calculation
+
+2005-11-06 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use quotient rule in differentation to possible get simpler results then if always using the product rule
+	* Fix fetching of exchange rates with gnome-vfs < 2.10
+	* Fix display of fractions in fractional mode "Decimal (Try Exact)" 
+	* Differentiation fixes
+	* Do unicode stuff correctly (a sequence of unicode characters was sometimes counted as one)
+
+2005-11-05 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix (x+1)/x (= 1 + 1/x)
+	* Simplification by combining divisions
+	* Reversed polynomial division (ex. (x+1)/(x^2+2x+1) = 1/(x+1))
+
+2005-11-04 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Compile without warnings with -pedantic and -Wextra
+
+2005-11-03 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix simplification of (ax^b+cx^d)/x
+	* Fix (xy/z)+1/z
+	* Fix suggested multiplication sign before and after power
+
+2005-11-02 Hanna Knutsson <hanna_k@fmgirl.com>
+	
+	* More parse polishing
+	* Fix for cln-1.1.10 and remove all "obfuscating" cln operators
+	* Builtin function's represents...() was not used because of missing const in declaration
+
+2005-10-31 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Cleaner parsing (same result but looks nicer)
+
+2005-10-30 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add metre/metres for meter/meters
+	* nounit() function
+
+2005-10-29 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix Kibit interpretation (was kibitonne, is now kibibit) and similar
+	* Update setting of parsed structure and to expression in calculate function
+	* Update qalc
+
+2005-10-28 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Option to reduce transformation when parsing and print formating
+	* Support for binary and other prefixes
+	* Information units (bit, byte, etc.) and binary prefixes
+	* Neper and Bel units
+
+2005-10-26 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update Swedish translation
+	* light_year => lightyear
+	* Fix unended function information when optional arguments
+
+2005-10-22 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add SIGN_SMALLCIRCLE and SIGN_MULTIBULLET to utf8_pos_is_valid_in_name to fix completion
+
+2005-10-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Lots of new units
+
+2005-10-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Only give "Error in unit expression" message on errors in CompositeUnit parsing
+	* Do not accumulate the error count between levels for temporary stop messages
+
+2005-10-19 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add arguments past max arguments to unended_function
+
+2005-10-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Put seperation of unit expression to string in calculate function in a separate function
+	* Add stopped warnings count
+
+2005-10-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Print option to hide underscores (if not for suffix) in names
+	* Adjust precision of constants
+
+2005-10-16 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add unended_function to parse_options and put unended function there when parsing
+
+2005-10-15 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* mmHg unit
+	* Ideal Gas Constant
+
+2005-10-13 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fortnight unit
+	* More composite units for convenience
+	* Foot-Candle unit
+	* Fix conversion footcandle <-> lux
+	* Einstein unit
+
+2005-10-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* More composite units for convenience (km, mm, ml, km/h, etc.)
+
+2005-10-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Move currency definitions to currencies.xml
+	* Functions for loading sepearate global definitions files
+	* Create angle units if not loaded from definitions files
+
+2005-10-05 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not create qalculate symlink to qalc (confusing when installing GUI in other location)
+	* Use gnomevfs-copy instead of wget if available
+	* Allow user to specify wget arguments
+	* Update currencies
+
+2005-09-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* mph and mpg units
+
+2005-08-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix (1/2)^n < 0.5
+	* Fix replacement of unicode signs when skipping quotes
+	* Fix 0 oC to oF (0*unit != 0)
+
+2005-06-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Remove requirement glib-2.0 >= 2.4 and require libxml2 >= 2.3.8
+	* Do not let << take precedence over >> read from left to right
+
+2005-06-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not use unicode prefix names for long names
+	* xor() and bitxor() is NOT algebra
+	* Add even() and odd() functions
+	* shift() function and operators ("<<" and ">>")
+	* Add functins for getting exchange rates url and file name to allow interface to do the downloading themselves
+
+2005-06-09 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Support for "e" instead of "E" in result
+
+2005-06-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* SIGN_POWER_1, ... => "^(1)", ... instead of "^1", ...
+
+2005-06-06 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update Swedish translation
+
+2005-06-05 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Reminder => Remainder
+	* Reminder (mod) => Modulus
+	* Bitwise NOT (~)
+	* xor() and bitXor()
+	* Clean up expression such (x && y) > 0
+	* Update currencies (more added)
+	* Warn the use that objects with '~' in name will be lost
+	* Keep loading/saving after error
+	* Do not crash when saving data sets (initialize cat_i_prev)
+	* Do not load nameless objects
+
+2005-06-02 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Bitwise AND (&), OR (|), XOR
+	* Remove old giac stuff
+
+2005-06-01 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Non-static getElement() function
+	* Initialize saved_locale before use
+
+2005-05-15 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Max values seem to have been lost a long time ago -- add them again
+
+2005-05-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Initialize ids_i
+	* Fix documentation typos
+	* Fix includes.h for gcc-4.0
+
+2005-03-06 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* 5e2 = 5E2 = 500 and 5e = 5*e
+
+2005-02-08 Hanna Knutsson <hanna_k@fmgirl.com>
+	
+	* Update solve2()
+
+2005-02-06 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Dialog with buttons works in gtk+-2.6.2
+	* Do not look at function arguments in contains... functions
+
+2005-02-02 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update integration and differentiation (sin(x) != sin(x)*rad) after change in sin() and cos() behaviour
+
+2005-01-25 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix RPN crash and don't add lonely stack value to itself
+	* Workaround freeze with message dialog without buttons
+
+2005-01-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use the last operator for leftover stack values
+
+2004-11-30 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Show base (if not decimal, hexadecimal or non-standard) as subscript
+
+2004-11-26 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix "Convert result" button
+	* Use singular instead of abbreviated name for completion
+
+2004-11-21 Hanna Knutsson <hanna_k@fmgirl.com>
+	
+	* Fix draw unit
+	* Add alternative multiplication dot signs
+	* Enhance preferences safety
+
+2004-11-16 Hanna Knutsson <hanna_k@fmgirl.com>
+	
+	* Check if unicode characters can be displayed
+
+2004-11-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Revert back somewhat to the old behaviour of not rounding exact numbers not in exponential format 
+
+2004-10-25 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Generate vector function
+
+2004-10-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Rearrange plot dialog
+	* Do not update plot data when not changed
+	* Make x variable separate for each plot function
+
+2004-10-22 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix angle arguments by adding option default angle unit none where angle units must be specified
+	* Represents... for some functions
+	* Some tweaks
+
+2004-10-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix 0.5!
+
+2004-10-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix comparison of unit with unknown
+	* Try with assumptions set to unknown in solve function if not successful
+
+2004-10-19 Hanna Knutsson <hanna_k@fmgirl.com>
+	
+	* Fix when size_t not is unsigned int
+
+2004-10-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Disable plural forms not at the end of text strings (metersqrt(5) = meter * sqrt(5) instead of meters * qrt(5))
+	* Replace new lines with &#10; in definition xml files until we have a better solution
+
+2004-10-14 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Speed-up csum when component(i, "v") is used
+	* Give messages in the right order (reversed)
+	* Update obsolete plot documentation
+	* Clean up parsing
+	* Add limit implicit multiplication mode
+	* Fix unit conversion
+	* Fix m*s -> 1 m*s
+
+2004-10-13 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* More speed-ups
+
+2004-10-12 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Limit qalc history to 100 entries
+	* Increase qalculate-gtk history to 25 entries
+	* Store children i math structures as pointers to reduce copying of large vectors
+
+2004-10-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Help buttons in variable edit, unit edit, function edit and plot dialogs
+	* Make definitions loading more than twice as fast
+	* -set command line option for qalc
+
+2004-10-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* defs2doc program for generation of definition list in help
+	* Make help book and add appendix for lists of functions, variables and units
+	* Fix broken CVS
+
+2004-10-09 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* promille -> permille
+	* Permille sign
+	* permyriad
+	* Fix atan() ignoring angle unit
+	* Add exact value for atan(1) = 1/4 pi and atan(-1) = -1/4 pi
+
+2004-10-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Install headers
+	* Added pkgconfig file libqalculate.pc
+	* Remove inclusion of config.h in installed headers
+	* Include library headers with <libqalculate/*.h>
+	* Rename src/calclib src/libqalculate
+
+2004-10-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update exchange rates command in qalc
+	* Update Swedish translation
+	* Add last set options to qalc
+	* Allow user to type - when unicode signs is disabled
+	* Division sign selection
+	* Use selected multiplication and division sign in text printing
+
+2004-10-06 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix qalc Ctrl+D crash (exit when read line is NULL)
+	* Do not require two tabs to show completion list
+	* Do not show all output directly if terminal is too small
+	* Split out localization of definitions into po-defs
+	* Add full support for non-utf8 local characters in qalc
+	* Various qalc tweaks
+
+2004-10-05 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix equalsIgnoreCase() for unicode chars and make more efficient
+	* Make qalc case insensitive and add extend localization
+	* Change package name to qalculate
+
+2004-10-04 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use readline for qalc
+	* Change class Function to MathFunction
+	* Only use plural name when short multiplication
+	* qalc completion
+	* Autoconf updates -- make compilation of qalc and qalculate-gtk optional as well as readline
+	* qalc save variable, set assumptions, and more
+
+2004-10-03 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Ask if exchange rates shall be downloaded the first qalculate run
+	* Number base 1 makes no sense
+	* More work on qalc
+
+2004-10-02 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Change n for micro to u
+	* Command line program "qalc"
+	* Get rid of traces of separate angle unit variable
+
+2004-10-01 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add filter to save result to image file dialog
+	* Install libqalculate as a shared library
+
+2004-09-30 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Alternative to use step size instead of sampling rate for generation of plot data
+	* Big approximate and precision check and fix
+	* Message about the limited functionality of the gamma function
+
+2004-09-29 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Gamma for rational numbers with denominator 2
+	* Double and multi factorials
+	* Tweak parsing of !-factorials 
+	* Modify CLN error message
+	* hyperfactorial() and superfactorial()
+	* Make factorials more efficient by using CLN numbers directly
+
+2004-09-28 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Allow arguments to only be used in sub functions
+	* Remove countArgOccurence() as it is not needed any more
+	* Drop support for gtk+ < 2.4
+	* Fix large integers displayed inexact was reported as exact
+	* Stop gamma() if argument is not an integer
+	* Read precision from zero with decimals (0.000...)
+	* Set precision from function and its arguments after function calculation
+
+2004-09-27 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* "Inverse" -> "Matrix Inverse"
+	* Fix isolate_x() when comparison type is not equals
+	* Make plot non-numerical error more informative and include non-reals
+	* No use to have if() arguments as text, as they now only are parsed initially
+	* Fix trimmean() and winsormean()
+	* Localize "timed out"
+	* Version 0.6.4
+
+2004-09-26 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix selection of variable to solve
+	* New solve2() function
+	* New multisolve() function
+	* Do not add modified data object once more
+	* Do not check against new data objects for duplicates
+	* Get a default name for new vector/matrix just as with other known variables
+	* Display error when plot data contains non-numerical values
+	* Show function condition in function description
+	* Update Swedish translation
+	* We need to sort fully recursively before merging factors in factorize()
+	* Fix factorization with duplicate factor with a in (ax+b) greater than one
+	* Add new expression to expression history after set unknowns
+	* Use g_find_program_in_path() to check if gnuplot and wget is available to avoid terminal output
+
+2004-09-25 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* unitedit_glade was used in variable dialogs
+	* Use factorization in isolate_x()
+	* Improve isolate_x()
+	* Check if terms is equal (or a = -b) with the current precision in subtract and add to be able to find very small numbers that really are zero
+	* isolate_x() fixes
+	* Preserve evaluation options through factorization
+
+2004-09-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Include both "liter" and "litre" to avoid confusion
+	* Add "tonne" for metric ton
+	* Prefer keeping the original unit if equally good when converting to best unit
+	* Merge infinite numbers with somewhat known structures
+	* Be a bit more strict with undefined values
+	* Ohm and farad are SI units
+
+2004-09-23 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Increase space after imaginary i by 1
+	* Fix never ending loop in getBestPrefix()
+	* Fix (2x)/(5(yz)) --> (2x)/(5yz)
+	* Take into account place_units_separately in improve_division_multipliers()
+	* Increase space at end of parenthesis by 1
+	* Change components() to dimension()
+	* Set correl() as a different name for pearson() instead of a separate function
+	* Check that the dimension of vectors is equal in pearson() and spearman()
+	* Test if polynomial division reduces the size of the expression
+	* Stop after editing data set from edit function function
+	* Tweak data set info printing removing tabs
+	* Save Image -> Save Image...
+
+2004-09-22 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix data object edit option menu
+	* Do not show error when global data file cannot be loaded for local data set
+	* Update data property list also when the data set is new
+	* Fix setting data set function name
+	* Set default argument names for data set when entries are empty
+	* Do not delete original property and add new -- set original with new to not invalidate references in objects
+	* Position progress dialog center parent, and set unknowns and convert to unit expression under mouse
+	* Once again, fix prefix selection when prefix is first before/after zero
+
+2004-09-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Rational factorization of higher degree polynomials
+
+2004-09-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Some result display tweaks
+	* Update function titles and argument names
+	* Update Swedish translation
+	* Update documentation
+	* Print quotation marks for symbolic structures when not allow unusable
+	* Display e*e^x with multiplication sign
+
+2004-09-19 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Full factorization of quadratic polynomials
+	* Transform sqrt(8) to 2*sqrt(2) (and similar) in exact mode
+	* Fix xy-xy=xy !!!
+	* Fix repeated apply in unknowns dialog
+
+2004-09-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Updated result sorting
+	* (-x-y)/z --> -(x+y)/z
+
+2004-09-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Set unknowns dialog
+	* More refined selection of popup menu items to show
+	* Polynomial division
+	* More reliable internal sorting
+
+2004-09-16 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Extensive enhancements of symbolic division
+	* Alternative to assume that unknown denominators are non-zero
+
+2004-09-12 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Ex. 1/(x+10)=5, test if x+10 is zero after solve
+
+2004-09-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Evaluation options was not always preserved when converting to best units
+	* Display x^(5/2) as x^2*sqrt(x)
+
+2004-09-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Internal sorting fixes
+	* Update documentation
+	* Update Swedish translation
+	* Use displayed name when sorting
+
+2004-09-09 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Make factorization more functional
+
+2004-09-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Integration fixes
+	* Use representsNonZero() for arguments that must be non-zero
+
+2004-09-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* "times", "plus", "minus", "per", "AND", "OR"
+
+2004-09-06 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Finish GUI and user modifications for data sets
+
+2004-09-01 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* rm -f qalculate; $(LN_S) qalculate-gtk qalculate
+
+2004-08-28 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Edit and save data objects
+	* Finish system property of units
+	* Clean up some left over plural and singular stuff
+	* Add unit system to edit GUI
+
+2004-08-26 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Planets data set
+	* Day and Julian Year
+	* Fix set icon
+	* Do not always make Calculator message window transient for main window
+	* Save and load accel map
+
+2004-08-25 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* data collection -> data set
+	* Complete data set GUI
+
+2004-08-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Complete most of the data collection stuff
+	* Move elements to data collection format
+
+2004-08-23 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix diff() with variables and functions that contains x
+	* Simple integration
+
+2004-08-22 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* ans2, ans3, ans4 and ans5
+	* google/googleplex -> googol/googolplex
+	* thousand and hundred
+	* Reduce min result area height
+	* Put angle mode in evalution options
+	* Status text
+	* Save to image
+	* Initial work on data collection concept
+
+2004-08-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix RPN mode
+	* include errno.h
+
+2004-08-16 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Remove giac arguments
+	* Update documentation
+
+2004-08-15 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix prefix selection when first positive/negative exponent prefix
+	* No prefix in result prefix menu
+	* Only left parenthesis where added around vector!
+	* Make the title for mils more descriptive
+	* FIx matrix multiplication
+
+2004-08-14 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Make no comparison to solve error message more informative
+	* Do not factorize if factor is not non-zero
+	* Fix prefix selection with negative exponent prefixes
+	* Fix prefix selection with denominator prefix enabled
+
+2004-08-13 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix concatenate()
+	* Add localized full name to ans variable
+	* Make sure that completion pops down when going back in history
+	* Set minimum arguments to 1 for mergevectors()
+
+2004-08-12 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix derangements() which was broken due to changed interpretation of -1^x
+	* CALCULATOR->u_rad was null
+	* True and False variables
+	* "yes" -> "Yes" and "no" -> "No"
+	* Localize "True" and "False" radio buttons
+	* Add *.xml.in files to the dist tar sources
+	* Complete exp1 in "2+5exp1"
+	* Add undefined variable
+	* Fix ids in text arguments when function is used in other function (fixes distribution functions)
+	* Show classification in atom() dialog
+
+2004-08-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Remove double decimal points
+	* Nicer unit printing
+	* Warn in name edit dialog if name is used
+	* Update documentation
+	* Use gtk-paste instead of gtk-go-forward icon for insert
+	* Properties dialog for atoms in periodic table
+	* Respect max decimals with show ending zeroes
+	* Fix precision typos which made objects with undefined precision approximate
+	* Make element properties selectable
+	* Paste function instead of value of element property
+	* Display classification in element dialog
+	* Unformat parsed function expression
+	* Make sure that no unwanted prefixes are left when function expression has been parsed
+	* BMI (Body Mass index) function added (just to prove that Qalculate! is more than a scientific calculator)
+
+2004-08-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Reduce number of element properties for now and verify
+	* Periodic table
+	* Update Swedish translation
+
+2004-08-09 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not be backwards compatible for definitions saved with the current version
+	* Update Swedish translation
+	* Where there is approximate there shall also be precision
+	* More physical constants
+	* Fix formatting of x/unit
+	* Add atomic mass unit, u
+	* Add <system>si</system> again
+	* Elements!
+	* Ignore initial zeroes for precision
+
+2004-08-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Finish names GUI
+	* Finish new number precision system
+	* Menu item for read precision
+	* Option to show ending decimals (to see actual precision)
+	* Fix parsing of numbers with base < 10 and decimal point
+
+2004-08-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Initial work on GUI for new name system
+	* Treat whole ending number as suffix (for log10)
+
+2004-08-06 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* More work on name system
+	* Remove quarter unit
+	* Regenerate definition files
+	* Remove duplicate names
+
+2004-08-05 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not prefix currencies in all locales
+
+2004-08-04 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* New system for variable, unit and function names
+	* Solve quadratic equations
+
+2004-07-31 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* System property for units ("si" value only used for now)
+	* Optional automatic conversion to best or base units
+	* Update version number in global definition files
+	* Add CGS units
+
+2004-07-30 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Mark SI units
+	* Convert to best unit now only converts to SI units
+	* Mass Fraction (kg/kg)
+	* Fix insert and edit composite unit
+
+2004-07-29 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Electron Volt is approximate
+
+2004-07-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix arg()
+	* ...and disable it as it does not work correctly
+	* Fix i being display multiple times
+
+2004-07-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Focus tweaks
+
+2004-07-19 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* -5^2 = (-5)^2 -> = -(5^2)
+	* Beautify 2 * -1
+	* Fix not
+
+2004-07-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Show if precalculation display is approximate
+	* Show if approximate conversion in units manager
+	* Enable unicode signs in from-unit label
+	* Deillion -> Decillion
+	* Refine when to update result and display of result
+	* Ability to disable complex results
+	* Ability to disable infinite results
+
+2004-07-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update variable lists in GUI after save function has been called
+	* Do not let the user type any braces in the expression entry
+	* Select added plot series and let enter in plot expression entry modify selected (if any selected)
+	* Fix rad unit being dropped in unsolved sin/cos function
+	* Fix plus/minus before id
+	* Show precalculation result in history view
+
+2004-07-16 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Oops! operators does not include parenthesis
+	* Use unicode operators in text printing
+	* base == 10 -> base >= 2 && base <= 10 (in parsing)
+	* Refine CSV export dialog
+	* Sort out some getActive... vs get...
+	* Fix too many arguments warning
+	* Increase function parsing efficiency (decrease number of MathStructure copies)
+	* Produce vector imediately on parse
+	* Export button in variables dialog
+	* Split number base expression and export csv dialogs from main.glade
+	* Remove <requires lib="gnome"/> lines
+	* Update Swedish translation
+	* Update documentation
+	* Fix nameTaken()
+	* Fix overwriting variable
+	* Remove deleted items from recent units/variables/functions
+	* Do not try to insert deleted variable
+
+2004-07-15 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* More work on base in parse options
+	* Fix E in rpn mode
+	* Parsing tweaking
+	* GUI for number base in expression
+
+2004-07-14 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Alternative to round halfway integers to even (instead of upwards)
+	* Make qalculate symlink from qalculate-gtk
+	* Fix addColumns() and import of CSV file to matrix
+	* Export to CSV file
+	* if, function, error, warning, load, save and title functions were not activated (oops!)
+	* Let argument definitions parse default values
+	* Do not parse ! as factorial if functions is disabled
+	* Ability to set number base for expression parsing
+	* Allow full expressions in base functions
+
+2004-07-13 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Ability to set all number bases from 2 to 36 from GUI
+	* Documentation updates
+	* Alternative to use lower case letters in numbers
+	* Fix double decimal point with integers
+	* Fix decimal reduction rounding
+	* Fix precision rounding
+	* Fix approximate indication with multiple numbers
+	* Fix printing of empty vector
+
+2004-07-12 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update documentation
+	* Force use of -O2 instead of -Os
+	* Revert back to a^b^c = a^(b^z) (I don't remember changing it)
+	* Unknowns disabled by default
+	* Copy subfunctions
+	* GUI for subfunctions
+
+2004-07-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not segfault on exit
+	* Fix compilation warnings
+
+2004-07-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not try to fetch exchange rates everytime they are missing
+	* Set fetch timeout to 5 seconds on first run
+	* Inform user that we are trying to fetch exchange rates
+	* Update fetch exchange rates at startup in preferences dialog
+
+2004-07-05 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Follow ISO 8601 standard for week numbers (glib doesn't)
+	* Sort out approximation with rounding
+
+2004-07-03 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix input of numbers in bases > 10
+	* Is approximate? fixes
+	* usleep() is obsolete. use nanosleep() instead
+	* Terminate threads before exit
+	* Include unistd.h in main.cc for pipes
+
+2004-06-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* definitions -> subfunctions
+	* save subfunctions
+	* Function::countSubfunctions()
+	* Fix for()
+	* Fix creation of vectors with zero or one component
+	* Pass parse options to function parsing
+	* Variables might contain functions
+	* Fix approximate integer printing
+	* Fix try exact
+
+2004-06-23 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Release v. 0.6
+	* Do not create a new thread for every calculation and printing
+
+2004-06-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* ...
+
+2004-06-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Continue converting to new internal structures
+
+2004-06-14 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Continue converting to new internal structures
+
+2004-05-25 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Converting to new internal structures
+
+2004-05-12 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* New internal structures (Manager -> MathStructure)
+
+2004-04-05 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Find linear function
+	* Do not automatically recalculate on precision spinbutton update and add recalculate button to avoid annoying problems
+	* More multiple root updates
+	* Do not just clear the window, clear the pixbuf too
+	* MatrixArgument->type should not return TEXT_ARGUMENT
+	* Multiple roots updates
+
+2004-04-04 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Put in some restrictions and enable multiple roots
+	* Disable multiple roots
+	* Remove 0 == any number from Manager->equals
+	* try x^(y+z) = x^y*x^z and x^(yz) = x^y^z
+
+2004-04-03 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Capitulate in search for exact as long as possible to fix alternatives
+	* Recalculate directly on angle unit change
+	* Enable multiple roots again
+	* Do not ignore unsolvable comparison
+	* Remove imaginary or real part present because of approximate floating point numbers
+	* Do not display errors for arguments in exact precalculation
+	* Do not display extra trailing zeros
+	* Make comparison between floats in lower precision (but not less than user defined precision)
+	* Fix printing of toplevel negative complex number
+	* Return -(x^(1/3)) for (-x)^(1/3)
+
+2004-04-02 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Remove integrate parts that does not work
+	* Do not crash on i^4
+	* Disable broken multiple roots
+
+2004-04-01 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Hyperbolic and inverse does not take angle arguments
+	* Fix raise by matrix
+	* Fix raise by alternatives
+	* Fix drawing of function
+
+2004-03-31 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* More solve work
+	* Fix sorting of alternatives
+	* Fix wrong add alternatives to alternatives logic
+	* Clean after multiplication raise... (serious bug)
+	* Quadratic equations
+	* Non-giac solve function and automatic "solving" of comparisons
+	* Better comparison equals printing
+	* Minimal non-giac integrate function
+
+2004-03-30 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Finance -> Economics/Finance
+	* Demand Elasticity function
+	* Fix that all arguments wanted text after function editing
+	* Free temporary composite units
+	* Fix sin(x)/tan(x)
+	* No (+ -) in printing with complex numbers
+	* Fix sorting of complex numbers
+
+2004-03-29 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Release v. 0.5
+	* More extensive, verbose and fault-tolerant roman input
+
+2004-03-28 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Set exact button for edit variable
+	* Fix diff() with power without x
+	* Fix compilation with gtk+ < 2.3
+	* Do not crash on abort sum() (memory leak is better)
+	* Change line width instead of drawing multiple lines
+	* Use barckets instead of parenthesis when drawing matrix
+	* Use commas for vector drawing
+	* Fix matrix text printing
+
+2004-03-27 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not let user disable loading of global definitions
+	* Do not raise if makes approximate in exact mode
+	* Cleanup unused functions
+	* Fix hypotenuse and make non-builtin
+	* Automatically act on "calculate variables"
+	* Set e as default second argument in log()
+
+2004-03-26 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* time()
+	* week(), weekday(), year(), month(), day()
+	* Allow "today" for dates
+	* Use both localized and non-localized "to"
+	* Sexagesimal number display
+	* Fix prefixes with simple display format
+	* Sexagesimal number input
+	* (2 > 0) + (2 > 0) = 2 * (2 > 0)
+	* Polynomial division refinements
+
+2004-03-25 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Roman numerals
+	* Polynomial division
+
+2004-03-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix printing of complex numbers with negative imaginary part and no real part
+	* re() and im()
+	* Fix unit conversion
+	* Imperial and U.S. capacity units
+	* Fix nested product() and sum()
+	* Correct treatment of (), "", '', and {} in text argument
+
+2004-03-23 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Symbols for sum, product and ohm
+	* derangements()
+	* sum() and product() corresponding to the signs
+	* sum() -> total()
+	* Reorganisation of function categories
+
+2004-03-22 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Complete convert to best unit
+
+2004-03-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Make result context menu context sensitive
+	* Protect intValue and longIntValue against overflow
+	* Fix printing of exponent 1E...
+	* Convert to best unit (beginning)
+	* Convert to base units
+
+2004-03-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Define sin and cos as expressions
+	* e^(i*pi) = -1 ...
+	* ln -1 = i*pi, ln i = i*pi/2, ln -i = -i*pi/2
+	* permanent()
+	* Print short currency unit before value
+	* Factorize independent of giac
+	* Make my own derive function default
+
+2004-03-19 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* asec, acsc, acot, sech, csch, coth, asech, acsch, acoth
+	* cis
+	* As we now have complex number, define inverse trigonometric functions as expressions
+	* sec, csc, cot
+	* "CAS" -> "Calculus"
+	* Update my own derive function and enable it if giac is not used
+	* Fix ln() argument so that e can pass through
+
+2004-03-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Show error when custom condition is not met
+	* area, ascii and char functions
+	* Limits function should accept negative numbers for end. Fixes trimmed, weighted and winsorized mean.
+	* Nicer text printing of matrices and vectors
+
+2004-03-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Save size of history dialog
+	* Show a nice little help message the first time Qalculate! is started
+	* Update Swedish translation
+	* "quaert" -> "quart"
+	* Do not insert parenthesis when completing if they already are there
+	* New error message when matrix has no inverse
+	* Make abort messages localized and nicer
+	* Limit width of result display text
+	* Use transparent pixbuf for result to not look ugly with pixmap themes
+	* Support newer Giac versions
+
+2004-03-16 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Serious try to fix the localized decimal point and comma once and for all
+	* Use [] for vectors and matrices
+	* Use Page Up and Page Down for expression history instead to allow completion to use Up and Down keys
+	* huh! do not sort functions.
+	* "European 30/365" -> "European 30/360"
+	* Fix date calculations
+	* Add "allow_complex" property for number arguments
+	* Fix abs (for complex numbers)
+
+2004-03-15 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Handle CLN errors better
+	* Font selection for expression entry
+	* Replace Fraction and Integer with new Number class
+
+2004-03-12 Hanna Knutsson <hanna_k@fmgirl.com>
+	
+	* Set selected font in custom font dialog
+	* Save time by first destroying completion then updating list then creating new completion on update
+	* Do not crash when updating completion after new variable
+	* Bring up user interface as soon as possible
+	* Make completion block work
+	* Move recent objects to to the top of object menus
+	* "buttons" -> "keypad"
+	* Completion finished
+	* Ugly fix to not complete on completed
+	* Add units to completion if not composite
+	* Use g_utf8_next_char and g_utf8_prev_char
+
+2004-03-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Advanced completion in expression
+	* Popup menu for resultview
+
+2004-03-10 Hanna Knutsson <hanna_k@fmgirl.com>
+	
+	* Lower default precision
+	* Make history button a regular button
+	* Reworked GUI -- menubar, expander, history window...
+	* Release 0.4.2a
+	* Set correct name on separator again
+	* Fix some compiler warnings
+	* Fix compilation without Giac
+
+2004-03-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Release 0.4.2
+	* Proofread manual
+	* Allow currencies to be put in front of quantity
+	* Cent, yen, pound and dollar signs
+	* Remove debug output related to Giac 
+	* Fix some troubles printing complex numbers
+
+2004-03-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update Swedish translation
+	* First manual draft finished
+	* Remove compiler warnings
+
+2004-03-06 Hanna Knutsson <hanna_k@fmgirl.com>
+	
+	* Gnuplot does not like quotation signs
+	* Do not abort when locale not supported by C library
+
+2004-03-05 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix unit conversion of ex. ch^2 to acre
+	* Some menu fixes
+	* More user documentation
+
+2004-03-04 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Move calculate multiple roots option to result menu
+	* Move unit display options to a unit display submenu
+	* Begin writing the manual
+	* Add help menu item if libgnome is available	
+	* Add build structure for gnome style user documentation
+
+2004-03-03 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix exponential display in non-fractional mode with negative exponents
+	* Fix big mistake in log (if negative exact result, returned zero)
+	* Use "tab" for tab ("\t") a separator in load
+
+2004-03-01 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Load CSV file as matrix function (load)
+	* File argument
+	* Replace localized decimal point with dot in plot data
+	* Save history (20 rows)
+	* Expression entry history
+	* "Save Result" -> "Store Result"
+
+2004-02-28 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Calculate command line expression
+
+2004-02-26 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Release 0.4.1
+	* Fix parsing of text arguments
+	* Replace strptime with g_date_set_parse
+
+2004-02-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Destroy widgets after autoconnect
+
+2004-02-19 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use the new file chooser
+	* "Select file to import" --> "Select file to export"
+
+2004-02-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Release 0.4
+	* Fix tanh
+
+2004-02-15 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Reenable checks for arguments that results in infinity
+	* Fix comparison with complex numbers (not solvable)
+
+2004-02-12 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add giac functions in functions.xml
+
+2004-02-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix binomial arguments
+	* Update Swedish translation
+
+2004-02-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Remove PACKAGE and VERSION warnings with giac
+	* Permutations and combinations
+
+2004-02-09 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Start even if gnuplot is not present
+
+2004-02-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Complex numbers: log, pow, root
+
+2004-02-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Filter out all duplicate errors
+	* Fix compilation without giac
+	* Forward: "Copy Result" menu item
+	* Forward: Correctly calculate divison by root with multiple solutions.
+	* Forward: Remove unused non-portable function.
+
+2003-11-02 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Complex numbers...
+	* Complex number printing
+	* Use Newton's Binomial Formula for raised addition manager
+	* Binomial function
+	* Manager::set(const Integer*)
+	* Start work on complex numbers
+
+2003-10-30 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Show argument names when too few arguments
+	* Really no need to have exp, exp2 and exp10 as builtins
+	* Log tweaks
+	* More trigonometric tweaks
+	* Giac might actually return -1*1 (we prefer -1)
+	* Catch giac errors
+	* Define tan, asinh, acosh, atanh as sin(x)/cos(x), log(x+sqrt(x^2+1)), ...
+	* Handle pi correctly in trigonometric functions
+	* Delay calculation of inexact values
+	* New variable manager
+
+2003-10-29 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Giac function
+	* Factorize in result menu
+	* New functions: diff, integrate, solve
+	* Giac support
+	* Do not crash when printing a manager with matrix
+
+2003-10-27 Hanna Knutsson <hanna_k@fmgirl.com>
+	
+	* Release Qalculate-GTK version 0.3.1
+	* Left over missing setPrecise() in builtin functions
+	* Fix printing of function manager
+	* Fix display of only number in numerator
+	* Parenthesis adjustments
+	* Update swedish translation
+	* More extensive error handling for misplaced operators
+	* Replace "**" with "^"
+	* Fix parenthesis in Manager::print()
+	* Recreated Manager::print() from gtk drawing function
+	* Optional prefix for denominator
+	* Reworked composite unit printing
+	* Reworked prefix handling
+	* Reworked drawing of MULTIPLICATION_MANAGER
+	* Fix loadLocalDefinitions()
+	* Year and Century units
+	* Fix parsec, light year, astronomical unit, and torr
+	* Plural fixes
+	* Draw unit names with "_" replaced by space
+
+2003-10-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Compability fixes for Unit.cc
+	* change strold to strol in HEX()
+	* remove ld2s()
+	* provide another workaround for strptime
+	* some warnings left
+	* remove llpow() as it only creates problems
+	* __USE_XOPEN for strptime
+	* Replace insert(0, 1, ...) with insert(begin(), 1, ...)
+	* Fix ALL warnings
+	* Ignore blanks in BIN(), OCT(), HEX(), BASE()
+	* Fix number bases dialog
+
+2003-10-23 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not use scandir as Solaris does not support it
+	* Access hash_map header properly
+	* Update POTFILES.in for new glade files
+	* Remove #include <ext/hash_map> from Calculator.h
+
+2003-10-22 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Split up glade file
+	* minute -> min
+	* Now function can have the same name as a unit or variable, but units and variables cannot have the same name
+
+2003-10-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Release Qalculate-GTK version 0.3
+	* Disable convert in units dialog when no unit selected	
+	* Revert fractional button to use combined fractional display, but treat it as normal fractional display for regular text
+	* Draw parenthesis around not alone manager (not power) with childs in denominator
+	* Add a bit more space behind italic text to not cut tall chars off
+	* More drawing fixes
+
+2003-10-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Include all bytes in unicode char for unknown variables in setFunctionsAndVariables()
+	* Fix Manager->print(), and as below
+	* Display x^-y as 1/x^y in non-scientific mode
+	* Draw multiplication manager fixes
+	* Put menus before items
+	* More TODO
+	* Also add icon.xpm
+	* Add qalculate.h to Makefile.am to get it included in dist
+	* Accel fixes and additions
+	* Move "convert number basis" to the other menu
+	* Reorder some buttons to follow HIG
+	* Make convert unit dialog non-modal
+
+2003-10-19 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Display ^0.5 as square root
+	* Fix display of ugly -x^-0.5 (still ugly but no duplicate ones and spaces)
+	* Stop display errors a bit more...
+
+2003-10-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not delete selection on sqrt button clicked but act as with the other functions
+	* Make answer variables a special case which cannot be edited and does not display result in variable dialog
+	* Change "first"/"second" axis to "primary"/"secondary"
+	* Put axis after smooth
+	* Fix rms(), stdev(), stdevp()
+	* Fix error in setFunctionsAndVariables that stopped unknown variables after something was set
+	* Remove CVS version title
+	* Write something in AUTHORS and NEWS
+	* Hidden property in function and unit edit dialogs
+	* Hide some annoying composite units (m/m and m2/m2)
+	* Hide hidden items in menus
+	* New hidden property for ExpressionItem (meant for some composite units and sub functions)
+
+2003-10-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Finally implement angle units and allow direct specification of angle unit in trigonometric functions
+	* rem and rad units renamed to rem_radioactivity and rad_radioactivity
+	* Some swedish translation updates
+	* Some tooltip updates
+	* Some TODO updates
+	* Fill in the last argument titles and add some descriptions
+	* Set min arguments to zero if lower (and max to -1)
+	* Argument names and descriptions for matrix and vector functions
+	* Rename title "Power" with "X raised to Y" to solve translation conflict with the category "Power"
+	* Fix 0^0 warning
+
+2003-10-16 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* If add argument button is not sensitive, modify argument instead on enter
+	* Fix arguments for process()
+	* Titles for functions and arguments in utilities category
+	* Put buttons in first tab
+	* Default to show buttons
+	* Remove quotes from default values in insert function dialog
+	* Matrix multiplication error message
+	* Better error message for misplaced operators
+	* Updated swedish translation
+	* More argument names
+	* Fix category selection after editing
+	* Argument names for all geometry functions
+	* Do not use "free" for argument == NULL but printlong() of default argument
+
+2003-10-15 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not add extra space after matrix in GTK widget
+	* Update rank() and sort() to new comparison that not only allows fractions
+	* Update min() and max() to new comparison that not only allows fractions
+	* Go back to builtin sum() function as sum() is used often and csum() is rather slow
+	* eurocent and cent
+	* Fix yearfrac() for basis = 1
+	* More TODO
+	* Category "Matrices" -> "Matrices & Vectors", "Financial" -> "Finance"
+
+2003-10-13 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Finally make class variables in Manager protected
+	* setPrecise(fraction()->isPrecise()) after operation directly on Manager::fraction()
+	* Change output of "log" button to log10
+	* Write more in TODO
+
+2003-10-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Update plot on add/modify/remove
+	* Use only one gnuplot process/window and close it on exit
+	* Fix crach on create new variable dialog
+	* Delete the submenus, not the menu item, when updating
+	* Do not update treeviews if not created
+	* Save plot settings
+	* Switch to enums for style and smoothing
+
+2003-10-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* More plot stuff
+	* Change step to steps
+	* Make that the second tab page is realised
+	* Save plot as postscript, eps, png, svg, fig or latex
+	* Set a nicer font for gnuplot
+	* Plot dialog: tabwidget, paired matrix, save
+	* Plots: logscale, style, separate smoothing for each line, title, grid, color, linewidth, borders
+	* Set timeout for wget and error on fail
+	* Check if wget and gnuplot is available
+
+2003-10-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Plot dialog
+	* Lots of plotting stuff
+	* Hide on destroy and delete events for non-modal windows
+	* Place terms with negative sign in the back when not using scientific sorting
+	* Do not display more than one minus
+	* Change compare() in Manager to sortCompare() and add real compare() function
+	* Plot vector
+	* Plotting with gnuplot
+	* Fix crash with no argument definitions and variable number of arguments
+	* Do not recreate currencies, just change the relation
+
+2003-10-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fully enable builtin units
+	* Do not print the same error message more than once
+	* Fetch exchange rates from ECB
+	* Fix crash by removing new line for alternative manager and gettextize the "or" while we are at it
+	* Root functions non-abs
+	* Fix argument check on alternative manager
+	* Remove unnecessary gtk_main_iteration() as they create lots of problems
+	* Do not unref wrong Manager in conversion in units dialog
+	* Fix check of arguments in functions with unlimited number of arguments
+	* Remove (again) prepended "1" for composite units
+	* Fix prefixes
+
+2003-10-06 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Allow disabling of multiple roots
+	* "Recently Used"-menu
+	* Fix rounding of negative numbers
+	* Fix adding ALTERNATIVE_MANAGER to ALTERNATIVE_MANAGER
+	* Change GUI code to allow unrestrained category depth
+	* Load builtin unit definitions even if we have no such
+	* Do not write active and precise attributes when true
+	* Organize definitions files in a category tree structure
+	* Make execute button in insert function dialog non-stock
+	* Change button text to "Insert"
+	* Fix insert function with undefined arguments
+	* Use a frame for description in insert function dialog
+
+2003-10-02 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use &amp; for &
+	* Fix NOT
+	* Fix signedness function (and comparisons)
+	* Replace "<" with "&lt;" and ">" with "&gt;"
+	* Display NOT_MANAGER
+	* Make it configurable in preferences
+	* Do not use annoying prefixes (hekto, deka, centi, deci) by default
+	* Change unit conversion from printing value to using a value id as was originally intended
+	* Delete string alternative "," when switching locale
+	* #ifdef out fenv.h and floating point exceptions as they are only obstructing portability when using CLN
+	* Cleanup
+	* Warning function
+	* Disable message function for now
+
+2003-10-01 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Updated swedish translation
+	* Do not actually lower the precision below 10 to prohibit overflow
+	* Do not act when setting the initial value of spinbuttons
+	* Precision and decimals dialog need not be modal
+	* Actually load the correct nodes for the locale
+	* New simpler algorithm for reading function arguments, which handles citations correctly
+	* Accept zero length strings
+	* Concatenate and Length functions
+	* Save function
+
+2003-09-30 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Execute expression when updating result display if expression has changed
+	* Do not display more than 1500 digits in result display widget and not more than 500000 digits in history (works for me at least)
+	* Restrict display time in variables dialog
+	* Restrict value length if variables dialog
+	* Delay calculation of variables
+	* Remove signs menu
+	* Try to speed up determinant (not very succeful)
+
+2003-09-29 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* A little icon for the window
+	* Update display outside of thread
+	* Do not reverse order when transforming manager
+	* Merge boolean operations into Manager class to enable unsolved operations
+	* Make sure that thread actually is canceled before resuming
+	* Change log to log10 and logn to log
+	* Ignore syntax error function without parentesis are space before argument
+	* New better algorithm for Calculator::setFunctionsAndVariables()
+	* Nicer functions, variables and units dialogs
+	* Show a nice progress dialog
+	* More information (syntax and arguments) in description in functions dialog
+	* Sort categories in edit dialogs
+
+2003-09-27 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Safer threads
+	* Switch unit->name() to short name and add singular to enable translation
+	* Enable xml data translation
+	* Use less attributes in xml
+	* Implement GUI editing of argument rules
+	* Replace empty optional value with default value
+	* Fill in default values in insert function dialog
+	* Add ability to abort long calculations
+	* ...and slow result display
+
+2003-09-25 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* New condition for functions which can test the relation between arguments
+	* Error function
+	* Boolean operators
+	* For (loop) function
+	* Fix crash on delete inactive definition in GUI
+	* Definition edit fixes
+
+2003-09-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Move defintions to library and PACKAGE_DATA_DIR/qalculate
+	* Place local definitions in ~/.qalculate/definitions and load everything in that directory
+	* XML definitions files
+	* Update function edit dialog to new argument definitions, and turn function expression entry into a textview
+	* Furthering argument definitions: new Argument classes that tests type and value
+	* Fix parenthesis madness and handle missing left parenthesis
+
+2003-09-22 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* ExpressionItem::isRegistered()
+	* Once again constants -- new DynamicVariable class that recalculates value when precision has changed
+	* Fix ...E-...
+	* Fix root for negative results
+	* Fix log for negative results
+	* Fix display of ...E...
+	* Fix infinite loop with prefixes <= 10E-1
+	* Check file format and version of definitions file
+
+2003-09-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix error message when too many arguments
+	* Change "years_between_dates" to "yearfrac"
+	* Fix day counting basis (hopefully gnumeric has done it right)
+	* More financial functions
+	* Fix mod, rem and frac
+	* Better RPN support
+
+2003-09-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* RPN Mode
+	* Clean up EqItem.cc
+	* Add variables for constants functions
+	* Load definitions in exact mode
+	* Reset (and restore) mode when loading definitions
+	* Lots of tooltips (too many perhaps?)
+	* Some definitions fixes
+	* Function edit dialog: turn argument entry into a list view and add argument type
+	* Do not locally save global deactivations
+
+2003-09-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Big restructuring to fix editing of global definitions, including deactivation
+	  of definitions and a new virtual ExpressionItem class
+	* More error messages in matrix functions
+	* Check if matrix operations were successful
+	* Correct bad setPrecise(false) call in matrix
+	* Speed up csum function for large vectors in statistical functions
+	* Fix addition^integer
+	* Fix display of 1/-x
+	* Fix sqrt()
+	* Fix display of fraction with 'E'
+	* Fix display of 5*5^x
+	* Fix detection of long prefixes
+	* Fix 'E' (now we can have it in names)
+	* Type label, spin buttons, date picker etc. in insert function dialog
+	* Argument type
+
+2003-09-15 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix insert function dialog
+	* Add scrollbars to table in matrix edit dialog
+	* CSV file import
+	* Lots of statistical functions: range, harmonic mean, geometric mean, trimmed mean,
+	  winsorized mean, quadratic mean, quartile, decile, percentile, interquartile range,
+	  variance, standard error, mean deviation, pearson, spearman's rho,
+	  covariance, correlation, pooled variance, paired t-test, unpaired t-test...
+	* Add limits to custom sum function and allow references to other than current element (x_i-1)
+	* Limits
+	* Clean up base conversion functions
+	* Fix If function
+
+2003-09-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Sort function
+	* Buttons to set if precise in variable and unit edit dialogs
+	* Exact mode
+	* Use vectors in max, min, mode and median
+	* Make constants functions for more flexible precision
+
+2003-09-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Change behavior of decimals settings
+	* CLN support (requirement for now, in place of GMP)
+	* Disable gnome support in glade file
+
+2003-09-09 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* More accurate roots using Newton's Method with the libc function as initial value
+	* Require GMP (it is not a priority right now to fix my own integer implementation)
+	* GUI for edit/create matrix/vector
+	* Remove repaint artifacts
+	* Rank function
+
+2003-09-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Pearson Correlation and Spearman's rho (still needs rank function)
+	* Replace hardcoded statistical functions
+	* Utility functions: csum (Custom sum), process (Process vector components)
+	* Vector (\v) in user functions
+	* Function function for immediate creation and execution of a custom function
+	* Indicate infinite sequence of decimals (configurable)
+	* Custom font selection
+	* Vector
+	* Better alignment
+
+2003-09-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use GtkDrawingArea to make result display nicer
+	* More matrix functions: cofactor, adjoint, inverse
+
+2003-09-03 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Matrix functions: determinant (det), identity, transpose, element, columns, rows, matrix
+	* Multiple solutions (4^0.5 = 2 or -2)
+	* More work on matrices
+
+2003-09-02 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Beginning of matrix support
+	* Fix zero division
+
+2003-09-01 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* factorial function and !
+	* frac and int functions
+	* Menu items for fractional representation
+	* Turn "use prefixes" into check menu item
+
+2003-08-31 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Move builtin functions to fraction system
+	* Reactivate display modes, decimals and precision
+	* Use GMP if available in Integer class (much faster)
+
+2003-08-30 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Show if result is exact or not
+	* Arbitrary precision
+	* Move from long double to Fraction
+
+2003-08-24 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Decimal string to fraction
+	* Date functions (for financial functions)
+	* Fixes
+
+2003-08-23 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Localized dot and more
+
+2003-08-22 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fractions and restructuring
+
+2003-08-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* CALCULATOR macro (removes Calculator object from all classes)
+	* New Prefix class and new get/add prefix functions; prefixes stored in a sorted vector
+	* New get Function/Variable/Unit(index) functions
+
+2003-08-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fraction button
+	* Fraction Manager
+	* New Fraction class
+
+2003-08-19 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Add title label to insert function dialog
+	* Remove duplicate adding of answer variables, and remove from global definitions file... and gettextize
+
+2003-08-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Qalculate! version 0.2 released
+	* Last minute fixes
+	* More unicode
+	* Fix display of exponent of exponent
+	* Put unicode chars on buttons in code and add option to disable unicode signs
+	* Unicode math operators
+	* Save version info to configuration file
+	* Update version number
+
+2003-08-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Only put "1 " in front of unit in toplevel
+	* Fix 5*5^m (endless loop in Manager::convert)
+	* Unscientific mode gives inexact result display -- disable for now
+	* Disable installation of old German translation (will enable again after v0.2)
+	* Create en_GB and en_US locales to get that nice square root sign
+	* Do not shrink result label on clear
+	* Do not expand menu buttons
+	* Make functions dialog a bit nicer
+	* Make units dialog a bit nicer
+	* More energy and pressure units
+	* Some constants
+	* Write variables to file with maximum precision
+	* Show variable title in menu and tree
+	* Unit expression conversion fixes
+	* Make operators wrap selection in parenthesis instead of deleting it, thus they operate on the result after execute
+	* Insert ^ directly instead of waiting for another key press.
+	* Fix annoying repositioning of text cursor in n-bases dialog
+	* Update conversion in units dialog after focus out event in entries
+	* Remove empty parenthesis after zero argument functions
+	* Fix disabling of units
+	* Fix unclosed brackets
+	* restrict abs() to numbers
+	* Change Function::name(string), Unit::title(string), etc. to setTitle(), setName()
+
+2003-08-16 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Google style in expression conversion (ex. 5 m to ft = 16.4 ft)
+	* Small unit conversion fix (1 km/1 kg => 1 km/kg).
+	* More units.
+	* Fix loading of alias unit that is defined before its base unit in file
+	* Modify priotrity for calculations so that inexplicit multiplication is calculated before division (2/2(x) = 2/(2*x)) and functions (sin 2x(x) = sin (2x*x), but sin(2x)(x) is still sin(2x)*x)
+	* Some restructuring
+	* Unbreak brokeness from last fix
+	* Move three small dialogs to Glade
+	* Convert button
+
+2003-08-15 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix bracket madness breaking unbrackened division (!)
+	* About dialog
+
+2003-08-14 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix loading of argument names for builtin functions
+	* Do not add argument names in code for builtin functions, read from definitions file instead
+	* Fix crash when creating new unit
+	* Disable OK button for editing global definitions until structure is sorted out
+	* Beautify dialogs
+	* Functions, variables and units buttons in main window
+	* Sorting menus
+	* Tree lists implemented for units, variables and functions dialogs
+	* Submenus implemented for unit, variable and function menus
+	* Connect "convert to"-button in unit managaer to new conversion system
+	* Complete set of SI units
+	* Various fixes
+
+2003-08-13 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Remove duplicate functions
+	* Do not save unchanged global definitions in users definitions files
+	* Selectable prefix in result
+	* Fully functional unit conversion!
+
+2003-08-12 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Interpret "apple" as an unknown variable named apple
+	* Add base conversion dialog
+	* Beautify units dialog
+	* Store pointer to unit in GUI to simplify the Unit/ComplexUnit mess
+	* Enable editing/creation of composite units
+	* New Greatest Common Divisor (gcd) function
+	* First try at differentiation
+	* Fix division
+
+2003-08-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Beautify insert function dialog
+	* Populate category combos
+	* Turn base unit combo into entry as it probably is not a good idea to fill the combo with all units
+	* Gladeify the variable and function edit dialogs hidden callbacks.cc (gladeification finished?)
+	* Beautification of dialogs
+	* Huge gladeification of signals and widget references
+
+2003-08-10  Sven Herzberg  <herzi@gnome-de.org>
+
+	* data/qalculate.glade: don't know what exactly, but i'm sure that we
+	got rid of one c dialog more
+	* src/callbacks.cc:
+	* src/interface.cc:
+
+2003-08-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use <sup></sup> for all exponents for consistency
+	* New elegant and intelligent sorting, not only for internal purposes
+	* Updated swedish translation.
+	* Gettextized error messages.
+	* Updaterad Calculator::error().
+	* Only enable prefixes in front of units
+	* Fix disable/enable variables/functions/units/unknown
+	* Found true evil in Manager::sort(). This should solve many problems. :-)
+	* Enable binary output for larger numbers
+	* Fix nested functions
+	* Fix prefix followed be unit
+	* Fix functions without parenthesis
+	* correct widget name (units_option_menu_to_unit)
+	* handle long result by making the window not resizable and the result label wrap
+
+2003-08-09 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Swedish translation
+	* More strings to translate
+	* Binary output
+	* Fix BASE()
+	* Fix prefixes in expression
+	* Added ability to disable unknown variables
+	* Support unsolved function -- now log(x) returns log(x) instead of the result of log(0)
+	* Fix prefix display mode (only use in front of units to avoid confusion and support exponents)
+
+2003-08-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Set LC_NUMERIC to "C" to make strold() happy
+	* Minor restructuring in preparation for different decimal points
+	* Comment out debug output. Now (x+y)^50 takes 1 instead of 100 seconds.
+	  For those interested, the result of (x+y)^100 is 24287 pixels wide...
+
+2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
+
+	* data/qalculate.glade,
+	* src/interface.cc: glade-ified the preferences dialog
+
+2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
+
+	* data/qalculate.glade,
+	* src/interface.cc: glade-ified the units dialog
+	* po/de.po: updated translation
+
+2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
+
+	* src/interface.cc: removed unneccessary variables
+
+2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
+
+	* data/qalculate.glade,
+	* src/interface.cc: glade-ified the variables dialog
+
+2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
+
+	* src/interface.cc: removed unneccessary variables
+
+2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
+
+	* data/qalculate.glade,
+	* src/callbacks.cc,
+	* src/interface.cc: finished moving the menus
+
+2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
+
+	* data/qalculate.glade,
+	* src/callbacks.cc,
+	* src/interface.cc: moving the menus to a (hidden) menubar to
+	solve a warning regarding an accelerator group
+
+2003-08-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Move generated menus one step up
+	* Add finalize() after conversion in callbacks.cc
+
+2003-08-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Some more fixes that I do not remember
+	* Fix (x+y)^(6+n)
+	* Fix kWs = W^2 * s^2 in Calculator.cc
+	* Do not convert units during the whole calculation, do it in finalize() afterwards instead
+	* Make units work even better.
+	* Move OCT, HEX, BIN and BASE functions to category "Number Bases"
+
+2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
+
+	* configure.in: added -Wall stuff again (was just a typo)
+	* src/interface.cc: removed some unneccessary variables from
+	create_window
+
+2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
+
+	* data/qalculate.glade: includes the complete main window now
+	* src/callbacks.cc: removed the GtkHSeparator (the're not used anymore)
+	* src/interface.cc: moved the whole main window to the glade file
+
+2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
+
+	* data/qalculate.glade: added the expression menu and the result menu
+	* po/de.po: updated translation
+	* src/callbacks.cc: glade updates
+	* src/interface.cc: glade updates
+
+2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
+
+	* src/interface.cc,
+	* src/interface.h,
+	* src/main.cc: as the return value of create_window was only used to
+	display the widget, made create_window a void method and display
+	widget from there
+
+2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
+
+	* configure.in: added libglade dependency
+	* data/Makefile.am: added glade file
+	* data/qalculate.glade: user interface definition
+	* src/callbacks.cc: removed the extern GtkWidget *window
+	* src/interface.cc: started migration to glade
+	* src/interface.h: started migration to glade
+	* src/main.cc: started migration to glade
+
+2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
+
+	* .cvsignore: cvs update has less warnings now
+	* configure.in: added de to ALL_LINGUAS
+	* data/qalculate.desktop.in: fixed the starter
+	* po/.cvsignore: cvs update has less warnings now
+	* po/de.po: updated german translation
+
+2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
+
+	* data/Makefile.am: added fixes for kde pre-3.2 (aka stable)
+
+2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
+
+	* .cvsignore: cvs update has less warnings now
+	* configure.in: some beautification (will fix -Wall later this day)
+	* data/.cvsignore: cvs update has less warnings now
+	* data/Makefile.am: added desktop file
+	* data/qalculate.desktop.in: desktop file template
+	* po/.cvsignore: cvs update has less warnings now
+	* po/POTFILES.in: added data/qalculate.desktop
+	* po/de.po: added german translation
+
+2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
+
+	* src/main.cc: some beautification
+	* src/main.h: made enums from #defines (are the values relevant?)
+
+2003-08-06 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Removed some debug output
+	* Fix (x+y)^5, but unfortunately not (x+y)^6...
+	* Even better unit conversion.
+	* Change Ctrl+V to Ctrl+M for manage variables
+
+2003-08-06  Sven Herzberg  <herzi@gnome-de.org>
+
+	* Makefile.am: make dist works now
+	* configure.in: added data/Makefile.am
+	* data/.cvsignore: cvs update has less warnings now
+	* data/Makefile.am: make dist works now, make install too
+	* po/.cvsignore: cvs update has less warnings now
+
+2003-08-06  Sven Herzberg  <herzi@gnome-de.org>
+
+	* .cvsignore: cvs update has less warnings now
+	* Makefile.am: added data as subdir
+	* acconfig.h: removed (templates are deprecated)
+	* configure.in: added libtool
+	* data/Makefile.am: added config file installation
+	* po/.cvsignore: cvs update has less warnings now
+	* src/.cvsignore: cvs update has less warnings now
+	* src/Makefile.am: switched to libtool now
+	* src/calclib/.cvsignore: cvs update has less warnings now
+	* src/calclib/Makefile.am: using libtool now
+
+2003-08-04 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Optional arguments for functions
+	* More functions...
+	* Implemented if...then...else function
+	* "config" -> "definition"
+	* Added Execute button to insert function dialog
+	* Added some financial functions

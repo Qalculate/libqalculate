@@ -1,0 +1,14 @@
+# List of source files containing translatable strings.
+[encoding: UTF-8]
+src/qalc.cc
+libqalculate/BuiltinFunctions.cc
+libqalculate/Calculator.cc
+libqalculate/DataSet.cc
+libqalculate/ExpressionItem.cc
+libqalculate/MathStructure.cc
+libqalculate/Function.cc
+libqalculate/Number.cc
+libqalculate/Prefix.cc
+libqalculate/Unit.cc
+libqalculate/Variable.cc
+libqalculate/util.cc

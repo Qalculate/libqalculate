@@ -1,0 +1,8005 @@
+# translation of libqalculate-defs.po to
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+#
+# Rinse de Vries <RinseDeVries@home.nl>, 2006.
+# Jaap Woldringh <jjh.woldringh@planet.nl>, 2006, 2007.
+# R.F. Pels <ruurd@tiscali.nl>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: libqalculate-defs\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-05-16 19:45+0200\n"
+"PO-Revision-Date: 2007-05-18 15:47+0200\n"
+"Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
+"Language-Team:  <kde-i18n-nl@kde.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+
+#: ../data/currencies.xml.in.h:1
+msgid "Currency"
+msgstr "Valuta"
+
+#: ../data/currencies.xml.in.h:2
+msgid "European Euros"
+msgstr "Europese euro"
+
+#: ../data/currencies.xml.in.h:3
+msgid "ar:EUR,au:&#x20AC;,euro,p:euros"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:4
+msgid "U.S. Dollars"
+msgstr "U.S. dollar"
+
+#: ../data/currencies.xml.in.h:5
+msgid "a:$,ar:USD,dollar,p:dollars"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:6
+msgid "Japanese Yen"
+msgstr "Japanse yen"
+
+#: ../data/currencies.xml.in.h:7
+msgid "ar:JPY,au:&#xA5;,yen"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:8
+msgid "Danish Kroner"
+msgstr "Deense kroon"
+
+#: ../data/currencies.xml.in.h:9
+msgid "ar:DKK"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:10
+msgid "British Pounds"
+msgstr "Britse Pond"
+
+#: ../data/currencies.xml.in.h:11
+msgid "ar:GBP,au:&#xA3;"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:12
+msgid "Thai Baht"
+msgstr "Thailandse bat"
+
+#: ../data/currencies.xml.in.h:13
+msgid "ar:THB"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:14
+msgid "Swedish Krona"
+msgstr "Zweedse kroon"
+
+#: ../data/currencies.xml.in.h:15
+msgid "ar:SEK"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:16
+msgid "Swiss Francs"
+msgstr "Zwitserse franc"
+
+#: ../data/currencies.xml.in.h:17
+msgid "ar:CHF"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:18
+msgid "Icelandic Krona"
+msgstr "IJslandse kroon"
+
+#: ../data/currencies.xml.in.h:19
+msgid "ar:ISK"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:20
+msgid "Norwegian Kroner"
+msgstr "Noorse kroon"
+
+#: ../data/currencies.xml.in.h:21
+msgid "ar:NOK"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:22
+msgid "Bulgarian Lev"
+msgstr "Bulgaarse Lev"
+
+#: ../data/currencies.xml.in.h:23
+msgid "lev,ar:BGN"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:24
+msgid "Russian Ruble"
+msgstr "Russische roebel"
+
+#: ../data/currencies.xml.in.h:25
+msgid "ar:RUB,au:&#x20BD;,ruble"
+msgstr "RUB,au:&#x20BD;,roebel"
+
+#: ../data/currencies.xml.in.h:26
+msgid "Philippine Peso"
+msgstr "Filippijnse peso"
+
+#: ../data/currencies.xml.in.h:27
+msgid "ar:PHP,au:&#x20B1;"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:28
+msgid "Malaysian Ringgit"
+msgstr "Maleisische ringgit"
+
+#: ../data/currencies.xml.in.h:29
+msgid "ar:MYR"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:30
+msgid "Croatian Kuna"
+msgstr "Kroatische kuna"
+
+#: ../data/currencies.xml.in.h:31
+msgid "ar:HRK"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:32
+msgid "Yuan Renminbi (PR China)"
+msgstr "Yuan Renminbi (PR China)"
+
+#: ../data/currencies.xml.in.h:33
+msgid "ar:CNY"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:34
+msgid "Indonesian Rupiah"
+msgstr "Indonesische roepiah"
+
+#: ../data/currencies.xml.in.h:35
+msgid "ar:IDR,rupiah"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:36
+msgid "Czech Koruna"
+msgstr "Tsjechische kroon"
+
+#: ../data/currencies.xml.in.h:37
+msgid "ar:CZK"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:38
+msgid "Hungarian Forint"
+msgstr "Hongaarse forint"
+
+#: ../data/currencies.xml.in.h:39
+msgid "forint,ar:HUF"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:40
+msgid "Polish Zloty"
+msgstr "Poolse zloty"
+
+#: ../data/currencies.xml.in.h:41
+msgid "zloty,ar:PLN"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:42
+msgid "Romanian New Leu"
+msgstr "Nieuwe Roemeense leu"
+
+#: ../data/currencies.xml.in.h:43
+msgid "leu,ar:RON"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:44
+msgid "Turkish New Lira"
+msgstr "Nieuwe Turkse lire"
+
+#: ../data/currencies.xml.in.h:45
+msgid "ar:TRY,au:&#x20BA;"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:46
+msgid "Australian Dollars"
+msgstr "Australische dollar"
+
+#: ../data/currencies.xml.in.h:47
+msgid "ar:AUD"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:48
+msgid "Canadian Dollars"
+msgstr "Canadese dollar"
+
+#: ../data/currencies.xml.in.h:49
+msgid "ar:CAD"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:50
+msgid "Hong Kong Dollars"
+msgstr "Hongkong dollar"
+
+#: ../data/currencies.xml.in.h:51
+msgid "ar:HKD"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:52
+msgid "New Zealand Dollars"
+msgstr "Nieuwzeelandse dollar"
+
+#: ../data/currencies.xml.in.h:53
+msgid "ar:NZD"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:54
+msgid "Singapore Dollars"
+msgstr "Singapore dollar"
+
+#: ../data/currencies.xml.in.h:55
+msgid "ar:SGD"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:56
+msgid "South Korean Won"
+msgstr "Zuid-Koreaanse won"
+
+#: ../data/currencies.xml.in.h:57
+msgid "ar:KRW,au:&#x20A9;,won"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:58
+msgid "South African Rand"
+msgstr "Zuid-Afrikaanse rand"
+
+#: ../data/currencies.xml.in.h:59
+msgid "ar:ZAR"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:60
+#, fuzzy
+msgid "Indian Rupee"
+msgstr "Indonesische roepiah"
+
+#: ../data/currencies.xml.in.h:61
+#, fuzzy
+msgid "ar:INR,au:&#x20B9;,rupee"
+msgstr "grd,&#xB0;,graad,graden"
+
+#: ../data/currencies.xml.in.h:62
+msgid "Israeli New Sheqel"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:63
+msgid "ar:ILS,au:&#x20AA;,sheqel"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:64
+msgid "Mexican Peso"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:65
+msgid "ar:MXN"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:66
+msgid "Brazilian Real"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:67
+msgid "ar:BRL"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:68
+msgid "Euro Cent"
+msgstr "Eurocent"
+
+#: ../data/currencies.xml.in.h:69
+msgid "r:eurocent,p:eurocents"
+msgstr "eurocent,eurocenten"
+
+#: ../data/currencies.xml.in.h:70
+msgid "Cent (USD)"
+msgstr "Cent (USD)"
+
+#: ../data/currencies.xml.in.h:71
+msgid "au:&#xA2;,r:cent,p:cents"
+msgstr "&#xA2;,cent,centen"
+
+#: ../data/currencies.xml.in.h:72
+msgid "Belgian Franc"
+msgstr "Belgische frank"
+
+#: ../data/currencies.xml.in.h:73
+msgid "ar:BEF"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:74
+msgid "Greek Drachma"
+msgstr "Griekse drachme"
+
+#: ../data/currencies.xml.in.h:75
+msgid "ar:GRD,au:&#x20AF;,drachma"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:76
+msgid "French Franc"
+msgstr "Franse franc"
+
+#: ../data/currencies.xml.in.h:77
+#, fuzzy
+msgid "ar:FRF,au:&#x20A3;,franc"
+msgstr "grd,&#xB0;,graad,graden"
+
+#: ../data/currencies.xml.in.h:78
+msgid "Italian Lira"
+msgstr "Italiaanse lire"
+
+#: ../data/currencies.xml.in.h:79
+msgid "ar:ITL,au:&#x20A4;,lira"
+msgstr "ITL,au:&#x20A4;,lire"
+
+#: ../data/currencies.xml.in.h:80
+msgid "Dutch Guilder"
+msgstr "Nederlandse gulden"
+
+#: ../data/currencies.xml.in.h:81
+msgid "ar:NLG,guilder"
+msgstr "NLG,gulden"
+
+#: ../data/currencies.xml.in.h:82
+msgid "Portuguese Escudo"
+msgstr "Portugese escudo"
+
+#: ../data/currencies.xml.in.h:83
+msgid "ar:PTE,escudo"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:84
+msgid "Deutsche Mark"
+msgstr "Duitse mark"
+
+#: ../data/currencies.xml.in.h:85
+msgid "ar:DEM,mark"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:86
+msgid "Spanish Peseta"
+msgstr "Spaanse peseta"
+
+#: ../data/currencies.xml.in.h:87
+#, fuzzy
+msgid "ar:ESP,au:&#x20A7;,peseta,p:pesetas"
+msgstr "grd,&#xB0;,graad,graden"
+
+#: ../data/currencies.xml.in.h:88
+msgid "Irish Pound"
+msgstr "Ierse pond"
+
+#: ../data/currencies.xml.in.h:89
+msgid "ar:IEP"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:90
+msgid "Luxembourg Franc"
+msgstr "Luxemburgse frank"
+
+#: ../data/currencies.xml.in.h:91
+msgid "ar:LUF"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:92
+msgid "Austrian Schilling"
+msgstr "Oostenrijkse schilling"
+
+#: ../data/currencies.xml.in.h:93
+msgid "ar:ATS,schilling"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:94
+msgid "Finnish Markka"
+msgstr "Finse mark"
+
+#: ../data/currencies.xml.in.h:95
+msgid "ar:FIM,markka"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:96
+msgid "Slovenian Tolar"
+msgstr "Sloveense tolar"
+
+#: ../data/currencies.xml.in.h:97
+msgid "ar:SIT,tolar"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:98
+msgid "Cypriot Pound"
+msgstr "Cypriotische pond"
+
+#: ../data/currencies.xml.in.h:99
+msgid "ar:CYP"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:100
+msgid "Estonian Kroon"
+msgstr "Estlandse kroon"
+
+#: ../data/currencies.xml.in.h:101
+msgid "ar:EEK,kroon,p:krooni"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:102
+msgid "Slovak Koruna"
+msgstr "Slowaakse kroon"
+
+#: ../data/currencies.xml.in.h:103
+msgid "ar:SKK"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:104
+msgid "Maltese Lira"
+msgstr "Maltese Lira"
+
+#: ../data/currencies.xml.in.h:105
+msgid "ar:MTL"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:106
+msgid "Latvian Lats"
+msgstr "Letlandse lat"
+
+#: ../data/currencies.xml.in.h:107
+msgid "lats,ar:LVL"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:108
+msgid "Lithuanian Litas"
+msgstr "Litouwse litas"
+
+#: ../data/currencies.xml.in.h:109
+msgid "litas,ar:LTL"
+msgstr ""
+
+#: ../data/datasets.xml.in.h:1
+msgid "Data Sets"
+msgstr "Gegevensverzamelingen"
+
+#. Data set for chemical elements
+#: ../data/datasets.xml.in.h:3
+msgid "!datasets!Elements"
+msgstr "Elementen"
+
+#: ../data/datasets.xml.in.h:4
+msgid "r:atom"
+msgstr "atoom"
+
+#. Object argument for chemical elements data set
+#: ../data/datasets.xml.in.h:6
+msgid "!datasets!Element"
+msgstr ""
+
+#: ../data/datasets.xml.in.h:7
+msgid "Symbol"
+msgstr "Symbool"
+
+#: ../data/datasets.xml.in.h:8
+msgid "r:symbol"
+msgstr "symbool"
+
+#. Chemical elements number
+#: ../data/datasets.xml.in.h:10
+msgid "!datasets!Number"
+msgstr "Getal"
+
+#. Chemical elements number
+#: ../data/datasets.xml.in.h:12
+msgid "!datasets!r:number"
+msgstr "getal"
+
+#: ../data/datasets.xml.in.h:13 ../data/functions.xml.in.h:574
+msgid "Name"
+msgstr "Naam"
+
+#: ../data/datasets.xml.in.h:14
+msgid "r:name"
+msgstr "naam"
+
+#: ../data/datasets.xml.in.h:15
+msgid "Classification"
+msgstr "Klassificatie"
+
+#: ../data/datasets.xml.in.h:16
+#, fuzzy
+msgid ""
+"A number representing an element group:&#10;1 Alkali Metal&#10;2 Alkaline-"
+"Earth Metal&#10;3 Lanthanide&#10;4 Actinide&#10;5 Transition Metal&#10;6 "
+"Metal&#10;7 Metalloid&#10;8 Polyatomic Non-Metal&#10;9 Diatomic Non-"
+"Metal&#10;10 Noble Gas&#10;11 Unknown chemical properties"
+msgstr ""
+"Een getal vertegenwoordigt een groep van elementen: &#10;1 Alkalisch "
+"metaal&#10;2 Alkalischaardmetaal&#10;3 Lanthanide&#10;4 Actinide&#10;5 "
+"Overgangsmetaal&#10;6 Metaal&#10;7 Metalloïde&#10;8 Niet-metaal&#10;9 "
+"Halogeen&#10;10 Edelgas&#10;11 Transactinide"
+
+#: ../data/datasets.xml.in.h:17
+msgid "r:class"
+msgstr "klasse"
+
+#: ../data/datasets.xml.in.h:18 ../data/functions.xml.in.h:352
+msgid "Weight"
+msgstr "Gewicht"
+
+#: ../data/datasets.xml.in.h:19
+msgid "r:weight,mass"
+msgstr "gewicht,massa"
+
+#: ../data/datasets.xml.in.h:20
+msgid "Boiling Point"
+msgstr "Kookpunt"
+
+#: ../data/datasets.xml.in.h:21
+msgid "r:boiling"
+msgstr "kokend"
+
+#: ../data/datasets.xml.in.h:22
+msgid "Melting Point"
+msgstr "Smeltpunt"
+
+#: ../data/datasets.xml.in.h:23
+msgid "r:melting"
+msgstr "smeltend"
+
+#: ../data/datasets.xml.in.h:24 ../data/units.xml.in.h:119
+msgid "Density"
+msgstr "Dichtheid"
+
+#: ../data/datasets.xml.in.h:25
+msgid "Density at 295K"
+msgstr "Dichtheid bij 295K"
+
+#: ../data/datasets.xml.in.h:26
+msgid "r:density"
+msgstr "dichtheid"
+
+#: ../data/datasets.xml.in.h:27
+msgid "X Position"
+msgstr "X Positie"
+
+#: ../data/datasets.xml.in.h:28
+msgid "r:x_pos"
+msgstr ""
+
+#: ../data/datasets.xml.in.h:29
+msgid "Y Position"
+msgstr "Y Positie"
+
+#: ../data/datasets.xml.in.h:30
+msgid "r:y_pos"
+msgstr ""
+
+#: ../data/datasets.xml.in.h:31
+msgid "Planets"
+msgstr "Planeten"
+
+#: ../data/datasets.xml.in.h:32
+msgid "r:planet"
+msgstr "planeet"
+
+#: ../data/datasets.xml.in.h:33
+msgid "Planet"
+msgstr "Planeet"
+
+#: ../data/datasets.xml.in.h:34
+msgid "Orbital Period (Year)"
+msgstr "Omloopperiode (Jaar)"
+
+#. Orbital period for planet
+#: ../data/datasets.xml.in.h:36
+msgid "!datasets!r:year"
+msgstr "jaar"
+
+#: ../data/datasets.xml.in.h:37
+msgid "Average Orbital Speed"
+msgstr "Gemiddelde baansnelheid"
+
+#: ../data/datasets.xml.in.h:38
+msgid "r:speed"
+msgstr "snelheid"
+
+#: ../data/datasets.xml.in.h:39
+msgid "Eccentricity"
+msgstr "Excentriciteit"
+
+#: ../data/datasets.xml.in.h:40
+msgid "r:eccentricity"
+msgstr "excentriciteit"
+
+#: ../data/datasets.xml.in.h:41
+msgid "Inclination"
+msgstr "Inclinatie"
+
+#: ../data/datasets.xml.in.h:42
+msgid "r:inclination"
+msgstr "inclinatie"
+
+#: ../data/datasets.xml.in.h:43
+msgid "Number of Satellites"
+msgstr "Aantal satellieten"
+
+#: ../data/datasets.xml.in.h:44
+msgid "r:satellites"
+msgstr "satellieten"
+
+#. Planet mass
+#: ../data/datasets.xml.in.h:46
+msgid "!datasets!Mass"
+msgstr "Massa"
+
+#: ../data/datasets.xml.in.h:47
+msgid "r:mass"
+msgstr "massa"
+
+#: ../data/datasets.xml.in.h:48
+msgid "Mean Density"
+msgstr "Gemiddelde dichtheid"
+
+#: ../data/datasets.xml.in.h:49
+msgid "Surface Area"
+msgstr "Oppervlak (3D)"
+
+#. Surface area of planet
+#: ../data/datasets.xml.in.h:51
+msgid "!datasets!r:area"
+msgstr "oppervlak"
+
+#: ../data/datasets.xml.in.h:52
+msgid "Equatorial Gravity"
+msgstr "Equatoriale zwaartekracht"
+
+#: ../data/datasets.xml.in.h:53
+msgid "r:gravity"
+msgstr "zwaartekracht"
+
+#: ../data/datasets.xml.in.h:54
+msgid "Mean Surface Temperature"
+msgstr "Gemiddelde oppervlaktetemperatuur"
+
+#: ../data/datasets.xml.in.h:55
+msgid "r:temperature"
+msgstr "temperatuur"
+
+#: ../data/elements.xml.in.h:1
+msgid "Hydrogen"
+msgstr "Waterstof"
+
+#: ../data/elements.xml.in.h:2
+msgid "Helium"
+msgstr "Helium"
+
+#: ../data/elements.xml.in.h:3
+msgid "Lithium"
+msgstr "Lithium"
+
+#: ../data/elements.xml.in.h:4
+msgid "Beryllium"
+msgstr "Beryllium"
+
+#: ../data/elements.xml.in.h:5
+msgid "Boron"
+msgstr "Boor"
+
+#: ../data/elements.xml.in.h:6
+msgid "Carbon"
+msgstr "Koolstof"
+
+#: ../data/elements.xml.in.h:7
+msgid "Nitrogen"
+msgstr "Stikstof"
+
+#: ../data/elements.xml.in.h:8
+msgid "Oxygen"
+msgstr "Zuurstof"
+
+#: ../data/elements.xml.in.h:9
+msgid "Fluorine"
+msgstr "Fluor"
+
+#: ../data/elements.xml.in.h:10
+msgid "Neon"
+msgstr "Neon"
+
+#: ../data/elements.xml.in.h:11
+msgid "Sodium"
+msgstr "Natrium"
+
+#: ../data/elements.xml.in.h:12
+msgid "Magnesium"
+msgstr "Magnesium"
+
+#: ../data/elements.xml.in.h:13
+msgid "Aluminum"
+msgstr "Aluminium"
+
+#: ../data/elements.xml.in.h:14
+msgid "Silicon"
+msgstr "Silicium"
+
+#: ../data/elements.xml.in.h:15
+msgid "Phosphorus"
+msgstr "Fosfor"
+
+#: ../data/elements.xml.in.h:16
+msgid "Sulfur"
+msgstr "Zwavel"
+
+#: ../data/elements.xml.in.h:17
+msgid "Chlorine"
+msgstr "Chloor"
+
+#: ../data/elements.xml.in.h:18
+msgid "Argon"
+msgstr "Argon"
+
+#: ../data/elements.xml.in.h:19
+msgid "Potassium"
+msgstr "Kalium"
+
+#: ../data/elements.xml.in.h:20
+msgid "Calcium"
+msgstr "Calcium"
+
+#: ../data/elements.xml.in.h:21
+msgid "Scandium"
+msgstr "Scandium"
+
+#: ../data/elements.xml.in.h:22
+msgid "Titanium"
+msgstr "Titaan"
+
+#: ../data/elements.xml.in.h:23
+msgid "Vanadium"
+msgstr "Vanadium"
+
+#: ../data/elements.xml.in.h:24
+msgid "Chromium"
+msgstr "Chroom"
+
+#: ../data/elements.xml.in.h:25
+msgid "Manganese"
+msgstr "Mangaan"
+
+#: ../data/elements.xml.in.h:26
+msgid "Iron"
+msgstr "IJzer"
+
+#: ../data/elements.xml.in.h:27
+msgid "Cobalt"
+msgstr "Kobalt"
+
+#: ../data/elements.xml.in.h:28
+msgid "Nickel"
+msgstr "Nikkel"
+
+#: ../data/elements.xml.in.h:29
+msgid "Copper"
+msgstr "Koper"
+
+#: ../data/elements.xml.in.h:30
+msgid "Zinc"
+msgstr "Zink"
+
+#: ../data/elements.xml.in.h:31
+msgid "Gallium"
+msgstr "Gallium"
+
+#: ../data/elements.xml.in.h:32
+msgid "Germanium"
+msgstr "Germanium"
+
+#: ../data/elements.xml.in.h:33
+msgid "Arsenic"
+msgstr "Arsenicum"
+
+#: ../data/elements.xml.in.h:34
+msgid "Selenium"
+msgstr "Selenium"
+
+#: ../data/elements.xml.in.h:35
+msgid "Bromine"
+msgstr "Broom"
+
+#: ../data/elements.xml.in.h:36
+msgid "Krypton"
+msgstr "Krypton"
+
+#: ../data/elements.xml.in.h:37
+msgid "Rubidium"
+msgstr "Rubidium"
+
+#: ../data/elements.xml.in.h:38
+msgid "Strontium"
+msgstr "Strontium"
+
+#: ../data/elements.xml.in.h:39
+msgid "Yttrium"
+msgstr "Yttrium"
+
+#: ../data/elements.xml.in.h:40
+msgid "Zirconium"
+msgstr "Zirconium"
+
+#: ../data/elements.xml.in.h:41
+msgid "Niobium"
+msgstr "Niobium"
+
+#: ../data/elements.xml.in.h:42
+msgid "Molybdenum"
+msgstr "Molybdeen"
+
+#: ../data/elements.xml.in.h:43
+msgid "Technetium"
+msgstr "Technetium"
+
+#: ../data/elements.xml.in.h:44
+msgid "Ruthenium"
+msgstr "Ruthenium"
+
+#: ../data/elements.xml.in.h:45
+msgid "Rhodium"
+msgstr "Rhodium"
+
+#: ../data/elements.xml.in.h:46
+msgid "Palladium"
+msgstr "Palladium"
+
+#: ../data/elements.xml.in.h:47
+msgid "Silver"
+msgstr "Zilver"
+
+#: ../data/elements.xml.in.h:48
+msgid "Cadmium"
+msgstr "Cadmium"
+
+#: ../data/elements.xml.in.h:49
+msgid "Indium"
+msgstr "Indium"
+
+#: ../data/elements.xml.in.h:50
+msgid "Tin"
+msgstr "Tin"
+
+#: ../data/elements.xml.in.h:51
+msgid "Antimony"
+msgstr "Antimoon"
+
+#: ../data/elements.xml.in.h:52
+msgid "Tellurium"
+msgstr "Telluur"
+
+#: ../data/elements.xml.in.h:53
+msgid "Iodine"
+msgstr "Jood"
+
+#: ../data/elements.xml.in.h:54
+msgid "Xenon"
+msgstr "Xenon"
+
+#: ../data/elements.xml.in.h:55
+msgid "Cesium"
+msgstr "Cesium"
+
+#: ../data/elements.xml.in.h:56
+msgid "Barium"
+msgstr "Barium"
+
+#: ../data/elements.xml.in.h:57
+msgid "Lanthanum"
+msgstr "Lanthaan"
+
+#: ../data/elements.xml.in.h:58
+msgid "Cerium"
+msgstr "Cerium"
+
+#: ../data/elements.xml.in.h:59
+msgid "Praseodymium"
+msgstr "Praseodymium"
+
+#: ../data/elements.xml.in.h:60
+msgid "Neodymium"
+msgstr "Neodymium"
+
+#: ../data/elements.xml.in.h:61
+msgid "Promethium"
+msgstr "Promethium"
+
+#: ../data/elements.xml.in.h:62
+msgid "Samarium"
+msgstr "Samarium"
+
+#: ../data/elements.xml.in.h:63
+msgid "Europium"
+msgstr "Europium"
+
+#: ../data/elements.xml.in.h:64
+msgid "Gadolinium"
+msgstr "Gadolinium"
+
+#: ../data/elements.xml.in.h:65
+msgid "Terbium"
+msgstr "Terbium"
+
+#: ../data/elements.xml.in.h:66
+msgid "Dysprosium"
+msgstr "Dysprosium"
+
+#: ../data/elements.xml.in.h:67
+msgid "Holmium"
+msgstr "Holmium"
+
+#: ../data/elements.xml.in.h:68
+msgid "Erbium"
+msgstr "Erbium"
+
+#: ../data/elements.xml.in.h:69
+msgid "Thulium"
+msgstr "Thulium"
+
+#: ../data/elements.xml.in.h:70
+msgid "Ytterbium"
+msgstr "Ytterbium"
+
+#: ../data/elements.xml.in.h:71
+msgid "Lutetium"
+msgstr "Lutetium"
+
+#: ../data/elements.xml.in.h:72
+msgid "Hafnium"
+msgstr "Hafnium"
+
+#: ../data/elements.xml.in.h:73
+msgid "Tantalum"
+msgstr "Tantaal"
+
+#: ../data/elements.xml.in.h:74
+msgid "Tungsten"
+msgstr "Tungsten"
+
+#: ../data/elements.xml.in.h:75
+msgid "Rhenium"
+msgstr "Rhenium"
+
+#: ../data/elements.xml.in.h:76
+msgid "Osmium"
+msgstr "Osmium"
+
+#: ../data/elements.xml.in.h:77
+msgid "Iridium"
+msgstr "Iridium"
+
+#: ../data/elements.xml.in.h:78
+msgid "Platinum"
+msgstr "Platina"
+
+#: ../data/elements.xml.in.h:79
+msgid "Gold"
+msgstr "Goud"
+
+#. Chemical element
+#: ../data/elements.xml.in.h:81
+msgid "!elements!Mercury"
+msgstr "Kwik"
+
+#: ../data/elements.xml.in.h:82
+msgid "Thallium"
+msgstr "Thallium"
+
+#: ../data/elements.xml.in.h:83
+msgid "Lead"
+msgstr "Lood"
+
+#: ../data/elements.xml.in.h:84
+msgid "Bismuth"
+msgstr "Bismut"
+
+#: ../data/elements.xml.in.h:85
+msgid "Polonium"
+msgstr "Polonium"
+
+#: ../data/elements.xml.in.h:86
+msgid "Astatine"
+msgstr "Astatine"
+
+#: ../data/elements.xml.in.h:87
+msgid "Radon"
+msgstr "Radon"
+
+#: ../data/elements.xml.in.h:88
+msgid "Francium"
+msgstr "Francium"
+
+#: ../data/elements.xml.in.h:89
+msgid "Radium"
+msgstr "Radium"
+
+#: ../data/elements.xml.in.h:90
+msgid "Actinium"
+msgstr "Actinium"
+
+#: ../data/elements.xml.in.h:91
+msgid "Thorium"
+msgstr "Thorium"
+
+#: ../data/elements.xml.in.h:92
+msgid "Protactinium"
+msgstr "Protactinium"
+
+#: ../data/elements.xml.in.h:93
+msgid "Uranium"
+msgstr "Uraan"
+
+#: ../data/elements.xml.in.h:94
+msgid "Neptunium"
+msgstr "Neptunium"
+
+#: ../data/elements.xml.in.h:95
+msgid "Plutonium"
+msgstr "Plutonium"
+
+#: ../data/elements.xml.in.h:96
+msgid "Americium"
+msgstr "Americium"
+
+#: ../data/elements.xml.in.h:97
+msgid "Curium"
+msgstr "Curium"
+
+#: ../data/elements.xml.in.h:98
+msgid "Berkelium"
+msgstr "Berkelium"
+
+#: ../data/elements.xml.in.h:99
+msgid "Californium"
+msgstr "Californium"
+
+#: ../data/elements.xml.in.h:100
+msgid "Einsteinium"
+msgstr "Einsteinium"
+
+#: ../data/elements.xml.in.h:101
+msgid "Fermium"
+msgstr "Fermium"
+
+#: ../data/elements.xml.in.h:102
+msgid "Mendelevium"
+msgstr "Mendelevium"
+
+#: ../data/elements.xml.in.h:103
+msgid "Nobelium"
+msgstr "Nobelium"
+
+#: ../data/elements.xml.in.h:104
+msgid "Lawrencium"
+msgstr "Lawrencium"
+
+#: ../data/elements.xml.in.h:105
+msgid "Rutherfordium"
+msgstr "Rutherfordium"
+
+#: ../data/elements.xml.in.h:106
+msgid "Dubnium"
+msgstr "Dubnium"
+
+#: ../data/elements.xml.in.h:107
+msgid "Seaborgium"
+msgstr "Seaborgium"
+
+#: ../data/elements.xml.in.h:108
+msgid "Bohrium"
+msgstr "Bohrium"
+
+#: ../data/elements.xml.in.h:109
+msgid "Hassium"
+msgstr "Hassium"
+
+#: ../data/elements.xml.in.h:110
+msgid "Meitnerium"
+msgstr "Meitnerium"
+
+#: ../data/elements.xml.in.h:111
+msgid "Darmstadtium"
+msgstr "Darmstadtium"
+
+#: ../data/elements.xml.in.h:112
+msgid "Roentgenium"
+msgstr "Roentgenium"
+
+#: ../data/elements.xml.in.h:113
+#, fuzzy
+msgid "Copernicium"
+msgstr "Americium"
+
+#: ../data/elements.xml.in.h:114
+msgid "Ununtrium"
+msgstr "Ununtrium"
+
+#: ../data/elements.xml.in.h:115
+#, fuzzy
+msgid "Flerovium"
+msgstr "Mendelevium"
+
+#: ../data/elements.xml.in.h:116
+msgid "Ununpentium"
+msgstr "Ununpentium"
+
+#: ../data/elements.xml.in.h:117
+msgid "Livermorium"
+msgstr ""
+
+#: ../data/elements.xml.in.h:118
+msgid "Ununseptium"
+msgstr "Ununseptium"
+
+#: ../data/elements.xml.in.h:119
+msgid "Ununoctium"
+msgstr "Ununoctium"
+
+#: ../data/functions.xml.in.h:1
+msgid "Matrices &amp; Vectors"
+msgstr "Matrices &amp; vectoren"
+
+#: ../data/functions.xml.in.h:2
+msgid "Construct Vector"
+msgstr "Vector construeren"
+
+#: ../data/functions.xml.in.h:3
+msgid "r:vector"
+msgstr ""
+
+#: ../data/functions.xml.in.h:4
+msgid "Returns a vector with listed elements."
+msgstr "Retourneert een vector met de opgegeven elementen."
+
+#. Vector/matrix elements
+#: ../data/functions.xml.in.h:6
+msgid "Elements"
+msgstr "Elementen"
+
+#: ../data/functions.xml.in.h:7
+msgid "Generate Vector"
+msgstr "Vector aanmaken"
+
+#: ../data/functions.xml.in.h:8
+msgid "r:genvector"
+msgstr ""
+
+#: ../data/functions.xml.in.h:9
+msgid ""
+"Returns a vector generated from a function with a variable (default x) "
+"running from min to max. The fourth argument is either the requested number "
+"of elements if the sixth argument is false (default) or the step between "
+"each value of the variable."
+msgstr ""
+"Berekent een vector met behulp van een functie waarvan de variabele "
+"(standaard x) waarden krijgt tussen min en max. Het vierde argument is of "
+"het vereiste aantal elementen indien het zesde argument onwaar is "
+"(standaard) of de stapgrootte tussen elke waarde van de variabele."
+
+#: ../data/functions.xml.in.h:10
+msgid "Function"
+msgstr "Functie"
+
+#: ../data/functions.xml.in.h:11
+msgid "Min"
+msgstr "Min"
+
+#: ../data/functions.xml.in.h:12
+msgid "Max"
+msgstr "Max"
+
+#: ../data/functions.xml.in.h:13
+msgid "Dimension / Step size"
+msgstr "Dimensie / stapgrootte"
+
+#: ../data/functions.xml.in.h:14
+msgid "Variable"
+msgstr "Variabele"
+
+#: ../data/functions.xml.in.h:15
+msgid "Use step size"
+msgstr "Stapgrootte gebruiken"
+
+#: ../data/functions.xml.in.h:16
+msgid "Sort"
+msgstr "Sorteren"
+
+#: ../data/functions.xml.in.h:17
+msgid "r:sort"
+msgstr "sorteren"
+
+#: ../data/functions.xml.in.h:18
+msgid "Returns a sorted vector.&#10;&#10;ex. sort([6, 1, 4])=[1, 4, 6]"
+msgstr ""
+"Retourneert een gesorteerde vector.&#10;&#10;bv. sort([6, 1, 4])=[1, 4, 6]"
+
+#: ../data/functions.xml.in.h:19
+msgid "Vector"
+msgstr "Vector"
+
+#: ../data/functions.xml.in.h:20
+msgid "Ascending"
+msgstr "Oplopend"
+
+#: ../data/functions.xml.in.h:21
+msgid "Rank"
+msgstr "Rangorde"
+
+#: ../data/functions.xml.in.h:22
+msgid "r:rank"
+msgstr "rangorde"
+
+#: ../data/functions.xml.in.h:23
+msgid ""
+"Returns a vector with values of elements replaced with their mutual ranks."
+"&#10;&#10;ex. rank([6, 1, 4]) = [3, 1, 2]"
+msgstr ""
+"Retourneert een vector waarin de elementen zijn vervangen door hun "
+"onderlinge rangorde.&#10;&#10;bv. rank([6, 1, 4]) = [3, 1, 2] (6 staat op de "
+"3de plaats in de gesorteerde vector, 1 op de 1ste en 4 op de 2de plaats)"
+
+#: ../data/functions.xml.in.h:24
+msgid "Vector Limits"
+msgstr "Vectorgrenzen"
+
+#: ../data/functions.xml.in.h:25
+msgid "r:limits"
+msgstr "grenzen"
+
+#: ../data/functions.xml.in.h:26
+msgid "Returns a part of a vector between two positions."
+msgstr "Retourneert een deel van een vector tussen twee posities."
+
+#: ../data/functions.xml.in.h:27
+msgid "Lower limit"
+msgstr "Ondergrens"
+
+#: ../data/functions.xml.in.h:28
+msgid "Upper limit"
+msgstr "Bovengrens"
+
+#: ../data/functions.xml.in.h:29
+msgid "Dimension"
+msgstr "Dimensie"
+
+#: ../data/functions.xml.in.h:30
+msgid "r:dimension"
+msgstr "dimensie"
+
+#: ../data/functions.xml.in.h:31
+msgid "Returns the number of elements in a vector."
+msgstr "Retourneert het aantal elementen in een vector."
+
+#: ../data/functions.xml.in.h:32
+msgid "Merge Vectors"
+msgstr "Vectoren samenvoegen"
+
+#: ../data/functions.xml.in.h:33
+msgid "r:mergevectors"
+msgstr "vectorensamenvoegen"
+
+#: ../data/functions.xml.in.h:34
+msgid "Returns a vector with the elements from two vectors."
+msgstr "Retourneert een vector met de elementen van twee vectoren."
+
+#: ../data/functions.xml.in.h:35
+msgid "Vector 1"
+msgstr "Vector 1"
+
+#: ../data/functions.xml.in.h:36
+msgid "Vector 2"
+msgstr "Vector 2"
+
+#: ../data/functions.xml.in.h:37
+msgid "Construct Matrix"
+msgstr "Matrix construeren"
+
+#: ../data/functions.xml.in.h:38
+msgid "r:matrix"
+msgstr ""
+
+#: ../data/functions.xml.in.h:39
+msgid ""
+"Returns a matrix with specified dimensions and listed elements. Omitted "
+"elements are set to zero."
+msgstr ""
+"Retourneert een matrix met opgegeven dimensies en gegeven elementen. "
+"Weggelaten elementen worden op nul gesteld."
+
+#: ../data/functions.xml.in.h:40
+msgid "Rows"
+msgstr "Rijen"
+
+#: ../data/functions.xml.in.h:41
+msgid "Columns"
+msgstr "Kolommen"
+
+#: ../data/functions.xml.in.h:42
+msgid "Convert Matrix to Vector"
+msgstr "Matrix naar vector converteren"
+
+#: ../data/functions.xml.in.h:43
+msgid "r:matrix2vector"
+msgstr ""
+
+#: ../data/functions.xml.in.h:44
+msgid "Puts each element of a matrix in vertical order in a vector."
+msgstr ""
+"Ieder element van een matrix wordt in verticale volgorde in een vector "
+"geplaatst."
+
+#: ../data/functions.xml.in.h:45
+msgid "Matrix"
+msgstr "Matrix"
+
+#: ../data/functions.xml.in.h:46
+msgid "Matrix Area"
+msgstr "Matrixbereik"
+
+#. Matrix area
+#: ../data/functions.xml.in.h:48
+msgid "r:area"
+msgstr "oppervlak"
+
+#: ../data/functions.xml.in.h:49
+msgid "Returns a part of a matrix."
+msgstr "Retourneert een deel van een matrix."
+
+#: ../data/functions.xml.in.h:50
+msgid "Start row"
+msgstr "Startrij"
+
+#: ../data/functions.xml.in.h:51
+msgid "Start column"
+msgstr "Startkolom"
+
+#: ../data/functions.xml.in.h:52
+msgid "End row"
+msgstr "Einde rij"
+
+#: ../data/functions.xml.in.h:53
+msgid "End column"
+msgstr "Einde kolom"
+
+#: ../data/functions.xml.in.h:54
+msgid "r:rows"
+msgstr "rijen"
+
+#: ../data/functions.xml.in.h:55
+msgid "Returns the number of rows in a matrix."
+msgstr "Retourneert het aantal rijen in een matrix."
+
+#: ../data/functions.xml.in.h:56
+msgid "r:columns"
+msgstr "kolommen"
+
+#: ../data/functions.xml.in.h:57
+msgid "Returns the number of columns in a matrix."
+msgstr "Retourneert het aantal kolommen in een matrix."
+
+#: ../data/functions.xml.in.h:58
+msgid "Extract row as vector"
+msgstr "Rij als vector uit (matrix) halen"
+
+#: ../data/functions.xml.in.h:59
+msgid "r:row"
+msgstr "rij"
+
+#: ../data/functions.xml.in.h:60
+msgid "Returns a row in a matrix as a vector."
+msgstr "Retourneert een rij in een matrix als een vector."
+
+#: ../data/functions.xml.in.h:61
+msgid "Row"
+msgstr "Rij"
+
+#: ../data/functions.xml.in.h:62
+msgid "Extract Column as Vector"
+msgstr "Kolom als vector uit (matrix) halen"
+
+#: ../data/functions.xml.in.h:63
+msgid "r:column"
+msgstr "kolom"
+
+#: ../data/functions.xml.in.h:64
+msgid "Returns a column in a matrix as a vector."
+msgstr "Retourneert een kolom van een matrix als een vector."
+
+#: ../data/functions.xml.in.h:65
+msgid "Column"
+msgstr "Kolom"
+
+#: ../data/functions.xml.in.h:66
+msgid "r:elements"
+msgstr "elementen"
+
+#: ../data/functions.xml.in.h:67
+msgid "Returns the number of elements in a matrix or vector."
+msgstr "Retourneert het aantal elementen in een matrix of vector."
+
+#: ../data/functions.xml.in.h:68
+msgid "Matrix or vector"
+msgstr "Matrix of vector"
+
+#. Vector/matrix element
+#: ../data/functions.xml.in.h:70
+msgid "Element"
+msgstr "Element"
+
+#: ../data/functions.xml.in.h:71
+msgid "r:element"
+msgstr ""
+
+#: ../data/functions.xml.in.h:72
+msgid ""
+"Returns the element at specified position in a matrix (row and column) or "
+"vector (index)."
+msgstr ""
+"Retourneert het element op de opgegeven positie in een matrix (rij en kolom) "
+"of vector (index)."
+
+#: ../data/functions.xml.in.h:73
+msgid "Matrix/vector"
+msgstr "Matrix/vector"
+
+#: ../data/functions.xml.in.h:74
+msgid "Row/index"
+msgstr "Rij/Index"
+
+#: ../data/functions.xml.in.h:75
+msgid "Transpose"
+msgstr "Transponeren"
+
+#: ../data/functions.xml.in.h:76
+msgid "r:transpose"
+msgstr "transponeren"
+
+#: ../data/functions.xml.in.h:77
+msgid "Returns the transpose of a matrix."
+msgstr "Retourneert de getransponeerde van een matrix."
+
+#: ../data/functions.xml.in.h:78
+msgid "Identity"
+msgstr "Identiteit"
+
+#: ../data/functions.xml.in.h:79
+msgid "r:identity"
+msgstr "identiteit"
+
+#: ../data/functions.xml.in.h:80
+msgid ""
+"Returns the identity matrix of a matrix or with specified number of rows/"
+"columns."
+msgstr ""
+"Retourneert de eenheidsmatrix bij een matrix of met een opgegeven aantal "
+"rijen/kolommen."
+
+#: ../data/functions.xml.in.h:81
+msgid "Matrix or rows/columns"
+msgstr "Matrix of rijen/kolommen"
+
+#: ../data/functions.xml.in.h:82
+msgid "Determinant"
+msgstr "Determinant"
+
+#: ../data/functions.xml.in.h:83
+msgid "r:det"
+msgstr ""
+
+#: ../data/functions.xml.in.h:84
+msgid "Calculates the determinant of a matrix."
+msgstr "Berekent de determinant van een matrix."
+
+#: ../data/functions.xml.in.h:85
+msgid "Permanent"
+msgstr "Permanent"
+
+#: ../data/functions.xml.in.h:86
+msgid "r:permanent"
+msgstr ""
+
+#: ../data/functions.xml.in.h:87
+msgid ""
+"Calculates the permanent of a matrix. The permanent differs from a "
+"determinant in that all signs in the expansion by minors are taken as "
+"positive."
+msgstr ""
+"Berekent de permanent van een matrix. Het verschil met de determinant is dat "
+"alle subdeterminanten met +1 worden vermenigvuldigd, en bij de determinant "
+"om en om met +1 en met -1."
+
+#: ../data/functions.xml.in.h:88
+msgid "Adjugate (Adjoint)"
+msgstr "Aangrenzend"
+
+#: ../data/functions.xml.in.h:89
+msgid "r:adj"
+msgstr ""
+
+#: ../data/functions.xml.in.h:90
+msgid "Calculates the adjugate or adjoint of a matrix."
+msgstr "Berekent de geadjungeerde matrix."
+
+#: ../data/functions.xml.in.h:91
+msgid "Cofactor"
+msgstr "Cofactor"
+
+#: ../data/functions.xml.in.h:92
+msgid "r:cofactor"
+msgstr ""
+
+#: ../data/functions.xml.in.h:93
+msgid "Calculates the cofactor of the element at specified position."
+msgstr "Berekent de cofactor van het element op de opgegeven positie."
+
+#: ../data/functions.xml.in.h:94
+msgid "Matrix Inverse"
+msgstr "Inverse matrix"
+
+#: ../data/functions.xml.in.h:95
+msgid "r:inverse"
+msgstr ""
+
+#: ../data/functions.xml.in.h:96
+msgid ""
+"Calculates the inverse of a matrix. The inverse is the matrix that "
+"multiplied by the original matrix equals the identity matrix (AB = BA = I)."
+msgstr ""
+"Retourneert de inverse van een matrix. De inverse matrix is de matrix die, "
+"vermenigvuldigd met de originele matrix, de eenheidsmatrix geeft (AB = BA = "
+"E)."
+
+#: ../data/functions.xml.in.h:97
+msgid "Load CSV File"
+msgstr "Inlezen CSV-bestand"
+
+#: ../data/functions.xml.in.h:98
+msgid "r:load"
+msgstr "lees"
+
+#: ../data/functions.xml.in.h:99
+msgid "Returns a matrix imported from a CSV data file."
+msgstr "Retourneert een matrix, geïmporteerd uit een CSV-gegevensbestand."
+
+#: ../data/functions.xml.in.h:100
+msgid "Filename"
+msgstr "Bestandsnaam"
+
+#: ../data/functions.xml.in.h:101
+msgid "First data row"
+msgstr "Eerste gegevensrij"
+
+#: ../data/functions.xml.in.h:102
+msgid "Separator"
+msgstr "Scheidingsteken"
+
+#: ../data/functions.xml.in.h:103
+msgid "Export To CSV File"
+msgstr "Exporteren naar CSV-bestand"
+
+#: ../data/functions.xml.in.h:104
+msgid "r:export"
+msgstr "exporteren"
+
+#: ../data/functions.xml.in.h:105
+msgid "Exports a matrix to a CSV data file."
+msgstr "Exporteert een matrix naar een CSV-gegevensbestand."
+
+#: ../data/functions.xml.in.h:106
+msgid "Norm (length)"
+msgstr "Norm (lengte)"
+
+#: ../data/functions.xml.in.h:107
+msgid "r:norm"
+msgstr ""
+
+#: ../data/functions.xml.in.h:108
+msgid "Calculates the norm/length of a vector."
+msgstr "Berekent de norm/lengte van een vector."
+
+#: ../data/functions.xml.in.h:109
+msgid "Cross Product"
+msgstr "Uitproduct"
+
+#: ../data/functions.xml.in.h:110
+msgid "r:cross"
+msgstr "uitproduct"
+
+#: ../data/functions.xml.in.h:111
+msgid "Calculates the cross product of two 3-dimensional vectors."
+msgstr "Berekent het uitproduct van twee 3-dimensionale vectoren."
+
+#: ../data/functions.xml.in.h:112
+msgid "Combinatorics"
+msgstr "Combinatoriek"
+
+#: ../data/functions.xml.in.h:113
+msgid "Factorial"
+msgstr "Faculteit"
+
+#: ../data/functions.xml.in.h:114
+#, fuzzy
+msgid ""
+"Calculates the factorial of an integer. Multiplies the argument with every "
+"lesser positive integer (n(n-1)(n-2)...2*1). Can also be entered as a number "
+"followed by one exclamation mark.&#10;&#10;ex. factorial(5) = 5! = 5 * 4 * 3 "
+"* 2 * 1 = 120"
+msgstr ""
+"Berekent de faculteit van een positief geheel getal n: (n(n-1)(n-2)... "
+"*2*1.  Kan ook worden ingevoerd als een positief geheel getal, gevolgd door "
+"een uitroepteken.&#10;&#10;bv. factorial(5) = 5! = 5 * 4 * 3 * 2 * 1 = 120"
+
+#: ../data/functions.xml.in.h:115
+msgid "r:factorial"
+msgstr "faculteit"
+
+#: ../data/functions.xml.in.h:116
+msgid "Value"
+msgstr "Waarde"
+
+#: ../data/functions.xml.in.h:117
+msgid "Double Factorial"
+msgstr "Dubbele faculteit"
+
+#: ../data/functions.xml.in.h:118
+msgid "r:factorial2"
+msgstr "faculteit2"
+
+#: ../data/functions.xml.in.h:119
+#, fuzzy
+msgid ""
+"Calculates the double factorial of an integer. Multiplies the argument with "
+"every second lesser positive integer (n(n-2)(n-4)...). Can also be entered "
+"as a number followed by two exclamation marks.&#10;&#10;ex. factorial2(5) = "
+"5!! = 5 * 3 * 1 = 15"
+msgstr ""
+"Berekent de dubbelfaculteit van een positief geheel getal n: (n(n-2)(n-4)... "
+"Kan ook worden ingevoerd als een positief geheel getal, gevolgd door twee "
+"uitroeptekens.&#10;&#10;bv. factorial2(5) = 5!! = 5 * 3 * 1 = 15"
+
+#: ../data/functions.xml.in.h:120
+msgid "Multifactorial"
+msgstr "Multifaculteit"
+
+#: ../data/functions.xml.in.h:121
+msgid "r:multifactorial"
+msgstr "multifaculteit"
+
+#: ../data/functions.xml.in.h:122
+#, fuzzy
+msgid ""
+"Calculates the multifactorial of an integer. Multiplies the argument with "
+"every x lesser positive integer (n(n-x)(n-2x)...). Can also be entered as a "
+"number followed by three or more exclamation marks.&#10;&#10;ex. "
+"multifactorial(18, 4) = 18!!!! = 18 * 14 * 10 * 6 * 2 = 30 240"
+msgstr ""
+"Berekent de multifaculteit van een positief geheel getal n: (n(n-x)"
+"(n-2x)...). Kan ook worden ingevoerd als een positief geheel getal gevolgd "
+"door drie of meer uitroeptekens.&#10;&#10;bv. multifactorial(18, 4) = 18!!!! "
+"= 18 * 14 * 10 * 6 * 2 = 30 240"
+
+#: ../data/functions.xml.in.h:123
+msgid "Binomial Coefficient"
+msgstr "Binomiaalcoëfficiënt"
+
+#: ../data/functions.xml.in.h:124
+msgid "r:binomial"
+msgstr "binomiaal"
+
+#: ../data/functions.xml.in.h:125
+msgid "Exponent"
+msgstr "Exponent"
+
+#: ../data/functions.xml.in.h:126
+msgid "Index"
+msgstr "Index"
+
+#: ../data/functions.xml.in.h:127
+msgid "Hyperfactorial"
+msgstr "Hyperfaculteit"
+
+#: ../data/functions.xml.in.h:128
+msgid "r:hyperfactorial"
+msgstr "hyperfaculteit"
+
+#: ../data/functions.xml.in.h:129
+#, fuzzy
+msgid ""
+"Calculates the hyperfactorial of an integer. Multiplies the argument raised "
+"by itself with every lesser positive integer raised by themselves (1^1 * "
+"2^2 ... n^n). &#10;&#10;ex. hyperfactorial(3) = (3^3) * (2^2) * (1^1) = 108"
+msgstr ""
+"Berekent de hyperfaculteit van een positief geheel getal n: "
+"(n^n*(n-1)^(n-1)...*2^2*1^1. &#10;&#10;bv. hyperfactorial(3) = (3^3) * (2^2) "
+"* (1^1) = 27*4*1 = 108"
+
+#: ../data/functions.xml.in.h:130
+msgid "Superfactorial"
+msgstr "Superfaculteit"
+
+#: ../data/functions.xml.in.h:131
+msgid "r:superfactorial"
+msgstr "superfaculteit"
+
+#: ../data/functions.xml.in.h:132
+#, fuzzy
+msgid ""
+"Calculates the superfactorial of an integer. Multiplies the factorial of the "
+"argument with the factorial of every lesser positive integer (1! * 2! ... "
+"n!). &#10;&#10;ex. superfactorial(5) = 5! * 4! * 3! * 2! * 1! = 34 560"
+msgstr ""
+"Berekent de superfaculteit van een positief geheel getal n: (n!*(n-1)!...*2!"
+"*1! &#10;&#10;bv. superfactorial(5) = 5! * 4! * 3! * 2! * 1! = 120 * 24 * 6 "
+"* 2 * 1 =34 560"
+
+#: ../data/functions.xml.in.h:133
+msgid "Permutations (Variations)"
+msgstr "Permutaties (Variaties)"
+
+#: ../data/functions.xml.in.h:134
+msgid "r:perm,variations"
+msgstr "perm,variaties"
+
+#: ../data/functions.xml.in.h:135
+msgid ""
+"Returns the number of possible arrangements of an ordered list with a number "
+"of objects to choose from and a list size. If there are three objects (1, 2 "
+"and 3) that is put in a list with two positions, the alternatives are [1, "
+"2], [2, 1], [1, 3], [3, 1], [2, 3] and [3, 2], and thus the number of "
+"permutations is 6."
+msgstr ""
+"Retourneert op hoeveel manieren een bepaald aantal objecten op een geordende "
+"manier kunnen worden gekozen uit een verzameling van (verschillende) "
+"objecten. Stel er zijn drie objecten (1, 2, en 3) waarvan er twee moeten "
+"worden gekozen in een geordende lijst, dan zijn de mogelijkheden [1, 2], [2, "
+"1], [1, 3], [3, 1], [2, 3] en [3, 2], en is het aantal permutaties dus 6."
+
+#: ../data/functions.xml.in.h:136
+msgid "Objects"
+msgstr "Objecten"
+
+#: ../data/functions.xml.in.h:137
+msgid "Size"
+msgstr "Grootte"
+
+#: ../data/functions.xml.in.h:138
+msgid "Combinations"
+msgstr "Combinaties"
+
+#: ../data/functions.xml.in.h:139
+msgid "r:comb"
+msgstr "kam"
+
+#: ../data/functions.xml.in.h:140
+msgid ""
+"Returns the number of possible arrangements of an unordered list with a "
+"number of objects to choose from and a list size. If there are three objects "
+"(1, 2 and 3) that is put in a list with place for two, the alternatives are "
+"[1, 2], [1, 3], and [2, 3], and thus the number of combinations is 3."
+msgstr ""
+"Retourneert op hoeveel manieren een bepaald aantal objecten op een niet "
+"geordende manier kunnen worden gekozen uit een verzameling van "
+"(verschillende) objecten. Stel er zijn drie objecten (1, 2, en 3) waarvan er "
+"twee moeten worden gekozen in een niet geordende lijst, dan zijn de "
+"mogelijkheden [1, 2], [1, 3] en [2, 3], en is het aantal combinaties dus 6."
+
+#: ../data/functions.xml.in.h:141
+msgid "Derangements"
+msgstr "Derangementen"
+
+#: ../data/functions.xml.in.h:142
+msgid "r:derangements"
+msgstr "derangementen"
+
+#: ../data/functions.xml.in.h:143
+msgid ""
+"Returns the number of possible rearrangements of an ordered list, of a "
+"certain size, where none of the objects are on their original position. If "
+"the original list is [1, 2, 3], the possible derangements is [2, 3, 1] and "
+"[3, 1, 2], and thus the number of derangements is 2."
+msgstr ""
+"Retourneert op hoeveel manieren een geordende lijst van objecten zo kan "
+"worden herschikt dat geen der objecten op zijn oorspronkelijke posite "
+"terecht komt. Indien de oorspronkelijke lijst [1, 2, 3] is, zijn de "
+"mogelijke herschikkingen [2, 3, 1] en [3, 1, 2], en is het aantal mogelijke "
+"herschikkingen dus 2."
+
+#: ../data/functions.xml.in.h:144
+msgid "Number of elements"
+msgstr "Aantal elementen"
+
+#: ../data/functions.xml.in.h:145
+msgid "Number Theory"
+msgstr "Getallentheorie"
+
+#: ../data/functions.xml.in.h:146
+msgid "Absolute Value"
+msgstr "Absolute waarde"
+
+#: ../data/functions.xml.in.h:147
+msgid "r:abs"
+msgstr ""
+
+#: ../data/functions.xml.in.h:148
+msgid "Arithmetics"
+msgstr "Rekenen"
+
+#: ../data/functions.xml.in.h:149
+msgid "Signum"
+msgstr "Signum"
+
+#: ../data/functions.xml.in.h:150
+msgid "r:sgn"
+msgstr ""
+
+#. A numerical value
+#: ../data/functions.xml.in.h:152
+msgid "Number"
+msgstr "Nummer"
+
+#: ../data/functions.xml.in.h:153
+msgid "Numerator"
+msgstr "Teller"
+
+#: ../data/functions.xml.in.h:154
+msgid "r:numerator"
+msgstr "noemer"
+
+#: ../data/functions.xml.in.h:155
+msgid "Denominator"
+msgstr "Noemer"
+
+#: ../data/functions.xml.in.h:156
+msgid "r:denominator"
+msgstr "noemer"
+
+#: ../data/functions.xml.in.h:157
+msgid "Remainder"
+msgstr "Rest"
+
+#: ../data/functions.xml.in.h:158
+msgid "r:rem"
+msgstr ""
+
+#: ../data/functions.xml.in.h:159
+msgid "Modulus"
+msgstr "Modulus"
+
+#: ../data/functions.xml.in.h:160
+msgid "r:mod"
+msgstr "."
+
+#: ../data/functions.xml.in.h:161
+msgid "Negate"
+msgstr "Ander teken"
+
+#: ../data/functions.xml.in.h:162
+msgid "r:neg"
+msgstr "anderteken"
+
+#: ../data/functions.xml.in.h:163
+msgid "Reciprocal"
+msgstr "Omgekeerde waarde (x naar 1/x)"
+
+#: ../data/functions.xml.in.h:164
+msgid "r:inv"
+msgstr ""
+
+#: ../data/functions.xml.in.h:165
+msgid "Multiply"
+msgstr "Vermenigvuldigen"
+
+#: ../data/functions.xml.in.h:166
+msgid "r:multiply"
+msgstr "vermenigvuldigen"
+
+#: ../data/functions.xml.in.h:167
+msgid "Factors"
+msgstr "Factoren"
+
+#: ../data/functions.xml.in.h:168
+msgid "Add"
+msgstr "Optellen"
+
+#: ../data/functions.xml.in.h:169
+msgid "r:add"
+msgstr "optellen"
+
+#: ../data/functions.xml.in.h:170
+msgid "Terms"
+msgstr "Termen"
+
+#: ../data/functions.xml.in.h:171
+msgid "Subtract"
+msgstr "Aftrekken"
+
+#: ../data/functions.xml.in.h:172
+msgid "r:subtract"
+msgstr "aftrekken"
+
+#: ../data/functions.xml.in.h:173
+msgid "Divide"
+msgstr "Delen"
+
+#: ../data/functions.xml.in.h:174
+msgid "r:divide"
+msgstr "delen"
+
+#: ../data/functions.xml.in.h:175
+msgid "Raise"
+msgstr "Machtverheffen"
+
+#: ../data/functions.xml.in.h:176
+msgid "r:raise"
+msgstr "machtverheffen"
+
+#: ../data/functions.xml.in.h:177
+msgid "Base"
+msgstr "Grondtal"
+
+#: ../data/functions.xml.in.h:178
+msgid "Polynomials"
+msgstr "Polynomen (veeltermen)"
+
+#: ../data/functions.xml.in.h:179
+msgid "Coefficient"
+msgstr "Coëfficiënt"
+
+#: ../data/functions.xml.in.h:180
+msgid "r:coeff"
+msgstr ""
+
+#: ../data/functions.xml.in.h:181
+msgid "Polynomial"
+msgstr "Polynoom (veelterm)"
+
+#: ../data/functions.xml.in.h:182
+msgid "Leading Coefficient"
+msgstr "Eerste coëfficiënt"
+
+#: ../data/functions.xml.in.h:183
+msgid "r:lcoeff"
+msgstr ""
+
+#: ../data/functions.xml.in.h:184
+msgid "Trailing Coefficient"
+msgstr "Laatste coëfficiënt"
+
+#: ../data/functions.xml.in.h:185
+msgid "r:tcoeff"
+msgstr ""
+
+#: ../data/functions.xml.in.h:186
+msgid "Polynomial Degree"
+msgstr "Graad van polynoom (veelterm)"
+
+#: ../data/functions.xml.in.h:187
+msgid "r:degree"
+msgstr "graad"
+
+#: ../data/functions.xml.in.h:188
+msgid "Lowest Degree (Valuation)"
+msgstr "Laagste graad (waardebepaling)"
+
+#: ../data/functions.xml.in.h:189
+msgid "r:ldegree"
+msgstr "lgraad"
+
+#: ../data/functions.xml.in.h:190
+msgid "Content Part"
+msgstr "Inhoudgedeelte"
+
+#: ../data/functions.xml.in.h:191
+msgid "r:pcontent"
+msgstr "pinhoud"
+
+#: ../data/functions.xml.in.h:192
+msgid "Primitive Part"
+msgstr "Primitieve deel"
+
+#: ../data/functions.xml.in.h:193
+msgid "r:primpart"
+msgstr ""
+
+#: ../data/functions.xml.in.h:194
+msgid "Unit Part"
+msgstr "Eenheidsgedeelte"
+
+#: ../data/functions.xml.in.h:195
+msgid "r:punit"
+msgstr "peenheid"
+
+#: ../data/functions.xml.in.h:196
+msgid "Greatest Common Divisor"
+msgstr "Grootste gemene deler"
+
+#: ../data/functions.xml.in.h:197
+msgid "r:gcd"
+msgstr "ggd"
+
+#: ../data/functions.xml.in.h:198
+msgid "1st value"
+msgstr "1e waarde"
+
+#: ../data/functions.xml.in.h:199
+msgid "2nd value"
+msgstr "2de waarde"
+
+#: ../data/functions.xml.in.h:200
+msgid "Least Common Multiple"
+msgstr "Kleinste gemene veelvoud"
+
+#: ../data/functions.xml.in.h:201
+msgid "r:lcm"
+msgstr "kgv"
+
+#: ../data/functions.xml.in.h:202
+msgid "Rounding"
+msgstr "Afronding"
+
+#: ../data/functions.xml.in.h:203
+msgid "Round"
+msgstr "Afronden"
+
+#: ../data/functions.xml.in.h:204
+msgid "r:round"
+msgstr "afronden"
+
+#: ../data/functions.xml.in.h:205
+msgid "Round Downwards"
+msgstr "Naar beneden afronden"
+
+#: ../data/functions.xml.in.h:206
+msgid "r:floor"
+msgstr ""
+
+#: ../data/functions.xml.in.h:207
+msgid "Round Upwards"
+msgstr "Naar boven afronden"
+
+#: ../data/functions.xml.in.h:208
+msgid "r:ceil"
+msgstr ""
+
+#: ../data/functions.xml.in.h:209
+msgid "Round Towards Zero"
+msgstr "Afronden in de richting van nul"
+
+#: ../data/functions.xml.in.h:210
+msgid "r:trunc"
+msgstr "afkap"
+
+#: ../data/functions.xml.in.h:211
+msgid "Extract Integer Part"
+msgstr "Gehele deel uit (getal) halen"
+
+#: ../data/functions.xml.in.h:212
+msgid "r:int"
+msgstr ""
+
+#: ../data/functions.xml.in.h:213
+msgid "Extract Fractional Part"
+msgstr "Fractionele deel uit (getal) halen"
+
+#: ../data/functions.xml.in.h:214
+msgid "r:frac"
+msgstr ""
+
+#: ../data/functions.xml.in.h:215
+msgid "Number Bases"
+msgstr "Grondtallen voor talstelsels"
+
+#: ../data/functions.xml.in.h:216
+msgid "Number Base"
+msgstr "Grondtal talstelsel"
+
+#: ../data/functions.xml.in.h:217
+msgid "r:base"
+msgstr "grondtal"
+
+#: ../data/functions.xml.in.h:218
+msgid "Returns an integer from a number of specified base between 2 and 36"
+msgstr ""
+"Converteert een getal in een opgegeven basis tussen 2 en 36 naar een geheel "
+"getal"
+
+#: ../data/functions.xml.in.h:219
+msgid "Binary"
+msgstr "Binair"
+
+#: ../data/functions.xml.in.h:220
+msgid "r:bin"
+msgstr ""
+
+#: ../data/functions.xml.in.h:221
+msgid "Returns an integer from a binary number"
+msgstr "Converteert een binair getal naar een geheel getal"
+
+#: ../data/functions.xml.in.h:222
+msgid "Binary number"
+msgstr "Binair getal"
+
+#: ../data/functions.xml.in.h:223
+msgid "Octal"
+msgstr "Octaal"
+
+#: ../data/functions.xml.in.h:224
+msgid "r:oct"
+msgstr ""
+
+#: ../data/functions.xml.in.h:225
+msgid "Returns an integer from an octal number"
+msgstr "Converteert een octaal getal naar een geheel getal"
+
+#: ../data/functions.xml.in.h:226
+msgid "Octal number"
+msgstr "Octaal getal"
+
+#: ../data/functions.xml.in.h:227
+msgid "Hexadecimal"
+msgstr "Hexadecimaal"
+
+#: ../data/functions.xml.in.h:228
+msgid "r:hex"
+msgstr ""
+
+#: ../data/functions.xml.in.h:229
+msgid "Returns a value from a hexadecimal number"
+msgstr "Converteert een hexadecimaal getal naar een getal"
+
+#: ../data/functions.xml.in.h:230
+msgid "Hexadecimal number"
+msgstr "Hexadecimaal getal"
+
+#: ../data/functions.xml.in.h:231
+msgid "Integers"
+msgstr "Gehele getallen"
+
+#: ../data/functions.xml.in.h:232
+msgid "Even"
+msgstr "Even"
+
+#: ../data/functions.xml.in.h:233
+msgid "r:even"
+msgstr ""
+
+#: ../data/functions.xml.in.h:234
+msgid "Odd"
+msgstr "Oneven"
+
+#: ../data/functions.xml.in.h:235
+msgid "r:odd"
+msgstr "oneven"
+
+#: ../data/functions.xml.in.h:236
+msgid "Step Functions"
+msgstr "Stapfuncties"
+
+#: ../data/functions.xml.in.h:237
+msgid "Heaviside Step Function"
+msgstr "Heavyside stapfunctie"
+
+#: ../data/functions.xml.in.h:238
+msgid "r:heaviside"
+msgstr "heavyside"
+
+#: ../data/functions.xml.in.h:239
+msgid ""
+"Discontinuous function also known as \"unit step function\". Returns 0 if x "
+"&lt; 0, 1 if x &gt; 0, and 1/2 if x = 0."
+msgstr ""
+"Discontinue functie die ook bekend staat als de \"eenheids stapfunctie\". "
+"Retourneert 0 indien x &lt; 0, 1 indien x ;gt; 0, en 1/2 indien x=0."
+
+#: ../data/functions.xml.in.h:240
+msgid "Ramp Function"
+msgstr "Rampfunctie"
+
+#: ../data/functions.xml.in.h:241
+msgid "r:ramp"
+msgstr ""
+
+#: ../data/functions.xml.in.h:242
+msgid "Rectangular Function"
+msgstr "Rechthoekige functie"
+
+#: ../data/functions.xml.in.h:243
+msgid "r:rectangular"
+msgstr "rechthoekig"
+
+#: ../data/functions.xml.in.h:244
+msgid "Sigmoid Function"
+msgstr "Sigmoïde functie"
+
+#: ../data/functions.xml.in.h:245
+msgid "r:sigmoid"
+msgstr "sigmoïde"
+
+#: ../data/functions.xml.in.h:246
+msgid "Logit Transformation"
+msgstr "Logit transformatie"
+
+#: ../data/functions.xml.in.h:247
+msgid "r:logit"
+msgstr ""
+
+#: ../data/functions.xml.in.h:248
+msgid "Triangular Function"
+msgstr "Driehoekige functie"
+
+#: ../data/functions.xml.in.h:249
+msgid "r:triangular"
+msgstr "driehoekig"
+
+#: ../data/functions.xml.in.h:250
+msgid "Analysis"
+msgstr "Analyse"
+
+#: ../data/functions.xml.in.h:251
+msgid "Real Part"
+msgstr "Reële deel"
+
+#: ../data/functions.xml.in.h:252
+msgid "r:re"
+msgstr ""
+
+#: ../data/functions.xml.in.h:253
+msgid "Complex number"
+msgstr "Complex getal"
+
+#: ../data/functions.xml.in.h:254
+msgid "Imaginary Part"
+msgstr "Imaginaire deel"
+
+#: ../data/functions.xml.in.h:255
+msgid "r:im"
+msgstr ""
+
+#: ../data/functions.xml.in.h:256
+msgid "Gamma Function"
+msgstr "Gamma-functie"
+
+#: ../data/functions.xml.in.h:257
+msgid "r:gamma"
+msgstr ""
+
+#: ../data/functions.xml.in.h:258
+msgid "Beta Function"
+msgstr "Beta-functie"
+
+#: ../data/functions.xml.in.h:259
+msgid "r:beta"
+msgstr ""
+
+#: ../data/functions.xml.in.h:260
+msgid "Exponents &amp; Logarithms"
+msgstr "Exponenten &amp; Logaritmen"
+
+#: ../data/functions.xml.in.h:261
+msgid "Square Root"
+msgstr "Vierkantswortel"
+
+#: ../data/functions.xml.in.h:262
+msgid "au:&#x221A;,r:sqrt"
+msgstr ""
+
+#: ../data/functions.xml.in.h:263
+msgid "Square"
+msgstr "Vierkant"
+
+#: ../data/functions.xml.in.h:264
+msgid "r:sq"
+msgstr ""
+
+#: ../data/functions.xml.in.h:265
+msgid "Exponential (e^x)"
+msgstr "Exponent (e^x)"
+
+#: ../data/functions.xml.in.h:266
+msgid "r:exp"
+msgstr ""
+
+#: ../data/functions.xml.in.h:267
+msgid "Natural Logarithm"
+msgstr "Natuurlijke logaritme"
+
+#: ../data/functions.xml.in.h:268
+msgid "r:ln"
+msgstr ""
+
+#: ../data/functions.xml.in.h:269
+msgid "Base-N Logarithm"
+msgstr "Logaritme met grondtal N"
+
+#: ../data/functions.xml.in.h:270
+msgid "r:log"
+msgstr ""
+
+#: ../data/functions.xml.in.h:271
+msgid "Lambert W Function (Omega Function, Product Log)"
+msgstr "Lambert W Functie (Omega Functie, Product Log)"
+
+#: ../data/functions.xml.in.h:272
+msgid "r:lambertw,productlog"
+msgstr ""
+
+#: ../data/functions.xml.in.h:273
+msgid "Returns the inverse function for mx*e^x as ln() does for e^x."
+msgstr ""
+"Retourneert de inverse functie van mx*e^x (zoals ln(x) de inverse functie is "
+"van e^x)."
+
+#: ../data/functions.xml.in.h:274
+msgid "Base-2 Logarithm"
+msgstr "Logaritme met grondtal 2"
+
+#: ../data/functions.xml.in.h:275
+msgid "rs:log2"
+msgstr ""
+
+#: ../data/functions.xml.in.h:276
+msgid "Returns the base n logarithm."
+msgstr "Retourneert de logaritme met grondtal n."
+
+#: ../data/functions.xml.in.h:277
+msgid "Base-10 Logarithm"
+msgstr "Logaritme met grondtal 10"
+
+#: ../data/functions.xml.in.h:278
+msgid "rs:log10"
+msgstr ""
+
+#: ../data/functions.xml.in.h:279
+msgid "Complex Exponential (Cis)"
+msgstr "Complex Exponentieel (Cis)"
+
+#: ../data/functions.xml.in.h:280
+msgid "r:cis"
+msgstr ""
+
+#: ../data/functions.xml.in.h:281
+msgid "2 raised the to power X"
+msgstr "2 tot de macht X"
+
+#: ../data/functions.xml.in.h:282
+msgid "rs:exp2"
+msgstr ""
+
+#: ../data/functions.xml.in.h:283
+msgid "10 raised the to power X"
+msgstr "10 tot de macht X"
+
+#: ../data/functions.xml.in.h:284
+msgid "rs:exp10"
+msgstr ""
+
+#: ../data/functions.xml.in.h:285
+msgid "Cube Root"
+msgstr "Derdemachtswortel"
+
+#: ../data/functions.xml.in.h:286
+msgid "r:cbrt"
+msgstr ""
+
+#: ../data/functions.xml.in.h:287
+msgid "Nth root"
+msgstr "N-de wortel"
+
+#: ../data/functions.xml.in.h:288
+msgid "r:root"
+msgstr "wortel"
+
+#: ../data/functions.xml.in.h:289
+msgid "X raised to the power Y"
+msgstr "X tot de macht Y"
+
+#: ../data/functions.xml.in.h:290
+msgid "r:pow"
+msgstr "macht"
+
+#: ../data/functions.xml.in.h:291
+msgid "Square root (x * pi)"
+msgstr "Vierkantswortel (x * pi)"
+
+#: ../data/functions.xml.in.h:292
+msgid "r:sqrtpi"
+msgstr ""
+
+#: ../data/functions.xml.in.h:293
+msgid "Returns the non-negative square root of x * pi"
+msgstr "Retourneert de niet-negatieve vierkantswortel van x * pi"
+
+#: ../data/functions.xml.in.h:294
+msgid "Non-negative value"
+msgstr "Niet-negatieve waarde"
+
+#: ../data/functions.xml.in.h:295
+msgid "Trigonometry"
+msgstr "Goniometrie"
+
+#: ../data/functions.xml.in.h:296
+msgid "Sine"
+msgstr "Sinus"
+
+#: ../data/functions.xml.in.h:297
+msgid "r:sin"
+msgstr ""
+
+#: ../data/functions.xml.in.h:298
+msgid "Angle"
+msgstr "Hoek"
+
+#: ../data/functions.xml.in.h:299
+msgid "Cosine"
+msgstr "Cosinus"
+
+#: ../data/functions.xml.in.h:300
+msgid "r:cos"
+msgstr ""
+
+#: ../data/functions.xml.in.h:301
+msgid "Tangent"
+msgstr "Tangens"
+
+#: ../data/functions.xml.in.h:302
+msgid "r:tan"
+msgstr ""
+
+#: ../data/functions.xml.in.h:303
+msgid "Inverse Sine"
+msgstr "Inverse sinus"
+
+#: ../data/functions.xml.in.h:304
+msgid "r:asin"
+msgstr ""
+
+#: ../data/functions.xml.in.h:305
+msgid "Inverse Cosine"
+msgstr "Inverse cosinus"
+
+#: ../data/functions.xml.in.h:306
+msgid "r:acos"
+msgstr ""
+
+#: ../data/functions.xml.in.h:307
+msgid "Inverse Tangent"
+msgstr "Inverse tangens"
+
+#: ../data/functions.xml.in.h:308
+msgid "r:atan"
+msgstr ""
+
+#: ../data/functions.xml.in.h:309
+msgid "Hyperbolic Sine"
+msgstr "Hyperbolische sinus"
+
+#: ../data/functions.xml.in.h:310
+msgid "r:sinh"
+msgstr ""
+
+#: ../data/functions.xml.in.h:311
+msgid "Hyperbolic Cosine"
+msgstr "Hyperbolische cosinus"
+
+#: ../data/functions.xml.in.h:312
+msgid "r:cosh"
+msgstr ""
+
+#: ../data/functions.xml.in.h:313
+msgid "Hyperbolic Tangent"
+msgstr "Hyperbolische tangens"
+
+#: ../data/functions.xml.in.h:314
+msgid "r:tanh"
+msgstr ""
+
+#: ../data/functions.xml.in.h:315
+msgid "Inverse Hyperbolic Sine"
+msgstr "Inverse hyperbolische sinus"
+
+#: ../data/functions.xml.in.h:316
+msgid "r:asinh"
+msgstr ""
+
+#: ../data/functions.xml.in.h:317
+msgid "Inverse Hyperbolic Cosine"
+msgstr "Inverse hyperbolische cosinus"
+
+#: ../data/functions.xml.in.h:318
+msgid "r:acosh"
+msgstr ""
+
+#: ../data/functions.xml.in.h:319
+msgid "Inverse Hyperbolic Tangent"
+msgstr "Inverse hyperbolische tangens"
+
+#: ../data/functions.xml.in.h:320
+msgid "r:atanh"
+msgstr ""
+
+#: ../data/functions.xml.in.h:321
+msgid "Radians to Default Angle Unit"
+msgstr "Radialen naar standaard hoekeenheid"
+
+#: ../data/functions.xml.in.h:322
+msgid "r:radtodef"
+msgstr "radnaardef"
+
+#: ../data/functions.xml.in.h:323
+msgid "Radians"
+msgstr "Radialen"
+
+#: ../data/functions.xml.in.h:324
+msgid "Secant"
+msgstr "Secans"
+
+#: ../data/functions.xml.in.h:325
+msgid "r:sec"
+msgstr ""
+
+#: ../data/functions.xml.in.h:326
+msgid "Cosecant"
+msgstr "Cosecant"
+
+#: ../data/functions.xml.in.h:327
+msgid "r:csc"
+msgstr ""
+
+#: ../data/functions.xml.in.h:328
+msgid "Cotangent"
+msgstr "Cotangens"
+
+#: ../data/functions.xml.in.h:329
+msgid "r:cot"
+msgstr ""
+
+#: ../data/functions.xml.in.h:330
+msgid "Hyperbolic Secant"
+msgstr "Hyperbolische secans"
+
+#: ../data/functions.xml.in.h:331
+msgid "r:sech"
+msgstr ""
+
+#: ../data/functions.xml.in.h:332
+msgid "Hyperbolic Cosecant"
+msgstr "Hyperbolische cosecans"
+
+#: ../data/functions.xml.in.h:333
+msgid "r:csch"
+msgstr ""
+
+#: ../data/functions.xml.in.h:334
+msgid "Hyperbolic Cotangent"
+msgstr "Hyperbolische cotangens"
+
+#: ../data/functions.xml.in.h:335
+msgid "r:coth"
+msgstr ""
+
+#: ../data/functions.xml.in.h:336
+msgid "Inverse Secant"
+msgstr "Inverse secans"
+
+#: ../data/functions.xml.in.h:337
+msgid "r:asec"
+msgstr ""
+
+#: ../data/functions.xml.in.h:338
+msgid "Inverse Cosecant"
+msgstr "Inverse cosecans"
+
+#: ../data/functions.xml.in.h:339
+msgid "r:acsc"
+msgstr ""
+
+#: ../data/functions.xml.in.h:340
+msgid "Inverse Cotangent"
+msgstr "Inverse cotangens"
+
+#: ../data/functions.xml.in.h:341
+msgid "r:acot"
+msgstr ""
+
+#: ../data/functions.xml.in.h:342
+msgid "Inverse Hyperbolic Secant"
+msgstr "Inverse hyperbolische secans"
+
+#: ../data/functions.xml.in.h:343
+msgid "r:asech"
+msgstr ""
+
+#: ../data/functions.xml.in.h:344
+msgid "Inverse Hyperbolic Cosecant"
+msgstr "Inverse hyperbolische cosecans"
+
+#: ../data/functions.xml.in.h:345
+msgid "r:acsch"
+msgstr ""
+
+#: ../data/functions.xml.in.h:346
+msgid "Inverse Hyperbolic Cotangent"
+msgstr "Inverse hyperbolische cotangens"
+
+#: ../data/functions.xml.in.h:347
+msgid "r:acoth"
+msgstr ""
+
+#: ../data/functions.xml.in.h:348
+msgid "Miscellaneous"
+msgstr "Diversen"
+
+#: ../data/functions.xml.in.h:349
+msgid "Body Mass Index (BMI)"
+msgstr "Body Mass Index (BMI) (Index voor lichaamsmassa)"
+
+#: ../data/functions.xml.in.h:350
+msgid "-r:bmi"
+msgstr ""
+
+#: ../data/functions.xml.in.h:351
+msgid ""
+"Calculates the Body Mass Index. The resulting BMI-value is sometimes "
+"interpreted as follows (although varies with age, sex, etc.):&#10;&#10;"
+"Underweight&#9;&#9;&lt; 18.5&#10;Normal weight&#9;&#9;18.5-25&#10;"
+"Overweight&#9;&#9;25-30&#10;Obesity&#9;&#9;&#9;&gt; 30&#10;&#10;Note that "
+"you must use units for weight (ex. 59kg) and length (ex. 174cm)."
+msgstr ""
+"Berekent de zg. Body Mass Index (index voor de lichaamsmassa). De berekende "
+"BMI wordt als volgt beoordeeld (hoewel dit varieert met leeftijd, geslacht, "
+"enz): &#10;&#10;Te laag gewicht&#9;&#9;&lt; 18.5&#10;Normaal gewicht&#9;"
+"&#9;18.5-25&#10;Te hoog gewicht&#9;&#9;25-30&#10;Zwaarlijvigheid&#9;&#9;&#9;"
+"&gt; 30&#10;&#10;Let er opdat u eenheden gebruikt voor gewicht (bv. 59kg) en "
+"lengte (bv. 174cm)."
+
+#: ../data/functions.xml.in.h:353
+msgid "Length"
+msgstr "Lengte"
+
+#: ../data/functions.xml.in.h:354
+msgid "Riemann Zeta"
+msgstr "Riemann Zeta"
+
+#: ../data/functions.xml.in.h:355
+msgid "r:zeta"
+msgstr ""
+
+#: ../data/functions.xml.in.h:356
+msgid "Integral point"
+msgstr "Gehele waarde"
+
+#: ../data/functions.xml.in.h:357
+msgid "Roman Number"
+msgstr "Romeins getal"
+
+#: ../data/functions.xml.in.h:358
+msgid "r:roman"
+msgstr "romeins"
+
+#: ../data/functions.xml.in.h:359
+msgid "Returns the value of a roman number."
+msgstr "Retourneert de waarde van een Romeins getal."
+
+#: ../data/functions.xml.in.h:360
+msgid "Roman number"
+msgstr "Romeins getal"
+
+#: ../data/functions.xml.in.h:361
+msgid "Kronecker Delta"
+msgstr "Kronecker Delta"
+
+#: ../data/functions.xml.in.h:362
+msgid "r:kronecker"
+msgstr ""
+
+#: ../data/functions.xml.in.h:363
+msgid "Returns 0 if i != j and 1 if i = j."
+msgstr "Retourneert 0 indien i != j en 1 if i = j."
+
+#: ../data/functions.xml.in.h:364
+msgid "Value 1 (i)"
+msgstr "Waarde 1 (i)"
+
+#: ../data/functions.xml.in.h:365
+msgid "Value 2 (j)"
+msgstr "Waarde 2 (j)"
+
+#: ../data/functions.xml.in.h:366
+#, fuzzy
+msgid "Fibonacci Number"
+msgstr "Romeins getal"
+
+#: ../data/functions.xml.in.h:367
+msgid "r:fibonacci"
+msgstr ""
+
+#: ../data/functions.xml.in.h:368
+#, fuzzy
+msgid "Returns the n-th term of the Fibonacci sequence."
+msgstr "Retourneert het aantal elementen in een vector."
+
+#: ../data/functions.xml.in.h:369
+#, fuzzy
+msgid "Index (n)"
+msgstr "Index"
+
+#: ../data/functions.xml.in.h:370
+msgid "Statistics"
+msgstr "Statistiek"
+
+#: ../data/functions.xml.in.h:371
+msgid "Descriptive Statistics"
+msgstr "Beschrijvende statistiek"
+
+#: ../data/functions.xml.in.h:372
+msgid "Sum (total)"
+msgstr "Som (totaal)"
+
+#: ../data/functions.xml.in.h:373
+msgid "r:total"
+msgstr "totaal"
+
+#: ../data/functions.xml.in.h:374
+msgid "Data"
+msgstr "Gegevens"
+
+#: ../data/functions.xml.in.h:375
+msgid "Percentile"
+msgstr "Percentiel"
+
+#: ../data/functions.xml.in.h:376
+msgid "r:percentile"
+msgstr "percentiel"
+
+#: ../data/functions.xml.in.h:378
+#, no-c-format
+msgid "Percentile (%)"
+msgstr "Percentiel (%)"
+
+#: ../data/functions.xml.in.h:379
+msgid "r:min"
+msgstr ""
+
+#: ../data/functions.xml.in.h:380
+msgid "Returns the lowest value."
+msgstr "Retourneert de kleinste waarde."
+
+#: ../data/functions.xml.in.h:381
+msgid "r:max"
+msgstr ""
+
+#: ../data/functions.xml.in.h:382
+msgid "Returns the highest value."
+msgstr "Retourneert de grootste waarde."
+
+#: ../data/functions.xml.in.h:383
+msgid "Mode"
+msgstr "Modus"
+
+#: ../data/functions.xml.in.h:384
+msgid "r:mode"
+msgstr "modus"
+
+#: ../data/functions.xml.in.h:385
+msgid "Returns the most frequently occurring value."
+msgstr "Retourneert de meest voorkomende waarde."
+
+#: ../data/functions.xml.in.h:386
+msgid "Range"
+msgstr "Bereik"
+
+#: ../data/functions.xml.in.h:387
+msgid "r:range"
+msgstr "bereik"
+
+#: ../data/functions.xml.in.h:388
+msgid "Calculates the difference between the min and max value."
+msgstr "Berekent het verschil tussen de kleinste en de grootste waarde."
+
+#: ../data/functions.xml.in.h:389
+msgid "Median"
+msgstr "Mediaan"
+
+#: ../data/functions.xml.in.h:390
+msgid "r:median"
+msgstr "mediaan"
+
+#: ../data/functions.xml.in.h:391
+msgid "Quartile"
+msgstr "Kwartiel"
+
+#: ../data/functions.xml.in.h:392
+msgid "r:quartile"
+msgstr "kwartiel"
+
+#: ../data/functions.xml.in.h:393
+msgid "Decile"
+msgstr "Deciel"
+
+#: ../data/functions.xml.in.h:394
+msgid "r:decile"
+msgstr "deciel"
+
+#: ../data/functions.xml.in.h:395
+msgid "Interquartile Range"
+msgstr "Interkwartiel bereik"
+
+#: ../data/functions.xml.in.h:396
+msgid "r:iqr"
+msgstr ""
+
+#: ../data/functions.xml.in.h:397
+msgid "Calculates the difference between the first and third quartile."
+msgstr "Berekent het verschil tussen het eerste en het derde kwartiel."
+
+#: ../data/functions.xml.in.h:398
+msgid "Number of Samples"
+msgstr "Aantal monsters"
+
+#. Number of samples
+#: ../data/functions.xml.in.h:400
+msgid "r:number"
+msgstr "getal"
+
+#: ../data/functions.xml.in.h:401
+msgid "Returns the number of samples."
+msgstr "Retourneert het aantal monsters."
+
+#: ../data/functions.xml.in.h:402
+msgid "Random Number"
+msgstr "Willekeurig getal"
+
+#: ../data/functions.xml.in.h:403
+msgid "r:rand"
+msgstr "wilk"
+
+#: ../data/functions.xml.in.h:404
+msgid ""
+"Generates a pseudo-random number. Returns a real number between 0 and 1, if "
+"ceil is zero (default), or an integer between 1 and (including) ceil."
+msgstr ""
+"Levert een pseudowillekeurig getal. Retourneert een reëel getal tussen 0 en "
+"1 als ceil nul is (standaard), of een getal tussen 1 en ceil (inclusief)."
+
+#: ../data/functions.xml.in.h:405
+msgid "Ceil"
+msgstr "Ceil"
+
+#: ../data/functions.xml.in.h:406
+msgid "Random Number Between Limits"
+msgstr "Willekeurig getal tussen twee grenswaarden"
+
+#: ../data/functions.xml.in.h:407
+msgid "r:randbetween"
+msgstr "wilktussen"
+
+#: ../data/functions.xml.in.h:408
+msgid "Returns an integer between (including) bottom and top."
+msgstr "Retourneert een geheel getal tussen onder- en bovengrens (inclusief)."
+
+#: ../data/functions.xml.in.h:409
+msgid "Bottom"
+msgstr "Onder"
+
+#: ../data/functions.xml.in.h:410
+msgid "Top"
+msgstr "Boven"
+
+#: ../data/functions.xml.in.h:411
+msgid "Means"
+msgstr "Gemiddelden"
+
+#: ../data/functions.xml.in.h:412
+msgid "Mean"
+msgstr "Gemiddelde"
+
+#: ../data/functions.xml.in.h:413
+msgid "r:mean,average"
+msgstr "gemiddelde"
+
+#: ../data/functions.xml.in.h:414
+msgid "Harmonic Mean"
+msgstr "Harmonisch gemiddelde"
+
+#: ../data/functions.xml.in.h:415
+msgid "r:harmmean"
+msgstr "harmgem"
+
+#: ../data/functions.xml.in.h:416
+msgid "Geometric Mean"
+msgstr "Meetkundig gemiddelde"
+
+#: ../data/functions.xml.in.h:417
+msgid "r:geomean"
+msgstr "meetkgem"
+
+#: ../data/functions.xml.in.h:418
+msgid "Trimmed Mean"
+msgstr "Getrimd gemiddelde"
+
+#: ../data/functions.xml.in.h:419
+msgid "r:trimmean"
+msgstr "trimgemidd"
+
+#: ../data/functions.xml.in.h:420
+msgid "Trimmed percentage (at each end)"
+msgstr "Getrimd percentage (aan beide kanten)"
+
+#: ../data/functions.xml.in.h:421
+msgid "Winsorized Mean"
+msgstr "Gewinsoriseerd gemiddelde"
+
+#: ../data/functions.xml.in.h:422
+msgid "r:winsormean"
+msgstr "winsorgemidd"
+
+#: ../data/functions.xml.in.h:423
+msgid "Winsorized percentage (at each end)"
+msgstr "Gewinsoriseerd percentage (aan beide kanten)"
+
+#: ../data/functions.xml.in.h:424
+msgid "Weighted Mean"
+msgstr "Gewogen gemiddelde"
+
+#: ../data/functions.xml.in.h:425
+msgid "r:weighmean"
+msgstr "gewogengemidd"
+
+#: ../data/functions.xml.in.h:426
+msgid "Weights"
+msgstr "Gewichten"
+
+#: ../data/functions.xml.in.h:427
+msgid "Quadratic Mean (RMS)"
+msgstr "Kwadratisch gemiddelde (RMS)"
+
+#: ../data/functions.xml.in.h:428
+msgid "r:rms"
+msgstr ""
+
+#: ../data/functions.xml.in.h:429
+msgid "Moments"
+msgstr "Momenten"
+
+#: ../data/functions.xml.in.h:430
+msgid "Standard Deviation (entire population)"
+msgstr "Standaarddeviatie (gehele populatie)"
+
+#: ../data/functions.xml.in.h:431
+msgid "r:stdevp"
+msgstr ""
+
+#: ../data/functions.xml.in.h:432
+msgid "Standard Deviation (random sampling)"
+msgstr "Standaarddeviatie (willekeurige steekproef)"
+
+#: ../data/functions.xml.in.h:433
+msgid "r:stdev"
+msgstr ""
+
+#: ../data/functions.xml.in.h:434
+msgid "Variance (entire population)"
+msgstr "Variantie (gehele populatie)"
+
+#: ../data/functions.xml.in.h:435
+msgid "r:varp"
+msgstr ""
+
+#: ../data/functions.xml.in.h:436
+msgid "Variance (random sampling)"
+msgstr "Variantie (willekeurige steekproef)"
+
+#: ../data/functions.xml.in.h:437
+msgid "r:var"
+msgstr ""
+
+#: ../data/functions.xml.in.h:438
+msgid "Standard Error"
+msgstr "Standaardfout"
+
+#: ../data/functions.xml.in.h:439
+msgid "r:stderr"
+msgstr ""
+
+#: ../data/functions.xml.in.h:440
+msgid "Mean Deviation"
+msgstr "Gemiddelde afwijking"
+
+#: ../data/functions.xml.in.h:441
+msgid "r:meandev"
+msgstr "gemiddev"
+
+#: ../data/functions.xml.in.h:442
+msgid "Covariance"
+msgstr "Covariantie"
+
+#: ../data/functions.xml.in.h:443
+msgid "r:cov,r:covar"
+msgstr ""
+
+#: ../data/functions.xml.in.h:444
+msgid "Data 1"
+msgstr "Gegevens 1"
+
+#: ../data/functions.xml.in.h:445
+msgid "Data 2"
+msgstr "Gegevens 2"
+
+#: ../data/functions.xml.in.h:446
+msgid "Pooled Variance"
+msgstr "Pooled variantie"
+
+#: ../data/functions.xml.in.h:447
+msgid "r:poolvar"
+msgstr ""
+
+#: ../data/functions.xml.in.h:448
+msgid "Regression"
+msgstr "Regressie"
+
+#: ../data/functions.xml.in.h:449
+msgid "Statistical Correlation"
+msgstr "Statistische correlatie"
+
+#: ../data/functions.xml.in.h:450
+msgid "r:cor"
+msgstr ""
+
+#: ../data/functions.xml.in.h:451
+msgid "Pearson's Correlation Coefficient"
+msgstr "Pearson's correlatiecoëfficiënt"
+
+#: ../data/functions.xml.in.h:452
+msgid "r:pearson,r:correl"
+msgstr ""
+
+#: ../data/functions.xml.in.h:453
+msgid "Spearman's Rho"
+msgstr "Spearman's Rho"
+
+#: ../data/functions.xml.in.h:454
+msgid "r:spearman"
+msgstr ""
+
+#: ../data/functions.xml.in.h:455
+msgid "Durbin-Watson"
+msgstr "Durbin-Watson"
+
+#: ../data/functions.xml.in.h:456
+msgid "r:durbinwatson"
+msgstr ""
+
+#: ../data/functions.xml.in.h:457
+msgid "Statistical Tests"
+msgstr "Statistische testen"
+
+#: ../data/functions.xml.in.h:458
+msgid "Unpaired T-Test"
+msgstr "Ongepaarde T-proef"
+
+#: ../data/functions.xml.in.h:459
+msgid "r:ttest"
+msgstr ""
+
+#: ../data/functions.xml.in.h:460
+msgid "Paired T-Test"
+msgstr "Gepaarde t-proef"
+
+#: ../data/functions.xml.in.h:461
+msgid "r:pttest"
+msgstr ""
+
+#: ../data/functions.xml.in.h:462
+msgid "Distribution"
+msgstr "Distributie"
+
+#: ../data/functions.xml.in.h:463
+msgid "Rayleigh Distribution"
+msgstr "Rayleigh-verdeling"
+
+#: ../data/functions.xml.in.h:464
+msgid "r:rayleigh"
+msgstr ""
+
+#: ../data/functions.xml.in.h:465
+msgid ""
+"Returns the probability density p(x) at x for a Rayleigh distribution with "
+"scale parameter sigma. (from Gnumeric)"
+msgstr ""
+"Retourneert de kansdichtheid p(x) in x voor een Rayleigh-verdeling met "
+"schaalparameter sigma. (van Gnumeric)"
+
+#: ../data/functions.xml.in.h:466
+msgid "X"
+msgstr "X"
+
+#: ../data/functions.xml.in.h:467
+msgid "Sigma"
+msgstr "Sigma"
+
+#: ../data/functions.xml.in.h:468
+msgid "Rayleigh Tail Distribution"
+msgstr "Rayleigh-staartverdeling"
+
+#: ../data/functions.xml.in.h:469
+msgid "r:rayleightail"
+msgstr "rayleighstaart"
+
+#: ../data/functions.xml.in.h:470
+msgid ""
+"Returns the probability density p(x) at x for a Rayleigh tail distribution "
+"with scale parameter sigma and a lower limit. (from Gnumeric)"
+msgstr ""
+"Retourneert de kansdichtheid p(x) in x voor een Rayleigh-staartverdeling met "
+"schaalparameter sigma en een ondergrens. (van Gnumeric)"
+
+#: ../data/functions.xml.in.h:471
+msgid "Pareto Distribution"
+msgstr "Paretoverdeling"
+
+#: ../data/functions.xml.in.h:472
+msgid "r:pareto"
+msgstr ""
+
+#: ../data/functions.xml.in.h:473
+msgid ""
+"Returns the probability density p(x) at x for a Pareto distribution with "
+"exponent and scale. (from Gnumeric)"
+msgstr ""
+"Retourneert de kansdichtheid p(x) in x voor een Pareto-verdeling met "
+"exponent en schaal. (van Gnumeric)"
+
+#: ../data/functions.xml.in.h:474
+msgid "Scale"
+msgstr "Schaal"
+
+#: ../data/functions.xml.in.h:475
+msgid "Logistic Distribution"
+msgstr "Logistische verdeling"
+
+#: ../data/functions.xml.in.h:476
+msgid "r:logistic"
+msgstr "logistisch"
+
+#: ../data/functions.xml.in.h:477
+msgid ""
+"Returns the probability density p(x) at x for a logistic distribution with "
+"scale parameter. (from Gnumeric)"
+msgstr ""
+"Retourneert de kansdichtheid p(x) in x voor een  logistische verdeling met "
+"schaalparameter. (van Gnumeric)"
+
+#: ../data/functions.xml.in.h:478
+msgid "Date &amp; Time"
+msgstr "Datum &amp; Tijd"
+
+#: ../data/functions.xml.in.h:479
+msgid "Days between two dates"
+msgstr "Aantal dagen tussen twee data"
+
+#: ../data/functions.xml.in.h:480
+msgid "r:days"
+msgstr "dagen"
+
+#: ../data/functions.xml.in.h:481
+msgid ""
+"Returns the number of days between two dates.&#10;&#10;Basis is the type of "
+"day counting you want to use: 0: US 30/360, 1: real days (default), 2: real "
+"days/360, 3: real days/365 or 4: European 30/360."
+msgstr ""
+"Retourneert het aantal dagen tussen twee data.&#10;&#10;Basis is de "
+"dagtelling die u wilt gebruiken: 0: US 30/360 (standaard), 1: werkelijke "
+"dagen, 2: werkelijke dagen/360, 3: werkelijke dagen/365 of 4: Europees "
+"30/360."
+
+#: ../data/functions.xml.in.h:482
+msgid "First date"
+msgstr "Eerste datum"
+
+#: ../data/functions.xml.in.h:483
+msgid "Second date"
+msgstr "Tweede datum"
+
+#: ../data/functions.xml.in.h:484
+msgid "Day counting basis"
+msgstr "Basis dagtelling"
+
+#: ../data/functions.xml.in.h:485
+msgid "Financial function mode"
+msgstr "Financiële functiemodus"
+
+#: ../data/functions.xml.in.h:486
+msgid "Years between two dates"
+msgstr "Jaren tussen twee data"
+
+#: ../data/functions.xml.in.h:487
+msgid "r:yearfrac"
+msgstr "jaarfrac"
+
+#: ../data/functions.xml.in.h:488
+msgid ""
+"Returns the number of years (fractional) between two dates.&#10;&#10;Basis "
+"is the type of day counting you want to use: 0: US 30/360, 1: real days "
+"(default), 2: real days/360, 3: real days/365 or 4: European 30/360."
+msgstr ""
+"Retourneert het aantal jaren (niet noodzakelijk geheel) tussen twee data. "
+"&#10;&#10;Basis is de dagtelling die u wilt gebruiken: 0: US 30/360 "
+"(standaard), 1: werkelijke dagen, 2: werkelijke dagen/360, 3: werkelijke "
+"dagen/365 of 4: Europees 30/360."
+
+#: ../data/functions.xml.in.h:489
+msgid "Week of Year"
+msgstr "Week van het jaar"
+
+#: ../data/functions.xml.in.h:490
+msgid "r:week"
+msgstr ""
+
+#: ../data/functions.xml.in.h:491
+msgid "Date"
+msgstr "Datum"
+
+#: ../data/functions.xml.in.h:492
+msgid "Week begins on Sunday"
+msgstr "Week begint op zondag"
+
+#: ../data/functions.xml.in.h:493
+msgid "Day of Week"
+msgstr "Dag van de week"
+
+#: ../data/functions.xml.in.h:494
+msgid "r:weekday"
+msgstr "weekdag"
+
+#: ../data/functions.xml.in.h:495
+msgid "Month"
+msgstr "Maand"
+
+#: ../data/functions.xml.in.h:496
+msgid "r:month"
+msgstr "maand"
+
+#: ../data/functions.xml.in.h:497
+msgid "Day of Month"
+msgstr "Dag van de maand"
+
+#: ../data/functions.xml.in.h:498
+msgid "r:day"
+msgstr "dag"
+
+#: ../data/functions.xml.in.h:499
+msgid "Year"
+msgstr "Jaar"
+
+#: ../data/functions.xml.in.h:500
+msgid "r:year"
+msgstr "jaar"
+
+#: ../data/functions.xml.in.h:501
+msgid "Day of Year"
+msgstr "Dag van het jaar"
+
+#: ../data/functions.xml.in.h:502
+msgid "r:yearday"
+msgstr "jaardag"
+
+#: ../data/functions.xml.in.h:503
+msgid "Current Time"
+msgstr "Huidige tijd"
+
+#: ../data/functions.xml.in.h:504
+msgid "r:time"
+msgstr "tijd"
+
+#: ../data/functions.xml.in.h:505
+msgid "Standard Date Format"
+msgstr "Standaardnotatie voor datum"
+
+#: ../data/functions.xml.in.h:506
+msgid "r:isodate"
+msgstr ""
+
+#: ../data/functions.xml.in.h:507
+msgid "Local Date Format"
+msgstr "Lokale datumnotatie"
+
+#: ../data/functions.xml.in.h:508
+msgid "r:localdate"
+msgstr "lokaledatum"
+
+#: ../data/functions.xml.in.h:509
+msgid "Date to Unix Timestamp"
+msgstr "Datum naar Unix-timestamp"
+
+#: ../data/functions.xml.in.h:510
+msgid "r:timestamp"
+msgstr ""
+
+#: ../data/functions.xml.in.h:511
+msgid "Unix Timestamp to Date"
+msgstr "Unix Timestamp naar datum"
+
+#: ../data/functions.xml.in.h:512
+msgid "r:stamptodate"
+msgstr "stampnaardatum"
+
+#: ../data/functions.xml.in.h:513
+msgid "Timestamp"
+msgstr "Timestamp"
+
+#: ../data/functions.xml.in.h:514
+msgid "Add Days"
+msgstr "Dagen bijtellen"
+
+#: ../data/functions.xml.in.h:515
+msgid "r:addDays"
+msgstr "dagen bijtellen"
+
+#: ../data/functions.xml.in.h:516
+msgid "Days"
+msgstr "Dagen"
+
+#: ../data/functions.xml.in.h:517
+msgid "Add Months"
+msgstr "Maanden bijtellen"
+
+#: ../data/functions.xml.in.h:518
+msgid "r:addMonths"
+msgstr "maanden bijtellen"
+
+#: ../data/functions.xml.in.h:519
+msgid "Months"
+msgstr "Maanden"
+
+#: ../data/functions.xml.in.h:520
+msgid "Add Years"
+msgstr "Jaren bijtellen"
+
+#: ../data/functions.xml.in.h:521
+msgid "r:addYears"
+msgstr "jaren bijtellen"
+
+#: ../data/functions.xml.in.h:522
+msgid "Years"
+msgstr "Jaren"
+
+#: ../data/functions.xml.in.h:523
+msgid "Add Time"
+msgstr "Tijd optellen"
+
+#: ../data/functions.xml.in.h:524
+msgid "r:addTime"
+msgstr "tijd bijtellen"
+
+#: ../data/functions.xml.in.h:525
+msgid ""
+"Adds a time value to a date. The value can be positive or negative, but must "
+"use a unit based on seconds (such as day and year). Fractions of days are "
+"truncated."
+msgstr ""
+"Telt een tijdswaarde op bij een datum. Deze waarde kan zowel positief zijn "
+"als negatief, maar moet in een eenheid zijn uitgedrukt die op seconden is "
+"gebaseerd (zoals dag of jaar). Fracties van dagen worden afgekapt tot hele "
+"dagen."
+
+#: ../data/functions.xml.in.h:526 ../data/units.xml.in.h:128
+msgid "Time"
+msgstr "Tijd"
+
+#: ../data/functions.xml.in.h:527
+msgid "Utilities"
+msgstr "Hulpmiddelen"
+
+#: ../data/functions.xml.in.h:528
+msgid "ASCII Value"
+msgstr "ASCII-waarde"
+
+#: ../data/functions.xml.in.h:529
+msgid "r:code"
+msgstr ""
+
+#: ../data/functions.xml.in.h:530
+msgid "Character"
+msgstr "Karakter"
+
+#: ../data/functions.xml.in.h:531
+msgid "ASCII Char"
+msgstr "ASCII-kar"
+
+#: ../data/functions.xml.in.h:532
+msgid "r:char"
+msgstr ""
+
+#: ../data/functions.xml.in.h:533
+msgid "Length of string"
+msgstr "Lengte van karakterrij"
+
+#: ../data/functions.xml.in.h:534
+msgid "r:len"
+msgstr ""
+
+#: ../data/functions.xml.in.h:535
+msgid "Text"
+msgstr "Tekst"
+
+#: ../data/functions.xml.in.h:536
+msgid "Concatenate Strings"
+msgstr "Karakterrijen samenvoegen"
+
+#: ../data/functions.xml.in.h:537
+msgid "r:concatenate"
+msgstr "samenvoegen"
+
+#: ../data/functions.xml.in.h:538
+msgid "Text string 1"
+msgstr "Tekstrij 1"
+
+#: ../data/functions.xml.in.h:539
+msgid "Text string 2"
+msgstr "Tekstrij 2"
+
+#: ../data/functions.xml.in.h:540
+msgid "Replace"
+msgstr "Vervangen"
+
+#: ../data/functions.xml.in.h:541
+msgid "r:replace"
+msgstr "vervangen"
+
+#: ../data/functions.xml.in.h:542
+msgid ""
+"Replaces a certain value in an expression with a new value. The expression "
+"is calculated before the replacement if the fourth argument is true."
+msgstr ""
+"Vervangt een waarde in een expressie door een nieuwe waarde. Eerst wordt de "
+"expressie berekend indien het vierde argument waar (true) is."
+
+#: ../data/functions.xml.in.h:543
+msgid "Expression"
+msgstr "Expressie"
+
+#: ../data/functions.xml.in.h:544
+msgid "Original value"
+msgstr "Originele waarde"
+
+#: ../data/functions.xml.in.h:545
+msgid "New value"
+msgstr "Nieuwe waarde"
+
+#: ../data/functions.xml.in.h:546
+msgid "Precalculate expression"
+msgstr "Voorbereken expressie"
+
+#: ../data/functions.xml.in.h:547
+msgid "Strip Units"
+msgstr "Eenheden verwijderen"
+
+#: ../data/functions.xml.in.h:548
+msgid "r:nounit,strip_units"
+msgstr "geeneenheid,eenheden_weg"
+
+#: ../data/functions.xml.in.h:549
+msgid ""
+"Removes all units from an expression. The expression is calculated before "
+"the removal."
+msgstr ""
+"Verwijdert alle eenheden uit een expressie. De expressie wordt hierbij eerst "
+"berekend."
+
+#: ../data/functions.xml.in.h:550
+msgid "Process Vector Elements"
+msgstr "Vector-elementen verwerken"
+
+#: ../data/functions.xml.in.h:551
+msgid "r:process"
+msgstr "verwerken"
+
+#: ../data/functions.xml.in.h:552
+msgid "Element variable"
+msgstr "Elementvariabele"
+
+#: ../data/functions.xml.in.h:553
+msgid "Index variable"
+msgstr "Indexvariabele"
+
+#: ../data/functions.xml.in.h:554
+msgid "Vector variable"
+msgstr "Vectorvariabele"
+
+#: ../data/functions.xml.in.h:555
+msgid "Process Matrix Elements"
+msgstr "Matrix-elementen verwerken"
+
+#: ../data/functions.xml.in.h:556
+msgid "r:processm"
+msgstr ""
+
+#: ../data/functions.xml.in.h:557
+msgid "Row variable"
+msgstr "Rijvariabele"
+
+#: ../data/functions.xml.in.h:558
+msgid "Column variable"
+msgstr "Kolomvariabele"
+
+#: ../data/functions.xml.in.h:559
+msgid "Matrix variable"
+msgstr "Matrixvariabele"
+
+#: ../data/functions.xml.in.h:560
+msgid "Custom Sum of Elements"
+msgstr "Aangepaste som van elementen"
+
+#: ../data/functions.xml.in.h:561
+msgid "r:csum"
+msgstr "csom"
+
+#: ../data/functions.xml.in.h:562
+msgid "First element"
+msgstr "Eerste element"
+
+#: ../data/functions.xml.in.h:563
+msgid "Last element"
+msgstr "Laatste element"
+
+#: ../data/functions.xml.in.h:564
+msgid "Initial value"
+msgstr "Beginwaarde"
+
+#: ../data/functions.xml.in.h:565
+msgid "Value variable"
+msgstr "Waarde variabele"
+
+#: ../data/functions.xml.in.h:566
+msgid "Select Vector Elements"
+msgstr "Vectorelementen selecteren"
+
+#: ../data/functions.xml.in.h:567
+msgid "r:select"
+msgstr "selecteer"
+
+#: ../data/functions.xml.in.h:568
+msgid "Condition"
+msgstr "Conditie"
+
+#: ../data/functions.xml.in.h:569
+msgid "Select first match"
+msgstr "Eerste overeenkomst secteren"
+
+#: ../data/functions.xml.in.h:570
+msgid "r:function"
+msgstr "functie"
+
+#: ../data/functions.xml.in.h:571
+msgid "Arguments"
+msgstr "Argumenten"
+
+#: ../data/functions.xml.in.h:572
+msgid "Title"
+msgstr "Titel"
+
+#: ../data/functions.xml.in.h:573
+msgid "r:title"
+msgstr "titel"
+
+#: ../data/functions.xml.in.h:575
+msgid "Display Error"
+msgstr "Weergavefout"
+
+#: ../data/functions.xml.in.h:576
+msgid "r:error"
+msgstr "fout"
+
+#: ../data/functions.xml.in.h:577
+msgid "Message"
+msgstr "Bericht"
+
+#: ../data/functions.xml.in.h:578
+msgid "Display Warning"
+msgstr "Waarschuwing weergeven"
+
+#: ../data/functions.xml.in.h:579
+msgid "r:warning"
+msgstr "waarschuwing"
+
+#: ../data/functions.xml.in.h:580
+msgid "Display Message"
+msgstr "Bericht weergeven"
+
+#: ../data/functions.xml.in.h:581
+msgid "r:message"
+msgstr "bericht"
+
+#: ../data/functions.xml.in.h:582
+msgid "Save as Variable"
+msgstr "Opslaan als variabele"
+
+#: ../data/functions.xml.in.h:583
+msgid "r:save"
+msgstr "opslaan"
+
+#: ../data/functions.xml.in.h:584
+msgid "Category"
+msgstr "Categorie"
+
+#: ../data/functions.xml.in.h:585
+msgid "RPN Stack Register"
+msgstr "RPN-register in stapelgeheugen"
+
+#: ../data/functions.xml.in.h:586
+msgid "r:register"
+msgstr ""
+
+#: ../data/functions.xml.in.h:587
+msgid "Returns the value of a RPN stack register."
+msgstr "Retourneert de waarde in een register van het RPN-stapelgeheugen."
+
+#: ../data/functions.xml.in.h:588
+msgid "RPN Stack Vector"
+msgstr "RPN-vector in stapelgeheugen"
+
+#: ../data/functions.xml.in.h:589
+msgid "r:stack"
+msgstr "stapelgeheugen"
+
+#: ../data/functions.xml.in.h:590
+msgid "Returns the RPN stack as a vector."
+msgstr "Retourneert de inhoud van het RPN-stapelgeheugen als een vector."
+
+#: ../data/functions.xml.in.h:591
+msgid "Is Number"
+msgstr "Is een getal"
+
+#: ../data/functions.xml.in.h:592
+msgid "r:isNumber"
+msgstr "isGetal"
+
+#: ../data/functions.xml.in.h:593
+msgid "Is Real"
+msgstr "Is een reëel getal"
+
+#: ../data/functions.xml.in.h:594
+msgid "r:isReal"
+msgstr "isReëel"
+
+#: ../data/functions.xml.in.h:595
+msgid "Is Rational"
+msgstr "Is een rationaal getal"
+
+#: ../data/functions.xml.in.h:596
+msgid "r:isRational"
+msgstr "isRationaal"
+
+#: ../data/functions.xml.in.h:597
+msgid "Is Integer"
+msgstr "Is een geheel getal"
+
+#: ../data/functions.xml.in.h:598
+msgid "r:isInteger"
+msgstr "isGeheel"
+
+#: ../data/functions.xml.in.h:599
+msgid "Represents Number"
+msgstr "Geeft een getal weer"
+
+#: ../data/functions.xml.in.h:600
+msgid "r:representsNumber"
+msgstr "isGetal"
+
+#: ../data/functions.xml.in.h:601
+msgid "Represents Real"
+msgstr "Geeft een reëel getal weer"
+
+#: ../data/functions.xml.in.h:602
+msgid "r:representsReal"
+msgstr "isReëel"
+
+#: ../data/functions.xml.in.h:603
+msgid "Represents Rational"
+msgstr "Geeft een rationaal getal weer"
+
+#: ../data/functions.xml.in.h:604
+msgid "r:representsRational"
+msgstr "isRationaalgetal"
+
+#: ../data/functions.xml.in.h:605
+msgid "Represents Integer"
+msgstr "Geeft een geheel getal weer"
+
+#: ../data/functions.xml.in.h:606
+msgid "r:representsInteger"
+msgstr "isGeheelgetal"
+
+#: ../data/functions.xml.in.h:607
+msgid "Logical"
+msgstr "Logisch"
+
+#: ../data/functions.xml.in.h:608
+msgid "For...Do"
+msgstr "For...Do"
+
+#: ../data/functions.xml.in.h:609
+msgid "r:for"
+msgstr ""
+
+#: ../data/functions.xml.in.h:610
+msgid "Initial value of counter"
+msgstr "Beginwaarde van teller"
+
+#: ../data/functions.xml.in.h:611
+msgid "Counter variable"
+msgstr "Tellervariabele"
+
+#: ../data/functions.xml.in.h:612
+msgid "For condition"
+msgstr "For-voorwaarde"
+
+#: ../data/functions.xml.in.h:613
+msgid "Counter update function"
+msgstr "Functie voor bijwerken van de teller"
+
+#: ../data/functions.xml.in.h:614
+msgid "Do function"
+msgstr "Do-functie"
+
+#: ../data/functions.xml.in.h:615
+msgid "If...Then...Else"
+msgstr "If...Then...Else"
+
+#: ../data/functions.xml.in.h:616
+msgid "r:if"
+msgstr ""
+
+#: ../data/functions.xml.in.h:617
+msgid "Tests a condition and returns a value depending on the result."
+msgstr ""
+"Test een conditie en retourneert een waarde afhankelijk van het resultaat."
+
+#: ../data/functions.xml.in.h:618
+msgid "Expression if condition is met"
+msgstr "Expressie indien aan conditie wordt voldaan"
+
+#: ../data/functions.xml.in.h:619
+msgid "Expression if condition is NOT met"
+msgstr "Expressie indien NIET aan conditie wordt voldaan"
+
+#: ../data/functions.xml.in.h:620
+msgid "Logical Exclusive OR"
+msgstr "Booleaanse XOR"
+
+#: ../data/functions.xml.in.h:621
+msgid "r:xor"
+msgstr ""
+
+#: ../data/functions.xml.in.h:622
+msgid "Value 1"
+msgstr "Waarde 1"
+
+#: ../data/functions.xml.in.h:623
+msgid "Value 2"
+msgstr "Waarde 2"
+
+#: ../data/functions.xml.in.h:624
+msgid "Bitwise Exclusive OR"
+msgstr "Bitsgewijs XOR"
+
+#: ../data/functions.xml.in.h:625
+msgid "r:bitxor"
+msgstr ""
+
+#: ../data/functions.xml.in.h:626
+msgid "Bitwise Shift"
+msgstr "Bitsgewijs verschuiven (shift)"
+
+#: ../data/functions.xml.in.h:627
+msgid "r:shift"
+msgstr ""
+
+#: ../data/functions.xml.in.h:628
+msgid "Bits"
+msgstr "Bits"
+
+#: ../data/functions.xml.in.h:629
+msgid "Algebra"
+msgstr "Algebra"
+
+#: ../data/functions.xml.in.h:630
+msgid "Sum"
+msgstr "Som"
+
+#: ../data/functions.xml.in.h:631
+msgid "au:&#x3A3;,r:sum"
+msgstr "&#x3A3;,som"
+
+#: ../data/functions.xml.in.h:632
+msgid ""
+"Corresponds to the sum symbol. Adds terms for each x ranging from the lower "
+"to the upper limit."
+msgstr ""
+"Komt overeen met symbool voor optellen. Telt termen op met een waarde tussen "
+"de kleinste en de grootste grenswaarde."
+
+#: ../data/functions.xml.in.h:633
+msgid "Term expression"
+msgstr "Expressie voor term"
+
+#: ../data/functions.xml.in.h:634
+msgid "Lower limit (i)"
+msgstr "Ondergrens (i)"
+
+#: ../data/functions.xml.in.h:635
+msgid "Upper limit (n)"
+msgstr "Bovengrens (n)"
+
+#: ../data/functions.xml.in.h:636
+msgid "Product"
+msgstr "Product"
+
+#: ../data/functions.xml.in.h:637
+msgid "au:&#x3A0;,r:product"
+msgstr ""
+
+#: ../data/functions.xml.in.h:638
+msgid ""
+"Corresponds to the product symbol. Multiplies factors for each x ranging "
+"from the lower to the upper limit."
+msgstr ""
+"Komt overeen met het symbool voor vermenigvuldiging. Vermenigvuldigt met "
+"factoren met een waarde tussen de kleinste en de grootste grenswaarde."
+
+#: ../data/functions.xml.in.h:639
+msgid "Factor expression"
+msgstr "Expressie voor factor"
+
+#: ../data/functions.xml.in.h:640
+msgid "Solve for multiple variables"
+msgstr "Oplossen voor meerdere variabelen"
+
+#: ../data/functions.xml.in.h:641
+msgid "r:multisolve"
+msgstr "meerdereoplossen"
+
+#: ../data/functions.xml.in.h:642
+msgid "Equation vector"
+msgstr "Vergelijkingsvector"
+
+#: ../data/functions.xml.in.h:643
+msgid "Variable vector"
+msgstr "Variabele vector"
+
+#: ../data/functions.xml.in.h:644
+msgid "Solve equation"
+msgstr "Vergelijking oplossen"
+
+#: ../data/functions.xml.in.h:645
+msgid "r:solve"
+msgstr "oplossen"
+
+#: ../data/functions.xml.in.h:646
+msgid "Equation"
+msgstr "Vergelijking"
+
+#: ../data/functions.xml.in.h:647
+msgid "With respect to"
+msgstr "Met betrekking tot"
+
+#: ../data/functions.xml.in.h:648
+msgid "Solve for two variables"
+msgstr "Oplossen voor twee variabelen"
+
+#: ../data/functions.xml.in.h:649
+msgid "r:solve2"
+msgstr "oplossen2"
+
+#: ../data/functions.xml.in.h:650
+msgid ""
+"Solves two equations with two unknown variables. Returns the value of the "
+"first variable."
+msgstr ""
+"Lost twee vergelijkingen op in twee variabelen. Retourneert de waarde van de "
+"eerste variabele."
+
+#: ../data/functions.xml.in.h:651
+msgid "Equation 1"
+msgstr "Vergelijking 1"
+
+#: ../data/functions.xml.in.h:652
+msgid "Equation 2"
+msgstr "Vergelijking 2"
+
+#: ../data/functions.xml.in.h:653
+msgid "Variable 1"
+msgstr "Variabele 1"
+
+#: ../data/functions.xml.in.h:654
+msgid "Variable 2"
+msgstr "Variabele 2"
+
+#: ../data/functions.xml.in.h:655
+msgid "Find Linear Function"
+msgstr "Lineaire functie bepalen"
+
+#: ../data/functions.xml.in.h:656
+msgid "r:linearfunction"
+msgstr "lineairefunctie"
+
+#: ../data/functions.xml.in.h:657
+msgid ""
+"Finds the linear function for the straight line between two distinct points."
+msgstr ""
+"Bepaalt de lineaire functie voor de rechte lijn tussen twee verschillende "
+"punten."
+
+#: ../data/functions.xml.in.h:658
+msgid "x1"
+msgstr ""
+
+#: ../data/functions.xml.in.h:659
+msgid "y1"
+msgstr ""
+
+#: ../data/functions.xml.in.h:660
+msgid "x2"
+msgstr ""
+
+#: ../data/functions.xml.in.h:661
+msgid "y2"
+msgstr ""
+
+#: ../data/functions.xml.in.h:662
+msgid "Calculus"
+msgstr "Calculus"
+
+#: ../data/functions.xml.in.h:663
+#, fuzzy
+msgid "Differentiate"
+msgstr "Percentiel"
+
+#: ../data/functions.xml.in.h:664
+msgid "r:diff"
+msgstr ""
+
+#: ../data/functions.xml.in.h:665
+msgid "Order"
+msgstr "Orde"
+
+#: ../data/functions.xml.in.h:666
+msgid "Integrate"
+msgstr "Integreren"
+
+#: ../data/functions.xml.in.h:667
+msgid "r:integrate"
+msgstr "integreren"
+
+#: ../data/functions.xml.in.h:668
+msgid "Variable of integration"
+msgstr "Integratievariabele"
+
+#: ../data/functions.xml.in.h:669
+msgid "Extreme Values"
+msgstr "Uiterste waarden"
+
+#: ../data/functions.xml.in.h:670
+msgid "r:extremum"
+msgstr "uiterste"
+
+#: ../data/functions.xml.in.h:671
+msgid "Geometry"
+msgstr "Meetkunde"
+
+#: ../data/functions.xml.in.h:672
+msgid "Triangle"
+msgstr "Driehoek"
+
+#: ../data/functions.xml.in.h:673
+msgid "Hypotenuse"
+msgstr "Hypotenusa"
+
+#: ../data/functions.xml.in.h:674
+msgid "r:hypot"
+msgstr ""
+
+#: ../data/functions.xml.in.h:675
+msgid "Side A"
+msgstr "Zijde A"
+
+#: ../data/functions.xml.in.h:676
+msgid "Side B"
+msgstr "Zijde B"
+
+#: ../data/functions.xml.in.h:677
+msgid "Triangle Area"
+msgstr "Oppervlakte van driehoek"
+
+#: ../data/functions.xml.in.h:678
+msgid "r:triangle"
+msgstr "driehoek"
+
+#: ../data/functions.xml.in.h:679
+msgid "Height"
+msgstr "Hoogte"
+
+#: ../data/functions.xml.in.h:680
+msgid "Triangle Perimeter"
+msgstr "Omtrek van driehoek"
+
+#: ../data/functions.xml.in.h:681
+msgid "r:triangle_perimeter"
+msgstr "driehoek_omtrek"
+
+#: ../data/functions.xml.in.h:682
+msgid "Circle"
+msgstr "Cirkel"
+
+#: ../data/functions.xml.in.h:683
+msgid "Circle Area"
+msgstr "Cirkeloppervlak"
+
+#: ../data/functions.xml.in.h:684
+msgid "r:circle"
+msgstr "cirkel"
+
+#: ../data/functions.xml.in.h:685
+msgid "Calculates the area of a circle using the radius"
+msgstr "Berekent met de straal het oppervlak van een cirkel"
+
+#: ../data/functions.xml.in.h:686
+msgid "Radius"
+msgstr "Straal"
+
+#: ../data/functions.xml.in.h:687
+msgid "Circle Circumference"
+msgstr "Cirkelomtrek"
+
+#: ../data/functions.xml.in.h:688
+msgid "r:circumference"
+msgstr "cirkelomtrek"
+
+#: ../data/functions.xml.in.h:689
+msgid "Cylinder"
+msgstr "Cilinder"
+
+#: ../data/functions.xml.in.h:690
+msgid "Cylinder Volume"
+msgstr "Volume van cilinder"
+
+#: ../data/functions.xml.in.h:691
+msgid "r:cylinder"
+msgstr "cilinder"
+
+#: ../data/functions.xml.in.h:692
+msgid "Surface Area of Cylinder"
+msgstr "Oppervlaktegrootte van cilinder"
+
+#: ../data/functions.xml.in.h:693
+msgid "r:cylinder_sa"
+msgstr "cilinder_opp"
+
+#: ../data/functions.xml.in.h:694
+msgid "Cone"
+msgstr "Kegel"
+
+#: ../data/functions.xml.in.h:695
+msgid "Cone Volume"
+msgstr "Volume van kegel"
+
+#: ../data/functions.xml.in.h:696
+msgid "r:cone"
+msgstr "kegel"
+
+#: ../data/functions.xml.in.h:697
+msgid "Surface Area of Cone"
+msgstr "Oppervlaktegrootte van kegel"
+
+#: ../data/functions.xml.in.h:698
+msgid "r:cone_sa"
+msgstr "kegel_opp"
+
+#: ../data/functions.xml.in.h:699
+msgid "Sphere"
+msgstr "Bol"
+
+#: ../data/functions.xml.in.h:700
+msgid "Sphere Volume"
+msgstr "Volume van bol"
+
+#: ../data/functions.xml.in.h:701
+msgid "r:sphere"
+msgstr "bol"
+
+#: ../data/functions.xml.in.h:702
+msgid "Surface Area of Sphere"
+msgstr "Oppervlaktegrootte van bol"
+
+#: ../data/functions.xml.in.h:703
+msgid "r:sphere_sa"
+msgstr "bol_oppervlak"
+
+#: ../data/functions.xml.in.h:704
+msgid "Square Area"
+msgstr "Oppervlakte van vierkant"
+
+#: ../data/functions.xml.in.h:705
+msgid "r:square"
+msgstr "vierkant"
+
+#: ../data/functions.xml.in.h:706
+msgid "Length of side"
+msgstr "Lengte van zijde"
+
+#: ../data/functions.xml.in.h:707
+msgid "Square Perimeter"
+msgstr "Omtrek van vierkant"
+
+#: ../data/functions.xml.in.h:708
+msgid "r:square_perimeter"
+msgstr "vierkant_omtrek"
+
+#: ../data/functions.xml.in.h:709
+msgid "Cube"
+msgstr "Derdemacht"
+
+#: ../data/functions.xml.in.h:710
+msgid "Cube Volume"
+msgstr "Volume kubus"
+
+#: ../data/functions.xml.in.h:711
+msgid "r:cube"
+msgstr "kubus"
+
+#: ../data/functions.xml.in.h:712
+msgid "Surface Area of Cube"
+msgstr "Oppervlaktegrootte van kubus"
+
+#: ../data/functions.xml.in.h:713
+msgid "r:cube_sa"
+msgstr "kubus_opp"
+
+#: ../data/functions.xml.in.h:714
+msgid "Rectangle"
+msgstr "Rechthoek"
+
+#: ../data/functions.xml.in.h:715
+msgid "Rectangle Area"
+msgstr "Oppervlak rechthoek"
+
+#: ../data/functions.xml.in.h:716
+msgid "r:rect"
+msgstr ""
+
+#: ../data/functions.xml.in.h:717
+msgid "Width"
+msgstr "Breedte"
+
+#: ../data/functions.xml.in.h:718
+msgid "Rectangle Perimeter"
+msgstr "Omtrek rechthoek"
+
+#: ../data/functions.xml.in.h:719
+msgid "r:rect_perimeter"
+msgstr "rect_omtrek"
+
+#: ../data/functions.xml.in.h:720
+msgid "Prism"
+msgstr "Prisma"
+
+#: ../data/functions.xml.in.h:721
+msgid "Volume of Rectangular Prism"
+msgstr "Inhoud van rechthoekig prisma"
+
+#: ../data/functions.xml.in.h:722
+msgid "r:rectprism"
+msgstr "rectprisma"
+
+#: ../data/functions.xml.in.h:723
+msgid "Calculates the volume of a prism with rectangular base."
+msgstr "Berekent de inhoud van een prisma met een rechthoekig basisvlak."
+
+#: ../data/functions.xml.in.h:724
+msgid "Surface Area of Rectangular Prism"
+msgstr "Oppervlaktegrootte van rechthoekig prisma"
+
+#: ../data/functions.xml.in.h:725
+msgid "r:rectprism_sa"
+msgstr "rectprisma_opp"
+
+#: ../data/functions.xml.in.h:726
+msgid "Calculates the surface area of a prism with rectangular base."
+msgstr "Berekent de oppervlakte van een prisma met een rechthoekig basisvlak."
+
+#: ../data/functions.xml.in.h:727
+msgid "Volume of Triangular Prism"
+msgstr "Inhoud van driehoekig prisma"
+
+#: ../data/functions.xml.in.h:728
+msgid "r:triangleprism"
+msgstr "driehoekprisma"
+
+#: ../data/functions.xml.in.h:729
+msgid "Calculates the volume of a prism with triangular base."
+msgstr "Berekent de inhoud van een prisma met een driehoekig basisvlak."
+
+#: ../data/functions.xml.in.h:730
+msgid "Pyramid"
+msgstr "Piramide"
+
+#: ../data/functions.xml.in.h:731
+msgid "Pyramid Volume"
+msgstr "Volume van piramide"
+
+#: ../data/functions.xml.in.h:732
+msgid "r:pyramid"
+msgstr "piramide"
+
+#: ../data/functions.xml.in.h:733
+msgid ""
+"Calculates the volume of a 3-dimensional shape standing on a rectangular "
+"base and terminating in a point at the top."
+msgstr ""
+"Berekent de inhoud van een 3-dimensionaal lichaam met een rechthoekig "
+"basisvlak en een top in de vorm van een punt."
+
+#: ../data/functions.xml.in.h:734
+msgid "Length of base"
+msgstr "Lengte van basis"
+
+#: ../data/functions.xml.in.h:735
+msgid "Width of base"
+msgstr "Basislengte"
+
+#: ../data/functions.xml.in.h:736
+msgid "Volume of Regular Tetrahedron"
+msgstr "Inhoud van regelmatig viervlak (tetraëder)"
+
+#: ../data/functions.xml.in.h:737
+msgid "r:tetrahedron"
+msgstr "tetraëder"
+
+#: ../data/functions.xml.in.h:738
+msgid "Surface Area of Regular Tetrahedron"
+msgstr "Oppervlaktegrootte van regelmatig viervlak (tetraëder)"
+
+#: ../data/functions.xml.in.h:739
+msgid "r:tetrahedron_sa"
+msgstr "tetraëder_opp"
+
+#: ../data/functions.xml.in.h:740
+msgid "Height of Regular Tetrahedron"
+msgstr " Hoogte van een regelmatig viervlak (tetraëder)"
+
+#: ../data/functions.xml.in.h:741
+msgid "r:tetrahedron_height"
+msgstr "tetraëder_hoogte"
+
+#: ../data/functions.xml.in.h:742
+msgid "Volume of Square Pyramid"
+msgstr "Inhoud van vierkant prisma"
+
+#: ../data/functions.xml.in.h:743
+msgid "r:sqpyramid"
+msgstr "vierkpiramide"
+
+#: ../data/functions.xml.in.h:744
+msgid "Surface Area of Square Pyramid"
+msgstr "Oppervlaktegrootte van vierkante piramide"
+
+#: ../data/functions.xml.in.h:745
+msgid "r:sqpyramid_sa"
+msgstr "vierkpiramide_opp"
+
+#: ../data/functions.xml.in.h:746
+msgid "Height of Square Pyramid"
+msgstr "Hoogte van een vierkante piramide"
+
+#: ../data/functions.xml.in.h:747
+msgid "r:sqpyramid_height"
+msgstr "midhoogte_vierkpiramide"
+
+#: ../data/functions.xml.in.h:748
+msgid "Parallelogram"
+msgstr "Parallellogram"
+
+#: ../data/functions.xml.in.h:749
+msgid "Parallelogram Area"
+msgstr "Oppervlak van parallellogram"
+
+#: ../data/functions.xml.in.h:750
+msgid "r:parallelogram"
+msgstr "parallellogram"
+
+#: ../data/functions.xml.in.h:751
+msgid ""
+"Calculates the area of a four-sided figure whose opposite sides are both "
+"parallel and equal in length."
+msgstr ""
+"Berekent de oppervlakte van een figuur met vier zijden waarvan de "
+"overstaande zijden zowel evenwijdig als even lang zijn."
+
+#: ../data/functions.xml.in.h:752
+msgid "Parallelogram Perimeter"
+msgstr "Omtrek van parallellogram"
+
+#: ../data/functions.xml.in.h:753
+msgid "r:parallelogram_perimeter"
+msgstr "parallellogram_omtrek"
+
+#: ../data/functions.xml.in.h:754
+msgid ""
+"Calculates the perimeter of a four-sided figure whose opposite sides are "
+"both parallel and equal in length."
+msgstr ""
+"Berekent de omtrek van een figuur met vier zijden waarvan de overstaande "
+"zijden zowel evenwijdig als even lang zijn."
+
+#: ../data/functions.xml.in.h:755
+msgid "Trapezoid"
+msgstr "Trapezium"
+
+#: ../data/functions.xml.in.h:756
+msgid "Trapezoid Area"
+msgstr "Oppervlakte van trapezium"
+
+#: ../data/functions.xml.in.h:757
+msgid "r:trapezoid"
+msgstr "trapezium"
+
+#: ../data/functions.xml.in.h:758
+msgid "Calculates the area of a four-sided figure with two parallel sides."
+msgstr ""
+"Berekent de oppervlakte van een figuur met vier zijden waarvan twee zijden "
+"evenwijdig zijn."
+
+#: ../data/functions.xml.in.h:759
+msgid "Economics"
+msgstr "Economie"
+
+#: ../data/functions.xml.in.h:760
+msgid "Microeconomics"
+msgstr "Microëconomie"
+
+#: ../data/functions.xml.in.h:761
+msgid "Elasticity"
+msgstr "Elasticiteit"
+
+#: ../data/functions.xml.in.h:762
+msgid "r:elasticity"
+msgstr "elasticiteit"
+
+#: ../data/functions.xml.in.h:763
+msgid ""
+"Calculates the demand elasticity. Also works for supply elasticity, income "
+"elasticity, cross-price elasticity, etc. Just replace demand, with supply, "
+"or price with income...&#10;&#10;Ex. elasticity(100-x^2, 3) calculates the "
+"demand elasticity when the price is 3 for the function \"Q = 100 - x^2\" "
+"where x is the default price variable."
+msgstr ""
+"Berekent de vraagelasticiteit. Is ook toepasbaar op aanbodelasticiteit, "
+"inkomenselasticiteit, prijselasticiteit, enzovoorts. Vervang vraag door "
+"aanbod of prijs met inkomen...&#10;%#10; De formule elasticity(100-x^2, 3) "
+"bijvoorbeeld berekent de vraagelasticiteit als de prijs 3 is voor de functie "
+"\"Q = 100 -x^2\". waar x de standaard prijsvariabele is."
+
+#: ../data/functions.xml.in.h:764
+msgid "Demand function"
+msgstr "Vraagfunctie"
+
+#: ../data/functions.xml.in.h:765
+msgid "Price"
+msgstr "Prijs"
+
+#: ../data/functions.xml.in.h:766
+msgid "Price variable"
+msgstr "Prijsvariabele"
+
+#: ../data/functions.xml.in.h:767
+msgid "Consumer Surplus"
+msgstr "Consumentenoverschot"
+
+#: ../data/functions.xml.in.h:768
+msgid "r:csurplus"
+msgstr ""
+
+#: ../data/functions.xml.in.h:769
+msgid "Supply function or price"
+msgstr "Aanbodfunctie of prijs"
+
+#: ../data/functions.xml.in.h:770
+msgid "Quantity variabel"
+msgstr "Hoeveelheidvariabele"
+
+#: ../data/functions.xml.in.h:771
+msgid "Producer Surplus"
+msgstr "Producentenoverschot"
+
+#: ../data/functions.xml.in.h:772
+msgid "r:psurplus"
+msgstr ""
+
+#: ../data/functions.xml.in.h:773
+msgid "Supply function"
+msgstr "Aanbodfunctie"
+
+#: ../data/functions.xml.in.h:774
+msgid "Demand function or price"
+msgstr "Vraagfunctie of prijs"
+
+#: ../data/functions.xml.in.h:775
+msgid "Finance"
+msgstr "Financiën"
+
+#: ../data/functions.xml.in.h:776
+msgid "Sum-of-Years Digits Depreciation"
+msgstr "Afschrijving volgens som der jaren"
+
+#: ../data/functions.xml.in.h:777
+msgid "r:syd"
+msgstr ""
+
+#: ../data/functions.xml.in.h:778
+msgid ""
+"Calculates the sum-of-years digits depreciation for an asset based on its "
+"cost, salvage value, anticipated life, and a particular period. This method "
+"accelerates the rate of the depreciation, so that more depreciation expense "
+"occurs in earlier periods than in later ones. The depreciable cost is the "
+"actual cost minus the salvage value. The useful life is the number of "
+"periods (typically years) over which the asset is depreciated."
+msgstr ""
+"Berekent de afschrijving naar leeftijd voor een actief gebaseerd op de "
+"aanschafkosten, de restwaarde, de verwachte economische levensduur en een "
+"bepaalde periode. Deze methode vermindert de afschrijvingskosten naarmate "
+"het actief ouder word. De afschrijvingskosten zijn dus aan het begin het "
+"hoogst. De af te schrijven waarde wordt berekend uit het verschil tussen "
+"aanschaf- en restwaarde. De economische levensduur is het aantal perioden "
+"(meestal jaren) waarin het actief word afgeschreven."
+
+#: ../data/functions.xml.in.h:779
+msgid "Cost"
+msgstr "Kosten"
+
+#: ../data/functions.xml.in.h:780
+msgid "Salvage value"
+msgstr "Restwaarde"
+
+#: ../data/functions.xml.in.h:781
+msgid "Life"
+msgstr "Levensduur"
+
+#: ../data/functions.xml.in.h:782
+msgid "Period"
+msgstr "Termijn"
+
+#: ../data/functions.xml.in.h:783
+msgid "Straight Line Depreciation"
+msgstr "Gelijkblijvende afschrijving"
+
+#: ../data/functions.xml.in.h:784
+msgid "r:sln"
+msgstr ""
+
+#: ../data/functions.xml.in.h:785
+msgid ""
+"Determines the straight line depreciation of an asset for a single period."
+"&#10;&#10;Cost is the amount you paid for the asset. Salvage is the value of "
+"the asset at the end of the period. Life is the number of periods over which "
+"the asset is depreciated. SLN divides the cost evenly over the life of an "
+"asset."
+msgstr ""
+"Bepaalt de waardevermindering volgens een rechte lijn van een bezit "
+"gedurende een enkele termijn. &#10;&#10;Kosten is het voor het bezit "
+"betaalde bedrag. Restwaarde is de waarde van het bezit aan het einde van de "
+"termijn. Levensduur is het aantal termijnen waarover het bezit wordt "
+"afgeschreven. Door deze vorm van afschrijven worden de kosten gelijkelijk "
+"verdeeld over de gehele afschrijvingsduur."
+
+#: ../data/functions.xml.in.h:786
+msgid "Present Value"
+msgstr "Huidige waarde"
+
+#: ../data/functions.xml.in.h:787
+msgid "r:pv"
+msgstr ""
+
+#: ../data/functions.xml.in.h:788
+msgid ""
+"Returns the present value of an investment.&#10;&#10;If type = 1 then the "
+"payment is made at the beginning of the period, If type = 0 (or omitted) it "
+"is made at the end of each period."
+msgstr ""
+"Berekent de huidige waarde van een investering.&#10;&#10;Indien type = 1 is "
+"de uitbetaling aan het begin van de termijn, indien type = 0 (of weggelaten) "
+"aan het einde van elke termijn."
+
+#: ../data/functions.xml.in.h:789
+msgid "Interest rate"
+msgstr "Rentepercentage"
+
+#: ../data/functions.xml.in.h:790
+msgid "Number of periods"
+msgstr "Aantal termijnen"
+
+#: ../data/functions.xml.in.h:791
+msgid "Payment made each period"
+msgstr "Termijnbetaling"
+
+#: ../data/functions.xml.in.h:792
+msgid "Future value"
+msgstr "Toekomstige waarde"
+
+#: ../data/functions.xml.in.h:793
+msgid "Type"
+msgstr "Type"
+
+#: ../data/functions.xml.in.h:794
+msgid "Nominal Interest Rate"
+msgstr "Nominaal rentepercentage"
+
+#: ../data/functions.xml.in.h:795
+msgid "r:nominal"
+msgstr "nominaal"
+
+#: ../data/functions.xml.in.h:796
+msgid ""
+"Calculates the nominal interest rate from a given effective interest rate "
+"compounded at given intervals."
+msgstr ""
+"Berekent de nominale rente uit de effectieve rente betaald over het "
+"opgegeven tijdsinterval."
+
+#: ../data/functions.xml.in.h:797
+msgid "Effective interest rate"
+msgstr "Effectief rentepercentage"
+
+#: ../data/functions.xml.in.h:798
+msgid "Periods"
+msgstr "Termijnen"
+
+#: ../data/functions.xml.in.h:799
+msgid "Zero Coupon"
+msgstr "Zonder coupons"
+
+#: ../data/functions.xml.in.h:800
+msgid "r:zero_coupon"
+msgstr "geen_coupon"
+
+#: ../data/functions.xml.in.h:801
+msgid "Calculates the value of a zero-coupon (pure discount) bond."
+msgstr "Berekent de waarde van een obligatie zonder coupons."
+
+#: ../data/functions.xml.in.h:802
+msgid "Face value"
+msgstr "Nominale waarde"
+
+#: ../data/functions.xml.in.h:803
+msgid "Treasury Bill Yield"
+msgstr "Opbrengst kortlopende overheidsobligatie zonder coupons"
+
+#: ../data/functions.xml.in.h:804
+msgid "r:tbillyield"
+msgstr ""
+
+#: ../data/functions.xml.in.h:805
+msgid "Returns the yield for a treasury bill."
+msgstr ""
+"Berekent de opbrengst van een kortlopende overheidsobligatie zonder coupons."
+
+#: ../data/functions.xml.in.h:806
+msgid "Settlement date"
+msgstr "Afwikkeldatum"
+
+#: ../data/functions.xml.in.h:807
+msgid "Maturity date"
+msgstr "Vervaldatum"
+
+#: ../data/functions.xml.in.h:808
+msgid "Price per $100 face value"
+msgstr "Prijs per &euro;100 nominale waarde"
+
+#: ../data/functions.xml.in.h:809
+msgid "Treasury Bill Price"
+msgstr "Prijs kortlopende overheidsobligatie zonder coupons"
+
+#: ../data/functions.xml.in.h:810
+msgid "r:tbillprice"
+msgstr ""
+
+#: ../data/functions.xml.in.h:811
+msgid "Returns the price per $100 value for a treasury bill."
+msgstr ""
+"Berekent de prijs per € 100 voor een kortlopende overheidsobligatie zonder "
+"coupons."
+
+#: ../data/functions.xml.in.h:812
+msgid "Discount rate"
+msgstr "Discontopercentage"
+
+#: ../data/functions.xml.in.h:813
+msgid "Treasury Bill Equivalent"
+msgstr "Equivalent van kortlopende overheidsobligatie zonder coupons"
+
+#: ../data/functions.xml.in.h:814
+msgid "r:tbilleq"
+msgstr ""
+
+#: ../data/functions.xml.in.h:815
+msgid "Returns the bond equivalent for a treasury bill."
+msgstr ""
+"Berekent het obligatie-equivalent voor een kortlopende overheidsobligatie "
+"zonder coupons."
+
+#: ../data/functions.xml.in.h:816
+msgid "Interest paid on a given period of an investment (ISPMT)"
+msgstr "Rente betaald over een gegeven investeringstermijn (ISPMT)"
+
+#: ../data/functions.xml.in.h:817
+msgid "r:ispmt"
+msgstr ""
+
+#: ../data/functions.xml.in.h:818
+msgid "Calculates the interest paid on a given period of an investment."
+msgstr "Berekent de betaalde rente over de opgegeven investeringstermijn."
+
+#: ../data/functions.xml.in.h:819
+msgid "Periodic interest rate"
+msgstr "Periodiek rentepercentage"
+
+#: ../data/functions.xml.in.h:820
+msgid "Amortizement period"
+msgstr "Amortisatieperiode"
+
+#: ../data/functions.xml.in.h:821
+msgid "Present value"
+msgstr "Huidige waarde"
+
+#: ../data/functions.xml.in.h:822
+msgid "Payment for a loan"
+msgstr "Betaling voor een lening"
+
+#: ../data/functions.xml.in.h:823
+msgid "r:pmt"
+msgstr ""
+
+#: ../data/functions.xml.in.h:824
+#, fuzzy
+msgid ""
+"Returns the amount of payment for a loan based on a constant interest rate "
+"and constant payments (each payment is equal amount).&#10;&#10;If type = 1 "
+"then the payment is made at the beginning of the period, If type = 0 (or "
+"omitted) it is made at the end of each period.&#10;&#10;Note that the "
+"interest rate here refers to the rate for each period and if you calculate "
+"with an annual rate, each period will be interpreted as a whole year (to get "
+"monthly payments, divide the result by 12)."
+msgstr ""
+"Berekent het te betalen bedrag voor een lening gebaseerd op een vast "
+"rentepercentage en gelijkblijvende betalingen (elke keer moet hetzelfde "
+"bedrag worden betaald).&#10;&#10;Indien type = 1 moet er aan het begin van "
+"de termijn worden betaald, Indien type = 0 (ofweggelaten) aan het einde van "
+"elke termijn."
+
+#: ../data/functions.xml.in.h:825
+msgid "Rate"
+msgstr "Rate"
+
+#: ../data/functions.xml.in.h:826
+msgid "Periods of an investment"
+msgstr "Termijnen van een investering"
+
+#: ../data/functions.xml.in.h:827
+msgid "r:nper"
+msgstr "nterm"
+
+#: ../data/functions.xml.in.h:828
+msgid ""
+"Calculates number of periods of an investment based on periodic constant "
+"payments and a constant interest rate.&#10;&#10;Type defines the due date. 1 "
+"for payment at the beginning of a period and 0 (default) for payment at the "
+"end of a period."
+msgstr ""
+"Berekent het aantal termijnen voor een investering op basis van periodiek "
+"gelijkblijvende betalingen en een gelijkblijvende rente.&#10;&#10;Type "
+"bepaalt de datum waarop moet worden betaald. 1 voor betalen aan het begin "
+"van een termijn en 0 (standaard) voor betalen aan het eind van een termijn."
+
+#: ../data/functions.xml.in.h:829
+msgid "Duration"
+msgstr "Duur"
+
+#: ../data/functions.xml.in.h:830
+msgid "r:duration"
+msgstr "tijdsduur"
+
+#: ../data/functions.xml.in.h:831
+msgid "Calculates the duration of a security."
+msgstr "Berekent de looptijd van een waardepapier."
+
+#: ../data/functions.xml.in.h:833
+#, no-c-format
+msgid "Annual coupon rate (%)"
+msgstr "Jaarlijkse couponopbrengst (%)"
+
+#: ../data/functions.xml.in.h:835
+#, no-c-format
+msgid "Annualized yield (%)"
+msgstr "Teruggerekende opbrengst per jaar (%)"
+
+#. Reccurance
+#: ../data/functions.xml.in.h:837
+msgid "Frequency"
+msgstr "Frequentie"
+
+#: ../data/functions.xml.in.h:838
+msgid "Periods for investment to attain desired value"
+msgstr "Termijnen waarin een investering de gewenste waarde bereikt"
+
+#: ../data/functions.xml.in.h:839
+msgid "r:g_duration"
+msgstr "g_duur"
+
+#: ../data/functions.xml.in.h:840
+msgid ""
+"Returns the number of periods needed for an investment to attain a desired "
+"value."
+msgstr ""
+"Retourneert het aantal benodigde termijnen waarna een investering een "
+"gewenste waarde bereikt."
+
+#: ../data/functions.xml.in.h:841
+msgid "Payment of an annuity going towards principal (PPMT)"
+msgstr "Aflossingsdeel van een termijn van een annuïteit (PPMT)"
+
+#: ../data/functions.xml.in.h:842
+msgid "r:ppmt"
+msgstr ""
+
+#: ../data/functions.xml.in.h:843
+msgid ""
+"Calculates the amount of a payment of an annuity going towards principal."
+"&#10;&#10;Type defines the due date. 1 for payment at the beginning of a "
+"period and 0 (default) for payment at the end of a period."
+msgstr ""
+"Berekent het aflossingsdeel van een periodieke betaling voor een annuïteit."
+"&#10;&#10;Type bepaalt de vervaldatum van de betaling. 1 voor betaling "
+"aanhet het begin van de termijn en 0 (standaard) voor betaling aan het einde "
+"van de termijn."
+
+#: ../data/functions.xml.in.h:844
+msgid "Desired future value"
+msgstr "Gewenste toekomstige waarde"
+
+#: ../data/functions.xml.in.h:845
+msgid "Effective Interest Rate"
+msgstr "Effectief rentepercentage"
+
+#: ../data/functions.xml.in.h:846
+msgid "r:effect"
+msgstr ""
+
+#: ../data/functions.xml.in.h:847
+msgid "Calculates the effective interest for a given nominal rate."
+msgstr "Berekent de effectieve rente bij een gegeven nominale rente."
+
+#: ../data/functions.xml.in.h:848
+msgid "Nominal interest rate"
+msgstr "Nominaal rentepercentage"
+
+#: ../data/functions.xml.in.h:849
+msgid "Future Value"
+msgstr "Toekomstige waarde"
+
+#: ../data/functions.xml.in.h:850
+msgid "r:fv"
+msgstr ""
+
+#: ../data/functions.xml.in.h:851
+msgid ""
+"Computes the future value of an investment. This is based on periodic, "
+"constant payments and a constant interest rate.&#10;&#10;If type = 1 then "
+"the payment is made at the beginning of the period, If type = 0 (or omitted) "
+"it is made at the end of each period."
+msgstr ""
+"Berekent de waarde van een investering. Dit wordt gebaseerd op periodieke "
+"gelijkblijvende betalingen en een gelijkblijvende rente. &#10;&#10;Indien "
+"type = 1 wordt er betaald aanhet het begin van de termijn, als type = 0 (of "
+"weggelaten)wordt er betaald aan het einde van elke termijn."
+
+#: ../data/functions.xml.in.h:852
+msgid "Return on continuously compounded interest"
+msgstr "Opbrengst van continu samengestelde rente"
+
+#: ../data/functions.xml.in.h:853
+msgid "r:continuous"
+msgstr "continu"
+
+#: ../data/functions.xml.in.h:854
+msgid ""
+"Calculates the return on continuously compounded interest, given the "
+"principal, nominal rate and time in years."
+msgstr ""
+"Berekent de opbrengst bij een continu samengestelde rente, gegeven de "
+"hoofdsom, nominale rente en de tijd in jaren."
+
+#: ../data/functions.xml.in.h:855
+msgid "Principal"
+msgstr "Hoofdsom"
+
+#: ../data/functions.xml.in.h:856
+msgid "Compound"
+msgstr "Samengesteld"
+
+#: ../data/functions.xml.in.h:857
+msgid "r:compound"
+msgstr "samenstellen"
+
+#: ../data/functions.xml.in.h:858
+msgid ""
+"Returns the value of an investment, given the principal, nominal interest "
+"rate, compounding frequency and time."
+msgstr ""
+"Berekent de waarde van een investering, gegeven de hoofdsom, nominale rente, "
+"samenstellingsfrequentie en tijdsduur."
+
+#: ../data/functions.xml.in.h:859
+msgid "Periods per year"
+msgstr "Termijnen per jaar"
+
+#: ../data/functions.xml.in.h:860
+msgid "Payment of an annuity going towards interest (IPMT)"
+msgstr "Interestdeel van een termijn van een annuïteit (IPMT)"
+
+#: ../data/functions.xml.in.h:861
+msgid "r:ipmt"
+msgstr ""
+
+#: ../data/functions.xml.in.h:862
+msgid ""
+"Calculates the amount of a payment of an annuity going towards interest.&#10;"
+"&#10;Type defines the due date. 1 for payment at the beginning of a period "
+"and 0 (default) for payment at the end of a period."
+msgstr ""
+"Berekent het interestdeel van een periodieke betaling voor een annuïteit."
+"&#10;&#10;Type bepaalt de vervaldatum van de betaling. 1 voor betaling "
+"aanhet het begin van de termijn en 0 (standaard) voor betaling aan het einde "
+"van de termijn."
+
+#: ../data/functions.xml.in.h:863
+msgid "Interest rate for a fully invested security"
+msgstr ""
+"Interestpercentage voor een waardepapier waarvan de hoofdsom aan het einde "
+"vrijvalt"
+
+#: ../data/functions.xml.in.h:864
+msgid "r:intrate"
+msgstr "renteperc"
+
+#: ../data/functions.xml.in.h:865
+msgid ""
+"Returns the interest rate for a fully invested security.&#10;&#10;Basis is "
+"the type of day counting you want to use: 0: US 30/360 (default), 1: real "
+"days, 2: real days/360, 3: real days/365 or 4: European 30/360."
+msgstr ""
+"Berekent het rentepercentage voor een volledig geïnvesteerd waardepapier. "
+"&#10;&#10;Basis is de dagtelling die u wilt gebruiken: 0: US 30/360 "
+"(standaard), 1: werkelijke dagen, 2: werkelijke dagen/360, 3: werkelijke "
+"dagen/365 of 4: Europees 30/360."
+
+#: ../data/functions.xml.in.h:866
+msgid "Investment"
+msgstr "Investering"
+
+#: ../data/functions.xml.in.h:867
+msgid "Redemption"
+msgstr "Aflossing"
+
+#: ../data/functions.xml.in.h:868
+msgid "Dollar Fraction"
+msgstr "Dollar fractie"
+
+#: ../data/functions.xml.in.h:869
+msgid "r:dollarfr"
+msgstr ""
+
+#: ../data/functions.xml.in.h:870
+msgid ""
+"Converts a decimal dollar price into a dollar price expressed as a fraction."
+msgstr ""
+"Converteert een prijs in decimale dollars naar een prijs in dollars "
+"uitgedrukt als een breuk."
+
+#: ../data/functions.xml.in.h:871
+msgid "Decimal dollar"
+msgstr "Decimale dollar"
+
+#: ../data/functions.xml.in.h:872
+msgid "Denominator of fraction"
+msgstr "Noemer van breuk"
+
+#: ../data/functions.xml.in.h:873
+msgid "Dollar Decimal"
+msgstr "Dollar decimaal"
+
+#: ../data/functions.xml.in.h:874
+msgid "r:dollarde"
+msgstr ""
+
+#: ../data/functions.xml.in.h:875
+msgid ""
+"Converts a dollar price expressed as a fraction into a dollar price "
+"expressed as a decimal number."
+msgstr ""
+"Converteert een prijs in dollars uitgedrukt als een breuk naar een prijs "
+"uitgedrukt in een decimaal getal."
+
+#: ../data/functions.xml.in.h:876
+msgid "Fractional dollar"
+msgstr "Dollar als breuk"
+
+#: ../data/functions.xml.in.h:877
+msgid "Amount received at maturity for a security bond"
+msgstr "Ontvangen bedrag voor een waardepapier op vervaldatum"
+
+#: ../data/functions.xml.in.h:878
+msgid "r:received"
+msgstr "ontvangen"
+
+#: ../data/functions.xml.in.h:879
+msgid ""
+"Returns the amount received at the maturity date for an invested security."
+"&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 "
+"(default), 1: real days, 2: real days/360, 3: real days/365 or 4: European "
+"30/360. The settlement date must be before maturity date."
+msgstr ""
+"Berekent het te ontvangen bedrag na de afloopdatum van een "
+"investeringswaardepapier. &#10;&#10;Basis is de dagtelling die u wilt "
+"gebruiken: 0: US 30/360 (standaard), 1: werkelijke dagen, 2: werkelijke "
+"dagen/360, 3: werkelijke dagen/365 of 4: Europees 30/360. De afwikkeling "
+"moet plaats vinden voor de afloopdatum."
+
+#: ../data/functions.xml.in.h:880
+msgid "Discount rate for a security"
+msgstr "Discontopercentage voor een waardepapier"
+
+#: ../data/functions.xml.in.h:881
+msgid "r:disc"
+msgstr "kort"
+
+#: ../data/functions.xml.in.h:882
+msgid ""
+"Returns the discount rate for a security.&#10;&#10;Basis is the type of day "
+"counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
+"days/360, 3: real days/365 or 4: European 30/360."
+msgstr ""
+"Berekent het rentepercentage voor een waardepapier.&#10;&#10;Basis is de "
+"dagtelling die u wilt gebruiken: 0: US 30/360 (standaard), 1: werkelijke "
+"dagen, 2: werkelijke dagen/360, 3: werkelijke dagen/365 of 4: Europees "
+"30/360."
+
+#: ../data/functions.xml.in.h:883
+msgid "Accrued interest of security paying at maturity"
+msgstr "Totale rente van waardepapier op vervaldatum"
+
+#: ../data/functions.xml.in.h:884
+msgid "r:accrintm"
+msgstr ""
+
+#: ../data/functions.xml.in.h:885
+msgid ""
+"Returns the accrued interest for a security which pays interest at maturity "
+"date.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
+"30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: "
+"European 30/360."
+msgstr ""
+"Berekent de aangegroeide rente voor een waardepapier waarvan de rente wordt "
+"uitgekeerd na de afloopdatum.&#10;&#10;Basis is de dagtelling die u wilt "
+"gebruiken: 0: US 30/360 (standaard), 1: werkelijke dagen, 2: werkelijke "
+"dagen/360, 3: werkelijke dagen/365 of 4: Europees 30/360."
+
+#: ../data/functions.xml.in.h:886
+msgid "Issue date"
+msgstr "Uitgiftedatum"
+
+#: ../data/functions.xml.in.h:887
+msgid "Annual rate of security"
+msgstr "Jaarlijkse rente van waardepapier"
+
+#: ../data/functions.xml.in.h:888
+msgid "Par value"
+msgstr "Nominale waarde"
+
+#: ../data/functions.xml.in.h:889
+msgid "Accrued interest of security with periodic interest payments"
+msgstr "Totale rente van waardepapier met periodieke renteuitkeringen"
+
+#: ../data/functions.xml.in.h:890
+msgid "r:accrint"
+msgstr ""
+
+#: ../data/functions.xml.in.h:891
+msgid ""
+"Returns accrued interest for a security which pays periodic interest.&#10;"
+"&#10;Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. "
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
+msgstr ""
+"Berekent de aangegroeide rente voor een waardepapier met een periodieke "
+"rente-uitkering.&#10;&#10;Mogelijke frequenties zijn 1 - jaarlijks, 2 - "
+"halfjaarlijks of 4 - per kwartaal. Basis is de dagtelling die u wilt "
+"gebruiken: 0: US 30/360 (standaard), 1: werkelijke dagen, 2: werkelijke "
+"dagen/360, 3: werkelijke dagen/365 of 4: Europees 30/360."
+
+#: ../data/functions.xml.in.h:892
+msgid "First interest"
+msgstr "Eerste rente"
+
+#: ../data/functions.xml.in.h:893
+msgid "Number of coupons to be paid"
+msgstr "Aantal te betalen coupons"
+
+#: ../data/functions.xml.in.h:894
+msgid "r:coupnum"
+msgstr ""
+
+#: ../data/functions.xml.in.h:895
+msgid ""
+"Returns the number of coupons to be paid between the settlement and the "
+"maturity.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
+"30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: "
+"European 30/360."
+msgstr ""
+"berekent het aantal te betalen coupons tussen afwikkeling en de afloopdatum. "
+"&#10;&#10;Basis is de dagtelling die u wilt gebruiken: 0: US 30/360 "
+"(standaard), 1: werkelijke dagen, 2: werkelijke dagen/360, 3: werkelijke "
+"dagen/365 of 4: Europees 30/360."
+
+#: ../data/functions.xml.in.h:896
+#, fuzzy
+msgid "Price per $100 face value of a discounted security"
+msgstr "Prijs per &euro;100 nominale waarde van een waardepapier"
+
+#: ../data/functions.xml.in.h:897
+msgid "r:pricedisc"
+msgstr "prijskorting"
+
+#: ../data/functions.xml.in.h:898
+#, fuzzy
+msgid ""
+"Calculates and returns the price per $100 face value of a discounted "
+"security. The security does not pay interest at maturity.&#10;&#10;Basis is "
+"the type of day counting you want to use: 0: US 30/360 (default), 1: real "
+"days, 2: real days/360, 3: real days/365 or 4: European 30/360."
+msgstr ""
+"Berekent en retourneert de prijs per &euro;100 nominaal van een "
+"waardepapier. Er wordt na de vervaldatum geen rente uitgekeerd. &#10;&#10;"
+"Basis is de manier waarop dagen worden geteld: 0: US 30/360 (standaard), 1: "
+"werkelijke dagen, 2: werkelijke dagen/360, 3: werkelijke dagen/365 of 4: "
+"Europees 30/360."
+
+#: ../data/functions.xml.in.h:899
+msgid "Discount"
+msgstr "Korting"
+
+#: ../data/functions.xml.in.h:900
+msgid "Price per $100 face value of a security"
+msgstr "Prijs per &euro;100 nominale waarde van een waardepapier"
+
+#: ../data/functions.xml.in.h:901
+msgid "r:pricemat"
+msgstr "prijsmat"
+
+#: ../data/functions.xml.in.h:902
+msgid ""
+"Calculates and returns the price per $100 face value of a security. The "
+"security pays interest at maturity.&#10;&#10;Basis is the type of day "
+"counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
+"days/360, 3: real days/365 or 4: European 30/360."
+msgstr ""
+"Berekent en retourneert de prijs per &euro;100 nominale waarde van een "
+"waardepapier. De rente wordt uitgekeerd op de vervaldatum.&#10;&#10;Basis is "
+"de manier waarop dagen worden geteld: 0: US 30/360 (standaard), 1: "
+"werkelijke dagen, 2: werkelijke dagen/360, 3: werkelijke dagen/365 of 4: "
+"Europees 30/360."
+
+#: ../data/functions.xml.in.h:903
+msgid "Annual yield"
+msgstr "Opbrengst per jaar"
+
+#: ../data/functions.xml.in.h:904
+msgid "Level-Coupon Bond"
+msgstr "Obligatie met gelijkblijvende coupons"
+
+#: ../data/functions.xml.in.h:905
+msgid "r:level_coupon"
+msgstr "gelijke_coupon"
+
+#: ../data/functions.xml.in.h:906
+msgid "Calculates the value of a level-coupon bond."
+msgstr "Berekent de waarde van een obligatie met gelijkblijvende coupons."
+
+#: ../data/functions.xml.in.h:907
+msgid "Coupon rate"
+msgstr "Couponrente"
+
+#: ../data/functions.xml.in.h:908
+msgid "Coupons per year"
+msgstr "Aantal coupons per jaar"
+
+#: ../data/functions.xml.in.h:909
+msgid "Market interest rate"
+msgstr "Marktrente"
+
+#: ../data/planets.xml.in.h:1
+msgid "Earth"
+msgstr "Aarde"
+
+#: ../data/planets.xml.in.h:2
+msgid "Mars"
+msgstr "Mars"
+
+#. Planet
+#: ../data/planets.xml.in.h:4
+msgid "!planets!Mercury"
+msgstr "Mercurius"
+
+#: ../data/planets.xml.in.h:5
+msgid "Venus"
+msgstr "Venus"
+
+#: ../data/planets.xml.in.h:6
+msgid "Jupiter"
+msgstr "Jupiter"
+
+#: ../data/planets.xml.in.h:7
+msgid "Saturn"
+msgstr "Saturnus"
+
+#: ../data/planets.xml.in.h:8
+msgid "Neptune"
+msgstr "Neptunus"
+
+#: ../data/planets.xml.in.h:9
+msgid "Pluto"
+msgstr "Pluto"
+
+#: ../data/planets.xml.in.h:10
+msgid "Uranus"
+msgstr "Uranus"
+
+#. Unit category
+#: ../data/units.xml.in.h:2
+msgid "!units!Length"
+msgstr "Lengte"
+
+#: ../data/units.xml.in.h:3
+msgid "Meter"
+msgstr "Meter"
+
+#: ../data/units.xml.in.h:4
+msgid "ar:m,meter,p:meters,metre,p:metres"
+msgstr "m,meter,meters"
+
+#: ../data/units.xml.in.h:5
+msgid "Kilometer"
+msgstr "Kilometer"
+
+#: ../data/units.xml.in.h:6
+msgid "Decimeter"
+msgstr "Decimeter"
+
+#: ../data/units.xml.in.h:7
+msgid "Centimeter"
+msgstr "Centimeter"
+
+#: ../data/units.xml.in.h:8
+msgid "Millimeter"
+msgstr "Milimeter"
+
+#: ../data/units.xml.in.h:9
+msgid "Nautical Mile"
+msgstr "Nautische mijl"
+
+#: ../data/units.xml.in.h:10
+msgid "r:nautical_mile,p:nautical_miles"
+msgstr "nautische_mijl,nautische_mijlen"
+
+#: ../data/units.xml.in.h:11
+msgid "&#xC5;ngstr&#xF6;m"
+msgstr "&#xC5;ngstr&#xF6;m"
+
+#: ../data/units.xml.in.h:12
+msgid "aru:&#xC5;,u:&#xE5;ngstr&#xF6;m,angstrom"
+msgstr ""
+
+#: ../data/units.xml.in.h:13
+msgid "U.S. Survey Inch"
+msgstr "U.S. Survey Inch"
+
+#: ../data/units.xml.in.h:14
+msgid "ar:US_in,US_inch,p:US_inches"
+msgstr ""
+
+#: ../data/units.xml.in.h:15
+msgid "Inch"
+msgstr "Inch"
+
+#: ../data/units.xml.in.h:16
+msgid "ar:in,inch,p:inches"
+msgstr ""
+
+#: ../data/units.xml.in.h:17
+msgid "Hand"
+msgstr "Hand"
+
+#: ../data/units.xml.in.h:18
+msgid "r:hand,p:hands"
+msgstr ""
+
+#: ../data/units.xml.in.h:19
+msgid "Foot"
+msgstr "Voet"
+
+#: ../data/units.xml.in.h:20
+msgid "ar:ft,foot,p:feet"
+msgstr ""
+
+#: ../data/units.xml.in.h:21
+msgid "U.S. Survey Foot"
+msgstr "U.S. Survey Foot"
+
+#: ../data/units.xml.in.h:22
+msgid "ar:US_ft,US_foot,p:US_feet"
+msgstr ""
+
+#: ../data/units.xml.in.h:23
+msgid "Link"
+msgstr "Link"
+
+#: ../data/units.xml.in.h:24
+msgid "ar:li,link,p:links"
+msgstr ""
+
+#: ../data/units.xml.in.h:25
+msgid "Yard"
+msgstr "Yard"
+
+#: ../data/units.xml.in.h:26
+msgid "ar:yd,yard,p:yards"
+msgstr ""
+
+#: ../data/units.xml.in.h:27
+msgid "Rod (pole/perch)"
+msgstr "Rod (pole/perch)"
+
+#: ../data/units.xml.in.h:28
+msgid "ar:rd,rod,p:rods"
+msgstr ""
+
+#: ../data/units.xml.in.h:29
+msgid "Fathom"
+msgstr "Vadem"
+
+#: ../data/units.xml.in.h:30
+msgid "r:fathom,p:fathoms"
+msgstr "vadem,vadems"
+
+#: ../data/units.xml.in.h:31
+msgid "Chain"
+msgstr "Chain"
+
+#: ../data/units.xml.in.h:32
+msgid "ar:ch,chain,p:chains"
+msgstr ""
+
+#: ../data/units.xml.in.h:33
+msgid "Furlong"
+msgstr "Furlong"
+
+#: ../data/units.xml.in.h:34
+msgid "ar:fur,furlong,p:furlongs"
+msgstr ""
+
+#: ../data/units.xml.in.h:35
+msgid "Mile"
+msgstr "Mijl"
+
+#: ../data/units.xml.in.h:36
+msgid "ar:mi,mile,p:miles"
+msgstr "mi,mijl,mijlen"
+
+#: ../data/units.xml.in.h:37
+msgid "U.S. Survey Mile"
+msgstr "U.S. Survey Mile"
+
+#: ../data/units.xml.in.h:38
+msgid "ar:US_mi,US_mile,p:US_miles"
+msgstr ""
+
+#: ../data/units.xml.in.h:39
+msgid "Mil (1/1000 in)"
+msgstr "Mil (1/1000 in)"
+
+#: ../data/units.xml.in.h:40
+msgid "r:mil,p:mils"
+msgstr ""
+
+#: ../data/units.xml.in.h:41
+msgid "Astronomical Unit"
+msgstr "Astronomische eenheid"
+
+#: ../data/units.xml.in.h:42
+msgid "ar:AU,astronomical_unit,p:astronomical_units"
+msgstr "AU,astronomische_eenheid,astronomische_eenheden"
+
+#: ../data/units.xml.in.h:43
+msgid "Light Year"
+msgstr "Lichtjaar"
+
+#: ../data/units.xml.in.h:44
+msgid "ar:ly,lightyear,p:lightyears"
+msgstr "lj,lichtjaar,lichtjaren"
+
+#: ../data/units.xml.in.h:45
+msgid "Parsec"
+msgstr "Parsec"
+
+#: ../data/units.xml.in.h:46
+msgid "ar:pc,parsec,p:parsecs"
+msgstr ""
+
+#: ../data/units.xml.in.h:47
+msgid "Pied du roi (French Royal Foot)"
+msgstr "Pied du roi (Franse koninklijke voet)"
+
+#: ../data/units.xml.in.h:48
+msgid "r:pied_du_roi"
+msgstr ""
+
+#: ../data/units.xml.in.h:49
+msgid "Pouce (French Royal Inch)"
+msgstr "Pouce (Franse koninklijke duim)"
+
+#: ../data/units.xml.in.h:50
+msgid "r:pouce"
+msgstr ""
+
+#: ../data/units.xml.in.h:51
+msgid "Ligne"
+msgstr "Ligne (1/40 inch)"
+
+#: ../data/units.xml.in.h:52
+msgid "r:ligne"
+msgstr ""
+
+#: ../data/units.xml.in.h:53
+msgid "Toise"
+msgstr "Toise"
+
+#: ../data/units.xml.in.h:54
+msgid "r:toise"
+msgstr ""
+
+#. Unit category
+#: ../data/units.xml.in.h:56
+msgid "!units!Angle"
+msgstr "Hoek"
+
+#: ../data/units.xml.in.h:57
+msgid "Plane Angle"
+msgstr "Vlakke hoek"
+
+#: ../data/units.xml.in.h:58
+msgid "Meter per Meter"
+msgstr "Meter per meter"
+
+#: ../data/units.xml.in.h:59
+msgid "Radian"
+msgstr "Radiaal"
+
+#: ../data/units.xml.in.h:60
+msgid "ar:rad,radian,p:radians"
+msgstr "rad,radiaal,radialen"
+
+#: ../data/units.xml.in.h:61
+msgid "Degree"
+msgstr "Graad"
+
+#: ../data/units.xml.in.h:62
+msgid "ar:deg,au:&#xB0;,degree,p:degrees"
+msgstr "grd,&#xB0;,graad,graden"
+
+#: ../data/units.xml.in.h:63
+msgid "Gradian (Gon)"
+msgstr "Grad (Gon)"
+
+#: ../data/units.xml.in.h:64
+msgid "ar:gra,gradian,p:gradians,gon,p:gons"
+msgstr "gra,grad,grads,gon,gons"
+
+#: ../data/units.xml.in.h:65
+msgid "Arcminute"
+msgstr "Boogminuut"
+
+#: ../data/units.xml.in.h:66
+msgid "r:arcminute,p:arcminutes"
+msgstr "boogminuut,boogminuten"
+
+#: ../data/units.xml.in.h:67
+msgid "Arcsecond"
+msgstr "Boogseconde"
+
+#: ../data/units.xml.in.h:68
+msgid "r:arcsecond,p:arcseconds"
+msgstr "boogseconde,boogseconden"
+
+#: ../data/units.xml.in.h:69
+msgid "Turn"
+msgstr "Slag"
+
+#: ../data/units.xml.in.h:70
+msgid "r:turn,p:turns"
+msgstr "slag,slagen"
+
+#: ../data/units.xml.in.h:71
+msgid "Solid Angle"
+msgstr "Ruimtehoek"
+
+#: ../data/units.xml.in.h:72
+msgid "Square Meter per Square Meter"
+msgstr "Vierkante meter per vierkante meter"
+
+#: ../data/units.xml.in.h:73
+msgid "Steradian"
+msgstr "Steradiaal"
+
+#: ../data/units.xml.in.h:74
+msgid "ar:sr,steradian,p:steradians"
+msgstr "sr,steradiaal,steradialen"
+
+#: ../data/units.xml.in.h:75
+msgid "Angular Acceleration"
+msgstr "Hoekversnelling"
+
+#: ../data/units.xml.in.h:76
+msgid "Radians per Second Squared"
+msgstr "Radialen per seconde kwadraat"
+
+#: ../data/units.xml.in.h:77
+msgid "Angular Velocity"
+msgstr "Hoeksnelheid"
+
+#: ../data/units.xml.in.h:78
+msgid "Radians per Second"
+msgstr "Radialen per seconde"
+
+#. Unit category
+#: ../data/units.xml.in.h:80
+msgid "!units!Mass"
+msgstr "Massa"
+
+#: ../data/units.xml.in.h:81
+msgid "Gram"
+msgstr "Gram"
+
+#: ../data/units.xml.in.h:82
+msgid "ar:g,gram,p:grams"
+msgstr "g,gram,grammen"
+
+#: ../data/units.xml.in.h:83
+msgid "Kilogram"
+msgstr "Kilogram"
+
+#: ../data/units.xml.in.h:84
+#, fuzzy
+msgid "Hectogram"
+msgstr "Hectogram"
+
+#: ../data/units.xml.in.h:85
+msgid "Metric Ton (Tonne)"
+msgstr "Metrische ton (Ton)"
+
+#: ../data/units.xml.in.h:86
+msgid "ar:t,tonne,p:tonnes,ton,p:tons"
+msgstr "t,ton,tonnen"
+
+#: ../data/units.xml.in.h:87
+msgid "Grain"
+msgstr "Grain"
+
+#: ../data/units.xml.in.h:88
+msgid "ar:gr,grain,p:grains"
+msgstr ""
+
+#: ../data/units.xml.in.h:89
+msgid "Pennyweight"
+msgstr "Pennyweight"
+
+#: ../data/units.xml.in.h:90
+msgid "ar:pwt,pennyweight,p:pennyweights"
+msgstr ""
+
+#: ../data/units.xml.in.h:91
+msgid "Ounce (troy)"
+msgstr "Ounce (troy)"
+
+#: ../data/units.xml.in.h:92
+msgid "ar:oz_t,troy_ounce,p:troy_ounces"
+msgstr ""
+
+#: ../data/units.xml.in.h:93
+msgid "Pound (troy)"
+msgstr "Pound (troy)"
+
+#: ../data/units.xml.in.h:94
+msgid "ar:lb_t,troy_pound,p:troy_pounds"
+msgstr ""
+
+#: ../data/units.xml.in.h:95
+msgid "Dram"
+msgstr "Dram"
+
+#: ../data/units.xml.in.h:96
+msgid "ar:dr,dram,p:drams"
+msgstr ""
+
+#: ../data/units.xml.in.h:97
+msgid "Ounce"
+msgstr "Ounce"
+
+#: ../data/units.xml.in.h:98
+msgid "ar:oz,ounce,p:ounces"
+msgstr ""
+
+#: ../data/units.xml.in.h:99
+msgid "Pound"
+msgstr "Pound"
+
+#: ../data/units.xml.in.h:100
+msgid "ar:lb,pound,p:pounds"
+msgstr ""
+
+#: ../data/units.xml.in.h:101
+msgid "Short Hundredweight"
+msgstr "Short hundredweight"
+
+#: ../data/units.xml.in.h:102
+msgid "ar:cwt,hundredweight,p:hundredweights"
+msgstr ""
+
+#: ../data/units.xml.in.h:103
+msgid "Long Hundredweight"
+msgstr "Long hundredweight"
+
+#: ../data/units.xml.in.h:104
+msgid "ar:l_cwt,long_hundredweight,p:long_hundredweights"
+msgstr ""
+
+#: ../data/units.xml.in.h:105
+msgid "Short Ton"
+msgstr "Short ton"
+
+#: ../data/units.xml.in.h:106
+msgid "ar:s_ton,short_ton,p:short_tons"
+msgstr ""
+
+#: ../data/units.xml.in.h:107
+msgid "Long Ton"
+msgstr "Long ton"
+
+#: ../data/units.xml.in.h:108
+msgid "ar:l_ton,long_ton,p:long_tons"
+msgstr ""
+
+#: ../data/units.xml.in.h:109
+msgid "Stone"
+msgstr "Stone"
+
+#: ../data/units.xml.in.h:110
+msgid "r:stone,p:stones"
+msgstr ""
+
+#: ../data/units.xml.in.h:111
+msgid "Cental"
+msgstr "Cental"
+
+#: ../data/units.xml.in.h:112
+msgid "r:cental,p:centals"
+msgstr ""
+
+#: ../data/units.xml.in.h:113
+msgid "Carat"
+msgstr "Karaat"
+
+#: ../data/units.xml.in.h:114
+msgid "r:carat,p:carats"
+msgstr "karaat"
+
+#: ../data/units.xml.in.h:115
+msgid "Pfund"
+msgstr "Pond"
+
+#: ../data/units.xml.in.h:116
+msgid "r:pfund"
+msgstr ""
+
+#: ../data/units.xml.in.h:117
+msgid "Zentner"
+msgstr "Zentner"
+
+#: ../data/units.xml.in.h:118
+msgid "r:zentner"
+msgstr ""
+
+#: ../data/units.xml.in.h:120
+msgid "Kilogram per Cubic Meter"
+msgstr "Kilogram per kubieke meter"
+
+#: ../data/units.xml.in.h:121
+msgid "Gram per Cubic Decimeter"
+msgstr "Gram per kubieke decimeter"
+
+#: ../data/units.xml.in.h:122
+msgid "Gram per Cubic Centimeter"
+msgstr "Gram per kubieke centimeter"
+
+#: ../data/units.xml.in.h:123
+msgid "Gram per Mole"
+msgstr "Gram per mol"
+
+#: ../data/units.xml.in.h:124
+msgid "Atomic Mass Unit"
+msgstr "Atomaire massa-eenheid"
+
+#: ../data/units.xml.in.h:125
+msgid "ar:u,a:AMU,atomic_mass_unit,p:atomic_mass_units"
+msgstr "AMU,atomaire_massa_eenheid,atomaire_massa_eenheden"
+
+#: ../data/units.xml.in.h:126
+msgid "Mass Fraction"
+msgstr "Massafractie"
+
+#: ../data/units.xml.in.h:127
+msgid "Kilogram per Kilogram"
+msgstr "Kilogram per kilogram"
+
+#: ../data/units.xml.in.h:129
+msgid "Second"
+msgstr "Seconde"
+
+#: ../data/units.xml.in.h:130
+msgid "ar:s,second,p:seconds"
+msgstr "s,seconde,seconden"
+
+#: ../data/units.xml.in.h:131
+msgid "Minute"
+msgstr "Minuut"
+
+#: ../data/units.xml.in.h:132
+msgid "ar:min,minute,p:minutes"
+msgstr "min,minuut,minuten"
+
+#: ../data/units.xml.in.h:133
+msgid "Hour"
+msgstr "Uur"
+
+#: ../data/units.xml.in.h:134
+msgid "ar:h,hour,p:hours"
+msgstr "u,uur,uren"
+
+#: ../data/units.xml.in.h:135
+msgid "Day"
+msgstr "Dag"
+
+#: ../data/units.xml.in.h:136
+msgid "ar:d,day,p:days"
+msgstr "d,dag,dagen"
+
+#: ../data/units.xml.in.h:137
+msgid "Week"
+msgstr "Week"
+
+#: ../data/units.xml.in.h:138
+msgid "r:week,p:weeks"
+msgstr "week,weken"
+
+#: ../data/units.xml.in.h:139
+msgid "Fortnight"
+msgstr "Fortnight"
+
+#: ../data/units.xml.in.h:140
+msgid "r:fortnight,p:fortnights"
+msgstr ""
+
+#: ../data/units.xml.in.h:141
+msgid "Julian Year"
+msgstr "Juliaans jaar"
+
+#: ../data/units.xml.in.h:142
+msgid "r:year,p:years"
+msgstr "jaar,jaren"
+
+#. Unit category
+#: ../data/units.xml.in.h:144
+msgid "!units!Frequency"
+msgstr "Frequentie"
+
+#: ../data/units.xml.in.h:145
+msgid "Hertz"
+msgstr "Hertz"
+
+#: ../data/units.xml.in.h:146
+msgid "ar:Hz,hertz"
+msgstr ""
+
+#: ../data/units.xml.in.h:147
+msgid "Electricity"
+msgstr "Elektriciteit"
+
+#: ../data/units.xml.in.h:148
+msgid "Electric Current"
+msgstr "Elektrische stroom"
+
+#: ../data/units.xml.in.h:149
+msgid "Ampere"
+msgstr "Ampere"
+
+#: ../data/units.xml.in.h:150
+msgid "ar:A,ampere,p:amperes"
+msgstr ""
+
+#: ../data/units.xml.in.h:151
+msgid "Abampere"
+msgstr "Abampere"
+
+#: ../data/units.xml.in.h:152
+msgid "r:abampere,a:abA,a:aA,p:abamperes"
+msgstr ""
+
+#: ../data/units.xml.in.h:153
+msgid "Current Density"
+msgstr "Stroomdichtheid"
+
+#: ../data/units.xml.in.h:154
+msgid "Ampere per Meter Squared"
+msgstr "Ampere per meter kwadraat"
+
+#: ../data/units.xml.in.h:155
+msgid "Electric Charge"
+msgstr "Elektrische lading"
+
+#: ../data/units.xml.in.h:156
+msgid "Second Ampere"
+msgstr "Seconde ampere"
+
+#: ../data/units.xml.in.h:157
+msgid "Coulomb"
+msgstr "Coulomb"
+
+#: ../data/units.xml.in.h:158
+msgid "ar:C,coulomb,p:coulombs"
+msgstr ""
+
+#: ../data/units.xml.in.h:159
+msgid "Abcoulomb"
+msgstr "Abcoulomb"
+
+#: ../data/units.xml.in.h:160
+msgid "r:abcoulomb,p:abcoulombs,a:abC,a:aC"
+msgstr ""
+
+#: ../data/units.xml.in.h:161
+msgid "Statcoloumb (Franklin)"
+msgstr "Statcoloumb (Franklin)"
+
+#: ../data/units.xml.in.h:162
+msgid "r:statcoulomb,p:statcoulombs,a:statC,franklin,a:Fr,p:franklins"
+msgstr ""
+
+#: ../data/units.xml.in.h:163
+msgid "Electric Charge Density"
+msgstr "Elektrische ladingsdichtheid"
+
+#: ../data/units.xml.in.h:164
+msgid "Coulomb per Cubic Meter"
+msgstr "Coulomb per kubieke meter"
+
+#: ../data/units.xml.in.h:165
+msgid "Electric Flux Density"
+msgstr "Elektrische fluxdichtheid"
+
+#: ../data/units.xml.in.h:166
+msgid "Coulomb per Meter Squared"
+msgstr "Coulomb per vierkante meter"
+
+#: ../data/units.xml.in.h:167
+msgid "Electric Potential"
+msgstr "Elektrische potentiaal"
+
+#: ../data/units.xml.in.h:168
+msgid "Watt per Ampere"
+msgstr "Watt per ampere"
+
+#: ../data/units.xml.in.h:169
+msgid "Volt"
+msgstr "Volt"
+
+#: ../data/units.xml.in.h:170
+msgid "ar:V,volt,p:volts"
+msgstr ""
+
+#: ../data/units.xml.in.h:171
+msgid "Statvolt"
+msgstr "Statvolt"
+
+#: ../data/units.xml.in.h:172
+msgid "r:statvolt,p:statvolts,a:statV"
+msgstr ""
+
+#: ../data/units.xml.in.h:173
+msgid "Abvolt"
+msgstr "Abvolt"
+
+#: ../data/units.xml.in.h:174
+msgid "r:abvolt,p:abvolts,a:abV"
+msgstr ""
+
+#: ../data/units.xml.in.h:175
+msgid "Capacitance"
+msgstr "Capaciteit"
+
+#: ../data/units.xml.in.h:176
+msgid "Coulomb per Volt"
+msgstr "Coulomb per volt"
+
+#: ../data/units.xml.in.h:177
+msgid "Farad"
+msgstr "Farad"
+
+#: ../data/units.xml.in.h:178
+msgid "ar:F,farad,p:farads"
+msgstr ""
+
+#: ../data/units.xml.in.h:179
+msgid "Electric Resistance"
+msgstr "Elektrische weerstand"
+
+#: ../data/units.xml.in.h:180
+msgid "Volt per Ampere"
+msgstr "Volt per ampere"
+
+#: ../data/units.xml.in.h:181
+msgid "Ohm"
+msgstr "Ohm"
+
+#: ../data/units.xml.in.h:182
+msgid "au:&#x3A9;,r:ohm,p:ohms"
+msgstr "&#x3A9;,ohm"
+
+#: ../data/units.xml.in.h:183
+msgid "Abohm"
+msgstr "Abohm"
+
+#: ../data/units.xml.in.h:184
+msgid "r:abohm,p:abohms,au:ab&#x3A9;"
+msgstr "abohm, abohms,ab&#x3A9;"
+
+#: ../data/units.xml.in.h:185
+msgid "Statohm"
+msgstr "Statohm"
+
+#: ../data/units.xml.in.h:186
+msgid "r:statohm,p:statohms,au:stat&#x3A9;"
+msgstr ""
+
+#: ../data/units.xml.in.h:187
+msgid "Electric Conductance"
+msgstr "Elektrisch geleidingsvermogen"
+
+#: ../data/units.xml.in.h:188
+msgid "Ampere per Volt"
+msgstr "Ampere per volt"
+
+#: ../data/units.xml.in.h:189
+msgid "Siemens"
+msgstr "Siemens"
+
+#: ../data/units.xml.in.h:190
+msgid "ar:S,siemens"
+msgstr ""
+
+#: ../data/units.xml.in.h:191
+msgid "Electric Field Strength"
+msgstr "Elektrische veldsterkte"
+
+#: ../data/units.xml.in.h:192
+msgid "Volt per Meter"
+msgstr "Volt per meter"
+
+#: ../data/units.xml.in.h:193
+msgid "Permittivity"
+msgstr "Permittiviteit"
+
+#: ../data/units.xml.in.h:194
+msgid "Farad per Meter"
+msgstr "Farad per meter"
+
+#: ../data/units.xml.in.h:195
+msgid "Inductance"
+msgstr "Zelfinductie"
+
+#: ../data/units.xml.in.h:196
+msgid "Weber per Ampere"
+msgstr "Weber per ampere"
+
+#: ../data/units.xml.in.h:197
+msgid "Henry"
+msgstr "Henry"
+
+#: ../data/units.xml.in.h:198
+msgid "ar:H,henry,p:henrys"
+msgstr ""
+
+#: ../data/units.xml.in.h:199
+msgid "Permeability"
+msgstr "Permeabiliteit"
+
+#: ../data/units.xml.in.h:200
+msgid "Henry per Meter"
+msgstr "Henry per meter"
+
+#: ../data/units.xml.in.h:201
+msgid "Temperature"
+msgstr "Temperatuur"
+
+#: ../data/units.xml.in.h:202
+msgid "Kelvin"
+msgstr "Kelvin"
+
+#: ../data/units.xml.in.h:203
+msgid "ar:K,kelvin,p:kelvins"
+msgstr ""
+
+#: ../data/units.xml.in.h:204
+msgid "Degree Celsius"
+msgstr "Graden Celsius"
+
+#: ../data/units.xml.in.h:205
+#, fuzzy
+msgid "ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius"
+msgstr "grd,&#xB0;,graad,graden"
+
+#: ../data/units.xml.in.h:206
+msgid "Degree Rankine"
+msgstr "Graden Rankine"
+
+#: ../data/units.xml.in.h:207
+msgid "ar:oR,au:&#xB0;R,r:rankine"
+msgstr ""
+
+#: ../data/units.xml.in.h:208
+msgid "Degree Fahrenheit"
+msgstr "Graden Fahrenheit"
+
+#: ../data/units.xml.in.h:209
+msgid "ar:oF,au:&#xB0;F,au:&#x2109;,r:fahrenheit"
+msgstr ""
+
+#: ../data/units.xml.in.h:210
+msgid "Substance"
+msgstr "Stofhoeveelheid"
+
+#: ../data/units.xml.in.h:211
+msgid "Mole"
+msgstr "Mol"
+
+#: ../data/units.xml.in.h:212
+msgid "ar:mol,mole,p:moles"
+msgstr "mol,mol,molen"
+
+#: ../data/units.xml.in.h:213
+msgid "Einstein"
+msgstr "Einstein"
+
+#: ../data/units.xml.in.h:214
+msgid "r:einstein,p:einsteins"
+msgstr ""
+
+#: ../data/units.xml.in.h:215
+msgid "Substance Concentration"
+msgstr "Concentratie van stof"
+
+#: ../data/units.xml.in.h:216
+msgid "Mole per Cubic Meter"
+msgstr "Mol per kubieke meter"
+
+#: ../data/units.xml.in.h:217
+msgid "Catalytic Activity"
+msgstr "Katalitische activiteit"
+
+#: ../data/units.xml.in.h:218
+msgid "Reciprocal Seconds Mole"
+msgstr "Omgekeerde seconden mol"
+
+#: ../data/units.xml.in.h:219
+msgid "Katal"
+msgstr "Katal"
+
+#: ../data/units.xml.in.h:220
+msgid "ar:kat,katal,p:katals"
+msgstr ""
+
+#: ../data/units.xml.in.h:221
+msgid "Catalytic Concentration"
+msgstr "Catalitische concentratie"
+
+#: ../data/units.xml.in.h:222
+msgid "Katal per Cubic Meter"
+msgstr "Katal per kubieke meter"
+
+#: ../data/units.xml.in.h:223
+msgid "Light"
+msgstr "Licht"
+
+#: ../data/units.xml.in.h:224
+msgid "Luminous Intensity"
+msgstr "Lichtsterkte"
+
+#: ../data/units.xml.in.h:225
+msgid "Candela"
+msgstr "Candela"
+
+#: ../data/units.xml.in.h:226
+msgid "ar:cd,candela,p:candelas"
+msgstr ""
+
+#: ../data/units.xml.in.h:227
+msgid "Luminance"
+msgstr "Luminantie"
+
+#: ../data/units.xml.in.h:228
+msgid "Candela per Meter Squared"
+msgstr "Candela per vierkante meter"
+
+#: ../data/units.xml.in.h:229
+msgid "Stilb"
+msgstr "Stilb"
+
+#: ../data/units.xml.in.h:230
+msgid "ar:sb,stilb,p:stilbs"
+msgstr ""
+
+#: ../data/units.xml.in.h:231
+msgid "Luminous Flux"
+msgstr "Lichtstroom"
+
+#: ../data/units.xml.in.h:232
+msgid "Candela Steradian"
+msgstr "Candela-steradiaal"
+
+#: ../data/units.xml.in.h:233
+msgid "Lumen"
+msgstr "Lumen"
+
+#: ../data/units.xml.in.h:234
+msgid "ar:lm,lumen,p:lumens"
+msgstr "lm,lumen"
+
+#: ../data/units.xml.in.h:235
+msgid "Illuminance"
+msgstr "Verlichtingssterkte"
+
+#: ../data/units.xml.in.h:236
+msgid "Lumen per Meter Squared"
+msgstr "Lumen per vierkante meter"
+
+#: ../data/units.xml.in.h:237
+msgid "Lumen per Foot Squared"
+msgstr "Lumen per vierkante voet"
+
+#: ../data/units.xml.in.h:238
+msgid "Lux"
+msgstr "Lux"
+
+#: ../data/units.xml.in.h:239
+msgid "ar:lx,lux"
+msgstr ""
+
+#: ../data/units.xml.in.h:240
+msgid "Foot-Candle"
+msgstr "Foot-Candle"
+
+#: ../data/units.xml.in.h:241
+msgid "ar:fc,footcandle,p:footcandles"
+msgstr ""
+
+#: ../data/units.xml.in.h:242
+msgid "Phot"
+msgstr "Phot"
+
+#: ../data/units.xml.in.h:243
+msgid "ar:ph,phot,p:phots"
+msgstr ""
+
+#: ../data/units.xml.in.h:244
+msgid "Radiant Intensity"
+msgstr "Stralingsintensiteit"
+
+#: ../data/units.xml.in.h:245
+msgid "Watt per Steradian"
+msgstr "Watt per steradiaal"
+
+#: ../data/units.xml.in.h:246
+msgid "Irradiance"
+msgstr "Irradiantie"
+
+#: ../data/units.xml.in.h:247
+msgid "Watt per Meter Squared"
+msgstr "Watt per meter kwadraat"
+
+#: ../data/units.xml.in.h:248
+msgid "Einstein per Meter Squared per Second"
+msgstr "Einstein per vierkante meter per seconde"
+
+#: ../data/units.xml.in.h:249
+msgid "Microeinstein per Meter Squared per Second"
+msgstr "Micro-einstein per vierkante meter per seconde"
+
+#: ../data/units.xml.in.h:250
+msgid "Radiance"
+msgstr "Radiantie"
+
+#: ../data/units.xml.in.h:251
+msgid "Watt per Square Meter Steradian"
+msgstr "Watt per vierkante meter per steradiaal"
+
+#: ../data/units.xml.in.h:252
+msgid "Area"
+msgstr "Oppervlak"
+
+#: ../data/units.xml.in.h:253
+msgid "Square Meter"
+msgstr "Vierkante meter"
+
+#: ../data/units.xml.in.h:254
+msgid "Square Kilometer"
+msgstr "Vierkante kilometer"
+
+#: ../data/units.xml.in.h:255
+msgid "Are"
+msgstr "Are"
+
+#: ../data/units.xml.in.h:256
+msgid "ar:a,are,p:ares"
+msgstr ""
+
+#: ../data/units.xml.in.h:257
+msgid "Hectare"
+msgstr "Hectare"
+
+#: ../data/units.xml.in.h:258
+msgid "Barn"
+msgstr "Barn"
+
+#: ../data/units.xml.in.h:259
+msgid "ar:b,barn,p:barns"
+msgstr ""
+
+#: ../data/units.xml.in.h:260
+msgid "Rood"
+msgstr "Rood"
+
+#: ../data/units.xml.in.h:261
+msgid "r:rood,p:roods"
+msgstr ""
+
+#: ../data/units.xml.in.h:262
+msgid "Acre"
+msgstr "Acre"
+
+#: ../data/units.xml.in.h:263
+msgid "r:acre,p:acres"
+msgstr ""
+
+#: ../data/units.xml.in.h:264
+msgid "Section"
+msgstr "Sectie"
+
+#: ../data/units.xml.in.h:265
+msgid "r:section,p:sections"
+msgstr "sectie,secties"
+
+#: ../data/units.xml.in.h:266
+msgid "Township"
+msgstr "Township"
+
+#: ../data/units.xml.in.h:267
+msgid "r:township,p:townships"
+msgstr ""
+
+#: ../data/units.xml.in.h:268
+msgid "Square Foot"
+msgstr "Vierkante voet"
+
+#: ../data/units.xml.in.h:269
+msgid "Square Inch"
+msgstr "Vierkante inch"
+
+#: ../data/units.xml.in.h:270
+msgid "Square Mile"
+msgstr "Vierkante mijl"
+
+#: ../data/units.xml.in.h:271
+msgid "Volume"
+msgstr "Volume"
+
+#: ../data/units.xml.in.h:272
+msgid "Cubic Meter"
+msgstr "Kubieke meter"
+
+#: ../data/units.xml.in.h:273
+msgid "Liter"
+msgstr "Liter"
+
+#: ../data/units.xml.in.h:274
+msgid "ar:L,a:l,liter,p:liters,litre,p:litres"
+msgstr "L,l,liter,liters,liter,liters"
+
+#: ../data/units.xml.in.h:275
+msgid "Milliliter"
+msgstr "Mililiter"
+
+#: ../data/units.xml.in.h:276
+msgid "Centiliter"
+msgstr "Centiliter"
+
+#: ../data/units.xml.in.h:277
+msgid "Deciliter"
+msgstr "Deciliter"
+
+#: ../data/units.xml.in.h:278
+msgid "Cubic Inch"
+msgstr "Kubieke inch"
+
+#: ../data/units.xml.in.h:279
+msgid "Fuel Economy"
+msgstr "Brandstofgebruik"
+
+#: ../data/units.xml.in.h:280
+msgid "Liter per Kilometer"
+msgstr "Liter per kilometer"
+
+#: ../data/units.xml.in.h:281
+msgid "Kilometer per Liter"
+msgstr "Kilometer per liter"
+
+#: ../data/units.xml.in.h:282
+msgid "Miles per Gallon"
+msgstr "Miles per Gallon"
+
+#: ../data/units.xml.in.h:283
+msgid "a-cr:mpg"
+msgstr ""
+
+#: ../data/units.xml.in.h:284
+msgid "Cooking"
+msgstr "Koken"
+
+#: ../data/units.xml.in.h:285
+msgid "Teaspoon"
+msgstr "Theelepel"
+
+#: ../data/units.xml.in.h:286
+msgid "r:teaspoon,p:teaspoons"
+msgstr "theelepel,theelepels"
+
+#: ../data/units.xml.in.h:287
+msgid "Dessertspoon"
+msgstr "Dessertlepel"
+
+#: ../data/units.xml.in.h:288
+msgid "r:dessertspoon,p:dessertspoons"
+msgstr "dessertlepel,dessertlepels"
+
+#: ../data/units.xml.in.h:289
+msgid "Tablespoon"
+msgstr "Eetlepel"
+
+#: ../data/units.xml.in.h:290
+msgid "r:tablespoon,p:tablespoons"
+msgstr "eetlepel,eetlepels"
+
+#: ../data/units.xml.in.h:291
+msgid "Cup"
+msgstr "Kop"
+
+#: ../data/units.xml.in.h:292
+msgid "r:cup,p:cups"
+msgstr "kop,p:koppen"
+
+#: ../data/units.xml.in.h:293
+msgid "Imperial Capacity"
+msgstr "Imperial Capacity"
+
+#: ../data/units.xml.in.h:294
+msgid "Imperial Fluid Ounce"
+msgstr "Imperial Fluid Ounce"
+
+#: ../data/units.xml.in.h:295
+msgid "ar:UK_fl_oz,imperial_fluid_ounce,p:imperial_fluid_ounces"
+msgstr ""
+
+#: ../data/units.xml.in.h:296
+msgid "Imperial Gill"
+msgstr "Imperial Gill"
+
+#: ../data/units.xml.in.h:297
+msgid "ar:UK_gi,imperial_gill,p:imperial_gills"
+msgstr ""
+
+#: ../data/units.xml.in.h:298
+msgid "Imperial Pint"
+msgstr "Imperial Pint"
+
+#: ../data/units.xml.in.h:299
+msgid "ar:UK_pt,imperial_pint,p:imperial_pints"
+msgstr ""
+
+#: ../data/units.xml.in.h:300
+msgid "Imperial Quart"
+msgstr "Imperial Quart"
+
+#: ../data/units.xml.in.h:301
+msgid "ar:UK_qt,imperial_quart,p:imperial_quarts"
+msgstr ""
+
+#: ../data/units.xml.in.h:302
+msgid "Imperial Gallon"
+msgstr "Imperial Gallon"
+
+#: ../data/units.xml.in.h:303
+msgid "ar:UK_gal,imperial_gallon,p:imperial_gallons"
+msgstr ""
+
+#: ../data/units.xml.in.h:304
+msgid "Imperial Minim"
+msgstr "Imperial Minim"
+
+#: ../data/units.xml.in.h:305
+msgid "r:imperial_minim,p:imperial_minims"
+msgstr ""
+
+#: ../data/units.xml.in.h:306
+msgid "Imperial Fluid Scuple"
+msgstr "Imperial Fluid Scuple"
+
+#: ../data/units.xml.in.h:307
+msgid "r:imperial_fluid_scuple,p:imperial_fluid_scuples"
+msgstr ""
+
+#: ../data/units.xml.in.h:308
+msgid "Imperial Fluid Drachm"
+msgstr "Imperial Fluid Drachm"
+
+#: ../data/units.xml.in.h:309
+msgid "ar:UK_fl_dr,imperial_fluid_drachm,p:imperial_fluid_drachms"
+msgstr ""
+
+#: ../data/units.xml.in.h:310
+msgid "Imperial Bushel"
+msgstr "Imperial Bushel"
+
+#: ../data/units.xml.in.h:311
+msgid "ar:UK_bu,imperial_bushel,p:imperial_bushels"
+msgstr ""
+
+#: ../data/units.xml.in.h:312
+msgid "U.S. Capacity"
+msgstr "U.S. Capacity"
+
+#: ../data/units.xml.in.h:313
+msgid "U.S. Fluid Ounce"
+msgstr "U.S. Fluid Ounce"
+
+#: ../data/units.xml.in.h:314
+msgid "ar:fl_oz,fluid_ounce,p:fluid_ounces"
+msgstr ""
+
+#: ../data/units.xml.in.h:315
+msgid "U.S. Gill"
+msgstr "U.S. Gill"
+
+#: ../data/units.xml.in.h:316
+msgid "ar:gi,gill,p:gills"
+msgstr ""
+
+#: ../data/units.xml.in.h:317
+msgid "U.S. Liquid Pints"
+msgstr "U.S. Liquid Pints"
+
+#: ../data/units.xml.in.h:318
+msgid "ar:liq_pt,liquid_pint,p:liquid_pints"
+msgstr ""
+
+#: ../data/units.xml.in.h:319
+msgid "U.S. Liquid Quarts"
+msgstr "U.S. Liquid Quarts"
+
+#: ../data/units.xml.in.h:320
+msgid "ar:liq_qt,liquid_quart,p:liquid_quarts"
+msgstr ""
+
+#: ../data/units.xml.in.h:321
+msgid "U.S. Minim"
+msgstr "U.S. Minim"
+
+#: ../data/units.xml.in.h:322
+msgid "r:minim,p:minims"
+msgstr ""
+
+#: ../data/units.xml.in.h:323
+msgid "U.S. Fluid Drachm"
+msgstr "U.S. Fluid Drachm"
+
+#: ../data/units.xml.in.h:324
+msgid "ar:fl_dr,fluid_drachm,p:fluid_drachms"
+msgstr ""
+
+#: ../data/units.xml.in.h:325
+msgid "U.S. Dry Pint"
+msgstr "U.S. Dry Pint"
+
+#: ../data/units.xml.in.h:326
+msgid "ar:dry_pt,dry_pint,p:dry_pints"
+msgstr ""
+
+#: ../data/units.xml.in.h:327
+msgid "U.S. Dry Quart"
+msgstr "U.S. Dry Quart"
+
+#: ../data/units.xml.in.h:328
+msgid "ar:dry_qt,dry_quart,p:dry_quarts"
+msgstr ""
+
+#: ../data/units.xml.in.h:329
+msgid "U.S. Peck"
+msgstr "U.S. Peck"
+
+#: ../data/units.xml.in.h:330
+msgid "ar:pk,peck,p:pecks"
+msgstr ""
+
+#: ../data/units.xml.in.h:331
+msgid "U.S. Bushel"
+msgstr "U.S. Bushel"
+
+#: ../data/units.xml.in.h:332
+msgid "ar:bu,bushel,p:bushels"
+msgstr ""
+
+#: ../data/units.xml.in.h:333
+msgid "U.S. Gallon"
+msgstr "U.S. Gallon"
+
+#: ../data/units.xml.in.h:334
+msgid "ar:gal,gallon,p:gallons"
+msgstr ""
+
+#: ../data/units.xml.in.h:335
+#, fuzzy
+msgid "U.S. Barrel (oil)"
+msgstr "U.S. Barrell (olie)"
+
+#: ../data/units.xml.in.h:336
+#, fuzzy
+msgid "ar:bbl,barrel,p:barrels"
+msgstr "bar"
+
+#: ../data/units.xml.in.h:337
+msgid "Specific Volume"
+msgstr "Soortelijk volume"
+
+#: ../data/units.xml.in.h:338
+msgid "Cubic Meter per Kilogram"
+msgstr "Kubieke meter per kilogram"
+
+#: ../data/units.xml.in.h:339
+msgid "Speed"
+msgstr "Snelheid"
+
+#: ../data/units.xml.in.h:340
+msgid "Meter per Second"
+msgstr "Meter per seconde"
+
+#: ../data/units.xml.in.h:341
+msgid "Kilometer per Hour"
+msgstr "Kilometer per uur"
+
+#: ../data/units.xml.in.h:342
+msgid "Nautical Mile per Hour"
+msgstr "Nautische mijl per uur"
+
+#: ../data/units.xml.in.h:343
+msgid "Knot"
+msgstr "Knoop"
+
+#: ../data/units.xml.in.h:344
+msgid "r:knot,p:knots"
+msgstr "knoop,knopen"
+
+#: ../data/units.xml.in.h:345
+msgid "Miles per Hour"
+msgstr "Miles per Hour"
+
+#: ../data/units.xml.in.h:346
+msgid "a-cr:mph"
+msgstr ""
+
+#: ../data/units.xml.in.h:347
+msgid "Acceleration"
+msgstr "Versnelling"
+
+#: ../data/units.xml.in.h:348
+msgid "Meter per Second Squared"
+msgstr "Meter per seconde kwadraat"
+
+#: ../data/units.xml.in.h:349
+msgid "Galileo"
+msgstr "Galileo"
+
+#: ../data/units.xml.in.h:350
+msgid "ar:Gal,galileo,p:galileos"
+msgstr ""
+
+#: ../data/units.xml.in.h:351
+msgid "Gee"
+msgstr "Gee"
+
+#: ../data/units.xml.in.h:352
+msgid "r:gee,p:gees"
+msgstr ""
+
+#: ../data/units.xml.in.h:353
+msgid "Magnetism"
+msgstr "Magnetisme"
+
+#: ../data/units.xml.in.h:354
+msgid "Wave Number"
+msgstr "Golfgetal"
+
+#: ../data/units.xml.in.h:355
+msgid "Reciprocal Meter"
+msgstr "Omgekeerde meter"
+
+#: ../data/units.xml.in.h:356
+msgid "Magnetic Field Strength"
+msgstr "Magnetische veldsterkte"
+
+#: ../data/units.xml.in.h:357
+msgid "Ampere per Meter"
+msgstr "Ampere per meter"
+
+#: ../data/units.xml.in.h:358
+msgid "Oersted"
+msgstr "Oersted"
+
+#: ../data/units.xml.in.h:359
+msgid "ar:Oe,oersted,p:oersteds"
+msgstr "Oe,oersted,oersteds"
+
+#: ../data/units.xml.in.h:360
+msgid "Magnetic Flux"
+msgstr "Magnetische flux"
+
+#: ../data/units.xml.in.h:361
+msgid "Volt Seconds"
+msgstr "Volt seconden"
+
+#: ../data/units.xml.in.h:362
+msgid "Weber"
+msgstr "Weber"
+
+#: ../data/units.xml.in.h:363
+msgid "ar:Wb,weber,p:webers"
+msgstr ""
+
+#: ../data/units.xml.in.h:364
+msgid "Maxwell"
+msgstr "Maxwell"
+
+#: ../data/units.xml.in.h:365
+msgid "ar:Mx,maxwell,p:maxwells"
+msgstr ""
+
+#: ../data/units.xml.in.h:366
+msgid "Magnetic Flux Density"
+msgstr "Magnetische fluxdichtheid"
+
+#: ../data/units.xml.in.h:367
+msgid "Weber per Meter Squared"
+msgstr "Weber per meter kwadraat"
+
+#: ../data/units.xml.in.h:368
+msgid "Tesla"
+msgstr "Tesla"
+
+#: ../data/units.xml.in.h:369
+msgid "ar:T,tesla,p:teslas"
+msgstr ""
+
+#: ../data/units.xml.in.h:370
+msgid "Gauss"
+msgstr "Gauss"
+
+#: ../data/units.xml.in.h:371
+msgid "r:gauss"
+msgstr ""
+
+#: ../data/units.xml.in.h:372
+msgid "Force"
+msgstr "Kracht"
+
+#: ../data/units.xml.in.h:373
+msgid "Meter Kilogram per Second Squared"
+msgstr "Meter kilogram per seconde kwadraat"
+
+#: ../data/units.xml.in.h:374
+msgid "Newton"
+msgstr "Newton"
+
+#: ../data/units.xml.in.h:375
+msgid "ar:N,newton,p:newtons"
+msgstr ""
+
+#: ../data/units.xml.in.h:376
+msgid "Dyne"
+msgstr "Dyne"
+
+#: ../data/units.xml.in.h:377
+msgid "ar:dyn,dyne,p:dynes"
+msgstr ""
+
+#: ../data/units.xml.in.h:378
+msgid "Pound-force"
+msgstr "Pound-force"
+
+#: ../data/units.xml.in.h:379
+msgid "ar:lbf,pound_force"
+msgstr ""
+
+#: ../data/units.xml.in.h:380
+msgid "Pound Foot per Second Squared"
+msgstr "Pound Foot per seconde kwadraat"
+
+#: ../data/units.xml.in.h:381
+msgid "Poundal"
+msgstr "Poundal"
+
+#: ../data/units.xml.in.h:382
+msgid "r:poundal,p:poundals,a:pdl"
+msgstr ""
+
+#: ../data/units.xml.in.h:383
+msgid "Pond (Gram-Force)"
+msgstr "Pond (gram-kracht)"
+
+#: ../data/units.xml.in.h:384
+msgid "r:pond,p:ponds,a:gf"
+msgstr "pond,ponden,gf"
+
+#: ../data/units.xml.in.h:385
+msgid "Kilopond (Kilogram-Force)"
+msgstr "Kilopond (Kilogram-kracht)"
+
+#: ../data/units.xml.in.h:386
+msgid "Moment of Force"
+msgstr "Krachtmoment"
+
+#: ../data/units.xml.in.h:387
+msgid "Newton Meter"
+msgstr "Newtonmeter"
+
+#: ../data/units.xml.in.h:388
+msgid "Pressure"
+msgstr "Druk"
+
+#: ../data/units.xml.in.h:389
+msgid "Newton per Meter Squared"
+msgstr "Newton per vierkante meter"
+
+#: ../data/units.xml.in.h:390
+msgid "Pound-force per Square Inch"
+msgstr "Pound-force per inch kwadraat"
+
+#: ../data/units.xml.in.h:391
+msgid "Pascal"
+msgstr "Pascal"
+
+#: ../data/units.xml.in.h:392
+msgid "ar:Pa,pascal,p:pascals"
+msgstr ""
+
+#: ../data/units.xml.in.h:393
+msgid "Pound-force per Square Inch (psi)"
+msgstr "Pound-force per inch kwadraat (psi)"
+
+#: ../data/units.xml.in.h:394
+msgid "a-cr:psi"
+msgstr ""
+
+#: ../data/units.xml.in.h:395
+msgid "Bar"
+msgstr "Bar"
+
+#: ../data/units.xml.in.h:396
+msgid "r:bar,p:bars"
+msgstr "bar"
+
+#: ../data/units.xml.in.h:397
+msgid "Atmosphere"
+msgstr "Atmosfeer"
+
+#: ../data/units.xml.in.h:398
+msgid "ar:atm,atmosphere,p:atmospheres"
+msgstr "atm,atmosfeer,atmosfeer"
+
+#: ../data/units.xml.in.h:399
+msgid "Torr"
+msgstr "Torr"
+
+#: ../data/units.xml.in.h:400
+msgid "r:torr,p:torrs"
+msgstr ""
+
+#: ../data/units.xml.in.h:401
+msgid "Millimeter of Mercury"
+msgstr "Milimeter kwik"
+
+#: ../data/units.xml.in.h:402
+msgid "ar:mmHg"
+msgstr ""
+
+#: ../data/units.xml.in.h:403
+msgid "Inch of Mercury"
+msgstr "Inches kwik"
+
+#: ../data/units.xml.in.h:404
+msgid "ar:inHg"
+msgstr ""
+
+#: ../data/units.xml.in.h:405
+msgid "Dynamic Viscosity"
+msgstr "Dynamische viscositeit"
+
+#: ../data/units.xml.in.h:406
+msgid "Pascal Second"
+msgstr "Pascal seconde"
+
+#: ../data/units.xml.in.h:407
+msgid "Poise"
+msgstr "Poise"
+
+#: ../data/units.xml.in.h:408
+msgid "ar:P,poise,p:poises"
+msgstr ""
+
+#: ../data/units.xml.in.h:409
+msgid "Kinematic Viscosity"
+msgstr "Kinematische viscositeit"
+
+#: ../data/units.xml.in.h:410
+msgid "Square Meter per Second"
+msgstr "Vierkante meter per seconde"
+
+#: ../data/units.xml.in.h:411
+msgid "Stokes"
+msgstr "Stokes"
+
+#: ../data/units.xml.in.h:412
+msgid "ar:St,stokes"
+msgstr ""
+
+#: ../data/units.xml.in.h:413
+msgid "Surface Tension"
+msgstr "Oppervlaktespanning"
+
+#: ../data/units.xml.in.h:414
+msgid "Newton per Meter"
+msgstr "Newton per meter"
+
+#: ../data/units.xml.in.h:415
+msgid "Energy"
+msgstr "Energie"
+
+#: ../data/units.xml.in.h:416
+msgid "Joule"
+msgstr "Joule"
+
+#: ../data/units.xml.in.h:417
+msgid "ar:J,joule,p:joules"
+msgstr ""
+
+#: ../data/units.xml.in.h:418
+msgid "Watt Hour"
+msgstr "Wattuur"
+
+#: ../data/units.xml.in.h:419
+msgid "Kilowatt Hour"
+msgstr "Kilowattuur"
+
+#: ../data/units.xml.in.h:420
+msgid "Calorie (international table)"
+msgstr "Calorie (internationale tabel)"
+
+#: ../data/units.xml.in.h:421
+msgid "ais:cal_IT,ar:cal,c:calorie,cp:calories"
+msgstr "cal_IT,cal,calorie,calorieën"
+
+#: ../data/units.xml.in.h:422
+msgid "Calorie (capital C)"
+msgstr "Calorie (hoofdletter C)"
+
+#: ../data/units.xml.in.h:423
+msgid "cr:Calorie,cp:Calories"
+msgstr "Calorie,Calorieën"
+
+#: ../data/units.xml.in.h:424
+msgid "Calorie (thermochemical)"
+msgstr "Calorie (thermochemisch)"
+
+#: ../data/units.xml.in.h:425
+msgid "ars:cal_th"
+msgstr "cal_th"
+
+#: ../data/units.xml.in.h:426
+msgid "Gram of TNT"
+msgstr "Gram TNT"
+
+#: ../data/units.xml.in.h:427
+msgid "a-cr:gTNT,gramTNT"
+msgstr ""
+
+#: ../data/units.xml.in.h:428
+msgid "Ton of TNT"
+msgstr "Ton TNT"
+
+#: ../data/units.xml.in.h:429
+msgid "a-cr:tTNT,tonTNT"
+msgstr ""
+
+#: ../data/units.xml.in.h:430
+msgid "Calorie (15 degrees Celsius)"
+msgstr "Calorie (15 graden Celcius)"
+
+#: ../data/units.xml.in.h:431
+msgid "ars:cal_fifteen"
+msgstr "cal_fifteen"
+
+#: ../data/units.xml.in.h:432
+msgid "Calorie (mean)"
+msgstr "Calorie (gemiddeld)"
+
+#: ../data/units.xml.in.h:433
+msgid "ars:cal_mean"
+msgstr "cal_gemiddeld"
+
+#: ../data/units.xml.in.h:434
+msgid "British Thermal Unit (IT)"
+msgstr "British Thermal Unit (IT)"
+
+#: ../data/units.xml.in.h:435
+msgid "ar:Btu"
+msgstr ""
+
+#: ../data/units.xml.in.h:436
+msgid "Electron Volt"
+msgstr "Elektronvolt"
+
+#: ../data/units.xml.in.h:437
+msgid "ar:eV,electron_volt,p:electron_volts"
+msgstr ""
+
+#: ../data/units.xml.in.h:438
+msgid "Erg"
+msgstr "Erg"
+
+#: ../data/units.xml.in.h:439
+msgid "r:erg,p:ergs"
+msgstr ""
+
+#: ../data/units.xml.in.h:440
+msgid "Foe"
+msgstr "Foe"
+
+#: ../data/units.xml.in.h:441
+msgid "r:foe,p:foes"
+msgstr ""
+
+#: ../data/units.xml.in.h:442
+msgid "Foot-Pound Force"
+msgstr "Foot-Pound Force"
+
+#: ../data/units.xml.in.h:443
+#, fuzzy
+msgid "Rydberg"
+msgstr "Rydberg constante"
+
+#: ../data/units.xml.in.h:444
+msgid "ar:Ry,s:rydberg_unit"
+msgstr ""
+
+#: ../data/units.xml.in.h:445
+msgid "Hartree"
+msgstr ""
+
+#: ../data/units.xml.in.h:446
+msgid "ar:Ha,as:E_h,hartree"
+msgstr ""
+
+#: ../data/units.xml.in.h:447
+msgid "Specific Energy"
+msgstr "Soortelijke energie"
+
+#: ../data/units.xml.in.h:448
+msgid "Joule per Kilogram"
+msgstr "Joule per kilogram"
+
+#: ../data/units.xml.in.h:449
+msgid "Power"
+msgstr "Vermogen"
+
+#: ../data/units.xml.in.h:450
+msgid "Joule per Second"
+msgstr "Joule per seconde"
+
+#: ../data/units.xml.in.h:451
+msgid "Watt"
+msgstr "Watt"
+
+#: ../data/units.xml.in.h:452
+msgid "ar:W,watt,p:watts"
+msgstr ""
+
+#: ../data/units.xml.in.h:453
+msgid "Horse Power"
+msgstr "Paardekracht (Engels)"
+
+#: ../data/units.xml.in.h:454
+msgid "ar:hp,horsepower,p:horsepowers"
+msgstr ""
+
+#: ../data/units.xml.in.h:455
+msgid "Pferdest&#xE4;rke"
+msgstr "Paardekracht (metrisch)"
+
+#: ../data/units.xml.in.h:456
+msgid "ar:PS,u:pferdest&#xE4;rke"
+msgstr "pk,paardekracht,paardekrachten"
+
+#: ../data/units.xml.in.h:457
+msgid "Entropy"
+msgstr "Entropie"
+
+#: ../data/units.xml.in.h:458
+msgid "Joule per Kelvin"
+msgstr "Joule per Kelvin"
+
+#: ../data/units.xml.in.h:459
+msgid "Specific Entropy"
+msgstr "Soortelijke entropie"
+
+#: ../data/units.xml.in.h:460
+msgid "Joule per Kilogram Kelvin"
+msgstr "Joule per kilogram Kelvin"
+
+#: ../data/units.xml.in.h:461
+msgid "Thermal Conductivity"
+msgstr "Thermisch geleidingsvermogen"
+
+#: ../data/units.xml.in.h:462
+msgid "Watt per Meter Kelvin"
+msgstr "Watt per meter Kelvin"
+
+#: ../data/units.xml.in.h:463
+msgid "Energy Density"
+msgstr "Energiedichtheid"
+
+#: ../data/units.xml.in.h:464
+msgid "Joule per Cubic Meter"
+msgstr "Joule per kubieke meter"
+
+#: ../data/units.xml.in.h:465
+msgid "Molar Energy"
+msgstr "Molaire energie"
+
+#: ../data/units.xml.in.h:466
+msgid "Joule per Mole"
+msgstr "Joule per mol"
+
+#: ../data/units.xml.in.h:467
+msgid "Molar Entropy"
+msgstr "Molaire entropy"
+
+#: ../data/units.xml.in.h:468
+msgid "Joule per Mole Kelvin"
+msgstr "Joule per mol Kelvin"
+
+#: ../data/units.xml.in.h:469
+msgid "Radioactivity"
+msgstr "Radioactiviteit"
+
+#: ../data/units.xml.in.h:470
+msgid "Becquerel"
+msgstr "Becquerel"
+
+#: ../data/units.xml.in.h:471
+msgid "ar:Bq,becquerel,p:becquerels"
+msgstr ""
+
+#: ../data/units.xml.in.h:472
+msgid "Curie"
+msgstr "Curie"
+
+#: ../data/units.xml.in.h:473
+msgid "ar:Ci,curie,p:curies"
+msgstr ""
+
+#: ../data/units.xml.in.h:474
+msgid "Absorbed Dose"
+msgstr "Absorptiedosis"
+
+#: ../data/units.xml.in.h:475
+msgid "Gray"
+msgstr "Gray"
+
+#: ../data/units.xml.in.h:476
+msgid "ar:Gy,gray,p:grays"
+msgstr ""
+
+#: ../data/units.xml.in.h:477
+msgid "Rad"
+msgstr "Rad"
+
+#: ../data/units.xml.in.h:478
+msgid "r:rad_radioactivity"
+msgstr ""
+
+#: ../data/units.xml.in.h:479
+msgid "Dose Equivalent"
+msgstr "Dosisequivalent"
+
+#: ../data/units.xml.in.h:480
+msgid "Sievert"
+msgstr "Sievert"
+
+#: ../data/units.xml.in.h:481
+msgid "ar:Sv,sievert,p:sieverts"
+msgstr ""
+
+#: ../data/units.xml.in.h:482
+msgid "Rem"
+msgstr "Rem"
+
+#: ../data/units.xml.in.h:483
+msgid "r:rem_radioactivity"
+msgstr ""
+
+#: ../data/units.xml.in.h:484
+msgid "Exposure"
+msgstr "Belichting"
+
+#: ../data/units.xml.in.h:485
+msgid "Coulomb per Kilogram"
+msgstr "Coulomb per kilogram"
+
+#: ../data/units.xml.in.h:486
+msgid "Roentgen"
+msgstr "Roentgen"
+
+#: ../data/units.xml.in.h:487
+msgid "ar:R,roentgen,p:roentgens"
+msgstr ""
+
+#: ../data/units.xml.in.h:488
+msgid "Absorbed Dose Rate"
+msgstr "Absorptiesnelheid"
+
+#: ../data/units.xml.in.h:489
+msgid "Gray per Second"
+msgstr "Gray per seconde"
+
+#: ../data/units.xml.in.h:490
+msgid "Ratio"
+msgstr "Verhouding"
+
+#: ../data/units.xml.in.h:491
+msgid "Neper"
+msgstr "Neper"
+
+#: ../data/units.xml.in.h:492
+msgid "ar:Np,neper,p:nepers"
+msgstr ""
+
+#: ../data/units.xml.in.h:493
+msgid "Bel"
+msgstr "Bel"
+
+#: ../data/units.xml.in.h:494
+msgid "ar:B,bel,p:bels"
+msgstr ""
+
+#: ../data/units.xml.in.h:495
+msgid "Decibel"
+msgstr "Decibel"
+
+#: ../data/units.xml.in.h:496
+msgid "Information"
+msgstr "Informatie"
+
+#: ../data/units.xml.in.h:497
+msgid "Bit"
+msgstr "Bit"
+
+#: ../data/units.xml.in.h:498
+msgid "r:bit,p:bits"
+msgstr ""
+
+#: ../data/units.xml.in.h:499
+msgid "Byte (8-bit)"
+msgstr "Byte (8-bit)"
+
+#: ../data/units.xml.in.h:500
+msgid "r:byte,p:bytes,octet,p:octets"
+msgstr ""
+
+#: ../data/units.xml.in.h:501
+msgid "Nibble"
+msgstr "Nibble"
+
+#: ../data/units.xml.in.h:502
+msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets"
+msgstr ""
+
+#: ../data/units.xml.in.h:503
+msgid "Tribble"
+msgstr "Tribble"
+
+#: ../data/units.xml.in.h:504
+msgid "r:tribble,p:tribbles"
+msgstr ""
+
+#: ../data/units.xml.in.h:505
+msgid "Word (16-bit)"
+msgstr "Word (16-bit)"
+
+#: ../data/units.xml.in.h:506
+msgid "r:word,p:words"
+msgstr "woord,woorden"
+
+#: ../data/units.xml.in.h:507
+msgid "Kilobyte"
+msgstr "Kilobyte"
+
+#: ../data/units.xml.in.h:508
+msgid "Kibibyte"
+msgstr "Kibibyte"
+
+#: ../data/units.xml.in.h:509
+msgid "Mebibyte"
+msgstr "Mebibyte"
+
+#: ../data/units.xml.in.h:510
+msgid "Gibibyte"
+msgstr "Gibibyte"
+
+#: ../data/units.xml.in.h:511
+msgid "Megabyte"
+msgstr "Megabyte"
+
+#: ../data/units.xml.in.h:512
+msgid "Gigabyte"
+msgstr "Gigabyte"
+
+#: ../data/units.xml.in.h:513
+msgid "Terabyte"
+msgstr "Terabyte"
+
+#: ../data/units.xml.in.h:514
+msgid "Kilobit"
+msgstr "Kilobit"
+
+#: ../data/units.xml.in.h:515
+msgid "Kibibit"
+msgstr "Kibibit"
+
+#: ../data/units.xml.in.h:516
+msgid "Mebibit"
+msgstr "Mebibit"
+
+#: ../data/units.xml.in.h:517
+msgid "Gibibit"
+msgstr "Gibibit"
+
+#: ../data/units.xml.in.h:518
+msgid "Megabit"
+msgstr "Megabit"
+
+#: ../data/units.xml.in.h:519
+msgid "Gigabit"
+msgstr "Gigabit"
+
+#: ../data/units.xml.in.h:520
+msgid "Terabit"
+msgstr "Terabit"
+
+#: ../data/units.xml.in.h:521
+msgid "Typography"
+msgstr "Typografie"
+
+#: ../data/units.xml.in.h:522
+msgid "PostScript Point"
+msgstr "PostScript Point"
+
+#: ../data/units.xml.in.h:523
+msgid "ar:pt,a:pts,point,p:points"
+msgstr ""
+
+#: ../data/units.xml.in.h:524
+msgid "PostScript Pica"
+msgstr "PostScript Pica"
+
+#: ../data/units.xml.in.h:525
+msgid "r:pica,p:picas"
+msgstr ""
+
+#: ../data/units.xml.in.h:526
+msgid "ATA Pica"
+msgstr "ATA Pica"
+
+#: ../data/units.xml.in.h:527
+msgid "r:ata_pica,p:ata_picas"
+msgstr ""
+
+#: ../data/units.xml.in.h:528
+msgid "ATA Point"
+msgstr "ATA Point"
+
+#: ../data/units.xml.in.h:529
+msgid "r:ata_point,a:ata_pt,p:ata_points"
+msgstr ""
+
+#: ../data/units.xml.in.h:530
+msgid "New Didot Point"
+msgstr "Nieuwe Didot Point"
+
+#: ../data/units.xml.in.h:531
+msgid "r:new_didot"
+msgstr "nieuwe_didot"
+
+#: ../data/units.xml.in.h:532
+msgid "Didot Point"
+msgstr "Didot Point"
+
+#: ../data/units.xml.in.h:533
+msgid "r:didot,a:dd"
+msgstr ""
+
+#: ../data/units.xml.in.h:534
+msgid "Cicero"
+msgstr "Cicero"
+
+#: ../data/units.xml.in.h:535
+msgid "r:cicero"
+msgstr ""
+
+#: ../data/variables.xml.in.h:1
+msgid "Small Numbers"
+msgstr "Kleine getallen"
+
+#: ../data/variables.xml.in.h:2
+msgid "Per Mille"
+msgstr "Per mille"
+
+#: ../data/variables.xml.in.h:3
+msgid "r:permille,au:&#x2030;"
+msgstr ""
+
+#: ../data/variables.xml.in.h:4
+msgid "Per Myriad"
+msgstr "Per myriad"
+
+#: ../data/variables.xml.in.h:5
+msgid "r:permyriad,au:&#x2031;"
+msgstr ""
+
+#: ../data/variables.xml.in.h:6
+msgid "Percent"
+msgstr "Procent"
+
+#: ../data/variables.xml.in.h:8
+#, fuzzy, no-c-format
+msgid "a:%,r:percent"
+msgstr "percentiel"
+
+#: ../data/variables.xml.in.h:9
+msgid "Large Numbers"
+msgstr "Grote getallen"
+
+#: ../data/variables.xml.in.h:10
+msgid "Googolplex"
+msgstr "Googolplex"
+
+#: ../data/variables.xml.in.h:11
+msgid "r:googolplex"
+msgstr ""
+
+#: ../data/variables.xml.in.h:12
+msgid "Googol"
+msgstr "Googol"
+
+#: ../data/variables.xml.in.h:13
+msgid "r:googol"
+msgstr ""
+
+#: ../data/variables.xml.in.h:14
+msgid "Centillion"
+msgstr "Quinquagintiljard"
+
+#: ../data/variables.xml.in.h:15
+msgid "-r:centillion"
+msgstr "quinquagintiljard"
+
+#: ../data/variables.xml.in.h:16
+msgid "Vigintillion"
+msgstr "Deciljard"
+
+#: ../data/variables.xml.in.h:17
+msgid "-r:vigintillion"
+msgstr "deciljard"
+
+#: ../data/variables.xml.in.h:18
+msgid "Novemdecillion"
+msgstr "deciljoen"
+
+#: ../data/variables.xml.in.h:19
+msgid "-r:novemdecillion"
+msgstr "deciljoen"
+
+#: ../data/variables.xml.in.h:20
+msgid "Octodecillion"
+msgstr "Noniljard"
+
+#: ../data/variables.xml.in.h:21
+msgid "-r:octodecillion"
+msgstr "noniljard"
+
+#: ../data/variables.xml.in.h:22
+msgid "Septendecillion"
+msgstr "Noniljoen"
+
+#: ../data/variables.xml.in.h:23
+msgid "-r:septendecillion"
+msgstr "noniljoen"
+
+#: ../data/variables.xml.in.h:24
+msgid "Sexdecillion"
+msgstr "Octiljard"
+
+#: ../data/variables.xml.in.h:25
+msgid "-r:sexdecillion"
+msgstr "octiljard"
+
+#: ../data/variables.xml.in.h:26
+msgid "Quindecillion"
+msgstr "Octiljoen"
+
+#: ../data/variables.xml.in.h:27
+msgid "-r:quindecillion"
+msgstr "octiljoen"
+
+#: ../data/variables.xml.in.h:28
+msgid "Quattuordecillion"
+msgstr "Septiljard"
+
+#: ../data/variables.xml.in.h:29
+msgid "-r:quattuordecillion"
+msgstr "septiljard"
+
+#: ../data/variables.xml.in.h:30
+msgid "Tredecillion"
+msgstr "Septiljoen"
+
+#: ../data/variables.xml.in.h:31
+msgid "-r:tredecillion"
+msgstr "septiljoen"
+
+#: ../data/variables.xml.in.h:32
+msgid "Duodecillion"
+msgstr "Sextiljard"
+
+#: ../data/variables.xml.in.h:33
+msgid "-r:duodecillion"
+msgstr "sextiljard"
+
+#: ../data/variables.xml.in.h:34
+msgid "Undecillion"
+msgstr "Sextiljoen"
+
+#: ../data/variables.xml.in.h:35
+msgid "-r:undecillion"
+msgstr "sextiljoen"
+
+#: ../data/variables.xml.in.h:36
+msgid "Decillion"
+msgstr "Quintiljard"
+
+#: ../data/variables.xml.in.h:37
+msgid "-r:decillion"
+msgstr "quintiljard"
+
+#: ../data/variables.xml.in.h:38
+msgid "Nonillion"
+msgstr "Quintiljoen"
+
+#: ../data/variables.xml.in.h:39
+msgid "-r:nonillion"
+msgstr "quintiljoen"
+
+#: ../data/variables.xml.in.h:40
+msgid "Octillion"
+msgstr "Quadriljard"
+
+#: ../data/variables.xml.in.h:41
+msgid "-r:octillion"
+msgstr "quadriljard"
+
+#: ../data/variables.xml.in.h:42
+msgid "Septillion"
+msgstr "Quadriljoen"
+
+#: ../data/variables.xml.in.h:43
+msgid "-r:septillion"
+msgstr "quadriljoen"
+
+#: ../data/variables.xml.in.h:44
+msgid "Sextillion"
+msgstr "Triljard"
+
+#: ../data/variables.xml.in.h:45
+msgid "-r:sextillion"
+msgstr "triljard"
+
+#: ../data/variables.xml.in.h:46
+msgid "Quintillion"
+msgstr "Triljoen"
+
+#: ../data/variables.xml.in.h:47
+msgid "-r:quintillion"
+msgstr "triljoen"
+
+#: ../data/variables.xml.in.h:48
+msgid "Quadrillion"
+msgstr "Biljard"
+
+#: ../data/variables.xml.in.h:49
+msgid "-r:quadrillion"
+msgstr "biljard"
+
+#: ../data/variables.xml.in.h:50
+msgid "Trillion"
+msgstr "Biljoen"
+
+#: ../data/variables.xml.in.h:51
+msgid "-r:trillion"
+msgstr "biljoen"
+
+#: ../data/variables.xml.in.h:52
+msgid "Billion"
+msgstr "Miljard"
+
+#: ../data/variables.xml.in.h:53
+msgid "-r:billion"
+msgstr "miljard"
+
+#: ../data/variables.xml.in.h:54
+msgid "Million"
+msgstr "Miljoen"
+
+#: ../data/variables.xml.in.h:55
+msgid "-r:million"
+msgstr "miljoen"
+
+#: ../data/variables.xml.in.h:56
+msgid "Thousand"
+msgstr "Duizend"
+
+#: ../data/variables.xml.in.h:57
+msgid "-r:thousand"
+msgstr "duizend"
+
+#: ../data/variables.xml.in.h:58
+msgid "Hundred"
+msgstr "Honderd"
+
+#: ../data/variables.xml.in.h:59
+msgid "-r:hundred"
+msgstr "honderd"
+
+#: ../data/variables.xml.in.h:60
+msgid "Physical Constants"
+msgstr "Natuurkundige constanten"
+
+#: ../data/variables.xml.in.h:61
+msgid "Universal Constants"
+msgstr "Universele constanten"
+
+#: ../data/variables.xml.in.h:62
+msgid "Speed of Light in Vacuum"
+msgstr "Lichtsnelheid in vacuüm"
+
+#: ../data/variables.xml.in.h:63
+msgid "ar:c,speed_of_light"
+msgstr "c,licht_snelheid"
+
+#: ../data/variables.xml.in.h:64
+msgid "Planck Time"
+msgstr "Plancktijd"
+
+#: ../data/variables.xml.in.h:65
+msgid "r:planck_time,ais:t_P"
+msgstr "planck_tijd,t_P"
+
+#: ../data/variables.xml.in.h:66
+msgid "Planck Temperature"
+msgstr "Plancktemperatuur"
+
+#: ../data/variables.xml.in.h:67
+msgid "r:planck_temperature,ais:T_P"
+msgstr "planck_temperatuur,T_P"
+
+#: ../data/variables.xml.in.h:68
+msgid "Planck Mass"
+msgstr "Planckmassa"
+
+#: ../data/variables.xml.in.h:69
+msgid "r:planck_mass,ais:m_P"
+msgstr "planck_massa,m_P"
+
+#: ../data/variables.xml.in.h:70
+msgid "Planck Length"
+msgstr "Plancklengte"
+
+#: ../data/variables.xml.in.h:71
+msgid "r:planck_length,ais:l_P"
+msgstr "planck_lengte,l_P"
+
+#: ../data/variables.xml.in.h:72
+msgid "Planck Constant"
+msgstr "Planck constante"
+
+#: ../data/variables.xml.in.h:73
+msgid "r:planck"
+msgstr ""
+
+#: ../data/variables.xml.in.h:74
+msgid "Planck Constant over 2 pi"
+msgstr "Planck constante gedeeld door 2 pi"
+
+#: ../data/variables.xml.in.h:75
+msgid "r:planck2pi"
+msgstr ""
+
+#: ../data/variables.xml.in.h:76
+msgid "Newtonian Constant of Gravitation"
+msgstr "Newtons zwaartekrachtconstante"
+
+#: ../data/variables.xml.in.h:77
+msgid "r:newtonian_constant,a:G"
+msgstr "newton_constante,G"
+
+#: ../data/variables.xml.in.h:78
+msgid "Electric Constant (Permittivity of Free Space)"
+msgstr "Elektrische constante (permittiviteit vrije ruimte)"
+
+#: ../data/variables.xml.in.h:79
+msgid "r:electric_constant,aisu:&#x3B5;_0"
+msgstr "elektrische_constante,&#x3B5;_0"
+
+#: ../data/variables.xml.in.h:80
+msgid "Magnetic Constant (Permeability of Free Space)"
+msgstr "Magnetische constante (permeabiliteit vrije ruimte)"
+
+#: ../data/variables.xml.in.h:81
+msgid "r:magnetic_constant,aisu:&#x3BC;_0"
+msgstr "magnetische_constante,&#x3BC;_0"
+
+#: ../data/variables.xml.in.h:82
+msgid "Characteristic Impedance of Vacuum"
+msgstr "Karakteristieke impedantie vacuüm"
+
+#: ../data/variables.xml.in.h:83
+msgid "r:characteristic_impedance,ais:Z_0"
+msgstr "karakteristieke_impedantie,Z_0"
+
+#: ../data/variables.xml.in.h:84
+msgid "Electromagnetic Constants"
+msgstr "Elektromagnetische constanten"
+
+#: ../data/variables.xml.in.h:85
+#, fuzzy
+msgid "Bohr Magneton"
+msgstr "Borh Magneton"
+
+#: ../data/variables.xml.in.h:86
+msgid "r:bohr_magneton,aisu:&#x3BC;_B"
+msgstr ""
+
+#: ../data/variables.xml.in.h:87
+msgid "Conductance Quantum"
+msgstr "Geleidingsvermogen kwantum"
+
+#: ../data/variables.xml.in.h:88
+msgid "r:conductance_quantum,ais:G_0"
+msgstr "geleidings_kwantum,G_0"
+
+#: ../data/variables.xml.in.h:89
+msgid "Elementary Charge"
+msgstr "Elementaire lading"
+
+#: ../data/variables.xml.in.h:90
+msgid "r:elementary_charge,ais:e_charge"
+msgstr "elementaire_lading,e_lading"
+
+#: ../data/variables.xml.in.h:91
+msgid "Josephson Constant"
+msgstr "Josephson constante"
+
+#: ../data/variables.xml.in.h:92
+msgid "r:josephson,ais:K_J"
+msgstr ""
+
+#: ../data/variables.xml.in.h:93
+msgid "Magnetic Flux Quantum"
+msgstr "Magnetische flux kwantum"
+
+#: ../data/variables.xml.in.h:94
+msgid "r:magnetic_flux_quantum,aisu:&#x3A6;_0"
+msgstr "magnetische_flux_kwantum,&#x3A6;_0"
+
+#: ../data/variables.xml.in.h:95
+msgid "Nuclear Magneton"
+msgstr "Nucleaire magneton"
+
+#: ../data/variables.xml.in.h:96
+msgid "r:nuclear_magneton,aisu:&#x3BC;_N"
+msgstr "nucleaire_magneton,&#x3BC;_N"
+
+#: ../data/variables.xml.in.h:97
+msgid "von Klitzing Constant"
+msgstr "von Klitzing constante"
+
+#: ../data/variables.xml.in.h:98
+msgid "r:klitzing,ais:R_K"
+msgstr ""
+
+#: ../data/variables.xml.in.h:99
+msgid "Atomic and Nuclear Constants"
+msgstr "Atomaire- en nucleaire constanten"
+
+#: ../data/variables.xml.in.h:100
+msgid "Alpha Particle Mass"
+msgstr "Massa alfadeeltje"
+
+#: ../data/variables.xml.in.h:101
+msgid "r:alpha_particle_mass,aisu:m_&#x3B1;"
+msgstr "alfa_deeltje_massa,m_&#x3B1;"
+
+#: ../data/variables.xml.in.h:102
+msgid "Bohr Radius"
+msgstr "Bohr-straal"
+
+#: ../data/variables.xml.in.h:103
+msgid "r:bohr_radius,ais:a_o"
+msgstr ""
+
+#: ../data/variables.xml.in.h:104
+msgid "Classical Electron Radius"
+msgstr "Klassieke straal elektron"
+
+#: ../data/variables.xml.in.h:105
+msgid "r:classical_electron_radius,ais:r_e"
+msgstr "klassieke_electron_radius,r_e"
+
+#: ../data/variables.xml.in.h:106
+msgid "Compton Wavelength"
+msgstr "Compton golflengte"
+
+#: ../data/variables.xml.in.h:107
+msgid "r:compton_wavelength,aisu:&#x3BB;_C"
+msgstr "compton_golflengte,&#x3BB;_C"
+
+#: ../data/variables.xml.in.h:108
+msgid "Electron Mass"
+msgstr "Elektronmassa"
+
+#: ../data/variables.xml.in.h:109
+msgid "r:electron_mass,ais:m_e"
+msgstr "elektron_massa,m_e"
+
+#: ../data/variables.xml.in.h:110
+msgid "Helion Mass"
+msgstr "Helionmassa"
+
+#: ../data/variables.xml.in.h:111
+msgid "r:helion_mass,ais:m_h"
+msgstr "helion_massa,m_h"
+
+#: ../data/variables.xml.in.h:112
+msgid "Neutron Mass"
+msgstr "Neutronmassa"
+
+#: ../data/variables.xml.in.h:113
+msgid "r:neutron_mass,ais:m_n"
+msgstr "neutron_massa,m_n"
+
+#: ../data/variables.xml.in.h:114
+msgid "Proton Mass"
+msgstr "Protonmassa"
+
+#: ../data/variables.xml.in.h:115
+msgid "r:proton_mass,ais:m_p"
+msgstr "proton_massa,m_p"
+
+#: ../data/variables.xml.in.h:116
+msgid "Rydberg Constant"
+msgstr "Rydberg constante"
+
+#: ../data/variables.xml.in.h:117
+msgid "r:rydberg,aisu:R_&#x221E;"
+msgstr ""
+
+#: ../data/variables.xml.in.h:118
+msgid "Tau Mass"
+msgstr "Tau massa"
+
+#: ../data/variables.xml.in.h:119
+msgid "r:tau_mass,aisu:m_&#x3C4;"
+msgstr "tau_massa,m_&#x3C4;"
+
+#: ../data/variables.xml.in.h:120
+msgid "Physico-Chemical Constants"
+msgstr "Fysisch-chemische constanten"
+
+#: ../data/variables.xml.in.h:121
+msgid "Atomic Mass Constant"
+msgstr "Atomaire massaconstante"
+
+#: ../data/variables.xml.in.h:122
+msgid "r:atomic_mass,ais:m_u"
+msgstr "atoommassa,m_u"
+
+#: ../data/variables.xml.in.h:123
+msgid "Avogadro Constant"
+msgstr "Avogadro's constante"
+
+#: ../data/variables.xml.in.h:124
+msgid "r:avogadro,ais:N_A"
+msgstr ""
+
+#: ../data/variables.xml.in.h:125
+msgid "Boltzmann Constant"
+msgstr "Constante van Boltzmann"
+
+#: ../data/variables.xml.in.h:126
+msgid "r:boltzmann"
+msgstr ""
+
+#: ../data/variables.xml.in.h:127
+msgid "Faraday Constant"
+msgstr "Faraday constante"
+
+#: ../data/variables.xml.in.h:128
+msgid "r:faraday"
+msgstr ""
+
+#: ../data/variables.xml.in.h:129
+msgid "First Radiation Constant"
+msgstr "Eerste stralingsconstante"
+
+#: ../data/variables.xml.in.h:130
+msgid "r:first_radiation,ais:c_1"
+msgstr "eerste_straling,c_1"
+
+#: ../data/variables.xml.in.h:131
+msgid "Ideal Gas Constant"
+msgstr "Ideale gasconstante"
+
+#: ../data/variables.xml.in.h:132
+msgid "r:ideal_gas"
+msgstr "ideale_gas"
+
+#: ../data/variables.xml.in.h:133
+msgid "Second Radiation Constant"
+msgstr "Tweede stralingsconstante"
+
+#: ../data/variables.xml.in.h:134
+msgid "r:second_radiation,ais:c_2"
+msgstr "tweede_straling,c_2"
+
+#: ../data/variables.xml.in.h:135
+msgid "Basic Constants"
+msgstr "Basisconstanten"
+
+#: ../data/variables.xml.in.h:136
+msgid "Golden Ratio"
+msgstr "Gulden snede"
+
+#: ../data/variables.xml.in.h:137
+msgid "r:golden,au:&#x3C6;"
+msgstr "gouden,&#x3C6;"
+
+#: ../data/variables.xml.in.h:138
+msgid "Omega Constant"
+msgstr "Omega constante"
+
+#: ../data/variables.xml.in.h:139
+msgid "r:omega"
+msgstr ""
+
+#: ../data/variables.xml.in.h:140
+msgid "Pythagoras' Constant (sqrt 2)"
+msgstr "Pythagoras constante (sqrt 2)"
+
+#: ../data/variables.xml.in.h:141
+msgid "r:pythagoras"
+msgstr ""
+
+#: ../data/variables.xml.in.h:142
+msgid "Apery's Constant"
+msgstr "Apery's constante"
+
+#: ../data/variables.xml.in.h:143
+msgid "r:apery"
+msgstr ""
+
+#: ../data/variables.xml.in.h:144
+msgid "Base of Natural Logarithms (e)"
+msgstr "Grondtal natuurlijke logaritmen (e)"
+
+#: ../data/variables.xml.in.h:145
+msgid "r:e"
+msgstr ""
+
+#: ../data/variables.xml.in.h:146
+msgid "Archimedes' Constant (pi)"
+msgstr "Archimede's constante (pi)"
+
+#: ../data/variables.xml.in.h:147
+msgid "au:&#x3C0;,r:pi"
+msgstr ""
+
+#: ../data/variables.xml.in.h:148
+msgid "Euler's Constant"
+msgstr "Euler's constante"
+
+#: ../data/variables.xml.in.h:149
+msgid "au:&#x3B3;,r:euler"
+msgstr ""
+
+#: ../data/variables.xml.in.h:150
+msgid "Catalan's Constant"
+msgstr "Catalan's constante"
+
+#: ../data/variables.xml.in.h:151
+msgid "r:catalan"
+msgstr ""
+
+#: ../data/variables.xml.in.h:152
+msgid "Special Numbers"
+msgstr "Bijzondere getallen"
+
+#: ../data/variables.xml.in.h:153
+msgid "Imaginary i (sqrt -1)"
+msgstr "Imaginaire i (sqrt -1)"
+
+#: ../data/variables.xml.in.h:154
+msgid "r:i"
+msgstr "."
+
+#: ../data/variables.xml.in.h:155
+msgid "Infinity"
+msgstr "Oneindig"
+
+#: ../data/variables.xml.in.h:156
+msgid "a:&#x221E;,r:infinity"
+msgstr "a:&#x221E;,oneindig"
+
+#: ../data/variables.xml.in.h:157
+msgid "Positive Infinity"
+msgstr "Positief oneindig"
+
+#: ../data/variables.xml.in.h:158
+msgid "r:plus_infinity"
+msgstr "plus_oneindig"
+
+#: ../data/variables.xml.in.h:159
+msgid "Negative Infinity"
+msgstr "Negatief oneindig"
+
+#: ../data/variables.xml.in.h:160
+msgid "r:minus_infinity"
+msgstr "min_oneindig"
+
+#: ../data/variables.xml.in.h:161
+msgid "Undefined"
+msgstr "Ongedefinieerd"
+
+#: ../data/variables.xml.in.h:162
+msgid "r:undefined"
+msgstr "ongedefinieerd"
+
+#: ../data/variables.xml.in.h:163
+msgid "False"
+msgstr "Onwaar"
+
+#: ../data/variables.xml.in.h:164
+msgid "r:false,r:no"
+msgstr "onwaar,nee"
+
+#: ../data/variables.xml.in.h:165
+msgid "True"
+msgstr "Waar"
+
+#: ../data/variables.xml.in.h:166
+msgid "r:true,r:yes"
+msgstr "waar,ja"
+
+#: ../data/variables.xml.in.h:167
+msgid "Unknowns"
+msgstr "Onbekenden"
+
+#: ../data/variables.xml.in.h:168
+msgid "r:x"
+msgstr ""
+
+#: ../data/variables.xml.in.h:169
+msgid "r:y"
+msgstr ""
+
+#: ../data/variables.xml.in.h:170
+msgid "r:z"
+msgstr ""
+
+#~ msgid "Ionization Potential"
+#~ msgstr "Ionisatiepotentiaal"
+
+#~ msgid "r:ionization"
+#~ msgstr "ionisatie"
+
+#~ msgid "Covalent Radius"
+#~ msgstr "Covalente straal"
+
+#~ msgid "r:covalent"
+#~ msgstr "covalent"
+
+#~ msgid "Ununbium"
+#~ msgstr "Ununbium"
+
+#~ msgid "Ununquadium"
+#~ msgstr "Ununquadium"
+
+#~ msgid "Ununhexium"
+#~ msgstr "Ununhexium"
+
+#, fuzzy
+#~ msgid "Value 1 (n)"
+#~ msgstr "Waarde 1 (i)"
+
+#~ msgid "Price per $100 face value of a security bond"
+#~ msgstr "Prijs per &euro;100 nominale waarde van een obligatie"
+
+#~ msgid "Derive"
+#~ msgstr "Afleiden"

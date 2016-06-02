@@ -1,0 +1,327 @@
+<?xml version="1.0"?>
+<QALCULATE version="0.9.4">
+  <category>
+    <_title>Currency</_title>
+    <builtin_unit name="EUR">
+      <_title>European Euros</_title>
+      <_names>ar:EUR,au:&#x20AC;,euro,p:euros</_names>
+    </builtin_unit>
+    <builtin_unit name="USD">
+      <_title>U.S. Dollars</_title>
+      <_names>a:$,ar:USD,dollar,p:dollars</_names>
+    </builtin_unit>
+    <builtin_unit name="JPY">
+      <_title>Japanese Yen</_title>
+      <_names>ar:JPY,au:&#xA5;,yen</_names>
+    </builtin_unit>
+    <builtin_unit name="DKK">
+      <_title>Danish Kroner</_title>
+      <_names>ar:DKK</_names>
+    </builtin_unit>
+    <builtin_unit name="GBP">
+      <_title>British Pounds</_title>
+      <_names>ar:GBP,au:&#xA3;</_names>
+    </builtin_unit>
+    <builtin_unit name="THB">
+      <_title>Thai Baht</_title>
+      <_names>ar:THB</_names>
+    </builtin_unit>
+    <builtin_unit name="SEK">
+      <_title>Swedish Krona</_title>
+      <_names>ar:SEK</_names>
+    </builtin_unit>
+    <builtin_unit name="CHF">
+      <_title>Swiss Francs</_title>
+      <_names>ar:CHF</_names>
+    </builtin_unit>
+    <builtin_unit name="ISK">
+      <_title>Icelandic Krona</_title>
+      <_names>ar:ISK</_names>
+    </builtin_unit>
+    <builtin_unit name="NOK">
+      <_title>Norwegian Kroner</_title>
+      <_names>ar:NOK</_names>
+    </builtin_unit>
+    <builtin_unit name="BGN">
+      <_title>Bulgarian Lev</_title>
+      <_names>lev,ar:BGN</_names>
+    </builtin_unit>
+    <builtin_unit name="RUB">
+      <_title>Russian Ruble</_title>
+      <_names>ar:RUB,au:&#x20BD;,ruble</_names>
+    </builtin_unit>
+    <builtin_unit name="PHP">
+      <_title>Philippine Peso</_title>
+      <_names>ar:PHP,au:&#x20B1;</_names>
+    </builtin_unit>
+    <builtin_unit name="MYR">
+      <_title>Malaysian Ringgit</_title>
+      <_names>ar:MYR</_names>
+    </builtin_unit>
+    <builtin_unit name="HRK">
+      <_title>Croatian Kuna</_title>
+      <_names>ar:HRK</_names>
+    </builtin_unit>
+    <builtin_unit name="CNY">
+      <_title>Yuan Renminbi (PR China)</_title>
+      <_names>ar:CNY</_names>
+    </builtin_unit>
+    <builtin_unit name="IDR">
+      <_title>Indonesian Rupiah</_title>
+      <_names>ar:IDR,rupiah</_names>
+    </builtin_unit>
+    <builtin_unit name="CZK">
+      <_title>Czech Koruna</_title>
+      <_names>ar:CZK</_names>
+    </builtin_unit>
+     <builtin_unit name="HUF">
+      <_title>Hungarian Forint</_title>
+      <_names>forint,ar:HUF</_names>
+    </builtin_unit>
+    <builtin_unit name="PLN">
+      <_title>Polish Zloty</_title>
+      <_names>zloty,ar:PLN</_names>
+    </builtin_unit>
+    <builtin_unit name="RON">
+      <_title>Romanian New Leu</_title>
+      <_names>leu,ar:RON</_names>
+    </builtin_unit>
+    <builtin_unit name="TRY">
+      <_title>Turkish New Lira</_title>
+      <_names>ar:TRY,au:&#x20BA;</_names>
+    </builtin_unit>
+    <builtin_unit name="AUD">
+      <_title>Australian Dollars</_title>
+      <_names>ar:AUD</_names>
+    </builtin_unit>
+    <builtin_unit name="CAD">
+      <_title>Canadian Dollars</_title>
+      <_names>ar:CAD</_names>
+    </builtin_unit>
+    <builtin_unit name="HKD">
+      <_title>Hong Kong Dollars</_title>
+      <_names>ar:HKD</_names>
+    </builtin_unit>
+    <builtin_unit name="NZD">
+      <_title>New Zealand Dollars</_title>
+      <_names>ar:NZD</_names>
+    </builtin_unit>
+    <builtin_unit name="SGD">
+      <_title>Singapore Dollars</_title>
+      <_names>ar:SGD</_names>
+    </builtin_unit>
+    <builtin_unit name="KRW">
+      <_title>South Korean Won</_title>
+      <_names>ar:KRW,au:&#x20A9;,won</_names>
+    </builtin_unit>
+    <builtin_unit name="ZAR">
+      <_title>South African Rand</_title>
+      <_names>ar:ZAR</_names>
+    </builtin_unit>
+    <builtin_unit name="INR">
+      <_title>Indian Rupee</_title>
+      <_names>ar:INR,au:&#x20B9;,rupee</_names>
+    </builtin_unit>
+    <builtin_unit name="ILS">
+      <_title>Israeli New Sheqel</_title>
+      <_names>ar:ILS,au:&#x20AA;,sheqel</_names>
+    </builtin_unit>
+    <builtin_unit name="MXN">
+      <_title>Mexican Peso</_title>
+      <_names>ar:MXN</_names>
+    </builtin_unit>
+    <builtin_unit name="BRL">
+      <_title>Brazilian Real</_title>
+      <_names>ar:BRL</_names>
+    </builtin_unit>
+    <unit type="alias">
+      <_title>Euro Cent</_title>
+      <_names>r:eurocent,p:eurocents</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/100</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Cent (USD)</_title>
+      <_names>au:&#xA2;,r:cent,p:cents</_names>
+      <base>
+        <unit>USD</unit>
+        <relation>1/100</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Belgian Franc</_title>
+      <_names>ar:BEF</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/40.3399</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Greek Drachma</_title>
+      <_names>ar:GRD,au:&#x20AF;,drachma</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/340.750</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>French Franc</_title>
+      <_names>ar:FRF,au:&#x20A3;,franc</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/6.55957</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Italian Lira</_title>
+      <_names>ar:ITL,au:&#x20A4;,lira</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/1936.27</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Dutch Guilder</_title>
+      <_names>ar:NLG,guilder</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/2.20371</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Portuguese Escudo</_title>
+      <_names>ar:PTE,escudo</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/200.482</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Deutsche Mark</_title>
+      <_names>ar:DEM,mark</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/1.95583</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Spanish Peseta</_title>
+      <_names>ar:ESP,au:&#x20A7;,peseta,p:pesetas</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/166.386</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Irish Pound</_title>
+      <_names>ar:IEP</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/0.787564</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Luxembourg Franc</_title>
+      <_names>ar:LUF</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/40.3399</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Austrian Schilling</_title>
+      <_names>ar:ATS,schilling</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/13.7603</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Finnish Markka</_title>
+      <_names>ar:FIM,markka</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/5.94573</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Slovenian Tolar</_title>
+      <_names>ar:SIT,tolar</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/239.640</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Cypriot Pound</_title>
+      <_names>ar:CYP</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/0.585274</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Estonian Kroon</_title>
+      <_names>ar:EEK,kroon,p:krooni</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/15.6466</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Slovak Koruna</_title>
+      <_names>ar:SKK</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/30.1260</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Maltese Lira</_title>
+      <_names>ar:MTL</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/0.429300</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Latvian Lats</_title>
+      <_names>lats,ar:LVL</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/0.702800</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Lithuanian Litas</_title>
+      <_names>litas,ar:LTL</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/3.45280</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+  </category>
+</QALCULATE>

@@ -1,0 +1,25 @@
+* Implement signals for deleted variables etc.
+* Sort out when small floats really are zero due to limited precision
+* Quoted ")" in function
+* Plot-functions
+* Replace pointers to unit when unit type has changed (a different object must be created)
+* Sort out percentile and provide alternative methods
+
+* More functions
+* More units
+
+* Increase support for non-glibc systems
+
+* Sane and stable API
+
+* Script/code plugins for advanced functions
+
+* Keep track of if user has changed definitions since load
+
+* Better handling of exchange rates fetching
+
+* Timeout for plot data calculation
+
+* Uncertainty propagation
+
+* Load data set from csv file
