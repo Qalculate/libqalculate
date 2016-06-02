@@ -2226,11 +2226,13 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		RPNRegisterChanged(result_text, stack_index);
 	} else {
 		if(!result_only) {
+			if(mstruct->isComparison()) fputs(LEFT_PARENTHESIS, stdout);
 			if(update_parse) {
 				FPUTS_UNICODE(parsed_text.c_str(), stdout);
 			} else {
 				FPUTS_UNICODE(prev_result_text.c_str(), stdout);
 			}
+			if(mstruct->isComparison()) fputs(RIGHT_PARENTHESIS, stdout);
 			if(!(*printops.is_approximate) && !mstruct->isApproximate()) {
 				printf(" = ");	
 			} else {
@@ -2241,7 +2243,13 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				}
 			}
 		}
-		PUTS_UNICODE(result_text.c_str());
+		if(!result_only && mstruct->isComparison()) {
+			fputs(LEFT_PARENTHESIS, stdout);
+			FPUTS_UNICODE(result_text.c_str(), stdout);
+			puts(RIGHT_PARENTHESIS);
+		} else {
+			PUTS_UNICODE(result_text.c_str());
+		}
 		if(goto_input) printf("\n");
 	}
 

@@ -2645,7 +2645,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					return 0;
 				}
 				case STRUCT_ADDITION: {					
-					if(eo.expand) {
+					if(eo.expand != 0) {
 						MathStructure msave(*this);
 						CLEAR;
 						for(size_t i = 0; i < mstruct.size(); i++) {
@@ -2690,7 +2690,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							return 1;
 						}
 					}
-					if(!eo.expand && mstruct[0].isAddition()) return -1;
+					if(eo.expand == 0 && mstruct[0].isAddition()) return -1;
 					if(mstruct[1].hasNegativeSign()) {
 						int ret;
 						vector<bool> merged;
@@ -2755,7 +2755,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					if(!eo.expand) return -1;
 				}
 				case STRUCT_MULTIPLICATION: {
-					if(!eo.expand && do_append) {
+					if(eo.expand == 0 && do_append) {
 						transform(STRUCT_MULTIPLICATION);
 						for(size_t i = 0; i < mstruct.size(); i++) {
 							APPEND_REF(&mstruct[i]);
@@ -2764,7 +2764,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					}
 				}
 				default: {
-					if(!eo.expand) return -1;
+					if(eo.expand == 0) return -1;
 					for(size_t i = 0; i < SIZE; i++) {
 						CHILD(i).multiply(mstruct, true);						
 						if(reversed) {
@@ -2785,7 +2785,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			switch(mstruct.type()) {
 				case STRUCT_VECTOR: {}
 				case STRUCT_ADDITION: {
-					if(!eo.expand) {
+					if(eo.expand == 0) {
 						if(!do_append) return -1;
 						APPEND_REF(&mstruct);
 						return 1;
@@ -2987,7 +2987,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							return 1;
 						}
 					}
-					if(mstruct.isZero() && (!eo.keep_zero_units || containsRepresentativeOfType(STRUCT_UNIT, true, true) == 0 || (CHILD(0).isUnit() && CHILD(0).unit() == CALCULATOR->u_rad)) && !representsUndefined(true, true, !eo.assume_denominators_nonzero)) {
+					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, true, true) == 0 || (CHILD(0).isUnit() && CHILD(0).unit() == CALCULATOR->u_rad)) && !representsUndefined(true, true, !eo.assume_denominators_nonzero)) {
 						clear(true);
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
@@ -3006,12 +3006,12 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					return 0;
 				}
 				default: {
-					if(mstruct.isZero() && (!eo.keep_zero_units || containsRepresentativeOfType(STRUCT_UNIT, true, true) == 0 || (isUnit() && unit() == CALCULATOR->u_rad)) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
+					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, true, true) == 0 || (isUnit() && unit() == CALCULATOR->u_rad)) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
 						clear(true); 
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
 					}
-					if(isZero() && !mstruct.representsUndefined(true, true, !eo.assume_denominators_nonzero) && (!eo.keep_zero_units || mstruct.containsRepresentativeOfType(STRUCT_UNIT, true, true) == 0 || (mstruct.isUnit() && mstruct.unit() == CALCULATOR->u_rad)) && mstruct.representsNonMatrix()) {
+					if(isZero() && !mstruct.representsUndefined(true, true, !eo.assume_denominators_nonzero) && (!eo.keep_zero_units || mstruct.containsType(STRUCT_UNIT, true, true) == 0 || (mstruct.isUnit() && mstruct.unit() == CALCULATOR->u_rad)) && mstruct.representsNonMatrix()) {
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 2;
 					}
@@ -3315,55 +3315,83 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							return 1;
 						}
 					}
-				} else if(eo.expand && !mstruct.number().isZero()) {
+				} else if(eo.expand != 0 && !mstruct.number().isZero()) {
+					bool b = true;
 					bool neg = mstruct.number().isNegative();
 					Number m(mstruct.number());
 					m.setNegative(false);
-					if(!representsNonMatrix()) {
-						MathStructure mthis(*this);
-						while(!m.isOne()) {
-							calculateMultiply(mthis, eo);
-							m--;
-						}
-					} else {
-						MathStructure mstruct1(CHILD(0));
-						MathStructure mstruct2(CHILD(1));
-						for(size_t i = 2; i < SIZE; i++) {
-							mstruct2.add(CHILD(i), true);
-						}					
-						Number k(1);
-						Number p1(m);
-						Number p2(1);
-						p1--;
-						Number bn;
-						CLEAR
-						APPEND(mstruct1);
-						CHILD(0).calculateRaise(m, eo);
-						while(k.isLessThan(m)) {
-							bn.binomial(m, k);
-							APPEND_NEW(bn);
-							LAST.multiply(mstruct1);
-							if(!p1.isOne()) {
-								LAST[1].raise_nocopy(new MathStructure(p1));
-								LAST[1].calculateRaiseExponent(eo);
+					if(eo.expand < 0 && SIZE > 1) {
+						Number num_max;
+						switch(SIZE) {
+							case 14: {}
+							case 13: {}
+							case 12: {}
+							case 11: {}
+							case 10: {num_max.set(2, 1); break;}
+							case 9: {}
+							case 8: {num_max.set(3, 1); break;}
+							case 7: {num_max.set(4, 1); break;}
+							case 6: {num_max.set(5, 1); break;}
+							case 5: {num_max.set(7, 1); break;}
+							case 4: {num_max.set(12, 1); break;}
+							case 3: {num_max.set(28, 1); break;}
+							case 2: {num_max.set(150, 1); break;}
+							default: {
+								b = false;
+								break;
 							}
-							LAST.multiply(mstruct2, true);
-							if(!p2.isOne()) {
-								LAST[2].raise_nocopy(new MathStructure(p2));
-								LAST[2].calculateRaiseExponent(eo);
-							}
-							LAST.calculatesub(eo, eo, false);
-							k++;
-							p1--;
-							p2++;
 						}
-						APPEND(mstruct2);
-						LAST.calculateRaise(m, eo);
-						calculatesub(eo, eo, false);
+						if(b && m.isGreaterThan(num_max)) {
+							b = false;
+						}
 					}
-					if(neg) calculateInverse(eo);
-					MERGE_APPROX_AND_PREC(mstruct)
-					return 1;
+					if(b) {
+						if(!representsNonMatrix()) {
+							MathStructure mthis(*this);
+							while(!m.isOne()) {
+								calculateMultiply(mthis, eo);
+								m--;
+							}
+						} else {
+							MathStructure mstruct1(CHILD(0));
+							MathStructure mstruct2(CHILD(1));
+							for(size_t i = 2; i < SIZE; i++) {
+								mstruct2.add(CHILD(i), true);
+							}					
+							Number k(1);
+							Number p1(m);
+							Number p2(1);
+							p1--;
+							Number bn;
+							CLEAR
+							APPEND(mstruct1);
+							CHILD(0).calculateRaise(m, eo);
+							while(k.isLessThan(m)) {
+								bn.binomial(m, k);
+								APPEND_NEW(bn);
+								LAST.multiply(mstruct1);
+								if(!p1.isOne()) {
+									LAST[1].raise_nocopy(new MathStructure(p1));
+									LAST[1].calculateRaiseExponent(eo);
+								}
+								LAST.multiply(mstruct2, true);
+								if(!p2.isOne()) {
+									LAST[2].raise_nocopy(new MathStructure(p2));
+									LAST[2].calculateRaiseExponent(eo);
+								}
+								LAST.calculatesub(eo, eo, false);
+								k++;
+								p1--;
+								p2++;
+							}
+							APPEND(mstruct2);
+							LAST.calculateRaise(m, eo);
+							calculatesub(eo, eo, false);
+						}
+						if(neg) calculateInverse(eo);
+						MERGE_APPROX_AND_PREC(mstruct)
+						return 1;
+					}
 				}
 			}
 			goto default_power_merge;
@@ -6687,6 +6715,11 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			unformat(eo);
 			calculatesub(eo3, feo);
 		}
+		if(eo.expand != 0 && !containsType(STRUCT_COMPARISON, true, true, true)) {
+			unformat(eo);
+			eo3.expand = -1;
+			calculatesub(eo3, feo);
+		}
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 	}
 
@@ -6707,7 +6740,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		}
 	}
 
-	if(eo.expand || (eo.test_comparisons && !found_complex_relations && containsType(STRUCT_COMPARISON))) {
+	if(eo.expand != 0 || (eo.test_comparisons && !found_complex_relations && containsType(STRUCT_COMPARISON))) {
 		eo2.test_comparisons = eo.test_comparisons && !found_complex_relations;
 		eo2.expand = eo.expand;
 		bool b = eo2.test_comparisons;

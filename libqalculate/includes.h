@@ -514,7 +514,7 @@ static const struct EvaluationOptions {
 	/// If a varaible will be isolated to the left side in equations/comparisons (ex. x+y=2 => x=2-y). Default: true
 	bool  isolate_x;
 	/// If factors (and bases) containing addition will be expanded (ex. z(x+y)=zx+zy). Default: true
-	bool expand;
+	int expand;
 	/// If non-numerical parts of a fraction will be reduced (ex. (5x)/(3xy) =5/(3y) .  Default: true
 	bool reduce_divisions;
 	/// If complex numbers will be used for evaluation. Default: true

@@ -40,6 +40,42 @@ void cln::cl_abort() {
 }
 */
 
+string format_number_string(string cl_str, int base, BaseDisplay base_display, bool show_neg, bool format_base_two = true) {
+	if(format_base_two && base == 2 && base_display != BASE_DISPLAY_NONE) {
+		int i2 = cl_str.length() % 4;
+		if(i2 != 0) i2 = 4 - i2;
+		if(base_display == BASE_DISPLAY_NORMAL) {
+			for(int i = (int) cl_str.length() - 4; i > 0; i -= 4) {
+				cl_str.insert(i, 1, ' ');
+			}
+		}
+		for(; i2 > 0; i2--) {
+			cl_str.insert(cl_str.begin(), 1, '0');
+		}
+	}	
+	string str = "";
+	if(show_neg) {
+		str += '-';
+	}
+	if(base_display == BASE_DISPLAY_NORMAL) {
+		if(base == 16) {
+			str += "0x";
+		} else if(base == 8) {
+			str += "0";
+		}
+	} else if(base_display == BASE_DISPLAY_ALTERNATIVE) {
+		if(base == 16) {
+			str += "0x0";
+		} else if(base == 8) {
+			str += "0";
+		} else if(base == 2) {
+			str += "0b00";
+		} 
+	}
+	str += cl_str;
+	return str;
+}
+
 string printCL_I(cl_I integ, int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) {
 	bool is_neg = minusp(integ);
 	if(is_neg) {
@@ -195,39 +231,7 @@ string printCL_I(cl_I integ, int base = 10, bool display_sign = true, BaseDispla
 	if(cl_str[cl_str.length() - 1] == '.') {
 		cl_str.erase(cl_str.length() - 1, 1);
 	}
-	if(base == 2 && base_display != BASE_DISPLAY_NONE) {
-		int i2 = cl_str.length() % 4;
-		if(i2 != 0) i2 = 4 - i2;
-		if(base_display == BASE_DISPLAY_NORMAL) {
-			for(int i = (int) cl_str.length() - 4; i > 0; i -= 4) {
-				cl_str.insert(i, 1, ' ');
-			}
-		}
-		for(; i2 > 0; i2--) {
-			cl_str.insert(cl_str.begin(), 1, '0');
-		}
-	}	
-	string str = "";
-	if(is_neg && display_sign) {
-		str += '-';
-	}
-	if(base_display == BASE_DISPLAY_NORMAL) {
-		if(base == 16) {
-			str += "0x";
-		} else if(base == 8) {
-			str += "0";
-		}
-	} else if(base_display == BASE_DISPLAY_ALTERNATIVE) {
-		if(base == 16) {
-			str += "0x0";
-		} else if(base == 8) {
-			str += "0";
-		} else if(base == 2) {
-			str += "0b00";
-		} 
-	}
-	str += cl_str;
-	return str;
+	return format_number_string(cl_str, base, base_display, is_neg && display_sign);
 }
 
 Number::Number() {
@@ -3034,9 +3038,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		bool exact = true;
 
 		integer_rerun:
-		string mpz_str = printCL_I(ivalue, base, false, po.base_display, po.lower_case_numbers);
+		string mpz_str = printCL_I(ivalue, base, false, BASE_DISPLAY_NONE, po.lower_case_numbers);
 		if(CALCULATOR->printingAborted()) return CALCULATOR->printingAbortedMessage();
-
+		
 		int expo = 0;
 		if(base == 10) {
 			if(mpz_str.length() > 0 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
@@ -3049,21 +3053,21 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					expo++;
 				} 
 			}
-		}
-
-		if(po.min_exp == EXP_PRECISION) {
-			if((expo > -precision && expo < precision) || (expo < 3 && expo > -3 && PRECISION >= 3)) { 
+			if(po.min_exp == EXP_PRECISION) {
+				if((expo > -precision && expo < precision) || (expo < 3 && expo > -3 && PRECISION >= 3)) { 
+					expo = 0;
+				}
+			} else if(po.min_exp == EXP_BASE_3) {
+				expo -= expo % 3;
+			} else if(po.min_exp != 0) {
+				if(expo > -po.min_exp && expo < po.min_exp) { 
+					expo = 0;
+				}
+			} else {
 				expo = 0;
 			}
-		} else if(po.min_exp == EXP_BASE_3) {
-			expo -= expo % 3;
-		} else if(po.min_exp != 0) {
-			if(expo > -po.min_exp && expo < po.min_exp) { 
-				expo = 0;
-			}
-		} else {
-			expo = 0;
 		}
+		
 		bool dp_added = false;
 		bool b_zero = true;
 
@@ -3075,6 +3079,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		if(!rerun && !b_zero) {
 			int precision2 = precision;
+
 			if(base != 10) {
 				Number precmax(10);
 				precmax.raise(precision);
@@ -3159,13 +3164,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpz_str = mpz_str.substr(0, mpz_str.length() - expo);
 			}
 		}
-		str = "";
-		if(ips.minus) {
-			*ips.minus = neg;
-		} else if(neg) {
-			str += "-";
-		}
-		str += mpz_str;
+		if(ips.minus) *ips.minus = neg;
+		str = format_number_string(mpz_str, base, po.base_display, !ips.minus && neg);
 		if(base != BASE_ROMAN_NUMERALS && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 			int pos = str.length() - 1;
 			for(; pos >= (int) str.length() + min_decimals - decimals; pos--) {
@@ -3190,7 +3190,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		if(!exact && po.is_approximate) *po.is_approximate = true;
-		if(po.show_ending_zeroes && (isApproximate() || !exact || (ips.parent_approximate && po.restrict_to_parent_precision)) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
+		if(po.show_ending_zeroes && (!exact || isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision)) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
 			if(base != 10) {
 				Number precmax(10);
 				precmax.raise(precision);
@@ -3451,13 +3451,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(expo != 0) {
 				l10 += expo;
 			}
+			bool has_decimal = false;
 			if(l10 > 0) {
 				l10 = str.length() - l10;
 				if(l10 < 1) {
 					str.insert(str.begin(), 1 - l10, '0');
 					l10 = 1;
-				}
+				}				
 				str.insert(l10, po.decimalpoint());
+				has_decimal = true;
 				int l2 = 0;
 				while(str[str.length() - 1 - l2] == '0') {
 					l2++;
@@ -3467,6 +3469,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 				if(str[str.length() - 1] == po.decimalpoint()[0]) {
 					str.erase(str.end() - 1);
+					has_decimal = false;
 				}
 			}
 			int decimals = 0;
@@ -3481,6 +3484,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(decimals <= 0) {
 					str += po.decimalpoint();
 					decimals = 0;
+					has_decimal = true;
 				}
 				for(; decimals < min_decimals; decimals++) {
 					str += "0";
@@ -3488,6 +3492,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			if(str[str.length() - 1] == po.decimalpoint()[0]) {
 				str.erase(str.end() - 1);
+				has_decimal = false;
 			}
 			if(po.show_ending_zeroes && !infinite_series && (isApproximate() || !exact || (ips.parent_approximate && po.restrict_to_parent_precision)) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
 				precision -= str.length();
@@ -3495,12 +3500,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					precision += 1;
 				} else if(precision > 0) {
 					str += po.decimalpoint();
+					has_decimal = true;
 				}
 				for(; precision > 0 && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals); precision--) {
 					decimals++;
 					str += "0";
 				}
 			}
+			
+			str = format_number_string(str, base, po.base_display, !ips.minus && neg, !has_decimal);
 			
 			if(infinite_series) {
 				str += "...";
@@ -3518,32 +3526,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					str += i2s(expo);
 				}
 			}
-			switch(po.base_display) {
-				case BASE_DISPLAY_NORMAL: {
-					if(base == 16) {
-						str.insert(0, "0x");
-					} else if(base == 8) {
-						str.insert(0, "0");
-					}
-					break;
-				}
-				case BASE_DISPLAY_ALTERNATIVE: {
-					if(base == 16) {
-						str.insert(0, "0x0");
-					} else if(base == 8) {
-						str.insert(0, "0");
-					} else if(base == 2) {
-						str.insert(0, "0b00");
-					}
-					break;
-				}
-				default: {}
-			}
-			if(ips.minus) {
-				*ips.minus = neg;
-			} else if(neg) {
-				str.insert(0, "-");
-			}
+			if(ips.minus) *ips.minus = neg;
 			if(ips.num) *ips.num = str;
 
 		} else {
