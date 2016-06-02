@@ -1,6 +1,8 @@
 # libqalculate
 Qalculate! library
 
+![Image of qalculate-gtk](http://qalculate.github.io/images/qalculate-gtk.png)
+
 Qalculate! is a multi-purpose desktop calculator for GNU/Linux (and Mac OS). It is small and simple to use but with much power and versatility underneath. Features include customizable functions, units, arbitrary precision, plotting, and a user-friendly interface (GTK+).
 
 Features if libqalculate:
