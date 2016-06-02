@@ -1,0 +1,2 @@
+# libqalculate
+Qalculate! library
