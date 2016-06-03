@@ -2968,7 +2968,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						if(mstruct2.calculateMultiply(mstruct[0], eo)) {
 							CHILD(0) = mstruct2;
 							MERGE_APPROX_AND_PREC(mstruct)
-							calculateRaiseExponent(eo, mparent, index_this);							
+							calculateRaiseExponent(eo, mparent, index_this);
 							return 1;
 						}
 					}
@@ -3093,6 +3093,25 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					calculateMultiplyIndex(0, eo, true, mparent, index_this);
 					return 1;
 				}
+			}
+		}
+		if(o_number.isRational() && !o_number.isInteger()) {
+			if(o_number.numeratorIsOne()) {
+				mstruct.number().negate();
+				o_number.recip();
+				return 0;
+			} else {
+				Number den = o_number.denominator();
+				Number exp2 = mstruct.number();
+				exp2.negate();
+				o_number = o_number.numerator();
+				transform(STRUCT_MULTIPLICATION);
+				CHILD(0).calculateRaise(mstruct, eo, this, 0);
+				APPEND(den);
+				CHILD(1).calculateRaise(exp2, eo, this, 1);
+				calculateMultiplyIndex(0, eo, true, mparent, index_this);
+				evalSort();
+				return 1;
 			}
 		}
 		return -1;

@@ -1,3 +1,7 @@
+2016-06-03 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* sqrt(7/4) = sqrt(7)/2, sqrt(2)/2−(1/sqrt(2)) equals exactly zero
+
 2016-05-27 Hanna Knutsson <hanna_k@fmgirl.com>
 	
 	* Allow special "to" commands directly in expression
