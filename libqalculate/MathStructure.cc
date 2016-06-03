@@ -3095,7 +3095,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				}
 			}
 		}
-		if(o_number.isRational() && !o_number.isInteger()) {
+		if(o_number.isRational() && !o_number.isInteger() && !o_number.isZero()) {
 			if(o_number.numeratorIsOne()) {
 				mstruct.number().negate();
 				o_number.recip();

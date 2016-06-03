@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-02 11:13+0200\n"
+"POT-Creation-Date: 2016-06-03 14:50+0200\n"
 "PO-Revision-Date: 2006-05-04 12:29+0200\n"
 "Last-Translator: Hanna Knutsson <hanna_k@fmgirl.com>\n"
 "Language-Team: Swedish\n"
@@ -140,7 +140,7 @@ msgstr "Otillåtet värde"
 #: ../src/qalc.cc:350 ../src/qalc.cc:522 ../src/qalc.cc:1086
 #: ../src/qalc.cc:1193 ../src/qalc.cc:1264 ../src/qalc.cc:1267
 #: ../src/qalc.cc:1390 ../src/qalc.cc:1777 ../src/qalc.cc:1778
-#: ../src/qalc.cc:1940 ../src/qalc.cc:2469
+#: ../src/qalc.cc:1940 ../src/qalc.cc:2477
 msgid "base"
 msgstr "bas"
 
@@ -166,7 +166,7 @@ msgstr "tid"
 msgid "hex"
 msgstr "hex"
 
-#: ../src/qalc.cc:355 ../src/qalc.cc:1134 ../src/qalc.cc:2424
+#: ../src/qalc.cc:355 ../src/qalc.cc:1134 ../src/qalc.cc:2432
 msgid "hexadecimal"
 msgstr "hexadecimal"
 
@@ -174,7 +174,7 @@ msgstr "hexadecimal"
 msgid "bin"
 msgstr "bin"
 
-#: ../src/qalc.cc:356 ../src/qalc.cc:1139 ../src/qalc.cc:2433
+#: ../src/qalc.cc:356 ../src/qalc.cc:1139 ../src/qalc.cc:2441
 msgid "binary"
 msgstr "binär"
 
@@ -182,7 +182,7 @@ msgstr "binär"
 msgid "oct"
 msgstr "okt"
 
-#: ../src/qalc.cc:357 ../src/qalc.cc:1144 ../src/qalc.cc:2442
+#: ../src/qalc.cc:357 ../src/qalc.cc:1144 ../src/qalc.cc:2450
 msgid "octal"
 msgstr "oktal"
 
@@ -443,7 +443,7 @@ msgid "best"
 msgstr "bästa"
 
 #: ../src/qalc.cc:521 ../src/qalc.cc:1190 ../src/qalc.cc:1263
-#: ../src/qalc.cc:1777 ../src/qalc.cc:2460
+#: ../src/qalc.cc:1777 ../src/qalc.cc:2468
 msgid "optimal"
 msgstr "optimal"
 
@@ -743,15 +743,15 @@ msgstr "omvandla"
 msgid "to"
 msgstr "till"
 
-#: ../src/qalc.cc:1149 ../src/qalc.cc:2457
+#: ../src/qalc.cc:1149 ../src/qalc.cc:2465
 msgid "bases"
 msgstr "baser"
 
-#: ../src/qalc.cc:1182 ../src/qalc.cc:2451
+#: ../src/qalc.cc:1182 ../src/qalc.cc:2459
 msgid "fraction"
 msgstr "bråktal"
 
-#: ../src/qalc.cc:1188 ../src/qalc.cc:2454
+#: ../src/qalc.cc:1188 ../src/qalc.cc:2462
 msgid "factors"
 msgstr "faktorer"
 
@@ -1163,27 +1163,27 @@ msgstr "RPN-register flyttades"
 msgid "Processing (press Enter to abort)"
 msgstr "Behandlar (tryck Enter för att avbryta)"
 
-#: ../src/qalc.cc:2240 ../src/qalc.cc:2716
+#: ../src/qalc.cc:2242 ../src/qalc.cc:2724
 msgid "approx."
 msgstr "ca"
 
-#: ../src/qalc.cc:2346
+#: ../src/qalc.cc:2354
 msgid "Factorizing (press Enter to abort)"
 msgstr "Faktoriserar (tryck Enter för att avbryta)"
 
-#: ../src/qalc.cc:2350
+#: ../src/qalc.cc:2358
 msgid "Simplifying (press Enter to abort)"
 msgstr "Förenklar (tryck Enter för att avbryta)"
 
-#: ../src/qalc.cc:2608
+#: ../src/qalc.cc:2616
 msgid "Calculating (press Enter to abort)"
 msgstr "Beräknar (tryck Enter för att avbryta)"
 
-#: ../src/qalc.cc:2676
+#: ../src/qalc.cc:2684
 msgid "RPN Operation"
 msgstr "RPN-operation"
 
-#: ../src/qalc.cc:3057
+#: ../src/qalc.cc:3065
 #, c-format
 msgid ""
 "Couldn't write preferences to\n"
@@ -1192,7 +1192,7 @@ msgstr ""
 "Kunde inte spara inställningar till\n"
 "%s"
 
-#: ../src/qalc.cc:3135
+#: ../src/qalc.cc:3143
 msgid "Couldn't write definitions"
 msgstr "Kunde inte spara definitioner"
 
@@ -1425,14 +1425,14 @@ msgstr "plus"
 msgid "minus"
 msgstr "minus"
 
-#: ../libqalculate/Calculator.cc:282 ../libqalculate/MathStructure.cc:11553
+#: ../libqalculate/Calculator.cc:282 ../libqalculate/MathStructure.cc:11605
 #: ../libqalculate/Function.cc:1106 ../libqalculate/Function.cc:1114
 #: ../libqalculate/Function.cc:1523 ../libqalculate/Function.cc:1667
 msgid "and"
 msgstr "och"
 
 #: ../libqalculate/Calculator.cc:286 ../libqalculate/DataSet.cc:1066
-#: ../libqalculate/DataSet.cc:1129 ../libqalculate/MathStructure.cc:11567
+#: ../libqalculate/DataSet.cc:1129 ../libqalculate/MathStructure.cc:11619
 #: ../libqalculate/Function.cc:1982 ../libqalculate/Function.cc:1998
 msgid "or"
 msgstr "eller"
@@ -1737,38 +1737,38 @@ msgstr ""
 #. }
 #. }
 #. std::cout << "WRONG! this: " << print() << " copy: " << mcopy.print() << " copy2: " << mcopy2.print() << std::endl;
-#: ../libqalculate/MathStructure.cc:5178 ../libqalculate/MathStructure.cc:5219
-#: ../libqalculate/MathStructure.cc:5252 ../libqalculate/MathStructure.cc:5308
-#: ../libqalculate/MathStructure.cc:5328 ../libqalculate/MathStructure.cc:5347
-#: ../libqalculate/MathStructure.cc:5366 ../libqalculate/MathStructure.cc:5385
-#: ../libqalculate/MathStructure.cc:5474 ../libqalculate/MathStructure.cc:8722
-#: ../libqalculate/MathStructure.cc:8733 ../libqalculate/MathStructure.cc:8810
+#: ../libqalculate/MathStructure.cc:5225 ../libqalculate/MathStructure.cc:5266
+#: ../libqalculate/MathStructure.cc:5299 ../libqalculate/MathStructure.cc:5355
+#: ../libqalculate/MathStructure.cc:5375 ../libqalculate/MathStructure.cc:5394
+#: ../libqalculate/MathStructure.cc:5413 ../libqalculate/MathStructure.cc:5432
+#: ../libqalculate/MathStructure.cc:5521 ../libqalculate/MathStructure.cc:8774
+#: ../libqalculate/MathStructure.cc:8785 ../libqalculate/MathStructure.cc:8862
 msgid "This is a bug. Please report it."
 msgstr "Detta är en bug. Var vänlig rapportera felet."
 
-#: ../libqalculate/MathStructure.cc:11647
+#: ../libqalculate/MathStructure.cc:11699
 msgid "undefined"
 msgstr "odefinierad"
 
-#: ../libqalculate/MathStructure.cc:11697
+#: ../libqalculate/MathStructure.cc:11749
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to rank vector."
 msgstr "Olöslig jämförelse vid element %s, vid rangordning av vektor."
 
-#: ../libqalculate/MathStructure.cc:11745
+#: ../libqalculate/MathStructure.cc:11797
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to sort vector."
 msgstr "Olöslig jämförelse vid element %s, vid sortering av vektor."
 
-#: ../libqalculate/MathStructure.cc:12170
+#: ../libqalculate/MathStructure.cc:12222
 msgid "The determinant can only be calculated for square matrices."
 msgstr "Determinanten kan enbart beräknas för kvadratiska matriser."
 
-#: ../libqalculate/MathStructure.cc:12233
+#: ../libqalculate/MathStructure.cc:12285
 msgid "The permanent can only be calculated for square matrices."
 msgstr "Permanenten kan enbart beräknas för kvadratiska matriser."
 
-#: ../libqalculate/MathStructure.cc:12322
+#: ../libqalculate/MathStructure.cc:12374
 msgid "Inverse of singular matrix."
 msgstr "Invers av singulär matrs."
 
@@ -1955,50 +1955,50 @@ msgstr "vinkel"
 msgid "an angle or a number (using the default angle unit)"
 msgstr "en vinkel eller ett tal (som använder inställd vinkelenhet)"
 
-#: ../libqalculate/Number.cc:55 ../libqalculate/Number.cc:161
-#: ../libqalculate/Number.cc:183 ../libqalculate/Number.cc:517
-#: ../libqalculate/Number.cc:685 ../libqalculate/Number.cc:804
-#: ../libqalculate/Number.cc:814 ../libqalculate/Number.cc:824
-#: ../libqalculate/Number.cc:834 ../libqalculate/Number.cc:843
-#: ../libqalculate/Number.cc:856 ../libqalculate/Number.cc:869
-#: ../libqalculate/Number.cc:879 ../libqalculate/Number.cc:891
-#: ../libqalculate/Number.cc:901 ../libqalculate/Number.cc:940
-#: ../libqalculate/Number.cc:947 ../libqalculate/Number.cc:993
-#: ../libqalculate/Number.cc:1011 ../libqalculate/Number.cc:1025
-#: ../libqalculate/Number.cc:1072 ../libqalculate/Number.cc:1257
-#: ../libqalculate/Number.cc:1413 ../libqalculate/Number.cc:1459
-#: ../libqalculate/Number.cc:1511 ../libqalculate/Number.cc:1556
-#: ../libqalculate/Number.cc:1579 ../libqalculate/Number.cc:1657
-#: ../libqalculate/Number.cc:1664 ../libqalculate/Number.cc:1672
-#: ../libqalculate/Number.cc:1742 ../libqalculate/Number.cc:1759
-#: ../libqalculate/Number.cc:1771 ../libqalculate/Number.cc:1794
-#: ../libqalculate/Number.cc:1804 ../libqalculate/Number.cc:1824
-#: ../libqalculate/Number.cc:1837 ../libqalculate/Number.cc:1850
-#: ../libqalculate/Number.cc:1866 ../libqalculate/Number.cc:1883
-#: ../libqalculate/Number.cc:1900 ../libqalculate/Number.cc:1917
-#: ../libqalculate/Number.cc:1931 ../libqalculate/Number.cc:1945
-#: ../libqalculate/Number.cc:1958 ../libqalculate/Number.cc:1973
-#: ../libqalculate/Number.cc:1987 ../libqalculate/Number.cc:2001
-#: ../libqalculate/Number.cc:2012 ../libqalculate/Number.cc:2026
-#: ../libqalculate/Number.cc:2038 ../libqalculate/Number.cc:2103
-#: ../libqalculate/Number.cc:2117 ../libqalculate/Number.cc:2133
-#: ../libqalculate/Number.cc:2149 ../libqalculate/Number.cc:2165
-#: ../libqalculate/Number.cc:2184 ../libqalculate/Number.cc:2203
-#: ../libqalculate/Number.cc:2226 ../libqalculate/Number.cc:2242
-#: ../libqalculate/Number.cc:2258 ../libqalculate/Number.cc:2280
-#: ../libqalculate/Number.cc:2298 ../libqalculate/Number.cc:2322
-#: ../libqalculate/Number.cc:2346 ../libqalculate/Number.cc:2385
-#: ../libqalculate/Number.cc:2392 ../libqalculate/Number.cc:2414
-#: ../libqalculate/Number.cc:2441 ../libqalculate/Number.cc:2449
-#: ../libqalculate/Number.cc:2463 ../libqalculate/Number.cc:2489
-#: ../libqalculate/Number.cc:2502 ../libqalculate/Number.cc:2535
-#: ../libqalculate/Number.cc:2564 ../libqalculate/Number.cc:2591
-#: ../libqalculate/Number.cc:2619 ../libqalculate/Number.cc:2634
-#: ../libqalculate/Number.cc:2644 ../libqalculate/Number.cc:2662
-#: ../libqalculate/Number.cc:2680 ../libqalculate/Number.cc:2686
-#: ../libqalculate/Number.cc:2705 ../libqalculate/Number.cc:2712
-#: ../libqalculate/Number.cc:3073 ../libqalculate/Number.cc:3108
-#: ../libqalculate/Number.cc:3144 ../libqalculate/Number.cc:3258
+#: ../libqalculate/Number.cc:91 ../libqalculate/Number.cc:197
+#: ../libqalculate/Number.cc:219 ../libqalculate/Number.cc:521
+#: ../libqalculate/Number.cc:689 ../libqalculate/Number.cc:808
+#: ../libqalculate/Number.cc:818 ../libqalculate/Number.cc:828
+#: ../libqalculate/Number.cc:838 ../libqalculate/Number.cc:847
+#: ../libqalculate/Number.cc:860 ../libqalculate/Number.cc:873
+#: ../libqalculate/Number.cc:883 ../libqalculate/Number.cc:895
+#: ../libqalculate/Number.cc:905 ../libqalculate/Number.cc:944
+#: ../libqalculate/Number.cc:951 ../libqalculate/Number.cc:997
+#: ../libqalculate/Number.cc:1015 ../libqalculate/Number.cc:1029
+#: ../libqalculate/Number.cc:1076 ../libqalculate/Number.cc:1261
+#: ../libqalculate/Number.cc:1417 ../libqalculate/Number.cc:1463
+#: ../libqalculate/Number.cc:1515 ../libqalculate/Number.cc:1560
+#: ../libqalculate/Number.cc:1583 ../libqalculate/Number.cc:1661
+#: ../libqalculate/Number.cc:1668 ../libqalculate/Number.cc:1676
+#: ../libqalculate/Number.cc:1746 ../libqalculate/Number.cc:1763
+#: ../libqalculate/Number.cc:1775 ../libqalculate/Number.cc:1798
+#: ../libqalculate/Number.cc:1808 ../libqalculate/Number.cc:1828
+#: ../libqalculate/Number.cc:1841 ../libqalculate/Number.cc:1854
+#: ../libqalculate/Number.cc:1870 ../libqalculate/Number.cc:1887
+#: ../libqalculate/Number.cc:1904 ../libqalculate/Number.cc:1921
+#: ../libqalculate/Number.cc:1935 ../libqalculate/Number.cc:1949
+#: ../libqalculate/Number.cc:1962 ../libqalculate/Number.cc:1977
+#: ../libqalculate/Number.cc:1991 ../libqalculate/Number.cc:2005
+#: ../libqalculate/Number.cc:2016 ../libqalculate/Number.cc:2030
+#: ../libqalculate/Number.cc:2042 ../libqalculate/Number.cc:2107
+#: ../libqalculate/Number.cc:2121 ../libqalculate/Number.cc:2137
+#: ../libqalculate/Number.cc:2153 ../libqalculate/Number.cc:2169
+#: ../libqalculate/Number.cc:2188 ../libqalculate/Number.cc:2207
+#: ../libqalculate/Number.cc:2230 ../libqalculate/Number.cc:2246
+#: ../libqalculate/Number.cc:2262 ../libqalculate/Number.cc:2284
+#: ../libqalculate/Number.cc:2302 ../libqalculate/Number.cc:2326
+#: ../libqalculate/Number.cc:2350 ../libqalculate/Number.cc:2389
+#: ../libqalculate/Number.cc:2396 ../libqalculate/Number.cc:2418
+#: ../libqalculate/Number.cc:2445 ../libqalculate/Number.cc:2453
+#: ../libqalculate/Number.cc:2467 ../libqalculate/Number.cc:2493
+#: ../libqalculate/Number.cc:2506 ../libqalculate/Number.cc:2539
+#: ../libqalculate/Number.cc:2568 ../libqalculate/Number.cc:2595
+#: ../libqalculate/Number.cc:2623 ../libqalculate/Number.cc:2638
+#: ../libqalculate/Number.cc:2648 ../libqalculate/Number.cc:2666
+#: ../libqalculate/Number.cc:2684 ../libqalculate/Number.cc:2690
+#: ../libqalculate/Number.cc:2709 ../libqalculate/Number.cc:2716
+#: ../libqalculate/Number.cc:3077 ../libqalculate/Number.cc:3113
+#: ../libqalculate/Number.cc:3149 ../libqalculate/Number.cc:3258
 #: ../libqalculate/Number.cc:3268 ../libqalculate/Number.cc:3274
 #: ../libqalculate/Number.cc:3280 ../libqalculate/Number.cc:3286
 #: ../libqalculate/Number.cc:3362 ../libqalculate/Number.cc:3386
@@ -2007,30 +2007,30 @@ msgstr "en vinkel eller ett tal (som använder inställd vinkelenhet)"
 msgid "CLN Exception: %s"
 msgstr "CLN Exception: %s"
 
-#: ../libqalculate/Number.cc:138
+#: ../libqalculate/Number.cc:174
 msgid ""
 "Cannot display numbers greater than 9999 or less than -9999 as roman "
 "numerals."
 msgstr ""
 "Kan inte visa tal större än 9999 eller mindre än -9999 som romerska siffror."
 
-#: ../libqalculate/Number.cc:264
+#: ../libqalculate/Number.cc:268
 msgid ""
 "Assuming the unusual practice of letting a last capital I mean 2 in a roman "
 "numeral."
 msgstr "Antar att ett sista stort I avses betyda 2."
 
-#: ../libqalculate/Number.cc:342
+#: ../libqalculate/Number.cc:346
 #, c-format
 msgid "Error in roman numerals: %s."
 msgstr "Fel i romerska siffor: \"%s\"."
 
-#: ../libqalculate/Number.cc:377
+#: ../libqalculate/Number.cc:381
 #, c-format
 msgid "Unknown roman numeral: %c."
 msgstr "Okänd romersk siffra: %c."
 
-#: ../libqalculate/Number.cc:435
+#: ../libqalculate/Number.cc:439
 #, c-format
 msgid ""
 "Errors in roman numerals: \"%s\". Interpreted as %s, which should be written "
@@ -2038,33 +2038,33 @@ msgid ""
 msgstr ""
 "Fel i romerska siffor: \"%s\". Tolkat som %s, vilket borde skrivits %s."
 
-#: ../libqalculate/Number.cc:524
+#: ../libqalculate/Number.cc:528
 msgid "':' in decimal number ignored (decimal point detected)."
 msgstr "':' i decimalt tal ignorerades (decimalkomma upptäckt)."
 
-#: ../libqalculate/Number.cc:580
+#: ../libqalculate/Number.cc:584
 #, c-format
 msgid "Character '%c' was ignored in the number \"%s\" with base %s."
 msgstr "Tecken '%c' ignorerades i numret \"%s\" med bas %s"
 
-#: ../libqalculate/Number.cc:1629
+#: ../libqalculate/Number.cc:1633
 msgid "Division by zero."
 msgstr "Division med noll."
 
 #. 0^0
-#: ../libqalculate/Number.cc:1635
+#: ../libqalculate/Number.cc:1639
 msgid "0^0 might be considered undefined"
 msgstr "0^0 kan anses vara odefinierat"
 
-#: ../libqalculate/Number.cc:1640
+#: ../libqalculate/Number.cc:1644
 msgid "The result of 0^i is possibly undefined"
 msgstr "Resulatatet av 0^i är möjligen idefinierat"
 
-#: ../libqalculate/Number.cc:2090
+#: ../libqalculate/Number.cc:2094
 msgid "Can only handle Riemann Zeta with an integer argument (s) >= 1"
 msgstr "Kan enbart hantera Riemann Zeta med en heltalsparameter (s) >= 1"
 
-#: ../libqalculate/Number.cc:2096
+#: ../libqalculate/Number.cc:2100
 msgid "Cannot handle an argument (s) that large for Riemann Zeta."
 msgstr ""
 "Kan inte hantera ett så stort tal för parametern (s) till Riemann Zeta."
