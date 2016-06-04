@@ -5,8 +5,42 @@ Qalculate! library and CLI
 
 Qalculate! is a multi-purpose desktop calculator for GNU/Linux (and Mac OS). It is small and simple to use but with much power and versatility underneath. Features include customizable functions, units, arbitrary precision, plotting, and a user-friendly interface (GTK+ and CLI).
 
-Features if libqalculate:
+##Installation
+In a terminal window in the top source code directory run
+`./autogen.sh` *(not required if using a release source tarball, only if using the git version)*
+`./configure`
+`make`
+`make install`
 
+##Requirements
+* CLN - Class Library for Numbers (http://www.ginac.de/CLN/)
+* Libxml2 (>= 2.3.8)
+* Glib
+* Gnuplot 1.7 (optional, for plotting)
+* GVfs or GNU Wget (optional, for retrieval of exchange rates)
+
+##API Documentation
+The API documentation is included in the package and is installed in $docdir/libqalculate/html (usually /usr/share/doc/libqalculate/html). It is generated when running autogen.sh.
+
+It is also available online at http://qalculate.github.io/reference/index.html.
+
+##Using the CLI program 'qalc'
+To calculate a single expression from the command line (non-interactive mode) enter
+`qalc mathematical expression` *(e.g. qalc 5+2)*
+
+`qalc --help` shows information about command line options in non-interactive mode.
+
+If you run `qalc` without any mathematical expression the program will start in interactive mode, where you can enter multiple expressions with history and completion, manipulate the result and change settings. Type `help` in interactive mode for more information.
+
+##Other Applications
+The main user interface for libqalculate is qalculate-gtk (https://github.com/Qalculate/qalculate-gtk).
+
+Other software using libqalculate includes
+* KDE Plasma Workspace (https://www.kde.org/workspaces/plasmadesktop/)
+* Cantor (http://kde.org/applications/education/cantor/)
+* Step (http://kde.org/applications/education/step/)
+
+##Features
 * Calculation and parsing:
    * Basic operations and operators: + - * / ^ E () && || ! < > >= <= != ~ & | << >>
    * Fault-tolerant parsing of strings: log 5 / 2 .5 (3) + (2( 3 +5 = ln(5) / (2.5 * 3) + 2 * (3 + 5)
