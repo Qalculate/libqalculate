@@ -251,6 +251,25 @@ void KnownVariable::set(string expression_) {
 	calculated_precision = 0;
 	setChanged(true);
 }
+bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
+	if(mstruct.isNumber()) {
+		if(i_prec < 1) {
+			if(!mstruct.number().isApproximate()) {
+				mstruct.number().setApproximate();
+				mstruct.numberUpdated();
+			}
+		} else if(mstruct.number().precision() < 1 || mstruct.number().precision() < i_prec) {
+			mstruct.number().setPrecision(i_prec);
+			mstruct.numberUpdated();
+		}
+		return true;
+	}
+	bool b = false;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(set_precision_of_numbers(mstruct[i], i_prec)) b = true;
+	}
+	return b;
+}
 const MathStructure &KnownVariable::get() {
 	if(b_expression && !mstruct) {
 		ParseOptions po;
@@ -259,11 +278,14 @@ const MathStructure &KnownVariable::get() {
 		}
 		mstruct = new MathStructure();
 		CALCULATOR->parse(mstruct, sexpression, po);
-		if(precision() > 0 && (mstruct->precision() < 1 || precision() < mstruct->precision())) {
-			mstruct->setPrecision(precision());
-		}
-		if(isApproximate() && !mstruct->isApproximate()) {
-			mstruct->setApproximate();
+		if(precision() > 0) {
+			if(mstruct->precision() < 1 || precision() < mstruct->precision()) {
+				if(!set_precision_of_numbers(*mstruct, precision())) mstruct->setPrecision(precision(), true);
+			}
+		} else if(isApproximate()) {
+			if(!mstruct->isApproximate()) {
+				if(!set_precision_of_numbers(*mstruct, precision())) mstruct->setApproximate(true, true);
+			}
 		}
 	}
 	return *mstruct;

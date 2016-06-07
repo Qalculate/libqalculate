@@ -378,7 +378,7 @@ void MathStructure::setToChild(size_t index, bool preserve_precision, MathStruct
 	if(index > 0 && index <= SIZE) {
 		if(mparent) {
 			CHILD(index - 1).ref();
-			mparent->setChild_nocopy(&CHILD(index - 1), index_this);
+			mparent->setChild_nocopy(&CHILD(index - 1), index_this, preserve_precision);
 		} else {
 			set_nocopy(CHILD(index - 1), preserve_precision);
 		}
@@ -1169,12 +1169,20 @@ bool MathStructure::representsNonMatrix() const {
 	return true;
 }
 
-void MathStructure::setApproximate(bool is_approx) {
+void MathStructure::setApproximate(bool is_approx, bool recursive) {
 	b_approx = is_approx;
 	if(b_approx) {
 		if(i_precision < 1) i_precision = PRECISION;
 	} else {
 		i_precision = -1;
+	}
+	if(recursive) {
+		if(m_type == STRUCT_NUMBER) {
+			o_number.setApproximate(is_approx);
+		}
+		for(size_t i = 0; i < SIZE; i++) {
+			CHILD(i).setApproximate(is_approx, true);
+		}
 	}
 }
 bool MathStructure::isApproximate() const {
@@ -1184,9 +1192,17 @@ bool MathStructure::isApproximate() const {
 int MathStructure::precision() const {
 	return i_precision;
 }
-void MathStructure::setPrecision(int prec) {
+void MathStructure::setPrecision(int prec, bool recursive) {
 	i_precision = prec;
 	if(i_precision > 0) b_approx = true;
+	if(recursive) {
+		if(m_type == STRUCT_NUMBER) {
+			o_number.setPrecision(prec);
+		}
+		for(size_t i = 0; i < SIZE; i++) {
+			CHILD(i).setPrecision(prec, true);
+		}
+	}
 }
 
 void MathStructure::transform(StructureType mtype, const MathStructure &o) {
@@ -5466,6 +5482,7 @@ bool MathStructure::calculateMultiplyIndex(size_t index, const EvaluationOptions
 			if(b_matrix && !CHILD(i).representsNonMatrix()) break;
 		}
 	}
+
 	bool had_matrix = false;
 	for(size_t i = index + 1; i < SIZE; i++) {
 		if(had_matrix && !CHILD(i).representsNonMatrix()) continue;
@@ -5496,9 +5513,10 @@ bool MathStructure::calculateMultiplyIndex(size_t index, const EvaluationOptions
 		if(i == SIZE - 1) break;
 		if(b_matrix && !CHILD(i).representsNonMatrix()) had_matrix = true;
 	}
-	
+
 	MERGE_INDEX2
-		
+	
+
 }
 bool MathStructure::calculateMultiply(const MathStructure &mmul, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
 	multiply(mmul, true);
@@ -9497,15 +9515,20 @@ void MathStructure::insertChild_nocopy(MathStructure *o, size_t index) {
 		addChild_nocopy(o);
 	}
 }
-void MathStructure::setChild(const MathStructure &o, size_t index) {
+void MathStructure::setChild(const MathStructure &o, size_t index, bool merge_precision) {
 	if(index > 0 && index <= SIZE) {
-		CHILD(index - 1) = o;
+		CHILD(index - 1).set(o, merge_precision);
 		CHILD_UPDATED(index - 1);
 	}
 }
-void MathStructure::setChild_nocopy(MathStructure *o, size_t index) {
+void MathStructure::setChild_nocopy(MathStructure *o, size_t index, bool merge_precision) {
 	if(index > 0 && index <= SIZE) {
-		v_subs[v_order[index - 1]]->unref();
+		MathStructure *o_prev = v_subs[v_order[index - 1]];
+		if(merge_precision) {
+			if(!o->isApproximate() && o_prev->isApproximate()) o->setApproximate(true);
+			if(o_prev->precision() > 0 && (o->precision() < 1 || o_prev->precision() < o->precision())) o->setPrecision(o_prev->precision()); 
+		}
+		o_prev->unref();
 		v_subs[v_order[index - 1]] = o;
 		CHILD_UPDATED(index - 1);
 	}

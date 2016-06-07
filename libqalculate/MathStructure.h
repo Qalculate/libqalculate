@@ -412,8 +412,8 @@ class MathStructure {
 		void delChild(size_t index);
 		void insertChild(const MathStructure &o, size_t index);
 		void insertChild_nocopy(MathStructure *o, size_t index);
-		void setChild(const MathStructure &o, size_t index = 1);
-		void setChild_nocopy(MathStructure *o, size_t index = 1);
+		void setChild(const MathStructure &o, size_t index = 1, bool merge_precision = false);
+		void setChild_nocopy(MathStructure *o, size_t index = 1, bool merge_precision = false);
 		const MathStructure *getChild(size_t index) const;
 		MathStructure *getChild(size_t index);
 		size_t countChildren() const;
@@ -494,9 +494,9 @@ class MathStructure {
 	
 		/** @name Functions for precision */
 		//@{
-		void setApproximate(bool is_approx = true);	
+		void setApproximate(bool is_approx = true, bool recuresive = false);
 		bool isApproximate() const;		
-		void setPrecision(int prec);
+		void setPrecision(int prec, bool recursive = false);
 		int precision() const;
 		void mergePrecision(const MathStructure &o);
 		//@}

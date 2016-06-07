@@ -234,7 +234,7 @@ Calculator::Calculator() {
 #endif
 
 	has_gvfs = -1;
-	exchange_rates_warning_issued = false;
+	exchange_rates_time = 0;
 	
 	i_printing_aborted = 0;
 	b_printing_controlled = false;
@@ -7196,7 +7196,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "relation")) {
 									XML_GET_STRING_FROM_TEXT(child2, svalue);
 									XML_GET_APPROX_FROM_PROP(child2, b)
-									XML_GET_PREC_FROM_PROP(child, prec)
+									XML_GET_PREC_FROM_PROP(child2, prec)
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "reverse_relation")) {
 									XML_GET_STRING_FROM_TEXT(child2, inverse);
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "inverse_relation")) {
@@ -8720,7 +8720,6 @@ bool Calculator::loadExchangeRates() {
 		}
 		g_free(filename_old);
 	}
-	g_free(filename);
 	cur = xmlDocGetRootElement(doc);
 	if(cur == NULL) {
 		xmlFreeDoc(doc);
@@ -8755,7 +8754,11 @@ bool Calculator::loadExchangeRates() {
 		}
 	}
 	xmlFreeDoc(doc);
-	exchange_rates_warning_issued = false;
+	struct stat stats;
+	if(stat(filename, &stats) == 0) {
+		exchange_rates_time = stats.st_mtime;
+	}
+	g_free(filename);
 	return true;
 }
 bool Calculator::hasGVFS() {
@@ -8822,21 +8825,10 @@ bool CalculatorMessage::isExchangeRatesWarning() const {
 	return mtype == MESSAGE_WARNING && smessage == _("It has been more than one week since the exchange rates last were updated.");
 }
 bool Calculator::checkExchangeRatesDate() {
-	if(exchange_rates_warning_issued) return true;
-	gchar *filename = g_build_filename(getLocalDataDir().c_str(), "eurofxref-daily.xml", NULL);
-	bool up_to_date = false;
-	struct stat stats;
-	if(stat(filename, &stats) == 0) {
-		if(time(NULL) - stats.st_mtime <= 604800) {
-			up_to_date = true;
-		}
-	}
-	if(!up_to_date) {
-		error(false, _("It has been more than one week since the exchange rates last were updated."), NULL);
-		exchange_rates_warning_issued = true;
-	}
-	g_free(filename);
-	return up_to_date;
+	if(exchange_rates_time > 0 && difftime(time(NULL), exchange_rates_time) < 604800) return true;
+	error(false, _("It has been more than one week since the exchange rates last were updated."), NULL);
+	time(&exchange_rates_time);
+	return false;
 }
 
 bool Calculator::canPlot() {

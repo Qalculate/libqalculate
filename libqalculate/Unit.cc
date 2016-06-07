@@ -197,7 +197,7 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 	} else if(u->baseUnit() == baseUnit()) {
 		u->convertToBaseUnit(mvalue, mexp);
 		convertFromBaseUnit(mvalue, mexp);
-		if(isCurrency()) {
+		if(isCurrency() && u->isCurrency() && ((isBuiltin() && this != CALCULATOR->u_euro) || (u->isBuiltin() && u != CALCULATOR->u_euro))) {
 			CALCULATOR->checkExchangeRatesDate();
 		}
 		return true;
@@ -323,6 +323,7 @@ MathStructure AliasUnit::convertFromBaseUnit() const {
 int AliasUnit::baseExponent(int exp) const {
 	return o_unit->baseExponent(exp * i_exp);
 }
+
 MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const {
 	if(i_exp != 1) mexp /= i_exp;
 	ParseOptions po;
@@ -345,9 +346,16 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 			CALCULATOR->parse(&mvalue, stmp, po);
 			CALCULATOR->delId(x_id);
 			CALCULATOR->delId(y_id);
+			if(precision() > 0 && (mvalue.precision() < 1 || precision() < mvalue.precision())) mvalue.setPrecision(precision(), true);
+			if(isApproximate()) mvalue.setApproximate(true, true);
 		} else {
 			MathStructure *mstruct = new MathStructure();
 			CALCULATOR->parse(mstruct, svalue, po);
+			if(precision() > 0) {
+				if(mstruct->precision() < 1 || precision() < mstruct->precision()) mstruct->setPrecision(precision(), true);
+			} else if(isApproximate() && !mstruct->isApproximate()) {
+				mstruct->setApproximate(true, true);
+			}
 			if(!mexp.isOne()) mstruct->raise(mexp);
 			mvalue.divide_nocopy(mstruct, true);
 		}
@@ -366,16 +374,21 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 			gsub("\\y", stmp2, stmp);
 			CALCULATOR->parse(&mvalue, stmp, po);
 			CALCULATOR->delId(x_id);
-			CALCULATOR->delId(y_id);			
+			CALCULATOR->delId(y_id);
+			if(precision() > 0 && (mvalue.precision() < 1 || precision() < mvalue.precision())) mvalue.setPrecision(precision(), true);
+			if(isApproximate()) mvalue.setApproximate(true, true);
 		} else {
 			MathStructure *mstruct = new MathStructure();
 			CALCULATOR->parse(mstruct, sinverse, po);
+			if(precision() > 0) {
+				if(mstruct->precision() < 1 || precision() < mstruct->precision()) mstruct->setPrecision(precision(), true);
+			} else if(isApproximate() && !mstruct->isApproximate()) {
+				mstruct->setApproximate(true, true);
+			}
 			if(!mexp.isOne()) mstruct->raise(mexp);
 			mvalue.multiply_nocopy(mstruct, true);
 		}
-	}
-	if(precision() > 0 && (mvalue.precision() < 1 || precision() < mvalue.precision())) mvalue.setPrecision(precision());
-	if(isApproximate()) mvalue.setApproximate();
+	}	
 	return mvalue;
 }
 MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const {
@@ -405,14 +418,21 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 		} else {
 			CALCULATOR->delId(y_id);
 		}
+		if(precision() > 0 && (mvalue.precision() < 1 || precision() < mvalue.precision())) mvalue.setPrecision(precision(), true);
+		if(isApproximate()) mvalue.setApproximate(true, true);
 	} else {
 		MathStructure *mstruct = new MathStructure();
 		CALCULATOR->parse(mstruct, svalue, po);
+		if(precision() > 0) {			
+			if(mstruct->precision() < 1 || precision() < mstruct->precision()) {
+				mstruct->setPrecision(precision(), true);
+			}
+		} else if(isApproximate() && !mstruct->isApproximate()) {
+			mstruct->setApproximate(true, true);
+		}		
 		if(!mexp.isOne()) mstruct->raise(mexp);
 		mvalue.multiply_nocopy(mstruct, true);
 	}
-	if(precision() > 0 && (mvalue.precision() < 1 || precision() < mvalue.precision())) mvalue.setPrecision(precision());
-	if(isApproximate()) mvalue.setApproximate();
 	if(i_exp != 1) mexp.multiply(i_exp);
 	return mvalue;
 }

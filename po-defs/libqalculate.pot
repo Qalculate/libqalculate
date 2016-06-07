@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-03 15:10+0200\n"
+"POT-Creation-Date: 2016-06-07 19:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6705,19 +6705,19 @@ msgid "Foot-Pound Force"
 msgstr ""
 
 #: ../data/units.xml.in.h:447
-msgid "Rydberg"
-msgstr ""
-
-#: ../data/units.xml.in.h:448
-msgid "ar:Ry,s:rydberg_unit"
-msgstr ""
-
-#: ../data/units.xml.in.h:449
 msgid "Hartree"
 msgstr ""
 
-#: ../data/units.xml.in.h:450
+#: ../data/units.xml.in.h:448
 msgid "ar:Ha,as:E_h,hartree"
+msgstr ""
+
+#: ../data/units.xml.in.h:449
+msgid "Rydberg"
+msgstr ""
+
+#: ../data/units.xml.in.h:450
+msgid "ar:Ry,s:rydberg_unit"
 msgstr ""
 
 #: ../data/units.xml.in.h:451
@@ -7362,7 +7362,7 @@ msgid "Planck Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:73
-msgid "r:planck"
+msgid "r:planck,au:&#x210e;"
 msgstr ""
 
 #: ../data/variables.xml.in.h:74
@@ -7370,7 +7370,7 @@ msgid "Planck Constant over 2 pi"
 msgstr ""
 
 #: ../data/variables.xml.in.h:75
-msgid "r:planck2pi"
+msgid "r:planck2pi,au:&#x210f;"
 msgstr ""
 
 #: ../data/variables.xml.in.h:76
@@ -7482,7 +7482,7 @@ msgid "Bohr Radius"
 msgstr ""
 
 #: ../data/variables.xml.in.h:103
-msgid "r:bohr_radius,ais:a_o"
+msgid "r:bohr_radius,ais:a_0"
 msgstr ""
 
 #: ../data/variables.xml.in.h:104
@@ -7574,7 +7574,7 @@ msgid "Boltzmann Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:126
-msgid "r:boltzmann"
+msgid "r:boltzmann,ais:k_B"
 msgstr ""
 
 #: ../data/variables.xml.in.h:127

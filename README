@@ -32,7 +32,7 @@ If you run `qalc` without any mathematical expression the program will start in 
 5. Other Applications
 The main user interface for libqalculate is qalculate-gtk (https://github.com/Qalculate/qalculate-gtk).
 
-Other software using libqalculate includes
+Other software using libqalculate include
 * KDE Plasma Workspace (https://www.kde.org/workspaces/plasmadesktop/)
 * Cantor (http://kde.org/applications/education/cantor/)
 * Step (http://kde.org/applications/education/step/)

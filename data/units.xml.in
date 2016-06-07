@@ -2593,22 +2593,20 @@
       </part>
     </unit>
     <unit type="alias">
-      <system>SI</system>
-      <_title>Rydberg</_title>
-      <_names>ar:Ry,s:rydberg_unit</_names>
+      <_title>Hartree</_title>
+      <_names>ar:Ha,as:E_h,hartree</_names>
       <base>
         <unit>J</unit>
-        <relation approximate="true" precision="7">2.17987235E-18</relation>
+        <relation approximate="true" precision="7">4.359744650E-18</relation>
         <exponent>1</exponent>
       </base>
     </unit>
     <unit type="alias">
-      <system>SI</system>
-      <_title>Hartree</_title>
-      <_names>ar:Ha,as:E_h,hartree</_names>
+      <_title>Rydberg</_title>
+      <_names>ar:Ry,s:rydberg_unit</_names>
       <base>
-        <unit>Ry</unit>
-        <relation>2</relation>
+        <unit>Ha</unit>
+        <relation>0.5</relation>
         <exponent>1</exponent>
       </base>
     </unit>

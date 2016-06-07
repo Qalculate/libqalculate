@@ -219,7 +219,7 @@ class Calculator {
 	string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
 
 	bool b_argument_errors;
-	bool exchange_rates_warning_issued;
+	time_t exchange_rates_time;
 
 	int has_gvfs;
 

@@ -7,10 +7,10 @@ Qalculate! is a multi-purpose desktop calculator for GNU/Linux (and Mac OS). It 
 
 ##Installation
 In a terminal window in the top source code directory run
-`./autogen.sh` *(not required if using a release source tarball, only if using the git version)*
-`./configure`
-`make`
-`make install`
+* `./autogen.sh` *(not required if using a release source tarball, only if using the git version)*
+* `./configure`
+* `make`
+* `make install`
 
 ##Requirements
 * CLN - Class Library for Numbers (http://www.ginac.de/CLN/)
@@ -35,7 +35,7 @@ If you run `qalc` without any mathematical expression the program will start in 
 ##Other Applications
 The main user interface for libqalculate is qalculate-gtk (https://github.com/Qalculate/qalculate-gtk).
 
-Other software using libqalculate includes
+Other software using libqalculate include
 * KDE Plasma Workspace (https://www.kde.org/workspaces/plasmadesktop/)
 * Cantor (http://kde.org/applications/education/cantor/)
 * Step (http://kde.org/applications/education/step/)

@@ -1,3 +1,11 @@
+2016-06-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not check if exchange rates is up to date when using currencies with fixed exchange rate (currencies replaced by euro)
+	* Warn about old exchange rates again after one week if the application has not been restarted (Calculator object not recreated) 
+	* Make sure precision and if approximate is not lost from units, functions and variables
+	* Update physical constants from CODATA Recommended Values 2014
+	* Fix unit precision from definitions
+
 2016-06-03 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* sqrt(7/4) = sqrt(7)/2, sqrt(2)/2−(1/sqrt(2)) equals exactly zero
