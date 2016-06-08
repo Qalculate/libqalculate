@@ -266,7 +266,10 @@ bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
 	}
 	bool b = false;
 	for(size_t i = 0; i < mstruct.size(); i++) {
-		if(set_precision_of_numbers(mstruct[i], i_prec)) b = true;
+		if(set_precision_of_numbers(mstruct[i], i_prec)) {
+			mstruct.childUpdated(i + 1);
+			b = true;
+		}
 	}
 	return b;
 }

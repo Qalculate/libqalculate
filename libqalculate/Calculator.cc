@@ -4687,14 +4687,7 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 					mstruct2->unref();
 					return false;
 				}
-				if(s == OPERATION_DIVIDE && po.preserve_format) {
-					mstruct->transform_nocopy(STRUCT_DIVISION, mstruct2);
-				} else if(s == OPERATION_SUBTRACT && po.preserve_format) {
-					mstruct2->transform(STRUCT_NEGATE);
-					mstruct->add_nocopy(mstruct2, OPERATION_ADD, true);
-				} else {
-					mstruct->add_nocopy(mstruct2, s, true);
-				}
+				mstruct->add_nocopy(mstruct2, s, true);
 			} else {
 				MathStructure *mstruct2 = new MathStructure();
 				if(!parseNumber(mstruct2, str, po)) {
