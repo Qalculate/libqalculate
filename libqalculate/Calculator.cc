@@ -235,6 +235,9 @@ Calculator::Calculator() {
 
 	has_gvfs = -1;
 	exchange_rates_time = 0;
+	exchange_rates_check_time = 0;
+	b_exchange_rates_warning_enabled = true;
+	b_exchange_rates_used = false;
 	
 	i_printing_aborted = 0;
 	b_printing_controlled = false;
@@ -8750,6 +8753,7 @@ bool Calculator::loadExchangeRates() {
 	struct stat stats;
 	if(stat(filename, &stats) == 0) {
 		exchange_rates_time = stats.st_mtime;
+		exchange_rates_check_time = stats.st_mtime;
 	}
 	g_free(filename);
 	return true;
@@ -8814,14 +8818,27 @@ bool Calculator::fetchExchangeRates(int timeout, string wget_args) {
 bool Calculator::fetchExchangeRates(int timeout) {
 	return fetchExchangeRates(timeout, "--quiet --tries=1");
 }
-bool CalculatorMessage::isExchangeRatesWarning() const {
-	return mtype == MESSAGE_WARNING && smessage == _("It has been more than one week since the exchange rates last were updated.");
-}
-bool Calculator::checkExchangeRatesDate() {
-	if(exchange_rates_time > 0 && difftime(time(NULL), exchange_rates_time) < 604800) return true;
-	error(false, _("It has been more than one week since the exchange rates last were updated."), NULL);
-	time(&exchange_rates_time);
+bool Calculator::checkExchangeRatesDate(unsigned int n_days, bool force_check, bool send_warning) {
+	if(exchange_rates_time > 0 && ((!force_check && exchange_rates_check_time > 0 && difftime(time(NULL), exchange_rates_check_time) < 86400 * n_days) || difftime(time(NULL), exchange_rates_time) < 86400 * n_days)) return true;
+	time(&exchange_rates_check_time);
+	if(send_warning) error(false, _("It has been more than one week since the exchange rates last were updated."), NULL);
 	return false;
+}
+void Calculator::setExchangeRatesWarningEnabled(bool enable) {
+	b_exchange_rates_warning_enabled = enable;
+}
+bool Calculator::exchangeRatesWarningEnabled() const {
+	return b_exchange_rates_warning_enabled;
+}
+bool Calculator::exchangeRatesUsed() const {
+	return b_exchange_rates_used;
+}
+void Calculator::resetExchangeRatesUsed() {
+	b_exchange_rates_used = false;
+}
+void Calculator::setExchangeRatesUsed() {
+	b_exchange_rates_used = true;
+	if(b_exchange_rates_warning_enabled) checkExchangeRatesDate(7, false, true);
 }
 
 bool Calculator::canPlot() {

@@ -198,7 +198,7 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 		u->convertToBaseUnit(mvalue, mexp);
 		convertFromBaseUnit(mvalue, mexp);
 		if(isCurrency() && u->isCurrency() && ((isBuiltin() && this != CALCULATOR->u_euro) || (u->isBuiltin() && u != CALCULATOR->u_euro))) {
-			CALCULATOR->checkExchangeRatesDate();
+			CALCULATOR->setExchangeRatesUsed();
 		}
 		return true;
 	}

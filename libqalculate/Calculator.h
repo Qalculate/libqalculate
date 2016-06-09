@@ -144,7 +144,6 @@ class CalculatorMessage {
 	string message() const;
 	const char* c_message() const;	
 	MessageType type() const;
-	bool isExchangeRatesWarning() const;
 };
 
 #include <libqalculate/MathStructure.h>
@@ -219,7 +218,9 @@ class Calculator {
 	string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
 
 	bool b_argument_errors;
-	time_t exchange_rates_time;
+
+	time_t exchange_rates_time, exchange_rates_check_time;
+	bool b_exchange_rates_used, b_exchange_rates_warning_enabled;
 
 	int has_gvfs;
 
@@ -979,8 +980,16 @@ class Calculator {
 	* @returns true if operation was successful.
 	*/
 	bool fetchExchangeRates(int timeout = 15);
-	/** Returns true if the exchange rates on local disc is older than one week. */
-	bool checkExchangeRatesDate();
+	/** Returns false if the exchange rates on local disc is older than n days (and if not force_check = true, there have been n days before last true return of this function). */
+	bool checkExchangeRatesDate(unsigned int n_days = 7, bool force_check = false, bool send_warning = false);
+	/// Enable or disable old exchange rates warning (initial state is true).
+	void setExchangeRatesWarningEnabled(bool enable);
+	bool exchangeRatesWarningEnabled() const;
+	/// Check if exchange rates has been used since resetExchangeRatesUsed() was last called
+	bool exchangeRatesUsed() const;
+	void resetExchangeRatesUsed();
+	/// For internal use, called by currency units
+	void setExchangeRatesUsed();
 	//@}
 
 	/** @name Functions for plotting */

@@ -30,6 +30,7 @@ MathStructure *mstruct, *parsed_mstruct;
 KnownVariable *vans[5];
 string result_text, parsed_text;
 bool load_global_defs, fetch_exchange_rates_at_startup, first_time, first_qalculate_run, save_mode_on_exit, save_defs_on_exit;
+int auto_update_exchange_rates;
 PrintOptions printops, saved_printops;
 EvaluationOptions evalops, saved_evalops;
 AssumptionType saved_assumption_type;
@@ -44,6 +45,7 @@ string expression_str;
 bool expression_executed = false;
 bool rpn_mode;
 bool use_readline = true;
+bool batch;
 
 bool result_only;
 
@@ -321,6 +323,27 @@ int countRows(const char *str, int cols) {
 	return r;
 }
 
+bool check_exchange_rates() {
+	if(batch && auto_update_exchange_rates <= 0) return false;
+	if(!CALCULATOR->exchangeRatesUsed()) return false;
+	if(CALCULATOR->checkExchangeRatesDate(auto_update_exchange_rates > 0 ? auto_update_exchange_rates : 7, false, auto_update_exchange_rates == 0)) return false;
+	if(auto_update_exchange_rates == 0) return false;
+	bool b = false;
+	if(auto_update_exchange_rates < 0) {
+		string ask_str = _("It has been more than one week since the exchange rates last were updated.");
+		ask_str += "\n";
+		ask_str += _("Do you wish to update the exchange rates now?");
+		b = ask_question(ask_str.c_str());
+	}
+	if(b || auto_update_exchange_rates > 0) {
+		CALCULATOR->fetchExchangeRates(15);
+		CALCULATOR->loadExchangeRates();
+		return true;
+	}
+	return false;
+}
+
+
 #ifdef HAVE_LIBREADLINE
 #	define CHECK_IF_SCREEN_FILLED if(!cfile) {rcount++; if(rcount + 3 >= rows) {FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); rl_read_key(); puts(""); rcount = 1;}}
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) if(!cfile) {rcount += countRows(x, cols); if(rcount + 2 >= rows) {FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); rl_read_key(); puts(""); rcount = 1;}} PUTS_UNICODE(x);
@@ -471,6 +494,16 @@ void set_option(string str) {
 		} else {
 			evalops.parse_options.parsing_mode = (ParsingMode) v;
 			expression_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "update exchange rates", _("update exchange rates"))) {
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "never", _("never"))) {
+			auto_update_exchange_rates = 0;
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "ask", _("ask"))) {
+			auto_update_exchange_rates = -1;
+		} else {
+			int v = s2i(svalue);
+			if(v < 0) auto_update_exchange_rates = -1;
+			else auto_update_exchange_rates = v;
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "multiplication sign", _("multiplication sign"))) {
 		int v = -1;
@@ -678,7 +711,7 @@ int main(int argc, char *argv[]) {
 	bool calc_arg_begun = false;
 	string command_file;
 	cfile = NULL;
-	bool batch = false;
+	batch = true;
 	result_only = false;
 	bool load_units = true, load_functions = true, load_variables = true, load_currencies = true, load_datasets = true;
 	load_global_defs = true;
@@ -699,6 +732,8 @@ int main(int argc, char *argv[]) {
 			fputs("\t", stdout); PUTS_UNICODE(_("executes commands from a file first"));
 			fputs("\n\t-t, -terse\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("reduces output to just the result of the input expression"));
+			fputs("\n\t-i, -interactive\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("start in interactive mode"));
 			fputs("\n\t-n, -nodefs\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("do not load any functions, units, or variables from file"));
 			fputs("\n\t-nocurrencies\n", stdout);
@@ -712,7 +747,7 @@ int main(int argc, char *argv[]) {
 			fputs("\n\t-novariables\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("do not load any global variables from file"));
 			puts("");
-			PUTS_UNICODE(_("The program will start in interactive mode if no expression is specified."));
+			PUTS_UNICODE(_("The program will start in interactive mode if no expression and no file is specified (or interactive mode is explicitly selected)."));
 			puts("");
 			return 0;
 		} else if(!calc_arg_begun && strcmp(argv[i], "-u8") == 0) {
@@ -721,6 +756,8 @@ int main(int argc, char *argv[]) {
 			enable_unicode = 0;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-terse") == 0 || strcmp(argv[i], "--terse") == 0 || strcmp(argv[i], "-t") == 0)) {
 			result_only = true;
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-interactive") == 0 || strcmp(argv[i], "--interactive") == 0 || strcmp(argv[i], "-i") == 0)) {
+			batch = false;
 		} else if(!calc_arg_begun && strcmp(argv[i], "-nounits") == 0) {
 			load_units = false;
 		} else if(!calc_arg_begun && strcmp(argv[i], "-nocurrencies") == 0) {
@@ -797,13 +834,14 @@ int main(int argc, char *argv[]) {
 
 	//exchange rates
 	if(load_global_defs && load_currencies) {
-		if(first_qalculate_run && canfetch && command_file.empty()) {
+		if(first_qalculate_run && canfetch && (command_file.empty() || !batch) && !result_only) {
 			if(ask_question(_("You need the download exchange rates to be able to convert between different currencies.\nYou can later get current exchange rates with the \"exchange rates\" command.\nDo you want to fetch exchange rates now from the Internet (default: yes)?"), true)) {
 				CALCULATOR->fetchExchangeRates(5);
 			}
 		} else if(fetch_exchange_rates_at_startup && canfetch) {
 			CALCULATOR->fetchExchangeRates(5);
 		}
+		CALCULATOR->setExchangeRatesWarningEnabled(batch && (!command_file.empty() || !calc_arg.empty()));
 		CALCULATOR->loadExchangeRates();
 	}
 
@@ -859,6 +897,11 @@ int main(int argc, char *argv[]) {
 			cfile = fopen(command_file.c_str(), "r");
 			if(!cfile) {
 				printf(_("Could not open \"%s\".\n"), command_file.c_str());
+				if(batch) {
+					pthread_cancel(view_thread);
+					CALCULATOR->terminateThreads();
+					return 0;
+				}
 			}
 		}
 	}
@@ -881,11 +924,16 @@ int main(int argc, char *argv[]) {
 			puts("");
 		} else {
 			use_readline = false;
-			execute_expression(false);
+			execute_expression(!batch);
 		}
-		pthread_cancel(view_thread);
-		CALCULATOR->terminateThreads();
-		return 0;
+		if(batch) {
+			pthread_cancel(view_thread);
+			CALCULATOR->terminateThreads();
+			return 0;
+		}
+		use_readline = true;
+	} else if(!cfile) {
+		batch = false;
 	}
 	
 #ifdef HAVE_LIBREADLINE
@@ -1188,13 +1236,22 @@ int main(int argc, char *argv[]) {
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "factors", _("factors"))) {
 				execute_command(COMMAND_FACTORIZE);
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "best", _("best")) || EQUALS_IGNORECASE_AND_LOCAL(str, "optimal", _("optimal"))) {
-				mstruct->set(CALCULATOR->convertToBestUnit(*mstruct, evalops));
+				CALCULATOR->resetExchangeRatesUsed();
+				MathStructure mstruct_new(CALCULATOR->convertToBestUnit(*mstruct, evalops));
+				if(check_exchange_rates()) mstruct->set(CALCULATOR->convertToBestUnit(*mstruct, evalops));
+				else mstruct->set(mstruct_new);
 				result_action_executed();
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base"))) {
-				mstruct->set(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
+				CALCULATOR->resetExchangeRatesUsed();
+				MathStructure mstruct_new(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
+				if(check_exchange_rates()) mstruct->set(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
+				else mstruct->set(mstruct_new);
 				result_action_executed();
 			} else {
-				mstruct->set(CALCULATOR->convert(*mstruct, str, evalops));
+				CALCULATOR->resetExchangeRatesUsed();
+				MathStructure mstruct_new(CALCULATOR->convert(*mstruct, str, evalops));
+				if(check_exchange_rates()) mstruct->set(CALCULATOR->convert(*mstruct, str, evalops));
+				else mstruct->set(mstruct_new);
 				result_action_executed();
 			}
 		//qalc command
@@ -1374,6 +1431,13 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("unicode")); PUTS_UNICODE(b2oo(printops.use_unicode_signs, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("units")); PUTS_UNICODE(b2oo(evalops.parse_options.units_enabled, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("unknowns")); PUTS_UNICODE(b2oo(evalops.parse_options.unknowns_enabled, false)); CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("update exchange rates")); 
+			switch(auto_update_exchange_rates) {
+				case -1: {PUTS_UNICODE(_("ask")); break;}
+				case 0: {PUTS_UNICODE(_("never")); break;}
+				default: {printf("%i\n", auto_update_exchange_rates); break;}
+			}
+			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("variables")); PUTS_UNICODE(b2oo(evalops.parse_options.variables_enabled, false)); CHECK_IF_SCREEN_FILLED
 			puts("");
 		//qalc command
@@ -1864,6 +1928,12 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("unicode"), printops.use_unicode_signs);
 				STR_AND_TABS_BOOL(_("units"), evalops.parse_options.units_enabled);
 				STR_AND_TABS_BOOL(_("unknowns"), evalops.parse_options.unknowns_enabled);
+				STR_AND_TABS(_("update exchange rates")); 
+				str += "(-1 = "; str += _("ask"); if(auto_update_exchange_rates < 0) str += "*";
+				str += ", 0 = "; str += _("never"); if(auto_update_exchange_rates == 0) str += "*";
+				str += ", > 0 = "; str += _("days"); str += ")";
+				if(auto_update_exchange_rates > 0) {str += " "; str += i2s(auto_update_exchange_rates); str += "*";}
+				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("variables"), evalops.parse_options.variables_enabled);
 				CHECK_IF_SCREEN_FILLED_PUTS(_("The current value is marked with '*'."));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
@@ -2109,6 +2179,8 @@ void *view_proc(void *pipe) {
 void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_index, bool register_moved, bool noprint) {
 
 	b_busy = true;
+	
+	if(batch) goto_input = false;
 
 	string prev_result_text = result_text;
 	result_text = "?";
@@ -2422,6 +2494,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
 	string str;
 	bool do_bases = false, do_factors = false, do_fraction = false;
+	if(batch) goto_input = false;
 	if(do_stack) {
 	} else {
 		str = expression_str;
@@ -2493,6 +2566,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	b_busy = true;
 
 	size_t stack_size = 0;
+	
+	CALCULATOR->resetExchangeRatesUsed();
 
 	if(do_stack) {
 		stack_size = CALCULATOR->RPNStackSize();
@@ -2659,6 +2734,11 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		else mstruct->ref();
 	}
 	
+	if(!do_mathoperation && check_exchange_rates()) {
+		execute_expression(goto_input, do_mathoperation, op, f, rpn_mode, do_stack ? stack_index : 0);
+		return;
+	}
+	
 	if(do_factors) {
 		if(do_stack && stack_index != 0) {
 			MathStructure *save_mstruct = mstruct;
@@ -2816,6 +2896,7 @@ void load_preferences() {
 	save_mode_on_exit = true;
 	save_defs_on_exit = true;	
 	fetch_exchange_rates_at_startup = false;
+	auto_update_exchange_rates = -1;
 	first_time = false;
 
 	FILE *file = NULL;
@@ -2881,7 +2962,9 @@ void load_preferences() {
 				} else if(svar == "save_definitions_on_exit") {
 					save_defs_on_exit = v;
 				} else if(svar == "fetch_exchange_rates_at_startup") {
-					fetch_exchange_rates_at_startup = v;
+					if(auto_update_exchange_rates < 0 && v) auto_update_exchange_rates = 1;
+				} else if(svar == "auto_update_exchange_rates") {
+					auto_update_exchange_rates = v;
 				} else if(svar == "min_deci") {
 					printops.min_decimals = v;
 				} else if(svar == "use_min_deci") {
@@ -3069,7 +3152,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "version=%s\n", VERSION);	
 	fprintf(file, "save_mode_on_exit=%i\n", save_mode_on_exit);
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
-	fprintf(file, "fetch_exchange_rates_at_startup=%i\n", fetch_exchange_rates_at_startup);
+	fprintf(file, "auto_update_exchange_rates=%i\n", auto_update_exchange_rates);
 	fprintf(file, "spacious=%i\n", printops.spacious);
 	fprintf(file, "excessive_parenthesis=%i\n", printops.excessive_parenthesis);
 	fprintf(file, "short_multiplication=%i\n", printops.short_multiplication);
