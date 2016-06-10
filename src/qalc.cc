@@ -400,6 +400,7 @@ void set_option(string str) {
 					goto set_option_place;
 				}
 			}
+			
 			PUTS_UNICODE(_("Illegal base."));
 		} else if(b_in) {
 			evalops.parse_options.base = v;
@@ -716,6 +717,15 @@ int main(int argc, char *argv[]) {
 	bool load_units = true, load_functions = true, load_variables = true, load_currencies = true, load_datasets = true;
 	load_global_defs = true;
 	printops.use_unicode_signs = false;
+	
+#ifdef ENABLE_NLS
+	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
+#endif
+	
+	setlocale(LC_ALL, "");
+	
 	for(int i = 1; i < argc; i++) {
 		if(calc_arg_begun) {
 			calc_arg += " ";
@@ -795,13 +805,7 @@ int main(int argc, char *argv[]) {
 			calc_arg_begun = true;
 		}
 	}
-	
-#ifdef ENABLE_NLS
-	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-	textdomain (GETTEXT_PACKAGE);
-#endif
-	
+
 	b_busy = false;
 
 	//create the almighty Calculator object

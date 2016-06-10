@@ -1,3 +1,7 @@
+2016-06-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix localization of command line arguments
+
 2016-06-09 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Improve exchange rates handling

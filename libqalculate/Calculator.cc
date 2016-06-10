@@ -233,6 +233,8 @@ Calculator::Calculator() {
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 #endif
 
+	setlocale(LC_ALL, "");
+
 	has_gvfs = -1;
 	exchange_rates_time = 0;
 	exchange_rates_check_time = 0;
