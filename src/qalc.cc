@@ -325,7 +325,6 @@ int countRows(const char *str, int cols) {
 }
 
 bool check_exchange_rates() {
-	if(!interactive_mode && auto_update_exchange_rates < 0) return false;
 	if(!CALCULATOR->exchangeRatesUsed()) return false;
 	if(CALCULATOR->checkExchangeRatesDate(auto_update_exchange_rates > 0 ? auto_update_exchange_rates : 7, false, auto_update_exchange_rates == 0 || (auto_update_exchange_rates < 0 && !ask_questions))) return false;
 	if(auto_update_exchange_rates == 0 || (auto_update_exchange_rates < 0 && !ask_questions)) return false;
