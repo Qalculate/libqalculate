@@ -717,6 +717,8 @@ int main(int argc, char *argv[]) {
 	bool load_units = true, load_functions = true, load_variables = true, load_currencies = true, load_datasets = true;
 	load_global_defs = true;
 	printops.use_unicode_signs = false;
+	fetch_exchange_rates_at_startup = false;
+	
 	
 #ifdef ENABLE_NLS
 	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
@@ -734,16 +736,14 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("usage: qalc [options] [expression]"));
 			printf("\n");
 			PUTS_UNICODE(_("where options are:"));
-			fputs("\n\t-/+u8\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("turn on/off unicode support"));
-			fputs("\n\t-set", stdout); fputs(" \"", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("VALUE"), stdout); fputs("\"\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("as set command in interactive program session (ex. -set \"base 16\")"));
+			fputs("\n\t-b,-base", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("set the result number base"));
+			fputs("\n\t-e,-exrates\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("update exchange rates"));
 			fputs("\n\t-f, -file", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("FILE"), stdout); fputs("\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("executes commands from a file first"));
-			fputs("\n\t-t, -terse\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("reduces output to just the result of the input expression"));
 			fputs("\n\t-i, -interactive\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("start in interactive mode"));
+			fputs("\t", stdout); PUTS_UNICODE(_("start in interactive mode"));			
 			fputs("\n\t-n, -nodefs\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("do not load any functions, units, or variables from file"));
 			fputs("\n\t-nocurrencies\n", stdout);
@@ -756,6 +756,12 @@ int main(int argc, char *argv[]) {
 			fputs("\t", stdout); PUTS_UNICODE(_("do not load any global units from file"));
 			fputs("\n\t-novariables\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("do not load any global variables from file"));
+			fputs("\n\t-t, -terse\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("reduces output to just the result of the input expression"));
+			fputs("\n\t-s, -set", stdout); fputs(" \"", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("VALUE"), stdout); fputs("\"\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("as set command in interactive program session (ex. -set \"base 16\")"));
+			fputs("\n\t-/+u8\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("turn on/off unicode support"));
 			puts("");
 			PUTS_UNICODE(_("The program will start in interactive mode if no expression and no file is specified (or interactive mode is explicitly selected)."));
 			puts("");
@@ -764,6 +770,15 @@ int main(int argc, char *argv[]) {
 			enable_unicode = 1;
 		} else if(!calc_arg_begun && strcmp(argv[i], "+u8") == 0) {
 			enable_unicode = 0;
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-exrates") == 0 || strcmp(argv[i], "--exrates") == 0 || strcmp(argv[i], "-e") == 0)) {
+			fetch_exchange_rates_at_startup = true;
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-base") == 0 || strcmp(argv[i], "--base") == 0 || strcmp(argv[i], "-b") == 0)) {
+			i++;
+			string set_base_str = "base ";
+			if(i < argc) {
+				set_base_str += argv[i];
+			}
+			set_option_strings.push_back(set_base_str);
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-terse") == 0 || strcmp(argv[i], "--terse") == 0 || strcmp(argv[i], "-t") == 0)) {
 			result_only = true;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-interactive") == 0 || strcmp(argv[i], "--interactive") == 0 || strcmp(argv[i], "-i") == 0)) {
@@ -780,7 +795,7 @@ int main(int argc, char *argv[]) {
 			load_datasets = false;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-nodefs") == 0 || strcmp(argv[i], "-n") == 0)) {
 			load_global_defs = false;
-		} else if(!calc_arg_begun && (strcmp(argv[i], "-set") == 0 || strcmp(argv[i], "--set") == 0)) {
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-set") == 0 || strcmp(argv[i], "--set") == 0 || strcmp(argv[i], "-s") == 0)) {
 			i++;
 			if(i < argc) {
 				set_option_strings.push_back(argv[i]);
@@ -839,13 +854,14 @@ int main(int argc, char *argv[]) {
 	ask_questions = (command_file.empty() || interactive_mode) && !result_only;
 	
 	//exchange rates
+	if(fetch_exchange_rates_at_startup && canfetch) {
+		CALCULATOR->fetchExchangeRates(15);
+	}
 	if(load_global_defs && load_currencies) {
-		if(first_qalculate_run && canfetch && ask_questions) {
+		if(!fetch_exchange_rates_at_startup && first_qalculate_run && canfetch && ask_questions) {
 			if(ask_question(_("You need the download exchange rates to be able to convert between different currencies.\nYou can later get current exchange rates with the \"exchange rates\" command.\nDo you want to fetch exchange rates now from the Internet (default: yes)?"), true)) {
-				CALCULATOR->fetchExchangeRates(5);
+				CALCULATOR->fetchExchangeRates(15);
 			}
-		} else if(fetch_exchange_rates_at_startup && canfetch) {
-			CALCULATOR->fetchExchangeRates(5);
 		}
 		CALCULATOR->setExchangeRatesWarningEnabled(!interactive_mode && (!command_file.empty() || (result_only && !calc_arg.empty())));
 		CALCULATOR->loadExchangeRates();
@@ -2010,7 +2026,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base"))) {
 				puts("");
-				PUTS_UNICODE(_("Sets the result base (equivalent to set base)."));
+				PUTS_UNICODE(_("Sets the result number base (equivalent to set base)."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exact", _("exact"))) {
 				puts("");
@@ -2895,8 +2911,7 @@ void load_preferences() {
 	rpn_mode = false;
 	
 	save_mode_on_exit = true;
-	save_defs_on_exit = true;	
-	fetch_exchange_rates_at_startup = false;
+	save_defs_on_exit = true;		
 	auto_update_exchange_rates = -1;
 	first_time = false;
 
