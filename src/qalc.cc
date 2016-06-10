@@ -736,9 +736,9 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("usage: qalc [options] [expression]"));
 			printf("\n");
 			PUTS_UNICODE(_("where options are:"));
-			fputs("\n\t-b,-base", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("\n", stdout);
+			fputs("\n\t-b, -base", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("set the result number base"));
-			fputs("\n\t-e,-exrates\n", stdout);
+			fputs("\n\t-e, -exrates\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("update exchange rates"));
 			fputs("\n\t-f, -file", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("FILE"), stdout); fputs("\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("executes commands from a file first"));
