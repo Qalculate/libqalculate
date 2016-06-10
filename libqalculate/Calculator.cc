@@ -8792,6 +8792,9 @@ string Calculator::getExchangeRatesFileName() {
 	g_free(filename);
 	return str;
 }
+time_t Calculator::getExchangeRatesTime() {
+	return exchange_rates_time;
+}
 string Calculator::getExchangeRatesUrl() {
 	return "http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml";
 }

@@ -45,7 +45,8 @@ string expression_str;
 bool expression_executed = false;
 bool rpn_mode;
 bool use_readline = true;
-bool batch;
+bool interactive_mode;
+bool ask_questions;
 
 bool result_only;
 
@@ -324,10 +325,10 @@ int countRows(const char *str, int cols) {
 }
 
 bool check_exchange_rates() {
-	if(batch && auto_update_exchange_rates <= 0) return false;
+	if(!interactive_mode && auto_update_exchange_rates < 0) return false;
 	if(!CALCULATOR->exchangeRatesUsed()) return false;
-	if(CALCULATOR->checkExchangeRatesDate(auto_update_exchange_rates > 0 ? auto_update_exchange_rates : 7, false, auto_update_exchange_rates == 0)) return false;
-	if(auto_update_exchange_rates == 0) return false;
+	if(CALCULATOR->checkExchangeRatesDate(auto_update_exchange_rates > 0 ? auto_update_exchange_rates : 7, false, auto_update_exchange_rates == 0 || (auto_update_exchange_rates < 0 && !ask_questions))) return false;
+	if(auto_update_exchange_rates == 0 || (auto_update_exchange_rates < 0 && !ask_questions)) return false;
 	bool b = false;
 	if(auto_update_exchange_rates < 0) {
 		string ask_str = _("It has been more than one week since the exchange rates last were updated.");
@@ -711,7 +712,7 @@ int main(int argc, char *argv[]) {
 	bool calc_arg_begun = false;
 	string command_file;
 	cfile = NULL;
-	batch = true;
+	interactive_mode = false;
 	result_only = false;
 	bool load_units = true, load_functions = true, load_variables = true, load_currencies = true, load_datasets = true;
 	load_global_defs = true;
@@ -757,7 +758,7 @@ int main(int argc, char *argv[]) {
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-terse") == 0 || strcmp(argv[i], "--terse") == 0 || strcmp(argv[i], "-t") == 0)) {
 			result_only = true;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-interactive") == 0 || strcmp(argv[i], "--interactive") == 0 || strcmp(argv[i], "-i") == 0)) {
-			batch = false;
+			interactive_mode = true;
 		} else if(!calc_arg_begun && strcmp(argv[i], "-nounits") == 0) {
 			load_units = false;
 		} else if(!calc_arg_begun && strcmp(argv[i], "-nocurrencies") == 0) {
@@ -832,16 +833,18 @@ int main(int argc, char *argv[]) {
 	static char* rlbuffer;
 #endif
 
+	ask_questions = (command_file.empty() || interactive_mode) && !result_only;
+	
 	//exchange rates
 	if(load_global_defs && load_currencies) {
-		if(first_qalculate_run && canfetch && (command_file.empty() || !batch) && !result_only) {
+		if(first_qalculate_run && canfetch && ask_questions) {
 			if(ask_question(_("You need the download exchange rates to be able to convert between different currencies.\nYou can later get current exchange rates with the \"exchange rates\" command.\nDo you want to fetch exchange rates now from the Internet (default: yes)?"), true)) {
 				CALCULATOR->fetchExchangeRates(5);
 			}
 		} else if(fetch_exchange_rates_at_startup && canfetch) {
 			CALCULATOR->fetchExchangeRates(5);
 		}
-		CALCULATOR->setExchangeRatesWarningEnabled(batch && (!command_file.empty() || !calc_arg.empty()));
+		CALCULATOR->setExchangeRatesWarningEnabled(!interactive_mode && (!command_file.empty() || (result_only && !calc_arg.empty())));
 		CALCULATOR->loadExchangeRates();
 	}
 
@@ -897,7 +900,7 @@ int main(int argc, char *argv[]) {
 			cfile = fopen(command_file.c_str(), "r");
 			if(!cfile) {
 				printf(_("Could not open \"%s\".\n"), command_file.c_str());
-				if(batch) {
+				if(!interactive_mode) {
 					pthread_cancel(view_thread);
 					CALCULATOR->terminateThreads();
 					return 0;
@@ -924,16 +927,17 @@ int main(int argc, char *argv[]) {
 			puts("");
 		} else {
 			use_readline = false;
-			execute_expression(!batch);
+			execute_expression(interactive_mode);
 		}
-		if(batch) {
+		if(!interactive_mode) {
 			pthread_cancel(view_thread);
 			CALCULATOR->terminateThreads();
 			return 0;
 		}
 		use_readline = true;
 	} else if(!cfile) {
-		batch = false;
+		ask_questions = !result_only;
+		interactive_mode = true;
 	}
 	
 #ifdef HAVE_LIBREADLINE
@@ -951,38 +955,32 @@ int main(int argc, char *argv[]) {
 	while(true) {
 		if(cfile) {
 			if(!fgets(buffer, 1000, cfile)) {
-				if(batch) {
-					break;
-				} else {
-					if(cfile != stdin) {
-						fclose(cfile);
-					}
-					cfile = NULL;
-					if(!calc_arg.empty()) {
-						if(!printops.use_unicode_signs && contains_unicode_char(calc_arg.c_str())) {
-							gchar *gstr = g_locale_to_utf8(calc_arg.c_str(), -1, NULL, NULL, NULL);
-							if(gstr) {
-								expression_str = gstr;
-								g_free(gstr);
-							} else {
-								expression_str = calc_arg;
-							}
+				if(cfile != stdin) {
+					fclose(cfile);
+				}
+				cfile = NULL;
+				if(!calc_arg.empty()) {
+					if(!printops.use_unicode_signs && contains_unicode_char(calc_arg.c_str())) {
+						gchar *gstr = g_locale_to_utf8(calc_arg.c_str(), -1, NULL, NULL, NULL);
+						if(gstr) {
+							expression_str = gstr;
+							g_free(gstr);
 						} else {
 							expression_str = calc_arg;
 						}
-						size_t index = expression_str.find_first_of(ID_WRAPS);
-						if(index != string::npos) {
-							printf(_("Illegal character, \'%c\', in expression."), expression_str[index]);
-							puts("");
-						} else {
-							execute_expression(false);
-						}
-						pthread_cancel(view_thread);
-						CALCULATOR->terminateThreads();
-						return 0;
+					} else {
+						expression_str = calc_arg;
 					}
-					continue;
+					size_t index = expression_str.find_first_of(ID_WRAPS);
+					if(index != string::npos) {
+						printf(_("Illegal character, \'%c\', in expression."), expression_str[index]);
+						puts("");
+					} else {
+						execute_expression(interactive_mode);
+					}
 				}
+				if(!interactive_mode) break;
+				continue;
 			}
 			if(!printops.use_unicode_signs && contains_unicode_char(buffer)) {
 				gchar *gstr = g_locale_to_utf8(buffer, -1, NULL, NULL, NULL);
@@ -2180,7 +2178,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 	b_busy = true;
 	
-	if(batch) goto_input = false;
+	if(!interactive_mode) goto_input = false;
 
 	string prev_result_text = result_text;
 	result_text = "?";
@@ -2494,7 +2492,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
 	string str;
 	bool do_bases = false, do_factors = false, do_fraction = false;
-	if(batch) goto_input = false;
+	if(!interactive_mode) goto_input = false;
 	if(do_stack) {
 	} else {
 		str = expression_str;

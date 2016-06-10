@@ -967,6 +967,11 @@ class Calculator {
 	* @returns Url of exchange rates file.
 	*/
 	string getExchangeRatesUrl();
+	/** Modification time of the exchange rates file.
+	*
+	* @returns Returns exchange rates modification time.
+	*/
+	time_t getExchangeRatesTime();
 	/** Download current exchange rates from the Internet to local disc.
 	*
 	* @param timeout Timeout for donwload try (only used by wget)
@@ -980,8 +985,14 @@ class Calculator {
 	* @returns true if operation was successful.
 	*/
 	bool fetchExchangeRates(int timeout = 15);
-	/** Returns false if the exchange rates on local disc is older than n days (and if not force_check = true, there have been n days before last true return of this function). */
-	bool checkExchangeRatesDate(unsigned int n_days = 7, bool force_check = false, bool send_warning = false);
+	/** Check age of exchange rates on local disc. 
+	*
+	* @param n_days How old in days exchange rates may be before exchange rates need updating
+	* @param force_check If exchange rates date should be checked again even if found outdated within n_days before
+	* @param send_warning If the standard exchange rates warning should be sent.
+	* @returns false if exchange.rates need updating
+	*/
+	bool checkExchangeRatesDate(unsigned int n_days = 7, bool force_check = false, bool send_warning = false);	
 	/// Enable or disable old exchange rates warning (initial state is true).
 	void setExchangeRatesWarningEnabled(bool enable);
 	bool exchangeRatesWarningEnabled() const;
