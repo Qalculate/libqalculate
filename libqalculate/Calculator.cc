@@ -8755,7 +8755,7 @@ bool Calculator::loadExchangeRates() {
 	struct stat stats;
 	if(stat(filename, &stats) == 0) {
 		exchange_rates_time = stats.st_mtime;
-		exchange_rates_check_time = stats.st_mtime;
+		if(exchange_rates_time > exchange_rates_check_time) exchange_rates_check_time = exchange_rates_time;
 	}
 	g_free(filename);
 	return true;
@@ -8826,7 +8826,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 bool Calculator::checkExchangeRatesDate(unsigned int n_days, bool force_check, bool send_warning) {
 	if(exchange_rates_time > 0 && ((!force_check && exchange_rates_check_time > 0 && difftime(time(NULL), exchange_rates_check_time) < 86400 * n_days) || difftime(time(NULL), exchange_rates_time) < 86400 * n_days)) return true;
 	time(&exchange_rates_check_time);
-	if(send_warning) error(false, _("It has been more than one week since the exchange rates last were updated."), NULL);
+	if(send_warning) error(false, _("It has been %s day(s) since the exchange rates last were updated."), i2s((int) floor(difftime(time(NULL), exchange_rates_time) / 86400)).c_str(), NULL);
 	return false;
 }
 void Calculator::setExchangeRatesWarningEnabled(bool enable) {

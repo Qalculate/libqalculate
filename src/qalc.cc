@@ -330,8 +330,13 @@ bool check_exchange_rates() {
 	if(auto_update_exchange_rates == 0 || (auto_update_exchange_rates < 0 && !ask_questions)) return false;
 	bool b = false;
 	if(auto_update_exchange_rates < 0) {
-		string ask_str = _("It has been more than one week since the exchange rates last were updated.");
-		ask_str += "\n";
+		char buffer[1000];
+		string ask_str;
+		int cx = snprintf(buffer, 1000, _("It has been %s day(s) since the exchange rates last were updated."), i2s((int) floor(difftime(time(NULL), CALCULATOR->getExchangeRatesTime()) / 86400)).c_str());
+		if(cx >= 0 && cx < 1000) {
+			ask_str = buffer;
+			ask_str += "\n";
+		}
 		ask_str += _("Do you wish to update the exchange rates now?");
 		b = ask_question(ask_str.c_str());
 	}

@@ -1,3 +1,7 @@
+2016-06-11 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	Show actual number of days since last exchange rates update
+
 2016-06-10 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Fix localization of command line arguments
