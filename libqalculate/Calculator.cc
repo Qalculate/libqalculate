@@ -29,6 +29,7 @@
 #include <pwd.h>
 #include <unistd.h>
 #include <time.h>
+#include <utime.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -8754,8 +8755,30 @@ bool Calculator::loadExchangeRates() {
 	xmlFreeDoc(doc);
 	struct stat stats;
 	if(stat(filename, &stats) == 0) {
-		exchange_rates_time = stats.st_mtime;
-		if(exchange_rates_time > exchange_rates_check_time) exchange_rates_check_time = exchange_rates_time;
+		if(exchange_rates_time >= stats.st_mtime) {
+			struct utimbuf new_times;
+			struct tm *temptm = localtime(&exchange_rates_time);
+			if(temptm) {
+				struct tm extm = *temptm;
+				time_t time_now = time(NULL);
+				struct tm *newtm = localtime(&time_now);
+				if(newtm && newtm->tm_mday != extm.tm_mday) {
+					newtm->tm_hour = extm.tm_hour;
+					newtm->tm_min = extm.tm_min;
+					newtm->tm_sec = extm.tm_sec;
+					exchange_rates_time = mktime(newtm);
+				} else {
+					time(&exchange_rates_time);
+				}
+			} else {
+				time(&exchange_rates_time);
+			}
+			new_times.modtime = exchange_rates_time;
+			utime(filename, &new_times);
+		} else {
+			exchange_rates_time = stats.st_mtime;
+			if(exchange_rates_time > exchange_rates_check_time) exchange_rates_check_time = exchange_rates_time;
+		}
 	}
 	g_free(filename);
 	return true;
@@ -8824,7 +8847,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	return fetchExchangeRates(timeout, "--quiet --tries=1");
 }
 bool Calculator::checkExchangeRatesDate(unsigned int n_days, bool force_check, bool send_warning) {
-	if(exchange_rates_time > 0 && ((!force_check && exchange_rates_check_time > 0 && difftime(time(NULL), exchange_rates_check_time) < 86400 * n_days) || difftime(time(NULL), exchange_rates_time) < 86400 * n_days)) return true;
+	if(exchange_rates_time > 0 && ((!force_check && exchange_rates_check_time > 0 && difftime(time(NULL), exchange_rates_check_time) < 86400 * n_days) || difftime(time(NULL), exchange_rates_time) < (86400 * n_days) + 3600)) return true;
 	time(&exchange_rates_check_time);
 	if(send_warning) error(false, _("It has been %s day(s) since the exchange rates last were updated."), i2s((int) floor(difftime(time(NULL), exchange_rates_time) / 86400)).c_str(), NULL);
 	return false;
