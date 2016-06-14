@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-03 14:57+0200\n"
+"POT-Creation-Date: 2016-06-14 14:33+0200\n"
 "PO-Revision-Date: 2006-12-06 15:54-0500\n"
 "Last-Translator: Nicolas Laug <nicolog@users.sourceforge.net>\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -2094,8 +2094,7 @@ msgstr ""
 #: ../data/functions.xml.in.h:218
 msgid "Returns an integer from a number of specified base between 2 and 36"
 msgstr ""
-"Retourne un entier à partir d'un nombre dans une base spécifiée "
-"entre 2 et 36"
+"Retourne un entier à partir d'un nombre dans une base spécifiée entre 2 et 36"
 
 #: ../data/functions.xml.in.h:219
 msgid "Binary"
@@ -6895,19 +6894,19 @@ msgid "Foot-Pound Force"
 msgstr ""
 
 #: ../data/units.xml.in.h:447
-msgid "Rydberg"
-msgstr ""
-
-#: ../data/units.xml.in.h:448
-msgid "ar:Ry,s:rydberg_unit"
-msgstr ""
-
-#: ../data/units.xml.in.h:449
 msgid "Hartree"
 msgstr ""
 
-#: ../data/units.xml.in.h:450
+#: ../data/units.xml.in.h:448
 msgid "ar:Ha,as:E_h,hartree"
+msgstr ""
+
+#: ../data/units.xml.in.h:449
+msgid "Rydberg"
+msgstr ""
+
+#: ../data/units.xml.in.h:450
+msgid "ar:Ry,s:rydberg_unit"
 msgstr ""
 
 #: ../data/units.xml.in.h:451
@@ -7553,16 +7552,18 @@ msgid "Planck Constant"
 msgstr "Constantes de Planck"
 
 #: ../data/variables.xml.in.h:73
-msgid "r:planck"
-msgstr ""
+#, fuzzy
+msgid "r:planck,au:&#x210e;"
+msgstr "pourmille,au:&#x2030;"
 
 #: ../data/variables.xml.in.h:74
 msgid "Planck Constant over 2 pi"
 msgstr "Constante de Planck sur 2 pi"
 
 #: ../data/variables.xml.in.h:75
-msgid "r:planck2pi"
-msgstr ""
+#, fuzzy
+msgid "r:planck2pi,au:&#x210f;"
+msgstr "pourmille,au:&#x2030;"
 
 #: ../data/variables.xml.in.h:76
 msgid "Newtonian Constant of Gravitation"
@@ -7673,7 +7674,8 @@ msgid "Bohr Radius"
 msgstr "Rayon de Bohr"
 
 #: ../data/variables.xml.in.h:103
-msgid "r:bohr_radius,ais:a_o"
+#, fuzzy
+msgid "r:bohr_radius,ais:a_0"
 msgstr "rayon_de_bohr,ais:a_o"
 
 #: ../data/variables.xml.in.h:104
@@ -7765,8 +7767,9 @@ msgid "Boltzmann Constant"
 msgstr "Constante de Boltzmann"
 
 #: ../data/variables.xml.in.h:126
-msgid "r:boltzmann"
-msgstr ""
+#, fuzzy
+msgid "r:boltzmann,ais:k_B"
+msgstr "magnéton_de_bohr,aisu:&#x3BC;_B"
 
 #: ../data/variables.xml.in.h:127
 msgid "Faraday Constant"

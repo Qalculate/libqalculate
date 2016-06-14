@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-07 18:27+0200\n"
+"POT-Creation-Date: 2016-06-14 14:33+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna_k@fmgirl.com>\n"
 "Language-Team: Swedish\n"
@@ -6828,20 +6828,20 @@ msgid "Foot-Pound Force"
 msgstr ""
 
 #: ../data/units.xml.in.h:447
-msgid "Rydberg"
-msgstr "Rydberg"
-
-#: ../data/units.xml.in.h:448
-msgid "ar:Ry,s:rydberg_unit"
-msgstr "ar:Ry,s:rydberg_enhet"
-
-#: ../data/units.xml.in.h:449
 msgid "Hartree"
 msgstr ""
 
-#: ../data/units.xml.in.h:450
+#: ../data/units.xml.in.h:448
 msgid "ar:Ha,as:E_h,hartree"
 msgstr ""
+
+#: ../data/units.xml.in.h:449
+msgid "Rydberg"
+msgstr "Rydberg"
+
+#: ../data/units.xml.in.h:450
+msgid "ar:Ry,s:rydberg_unit"
+msgstr "ar:Ry,s:rydberg_enhet"
 
 #: ../data/units.xml.in.h:451
 msgid "Specific Energy"
@@ -7605,7 +7605,7 @@ msgid "Bohr Radius"
 msgstr "Bohr-radie"
 
 #: ../data/variables.xml.in.h:103
-msgid "r:bohr_radius,ais:a_o"
+msgid "r:bohr_radius,ais:a_0"
 msgstr ""
 
 #: ../data/variables.xml.in.h:104
@@ -7697,7 +7697,7 @@ msgid "Boltzmann Constant"
 msgstr "Boltzmanns konstant"
 
 #: ../data/variables.xml.in.h:126
-msgid "r:boltzmann"
+msgid "r:boltzmann,ais:k_B"
 msgstr ""
 
 #: ../data/variables.xml.in.h:127
