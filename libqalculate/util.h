@@ -51,6 +51,7 @@ string addMonths(string str, int months);
 bool addYears(int &year, int &month, int &day, int years);
 string addYears(string str, int years);
 bool s2date(string str, int &year, int &month, int &day);
+bool s2date(string str, void *gtime);
 bool isLeapYear(int year);
 int daysPerYear(int year, int basis = 0);
 int daysPerMonth(int month, int year);

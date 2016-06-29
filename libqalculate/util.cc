@@ -44,13 +44,25 @@ string date2s(int year, int month, int day) {
 	str += i2s(day);
 	return str;
 }
-bool s2date(string str, GDate *gtime) {
+bool s2date(string str, void *gtime) {
 /*	if(strptime(str.c_str(), "%x", time) || strptime(str.c_str(), "%Ex", time) || strptime(str.c_str(), "%Y-%m-%d", time) || strptime(str.c_str(), "%m/%d/%Y", time) || strptime(str.c_str(), "%m/%d/%y", time)) {
 		return true;
 	}*/
 	//char *date_format = nl_langinfo(D_FMT);
-	g_date_set_parse(gtime, str.c_str());
-	return g_date_valid(gtime);
+	if(equalsIgnoreCase(str, _("today")) || equalsIgnoreCase(str, "today") || equalsIgnoreCase(str, _("now")) || equalsIgnoreCase(str, "now")) {
+		g_date_set_time_t((GDate*) gtime, time(NULL));
+		return true;
+	} else if(equalsIgnoreCase(str, _("tomorrow")) || equalsIgnoreCase(str, "tomorrow")) {
+		g_date_set_time_t((GDate*) gtime, time(NULL));
+		g_date_add_days((GDate*) gtime, 1);
+		return true;
+	} else if(equalsIgnoreCase(str, _("yesterday")) || equalsIgnoreCase(str, "yesterday")) {
+		g_date_set_time_t((GDate*) gtime, time(NULL));
+		g_date_subtract_days((GDate*) gtime, 1);
+		return true;
+	}
+	g_date_set_parse((GDate*) gtime, str.c_str());
+	return g_date_valid((GDate*) gtime);
 }
 
 void now(int &hour, int &min, int &sec) {
@@ -162,18 +174,8 @@ string addYears(string str, int years) {
 int week(string str, bool start_sunday) {
 	remove_blank_ends(str);
 	GDate *gtime = g_date_new();
-	bool b = false;
-	if(str == _("today") || str == "today") {
-		g_date_set_time_t(gtime, time(NULL));
-		b = true;
-	} else if(str == _("now") || str == "now") {
-		g_date_set_time_t(gtime, time(NULL));
-		b = true;
-	} else {
-		b = s2date(str, gtime);
-	}
 	int week = -1;
-	if(b) {
+	if(s2date(str, gtime)) {
 		if(start_sunday) {
 			week = g_date_get_sunday_week_of_year(gtime);
 		} else {
@@ -209,18 +211,8 @@ int week(string str, bool start_sunday) {
 int weekday(string str) {
 	remove_blank_ends(str);
 	GDate *gtime = g_date_new();
-	bool b = false;
-	if(str == _("today") || str == "today") {
-		g_date_set_time_t(gtime, time(NULL));
-		b = true;
-	} else if(str == _("now") || str == "now") {
-		g_date_set_time_t(gtime, time(NULL));
-		b = true;
-	} else {
-		b = s2date(str, gtime);
-	}
 	int day = -1;
-	if(b) {
+	if(s2date(str, gtime)) {
 		day = g_date_get_weekday(gtime);
 	}
 	g_date_free(gtime);
@@ -229,18 +221,8 @@ int weekday(string str) {
 int yearday(string str) {
 	remove_blank_ends(str);
 	GDate *gtime = g_date_new();
-	bool b = false;
-	if(str == _("today") || str == "today") {
-		g_date_set_time_t(gtime, time(NULL));
-		b = true;
-	} else if(str == _("now") || str == "now") {
-		g_date_set_time_t(gtime, time(NULL));
-		b = true;
-	} else {
-		b = s2date(str, gtime);
-	}
 	int day = -1;
-	if(b) {
+	if(s2date(str, gtime)) {
 		day = g_date_get_day_of_year(gtime);
 	}
 	g_date_free(gtime);
@@ -250,16 +232,8 @@ int yearday(string str) {
 bool s2date(string str, int &year, int &month, int &day) {
 	//struct tm time;
 	remove_blank_ends(str);
-	if(str == _("today") || str == "today") {
-		today(year, month, day);
-		return true;
-	} else if(str == _("now") || str == "now") {
-		today(year, month, day);
-		return true;
-	}
 	GDate *gtime = g_date_new();
-	bool b = s2date(str, gtime);
-	if(b) {
+	if(s2date(str, gtime)) {
 /*		year = time.tm_year + 1900;
 		month = time.tm_mon + 1;
 		day = time.tm_mday;	*/

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-14 14:33+0200\n"
+"POT-Creation-Date: 2016-06-29 14:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,25 +18,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../src/qalc.cc:101 ../src/qalc.cc:151 ../src/qalc.cc:1819
-#: ../libqalculate/util.cc:564
+#: ../libqalculate/util.cc:538
 msgid "yes"
 msgstr ""
 
 #: ../src/qalc.cc:102 ../src/qalc.cc:153 ../src/qalc.cc:1819
-#: ../libqalculate/util.cc:565
+#: ../libqalculate/util.cc:539
 msgid "no"
 msgstr ""
 
-#: ../src/qalc.cc:103 ../libqalculate/util.cc:572
+#: ../src/qalc.cc:103 ../libqalculate/util.cc:546
 msgid "true"
 msgstr ""
 
-#: ../src/qalc.cc:104 ../libqalculate/util.cc:573
+#: ../src/qalc.cc:104 ../libqalculate/util.cc:547
 msgid "false"
 msgstr ""
 
 #: ../src/qalc.cc:105 ../src/qalc.cc:670 ../src/qalc.cc:685 ../src/qalc.cc:1388
-#: ../src/qalc.cc:1818 ../src/qalc.cc:1903 ../libqalculate/util.cc:580
+#: ../src/qalc.cc:1818 ../src/qalc.cc:1903 ../libqalculate/util.cc:554
 msgid "on"
 msgstr ""
 
@@ -45,7 +45,7 @@ msgstr ""
 #: ../src/qalc.cc:1386 ../src/qalc.cc:1408 ../src/qalc.cc:1415
 #: ../src/qalc.cc:1437 ../src/qalc.cc:1818 ../src/qalc.cc:1890
 #: ../src/qalc.cc:1903 ../src/qalc.cc:1923 ../src/qalc.cc:1928
-#: ../src/qalc.cc:1938 ../libqalculate/util.cc:581
+#: ../src/qalc.cc:1938 ../libqalculate/util.cc:555
 msgid "off"
 msgstr ""
 
@@ -1239,139 +1239,129 @@ msgstr ""
 msgid "Unsolvable comparison in %s()."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:2247
-#: ../libqalculate/BuiltinFunctions.cc:2267
-#: ../libqalculate/BuiltinFunctions.cc:2291 ../libqalculate/util.cc:166
-#: ../libqalculate/util.cc:213 ../libqalculate/util.cc:233
-#: ../libqalculate/util.cc:253
-msgid "today"
-msgstr ""
-
-#: ../libqalculate/BuiltinFunctions.cc:2286 ../libqalculate/util.cc:169
-#: ../libqalculate/util.cc:216 ../libqalculate/util.cc:236
-#: ../libqalculate/util.cc:256
+#: ../libqalculate/BuiltinFunctions.cc:2274 ../libqalculate/util.cc:52
 msgid "now"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:2302
+#: ../libqalculate/BuiltinFunctions.cc:2286
 #, c-format
 msgid "The timestamp value for the date %s is too large or small for %s()."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:2335
-#: ../libqalculate/BuiltinFunctions.cc:2348
-#: ../libqalculate/BuiltinFunctions.cc:2361
-#: ../libqalculate/BuiltinFunctions.cc:2383
-#: ../libqalculate/BuiltinFunctions.cc:2404
+#: ../libqalculate/BuiltinFunctions.cc:2319
+#: ../libqalculate/BuiltinFunctions.cc:2332
+#: ../libqalculate/BuiltinFunctions.cc:2345
+#: ../libqalculate/BuiltinFunctions.cc:2367
+#: ../libqalculate/BuiltinFunctions.cc:2388
 #, c-format
 msgid "Error in date format for function %s()."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:2658
+#: ../libqalculate/BuiltinFunctions.cc:2642
 msgid ""
 "The number of requested elements in generate vector function must be a "
 "positive integer."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:2953
-#: ../libqalculate/BuiltinFunctions.cc:2970
+#: ../libqalculate/BuiltinFunctions.cc:2937
+#: ../libqalculate/BuiltinFunctions.cc:2954
 msgid "Comparison failed."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:2958
-#: ../libqalculate/BuiltinFunctions.cc:2988
+#: ../libqalculate/BuiltinFunctions.cc:2942
+#: ../libqalculate/BuiltinFunctions.cc:2972
 msgid "No matching item found."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3070
+#: ../libqalculate/BuiltinFunctions.cc:3054
 #, c-format
 msgid "Object %s does not exist."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3097
+#: ../libqalculate/BuiltinFunctions.cc:3081
 #, c-format
 msgid "Register %s does not exist. Returning zero."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3140
+#: ../libqalculate/BuiltinFunctions.cc:3124
 #, c-format
 msgid ""
 "The %s function is incomplete, unreliable and unstable. Use at your own risk "
 "and avoid complex expressions."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3151
-#: ../libqalculate/BuiltinFunctions.cc:3162
+#: ../libqalculate/BuiltinFunctions.cc:3135
+#: ../libqalculate/BuiltinFunctions.cc:3146
 msgid "Unable to integrate the expression."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3157
+#: ../libqalculate/BuiltinFunctions.cc:3141
 msgid ""
 "Both the lower and upper limit must be set to get the definite integral."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3298
+#: ../libqalculate/BuiltinFunctions.cc:3282
 msgid ""
 "No equality or inequality to solve. The entered expression to solve is not "
 "correct (ex. \"x + 5 = 3\" is correct)"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3345
+#: ../libqalculate/BuiltinFunctions.cc:3329
 #, c-format
 msgid "The comparison is true for all %s (with current assumptions)."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3349
+#: ../libqalculate/BuiltinFunctions.cc:3333
 msgid "No possible solution was found (with current assumptions)."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3353
+#: ../libqalculate/BuiltinFunctions.cc:3337
 #, c-format
 msgid "Was unable to completely isolate %s."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3357
-#: ../libqalculate/BuiltinFunctions.cc:3485
-#: ../libqalculate/BuiltinFunctions.cc:3580
+#: ../libqalculate/BuiltinFunctions.cc:3341
+#: ../libqalculate/BuiltinFunctions.cc:3469
+#: ../libqalculate/BuiltinFunctions.cc:3564
 #, c-format
 msgid "The comparison is true for all %s if %s."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3361
+#: ../libqalculate/BuiltinFunctions.cc:3345
 #, c-format
 msgid "Was unable to isolate %s."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3444
-#: ../libqalculate/BuiltinFunctions.cc:3471
-#: ../libqalculate/BuiltinFunctions.cc:3554
+#: ../libqalculate/BuiltinFunctions.cc:3428
+#: ../libqalculate/BuiltinFunctions.cc:3455
+#: ../libqalculate/BuiltinFunctions.cc:3538
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed sign was "
 "therefor temporarily set as unknown."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3447
-#: ../libqalculate/BuiltinFunctions.cc:3474
-#: ../libqalculate/BuiltinFunctions.cc:3557
+#: ../libqalculate/BuiltinFunctions.cc:3431
+#: ../libqalculate/BuiltinFunctions.cc:3458
+#: ../libqalculate/BuiltinFunctions.cc:3541
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed type and "
 "sign was therefor temporarily set as unknown."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3480
-#: ../libqalculate/BuiltinFunctions.cc:3565
+#: ../libqalculate/BuiltinFunctions.cc:3464
+#: ../libqalculate/BuiltinFunctions.cc:3549
 #, c-format
 msgid "The solution requires that %s."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3573
+#: ../libqalculate/BuiltinFunctions.cc:3557
 #, c-format
 msgid "Solution %s requires that %s."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3641
+#: ../libqalculate/BuiltinFunctions.cc:3625
 #, c-format
 msgid ""
 "Unable to isolate %s.\n"
@@ -1381,14 +1371,14 @@ msgid ""
 "automatic reordering failed)."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3643
-#: ../libqalculate/BuiltinFunctions.cc:3657
-#: ../libqalculate/BuiltinFunctions.cc:3666
+#: ../libqalculate/BuiltinFunctions.cc:3627
+#: ../libqalculate/BuiltinFunctions.cc:3641
+#: ../libqalculate/BuiltinFunctions.cc:3650
 #, c-format
 msgid "Unable to isolate %s."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3650
+#: ../libqalculate/BuiltinFunctions.cc:3634
 #, c-format
 msgid "Inequalities is not allowed in %s()."
 msgstr ""
@@ -2031,26 +2021,42 @@ msgstr ""
 msgid "Error(s) in unitexpression."
 msgstr ""
 
-#: ../libqalculate/util.cc:561
+#. if(strptime(str.c_str(), "%x", time) || strptime(str.c_str(), "%Ex", time) || strptime(str.c_str(), "%Y-%m-%d", time) || strptime(str.c_str(), "%m/%d/%Y", time) || strptime(str.c_str(), "%m/%d/%y", time)) {
+#. return true;
+#. }
+#. char *date_format = nl_langinfo(D_FMT);
+#: ../libqalculate/util.cc:52
+msgid "today"
+msgstr ""
+
+#: ../libqalculate/util.cc:55
+msgid "tomorrow"
+msgstr ""
+
+#: ../libqalculate/util.cc:59
+msgid "yesterday"
+msgstr ""
+
+#: ../libqalculate/util.cc:535
 msgid "Yes"
 msgstr ""
 
-#: ../libqalculate/util.cc:562
+#: ../libqalculate/util.cc:536
 msgid "No"
 msgstr ""
 
-#: ../libqalculate/util.cc:569
+#: ../libqalculate/util.cc:543
 msgid "True"
 msgstr ""
 
-#: ../libqalculate/util.cc:570
+#: ../libqalculate/util.cc:544
 msgid "False"
 msgstr ""
 
-#: ../libqalculate/util.cc:577
+#: ../libqalculate/util.cc:551
 msgid "On"
 msgstr ""
 
-#: ../libqalculate/util.cc:578
+#: ../libqalculate/util.cc:552
 msgid "Off"
 msgstr ""

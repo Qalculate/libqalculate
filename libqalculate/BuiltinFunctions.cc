@@ -2242,13 +2242,7 @@ ISODateFunction::ISODateFunction() : MathFunction("isodate", 0, 1) {
 }
 int ISODateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	GDate *gtime = g_date_new();
-	string str = vargs[0].symbol();
-	remove_blank_ends(str);
-	if(str == _("today") || str == "today") {
-		g_date_set_time_t(gtime, time(NULL));
-	} else {
-		g_date_set_parse(gtime, str.c_str());
-	}
+	s2date(vargs[0].symbol(), gtime);
 	gchar *gstr = (gchar*) malloc(sizeof(gchar) * 100);
 	g_date_strftime(gstr, 100, "%F", gtime);
 	mstruct.set(gstr);
@@ -2262,13 +2256,7 @@ LocalDateFunction::LocalDateFunction() : MathFunction("localdate", 0, 1) {
 }
 int LocalDateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	GDate *gtime = g_date_new();
-	string str = vargs[0].symbol();
-	remove_blank_ends(str);
-	if(str == _("today") || str == "today") {
-		g_date_set_time_t(gtime, time(NULL));
-	} else {
-		g_date_set_parse(gtime, str.c_str());
-	}
+	s2date(vargs[0].symbol(), gtime);
 	gchar *gstr = (gchar*) malloc(sizeof(gchar) * 100);
 	g_date_strftime(gstr, 100, "%x", gtime);
 	mstruct.set(gstr);
@@ -2288,11 +2276,7 @@ int TimestampFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		return 1;
 	}
 	GDate *gtime = g_date_new();
-	if(str == _("today") || str == "today") {
-		g_date_set_time_t(gtime, time(NULL));
-	} else {
-		g_date_set_parse(gtime, str.c_str());
-	}
+	s2date(str, gtime);
 	gchar *gstr = (gchar*) malloc(sizeof(gchar) * 100);
 	g_date_strftime(gstr, 100, "%s", gtime);
 	Number nr(gstr);
