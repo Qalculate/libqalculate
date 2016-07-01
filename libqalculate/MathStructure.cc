@@ -12312,8 +12312,8 @@ MathStructure &MathStructure::permanent(MathStructure &mstruct, const Evaluation
 	if(b_approx) mstruct.setApproximate();
 	mstruct.setPrecision(i_precision);
 	if(SIZE == 1) {
-		if(CHILD(0).size() >= 1) {	
-			mstruct == CHILD(0)[0];
+		if(CHILD(0).size() >= 1) {
+			mstruct = CHILD(0)[0];
 		}
 	} else if(SIZE == 2) {
 		mstruct = CHILD(0)[0];
