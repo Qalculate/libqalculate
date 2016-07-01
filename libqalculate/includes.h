@@ -33,7 +33,7 @@ using namespace std;
 #include <stdint.h>
 
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 #	define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #	if GCC_VERSION >= 40300
 #		include <tr1/unordered_map>
@@ -51,8 +51,10 @@ using namespace std;
 				namespace Sgi = ::__gnu_cxx;       // GCC 3.1 and later
 #			endif
 #		endif
-#		#define unordered_map Sgi::hash_map
+#		define unordered_map Sgi::hash_map
 #	endif
+#elif defined(__clang__) && defined(_LIBCPP_VERSION)
+#	include <unordered_map>
 #else      // ...  there are other compilers, right?
 	namespace Sgi = std;
 #	define unordered_map Sgi::hash_map
