@@ -2233,8 +2233,8 @@ int RandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return 1;
 }
 bool RandFunction::representsReal(const MathStructure&, bool) const {return true;}
-bool RandFunction::representsInteger(const MathStructure &vargs) const {return vargs.size() > 0 && vargs[0].isNumber() && vargs[0].number().isPositive();}
-bool RandFunction::representsNonNegative(const MathStructure&) const {return true;}
+bool RandFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() > 0 && vargs[0].isNumber() && vargs[0].number().isPositive();}
+bool RandFunction::representsNonNegative(const MathStructure&, bool) const {return true;}
 
 ISODateFunction::ISODateFunction() : MathFunction("isodate", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());

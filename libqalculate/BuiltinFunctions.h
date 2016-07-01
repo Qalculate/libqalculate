@@ -50,8 +50,8 @@
 						x(const x *function) {set(function);} \
 						ExpressionItem *copy() const {return new x(this);} \
 						bool representsReal(const MathStructure&, bool) const;\
-						bool representsInteger(const MathStructure&) const;\
-						bool representsNonNegative(const MathStructure&) const;\
+						bool representsInteger(const MathStructure&, bool) const;\
+						bool representsNonNegative(const MathStructure&, bool) const;\
 					};															
 
 #define DECLARE_BUILTIN_FUNCTION_R(x)	class x : public MathFunction { \

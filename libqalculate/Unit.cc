@@ -81,7 +81,7 @@ void Unit::setAsSIUnit() {
 	if(!b_si) {
 		b_si = true;
 		b_use_with_prefixes = true;
-		ssystem == "SI";
+		ssystem = "SI";
 		setChanged(true);
 	}
 }
