@@ -296,8 +296,14 @@ Calculator::Calculator() {
 	XOR_str = "XOR";
 	XOR_str_len = OR_str.length();
 
-	saved_locale = strdup(setlocale(LC_NUMERIC, ""));
+	char *current_lc_numeric = setlocale(LC_NUMERIC, "");
+	if(current_lc_numeric) saved_locale = strdup(current_lc_numeric);
+	else saved_locale = NULL;
 	struct lconv *lc = localeconv();
+	if(!lc) {
+		setlocale(LC_NUMERIC, "C");
+		lc = localeconv();
+	}
 #ifdef HAVE_STRUCT_LCONV_INT_N_CS_PRECEDES
  	place_currency_code_before = lc->int_p_cs_precedes;
 #else
@@ -321,7 +327,7 @@ Calculator::Calculator() {
 		DOT_S = ".";	
 		COMMA_STR = ",";
 		COMMA_S = ",;";		
-	}	
+	}
 	setlocale(LC_NUMERIC, "C");
 
 	NAME_NUMBER_PRE_S = "_#";
@@ -1043,7 +1049,7 @@ string Calculator::localToString() const {
 	return _(" to ");
 }
 void Calculator::setLocale() {
-	setlocale(LC_NUMERIC, saved_locale);
+	if(saved_locale) setlocale(LC_NUMERIC, saved_locale);
 	lconv *locale = localeconv();
 	if(strcmp(locale->decimal_point, ",") == 0) {
 		DOT_STR = ",";
