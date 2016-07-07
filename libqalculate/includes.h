@@ -32,15 +32,15 @@
 using namespace std;
 /// \endcond
 
-#ifdef HAVE_CXX11
-	#include <unordered_map>
-#elif 	defined(__GNUC__)
+#if 	defined(__GNUC__)
 
 #	ifndef __has_include
 #	define __has_include(x) 0
 #	endif
 
-#	if (defined(__clang__) && __has_include(<tr1/unordered_map>)) || (__GNUC__ >= 4 && __GNUC_MINOR__ >= 3)
+#	if (defined(__clang__)  && defined(_LIBCPP_VERSION)) || __GNUC__ >= 5
+#		include <unordered_map>
+#	elif (defined(__clang__) && __has_include(<tr1/unordered_map>)) || (__GNUC__ >= 4 && __GNUC_MINOR__ >= 3)
 #		include <tr1/unordered_map>
 		namespace Sgi = std;
 #		define unordered_map std::tr1::unordered_map

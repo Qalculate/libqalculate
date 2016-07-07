@@ -90,8 +90,6 @@ dnl  --------------------------------
 
 AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
 
-AX_CXX_COMPILE_STDCXX(11,,optional)
-
 AC_LANG([C++])
 
 PKG_CHECK_MODULES(GLIB, [
