@@ -2294,7 +2294,13 @@ string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int m
 }
 
 MathStructure Calculator::convert(double value, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo) {
-	return convert(value, from_unit, to_unit, eo);
+	MathStructure mstruct(value);
+	mstruct *= from_unit;
+	mstruct.eval(eo);
+	mstruct.convert(to_unit, true);
+	mstruct.divide(to_unit, true);
+	mstruct.eval(eo);
+	return mstruct;
 }
 MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_unit, int msecs, const EvaluationOptions &eo) {
 	MathStructure mstruct;

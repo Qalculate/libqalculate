@@ -68,7 +68,7 @@ changequote([,])dnl
 dnl libtool versioning for libqalculate
 
 dnl increment if the interface has additions, changes, removals.
-QALCULATE_CURRENT=5
+QALCULATE_CURRENT=6
 
 dnl increment any time the source changes; set to 
 dnl  0 if you increment CURRENT
@@ -89,6 +89,8 @@ dnl | check for neccessary libraries |-----------------------------------------
 dnl  --------------------------------
 
 AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
+
+AX_CXX_COMPILE_STDCXX(11,,optional)
 
 AC_LANG([C++])
 

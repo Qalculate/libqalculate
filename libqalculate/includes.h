@@ -14,10 +14,6 @@
 
 /** @file */
 
-/// \cond
-using namespace std;
-/// \endcond
-
 #include <vector>
 #include <string>
 #include <stack>
@@ -32,12 +28,19 @@ using namespace std;
 #include <unistd.h>
 #include <stdint.h>
 
+/// \cond
+using namespace std;
+/// \endcond
 
-#if defined(__clang__) && defined(_LIBCPP_VERSION)
-#	include <unordered_map>
-#elif defined(__GNUC__)
-#	define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
-#	if GCC_VERSION >= 40300
+#ifdef HAVE_CXX11
+	#include <unordered_map>
+#elif 	defined(__GNUC__)
+
+#	ifndef __has_include
+#	define __has_include(x) 0
+#	endif
+
+#	if (defined(__clang__) && __has_include(<tr1/unordered_map>)) || (__GNUC__ >= 4 && __GNUC_MINOR__ >= 3)
 #		include <tr1/unordered_map>
 		namespace Sgi = std;
 #		define unordered_map std::tr1::unordered_map
