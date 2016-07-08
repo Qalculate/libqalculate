@@ -92,6 +92,8 @@ AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
 
 AC_LANG([C++])
 
+AC_CHECK_HEADERS([unordered_map])
+
 PKG_CHECK_MODULES(GLIB, [
 	glib-2.0
 	libxml-2.0 >= 2.3.8

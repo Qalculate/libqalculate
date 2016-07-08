@@ -58,6 +58,8 @@ typedef enum {
 	SUBTYPE_DATA_SET
 } FunctionSubtype;
 
+class MathFunction_p;
+
 /// Abstract base class for mathematical functions.
 /**
 * A mathemical function, subclassed from MathFunction, should at least reimplement
@@ -68,10 +70,10 @@ class MathFunction : public ExpressionItem {
 
   protected:
 
+	MathFunction_p *priv;
 	int argc;
 	int max_argc;
 	vector<string> default_values;
-	unordered_map<size_t, Argument*> argdefs;
 	size_t last_argdef_index;		
 	bool testArguments(MathStructure &vargs);
 	virtual MathStructure createFunctionMathStructureFromVArgs(const MathStructure &vargs);

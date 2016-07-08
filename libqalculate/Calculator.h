@@ -172,6 +172,8 @@ struct Element {
 
 #define UFV_LENGTHS	20
 
+class Calculate_p;
+
 /// The almighty calculator class.
 /** The calculator class is responsible for loading functions, variables and units, and keeping track of them, as well as parsing expressions and much more. A calculator object must be created before any other Qalculate! class is used. There should never be more than one calculator object, accessed with CALCULATOR. 
 *
@@ -198,10 +200,7 @@ class Calculator {
 	
 	vector<DataSet*> data_sets;
 	
-	unordered_map<size_t, MathStructure*> id_structs;
-	unordered_map<size_t, bool> ids_p;
-	vector<size_t> freed_ids;	
-	size_t ids_i;
+	class Calculator_p *priv;
 	
 	vector<string> signs;	
 	vector<string> real_signs;

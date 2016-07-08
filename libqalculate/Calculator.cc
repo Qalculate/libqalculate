@@ -43,6 +43,38 @@
 #include <cln/cln.h>
 using namespace cln;
 
+
+#if HAVE_UNORDERED_MAP
+#	include <unordered_map>
+#elif 	defined(__GNUC__)
+
+#	ifndef __has_include
+#	define __has_include(x) 0
+#	endif
+
+#	if (defined(__clang__) && __has_include(<tr1/unordered_map>)) || (__GNUC__ >= 4 && __GNUC_MINOR__ >= 3)
+#		include <tr1/unordered_map>
+		namespace Sgi = std;
+#		define unordered_map std::tr1::unordered_map
+#	else
+#		if __GNUC__ < 3
+#			include <hash_map.h>
+			namespace Sgi { using ::hash_map; }; // inherit globals
+#		else
+#			include <ext/hash_map>
+#			if __GNUC__ == 3 && __GNUC_MINOR__ == 0
+				namespace Sgi = std;               // GCC 3.0
+#			else
+				namespace Sgi = ::__gnu_cxx;       // GCC 3.1 and later
+#			endif
+#		endif
+#		define unordered_map Sgi::hash_map
+#	endif
+#else      // ...  there are other compilers, right?
+	namespace Sgi = std;
+#	define unordered_map Sgi::hash_map
+#endif
+
 #define XML_GET_PREC_FROM_PROP(node, i)			value = xmlGetProp(node, (xmlChar*) "precision"); if(value) {i = s2i((char*) value); xmlFree(value);} else {i = -1;}
 #define XML_GET_APPROX_FROM_PROP(node, b)		value = xmlGetProp(node, (xmlChar*) "approximate"); if(value) {b = !xmlStrcmp(value, (const xmlChar*) "true");} else {value = xmlGetProp(node, (xmlChar*) "precise"); if(value) {b = xmlStrcmp(value, (const xmlChar*) "true");} else {b = false;}} if(value) xmlFree(value);
 #define XML_GET_FALSE_FROM_PROP(node, name, b)		value = xmlGetProp(node, (xmlChar*) name); if(value && !xmlStrcmp(value, (const xmlChar*) "false")) {b = false;} else {b = true;} if(value) xmlFree(value);
@@ -227,12 +259,22 @@ void *calculate_proc(void *pipe) {
 	return NULL;
 }
 
+class Calculator_p {
+	public:
+		unordered_map<size_t, MathStructure*> id_structs;
+		unordered_map<size_t, bool> ids_p;
+		vector<size_t> freed_ids;
+		size_t ids_i;
+};
+
 Calculator::Calculator() {	
 
 #ifdef ENABLE_NLS
 	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 #endif
+
+	priv = new Calculator_p;
 
 	setlocale(LC_ALL, "");
 
@@ -336,7 +378,7 @@ Calculator::Calculator() {
 	string str = _(" to ");
 	local_to = (str != " to ");
 	
-	ids_i = 0;
+	priv->ids_i = 0;
 	
 	decimal_null_prefix = new DecimalPrefix(0, "", "");
 	binary_null_prefix = new BinaryPrefix(0, "", "");
@@ -394,6 +436,7 @@ Calculator::Calculator() {
 }
 Calculator::~Calculator() {
 	closeGnuplot();
+	delete priv;
 }
 
 Unit *Calculator::getGraUnit() {
@@ -1090,69 +1133,69 @@ void Calculator::unsetLocale() {
 
 size_t Calculator::addId(MathStructure *mstruct, bool persistent) {
 	size_t id = 0;
-	if(freed_ids.size() > 0) {
-		id = freed_ids.back();
-		freed_ids.pop_back();
+	if(priv->freed_ids.size() > 0) {
+		id = priv->freed_ids.back();
+		priv->freed_ids.pop_back();
 	} else {
-		ids_i++;
-		id = ids_i;
+		priv->ids_i++;
+		id = priv->ids_i;
 	}
-	ids_p[id] = persistent;
-	id_structs[id] = mstruct;
+	priv->ids_p[id] = persistent;
+	priv->id_structs[id] = mstruct;
 	return id;
 }
 size_t Calculator::parseAddId(MathFunction *f, const string &str, const ParseOptions &po, bool persistent) {
 	size_t id = 0;
-	if(freed_ids.size() > 0) {
-		id = freed_ids.back();
-		freed_ids.pop_back();
+	if(priv->freed_ids.size() > 0) {
+		id = priv->freed_ids.back();
+		priv->freed_ids.pop_back();
 	} else {
-		ids_i++;
-		id = ids_i;
+		priv->ids_i++;
+		id = priv->ids_i;
 	}
-	ids_p[id] = persistent;
-	id_structs[id] = new MathStructure();
-	f->parse(*id_structs[id], str, po);
+	priv->ids_p[id] = persistent;
+	priv->id_structs[id] = new MathStructure();
+	f->parse(*priv->id_structs[id], str, po);
 	return id;
 }
 size_t Calculator::parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent) {
 	size_t id = 0;
-	if(freed_ids.size() > 0) {
-		id = freed_ids.back();
-		freed_ids.pop_back();
+	if(priv->freed_ids.size() > 0) {
+		id = priv->freed_ids.back();
+		priv->freed_ids.pop_back();
 	} else {
-		ids_i++;
-		id = ids_i;
+		priv->ids_i++;
+		id = priv->ids_i;
 	}
-	ids_p[id] = persistent;
-	id_structs[id] = new MathStructure();
-	f->parse(*id_structs[id], str, po);
-	id_structs[id]->addChild(append_mstruct);
+	priv->ids_p[id] = persistent;
+	priv->id_structs[id] = new MathStructure();
+	f->parse(*priv->id_structs[id], str, po);
+	priv->id_structs[id]->addChild(append_mstruct);
 	return id;
 }
 size_t Calculator::parseAddVectorId(const string &str, const ParseOptions &po, bool persistent) {
 	size_t id = 0;
-	if(freed_ids.size() > 0) {
-		id = freed_ids.back();
-		freed_ids.pop_back();
+	if(priv->freed_ids.size() > 0) {
+		id = priv->freed_ids.back();
+		priv->freed_ids.pop_back();
 	} else {
-		ids_i++;
-		id = ids_i;
+		priv->ids_i++;
+		id = priv->ids_i;
 	}
-	ids_p[id] = persistent;
-	id_structs[id] = new MathStructure();
-	f_vector->args(str, *id_structs[id], po);
+	priv->ids_p[id] = persistent;
+	priv->id_structs[id] = new MathStructure();
+	f_vector->args(str, *priv->id_structs[id], po);
 	return id;
 }
 MathStructure *Calculator::getId(size_t id) {
-	if(id_structs.find(id) != id_structs.end()) {
-		if(ids_p[id]) {
-			return new MathStructure(*id_structs[id]);
+	if(priv->id_structs.find(id) != priv->id_structs.end()) {
+		if(priv->ids_p[id]) {
+			return new MathStructure(*priv->id_structs[id]);
 		} else {
-			MathStructure *mstruct = id_structs[id];
-			freed_ids.push_back(id);
-			id_structs.erase(id);
-			ids_p.erase(id);
+			MathStructure *mstruct = priv->id_structs[id];
+			priv->freed_ids.push_back(id);
+			priv->id_structs.erase(id);
+			priv->ids_p.erase(id);
 			return mstruct;
 		}
 	}
@@ -1160,11 +1203,11 @@ MathStructure *Calculator::getId(size_t id) {
 }
 
 void Calculator::delId(size_t id) {
-	if(ids_p.find(id) != ids_p.end()) {	
-		freed_ids.push_back(id);
-		id_structs[id]->unref();
-		id_structs.erase(id);
-		ids_p.erase(id);
+	if(priv->ids_p.find(id) != priv->ids_p.end()) {	
+		priv->freed_ids.push_back(id);
+		priv->id_structs[id]->unref();
+		priv->id_structs.erase(id);
+		priv->ids_p.erase(id);
 	}
 }
 
@@ -1561,11 +1604,11 @@ void Calculator::saveState() {
 void Calculator::restoreState() {
 }
 void Calculator::clearBuffers() {
-	for(unordered_map<size_t, bool>::iterator it = ids_p.begin(); it != ids_p.end(); ++it) {
+	for(unordered_map<size_t, bool>::iterator it = priv->ids_p.begin(); it != priv->ids_p.end(); ++it) {
 		if(!it->second) {
-			freed_ids.push_back(it->first);
-			id_structs.erase(it->first);
-			ids_p.erase(it);
+			priv->freed_ids.push_back(it->first);
+			priv->id_structs.erase(it->first);
+			priv->ids_p.erase(it);
 		}
 	}
 }
@@ -4265,7 +4308,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										if(i7 != string::npos) {
 											int id = s2i(str.substr(i7 + 1, i6 - i7 - 1));
 											MathStructure *m_temp = NULL;
-											if(id_structs.find(id) != id_structs.end()) m_temp = id_structs[id];
+											if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp = priv->id_structs[id];
 											if(m_temp && m_temp->isUnit()) {
 												if(i_depth == 0) break;
 												if(b_nonspace == 1 && str[i6 + 1] == RIGHT_PARENTHESIS_CH) {
@@ -5225,7 +5268,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					m_temp = NULL;
 					if(i2 != string::npos) {
 						int id = s2i(str.substr(i2 + 1, (i4 - 1) - (i2 + 1)));
-						if(id_structs.find(id) != id_structs.end()) m_temp = id_structs[id];
+						if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp = priv->id_structs[id];
 					}
 					if(!m_temp || !m_temp->isUnit()) break;
 					had_unit = true;
@@ -5239,7 +5282,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					m_temp2 = NULL;
 					if(i3 != string::npos) {
 						int id = s2i(str.substr(i4 + 2, (i3 - 1) - (i4 + 1)));
-						if(id_structs.find(id) != id_structs.end()) m_temp2 = id_structs[id];
+						if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp2 = priv->id_structs[id];
 					}
 					if(!m_temp2 || !m_temp2->isUnit()) {
 						b = false;

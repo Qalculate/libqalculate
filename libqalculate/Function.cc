@@ -19,7 +19,44 @@
 #include "Number.h"
 #include "Unit.h"
 
+#if HAVE_UNORDERED_MAP
+#	include <unordered_map>
+#elif 	defined(__GNUC__)
+
+#	ifndef __has_include
+#	define __has_include(x) 0
+#	endif
+
+#	if (defined(__clang__) && __has_include(<tr1/unordered_map>)) || (__GNUC__ >= 4 && __GNUC_MINOR__ >= 3)
+#		include <tr1/unordered_map>
+		namespace Sgi = std;
+#		define unordered_map std::tr1::unordered_map
+#	else
+#		if __GNUC__ < 3
+#			include <hash_map.h>
+			namespace Sgi { using ::hash_map; }; // inherit globals
+#		else
+#			include <ext/hash_map>
+#			if __GNUC__ == 3 && __GNUC_MINOR__ == 0
+				namespace Sgi = std;               // GCC 3.0
+#			else
+				namespace Sgi = ::__gnu_cxx;       // GCC 3.1 and later
+#			endif
+#		endif
+#		define unordered_map Sgi::hash_map
+#	endif
+#else      // ...  there are other compilers, right?
+	namespace Sgi = std;
+#	define unordered_map Sgi::hash_map
+#endif
+
+class MathFunction_p {
+	public:
+		unordered_map<size_t, Argument*> argdefs;
+};
+
 MathFunction::MathFunction(string name_, int argc_, int max_argc_, string cat_, string title_, string descr_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
+	priv = new MathFunction_p;
 	argc = argc_;
 	if(max_argc_ < 0 || argc < 0) {
 		if(argc < 0) argc = 0;
@@ -35,15 +72,18 @@ MathFunction::MathFunction(string name_, int argc_, int max_argc_, string cat_, 
 	last_argdef_index = 0;
 }
 MathFunction::MathFunction(const MathFunction *function) {
+	priv = new MathFunction_p;
 	set(function);
 }
 MathFunction::MathFunction() {
+	priv = new MathFunction_p;
 	argc = 0;
 	max_argc = 0;
 	last_argdef_index = 0;
 }
 MathFunction::~MathFunction() {
 	clearArgumentDefinitions();
+	delete priv;
 }
 
 void MathFunction::set(const ExpressionItem *item) {
@@ -222,7 +262,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 						remove_blank_ends(stmp);
 						arg = getArgumentDefinition(itmp);
 						if(!arg && itmp > argc && args() < 0 && itmp > (int) last_argdef_index && last_argdef_index > 0) {
-							 arg = argdefs[last_argdef_index];
+							 arg = priv->argdefs[last_argdef_index];
 						}
 						if(stmp.empty()) {
 							if(arg) {
@@ -279,7 +319,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			remove_blank_ends(stmp);
 			arg = getArgumentDefinition(itmp);
 			if(!arg && itmp > argc && args() < 0 && itmp > (int) last_argdef_index && last_argdef_index > 0) {
-				 arg = argdefs[last_argdef_index];
+				 arg = priv->argdefs[last_argdef_index];
 			}
 			if(stmp.empty()) {
 				if(arg) {
@@ -353,24 +393,24 @@ size_t MathFunction::lastArgumentDefinitionIndex() const {
 	return last_argdef_index;
 }
 Argument *MathFunction::getArgumentDefinition(size_t index) {
-	if(argdefs.find(index) != argdefs.end()) {
-		return argdefs[index];
+	if(priv->argdefs.find(index) != priv->argdefs.end()) {
+		return priv->argdefs[index];
 	}
 	return NULL;
 }
 void MathFunction::clearArgumentDefinitions() {
-	for(unordered_map<size_t, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
+	for(unordered_map<size_t, Argument*>::iterator it = priv->argdefs.begin(); it != priv->argdefs.end(); ++it) {
 		delete it->second;
 	}
-	argdefs.clear();
+	priv->argdefs.clear();
 	last_argdef_index = 0;
 	setChanged(true);
 }
 void MathFunction::setArgumentDefinition(size_t index, Argument *argdef) {
-	if(argdefs.find(index) != argdefs.end()) {
-		delete argdefs[index];
+	if(priv->argdefs.find(index) != priv->argdefs.end()) {
+		delete priv->argdefs[index];
 	}
-	argdefs[index] = argdef;
+	priv->argdefs[index] = argdef;
 	if(index > last_argdef_index) {
 		last_argdef_index = index;
 	}
@@ -444,7 +484,7 @@ int MathFunction::parse(MathStructure &mstruct, const string &argv, const ParseO
 }
 bool MathFunction::testArguments(MathStructure &vargs) {
 	size_t last = 0;
-	for(unordered_map<size_t, Argument*>::iterator it = argdefs.begin(); it != argdefs.end(); ++it) {
+	for(unordered_map<size_t, Argument*>::iterator it = priv->argdefs.begin(); it != priv->argdefs.end(); ++it) {
 		if(it->first > last) {
 			last = it->first;
 		}
@@ -452,9 +492,9 @@ bool MathFunction::testArguments(MathStructure &vargs) {
 			return false;
 		}
 	}
-	if(max_argc < 0 && (int) last > argc && argdefs.find(last) != argdefs.end()) {
+	if(max_argc < 0 && (int) last > argc && priv->argdefs.find(last) != priv->argdefs.end()) {
 		for(size_t i = last + 1; i <= vargs.size(); i++) {
-			if(!argdefs[last]->test(vargs[i - 1], i, this)) {
+			if(!priv->argdefs[last]->test(vargs[i - 1], i, this)) {
 				return false;
 			}
 		}
