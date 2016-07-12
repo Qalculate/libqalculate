@@ -8753,30 +8753,33 @@ void Calculator::stopPrintControl() {
 
 
 bool Calculator::loadExchangeRates() {
-	xmlDocPtr doc;
+	xmlDocPtr doc = NULL;
 	xmlNodePtr cur;
 	xmlChar *value;
 	string currency, rate;
 	gchar *filename = g_build_filename(getLocalDataDir().c_str(), "eurofxref-daily.xml", NULL);
-	doc = xmlParseFile(filename);
-	if(doc == NULL) {
-		/*fetchExchangeRates();
+	if(g_file_test(filename, G_FILE_TEST_EXISTS)) {
 		doc = xmlParseFile(filename);
-		if(doc == NULL) {
-			return false;
-		}*/
+	} else {
 		gchar *filename_old = g_build_filename(getOldLocalDir().c_str(), "eurofxref-daily.xml", NULL);
-		doc = xmlParseFile(filename_old);
-		if(doc) {
-			mkdir(getLocalDataDir().c_str(), S_IRWXU);
-			move_file(filename_old, filename);
-			rmdir(getOldLocalDir().c_str());			
+		if(g_file_test(filename_old, G_FILE_TEST_EXISTS)) {
+			doc = xmlParseFile(filename_old);
+			if(doc) {
+				mkdir(getLocalDataDir().c_str(), S_IRWXU);
+				move_file(filename_old, filename);
+				rmdir(getOldLocalDir().c_str());
+			}
 		}
 		g_free(filename_old);
+	}
+	if(!doc) {
+		g_free(filename);
+		return false;
 	}
 	cur = xmlDocGetRootElement(doc);
 	if(cur == NULL) {
 		xmlFreeDoc(doc);
+		g_free(filename);
 		return false;
 	}
 	Unit *u;
