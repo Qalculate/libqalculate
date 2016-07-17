@@ -1,10 +1,26 @@
+2016-07-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* 'list' command, which displays a list of user defined variables, functions and units, in qalc
+
+2016-07-12 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Avoid warning message if exchange rates file does not exist
+
+2016-07-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix errors and warnings when compiling with clang, and fix unordered_map/hash_map issues
+
+2016-07-06 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix crash when using locale missing on system
+
 2016-06-29 Hanna Knutsson <hanna_k@fmgirl.com>
 
-	Fix parsing of "today" and add "tomorrow" and "yesterday"
+	* Fix parsing of "today" and add "tomorrow" and "yesterday"
 
 2016-06-11 Hanna Knutsson <hanna_k@fmgirl.com>
 
-	Show actual number of days since last exchange rates update
+	* Show actual number of days since last exchange rates update
 
 2016-06-10 Hanna Knutsson <hanna_k@fmgirl.com>
 
