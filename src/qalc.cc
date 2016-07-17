@@ -839,7 +839,7 @@ void list_local_defs(bool in_interactive) {
 	if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 	puts("");
 	if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-	puts(_("For a complete list of functions, variables and units, see the appendixes of the manual of the graphical user interface (available at http://qalculate.github.io/manual/index.html)."));
+	puts(_("For a list of predefined functions, variables and units, see the appendixes of the manual of the graphical user interface (available at http://qalculate.github.io/manual/index.html)."));
 	if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 	puts("");
 	if(in_interactive) {CHECK_IF_SCREEN_FILLED}
