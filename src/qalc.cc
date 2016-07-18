@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
+#include <forward_list>
 #include <glib.h>
 #ifdef HAVE_LIBREADLINE
 #include <readline/readline.h>
@@ -356,7 +357,7 @@ bool check_exchange_rates() {
 #else
 #	define CHECK_IF_SCREEN_FILLED
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) PUTS_UNICODE(x);
-#	define INIT_SCREEN_CHECK
+#	define INIT_SCREEN_CHECK {int rows = 50, cols = 80, rcount = 0;}
 #endif
 
 #define SET_BOOL(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v;}}
@@ -714,135 +715,191 @@ void set_option(string str) {
 #define PRINT_AND_COLON_TABS(x) FPUTS_UNICODE(x, stdout); pctl = unicode_length_check(x); if(pctl >= 32) fputs("\t", stdout); else if(pctl >= 24) fputs("\t\t", stdout); else if(pctl >= 16) fputs("\t\t\t", stdout); else if(pctl >= 8) fputs("\t\t\t\t", stdout); else fputs("\t\t\t\t\t", stdout);
 #define PUTS_BOLD(x) str = "\033[1m"; str += x; str += "\033[0m"; puts(str.c_str());
 
-void list_local_defs(bool in_interactive) {
+void list_defs(bool in_interactive, char list_type = 0) {
 	int rows, cols, rcount = 0; 
-	if(in_interactive && !cfile) rl_get_screen_size(&rows, &cols);
+#ifdef HAVE_LIBREADLINE
+	if(in_interactive && !cfile) {
+		rl_get_screen_size(&rows, &cols);
+		cout << cols << endl;
+	} else {
+		cols = 80;
+	}
+#else
+	cols = 80;
+	rows = 50;
+#endif
 	string str;
-	if(in_interactive) {CHECK_IF_SCREEN_FILLED_PUTS("");}
-	bool b_started = false;
-	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
-		if(CALCULATOR->variables[i]->isLocal() || is_answer_variable(CALCULATOR->variables[i])) {
-			int pctl;
-			if(!b_started) {
-				b_started = true;
-				PUTS_BOLD(_("Variables:"));
-				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-				STR_AND_TABS(_("Name"))
-				str += _("Value");
-				PUTS_UNICODE(str.c_str());
-				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-			}
-			Variable *v = CALCULATOR->variables[i];					
-			STR_AND_TABS(v->preferredName(false, printops.use_unicode_signs).name.c_str())
-			FPUTS_UNICODE(str.c_str(), stdout);
-			string value;
-			if(v->isKnown()) {
-				if(((KnownVariable*) v)->isExpression()) {
-					value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression());
-					if(value.length() > 40) {
-						value = value.substr(0, 30);
-						value += "...";
-					}
-				} else {
-					if(((KnownVariable*) v)->get().isMatrix()) {
-						value = _("matrix");
-					} else if(((KnownVariable*) v)->get().isVector()) {
-						value = _("vector");
-					} else {
-						value = CALCULATOR->printMathStructureTimeOut(((KnownVariable*) v)->get(), 30);
-					}
+	if(list_type == 0) {
+		puts("");
+		if(in_interactive) {CHECK_IF_SCREEN_FILLED;}
+		bool b_started = false;
+		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
+			if(CALCULATOR->variables[i]->isLocal() || is_answer_variable(CALCULATOR->variables[i])) {
+				int pctl;
+				if(!b_started) {
+					b_started = true;
+					PUTS_BOLD(_("Variables:"));
+					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+					STR_AND_TABS(_("Name"))
+					str += _("Value");
+					PUTS_UNICODE(str.c_str());
+					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 				}
-			} else {
-				if(((UnknownVariable*) v)->assumptions()) {
-					switch(((UnknownVariable*) v)->assumptions()->sign()) {
-						case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
-						case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
-						case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
-						case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
-						case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
-						default: {}
+				Variable *v = CALCULATOR->variables[i];					
+				STR_AND_TABS(v->preferredName(false, printops.use_unicode_signs).name.c_str())
+				FPUTS_UNICODE(str.c_str(), stdout);
+				string value;
+				if(v->isKnown()) {
+					if(((KnownVariable*) v)->isExpression()) {
+						value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression());
+						if(value.length() > 40) {
+							value = value.substr(0, 30);
+							value += "...";
+						}
+					} else {
+						if(((KnownVariable*) v)->get().isMatrix()) {
+							value = _("matrix");
+						} else if(((KnownVariable*) v)->get().isVector()) {
+							value = _("vector");
+						} else {
+							value = CALCULATOR->printMathStructureTimeOut(((KnownVariable*) v)->get(), 30);
+						}
 					}
-					if(!value.empty() && ((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
-					switch(((UnknownVariable*) v)->assumptions()->type()) {
-						case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
-						case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
-						case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
-						case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
-						case ASSUMPTION_TYPE_NUMBER: {value += _("number"); break;}
-						case ASSUMPTION_TYPE_NONMATRIX: {value += _("non-matrix"); break;}
-						default: {}
-					}
-					if(value.empty()) value = _("unknown");
 				} else {
-					value = _("default assumptions");
-				}		
+					if(((UnknownVariable*) v)->assumptions()) {
+						switch(((UnknownVariable*) v)->assumptions()->sign()) {
+							case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
+							case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
+							case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
+							case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
+							case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
+							default: {}
+						}
+						if(!value.empty() && ((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
+						switch(((UnknownVariable*) v)->assumptions()->type()) {
+							case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
+							case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
+							case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
+							case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
+							case ASSUMPTION_TYPE_NUMBER: {value += _("number"); break;}
+							case ASSUMPTION_TYPE_NONMATRIX: {value += _("non-matrix"); break;}
+							default: {}
+						}
+						if(value.empty()) value = _("unknown");
+					} else {
+						value = _("default assumptions");
+					}		
+				}
+				FPUTS_UNICODE(value.c_str(), stdout);
+				if(v->isApproximate()) {
+					fputs(" (", stdout);
+					FPUTS_UNICODE(_("approximate"), stdout);
+					fputs(")", stdout);
+				}
+				puts("");
+				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 			}
-			FPUTS_UNICODE(value.c_str(), stdout);
-			if(v->isApproximate()) {
-				fputs(" (", stdout);
-				FPUTS_UNICODE(_("approximate"), stdout);
-				fputs(")", stdout);
+		}
+		if(!b_started) {
+			puts(_("no variables"));
+			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+		}
+		b_started = false;
+		for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
+			if(CALCULATOR->functions[i]->isLocal()) {
+				MathFunction *f = CALCULATOR->functions[i];
+				if(!b_started) {
+					puts("");
+					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+					b_started = true;
+					PUTS_BOLD(_("Functions:"));
+				}
+				puts(f->preferredName(false, printops.use_unicode_signs).name.c_str());
+				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 			}
+		}
+		if(!b_started) {
 			puts("");
 			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-		}
-	}
-	if(!b_started) {
-		puts(_("no variables"));
-		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-	}
-	b_started = false;
-	for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
-		if(CALCULATOR->functions[i]->isLocal()) {
-			MathFunction *f = CALCULATOR->functions[i];
-			if(!b_started) {
-				puts("");
-				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-				b_started = true;
-				PUTS_BOLD(_("Functions:"));
-			}
-			puts(f->preferredName(false, printops.use_unicode_signs).name.c_str());
+			puts(_("no functions"));
 			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 		}
-	}
-	if(!b_started) {
-		puts("");
-		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-		puts(_("no functions"));
-		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-	}
-	b_started = false;
-	for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
-		if(CALCULATOR->units[i]->isLocal()) {
-			Unit *u = CALCULATOR->units[i];
-			if(!b_started) {
-				puts("");
+		b_started = false;
+		for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
+			if(CALCULATOR->units[i]->isLocal()) {
+				Unit *u = CALCULATOR->units[i];
+				if(!b_started) {
+					puts("");
+					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+					b_started = true;
+					PUTS_BOLD(_("Units:"));
+				}
+				puts(u->preferredName(false, printops.use_unicode_signs).name.c_str());
 				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-				b_started = true;
-				PUTS_BOLD(_("Units:"));
 			}
-			puts(u->preferredName(false, printops.use_unicode_signs).name.c_str());
+		}
+		if(!b_started) {
+			puts("");
+			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+			puts(_("no units"));
 			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 		}
-	}
-	if(!b_started) {
 		puts("");
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-		puts(_("no units"));
+		puts(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+		puts("");
+	} else {
+		int max_l = 0;
+		forward_list<string> name_list;
+		int i_end = 0;
+		if(list_type == 'f') i_end = CALCULATOR->functions.size();
+		if(list_type == 'v') i_end = CALCULATOR->variables.size();
+		if(list_type == 'u') i_end = CALCULATOR->units.size();
+		ExpressionItem *item = NULL;
+		for(int i = 0; i < i_end; i++) {
+			if(list_type == 'f') item = CALCULATOR->functions[i];
+			if(list_type == 'v') item = CALCULATOR->variables[i];
+			if(list_type == 'u') item = CALCULATOR->units[i];
+			if(!item->isHidden() && item->isActive()) {
+				if((int) item->preferredName(false, printops.use_unicode_signs).name.length() > max_l) max_l = item->preferredName(false, printops.use_unicode_signs).name.length();
+			
+				name_list.push_front(item->preferredName(false, printops.use_unicode_signs).name);
+			}
+		}
+		name_list.sort();
+		forward_list<string>::iterator it = name_list.begin();
+		forward_list<string>::iterator it_e = name_list.end();
+		int c = 0;
+		int max_tabs = (max_l / 8) + 1;
+		int max_c = cols / (max_tabs * 8);
+		if(cfile) max_c = 0;
+		while(it != it_e) {
+			c++;
+			if(c >= max_c) {
+				c = 0;
+				PUTS_UNICODE(it->c_str());
+			} else {
+				if(c == 1 && in_interactive) {CHECK_IF_SCREEN_FILLED}
+				int l = unicode_length_check(it->c_str());
+				int nr_of_tabs = max_tabs - (l / 8);
+				for(int tab_nr = 0; tab_nr < nr_of_tabs; tab_nr++) {
+					*it += "\t";
+				}
+				FPUTS_UNICODE(it->c_str(), stdout);
+			}
+			++it;
+		}
+		if(c > 0) puts("");
+		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+		puts("");
+		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+		puts(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));
+		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+		puts("");
 	}
-	puts("");
-	if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-	puts(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));
-	if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-	puts("");
-	if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-	puts(_("For a list of predefined functions, variables and units, see the appendixes of the manual of the graphical user interface (available at http://qalculate.github.io/manual/index.html)."));
-	if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-	puts("");
-	if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 }
 
 int main(int argc, char *argv[]) {
@@ -858,7 +915,7 @@ int main(int argc, char *argv[]) {
 	load_global_defs = true;
 	printops.use_unicode_signs = false;
 	fetch_exchange_rates_at_startup = false;
-	bool do_list = false;
+	char list_type = 'n';
 	
 	
 #ifdef ENABLE_NLS
@@ -887,6 +944,12 @@ int main(int argc, char *argv[]) {
 			fputs("\t", stdout); PUTS_UNICODE(_("start in interactive mode"));
 			fputs("\n\t-l, -list\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all user defined variables, functions and units."));
+			fputs("\n\t--list-functions\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all functions."));
+			fputs("\n\t--list-units\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all units."));
+			fputs("\n\t--list-variables\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all variables."));
 			fputs("\n\t-n, -nodefs\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("do not load any functions, units, or variables from file"));
 			fputs("\n\t-nocurrencies\n", stdout);
@@ -927,7 +990,13 @@ int main(int argc, char *argv[]) {
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-interactive") == 0 || strcmp(argv[i], "--interactive") == 0 || strcmp(argv[i], "-i") == 0)) {
 			interactive_mode = true;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-list") == 0 || strcmp(argv[i], "--list") == 0 || strcmp(argv[i], "-l") == 0)) {
-			do_list = true;
+			list_type = 0;
+		} else if(!calc_arg_begun && strcmp(argv[i], "--list-functions") == 0) {
+			list_type = 'f';
+		} else if(!calc_arg_begun && strcmp(argv[i], "--list-units") == 0) {
+			list_type = 'u';
+		} else if(!calc_arg_begun && strcmp(argv[i], "--list-variables") == 0) {
+			list_type = 'v';
 		} else if(!calc_arg_begun && strcmp(argv[i], "-nounits") == 0) {
 			load_units = false;
 		} else if(!calc_arg_begun && strcmp(argv[i], "-nocurrencies") == 0) {
@@ -1036,9 +1105,9 @@ int main(int argc, char *argv[]) {
 	//load local definitions
 	if(load_global_defs) CALCULATOR->loadLocalDefinitions();
 	
-	if(do_list) {
+	if(list_type != 'n') {
 		CALCULATOR->terminateThreads();
-		list_local_defs(false);
+		list_defs(false, list_type);
 		return 0;
 	}
 
@@ -1642,7 +1711,15 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("For more information about mathematical expression, different options, and a complete list of functions, variables and units, see the relevant sections in the manual of the graphical user interface (available at http://qalculate.github.io/manual/index.html)."));
 			puts("");
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "list", _("list"))) {
-			list_local_defs(true);
+			list_defs(true);
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "list", _("list"))) {			
+			str = str.substr(ispace + 1, slen - (ispace + 1));
+			remove_blank_ends(str);
+			char list_type = 0;
+			if(EQUALS_IGNORECASE_AND_LOCAL(str, "functions", _("functions"))) list_type = 'f';
+			if(EQUALS_IGNORECASE_AND_LOCAL(str, "variables", _("variables"))) list_type = 'v';
+			if(EQUALS_IGNORECASE_AND_LOCAL(str, "units", _("units"))) list_type = 'u';
+			list_defs(true, list_type);
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "info", _("info"))) {
 			int pctl;
 #define PRINT_AND_COLON_TABS_INFO(x) FPUTS_UNICODE(x, stdout); pctl = unicode_length_check(x); if(pctl >= 23) fputs(":\t", stdout); else if(pctl >= 15) fputs(":\t\t", stdout); else if(pctl >= 7) fputs(":\t\t\t", stdout); else fputs(":\t\t\t\t", stdout);
@@ -2154,6 +2231,9 @@ int main(int argc, char *argv[]) {
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "list", _("list"))) {
 				puts("");
 				PUTS_UNICODE(_("Displays a list of all user defined variables, functions and units."));
+				PUTS_UNICODE(_("Enter with argument 'functions', 'variables' or 'units' to show a list of all functions, variables or units."));
+				puts("");
+				PUTS_UNICODE(_("Example: list functions."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "info", _("info"))) {
 				puts("");

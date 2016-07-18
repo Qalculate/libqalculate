@@ -1,3 +1,7 @@
+2016-07-18 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Option to list all functions, variables or units in qalc
+
 2016-07-17 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* 'list' command, which displays a list of user defined variables, functions and units, in qalc
