@@ -1,3 +1,7 @@
+2016-07-20 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* 'delete' command, for removal of user-defined variables, in qalc
+
 2016-07-18 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Option to list all functions, variables or units in qalc

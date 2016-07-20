@@ -732,12 +732,13 @@ void list_defs(bool in_interactive, char list_type = 0) {
 	if(list_type == 0) {
 		puts("");
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED;}
-		bool b_started = false;
+		bool b_variables = false, b_functions = false, b_units = false;
 		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
-			if(CALCULATOR->variables[i]->isLocal() || is_answer_variable(CALCULATOR->variables[i])) {
+			Variable *v = CALCULATOR->variables[i];
+			if((v->isLocal() || v->hasChanged()) && v->isActive() && (!is_answer_variable(v) || !v->representsUndefined())) {
 				int pctl;
-				if(!b_started) {
-					b_started = true;
+				if(!b_variables) {
+					b_variables = true;
 					PUTS_BOLD(_("Variables:"));
 					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 					STR_AND_TABS(_("Name"))
@@ -745,8 +746,7 @@ void list_defs(bool in_interactive, char list_type = 0) {
 					PUTS_UNICODE(str.c_str());
 					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 				}
-				Variable *v = CALCULATOR->variables[i];					
-				STR_AND_TABS(v->preferredName(false, printops.use_unicode_signs).name.c_str())
+				STR_AND_TABS(v->preferredInputName(false, printops.use_unicode_signs).name.c_str())
 				FPUTS_UNICODE(str.c_str(), stdout);
 				string value;
 				if(v->isKnown()) {
@@ -800,50 +800,36 @@ void list_defs(bool in_interactive, char list_type = 0) {
 				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 			}
 		}
-		if(!b_started) {
-			puts(_("no variables"));
-			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-		}
-		b_started = false;
 		for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
-			if(CALCULATOR->functions[i]->isLocal()) {
-				MathFunction *f = CALCULATOR->functions[i];
-				if(!b_started) {
-					puts("");
+			MathFunction *f = CALCULATOR->functions[i];
+			if((f->isLocal() || f->hasChanged()) && f->isActive()) {
+				if(!b_functions) {
+					if(b_variables) puts("");
 					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-					b_started = true;
+					b_functions = true;
 					PUTS_BOLD(_("Functions:"));
 				}
-				puts(f->preferredName(false, printops.use_unicode_signs).name.c_str());
+				puts(f->preferredInputName(false, printops.use_unicode_signs).name.c_str());
 				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 			}
 		}
-		if(!b_started) {
-			puts("");
-			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-			puts(_("no functions"));
-			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-		}
-		b_started = false;
 		for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
-			if(CALCULATOR->units[i]->isLocal()) {
-				Unit *u = CALCULATOR->units[i];
-				if(!b_started) {
-					puts("");
+			Unit *u = CALCULATOR->units[i];
+			if((u->isLocal() || u->hasChanged()) && u->isActive()) {
+				if(!b_units) {
+					if(b_variables || b_functions) puts("");
 					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-					b_started = true;
+					b_units = true;
 					PUTS_BOLD(_("Units:"));
 				}
-				puts(u->preferredName(false, printops.use_unicode_signs).name.c_str());
+				puts(u->preferredInputName(false, printops.use_unicode_signs).name.c_str());
 				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 			}
 		}
-		if(!b_started) {
-			puts("");
-			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-			puts(_("no units"));
+		if(!b_variables && !b_functions && !b_units) {
+			puts(_("No local variables, functions or units have been defined."));
 			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 		}
 		puts("");
@@ -864,9 +850,9 @@ void list_defs(bool in_interactive, char list_type = 0) {
 			if(list_type == 'v') item = CALCULATOR->variables[i];
 			if(list_type == 'u') item = CALCULATOR->units[i];
 			if(!item->isHidden() && item->isActive()) {
-				if((int) item->preferredName(false, printops.use_unicode_signs).name.length() > max_l) max_l = item->preferredName(false, printops.use_unicode_signs).name.length();
+				if((int) item->preferredInputName(false, printops.use_unicode_signs).name.length() > max_l) max_l = item->preferredInputName(false, printops.use_unicode_signs).name.length();
 			
-				name_list.push_front(item->preferredName(false, printops.use_unicode_signs).name);
+				name_list.push_front(item->preferredInputName(false, printops.use_unicode_signs).name);
 			}
 		}
 		name_list.sort();
@@ -943,7 +929,7 @@ int main(int argc, char *argv[]) {
 			fputs("\n\t-i, -interactive\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("start in interactive mode"));
 			fputs("\n\t-l, -list\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all user defined variables, functions and units."));
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all user-defined variables, functions and units."));
 			fputs("\n\t--list-functions\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all functions."));
 			fputs("\n\t--list-units\n", stdout);
@@ -1363,6 +1349,16 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "delete", _("delete"))) {
+			str = str.substr(ispace + 1, slen - (ispace + 1));
+			remove_blank_ends(str);
+			Variable *v = CALCULATOR->getActiveVariable(str);
+			if(v && v->isLocal()) {
+				v->destroy();
+			} else {
+				PUTS_UNICODE(_("No user-defined variable with the specified name exist."));
+			}
+		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "assume", _("assume"))) {
 			string str2 = "assumptions ";
 			set_option(str2 + str.substr(ispace + 1, slen - (ispace + 1)));
@@ -1687,7 +1683,7 @@ int main(int argc, char *argv[]) {
 			FPUTS_UNICODE(_("assume"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("ASSUMPTIONS")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("base"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("BASE")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("clear stack")); CHECK_IF_SCREEN_FILLED
-			FPUTS_UNICODE(_("to"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("convert"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("UNIT or \"TO\" COMMAND")); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("delete"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("NAME")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("exact")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("exrates"), stdout);			
 			if(!CALCULATOR->hasGVFS()) {
@@ -1699,17 +1695,19 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("list")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("mode")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("rpn"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("ON/OFF")); CHECK_IF_SCREEN_FILLED
-			FPUTS_UNICODE(_("save"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("store"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("CATEGORY"), stdout); fputs("] [", stdout); FPUTS_UNICODE("[", stdout); fputs(_("TITLE"), stdout); PUTS_UNICODE("]"); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("save"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("store"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("CATEGORY"), stdout); fputs("] [", stdout); fputs(_("TITLE"), stdout); PUTS_UNICODE("]"); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("save definitions")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("save mode")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("set"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("VALUE")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("simplify")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("stack")); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("to"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("convert"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("UNIT or \"TO\" COMMAND")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("quit"), stdout); fputs("/", stdout); PUTS_UNICODE(_("exit")); CHECK_IF_SCREEN_FILLED_PUTS("");
 			PUTS_UNICODE(_("Type help COMMAND for more information (example: help save).")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("Type info NAME for information about a function, variable or unit (example: info sin).")); CHECK_IF_SCREEN_FILLED_PUTS("");
 			PUTS_UNICODE(_("For more information about mathematical expression, different options, and a complete list of functions, variables and units, see the relevant sections in the manual of the graphical user interface (available at http://qalculate.github.io/manual/index.html)."));
 			puts("");
+		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "list", _("list"))) {
 			list_defs(true);
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "list", _("list"))) {			
@@ -1720,6 +1718,7 @@ int main(int argc, char *argv[]) {
 			if(EQUALS_IGNORECASE_AND_LOCAL(str, "variables", _("variables"))) list_type = 'v';
 			if(EQUALS_IGNORECASE_AND_LOCAL(str, "units", _("units"))) list_type = 'u';
 			list_defs(true, list_type);
+		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "info", _("info"))) {
 			int pctl;
 #define PRINT_AND_COLON_TABS_INFO(x) FPUTS_UNICODE(x, stdout); pctl = unicode_length_check(x); if(pctl >= 23) fputs(":\t", stdout); else if(pctl >= 15) fputs(":\t\t", stdout); else if(pctl >= 7) fputs(":\t\t\t", stdout); else fputs(":\t\t\t\t", stdout);
@@ -2224,13 +2223,19 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Example: store var1."));
 				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "delete", _("delete"))) {
+				puts("");
+				PUTS_UNICODE(_("Removes the user-defined variable with the specified name."));
+				puts("");
+				PUTS_UNICODE(_("Example: delete var1."));
+				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "mode", _("mode"))) {
 				puts("");
 				PUTS_UNICODE(_("Displays the current mode."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "list", _("list"))) {
 				puts("");
-				PUTS_UNICODE(_("Displays a list of all user defined variables, functions and units."));
+				PUTS_UNICODE(_("Displays a list of all user-defined variables, functions and units."));
 				PUTS_UNICODE(_("Enter with argument 'functions', 'variables' or 'units' to show a list of all functions, variables or units."));
 				puts("");
 				PUTS_UNICODE(_("Example: list functions."));
