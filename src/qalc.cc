@@ -851,11 +851,17 @@ void list_defs(bool in_interactive, char list_type = 0) {
 			if(list_type == 'v') item = CALCULATOR->variables[i];
 			if(list_type == 'u') item = CALCULATOR->units[i];
 			if(!item->isHidden() && item->isActive() && (list_type != 'u' || item->subtype() != SUBTYPE_COMPOSITE_UNIT)) {
-				name_str = item->preferredInputName(false, false).name;
-				name_str2 = item->preferredInputName(true, false).name;
-				if(name_str != name_str2) {
-					name_str += " / ";
-					name_str += name_str2;
+				const ExpressionName &ename1 = item->preferredInputName(false, false);
+				name_str = ename1.name;
+				size_t name_i = 1;
+				while(true) {
+					const ExpressionName &ename = item->getName(name_i);
+					if(ename == empty_expression_name) break;
+					if(ename != ename1 && !ename.avoid_input && !ename.plural && (!ename.unicode || printops.use_unicode_signs)) {
+						name_str += " / ";
+						name_str += ename.name;
+					}
+					name_i++;
 				}
 				if((int) name_str.length() > max_l) max_l = name_str.length();
 				name_list.push_front(name_str);
