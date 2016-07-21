@@ -850,7 +850,7 @@ void list_defs(bool in_interactive, char list_type = 0) {
 			if(list_type == 'f') item = CALCULATOR->functions[i];
 			if(list_type == 'v') item = CALCULATOR->variables[i];
 			if(list_type == 'u') item = CALCULATOR->units[i];
-			if(!item->isHidden() && item->isActive()) {
+			if(!item->isHidden() && item->isActive() && (list_type != 'u' || item->subtype() != SUBTYPE_COMPOSITE_UNIT)) {
 				name_str = item->preferredInputName(false, false).name;
 				name_str2 = item->preferredInputName(true, false).name;
 				if(name_str != name_str2) {
