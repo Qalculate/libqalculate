@@ -746,7 +746,7 @@ void list_defs(bool in_interactive, char list_type = 0) {
 					PUTS_UNICODE(str.c_str());
 					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 				}
-				STR_AND_TABS(v->preferredInputName(false, printops.use_unicode_signs).name.c_str())
+				STR_AND_TABS(v->preferredInputName(false, false).name.c_str())
 				FPUTS_UNICODE(str.c_str(), stdout);
 				string value;
 				if(v->isKnown()) {
@@ -810,7 +810,7 @@ void list_defs(bool in_interactive, char list_type = 0) {
 					b_functions = true;
 					PUTS_BOLD(_("Functions:"));
 				}
-				puts(f->preferredInputName(false, printops.use_unicode_signs).name.c_str());
+				puts(f->preferredInputName(false, false).name.c_str());
 				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 			}
 		}
@@ -824,7 +824,7 @@ void list_defs(bool in_interactive, char list_type = 0) {
 					b_units = true;
 					PUTS_BOLD(_("Units:"));
 				}
-				puts(u->preferredInputName(false, printops.use_unicode_signs).name.c_str());
+				puts(u->preferredInputName(false, false).name.c_str());
 				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 			}
 		}
@@ -845,14 +845,20 @@ void list_defs(bool in_interactive, char list_type = 0) {
 		if(list_type == 'v') i_end = CALCULATOR->variables.size();
 		if(list_type == 'u') i_end = CALCULATOR->units.size();
 		ExpressionItem *item = NULL;
+		string name_str, name_str2;
 		for(int i = 0; i < i_end; i++) {
 			if(list_type == 'f') item = CALCULATOR->functions[i];
 			if(list_type == 'v') item = CALCULATOR->variables[i];
 			if(list_type == 'u') item = CALCULATOR->units[i];
 			if(!item->isHidden() && item->isActive()) {
-				if((int) item->preferredInputName(false, printops.use_unicode_signs).name.length() > max_l) max_l = item->preferredInputName(false, printops.use_unicode_signs).name.length();
-			
-				name_list.push_front(item->preferredInputName(false, printops.use_unicode_signs).name);
+				name_str = item->preferredInputName(false, false).name;
+				name_str2 = item->preferredInputName(true, false).name;
+				if(name_str != name_str2) {
+					name_str += " / ";
+					name_str += name_str2;
+				}
+				if((int) name_str.length() > max_l) max_l = name_str.length();
+				name_list.push_front(name_str);
 			}
 		}
 		name_list.sort();

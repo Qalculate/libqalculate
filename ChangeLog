@@ -1,3 +1,7 @@
+2016-07-21 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not use unicode signs in definitions list and show both abbreviated and long name
+
 2016-07-20 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* 'delete' command, for removal of user-defined variables, in qalc
