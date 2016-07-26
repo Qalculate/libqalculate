@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
-#include <forward_list>
+#include <list>
 #include <glib.h>
 #ifdef HAVE_LIBREADLINE
 #include <readline/readline.h>
@@ -839,7 +839,7 @@ void list_defs(bool in_interactive, char list_type = 0) {
 		puts("");
 	} else {
 		int max_l = 0;
-		forward_list<string> name_list;
+		list<string> name_list;
 		int i_end = 0;
 		if(list_type == 'f') i_end = CALCULATOR->functions.size();
 		if(list_type == 'v') i_end = CALCULATOR->variables.size();
@@ -868,8 +868,8 @@ void list_defs(bool in_interactive, char list_type = 0) {
 			}
 		}
 		name_list.sort();
-		forward_list<string>::iterator it = name_list.begin();
-		forward_list<string>::iterator it_e = name_list.end();
+		list<string>::iterator it = name_list.begin();
+		list<string>::iterator it_e = name_list.end();
 		int c = 0;
 		int max_tabs = (max_l / 8) + 1;
 		int max_c = cols / (max_tabs * 8);
