@@ -1716,13 +1716,13 @@
       <_title>Add Time</_title>
       <_names>r:addTime</_names>
       <_description>Adds a time value to a date. The value can be positive or negative, but must use a unit based on seconds (such as day and year). Fractions of days are truncated.</_description>
-      <expression>addDays(\x,trunc(\y/day))</expression>
+      <expression>addDays(\x,trunc(\y/d))</expression>
       <argument type="date" index="1">
         <_title>Date</_title>
       </argument>
       <argument index="2">
         <_title>Time</_title>
-	<condition>isNumber(\x/day)</condition>
+	<condition>isNumber(\x/d)</condition>
       </argument>
     </function>
   </category>
