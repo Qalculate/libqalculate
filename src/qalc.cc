@@ -3166,7 +3166,7 @@ void load_preferences() {
 	first_time = false;
 
 	FILE *file = NULL;
-#ifdef HAVE_LIBREADLINE	
+#ifdef HAVE_LIBREADLINE
 	gchar *historyfile = g_build_filename(getLocalDir().c_str(), "qalc.history", NULL);
 	gchar *oldhistoryfile = NULL;
 #endif	
@@ -3179,7 +3179,9 @@ void load_preferences() {
 		if(!file) {
 			g_free(gstr_file);
 			g_free(gstr_oldfile);
+#ifdef HAVE_LIBREADLINE
 			g_free(historyfile);
+#endif
 			first_time = true;
 			set_saved_mode();
 			return;

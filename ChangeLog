@@ -1,3 +1,7 @@
+2016-08-05 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix compilation without readline
+
 2016-07-21 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Do not use unicode signs in definitions list and show both abbreviated and long name
