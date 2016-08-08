@@ -1,3 +1,7 @@
+2016-08-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix degree sign
+
 2016-08-05 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Fix compilation without readline

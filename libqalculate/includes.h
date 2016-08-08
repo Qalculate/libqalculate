@@ -527,7 +527,7 @@ extern Calculator *calculator;
 #define PRECISION		CALCULATOR->getPrecision()
 
 #define SIGN_DEGREE			"°"
-#define SIGN_POWER_0			"°"
+#define SIGN_POWER_0			"⁰"
 #define SIGN_POWER_1			"¹"
 #define SIGN_POWER_2			"²"
 #define SIGN_POWER_3			"³"
