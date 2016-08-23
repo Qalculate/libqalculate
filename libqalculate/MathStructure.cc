@@ -672,7 +672,7 @@ Unit *MathStructure::unit() const {
 }
 Unit *MathStructure::unit_exp_unit() const {
 	if(isUnit()) return o_unit;
-	if(isPower() && CHILD(0).isUnit()) CHILD(0).unit();
+	if(isPower() && CHILD(0).isUnit()) return CHILD(0).unit();
 	return NULL;
 }
 Prefix *MathStructure::prefix() const {
@@ -680,7 +680,7 @@ Prefix *MathStructure::prefix() const {
 }
 Prefix *MathStructure::unit_exp_prefix() const {
 	if(isUnit()) return o_prefix;
-	if(isPower() && CHILD(0).isUnit()) CHILD(0).prefix();
+	if(isPower() && CHILD(0).isUnit()) return CHILD(0).prefix();
 	return NULL;
 }
 void MathStructure::setPrefix(Prefix *p) {
