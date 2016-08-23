@@ -12832,28 +12832,27 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 		}
 		MathStructure *exp = new MathStructure(1, 1);
 		MathStructure *mstruct = new MathStructure(1, 1);		
-		if(o_prefix || new_prefix) {
-			Number new_value(1, 1);
-			if(o_prefix) new_value = o_prefix->value();
-			if(new_prefix) new_value.divide(new_prefix->value());
-			mstruct->set(new_value);
+		if(o_prefix) {
+			mstruct->set(o_prefix->value());
 		}
-
 		if(u->convert(o_unit, *mstruct, *exp)) {
 			o_unit = u;
 			o_prefix = new_prefix;
+			if(new_prefix) {
+				divide(new_prefix->value());
+			}
 			if(!exp->isOne()) {
 				if(calculate_new_functions) exp->calculateFunctions(feo, true);
 				raise_nocopy(exp);
 			} else {
 				exp->unref();
-			}
+			}			
 			if(!mstruct->isOne()) {
 				if(calculate_new_functions) mstruct->calculateFunctions(feo, true);
 				multiply_nocopy(mstruct);
 			} else {
 				mstruct->unref();
-			}
+			}			
 			return true;
 		} else {
 			exp->unref();
