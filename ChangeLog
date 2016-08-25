@@ -1,3 +1,8 @@
+2016-08-23 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix unit conversion (e.g. 1/s to ms)
+	* Fix unit conversion (e.g. 1/ns to GHz)
+
 2016-08-08 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Fix degree sign
