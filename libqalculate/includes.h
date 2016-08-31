@@ -245,6 +245,19 @@ typedef enum {
 	FRACTION_COMBINED
 } NumberFractionFormat;
 
+typedef enum {
+	/// Display numbers in decimal, not fractional, format (ex. 0.333333)
+	BREAK_UP_UNIT_NONE,
+	/// Display as fraction if necessary to get an exact display of the result (ex. 1/3, but 0.25)
+	BREAK_UP_UNIT_DOWNWARDS_KEEP,
+	BREAK_UP_UNIT_DOWNWARDS,
+	/// Display as fraction (ex. 4/3)
+	BREAK_UP_UNIT_DEFAULT,
+	/// Display as an integer and a fraction (ex. 3 + 1/2)
+	BREAK_UP_UNIT_FORCE_INTEGER,
+	BREAK_UP_UNIT_FORCE_FULL
+} BreakUpUnitFlags;
+
 /// Options for ordering the parts of a mathematical expression/result before display
 static const struct SortOptions {
 	/// Put currency units before quantity. Default: true
@@ -361,7 +374,9 @@ static const struct PrintOptions {
 	bool spell_out_logical_operators;
 	/// Displays children of the structure with no higher precision than the parent. Default: true
 	bool restrict_to_parent_precision;
-	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), lower_case_e(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(false), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_all_units(false), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), limit_implicit_multiplication(false), allow_non_usable(false), use_unicode_signs(false), multiplication_sign(MULTIPLICATION_SIGN_DOT), division_sign(DIVISION_SIGN_DIVISION_SLASH), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL), can_display_unicode_string_function(NULL), can_display_unicode_string_arg(NULL), hide_underscore_spaces(false), preserve_format(false), allow_factorization(false), spell_out_logical_operators(false), restrict_to_parent_precision(true) {}
+	/// Shows time as h + min + s, imperial length as ft + in, etc.
+	BreakUpUnitFlags break_up_units;
+	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), lower_case_e(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(false), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_all_units(false), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), limit_implicit_multiplication(false), allow_non_usable(false), use_unicode_signs(false), multiplication_sign(MULTIPLICATION_SIGN_DOT), division_sign(DIVISION_SIGN_DIVISION_SLASH), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL), can_display_unicode_string_function(NULL), can_display_unicode_string_arg(NULL), hide_underscore_spaces(false), preserve_format(false), allow_factorization(false), spell_out_logical_operators(false), restrict_to_parent_precision(true), break_up_units(BREAK_UP_UNIT_NONE) {}
 	/// Returns the comma sign used (default sign or comma_sign)
 	const string &comma() const;
 	/// Returns the decimal sign used (default sign or decimalpoint_sign)

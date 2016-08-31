@@ -5908,6 +5908,15 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			return -1;
 		}
 	}
+	if(parent.isAddition() && (mstruct1.isUnit() || (mstruct1.isMultiplication() && mstruct1.size() == 2 && mstruct1[1].isUnit())) && (mstruct2.isUnit() || (mstruct2.isMultiplication() && mstruct2.size() == 2 && mstruct2[1].isUnit()))) {
+		Unit *u1, *u2;
+		if(mstruct1.isUnit()) u1 = mstruct1.unit();
+		else u1 = mstruct1[1].unit();
+		if(mstruct2.isUnit()) u2 = mstruct2.unit();
+		else u2 = mstruct2[1].unit();
+		if(u1->isParentOf(u2)) return 1;
+		if(u2->isParentOf(u1)) return -1;
+	}
 	bool isdiv1 = false, isdiv2 = false;
 	if(!po.negative_exponents) {
 		if(mstruct1.isMultiplication()) {
@@ -10572,8 +10581,110 @@ void MathStructure::prefixCurrencies() {
 		}
 	}
 }
+
+bool MathStructure::splitUpUnits(const PrintOptions &po) {
+	if(!isMultiplication()) return false;
+	if(SIZE != 2) return false;
+	if((CHILD(0).isUnit() && CHILD(1).isNumber()) || (CHILD(1).isUnit() && CHILD(0).isNumber())) {
+		Number nr;
+		Unit *u;
+		if(CHILD(0).isUnit()) {
+			u = CHILD(0).unit();
+			nr = CHILD(1).number();
+		} else {
+			u = CHILD(1).unit();
+			nr = CHILD(0).number();
+		}
+		if(!nr.isReal()) return false;
+		if(nr.isOne()) return false;
+		if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) return false;
+		bool accept_obsolete = (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->combineWithBase() >= 3);
+		Unit *original_u = u;
+		Unit *last_nonobsolete_u = u;
+		Number last_nonobsolete_nr = nr;
+		sort(po);
+		Number nr_one(1, 1);
+		Number nr_ten(10, 1);
+		bool has_changed = false;
+		while(po.break_up_units > BREAK_UP_UNIT_DOWNWARDS && nr.isGreaterThan(nr_one)) {
+			Unit *best_u = NULL;
+			Number best_nr;
+			int best_priority = -1;
+			for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
+				Unit *ui = CALCULATOR->units[i];
+				if(ui->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ui)->firstBaseUnit() == u  && ((AliasUnit*) ui)->firstBaseExponent() == 1 && (((AliasUnit*) ui)->combineWithBase() == 1 || (((AliasUnit*) ui)->combineWithBase() == 2 && best_priority != 1 && nr.isGreaterThan(nr_ten)) || (((AliasUnit*) ui)->combineWithBase() == 3 && (best_priority >= 3 || best_priority < 0)) || (best_priority <= 0 && ((AliasUnit*) ui)->combineWithBase() == 0 && ((po.break_up_units == BREAK_UP_UNIT_FORCE_INTEGER && ((AliasUnit*) ui)->expression().find_first_not_of(NUMBERS) == string::npos) || po.break_up_units == BREAK_UP_UNIT_FORCE_FULL)))) {
+					MathStructure mstruct_nr(nr);
+					MathStructure m_exp(m_one);
+					((AliasUnit*) ui)->convertFromFirstBaseUnit(mstruct_nr, m_exp);
+					mstruct_nr.eval();
+					if(mstruct_nr.isNumber() && m_exp.isOne() && mstruct_nr.number().isLessThan(nr) && mstruct_nr.number().isGreaterThanOrEqualTo(nr_one) && (!best_u || mstruct_nr.number().isLessThan(best_nr))) {
+						best_u = ui;
+						best_nr = mstruct_nr.number();
+						best_priority = ((AliasUnit*) ui)->combineWithBase();
+					}
+				}
+			}
+			if(!best_u) break;
+			u = best_u;
+			nr = best_nr;
+			if(accept_obsolete || ((AliasUnit*) u)->combineWithBase() < 3) {
+				last_nonobsolete_u = u;
+				last_nonobsolete_nr = nr;
+			}
+		}
+		u = last_nonobsolete_u;
+		nr = last_nonobsolete_nr;
+		if(u != original_u) {
+			CHILD(0).set(nr);
+			CHILD(1).set(u);
+			has_changed = true;
+		}
+		while(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->combineWithBase() > 0 || po.break_up_units == BREAK_UP_UNIT_FORCE_FULL || (po.break_up_units == BREAK_UP_UNIT_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos)) && !nr.isInteger() && !nr.isZero()) {
+			Number int_nr(nr);
+			int_nr.trunc();
+			if(po.break_up_units == BREAK_UP_UNIT_DOWNWARDS_KEEP && int_nr.isZero()) break;
+			nr -= int_nr;
+			MathStructure mstruct_nr(nr);
+			MathStructure m_exp(m_one);
+			((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
+			mstruct_nr.eval();
+			while(!accept_obsolete && ((AliasUnit*) u)->firstBaseUnit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ((AliasUnit*) u)->firstBaseUnit())->combineWithBase() >= 3) {
+				u = ((AliasUnit*) u)->firstBaseUnit();
+				cout << u->name().c_str() << endl;
+				if(((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->combineWithBase() > 0 || po.break_up_units == BREAK_UP_UNIT_FORCE_FULL || (po.break_up_units == BREAK_UP_UNIT_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos))) {
+					((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
+					mstruct_nr.eval();
+					if(!mstruct_nr.isNumber() || !m_exp.isOne()) break;
+				} else {
+					mstruct_nr.setUndefined();
+					break;
+				}
+			}
+			if(!mstruct_nr.isNumber() || !m_exp.isOne()) break;
+			if(po.break_up_units == BREAK_UP_UNIT_FORCE_FULL && mstruct_nr.number().isLessThanOrEqualTo(nr)) break;
+			u = ((AliasUnit*) u)->firstBaseUnit();
+			nr = mstruct_nr.number();
+			MathStructure mstruct_new = nr;
+			mstruct_new *= MathStructure(u);
+			mstruct_new.sort(po);
+			if(int_nr.isZero()) {
+				if(isAddition()) LAST.set(mstruct_new);
+				else set(mstruct_new);
+			} else {
+				if(isAddition()) LAST[0].set(int_nr);
+				else CHILD(0).set(int_nr);
+				add(mstruct_new, true);
+			}
+			has_changed = true;
+		}
+		return has_changed;
+	}
+	return false;
+}
+
 void MathStructure::format(const PrintOptions &po) {
 	if(!po.preserve_format) {
+		if(po.break_up_units) splitUpUnits(po);
 		if(po.place_units_separately) {
 			factorizeUnits();
 		}

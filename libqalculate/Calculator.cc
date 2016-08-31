@@ -6321,7 +6321,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		fulfilled_translation = 2;
 	}
 
-	int exponent = 1, litmp = 0;
+	int exponent = 1, litmp = 0, combine_priority = 0;
 	bool active = false, hidden = false, b = false, require_translation = false, use_with_prefixes = false, use_with_prefixes_set = false;
 	Number nr;
 	ExpressionItem *item;
@@ -7237,6 +7237,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						if(!xmlStrcmp(child->name, (const xmlChar*) "base")) {
 							child2 = child->xmlChildrenNode;
 							exponent = 1;
+							combine_priority = 0;
 							svalue = "";
 							inverse = "";
 							b = true;
@@ -7261,6 +7262,13 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 										exponent = 1;
 									} else {
 										exponent = s2i(stmp);
+									}
+								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "combine")) {
+									XML_GET_STRING_FROM_TEXT(child2, stmp);
+									if(stmp.empty()) {
+										combine_priority = 0;
+									} else {
+										combine_priority = s2i(stmp);
 									}
 								}
 								child2 = child2->next;
@@ -7295,6 +7303,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						}
 					} else {
 						au = new AliasUnit(category, name, plural, singular, title, u, svalue, exponent, inverse, is_user_defs, false, active);
+						au->setCombineWithBase(combine_priority);
 						au->setDescription(description);
 						au->setPrecision(prec);
 						au->setApproximate(b);
@@ -8034,6 +8043,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "inverse_relation", (xmlChar*) au->inverseExpression().c_str());
 						}
 						xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) i2s(au->firstBaseExponent()).c_str());
+						if(au->combineWithBase() > 0) xmlNewTextChild(newnode2, NULL, (xmlChar*) "combine", (xmlChar*) i2s(au->combineWithBase()).c_str());
 					}
 				}
 			}

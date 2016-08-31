@@ -221,12 +221,14 @@ AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_nam
 	svalue = relation;
 	sinverse = inverse;
 	i_exp = exp;
+	i_combine = 0;
 }
 AliasUnit::AliasUnit() {
 	o_unit = NULL;
 	svalue = "";
 	sinverse = "";
 	i_exp = 1;
+	i_combine = 0;
 }
 AliasUnit::AliasUnit(const AliasUnit *unit) {
 	set(unit);
@@ -480,6 +482,8 @@ void AliasUnit::setExponent(int exp) {
 int AliasUnit::firstBaseExponent() const {
 	return i_exp;
 }
+int AliasUnit::combineWithBase() const {return i_combine;}
+void AliasUnit::setCombineWithBase(int combine_priority) {i_combine = combine_priority;}
 int AliasUnit::subtype() const {
 	return SUBTYPE_ALIAS_UNIT;
 }

@@ -168,7 +168,7 @@ class AliasUnit : public Unit {
   protected:
 
 	string svalue, sinverse;
-	int i_exp;
+	int i_exp, i_combine;
 	Unit *o_unit;
 
   public:
@@ -205,6 +205,8 @@ class AliasUnit : public Unit {
 	virtual int baseExponent(int exp = 1) const;
 	virtual void setExponent(int exp);
 	virtual int firstBaseExponent() const;
+	virtual int combineWithBase() const;
+	virtual void setCombineWithBase(int combine_priority = 1);
 	virtual int subtype() const;
 	virtual bool isChildOf(Unit *u) const;
 	virtual bool isParentOf(Unit *u) const;

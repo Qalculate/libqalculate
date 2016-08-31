@@ -3142,6 +3142,7 @@ void load_preferences() {
 	printops.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
 	printops.allow_factorization = false;
 	printops.spell_out_logical_operators = true;
+	printops.break_up_units = BREAK_UP_UNIT_DEFAULT;
 	
 	evalops.parse_options.parsing_mode = PARSING_MODE_ADAPTIVE;
 	evalops.approximation = APPROXIMATION_TRY_EXACT;

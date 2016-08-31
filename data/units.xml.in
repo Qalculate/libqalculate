@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="0.9.8">
+<QALCULATE version="0.9.11">
   <category>
     <!-- Unit category -->
     <_title>!units!Length</_title>
@@ -88,6 +88,7 @@
         <unit>in</unit>
         <relation>4</relation>
         <exponent>1</exponent>
+        <combine>3</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -97,6 +98,7 @@
         <unit>hand</unit>
         <relation>3</relation>
         <exponent>1</exponent>
+        <combine>1</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -106,15 +108,17 @@
         <unit>US_in</unit>
         <relation>12</relation>
         <exponent>1</exponent>
+        <combine>1</combine>
       </base>
     </unit>
     <unit type="alias">
       <_title>Link</_title>
       <_names>ar:li,link,p:links</_names>
       <base>
-        <unit>ft</unit>
-        <relation>66/100</relation>
+        <unit>in</unit>
+        <relation>7.92</relation>
         <exponent>1</exponent>
+        <combine>3</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -124,6 +128,7 @@
         <unit>ft</unit>
         <relation>3</relation>
         <exponent>1</exponent>
+        <combine>2</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -133,6 +138,7 @@
         <unit>US_ft</unit>
         <relation>16.5</relation>
         <exponent>1</exponent>
+        <combine>3</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -142,6 +148,7 @@
         <unit>yd</unit>
         <relation>2</relation>
         <exponent>1</exponent>
+        <combine>3</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -151,24 +158,27 @@
         <unit>li</unit>
         <relation>100</relation>
         <exponent>1</exponent>
+        <combine>3</combine>
       </base>
     </unit>
     <unit type="alias">
       <_title>Furlong</_title>
       <_names>ar:fur,furlong,p:furlongs</_names>
       <base>
-        <unit>yd</unit>
-        <relation>220</relation>
+        <unit>ch</unit>
+        <relation>10</relation>
         <exponent>1</exponent>
+        <combine>3</combine>
       </base>
     </unit>
     <unit type="alias">
       <_title>Mile</_title>
       <_names>ar:mi,mile,p:miles</_names>
       <base>
-        <unit>ch</unit>
-        <relation>80</relation>
+        <unit>yd</unit>
+        <relation>1760</relation>
         <exponent>1</exponent>
+        <combine>1</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -178,6 +188,7 @@
         <unit>US_ft</unit>
         <relation>5280</relation>
         <exponent>1</exponent>
+        <combine>1</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -187,6 +198,7 @@
         <unit>in</unit>
         <relation>0.001</relation>
         <exponent>1</exponent>
+        <combine>-3</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -447,6 +459,7 @@
         <unit>gr</unit>
         <relation>24</relation>
         <exponent>1</exponent>
+        <combine>1</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -456,6 +469,7 @@
         <unit>pwt</unit>
         <relation>20</relation>
         <exponent>1</exponent>
+        <combine>1</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -465,6 +479,7 @@
         <unit>oz_t</unit>
         <relation>12</relation>
         <exponent>1</exponent>
+        <combine>1</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -492,6 +507,7 @@
         <unit>oz</unit>
         <relation>16</relation>
         <exponent>1</exponent>
+        <combine>1</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -537,6 +553,7 @@
         <unit>lb</unit>
         <relation>14</relation>
         <exponent>1</exponent>
+        <combine>3</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -699,6 +716,7 @@
         <unit>s</unit>
         <relation>60</relation>
         <exponent>1</exponent>
+        <combine>1</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -708,6 +726,7 @@
         <unit>min</unit>
         <relation>60</relation>
         <exponent>1</exponent>
+        <combine>1</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -717,6 +736,7 @@
         <unit>h</unit>
         <relation>24</relation>
         <exponent>1</exponent>
+        <combine>1</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -726,6 +746,7 @@
         <unit>day</unit>
         <relation>7</relation>
         <exponent>1</exponent>
+        <combine>3</combine>
       </base>
     </unit>
     <unit type="alias">
@@ -744,6 +765,7 @@
         <unit>d</unit>
         <relation>365.25</relation>
         <exponent>1</exponent>
+        <combine>3</combine>
       </base>
     </unit>
     <category>
@@ -1520,6 +1542,7 @@
         <unit>section</unit>
         <relation>36</relation>
         <exponent>1</exponent>
+        <combine>1</combine>
       </base>
     </unit>
     <unit type="composite">
@@ -1671,6 +1694,7 @@
           <unit>L</unit>
           <relation>0.005</relation>
           <exponent>1</exponent>
+          <combine>1</combine>
         </base>
       </unit>
       <unit type="alias">
@@ -1680,6 +1704,7 @@
           <unit>teaspoon</unit>
           <relation>2</relation>
           <exponent>1</exponent>
+          <combine>3</combine>
         </base>
       </unit>
       <unit type="alias">
@@ -1689,14 +1714,15 @@
           <unit>teaspoon</unit>
           <relation>3</relation>
           <exponent>1</exponent>
+          <combine>1</combine>
         </base>
       </unit>
       <unit type="alias">
-        <_title>Cup</_title>
+        <_title>Cup (U.S.)</_title>
         <_names>r:cup,p:cups</_names>
         <base>
           <unit>L</unit>
-          <relation>0.250</relation>
+          <relation>0.2365882365</relation>
           <exponent>1</exponent>
         </base>
       </unit>
@@ -1719,6 +1745,7 @@
           <unit>UK_fl_oz</unit>
           <relation>5</relation>
           <exponent>1</exponent>
+          <combine>2</combine>
         </base>
       </unit>
       <unit type="alias">
@@ -1728,6 +1755,7 @@
           <unit>UK_gi</unit>
           <relation>4</relation>
           <exponent>1</exponent>
+          <combine>1</combine>
         </base>
       </unit>
       <unit type="alias">
@@ -1737,6 +1765,7 @@
           <unit>UK_pt</unit>
           <relation>2</relation>
           <exponent>1</exponent>
+          <combine>2</combine>
         </base>
       </unit>
       <unit type="alias">
@@ -1746,6 +1775,7 @@
           <unit>UK_qt</unit>
           <relation>4</relation>
           <exponent>1</exponent>
+          <combine>1</combine>
         </base>
       </unit>
       <unit type="alias">
@@ -1782,6 +1812,7 @@
           <unit>UK_gal</unit>
           <relation>8</relation>
           <exponent>1</exponent>
+          <combine>1</combine>
         </base>
       </unit>
     </category>
