@@ -697,7 +697,6 @@ class MathStructure {
 		bool improve_division_multipliers(const PrintOptions &po = default_print_options);
 		void setPrefixes(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, size_t pindex = 0);
 		void prefixCurrencies();
-		bool splitUpUnits(const PrintOptions &po = default_print_options);
 		void format(const PrintOptions &po = default_print_options);
 		void formatsub(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, size_t pindex = 0, bool recursive = true);
 		void postFormatUnits(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, size_t pindex = 0);

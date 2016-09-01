@@ -3142,7 +3142,6 @@ void load_preferences() {
 	printops.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
 	printops.allow_factorization = false;
 	printops.spell_out_logical_operators = true;
-	printops.break_up_units = BREAK_UP_UNIT_DEFAULT;
 	
 	evalops.parse_options.parsing_mode = PARSING_MODE_ADAPTIVE;
 	evalops.approximation = APPROXIMATION_TRY_EXACT;
@@ -3158,6 +3157,7 @@ void load_preferences() {
 	evalops.warn_about_denominators_assumed_nonzero = true;
 	evalops.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	evalops.parse_options.dot_as_separator = CALCULATOR->default_dot_as_separator;
+	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;
 
 	rpn_mode = false;
 	

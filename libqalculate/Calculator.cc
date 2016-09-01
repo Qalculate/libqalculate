@@ -2245,7 +2245,7 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 		return false;
 	}
 	remove_blank_ends(to_str);
-	if(!keep_modifiers && !to_str.empty() && (to_str[0] == '0' || to_str[0] == '?')) {
+	if(!keep_modifiers && !to_str.empty() && (to_str[0] == '0' || to_str[0] == '?' || to_str[0] == '+' || to_str[0] == '-')) {
 		to_str = to_str.substr(1, str.length() - 1);
 		remove_blank_ends(to_str);
 	}
@@ -2288,14 +2288,17 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		if(!u) u = getUnit(str2);
 		EvaluationOptions eo2 = eo;
 		eo2.keep_prefixes = (str2[0] != '?');
-		if(str2[0] == '?' || str2[0] == '0') {
+		if(str2[0] == '-') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
+		else if(str2[0] == '+') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_ALL;
+		else if(eo2.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP;
+		if(str2[0] == '?' || str2[0] == '0' || str2[0] == '+' || str2[0] == '-') {
 			str2 = str2.substr(1, str2.length() - 1);
 			remove_blank_ends(str2);
-			if(str2.empty()) return mstruct;
+			if(str2.empty()) return convertToMixedUnits(mstruct, eo);
 		}
 		if(u) {
 			if(to_struct) to_struct->set(u);
-			return convert(mstruct, u, eo2, false);
+			return convertToMixedUnits(convert(mstruct, u, eo2, false, false), eo2);
 		}
 		for(size_t i = 0; i < signs.size(); i++) {
 			if(str2 == signs[i]) {
@@ -2305,13 +2308,12 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		}
 		if(u) {
 			if(to_struct) to_struct->set(u);
-			return convert(mstruct, u, eo2, false);
+			return convertToMixedUnits(convert(mstruct, u, eo2, false, false), eo2);
 		}
 		CompositeUnit cu("", "temporary_composite_convert", "", str2);		
 		if(to_struct) to_struct->set(cu.generateMathStructure(make_to_division));
-		if(cu.countUnits() > 0)	{
-			mstruct = convertToCompositeUnit(mstruct, &cu, eo2, false);
-			return mstruct;
+		if(cu.countUnits() > 0) {
+			return convertToMixedUnits(convert(mstruct, &cu, eo2, false, false), eo2);
 		}
 	} else {
 		if(to_struct) to_struct->setUndefined();
@@ -2325,7 +2327,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 			default: {}
 		}
 	}
-	return mstruct;
+	return convertToMixedUnits(mstruct, eo);
 }
 string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int msecs, const PrintOptions &po) {
 	startPrintControl(msecs);
@@ -2334,6 +2336,110 @@ string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int m
 	string print_result = mstruct2.print(po);
 	stopPrintControl();
 	return print_result;
+}
+
+MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, const EvaluationOptions &eo) {
+	if(eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_NONE) return mstruct;
+	if(!mstruct.isMultiplication()) return mstruct;
+	if(mstruct.size() != 2) return mstruct;
+	if(mstruct[1].isUnit() && (!mstruct[1].prefix() || mstruct[1].prefix() == decimal_null_prefix) && mstruct[0].isNumber()) {
+		Prefix *p = mstruct[1].prefix();
+		MathStructure mstruct_new(mstruct);
+		Unit *u = mstruct[1].unit();
+		Number nr = mstruct[0].number();
+		if(!nr.isReal()) return false;
+		if(nr.isOne()) return false;
+		if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) return false;
+		bool negated = false;
+		if(nr.isNegative()) {
+			nr.negate();
+			negated = true;
+		}
+		bool accept_obsolete = (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->combineWithBase() >= 3);
+		Unit *original_u = u;
+		Unit *last_nonobsolete_u = u;
+		Number last_nonobsolete_nr = nr;
+		Number nr_one(1, 1);
+		Number nr_ten(10, 1);
+		while(eo.mixed_units_conversion > MIXED_UNITS_CONVERSION_DOWNWARDS && nr.isGreaterThan(nr_one)) {
+			Unit *best_u = NULL;
+			Number best_nr;
+			int best_priority = -1;
+			for(size_t i = 0; i < units.size(); i++) {
+				Unit *ui = units[i];
+				if(ui->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ui)->firstBaseUnit() == u  && ((AliasUnit*) ui)->firstBaseExponent() == 1 && (((AliasUnit*) ui)->combineWithBase() == 1 || (((AliasUnit*) ui)->combineWithBase() == 2 && best_priority != 1 && nr.isGreaterThan(nr_ten)) || (((AliasUnit*) ui)->combineWithBase() == 3 && (best_priority >= 3 || best_priority < 0)) || (best_priority <= 0 && ((AliasUnit*) ui)->combineWithBase() == 0 && ((eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) ui)->expression().find_first_not_of(NUMBERS) == string::npos) || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL)))) {
+					MathStructure mstruct_nr(nr);
+					MathStructure m_exp(m_one);
+					((AliasUnit*) ui)->convertFromFirstBaseUnit(mstruct_nr, m_exp);
+					mstruct_nr.eval();
+					if(mstruct_nr.isNumber() && m_exp.isOne() && mstruct_nr.number().isLessThan(nr) && mstruct_nr.number().isGreaterThanOrEqualTo(nr_one) && (!best_u || mstruct_nr.number().isLessThan(best_nr))) {
+						best_u = ui;
+						best_nr = mstruct_nr.number();
+						best_priority = ((AliasUnit*) ui)->combineWithBase();
+					}
+				}
+			}
+			if(!best_u) break;
+			u = best_u;
+			nr = best_nr;
+			if(accept_obsolete || ((AliasUnit*) u)->combineWithBase() < 3) {
+				last_nonobsolete_u = u;
+				last_nonobsolete_nr = nr;
+			}
+		}
+		u = last_nonobsolete_u;
+		nr = last_nonobsolete_nr;
+		if(u != original_u) {
+			if(negated) last_nonobsolete_nr.negate();
+			mstruct_new[0].set(last_nonobsolete_nr);
+			mstruct_new[1].set(u, p);
+		}
+		while(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->combineWithBase() > 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos)) && !nr.isInteger() && !nr.isZero()) {
+			Number int_nr(nr);
+			int_nr.trunc();
+			if(eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP && int_nr.isZero()) break;
+			nr -= int_nr;
+			MathStructure mstruct_nr(nr);
+			MathStructure m_exp(m_one);
+			((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
+			mstruct_nr.eval();
+			while(!accept_obsolete && ((AliasUnit*) u)->firstBaseUnit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ((AliasUnit*) u)->firstBaseUnit())->combineWithBase() >= 3) {
+				u = ((AliasUnit*) u)->firstBaseUnit();
+				if(((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->combineWithBase() > 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos))) {
+					((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
+					mstruct_nr.eval();
+					if(!mstruct_nr.isNumber() || !m_exp.isOne()) break;
+				} else {
+					mstruct_nr.setUndefined();
+					break;
+				}
+			}
+			if(!mstruct_nr.isNumber() || !m_exp.isOne()) break;
+			if(eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL && mstruct_nr.number().isLessThanOrEqualTo(nr)) break;
+			u = ((AliasUnit*) u)->firstBaseUnit();
+			nr = mstruct_nr.number();
+			MathStructure mstruct_term;
+			if(negated) {
+				Number pos_nr(nr);
+				pos_nr.negate();
+				mstruct_term.set(pos_nr);
+			} else {
+				mstruct_term.set(nr);
+			}
+			mstruct_term *= MathStructure(u, p);
+			if(int_nr.isZero()) {
+				if(mstruct_new.isAddition()) mstruct_new[mstruct_new.size() - 1].set(mstruct_term);
+				else mstruct_new.set(mstruct_term);
+			} else {
+				if(negated) int_nr.negate();
+				if(mstruct_new.isAddition()) mstruct_new[mstruct_new.size() - 1][0].set(int_nr);
+				else mstruct_new[0].set(int_nr);
+				mstruct_new.add(mstruct_term, true);
+			}
+		}
+		return mstruct_new;
+	}
+	return mstruct;
 }
 
 MathStructure Calculator::convert(double value, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo) {
@@ -2403,7 +2509,7 @@ MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit, co
 	mstruct.eval(eo);
 	return mstruct;
 }
-MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert) {
+MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units) {
 	CompositeUnit *cu = NULL;
 	if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) cu = (CompositeUnit*) to_unit;
 	if(cu && cu->countUnits() == 0) return mstruct;
@@ -2518,7 +2624,12 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 			eo2.sync_units = false;
 			eo2.keep_prefixes = true;
 			mstruct_new.eval(eo2);
-			return mstruct_new;
+			if(convert_to_mixed_units && eo2.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) {
+				eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP;
+				return convertToMixedUnits(mstruct_new, eo2);
+			} else {
+				return mstruct_new;
+			}
 		}
 	}
 	return mstruct_new;
