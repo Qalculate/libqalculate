@@ -556,17 +556,24 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "autoconversion", _("autoconversion"))) {
 		int v = -1;
-		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = POST_CONVERSION_NONE;
+		MixedUnitsConversion muc = MIXED_UNITS_CONVERSION_DEFAULT;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) {v = POST_CONVERSION_NONE;  muc = MIXED_UNITS_CONVERSION_NONE;}
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "best", _("best"))) v = POST_CONVERSION_BEST;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimal", _("optimal"))) v = POST_CONVERSION_BEST;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "base", _("base"))) v = POST_CONVERSION_BASE;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = POST_CONVERSION_NONE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
+		}
+		if(v == 3) {
+			v = 2;
+			muc = MIXED_UNITS_CONVERSION_DEFAULT;
 		}
 		if(v < 0 || v > 2) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			evalops.auto_post_conversion = (AutoPostConversion) v;
+			evalops.mixed_units_conversion = muc;
 			expression_format_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "algebra mode", _("algebra mode"))) {
@@ -1558,7 +1565,11 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("assumptions")); PUTS_UNICODE(value.c_str()); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("autoconversion"));
 			switch(evalops.auto_post_conversion) {
-				case POST_CONVERSION_NONE: {PUTS_UNICODE(_("none")); break;}
+				case POST_CONVERSION_NONE: {
+					if(evalops.mixed_units_conversion > MIXED_UNITS_CONVERSION_NONE) {PUTS_UNICODE(_("mixed"));}
+					else {PUTS_UNICODE(_("none"));}
+					break;
+				}
 				case POST_CONVERSION_BEST: {PUTS_UNICODE(_("optimal")); break;}
 				case POST_CONVERSION_BASE: {PUTS_UNICODE(_("base")); break;}
 			}
@@ -2092,7 +2103,17 @@ int main(int argc, char *argv[]) {
 				str += ", "; str += _("integer");
 				if(ass->type() == ASSUMPTION_TYPE_INTEGER) str += "*";
 				str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-				STR_AND_TABS_2(_("autoconversion"), evalops.auto_post_conversion, _("none"), _("optimal"), _("base"));
+				STR_AND_TABS(_("autoconversion"));
+				str += (_("none"));
+				if(evalops.auto_post_conversion == POST_CONVERSION_NONE && evalops.mixed_units_conversion == MIXED_UNITS_CONVERSION_NONE) str += "*";
+				str += ", "; str +=  _("optimal");
+				if(evalops.auto_post_conversion == POST_CONVERSION_BEST) str += "*";
+				str += ", "; str += _("base");
+				if(evalops.auto_post_conversion == POST_CONVERSION_BASE) str += "*";
+				str += ", "; str += _("mixed");
+				if(evalops.auto_post_conversion == POST_CONVERSION_NONE && evalops.mixed_units_conversion > MIXED_UNITS_CONVERSION_NONE) str += "*";
+				str += ")";
+				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS(_("base")); str += "(2 - 36"; str += ", "; str += _("bin");
 				if(printops.base == BASE_BINARY) str += "*";
 				str += ", "; str += _("oct");
@@ -2292,18 +2313,21 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Possible values:"));
 				puts("");
-				PUTS_UNICODE(_("a unit (e.g. meter, prepend with ? to request the optimal prefix)"));
-				PUTS_UNICODE(_("a unit expression (e.g. km/h)"));
-				PUTS_UNICODE(_("base (convert to base units)"));
-				PUTS_UNICODE(_("optimal (convert to optimal unit)"));
+				PUTS_UNICODE(_("- a unit (e.g. meter)"));
+				PUTS_UNICODE(_("prepend with ? to request the optimal prefix"));
+				PUTS_UNICODE(_("prepend with + or - to force/disable use of mixed units"));
+				PUTS_UNICODE(_("- a unit expression (e.g. km/h)"));
+				PUTS_UNICODE(_("- base (convert to base units)"));
+				PUTS_UNICODE(_("- optimal (convert to optimal unit)"));
+				PUTS_UNICODE(_("- mixed (convert to mixed units, e.g. hours + minutes)"));
 				puts("");
-				PUTS_UNICODE(_("bin / binary (show as binary number)"));
-				PUTS_UNICODE(_("oct / octal (show as octal number)"));
-				PUTS_UNICODE(_("hex / hexadecimal (show as hexadecimal number)"));
-				PUTS_UNICODE(_("bases (show as binary, octal, decimal and hexadecimal number)"));
+				PUTS_UNICODE(_("- bin / binary (show as binary number)"));
+				PUTS_UNICODE(_("- oct / octal (show as octal number)"));
+				PUTS_UNICODE(_("- hex / hexadecimal (show as hexadecimal number)"));
+				PUTS_UNICODE(_("- bases (show as binary, octal, decimal and hexadecimal number)"));
 				puts("");
-				PUTS_UNICODE(_("fraction (show result in combined fractional format)"));
-				PUTS_UNICODE(_("factors (factorize result)"));
+				PUTS_UNICODE(_("- fraction (show result in combined fractional format)"));
+				PUTS_UNICODE(_("- factors (factorize result)"));
 				puts("");
 				PUTS_UNICODE(_("Example: to ?g"));
 				puts("");
@@ -2817,9 +2841,21 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "base", _("base"))) {
 				expression_str = from_str;
 				AutoPostConversion save_auto_post_conversion = evalops.auto_post_conversion;
-				evalops.auto_post_conversion = POST_CONVERSION_BEST;
+				evalops.auto_post_conversion = POST_CONVERSION_BASE;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				evalops.auto_post_conversion = save_auto_post_conversion;
+				expression_str = str;
+				evalops.parse_options.units_enabled = b_units_saved;
+				return;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _("mixed"))) {
+				expression_str = from_str;
+				AutoPostConversion save_auto_post_conversion = evalops.auto_post_conversion;
+				MixedUnitsConversion save_mixed_units_conversion = evalops.mixed_units_conversion;
+				evalops.auto_post_conversion = POST_CONVERSION_NONE;
+				evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				evalops.auto_post_conversion = save_auto_post_conversion;
+				evalops.mixed_units_conversion = save_mixed_units_conversion;
 				expression_str = str;
 				evalops.parse_options.units_enabled = b_units_saved;
 				return;
@@ -3332,6 +3368,10 @@ void load_preferences() {
 					if(v >= POST_CONVERSION_NONE && v <= POST_CONVERSION_BASE) {
 						evalops.auto_post_conversion = (AutoPostConversion) v;
 					}
+				} else if(svar == "mixed_units_conversion") {
+					if(v >= MIXED_UNITS_CONVERSION_NONE && v <= MIXED_UNITS_CONVERSION_FORCE_ALL) {
+						evalops.mixed_units_conversion = (MixedUnitsConversion) v;
+					}
 				} else if(svar == "use_unicode_signs") {
 					printops.use_unicode_signs = v;	
 				} else if(svar == "lower_case_numbers") {
@@ -3453,7 +3493,8 @@ bool save_preferences(bool mode)
 	fprintf(file, "all_prefixes_enabled=%i\n", saved_printops.use_all_prefixes);
 	fprintf(file, "denominator_prefix_enabled=%i\n", saved_printops.use_denominator_prefix);
 	fprintf(file, "place_units_separately=%i\n", saved_printops.place_units_separately);
-	fprintf(file, "auto_post_conversion=%i\n", saved_evalops.auto_post_conversion);	
+	fprintf(file, "auto_post_conversion=%i\n", saved_evalops.auto_post_conversion);
+	fprintf(file, "mixed_units_conversion=%i\n", saved_evalops.mixed_units_conversion);
 	fprintf(file, "number_base=%i\n", saved_printops.base);
 	fprintf(file, "number_base_expression=%i\n", saved_evalops.parse_options.base);
 	fprintf(file, "read_precision=%i\n", saved_evalops.parse_options.read_precision);

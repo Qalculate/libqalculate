@@ -1,3 +1,8 @@
+2016-09-01 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix "to base"
+	* Mixed units conversion (e.g. 75.2 min = 1 h + 15 min + 12 s)
+
 2016-08-23 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Fix unit conversion (e.g. 1/s to ms)

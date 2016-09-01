@@ -2289,7 +2289,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		EvaluationOptions eo2 = eo;
 		eo2.keep_prefixes = (str2[0] != '?');
 		if(str2[0] == '-') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
-		else if(str2[0] == '+') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_ALL;
+		else if(str2[0] == '+') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
 		else if(eo2.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP;
 		if(str2[0] == '?' || str2[0] == '0' || str2[0] == '+' || str2[0] == '-') {
 			str2 = str2.substr(1, str2.length() - 1);
