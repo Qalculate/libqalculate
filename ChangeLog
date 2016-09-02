@@ -1,3 +1,7 @@
+2016-09-02 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix saving of precision of unit relation
+
 2016-09-01 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Fix "to base"

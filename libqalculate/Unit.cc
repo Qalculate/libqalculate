@@ -221,14 +221,16 @@ AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_nam
 	svalue = relation;
 	sinverse = inverse;
 	i_exp = exp;
-	i_combine = 0;
+	i_mix = 0;
+	i_mix_min = 0;
 }
 AliasUnit::AliasUnit() {
 	o_unit = NULL;
 	svalue = "";
 	sinverse = "";
 	i_exp = 1;
-	i_combine = 0;
+	i_mix = 0;
+	i_mix_min = 0;
 }
 AliasUnit::AliasUnit(const AliasUnit *unit) {
 	set(unit);
@@ -246,6 +248,8 @@ void AliasUnit::set(const ExpressionItem *item) {
 			i_exp = u->firstBaseExponent();
 			svalue = u->expression();
 			sinverse = u->inverseExpression();
+			i_mix = u->mixWithBase();
+			i_mix_min = u->mixWithBaseMinimum();
 		}
 	} else {
 		ExpressionItem::set(item);
@@ -482,8 +486,10 @@ void AliasUnit::setExponent(int exp) {
 int AliasUnit::firstBaseExponent() const {
 	return i_exp;
 }
-int AliasUnit::combineWithBase() const {return i_combine;}
-void AliasUnit::setCombineWithBase(int combine_priority) {i_combine = combine_priority;}
+int AliasUnit::mixWithBase() const {return i_mix;}
+int AliasUnit::mixWithBaseMinimum() const {return i_mix_min;}
+void AliasUnit::setMixWithBase(int mix_priority) {i_mix = mix_priority;}
+void AliasUnit::setMixWithBaseMinimum(int mix_minimum) {i_mix_min = mix_minimum;}
 int AliasUnit::subtype() const {
 	return SUBTYPE_ALIAS_UNIT;
 }

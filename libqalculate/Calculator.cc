@@ -2355,7 +2355,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 			nr.negate();
 			negated = true;
 		}
-		bool accept_obsolete = (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->combineWithBase() >= 3);
+		bool accept_obsolete = (u->subtype() == SUBTYPE_ALIAS_UNIT && abs(((AliasUnit*) u)->mixWithBase()) > 1);
 		Unit *original_u = u;
 		Unit *last_nonobsolete_u = u;
 		Number last_nonobsolete_nr = nr;
@@ -2364,25 +2364,29 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 		while(eo.mixed_units_conversion > MIXED_UNITS_CONVERSION_DOWNWARDS && nr.isGreaterThan(nr_one)) {
 			Unit *best_u = NULL;
 			Number best_nr;
-			int best_priority = -1;
+			int best_priority = 0;
 			for(size_t i = 0; i < units.size(); i++) {
-				Unit *ui = units[i];
-				if(ui->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ui)->firstBaseUnit() == u  && ((AliasUnit*) ui)->firstBaseExponent() == 1 && (((AliasUnit*) ui)->combineWithBase() == 1 || (((AliasUnit*) ui)->combineWithBase() == 2 && best_priority != 1 && nr.isGreaterThan(nr_ten)) || (((AliasUnit*) ui)->combineWithBase() == 3 && (best_priority >= 3 || best_priority < 0)) || (best_priority <= 0 && ((AliasUnit*) ui)->combineWithBase() == 0 && ((eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) ui)->expression().find_first_not_of(NUMBERS) == string::npos) || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL)))) {
-					MathStructure mstruct_nr(nr);
-					MathStructure m_exp(m_one);
-					((AliasUnit*) ui)->convertFromFirstBaseUnit(mstruct_nr, m_exp);
-					mstruct_nr.eval();
-					if(mstruct_nr.isNumber() && m_exp.isOne() && mstruct_nr.number().isLessThan(nr) && mstruct_nr.number().isGreaterThanOrEqualTo(nr_one) && (!best_u || mstruct_nr.number().isLessThan(best_nr))) {
-						best_u = ui;
-						best_nr = mstruct_nr.number();
-						best_priority = ((AliasUnit*) ui)->combineWithBase();
+				Unit *ui = units[i];				
+				if(ui->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ui)->firstBaseUnit() == u  && ((AliasUnit*) ui)->firstBaseExponent() == 1) {
+					AliasUnit *aui = (AliasUnit*) ui;
+					int priority_i = aui->mixWithBase();
+					if(((priority_i > 0 && (!best_u || priority_i <= best_priority)) || (best_priority == 0 && priority_i == 0 && ((eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && aui->expression().find_first_not_of(NUMBERS) == string::npos) || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL))) && (aui->mixWithBaseMinimum() <= 1 || nr.isGreaterThanOrEqualTo(aui->mixWithBaseMinimum()))) {
+						MathStructure mstruct_nr(nr);
+						MathStructure m_exp(m_one);
+						aui->convertFromFirstBaseUnit(mstruct_nr, m_exp);
+						mstruct_nr.eval();
+						if(mstruct_nr.isNumber() && m_exp.isOne() && mstruct_nr.number().isLessThan(nr) && mstruct_nr.number().isGreaterThanOrEqualTo(nr_one) && (!best_u || mstruct_nr.number().isLessThan(best_nr))) {
+							best_u = ui;
+							best_nr = mstruct_nr.number();
+							best_priority = priority_i;
+						}
 					}
 				}
 			}
 			if(!best_u) break;
 			u = best_u;
 			nr = best_nr;
-			if(accept_obsolete || ((AliasUnit*) u)->combineWithBase() < 3) {
+			if(accept_obsolete || best_priority <= 1) {
 				last_nonobsolete_u = u;
 				last_nonobsolete_nr = nr;
 			}
@@ -2394,7 +2398,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 			mstruct_new[0].set(last_nonobsolete_nr);
 			mstruct_new[1].set(u, p);
 		}
-		while(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->combineWithBase() > 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos)) && !nr.isInteger() && !nr.isZero()) {
+		while(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() != 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos)) && !nr.isInteger() && !nr.isZero()) {
 			Number int_nr(nr);
 			int_nr.trunc();
 			if(eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP && int_nr.isZero()) break;
@@ -2403,9 +2407,9 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 			MathStructure m_exp(m_one);
 			((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
 			mstruct_nr.eval();
-			while(!accept_obsolete && ((AliasUnit*) u)->firstBaseUnit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ((AliasUnit*) u)->firstBaseUnit())->combineWithBase() >= 3) {
+			while(!accept_obsolete && ((AliasUnit*) u)->firstBaseUnit()->subtype() == SUBTYPE_ALIAS_UNIT && abs(((AliasUnit*) ((AliasUnit*) u)->firstBaseUnit())->mixWithBase()) > 1) {
 				u = ((AliasUnit*) u)->firstBaseUnit();
-				if(((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->combineWithBase() > 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos))) {
+				if(((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() != 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos))) {
 					((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
 					mstruct_nr.eval();
 					if(!mstruct_nr.isNumber() || !m_exp.isOne()) break;
@@ -6432,7 +6436,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		fulfilled_translation = 2;
 	}
 
-	int exponent = 1, litmp = 0, combine_priority = 0;
+	int exponent = 1, litmp = 0, mix_priority = 0, mix_min = 0;
 	bool active = false, hidden = false, b = false, require_translation = false, use_with_prefixes = false, use_with_prefixes_set = false;
 	Number nr;
 	ExpressionItem *item;
@@ -7348,7 +7352,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						if(!xmlStrcmp(child->name, (const xmlChar*) "base")) {
 							child2 = child->xmlChildrenNode;
 							exponent = 1;
-							combine_priority = 0;
+							mix_priority = 0;
+							mix_min = 0;
 							svalue = "";
 							inverse = "";
 							b = true;
@@ -7374,13 +7379,14 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 									} else {
 										exponent = s2i(stmp);
 									}
-								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "combine")) {
+								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "mix")) {
+									XML_GET_INT_FROM_PROP(child2, "min", mix_min);
 									XML_GET_STRING_FROM_TEXT(child2, stmp);
 									if(stmp.empty()) {
-										combine_priority = 0;
+										mix_priority = 0;
 									} else {
-										combine_priority = s2i(stmp);
-									}
+										mix_priority = s2i(stmp);
+									}									
 								}
 								child2 = child2->next;
 							}
@@ -7414,7 +7420,10 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						}
 					} else {
 						au = new AliasUnit(category, name, plural, singular, title, u, svalue, exponent, inverse, is_user_defs, false, active);
-						au->setCombineWithBase(combine_priority);
+						if(mix_priority > 0) {
+							au->setMixWithBase(mix_priority);
+							au->setMixWithBaseMinimum(mix_min);
+						}
 						au->setDescription(description);
 						au->setPrecision(prec);
 						au->setApproximate(b);
@@ -8011,16 +8020,18 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 	const ExpressionName *ename;
 	CompositeUnit *cu = NULL;
 	AliasUnit *au = NULL;
+	Unit *u;
 	node_tree_item top;
 	top.category = "";
 	top.node = doc->children;
 	node_tree_item *item;
 	string cat, cat_sub;
 	for(size_t i = 0; i < units.size(); i++) {
-		if(save_global || units[i]->isLocal() || units[i]->hasChanged()) {
+		u = units[i];
+		if(save_global || u->isLocal() || u->hasChanged()) {
 			item = &top;
-			if(!units[i]->category().empty()) {
-				cat = units[i]->category();
+			if(!u->category().empty()) {
+				cat = u->category();
 				size_t cat_i = cat.find("/"); size_t cat_i_prev = 0;
 				bool b = false;
 				while(true) {
@@ -8056,67 +8067,67 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 				}
 			}
 			cur = item->node;	
-			if(!save_global && !units[i]->isLocal() && units[i]->hasChanged()) {
-				if(units[i]->isActive()) {
-					xmlNewTextChild(cur, NULL, (xmlChar*) "activate", (xmlChar*) units[i]->referenceName().c_str());
+			if(!save_global && !u->isLocal() && u->hasChanged()) {
+				if(u->isActive()) {
+					xmlNewTextChild(cur, NULL, (xmlChar*) "activate", (xmlChar*) u->referenceName().c_str());
 				} else {
-					xmlNewTextChild(cur, NULL, (xmlChar*) "deactivate", (xmlChar*) units[i]->referenceName().c_str());
+					xmlNewTextChild(cur, NULL, (xmlChar*) "deactivate", (xmlChar*) u->referenceName().c_str());
 				}
-			} else if(save_global || units[i]->isLocal()) {
-				if(units[i]->isBuiltin()) {
+			} else if(save_global || u->isLocal()) {
+				if(u->isBuiltin()) {
 					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "builtin_unit", NULL);
-					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) units[i]->referenceName().c_str());
+					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) u->referenceName().c_str());
 				} else {
 					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "unit", NULL);
-					switch(units[i]->subtype()) {
+					switch(u->subtype()) {
 						case SUBTYPE_BASE_UNIT: {
 							xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "base");
 							break;
 						}
 						case SUBTYPE_ALIAS_UNIT: {
-							au = (AliasUnit*) units[i];
+							au = (AliasUnit*) u;
 							xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "alias");
 							break;
 						}
 						case SUBTYPE_COMPOSITE_UNIT: {
-							cu = (CompositeUnit*) units[i];
+							cu = (CompositeUnit*) u;
 							xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "composite");
 							break;
 						}
 					}
 				}
-				if(!units[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
-				if(units[i]->isHidden()) xmlNewTextChild(newnode, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
-				if(!units[i]->system().empty()) {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "system", (xmlChar*) units[i]->system().c_str());
+				if(!u->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
+				if(u->isHidden()) xmlNewTextChild(newnode, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
+				if(!u->system().empty()) {
+					xmlNewTextChild(newnode, NULL, (xmlChar*) "system", (xmlChar*) u->system().c_str());
 				}				
-				if(!units[i]->isSIUnit() || !units[i]->useWithPrefixesByDefault()) {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "use_with_prefixes", units[i]->useWithPrefixesByDefault() ? (xmlChar*) "true" : (xmlChar*) "false");
+				if(!u->isSIUnit() || !u->useWithPrefixesByDefault()) {
+					xmlNewTextChild(newnode, NULL, (xmlChar*) "use_with_prefixes", u->useWithPrefixesByDefault() ? (xmlChar*) "true" : (xmlChar*) "false");
 				}
-				if(!units[i]->title(false).empty()) {
+				if(!u->title(false).empty()) {
 					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) units[i]->title(false).c_str());
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) u->title(false).c_str());
 					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) units[i]->title(false).c_str());
+						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) u->title(false).c_str());
 					}
 				}
-				if(save_global && units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+				if(save_global && u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 					save_global = false;
-					SAVE_NAMES(units[i])
+					SAVE_NAMES(u)
 					save_global = true;
 				} else {
-					SAVE_NAMES(units[i])
+					SAVE_NAMES(u)
 				}
-				if(!units[i]->description().empty()) {
-					str = units[i]->description();
+				if(!u->description().empty()) {
+					str = u->description();
 					if(save_global) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
 					} else {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
 					}
 				}
-				if(!units[i]->isBuiltin()) {
-					if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+				if(!u->isBuiltin()) {
+					if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 						for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
 							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "part", NULL);
 							int exp = 1;
@@ -8144,17 +8155,20 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) i2s(exp).c_str());
 						}
 					}
-					if(units[i]->subtype() == SUBTYPE_ALIAS_UNIT) {
+					if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
 						newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "base", NULL);
 						xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) au->firstBaseUnit()->referenceName().c_str());								
 						newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "relation", (xmlChar*) au->expression().c_str());
-						if(units[i]->isApproximate()) xmlNewProp(newnode3, (xmlChar*) "approximate", (xmlChar*) "true");
-						if(units[i]->precision() > 0) xmlNewProp(newnode2, (xmlChar*) "precision", (xmlChar*) i2s(units[i]->precision()).c_str());
+						if(au->isApproximate()) xmlNewProp(newnode3, (xmlChar*) "approximate", (xmlChar*) "true");
+						if(au->precision() > 0) xmlNewProp(newnode3, (xmlChar*) "precision", (xmlChar*) i2s(u->precision()).c_str());
 						if(!au->inverseExpression().empty()) {
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "inverse_relation", (xmlChar*) au->inverseExpression().c_str());
 						}
 						xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) i2s(au->firstBaseExponent()).c_str());
-						if(au->combineWithBase() > 0) xmlNewTextChild(newnode2, NULL, (xmlChar*) "combine", (xmlChar*) i2s(au->combineWithBase()).c_str());
+						if(au->mixWithBase() > 0) {
+							newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "mix", (xmlChar*) i2s(au->mixWithBase()).c_str());
+							if(au->mixWithBaseMinimum() != 0) xmlNewProp(newnode3, (xmlChar*) "min", (xmlChar*) i2s(au->mixWithBaseMinimum()).c_str());
+						}
 					}
 				}
 			}
