@@ -198,7 +198,6 @@
         <unit>in</unit>
         <relation>0.001</relation>
         <exponent>1</exponent>
-        <mix>-3</mix>
       </base>
     </unit>
     <unit type="alias">
@@ -1745,7 +1744,7 @@
           <unit>UK_fl_oz</unit>
           <relation>5</relation>
           <exponent>1</exponent>
-          <mix>-1</mix>
+          <mix>2</mix>
         </base>
       </unit>
       <unit type="alias">
@@ -1765,7 +1764,7 @@
           <unit>UK_pt</unit>
           <relation>2</relation>
           <exponent>1</exponent>
-          <mix>-1</mix>
+          <mix>2</mix>
         </base>
       </unit>
       <unit type="alias">

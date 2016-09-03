@@ -8167,7 +8167,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 						xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) i2s(au->firstBaseExponent()).c_str());
 						if(au->mixWithBase() > 0) {
 							newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "mix", (xmlChar*) i2s(au->mixWithBase()).c_str());
-							if(au->mixWithBaseMinimum() != 0) xmlNewProp(newnode3, (xmlChar*) "min", (xmlChar*) i2s(au->mixWithBaseMinimum()).c_str());
+							if(au->mixWithBaseMinimum() > 1) xmlNewProp(newnode3, (xmlChar*) "min", (xmlChar*) i2s(au->mixWithBaseMinimum()).c_str());
 						}
 					}
 				}
