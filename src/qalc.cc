@@ -1500,8 +1500,8 @@ int main(int argc, char *argv[]) {
 				result_action_executed();
 			} else {
 				CALCULATOR->resetExchangeRatesUsed();
-				MathStructure mstruct_new(CALCULATOR->convert(*mstruct, str, evalops));
-				if(check_exchange_rates()) mstruct->set(CALCULATOR->convert(*mstruct, str, evalops));
+				MathStructure mstruct_new(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), evalops));
+				if(check_exchange_rates()) mstruct->set(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), evalops));
 				else mstruct->set(mstruct_new);
 				result_action_executed();
 			}

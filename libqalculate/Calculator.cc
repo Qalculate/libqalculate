@@ -2244,7 +2244,9 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 	} else {
 		return false;
 	}
-	remove_blank_ends(to_str);
+	if(to_str.rfind(SIGN_MINUS, 0) == 0) {
+		to_str.replace(0, strlen(SIGN_MINUS), MINUS);
+	}
 	if(!keep_modifiers && !to_str.empty() && (to_str[0] == '0' || to_str[0] == '?' || to_str[0] == '+' || to_str[0] == '-')) {
 		to_str = to_str.substr(1, str.length() - 1);
 		remove_blank_ends(to_str);
@@ -3043,21 +3045,24 @@ MathStructure Calculator::convert(const MathStructure &mstruct, string composite
 	if(composite_.empty()) return mstruct;
 	EvaluationOptions eo2 = eo;
 	eo2.keep_prefixes = (composite_[0] != '?');
-	if(composite_[0] == '0' || composite_[0] == '?') {
+	if(composite_[0] == '+') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
+	else if(composite_[0] == '-') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
+	else if(eo2.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
+	if(composite_[0] == '0' || composite_[0] == '?' || composite_[0] == '+' || composite_[0] == '-') {
 		composite_ = composite_.substr(1, composite_.length() - 1);
-		if(composite_.empty()) return mstruct;
+		if(composite_.empty()) return convertToMixedUnits(mstruct, eo2);
 	}
 	Unit *u = getUnit(composite_);
-	if(u) return convert(mstruct, u, eo2, true);
+	if(u) return convertToMixedUnits(convert(mstruct, u, eo2, false), eo2);
 	for(size_t i = 0; i < signs.size(); i++) {
 		if(composite_ == signs[i]) {
 			u = getUnit(real_signs[i]);
 			break;
 		}
 	}
-	if(u) return convert(mstruct, u, eo2, true);
+	if(u) return convertToMixedUnits(convert(mstruct, u, eo2, true, false), eo2);
 	CompositeUnit cu("", "temporary_composite_convert", "", composite_);
-	return convertToCompositeUnit(mstruct, &cu, eo2, true);
+	return convertToMixedUnits(convert(mstruct, &cu, eo2, false), eo2);
 }
 Unit* Calculator::addUnit(Unit *u, bool force, bool check_names) {
 	if(check_names) {
