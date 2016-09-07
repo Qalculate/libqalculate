@@ -1,7 +1,6 @@
 * Implement signals for deleted variables etc.
 * Sort out when small floats really are zero due to limited precision
 * Quoted ")" in function
-* Plot-functions
 * Replace pointers to unit when unit type has changed (a different object must be created)
 * Sort out percentile and provide alternative methods
 

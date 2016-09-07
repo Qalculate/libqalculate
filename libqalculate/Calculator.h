@@ -277,6 +277,7 @@ class Calculator {
 	MathFunction *f_diff, *f_integrate, *f_solve, *f_multisolve;
 	MathFunction *f_error, *f_warning, *f_message, *f_save, *f_load, *f_export, *f_title;
 	MathFunction *f_register, *f_stack;
+	MathFunction *f_plot;
 	MathFunction *f_uncertainty;
 	
 	Unit *u_rad, *u_gra, *u_deg, *u_euro, *u_kelvin, *u_celsius, *u_fahrenheit;

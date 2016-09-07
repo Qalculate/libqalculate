@@ -315,10 +315,10 @@ int InverseFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 
 ZetaFunction::ZetaFunction() : MathFunction("zeta", 1, 1, SIGN_ZETA) {
 	IntegerArgument *arg = new IntegerArgument();
-	arg->setMin(new Number(1 ,1));
-	Number *nr = new Number();
-	nr->setInternal(long(INT_MAX));
-	arg->setMax(nr);
+	Number nr(1, 1);
+	arg->setMin(&nr);
+	nr.setInternal(long(INT_MAX));
+	arg->setMax(&nr);
 	setArgumentDefinition(1, arg);
 }
 int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -486,7 +486,7 @@ bool MultiFactorialFunction::representsUndefined(const MathStructure&) const {re
 BinomialFunction::BinomialFunction() : MathFunction("binomial", 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, true));
-	setCondition("\\x>=\\y");
+	setCondition("\\x >= \\y");
 }
 int BinomialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	Number nr;
@@ -3579,7 +3579,7 @@ SolveMultipleFunction::SolveMultipleFunction() : MathFunction("multisolve", 2) {
 	arg->addArgument(new SymbolicArgument());
 	arg->setReoccuringArguments(true);
 	setArgumentDefinition(2, arg);
-	setCondition("dimension(\\x)=dimension(\\y)");
+	setCondition("dimension(\\x) = dimension(\\y)");
 }
 int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
@@ -3661,6 +3661,110 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 	
 	return 1;
 	
+}
+
+PlotFunction::PlotFunction() : MathFunction("plot", 1, 5) {
+	NumberArgument *arg = new NumberArgument();
+	arg->setComplexAllowed(false);
+	setArgumentDefinition(2, arg);
+	setDefaultValue(2, "0");
+	arg = new NumberArgument();
+	arg->setComplexAllowed(false);
+	setArgumentDefinition(3, arg);
+	setDefaultValue(3, "10");
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONZERO);
+	Number nr(10000, 1);
+	iarg->setMax(&nr);
+	setArgumentDefinition(4, iarg);
+	setDefaultValue(4, "100");
+	setArgumentDefinition(5, new SymbolicArgument());
+	setDefaultValue(5, "x");
+	setCondition("\\y < \\z");
+}
+int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	vector<MathStructure> x_vectors, y_vectors;
+	vector<PlotDataParameters*> dpds;
+	if(mstruct.isMatrix() && mstruct.columns() == 2) {
+		MathStructure x_vector, y_vector;
+		mstruct.columnToVector(1, x_vector);
+		mstruct.columnToVector(2, y_vector);
+		y_vectors.push_back(y_vector);
+		x_vectors.push_back(x_vector);
+		PlotDataParameters *dpd = new PlotDataParameters;
+		dpd->title = _("Matrix");
+		dpds.push_back(dpd);
+	} else if(mstruct.isVector()) {
+		int matrix_index = 1, vector_index = 1;
+		if(mstruct.size() > 0 && (mstruct[0].isVector() || mstruct[0].contains(vargs[4], false, true, true))) {
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				MathStructure x_vector;
+				if(mstruct[i].isMatrix() && mstruct[i].columns() == 2) {
+					MathStructure y_vector;
+					mstruct[i].columnToVector(1, x_vector);
+					mstruct[i].columnToVector(2, y_vector);
+					y_vectors.push_back(y_vector);
+					x_vectors.push_back(x_vector);
+					PlotDataParameters *dpd = new PlotDataParameters;
+					dpd->title = _("Matrix");
+					dpd->title += " ";
+					dpd->title += i2s(matrix_index);
+					matrix_index++;
+					dpds.push_back(dpd);
+				} else if(mstruct[i].isVector()) {
+					y_vectors.push_back(mstruct[i]);
+					x_vectors.push_back(x_vector);
+					PlotDataParameters *dpd = new PlotDataParameters;
+					dpd->title = _("Vector");
+					dpd->title += " ";
+					dpd->title += i2s(vector_index);
+					vector_index++;
+					dpds.push_back(dpd);
+				} else {				
+					MathStructure y_vector(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], vargs[3].number().intValue(), &x_vector, eo));
+					if(y_vector.size() == 0) {
+						CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
+					} else {				
+						x_vectors.push_back(x_vector);
+						y_vectors.push_back(y_vector);
+						PlotDataParameters *dpd = new PlotDataParameters;
+						dpd->title = mstruct[i].print();
+						dpds.push_back(dpd);
+					}
+				}
+			}
+		} else {
+			MathStructure x_vector;
+			y_vectors.push_back(mstruct);
+			x_vectors.push_back(x_vector);
+			PlotDataParameters *dpd = new PlotDataParameters;
+			dpd->title = _("Vector");
+			dpds.push_back(dpd);
+		}
+	} else {
+		MathStructure x_vector;
+		MathStructure y_vector(mstruct.generateVector(vargs[4], vargs[1], vargs[2], vargs[3].number().intValue(), &x_vector, eo));
+		if(y_vector.size() == 0) {
+			CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
+		} else {
+			x_vectors.push_back(x_vector);
+			y_vectors.push_back(y_vector);
+			PlotDataParameters *dpd = new PlotDataParameters;
+			dpd->title = mstruct.print();
+			dpds.push_back(dpd);
+		}
+	}
+	if(x_vectors.size() > 0) {
+		PlotParameters param;
+		CALCULATOR->plotVectors(&param, y_vectors, x_vectors, dpds, false);
+		for(size_t i = 0; i < dpds.size(); i++) {
+			if(dpds[i]) delete dpds[i];
+		}
+	}
+	return 1;
+
 }
 
 UncertaintyFunction::UncertaintyFunction() : MathFunction("uncertainty", 2) {

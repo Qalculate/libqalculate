@@ -121,11 +121,13 @@ PlotParameters::PlotParameters() {
 	color = true;
 	linewidth = -1;
 	show_all_borders = false;
-	legend_placement = PLOT_LEGEND_TOP_RIGHT;
+	legend_placement = PLOT_LEGEND_TOP_RIGHT;	
 }
 PlotDataParameters::PlotDataParameters() {
 	yaxis2 = false;
 	xaxis2 = false;
+	style = PLOT_STYLE_LINES;
+	smoothing = PLOT_SMOOTHING_NONE;
 }
 
 CalculatorMessage::CalculatorMessage(string message_, MessageType type_) {
@@ -1418,6 +1420,8 @@ void Calculator::addBuiltinFunctions() {
 	f_integrate = addFunction(new IntegrateFunction());
 	f_solve = addFunction(new SolveFunction());
 	f_multisolve = addFunction(new SolveMultipleFunction());
+	
+	if(canPlot()) f_plot = addFunction(new PlotFunction());
 	
 	//f_uncertainty = addFunction(new UncertaintyFunction());
 
