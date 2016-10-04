@@ -1108,7 +1108,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	//load local definitions
-	if(load_global_defs) CALCULATOR->loadLocalDefinitions();
+	CALCULATOR->loadLocalDefinitions();
 	
 	if(list_type != 'n') {
 		CALCULATOR->terminateThreads();
@@ -2477,7 +2477,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	result_text = "?";
 
 	if(update_parse) {
-		parsed_text = "aborted";
+		parsed_text = _("aborted");
 	}
 
 	if(!rpn_mode) stack_index = 0;

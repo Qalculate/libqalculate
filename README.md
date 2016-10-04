@@ -39,6 +39,7 @@ Other software using libqalculate include
 * KDE Plasma Workspace (https://www.kde.org/workspaces/plasmadesktop/)
 * Cantor (http://kde.org/applications/education/cantor/)
 * Step (http://kde.org/applications/education/step/)
+* Qalculate widget for KDE Plasma (https://store.kde.org/p/1155946/)
 
 ##Features
 * Calculation and parsing:

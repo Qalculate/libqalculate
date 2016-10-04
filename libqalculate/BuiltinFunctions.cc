@@ -3709,8 +3709,10 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					x_vectors.push_back(x_vector);
 					PlotDataParameters *dpd = new PlotDataParameters;
 					dpd->title = _("Matrix");
-					dpd->title += " ";
-					dpd->title += i2s(matrix_index);
+					if(matrix_index > 1) {
+						dpd->title += " ";
+						dpd->title += i2s(matrix_index);
+					}
 					matrix_index++;
 					dpds.push_back(dpd);
 				} else if(mstruct[i].isVector()) {
@@ -3718,8 +3720,10 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					x_vectors.push_back(x_vector);
 					PlotDataParameters *dpd = new PlotDataParameters;
 					dpd->title = _("Vector");
-					dpd->title += " ";
-					dpd->title += i2s(vector_index);
+					if(vector_index > 1) {
+						dpd->title += " ";
+						dpd->title += i2s(vector_index);
+					}
 					vector_index++;
 					dpds.push_back(dpd);
 				} else {				
