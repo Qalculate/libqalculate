@@ -1,3 +1,7 @@
+2016-10-30 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	Fix u and 1/u to optimal, and handle unforeseen situations better in optimal units conversion
+
 2016-09-07 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Plot functions

@@ -2747,7 +2747,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 			AliasUnit *au = (AliasUnit*) u;
 			if(au->baseExponent() == 1 && au->baseUnit()->subtype() == SUBTYPE_BASE_UNIT) {
 				return (Unit*) au->baseUnit();
-			} else if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT || au->firstBaseExponent() != 1) {
+			} else if(au->isSIUnit() && (au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT || au->firstBaseExponent() != 1)) {
 				return u;
 			} else {
 				return getBestUnit((Unit*) au->firstBaseUnit());
@@ -2790,7 +2790,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 					b_exp = au->baseExponent();
 					new_points = 0;
 					new_points_m = 0;
-					if(b_exp != 1 || bu->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+					if(b_exp != 1 || bu->subtype() == SUBTYPE_COMPOSITE_UNIT) {					
 						if(bu->subtype() == SUBTYPE_BASE_UNIT) {
 							for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
 								if(cu->get(i2, &exp) == bu) {
@@ -2892,6 +2892,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 				}
 				if(points >= max_points && !minus) break;
 			}
+			if(!best_u) return u;
 			best_u = getBestUnit(best_u);
 			if(points > 1 && points < max_points - 1) {
 				CompositeUnit *cu_new = new CompositeUnit("", "temporary_composite_convert");
@@ -2962,7 +2963,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 			}
 		}
 	}
-	return u;	
+	return u;
 }
 MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	EvaluationOptions eo2 = eo;
@@ -2992,13 +2993,18 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 		case STRUCT_POWER: {
 			MathStructure mstruct_new(mstruct);
 			if(mstruct_new.base()->isUnit() && mstruct_new.exponent()->isNumber() && mstruct_new.exponent()->number().isInteger()) {
+				if(mstruct_new.base()->unit()->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+					return convertToBestUnit(convertToBaseUnits(mstruct_new, eo), eo);
+				}
 				CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
 				cu->add(mstruct_new.base()->unit(), mstruct_new.exponent()->number().intValue());
 				Unit *u = getBestUnit(cu);
-				mstruct_new = convert(mstruct_new, u, eo, true);
-				if(!u->isRegistered()) delete u;
+				if(u != cu) {
+					mstruct_new = convert(mstruct_new, u, eo, true);
+					if(!u->isRegistered()) delete u;
+				}
 				delete cu;
-			} else {
+			} else {				
 				mstruct_new[0] = convertToBestUnit(mstruct_new[0], eo);
 				mstruct_new[1] = convertToBestUnit(mstruct_new[1], eo);
 				mstruct_new.childrenUpdated();
@@ -3008,12 +3014,16 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 		}
 		case STRUCT_UNIT: {
 			Unit *u = getBestUnit(mstruct.unit());
-			MathStructure mstruct_new = convert(mstruct, u, eo, true);
-			if(!u->isRegistered()) delete u;
-			return mstruct_new;
+			if(u != mstruct.unit()) {
+				MathStructure mstruct_new = convert(mstruct, u, eo, true);
+				if(!u->isRegistered()) delete u;
+				return mstruct_new;
+			}
+			break;
 		}
 		case STRUCT_MULTIPLICATION: {
 			MathStructure mstruct_new(convertToBaseUnits(mstruct, eo));
+			if(mstruct_new.type() != STRUCT_MULTIPLICATION) return convertToBestUnit(mstruct_new, eo);
 			CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
 			bool b = false;
 			for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
@@ -3027,11 +3037,13 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 					mstruct_new[i - 1] = convertToBestUnit(mstruct_new[i - 1], eo);
 					mstruct_new.childUpdated(i);
 				}
-			}			
+			}
 			if(b) {
 				Unit *u = getBestUnit(cu);
-				mstruct_new = convert(mstruct_new, u, eo, true);
-				if(!u->isRegistered()) delete u;
+				if(u != cu) {
+					mstruct_new = convert(mstruct_new, u, eo, true);
+					if(!u->isRegistered()) delete u;
+				}
 			}
 			delete cu;
 			mstruct_new.eval(eo2);
