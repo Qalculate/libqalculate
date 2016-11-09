@@ -72,7 +72,7 @@
     </builtin_unit>
     <builtin_unit name="CZK">
       <_title>Czech Koruna</_title>
-      <_names>ar:CZK</_names>
+      <_names>ar:CZK,au-c:K&#x10D;</_names>
     </builtin_unit>
      <builtin_unit name="HUF">
       <_title>Hungarian Forint</_title>
