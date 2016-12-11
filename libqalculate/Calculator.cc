@@ -9035,7 +9035,7 @@ time_t Calculator::getExchangeRatesTime() {
 	return exchange_rates_time;
 }
 string Calculator::getExchangeRatesUrl() {
-	return "http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml";
+	return "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 }
 bool Calculator::fetchExchangeRates(int timeout, string wget_args) {
 	int status = 0;
@@ -9043,14 +9043,14 @@ bool Calculator::fetchExchangeRates(int timeout, string wget_args) {
 	string cmdline;
 	gchar *filename = g_build_filename(getLocalDataDir().c_str(), "eurofxref-daily.xml", NULL);
 	if(hasGVFS()) {
-		cmdline = "gvfs-copy http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml";		
+		cmdline = "gvfs-copy https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 		cmdline += " "; cmdline += filename;
 	} else {	
 		cmdline = "wget";
 		cmdline += " "; cmdline += "--timeout="; cmdline += i2s(timeout);
 		cmdline += " "; cmdline += wget_args;
 		cmdline += " "; cmdline +=  "--output-document="; cmdline += filename;
-		cmdline += " "; cmdline += "http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml";
+		cmdline += " "; cmdline += "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 	}
 	g_free(filename);
 	if(!g_spawn_command_line_sync(cmdline.c_str(), NULL, NULL, NULL, NULL)) status = -1;
