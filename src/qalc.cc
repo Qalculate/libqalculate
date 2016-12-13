@@ -285,7 +285,7 @@ void handle_exit() {
 	if(enable_unicode >= 0) {
 		printops.use_unicode_signs = enable_unicode;
 	} 
-	if(!cfile) {
+	if(interactive_mode) {
 		if(save_mode_on_exit) {
 			save_mode();
 		} else {
