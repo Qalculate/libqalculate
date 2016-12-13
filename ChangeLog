@@ -1,6 +1,7 @@
 2016-12-13 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Do not save mode changes in batches file
+	* Add 'comma as separator' option to qalc and only show 'dot as separator' when dot is not used as decimal separator
 
 2016-12-11 Hanna Knutsson <hanna_k@fmgirl.com>
 
