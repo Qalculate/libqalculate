@@ -34,10 +34,6 @@
       <_title>Swiss Francs</_title>
       <_names>ar:CHF</_names>
     </builtin_unit>
-    <builtin_unit name="ISK">
-      <_title>Icelandic Krona</_title>
-      <_names>ar:ISK</_names>
-    </builtin_unit>
     <builtin_unit name="NOK">
       <_title>Norwegian Kroner</_title>
       <_names>ar:NOK</_names>
