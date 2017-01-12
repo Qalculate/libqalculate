@@ -76,7 +76,7 @@
     </builtin_unit>
     <builtin_unit name="PLN">
       <_title>Polish Zloty</_title>
-      <_names>zloty,ar:PLN</_names>
+      <_names>ar:PLN,au:z&#x0142;,zloty</_names>
     </builtin_unit>
     <builtin_unit name="RON">
       <_title>Romanian New Leu</_title>
