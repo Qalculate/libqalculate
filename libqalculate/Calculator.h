@@ -14,6 +14,7 @@
 
 #include <libqalculate/includes.h>
 #include <libqalculate/util.h>
+#include <sys/time.h>
 #include <pthread.h>
 
 /** @file */
