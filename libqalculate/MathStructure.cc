@@ -3061,9 +3061,10 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			return 1;
 		}
 		if(mstruct.number().isRational()) {
-			if(!mstruct.number().numeratorIsOne() && o_number.isPositive()) {
+			Number exp_num(mstruct.number().numerator());
+			if(!exp_num.isOne() && o_number.isPositive() && exp_num.isLessThanOrEqualTo(Number(10000, 1)) && exp_num.isGreaterThanOrEqualTo(Number(-10000, 1))) {
 				nr = o_number;
-				if(nr.raise(mstruct.number().numerator()) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
+				if(nr.raise(exp_num) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
 					o_number = nr;
 					numberUpdated();
 					nr.set(mstruct.number().denominator());
@@ -3484,7 +3485,6 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					return 1;
 				}
 			}
-			
 			goto default_power_merge;
 		}
 		case STRUCT_VARIABLE: {

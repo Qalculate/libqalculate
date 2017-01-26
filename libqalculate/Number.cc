@@ -1654,6 +1654,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 	}	
 	cln::cl_RA dmax = 1;
 	dmax = dmax / 10;
+
 	if(o.isRational() && isRational() && (!try_exact || (cln::abs(new_value) <= 1 + dmax && cln::abs(new_value) >= 1 - dmax)) && new_value != 1 && new_value != -1 && (cln::numerator(cln::rational(cln::realpart(o.internalNumber()))) > 10000 || cln::numerator(cln::rational(cln::realpart(o.internalNumber()))) < -10000)) {
 		try {
 			new_value = cln::expt(cln::cl_float(cln::realpart(new_value)), cln::cl_float(cln::realpart(o.internalNumber())));
@@ -1677,6 +1678,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 			return false;
 		}
 	}
+	
 	value = new_value;
 	removeFloatZeroPart();
 	setPrecisionAndApproximateFrom(o);
