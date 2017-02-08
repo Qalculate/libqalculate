@@ -1,3 +1,7 @@
+2017-02-08 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix set command, in qalc, for variables with spaces
+
 2017-01-26 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Do not raise by exponent numerator larger than 10 000 or smaller than -10 000, when exact exponantiation has failed (fixes slow calculation of for expample 2^0.333333333 in "try exact" mode).
