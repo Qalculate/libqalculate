@@ -3815,13 +3815,16 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	}
 
 	//remove spaces in numbers
-	size_t space_i = str.find(SPACE_CH, 0);
-	while(space_i != string::npos) {
-		if(is_in(NUMBERS DOT, str[space_i + 1]) && is_in(NUMBERS DOT, str[space_i - 1])) {
-			str.erase(space_i, 1);
-			space_i--;
-		}		
-		space_i = str.find(SPACE_CH, space_i + 1);
+	size_t space_i = 0;
+	if(!po.rpn) {
+		space_i = str.find(SPACE_CH, 0);
+		while(space_i != string::npos) {
+			if(is_in(NUMBERS DOT, str[space_i + 1]) && is_in(NUMBERS DOT, str[space_i - 1])) {
+				str.erase(space_i, 1);
+				space_i--;
+			}		
+			space_i = str.find(SPACE_CH, space_i + 1);
+		}
 	}
 
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {

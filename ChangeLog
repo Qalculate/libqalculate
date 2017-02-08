@@ -1,6 +1,7 @@
 2017-02-08 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Fix set command, in qalc, for variables with spaces
+	* Fix RPN syntax (do not remove spaces between digits when activated)
 
 2017-01-26 Hanna Knutsson <hanna_k@fmgirl.com>
 
