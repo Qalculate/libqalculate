@@ -3069,10 +3069,19 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	
 	//update "ans" variables
 	if(!do_stack || stack_index == 0) {
-		vans[4]->set(vans[3]->get());
-		vans[3]->set(vans[2]->get());
-		vans[2]->set(vans[1]->get());
-		vans[1]->set(vans[0]->get());
+		MathStructure m4(vans[3]->get());
+		m4.replace(vans[4], vans[4]->get());
+		vans[4]->set(m4);
+		MathStructure m3(vans[2]->get());
+		m3.replace(vans[3], vans[4]);
+		vans[3]->set(m3);
+		MathStructure m2(vans[1]->get());
+		m2.replace(vans[2], vans[3]);
+		vans[2]->set(m2);
+		MathStructure m1(vans[0]->get());
+		m1.replace(vans[1], vans[2]);
+		vans[1]->set(m1);
+		mstruct->replace(vans[0], vans[1]);
 		vans[0]->set(*mstruct);
 	}
 

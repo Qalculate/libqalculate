@@ -291,6 +291,10 @@ const MathStructure &KnownVariable::get() {
 			}
 		}
 	}
+	if(mstruct->contains(this, false, true, true) > 0) {
+		CALCULATOR->error(true, _("Recursive variable: %s = %s"), name().c_str(), mstruct->print().c_str(), NULL);
+		return m_undefined;
+	}
 	return *mstruct;
 }
 bool KnownVariable::representsPositive(bool allow_units) {return get().representsPositive(allow_units);}

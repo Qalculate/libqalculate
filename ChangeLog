@@ -1,3 +1,9 @@
+2017-02-10 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix and increase the size of the list of prime numbers
+	* Handle recursive variables (give error and return undefined)
+	* Replace ans with ans2 in ans (and ans2 in ans2...) in qalc
+
 2017-02-08 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Fix set rpn syntax in qalc
