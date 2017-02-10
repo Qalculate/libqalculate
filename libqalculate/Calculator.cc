@@ -4288,7 +4288,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								stmp += i2s(parseAddId(f, empty_string, po));
 								stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 								if(i4 < 0) i4 = name_length;
-							} else if(po.rpn && f->args() == 1 && str_index > 0 && str[str_index - 1] == SPACE_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {
+							} else if(po.rpn && f->args() == 1 && str_index > 0 && str[str_index - 1] == SPACE_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {								
 								size_t i7 = str.rfind(SPACE, i6);
 								if(i7 == string::npos) {
 									stmp2 = str.substr(0, i6 + 1);	

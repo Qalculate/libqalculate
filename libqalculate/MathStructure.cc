@@ -3082,7 +3082,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					val = o_number.intValue(&overflow);
 					if(overflow) {
 						cln::cl_I cval = cln::numerator(cln::rational(cln::realpart(o_number.internalNumber())));
-						for(size_t i = 0; i < NR_OF_PRIMES; i++) {
+						for(size_t i = 0; i < NR_OF_SQUARE_PRIMES; i++) {
 							if(cln::zerop(cln::rem(cval, SQUARE_PRIMES[i]))) {
 								nr *= PRIMES[i];
 								o_number /= SQUARE_PRIMES[i];
@@ -3091,7 +3091,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							}
 						}
 					} else {
-						for(size_t i = 0; i < NR_OF_PRIMES; i++) {
+						for(size_t i = 0; i < NR_OF_SQUARE_PRIMES; i++) {
 							if(SQUARE_PRIMES[i] > val) {
 								break;
 							} else if(val % SQUARE_PRIMES[i] == 0) {
