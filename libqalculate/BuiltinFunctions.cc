@@ -1453,17 +1453,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct.eval(eo);
 	}
 	bool b = false;
-	if(mstruct.isNumber() && eo.approximation == APPROXIMATION_APPROXIMATE) {
-		Number nr(mstruct.number());
-		nr /= CALCULATOR->v_pi->get().number();
-		nr.frac();
-		nr.setNegative(false);
-		nr -= Number(1, 2);
-		if(nr.isZero()) {
-			mstruct.clear(true);
-			b = true;
-		}
-	} else if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
+	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
 		mstruct = -1;
 		b = true;
 	} else if(mstruct.isFunction() && mstruct.size() == 1) {
@@ -1573,6 +1563,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(nr.cos() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) {
+			if(eo.approximation == APPROXIMATION_APPROXIMATE && mstruct.isApproximate() && nr.equalsZero()) nr.clear();
 			mstruct.set(nr, true);
 			return 1;
 		}
