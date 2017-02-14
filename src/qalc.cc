@@ -1372,6 +1372,120 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "variable", _("variable"))) {
+			str = str.substr(ispace + 1, slen - (ispace + 1));
+			remove_blank_ends(str);
+			string name = str, expr;
+			if(str[0] == '\"') {
+				size_t i = str.find('\"', 1);
+				if(i != string::npos) {
+					name = str.substr(1, i - 1);
+					str = str.substr(i + 1, str.length() - (i + 1));
+					remove_blank_ends(str);
+				} else {
+					str = "";
+				}
+			} else {
+				size_t i = str.find_first_of(SPACES, 1);
+				if(i != string::npos) {
+					name = str.substr(0, i);
+					str = str.substr(i + 1, str.length() - (i + 1));
+					remove_blank_ends(str);
+				} else {
+					str = "";
+				}
+			}
+			if(str.length() >= 2 && str[0] == '\"' && str[str.length() - 1] == '\"') str = str.substr(1, str.length() - 2);
+			expr = str;
+			bool b = true;
+			if(!CALCULATOR->variableNameIsValid(name)) {
+				name = CALCULATOR->convertToValidVariableName(name);
+				size_t l = name.length() + strlen(_("Illegal name. Save as %s instead (default: no)?"));
+				char *cstr = (char*) malloc(sizeof(char) * (l + 1));
+				snprintf(cstr, l, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
+				if(!ask_question(cstr)) {
+					b = false;
+				}
+				free(cstr);
+			}
+			if(b && CALCULATOR->variableNameTaken(name)) {
+				if(!ask_question(_("An unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"))) {
+					b = false;
+				}
+			}
+			if(b) {
+				Variable *v = CALCULATOR->getActiveVariable(name);
+				if(v && v->isLocal() && v->isKnown()) {
+					((KnownVariable*) v)->set(expr);
+					if(v->countNames() == 0) {
+						ExpressionName ename(name);
+						ename.reference = true;
+						v->setName(ename, 1);
+					} else {
+						v->setName(name, 1);
+					}
+				} else {
+					CALCULATOR->addVariable(new KnownVariable("", name, expr));
+				}
+			}
+		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "function", _("function"))) {
+			str = str.substr(ispace + 1, slen - (ispace + 1));
+			remove_blank_ends(str);
+			string name = str, expr;
+			if(str[0] == '\"') {
+				size_t i = str.find('\"', 1);
+				if(i != string::npos) {
+					name = str.substr(1, i - 1);
+					str = str.substr(i + 1, str.length() - (i + 1));
+					remove_blank_ends(str);
+				} else {
+					str = "";
+				}
+			} else {
+				size_t i = str.find_first_of(SPACES, 1);
+				if(i != string::npos) {
+					name = str.substr(0, i);
+					str = str.substr(i + 1, str.length() - (i + 1));
+					remove_blank_ends(str);
+				} else {
+					str = "";
+				}
+			}
+			if(str.length() >= 2 && str[0] == '\"' && str[str.length() - 1] == '\"') str = str.substr(1, str.length() - 2);
+			expr = str;
+			bool b = true;
+			if(!CALCULATOR->functionNameIsValid(name)) {
+				name = CALCULATOR->convertToValidFunctionName(name);
+				size_t l = name.length() + strlen(_("Illegal name. Save as %s instead (default: no)?"));
+				char *cstr = (char*) malloc(sizeof(char) * (l + 1));
+				snprintf(cstr, l, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
+				if(!ask_question(cstr)) {
+					b = false;
+				}
+				free(cstr);
+			}
+			if(b && CALCULATOR->functionNameTaken(name)) {
+				if(!ask_question(_("An function with the same name already exists.\nDo you want to overwrite it (default: no)?"))) {
+					b = false;
+				}
+			}
+			if(b) {
+				MathFunction *f = CALCULATOR->getActiveFunction(name);
+				if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION) {
+					((UserFunction*) f)->setFormula(expr);
+					if(f->countNames() == 0) {
+						ExpressionName ename(name);
+						ename.reference = true;
+						f->setName(ename, 1);
+					} else {
+						f->setName(name, 1);
+					}
+				} else {
+					CALCULATOR->addFunction(new UserFunction("", name, expr));
+				}
+			}
+		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "delete", _("delete"))) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
@@ -1379,7 +1493,12 @@ int main(int argc, char *argv[]) {
 			if(v && v->isLocal()) {
 				v->destroy();
 			} else {
-				PUTS_UNICODE(_("No user-defined variable with the specified name exist."));
+				MathFunction *f = CALCULATOR->getActiveFunction(str);
+				if(f && f->isLocal()) {
+					f->destroy();
+				} else {
+					PUTS_UNICODE(_("No user-defined variable or function with the specified name exist."));
+				}
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "assume", _("assume"))) {
@@ -1723,6 +1842,7 @@ int main(int argc, char *argv[]) {
 			}			
 			puts(""); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("factor")); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("function"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("EXPRESSION"), stdout); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("info")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("list")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("mode")); CHECK_IF_SCREEN_FILLED
@@ -1734,6 +1854,7 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("simplify")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("stack")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("to"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("convert"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("UNIT or \"TO\" COMMAND")); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("variable"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("EXPRESSION"), stdout); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("quit"), stdout); fputs("/", stdout); PUTS_UNICODE(_("exit")); CHECK_IF_SCREEN_FILLED_PUTS("");
 			PUTS_UNICODE(_("Type help COMMAND for more information (example: help save).")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("Type info NAME for information about a function, variable or unit (example: info sin).")); CHECK_IF_SCREEN_FILLED_PUTS("");
@@ -2270,9 +2391,22 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Example: store var1."));
 				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "variable", _("variable"))) {
+				puts("");
+				PUTS_UNICODE(_("Create a variables with the specified name and expression."));
+				puts("");
+				PUTS_UNICODE(_("Example: variable var1 pi / 2."));
+				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "function", _("function"))) {
+				puts("");
+				PUTS_UNICODE(_("Creates a function with the specified name and expression."));
+				PUTS_UNICODE(_("Use '\\x', '\\y', '\\z', '\\a', etc. for arguments in the expression."));
+				puts("");
+				PUTS_UNICODE(_("Example: function func1 5*\\x."));
+				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "delete", _("delete"))) {
 				puts("");
-				PUTS_UNICODE(_("Removes the user-defined variable with the specified name."));
+				PUTS_UNICODE(_("Removes the user-defined variable or function with the specified name."));
 				puts("");
 				PUTS_UNICODE(_("Example: delete var1."));
 				puts("");

@@ -3455,15 +3455,16 @@ MathFunction* Calculator::getActiveFunction(string name_) {
 	return NULL;
 }
 bool Calculator::variableNameIsValid(const string &name_) {
-	return name_.find_first_of(ILLEGAL_IN_NAMES) == string::npos && is_not_in(NUMBERS, name_[0]);
+	return !name_.empty() && name_.find_first_of(ILLEGAL_IN_NAMES) == string::npos && is_not_in(NUMBERS, name_[0]);
 }
 bool Calculator::functionNameIsValid(const string &name_) {
-	return name_.find_first_of(ILLEGAL_IN_NAMES) == string::npos && is_not_in(NUMBERS, name_[0]);
+	return !name_.empty() && name_.find_first_of(ILLEGAL_IN_NAMES) == string::npos && is_not_in(NUMBERS, name_[0]);
 }
 bool Calculator::unitNameIsValid(const string &name_) {
-	return name_.find_first_of(ILLEGAL_IN_UNITNAMES) == string::npos;
+	return !name_.empty() && name_.find_first_of(ILLEGAL_IN_UNITNAMES) == string::npos;
 }
 bool Calculator::variableNameIsValid(const char *name_) {
+	if(strlen(name_) == 0) return false;
 	if(is_in(NUMBERS, name_[0])) return false;
 	for(size_t i = 0; name_[i] != '\0'; i++) {
 		if(is_in(ILLEGAL_IN_NAMES, name_[i])) return false;
@@ -3471,6 +3472,7 @@ bool Calculator::variableNameIsValid(const char *name_) {
 	return true;
 }
 bool Calculator::functionNameIsValid(const char *name_) {
+	if(strlen(name_) == 0) return false;
 	if(is_in(NUMBERS, name_[0])) return false;
 	for(size_t i = 0; name_[i] != '\0'; i++) {
 		if(is_in(ILLEGAL_IN_NAMES, name_[i])) return false;
@@ -3478,6 +3480,7 @@ bool Calculator::functionNameIsValid(const char *name_) {
 	return true;
 }
 bool Calculator::unitNameIsValid(const char *name_) {
+	if(strlen(name_) == 0) return false;
 	for(size_t i = 0; name_[i] != '\0'; i++) {
 		if(is_in(ILLEGAL_IN_UNITNAMES, name_[i])) return false;
 	}
@@ -3494,6 +3497,7 @@ bool Calculator::unitNameIsValid(const string &name_, int version_numbers[3], bo
 	return unitNameIsValid(name_.c_str(), version_numbers, is_user_defs);
 }
 bool Calculator::variableNameIsValid(const char *name_, int version_numbers[3], bool is_user_defs) {
+	if(strlen(name_) == 0) return false;
 	if(is_in(NUMBERS, name_[0])) return false;
 	bool b = false;
 	for(size_t i = 0; name_[i] != '\0'; i++) {
@@ -3511,6 +3515,7 @@ bool Calculator::variableNameIsValid(const char *name_, int version_numbers[3], 
 	return true;
 }
 bool Calculator::functionNameIsValid(const char *name_, int version_numbers[3], bool is_user_defs) {
+	if(strlen(name_) == 0) return false;
 	if(is_in(NUMBERS, name_[0])) return false;
 	bool b = false;
 	for(size_t i = 0; name_[i] != '\0'; i++) {
@@ -3528,6 +3533,7 @@ bool Calculator::functionNameIsValid(const char *name_, int version_numbers[3], 
 	return true;
 }
 bool Calculator::unitNameIsValid(const char *name_, int version_numbers[3], bool is_user_defs) {
+	if(strlen(name_) == 0) return false;
 	bool b = false;
 	for(size_t i = 0; name_[i] != '\0'; i++) {
 		if(is_in(ILLEGAL_IN_UNITNAMES, name_[i])) {
@@ -3544,6 +3550,7 @@ bool Calculator::unitNameIsValid(const char *name_, int version_numbers[3], bool
 	return true;
 }
 string Calculator::convertToValidVariableName(string name_) {
+	if(name_.empty()) return "var_1";
 	size_t i = 0;
 	while(true) {
 		i = name_.find_first_of(ILLEGAL_IN_NAMES_MINUS_SPACE_STR, i);
@@ -3558,9 +3565,11 @@ string Calculator::convertToValidVariableName(string name_) {
 	return name_;
 }
 string Calculator::convertToValidFunctionName(string name_) {
+	if(name_.empty()) return "func_1";
 	return convertToValidVariableName(name_);
 }
 string Calculator::convertToValidUnitName(string name_) {
+	if(name_.empty()) return "new_unit";
 	size_t i = 0;
 	string stmp = ILLEGAL_IN_NAMES_MINUS_SPACE_STR + NUMBERS;
 	while(true) {

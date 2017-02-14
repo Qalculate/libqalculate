@@ -1,3 +1,8 @@
+2017-02-14 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* New commands for creation of simple functions and variables (with specified expression) in qalc
+	* Do not allow empty names
+
 2017-02-10 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Fix and increase the size of the list of prime numbers
