@@ -270,7 +270,7 @@ class Argument {
   protected:
   
   	string sname, scondition;
-	bool b_zero, b_test, b_matrix, b_text, b_error, b_rational;
+	bool b_zero, b_test, b_matrix, b_text, b_error, b_rational, b_last;
 	/** This function is called from Argument::test() and performs validation specific to the argument definition type.
 	* Should be reimplemented by all subclasses.
 	*
@@ -404,6 +404,9 @@ class Argument {
 	
 	bool matrixAllowed() const;
 	void setMatrixAllowed(bool allow_matrix);
+
+	bool isLastArgument() const;
+	void setIsLastArgument(bool is_last);
 
 	/** If only rational polynomials are allowed as argument value.
 	*
@@ -589,6 +592,7 @@ class VectorArgument : public Argument {
 	void delArgument(size_t index);
 	size_t countArguments() const;
 	Argument *getArgument(size_t index) const;
+	
 };
 
 /// A matrix argument.

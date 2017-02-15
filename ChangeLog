@@ -1,3 +1,7 @@
+2017-02-15 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix transform last arguments to vector, when only one last argument (fixes function("1+\x"; 1))
+
 2017-02-14 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* New commands for creation of simple functions and variables (with specified expression) in qalc

@@ -220,7 +220,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 	bool last_is_vctr = false, vctr_started = false;
 	if(maxargs() > 0) {
 		arg = getArgumentDefinition(maxargs());
-		last_is_vctr = arg && arg->type() == ARGUMENT_TYPE_VECTOR;
+		last_is_vctr = (arg && arg->type() == ARGUMENT_TYPE_VECTOR);
 	}
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		switch(str[str_index]) {
@@ -287,7 +287,9 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 						}
 					} else if(last_is_vctr) {
 						if(!vctr_started) {
-							vargs[vargs.size() - 1].transform(STRUCT_VECTOR);
+							if(!vargs[vargs.size() - 1].isVector() || vargs[vargs.size() - 1].size() != 1) {
+								vargs[vargs.size() - 1].transform(STRUCT_VECTOR);
+							}
 							vctr_started = true;
 						}
 						stmp = str.substr(start_pos, str_index - start_pos);
@@ -344,7 +346,9 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			}
 		} else if(last_is_vctr) {
 			if(!vctr_started) {
-				vargs[vargs.size() - 1].transform(STRUCT_VECTOR);
+				if(!vargs[vargs.size() - 1].isVector() || vargs[vargs.size() - 1].size() != 1) {
+					vargs[vargs.size() - 1].transform(STRUCT_VECTOR);
+				}
 				vctr_started = true;
 			}
 			stmp = str.substr(start_pos, str.length() - start_pos);
@@ -414,6 +418,7 @@ void MathFunction::setArgumentDefinition(size_t index, Argument *argdef) {
 	if(index > last_argdef_index) {
 		last_argdef_index = index;
 	}
+	argdef->setIsLastArgument((int) index == maxargs());
 	setChanged(true);
 }
 bool MathFunction::testArgumentCount(int itmp) {
@@ -1123,6 +1128,7 @@ Argument::Argument(string name_, bool does_test, bool does_error) {
 	b_text = false;
 	b_error = does_error;
 	b_rational = false;
+	b_last = false;
 }
 Argument::Argument(const Argument *arg) {
 	b_text = false;
@@ -1171,6 +1177,7 @@ void Argument::set(const Argument *arg) {
 	b_test = arg->tests();
 	b_matrix = arg->matrixAllowed();
 	b_rational = arg->rationalPolynomial();
+	b_last = arg->isLastArgument();
 }
 bool Argument::test(MathStructure &value, int index, MathFunction *f, const EvaluationOptions &eo) const {
 	if(!b_test) {
@@ -1382,6 +1389,8 @@ int Argument::type() const {
 }
 bool Argument::matrixAllowed() const {return b_matrix;}
 void Argument::setMatrixAllowed(bool allow_matrix) {b_matrix = allow_matrix;}
+bool Argument::isLastArgument() const {return b_last;}
+void Argument::setIsLastArgument(bool is_last) {b_last = is_last;}
 bool Argument::rationalPolynomial() const {return b_rational;}
 void Argument::setRationalPolynomial(bool rational_polynomial) {b_rational = rational_polynomial;}
 
@@ -1781,7 +1790,10 @@ bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 	//if(!value.isVector()) {
 		value.eval(eo);
 	//}
-	if(!value.isVector()) return false;
+	if(!value.isVector()) {
+		if(isLastArgument() && subargs.size() == 0) value.transform(STRUCT_VECTOR);
+		else return false;
+	}
 	if(b_argloop && subargs.size() > 0) {
 		for(size_t i = 0; i < value.countChildren(); i++) {
 			if(!subargs[i % subargs.size()]->test(value[i], 1, NULL, eo)) {
