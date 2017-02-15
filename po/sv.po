@@ -236,7 +236,7 @@ msgstr "komplexa tal"
 
 #: ../src/qalc.cc:430 ../src/qalc.cc:1732 ../src/qalc.cc:2277
 msgid "excessive parentheses"
-msgstr "parenteser av mass"
+msgstr "överdrivna parenteser"
 
 #: ../src/qalc.cc:431 ../src/qalc.cc:1751 ../src/qalc.cc:1870
 #: ../src/qalc.cc:2292
