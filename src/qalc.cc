@@ -45,6 +45,7 @@ bool b_busy = false;
 string expression_str;
 bool expression_executed = false;
 bool avoid_recalculation = false;
+bool hide_parse_errors = false;
 bool rpn_mode;
 bool use_readline = true;
 bool interactive_mode;
@@ -495,7 +496,9 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			evalops.parse_options.angle_unit = (AngleUnit) v;
+			hide_parse_errors = true;
 			expression_format_updated(true);
+			hide_parse_errors = false;
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "parsing mode", _("parsing mode"))) {
 		int v = -1;
@@ -2551,17 +2554,19 @@ bool display_errors(bool goto_input) {
 	if(!CALCULATOR->message()) return false;
 	bool b = false;
 	while(true) {
-		MessageType mtype = CALCULATOR->message()->type();
-		if(b && goto_input) fputs("  ", stdout);
-		if(mtype == MESSAGE_ERROR) {
-			FPUTS_UNICODE(_("error"), stdout); fputs(": ", stdout); PUTS_UNICODE(CALCULATOR->message()->message().c_str());
-		} else if(mtype == MESSAGE_WARNING) {
-			FPUTS_UNICODE(_("warning"), stdout); fputs(": ", stdout); PUTS_UNICODE(CALCULATOR->message()->message().c_str());
-		} else {
-			PUTS_UNICODE(CALCULATOR->message()->message().c_str());
+		if(!hide_parse_errors || (CALCULATOR->message()->stage() != MESSAGE_STAGE_PARSING && CALCULATOR->message()->stage() != MESSAGE_STAGE_CONVERSION_PARSING)) {
+			MessageType mtype = CALCULATOR->message()->type();
+			if(b && goto_input) fputs("  ", stdout);
+			if(mtype == MESSAGE_ERROR) {
+				FPUTS_UNICODE(_("error"), stdout); fputs(": ", stdout); PUTS_UNICODE(CALCULATOR->message()->message().c_str());
+			} else if(mtype == MESSAGE_WARNING) {
+				FPUTS_UNICODE(_("warning"), stdout); fputs(": ", stdout); PUTS_UNICODE(CALCULATOR->message()->message().c_str());
+			} else {
+				PUTS_UNICODE(CALCULATOR->message()->message().c_str());
+			}
+			b = true;
 		}
 		if(!CALCULATOR->nextMessage()) break;
-		b = true;
 	}
 	return true;
 }
@@ -2792,7 +2797,11 @@ void result_prefix_changed(Prefix *prefix) {
 	if(expression_executed) setResult(prefix, false);
 }
 void expression_calculation_updated() {
-	if(expression_executed && !rpn_mode && !avoid_recalculation) execute_expression();
+	if(expression_executed && !rpn_mode && !avoid_recalculation) {
+		hide_parse_errors = true;
+		execute_expression();
+		hide_parse_errors = false;
+	}
 }
 void expression_format_updated(bool reparse) {
 	if(rpn_mode) reparse = false;

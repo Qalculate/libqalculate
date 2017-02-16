@@ -134,17 +134,32 @@ typedef enum {
 	MESSAGE_ERROR
 } MessageType;
 
+///Message stages
+#define MESSAGE_STAGE_CONVERSION		-4
+#define MESSAGE_STAGE_CONVERSION_PARSING	-3
+#define MESSAGE_STAGE_CALCULATION		-2
+#define MESSAGE_STAGE_PARSING			-1
+#define MESSAGE_STAGE_UNSET			0
+
+///Message categories
+#define MESSAGE_CATEGORY_NONE		0
+#define MESSAGE_CATEGORY_PARSING	1
+
+
 /// A message with information to the user. Primarily used for errors and warnings.
 class CalculatorMessage {
   protected:
 	string smessage;
 	MessageType mtype;
+	int i_stage, i_cat;
   public:
-	CalculatorMessage(string message_, MessageType type_ = MESSAGE_WARNING);
+	CalculatorMessage(string message_, MessageType type_ = MESSAGE_WARNING, int cat_ = MESSAGE_CATEGORY_NONE, int stage_ = MESSAGE_STAGE_UNSET);
 	CalculatorMessage(const CalculatorMessage &e);
 	string message() const;
-	const char* c_message() const;	
+	const char* c_message() const;
 	MessageType type() const;
+	int stage() const;
+	int category() const;
 };
 
 #include <libqalculate/MathStructure.h>
@@ -218,6 +233,7 @@ class Calculator {
 	string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
 
 	bool b_argument_errors;
+	int current_stage;
 
 	time_t exchange_rates_time, exchange_rates_check_time;
 	bool b_exchange_rates_used, b_exchange_rates_warning_enabled;
@@ -339,7 +355,7 @@ class Calculator {
 	* @param make_to_division If true, the expression after "to" will be interpreted as a unit epxression to convert the result to.
 	* @returns The result of the calculation.
 	*/
-	MathStructure calculate(string str, const EvaluationOptions &eo = default_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);	
+	MathStructure calculate(string str, const EvaluationOptions &eo = default_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
 	int testCondition(string expression);
 	//@}
 
@@ -844,10 +860,13 @@ class Calculator {
 
 	/** @name Functions for message handling. */
 	//@{
+	void error(bool critical, int message_category, const char *TEMPLATE,...);
 	void error(bool critical, const char *TEMPLATE,...);
 	/** Put a message in the message queue. 
 	*/
+	void message(MessageType mtype, int message_category, const char *TEMPLATE,...);
 	void message(MessageType mtype, const char *TEMPLATE,...);
+	void message(MessageType mtype, int message_category, const char *TEMPLATE, va_list ap);
 	/** Returns the first message in queue.
 	*/
 	CalculatorMessage *message();

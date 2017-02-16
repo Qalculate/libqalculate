@@ -129,12 +129,16 @@ PlotDataParameters::PlotDataParameters() {
 	smoothing = PLOT_SMOOTHING_NONE;
 }
 
-CalculatorMessage::CalculatorMessage(string message_, MessageType type_) {
+CalculatorMessage::CalculatorMessage(string message_, MessageType type_, int cat_, int stage_) {
 	mtype = type_;
+	i_stage = stage_;
+	i_cat = cat_;
 	smessage = message_;
 }
 CalculatorMessage::CalculatorMessage(const CalculatorMessage &e) {
 	mtype = e.type();
+	i_stage = e.stage();
+	i_cat = e.category();
 	smessage = e.message();
 }
 string CalculatorMessage::message() const {
@@ -145,6 +149,12 @@ const char* CalculatorMessage::c_message() const {
 }
 MessageType CalculatorMessage::type() const {
 	return mtype;
+}
+int CalculatorMessage::stage() const {
+	return i_stage;
+}
+int CalculatorMessage::category() const {
+	return i_cat;
 }
 
 void Calculator::addStringAlternative(string replacement, string standard) {
@@ -415,6 +425,7 @@ Calculator::Calculator() {
 	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = DOT_S + RESERVED OPERATORS PARENTHESISS VECTOR_WRAPS;
 	ILLEGAL_IN_UNITNAMES = ILLEGAL_IN_NAMES + NUMBERS;
 	b_argument_errors = true;
+	current_stage = MESSAGE_STAGE_UNSET;
 	calculator = this;
 	srand48(time(0));
 	
@@ -1445,62 +1456,31 @@ void Calculator::addBuiltinUnits() {
 	u_celsius = addUnit(new AliasUnit(_("Temperature"), "oC", "", "celsius", "Degree Celsius", u_kelvin, "\\x+273.15", 1, "\\x-273.15", false, true, true));	
 	u_fahrenheit = addUnit(new AliasUnit(_("Temperature"), "oF", "", "fahrenheit", "Degree Fahrenheit", u_kelvin, "(\\x+459.67)*5/9", 1, "(\\x*9/5)-459.67", false, true, true));
 }
-void Calculator::error(bool critical, const char *TEMPLATE, ...) {
-	if(disable_errors_ref > 0) {
-		stopped_messages_count[disable_errors_ref - 1]++;
-		if(critical) {
-			stopped_errors_count[disable_errors_ref - 1]++;
-		} else {
-			stopped_warnings_count[disable_errors_ref - 1]++;
-		}		
-		return;
-	}
-	string error_str = TEMPLATE;
+void Calculator::error(bool critical, int message_category, const char *TEMPLATE, ...) {
 	va_list ap;
 	va_start(ap, TEMPLATE);
-	size_t i = 0;
-	while(true) {
-		i = error_str.find("%", i);
-		if(i == string::npos || i + 1 == error_str.length()) break;
-		switch(error_str[i + 1]) {
-			case 's': {
-				const char *str = va_arg(ap, const char*);
-				if(!str) {
-					i++;
-				} else {
-					error_str.replace(i, 2, str);
-					i += strlen(str);
-				}
-				break;
-			}
-			case 'c': {
-				char c = (char) va_arg(ap, int);
-				if(c > 0) {
-					error_str.replace(i, 2, 1, c);
-				}
-				i++;
-				break;
-			}
-			default: {
-				i++;
-				break;
-			}
-		}
-	}
+	message(critical ? MESSAGE_ERROR : MESSAGE_WARNING, message_category, TEMPLATE, ap);
 	va_end(ap);
-	bool dup_error = false;
-	for(i = 0; i < messages.size(); i++) {
-		if(error_str == messages[i].message()) {
-			dup_error = true;
-			break;
-		}
-	}
-	if(!dup_error) {
-		if(critical) messages.push_back(CalculatorMessage(error_str, MESSAGE_ERROR));
-		else messages.push_back(CalculatorMessage(error_str, MESSAGE_WARNING));
-	}
+}
+void Calculator::error(bool critical, const char *TEMPLATE, ...) {
+	va_list ap;
+	va_start(ap, TEMPLATE);
+	message(critical ? MESSAGE_ERROR : MESSAGE_WARNING, MESSAGE_CATEGORY_NONE, TEMPLATE, ap);
+	va_end(ap);
+}
+void Calculator::message(MessageType mtype, int message_category, const char *TEMPLATE, ...) {
+	va_list ap;
+	va_start(ap, TEMPLATE);
+	error(mtype, message_category, TEMPLATE, ap);
+	va_end(ap);
 }
 void Calculator::message(MessageType mtype, const char *TEMPLATE, ...) {
+	va_list ap;
+	va_start(ap, TEMPLATE);
+	error(mtype, MESSAGE_CATEGORY_NONE, TEMPLATE, ap);
+	va_end(ap);
+}
+void Calculator::message(MessageType mtype, int message_category, const char *TEMPLATE, va_list ap) {
 	if(disable_errors_ref > 0) {
 		stopped_messages_count[disable_errors_ref - 1]++;
 		if(mtype == MESSAGE_ERROR) {
@@ -1511,8 +1491,6 @@ void Calculator::message(MessageType mtype, const char *TEMPLATE, ...) {
 		return;
 	}
 	string error_str = TEMPLATE;
-	va_list ap;
-	va_start(ap, TEMPLATE);
 	size_t i = 0;
 	while(true) {
 		i = error_str.find("%", i);
@@ -1542,7 +1520,6 @@ void Calculator::message(MessageType mtype, const char *TEMPLATE, ...) {
 			}
 		}
 	}
-	va_end(ap);
 	bool dup_error = false;
 	for(i = 0; i < messages.size(); i++) {
 		if(error_str == messages[i].message()) {
@@ -1551,7 +1528,7 @@ void Calculator::message(MessageType mtype, const char *TEMPLATE, ...) {
 		}
 	}
 	if(!dup_error) {
-		messages.push_back(CalculatorMessage(error_str, mtype));
+		messages.push_back(CalculatorMessage(error_str, mtype, message_category, current_stage));
 	}
 }
 CalculatorMessage* Calculator::message() {
@@ -2279,6 +2256,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	}
 	
 	MathStructure mstruct;
+	current_stage = MESSAGE_STAGE_PARSING;
 	parse(&mstruct, str, eo.parse_options);
 	if(parsed_struct) {
 		beginTemporaryStopMessages();
@@ -2287,8 +2265,10 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		parse(parsed_struct, str, po);
 		endTemporaryStopMessages();
 	}
+	current_stage = MESSAGE_STAGE_CALCULATION;
 	mstruct.eval(eo);
 	
+	current_stage = MESSAGE_STAGE_CONVERSION;
 	if(!str2.empty() || u) {
 		if(!u) u = getUnit(str2);
 		EvaluationOptions eo2 = eo;
@@ -2299,39 +2279,51 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		if(str2[0] == '?' || str2[0] == '0' || str2[0] == '+' || str2[0] == '-') {
 			str2 = str2.substr(1, str2.length() - 1);
 			remove_blank_ends(str2);
-			if(str2.empty()) return convertToMixedUnits(mstruct, eo);
-		}
-		if(u) {
-			if(to_struct) to_struct->set(u);
-			return convertToMixedUnits(convert(mstruct, u, eo2, false, false), eo2);
-		}
-		for(size_t i = 0; i < signs.size(); i++) {
-			if(str2 == signs[i]) {
-				u = getUnit(real_signs[i]);
-				break;
+			if(str2.empty()) {
+				current_stage = MESSAGE_STAGE_UNSET;
+				return convertToMixedUnits(mstruct, eo);
 			}
 		}
 		if(u) {
 			if(to_struct) to_struct->set(u);
-			return convertToMixedUnits(convert(mstruct, u, eo2, false, false), eo2);
-		}
-		CompositeUnit cu("", "temporary_composite_convert", "", str2);		
-		if(to_struct) to_struct->set(cu.generateMathStructure(make_to_division));
-		if(cu.countUnits() > 0) {
-			return convertToMixedUnits(convert(mstruct, &cu, eo2, false, false), eo2);
+			mstruct.set(convert(mstruct, u, eo2, false, false));
+		} else {
+			for(size_t i = 0; i < signs.size(); i++) {
+				if(str2 == signs[i]) {
+					u = getUnit(real_signs[i]);
+					break;
+				}
+			}
+			if(u) {
+				if(to_struct) to_struct->set(u);
+				mstruct.set(convert(mstruct, u, eo2, false, false));
+			} else {
+				current_stage = MESSAGE_STAGE_CONVERSION_PARSING;
+				CompositeUnit cu("", "temporary_composite_convert", "", str2);
+				current_stage = MESSAGE_STAGE_CONVERSION;
+				if(to_struct) to_struct->set(cu.generateMathStructure(make_to_division));
+				if(cu.countUnits() > 0) {
+					mstruct.set(convert(mstruct, &cu, eo2, false, false));
+				}
+			}
 		}
 	} else {
 		if(to_struct) to_struct->setUndefined();
 		switch(eo.auto_post_conversion) {
 			case POST_CONVERSION_BEST: {
-				return convertToBestUnit(mstruct, eo);
+				mstruct.set(convertToBestUnit(mstruct, eo));
+				current_stage = MESSAGE_STAGE_UNSET;
+				return mstruct;
 			}
 			case POST_CONVERSION_BASE: {
-				return convertToBaseUnits(mstruct, eo);
+				mstruct.set(convertToBaseUnits(mstruct, eo));
+				current_stage = MESSAGE_STAGE_UNSET;
+				return mstruct;
 			}
 			default: {}
 		}
 	}
+	current_stage = MESSAGE_STAGE_UNSET;
 	return convertToMixedUnits(mstruct, eo);
 }
 string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int msecs, const PrintOptions &po) {
@@ -3762,7 +3754,7 @@ void Calculator::parseSigns(string &str) const {
 MathStructure Calculator::parse(string str, const ParseOptions &po) {
 	
 	MathStructure mstruct;
-	parse(&mstruct, str, po);	
+	parse(&mstruct, str, po);
 	return mstruct;
 	
 }
