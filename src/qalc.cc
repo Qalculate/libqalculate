@@ -44,6 +44,7 @@ bool command_aborted = false, command_thread_started;
 bool b_busy = false;
 string expression_str;
 bool expression_executed = false;
+bool avoid_recalculation = false;
 bool rpn_mode;
 bool use_readline = true;
 bool interactive_mode;
@@ -70,7 +71,8 @@ void result_display_updated();
 void result_format_updated();
 void result_action_executed();
 void result_prefix_changed(Prefix *prefix = NULL);
-void expression_format_updated();
+void expression_format_updated(bool reparse);
+void expression_calculation_updated();
 
 FILE *cfile;
 
@@ -362,7 +364,10 @@ bool check_exchange_rates() {
 
 #define SET_BOOL(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v;}}
 #define SET_BOOL_D(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; result_display_updated();}}
-#define SET_BOOL_E(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; expression_format_updated();}}
+#define SET_BOOL_E(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; expression_calculation_updated();}}
+#define SET_BOOL_PV(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; expression_format_updated(v);}}
+#define SET_BOOL_PT(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; expression_format_updated(true);}}
+#define SET_BOOL_PF(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; expression_format_updated(false);}}
 
 void set_option(string str) {
 	remove_blank_ends(str);
@@ -410,7 +415,7 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal base."));
 		} else if(b_in) {
 			evalops.parse_options.base = v;
-			expression_format_updated();
+			expression_format_updated(false);
 		} else {
 			printops.base = v;
 			result_format_updated();
@@ -423,12 +428,12 @@ void set_option(string str) {
 		} else {
 			set_assumption(svalue, false);
 		}
-		expression_format_updated();
+		expression_calculation_updated();
 	}
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "all prefixes", _("all prefixes"))) SET_BOOL_D(printops.use_all_prefixes)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "complex numbers", _("complex numbers"))) SET_BOOL_E(evalops.allow_complex)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "excessive parentheses", _("excessive parentheses"))) SET_BOOL_D(printops.excessive_parenthesis)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "functions", _("functions"))) SET_BOOL_E(evalops.parse_options.functions_enabled)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "functions", _("functions"))) SET_BOOL_PV(evalops.parse_options.functions_enabled)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "infinite numbers", _("infinite numbers"))) SET_BOOL_E(evalops.allow_infinite)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "show negative exponents", _("show negative exponents"))) SET_BOOL_D(printops.negative_exponents)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assume nonzero denominators", _("assume nonzero denominators"))) SET_BOOL_E(evalops.assume_denominators_nonzero)
@@ -440,7 +445,7 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate functions", _("calculate functions"))) SET_BOOL_E(evalops.calculate_functions)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "sync units", _("sync units"))) SET_BOOL_E(evalops.sync_units)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even"))) SET_BOOL_D(printops.round_halfway_to_even)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn syntax", _("rpn syntax"))) SET_BOOL_E(evalops.parse_options.rpn)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn syntax", _("rpn syntax"))) SET_BOOL_PF(evalops.parse_options.rpn)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn", _("rpn")) && svalue.find(" ") == string::npos) {SET_BOOL(rpn_mode) if(!rpn_mode) CALCULATOR->clearRPNStack();}
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "short multiplication", _("short multiplication"))) SET_BOOL_D(printops.short_multiplication)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase e", _("lowercase e"))) SET_BOOL_D(printops.lower_case_e)
@@ -460,20 +465,20 @@ void set_option(string str) {
 			result_display_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spell out logical", _("spell out logical"))) SET_BOOL_D(printops.spell_out_logical_operators)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "dot as separator", _("dot as separator")) && CALCULATOR->getDecimalPoint() != DOT) SET_BOOL_E(evalops.parse_options.dot_as_separator)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "dot as separator", _("dot as separator")) && CALCULATOR->getDecimalPoint() != DOT) SET_BOOL_PF(evalops.parse_options.dot_as_separator)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "comma as separator", _("comma as separator")) && CALCULATOR->getDecimalPoint() != COMMA) {
 		SET_BOOL(evalops.parse_options.comma_as_separator)
 		CALCULATOR->useDecimalPoint(evalops.parse_options.comma_as_separator);
-		expression_format_updated();
+		expression_format_updated(false);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "limit implicit multiplication", _("limit implicit multiplication"))) {
-		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {printops.limit_implicit_multiplication = v; evalops.parse_options.limit_implicit_multiplication = v; expression_format_updated();}		
+		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {printops.limit_implicit_multiplication = v; evalops.parse_options.limit_implicit_multiplication = v; expression_format_updated(true);}		
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spacious", _("spacious"))) SET_BOOL_D(printops.spacious)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unicode", _("unicode"))) {
 		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {printops.use_unicode_signs = v; result_display_updated();}
 		enable_unicode = -1;
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "units", _("units"))) SET_BOOL_E(evalops.parse_options.units_enabled)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unknowns", _("unknowns"))) SET_BOOL_E(evalops.parse_options.unknowns_enabled)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "variables", _("variables"))) SET_BOOL_E(evalops.parse_options.variables_enabled)
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "units", _("units"))) SET_BOOL_PV(evalops.parse_options.units_enabled)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unknowns", _("unknowns"))) SET_BOOL_PV(evalops.parse_options.unknowns_enabled)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "variables", _("variables"))) SET_BOOL_PV(evalops.parse_options.variables_enabled)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "abbreviations", _("abbreviations"))) SET_BOOL_D(printops.abbreviate_names)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "show ending zeroes", _("show ending zeroes"))) SET_BOOL_D(printops.show_ending_zeroes)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "indicate infinite series", _("indicate infinite series"))) SET_BOOL_D(printops.indicate_infinite_series)
@@ -490,7 +495,7 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			evalops.parse_options.angle_unit = (AngleUnit) v;
-			expression_format_updated();
+			expression_format_updated(true);
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "parsing mode", _("parsing mode"))) {
 		int v = -1;
@@ -504,7 +509,7 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			evalops.parse_options.parsing_mode = (ParsingMode) v;
-			expression_format_updated();
+			expression_format_updated(true);
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "update exchange rates", _("update exchange rates"))) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "never", _("never"))) {
@@ -556,7 +561,7 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			evalops.approximation = (ApproximationMode) v;
-			expression_format_updated();
+			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "autoconversion", _("autoconversion"))) {
 		int v = -1;
@@ -578,7 +583,7 @@ void set_option(string str) {
 		} else {
 			evalops.auto_post_conversion = (AutoPostConversion) v;
 			evalops.mixed_units_conversion = muc;
-			expression_format_updated();
+			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "algebra mode", _("algebra mode"))) {
 		int v = -1;
@@ -593,7 +598,7 @@ void set_option(string str) {
 		} else {
 			evalops.structuring = (StructuringMode) v;
 			printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
-			expression_format_updated();
+			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "exact", _("exact"))) {
 		int v = s2b(svalue); 
@@ -601,10 +606,10 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value")); 
 		} else if(v > 0) {
 			evalops.approximation = APPROXIMATION_EXACT; 
-			expression_format_updated();
+			expression_calculation_updated();
 		} else {
 			evalops.approximation = APPROXIMATION_TRY_EXACT; 
-			expression_format_updated();
+			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save mode", _("save mode"))) {
 		int v = s2b(svalue); 
@@ -648,7 +653,7 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			CALCULATOR->setPrecision(v);
-			expression_format_updated();
+			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "max decimals", _("max decimals"))) {
 		int v = -1;
@@ -702,7 +707,7 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			evalops.parse_options.read_precision = (ReadPrecisionMode) v;
-			expression_format_updated();
+			expression_format_updated(true);
 		}
 	} else {
 		if(index != string::npos) {
@@ -1541,13 +1546,13 @@ int main(int argc, char *argv[]) {
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exact", _("exact"))) {
 			if(evalops.approximation != APPROXIMATION_EXACT) {
 				evalops.approximation = APPROXIMATION_EXACT;
-				expression_format_updated();
+				expression_calculation_updated();
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "approximate", _("approximate"))) {
 			if(evalops.approximation != APPROXIMATION_TRY_EXACT) {
 				evalops.approximation = APPROXIMATION_TRY_EXACT;
-				expression_format_updated();
+				expression_calculation_updated();
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to"))) {
@@ -2786,8 +2791,17 @@ void result_action_executed() {
 void result_prefix_changed(Prefix *prefix) {
 	if(expression_executed) setResult(prefix, false);
 }
-void expression_format_updated() {
-	if(expression_executed && !rpn_mode) execute_expression();
+void expression_calculation_updated() {
+	if(expression_executed && !rpn_mode && !avoid_recalculation) execute_expression();
+}
+void expression_format_updated(bool reparse) {
+	if(rpn_mode) reparse = false;
+	if(!reparse && !rpn_mode) {
+		avoid_recalculation = true;
+	}
+	if(reparse) {
+		execute_expression();
+	}
 }
 
 void on_abort_command() {
@@ -2933,6 +2947,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
 	string str;
 	bool do_bases = false, do_factors = false, do_fraction = false;
+	avoid_recalculation = false;
 	if(!interactive_mode) goto_input = false;
 	if(do_stack) {
 	} else {
@@ -3165,6 +3180,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 #endif			
 				if(c == '\n') {
 					CALCULATOR->abort();
+					avoid_recalculation = true;
 				}
 			} else {
 				if(!result_only) {

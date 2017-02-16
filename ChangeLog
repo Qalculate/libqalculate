@@ -1,3 +1,7 @@
+2017-02-16 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not always reparse expression when parse options have changed
+
 2017-02-15 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Fix transform last arguments to vector, when only one last argument (fixes function("1+\x"; 1))
