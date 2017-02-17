@@ -4289,22 +4289,45 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								stmp += i2s(parseAddId(f, empty_string, po));
 								stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 								if(i4 < 0) i4 = name_length;
-							} else if(po.rpn && f->args() == 1 && str_index > 0 && str[str_index - 1] == SPACE_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {								
-								size_t i7 = str.rfind(SPACE, i6);
-								if(i7 == string::npos) {
-									stmp2 = str.substr(0, i6 + 1);	
-								} else {
-									stmp2 = str.substr(i7 + 1, i6 - i7);
+							} else if(po.rpn && f->args() == 1 && str_index > 0 && str[str_index - 1] != LEFT_PARENTHESIS_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {
+								size_t i7 = i6;
+								int nr_of_p = 0, nr_of_op = 0;
+								bool b_started = false;
+								while(i7 != 0) {
+									if(nr_of_p > 0) {
+										if(str[i7] == LEFT_PARENTHESIS_CH) {
+											nr_of_p--;
+											if(nr_of_p == 0 && nr_of_op == 0) break;
+										} else if(str[i7] == RIGHT_PARENTHESIS_CH) {
+											nr_of_p++;
+										}
+									} else if(nr_of_p == 0 && is_in(OPERATORS SPACE RIGHT_PARENTHESIS, str[i7])) {
+										if(nr_of_op == 0 && b_started) {
+											i7++;
+											break;
+										} else {
+											if(is_in(OPERATORS, str[i7])) {
+												nr_of_op++;
+												b_started = false;
+											} else if(str[i7] == RIGHT_PARENTHESIS_CH) {
+												nr_of_p++;
+												b_started = true;
+											} else if(b_started) {
+												nr_of_op--;
+												b_started = false;
+											}
+										}
+									} else {
+										b_started = true;
+									}
+									i7--;
 								}
+								stmp2 = str.substr(i7, i6 - i7 + 1);
 								stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 								if(f == f_vector) stmp += i2s(parseAddVectorId(stmp2, po));
 								else stmp += i2s(parseAddId(f, stmp2, po));
 								stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-								if(i7 == string::npos) {
-									str.replace(0, str_index + name_length, stmp);
-								} else {
-									str.replace(i7 + 1, str_index + name_length - i7 - 1, stmp);
-								}
+								str.replace(i7, str_index + name_length - i7, stmp);
 								str_index += name_length;
 								moved_forward = true;
 							} else {
