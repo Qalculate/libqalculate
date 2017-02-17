@@ -1,9 +1,13 @@
+2017-02-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix functions with RPN syntax
+	* Swap command for RPN stack manipulation in qalc
+
 2017-02-16 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Do not always reparse expression when parse options have changed
 	* Introduce message categories and stages
-	* Hide parsing stage messages when only recalculating or angle unit has changed in qalc
-	* Fix functions with RPN syntax
+	* Hide parsing stage messages when only recalculating or angle unit has changed in qalc	
 
 2017-02-15 Hanna Knutsson <hanna_k@fmgirl.com>
 

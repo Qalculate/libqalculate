@@ -1543,6 +1543,49 @@ int main(int argc, char *argv[]) {
 				puts("");
 			}
 		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "swap", _("swap"))) {
+			if(CALCULATOR->RPNStackSize() == 0) {
+				PUTS_UNICODE(_("The RPN stack is empty."));
+			} else if(CALCULATOR->RPNStackSize() == 1) {
+				PUTS_UNICODE(_("The RPN stack only contains one value."));
+			} else {
+				CALCULATOR->moveRPNRegisterUp(2);
+			}
+		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "swap", _("swap"))) {
+			if(CALCULATOR->RPNStackSize() == 0) {
+				PUTS_UNICODE(_("The RPN stack is empty."));
+			} else if(CALCULATOR->RPNStackSize() == 1) {
+				PUTS_UNICODE(_("The RPN stack only contains one value."));
+			} else {
+				int index1 = 0, index2 = 0;
+				str = str.substr(ispace + 1, slen - (ispace + 1));
+				string str2 = "";
+				remove_blank_ends(str);
+				ispace = str.find_first_of(SPACES);
+				if(ispace != string::npos) {
+					str2 = str.substr(ispace + 1, str.length() - (ispace + 1));
+					str = str.substr(0, ispace);
+					remove_blank_ends(str2);
+					remove_blank_ends(str);
+				}
+				index1 = s2i(str);
+				if(str2.empty()) index2 = 1;
+				else index2 = s2i(str2);				
+				if(index1 < 0) index1 = (int) CALCULATOR->RPNStackSize() + 1 + index1;
+				if(index2 < 0) index2 = (int) CALCULATOR->RPNStackSize() + 1 + index2;
+				cout << index1 << ":" << index2 << endl;
+				if(index1 <= 0 || index1 > (int) CALCULATOR->RPNStackSize() || (!str2.empty() && (index2 <= 0 || index2 > (int) CALCULATOR->RPNStackSize()))) {
+					PUTS_UNICODE(_("The specified RPN stack index does not exist."));
+				} else if(index1 > index2) {					
+					CALCULATOR->moveRPNRegister((size_t) index2, (size_t) index1);
+					CALCULATOR->moveRPNRegister((size_t) index1 - 1, (size_t) index2);
+				} else if(index1 != index2) {
+					CALCULATOR->moveRPNRegister((size_t) index1, (size_t) index2);
+					CALCULATOR->moveRPNRegister((size_t) index2 - 1, (size_t) index1);
+				}
+			}
+		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear stack", _("clear stack"))) {
 			CALCULATOR->clearRPNStack();
 		//qalc command
@@ -1861,6 +1904,7 @@ int main(int argc, char *argv[]) {
 			FPUTS_UNICODE(_("set"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("VALUE")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("simplify")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("stack")); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("swap"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("INDEX 1"), stdout); fputs("] [", stdout); fputs(_("INDEX 2"), stdout); PUTS_UNICODE("]"); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("to"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("convert"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("UNIT or \"TO\" COMMAND")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("variable"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("EXPRESSION"), stdout); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("quit"), stdout); fputs("/", stdout); PUTS_UNICODE(_("exit")); CHECK_IF_SCREEN_FILLED_PUTS("");
@@ -2450,6 +2494,14 @@ int main(int argc, char *argv[]) {
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "stack", _("stack"))) {
 				puts("");
 				PUTS_UNICODE(_("Displays the RPN stack."));
+				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "swap", _("swap"))) {
+				puts("");
+				PUTS_UNICODE(_("Swaps position of values on the RPN stack."));
+				puts("");
+				PUTS_UNICODE(_("If no index is specified the values on the top of the stack (index 1 and index 2) will be swapped and if only one index is specified, the value at this index will be swapped with the top value. Index 1 is the top of stack and negative index values counts from the bottom of the stack."));
+				puts("");
+				PUTS_UNICODE(_("Example: swap 2 4"));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base"))) {
 				puts("");
