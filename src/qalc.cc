@@ -1517,7 +1517,34 @@ int main(int argc, char *argv[]) {
 			set_option(str);
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "rpn", _("rpn"))) {
-			set_option(str);
+			str = str.substr(ispace + 1, slen - (ispace + 1));
+			remove_blank_ends(str);
+			if(EQUALS_IGNORECASE_AND_LOCAL(str, "syntax", _("syntax"))) {
+				if(!evalops.parse_options.rpn) {
+					evalops.parse_options.rpn = true;
+					expression_format_updated(false);
+				}
+				rpn_mode = false;
+				CALCULATOR->clearRPNStack();
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "stack", _("stack"))) {
+				if(evalops.parse_options.rpn) {
+					evalops.parse_options.rpn = false;
+					expression_format_updated(false);
+				}
+				rpn_mode = true;
+			} else {
+				int v = s2b(str); 
+				if(v < 0) {
+					PUTS_UNICODE(_("Illegal value")); 
+				} else {
+					rpn_mode = v;
+				}
+				if(evalops.parse_options.rpn != rpn_mode) {
+					evalops.parse_options.rpn = rpn_mode;
+					expression_format_updated(false);
+				}
+				if(!rpn_mode) CALCULATOR->clearRPNStack();
+			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "exrates", _("exrates"))) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
@@ -1574,7 +1601,6 @@ int main(int argc, char *argv[]) {
 				else index2 = s2i(str2);				
 				if(index1 < 0) index1 = (int) CALCULATOR->RPNStackSize() + 1 + index1;
 				if(index2 < 0) index2 = (int) CALCULATOR->RPNStackSize() + 1 + index2;
-				cout << index1 << ":" << index2 << endl;
 				if(index1 <= 0 || index1 > (int) CALCULATOR->RPNStackSize() || (!str2.empty() && (index2 <= 0 || index2 > (int) CALCULATOR->RPNStackSize()))) {
 					PUTS_UNICODE(_("The specified RPN stack index does not exist."));
 				} else if(index1 > index2) {					
@@ -1586,8 +1612,106 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "move", _("move"))) {
+			if(CALCULATOR->RPNStackSize() == 0) {
+				PUTS_UNICODE(_("The RPN stack is empty."));
+			} else if(CALCULATOR->RPNStackSize() == 1) {
+				PUTS_UNICODE(_("The RPN stack only contains one value."));
+			} else {
+				int index1 = 0, index2 = 0;
+				str = str.substr(ispace + 1, slen - (ispace + 1));
+				string str2 = "";
+				remove_blank_ends(str);
+				ispace = str.find_first_of(SPACES);
+				if(ispace != string::npos) {
+					str2 = str.substr(ispace + 1, str.length() - (ispace + 1));
+					str = str.substr(0, ispace);
+					remove_blank_ends(str2);
+					remove_blank_ends(str);
+				}
+				index1 = s2i(str);
+				if(str2.empty()) index2 = 1;
+				else index2 = s2i(str2);				
+				if(index1 < 0) index1 = (int) CALCULATOR->RPNStackSize() + 1 + index1;
+				if(index2 < 0) index2 = (int) CALCULATOR->RPNStackSize() + 1 + index2;
+				if(index1 <= 0 || index1 > (int) CALCULATOR->RPNStackSize() || (!str2.empty() && (index2 <= 0 || index2 > (int) CALCULATOR->RPNStackSize()))) {
+					PUTS_UNICODE(_("The specified RPN stack index does not exist."));
+				} else {
+					CALCULATOR->moveRPNRegister((size_t) index1, (size_t) index2);
+				}
+			}
+		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rotate", _("rotate"))) {
+			if(CALCULATOR->RPNStackSize() == 0) {
+				PUTS_UNICODE(_("The RPN stack is empty."));
+			} else if(CALCULATOR->RPNStackSize() == 1) {
+				PUTS_UNICODE(_("The RPN stack only contains one value."));
+			} else {
+				CALCULATOR->moveRPNRegister(1, CALCULATOR->RPNStackSize());
+			}
+		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "rotate", _("rotate"))) {
+			if(CALCULATOR->RPNStackSize() == 0) {
+				PUTS_UNICODE(_("The RPN stack is empty."));
+			} else if(CALCULATOR->RPNStackSize() == 1) {
+				PUTS_UNICODE(_("The RPN stack only contains one value."));
+			} else {
+				str = str.substr(ispace + 1, slen - (ispace + 1));
+				remove_blank_ends(str);
+				if(EQUALS_IGNORECASE_AND_LOCAL(str, "up", _("up"))) {
+					CALCULATOR->moveRPNRegister(1, CALCULATOR->RPNStackSize());
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "down", _("down"))) {
+					CALCULATOR->moveRPNRegister(CALCULATOR->RPNStackSize(), 1);
+				} else {
+					PUTS_UNICODE(_("Illegal value"));
+				}
+			}
+		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "copy", _("copy"))) {
+			if(CALCULATOR->RPNStackSize() == 0) {
+				PUTS_UNICODE(_("The RPN stack is empty."));
+			} else {
+				CALCULATOR->RPNStackEnter(new MathStructure(*CALCULATOR->getRPNRegister(1)));
+			}
+		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "copy", _("copy"))) {
+			if(CALCULATOR->RPNStackSize() == 0) {
+				PUTS_UNICODE(_("The RPN stack is empty."));
+			} else {
+				str = str.substr(ispace + 1, slen - (ispace + 1));
+				remove_blank_ends(str);
+				int index1 = s2i(str);
+				if(index1 < 0) index1 = (int) CALCULATOR->RPNStackSize() + 1 + index1;
+				if(index1 <= 0 || index1 > (int) CALCULATOR->RPNStackSize()) {
+					PUTS_UNICODE(_("The specified RPN stack index does not exist."));
+				} else {
+					CALCULATOR->RPNStackEnter(new MathStructure(*CALCULATOR->getRPNRegister((size_t) index1)));
+				}
+			}
+		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear stack", _("clear stack"))) {
 			CALCULATOR->clearRPNStack();
+		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "pop", _("pop"))) {
+			if(CALCULATOR->RPNStackSize() == 0) {
+				PUTS_UNICODE(_("The RPN stack is empty."));
+			} else {
+				CALCULATOR->deleteRPNRegister(1);
+			}
+		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "pop", _("pop"))) {
+			if(CALCULATOR->RPNStackSize() == 0) {
+				PUTS_UNICODE(_("The RPN stack is empty."));
+			} else {
+				str = str.substr(ispace + 1, slen - (ispace + 1));
+				int index1 = s2i(str);
+				if(index1 < 0) index1 = (int) CALCULATOR->RPNStackSize() + 1 + index1;
+				if(index1 <= 0 || index1 > (int) CALCULATOR->RPNStackSize()) {
+					PUTS_UNICODE(_("The specified RPN stack index does not exist."));
+				} else {
+					CALCULATOR->deleteRPNRegister((size_t) index1);
+				}
+			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exact", _("exact"))) {
 			if(evalops.approximation != APPROXIMATION_EXACT) {
@@ -1883,8 +2007,7 @@ int main(int argc, char *argv[]) {
 			puts(""); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("approximate")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("assume"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("ASSUMPTIONS")); CHECK_IF_SCREEN_FILLED
-			FPUTS_UNICODE(_("base"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("BASE")); CHECK_IF_SCREEN_FILLED
-			PUTS_UNICODE(_("clear stack")); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("base"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("BASE")); CHECK_IF_SCREEN_FILLED			
 			FPUTS_UNICODE(_("delete"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("NAME")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("exact")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("exrates"), stdout);			
@@ -1893,21 +2016,29 @@ int main(int argc, char *argv[]) {
 			}			
 			puts(""); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("factor")); CHECK_IF_SCREEN_FILLED
-			FPUTS_UNICODE(_("function"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("EXPRESSION"), stdout); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("function"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("EXPRESSION")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("info")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("list")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("mode")); CHECK_IF_SCREEN_FILLED
-			FPUTS_UNICODE(_("rpn"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("ON/OFF")); CHECK_IF_SCREEN_FILLED
-			FPUTS_UNICODE(_("save"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("store"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("CATEGORY"), stdout); fputs("] [", stdout); fputs(_("TITLE"), stdout); PUTS_UNICODE("]"); CHECK_IF_SCREEN_FILLED
+			
+			FPUTS_UNICODE(_("save"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("store"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("CATEGORY"), stdout); fputs("] [", stdout); FPUTS_UNICODE(_("TITLE"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("save definitions")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("save mode")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("set"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("VALUE")); CHECK_IF_SCREEN_FILLED
-			PUTS_UNICODE(_("simplify")); CHECK_IF_SCREEN_FILLED
-			PUTS_UNICODE(_("stack")); CHECK_IF_SCREEN_FILLED
-			FPUTS_UNICODE(_("swap"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("INDEX 1"), stdout); fputs("] [", stdout); fputs(_("INDEX 2"), stdout); PUTS_UNICODE("]"); CHECK_IF_SCREEN_FILLED
+			PUTS_UNICODE(_("simplify")); CHECK_IF_SCREEN_FILLED			
 			FPUTS_UNICODE(_("to"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("convert"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("UNIT or \"TO\" COMMAND")); CHECK_IF_SCREEN_FILLED
-			FPUTS_UNICODE(_("variable"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("EXPRESSION"), stdout); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("variable"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("EXPRESSION"), stdout); CHECK_IF_SCREEN_FILLED_PUTS("");
 			FPUTS_UNICODE(_("quit"), stdout); fputs("/", stdout); PUTS_UNICODE(_("exit")); CHECK_IF_SCREEN_FILLED_PUTS("");
+			PUTS_UNICODE(_("Commands for RPN mode:")); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("rpn"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("STATE")); CHECK_IF_SCREEN_FILLED
+			PUTS_UNICODE(_("stack")); CHECK_IF_SCREEN_FILLED
+			PUTS_UNICODE(_("clear stack")); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("copy"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("INDEX"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("move"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("INDEX 1"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("INDEX 2")); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("pop"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("INDEX"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("rotate"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("DIRECTION"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("swap"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("INDEX 1"), stdout); fputs("] [", stdout); FPUTS_UNICODE(_("INDEX 2"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED			
+			CHECK_IF_SCREEN_FILLED_PUTS("");
 			PUTS_UNICODE(_("Type help COMMAND for more information (example: help save).")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("Type info NAME for information about a function, variable or unit (example: info sin).")); CHECK_IF_SCREEN_FILLED_PUTS("");
 			PUTS_UNICODE(_("For more information about mathematical expression, different options, and a complete list of functions, variables and units, see the relevant sections in the manual of the graphical user interface (available at http://qalculate.github.io/manual/index.html)."));
@@ -2485,11 +2616,19 @@ int main(int argc, char *argv[]) {
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rpn", _("rpn"))) {
 				puts("");
-				PUTS_UNICODE(_("(De)activates the Reverse Polish Notation mode."));
+				PUTS_UNICODE(_("(De)activates the Reverse Polish Notation stack and syntax."));
+				puts("");
+				PUTS_UNICODE(_("\"syntax\" activates only the RPN syntax and \"stack\" enables the RPN stack."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear stack", _("clear stack"))) {
 				puts("");
-				PUTS_UNICODE(_("Clears the RPN stack."));
+				PUTS_UNICODE(_("Clears the entire RPN stack."));
+				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "pop", _("pop"))) {
+				puts("");
+				PUTS_UNICODE(_("Removes the top of the RPN stack or the value at the specified index."));
+				puts("");
+				PUTS_UNICODE(_("Index 1 is the top of stack and negative index values counts from the bottom of the stack."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "stack", _("stack"))) {
 				puts("");
@@ -2499,9 +2638,31 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Swaps position of values on the RPN stack."));
 				puts("");
-				PUTS_UNICODE(_("If no index is specified the values on the top of the stack (index 1 and index 2) will be swapped and if only one index is specified, the value at this index will be swapped with the top value. Index 1 is the top of stack and negative index values counts from the bottom of the stack."));
+				FPUTS_UNICODE(_("If no index is specified, the values on the top of the stack (index 1 and index 2) will be swapped and if only one index is specified, the value at this index will be swapped with the top value."), stdout);
+				fputs(" ", stdout);
+				PUTS_UNICODE(_("Index 1 is the top of stack and negative index values counts from the bottom of the stack."));
 				puts("");
 				PUTS_UNICODE(_("Example: swap 2 4"));
+				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "copy", _("copy"))) {
+				puts("");
+				PUTS_UNICODE(_("Duplicates a value on the RPN stack to the top of the stack."));
+				puts("");
+				FPUTS_UNICODE(_("If no index is specified, the top of the stack is duplicated."), stdout);
+				fputs(" ", stdout);
+				PUTS_UNICODE(_("Index 1 is the top of stack and negative index values counts from the bottom of the stack."));
+				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rotate", _("rotate"))) {
+				puts("");
+				PUTS_UNICODE(_("Rotates the RPN stack up (default) or down."));
+				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "move", _("move"))) {
+				puts("");
+				PUTS_UNICODE(_("Changes the position of a value on the RPN stack."));
+				puts("");
+				PUTS_UNICODE(_("Index 1 is the top of stack and negative index values counts from the bottom of the stack."));
+				puts("");
+				PUTS_UNICODE(_("Example: move 2 4"));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base"))) {
 				puts("");
