@@ -523,6 +523,7 @@ static const struct ParseOptions {
 	bool convert_temperature_units;
 	/// Parsing mode. Default: PARSING_MODE_ADAPTIVE
 	ParsingMode parsing_mode;
+	
 	ParseOptions() : variables_enabled(true), functions_enabled(true), unknowns_enabled(true), units_enabled(true), rpn(false), base(BASE_DECIMAL), limit_implicit_multiplication(false), read_precision(DONT_READ_PRECISION), dot_as_separator(false), brackets_as_parentheses(false), angle_unit(ANGLE_UNIT_NONE), unended_function(NULL), preserve_format(false), default_dataset(NULL), convert_temperature_units(true), parsing_mode(PARSING_MODE_ADAPTIVE) {}
 } default_parse_options;
 

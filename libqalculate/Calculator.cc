@@ -1855,17 +1855,20 @@ bool Calculator::calculateRPN(MathOperation op, int msecs, const EvaluationOptio
 		if(parsed_struct) parsed_struct->clear();
 	} else if(rpn_stack.size() == 1) {
 		if(parsed_struct) {
-			parsed_struct->clear();
+			parsed_struct->set(*rpn_stack.back());
 			if(op == OPERATION_SUBTRACT) {
-				parsed_struct->transform(STRUCT_ADDITION, *rpn_stack.back());
-				(*parsed_struct)[1].transform(STRUCT_NEGATE);
+				parsed_struct->transform(STRUCT_NEGATE);
 			} else if(op == OPERATION_DIVIDE) {
 				parsed_struct->transform(STRUCT_DIVISION, *rpn_stack.back());
 			} else {
 				parsed_struct->add(*rpn_stack.back(), op);
 			}
 		}
-		mstruct = new MathStructure();
+		if(op == OPERATION_SUBTRACT) {
+			mstruct = new MathStructure();
+		} else {
+			mstruct = new MathStructure(*rpn_stack.back());
+		}
 		mstruct->add(*rpn_stack.back(), op);
 	} else {
 		if(parsed_struct) {
