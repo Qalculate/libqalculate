@@ -1,7 +1,6 @@
-2017-02-18 Hanna Knutsson <hanna_k@fmgirl.com>
+2017-02-20 Hanna Knutsson <hanna_k@fmgirl.com>
 
-	* Add copy register button and modify the behaviour of the swap button
-	* Add buttons for arithmetics next to the RPN stack
+	* Use top of the stack twice (instead of zero) for operations (except subtract) when only one value is available
 
 2017-02-18 Hanna Knutsson <hanna_k@fmgirl.com>
 
