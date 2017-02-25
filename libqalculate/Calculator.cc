@@ -1471,13 +1471,13 @@ void Calculator::error(bool critical, const char *TEMPLATE, ...) {
 void Calculator::message(MessageType mtype, int message_category, const char *TEMPLATE, ...) {
 	va_list ap;
 	va_start(ap, TEMPLATE);
-	error(mtype, message_category, TEMPLATE, ap);
+	message(mtype, message_category, TEMPLATE, ap);
 	va_end(ap);
 }
 void Calculator::message(MessageType mtype, const char *TEMPLATE, ...) {
 	va_list ap;
 	va_start(ap, TEMPLATE);
-	error(mtype, MESSAGE_CATEGORY_NONE, TEMPLATE, ap);
+	message(mtype, MESSAGE_CATEGORY_NONE, TEMPLATE, ap);
 	va_end(ap);
 }
 void Calculator::message(MessageType mtype, int message_category, const char *TEMPLATE, va_list ap) {

@@ -727,7 +727,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	xmlFreeDoc(doc);
 	b_loaded = true;
 	if(!scopyright.empty()) {
-		CALCULATOR->message(MESSAGE_INFORMATION, "%s", scopyright.c_str(), NULL);
+		CALCULATOR->message(MESSAGE_INFORMATION, scopyright.c_str(), NULL);
 	}
 	return true;
 }
