@@ -40,7 +40,7 @@
 
 2017-01-26 Hanna Knutsson <hanna_k@fmgirl.com>
 
-	* Do not raise by exponent numerator larger than 10 000 or smaller than -10 000, when exact exponantiation has failed (fixes slow calculation of for expample 2^0.333333333 in "try exact" mode).
+	* Do not raise by exponent numerator larger than 10 000 or smaller than -10 000, when exact exponantiation has failed (fixes slow calculation of for example 2^0.333333333 in "try exact" mode).
 
 2016-12-13 Hanna Knutsson <hanna_k@fmgirl.com>
 
