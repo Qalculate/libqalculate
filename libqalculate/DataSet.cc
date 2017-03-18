@@ -739,8 +739,8 @@ int DataSet::saveObjects(const char *file_name, bool save_global) {
 		gchar *gstr = g_build_filename(getLocalDataDir().c_str(), "definitions", NULL);		
 		g_mkdir(gstr, S_IRWXU);
 		gchar *gstr2 = g_build_filename(gstr, "datasets", NULL);
-		g_mkdir(filename.c_str(), S_IRWXU);
-		gchar *gstr3 = g_build_filename(gstr, sfile.c_str(), NULL);
+		g_mkdir(gstr2, S_IRWXU);
+		gchar *gstr3 = g_build_filename(gstr2, sfile.c_str(), NULL);
 		filename = gstr3;
 		g_free(gstr);
 		g_free(gstr2);
