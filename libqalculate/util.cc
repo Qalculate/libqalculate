@@ -19,7 +19,6 @@
 #include <time.h>
 #include <fstream>
 #ifdef __unix__
-#	include <utime.h>
 #	include <sys/types.h>
 #	include <sys/stat.h>
 #	include <unistd.h>
@@ -782,39 +781,6 @@ string getLocalTmpDir() {
 	string tmpdir = gstr;
 	g_free(gstr);
 	return tmpdir;
-}
-bool move_file(const char *from_file, const char *to_file) {
-
-	ifstream source(from_file);
-	if(source.fail()) {
-		source.close();
-		return false;
-	}
-
-	ofstream dest(to_file);	
-	if(dest.fail()) {
-		source.close();
-		dest.close();	
-		return false;
-	}
-
-	dest << source.rdbuf();
-
-	source.close();
-	dest.close();
-	
-	struct stat stats_from;
-	if(stat(from_file, &stats_from) == 0) {
-		struct utimbuf to_times;
-		to_times.actime = stats_from.st_atime;
-		to_times.modtime = stats_from.st_mtime;
-		utime(to_file, &to_times);
-	}
-	
-	remove(from_file);
-	
-	return true;
-	
 }
 
 string getPackageDataDir() {

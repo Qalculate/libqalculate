@@ -3601,7 +3601,7 @@ void load_preferences() {
 	stifle_history(100);
 	if(oldhistoryfile) {
 		read_history(oldhistoryfile);
-		move_file(oldhistoryfile, historyfile);
+		g_rename(oldhistoryfile, historyfile);
 		g_free(oldhistoryfile);
 	} else {
 		read_history(historyfile);		
@@ -3794,7 +3794,7 @@ void load_preferences() {
 		}
 		fclose(file);
 		if(gstr_oldfile) {			
-			move_file(gstr_oldfile, gstr_file);
+			g_rename(gstr_oldfile, gstr_file);
 			g_free(gstr_oldfile);
 		}
 	} else {

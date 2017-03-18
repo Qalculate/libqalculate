@@ -444,7 +444,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 					dir = g_build_filename(getLocalDataDir().c_str(), "definitions", "datasets", NULL);
 					g_mkdir(dir, S_IRWXU);
 					g_free(dir);
-					move_file(filepath_old, filepath);
+					g_rename(filepath_old, filepath);
 					dir = g_build_filename(getOldLocalDir().c_str(), "definitions", "datasets", NULL);
 					g_rmdir(dir);
 					g_free(dir);
@@ -475,7 +475,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 				dir = g_build_filename(getLocalDataDir().c_str(), "definitions", "datasets", NULL);
 				g_mkdir(dir, S_IRWXU);
 				g_free(dir);
-				move_file(filepath_old, filepath);
+				g_rename(filepath_old, filepath);
 				dir = g_build_filename(getOldLocalDir().c_str(), "definitions", "datasets", NULL);
 				g_rmdir(dir);
 				g_free(dir);

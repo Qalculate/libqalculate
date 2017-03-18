@@ -5899,7 +5899,7 @@ bool Calculator::loadLocalDefinitions() {
 				for(list<string>::iterator it = eps_old.begin(); it != eps_old.end(); ++it) {	
 					gchar *old_filename = g_build_filename(homedir_old, (*it).c_str(), NULL);
 					gchar *new_filename = g_build_filename(homedir, (*it).c_str(), NULL);
-					move_file(old_filename, new_filename);
+					g_rename(old_filename, new_filename);
 					g_free(old_filename);
 					g_free(new_filename);
 				}
@@ -8929,7 +8929,7 @@ bool Calculator::loadExchangeRates() {
 			doc = xmlParseFile(filename_old);
 			if(doc) {
 				g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
-				move_file(filename_old, filename);
+				g_rename(filename_old, filename);
 				g_rmdir(getOldLocalDir().c_str());
 			}
 		}
