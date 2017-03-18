@@ -25,6 +25,10 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #endif
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
 
 class ViewThread : public Thread {
 protected:
@@ -59,9 +63,6 @@ bool interactive_mode;
 bool ask_questions;
 
 bool result_only;
-
-fd_set in_set;
-struct timeval timeout;
 
 static char buffer[1000];
 
@@ -1140,9 +1141,6 @@ int main(int argc, char *argv[]) {
 	view_thread = new ViewThread;
 	view_thread->start();
 	command_thread = new CommandThread;
-	
-	timeout.tv_sec = 0;
-	timeout.tv_usec = 100000;
 
 	if(!command_file.empty()) {
 		if(command_file == "-") {
@@ -2824,6 +2822,21 @@ void ViewThread::run() {
 	}
 }
 
+static bool wait_for_key_press(int timeout_ms) {
+#ifdef _WIN32
+	return WaitForSingleObject(GetStdHandle(STD_INPUT_HANDLE), timeout_ms) == WAIT_OBJECT_0;
+#else
+	fd_set in_set;
+	struct timeval timeout;
+
+	timeout.tv_sec = 0;
+	timeout.tv_usec = timeout_ms*1000;
+
+	FD_ZERO(&in_set);
+	FD_SET(STDIN_FILENO, &in_set);
+	return select(FD_SETSIZE, &in_set, NULL, NULL, &timeout) > 0;
+#endif
+}
 
 void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_index, bool register_moved, bool noprint) {
 
@@ -2900,9 +2913,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		if(cfile) {
 			nanosleep(&rtime, NULL);
 		} else {
-			FD_ZERO(&in_set);
-			FD_SET(STDIN_FILENO, &in_set);
-			if(select(FD_SETSIZE, &in_set, NULL, NULL, &timeout) > 0) {
+			if(wait_for_key_press(100)) {
 #ifdef HAVE_LIBREADLINE		
 				if(use_readline) c = rl_read_key();
 				else read(STDIN_FILENO, &c, 1);
@@ -3092,9 +3103,7 @@ void execute_command(int command_type, bool show_result) {
 		if(cfile) {
 			nanosleep(&rtime, NULL);
 		} else {
-			FD_ZERO(&in_set);
-			FD_SET(STDIN_FILENO, &in_set);
-			if(select(FD_SETSIZE, &in_set, NULL, NULL, &timeout) > 0) {
+			if(wait_for_key_press(100)) {
 #ifdef HAVE_LIBREADLINE
 				if(use_readline) c = rl_read_key();
 				else read(STDIN_FILENO, &c, 1);
@@ -3363,9 +3372,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		if(cfile) {
 			nanosleep(&rtime, NULL);
 		} else {
-			FD_ZERO(&in_set);
-			FD_SET(STDIN_FILENO, &in_set);
-			if(select(FD_SETSIZE, &in_set, NULL, NULL, &timeout) > 0) {
+			if(wait_for_key_press(100)) {
 #ifdef HAVE_LIBREADLINE		
 				if(use_readline) c = rl_read_key();
 				else read(STDIN_FILENO, &c, 1);
