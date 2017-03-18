@@ -106,16 +106,7 @@ PKG_CHECK_MODULES(GLIB, [
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
-PKG_CHECK_MODULES(CLN, [ cln >= 1.2 ],
-                  [have_recent_cln=yes], [have_recent_cln=no])
-AC_SUBST(CLN_CLAGS)
-AC_SUBST(CLN_LIBS)
-
-if test "$have_recent_cln" = "yes" ; then
-   AC_DEFINE(HAVE_RECENT_CLN, 1, [Define if CLN can be used])
-   LIBS="$LIBS $CLN_LIBS"
-   CPPFLAGS="$CPPFLAGS $CLN_CFLAGS"
-fi
+PKG_CHECK_MODULES(CLN, [ cln >= 1.2 ])
 
 dnl  --------------------------------
 dnl | check for readline            |-----------------------------------------
