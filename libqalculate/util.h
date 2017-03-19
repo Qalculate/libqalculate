@@ -101,6 +101,7 @@ string getPackageDataDir();
 string getPackageLocaleDir();
 string getLocalDataDir();
 string getLocalTmpDir();
+bool move_file(const char *from_file, const char *to_file);
 
 class Thread {
 public:
