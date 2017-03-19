@@ -709,7 +709,7 @@ extern Calculator *calculator;
 #define	NOT			"!"
 #define	EQUALS			"="
 #define SINF			"INF"
-#define SNAN			"NAN"
+//#define SNAN			"NAN"
 #define UNDERSCORE		"_"
 
 #define NOT_IN_NAMES 	RESERVED OPERATORS SPACES SEXADOT DOT VECTOR_WRAPS PARENTHESISS COMMAS
