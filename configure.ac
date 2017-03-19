@@ -65,10 +65,15 @@ if test "x$GCC" = "xyes"; then
 fi
 changequote([,])dnl
 
+dnl check for threading model
+dnl TODO
+AC_DEFINE([HAVE_PTHREADS],1,
+        [Define if pthreads are present.])
+
 dnl libtool versioning for libqalculate
 
 dnl increment if the interface has additions, changes, removals.
-QALCULATE_CURRENT=7
+QALCULATE_CURRENT=8
 
 dnl increment any time the source changes; set to 
 dnl  0 if you increment CURRENT
@@ -101,16 +106,7 @@ PKG_CHECK_MODULES(GLIB, [
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
-PKG_CHECK_MODULES(CLN, [ cln >= 1.2 ],
-                  [have_recent_cln=yes], [have_recent_cln=no])
-AC_SUBST(CLN_CLAGS)
-AC_SUBST(CLN_LIBS)
-
-if test "$have_recent_cln" = "yes" ; then
-   AC_DEFINE(HAVE_RECENT_CLN, 1, [Define if CLN can be used])
-   LIBS="$LIBS $CLN_LIBS"
-   CPPFLAGS="$CPPFLAGS $CLN_CFLAGS"
-fi
+PKG_CHECK_MODULES(CLN, [ cln >= 1.2 ])
 
 dnl  --------------------------------
 dnl | check for readline            |-----------------------------------------
@@ -121,7 +117,7 @@ LN_QALCULATE=""
 USE_READLINE="yes"
 READLINE_LIBS=""
 if test "x$enable_textport" = "xyes" ; then
-  QALCULATE_TEXT="qalc"
+  QALCULATE_TEXT="qalc$EXEEXT"
   LN_QALCULATE="qalc"
 
   AC_MSG_CHECKING([whether to use readline])
@@ -206,11 +202,19 @@ AC_SUBST(LN_QALCULATE)
 
 QALCULATE_DEFS2DOC=""
 if test "x$enable_defs2doc" = "xyes" ; then
-	QALCULATE_DEFS2DOC="defs2doc"
+	QALCULATE_DEFS2DOC="defs2doc$EXEEXT"
 fi
 AC_SUBST(QALCULATE_DEFS2DOC)
 
 AC_SEARCH_LIBS([nanosleep],[rt posix4])
+
+AC_MSG_CHECKING(if shared package data paths are absolute)
+if test "$host_os" == "mingw32"; then
+	AC_MSG_RESULT(no)
+else
+	AC_DEFINE(USE_ABSOLUTE_PACKAGE_PATHS, 1, [Whether shared package data paths are absolute])
+	AC_MSG_RESULT(yes)
+fi
 
 dnl  -------------------------------------
 dnl | internationalization (i18n) support |------------------------------------

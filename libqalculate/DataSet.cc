@@ -23,6 +23,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <glib.h>
+#include <glib/gstdio.h>
 
 #define XML_GET_STRING_FROM_PROP(node, name, str)	value = xmlGetProp(node, (xmlChar*) name); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = ""; 
 #define XML_GET_STRING_FROM_TEXT(node, str)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = "";
@@ -436,19 +437,19 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 				gchar *filepath_old = g_build_filename(getOldLocalDir().c_str(), "definitions", "datasets", sfile.substr(i + 1, sfile.length() - (i + 1)).c_str(), NULL);
 				if(loadObjects(filepath_old, true)) {
 					b = true;
-					mkdir(getLocalDataDir().c_str(), S_IRWXU);
+					g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
 					gchar *dir = g_build_filename(getLocalDataDir().c_str(), "definitions", NULL);
-					mkdir(dir, S_IRWXU);
+					g_mkdir(dir, S_IRWXU);
 					g_free(dir);
 					dir = g_build_filename(getLocalDataDir().c_str(), "definitions", "datasets", NULL);
-					mkdir(dir, S_IRWXU);
+					g_mkdir(dir, S_IRWXU);
 					g_free(dir);
-					move_file(filepath_old, filepath);
+					g_rename(filepath_old, filepath);
 					dir = g_build_filename(getOldLocalDir().c_str(), "definitions", "datasets", NULL);
-					rmdir(dir);
+					g_rmdir(dir);
 					g_free(dir);
 					dir = g_build_filename(getOldLocalDir().c_str(), "definitions", NULL);
-					rmdir(dir);
+					g_rmdir(dir);
 					g_free(dir);
 				}
 				g_free(filepath_old);
@@ -457,7 +458,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 		}
 		return b;
 	} else {
-		gchar *filepath = g_build_filename(PACKAGE_DATA_DIR, "qalculate", sfile.c_str(), NULL);
+		gchar *filepath = g_build_filename(getPackageDataDir().c_str(), "qalculate", sfile.c_str(), NULL);
 		bool b = loadObjects(filepath, false);
 		g_free(filepath);
 		filepath = g_build_filename(getLocalDataDir().c_str(), "definitions", "datasets", sfile.c_str(), NULL);
@@ -467,19 +468,19 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 			gchar *filepath_old = g_build_filename(getOldLocalDir().c_str(), "definitions", "datasets", sfile.c_str(), NULL);
 			if(loadObjects(filepath_old, true)) {
 				b = true;
-				mkdir(getLocalDataDir().c_str(), S_IRWXU);
+				g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
 				gchar *dir = g_build_filename(getLocalDataDir().c_str(), "definitions", NULL);
-				mkdir(dir, S_IRWXU);
+				g_mkdir(dir, S_IRWXU);
 				g_free(dir);
 				dir = g_build_filename(getLocalDataDir().c_str(), "definitions", "datasets", NULL);
-				mkdir(dir, S_IRWXU);
+				g_mkdir(dir, S_IRWXU);
 				g_free(dir);
-				move_file(filepath_old, filepath);
+				g_rename(filepath_old, filepath);
 				dir = g_build_filename(getOldLocalDir().c_str(), "definitions", "datasets", NULL);
-				rmdir(dir);
+				g_rmdir(dir);
 				g_free(dir);
 				dir = g_build_filename(getOldLocalDir().c_str(), "definitions", NULL);
-				rmdir(dir);
+				g_rmdir(dir);
 				g_free(dir);
 			}
 			g_free(filepath_old);
@@ -734,12 +735,12 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 int DataSet::saveObjects(const char *file_name, bool save_global) {
 	string str, filename;
 	if(!save_global && !file_name) {
-		mkdir(getLocalDataDir().c_str(), S_IRWXU);
+		g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
 		gchar *gstr = g_build_filename(getLocalDataDir().c_str(), "definitions", NULL);		
-		mkdir(gstr, S_IRWXU);
+		g_mkdir(gstr, S_IRWXU);
 		gchar *gstr2 = g_build_filename(gstr, "datasets", NULL);
-		mkdir(filename.c_str(), S_IRWXU);
-		gchar *gstr3 = g_build_filename(gstr, sfile.c_str(), NULL);
+		g_mkdir(gstr2, S_IRWXU);
+		gchar *gstr3 = g_build_filename(gstr2, sfile.c_str(), NULL);
 		filename = gstr3;
 		g_free(gstr);
 		g_free(gstr2);

@@ -1,7 +1,8 @@
 *.lo
 *.o
 *.la
-*Makefile*
+Makefile
+Makefile.in
 *~
 data/*.xml
 *.gmo

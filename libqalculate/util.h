@@ -13,6 +13,19 @@
 #define UTIL_H
 
 #include <libqalculate/includes.h>
+/* threads */
+#ifdef __unix__
+#	include <pthread.h>
+#	include <unistd.h>
+#elif defined(_WIN32)
+#	include <windows.h>
+#else
+#	error "No thread support available on this platform"
+#endif
+
+#ifdef _WIN32
+	#define srand48 srand
+#endif
 
 /** @file */
 
@@ -86,8 +99,62 @@ void parse_qalculate_version(string qalculate_version, int *qalculate_version_nu
 
 string getOldLocalDir();
 string getLocalDir();
+string getPackageDataDir();
+string getPackageLocaleDir();
 string getLocalDataDir();
 string getLocalTmpDir();
-bool move_file(const char *from_file, const char *to_file);
+
+class Thread {
+public:
+	Thread();
+	virtual ~Thread();
+	bool start();
+	bool cancel();
+	template <class T> bool write(T data) {
+#ifdef __unix__
+		fwrite(&data, sizeof(T), 1, m_pipe_w);
+		fflush(m_pipe_w);
+		return true;
+
+#elif defined(_WIN32)
+		int ret = PostThreadMessage(m_threadID, WM_USER, (WPARAM) data, 0);
+		return (ret != 0);
+#endif
+	}
+
+	// FIXME: this is technically wrong -- needs memory barriers (std::atomic?)
+	volatile bool running;
+
+protected:
+	virtual void run() = 0;
+	template <class T> T read() {
+#ifdef __unix__
+		T x;
+		fread(&x, sizeof(T), 1, m_pipe_r);
+		return x;
+
+#elif defined(_WIN32)
+		MSG msg;
+		int ret = GetMessage(&msg, NULL, WM_USER, WM_USER);
+		return (T) msg.wParam;
+#endif
+	}
+
+private:
+#ifdef __unix__
+	static void doCleanup(void *data);
+	static void *doRun(void *data);
+
+	pthread_t m_thread;
+	pthread_attr_t m_thread_attr;
+	FILE *m_pipe_r, *m_pipe_w;
+
+#elif defined(_WIN32)
+	static DWORD WINAPI doRun(void *data);
+
+	HANDLE m_thread, m_threadReadyEvent;
+	DWORD m_threadID;
+#endif
+};
 
 #endif

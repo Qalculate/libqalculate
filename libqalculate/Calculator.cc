@@ -26,7 +26,6 @@
 #include <locale.h>
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
-#include <pwd.h>
 #include <unistd.h>
 #include <time.h>
 #include <utime.h>
@@ -34,9 +33,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
-#include <sys/wait.h>
 #include <queue>
 #include <glib.h>
+#include <glib/gstdio.h>
 //#include <dlfcn.h>
 
 #include <cln/cln.h>
@@ -201,6 +200,12 @@ enum {
 	PROC_NO_COMMAND
 };
 
+class CalculateThread : public Thread {
+protected:
+	virtual void run();
+};
+
+
 void autoConvert(const MathStructure &morig, MathStructure &mconv, const EvaluationOptions &eo) {
 	switch(eo.auto_post_conversion) {
 		case POST_CONVERSION_BEST: {
@@ -213,15 +218,10 @@ void autoConvert(const MathStructure &morig, MathStructure &mconv, const Evaluat
 	}
 }
 
-void *calculate_proc(void *pipe) {
-	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	FILE *calculate_pipe = (FILE*) pipe;
+void CalculateThread::run() {
 	while(true) {
-		bool b_parse = true;
-		fread(&b_parse, sizeof(bool), 1, calculate_pipe);
-		void *x = NULL;
-		fread(&x, sizeof(void*), 1, calculate_pipe);
+		bool b_parse = read<bool>();
+		void *x = read<void *>();
 		MathStructure *mstruct = (MathStructure*) x;
 		if(b_parse) {
 			mstruct->setAborted();
@@ -267,7 +267,6 @@ void *calculate_proc(void *pipe) {
 		}
 		CALCULATOR->b_busy = false;
 	}
-	return NULL;
 }
 
 class Calculator_p {
@@ -281,7 +280,7 @@ class Calculator_p {
 Calculator::Calculator() {	
 
 #ifdef ENABLE_NLS
-	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+	bindtextdomain (GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 #endif
 
@@ -437,18 +436,13 @@ Calculator::Calculator() {
 	b_busy = false;
 	b_gnuplot_open = false;
 	gnuplot_pipe = NULL;
-	
-	calculate_thread_stopped = true;
-	pthread_attr_init(&calculate_thread_attr);
-	int pipe_wr[] = {0, 0};
-	pipe(pipe_wr);
-	calculate_pipe_r = fdopen(pipe_wr[0], "r");
-	calculate_pipe_w = fdopen(pipe_wr[1], "w");
 
+	calculate_thread = new CalculateThread;
 }
 Calculator::~Calculator() {
 	closeGnuplot();
 	delete priv;
+	delete calculate_thread;
 }
 
 Unit *Calculator::getGraUnit() {
@@ -1593,10 +1587,10 @@ void Calculator::clearBuffers() {
 	}
 }
 void Calculator::abort() {
-	if(calculate_thread_stopped) {
+	if(!calculate_thread->running) {
 		b_busy = false;
 	} else {
-		pthread_cancel(calculate_thread);
+		calculate_thread->cancel();
 		restoreState();
 		stopped_messages_count.clear();
 		stopped_warnings_count.clear();
@@ -1606,7 +1600,7 @@ void Calculator::abort() {
 		if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
 		tmp_rpn_mstruct = NULL;
 		b_busy = false;
-		pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r);
+		calculate_thread->start();
 	}
 }
 void Calculator::abort_this() {
@@ -1619,15 +1613,14 @@ void Calculator::abort_this() {
 	if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
 	tmp_rpn_mstruct = NULL;
 	b_busy = false;
-	calculate_thread_stopped = true;
 	pthread_exit(/* Solaris 2.6 needs a cast */ (void*) PTHREAD_CANCELED);
 }
 bool Calculator::busy() {
 	return b_busy;
 }
 void Calculator::terminateThreads() {
-	if(!calculate_thread_stopped) {
-		pthread_cancel(calculate_thread);
+	if(calculate_thread->running) {
+		calculate_thread->cancel();
 	}
 }
 
@@ -1784,20 +1777,16 @@ bool Calculator::calculateRPNRegister(size_t index, int msecs, const EvaluationO
 bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index, int msecs, const EvaluationOptions &eo) {
 	saveState();
 	b_busy = true;
-	if(calculate_thread_stopped) {
-		pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r);
-		calculate_thread_stopped = false;
+	if(!calculate_thread->running) {
+		calculate_thread->start();
 	}
 	bool had_msecs = msecs > 0;
 	tmp_evaluationoptions = eo;
 	tmp_proc_command = command;
 	tmp_rpnindex = index;
 	tmp_rpn_mstruct = mstruct;
-	bool b_parse = false;
-	fwrite(&b_parse, sizeof(bool), 1, calculate_pipe_w);
-	void *x = (void*) mstruct;
-	fwrite(&x, sizeof(void*), 1, calculate_pipe_w);
-	fflush(calculate_pipe_w);
+	calculate_thread->write(false);
+	calculate_thread->write((void*) mstruct);
 	struct timespec rtime;
 	rtime.tv_sec = 0;
 	rtime.tv_nsec = 1000000;
@@ -1815,9 +1804,8 @@ bool Calculator::calculateRPN(string str, int command, size_t index, int msecs, 
 	MathStructure *mstruct = new MathStructure();
 	saveState();
 	b_busy = true;
-	if(calculate_thread_stopped) {
-		pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r);
-		calculate_thread_stopped = false;
+	if(!calculate_thread->running) {
+		calculate_thread->start();
 	}
 	bool had_msecs = msecs > 0;
 	expression_to_calculate = str;
@@ -1828,11 +1816,8 @@ bool Calculator::calculateRPN(string str, int command, size_t index, int msecs, 
 	tmp_parsedstruct = parsed_struct;
 	tmp_tostruct = to_struct;
 	tmp_maketodivision = make_to_division;
-	bool b_parse = true;
-	fwrite(&b_parse, sizeof(bool), 1, calculate_pipe_w);
-	void *x = (void*) mstruct;
-	fwrite(&x, sizeof(void*), 1, calculate_pipe_w);
-	fflush(calculate_pipe_w);
+	calculate_thread->write(true);
+	calculate_thread->write((void*) mstruct);
 	struct timespec rtime;
 	rtime.tv_sec = 0;
 	rtime.tv_nsec = 1000000;
@@ -2180,9 +2165,8 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 	mstruct->set(string(_("calculating...")));
 	saveState();
 	b_busy = true;
-	if(calculate_thread_stopped) {
-		pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r);
-		calculate_thread_stopped = false;
+	if(!calculate_thread->running) {
+		calculate_thread->start();
 	}
 	bool had_msecs = msecs > 0;
 	expression_to_calculate = str;
@@ -2192,11 +2176,8 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 	tmp_parsedstruct = parsed_struct;
 	tmp_tostruct = to_struct;
 	tmp_maketodivision = make_to_division;
-	bool b_parse = true;
-	fwrite(&b_parse, sizeof(bool), 1, calculate_pipe_w);
-	void *x = (void*) mstruct;
-	fwrite(&x, sizeof(void*), 1, calculate_pipe_w);
-	fflush(calculate_pipe_w);
+	calculate_thread->write(true);
+	calculate_thread->write((void*) mstruct);
 	struct timespec rtime;
 	rtime.tv_sec = 0;
 	rtime.tv_nsec = 1000000;
@@ -2461,18 +2442,16 @@ MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_u
 	mstruct *= from_unit;
 	saveState();
 	b_busy = true;
-	if(calculate_thread_stopped) {
-		pthread_create(&calculate_thread, &calculate_thread_attr, calculate_proc, calculate_pipe_r);
-		calculate_thread_stopped = false;
+	if(!calculate_thread->running) {
+		calculate_thread->start();
 	}
 	bool had_msecs = msecs > 0;
 	tmp_evaluationoptions = eo;
 	tmp_proc_command = PROC_NO_COMMAND;
 	bool b_parse = false;
-	fwrite(&b_parse, sizeof(bool), 1, calculate_pipe_w);
+	calculate_thread->write(b_parse);
 	void *x = (void*) &mstruct;
-	fwrite(&x, sizeof(void*), 1, calculate_pipe_w);
-	fflush(calculate_pipe_w);
+	calculate_thread->write(x);
 	struct timespec rtime;
 	rtime.tv_sec = 0;
 	rtime.tv_nsec = 1000000;
@@ -2489,10 +2468,9 @@ MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_u
 	mstruct.divide(to_unit, true);
 	saveState();
 	b_busy = true;
-	fwrite(&b_parse, sizeof(bool), 1, calculate_pipe_w);
+	calculate_thread->write(b_parse);
 	x = (void*) &mstruct;
-	fwrite(&x, sizeof(void*), 1, calculate_pipe_w);
-	fflush(calculate_pipe_w);
+	calculate_thread->write(x);
 	while(msecs > 0 && b_busy) {
 		nanosleep(&rtime, NULL);
 		msecs -= 1;
@@ -5832,7 +5810,7 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 }
 
 bool Calculator::loadGlobalDefinitions() {
-	gchar *dirname = g_build_filename(PACKAGE_DATA_DIR, "qalculate", NULL);
+	gchar *dirname = g_build_filename(getPackageDataDir().c_str(), "qalculate", NULL);
 	gchar *filename = g_build_filename(dirname, "prefixes.xml", NULL);
 	bool b = true;
 	if(!loadDefinitions(filename, false)) {
@@ -5868,7 +5846,7 @@ bool Calculator::loadGlobalDefinitions() {
 	return b;
 }
 bool Calculator::loadGlobalDefinitions(string filename) {
-	gchar *filepath = g_build_filename(PACKAGE_DATA_DIR, "qalculate", filename.c_str(), NULL);
+	gchar *filepath = g_build_filename(getPackageDataDir().c_str(), "qalculate", filename.c_str(), NULL);
 	bool b = loadDefinitions(filepath, false);
 	g_free(filepath);
 	return b;
@@ -5898,9 +5876,9 @@ bool Calculator::loadLocalDefinitions() {
 		gchar *homedir_old = g_build_filename(getOldLocalDir().c_str(), "definitions", NULL);
 		if(g_file_test(homedir_old, G_FILE_TEST_IS_DIR)) {
 			if(!g_file_test(getLocalDataDir().c_str(), G_FILE_TEST_IS_DIR)) {
-				mkdir(getLocalDataDir().c_str(), S_IRWXU);
+				g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
 			}
-			if(mkdir(homedir, S_IRWXU) == 0) {
+			if(g_mkdir(homedir, S_IRWXU) == 0) {
 				list<string> eps_old;
 				struct dirent *ep_old;	
 				DIR *dp_old = opendir(homedir_old);
@@ -5921,12 +5899,12 @@ bool Calculator::loadLocalDefinitions() {
 				for(list<string>::iterator it = eps_old.begin(); it != eps_old.end(); ++it) {	
 					gchar *old_filename = g_build_filename(homedir_old, (*it).c_str(), NULL);
 					gchar *new_filename = g_build_filename(homedir, (*it).c_str(), NULL);
-					move_file(old_filename, new_filename);
+					g_rename(old_filename, new_filename);
 					g_free(old_filename);
 					g_free(new_filename);
 				}
-				if(rmdir(homedir_old) == 0) {
-					rmdir(getOldLocalDir().c_str());
+				if(g_rmdir(homedir_old) == 0) {
+					g_rmdir(getOldLocalDir().c_str());
 				}
 			}
 		}
@@ -7767,9 +7745,9 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 }
 bool Calculator::saveDefinitions() {
 
-	mkdir(getLocalDataDir().c_str(), S_IRWXU);
+	g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
 	gchar *homedir = g_build_filename(getLocalDataDir().c_str(), "definitions", NULL);
-	mkdir(homedir, S_IRWXU);
+	g_mkdir(homedir, S_IRWXU);
 	bool b = true;
 	gchar *filename = g_build_filename(homedir, "functions.xml", NULL);
 	if(!saveFunctions(filename)) {
@@ -8950,9 +8928,9 @@ bool Calculator::loadExchangeRates() {
 		if(g_file_test(filename_old, G_FILE_TEST_EXISTS)) {
 			doc = xmlParseFile(filename_old);
 			if(doc) {
-				mkdir(getLocalDataDir().c_str(), S_IRWXU);
-				move_file(filename_old, filename);
-				rmdir(getOldLocalDir().c_str());
+				g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
+				g_rename(filename_old, filename);
+				g_rmdir(getOldLocalDir().c_str());
 			}
 		}
 		g_free(filename_old);
@@ -9068,7 +9046,7 @@ string Calculator::getExchangeRatesUrl() {
 }
 bool Calculator::fetchExchangeRates(int timeout, string wget_args) {
 	int status = 0;
-	mkdir(getLocalDataDir().c_str(), S_IRWXU);	
+	g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
 	string cmdline;
 	gchar *filename = g_build_filename(getLocalDataDir().c_str(), "eurofxref-daily.xml", NULL);
 	if(hasGVFS()) {
@@ -9124,11 +9102,13 @@ bool Calculator::canPlot() {
 	}
 	fputs("show version\n", pipe);
 	return pclose(pipe) == 0;*/
+#ifdef __unix__
 	gchar *gstr = g_find_program_in_path("gnuplot");
 	if(gstr) {
 		g_free(gstr);
 		return true;
 	}
+#endif
 	return false;
 }
 MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po) {
@@ -9207,7 +9187,7 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent) {
 
 	string homedir = getLocalTmpDir();
-	mkdir(homedir.c_str(), S_IRWXU);
+	g_mkdir(homedir.c_str(), S_IRWXU);
 
 	string commandline_extra;
 	string title;
@@ -9512,6 +9492,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 	
 	return invokeGnuplot(plot, commandline_extra, persistent);
 }
+#ifdef __unix__
 bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
 	FILE *pipe = NULL;
 	if(!b_gnuplot_open || !gnuplot_pipe || persistent || commandline_extra != gnuplot_cmdline) {
@@ -9565,4 +9546,15 @@ bool Calculator::closeGnuplot() {
 bool Calculator::gnuplotOpen() {
 	return b_gnuplot_open && gnuplot_pipe;
 }
+#else
+bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
+	return false;
+}
+bool Calculator::closeGnuplot() {
+	return true;
+}
+bool Calculator::gnuplotOpen() {
+	return false;
+}
+#endif
 

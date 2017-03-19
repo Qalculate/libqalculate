@@ -5,8 +5,10 @@
 AM_CPPFLAGS = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-	-I../libqalculate \
-	@GLIB_CFLAGS@
+	-I$(top_srcdir) \
+	-I$(top_srcdir)/libqalculate \
+	@GLIB_CFLAGS@ \
+	@CLN_CFLAGS@
 
 bin_PROGRAMS = @QALCULATE_TEXT@
 noinst_PROGRAMS = @QALCULATE_DEFS2DOC@
@@ -16,6 +18,7 @@ qalc_SOURCES = qalc.cc
 
 qalc_LDADD = \
 	@GLIB_LIBS@ \
+	@CLN_LIBS@ \
 	@READLINE_LIBS@ \
 	../libqalculate/libqalculate.la
 
