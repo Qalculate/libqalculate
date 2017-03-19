@@ -14,13 +14,11 @@
 
 #include <libqalculate/includes.h>
 /* threads */
-#ifdef __unix__
-#	include <pthread.h>
-#	include <unistd.h>
-#elif defined(_WIN32)
+#ifdef _WIN32
 #	include <windows.h>
 #else
-#	error "No thread support available on this platform"
+#	include <pthread.h>
+#	include <unistd.h>
 #endif
 
 #ifdef _WIN32
@@ -111,14 +109,13 @@ public:
 	bool start();
 	bool cancel();
 	template <class T> bool write(T data) {
-#ifdef __unix__
+#ifdef _WIN32
+		int ret = PostThreadMessage(m_threadID, WM_USER, (WPARAM) data, 0);
+		return (ret != 0);
+#else
 		fwrite(&data, sizeof(T), 1, m_pipe_w);
 		fflush(m_pipe_w);
 		return true;
-
-#elif defined(_WIN32)
-		int ret = PostThreadMessage(m_threadID, WM_USER, (WPARAM) data, 0);
-		return (ret != 0);
 #endif
 	}
 
@@ -128,32 +125,30 @@ public:
 protected:
 	virtual void run() = 0;
 	template <class T> T read() {
-#ifdef __unix__
-		T x;
-		fread(&x, sizeof(T), 1, m_pipe_r);
-		return x;
-
-#elif defined(_WIN32)
+#ifdef _WIN32
 		MSG msg;
 		int ret = GetMessage(&msg, NULL, WM_USER, WM_USER);
 		return (T) msg.wParam;
+#else
+		T x;
+		fread(&x, sizeof(T), 1, m_pipe_r);
+		return x;
 #endif
 	}
 
 private:
-#ifdef __unix__
+#ifdef _WIN32
+	static DWORD WINAPI doRun(void *data);
+
+	HANDLE m_thread, m_threadReadyEvent;
+	DWORD m_threadID;
+#else
 	static void doCleanup(void *data);
 	static void *doRun(void *data);
 
 	pthread_t m_thread;
 	pthread_attr_t m_thread_attr;
 	FILE *m_pipe_r, *m_pipe_w;
-
-#elif defined(_WIN32)
-	static DWORD WINAPI doRun(void *data);
-
-	HANDLE m_thread, m_threadReadyEvent;
-	DWORD m_threadID;
 #endif
 };
 
