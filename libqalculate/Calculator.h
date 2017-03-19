@@ -15,7 +15,6 @@
 #include <libqalculate/includes.h>
 #include <libqalculate/util.h>
 #include <sys/time.h>
-#include <pthread.h>
 
 /** @file */
 
@@ -386,8 +385,8 @@ class Calculator {
 	//@{
 	/** Aborts the current calculation. */
 	void abort();
-	/** Aborts the current calculation. Used from within the calculation thread. */
-	void abort_this();
+	///** Aborts the current calculation. Used from within the calculation thread. */
+	//void abort_this();
 	/** Returns true if the calculate or print thread is busy. */
 	bool busy();
 	/** Saves the state of the calculator. Used internally to be able to restore the state after aborted calculation. */

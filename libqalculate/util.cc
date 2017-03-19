@@ -866,6 +866,8 @@ Thread::~Thread() {
 	CloseHandle(m_threadReadyEvent);
 }
 
+void Thread::enableAsynchronousCancel() {}
+
 DWORD WINAPI Thread::doRun(void *data) {
 	// create thread message queue
 	MSG msg;
@@ -921,17 +923,21 @@ void Thread::doCleanup(void *data) {
 	thread->running = false;
 }
 
-void *Thread::doRun(void *data) {
-	pthread_cleanup_push(&Thread::doCleanup, data);
-
+void Thread::enableAsynchronousCancel() {
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+}
+
+void *Thread::doRun(void *data) {
+
+	pthread_cleanup_push(&Thread::doCleanup, data);
 
 	Thread *thread = (Thread *) data;
 	thread->run();
 
 	pthread_cleanup_pop(1);
 	return NULL;
+
 }
 
 bool Thread::start() {

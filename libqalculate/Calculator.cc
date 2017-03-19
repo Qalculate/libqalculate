@@ -219,6 +219,7 @@ void autoConvert(const MathStructure &morig, MathStructure &mconv, const Evaluat
 }
 
 void CalculateThread::run() {
+	enableAsynchronousCancel();
 	while(true) {
 		bool b_parse = read<bool>();
 		void *x = read<void *>();
@@ -1603,7 +1604,7 @@ void Calculator::abort() {
 		calculate_thread->start();
 	}
 }
-void Calculator::abort_this() {
+/*void Calculator::abort_this() {
 	restoreState();
 	stopped_messages_count.clear();
 	stopped_warnings_count.clear();
@@ -1612,9 +1613,9 @@ void Calculator::abort_this() {
 	clearBuffers();
 	if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
 	tmp_rpn_mstruct = NULL;
-	b_busy = false;
-	pthread_exit(/* Solaris 2.6 needs a cast */ (void*) PTHREAD_CANCELED);
-}
+	b_busy = false;*/
+//	pthread_exit(/* Solaris 2.6 needs a cast */ (void*) PTHREAD_CANCELED);
+//}
 bool Calculator::busy() {
 	return b_busy;
 }

@@ -2787,7 +2787,8 @@ void ViewThread::run() {
 	
 		void *x = read<void *>();
 		MathStructure m(*((MathStructure*) x));
-		bool b_stack = read<bool>();
+		//bool b_stack = read<bool>();
+		read<bool>();
 		x = read<void *>();
 		if(x) {
 			PrintOptions po;
@@ -3031,6 +3032,9 @@ void on_abort_command() {
 }
 
 void CommandThread::run() {
+
+	enableAsynchronousCancel();
+
 	while(true) {
 	
 		int command_type = read<int>();

@@ -125,6 +125,7 @@ public:
 
 protected:
 	virtual void run() = 0;
+	void enableAsynchronousCancel();
 	template <class T> T read() {
 #ifdef _WIN32
 		MSG msg;
