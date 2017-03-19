@@ -2710,7 +2710,9 @@ bool Number::factorize(vector<Number> &factors) {
 				} catch(runtime_exception &e) {
 					CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
 				}
+#ifndef _WIN32
 				pthread_testcancel();
+#endif
 				if(b_zero) {
 					try {
 						inr = cln::exquo(inr, last_prime);
