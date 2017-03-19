@@ -17,11 +17,16 @@
 
 #include <glib.h>
 #include <time.h>
-#include <utime.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <fstream>
+#ifdef __unix__
+#	include <sys/types.h>
+#	include <sys/stat.h>
+#	include <unistd.h>
+#	include <pwd.h>
+#elif defined(_WIN32)
+#	include <windows.h>
+#	include <shlobj.h>
+#endif
 
 
 bool eqstr::operator()(const char *s1, const char *s2) const {
@@ -777,37 +782,132 @@ string getLocalTmpDir() {
 	g_free(gstr);
 	return tmpdir;
 }
-bool move_file(const char *from_file, const char *to_file) {
 
-	ifstream source(from_file);
-	if(source.fail()) {
-		source.close();
-		return false;
+string getPackageDataDir() {
+#ifdef USE_ABSOLUTE_PACKAGE_PATHS
+	string datadir(PACKAGE_DATA_DIR);
+	return datadir;
+#else
+	char exepath[MAX_PATH];
+	GetModuleFileName(NULL, exepath, MAX_PATH);
+	string datadir(exepath);
+	datadir.resize(datadir.find_last_of('\\'));
+	if (datadir.substr(datadir.length() - 3) == "bin") {
+		datadir.resize(datadir.find_last_of('\\'));
 	}
-
-	ofstream dest(to_file);	
-	if(dest.fail()) {
-		source.close();
-		dest.close();	
-		return false;
-	}
-
-	dest << source.rdbuf();
-
-	source.close();
-	dest.close();
-	
-	struct stat stats_from;
-	if(stat(from_file, &stats_from) == 0) {
-		struct utimbuf to_times;
-		to_times.actime = stats_from.st_atime;
-		to_times.modtime = stats_from.st_mtime;
-		utime(to_file, &to_times);
-	}
-	
-	remove(from_file);
-	
-	return true;
-	
+	datadir += "\\share";
+	return datadir;
+#endif
 }
 
+string getPackageLocaleDir() {
+#ifdef USE_ABSOLUTE_PACKAGE_PATHS
+	string localedir(PACKAGE_LOCALE_DIR);
+	return localedir;
+#else
+	gchar *dir = g_build_filename(getPackageDataDir().c_str(), "locale", NULL);
+	string localeDir(dir);
+	g_free(dir);
+	return localeDir;
+#endif
+}
+
+
+#ifdef __unix__
+
+Thread::Thread() :
+	running(false),
+	m_pipe_r(NULL),
+	m_pipe_w(NULL)
+{
+	pthread_attr_init(&m_thread_attr);
+	int pipe_wr[] = {0, 0};
+	pipe(pipe_wr);
+	m_pipe_r = fdopen(pipe_wr[0], "r");
+	m_pipe_w = fdopen(pipe_wr[1], "w");
+}
+
+Thread::~Thread() {
+	fclose(m_pipe_r);
+	fclose(m_pipe_w);
+	pthread_attr_destroy(&m_thread_attr);
+}
+
+void Thread::doCleanup(void *data) {
+	Thread *thread = (Thread *) data;
+	thread->running = false;
+}
+
+void *Thread::doRun(void *data) {
+	pthread_cleanup_push(&Thread::doCleanup, data);
+
+	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+
+	Thread *thread = (Thread *) data;
+	thread->run();
+
+	pthread_cleanup_pop(1);
+	return NULL;
+}
+
+bool Thread::start() {
+	int ret = pthread_create(&m_thread, &m_thread_attr, &Thread::doRun, this);
+	running = (ret == 0);
+	return running;
+}
+
+bool Thread::cancel() {
+	int ret = pthread_cancel(m_thread);
+	running = (ret != 0);
+	return !running;
+}
+
+#elif defined(_WIN32)
+
+
+Thread::Thread() :
+	running(false),
+	m_thread(NULL),
+	m_threadReadyEvent(NULL),
+	m_threadID(0)
+{
+	m_threadReadyEvent = CreateEvent(NULL, false, false, NULL);
+}
+
+Thread::~Thread() {
+	CloseHandle(m_threadReadyEvent);
+}
+
+DWORD WINAPI Thread::doRun(void *data) {
+	// create thread message queue
+	MSG msg;
+	PeekMessage(&msg, NULL, WM_USER, WM_USER, PM_NOREMOVE);
+
+	Thread *thread = (Thread *) data;
+	SetEvent(thread->m_threadReadyEvent);
+	thread->run();
+	return 0;
+}
+
+bool Thread::start() {
+	m_thread = CreateThread(NULL, 0, Thread::doRun, this, 0, &m_threadID);
+	if (m_thread == NULL) return false;
+	WaitForSingleObject(m_threadReadyEvent, INFINITE);
+	running = (m_thread != NULL);
+	return running;
+}
+
+bool Thread::cancel() {
+	// FIXME: this is dangerous
+	int ret = TerminateThread(m_thread, 0);
+	if (ret == 0) return false;
+	CloseHandle(m_thread);
+	m_thread = NULL;
+	m_threadID = 0;
+	running = false;
+	return true;
+}
+
+
+#endif
