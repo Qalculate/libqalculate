@@ -5389,8 +5389,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			return true;
 		}
 	}
-	
+
 	if(!po.rpn && po.parsing_mode == PARSING_MODE_ADAPTIVE && (i = str.find(DIVISION_CH, 1)) != string::npos && i + 1 != str.length()) {
+		bool prev_unit_only = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			bool b = false;
 			if(i > 2 && i < str.length() - 3 && str[i + 1] == ID_WRAP_LEFT_CH) {
@@ -5398,7 +5399,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				b = true;
 				bool had_unit = false;
 				MathStructure *m_temp = NULL, *m_temp2 = NULL;
-				while(b) {
+				while(b && !prev_unit_only) {
 					b = false;
 					size_t i4 = i2;
 					if(i2 > 2 && str[i2 - 1] == ID_WRAP_RIGHT_CH) {
@@ -5420,6 +5421,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				i3 = i;
 				b = had_unit;
 				had_unit = false;
+				bool had_nonunit = false;
 				while(b) {
 					size_t i4 = i3;
 					i3 = str.find(ID_WRAP_RIGHT_CH, i4 + 2);
@@ -5429,6 +5431,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp2 = priv->id_structs[id];
 					}
 					if(!m_temp2 || !m_temp2->isUnit()) {
+						had_nonunit = true;
 						b = false;
 						break;
 					}
@@ -5439,8 +5442,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					} else if(i3 < str.length() - 5 && str[i3 + 3] == ID_WRAP_LEFT_CH && str[i3 + 1] == POWER_CH && is_in(NUMBERS, str[i3 + 2])) {
 						b = true;
 						i3 += 2;
-					}					
+					}
 				}
+				if(had_unit && !had_nonunit) prev_unit_only = true;
 				b = had_unit;
 				if(b) {
 					if(i3 < str.length() - 2 && str[i3 + 1] == POWER_CH && is_in(NUMBERS, str[i3 + 2])) i3 += 2;
@@ -5482,7 +5486,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					}
 				}
 			}
-			i = str.find(DIVISION_CH, i + 1);			
+			i = str.find(DIVISION_CH, i + 1);
 		}
 	}
 	if(po.parsing_mode == PARSING_MODE_ADAPTIVE && !po.rpn) remove_blanks(str);
