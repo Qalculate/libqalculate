@@ -5408,7 +5408,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						i4 -= 2;
 					}
 					if(!b) {
-						if((i2 > 1 && is_in(NUMBERS, str[i2 - 1])) || (i2 > 2 && str[i2 - 1] == MULTIPLICATION_2_CH && is_not_in(OPERATORS, str[i2 - 2]))) had_nonunit = true;
+						if((i2 > 1 && is_not_in(OPERATORS MULTIPLICATION_2, str[i2 - 1])) || (i2 > 2 && str[i2 - 1] == MULTIPLICATION_2_CH && is_not_in(OPERATORS, str[i2 - 2]))) had_nonunit = true;
 						break;
 					}
 					i2 = str.rfind(ID_WRAP_LEFT_CH, i4 - 2);
