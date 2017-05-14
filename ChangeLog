@@ -1,3 +1,14 @@
+2017-05-14 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Use gio when available instead of deprecated gvfs-copy
+	* Save default preferences when running qalc the first time even if in non-interactive mode
+	* Fix ask if fetch exchange rates first qalc run
+
+2017-05-05 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* unit/unit/unit = (unit/unit)/unit with adaptive parsing
+	* Fix "1 W Ohm /K/K"
+
 2017-02-20 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Use top of the stack twice (instead of zero) for operations (except subtract) when only one value is available

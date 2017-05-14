@@ -43,7 +43,7 @@ protected:
 MathStructure *mstruct, *parsed_mstruct;
 KnownVariable *vans[5];
 string result_text, parsed_text;
-bool load_global_defs, fetch_exchange_rates_at_startup, first_time, first_qalculate_run, save_mode_on_exit, save_defs_on_exit;
+bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit;
 int auto_update_exchange_rates;
 PrintOptions printops, saved_printops;
 EvaluationOptions evalops, saved_evalops;
@@ -1095,13 +1095,13 @@ int main(int argc, char *argv[]) {
 		CALCULATOR->fetchExchangeRates(15);
 	}
 	if(load_global_defs && load_currencies) {
-		if(!fetch_exchange_rates_at_startup && first_qalculate_run && canfetch && ask_questions) {
-			if(ask_question(_("You need the download exchange rates to be able to convert between different currencies.\nYou can later get current exchange rates with the \"exchange rates\" command.\nDo you want to fetch exchange rates now from the Internet (default: yes)?"), true)) {
+		CALCULATOR->setExchangeRatesWarningEnabled(!interactive_mode && (!command_file.empty() || (result_only && !calc_arg.empty())));
+		if(!CALCULATOR->loadExchangeRates() && !fetch_exchange_rates_at_startup && first_time && canfetch && ask_questions) {
+			if(ask_question(_("You need the download exchange rates to be able to convert between different currencies.\nYou can later get current exchange rates with the \"exrates\" command.\nDo you want to fetch exchange rates now from the Internet (default: yes)?"), true)) {
 				CALCULATOR->fetchExchangeRates(15);
+				CALCULATOR->loadExchangeRates();
 			}
 		}
-		CALCULATOR->setExchangeRatesWarningEnabled(!interactive_mode && (!command_file.empty() || (result_only && !calc_arg.empty())));
-		CALCULATOR->loadExchangeRates();
 	}
 
 	string ans_str = _("ans");
@@ -3577,7 +3577,7 @@ void load_preferences() {
 	rpn_mode = false;
 	
 	save_mode_on_exit = true;
-	save_defs_on_exit = true;		
+	save_defs_on_exit = true;
 	auto_update_exchange_rates = -1;
 	first_time = false;
 
@@ -3599,7 +3599,7 @@ void load_preferences() {
 			g_free(historyfile);
 #endif
 			first_time = true;
-			set_saved_mode();
+			save_preferences(true);
 			return;
 		}
 #ifdef HAVE_LIBREADLINE
@@ -3810,6 +3810,9 @@ void load_preferences() {
 		}
 	} else {
 		first_time = true;
+		save_preferences(true);
+		g_free(gstr_file);
+		return;
 	}
 	g_free(gstr_file);
 	//remember start mode for when we save preferences

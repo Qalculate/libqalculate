@@ -9013,13 +9013,18 @@ bool Calculator::loadExchangeRates() {
 }
 bool Calculator::hasGVFS() {
 	if(has_gvfs >= 0) return has_gvfs > 0;
-	gchar *gstr = g_find_program_in_path("gvfs-copy");
+	gchar *gstr = g_find_program_in_path("gio");
 	if(gstr) {
 		g_free(gstr);
 		has_gvfs = 1;
 		return true;
 	}
-	g_free(gstr);
+	gstr = g_find_program_in_path("gvfs-copy");
+	if(gstr) {
+		g_free(gstr);
+		has_gvfs = 1;
+		return true;
+	}
 	has_gvfs = 0;
 	return has_gvfs > 0;
 }
@@ -9057,7 +9062,13 @@ bool Calculator::fetchExchangeRates(int timeout, string wget_args) {
 	string cmdline;
 	gchar *filename = g_build_filename(getLocalDataDir().c_str(), "eurofxref-daily.xml", NULL);
 	if(hasGVFS()) {
-		cmdline = "gvfs-copy https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+		gchar *gstr = g_find_program_in_path("gio");
+		if(gstr) {
+			g_free(gstr);
+			cmdline = "gio copy https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+		} else {
+			cmdline = "gvfs-copy https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+		}				
 		cmdline += " "; cmdline += filename;
 	} else {	
 		cmdline = "wget";
