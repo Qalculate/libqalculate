@@ -9,6 +9,14 @@
 	* unit/unit/unit = (unit/unit)/unit with adaptive parsing
 	* Fix "1 W Ohm /K/K"
 
+2017-03-31 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Build fixes (Check for libtoolize instead of libtool in autogen.sh; Include Doxyfile in dist files)
+
+2017-03-19 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Merge Windows support fork (chengsun)
+
 2017-02-20 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Use top of the stack twice (instead of zero) for operations (except subtract) when only one value is available
