@@ -23,6 +23,10 @@
 #include "Prefix.h"
 #include "Number.h"
 
+#if (defined(__clang__) && !defined char16_t)
+typedef __CHAR16_TYPE__ char16_t;
+#endif
+
 #include <locale.h>
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>

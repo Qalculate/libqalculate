@@ -52,7 +52,7 @@
 *
 * If the program uses autoconf, put the following in configure.ac:
 * \code PKG_CHECK_MODULES(QALCULATE, [
-*	libqalculate >= 0.9.11
+*	libqalculate >= 0.9.12
 *	])
 * AC_SUBST(QALCULATE_CFLAGS)
 * AC_SUBST(QALCULATE_LIBS) \endcode

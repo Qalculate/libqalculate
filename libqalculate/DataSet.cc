@@ -13,6 +13,10 @@
 
 #include "DataSet.h"
 
+#if (defined(__clang__) && !defined char16_t)
+typedef __CHAR16_TYPE__ char16_t;
+#endif
+
 #include "util.h"
 #include "Calculator.h"
 #include "MathStructure.h"
