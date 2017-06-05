@@ -212,11 +212,14 @@ protected:
 
 void autoConvert(const MathStructure &morig, MathStructure &mconv, const EvaluationOptions &eo) {
 	switch(eo.auto_post_conversion) {
-		case POST_CONVERSION_BEST: {
-			mconv.set(CALCULATOR->convertToBestUnit(morig, eo));
+		case POST_CONVERSION_OPTIMAL: {
+			mconv.set(CALCULATOR->convertToBestUnit(morig, eo, false));
 		}
 		case POST_CONVERSION_BASE: {
 			mconv.set(CALCULATOR->convertToBaseUnits(morig, eo));
+		}
+		case POST_CONVERSION_OPTIMAL_SI: {
+			mconv.set(CALCULATOR->convertToBestUnit(morig, eo, true));
 		}
 		default: {}
 	}
@@ -2299,13 +2302,18 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	} else {
 		if(to_struct) to_struct->setUndefined();
 		switch(eo.auto_post_conversion) {
-			case POST_CONVERSION_BEST: {
-				mstruct.set(convertToBestUnit(mstruct, eo));
+			case POST_CONVERSION_OPTIMAL: {
+				mstruct.set(convertToBestUnit(mstruct, eo, false));
 				current_stage = MESSAGE_STAGE_UNSET;
 				return mstruct;
 			}
 			case POST_CONVERSION_BASE: {
 				mstruct.set(convertToBaseUnits(mstruct, eo));
+				current_stage = MESSAGE_STAGE_UNSET;
+				return mstruct;
+			}
+			case POST_CONVERSION_OPTIMAL_SI: {
+				mstruct.set(convertToBestUnit(mstruct, eo, true));
 				current_stage = MESSAGE_STAGE_UNSET;
 				return mstruct;
 			}
@@ -2767,7 +2775,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 					b_exp = au->baseExponent();
 					new_points = 0;
 					new_points_m = 0;
-					if(b_exp != 1 || bu->subtype() == SUBTYPE_COMPOSITE_UNIT) {					
+					if(b_exp != 1 || bu->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 						if(bu->subtype() == SUBTYPE_BASE_UNIT) {
 							for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
 								if(cu->get(i2, &exp) == bu) {
@@ -2942,7 +2950,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 	}
 	return u;
 }
-MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const EvaluationOptions &eo) {
+MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const EvaluationOptions &eo, bool convert_to_si_units) {
 	EvaluationOptions eo2 = eo;
 	//eo2.calculate_functions = false;
 	eo2.sync_units = false;
@@ -2961,7 +2969,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 		case STRUCT_ADDITION: {
 			MathStructure mstruct_new(mstruct);
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
-				mstruct_new[i] = convertToBestUnit(mstruct_new[i], eo);
+				mstruct_new[i] = convertToBestUnit(mstruct_new[i], eo, convert_to_si_units);
 			}
 			mstruct_new.childrenUpdated();
 			mstruct_new.eval(eo2);
@@ -2970,26 +2978,58 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 		case STRUCT_POWER: {
 			MathStructure mstruct_new(mstruct);
 			if(mstruct_new.base()->isUnit() && mstruct_new.exponent()->isNumber() && mstruct_new.exponent()->number().isInteger()) {
+				int old_points = mstruct_new.exponent()->number().intValue();
+				if(old_points < 0) old_points = -old_points;
+				bool is_si_units = mstruct_new.base()->unit()->isSIUnit();
 				if(mstruct_new.base()->unit()->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-					return convertToBestUnit(convertToBaseUnits(mstruct_new, eo), eo);
-				}
-				CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
-				cu->add(mstruct_new.base()->unit(), mstruct_new.exponent()->number().intValue());
-				Unit *u = getBestUnit(cu);
-				if(u != cu) {
+					mstruct_new = convertToBestUnit(convertToBaseUnits(mstruct_new, eo), eo, convert_to_si_units);
+					if(mstruct_new == mstruct) return mstruct_new;
+				} else {
+					CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
+					cu->add(mstruct_new.base()->unit(), mstruct_new.exponent()->number().intValue());
+					Unit *u = getBestUnit(cu);
+					if(u == cu) {
+						delete cu;
+						return mstruct_new;
+					}
 					mstruct_new = convert(mstruct_new, u, eo, true);
 					if(!u->isRegistered()) delete u;
+					delete cu;
 				}
-				delete cu;
-			} else {				
-				mstruct_new[0] = convertToBestUnit(mstruct_new[0], eo);
-				mstruct_new[1] = convertToBestUnit(mstruct_new[1], eo);
+				int new_points = 0;
+				bool new_is_si_units = true;
+				if(mstruct_new.isMultiplication()) {
+					for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
+						if(mstruct_new.getChild(i)->isUnit()) {
+							if(new_is_si_units && !mstruct_new.getChild(i)->unit()->isSIUnit()) new_is_si_units = false;
+							new_points++;
+						} else if(mstruct_new.getChild(i)->isPower() && mstruct_new.getChild(i)->base()->isUnit() && mstruct_new.getChild(i)->exponent()->isNumber() && mstruct_new.getChild(i)->exponent()->number().isInteger()) {
+							int points = mstruct_new.getChild(i)->exponent()->number().intValue();
+							if(new_is_si_units && !mstruct_new.getChild(i)->base()->unit()->isSIUnit()) new_is_si_units = false;
+							if(points < 0) new_points -= points;
+							else new_points += points;
+						}
+					}
+				} else if(mstruct_new.isPower() && mstruct_new.base()->isUnit() && mstruct_new.exponent()->isNumber() && mstruct_new.exponent()->number().isInteger()) {
+					int points = mstruct_new.exponent()->number().intValue();
+					if(new_is_si_units && !mstruct_new.base()->unit()->isSIUnit()) new_is_si_units = false;
+					if(points < 0) new_points = -points;
+					else new_points = points;
+				} else if(mstruct_new.isUnit()) {
+					if(!mstruct_new.unit()->isSIUnit()) new_is_si_units = false;
+					new_points = 1;
+				}
+				if((new_points > old_points && (!convert_to_si_units || is_si_units)) || (new_points == old_points && (!convert_to_si_units || (is_si_units && !new_is_si_units)))) return mstruct;
+			} else {
+				mstruct_new[0] = convertToBestUnit(mstruct_new[0], eo, convert_to_si_units);
+				mstruct_new[1] = convertToBestUnit(mstruct_new[1], eo, convert_to_si_units);
 				mstruct_new.childrenUpdated();
 				mstruct_new.eval(eo2);
 			}
 			return mstruct_new;
 		}
 		case STRUCT_UNIT: {
+			if(!convert_to_si_units || mstruct.unit()->isSIUnit()) return mstruct;
 			Unit *u = getBestUnit(mstruct.unit());
 			if(u != mstruct.unit()) {
 				MathStructure mstruct_new = convert(mstruct, u, eo, true);
@@ -2999,31 +3039,89 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
-			MathStructure mstruct_new(convertToBaseUnits(mstruct, eo));
-			if(mstruct_new.type() != STRUCT_MULTIPLICATION) return convertToBestUnit(mstruct_new, eo);
-			CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
-			bool b = false;
-			for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
-				if(mstruct_new.getChild(i)->isUnit()) {
-					b = true;
-					cu->add(mstruct_new.getChild(i)->unit());
-				} else if(mstruct_new.getChild(i)->isPower() && mstruct_new.getChild(i)->base()->isUnit() && mstruct_new.getChild(i)->exponent()->isNumber() && mstruct_new.getChild(i)->exponent()->number().isInteger()) {
-					b = true;
-					cu->add(mstruct_new.getChild(i)->base()->unit(), mstruct_new.getChild(i)->exponent()->number().intValue());
+			int old_points = 0;
+			bool is_si_units = true;
+			bool child_updated = false;
+			MathStructure mstruct_old(mstruct);
+			for(size_t i = 1; i <= mstruct_old.countChildren(); i++) {
+				if(mstruct_old.getChild(i)->isUnit()) {
+					if(is_si_units && !mstruct_old.getChild(i)->unit()->isSIUnit()) is_si_units = false;
+					old_points++;
+				} else if(mstruct_old.getChild(i)->isPower() && mstruct_old.getChild(i)->base()->isUnit() && mstruct_old.getChild(i)->exponent()->isNumber() && mstruct_old.getChild(i)->exponent()->number().isInteger()) {
+					int points = mstruct_old.getChild(i)->exponent()->number().intValue();
+					if(is_si_units && !mstruct_old.getChild(i)->base()->unit()->isSIUnit()) is_si_units = false;
+					if(points < 0) old_points -= points;
+					else old_points += points;
 				} else {
-					mstruct_new[i - 1] = convertToBestUnit(mstruct_new[i - 1], eo);
-					mstruct_new.childUpdated(i);
+					mstruct_old[i - 1] = convertToBestUnit(mstruct_old[i - 1], eo, convert_to_si_units);
+					mstruct_old.childUpdated(i);
+					child_updated = true;
 				}
 			}
-			if(b) {
-				Unit *u = getBestUnit(cu);
-				if(u != cu) {
-					mstruct_new = convert(mstruct_new, u, eo, true);
-					if(!u->isRegistered()) delete u;
-				}
+			if(child_updated) mstruct_old.eval(eo2);
+			if((!convert_to_si_units || is_si_units) && old_points <= 1) {
+				return mstruct_old;
 			}
-			delete cu;
-			mstruct_new.eval(eo2);
+			MathStructure mstruct_new(convertToBaseUnits(mstruct_old, eo));	
+			if(mstruct_new.type() != STRUCT_MULTIPLICATION) {
+				mstruct_new = convertToBestUnit(mstruct_new, eo, convert_to_si_units);
+			} else {
+				CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
+				bool b = false;
+				child_updated = false;
+				for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
+					if(mstruct_new.getChild(i)->isUnit()) {
+						b = true;
+						cu->add(mstruct_new.getChild(i)->unit());
+					} else if(mstruct_new.getChild(i)->isPower() && mstruct_new.getChild(i)->base()->isUnit() && mstruct_new.getChild(i)->exponent()->isNumber() && mstruct_new.getChild(i)->exponent()->number().isInteger()) {
+						b = true;
+						cu->add(mstruct_new.getChild(i)->base()->unit(), mstruct_new.getChild(i)->exponent()->number().intValue());
+					} else {
+						mstruct_new[i - 1] = convertToBestUnit(mstruct_new[i - 1], eo, convert_to_si_units);
+						mstruct_new.childUpdated(i);
+						child_updated = true;
+					}
+				}
+				bool is_converted = false;
+				if(b) {
+					Unit *u = getBestUnit(cu);
+					if(u != cu) {
+						mstruct_new = convert(mstruct_new, u, eo, true);
+						if(!u->isRegistered()) delete u;
+						is_converted = true;
+					}
+				}
+				delete cu;
+				if((!b || !is_converted) && (!convert_to_si_units || is_si_units)) {
+					return mstruct_old;
+				}
+				if(child_updated) mstruct_new.eval(eo2);
+			}
+			if(mstruct_new == mstruct_old) return mstruct_old;
+			int new_points = 0;
+			bool new_is_si_units = true;
+			if(mstruct_new.isMultiplication()) {
+				for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
+					if(mstruct_new.getChild(i)->isUnit()) {
+						if(new_is_si_units && !mstruct_new.getChild(i)->unit()->isSIUnit()) new_is_si_units = false;
+						new_points++;
+					} else if(mstruct_new.getChild(i)->isPower() && mstruct_new.getChild(i)->base()->isUnit() && mstruct_new.getChild(i)->exponent()->isNumber() && mstruct_new.getChild(i)->exponent()->number().isInteger()) {
+						int points = mstruct_new.getChild(i)->exponent()->number().intValue();
+						if(new_is_si_units && !mstruct_new.getChild(i)->base()->unit()->isSIUnit()) new_is_si_units = false;
+						if(points < 0) new_points -= points;
+						else new_points += points;
+					}
+				}
+			} else if(mstruct_new.isPower() && mstruct_new.base()->isUnit() && mstruct_new.exponent()->isNumber() && mstruct_new.exponent()->number().isInteger()) {
+				int points = mstruct_new.exponent()->number().intValue();
+				if(new_is_si_units && !mstruct_new.base()->unit()->isSIUnit()) new_is_si_units = false;
+				if(points < 0) new_points = -points;
+				else new_points = points;
+			} else if(mstruct_new.isUnit()) {
+				if(!mstruct_new.unit()->isSIUnit()) new_is_si_units = false;
+				new_points = 1;
+			}
+			if((new_points > old_points && (!convert_to_si_units || is_si_units)) || (new_points == old_points && (!convert_to_si_units || (is_si_units && !new_is_si_units)))) return mstruct_old;
 			return mstruct_new;
 		}
 		default: {}

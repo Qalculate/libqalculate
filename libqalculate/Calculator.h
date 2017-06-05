@@ -609,7 +609,7 @@ class Calculator {
 	MathStructure convert(string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options);	
 	MathStructure convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);
 	Unit *getBestUnit(Unit *u, bool allow_only_div = false);
-	MathStructure convertToBestUnit(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);
+	MathStructure convertToBestUnit(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options, bool convert_to_si_units = false);
 	MathStructure convertToCompositeUnit(const MathStructure &mstruct, CompositeUnit *cu, const EvaluationOptions &eo = default_evaluation_options, bool always_convert = true);
 	MathStructure convertToMixedUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);
 	//@}

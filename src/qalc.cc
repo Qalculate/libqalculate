@@ -576,18 +576,18 @@ void set_option(string str) {
 		int v = -1;
 		MixedUnitsConversion muc = MIXED_UNITS_CONVERSION_DEFAULT;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) {v = POST_CONVERSION_NONE;  muc = MIXED_UNITS_CONVERSION_NONE;}
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "best", _("best"))) v = POST_CONVERSION_BEST;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimal", _("optimal"))) v = POST_CONVERSION_BEST;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "best", _("best"))) v = POST_CONVERSION_OPTIMAL_SI;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimal", _("optimal"))) v = POST_CONVERSION_OPTIMAL;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "base", _("base"))) v = POST_CONVERSION_BASE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = POST_CONVERSION_NONE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
-		if(v == 3) {
-			v = 2;
+		if(v == POST_CONVERSION_OPTIMAL + 1) {
+			v = POST_CONVERSION_BASE;
 			muc = MIXED_UNITS_CONVERSION_DEFAULT;
 		}
-		if(v < 0 || v > 2) {
+		if(v < 0 || v > POST_CONVERSION_OPTIMAL) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			evalops.auto_post_conversion = (AutoPostConversion) v;
@@ -1779,8 +1779,8 @@ int main(int argc, char *argv[]) {
 				execute_command(COMMAND_FACTORIZE);
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "best", _("best")) || EQUALS_IGNORECASE_AND_LOCAL(str, "optimal", _("optimal"))) {
 				CALCULATOR->resetExchangeRatesUsed();
-				MathStructure mstruct_new(CALCULATOR->convertToBestUnit(*mstruct, evalops));
-				if(check_exchange_rates()) mstruct->set(CALCULATOR->convertToBestUnit(*mstruct, evalops));
+				MathStructure mstruct_new(CALCULATOR->convertToBestUnit(*mstruct, evalops, true));
+				if(check_exchange_rates()) mstruct->set(CALCULATOR->convertToBestUnit(*mstruct, evalops, true));
 				else mstruct->set(mstruct_new);
 				result_action_executed();
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base"))) {
@@ -1861,8 +1861,9 @@ int main(int argc, char *argv[]) {
 					else {PUTS_UNICODE(_("none"));}
 					break;
 				}
-				case POST_CONVERSION_BEST: {PUTS_UNICODE(_("optimal")); break;}
+				case POST_CONVERSION_OPTIMAL: {PUTS_UNICODE(_("optimal")); break;}
 				case POST_CONVERSION_BASE: {PUTS_UNICODE(_("base")); break;}
+				case POST_CONVERSION_OPTIMAL_SI: {PUTS_UNICODE(_("best")); break;}
 			}
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("base")); 
@@ -2413,9 +2414,11 @@ int main(int argc, char *argv[]) {
 				str += (_("none"));
 				if(evalops.auto_post_conversion == POST_CONVERSION_NONE && evalops.mixed_units_conversion == MIXED_UNITS_CONVERSION_NONE) str += "*";
 				str += ", "; str +=  _("optimal");
-				if(evalops.auto_post_conversion == POST_CONVERSION_BEST) str += "*";
+				if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) str += "*";
 				str += ", "; str += _("base");
 				if(evalops.auto_post_conversion == POST_CONVERSION_BASE) str += "*";
+				str += ", "; str += _("best");
+				if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL_SI) str += "*";
 				str += ", "; str += _("mixed");
 				if(evalops.auto_post_conversion == POST_CONVERSION_NONE && evalops.mixed_units_conversion > MIXED_UNITS_CONVERSION_NONE) str += "*";
 				str += ")";
@@ -3202,7 +3205,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "optimal", _("optimal"))) {
 				expression_str = from_str;
 				AutoPostConversion save_auto_post_conversion = evalops.auto_post_conversion;
-				evalops.auto_post_conversion = POST_CONVERSION_BEST;
+				evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				evalops.auto_post_conversion = save_auto_post_conversion;
 				expression_str = str;
@@ -3566,7 +3569,7 @@ void load_preferences() {
 	evalops.parse_options.base = BASE_DECIMAL;
 	evalops.allow_complex = true;
 	evalops.allow_infinite = true;
-	evalops.auto_post_conversion = POST_CONVERSION_NONE;
+	evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL;
 	evalops.assume_denominators_nonzero = true;
 	evalops.warn_about_denominators_assumed_nonzero = true;
 	evalops.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
@@ -3621,7 +3624,7 @@ void load_preferences() {
 #endif
 
 	
-	int version_numbers[] = {0, 9, 8};
+	int version_numbers[] = {0, 9, 12};
 	
 	if(file) {
 		char line[10000];
@@ -3744,9 +3747,12 @@ void load_preferences() {
 				} else if(svar == "denominator_prefix_enabled") {
 					printops.use_denominator_prefix = v;
 				} else if(svar == "auto_post_conversion") {
-					if(v >= POST_CONVERSION_NONE && v <= POST_CONVERSION_BASE) {
+					if(v >= POST_CONVERSION_NONE && v <= POST_CONVERSION_OPTIMAL) {
 						evalops.auto_post_conversion = (AutoPostConversion) v;
 					}
+					/*if((v == POST_CONVERSION_NONE || v == POST_CONVERSION_OPTIMAL_SI) && version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] <= 12))) {
+						evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL;
+					}*/
 				} else if(svar == "mixed_units_conversion") {
 					if(v >= MIXED_UNITS_CONVERSION_NONE && v <= MIXED_UNITS_CONVERSION_FORCE_ALL) {
 						evalops.mixed_units_conversion = (MixedUnitsConversion) v;

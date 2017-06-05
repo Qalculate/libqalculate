@@ -447,11 +447,15 @@ typedef enum {
 typedef enum {
 	/// Do not do any conversion of units in addition to syncing
 	POST_CONVERSION_NONE,
-	/// Convert to the best suited SI units (the least amount of units)
-	POST_CONVERSION_BEST,
+	/// Convert to the least amount of units. Non-SI units are converted to SI units.
+	POST_CONVERSION_OPTIMAL_SI,
 	/// Convert to base units
-	POST_CONVERSION_BASE
+	POST_CONVERSION_BASE,
+	/// Convert to the the least amount of units. Non-SI units is kept (if optimal), but for conversion only SI units are used.
+	POST_CONVERSION_OPTIMAL
 } AutoPostConversion;
+
+#define POST_CONVERSION_BEST POST_CONVERSION_OPTIMAL_AND_SI
 
 typedef enum {
 	MIXED_UNITS_CONVERSION_NONE,

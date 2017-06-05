@@ -1,3 +1,7 @@
+2017-06-05 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Updated automatic conversion - controls that new units really is better than old (fixes V^3) and splits up POST_CONVERSION_BEST in POST_CONVERSION_OPTIMAL_IS and POST_CONVERSION_OPTIMAL (prioritises original units)
+
 2017-05-14 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Use gio when available instead of deprecated gvfs-copy
