@@ -6731,11 +6731,10 @@ void MathStructure::calculateUncertaintyPropagation(const EvaluationOptions &eo)
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	unformat(eo);
-
 	bool found_complex_relations = false;
-	if(eo.sync_units && syncUnits(false, &found_complex_relations, false)) {
+	if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, &found_complex_relations, false)) {
 		unformat(eo);
-	}	
+	}
 	EvaluationOptions feo = eo;
 	if(eo.structuring == STRUCTURING_FACTORIZE) feo.structuring = STRUCTURING_SIMPLIFY;
 	EvaluationOptions eo2 = eo;
@@ -6747,7 +6746,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(eo.calculate_functions && calculateFunctions(feo)) {
 		unformat(eo);
-		if(eo.sync_units && syncUnits(false, &found_complex_relations, true, feo)) {
+		if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, &found_complex_relations, true, feo)) {
 			unformat(eo);
 		}
 	}
@@ -6757,7 +6756,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		eo3.split_squares = false;
 		eo3.assume_denominators_nonzero = false;
 		calculatesub(eo3, feo);
-		if(eo.sync_units && syncUnits(false, &found_complex_relations, true, feo)) {
+		if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, &found_complex_relations, true, feo)) {
 			unformat(eo);
 			calculatesub(eo3, feo);
 		}
@@ -6771,7 +6770,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	calculatesub(eo2, feo);
 
-	if(eo.sync_units && syncUnits(false, &found_complex_relations, true, feo)) {
+	if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, &found_complex_relations, true, feo)) {
 		unformat(eo);
 		calculatesub(eo2, feo);
 	}
@@ -6786,8 +6785,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		}
 	}
 
-	if(eo.expand != 0 || (eo.test_comparisons && !found_complex_relations && containsType(STRUCT_COMPARISON))) {
-		eo2.test_comparisons = eo.test_comparisons && !found_complex_relations;
+	if(eo.expand != 0 || (eo.test_comparisons && containsType(STRUCT_COMPARISON))) {
+		eo2.test_comparisons = eo.test_comparisons;
 		eo2.expand = eo.expand;
 		bool b = eo2.test_comparisons;
 		if(!b && isAddition()) {
@@ -6820,24 +6819,6 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		}
 	}
 
-	eo2.test_comparisons = eo.test_comparisons;
-	if(eo2.sync_units && eo2.sync_complex_unit_relations && found_complex_relations) {
-		if(syncUnits(true, NULL, true, feo)) {
-			unformat(eo);
-			calculatesub(eo2, feo);
-			if(eo2.isolate_x) {
-				eo2.assume_denominators_nonzero = false;
-				isolate_x(eo2, feo);
-				if(isolate_x(eo2, feo)) {
-					eo2.assume_denominators_nonzero = eo.assume_denominators_nonzero;
-					calculatesub(eo2, feo);
-				} else {
-					eo2.assume_denominators_nonzero = eo.assume_denominators_nonzero;
-				}
-			}
-		}
-	}
-
 	if(eo.structuring == STRUCTURING_SIMPLIFY) {
 		simplify(eo2, false);
 		clean_multiplications(*this);
@@ -6846,7 +6827,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		clean_multiplications(*this);
 	}
 	
-	
+	if(found_complex_relations) CALCULATOR->error(false, _("Calculations involving multiple units with complex relations, such as temperature units, might give unexpected results and is not recommended."), NULL);
 
 	return *this;
 }
@@ -12729,14 +12710,14 @@ bool MathStructure::syncUnits(bool sync_complex_relations, bool *found_complex_r
 		}
 	}
 	b = false;
-	for(size_t i = 0; i < composite_units.size(); i++) {	
+	for(size_t i = 0; i < composite_units.size(); i++) {
 		if(convert(composite_units[i], sync_complex_relations, found_complex_relations, calculate_new_functions, feo)) b = true;
 	}	
 	if(dissolveAllCompositeUnits()) b = true;
-	for(size_t i = 0; i < base_units.size(); i++) {	
+	for(size_t i = 0; i < base_units.size(); i++) {
 		if(convert(base_units[i], sync_complex_relations, found_complex_relations, calculate_new_functions, feo)) b = true;
 	}
-	for(size_t i = 0; i < alias_units.size(); i++) {	
+	for(size_t i = 0; i < alias_units.size(); i++) {
 		if(convert(alias_units[i], sync_complex_relations, found_complex_relations, calculate_new_functions, feo)) b = true;
 	}
 	return b;
@@ -12832,9 +12813,13 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 		return convert(((CompositeUnit*) u)->generateMathStructure(false, true), convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
 	}
 	if(m_type == STRUCT_UNIT) {
-		if(!convert_complex_relations && u->hasComplexRelationTo(o_unit)) {
+		/*if(!convert_complex_relations && u->hasComplexRelationTo(o_unit)) {
 			if(found_complex_relations) *found_complex_relations = true;
 			return false;
+		}*/
+		if(u->hasComplexRelationTo(o_unit)) {
+			if(found_complex_relations) *found_complex_relations = true;			
+			if(!convert_complex_relations) return false;
 		}
 		if(testDissolveCompositeUnit(u)) {
 			convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
@@ -12875,16 +12860,17 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 				int b_c = -1;
 				for(size_t i = 0; i < SIZE; i++) {
 					if(CHILD(i).isUnit_exp()) {
-						if((CHILD(i).isUnit() && u->hasComplexRelationTo(CHILD(i).unit())) || (CHILD(i).isPower() && u->hasComplexRelationTo(CHILD(i)[0].unit()))) {
+						if(b_c < 0 && ((CHILD(i).isUnit() && u->hasComplexRelationTo(CHILD(i).unit())) || (CHILD(i).isPower() && u->hasComplexRelationTo(CHILD(i)[0].unit())))) {
 							if(found_complex_relations) *found_complex_relations = true;
-							if(b_c >= 0) {
-								b_c = -1;
-								break;
-							}
-							b_c = i;
+							if(b_c == -1) b_c = i;
+						} else {
+							b_c = -2;
 						}
+					} else if(CHILD(i).containsType(STRUCT_UNIT, false, true, true) != 0) {
+						b_c = -3;
 					}
 				}
+				if(b_c == -2) return false;
 				if(b_c >= 0) {
 					MathStructure mstruct(1, 1);
 					if(SIZE == 2) {
@@ -12968,7 +12954,7 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 					return false;
 				}
 			}
-			if(m_type == STRUCT_MULTIPLICATION || m_type == STRUCT_POWER) {
+			/*if(m_type == STRUCT_MULTIPLICATION || m_type == STRUCT_POWER) {
 				for(size_t i = 0; i < SIZE; i++) {
 					if(CHILD(i).convert(u, false, found_complex_relations, calculate_new_functions, feo, new_prefix)) {
 						CHILD_UPDATED(i);
@@ -12976,7 +12962,7 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 					}
 				}
 				return b;
-			}
+			}*/
 		}
 		if(m_type == STRUCT_FUNCTION) {
 			for(size_t i = 0; i < SIZE; i++) {
@@ -12994,7 +12980,7 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 			}
 		}
 		return b;
-	}	
+	}
 	return b;
 }
 bool MathStructure::convert(const MathStructure unit_mstruct, bool convert_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo) {

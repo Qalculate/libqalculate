@@ -577,6 +577,7 @@ void set_option(string str) {
 		MixedUnitsConversion muc = MIXED_UNITS_CONVERSION_DEFAULT;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) {v = POST_CONVERSION_NONE;  muc = MIXED_UNITS_CONVERSION_NONE;}
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "best", _("best"))) v = POST_CONVERSION_OPTIMAL_SI;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimalsi", _("optimalsi"))) v = POST_CONVERSION_OPTIMAL_SI;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimal", _("optimal"))) v = POST_CONVERSION_OPTIMAL;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "base", _("base"))) v = POST_CONVERSION_BASE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = POST_CONVERSION_NONE;
@@ -584,7 +585,7 @@ void set_option(string str) {
 			v = s2i(svalue);
 		}
 		if(v == POST_CONVERSION_OPTIMAL + 1) {
-			v = POST_CONVERSION_BASE;
+			v = POST_CONVERSION_NONE;
 			muc = MIXED_UNITS_CONVERSION_DEFAULT;
 		}
 		if(v < 0 || v > POST_CONVERSION_OPTIMAL) {
@@ -1863,7 +1864,7 @@ int main(int argc, char *argv[]) {
 				}
 				case POST_CONVERSION_OPTIMAL: {PUTS_UNICODE(_("optimal")); break;}
 				case POST_CONVERSION_BASE: {PUTS_UNICODE(_("base")); break;}
-				case POST_CONVERSION_OPTIMAL_SI: {PUTS_UNICODE(_("best")); break;}
+				case POST_CONVERSION_OPTIMAL_SI: {PUTS_UNICODE(_("optimalsi")); break;}
 			}
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("base")); 
@@ -2417,7 +2418,7 @@ int main(int argc, char *argv[]) {
 				if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) str += "*";
 				str += ", "; str += _("base");
 				if(evalops.auto_post_conversion == POST_CONVERSION_BASE) str += "*";
-				str += ", "; str += _("best");
+				str += ", "; str += _("optimalsi");
 				if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL_SI) str += "*";
 				str += ", "; str += _("mixed");
 				if(evalops.auto_post_conversion == POST_CONVERSION_NONE && evalops.mixed_units_conversion > MIXED_UNITS_CONVERSION_NONE) str += "*";
