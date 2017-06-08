@@ -6728,6 +6728,44 @@ void MathStructure::calculateUncertaintyPropagation(const EvaluationOptions &eo)
 	o_uncertainty = new_uncertainty;
 }
 
+bool containsComplexUnits(const MathStructure &mstruct) {
+	if(mstruct.type() == STRUCT_UNIT && mstruct.unit()->hasComplexRelationTo(mstruct.unit()->baseUnit())) return true;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(containsComplexUnits(mstruct[i])) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool variablesContainsComplexUnits(const MathStructure &mstruct, const EvaluationOptions &eo) {
+	if(mstruct.type() == STRUCT_VARIABLE && mstruct.variable()->isKnown() && (eo.approximation != APPROXIMATION_EXACT || !mstruct.variable()->isApproximate()) && ((KnownVariable*) mstruct.variable())->get().containsType(STRUCT_UNIT, false, true, true)) {
+		return containsComplexUnits(((KnownVariable*) mstruct.variable())->get());
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(variablesContainsComplexUnits(mstruct[i], eo)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool expandVariablesWithUnits(MathStructure &mstruct, const EvaluationOptions &eo) {
+	if(mstruct.type() == STRUCT_VARIABLE && mstruct.variable()->isKnown() && (eo.approximation != APPROXIMATION_EXACT || !mstruct.variable()->isApproximate()) && ((KnownVariable*) mstruct.variable())->get().containsType(STRUCT_UNIT, false, true, true) != 0) {
+		mstruct.set(((KnownVariable*) mstruct.variable())->get());
+		return true;
+	}
+	bool retval = false;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(expandVariablesWithUnits(mstruct[i], eo)) {
+			mstruct.childUpdated(i);
+			retval = true;
+		}
+	}
+	return retval;
+}
+
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	unformat(eo);
@@ -6750,13 +6788,24 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			unformat(eo);
 		}
 	}
+	
+	if(eo.sync_complex_unit_relations && (found_complex_relations || variablesContainsComplexUnits(*this, eo))) {
+		while(expandVariablesWithUnits(*this, eo)) {
+			unformat(eo);
+			if(eo.calculate_functions && calculateFunctions(feo)) unformat(eo);
+			if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, &found_complex_relations, true, feo)) {
+				unformat(eo);
+			}
+		}
+	}
+
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo3 = eo2;
 		eo3.approximation = APPROXIMATION_EXACT;
 		eo3.split_squares = false;
 		eo3.assume_denominators_nonzero = false;
 		calculatesub(eo3, feo);
-		if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, &found_complex_relations, true, feo)) {
+		if(eo.sync_units && syncUnits(false, &found_complex_relations, true, feo)) {
 			unformat(eo);
 			calculatesub(eo3, feo);
 		}
@@ -6770,7 +6819,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	calculatesub(eo2, feo);
 
-	if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, &found_complex_relations, true, feo)) {
+	if(eo.sync_units && syncUnits(false, &found_complex_relations, true, feo)) {
 		unformat(eo);
 		calculatesub(eo2, feo);
 	}
@@ -6827,7 +6876,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		clean_multiplications(*this);
 	}
 	
-	if(found_complex_relations) CALCULATOR->error(false, _("Calculations involving multiple units with complex relations, such as temperature units, might give unexpected results and is not recommended."), NULL);
+	if(found_complex_relations) CALCULATOR->error(false, _("Calculations involving units with complex relations (with multiple temperature units), might give unexpected results and is not recommended."), NULL);
 
 	return *this;
 }
@@ -12860,25 +12909,38 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 				int b_c = -1;
 				for(size_t i = 0; i < SIZE; i++) {
 					if(CHILD(i).isUnit_exp()) {
-						if(b_c < 0 && ((CHILD(i).isUnit() && u->hasComplexRelationTo(CHILD(i).unit())) || (CHILD(i).isPower() && u->hasComplexRelationTo(CHILD(i)[0].unit())))) {
+						if((CHILD(i).isUnit() && u->hasComplexRelationTo(CHILD(i).unit())) || (CHILD(i).isPower() && u->hasComplexRelationTo(CHILD(i)[0].unit()))) {
 							if(found_complex_relations) *found_complex_relations = true;
-							if(b_c == -1) b_c = i;
-						} else {
-							b_c = -2;
+							b_c = i;
+							break;
 						}
-					} else if(CHILD(i).containsType(STRUCT_UNIT, false, true, true) != 0) {
-						b_c = -3;
 					}
 				}
-				if(b_c == -2) return false;
 				if(b_c >= 0) {
 					MathStructure mstruct(1, 1);
+					MathStructure mstruct2(1, 1);
 					if(SIZE == 2) {
 						if(b_c == 0) mstruct = CHILD(1);
 						else mstruct = CHILD(0);
+						if(mstruct.isUnit_exp()) {
+							mstruct2 = mstruct;
+							mstruct.set(1, 1);
+						}
 					} else if(SIZE > 2) {
 						mstruct = *this;
-						mstruct.delChild(b_c + 1);
+						size_t nr_of_del = 0;
+						for(size_t i = 0; i < SIZE; i++) {
+							if(CHILD(i).isUnit_exp()) {
+								mstruct.delChild(i + 1 - nr_of_del);
+								nr_of_del++;
+								if((int) i != b_c) {
+									if(mstruct2.isOne()) mstruct2 = CHILD(i);
+									else mstruct2.multiply(CHILD(i), true);
+								}
+							}
+						}
+						if(mstruct.size() == 1) mstruct.setToChild(1);
+						else if(mstruct.size() == 0) mstruct.set(1, 1);
 					}
 					MathStructure exp(1, 1);
 					Unit *u2;
@@ -12913,6 +12975,9 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 						if(!exp.isOne()) {
 							if(calculate_new_functions && exp.countFunctions() > efc) exp.calculateFunctions(feo, true);
 							raise(exp);
+						}
+						if(!mstruct2.isOne()) {
+							multiply(mstruct2);
 						}
 						if(!mstruct.isOne()) {
 							if(calculate_new_functions && mstruct.countFunctions() > mfc) mstruct.calculateFunctions(feo, true);

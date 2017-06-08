@@ -1136,17 +1136,23 @@
   </category>
   <category>
     <_title>Temperature</_title>
-    <builtin_unit name="K">
+    <unit type="base">
       <system>SI</system>
       <_title>Kelvin</_title>
       <_names>ar:K,kelvin,p:kelvins</_names>
-    </builtin_unit>
-    <builtin_unit name="oC">
+    </unit>
+    <unit type="alias">
       <system>SI</system>
       <_title>Degree Celsius</_title>
       <_names>ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius,p:celsius,centigrade,p:centigrades</_names>
       <use_with_prefixes>false</use_with_prefixes>
-    </builtin_unit>
+      <base>
+        <unit>K</unit>
+        <relation>\x + 273.15</relation>
+        <inverse_relation>\x - 273.15</inverse_relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
     <unit type="alias">
       <_title>Degree Rankine</_title>
       <_names>ar:oR,au:&#xB0;R,r:rankine</_names>
@@ -1156,10 +1162,16 @@
         <exponent>1</exponent>
       </base>
     </unit>
-    <builtin_unit name="oF">
+    <unit type="alias">
       <_title>Degree Fahrenheit</_title>
       <_names>ar:oF,au:&#xB0;F,au:&#x2109;,r:fahrenheit</_names>
-    </builtin_unit>
+      <base>
+        <unit>K</unit>
+        <relation>(\x+459.67)*5/9</relation>
+        <inverse_relation>(\x*9/5)-459.67</inverse_relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
   </category>
   <category>
     <_title>Substance</_title>

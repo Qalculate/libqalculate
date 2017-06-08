@@ -823,7 +823,6 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	po.variables_enabled = false;
 	po.functions_enabled = false;
 	po.unknowns_enabled = true;
-	po.convert_temperature_units = false;
 	MathStructure mstruct;
 	bool had_errors = false;
 	CALCULATOR->beginTemporaryStopMessages();

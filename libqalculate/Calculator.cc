@@ -1453,10 +1453,6 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_kelvin = addUnit(new Unit(_("Temperature"), "K", "kelvins", "kelvin", "Kelvin", false, true, true));
-	u_kelvin->setAsSIUnit();
-	u_celsius = addUnit(new AliasUnit(_("Temperature"), "oC", "", "celsius", "Degree Celsius", u_kelvin, "\\x+273.15", 1, "\\x-273.15", false, true, true));	
-	u_fahrenheit = addUnit(new AliasUnit(_("Temperature"), "oF", "", "fahrenheit", "Degree Fahrenheit", u_kelvin, "(\\x+459.67)*5/9", 1, "(\\x*9/5)-459.67", false, true, true));
 }
 void Calculator::error(bool critical, int message_category, const char *TEMPLATE, ...) {
 	va_list ap;
@@ -2524,40 +2520,8 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 			eo2.keep_prefixes = true;
 			mstruct_new.eval(eo2);
 		}
-	} else {		
-		if(cu && cu->countUnits() > 1 && (cu->find(u_celsius) != 0 || cu->find(u_fahrenheit) != 0)) {
-			CALCULATOR->error(true, _("Cannot convert to unit expression that includes degrees Celsius or Fahrenheit in addition to other units, prefixes or exponents."), NULL);
-			return mstruct_new;
-		} else if(to_unit == u_celsius || to_unit == u_fahrenheit || (cu && (cu->get(1) == u_fahrenheit || cu->get(1) == u_celsius))) {
-			if(cu) {
-				int exp = 1;
-				Prefix *p = NULL;
-				cu->get(1, &exp, &p);
-				if(exp != 1 || (p != NULL && p != decimal_null_prefix)) {
-					CALCULATOR->error(true, _("Cannot convert to unit expression that includes degrees Celsius or Fahrenheit in addition to other units, prefixes or exponents."), NULL);
-					return mstruct_new;
-				}
-			}
-			Unit *u = NULL;
-			if(mstruct.isMultiplication()) {
-				for(size_t i = 0; i < mstruct.size(); i++) {
-					if(mstruct[i].isUnit()) {
-						if(u) {
-							CALCULATOR->error(true, _("Cannot convert the expression to degrees Celsius or Fahrenheit."), NULL);
-							return mstruct_new;
-						}
-						u = mstruct[i].unit();
-					} else if(mstruct[i].isUnit_exp()) {
-						CALCULATOR->error(true, _("Cannot convert the expression to degrees Celsius or Fahrenheit."), NULL);
-						return mstruct_new;
-					}
-				}
-			} else if(!mstruct.isUnit() && mstruct.isUnit_exp()) {
-				CALCULATOR->error(true, _("Cannot convert the expression to degrees Celsius or Fahrenheit."), NULL);
-				return mstruct_new;
-			}
-		}		
-		EvaluationOptions eo2 = eo;		
+	} else {
+		EvaluationOptions eo2 = eo;
 		eo2.keep_prefixes = true;
 		bool b = false;
 		if(mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL) || always_convert) {
@@ -4536,107 +4500,13 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							if(str.length() > str_index + name_length && is_in(NUMBERS, str[str_index + name_length]) && !((Unit*) object)->isCurrency()) {
 								str.insert(str_index + name_length, 1, POWER_CH);
 							}
-							if(parseoptions.convert_temperature_units && (object == u_celsius || object == u_fahrenheit)) {
-								int i_depth = 0;
-								int i6 = str_index - 1;
-								int b_nonspace = 0;
-								bool b_minus = false;
-								for(; i6 >= 0; i6--) {
-									if(i_depth == 0 && is_in(OPERATORS LEFT_PARENTHESIS VECTOR_WRAPS COMMAS, str[i6]) && (b_nonspace == 0 || str[i6] != POWER_CH)) {
-										if(str[i6] == MINUS_CH && (i6 == 0 || str.find_last_not_of(SPACE_CH, i6 - 1) == string::npos)) {
-											i6--;
-											b_minus = TRUE;
-										}
-										break;
-									}
-									if(((i_depth == 0 && b_nonspace == 0) || i_depth == 1) && str[i6] == ID_WRAP_RIGHT_CH && i6 > 1) {
-										size_t i7 = str.find_last_of(ID_WRAP_LEFT_CH, i6 - 2);
-										if(i7 != string::npos) {
-											int id = s2i(str.substr(i7 + 1, i6 - i7 - 1));
-											MathStructure *m_temp = NULL;
-											if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp = priv->id_structs[id];
-											if(m_temp && m_temp->isUnit()) {
-												if(i_depth == 0) break;
-												if(b_nonspace == 1 && str[i6 + 1] == RIGHT_PARENTHESIS_CH) {
-													i6++;
-													i_depth = 0;
-													b_nonspace = 0;
-													break;
-												} else if(b_nonspace == 3 && str[i6 + 1] == RIGHT_PARENTHESIS_CH && str[i6 + 2] == POWER_CH && is_not_in(OPERATORS SPACES, str[i6 + 3])) {
-													i6 += 3;
-													i_depth = 0;
-													b_nonspace = 0;
-													break;
-												}
-											}
-										}
-									}
-									if(is_not_in(SPACES, str[i6])) b_nonspace++;
-									if(str[i6] == LEFT_PARENTHESIS_CH) i_depth--;
-									else if(str[i6] == RIGHT_PARENTHESIS_CH) i_depth++;
-								}
-								i6++;
-								if(object == u_fahrenheit) {
-									if(b_minus && i6 != 0) {
-										str.insert(i6, PLUS);
-										str_index++;
-										i6++;
-									}
-									if(b_nonspace > 0) {	
-										str.insert(i6, LEFT_PARENTHESIS LEFT_PARENTHESIS LEFT_PARENTHESIS);
-										str_index += 3;
-										stmp = RIGHT_PARENTHESIS;
-										
-									} else {
-										str.insert(i6, LEFT_PARENTHESIS LEFT_PARENTHESIS);
-										str_index += 2;
-										stmp += "1";
-									}
-									stmp += LEFT_PARENTHESIS ID_WRAP_LEFT;
-									stmp += i2s(addId(new MathStructure(u_kelvin, p)));
-									stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-									stmp += "+459.67";
-									stmp += LEFT_PARENTHESIS ID_WRAP_LEFT;
-									stmp += i2s(addId(new MathStructure(u_kelvin, p)));
-									stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-									stmp += RIGHT_PARENTHESIS;
-									stmp += "*5/9";
-									stmp += RIGHT_PARENTHESIS;
-								} else {
-									if(b_minus && i6 != 0) {
-										str.insert(i6, PLUS);
-										str_index++;
-										i6++;
-									}
-									if(b_nonspace > 0) {
-										str.insert(i6, LEFT_PARENTHESIS LEFT_PARENTHESIS);
-										str_index += 2;										
-										stmp = RIGHT_PARENTHESIS;										
-									} else {
-										str.insert(i6, LEFT_PARENTHESIS);
-										str_index++;
-										if(!b_minus) stmp = "1";
-									}
-									stmp += LEFT_PARENTHESIS ID_WRAP_LEFT;
-									stmp += i2s(addId(new MathStructure(u_kelvin, p)));
-									stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-									stmp += "+273.15";
-									stmp += LEFT_PARENTHESIS ID_WRAP_LEFT;
-									stmp += i2s(addId(new MathStructure(u_kelvin, p)));
-									stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-									stmp += RIGHT_PARENTHESIS;																
-								}
-								str.replace(str_index, name_length, stmp);
-								str_index += stmp.length();
-							} else {
-								stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
-								stmp += i2s(addId(new MathStructure((Unit*) object, p)));
-								stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-								str.replace(str_index, name_length, stmp);
-								str_index += stmp.length();
-							}
+							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+							stmp += i2s(addId(new MathStructure((Unit*) object, p)));
+							stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+							str.replace(str_index, name_length, stmp);
+							str_index += stmp.length();
 							moved_forward = true;
-							p = NULL;							
+							p = NULL;
 							break;
 						}
 						case 'p': {}

@@ -295,7 +295,7 @@ class Calculator {
 	MathFunction *f_plot;
 	MathFunction *f_uncertainty;
 	
-	Unit *u_rad, *u_gra, *u_deg, *u_euro, *u_kelvin, *u_celsius, *u_fahrenheit;
+	Unit *u_rad, *u_gra, *u_deg, *u_euro;
 	DecimalPrefix *decimal_null_prefix;
 	BinaryPrefix *binary_null_prefix;
 
