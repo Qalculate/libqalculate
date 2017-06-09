@@ -579,7 +579,7 @@ class Calculator {
 	void parse(MathStructure *mstruct, string str, const ParseOptions &po = default_parse_options);
 	bool parseNumber(MathStructure *mstruct, string str, const ParseOptions &po = default_parse_options);
 	bool parseOperators(MathStructure *mstruct, string str, const ParseOptions &po = default_parse_options);
-	bool parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po, MathOperation s);
+	bool parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po, MathOperation s, bool append = true);
 	bool parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po);
 	//@}
 

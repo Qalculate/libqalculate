@@ -4616,12 +4616,20 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		}
 		case STRUCT_ADDITION: {
 			MERGE_RECURSE
+			if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, NULL, true, feo)) {
+				unformat(eo);
+				MERGE_RECURSE
+			}
 			MERGE_ALL(merge_addition, try_add)
 			MERGE_ALL2
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
 			MERGE_RECURSE
+			if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, NULL, true, feo)) {
+				unformat(eo);
+				MERGE_RECURSE
+			}
 			if(representsNonMatrix()) {
 				MERGE_ALL(merge_multiplication, try_multiply)
 			} else {
@@ -4870,11 +4878,19 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		}
 		case STRUCT_COMPARISON: {
 			EvaluationOptions eo2 = eo;
-			eo2.assume_denominators_nonzero = false;			
-			if(recursive) {					
+			eo2.assume_denominators_nonzero = false;
+			if(recursive) {			
 				CHILD(0).calculatesub(eo2, feo, true, this, 0);
 				CHILD(1).calculatesub(eo2, feo, true, this, 1);
 				CHILDREN_UPDATED;
+			}
+			if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, NULL, true, feo)) {
+				unformat(eo);
+				if(recursive) {			
+					CHILD(0).calculatesub(eo2, feo, true, this, 0);
+					CHILD(1).calculatesub(eo2, feo, true, this, 1);
+					CHILDREN_UPDATED;
+				}
 			}
 			if(CHILD(0).isNumber() && CHILD(1).isNumber()) {
 				ComparisonResult cr = CHILD(1).number().compareApproximately(CHILD(0).number());
@@ -5121,8 +5137,17 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			if(recursive) {
 				for(size_t i = 0; i < SIZE; i++) {
 					if(CHILD(i).calculatesub(eo, feo, true, this, i)) b = true;
-				}
+				}				
 				CHILDREN_UPDATED;
+			}
+			if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, NULL, true, feo)) {
+				unformat(eo);
+				if(recursive) {
+					for(size_t i = 0; i < SIZE; i++) {
+						if(CHILD(i).calculatesub(eo, feo, true, this, i)) b = true;
+					}
+					CHILDREN_UPDATED;
+				}
 			}
 		}
 	}
@@ -6759,7 +6784,7 @@ bool expandVariablesWithUnits(MathStructure &mstruct, const EvaluationOptions &e
 	bool retval = false;
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(expandVariablesWithUnits(mstruct[i], eo)) {
-			mstruct.childUpdated(i);
+			mstruct.childUpdated(i + 1);
 			retval = true;
 		}
 	}
@@ -6769,10 +6794,10 @@ bool expandVariablesWithUnits(MathStructure &mstruct, const EvaluationOptions &e
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	unformat(eo);
-	bool found_complex_relations = false;
+	/*bool found_complex_relations = false;
 	if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, &found_complex_relations, false)) {
 		unformat(eo);
-	}
+	}*/
 	EvaluationOptions feo = eo;
 	if(eo.structuring == STRUCTURING_FACTORIZE) feo.structuring = STRUCTURING_SIMPLIFY;
 	EvaluationOptions eo2 = eo;
@@ -6784,12 +6809,12 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(eo.calculate_functions && calculateFunctions(feo)) {
 		unformat(eo);
-		if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, &found_complex_relations, true, feo)) {
+		/*if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, &found_complex_relations, true, feo)) {
 			unformat(eo);
-		}
+		}*/
 	}
 	
-	if(eo.sync_complex_unit_relations && (found_complex_relations || variablesContainsComplexUnits(*this, eo))) {
+	/*if(eo.sync_complex_unit_relations && (found_complex_relations || variablesContainsComplexUnits(*this, eo))) {
 		while(expandVariablesWithUnits(*this, eo)) {
 			unformat(eo);
 			if(eo.calculate_functions && calculateFunctions(feo)) unformat(eo);
@@ -6797,7 +6822,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				unformat(eo);
 			}
 		}
-	}
+	}*/
 
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo3 = eo2;
@@ -6805,10 +6830,10 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		eo3.split_squares = false;
 		eo3.assume_denominators_nonzero = false;
 		calculatesub(eo3, feo);
-		if(eo.sync_units && syncUnits(false, &found_complex_relations, true, feo)) {
+		/*if(eo.sync_units && syncUnits(false, &found_complex_relations, true, feo)) {
 			unformat(eo);
 			calculatesub(eo3, feo);
-		}
+		}*/
 		if(eo.expand != 0 && !containsType(STRUCT_COMPARISON, true, true, true)) {
 			unformat(eo);
 			eo3.expand = -1;
@@ -6819,10 +6844,10 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	calculatesub(eo2, feo);
 
-	if(eo.sync_units && syncUnits(false, &found_complex_relations, true, feo)) {
+	/*if(eo.sync_units && syncUnits(false, &found_complex_relations, true, feo)) {
 		unformat(eo);
 		calculatesub(eo2, feo);
-	}
+	}*/
 
 	if(eo2.isolate_x) {
 		eo2.assume_denominators_nonzero = false;
@@ -6876,7 +6901,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		clean_multiplications(*this);
 	}
 	
-	if(found_complex_relations) CALCULATOR->error(false, _("Calculations involving units with complex relations (with multiple temperature units), might give unexpected results and is not recommended."), NULL);
+	//if(found_complex_relations) CALCULATOR->error(false, _("Calculations involving units with complex relations (with multiple temperature units), might give unexpected results and is not recommended."), NULL);
 
 	return *this;
 }
@@ -12759,16 +12784,19 @@ bool MathStructure::syncUnits(bool sync_complex_relations, bool *found_complex_r
 		}
 	}
 	b = false;
+	bool fcr = false;
 	for(size_t i = 0; i < composite_units.size(); i++) {
-		if(convert(composite_units[i], sync_complex_relations, found_complex_relations, calculate_new_functions, feo)) b = true;
+		if(convert(composite_units[i], sync_complex_relations, &fcr, calculate_new_functions, feo)) b = true;
 	}	
 	if(dissolveAllCompositeUnits()) b = true;
 	for(size_t i = 0; i < base_units.size(); i++) {
-		if(convert(base_units[i], sync_complex_relations, found_complex_relations, calculate_new_functions, feo)) b = true;
+		if(convert(base_units[i], sync_complex_relations, &fcr, calculate_new_functions, feo)) b = true;
 	}
 	for(size_t i = 0; i < alias_units.size(); i++) {
-		if(convert(alias_units[i], sync_complex_relations, found_complex_relations, calculate_new_functions, feo)) b = true;
+		if(convert(alias_units[i], sync_complex_relations, &fcr, calculate_new_functions, feo)) b = true;
 	}
+	if(sync_complex_relations && fcr) CALCULATOR->error(false, _("Calculations involving units with complex relations (with multiple temperature units), might give unexpected results and is not recommended."), NULL);
+	if(fcr && found_complex_relations) *found_complex_relations = fcr;
 	return b;
 }
 bool MathStructure::testDissolveCompositeUnit(Unit *u) {
@@ -12845,6 +12873,42 @@ bool MathStructure::setPrefixForUnit(Unit *u, Prefix *new_prefix) {
 	}
 	return b;
 }
+
+bool searchSubMultiplicationsForComplexRelations(Unit *u, const MathStructure &mstruct) {
+	int b_c = -1;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(mstruct[i].isUnit_exp()) {
+			if((mstruct[i].isUnit() && u->hasComplexRelationTo(mstruct[i].unit())) || (mstruct[i].isPower() && u->hasComplexRelationTo(mstruct[i][0].unit()))) {
+				return true;
+			}
+		} else if(b_c == -1 && mstruct[i].isMultiplication()) {
+			b_c = -3;
+		}
+	}
+	if(b_c == -3) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(mstruct[i].isMultiplication() && searchSubMultiplicationsForComplexRelations(u, mstruct[i])) return true;
+		}
+	}
+	return false;
+}
+bool flattenMultiplication(MathStructure &mstruct) {
+	bool retval = false;
+	for(size_t i = 0; i < mstruct.size();) {
+		if(mstruct[i].isMultiplication()) {
+			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+				mstruct[i][i2].ref();
+				mstruct.insertChild_nocopy(&mstruct[i][i2], i + i2 + 2);
+			}
+			mstruct.delChild(i + 1);
+			retval = true;
+		} else {
+			i++;
+		}
+	}
+	return retval;
+}
+
 bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo, Prefix *new_prefix) {
 	bool b = false;
 	if(m_type == STRUCT_UNIT && o_unit == u) {
@@ -12914,9 +12978,22 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 							b_c = i;
 							break;
 						}
+					} else if(CHILD(i).isMultiplication()) {
+						b_c = -3;
+					}
+				}
+				if(b_c == -3) {
+					for(size_t i = 0; i < SIZE; i++) {
+						if(CHILD(i).isMultiplication()) {
+							if(searchSubMultiplicationsForComplexRelations(u, CHILD(i))) {
+								flattenMultiplication(*this);
+								return convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
+							}
+						}
 					}
 				}
 				if(b_c >= 0) {
+					if(flattenMultiplication(*this)) return convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
 					MathStructure mstruct(1, 1);
 					MathStructure mstruct2(1, 1);
 					if(SIZE == 2) {

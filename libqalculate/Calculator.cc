@@ -2506,11 +2506,56 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 	if(cu && cu->countUnits() == 0) return mstruct;
 	MathStructure mstruct_new(mstruct);
 	//bool b_simple = !cu && (to_unit->subtype() != SUBTYPE_ALIAS_UNIT || (((AliasUnit*) to_unit)->baseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT && ((AliasUnit*) to_unit)->baseExponent() == 1));
+	if(mstruct_new.isAddition()) {
+		bool b = false;
+		MathStructure mstruct_units = mstruct_new;
+		for(size_t i = 0; i < mstruct_units.size(); i++) {
+			if(mstruct_units[i].isMultiplication()) {
+				for(size_t i2 = 0; i2 < mstruct_units[i].size();) {
+					if(!mstruct_units[i][i2].isUnit_exp()) {
+						mstruct_units[i].delChild(i2 + 1);
+					} else {
+						i2++;
+					}
+				}
+				if(mstruct_units[i].size() == 0) mstruct_units[i].setUndefined();
+				else if(mstruct_units[i].size() == 1) mstruct_units[i].setToChild(1);
+				for(size_t i2 = 0; i2 < mstruct_new[i].size();) {
+					if(mstruct_new[i][i2].isUnit_exp()) {
+						mstruct_new[i].delChild(i2 + 1);
+					} else {
+						i2++;
+					}
+				}
+				if(mstruct_new[i].size() == 0) mstruct_new[i].set(1, 1);
+				else if(mstruct_new[i].size() == 1) mstruct_new[i].setToChild(1);
+			} else if(!mstruct_units[i].isUnit_exp()) {
+				mstruct_units[i].setUndefined();
+			}
+		}
+		for(size_t i = 0; i < mstruct_units.size(); i++) {
+			if(!mstruct_units[i].isUndefined()) {
+				for(size_t i2 = i + 1; i2 < mstruct_units.size();) {
+					if(mstruct_units[i2] == mstruct_units[i]) {
+						mstruct_new[i].add(mstruct_new[i2], true);
+						mstruct_new.delChild(i2 + 1);
+						mstruct_units.delChild(i2 + 1);
+						b = true;
+					} else {
+						i2++;
+					}
+				}
+				if(mstruct_new[i].isOne()) mstruct_new[i].set(mstruct_units[i]);
+				else mstruct_new[i].multiply(mstruct_units[i], true);
+			}
+		}
+		if(!b) mstruct_new = mstruct;
+	}	
 	if(!mstruct_new.isPower() && !mstruct_new.isUnit() && !mstruct_new.isMultiplication()) {
 		if(mstruct_new.size() > 0) {
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
 				if(!mstruct_new.isFunction() || !mstruct_new.function()->getArgumentDefinition(i + 1) || mstruct_new.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) { 
-					mstruct_new[i] = convert(mstruct_new[i], to_unit, eo, false);
+					mstruct_new[i] = convert(mstruct_new[i], to_unit, eo, false, convert_to_mixed_units);
 				}
 			}
 			mstruct_new.childrenUpdated();
@@ -2519,14 +2564,14 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 			eo2.sync_units = false;
 			eo2.keep_prefixes = true;
 			mstruct_new.eval(eo2);
+			return mstruct_new;
 		}
 	} else {
 		EvaluationOptions eo2 = eo;
 		eo2.keep_prefixes = true;
 		bool b = false;
-		if(mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL) || always_convert) {
+		if(mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL) || always_convert) {			
 			b = true;
-			
 		} else {
 			CompositeUnit *cu2 = cu;
 			if(to_unit->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) to_unit)->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
@@ -2591,7 +2636,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 			}
 		}
 	}
-	return mstruct_new;
+	return mstruct;
 }
 MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	MathStructure mstruct_new(mstruct);
@@ -4715,7 +4760,6 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			space_i = str.find(SPACE_CH, space_i + 1);
 		}
 	}
-	
 	parseOperators(mstruct, str, po);
 
 }
@@ -4847,7 +4891,7 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 	}	
 	return false;
 }
-bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po, MathOperation s) {
+bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po, MathOperation s, bool append) {
 	if(str.length() > 0) {
 		size_t i;
 		if(po.base >= 2 && po.base <= 10) {
@@ -4864,7 +4908,7 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 					mstruct2->unref();
 					return false;
 				}
-				mstruct->add_nocopy(mstruct2, s, true);
+				mstruct->add_nocopy(mstruct2, s, append);
 			} else {
 				MathStructure *mstruct2 = new MathStructure();
 				if(!parseNumber(mstruct2, str, po)) {
@@ -4875,9 +4919,9 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 					mstruct->transform_nocopy(STRUCT_DIVISION, mstruct2);
 				} else if(s == OPERATION_SUBTRACT && po.preserve_format) {
 					mstruct2->transform(STRUCT_NEGATE);
-					mstruct->add_nocopy(mstruct2, OPERATION_ADD, true);
+					mstruct->add_nocopy(mstruct2, OPERATION_ADD, append);
 				} else {
-					mstruct->add_nocopy(mstruct2, s, true);
+					mstruct->add_nocopy(mstruct2, s, append);
 				}
 			}
 		} else {
@@ -4890,9 +4934,9 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 				mstruct->transform_nocopy(STRUCT_DIVISION, mstruct2);
 			} else if(s == OPERATION_SUBTRACT && po.preserve_format) {
 				mstruct2->transform(STRUCT_NEGATE);
-				mstruct->add_nocopy(mstruct2, OPERATION_ADD, true);
+				mstruct->add_nocopy(mstruct2, OPERATION_ADD, append);
 			} else {
-				mstruct->add_nocopy(mstruct2, s, true);
+				mstruct->add_nocopy(mstruct2, s, append);
 			}
 		}
 	}
@@ -4976,12 +5020,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		mstruct->clear();
 	}
 	if((i = str.find(LOGICAL_AND, 1)) != string::npos && i + 2 != str.length()) {
-		bool b = false;
+		bool b = false, append = false;
 		while(i != string::npos && i + 2 != str.length()) {
 			str2 = str.substr(0, i);
 			str = str.substr(i + 2, str.length() - (i + 2));
 			if(b) {
-				parseAdd(str2, mstruct, po, OPERATION_LOGICAL_AND);
+				parseAdd(str2, mstruct, po, OPERATION_LOGICAL_AND, append);
+				append = true;
 			} else {
 				parseAdd(str2, mstruct, po);
 				b = true;
@@ -4989,19 +5034,20 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			i = str.find(LOGICAL_AND, 1);
 		}
 		if(b) {
-			parseAdd(str, mstruct, po, OPERATION_LOGICAL_AND);
+			parseAdd(str, mstruct, po, OPERATION_LOGICAL_AND, append);
 		} else {
 			parseAdd(str, mstruct, po);
 		}
 		return true;
 	}
 	if((i = str.find(LOGICAL_OR, 1)) != string::npos && i + 2 != str.length()) {
-		bool b = false;
+		bool b = false, append = false;
 		while(i != string::npos && i + 2 != str.length()) {
 			str2 = str.substr(0, i);
 			str = str.substr(i + 2, str.length() - (i + 2));
 			if(b) {
-				parseAdd(str2, mstruct, po, OPERATION_LOGICAL_OR);
+				parseAdd(str2, mstruct, po, OPERATION_LOGICAL_OR, append);
+				append = true;
 			} else {
 				parseAdd(str2, mstruct, po);
 				b = true;
@@ -5009,7 +5055,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			i = str.find(LOGICAL_OR, 1);
 		}
 		if(b) {
-			parseAdd(str, mstruct, po, OPERATION_LOGICAL_OR);
+			parseAdd(str, mstruct, po, OPERATION_LOGICAL_OR, append);
 		} else {
 			parseAdd(str, mstruct, po);
 		}
@@ -5098,12 +5144,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 	
 	if((i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
-		bool b = false;
+		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			if(b) {
-				parseAdd(str2, mstruct, po, OPERATION_BITWISE_OR);
+				parseAdd(str2, mstruct, po, OPERATION_BITWISE_OR, append);
+				append = true;
 			} else {
 				parseAdd(str2, mstruct, po);
 				b = true;
@@ -5111,19 +5158,20 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			i = str.find(BITWISE_OR, 1);
 		}
 		if(b) {
-			parseAdd(str, mstruct, po, OPERATION_BITWISE_OR);
+			parseAdd(str, mstruct, po, OPERATION_BITWISE_OR, append);
 		} else {
 			parseAdd(str, mstruct, po);
 		}
 		return true;
 	}
 	if((i = str.find(BITWISE_AND, 1)) != string::npos && i + 1 != str.length()) {
-		bool b = false;
+		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			if(b) {
-				parseAdd(str2, mstruct, po, OPERATION_BITWISE_AND);
+				parseAdd(str2, mstruct, po, OPERATION_BITWISE_AND, append);
+				append = true;
 			} else {
 				parseAdd(str2, mstruct, po);
 				b = true;
@@ -5131,7 +5179,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			i = str.find(BITWISE_AND, 1);
 		}
 		if(b) {
-			parseAdd(str, mstruct, po, OPERATION_BITWISE_AND);
+			parseAdd(str, mstruct, po, OPERATION_BITWISE_AND, append);
 		} else {
 			parseAdd(str, mstruct, po);
 		}
@@ -5312,17 +5360,18 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 	if(po.rpn) remove_blanks(str);
 	if((i = str.find_first_of(PLUS MINUS, 1)) != string::npos && i + 1 != str.length()) {
-		bool b = false, c = false;
+		bool b = false, c = false, append = false;
 		bool min = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			if(is_not_in(MULTIPLICATION_2 OPERATORS EXPS, str[i - 1])) {
 				str2 = str.substr(0, i);
 				if(!c && b) {
 					if(min) {
-						parseAdd(str2, mstruct, po, OPERATION_SUBTRACT);
+						parseAdd(str2, mstruct, po, OPERATION_SUBTRACT, append);
 					} else {
-						parseAdd(str2, mstruct, po, OPERATION_ADD);
+						parseAdd(str2, mstruct, po, OPERATION_ADD, append);
 					}
+					append = true;
 				} else {
 					if(!b && str2.empty()) {
 						c = true;
@@ -5353,9 +5402,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				return b;
 			} else {
 				if(min) {
-					parseAdd(str, mstruct, po, OPERATION_SUBTRACT);
+					parseAdd(str, mstruct, po, OPERATION_SUBTRACT, append);
 				} else {
-					parseAdd(str, mstruct, po, OPERATION_ADD);
+					parseAdd(str, mstruct, po, OPERATION_ADD, append);
 				}
 			}
 			return true;
@@ -5488,7 +5537,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 	
 	if((i = str.find_first_of(MULTIPLICATION DIVISION, 0)) != string::npos && i + 1 != str.length()) {
-		bool b = false;
+		bool b = false, append = false;
 		bool div = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			if(i < 1) {
@@ -5517,10 +5566,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				str2 = str.substr(0, i);
 				if(b) {
 					if(div) {
-						parseAdd(str2, mstruct, po, OPERATION_DIVIDE);
+						parseAdd(str2, mstruct, po, OPERATION_DIVIDE, append);
 					} else {
-						parseAdd(str2, mstruct, po, OPERATION_MULTIPLY);
+						parseAdd(str2, mstruct, po, OPERATION_MULTIPLY, append);
 					}
+					append = true;
 				} else {
 					parseAdd(str2, mstruct, po);
 					b = true;
@@ -5545,9 +5595,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		if(b) {
 			if(div) {
-				parseAdd(str, mstruct, po, OPERATION_DIVIDE);
+				parseAdd(str, mstruct, po, OPERATION_DIVIDE, append);
 			} else {
-				parseAdd(str, mstruct, po, OPERATION_MULTIPLY);
+				parseAdd(str, mstruct, po, OPERATION_MULTIPLY, append);
 			}
 			return true;
 		}
@@ -5606,13 +5656,14 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		return false;
 	}
 	if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
-		bool b = false;
+		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			if(str[i + 1] != POWER_CH) {
 				str2 = str.substr(0, i + 1);
 				str = str.substr(i + 1, str.length() - (i + 1));
 				if(b) {
-					parseAdd(str2, mstruct, po, OPERATION_MULTIPLY);
+					parseAdd(str2, mstruct, po, OPERATION_MULTIPLY, append);
+					append = true;
 				} else {
 					parseAdd(str2, mstruct, po);
 					b = true;
@@ -5623,7 +5674,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 		}
 		if(b) {
-			parseAdd(str, mstruct, po, OPERATION_MULTIPLY);
+			parseAdd(str, mstruct, po, OPERATION_MULTIPLY, append);
 			if(po.preserve_format) {
 				while(minus_count > 0) {
 					mstruct->transform(STRUCT_NEGATE);
@@ -5636,13 +5687,14 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 	}
 	if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos) {
-		bool b = false;
+		bool b = false, append = false;
 		while(i != string::npos) {
 			if(str[i - 1] != POWER_CH) {
 				str2 = str.substr(0, i);
 				str = str.substr(i, str.length() - i);
 				if(b) {
-					parseAdd(str2, mstruct, po, OPERATION_MULTIPLY);
+					parseAdd(str2, mstruct, po, OPERATION_MULTIPLY, append);
+					append = true;
 				} else {
 					parseAdd(str2, mstruct, po);
 					b = true;
@@ -5653,7 +5705,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 		}
 		if(b) {
-			parseAdd(str, mstruct, po, OPERATION_MULTIPLY);
+			parseAdd(str, mstruct, po, OPERATION_MULTIPLY, append);
 			if(po.preserve_format) {
 				while(minus_count > 0) {
 					mstruct->transform(STRUCT_NEGATE);
