@@ -450,6 +450,8 @@ class MathStructure {
 		bool isFunction() const;
 		bool isUnit() const;
 		bool isUnit_exp() const;
+		bool isUnknown() const;
+		bool isUnknown_exp() const;
 		bool isNumber_exp() const;
 		bool isVariable() const;
 		bool isComparison() const;
@@ -804,6 +806,7 @@ class MathStructure {
 		//@{
 		bool simplify(const EvaluationOptions &eo = default_evaluation_options, bool unfactorize = true);
 		bool factorize(const EvaluationOptions &eo = default_evaluation_options);
+		bool structure(StructuringMode structuring, const EvaluationOptions &eo, bool restore_first = true);
 		/** If the structure represents a rational polynomial.
 		* This is true for
 		*	- rational numbers;

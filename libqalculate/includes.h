@@ -438,10 +438,12 @@ typedef enum {
 typedef enum {
 	/// Do not do any factorization or additional simplifications
 	STRUCTURING_NONE,
-	/// Simplify the result as much as possible
+	/// Simplify the result as much as possible (no factorization, normally the same as STRUCTURING_NONE))
 	STRUCTURING_SIMPLIFY,
 	/// Factorize the result
-	STRUCTURING_FACTORIZE
+	STRUCTURING_FACTORIZE,
+	/// Make some factorizations to enhance visibility of the result (e.g. x/z+y/z=(x+y)/z and 2*x+pi*x=(2+pi)*x)
+	STRUCTURING_COMBINATION
 } StructuringMode;
 
 typedef enum {
@@ -550,6 +552,8 @@ static const struct EvaluationOptions {
 	bool  isolate_x;
 	/// If factors (and bases) containing addition will be expanded (ex. z(x+y)=zx+zy). Default: true
 	int expand;
+	/// Use behaviour from version <= 0.9.12 which returns (x+y)/z instead of x/y+y/z if expand = true
+	bool combine_divisions;
 	/// If non-numerical parts of a fraction will be reduced (ex. (5x)/(3xy) =5/(3y) .  Default: true
 	bool reduce_divisions;
 	/// If complex numbers will be used for evaluation. Default: true
@@ -573,8 +577,8 @@ static const struct EvaluationOptions {
 	/// Options for parsing of expression. Default: default_parse_options
 	ParseOptions parse_options;
 	/// If set will decide which variable to isolate in an equation. Default: NULL
-	const MathStructure *isolate_var;
-	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), expand(true), reduce_divisions(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(false), warn_about_denominators_assumed_nonzero(false), split_squares(true), keep_zero_units(true), auto_post_conversion(POST_CONVERSION_NONE), mixed_units_conversion(MIXED_UNITS_CONVERSION_DEFAULT), structuring(STRUCTURING_SIMPLIFY), isolate_var(NULL) {}
+	const MathStructure *isolate_var;	
+	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), expand(true), combine_divisions(false), reduce_divisions(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(false), warn_about_denominators_assumed_nonzero(false), split_squares(true), keep_zero_units(true), auto_post_conversion(POST_CONVERSION_NONE), mixed_units_conversion(MIXED_UNITS_CONVERSION_DEFAULT), structuring(STRUCTURING_SIMPLIFY), isolate_var(NULL) {}
 } default_evaluation_options;
 
 extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one;

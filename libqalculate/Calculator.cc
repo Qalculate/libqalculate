@@ -2502,51 +2502,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 	if(cu && cu->countUnits() == 0) return mstruct;
 	MathStructure mstruct_new(mstruct);
 	//bool b_simple = !cu && (to_unit->subtype() != SUBTYPE_ALIAS_UNIT || (((AliasUnit*) to_unit)->baseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT && ((AliasUnit*) to_unit)->baseExponent() == 1));
-	if(mstruct_new.isAddition()) {
-		bool b = false;
-		MathStructure mstruct_units = mstruct_new;
-		for(size_t i = 0; i < mstruct_units.size(); i++) {
-			if(mstruct_units[i].isMultiplication()) {
-				for(size_t i2 = 0; i2 < mstruct_units[i].size();) {
-					if(!mstruct_units[i][i2].isUnit_exp()) {
-						mstruct_units[i].delChild(i2 + 1);
-					} else {
-						i2++;
-					}
-				}
-				if(mstruct_units[i].size() == 0) mstruct_units[i].setUndefined();
-				else if(mstruct_units[i].size() == 1) mstruct_units[i].setToChild(1);
-				for(size_t i2 = 0; i2 < mstruct_new[i].size();) {
-					if(mstruct_new[i][i2].isUnit_exp()) {
-						mstruct_new[i].delChild(i2 + 1);
-					} else {
-						i2++;
-					}
-				}
-				if(mstruct_new[i].size() == 0) mstruct_new[i].set(1, 1);
-				else if(mstruct_new[i].size() == 1) mstruct_new[i].setToChild(1);
-			} else if(!mstruct_units[i].isUnit_exp()) {
-				mstruct_units[i].setUndefined();
-			}
-		}
-		for(size_t i = 0; i < mstruct_units.size(); i++) {
-			if(!mstruct_units[i].isUndefined()) {
-				for(size_t i2 = i + 1; i2 < mstruct_units.size();) {
-					if(mstruct_units[i2] == mstruct_units[i]) {
-						mstruct_new[i].add(mstruct_new[i2], true);
-						mstruct_new.delChild(i2 + 1);
-						mstruct_units.delChild(i2 + 1);
-						b = true;
-					} else {
-						i2++;
-					}
-				}
-				if(mstruct_new[i].isOne()) mstruct_new[i].set(mstruct_units[i]);
-				else mstruct_new[i].multiply(mstruct_units[i], true);
-			}
-		}
-		if(!b) mstruct_new = mstruct;
-	}	
+	if(mstruct_new.isAddition()) mstruct_new.factorizeUnits();
 	if(!mstruct_new.isPower() && !mstruct_new.isUnit() && !mstruct_new.isMultiplication()) {
 		if(mstruct_new.size() > 0) {
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
