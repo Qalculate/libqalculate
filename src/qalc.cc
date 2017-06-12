@@ -3048,7 +3048,7 @@ void CommandThread::run() {
 		switch(command_type) {
 			case COMMAND_FACTORIZE: {
 				if(!((MathStructure*) x)->integerFactorize()) {
-					((MathStructure*) x)->factorize(evalops);
+					((MathStructure*) x)->factorize(evalops, true);
 				}
 				break;
 			}
@@ -3090,7 +3090,7 @@ void execute_command(int command_type, bool show_result) {
 	if(b_busy && !cfile) {
 		if(!result_only) {
 			switch(command_type) {
-				case COMMAND_FACTORIZE: {				
+				case COMMAND_FACTORIZE: {
 					FPUTS_UNICODE(_("Factorizing (press Enter to abort)"), stdout);
 					break;
 				}
@@ -3136,7 +3136,7 @@ void execute_command(int command_type, bool show_result) {
 	if(has_printed) printf("\n");
 
 	b_busy = false;
-	
+
 	if(!command_aborted) {
 		mstruct->unref();
 		mstruct = mfactor;
