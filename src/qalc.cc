@@ -600,7 +600,7 @@ void set_option(string str) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = STRUCTURING_NONE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "simplify", _("simplify"))) v = STRUCTURING_SIMPLIFY;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "factorize", _("factorize"))) v = STRUCTURING_FACTORIZE;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "combination", _("combination"))) v = STRUCTURING_COMBINATION;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "hybrid", _("hybrid"))) v = STRUCTURING_HYBRID;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
@@ -1815,7 +1815,7 @@ int main(int argc, char *argv[]) {
 				case STRUCTURING_NONE: {PUTS_UNICODE(_("none")); break;}
 				case STRUCTURING_SIMPLIFY: {PUTS_UNICODE(_("simplify")); break;}
 				case STRUCTURING_FACTORIZE: {PUTS_UNICODE(_("factorize")); break;}
-				case STRUCTURING_COMBINATION: {PUTS_UNICODE(_("combination")); break;}
+				case STRUCTURING_HYBRID: {PUTS_UNICODE(_("hybrid")); break;}
 			}
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("all prefixes")); PUTS_UNICODE(b2oo(printops.use_all_prefixes, false)); CHECK_IF_SCREEN_FILLED
@@ -2378,7 +2378,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("Available options and accepted values are:"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				STR_AND_TABS_BOOL(_("abbreviations"), printops.abbreviate_names);
-				STR_AND_TABS_3(_("algebra mode"), evalops.structuring, _("none"), _("simplify"), _("factorize"), _("combination"));
+				STR_AND_TABS_3(_("algebra mode"), evalops.structuring, _("none"), _("simplify"), _("factorize"), _("hybrid"));
 				STR_AND_TABS_BOOL(_("all prefixes"), printops.use_all_prefixes);
 				STR_AND_TABS_3(_("angle unit"), evalops.parse_options.angle_unit, _("none"), _("radians"), _("degrees"), _("gradians"));
 				STR_AND_TABS_2(_("approximation"), evalops.approximation, _("exact"), _("try exact"), _("approximate"));
@@ -3712,7 +3712,7 @@ void load_preferences() {
 				} else if(svar == "warn_about_denominators_assumed_nonzero") {
 					evalops.warn_about_denominators_assumed_nonzero = v;
 				} else if(svar == "structuring") {
-					if(v >= STRUCTURING_NONE && v <= STRUCTURING_COMBINATION) {
+					if(v >= STRUCTURING_NONE && v <= STRUCTURING_HYBRID) {
 						evalops.structuring = (StructuringMode) v;
 						printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
 					}

@@ -443,7 +443,7 @@ typedef enum {
 	/// Factorize the result
 	STRUCTURING_FACTORIZE,
 	/// Make some factorizations to enhance visibility of the result (e.g. x/z+y/z=(x+y)/z and 2*x+pi*x=(2+pi)*x)
-	STRUCTURING_COMBINATION
+	STRUCTURING_HYBRID
 } StructuringMode;
 
 typedef enum {

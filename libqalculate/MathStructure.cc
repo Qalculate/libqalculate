@@ -6053,6 +6053,8 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 		if(parent.isMultiplication()) {
 			if(mstruct2.isUnit()) return -1;
 			if(mstruct1.isUnit()) return 1;
+			if(mstruct1.isAddition() && !mstruct2.isAddition() && !mstruct1.containsUnknowns() && (mstruct2.isUnknown_exp() || (mstruct2.isMultiplication() && mstruct2.size() > 0 && mstruct2[0].isUnknown_exp()))) return -1;
+			if(mstruct2.isAddition() && !mstruct1.isAddition() && !mstruct2.containsUnknowns() && (mstruct1.isUnknown_exp() || (mstruct1.isMultiplication() && mstruct1.size() > 0 && mstruct1[0].isUnknown_exp()))) return 1;
 		}
 		if(mstruct2.isInverse()) return -1;
 		if(mstruct1.isInverse()) return 1;
@@ -6722,7 +6724,8 @@ bool combination_factorize(MathStructure &mstruct) {
 				}
 			}
 			if(b) {
-				mstruct = mstruct_new;
+				if(mstruct_new.size() == 1) mstruct.set(mstruct_new[0], true);
+				else mstruct = mstruct_new;
 				return true;
 			}
 		}
@@ -6754,7 +6757,7 @@ bool MathStructure::structure(StructuringMode structuring, const EvaluationOptio
 			}
 			return factorize(eo);
 		}
-		case STRUCTURING_COMBINATION: {
+		case STRUCTURING_HYBRID: {
 			if(isAddition()) {
 				bool b = false;
 				if(containsDivision()) {
@@ -6905,7 +6908,6 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			eo2.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 		}
 	}
-
 	if(eo.expand != 0 || (eo.test_comparisons && containsType(STRUCT_COMPARISON))) {
 		eo2.test_comparisons = eo.test_comparisons;
 		eo2.expand = eo.expand;
@@ -6933,7 +6935,6 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			}
 		}
 	}
-
 	if(eo2.isolate_x && containsType(STRUCT_COMPARISON) && eo2.assume_denominators_nonzero) {
 		if(try_isolate_x(*this, eo2, feo)) {
 			calculatesub(eo2, feo);
@@ -6942,8 +6943,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(eo.structuring == STRUCTURING_FACTORIZE) {
 		factorize(eo2);
-	} else if(eo.structuring == STRUCTURING_COMBINATION) {
-		structure(STRUCTURING_COMBINATION, eo2, false);
+	} else if(eo.structuring == STRUCTURING_HYBRID) {
+		structure(STRUCTURING_HYBRID, eo2, false);
 	}
 	if(eo.structuring != STRUCTURING_NONE) {
 		clean_multiplications(*this);
@@ -10671,7 +10672,8 @@ bool MathStructure::factorizeUnits() {
 				}
 			}
 			if(b) {
-				set(mstruct_new, true);
+				if(mstruct_new.size() == 1) set(mstruct_new[0], true);
+				else set(mstruct_new, true);
 				return true;
 			}
 		}
@@ -10714,7 +10716,6 @@ void MathStructure::prefixCurrencies() {
 		}
 	}
 }
-
 void MathStructure::format(const PrintOptions &po) {
 	if(!po.preserve_format) {
 		if(po.place_units_separately) {
@@ -11402,7 +11403,11 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 	if(par_prev && par) return MULTIPLICATION_SIGN_NONE;
 	if(par_prev) {
 		if(isUnit_exp()) return MULTIPLICATION_SIGN_SPACE;
-		if(isMultiplication() || isDivision()) {
+		if(isUnknown_exp()) return (namelen(isPower() ? CHILD(0) : *this, po, ips, NULL) > 1 ? MULTIPLICATION_SIGN_SPACE : MULTIPLICATION_SIGN_NONE);
+		if(isMultiplication() && SIZE > 0) {
+			if(CHILD(0).isUnit_exp()) return MULTIPLICATION_SIGN_SPACE;
+			if(CHILD(0).isUnknown_exp()) return (namelen(CHILD(0).isPower() ? CHILD(0)[0] : CHILD(0), po, ips, NULL) > 1 ? MULTIPLICATION_SIGN_SPACE : MULTIPLICATION_SIGN_NONE);
+		} else if(isDivision()) {
 			for(size_t i = 0; i < SIZE; i++) {
 				if(!CHILD(i).isUnit_exp()) {
 					return MULTIPLICATION_SIGN_OPERATOR;
@@ -11417,8 +11422,8 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 	if(par && t == STRUCT_POWER) return MULTIPLICATION_SIGN_SPACE;
 	if(par) return MULTIPLICATION_SIGN_NONE;
 	bool abbr_prev = false, abbr_this = false;
+	int namelen_this = namelen(*this, po, ips, &abbr_this);
 	int namelen_prev = namelen(parent[index - 2], po, ips, &abbr_prev);
-	int namelen_this = namelen(*this, po, ips, &abbr_this);	
 	switch(t) {
 		case STRUCT_MULTIPLICATION: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_INVERSE: {}
