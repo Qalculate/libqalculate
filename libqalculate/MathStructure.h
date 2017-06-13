@@ -805,7 +805,7 @@ class MathStructure {
 		/** @name Functions for polynomials */
 		//@{
 		bool simplify(const EvaluationOptions &eo = default_evaluation_options, bool unfactorize = true);
-		bool factorize(const EvaluationOptions &eo = default_evaluation_options, bool unfactorize = false);
+		bool factorize(const EvaluationOptions &eo = default_evaluation_options, bool unfactorize = true, bool try_term_combinations = true, bool only_integers = true, bool recursive = true);
 		bool structure(StructuringMode structuring, const EvaluationOptions &eo, bool restore_first = true);
 		/** If the structure represents a rational polynomial.
 		* This is true for

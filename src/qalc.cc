@@ -3048,7 +3048,7 @@ void CommandThread::run() {
 		switch(command_type) {
 			case COMMAND_FACTORIZE: {
 				if(!((MathStructure*) x)->integerFactorize()) {
-					((MathStructure*) x)->factorize(evalops, true);
+					((MathStructure*) x)->factorize(evalops, true, true, true);
 				}
 				break;
 			}
