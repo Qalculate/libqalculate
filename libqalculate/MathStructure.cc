@@ -4627,9 +4627,9 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					eo2.combine_divisions = false;
 					for(size_t i = 0; i < SIZE; i++) {
 						CHILD(i).calculatesub(eo2, feo, true, this, i);
+						CHILD(i).factorizeUnits();
 					}
 					CHILDREN_UPDATED;
-					factorizeUnits();
 					syncUnits(true, NULL, true, feo);
 				}
 				unformat(eo);
@@ -12888,7 +12888,7 @@ bool MathStructure::syncUnits(bool sync_complex_relations, bool *found_complex_r
 	for(size_t i = 0; i < alias_units.size(); i++) {
 		if(convert(alias_units[i], sync_complex_relations, &fcr, calculate_new_functions, feo)) b = true;
 	}
-	if(sync_complex_relations && fcr) CALCULATOR->error(false, _("Calculations involving units with complex relations (with multiple temperature units), might give unexpected results and is not recommended."), NULL);
+	if(sync_complex_relations && fcr) CALCULATOR->error(false, _("Calculations involving conversion of units without proportional linear relationship (e.g. with multiple temperature units), might give unexpected results and is not recommended."), NULL);
 	if(fcr && found_complex_relations) *found_complex_relations = fcr;
 	return b;
 }

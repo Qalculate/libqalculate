@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-12 09:09+0200\n"
+"POT-Creation-Date: 2017-06-14 19:47+0200\n"
 "PO-Revision-Date: 2006-05-04 12:29+0200\n"
 "Last-Translator: Hanna Knutsson <hanna_k@fmgirl.com>\n"
 "Language-Team: Swedish\n"
@@ -1776,14 +1776,14 @@ msgstr "plus"
 msgid "minus"
 msgstr "minus"
 
-#: ../libqalculate/Calculator.cc:344 ../libqalculate/MathStructure.cc:11776
+#: ../libqalculate/Calculator.cc:344 ../libqalculate/MathStructure.cc:11788
 #: ../libqalculate/Function.cc:1152 ../libqalculate/Function.cc:1160
 #: ../libqalculate/Function.cc:1572 ../libqalculate/Function.cc:1716
 msgid "and"
 msgstr "och"
 
 #: ../libqalculate/Calculator.cc:348 ../libqalculate/DataSet.cc:1067
-#: ../libqalculate/DataSet.cc:1130 ../libqalculate/MathStructure.cc:11790
+#: ../libqalculate/DataSet.cc:1130 ../libqalculate/MathStructure.cc:11802
 #: ../libqalculate/Function.cc:2034 ../libqalculate/Function.cc:2050
 msgid "or"
 msgstr "eller"
@@ -2048,61 +2048,50 @@ msgstr ""
 "Den andra matrisen måste ha lika många rader (var %s) som den första har "
 "kolumner (var %s) för matrismultiplikation."
 
-#. for(size_t i = 0; i < mcopy.size(); i++) {
-#. std::cout << "MCOPY " << i << ": " << mcopy[i].print() << std::endl;
-#. for(size_t i2 = 0; i2 < mcopy[i].size(); i2++) {
-#. std::cout << "MCOPY " << i << "-" << i2 << ": " << mcopy[i][i2].print() << std::endl;
-#. }
-#. }
-#. for(size_t i = 0; i < mcopy2.size(); i++) {
-#. std::cout << "MCOPY2 " << i << ": " << mcopy2[i].print() << std::endl;
-#. for(size_t i2 = 0; i2 < mcopy2[i].size(); i2++) {
-#. std::cout << "MCOPY2 " << i << "-" << i2 << ": " << mcopy2[i][i2].print() << std::endl;
-#. }
-#. }
-#. std::cout << "WRONG! this: " << print() << " copy: " << mcopy.print() << " copy2: " << mcopy2.print() << std::endl;
-#: ../libqalculate/MathStructure.cc:5281 ../libqalculate/MathStructure.cc:5322
-#: ../libqalculate/MathStructure.cc:5355 ../libqalculate/MathStructure.cc:5411
-#: ../libqalculate/MathStructure.cc:5431 ../libqalculate/MathStructure.cc:5450
-#: ../libqalculate/MathStructure.cc:5469 ../libqalculate/MathStructure.cc:5488
-#: ../libqalculate/MathStructure.cc:5579 ../libqalculate/MathStructure.cc:8903
-#: ../libqalculate/MathStructure.cc:8914 ../libqalculate/MathStructure.cc:8991
+#: ../libqalculate/MathStructure.cc:5283 ../libqalculate/MathStructure.cc:5324
+#: ../libqalculate/MathStructure.cc:5357 ../libqalculate/MathStructure.cc:5413
+#: ../libqalculate/MathStructure.cc:5433 ../libqalculate/MathStructure.cc:5452
+#: ../libqalculate/MathStructure.cc:5471 ../libqalculate/MathStructure.cc:5490
+#: ../libqalculate/MathStructure.cc:5581 ../libqalculate/MathStructure.cc:8899
+#: ../libqalculate/MathStructure.cc:8910 ../libqalculate/MathStructure.cc:8974
 msgid "This is a bug. Please report it."
 msgstr "Detta är en bug. Var vänlig rapportera felet."
 
-#: ../libqalculate/MathStructure.cc:11870
+#: ../libqalculate/MathStructure.cc:11882
 msgid "undefined"
 msgstr "odefinierad"
 
-#: ../libqalculate/MathStructure.cc:11920
+#: ../libqalculate/MathStructure.cc:11932
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to rank vector."
 msgstr "Olöslig jämförelse vid element %s, vid rangordning av vektor."
 
-#: ../libqalculate/MathStructure.cc:11968
+#: ../libqalculate/MathStructure.cc:11980
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to sort vector."
 msgstr "Olöslig jämförelse vid element %s, vid sortering av vektor."
 
-#: ../libqalculate/MathStructure.cc:12393
+#: ../libqalculate/MathStructure.cc:12405
 msgid "The determinant can only be calculated for square matrices."
 msgstr "Determinanten kan enbart beräknas för kvadratiska matriser."
 
-#: ../libqalculate/MathStructure.cc:12456
+#: ../libqalculate/MathStructure.cc:12468
 msgid "The permanent can only be calculated for square matrices."
 msgstr "Permanenten kan enbart beräknas för kvadratiska matriser."
 
-#: ../libqalculate/MathStructure.cc:12545
+#: ../libqalculate/MathStructure.cc:12557
 msgid "Inverse of singular matrix."
 msgstr "Invers av singulär matrs."
 
-#: ../libqalculate/MathStructure.cc:12881
+#: ../libqalculate/MathStructure.cc:12893
 msgid ""
-"Calculations involving units with complex relations (with multiple "
-"temperature units), might give unexpected results and is not recommended."
+"Calculations involving conversion of units without proportional linear "
+"relationship (e.g. with multiple temperature units), might give unexpected "
+"results and is not recommended."
 msgstr ""
-"Beräkningar som involverar enheter med komplexa relationer (med flera olika "
-"temperaturenheter), kan ge oförutsedda svar och rekommenderas ej."
+"Beräkningar som involverar omvandling av  enheter utan proportionella "
+"linjära förhållanden (t.ex. med flera olika temperaturenheter), kan ge "
+"oförutsedda svar och rekommenderas ej."
 
 #: ../libqalculate/Function.cc:153
 #, c-format
