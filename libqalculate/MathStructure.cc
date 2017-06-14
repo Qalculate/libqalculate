@@ -3115,7 +3115,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				}
 			}
 		}
-		if(o_number.isRational() && !o_number.isInteger() && !o_number.isZero()) {
+		if(mstruct.number().isNegative() && o_number.isRational() && !o_number.isInteger() && !o_number.isZero()) {
 			if(o_number.numeratorIsOne()) {
 				mstruct.number().negate();
 				o_number.recip();
@@ -4600,12 +4600,12 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 						unformat(feo);
 					}
 					b = true;
-					calculatesub(eo, feo, true, mparent, index_this);					
+					calculatesub(eo, feo, true, mparent, index_this);
 				}
 			}
 			break;
 		}
-		case STRUCT_POWER: {			
+		case STRUCT_POWER: {
 			if(recursive) {
 				CHILD(0).calculatesub(eo, feo, true, this, 0);
 				CHILD(1).calculatesub(eo, feo, true, this, 1);
@@ -4708,7 +4708,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 						i3 = SIZE;
 						i2 = i + 1;
 						goto try_multiply_matrix;
-					}												
+					}
 				}
 			}
 			MERGE_ALL2
@@ -9021,7 +9021,6 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						Number sqrtb24ac(nr1);
 						sqrtb24ac.raise(nrtwo);
 						sqrtb24ac -= nr4ac;
-						cout << sqrtb24ac.print() << endl;
 						if(sqrtb24ac.isNegative()) factorable = false;
 						MathStructure mstructb24(sqrtb24ac);
 						if(factorable) {
