@@ -9538,60 +9538,26 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				}
 			}
 			//Try factorize combinations of terms
-			if(try_term_combinations && SIZE > 2 && SIZE < 10) {
-				bool b = false;
-				MathStructure mtest;
+			if(try_term_combinations && SIZE > 2 && SIZE < 9) {
 				int start_index = rand() % SIZE;
 				int index = start_index;
+				int best_index = -1;
+				MathStructure mbest;
 				do {
-					mtest.set(*this);
+					MathStructure mtest(*this);
 					mtest.delChild(index + 1);
 					if(mtest.factorize(eo, false, try_term_combinations, only_integers, recursive)) {
-						mtest.add(CHILD(index), true);
-						mtest.factorize(eo, false, try_term_combinations, only_integers, recursive);
-						b = true;
-						break;
+						if(best_index < 0 || (mbest.isAddition() && !mtest.isAddition()) || ((mtest.isAddition() && mtest.size() < mbest.size()) || (mtest.size() ==  mbest.size() && mtest.countTotalChildren() + CHILD(index).countTotalChildren() < mbest.countTotalChildren() + CHILD(best_index).countTotalChildren()))) {
+							mbest = mtest;
+							best_index = index;
+						}
 					}
 					index++;
 					if(index == (int) SIZE) index = 0;
 				} while(index != start_index);
-				if(b) {
-					if(mtest.isAddition()) {
-						bool b2 = false;
-						MathStructure mtest2;
-						//Test factorize combinations in different order
-						while(start_index == index) {
-							start_index = rand() % SIZE;
-						}
-						index = start_index;
-						do {
-							mtest2.set(*this);
-							mtest2.delChild(index + 1);
-							if(mtest2.factorize(eo, false, try_term_combinations, only_integers, recursive)) {
-								mtest2.add(CHILD(index), true);
-								mtest2.factorize(eo, false, try_term_combinations, only_integers, recursive);
-								b2 = true;
-								break;
-							}
-							index--;
-							if(index < 0) index = SIZE - 1;
-						} while(index != start_index);
-						if(b2 && mtest2 != mtest) {
-							//Check which alternative is best
-							if(!mtest2.isAddition() || mtest2.size() < mtest.size()) {
-								set(mtest2, true);
-							} else if(mtest.size() < mtest2.size()) {
-								set(mtest, true);
-							} else {
-								if(mtest.countTotalChildren() > mtest2.countTotalChildren()) set(mtest2, true);
-								else set(mtest, true);
-							}
-						} else {
-							set(mtest, true);
-						}
-					} else {
-						set(mtest, true);
-					}
+				if(best_index >= 0) {
+					mbest.add(CHILD(best_index), true);
+					set(mbest);
 					return true;
 				}
 			}
