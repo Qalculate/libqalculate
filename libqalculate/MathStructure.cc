@@ -3052,8 +3052,10 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 
 int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this, size_t index_mstruct, bool) {
 	if(mstruct.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
+		// number^number
 		Number nr(o_number);
 		if(nr.raise(mstruct.number(), eo.approximation != APPROXIMATION_APPROXIMATE) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
+			// Exponentiation succeeded without inappropriate change in approximation status
 			if(o_number == nr) {
 				o_number = nr;
 				numberUpdated();
@@ -3066,6 +3068,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		if(mstruct.number().isRational()) {
 			Number exp_num(mstruct.number().numerator());
 			if(!exp_num.isOne() && !exp_num.isMinusOne() && o_number.isPositive() && exp_num.isLessThanOrEqualTo(Number(10000, 1)) && exp_num.isGreaterThanOrEqualTo(Number(-10000, 1))) {
+				// Try raise by exponent numerator if not very large
 				nr = o_number;
 				if(nr.raise(exp_num) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
 					o_number = nr;
@@ -3115,6 +3118,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				}
 			}
 		}
+		// If base numerator is larger than denominator, invert base and negate exponent
 		if(o_number.isRational() && !o_number.isInteger() && !o_number.isZero() && ((o_number.isNegative() && o_number.isGreaterThan(nr_minus_one)) || (o_number.isPositive() && o_number.isLessThan(nr_one)))) {
 			mstruct.number().negate();
 			o_number.recip();
@@ -8993,6 +8997,22 @@ bool MathStructure::integerFactorize() {
 	m_type = STRUCT_MULTIPLICATION;
 	return true;
 }
+size_t count_powers(const MathStructure &mstruct) {
+	if(mstruct.isPower()) {
+		if(mstruct[1].isInteger()) {
+			bool overflow = false;
+			int c = mstruct.number().intValue(&overflow) - 1;
+			if(overflow) return 0;
+			if(c < 0) return -c;
+			return c;
+		}
+	}
+	size_t c = 0;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		c += count_powers(mstruct[i]);
+	}
+	return c;
+}
 bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, bool try_term_combinations, bool only_integers, bool recursive) {
 	EvaluationOptions eo = eo_pre;
 	eo.sync_units = false;
@@ -9592,7 +9612,19 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					MathStructure mtest(*this);
 					mtest.delChild(index + 1);
 					if(mtest.factorize(eo, false, try_term_combinations, only_integers, recursive)) {
-						if(best_index < 0 || (mbest.isAddition() && !mtest.isAddition()) || ((mtest.isAddition() && mtest.size() < mbest.size()) || (mtest.size() ==  mbest.size() && mtest.countTotalChildren() + CHILD(index).countTotalChildren() < mbest.countTotalChildren() + CHILD(best_index).countTotalChildren()))) {
+						bool b = best_index < 0 || (mbest.isAddition() && !mtest.isAddition());
+						if(!b && mtest.isAddition()) {
+							b = (mtest.size() < mbest.size());
+							if(!b &&  mtest.size() ==  mbest.size()) {
+								size_t c1 = mtest.countTotalChildren() + CHILD(index).countTotalChildren();
+								size_t c2 = mbest.countTotalChildren() + CHILD(best_index).countTotalChildren();
+								b = (c1 < c2);
+								if(c1 == c2) {
+									b = (count_powers(mtest) + count_powers(CHILD(index))) < (count_powers(mbest) + count_powers(CHILD(best_index)));
+								}
+							}
+						}
+						if(b) {
 							mbest = mtest;
 							best_index = index;
 						}
