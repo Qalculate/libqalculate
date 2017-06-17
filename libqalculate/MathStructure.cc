@@ -12104,7 +12104,7 @@ void MathStructure::resizeVector(size_t i, const MathStructure &mfill) {
 		while(i > SIZE) {
 			APPEND(mfill);
 		}
-	} else if(i > SIZE) {
+	} else if(i < SIZE) {
 		REDUCE(i)
 	}
 }
