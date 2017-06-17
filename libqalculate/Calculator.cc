@@ -7157,10 +7157,15 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						else if(stmp == "real") ((UnknownVariable*) v)->assumptions()->setType(ASSUMPTION_TYPE_REAL);
 						else if(stmp == "complex") ((UnknownVariable*) v)->assumptions()->setType(ASSUMPTION_TYPE_COMPLEX);
 						else if(stmp == "number") ((UnknownVariable*) v)->assumptions()->setType(ASSUMPTION_TYPE_NUMBER);
-						else if(stmp == "non-matrix") ((UnknownVariable*) v)->assumptions()->setType(ASSUMPTION_TYPE_NONMATRIX);
-						else if(stmp == "none") {
-							if(VERSION_BEFORE(0, 9, 1)) {
+						else if(stmp == "non-matrix") {
+							if(VERSION_BEFORE(0, 9, 13)) {
+								((UnknownVariable*) v)->assumptions()->setType(ASSUMPTION_TYPE_NUMBER);
+							} else {
 								((UnknownVariable*) v)->assumptions()->setType(ASSUMPTION_TYPE_NONMATRIX);
+							}
+						} else if(stmp == "none") {
+							if(VERSION_BEFORE(0, 9, 13)) {
+								((UnknownVariable*) v)->assumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 							} else {
 								((UnknownVariable*) v)->assumptions()->setType(ASSUMPTION_TYPE_NONE);
 							}
@@ -7866,7 +7871,7 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 	node_tree_item *item;
 	string cat, cat_sub;
 	for(size_t i = 0; i < variables.size(); i++) {
-		if((save_global || variables[i]->isLocal() || variables[i]->hasChanged()) && variables[i]->category() != _("Temporary")) {
+		if((save_global || variables[i]->isLocal() || variables[i]->hasChanged()) && variables[i]->category() != _("Temporary") && variables[i]->category() != "Temporary") {
 			item = &top;
 			if(!variables[i]->category().empty()) {
 				cat = variables[i]->category();

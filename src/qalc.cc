@@ -176,12 +176,12 @@ void set_assumption(const string &str, bool first_of_two = false) {
 		if(first_of_two) {
 			CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_UNKNOWN);
 		} else {
-			CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NONE);
+			CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "none", _("none"))) {
+	/*} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "none", _("none"))) {
 		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NONE);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "non-matrix", _("non-matrix"))) {
-		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NONMATRIX);
+		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NONMATRIX);*/
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "complex", _("complex"))) {
 		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_COMPLEX);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "real", _("real"))) {
@@ -2398,11 +2398,11 @@ int main(int argc, char *argv[]) {
 				if(ass->sign() == ASSUMPTION_SIGN_NONPOSITIVE) str += "*";
 				str += ", "; str += _("non-negative");
 				if(ass->sign() == ASSUMPTION_SIGN_NONNEGATIVE) str += "*";
-				str += " +\n"; str += "\t\t\t\t\t "; str += _("unknown");
+				str += " +\n"; str += "\t\t\t\t\t "; /*str += _("unknown");
 				if(ass->type() == ASSUMPTION_TYPE_NONE) str += "*";
 				str += ", "; str += _("non-matrix");
 				if(ass->type() == ASSUMPTION_TYPE_NONMATRIX) str += "*";
-				str += ", "; str += _("number");
+				str += ", ";*/ str += _("number");
 				if(ass->type() == ASSUMPTION_TYPE_NUMBER) str += "*";
 				str += ", "; str += _("complex");
 				if(ass->type() == ASSUMPTION_TYPE_COMPLEX) str += "*";
@@ -2549,11 +2549,11 @@ int main(int argc, char *argv[]) {
 				if(ass->sign() == ASSUMPTION_SIGN_NONPOSITIVE) str += "*";
 				str += ", "; str += _("non-negative");
 				if(ass->sign() == ASSUMPTION_SIGN_NONNEGATIVE) str += "*";
-				str += " +\n"; str += _("unknown");
+				str += " +\n"; /*str += _("unknown");
 				if(ass->type() == ASSUMPTION_TYPE_NONE) str += "*";
 				str += ", "; str += _("non-matrix");
 				if(ass->type() == ASSUMPTION_TYPE_NONMATRIX) str += "*";
-				str += ", "; str += _("number");
+				str += ", "; */str += _("number");
 				if(ass->type() == ASSUMPTION_TYPE_NUMBER) str += "*";
 				str += ", "; str += _("complex");
 				if(ass->type() == ASSUMPTION_TYPE_COMPLEX) str += "*";
@@ -3797,9 +3797,10 @@ void load_preferences() {
 					evalops.parse_options.rpn = v;
 				} else if(svar == "default_assumption_type") {
 					if(v >= ASSUMPTION_TYPE_NONE && v <= ASSUMPTION_TYPE_INTEGER) {
-						if(v == ASSUMPTION_TYPE_NONE && version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] == 0))) {
+						/*if(v == ASSUMPTION_TYPE_NONE && version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] == 0))) {
 							v = ASSUMPTION_TYPE_NONMATRIX;
-						}
+						}*/
+						if(v < ASSUMPTION_TYPE_NUMBER && version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] <= 12))) v = ASSUMPTION_TYPE_NUMBER;
 						CALCULATOR->defaultAssumptions()->setType((AssumptionType) v);
 					}
 				} else if(svar == "default_assumption_sign") {
