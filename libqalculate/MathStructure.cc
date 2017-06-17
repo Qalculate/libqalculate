@@ -1920,6 +1920,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 	switch(m_type) {
 		case STRUCT_VECTOR: {
 			switch(mstruct.type()) {
+				case STRUCT_ADDITION: {return 0;}
 				case STRUCT_VECTOR: {
 					if(SIZE == mstruct.size()) {
 						for(size_t i = 0; i < SIZE; i++) {
@@ -1928,7 +1929,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
 					}
-				}
+				}				
 				default: {
 					return -1;
 				}
@@ -1937,9 +1938,6 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 		}
 		case STRUCT_ADDITION: {
 			switch(mstruct.type()) {
-				case STRUCT_VECTOR: {
-					return -1;
-				}
 				case STRUCT_ADDITION: {
 					for(size_t i = 0; i < mstruct.size(); i++) {
 						if(reversed) {
@@ -2611,6 +2609,9 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 	switch(m_type) {
 		case STRUCT_VECTOR: {
 			switch(mstruct.type()) {
+				case STRUCT_ADDITION: {
+					return 0;
+				}
 				case STRUCT_VECTOR: {
 					if(isMatrix() && mstruct.isMatrix()) {
 						if(CHILD(0).size() != mstruct.size()) {
@@ -2660,10 +2661,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 		}
 		case STRUCT_ADDITION: {
 			switch(mstruct.type()) {
-				case STRUCT_VECTOR: {
-					return 0;
-				}
-				case STRUCT_ADDITION: {					
+				case STRUCT_ADDITION: {
 					if(eo.expand != 0) {
 						MathStructure msave(*this);
 						CLEAR;
