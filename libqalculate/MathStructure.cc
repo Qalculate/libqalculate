@@ -12838,10 +12838,12 @@ int MathStructure::isUnitCompatible(const MathStructure &mstruct) {
 }
 
 bool MathStructure::syncUnits(bool sync_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo) {
+	if(SIZE == 0) return false;
 	vector<Unit*> base_units;
 	vector<AliasUnit*> alias_units;
 	vector<CompositeUnit*> composite_units;	
 	gatherInformation(*this, base_units, alias_units);
+	if(alias_units.empty() || base_units.size() + alias_units.size() == 1) return false;
 	CompositeUnit *cu;
 	bool b = false, do_erase = false;
 	for(size_t i = 0; i < alias_units.size(); ) {
@@ -12857,7 +12859,7 @@ bool MathStructure::syncUnits(bool sync_complex_relations, bool *found_complex_r
 							break;
 						}
 					}
-					if(!b) composite_units.push_back(cu);					
+					if(!b) composite_units.push_back(cu);
 					do_erase = true;
 					break;
 				}
@@ -12913,6 +12915,7 @@ bool MathStructure::syncUnits(bool sync_complex_relations, bool *found_complex_r
 			i++;
 		}
 	}
+	
 	for(size_t i = 0; i < alias_units.size();) {
 		do_erase = false;
 		for(size_t i2 = 0; i2 < alias_units.size(); i2++) {
