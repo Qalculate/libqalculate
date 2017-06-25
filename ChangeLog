@@ -1,3 +1,17 @@
+2017-06-17 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Remove "none" and "non-matrix" assumptions from qalc and when loading definitions from previous versions (<= 0.9.12)
+	* Fix transpose() and (matrix+1)*(matrix-1)
+	* For cases when 0x cannot be assumed to zero, the same should be true for 0x^b
+
+2017-06-12 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Enhanced factorization/simplifaction (including hybrid mode)
+
+2017-06-07 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Revised temperature unit handling
+
 2017-06-05 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Updated automatic conversion - controls that new units really is better than old (fixes V^3) and splits up POST_CONVERSION_BEST in POST_CONVERSION_OPTIMAL_IS and POST_CONVERSION_OPTIMAL (prioritises original units)
