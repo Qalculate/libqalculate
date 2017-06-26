@@ -6560,7 +6560,7 @@ bool factor1(const MathStructure &mstruct, MathStructure &mnum, MathStructure &m
 	}
 	if(!mnum.isUndefined() && !mden.isUndefined()) {
 		while(true) {
-			mnum.factorize(eo, false, false, true);
+			mnum.factorize(eo, false, false, 0, true);
 			mnum.evalSort(true);
 			if(mnum.isMultiplication()) {
 				for(size_t i = 0; i < mnum.size(); ) {
@@ -6582,7 +6582,7 @@ bool factor1(const MathStructure &mstruct, MathStructure &mnum, MathStructure &m
 				if(mnum.size() == 0) mnum.set(1, 1);
 				else if(mnum.size() == 1) mnum.setToChild(1);
 			}
-			mden.factorize(eo, false, false, true);
+			mden.factorize(eo, false, false, 0, true);
 			mden.evalSort(true);
 			bool b = false;
 			if(mden.isMultiplication()) {
@@ -6802,7 +6802,7 @@ bool MathStructure::structure(StructuringMode structuring, const EvaluationOptio
 	switch(structuring) {
 		case STRUCTURING_SIMPLIFY: {return simplify(eo, restore_first);}
 		case STRUCTURING_FACTORIZE: {
-			return factorize(eo, restore_first, true, true, true);
+			return factorize(eo, restore_first);
 		}
 		case STRUCTURING_HYBRID: {
 			if(isAddition()) {
@@ -8988,7 +8988,27 @@ size_t count_powers(const MathStructure &mstruct) {
 	}
 	return c;
 }
-bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, bool try_term_combinations, bool only_integers, bool recursive) {
+bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, int try_term_combinations, int max_msecs, bool only_integers, bool recursive, struct timeval *endtime_p) {
+	struct timeval endtime;
+	if(max_msecs > 0 && !endtime_p) {
+#ifndef CLOCK_MONOTONIC
+		gettimeofday(&endtime, NULL);
+#else
+		struct timespec ts;
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+		endtime.tv_sec = ts.tv_sec;
+		endtime.tv_usec = ts.tv_nsec / 1000;
+#endif
+		endtime.tv_sec += max_msecs / 1000;
+		long int usecs = endtime.tv_usec + (long int) (max_msecs % 1000) * 1000;
+		if(usecs >= 1000000) {
+			usecs -= 1000000;
+			endtime.tv_sec++;
+		}
+		endtime.tv_usec = usecs;
+		max_msecs = 0;
+		endtime_p = &endtime;
+	}
 	EvaluationOptions eo = eo_pre;
 	eo.sync_units = false;
 	if(unfactorize) {
@@ -9015,7 +9035,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 			}
 		}
 		if(!isAddition()) {
-			factorize(eo, false, try_term_combinations, only_integers, recursive);
+			factorize(eo, false, try_term_combinations, 0, only_integers, recursive, endtime_p);
 			return true;
 		}
 	}	
@@ -9167,7 +9187,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 			MathStructure *factor_mstruct = new MathStructure(1, 1);
 			MathStructure mnew;
 			if(factorize_find_multiplier(*this, mnew, *factor_mstruct)) {
-				mnew.factorize(eo, false, try_term_combinations, only_integers, recursive);
+				mnew.factorize(eo, false, try_term_combinations, 0, only_integers, recursive, endtime_p);
 				clear(true);
 				m_type = STRUCT_MULTIPLICATION;
 				APPEND_REF(factor_mstruct);
@@ -9381,7 +9401,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 									}
 								}
 							}
-							mleft.factorize(eo, false, try_term_combinations, only_integers, recursive);
+							mleft.factorize(eo, false, try_term_combinations, 0, only_integers, recursive, endtime_p);
 							vector<int> powers;
 							vector<size_t> powers_i;
 							int dupsfound = 0;
@@ -9578,15 +9598,29 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				}
 			}
 			//Try factorize combinations of terms
-			if(try_term_combinations && SIZE > 2 && SIZE < 9) {
+			if(try_term_combinations > 0 && SIZE > 2 && (try_term_combinations == 1 || (int) SIZE <= try_term_combinations)) {
 				int start_index = rand() % SIZE;
 				int index = start_index;
 				int best_index = -1;
 				MathStructure mbest;
 				do {
+					if(endtime_p && endtime_p->tv_sec > 0) {
+#ifndef CLOCK_MONOTONIC
+						struct timeval curtime;
+						gettimeofday(&curtime, NULL);
+						if(curtime.tv_sec > endtime_p->tv_sec || (curtime.tv_sec == endtime_p->tv_sec && curtime.tv_usec > endtime_p->tv_usec)) {
+#else
+						struct timespec curtime;
+						clock_gettime(CLOCK_MONOTONIC, &curtime);
+						if(curtime.tv_sec > endtime_p->tv_sec || (curtime.tv_sec == endtime_p->tv_sec && curtime.tv_nsec / 1000 > endtime_p->tv_usec)) {
+#endif
+							CALCULATOR->error(false, _("Because of time constraints only a limited number of combinations of terms were tried during factorization. Repeat factorization to try other randon combinations."), NULL);
+							break;
+						}
+					}
 					MathStructure mtest(*this);
 					mtest.delChild(index + 1);
-					if(mtest.factorize(eo, false, try_term_combinations, only_integers, recursive)) {
+					if(mtest.factorize(eo, false, try_term_combinations, 0, only_integers, false, endtime_p)) {
 						bool b = best_index < 0 || (mbest.isAddition() && !mtest.isAddition());
 						if(!b && mtest.isAddition()) {
 							b = (mtest.size() < mbest.size());
@@ -9602,6 +9636,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						if(b) {
 							mbest = mtest;
 							best_index = index;
+							if(mbest.isPower()) break;
 						}
 					}
 					index++;
@@ -9620,14 +9655,14 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				EvaluationOptions eo2 = eo;
 				eo2.assume_denominators_nonzero = false;
 				for(size_t i = 0; i < SIZE; i++) {
-					if(CHILD(i).factorize(eo2, false, try_term_combinations, only_integers, recursive)) {
+					if(CHILD(i).factorize(eo2, false, try_term_combinations, 0, only_integers, recursive, endtime_p)) {
 						CHILD_UPDATED(i);
 						b = true;
 					}
 				}
 			} else if(recursive) {
 				for(size_t i = 0; i < SIZE; i++) {
-					if(CHILD(i).factorize(eo, false, try_term_combinations, only_integers, recursive)) {
+					if(CHILD(i).factorize(eo, false, try_term_combinations, 0, only_integers, recursive, endtime_p)) {
 						CHILD_UPDATED(i);
 						b = true;
 					}
@@ -14306,7 +14341,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				mtest.childrenUpdated();
 			}
 			if(!morig || !equals(*morig)) {
-				if(mtest[0].factorize(eo2, false, false, false, false) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && (mtest[0][0].isNumber() || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
+				if(mtest[0].factorize(eo2, false, false, 0, false, false) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && (mtest[0][0].isNumber() || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
 					mtest.childUpdated(1);
 					if(mtest.isolate_x_sub(eo, eo2, x_var, this)) {
 						set_nocopy(mtest);
@@ -14315,7 +14350,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 				if(!CHILD(1).isZero()) {
 					mtest.set(*this);
-					if(mtest[0].factorize(eo2, false, false, false, false) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && (mtest[0][0].isNumber() || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
+					if(mtest[0].factorize(eo2, false, false, 0, false, false) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && (mtest[0][0].isNumber() || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
 						mtest.childUpdated(1);
 						if(mtest.isolate_x_sub(eo, eo2, x_var, this)) {
 							set_nocopy(mtest);
@@ -14796,7 +14831,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				mtest[0].calculateSubtract(CHILD(1), eo2);
 				mtest[1].clear();
 				mtest.childrenUpdated();
-				if(mtest[0].factorize(eo2, false, false, false, false) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && (mtest[0][0].isNumber() || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
+				if(mtest[0].factorize(eo2, false, false, 0, false, false) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && (mtest[0][0].isNumber() || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
 					mtest.childUpdated(1);
 					if(mtest.isolate_x_sub(eo, eo2, x_var, this)) {
 						set_nocopy(mtest);

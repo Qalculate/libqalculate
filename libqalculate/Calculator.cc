@@ -8864,7 +8864,14 @@ void Calculator::startPrintControl(int milli_timeout) {
 	i_printing_aborted = 0;
 	i_print_timeout = milli_timeout;
 	if(i_print_timeout > 0) {
+#ifndef CLOCK_MONOTONIC
 		gettimeofday(&t_print_end, NULL);
+#else
+		struct timespec ts;
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+		t_print_end.tv_sec = ts.tv_sec;
+		t_print_end.tv_usec = ts.tv_nsec / 1000;
+#endif
 		long int usecs = t_print_end.tv_usec + (long int) milli_timeout * 1000;
 		t_print_end.tv_usec = usecs % 1000000;
 		t_print_end.tv_sec += usecs / 1000000;
@@ -8877,9 +8884,15 @@ bool Calculator::printingAborted() {
 	if(!b_printing_controlled) return false;
 	if(i_printing_aborted > 0) return true;
 	if(i_print_timeout > 0) {
+#ifndef CLOCK_MONOTONIC
 		struct timeval tv;
 		gettimeofday(&tv, NULL);
 		if(tv.tv_sec > t_print_end.tv_sec || (tv.tv_sec == t_print_end.tv_sec && tv.tv_usec > t_print_end.tv_usec)) {
+#else
+		struct timespec tv;
+		clock_gettime(CLOCK_MONOTONIC, &tv);
+		if(tv.tv_sec > t_print_end.tv_sec || (tv.tv_sec == t_print_end.tv_sec && tv.tv_nsec / 1000 > t_print_end.tv_usec)) {
+#endif
 			i_printing_aborted = 2;
 			return true;
 		}
