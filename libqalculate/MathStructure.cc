@@ -7535,8 +7535,8 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 
 	if(var_i >= sym_stats.size()) return false;
 	const MathStructure &xvar = sym_stats[var_i].sym;
-
-	MathStructure c, d;	
+	
+	MathStructure c, d;
 	Number adeg = m1.degree(xvar);
 	Number bdeg = m2.degree(xvar);
 	Number cdeg, ddeg;
@@ -7551,14 +7551,15 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 		cdeg = bdeg;
 		ddeg = adeg;
 	}
-
+	
 	MathStructure cont_c, cont_d;
 	c.polynomialContent(xvar, cont_c, eo);
 	d.polynomialContent(xvar, cont_d, eo);
+	
 	MathStructure gamma;
 	MathStructure::gcd(cont_c, cont_d, gamma, eo, NULL, NULL, false);
+	mgcd = gamma;
 	if(ddeg.isZero()) {
-		mgcd = gamma;
 		return true;
 	}
 	MathStructure prim_c, prim_d;	
@@ -7566,7 +7567,7 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 	d.polynomialPrimpart(xvar, cont_d, prim_d, eo);
 	c = prim_c;
 	d = prim_d;
-
+	
 	MathStructure r;
 	MathStructure ri(1, 1);
 	MathStructure psi(1, 1);
@@ -7710,7 +7711,6 @@ void interpolate(const MathStructure &gamma, const Number &xi, const MathStructu
 }
 
 bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgcd, const EvaluationOptions &eo, MathStructure *ca, MathStructure *cb, sym_desc_vec &sym_stats, size_t var_i) {
-
 	if(var_i >= sym_stats.size()) return false;
 	if(m1.isZero() || m2.isZero())	return false;
 
@@ -7728,17 +7728,14 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 		return true;
 	}
 
-//	std::cout << "HEUR 1 a: " << m1.print() << " b: " << m2.print() << std::endl;
 	const MathStructure &xvar = sym_stats[var_i].sym;
 	Number nr_gc;
 	integer_content(m1, nr_gc);
 	Number nr_rgc;
 	integer_content(m2, nr_rgc);
-//	std::cout << " ic1: " << nr_gc.print() << " ic2: " << nr_rgc.print() << std::endl;
 	nr_gc.gcd(nr_rgc);
 	nr_rgc = nr_gc;
 	nr_rgc.recip();
-//	std::cout << "HEUR nr_gc: " << nr_gc.print() << " nr_rgc: " << nr_rgc.print() << std::endl;
 	MathStructure p(m1);
 	p.calculateMultiply(nr_rgc, eo);
 	MathStructure q(m2);	
@@ -7757,8 +7754,6 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 	xi *= 2;
 	xi += 2;
 	
-//	std::cout << "HEUR 2 xi: " << xi.print() << " p: " << p.print() << " q: " << q.print() << std::endl;
-
 	for(int t = 0; t < 6; t++) {
 
 		if((maxdeg * xi.integerLength()).isGreaterThan(100000)) {
@@ -7774,15 +7769,12 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 
 		if(heur_gcd(psub, qsub, gamma, eo, &cp, &cq, sym_stats, var_i + 1)) {
 
-//			std::cout << "HEUR 4-2 gamma: " << gamma.print() << " xi: " << xi.print() << std::endl;
 			interpolate(gamma, xi, xvar, mgcd, eo);
-//			std::cout << "HEUR 4-3 gamma: " << gamma.print() << " g: " << mgcd.print() << std::endl;
 
 			Number ig;
 			integer_content(mgcd, ig);
 			ig.recip();
 			mgcd.calculateMultiply(ig, eo); 
-//			std::cout << "HEUR 3 g: " << mgcd.print() << " p: " << p.print() << std::endl;
 
 			MathStructure dummy;
 			if(divide_in_z(p, mgcd, ca ? *ca : dummy, sym_stats, var_i, eo) && divide_in_z(q, mgcd, cb ? *cb : dummy, sym_stats, var_i, eo)) {
@@ -7791,14 +7783,12 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 			}
 		}
 
-//		std::cout << "xi: " << xi.print() << std::endl;
 		Number xi2(xi);
 		xi2.isqrt();
 		xi2.isqrt();
 		xi *= xi2;
 		xi *= 73794;
 		xi.iquo(27011);
-//		std::cout << "xi: " << xi.print() << std::endl;
 		
 	}
 
@@ -7880,7 +7870,7 @@ void MathStructure::polynomialContent(const MathStructure &xvar, MathStructure &
 	MathStructure c;
 	integer_content(*this, c.number());
 	MathStructure r(*this);
-	r.calculateDivide(c, eo);
+	if(!c.isOne()) r.calculateDivide(c, eo);
 	MathStructure lcoeff;
 	r.lcoefficient(xvar, lcoeff);
 	if(lcoeff.isInteger()) {
@@ -7904,7 +7894,8 @@ void MathStructure::polynomialContent(const MathStructure &xvar, MathStructure &
 		mtmp = mcontent;
 		MathStructure::gcd(coeff, mtmp, mcontent, eo, NULL, NULL, false);
 	}
-	mcontent.calculateMultiply(c, eo);
+	if(!c.isOne()) mcontent.calculateMultiply(c, eo);
+
 }
 
 void MathStructure::polynomialPrimpart(const MathStructure &xvar, MathStructure &mprim, const EvaluationOptions &eo) const {
@@ -8304,10 +8295,12 @@ void get_symbol_stats(const MathStructure &m1, const MathStructure &m2, sym_desc
 }
 
 bool MathStructure::gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mresult, const EvaluationOptions &eo, MathStructure *ca, MathStructure *cb, bool check_args) {
+
+	if(ca) *ca = m1;
+	if(cb) *cb = m2;
+	mresult.set(1, 1);
+
 	if(m1.isOne() || m2.isOne()) {
-		if(ca) *ca = m1;
-		if(cb) *cb = m2;
-		mresult.set(1, 1);
 		return true;
 	}
 	if(m1.isNumber() && m2.isNumber()) {
@@ -8426,9 +8419,6 @@ factored_2:
 				MathStructure p_gcd;
 				if(!MathStructure::gcd(m1[0], m2[0], p_gcd, eo, &p_co, &pb_co, false)) return false;
 				if(p_gcd.isOne()) {
-					if(ca) *ca = m1;
-					if(cb) *cb = m2;
-					mresult.set(1, 1);
 					return true;
 				} else {
 					if(m1[1].number().isLessThan(m2[1].number())) {
@@ -8475,9 +8465,6 @@ factored_2:
 			MathStructure p_gcd;
 			if(!MathStructure::gcd(m1[0], m2, p_gcd, eo, &p_co, &bpart_co, false)) return false;
 			if(p_gcd.isOne()) {
-				if(ca) *ca = m1;
-				if(cb) *cb = m2;
-				mresult.set(1, 1);
 				return true;
 			} else {
 				mresult = p_gcd;
@@ -8507,9 +8494,6 @@ factored_2:
 		MathStructure p_gcd;
 		if(!MathStructure::gcd(m1, m2[0], p_gcd, eo, &apart_co, &p_co, false)) return false;
 		if(p_gcd.isOne()) {
-			if(ca) *ca = m1;
-			if(cb) *cb = m2;
-			mresult.set(1, 1);
 			return true;
 		} else {
 			mresult = p_gcd;
@@ -8528,9 +8512,6 @@ factored_2:
 		MathStructure bex(m2);
 		bex.calculateReplace(m1, m_zero, eo);
 		if(!bex.isZero()) {
-			if(ca) *ca = m1;
-			if(cb) *cb = m2;
-			mresult.set(1, 1);
 			return true;
 		}
 	}
@@ -8538,9 +8519,6 @@ factored_2:
 		MathStructure aex(m1);
 		aex.calculateReplace(m2, m_zero, eo);
 		if(!aex.isZero()) {
-			if(ca) *ca = m1;
-			if(cb) *cb = m2;
-			mresult.set(1, 1);
 			return true;
 		}
 	}
@@ -8561,7 +8539,7 @@ factored_2:
 	} else {
 		min_ldeg = ldeg_b;
 	}
-
+	
 	if(min_ldeg.isPositive()) {
 		MathStructure aex(m1), bex(m2);
 		MathStructure common(xvar);
@@ -8605,23 +8583,16 @@ factored_2:
 		}
 		return true;
 	}
+
 	if(!heur_gcd(m1, m2, mresult, eo, ca, cb, sym_stats, var_i)) {
 		sr_gcd(m1, m2, mresult, sym_stats, var_i, eo);
-		if(mresult.isOne()) {
-			if(ca) *ca = m1;
-			if(cb) *cb = m2;
-		} else {
+		if(!mresult.isOne()) {
 			if(ca) {
 				MathStructure::polynomialDivide(m1, mresult, *ca, eo, false);
 			}
 			if(cb) {
 				MathStructure::polynomialDivide(m2, mresult, *cb, eo, false);
 			}
-		}
-	} else {
-		if(mresult.isOne()) {
-			if(ca) *ca = m1;
-			if(cb) *cb = m2;
 		}
 	}
 	return true;
@@ -9023,7 +8994,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 		calculatesub(eo2, eo2);
 	}
 	MathStructure mden, mnum;
-	evalSort(true);
+	evalSort(true);	
 	if(isAddition() && isRationalPolynomial()) {
 		MathStructure mcopy(*this);
 		sqrfree(*this, eo);
@@ -9040,8 +9011,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 		if(!isAddition()) {
 			factorize(eo, false, try_term_combinations, only_integers, recursive);
 			return true;
-		}		
-	}
+		}
+	}	
 	switch(type()) {
 		case STRUCT_ADDITION: {
 			if(SIZE <= 3 && SIZE > 1) {
