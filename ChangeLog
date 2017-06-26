@@ -1,3 +1,8 @@
+2017-06-26 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Polynomial gcd fixes
+	* Do not crash when factorizing 1
+
 2017-06-17 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Remove "none" and "non-matrix" assumptions from qalc and when loading definitions from previous versions (<= 0.9.12)

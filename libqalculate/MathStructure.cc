@@ -7487,7 +7487,8 @@ bool prem(const MathStructure &mnum, const MathStructure &mden, const MathStruct
 		} else {
 			MathStructure mpow(xvar);
 			mpow.raise(bdeg);
-			POWER_CLEAN(mpow)
+			mpow.calculateRaiseExponent(eo);
+			//POWER_CLEAN(mpow)
 			mpow.calculateMultiply(blcoeff, eo);
 			eb.calculateSubtract(mpow, eo);
 		}
@@ -7505,7 +7506,8 @@ bool prem(const MathStructure &mnum, const MathStructure &mden, const MathStruct
 		MathStructure term(xvar);
 		term.raise(rdeg);
 		term[1].number() -= bdeg;
-		POWER_CLEAN(term)
+		term.calculateRaiseExponent(eo);
+		//POWER_CLEAN(term)
 		term.calculateMultiply(rlcoeff, eo);
 		term.calculateMultiply(eb, eo);
 		if(rdeg == 0) {
@@ -7514,7 +7516,10 @@ bool prem(const MathStructure &mnum, const MathStructure &mden, const MathStruct
 		} else {
 			if(!rdeg.isZero()) {
 				rlcoeff.multiply(xvar, true);
-				if(!rdeg.isOne()) rlcoeff[rlcoeff.size() - 1].raise(rdeg);
+				if(!rdeg.isOne()) {
+					rlcoeff[rlcoeff.size() - 1].raise(rdeg);
+					rlcoeff[rlcoeff.size() - 1].calculateRaiseExponent(eo);
+				}
 				rlcoeff.calculateMultiplyLast(eo);
 			}
 			mrem.calculateSubtract(rlcoeff, eo);
@@ -7526,6 +7531,7 @@ bool prem(const MathStructure &mnum, const MathStructure &mden, const MathStruct
 	}
 	delta -= i;
 	blcoeff.raise(delta);
+	blcoeff.calculateRaiseExponent(eo);
 	mrem.calculateMultiply(blcoeff, eo);
 	return true;
 }
@@ -8946,7 +8952,7 @@ bool MathStructure::integerFactorize() {
 	if(!isNumber()) return false;
 	vector<Number> factors;
 	if(!o_number.factorize(factors)) return false;
-	if(factors.size() == 1) return true;
+	if(factors.size() <= 1) return true;
 	clear(true);
 	bool b_pow = false;
 	Number *lastnr = NULL;
@@ -8994,7 +9000,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 		calculatesub(eo2, eo2);
 	}
 	MathStructure mden, mnum;
-	evalSort(true);	
+	evalSort(true);
 	if(isAddition() && isRationalPolynomial()) {
 		MathStructure mcopy(*this);
 		sqrfree(*this, eo);

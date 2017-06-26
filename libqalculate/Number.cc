@@ -2668,6 +2668,14 @@ bool Number::factorize(vector<Number> &factors) {
 		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
 		return false;
 	}
+	if(inr == 1) {
+		factors.push_back(Number(1, 1));
+		return true;
+	}
+	if(inr == -1) {
+		factors.push_back(Number(-1, 1));
+		return true;
+	}
 	if(minusp(inr)) {
 		inr = -inr;
 		factors.push_back(Number(-1, 1));
