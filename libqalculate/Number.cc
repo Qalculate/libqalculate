@@ -2535,6 +2535,7 @@ bool Number::factorial() {
 		cln::cl_I i = cln::numerator(cln::rational(cln::realpart(new_value)));
 		i = cln::minus1(i);
 		for(; !cln::zerop(i); i = cln::minus1(i)) {
+			if(CALCULATOR->calculationAborted()) return false;
 			new_value = new_value * i;
 		}
 	} catch(runtime_exception &e) {
@@ -2564,6 +2565,7 @@ bool Number::multiFactorial(const Number &o) {
 		cln::cl_I i_o = cln::numerator(cln::rational(cln::realpart(o.internalNumber())));
 		i = i - i_o;
 		for(; cln::plusp(i); i = i - i_o) {
+			if(CALCULATOR->calculationAborted()) return false;
 			new_value = new_value * i;
 		}
 	} catch(runtime_exception &e) {
@@ -2591,6 +2593,7 @@ bool Number::doubleFactorial() {
 		cln::cl_I i2 = 2;
 		i = i - i2;
 		for(; cln::plusp(i); i = i - i2) {
+			if(CALCULATOR->calculationAborted()) return false;
 			new_value = new_value * i;
 		}
 	} catch(runtime_exception &e) {
@@ -2718,6 +2721,7 @@ bool Number::factorize(vector<Number> &factors) {
 				} catch(runtime_exception &e) {
 					CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
 				}
+				if(CALCULATOR->calculationAborted()) return false;
 #ifndef _WIN32
 				pthread_testcancel();
 #endif

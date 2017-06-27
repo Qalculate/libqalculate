@@ -247,15 +247,15 @@ class Calculator {
 	Assumptions *default_assumptions;
 	
 	vector<Variable*> deleted_variables;
-	vector<MathFunction*> deleted_functions;	
+	vector<MathFunction*> deleted_functions;
 	vector<Unit*> deleted_units;
 	
 	bool b_save_called;
 	
-	int i_print_timeout;
-	struct timeval t_print_end;
-	int i_printing_aborted;
-	bool b_printing_controlled;
+	int i_print_timeout, i_calc_timeout;
+	struct timeval t_print_end, t_calc_end;
+	int i_printing_aborted, i_calc_aborted;
+	bool b_printing_controlled, b_calc_controlled;
 	
 	string per_str, times_str, plus_str, minus_str, and_str, AND_str, or_str, OR_str, XOR_str;
 	size_t per_str_len, times_str_len, plus_str_len, minus_str_len, and_str_len, AND_str_len, or_str_len, OR_str_len, XOR_str_len;
@@ -355,6 +355,12 @@ class Calculator {
 	*/
 	MathStructure calculate(string str, const EvaluationOptions &eo = default_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
 	int testCondition(string expression);
+	void startCalculationControl(int milli_timeout = 0);
+	void abortCalculation(void);
+	void stopCalculationControl(void);
+	bool calculationAborted(void);
+	bool calculationControlled(void);
+	string calculationAbortedMessage(void) const;
 	//@}
 
 	/** @name Functions for printing expressions with the option to set a timeout or abort. */
@@ -384,7 +390,7 @@ class Calculator {
 	/** @name Functions for handling of threaded calculations */
 	//@{
 	/** Aborts the current calculation. */
-	void abort();
+	bool abort();
 	///** Aborts the current calculation. Used from within the calculation thread. */
 	//void abort_this();
 	/** Returns true if the calculate or print thread is busy. */

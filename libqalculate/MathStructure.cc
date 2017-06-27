@@ -2666,9 +2666,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MathStructure msave(*this);
 						CLEAR;
 						for(size_t i = 0; i < mstruct.size(); i++) {
+							if(CALCULATOR->calculationAborted()) {
+								set(msave);
+								return -1;
+							}
 							APPEND(msave);
 							mstruct[i].ref();
-							LAST.multiply_nocopy(&mstruct[i], true);							
+							LAST.multiply_nocopy(&mstruct[i], true);
 							if(reversed) {
 								LAST.swapChildren(1, LAST.size());
 								LAST.calculateMultiplyIndex(0, eo, true, this, SIZE - 1);
@@ -3383,17 +3387,23 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							MathStructure mstruct1(CHILD(0));
 							MathStructure mstruct2(CHILD(1));
 							for(size_t i = 2; i < SIZE; i++) {
+								if(CALCULATOR->calculationAborted()) goto default_power_merge;
 								mstruct2.add(CHILD(i), true);
-							}					
+							}
 							Number k(1);
 							Number p1(m);
 							Number p2(1);
 							p1--;
 							Number bn;
+							MathStructure msave(*this);
 							CLEAR
 							APPEND(mstruct1);
 							CHILD(0).calculateRaise(m, eo);
 							while(k.isLessThan(m)) {
+								if(CALCULATOR->calculationAborted()) {
+									set(msave);
+									goto default_power_merge;
+								}
 								bn.binomial(m, k);
 								APPEND_NEW(bn);
 								LAST.multiply(mstruct1);
@@ -3429,7 +3439,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					CHILD(i).calculateRaise(mstruct, eo, this, i);
 				}
 				MERGE_APPROX_AND_PREC(mstruct)
-				calculatesub(eo, eo, false, mparent, index_this);				
+				calculatesub(eo, eo, false, mparent, index_this);
 				return 1;
 			} else {
 				bool b = true;
@@ -3444,7 +3454,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						CHILD(i).calculateRaise(mstruct, eo, this, i);
 					}
 					MERGE_APPROX_AND_PREC(mstruct)
-					calculatesub(eo, eo, false, mparent, index_this);					
+					calculatesub(eo, eo, false, mparent, index_this);
 					return 1;
 				}
 			}
@@ -3628,7 +3638,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						raise(mstruct.number().numerator());
 					}
 					return 1;
-				}				
+				}
 			}
 			break;
 		}
@@ -8989,6 +8999,7 @@ size_t count_powers(const MathStructure &mstruct) {
 	return c;
 }
 bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, int term_combination_levels, int max_msecs, bool only_integers, bool recursive, struct timeval *endtime_p) {
+	if(CALCULATOR->calculationAborted()) return false;
 	struct timeval endtime;
 	if(max_msecs > 0 && !endtime_p) {
 #ifndef CLOCK_MONOTONIC
@@ -9041,6 +9052,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 	}	
 	switch(type()) {
 		case STRUCT_ADDITION: {
+			if(CALCULATOR->calculationAborted()) return false;
 			if(term_combination_levels >= -1) {
 				if(SIZE <= 3 && SIZE > 1) {
 					MathStructure *xvar = NULL;
@@ -9614,6 +9626,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				}
 				MathStructure mbest;
 				do {
+					if(CALCULATOR->calculationAborted()) break;
 					if(endtime_p && endtime_p->tv_sec > 0) {
 #ifndef CLOCK_MONOTONIC
 						struct timeval curtime;

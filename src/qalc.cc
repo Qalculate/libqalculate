@@ -3030,11 +3030,22 @@ void expression_format_updated(bool reparse) {
 }
 
 void on_abort_command() {
-	command_thread->cancel();
-	CALCULATOR->restoreState();
-	CALCULATOR->clearBuffers();
-	b_busy = false;
-	command_aborted = true;
+	CALCULATOR->abortCalculation();
+	struct timespec rtime;
+	rtime.tv_sec = 0;
+	rtime.tv_nsec = 1000000;
+	int msecs = 1000;
+	while(b_busy && msecs > 0) {
+		nanosleep(&rtime, NULL);
+		msecs--;
+	}
+	if(b_busy) {
+		command_thread->cancel();
+		CALCULATOR->restoreState();
+		CALCULATOR->clearBuffers();
+		b_busy = false;
+		command_aborted = true;
+	}
 }
 
 void CommandThread::run() {
@@ -3042,13 +3053,13 @@ void CommandThread::run() {
 	enableAsynchronousCancel();
 
 	while(true) {
-	
 		int command_type = read<int>();
 		void *x = read<void *>();
+		CALCULATOR->startCalculationControl();
 		switch(command_type) {
 			case COMMAND_FACTORIZE: {
 				if(!((MathStructure*) x)->integerFactorize()) {
-					((MathStructure*) x)->factorize(evalops, true, -1, 2000);
+					((MathStructure*) x)->factorize(evalops, true, -1, 0);
 				}
 				break;
 			}
@@ -3057,6 +3068,7 @@ void CommandThread::run() {
 				break;
 			}
 		}
+		CALCULATOR->stopCalculationControl();
 		b_busy = false;
 		
 	}

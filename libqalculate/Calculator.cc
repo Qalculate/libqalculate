@@ -227,6 +227,7 @@ void CalculateThread::run() {
 		bool b_parse = read<bool>();
 		void *x = read<void *>();
 		MathStructure *mstruct = (MathStructure*) x;
+		CALCULATOR->startCalculationControl();
 		if(b_parse) {
 			mstruct->setAborted();
 			if(CALCULATOR->tmp_parsedstruct) CALCULATOR->tmp_parsedstruct->setAborted();
@@ -269,6 +270,7 @@ void CalculateThread::run() {
 			}
 			case PROC_NO_COMMAND: {}
 		}
+		CALCULATOR->stopCalculationControl();
 		CALCULATOR->b_busy = false;
 	}
 }
@@ -301,6 +303,10 @@ Calculator::Calculator() {
 	i_printing_aborted = 0;
 	b_printing_controlled = false;
 	i_print_timeout = 0;
+	
+	i_calc_aborted = 0;
+	b_calc_controlled = false;
+	i_calc_timeout = 0;
 
 	setPrecision(DEFAULT_PRECISION);
 
@@ -1586,22 +1592,35 @@ void Calculator::clearBuffers() {
 		}
 	}
 }
-void Calculator::abort() {
+bool Calculator::abort() {
 	if(!calculate_thread->running) {
 		b_busy = false;
 	} else {
-		calculate_thread->cancel();
-		restoreState();
-		stopped_messages_count.clear();
-		stopped_warnings_count.clear();
-		stopped_errors_count.clear();
-		disable_errors_ref = 0;
-		clearBuffers();
-		if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
-		tmp_rpn_mstruct = NULL;
-		b_busy = false;
-		calculate_thread->start();
+		abortCalculation();
+		struct timespec rtime;
+		rtime.tv_sec = 0;
+		rtime.tv_nsec = 1000000;
+		int msecs = 1000;
+		while(b_busy && msecs > 0) {
+			nanosleep(&rtime, NULL);
+			msecs--;
+		}
+		if(b_busy) {
+			calculate_thread->cancel();
+			restoreState();
+			stopped_messages_count.clear();
+			stopped_warnings_count.clear();
+			stopped_errors_count.clear();
+			disable_errors_ref = 0;
+			clearBuffers();
+			if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
+			tmp_rpn_mstruct = NULL;
+			b_busy = false;
+			calculate_thread->start();
+			return false;
+		}
 	}
+	return true;
 }
 /*void Calculator::abort_this() {
 	restoreState();
@@ -2165,6 +2184,7 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 	mstruct->set(string(_("calculating...")));
 	saveState();
 	b_busy = true;
+	startCalculationControl();
 	if(!calculate_thread->running) {
 		calculate_thread->start();
 	}
@@ -2186,10 +2206,11 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 		msecs -= 1;
 	}	
 	if(had_msecs && b_busy) {
-		abort();
-		mstruct->setAborted();
+		if(!abort()) mstruct->setAborted();
+		stopCalculationControl();
 		return false;
 	}
+	stopCalculationControl();
 	return true;
 }
 bool Calculator::hasToExpression(const string &str) const {
@@ -8913,6 +8934,59 @@ void Calculator::stopPrintControl() {
 	b_printing_controlled = false;
 	i_printing_aborted = 0;
 	i_print_timeout = 0;
+}
+
+void Calculator::startCalculationControl(int milli_timeout) {
+	b_calc_controlled = true;
+	i_calc_aborted = 0;
+	i_calc_timeout = milli_timeout;
+	if(i_calc_timeout > 0) {
+#ifndef CLOCK_MONOTONIC
+		gettimeofday(&t_calc_end, NULL);
+#else
+		struct timespec ts;
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+		t_calc_end.tv_sec = ts.tv_sec;
+		t_calc_end.tv_usec = ts.tv_nsec / 1000;
+#endif
+		long int usecs = t_calc_end.tv_usec + (long int) milli_timeout * 1000;
+		t_calc_end.tv_usec = usecs % 1000000;
+		t_calc_end.tv_sec += usecs / 1000000;
+	}
+}
+void Calculator::abortCalculation() {
+	i_calc_aborted = 1;
+}
+bool Calculator::calculationAborted() {
+	if(!b_calc_controlled) return false;
+	if(i_calc_aborted > 0) return true;
+	if(i_calc_timeout > 0) {
+#ifndef CLOCK_MONOTONIC
+		struct timeval tv;
+		gettimeofday(&tv, NULL);
+		if(tv.tv_sec > t_calc_end.tv_sec || (tv.tv_sec == t_calc_end.tv_sec && tv.tv_usec > t_calc_end.tv_usec)) {
+#else
+		struct timespec tv;
+		clock_gettime(CLOCK_MONOTONIC, &tv);
+		if(tv.tv_sec > t_calc_end.tv_sec || (tv.tv_sec == t_calc_end.tv_sec && tv.tv_nsec / 1000 > t_calc_end.tv_usec)) {
+#endif
+			i_calc_aborted = 2;
+			return true;
+		}
+	}
+	return false;
+}
+string Calculator::calculationAbortedMessage() const {
+	if(i_calc_aborted == 2) return _("timed out");
+	return _("aborted");
+}
+bool Calculator::calculationControlled() {
+	return b_calc_controlled;
+}
+void Calculator::stopCalculationControl() {
+	b_calc_controlled = false;
+	i_calc_aborted = 0;
+	i_calc_timeout = 0;
 }
 
 
