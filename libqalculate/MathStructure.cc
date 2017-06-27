@@ -8988,7 +8988,7 @@ size_t count_powers(const MathStructure &mstruct) {
 	}
 	return c;
 }
-bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, int try_term_combinations, int max_msecs, bool only_integers, bool recursive, struct timeval *endtime_p) {
+bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, int term_combination_levels, int max_msecs, bool only_integers, bool recursive, struct timeval *endtime_p) {
 	struct timeval endtime;
 	if(max_msecs > 0 && !endtime_p) {
 #ifndef CLOCK_MONOTONIC
@@ -9021,7 +9021,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 	}
 	MathStructure mden, mnum;
 	evalSort(true);
-	if(isAddition() && isRationalPolynomial()) {
+	if(term_combination_levels >= -1 && isAddition() && isRationalPolynomial()) {
 		MathStructure mcopy(*this);
 		sqrfree(*this, eo);
 		if(!equals(mcopy)) {
@@ -9035,573 +9035,583 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 			}
 		}
 		if(!isAddition()) {
-			factorize(eo, false, try_term_combinations, 0, only_integers, recursive, endtime_p);
+			factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
 			return true;
 		}
 	}	
 	switch(type()) {
 		case STRUCT_ADDITION: {
-			if(SIZE <= 3 && SIZE > 1) {
-				MathStructure *xvar = NULL;
-				Number nr2(1, 1);
-				if(CHILD(0).isPower() && CHILD(0)[0].size() == 0 && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isTwo()) {
-					xvar = &CHILD(0)[0];
-				} else if(CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isNumber()) {
-					if(CHILD(0)[1].isPower()) {
-						if(CHILD(0)[1][0].size() == 0 && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number().isTwo()) {
-							xvar = &CHILD(0)[1][0];
-							nr2.set(CHILD(0)[0].number());
+			if(term_combination_levels >= -1) {
+				if(SIZE <= 3 && SIZE > 1) {
+					MathStructure *xvar = NULL;
+					Number nr2(1, 1);
+					if(CHILD(0).isPower() && CHILD(0)[0].size() == 0 && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isTwo()) {
+						xvar = &CHILD(0)[0];
+					} else if(CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isNumber()) {
+						if(CHILD(0)[1].isPower()) {
+							if(CHILD(0)[1][0].size() == 0 && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number().isTwo()) {
+								xvar = &CHILD(0)[1][0];
+								nr2.set(CHILD(0)[0].number());
+							}
 						}
 					}
-				}
-				if(xvar) {
-					bool factorable = false;
-					Number nr1, nr0;
-					if(SIZE == 2 && CHILD(1).isNumber()) {
-						factorable = true;
-						nr0 = CHILD(1).number();
-					} else if(SIZE == 3 && CHILD(2).isNumber()) {
-						nr0 = CHILD(2).number();
-						if(CHILD(1).isMultiplication()) {
-							if(CHILD(1).size() == 2 && CHILD(1)[0].isNumber() && xvar->equals(CHILD(1)[1])) {
-								nr1 = CHILD(1)[0].number();
+					if(xvar) {
+						bool factorable = false;
+						Number nr1, nr0;
+						if(SIZE == 2 && CHILD(1).isNumber()) {
+							factorable = true;
+							nr0 = CHILD(1).number();
+						} else if(SIZE == 3 && CHILD(2).isNumber()) {
+							nr0 = CHILD(2).number();
+							if(CHILD(1).isMultiplication()) {
+								if(CHILD(1).size() == 2 && CHILD(1)[0].isNumber() && xvar->equals(CHILD(1)[1])) {
+									nr1 = CHILD(1)[0].number();
+									factorable = true;
+								}
+							} else if(xvar->equals(CHILD(1))) {
+								nr1.set(1, 1);
 								factorable = true;
 							}
-						} else if(xvar->equals(CHILD(1))) {
-							nr1.set(1, 1);
-							factorable = true;
 						}
-					}
-					if(factorable) {
-						Number nr4ac(4, 1);
-						nr4ac *= nr2;
-						nr4ac *= nr0;
-						Number nrtwo(2, 1);
-						Number nr2a(2, 1);
-						nr2a *= nr2;
-						Number sqrtb24ac(nr1);
-						sqrtb24ac.raise(nrtwo);
-						sqrtb24ac -= nr4ac;
-						if(sqrtb24ac.isNegative()) factorable = false;
-						MathStructure mstructb24(sqrtb24ac);
 						if(factorable) {
-							nrtwo.set(1, 2);
-							if(!only_integers) {
-								if(eo.approximation == APPROXIMATION_EXACT && !sqrtb24ac.isApproximate()) {
-									sqrtb24ac.raise(nrtwo);
-									if(sqrtb24ac.isApproximate()) {
-										mstructb24.raise(nrtwo);
+							Number nr4ac(4, 1);
+							nr4ac *= nr2;
+							nr4ac *= nr0;
+							Number nrtwo(2, 1);
+							Number nr2a(2, 1);
+							nr2a *= nr2;
+							Number sqrtb24ac(nr1);
+							sqrtb24ac.raise(nrtwo);
+							sqrtb24ac -= nr4ac;
+							if(sqrtb24ac.isNegative()) factorable = false;
+							MathStructure mstructb24(sqrtb24ac);
+							if(factorable) {
+								nrtwo.set(1, 2);
+								if(!only_integers) {
+									if(eo.approximation == APPROXIMATION_EXACT && !sqrtb24ac.isApproximate()) {
+										sqrtb24ac.raise(nrtwo);
+										if(sqrtb24ac.isApproximate()) {
+											mstructb24.raise(nrtwo);
+										} else {
+											mstructb24.set(sqrtb24ac);
+										}
 									} else {
-										mstructb24.set(sqrtb24ac);
+										mstructb24.number().raise(nrtwo);
 									}
 								} else {
 									mstructb24.number().raise(nrtwo);
-								}
-							} else {
-								mstructb24.number().raise(nrtwo);
-								if((!sqrtb24ac.isApproximate() && mstructb24.number().isApproximate()) || (sqrtb24ac.isInteger() && !mstructb24.number().isInteger())) {
-									factorable = false;
+									if((!sqrtb24ac.isApproximate() && mstructb24.number().isApproximate()) || (sqrtb24ac.isInteger() && !mstructb24.number().isInteger())) {
+										factorable = false;
+									}
 								}
 							}
-						}
-						if(factorable) {
-							MathStructure m1(nr1), m2(nr1);
-							Number mul1(1, 1), mul2(1, 1);
-							if(mstructb24.isNumber()) {
-								m1.number() += mstructb24.number();
-								m1.number() /= nr2a;
-								if(m1.number().isRational() && !m1.number().isInteger()) {
-									mul1 = m1.number().denominator();
-									m1.number() *= mul1;
-								}
-								m2.number() -= mstructb24.number();
-								m2.number() /= nr2a;
-								if(m2.number().isRational() && !m2.number().isInteger()) {
-									mul2 = m2.number().denominator();
-									m2.number() *= mul2;
-								}
-							} else {
-								m1.calculateAdd(mstructb24, eo);
-								m1.calculateDivide(nr2a, eo);
-								if(m1.isNumber()) {
+							if(factorable) {
+								MathStructure m1(nr1), m2(nr1);
+								Number mul1(1, 1), mul2(1, 1);
+								if(mstructb24.isNumber()) {
+									m1.number() += mstructb24.number();
+									m1.number() /= nr2a;
 									if(m1.number().isRational() && !m1.number().isInteger()) {
 										mul1 = m1.number().denominator();
 										m1.number() *= mul1;
 									}
-								} else {
-									bool bint = false, bfrac = false;
-									idm1(m1, bfrac, bint);
-									if(bfrac) {
-										idm2(m1, bfrac, bint, mul1);
-										idm3(m1, mul1, true);
-									}
-								}
-								m2.calculateSubtract(mstructb24, eo);
-								m2.calculateDivide(nr2a, eo);
-								if(m2.isNumber()) {
+									m2.number() -= mstructb24.number();
+									m2.number() /= nr2a;
 									if(m2.number().isRational() && !m2.number().isInteger()) {
 										mul2 = m2.number().denominator();
 										m2.number() *= mul2;
 									}
 								} else {
-									bool bint = false, bfrac = false;
-									idm1(m2, bfrac, bint);
-									if(bfrac) {
-										idm2(m2, bfrac, bint, mul2);
-										idm3(m2, mul2, true);
-									}
-								}
-							}
-							nr2 /= mul1;
-							nr2 /= mul2;
-							if(m1 == m2 && mul1 == mul2) {
-								MathStructure xvar2(*xvar);
-								if(!mul1.isOne()) xvar2 *= mul1;
-								set(m1);
-								add(xvar2, true);
-								raise(MathStructure(2, 1));
-								if(!nr2.isOne()) {
-									multiply(nr2);
-								}
-							} else {				
-								m1.add(*xvar, true);
-								if(!mul1.isOne()) m1[m1.size() - 1] *= mul1;
-								m2.add(*xvar, true);
-								if(!mul2.isOne()) m2[m2.size() - 1] *= mul2;
-								clear(true);
-								m_type = STRUCT_MULTIPLICATION;
-								if(!nr2.isOne()) {
-									APPEND_NEW(nr2);
-								}
-								APPEND(m1);
-								APPEND(m2);
-							}
-							EvaluationOptions eo2 = eo;
-							eo2.expand = false;
-							calculatesub(eo2, eo2, false);
-							return true;
-						}
-					}
-				}
-			}
-			MathStructure *factor_mstruct = new MathStructure(1, 1);
-			MathStructure mnew;
-			if(factorize_find_multiplier(*this, mnew, *factor_mstruct)) {
-				mnew.factorize(eo, false, try_term_combinations, 0, only_integers, recursive, endtime_p);
-				clear(true);
-				m_type = STRUCT_MULTIPLICATION;
-				APPEND_REF(factor_mstruct);
-				APPEND(mnew);
-				EvaluationOptions eo2 = eo;
-				eo2.expand = false;
-				calculatesub(eo2, eo2, false);
-				factor_mstruct->unref();
-				return true;
-			}
-			factor_mstruct->unref();
-			if(SIZE > 1 && CHILD(SIZE - 1).isNumber() && CHILD(SIZE - 1).number().isInteger()) {
-				MathStructure *xvar = NULL;
-				Number qnr(1, 1);
-				int degree = 1;
-				bool overflow = false;
-				int qcof = 1;
-				if(CHILD(0).isPower() && CHILD(0)[0].size() == 0 && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isInteger() && CHILD(0)[1].number().isPositive()) {
-					xvar = &CHILD(0)[0];
-					degree = CHILD(0)[1].number().intValue(&overflow);
-				} else if(CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isNumber() && CHILD(0)[0].number().isInteger()) {
-					if(CHILD(0)[1].isPower()) {
-						if(CHILD(0)[1][0].size() == 0 && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number().isInteger() && CHILD(0)[1][1].number().isPositive()) {
-							xvar = &CHILD(0)[1][0];
-							qcof = CHILD(0)[0].number().intValue(&overflow);
-							if(!overflow) {
-								if(qcof < 0) qcof = -qcof;
-								degree = CHILD(0)[1][1].number().intValue(&overflow);
-							}
-						}
-					}
-				}
-				int pcof = 1;
-				if(!overflow) {
-					pcof = CHILD(SIZE - 1).number().intValue(&overflow);
-					if(pcof < 0) pcof = -pcof;
-				}
-				if(xvar && !overflow && degree <= 1000 && degree > 2) {
-					bool b = true;
-					for(size_t i = 1; b && i < SIZE - 1; i++) {
-						switch(CHILD(i).type()) {
-							case STRUCT_NUMBER: {
-								b = false;
-								break;
-							}
-							case STRUCT_POWER: {
-								if(!CHILD(i)[1].isNumber() || !xvar->equals(CHILD(i)[0]) || !CHILD(i)[1].number().isInteger() || !CHILD(i)[1].number().isPositive()) {
-									b = false;
-								}
-								break;
-							}
-							case STRUCT_MULTIPLICATION: {
-								if(!(CHILD(i).size() == 2) || !CHILD(i)[0].isNumber()) {
-									b = false;
-								} else if(CHILD(i)[1].isPower()) {
-									if(!CHILD(i)[1][1].isNumber() || !xvar->equals(CHILD(i)[1][0]) || !CHILD(i)[1][1].number().isInteger() || !CHILD(i)[1][1].number().isPositive()) {
-										b = false;
-									}
-								} else if(!xvar->equals(CHILD(i)[1])) {
-									b = false;
-								}
-								break;
-							}
-							default: {
-								if(!xvar->equals(CHILD(i))) {
-									b = false;
-								}
-							}
-						}
-					}
-					if(b) {
-						vector<Number> factors;
-						factors.resize(degree + 1, Number());
-						factors[0] = CHILD(SIZE - 1).number();
-						vector<int> ps;
-						vector<int> qs;
-						vector<Number> zeroes;
-						int curdeg = 1, prevdeg = 0;
-						for(size_t i = 0; b && i < SIZE - 1; i++) {
-							switch(CHILD(i).type()) {
-								case STRUCT_POWER: {
-									curdeg = CHILD(i)[1].number().intValue(&overflow);
-									if(curdeg == prevdeg || curdeg > degree || (prevdeg > 0 && curdeg > prevdeg) || overflow) {
-										b = false;
+									m1.calculateAdd(mstructb24, eo);
+									m1.calculateDivide(nr2a, eo);
+									if(m1.isNumber()) {
+										if(m1.number().isRational() && !m1.number().isInteger()) {
+											mul1 = m1.number().denominator();
+											m1.number() *= mul1;
+										}
 									} else {
-										factors[curdeg].set(1, 1);
+										bool bint = false, bfrac = false;
+										idm1(m1, bfrac, bint);
+										if(bfrac) {
+											idm2(m1, bfrac, bint, mul1);
+											idm3(m1, mul1, true);
+										}
+									}
+									m2.calculateSubtract(mstructb24, eo);
+									m2.calculateDivide(nr2a, eo);
+									if(m2.isNumber()) {
+										if(m2.number().isRational() && !m2.number().isInteger()) {
+											mul2 = m2.number().denominator();
+											m2.number() *= mul2;
+										}
+									} else {
+										bool bint = false, bfrac = false;
+										idm1(m2, bfrac, bint);
+										if(bfrac) {
+											idm2(m2, bfrac, bint, mul2);
+											idm3(m2, mul2, true);
+										}
+									}
+								}
+								nr2 /= mul1;
+								nr2 /= mul2;
+								if(m1 == m2 && mul1 == mul2) {
+									MathStructure xvar2(*xvar);
+									if(!mul1.isOne()) xvar2 *= mul1;
+									set(m1);
+									add(xvar2, true);
+									raise(MathStructure(2, 1));
+									if(!nr2.isOne()) {
+										multiply(nr2);
+									}
+								} else {				
+									m1.add(*xvar, true);
+									if(!mul1.isOne()) m1[m1.size() - 1] *= mul1;
+									m2.add(*xvar, true);
+									if(!mul2.isOne()) m2[m2.size() - 1] *= mul2;
+									clear(true);
+									m_type = STRUCT_MULTIPLICATION;
+									if(!nr2.isOne()) {
+										APPEND_NEW(nr2);
+									}
+									APPEND(m1);
+									APPEND(m2);
+								}
+								EvaluationOptions eo2 = eo;
+								eo2.expand = false;
+								calculatesub(eo2, eo2, false);
+								return true;
+							}
+						}
+					}
+				}
+				MathStructure *factor_mstruct = new MathStructure(1, 1);
+				MathStructure mnew;
+				if(factorize_find_multiplier(*this, mnew, *factor_mstruct)) {
+					mnew.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+					clear(true);
+					m_type = STRUCT_MULTIPLICATION;
+					APPEND_REF(factor_mstruct);
+					APPEND(mnew);
+					EvaluationOptions eo2 = eo;
+					eo2.expand = false;
+					calculatesub(eo2, eo2, false);
+					factor_mstruct->unref();
+					return true;
+				}
+				factor_mstruct->unref();
+				if(SIZE > 1 && CHILD(SIZE - 1).isNumber() && CHILD(SIZE - 1).number().isInteger()) {
+					MathStructure *xvar = NULL;
+					Number qnr(1, 1);
+					int degree = 1;
+					bool overflow = false;
+					int qcof = 1;
+					if(CHILD(0).isPower() && CHILD(0)[0].size() == 0 && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isInteger() && CHILD(0)[1].number().isPositive()) {
+						xvar = &CHILD(0)[0];
+						degree = CHILD(0)[1].number().intValue(&overflow);
+					} else if(CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isNumber() && CHILD(0)[0].number().isInteger()) {
+						if(CHILD(0)[1].isPower()) {
+							if(CHILD(0)[1][0].size() == 0 && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number().isInteger() && CHILD(0)[1][1].number().isPositive()) {
+								xvar = &CHILD(0)[1][0];
+								qcof = CHILD(0)[0].number().intValue(&overflow);
+								if(!overflow) {
+									if(qcof < 0) qcof = -qcof;
+									degree = CHILD(0)[1][1].number().intValue(&overflow);
+								}
+							}
+						}
+					}
+					int pcof = 1;
+					if(!overflow) {
+						pcof = CHILD(SIZE - 1).number().intValue(&overflow);
+						if(pcof < 0) pcof = -pcof;
+					}
+					if(xvar && !overflow && degree <= 1000 && degree > 2) {
+						bool b = true;
+						for(size_t i = 1; b && i < SIZE - 1; i++) {
+							switch(CHILD(i).type()) {
+								case STRUCT_NUMBER: {
+									b = false;
+									break;
+								}
+								case STRUCT_POWER: {
+									if(!CHILD(i)[1].isNumber() || !xvar->equals(CHILD(i)[0]) || !CHILD(i)[1].number().isInteger() || !CHILD(i)[1].number().isPositive()) {
+										b = false;
 									}
 									break;
 								}
 								case STRUCT_MULTIPLICATION: {
-									if(CHILD(i)[1].isPower()) {
-										curdeg = CHILD(i)[1][1].number().intValue(&overflow);
-									} else {
-										curdeg = 1;
-									}
-									if(curdeg == prevdeg || curdeg > degree || (prevdeg > 0 && curdeg > prevdeg) || overflow) {
+									if(!(CHILD(i).size() == 2) || !CHILD(i)[0].isNumber()) {
 										b = false;
-									} else {
-										factors[curdeg] = CHILD(i)[0].number();
+									} else if(CHILD(i)[1].isPower()) {
+										if(!CHILD(i)[1][1].isNumber() || !xvar->equals(CHILD(i)[1][0]) || !CHILD(i)[1][1].number().isInteger() || !CHILD(i)[1][1].number().isPositive()) {
+											b = false;
+										}
+									} else if(!xvar->equals(CHILD(i)[1])) {
+										b = false;
 									}
 									break;
 								}
 								default: {
-									curdeg = 1;
-									factors[curdeg].set(1, 1);
+									if(!xvar->equals(CHILD(i))) {
+										b = false;
+									}
 								}
 							}
-							prevdeg = curdeg;
 						}
-						while(b && degree > 2) {
-							for(int i = 1; i <= 1000; i++) {
-								if(i > pcof) break;
-								if(pcof % i == 0) ps.push_back(i);
+						if(b) {
+							vector<Number> factors;
+							factors.resize(degree + 1, Number());
+							factors[0] = CHILD(SIZE - 1).number();
+							vector<int> ps;
+							vector<int> qs;
+							vector<Number> zeroes;
+							int curdeg = 1, prevdeg = 0;
+							for(size_t i = 0; b && i < SIZE - 1; i++) {
+								switch(CHILD(i).type()) {
+									case STRUCT_POWER: {
+										curdeg = CHILD(i)[1].number().intValue(&overflow);
+										if(curdeg == prevdeg || curdeg > degree || (prevdeg > 0 && curdeg > prevdeg) || overflow) {
+											b = false;
+										} else {
+											factors[curdeg].set(1, 1);
+										}
+										break;
+									}
+									case STRUCT_MULTIPLICATION: {
+										if(CHILD(i)[1].isPower()) {
+											curdeg = CHILD(i)[1][1].number().intValue(&overflow);
+										} else {
+											curdeg = 1;
+										}
+										if(curdeg == prevdeg || curdeg > degree || (prevdeg > 0 && curdeg > prevdeg) || overflow) {
+											b = false;
+										} else {
+											factors[curdeg] = CHILD(i)[0].number();
+										}
+										break;
+									}
+									default: {
+										curdeg = 1;
+										factors[curdeg].set(1, 1);
+									}
+								}
+								prevdeg = curdeg;
 							}
-							for(int i = 1; i <= 1000; i++) {
-								if(i > qcof) break;
-								if(qcof % i == 0) qs.push_back(i);
-							}
-							Number itest;
-							int i2;
-							size_t pi = 0, qi = 0;
-							Number nrtest(ps[0], qs[0]);
-							while(true) {
-								itest.clear(); i2 = degree;
+							while(b && degree > 2) {
+								for(int i = 1; i <= 1000; i++) {
+									if(i > pcof) break;
+									if(pcof % i == 0) ps.push_back(i);
+								}
+								for(int i = 1; i <= 1000; i++) {
+									if(i > qcof) break;
+									if(qcof % i == 0) qs.push_back(i);
+								}
+								Number itest;
+								int i2;
+								size_t pi = 0, qi = 0;
+								Number nrtest(ps[0], qs[0]);
 								while(true) {
-									itest += factors[i2];
-									if(i2 == 0) break;
-									itest *= nrtest;
-									i2--;
+									itest.clear(); i2 = degree;
+									while(true) {
+										itest += factors[i2];
+										if(i2 == 0) break;
+										itest *= nrtest;
+										i2--;
+									}
+									if(itest.isZero()) {
+										break;
+									}
+									if(nrtest.isPositive()) {
+										nrtest.negate();
+									} else {
+										qi++;
+										if(qi == qs.size()) {
+											qi = 0;
+											pi++;
+											if(pi == ps.size()) {
+												break;
+											}
+										}
+										nrtest.set(ps[pi], qs[qi]);
+									}
 								}
 								if(itest.isZero()) {
-									break;
-								}
-								if(nrtest.isPositive()) {
+									itest.clear(); i2 = degree;
+									Number ntmp(factors[i2]);
+									for(; i2 > 0; i2--) {
+										itest += ntmp;
+										ntmp = factors[i2 - 1];
+										factors[i2 - 1] = itest;
+										itest *= nrtest;
+									}
+									degree--;
 									nrtest.negate();
-								} else {
-									qi++;
-									if(qi == qs.size()) {
-										qi = 0;
-										pi++;
-										if(pi == ps.size()) {
-											break;
-										}
+									zeroes.push_back(nrtest);
+									if(degree == 2) {
+										break;
 									}
-									nrtest.set(ps[pi], qs[qi]);
-								}
-							}
-							if(itest.isZero()) {
-								itest.clear(); i2 = degree;
-								Number ntmp(factors[i2]);
-								for(; i2 > 0; i2--) {
-									itest += ntmp;
-									ntmp = factors[i2 - 1];
-									factors[i2 - 1] = itest;
-									itest *= nrtest;
-								}
-								degree--;
-								nrtest.negate();
-								zeroes.push_back(nrtest);
-								if(degree == 2) {
-									break;
-								}
-								qcof = factors[degree].intValue(&overflow);
-								if(!overflow) {
-									if(qcof < 0) qcof = -qcof;
-									pcof = factors[0].intValue(&overflow);
+									qcof = factors[degree].intValue(&overflow);
 									if(!overflow) {
-										if(pcof < 0) pcof = -pcof;
+										if(qcof < 0) qcof = -qcof;
+										pcof = factors[0].intValue(&overflow);
+										if(!overflow) {
+											if(pcof < 0) pcof = -pcof;
+										}
 									}
-								}
-								if(overflow) {
+									if(overflow) {
+										break;
+									}
+								} else {
 									break;
 								}
-							} else {
-								break;
+								ps.clear();
+								qs.clear();
 							}
-							ps.clear();
-							qs.clear();
-						}
-						if(zeroes.size() > 0) {
-							MathStructure mleft;
-							MathStructure mtmp;
-							MathStructure *mcur;
-							for(int i = degree; i >= 0; i--) {
-								if(!factors[i].isZero()) {
-									if(mleft.isZero()) {
-										mcur = &mleft;
-									} else {
-										mleft.add(m_zero, true);
-										mcur = &mleft[mleft.size() - 1];
-									}
-									if(i > 1) {
-										if(!factors[i].isOne()) {
-											mcur->multiply(*xvar);
-											(*mcur)[0].set(factors[i]);
-											mcur = &(*mcur)[1];
+							if(zeroes.size() > 0) {
+								MathStructure mleft;
+								MathStructure mtmp;
+								MathStructure *mcur;
+								for(int i = degree; i >= 0; i--) {
+									if(!factors[i].isZero()) {
+										if(mleft.isZero()) {
+											mcur = &mleft;
 										} else {
-											mcur->set(*xvar);
+											mleft.add(m_zero, true);
+											mcur = &mleft[mleft.size() - 1];
 										}
-										mtmp.set(i, 1);
-										mcur->raise(mtmp);
-									} else if(i == 1) {
-										if(!factors[i].isOne()) {
-											mcur->multiply(*xvar);
-											(*mcur)[0].set(factors[i]);
+										if(i > 1) {
+											if(!factors[i].isOne()) {
+												mcur->multiply(*xvar);
+												(*mcur)[0].set(factors[i]);
+												mcur = &(*mcur)[1];
+											} else {
+												mcur->set(*xvar);
+											}
+											mtmp.set(i, 1);
+											mcur->raise(mtmp);
+										} else if(i == 1) {
+											if(!factors[i].isOne()) {
+												mcur->multiply(*xvar);
+												(*mcur)[0].set(factors[i]);
+											} else {
+												mcur->set(*xvar);
+											}
 										} else {
-											mcur->set(*xvar);
+											mcur->set(factors[i]);
 										}
-									} else {
-										mcur->set(factors[i]);
 									}
 								}
-							}
-							mleft.factorize(eo, false, try_term_combinations, 0, only_integers, recursive, endtime_p);
-							vector<int> powers;
-							vector<size_t> powers_i;
-							int dupsfound = 0;
-							for(size_t i = 0; i < zeroes.size() - 1; i++) {
-								while(i + 1 < zeroes.size() && zeroes[i] == zeroes[i + 1]) {
-									dupsfound++;
-									zeroes.erase(zeroes.begin() + (i + 1));
+								mleft.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+								vector<int> powers;
+								vector<size_t> powers_i;
+								int dupsfound = 0;
+								for(size_t i = 0; i < zeroes.size() - 1; i++) {
+									while(i + 1 < zeroes.size() && zeroes[i] == zeroes[i + 1]) {
+										dupsfound++;
+										zeroes.erase(zeroes.begin() + (i + 1));
+									}
+									if(dupsfound > 0) {
+										powers_i.push_back(i);
+										powers.push_back(dupsfound + 1);
+										dupsfound = 0;
+									}
 								}
-								if(dupsfound > 0) {
-									powers_i.push_back(i);
-									powers.push_back(dupsfound + 1);
-									dupsfound = 0;
-								}
-							}
-							MathStructure xvar2(*xvar);
-							Number *nrmul;
-							if(mleft.isMultiplication()) {
-								set(mleft);
-								evalSort();
-								if(CHILD(0).isNumber()) {
+								MathStructure xvar2(*xvar);
+								Number *nrmul;
+								if(mleft.isMultiplication()) {
+									set(mleft);
+									evalSort();
+									if(CHILD(0).isNumber()) {
+										nrmul = &CHILD(0).number();
+									} else if(CHILD(0).isMultiplication() && CHILD(0).size() > 0 && CHILD(0)[0].isNumber()) {
+										nrmul = &CHILD(0)[0].number();
+									} else {
+										PREPEND(m_one);
+										nrmul = &CHILD(0).number();
+									}
+								} else {
+									clear(true);
+									m_type = STRUCT_MULTIPLICATION;
+									APPEND(m_one);
+									APPEND(mleft);
 									nrmul = &CHILD(0).number();
-								} else if(CHILD(0).isMultiplication() && CHILD(0).size() > 0 && CHILD(0)[0].isNumber()) {
-									nrmul = &CHILD(0)[0].number();
-								} else {
-									PREPEND(m_one);
-									nrmul = &CHILD(0).number();
 								}
-							} else {
-								clear(true);
-								m_type = STRUCT_MULTIPLICATION;
-								APPEND(m_one);
-								APPEND(mleft);
-								nrmul = &CHILD(0).number();
-							}
-							size_t pi = 0;
-							for(size_t i = 0; i < zeroes.size(); i++) {
-								if(zeroes[i].isInteger()) {
-									APPEND(xvar2);
-								} else {
-									APPEND(m_zero);
-								}
-								mcur = &CHILD(SIZE - 1);
-								if(pi < powers_i.size() && powers_i[pi] == i) {
-									mcur->raise(MathStructure(powers[pi], 1));
-									mcur = &(*mcur)[0];
+								size_t pi = 0;
+								for(size_t i = 0; i < zeroes.size(); i++) {
 									if(zeroes[i].isInteger()) {
-										mcur->add(zeroes[i]);
+										APPEND(xvar2);
 									} else {
-										Number nr(zeroes[i].denominator());
-										mcur->add(zeroes[i].numerator());
-										(*mcur)[0] *= xvar2;
-										(*mcur)[0][0].number() = nr;
-										nr.raise(powers[pi]);
-										nrmul->divide(nr);										
+										APPEND(m_zero);
 									}
-									pi++;
-								} else {
-									if(zeroes[i].isInteger()) {
-										mcur->add(zeroes[i]);
+									mcur = &CHILD(SIZE - 1);
+									if(pi < powers_i.size() && powers_i[pi] == i) {
+										mcur->raise(MathStructure(powers[pi], 1));
+										mcur = &(*mcur)[0];
+										if(zeroes[i].isInteger()) {
+											mcur->add(zeroes[i]);
+										} else {
+											Number nr(zeroes[i].denominator());
+											mcur->add(zeroes[i].numerator());
+											(*mcur)[0] *= xvar2;
+											(*mcur)[0][0].number() = nr;
+											nr.raise(powers[pi]);
+											nrmul->divide(nr);										
+										}
+										pi++;
 									} else {
-										nrmul->divide(zeroes[i].denominator());
-										mcur->add(zeroes[i].numerator());
-										(*mcur)[0] *= xvar2;
-										(*mcur)[0][0].number() = zeroes[i].denominator();
+										if(zeroes[i].isInteger()) {
+											mcur->add(zeroes[i]);
+										} else {
+											nrmul->divide(zeroes[i].denominator());
+											mcur->add(zeroes[i].numerator());
+											(*mcur)[0] *= xvar2;
+											(*mcur)[0][0].number() = zeroes[i].denominator();
+										}
 									}
 								}
-							}
-							if(CHILD(0).isNumber() && CHILD(0).number().isOne()) {
-								ERASE(0);
-							} else if(CHILD(0).isMultiplication() && CHILD(0).size() > 0 && CHILD(0)[0].isNumber() && CHILD(0)[0].number().isOne()) {
-								if(CHILD(0).size() == 1) {
+								if(CHILD(0).isNumber() && CHILD(0).number().isOne()) {
 									ERASE(0);
-								} else if(CHILD(0).size() == 2) {
-									CHILD(0).setToChild(2, true);
-								} else {
-									CHILD(0).delChild(1);
-								}
-							}
-							evalSort(true);
-							Number dupspow;
-							for(size_t i = 0; i < SIZE - 1; i++) {
-								mcur = NULL;
-								if(CHILD(i).isPower()) {
-									if(CHILD(i)[0].isAddition() && CHILD(i)[1].isNumber()) {
-										mcur = &CHILD(i)[0];
+								} else if(CHILD(0).isMultiplication() && CHILD(0).size() > 0 && CHILD(0)[0].isNumber() && CHILD(0)[0].number().isOne()) {
+									if(CHILD(0).size() == 1) {
+										ERASE(0);
+									} else if(CHILD(0).size() == 2) {
+										CHILD(0).setToChild(2, true);
+									} else {
+										CHILD(0).delChild(1);
 									}
-								} else if(CHILD(i).isAddition()) {
-									mcur = &CHILD(i);
 								}
-								while(mcur && i + 1 < SIZE) {
-									if(CHILD(i + 1).isPower()) {
-										if(CHILD(i + 1)[0].isAddition() && CHILD(i + 1)[1].isNumber() && mcur->equals(CHILD(i + 1)[0])) {
-											dupspow += CHILD(i + 1)[1].number();
+								evalSort(true);
+								Number dupspow;
+								for(size_t i = 0; i < SIZE - 1; i++) {
+									mcur = NULL;
+									if(CHILD(i).isPower()) {
+										if(CHILD(i)[0].isAddition() && CHILD(i)[1].isNumber()) {
+											mcur = &CHILD(i)[0];
+										}
+									} else if(CHILD(i).isAddition()) {
+										mcur = &CHILD(i);
+									}
+									while(mcur && i + 1 < SIZE) {
+										if(CHILD(i + 1).isPower()) {
+											if(CHILD(i + 1)[0].isAddition() && CHILD(i + 1)[1].isNumber() && mcur->equals(CHILD(i + 1)[0])) {
+												dupspow += CHILD(i + 1)[1].number();
+											} else {
+												mcur = NULL;
+											}
+										} else if(CHILD(i + 1).isAddition() && mcur->equals(CHILD(i + 1))) {
+											dupspow++;
 										} else {
 											mcur = NULL;
 										}
-									} else if(CHILD(i + 1).isAddition() && mcur->equals(CHILD(i + 1))) {
-										dupspow++;
-									} else {
-										mcur = NULL;
+										if(mcur) {
+											ERASE(i + 1);
+										}
 									}
-									if(mcur) {
-										ERASE(i + 1);
+									if(!dupspow.isZero()) {
+										if(CHILD(i).isPower()) {
+											CHILD(i)[1].number() += dupspow;
+										} else {
+											dupspow++;
+											CHILD(i) ^= dupspow;
+										}
+										dupspow.clear();
 									}
 								}
-								if(!dupspow.isZero()) {
-									if(CHILD(i).isPower()) {
-										CHILD(i)[1].number() += dupspow;
-									} else {
-										dupspow++;
-										CHILD(i) ^= dupspow;
-									}
-									dupspow.clear();
+								if(SIZE == 1) {
+									setToChild(1, true);
+								} else {
+									EvaluationOptions eo2 = eo;
+									eo2.expand = false;
+									calculatesub(eo2, eo2, false);
 								}
+								return true;
 							}
-							if(SIZE == 1) {
-								setToChild(1, true);
-							} else {
-								EvaluationOptions eo2 = eo;
-								eo2.expand = false;
-								calculatesub(eo2, eo2, false);
-							}
-							return true;
 						}
 					}
 				}
-			}
-			//x^2-y^2=(x+y)(x-y)
-			if(SIZE == 2 && CHILD(0).isPower() && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isTwo() && CHILD(1).isMultiplication() && CHILD(1).size() == 2 && CHILD(1)[0].isMinusOne() && CHILD(1)[1].isPower() && CHILD(1)[1][1].isNumber() && CHILD(1)[1][1].number().isTwo()) {
-				if(CHILD(0)[0].representsNonMatrix() && CHILD(1)[1][0].representsNonMatrix()) {
-					CHILD(0).setToChild(1, true);
-					CHILD(1)[1].setToChild(1, true);
-					MathStructure *m2 = new MathStructure(*this);
-					(*m2)[1].setToChild(2, true);
-					EvaluationOptions eo2 = eo;
-					eo2.expand = false;
-					calculatesub(eo2, eo2, false);
-					multiply_nocopy(m2, true);
-					return true;
+				//x^2-y^2=(x+y)(x-y)
+				if(SIZE == 2 && CHILD(0).isPower() && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isTwo() && CHILD(1).isMultiplication() && CHILD(1).size() == 2 && CHILD(1)[0].isMinusOne() && CHILD(1)[1].isPower() && CHILD(1)[1][1].isNumber() && CHILD(1)[1][1].number().isTwo()) {
+					if(CHILD(0)[0].representsNonMatrix() && CHILD(1)[1][0].representsNonMatrix()) {
+						CHILD(0).setToChild(1, true);
+						CHILD(1)[1].setToChild(1, true);
+						MathStructure *m2 = new MathStructure(*this);
+						(*m2)[1].setToChild(2, true);
+						EvaluationOptions eo2 = eo;
+						eo2.expand = false;
+						calculatesub(eo2, eo2, false);
+						multiply_nocopy(m2, true);
+						return true;
+					}
 				}
-			}
-			//-x^2+y^2=(x+y)(-y+x)
-			if(SIZE == 2 && CHILD(1).isPower() && CHILD(1)[1].isNumber() && CHILD(1)[1].number().isTwo() && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isMinusOne() && CHILD(0)[1].isPower() && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number().isTwo()) {
-				if(CHILD(1)[0].representsNonMatrix() && CHILD(0)[1][0].representsNonMatrix()) {
-					CHILD(1).setToChild(1, true);
-					CHILD(0)[1].setToChild(1, true);
-					MathStructure *m2 = new MathStructure(*this);
-					(*m2)[0].setToChild(2, true);
-					EvaluationOptions eo2 = eo;
-					eo2.expand = false;
-					calculatesub(eo2, eo2, false);
-					multiply_nocopy(m2, true);
-					return true;
+				//-x^2+y^2=(x+y)(-y+x)
+				if(SIZE == 2 && CHILD(1).isPower() && CHILD(1)[1].isNumber() && CHILD(1)[1].number().isTwo() && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isMinusOne() && CHILD(0)[1].isPower() && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number().isTwo()) {
+					if(CHILD(1)[0].representsNonMatrix() && CHILD(0)[1][0].representsNonMatrix()) {
+						CHILD(1).setToChild(1, true);
+						CHILD(0)[1].setToChild(1, true);
+						MathStructure *m2 = new MathStructure(*this);
+						(*m2)[0].setToChild(2, true);
+						EvaluationOptions eo2 = eo;
+						eo2.expand = false;
+						calculatesub(eo2, eo2, false);
+						multiply_nocopy(m2, true);
+						return true;
+					}
 				}
-			}
-			//x^3-y^3=(x-y)(x^2+xy+y^2)
-			if(SIZE == 2 && CHILD(0).isPower() && CHILD(0)[1].isNumber() && CHILD(0)[1].number() == 3 && CHILD(1).isMultiplication() && CHILD(1).size() == 2 && CHILD(1)[0].isMinusOne() && CHILD(1)[1].isPower() && CHILD(1)[1][1].isNumber() && CHILD(1)[1][1].number() == 3) {
-				if(CHILD(0)[0].representsNonMatrix() && CHILD(1)[1][0].representsNonMatrix()) {
-					MathStructure *m2 = new MathStructure(*this);
-					(*m2)[0].setToChild(1, true);
-					(*m2)[1][1].setToChild(1, true);
-					EvaluationOptions eo2 = eo;
-					eo2.expand = false;
-					m2->calculatesub(eo2, eo2, false);					
-					CHILD(0)[1].set(2, 1, 0, true);
-					CHILD(1).setToChild(2, true);
-					CHILD(1)[1].set(2, 1, 0, true);
-					MathStructure *m3 = new MathStructure(CHILD(0)[0]);
-					m3->calculateMultiply(CHILD(1)[0], eo2);
-					add_nocopy(m3, true);
-					calculatesub(eo2, eo2, false);
-					multiply_nocopy(m2, true);
-					return true;
+				//x^3-y^3=(x-y)(x^2+xy+y^2)
+				if(SIZE == 2 && CHILD(0).isPower() && CHILD(0)[1].isNumber() && CHILD(0)[1].number() == 3 && CHILD(1).isMultiplication() && CHILD(1).size() == 2 && CHILD(1)[0].isMinusOne() && CHILD(1)[1].isPower() && CHILD(1)[1][1].isNumber() && CHILD(1)[1][1].number() == 3) {
+					if(CHILD(0)[0].representsNonMatrix() && CHILD(1)[1][0].representsNonMatrix()) {
+						MathStructure *m2 = new MathStructure(*this);
+						(*m2)[0].setToChild(1, true);
+						(*m2)[1][1].setToChild(1, true);
+						EvaluationOptions eo2 = eo;
+						eo2.expand = false;
+						m2->calculatesub(eo2, eo2, false);					
+						CHILD(0)[1].set(2, 1, 0, true);
+						CHILD(1).setToChild(2, true);
+						CHILD(1)[1].set(2, 1, 0, true);
+						MathStructure *m3 = new MathStructure(CHILD(0)[0]);
+						m3->calculateMultiply(CHILD(1)[0], eo2);
+						add_nocopy(m3, true);
+						calculatesub(eo2, eo2, false);
+						multiply_nocopy(m2, true);
+						return true;
+					}
 				}
-			}
-			//-x^3+y^3=(-x+y)(x^2+xy+y^2)
-			if(SIZE == 2 && CHILD(1).isPower() && CHILD(1)[1].isNumber() && CHILD(1)[1].number() == 3 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isMinusOne() && CHILD(0)[1].isPower() && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number() == 3) {
-				if(CHILD(1)[0].representsNonMatrix() && CHILD(0)[1][0].representsNonMatrix()) {
-					MathStructure *m2 = new MathStructure(*this);
-					(*m2)[1].setToChild(1, true);
-					(*m2)[0][1].setToChild(1, true);
-					EvaluationOptions eo2 = eo;
-					eo2.expand = false;
-					m2->calculatesub(eo2, eo2, false);
-					CHILD(1)[1].set(2, 1, 0, true);
-					CHILD(0).setToChild(2, true);
-					CHILD(0)[1].set(2, 1, 0, true);
-					MathStructure *m3 = new MathStructure(CHILD(0)[0]);
-					m3->calculateMultiply(CHILD(1)[0], eo2);
-					add_nocopy(m3, true);
-					calculatesub(eo2, eo2, false);
-					multiply_nocopy(m2, true);
-					return true;
+				//-x^3+y^3=(-x+y)(x^2+xy+y^2)
+				if(SIZE == 2 && CHILD(1).isPower() && CHILD(1)[1].isNumber() && CHILD(1)[1].number() == 3 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isMinusOne() && CHILD(0)[1].isPower() && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number() == 3) {
+					if(CHILD(1)[0].representsNonMatrix() && CHILD(0)[1][0].representsNonMatrix()) {
+						MathStructure *m2 = new MathStructure(*this);
+						(*m2)[1].setToChild(1, true);
+						(*m2)[0][1].setToChild(1, true);
+						EvaluationOptions eo2 = eo;
+						eo2.expand = false;
+						m2->calculatesub(eo2, eo2, false);
+						CHILD(1)[1].set(2, 1, 0, true);
+						CHILD(0).setToChild(2, true);
+						CHILD(0)[1].set(2, 1, 0, true);
+						MathStructure *m3 = new MathStructure(CHILD(0)[0]);
+						m3->calculateMultiply(CHILD(1)[0], eo2);
+						add_nocopy(m3, true);
+						calculatesub(eo2, eo2, false);
+						multiply_nocopy(m2, true);
+						return true;
+					}
 				}
 			}
 			//Try factorize combinations of terms
-			if(try_term_combinations > 0 && SIZE > 2 && (try_term_combinations == 1 || (int) SIZE <= try_term_combinations)) {
+			if(term_combination_levels != 0 && SIZE > 2) {
 				int start_index = rand() % SIZE;
 				int index = start_index;
 				int best_index = -1;
+				int run_index = 0;
+				int max_run_index = SIZE - 3;
+				if(term_combination_levels < -1) {
+					run_index = -term_combination_levels - 2;
+					max_run_index = run_index;
+				} else if(term_combination_levels > 0 && term_combination_levels - 1 < max_run_index) {
+					max_run_index = term_combination_levels -1;
+				}
 				MathStructure mbest;
 				do {
 					if(endtime_p && endtime_p->tv_sec > 0) {
@@ -9620,11 +9630,11 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					}
 					MathStructure mtest(*this);
 					mtest.delChild(index + 1);
-					if(mtest.factorize(eo, false, try_term_combinations, 0, only_integers, false, endtime_p)) {
+					if(mtest.factorize(eo, false, run_index == 0 ? 0 : -1 - run_index, 0, only_integers, false, endtime_p)) {
 						bool b = best_index < 0 || (mbest.isAddition() && !mtest.isAddition());
-						if(!b && mtest.isAddition()) {
-							b = (mtest.size() < mbest.size());
-							if(!b &&  mtest.size() ==  mbest.size()) {
+						if(!b && (mtest.isAddition() == mbest.isAddition())) {
+							b = mtest.isAddition() && (mtest.size() < mbest.size());
+							if(!b && (!mtest.isAddition() || mtest.size() == mbest.size())) {
 								size_t c1 = mtest.countTotalChildren() + CHILD(index).countTotalChildren();
 								size_t c2 = mbest.countTotalChildren() + CHILD(best_index).countTotalChildren();
 								b = (c1 < c2);
@@ -9641,28 +9651,37 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					}
 					index++;
 					if(index == (int) SIZE) index = 0;
-				} while(index != start_index);
+					if(index == start_index) {
+						if(best_index >= 0) {
+							break;
+						}
+						run_index++;
+						if(run_index > max_run_index) break;
+					}
+				} while(true);
 				if(best_index >= 0) {
 					mbest.add(CHILD(best_index), true);
 					set(mbest);
+					if(term_combination_levels >= -1 && run_index > 0) factorize(eo, false, term_combination_levels, 0, only_integers, true, endtime_p);
 					return true;
 				}
 			}
 		}
 		default: {
+			if(term_combination_levels < -1) break;
 			bool b = false;
 			if(isComparison()) {
 				EvaluationOptions eo2 = eo;
 				eo2.assume_denominators_nonzero = false;
 				for(size_t i = 0; i < SIZE; i++) {
-					if(CHILD(i).factorize(eo2, false, try_term_combinations, 0, only_integers, recursive, endtime_p)) {
+					if(CHILD(i).factorize(eo2, false, term_combination_levels, 0, only_integers, recursive, endtime_p)) {
 						CHILD_UPDATED(i);
 						b = true;
 					}
 				}
 			} else if(recursive) {
 				for(size_t i = 0; i < SIZE; i++) {
-					if(CHILD(i).factorize(eo, false, try_term_combinations, 0, only_integers, recursive, endtime_p)) {
+					if(CHILD(i).factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p)) {
 						CHILD_UPDATED(i);
 						b = true;
 					}
