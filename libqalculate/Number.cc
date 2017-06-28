@@ -1654,6 +1654,15 @@ bool Number::raise(const Number &o, bool try_exact) {
 	}	
 	cln::cl_RA dmax = 1;
 	dmax = dmax / 10;
+	
+	if(cln::plusp(cln::realpart(o.internalNumber()))) {
+		cln::cl_R v_log10 = cln::abs(cln::log(cln::realpart(value), 10));
+		cln::cl_R o_log10 = cln::log(cln::realpart(o.internalNumber()) * v_log10, 10);
+		if(o_log10 > 7) {
+			CALCULATOR->error(false, _("Extreme exponentiation was not calculated."), NULL);
+			return false;
+		}
+	}
 
 	if(o.isRational() && isRational() && (!try_exact || (cln::abs(new_value) <= 1 + dmax && cln::abs(new_value) >= 1 - dmax)) && new_value != 1 && new_value != -1 && (cln::numerator(cln::rational(cln::realpart(o.internalNumber()))) > 10000 || cln::numerator(cln::rational(cln::realpart(o.internalNumber()))) < -10000)) {
 		try {
