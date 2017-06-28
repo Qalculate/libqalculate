@@ -3034,7 +3034,7 @@ void on_abort_command() {
 	struct timespec rtime;
 	rtime.tv_sec = 0;
 	rtime.tv_nsec = 1000000;
-	int msecs = 1000;
+	int msecs = 250;
 	while(b_busy && msecs > 0) {
 		nanosleep(&rtime, NULL);
 		msecs--;

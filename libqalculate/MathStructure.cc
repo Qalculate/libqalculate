@@ -5553,7 +5553,6 @@ bool MathStructure::calculateMultiplyIndex(size_t index, const EvaluationOptions
 	}
 
 	MERGE_INDEX2
-	
 
 }
 bool MathStructure::calculateMultiply(const MathStructure &mmul, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
@@ -7571,7 +7570,7 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 	MathStructure cont_c, cont_d;
 	c.polynomialContent(xvar, cont_c, eo);
 	d.polynomialContent(xvar, cont_d, eo);
-	
+
 	MathStructure gamma;
 	MathStructure::gcd(cont_c, cont_d, gamma, eo, NULL, NULL, false);
 	mgcd = gamma;
@@ -7591,6 +7590,8 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 	delta -= ddeg;
 
 	while(true) {
+	
+		if(CALCULATOR->calculationAborted()) return false;
 
 		prem(c, d, xvar, r, eo, false);
 		if(r.isZero()) {
@@ -7771,6 +7772,8 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 	xi += 2;
 	
 	for(int t = 0; t < 6; t++) {
+	
+		if(CALCULATOR->calculationAborted()) return false;
 
 		if((maxdeg * xi.integerLength()).isGreaterThan(100000)) {
 			return false;
@@ -7964,7 +7967,6 @@ void MathStructure::polynomialUnitContentPrimpart(const MathStructure &xvar, int
 
 	munit = polynomialUnit(xvar);
 	polynomialContent(xvar, mcontent, eo);
-
 	if(mcontent.isZero()) {
 		mprim.clear();
 		return;
@@ -8393,7 +8395,7 @@ factored_2:
 		acc_cb.setType(STRUCT_MULTIPLICATION);
 		MathStructure part_1(m1);
 		MathStructure part_ca, part_cb;
-		for(size_t i = 0; i < m2.size(); i++) {			
+		for(size_t i = 0; i < m2.size(); i++) {
 			mresult.addChild(m_zero);
 			MathStructure::gcd(part_1, m2[i], mresult[i], eo, &part_ca, &part_cb, false);
 			acc_cb.addChild(part_cb);
@@ -8538,7 +8540,7 @@ factored_2:
 			return true;
 		}
 	}
-	
+
 	sym_desc_vec sym_stats;
 	get_symbol_stats(m1, m2, sym_stats);
 	
@@ -8555,7 +8557,7 @@ factored_2:
 	} else {
 		min_ldeg = ldeg_b;
 	}
-	
+
 	if(min_ldeg.isPositive()) {
 		MathStructure aex(m1), bex(m2);
 		MathStructure common(xvar);
@@ -8722,7 +8724,7 @@ bool sqrfree_yun(const MathStructure &a, const MathStructure &xvar, MathStructur
 	}
 	MathStructure y;
 	MathStructure tmp;
-	do {	
+	do {
 		tmp = w;
 		if(!MathStructure::polynomialQuotient(tmp, g, xvar, w, eo)) {
 //			printf("D Failed\n");
@@ -8868,13 +8870,13 @@ void multiply_lcm(const MathStructure &e, const Number &lcm, MathStructure &mmul
 }
 
 //from GiNaC
-void sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const EvaluationOptions &eo);
-void sqrfree(MathStructure &mpoly, const EvaluationOptions &eo) {
+bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const EvaluationOptions &eo);
+bool sqrfree(MathStructure &mpoly, const EvaluationOptions &eo) {
 	vector<MathStructure> symbols;
 	collect_symbols(mpoly, symbols);
-	sqrfree(mpoly, symbols, eo);
+	return sqrfree(mpoly, symbols, eo);
 }
-void sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const EvaluationOptions &eo) {
+bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const EvaluationOptions &eo) {
 
 	EvaluationOptions eo2 = eo;
 	eo2.assume_denominators_nonzero = true;
@@ -8885,9 +8887,9 @@ void sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 	eo2.expand = true;
 
 	if(mpoly.size() == 0) {
-		return;
+		return true;
 	}
-	if(symbols.empty()) return;
+	if(symbols.empty()) return true;
 
 	const MathStructure &xvar = symbols[0];
 
@@ -8910,7 +8912,7 @@ void sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 
 	if(newsymbols.size() > 0) {
 		for(size_t i = 0; i < factors.size(); i++) {
-			sqrfree(factors[i], newsymbols, eo);
+			if(!sqrfree(factors[i], newsymbols, eo)) return false;
 		}
 	}
 
@@ -8929,7 +8931,7 @@ void sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 
 	if(mpoly.isZero()) {
 		CALCULATOR->error(true, "mpoly is zero: %s. %s", tmp.print().c_str(), _("This is a bug. Please report it."), NULL);
-		return;
+		return false;
 	}
 	MathStructure mquo;
 	MathStructure mpoly_expand(mpoly);
@@ -8940,7 +8942,7 @@ void sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 	MathStructure::polynomialQuotient(tmp, mpoly_expand, xvar, mquo, eo2);
 	if(mquo.isZero()) {
 		CALCULATOR->error(true, "quo is zero: %s. %s", tmp.print().c_str(), _("This is a bug. Please report it."), NULL);
-		return;
+		return false;
 	}
 	if(newsymbols.size() > 0) {
 		sqrfree(mquo, newsymbols, eo);
@@ -8955,6 +8957,8 @@ void sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 
 	eo3.expand = false;
 	mpoly.calculatesub(eo3, eo3, false);
+
+	return true;
 
 }
 
@@ -9033,21 +9037,24 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 	MathStructure mden, mnum;
 	evalSort(true);
 	if(term_combination_levels >= -1 && isAddition() && isRationalPolynomial()) {
-		MathStructure mcopy(*this);
-		sqrfree(*this, eo);
-		if(!equals(mcopy)) {
-			MathStructure mcopy2(*this);
-			EvaluationOptions eo2 = eo;
-			eo2.expand = true;
-			mcopy2.calculatesub(eo2, eo2);
-			if(mcopy != mcopy2) {
-				CALCULATOR->error(true, "factorized result is wrong: %s. %s", mcopy.print().c_str(), _("This is a bug. Please report it."), NULL);
-				set(mcopy);
+		MathStructure msqrfree(*this);
+		if(sqrfree(msqrfree, eo)) {
+			if(!equals(msqrfree)) {
+				MathStructure mcopy(msqrfree);
+				EvaluationOptions eo2 = eo;
+				eo2.expand = true;
+				mcopy.calculatesub(eo2, eo2);
+				if(!equals(mcopy)) {
+					cout << msqrfree.print() << ":" << mcopy.print() << ":" << print() << endl;
+					CALCULATOR->error(true, "factorized result is wrong: %s. %s", msqrfree.print().c_str(), _("This is a bug. Please report it."), NULL);
+				} else {
+					set(msqrfree);
+					if(!isAddition()) {
+						factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+						return true;
+					}
+				}
 			}
-		}
-		if(!isAddition()) {
-			factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
-			return true;
 		}
 	}	
 	switch(type()) {
