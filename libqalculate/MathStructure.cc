@@ -3085,12 +3085,14 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				bool b = true, overflow;
 				int val;
 				while(b) {
+					if(CALCULATOR->calculationAborted()) break;
 					b = false;
 					overflow = false;
 					val = o_number.intValue(&overflow);
 					if(overflow) {
 						cln::cl_I cval = cln::numerator(cln::rational(cln::realpart(o_number.internalNumber())));
 						for(size_t i = 0; i < NR_OF_SQUARE_PRIMES; i++) {
+							if(CALCULATOR->calculationAborted()) break;
 							if(cln::zerop(cln::rem(cval, SQUARE_PRIMES[i]))) {
 								nr *= PRIMES[i];
 								o_number /= SQUARE_PRIMES[i];
@@ -3100,6 +3102,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						}
 					} else {
 						for(size_t i = 0; i < NR_OF_SQUARE_PRIMES; i++) {
+							if(CALCULATOR->calculationAborted()) break;
 							if(SQUARE_PRIMES[i] > val) {
 								break;
 							} else if(val % SQUARE_PRIMES[i] == 0) {
@@ -3196,6 +3199,10 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							MathStructure msave(*this);
 							nr--;
 							while(nr.isPositive()) {
+								if(CALCULATOR->calculationAborted()) {
+									set(msave);
+									return -1;
+								}
 								calculateMultiply(msave, eo);
 								nr--;
 							}
@@ -3380,6 +3387,10 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						if(!representsNonMatrix()) {
 							MathStructure mthis(*this);
 							while(!m.isOne()) {
+								if(CALCULATOR->calculationAborted()) {
+									set(mthis);
+									goto default_power_merge;
+								}
 								calculateMultiply(mthis, eo);
 								m--;
 							}
@@ -3400,11 +3411,10 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							APPEND(mstruct1);
 							CHILD(0).calculateRaise(m, eo);
 							while(k.isLessThan(m)) {
-								if(CALCULATOR->calculationAborted()) {
+								if(CALCULATOR->calculationAborted() || !bn.binomial(m, k)) {
 									set(msave);
 									goto default_power_merge;
 								}
-								bn.binomial(m, k);
 								APPEND_NEW(bn);
 								LAST.multiply(mstruct1);
 								if(!p1.isOne()) {
@@ -6930,8 +6940,11 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	eo2.test_comparisons = false;
 
 	//calculateUncertaintyPropagation(eo);
+	
+	if(CALCULATOR->calculationAborted()) return *this;
 
 	if(eo.calculate_functions && calculateFunctions(feo)) {
+		if(CALCULATOR->calculationAborted()) return *this;
 		unformat(eo);
 	}
 
@@ -6947,20 +6960,24 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			calculatesub(eo3, feo);
 		}
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
+		if(CALCULATOR->calculationAborted()) return *this;
 	}
 
 	calculatesub(eo2, feo);
+	if(CALCULATOR->calculationAborted()) return *this;
 
 	eo2.sync_units = false;
 
 	if(eo2.isolate_x) {
 		eo2.assume_denominators_nonzero = false;
 		if(isolate_x(eo2, feo)) {
+			if(CALCULATOR->calculationAborted()) return *this;
 			eo2.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 			calculatesub(eo2, feo);
 		} else {
 			eo2.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 		}
+		if(CALCULATOR->calculationAborted()) return *this;
 	}
 	if(eo.expand != 0 || (eo.test_comparisons && containsType(STRUCT_COMPARISON))) {
 		eo2.test_comparisons = eo.test_comparisons;
@@ -6978,20 +6995,24 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		}
 		if(b) {
 			calculatesub(eo2, feo);
+			if(CALCULATOR->calculationAborted()) return *this;
 			if(eo2.isolate_x) {
 				eo2.assume_denominators_nonzero = false;
 				if(isolate_x(eo2, feo)) {
+					if(CALCULATOR->calculationAborted()) return *this;
 					eo2.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 					calculatesub(eo2, feo);
 				} else {
 					eo2.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 				}
+				if(CALCULATOR->calculationAborted()) return *this;
 			}
 		}
 	}
 	if(eo2.isolate_x && containsType(STRUCT_COMPARISON) && eo2.assume_denominators_nonzero) {
 		if(try_isolate_x(*this, eo2, feo)) {
 			calculatesub(eo2, feo);
+			if(CALCULATOR->calculationAborted()) return *this;
 		}
 	}
 
@@ -9045,7 +9066,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				eo2.expand = true;
 				mcopy.calculatesub(eo2, eo2);
 				if(!equals(mcopy)) {
-					cout << msqrfree.print() << ":" << mcopy.print() << ":" << print() << endl;
+					if(CALCULATOR->calculationAborted()) return false;
 					CALCULATOR->error(true, "factorized result is wrong: %s. %s", msqrfree.print().c_str(), _("This is a bug. Please report it."), NULL);
 				} else {
 					set(msqrfree);
@@ -9838,7 +9859,9 @@ void MathStructure::unformat(const EvaluationOptions &eo) {
 			m_type = STRUCT_MULTIPLICATION;
 		}
 		case STRUCT_UNIT: {
-			if(o_prefix && !eo.keep_prefixes) {
+			if(o_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+				set(((CompositeUnit*) o_unit)->generateMathStructure(false, eo.keep_prefixes));
+			} else if(o_prefix && !eo.keep_prefixes) {
 				if(o_prefix == CALCULATOR->decimal_null_prefix || o_prefix == CALCULATOR->binary_null_prefix) {
 					o_prefix = NULL;
 				} else {
@@ -13899,7 +13922,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 			break;
 		}
 		case STRUCT_SYMBOLIC: {
-			if(representsNumber()) {
+			if(representsNumber(true)) {
 				clear(true);
 			} else {
 				MathStructure mstruct(CALCULATOR->f_diff, this, &x_var, &m_one, NULL);
@@ -14085,7 +14108,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 			break;
 		}
 		case STRUCT_SYMBOLIC: {
-			if(representsNumber()) {
+			if(representsNumber(true)) {
 				multiply(x_var);
 			} else {
 				MathStructure mstruct(CALCULATOR->f_integrate, this, &x_var, NULL);
@@ -14106,7 +14129,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 					return false;
 				}
 			}
-			if(representsNumber()) {
+			if(representsNumber(true)) {
 				multiply(x_var);
 				break;
 			}

@@ -1600,7 +1600,7 @@ bool Calculator::abort() {
 		struct timespec rtime;
 		rtime.tv_sec = 0;
 		rtime.tv_nsec = 1000000;
-		int msecs = 250;
+		int msecs = 500;
 		while(b_busy && msecs > 0) {
 			nanosleep(&rtime, NULL);
 			msecs--;
@@ -2523,7 +2523,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 	if(cu && cu->countUnits() == 0) return mstruct;
 	MathStructure mstruct_new(mstruct);
 	//bool b_simple = !cu && (to_unit->subtype() != SUBTYPE_ALIAS_UNIT || (((AliasUnit*) to_unit)->baseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT && ((AliasUnit*) to_unit)->baseExponent() == 1));
+
 	if(mstruct_new.isAddition()) mstruct_new.factorizeUnits();
+
 	if(!mstruct_new.isPower() && !mstruct_new.isUnit() && !mstruct_new.isMultiplication()) {
 		if(mstruct_new.size() > 0) {
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
@@ -2543,7 +2545,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 		EvaluationOptions eo2 = eo;
 		eo2.keep_prefixes = true;
 		bool b = false;
-		if(mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL) || always_convert) {			
+		if(mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL) || always_convert) {
 			b = true;
 		} else {
 			CompositeUnit *cu2 = cu;
@@ -2579,11 +2581,13 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				}
 			}
 		}
+
 		if(b) {
 			eo2.sync_units = true;
 			eo2.keep_prefixes = false;
 			mstruct_new.divide(MathStructure(to_unit, NULL));
 			mstruct_new.eval(eo2);
+
 			if(cu) {
 				MathStructure mstruct_cu(cu->generateMathStructure(false, eo.keep_prefixes));
 				Prefix *p = NULL;
@@ -2598,9 +2602,11 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 			} else {
 				mstruct_new.multiply(MathStructure(to_unit, eo.keep_prefixes ? decimal_null_prefix : NULL));
 			}
+
 			eo2.sync_units = false;
 			eo2.keep_prefixes = true;
 			mstruct_new.eval(eo2);
+
 			if(convert_to_mixed_units && eo2.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) {
 				eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP;
 				return convertToMixedUnits(mstruct_new, eo2);
@@ -2609,7 +2615,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 			}
 		}
 	}
+
 	return mstruct;
+
 }
 MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	MathStructure mstruct_new(mstruct);

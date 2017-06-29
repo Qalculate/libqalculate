@@ -31,8 +31,8 @@
 * Each type is a subset of the type above.
 */
 typedef enum {
+	/// Multiplication is NOT commutative; do not use
 	ASSUMPTION_TYPE_NONE = 0,
-	/// Multiplication is NOT commutative
 	ASSUMPTION_TYPE_NONMATRIX = 1,
 	ASSUMPTION_TYPE_NUMBER = 2,
 	/// im(x) != 0

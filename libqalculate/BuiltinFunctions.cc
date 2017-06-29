@@ -2652,7 +2652,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mtest = vargs[3];
 		mtest.replace(vargs[1], mcounter);
 		mtest.eval(eo);
-		if(!mtest.isNumber()) return 0;
+		if(!mtest.isNumber() || CALCULATOR->calculationAborted()) return 0;
 		if(!mtest.number().getBoolean()) {
 			break;
 		}
@@ -2681,7 +2681,8 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	Number i_nr(vargs[1].number());
 	MathStructure mstruct_calc;
 	bool started = false, s2 = false;
-	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {	
+	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {
+		if(CALCULATOR->calculationAborted()) return 0;
 		mstruct_calc.set(vargs[0]);
 		mstruct_calc.replace(vargs[3], i_nr);
 		if(started) {
@@ -2709,7 +2710,8 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	Number i_nr(vargs[1].number());
 	MathStructure mstruct_calc;
 	bool started = false, s2 = false;
-	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {	
+	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {
+		if(CALCULATOR->calculationAborted()) return false;
 		mstruct_calc.set(vargs[0]);
 		mstruct_calc.replace(vargs[3], i_nr);
 		if(started) {
@@ -3097,6 +3099,7 @@ int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	mstruct = vargs[0];
 	bool b = false;
 	while(i) {
+		if(CALCULATOR->calculationAborted()) return 0;
 		if(!mstruct.differentiate(vargs[1], eo) && !b) {
 			return 0;
 		}

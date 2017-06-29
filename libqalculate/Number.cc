@@ -1663,6 +1663,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		}
 		if(v_log10 != 0) {
 			o_log10 = cln::log(cln::realpart(o.internalNumber()) * v_log10, 10);
+			if(o_log10 > 5 && CALCULATOR->calculationAborted()) return false;
 			if(o_log10 > 7) {
 				CALCULATOR->error(false, _("Extreme exponentiation was not calculated."), NULL);
 				return false;
@@ -2643,13 +2644,14 @@ bool Number::binomial(const Number &m, const Number &k) {
 			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
 			return false;
 		}
-		if(im > long(INT_MAX) || ik > long(INT_MAX)) {
+		if(im > long(INT_MAX) || ik > 100000) {
 			ik = cln::minus1(ik);
 			Number k_fac(k);
 			try {
 				k_fac.factorial();
 				cl_I ithis = im;
 				for(; !cln::zerop(ik); ik = cln::minus1(ik)) {
+					if(CALCULATOR->calculationAborted()) return false;
 					im = cln::minus1(im);
 					ithis = ithis * im;
 				}
@@ -2702,6 +2704,7 @@ bool Number::factorize(vector<Number> &factors) {
 	cl_I last_prime = 0;
 	bool b = true;
 	while(b) {
+		if(CALCULATOR->calculationAborted()) return false;
 		b = false;
 		cl_I facmax = cln::floor1(cln::sqrt(inr));
 		for(; prime_index < NR_OF_PRIMES && PRIMES[prime_index] <= facmax; prime_index++) {
