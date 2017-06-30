@@ -1,7 +1,20 @@
+2017-06-30 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Fix x^-y (=x^(-y))
+
+2017-06-28 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Do not try to calculate extreme exponentiations
+	
+2017-06-27 Hanna Knutsson <hanna_k@fmgirl.com>
+
+	* Controlled calculation termination handling points
+
 2017-06-26 Hanna Knutsson <hanna_k@fmgirl.com>
 
 	* Polynomial gcd fixes
 	* Do not crash when factorizing 1
+	* Use clock_gettime() instead of gettimeofday() if avaiable
 
 2017-06-17 Hanna Knutsson <hanna_k@fmgirl.com>
 

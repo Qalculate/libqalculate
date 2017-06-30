@@ -3639,7 +3639,7 @@ void load_preferences() {
 #endif
 
 	
-	int version_numbers[] = {0, 9, 12};
+	int version_numbers[] = {0, 9, 13};
 	
 	if(file) {
 		char line[10000];
@@ -3765,9 +3765,9 @@ void load_preferences() {
 					if(v >= POST_CONVERSION_NONE && v <= POST_CONVERSION_OPTIMAL) {
 						evalops.auto_post_conversion = (AutoPostConversion) v;
 					}
-					/*if((v == POST_CONVERSION_NONE || v == POST_CONVERSION_OPTIMAL_SI) && version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] <= 12))) {
+					if((v == POST_CONVERSION_NONE || v == POST_CONVERSION_OPTIMAL_SI) && version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] <= 12))) {
 						evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL;
-					}*/
+					}
 				} else if(svar == "mixed_units_conversion") {
 					if(v >= MIXED_UNITS_CONVERSION_NONE && v <= MIXED_UNITS_CONVERSION_FORCE_ALL) {
 						evalops.mixed_units_conversion = (MixedUnitsConversion) v;
@@ -3809,9 +3809,6 @@ void load_preferences() {
 					evalops.parse_options.rpn = v;
 				} else if(svar == "default_assumption_type") {
 					if(v >= ASSUMPTION_TYPE_NONE && v <= ASSUMPTION_TYPE_INTEGER) {
-						/*if(v == ASSUMPTION_TYPE_NONE && version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] == 0))) {
-							v = ASSUMPTION_TYPE_NONMATRIX;
-						}*/
 						if(v < ASSUMPTION_TYPE_NUMBER && version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] <= 12))) v = ASSUMPTION_TYPE_NUMBER;
 						CALCULATOR->defaultAssumptions()->setType((AssumptionType) v);
 					}
