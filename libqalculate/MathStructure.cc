@@ -9859,9 +9859,7 @@ void MathStructure::unformat(const EvaluationOptions &eo) {
 			m_type = STRUCT_MULTIPLICATION;
 		}
 		case STRUCT_UNIT: {
-			if(o_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-				set(((CompositeUnit*) o_unit)->generateMathStructure(false, eo.keep_prefixes));
-			} else if(o_prefix && !eo.keep_prefixes) {
+			if(o_prefix && !eo.keep_prefixes) {
 				if(o_prefix == CALCULATOR->decimal_null_prefix || o_prefix == CALCULATOR->binary_null_prefix) {
 					o_prefix = NULL;
 				} else {
@@ -9870,6 +9868,12 @@ void MathStructure::unformat(const EvaluationOptions &eo) {
 					set(p->value());
 					multiply(u);
 				}
+				unformat(eo);
+				break;
+			} else if(o_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+				set(((CompositeUnit*) o_unit)->generateMathStructure(false, eo.keep_prefixes));
+				unformat(eo);
+				break;
 			}
 			b_plural = false;
 		}

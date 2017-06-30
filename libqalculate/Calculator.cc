@@ -5670,7 +5670,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos) {
 		bool b = false, append = false;
 		while(i != string::npos) {
-			if(str[i - 1] != POWER_CH) {
+			if(str[i - 1] != POWER_CH && (i < 2 || (str[i - 1] != MINUS_CH && str[i - 2] != POWER_CH))) {
 				str2 = str.substr(0, i);
 				str = str.substr(i, str.length() - i);
 				if(b) {
