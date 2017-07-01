@@ -1647,7 +1647,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		}
 	}
 	cln::cl_N new_value = value;
-	bool neg = false;	
+	bool neg = false;
 	if(isNegative() && !o.isComplex() && !o.isApproximateType() && !o.numeratorIsEven() && !o.denominatorIsEven()) {
 		neg = true;
 		new_value = cln::abs(new_value);
@@ -2114,7 +2114,7 @@ bool Number::zeta() {
 	}
 	bool overflow = false;
 	int i = intValue(&overflow);
-	if(overflow) {
+	if(overflow || i > 100000) {
 		CALCULATOR->error(true, _("Cannot handle an argument (s) that large for Riemann Zeta."), NULL);
 		return false;
 	}
@@ -2503,6 +2503,7 @@ bool Number::gcd(const Number &o) {
 		return true;
 	}
 	cln::cl_N new_value;
+	
 	try {
 		cl_I num = cln::numerator(cln::rational(cln::realpart(value)));
 		cl_I num_o = cln::numerator(cln::rational(cln::realpart(o.internalNumber())));

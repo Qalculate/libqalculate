@@ -94,6 +94,7 @@ MergeVectorsFunction::MergeVectorsFunction() : MathFunction("mergevectors", 1, -
 int MergeVectorsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct.clearVector();
 	for(size_t i = 0; i < vargs.size(); i++) {
+		if(CALCULATOR->calculationAborted()) return 0;
 		if(vargs[i].isVector()) {
 			for(size_t i2 = 0; i2 < vargs[i].size(); i2++) {
 				mstruct.addChild(vargs[i][i2]);
@@ -2713,7 +2714,7 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	MathStructure mstruct_calc;
 	bool started = false, s2 = false;
 	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {
-		if(CALCULATOR->calculationAborted()) return false;
+		if(CALCULATOR->calculationAborted()) return 0;
 		mstruct_calc.set(vargs[0]);
 		mstruct_calc.replace(vargs[3], i_nr);
 		if(started) {
@@ -2819,6 +2820,7 @@ int ProcessMatrixFunction::calculate(MathStructure &mstruct, const MathStructure
 	MathStructure mprocess;
 	for(size_t rindex = 0; rindex < mstruct.size(); rindex++) {
 		for(size_t cindex = 0; cindex < mstruct[rindex].size(); cindex++) {
+			if(CALCULATOR->calculationAborted()) return 0;
 			mprocess = vargs[0];
 			process_matrix_replace(mprocess, mstruct, vargs, rindex, cindex);
 			mstruct[rindex][cindex] = mprocess;
@@ -2893,7 +2895,8 @@ int CustomSumFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	MathStructure mprocess;
 	EvaluationOptions eo2 = eo;
 	eo2.calculate_functions = false;
-	for(size_t index = (size_t) start - 1; index < (size_t) end; index++) {	
+	for(size_t index = (size_t) start - 1; index < (size_t) end; index++) {
+		if(CALCULATOR->calculationAborted()) return 0;
 		mprocess = mexpr;
 		csum_replace(mprocess, mstruct, vargs, index, eo2);
 		mprocess.eval(eo2);

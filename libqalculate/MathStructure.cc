@@ -12085,6 +12085,7 @@ bool MathStructure::rankVector(bool ascending) {
 	for(size_t index = 0; index < SIZE; index++) {
 		b = false;
 		for(size_t i = 0; i < ranked.size(); i++) {
+			if(CALCULATOR->calculationAborted()) return false;
 			ComparisonResult cmp = CHILD(index).compare(CHILD(ranked[i]));
 			if(COMPARISON_NOT_FULLY_KNOWN(cmp)) {
 				CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to rank vector."), i2s(index).c_str(), NULL);
@@ -12109,6 +12110,7 @@ bool MathStructure::rankVector(bool ascending) {
 	}	
 	int n_rep = 0;
 	for(int i = (int) ranked.size() - 1; i >= 0; i--) {
+		if(CALCULATOR->calculationAborted()) return false;
 		if(ranked_equals_prev[i]) {
 			n_rep++;
 		} else {
@@ -12133,6 +12135,7 @@ bool MathStructure::sortVector(bool ascending) {
 	for(size_t index = 0; index < SIZE; index++) {
 		b = false;
 		for(size_t i = 0; i < ranked_mstructs.size(); i++) {
+			if(CALCULATOR->calculationAborted()) return false;
 			ComparisonResult cmp = CHILD(index).compare(*v_subs[ranked_mstructs[i]]);
 			if(COMPARISON_MIGHT_BE_LESS_OR_GREATER(cmp)) {
 				CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to sort vector."), i2s(index).c_str(), NULL);
