@@ -2624,6 +2624,7 @@ GenerateVectorFunction::GenerateVectorFunction() : MathFunction("genvector", 4, 
 	setDefaultValue(6, "0");
 }
 int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(CALCULATOR->calculationAborted()) return 0;
 	if(vargs[5].number().getBoolean()) {
 		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], NULL, eo);
 	} else {
@@ -2635,6 +2636,7 @@ int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructur
 		}
 		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], steps, NULL, eo);
 	}
+	if(CALCULATOR->calculationAborted()) return 0;
 	return 1;
 }
 ForFunction::ForFunction() : MathFunction("for", 7) {
@@ -3693,7 +3695,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	} else if(mstruct.isVector()) {
 		int matrix_index = 1, vector_index = 1;
 		if(mstruct.size() > 0 && (mstruct[0].isVector() || mstruct[0].contains(vargs[4], false, true, true))) {
-			for(size_t i = 0; i < mstruct.size(); i++) {
+			for(size_t i = 0; i < mstruct.size() && !CALCULATOR->calculationAborted(); i++) {
 				MathStructure x_vector;
 				if(mstruct[i].isMatrix() && mstruct[i].columns() == 2) {
 					MathStructure y_vector;
@@ -3754,9 +3756,12 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			dpds.push_back(dpd);
 		}
 	}
-	if(x_vectors.size() > 0) {
+	if(x_vectors.size() > 0 && !CALCULATOR->calculationAborted()) {
 		PlotParameters param;
-		CALCULATOR->plotVectors(&param, y_vectors, x_vectors, dpds, false);
+		bool b = CALCULATOR->printingControlledByCalculation();
+		CALCULATOR->setPrintingControlledByCalculation(true);
+		CALCULATOR->plotVectors(&param, y_vectors, x_vectors, dpds, false, 0);
+		CALCULATOR->setPrintingControlledByCalculation(b);
 		for(size_t i = 0; i < dpds.size(); i++) {
 			if(dpds[i]) delete dpds[i];
 		}

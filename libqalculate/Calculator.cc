@@ -307,6 +307,8 @@ Calculator::Calculator() {
 	i_calc_aborted = 0;
 	b_calc_controlled = false;
 	i_calc_timeout = 0;
+	
+	b_printing_controlled_by_calc = false;
 
 	setPrecision(DEFAULT_PRECISION);
 
@@ -1606,6 +1608,7 @@ bool Calculator::abort() {
 			msecs--;
 		}
 		if(b_busy) {
+			cout << "A" << endl;
 			calculate_thread->cancel();
 			restoreState();
 			stopped_messages_count.clear();
@@ -8910,6 +8913,7 @@ void Calculator::abortPrint() {
 	i_printing_aborted = 1;
 }
 bool Calculator::printingAborted() {
+	if(b_printing_controlled_by_calc && calculationAborted()) return true;
 	if(!b_printing_controlled) return false;
 	if(i_printing_aborted > 0) return true;
 	if(i_print_timeout > 0) {
@@ -8935,8 +8939,14 @@ string Calculator::printingAbortedMessage() const {
 string Calculator::timedOutString() const {
 	return _("timed out");
 }
-bool Calculator::printingControlled() {
+bool Calculator::printingControlled() const {
 	return b_printing_controlled;
+}
+bool Calculator::printingControlledByCalculation() const {
+	return b_printing_controlled_by_calc;
+}
+void Calculator::setPrintingControlledByCalculation(bool control_print_with_calc) {
+	b_printing_controlled_by_calc = control_print_with_calc;
 }
 void Calculator::stopPrintControl() {
 	b_printing_controlled = false;
@@ -9205,7 +9215,7 @@ bool Calculator::canPlot() {
 #endif
 	return false;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po) {
+MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
 	Variable *v = getActiveVariable(x_var);
 	MathStructure x_mstruct;
 	if(v) x_mstruct = v;
@@ -9213,29 +9223,30 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	ParseOptions po2 = po;
-	po2.read_precision = DONT_READ_PRECISION;	
+	po2.read_precision = DONT_READ_PRECISION;
 	eo.parse_options = po2;
+	if(msecs > 0) startCalculationControl(msecs);
 	MathStructure y_vector(parse(expression, po2).generateVector(x_mstruct, min, max, steps, x_vector, eo));
+	if(msecs > 0) {
+		if(calculationAborted()) error(true, _("It took too long to generate the plot data."), NULL);
+		stopCalculationControl();
+	}
 	if(y_vector.size() == 0) {
 		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
 	}
 	return y_vector;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po) {
+MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
 	MathStructure min_mstruct(min), max_mstruct(max);
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	ParseOptions po2 = po;
-	po2.read_precision = DONT_READ_PRECISION;	
+	po2.read_precision = DONT_READ_PRECISION;
 	eo.parse_options = po2;
-	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, steps, x_vector, x_var, po2));
-	y_vector.eval(eo);
-	if(y_vector.size() == 0) {
-		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
-	}
+	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, steps, x_vector, x_var, po2, msecs));
 	return y_vector;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector, string x_var, const ParseOptions &po) {
+MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
 	Variable *v = getActiveVariable(x_var);
 	MathStructure x_mstruct;
 	if(v) x_mstruct = v;
@@ -9243,29 +9254,30 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	ParseOptions po2 = po;
-	po2.read_precision = DONT_READ_PRECISION;	
+	po2.read_precision = DONT_READ_PRECISION;
 	eo.parse_options = po2;
+	if(msecs > 0) startCalculationControl(msecs);
 	MathStructure y_vector(parse(expression, po2).generateVector(x_mstruct, min, max, step, x_vector, eo));
+	if(msecs > 0) {
+		if(calculationAborted()) error(true, _("It took too long to generate the plot data."), NULL);
+		stopCalculationControl();
+	}
 	if(y_vector.size() == 0) {
 		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
 	}
 	return y_vector;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, float step, MathStructure *x_vector, string x_var, const ParseOptions &po) {
+MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, float step, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
 	MathStructure min_mstruct(min), max_mstruct(max), step_mstruct(step);
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	ParseOptions po2 = po;
-	po2.read_precision = DONT_READ_PRECISION;	
+	po2.read_precision = DONT_READ_PRECISION;
 	eo.parse_options = po2;
-	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, step_mstruct, x_vector, x_var, po2));
-	y_vector.eval(eo);
-	if(y_vector.size() == 0) {
-		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
-	}
+	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, step_mstruct, x_vector, x_var, po2, msecs));
 	return y_vector;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var, const ParseOptions &po) {
+MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var, const ParseOptions &po, int msecs) {
 	Variable *v = getActiveVariable(x_var);
 	MathStructure x_mstruct;
 	if(v) x_mstruct = v;
@@ -9273,12 +9285,18 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	ParseOptions po2 = po;
-	po2.read_precision = DONT_READ_PRECISION;	
+	po2.read_precision = DONT_READ_PRECISION;
 	eo.parse_options = po2;
-	return parse(expression, po2).generateVector(x_mstruct, x_vector, eo).eval(eo);
+	if(msecs > 0) startCalculationControl(msecs);
+	MathStructure y_vector(parse(expression, po2).generateVector(x_mstruct, x_vector, eo).eval(eo));
+	if(msecs > 0) {
+		if(calculationAborted()) error(true, _("It took too long to generate the plot data."), NULL);
+		stopCalculationControl();
+	}
+	return y_vector;
 }
 
-bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent) {
+bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent, int msecs) {
 
 	string homedir = getLocalTmpDir();
 	g_mkdir(homedir.c_str(), S_IRWXU);
@@ -9524,7 +9542,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			plot_data = "";
 			int non_numerical = 0, non_real = 0;
 			string str = "";
-			startPrintControl(5000);
+			if(msecs > 0) startPrintControl(msecs);
 			for(size_t i = 1; i <= y_vectors[serie].countChildren(); i++) {
 				bool invalid_nr = false;
 				if(!y_vectors[serie].getChild(i)->isNumber()) {
@@ -9559,11 +9577,11 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 					fclose(fdata);
 					g_free(filepath);
 					error(true, _("It took too long to generate the plot data."), NULL);
-					stopPrintControl();
+					if(msecs > 0) stopPrintControl();
 					return false;
 				}
 			}
-			stopPrintControl();
+			if(msecs > 0) stopPrintControl();
 			if(non_numerical > 0 || non_real > 0) {
 				string stitle;
 				if(serie < pdps.size() && !pdps[serie]->title.empty()) {

@@ -13688,6 +13688,7 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 		y_value.eval(eo);
 		y_vector.addChild(y_value);
 		x_value.calculateAdd(step, eo);
+		if(CALCULATOR->calculationAborted()) return y_vector;
 	}
 	return y_vector;
 }
@@ -13716,6 +13717,7 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 		x_value.calculateAdd(step, eo);
 		if(cr == COMPARISON_RESULT_EQUAL) break;
 		cr = max.compare(x_value);
+		if(CALCULATOR->calculationAborted()) return y_vector;
 	}
 	return y_vector;
 }
@@ -13724,6 +13726,10 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 	MathStructure y_vector;
 	y_vector.clearVector();
 	for(size_t i = 1; i <= x_vector.countChildren(); i++) {
+		if(CALCULATOR->calculationAborted()) {
+			y_vector.clearVector();
+			return y_vector;
+		}
 		y_value = *this;
 		y_value.replace(x_mstruct, x_vector.getChild(i));
 		y_value.eval(eo);

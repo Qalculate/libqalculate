@@ -255,7 +255,7 @@ class Calculator {
 	int i_print_timeout, i_calc_timeout;
 	struct timeval t_print_end, t_calc_end;
 	int i_printing_aborted, i_calc_aborted;
-	bool b_printing_controlled, b_calc_controlled;
+	bool b_printing_controlled, b_calc_controlled, b_printing_controlled_by_calc;
 	
 	string per_str, times_str, plus_str, minus_str, and_str, AND_str, or_str, OR_str, XOR_str;
 	size_t per_str_len, times_str_len, plus_str_len, minus_str_len, and_str_len, AND_str_len, or_str_len, OR_str_len, XOR_str_len;
@@ -382,7 +382,9 @@ class Calculator {
 	*/
 	void stopPrintControl(void);
 	bool printingAborted(void);
-	bool printingControlled(void);
+	bool printingControlled(void) const;
+	bool printingControlledByCalculation(void) const;
+	void setPrintingControlledByCalculation(bool control_print_with_calc = true);
 	string printingAbortedMessage(void) const;
 	string timedOutString(void) const;
 	//@}
@@ -1035,12 +1037,12 @@ class Calculator {
 	* @returns true if gnuplot was found.
 	*/
 	bool canPlot();
-	MathStructure expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, string x_var = "\\x", const ParseOptions &po = default_parse_options);
-	MathStructure expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector = NULL, string x_var = "\\x", const ParseOptions &po = default_parse_options);
-	MathStructure expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector = NULL, string x_var = "\\x", const ParseOptions &po = default_parse_options);
-	MathStructure expressionToPlotVector(string expression, float min, float max, float step, MathStructure *x_vector = NULL, string x_var = "\\x", const ParseOptions &po = default_parse_options);
-	MathStructure expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var = "\\x", const ParseOptions &po = default_parse_options);
-	bool plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent = false);
+	MathStructure expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector = NULL, string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector = NULL, string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(string expression, float min, float max, float step, MathStructure *x_vector = NULL, string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	bool plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent = false, int msecs = 5000);
 	bool invokeGnuplot(string commands, string commandline_extra = "", bool persistent = false);
 	bool closeGnuplot();
 	bool gnuplotOpen();
