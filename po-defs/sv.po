@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-08 15:51+0200\n"
+"POT-Creation-Date: 2017-07-01 13:27+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna_k@fmgirl.com>\n"
 "Language-Team: Swedish\n"
@@ -451,7 +451,7 @@ msgstr "Dataset"
 #. Data set for chemical elements
 #: ../data/datasets.xml.in.h:3
 msgid "!datasets!Elements"
-msgstr "Element"
+msgstr "Grundämnen"
 
 #: ../data/datasets.xml.in.h:4
 msgid "r:atom"
@@ -1101,7 +1101,7 @@ msgid "Copernicium"
 msgstr ""
 
 #: ../data/elements.xml.in.h:114
-msgid "Ununtrium"
+msgid "Nihonium"
 msgstr ""
 
 #: ../data/elements.xml.in.h:115
@@ -1109,7 +1109,7 @@ msgid "Flerovium"
 msgstr ""
 
 #: ../data/elements.xml.in.h:116
-msgid "Ununpentium"
+msgid "Moscovium"
 msgstr ""
 
 #: ../data/elements.xml.in.h:117
@@ -1117,11 +1117,11 @@ msgid "Livermorium"
 msgstr ""
 
 #: ../data/elements.xml.in.h:118
-msgid "Ununseptium"
+msgid "Tennessine"
 msgstr ""
 
 #: ../data/elements.xml.in.h:119
-msgid "Ununoctium"
+msgid "Oganesson"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1
