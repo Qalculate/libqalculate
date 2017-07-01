@@ -1077,8 +1077,8 @@
     <x_pos>12</x_pos>
     <y_pos>7</y_pos>
   </object>
-  <object symbol="Uut" number="113">
-    <_name>Ununtrium</_name>
+  <object symbol="Nh" number="113">
+    <_name>Nihonium</_name>
     <class>11</class>
     <weight>[286]</weight>
     <x_pos>13</x_pos>
@@ -1091,10 +1091,10 @@
     <x_pos>14</x_pos>
     <y_pos>7</y_pos>
   </object>
-  <object symbol="Uup" number="115">
-    <_name>Ununpentium</_name>
+  <object symbol="Mc" number="115">
+    <_name>Moscovium</_name>
     <class>11</class>
-    <weight>[289]</weight>
+    <weight>[290]</weight>
     <x_pos>15</x_pos>
     <y_pos>7</y_pos>
   </object>
@@ -1105,15 +1105,15 @@
     <x_pos>16</x_pos>
     <y_pos>7</y_pos>
   </object>
-  <object symbol="Uus" number="117">
-    <_name>Ununseptium</_name>
+  <object symbol="Ts" number="117">
+    <_name>Tennessine</_name>
     <class>11</class>
     <weight>[294]</weight>
     <x_pos>17</x_pos>
     <y_pos>7</y_pos>
   </object>
-  <object symbol="Uuo" number="118">
-    <_name>Ununoctium</_name>
+  <object symbol="Og" number="118">
+    <_name>Oganesson</_name>
     <class>11</class>
     <weight>[294]</weight>
     <x_pos>18</x_pos>
