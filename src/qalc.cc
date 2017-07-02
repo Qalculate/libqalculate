@@ -3765,7 +3765,7 @@ void load_preferences() {
 					if(v >= POST_CONVERSION_NONE && v <= POST_CONVERSION_OPTIMAL) {
 						evalops.auto_post_conversion = (AutoPostConversion) v;
 					}
-					if((v == POST_CONVERSION_NONE || v == POST_CONVERSION_OPTIMAL_SI) && version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] <= 12))) {
+					if(v == POST_CONVERSION_NONE && version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] <= 12))) {
 						evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL;
 					}
 				} else if(svar == "mixed_units_conversion") {
