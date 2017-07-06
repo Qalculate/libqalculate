@@ -1,7 +1,7 @@
 # translation of sv.po to Swedish
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
-# Hanna Knutsson <hanna_k@fmgirl.com>, 2003.
+# Hanna Knutsson <hanna.knutsson@protonmail.com>, 2003.
 #
 msgid ""
 msgstr ""
@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-29 12:51+0200\n"
 "PO-Revision-Date: 2006-05-04 12:29+0200\n"
-"Last-Translator: Hanna Knutsson <hanna_k@fmgirl.com>\n"
+"Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
 "Language: \n"
 "MIME-Version: 1.0\n"

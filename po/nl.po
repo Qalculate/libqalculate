@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 #
-# Hanna Knutsson <hanna_k@fmgirl.com>, 2003.
+# Hanna Knutsson <hanna.knutsson@protonmail.com>, 2003.
 # Rinse de Vries <RinseDeVries@home.nl>, 2006.
 # Jaap Woldringh <jjh.woldringh@planet.nl>, 2006, 2007.
 msgid ""
