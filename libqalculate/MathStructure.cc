@@ -13195,23 +13195,35 @@ bool MathStructure::convertToBaseUnits(bool convert_complex_relations, bool *fou
 		}
 		return false;
 	} else if(m_type == STRUCT_MULTIPLICATION && (convert_complex_relations || found_complex_relations)) {
+		AliasUnit *complex_au = NULL;
+		if(convert_complex_relations && convertToBaseUnits(false, NULL, calculate_new_functions, feo)) {
+			return true;
+		}
 		for(size_t i = 0; i < SIZE; i++) {
-			AliasUnit *au = NULL;
-			if(CHILD(i).isUnit() && CHILD(i).unit()->subtype() == SUBTYPE_ALIAS_UNIT) au = (AliasUnit*) CHILD(i).unit();
-			else if(CHILD(i).isPower() && CHILD(i)[0].isUnit() && CHILD(i)[0].unit()->subtype() == SUBTYPE_ALIAS_UNIT) au = (AliasUnit*) CHILD(i)[0].unit();
-			if(au && au->hasComplexRelationTo(au->baseUnit())) {
-				if(found_complex_relations) {
-					*found_complex_relations = true;
-				}
-				if(convert_complex_relations) {
-					MathStructure mstruct_old(*this);
-					if(convert(au->firstBaseUnit(), true, NULL, calculate_new_functions, feo) && !equals(mstruct_old)) {
-						convertToBaseUnits(convert_complex_relations, NULL, calculate_new_functions, feo);
-						return true;
+			if(CHILD(i).isUnit_exp() && CHILD(i).unit_exp_unit()->subtype() == SUBTYPE_ALIAS_UNIT) {
+				AliasUnit *au = (AliasUnit*) CHILD(i).unit_exp_unit();
+				if(au && au->hasComplexRelationTo(au->baseUnit())) {
+					if(found_complex_relations) {
+						*found_complex_relations = true;
 					}
-				} else {
-					break;
+					if(convert_complex_relations) {
+						if(complex_au) {
+							complex_au = NULL;
+							convert_complex_relations = false;
+							break;
+						} else {
+							complex_au = au;
+						}
+					} else {
+						break;
+					}
 				}
+			}
+		}
+		if(convert_complex_relations && complex_au) {
+			MathStructure mstruct_old(*this);
+			if(convert(complex_au->firstBaseUnit(), true, NULL, calculate_new_functions, feo)) {
+				return true;
 			}
 		}
 	} else if(m_type == STRUCT_FUNCTION) {
