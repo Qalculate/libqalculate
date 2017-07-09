@@ -2625,11 +2625,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 }
 MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	MathStructure mstruct_new(mstruct);
-	for(size_t i = 0; i < units.size(); i++) {
-		if(units[i]->subtype() == SUBTYPE_BASE_UNIT) {
-			mstruct_new.convert(units[i], true);
-		}
-	}
+	mstruct_new.convertToBaseUnits(true, NULL, true, eo);
 	EvaluationOptions eo2 = eo;
 	eo2.keep_prefixes = false;
 	//eo2.calculate_functions = false;
@@ -2757,7 +2753,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 				if(units[i]->subtype() == SUBTYPE_BASE_UNIT && (points == 0 || (points == 1 && minus))) {
 					new_points = 0;
 					for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
-						if(cu->get(i2, &exp)->baseUnit() == units[i]) {
+						if(cu->get(i2, &exp)->baseUnit() == units[i] && !cu->get(i2)->hasComplexRelationTo(units[i])) {
 							points = 1;
 							best_u = units[i];
 							minus = !has_positive && (exp < 0);
@@ -2771,7 +2767,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 					b_exp = au->baseExponent();
 					new_points = 0;
 					new_points_m = 0;
-					if(b_exp != 1 || bu->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+					if((b_exp != 1 || bu->subtype() == SUBTYPE_COMPOSITE_UNIT) && !au->hasComplexRelationTo(bu)) {
 						if(bu->subtype() == SUBTYPE_BASE_UNIT) {
 							for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
 								if(cu->get(i2, &exp) == bu) {
@@ -3030,6 +3026,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 					new_points = 1;
 					new_minus = false;
 				}
+				if(new_points == 0) return mstruct;
 				if((new_points > old_points && (!convert_to_si_units || is_si_units)) || (new_points == old_points && (new_minus || !old_minus) && (!convert_to_si_units || (is_si_units && !new_is_si_units)))) return mstruct;
 			} else {
 				mstruct_new[0] = convertToBestUnit(mstruct_new[0], eo, convert_to_si_units);
@@ -3149,6 +3146,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				new_points = 1;
 				new_minus = false;
 			}
+			if(new_points == 0) return mstruct_old;
 			if((new_points > old_points && (!convert_to_si_units || is_si_units)) || (new_points == old_points && (new_minus || !old_minus) && (!convert_to_si_units || (is_si_units && !new_is_si_units)))) return mstruct_old;
 			return mstruct_new;
 		}

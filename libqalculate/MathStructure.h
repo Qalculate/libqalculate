@@ -767,6 +767,7 @@ class MathStructure {
 		bool testCompositeUnit(Unit *u);	
 		bool dissolveAllCompositeUnits();
 		bool setPrefixForUnit(Unit *u, Prefix *new_prefix);
+		bool convertToBaseUnits(bool convert_complex_relations = false, bool *found_complex_relations = NULL, bool calculate_new_functions = false, const EvaluationOptions &feo = default_evaluation_options);
 		bool convert(Unit *u, bool convert_complex_relations = false, bool *found_complex_relations = NULL, bool calculate_new_functions = false, const EvaluationOptions &feo = default_evaluation_options, Prefix *new_prefix = NULL);
 		bool convert(const MathStructure unit_mstruct, bool convert_complex_relations = false, bool *found_complex_relations = NULL, bool calculate_new_functions = false, const EvaluationOptions &feo = default_evaluation_options);
 		//@}

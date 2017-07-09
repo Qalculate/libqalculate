@@ -13167,7 +13167,72 @@ bool flattenMultiplication(MathStructure &mstruct) {
 	}
 	return retval;
 }
-
+bool MathStructure::convertToBaseUnits(bool convert_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo) {
+	if(m_type == STRUCT_UNIT) {
+		if(o_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+			set(((CompositeUnit*) o_unit)->generateMathStructure());
+			convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
+			return true;
+		} else if(o_unit->subtype() == SUBTYPE_ALIAS_UNIT) {
+			AliasUnit *au = (AliasUnit*) o_unit;
+			if(au->hasComplexRelationTo(au->baseUnit())) {
+				if(found_complex_relations) *found_complex_relations = true;
+				if(!convert_complex_relations) {
+					if(!au->hasComplexExpression()) {
+						MathStructure mstruct_old(*this);
+						if(convert(au->firstBaseUnit(), false, NULL, calculate_new_functions, feo) && !equals(mstruct_old)) {
+							convertToBaseUnits(false, NULL, calculate_new_functions, feo);
+							return true;
+						}
+					}
+					return false;
+				}
+			}
+			if(convert(au->baseUnit(), convert_complex_relations, found_complex_relations, calculate_new_functions, feo)) {
+				convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
+				return true;
+			}
+		}
+		return false;
+	} else if(m_type == STRUCT_MULTIPLICATION && (convert_complex_relations || found_complex_relations)) {
+		for(size_t i = 0; i < SIZE; i++) {
+			AliasUnit *au = NULL;
+			if(CHILD(i).isUnit() && CHILD(i).unit()->subtype() == SUBTYPE_ALIAS_UNIT) au = (AliasUnit*) CHILD(i).unit();
+			else if(CHILD(i).isPower() && CHILD(i)[0].isUnit() && CHILD(i)[0].unit()->subtype() == SUBTYPE_ALIAS_UNIT) au = (AliasUnit*) CHILD(i)[0].unit();
+			if(au && au->hasComplexRelationTo(au->baseUnit())) {
+				if(found_complex_relations) {
+					*found_complex_relations = true;
+				}
+				if(convert_complex_relations) {
+					MathStructure mstruct_old(*this);
+					if(convert(au->firstBaseUnit(), true, NULL, calculate_new_functions, feo) && !equals(mstruct_old)) {
+						convertToBaseUnits(convert_complex_relations, NULL, calculate_new_functions, feo);
+						return true;
+					}
+				} else {
+					break;
+				}
+			}
+		}
+	} else if(m_type == STRUCT_FUNCTION) {
+		bool b = false;
+		for(size_t i = 0; i < SIZE; i++) {
+			if((!o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) && CHILD(i).convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo)) {
+				CHILD_UPDATED(i);
+				b = true;
+			}
+		}
+		return b;
+	}
+	bool b = false; 
+	for(size_t i = 0; i < SIZE; i++) {
+		if(CHILD(i).convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo)) {
+			CHILD_UPDATED(i);
+			b = true;
+		}
+	}
+	return b;
+}
 bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo, Prefix *new_prefix) {
 	bool b = false;
 	if(m_type == STRUCT_UNIT && o_unit == u) {
@@ -13198,7 +13263,7 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 			return true;
 		}
 		MathStructure *exp = new MathStructure(1, 1);
-		MathStructure *mstruct = new MathStructure(1, 1);		
+		MathStructure *mstruct = new MathStructure(1, 1);
 		if(o_prefix) {
 			mstruct->set(o_prefix->value());
 		}

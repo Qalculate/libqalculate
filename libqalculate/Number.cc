@@ -1663,8 +1663,8 @@ bool Number::raise(const Number &o, bool try_exact) {
 		}
 		if(v_log10 != 0) {
 			o_log10 = cln::log(cln::realpart(o.internalNumber()) * v_log10, 10);
-			if(o_log10 > 5 && CALCULATOR->calculationAborted()) return false;
-			if(o_log10 > 7) {
+			if(o_log10 > 4 && CALCULATOR->calculationAborted()) return false;
+			if(o_log10 > 6) {
 				CALCULATOR->error(false, _("Extreme exponentiation was not calculated."), NULL);
 				return false;
 			}
