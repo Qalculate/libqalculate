@@ -789,7 +789,7 @@ void list_defs(bool in_interactive, char list_type = 0) {
 						} else if(((KnownVariable*) v)->get().isVector()) {
 							value = _("vector");
 						} else {
-							value = CALCULATOR->printMathStructureTimeOut(((KnownVariable*) v)->get(), 30);
+							value = CALCULATOR->print(((KnownVariable*) v)->get(), 30);
 						}
 					}
 				} else {
@@ -2307,7 +2307,7 @@ int main(int argc, char *argv[]) {
 								} else if(((KnownVariable*) v)->get().isVector()) {
 									value = _("vector");
 								} else {
-									value = CALCULATOR->printMathStructureTimeOut(((KnownVariable*) v)->get(), 30);
+									value = CALCULATOR->print(((KnownVariable*) v)->get(), 30);
 								}
 							}
 						} else {

@@ -32,14 +32,16 @@
 * CALCULATOR->loadGlobalDefinitions();
 * CALCULATOR->loadLocalDefinitions();
 * EvaluationOptions eo;
-* MathStructure result = CALCULATOR->calculate("1 + 1", eo);\endcode
+* MathStructure result;
+* CALCULATOR->calculate(&mstruct, "1 + 1", 2000, eo);\endcode
+* In the above example, the calculation is terminated after two second (2000 ms), if it is not finished before then.
 *
 * More complex usage mainly involves manipulating objects of the MathStructure class directly.
 *
-* To display the resulting expression you will normally use MathStructure::format() followed by MathStructure::print() as follows:
+* To display the resulting expression use Calculator::print() as follows:
 * \code PrintOptions po;
-* result.format(po);
-* string result_str = result.print(po); \endcode
+* string result_str = CALCULATOR->print(result, 2000, po);\endcode
+* Alternatively MathStructure::format() followed by MathStructure::print() can be used, whithout the possiblity to specify a time limit.
 *
 * Central to the flexiblity of libqalculate is the many options passed to evaluating and display functions with EvaluationOptions and PrintOptions.
 *
@@ -367,6 +369,8 @@ class Calculator {
 	//@{
 	/** Calls MathStructure::format(po) and MathStructure::print(po). The process is aborted after msecs milliseconds.
 	*/
+	string print(const MathStructure &mstruct, int msecs = 100000, const PrintOptions &op = default_print_options);
+	///Deprecated: use print() instead
 	string printMathStructureTimeOut(const MathStructure &mstruct, int msecs = 100000, const PrintOptions &op = default_print_options);
 	/** Called before formatting and printing a MathStructure (using MathStructure::format() and MathStructure::print()) 
 	* or a Number (using Number::print) to be able to abort the process. Always use Calculator::abortPrint() after finishing.

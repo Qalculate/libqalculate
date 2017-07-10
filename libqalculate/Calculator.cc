@@ -2340,13 +2340,16 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	current_stage = MESSAGE_STAGE_UNSET;
 	return convertToMixedUnits(mstruct, eo);
 }
-string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int msecs, const PrintOptions &po) {
+string Calculator::print(const MathStructure &mstruct, int msecs, const PrintOptions &po) {
 	startPrintControl(msecs);
 	MathStructure mstruct2(mstruct);
 	mstruct2.format();
 	string print_result = mstruct2.print(po);
 	stopPrintControl();
 	return print_result;
+}
+string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int msecs, const PrintOptions &po) {
+	return print(mstruct, msecs, po);
 }
 
 MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, const EvaluationOptions &eo) {
