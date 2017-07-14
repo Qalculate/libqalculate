@@ -41,7 +41,6 @@
 #include <cln/cln.h>
 using namespace cln;
 
-
 #if HAVE_UNORDERED_MAP
 #	include <unordered_map>
 #elif 	defined(__GNUC__)
@@ -201,9 +200,10 @@ enum {
 };
 
 class CalculateThread : public Thread {
-protected:
+  protected:
 	virtual void run();
 };
+
 
 
 void autoConvert(const MathStructure &morig, MathStructure &mconv, const EvaluationOptions &eo) {
@@ -227,7 +227,7 @@ void CalculateThread::run() {
 		bool b_parse = read<bool>();
 		void *x = read<void *>();
 		MathStructure *mstruct = (MathStructure*) x;
-		CALCULATOR->startCalculationControl();
+		CALCULATOR->startControl();
 		if(b_parse) {
 			mstruct->setAborted();
 			if(CALCULATOR->tmp_parsedstruct) CALCULATOR->tmp_parsedstruct->setAborted();
@@ -270,7 +270,7 @@ void CalculateThread::run() {
 			}
 			case PROC_NO_COMMAND: {}
 		}
-		CALCULATOR->stopCalculationControl();
+		CALCULATOR->stopControl();
 		CALCULATOR->b_busy = false;
 	}
 }
@@ -300,16 +300,10 @@ Calculator::Calculator() {
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = false;
 	
-	i_printing_aborted = 0;
-	b_printing_controlled = false;
-	i_print_timeout = 0;
+	i_aborted = 0;
+	b_controlled = false;
+	i_timeout = 0;
 	
-	i_calc_aborted = 0;
-	b_calc_controlled = false;
-	i_calc_timeout = 0;
-	
-	b_printing_controlled_by_calc = false;
-
 	setPrecision(DEFAULT_PRECISION);
 
 	addStringAlternative(SIGN_POWER_0, "^(0)");
@@ -1595,10 +1589,11 @@ void Calculator::clearBuffers() {
 	}
 }
 bool Calculator::abort() {
+	i_aborted = 1;
+	if(!b_busy) return true;
 	if(!calculate_thread->running) {
 		b_busy = false;
 	} else {
-		abortCalculation();
 		struct timespec rtime;
 		rtime.tv_sec = 0;
 		rtime.tv_nsec = 1000000;
@@ -1609,12 +1604,11 @@ bool Calculator::abort() {
 		}
 		if(b_busy) {
 			calculate_thread->cancel();
-			restoreState();
+			stopControl();
 			stopped_messages_count.clear();
 			stopped_warnings_count.clear();
 			stopped_errors_count.clear();
 			disable_errors_ref = 0;
-			clearBuffers();
 			if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
 			tmp_rpn_mstruct = NULL;
 			b_busy = false;
@@ -1624,18 +1618,6 @@ bool Calculator::abort() {
 	}
 	return true;
 }
-/*void Calculator::abort_this() {
-	restoreState();
-	stopped_messages_count.clear();
-	stopped_warnings_count.clear();
-	stopped_errors_count.clear();
-	disable_errors_ref = 0;
-	clearBuffers();
-	if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
-	tmp_rpn_mstruct = NULL;
-	b_busy = false;*/
-//	pthread_exit(/* Solaris 2.6 needs a cast */ (void*) PTHREAD_CANCELED);
-//}
 bool Calculator::busy() {
 	return b_busy;
 }
@@ -1796,7 +1778,6 @@ bool Calculator::calculateRPNRegister(size_t index, int msecs, const EvaluationO
 }
 
 bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index, int msecs, const EvaluationOptions &eo) {
-	saveState();
 	b_busy = true;
 	if(!calculate_thread->running) {
 		calculate_thread->start();
@@ -1823,7 +1804,6 @@ bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index,
 }
 bool Calculator::calculateRPN(string str, int command, size_t index, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
 	MathStructure *mstruct = new MathStructure();
-	saveState();
 	b_busy = true;
 	if(!calculate_thread->running) {
 		calculate_thread->start();
@@ -2184,9 +2164,7 @@ void Calculator::moveRPNRegisterDown(size_t index) {
 
 bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
 	mstruct->set(string(_("calculating...")));
-	saveState();
 	b_busy = true;
-	startCalculationControl();
 	if(!calculate_thread->running) {
 		calculate_thread->start();
 	}
@@ -2209,10 +2187,8 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 	}	
 	if(had_msecs && b_busy) {
 		if(!abort()) mstruct->setAborted();
-		stopCalculationControl();
 		return false;
 	}
-	stopCalculationControl();
 	return true;
 }
 bool Calculator::hasToExpression(const string &str) const {
@@ -2341,11 +2317,11 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	return convertToMixedUnits(mstruct, eo);
 }
 string Calculator::print(const MathStructure &mstruct, int msecs, const PrintOptions &po) {
-	startPrintControl(msecs);
+	startControl(msecs);
 	MathStructure mstruct2(mstruct);
 	mstruct2.format();
 	string print_result = mstruct2.print(po);
-	stopPrintControl();
+	stopControl();
 	return print_result;
 }
 string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int msecs, const PrintOptions &po) {
@@ -2473,7 +2449,6 @@ MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_u
 	MathStructure mstruct;
 	parse(&mstruct, str, eo.parse_options);
 	mstruct *= from_unit;
-	saveState();
 	b_busy = true;
 	if(!calculate_thread->running) {
 		calculate_thread->start();
@@ -2499,7 +2474,6 @@ MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_u
 	}
 	mstruct.convert(to_unit, true);
 	mstruct.divide(to_unit, true);
-	saveState();
 	b_busy = true;
 	calculate_thread->write(b_parse);
 	x = (void*) &mstruct;
@@ -8928,119 +8902,75 @@ int Calculator::testCondition(string expression) {
 }
 
 void Calculator::startPrintControl(int milli_timeout) {
-	b_printing_controlled = true;
-	i_printing_aborted = 0;
-	i_print_timeout = milli_timeout;
-	if(i_print_timeout > 0) {
-#ifndef CLOCK_MONOTONIC
-		gettimeofday(&t_print_end, NULL);
-#else
-		struct timespec ts;
-		clock_gettime(CLOCK_MONOTONIC, &ts);
-		t_print_end.tv_sec = ts.tv_sec;
-		t_print_end.tv_usec = ts.tv_nsec / 1000;
-#endif
-		long int usecs = t_print_end.tv_usec + (long int) milli_timeout * 1000;
-		t_print_end.tv_usec = usecs % 1000000;
-		t_print_end.tv_sec += usecs / 1000000;
-	}
+	startControl(milli_timeout);
 }
 void Calculator::abortPrint() {
-	i_printing_aborted = 1;
+	abort();
 }
 bool Calculator::printingAborted() {
-	if(b_printing_controlled_by_calc && calculationAborted()) return true;
-	if(!b_printing_controlled) return false;
-	if(i_printing_aborted > 0) return true;
-	if(i_print_timeout > 0) {
-#ifndef CLOCK_MONOTONIC
-		struct timeval tv;
-		gettimeofday(&tv, NULL);
-		if(tv.tv_sec > t_print_end.tv_sec || (tv.tv_sec == t_print_end.tv_sec && tv.tv_usec > t_print_end.tv_usec)) {
-#else
-		struct timespec tv;
-		clock_gettime(CLOCK_MONOTONIC, &tv);
-		if(tv.tv_sec > t_print_end.tv_sec || (tv.tv_sec == t_print_end.tv_sec && tv.tv_nsec / 1000 > t_print_end.tv_usec)) {
-#endif
-			i_printing_aborted = 2;
-			return true;
-		}
-	}
-	return false;
+	return aborted();
 }
 string Calculator::printingAbortedMessage() const {
-	if(i_printing_aborted == 2) return _("timed out");
-	return _("aborted");
+	return abortedMessage();
 }
 string Calculator::timedOutString() const {
 	return _("timed out");
 }
 bool Calculator::printingControlled() const {
-	return b_printing_controlled;
-}
-bool Calculator::printingControlledByCalculation() const {
-	return b_printing_controlled_by_calc;
-}
-void Calculator::setPrintingControlledByCalculation(bool control_print_with_calc) {
-	b_printing_controlled_by_calc = control_print_with_calc;
+	return isControlled();
 }
 void Calculator::stopPrintControl() {
-	b_printing_controlled = false;
-	i_printing_aborted = 0;
-	i_print_timeout = 0;
+	stopControl();
 }
 
-void Calculator::startCalculationControl(int milli_timeout) {
-	b_calc_controlled = true;
-	i_calc_aborted = 0;
-	i_calc_timeout = milli_timeout;
-	if(i_calc_timeout > 0) {
+void Calculator::startControl(int milli_timeout) {
+	b_controlled = true;
+	i_aborted = 0;
+	i_timeout = milli_timeout;
+	if(i_timeout > 0) {
 #ifndef CLOCK_MONOTONIC
-		gettimeofday(&t_calc_end, NULL);
+		gettimeofday(&t_end, NULL);
 #else
 		struct timespec ts;
 		clock_gettime(CLOCK_MONOTONIC, &ts);
-		t_calc_end.tv_sec = ts.tv_sec;
-		t_calc_end.tv_usec = ts.tv_nsec / 1000;
+		t_end.tv_sec = ts.tv_sec;
+		t_end.tv_usec = ts.tv_nsec / 1000;
 #endif
-		long int usecs = t_calc_end.tv_usec + (long int) milli_timeout * 1000;
-		t_calc_end.tv_usec = usecs % 1000000;
-		t_calc_end.tv_sec += usecs / 1000000;
+		long int usecs = t_end.tv_usec + (long int) milli_timeout * 1000;
+		t_end.tv_usec = usecs % 1000000;
+		t_end.tv_sec += usecs / 1000000;
 	}
 }
-void Calculator::abortCalculation() {
-	i_calc_aborted = 1;
-}
-bool Calculator::calculationAborted() {
-	if(!b_calc_controlled) return false;
-	if(i_calc_aborted > 0) return true;
-	if(i_calc_timeout > 0) {
+bool Calculator::aborted() {
+	if(!b_controlled) return false;
+	if(i_aborted > 0) return true;
+	if(i_timeout > 0) {
 #ifndef CLOCK_MONOTONIC
 		struct timeval tv;
 		gettimeofday(&tv, NULL);
-		if(tv.tv_sec > t_calc_end.tv_sec || (tv.tv_sec == t_calc_end.tv_sec && tv.tv_usec > t_calc_end.tv_usec)) {
+		if(tv.tv_sec > t_end.tv_sec || (tv.tv_sec == t_end.tv_sec && tv.tv_usec > t_end.tv_usec)) {
 #else
 		struct timespec tv;
 		clock_gettime(CLOCK_MONOTONIC, &tv);
-		if(tv.tv_sec > t_calc_end.tv_sec || (tv.tv_sec == t_calc_end.tv_sec && tv.tv_nsec / 1000 > t_calc_end.tv_usec)) {
+		if(tv.tv_sec > t_end.tv_sec || (tv.tv_sec == t_end.tv_sec && tv.tv_nsec / 1000 > t_end.tv_usec)) {
 #endif
-			i_calc_aborted = 2;
+			i_aborted = 2;
 			return true;
 		}
 	}
 	return false;
 }
-string Calculator::calculationAbortedMessage() const {
-	if(i_calc_aborted == 2) return _("timed out");
+string Calculator::abortedMessage() const {
+	if(i_aborted == 2) return _("timed out");
 	return _("aborted");
 }
-bool Calculator::calculationControlled() {
-	return b_calc_controlled;
+bool Calculator::isControlled() const {
+	return b_controlled;
 }
-void Calculator::stopCalculationControl() {
-	b_calc_controlled = false;
-	i_calc_aborted = 0;
-	i_calc_timeout = 0;
+void Calculator::stopControl() {
+	b_controlled = false;
+	i_aborted = 0;
+	i_timeout = 0;
 }
 
 
@@ -9261,11 +9191,11 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	ParseOptions po2 = po;
 	po2.read_precision = DONT_READ_PRECISION;
 	eo.parse_options = po2;
-	if(msecs > 0) startCalculationControl(msecs);
+	if(msecs > 0) startControl(msecs);
 	MathStructure y_vector(parse(expression, po2).generateVector(x_mstruct, min, max, steps, x_vector, eo));
 	if(msecs > 0) {
-		if(calculationAborted()) error(true, _("It took too long to generate the plot data."), NULL);
-		stopCalculationControl();
+		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
+		stopControl();
 	}
 	if(y_vector.size() == 0) {
 		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
@@ -9292,11 +9222,11 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	ParseOptions po2 = po;
 	po2.read_precision = DONT_READ_PRECISION;
 	eo.parse_options = po2;
-	if(msecs > 0) startCalculationControl(msecs);
+	if(msecs > 0) startControl(msecs);
 	MathStructure y_vector(parse(expression, po2).generateVector(x_mstruct, min, max, step, x_vector, eo));
 	if(msecs > 0) {
-		if(calculationAborted()) error(true, _("It took too long to generate the plot data."), NULL);
-		stopCalculationControl();
+		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
+		stopControl();
 	}
 	if(y_vector.size() == 0) {
 		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
@@ -9323,11 +9253,11 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	ParseOptions po2 = po;
 	po2.read_precision = DONT_READ_PRECISION;
 	eo.parse_options = po2;
-	if(msecs > 0) startCalculationControl(msecs);
+	if(msecs > 0) startControl(msecs);
 	MathStructure y_vector(parse(expression, po2).generateVector(x_mstruct, x_vector, eo).eval(eo));
 	if(msecs > 0) {
-		if(calculationAborted()) error(true, _("It took too long to generate the plot data."), NULL);
-		stopCalculationControl();
+		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
+		stopControl();
 	}
 	return y_vector;
 }
@@ -9578,7 +9508,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			plot_data = "";
 			int non_numerical = 0, non_real = 0;
 			string str = "";
-			if(msecs > 0) startPrintControl(msecs);
+			if(msecs > 0) startControl(msecs);
 			for(size_t i = 1; i <= y_vectors[serie].countChildren(); i++) {
 				bool invalid_nr = false;
 				if(!y_vectors[serie].getChild(i)->isNumber()) {
@@ -9609,15 +9539,15 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 					plot_data += y_vectors[serie].getChild(i)->print(po);
 					plot_data += "\n";	
 				}
-				if(printingAborted()) {
+				if(aborted()) {
 					fclose(fdata);
 					g_free(filepath);
 					error(true, _("It took too long to generate the plot data."), NULL);
-					if(msecs > 0) stopPrintControl();
+					if(msecs > 0) stopControl();
 					return false;
 				}
 			}
-			if(msecs > 0) stopPrintControl();
+			if(msecs > 0) stopControl();
 			if(non_numerical > 0 || non_real > 0) {
 				string stitle;
 				if(serie < pdps.size() && !pdps[serie]->title.empty()) {

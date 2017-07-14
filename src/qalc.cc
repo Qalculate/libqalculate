@@ -2784,7 +2784,7 @@ bool display_errors(bool goto_input) {
 }
 
 void on_abort_display() {
-	CALCULATOR->abortPrint();
+	CALCULATOR->abort();
 }
 
 
@@ -2796,6 +2796,7 @@ void ViewThread::run() {
 		//bool b_stack = read<bool>();
 		read<bool>();
 		x = read<void *>();
+		CALCULATOR->startControl();
 		if(x) {
 			PrintOptions po;
 			po.preserve_format = true;
@@ -2821,11 +2822,13 @@ void ViewThread::run() {
 		
 		m.format(printops);
 		result_text = m.print(printops);
+		
 	
 		if(result_text == _("aborted")) {
 			*printops.is_approximate = false;
 		}
 		b_busy = false;
+		CALCULATOR->stopControl();
 	}
 }
 
@@ -2871,9 +2874,6 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	}
 	
 	printops.prefix = prefix;
-	
-	//CALCULATOR->saveState();
-	CALCULATOR->startPrintControl();
 
 	bool parsed_approx = false;
 	if(stack_index == 0) {
@@ -2939,7 +2939,6 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			}
 		}
 	}
-	CALCULATOR->stopPrintControl();
 
 	printops.prefix = NULL;
 
@@ -3030,7 +3029,7 @@ void expression_format_updated(bool reparse) {
 }
 
 void on_abort_command() {
-	CALCULATOR->abortCalculation();
+	CALCULATOR->abort();
 	struct timespec rtime;
 	rtime.tv_sec = 0;
 	rtime.tv_nsec = 1000000;
@@ -3041,9 +3040,8 @@ void on_abort_command() {
 	}
 	if(b_busy) {
 		command_thread->cancel();
-		CALCULATOR->restoreState();
-		CALCULATOR->clearBuffers();
 		b_busy = false;
+		CALCULATOR->stopControl();
 		command_aborted = true;
 	}
 }
@@ -3055,7 +3053,7 @@ void CommandThread::run() {
 	while(true) {
 		int command_type = read<int>();
 		void *x = read<void *>();
-		CALCULATOR->startCalculationControl();
+		CALCULATOR->startControl();
 		switch(command_type) {
 			case COMMAND_FACTORIZE: {
 				if(!((MathStructure*) x)->integerFactorize()) {
@@ -3068,8 +3066,8 @@ void CommandThread::run() {
 				break;
 			}
 		}
-		CALCULATOR->stopCalculationControl();
 		b_busy = false;
+		CALCULATOR->stopControl();
 		
 	}
 }
@@ -3078,7 +3076,6 @@ void execute_command(int command_type, bool show_result) {
 
 	b_busy = true;	
 	command_aborted = false;
-	CALCULATOR->saveState();
 
 	if(!command_thread->running) {
 		command_thread->start();

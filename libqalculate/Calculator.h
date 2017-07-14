@@ -228,8 +228,9 @@ class Calculator {
 	vector<int> stopped_errors_count;
 	vector<int> stopped_warnings_count;
 	vector<int> stopped_messages_count;
+
 	Thread *calculate_thread;
-	bool b_functions_was, b_variables_was, b_units_was, b_unknown_was, b_calcvars_was, b_rpn_was;
+
 	string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
 
 	bool b_argument_errors;
@@ -254,10 +255,10 @@ class Calculator {
 	
 	bool b_save_called;
 	
-	int i_print_timeout, i_calc_timeout;
-	struct timeval t_print_end, t_calc_end;
-	int i_printing_aborted, i_calc_aborted;
-	bool b_printing_controlled, b_calc_controlled, b_printing_controlled_by_calc;
+	int i_timeout;
+	struct timeval t_end;
+	int i_aborted;
+	bool b_controlled;
 	
 	string per_str, times_str, plus_str, minus_str, and_str, AND_str, or_str, OR_str, XOR_str;
 	size_t per_str_len, times_str_len, plus_str_len, minus_str_len, and_str_len, AND_str_len, or_str_len, OR_str_len, XOR_str_len;
@@ -357,12 +358,6 @@ class Calculator {
 	*/
 	MathStructure calculate(string str, const EvaluationOptions &eo = default_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
 	int testCondition(string expression);
-	void startCalculationControl(int milli_timeout = 0);
-	void abortCalculation(void);
-	void stopCalculationControl(void);
-	bool calculationAborted(void);
-	bool calculationControlled(void);
-	string calculationAbortedMessage(void) const;
 	//@}
 
 	/** @name Functions for printing expressions with the option to set a timeout or abort. */
@@ -372,38 +367,47 @@ class Calculator {
 	string print(const MathStructure &mstruct, int msecs = 100000, const PrintOptions &op = default_print_options);
 	///Deprecated: use print() instead
 	string printMathStructureTimeOut(const MathStructure &mstruct, int msecs = 100000, const PrintOptions &op = default_print_options);
-	/** Called before formatting and printing a MathStructure (using MathStructure::format() and MathStructure::print()) 
-	* or a Number (using Number::print) to be able to abort the process. Always use Calculator::abortPrint() after finishing.
+	
+	/** Called before calculation, formatting or printing of a MathStructure (Calculator::calculate(), without timeout, MathStructure::eval(), MathStructure::format() and MathStructure::print(), etc.) or printing of a Number (using Number::print) to be able to abort the process. Always use Calculator::stopControl() after finishing.
 	*
-	* @param msecs The maximum time for formatting printing in milliseconds. If msecs <= 0 the time will be unlimited.
+	* @param msecs The maximum time for the process in milliseconds. If msecs <= 0 the time will be unlimited (stop with abort()).
 	*/
-	void startPrintControl(int milli_timeout = 0);
-	/** Abort formatting and printing (after startPrintControl() has been called).
-	* This function will normally be called from a thread that checks for used input or other conditions.
-	*/	
-	void abortPrint(void);
-	/** Always call this function after Calculator::startPrintControl() after formatting and printing has finished.
+	void startControl(int milli_timeout = 0);
+	/** Always call this function after Calculator::startControl() after formatting, printing or calculation has finished.
 	*/
-	void stopPrintControl(void);
-	bool printingAborted(void);
-	bool printingControlled(void) const;
-	bool printingControlledByCalculation(void) const;
-	void setPrintingControlledByCalculation(bool control_print_with_calc = true);
-	string printingAbortedMessage(void) const;
+	void stopControl(void);
+	/** Abort formatting, printing or evaluation (after startControl() has been called).
+	* This function will normally be called from a thread that checks for user input or other conditions.
+	*
+	* @returns false if the calculation thread was forcibly stopped
+	*/
+	bool abort();
+	bool aborted(void);
+	bool isControlled(void) const;
+	string abortedMessage(void) const;
 	string timedOutString(void) const;
+	
+	/** Deprecated: use startControl() */
+	void startPrintControl(int milli_timeout = 0);
+	/** Deprecated: use abort() */
+	void abortPrint(void);
+	/** Deprecated: use stopControl() */
+	void stopPrintControl(void);
+	/** Deprecated: use aborted() */
+	bool printingAborted(void);
+	/** Deprecated: use isControlled() */
+	bool printingControlled(void) const;
+	/** Deprecated: use abortedMessage() */
+	string printingAbortedMessage(void) const;
 	//@}
 
 	/** @name Functions for handling of threaded calculations */
 	//@{
-	/** Aborts the current calculation. */
-	bool abort();
-	///** Aborts the current calculation. Used from within the calculation thread. */
-	//void abort_this();
 	/** Returns true if the calculate or print thread is busy. */
 	bool busy();
-	/** Saves the state of the calculator. Used internally to be able to restore the state after aborted calculation. */
+	/** Deprecated: does nothing. */
 	void saveState();
-	/** Restores the saved state of the calculator. Used internally to restore the state after aborted calculation. */
+	/** Deprecated: does nothing. */
 	void restoreState();
 	/** Clears all stored values. Used internally after aborted calculation. */
 	void clearBuffers();

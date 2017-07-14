@@ -2666,7 +2666,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MathStructure msave(*this);
 						CLEAR;
 						for(size_t i = 0; i < mstruct.size(); i++) {
-							if(CALCULATOR->calculationAborted()) {
+							if(CALCULATOR->aborted()) {
 								set(msave);
 								return -1;
 							}
@@ -3085,14 +3085,14 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				bool b = true, overflow;
 				int val;
 				while(b) {
-					if(CALCULATOR->calculationAborted()) break;
+					if(CALCULATOR->aborted()) break;
 					b = false;
 					overflow = false;
 					val = o_number.intValue(&overflow);
 					if(overflow) {
 						cln::cl_I cval = cln::numerator(cln::rational(cln::realpart(o_number.internalNumber())));
 						for(size_t i = 0; i < NR_OF_SQUARE_PRIMES; i++) {
-							if(CALCULATOR->calculationAborted()) break;
+							if(CALCULATOR->aborted()) break;
 							if(cln::zerop(cln::rem(cval, SQUARE_PRIMES[i]))) {
 								nr *= PRIMES[i];
 								o_number /= SQUARE_PRIMES[i];
@@ -3102,7 +3102,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						}
 					} else {
 						for(size_t i = 0; i < NR_OF_SQUARE_PRIMES; i++) {
-							if(CALCULATOR->calculationAborted()) break;
+							if(CALCULATOR->aborted()) break;
 							if(SQUARE_PRIMES[i] > val) {
 								break;
 							} else if(val % SQUARE_PRIMES[i] == 0) {
@@ -3199,7 +3199,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							MathStructure msave(*this);
 							nr--;
 							while(nr.isPositive()) {
-								if(CALCULATOR->calculationAborted()) {
+								if(CALCULATOR->aborted()) {
 									set(msave);
 									return -1;
 								}
@@ -3387,7 +3387,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						if(!representsNonMatrix()) {
 							MathStructure mthis(*this);
 							while(!m.isOne()) {
-								if(CALCULATOR->calculationAborted()) {
+								if(CALCULATOR->aborted()) {
 									set(mthis);
 									goto default_power_merge;
 								}
@@ -3398,7 +3398,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							MathStructure mstruct1(CHILD(0));
 							MathStructure mstruct2(CHILD(1));
 							for(size_t i = 2; i < SIZE; i++) {
-								if(CALCULATOR->calculationAborted()) goto default_power_merge;
+								if(CALCULATOR->aborted()) goto default_power_merge;
 								mstruct2.add(CHILD(i), true);
 							}
 							Number k(1);
@@ -3411,7 +3411,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							APPEND(mstruct1);
 							CHILD(0).calculateRaise(m, eo);
 							while(k.isLessThan(m)) {
-								if(CALCULATOR->calculationAborted() || !bn.binomial(m, k)) {
+								if(CALCULATOR->aborted() || !bn.binomial(m, k)) {
 									set(msave);
 									goto default_power_merge;
 								}
@@ -6941,10 +6941,10 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	//calculateUncertaintyPropagation(eo);
 	
-	if(CALCULATOR->calculationAborted()) return *this;
+	if(CALCULATOR->aborted()) return *this;
 
 	if(eo.calculate_functions && calculateFunctions(feo)) {
-		if(CALCULATOR->calculationAborted()) return *this;
+		if(CALCULATOR->aborted()) return *this;
 		unformat(eo);
 	}
 
@@ -6960,24 +6960,24 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			calculatesub(eo3, feo);
 		}
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
-		if(CALCULATOR->calculationAborted()) return *this;
+		if(CALCULATOR->aborted()) return *this;
 	}
 
 	calculatesub(eo2, feo);
-	if(CALCULATOR->calculationAborted()) return *this;
+	if(CALCULATOR->aborted()) return *this;
 
 	eo2.sync_units = false;
 
 	if(eo2.isolate_x) {
 		eo2.assume_denominators_nonzero = false;
 		if(isolate_x(eo2, feo)) {
-			if(CALCULATOR->calculationAborted()) return *this;
+			if(CALCULATOR->aborted()) return *this;
 			eo2.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 			calculatesub(eo2, feo);
 		} else {
 			eo2.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 		}
-		if(CALCULATOR->calculationAborted()) return *this;
+		if(CALCULATOR->aborted()) return *this;
 	}
 	if(eo.expand != 0 || (eo.test_comparisons && containsType(STRUCT_COMPARISON))) {
 		eo2.test_comparisons = eo.test_comparisons;
@@ -6995,24 +6995,24 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		}
 		if(b) {
 			calculatesub(eo2, feo);
-			if(CALCULATOR->calculationAborted()) return *this;
+			if(CALCULATOR->aborted()) return *this;
 			if(eo2.isolate_x) {
 				eo2.assume_denominators_nonzero = false;
 				if(isolate_x(eo2, feo)) {
-					if(CALCULATOR->calculationAborted()) return *this;
+					if(CALCULATOR->aborted()) return *this;
 					eo2.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 					calculatesub(eo2, feo);
 				} else {
 					eo2.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 				}
-				if(CALCULATOR->calculationAborted()) return *this;
+				if(CALCULATOR->aborted()) return *this;
 			}
 		}
 	}
 	if(eo2.isolate_x && containsType(STRUCT_COMPARISON) && eo2.assume_denominators_nonzero) {
 		if(try_isolate_x(*this, eo2, feo)) {
 			calculatesub(eo2, feo);
-			if(CALCULATOR->calculationAborted()) return *this;
+			if(CALCULATOR->aborted()) return *this;
 		}
 	}
 
@@ -7612,7 +7612,7 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 
 	while(true) {
 	
-		if(CALCULATOR->calculationAborted()) return false;
+		if(CALCULATOR->aborted()) return false;
 
 		prem(c, d, xvar, r, eo, false);
 		if(r.isZero()) {
@@ -7794,7 +7794,7 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 	
 	for(int t = 0; t < 6; t++) {
 	
-		if(CALCULATOR->calculationAborted()) return false;
+		if(CALCULATOR->aborted()) return false;
 
 		if((maxdeg * xi.integerLength()).isGreaterThan(100000)) {
 			return false;
@@ -9024,7 +9024,7 @@ size_t count_powers(const MathStructure &mstruct) {
 	return c;
 }
 bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, int term_combination_levels, int max_msecs, bool only_integers, bool recursive, struct timeval *endtime_p) {
-	if(CALCULATOR->calculationAborted()) return false;
+	if(CALCULATOR->aborted()) return false;
 	struct timeval endtime;
 	if(max_msecs > 0 && !endtime_p) {
 #ifndef CLOCK_MONOTONIC
@@ -9066,7 +9066,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				eo2.expand = true;
 				mcopy.calculatesub(eo2, eo2);
 				if(!equals(mcopy)) {
-					if(CALCULATOR->calculationAborted()) return false;
+					if(CALCULATOR->aborted()) return false;
 					CALCULATOR->error(true, "factorized result is wrong: %s. %s", msqrfree.print().c_str(), _("This is a bug. Please report it."), NULL);
 				} else {
 					set(msqrfree);
@@ -9080,7 +9080,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 	}	
 	switch(type()) {
 		case STRUCT_ADDITION: {
-			if(CALCULATOR->calculationAborted()) return false;
+			if(CALCULATOR->aborted()) return false;
 			if(term_combination_levels >= -1) {
 				if(SIZE <= 3 && SIZE > 1) {
 					MathStructure *xvar = NULL;
@@ -9654,7 +9654,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				}
 				MathStructure mbest;
 				do {
-					if(CALCULATOR->calculationAborted()) break;
+					if(CALCULATOR->aborted()) break;
 					if(endtime_p && endtime_p->tv_sec > 0) {
 #ifndef CLOCK_MONOTONIC
 						struct timeval curtime;
@@ -12041,7 +12041,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			break;
 		}
 	}
-	if(CALCULATOR->printingAborted()) print_str = CALCULATOR->printingAbortedMessage();
+	if(CALCULATOR->aborted()) print_str = CALCULATOR->abortedMessage();
 	if(o_uncertainty) {
 		if(SIZE > 0) {
 			print_str.insert(0, "(");
@@ -12085,7 +12085,7 @@ bool MathStructure::rankVector(bool ascending) {
 	for(size_t index = 0; index < SIZE; index++) {
 		b = false;
 		for(size_t i = 0; i < ranked.size(); i++) {
-			if(CALCULATOR->calculationAborted()) return false;
+			if(CALCULATOR->aborted()) return false;
 			ComparisonResult cmp = CHILD(index).compare(CHILD(ranked[i]));
 			if(COMPARISON_NOT_FULLY_KNOWN(cmp)) {
 				CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to rank vector."), i2s(index).c_str(), NULL);
@@ -12110,7 +12110,7 @@ bool MathStructure::rankVector(bool ascending) {
 	}	
 	int n_rep = 0;
 	for(int i = (int) ranked.size() - 1; i >= 0; i--) {
-		if(CALCULATOR->calculationAborted()) return false;
+		if(CALCULATOR->aborted()) return false;
 		if(ranked_equals_prev[i]) {
 			n_rep++;
 		} else {
@@ -12135,7 +12135,7 @@ bool MathStructure::sortVector(bool ascending) {
 	for(size_t index = 0; index < SIZE; index++) {
 		b = false;
 		for(size_t i = 0; i < ranked_mstructs.size(); i++) {
-			if(CALCULATOR->calculationAborted()) return false;
+			if(CALCULATOR->aborted()) return false;
 			ComparisonResult cmp = CHILD(index).compare(*v_subs[ranked_mstructs[i]]);
 			if(COMPARISON_MIGHT_BE_LESS_OR_GREATER(cmp)) {
 				CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to sort vector."), i2s(index).c_str(), NULL);
@@ -13768,7 +13768,7 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 		y_value.eval(eo);
 		y_vector.addChild(y_value);
 		x_value.calculateAdd(step, eo);
-		if(CALCULATOR->calculationAborted()) return y_vector;
+		if(CALCULATOR->aborted()) return y_vector;
 	}
 	return y_vector;
 }
@@ -13797,7 +13797,7 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 		x_value.calculateAdd(step, eo);
 		if(cr == COMPARISON_RESULT_EQUAL) break;
 		cr = max.compare(x_value);
-		if(CALCULATOR->calculationAborted()) return y_vector;
+		if(CALCULATOR->aborted()) return y_vector;
 	}
 	return y_vector;
 }
@@ -13806,7 +13806,7 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 	MathStructure y_vector;
 	y_vector.clearVector();
 	for(size_t i = 1; i <= x_vector.countChildren(); i++) {
-		if(CALCULATOR->calculationAborted()) {
+		if(CALCULATOR->aborted()) {
 			y_vector.clearVector();
 			return y_vector;
 		}

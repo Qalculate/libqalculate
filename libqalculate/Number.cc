@@ -207,8 +207,8 @@ string printCL_I(cl_I integ, int base = 10, bool display_sign = true, BaseDispla
 				str += stream_str;
 				cl_str = str + cl_str;
 			}
-			if(CALCULATOR->printingAborted()) {
-				return CALCULATOR->printingAbortedMessage();
+			if(CALCULATOR->aborted()) {
+				return CALCULATOR->abortedMessage();
 			}
 		}
 	} else {
@@ -1663,7 +1663,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		}
 		if(v_log10 != 0) {
 			o_log10 = cln::log(cln::realpart(o.internalNumber()) * v_log10, 10);
-			if(o_log10 > 4 && CALCULATOR->calculationAborted()) return false;
+			if(o_log10 > 4 && CALCULATOR->aborted()) return false;
 			if(o_log10 > 6) {
 				CALCULATOR->error(false, _("Extreme exponentiation was not calculated."), NULL);
 				return false;
@@ -2552,7 +2552,7 @@ bool Number::factorial() {
 		cln::cl_I i = cln::numerator(cln::rational(cln::realpart(new_value)));
 		i = cln::minus1(i);
 		for(; !cln::zerop(i); i = cln::minus1(i)) {
-			if(CALCULATOR->calculationAborted()) return false;
+			if(CALCULATOR->aborted()) return false;
 			new_value = new_value * i;
 		}
 	} catch(runtime_exception &e) {
@@ -2582,7 +2582,7 @@ bool Number::multiFactorial(const Number &o) {
 		cln::cl_I i_o = cln::numerator(cln::rational(cln::realpart(o.internalNumber())));
 		i = i - i_o;
 		for(; cln::plusp(i); i = i - i_o) {
-			if(CALCULATOR->calculationAborted()) return false;
+			if(CALCULATOR->aborted()) return false;
 			new_value = new_value * i;
 		}
 	} catch(runtime_exception &e) {
@@ -2610,7 +2610,7 @@ bool Number::doubleFactorial() {
 		cln::cl_I i2 = 2;
 		i = i - i2;
 		for(; cln::plusp(i); i = i - i2) {
-			if(CALCULATOR->calculationAborted()) return false;
+			if(CALCULATOR->aborted()) return false;
 			new_value = new_value * i;
 		}
 	} catch(runtime_exception &e) {
@@ -2652,7 +2652,7 @@ bool Number::binomial(const Number &m, const Number &k) {
 				k_fac.factorial();
 				cl_I ithis = im;
 				for(; !cln::zerop(ik); ik = cln::minus1(ik)) {
-					if(CALCULATOR->calculationAborted()) return false;
+					if(CALCULATOR->aborted()) return false;
 					im = cln::minus1(im);
 					ithis = ithis * im;
 				}
@@ -2705,7 +2705,7 @@ bool Number::factorize(vector<Number> &factors) {
 	cl_I last_prime = 0;
 	bool b = true;
 	while(b) {
-		if(CALCULATOR->calculationAborted()) return false;
+		if(CALCULATOR->aborted()) return false;
 		b = false;
 		cl_I facmax = cln::floor1(cln::sqrt(inr));
 		for(; prime_index < NR_OF_PRIMES && PRIMES[prime_index] <= facmax; prime_index++) {
@@ -2740,10 +2740,7 @@ bool Number::factorize(vector<Number> &factors) {
 				} catch(runtime_exception &e) {
 					CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
 				}
-				if(CALCULATOR->calculationAborted()) return false;
-#ifndef _WIN32
-				pthread_testcancel();
-#endif
+				if(CALCULATOR->aborted()) return false;
 				if(b_zero) {
 					try {
 						inr = cln::exquo(inr, last_prime);
@@ -2932,7 +2929,7 @@ string Number::printImaginaryDenominator(int base, bool display_sign, BaseDispla
 }
 
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
-	if(CALCULATOR->printingAborted()) return CALCULATOR->printingAbortedMessage();
+	if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 	if(isApproximateType() && !isInfinite() && !isComplex()) {
 		if((PRECISION < cln::float_format_lfloat_min && cln::zerop(cln::truncate2(MIN_PRECISION_FLOAT_RE(value)).remainder))
 		|| (PRECISION >= cln::float_format_lfloat_min && cln::zerop(cln::truncate2(REAL_PRECISION_FLOAT_RE(value)).remainder))) {
@@ -3074,7 +3071,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		integer_rerun:
 		string mpz_str = printCL_I(ivalue, base, false, BASE_DISPLAY_NONE, po.lower_case_numbers);
-		if(CALCULATOR->printingAborted()) return CALCULATOR->printingAbortedMessage();
+		if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 		
 		int expo = 0;
 		if(base == 10) {
@@ -3158,7 +3155,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						while(p2_cd >= 1000) {
 							v = v / i_exp;
 							p2_cd -= 1000;
-							if(CALCULATOR->printingAborted()) return CALCULATOR->printingAbortedMessage();
+							if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 						}
 					}
 					i_exp = cln::expt_pos(cln::cl_I(base), p2_cd);
@@ -3335,7 +3332,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			int precision2 = precision;
 			if(!cln::zerop(num)) {
 				str = printCL_I(num, base, true, BASE_DISPLAY_NONE);
-				if(CALCULATOR->printingAborted()) return CALCULATOR->printingAbortedMessage();
+				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(base != 10) {
 					expo = 0;
 				} else {
@@ -3420,12 +3417,12 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				} catch(runtime_exception &e) {
 					CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
 				}
-				if(CALCULATOR->printingAborted()) return CALCULATOR->printingAbortedMessage();
+				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				l10++;
 				remainder = remainder2;				
 				if(try_infinite_series && !exact) {
 					for(size_t i = 0; i < remainders.size(); i++) {
-						if(CALCULATOR->printingAborted()) return CALCULATOR->printingAbortedMessage();
+						if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 						if(remainders[i] == remainder) {
 							infinite_series = true;
 							try_infinite_series = false;
@@ -3466,7 +3463,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(po.is_approximate) *po.is_approximate = true;
 			}
 			str = printCL_I(num, base, true, BASE_DISPLAY_NONE, po.lower_case_numbers);
-			if(CALCULATOR->printingAborted()) return CALCULATOR->printingAbortedMessage();
+			if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 			if(base == 10) {
 				expo = str.length() - l10 - 1;
 				if(po.min_exp == EXP_PRECISION) {

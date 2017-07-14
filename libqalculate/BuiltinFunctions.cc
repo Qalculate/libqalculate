@@ -94,7 +94,7 @@ MergeVectorsFunction::MergeVectorsFunction() : MathFunction("mergevectors", 1, -
 int MergeVectorsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct.clearVector();
 	for(size_t i = 0; i < vargs.size(); i++) {
-		if(CALCULATOR->calculationAborted()) return 0;
+		if(CALCULATOR->aborted()) return 0;
 		if(vargs[i].isVector()) {
 			for(size_t i2 = 0; i2 < vargs[i].size(); i2++) {
 				mstruct.addChild(vargs[i][i2]);
@@ -2625,7 +2625,7 @@ GenerateVectorFunction::GenerateVectorFunction() : MathFunction("genvector", 4, 
 	setDefaultValue(6, "0");
 }
 int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(CALCULATOR->calculationAborted()) return 0;
+	if(CALCULATOR->aborted()) return 0;
 	if(vargs[5].number().getBoolean()) {
 		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], NULL, eo);
 	} else {
@@ -2637,7 +2637,7 @@ int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructur
 		}
 		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], steps, NULL, eo);
 	}
-	if(CALCULATOR->calculationAborted()) return 0;
+	if(CALCULATOR->aborted()) return 0;
 	return 1;
 }
 ForFunction::ForFunction() : MathFunction("for", 7) {
@@ -2655,7 +2655,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mtest = vargs[3];
 		mtest.replace(vargs[1], mcounter);
 		mtest.eval(eo);
-		if(!mtest.isNumber() || CALCULATOR->calculationAborted()) return 0;
+		if(!mtest.isNumber() || CALCULATOR->aborted()) return 0;
 		if(!mtest.number().getBoolean()) {
 			break;
 		}
@@ -2685,7 +2685,7 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	MathStructure mstruct_calc;
 	bool started = false, s2 = false;
 	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {
-		if(CALCULATOR->calculationAborted()) return 0;
+		if(CALCULATOR->aborted()) return 0;
 		mstruct_calc.set(vargs[0]);
 		mstruct_calc.replace(vargs[3], i_nr);
 		if(started) {
@@ -2714,7 +2714,7 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	MathStructure mstruct_calc;
 	bool started = false, s2 = false;
 	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {
-		if(CALCULATOR->calculationAborted()) return 0;
+		if(CALCULATOR->aborted()) return 0;
 		mstruct_calc.set(vargs[0]);
 		mstruct_calc.replace(vargs[3], i_nr);
 		if(started) {
@@ -2820,7 +2820,7 @@ int ProcessMatrixFunction::calculate(MathStructure &mstruct, const MathStructure
 	MathStructure mprocess;
 	for(size_t rindex = 0; rindex < mstruct.size(); rindex++) {
 		for(size_t cindex = 0; cindex < mstruct[rindex].size(); cindex++) {
-			if(CALCULATOR->calculationAborted()) return 0;
+			if(CALCULATOR->aborted()) return 0;
 			mprocess = vargs[0];
 			process_matrix_replace(mprocess, mstruct, vargs, rindex, cindex);
 			mstruct[rindex][cindex] = mprocess;
@@ -2896,7 +2896,7 @@ int CustomSumFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	EvaluationOptions eo2 = eo;
 	eo2.calculate_functions = false;
 	for(size_t index = (size_t) start - 1; index < (size_t) end; index++) {
-		if(CALCULATOR->calculationAborted()) return 0;
+		if(CALCULATOR->aborted()) return 0;
 		mprocess = mexpr;
 		csum_replace(mprocess, mstruct, vargs, index, eo2);
 		mprocess.eval(eo2);
@@ -3104,7 +3104,7 @@ int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	mstruct = vargs[0];
 	bool b = false;
 	while(i) {
-		if(CALCULATOR->calculationAborted()) return 0;
+		if(CALCULATOR->aborted()) return 0;
 		if(!mstruct.differentiate(vargs[1], eo) && !b) {
 			return 0;
 		}
@@ -3698,7 +3698,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	} else if(mstruct.isVector()) {
 		int matrix_index = 1, vector_index = 1;
 		if(mstruct.size() > 0 && (mstruct[0].isVector() || mstruct[0].contains(vargs[4], false, true, true))) {
-			for(size_t i = 0; i < mstruct.size() && !CALCULATOR->calculationAborted(); i++) {
+			for(size_t i = 0; i < mstruct.size() && !CALCULATOR->aborted(); i++) {
 				MathStructure x_vector;
 				if(mstruct[i].isMatrix() && mstruct[i].columns() == 2) {
 					MathStructure y_vector;
@@ -3759,12 +3759,9 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			dpds.push_back(dpd);
 		}
 	}
-	if(x_vectors.size() > 0 && !CALCULATOR->calculationAborted()) {
+	if(x_vectors.size() > 0 && !CALCULATOR->aborted()) {
 		PlotParameters param;
-		bool b = CALCULATOR->printingControlledByCalculation();
-		CALCULATOR->setPrintingControlledByCalculation(true);
 		CALCULATOR->plotVectors(&param, y_vectors, x_vectors, dpds, false, 0);
-		CALCULATOR->setPrintingControlledByCalculation(b);
 		for(size_t i = 0; i < dpds.size(); i++) {
 			if(dpds[i]) delete dpds[i];
 		}
