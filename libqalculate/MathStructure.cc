@@ -50,7 +50,7 @@
 #define IS_RATIONAL(o)		(o.isNumber() && o.number().isRational())
 #define IS_N_INF_NUMBER(o)	(o.isNumber() && !o.number().isInfinite())
 
-#define IS_A_SYMBOL(o)		(o.isSymbolic() || o.isVariable() || o.isFunction())
+#define IS_A_SYMBOL(o)		(o.isSymbolic() || o.isVariable() || o.isFunction() || o.isAborted())
 
 #define POWER_CLEAN(o)		if(o[1].isOne()) {o.setToChild(1);} else if(o[1].isZero()) {o.set(1, 1);}
 
@@ -275,6 +275,7 @@ void MathStructure::set(const MathStructure &o, bool merge_precision) {
 			o_number.set(o.number());
 			break;
 		}
+		case STRUCT_ABORTED: {}
 		case STRUCT_SYMBOLIC: {
 			s_sym = o.symbol();
 			break;
@@ -326,6 +327,7 @@ void MathStructure::set_nocopy(MathStructure &o, bool merge_precision) {
 			o_number.set(o.number());
 			break;
 		}
+		case STRUCT_ABORTED: {}
 		case STRUCT_SYMBOLIC: {
 			s_sym = o.symbol();
 			break;
@@ -479,7 +481,7 @@ void MathStructure::setUndefined(bool preserve_precision) {
 }
 void MathStructure::setAborted(bool preserve_precision) {
 	clear(preserve_precision);
-	m_type = STRUCT_SYMBOLIC;
+	m_type = STRUCT_ABORTED;
 	s_sym = _("aborted");
 }
 
@@ -727,7 +729,7 @@ bool MathStructure::isAddition() const {return m_type == STRUCT_ADDITION;}
 bool MathStructure::isMultiplication() const {return m_type == STRUCT_MULTIPLICATION;}
 bool MathStructure::isPower() const {return m_type == STRUCT_POWER;}
 bool MathStructure::isSymbolic() const {return m_type == STRUCT_SYMBOLIC;}
-bool MathStructure::isAborted() const {return m_type == STRUCT_SYMBOLIC && s_sym == _("aborted");}
+bool MathStructure::isAborted() const {return m_type == STRUCT_ABORTED;}
 bool MathStructure::isEmptySymbol() const {return m_type == STRUCT_SYMBOLIC && s_sym.empty();}
 bool MathStructure::isVector() const {return m_type == STRUCT_VECTOR;}
 bool MathStructure::isMatrix() const {
@@ -1165,6 +1167,9 @@ bool MathStructure::representsNonMatrix() const {
 				}
 			}
 			return true;
+		}
+		case STRUCT_ABORTED: {
+			return false;
 		}
 		default: {}
 	}
@@ -1724,7 +1729,7 @@ bool MathStructure::equals(const MathStructure &o) const {
 		}
 		default: {}
 	}
-	if((o_uncertainty == NULL) !=(o.uncertainty() == NULL)) return false;
+	if((o_uncertainty == NULL) != (o.uncertainty() == NULL)) return false;
 	if(o_uncertainty && !o_uncertainty->equals(*o.uncertainty())) return false;
 	if(SIZE < 1) return false;
 	for(size_t i = 0; i < SIZE; i++) {
@@ -4601,7 +4606,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 	switch(m_type) {
 		case STRUCT_VARIABLE: {
 			if(eo.calculate_variables && o_variable->isKnown()) {
-				if(eo.approximation == APPROXIMATION_APPROXIMATE || !o_variable->isApproximate()) {
+				if((eo.approximation == APPROXIMATION_APPROXIMATE || !o_variable->isApproximate()) && !((KnownVariable*) o_variable)->get().isAborted()) {
 					set(((KnownVariable*) o_variable)->get());
 					if(eo.calculate_functions) {
 						calculateFunctions(feo);
@@ -5776,6 +5781,8 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 				return i;
 			}
 		}
+		if(mstruct2.isAborted()) return -1;
+		if(mstruct1.isAborted()) return 1;
 		if(mstruct2.isInverse()) return -1;
 		if(mstruct1.isInverse()) return 1;
 		if(mstruct2.isDivision()) return -1;
@@ -6063,6 +6070,8 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			if(mstruct1.isAddition() && !mstruct2.isAddition() && !mstruct1.containsUnknowns() && (mstruct2.isUnknown_exp() || (mstruct2.isMultiplication() && mstruct2.containsUnknowns()))) return -1;
 			if(mstruct2.isAddition() && !mstruct1.isAddition() && !mstruct2.containsUnknowns() && (mstruct1.isUnknown_exp() || (mstruct1.isMultiplication() && mstruct1.containsUnknowns()))) return 1;
 		}
+		if(mstruct2.isAborted()) return -1;
+		if(mstruct1.isAborted()) return 1;
 		if(mstruct2.isInverse()) return -1;
 		if(mstruct1.isInverse()) return 1;
 		if(mstruct2.isDivision()) return -1;
@@ -11280,6 +11289,7 @@ int namelen(const MathStructure &mstruct, const PrintOptions &po, const Internal
 			if(abbreviated) *abbreviated = ename->abbreviation;
 			break;
 		}
+		case STRUCT_ABORTED: {}
 		case STRUCT_SYMBOLIC:  {
 			str = &mstruct.symbol();
 			if(abbreviated) *abbreviated = false;
@@ -11321,6 +11331,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return po.excessive_parenthesis;}
@@ -11344,11 +11355,12 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_OR: {return flat_division || po.excessive_parenthesis;}
 				case STRUCT_LOGICAL_XOR: {return flat_division || po.excessive_parenthesis;}
 				case STRUCT_LOGICAL_NOT: {return flat_division && po.excessive_parenthesis;}
-				case STRUCT_COMPARISON: {return flat_division || po.excessive_parenthesis;}				
+				case STRUCT_COMPARISON: {return flat_division || po.excessive_parenthesis;}
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
@@ -11371,11 +11383,12 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_OR: {return true;}
 				case STRUCT_LOGICAL_XOR: {return true;}
 				case STRUCT_LOGICAL_NOT: {return false;}
-				case STRUCT_COMPARISON: {return true;}				
+				case STRUCT_COMPARISON: {return true;}
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
@@ -11403,6 +11416,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
@@ -11430,6 +11444,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
@@ -11459,6 +11474,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
@@ -11488,6 +11504,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
@@ -11515,6 +11532,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return false;}
 				case STRUCT_VARIABLE: {return false;}
+				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
@@ -11543,6 +11561,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_VECTOR: {return po.excessive_parenthesis;}
 				case STRUCT_NUMBER: {return po.excessive_parenthesis;}
 				case STRUCT_VARIABLE: {return po.excessive_parenthesis;}
+				case STRUCT_ABORTED: {return po.excessive_parenthesis;}
 				case STRUCT_SYMBOLIC: {return po.excessive_parenthesis;}
 				case STRUCT_UNIT: {return po.excessive_parenthesis;}
 				case STRUCT_UNDEFINED: {return po.excessive_parenthesis;}
@@ -11614,9 +11633,8 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_VECTOR: {break;}
 		case STRUCT_NUMBER: {break;}
 		case STRUCT_VARIABLE: {break;}
-		case STRUCT_SYMBOLIC: {
-			break;
-		}
+		case STRUCT_ABORTED: {break;}
+		case STRUCT_SYMBOLIC: {break;}
 		case STRUCT_UNIT: {
 			if(m_type == STRUCT_UNIT) {
 				if(!po.limit_implicit_multiplication && !abbr_prev && !abbr_this) {
@@ -11658,6 +11676,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_FUNCTION: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_VECTOR: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_NUMBER: {return MULTIPLICATION_SIGN_OPERATOR;}
+		case STRUCT_ABORTED: {}
 		case STRUCT_VARIABLE: {}
 		case STRUCT_SYMBOLIC: {
 			if(po.limit_implicit_multiplication && t != STRUCT_NUMBER) return MULTIPLICATION_SIGN_OPERATOR;
@@ -11687,6 +11706,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			print_str = o_number.print(po, ips_n);
 			break;
 		}
+		case STRUCT_ABORTED: {}
 		case STRUCT_SYMBOLIC: {
 			if(po.allow_non_usable) {
 				print_str = s_sym;
@@ -13502,6 +13522,8 @@ int MathStructure::contains(const MathStructure &mstruct, bool structural_only, 
 				return function_value->contains(mstruct, structural_only, check_variables, check_functions);
 			}
 			return -1;
+		} else if(isAborted()) {
+			return -1;
 		}
 		return ret;
 	}
@@ -13529,6 +13551,8 @@ int MathStructure::containsFunction(MathFunction *f, bool structural_only, bool 
 				return function_value->containsFunction(f, structural_only, check_variables, check_functions);
 			}
 			return -1;
+		} else if(isAborted()) {
+			return -1;
 		}
 		return ret;
 	}
@@ -13550,6 +13574,8 @@ int MathStructure::containsRepresentativeOf(const MathStructure &mstruct, bool c
 		if(function_value) {
 			return function_value->containsRepresentativeOf(mstruct, check_variables, check_functions);
 		}
+		return -1;
+	} else if(isAborted()) {
 		return -1;
 	}
 	return ret;
@@ -13578,6 +13604,8 @@ int MathStructure::containsType(StructureType mtype, bool structural_only, bool 
 				return function_value->containsType(mtype, false, check_variables, check_functions);
 			}
 			return -1;
+		} else if(isAborted()) {
+			return -1;
 		}
 		return ret;
 	}
@@ -13599,7 +13627,7 @@ int MathStructure::containsRepresentativeOfType(StructureType mtype, bool check_
 			return function_value->containsRepresentativeOfType(mtype, check_variables, check_functions);
 		}
 	}
-	if(m_type == STRUCT_SYMBOLIC || m_type == STRUCT_VARIABLE || m_type == STRUCT_FUNCTION) {
+	if(m_type == STRUCT_SYMBOLIC || m_type == STRUCT_VARIABLE || m_type == STRUCT_FUNCTION || m_type == STRUCT_ABORTED) {
 		if(representsNumber(false)) {
 			if(mtype == STRUCT_UNIT) return -1;
 			return mtype == STRUCT_NUMBER;
