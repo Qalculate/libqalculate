@@ -10889,16 +10889,28 @@ void MathStructure::prefixCurrencies() {
 		}
 	}
 }
+void remove_multi_one(MathStructure &mstruct) {
+	if(mstruct.isMultiplication() && mstruct.size() > 1) {
+		if(mstruct[0].isOne() && !mstruct[1].isUnit_exp()) {
+			if(mstruct.size() == 2) mstruct.setToChild(2, true);
+			else mstruct.delChild(1);
+		}
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		remove_multi_one(mstruct[i]);
+	}
+}
 void MathStructure::format(const PrintOptions &po) {
 	if(!po.preserve_format) {
 		if(po.place_units_separately) {
 			factorizeUnits();
 		}
 		sort(po);
+		setPrefixes(po);
 		if(po.improve_division_multipliers) {
 			if(improve_division_multipliers(po)) sort(po);
 		}
-		setPrefixes(po);
+		remove_multi_one(*this);
 	}
 	formatsub(po);
 	if(!po.preserve_format) {

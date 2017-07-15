@@ -275,11 +275,12 @@ bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
 }
 const MathStructure &KnownVariable::get() {
 	if(b_expression && (!mstruct || mstruct->isAborted())) {
+		mstruct = new MathStructure();
+		mstruct->setAborted();
 		ParseOptions po;
 		if(isApproximate() && precision() < 1) {
 			po.read_precision = READ_PRECISION_WHEN_DECIMALS;
 		}
-		mstruct = new MathStructure();
 		CALCULATOR->parse(mstruct, sexpression, po);
 		if(precision() > 0) {
 			if(mstruct->precision() < 1 || precision() < mstruct->precision()) {
@@ -342,6 +343,7 @@ void DynamicVariable::set(string) {}
 const MathStructure &DynamicVariable::get() {
 	if(calculated_precision != CALCULATOR->getPrecision() || !mstruct || mstruct->isAborted()) {
 		mstruct = new MathStructure();
+		mstruct->setAborted();
 		calculated_precision = CALCULATOR->getPrecision();
 		calculate();
 	}
