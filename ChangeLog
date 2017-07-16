@@ -1,10 +1,36 @@
+2017-07-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* New Calculator::calculate() variant that calculates a parsed expression
+
+2017-07-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix formatting of (x^2)/(10y) (was (1*x^2)/(10y))
+	* STRUCT_ABORTED MathStructure type
+
 2017-07-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Rename Calculator::printMathStructureTimeOut() to Calculator::print()
 
+2017-07-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not convert temperature units if other units are converted, when converting to optimal or base units
+	* More efficient conversion to base units that solves issues with temperature units in conversion to base and optimal units
+	* Lower the maximum exponent to avoid slow division
+
 2017-07-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Prefer positive exponents over negative, unless the result includes a another unit with positive exponent (fixes Hz)
+
+2017-07-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not convert to composite units in mixed units conversion
+	* Fix mixed units forced by default in separate unit conversion
+
+2017-07-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Update elements data set
+	* Do not try to calculate zeta for values larger than 100 000
+	* Controlled termination of plot()
 
 2017-06-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
