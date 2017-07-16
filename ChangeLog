@@ -1,6 +1,7 @@
 2017-07-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* New Calculator::calculate() variant that calculates a parsed expression
+	* Command line option for maximum calculation and display time
 
 2017-07-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

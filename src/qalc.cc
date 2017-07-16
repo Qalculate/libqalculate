@@ -61,6 +61,8 @@ bool rpn_mode;
 bool use_readline = true;
 bool interactive_mode;
 bool ask_questions;
+long int i_maxtime = 0;
+struct timeval t_end;
 
 bool result_only;
 
@@ -975,6 +977,8 @@ int main(int argc, char *argv[]) {
 			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all units."));
 			fputs("\n\t--list-variables\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all variables."));
+			fputs("\n\t-m, -time", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("MILLISECONDS"), stdout); fputs("\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("terminate calculation and display of result after specified amount of time"));
 			fputs("\n\t-n, -nodefs\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("do not load any functions, units, or variables from file"));
 			fputs("\n\t-nocurrencies\n", stdout);
@@ -987,10 +991,10 @@ int main(int argc, char *argv[]) {
 			fputs("\t", stdout); PUTS_UNICODE(_("do not load any global units from file"));
 			fputs("\n\t-novariables\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("do not load any global variables from file"));
-			fputs("\n\t-t, -terse\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("reduces output to just the result of the input expression"));
 			fputs("\n\t-s, -set", stdout); fputs(" \"", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("VALUE"), stdout); fputs("\"\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("as set command in interactive program session (ex. -set \"base 16\")"));
+			fputs("\n\t-t, -terse\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("reduces output to just the result of the input expression"));
 			fputs("\n\t-/+u8\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("turn on/off unicode support"));
 			puts("");
@@ -1034,6 +1038,12 @@ int main(int argc, char *argv[]) {
 			load_datasets = false;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-nodefs") == 0 || strcmp(argv[i], "-n") == 0)) {
 			load_global_defs = false;
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-time") == 0 || strcmp(argv[i], "--time") == 0 || strcmp(argv[i], "-m") == 0)) {
+			i++;
+			if(i < argc) {
+				i_maxtime += strtol(argv[i], NULL, 10);
+				if(i_maxtime < 0) i_maxtime = 0;
+			}
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-set") == 0 || strcmp(argv[i], "--set") == 0 || strcmp(argv[i], "-s") == 0)) {
 			i++;
 			if(i < argc) {
@@ -1159,6 +1169,20 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
+
+	if(i_maxtime > 0) {
+#ifndef CLOCK_MONOTONIC
+		gettimeofday(&t_end, NULL);
+#else
+		struct timespec ts;
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+		t_end.tv_sec = ts.tv_sec;
+		t_end.tv_usec = ts.tv_nsec / 1000;
+#endif
+		long int usecs = t_end.tv_usec + (long int) i_maxtime * 1000;
+		t_end.tv_usec = usecs % 1000000;
+		t_end.tv_sec += usecs / 1000000;
+	}
 	if(!cfile && !calc_arg.empty()) {
 		if(!printops.use_unicode_signs && contains_unicode_char(calc_arg.c_str())) {
 			gchar *gstr = g_locale_to_utf8(calc_arg.c_str(), -1, NULL, NULL, NULL);
@@ -1184,10 +1208,12 @@ int main(int argc, char *argv[]) {
 			CALCULATOR->terminateThreads();
 			return 0;
 		}
+		i_maxtime = 0;
 		use_readline = true;
 	} else if(!cfile) {
 		ask_questions = !result_only;
 		interactive_mode = true;
+		i_maxtime = 0;
 	}
 	
 #ifdef HAVE_LIBREADLINE
@@ -1204,7 +1230,7 @@ int main(int argc, char *argv[]) {
 	
 	while(true) {
 		if(cfile) {
-			if(!fgets(buffer, 1000, cfile)) {
+			if(i_maxtime < 0 || !fgets(buffer, 1000, cfile)) {
 				if(cfile != stdin) {
 					fclose(cfile);
 				}
@@ -1230,6 +1256,7 @@ int main(int argc, char *argv[]) {
 					}
 				}
 				if(!interactive_mode) break;
+				i_maxtime = 0;
 				continue;
 			}
 			if(!printops.use_unicode_signs && contains_unicode_char(buffer)) {
@@ -2850,6 +2877,8 @@ static bool wait_for_key_press(int timeout_ms) {
 
 void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_index, bool register_moved, bool noprint) {
 
+	if(i_maxtime < 0) return;
+
 	b_busy = true;
 	
 	if(!interactive_mode) goto_input = false;
@@ -2891,47 +2920,69 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	} else {
 		view_thread->write((void *) NULL);
 	}
-
-	int i = 0;
-	bool has_printed = false;
-	while(b_busy && i < 75) {
-		sleep_ms(10);
-		i++;
-	}
-	i = 0;
 	
-	if(b_busy && !cfile) {
-		if(!result_only) { 
-			FPUTS_UNICODE(_("Processing (press Enter to abort)"), stdout);
-			has_printed = true;
-			fflush(stdout);
-		}
-	}
-#ifdef HAVE_LIBREADLINE	
-	int c = 0;
+	bool has_printed = false;
+	
+	if(i_maxtime != 0) {
+#ifndef CLOCK_MONOTONIC
+		struct timeval tv;
+		gettimeofday(&tv, NULL);
+		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;
 #else
-	char c = 0;
+		struct timespec tv;
+		clock_gettime(CLOCK_MONOTONIC, &tv);
+		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
 #endif
-	while(b_busy) {
-		if(cfile) {
-			sleep_ms(100);
-		} else {
-			if(wait_for_key_press(100)) {
-#ifdef HAVE_LIBREADLINE		
-				if(use_readline) c = rl_read_key();
-				else read(STDIN_FILENO, &c, 1);
+		while(b_busy && i_timeleft > 0) {
+			sleep_ms(10);
+			i_timeleft -= 10;
+		}
+		if(b_busy) {
+			on_abort_display();
+			i_maxtime = -1;
+		}
+	} else {
+
+		int i = 0;
+		while(b_busy && i < 75) {
+			sleep_ms(10);
+			i++;
+		}
+		i = 0;
+
+		if(b_busy && !cfile) {
+			if(!result_only) { 
+				FPUTS_UNICODE(_("Processing (press Enter to abort)"), stdout);
+				has_printed = true;
+				fflush(stdout);
+			}
+		}
+#ifdef HAVE_LIBREADLINE	
+		int c = 0;
 #else
-				read(STDIN_FILENO, &c, 1);
-#endif			
-				if(c == '\n') {
-					on_abort_display();
-				}
-			} else {
-				if(!result_only) {
-					printf(".");
-					fflush(stdout);
-				}
+		char c = 0;
+#endif
+		while(b_busy) {
+			if(cfile) {
 				sleep_ms(100);
+			} else {
+				if(wait_for_key_press(100)) {
+#ifdef HAVE_LIBREADLINE		
+					if(use_readline) c = rl_read_key();
+					else read(STDIN_FILENO, &c, 1);
+#else
+					read(STDIN_FILENO, &c, 1);
+#endif			
+					if(c == '\n') {
+						on_abort_display();
+					}
+				} else {
+					if(!result_only) {
+						printf(".");
+						fflush(stdout);
+					}
+					sleep_ms(100);
+				}
 			}
 		}
 	}
@@ -3067,6 +3118,8 @@ void CommandThread::run() {
 
 void execute_command(int command_type, bool show_result) {
 
+	if(i_maxtime < 0) return;
+
 	b_busy = true;	
 	command_aborted = false;
 
@@ -3078,60 +3131,84 @@ void execute_command(int command_type, bool show_result) {
 	MathStructure *mfactor = new MathStructure(*mstruct);
 	command_thread->write((void *) mfactor);
 
-	int i = 0;
-	bool has_printed = false;
-	while(b_busy && i < 75) {
-		sleep_ms(10);
-		i++;
-	}
-	i = 0;
-	
-	if(b_busy && !cfile) {
-		if(!result_only) {
-			switch(command_type) {
-				case COMMAND_FACTORIZE: {
-					FPUTS_UNICODE(_("Factorizing (press Enter to abort)"), stdout);
-					break;
-				}
-				case COMMAND_SIMPLIFY: {
-					FPUTS_UNICODE(_("Simplifying (press Enter to abort)"), stdout);
-					break;
-				}
-			}
-			has_printed = true;
-			fflush(stdout);
-		}
-	}
-#ifdef HAVE_LIBREADLINE	
-	int c = 0;
+	if(i_maxtime != 0) {
+#ifndef CLOCK_MONOTONIC
+		struct timeval tv;
+		gettimeofday(&tv, NULL);
+		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;
 #else
-	char c = 0;
+		struct timespec tv;
+		clock_gettime(CLOCK_MONOTONIC, &tv);
+		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
 #endif
-	while(b_busy) {
-		if(cfile) {
-			sleep_ms(100);
-		} else {
-			if(wait_for_key_press(100)) {
-#ifdef HAVE_LIBREADLINE
-				if(use_readline) c = rl_read_key();
-				else read(STDIN_FILENO, &c, 1);
-#else
-				read(STDIN_FILENO, &c, 1);
-#endif			
-				if(c == '\n') {
-					on_abort_command();
+		while(b_busy && i_timeleft > 0) {
+			sleep_ms(10);
+			i_timeleft -= 10;
+		}
+		if(b_busy) {
+			on_abort_command();
+			i_maxtime = -1;
+			printf(_("aborted"));
+			printf("\n");
+		}
+	} else {
+
+		int i = 0;
+		bool has_printed = false;
+		while(b_busy && i < 75) {
+			sleep_ms(10);
+			i++;
+		}
+		i = 0;
+	
+		if(b_busy && !cfile) {
+			if(!result_only) {
+				switch(command_type) {
+					case COMMAND_FACTORIZE: {
+						FPUTS_UNICODE(_("Factorizing (press Enter to abort)"), stdout);
+						break;
+					}
+					case COMMAND_SIMPLIFY: {
+						FPUTS_UNICODE(_("Simplifying (press Enter to abort)"), stdout);
+						break;
+					}
 				}
-			} else {
-				if(!result_only) {
-					printf(".");
-					fflush(stdout);
-				}
-				sleep_ms(100);
+				has_printed = true;
+				fflush(stdout);
 			}
 		}
-	}
+	#ifdef HAVE_LIBREADLINE	
+		int c = 0;
+	#else
+		char c = 0;
+	#endif
+		while(b_busy) {
+			if(cfile) {
+				sleep_ms(100);
+			} else {
+				if(wait_for_key_press(100)) {
+	#ifdef HAVE_LIBREADLINE
+					if(use_readline) c = rl_read_key();
+					else read(STDIN_FILENO, &c, 1);
+	#else
+					read(STDIN_FILENO, &c, 1);
+	#endif			
+					if(c == '\n') {
+						on_abort_command();
+					}
+				} else {
+					if(!result_only) {
+						printf(".");
+						fflush(stdout);
+					}
+					sleep_ms(100);
+				}
+			}
+		}
 	
-	if(has_printed) printf("\n");
+		if(has_printed) printf("\n");
+
+	}
 
 	b_busy = false;
 
@@ -3155,6 +3232,8 @@ void execute_command(int command_type, bool show_result) {
 
 
 void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index) {
+
+	if(i_maxtime < 0) return;
 
 	string str;
 	bool do_bases = false, do_factors = false, do_fraction = false;
@@ -3353,50 +3432,77 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	} else {
 		CALCULATOR->calculate(mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, NULL, !printops.negative_exponents);
 	}
-	int i = 0;
-	while(CALCULATOR->busy() && i < 75) {
-		sleep_ms(10);
-		i++;
-	}
-	i = 0;
+	
 	bool has_printed = false;
-	if(CALCULATOR->busy() && !cfile) {
-		if(!result_only) {
-			FPUTS_UNICODE(_("Calculating (press Enter to abort)"), stdout);
-			fflush(stdout);
-			has_printed = true;
-		}
-	}
-#ifdef HAVE_LIBREADLINE		
-	int c = 0;
+	
+	if(i_maxtime != 0) {
+#ifndef CLOCK_MONOTONIC
+		struct timeval tv;
+		gettimeofday(&tv, NULL);
+		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;
 #else
-	char c = 0;
+		struct timespec tv;
+		clock_gettime(CLOCK_MONOTONIC, &tv);
+		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
 #endif
-	while(CALCULATOR->busy()) {
-		if(cfile) {
-			sleep_ms(100);
-		} else {
-			if(wait_for_key_press(100)) {
-#ifdef HAVE_LIBREADLINE		
-				if(use_readline) c = rl_read_key();
-				else read(STDIN_FILENO, &c, 1);
-#else
-				read(STDIN_FILENO, &c, 1);
-#endif			
-				if(c == '\n') {
-					CALCULATOR->abort();
-					avoid_recalculation = true;
-				}
-			} else {
-				if(!result_only) {
-					printf(".");
-					fflush(stdout);
-				}
-				sleep_ms(100);
+		while(CALCULATOR->busy() && i_timeleft > 0) {
+			sleep_ms(10);
+			i_timeleft -= 10;
+		}
+		if(CALCULATOR->busy()) {
+			CALCULATOR->abort();
+			i_maxtime = -1;
+			printf(_("aborted"));
+			printf("\n");
+		}
+	} else {
+	
+		int i = 0;
+		while(CALCULATOR->busy() && i < 75) {
+			sleep_ms(10);
+			i++;
+		}
+		i = 0;
+		
+		if(CALCULATOR->busy() && !cfile) {
+			if(!result_only) {
+				FPUTS_UNICODE(_("Calculating (press Enter to abort)"), stdout);
+				fflush(stdout);
+				has_printed = true;
 			}
 		}
+	#ifdef HAVE_LIBREADLINE
+		int c = 0;
+	#else
+		char c = 0;
+	#endif
+		while(CALCULATOR->busy()) {
+			if(cfile) {
+				sleep_ms(100);
+			} else {
+				if(wait_for_key_press(100)) {
+	#ifdef HAVE_LIBREADLINE		
+					if(use_readline) c = rl_read_key();
+					else read(STDIN_FILENO, &c, 1);
+	#else
+					read(STDIN_FILENO, &c, 1);
+	#endif			
+					if(c == '\n') {
+						CALCULATOR->abort();
+						avoid_recalculation = true;
+					}
+				} else {
+					if(!result_only) {
+						printf(".");
+						fflush(stdout);
+					}
+					sleep_ms(100);
+				}
+			}
+		}
+		if(has_printed) printf("\n");
 	}
-	if(has_printed) printf("\n");
+	
 	b_busy = false;	
 
 	if(rpn_mode && (!do_stack || stack_index == 0)) {

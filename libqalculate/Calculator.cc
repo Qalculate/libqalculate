@@ -2428,6 +2428,10 @@ MathStructure Calculator::convert(double value, Unit *from_unit, Unit *to_unit, 
 	mstruct.divide(to_unit, true);
 	mstruct.eval(eo);
 	return mstruct;
+
+}
+MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit, int msecs, const EvaluationOptions &eo) {
+	return convertTimeOut(str, from_unit, to_unit, msecs, eo);
 }
 MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_unit, int msecs, const EvaluationOptions &eo) {
 	MathStructure mstruct;

@@ -368,19 +368,19 @@ class Calculator {
 	int testCondition(string expression);
 	//@}
 
-	/** @name Functions for printing expressions with the option to set a timeout or abort. */
+	/** @name Functions for printing expressions with the option to set maximum time or abort. */
 	//@{
 	/** Calls MathStructure::format(po) and MathStructure::print(po). The process is aborted after msecs milliseconds.
 	*/
-	string print(const MathStructure &mstruct, int msecs = 100000, const PrintOptions &op = default_print_options);
+	string print(const MathStructure &mstruct, int milliseconds = 100000, const PrintOptions &op = default_print_options);
 	///Deprecated: use print() instead
-	string printMathStructureTimeOut(const MathStructure &mstruct, int msecs = 100000, const PrintOptions &op = default_print_options);
+	string printMathStructureTimeOut(const MathStructure &mstruct, int milliseconds = 100000, const PrintOptions &op = default_print_options);
 	
-	/** Called before calculation, formatting or printing of a MathStructure (Calculator::calculate(), without timeout, MathStructure::eval(), MathStructure::format() and MathStructure::print(), etc.) or printing of a Number (using Number::print) to be able to abort the process. Always use Calculator::stopControl() after finishing.
+	/** Called before calculation, formatting or printing of a MathStructure (Calculator::calculate(), without maximum time, MathStructure::eval(), MathStructure::format() and MathStructure::print(), etc.) or printing of a Number (using Number::print) to be able to abort the process. Always use Calculator::stopControl() after finishing.
 	*
-	* @param msecs The maximum time for the process in milliseconds. If msecs <= 0 the time will be unlimited (stop with abort()).
+	* @param milliseconds The maximum time for the process in milliseconds. If msecs <= 0 the time will be unlimited (stop with abort()).
 	*/
-	void startControl(int milli_timeout = 0);
+	void startControl(int milliseconds = 0);
 	/** Always call this function after Calculator::startControl() after formatting, printing or calculation has finished.
 	*/
 	void stopControl(void);
@@ -396,7 +396,7 @@ class Calculator {
 	string timedOutString(void) const;
 	
 	/** Deprecated: use startControl() */
-	void startPrintControl(int milli_timeout = 0);
+	void startPrintControl(int milliseconds = 0);
 	/** Deprecated: use abort() */
 	void abortPrint(void);
 	/** Deprecated: use stopControl() */
@@ -630,7 +630,9 @@ class Calculator {
 	*/
 	MathStructure convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options, bool always_convert = true, bool convert_to_mixed_units = true);
 	MathStructure convert(double value, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options);
-	MathStructure convertTimeOut(string str, Unit *from_unit, Unit *to_unit, int msecs, const EvaluationOptions &eo = default_evaluation_options);
+	MathStructure convert(string str, Unit *from_unit, Unit *to_unit, int milliseconds, const EvaluationOptions &eo = default_evaluation_options);
+	/** Depecated: use convert() */
+	MathStructure convertTimeOut(string str, Unit *from_unit, Unit *to_unit, int milliseconds, const EvaluationOptions &eo = default_evaluation_options);
 	MathStructure convert(string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options);	
 	MathStructure convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);
 	Unit *getBestUnit(Unit *u, bool allow_only_div = false);
@@ -1018,17 +1020,17 @@ class Calculator {
 	time_t getExchangeRatesTime();
 	/** Download current exchange rates from the Internet to local disc.
 	*
-	* @param timeout Timeout for donwload try (only used by wget)
+	* @param milliseconds Maximum time for donwload try (only used by wget)
 	* @param wget_args Extra arguments to pass to wget.
 	* @returns true if operation was successful.
 	*/
-	bool fetchExchangeRates(int timeout, string wget_args);
+	bool fetchExchangeRates(int seconds, string wget_args);
 	/** Download current exchange rates from the Internet to local disc with default wget arguments.
 	*
-	* @param timeout Timeout for donwload try (only used by wget)
+	* @param milliseconds Maximum time for donwload try (only used by wget)
 	* @returns true if operation was successful.
 	*/
-	bool fetchExchangeRates(int timeout = 15);
+	bool fetchExchangeRates(int seconds = 15);
 	/** Check age of exchange rates on local disc. 
 	*
 	* @param n_days How old in days exchange rates may be before exchange rates need updating
