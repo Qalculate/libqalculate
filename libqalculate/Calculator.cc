@@ -1594,13 +1594,10 @@ bool Calculator::abort() {
 	if(!calculate_thread->running) {
 		b_busy = false;
 	} else {
-		struct timespec rtime;
-		rtime.tv_sec = 0;
-		rtime.tv_nsec = 1000000;
 		int msecs = 500;
 		while(b_busy && msecs > 0) {
-			nanosleep(&rtime, NULL);
-			msecs--;
+			sleep_ms(10);
+			msecs -= 10;
 		}
 		if(b_busy) {
 			calculate_thread->cancel();
@@ -1789,12 +1786,9 @@ bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index,
 	tmp_rpn_mstruct = mstruct;
 	calculate_thread->write(false);
 	calculate_thread->write((void*) mstruct);
-	struct timespec rtime;
-	rtime.tv_sec = 0;
-	rtime.tv_nsec = 1000000;
 	while(msecs > 0 && b_busy) {
-		nanosleep(&rtime, NULL);
-		msecs -= 1;
+		sleep_ms(10);
+		msecs -= 10;
 	}	
 	if(had_msecs && b_busy) {
 		abort();
@@ -1819,12 +1813,9 @@ bool Calculator::calculateRPN(string str, int command, size_t index, int msecs, 
 	tmp_maketodivision = make_to_division;
 	calculate_thread->write(true);
 	calculate_thread->write((void*) mstruct);
-	struct timespec rtime;
-	rtime.tv_sec = 0;
-	rtime.tv_nsec = 1000000;
 	while(msecs > 0 && b_busy) {
-		nanosleep(&rtime, NULL);
-		msecs -= 1;
+		sleep_ms(10);
+		msecs -= 10;
 	}	
 	if(had_msecs && b_busy) {
 		abort();
@@ -2178,12 +2169,9 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 	tmp_maketodivision = make_to_division;
 	calculate_thread->write(true);
 	calculate_thread->write((void*) mstruct);
-	struct timespec rtime;
-	rtime.tv_sec = 0;
-	rtime.tv_nsec = 1000000;
 	while(msecs > 0 && b_busy) {
-		nanosleep(&rtime, NULL);
-		msecs -= 1;
+		sleep_ms(10);
+		msecs -= 10;
 	}	
 	if(had_msecs && b_busy) {
 		if(!abort()) mstruct->setAborted();
@@ -2456,12 +2444,9 @@ MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_u
 	calculate_thread->write(b_parse);
 	void *x = (void*) &mstruct;
 	calculate_thread->write(x);
-	struct timespec rtime;
-	rtime.tv_sec = 0;
-	rtime.tv_nsec = 1000000;
 	while(msecs > 0 && b_busy) {
-		nanosleep(&rtime, NULL);
-		msecs -= 1;
+		sleep_ms(10);
+		msecs -= 10;
 	}	
 	if(had_msecs && b_busy) {
 		abort();
@@ -2475,8 +2460,8 @@ MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_u
 	x = (void*) &mstruct;
 	calculate_thread->write(x);
 	while(msecs > 0 && b_busy) {
-		nanosleep(&rtime, NULL);
-		msecs -= 1;
+		sleep_ms(10);
+		msecs -= 10;
 	}	
 	if(had_msecs && b_busy) {
 		abort();

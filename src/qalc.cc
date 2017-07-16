@@ -2892,13 +2892,10 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		view_thread->write((void *) NULL);
 	}
 
-	struct timespec rtime;
-	rtime.tv_sec = 0;
-	rtime.tv_nsec = 10000000;
 	int i = 0;
 	bool has_printed = false;
 	while(b_busy && i < 75) {
-		nanosleep(&rtime, NULL);
+		sleep_ms(10);
 		i++;
 	}
 	i = 0;
@@ -2915,10 +2912,9 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 #else
 	char c = 0;
 #endif
-	rtime.tv_nsec = 100000000;
 	while(b_busy) {
 		if(cfile) {
-			nanosleep(&rtime, NULL);
+			sleep_ms(100);
 		} else {
 			if(wait_for_key_press(100)) {
 #ifdef HAVE_LIBREADLINE		
@@ -2935,7 +2931,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					printf(".");
 					fflush(stdout);
 				}
-				nanosleep(&rtime, NULL);
+				sleep_ms(100);
 			}
 		}
 	}
@@ -3030,13 +3026,10 @@ void expression_format_updated(bool reparse) {
 
 void on_abort_command() {
 	CALCULATOR->abort();
-	struct timespec rtime;
-	rtime.tv_sec = 0;
-	rtime.tv_nsec = 1000000;
 	int msecs = 1000;
 	while(b_busy && msecs > 0) {
-		nanosleep(&rtime, NULL);
-		msecs--;
+		sleep_ms(10);
+		msecs -= 10;
 	}
 	if(b_busy) {
 		command_thread->cancel();
@@ -3085,13 +3078,10 @@ void execute_command(int command_type, bool show_result) {
 	MathStructure *mfactor = new MathStructure(*mstruct);
 	command_thread->write((void *) mfactor);
 
-	struct timespec rtime;
-	rtime.tv_sec = 0;
-	rtime.tv_nsec = 10000000;
 	int i = 0;
 	bool has_printed = false;
 	while(b_busy && i < 75) {
-		nanosleep(&rtime, NULL);
+		sleep_ms(10);
 		i++;
 	}
 	i = 0;
@@ -3117,10 +3107,9 @@ void execute_command(int command_type, bool show_result) {
 #else
 	char c = 0;
 #endif
-	rtime.tv_nsec = 100000000;
 	while(b_busy) {
 		if(cfile) {
-			nanosleep(&rtime, NULL);
+			sleep_ms(100);
 		} else {
 			if(wait_for_key_press(100)) {
 #ifdef HAVE_LIBREADLINE
@@ -3137,7 +3126,7 @@ void execute_command(int command_type, bool show_result) {
 					printf(".");
 					fflush(stdout);
 				}
-				nanosleep(&rtime, NULL);
+				sleep_ms(100);
 			}
 		}
 	}
@@ -3364,12 +3353,9 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	} else {
 		CALCULATOR->calculate(mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, NULL, !printops.negative_exponents);
 	}
-	struct timespec rtime;
-	rtime.tv_sec = 0;
-	rtime.tv_nsec = 10000000;
 	int i = 0;
 	while(CALCULATOR->busy() && i < 75) {
-		nanosleep(&rtime, NULL);
+		sleep_ms(10);
 		i++;
 	}
 	i = 0;
@@ -3386,10 +3372,9 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 #else
 	char c = 0;
 #endif
-	rtime.tv_nsec = 100000000;
 	while(CALCULATOR->busy()) {
 		if(cfile) {
-			nanosleep(&rtime, NULL);
+			sleep_ms(100);
 		} else {
 			if(wait_for_key_press(100)) {
 #ifdef HAVE_LIBREADLINE		
@@ -3407,7 +3392,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					printf(".");
 					fflush(stdout);
 				}
-				nanosleep(&rtime, NULL);
+				sleep_ms(100);
 			}
 		}
 	}

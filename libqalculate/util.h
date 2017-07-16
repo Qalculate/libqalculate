@@ -33,6 +33,8 @@ struct eqstr {
 };
 /// \endcond
 
+void sleep_ms(int milliseconds);
+
 string& gsub(const string &pattern, const string &sub, string &str);
 string& gsub(const char *pattern, const char *sub, string &str);
 string d2s(double value, int precision = 100);
