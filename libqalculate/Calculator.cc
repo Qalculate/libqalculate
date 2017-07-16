@@ -2223,7 +2223,7 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
 
 	string str2;
-	separateToExpression(str, str2, eo, true);
+	if(make_to_division) separateToExpression(str, str2, eo, true);
 	Unit *u = NULL;
 
 	if(to_struct) {
@@ -2251,71 +2251,67 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	current_stage = MESSAGE_STAGE_CALCULATION;
 	mstruct.eval(eo);
 	
-	current_stage = MESSAGE_STAGE_CONVERSION;
-	if(!str2.empty() || u) {
-		if(!u) u = getUnit(str2);
-		EvaluationOptions eo2 = eo;
-		eo2.keep_prefixes = (str2[0] != '?');
-		if(str2[0] == '-') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
-		else if(str2[0] == '+') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
-		else if(eo2.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP;
-		if(str2[0] == '?' || str2[0] == '0' || str2[0] == '+' || str2[0] == '-') {
-			str2 = str2.substr(1, str2.length() - 1);
-			remove_blank_ends(str2);
-			if(str2.empty()) {
-				current_stage = MESSAGE_STAGE_UNSET;
-				return convertToMixedUnits(mstruct, eo2);
-			}
-		}
-		if(u) {
-			if(to_struct) to_struct->set(u);
-			mstruct.set(convert(mstruct, u, eo2, false, false));
-		} else {
-			for(size_t i = 0; i < signs.size(); i++) {
-				if(str2 == signs[i]) {
-					u = getUnit(real_signs[i]);
-					break;
-				}
-			}
-			if(u) {
-				if(to_struct) to_struct->set(u);
-				mstruct.set(convert(mstruct, u, eo2, false, false));
-			} else {
-				current_stage = MESSAGE_STAGE_CONVERSION_PARSING;
-				CompositeUnit cu("", "temporary_composite_convert", "", str2);
-				current_stage = MESSAGE_STAGE_CONVERSION;
-				if(to_struct) to_struct->set(cu.generateMathStructure(make_to_division));
-				if(cu.countUnits() > 0) {
-					mstruct.set(convert(mstruct, &cu, eo2, false, false));
-				}
-			}
-		}
-		current_stage = MESSAGE_STAGE_UNSET;
-		return convertToMixedUnits(mstruct, eo2);
+	if(u) {
+		current_stage = MESSAGE_STAGE_CONVERSION;
+		if(to_struct) to_struct->set(u);
+		mstruct.set(convert(mstruct, u, eo, false, false));
+	} else if(!str2.empty()) {
+		return convert(mstruct, str2, eo);
 	} else {
-		if(to_struct) to_struct->setUndefined();
+		current_stage = MESSAGE_STAGE_CONVERSION;
 		switch(eo.auto_post_conversion) {
 			case POST_CONVERSION_OPTIMAL: {
 				mstruct.set(convertToBestUnit(mstruct, eo, false));
-				current_stage = MESSAGE_STAGE_UNSET;
-				return mstruct;
+				break;
 			}
 			case POST_CONVERSION_BASE: {
 				mstruct.set(convertToBaseUnits(mstruct, eo));
-				current_stage = MESSAGE_STAGE_UNSET;
-				return mstruct;
+				break;
 			}
 			case POST_CONVERSION_OPTIMAL_SI: {
 				mstruct.set(convertToBestUnit(mstruct, eo, true));
-				current_stage = MESSAGE_STAGE_UNSET;
-				return mstruct;
+				break;
 			}
 			default: {}
 		}
 	}
+	if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo));
 	current_stage = MESSAGE_STAGE_UNSET;
-	return convertToMixedUnits(mstruct, eo);
+	return mstruct;
 }
+MathStructure Calculator::calculate(const MathStructure &mstruct_to_calculate, const EvaluationOptions &eo, string to_str) {
+
+	remove_blank_ends(to_str);
+	
+	MathStructure mstruct(mstruct_to_calculate);
+	current_stage = MESSAGE_STAGE_CALCULATION;
+	mstruct.eval(eo);
+	
+	current_stage = MESSAGE_STAGE_CONVERSION;
+	if(!to_str.empty()) {
+		return convert(mstruct, to_str, eo);
+	} else {
+		switch(eo.auto_post_conversion) {
+			case POST_CONVERSION_OPTIMAL: {
+				mstruct.set(convertToBestUnit(mstruct, eo, false));
+				break;
+			}
+			case POST_CONVERSION_BASE: {
+				mstruct.set(convertToBaseUnits(mstruct, eo));
+				break;
+			}
+			case POST_CONVERSION_OPTIMAL_SI: {
+				mstruct.set(convertToBestUnit(mstruct, eo, true));
+				break;
+			}
+			default: {}
+		}
+	}
+	if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo));
+	current_stage = MESSAGE_STAGE_UNSET;
+	return mstruct;
+}
+
 string Calculator::print(const MathStructure &mstruct, int msecs, const PrintOptions &po) {
 	startControl(msecs);
 	MathStructure mstruct2(mstruct);
@@ -3134,29 +3130,57 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 MathStructure Calculator::convertToCompositeUnit(const MathStructure &mstruct, CompositeUnit *cu, const EvaluationOptions &eo, bool always_convert) {
 	return convert(mstruct, cu, eo, always_convert);
 }
-MathStructure Calculator::convert(const MathStructure &mstruct, string composite_, const EvaluationOptions &eo) {
-	remove_blank_ends(composite_);
-	if(composite_.empty()) return mstruct;
+MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, string str2, const EvaluationOptions &eo, MathStructure *to_struct) {
+	if(to_struct) to_struct->setUndefined();
+	remove_blank_ends(str2);
+	if(str2.empty()) return mstruct_to_convert;
+	current_stage = MESSAGE_STAGE_CONVERSION;
 	EvaluationOptions eo2 = eo;
-	eo2.keep_prefixes = (composite_[0] != '?');
-	if(composite_[0] == '+') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
-	else if(composite_[0] == '-') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
+	eo2.keep_prefixes = (str2[0] != '?');
+	if(str2[0] == '-') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
+	else if(str2[0] == '+') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
 	else if(eo2.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP;
-	if(composite_[0] == '0' || composite_[0] == '?' || composite_[0] == '+' || composite_[0] == '-') {
-		composite_ = composite_.substr(1, composite_.length() - 1);
-		if(composite_.empty()) return convertToMixedUnits(mstruct, eo2);
-	}
-	Unit *u = getUnit(composite_);
-	if(u) return convertToMixedUnits(convert(mstruct, u, eo2, false, false), eo2);
-	for(size_t i = 0; i < signs.size(); i++) {
-		if(composite_ == signs[i]) {
-			u = getUnit(real_signs[i]);
-			break;
+	if(str2[0] == '?' || str2[0] == '0' || str2[0] == '+' || str2[0] == '-') {
+		str2 = str2.substr(1, str2.length() - 1);
+		remove_blank_ends(str2);
+		if(str2.empty()) {
+			current_stage = MESSAGE_STAGE_UNSET;
+			return convertToMixedUnits(mstruct_to_convert, eo2);
 		}
 	}
-	if(u) return convertToMixedUnits(convert(mstruct, u, eo2, true, false), eo2);
-	CompositeUnit cu("", "temporary_composite_convert", "", composite_);
-	return convertToMixedUnits(convert(mstruct, &cu, eo2, false, false), eo2);
+	MathStructure mstruct;
+	bool b = false;
+	Unit *u = getUnit(str2);
+	if(u) {
+		if(to_struct) to_struct->set(u);
+		mstruct.set(convert(mstruct_to_convert, u, eo2, false, false));
+		b = true;
+	} else {
+		for(size_t i = 0; i < signs.size(); i++) {
+			if(str2 == signs[i]) {
+				u = getUnit(real_signs[i]);
+				break;
+			}
+		}
+		if(u) {
+			if(to_struct) to_struct->set(u);
+			mstruct.set(convert(mstruct_to_convert, u, eo2, false, false));
+			b = true;
+		} else {
+			current_stage = MESSAGE_STAGE_CONVERSION_PARSING;
+			CompositeUnit cu("", "temporary_composite_convert", "", str2);
+			current_stage = MESSAGE_STAGE_CONVERSION;
+			if(to_struct) to_struct->set(cu.generateMathStructure());
+			if(cu.countUnits() > 0) {
+				mstruct.set(convert(mstruct_to_convert, &cu, eo2, false, false));
+				b = true;
+			}
+		}
+	}
+	if(!b) return mstruct_to_convert;
+	if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo2));
+	current_stage = MESSAGE_STAGE_UNSET;
+	return mstruct;
 }
 Unit* Calculator::addUnit(Unit *u, bool force, bool check_names) {
 	if(check_names) {

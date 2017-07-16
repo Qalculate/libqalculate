@@ -357,6 +357,14 @@ class Calculator {
 	* @returns The result of the calculation.
 	*/
 	MathStructure calculate(string str, const EvaluationOptions &eo = default_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
+	/** Calculates a parsed value.
+	*
+	* @param mstruct Parsed value to evaluate.
+	* @param eo Options for the evaluation of the expression.
+	* @param to_str "to" expression for conversion.
+	* @returns The result of the calculation.
+	*/
+	MathStructure calculate(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options, string to_str = "");
 	int testCondition(string expression);
 	//@}
 
@@ -607,9 +615,10 @@ class Calculator {
 	* @param mstruct The value to convert.
 	* @param composite_ Unit expression.
 	* @param eo Evaluation options.
+	* @param[out] units NULL or a math structure to fill with the parsed unit expression(or set to undefined if no units were found).
 	* @returns Converted value.
 	*/
-	MathStructure convert(const MathStructure &mstruct, string composite_, const EvaluationOptions &eo = default_evaluation_options);
+	MathStructure convert(const MathStructure &mstruct, string composite_, const EvaluationOptions &eo = default_evaluation_options, MathStructure *units = NULL);
 	/** Converts to a unit.
 	* The converted value is evaluated.
 	*
@@ -625,7 +634,7 @@ class Calculator {
 	MathStructure convert(string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options);	
 	MathStructure convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);
 	Unit *getBestUnit(Unit *u, bool allow_only_div = false);
-	MathStructure convertToBestUnit(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options, bool convert_to_si_units = false);
+	MathStructure convertToBestUnit(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options, bool convert_to_si_units = true);
 	MathStructure convertToCompositeUnit(const MathStructure &mstruct, CompositeUnit *cu, const EvaluationOptions &eo = default_evaluation_options, bool always_convert = true);
 	MathStructure convertToMixedUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);
 	//@}
