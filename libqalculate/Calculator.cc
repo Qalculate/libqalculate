@@ -2708,23 +2708,44 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 					has_positive = true;
 				}
 			}
+			for(size_t i = 0; i < units.size(); i++) {
+				if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+					CompositeUnit *cu2 = (CompositeUnit*) units[i];
+					if(cu == cu2) {
+						points = max_points - 1;
+					} else if(!cu2->isHidden() && cu2->isSIUnit() && cu2->countUnits() == cu->countUnits()) {
+						bool b_match = true;
+						for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
+							int exp2;
+							if(cu->get(i2, &exp) != cu2->get(i2, &exp2) || exp != exp2) {
+								b_match = false;
+								break;
+							}
+						}
+						if(b_match) {
+							points = max_points - 1;
+							break;
+						}
+					}
+				}
+			}
 			Unit *best_u = NULL;
-			Unit *bu;
+			Unit *bu, *u2;
 			AliasUnit *au;
 			for(size_t i = 0; i < units.size(); i++) {
-				if(units[i]->subtype() == SUBTYPE_BASE_UNIT && (points == 0 || (points == 1 && minus))) {
-					new_points = 0;
+				u2 = units[i];
+				if(u2->subtype() == SUBTYPE_BASE_UNIT && (points == 0 || (points == 1 && minus))) {
 					for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
-						if(cu->get(i2, &exp)->baseUnit() == units[i] && !cu->get(i2)->hasComplexRelationTo(units[i])) {
+						if(cu->get(i2, &exp)->baseUnit() == u2 && !cu->get(i2)->hasComplexRelationTo(u2)) {
 							points = 1;
-							best_u = units[i];
+							best_u = u2;
 							minus = !has_positive && (exp < 0);
 							break;
 						}
 					}
-				} else if(!units[i]->isSIUnit()) {
-				} else if(units[i]->subtype() == SUBTYPE_ALIAS_UNIT) {
-					au = (AliasUnit*) units[i];
+				} else if(!u2->isSIUnit()) {
+				} else if(u2->subtype() == SUBTYPE_ALIAS_UNIT) {
+					au = (AliasUnit*) u2;
 					bu = (Unit*) au->baseUnit();
 					b_exp = au->baseExponent();
 					new_points = 0;
@@ -2755,7 +2776,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 									if(new_points > points || (!m && minus && new_points == points)) {
 										points = new_points;
 										minus = m;
-										best_u = units[i];
+										best_u = au;
 									}
 									break;
 								}
@@ -3028,7 +3049,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 						old_points += points;
 						old_minus = false;
 					}
-				} else {
+				} else if(mstruct_old.getChild(i)->size() > 0) {
 					mstruct_old[i - 1] = convertToBestUnit(mstruct_old[i - 1], eo, convert_to_si_units);
 					mstruct_old.childUpdated(i);
 					child_updated = true;
@@ -3052,7 +3073,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 					} else if(mstruct_new.getChild(i)->isPower() && mstruct_new.getChild(i)->base()->isUnit() && mstruct_new.getChild(i)->exponent()->isNumber() && mstruct_new.getChild(i)->exponent()->number().isInteger()) {
 						b = true;
 						cu->add(mstruct_new.getChild(i)->base()->unit(), mstruct_new.getChild(i)->exponent()->number().intValue());
-					} else {
+					} else if(mstruct_new.getChild(i)->size() > 0) {
 						mstruct_new[i - 1] = convertToBestUnit(mstruct_new[i - 1], eo, convert_to_si_units);
 						mstruct_new.childUpdated(i);
 						child_updated = true;
