@@ -2711,7 +2711,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 			for(size_t i = 0; i < units.size(); i++) {
 				if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 					CompositeUnit *cu2 = (CompositeUnit*) units[i];
-					if(cu == cu2) {
+					if(cu == cu2 && !cu2->isHidden()) {
 						points = max_points - 1;
 					} else if(!cu2->isHidden() && cu2->isSIUnit() && cu2->countUnits() == cu->countUnits()) {
 						bool b_match = true;
@@ -8757,14 +8757,20 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 		first_row = 1;
 	}
 	string filestr = file_name;
+	remove_blank_ends(filestr);
 	size_t i = filestr.find_last_of("/");
 	if(i != string::npos) {
 		filestr = filestr.substr(i + 1, filestr.length() - (i + 1));
 	}
+	remove_blank_ends(name);
 	if(name.empty()) {
-		i = filestr.find_last_of(".");
-		name = filestr.substr(0, i);
+		name = filestr;
+		i = name.find_last_of("/");
+		if(i != string::npos) name = name.substr(i + 1, name.length() - i);
+		i = name.find_last_of(".");
+		if(i != string::npos) name = name.substr(0, i);
 	}
+			
 	char line[10000];
 	string stmp, str1, str2;
 	int row = 0;

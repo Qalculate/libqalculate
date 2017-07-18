@@ -679,7 +679,13 @@ const cl_N &Number::internalNumber() const {
 }
 
 double Number::floatValue() const {
-	return double_approx(cln::realpart(value));
+	double d = 0.0;
+	try {
+		d = double_approx(cln::realpart(value));
+	} catch(runtime_exception &e) {
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+	}
+	return d;
 }
 int Number::intValue(bool *overflow) const {
 	cl_I i;
