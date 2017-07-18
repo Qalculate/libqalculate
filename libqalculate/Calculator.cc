@@ -4098,7 +4098,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		} else if(po.base == BASE_DECIMAL && str[str_index] == '0' && (str_index == 0 || is_in(ILLEGAL_IN_NAMES, str[str_index - 1]))) {
 			if(str_index + 2 < str.length() && (str[str_index + 1] == 'x' || str[str_index + 1] == 'X') && is_in(NUMBER_ELEMENTS "abcdefABCDEF", str[str_index + 2])) {
 				//hexadecimal number 0x...
-				size_t i = str.find_first_not_of(SPACE NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
+				size_t i;
+				if(po.rpn) i = str.find_first_not_of(NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
+				else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
 				size_t name_length;
 				if(i == string::npos) i = str.length();
 				name_length = i - str_index;
@@ -4112,7 +4114,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				str_index += stmp.length() - 1;
 			} else if(str_index + 2 < str.length() && (str[str_index + 1] == 'b' || str[str_index + 1] == 'B') && is_in("01", str[str_index + 2])) {
 				//binary number 0b...
-				size_t i = str.find_first_not_of(SPACE NUMBER_ELEMENTS, str_index + 2);
+				size_t i;
+				if(po.rpn) i = str.find_first_not_of(NUMBER_ELEMENTS, str_index + 2);
+				else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS, str_index + 2);
 				size_t name_length;
 				if(i == string::npos) i = str.length();
 				name_length = i - str_index;
@@ -4126,7 +4130,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				str_index += stmp.length() - 1;
 			} else if(str_index + 2 < str.length() && (str[str_index + 1] == 'o' || str[str_index + 1] == 'O') && is_in(NUMBERS, str[str_index + 2])) {
 				//octal number 0o...
-				size_t i = str.find_first_not_of(SPACE NUMBER_ELEMENTS, str_index + 2);
+				size_t i;
+				if(po.rpn) i = str.find_first_not_of(NUMBER_ELEMENTS, str_index + 2);
+				else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS, str_index + 2);
 				size_t name_length;
 				if(i == string::npos) i = str.length();
 				name_length = i - str_index;

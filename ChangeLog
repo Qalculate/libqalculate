@@ -1,6 +1,7 @@
 2017-07-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add option to use step size instead of sampling rate for plot function
+	* Fix non-decimal numbers with rpn syntax
 
 2017-07-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
