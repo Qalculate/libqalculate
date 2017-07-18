@@ -3662,7 +3662,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 	
 }
 
-PlotFunction::PlotFunction() : MathFunction("plot", 1, 5) {
+PlotFunction::PlotFunction() : MathFunction("plot", 1, 6) {
 	NumberArgument *arg = new NumberArgument();
 	arg->setComplexAllowed(false);
 	setArgumentDefinition(2, arg);
@@ -3671,17 +3671,16 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, 5) {
 	arg->setComplexAllowed(false);
 	setArgumentDefinition(3, arg);
 	setDefaultValue(3, "10");
-	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONZERO);
-	Number nr(10000, 1);
-	iarg->setMax(&nr);
-	setArgumentDefinition(4, iarg);
 	setDefaultValue(4, "100");
 	setArgumentDefinition(5, new SymbolicArgument());
 	setDefaultValue(5, "x");
+	setArgumentDefinition(6, new BooleanArgument());
+	setDefaultValue(6, "0");
 	setCondition("\\y < \\z");
 }
 int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
+	bool use_step_size = vargs[5].number().getBoolean();
 	mstruct = vargs[0];
 	mstruct.eval(eo);
 	vector<MathStructure> x_vectors, y_vectors;
@@ -3725,11 +3724,18 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					}
 					vector_index++;
 					dpds.push_back(dpd);
-				} else {				
-					MathStructure y_vector(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], vargs[3].number().intValue(), &x_vector, eo));
-					if(y_vector.size() == 0) {
-						CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
-					} else {				
+				} else {
+					MathStructure y_vector;
+					if(use_step_size) {
+						y_vector.set(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], &x_vector, eo));
+						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
+					} else if(!vargs[3].isInteger() || !vargs[3].representsPositive()) {
+						CALCULATOR->error(true, _("Sampling rate must be a positive integer."), NULL);
+					} else {
+						y_vector.set(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], vargs[3].number().intValue(), &x_vector, eo));
+						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
+					}
+					if(y_vector.size() > 0) {
 						x_vectors.push_back(x_vector);
 						y_vectors.push_back(y_vector);
 						PlotDataParameters *dpd = new PlotDataParameters;
@@ -3747,11 +3753,17 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			dpds.push_back(dpd);
 		}
 	} else {
-		MathStructure x_vector;
-		MathStructure y_vector(mstruct.generateVector(vargs[4], vargs[1], vargs[2], vargs[3].number().intValue(), &x_vector, eo));
-		if(y_vector.size() == 0) {
-			CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
+		MathStructure x_vector, y_vector;
+		if(use_step_size) {
+			y_vector.set(mstruct.generateVector(vargs[4], vargs[1], vargs[2], vargs[3], &x_vector, eo));
+			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
+		} else if(!vargs[3].isInteger() || !vargs[3].representsPositive()) {
+			CALCULATOR->error(true, _("Sampling rate must be a positive integer."), NULL);
 		} else {
+			y_vector.set(mstruct.generateVector(vargs[4], vargs[1], vargs[2], vargs[3].number().intValue(), &x_vector, eo));
+			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
+		}
+		if(y_vector.size() > 0) {
 			x_vectors.push_back(x_vector);
 			y_vectors.push_back(y_vector);
 			PlotDataParameters *dpd = new PlotDataParameters;

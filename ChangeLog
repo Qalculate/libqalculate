@@ -1,3 +1,7 @@
+2017-07-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add option to use step size instead of sampling rate for plot function
+
 2017-07-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Prefer non-hidden composite units over alternatives with multiple units, in optimal unit conversion (5 m/s^2 instead of 0.005 N/g)
