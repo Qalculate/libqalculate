@@ -1,6 +1,13 @@
 2017-07-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* More efficient factorials
+	* Fix Number::print() not able to terminate with very large numbers (halted at cln::expt_pos with y = 0) 
+	* Fix termination of MathStructure::print() and format() with very large size
+	* Add extra termination points for MathStructure with large size and do not sort numbers when aborted
+	* Fix display of large integers in fractional modes
+	* Make product() and sum() more efficient
+	* Fix for()
+	* Check that step size gives finite number of data points and set max data points to 1000000
 
 2017-07-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

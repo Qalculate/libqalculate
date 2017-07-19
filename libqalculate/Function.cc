@@ -149,7 +149,7 @@ bool MathFunction::testCondition(const MathStructure &vargs) {
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	mstruct.eval(eo);
 	if(!mstruct.isNumber() || !mstruct.number().isPositive()) {
-		if(CALCULATOR->showArgumentErrors()) {
+		if(CALCULATOR->showArgumentErrors() && !CALCULATOR->aborted()) {
 			CALCULATOR->error(true, _("%s() requires that %s"), name().c_str(), printCondition().c_str(), NULL);
 		}
 		return false;

@@ -4532,17 +4532,22 @@ int MathStructure::merge_bitwise_xor(MathStructure &mstruct, const EvaluationOpt
 }
 
 #define MERGE_RECURSE			if(recursive) {\
+						bool large_size = (SIZE > 100); \
 						for(size_t i = 0; i < SIZE; i++) {\
+							if(large_size && CALCULATOR->aborted()) break;\
 							CHILD(i).calculatesub(eo, feo, true, this, i);\
 						}\
 						CHILDREN_UPDATED;\
 					}
 
 #define MERGE_ALL(FUNC, TRY_LABEL) 	size_t i2, i3 = SIZE;\
+					bool large_size = (i3 > 100); \
 					for(size_t i = 0; i < SIZE - 1; i++) {\
+						if(large_size && CALCULATOR->aborted()) break;\
 						i2 = i + 1;\
 						TRY_LABEL:\
 						for(; i2 < i; i2++) {\
+							if(large_size && CALCULATOR->aborted()) break;\
 							int r = CHILD(i2).FUNC(CHILD(i), eo, this, i2, i);\
 							if(r == 0) {\
 								SWAP_CHILDREN(i2, i);\
@@ -4561,6 +4566,7 @@ int MathStructure::merge_bitwise_xor(MathStructure &mstruct, const EvaluationOpt
 							}\
 						}\
 						for(i2 = i + 1; i2 < SIZE; i2++) {\
+							if(large_size && CALCULATOR->aborted()) break;\
 							int r = CHILD(i).FUNC(CHILD(i2), eo, this, i, i2);\
 							if(r == 0) {\
 								SWAP_CHILDREN(i, i2);\
@@ -5831,6 +5837,7 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 	}
 	switch(mstruct1.type()) {
 		case STRUCT_NUMBER: {
+			if(CALCULATOR->aborted()) return 0;
 			if(!mstruct1.number().isComplex() && !mstruct2.number().isComplex()) {
 				ComparisonResult cmp = mstruct1.number().compare(mstruct2.number());
 				if(cmp == COMPARISON_RESULT_LESS) return -1;
@@ -5920,6 +5927,7 @@ void MathStructure::evalSort(bool recursive) {
 	//if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION && m_type != STRUCT_LOGICAL_AND && m_type != STRUCT_LOGICAL_OR && m_type != STRUCT_LOGICAL_XOR && m_type != STRUCT_BITWISE_AND && m_type != STRUCT_BITWISE_OR && m_type != STRUCT_BITWISE_XOR) return;
 	if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION && m_type != STRUCT_BITWISE_AND && m_type != STRUCT_BITWISE_OR && m_type != STRUCT_BITWISE_XOR) return;
 	vector<size_t> sorted;
+	sorted.reserve(SIZE);
 	for(size_t i = 0; i < SIZE; i++) {
 		if(i == 0) {
 			sorted.push_back(v_order[i]);
@@ -6234,6 +6242,7 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 void MathStructure::sort(const PrintOptions &po, bool recursive) {
 	if(recursive) {
 		for(size_t i = 0; i < SIZE; i++) {
+			if(CALCULATOR->aborted()) break;
 			CHILD(i).sort(po);
 		}
 	}
@@ -6244,6 +6253,7 @@ void MathStructure::sort(const PrintOptions &po, bool recursive) {
 	po2.sort_options.minus_last = po.sort_options.minus_last && SIZE == 2;
 	//!containsUnknowns();
 	for(size_t i = 0; i < SIZE; i++) {
+		if(CALCULATOR->aborted()) break;
 		b = false;
 		for(size_t i2 = 0; i2 < sorted.size(); i2++) {
 			if(sortCompare(CHILD(i), *v_subs[sorted[i2]], *this, po2) < 0) {
@@ -6256,6 +6266,7 @@ void MathStructure::sort(const PrintOptions &po, bool recursive) {
 	}
 	if(m_type == STRUCT_ADDITION && SIZE > 2 && po.sort_options.minus_last && v_subs[sorted[0]]->hasNegativeSign()) {
 		for(size_t i2 = 1; i2 < sorted.size(); i2++) {
+			if(CALCULATOR->aborted()) break;
 			if(!v_subs[sorted[i2]]->hasNegativeSign()) {
 				sorted.insert(sorted.begin(), sorted[i2]);
 				sorted.erase(sorted.begin() + (i2 + 1));
@@ -6951,11 +6962,10 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	//calculateUncertaintyPropagation(eo);
 	
 	if(CALCULATOR->aborted()) return *this;
-
 	if(eo.calculate_functions && calculateFunctions(feo)) {
-		if(CALCULATOR->aborted()) return *this;
 		unformat(eo);
 	}
+	if(CALCULATOR->aborted()) return *this;
 
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo3 = eo2;
@@ -6963,9 +6973,11 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		eo3.split_squares = false;
 		eo3.assume_denominators_nonzero = false;
 		calculatesub(eo3, feo);
+		if(CALCULATOR->aborted()) return *this;
 		if(eo.expand != 0 && !containsType(STRUCT_COMPARISON, true, true, true)) {
 			unformat(eo);
 			eo3.expand = -1;
+			if(CALCULATOR->aborted()) return *this;
 			calculatesub(eo3, feo);
 		}
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
@@ -10296,6 +10308,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 				}
 				if(po.use_denominator_prefix && !exp.isNegative()) {
 					for(size_t i2 = i + 1; i2 < SIZE; i2++) {
+						if(CALCULATOR->aborted()) break;
 						if(CHILD(i2).isPower() && CHILD(i2)[1].isNumber() && CHILD(i2)[1].number().isNegative()) {
 							if(CHILD(i2)[0].isUnit() && use_prefix_with_unit(CHILD(i2)[0], po)) {
 								munit2 = &CHILD(i2)[0];
@@ -10346,7 +10359,8 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 				} else if(exp.isNegative() && b) {
 					bool had_unit = false;
 					for(size_t i2 = i + 1; i2 < SIZE; i2++) {
-						bool b3 = false;						
+						if(CALCULATOR->aborted()) break;
+						bool b3 = false;
 						if(CHILD(i2).isPower() && CHILD(i2)[1].isNumber() && CHILD(i2)[1].number().isPositive()) {
 							if(CHILD(i2)[0].isUnit()) {
 								if(!use_prefix_with_unit(CHILD(i2)[0], po)) {
@@ -10526,6 +10540,7 @@ bool split_unit_powers(MathStructure &mstruct);
 bool split_unit_powers(MathStructure &mstruct) {
 	bool b = false;
 	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(CALCULATOR->aborted()) break;
 		if(split_unit_powers(mstruct[i])) {
 			mstruct.childUpdated(i + 1);
 			b = true;
@@ -10718,11 +10733,12 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure*, size
 							}
 							break;
 						}
-						default: {}						
+						default: {}
 					}
 				}
 			} else {
 				for(size_t i = 0; i < SIZE; i++) {
+					if(CALCULATOR->aborted()) break;
 					CHILD(i).postFormatUnits(po, this, i + 1);
 					CHILD_UPDATED(i);
 				}
@@ -10738,6 +10754,7 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure*, size
 				bool do_plural = po.short_multiplication && !(CHILD(0).isZero() || CHILD(0).number().isOne() || CHILD(0).number().isMinusOne() || CHILD(0).number().isFraction());
 				size_t i = 2;
 				for(; i < SIZE; i++) {
+					if(CALCULATOR->aborted()) break;
 					if(CHILD(i).isUnit()) {
 						CHILD(i).setPlural(false);
 					} else if(CHILD(i).isPower() && CHILD(i)[0].isUnit()) {
@@ -10758,6 +10775,7 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure*, size
 			} else if(SIZE > 0) {
 				int last_unit = -1;
 				for(size_t i = 0; i < SIZE; i++) {
+					if(CALCULATOR->aborted()) break;
 					if(CHILD(i).isUnit()) {
 						CHILD(i).setPlural(false);
 						if(!po.limit_implicit_multiplication || last_unit < 0) {
@@ -10803,8 +10821,10 @@ bool MathStructure::factorizeUnits() {
 			MathStructure mstruct_units(*this);
 			MathStructure mstruct_new(*this);
 			for(size_t i = 0; i < mstruct_units.size(); i++) {
+				if(CALCULATOR->aborted()) break;
 				if(mstruct_units[i].isMultiplication()) {
 					for(size_t i2 = 0; i2 < mstruct_units[i].size();) {
+						if(CALCULATOR->aborted()) break;
 						if(!mstruct_units[i][i2].isUnit_exp()) {
 							mstruct_units[i].delChild(i2 + 1);
 						} else {
@@ -10814,6 +10834,7 @@ bool MathStructure::factorizeUnits() {
 					if(mstruct_units[i].size() == 0) mstruct_units[i].setUndefined();
 					else if(mstruct_units[i].size() == 1) mstruct_units[i].setToChild(1);
 					for(size_t i2 = 0; i2 < mstruct_new[i].size();) {
+						if(CALCULATOR->aborted()) break;
 						if(mstruct_new[i][i2].isUnit_exp()) {
 							mstruct_new[i].delChild(i2 + 1);
 						} else {
@@ -10829,6 +10850,7 @@ bool MathStructure::factorizeUnits() {
 				}
 			}
 			for(size_t i = 0; i < mstruct_units.size(); i++) {
+				if(CALCULATOR->aborted()) break;
 				if(!mstruct_units[i].isUndefined()) {
 					for(size_t i2 = i + 1; i2 < mstruct_units.size();) {
 						if(mstruct_units[i2] == mstruct_units[i]) {
@@ -10866,6 +10888,7 @@ void MathStructure::prefixCurrencies() {
 	if(isMultiplication() && (!hasNegativeSign() || CALCULATOR->place_currency_code_before_negative)) {
 		int index = -1;
 		for(size_t i = 0; i < SIZE; i++) {
+			if(CALCULATOR->aborted()) break;
 			if(CHILD(i).isUnit_exp()) {
 				if(CHILD(i).isUnit() && CHILD(i).unit()->isCurrency()) {
 					if(index >= 0) {
@@ -10885,6 +10908,7 @@ void MathStructure::prefixCurrencies() {
 		}
 	} else {
 		for(size_t i = 0; i < SIZE; i++) {
+			if(CALCULATOR->aborted()) break;
 			CHILD(i).prefixCurrencies();
 		}
 	}
@@ -10924,6 +10948,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 
 	if(recursive) {
 		for(size_t i = 0; i < SIZE; i++) {
+			if(CALCULATOR->aborted()) break;
 			CHILD(i).formatsub(po, this, i + 1);
 			CHILD_UPDATED(i);
 		}
@@ -11042,6 +11067,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 			
 			bool b = false;
 			for(size_t i = 0; i < SIZE; i++) {
+				if(CALCULATOR->aborted()) break;
 				if(CHILD(i).isInverse()) {
 					if(!po.negative_exponents || !CHILD(i)[0].isNumber()) {
 						b = true;
@@ -11732,6 +11758,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		case STRUCT_ADDITION: {
 			ips_n.depth++;
 			for(size_t i = 0; i < SIZE; i++) {
+				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					if(CHILD(i).type() == STRUCT_NEGATE) {
 						if(po.spacious) print_str += " ";
@@ -11766,6 +11793,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			ips_n.depth++;
 			bool par_prev = false;
 			for(size_t i = 0; i < SIZE; i++) {
+				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
 				if(!po.short_multiplication && i > 0) {
 					if(po.spacious) print_str += " ";
@@ -11880,6 +11908,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		case STRUCT_BITWISE_AND: {
 			ips_n.depth++;
 			for(size_t i = 0; i < SIZE; i++) {
+				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					if(po.spacious) print_str += " ";
 					print_str += "&";
@@ -11893,6 +11922,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		case STRUCT_BITWISE_OR: {
 			ips_n.depth++;
 			for(size_t i = 0; i < SIZE; i++) {
+				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					if(po.spacious) print_str += " ";
 					print_str += "|";
@@ -11906,6 +11936,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		case STRUCT_BITWISE_XOR: {
 			ips_n.depth++;
 			for(size_t i = 0; i < SIZE; i++) {
+				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					if(po.spacious) print_str += " ";
 					print_str += "XOR";
@@ -11973,6 +12004,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				break;
 			}
 			for(size_t i = 0; i < SIZE; i++) {
+				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					if(po.spacious) print_str += " ";
 					if(po.spell_out_logical_operators) print_str += _("and");
@@ -11987,6 +12019,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		case STRUCT_LOGICAL_OR: {
 			ips_n.depth++;
 			for(size_t i = 0; i < SIZE; i++) {
+				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					if(po.spacious) print_str += " ";
 					if(po.spell_out_logical_operators) print_str += _("or");
@@ -12001,6 +12034,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		case STRUCT_LOGICAL_XOR: {
 			ips_n.depth++;
 			for(size_t i = 0; i < SIZE; i++) {
+				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					if(po.spacious) print_str += " ";
 					print_str += "XOR";
@@ -12022,6 +12056,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			ips_n.depth++;
 			print_str = "[";
 			for(size_t i = 0; i < SIZE; i++) {
+				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					print_str += po.comma();
 					if(po.spacious) print_str += " ";
@@ -12058,6 +12093,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			}
 			print_str += "(";
 			for(size_t i = 0; i < SIZE; i++) {
+				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					print_str += po.comma();
 					if(po.spacious) print_str += " ";
@@ -13232,6 +13268,7 @@ bool MathStructure::convertToBaseUnits(bool convert_complex_relations, bool *fou
 			return true;
 		}
 		for(size_t i = 0; i < SIZE; i++) {
+			if(SIZE > 100 && CALCULATOR->aborted()) return false;
 			if(CHILD(i).isUnit_exp() && CHILD(i).unit_exp_unit()->subtype() == SUBTYPE_ALIAS_UNIT) {
 				AliasUnit *au = (AliasUnit*) CHILD(i).unit_exp_unit();
 				if(au && au->hasComplexRelationTo(au->baseUnit())) {
@@ -13261,6 +13298,7 @@ bool MathStructure::convertToBaseUnits(bool convert_complex_relations, bool *fou
 	} else if(m_type == STRUCT_FUNCTION) {
 		bool b = false;
 		for(size_t i = 0; i < SIZE; i++) {
+			if(SIZE > 100 && CALCULATOR->aborted()) return b;
 			if((!o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) && CHILD(i).convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo)) {
 				CHILD_UPDATED(i);
 				b = true;
@@ -13270,6 +13308,7 @@ bool MathStructure::convertToBaseUnits(bool convert_complex_relations, bool *fou
 	}
 	bool b = false; 
 	for(size_t i = 0; i < SIZE; i++) {
+		if(SIZE > 100 && CALCULATOR->aborted()) return b;
 		if(CHILD(i).convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo)) {
 			CHILD_UPDATED(i);
 			b = true;
@@ -13483,6 +13522,7 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 		}
 		if(m_type == STRUCT_FUNCTION) {
 			for(size_t i = 0; i < SIZE; i++) {
+				if(SIZE > 100 && CALCULATOR->aborted()) return b;
 				if((!o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) && CHILD(i).convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix)) {
 					CHILD_UPDATED(i);
 					b = true;
@@ -13491,6 +13531,7 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 			return b;
 		}
 		for(size_t i = 0; i < SIZE; i++) {
+			if(SIZE > 100 && CALCULATOR->aborted()) return b;
 			if(CHILD(i).convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix)) {
 				CHILD_UPDATED(i);
 				b = true;
@@ -13793,10 +13834,15 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 	MathStructure y_value;
 	MathStructure y_vector;
 	y_vector.clearVector();
+	if(steps > 1000000) {
+		CALCULATOR->error(true, _("Too many data points"), NULL);
+		return y_vector;
+	}
 	MathStructure step(max);
 	step.calculateSubtract(min, eo);
 	step.calculateDivide(steps - 1, eo);
 	if(!step.isNumber() || step.number().isNegative()) {
+		CALCULATOR->error(true, _("The selected min and max do not result in a positive, finite number of data points"), NULL);
 		return y_vector;
 	}
 	for(int i = 0; i < steps; i++) {
@@ -13808,7 +13854,9 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 		y_value.eval(eo);
 		y_vector.addChild(y_value);
 		x_value.calculateAdd(step, eo);
-		if(CALCULATOR->aborted()) return y_vector;
+		if(CALCULATOR->aborted()) {
+			return y_vector;
+		}
 	}
 	return y_vector;
 }
@@ -13820,8 +13868,12 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 	if(min != max) {
 		MathStructure mtest(max);
 		mtest.calculateSubtract(min, eo);
-		if(!min.isZero()) mtest.calculateDivide(min, eo);
-		if(!mtest.isNumber() || mtest.number().isNegative()) {
+		if(!step.isZero()) mtest.calculateDivide(step, eo);
+		if(step.isZero() || !mtest.isNumber() || mtest.number().isNegative()) {
+			CALCULATOR->error(true, _("The selected min, max and step size do not result in a positive, finite number of data points"), NULL);
+			return y_vector;
+		} else if(mtest.number().isGreaterThan(1000000)) {
+			CALCULATOR->error(true, _("Too many data points"), NULL);
 			return y_vector;
 		}
 	}
@@ -13835,7 +13887,6 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 		y_value.eval(eo);
 		y_vector.addChild(y_value);
 		x_value.calculateAdd(step, eo);
-		if(cr == COMPARISON_RESULT_EQUAL) break;
 		cr = max.compare(x_value);
 		if(CALCULATOR->aborted()) return y_vector;
 	}

@@ -1594,12 +1594,13 @@ bool Calculator::abort() {
 	if(!calculate_thread->running) {
 		b_busy = false;
 	} else {
-		int msecs = 500;
+		int msecs = 1000;
 		while(b_busy && msecs > 0) {
 			sleep_ms(10);
 			msecs -= 10;
 		}
 		if(b_busy) {
+			cout << "B" << endl;
 			calculate_thread->cancel();
 			stopControl();
 			stopped_messages_count.clear();
@@ -2239,6 +2240,8 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	current_stage = MESSAGE_STAGE_CALCULATION;
 	mstruct.eval(eo);
 	
+	if(aborted()) return mstruct;
+	
 	if(u) {
 		current_stage = MESSAGE_STAGE_CONVERSION;
 		if(to_struct) to_struct->set(u);
@@ -2490,11 +2493,15 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 	MathStructure mstruct_new(mstruct);
 	//bool b_simple = !cu && (to_unit->subtype() != SUBTYPE_ALIAS_UNIT || (((AliasUnit*) to_unit)->baseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT && ((AliasUnit*) to_unit)->baseExponent() == 1));
 
-	if(mstruct_new.isAddition()) mstruct_new.factorizeUnits();
+	if(mstruct_new.isAddition()) {
+		if(mstruct_new.size() > 100 && aborted()) return mstruct;
+		mstruct_new.factorizeUnits();
+	}
 
 	if(!mstruct_new.isPower() && !mstruct_new.isUnit() && !mstruct_new.isMultiplication()) {
 		if(mstruct_new.size() > 0) {
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
+				if(mstruct_new.size() > 100 && aborted()) return mstruct;
 				if(!mstruct_new.isFunction() || !mstruct_new.function()->getArgumentDefinition(i + 1) || mstruct_new.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) { 
 					mstruct_new[i] = convert(mstruct_new[i], to_unit, eo, false, convert_to_mixed_units);
 				}
@@ -2528,6 +2535,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 					} 
 					case STRUCT_MULTIPLICATION: {
 						for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
+							if(mstruct_new.countChildren() > 100 && aborted()) return mstruct;
 							if(mstruct_new.getChild(i)->isUnit() && cu2->containsRelativeTo(mstruct_new.getChild(i)->unit())) {
 								b = true;
 							}
@@ -2667,6 +2675,7 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 		}
 		default: {
 			for(size_t i = 0; i < mstruct.size(); i++) {
+				if(mstruct.size() > 100 && aborted()) return NULL;
 				Unit *u = findMatchingUnit(mstruct[i]);
 				if(u) return u;
 			}
@@ -2944,6 +2953,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 		case STRUCT_ADDITION: {
 			MathStructure mstruct_new(mstruct);
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
+				if(mstruct_new.size() > 100 && aborted()) return mstruct;
 				mstruct_new[i] = convertToBestUnit(mstruct_new[i], eo, convert_to_si_units);
 			}
 			mstruct_new.childrenUpdated();
@@ -3036,6 +3046,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 			bool child_updated = false;
 			MathStructure mstruct_old(mstruct);
 			for(size_t i = 1; i <= mstruct_old.countChildren(); i++) {
+				if(mstruct_old.countChildren() > 100 && aborted()) return mstruct_old;
 				if(mstruct_old.getChild(i)->isUnit()) {
 					if(is_si_units && !mstruct_old.getChild(i)->unit()->isSIUnit()) is_si_units = false;
 					old_points++;
@@ -3067,6 +3078,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				bool b = false;
 				child_updated = false;
 				for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
+					if(mstruct_new.countChildren() > 100 && aborted()) return mstruct_old;
 					if(mstruct_new.getChild(i)->isUnit()) {
 						b = true;
 						cu->add(mstruct_new.getChild(i)->unit());
@@ -3100,6 +3112,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 			bool new_is_si_units = true;
 			if(mstruct_new.isMultiplication()) {
 				for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
+					if(mstruct_new.countChildren() > 100 && aborted()) return mstruct_old;
 					if(mstruct_new.getChild(i)->isUnit()) {
 						if(new_is_si_units && !mstruct_new.getChild(i)->unit()->isSIUnit()) new_is_si_units = false;
 						new_points++;
@@ -9581,15 +9594,17 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 						plot_data += " ";
 					}
 				}	
-				if(!invalid_nr) {			
+				if(!invalid_nr) {
 					plot_data += y_vectors[serie].getChild(i)->print(po);
 					plot_data += "\n";	
 				}
 				if(aborted()) {
 					fclose(fdata);
 					g_free(filepath);
-					error(true, _("It took too long to generate the plot data."), NULL);
-					if(msecs > 0) stopControl();
+					if(msecs > 0) {
+						error(true, _("It took too long to generate the plot data."), NULL);
+						stopControl();
+					}
 					return false;
 				}
 			}

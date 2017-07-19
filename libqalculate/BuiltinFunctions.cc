@@ -2027,10 +2027,10 @@ int RadiansToDefaultAngleUnitFunction::calculate(MathStructure &mstruct, const M
 TotalFunction::TotalFunction() : MathFunction("total", 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
 }
-int TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+int TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.clear();
 	for(size_t index = 0; index < vargs[0].size(); index++) {
-		mstruct.add(vargs[0][index], true);
+		mstruct.calculateAdd(vargs[0][index], eo);
 	}
 	return 1;
 }
@@ -2652,7 +2652,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	MathStructure mcount;
 	MathStructure mupdate;
 	while(true) {
-		mtest = vargs[3];
+		mtest = vargs[2];
 		mtest.replace(vargs[1], mcounter);
 		mtest.eval(eo);
 		if(!mtest.isNumber() || CALCULATOR->aborted()) return 0;
@@ -2663,6 +2663,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mupdate = vargs[5];
 		mupdate.replace(vargs[1], mcounter, vargs[6], mstruct);
 		mstruct = mupdate;
+		mstruct.calculatesub(eo, eo, false);
 		
 		mcount = vargs[3];
 		mcount.replace(vargs[1], mcounter);
@@ -2678,19 +2679,20 @@ SumFunction::SumFunction() : MathFunction("sum", 3, 4) {
 	setDefaultValue(4, "x");
 	setCondition("\\z >= \\y");
 }
-int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
+	MathStructure m1(vargs[0]);
+	m1.eval(eo);
 	mstruct.clear();
 	Number i_nr(vargs[1].number());
 	MathStructure mstruct_calc;
-	bool started = false, s2 = false;
+	bool started = false;
 	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {
 		if(CALCULATOR->aborted()) return 0;
-		mstruct_calc.set(vargs[0]);
+		mstruct_calc.set(1);
 		mstruct_calc.replace(vargs[3], i_nr);
 		if(started) {
-			mstruct.add(mstruct_calc, s2);
-			s2 = true;
+			mstruct.calculateAdd(mstruct_calc, eo);
 		} else {
 			mstruct = mstruct_calc;
 			started = true;
@@ -2707,19 +2709,28 @@ ProductFunction::ProductFunction() : MathFunction("product", 3, 4) {
 	setDefaultValue(4, "x");
 	setCondition("\\z >= \\y");
 }
-int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
+	MathStructure m1(vargs[0]);
+	m1.eval(eo);
 	mstruct.clear();
 	Number i_nr(vargs[1].number());
 	MathStructure mstruct_calc;
-	bool started = false, s2 = false;
+	bool started = false;
 	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {
-		if(CALCULATOR->aborted()) return 0;
-		mstruct_calc.set(vargs[0]);
+		if(CALCULATOR->aborted()) {
+			if(!started) {
+				return 0;
+			} else if(i_nr != vargs[2].number()) {
+				MathStructure mmin(i_nr);
+				mstruct.multiply(MathStructure(this, &vargs[0], &mmin, &vargs[2], &vargs[3], NULL), true);
+				return 1;
+			}
+		}
+		mstruct_calc.set(m1);
 		mstruct_calc.replace(vargs[3], i_nr);
 		if(started) {
-			mstruct.multiply(mstruct_calc, s2);
-			s2 = true;
+			mstruct.calculateMultiply(mstruct_calc, eo);
 		} else {
 			mstruct = mstruct_calc;
 			started = true;
@@ -3735,6 +3746,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						y_vector.set(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], vargs[3].number().intValue(), &x_vector, eo));
 						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
 					}
+					if(CALCULATOR->aborted()) return 1;
 					if(y_vector.size() > 0) {
 						x_vectors.push_back(x_vector);
 						y_vectors.push_back(y_vector);
@@ -3763,6 +3775,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			y_vector.set(mstruct.generateVector(vargs[4], vargs[1], vargs[2], vargs[3].number().intValue(), &x_vector, eo));
 			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
 		}
+		if(CALCULATOR->aborted()) return 1;
 		if(y_vector.size() > 0) {
 			x_vectors.push_back(x_vector);
 			y_vectors.push_back(y_vector);

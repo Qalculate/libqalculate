@@ -88,7 +88,7 @@ string printCL_I(cl_I integ, int base = 10, bool display_sign = true, BaseDispla
 			try {
 				value = cl_I_to_int(integ);
 			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			}			
 			if(is_neg) {
 				if(display_sign) {
@@ -194,7 +194,7 @@ string printCL_I(cl_I integ, int base = 10, bool display_sign = true, BaseDispla
 					cln::print_integer(stream, flags, i_remdiv.remainder);
 				}
 			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			}			
 			integ = i_remdiv.quotient;
 			if(cln::zerop(integ)) {
@@ -216,7 +216,7 @@ string printCL_I(cl_I integ, int base = 10, bool display_sign = true, BaseDispla
 		try {
 			cln::print_integer(stream, flags, integ);
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		}
 		cl_str = stream.str();
 	}
@@ -518,7 +518,7 @@ void Number::set(string number, const ParseOptions &po) {
 					num = num * expt_pos(cl10, exp);
 				}
 			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			}
 			break;
 		} else if(number[index] == '.') {
@@ -683,7 +683,7 @@ double Number::floatValue() const {
 	try {
 		d = double_approx(cln::realpart(value));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	return d;
 }
@@ -692,7 +692,7 @@ int Number::intValue(bool *overflow) const {
 	try {
 		i = cln::round1(cln::realpart(value));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	if(i > long(INT_MAX)) {
 		if(overflow) *overflow = true;
@@ -811,7 +811,7 @@ bool Number::bitAnd(const Number &o) {
 	try {
 		value = cln::logand(cln::numerator(cln::rational(cln::realpart(value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	setPrecisionAndApproximateFrom(o);
 	return true;
@@ -821,7 +821,7 @@ bool Number::bitOr(const Number &o) {
 	try {
 		value = cln::logior(cln::numerator(cln::rational(cln::realpart(value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	setPrecisionAndApproximateFrom(o);
 	return true;
@@ -831,7 +831,7 @@ bool Number::bitXor(const Number &o) {
 	try {
 		value = cln::logxor(cln::numerator(cln::rational(cln::realpart(value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	setPrecisionAndApproximateFrom(o);
 	return true;
@@ -841,7 +841,7 @@ bool Number::bitNot() {
 	try {
 		value = cln::lognot(cln::numerator(cln::rational(cln::realpart(value))));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	return true;
 }
@@ -850,7 +850,7 @@ bool Number::bitEqv(const Number &o) {
 	try {
 		value = cln::logeqv(cln::numerator(cln::rational(cln::realpart(value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	setPrecisionAndApproximateFrom(o);
 	return true;
@@ -863,7 +863,7 @@ bool Number::shiftLeft(const Number &o) {
 		intval << cln::numerator(cln::rational(cln::realpart(o.internalNumber())));
 		value = intval;
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	setPrecisionAndApproximateFrom(o);
 	return true;
@@ -876,7 +876,7 @@ bool Number::shiftRight(const Number &o) {
 		intval >> cln::numerator(cln::rational(cln::realpart(o.internalNumber())));
 		value = intval;
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	setPrecisionAndApproximateFrom(o);
 	return true;
@@ -886,7 +886,7 @@ bool Number::shift(const Number &o) {
 	try {
 		value = cln::ash(cln::numerator(cln::rational(cln::realpart(value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	setPrecisionAndApproximateFrom(o);
 	return true;
@@ -898,7 +898,7 @@ bool Number::hasRealPart() const {
 	try {
 		b = !cln::zerop(cln::realpart(value));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	return b;
 }
@@ -908,7 +908,7 @@ bool Number::hasImaginaryPart() const {
 	try {
 		b = !cln::zerop(cln::imagpart(value));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	return b;
 }
@@ -947,14 +947,14 @@ void Number::testInteger() {
 				b = cln::zerop(cln::truncate2(REAL_PRECISION_FLOAT_RE(value)).remainder);
 			}
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		}
 		if(b) {
 			cln::cl_N new_value;
 			try {
 				new_value = cln::round1(cln::realpart(value));
 			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 				return;
 			}
 			value = new_value;
@@ -1000,7 +1000,7 @@ bool Number::isZero() const {
 	try {
 		b = cln::zerop(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	return b;
 }
@@ -1018,7 +1018,7 @@ bool Number::isI() const {
 	try {
 		b = cln::zerop(cln::realpart(value));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	return b && cln::imagpart(value) == 1;
 }
@@ -1032,7 +1032,7 @@ bool Number::isMinusI() const {
 	try {
 		b = cln::zerop(cln::realpart(value));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	return b && cln::imagpart(value) == -1;
 }
@@ -1079,7 +1079,7 @@ bool Number::equalsZero() const {
 				b_zero = REAL_PRECISION_FLOAT_RE(value + 1) == cln::cl_float(1, cln::float_format(PRECISION + 1));
 			}
 		} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		}
 		return b_zero;
 	}
@@ -1264,7 +1264,7 @@ bool Number::equalsApproximately(const Number &o, int prec) const {
 			return false;
 		}
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	return false;
 }
@@ -1420,7 +1420,7 @@ bool Number::add(const Number &o) {
 	try {
 		new_value = value + o.internalNumber();
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1466,7 +1466,7 @@ bool Number::subtract(const Number &o) {
 	try {
 		new_value = value - o.internalNumber();
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1518,7 +1518,7 @@ bool Number::multiply(const Number &o) {
 	try {
 		new_value = value * o.internalNumber();
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1563,7 +1563,7 @@ bool Number::divide(const Number &o) {
 	try {
 		new_value = value / o.internalNumber();
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1586,7 +1586,7 @@ bool Number::recip() {
 	try {
 		new_value = cln::recip(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1681,14 +1681,14 @@ bool Number::raise(const Number &o, bool try_exact) {
 		try {
 			new_value = cln::expt(cln::cl_float(cln::realpart(new_value)), cln::cl_float(cln::realpart(o.internalNumber())));
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			return false;
 		}
 	} else {
 		try {
 			new_value = cln::expt(new_value, o.internalNumber());
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			return false;
 		}
 	}
@@ -1696,7 +1696,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		try {
 			new_value = -new_value;
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			return false;
 		}
 	}
@@ -1767,7 +1767,7 @@ bool Number::square() {
 	try {
 		new_value = cln::square(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1784,7 +1784,7 @@ bool Number::negate() {
 	try {
 		new_value = -value;
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1796,7 +1796,7 @@ void Number::setNegative(bool is_negative) {
 		try {
 			value = cln::complex(-cln::realpart(value), cln::imagpart(value));
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		}
 	}
 }
@@ -1819,7 +1819,7 @@ bool Number::round() {
 	try {
 		new_value = cln::round1(cln::realpart(value));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1829,7 +1829,7 @@ bool Number::round() {
 			try {
 				b_zero = cln::zerop(cln::rem(cln::realpart(value), 10));
 			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			}
 			if(!b_zero) {
 				i_precision = -1;
@@ -1849,7 +1849,7 @@ bool Number::floor() {
 	try {
 		new_value = cln::floor1(cln::realpart(value));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1862,7 +1862,7 @@ bool Number::ceil() {
 	try {
 		new_value = cln::ceiling1(cln::realpart(value));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1875,7 +1875,7 @@ bool Number::trunc() {
 	try {
 		new_value = cln::truncate1(cln::realpart(value));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1891,7 +1891,7 @@ bool Number::round(const Number &o) {
 	try {
 		new_value = cln::round1(cln::realpart(value), cln::realpart(o.internalNumber()));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1908,7 +1908,7 @@ bool Number::floor(const Number &o) {
 	try {
 		new_value = cln::floor1(cln::realpart(value), cln::realpart(o.internalNumber()));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1925,7 +1925,7 @@ bool Number::ceil(const Number &o) {
 	try {
 		new_value = cln::ceiling1(cln::realpart(value), cln::realpart(o.internalNumber()));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1942,7 +1942,7 @@ bool Number::trunc(const Number &o) {
 	try {
 		new_value = cln::truncate1(cln::realpart(value), cln::realpart(o.internalNumber()));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1956,7 +1956,7 @@ bool Number::mod(const Number &o) {
 	try {
 		new_value = cln::mod(cln::realpart(value), cln::realpart(o.internalNumber()));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1970,7 +1970,7 @@ bool Number::frac() {
 		cl_N whole_value = cln::truncate1(cln::realpart(value));
 		new_value = value - whole_value;
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1983,7 +1983,7 @@ bool Number::rem(const Number &o) {
 	try {
 		new_value = cln::rem(cln::realpart(value), cln::realpart(o.internalNumber()));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -1998,7 +1998,7 @@ bool Number::smod(const Number &o) {
 		const cln::cl_I b2 = cln::ceiling1(cln::numerator(cln::rational(cln::realpart(o.internalNumber()))) >> 1) - 1;
 		new_value = cln::mod(cln::numerator(cln::rational(cln::realpart(value))) + b2, cln::numerator(cln::rational(cln::realpart(o.internalNumber())))) - b2;
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2012,7 +2012,7 @@ bool Number::irem(const Number &o) {
 	try {
 		new_value = cln::rem(cln::numerator(cln::rational(cln::realpart(value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2026,7 +2026,7 @@ bool Number::irem(const Number &o, Number &q) {
 		q.setInternal(rem_quo.quotient);
 		value = rem_quo.remainder;
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	return true;
 }
@@ -2037,7 +2037,7 @@ bool Number::iquo(const Number &o) {
 	try {
 		new_value = cln::truncate1(cln::numerator(cln::rational(cln::realpart(value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2051,7 +2051,7 @@ bool Number::iquo(const Number &o, Number &r) {
 		r.setInternal(rem_quo.remainder);
 		value = rem_quo.quotient;
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 	}
 	return true;
 }
@@ -2063,7 +2063,7 @@ bool Number::isqrt() {
 			cln::isqrt(cln::numerator(cln::rational(cln::realpart(value))), &iroot);
 			new_value = iroot;
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			return false;
 		}
 		value = new_value;
@@ -2128,7 +2128,7 @@ bool Number::zeta() {
 	try {
 		new_value = cln::zeta(i); 
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2142,7 +2142,7 @@ bool Number::sin() {
 	try {
 		new_value = cln::sin(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2158,7 +2158,7 @@ bool Number::asin() {
 	try {
 		new_value = cln::asin(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2174,7 +2174,7 @@ bool Number::sinh() {
 	try {
 		new_value = cln::sinh(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2190,7 +2190,7 @@ bool Number::asinh() {
 	try {
 		new_value = cln::asinh(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2209,7 +2209,7 @@ bool Number::cos() {
 	try {
 		new_value = cln::cos(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2228,7 +2228,7 @@ bool Number::acos() {
 	try {
 		new_value = cln::acos(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2251,7 +2251,7 @@ bool Number::cosh() {
 	try {
 		new_value = cln::cosh(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2267,7 +2267,7 @@ bool Number::acosh() {
 	try {
 		new_value = cln::acosh(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2283,7 +2283,7 @@ bool Number::tan() {
 	try {
 		new_value = cln::tan(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2305,7 +2305,7 @@ bool Number::atan() {
 	try {
 		new_value = cln::atan(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2323,7 +2323,7 @@ bool Number::tanh() {
 	try {
 		new_value = cln::tanh(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2347,7 +2347,7 @@ bool Number::atanh() {
 	try {
 		new_value = cln::atanh(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2371,7 +2371,7 @@ bool Number::ln() {
 	try {
 		new_value = cln::log(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2410,14 +2410,14 @@ bool Number::log(const Number &o) {
 		try {		
 			new_value = -cln::log(cln::recip(value), o.internalNumber());			
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			return false;
 		}
 	} else {
 		try {
 			new_value = cln::log(value, o.internalNumber());
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			return false;
 		}
 	}
@@ -2439,7 +2439,7 @@ bool Number::exp() {
 	try {
 		new_value = cln::exp(value);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2466,7 +2466,7 @@ bool Number::lambertW() {
 		try {
 			w = cln::ln(x) - cln::ln(cln::ln(x));
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			return false;
 		}
 	}
@@ -2474,7 +2474,7 @@ bool Number::lambertW() {
 	try {
 		wPrec = cln::expt(cln::cl_I(10), -(PRECISION + 2));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	cln::cl_N new_value = value;
@@ -2488,7 +2488,7 @@ bool Number::lambertW() {
 			}
 			w = w - (wTimesExpW - x) / (wPlusOneTimesExpW - (w + 2) * (wTimesExpW - x) / (2 * w + 2));
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			return false;
 		}
 	}
@@ -2515,7 +2515,7 @@ bool Number::gcd(const Number &o) {
 		cl_I num_o = cln::numerator(cln::rational(cln::realpart(o.internalNumber())));
 		new_value = cln::gcd(num, num_o);
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2528,7 +2528,7 @@ bool Number::lcm(const Number &o) {
 		try {
 			new_value = cln::lcm(cln::numerator(cln::rational(cln::realpart(value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			return false;
 		}
 		value = new_value;
@@ -2544,8 +2544,8 @@ cln::cl_I recfact(cln::cl_I start, cln::cl_I n) {
 		for(i = start + 1; i < start + n; i++) r *= i;
 		return r;
 	}
-	i = cln::floor1(n, 2);
 	if(CALCULATOR->aborted()) return 0;
+	i = cln::floor1(n, 2);
 	return recfact(start, i) * recfact(start + i, n - i);
 }
 cln::cl_I recfact2(cln::cl_I start, cln::cl_I n) {
@@ -2555,11 +2555,11 @@ cln::cl_I recfact2(cln::cl_I start, cln::cl_I n) {
 		for(i = start + n - 3; i >= start; i -= 2) r *= i;
 		return r;
 	}
+	if(CALCULATOR->aborted()) return 0;
 	i = cln::floor1(n, 2);
 	if(cln::evenp(i) != cln::evenp(n)) {
 		return recfact2(start, i - 1) * recfact2(start + i - 1, n - i + 1);
 	}
-	if(CALCULATOR->aborted()) return 0;
 	return recfact2(start, i) * recfact2(start + i, n - i);
 }
 cln::cl_I recfactm(cln::cl_I start, cln::cl_I n, cln::cl_I m) {
@@ -2596,7 +2596,7 @@ bool Number::factorial() {
 		new_value = recfact(1, cln::numerator(cln::rational(cln::realpart(new_value))));
 		if(cln::zerop(new_value)) return false;
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2628,7 +2628,7 @@ bool Number::multiFactorial(const Number &o) {
 			new_value = new_value * i;
 		}*/
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2658,7 +2658,7 @@ bool Number::doubleFactorial() {
 			new_value = new_value * i;
 		}*/
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	value = new_value;
@@ -2686,7 +2686,7 @@ bool Number::binomial(const Number &m, const Number &k) {
 			ik = cln::numerator(cln::rational(cln::realpart(k.internalNumber())));
 			im = cln::numerator(cln::rational(cln::realpart(m.internalNumber())));
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			return false;
 		}
 		if(im > long(INT_MAX) || ik > 100000) {
@@ -2702,7 +2702,7 @@ bool Number::binomial(const Number &m, const Number &k) {
 				}
 				new_value = ithis;
 			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 				return false;
 			}
 			clear();
@@ -2712,7 +2712,7 @@ bool Number::binomial(const Number &m, const Number &k) {
 			try {
 				new_value = cln::binomial(cl_I_to_uint(im), cl_I_to_uint(ik));
 			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 				return false;
 			}
 			clear();
@@ -2730,7 +2730,7 @@ bool Number::factorize(vector<Number> &factors) {
 	try {
 		inr = cln::numerator(cln::rational(cln::realpart(value)));
 	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+		CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		return false;
 	}
 	if(inr == 1) {
@@ -2757,13 +2757,13 @@ bool Number::factorize(vector<Number> &factors) {
 			try {
 				b_zero = cln::zerop(cln::mod(inr, PRIMES[prime_index]));
 			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			}
 			if(b_zero) {
 				try {
 					inr = cln::exquo(inr, PRIMES[prime_index]);
 				} catch(runtime_exception &e) {
-					CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+					CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 				}
 				Number fac;
 				fac.setInternal(PRIMES[prime_index]);
@@ -2782,14 +2782,14 @@ bool Number::factorize(vector<Number> &factors) {
 				try {
 					b_zero = cln::zerop(cln::mod(inr, last_prime));
 				} catch(runtime_exception &e) {
-					CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+					CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 				}
 				if(CALCULATOR->aborted()) return false;
 				if(b_zero) {
 					try {
 						inr = cln::exquo(inr, last_prime);
 					} catch(runtime_exception &e) {
-						CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+						CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 					}
 					b = true;
 					Number fac;
@@ -3107,7 +3107,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(po.is_approximate && isApproximate()) *po.is_approximate = true;
 		if(ips.num) *ips.num = str;
 	} else if(isInteger()) {
-
 		cl_I ivalue = cln::numerator(cln::rational(cln::realpart(value)));
 		bool neg = cln::minusp(ivalue);
 		bool rerun = false;
@@ -3150,12 +3149,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		try {
 			b_zero = cln::zerop(ivalue);
 		} catch(runtime_exception &e) {
-			CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+			CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 		}
 
 		if(!rerun && !b_zero) {
 			int precision2 = precision;
-
 			if(base != 10) {
 				Number precmax(10);
 				precmax.raise(precision);
@@ -3164,9 +3162,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				precmax.floor();
 				precision2 = precmax.intValue();
 			}
-
 			precision2 -= mpz_str.length();
-			if(po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < expo && po.max_decimals - expo < precision2) {
+			if(po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < expo && po.max_decimals - expo < precision2 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 				try {
 					cln::cl_RA_div_t div = cln::floor2(ivalue / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo)));
 					if(!cln::zerop(div.remainder)) {
@@ -3186,9 +3183,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						goto integer_rerun;
 					}
 				} catch(runtime_exception &e) {
-					CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+					CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 				}
-			} else if(precision2 < 0 && (expo > 0 || isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision))) {
+			} else if(precision2 < 0 && ((expo > 0 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) || isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision))) {
 				precision2 = -precision2;
 				try {
 					cln::cl_RA v = ivalue;
@@ -3196,7 +3193,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					cln::cl_I i_exp;
 					if(p2_cd > 1000) {
 						i_exp = cln::expt_pos(cln::cl_I(base), 1000);
-						while(p2_cd >= 1000) {
+						while(p2_cd > 1000) {
 							v = v / i_exp;
 							p2_cd -= 1000;
 							if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
@@ -3222,7 +3219,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						goto integer_rerun;
 					}
 				} catch(runtime_exception &e) {
-					CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+					CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 				}
 			}
 		}
@@ -3331,7 +3328,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			try {
 				d = cln::denominator(cln::rational(cln::realpart(value)));
 			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			}			
 			bool neg = cln::minusp(cln::realpart(value));
 			try {
@@ -3341,25 +3338,25 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					num = cln::numerator(cln::rational(cln::realpart(value)));
 				}
 			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			}
 			int l10 = 0;
 			try {
 				div = cln::truncate2(num, d);
 			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			}
 			try {
 				remainder = div.remainder;
 				num = div.quotient;
 			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			}
 			bool exact = false;
 			try {
 				exact = cln::zerop(remainder);
 			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			}
 			vector<cln::cl_I> remainders;
 			bool infinite_series = false;
@@ -3435,7 +3432,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						remainder = 0;
 					}					
 				} catch(runtime_exception &e) {
-					CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+					CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 				}	
 				started = true;
 			}
@@ -3459,7 +3456,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						num = num + remainder;
 					}
 				} catch(runtime_exception &e) {
-					CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+					CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 				}
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				l10++;
@@ -3495,7 +3492,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						}
 					}
 				} catch(runtime_exception &e) {
-					CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
+					CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 				}
 			}
 			if(!exact && !infinite_series) {
