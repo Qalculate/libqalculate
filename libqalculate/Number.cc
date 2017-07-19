@@ -181,7 +181,7 @@ string printCL_I(cl_I integ, int base = 10, bool display_sign = true, BaseDispla
 	flags.rational_base = base;
 	
 	if(integ > LLONG_MAX) {
-		int i_step = 1000;
+		int i_step = 1000000;
 		if(base < 8) i_step = 100;
 		cl_I i_div = cln::expt_pos(cl_I(base), cl_I(i_step));		
 		string str, stream_str;
@@ -3113,6 +3113,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		bool exact = true;
 
 		integer_rerun:
+
 		string mpz_str = printCL_I(ivalue, base, false, BASE_DISPLAY_NONE, po.lower_case_numbers);
 		if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 		
@@ -3191,17 +3192,24 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					cln::cl_RA v = ivalue;
 					int p2_cd = precision2;
 					cln::cl_I i_exp;
-					if(p2_cd > 1000) {
-						i_exp = cln::expt_pos(cln::cl_I(base), 1000);
-						while(p2_cd > 1000) {
-							v = v / i_exp;
-							p2_cd -= 1000;
-							if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+
+					long int p2_cd_min = 10000;
+					while(p2_cd_min >= 1000) {
+						if(p2_cd > p2_cd_min) {
+							i_exp = cln::expt_pos(cln::cl_I(base), p2_cd_min);
+							while(p2_cd > p2_cd_min) {
+								v = v / i_exp;
+								p2_cd -= p2_cd_min;
+								if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+							}
 						}
+						p2_cd_min = p2_cd_min / 10;
 					}
+					
 					i_exp = cln::expt_pos(cln::cl_I(base), p2_cd);
 					v = v / i_exp;
 					cln::cl_RA_div_t div = cln::floor2(v);
+
 					if(!cln::zerop(div.remainder)) {
 						ivalue = div.quotient;
 						if(po.round_halfway_to_even && cln::evenp(ivalue)) {

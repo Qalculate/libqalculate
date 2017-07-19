@@ -8,6 +8,7 @@
 	* Make product() and sum() more efficient
 	* Fix for()
 	* Check that step size gives finite number of data points and set max data points to 1000000
+	* Increase speed of Number::print() with huge numbers
 
 2017-07-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

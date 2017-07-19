@@ -1600,7 +1600,6 @@ bool Calculator::abort() {
 			msecs -= 10;
 		}
 		if(b_busy) {
-			cout << "B" << endl;
 			calculate_thread->cancel();
 			stopControl();
 			stopped_messages_count.clear();
