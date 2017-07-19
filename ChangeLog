@@ -1,3 +1,7 @@
+2017-07-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* More efficient factorials
+
 2017-07-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add option to use step size instead of sampling rate for plot function

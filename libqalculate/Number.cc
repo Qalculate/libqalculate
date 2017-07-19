@@ -2537,6 +2537,44 @@ bool Number::lcm(const Number &o) {
 	return multiply(o);
 }
 
+cln::cl_I recfact(cln::cl_I start, cln::cl_I n) {
+	cln::cl_I i;
+	if(n <= 16) { 
+		cln::cl_I r = start;
+		for(i = start + 1; i < start + n; i++) r *= i;
+		return r;
+	}
+	i = cln::floor1(n, 2);
+	if(CALCULATOR->aborted()) return 0;
+	return recfact(start, i) * recfact(start + i, n - i);
+}
+cln::cl_I recfact2(cln::cl_I start, cln::cl_I n) {
+	cln::cl_I i;
+	if(n <= 32) { 
+		cln::cl_I r = start + n - 1;
+		for(i = start + n - 3; i >= start; i -= 2) r *= i;
+		return r;
+	}
+	i = cln::floor1(n, 2);
+	if(cln::evenp(i) != cln::evenp(n)) {
+		return recfact2(start, i - 1) * recfact2(start + i - 1, n - i + 1);
+	}
+	if(CALCULATOR->aborted()) return 0;
+	return recfact2(start, i) * recfact2(start + i, n - i);
+}
+cln::cl_I recfactm(cln::cl_I start, cln::cl_I n, cln::cl_I m) {
+	cln::cl_I i;
+	if(n <= 16 * m) { 
+		cln::cl_I r = start + n - 1;
+		for(i = start + n - 1 - m; i >= start; i -= m) r *= i;
+		return r;
+	}
+	if(CALCULATOR->aborted()) return 0;
+	i = cln::floor1(n, 2);
+	cln::cl_I im = cln::rem(i, m) - cln::rem(n, m);
+	return recfactm(start, i - im, m) * recfactm(start + i - im, n - i + im, m);
+}
+
 bool Number::factorial() {
 	if(!isInteger()) {
 		return false;
@@ -2555,12 +2593,8 @@ bool Number::factorial() {
 	}
 	cln::cl_N new_value = value;
 	try {
-		cln::cl_I i = cln::numerator(cln::rational(cln::realpart(new_value)));
-		i = cln::minus1(i);
-		for(; !cln::zerop(i); i = cln::minus1(i)) {
-			if(CALCULATOR->aborted()) return false;
-			new_value = new_value * i;
-		}
+		new_value = recfact(1, cln::numerator(cln::rational(cln::realpart(new_value))));
+		if(cln::zerop(new_value)) return false;
 	} catch(runtime_exception &e) {
 		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
 		return false;
@@ -2584,13 +2618,15 @@ bool Number::multiFactorial(const Number &o) {
 	}
 	cln::cl_N new_value = value;
 	try {
-		cln::cl_I i = cln::numerator(cln::rational(cln::realpart(new_value)));
+		new_value = recfactm(1, cln::numerator(cln::rational(cln::realpart(new_value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
+		if(cln::zerop(new_value)) return false;
+		/*cln::cl_I i = cln::numerator(cln::rational(cln::realpart(new_value)));
 		cln::cl_I i_o = cln::numerator(cln::rational(cln::realpart(o.internalNumber())));
 		i = i - i_o;
 		for(; cln::plusp(i); i = i - i_o) {
 			if(CALCULATOR->aborted()) return false;
 			new_value = new_value * i;
-		}
+		}*/
 	} catch(runtime_exception &e) {
 		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
 		return false;
@@ -2612,13 +2648,15 @@ bool Number::doubleFactorial() {
 	}
 	cln::cl_N new_value = value;
 	try {
-		cln::cl_I i = cln::numerator(cln::rational(cln::realpart(value)));
+		new_value = recfact2(1, cln::numerator(cln::rational(cln::realpart(new_value))));
+		if(cln::zerop(new_value)) return false;
+		/*cln::cl_I i = cln::numerator(cln::rational(cln::realpart(value)));
 		cln::cl_I i2 = 2;
 		i = i - i2;
 		for(; cln::plusp(i); i = i - i2) {
 			if(CALCULATOR->aborted()) return false;
 			new_value = new_value * i;
-		}
+		}*/
 	} catch(runtime_exception &e) {
 		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
 		return false;
