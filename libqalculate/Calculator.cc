@@ -9363,6 +9363,8 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 					param->filetype = PLOT_FILETYPE_PNG;
 				} else if(ext == "ps") {
 					param->filetype = PLOT_FILETYPE_PS;
+				} else if(ext == "pdf") {
+					param->filetype = PLOT_FILETYPE_PDF;
 				} else if(ext == "eps") {
 					param->filetype = PLOT_FILETYPE_EPS;
 				} else if(ext == "svg") {
@@ -9406,6 +9408,15 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 				plot += " \"Times\"";
 				break;
 			}
+			case PLOT_FILETYPE_PDF: {
+				plot += "pdf ";
+				if(param->color) {
+					plot += "color";
+				} else {
+					plot += "monochrome";
+				}
+				break;
+			}
 			case PLOT_FILETYPE_EPS: {
 				plot += "postscript eps ";
 				if(param->color) {
@@ -9418,11 +9429,6 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			}
 			default: {
 				plot += "png ";
-				if(param->color) {
-					plot += "color";
-				} else {
-					plot += "monochrome";
-				}
 				break;
 			}
 

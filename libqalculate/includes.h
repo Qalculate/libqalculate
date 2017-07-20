@@ -228,7 +228,8 @@ typedef enum {
 	PLOT_FILETYPE_EPS,
 	PLOT_FILETYPE_LATEX,
 	PLOT_FILETYPE_SVG,
-	PLOT_FILETYPE_FIG
+	PLOT_FILETYPE_FIG,
+	PLOT_FILETYPE_PDF
 } PlotFileType;
 
 /// Mathematical operations
