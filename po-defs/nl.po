@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-29 07:51+0200\n"
+"POT-Creation-Date: 2017-07-20 18:20+0200\n"
 "PO-Revision-Date: 2007-05-18 15:47+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -1107,15 +1107,16 @@ msgid "Copernicium"
 msgstr ""
 
 #: ../data/elements.xml.in.h:114
-msgid "Ununtrium"
-msgstr ""
+#, fuzzy
+msgid "Nihonium"
+msgstr "Titaan"
 
 #: ../data/elements.xml.in.h:115
 msgid "Flerovium"
 msgstr ""
 
 #: ../data/elements.xml.in.h:116
-msgid "Ununpentium"
+msgid "Moscovium"
 msgstr ""
 
 #: ../data/elements.xml.in.h:117
@@ -1123,12 +1124,13 @@ msgid "Livermorium"
 msgstr ""
 
 #: ../data/elements.xml.in.h:118
-msgid "Ununseptium"
-msgstr "Ununseptium"
+#, fuzzy
+msgid "Tennessine"
+msgstr "Regressie"
 
 #: ../data/elements.xml.in.h:119
-msgid "Ununoctium"
-msgstr "Ununoctium"
+msgid "Oganesson"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1
 msgid "Matrices &amp; Vectors"
@@ -1204,9 +1206,9 @@ msgid "r:sort"
 msgstr "sorteren"
 
 #: ../data/functions.xml.in.h:18
-msgid "Returns a sorted vector.&#10;&#10;ex. sort([6, 1, 4])=[1, 4, 6]"
-msgstr ""
-"Retourneert een gesorteerde vector.&#10;&#10;bv. sort([6, 1, 4])=[1, 4, 6]"
+#, fuzzy
+msgid "Returns a sorted vector."
+msgstr "Retourneert de inhoud van het RPN-stapelgeheugen als een vector."
 
 #: ../data/functions.xml.in.h:19
 msgid "Vector"
@@ -1227,11 +1229,9 @@ msgstr "rangorde"
 #: ../data/functions.xml.in.h:23
 msgid ""
 "Returns a vector with values of elements replaced with their mutual ranks."
-"&#10;&#10;ex. rank([6, 1, 4]) = [3, 1, 2]"
 msgstr ""
 "Retourneert een vector waarin de elementen zijn vervangen door hun "
-"onderlinge rangorde.&#10;&#10;bv. rank([6, 1, 4]) = [3, 1, 2] (6 staat op de "
-"3de plaats in de gesorteerde vector, 1 op de 1ste en 4 op de 2de plaats)"
+"onderlinge rangorde."
 
 #: ../data/functions.xml.in.h:24
 msgid "Vector Limits"
@@ -1613,16 +1613,14 @@ msgid "Factorial"
 msgstr "Faculteit"
 
 #: ../data/functions.xml.in.h:114
-#, fuzzy
 msgid ""
 "Calculates the factorial of an integer. Multiplies the argument with every "
 "lesser positive integer (n(n-1)(n-2)...2*1). Can also be entered as a number "
-"followed by one exclamation mark.&#10;&#10;ex. factorial(5) = 5! = 5 * 4 * 3 "
-"* 2 * 1 = 120"
+"followed by one exclamation mark."
 msgstr ""
 "Berekent de faculteit van een positief geheel getal n: (n(n-1)(n-2)... "
 "*2*1.  Kan ook worden ingevoerd als een positief geheel getal, gevolgd door "
-"een uitroepteken.&#10;&#10;bv. factorial(5) = 5! = 5 * 4 * 3 * 2 * 1 = 120"
+"een uitroepteken."
 
 #: ../data/functions.xml.in.h:115
 msgid "r:factorial"
@@ -1641,16 +1639,14 @@ msgid "r:factorial2"
 msgstr "faculteit2"
 
 #: ../data/functions.xml.in.h:119
-#, fuzzy
 msgid ""
 "Calculates the double factorial of an integer. Multiplies the argument with "
 "every second lesser positive integer (n(n-2)(n-4)...). Can also be entered "
-"as a number followed by two exclamation marks.&#10;&#10;ex. factorial2(5) = "
-"5!! = 5 * 3 * 1 = 15"
+"as a number followed by two exclamation marks."
 msgstr ""
 "Berekent de dubbelfaculteit van een positief geheel getal n: (n(n-2)(n-4)... "
 "Kan ook worden ingevoerd als een positief geheel getal, gevolgd door twee "
-"uitroeptekens.&#10;&#10;bv. factorial2(5) = 5!! = 5 * 3 * 1 = 15"
+"uitroeptekens."
 
 #: ../data/functions.xml.in.h:120
 msgid "Multifactorial"
@@ -1661,17 +1657,14 @@ msgid "r:multifactorial"
 msgstr "multifaculteit"
 
 #: ../data/functions.xml.in.h:122
-#, fuzzy
 msgid ""
 "Calculates the multifactorial of an integer. Multiplies the argument with "
 "every x lesser positive integer (n(n-x)(n-2x)...). Can also be entered as a "
-"number followed by three or more exclamation marks.&#10;&#10;ex. "
-"multifactorial(18, 4) = 18!!!! = 18 * 14 * 10 * 6 * 2 = 30 240"
+"number followed by three or more exclamation marks."
 msgstr ""
 "Berekent de multifaculteit van een positief geheel getal n: (n(n-x)"
 "(n-2x)...). Kan ook worden ingevoerd als een positief geheel getal gevolgd "
-"door drie of meer uitroeptekens.&#10;&#10;bv. multifactorial(18, 4) = 18!!!! "
-"= 18 * 14 * 10 * 6 * 2 = 30 240"
+"door drie of meer uitroeptekens."
 
 #: ../data/functions.xml.in.h:123
 msgid "Binomial Coefficient"
@@ -1698,15 +1691,13 @@ msgid "r:hyperfactorial"
 msgstr "hyperfaculteit"
 
 #: ../data/functions.xml.in.h:129
-#, fuzzy
 msgid ""
 "Calculates the hyperfactorial of an integer. Multiplies the argument raised "
 "by itself with every lesser positive integer raised by themselves (1^1 * "
-"2^2 ... n^n). &#10;&#10;ex. hyperfactorial(3) = (3^3) * (2^2) * (1^1) = 108"
+"2^2 ... n^n)."
 msgstr ""
 "Berekent de hyperfaculteit van een positief geheel getal n: "
-"(n^n*(n-1)^(n-1)...*2^2*1^1. &#10;&#10;bv. hyperfactorial(3) = (3^3) * (2^2) "
-"* (1^1) = 27*4*1 = 108"
+"(n^n*(n-1)^(n-1)...*2^2*1^1."
 
 #: ../data/functions.xml.in.h:130
 msgid "Superfactorial"
@@ -1717,15 +1708,13 @@ msgid "r:superfactorial"
 msgstr "superfaculteit"
 
 #: ../data/functions.xml.in.h:132
-#, fuzzy
 msgid ""
 "Calculates the superfactorial of an integer. Multiplies the factorial of the "
 "argument with the factorial of every lesser positive integer (1! * 2! ... "
-"n!). &#10;&#10;ex. superfactorial(5) = 5! * 4! * 3! * 2! * 1! = 34 560"
+"n!)."
 msgstr ""
 "Berekent de superfaculteit van een positief geheel getal n: (n!*(n-1)!...*2!"
-"*1! &#10;&#10;bv. superfactorial(5) = 5! * 4! * 3! * 2! * 1! = 120 * 24 * 6 "
-"* 2 * 1 =34 560"
+"*1!)"
 
 #: ../data/functions.xml.in.h:133
 msgid "Permutations (Variations)"
@@ -2637,14 +2626,14 @@ msgstr ""
 msgid ""
 "Calculates the Body Mass Index. The resulting BMI-value is sometimes "
 "interpreted as follows (although varies with age, sex, etc.):&#10;&#10;"
-"Underweight&#9;&#9;&lt; 18.5&#10;Normal weight&#9;&#9;18.5-25&#10;"
-"Overweight&#9;&#9;25-30&#10;Obesity&#9;&#9;&#9;&gt; 30&#10;&#10;Note that "
-"you must use units for weight (ex. 59kg) and length (ex. 174cm)."
+"Underweight &lt; 18.5&#10;Normal weight 18.5-25&#10;Overweight 25-30&#10;"
+"Obesity &gt; 30&#10;&#10;Note that you must use units for weight (ex. 59kg) "
+"and length (ex. 174cm)."
 msgstr ""
 "Berekent de zg. Body Mass Index (index voor de lichaamsmassa). De berekende "
 "BMI wordt als volgt beoordeeld (hoewel dit varieert met leeftijd, geslacht, "
-"enz): &#10;&#10;Te laag gewicht&#9;&#9;&lt; 18.5&#10;Normaal gewicht&#9;"
-"&#9;18.5-25&#10;Te hoog gewicht&#9;&#9;25-30&#10;Zwaarlijvigheid&#9;&#9;&#9;"
+"enz): &#10;&#10;Te laag gewicht &lt; 18.5&#10;Normaal gewicht "
+" ;18.5-25&#10;Te hoog gewicht& 25-30&#10;Zwaarlijvigheid "
 "&gt; 30&#10;&#10;Let er opdat u eenheden gebruikt voor gewicht (bv. 59kg) en "
 "lengte (bv. 174cm)."
 
@@ -3410,9 +3399,8 @@ msgid "Maximum x value"
 msgstr "Matrixvariabele"
 
 #: ../data/functions.xml.in.h:533
-#, fuzzy
-msgid "Number of samples"
-msgstr "Aantal monsters"
+msgid "Number of samples / Step size"
+msgstr "Aantal monsters / stapgrootte"
 
 #: ../data/functions.xml.in.h:534
 #, fuzzy
@@ -3424,7 +3412,7 @@ msgid ""
 "Plots one or more expressions or vectors. Use a vector for the first "
 "argument to plot multiple series. Only the first argument is used for vector "
 "series. It is also possible to plot a matrix where each row is a pair of x "
-"and y values. Example: plot([x^2; 2x; [0;1;4;8;16]]; 0; 4)."
+"and y values."
 msgstr ""
 
 #: ../data/functions.xml.in.h:536
@@ -4406,7 +4394,7 @@ msgstr "elasticiteit"
 msgid ""
 "Calculates the demand elasticity. Also works for supply elasticity, income "
 "elasticity, cross-price elasticity, etc. Just replace demand, with supply, "
-"or price with income...&#10;&#10;Ex. elasticity(100-x^2, 3) calculates the "
+"or price with income...&#10;&#10;eg. elasticity(100-x^2, 3) calculates the "
 "demand elasticity when the price is 3 for the function \"Q = 100 - x^2\" "
 "where x is the default price variable."
 msgstr ""
@@ -8022,6 +8010,16 @@ msgstr ""
 #: ../data/variables.xml.in.h:170
 msgid "r:z"
 msgstr ""
+
+#~ msgid "Returns a sorted vector.&#10;&#10;ex. sort([6, 1, 4])=[1, 4, 6]"
+#~ msgstr ""
+#~ "Retourneert een gesorteerde vector.&#10;&#10;bv. sort([6, 1, 4])=[1, 4, 6]"
+
+#~ msgid "Ununseptium"
+#~ msgstr "Ununseptium"
+
+#~ msgid "Ununoctium"
+#~ msgstr "Ununoctium"
 
 #~ msgid "Icelandic Krona"
 #~ msgstr "IJslandse kroon"

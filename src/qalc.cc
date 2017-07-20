@@ -2155,6 +2155,11 @@ int main(int argc, char *argv[]) {
 							CHECK_IF_SCREEN_FILLED_PUTS(""); 
 							CHECK_IF_SCREEN_FILLED_PUTS(f->description().c_str());
 						}
+						if(!f->example(true).empty()) {
+							CHECK_IF_SCREEN_FILLED_PUTS(""); 
+							str = _("Example:"); str += " "; str += f->example(false, ename->name);
+							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+						}
 						if(f->subtype() == SUBTYPE_DATA_SET && !((DataSet*) f)->copyright().empty()) {
 							CHECK_IF_SCREEN_FILLED_PUTS(""); 
 							CHECK_IF_SCREEN_FILLED_PUTS(((DataSet*) f)->copyright().c_str());

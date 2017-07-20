@@ -79,6 +79,7 @@ class MathFunction : public ExpressionItem {
 	virtual MathStructure createFunctionMathStructureFromVArgs(const MathStructure &vargs);
 	virtual MathStructure createFunctionMathStructureFromSVArgs(vector<string> &svargs);	
 	string scondition;
+	string sexample;
 	
   public:
   
@@ -95,6 +96,9 @@ class MathFunction : public ExpressionItem {
 	* @returns ::FunctionSubtype.
 	*/
 	virtual int subtype() const;
+	
+	string example(bool raw_format = false, string name_string = "") const;
+	void setExample(string new_example);
 
 	bool testArgumentCount(int itmp);
 	virtual MathStructure calculate(const string &eq, const EvaluationOptions &eo = default_evaluation_options);

@@ -113,6 +113,16 @@ int MathFunction::subtype() const {
 	return SUBTYPE_FUNCTION;
 }
 
+string MathFunction::example(bool raw_format, string name_string) const {
+	if(raw_format) return sexample;
+	string str = sexample;
+	gsub("$name", name_string.empty() ? name() : name_string, str);
+	return CALCULATOR->localizeExpression(str);
+}
+void MathFunction::setExample(string new_example) {
+	sexample = new_example;
+}
+
 /*int MathFunction::countArgOccurence(size_t arg_) {
 	if((int) arg_ > argc && max_argc < 0) {
 		arg_ = argc + 1;

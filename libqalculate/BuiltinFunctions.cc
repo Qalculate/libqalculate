@@ -2030,6 +2030,7 @@ TotalFunction::TotalFunction() : MathFunction("total", 1) {
 int TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.clear();
 	for(size_t index = 0; index < vargs[0].size(); index++) {
+		if(CALCULATOR->aborted()) return 0;
 		mstruct.calculateAdd(vargs[0][index], eo);
 	}
 	return 1;
@@ -2688,13 +2689,22 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	MathStructure mstruct_calc;
 	bool started = false;
 	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {
-		if(CALCULATOR->aborted()) return 0;
-		mstruct_calc.set(1);
+		if(CALCULATOR->aborted()) {
+			if(!started) {
+				return 0;
+			} else if(i_nr != vargs[2].number()) {
+				MathStructure mmin(i_nr);
+				mstruct.add(MathStructure(this, &vargs[0], &mmin, &vargs[2], &vargs[3], NULL), true);
+				return 1;
+			}
+		}
+		mstruct_calc.set(m1);
 		mstruct_calc.replace(vargs[3], i_nr);
 		if(started) {
 			mstruct.calculateAdd(mstruct_calc, eo);
 		} else {
 			mstruct = mstruct_calc;
+			mstruct.calculatesub(eo, eo);
 			started = true;
 		}
 		i_nr += 1;
@@ -2733,6 +2743,7 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 			mstruct.calculateMultiply(mstruct_calc, eo);
 		} else {
 			mstruct = mstruct_calc;
+			mstruct.calculatesub(eo, eo);
 			started = true;
 		}
 		i_nr += 1;

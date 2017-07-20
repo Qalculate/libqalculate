@@ -6769,6 +6769,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						itmp = 1;
 						XML_GET_INT_FROM_PROP(child, "index", itmp);
 						f->setArgumentDefinition(itmp, arg); 
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "example")) {
+						XML_DO_FROM_TEXT(child, f->setExample);
 					} else ITEM_READ_NAME(functionNameIsValid)
 					 else ITEM_READ_DTH
 					 else {
@@ -7124,6 +7126,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						XML_DO_FROM_TEXT(child, dc->setCopyright)
 					} else if(!builtin && !xmlStrcmp(child->name, (const xmlChar*) "datafile")) {
 						XML_DO_FROM_TEXT(child, dc->setDefaultDataFile)
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "example")) {
+						XML_DO_FROM_TEXT(child, dc->setExample);
 					} else ITEM_READ_NAME(functionNameIsValid)
 					 else ITEM_READ_DTH
 					 else {
@@ -7205,6 +7209,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 									f->setArgumentDefinition(itmp, new Argument(argname, false));
 								}
 							}
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "example")) {
+							XML_DO_FROM_TEXT(child, f->setExample);
 						} else ITEM_READ_NAME(functionNameIsValid)
 						 else ITEM_READ_DTH
 						 else {
@@ -8375,6 +8381,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
 					}
 				}
+				if(!functions[i]->example(true).empty()) newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "example", (xmlChar*) functions[i]->example(true).c_str());
 				if(functions[i]->isBuiltin()) {
 					cur = newnode;
 					for(size_t i2 = 1; i2 <= functions[i]->lastArgumentDefinitionIndex(); i2++) {

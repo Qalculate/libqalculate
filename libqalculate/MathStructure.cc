@@ -6950,6 +6950,8 @@ bool expandVariablesWithUnits(MathStructure &mstruct, const EvaluationOptions &e
 
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
+	if(m_type == STRUCT_NUMBER) return *this;
+
 	unformat(eo);
 
 	EvaluationOptions feo = eo;
@@ -6965,15 +6967,15 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	if(eo.calculate_functions && calculateFunctions(feo)) {
 		unformat(eo);
 	}
-	if(CALCULATOR->aborted()) return *this;
-
+	if(m_type == STRUCT_NUMBER || CALCULATOR->aborted()) return *this;
+	
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo3 = eo2;
 		eo3.approximation = APPROXIMATION_EXACT;
 		eo3.split_squares = false;
 		eo3.assume_denominators_nonzero = false;
 		calculatesub(eo3, feo);
-		if(CALCULATOR->aborted()) return *this;
+		if(m_type == STRUCT_NUMBER || CALCULATOR->aborted()) return *this;
 		if(eo.expand != 0 && !containsType(STRUCT_COMPARISON, true, true, true)) {
 			unformat(eo);
 			eo3.expand = -1;
@@ -6985,7 +6987,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	}
 
 	calculatesub(eo2, feo);
-	if(CALCULATOR->aborted()) return *this;
+	if(m_type == STRUCT_NUMBER || CALCULATOR->aborted()) return *this;
 
 	eo2.sync_units = false;
 

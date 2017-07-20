@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-18 19:06+0200\n"
+"POT-Creation-Date: 2017-07-20 18:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1191,7 +1191,7 @@ msgid "r:sort"
 msgstr ""
 
 #: ../data/functions.xml.in.h:18
-msgid "Returns a sorted vector.&#10;&#10;ex. sort([6, 1, 4])=[1, 4, 6]"
+msgid "Returns a sorted vector."
 msgstr ""
 
 #: ../data/functions.xml.in.h:19
@@ -1213,7 +1213,6 @@ msgstr ""
 #: ../data/functions.xml.in.h:23
 msgid ""
 "Returns a vector with values of elements replaced with their mutual ranks."
-"&#10;&#10;ex. rank([6, 1, 4]) = [3, 1, 2]"
 msgstr ""
 
 #: ../data/functions.xml.in.h:24
@@ -1585,8 +1584,7 @@ msgstr ""
 msgid ""
 "Calculates the factorial of an integer. Multiplies the argument with every "
 "lesser positive integer (n(n-1)(n-2)...2*1). Can also be entered as a number "
-"followed by one exclamation mark.&#10;&#10;ex. factorial(5) = 5! = 5 * 4 * 3 "
-"* 2 * 1 = 120"
+"followed by one exclamation mark."
 msgstr ""
 
 #: ../data/functions.xml.in.h:115
@@ -1609,8 +1607,7 @@ msgstr ""
 msgid ""
 "Calculates the double factorial of an integer. Multiplies the argument with "
 "every second lesser positive integer (n(n-2)(n-4)...). Can also be entered "
-"as a number followed by two exclamation marks.&#10;&#10;ex. factorial2(5) = "
-"5!! = 5 * 3 * 1 = 15"
+"as a number followed by two exclamation marks."
 msgstr ""
 
 #: ../data/functions.xml.in.h:120
@@ -1625,8 +1622,7 @@ msgstr ""
 msgid ""
 "Calculates the multifactorial of an integer. Multiplies the argument with "
 "every x lesser positive integer (n(n-x)(n-2x)...). Can also be entered as a "
-"number followed by three or more exclamation marks.&#10;&#10;ex. "
-"multifactorial(18, 4) = 18!!!! = 18 * 14 * 10 * 6 * 2 = 30 240"
+"number followed by three or more exclamation marks."
 msgstr ""
 
 #: ../data/functions.xml.in.h:123
@@ -1657,7 +1653,7 @@ msgstr ""
 msgid ""
 "Calculates the hyperfactorial of an integer. Multiplies the argument raised "
 "by itself with every lesser positive integer raised by themselves (1^1 * "
-"2^2 ... n^n). &#10;&#10;ex. hyperfactorial(3) = (3^3) * (2^2) * (1^1) = 108"
+"2^2 ... n^n)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:130
@@ -1672,7 +1668,7 @@ msgstr ""
 msgid ""
 "Calculates the superfactorial of an integer. Multiplies the factorial of the "
 "argument with the factorial of every lesser positive integer (1! * 2! ... "
-"n!). &#10;&#10;ex. superfactorial(5) = 5! * 4! * 3! * 2! * 1! = 34 560"
+"n!)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:133
@@ -2563,9 +2559,9 @@ msgstr ""
 msgid ""
 "Calculates the Body Mass Index. The resulting BMI-value is sometimes "
 "interpreted as follows (although varies with age, sex, etc.):&#10;&#10;"
-"Underweight&#9;&#9;&lt; 18.5&#10;Normal weight&#9;&#9;18.5-25&#10;"
-"Overweight&#9;&#9;25-30&#10;Obesity&#9;&#9;&#9;&gt; 30&#10;&#10;Note that "
-"you must use units for weight (ex. 59kg) and length (ex. 174cm)."
+"Underweight &lt; 18.5&#10;Normal weight 18.5-25&#10;Overweight 25-30&#10;"
+"Obesity &gt; 30&#10;&#10;Note that you must use units for weight (ex. 59kg) "
+"and length (ex. 174cm)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:353
@@ -3314,7 +3310,7 @@ msgid ""
 "Plots one or more expressions or vectors. Use a vector for the first "
 "argument to plot multiple series. Only the first argument is used for vector "
 "series. It is also possible to plot a matrix where each row is a pair of x "
-"and y values. Example: plot([x^2; 2x; [0;1;4;8;16]]; 0; 4)."
+"and y values."
 msgstr ""
 
 #: ../data/functions.xml.in.h:536
@@ -4274,7 +4270,7 @@ msgstr ""
 msgid ""
 "Calculates the demand elasticity. Also works for supply elasticity, income "
 "elasticity, cross-price elasticity, etc. Just replace demand, with supply, "
-"or price with income...&#10;&#10;Ex. elasticity(100-x^2, 3) calculates the "
+"or price with income...&#10;&#10;eg. elasticity(100-x^2, 3) calculates the "
 "demand elasticity when the price is 3 for the function \"Q = 100 - x^2\" "
 "where x is the default price variable."
 msgstr ""

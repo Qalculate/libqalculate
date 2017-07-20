@@ -37,7 +37,8 @@
     <builtin_function name="sort">
       <_title>Sort</_title>
       <_names>r:sort</_names>
-      <_description>Returns a sorted vector.&#10;&#10;ex. sort([6, 1, 4])=[1, 4, 6]</_description>
+      <_description>Returns a sorted vector.</_description>
+      <example>$name([6, 1, 4])=[1, 4, 6]</example>
       <argument index="1">
         <_title>Vector</_title>
       </argument>
@@ -48,7 +49,8 @@
     <builtin_function name="rank">
       <_title>Rank</_title>
       <_names>r:rank</_names>
-      <_description>Returns a vector with values of elements replaced with their mutual ranks.&#10;&#10;ex. rank([6, 1, 4]) = [3, 1, 2]</_description>
+      <_description>Returns a vector with values of elements replaced with their mutual ranks.</_description>
+      <example>$name([6, 1, 4]) = [3, 1, 2]</example>
       <argument index="1">
         <_title>Vector</_title>
       </argument>
@@ -312,7 +314,8 @@
     <_title>Combinatorics</_title>
     <builtin_function name="factorial">
       <_title>Factorial</_title>
-      <_description>Calculates the factorial of an integer. Multiplies the argument with every lesser positive integer (n(n-1)(n-2)...2*1). Can also be entered as a number followed by one exclamation mark.&#10;&#10;ex. factorial(5) = 5! = 5 * 4 * 3 * 2 * 1 = 120</_description>
+      <_description>Calculates the factorial of an integer. Multiplies the argument with every lesser positive integer (n(n-1)(n-2)...2*1). Can also be entered as a number followed by one exclamation mark.</_description>
+      <example>$name(5) = 5! = 5 * 4 * 3 * 2 * 1 = 120</example>
       <_names>r:factorial</_names>
       <argument index="1">
         <_title>Value</_title>
@@ -321,7 +324,8 @@
     <builtin_function name="factorial2">
       <_title>Double Factorial</_title>
       <_names>r:factorial2</_names>
-      <_description>Calculates the double factorial of an integer. Multiplies the argument with every second lesser positive integer (n(n-2)(n-4)...). Can also be entered as a number followed by two exclamation marks.&#10;&#10;ex. factorial2(5) = 5!! = 5 * 3 * 1 = 15</_description>
+      <_description>Calculates the double factorial of an integer. Multiplies the argument with every second lesser positive integer (n(n-2)(n-4)...). Can also be entered as a number followed by two exclamation marks.</_description>
+      <example>$name(5) = 5!! = 5 * 3 * 1 = 15</example>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -329,7 +333,8 @@
     <builtin_function name="multifactorial">
       <_title>Multifactorial</_title>
       <_names>r:multifactorial</_names>
-      <_description>Calculates the multifactorial of an integer. Multiplies the argument with every x lesser positive integer (n(n-x)(n-2x)...). Can also be entered as a number followed by three or more exclamation marks.&#10;&#10;ex. multifactorial(18, 4) = 18!!!! = 18 * 14 * 10 * 6 * 2 = 30 240</_description>
+      <_description>Calculates the multifactorial of an integer. Multiplies the argument with every x lesser positive integer (n(n-x)(n-2x)...). Can also be entered as a number followed by three or more exclamation marks.</_description>
+      <example>$name(18, 4) = 18!!!! = 18 * 14 * 10 * 6 * 2 = 30 240</example>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -351,7 +356,8 @@
       <_title>Hyperfactorial</_title>
       <_names>r:hyperfactorial</_names>
       <expression>product(x^x,1,\x,x)</expression>
-      <_description>Calculates the hyperfactorial of an integer. Multiplies the argument raised by itself with every lesser positive integer raised by themselves (1^1 * 2^2 ... n^n). &#10;&#10;ex. hyperfactorial(3) = (3^3) * (2^2) * (1^1) = 108</_description>
+      <_description>Calculates the hyperfactorial of an integer. Multiplies the argument raised by itself with every lesser positive integer raised by themselves (1^1 * 2^2 ... n^n).</_description>
+      <example>$name(3) = (3^3) * (2^2) * (1^1) = 108</example>
       <argument type="integer" index="1">
         <_title>Value</_title>
 	<min>1</min>
@@ -361,7 +367,8 @@
       <_title>Superfactorial</_title>
       <_names>r:superfactorial</_names>
       <expression>product(factorial(x),0,\x,x)</expression>
-      <_description>Calculates the superfactorial of an integer. Multiplies the factorial of the argument with the factorial of every lesser positive integer (1! * 2! ... n!). &#10;&#10;ex. superfactorial(5) = 5! * 4! * 3! * 2! * 1! = 34 560</_description>
+      <_description>Calculates the superfactorial of an integer. Multiplies the factorial of the argument with the factorial of every lesser positive integer (1! * 2! ... n!).</_description>
+      <example>$name(5) = 5! * 4! * 3! * 2! * 1! = 34 560</example>
       <argument type="integer" index="1">
         <_title>Value</_title>
 	<min>0</min>
@@ -1091,7 +1098,8 @@
     <function>
       <_title>Body Mass Index (BMI)</_title>
       <_names>-r:bmi</_names>
-      <_description>Calculates the Body Mass Index. The resulting BMI-value is sometimes interpreted as follows (although varies with age, sex, etc.):&#10;&#10;Underweight&#9;&#9;&lt; 18.5&#10;Normal weight&#9;&#9;18.5-25&#10;Overweight&#9;&#9;25-30&#10;Obesity&#9;&#9;&#9;&gt; 30&#10;&#10;Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_description>
+      <_description>Calculates the Body Mass Index. The resulting BMI-value is sometimes interpreted as follows (although varies with age, sex, etc.):&#10;&#10;Underweight &lt; 18.5&#10;Normal weight 18.5-25&#10;Overweight 25-30&#10;Obesity &gt; 30&#10;&#10;Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_description>
+      <example>$name(127 lb, 5ft + 4in) = 21.80</example>
       <expression>(\x/(1000g))/(\y/m)^2</expression>
       <argument type="free" index="1">
         <_title>Weight</_title>
@@ -1749,7 +1757,8 @@
       <argument index="6">
         <_title>Use step size</_title>
       </argument>
-      <_description>Plots one or more expressions or vectors. Use a vector for the first argument to plot multiple series. Only the first argument is used for vector series. It is also possible to plot a matrix where each row is a pair of x and y values. Example: plot([x^2; 2x; [0;1;4;8;16]]; 0; 4).</_description>
+      <_description>Plots one or more expressions or vectors. Use a vector for the first argument to plot multiple series. Only the first argument is used for vector series. It is also possible to plot a matrix where each row is a pair of x and y values.</_description>
+      <example>$name([x^2, 2x, [0,1,4,8,16]], 0, 4).</example>
     </builtin_function>
     <builtin_function name="code">
       <_title>ASCII Value</_title>
@@ -2097,6 +2106,7 @@
       <_title>Sum</_title>
       <_names>au:&#x3A3;,r:sum</_names>
       <_description>Corresponds to the sum symbol. Adds terms for each x ranging from the lower to the upper limit.</_description>
+      <example>$name(x^2, 1, 5) = 1^2 + 2^2 + 3^2 + 4^2 + 5^2 = 55</example>
       <argument index="1">
         <_title>Term expression</_title>
       </argument>
@@ -2114,6 +2124,7 @@
       <_title>Product</_title>
       <_names>au:&#x3A0;,r:product</_names>
       <_description>Corresponds to the product symbol. Multiplies factors for each x ranging from the lower to the upper limit.</_description>
+      <example>$name(x^2, 1, 5) = 1^2 * 2^2 * 3^2 * 4^2 * 5^2 = 1440</example>
       <argument index="1">
         <_title>Factor expression</_title>
       </argument>
@@ -2585,7 +2596,7 @@
       <function>
         <_title>Elasticity</_title>
         <_names>r:elasticity</_names>
-        <_description>Calculates the demand elasticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand, with supply, or price with income...&#10;&#10;Ex. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</_description>
+        <_description>Calculates the demand elasticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand, with supply, or price with income...&#10;&#10;eg. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</_description>
         <expression>replace(diff(\x,\Z{x}),\Z,\y,1)*\y/replace(\x,\Z,\y)</expression>
         <argument type="free" index="1">
           <_title>Demand function</_title>
