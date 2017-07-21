@@ -2683,7 +2683,9 @@ SumFunction::SumFunction() : MathFunction("sum", 3, 4) {
 int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	MathStructure m1(vargs[0]);
-	m1.eval(eo);
+	EvaluationOptions eo2 = eo;
+	eo2.calculate_functions = false;
+	m1.eval(eo2);
 	mstruct.clear();
 	Number i_nr(vargs[1].number());
 	MathStructure mstruct_calc;
@@ -2700,6 +2702,7 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		mstruct_calc.set(m1);
 		mstruct_calc.replace(vargs[3], i_nr);
+		mstruct_calc.eval(eo);
 		if(started) {
 			mstruct.calculateAdd(mstruct_calc, eo);
 		} else {
@@ -2722,7 +2725,9 @@ ProductFunction::ProductFunction() : MathFunction("product", 3, 4) {
 int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	MathStructure m1(vargs[0]);
-	m1.eval(eo);
+	EvaluationOptions eo2 = eo;
+	eo2.calculate_functions = false;
+	m1.eval(eo2);
 	mstruct.clear();
 	Number i_nr(vargs[1].number());
 	MathStructure mstruct_calc;
@@ -2739,6 +2744,7 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		}
 		mstruct_calc.set(m1);
 		mstruct_calc.replace(vargs[3], i_nr);
+		mstruct_calc.eval(eo);
 		if(started) {
 			mstruct.calculateMultiply(mstruct_calc, eo);
 		} else {
@@ -2908,15 +2914,23 @@ int CustomSumFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	if(start < 1) start = 1;
 	int end = vargs[1].number().intValue();
 	int n = vargs[6].countChildren();
-	if(start > n) start = n;
-	if(end < 1 || end > n) end = n;
-	else if(end < start) end = start;	
+	if(start > n) {
+		CALCULATOR->error(true, _("Too few elements (%s) in vector (%s required)"), i2s(n).c_str(), i2s(start).c_str(), NULL);
+		start = n;
+	}
+	if(end < 1 || end > n) {
+		if(end > n) CALCULATOR->error(true, _("Too few elements (%s) in vector (%s required)"), i2s(n).c_str(), i2s(end).c_str(), NULL);
+		end = n;
+	} else if(end < start) {
+		end = start;
+	}
 	
 	mstruct = vargs[2];
 	MathStructure mexpr(vargs[3]);
 	MathStructure mprocess;
 	EvaluationOptions eo2 = eo;
 	eo2.calculate_functions = false;
+	mstruct.eval(eo2);
 	for(size_t index = (size_t) start - 1; index < (size_t) end; index++) {
 		if(CALCULATOR->aborted()) return 0;
 		mprocess = mexpr;

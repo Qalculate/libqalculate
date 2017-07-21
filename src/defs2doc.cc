@@ -357,6 +357,10 @@ void print_function(MathFunction *f) {
 		if(!f->description().empty()) {
 			fprintf(ffile, "<para>%s</para>\n", fix(f->description()).c_str());
 		}
+		if(!f->example(true).empty()) {
+			str = _("Example:"); str += " "; str += fix(f->example(false, ename->name));
+			fprintf(ffile, "<para>%s</para>\n", str.c_str());
+		}
 		if(f->subtype() == SUBTYPE_DATA_SET && !((DataSet*) f)->copyright().empty()) {
 			fprintf(ffile, "<para>%s</para>\n", fix(((DataSet*) f)->copyright()).c_str());
 		}

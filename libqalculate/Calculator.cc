@@ -4105,7 +4105,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 //				} else if(compare_name_no_case(XOR_str, str, XOR_str_len, str_index + 1)) {
 				}
 			}
-		} else if(str_index > 0 && po.base >= 2 && po.base <= 10 && is_in(EXPS, str[str_index]) && str_index + 1 < str.length() && (is_in(NUMBERS, str[str_index + 1]) || (is_in(PLUS MINUS, str[str_index + 1]) && str_index + 2 < str.length() && is_in(NUMBERS, str[str_index + 2]))) && is_in(NUMBER_ELEMENTS, str[str_index - 1])) {
+		} else if(str_index > 0 && po.base >= 2 && po.base <= 10 && is_in(EXPS, str[str_index]) && str_index + 1 < str.length() && (is_in(NUMBER_ELEMENTS, str[str_index + 1]) || (is_in(PLUS MINUS, str[str_index + 1]) && str_index + 2 < str.length() && is_in(NUMBER_ELEMENTS, str[str_index + 2]))) && is_in(NUMBER_ELEMENTS, str[str_index - 1])) {
 			//don't do anything when e is used instead of E for EXP
 		} else if(po.base == BASE_DECIMAL && str[str_index] == '0' && (str_index == 0 || is_in(ILLEGAL_IN_NAMES, str[str_index - 1]))) {
 			if(str_index + 2 < str.length() && (str[str_index + 1] == 'x' || str[str_index + 1] == 'X') && is_in(NUMBER_ELEMENTS "abcdefABCDEF", str[str_index + 2])) {
@@ -4706,17 +4706,18 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				goto set_function;
 			}
 			if(!moved_forward) {
+				bool b = po.unknowns_enabled && !(str_index > 0 && is_in(EXPS, str[str_index]) && str_index + 1 < str.length() && (is_in(NUMBER_ELEMENTS, str[str_index + 1]) || (is_in(PLUS MINUS, str[str_index + 1]) && str_index + 2 < str.length() && is_in(NUMBER_ELEMENTS, str[str_index + 2]))) && is_in(NUMBER_ELEMENTS, str[str_index - 1]));
 				if(po.limit_implicit_multiplication) {
-					if(po.unknowns_enabled && (unit_chars_left > 1 || (str[str_index] != EXP_CH && str[str_index] != EXP2_CH))) {
+					if(b) {
 						stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 						stmp += i2s(addId(new MathStructure(str.substr(str_index, unit_chars_left))));
 						stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 						str.replace(str_index, unit_chars_left, stmp);
-						str_index += stmp.length() - 1;	
+						str_index += stmp.length() - 1;
 					} else {
 						str_index += unit_chars_left - 1;
 					}
-				} else if(po.unknowns_enabled && str[str_index] != EXP_CH && str[str_index] != EXP2_CH) {
+				} else if(b) {
 					size_t i = 1;
 					if(str[str_index + 1] < 0) {
 						i++;
@@ -4728,8 +4729,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					stmp += i2s(addId(new MathStructure(str.substr(str_index, i))));
 					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 					str.replace(str_index, i, stmp);
-					str_index += stmp.length() - 1;	
-				}	
+					str_index += stmp.length() - 1;
+				}
 			}
 		}
 	}
