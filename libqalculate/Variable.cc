@@ -31,6 +31,7 @@ bool Assumptions::isReal() {return i_type >= ASSUMPTION_TYPE_REAL;}
 bool Assumptions::isComplex() {return i_type == ASSUMPTION_TYPE_COMPLEX;}
 bool Assumptions::isNonZero() {return i_sign == ASSUMPTION_SIGN_NONZERO || isPositive() || isNegative();}
 bool Assumptions::isNonMatrix() {return i_type >= ASSUMPTION_TYPE_NONMATRIX;}
+bool Assumptions::isScalar() {return i_type >= ASSUMPTION_TYPE_NONMATRIX;}
 
 AssumptionType Assumptions::type() {return i_type;}
 AssumptionSign Assumptions::sign() {return i_sign;}
@@ -184,6 +185,10 @@ bool UnknownVariable::representsNonMatrix() {
 	if(o_assumption) return o_assumption->isNonMatrix();
 	return CALCULATOR->defaultAssumptions()->isNonMatrix();
 }
+bool UnknownVariable::representsScalar() { 
+	if(o_assumption) return o_assumption->isScalar();
+	return CALCULATOR->defaultAssumptions()->isScalar();
+}
 
 KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
 	mstruct = new MathStructure(o);
@@ -313,6 +318,7 @@ bool KnownVariable::representsOdd(bool allow_units) {return get().representsOdd(
 bool KnownVariable::representsUndefined(bool include_childs, bool include_infinite, bool be_strict) {return get().representsUndefined(include_childs, include_infinite, be_strict);}
 bool KnownVariable::representsBoolean() {return get().representsBoolean();}
 bool KnownVariable::representsNonMatrix() {return get().representsNonMatrix();}
+bool KnownVariable::representsScalar() {return get().representsScalar();}
 
 DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : KnownVariable(cat_, name_, MathStructure(), title_, is_local, is_builtin, is_active) {
 	mstruct = NULL;

@@ -703,6 +703,7 @@ bool MathFunction::representsOdd(const MathStructure&, bool) const {return false
 bool MathFunction::representsUndefined(const MathStructure&) const {return false;}
 bool MathFunction::representsBoolean(const MathStructure&) const {return false;}
 bool MathFunction::representsNonMatrix(const MathStructure &vargs) const {return representsNumber(vargs, true);}
+bool MathFunction::representsScalar(const MathStructure &vargs) const {return representsNonMatrix(vargs);}
 
 UserFunction::UserFunction(string cat_, string name_, string formula_, bool is_local, int argc_, string title_, string descr_, int max_argc_, bool is_active) : MathFunction(name_, argc_, max_argc_, cat_, title_, descr_, is_active) {
 	b_local = is_local;

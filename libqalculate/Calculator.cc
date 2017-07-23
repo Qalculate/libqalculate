@@ -1594,7 +1594,7 @@ bool Calculator::abort() {
 	if(!calculate_thread->running) {
 		b_busy = false;
 	} else {
-		int msecs = 1000;
+		int msecs = 5000;
 		while(b_busy && msecs > 0) {
 			sleep_ms(10);
 			msecs -= 10;
@@ -1608,6 +1608,7 @@ bool Calculator::abort() {
 			disable_errors_ref = 0;
 			if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
 			tmp_rpn_mstruct = NULL;
+			error(true, _("The calculation has been forcibly terminated. Please restart the application and report this as a bug."), NULL);
 			b_busy = false;
 			calculate_thread->start();
 			return false;
@@ -6582,7 +6583,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {0, 9, 8};
+	int version_numbers[] = {1, 0, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

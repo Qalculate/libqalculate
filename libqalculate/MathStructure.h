@@ -494,6 +494,7 @@ class MathStructure {
 		bool representsOdd(bool allow_units = false) const;
 		bool representsUndefined(bool include_childs = false, bool include_infinite = false, bool be_strict = false) const;
 		bool representsNonMatrix() const;
+		bool representsScalar() const;
 		//@}
 	
 		/** @name Functions for precision */

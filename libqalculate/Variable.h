@@ -98,6 +98,7 @@ class Assumptions {
 	bool isComplex();
 	bool isNonZero();
 	bool isNonMatrix();
+	bool isScalar();
 	
 	AssumptionType type();
 	AssumptionSign sign();
@@ -157,6 +158,7 @@ class Variable : public ExpressionItem {
 	virtual bool representsUndefined(bool = false, bool = false, bool = false) {return false;}
 	virtual bool representsBoolean() {return false;}
 	virtual bool representsNonMatrix() {return false;}
+	virtual bool representsScalar() {return false;}
 	
 };
 
@@ -217,6 +219,7 @@ class UnknownVariable : public Variable {
 	virtual bool representsComplex(bool = false);
 	virtual bool representsNonZero(bool = false);
 	virtual bool representsNonMatrix();
+	virtual bool representsScalar();
 	
 };
 
@@ -316,6 +319,7 @@ class KnownVariable : public Variable {
 	virtual bool representsUndefined(bool = false, bool = false, bool = false);
 	virtual bool representsBoolean();
 	virtual bool representsNonMatrix();
+	virtual bool representsScalar();
 
 };
 
@@ -364,6 +368,7 @@ class DynamicVariable : public KnownVariable {
 	virtual bool representsUndefined(bool = false, bool = false, bool = false) {return false;}
 	virtual bool representsBoolean() {return false;}
 	virtual bool representsNonMatrix() {return true;}
+	virtual bool representsScalar() {return true;}
 
 };
 

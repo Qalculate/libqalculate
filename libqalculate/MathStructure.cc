@@ -1175,6 +1175,32 @@ bool MathStructure::representsNonMatrix() const {
 	}
 	return true;
 }
+bool MathStructure::representsScalar() const {
+	switch(m_type) {
+		case STRUCT_VECTOR: {return false;}
+		case STRUCT_POWER: {return CHILD(0).representsScalar();}
+		case STRUCT_VARIABLE: {return o_variable->representsScalar();}
+		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonMatrix();}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsScalar()) || o_function->representsScalar(*this);}
+		case STRUCT_INVERSE: {}
+		case STRUCT_NEGATE: {}
+		case STRUCT_DIVISION: {}
+		case STRUCT_MULTIPLICATION: {}
+		case STRUCT_ADDITION: {
+			for(size_t i = 0; i < SIZE; i++) {
+				if(!CHILD(i).representsScalar()) {
+					return false;
+				}
+			}
+			return true;
+		}
+		case STRUCT_ABORTED: {
+			return false;
+		}
+		default: {}
+	}
+	return true;
+}
 
 void MathStructure::setApproximate(bool is_approx, bool recursive) {
 	b_approx = is_approx;
@@ -2624,7 +2650,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							return -1;
 						}
 						MathStructure msave(*this);
-						size_t rows = size();
+						size_t rows = SIZE;
 						clearMatrix(true);
 						resizeMatrix(rows, mstruct[0].size(), m_zero);
 						MathStructure mtmp;
@@ -2636,6 +2662,24 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 									CHILD(index_r)[index_c].calculateAdd(mtmp, eo, &CHILD(index_r), index_c);
 								}			
 							}		
+						}
+						MERGE_APPROX_AND_PREC(mstruct)
+						return 1;
+					} else if(isMatrix() && mstruct.isVector()) {
+						if(SIZE != mstruct.size() || CHILD(0).size() != 1) {
+							CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(1).c_str(), i2s(CHILD(0).size()).c_str(), NULL);
+							return -1;
+						}
+						MathStructure msave(*this);
+						size_t rows = SIZE;
+						clearMatrix(true);
+						resizeMatrix(rows, mstruct.size(), m_zero);
+						MathStructure mtmp;
+						for(size_t index_r = 0; index_r < SIZE; index_r++) {
+							for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
+								CHILD(index_r)[index_c].set(msave[index_r][0]);
+								CHILD(index_r)[index_c].calculateMultiply(mstruct[index_c], eo);
+							}
 						}
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
@@ -3057,6 +3101,22 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 	return -1;
 }
 
+bool test_if_numerator_not_too_large(const cln::cl_N &vb, const cln::cl_N &ve) {
+	cln::cl_R v_log10 = cln::realpart(vb);
+	cln::cl_R o_log10 = cln::realpart(ve);
+	if(!cln::zerop(v_log10) && !cln::zerop(ve) && v_log10 != 1 && v_log10 != -1 && o_log10 != 1 && o_log10 != -1) {
+		if(v_log10 != 1) {
+			v_log10 = cln::abs(cln::log(v_log10, 10));
+		}
+		if(v_log10 != 0) {
+			o_log10 = cln::log(o_log10 * v_log10, 10);
+			if(o_log10 > 3) return false;
+		}
+	}
+	return true;
+}
+
+
 int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this, size_t index_mstruct, bool) {
 	if(mstruct.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
 		// number^number
@@ -3074,7 +3134,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		}
 		if(mstruct.number().isRational()) {
 			Number exp_num(mstruct.number().numerator());
-			if(!exp_num.isOne() && !exp_num.isMinusOne() && o_number.isPositive() && exp_num.isLessThanOrEqualTo(Number(10000, 1)) && exp_num.isGreaterThanOrEqualTo(Number(-10000, 1))) {
+			if(!exp_num.isOne() && !exp_num.isMinusOne() && o_number.isPositive() && test_if_numerator_not_too_large(o_number.internalNumber(), exp_num.internalNumber())) {
 				// Try raise by exponent numerator if not very large
 				nr = o_number;
 				if(nr.raise(exp_num) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
@@ -5724,7 +5784,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent);
 int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent) {
 	if(parent.isMultiplication()) {
-		if(!mstruct1.representsNonMatrix() && !mstruct2.representsNonMatrix()) {
+		if((!mstruct1.representsNonMatrix() && !mstruct2.representsScalar()) || (!mstruct2.representsNonMatrix() && !mstruct1.representsScalar())) {
 			return 0;
 		}
 	}
@@ -6953,7 +7013,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	if(m_type == STRUCT_NUMBER) return *this;
 
 	unformat(eo);
-
+	
 	EvaluationOptions feo = eo;
 	feo.structuring = STRUCTURING_SIMPLIFY;
 	EvaluationOptions eo2 = eo;
@@ -6963,11 +7023,10 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	//calculateUncertaintyPropagation(eo);
 	
-	if(CALCULATOR->aborted()) return *this;
 	if(eo.calculate_functions && calculateFunctions(feo)) {
 		unformat(eo);
 	}
-	if(m_type == STRUCT_NUMBER || CALCULATOR->aborted()) return *this;
+	if(m_type == STRUCT_NUMBER) return *this;
 	
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo3 = eo2;
@@ -6975,15 +7034,13 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		eo3.split_squares = false;
 		eo3.assume_denominators_nonzero = false;
 		calculatesub(eo3, feo);
-		if(m_type == STRUCT_NUMBER || CALCULATOR->aborted()) return *this;
+		if(m_type == STRUCT_NUMBER) return *this;
 		if(eo.expand != 0 && !containsType(STRUCT_COMPARISON, true, true, true)) {
 			unformat(eo);
 			eo3.expand = -1;
-			if(CALCULATOR->aborted()) return *this;
 			calculatesub(eo3, feo);
 		}
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
-		if(CALCULATOR->aborted()) return *this;
 	}
 
 	calculatesub(eo2, feo);
@@ -8974,7 +9031,7 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 	}
 
 	if(mpoly.isZero()) {
-		CALCULATOR->error(true, "mpoly is zero: %s. %s", tmp.print().c_str(), _("This is a bug. Please report it."), NULL);
+		if(!CALCULATOR->aborted()) CALCULATOR->error(true, "mpoly is zero: %s. %s", tmp.print().c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
 	MathStructure mquo;
@@ -8985,7 +9042,7 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 
 	MathStructure::polynomialQuotient(tmp, mpoly_expand, xvar, mquo, eo2);
 	if(mquo.isZero()) {
-		CALCULATOR->error(true, "quo is zero: %s. %s", tmp.print().c_str(), _("This is a bug. Please report it."), NULL);
+		if(!CALCULATOR->aborted()) CALCULATOR->error(true, "quo is zero: %s. %s", tmp.print().c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
 	if(newsymbols.size() > 0) {

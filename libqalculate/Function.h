@@ -200,6 +200,7 @@ class MathFunction : public ExpressionItem {
 	virtual bool representsUndefined(const MathStructure&) const;
 	virtual bool representsBoolean(const MathStructure&) const;
 	virtual bool representsNonMatrix(const MathStructure&) const;
+	virtual bool representsScalar(const MathStructure&) const;
 	
 };
 

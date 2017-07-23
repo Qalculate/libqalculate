@@ -1143,11 +1143,11 @@ msgstr "Returnerar en vektor med listade element."
 #. Vector/matrix elements
 #: ../data/functions.xml.in.h:6
 msgid "Elements"
-msgstr "Element"
+msgstr "Antal element"
 
 #: ../data/functions.xml.in.h:7
 msgid "Generate Vector"
-msgstr "Skapa vektor"
+msgstr "Generera vektor"
 
 #: ../data/functions.xml.in.h:8
 msgid "r:genvector"

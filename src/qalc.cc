@@ -293,6 +293,7 @@ char *qalc_completion(const char *text, int index) {
 int enable_unicode = -1;
 
 void handle_exit() {
+	CALCULATOR->abort();
 	if(enable_unicode >= 0) {
 		printops.use_unicode_signs = enable_unicode;
 	} 
@@ -3082,7 +3083,7 @@ void expression_format_updated(bool reparse) {
 
 void on_abort_command() {
 	CALCULATOR->abort();
-	int msecs = 1000;
+	int msecs = 5000;
 	while(b_busy && msecs > 0) {
 		sleep_ms(10);
 		msecs -= 10;
@@ -3732,7 +3733,7 @@ void load_preferences() {
 #endif
 
 	
-	int version_numbers[] = {0, 9, 13};
+	int version_numbers[] = {1, 0, 0};
 	
 	if(file) {
 		char line[10000];
