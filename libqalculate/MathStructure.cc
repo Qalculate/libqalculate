@@ -3103,6 +3103,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 
 bool test_if_numerator_not_too_large(const cln::cl_N &vb, const cln::cl_N &ve) {
 	cln::cl_R v_log10 = cln::realpart(vb);
+	if(!cln::zerop(cln::imagpart(vb)) && cln::abs(cln::imagpart(vb)) > cln::abs(v_log10)) v_log10 = cln::imagpart(vb);
 	cln::cl_R o_log10 = cln::realpart(ve);
 	if(!cln::zerop(v_log10) && !cln::zerop(ve) && v_log10 != 1 && v_log10 != -1 && o_log10 != 1 && o_log10 != -1) {
 		if(v_log10 != 1) {

@@ -1663,10 +1663,27 @@ bool Number::raise(const Number &o, bool try_exact) {
 
 	cln::cl_R v_log10 = cln::realpart(value);
 	cln::cl_R o_log10 = cln::realpart(o.internalNumber());
-	if(!cln::zerop(v_log10) && !cln::zerop(o_log10) && v_log10 != 1 && v_log10 != -1 && o_log10 != 1 && o_log10 != -1) {
-		if(v_log10 != 1) {
-			v_log10 = cln::abs(cln::log(v_log10, 10));
+	if(!zerop(cln::imagpart(value))) {
+		if(cln::abs(cln::imagpart(o.internalNumber())) > cln::abs(o_log10)) {
+			if(!cln::zerop(v_log10) && !cln::zerop(o_log10) && v_log10 != 1 && v_log10 != -1 && o_log10 != 1 && o_log10 != -1) {
+				if(v_log10 != 1) v_log10 = cln::abs(cln::log(v_log10, 10));
+				if(v_log10 != 0) {
+					o_log10 = cln::log(o_log10 * v_log10, 10);
+					if(o_log10 > 4 && CALCULATOR->aborted()) return false;
+					if(o_log10 > 6) {
+						CALCULATOR->error(false, _("Extreme exponentiation was not calculated."), NULL);
+						return false;
+					}
+				}
+			}
+			o_log10 = cln::imagpart(o.internalNumber());
+			v_log10 = cln::imagpart(value);
+		} else if(cln::abs(cln::imagpart(value)) > cln::abs(v_log10)) {
+			v_log10 = cln::imagpart(value);
 		}
+	}
+	if(!cln::zerop(v_log10) && !cln::zerop(o_log10) && v_log10 != 1 && v_log10 != -1 && o_log10 != 1 && o_log10 != -1) {
+		if(v_log10 != 1) v_log10 = cln::abs(cln::log(v_log10, 10));
 		if(v_log10 != 0) {
 			o_log10 = cln::log(o_log10 * v_log10, 10);
 			if(o_log10 > 4 && CALCULATOR->aborted()) return false;
