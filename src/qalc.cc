@@ -3333,7 +3333,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
 	if(do_stack) {
 		stack_size = CALCULATOR->RPNStackSize();
-		CALCULATOR->setRPNRegister(stack_index + 1, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, NULL, !printops.negative_exponents);
+		CALCULATOR->setRPNRegister(stack_index + 1, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, NULL);
 	} else if(rpn_mode) {
 		stack_size = CALCULATOR->RPNStackSize();
 		if(do_mathoperation) {
@@ -3431,12 +3431,12 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					do_mathoperation = true;
 					CALCULATOR->calculateRPN(f, 0, evalops, parsed_mstruct);
 				} else {
-					CALCULATOR->RPNStackEnter(str2, 0, evalops, parsed_mstruct, NULL, !printops.negative_exponents);
+					CALCULATOR->RPNStackEnter(str2, 0, evalops, parsed_mstruct, NULL);
 				}
 			}
 		}
 	} else {
-		CALCULATOR->calculate(mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, NULL, !printops.negative_exponents);
+		CALCULATOR->calculate(mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, NULL);
 	}
 	
 	bool has_printed = false;
