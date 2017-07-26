@@ -1,6 +1,7 @@
 2017-07-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix round halfway to even with non-integers
+	* Fix show ending zeroes and min decimals
 
 2017-07-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

@@ -3463,7 +3463,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			if(!exact && po.use_max_decimals && po.max_decimals >= 0 && precision2 > po.max_decimals - expo) precision2 = po.max_decimals - expo;
 			bool try_infinite_series = po.indicate_infinite_series && !isApproximateType();
-			while(!exact && precision2 > 0) {
+			while(!exact && (precision2 > 0 || (expo == 0 && !isApproximate() ))) {
 				if(try_infinite_series) {
 					remainders.push_back(remainder);
 				}
@@ -3562,8 +3562,12 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				while(str[str.length() - 1 - l2] == '0') {
 					l2++;
 				}
-				if(l2 > 0) {
-					str = str.substr(0, str.length() - l2);
+				if(l2 > 0 && !infinite_series && (exact || !po.show_ending_zeroes)) {
+					if(min_decimals > 0) {
+						int decimals = str.length() - l10 - 1;
+						if(decimals - min_decimals < l2) l2 = decimals - min_decimals;
+					}
+					if(l2 > 0) str = str.substr(0, str.length() - l2);
 				}
 				if(str[str.length() - 1] == po.decimalpoint()[0]) {
 					str.erase(str.end() - 1);
@@ -3591,19 +3595,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(str[str.length() - 1] == po.decimalpoint()[0]) {
 				str.erase(str.end() - 1);
 				has_decimal = false;
-			}
-			if(po.show_ending_zeroes && !infinite_series && (isApproximate() || !exact || (ips.parent_approximate && po.restrict_to_parent_precision)) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
-				precision -= str.length();
-				if(decimals > 0) {
-					precision += 1;
-				} else if(precision > 0) {
-					str += po.decimalpoint();
-					has_decimal = true;
-				}
-				for(; precision > 0 && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals); precision--) {
-					decimals++;
-					str += "0";
-				}
 			}
 			
 			str = format_number_string(str, base, po.base_display, !ips.minus && neg, !has_decimal);
