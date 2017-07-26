@@ -34,7 +34,7 @@
 * EvaluationOptions eo;
 * MathStructure result;
 * CALCULATOR->calculate(&mstruct, "1 + 1", 2000, eo);\endcode
-* In the above example, the calculation is terminated after two second (2000 ms), if it is not finished before then.
+* In the above example, the calculation is terminated after two seconds (2000 ms), if it is not finished before then.
 *
 * More complex usage mainly involves manipulating objects of the MathStructure class directly.
 *

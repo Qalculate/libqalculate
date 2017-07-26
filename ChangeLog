@@ -1,3 +1,7 @@
+2017-07-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix round halfway to even with non-integers
+
 2017-07-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix multiplication of matrix by (row) vector

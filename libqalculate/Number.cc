@@ -3507,7 +3507,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					div = cln::truncate2(remainder, d);
 					remainder2 = div.remainder;
 					remainder = div.quotient;
-					if(po.round_halfway_to_even && cln::evenp(num)) {
+					if(po.round_halfway_to_even && cln::evenp(num) && cln::zerop(remainder2)) {
 						if(remainder > cl_I(base) / cl_I(2)) {
 							num = cln::plus1(num);
 						}
