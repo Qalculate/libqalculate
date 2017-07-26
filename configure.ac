@@ -95,6 +95,8 @@ dnl  --------------------------------
 
 AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
 
+AC_CHECK_LIB(mpfr, mpfr_add, , [AC_MSG_ERROR([MPFR not found, see http://www.mpfr.org])])
+
 AC_LANG([C++])
 
 AC_CHECK_HEADERS([unordered_map])

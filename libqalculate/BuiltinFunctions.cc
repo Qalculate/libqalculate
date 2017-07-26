@@ -318,7 +318,7 @@ ZetaFunction::ZetaFunction() : MathFunction("zeta", 1, 1, SIGN_ZETA) {
 	IntegerArgument *arg = new IntegerArgument();
 	Number nr(1, 1);
 	arg->setMin(&nr);
-	nr.setInternal(long(INT_MAX));
+	nr.set(long(INT_MAX), 1);
 	arg->setMax(&nr);
 	setArgumentDefinition(1, arg);
 }
@@ -2214,15 +2214,27 @@ RandFunction::RandFunction() : MathFunction("rand", 0, 1) {
 	setDefaultValue(1, "0"); 
 }
 int RandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	//initialize static in calculator
+	gmp_randstate_t randstate;
+	gmp_randinit_default(randstate);
+	Number nr;
 	if(vargs[0].number().isZero() || vargs[0].number().isNegative()) {
 		Number nr;
-		nr.setInternal(cln::random_F(cln::cl_float(1)));
+		mpfr_t f_rand;
+		mpfr_init(f_rand);
+		mpfr_urandom(f_rand, randstate, MPFR_RNDN);
+		nr.setInternal(f_rand);
+		mpfr_clear(f_rand);
+		gmp_randclear(randstate);
 		mstruct = nr;
 	} else {
-		Number nr;
-		nr.setInternal(cln::random_I(cln::numerator(cln::rational(cln::realpart(vargs[0].number().internalNumber())))) + 1);
-		mstruct = nr;
+		mpz_t i_rand;
+		mpz_init(i_rand);
+		mpz_urandomm(i_rand, randstate, mpq_numref(nr.internalRational()));
+		mpz_add_ui(i_rand, i_rand, 1);
+		nr.setInternal(i_rand);
 	}
+	mstruct = nr;
 	return 1;
 }
 bool RandFunction::representsReal(const MathStructure&, bool) const {return true;}
@@ -2265,7 +2277,7 @@ int TimestampFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	string str = vargs[0].symbol();
 	remove_blank_ends(str);
 	if(str == _("now") || str == "now") {
-		mstruct.number().setInternal(time(NULL));
+		mstruct.number().set(time(NULL), 1);
 		return 1;
 	}
 	GDate *gtime = g_date_new();

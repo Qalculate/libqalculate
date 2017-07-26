@@ -14,13 +14,25 @@
 
 #include <libqalculate/includes.h>
 
+#include <gmp.h>
+#include <mpfr.h>
+
+//cln
 #include <cln/cln.h>
 
 /** @file */
 
 #define EQUALS_PRECISION_DEFAULT 	-1
-#define EQUALS_PRECISION_LOWEST	-2
+#define EQUALS_PRECISION_LOWEST		-2
 #define EQUALS_PRECISION_HIGHEST	-3
+
+typedef enum {
+	NUMBER_TYPE_RATIONAL,
+	NUMBER_TYPE_FLOAT,
+	NUMBER_TYPE_INFINITY,
+	NUMBER_TYPE_PLUS_INFINITY,
+	NUMBER_TYPE_MINUS_INFINITY
+} NumberType;
 
 
 /// A number.
@@ -40,10 +52,17 @@ class Number {
 		void testInteger();
 		void setPrecisionAndApproximateFrom(const Number &o);
 
+		mpq_t r_value;
+		mpfr_t f_value;
+		
+		NumberType n_type;
+		
+		//cln
 		cln::cl_N value;
 		bool b_inf, b_pinf, b_minf;
+		
 		bool b_approx;
-		int i_precision;
+		long int i_precision;
 
 	public:
 	
@@ -65,7 +84,7 @@ class Number {
 		* @param denominator
 		* @param exp_10
  		*/
-		Number(int numerator, int denominator = 1, int exp_10 = 0);
+		Number(long int numerator, long int denominator = 1, long int exp_10 = 0);
 		/**
 		* Constructs a copy of a number.
  		*/
@@ -73,20 +92,29 @@ class Number {
 		virtual ~Number();
 		
 		void set(string number, const ParseOptions &po = default_parse_options);
-		void set(int numerator, int denominator = 1, int exp_10 = 0);
+		void set(long int numerator, long int denominator = 1, long int exp_10 = 0);
 		void setInfinity();
 		void setPlusInfinity();
 		void setMinusInfinity();
 		void setFloat(double d_value);
 
-		void setInternal(const cln::cl_N &cln_value);
+		void setInternal(const mpz_t &mpz_value);
+		void setInternal(mpz_srcptr mpz_value);
+		void setInternal(const mpq_t &mpq_value);
+		void setInternal(const mpz_t &mpz_num, const mpz_t &mpz_den);
+		void setInternal(const mpfr_t &mpfr_value);
 
 		void setImaginaryPart(const Number &o);
-		void setImaginaryPart(int numerator, int denominator = 1, int exp_10 = 0);
+		void setImaginaryPart(long int numerator, long int denominator = 1, long int exp_10 = 0);
 		void set(const Number &o);
 		void clear();
-
+		
+		//cln
 		const cln::cl_N &internalNumber() const;
+
+		const mpq_t &internalRational() const;
+		const mpfr_t &internalFloat() const;
+		const NumberType &internalType() const;
 		
 		double floatValue() const;
 		/**
@@ -95,7 +123,7 @@ class Number {
 		* @param[out] overflow If overflow is non-null it will be set to true if the number was to large to fit in an int.
 		* @return Resulting integer.
  		*/
-		int intValue(bool *overflow = NULL) const;
+		long int intValue(bool *overflow = NULL) const;
 		
 		/** Returns true if the number is approximate.
 		*
@@ -118,7 +146,7 @@ class Number {
  		* @return Precision of the number or -1 if the number is exact or the precision has not been set.
  		*/
 		int precision() const;
-		void setPrecision(int prec);
+		void setPrecision(long int prec);
 		
 		bool isUndefined() const;
 		/** Returns true if the number is infinity, plus infinity or minus infinity.
@@ -199,6 +227,7 @@ class Number {
 		bool isZero() const;
 		bool isOne() const;
 		bool isTwo() const;
+		bool isTen() const;
 		bool isI() const;
 		bool isMinusI() const;
 		bool isMinusOne() const;

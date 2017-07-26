@@ -184,7 +184,7 @@ bool Calculator::delDefaultStringAlternative(string replacement, string standard
 	return false;
 }
 
-Calculator *calculator;
+Calculator *calculator = NULL;
 
 MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one;
 Number nr_zero, nr_one, nr_minus_one;
@@ -1096,6 +1096,9 @@ void Calculator::setPrecision(int precision) {
 }
 int Calculator::getPrecision() const {
 	return i_precision;
+}
+long int Calculator::getBitPrecision() const {
+	return (long int) (i_precision * 3.322 + 30);
 }
 
 const string &Calculator::getDecimalPoint() const {return DOT_STR;}
