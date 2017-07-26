@@ -1085,20 +1085,14 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
 
 void Calculator::setPrecision(int precision) {
 	if(precision <= 0) precision = DEFAULT_PRECISION;
-/*	if(precision < 10) {
-		cln::default_float_format = float_format(precision + (10 - precision) + 5);	*/
-	if(precision < cln::float_format_lfloat_min) {
-		cln::default_float_format = cln::float_format(cln::float_format_lfloat_min + 5);
-	} else {
-		cln::default_float_format = cln::float_format(precision + 5);	
-	}
 	i_precision = precision;
+	mpfr_set_default_prec(getBitPrecision());
 }
 int Calculator::getPrecision() const {
 	return i_precision;
 }
 long int Calculator::getBitPrecision() const {
-	return (long int) (i_precision * 3.322 + 30);
+	return (long int) (i_precision * 3.322 + 26);
 }
 
 const string &Calculator::getDecimalPoint() const {return DOT_STR;}

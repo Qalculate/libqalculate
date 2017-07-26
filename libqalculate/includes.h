@@ -85,7 +85,7 @@ typedef enum {
 
 #define NR_OF_PRIMES 600
 
-static const int PRIMES[] = {
+static const long int PRIMES[] = {
 2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
 31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
 73, 79, 83, 89, 97, 101, 103, 107, 109, 113,
@@ -156,7 +156,7 @@ static const int PRIMES[] = {
 
 #define NR_OF_SQUARE_PRIMES 174
 
-static const int SQUARE_PRIMES[] = {
+static const long int SQUARE_PRIMES[] = {
 4, 9, 25, 49, 121, 169, 289, 361, 441, 529, 
 841, 961, 1369, 1681, 961, 1369, 1681, 1849, 2209, 2809, 
 3481, 3721, 4489, 5041, 5329, 6241, 6889, 7921, 9409, 10201, 
@@ -592,7 +592,7 @@ extern Calculator *calculator;
 #define CALCULATOR	calculator
 
 #define DEFAULT_PRECISION	8
-#define DEFAULT_BIT_PRECISION	57
+#define DEFAULT_BIT_PRECISION	53
 #define PRECISION		(CALCULATOR ? CALCULATOR->getPrecision() : DEFAULT_PRECISION)
 #define BIT_PRECISION		(CALCULATOR ? CALCULATOR->getBitPrecision() : DEFAULT_BIT_PRECISION)
 

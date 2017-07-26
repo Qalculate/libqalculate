@@ -68,7 +68,7 @@ string format_number_string(string cl_str, int base, BaseDisplay base_display, b
 	return str;
 }
 
-string printMPZ(const mpz_t &integ_pre, int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) {
+string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) {
 	int sign = mpz_sgn(integ_pre);
 	if(base == BASE_ROMAN_NUMERALS) {
 		if(sign != 0 && mpz_cmpabs_ui(integ_pre, 10000) == -1) {
@@ -169,44 +169,11 @@ string printMPZ(const mpz_t &integ_pre, int base = 10, bool display_sign = true,
 	
 	string cl_str;
 	
-	/*if(integ > LLONG_MAX) {
-		int i_step = 1000000;
-		if(base < 8) i_step = 100;
-		cl_I i_div = cln::expt_pos(cl_I(base), cl_I(i_step));		
-		string str, stream_str;
-		cl_I_div_t i_remdiv;
-		while(true) {
-			ostringstream stream;			
-			try {
-				i_remdiv = cln::floor2(integ, i_div);
-				if(!zerop(i_remdiv.remainder)) {
-					cln::print_integer(stream, flags, i_remdiv.remainder);
-				}
-			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
-			}			
-			integ = i_remdiv.quotient;
-			if(cln::zerop(integ)) {
-				cl_str = stream.str() + cl_str;
-				break;
-			} else {
-				str = "";
-				stream_str = stream.str();
-				str.resize((size_t) i_step - stream_str.length(), '0');
-				str += stream_str;
-				cl_str = str + cl_str;
-			}
-			if(CALCULATOR->aborted()) {
-				return CALCULATOR->abortedMessage();
-			}
-		}
-	} else {*/
-		char *tmp = mpz_get_str(NULL, base, integ); 
-		cl_str = tmp;
-		void (*freefunc)(void *, size_t);
-		mp_get_memory_functions (NULL, NULL, &freefunc);
-		freefunc(tmp, strlen(tmp) + 1);
-	//}
+	char *tmp = mpz_get_str(NULL, base, integ); 
+	cl_str = tmp;
+	void (*freefunc)(void *, size_t);
+	mp_get_memory_functions (NULL, NULL, &freefunc);
+	freefunc(tmp, strlen(tmp) + 1);
 	
 	if(lower_case) {
 		for(size_t i = 0; i < cl_str.length(); i++) {
@@ -507,11 +474,16 @@ void Number::set(string number, const ParseOptions &po) {
 			numbers_started = false;
 			bool exp_minus = false;
 			unsigned long int exp = 0;
+			unsigned long int max_exp = ULONG_MAX / 10;
 			while(index < number.size()) {
-				if(number[index] >= '0' && number[index] <= '9') {				
-					exp = exp * 10;
-					exp = exp + number[index] - '0';
-					numbers_started = true;
+				if(number[index] >= '0' && number[index] <= '9') {
+					if(exp > max_exp) {
+						CALCULATOR->error(true, _("Too large exponent."), NULL);
+					} else {
+						exp = exp * 10;
+						exp = exp + number[index] - '0';
+						numbers_started = true;
+					}
 				} else if(!numbers_started && number[index] == '-') {
 					exp_minus = !exp_minus;
 				}
@@ -635,7 +607,6 @@ void Number::setInternal(const mpz_t &mpz_num, const mpz_t &mpz_den) {
 	n_type = NUMBER_TYPE_RATIONAL;
 	i_precision = -1;
 }
-
 void Number::setInternal(const mpfr_t &mpfr_value) {
 	b_inf = false; b_pinf = false; b_minf = false; b_approx = true;
 	n_type = NUMBER_TYPE_FLOAT;
@@ -643,6 +614,7 @@ void Number::setInternal(const mpfr_t &mpfr_value) {
 	mpfr_set(f_value, mpfr_value, DRM);
 	i_precision = (int) mpfr_get_prec(f_value);
 }
+
 void Number::setImaginaryPart(const Number &o) {
 	//value = cln::complex(cln::realpart(value), cln::realpart(o.internalNumber()));
 	testApproximate();
@@ -766,7 +738,8 @@ bool Number::isMinusInfinity() const {
 Number Number::realPart() const {
 	if(isInfinite()) return *this;
 	Number real_part;
-	//real_part.setInternal(cln::realpart(value));
+	if(n_type == NUMBER_TYPE_RATIONAL) real_part.setInternal(r_value);
+	else real_part.setInternal(f_value);
 	return real_part;
 }
 Number Number::imaginaryPart() const {
@@ -832,99 +805,67 @@ bool Number::operator != (const Number &o) const {return !equals(o);}
 
 bool Number::bitAnd(const Number &o) {
 	if(!o.isInteger() || !isInteger()) return false;
-	try {
-		value = cln::logand(cln::numerator(cln::rational(cln::realpart(value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
-	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-	}
+	mpz_and(mpq_numref(r_value), mpq_numref(r_value), mpq_numref(o.internalRational()));
 	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::bitOr(const Number &o) {
 	if(!o.isInteger() || !isInteger()) return false;
-	try {
-		value = cln::logior(cln::numerator(cln::rational(cln::realpart(value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
-	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-	}
+	mpz_ior(mpq_numref(r_value), mpq_numref(r_value), mpq_numref(o.internalRational()));
 	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::bitXor(const Number &o) {
 	if(!o.isInteger() || !isInteger()) return false;
-	try {
-		value = cln::logxor(cln::numerator(cln::rational(cln::realpart(value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
-	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-	}
+	mpz_xor(mpq_numref(r_value), mpq_numref(r_value), mpq_numref(o.internalRational()));
 	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::bitNot() {
 	if(!isInteger()) return false;
-	try {
-		value = cln::lognot(cln::numerator(cln::rational(cln::realpart(value))));
-	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-	}
+	mpz_com(mpq_numref(r_value), mpq_numref(r_value));
 	return true;
 }
 bool Number::bitEqv(const Number &o) {
 	if(!o.isInteger() || !isInteger()) return false;
-	try {
-		value = cln::logeqv(cln::numerator(cln::rational(cln::realpart(value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
-	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-	}
+	bitXor(o);
+	bitNot();
 	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::shiftLeft(const Number &o) {
 	if(!o.isInteger() || !isInteger() || o.isNegative()) return false;
-	cln::cl_I intval;
-	try {
-		intval = cln::numerator(cln::rational(cln::realpart(value)));
-		intval << cln::numerator(cln::rational(cln::realpart(o.internalNumber())));
-		value = intval;
-	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-	}
+	bool overflow = false;
+	long int y = o.intValue(&overflow);
+	if(overflow) return false;
+	mpz_mul_2exp(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) y);
 	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::shiftRight(const Number &o) {
 	if(!o.isInteger() || !isInteger() || o.isNegative()) return false;
-	cln::cl_I intval;
-	try {
-		intval = cln::numerator(cln::rational(cln::realpart(value)));
-		intval >> cln::numerator(cln::rational(cln::realpart(o.internalNumber())));
-		value = intval;
-	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-	}
+	bool overflow = false;
+	long int y = o.intValue(&overflow);
+	if(overflow) return false;
+	mpz_tdiv_q_2exp(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) y);
 	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 bool Number::shift(const Number &o) {
 	if(!o.isInteger() || !isInteger()) return false;
-	try {
-		value = cln::ash(cln::numerator(cln::rational(cln::realpart(value))), cln::numerator(cln::rational(cln::realpart(o.internalNumber()))));
-	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-	}
+	bool overflow = false;
+	long int y = o.intValue(&overflow);
+	if(overflow) return false;
+	if(y < 0) mpz_tdiv_q_2exp(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) -y);
+	else mpz_mul_2exp(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) y);
 	setPrecisionAndApproximateFrom(o);
 	return true;
 }
 
 bool Number::hasRealPart() const {
 	if(isInfinite()) return true;
-	bool b = false;
-	try {
-		b = !cln::zerop(cln::realpart(value));
-	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-	}
-	return b;
+	if(n_type == NUMBER_TYPE_RATIONAL) return mpq_sgn(r_value) != 0;
+	return !mpfr_zero_p(f_value);
 }
 bool Number::hasImaginaryPart() const {
 	if(isInfinite()) return false;
@@ -963,6 +904,10 @@ void Number::testApproximate() {
 }
 void Number::testInteger() {
 	if(isApproximateType() && !isInfinite() && !isComplex()) {
+		if(mpfr_integer_p(f_value)) {
+			mpfr_get_z(mpq_numref(r_value), f_value, DRM);
+			n_type = NUMBER_TYPE_RATIONAL;
+		}
 		bool b = false;
 		try {
 			if(PRECISION < cln::float_format_lfloat_min) {
@@ -1019,7 +964,7 @@ bool Number::isFraction() const {
 }
 bool Number::isZero() const {
 	if(isComplex()) return false;
-	if(n_type == NUMBER_TYPE_FLOAT) return mpfr_sgn(f_value) == 0;
+	if(n_type == NUMBER_TYPE_FLOAT) return mpfr_zero_p(f_value);
 	else if(n_type == NUMBER_TYPE_RATIONAL) return mpz_sgn(mpq_numref(r_value)) == 0;
 	return false;
 }
@@ -1125,13 +1070,13 @@ bool Number::equals(const Number &o) const {
 	if(b_pinf) return false;
 	if(b_minf) return false;
 	if(o.isInfinite()) return false;
-	if(n_type == NUMBER_TYPE_RATIONAL) {
-		if(o.isApproximateType()) return mpfr_cmp_q(o.internalFloat(), r_value) == 0;
-		else return mpq_equal(r_value, o.internalRational());
+	if(o.isApproximateType() && n_type != NUMBER_TYPE_FLOAT) {
+		return mpfr_cmp_q(o.internalFloat(), r_value) == 0;
+	} else if(n_type == NUMBER_TYPE_FLOAT) {
+		if(o.isApproximateType()) return mpfr_equal_p(f_value, o.internalFloat());
+		else return mpfr_cmp_q(f_value, o.internalRational()) == 0;
 	}
-	if(o.isApproximateType()) return mpfr_cmp(o.internalFloat(), f_value) == 0;
-	return mpfr_cmp_q(f_value, o.internalRational()) == 0;
-	
+	return mpq_cmp(r_value, o.internalRational()) == 0;
 }
 bool Number::equalsApproximately(const Number &o, int prec) const {
 	if(b_inf) return false;
@@ -1324,13 +1269,18 @@ ComparisonResult Number::compare(const Number &o) const {
 	if(equals(o)) return COMPARISON_RESULT_EQUAL;
 	if(!isComplex() && !o.isComplex()) {
 		int i = 0;
-		if(n_type == NUMBER_TYPE_RATIONAL) mpq_cmp(o.internalRational(), r_value);
-		else i = mpfr_cmp(o.internalFloat(), f_value);
+		if(o.isApproximateType() && n_type != NUMBER_TYPE_FLOAT) {
+			i = mpfr_cmp_q(o.internalFloat(), r_value);
+		} else if(n_type == NUMBER_TYPE_FLOAT) {
+			if(o.isApproximateType()) i = -mpfr_cmp(f_value, o.internalFloat());
+			else i = -mpfr_cmp_q(f_value, o.internalRational());
+		} else {
+			i = mpq_cmp(o.internalRational(), r_value);
+		}
 		if(i == 0) return COMPARISON_RESULT_EQUAL;
-		else if(i < 0) return COMPARISON_RESULT_LESS;
 		else if(i > 0) return COMPARISON_RESULT_GREATER;
-		return COMPARISON_RESULT_UNKNOWN;
-	} else {		
+		else return COMPARISON_RESULT_LESS;
+	} else {
 		return COMPARISON_RESULT_NOT_EQUAL;
 	}
 }
@@ -1377,12 +1327,24 @@ bool Number::isGreaterThan(const Number &o) const {
 	if(o.isMinusInfinity()) return true;
 	if(b_pinf) return true;
 	if(isComplex() || o.isComplex()) return false;
+	if(o.isApproximateType() && n_type != NUMBER_TYPE_FLOAT) {
+		return mpfr_cmp_q(o.internalFloat(), r_value) < 0;
+	} else if(n_type == NUMBER_TYPE_FLOAT) {
+		if(o.isApproximateType()) return mpfr_greater_p(f_value, o.internalFloat());
+		else return mpfr_cmp_q(f_value, o.internalRational()) > 0;
+	}
 	return mpq_cmp(r_value, o.internalRational()) > 0;
 }
 bool Number::isLessThan(const Number &o) const {
 	if(o.isMinusInfinity() || o.isInfinity() || b_inf || b_pinf) return false;
 	if(b_minf || o.isPlusInfinity()) return true;
 	if(isComplex() || o.isComplex()) return false;
+	if(o.isApproximateType() && n_type != NUMBER_TYPE_FLOAT) {
+		return mpfr_cmp_q(o.internalFloat(), r_value) > 0;
+	} else if(n_type == NUMBER_TYPE_FLOAT) {
+		if(o.isApproximateType()) return mpfr_less_p(f_value, o.internalFloat());
+		else return mpfr_cmp_q(f_value, o.internalRational()) < 0;
+	}
 	return mpq_cmp(r_value, o.internalRational()) < 0;
 }
 bool Number::isGreaterThanOrEqualTo(const Number &o) const {
@@ -1390,6 +1352,12 @@ bool Number::isGreaterThanOrEqualTo(const Number &o) const {
 	if(b_minf) return o.isMinusInfinity();
 	if(b_pinf) return true;
 	if(!isComplex() && !o.isComplex()) {
+		if(o.isApproximateType() && n_type != NUMBER_TYPE_FLOAT) {
+			return mpfr_cmp_q(o.internalFloat(), r_value) <= 0;
+		} else if(n_type == NUMBER_TYPE_FLOAT) {
+			if(o.isApproximateType()) return mpfr_greaterequal_p(f_value, o.internalFloat());
+			else return mpfr_cmp_q(f_value, o.internalRational()) >= 0;
+		}
 		return mpq_cmp(r_value, o.internalRational()) >= 0;
 	}
 	return false;
@@ -1399,6 +1367,12 @@ bool Number::isLessThanOrEqualTo(const Number &o) const {
 	if(b_pinf) return o.isPlusInfinity();
 	if(b_minf) return true;
 	if(!isComplex() && !o.isComplex()) {
+		if(o.isApproximateType() && n_type != NUMBER_TYPE_FLOAT) {
+			return mpfr_cmp_q(o.internalFloat(), r_value) >= 0;
+		} else if(n_type == NUMBER_TYPE_FLOAT) {
+			if(o.isApproximateType()) return mpfr_lessequal_p(f_value, o.internalFloat());
+			else return mpfr_cmp_q(f_value, o.internalRational()) <= 0;
+		}
 		return mpq_cmp(r_value, o.internalRational()) <= 0;
 	}
 	return false;
@@ -2567,6 +2541,60 @@ bool Number::lcm(const Number &o) {
 	return multiply(o);
 }
 
+bool recfact(mpz_ptr ret, long int start, long int n) {
+	long int i;
+	if(n <= 16) { 
+		mpz_set_si(ret, start);
+		for(i = start + 1; i < start + n; i++) mpz_mul_si(ret, ret, i);
+		return true;
+	}
+	if(CALCULATOR->aborted()) return false;
+	i = n / 2;
+	if(!recfact(ret, start, i)) return false;
+	mpz_t retmul;
+	mpz_init(retmul);
+	if(!recfact(retmul, start + i, n - i)) return false;
+	mpz_mul(ret, ret, retmul);
+	mpz_clear(retmul);
+	return true;
+}
+bool recfact2(mpz_ptr ret, long int start, long int n) {
+	long int i;
+	if(n <= 32) { 
+		mpz_set_si(ret, start + n - 1);
+		for(i = start + n - 3; i >= start; i -= 2) mpz_mul_si(ret, ret, i);
+		return true;
+	}
+	if(CALCULATOR->aborted()) return false;
+	i = n / 2;
+	if(n % 2 != i % 2) i--;
+	if(!recfact2(ret, start, i)) return false;
+	mpz_t retmul;
+	mpz_init(retmul);
+	if(!recfact2(retmul, start + i, n - i)) return false;
+	mpz_mul(ret, ret, retmul);
+	mpz_clear(retmul);
+	return true;
+}
+bool recfactm(mpz_ptr ret, long int start, long int n, long int m) {
+	long int i;
+	if(n <= 16 * m) { 
+		mpz_set_si(ret, start + n - 1);
+		for(i = start + n - 1 - m; i >= start; i -= m) mpz_mul_si(ret, ret, i);
+		return true;
+	}
+	if(CALCULATOR->aborted()) return false;
+	i = n / 2;
+	i -= ((i % m) - (n % m));
+	if(!recfactm(ret, start, i, m)) return false;
+	mpz_t retmul;
+	mpz_init(retmul);
+	if(!recfactm(retmul, start + i, n - i, m)) return false;
+	mpz_mul(ret, ret, retmul);
+	mpz_clear(retmul);
+	return true;
+}
+
 bool Number::factorial() {
 	if(!isInteger()) {
 		return false;
@@ -2583,9 +2611,12 @@ bool Number::factorial() {
 	} else if(isNegative()) {
 		return false;
 	}
-	if(!mpz_fits_ulong_p(mpq_numref(r_value))) return false;
-	unsigned long int n = mpz_get_ui(mpq_numref(r_value));
-	mpz_fac_ui(mpq_numref(r_value), n);
+	if(!mpz_fits_slong_p(mpq_numref(r_value))) return false;
+	long int n = mpz_get_si(mpq_numref(r_value));
+	if(!recfact(mpq_numref(r_value), 1, n)) {
+		mpz_set_si(mpq_numref(r_value), n);
+		return false;
+	}
 	return true;
 }
 bool Number::multiFactorial(const Number &o) {
@@ -2600,10 +2631,13 @@ bool Number::multiFactorial(const Number &o) {
 	} else if(isNegative()) {
 		return false;
 	}
-	if(!mpz_fits_ulong_p(mpq_numref(r_value)) || !mpz_fits_ulong_p(mpq_numref(o.internalRational()))) return false;
-	unsigned long int n = mpz_get_ui(mpq_numref(r_value));
-	unsigned long int m = mpz_get_ui(mpq_numref(o.internalRational()));
-	mpz_mfac_uiui(mpq_numref(r_value), n, m);
+	if(!mpz_fits_slong_p(mpq_numref(r_value)) || !mpz_fits_slong_p(mpq_numref(o.internalRational()))) return false;
+	long int n = mpz_get_si(mpq_numref(r_value));
+	long int m = mpz_get_si(mpq_numref(o.internalRational()));
+	if(!recfactm(mpq_numref(r_value), 1, n, m)) {
+		mpz_set_si(mpq_numref(r_value), n);
+		return false;
+	}
 	return true;
 }
 bool Number::doubleFactorial() {
@@ -2618,9 +2652,12 @@ bool Number::doubleFactorial() {
 	} else if(isNegative()) {
 		return false;
 	}
-	if(!mpz_fits_ulong_p(mpq_numref(r_value))) return false;
-	unsigned long int n = mpz_get_ui(mpq_numref(r_value));
-	mpz_2fac_ui(mpq_numref(r_value), n);
+	if(!mpz_fits_slong_p(mpq_numref(r_value))) return false;
+	unsigned long int n = mpz_get_si(mpq_numref(r_value));
+	if(!recfact2(mpq_numref(r_value), 1, n)) {
+		mpz_set_si(mpq_numref(r_value), n);
+		return false;
+	}
 	return true;
 }
 bool Number::binomial(const Number &m, const Number &k) {
@@ -2684,77 +2721,61 @@ bool Number::binomial(const Number &m, const Number &k) {
 
 bool Number::factorize(vector<Number> &factors) {
 	if(isZero() || !isInteger()) return false;
-/*	cl_I inr;
-	try {
-		inr = cln::numerator(cln::rational(cln::realpart(value)));
-	} catch(runtime_exception &e) {
-		CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-		return false;
+	if(mpz_cmp_si(mpq_numref(r_value), 1) == 0) {
+		factors.push_back(Number(1, 1));
+		return true;
 	}
-	if(minusp(inr)) {
-		inr = -inr;
+	if(mpz_cmp_si(mpq_numref(r_value), -1) == 0) {
+		factors.push_back(Number(-1, 1));
+		return true;
+	}
+	mpz_t inr, last_prime, facmax;
+	mpz_inits(inr, last_prime, facmax, NULL);
+	mpz_set(inr, mpq_numref(r_value));
+	if(mpz_sgn(inr) < 0) {
+		mpz_neg(inr, inr);
 		factors.push_back(Number(-1, 1));
 	}
 	size_t prime_index = 0;
-	cl_I last_prime = 0;
 	bool b = true;
 	while(b) {
+		if(CALCULATOR->aborted()) {mpz_clears(inr, last_prime, facmax, NULL); return false;}
 		b = false;
-		cl_I facmax = cln::floor1(cln::sqrt(inr));
-		for(; prime_index < NR_OF_PRIMES && PRIMES[prime_index] <= facmax; prime_index++) {
-			bool b_zero = false;
-			try {
-				b_zero = cln::zerop(cln::mod(inr, PRIMES[prime_index]));
-			} catch(runtime_exception &e) {
-				CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-			}
-			if(b_zero) {
-				try {
-					inr = cln::exquo(inr, PRIMES[prime_index]);
-				} catch(runtime_exception &e) {
-					CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-				}
-				Number fac;
-				fac.setInternal(PRIMES[prime_index]);
+		mpz_sqrt(facmax, inr);
+		for(; prime_index < NR_OF_PRIMES && mpz_cmp_si(facmax, PRIMES[prime_index]) >= 0; prime_index++) {
+			if(mpz_divisible_ui_p(inr, (unsigned long int) PRIMES[prime_index])) {
+				mpz_divexact_ui(inr, inr, (unsigned long int) PRIMES[prime_index]);
+				Number fac(PRIMES[prime_index], 1);;
 				factors.push_back(fac);
 				b = true;
 				break;
 			}
 		}
 		if(prime_index == NR_OF_PRIMES) {
-			last_prime = PRIMES[NR_OF_PRIMES - 1] + 2;
+			mpz_set_si(last_prime, PRIMES[NR_OF_PRIMES - 1] + 2);
 			prime_index++;
 		}
 		if(!b && prime_index > NR_OF_PRIMES) {
-			while(!b && last_prime <= facmax) {
-				bool b_zero = false;
-				try {
-					b_zero = cln::zerop(cln::mod(inr, last_prime));
-				} catch(runtime_exception &e) {
-					CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-				}
-				pthread_testcancel();
-				if(b_zero) {
-					try {
-						inr = cln::exquo(inr, last_prime);
-					} catch(runtime_exception &e) {
-						CALCULATOR->error(true, _("CLN Exception: %s"), e.what());
-					}
+			while(!b && mpz_cmp(facmax, last_prime) >= 0) {
+				if(CALCULATOR->aborted()) {mpz_clears(inr, last_prime, facmax, NULL); return false;}
+				if(mpz_divisible_p(inr, last_prime)) {
+					mpz_divexact(inr, inr, last_prime);
 					b = true;
 					Number fac;
 					fac.setInternal(last_prime);
 					factors.push_back(fac);
 					break;
 				}
-				last_prime = last_prime + 2;
+				mpz_add_ui(last_prime, last_prime, 2);
 			}
 		}
 	}
-	if(inr != 1) {
+	if(mpz_cmp_si(mpq_numref(r_value), 1) != 0) {
 		Number fac;
 		fac.setInternal(inr);
 		factors.push_back(fac);
-	}*/
+	}
+	mpz_clears(inr, last_prime, facmax, NULL);
 	return true;
 }
 
@@ -3294,7 +3315,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		str += ")";
 	} else if(n_type == NUMBER_TYPE_FLOAT) {
-		mpfr_exp_t exp;
 		mpfr_t v;
 		mpfr_init2(v, BIT_PRECISION);
 		mpfr_set(v, f_value, DRM);
