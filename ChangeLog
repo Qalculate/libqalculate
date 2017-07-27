@@ -2,6 +2,7 @@
 
 	* Fix engineering exp mode in qalc and allow divisors other than 3
 	* Do not round digits before decimal point for exact values with exp mode off
+	* Fix sin(pi+x) and cos(pi+x)
 
 2017-07-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

@@ -1384,6 +1384,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					}
 				}
 			}
+			if(CALCULATOR->getRadUnit()) mstruct2 *= CALCULATOR->getRadUnit();
 			mstruct.set(CALCULATOR->f_sin, &mstruct2, NULL);
 		}
 	}
@@ -1534,6 +1535,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					}
 				}
 			}
+			if(CALCULATOR->getRadUnit()) mstruct2 *= CALCULATOR->getRadUnit();
 			mstruct.set(CALCULATOR->f_cos, &mstruct2, NULL);
 			mstruct.negate();
 		}

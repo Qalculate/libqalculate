@@ -3140,7 +3140,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		int expo = 0;
 		if(base == 10) {
 			if(mpz_str.length() > 0 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
-				expo = mpz_str.length() - 1;
+				expo = length - 1;
 			} else if(mpz_str.length() > 0) {
 				for(int i = mpz_str.length() - 1; i >= 0; i--) {
 					if(mpz_str[i] != '0') {
