@@ -15,6 +15,7 @@
 #include <stdarg.h>
 #include "Number.h"
 
+#include <string.h>
 #include <glib.h>
 #include <time.h>
 #include <fstream>

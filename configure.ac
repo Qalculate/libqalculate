@@ -108,8 +108,6 @@ PKG_CHECK_MODULES(GLIB, [
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
-PKG_CHECK_MODULES(CLN, [ cln >= 1.2 ])
-
 dnl  --------------------------------
 dnl | check for readline            |-----------------------------------------
 dnl  --------------------------------

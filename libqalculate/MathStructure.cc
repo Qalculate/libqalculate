@@ -3101,19 +3101,29 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 	return -1;
 }
 
-bool test_if_numerator_not_too_large(const cln::cl_N &vb, const cln::cl_N &ve) {
-	cln::cl_R v_log10 = cln::realpart(vb);
+bool test_if_numerator_not_too_large(Number &vb, Number &ve) {
+	mpfr_t v_log10, o_log10;
+	mpfr_inits(v_log10, o_log10, NULL);
+	if(vb.isApproximateType()) mpfr_set(v_log10, vb.internalFloat(), MPFR_RNDN);
+	else mpfr_set_q(v_log10, vb.internalRational(), MPFR_RNDN);
+	if(ve.isApproximateType()) mpfr_set(o_log10, ve.internalFloat(), MPFR_RNDN);
+	else mpfr_set_q(o_log10, ve.internalRational(), MPFR_RNDN);
+	/*cln::cl_R v_log10 = cln::realpart(vb);
 	if(!cln::zerop(cln::imagpart(vb)) && cln::abs(cln::imagpart(vb)) > cln::abs(v_log10)) v_log10 = cln::imagpart(vb);
-	cln::cl_R o_log10 = cln::realpart(ve);
-	if(!cln::zerop(v_log10) && !cln::zerop(ve) && v_log10 != 1 && v_log10 != -1 && o_log10 != 1 && o_log10 != -1) {
-		if(v_log10 != 1) {
-			v_log10 = cln::abs(cln::log(v_log10, 10));
-		}
-		if(v_log10 != 0) {
-			o_log10 = cln::log(o_log10 * v_log10, 10);
-			if(o_log10 > 3) return false;
+	cln::cl_R o_log10 = cln::realpart(ve);*/
+	if(!mpfr_zero_p(v_log10) && !mpfr_zero_p(o_log10) && mpfr_cmp_si(v_log10, 1) != 0 && mpfr_cmp_si(v_log10, -1) != 0 && mpfr_cmp_si(o_log10, 1) != 0 && mpfr_cmp_si(o_log10, -1) != 0) {
+		mpfr_log10(v_log10, v_log10, MPFR_RNDN);
+		mpfr_abs(v_log10, v_log10, MPFR_RNDN);
+		if(!mpfr_zero_p(v_log10)) {
+			mpfr_mul(o_log10, o_log10, v_log10, MPFR_RNDN);
+			mpfr_log10(o_log10, o_log10, MPFR_RNDN);
+			if(mpfr_cmp_ui(o_log10, 3) > 0) {
+				mpfr_clears(v_log10, o_log10, NULL);
+				return false;
+			}
 		}
 	}
+	mpfr_clears(v_log10, o_log10, NULL);
 	return true;
 }
 
@@ -3135,7 +3145,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		}
 		if(mstruct.number().isRational()) {
 			Number exp_num(mstruct.number().numerator());
-			if(!exp_num.isOne() && !exp_num.isMinusOne() && o_number.isPositive() && test_if_numerator_not_too_large(o_number.internalNumber(), exp_num.internalNumber())) {
+			if(!exp_num.isOne() && !exp_num.isMinusOne() && o_number.isPositive() && test_if_numerator_not_too_large(o_number, exp_num)) {
 				// Try raise by exponent numerator if not very large
 				nr = o_number;
 				if(nr.raise(exp_num) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
@@ -3156,10 +3166,10 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					overflow = false;
 					val = o_number.intValue(&overflow);
 					if(overflow) {
-						cln::cl_I cval = cln::numerator(cln::rational(cln::realpart(o_number.internalNumber())));
+						mpz_srcptr cval = mpq_numref(o_number.internalRational());
 						for(size_t i = 0; i < NR_OF_SQUARE_PRIMES; i++) {
 							if(CALCULATOR->aborted()) break;
-							if(cln::zerop(cln::rem(cval, SQUARE_PRIMES[i]))) {
+							if(mpz_divisible_ui_p(cval, (unsigned long int) SQUARE_PRIMES[i])) {
 								nr *= PRIMES[i];
 								o_number /= SQUARE_PRIMES[i];
 								b = true;

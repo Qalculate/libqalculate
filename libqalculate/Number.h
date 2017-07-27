@@ -17,9 +17,6 @@
 #include <gmp.h>
 #include <mpfr.h>
 
-//cln
-#include <cln/cln.h>
-
 /** @file */
 
 #define EQUALS_PRECISION_DEFAULT 	-1
@@ -39,7 +36,7 @@ typedef enum {
 /**
 * Can be rational, floating point, complex or infinite.
 * Has arbitrary precision (uses Calculator::precision()) and infinitely large rational numbers.
-* Implimented using CLN numbers.
+* Implimented using GNU MP and MPFR.
  */
 class Number {
 	
@@ -56,10 +53,6 @@ class Number {
 		mpfr_t f_value;
 		
 		NumberType n_type;
-		
-		//cln
-		cln::cl_N value;
-		bool b_inf, b_pinf, b_minf;
 		
 		bool b_approx;
 		long int i_precision;
@@ -109,9 +102,6 @@ class Number {
 		void set(const Number &o);
 		void clear();
 		
-		//cln
-		const cln::cl_N &internalNumber() const;
-
 		const mpq_t &internalRational() const;
 		const mpfr_t &internalFloat() const;
 		const NumberType &internalType() const;

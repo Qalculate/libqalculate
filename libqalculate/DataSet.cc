@@ -20,6 +20,7 @@
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include <errno.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <glib.h>

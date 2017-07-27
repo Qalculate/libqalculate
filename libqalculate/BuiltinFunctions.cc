@@ -2298,14 +2298,15 @@ TimestampToDateFunction::TimestampToDateFunction() : MathFunction("stamptodate",
 	setArgumentDefinition(1, new IntegerArgument());
 }
 int TimestampToDateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {	
-	cln::cl_I i = cln::numerator(cln::rational(cln::realpart(vargs[0].number().internalNumber())));
+	bool overflow = false;
+	long int i = vargs[0].number().intValue(&overflow);
 	if(i > std::numeric_limits<time_t>::max()) {
 		return 0;
 	} else if(i < std::numeric_limits<time_t>::min()) {
 		return 0;
 	}
 	GDate *gtime = g_date_new();
-	g_date_set_time_t(gtime, cln::cl_I_to_long(i));
+	g_date_set_time_t(gtime, i);
 	gchar *gstr = (gchar*) malloc(sizeof(gchar) * 100);
 	g_date_strftime(gstr, 100, "%F", gtime);
 	mstruct.set(gstr);
