@@ -3463,7 +3463,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			if(!exact && po.use_max_decimals && po.max_decimals >= 0 && precision2 > po.max_decimals - expo) precision2 = po.max_decimals - expo;
 			bool try_infinite_series = po.indicate_infinite_series && !isApproximateType();
-			while(!exact && (precision2 > 0 || (expo == 0 && !isApproximate() ))) {
+			while(!exact && precision2 > 0) {
 				if(try_infinite_series) {
 					remainders.push_back(remainder);
 				}
