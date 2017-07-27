@@ -47,6 +47,7 @@ class Number {
 		void removeFloatZeroPart();
 		void testApproximate();
 		void testInteger();
+		bool testFloatResult();
 		void setPrecisionAndApproximateFrom(const Number &o);
 
 		mpq_t r_value;

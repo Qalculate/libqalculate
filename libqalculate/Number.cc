@@ -1606,6 +1606,27 @@ bool Number::recip() {
 	removeFloatZeroPart();
 	return true;
 }
+bool Number::testFloatResult() {
+	if(mpfr_underflow_p()) {CALCULATOR->error(false, _("Floating point underflow exception"), NULL); return false;}
+	if(mpfr_overflow_p()) {CALCULATOR->error(false, _("Floating point overflow exception"), NULL); return false;}
+	if(mpfr_divby0_p()) {CALCULATOR->error(false, _("Floating point division by zero exception"), NULL); return false;}
+	if(mpfr_nanflag_p()) {CALCULATOR->error(false, _("Floating point not a number exception"), NULL); return false;}
+	if(mpfr_erangeflag_p()) {CALCULATOR->error(false, _("Floating range exception"), NULL); return false;}
+	if(mpfr_inexflag_p()) b_approx = true;
+	mpfr_clear_flags();
+	if(mpfr_inf_p(f_value)) {
+		int sign = mpfr_sgn(f_value);
+		if(sign > 0) n_type = NUMBER_TYPE_PLUS_INFINITY;
+		else if(sign < 0) n_type = NUMBER_TYPE_MINUS_INFINITY;
+		else n_type = NUMBER_TYPE_INFINITY;
+		mpfr_clear(f_value);
+	} else if(mpfr_integer_p(f_value)) {
+		mpfr_get_z(mpq_numref(r_value), f_value, DRM);
+		if(n_type == NUMBER_TYPE_FLOAT) mpfr_clear(f_value);
+		n_type = NUMBER_TYPE_RATIONAL;
+	}
+	return true;
+}
 bool Number::raise(const Number &o, bool try_exact) {
 	if(o.isInfinity()) return false;
 	if(isInfinite()) {	
@@ -1771,6 +1792,8 @@ bool Number::raise(const Number &o, bool try_exact) {
 			return true;
 		}
 	}
+	Number nr_bak(*this);
+	mpfr_clear_flags();
 	if(n_type != NUMBER_TYPE_FLOAT) {
 		mpfr_init2(f_value, BIT_PRECISION);
 		mpfr_set_q(f_value, r_value, DRM);
@@ -1780,19 +1803,21 @@ bool Number::raise(const Number &o, bool try_exact) {
 		bool is_neg = mpfr_sgn(f_value) < 0;
 		mpfr_pow(f_value, f_value, o.internalFloat(), DRM);
 		if(is_neg && mpfr_nan_p(f_value)) {
+			mpfr_clear_nanflag();
 			mpfr_t f_pow;
 			mpfr_init2(f_pow, BIT_PRECISION);
 			mpfr_set(f_pow, o.internalFloat(), DRM);
 			mpfr_mul_ui(f_pow, f_pow, 2, DRM);
 			mpfr_pow(f_value, f_value, f_pow, DRM);
 			//set complex
+			set(nr_bak);
 			return false;
 		}
 	} else if(o.isInteger()) {
 		mpfr_pow_z(f_value, f_value, mpq_numref(o.internalRational()), DRM);
 	} else {
 		bool do_complex = (mpfr_sgn(f_value) < 0 && mpz_even_p(mpq_denref(o.internalRational())));
-		if(do_complex) return false;
+		if(do_complex) {set(nr_bak); return false;}
 		if(do_complex) mpfr_neg(f_value, f_value, DRM);
 		mpfr_t f_pow;
 		mpfr_init2(f_pow, BIT_PRECISION);
@@ -1800,10 +1825,14 @@ bool Number::raise(const Number &o, bool try_exact) {
 		mpfr_pow(f_value, f_value, f_pow, DRM);
 		mpfr_clear(f_pow);
 	}
-	removeFloatZeroPart();
-	setPrecisionAndApproximateFrom(o);
-	testApproximate();
-	testInteger();
+	if(!testFloatResult()) {
+		set(nr_bak);
+		return false;
+	}
+	//removeFloatZeroPart();
+	//setPrecisionAndApproximateFrom(o);
+	//testApproximate();
+	//testInteger();
 	return true;
 }
 bool Number::exp10(const Number &o) {
@@ -2277,6 +2306,7 @@ bool Number::sin() {
 		mpfr_set_q(f_value, r_value, DRM);
 		n_type = NUMBER_TYPE_FLOAT;
 	}
+	
 	mpfr_sin(f_value, f_value, DRM);
 	removeFloatZeroPart();
 	testApproximate();
@@ -3203,7 +3233,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				precmax.floor();
 				precision2 = precmax.intValue();
 			}
-			precision2 -= mpz_str.length();
 			if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals && (!approx || po.max_decimals + nondecimals < precision2) && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 				mpz_t i_rem, i_quo, i_div;
 				mpz_inits(i_rem, i_quo, i_div, NULL);

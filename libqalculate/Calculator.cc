@@ -38,9 +38,6 @@
 #include <glib/gstdio.h>
 //#include <dlfcn.h>
 
-#include <cln/cln.h>
-using namespace cln;
-
 #if HAVE_UNORDERED_MAP
 #	include <unordered_map>
 #elif 	defined(__GNUC__)
