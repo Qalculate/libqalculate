@@ -3081,6 +3081,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	int precision = PRECISION;
 	if(b_approx && i_precision > 0 && i_precision < PRECISION) precision = i_precision;
 	if(po.restrict_to_parent_precision && ips.parent_precision > 0 && ips.parent_precision < precision) precision = ips.parent_precision;
+	bool approx = isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision);
 	if(isComplex()) {
 		bool bre = hasRealPart();
 		if(bre) {
@@ -3134,6 +3135,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		string mpz_str = printCL_I(ivalue, base, false, BASE_DISPLAY_NONE, po.lower_case_numbers);
 		if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 		
+		int length = mpz_str.length();
+		
 		int expo = 0;
 		if(base == 10) {
 			if(mpz_str.length() > 0 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
@@ -3150,8 +3153,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if((expo > -precision && expo < precision) || (expo < 3 && expo > -3 && PRECISION >= 3)) { 
 					expo = 0;
 				}
-			} else if(po.min_exp == EXP_BASE_3) {
-				expo -= expo % 3;
+			} else if(po.min_exp < -1) {
+				expo -= expo % (-po.min_exp);
+				if(expo < 0) expo = 0;
 			} else if(po.min_exp != 0) {
 				if(expo > -po.min_exp && expo < po.min_exp) { 
 					expo = 0;
@@ -3160,6 +3164,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				expo = 0;
 			}
 		}
+		int decimals = expo;
+		int nondecimals = length - decimals;
 		
 		bool dp_added = false;
 		bool b_zero = true;
@@ -3180,8 +3186,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				precmax.floor();
 				precision2 = precmax.intValue();
 			}
-			precision2 -= mpz_str.length();
-			if(po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < expo && po.max_decimals - expo < precision2 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+			if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals && (!approx || po.max_decimals + nondecimals < precision2) && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 				try {
 					cln::cl_RA_div_t div = cln::floor2(ivalue / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo)));
 					if(!cln::zerop(div.remainder)) {
@@ -3203,11 +3208,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				} catch(runtime_exception &e) {
 					CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 				}
-			} else if(precision2 < 0 && ((expo > 0 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) || isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision))) {
-				precision2 = -precision2;
+			} else if(precision2 < length && (approx || (decimals > min_decimals && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)))) {
 				try {
 					cln::cl_RA v = ivalue;
+					precision2 = length - precision2;
+					if(!approx && length - (min_decimals + nondecimals) < precision2) precision2 = length - (min_decimals + nondecimals);
+					
 					int p2_cd = precision2;
+					
 					cln::cl_I i_exp;
 
 					long int p2_cd_min = 10000;
@@ -3248,7 +3256,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 			}
 		}
-		int decimals = 0;
+		decimals = 0;
 		if(expo > 0) {
 			if(po.number_fraction_format == FRACTION_DECIMAL) {
 				mpz_str.insert(mpz_str.length() - expo, po.decimalpoint());
@@ -3271,7 +3279,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					break;
 				}
 			}
-			if(pos + 1 < (int) str.length()) str = str.substr(0, pos + 1);
+			if(pos + 1 < (int) str.length()) {
+				decimals -= str.length() - (pos + 1);
+				str = str.substr(0, pos + 1);
+			}
 			if(exact && min_decimals > decimals) {
 				if(decimals <= 0) {
 					str += po.decimalpoint();
@@ -3288,7 +3299,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		if(!exact && po.is_approximate) *po.is_approximate = true;
-		if(po.show_ending_zeroes && (!exact || isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision)) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
+		if(po.show_ending_zeroes && (!exact || approx) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
 			if(base != 10) {
 				Number precmax(10);
 				precmax.raise(precision);
@@ -3399,16 +3410,19 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(!cln::zerop(num)) {
 				str = printCL_I(num, base, true, BASE_DISPLAY_NONE);
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+				
+				int length = str.length();
 				if(base != 10) {
 					expo = 0;
 				} else {
-					expo = str.length() - 1;
+					expo = length - 1;
 					if(po.min_exp == EXP_PRECISION) {
 						if((expo > -precision && expo < precision) || (expo < 3 && expo > -3 && PRECISION >= 3)) { 
 							expo = 0;
 						}
-					} else if(po.min_exp == EXP_BASE_3) {
-						expo -= expo % 3;
+					} else if(po.min_exp < -1) {
+						expo -= expo % (-po.min_exp);
+						if(expo < 0) expo = 0;
 					} else if(po.min_exp != 0) {
 						if(expo > -po.min_exp && expo < po.min_exp) { 
 							expo = 0;
@@ -3417,9 +3431,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						expo = 0;
 					}
 				}
-				precision2 -= str.length();
+				int decimals = expo;
+				int nondecimals = length - decimals;
+		
+				precision2 -= length;
+				if(!approx && min_decimals + nondecimals > precision) precision2 = (min_decimals + nondecimals) - length;
 				try {
-					if(po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < expo && po.max_decimals - expo < precision2) {
+					if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals && (!approx || po.max_decimals + nondecimals < precision2)) {
 						cln::cl_R_div_t divr = cln::floor2(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo)));
 						if(!cln::zerop(divr.remainder)) {
 							num = divr.quotient;
@@ -3437,7 +3455,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 							if(neg) num = -num;
 						}
 						remainder = 0;
-					} else if(precision2 < 0) {
+					} else if(precision2 < 0 && (approx || decimals > min_decimals)) {
 						cln::cl_R_div_t divr = cln::floor2(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -precision2));
 						if(!cln::zerop(divr.remainder)) {
 							num = divr.quotient;
@@ -3455,7 +3473,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 							if(neg) num = -num;
 						}
 						remainder = 0;
-					}					
+					}
 				} catch(runtime_exception &e) {
 					CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 				}	
@@ -3536,8 +3554,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					if((expo > -precision && expo < precision) || (expo < 3 && expo > -3 && PRECISION >= 3)) { 
 						expo = 0;
 					}
-				} else if(po.min_exp == EXP_BASE_3) {
-					expo -= expo % 3;
+				} else if(po.min_exp < -1) {
+					expo -= expo % (-po.min_exp);
+					if(expo < 0) expo = 0;
 				} else if(po.min_exp != 0) {
 					if(expo > -po.min_exp && expo < po.min_exp) { 
 						expo = 0;

@@ -644,21 +644,20 @@ void set_option(string str) {
 			save_defs_on_exit = false;
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "exp mode", _("exp mode"))) {
-		int v = -2;
+		int v = -1;
+		bool valid = true;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = EXP_NONE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "auto", _("auto"))) v = EXP_PRECISION;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "pure", _("pure"))) v = EXP_PURE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "scientific", _("scientific"))) v = EXP_SCIENTIFIC;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "engineering", _("engineering"))) v = EXP_BASE_3;
-		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
-			v = s2i(svalue);
-			if(v < 0) v = -2;
-		}
-		if(v <= -2) {
-			PUTS_UNICODE(_("Illegal value."));
-		} else {
+		else if(svalue.find_first_not_of(SPACES NUMBERS MINUS) == string::npos) v = s2i(svalue);
+		else valid = false;
+		if(valid) {
 			printops.min_exp = v;
 			result_format_updated();
+		} else {
+			PUTS_UNICODE(_("Illegal value."));
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "precision", _("precision"))) {
 		int v = 0;
