@@ -1370,7 +1370,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		bool b_negate = false;
 		for(; i < mstruct.size(); i++) {
 			if(mstruct[i] == CALCULATOR->v_pi || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1] == CALCULATOR->v_pi && mstruct[i][0].isNumber() && mstruct[i][0].number().isInteger())) {
-				b_negate = mstruct[i][0].number().isOdd();
+				b_negate = mstruct[i] == CALCULATOR->v_pi || mstruct[i][0].number().isOdd();
 				b = true;
 				break;
 			}
@@ -1391,7 +1391,6 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			if(b_negate) mstruct.negate();
 		}
 	}
-
 	if(b) {
 		if(eo.approximation == APPROXIMATION_TRY_EXACT && errors > 0) {
 			EvaluationOptions eo2 = eo;
@@ -1524,7 +1523,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		bool b_negate = false;
 		for(; i < mstruct.size(); i++) {
 			if(mstruct[i] == CALCULATOR->v_pi || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1] == CALCULATOR->v_pi && mstruct[i][0].isNumber() && mstruct[i][0].number().isInteger())) {
-				b_negate = mstruct[i][0].number().isOdd();
+				b_negate = mstruct[i] == CALCULATOR->v_pi || mstruct[i][0].number().isOdd();
 				b = true;
 				break;
 			}
