@@ -1367,8 +1367,10 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 	} else if(mstruct.isAddition()) {
 		size_t i = 0;
+		bool b_negate = false;
 		for(; i < mstruct.size(); i++) {
 			if(mstruct[i] == CALCULATOR->v_pi || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1] == CALCULATOR->v_pi && mstruct[i][0].isNumber() && mstruct[i][0].number().isInteger())) {
+				b_negate = mstruct[i][0].number().isOdd();
 				b = true;
 				break;
 			}
@@ -1386,6 +1388,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			}
 			if(CALCULATOR->getRadUnit()) mstruct2 *= CALCULATOR->getRadUnit();
 			mstruct.set(CALCULATOR->f_sin, &mstruct2, NULL);
+			if(b_negate) mstruct.negate();
 		}
 	}
 
@@ -1518,8 +1521,10 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 	} else if(mstruct.isAddition()) {
 		size_t i = 0;
+		bool b_negate = false;
 		for(; i < mstruct.size(); i++) {
 			if(mstruct[i] == CALCULATOR->v_pi || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1] == CALCULATOR->v_pi && mstruct[i][0].isNumber() && mstruct[i][0].number().isInteger())) {
+				b_negate = mstruct[i][0].number().isOdd();
 				b = true;
 				break;
 			}
@@ -1537,7 +1542,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			}
 			if(CALCULATOR->getRadUnit()) mstruct2 *= CALCULATOR->getRadUnit();
 			mstruct.set(CALCULATOR->f_cos, &mstruct2, NULL);
-			mstruct.negate();
+			if(b_negate) mstruct.negate();
 		}
 	}
 	if(b) {
