@@ -1089,7 +1089,7 @@ int Calculator::getPrecision() const {
 	return i_precision;
 }
 long int Calculator::getBitPrecision() const {
-	return (long int) (i_precision * 3.322 + 26);
+	return (long int) (i_precision * 3.322 + 100);
 }
 
 const string &Calculator::getDecimalPoint() const {return DOT_STR;}

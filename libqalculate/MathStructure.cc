@@ -3102,29 +3102,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 }
 
 bool test_if_numerator_not_too_large(Number &vb, Number &ve) {
-	mpfr_t v_log10, o_log10;
-	mpfr_inits(v_log10, o_log10, NULL);
-	if(vb.isApproximateType()) mpfr_set(v_log10, vb.internalFloat(), MPFR_RNDN);
-	else mpfr_set_q(v_log10, vb.internalRational(), MPFR_RNDN);
-	if(ve.isApproximateType()) mpfr_set(o_log10, ve.internalFloat(), MPFR_RNDN);
-	else mpfr_set_q(o_log10, ve.internalRational(), MPFR_RNDN);
-	/*cln::cl_R v_log10 = cln::realpart(vb);
-	if(!cln::zerop(cln::imagpart(vb)) && cln::abs(cln::imagpart(vb)) > cln::abs(v_log10)) v_log10 = cln::imagpart(vb);
-	cln::cl_R o_log10 = cln::realpart(ve);*/
-	if(!mpfr_zero_p(v_log10) && !mpfr_zero_p(o_log10) && mpfr_cmp_si(v_log10, 1) != 0 && mpfr_cmp_si(v_log10, -1) != 0 && mpfr_cmp_si(o_log10, 1) != 0 && mpfr_cmp_si(o_log10, -1) != 0) {
-		mpfr_log10(v_log10, v_log10, MPFR_RNDN);
-		mpfr_abs(v_log10, v_log10, MPFR_RNDN);
-		if(!mpfr_zero_p(v_log10)) {
-			mpfr_mul(o_log10, o_log10, v_log10, MPFR_RNDN);
-			mpfr_log10(o_log10, o_log10, MPFR_RNDN);
-			if(mpfr_cmp_ui(o_log10, 3) > 0) {
-				mpfr_clears(v_log10, o_log10, NULL);
-				return false;
-			}
-		}
+	if(vb.isFloatingPoint()) return false;
+	if(!mpz_fits_slong_p(mpq_numref(ve.internalRational()))) return false;
+	long int exp = labs(mpz_get_si(mpq_numref(ve.internalRational())));
+	if(vb.isRational()) {
+		if((long long int) exp * mpz_sizeinbase(mpq_numref(ve.internalRational()), 10) <= 1000000LL && (long long int) exp * mpz_sizeinbase(mpq_denref(ve.internalRational()), 10) <= 1000000LL) return true;
 	}
-	mpfr_clears(v_log10, o_log10, NULL);
-	return true;
+	return false;
 }
 
 

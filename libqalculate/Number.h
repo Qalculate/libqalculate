@@ -45,15 +45,15 @@ class Number {
 	protected:
 	
 		void removeFloatZeroPart();
-		void testApproximate();
 		void testInteger();
+		bool testErrors() const;
 		bool testFloatResult();
 		void setPrecisionAndApproximateFrom(const Number &o);
 
-		mpq_t r_value;
-		mpfr_t f_value;
+		mpq_t r_value, ir_value;
+		mpfr_t f_value, if_value;
 		
-		NumberType n_type;
+		NumberType n_type, i_type;
 		
 		bool b_approx;
 		long int i_precision;
@@ -121,12 +121,12 @@ class Number {
  		* @return true if the number is approximate.
  		*/
 		bool isApproximate() const;
-		/** Returns true if the number has an approximate representation/is of approximate type -- if it is a floating point number. Numbers of approximate type are always approximate, but the reversed relation is not always true.
+		/** Returns true if the number is a floating point number.
 		*
  		* @return true if the number has an approximate representation.
  		*/
-		bool isApproximateType() const;
-		/** Defines the number as approximate or exact. If a number of approximate type is set as exact, it will be converted to a rational number.
+		bool isFloatingPoint() const;
+		/** Defines the number as approximate or exact.
 		*
  		* @param is_approximate If the number shall be regarded as approximate.
  		*/
@@ -177,6 +177,7 @@ class Number {
 		Number complexDenominator() const;
 
 		void operator = (const Number &o);
+		void operator = (long int i);
 		void operator -- (int);
 		void operator ++ (int);
 		Number operator - () const;
@@ -185,6 +186,11 @@ class Number {
 		Number operator + (const Number &o) const;
 		Number operator - (const Number &o) const;
 		Number operator ^ (const Number &o) const;
+		Number operator * (long int i) const;
+		Number operator / (long int i) const;
+		Number operator + (long int i) const;
+		Number operator - (long int i) const;
+		Number operator ^ (long int i) const;
 		Number operator && (const Number &o) const;
 		Number operator || (const Number &o) const;
 		Number operator ! () const;
@@ -194,9 +200,16 @@ class Number {
 		void operator += (const Number &o);
 		void operator -= (const Number &o);
 		void operator ^= (const Number &o);
+		void operator *= (long int i);
+		void operator /= (long int i);
+		void operator += (long int i);
+		void operator -= (long int i);
+		void operator ^= (long int i);
 		
 		bool operator == (const Number &o) const;
 		bool operator != (const Number &o) const;
+		bool operator == (long int i) const;
+		bool operator != (long int i) const;
 		
 		bool bitAnd(const Number &o);
 		bool bitOr(const Number &o);
@@ -218,7 +231,6 @@ class Number {
 		bool isZero() const;
 		bool isOne() const;
 		bool isTwo() const;
-		bool isTen() const;
 		bool isI() const;
 		bool isMinusI() const;
 		bool isMinusOne() const;
@@ -234,6 +246,7 @@ class Number {
 		bool hasPositiveSign() const;
 		bool equalsZero() const;
 		bool equals(const Number &o) const;
+		bool equals(long int i) const;
 		bool equalsApproximately(const Number &o, int prec) const;
 		ComparisonResult compare(const Number &o) const;
 		ComparisonResult compareApproximately(const Number &o, int prec = EQUALS_PRECISION_LOWEST) const;
@@ -259,24 +272,28 @@ class Number {
  		* @return true if the operation was successful.
  		*/
 		bool add(const Number &o);
+		bool add(long int i);
 		/** Subtracts from to the number (x-o).
 		*
 		* @param o Number to subtract.
  		* @return true if the operation was successful.
  		*/
 		bool subtract(const Number &o);
+		bool subtract(long int i);
 		/** Multiply the number (x*o).
 		*
 		* @param o Number to multiply with.
  		* @return true if the operation was successful.
  		*/
 		bool multiply(const Number &o);
+		bool multiply(long int i);
 		/** Divide the number (x/o).
 		*
 		* @param o Number to divide by.
  		* @return true if the operation was successful.
  		*/
 		bool divide(const Number &o);
+		bool divide(long int i);
 		/** Invert the number (1/x).
 		*
  		* @return true if the operation was successful.

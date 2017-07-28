@@ -1314,7 +1314,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct.eval(eo);
 	}
 	bool b = false;
-	if(mstruct.isNumber() && eo.approximation == APPROXIMATION_APPROXIMATE) {
+	/*if(mstruct.isNumber() && eo.approximation == APPROXIMATION_APPROXIMATE) {
 		Number nr(mstruct.number());
 		nr /= CALCULATOR->v_pi->get().number();
 		nr.frac();
@@ -1323,7 +1323,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct.clear(true);
 			b = true;
 		}
-	} else if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
+	} else*/ if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
 		mstruct.clear();
 		b = true;
 	} else if(mstruct.isFunction() && mstruct.size() == 1) {
@@ -1367,8 +1367,10 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 	} else if(mstruct.isAddition()) {
 		size_t i = 0;
+		bool b_negate = false;
 		for(; i < mstruct.size(); i++) {
 			if(mstruct[i] == CALCULATOR->v_pi || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1] == CALCULATOR->v_pi && mstruct[i][0].isNumber() && mstruct[i][0].number().isInteger())) {
+				b_negate = mstruct[i] == CALCULATOR->v_pi || mstruct[i][0].number().isOdd();
 				b = true;
 				break;
 			}
@@ -1384,7 +1386,9 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					}
 				}
 			}
+			if(CALCULATOR->getRadUnit()) mstruct2 *= CALCULATOR->getRadUnit();
 			mstruct.set(CALCULATOR->f_sin, &mstruct2, NULL);
+			if(b_negate) mstruct.negate();
 		}
 	}
 
@@ -1517,8 +1521,10 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 	} else if(mstruct.isAddition()) {
 		size_t i = 0;
+		bool b_negate = false;
 		for(; i < mstruct.size(); i++) {
 			if(mstruct[i] == CALCULATOR->v_pi || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1] == CALCULATOR->v_pi && mstruct[i][0].isNumber() && mstruct[i][0].number().isInteger())) {
+				b_negate = mstruct[i] == CALCULATOR->v_pi || mstruct[i][0].number().isOdd();
 				b = true;
 				break;
 			}
@@ -1534,8 +1540,9 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					}
 				}
 			}
+			if(CALCULATOR->getRadUnit()) mstruct2 *= CALCULATOR->getRadUnit();
 			mstruct.set(CALCULATOR->f_cos, &mstruct2, NULL);
-			mstruct.negate();
+			if(b_negate) mstruct.negate();
 		}
 	}
 	if(b) {
@@ -1564,7 +1571,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(nr.cos() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) {
-			if(eo.approximation == APPROXIMATION_APPROXIMATE && mstruct.isApproximate() && nr.equalsZero()) nr.clear();
+			//if(eo.approximation == APPROXIMATION_APPROXIMATE && mstruct.isApproximate() && nr.equalsZero()) nr.clear();
 			mstruct.set(nr, true);
 			return 1;
 		}
