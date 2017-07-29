@@ -9147,12 +9147,26 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					set(msqrfree);
 					if(!isAddition()) {
 						factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+						if(isMultiplication() && SIZE >= 2 && CHILD(0).isNumber()) {
+							for(size_t i = 1; i < SIZE; i++) {
+								if(CHILD(i).isPower() && CHILD(i)[0].isMultiplication() && CHILD(i)[0].size() >= 2 && CHILD(i)[0][0].isNumber() && CHILD(i)[0][0].number().isRational() && !CHILD(i)[0][0].number().isInteger() && CHILD(i)[1].isInteger()) {
+									CHILD(i)[0][0].number().raise(CHILD(i)[1].number());
+									CHILD(0).number().multiply(CHILD(i)[0][0].number());
+									CHILD(i)[0].delChild(1);
+									if(CHILD(i)[0].size() == 1) CHILD(i)[0].setToChild(1, true);
+								}
+							}
+							if(CHILD(0).isOne()) {
+								ERASE(0);
+								if(SIZE == 1) SET_CHILD_MAP(0);
+							}
+						}
 						return true;
 					}
 				}
 			}
 		}
-	}	
+	}
 	switch(type()) {
 		case STRUCT_ADDITION: {
 			if(CALCULATOR->aborted()) return false;

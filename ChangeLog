@@ -1,3 +1,13 @@
+2017-07-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix 3(x+1)(x+y)^3 to factors = 81((x + y) / 3)^3 * (x + 1)
+
+2017-07-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix engineering exp mode in qalc and allow divisors other than 3
+	* Do not round digits before decimal point for exact values with exp mode off
+	* Fix sin(pi+x) and cos(pi+x)
+
 2017-07-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix multiplication of matrix by (row) vector

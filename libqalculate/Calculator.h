@@ -1077,7 +1077,6 @@ class Calculator {
 	/** Returns default precision for approximate calculations.
 	*/
 	int getPrecision() const;
-	long int getBitPrecision() const;
 	//@}
 
 	/** @name Functions for localization */

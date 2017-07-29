@@ -1232,6 +1232,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		}
 		return 1;
 	}
+	if(eo.approximation == APPROXIMATION_EXACT) return -1;
 	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
@@ -1241,7 +1242,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(!nr.lambertW()) {
-			CALCULATOR->error(false, _("Argument for %s() must be a real number greater than or equal to -1/e."), preferredDisplayName().name.c_str(), NULL);
+			if(!CALCULATOR->aborted()) CALCULATOR->error(false, _("Argument for %s() must be a real number greater than or equal to -1/e."), preferredDisplayName().name.c_str(), NULL);
 		} else if(!(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) {
 			mstruct.set(nr, true);
 			return 1;

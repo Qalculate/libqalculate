@@ -594,9 +594,7 @@ extern Calculator *calculator;
 #define CALCULATOR	calculator
 
 #define DEFAULT_PRECISION	8
-#define DEFAULT_BIT_PRECISION	126
 #define PRECISION		(CALCULATOR ? CALCULATOR->getPrecision() : DEFAULT_PRECISION)
-#define BIT_PRECISION		(CALCULATOR ? CALCULATOR->getBitPrecision() : DEFAULT_BIT_PRECISION)
 
 #define SIGN_DEGREE			"°"
 #define SIGN_POWER_0			"⁰"

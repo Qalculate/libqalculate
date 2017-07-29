@@ -44,10 +44,9 @@ class Number {
 
 	protected:
 	
-		void removeFloatZeroPart();
 		void testInteger();
-		bool testErrors() const;
-		bool testFloatResult();
+		bool testErrors(int error_level = 1) const;
+		bool testFloatResult(int error_level = 1);
 		void setPrecisionAndApproximateFrom(const Number &o);
 
 		mpq_t r_value, ir_value;
@@ -105,6 +104,8 @@ class Number {
 		
 		const mpq_t &internalRational() const;
 		const mpfr_t &internalFloat() const;
+		mpq_t &internalRational();
+		mpfr_t &internalFloat();
 		const NumberType &internalType() const;
 		
 		double floatValue() const;
@@ -359,6 +360,7 @@ class Number {
 		bool irem(const Number &o);
 		bool irem(const Number &o, Number &q);
 		bool iquo(const Number &o);
+		bool iquo(unsigned long int i);
 		bool iquo(const Number &o, Number &r);
 
 		int getBoolean() const;

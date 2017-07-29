@@ -1079,17 +1079,14 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
 		}
 	}
 }
-
+#define PRECISION_TO_BITS(p) (((p) * 3.322) + 100)
 void Calculator::setPrecision(int precision) {
 	if(precision <= 0) precision = DEFAULT_PRECISION;
 	i_precision = precision;
-	mpfr_set_default_prec(getBitPrecision());
+	mpfr_set_default_prec(PRECISION_TO_BITS(i_precision));
 }
 int Calculator::getPrecision() const {
 	return i_precision;
-}
-long int Calculator::getBitPrecision() const {
-	return (long int) (i_precision * 3.322 + 100);
 }
 
 const string &Calculator::getDecimalPoint() const {return DOT_STR;}
