@@ -1963,46 +1963,25 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return 1;
 }
 AsinhFunction::AsinhFunction() : MathFunction("asinh", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 bool AsinhFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
 bool AsinhFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
-int AsinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	MathStructure m_arg(vargs[0]);
-	m_arg ^= 2;
-	m_arg += 1;
-	m_arg ^= Number(1, 2);
-	m_arg += vargs[0];
-	mstruct.set(CALCULATOR->f_ln, &m_arg, NULL);
-	return 1;
+int AsinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(asinh)
 }
 AcoshFunction::AcoshFunction() : MathFunction("acosh", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 bool AcoshFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
-int AcoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	MathStructure m_arg(vargs[0]);
-	m_arg ^= 2;
-	m_arg -= 1;
-	m_arg ^= Number(1, 2);
-	m_arg += vargs[0];
-	mstruct.set(CALCULATOR->f_ln, &m_arg, NULL);
-	return 1;
+int AcoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(acosh)
 }
 AtanhFunction::AtanhFunction() : MathFunction("atanh", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
-int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	
-	MathStructure m_arg = 1;
-	m_arg += vargs[0];
-	MathStructure m_den = 1;
-	m_den -= vargs[0];
-	m_arg /= m_den;
-	mstruct.set(CALCULATOR->f_ln, &m_arg, NULL);
-	mstruct *= Number(1, 2);
-	return 1;
-	
+int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(atanh)
 }
 
 RadiansToDefaultAngleUnitFunction::RadiansToDefaultAngleUnitFunction() : MathFunction("radtodef", 1) {

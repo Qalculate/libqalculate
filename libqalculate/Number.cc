@@ -1853,6 +1853,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		}
 	}
 	if(o.isComplex()) {
+		if(b_imag) return false;
 		Number tcos(*this);
 		if(!tcos.ln()) return false;
 		if(!tcos.multiply(*o.internalImaginary())) return false;
@@ -2170,7 +2171,7 @@ bool Number::abs() {
 			}
 			i_v->clear();
 			i_value = i_v;
-			if(!raise(Number(1, 2))) {
+			if(!raise(nr_half)) {
 				set(nr_bak);
 				return false;
 			}
@@ -2539,7 +2540,7 @@ bool Number::sin() {
 		mpfr_init2(f_quo, BIT_PRECISION - 30);
 		mpfr_const_pi(f_pi, MPFR_RNDN);
 		mpfr_div(f_quo, f_value, f_pi, MPFR_RNDN);
-		mpfr_get_z(f_int, f_quo, MPFR_RNDF);
+		mpfr_get_z(f_int, f_quo, MPFR_RNDD);
 		mpfr_frac(f_quo, f_quo, MPFR_RNDN);
 		if(mpfr_zero_p(f_quo)) {
 			clear(true);
@@ -2574,6 +2575,25 @@ bool Number::sin() {
 bool Number::asin() {
 	if(isInfinite()) return false;
 	if(isZero()) return true;
+	if(isOne()) {
+		pi();
+		divide(2);
+		return true;
+	}
+	if(isMinusOne()) {
+		pi();
+		divide(-2);
+		return true;
+	}
+	if(isComplex() || !isFraction()) {
+		if(b_imag) return false;
+		Number z_sqln(*this);
+		Number i_z(*this);
+		if(!i_z.multiply(nr_one_i)) return false;
+		if(!z_sqln.square() || !z_sqln.negate() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !z_sqln.add(i_z) || !z_sqln.ln() || !z_sqln.multiply(nr_minus_i)) return false;
+		set(z_sqln);
+		return true;
+	}
 	Number nr_bak(*this);
 	mpfr_clear_flags();
 	setToFloatingPoint();
@@ -2594,9 +2614,9 @@ bool Number::sinh() {
 			t1b.set(*i_value, false, true);
 			t2a.set(t1a);
 			t2b.set(t1b);
-			if(!t1a.cosh()) return false;
+			if(!t1a.sinh()) return false;
 			if(!t1b.cos()) return false;
-			if(!t2a.sinh()) return false;
+			if(!t2a.cosh()) return false;
 			if(!t2b.sin()) return false;
 			if(!t1a.multiply(t1b)) return false;
 			if(!t2a.multiply(t2b)) return false;
@@ -2624,6 +2644,12 @@ bool Number::sinh() {
 bool Number::asinh() {
 	if(isInfinite()) return true;
 	if(isZero()) return true;
+	if(isComplex()) {
+		Number z_sqln(*this);
+		if(!z_sqln.square() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !z_sqln.add(*this) || !z_sqln.ln()) return false;
+		set(z_sqln);
+		return true;
+	}
 	Number nr_bak(*this);
 	mpfr_clear_flags();
 	setToFloatingPoint();
@@ -2720,6 +2746,22 @@ bool Number::acos() {
 		clear(true);
 		return true;
 	}
+	if(isZero()) {
+		pi();
+		divide(2);
+		return true;
+	}
+	if(isMinusOne()) {
+		pi();
+		return true;
+	}
+	if(isComplex() || !isFraction()) {
+		if(b_imag) return false;
+		Number z_sqln(*this);
+		if(!z_sqln.square() || !z_sqln.negate() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !z_sqln.multiply(nr_one_i) || !z_sqln.add(*this) || !z_sqln.ln() || !z_sqln.multiply(nr_minus_i)) return false;
+		set(z_sqln);
+		return true;
+	}
 	Number nr_bak(*this);
 	mpfr_clear_flags();
 	setToFloatingPoint();
@@ -2778,6 +2820,18 @@ bool Number::cosh() {
 bool Number::acosh() {
 	if(isPlusInfinity() || isInfinity()) return true;
 	if(isMinusInfinity()) return false;
+	if(isOne()) {
+		clear(true);
+		return true;
+	}
+	if(isComplex() || isLessThan(nr_one)) {
+		if(b_imag) return false;
+		Number ipz(*this), imz(*this);
+		if(!ipz.add(1) || !imz.subtract(1)) return false;
+		if(!ipz.raise(nr_half) || !imz.raise(nr_half) || !ipz.multiply(imz) || !ipz.add(*this) || !ipz.ln()) return false;
+		set(ipz);
+		return true;
+	}
 	Number nr_bak(*this);
 	mpfr_clear_flags();
 	setToFloatingPoint();
@@ -2836,6 +2890,14 @@ bool Number::atan() {
 		pi();
 		divide(2);
 		if(isMinusInfinity()) negate();
+		return true;
+	}
+	if(isComplex()) {
+		if(b_imag) return false;
+		Number ipz(nr_one_i), imz(nr_one_i);
+		if(!ipz.add(*this) || !imz.subtract(*this)) return false;
+		if(!ipz.divide(imz) || !ipz.ln() || !ipz.multiply(nr_one_i) || !ipz.divide(2)) return false;
+		set(ipz);
 		return true;
 	}
 	Number nr_bak(*this);
@@ -2904,6 +2966,14 @@ bool Number::atanh() {
 	if(isMinusOne()) {
 		if(b_imag) return false;
 		setMinusInfinity();
+		return true;
+	}
+	if(isComplex() || !isFraction()) {
+		if(b_imag) return false;
+		Number ipz(nr_one), imz(nr_one);
+		if(!ipz.add(*this) || !imz.subtract(*this)) return false;
+		if(!ipz.divide(imz) || !ipz.ln() || !ipz.divide(2)) return false;
+		set(ipz);
 		return true;
 	}
 	Number nr_bak(*this);
@@ -3285,11 +3355,11 @@ bool Number::binomial(const Number &m, const Number &k) {
 bool Number::factorize(vector<Number> &factors) {
 	if(isZero() || !isInteger()) return false;
 	if(mpz_cmp_si(mpq_numref(r_value), 1) == 0) {
-		factors.push_back(Number(1, 1));
+		factors.push_back(nr_one);
 		return true;
 	}
 	if(mpz_cmp_si(mpq_numref(r_value), -1) == 0) {
-		factors.push_back(Number(-1, 1));
+		factors.push_back(nr_minus_one);
 		return true;
 	}
 	mpz_t inr, last_prime, facmax;
@@ -3297,7 +3367,7 @@ bool Number::factorize(vector<Number> &factors) {
 	mpz_set(inr, mpq_numref(r_value));
 	if(mpz_sgn(inr) < 0) {
 		mpz_neg(inr, inr);
-		factors.push_back(Number(-1, 1));
+		factors.push_back(nr_minus_one);
 	}
 	size_t prime_index = 0;
 	bool b = true;
@@ -3551,7 +3621,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			nr2.frac();
 			if(!nr2.isZero()) {
 				if(po.is_approximate) *po.is_approximate = true;
-				if(nr2.isGreaterThanOrEqualTo(Number(1, 2))) {
+				if(nr2.isGreaterThanOrEqualTo(nr_half)) {
 					nr.add(1);
 				}
 			}

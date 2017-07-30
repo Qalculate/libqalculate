@@ -184,7 +184,7 @@ bool Calculator::delDefaultStringAlternative(string replacement, string standard
 Calculator *calculator = NULL;
 
 MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one, m_one_i;
-Number nr_zero, nr_one, nr_minus_one, nr_one_i;
+Number nr_zero, nr_one, nr_minus_one, nr_one_i, nr_minus_i, nr_half;
 EvaluationOptions no_evaluation;
 ExpressionName empty_expression_name;
 
@@ -403,7 +403,9 @@ Calculator::Calculator() {
 	m_minus_one.set(-1, 1);
 	nr_zero.clear();
 	nr_one.set(1, 1);
+	nr_half.set(1, 2);
 	nr_one_i.setImaginaryPart(1, 1);
+	nr_minus_i.setImaginaryPart(-1, 1);
 	m_one_i.set(nr_one_i);
 	nr_minus_one.set(-1, 1);
 	no_evaluation.approximation = APPROXIMATION_EXACT;
