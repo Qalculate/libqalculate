@@ -540,7 +540,7 @@ void Number::set(string number, const ParseOptions &po) {
 	if(minus) mpz_neg(num, num);
 	clear();
 	if(b_cplx) {
-		if(!i_value) i_value = new Number();
+		if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
 		i_value->setInternal(num, den, false, true);
 		mpq_canonicalize(i_value->internalRational());
 	} else {
@@ -586,6 +586,7 @@ void Number::setFloat(double d_value) {
 	else if(mpfr_get_prec(f_value) < BIT_PRECISION) mpfr_set_prec(f_value, BIT_PRECISION);
 	mpfr_set_d(f_value, d_value, MPFR_RNDN);
 	n_type = NUMBER_TYPE_FLOAT;
+	mpq_set_ui(r_value, 0, 1);
 	i_precision = 8;
 	if(i_value) i_value->clear();
 }
@@ -636,6 +637,7 @@ void Number::setInternal(const mpfr_t &mpfr_value, bool merge_precision, bool ke
 	else if(mpfr_get_prec(f_value) < BIT_PRECISION || mpfr_get_prec(f_value) < mpfr_get_prec(mpfr_value)) mpfr_set_prec(f_value, mpfr_get_prec(mpfr_value) > BIT_PRECISION ? mpfr_get_prec(mpfr_value) : BIT_PRECISION);
 	mpfr_set(f_value, mpfr_value, MPFR_RNDN);
 	n_type = NUMBER_TYPE_FLOAT;
+	mpq_set_ui(r_value, 0, 1);
 	long int new_precision = PRECISION;
 	if(mpfr_get_prec(f_value) < BIT_PRECISION) new_precision = BITS_TO_PRECISION(mpfr_get_prec(f_value));
 	if(i_precision < 0 || !merge_precision || new_precision < i_precision) i_precision = new_precision;
@@ -643,12 +645,12 @@ void Number::setInternal(const mpfr_t &mpfr_value, bool merge_precision, bool ke
 }
 
 void Number::setImaginaryPart(const Number &o) {
-	if(!i_value) i_value = new Number();
-	i_value->set(o, true);
+	if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
+	i_value->set(o, false, true);
 	setPrecisionAndApproximateFrom(*i_value);
 }
 void Number::setImaginaryPart(long int numerator, long int denominator, long int exp_10) {
-	if(!i_value) i_value = new Number();
+	if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
 	i_value->set(numerator, denominator, exp_10);
 }
 void Number::set(const Number &o, bool merge_precision, bool keep_imag) {
@@ -665,7 +667,7 @@ void Number::set(const Number &o, bool merge_precision, bool keep_imag) {
 	}
 	if(o.isApproximate()) b_approx = true;
 	if(i_precision < 0 || o.precision() < i_precision) i_precision = o.precision();
-	if(!keep_imag) {
+	if(!keep_imag && !b_imag) {
 		if(o.hasImaginaryPart()) {
 			setImaginaryPart(*o.internalImaginary());
 		} else if(i_value) {
@@ -720,8 +722,19 @@ mpfr_t &Number::internalFloat() {
 Number *Number::internalImaginary() const {
 	return i_value;
 }
+void Number::markAsImaginaryPart(bool is_imag) {
+	b_imag = is_imag;
+}
 const NumberType &Number::internalType() const {
 	return n_type;
+}
+void Number::setToFloatingPoint() {
+	if(n_type == NUMBER_TYPE_RATIONAL) {
+		mpfr_init2(f_value, BIT_PRECISION);
+		mpfr_set_q(f_value, r_value, MPFR_RNDN);
+		mpq_set_ui(r_value, 0, 1);
+		n_type = NUMBER_TYPE_FLOAT;
+	}
 }
 
 double Number::floatValue() const {
@@ -733,7 +746,8 @@ double Number::floatValue() const {
 	return 0.0;
 }
 long int Number::intValue(bool *overflow) const {
-	if(isInteger()) {
+	if(isInfinite()) return 0;
+	if(n_type == NUMBER_TYPE_RATIONAL) {
 		if(mpz_fits_slong_p(mpq_numref(r_value)) == 0) {
 			if(overflow) *overflow = true;
 			if(mpz_sgn(mpq_numref(r_value)) == -1) return LONG_MIN;
@@ -741,7 +755,8 @@ long int Number::intValue(bool *overflow) const {
 		}
 		return (int) mpz_get_si(mpq_numref(r_value));
 	} else {
-		Number nr(*this);
+		Number nr;
+		nr.set(*this, false, true);
 		nr.round();
 		return nr.intValue(overflow);
 	}
@@ -949,6 +964,7 @@ bool Number::testFloatResult(int error_level) {
 	}
 	mpfr_clear_flags();
 	if(mpfr_inf_p(f_value)) {
+		if(b_imag) return false;
 		int sign = mpfr_sgn(f_value);
 		if(sign > 0) n_type = NUMBER_TYPE_PLUS_INFINITY;
 		else if(sign < 0) n_type = NUMBER_TYPE_MINUS_INFINITY;
@@ -962,13 +978,14 @@ bool Number::testFloatResult(int error_level) {
 	return true;
 }
 void Number::testInteger() {
-	if(isFloatingPoint() && !isInfinite() && !isComplex()) {
+	if(isFloatingPoint() && !isInfinite()) {
 		if(mpfr_integer_p(f_value)) {
 			mpfr_get_z(mpq_numref(r_value), f_value, MPFR_RNDN);
 			if(n_type == NUMBER_TYPE_FLOAT) mpfr_clear(f_value);
 			n_type = NUMBER_TYPE_RATIONAL;
 		}
 	}
+	if(i_value) i_value->testInteger();
 }
 void Number::setPrecisionAndApproximateFrom(const Number &o) {
 	if(o.precision() > 0 && (i_precision < 1 || o.precision() < i_precision)) i_precision = o.precision();
@@ -976,9 +993,10 @@ void Number::setPrecisionAndApproximateFrom(const Number &o) {
 }
 
 bool Number::isComplex() const {
-	return hasImaginaryPart();
+	return i_value && !i_value->isZero();
 }
 Number Number::integer() const {
+	if(isInteger()) return *this;
 	Number nr(*this);
 	nr.round();
 	return nr;
@@ -990,7 +1008,7 @@ bool Number::isInteger() const {
 	return mpz_cmp_ui(mpq_denref(r_value), 1) == 0;
 }
 bool Number::isRational() const {
-	return !isInfinite() && !isComplex() && !isFloatingPoint();
+	return !isFloatingPoint() && !isInfinite() && !isComplex();
 }
 bool Number::isReal() const {
 	return !isInfinite() && !isComplex();
@@ -1329,6 +1347,7 @@ int Number::integerLength() const {
 bool Number::add(const Number &o) {
 	if(n_type == NUMBER_TYPE_INFINITY) return !o.isInfinite();
 	if(o.isInfinity()) {
+		if(b_imag) return false;
 		if(isInfinite()) return false;
 		setInfinity();
 		setPrecisionAndApproximateFrom(o);
@@ -1337,21 +1356,21 @@ bool Number::add(const Number &o) {
 	if(n_type == NUMBER_TYPE_MINUS_INFINITY) return !o.isPlusInfinity();
 	if(n_type == NUMBER_TYPE_PLUS_INFINITY) return !o.isMinusInfinity();
 	if(o.isPlusInfinity()) {
+		if(b_imag) return false;
 		setPlusInfinity();
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(o.isMinusInfinity()) {
+		if(b_imag) return false;
 		setMinusInfinity();
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(o.isComplex()) {
-		if(!i_value) {
-			i_value = new Number(*o.internalImaginary());
-		} else {
-			if(!i_value->add(*o.internalImaginary())) return false;
-		}
+		if(!i_value) {i_value = new Number(*o.internalImaginary()); i_value->markAsImaginaryPart();}
+		else if(!i_value->add(*o.internalImaginary())) return false;
+		setPrecisionAndApproximateFrom(*i_value);
 	}
 	if(o.isFloatingPoint() || n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
@@ -1359,6 +1378,7 @@ bool Number::add(const Number &o) {
 		if(n_type != NUMBER_TYPE_FLOAT) {
 			mpfr_init2(f_value, BIT_PRECISION);
 			mpfr_add_q(f_value, o.internalFloat(), r_value, MPFR_RNDN);
+			mpq_set_ui(r_value, 0, 1);
 			n_type = NUMBER_TYPE_FLOAT;
 		} else if(n_type == NUMBER_TYPE_FLOAT) {
 			if(o.isFloatingPoint()) mpfr_add(f_value, f_value, o.internalFloat(), MPFR_RNDN);
@@ -1397,6 +1417,7 @@ bool Number::subtract(const Number &o) {
 		return !o.isInfinite();
 	}
 	if(o.isInfinity()) {
+		if(b_imag) return false;
 		if(isInfinite()) return false;
 		setPrecisionAndApproximateFrom(o);
 		setInfinity();
@@ -1409,18 +1430,21 @@ bool Number::subtract(const Number &o) {
 		return !o.isMinusInfinity();
 	}
 	if(o.isPlusInfinity()) {
+		if(b_imag) return false;
 		setMinusInfinity();
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(o.isMinusInfinity()) {
+		if(b_imag) return false;
 		setPlusInfinity();
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(o.isComplex()) {
-		if(!i_value) i_value = new Number();
+		if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
 		if(!i_value->subtract(*o.internalImaginary())) return false;
+		setPrecisionAndApproximateFrom(*i_value);
 	}
 	if(o.isFloatingPoint() || n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
@@ -1428,6 +1452,7 @@ bool Number::subtract(const Number &o) {
 		if(n_type != NUMBER_TYPE_FLOAT) {
 			mpfr_init2(f_value, BIT_PRECISION);
 			mpfr_sub_q(f_value, o.internalFloat(), r_value, MPFR_RNDN);
+			mpq_set_ui(r_value, 0, 1);
 			n_type = NUMBER_TYPE_FLOAT;
 			mpfr_neg(f_value, f_value, MPFR_RNDN);
 		} else if(n_type == NUMBER_TYPE_FLOAT) {
@@ -1488,12 +1513,14 @@ bool Number::multiply(const Number &o) {
 		return true;
 	}
 	if(o.isPlusInfinity()) {
+		if(b_imag) return false;
 		if(isNegative()) setMinusInfinity();
 		else setPlusInfinity();
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(o.isMinusInfinity()) {
+		if(b_imag) return false;
 		if(isNegative()) setPlusInfinity();
 		else setMinusInfinity();
 		setPrecisionAndApproximateFrom(o);
@@ -1513,7 +1540,9 @@ bool Number::multiply(const Number &o) {
 				nr_copy.set(*i_value);
 				nr_copy.negate();
 			}
-			nr_copy.setImaginaryPart(*this);
+			if(hasRealPart()) {
+				nr_copy.setImaginaryPart(*this);
+			}
 			if(!nr_copy.multiply(o.imaginaryPart())) return false;
 			if(!multiply(o.realPart())) return false;
 			if(!add(nr_copy)) {
@@ -1521,29 +1550,33 @@ bool Number::multiply(const Number &o) {
 				return false;
 			}
 			return true;
+		} else if(hasImaginaryPart()) {
+			Number nr_copy(*i_value);
+			nr_copy.negate();
+			if(hasRealPart()) {
+				nr_copy.setImaginaryPart(*this);
+			}
+			if(!nr_copy.multiply(o.imaginaryPart())) return false;
+			set(nr_copy);
+			return true;
 		}
 		if(!multiply(*o.internalImaginary())) return false;
-		if(hasImaginaryPart()) {
-			Number r_new(*i_value);
-			i_value->set(*this, true, true);
-			set(r_new, true);
-			setNegative(!hasNegativeSign());
-		} else {
-			i_value = new Number();
-			i_value->set(*this, true, true);
-			clearReal();
-		}
+		if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
+		i_value->set(*this, true, true);
+		clearReal();
 		return true;
 	}
 	if(o.isFloatingPoint() || n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
-		if(hasImaginaryPart() && !i_value->multiply(o)) {
-			return false;
+		if(hasImaginaryPart()) {
+			if(!i_value->multiply(o)) return false;
+			setPrecisionAndApproximateFrom(*i_value);
 		}
 		mpfr_clear_flags();
 		if(n_type != NUMBER_TYPE_FLOAT) {
 			mpfr_init2(f_value, BIT_PRECISION);
 			mpfr_mul_q(f_value, o.internalFloat(), r_value, MPFR_RNDN);
+			mpq_set_ui(r_value, 0, 1);
 			n_type = NUMBER_TYPE_FLOAT;
 		} else if(n_type == NUMBER_TYPE_FLOAT) {
 			if(o.isFloatingPoint()) mpfr_mul(f_value, f_value, o.internalFloat(), MPFR_RNDN);
@@ -1554,8 +1587,9 @@ bool Number::multiply(const Number &o) {
 			return false;
 		}
 	} else {
-		if(hasImaginaryPart() && !i_value->multiply(o)) {
-			return false;
+		if(hasImaginaryPart()) {
+			if(!i_value->multiply(o)) return false;
+			setPrecisionAndApproximateFrom(*i_value);
 		}
 		mpq_mul(r_value, r_value, o.internalRational());
 	}
@@ -1581,11 +1615,12 @@ bool Number::multiply(long int i) {
 		return true;
 	}
 	if(isInfinite()) return true;
-	if(hasImaginaryPart() && !i_value->multiply(i)) {
-		return false;
-	}
 	if(n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
+		if(hasImaginaryPart()) {
+			if(!i_value->multiply(i)) return false;
+			setPrecisionAndApproximateFrom(*i_value);
+		}
 		mpfr_clear_flags();
 		mpfr_mul_si(f_value, f_value, i, MPFR_RNDN);
 		if(!testFloatResult()) {
@@ -1593,6 +1628,10 @@ bool Number::multiply(long int i) {
 			return false;
 		}
 	} else {
+		if(hasImaginaryPart()) {
+			if(!i_value->multiply(i)) return false;
+			setPrecisionAndApproximateFrom(*i_value);
+		}
 		mpq_t r_i;
 		mpq_init(r_i);
 		mpz_set_si(mpq_numref(r_i), i);
@@ -1638,14 +1677,19 @@ bool Number::divide(const Number &o) {
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
+	if(o.isComplex()) {
+		Number oinv(o);
+		if(!oinv.recip()) return false;
+		return multiply(oinv);
+	}
 	if(o.isFloatingPoint() || n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
-		mpfr_clear_flags();
-		if(n_type != NUMBER_TYPE_FLOAT) {
-			mpfr_init2(f_value, BIT_PRECISION);
-			mpfr_set_q(f_value, r_value, MPFR_RNDN);
-			n_type = NUMBER_TYPE_FLOAT;
+		if(isComplex()) {
+			if(!i_value->divide(o)) return false;
+			setPrecisionAndApproximateFrom(*i_value);
 		}
+		mpfr_clear_flags();
+		setToFloatingPoint();
 		if(o.isFloatingPoint()) mpfr_div(f_value, f_value, o.internalFloat(), MPFR_RNDN);
 		else mpfr_div_q(f_value, f_value, o.internalRational(), MPFR_RNDN);
 		if(!testFloatResult()) {
@@ -1653,6 +1697,10 @@ bool Number::divide(const Number &o) {
 			return false;
 		}
 	} else {
+		if(isComplex()) {
+			if(!i_value->divide(o)) return false;
+			setPrecisionAndApproximateFrom(*i_value);
+		}
 		mpq_div(r_value, r_value, o.internalRational());
 	}
 	setPrecisionAndApproximateFrom(o);
@@ -1675,12 +1723,21 @@ bool Number::divide(long int i) {
 	if(n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
 		mpfr_clear_flags();
+		if(isComplex()) {
+			if(!i_value->divide(i)) return false;
+			setPrecisionAndApproximateFrom(*i_value);
+		}
+		mpfr_clear_flags();
 		mpfr_div_si(f_value, f_value, i, MPFR_RNDN);
 		if(!testFloatResult()) {
 			set(nr_bak);
 			return false;
 		}
 	} else {
+		if(isComplex()) {
+			if(!i_value->divide(i)) return false;
+			setPrecisionAndApproximateFrom(*i_value);
+		}
 		mpq_t r_i;
 		mpq_init(r_i);
 		mpz_set_si(mpq_numref(r_i), i);
@@ -1700,6 +1757,28 @@ bool Number::recip() {
 	if(isInfinite()) {
 		clear();
 		return true;
+	}
+	if(isComplex()) {
+		if(hasRealPart()) {
+			Number den1(*i_value);
+			Number den2;
+			den2.set(*this, false, true);
+			Number num_r(den2), num_i(den1);
+			if(!den1.square()) return false;
+			if(!num_i.negate()) return false;
+			if(!den2.square()) return false;
+			if(!den1.add(den2)) return false;
+			if(!num_r.divide(den1)) return false;
+			if(!num_i.divide(den1)) return false;
+			set(num_r);
+			setImaginaryPart(num_i);
+			return true;
+		} else {
+			i_value->recip();
+			i_value->negate();
+			setPrecisionAndApproximateFrom(*i_value);
+			return true;
+		}
 	}
 	if(n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
@@ -1725,12 +1804,13 @@ bool Number::raise(const Number &o, bool try_exact) {
 		}
 		if(isMinusInfinity()) {
 			if(o.isEven()) {
-				setPlusInfinity();
+				n_type = NUMBER_TYPE_PLUS_INFINITY;
 			} else if(!o.isInteger()) {
 				//setInfinity();
 				return false;
 			}
 		}
+		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(o.isMinusInfinity()) {
@@ -1747,7 +1827,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 	}
 	if(o.isPlusInfinity()) {
 		if(isZero()) {
-		} else if(isComplex() || isNegative()) {
+		} else if(b_imag || isComplex() || isNegative()) {
 			return false;
 		} else {
 			setPlusInfinity();
@@ -1763,7 +1843,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		if(o.isZero()) {
 			//0^0
 			CALCULATOR->error(false, _("0^0 might be considered undefined"), NULL);
-			set(1, 1);
+			set(1, 1, 0, true);
 			setPrecisionAndApproximateFrom(o);
 			return true;
 		} else if(o.isComplex()) {
@@ -1779,28 +1859,42 @@ bool Number::raise(const Number &o, bool try_exact) {
 		Number tsin(tcos);
 		if(!tcos.cos()) return false;
 		if(!tsin.sin()) return false;
-		Number mul(*this);
+		if(!tsin.multiply(nr_one_i)) return false;
+		if(!tcos.add(tsin)) return false;
 		if(o.hasRealPart()) {
+			Number mul(*this);
 			if(!mul.raise(o.realPart(), false)) return false;
 			if(!tcos.multiply(mul)) return false;
-			if(!tsin.multiply(mul)) return false;
 		}
-		set(tcos, true, true);
-		if(!i_value) i_value = new Number();
-		i_value->set(tsin, false, true);
-		setPrecisionAndApproximateFrom(*i_value);
+		set(tcos);
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
 	if(isComplex()) {
-		if(hasRealPart()) return false;
-		if(!o.isInteger() || !o.isPositive()) return false;
+		if(o.isNegative()) {
+			if(o.isMinusOne()) return recip();
+			Number ninv(*this), opos(o);
+			if(!ninv.recip()) return false;
+			if(!opos.negate()) return false;
+			if(!ninv.raise(opos, false)) return false;
+			set(ninv);
+			return true;
+		}
+		if(hasRealPart() || !o.isInteger()) {
+			Number nbase, nexp(*this);
+			nbase.e();
+			if(!nexp.ln()) return false;
+			if(!nexp.multiply(o)) return false;
+			if(!nbase.raise(nexp, false)) return false;
+			set(nbase);
+			return true;
+		}
 		if(!i_value->raise(o, try_exact)) return false;
+		i_value->negate();
 		if(o.isEven()) {
 			set(*i_value, true, true);
 			clearImaginary();
 		} else {
-			i_value->negate();
 			setPrecisionAndApproximateFrom(*i_value);
 		}
 		setPrecisionAndApproximateFrom(o);
@@ -1829,9 +1923,12 @@ bool Number::raise(const Number &o, bool try_exact) {
 					if(isInteger()) {
 						if(i_pow != 1) mpz_pow_ui(mpq_numref(r_test), mpq_numref(r_test), (unsigned long int) i_pow);
 						if(i_root % 2 == 0 && mpq_sgn(r_test) < 0) {
-							mpq_neg(r_test, r_test);
-							success = mpz_root(mpq_numref(r_test), mpq_numref(r_test), i_root);
-							complex_result = true;
+							if(b_imag) {mpq_clear(r_test); return false;}
+							if(i_root == 2) {
+								mpq_neg(r_test, r_test);
+								success = mpz_root(mpq_numref(r_test), mpq_numref(r_test), i_root);
+								complex_result = true;
+							}
 						} else {
 							success = mpz_root(mpq_numref(r_test), mpq_numref(r_test), i_root);
 						}
@@ -1841,9 +1938,12 @@ bool Number::raise(const Number &o, bool try_exact) {
 							mpz_pow_ui(mpq_denref(r_test), mpq_denref(r_test), (unsigned long int) i_pow);
 						}
 						if(i_root % 2 == 0 && mpq_sgn(r_test) < 0) {
-							mpq_neg(r_test, r_test);
-							success = mpz_root(mpq_numref(r_test), mpq_numref(r_test), i_root) && mpz_root(mpq_denref(r_test), mpq_denref(r_test), i_root);
-							complex_result = true;
+							if(b_imag) {mpq_clear(r_test); return false;}
+							if(i_root == 2) {
+								mpq_neg(r_test, r_test);
+								success = mpz_root(mpq_numref(r_test), mpq_numref(r_test), i_root) && mpz_root(mpq_denref(r_test), mpq_denref(r_test), i_root);
+								complex_result = true;
+							}
 						} else {
 							success = mpz_root(mpq_numref(r_test), mpq_numref(r_test), i_root) && mpz_root(mpq_denref(r_test), mpq_denref(r_test), i_root);
 						}
@@ -1851,7 +1951,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 					}
 					if(success) {
 						if(complex_result) {
-							if(!i_value) i_value = new Number();
+							if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
 							i_value->setInternal(r_test, false, true);
 							mpq_set_ui(r_value, 0, 1);
 						} else {
@@ -1877,39 +1977,56 @@ bool Number::raise(const Number &o, bool try_exact) {
 			return true;
 		}
 	}
+
 	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(n_type != NUMBER_TYPE_FLOAT) {
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
+	
+	if(n_type == NUMBER_TYPE_RATIONAL) {
+		setToFloatingPoint();
 	}
+	bool try_complex = false;
 	if(o.isFloatingPoint()) {
 		bool is_neg = mpfr_sgn(f_value) < 0;
 		mpfr_pow(f_value, f_value, o.internalFloat(), MPFR_RNDN);
 		if(is_neg && mpfr_nan_p(f_value)) {
 			mpfr_clear_nanflag();
-			mpfr_t f_pow;
-			mpfr_init2(f_pow, BIT_PRECISION);
-			mpfr_set(f_pow, o.internalFloat(), MPFR_RNDN);
-			mpfr_mul_ui(f_pow, f_pow, 2, MPFR_RNDN);
-			mpfr_pow(f_value, f_value, f_pow, MPFR_RNDN);
-			//set complex
-			set(nr_bak);
-			return false;
+			try_complex = true;
 		}
 	} else if(o.isInteger()) {
 		mpfr_pow_z(f_value, f_value, mpq_numref(o.internalRational()), MPFR_RNDN);
 	} else {
-		bool do_complex = (mpfr_sgn(f_value) < 0 && mpz_even_p(mpq_denref(o.internalRational())));
-		if(do_complex) {set(nr_bak); return false;}
-		if(do_complex) mpfr_neg(f_value, f_value, MPFR_RNDN);
-		mpfr_t f_pow;
-		mpfr_init2(f_pow, BIT_PRECISION);
-		mpfr_set_q(f_pow, o.internalRational(), MPFR_RNDN);
-		mpfr_pow(f_value, f_value, f_pow, MPFR_RNDN);
-		mpfr_clear(f_pow);
+		if(mpfr_sgn(f_value) < 0 && mpz_even_p(mpq_denref(o.internalRational())) && !mpz_even_p(mpq_numref(o.internalRational()))) {
+			if(b_imag) return false;
+			if(mpz_cmp_ui(mpq_denref(o.internalRational()), 2) == 0) {
+				if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
+				i_value->set(*this, false, true);
+				if(!i_value->negate() || !i_value->raise(o)) {
+					i_value->clear();
+				}
+				clearReal();
+				setPrecisionAndApproximateFrom(*i_value);
+				return true;
+			}
+			try_complex = true;
+		} else {
+			mpfr_t f_pow;
+			mpfr_init2(f_pow, BIT_PRECISION);
+			mpfr_set_q(f_pow, o.internalRational(), MPFR_RNDN);
+			mpfr_pow(f_value, f_value, f_pow, MPFR_RNDN);
+			mpfr_clear(f_pow);
+		}
 	}
+	if(try_complex) {
+		set(nr_bak);
+		Number nbase, nexp(*this);
+		nbase.e();
+		if(!nexp.ln()) return false;
+		if(!nexp.multiply(o)) return false;
+		if(!nbase.raise(nexp, false)) return false;
+		set(nbase);
+		return true;
+	}
+	
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -1969,7 +2086,7 @@ bool Number::exp2() {
 }
 bool Number::square() {
 	if(isInfinite()) {
-		setPlusInfinity();
+		n_type = NUMBER_TYPE_PLUS_INFINITY;
 		return true;
 	}
 	if(isComplex()) {
@@ -2034,7 +2151,7 @@ void Number::setNegative(bool is_negative) {
 }
 bool Number::abs() {
 	if(isInfinite()) {
-		setPlusInfinity();
+		n_type = NUMBER_TYPE_PLUS_INFINITY;
 		return true;
 	}
 	if(isComplex()) {
@@ -2071,10 +2188,17 @@ bool Number::abs() {
 }
 bool Number::signum() {
 	if(isZero()) return true;
+	if(isComplex()) {
+		if(hasRealPart()) {
+			Number nabs(*this);
+			if(!nabs.abs()) return false;
+			if(!nabs.recip()) return false;
+			return multiply(nabs);
+		}
+		return i_value->signum();
+	}
 	if(isPositive()) {set(1, 1); return true;}
 	if(isNegative()) {set(-1, 1); return true;}
-	//ai return i
-	//-ai return -i
 	return false;
 }
 bool Number::round() {
@@ -2319,7 +2443,7 @@ void Number::setLogicalNot() {
 }
 
 void Number::e() {
-	if(n_type != NUMBER_TYPE_FLOAT) mpfr_init2(f_value, BIT_PRECISION);
+	if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(f_value, BIT_PRECISION); mpq_set_ui(r_value, 0, 1);}
 	else if(mpfr_get_prec(f_value) < BIT_PRECISION) mpfr_set_prec(f_value, BIT_PRECISION);
 	n_type = NUMBER_TYPE_FLOAT;
 	mpfr_set_ui(f_value, 1, MPFR_RNDN);
@@ -2328,7 +2452,7 @@ void Number::e() {
 	i_precision = PRECISION;
 }
 void Number::pi() {
-	if(n_type != NUMBER_TYPE_FLOAT) mpfr_init2(f_value, BIT_PRECISION);
+	if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(f_value, BIT_PRECISION); mpq_set_ui(r_value, 0, 1);}
 	else if(mpfr_get_prec(f_value) < BIT_PRECISION) mpfr_set_prec(f_value, BIT_PRECISION);
 	n_type = NUMBER_TYPE_FLOAT;
 	mpfr_const_pi(f_value, MPFR_RNDN);
@@ -2336,7 +2460,7 @@ void Number::pi() {
 	i_precision = PRECISION;
 }
 void Number::catalan() {
-	if(n_type != NUMBER_TYPE_FLOAT) mpfr_init2(f_value, BIT_PRECISION);
+	if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(f_value, BIT_PRECISION); mpq_set_ui(r_value, 0, 1);}
 	else if(mpfr_get_prec(f_value) < BIT_PRECISION) mpfr_set_prec(f_value, BIT_PRECISION);
 	n_type = NUMBER_TYPE_FLOAT;
 	mpfr_const_catalan(f_value, MPFR_RNDN);
@@ -2344,7 +2468,7 @@ void Number::catalan() {
 	i_precision = PRECISION;
 }
 void Number::euler() {
-	if(n_type != NUMBER_TYPE_FLOAT) mpfr_init2(f_value, BIT_PRECISION);
+	if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(f_value, BIT_PRECISION); mpq_set_ui(r_value, 0, 1);}
 	else if(mpfr_get_prec(f_value) < BIT_PRECISION) mpfr_set_prec(f_value, BIT_PRECISION);
 	n_type = NUMBER_TYPE_FLOAT;
 	mpfr_const_euler(f_value, MPFR_RNDN);
@@ -2360,7 +2484,6 @@ bool Number::zeta() {
 		CALCULATOR->error(true, _("Can only handle Riemann Zeta with an integer argument (s) >= 1"), NULL);
 		return false;
 	}
-	
 	bool overflow = false;
 	long int i = intValue(&overflow);
 	if(overflow) {
@@ -2369,6 +2492,7 @@ bool Number::zeta() {
 	}
 	mpfr_init2(f_value, BIT_PRECISION);
 	mpfr_zeta_ui(f_value, (unsigned int) i, MPFR_RNDN);
+	mpq_set_ui(r_value, 0, 1);
 	n_type = NUMBER_TYPE_FLOAT;
 	return true;
 }
@@ -2403,11 +2527,9 @@ bool Number::sin() {
 	Number nr_bak(*this);
 	mpfr_clear_flags();
 	bool do_pi = true;
-	if(n_type != NUMBER_TYPE_FLOAT) {
+	if(n_type == NUMBER_TYPE_RATIONAL) {
 		if(mpz_cmp_ui(mpq_denref(r_value), 1000000L) < 0) do_pi = false;
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
+		setToFloatingPoint();
 	}
 	if(do_pi) {
 		mpfr_t f_pi, f_quo;
@@ -2454,11 +2576,7 @@ bool Number::asin() {
 	if(isZero()) return true;
 	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(n_type != NUMBER_TYPE_FLOAT) {
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
-	}
+	setToFloatingPoint();
 	mpfr_asin(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2495,11 +2613,7 @@ bool Number::sinh() {
 	}
 	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(n_type != NUMBER_TYPE_FLOAT) {
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
-	}
+	setToFloatingPoint();
 	mpfr_sinh(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2512,11 +2626,7 @@ bool Number::asinh() {
 	if(isZero()) return true;
 	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(n_type != NUMBER_TYPE_FLOAT) {
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
-	}
+	setToFloatingPoint();
 	mpfr_asinh(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2559,11 +2669,9 @@ bool Number::cos() {
 	Number nr_bak(*this);
 	mpfr_clear_flags();
 	bool do_pi = true, do_negate = false;
-	if(n_type != NUMBER_TYPE_FLOAT) {
+	if(n_type == NUMBER_TYPE_RATIONAL) {
 		if(mpz_cmp_ui(mpq_denref(r_value), 1000000L) < 0) do_pi = false;
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
+		setToFloatingPoint();
 	}
 	if(do_pi) {
 		mpfr_t f_pi, f_quo;
@@ -2614,11 +2722,7 @@ bool Number::acos() {
 	}
 	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(n_type != NUMBER_TYPE_FLOAT) {
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
-	}
+	setToFloatingPoint();
 	mpfr_acos(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2663,11 +2767,7 @@ bool Number::cosh() {
 	}
 	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(n_type != NUMBER_TYPE_FLOAT) {
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
-	}
+	setToFloatingPoint();
 	mpfr_cosh(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2680,11 +2780,7 @@ bool Number::acosh() {
 	if(isMinusInfinity()) return false;
 	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(n_type != NUMBER_TYPE_FLOAT) {
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
-	}
+	setToFloatingPoint();
 	mpfr_acosh(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2706,11 +2802,9 @@ bool Number::tan() {
 	Number nr_bak(*this);
 	mpfr_clear_flags();
 	bool do_pi = true;
-	if(n_type != NUMBER_TYPE_FLOAT) {
+	if(n_type == NUMBER_TYPE_RATIONAL) {
 		if(mpz_cmp_ui(mpq_denref(r_value), 1000000L) < 0) do_pi = false;
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
+		setToFloatingPoint();
 	}
 	if(do_pi) {
 		mpfr_t f_pi, f_quo;
@@ -2746,12 +2840,30 @@ bool Number::atan() {
 	}
 	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(n_type != NUMBER_TYPE_FLOAT) {
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
-	}
+	setToFloatingPoint();
 	mpfr_atan(f_value, f_value, MPFR_RNDN);
+	if(!testFloatResult()) {
+		set(nr_bak);
+		return false;
+	}
+	return true;
+}
+bool Number::atan2(const Number &o) {
+	if(isInfinite() || o.isInfinite()) return false;
+	if(isComplex() || o.isComplex()) return false;
+	if(isZero() && o.isZero()) return false;
+	Number nr_bak(*this);
+	mpfr_clear_flags();
+	setToFloatingPoint();
+	if(o.isFloatingPoint()) {
+		mpfr_atan2(f_value, f_value, o.internalFloat(), MPFR_RNDN);
+	} else {
+		mpfr_t of_value;
+		mpfr_init2(of_value, BIT_PRECISION);
+		mpfr_set_q(of_value, o.internalRational(), MPFR_RNDN);
+		mpfr_atan2(f_value, f_value, of_value, MPFR_RNDN);
+		mpfr_clear(of_value);
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -2773,11 +2885,7 @@ bool Number::tanh() {
 	}
 	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(n_type != NUMBER_TYPE_FLOAT) {
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
-	}
+	setToFloatingPoint();
 	mpfr_tanh(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2789,20 +2897,18 @@ bool Number::atanh() {
 	if(isInfinite()) return false;
 	if(isZero()) return true;
 	if(isOne()) {
+		if(b_imag) return false;
 		setPlusInfinity();
 		return true;
 	}
 	if(isMinusOne()) {
+		if(b_imag) return false;
 		setMinusInfinity();
 		return true;
 	}
 	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(n_type != NUMBER_TYPE_FLOAT) {
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
-	}
+	setToFloatingPoint();
 	mpfr_atanh(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2818,16 +2924,35 @@ bool Number::ln() {
 		return true;
 	}
 	if(isZero()) {
+		if(b_imag) return false;
 		setMinusInfinity();
+		return true;
+	}
+	if(hasImaginaryPart()) {
+		Number new_i(*i_value);
+		Number new_r(*this);
+		Number this_r;
+		this_r.set(*this, false, true);
+		if(!new_i.atan2(this_r)) return false;
+		if(!new_r.abs()) return false;
+		if(new_r.isComplex() || !new_r.ln()) return false;
+		set(new_r);
+		setImaginaryPart(new_i);
+		return true;
+	} else if(isNegative()) {
+		if(b_imag) return false;
+		Number new_i;
+		new_i.pi();
+		Number new_r(*this);
+		if(!new_r.abs()) return false;
+		if(!new_r.ln()) return false;
+		set(new_r);
+		setImaginaryPart(new_i);
 		return true;
 	}
 	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(n_type != NUMBER_TYPE_FLOAT) {
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
-	}
+	setToFloatingPoint();
 	mpfr_log(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2845,6 +2970,7 @@ bool Number::log(const Number &o) {
 		return true;
 	}
 	if(isZero()) {
+		if(b_imag) return false;
 		bool was_approx = b_approx || o.isApproximate();
 		setMinusInfinity();
 		b_approx = was_approx;
@@ -2860,13 +2986,20 @@ bool Number::log(const Number &o) {
 		//return true;
 		return false;
 	}
+	if(isComplex() || o.isComplex() || o.isNegative() || isNegative()) {
+		Number num(*this);
+		Number den(o);
+		if(!num.ln()) return false;
+		if(!den.ln()) return false;
+		if(!den.recip()) return false;
+		if(!num.multiply(den)) return false;
+		if(b_imag && num.isComplex()) return false;
+		set(num);
+		return true;
+	}
 	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(n_type != NUMBER_TYPE_FLOAT) {
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
-	}
+	setToFloatingPoint();
 	if(o.isRational()) {
 		if(o == 2) {
 			mpfr_log2(f_value, f_value, MPFR_RNDN);
@@ -2906,11 +3039,7 @@ bool Number::exp() {
 	}
 	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(n_type != NUMBER_TYPE_FLOAT) {
-		mpfr_init2(f_value, BIT_PRECISION);
-		mpfr_set_q(f_value, r_value, MPFR_RNDN);
-		n_type = NUMBER_TYPE_FLOAT;
-	}
+	setToFloatingPoint();
 	mpfr_exp(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2987,9 +3116,10 @@ bool Number::lambertW() {
 		mpfr_div(wTimesExpW, wTimesExpW, wPlusOneTimesExpW, MPFR_RNDN);
 		mpfr_sub(w, w, wTimesExpW, MPFR_RNDN);
 	}
-	if(n_type != NUMBER_TYPE_FLOAT) {
+	if(n_type == NUMBER_TYPE_RATIONAL) {
 		mpfr_init2(f_value, BIT_PRECISION);
 		n_type = NUMBER_TYPE_FLOAT;
+		mpq_set_ui(r_value, 0, 1);
 	}
 	mpfr_set(f_value, w, MPFR_RNDN);
 	mpfr_clears(x, m1_div_exp1, w, wPrec, wTimesExpW, wPlusOneTimesExpW, testXW, tmp1, tmp2, NULL);
@@ -3081,6 +3211,7 @@ bool Number::factorial() {
 		return false;
 	}
 	if(isNegative()) {
+		if(b_imag) return false;
 		setPlusInfinity();
 		return true;
 	}
@@ -3481,14 +3612,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			str = i_value->print(po, ips);
 			if(ips.im) *ips.im = str;
 		}
-		if(!po.short_multiplication) {
+		if(!po.short_multiplication && str != "1") {
 			if(po.spacious) {
 				str += " * ";
 			} else {
 				str += "*";
 			}
 		}
-		str += "i";
+		if(str == "1") str = "i";
+		else str += "i";
 		if(ips.num) *ips.num = str;
 	} else if(isInteger()) {
 	

@@ -111,7 +111,9 @@ class Number {
 		mpq_t &internalRational();
 		mpfr_t &internalFloat();
 		Number *internalImaginary() const;
+		void markAsImaginaryPart(bool is_imag = true);
 		const NumberType &internalType() const;
+		void setToFloatingPoint();
 		
 		double floatValue() const;
 		/**
@@ -402,9 +404,10 @@ class Number {
 		bool acosh();
 		bool tan();
 		bool atan();
+		bool atan2(const Number &o);
 		bool tanh();
 		bool atanh();
-		bool ln();	
+		bool ln();
 		bool log(const Number &o);
 		bool exp();
 		bool lambertW();
