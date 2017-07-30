@@ -87,22 +87,22 @@ class Number {
 		virtual ~Number();
 		
 		void set(string number, const ParseOptions &po = default_parse_options);
-		void set(long int numerator, long int denominator = 1, long int exp_10 = 0, bool keep_imag = false);
+		void set(long int numerator, long int denominator = 1, long int exp_10 = 0, bool keep_precision = false, bool keep_imag = false);
 		void setInfinity();
 		void setPlusInfinity();
 		void setMinusInfinity();
 		void setFloat(double d_value);
 
-		void setInternal(const mpz_t &mpz_value, bool keep_imag = false);
-		void setInternal(mpz_srcptr mpz_value, bool keep_imag = false);
-		void setInternal(const mpq_t &mpq_value, bool keep_imag = false);
-		void setInternal(const mpz_t &mpz_num, const mpz_t &mpz_den, bool keep_imag = false);
-		void setInternal(const mpfr_t &mpfr_value, bool keep_imag = false);
+		void setInternal(const mpz_t &mpz_value, bool keep_precision = false, bool keep_imag = false);
+		void setInternal(mpz_srcptr mpz_value, bool keep_precision = false, bool keep_imag = false);
+		void setInternal(const mpq_t &mpq_value, bool keep_precision = false, bool keep_imag = false);
+		void setInternal(const mpz_t &mpz_num, const mpz_t &mpz_den, bool keep_precision = false, bool keep_imag = false);
+		void setInternal(const mpfr_t &mpfr_value, bool merge_precision = false, bool keep_imag = false);
 
 		void setImaginaryPart(const Number &o);
 		void setImaginaryPart(long int numerator, long int denominator = 1, long int exp_10 = 0);
 		void set(const Number &o, bool merge_precision = false, bool keep_imag = false);
-		void clear();
+		void clear(bool keep_precision = false);
 		void clearReal();
 		void clearImaginary();
 		
