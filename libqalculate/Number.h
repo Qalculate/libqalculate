@@ -256,6 +256,7 @@ class Number {
 		bool equals(long int i) const;
 		bool equalsApproximately(const Number &o, int prec) const;
 		ComparisonResult compare(const Number &o) const;
+		ComparisonResult compare(long int i) const;
 		ComparisonResult compareApproximately(const Number &o, int prec = EQUALS_PRECISION_LOWEST) const;
 		ComparisonResult compareImaginaryParts(const Number &o) const;
 		ComparisonResult compareRealParts(const Number &o) const;
@@ -263,6 +264,10 @@ class Number {
 		bool isLessThan(const Number &o) const;
 		bool isGreaterThanOrEqualTo(const Number &o) const;
 		bool isLessThanOrEqualTo(const Number &o) const;
+		bool isGreaterThan(long int i) const;
+		bool isLessThan(long int i) const;
+		bool isGreaterThanOrEqualTo(long int i) const;
+		bool isLessThanOrEqualTo(long int i) const;
 		bool isEven() const;
 		bool denominatorIsEven() const;
 		bool denominatorIsTwo() const;
@@ -377,7 +382,7 @@ class Number {
 		
 		/** Set the number to e, the base of natural logarithm, calculated with the current default precision.
  		*/
-		void e();
+		void e(bool use_cached_number = true);
 		/** Set the number to pi, Archimede's constant, calculated with the current default precision.
  		*/
 		void pi();

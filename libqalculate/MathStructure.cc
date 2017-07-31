@@ -3591,7 +3591,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						}
 					}
 				} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_ln && mstruct.size() == 1) {
-					if(mstruct[0].representsPositive() || mstruct[0].representsComplex()) {
+					if(mstruct[0].representsNumber() && mstruct[0].representsNonZero()) {
 						set_nocopy(mstruct[0], true);
 						return 1;
 					}

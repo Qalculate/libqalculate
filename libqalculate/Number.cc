@@ -25,6 +25,8 @@
 
 gmp_randstate_t randstate;
 
+Number nr_e;
+
 string format_number_string(string cl_str, int base, BaseDisplay base_display, bool show_neg, bool format_base_two = true) {
 	if(format_base_two && base == 2 && base_display != BASE_DISPLAY_NONE) {
 		int i2 = cl_str.length() % 4;
@@ -974,7 +976,7 @@ bool Number::testFloatResult(int error_level) {
 		mpfr_clear(f_value);
 	} else if(mpfr_integer_p(f_value)) {
 		mpfr_get_z(mpq_numref(r_value), f_value, MPFR_RNDN);
-		if(n_type == NUMBER_TYPE_FLOAT) mpfr_clear(f_value);
+		mpfr_clear(f_value);
 		n_type = NUMBER_TYPE_RATIONAL;
 	}
 	return true;
@@ -1170,6 +1172,7 @@ bool Number::equalsApproximately(const Number &o, int prec) const {
 	}
 	return false;
 }
+ComparisonResult Number::compare(long int i) const {return compare(Number(i, 1));}
 ComparisonResult Number::compare(const Number &o) const {
 	if(n_type == NUMBER_TYPE_INFINITY || o.isInfinity()) return COMPARISON_RESULT_UNKNOWN;
 	if(n_type == NUMBER_TYPE_PLUS_INFINITY) {
@@ -1318,6 +1321,10 @@ bool Number::isLessThanOrEqualTo(const Number &o) const {
 	}
 	return false;
 }
+bool Number::isGreaterThan(long int i) const {return isGreaterThan(Number(i, 1));}
+bool Number::isLessThan(long int i) const {return isLessThan(Number(i, 1));}
+bool Number::isGreaterThanOrEqualTo(long int i) const {return isGreaterThanOrEqualTo(Number(i, 1));}
+bool Number::isLessThanOrEqualTo(long int i) const {return isLessThanOrEqualTo(Number(i, 1));}
 bool Number::isEven() const {
 	return isInteger() && mpz_even_p(mpq_numref(r_value));
 }
@@ -1766,12 +1773,7 @@ bool Number::recip() {
 			Number den2;
 			den2.set(*this, false, true);
 			Number num_r(den2), num_i(den1);
-			if(!den1.square()) return false;
-			if(!num_i.negate()) return false;
-			if(!den2.square()) return false;
-			if(!den1.add(den2)) return false;
-			if(!num_r.divide(den1)) return false;
-			if(!num_i.divide(den1)) return false;
+			if(!den1.square() || !num_i.negate() || !den2.square() || !den1.add(den2) || !num_r.divide(den1) || !num_i.divide(den1)) return false;
 			set(num_r);
 			setImaginaryPart(num_i);
 			return true;
@@ -1857,17 +1859,12 @@ bool Number::raise(const Number &o, bool try_exact) {
 	if(o.isComplex()) {
 		if(b_imag) return false;
 		Number tcos(*this);
-		if(!tcos.ln()) return false;
-		if(!tcos.multiply(*o.internalImaginary())) return false;
+		if(!tcos.ln() || !tcos.multiply(*o.internalImaginary())) return false;
 		Number tsin(tcos);
-		if(!tcos.cos()) return false;
-		if(!tsin.sin()) return false;
-		if(!tsin.multiply(nr_one_i)) return false;
-		if(!tcos.add(tsin)) return false;
+		if(!tcos.cos() || !tsin.sin() || !tsin.multiply(nr_one_i) || !tcos.add(tsin)) return false;
 		if(o.hasRealPart()) {
 			Number mul(*this);
-			if(!mul.raise(o.realPart(), false)) return false;
-			if(!tcos.multiply(mul)) return false;
+			if(!mul.raise(o.realPart(), false) || !tcos.multiply(mul)) return false;
 		}
 		set(tcos);
 		setPrecisionAndApproximateFrom(o);
@@ -1877,18 +1874,14 @@ bool Number::raise(const Number &o, bool try_exact) {
 		if(o.isNegative()) {
 			if(o.isMinusOne()) return recip();
 			Number ninv(*this), opos(o);
-			if(!ninv.recip()) return false;
-			if(!opos.negate()) return false;
-			if(!ninv.raise(opos, false)) return false;
+			if(!ninv.recip() ||!opos.negate() || !ninv.raise(opos, false)) return false;
 			set(ninv);
 			return true;
 		}
 		if(hasRealPart() || !o.isInteger()) {
 			Number nbase, nexp(*this);
 			nbase.e();
-			if(!nexp.ln()) return false;
-			if(!nexp.multiply(o)) return false;
-			if(!nbase.raise(nexp, false)) return false;
+			if(!nexp.ln() || !nexp.multiply(o) || !nbase.raise(nexp, false)) return false;
 			set(nbase);
 			return true;
 		}
@@ -2164,11 +2157,7 @@ bool Number::abs() {
 			if(!i_value->square()) return false;
 			Number *i_v = i_value;
 			i_value = NULL;
-			if(!square()) {
-				set(nr_bak);
-				return false;
-			}
-			if(!add(*i_v)) {
+			if(!square() || !add(*i_v)) {
 				set(nr_bak);
 				return false;
 			}
@@ -2446,14 +2435,21 @@ void Number::setLogicalNot() {
 	setTrue(!isPositive());
 }
 
-void Number::e() {
-	if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(f_value, BIT_PRECISION); mpq_set_ui(r_value, 0, 1);}
-	else if(mpfr_get_prec(f_value) < BIT_PRECISION) mpfr_set_prec(f_value, BIT_PRECISION);
-	n_type = NUMBER_TYPE_FLOAT;
-	mpfr_set_ui(f_value, 1, MPFR_RNDN);
-	mpfr_exp(f_value, f_value, MPFR_RNDN);
-	b_approx = true;
-	i_precision = PRECISION;
+void Number::e(bool use_cached_number) {
+	if(use_cached_number) {
+		if(nr_e.isZero() || ((i_precision < 0 && nr_e.precision() != PRECISION) || (i_precision >= 0 && nr_e.precision() != i_precision))) {
+			nr_e.e(false);
+		}
+		set(nr_e);
+	} else {
+		if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(f_value, BIT_PRECISION); mpq_set_ui(r_value, 0, 1);}
+		else if(mpfr_get_prec(f_value) < BIT_PRECISION) mpfr_set_prec(f_value, BIT_PRECISION);
+		n_type = NUMBER_TYPE_FLOAT;
+		mpfr_set_ui(f_value, 1, MPFR_RNDN);
+		mpfr_exp(f_value, f_value, MPFR_RNDN);
+		b_approx = true;
+		i_precision = PRECISION;
+	}
 }
 void Number::pi() {
 	if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(f_value, BIT_PRECISION); mpq_set_ui(r_value, 0, 1);}
@@ -2511,12 +2507,7 @@ bool Number::sin() {
 			t1b.set(*i_value, false, true);
 			t2a.set(t1a);
 			t2b.set(t1b);
-			if(!t1a.sin()) return false;
-			if(!t1b.cosh()) return false;
-			if(!t2a.cos()) return false;
-			if(!t2b.sinh()) return false;
-			if(!t1a.multiply(t1b)) return false;
-			if(!t2a.multiply(t2b)) return false;
+			if(!t1a.sin() || !t1b.cosh() || !t2a.cos() || !t2b.sinh() || !t1a.multiply(t1b) || !t2a.multiply(t2b)) return false;
 			if(!t1a.isReal() || !t2a.isReal()) return false;
 			set(t1a, true, true);
 			i_value->set(t2a, true, true);
@@ -2617,12 +2608,7 @@ bool Number::sinh() {
 			t1b.set(*i_value, false, true);
 			t2a.set(t1a);
 			t2b.set(t1b);
-			if(!t1a.sinh()) return false;
-			if(!t1b.cos()) return false;
-			if(!t2a.cosh()) return false;
-			if(!t2b.sin()) return false;
-			if(!t1a.multiply(t1b)) return false;
-			if(!t2a.multiply(t2b)) return false;
+			if(!t1a.sinh() || !t1b.cos() || !t2a.cosh() || !t2b.sin() || !t1a.multiply(t1b) || !t2a.multiply(t2b)) return false;
 			if(!t1a.isReal() || !t2a.isReal()) return false;
 			set(t1a, true, true);
 			i_value->set(t2a, true, true);
@@ -2676,13 +2662,7 @@ bool Number::cos() {
 			t1b.set(*i_value, false, true);
 			t2a.set(t1a);
 			t2b.set(t1b);
-			if(!t1a.cos()) return false;
-			if(!t1b.cosh()) return false;
-			if(!t2a.sin()) return false;
-			if(!t2b.sinh()) return false;
-			if(!t1a.multiply(t1b)) return false;
-			if(!t2a.multiply(t2b)) return false;
-			if(!t2a.negate()) return false;
+			if(!t1a.cos() || !t1b.cosh() || !t2a.sin() || !t2b.sinh() || !t1a.multiply(t1b) || !t2a.multiply(t2b) || !t2a.negate()) return false;
 			if(!t1a.isReal() || !t2a.isReal()) return false;
 			set(t1a, true, true);
 			i_value->set(t2a, true, true);
@@ -2792,12 +2772,7 @@ bool Number::cosh() {
 			t1b.set(*i_value, false, true);
 			t2a.set(t1a);
 			t2b.set(t1b);
-			if(!t1a.cosh()) return false;
-			if(!t1b.cos()) return false;
-			if(!t2a.sinh()) return false;
-			if(!t2b.sin()) return false;
-			if(!t1a.multiply(t1b)) return false;
-			if(!t2a.multiply(t2b)) return false;
+			if(!t1a.cosh() || !t1b.cos() || !t2a.sinh() || !t2b.sin() || !t1a.multiply(t1b) || !t2a.multiply(t2b)) return false;
 			if(!t1a.isReal() || !t2a.isReal()) return false;
 			set(t1a, true, true);
 			i_value->set(t2a, true, true);
@@ -2850,9 +2825,7 @@ bool Number::tan() {
 	if(isZero()) return true;
 	if(isComplex()) {
 		Number num(*this), den(*this);
-		if(!num.sin()) return false;
-		if(!den.cos()) return false;
-		if(!num.divide(den)) return false;
+		if(!num.sin() || !den.cos() || !num.divide(den)) return false;
 		set(num, true);
 		return true;
 	}
@@ -2942,9 +2915,7 @@ bool Number::tanh() {
 	if(isZero()) return true;
 	if(isComplex()) {
 		Number num(*this), den(*this);
-		if(!num.sinh()) return false;
-		if(!den.cosh()) return false;
-		if(!num.divide(den)) return false;
+		if(!num.sinh() || !den.cosh() || !num.divide(den)) return false;
 		set(num, true);
 		return true;
 	}
@@ -2974,8 +2945,7 @@ bool Number::atanh() {
 	if(isComplex() || !isFraction()) {
 		if(b_imag) return false;
 		Number ipz(nr_one), imz(nr_one);
-		if(!ipz.add(*this) || !imz.subtract(*this)) return false;
-		if(!ipz.divide(imz) || !ipz.ln() || !ipz.divide(2)) return false;
+		if(!ipz.add(*this) || !imz.subtract(*this) || !ipz.divide(imz) || !ipz.ln() || !ipz.divide(2)) return false;
 		set(ipz);
 		return true;
 	}
@@ -3006,8 +2976,7 @@ bool Number::ln() {
 		Number new_r(*this);
 		Number this_r;
 		this_r.set(*this, false, true);
-		if(!new_i.atan2(this_r)) return false;
-		if(!new_r.abs()) return false;
+		if(!new_i.atan2(this_r) || !new_r.abs()) return false;
 		if(new_r.isComplex() || !new_r.ln()) return false;
 		set(new_r);
 		setImaginaryPart(new_i);
@@ -3017,8 +2986,7 @@ bool Number::ln() {
 		Number new_i;
 		new_i.pi();
 		Number new_r(*this);
-		if(!new_r.abs()) return false;
-		if(!new_r.ln()) return false;
+		if(!new_r.abs() || !new_r.ln()) return false;
 		set(new_r);
 		setImaginaryPart(new_i);
 		return true;
@@ -3026,6 +2994,19 @@ bool Number::ln() {
 	Number nr_bak(*this);
 	mpfr_clear_flags();
 	setToFloatingPoint();
+	
+	
+	if(nr_e.isZero() || ((i_precision < 0 && nr_e.precision() != PRECISION) || (i_precision >= 0 && nr_e.precision() != i_precision))) {
+		nr_e.e(false);
+	}
+
+	if(mpfr_equal_p(f_value, nr_e.internalFloat())) {
+		set(1, 1);
+		b_approx = true;
+		if(i_precision < 0 || i_precision > PRECISION) i_precision = PRECISION;
+		return true;
+	}
+	
 	mpfr_log(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -3062,10 +3043,7 @@ bool Number::log(const Number &o) {
 	if(isComplex() || o.isComplex() || o.isNegative() || isNegative()) {
 		Number num(*this);
 		Number den(o);
-		if(!num.ln()) return false;
-		if(!den.ln()) return false;
-		if(!den.recip()) return false;
-		if(!num.multiply(den)) return false;
+		if(!num.ln() || !den.ln() || !den.recip() || !num.multiply(den)) return false;
 		if(b_imag && num.isComplex()) return false;
 		set(num);
 		return true;
@@ -3111,10 +3089,10 @@ bool Number::exp() {
 		return true;
 	}
 	if(isComplex()) {
-		Number nr_e;
-		nr_e.e();
-		if(!nr_e.raise(*this)) return false;
-		set(nr_e);
+		Number e_base;
+		e_base.e();
+		if(!e_base.raise(*this)) return false;
+		set(e_base);
 		return true;
 	}
 	Number nr_bak(*this);
