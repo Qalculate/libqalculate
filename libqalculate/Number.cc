@@ -1999,7 +1999,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 	} else if(o.isInteger()) {
 		mpfr_pow_z(f_value, f_value, mpq_numref(o.internalRational()), MPFR_RNDN);
 	} else {
-		if(mpfr_sgn(f_value) < 0 && mpz_even_p(mpq_denref(o.internalRational())) && !mpz_even_p(mpq_numref(o.internalRational()))) {
+		if(mpfr_sgn(f_value) < 0 && !mpz_even_p(mpq_numref(o.internalRational()))) {
 			if(b_imag) return false;
 			if(mpz_cmp_ui(mpq_denref(o.internalRational()), 2) == 0) {
 				if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
@@ -3108,6 +3108,13 @@ bool Number::exp() {
 	if(isPlusInfinity()) return true;
 	if(isMinusInfinity()) {
 		clear();
+		return true;
+	}
+	if(isComplex()) {
+		Number nr_e;
+		nr_e.e();
+		if(!nr_e.raise(*this)) return false;
+		set(nr_e);
 		return true;
 	}
 	Number nr_bak(*this);
