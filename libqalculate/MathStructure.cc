@@ -3102,11 +3102,11 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 }
 
 bool test_if_numerator_not_too_large(Number &vb, Number &ve) {
-	if(vb.isFloatingPoint()) return false;
+	if(!vb.isRational()) return false;
 	if(!mpz_fits_slong_p(mpq_numref(ve.internalRational()))) return false;
 	long int exp = labs(mpz_get_si(mpq_numref(ve.internalRational())));
 	if(vb.isRational()) {
-		if((long long int) exp * mpz_sizeinbase(mpq_numref(ve.internalRational()), 10) <= 1000000LL && (long long int) exp * mpz_sizeinbase(mpq_denref(ve.internalRational()), 10) <= 1000000LL) return true;
+		if((long long int) exp * mpz_sizeinbase(mpq_numref(vb.internalRational()), 10) <= 1000000LL && (long long int) exp * mpz_sizeinbase(mpq_denref(vb.internalRational()), 10) <= 1000000LL) return true;
 	}
 	return false;
 }

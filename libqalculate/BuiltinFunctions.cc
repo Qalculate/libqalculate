@@ -2339,25 +2339,12 @@ RandFunction::RandFunction() : MathFunction("rand", 0, 1) {
 	setDefaultValue(1, "0"); 
 }
 int RandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	//initialize static in calculator
-	gmp_randstate_t randstate;
-	gmp_randinit_default(randstate);
 	Number nr;
 	if(vargs[0].number().isZero() || vargs[0].number().isNegative()) {
-		Number nr;
-		mpfr_t f_rand;
-		mpfr_init(f_rand);
-		mpfr_urandom(f_rand, randstate, MPFR_RNDN);
-		nr.setInternal(f_rand);
-		mpfr_clear(f_rand);
-		gmp_randclear(randstate);
-		mstruct = nr;
+		nr.rand();
 	} else {
-		mpz_t i_rand;
-		mpz_init(i_rand);
-		mpz_urandomm(i_rand, randstate, mpq_numref(nr.internalRational()));
-		mpz_add_ui(i_rand, i_rand, 1);
-		nr.setInternal(i_rand);
+		nr.intRand(vargs[0].number());
+		nr++;
 	}
 	mstruct = nr;
 	return 1;
@@ -3854,9 +3841,13 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, 6) {
 }
 int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
+	EvaluationOptions eo2;
+	eo2.parse_options = eo.parse_options;
+	eo2.approximation = APPROXIMATION_APPROXIMATE;
+	eo2.parse_options.read_precision = DONT_READ_PRECISION;
 	bool use_step_size = vargs[5].number().getBoolean();
 	mstruct = vargs[0];
-	mstruct.eval(eo);
+	mstruct.eval(eo2);
 	vector<MathStructure> x_vectors, y_vectors;
 	vector<PlotDataParameters*> dpds;
 	if(mstruct.isMatrix() && mstruct.columns() == 2) {
@@ -3901,12 +3892,12 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				} else {
 					MathStructure y_vector;
 					if(use_step_size) {
-						y_vector.set(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], &x_vector, eo));
+						y_vector.set(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], &x_vector, eo2));
 						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
 					} else if(!vargs[3].isInteger() || !vargs[3].representsPositive()) {
 						CALCULATOR->error(true, _("Sampling rate must be a positive integer."), NULL);
 					} else {
-						y_vector.set(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], vargs[3].number().intValue(), &x_vector, eo));
+						y_vector.set(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], vargs[3].number().intValue(), &x_vector, eo2));
 						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
 					}
 					if(CALCULATOR->aborted()) return 1;
@@ -3930,12 +3921,12 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	} else {
 		MathStructure x_vector, y_vector;
 		if(use_step_size) {
-			y_vector.set(mstruct.generateVector(vargs[4], vargs[1], vargs[2], vargs[3], &x_vector, eo));
+			y_vector.set(mstruct.generateVector(vargs[4], vargs[1], vargs[2], vargs[3], &x_vector, eo2));
 			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
 		} else if(!vargs[3].isInteger() || !vargs[3].representsPositive()) {
 			CALCULATOR->error(true, _("Sampling rate must be a positive integer."), NULL);
 		} else {
-			y_vector.set(mstruct.generateVector(vargs[4], vargs[1], vargs[2], vargs[3].number().intValue(), &x_vector, eo));
+			y_vector.set(mstruct.generateVector(vargs[4], vargs[1], vargs[2], vargs[3].number().intValue(), &x_vector, eo2));
 			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
 		}
 		if(CALCULATOR->aborted()) return 1;

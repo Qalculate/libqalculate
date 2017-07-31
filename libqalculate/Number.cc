@@ -23,6 +23,8 @@
 #define PRECISION_TO_BITS(p) (((p) * 3.3219281) + 100)
 #define BITS_TO_PRECISION(p) (::ceil(((p) - 100) / 3.3219281))
 
+gmp_randstate_t randstate;
+
 string format_number_string(string cl_str, int base, BaseDisplay base_display, bool show_neg, bool format_base_two = true) {
 	if(format_base_two && base == 2 && base_display != BASE_DISPLAY_NONE) {
 		int i2 = cl_str.length() % 4;
@@ -3411,6 +3413,22 @@ bool Number::factorize(vector<Number> &factors) {
 	}
 	mpz_clears(inr, last_prime, facmax, NULL);
 	return true;
+}
+
+void Number::rand() {
+	if(n_type != NUMBER_TYPE_FLOAT) {
+		mpfr_init2(f_value, BIT_PRECISION);
+		mpq_set_ui(r_value, 0, 1);
+		n_type = NUMBER_TYPE_FLOAT;
+	}
+	mpfr_urandom(f_value, randstate, MPFR_RNDN);
+	b_approx = false;
+	i_precision = -1;
+}
+void Number::intRand(const Number &ceil) {
+	clear();
+	if(!ceil.isInteger() || !ceil.isPositive()) return;
+	mpz_urandomm(mpq_numref(r_value), randstate, mpq_numref(ceil.internalRational()));
 }
 
 bool Number::add(const Number &o, MathOperation op) {

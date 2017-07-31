@@ -187,6 +187,7 @@ MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minu
 Number nr_zero, nr_one, nr_minus_one, nr_one_i, nr_minus_i, nr_half;
 EvaluationOptions no_evaluation;
 ExpressionName empty_expression_name;
+extern gmp_randstate_t randstate;
 
 enum {
 	PROC_RPN_ADD,
@@ -286,6 +287,9 @@ Calculator::Calculator() {
 	bindtextdomain (GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 #endif
+
+	gmp_randinit_default(randstate);
+	gmp_randseed_ui(randstate, (unsigned long int) time(NULL));
 
 	priv = new Calculator_p;
 
@@ -450,6 +454,7 @@ Calculator::~Calculator() {
 	closeGnuplot();
 	delete priv;
 	delete calculate_thread;
+	gmp_randclear(randstate);
 }
 
 Unit *Calculator::getGraUnit() {
@@ -9267,11 +9272,8 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 }
 MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
 	MathStructure min_mstruct(min), max_mstruct(max);
-	EvaluationOptions eo;
-	eo.approximation = APPROXIMATION_APPROXIMATE;
 	ParseOptions po2 = po;
 	po2.read_precision = DONT_READ_PRECISION;
-	eo.parse_options = po2;
 	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, steps, x_vector, x_var, po2, msecs));
 	return y_vector;
 }
@@ -9298,11 +9300,8 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 }
 MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, float step, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
 	MathStructure min_mstruct(min), max_mstruct(max), step_mstruct(step);
-	EvaluationOptions eo;
-	eo.approximation = APPROXIMATION_APPROXIMATE;
 	ParseOptions po2 = po;
 	po2.read_precision = DONT_READ_PRECISION;
-	eo.parse_options = po2;
 	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, step_mstruct, x_vector, x_var, po2, msecs));
 	return y_vector;
 }

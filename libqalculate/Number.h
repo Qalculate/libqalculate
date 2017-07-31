@@ -31,7 +31,6 @@ typedef enum {
 	NUMBER_TYPE_MINUS_INFINITY
 } NumberType;
 
-
 /// A number.
 /**
 * Can be rational, floating point, complex or infinite.
@@ -419,6 +418,9 @@ class Number {
 		bool doubleFactorial();
 		bool binomial(const Number &m, const Number &k);
 		bool factorize(vector<Number> &factors);
+		
+		void rand();
+		void intRand(const Number &ceil);
 	
 		bool add(const Number &o, MathOperation op); 
 
