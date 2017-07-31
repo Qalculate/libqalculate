@@ -2635,7 +2635,10 @@ bool Number::asinh() {
 	if(isZero()) return true;
 	if(isComplex()) {
 		Number z_sqln(*this);
-		if(!z_sqln.square() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !z_sqln.add(*this) || !z_sqln.ln()) return false;
+		if(!z_sqln.square() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !z_sqln.add(*this)) return false;
+		//If zero, it means that the precision is too low (since infinity is not the correct value). Happens with number less than -(10^1000)i
+		if(z_sqln.isZero()) return false;
+		if(!z_sqln.ln()) return false;
 		set(z_sqln);
 		return true;
 	}
@@ -3986,6 +3989,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpfr_floor(f_log, f_log);
 		mpfr_sub_si(f_log, f_log, precision - 1, MPFR_RNDN);
 		long int l10 = -mpfr_get_si(f_log, MPFR_RNDN);
+		if(po.use_max_decimals && po.max_decimals >= 0 && l10 > po.max_decimals) {
+			mpfr_add_si(f_log, f_log, l10 - po.max_decimals, MPFR_RNDN);
+			l10 = po.max_decimals;
+		}
 		mpfr_pow(f_log, f_base, f_log, MPFR_RNDN);
 		mpfr_div(v, v, f_log, MPFR_RNDN);
 		if(po.round_halfway_to_even) mpfr_rint(v, v, MPFR_RNDN);
