@@ -1,6 +1,7 @@
 2017-07-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Use default evaluation options with approximate calculation in plot function
+	* Use GMP and MPFR instead of CLN
 
 2017-07-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

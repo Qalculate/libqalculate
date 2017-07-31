@@ -14,7 +14,7 @@ In a terminal window in the top source code directory run
 If libqalculate is installed in /usr/local (default) you may need to add /usr/local/lib to the library path of the system (add /usr/local/lib to a file under /etc/ld.so.conf.d/ and run ldconfig).
 
 ##Requirements
-* CLN - Class Library for Numbers (http://www.ginac.de/CLN/)
+* GMP and MPFR
 * Libxml2 (>= 2.3.8)
 * Glib
 * Gnuplot 1.7 (optional, for plotting)
