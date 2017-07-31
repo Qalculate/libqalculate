@@ -1921,7 +1921,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 					} else {
 						mpq_set(r_test, r_value);
 					}
-					if(isInteger()) {
+					if(mpz_cmp_ui(mpq_denref(r_test), 1) == 0) {
 						if(i_pow != 1) mpz_pow_ui(mpq_numref(r_test), mpq_numref(r_test), (unsigned long int) i_pow);
 						if(i_root % 2 == 0 && mpq_sgn(r_test) < 0) {
 							if(b_imag) {mpq_clear(r_test); return false;}
@@ -1965,8 +1965,10 @@ bool Number::raise(const Number &o, bool try_exact) {
 						mpq_inv(r_value, r_value);
 						i_pow = -i_pow;
 					}
-					mpz_pow_ui(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) i_pow);
-					mpz_pow_ui(mpq_denref(r_value), mpq_denref(r_value), (unsigned long int) i_pow);
+					if(i_pow != 1) {
+						mpz_pow_ui(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) i_pow);
+						mpz_pow_ui(mpq_denref(r_value), mpq_denref(r_value), (unsigned long int) i_pow);
+					}
 					success = true;
 				} else {
 					success = true;
@@ -1978,7 +1980,6 @@ bool Number::raise(const Number &o, bool try_exact) {
 			return true;
 		}
 	}
-
 	Number nr_bak(*this);
 	mpfr_clear_flags();
 	

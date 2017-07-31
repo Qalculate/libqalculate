@@ -1013,6 +1013,17 @@
       <_title>Inverse Hyperbolic Tangent</_title>
       <_names>r:atanh</_names>
     </builtin_function>
+    <builtin_function name="atan2">
+      <_title>Four-quadrant Inverse Tangent</_title>
+      <_names>r:atan2</_names>
+      <_description>Computes the principal value of the argument function applied to the complex number x+iy.</_description>
+      <argument index="1">
+        <_title>Y</_title>
+      </argument>
+      <argument index="2">
+        <_title>X</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="radtodef">
       <_title>Radians to Default Angle Unit</_title>
       <_names>r:radtodef</_names>
