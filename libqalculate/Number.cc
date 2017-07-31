@@ -3700,7 +3700,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		else str += "i";
 		if(ips.num) *ips.num = str;
 	} else if(isInteger()) {
-	
+
 		mpz_t ivalue;
 		mpz_init_set(ivalue, mpq_numref(r_value));
 		bool neg = (mpz_sgn(ivalue) < 0);
@@ -3768,7 +3768,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		long int decimals = expo;
 		long int nondecimals = length - decimals;
-		
+
 		bool dp_added = false;
 
 		if(!rerun && mpz_sgn(ivalue) != 0) {
@@ -3798,7 +3798,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					mpz_mul(ivalue, ivalue, i_div);
 					exact = false;
 					rerun = true;
-					mpz_clears(i_rem, i_quo, i_div, i_div, NULL);
+					mpz_clears(i_rem, i_quo, i_div, NULL);
 					goto integer_rerun;
 				}
 				mpz_clears(i_rem, i_quo, i_div, NULL);
@@ -3862,7 +3862,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpq_clears(q_exp, qvalue, NULL);
 			}
 		}
+
 		mpz_clear(ivalue);
+
 		decimals = 0;
 		if(expo > 0) {
 			if(po.number_fraction_format == FRACTION_DECIMAL) {
@@ -3940,6 +3942,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		if(ips.num) *ips.num = str;
+
 	} else if(isInfinity()) {
 		if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_INFINITY, po.can_display_unicode_string_arg))) {
 			str = SIGN_INFINITY;
@@ -3965,6 +3968,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		str += ")";
 	} else if(n_type == NUMBER_TYPE_FLOAT) {
+
 		mpfr_clear_flags();
 		mpfr_t v;
 		mpfr_init2(v, BIT_PRECISION);
@@ -4081,6 +4085,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpfr_clears(v, f_log, f_base, f_log_base, NULL);
 		if(po.is_approximate && mpfr_inexflag_p()) *po.is_approximate = true;
 		testErrors(2);
+
 	} else if(base != BASE_ROMAN_NUMERALS && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 		mpz_t num, d, remainder, remainder2, exp;
 		mpz_inits(num, d, remainder, remainder2, exp, NULL);
