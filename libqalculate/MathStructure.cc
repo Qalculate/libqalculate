@@ -11290,11 +11290,19 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 			}
 			break;
 		}
+		case STRUCT_VARIABLE: {
+			if(o_variable == CALCULATOR->v_pinf || o_variable == CALCULATOR->v_minf || o_variable == CALCULATOR->v_inf) {
+				set(((KnownVariable*) o_variable)->get());
+			}
+			break;
+		}
 		case STRUCT_NUMBER: {
 			if(o_number.isNegative()) {
-				o_number.negate();
-				transform(STRUCT_NEGATE);
-				formatsub(po, parent, pindex);
+				if(!o_number.isMinusInfinity() || (parent && parent->isAddition())) {
+					o_number.negate();
+					transform(STRUCT_NEGATE);
+					formatsub(po, parent, pindex);
+				}
 			} else if(po.number_fraction_format == FRACTION_COMBINED && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger()) {
 				if(o_number.isFraction()) {
 					Number num(o_number.numerator());
@@ -11435,7 +11443,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_COMPARISON: {return true;}				
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return false;}
+				case STRUCT_NUMBER: {return o_number.isInfinite();}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -11464,7 +11472,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_COMPARISON: {return flat_division || po.excessive_parenthesis;}
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return false;}
+				case STRUCT_NUMBER: {return (flat_division || po.excessive_parenthesis) && o_number.isInfinite();}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -11492,7 +11500,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_COMPARISON: {return true;}
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return false;}
+				case STRUCT_NUMBER: {return o_number.isInfinite();}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -11520,7 +11528,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_COMPARISON: {return true;}				
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return false;}
+				case STRUCT_NUMBER: {return o_number.isInfinite();}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -11548,7 +11556,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_COMPARISON: {return true;}				
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return false;}
+				case STRUCT_NUMBER: {return o_number.isInfinite();}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -11575,10 +11583,10 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_OR: {return true;}
 				case STRUCT_LOGICAL_XOR: {return true;}
 				case STRUCT_LOGICAL_NOT: {return false;}
-				case STRUCT_COMPARISON: {return false;}				
+				case STRUCT_COMPARISON: {return false;}
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return false;}
+				case STRUCT_NUMBER: {return po.excessive_parenthesis && o_number.isInfinite();}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -11605,10 +11613,10 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_OR: {return true;}
 				case STRUCT_LOGICAL_XOR: {return true;}
 				case STRUCT_LOGICAL_NOT: {return false;}
-				case STRUCT_COMPARISON: {return true;}				
+				case STRUCT_COMPARISON: {return true;}
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return false;}
+				case STRUCT_NUMBER: {return po.excessive_parenthesis && o_number.isInfinite();}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -11633,10 +11641,10 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_OR: {return true;}
 				case STRUCT_LOGICAL_XOR: {return true;}
 				case STRUCT_LOGICAL_NOT: {return false;}
-				case STRUCT_COMPARISON: {return true;}				
+				case STRUCT_COMPARISON: {return true;}
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return false;}
+				case STRUCT_NUMBER: {return po.excessive_parenthesis && o_number.isInfinite();}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
