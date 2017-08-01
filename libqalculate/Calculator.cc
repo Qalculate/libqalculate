@@ -9,6 +9,8 @@
     (at your option) any later version.
 */
 
+typedef __CHAR16_TYPE__ char16_t;
+
 #include "support.h"
 
 #include "Calculator.h"

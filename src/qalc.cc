@@ -369,7 +369,7 @@ bool check_exchange_rates() {
 #else
 #	define CHECK_IF_SCREEN_FILLED
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) PUTS_UNICODE(x);
-#	define INIT_SCREEN_CHECK {int rows = 50, cols = 80, rcount = 0;}
+#	define INIT_SCREEN_CHECK {}
 #endif
 
 #define SET_BOOL(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v;}}
@@ -745,8 +745,8 @@ void set_option(string str) {
 #define PUTS_BOLD(x) str = "\033[1m"; str += x; str += "\033[0m"; puts(str.c_str());
 
 void list_defs(bool in_interactive, char list_type = 0) {
-	int rows, cols, rcount = 0; 
 #ifdef HAVE_LIBREADLINE
+	int rows, cols, rcount = 0; 
 	if(in_interactive && !cfile) {
 		rl_get_screen_size(&rows, &cols);
 		cout << cols << endl;
@@ -754,8 +754,7 @@ void list_defs(bool in_interactive, char list_type = 0) {
 		cols = 80;
 	}
 #else
-	cols = 80;
-	rows = 50;
+	int cols = 80; 
 #endif
 	string str;
 	if(list_type == 0) {
@@ -3182,22 +3181,22 @@ void execute_command(int command_type, bool show_result) {
 				fflush(stdout);
 			}
 		}
-	#ifdef HAVE_LIBREADLINE	
+#ifdef HAVE_LIBREADLINE	
 		int c = 0;
-	#else
+#else
 		char c = 0;
-	#endif
+#endif
 		while(b_busy) {
 			if(cfile) {
 				sleep_ms(100);
 			} else {
 				if(wait_for_key_press(100)) {
-	#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_LIBREADLINE
 					if(use_readline) c = rl_read_key();
 					else read(STDIN_FILENO, &c, 1);
-	#else
+#else
 					read(STDIN_FILENO, &c, 1);
-	#endif			
+#endif			
 					if(c == '\n') {
 						on_abort_command();
 					}
@@ -3476,22 +3475,22 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				has_printed = true;
 			}
 		}
-	#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_LIBREADLINE
 		int c = 0;
-	#else
+#else
 		char c = 0;
-	#endif
+#endif
 		while(CALCULATOR->busy()) {
 			if(cfile) {
 				sleep_ms(100);
 			} else {
 				if(wait_for_key_press(100)) {
-	#ifdef HAVE_LIBREADLINE		
+#ifdef HAVE_LIBREADLINE		
 					if(use_readline) c = rl_read_key();
 					else read(STDIN_FILENO, &c, 1);
-	#else
+#else
 					read(STDIN_FILENO, &c, 1);
-	#endif			
+#endif			
 					if(c == '\n') {
 						CALCULATOR->abort();
 						avoid_recalculation = true;
