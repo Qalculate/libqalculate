@@ -3154,8 +3154,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					expo = 0;
 				}
 			} else if(po.min_exp < -1) {
-				expo -= expo % (-po.min_exp);
-				if(expo < 0) expo = 0;
+				if(expo < 0) {
+					int expo_rem = (-expo) % (-po.min_exp);
+					if(expo_rem > 0) expo_rem = (-po.min_exp) - expo_rem;
+					expo -= expo_rem;
+					if(expo > 0) expo = 0;
+				} else if(expo > 0) {
+					expo -= expo % (-po.min_exp);
+					if(expo < 0) expo = 0;
+				}
 			} else if(po.min_exp != 0) {
 				if(expo > -po.min_exp && expo < po.min_exp) { 
 					expo = 0;
@@ -3376,7 +3383,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			} catch(runtime_exception &e) {
 				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			}
-			int l10 = 0;
 			try {
 				div = cln::truncate2(num, d);
 			} catch(runtime_exception &e) {
@@ -3395,7 +3401,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 			}
 			vector<cln::cl_I> remainders;
-			bool infinite_series = false;
 			if(base != 10) {
 				Number precmax(10);
 				precmax.raise(precision);
@@ -3407,7 +3412,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			bool started = false;
 			int expo = 0;
 			int precision2 = precision;
-			if(!cln::zerop(num)) {
+			bool num_zero = cln::zerop(num);
+			if(!num_zero) {
 				str = printCL_I(num, base, true, BASE_DISPLAY_NONE);
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				
@@ -3433,12 +3439,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 				int decimals = expo;
 				int nondecimals = length - decimals;
-		
 				precision2 -= length;
 				if(!approx && min_decimals + nondecimals > precision) precision2 = (min_decimals + nondecimals) - length;
 				try {
-					if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals && (!approx || po.max_decimals + nondecimals < precision2)) {
-						cln::cl_R_div_t divr = cln::floor2(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - expo)));
+					if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals && (!approx || po.max_decimals - decimals < precision2)) {
+						cln::cl_R_div_t divr = cln::floor2(cln::realpart(value) / cln::expt_pos(cln::cl_I(base), -(po.max_decimals - decimals)));
 						if(!cln::zerop(divr.remainder)) {
 							num = divr.quotient;
 							if(po.round_halfway_to_even && cln::evenp(num)) {
@@ -3478,9 +3483,21 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					CALCULATOR->error(true, _("CLN Exception: %s"), e.what(), NULL);
 				}	
 				started = true;
+				if(po.use_max_decimals && po.max_decimals >= 0 && precision2 > po.max_decimals - decimals) precision2 = po.max_decimals - decimals;
 			}
-			if(!exact && po.use_max_decimals && po.max_decimals >= 0 && precision2 > po.max_decimals - expo) precision2 = po.max_decimals - expo;
 			bool try_infinite_series = po.indicate_infinite_series && !isApproximateType();
+			cl_I remainder_bak = remainder, num_bak = num;
+			
+			bool rerun = false;
+			
+			rational_rerun:
+
+			bool infinite_series = false;
+			int l10 = 0;
+			if(rerun) {
+				num = num_bak;
+				remainder = remainder_bak;
+			}
 			while(!exact && precision2 > 0) {
 				if(try_infinite_series) {
 					remainders.push_back(remainder);
@@ -3548,15 +3565,22 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			str = printCL_I(num, base, true, BASE_DISPLAY_NONE, po.lower_case_numbers);
 			if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
-			if(base == 10) {
+			if(!rerun && base == 10) {
 				expo = str.length() - l10 - 1;
 				if(po.min_exp == EXP_PRECISION) {
 					if((expo > -precision && expo < precision) || (expo < 3 && expo > -3 && PRECISION >= 3)) { 
 						expo = 0;
 					}
 				} else if(po.min_exp < -1) {
-					expo -= expo % (-po.min_exp);
-					if(expo < 0) expo = 0;
+					if(expo < 0) {
+						int expo_rem = (-expo) % (-po.min_exp);
+						if(expo_rem > 0) expo_rem = (-po.min_exp) - expo_rem;
+						expo -= expo_rem;
+						if(expo > 0) expo = 0;
+					} else if(expo > 0) {
+						expo -= expo % (-po.min_exp);
+						if(expo < 0) expo = 0;
+					}
 				} else if(po.min_exp != 0) {
 					if(expo > -po.min_exp && expo < po.min_exp) { 
 						expo = 0;
@@ -3564,6 +3588,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				} else {
 					expo = 0;
 				}
+			}
+			if(!rerun && num_zero && expo <= 0 && po.use_max_decimals && po.max_decimals >= 0 && precision > po.max_decimals - l10 - expo + (int) str.length()) {
+				precision2 = po.max_decimals + (int) str.length() - l10 - expo;
+				rerun = true;
+				exact = false;
+				started = false;
+				goto rational_rerun;
 			}
 			if(expo != 0) {
 				l10 += expo;
@@ -3581,9 +3612,16 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				while(str[str.length() - 1 - l2] == '0') {
 					l2++;
 				}
-				if(l2 > 0 && !infinite_series && (exact || !po.show_ending_zeroes)) {
+				int decimals = str.length() - l10 - 1;
+				if(!exact && po.show_ending_zeroes) {
+					if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals) {
+						l2 = decimals - po.max_decimals;
+					} else {
+						l2 = 0;
+					}
+				}
+				if(l2 > 0 && !infinite_series) {
 					if(min_decimals > 0) {
-						int decimals = str.length() - l10 - 1;
 						if(decimals - min_decimals < l2) l2 = decimals - min_decimals;
 					}
 					if(l2 > 0) str = str.substr(0, str.length() - l2);
