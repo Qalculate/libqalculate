@@ -2810,9 +2810,15 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	MathStructure m1(vargs[0]);
 	EvaluationOptions eo2 = eo;
 	eo2.calculate_functions = false;
-	m1.eval(eo2);
-	mstruct.clear();
 	Number i_nr(vargs[1].number());
+	if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
+		Number nr(vargs[2].number());
+		nr.subtract(i_nr);
+		if(nr.isGreaterThan(100)) eo2.approximation = APPROXIMATION_APPROXIMATE;
+	}
+	m1.eval(eo2);
+	eo2.calculate_functions = eo.calculate_functions;
+	mstruct.clear();
 	MathStructure mstruct_calc;
 	bool started = false;
 	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {
@@ -2827,12 +2833,12 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		mstruct_calc.set(m1);
 		mstruct_calc.replace(vargs[3], i_nr);
-		mstruct_calc.eval(eo);
+		mstruct_calc.eval(eo2);
 		if(started) {
-			mstruct.calculateAdd(mstruct_calc, eo);
+			mstruct.calculateAdd(mstruct_calc, eo2);
 		} else {
 			mstruct = mstruct_calc;
-			mstruct.calculatesub(eo, eo);
+			mstruct.calculatesub(eo2, eo2);
 			started = true;
 		}
 		i_nr += 1;
@@ -2852,9 +2858,15 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	MathStructure m1(vargs[0]);
 	EvaluationOptions eo2 = eo;
 	eo2.calculate_functions = false;
-	m1.eval(eo2);
-	mstruct.clear();
 	Number i_nr(vargs[1].number());
+	if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
+		Number nr(vargs[2].number());
+		nr.subtract(i_nr);
+		if(nr.isGreaterThan(100)) eo2.approximation = APPROXIMATION_APPROXIMATE;
+	}
+	m1.eval(eo2);
+	eo2.calculate_functions = eo.calculate_functions;
+	mstruct.clear();
 	MathStructure mstruct_calc;
 	bool started = false;
 	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {
@@ -2869,12 +2881,12 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		}
 		mstruct_calc.set(m1);
 		mstruct_calc.replace(vargs[3], i_nr);
-		mstruct_calc.eval(eo);
+		mstruct_calc.eval(eo2);
 		if(started) {
-			mstruct.calculateMultiply(mstruct_calc, eo);
+			mstruct.calculateMultiply(mstruct_calc, eo2);
 		} else {
 			mstruct = mstruct_calc;
-			mstruct.calculatesub(eo, eo);
+			mstruct.calculatesub(eo2, eo2);
 			started = true;
 		}
 		i_nr += 1;

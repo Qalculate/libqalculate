@@ -2241,8 +2241,8 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	current_stage = MESSAGE_STAGE_CALCULATION;
 	mstruct.eval(eo);
 	
-	if(aborted()) return mstruct;
-	
+	current_stage = MESSAGE_STAGE_UNSET;
+	if(aborted() || !mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
 	if(u) {
 		current_stage = MESSAGE_STAGE_CONVERSION;
 		if(to_struct) to_struct->set(u);
@@ -2486,15 +2486,18 @@ MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit, co
 	return mstruct;
 }
 MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units) {
+	if(!mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
 	CompositeUnit *cu = NULL;
 	if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) cu = (CompositeUnit*) to_unit;
 	if(cu && cu->countUnits() == 0) return mstruct;
 	MathStructure mstruct_new(mstruct);
 	//bool b_simple = !cu && (to_unit->subtype() != SUBTYPE_ALIAS_UNIT || (((AliasUnit*) to_unit)->baseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT && ((AliasUnit*) to_unit)->baseExponent() == 1));
 
+	bool b_changed = false;
 	if(mstruct_new.isAddition()) {
 		if(mstruct_new.size() > 100 && aborted()) return mstruct;
 		mstruct_new.factorizeUnits();
+		if(!b_changed && mstruct_new != mstruct) b_changed = true;
 	}
 
 	if(!mstruct_new.isPower() && !mstruct_new.isUnit() && !mstruct_new.isMultiplication()) {
@@ -2503,14 +2506,17 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				if(mstruct_new.size() > 100 && aborted()) return mstruct;
 				if(!mstruct_new.isFunction() || !mstruct_new.function()->getArgumentDefinition(i + 1) || mstruct_new.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) { 
 					mstruct_new[i] = convert(mstruct_new[i], to_unit, eo, false, convert_to_mixed_units);
+					if(!b_changed && mstruct_new != mstruct[i]) b_changed = true;
 				}
 			}
-			mstruct_new.childrenUpdated();
-			EvaluationOptions eo2 = eo;
-			//eo2.calculate_functions = false;
-			eo2.sync_units = false;
-			eo2.keep_prefixes = true;
-			mstruct_new.eval(eo2);
+			if(b_changed) {
+				mstruct_new.childrenUpdated();
+				EvaluationOptions eo2 = eo;
+				//eo2.calculate_functions = false;
+				eo2.sync_units = false;
+				eo2.keep_prefixes = true;
+				mstruct_new.eval(eo2);
+			}
 			return mstruct_new;
 		}
 	} else {
@@ -2593,12 +2599,15 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 
 }
 MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo) {
+	if(!mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
 	MathStructure mstruct_new(mstruct);
 	mstruct_new.convertToBaseUnits(true, NULL, true, eo);
-	EvaluationOptions eo2 = eo;
-	eo2.keep_prefixes = false;
-	//eo2.calculate_functions = false;
-	mstruct_new.eval(eo2);
+	if(mstruct_new != mstruct) {
+		EvaluationOptions eo2 = eo;
+		eo2.keep_prefixes = false;
+		//eo2.calculate_functions = false;
+		mstruct_new.eval(eo2);
+	}
 	return mstruct_new;
 }
 Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
@@ -2938,30 +2947,9 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 	//eo2.calculate_functions = false;
 	eo2.sync_units = false;
 	switch(mstruct.type()) {
-		case STRUCT_BITWISE_XOR: {}
-		case STRUCT_BITWISE_OR: {}
-		case STRUCT_BITWISE_AND: {}
-		case STRUCT_BITWISE_NOT: {}
-		case STRUCT_LOGICAL_XOR: {}
-		case STRUCT_LOGICAL_OR: {}
-		case STRUCT_LOGICAL_AND: {}
-		case STRUCT_LOGICAL_NOT: {}
-		case STRUCT_COMPARISON: {}
-		case STRUCT_FUNCTION: {}
-		case STRUCT_VECTOR: {}
-		case STRUCT_ADDITION: {
-			MathStructure mstruct_new(mstruct);
-			for(size_t i = 0; i < mstruct_new.size(); i++) {
-				if(mstruct_new.size() > 100 && aborted()) return mstruct;
-				mstruct_new[i] = convertToBestUnit(mstruct_new[i], eo, convert_to_si_units);
-			}
-			mstruct_new.childrenUpdated();
-			mstruct_new.eval(eo2);
-			return mstruct_new;
-		}
 		case STRUCT_POWER: {
-			MathStructure mstruct_new(mstruct);
-			if(mstruct_new.base()->isUnit() && mstruct_new.exponent()->isNumber() && mstruct_new.exponent()->number().isInteger()) {
+			if(mstruct.base()->isUnit() && mstruct.exponent()->isNumber() && mstruct.exponent()->number().isInteger()) {
+				MathStructure mstruct_new(mstruct);
 				int old_points = mstruct_new.exponent()->number().intValue();
 				bool old_minus = false;
 				if(old_points < 0) {
@@ -3020,9 +3008,30 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				}
 				if(new_points == 0) return mstruct;
 				if((new_points > old_points && (!convert_to_si_units || is_si_units)) || (new_points == old_points && (new_minus || !old_minus) && (!convert_to_si_units || (is_si_units && !new_is_si_units)))) return mstruct;
-			} else {
-				mstruct_new[0] = convertToBestUnit(mstruct_new[0], eo, convert_to_si_units);
-				mstruct_new[1] = convertToBestUnit(mstruct_new[1], eo, convert_to_si_units);
+				return mstruct_new;
+			}
+		}
+		case STRUCT_BITWISE_XOR: {}
+		case STRUCT_BITWISE_OR: {}
+		case STRUCT_BITWISE_AND: {}
+		case STRUCT_BITWISE_NOT: {}
+		case STRUCT_LOGICAL_XOR: {}
+		case STRUCT_LOGICAL_OR: {}
+		case STRUCT_LOGICAL_AND: {}
+		case STRUCT_LOGICAL_NOT: {}
+		case STRUCT_COMPARISON: {}
+		case STRUCT_FUNCTION: {}
+		case STRUCT_VECTOR: {}
+		case STRUCT_ADDITION: {
+			if(!mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
+			MathStructure mstruct_new(mstruct);
+			bool b = false;
+			for(size_t i = 0; i < mstruct_new.size(); i++) {
+				if(mstruct_new.size() > 100 && aborted()) return mstruct;
+				mstruct_new[i] = convertToBestUnit(mstruct_new[i], eo, convert_to_si_units);
+				if(!b && mstruct_new[i] != mstruct[i]) b = true;
+			}
+			if(b) {
 				mstruct_new.childrenUpdated();
 				mstruct_new.eval(eo2);
 			}
@@ -3039,6 +3048,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
+			if(!mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
 			int old_points = 0;
 			bool old_minus = true;
 			bool is_si_units = true;

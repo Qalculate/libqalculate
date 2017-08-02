@@ -7017,7 +7017,6 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	eo2.test_comparisons = false;
 
 	//calculateUncertaintyPropagation(eo);
-	
 	if(eo.calculate_functions && calculateFunctions(feo)) {
 		unformat(eo);
 	}
