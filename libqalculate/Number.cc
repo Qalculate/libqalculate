@@ -3613,15 +3613,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					l2++;
 				}
 				int decimals = str.length() - l10 - 1;
-				if(!exact && po.show_ending_zeroes) {
-					if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals) {
+				if((!exact || approx) && po.show_ending_zeroes && (int) str.length() - precision - 1 < l2) {
+					l2 = str.length() - precision - 1;
+					if(po.use_max_decimals && po.max_decimals >= 0 && decimals - l2 > po.max_decimals) {
 						l2 = decimals - po.max_decimals;
-					} else {
-						l2 = 0;
 					}
 				}
 				if(l2 > 0 && !infinite_series) {
-					if(min_decimals > 0) {
+					if(min_decimals > 0 && (!approx || decimals - min_decimals)) {
 						if(decimals - min_decimals < l2) l2 = decimals - min_decimals;
 					}
 					if(l2 > 0) str = str.substr(0, str.length() - l2);
@@ -3638,6 +3637,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 			if(str.empty()) {
 				str = "0";
+			}
+			if(!exact && str == "0" && po.show_ending_zeroes && po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < precision) {
+				str += po.decimalpoint();
+				for(; decimals < po.max_decimals; decimals++) str += '0';
 			}
 			if(exact && min_decimals > decimals) {
 				if(decimals <= 0) {
