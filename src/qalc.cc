@@ -1150,7 +1150,6 @@ int main(int argc, char *argv[]) {
 	parsed_text = "0";
 	
 	view_thread = new ViewThread;
-	view_thread->start();
 	command_thread = new CommandThread;
 
 	if(!command_file.empty()) {
@@ -2821,12 +2820,12 @@ void on_abort_display() {
 
 void ViewThread::run() {
 	while(true) {
-	
-		void *x = read<void *>();
+
+		void *x = NULL;
+		if(!read<void *>(&x) || !x) break;
 		MathStructure m(*((MathStructure*) x));
-		//bool b_stack = read<bool>();
-		read<bool>();
-		x = read<void *>();
+		x = NULL;
+		if(!read<void *>(&x)) break;
 		CALCULATOR->startControl();
 		if(x) {
 			PrintOptions po;
@@ -2885,6 +2884,8 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 	b_busy = true;
 	
+	if(!view_thread->running && !view_thread->start()) {b_busy = false; return;}
+	
 	if(!interactive_mode) goto_input = false;
 
 	string prev_result_text = result_text;
@@ -2910,19 +2911,17 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 	bool parsed_approx = false;
 	if(stack_index == 0) {
-		view_thread->write((void*) mstruct);
+		if(!view_thread->write((void*) mstruct)) {b_busy = false; view_thread->cancel(); return;}
 	} else {
 		MathStructure *mreg = CALCULATOR->getRPNRegister(stack_index + 1);
-		view_thread->write((void*) mreg);
+		if(!view_thread->write((void*) mreg)) {b_busy = false; view_thread->cancel(); return;}
 	}
-	bool b_stack = stack_index != 0;
-	view_thread->write(b_stack);
 	if(update_parse) {
-		view_thread->write((void *) parsed_mstruct);
+		if(!view_thread->write((void *) parsed_mstruct)) {b_busy = false; view_thread->cancel(); return;}
 		bool *parsed_approx_p = &parsed_approx;
-		view_thread->write(parsed_approx_p);
+		if(!view_thread->write(parsed_approx_p)) {b_busy = false; view_thread->cancel(); return;}
 	} else {
-		view_thread->write((void *) NULL);
+		if(!view_thread->write((void *) NULL)) {b_busy = false; view_thread->cancel(); return;}
 	}
 	
 	bool has_printed = false;
@@ -3099,8 +3098,10 @@ void CommandThread::run() {
 	enableAsynchronousCancel();
 
 	while(true) {
-		int command_type = read<int>();
-		void *x = read<void *>();
+		int command_type = 0;
+		if(!read<int>(&command_type)) break;
+		void *x = NULL;
+		if(!read<void *>(&x) || !x) break;
 		CALCULATOR->startControl();
 		switch(command_type) {
 			case COMMAND_FACTORIZE: {
@@ -3127,13 +3128,11 @@ void execute_command(int command_type, bool show_result) {
 	b_busy = true;	
 	command_aborted = false;
 
-	if(!command_thread->running) {
-		command_thread->start();
-	}
+	if(!command_thread->running && !command_thread->start()) {b_busy = false; return;}
 
-	command_thread->write(command_type);
+	if(!command_thread->write(command_type)) {command_thread->cancel(); b_busy = false; return;}
 	MathStructure *mfactor = new MathStructure(*mstruct);
-	command_thread->write((void *) mfactor);
+	if(!command_thread->write((void *) mfactor)) {command_thread->cancel(); mfactor->unref(); b_busy = false; return;}
 
 	if(i_maxtime != 0) {
 #ifndef CLOCK_MONOTONIC

@@ -1,3 +1,11 @@
+2017-08-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Handle errors on thread read and write (seems to solve issue #38)
+
+2017-08-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix max decimals
+
 2017-07-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Use default evaluation options with approximate calculation in plot function

@@ -9,7 +9,9 @@
     (at your option) any later version.
 */
 
-typedef __CHAR16_TYPE__ char16_t;
+/*#if (defined(__clang__) && !defined char16_t)
+	typedef __CHAR16_TYPE__ char16_t;
+#endif*/
 
 #include "support.h"
 
@@ -224,8 +226,10 @@ void autoConvert(const MathStructure &morig, MathStructure &mconv, const Evaluat
 void CalculateThread::run() {
 	enableAsynchronousCancel();
 	while(true) {
-		bool b_parse = read<bool>();
-		void *x = read<void *>();
+		bool b_parse = true;
+		if(!read<bool>(&b_parse)) break;
+		void *x = NULL;
+		if(!read<void *>(&x) || !x) break;
 		MathStructure *mstruct = (MathStructure*) x;
 		CALCULATOR->startControl();
 		if(b_parse) {
@@ -1780,16 +1784,14 @@ bool Calculator::calculateRPNRegister(size_t index, int msecs, const EvaluationO
 
 bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index, int msecs, const EvaluationOptions &eo) {
 	b_busy = true;
-	if(!calculate_thread->running) {
-		calculate_thread->start();
-	}
+	if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
 	bool had_msecs = msecs > 0;
 	tmp_evaluationoptions = eo;
 	tmp_proc_command = command;
 	tmp_rpnindex = index;
 	tmp_rpn_mstruct = mstruct;
-	calculate_thread->write(false);
-	calculate_thread->write((void*) mstruct);
+	if(!calculate_thread->write(false)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
+	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	while(msecs > 0 && b_busy) {
 		sleep_ms(10);
 		msecs -= 10;
@@ -1803,9 +1805,7 @@ bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index,
 bool Calculator::calculateRPN(string str, int command, size_t index, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
 	MathStructure *mstruct = new MathStructure();
 	b_busy = true;
-	if(!calculate_thread->running) {
-		calculate_thread->start();
-	}
+	if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
 	bool had_msecs = msecs > 0;
 	expression_to_calculate = str;
 	tmp_evaluationoptions = eo;
@@ -1815,8 +1815,8 @@ bool Calculator::calculateRPN(string str, int command, size_t index, int msecs, 
 	tmp_parsedstruct = parsed_struct;
 	tmp_tostruct = to_struct;
 	tmp_maketodivision = make_to_division;
-	calculate_thread->write(true);
-	calculate_thread->write((void*) mstruct);
+	if(!calculate_thread->write(true)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
+	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	while(msecs > 0 && b_busy) {
 		sleep_ms(10);
 		msecs -= 10;
@@ -2160,9 +2160,7 @@ void Calculator::moveRPNRegisterDown(size_t index) {
 bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
 	mstruct->set(string(_("calculating...")));
 	b_busy = true;
-	if(!calculate_thread->running) {
-		calculate_thread->start();
-	}
+	if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
 	bool had_msecs = msecs > 0;
 	expression_to_calculate = str;
 	tmp_evaluationoptions = eo;
@@ -2171,8 +2169,8 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 	tmp_parsedstruct = parsed_struct;
 	tmp_tostruct = to_struct;
 	tmp_maketodivision = make_to_division;
-	calculate_thread->write(true);
-	calculate_thread->write((void*) mstruct);
+	if(!calculate_thread->write(true)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
+	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	while(msecs > 0 && b_busy) {
 		sleep_ms(10);
 		msecs -= 10;
@@ -2444,16 +2442,14 @@ MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_u
 	parse(&mstruct, str, eo.parse_options);
 	mstruct *= from_unit;
 	b_busy = true;
-	if(!calculate_thread->running) {
-		calculate_thread->start();
-	}
+	if(!calculate_thread->running && !calculate_thread->start()) return mstruct;
 	bool had_msecs = msecs > 0;
 	tmp_evaluationoptions = eo;
 	tmp_proc_command = PROC_NO_COMMAND;
 	bool b_parse = false;
-	calculate_thread->write(b_parse);
+	if(!calculate_thread->write(b_parse)) {calculate_thread->cancel(); return mstruct;}
 	void *x = (void*) &mstruct;
-	calculate_thread->write(x);
+	if(!calculate_thread->write(x)) {calculate_thread->cancel(); return mstruct;}
 	while(msecs > 0 && b_busy) {
 		sleep_ms(10);
 		msecs -= 10;
@@ -2466,9 +2462,9 @@ MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_u
 	mstruct.convert(to_unit, true);
 	mstruct.divide(to_unit, true);
 	b_busy = true;
-	calculate_thread->write(b_parse);
+	if(!calculate_thread->write(b_parse)) {calculate_thread->cancel(); return mstruct;}
 	x = (void*) &mstruct;
-	calculate_thread->write(x);
+	if(!calculate_thread->write(x)) {calculate_thread->cancel(); return mstruct;}
 	while(msecs > 0 && b_busy) {
 		sleep_ms(10);
 		msecs -= 10;

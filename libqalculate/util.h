@@ -116,7 +116,8 @@ public:
 		int ret = PostThreadMessage(m_threadID, WM_USER, (WPARAM) data, 0);
 		return (ret != 0);
 #else
-		fwrite(&data, sizeof(T), 1, m_pipe_w);
+		int ret = fwrite(&data, sizeof(T), 1, m_pipe_w);
+		if(ret != 1) return false;
 		fflush(m_pipe_w);
 		return true;
 #endif
@@ -137,6 +138,18 @@ protected:
 		T x;
 		fread(&x, sizeof(T), 1, m_pipe_r);
 		return x;
+#endif
+	}
+	template <class T> bool read(T *data) {
+#ifdef _WIN32
+		MSG msg;
+		int ret = GetMessage(&msg, NULL, WM_USER, WM_USER);
+		if(ret == 0 || ret == -1) return false;
+		*data = (T) &msg.wParam;
+		return true;
+#else
+		int ret = fread(data, sizeof(T), 1, m_pipe_r);
+		return ret == 1;
 #endif
 	}
 
