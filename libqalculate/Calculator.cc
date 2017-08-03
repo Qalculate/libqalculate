@@ -38,9 +38,8 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <queue>
-#include <glib.h>
-#include <glib/gstdio.h>
 #include <curl/curl.h>
+#include <unicode/ucasemap.h>
 //#include <dlfcn.h>
 
 #if HAVE_UNORDERED_MAP
@@ -193,6 +192,8 @@ Number nr_zero, nr_one, nr_minus_one, nr_one_i, nr_minus_i, nr_half;
 EvaluationOptions no_evaluation;
 ExpressionName empty_expression_name;
 extern gmp_randstate_t randstate;
+extern UCaseMap *ucm;
+
 
 enum {
 	PROC_RPN_ADD,
@@ -301,6 +302,9 @@ Calculator::Calculator() {
 	priv = new Calculator_p;
 
 	setlocale(LC_ALL, "");
+	
+	UErrorCode err = U_ZERO_ERROR;
+	ucm = ucasemap_open(NULL, 0, &err);
 
 	exchange_rates_time = 0;
 	exchange_rates_check_time = 0;
@@ -461,6 +465,7 @@ Calculator::~Calculator() {
 	delete priv;
 	delete calculate_thread;
 	gmp_randclear(randstate);
+	if(ucm) ucasemap_close(ucm);
 }
 
 Unit *Calculator::getGraUnit() {
@@ -3821,11 +3826,11 @@ bool compare_name_no_case(const string &name, const string &str, const size_t &n
 			if(str[str_index + i2] >= 0) return false;
 			i2++;
 		}
-		gchar *gstr1 = g_utf8_strdown(name.c_str(), i2);
-		gchar *gstr2 = g_utf8_strdown(str.c_str() + (sizeof(char) * str_index), i2);
-		if(strcmp(gstr1, gstr2) != 0) return false;
-		g_free(gstr1);
-		g_free(gstr2);
+		char *gstr1 = utf8_strdown(name.c_str(), i2);
+		char *gstr2 = utf8_strdown(str.c_str() + (sizeof(char) * str_index), i2);
+		if(!gstr1 || !gstr2 || strcmp(gstr1, gstr2) != 0) return false;
+		free(gstr1);
+		free(gstr2);
 	} else if(name[0] != str[str_index] && !((name[0] >= 'a' && name[0] <= 'z') && name[0] - 32 == str[str_index]) && !((name[0] <= 'Z' && name[0] >= 'A') && name[0] + 32 == str[str_index])) {
 		return false;
 	}
@@ -3842,11 +3847,11 @@ bool compare_name_no_case(const string &name, const string &str, const size_t &n
 				if(str[str_index + i2 + i] >= 0) return false;
 				i2++;
 			}
-			gchar *gstr1 = g_utf8_strdown(name.c_str() + (sizeof(char) * i), i2);
-			gchar *gstr2 = g_utf8_strdown(str.c_str() + (sizeof(char) * (str_index + i)), i2);
-			if(strcmp(gstr1, gstr2) != 0) return false;
-			g_free(gstr1);
-			g_free(gstr2);
+			char *gstr1 = utf8_strdown(name.c_str() + (sizeof(char) * i), i2);
+			char *gstr2 = utf8_strdown(str.c_str() + (sizeof(char) * (str_index + i)), i2);
+			if(!gstr1 || !gstr2 || strcmp(gstr1, gstr2) != 0) return false;
+			free(gstr1);
+			free(gstr2);
 			i += i2 - 1;
 		} else if(name[i] != str[str_index + i] && !((name[i] >= 'a' && name[i] <= 'z') && name[i] - 32 == str[str_index + i]) && !((name[i] <= 'Z' && name[i] >= 'A') && name[i] + 32 == str[str_index + i])) {
 			return false;
@@ -5898,46 +5903,17 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 }
 
 bool Calculator::loadGlobalDefinitions() {
-	gchar *dirname = g_build_filename(getPackageDataDir().c_str(), "qalculate", NULL);
-	gchar *filename = g_build_filename(dirname, "prefixes.xml", NULL);
 	bool b = true;
-	if(!loadDefinitions(filename, false)) {
-		b = false;
-	}	
-	g_free(filename);
-	filename = g_build_filename(dirname, "currencies.xml", NULL);
-	if(!loadDefinitions(filename, false)) {
-		b = false;
-	}	
-	g_free(filename);
-	filename = g_build_filename(dirname, "units.xml", NULL);
-	if(!loadDefinitions(filename, false)) {
-		b = false;
-	}
-	g_free(filename);
-	filename = g_build_filename(dirname, "functions.xml", NULL);
-	if(!loadDefinitions(filename, false)) {
-		b = false;
-	}
-	g_free(filename);
-	filename = g_build_filename(dirname, "datasets.xml", NULL);
-	if(!loadDefinitions(filename, false)) {
-		b = false;
-	}
-	g_free(filename);
-	filename = g_build_filename(dirname, "variables.xml", NULL);
-	if(!loadDefinitions(filename, false)) {
-		b = false;
-	}
-	g_free(filename);
-	g_free(dirname);
+	if(!loadDefinitions(buildPath(getPackageDataDir(), "prefixes.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getPackageDataDir(), "currencies.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getPackageDataDir(), "units.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getPackageDataDir(), "functions.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getPackageDataDir(), "datasets.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getPackageDataDir(), "variables.xml").c_str(), false)) b = false;
 	return b;
 }
 bool Calculator::loadGlobalDefinitions(string filename) {
-	gchar *filepath = g_build_filename(getPackageDataDir().c_str(), "qalculate", filename.c_str(), NULL);
-	bool b = loadDefinitions(filepath, false);
-	g_free(filepath);
-	return b;
+	return loadDefinitions(buildPath(getPackageDataDir(), filename).c_str(), false);
 }
 bool Calculator::loadGlobalPrefixes() {
 	return loadGlobalDefinitions("prefixes.xml");
@@ -5959,17 +5935,17 @@ bool Calculator::loadGlobalDataSets() {
 	return loadGlobalDefinitions("datasets.xml");
 }
 bool Calculator::loadLocalDefinitions() {
-	gchar *homedir = g_build_filename(getLocalDataDir().c_str(), "definitions", NULL);
-	if(!g_file_test(homedir, G_FILE_TEST_IS_DIR)) {
-		gchar *homedir_old = g_build_filename(getOldLocalDir().c_str(), "definitions", NULL);
-		if(g_file_test(homedir_old, G_FILE_TEST_IS_DIR)) {
-			if(!g_file_test(getLocalDataDir().c_str(), G_FILE_TEST_IS_DIR)) {
-				g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
+	string homedir = buildPath(getLocalDataDir(), "definitions");
+	if(!dirExists(homedir)) {
+		string homedir_old = buildPath(getOldLocalDir(), "definitions");
+		if(dirExists(homedir)) {
+			if(!dirExists(getLocalDataDir())) {
+				makeDir(getLocalDataDir());
 			}
-			if(g_mkdir(homedir, S_IRWXU) == 0) {
+			if(makeDir(homedir)) {
 				list<string> eps_old;
 				struct dirent *ep_old;	
-				DIR *dp_old = opendir(homedir_old);
+				DIR *dp_old = opendir(homedir_old.c_str());
 				if(dp_old) {
 					while((ep_old = readdir(dp_old))) {
 #ifdef _DIRENT_HAVE_D_TYPE
@@ -5985,22 +5961,17 @@ bool Calculator::loadLocalDefinitions() {
 					closedir(dp_old);
 				}
 				for(list<string>::iterator it = eps_old.begin(); it != eps_old.end(); ++it) {	
-					gchar *old_filename = g_build_filename(homedir_old, (*it).c_str(), NULL);
-					gchar *new_filename = g_build_filename(homedir, (*it).c_str(), NULL);
-					move_file(old_filename, new_filename);
-					g_free(old_filename);
-					g_free(new_filename);
+					move_file(buildPath(homedir_old, *it).c_str(), buildPath(homedir, *it).c_str());
 				}
-				if(g_rmdir(homedir_old) == 0) {
-					g_rmdir(getOldLocalDir().c_str());
+				if(removeDir(homedir_old)) {
+					removeDir(getOldLocalDir());
 				}
 			}
 		}
-		g_free(homedir_old);
 	}
 	list<string> eps;
 	struct dirent *ep;	
-	DIR *dp = opendir(homedir);
+	DIR *dp = opendir(homedir.c_str());
 	if(dp) {
 		while((ep = readdir(dp))) {
 #ifdef _DIRENT_HAVE_D_TYPE
@@ -6017,11 +5988,8 @@ bool Calculator::loadLocalDefinitions() {
 	}
 	eps.sort();
 	for(list<string>::iterator it = eps.begin(); it != eps.end(); ++it) {
-		gchar *filename = g_build_filename(homedir, (*it).c_str(), NULL);
-		loadDefinitions(filename, true);
-		g_free(filename);
+		loadDefinitions(buildPath(homedir, *it).c_str(), true);
 	}
-	g_free(homedir);
 	return true;
 }
 
@@ -7844,34 +7812,15 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 }
 bool Calculator::saveDefinitions() {
 
-	g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
-	gchar *homedir = g_build_filename(getLocalDataDir().c_str(), "definitions", NULL);
-	g_mkdir(homedir, S_IRWXU);
+	makeDir(getLocalDataDir());
+	string homedir = buildPath(getLocalDataDir(), "definitions");
+	makeDir(homedir);
 	bool b = true;
-	gchar *filename = g_build_filename(homedir, "functions.xml", NULL);
-	if(!saveFunctions(filename)) {
-		b = false;
-	}
-	g_free(filename);
-	filename = g_build_filename(homedir, "units.xml", NULL);
-	if(!saveUnits(filename)) {
-		b = false;
-	}
-	g_free(filename);
-	filename = g_build_filename(homedir, "variables.xml", NULL);
-	if(!saveVariables(filename)) {
-		b = false;
-	}
-	g_free(filename);
-	filename = g_build_filename(homedir, "datasets.xml", NULL);
-	if(!saveDataSets(filename)) {
-		b = false;
-	}
-	g_free(filename);
-	if(!saveDataObjects()) {
-		b = false;
-	}
-	g_free(homedir);
+	if(!saveFunctions(buildPath(homedir, "functions.xml").c_str())) b = false;
+	if(!saveUnits(buildPath(homedir, "units.xml").c_str())) b = false;
+	if(!saveVariables(buildPath(homedir, "variables.xml").c_str())) b = false;
+	if(!saveDataSets(buildPath(homedir, "datasets.xml").c_str())) b = false;
+	if(!saveDataObjects()) b = false;
 	return b;
 }
 
@@ -9055,29 +9004,24 @@ bool Calculator::loadExchangeRates() {
 	xmlNodePtr cur;
 	xmlChar *value;
 	string currency, rate;
-	gchar *filename = g_build_filename(getLocalDataDir().c_str(), "eurofxref-daily.xml", NULL);
-	if(g_file_test(filename, G_FILE_TEST_EXISTS)) {
-		doc = xmlParseFile(filename);
+	string filename = buildPath(getLocalDataDir(), "eurofxref-daily.xml");
+	if(fileExists(filename)) {
+		doc = xmlParseFile(filename.c_str());
 	} else {
-		gchar *filename_old = g_build_filename(getOldLocalDir().c_str(), "eurofxref-daily.xml", NULL);
-		if(g_file_test(filename_old, G_FILE_TEST_EXISTS)) {
-			doc = xmlParseFile(filename_old);
+		string filename_old = buildPath(getOldLocalDir(), "eurofxref-daily.xml");
+		if(fileExists(filename)) {
+			doc = xmlParseFile(filename_old.c_str());
 			if(doc) {
-				g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
-				move_file(filename_old, filename);
-				g_rmdir(getOldLocalDir().c_str());
+				makeDir(getLocalDataDir());
+				move_file(filename_old.c_str(), filename.c_str());
+				removeDir(getOldLocalDir());
 			}
 		}
-		g_free(filename_old);
 	}
-	if(!doc) {
-		g_free(filename);
-		return false;
-	}
+	if(!doc) return false;
 	cur = xmlDocGetRootElement(doc);
 	if(cur == NULL) {
 		xmlFreeDoc(doc);
-		g_free(filename);
 		return false;
 	}
 	Unit *u;
@@ -9110,7 +9054,7 @@ bool Calculator::loadExchangeRates() {
 	}
 	xmlFreeDoc(doc);
 	struct stat stats;
-	if(stat(filename, &stats) == 0) {
+	if(stat(filename.c_str(), &stats) == 0) {
 		if(exchange_rates_time >= stats.st_mtime) {
 			struct utimbuf new_times;
 			struct tm *temptm = localtime(&exchange_rates_time);
@@ -9130,13 +9074,16 @@ bool Calculator::loadExchangeRates() {
 				time(&exchange_rates_time);
 			}
 			new_times.modtime = exchange_rates_time;
-			utime(filename, &new_times);
+#ifdef _WIN32
+			_utime(filename.c_str(), &new_times);
+#else
+			utime(filename.c_str(), &new_times);
+#endif
 		} else {
 			exchange_rates_time = stats.st_mtime;
 			if(exchange_rates_time > exchange_rates_check_time) exchange_rates_check_time = exchange_rates_time;
 		}
 	}
-	g_free(filename);
 	return true;
 }
 bool Calculator::hasGVFS() {
@@ -9149,10 +9096,7 @@ bool Calculator::canFetch() {
 	return true;
 }
 string Calculator::getExchangeRatesFileName() {
-	gchar *filename = g_build_filename(getLocalDataDir().c_str(), "eurofxref-daily.xml", NULL);
-	string str = filename;
-	g_free(filename);
-	return str;
+	return buildPath(getLocalDataDir(), "eurofxref-daily.xml");
 }
 time_t Calculator::getExchangeRatesTime() {
 	return exchange_rates_time;
@@ -9162,7 +9106,7 @@ string Calculator::getExchangeRatesUrl() {
 }
 bool Calculator::fetchExchangeRates(int timeout, string) {return fetchExchangeRates(timeout);}
 bool Calculator::fetchExchangeRates(int timeout) {
-	g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
+	makeDir(getLocalDataDir());
 	FILE *file = fopen(getExchangeRatesFileName().c_str(), "w+");
 	if(file == NULL) {
 		error(true, _("Failed to download exchange rates from ECB."), NULL);
@@ -9207,25 +9151,13 @@ void Calculator::setExchangeRatesUsed() {
 }
 
 bool Calculator::canPlot() {
-	/*FILE *pipe = popen("gnuplot -", "w");
-	if(!pipe) {
-		return false;
-	}
-	if(pclose(pipe) != 0) return false;
-	pipe = popen("gnuplot -", "w");
-	if(!pipe) {
-		return false;
-	}
-	fputs("show version\n", pipe);
-	return pclose(pipe) == 0;*/
-#ifndef _WIN32
-	gchar *gstr = g_find_program_in_path("gnuplot");
-	if(gstr) {
-		g_free(gstr);
-		return true;
-	}
-#endif
+#ifdef _WIN32
 	return false;
+#else
+	FILE *pipe = popen("gnuplot -", "w");
+	if(!pipe) return false;
+	return pclose(pipe) == 0;
+#endif
 }
 MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
 	Variable *v = getActiveVariable(x_var);
@@ -9305,7 +9237,7 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent, int msecs) {
 
 	string homedir = getLocalTmpDir();
-	g_mkdir(homedir.c_str(), S_IRWXU);
+	makeDir(homedir);
 
 	string commandline_extra;
 	string title;
@@ -9487,11 +9419,9 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			}
 			string filename = "gnuplot_data";
 			filename += i2s(i + 1);
-			gchar *filepath = g_build_filename(homedir.c_str(), filename.c_str(), NULL);
 			plot += "\"";
-			plot += filepath;
+			plot += buildPath(homedir, filename);
 			plot += "\"";
-			g_free(filepath);
 			if(i < pdps.size()) {
 				switch(pdps[i]->smoothing) {
 					case PLOT_SMOOTHING_UNIQUE: {plot += " smooth unique"; break;}
@@ -9544,11 +9474,10 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 		if(!y_vectors[serie].isUndefined()) {
 			string filename = "gnuplot_data";
 			filename += i2s(serie + 1);
-			gchar *filepath = g_build_filename(homedir.c_str(), filename.c_str(), NULL);
-			FILE *fdata = fopen(filepath, "w+");
+			string filepath = buildPath(homedir, filename);
+			FILE *fdata = fopen(filepath.c_str(), "w+");
 			if(!fdata) {
-				error(true, _("Could not create temporary file %s"), filepath, NULL);
-				g_free(filepath);
+				error(true, _("Could not create temporary file %s"), filepath.c_str(), NULL);
 				return false;
 			}
 			plot_data = "";
@@ -9587,7 +9516,6 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 				}
 				if(aborted()) {
 					fclose(fdata);
-					g_free(filepath);
 					if(msecs > 0) {
 						error(true, _("It took too long to generate the plot data."), NULL);
 						stopControl();
@@ -9612,7 +9540,6 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			fputs(plot_data.c_str(), fdata);
 			fflush(fdata);
 			fclose(fdata);
-			g_free(filepath);
 		}
 	}
 	
@@ -9683,4 +9610,179 @@ bool Calculator::gnuplotOpen() {
 	return b_gnuplot_open && gnuplot_pipe;
 }
 #endif
+
+bool isLeapYear(int year) {
+	return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+}
+int daysPerYear(int year, int basis = 1) {
+	switch(basis) {
+		case 0: {
+			return 360;
+		}
+		case 1: {
+			if(isLeapYear(year)) {
+				return 366;
+			} else {
+				return 365;
+			}
+		}
+		case 2: {
+			return 360;
+		}		
+		case 3: {
+			return 365;
+		} 
+		case 4: {
+			return 360;
+		}
+	}
+	return -1;
+}
+
+int daysPerMonth(int month, int year) {
+	switch(month) {
+		case 1: {} case 3: {} case 5: {} case 7: {} case 8: {} case 10: {} case 12: {
+			return 31;
+		}
+		case 2:	{
+			if(isLeapYear(year)) return 29;
+			else return 28;
+		}				
+		default: {
+			return 30;
+		}
+	}
+}
+
+QalculateDate::QalculateDate() : i_year(0), i_month(1), i_day(1) {}
+QalculateDate::QalculateDate(long int initialyear, int initialmonth, int initialday) : i_year(0), i_month(1), i_day(1) {set(initialyear, initialmonth, initialday);}
+QalculateDate::QalculateDate(long int initialtimestamp) : i_year(0), i_month(1), i_day(1) {set(initialtimestamp);}
+QalculateDate::QalculateDate(string date_string) : i_year(0), i_month(1), i_day(1) {set(date_string);}
+void QalculateDate::setToCurrentDate() {
+	set((long int) time(NULL));
+}
+bool QalculateDate::set(long int newyear, int newmonth, int newday) {
+	if(newmonth < 1 || newmonth > 12) return false;
+	if(newday < 1 || newday > daysPerMonth(newmonth, newyear)) return false;
+	i_year = newyear;
+	i_month = newmonth;
+	i_day = newday;
+	return true;
+}
+bool QalculateDate::set(long int newtimestamp) {
+	i_year = 1970;
+	i_month = 1;
+	i_day = 1;
+	newtimestamp = newtimestamp / (60 * 60 * 24);
+	addDays(newtimestamp);
+	return true;
+}
+bool QalculateDate::set(string str) {
+	remove_blank_ends(str);
+	if(equalsIgnoreCase(str, _("today")) || equalsIgnoreCase(str, "today") || equalsIgnoreCase(str, _("now")) || equalsIgnoreCase(str, "now")) {
+		set(time(NULL));
+		return true;
+	} else if(equalsIgnoreCase(str, _("tomorrow")) || equalsIgnoreCase(str, "tomorrow")) {
+		set(time(NULL));
+		addDays(1);
+		return true;
+	} else if(equalsIgnoreCase(str, _("yesterday")) || equalsIgnoreCase(str, "yesterday")) {
+		set(time(NULL));
+		addDays(-1);
+		return true;
+	}
+	long int newyear;
+	int newmonth, newday;
+	if(sscanf(str.c_str(), "%li-%i-%i", &newyear, &newmonth, &newday) != 3) return false;
+	return set(newyear, newmonth, newday);
+}
+string QalculateDate::toISOString() const {
+	string str = i2s(i_year);
+	str += "-";
+	if(i_month < 10) {
+		str += "0";
+	}
+	str += i2s(i_month);
+	str += "-";
+	if(i_day < 10) {
+		str += "0";
+	}
+	str += i2s(i_day);
+	return str;
+}
+string QalculateDate::toLocalString() const {
+	return "";
+}
+long int QalculateDate::year() const {return i_year;}
+long int QalculateDate::month() const {return i_month;}
+long int QalculateDate::day() const {return i_day;}
+void QalculateDate::addDays(long int days) {
+	if(days > 0) {
+		i_day += days;
+		while(i_day > daysPerYear(i_year)) {
+			i_day -= daysPerYear(i_year);
+			i_year++;
+			if(CALCULATOR && CALCULATOR->aborted()) return;
+		}
+		while(i_day > daysPerMonth(i_month, i_year)) {
+			i_day -= daysPerMonth(i_month, i_year);
+			i_month++;
+			if(i_month > 12) {
+				i_year++;
+				i_month = 1;
+			}
+		}
+	} else if(days < 0) {
+		i_day += days;
+		while(-i_day > daysPerYear(i_year - 1)) {
+			i_year--;
+			i_day += daysPerYear(i_year);
+			if(CALCULATOR && CALCULATOR->aborted()) return;
+		}
+		while(i_day < 0) {
+			i_month--;
+			if(i_month < 1) {
+				i_year--;
+				i_month = 12;
+			}
+			i_day += daysPerMonth(i_month, i_year);
+		}
+	}
+}
+void QalculateDate::addMonths(long int months) {
+	i_year += months / 12;
+	i_month += months % 12;
+	if(i_month > 12) {
+		i_month -= 12;
+		i_year += 1;
+	} else if(i_month < 1) {
+		i_month += 12;
+		i_year -= 1;
+	}
+	if(i_day > daysPerMonth(i_month, i_year)) {
+		i_day -= daysPerMonth(i_month, i_year);
+		i_month++;
+		if(i_month > 12) {
+			i_month -= 12;
+			i_year += 1;
+		}
+	}
+}
+void QalculateDate::addYears(long int years) {
+	i_year += years;
+	if(i_day > daysPerMonth(i_month, i_year)) {
+		i_day -= daysPerMonth(i_month, i_year);
+		i_month++;
+		if(i_month > 12) {
+			i_month -= 12;
+			i_year += 1;
+		}
+	}
+}
+int QalculateDate::weekday() const {return 1;}
+int QalculateDate::week(bool start_sunday) const {return 1;}
+int QalculateDate::yearday() const {return 1;}
+long int QalculateDate::timestamp() const {return 1;}
+long int QalculateDate::daysTo(const QalculateDate &date, int basis, bool date_func) {return 1;}
+Number QalculateDate::yearsTo(const QalculateDate &date, int basis, bool date_func) {return Number(1, 1);}
 

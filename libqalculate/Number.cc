@@ -757,7 +757,7 @@ long int Number::intValue(bool *overflow) const {
 			if(mpz_sgn(mpq_numref(r_value)) == -1) return LONG_MIN;
 			return LONG_MAX;	
 		}
-		return (int) mpz_get_si(mpq_numref(r_value));
+		return mpz_get_si(mpq_numref(r_value));
 	} else {
 		Number nr;
 		nr.set(*this, false, true);

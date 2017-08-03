@@ -15,9 +15,7 @@ If libqalculate is installed in /usr/local (default) you may need to add /usr/lo
 
 ##Requirements
 * GMP and MPFR
-* libxml2 (>= 2.3.8)
-* libcurl
-* Glib
+* libxml2, libcurl, iconv and icu
 * Gnuplot 1.7 (optional, for plotting)
 
 ##API Documentation

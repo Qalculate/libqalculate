@@ -1770,8 +1770,9 @@ bool DateArgument::subtest(MathStructure &value, const EvaluationOptions &eo) co
 	if(!value.isSymbolic()) {
 		value.eval(eo);
 	}
+	QalculateDate date;
 	int day = 0, year = 0, month = 0;
-	return value.isSymbolic() && s2date(value.symbol(), day, year, month);
+	return value.isSymbolic() && date.set(value.symbol());
 }
 int DateArgument::type() const {return ARGUMENT_TYPE_DATE;}
 Argument *DateArgument::copy() const {return new DateArgument(this);}

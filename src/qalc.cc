@@ -19,8 +19,6 @@
 #include <stdio.h>
 #include <vector>
 #include <list>
-#include <glib.h>
-#include <glib/gstdio.h>
 #ifdef HAVE_LIBREADLINE
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -99,8 +97,8 @@ bool contains_unicode_char(const char *str) {
 	return false;
 }
 
-#define PUTS_UNICODE(x)				if(printops.use_unicode_signs || !contains_unicode_char(x)) {puts(x);} else {gchar *gstr = g_locale_from_utf8(x, -1, NULL, NULL, NULL); if(gstr) {puts(gstr); g_free(gstr);} else {puts(x);}}
-#define FPUTS_UNICODE(x, y)			if(printops.use_unicode_signs || !contains_unicode_char(x)) {fputs(x, y);} else {gchar *gstr = g_locale_from_utf8(x, -1, NULL, NULL, NULL); if(gstr) {fputs(gstr, y); g_free(gstr);} else {fputs(x, y);}}
+#define PUTS_UNICODE(x)				if(printops.use_unicode_signs || !contains_unicode_char(x)) {puts(x);} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
+#define FPUTS_UNICODE(x, y)			if(printops.use_unicode_signs || !contains_unicode_char(x)) {fputs(x, y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
 
 size_t unicode_length_check(const char *str) {
 	/*if(printops.use_unicode_signs) return unicode_length(str);
@@ -136,11 +134,12 @@ bool equalsIgnoreCaseFirst(const string &str1, const char *str2) {
 			i2++;
 		}
 		if(i2 != str1.length()) return false;
-		gchar *gstr1 = g_utf8_strdown(str1.c_str(), i2);
-		gchar *gstr2 = g_utf8_strdown(str2, i2);
+		char *gstr1 = utf8_strdown(str1.c_str(), i2);
+		char *gstr2 = utf8_strdown(str2, i2);
+		if(!gstr1 || !gstr2) return false;
 		if(strcmp(gstr1, gstr2) != 0) return false;
-		g_free(gstr1);
-		g_free(gstr2);
+		free(gstr1);
+		free(gstr2);
 	} else if(str1.length() != 1 || (str1[0] != str2[0] && !((str1[0] >= 'a' && str1[0] <= 'z') && str1[0] - 32 == str2[0]) && !((str1[0] <= 'Z' && str1[0] >= 'A') && str1[0] + 32 == str2[0]))) {
 		return false;
 	}
@@ -1183,10 +1182,10 @@ int main(int argc, char *argv[]) {
 	}
 	if(!cfile && !calc_arg.empty()) {
 		if(!printops.use_unicode_signs && contains_unicode_char(calc_arg.c_str())) {
-			gchar *gstr = g_locale_to_utf8(calc_arg.c_str(), -1, NULL, NULL, NULL);
+			char *gstr = locale_to_utf8(calc_arg.c_str());
 			if(gstr) {
 				expression_str = gstr;
-				g_free(gstr);
+				free(gstr);
 			} else {
 				expression_str = calc_arg;
 			}
@@ -1235,10 +1234,10 @@ int main(int argc, char *argv[]) {
 				cfile = NULL;
 				if(!calc_arg.empty()) {
 					if(!printops.use_unicode_signs && contains_unicode_char(calc_arg.c_str())) {
-						gchar *gstr = g_locale_to_utf8(calc_arg.c_str(), -1, NULL, NULL, NULL);
+						char *gstr = locale_to_utf8(calc_arg.c_str());
 						if(gstr) {
 							expression_str = gstr;
-							g_free(gstr);
+							free(gstr);
 						} else {
 							expression_str = calc_arg;
 						}
@@ -1258,10 +1257,10 @@ int main(int argc, char *argv[]) {
 				continue;
 			}
 			if(!printops.use_unicode_signs && contains_unicode_char(buffer)) {
-				gchar *gstr = g_locale_to_utf8(buffer, -1, NULL, NULL, NULL);
+				char *gstr = locale_to_utf8(buffer);
 				if(gstr) {
 					str = gstr;
-					g_free(gstr);
+					free(gstr);
 				} else { 
 					str = buffer;
 				}
@@ -1273,10 +1272,10 @@ int main(int argc, char *argv[]) {
 			rlbuffer = readline("> ");
 			if(rlbuffer == NULL) break;
 			if(!printops.use_unicode_signs && contains_unicode_char(rlbuffer)) {
-				gchar *gstr = g_locale_to_utf8(rlbuffer, -1, NULL, NULL, NULL);
+				char *gstr = locale_to_utf8(rlbuffer);
 				if(gstr) {
 					str = gstr;
-					g_free(gstr);
+					free(gstr);
 				} else {
 					str = rlbuffer;
 				}
@@ -1287,10 +1286,10 @@ int main(int argc, char *argv[]) {
 			fputs("> ", stdout);
 			fgets(buffer, 1000, stdin);
 			if(!printops.use_unicode_signs && contains_unicode_char(buffer)) {
-				gchar *gstr = g_locale_to_utf8(buffer, -1, NULL, NULL, NULL);
+				char *gstr = locale_to_utf8(buffer);
 				if(gstr) {
 					str = gstr;
-					g_free(gstr);
+					free(gstr);
 				} else { 
 					str = buffer;
 				}
@@ -3692,41 +3691,34 @@ void load_preferences() {
 
 	FILE *file = NULL;
 #ifdef HAVE_LIBREADLINE
-	gchar *historyfile = g_build_filename(getLocalDir().c_str(), "qalc.history", NULL);
-	gchar *oldhistoryfile = NULL;
+	string historyfile = buildPath(getLocalDir(), "qalc.history");
+	string oldhistoryfile;
 #endif	
-	gchar *gstr_oldfile = NULL;	
-	gchar *gstr_file = g_build_filename(getLocalDir().c_str(), "qalc.cfg", NULL);
-	file = fopen(gstr_file, "r");
+	string oldfilename;
+	string filename = buildPath(getLocalDir(), "qalc.cfg");
+	file = fopen(filename.c_str(), "r");
 	if(!file) {
-		gstr_oldfile = g_build_filename(getOldLocalDir().c_str(), "qalc.cfg", NULL);
-		file = fopen(gstr_oldfile, "r");
+		oldfilename = buildPath(getOldLocalDir(), "qalc.cfg");
+		file = fopen(oldfilename.c_str(), "r");
 		if(!file) {
-			g_free(gstr_file);
-			g_free(gstr_oldfile);
-#ifdef HAVE_LIBREADLINE
-			g_free(historyfile);
-#endif
 			first_time = true;
 			save_preferences(true);
 			return;
 		}
 #ifdef HAVE_LIBREADLINE
-		oldhistoryfile = g_build_filename(getOldLocalDir().c_str(), "qalc.history", NULL);
+		oldhistoryfile = buildPath(getOldLocalDir(), "qalc.history");
 #endif
-		g_mkdir(getLocalDir().c_str(), S_IRWXU);
+		makeDir(getLocalDir());
 	}
 	
 #ifdef HAVE_LIBREADLINE
 	stifle_history(100);
-	if(oldhistoryfile) {
-		read_history(oldhistoryfile);
-		g_rename(oldhistoryfile, historyfile);
-		g_free(oldhistoryfile);
+	if(!oldhistoryfile.empty()) {
+		read_history(oldhistoryfile.c_str());
+		move_file(oldhistoryfile.c_str(), historyfile.c_str());
 	} else {
-		read_history(historyfile);		
+		read_history(historyfile.c_str());
 	}
-	g_free(historyfile);
 #endif
 
 	
@@ -3914,17 +3906,14 @@ void load_preferences() {
 			}
 		}
 		fclose(file);
-		if(gstr_oldfile) {			
-			g_rename(gstr_oldfile, gstr_file);
-			g_free(gstr_oldfile);
+		if(!oldfilename.empty()) {
+			move_file(oldfilename.c_str(), filename.c_str());
 		}
 	} else {
 		first_time = true;
 		save_preferences(true);
-		g_free(gstr_file);
 		return;
 	}
-	g_free(gstr_file);
 	//remember start mode for when we save preferences
 	set_saved_mode();
 }
@@ -3936,17 +3925,14 @@ void load_preferences() {
 bool save_preferences(bool mode)
 {
 	FILE *file = NULL;
-	g_mkdir(getLocalDir().c_str(), S_IRWXU);
+	makeDir(getLocalDir());
 #ifdef HAVE_LIBREADLINE	
-	gchar *historyfile = g_build_filename(getLocalDir().c_str(), "qalc.history", NULL);
-	write_history(historyfile);
-	g_free(historyfile);
+	write_history(buildPath(getLocalDir(), "qalc.history").c_str());
 #endif	
-	gchar *filename = g_build_filename(getLocalDir().c_str(), "qalc.cfg", NULL);
-	file = fopen(filename, "w+");
-	g_free(filename);
+	string filename = buildPath(getLocalDir(), "qalc.cfg");
+	file = fopen(filename.c_str(), "w+");
 	if(file == NULL) {
-		fprintf(stderr, _("Couldn't write preferences to\n%s"), filename);
+		fprintf(stderr, _("Couldn't write preferences to\n%s"), filename.c_str());
 		return false;
 	}
 	fprintf(file, "\n[General]\n");

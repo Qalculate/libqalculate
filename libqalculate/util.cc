@@ -16,11 +16,13 @@
 #include "Number.h"
 
 #include <string.h>
-#include <glib.h>
 #include <time.h>
+#include <iconv.h>
+#include <unicode/ucasemap.h>
 #include <fstream>
 #ifdef _WIN32
 #	include <windows.h>
+#	include <initguid.h>
 #	include <shlobj.h>
 #	include <glib/gstdio.h>
 #else
@@ -31,11 +33,11 @@
 #	include <pwd.h>
 #endif
 
-
 bool eqstr::operator()(const char *s1, const char *s2) const {
 	return strcmp(s1, s2) == 0;
 }
 
+UCaseMap *ucm = NULL;
 char buffer[20000];
 
 void sleep_ms(int milliseconds) {
@@ -51,26 +53,13 @@ void sleep_ms(int milliseconds) {
 #endif
 }
 
-string date2s(int year, int month, int day) {
-	string str = i2s(year);
-	str += "-";
-	if(month < 10) {
-		str += "0";
-	}
-	str += i2s(month);
-	str += "-";
-	if(day < 10) {
-		str += "0";
-	}
-	str += i2s(day);
-	return str;
-}
-bool s2date(string str, void *gtime) {
-/*	if(strptime(str.c_str(), "%x", time) || strptime(str.c_str(), "%Ex", time) || strptime(str.c_str(), "%Y-%m-%d", time) || strptime(str.c_str(), "%m/%d/%Y", time) || strptime(str.c_str(), "%m/%d/%y", time)) {
+/*bool s2date(string str, void *gtime) {
+	return true;
+	if(strptime(str.c_str(), "%x", time) || strptime(str.c_str(), "%Ex", time) || strptime(str.c_str(), "%Y-%m-%d", time) || strptime(str.c_str(), "%m/%d/%Y", time) || strptime(str.c_str(), "%m/%d/%y", time)) {
 		return true;
 	}*/
 	//char *date_format = nl_langinfo(D_FMT);
-	if(equalsIgnoreCase(str, _("today")) || equalsIgnoreCase(str, "today") || equalsIgnoreCase(str, _("now")) || equalsIgnoreCase(str, "now")) {
+/*	if(equalsIgnoreCase(str, _("today")) || equalsIgnoreCase(str, "today") || equalsIgnoreCase(str, _("now")) || equalsIgnoreCase(str, "now")) {
 		g_date_set_time_t((GDate*) gtime, time(NULL));
 		return true;
 	} else if(equalsIgnoreCase(str, _("tomorrow")) || equalsIgnoreCase(str, "tomorrow")) {
@@ -84,7 +73,7 @@ bool s2date(string str, void *gtime) {
 	}
 	g_date_set_parse((GDate*) gtime, str.c_str());
 	return g_date_valid((GDate*) gtime);
-}
+}*/
 
 void now(int &hour, int &min, int &sec) {
 	time_t t = time(NULL);
@@ -93,106 +82,8 @@ void now(int &hour, int &min, int &sec) {
 	min = lt->tm_min;
 	sec = lt->tm_sec;
 }
-void today(int &year, int &month, int &day) {
-	GDate *gtime = g_date_new();
-	g_date_set_time_t(gtime, time(NULL));
-	year = g_date_get_year(gtime);
-	month = g_date_get_month(gtime);
-	day = g_date_get_day(gtime);
-	g_date_free(gtime);
-}
-bool addDays(GDate *gtime, int days) {
-	if(days < 0) g_date_subtract_days(gtime, (guint) -days);
-	else if(days > 0) g_date_add_days(gtime, (guint) days);
-	if(!g_date_valid(gtime)) return false;
-	return true;
-}
-bool addDays(int &year, int &month, int &day, int days) {
-	GDate *gtime = g_date_new_dmy((GDateDay) day, (GDateMonth) month, (GDateYear) year);
-	if(!addDays(gtime, days)) {
-		g_date_free(gtime); 
-		return false;
-	}
-	year = (int) g_date_year(gtime);
-	month = (int) g_date_month(gtime);
-	day = (int) g_date_day(gtime);
-	g_date_free(gtime);
-	return true;
-}
-string addDays(string str, int days) {
-	GDate *gtime = g_date_new();
-	if(!s2date(str, gtime) || !addDays(gtime, days)) {
-		g_date_free(gtime); 
-		return empty_string;
-	}
-	int y = (int) g_date_year(gtime);
-	int m = (int) g_date_month(gtime);
-	int d = (int) g_date_day(gtime);
-	g_date_free(gtime);
-	return date2s(y, m, d);
-}
-bool addMonths(GDate *gtime, int months) {
-	if(months < 0) g_date_subtract_months(gtime, (guint) -months);
-	else if(months > 0) g_date_add_months(gtime, (guint) months);
-	if(!g_date_valid(gtime)) return false;
-	return true;
-}
-bool addMonths(int &year, int &month, int &day, int months) {
-	GDate *gtime = g_date_new_dmy((GDateDay) day, (GDateMonth) month, (GDateYear) year);
-	if(!addMonths(gtime, months)) {
-		g_date_free(gtime); 
-		return false;
-	}
-	year = (int) g_date_year(gtime);
-	month = (int) g_date_month(gtime);
-	day = (int) g_date_day(gtime);
-	g_date_free(gtime);
-	return true;
-}
-string addMonths(string str, int months) {
-	GDate *gtime = g_date_new();
-	if(!s2date(str, gtime) || !addMonths(gtime, months)) {
-		g_date_free(gtime); 
-		return empty_string;
-	}
-	int y = (int) g_date_year(gtime);
-	int m = (int) g_date_month(gtime);
-	int d = (int) g_date_day(gtime);
-	g_date_free(gtime);
-	return date2s(y, m, d);
-}
-bool addYears(GDate *gtime, int years) {
-	if(years < 0) g_date_subtract_years(gtime, (guint) -years);
-	else if(years > 0) g_date_add_years(gtime, (guint) years);
-	if(!g_date_valid(gtime)) return false;
-	return true;
-}
-bool addYears(int &year, int &month, int &day, int years) {
-	GDate *gtime = g_date_new_dmy((GDateDay) day, (GDateMonth) month, (GDateYear) year);
-	if(!addYears(gtime, years)) {
-		g_date_free(gtime); 
-		return false;
-	}
-	year = (int) g_date_year(gtime);
-	month = (int) g_date_month(gtime);
-	day = (int) g_date_day(gtime);
-	g_date_free(gtime);
-	return true;
-}
-string addYears(string str, int years) {
-	GDate *gtime = g_date_new();
-	if(!s2date(str, gtime) || !addYears(gtime, years)) {
-		g_date_free(gtime); 
-		return empty_string;
-	}
-	int y = (int) g_date_year(gtime);
-	int m = (int) g_date_month(gtime);
-	int d = (int) g_date_day(gtime);
-	g_date_free(gtime);
-	return date2s(y, m, d);
-}
 
-int week(string str, bool start_sunday) {
+/*int week(string str, bool start_sunday) {
 	remove_blank_ends(str);
 	GDate *gtime = g_date_new();
 	int week = -1;
@@ -248,69 +139,9 @@ int yearday(string str) {
 	}
 	g_date_free(gtime);
 	return day;
-}
+}*/
 
-bool s2date(string str, int &year, int &month, int &day) {
-	//struct tm time;
-	remove_blank_ends(str);
-	GDate *gtime = g_date_new();
-	if(s2date(str, gtime)) {
-/*		year = time.tm_year + 1900;
-		month = time.tm_mon + 1;
-		day = time.tm_mday;	*/
-		year = g_date_get_year(gtime);
-		month = g_date_get_month(gtime);
-		day = g_date_get_day(gtime);
-		g_date_free(gtime);
-		return true;
-	}
-	g_date_free(gtime);
-	return false;
-}
-bool isLeapYear(int year) {
-	return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
-}
-int daysPerYear(int year, int basis) {
-	switch(basis) {
-		case 0: {
-			return 360;
-		}
-		case 1: {
-			if(isLeapYear(year)) {
-				return 366;
-			} else {
-				return 365;
-			}
-		}
-		case 2: {
-			return 360;
-		}		
-		case 3: {
-			return 365;
-		} 
-		case 4: {
-			return 360;
-		}
-	}
-	return -1;
-}
-
-int daysPerMonth(int month, int year) {
-	switch(month) {
-		case 1: {} case 3: {} case 5: {} case 7: {} case 8: {} case 10: {} case 12: {
-			return 31;
-		}
-		case 2:	{
-			if(isLeapYear(year)) return 29;
-			else return 28;
-		}				
-		default: {
-			return 30;
-		}
-	}
-}	
-
-Number yearsBetweenDates(string date1, string date2, int basis, bool date_func) {
+/*Number yearsBetweenDates(string date1, string date2, int basis, bool date_func) {
 	if(basis < 0 || basis > 4) return -1;
 	if(basis == 1) {
 		int day1, day2, month1, month2, year1, year2;
@@ -335,13 +166,6 @@ Number yearsBetweenDates(string date1, string date2, int basis, bool date_func) 
 			days += daysPerMonth(month, year1);
 		}
 		days += daysPerMonth(month1, year1) - day1 + 1;
-/*		Number *nr = new Number(days, daysPerYear(year1, basis));
-		year1++;
-		if(year1 != year2) {
-			Number yfr(year2 - year1);
-			nr->add(&yfr);
-		}
-		days = 0;*/
 		for(int month = 1; month < month2; month++) {
 			days += daysPerMonth(month, year2);
 		}
@@ -354,10 +178,6 @@ Number yearsBetweenDates(string date1, string date2, int basis, bool date_func) 
 			}
 		}
 		Number year_frac(days_of_years, year2 + 1 - year1);
-/*		if(days > 0) {
-			Number nr2(days, daysPerYear(year2, basis));
-			nr->add(&nr2);
-		}*/
 		Number nr(days);
 		nr /= year_frac;
 		return nr;
@@ -456,7 +276,7 @@ int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int
 	}
 	return -1;
 	
-}
+}*/
 
 string& gsub(const string &pattern, const string &sub, string &str) {
 	size_t i = str.find(pattern);
@@ -518,10 +338,10 @@ string& remove_parenthesis(string &str) {
 }
 
 string d2s(double value, int precision) {
-	//	  qgcvt(value, precision, buffer);
+	// qgcvt(value, precision, buffer);
 	sprintf(buffer, "%.*G", precision, value);
 	string stmp = buffer;
-	//	  gsub("e", "E", stmp);
+	// gsub("e", "E", stmp);
 	return stmp;
 }
 
@@ -531,7 +351,7 @@ string p2s(void *o) {
 	return stmp;
 }
 string i2s(int value) {
-	//	  char buffer[10];
+	// char buffer[10];
 	sprintf(buffer, "%i", value);
 	string stmp = buffer;
 	return stmp;
@@ -726,11 +546,11 @@ bool equalsIgnoreCase(const string &str1, const string &str2) {
 				if(str2[i2 + i] >= 0) return false;
 				i2++;
 			}
-			gchar *gstr1 = g_utf8_strdown(str1.c_str() + (sizeof(char) * i), i2);
-			gchar *gstr2 = g_utf8_strdown(str2.c_str() + (sizeof(char) * i), i2);
-			if(strcmp(gstr1, gstr2) != 0) return false;
-			g_free(gstr1);
-			g_free(gstr2);
+			char *gstr1 = utf8_strdown(str1.c_str() + (sizeof(char) * i), i2);
+			char *gstr2 = utf8_strdown(str2.c_str() + (sizeof(char) * i), i2);
+			if(!gstr1 || !gstr2 || strcmp(gstr1, gstr2) != 0) return false;
+			free(gstr1);
+			free(gstr2);
 			i += i2 - 1;
 		} else if(str1[i] != str2[i] && !((str1[i] >= 'a' && str1[i] <= 'z') && str1[i] - 32 == str2[i]) && !((str1[i] <= 'Z' && str1[i] >= 'A') && str1[i] + 32 == str2[i])) {
 			return false;
@@ -749,11 +569,11 @@ bool equalsIgnoreCase(const string &str1, const char *str2) {
 				if(str2[i2 + i] >= 0) return false;
 				i2++;
 			}
-			gchar *gstr1 = g_utf8_strdown(str1.c_str() + (sizeof(char) * i), i2);
-			gchar *gstr2 = g_utf8_strdown(str2 + (sizeof(char) * i), i2);
-			if(strcmp(gstr1, gstr2) != 0) return false;
-			g_free(gstr1);
-			g_free(gstr2);
+			char *gstr1 = utf8_strdown(str1.c_str() + (sizeof(char) * i), i2);
+			char *gstr2 = utf8_strdown(str2 + (sizeof(char) * i), i2);
+			if(!gstr1 || !gstr2 || strcmp(gstr1, gstr2) != 0) return false;
+			free(gstr1);
+			free(gstr2);
 			i += i2 - 1;
 		} else if(str1[i] != str2[i] && !((str1[i] >= 'a' && str1[i] <= 'z') && str1[i] - 32 == str2[i]) && !((str1[i] <= 'Z' && str1[i] >= 'A') && str1[i] + 32 == str2[i])) {
 			return false;
@@ -774,29 +594,75 @@ void parse_qalculate_version(string qalculate_version, int *qalculate_version_nu
 	}
 }
 
+#ifdef _WIN32
+string utf8_encode(const wstring &wstr) {
+	if(wstr.empty()) return string();
+	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int) wstr.size(), NULL, 0, NULL, NULL);
+	std::string strTo(size_needed, 0);
+	WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int) wstr.size(), &strTo[0], size_needed, NULL, NULL);
+	return strTo;
+}
+#endif
+
 string getOldLocalDir() {
-	gchar *gstr = g_build_filename(g_get_home_dir(), ".qalculate", NULL);
-	string homedir = gstr;
-	g_free(gstr);
-	return homedir;
+#ifdef _WIN32
+	PWSTR path = NULL;
+	SHGetKnownFolderPath(FOLDERID_Profile, 0 NULL, &path);
+	string str = utf8_encode(path);
+	CoTaskMemFree(path);
+	return str + "\\qalculate";
+#else
+	const char *homedir;
+	if ((homedir = getenv("HOME")) == NULL) {
+		homedir = getpwuid(getuid())->pw_dir;
+	}
+	return string(homedir) + "/.qalculate";
+#endif
 }
 string getLocalDir() {
-	gchar *gstr = g_build_filename(g_get_user_config_dir(), "qalculate", NULL);
-	string confdir = gstr;
-	g_free(gstr);
-	return confdir;
+#ifdef _WIN32
+	PWSTR path = NULL;
+	SHGetKnownFolderPath(FOLDERID_LocalAppData, 0 NULL, &path);
+	string str = utf8_encode(path);
+	CoTaskMemFree(path);
+	return str + "\\qalculate";
+#else
+	const char *homedir;
+	if((homedir = getenv("XDG_CONFIG_HOME")) == NULL) {
+		return string(getpwuid(getuid())->pw_dir) + "/.config/qalculate";
+	}
+	return string(homedir) + "/qalculate";
+#endif
 }
 string getLocalDataDir() {
-	gchar *gstr = g_build_filename(g_get_user_data_dir(), "qalculate", NULL);
-	string datadir = gstr;
-	g_free(gstr);
-	return datadir;
+#ifdef _WIN32
+	PWSTR path = NULL;
+	SHGetKnownFolderPath(FOLDERID_LocalAppData, 0 NULL, &path);
+	string str = utf8_encode(path);
+	CoTaskMemFree(path);
+	return str + "\\qalculate";
+#else
+	const char *homedir;
+	if((homedir = getenv("XDG_DATA_HOME")) == NULL) {
+		return string(getpwuid(getuid())->pw_dir) + "/.local/share/qalculate";
+	}
+	return string(homedir) + "/qalculate";
+#endif
 }
 string getLocalTmpDir() {
-	gchar *gstr = g_build_filename(g_get_tmp_dir(), "qalculate", NULL);
-	string tmpdir = gstr;
-	g_free(gstr);
-	return tmpdir;
+#ifdef _WIN32
+	PWSTR path = NULL;
+	SHGetKnownFolderPath(FOLDERID_LocalAppData, 0 NULL, &path);
+	string str = utf8_encode(path);
+	CoTaskMemFree(path);
+	return str + "'\\cache\qalculate";
+#else
+	const char *homedir;
+	if((homedir = getenv("XDG_CACHE_HOME")) == NULL) {
+		return string(getpwuid(getuid())->pw_dir) + "/.cache/qalculate";
+	}
+	return string(homedir) + "/qalculate";
+#endif
 }
 
 bool move_file(const char *from_file, const char *to_file) {
@@ -836,9 +702,8 @@ bool move_file(const char *from_file, const char *to_file) {
 }
 
 string getPackageDataDir() {
-#ifdef USE_ABSOLUTE_PACKAGE_PATHS
-	string datadir(PACKAGE_DATA_DIR);
-	return datadir;
+#ifndef WIN32
+	return string(PACKAGE_DATA_DIR) + "/qalculate";
 #else
 	char exepath[MAX_PATH];
 	GetModuleFileName(NULL, exepath, MAX_PATH);
@@ -847,32 +712,119 @@ string getPackageDataDir() {
 	if (datadir.substr(datadir.length() - 3) == "bin") {
 		datadir.resize(datadir.find_last_of('\\'));
 	}
-	datadir += "\\share";
+	datadir += "\\share\\qalculate";
 	return datadir;
 #endif
 }
 
 string getPackageLocaleDir() {
-#ifdef USE_ABSOLUTE_PACKAGE_PATHS
-	string localedir(PACKAGE_LOCALE_DIR);
-	return localedir;
+#ifndef WIN32
+	return PACKAGE_LOCALE_DIR;
 #else
-	gchar *dir = g_build_filename(getPackageDataDir().c_str(), "locale", NULL);
-	string localeDir(dir);
-	g_free(dir);
-	return localeDir;
+	return getPackageDataDir() + "\\locale";
 #endif
 }
 
+string buildPath(string dir, string filename) {
+#ifdef WIN32
+	return dir + '\\' + filename;
+#else
+	return dir + '/' + filename;
+#endif
+}
+string buildPath(string dir1, string dir2, string filename) {
+#ifdef WIN32
+	return dir1 + '\\' + dir2 + '\\' + filename;
+#else
+	return dir1 + '/' + dir2 + '/' + filename;
+#endif
+}
+string buildPath(string dir1, string dir2, string dir3, string filename) {
+#ifdef WIN32
+	return dir1 + '\\' + dir2 + '\\' + dir3 + '\\' + filename;
+#else
+	return dir1 + '/' + dir2 + '/' + dir3 + '/' + filename;
+#endif
+}
+
+bool dirExists(string dirpath) {
+	struct stat info;
+	return stat(dirpath.c_str(), &info) == 0;
+}
+bool fileExists(string filepath) {
+	struct stat info;
+	return stat(filepath.c_str(), &info) == 0;
+}
+bool makeDir(string dirpath) {
+#ifdef WIN32
+	return _mkdir(dirpath.c_str()) == 0;
+#else
+	return mkdir(dirpath.c_str(), S_IRWXU) == 0;
+#endif
+}
+bool removeDir(string dirpath) {
+#ifdef WIN32
+	return _rmdir(dirpath.c_str()) == 0;
+#else
+	return rmdir(dirpath.c_str()) == 0;
+#endif
+}
+
+char *locale_from_utf8(const char *str) {
+	iconv_t conv = iconv_open("", "UTF-8");
+	if(conv == (iconv_t) -1) return NULL;
+	size_t inlength = strlen(str);
+	size_t outlength = inlength * 4;
+	char *dest, *buffer;
+	buffer = dest = (char*) malloc((outlength + 4) * sizeof(char));
+	if(!buffer) return NULL;
+	size_t err = iconv(conv, (char **) &str, &inlength, &buffer, &outlength);
+	if(err != (size_t) -1) err = iconv(conv, NULL, &inlength, &buffer, &outlength);
+	iconv_close(conv);
+	memset(buffer, 0, 4);
+	if(err != (size_t) -1) {free(dest); return NULL;}
+	return dest;
+}
+char *locale_to_utf8(const char *str) {
+	iconv_t conv = iconv_open("UTF-8", "");
+	if(conv == (iconv_t) -1) return NULL;
+	size_t inlength = strlen(str);
+	size_t outlength = inlength * 4;
+	char *dest, *buffer;
+	buffer = dest = (char*) malloc((outlength + 4) * sizeof(char));
+	if(!buffer) return NULL;
+	size_t err = iconv(conv, (char**) &str, &inlength, &buffer, &outlength);
+	if(err != (size_t) -1) err = iconv(conv, NULL, &inlength, &buffer, &outlength);
+	iconv_close(conv);
+	memset(buffer, 0, 4 * sizeof(char));
+	if(err != (size_t) -1) {free(dest); return NULL;}
+	return dest;
+}
+char *utf8_strdown(const char *str, int l) {
+	if(!ucm) return NULL;
+	UErrorCode err = U_ZERO_ERROR;
+	size_t inlength = l <= 0 ? strlen(str) : (size_t) l;
+	size_t outlength = inlength + 4;
+	char *buffer = (char*) malloc(outlength * sizeof(char));
+	int32_t length = ucasemap_utf8ToLower(ucm, buffer, outlength, str, inlength, &err);
+	if(U_SUCCESS(err)) {
+		return buffer;
+	} else if(err == U_BUFFER_OVERFLOW_ERROR) {
+		outlength = length + 4;
+		buffer = (char*) realloc(buffer, outlength * sizeof(char));
+		err = U_ZERO_ERROR;
+		ucasemap_utf8ToLower(ucm, buffer, outlength, str, inlength, &err);
+		if(U_SUCCESS(err)) {
+			return buffer;
+		}
+	}
+	cout << u_errorName(err) << endl;
+	return NULL;
+}
 
 #ifdef _WIN32
 
-Thread::Thread() :
-	running(false),
-	m_thread(NULL),
-	m_threadReadyEvent(NULL),
-	m_threadID(0)
-{
+Thread::Thread() : running(false), m_thread(NULL), m_threadReadyEvent(NULL), m_threadID(0) {
 	m_threadReadyEvent = CreateEvent(NULL, false, false, NULL);
 }
 
@@ -914,11 +866,7 @@ bool Thread::cancel() {
 
 #else
 
-Thread::Thread() :
-	running(false),
-	m_pipe_r(NULL),
-	m_pipe_w(NULL)
-{
+Thread::Thread() : running(false), m_pipe_r(NULL), m_pipe_w(NULL) {
 	pthread_attr_init(&m_thread_attr);
 	int pipe_wr[] = {0, 0};
 	pipe(pipe_wr);

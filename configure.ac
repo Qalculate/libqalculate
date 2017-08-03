@@ -101,13 +101,12 @@ AC_LANG([C++])
 
 AC_CHECK_HEADERS([unordered_map])
 
-PKG_CHECK_MODULES(GLIB, [
+PKG_CHECK_MODULES(PKGS, [
 	libcurl
-	glib-2.0
 	libxml-2.0 >= 2.3.8
 	])
-AC_SUBST(GLIB_CFLAGS)
-AC_SUBST(GLIB_LIBS)
+AC_SUBST(PKGS_CFLAGS)
+AC_SUBST(PKGS_LIBS)
 
 dnl  --------------------------------
 dnl | check for readline            |-----------------------------------------
@@ -208,14 +207,6 @@ fi
 AC_SUBST(QALCULATE_DEFS2DOC)
 
 AC_SEARCH_LIBS([nanosleep],[rt posix4])
-
-AC_MSG_CHECKING(if shared package data paths are absolute)
-if test "$host_os" == "mingw32"; then
-	AC_MSG_RESULT(no)
-else
-	AC_DEFINE(USE_ABSOLUTE_PACKAGE_PATHS, 1, [Whether shared package data paths are absolute])
-	AC_MSG_RESULT(yes)
-fi
 
 dnl  -------------------------------------
 dnl | internationalization (i18n) support |------------------------------------

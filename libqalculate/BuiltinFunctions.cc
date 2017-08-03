@@ -19,7 +19,6 @@
 #include "Variable.h"
 
 #include <sstream>
-#include <glib.h>
 #include <time.h>
 #include <limits>
 
@@ -2358,13 +2357,12 @@ ISODateFunction::ISODateFunction() : MathFunction("isodate", 0, 1) {
 	setDefaultValue(1, "today");
 }
 int ISODateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	GDate *gtime = g_date_new();
-	s2date(vargs[0].symbol(), gtime);
-	gchar *gstr = (gchar*) malloc(sizeof(gchar) * 100);
-	g_date_strftime(gstr, 100, "%F", gtime);
-	mstruct.set(gstr);
-	g_date_free(gtime);
-	g_free(gstr);
+	QalculateDate date;
+	if(!date.set(vargs[0].symbol())) {
+		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
+		return 0;
+	}
+	mstruct.set(date.toISOString());
 	return 1;
 }
 LocalDateFunction::LocalDateFunction() : MathFunction("localdate", 0, 1) {
@@ -2372,33 +2370,31 @@ LocalDateFunction::LocalDateFunction() : MathFunction("localdate", 0, 1) {
 	setDefaultValue(1, "today");
 }
 int LocalDateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	GDate *gtime = g_date_new();
-	s2date(vargs[0].symbol(), gtime);
-	gchar *gstr = (gchar*) malloc(sizeof(gchar) * 100);
-	g_date_strftime(gstr, 100, "%x", gtime);
-	mstruct.set(gstr);
-	g_date_free(gtime);
-	g_free(gstr);
+	QalculateDate date;
+	if(!date.set(vargs[0].symbol())) {
+		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
+		return 0;
+	}
+	mstruct.set(date.toLocalString());
 	return 1;
 }
 TimestampFunction::TimestampFunction() : MathFunction("timestamp", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
 	setDefaultValue(1, "now");
 }
-int TimestampFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {	
+int TimestampFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	string str = vargs[0].symbol();
 	remove_blank_ends(str);
 	if(str == _("now") || str == "now") {
-		mstruct.number().set(time(NULL), 1);
+		mstruct.set(time(NULL), 1);
 		return 1;
 	}
-	GDate *gtime = g_date_new();
-	s2date(str, gtime);
-	gchar *gstr = (gchar*) malloc(sizeof(gchar) * 100);
-	g_date_strftime(gstr, 100, "%s", gtime);
-	Number nr(gstr);
-	g_date_free(gtime);
-	g_free(gstr);
+	QalculateDate date;
+	if(!date.set(vargs[0].symbol())) {
+		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
+		return 0;
+	}
+	Number nr(date.timestamp(), 1);
 	if(nr.isMinusOne()) {
 		CALCULATOR->error(true, _("The timestamp value for the date %s is too large or small for %s()."), vargs[0].print().c_str(), preferredDisplayName().name.c_str(), NULL);
 		return 0;
@@ -2412,18 +2408,9 @@ TimestampToDateFunction::TimestampToDateFunction() : MathFunction("stamptodate",
 int TimestampToDateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {	
 	bool overflow = false;
 	long int i = vargs[0].number().intValue(&overflow);
-	if(i > std::numeric_limits<time_t>::max()) {
-		return 0;
-	} else if(i < std::numeric_limits<time_t>::min()) {
-		return 0;
-	}
-	GDate *gtime = g_date_new();
-	g_date_set_time_t(gtime, i);
-	gchar *gstr = (gchar*) malloc(sizeof(gchar) * 100);
-	g_date_strftime(gstr, 100, "%F", gtime);
-	mstruct.set(gstr);
-	g_date_free(gtime);
-	g_free(gstr);
+	if(overflow) return 0;
+	QalculateDate date(i);
+	mstruct.set(date.toISOString());
 	return 1;
 }
 
@@ -2431,13 +2418,18 @@ AddDaysFunction::AddDaysFunction() : MathFunction("addDays", 2) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new IntegerArgument());
 }	
-int AddDaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {	
-	string str = addDays(vargs[0].symbol(), vargs[1].number().intValue());
-	if(str.empty()) {
+int AddDaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	QalculateDate date;
+	if(!date.set(vargs[0].symbol())) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(str);
+	bool overflow = false;
+	long int i = vargs[1].number().intValue(&overflow);
+	if(overflow) return 0;
+	date.addDays(i);
+	if(CALCULATOR->aborted()) return 0;
+	mstruct.set(date.toISOString(), 1);
 	return 1;
 }
 AddMonthsFunction::AddMonthsFunction() : MathFunction("addMonths", 2) {
@@ -2445,12 +2437,16 @@ AddMonthsFunction::AddMonthsFunction() : MathFunction("addMonths", 2) {
 	setArgumentDefinition(2, new IntegerArgument());
 }	
 int AddMonthsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {	
-	string str = addMonths(vargs[0].symbol(), vargs[1].number().intValue());
-	if(str.empty()) {
+	QalculateDate date;
+	if(!date.set(vargs[0].symbol())) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(str);
+	bool overflow = false;
+	long int i = vargs[1].number().intValue(&overflow);
+	if(overflow) return 0;
+	date.addMonths(i);
+	mstruct.set(date.toISOString(), 1);
 	return 1;
 }
 AddYearsFunction::AddYearsFunction() : MathFunction("addYears", 2) {
@@ -2458,12 +2454,16 @@ AddYearsFunction::AddYearsFunction() : MathFunction("addYears", 2) {
 	setArgumentDefinition(2, new IntegerArgument());
 }	
 int AddYearsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {	
-	string str = addYears(vargs[0].symbol(), vargs[1].number().intValue());
-	if(str.empty()) {
+	QalculateDate date;
+	if(!date.set(vargs[0].symbol())) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(str);
+	bool overflow = false;
+	long int i = vargs[1].number().intValue(&overflow);
+	if(overflow) return 0;
+	date.addYears(i);
+	mstruct.set(date.toISOString(), 1);
 	return 1;
 }
 
@@ -2480,10 +2480,14 @@ DaysFunction::DaysFunction() : MathFunction("days", 2, 4) {
 	setDefaultValue(3, "1"); 
 }
 int DaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	int days = daysBetweenDates(vargs[0].symbol(), vargs[1].symbol(), vargs[2].number().intValue(), vargs[3].number().isZero());
-	if(days < 0) {
+	QalculateDate date1, date2;
+	if(!date1.set(vargs[0].symbol()) || !date2.set(vargs[0].symbol())) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
+	}
+	long int days = date1.daysTo(date2, vargs[2].number().intValue(), vargs[3].number().isZero());
+	if(days < 0) {
+		days = -days;
 	}
 	mstruct.set(days, 1);
 	return 1;
@@ -2501,12 +2505,12 @@ YearFracFunction::YearFracFunction() : MathFunction("yearfrac", 2, 4) {
 	setDefaultValue(3, "1");
 }
 int YearFracFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	Number yfr = yearsBetweenDates(vargs[0].symbol(), vargs[1].symbol(), vargs[2].number().intValue(), vargs[3].number().isZero());
-	if(yfr.isMinusOne()) {
+	QalculateDate date1, date2;
+	if(!date1.set(vargs[0].symbol()) || !date2.set(vargs[0].symbol())) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(yfr);
+	mstruct.set(date1.yearsTo(date2, vargs[2].number().intValue(), vargs[3].number().isZero()));
 	return 1;
 }
 WeekFunction::WeekFunction() : MathFunction("week", 0, 2) {
@@ -2515,11 +2519,12 @@ WeekFunction::WeekFunction() : MathFunction("week", 0, 2) {
 	setDefaultValue(1, "today");
 }
 int WeekFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	int w = week(vargs[0].symbol(), vargs[1].number().getBoolean());
-	if(w < 0) {
+	QalculateDate date;
+	if(!date.set(vargs[0].symbol())) {
+		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(w, 1);
+	mstruct.set(date.week(vargs[1].number().getBoolean()), 1);
 	return 1;
 }
 WeekdayFunction::WeekdayFunction() : MathFunction("weekday", 0, 2) {
@@ -2528,10 +2533,12 @@ WeekdayFunction::WeekdayFunction() : MathFunction("weekday", 0, 2) {
 	setDefaultValue(1, "today");
 }
 int WeekdayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	int w = weekday(vargs[0].symbol());
-	if(w < 0) {
+	QalculateDate date;
+	if(!date.set(vargs[0].symbol())) {
+		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
+	int w = date.weekday();
 	if(vargs[1].number().getBoolean()) {
 		if(w == 7) w = 1;
 		else w++;
@@ -2544,11 +2551,12 @@ YeardayFunction::YeardayFunction() : MathFunction("yearday", 0, 1) {
 	setDefaultValue(1, "today");
 }
 int YeardayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	int d = yearday(vargs[0].symbol());
-	if(d < 0) {
+	QalculateDate date;
+	if(!date.set(vargs[0].symbol())) {
+		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(d, 1);
+	mstruct.set(date.yearday(), 1);
 	return 1;
 }
 MonthFunction::MonthFunction() : MathFunction("month", 0, 1) {
@@ -2556,11 +2564,12 @@ MonthFunction::MonthFunction() : MathFunction("month", 0, 1) {
 	setDefaultValue(1, "today");
 }
 int MonthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	int year, month, day;
-	if(!s2date(vargs[0].symbol(), year, month, day)) {
+	QalculateDate date;
+	if(!date.set(vargs[0].symbol())) {
+		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(month, 1);
+	mstruct.set(date.month(), 1);
 	return 1;
 }
 DayFunction::DayFunction() : MathFunction("day", 0, 1) {
@@ -2568,11 +2577,12 @@ DayFunction::DayFunction() : MathFunction("day", 0, 1) {
 	setDefaultValue(1, "today");
 }
 int DayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	int year, month, day;
-	if(!s2date(vargs[0].symbol(), year, month, day)) {
+	QalculateDate date;
+	if(!date.set(vargs[0].symbol())) {
+		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(day, 1);
+	mstruct.set(date.day(), 1);
 	return 1;
 }
 YearFunction::YearFunction() : MathFunction("year", 0, 1) {
@@ -2580,11 +2590,12 @@ YearFunction::YearFunction() : MathFunction("year", 0, 1) {
 	setDefaultValue(1, "today");
 }
 int YearFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	int year, month, day;
-	if(!s2date(vargs[0].symbol(), year, month, day)) {
+	QalculateDate date;
+	if(!date.set(vargs[0].symbol())) {
+		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(year, 1);
+	mstruct.set(date.year(), 1);
 	return 1;
 }
 TimeFunction::TimeFunction() : MathFunction("time", 0) {

@@ -1,6 +1,7 @@
 2017-08-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Use libcurl instead of gvfs/wget
+	* Remove glib dependency (require instead iconv and icu)
 
 2017-08-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

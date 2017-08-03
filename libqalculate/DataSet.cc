@@ -27,8 +27,6 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <glib.h>
-#include <glib/gstdio.h>
 
 #define XML_GET_STRING_FROM_PROP(node, name, str)	value = xmlGetProp(node, (xmlChar*) name); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = ""; 
 #define XML_GET_STRING_FROM_TEXT(node, str)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = "";
@@ -426,71 +424,53 @@ void DataSet::setDefaultDataFile(string s_file) {
 const string &DataSet::defaultDataFile() const {
 	return sfile;
 }
-	
+#ifdef _WIN32
+#	define FILE_SEPARATOR_CHAR '\\'
+#else
+#	define FILE_SEPARATOR_CHAR '/'
+#endif
 bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	if(file_name) {
 	} else if(sfile.empty()) {
 		return false;
-	} else if(sfile.find(G_DIR_SEPARATOR_S) != string::npos) {
+	} else if(sfile.find(FILE_SEPARATOR_CHAR) != string::npos) {
 		bool b = loadObjects(file_name, false);
-		size_t i = sfile.find_last_of(G_DIR_SEPARATOR_S);
+		size_t i = sfile.find_last_of(FILE_SEPARATOR_CHAR);
 		if(i != sfile.length() - 1) {
-			gchar *filepath = g_build_filename(getLocalDataDir().c_str(), "definitions", "datasets", sfile.substr(i + 1, sfile.length() - (i + 1)).c_str(), NULL);
-			if(loadObjects(filepath, true)) {
+			string filepath = buildPath(getLocalDataDir(), "definitions", "datasets", sfile.substr(i + 1, sfile.length() - (i + 1)));
+			if(loadObjects(filepath.c_str(), true)) {
 				b = true;
 			} else {
-				gchar *filepath_old = g_build_filename(getOldLocalDir().c_str(), "definitions", "datasets", sfile.substr(i + 1, sfile.length() - (i + 1)).c_str(), NULL);
-				if(loadObjects(filepath_old, true)) {
+				string filepath_old = buildPath(getOldLocalDir(), "definitions", "datasets", sfile.substr(i + 1, sfile.length() - (i + 1)));
+				if(loadObjects(filepath_old.c_str(), true)) {
 					b = true;
-					g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
-					gchar *dir = g_build_filename(getLocalDataDir().c_str(), "definitions", NULL);
-					g_mkdir(dir, S_IRWXU);
-					g_free(dir);
-					dir = g_build_filename(getLocalDataDir().c_str(), "definitions", "datasets", NULL);
-					g_mkdir(dir, S_IRWXU);
-					g_free(dir);
-					move_file(filepath_old, filepath);
-					dir = g_build_filename(getOldLocalDir().c_str(), "definitions", "datasets", NULL);
-					g_rmdir(dir);
-					g_free(dir);
-					dir = g_build_filename(getOldLocalDir().c_str(), "definitions", NULL);
-					g_rmdir(dir);
-					g_free(dir);
+					makeDir(getLocalDataDir());
+					makeDir(buildPath(getLocalDataDir(), "definitions"));
+					makeDir(buildPath(getLocalDataDir(), "definitions", "datasets"));
+					move_file(filepath_old.c_str(), filepath.c_str());
+					removeDir(buildPath(getOldLocalDir(), "definitions", "datasets"));
+					removeDir(buildPath(getOldLocalDir(), "definitions"));
 				}
-				g_free(filepath_old);
 			}
-			g_free(filepath);
 		}
 		return b;
 	} else {
-		gchar *filepath = g_build_filename(getPackageDataDir().c_str(), "qalculate", sfile.c_str(), NULL);
-		bool b = loadObjects(filepath, false);
-		g_free(filepath);
-		filepath = g_build_filename(getLocalDataDir().c_str(), "definitions", "datasets", sfile.c_str(), NULL);
-		if(loadObjects(filepath, true)) {
+		bool b = loadObjects(buildPath(getPackageDataDir(), sfile, NULL).c_str(), false);
+		string filepath = buildPath(getLocalDataDir(), "definitions", "datasets", sfile);
+		if(loadObjects(filepath.c_str(), true)) {
 			b = true;
 		} else {
-			gchar *filepath_old = g_build_filename(getOldLocalDir().c_str(), "definitions", "datasets", sfile.c_str(), NULL);
-			if(loadObjects(filepath_old, true)) {
+			string filepath_old = buildPath(getOldLocalDir(), "definitions", "datasets", sfile);
+			if(loadObjects(filepath_old.c_str(), true)) {
 				b = true;
-				g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
-				gchar *dir = g_build_filename(getLocalDataDir().c_str(), "definitions", NULL);
-				g_mkdir(dir, S_IRWXU);
-				g_free(dir);
-				dir = g_build_filename(getLocalDataDir().c_str(), "definitions", "datasets", NULL);
-				g_mkdir(dir, S_IRWXU);
-				g_free(dir);
-				move_file(filepath_old, filepath);
-				dir = g_build_filename(getOldLocalDir().c_str(), "definitions", "datasets", NULL);
-				g_rmdir(dir);
-				g_free(dir);
-				dir = g_build_filename(getOldLocalDir().c_str(), "definitions", NULL);
-				g_rmdir(dir);
-				g_free(dir);
+				makeDir(getLocalDataDir());
+				makeDir(buildPath(getLocalDataDir(), "definitions"));
+				makeDir(buildPath(getLocalDataDir(), "definitions", "datasets"));
+				move_file(filepath_old.c_str(), filepath.c_str());
+				removeDir(buildPath(getOldLocalDir(), "definitions", "datasets"));
+				removeDir(buildPath(getOldLocalDir(), "definitions"));
 			}
-			g_free(filepath_old);
 		}
-		g_free(filepath);
 		return b;
 	}
 	xmlDocPtr doc;
@@ -740,16 +720,12 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 int DataSet::saveObjects(const char *file_name, bool save_global) {
 	string str, filename;
 	if(!save_global && !file_name) {
-		g_mkdir(getLocalDataDir().c_str(), S_IRWXU);
-		gchar *gstr = g_build_filename(getLocalDataDir().c_str(), "definitions", NULL);		
-		g_mkdir(gstr, S_IRWXU);
-		gchar *gstr2 = g_build_filename(gstr, "datasets", NULL);
-		g_mkdir(gstr2, S_IRWXU);
-		gchar *gstr3 = g_build_filename(gstr2, sfile.c_str(), NULL);
-		filename = gstr3;
-		g_free(gstr);
-		g_free(gstr2);
-		g_free(gstr3);
+		makeDir(getLocalDataDir());
+		filename = buildPath(getLocalDataDir(), "definitions");
+		makeDir(filename);
+		filename = buildPath(filename, "datasets");
+		makeDir(filename);
+		filename = buildPath(filename, sfile);
 	} else {
 		filename = file_name;
 	}

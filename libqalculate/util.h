@@ -51,26 +51,7 @@ int s2i(const char *str);
 void *s2p(const string& str);
 void *s2p(const char *str);
 
-string date2s(int year, int month, int day);
-int week(string str, bool start_sunday = false);
-int weekday(string str);
-int yearday(string str);
 void now(int &hour, int &min, int &sec);
-void today(int &year, int &month, int &day);
-bool addDays(int &year, int &month, int &day, int days);
-string addDays(string str, int days);
-bool addMonths(int &year, int &month, int &day, int months);
-string addMonths(string str, int months);
-bool addYears(int &year, int &month, int &day, int years);
-string addYears(string str, int years);
-bool s2date(string str, int &year, int &month, int &day);
-bool s2date(string str, void *gtime);
-bool isLeapYear(int year);
-int daysPerYear(int year, int basis = 0);
-int daysPerMonth(int month, int year);
-Number yearsBetweenDates(string date1, string date2, int basis, bool date_func = true);
-int daysBetweenDates(string date1, string date2, int basis, bool date_func = true);
-int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int day2, int basis, bool date_func = true);
 
 size_t find_ending_bracket(const string &str, size_t start, int *missing = NULL);
 
@@ -89,6 +70,9 @@ bool is_not_in(const string &str, char c);
 int sign_place(string *str, size_t start = 0);
 int gcd(int i1, int i2);
 
+char *locale_to_utf8(const char *str);
+char *locale_from_utf8(const char *str);
+char *utf8_strdown(const char *str, int l = -1);
 size_t unicode_length(const string &str);
 size_t unicode_length(const char *str);
 bool text_length_is_one(const string &str);
@@ -103,6 +87,13 @@ string getPackageDataDir();
 string getPackageLocaleDir();
 string getLocalDataDir();
 string getLocalTmpDir();
+string buildPath(string dir, string filename);
+string buildPath(string dir1, string dir2, string filename);
+string buildPath(string dir1, string dir2, string dir3, string filename);
+bool dirExists(string dirpath);
+bool fileExists(string dirpath);
+bool makeDir(string dirpath);
+bool removeDir(string dirpath);
 bool move_file(const char *from_file, const char *to_file);
 
 class Thread {

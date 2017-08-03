@@ -1124,4 +1124,35 @@ class Calculator {
 		
 };
 
+class QalculateDate {
+	protected:
+		long int i_year;
+		long int i_month;
+		long int i_day;
+	public:
+		QalculateDate();
+		QalculateDate(long int initialyear, int initialmonth, int initialday);
+		QalculateDate(long int initialtimestamp);
+		QalculateDate(string date_string);
+		void setToCurrentDate();
+		bool set(long int newyear, int newmonth, int newday);
+		bool set(long int newtimestamp);
+		bool set(string date_string);
+		string toISOString() const;
+		string toLocalString() const;
+		long int year() const;
+		long int month() const;
+		long int day() const;
+		void addDays(long int days);
+		void addMonths(long int months);
+		void addYears(long int years);
+		int weekday() const;
+		int week(bool start_sunday = false) const;
+		int yearday() const;
+		long int timestamp() const;
+		long int daysTo(const QalculateDate &date, int basis, bool date_func = true);
+		Number yearsTo(const QalculateDate &date, int basis, bool date_func = true);
+};
+
+
 #endif
