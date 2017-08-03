@@ -1,3 +1,7 @@
+2017-08-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use libcurl instead of gvfs/wget
+
 2017-08-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Handle errors on thread read and write (seems to solve issue #38)

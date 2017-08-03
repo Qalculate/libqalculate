@@ -239,8 +239,6 @@ class Calculator {
 	time_t exchange_rates_time, exchange_rates_check_time;
 	bool b_exchange_rates_used, b_exchange_rates_warning_enabled;
 
-	int has_gvfs;
-
 	bool b_gnuplot_open;
 	string gnuplot_cmdline;
 	FILE *gnuplot_pipe;
@@ -395,17 +393,17 @@ class Calculator {
 	string abortedMessage(void) const;
 	string timedOutString(void) const;
 	
-	/** Deprecated: use startControl() */
+	///Deprecated: use startControl()
 	void startPrintControl(int milliseconds = 0);
-	/** Deprecated: use abort() */
+	///Deprecated: use abort()
 	void abortPrint(void);
-	/** Deprecated: use stopControl() */
+	///Deprecated: use stopControl()
 	void stopPrintControl(void);
-	/** Deprecated: use aborted() */
+	/// Deprecated: use aborted()
 	bool printingAborted(void);
-	/** Deprecated: use isControlled() */
+	/// Deprecated: use isControlled()
 	bool printingControlled(void) const;
-	/** Deprecated: use abortedMessage() */
+	/// Deprecated: use abortedMessage()
 	string printingAbortedMessage(void) const;
 	//@}
 
@@ -413,9 +411,9 @@ class Calculator {
 	//@{
 	/** Returns true if the calculate or print thread is busy. */
 	bool busy();
-	/** Deprecated: does nothing. */
+	/// Deprecated: does nothing.
 	void saveState();
-	/** Deprecated: does nothing. */
+	/// Deprecated: does nothing.
 	void restoreState();
 	/** Clears all stored values. Used internally after aborted calculation. */
 	void clearBuffers();
@@ -981,22 +979,11 @@ class Calculator {
 	//@}
 	
 	/** @name Functions for exchange rates. */
-	//@{
-	/** Checks if gvfs-copy or wget is available for downloading exchange rates from the Internet.
-	*
-	* @returns true if gvfs-copy or wget was found.
-	*/
+	///Deprecated: not needed anymore
 	bool canFetch();
-	/** Checks if gvfs-copy available.
-	*
-	* @returns true if gvfs-copy was found.
-	*/
+	///Deprecated: gvfs is not needed anymore.
 	bool hasGVFS();
-	/** Checks if gvfs-copy available. Deprecated: use hasGVFS() or canFetch() instead.
-	*
-	*
-	* @returns true if gvfs-copy was found.
-	*/
+	///Deprecated: gvfs is not needed anymore.
 	bool hasGnomeVFS();
 	/** Load saved (local) currency units and exchange rates.
 	*
@@ -1018,16 +1005,11 @@ class Calculator {
 	* @returns Returns exchange rates modification time.
 	*/
 	time_t getExchangeRatesTime();
-	/** Download current exchange rates from the Internet to local disc.
-	*
-	* @param milliseconds Maximum time for donwload try (only used by wget)
-	* @param wget_args Extra arguments to pass to wget.
-	* @returns true if operation was successful.
-	*/
+	///Deprecated: wget arguments are not used
 	bool fetchExchangeRates(int seconds, string wget_args);
 	/** Download current exchange rates from the Internet to local disc with default wget arguments.
 	*
-	* @param milliseconds Maximum time for donwload try (only used by wget)
+	* @param seconds Maximum time for donwload try
 	* @returns true if operation was successful.
 	*/
 	bool fetchExchangeRates(int seconds = 15);

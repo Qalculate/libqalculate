@@ -2822,10 +2822,10 @@ void ViewThread::run() {
 	while(true) {
 
 		void *x = NULL;
-		if(!read<void *>(&x) || !x) break;
+		if(!read(&x) || !x) break;
 		MathStructure m(*((MathStructure*) x));
 		x = NULL;
-		if(!read<void *>(&x)) break;
+		if(!read(&x)) break;
 		CALCULATOR->startControl();
 		if(x) {
 			PrintOptions po;
@@ -2844,7 +2844,7 @@ void ViewThread::run() {
 			po.restrict_to_parent_precision = false;
 			po.spell_out_logical_operators = printops.spell_out_logical_operators;
 			MathStructure mp(*((MathStructure*) x));
-			po.is_approximate = read<bool *>();
+			read(&po.is_approximate);
 			mp.format(po);
 			parsed_text = mp.print(po);
 		}
@@ -3099,9 +3099,9 @@ void CommandThread::run() {
 
 	while(true) {
 		int command_type = 0;
-		if(!read<int>(&command_type)) break;
+		if(!read(&command_type)) break;
 		void *x = NULL;
-		if(!read<void *>(&x) || !x) break;
+		if(!read(&x) || !x) break;
 		CALCULATOR->startControl();
 		switch(command_type) {
 			case COMMAND_FACTORIZE: {

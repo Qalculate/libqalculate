@@ -955,14 +955,14 @@ void *Thread::doRun(void *data) {
 }
 
 bool Thread::start() {
-	int ret = pthread_create(&m_thread, &m_thread_attr, &Thread::doRun, this);
-	running = (ret == 0);
+	if(running) return true;
+	running = pthread_create(&m_thread, &m_thread_attr, &Thread::doRun, this) == 0;
 	return running;
 }
 
 bool Thread::cancel() {
-	int ret = pthread_cancel(m_thread);
-	running = (ret != 0);
+	if(!running) return true;
+	running = pthread_cancel(m_thread) != 0;
 	return !running;
 }
 

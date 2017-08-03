@@ -15,10 +15,10 @@ If libqalculate is installed in /usr/local (default) you may need to add /usr/lo
 
 ##Requirements
 * GMP and MPFR
-* Libxml2 (>= 2.3.8)
+* libxml2 (>= 2.3.8)
+* libcurl
 * Glib
 * Gnuplot 1.7 (optional, for plotting)
-* GVfs or GNU Wget (optional, for retrieval of exchange rates)
 
 ##API Documentation
 The API documentation is included in the package and is installed in $docdir/libqalculate/html (usually /usr/share/doc/libqalculate/html). It is generated when running autogen.sh.
