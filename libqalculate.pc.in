@@ -5,7 +5,6 @@ includedir=@includedir@
 
 Name: libqalculate
 Description: libqalculate
-Requires: libxml-2.0 libcurl
 Version: @VERSION@
 Libs: -L${libdir} -lqalculate
 Cflags: -I${includedir}

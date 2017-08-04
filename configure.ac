@@ -12,6 +12,8 @@ AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
+AC_CONFIG_MACRO_DIRS([m4])
+
 AC_ARG_ENABLE(textport, 
               [  --disable-textport	  Disable compiling the text port], 
               enable_textport=$enableval, 
@@ -73,7 +75,7 @@ AC_DEFINE([HAVE_PTHREADS],1,
 dnl libtool versioning for libqalculate
 
 dnl increment if the interface has additions, changes, removals.
-QALCULATE_CURRENT=10
+QALCULATE_CURRENT=11
 
 dnl increment any time the source changes; set to 
 dnl  0 if you increment CURRENT
@@ -231,7 +233,8 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The package name for gett
 
 dnl Please keep this in alphabetical order
 ALL_LINGUAS="fr nl sv zh_CN"
-AM_GLIB_GNU_GETTEXT
+AM_GNU_GETTEXT(external)
+AM_GNU_GETTEXT_VERSION([0.19.8])
 
 dnl AM_GLIB_GNU_GETTEXT sets $DATADIRNAME
 AC_MSG_CHECKING(locale directory)
