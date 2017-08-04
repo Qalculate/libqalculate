@@ -1766,18 +1766,24 @@ bool TextArgument::suggestsQuotes() const {return false;}
 DateArgument::DateArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 DateArgument::DateArgument(const DateArgument *arg) {set(arg); b_text = true;}
 DateArgument::~DateArgument() {}
+void DateArgument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
+	if(b_text && str.find_first_of(PARENTHESISS, 1) != string::npos) {
+		CALCULATOR->parse(mstruct, str, po);
+	} else {
+		Argument::parse(mstruct, str, po);
+	}
+}
 bool DateArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
 	if(!value.isSymbolic()) {
 		value.eval(eo);
 	}
 	QalculateDate date;
-	int day = 0, year = 0, month = 0;
 	return value.isSymbolic() && date.set(value.symbol());
 }
 int DateArgument::type() const {return ARGUMENT_TYPE_DATE;}
 Argument *DateArgument::copy() const {return new DateArgument(this);}
-string DateArgument::print() const {return _("date");}
-string DateArgument::subprintlong() const {return _("a date");}
+string DateArgument::print() const {return string(_("date")) + " (Y-M-D)";}
+string DateArgument::subprintlong() const {return string(_("a date")) + " (Y-M-D)";}
 
 VectorArgument::VectorArgument(string name_, bool does_test, bool allow_matrix, bool does_error) : Argument(name_, does_test, does_error) {
 	setMatrixAllowed(allow_matrix);

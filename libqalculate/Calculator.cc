@@ -38,8 +38,12 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <queue>
-#include <curl/curl.h>
-#include <unicode/ucasemap.h>
+#ifdef HAVE_LIBCURL
+#	include <curl/curl.h>
+#endif
+#ifdef HAVE_ICU
+#	include <unicode/ucasemap.h>
+#endif
 //#include <dlfcn.h>
 
 #if HAVE_UNORDERED_MAP
@@ -192,7 +196,9 @@ Number nr_zero, nr_one, nr_minus_one, nr_one_i, nr_minus_i, nr_half;
 EvaluationOptions no_evaluation;
 ExpressionName empty_expression_name;
 extern gmp_randstate_t randstate;
-extern UCaseMap *ucm;
+#ifdef HAVE_ICU
+	extern UCaseMap *ucm;
+#endif
 
 
 enum {
@@ -302,9 +308,11 @@ Calculator::Calculator() {
 	priv = new Calculator_p;
 
 	setlocale(LC_ALL, "");
-	
+
+#ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
 	ucm = ucasemap_open(NULL, 0, &err);
+#endif
 
 	exchange_rates_time = 0;
 	exchange_rates_check_time = 0;
@@ -465,7 +473,9 @@ Calculator::~Calculator() {
 	delete priv;
 	delete calculate_thread;
 	gmp_randclear(randstate);
+#ifdef HAVE_ICU
 	if(ucm) ucasemap_close(ucm);
+#endif
 }
 
 Unit *Calculator::getGraUnit() {
@@ -3817,47 +3827,46 @@ bool compare_name(const string &name, const string &str, const size_t &name_leng
 	}
 	return true;
 }
-bool compare_name_no_case(const string &name, const string &str, const size_t &name_length, const size_t &str_index) {
-	if(name_length == 0) return false;
-	if(name[0] < 0 && name_length > 1) {
-		if(str[str_index] >= 0) return false;
-		size_t i2 = 1;
-		while(i2 < name_length && name[i2] < 0) {
-			if(str[str_index + i2] >= 0) return false;
-			i2++;
-		}
-		char *gstr1 = utf8_strdown(name.c_str(), i2);
-		char *gstr2 = utf8_strdown(str.c_str() + (sizeof(char) * str_index), i2);
-		if(!gstr1 || !gstr2 || strcmp(gstr1, gstr2) != 0) return false;
-		free(gstr1);
-		free(gstr2);
-	} else if(name[0] != str[str_index] && !((name[0] >= 'a' && name[0] <= 'z') && name[0] - 32 == str[str_index]) && !((name[0] <= 'Z' && name[0] >= 'A') && name[0] + 32 == str[str_index])) {
-		return false;
-	}
-	if(name_length == 1) return true;
-	size_t i = 1;
-	while(name[i - 1] < 0 && i <= name_length) {
-		i++;
-	}
-	for(; i < name_length; i++) {
-		if(name[i] < 0 && i + 1 < name_length) {
-			if(str[str_index + i] >= 0) return false;
-			size_t i2 = 1;
-			while(i2 + i < name_length && name[i2 + i] < 0) {
-				if(str[str_index + i2 + i] >= 0) return false;
-				i2++;
+size_t compare_name_no_case(const string &name, const string &str, const size_t &name_length, const size_t &str_index) {
+	if(name_length == 0) return 0;
+	size_t is = str_index;
+	for(size_t i = 0; i < name_length; i++, is++) {
+		if(is >= str.length()) return 0;
+		if((name[i] < 0 && i + 1 < name_length) || (str[is] < 0 && is + 1 < str.length())) {
+			size_t i2 = 1, is2 = 1;
+			if(name[i] < 0) {
+				while(i2 + i < name_length && name[i2 + i] < 0) {
+					i2++;
+				}
 			}
-			char *gstr1 = utf8_strdown(name.c_str() + (sizeof(char) * i), i2);
-			char *gstr2 = utf8_strdown(str.c_str() + (sizeof(char) * (str_index + i)), i2);
-			if(!gstr1 || !gstr2 || strcmp(gstr1, gstr2) != 0) return false;
-			free(gstr1);
-			free(gstr2);
+			if(str[is] < 0) {
+				while(is2 + is < str.length() && str[is2 + is] < 0) {
+					is2++;
+				}
+			}
+			bool isequal = (i2 == is2);
+			if(isequal) {
+				for(size_t i3 = 0; i3 < i2; i3++) {
+					if(str[is + i3] != name[i + i3]) {
+						isequal = false;
+						break;
+					}
+				}
+			}
+			if(!isequal) {
+				char *gstr1 = utf8_strdown(name.c_str() + (sizeof(char) * i), i2);
+				char *gstr2 = utf8_strdown(str.c_str() + (sizeof(char) * (is)), is2);
+				if(!gstr1 || !gstr2) return 0;
+				if(strcmp(gstr1, gstr2) != 0) {free(gstr1); free(gstr2); return 0;}
+				free(gstr1); free(gstr2);
+			}
 			i += i2 - 1;
-		} else if(name[i] != str[str_index + i] && !((name[i] >= 'a' && name[i] <= 'z') && name[i] - 32 == str[str_index + i]) && !((name[i] <= 'Z' && name[i] >= 'A') && name[i] + 32 == str[str_index + i])) {
-			return false;
+			is += is2 - 1;
+		} else if(name[i] != str[is] && !((name[i] >= 'a' && name[i] <= 'z') && name[i] - 32 == str[is]) && !((name[i] <= 'Z' && name[i] >= 'A') && name[i] + 32 == str[is])) {
+			return 0;
 		}
 	}
-	return true;
+	return is - str_index;
 }
 
 void Calculator::parseSigns(string &str) const {
@@ -4093,29 +4102,30 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			size_t i = str.find(SPACE, str_index + 1);
 			if(i != string::npos) {
 				i -= str_index + 1;
-				if(i == per_str_len && compare_name_no_case(per_str, str, per_str_len, str_index + 1)) {
-					str.replace(str_index + 1, i, DIVISION);
+				size_t il = 0;
+				if((il = compare_name_no_case(per_str, str, per_str_len, str_index + 1))) {
+					str.replace(str_index + 1, il, DIVISION);
 					str_index++;
-				} else if(i == times_str_len && compare_name_no_case(times_str, str, times_str_len, str_index + 1)) {
-					str.replace(str_index + 1, i, MULTIPLICATION);
+				} else if((il = compare_name_no_case(times_str, str, times_str_len, str_index + 1))) {
+					str.replace(str_index + 1, il, MULTIPLICATION);
 					str_index++;
-				} else if(i == plus_str_len && compare_name_no_case(plus_str, str, plus_str_len, str_index + 1)) {
-					str.replace(str_index + 1, i, PLUS);
+				} else if((il = compare_name_no_case(plus_str, str, plus_str_len, str_index + 1))) {
+					str.replace(str_index + 1, il, PLUS);
 					str_index++;
-				} else if(i == minus_str_len && compare_name_no_case(minus_str, str, minus_str_len, str_index + 1)) {
-					str.replace(str_index + 1, i, MINUS);
+				} else if((il = compare_name_no_case(minus_str, str, minus_str_len, str_index + 1))) {
+					str.replace(str_index + 1, il, MINUS);
 					str_index++;
-				} else if(i == and_str_len && compare_name_no_case(and_str, str, and_str_len, str_index + 1)) {
-					str.replace(str_index + 1, i, LOGICAL_AND);
+				} else if((il = compare_name_no_case(and_str, str, and_str_len, str_index + 1))) {
+					str.replace(str_index + 1, il, LOGICAL_AND);
 					str_index++;
-				} else if(i == AND_str_len && compare_name_no_case(AND_str, str, AND_str_len, str_index + 1)) {
-					str.replace(str_index + 1, i, LOGICAL_AND);
+				} else if(i == AND_str_len && (il = compare_name_no_case(AND_str, str, AND_str_len, str_index + 1))) {
+					str.replace(str_index + 1, il, LOGICAL_AND);
 					str_index++;
-				} else if(i == or_str_len && compare_name_no_case(or_str, str, or_str_len, str_index + 1)) {
-					str.replace(str_index + 1, i, LOGICAL_OR);
+				} else if((il = compare_name_no_case(or_str, str, or_str_len, str_index + 1))) {
+					str.replace(str_index + 1, il, LOGICAL_OR);
 					str_index++;
-				} else if(i == OR_str_len && compare_name_no_case(OR_str, str, OR_str_len, str_index + 1)) {
-					str.replace(str_index + 1, i, LOGICAL_OR);
+				} else if(i == OR_str_len && (il = compare_name_no_case(OR_str, str, OR_str_len, str_index + 1))) {
+					str.replace(str_index + 1, il, LOGICAL_OR);
 					str_index++;
 //				} else if(compare_name_no_case(XOR_str, str, XOR_str_len, str_index + 1)) {
 				}
@@ -4399,7 +4409,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						}						
 					}
 				}
-				if(name && name_length >= found_function_name_length && ((case_sensitive && compare_name(*name, str, name_length, str_index)) || (!case_sensitive && compare_name_no_case(*name, str, name_length, str_index)))) {
+				if(name && name_length >= found_function_name_length && ((case_sensitive && compare_name(*name, str, name_length, str_index)) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index))))) {
 					moved_forward = false;
 					switch(ufvt) {
 						case 'v': {
@@ -4642,7 +4652,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 											break;
 										}
 									}								
-									if(name && ((case_sensitive && compare_name(*name, str, name_length, str_index)) || (!case_sensitive && compare_name_no_case(*name, str, name_length, str_index)))) {
+									if(name && ((case_sensitive && compare_name(*name, str, name_length, str_index)) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index))))) {
 										if((!p_mode && name_length_old > 1) || (p_mode && (name_length + name_length_old > best_pl || ((ufvt != 'P' || !((Unit*) ufvl[ufv_index2])->getName(ufvl_i[ufv_index2]).abbreviation) && name_length + name_length_old == best_pl)))) {
 											p_mode = true;
 											best_p = p;
@@ -4675,7 +4685,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									case_sensitive = ((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).case_sensitive;
 									name_length = name->length();
 									if(index + 1 == (int) unit_chars_left || !((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).plural) {
-										if(name_length <= unit_chars_left && ((case_sensitive && compare_name(*name, str, name_length, str_index)) || (!case_sensitive && compare_name_no_case(*name, str, name_length, str_index)))) {
+										if(name_length <= unit_chars_left && ((case_sensitive && compare_name(*name, str, name_length, str_index)) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index))))) {
 											if((!p_mode && name_length_old > 1) || (p_mode && (name_length + name_length_old > best_pl || ((ufvt != 'P' || !((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).abbreviation) && name_length + name_length_old == best_pl)))) {
 												p_mode = true;
 												best_p = p;
@@ -9093,7 +9103,11 @@ bool Calculator::hasGnomeVFS() {
 	return hasGVFS();
 }
 bool Calculator::canFetch() {
+#ifdef HAVE_LIBCURL
 	return true;
+#else
+	return false;
+#endif
 }
 string Calculator::getExchangeRatesFileName() {
 	return buildPath(getLocalDataDir(), "eurofxref-daily.xml");
@@ -9105,9 +9119,14 @@ string Calculator::getExchangeRatesUrl() {
 	return "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 }
 bool Calculator::fetchExchangeRates(int timeout, string) {return fetchExchangeRates(timeout);}
+size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+	size_t written = fwrite(ptr, size, nmemb, stream);
+	return written;
+}
 bool Calculator::fetchExchangeRates(int timeout) {
+#ifdef HAVE_LIBCURL
 	makeDir(getLocalDataDir());
-	FILE *file = fopen(getExchangeRatesFileName().c_str(), "w+");
+	FILE *file = fopen(getExchangeRatesFileName().c_str(), "wb");
 	if(file == NULL) {
 		error(true, _("Failed to download exchange rates from ECB."), NULL);
 		return false;
@@ -9119,13 +9138,17 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	if(!curl) {fclose(file); return false;}
 	curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl().c_str());
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
-	curl_easy_setopt(curl, CURLOPT_READDATA, file);
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
 	res = curl_easy_perform(curl);
 	curl_easy_cleanup(curl);
 	curl_global_cleanup();
 	fclose(file);
 	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from ECB."), NULL); return false;}
 	return true;
+#else
+	return false;
+#endif
 }
 bool Calculator::checkExchangeRatesDate(unsigned int n_days, bool force_check, bool send_warning) {
 	if(exchange_rates_time > 0 && ((!force_check && exchange_rates_check_time > 0 && difftime(time(NULL), exchange_rates_check_time) < 86400 * n_days) || difftime(time(NULL), exchange_rates_time) < (86400 * n_days) + 3600)) return true;
@@ -9647,7 +9670,7 @@ int daysPerMonth(int month, int year) {
 		case 2:	{
 			if(isLeapYear(year)) return 29;
 			else return 28;
-		}				
+		}
 		default: {
 			return 30;
 		}
@@ -9691,9 +9714,51 @@ bool QalculateDate::set(string str) {
 		addDays(-1);
 		return true;
 	}
-	long int newyear;
-	int newmonth, newday;
-	if(sscanf(str.c_str(), "%li-%i-%i", &newyear, &newmonth, &newday) != 3) return false;
+	
+	long int newyear = 0, newmonth = 0, newday = 0;
+	if(sscanf(str.c_str(), "%ld-%lu-%lu", &newyear, &newmonth, &newday) != 3) {
+		if(sscanf(str.c_str(), "%4ld%2lu%2lu", &newyear, &newmonth, &newday) != 3) {
+			struct tm tmdate;
+#ifndef _WIN32
+			if(strptime(str.c_str(), "%x", &tmdate) || strptime(str.c_str(), "%Ex", &tmdate)) {
+				newyear = tmdate.tm_year + 1900;
+				newmonth = tmdate.tm_mon + 1;
+				newday = tmdate.tm_mday;
+			} else {
+#endif
+				if(sscanf(str.c_str(), "%ld/%ld/%ld", &newmonth, &newday, &newyear) != 3) {
+					if(sscanf(str.c_str(), "%ld.%ld.%ld", &newday, &newmonth, &newyear) != 3) {
+						if(sscanf(str.c_str(), "%2ld%2lu%2lu", &newyear, &newmonth, &newday) != 3) {
+							return false;
+						}
+					
+					}
+					if(newday > 31) {
+						long int i = newday;
+						newday = newyear;
+						newyear = i;
+					}
+					if(newmonth > 12) {
+						long int i = newday;
+						newday = newmonth;
+						newmonth = i;
+					}
+				}
+				if(newmonth > 12) {
+					long int i = newday;
+					newday = newmonth;
+					newmonth = i;
+				}
+				if(newday > 31) {
+					long int i = newday;
+					newday = newyear;
+					newyear = i;
+				}
+#ifndef _WIN32
+			}
+#endif
+		}
+	}
 	return set(newyear, newmonth, newday);
 }
 string QalculateDate::toISOString() const {
@@ -9711,7 +9776,17 @@ string QalculateDate::toISOString() const {
 	return str;
 }
 string QalculateDate::toLocalString() const {
-	return "";
+	struct tm tmdate;
+	tmdate.tm_year = i_year - 1900;
+	tmdate.tm_mon = i_month - 1;
+	tmdate.tm_mday = i_day;
+	char *buffer = (char*) malloc(100 * sizeof(char));
+	if(!strftime(buffer, 100, "%x", &tmdate)) {
+		return toISOString();
+	}
+	string str = buffer;
+	free(buffer);
+	return str;
 }
 long int QalculateDate::year() const {return i_year;}
 long int QalculateDate::month() const {return i_month;}
@@ -9779,10 +9854,198 @@ void QalculateDate::addYears(long int years) {
 		}
 	}
 }
-int QalculateDate::weekday() const {return 1;}
-int QalculateDate::week(bool start_sunday) const {return 1;}
-int QalculateDate::yearday() const {return 1;}
-long int QalculateDate::timestamp() const {return 1;}
-long int QalculateDate::daysTo(const QalculateDate &date, int basis, bool date_func) {return 1;}
-Number QalculateDate::yearsTo(const QalculateDate &date, int basis, bool date_func) {return Number(1, 1);}
+int QalculateDate::weekday() const {
+	Number nr(daysTo(QalculateDate(2017, 7, 31)));
+	nr.negate();
+	nr.rem(Number(7, 1));
+	if(nr.isNegative()) return 8 + nr.intValue();
+	return nr.intValue() + 1;
+}
+int QalculateDate::week(bool start_sunday) const {
+	if(start_sunday) {
+		int yday = yearday();
+		QalculateDate date1(i_year, 1, 1);
+		int wday = date1.weekday() + 1;
+		if(wday == 8) wday = 1;
+		yday += (wday - 2);
+		int week = yday / 7 + 1;
+		if(week > 52) week = 1;
+		return week;
+	}
+	if(i_month == 12 && i_day >= 29 && weekday() <= i_day - 28) {
+		return 1;
+	} else {
+		QalculateDate date(i_year, i_month, i_day);
+		week_rerun:
+		int week1;
+		int day1 = date.yearday();
+		QalculateDate date1(date.year(), 1, 1);
+		int wday = date1.weekday();
+		day1 -= (8 - wday);
+		if(wday <= 4) {
+			week1 = 1;
+		} else {
+			week1 = 0;
+		}
+		if(day1 > 0) {
+			day1--;
+			week1 += day1 / 7 + 1;
+		}
+		if(week1 == 0) {
+			date.set(date.year() - 1, 12, 31);
+			goto week_rerun;
+		}
+		return week1;
+	}
+}
+int QalculateDate::yearday() const {
+	int yday = 0;
+	for(long int i = 1; i < i_month; i++) {
+		yday += daysPerMonth(i, i_year);
+	}
+	return yday + i_day;
+}
+Number QalculateDate::timestamp() const {
+	QalculateDate date(0);
+	Number nr(date.daysTo(*this));
+	nr *= (60 * 60 * 24);
+	return nr;
+}
+Number QalculateDate::daysTo(const QalculateDate &date, int basis, bool date_func) const {
+	
+	Number nr;
+	
+	if(basis < 0 || basis > 4) basis = 1;
+	
+	bool neg = false;
+	bool isleap = false;
+	long int days, years;
+	
+	long int day1 = i_day, month1 = i_month, year1 = i_year;
+	long int day2 = date.day(), month2 = date.month(), year2 = date.year();
+
+	if(year1 > year2 || (year1 == year2 && month1 > month2) || (year1 == year2 && month1 == month2 && day1 > day2)) {
+		int year3 = year1, month3 = month1, day3 = day1;
+		year1 = year2; month1 = month2; day1 = day2;
+		year2 = year3; month2 = month3; day2 = day3;
+		neg = true;
+	}
+
+	years = year2  - year1;
+	days = day2 - day1;
+
+	isleap = isLeapYear(year1);
+
+	switch(basis) {
+		case 0: {
+			nr.set(years, 1);
+			nr *= 12;
+			nr += (month2 - month1);
+			nr *= 30;
+			nr += days;
+			if(date_func) {
+				if(month1 == 2 && ((day1 == 28 && !isleap) || (day1 == 29 && isleap)) && !(month2 == month1 && day1 == day2 && year1 == year2)) {
+					if(isleap) nr -= 1;
+					else nr -= 2;
+				} else if(day1 == 31 && day2 < 31) {
+					nr++;
+				}
+			} else {
+				if(month1 == 2 && month2 != 2 && year1 == year2) {
+					if(isleap) nr -= 1;
+					else nr -= 2;
+				}
+			}
+			break;
+		}
+		case 1: {}
+		case 2: {}
+		case 3: {
+			int month4 = month2;
+			bool b;
+			if(years > 0) {
+				month4 = 12;
+				b = true;
+			} else {
+				b = false;
+			}
+			nr.set(days, 1);
+			for(; month1 < month4 || b; month1++) {
+				if(month1 > month4 && b) {
+					b = false;
+					month1 = 1;
+					month4 = month2;
+					if(month1 == month2) break;
+				}
+				if(!b) {
+					nr += daysPerMonth(month1, year2);
+				} else {
+					nr += daysPerMonth(month1, year1);
+				}
+			}
+			if(years == 0) break;
+			for(year1 += 1; year1 < year2; year1++) {
+				if(isLeapYear(year1)) nr += 366;
+				else nr += 365;
+			} 
+			break;
+		} 
+		case 4: {
+			nr.set(years, 1);
+			nr *= 12;
+			nr += (month2 - month1);
+			if(date_func) {
+				if(day2 == 31 && day1 < 31) days--;
+				if(day1 == 31 && day2 < 31) days++;
+			}
+			nr *= 30;
+			nr += days;
+			break;
+		}
+	}
+	if(neg) nr.negate();
+	return nr;
+}
+Number QalculateDate::yearsTo(const QalculateDate &date, int basis, bool date_func) const {
+	Number nr;
+	if(basis < 0 || basis > 4) basis = 1;
+	if(basis == 1) {
+		if(date.year() == i_year) {
+			nr.set(daysTo(date, basis, date_func));
+			nr.divide(daysPerYear(i_year, basis));
+		} else {
+			bool neg = false;
+			long int day1 = i_day, month1 = i_month, year1 = i_year;
+			long int day2 = date.day(), month2 = date.month(), year2 = date.year();
+			if(year1 > year2) {
+				int year3 = year1, month3 = month1, day3 = day1;
+				year1 = year2; month1 = month2; day1 = day2;
+				year2 = year3; month2 = month3; day2 = day3;
+				neg = true;
+			}
+			for(int month = 12; month > month1; month--) {
+				nr += daysPerMonth(month, year1);
+			}
+			nr += daysPerMonth(month1, year1) - day1 + 1;
+			for(int month = 1; month < month2; month++) {
+				nr += daysPerMonth(month, year2);
+			}
+			nr += day2 - 1;
+			Number days_of_years;
+			for(int year = year1; year <= year2; year++) {
+				days_of_years += daysPerYear(year, basis);
+				if(year != year1 && year != year2) {
+					nr += daysPerYear(year, basis);
+				}
+			}
+			days_of_years /= year2 + 1 - year1;
+			nr /= days_of_years;
+			if(neg) nr.negate();
+		}
+	} else {
+		nr.set(daysTo(date, basis, date_func));
+		nr.divide(daysPerYear(0, basis));
+	}
+	return nr;
+}
 

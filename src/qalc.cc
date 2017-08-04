@@ -59,6 +59,7 @@ bool rpn_mode;
 bool use_readline = true;
 bool interactive_mode;
 bool ask_questions;
+bool canfetch = true;
 long int i_maxtime = 0;
 struct timeval t_end;
 
@@ -126,20 +127,36 @@ bool is_answer_variable(Variable *v) {
 
 bool equalsIgnoreCaseFirst(const string &str1, const char *str2) {
 	if(str1.length() < 1 || strlen(str2) < 1) return false;
-	if(str1[0] < 0 && str1.length() > 1) {
-		if(str2[0] >= 0) return false;
-		size_t i2 = 1;
-		while(i2 < str1.length() && str1[i2] < 0) {
-			if(i2 >= strlen(str2) || str2[i2] >= 0) return false;
-			i2++;
+	if((str1[0] < 0 && str1.length() > 1) || (str2[0] < 0 && strlen(str2) > 1)) {
+		size_t iu1 = 1, iu2 = 1;
+		if(str1[0] < 0) {
+			while(iu1 < str1.length() && str1[iu1] < 0) {
+				iu1++;
+			}
 		}
-		if(i2 != str1.length()) return false;
-		char *gstr1 = utf8_strdown(str1.c_str(), i2);
-		char *gstr2 = utf8_strdown(str2, i2);
-		if(!gstr1 || !gstr2) return false;
-		if(strcmp(gstr1, gstr2) != 0) return false;
-		free(gstr1);
-		free(gstr2);
+		if(str2[0] < 0) {
+			while(iu2 < strlen(str2) && str2[iu2] < 0) {
+				iu2++;
+			}
+		}
+		bool isequal = (iu1 == iu2);
+		if(isequal) {
+			for(size_t i = 0; i < iu1; i++) {
+				if(str1[i] != str2[i]) {
+					isequal = false;
+					break;
+				}
+			}
+		}
+		if(!isequal) {
+			char *gstr1 = utf8_strdown(str1.c_str(), iu1);
+			char *gstr2 = utf8_strdown(str2, iu2);
+			if(!gstr1 || !gstr2) return false;
+			bool b = strcmp(gstr1, gstr2) == 0;
+			free(gstr1);
+			free(gstr2);
+			return b;
+		}
 	} else if(str1.length() != 1 || (str1[0] != str2[0] && !((str1[0] >= 'a' && str1[0] <= 'z') && str1[0] - 32 == str2[0]) && !((str1[0] <= 'Z' && str1[0] >= 'A') && str1[0] + 32 == str2[0]))) {
 		return false;
 	}
@@ -961,8 +978,10 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("where options are:"));
 			fputs("\n\t-b, -base", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("set the result number base"));
+#ifdef HAVE_LIBCURL
 			fputs("\n\t-e, -exrates\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("update exchange rates"));
+#endif
 			fputs("\n\t-f, -file", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("FILE"), stdout); fputs("\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("executes commands from a file first"));
 			fputs("\n\t-i, -interactive\n", stdout);
@@ -1003,8 +1022,10 @@ int main(int argc, char *argv[]) {
 			enable_unicode = 1;
 		} else if(!calc_arg_begun && strcmp(argv[i], "+u8") == 0) {
 			enable_unicode = 0;
+#ifdef HAVE_LIBCURL
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-exrates") == 0 || strcmp(argv[i], "--exrates") == 0 || strcmp(argv[i], "-e") == 0)) {
 			fetch_exchange_rates_at_startup = true;
+#endif
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-base") == 0 || strcmp(argv[i], "--base") == 0 || strcmp(argv[i], "-b") == 0)) {
 			i++;
 			string set_base_str = "base ";
@@ -1091,7 +1112,7 @@ int main(int argc, char *argv[]) {
 	mstruct = new MathStructure();
 	parsed_mstruct = new MathStructure();
 
-	bool canfetch = CALCULATOR->canFetch();
+	canfetch = CALCULATOR->canFetch();
 
 	string str;
 #ifdef HAVE_LIBREADLINE	
@@ -1104,7 +1125,7 @@ int main(int argc, char *argv[]) {
 	if(fetch_exchange_rates_at_startup && canfetch) {
 		CALCULATOR->fetchExchangeRates(15);
 	}
-	if(load_global_defs && load_currencies) {
+	if(load_global_defs && load_currencies && canfetch) {
 		CALCULATOR->setExchangeRatesWarningEnabled(!interactive_mode && (!command_file.empty() || (result_only && !calc_arg.empty())));
 		if(!CALCULATOR->loadExchangeRates() && !fetch_exchange_rates_at_startup && first_time && canfetch && ask_questions) {
 			if(ask_question(_("You need the download exchange rates to be able to convert between different currencies.\nYou can later get current exchange rates with the \"exrates\" command.\nDo you want to fetch exchange rates now from the Internet (default: yes)?"), true)) {
@@ -1565,13 +1586,7 @@ int main(int argc, char *argv[]) {
 				if(!rpn_mode) CALCULATOR->clearRPNStack();
 			}
 		//qalc command
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "exrates", _("exrates"))) {
-			str = str.substr(ispace + 1, slen - (ispace + 1));
-			remove_blank_ends(str);
-			CALCULATOR->fetchExchangeRates(15, str);
-			CALCULATOR->loadExchangeRates();
-		//qalc command
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exrates", _("exrates"))) {
+		} else if(canfetch && EQUALS_IGNORECASE_AND_LOCAL(str, "exrates", _("exrates"))) {
 			CALCULATOR->fetchExchangeRates(15);
 			CALCULATOR->loadExchangeRates();
 		//qalc command
@@ -2031,10 +2046,9 @@ int main(int argc, char *argv[]) {
 			FPUTS_UNICODE(_("base"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("BASE")); CHECK_IF_SCREEN_FILLED			
 			FPUTS_UNICODE(_("delete"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("NAME")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("exact")); CHECK_IF_SCREEN_FILLED
-			FPUTS_UNICODE(_("exrates"), stdout);			
-			if(!CALCULATOR->hasGVFS()) {
-				fputs(" ", stdout); FPUTS_UNICODE("[", stdout); fputs(_("WGET ARGUMENTS"), stdout); FPUTS_UNICODE("]", stdout);
-			}			
+			if(canfetch) {
+				FPUTS_UNICODE(_("exrates"), stdout);
+			}
 			puts(""); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("factor")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("function"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("EXPRESSION")); CHECK_IF_SCREEN_FILLED
@@ -2638,7 +2652,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Example: info sin."));
 				puts("");
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exrates", _("exrates"))) {
+			} else if(canfetch && EQUALS_IGNORECASE_AND_LOCAL(str, "exrates", _("exrates"))) {
 				puts("");
 				PUTS_UNICODE(_("Downloads current exchange rates from the Internet."));
 				puts("");

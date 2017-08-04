@@ -1,3 +1,9 @@
+2017-08-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Rewritten date functions with support for larger numbers
+	* Check if variable exists in save (:=) function
+	* Fix case insensitive comparison where upper and lower case string have different length
+
 2017-08-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Use libcurl instead of gvfs/wget

@@ -979,7 +979,10 @@ class Calculator {
 	//@}
 	
 	/** @name Functions for exchange rates. */
-	///Deprecated: not needed anymore
+	/** Checks if able to downloading exchange rates from the Internet (using libcurl).
+	*
+	* @returns true if exchange rates can downloaded (if libcurl is available).
+	*/
 	bool canFetch();
 	///Deprecated: gvfs is not needed anymore.
 	bool hasGVFS();
@@ -1149,9 +1152,9 @@ class QalculateDate {
 		int weekday() const;
 		int week(bool start_sunday = false) const;
 		int yearday() const;
-		long int timestamp() const;
-		long int daysTo(const QalculateDate &date, int basis, bool date_func = true);
-		Number yearsTo(const QalculateDate &date, int basis, bool date_func = true);
+		Number timestamp() const;
+		Number daysTo(const QalculateDate &date, int basis = 1, bool date_func = true) const;
+		Number yearsTo(const QalculateDate &date, int basis = 1, bool date_func = true) const;
 };
 
 

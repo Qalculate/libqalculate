@@ -2394,12 +2394,7 @@ int TimestampFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	Number nr(date.timestamp(), 1);
-	if(nr.isMinusOne()) {
-		CALCULATOR->error(true, _("The timestamp value for the date %s is too large or small for %s()."), vargs[0].print().c_str(), preferredDisplayName().name.c_str(), NULL);
-		return 0;
-	}
-	mstruct.set(nr);	
+	mstruct.set(date.timestamp());
 	return 1;
 }
 TimestampToDateFunction::TimestampToDateFunction() : MathFunction("stamptodate", 1) {
@@ -2481,15 +2476,13 @@ DaysFunction::DaysFunction() : MathFunction("days", 2, 4) {
 }
 int DaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDate date1, date2;
-	if(!date1.set(vargs[0].symbol()) || !date2.set(vargs[0].symbol())) {
+	if(!date1.set(vargs[0].symbol()) || !date2.set(vargs[1].symbol())) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	long int days = date1.daysTo(date2, vargs[2].number().intValue(), vargs[3].number().isZero());
-	if(days < 0) {
-		days = -days;
-	}
-	mstruct.set(days, 1);
+	Number days(date1.daysTo(date2, vargs[2].number().intValue(), vargs[3].number().isZero()));
+	days.abs();
+	mstruct.set(days);
 	return 1;
 }
 YearFracFunction::YearFracFunction() : MathFunction("yearfrac", 2, 4) {
@@ -2506,11 +2499,13 @@ YearFracFunction::YearFracFunction() : MathFunction("yearfrac", 2, 4) {
 }
 int YearFracFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDate date1, date2;
-	if(!date1.set(vargs[0].symbol()) || !date2.set(vargs[0].symbol())) {
+	if(!date1.set(vargs[0].symbol()) || !date2.set(vargs[1].symbol())) {
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(date1.yearsTo(date2, vargs[2].number().intValue(), vargs[3].number().isZero()));
+	Number years(date1.yearsTo(date2, vargs[2].number().intValue(), vargs[3].number().isZero()));
+	years.abs();
+	mstruct.set(years);
 	return 1;
 }
 WeekFunction::WeekFunction() : MathFunction("week", 0, 2) {
@@ -3250,7 +3245,30 @@ SaveFunction::SaveFunction() : MathFunction("save", 2, 4) {
 int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	mstruct.eval(eo);
-	CALCULATOR->addVariable(new KnownVariable(vargs[2].symbol(), vargs[1].symbol(), mstruct, vargs[3].symbol()));
+	if(!CALCULATOR->variableNameIsValid(vargs[1].symbol())) {
+		CALCULATOR->error(true, _("Invalid variable name (%s)."), vargs[1].symbol(), NULL);
+		return -1;
+	}
+	if(CALCULATOR->variableNameTaken(vargs[1].symbol())) {
+		Variable *v = CALCULATOR->getActiveVariable(vargs[1].symbol());
+		if(v && v->isLocal() && v->isKnown()) {
+			if(!vargs[2].symbol().empty()) v->setCategory(vargs[2].symbol());
+			if(!vargs[3].symbol().empty()) v->setTitle(vargs[3].symbol());
+			((KnownVariable*) v)->set(mstruct);
+			if(v->countNames() == 0) {
+				ExpressionName ename(vargs[1].symbol());
+				ename.reference = true;
+				v->setName(ename, 1);
+			} else {
+				v->setName(vargs[1].symbol(), 1);
+			}
+		} else {
+			CALCULATOR->error(true, _("An global unit or variable with the same name already exists."), NULL);
+			return -1;
+		}
+	} else {
+		CALCULATOR->addVariable(new KnownVariable(vargs[2].symbol(), vargs[1].symbol(), mstruct, vargs[3].symbol()));
+	}
 	CALCULATOR->saveFunctionCalled();
 	return 1;
 }

@@ -21,10 +21,10 @@ libqalculateinclude_HEADERS = \
 libqalculate_la_LDFLAGS = -version-info $(QALCULATE_CURRENT):$(QALCULATE_REVISION):$(QALCULATE_AGE) -no-undefined
 
 libqalculate_la_LIBADD = \
-	@PKGS_LIBS@
+	@LIBCURL_LIBS@ @LIBXML_LIBS@ @ICU_LIBS@
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-	@PKGS_CFLAGS@
+	@LIBCURL_CFLAGS@  @LIBXML_CFLAGS@  @ICU_CFLAGS@

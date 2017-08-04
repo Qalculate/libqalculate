@@ -101,12 +101,25 @@ AC_LANG([C++])
 
 AC_CHECK_HEADERS([unordered_map])
 
-PKG_CHECK_MODULES(PKGS, [
-	libcurl
-	libxml-2.0 >= 2.3.8
-	])
-AC_SUBST(PKGS_CFLAGS)
-AC_SUBST(PKGS_LIBS)
+AC_ARG_WITH([libcurl], AS_HELP_STRING([--with-libcurl], [support for built-in retrieval of exchange rates]), [], [with_libcurl=yes])
+AS_IF([test "x$with_libcurl" = "xyes"], [
+	PKG_CHECK_MODULES([LIBCURL], [libcurl])
+	AC_DEFINE([HAVE_LIBCURL], [1], [Use libcurl])
+	AC_SUBST(LIBCURL_CFLAGS)
+	AC_SUBST(LIBCURL_LIBS)
+])
+
+AC_ARG_WITH([icu], AS_HELP_STRING([--with-icu], [support for case-insensitive unicode strings]), [], [with_icu=yes])
+AS_IF([test "x$with_icu" = "xyes"], [
+	PKG_CHECK_MODULES([ICU], [icu-uc])
+	AC_DEFINE([HAVE_ICU], [1], [Use icu])
+	AC_SUBST(ICU_CFLAGS)
+	AC_SUBST(ICU_LIBS)
+])
+
+PKG_CHECK_MODULES(LIBXML, [libxml-2.0 >= 2.3.8])
+AC_SUBST(LIBXML_CFLAGS)
+AC_SUBST(LIBXML_LIBS)
 
 dnl  --------------------------------
 dnl | check for readline            |-----------------------------------------

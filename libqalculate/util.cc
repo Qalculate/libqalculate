@@ -18,7 +18,9 @@
 #include <string.h>
 #include <time.h>
 #include <iconv.h>
-#include <unicode/ucasemap.h>
+#ifdef HAVE_ICU
+#	include <unicode/ucasemap.h>
+#endif
 #include <fstream>
 #ifdef _WIN32
 #	include <windows.h>
@@ -37,7 +39,10 @@ bool eqstr::operator()(const char *s1, const char *s2) const {
 	return strcmp(s1, s2) == 0;
 }
 
-UCaseMap *ucm = NULL;
+#ifdef HAVE_ICU
+	UCaseMap *ucm = NULL;
+#endif
+
 char buffer[20000];
 
 void sleep_ms(int milliseconds) {
@@ -53,28 +58,6 @@ void sleep_ms(int milliseconds) {
 #endif
 }
 
-/*bool s2date(string str, void *gtime) {
-	return true;
-	if(strptime(str.c_str(), "%x", time) || strptime(str.c_str(), "%Ex", time) || strptime(str.c_str(), "%Y-%m-%d", time) || strptime(str.c_str(), "%m/%d/%Y", time) || strptime(str.c_str(), "%m/%d/%y", time)) {
-		return true;
-	}*/
-	//char *date_format = nl_langinfo(D_FMT);
-/*	if(equalsIgnoreCase(str, _("today")) || equalsIgnoreCase(str, "today") || equalsIgnoreCase(str, _("now")) || equalsIgnoreCase(str, "now")) {
-		g_date_set_time_t((GDate*) gtime, time(NULL));
-		return true;
-	} else if(equalsIgnoreCase(str, _("tomorrow")) || equalsIgnoreCase(str, "tomorrow")) {
-		g_date_set_time_t((GDate*) gtime, time(NULL));
-		g_date_add_days((GDate*) gtime, 1);
-		return true;
-	} else if(equalsIgnoreCase(str, _("yesterday")) || equalsIgnoreCase(str, "yesterday")) {
-		g_date_set_time_t((GDate*) gtime, time(NULL));
-		g_date_subtract_days((GDate*) gtime, 1);
-		return true;
-	}
-	g_date_set_parse((GDate*) gtime, str.c_str());
-	return g_date_valid((GDate*) gtime);
-}*/
-
 void now(int &hour, int &min, int &sec) {
 	time_t t = time(NULL);
 	struct tm *lt = localtime(&t);
@@ -82,201 +65,6 @@ void now(int &hour, int &min, int &sec) {
 	min = lt->tm_min;
 	sec = lt->tm_sec;
 }
-
-/*int week(string str, bool start_sunday) {
-	remove_blank_ends(str);
-	GDate *gtime = g_date_new();
-	int week = -1;
-	if(s2date(str, gtime)) {
-		if(start_sunday) {
-			week = g_date_get_sunday_week_of_year(gtime);
-		} else {
-			if(g_date_get_month(gtime) == G_DATE_DECEMBER && g_date_get_day(gtime) >= 29 && g_date_get_weekday(gtime) <= g_date_get_day(gtime) - 28) {
-				week = 1;
-			} else {
-				calc_week_1:
-				int day = g_date_get_day_of_year(gtime);
-				g_date_set_day(gtime, 1);
-				g_date_set_month(gtime, G_DATE_JANUARY);
-				int wday = g_date_get_weekday(gtime);
-				day -= (8 - wday);
-				if(wday <= 4) {
-					week = 1;
-				} else {
-					week = 0;
-				}
-				if(day > 0) {
-					day--;
-					week += day / 7 + 1;
-				}
-				if(week == 0) {
-					int year = g_date_get_year(gtime);
-					g_date_set_dmy(gtime, 31, G_DATE_DECEMBER, year - 1);
-					goto calc_week_1;
-				}
-			}
-		}
-	}
-	g_date_free(gtime);
-	return week;
-}
-int weekday(string str) {
-	remove_blank_ends(str);
-	GDate *gtime = g_date_new();
-	int day = -1;
-	if(s2date(str, gtime)) {
-		day = g_date_get_weekday(gtime);
-	}
-	g_date_free(gtime);
-	return day;
-}
-int yearday(string str) {
-	remove_blank_ends(str);
-	GDate *gtime = g_date_new();
-	int day = -1;
-	if(s2date(str, gtime)) {
-		day = g_date_get_day_of_year(gtime);
-	}
-	g_date_free(gtime);
-	return day;
-}*/
-
-/*Number yearsBetweenDates(string date1, string date2, int basis, bool date_func) {
-	if(basis < 0 || basis > 4) return -1;
-	if(basis == 1) {
-		int day1, day2, month1, month2, year1, year2;
-		if(!s2date(date1, year1, month1, day1)) {
-  			return -1;
-		}
-		if(!s2date(date2, year2, month2, day2)) {
-  			return -1;
-		}		
-		if(year1 > year2 || (year1 == year2 && month1 > month2) || (year1 == year2 && month1 == month2 && day1 > day2)) {
-			int year3 = year1, month3 = month1, day3 = day1;
-			year1 = year2; month1 = month2; day1 = day2;
-			year2 = year3; month2 = month3; day2 = day3;		
-		}		
-		int days = 0;
-		if(year1 == year2) {
-			days = daysBetweenDates(year1, month1, day1, year2, month2, day2, basis, date_func);
-			if(days < 0) return -1;
-			return Number(days, daysPerYear(year1, basis));
-		}
-		for(int month = 12; month > month1; month--) {
-			days += daysPerMonth(month, year1);
-		}
-		days += daysPerMonth(month1, year1) - day1 + 1;
-		for(int month = 1; month < month2; month++) {
-			days += daysPerMonth(month, year2);
-		}
-		days += day2 - 1;
-		int days_of_years = 0;
-		for(int year = year1; year <= year2; year++) {
-			days_of_years += daysPerYear(year, basis);
-			if(year != year1 && year != year2) {
-				days += daysPerYear(year, basis);
-			}
-		}
-		Number year_frac(days_of_years, year2 + 1 - year1);
-		Number nr(days);
-		nr /= year_frac;
-		return nr;
-	} else {
-		int days = daysBetweenDates(date1, date2, basis, date_func);
-		if(days < 0) return -1;
-		return Number(days, daysPerYear(0, basis));	
-	}
-	return -1;
-}
-int daysBetweenDates(string date1, string date2, int basis, bool date_func) {
-	int day1, day2, month1, month2, year1, year2;
-	if(!s2date(date1, year1, month1, day1)) {
-  		return -1;
-	}
-	if(!s2date(date2, year2, month2, day2)) {
-  		return -1;
-	}
-	return daysBetweenDates(year1, month1, day1, year2, month2, day2, basis, date_func);	
-}
-int daysBetweenDates(int year1, int month1, int day1, int year2, int month2, int day2, int basis, bool date_func) {
-	if(basis < 0 || basis > 4) return -1;
-	bool isleap = false;
-	int days, months, years;
-
-	if(year1 > year2 || (year1 == year2 && month1 > month2) || (year1 == year2 && month1 == month2 && day1 > day2)) {
-		int year3 = year1, month3 = month1, day3 = day1;
-		year1 = year2; month1 = month2; day1 = day2;
-		year2 = year3; month2 = month3; day2 = day3;		
-	}
-
-	years = year2  - year1;
-	months = month2 - month1 + years * 12;
-	days = day2 - day1;
-
-	isleap = isLeapYear(year1);
-
-	switch(basis) {
-		case 0: {
-			if(date_func) {
-				if(month1 == 2 && ((day1 == 28 && !isleap) || (day1 == 29 && isleap)) && !(month2 == month1 && day1 == day2 && year1 == year2)) {
-					if(isleap) return months * 30 + days - 1;
-					else return months * 30 + days - 2;
-				}
-				if(day1 == 31 && day2 < 31) days++;
-			} else {
-				if(month1 == 2 && month2 != 2 && year1 == year2) {
-					if(isleap) return months * 30 + days - 1;
-					else return months * 30 + days - 2;
-				}			
-			}
-			return months * 30 + days;
-		}
-		case 1: {}
-		case 2: {}		
-		case 3: {
-			int month4 = month2;
-			bool b;
-			if(years > 0) {
-				month4 = 12;
-				b = true;
-			} else {
-				b = false;
-			}
-			for(; month1 < month4 || b; month1++) {
-				if(month1 > month4 && b) {
-					b = false;
-					month1 = 1;
-					month4 = month2;
-					if(month1 == month2) break;
-				}
-				if(!b) {
-					days += daysPerMonth(month1, year2);
-				} else {
-					days += daysPerMonth(month1, year1);
-				}
-			}
-			if(years == 0) return days;
-			//if(basis == 1) {
-				for(year1 += 1; year1 < year2; year1++) {
-					if(isLeapYear(year1)) days += 366;
-					else days += 365;
-				} 
-				return days;
-			//}
-			//if(basis == 2) return (years - 1) * 360 + days;		
-			//if(basis == 3) return (years - 1) * 365 + days;
-		} 
-		case 4: {
-			if(date_func) {
-				if(day2 == 31 && day1 < 31) days--;
-				if(day1 == 31 && day2 < 31) days++;
-			}
-			return months * 30 + days;
-		}
-	}
-	return -1;
-	
-}*/
 
 string& gsub(const string &pattern, const string &sub, string &str) {
 	size_t i = str.find(pattern);
@@ -537,22 +325,42 @@ bool text_length_is_one(const string &str) {
 }
 
 bool equalsIgnoreCase(const string &str1, const string &str2) {
-	if(str1.length() != str2.length()) return false;
-	for(size_t i = 0; i < str1.length(); i++) {
-		if(str1[i] < 0 && i + 1 < str1.length()) {
-			if(str2[i] >= 0) return false;
-			int i2 = 1;
-			while(i2 + i < str1.length() && str1[i2 + i] < 0) {
-				if(str2[i2 + i] >= 0) return false;
-				i2++;
+	if(str1.empty() || str2.empty()) return false;
+	for(size_t i1 = 0, i2 = 0; i1 < str1.length() || i2 < str2.length(); i1++, i2++) {
+		if(i1 >= str1.length() || i2 >= str2.length()) return false;
+		if((str1[i1] < 0 && i1 + 1 < str1.length()) || (str2[i2] < 0 && i2 + 1 < str2.length())) {
+			size_t iu1 = 1, iu2 = 1;
+			if(str1[i1] < 0) {
+				while(iu1 + i1 < str1.length() && str1[i1 + iu1] < 0) {
+					iu1++;
+				}
 			}
-			char *gstr1 = utf8_strdown(str1.c_str() + (sizeof(char) * i), i2);
-			char *gstr2 = utf8_strdown(str2.c_str() + (sizeof(char) * i), i2);
-			if(!gstr1 || !gstr2 || strcmp(gstr1, gstr2) != 0) return false;
-			free(gstr1);
-			free(gstr2);
-			i += i2 - 1;
-		} else if(str1[i] != str2[i] && !((str1[i] >= 'a' && str1[i] <= 'z') && str1[i] - 32 == str2[i]) && !((str1[i] <= 'Z' && str1[i] >= 'A') && str1[i] + 32 == str2[i])) {
+			if(str2[i2] < 0) {
+				while(iu2 + i2 < str2.length() && str2[i2 + iu2] < 0) {
+					iu2++;
+				}
+			}
+			bool isequal = (iu1 == iu2);
+			if(isequal) {
+				for(size_t i = 0; i < iu1; i++) {
+					if(str1[i1 + i] != str2[i2 + i]) {
+						isequal = false;
+						break;
+					}
+				}
+			}
+			if(!isequal) {
+				char *gstr1 = utf8_strdown(str1.c_str() + (sizeof(char) * i1));
+				char *gstr2 = utf8_strdown(str2.c_str() + (sizeof(char) * i2));
+				if(!gstr1 || !gstr2) return false;
+				bool b = strcmp(gstr1, gstr2) == 0;
+				free(gstr1);
+				free(gstr2);
+				return b;
+			}
+			i1 += iu1 - 1;
+			i2 += iu2 - 1;
+		} else if(str1[i1] != str2[i2] && !((str1[i1] >= 'a' && str1[i1] <= 'z') && str1[i1] - 32 == str2[i2]) && !((str1[i1] <= 'Z' && str1[i1] >= 'A') && str1[i1] + 32 == str2[i2])) {
 			return false;
 		}
 	}
@@ -560,22 +368,42 @@ bool equalsIgnoreCase(const string &str1, const string &str2) {
 }
 
 bool equalsIgnoreCase(const string &str1, const char *str2) {
-	if(str1.length() != strlen(str2)) return false;
-	for(size_t i = 0; i < str1.length(); i++) {
-		if(str1[i] < 0 && i + 1 < str1.length()) {
-			if(str2[i] >= 0) return false;
-			int i2 = 1;
-			while(i2 + i < str1.length() && str1[i2 + i] < 0) {
-				if(str2[i2 + i] >= 0) return false;
-				i2++;
+	if(str1.empty() || strlen(str2) == 0) return false;
+	for(size_t i1 = 0, i2 = 0; i1 < str1.length() || i2 < strlen(str2); i1++, i2++) {
+		if(i1 >= str1.length() || i2 >= strlen(str2)) return false;
+		if((str1[i1] < 0 && i1 + 1 < str1.length()) || (str2[i2] < 0 && i2 + 1 < strlen(str2))) {
+			size_t iu1 = 1, iu2 = 1;
+			if(str1[i1] < 0) {
+				while(iu1 + i1 < str1.length() && str1[i1 + iu1] < 0) {
+					iu1++;
+				}
 			}
-			char *gstr1 = utf8_strdown(str1.c_str() + (sizeof(char) * i), i2);
-			char *gstr2 = utf8_strdown(str2 + (sizeof(char) * i), i2);
-			if(!gstr1 || !gstr2 || strcmp(gstr1, gstr2) != 0) return false;
-			free(gstr1);
-			free(gstr2);
-			i += i2 - 1;
-		} else if(str1[i] != str2[i] && !((str1[i] >= 'a' && str1[i] <= 'z') && str1[i] - 32 == str2[i]) && !((str1[i] <= 'Z' && str1[i] >= 'A') && str1[i] + 32 == str2[i])) {
+			if(str2[i2] < 0) {
+				while(iu2 + i2 < strlen(str2) && str2[i2 + iu2] < 0) {
+					iu2++;
+				}
+			}
+			bool isequal = (iu1 == iu2);
+			if(isequal) {
+				for(size_t i = 0; i < iu1; i++) {
+					if(str1[i1 + i] != str2[i2 + i]) {
+						isequal = false;
+						break;
+					}
+				}
+			}
+			if(!isequal) {
+				char *gstr1 = utf8_strdown(str1.c_str() + (sizeof(char) * i1));
+				char *gstr2 = utf8_strdown(str2 + (sizeof(char) * i2));
+				if(!gstr1 || !gstr2) return false;
+				bool b = strcmp(gstr1, gstr2) == 0;
+				free(gstr1);
+				free(gstr2);
+				return b;
+			}
+			i1 += iu1 - 1;
+			i2 += iu2 - 1;
+		} else if(str1[i1] != str2[i2] && !((str1[i1] >= 'a' && str1[i1] <= 'z') && str1[i1] - 32 == str2[i2]) && !((str1[i1] <= 'Z' && str1[i1] >= 'A') && str1[i1] + 32 == str2[i2])) {
 			return false;
 		}
 	}
@@ -801,6 +629,7 @@ char *locale_to_utf8(const char *str) {
 	return dest;
 }
 char *utf8_strdown(const char *str, int l) {
+#ifdef HAVE_ICU
 	if(!ucm) return NULL;
 	UErrorCode err = U_ZERO_ERROR;
 	size_t inlength = l <= 0 ? strlen(str) : (size_t) l;
@@ -820,6 +649,9 @@ char *utf8_strdown(const char *str, int l) {
 	}
 	cout << u_errorName(err) << endl;
 	return NULL;
+#else
+	return NULL;
+#endif
 }
 
 #ifdef _WIN32

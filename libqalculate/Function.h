@@ -566,6 +566,7 @@ class DateArgument : public Argument {
   	DateArgument(string name_ = "", bool does_test = true, bool does_error = true);
 	DateArgument(const DateArgument *arg);
 	virtual ~DateArgument();
+	virtual void parse(MathStructure *mstruct, const string &str, const ParseOptions &po = default_parse_options) const;
 	virtual int type() const;
 	virtual Argument *copy() const;
 	virtual string print() const;
