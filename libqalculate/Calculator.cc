@@ -5911,16 +5911,16 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 
 bool Calculator::loadGlobalDefinitions() {
 	bool b = true;
-	if(!loadDefinitions(buildPath(getPackageDataDir(), "qalculate", "prefixes.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getPackageDataDir(), "qalculate", "currencies.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getPackageDataDir(), "qalculate", "units.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getPackageDataDir(), "qalculate", "functions.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getPackageDataDir(), "qalculate", "datasets.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getPackageDataDir(), "qalculate", "variables.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "prefixes.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "currencies.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "units.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "functions.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "datasets.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "variables.xml").c_str(), false)) b = false;
 	return b;
 }
 bool Calculator::loadGlobalDefinitions(string filename) {
-	return loadDefinitions(buildPath(getPackageDataDir(), "qalculate", filename).c_str(), false);
+	return loadDefinitions(buildPath(getGlobalDefinitionsDir(), filename).c_str(), false);
 }
 bool Calculator::loadGlobalPrefixes() {
 	return loadGlobalDefinitions("prefixes.xml");

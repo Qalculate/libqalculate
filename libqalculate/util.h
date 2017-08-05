@@ -85,6 +85,7 @@ void parse_qalculate_version(string qalculate_version, int *qalculate_version_nu
 string getOldLocalDir();
 string getLocalDir();
 string getPackageDataDir();
+string getGlobalDefinitionsDir();
 string getPackageLocaleDir();
 string getLocalDataDir();
 string getLocalTmpDir();

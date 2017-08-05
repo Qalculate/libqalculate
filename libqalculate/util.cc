@@ -539,9 +539,39 @@ string getPackageDataDir() {
 	datadir.resize(datadir.find_last_of('\\'));
 	if (datadir.substr(datadir.length() - 3) == "bin") {
 		datadir.resize(datadir.find_last_of('\\'));
+		datadir += "\\share";
+	} else if(datadir.substr(datadir.length() - 5) == ".libs") {
+		datadir.resize(datadir.find_last_of('\\'));
+		datadir.resize(datadir.find_last_of('\\'));
+		return datadir;
 	}
-	datadir += "\\share";
 	return datadir;
+#endif
+}
+
+string getGlobalDefinitionsDir() {
+#ifndef WIN32
+	return string(PACKAGE_DATA_DIR) + "/qalculate";
+#else
+	char exepath[MAX_PATH];
+	GetModuleFileName(NULL, exepath, MAX_PATH);
+	string datadir(exepath);
+	bool is_qalc = datadir.substr(datadir.length() - 8) == "qalc.exe";
+	datadir.resize(datadir.find_last_of('\\'));
+	if(datadir.substr(datadir.length() - 3) == "bin") {
+		datadir.resize(datadir.find_last_of('\\'));
+		datadir += "\\share\\qalculate";
+		return datadir;
+	} else if(datadir.substr(datadir.length() - 5) == ".libs") {
+		datadir.resize(datadir.find_last_of('\\'));
+		datadir.resize(datadir.find_last_of('\\'));
+		if(!is_qalc) {
+			datadir.resize(datadir.find_last_of('\\'));
+			datadir += "\\libqalculate";
+		}
+		return datadir + "\\data";
+	}
+	return datadir + "\\definitions";
 #endif
 }
 
@@ -549,7 +579,15 @@ string getPackageLocaleDir() {
 #ifndef WIN32
 	return PACKAGE_LOCALE_DIR;
 #else
-	return getPackageDataDir() + "\\locale";
+	char exepath[MAX_PATH];
+	GetModuleFileName(NULL, exepath, MAX_PATH);
+	string datadir(exepath);
+	datadir.resize(datadir.find_last_of('\\'));
+	if (datadir.substr(datadir.length() - 3) == "bin" || datadir.substr(datadir.length() - 5) == ".libs") {
+		datadir.resize(datadir.find_last_of('\\'));
+		return datadir + "\\share\\locale";
+	}
+	return datadir + "\\locale";
 #endif
 }
 

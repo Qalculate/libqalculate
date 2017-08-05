@@ -1,3 +1,7 @@
+2017-08-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fixes for MS Windows (now compiles, and runs without apparent issues, with MinGW)
+
 2017-08-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Rewritten date functions with support for larger numbers
