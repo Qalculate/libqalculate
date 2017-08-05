@@ -441,6 +441,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 			if(loadObjects(filepath.c_str(), true)) {
 				b = true;
 			} else {
+#ifndef _WIN32
 				string filepath_old = buildPath(getOldLocalDir(), "definitions", "datasets", sfile.substr(i + 1, sfile.length() - (i + 1)));
 				if(loadObjects(filepath_old.c_str(), true)) {
 					b = true;
@@ -451,15 +452,17 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 					removeDir(buildPath(getOldLocalDir(), "definitions", "datasets"));
 					removeDir(buildPath(getOldLocalDir(), "definitions"));
 				}
+#endif
 			}
 		}
 		return b;
 	} else {
-		bool b = loadObjects(buildPath(getPackageDataDir(), sfile, NULL).c_str(), false);
+		bool b = loadObjects(buildPath(getPackageDataDir(), "qalculate", sfile, NULL).c_str(), false);
 		string filepath = buildPath(getLocalDataDir(), "definitions", "datasets", sfile);
 		if(loadObjects(filepath.c_str(), true)) {
 			b = true;
 		} else {
+#ifndef _WIN32
 			string filepath_old = buildPath(getOldLocalDir(), "definitions", "datasets", sfile);
 			if(loadObjects(filepath_old.c_str(), true)) {
 				b = true;
@@ -470,6 +473,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 				removeDir(buildPath(getOldLocalDir(), "definitions", "datasets"));
 				removeDir(buildPath(getOldLocalDir(), "definitions"));
 			}
+#endif
 		}
 		return b;
 	}

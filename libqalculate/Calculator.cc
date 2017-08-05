@@ -2226,7 +2226,6 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 	return false;
 }
 MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
-
 	string str2;
 	if(make_to_division) separateToExpression(str, str2, eo, true);
 	Unit *u = NULL;
@@ -2242,7 +2241,6 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		}
 		to_struct->setUndefined();
 	}
-	
 	MathStructure mstruct;
 	current_stage = MESSAGE_STAGE_PARSING;
 	parse(&mstruct, str, eo.parse_options);
@@ -2255,7 +2253,6 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	}
 	current_stage = MESSAGE_STAGE_CALCULATION;
 	mstruct.eval(eo);
-	
 	current_stage = MESSAGE_STAGE_UNSET;
 	if(aborted() || !mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
 	if(u) {
@@ -5914,16 +5911,16 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 
 bool Calculator::loadGlobalDefinitions() {
 	bool b = true;
-	if(!loadDefinitions(buildPath(getPackageDataDir(), "prefixes.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getPackageDataDir(), "currencies.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getPackageDataDir(), "units.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getPackageDataDir(), "functions.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getPackageDataDir(), "datasets.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getPackageDataDir(), "variables.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getPackageDataDir(), "qalculate", "prefixes.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getPackageDataDir(), "qalculate", "currencies.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getPackageDataDir(), "qalculate", "units.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getPackageDataDir(), "qalculate", "functions.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getPackageDataDir(), "qalculate", "datasets.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getPackageDataDir(), "qalculate", "variables.xml").c_str(), false)) b = false;
 	return b;
 }
 bool Calculator::loadGlobalDefinitions(string filename) {
-	return loadDefinitions(buildPath(getPackageDataDir(), filename).c_str(), false);
+	return loadDefinitions(buildPath(getPackageDataDir(), "qalculate", filename).c_str(), false);
 }
 bool Calculator::loadGlobalPrefixes() {
 	return loadGlobalDefinitions("prefixes.xml");
@@ -9018,6 +9015,7 @@ bool Calculator::loadExchangeRates() {
 	if(fileExists(filename)) {
 		doc = xmlParseFile(filename.c_str());
 	} else {
+#ifndef _WIN32
 		string filename_old = buildPath(getOldLocalDir(), "eurofxref-daily.xml");
 		if(fileExists(filename)) {
 			doc = xmlParseFile(filename_old.c_str());
@@ -9027,6 +9025,7 @@ bool Calculator::loadExchangeRates() {
 				removeDir(getOldLocalDir());
 			}
 		}
+#endif
 	}
 	if(!doc) return false;
 	cur = xmlDocGetRootElement(doc);
@@ -9066,7 +9065,11 @@ bool Calculator::loadExchangeRates() {
 	struct stat stats;
 	if(stat(filename.c_str(), &stats) == 0) {
 		if(exchange_rates_time >= stats.st_mtime) {
+#ifdef _WIN32
+			struct _utimbuf new_times;
+#else
 			struct utimbuf new_times;
+#endif
 			struct tm *temptm = localtime(&exchange_rates_time);
 			if(temptm) {
 				struct tm extm = *temptm;
@@ -9791,40 +9794,47 @@ string QalculateDate::toLocalString() const {
 long int QalculateDate::year() const {return i_year;}
 long int QalculateDate::month() const {return i_month;}
 long int QalculateDate::day() const {return i_day;}
-void QalculateDate::addDays(long int days) {
+bool QalculateDate::addDays(long int days) {
+	long int newday = i_day, newmonth = i_month, newyear = i_year;
 	if(days > 0) {
-		i_day += days;
-		while(i_day > daysPerYear(i_year)) {
-			i_day -= daysPerYear(i_year);
-			i_year++;
-			if(CALCULATOR && CALCULATOR->aborted()) return;
+		newday += days;
+		bool check_aborted = days > 1000000L;
+		while(newday > daysPerYear(newyear)) {
+			newday -= daysPerYear(newyear);
+			newyear++;
+			if(check_aborted && CALCULATOR && CALCULATOR->aborted()) return false;
 		}
-		while(i_day > daysPerMonth(i_month, i_year)) {
-			i_day -= daysPerMonth(i_month, i_year);
-			i_month++;
-			if(i_month > 12) {
-				i_year++;
-				i_month = 1;
+		while(newday > daysPerMonth(newmonth, newyear)) {
+			newday -= daysPerMonth(newmonth, newyear);
+			newmonth++;
+			if(newmonth > 12) {
+				newyear++;
+				newmonth = 1;
 			}
 		}
 	} else if(days < 0) {
-		i_day += days;
-		while(-i_day > daysPerYear(i_year - 1)) {
-			i_year--;
-			i_day += daysPerYear(i_year);
-			if(CALCULATOR && CALCULATOR->aborted()) return;
+		newday += days;
+		bool check_aborted = days < -1000000L;
+		while(-newday > daysPerYear(newyear - 1)) {
+			newyear--;
+			newday += daysPerYear(newyear);
+			if(check_aborted && CALCULATOR && CALCULATOR->aborted()) return false;
 		}
-		while(i_day < 0) {
-			i_month--;
-			if(i_month < 1) {
-				i_year--;
-				i_month = 12;
+		while(newday < 0) {
+			newmonth--;
+			if(newmonth < 1) {
+				newyear--;
+				newmonth = 12;
 			}
-			i_day += daysPerMonth(i_month, i_year);
+			newday += daysPerMonth(newmonth, newyear);
 		}
 	}
+	i_day = newday;
+	i_month = newmonth;
+	i_year = newyear;
+	return true;
 }
-void QalculateDate::addMonths(long int months) {
+bool QalculateDate::addMonths(long int months) {
 	i_year += months / 12;
 	i_month += months % 12;
 	if(i_month > 12) {
@@ -9842,8 +9852,9 @@ void QalculateDate::addMonths(long int months) {
 			i_year += 1;
 		}
 	}
+	return true;
 }
-void QalculateDate::addYears(long int years) {
+bool QalculateDate::addYears(long int years) {
 	i_year += years;
 	if(i_day > daysPerMonth(i_month, i_year)) {
 		i_day -= daysPerMonth(i_month, i_year);
@@ -9853,9 +9864,11 @@ void QalculateDate::addYears(long int years) {
 			i_year += 1;
 		}
 	}
+	return true;
 }
 int QalculateDate::weekday() const {
 	Number nr(daysTo(QalculateDate(2017, 7, 31)));
+	if(nr.isInfinite()) return -1;
 	nr.negate();
 	nr.rem(Number(7, 1));
 	if(nr.isNegative()) return 8 + nr.intValue();
@@ -9866,6 +9879,7 @@ int QalculateDate::week(bool start_sunday) const {
 		int yday = yearday();
 		QalculateDate date1(i_year, 1, 1);
 		int wday = date1.weekday() + 1;
+		if(wday < 0) return -1;
 		if(wday == 8) wday = 1;
 		yday += (wday - 2);
 		int week = yday / 7 + 1;
@@ -9881,6 +9895,7 @@ int QalculateDate::week(bool start_sunday) const {
 		int day1 = date.yearday();
 		QalculateDate date1(date.year(), 1, 1);
 		int wday = date1.weekday();
+		if(wday < 0) return -1;
 		day1 -= (8 - wday);
 		if(wday <= 4) {
 			week1 = 1;
@@ -9984,7 +9999,12 @@ Number QalculateDate::daysTo(const QalculateDate &date, int basis, bool date_fun
 				}
 			}
 			if(years == 0) break;
+			bool check_aborted = years > 10000L;
 			for(year1 += 1; year1 < year2; year1++) {
+				if(check_aborted && CALCULATOR && CALCULATOR->aborted()) {
+					nr.setInfinity();
+					return nr;
+				}
 				if(isLeapYear(year1)) nr += 366;
 				else nr += 365;
 			} 
@@ -10031,8 +10051,13 @@ Number QalculateDate::yearsTo(const QalculateDate &date, int basis, bool date_fu
 				nr += daysPerMonth(month, year2);
 			}
 			nr += day2 - 1;
+			bool check_aborted = (year2 - year1) > 10000L;
 			Number days_of_years;
 			for(int year = year1; year <= year2; year++) {
+				if(check_aborted && CALCULATOR && CALCULATOR->aborted()) {
+					nr.setInfinity();
+					return nr;
+				}
 				days_of_years += daysPerYear(year, basis);
 				if(year != year1 && year != year2) {
 					nr += daysPerYear(year, basis);

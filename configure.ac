@@ -6,7 +6,7 @@ dnl  ----------------------
 dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
-AC_INIT([libqalculate], [1.0.0])
+AC_INIT([libqalculate], [1.0.99])
 AC_CONFIG_SRCDIR(libqalculate/Calculator.cc)
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
@@ -97,7 +97,7 @@ dnl  --------------------------------
 
 AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
 
-AC_CHECK_LIB(mpfr, mpfr_add, , [AC_MSG_ERROR([MPFR not found, see http://www.mpfr.org])])
+AC_CHECK_HEADERS(mpfr.h, [LIBS="$LIBS -lmpfr -lgmp"])
 
 AC_LANG([C++])
 
@@ -122,6 +122,8 @@ AS_IF([test "x$with_icu" = "xyes"], [
 PKG_CHECK_MODULES(LIBXML, [libxml-2.0 >= 2.3.8])
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
+
+AM_ICONV_LINK()
 
 dnl  --------------------------------
 dnl | check for readline            |-----------------------------------------

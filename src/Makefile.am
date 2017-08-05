@@ -19,6 +19,8 @@ qalc_LDADD = \
 	@LIBCURL_LIBS@ \
 	@ICU_LIBS@ \
 	@READLINE_LIBS@ \
+	@LTLIBINTL@ \
+	@LTLIBICONV@ \
 	../libqalculate/libqalculate.la
 
 defs2doc_SOURCES = defs2doc.cc
@@ -27,6 +29,8 @@ defs2doc_LDADD = \
 	@LIBXML_LIBS@ \
 	@LIBCURL_LIBS@ \
 	@ICU_LIBS@ \
+	@LTLIBINTL@ \
+	@LTLIBICONV@ \
 	../libqalculate/libqalculate.la
 
 #install-exec-local:

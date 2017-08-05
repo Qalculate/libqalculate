@@ -765,7 +765,6 @@ void list_defs(bool in_interactive, char list_type = 0) {
 	int rows, cols, rcount = 0; 
 	if(in_interactive && !cfile) {
 		rl_get_screen_size(&rows, &cols);
-		cout << cols << endl;
 	} else {
 		cols = 80;
 	}
@@ -2949,24 +2948,24 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		clock_gettime(CLOCK_MONOTONIC, &tv);
 		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
 #endif
-		while(b_busy && i_timeleft > 0) {
+		while(b_busy && view_thread->running && i_timeleft > 0) {
 			sleep_ms(10);
 			i_timeleft -= 10;
 		}
-		if(b_busy) {
+		if(b_busy && view_thread->running) {
 			on_abort_display();
 			i_maxtime = -1;
 		}
 	} else {
 
 		int i = 0;
-		while(b_busy && i < 75) {
+		while(b_busy && view_thread->running && i < 75) {
 			sleep_ms(10);
 			i++;
 		}
 		i = 0;
 
-		if(b_busy && !cfile) {
+		if(b_busy && view_thread->running && !cfile) {
 			if(!result_only) { 
 				FPUTS_UNICODE(_("Processing (press Enter to abort)"), stdout);
 				has_printed = true;
@@ -2978,7 +2977,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 #else
 		char c = 0;
 #endif
-		while(b_busy) {
+		while(b_busy && view_thread->running) {
 			if(cfile) {
 				sleep_ms(100);
 			} else {
@@ -3157,11 +3156,11 @@ void execute_command(int command_type, bool show_result) {
 		clock_gettime(CLOCK_MONOTONIC, &tv);
 		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
 #endif
-		while(b_busy && i_timeleft > 0) {
+		while(b_busy && command_thread->running && i_timeleft > 0) {
 			sleep_ms(10);
 			i_timeleft -= 10;
 		}
-		if(b_busy) {
+		if(b_busy && command_thread->running) {
 			on_abort_command();
 			i_maxtime = -1;
 			printf(_("aborted"));
@@ -3171,13 +3170,13 @@ void execute_command(int command_type, bool show_result) {
 
 		int i = 0;
 		bool has_printed = false;
-		while(b_busy && i < 75) {
+		while(b_busy && command_thread->running && i < 75) {
 			sleep_ms(10);
 			i++;
 		}
 		i = 0;
 	
-		if(b_busy && !cfile) {
+		if(b_busy && command_thread->running && !cfile) {
 			if(!result_only) {
 				switch(command_type) {
 					case COMMAND_FACTORIZE: {
@@ -3198,7 +3197,7 @@ void execute_command(int command_type, bool show_result) {
 #else
 		char c = 0;
 #endif
-		while(b_busy) {
+		while(b_busy && command_thread->running) {
 			if(cfile) {
 				sleep_ms(100);
 			} else {
@@ -3338,7 +3337,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	b_busy = true;
 
 	size_t stack_size = 0;
-	
+
 	CALCULATOR->resetExchangeRatesUsed();
 
 	if(do_stack) {
@@ -3450,7 +3449,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	}
 	
 	bool has_printed = false;
-	
+
 	if(i_maxtime != 0) {
 #ifndef CLOCK_MONOTONIC
 		struct timeval tv;
@@ -3519,7 +3518,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		if(has_printed) printf("\n");
 	}
 	
-	b_busy = false;	
+	b_busy = false;
 
 	if(rpn_mode && (!do_stack || stack_index == 0)) {
 		mstruct->unref();
@@ -3712,8 +3711,10 @@ void load_preferences() {
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
 	file = fopen(filename.c_str(), "r");
 	if(!file) {
+#ifndef _WIN32
 		oldfilename = buildPath(getOldLocalDir(), "qalc.cfg");
 		file = fopen(oldfilename.c_str(), "r");
+#endif
 		if(!file) {
 			first_time = true;
 			save_preferences(true);

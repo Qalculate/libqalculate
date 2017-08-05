@@ -21,7 +21,7 @@ libqalculateinclude_HEADERS = \
 libqalculate_la_LDFLAGS = -version-info $(QALCULATE_CURRENT):$(QALCULATE_REVISION):$(QALCULATE_AGE) -no-undefined
 
 libqalculate_la_LIBADD = \
-	@LIBCURL_LIBS@ @LIBXML_LIBS@ @ICU_LIBS@
+	@LIBCURL_LIBS@ @LIBXML_LIBS@ @ICU_LIBS@ @LTLIBINTL@ @LTLIBICONV@
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \

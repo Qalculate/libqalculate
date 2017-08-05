@@ -2394,7 +2394,9 @@ int TimestampFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(date.timestamp());
+	Number nr(date.timestamp());
+	if(nr.isInfinite()) return 0;
+	mstruct.set(nr);
 	return 1;
 }
 TimestampToDateFunction::TimestampToDateFunction() : MathFunction("stamptodate", 1) {
@@ -2404,7 +2406,8 @@ int TimestampToDateFunction::calculate(MathStructure &mstruct, const MathStructu
 	bool overflow = false;
 	long int i = vargs[0].number().intValue(&overflow);
 	if(overflow) return 0;
-	QalculateDate date(i);
+	QalculateDate date;
+	if(!date.set(i)) return false;
 	mstruct.set(date.toISOString());
 	return 1;
 }
@@ -2422,8 +2425,7 @@ int AddDaysFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	bool overflow = false;
 	long int i = vargs[1].number().intValue(&overflow);
 	if(overflow) return 0;
-	date.addDays(i);
-	if(CALCULATOR->aborted()) return 0;
+	if(!date.addDays(i)) return 0;
 	mstruct.set(date.toISOString(), 1);
 	return 1;
 }
@@ -2440,7 +2442,7 @@ int AddMonthsFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	bool overflow = false;
 	long int i = vargs[1].number().intValue(&overflow);
 	if(overflow) return 0;
-	date.addMonths(i);
+	if(!date.addMonths(i)) return 0;
 	mstruct.set(date.toISOString(), 1);
 	return 1;
 }
@@ -2457,7 +2459,7 @@ int AddYearsFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	bool overflow = false;
 	long int i = vargs[1].number().intValue(&overflow);
 	if(overflow) return 0;
-	date.addYears(i);
+	if(!date.addYears(i)) return 0;
 	mstruct.set(date.toISOString(), 1);
 	return 1;
 }
@@ -2481,6 +2483,7 @@ int DaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		return 0;
 	}
 	Number days(date1.daysTo(date2, vargs[2].number().intValue(), vargs[3].number().isZero()));
+	if(days.isInfinite()) return 0;
 	days.abs();
 	mstruct.set(days);
 	return 1;
@@ -2504,6 +2507,7 @@ int YearFracFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		return 0;
 	}
 	Number years(date1.yearsTo(date2, vargs[2].number().intValue(), vargs[3].number().isZero()));
+	if(years.isInfinite()) return 0;
 	years.abs();
 	mstruct.set(years);
 	return 1;
@@ -2519,7 +2523,9 @@ int WeekFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(date.week(vargs[1].number().getBoolean()), 1);
+	int w = date.week(vargs[1].number().getBoolean());
+	if(w < 0) return 0;
+	mstruct.set(w, 1);
 	return 1;
 }
 WeekdayFunction::WeekdayFunction() : MathFunction("weekday", 0, 2) {
@@ -2534,6 +2540,7 @@ int WeekdayFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		return 0;
 	}
 	int w = date.weekday();
+	if(w < 0) return 0;
 	if(vargs[1].number().getBoolean()) {
 		if(w == 7) w = 1;
 		else w++;
@@ -2551,7 +2558,9 @@ int YeardayFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		CALCULATOR->error(true, _("Error in date format for function %s()."), name().c_str(), NULL);
 		return 0;
 	}
-	mstruct.set(date.yearday(), 1);
+	int yd = date.yearday();
+	if(yd < 0) return 0;
+	mstruct.set(yd, 1);
 	return 1;
 }
 MonthFunction::MonthFunction() : MathFunction("month", 0, 1) {

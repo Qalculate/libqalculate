@@ -15,6 +15,7 @@
 #include <libqalculate/includes.h>
 /* threads */
 #ifdef _WIN32
+#	include <winsock2.h>
 #	include <windows.h>
 #else
 #	include <pthread.h>
@@ -136,7 +137,7 @@ protected:
 		MSG msg;
 		int ret = GetMessage(&msg, NULL, WM_USER, WM_USER);
 		if(ret == 0 || ret == -1) return false;
-		*data = (T) &msg.wParam;
+		*data = (T) msg.wParam;
 		return true;
 #else
 		int ret = fread(data, sizeof(T), 1, m_pipe_r);

@@ -18,19 +18,23 @@
 #include <string.h>
 #include <time.h>
 #include <iconv.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #ifdef HAVE_ICU
 #	include <unicode/ucasemap.h>
 #endif
 #include <fstream>
 #ifdef _WIN32
+#	include <winsock2.h>
 #	include <windows.h>
+#	include <shlobj.h>
+//#	include <shlwapi.h>
+#	include <direct.h>
+#	include <knownfolders.h>
 #	include <initguid.h>
 #	include <shlobj.h>
-#	include <glib/gstdio.h>
 #else
 #	include <utime.h>
-#	include <sys/types.h>
-#	include <sys/stat.h>
 #	include <unistd.h>
 #	include <pwd.h>
 #endif
@@ -434,10 +438,9 @@ string utf8_encode(const wstring &wstr) {
 
 string getOldLocalDir() {
 #ifdef _WIN32
-	PWSTR path = NULL;
-	SHGetKnownFolderPath(FOLDERID_Profile, 0 NULL, &path);
-	string str = utf8_encode(path);
-	CoTaskMemFree(path);
+	char path[MAX_PATH];
+	SHGetFolderPathA(NULL, CSIDL_PROFILE, NULL, 0, path);
+	string str = path;
 	return str + "\\qalculate";
 #else
 	const char *homedir;
@@ -449,10 +452,9 @@ string getOldLocalDir() {
 }
 string getLocalDir() {
 #ifdef _WIN32
-	PWSTR path = NULL;
-	SHGetKnownFolderPath(FOLDERID_LocalAppData, 0 NULL, &path);
-	string str = utf8_encode(path);
-	CoTaskMemFree(path);
+	char path[MAX_PATH];
+	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
+	string str = path;
 	return str + "\\qalculate";
 #else
 	const char *homedir;
@@ -464,10 +466,9 @@ string getLocalDir() {
 }
 string getLocalDataDir() {
 #ifdef _WIN32
-	PWSTR path = NULL;
-	SHGetKnownFolderPath(FOLDERID_LocalAppData, 0 NULL, &path);
-	string str = utf8_encode(path);
-	CoTaskMemFree(path);
+	char path[MAX_PATH];
+	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
+	string str = path;
 	return str + "\\qalculate";
 #else
 	const char *homedir;
@@ -479,11 +480,10 @@ string getLocalDataDir() {
 }
 string getLocalTmpDir() {
 #ifdef _WIN32
-	PWSTR path = NULL;
-	SHGetKnownFolderPath(FOLDERID_LocalAppData, 0 NULL, &path);
-	string str = utf8_encode(path);
-	CoTaskMemFree(path);
-	return str + "'\\cache\qalculate";
+	char path[MAX_PATH];
+	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
+	string str = path;
+	return str + "\\cache\\qalculate";
 #else
 	const char *homedir;
 	if((homedir = getenv("XDG_CACHE_HOME")) == NULL) {
@@ -495,7 +495,7 @@ string getLocalTmpDir() {
 
 bool move_file(const char *from_file, const char *to_file) {
 #ifdef _WIN32
-	return g_rename(from_file, to_file) == 0;
+	return MoveFile(from_file, to_file) == 0;
 #else
 	ifstream source(from_file);
 	if(source.fail()) {
@@ -531,7 +531,7 @@ bool move_file(const char *from_file, const char *to_file) {
 
 string getPackageDataDir() {
 #ifndef WIN32
-	return string(PACKAGE_DATA_DIR) + "/qalculate";
+	return PACKAGE_DATA_DIR;
 #else
 	char exepath[MAX_PATH];
 	GetModuleFileName(NULL, exepath, MAX_PATH);
@@ -540,7 +540,7 @@ string getPackageDataDir() {
 	if (datadir.substr(datadir.length() - 3) == "bin") {
 		datadir.resize(datadir.find_last_of('\\'));
 	}
-	datadir += "\\share\\qalculate";
+	datadir += "\\share";
 	return datadir;
 #endif
 }
@@ -576,12 +576,16 @@ string buildPath(string dir1, string dir2, string dir3, string filename) {
 }
 
 bool dirExists(string dirpath) {
-	struct stat info;
-	return stat(dirpath.c_str(), &info) == 0;
+	return fileExists(dirpath);
 }
 bool fileExists(string filepath) {
+#ifdef WIN32
+	struct _stat info;
+	return _stat(filepath.c_str(), &info) == 0;
+#else
 	struct stat info;
 	return stat(filepath.c_str(), &info) == 0;
+#endif
 }
 bool makeDir(string dirpath) {
 #ifdef WIN32

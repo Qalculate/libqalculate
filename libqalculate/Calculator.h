@@ -1146,9 +1146,9 @@ class QalculateDate {
 		long int year() const;
 		long int month() const;
 		long int day() const;
-		void addDays(long int days);
-		void addMonths(long int months);
-		void addYears(long int years);
+		bool addDays(long int days);
+		bool addMonths(long int months);
+		bool addYears(long int years);
 		int weekday() const;
 		int week(bool start_sunday = false) const;
 		int yearday() const;
