@@ -1,3 +1,7 @@
+2017-08-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Set argument min/max from requested integer type
+
 2017-08-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fixes for MS Windows (now compiles, and runs without apparent issues, with MinGW)

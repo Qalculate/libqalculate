@@ -31,6 +31,15 @@ typedef enum {
 	NUMBER_TYPE_MINUS_INFINITY
 } NumberType;
 
+typedef enum {
+	INTEGER_TYPE_NONE,
+	INTEGER_TYPE_SINT,
+	INTEGER_TYPE_UINT,
+	INTEGER_TYPE_ULONG,
+	INTEGER_TYPE_SLONG,
+	INTEGER_TYPE_SIZE
+} IntegerType;
+
 /// A number.
 /**
 * Can be rational, floating point, complex or infinite.
@@ -56,7 +65,7 @@ class Number {
 		NumberType n_type;
 		
 		bool b_approx, b_imag;
-		long int i_precision;
+		int i_precision;
 
 	public:
 	
@@ -118,10 +127,13 @@ class Number {
 		/**
 		* Converts a number to an integer. If the number does not represent an integer it will rounded using round().
 		*
-		* @param[out] overflow If overflow is non-null it will be set to true if the number was to large to fit in an int.
+		* @param[out] overflow If overflow is non-null it will be set to true if the number was to large to fit the return type.
 		* @return Resulting integer.
  		*/
-		long int intValue(bool *overflow = NULL) const;
+		int intValue(bool *overflow = NULL) const;
+		unsigned int uintValue(bool *overflow = NULL) const;
+		long int lintValue(bool *overflow = NULL) const;
+		unsigned long int ulintValue(bool *overflow = NULL) const;
 		
 		/** Returns true if the number is approximate.
 		*
@@ -144,7 +156,7 @@ class Number {
  		* @return Precision of the number or -1 if the number is exact or the precision has not been set.
  		*/
 		int precision() const;
-		void setPrecision(long int prec);
+		void setPrecision(int prec);
 		
 		bool isUndefined() const;
 		/** Returns true if the number is infinity, plus infinity or minus infinity.
@@ -230,7 +242,7 @@ class Number {
 		bool hasRealPart() const;
 		bool hasImaginaryPart() const;
 		bool isComplex() const;
-		bool isInteger() const;
+		bool isInteger(IntegerType integer_type = INTEGER_TYPE_NONE) const;
 		Number integer() const;
 		bool isRational() const;
 		bool isReal() const;

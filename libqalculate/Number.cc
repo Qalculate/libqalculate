@@ -749,7 +749,39 @@ double Number::floatValue() const {
 	} 
 	return 0.0;
 }
-long int Number::intValue(bool *overflow) const {
+int Number::intValue(bool *overflow) const {
+	if(isInfinite()) return 0;
+	if(n_type == NUMBER_TYPE_RATIONAL) {
+		if(mpz_fits_sint_p(mpq_numref(r_value)) == 0) {
+			if(overflow) *overflow = true;
+			if(mpz_sgn(mpq_numref(r_value)) == -1) return INT_MIN;
+			return INT_MAX;	
+		}
+		return (int) mpz_get_si(mpq_numref(r_value));
+	} else {
+		Number nr;
+		nr.set(*this, false, true);
+		nr.round();
+		return nr.intValue(overflow);
+	}
+}
+unsigned int Number::uintValue(bool *overflow) const {
+	if(isInfinite()) return 0;
+	if(n_type == NUMBER_TYPE_RATIONAL) {
+		if(mpz_fits_uint_p(mpq_numref(r_value)) == 0) {
+			if(overflow) *overflow = true;
+			if(mpz_sgn(mpq_numref(r_value)) == -1) return 0;
+			return UINT_MAX;	
+		}
+		return (unsigned int) mpz_get_ui(mpq_numref(r_value));
+	} else {
+		Number nr;
+		nr.set(*this, false, true);
+		nr.round();
+		return nr.uintValue(overflow);
+	}
+}
+long int Number::lintValue(bool *overflow) const {
 	if(isInfinite()) return 0;
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		if(mpz_fits_slong_p(mpq_numref(r_value)) == 0) {
@@ -762,7 +794,23 @@ long int Number::intValue(bool *overflow) const {
 		Number nr;
 		nr.set(*this, false, true);
 		nr.round();
-		return nr.intValue(overflow);
+		return nr.lintValue(overflow);
+	}
+}
+unsigned long int Number::ulintValue(bool *overflow) const {
+	if(isInfinite()) return 0;
+	if(n_type == NUMBER_TYPE_RATIONAL) {
+		if(mpz_fits_ulong_p(mpq_numref(r_value)) == 0) {
+			if(overflow) *overflow = true;
+			if(mpz_sgn(mpq_numref(r_value)) == -1) return 0;
+			return ULONG_MAX;
+		}
+		return mpz_get_si(mpq_numref(r_value));
+	} else {
+		Number nr;
+		nr.set(*this, false, true);
+		nr.round();
+		return nr.ulintValue(overflow);
 	}
 }
 
@@ -787,7 +835,7 @@ void Number::setApproximate(bool is_approximate) {
 int Number::precision() const {
 	return i_precision;
 }
-void Number::setPrecision(long int prec) {
+void Number::setPrecision(int prec) {
 	i_precision = prec;
 	if(i_precision > 0) b_approx = true;
 }
@@ -918,7 +966,7 @@ bool Number::bitEqv(const Number &o) {
 bool Number::shiftLeft(const Number &o) {
 	if(!o.isInteger() || !isInteger() || o.isNegative()) return false;
 	bool overflow = false;
-	long int y = o.intValue(&overflow);
+	long int y = o.lintValue(&overflow);
 	if(overflow) return false;
 	mpz_mul_2exp(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) y);
 	setPrecisionAndApproximateFrom(o);
@@ -927,7 +975,7 @@ bool Number::shiftLeft(const Number &o) {
 bool Number::shiftRight(const Number &o) {
 	if(!o.isInteger() || !isInteger() || o.isNegative()) return false;
 	bool overflow = false;
-	long int y = o.intValue(&overflow);
+	long int y = o.lintValue(&overflow);
 	if(overflow) return false;
 	mpz_tdiv_q_2exp(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) y);
 	setPrecisionAndApproximateFrom(o);
@@ -936,7 +984,7 @@ bool Number::shiftRight(const Number &o) {
 bool Number::shift(const Number &o) {
 	if(!o.isInteger() || !isInteger()) return false;
 	bool overflow = false;
-	long int y = o.intValue(&overflow);
+	long int y = o.lintValue(&overflow);
 	if(overflow) return false;
 	if(y < 0) mpz_tdiv_q_2exp(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) -y);
 	else mpz_mul_2exp(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) y);
@@ -1005,11 +1053,20 @@ Number Number::integer() const {
 	nr.round();
 	return nr;
 }
-bool Number::isInteger() const {
+bool Number::isInteger(IntegerType integer_type) const {
 	if(isInfinite()) return false;
 	if(isComplex()) return false;
 	if(isFloatingPoint()) return false;
-	return mpz_cmp_ui(mpq_denref(r_value), 1) == 0;
+	if(mpz_cmp_ui(mpq_denref(r_value), 1) != 0) return false;
+	switch(integer_type) {
+		case INTEGER_TYPE_NONE: {return true;}
+		case INTEGER_TYPE_SIZE: {}
+		case INTEGER_TYPE_UINT: {return mpz_fits_uint_p(mpq_numref(r_value)) != 0;}
+		case INTEGER_TYPE_SINT: {return mpz_fits_sint_p(mpq_numref(r_value)) != 0;}
+		case INTEGER_TYPE_ULONG: {return mpz_fits_ulong_p(mpq_numref(r_value)) != 0;}
+		case INTEGER_TYPE_SLONG: {return mpz_fits_slong_p(mpq_numref(r_value)) != 0;}
+	}
+	return true;
 }
 bool Number::isRational() const {
 	return !isFloatingPoint() && !isInfinite() && !isComplex();
@@ -2493,13 +2550,13 @@ bool Number::zeta() {
 		return false;
 	}
 	bool overflow = false;
-	long int i = intValue(&overflow);
+	long int i = lintValue(&overflow);
 	if(overflow) {
 		CALCULATOR->error(true, _("Cannot handle an argument (s) that large for Riemann Zeta."), NULL);
 		return false;
 	}
 	mpfr_init2(f_value, BIT_PRECISION);
-	mpfr_zeta_ui(f_value, (unsigned int) i, MPFR_RNDN);
+	mpfr_zeta_ui(f_value, (unsigned long int) i, MPFR_RNDN);
 	mpq_set_ui(r_value, 0, 1);
 	n_type = NUMBER_TYPE_FLOAT;
 	return true;
@@ -3680,7 +3737,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		precmax--;
 		precmax.log(base);
 		precmax.floor();
-		precision_base = precmax.intValue();
+		precision_base = precmax.lintValue();
 	}
 	long int i_precision_base = precision;
 	if(i_precision > precision) {
@@ -3691,7 +3748,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			precmax--;
 			precmax.log(base);
 			precmax.floor();
-			i_precision_base = precmax.intValue();
+			i_precision_base = precmax.lintValue();
 		}
 	}
 	if(po.restrict_to_parent_precision && ips.parent_precision > 0 && ips.parent_precision < precision) precision = ips.parent_precision;

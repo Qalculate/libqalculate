@@ -1594,9 +1594,10 @@ string NumberArgument::subprintlong() const {
 	return str;
 }
 
-IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test, bool does_error, IntegerType integer_type) : Argument(name_, does_test, does_error) {
 	imin = NULL;
 	imax = NULL;
+	i_inttype = integer_type;
 	switch(minmax) {
 		case ARGUMENT_MIN_MAX_POSITIVE: {
 			imin = new Number(1, 1);
@@ -1620,6 +1621,7 @@ IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minma
 IntegerArgument::IntegerArgument(const IntegerArgument *arg) {
 	imin = NULL;
 	imax = NULL;
+	i_inttype = INTEGER_TYPE_NONE;
 	set(arg);
 }
 IntegerArgument::~IntegerArgument() {
@@ -1630,7 +1632,9 @@ IntegerArgument::~IntegerArgument() {
 		delete imax;
 	}
 }
-	
+
+IntegerType IntegerArgument::integerType() const {return i_inttype;}
+void IntegerArgument::setIntegerType(IntegerType integer_type) {i_inttype = integer_type;}
 void IntegerArgument::setMin(const Number *nmin) {
 	if(!nmin) {
 		if(imin) {
@@ -1667,7 +1671,7 @@ bool IntegerArgument::subtest(MathStructure &value, const EvaluationOptions &eo)
 	if(!value.isNumber()) {
 		value.eval(eo);
 	}
-	if(!value.isNumber() || !value.number().isInteger()) {
+	if(!value.isNumber() || !value.number().isInteger(i_inttype)) {
 		return false;
 	}
 	if(imin) {
@@ -1706,7 +1710,8 @@ void IntegerArgument::set(const Argument *arg) {
 		}
 		if(iarg->max()) {
 			imax = new Number(*iarg->max());
-		}		
+		}
+		i_inttype = iarg->integerType();
 	}
 	Argument::set(arg);
 }
@@ -1720,9 +1725,21 @@ string IntegerArgument::subprintlong() const {
 		str += _(">=");
 		str += " ";
 		str += imin->print();
+	} else if(i_inttype != INTEGER_TYPE_NONE) {
+		str += " ";
+		str += _(">=");
+		str += " ";
+		switch(i_inttype) {
+			case INTEGER_TYPE_SIZE: {}
+			case INTEGER_TYPE_UINT: {str += "0"; break;}
+			case INTEGER_TYPE_SINT: {str += i2s(INT_MIN); break;}
+			case INTEGER_TYPE_ULONG: {str += "0"; break;}
+			case INTEGER_TYPE_SLONG: {str += i2s(LONG_MIN); break;}
+			default: {}
+		}
 	}
 	if(imax) {
-		if(imin) {
+		if(imin || i_inttype != INTEGER_TYPE_NONE) {
 			str += " ";
 			str += _("and");
 		}
@@ -1730,6 +1747,20 @@ string IntegerArgument::subprintlong() const {
 		str += _("<=");
 		str += " ";
 		str += imax->print();
+	} else if(i_inttype != INTEGER_TYPE_NONE) {
+		str += " ";
+		str += _("and");
+		str += " ";
+		str += _("<=");
+		str += " ";
+		switch(i_inttype) {
+			case INTEGER_TYPE_SIZE: {}
+			case INTEGER_TYPE_UINT: {str += i2s(UINT_MAX); break;}
+			case INTEGER_TYPE_SINT: {str += i2s(INT_MAX); break;}
+			case INTEGER_TYPE_ULONG: {str += i2s(ULONG_MAX); break;}
+			case INTEGER_TYPE_SLONG: {str += i2s(LONG_MAX); break;}
+			default: {}
+		}
 	}
 	return str;
 }

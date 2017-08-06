@@ -192,7 +192,7 @@ bool Calculator::delDefaultStringAlternative(string replacement, string standard
 Calculator *calculator = NULL;
 
 MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one, m_one_i;
-Number nr_zero, nr_one, nr_minus_one, nr_one_i, nr_minus_i, nr_half;
+Number nr_zero, nr_one, nr_minus_one, nr_one_i, nr_minus_i, nr_half, nr_minus_half;
 EvaluationOptions no_evaluation;
 ExpressionName empty_expression_name;
 extern gmp_randstate_t randstate;
@@ -421,15 +421,16 @@ Calculator::Calculator() {
 	m_empty_vector.clearVector();
 	m_empty_matrix.clearMatrix();
 	m_zero.clear();
-	m_one.set(1, 1);
-	m_minus_one.set(-1, 1);
+	m_one.set(1, 1, 0);
+	m_minus_one.set(-1, 1, 0);
 	nr_zero.clear();
-	nr_one.set(1, 1);
-	nr_half.set(1, 2);
-	nr_one_i.setImaginaryPart(1, 1);
-	nr_minus_i.setImaginaryPart(-1, 1);
+	nr_one.set(1, 1, 0);
+	nr_half.set(1, 2, 0);
+	nr_minus_half.set(-1, 2, 0);
+	nr_one_i.setImaginaryPart(1, 1, 0);
+	nr_minus_i.setImaginaryPart(-1, 1, 0);
 	m_one_i.set(nr_one_i);
-	nr_minus_one.set(-1, 1);
+	nr_minus_one.set(-1, 1, 0);
 	no_evaluation.approximation = APPROXIMATION_EXACT;
 	no_evaluation.structuring = STRUCTURING_NONE;
 	no_evaluation.sync_units = false;
@@ -2337,9 +2338,9 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 		MathStructure mstruct_new(mstruct);
 		Unit *u = mstruct[1].unit();
 		Number nr = mstruct[0].number();
-		if(!nr.isReal()) return false;
-		if(nr.isOne()) return false;
-		if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) return false;
+		if(!nr.isReal()) return mstruct;
+		if(nr.isOne()) return mstruct;
+		if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) return mstruct;
 		bool negated = false;
 		if(nr.isNegative()) {
 			nr.negate();
@@ -2639,7 +2640,7 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 					}
 				}
 			}
-			return findMatchingUnit(mstruct[0]);			
+			return findMatchingUnit(mstruct[0]);
 		}
 		case STRUCT_UNIT: {
 			return mstruct.unit();
@@ -4089,7 +4090,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					}
 					if(ifac == 2) stmp += i2s(parseAddId(f_factorial2, stmp2, po));
 					else if(ifac == 1) stmp += i2s(parseAddId(f_factorial, stmp2, po));
-					else stmp += i2s(parseAddIdAppend(f_multifactorial, MathStructure(ifac, 1), stmp2, po));
+					else stmp += i2s(parseAddIdAppend(f_multifactorial, MathStructure(ifac, 1, 0), stmp2, po));
 					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 					str.replace(i5 - stmp2.length() + 1, stmp2.length() + i4 - i5 - 1, stmp);
 					str_index = stmp.length() + i5 - stmp2.length();
@@ -4875,9 +4876,9 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 	}
 	if(str.empty()) {
 		if(minus_count % 2 == 1 && !po.preserve_format) {
-			mstruct->set(-1, 1);
+			mstruct->set(-1, 1, 0);
 		} else if(has_sign) {
-			mstruct->set(1, 1);
+			mstruct->set(1, 1, 0);
 			if(po.preserve_format) {
 				while(minus_count > 0) {
 					mstruct->transform(STRUCT_NEGATE);
@@ -4912,9 +4913,9 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		if(itmp == 0) {
 			error(true, _("\"%s\" is not a valid variable/function/unit."), str.c_str(), NULL);
 			if(minus_count % 2 == 1 && !po.preserve_format) {
-				mstruct->set(-1, 1);
+				mstruct->set(-1, 1, 0);
 			} else if(has_sign) {
-				mstruct->set(1, 1);
+				mstruct->set(1, 1, 0);
 				if(po.preserve_format) {
 					while(minus_count > 0) {
 						mstruct->transform(STRUCT_NEGATE);
@@ -5712,9 +5713,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 	if(str.empty()) {
 		if(minus_count % 2 == 1 && !po.preserve_format) {
-			mstruct->set(-1, 1);
+			mstruct->set(-1, 1, 0);
 		} else if(has_sign) {
-			mstruct->set(1, 1);
+			mstruct->set(1, 1, 0);
 			if(po.preserve_format) {
 				while(minus_count > 0) {
 					mstruct->transform(STRUCT_NEGATE);
@@ -8679,7 +8680,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
 	}
 	char line[10000];
 	string stmp, str1, str2;
-	int row = 0, rows = 1;
+	long int row = 0, rows = 1;
 	int columns = 1;
 	int column;
 	mstruct = m_empty_matrix;
@@ -9797,6 +9798,7 @@ long int QalculateDate::day() const {return i_day;}
 bool QalculateDate::addDays(long int days) {
 	long int newday = i_day, newmonth = i_month, newyear = i_year;
 	if(days > 0) {
+		if(i_day > 0 && (unsigned long int) days + i_day > (unsigned long int) LONG_MAX) return false;
 		newday += days;
 		bool check_aborted = days > 1000000L;
 		while(newday > daysPerYear(newyear)) {
@@ -9835,6 +9837,8 @@ bool QalculateDate::addDays(long int days) {
 	return true;
 }
 bool QalculateDate::addMonths(long int months) {
+	if(i_year > 0 && months > 0 && (unsigned long int) months / 12 + i_year > (unsigned long int) LONG_MAX) return false;
+	if(i_year < 0 && months < 0 && (unsigned long int) (-months / 12) - i_year > (unsigned long int) LONG_MAX) return false;
 	i_year += months / 12;
 	i_month += months % 12;
 	if(i_month > 12) {
@@ -9855,6 +9859,8 @@ bool QalculateDate::addMonths(long int months) {
 	return true;
 }
 bool QalculateDate::addYears(long int years) {
+	if(i_year > 0 && years > 0 && (unsigned long int) years + i_year > (unsigned long int) LONG_MAX) return false;
+	if(i_year < 0 && years < 0 && (unsigned long int) (-years) - i_year > (unsigned long int) LONG_MAX) return false;
 	i_year += years;
 	if(i_day > daysPerMonth(i_month, i_year)) {
 		i_day -= daysPerMonth(i_month, i_year);
@@ -9953,7 +9959,7 @@ Number QalculateDate::daysTo(const QalculateDate &date, int basis, bool date_fun
 
 	switch(basis) {
 		case 0: {
-			nr.set(years, 1);
+			nr.set(years, 1, 0);
 			nr *= 12;
 			nr += (month2 - month1);
 			nr *= 30;
@@ -9984,7 +9990,7 @@ Number QalculateDate::daysTo(const QalculateDate &date, int basis, bool date_fun
 			} else {
 				b = false;
 			}
-			nr.set(days, 1);
+			nr.set(days, 1, 0);
 			for(; month1 < month4 || b; month1++) {
 				if(month1 > month4 && b) {
 					b = false;
@@ -10011,7 +10017,7 @@ Number QalculateDate::daysTo(const QalculateDate &date, int basis, bool date_fun
 			break;
 		} 
 		case 4: {
-			nr.set(years, 1);
+			nr.set(years, 1, 0);
 			nr *= 12;
 			nr += (month2 - month1);
 			if(date_func) {

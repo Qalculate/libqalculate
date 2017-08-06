@@ -185,6 +185,7 @@ class MathStructure {
 		* @param exp10 The base 10 exponent of the numeric value.
 		*/
 		MathStructure(int num, int den = 1, int exp10 = 0);
+		MathStructure(long int num, long int den, long int exp10 = 0L);
 		/** Create a new symbolic/text structure.
 		*
 		* @param sym Symbolic/text value.
@@ -248,6 +249,7 @@ class MathStructure {
 		* @param preserve_precision Preserve the current precision (unless the new value has a lower precision).
 		*/
 		void set(int num, int den = 1, int exp10 = 0, bool preserve_precision = false);
+		void set(long int num, long int den, long int exp10 = 0L, bool preserve_precision = false);
 		/** Set the structure to a symbolic/text value.
 		*
 		* @param o The new symolic/text value.

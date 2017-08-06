@@ -13,6 +13,7 @@
 #define FUNCTION_H
 
 #include <libqalculate/ExpressionItem.h>
+#include <libqalculate/Number.h>
 #include <libqalculate/includes.h>
 
 /** @file */
@@ -484,6 +485,7 @@ class IntegerArgument : public Argument {
   protected:
   
 	Number *imin, *imax;
+	IntegerType i_inttype;
 
   protected:
   
@@ -491,19 +493,22 @@ class IntegerArgument : public Argument {
 	virtual string subprintlong() const;
 
   public:
-  
-  	IntegerArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true, bool does_error = true);
+
+	IntegerArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true, bool does_error = true, IntegerType integer_type = INTEGER_TYPE_NONE);
 	IntegerArgument(const IntegerArgument *arg);
 	virtual ~IntegerArgument();
+
+	IntegerType integerType() const;
+	void setIntegerType(IntegerType integer_type);
 
 	virtual void set(const Argument *arg);
 	virtual Argument *copy() const;
 
-	virtual string print() const;	
+	virtual string print() const;
 
-	void setMin(const Number *nmin);	
+	void setMin(const Number *nmin);
 	const Number *min() const;
-	void setMax(const Number *nmax);	
+	void setMax(const Number *nmax);
 	const Number *max() const;
 	
 	virtual int type() const;
