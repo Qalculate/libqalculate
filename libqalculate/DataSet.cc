@@ -457,7 +457,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 		}
 		return b;
 	} else {
-		bool b = loadObjects(buildPath(getGlobalDefinitionsDir(), sfile, NULL).c_str(), false);
+		bool b = loadObjects(buildPath(getGlobalDefinitionsDir(), sfile).c_str(), false);
 		string filepath = buildPath(getLocalDataDir(), "definitions", "datasets", sfile);
 		if(loadObjects(filepath.c_str(), true)) {
 			b = true;
