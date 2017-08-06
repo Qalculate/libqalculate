@@ -44,7 +44,6 @@
 #ifdef HAVE_ICU
 #	include <unicode/ucasemap.h>
 #endif
-//#include <dlfcn.h>
 
 #if HAVE_UNORDERED_MAP
 #	include <unordered_map>
@@ -9722,8 +9721,8 @@ bool QalculateDate::set(string str) {
 	long int newyear = 0, newmonth = 0, newday = 0;
 	if(sscanf(str.c_str(), "%ld-%lu-%lu", &newyear, &newmonth, &newday) != 3) {
 		if(sscanf(str.c_str(), "%4ld%2lu%2lu", &newyear, &newmonth, &newday) != 3) {
-			struct tm tmdate;
 #ifndef _WIN32
+			struct tm tmdate;
 			if(strptime(str.c_str(), "%x", &tmdate) || strptime(str.c_str(), "%Ex", &tmdate)) {
 				newyear = tmdate.tm_year + 1900;
 				newmonth = tmdate.tm_mon + 1;
@@ -9731,11 +9730,11 @@ bool QalculateDate::set(string str) {
 			} else {
 #endif
 				if(sscanf(str.c_str(), "%ld/%ld/%ld", &newmonth, &newday, &newyear) != 3) {
-					if(sscanf(str.c_str(), "%ld.%ld.%ld", &newday, &newmonth, &newyear) != 3) {
-						if(sscanf(str.c_str(), "%2ld%2lu%2lu", &newyear, &newmonth, &newday) != 3) {
+					if(sscanf(str.c_str(), "%2ld%2lu%2lu", &newyear, &newmonth, &newday) != 3) {
+						char c1, c2;
+						if(sscanf(str.c_str(), "%ld%1c%ld%1c%ld", &newday, &c1, &newmonth, &c2, &newyear) != 5) {
 							return false;
 						}
-					
 					}
 					if(newday > 31) {
 						long int i = newday;
@@ -9758,10 +9757,16 @@ bool QalculateDate::set(string str) {
 					newday = newyear;
 					newyear = i;
 				}
-#ifndef _WIN32
+				time_t rawtime;
+				time(&rawtime);
+				if(newyear >= 0 && newyear < 100) {
+					if(newyear + 70 > localtime(&rawtime)->tm_year) newyear += 1900;
+					else newyear += 2000;
+				}
 			}
-#endif
+#ifndef _WIN32
 		}
+#endif
 	}
 	return set(newyear, newmonth, newday);
 }

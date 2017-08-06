@@ -537,10 +537,10 @@ string getPackageDataDir() {
 	GetModuleFileName(NULL, exepath, MAX_PATH);
 	string datadir(exepath);
 	datadir.resize(datadir.find_last_of('\\'));
-	if (datadir.substr(datadir.length() - 3) == "bin") {
+	if (datadir.substr(datadir.length() - 4) == "\\bin") {
 		datadir.resize(datadir.find_last_of('\\'));
 		datadir += "\\share";
-	} else if(datadir.substr(datadir.length() - 5) == ".libs") {
+	} else if(datadir.substr(datadir.length() - 6) == "\\.libs") {
 		datadir.resize(datadir.find_last_of('\\'));
 		datadir.resize(datadir.find_last_of('\\'));
 		return datadir;
@@ -558,16 +558,20 @@ string getGlobalDefinitionsDir() {
 	string datadir(exepath);
 	bool is_qalc = datadir.substr(datadir.length() - 8) == "qalc.exe";
 	datadir.resize(datadir.find_last_of('\\'));
-	if(datadir.substr(datadir.length() - 3) == "bin") {
+	if(datadir.substr(datadir.length() - 4) == "\\bin") {
 		datadir.resize(datadir.find_last_of('\\'));
 		datadir += "\\share\\qalculate";
 		return datadir;
-	} else if(datadir.substr(datadir.length() - 5) == ".libs") {
+	} else if(datadir.substr(datadir.length() - 6) == "\\.libs") {
 		datadir.resize(datadir.find_last_of('\\'));
 		datadir.resize(datadir.find_last_of('\\'));
 		if(!is_qalc) {
 			datadir.resize(datadir.find_last_of('\\'));
 			datadir += "\\libqalculate";
+			if(!dirExists(datadir)) {
+				datadir += "-";
+				datadir += VERSION;
+			}
 		}
 		return datadir + "\\data";
 	}
@@ -583,7 +587,7 @@ string getPackageLocaleDir() {
 	GetModuleFileName(NULL, exepath, MAX_PATH);
 	string datadir(exepath);
 	datadir.resize(datadir.find_last_of('\\'));
-	if (datadir.substr(datadir.length() - 3) == "bin" || datadir.substr(datadir.length() - 5) == ".libs") {
+	if (datadir.substr(datadir.length() - 4) == "\\bin" || datadir.substr(datadir.length() - 6) == "\\.libs") {
 		datadir.resize(datadir.find_last_of('\\'));
 		return datadir + "\\share\\locale";
 	}
