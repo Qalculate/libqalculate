@@ -9008,9 +9008,10 @@ void Calculator::stopControl() {
 
 bool Calculator::loadExchangeRates() {
 	xmlDocPtr doc = NULL;
-	xmlNodePtr cur;
+	xmlNodePtr cur = NULL;
 	xmlChar *value;
-	string currency, rate;
+	bool global_file = false;
+	string currency, rate, sdate;
 	string filename = buildPath(getLocalDataDir(), "eurofxref-daily.xml");
 	if(fileExists(filename)) {
 		doc = xmlParseFile(filename.c_str());
@@ -9027,15 +9028,29 @@ bool Calculator::loadExchangeRates() {
 		}
 #endif
 	}
-	if(!doc) return false;
-	cur = xmlDocGetRootElement(doc);
-	if(cur == NULL) {
-		xmlFreeDoc(doc);
-		return false;
+	if(doc) cur = xmlDocGetRootElement(doc);
+	if(!cur) {
+		if(doc) xmlFreeDoc(doc);
+		filename = buildPath(getGlobalDefinitionsDir(), "eurofxref-daily.xml");
+		doc = xmlParseFile(filename.c_str());
+		if(!doc) return false;
+		cur = xmlDocGetRootElement(doc);
+		if(!cur) return false;
+		global_file = true;
 	}
 	Unit *u;
 	while(cur) {
 		if(!xmlStrcmp(cur->name, (const xmlChar*) "Cube")) {
+			if(global_file && sdate.empty()) {
+				XML_GET_STRING_FROM_PROP(cur, "time", sdate);
+				QalculateDate qdate;
+				if(qdate.set(sdate)) {
+					exchange_rates_time = (time_t) qdate.timestamp().ulintValue();
+					if(exchange_rates_time > exchange_rates_check_time) exchange_rates_check_time = exchange_rates_time;
+				} else {
+					sdate.clear();
+				}
+			}
 			XML_GET_STRING_FROM_PROP(cur, "currency", currency);
 			if(!currency.empty()) {
 				XML_GET_STRING_FROM_PROP(cur, "rate", rate);
@@ -9062,6 +9077,7 @@ bool Calculator::loadExchangeRates() {
 		}
 	}
 	xmlFreeDoc(doc);
+	if(global_file && !sdate.empty()) return true;
 	struct stat stats;
 	if(stat(filename.c_str(), &stats) == 0) {
 		if(exchange_rates_time >= stats.st_mtime) {

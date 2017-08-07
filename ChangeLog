@@ -1,3 +1,7 @@
+2017-08-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Include system-wide exchange rates file to avoid issues with missing currencies and the need to ask first-time users questions
+
 2017-08-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Set argument min/max from requested integer type

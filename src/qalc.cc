@@ -1126,12 +1126,7 @@ int main(int argc, char *argv[]) {
 	}
 	if(load_global_defs && load_currencies && canfetch) {
 		CALCULATOR->setExchangeRatesWarningEnabled(!interactive_mode && (!command_file.empty() || (result_only && !calc_arg.empty())));
-		if(!CALCULATOR->loadExchangeRates() && !fetch_exchange_rates_at_startup && first_time && canfetch && ask_questions) {
-			if(ask_question(_("You need the download exchange rates to be able to convert between different currencies.\nYou can later get current exchange rates with the \"exrates\" command.\nDo you want to fetch exchange rates now from the Internet (default: yes)?"), true)) {
-				CALCULATOR->fetchExchangeRates(15);
-				CALCULATOR->loadExchangeRates();
-			}
-		}
+		CALCULATOR->loadExchangeRates();
 	}
 
 	string ans_str = _("ans");

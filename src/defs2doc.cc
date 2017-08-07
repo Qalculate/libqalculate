@@ -19,7 +19,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
-#include <glib.h>
 
 KnownVariable *vans[5];
 PrintOptions printops;
