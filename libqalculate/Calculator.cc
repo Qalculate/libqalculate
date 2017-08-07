@@ -38,6 +38,8 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <queue>
+#include <iostream>
+#include <fstream>
 #ifdef HAVE_LIBCURL
 #	include <curl/curl.h>
 #endif
@@ -9077,7 +9079,7 @@ bool Calculator::loadExchangeRates() {
 		}
 	}
 	xmlFreeDoc(doc);
-	if(global_file && !sdate.empty()) return true;
+	if(!sdate.empty()) return true;
 	struct stat stats;
 	if(stat(filename.c_str(), &stats) == 0) {
 		if(exchange_rates_time >= stats.st_mtime) {
@@ -9138,32 +9140,52 @@ string Calculator::getExchangeRatesUrl() {
 	return "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 }
 bool Calculator::fetchExchangeRates(int timeout, string) {return fetchExchangeRates(timeout);}
-size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
-	size_t written = fwrite(ptr, size, nmemb, stream);
-	return written;
+size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer) {
+	sbuffer->append((char*) ptr, size * nmemb);
+	return size * nmemb;
 }
 bool Calculator::fetchExchangeRates(int timeout) {
 #ifdef HAVE_LIBCURL
 	makeDir(getLocalDataDir());
-	FILE *file = fopen(getExchangeRatesFileName().c_str(), "wb");
-	if(file == NULL) {
-		error(true, _("Failed to download exchange rates from ECB."), NULL);
-		return false;
-	}
+	string sbuffer;
+	char error_buffer[CURL_ERROR_SIZE];
 	CURL *curl;
 	CURLcode res;
+	long int file_time;
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	curl = curl_easy_init();
-	if(!curl) {fclose(file); return false;}
+	if(!curl) {return false;}
 	curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl().c_str());
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-	curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
+	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+	curl_easy_setopt(curl, CURLOPT_FILETIME, &file_time);
 	res = curl_easy_perform(curl);
 	curl_easy_cleanup(curl);
 	curl_global_cleanup();
-	fclose(file);
-	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from ECB."), NULL); return false;}
+	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from ECB: %s"), error_buffer, NULL); return false;}
+	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from ECB: %s"), "Document empty", NULL); return false;}
+	ofstream file(getExchangeRatesFileName(), ios::out | ios::trunc | ios::binary);
+	if(!file.is_open()) {
+		error(true, _("Failed to download exchange rates from ECB: %s"), strerror(errno), NULL);
+		return false;
+	}
+	file << sbuffer;
+	file.close();
+	if(file_time > 0) {
+#ifdef _WIN32
+		struct _utimbuf new_times;
+#else
+		struct utimbuf new_times;
+#endif
+		new_times.modtime = (time_t) file_time;
+#ifdef _WIN32
+		_utime(getExchangeRatesFileName().c_str(), &new_times);
+#else
+		utime(getExchangeRatesFileName().c_str(), &new_times);
+#endif
+	}
 	return true;
 #else
 	return false;
@@ -9653,10 +9675,10 @@ bool Calculator::gnuplotOpen() {
 }
 #endif
 
-bool isLeapYear(int year) {
+bool isLeapYear(long int year) {
 	return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
 }
-int daysPerYear(int year, int basis = 1) {
+int daysPerYear(long int year, int basis = 1) {
 	switch(basis) {
 		case 0: {
 			return 360;
@@ -9681,7 +9703,7 @@ int daysPerYear(int year, int basis = 1) {
 	return -1;
 }
 
-int daysPerMonth(int month, int year) {
+int daysPerMonth(int month, long int year) {
 	switch(month) {
 		case 1: {} case 3: {} case 5: {} case 7: {} case 8: {} case 10: {} case 12: {
 			return 31;
@@ -9715,8 +9737,27 @@ bool QalculateDate::set(long int newtimestamp) {
 	i_year = 1970;
 	i_month = 1;
 	i_day = 1;
-	newtimestamp = newtimestamp / (60 * 60 * 24);
-	addDays(newtimestamp);
+	bool neg = newtimestamp < 0;
+	long int daytime = newtimestamp % 86400;
+	newtimestamp = newtimestamp / 86400;
+	cout << newtimestamp << endl;
+	if(!addDays(newtimestamp)) return false;
+	if(neg && daytime != 0 && !addDays(-1)) return false;
+	int yday = yearday() - 1;
+	time_t nulltime = (time_t) yday * 86400 + daytime;
+	if(i_year < 0) {
+		for(long int i = 1969; i >= i_year && i >= 1902; i--) {
+			nulltime -= (time_t) daysPerYear(i) * 86400;
+		}
+	} else if(i_year > 0) {
+		for(long int i = 1970; i < i_year && i < 2038; i++) {
+			nulltime += (time_t) daysPerYear(i) * 86400;
+		}
+	}
+	struct tm *tmdate = localtime(&nulltime);
+	cout << yday << tmdate->tm_yday << endl;
+	cout << tmdate->tm_year << endl;
+	if(tmdate->tm_yday > yday) return addDays(1);
 	return true;
 }
 bool QalculateDate::set(string str) {
@@ -9843,7 +9884,7 @@ bool QalculateDate::addDays(long int days) {
 			newday += daysPerYear(newyear);
 			if(check_aborted && CALCULATOR && CALCULATOR->aborted()) return false;
 		}
-		while(newday < 0) {
+		while(newday < 1) {
 			newmonth--;
 			if(newmonth < 1) {
 				newyear--;
