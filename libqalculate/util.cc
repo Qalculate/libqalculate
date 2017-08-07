@@ -656,7 +656,7 @@ char *locale_from_utf8(const char *str) {
 	if(err != (size_t) -1) err = iconv(conv, NULL, &inlength, &buffer, &outlength);
 	iconv_close(conv);
 	memset(buffer, 0, 4);
-	if(err != (size_t) -1) {free(dest); return NULL;}
+	if(err == (size_t) -1) {free(dest); return NULL;}
 	return dest;
 }
 char *locale_to_utf8(const char *str) {
@@ -671,7 +671,7 @@ char *locale_to_utf8(const char *str) {
 	if(err != (size_t) -1) err = iconv(conv, NULL, &inlength, &buffer, &outlength);
 	iconv_close(conv);
 	memset(buffer, 0, 4 * sizeof(char));
-	if(err != (size_t) -1) {free(dest); return NULL;}
+	if(err == (size_t) -1) {free(dest); return NULL;}
 	return dest;
 }
 char *utf8_strdown(const char *str, int l) {
@@ -720,14 +720,15 @@ DWORD WINAPI Thread::doRun(void *data) {
 	Thread *thread = (Thread *) data;
 	SetEvent(thread->m_threadReadyEvent);
 	thread->run();
+	thread->running = false;
 	return 0;
 }
 
 bool Thread::start() {
 	m_thread = CreateThread(NULL, 0, Thread::doRun, this, 0, &m_threadID);
-	if (m_thread == NULL) return false;
-	WaitForSingleObject(m_threadReadyEvent, INFINITE);
 	running = (m_thread != NULL);
+	if(!running) return false;
+	WaitForSingleObject(m_threadReadyEvent, INFINITE);
 	return running;
 }
 

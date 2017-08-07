@@ -9740,7 +9740,6 @@ bool QalculateDate::set(long int newtimestamp) {
 	bool neg = newtimestamp < 0;
 	long int daytime = newtimestamp % 86400;
 	newtimestamp = newtimestamp / 86400;
-	cout << newtimestamp << endl;
 	if(!addDays(newtimestamp)) return false;
 	if(neg && daytime != 0 && !addDays(-1)) return false;
 	int yday = yearday() - 1;
@@ -9755,8 +9754,6 @@ bool QalculateDate::set(long int newtimestamp) {
 		}
 	}
 	struct tm *tmdate = localtime(&nulltime);
-	cout << yday << tmdate->tm_yday << endl;
-	cout << tmdate->tm_year << endl;
 	if(tmdate->tm_yday > yday) return addDays(1);
 	return true;
 }
