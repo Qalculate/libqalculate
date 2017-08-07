@@ -15,6 +15,10 @@
 #include <libqalculate/includes.h>
 /* threads */
 #ifdef _WIN32
+#	undef WINVER
+#	undef _WIN32_WINNT
+#	define WINVER 0x0600
+#	define _WIN32_WINNT 0x0600
 #	include <winsock2.h>
 #	include <windows.h>
 #else
@@ -71,6 +75,9 @@ bool is_not_in(const string &str, char c);
 int sign_place(string *str, size_t start = 0);
 int gcd(int i1, int i2);
 
+#ifdef _WIN32
+string utf8_encode(const wstring &wstr);
+#endif
 char *locale_to_utf8(const char *str);
 char *locale_from_utf8(const char *str);
 char *utf8_strdown(const char *str, int l = -1);

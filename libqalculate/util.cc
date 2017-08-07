@@ -441,7 +441,7 @@ string getOldLocalDir() {
 	char path[MAX_PATH];
 	SHGetFolderPathA(NULL, CSIDL_PROFILE, NULL, 0, path);
 	string str = path;
-	return str + "\\qalculate";
+	return str + "\\Qalculate";
 #else
 	const char *homedir;
 	if ((homedir = getenv("HOME")) == NULL) {
@@ -455,7 +455,7 @@ string getLocalDir() {
 	char path[MAX_PATH];
 	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
 	string str = path;
-	return str + "\\qalculate";
+	return str + "\\Qalculate";
 #else
 	const char *homedir;
 	if((homedir = getenv("XDG_CONFIG_HOME")) == NULL) {
@@ -469,7 +469,7 @@ string getLocalDataDir() {
 	char path[MAX_PATH];
 	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
 	string str = path;
-	return str + "\\qalculate";
+	return str + "\\Qalculate";
 #else
 	const char *homedir;
 	if((homedir = getenv("XDG_DATA_HOME")) == NULL) {
@@ -483,7 +483,7 @@ string getLocalTmpDir() {
 	char path[MAX_PATH];
 	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
 	string str = path;
-	return str + "\\cache\\qalculate";
+	return str + "\\cache\\Qalculate";
 #else
 	const char *homedir;
 	if((homedir = getenv("XDG_CACHE_HOME")) == NULL) {

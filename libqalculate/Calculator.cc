@@ -6521,15 +6521,20 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	ExpressionName ename;
 
 	string locale;
+#ifdef _WIN32
+	WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
+	if(LCIDToLocaleName(LOCALE_USER_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
+	gsub("-", "_", locale);
+#else
 	char *clocale = setlocale(LC_MESSAGES, "");
-	if(clocale) {
-		locale = clocale;
-		if(locale == "POSIX" || locale == "C") {
-			locale = "";
-		} else {
-			size_t i = locale.find('.');
-			if(i != string::npos) locale = locale.substr(0, i);
-		}
+	if(clocale) locale = clocale;
+#endif
+
+	if(locale == "POSIX" || locale == "C") {
+		locale = "";
+	} else {
+		size_t i = locale.find('.');
+		if(i != string::npos) locale = locale.substr(0, i);
 	}
 
 	int fulfilled_translation = 0;

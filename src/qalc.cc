@@ -2780,7 +2780,7 @@ int main(int argc, char *argv[]) {
 		}
 #ifdef HAVE_LIBREADLINE
 		if(!cfile) {		
-			add_history(rlbuffer);		
+			add_history(rlbuffer);
 			free(rlbuffer);
 		}
 #endif

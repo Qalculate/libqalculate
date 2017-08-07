@@ -481,12 +481,19 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	xmlNodePtr cur, child;
 
 	string locale, lang_tmp;
+#ifdef _WIN32
+	WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
+	if(LCIDToLocaleName(LOCALE_USER_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
+	gsub("-", "_", locale);
+#else
 	char *clocale = setlocale(LC_MESSAGES, "");
-	if(clocale) {
-		locale = clocale;
-		if(locale == "POSIX" || locale == "C") {
-			locale = "";
-		}
+	if(clocale) locale = clocale;
+#endif
+	if(locale == "POSIX" || locale == "C") {
+		locale = "";
+	} else {
+		size_t i = locale.find('.');
+		if(i != string::npos) locale = locale.substr(0, i);
 	}
 
 	string localebase;
@@ -526,16 +533,6 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	/*int version_numbers[] = {0, 0, 0};
-	for(size_t i = 0; i < 3; i++) {
-		size_t dot_i = version.find(".");
-		if(dot_i == string::npos) {
-			version_numbers[i] = s2i(version);
-			break;
-		}
-		version_numbers[i] = s2i(version.substr(0, dot_i));
-		version = version.substr(dot_i + 1, version.length() - (dot_i + 1));
-	}*/
 	DataObject *o = NULL;
 	cur = cur->xmlChildrenNode;
 	string str, str2;
