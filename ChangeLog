@@ -1,6 +1,7 @@
 2017-08-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Include system-wide exchange rates file to avoid issues with missing currencies and the need to ask first-time users questions
+	* Reactivate deactivated global variables, units and functions after conflicting local object has been removed
 
 2017-08-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
