@@ -3419,9 +3419,23 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 					deleted_units.push_back((Unit*) item);
 					break;
 				}
-			}		
+			}
 			break;
-		}		
+		}
+	}
+	for(size_t i = 1; i <= item->countNames(); i++) {
+		if(item->type() == TYPE_VARIABLE || item->type() == TYPE_UNIT) {
+			for(size_t i = 0; i < variables.size(); i++) {
+				if(!variables[i]->isLocal() && !variables[i]->isActive() && variables[i]->hasName(item->getName(i).name, item->getName(i).case_sensitive) && !getActiveExpressionItem(variables[i])) variables[i]->setActive(true);
+			}
+			for(size_t i = 0; i < units.size(); i++) {
+				if(!units[i]->isLocal() && !units[i]->isActive() && units[i]->hasName(item->getName(i).name, item->getName(i).case_sensitive) && !getActiveExpressionItem(units[i])) units[i]->setActive(true);
+			}
+		} else {
+			for(size_t i = 0; i < functions.size(); i++) {
+				if(!functions[i]->isLocal() && !functions[i]->isActive() && functions[i]->hasName(item->getName(i).name, item->getName(i).case_sensitive) && !getActiveExpressionItem(functions[i])) functions[i]->setActive(true);
+			}
+		}
 	}
 	delUFV(item);
 }
@@ -5998,6 +6012,15 @@ bool Calculator::loadLocalDefinitions() {
 	eps.sort();
 	for(list<string>::iterator it = eps.begin(); it != eps.end(); ++it) {
 		loadDefinitions(buildPath(homedir, *it).c_str(), true);
+	}
+	for(size_t i = 0; i < variables.size(); i++) {
+		if(!variables[i]->isLocal() && !variables[i]->isActive() && !getActiveExpressionItem(variables[i])) variables[i]->setActive(true);
+	}
+	for(size_t i = 0; i < units.size(); i++) {
+		if(!units[i]->isLocal() && !units[i]->isActive() && !getActiveExpressionItem(units[i])) units[i]->setActive(true);
+	}
+	for(size_t i = 0; i < functions.size(); i++) {
+		if(!functions[i]->isLocal() && !functions[i]->isActive() && !getActiveExpressionItem(functions[i])) functions[i]->setActive(true);
 	}
 	return true;
 }

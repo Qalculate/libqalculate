@@ -3236,7 +3236,7 @@ SaveFunction::SaveFunction() : MathFunction("save", 2, 4) {
 	setArgumentDefinition(2, new TextArgument());
 	setArgumentDefinition(3, new TextArgument());
 	setArgumentDefinition(4, new TextArgument());
-	setDefaultValue(3, "Temporary");
+	setDefaultValue(3, CALCULATOR->temporaryCategory());
 	setDefaultValue(4, "");	
 }
 int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -3260,8 +3260,8 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				v->setName(vargs[1].symbol(), 1);
 			}
 		} else {
-			CALCULATOR->error(true, _("An global unit or variable with the same name already exists."), NULL);
-			return -1;
+			CALCULATOR->error(false, _("A global unit or variable was deactivated. It will be restored after the new variable has been removed."), NULL);
+			CALCULATOR->addVariable(new KnownVariable(vargs[2].symbol(), vargs[1].symbol(), mstruct, vargs[3].symbol()));
 		}
 	} else {
 		CALCULATOR->addVariable(new KnownVariable(vargs[2].symbol(), vargs[1].symbol(), mstruct, vargs[3].symbol()));

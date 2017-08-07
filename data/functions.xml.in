@@ -1487,14 +1487,6 @@
           <_title>Data 2</_title>
         </argument>
       </function>
-      <function active="false">
-        <_title>Durbin-Watson</_title>
-        <_names>r:durbinwatson</_names>
-        <expression approximate="true">csum(2,-1,0,"y"+("x"-element("v","i"-1))^2,"x","y",mergevectors([0],\x),"i","v")/csum(1,-1,0,"y"+"x"^2,"x","y",\x)</expression>
-        <argument type="vector" index="1">
-          <_title>Data</_title>
-        </argument>
-      </function>
     </category>
     <category>
       <_title>Statistical Tests</_title>
@@ -2619,36 +2611,6 @@
           <_title>Price variable</_title>
         </argument>
       </function>
-      <function active="false">
-        <_title>Consumer Surplus</_title>
-        <_names>r:csurplus</_names>
-        <subfunction precalculate="true">select(solve(\x=\y,\z),x&gt;=0,x,1)</subfunction>
-        <expression>replace(integrate(\x-replace(\y,\Z{x},\1),\Z),\Z,\1,1)</expression>
-        <argument type="free" index="1">
-          <_title>Demand function</_title>
-        </argument>
-        <argument type="free" index="2">
-          <_title>Supply function or price</_title>
-        </argument>
-        <argument type="symbol" index="3">
-          <_title>Quantity variabel</_title>
-        </argument>
-      </function>
-      <function active="false">
-        <_title>Producer Surplus</_title>
-        <_names>r:psurplus</_names>
-        <subfunction precalculate="true">select(solve(\x=\y,\z),x&gt;=0,x,1)</subfunction>
-        <expression>replace(integrate(replace(\y,\Z{x},\1)-\x,\Z),\Z,\1,1)</expression>
-	<argument type="free" index="1">
-          <_title>Supply function</_title>
-        </argument>
-        <argument type="free" index="2">
-          <_title>Demand function or price</_title>
-        </argument>
-        <argument type="symbol" index="3">
-          <_title>Quantity variabel</_title>
-        </argument>
-      </function>
     </category>
     <category>
       <_title>Finance</_title>
@@ -2838,33 +2800,6 @@
         </argument>
         <argument type="free" index="5">
           <_title>Type</_title>
-        </argument>
-      </function>
-      <function active="false">
-        <_title>Duration</_title>
-        <_names>r:duration</_names>
-        <_description>Calculates the duration of a security.</_description>
-        <expression></expression>
-        <argument type="date" index="1">
-          <_title>Settlement date</_title>
-        </argument>
-        <argument type="date" index="2">
-          <_title>Maturity date</_title>
-        </argument>
-        <argument type="free" index="3">
-          <_title>Annual coupon rate (%)</_title>
-        </argument>
-        <argument type="free" index="4">
-          <_title>Annualized yield (%)</_title>
-        </argument>
-        <argument type="free" index="5">
-          <!-- Reccurance -->
-          <_title>Frequency</_title>
-        </argument>
-        <argument type="integer" index="6">
-          <_title>Day counting basis</_title>
-          <min>0</min>
-	  <max>4</max>
         </argument>
       </function>
       <function>

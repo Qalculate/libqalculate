@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-07 09:30+0200\n"
+"POT-Creation-Date: 2017-08-07 14:37+0200\n"
 "PO-Revision-Date: 2007-05-18 16:19+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -131,7 +131,7 @@ msgstr "niet-positief"
 msgid "Unrecognized assumption."
 msgstr "Onbekende aanname."
 
-#: ../src/qalc.cc:364 ../libqalculate/Calculator.cc:9197
+#: ../src/qalc.cc:364 ../libqalculate/Calculator.cc:9220
 #, fuzzy, c-format
 msgid "It has been %s day(s) since the exchange rates last were updated."
 msgstr ""
@@ -773,7 +773,7 @@ msgstr "antw"
 
 #: ../src/qalc.cc:1133 ../src/qalc.cc:1136 ../src/qalc.cc:1137
 #: ../src/qalc.cc:1138 ../src/qalc.cc:1139 ../src/qalc.cc:1363
-#: ../libqalculate/Calculator.cc:7927 ../libqalculate/Calculator.cc:7943
+#: ../libqalculate/Calculator.cc:7950 ../libqalculate/Calculator.cc:7966
 msgid "Temporary"
 msgstr "Tijdelijk"
 
@@ -1036,7 +1036,7 @@ msgstr ""
 
 #. qalc command
 #: ../src/qalc.cc:2049 ../src/qalc.cc:2087 ../src/qalc.cc:2643
-#: ../libqalculate/Calculator.cc:8581 ../libqalculate/DataSet.cc:359
+#: ../libqalculate/Calculator.cc:8604 ../libqalculate/DataSet.cc:359
 #: ../libqalculate/DataSet.cc:386 ../libqalculate/DataSet.cc:1018
 msgid "info"
 msgstr "info"
@@ -1518,7 +1518,7 @@ msgid "warning"
 msgstr "waarschuwing"
 
 #: ../src/qalc.cc:2864 ../src/qalc.cc:2902 ../src/qalc.cc:3161
-#: ../src/qalc.cc:3465 ../libqalculate/Calculator.cc:8999
+#: ../src/qalc.cc:3465 ../libqalculate/Calculator.cc:9022
 #: ../libqalculate/MathStructure.cc:500
 #, c-format
 msgid "aborted"
@@ -1628,7 +1628,7 @@ msgstr "Vergelijken lukt niet in %s()."
 msgid "Error in date format for function %s()."
 msgstr "Fout in het datumformaat voor functie %s()."
 
-#: ../libqalculate/BuiltinFunctions.cc:2384 ../libqalculate/Calculator.cc:9746
+#: ../libqalculate/BuiltinFunctions.cc:2384 ../libqalculate/Calculator.cc:9785
 msgid "now"
 msgstr "nu"
 
@@ -1667,11 +1667,10 @@ msgid "Invalid variable name (%s)."
 msgstr "een geldige naam voor een variabele"
 
 #: ../libqalculate/BuiltinFunctions.cc:3263
-#, fuzzy
-msgid "An global unit or variable with the same name already exists."
+msgid ""
+"A global unit or variable was deactivated. It will be restored after the new "
+"variable has been removed."
 msgstr ""
-"Er bestaat al een eenheid of variabele met deze naam.\n"
-"Wilt u die overschrijven (standaard is nee)?"
 
 #: ../libqalculate/BuiltinFunctions.cc:3278
 #, c-format
@@ -1803,7 +1802,7 @@ msgid "Vector"
 msgstr "Vector"
 
 #: ../libqalculate/BuiltinFunctions.cc:3934
-#: ../libqalculate/BuiltinFunctions.cc:3965 ../libqalculate/Calculator.cc:9271
+#: ../libqalculate/BuiltinFunctions.cc:3965 ../libqalculate/Calculator.cc:9294
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr ""
 "Het is onmogelijk plotgegevens te genereren met de huidige min, max en "
@@ -1815,7 +1814,7 @@ msgid "Sampling rate must be a positive integer."
 msgstr ""
 
 #: ../libqalculate/BuiltinFunctions.cc:3941
-#: ../libqalculate/BuiltinFunctions.cc:3972 ../libqalculate/Calculator.cc:9243
+#: ../libqalculate/BuiltinFunctions.cc:3972 ../libqalculate/Calculator.cc:9266
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr ""
 "Het is onmogelijk plotgegevens te genereren met de huidige min, max en "
@@ -1875,7 +1874,7 @@ msgstr "Eenheid radiaal ontbreekt. Voor deze sessie wordt er een aangemaakt."
 msgid "Degrees unit is missing. Creating one for this session."
 msgstr "Eenheid graad ontbreekt. Voor deze sessie wordt er een aangemaakt."
 
-#: ../libqalculate/Calculator.cc:1477 ../libqalculate/Calculator.cc:9063
+#: ../libqalculate/Calculator.cc:1477 ../libqalculate/Calculator.cc:9086
 msgid "Currency"
 msgstr "Valuta"
 
@@ -1889,7 +1888,7 @@ msgstr ""
 msgid "calculating..."
 msgstr "aan het rekenen..."
 
-#: ../libqalculate/Calculator.cc:3662
+#: ../libqalculate/Calculator.cc:3676
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
@@ -1898,7 +1897,7 @@ msgstr ""
 "De naam \"%s\" is niet meer toegestaan. Verander alstublieft de naam \"%s\" "
 "omdat anders deze variabele verloren gaat."
 
-#: ../libqalculate/Calculator.cc:3680
+#: ../libqalculate/Calculator.cc:3694
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -1907,7 +1906,7 @@ msgstr ""
 "De naam \"%s\" is niet meer toegestaan. Verander alstublieft de naam \"%s\" "
 "omdat anders deze functie verloren gaat."
 
-#: ../libqalculate/Calculator.cc:3697
+#: ../libqalculate/Calculator.cc:3711
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -1916,30 +1915,30 @@ msgstr ""
 "De naam \"%s\" is niet meer toegestaan. Verander alstublieft de naam \"%s\" "
 "omdat anders deze eenheid verloren gaat."
 
-#: ../libqalculate/Calculator.cc:4846 ../libqalculate/Calculator.cc:5620
-#: ../libqalculate/Calculator.cc:5632 ../libqalculate/Calculator.cc:5658
-#: ../libqalculate/Calculator.cc:5684
+#: ../libqalculate/Calculator.cc:4860 ../libqalculate/Calculator.cc:5634
+#: ../libqalculate/Calculator.cc:5646 ../libqalculate/Calculator.cc:5672
+#: ../libqalculate/Calculator.cc:5698
 #, c-format
 msgid "Misplaced operator(s) \"%s\" ignored"
 msgstr "Verkeerd geplaatste bewerking(en) \"%s\" genegeerd"
 
-#: ../libqalculate/Calculator.cc:4870 ../libqalculate/Calculator.cc:5708
+#: ../libqalculate/Calculator.cc:4884 ../libqalculate/Calculator.cc:5722
 #, c-format
 msgid "Misplaced '%c' ignored"
 msgstr "Verkeerd geplaatste '%c' genegeerd"
 
-#: ../libqalculate/Calculator.cc:4897 ../libqalculate/Function.cc:1311
+#: ../libqalculate/Calculator.cc:4911 ../libqalculate/Function.cc:1311
 #: ../libqalculate/Function.cc:1342
 #, c-format
 msgid "Internal id %s does not exist."
 msgstr "Interne id %s bestaat niet."
 
-#: ../libqalculate/Calculator.cc:4915
+#: ../libqalculate/Calculator.cc:4929
 #, c-format
 msgid "\"%s\" is not a valid variable/function/unit."
 msgstr "\"%s\" is geen geldige variabele/functie/eenheid."
 
-#: ../libqalculate/Calculator.cc:4930
+#: ../libqalculate/Calculator.cc:4944
 #, c-format
 msgid ""
 "Trailing characters \"%s\" (not a valid variable/function/unit) in number "
@@ -1948,89 +1947,89 @@ msgstr ""
 "Afsluitende karakters \"%s\" (geen geldige variabele/functie/eenheid) in "
 "getal \"%s\" werden genegeerd."
 
-#: ../libqalculate/Calculator.cc:5311
+#: ../libqalculate/Calculator.cc:5325
 msgid "RPN syntax error. Values left at the end of the RPN expression."
 msgstr ""
 "RPN-fout. Er zijn nog waarden overgebleven na de verwerking van de RPN-"
 "opdracht."
 
-#: ../libqalculate/Calculator.cc:5314
+#: ../libqalculate/Calculator.cc:5328
 msgid "Unused stack values."
 msgstr "Ongebruikte waarden op de stack (stapelregister)."
 
-#: ../libqalculate/Calculator.cc:5353 ../libqalculate/Calculator.cc:5421
+#: ../libqalculate/Calculator.cc:5367 ../libqalculate/Calculator.cc:5435
 #, fuzzy, c-format
 msgid "RPN syntax error. Operator '%c' not supported."
 msgstr "RPN-syntaxisfout. Stack (stapelregister) is leeg."
 
-#: ../libqalculate/Calculator.cc:5381
+#: ../libqalculate/Calculator.cc:5395
 msgid "RPN syntax error. Stack is empty."
 msgstr "RPN-syntaxisfout. Stack (stapelregister) is leeg."
 
-#: ../libqalculate/Calculator.cc:5383
+#: ../libqalculate/Calculator.cc:5397
 msgid "RPN syntax error. Operator ignored as there where only one stack value."
 msgstr ""
 "RPN-syntaxisfout. Bewerking genegeerd omdat er slechts één waarde is op de "
 "stack (stapelregister)."
 
-#: ../libqalculate/Calculator.cc:5909
+#: ../libqalculate/Calculator.cc:5923
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "Naam \"%s\" wordt al gebruikt.. Wordt vervangen door \"%s\"."
 
-#: ../libqalculate/Calculator.cc:6568 ../libqalculate/DataSet.cc:525
+#: ../libqalculate/Calculator.cc:6591 ../libqalculate/DataSet.cc:525
 #, c-format
 msgid "File not identified as Qalculate! definitions file: %s."
 msgstr "Bestand niet gedefinieerd als definitiebestand voor Qalculate!: %s."
 
-#: ../libqalculate/Calculator.cc:8564 ../libqalculate/DataSet.cc:357
+#: ../libqalculate/Calculator.cc:8587 ../libqalculate/DataSet.cc:357
 msgid "Object"
 msgstr "Object"
 
-#: ../libqalculate/Calculator.cc:8573 ../libqalculate/DataSet.cc:358
+#: ../libqalculate/Calculator.cc:8596 ../libqalculate/DataSet.cc:358
 msgid "Property"
 msgstr "Eigenschap"
 
-#: ../libqalculate/Calculator.cc:8872
+#: ../libqalculate/Calculator.cc:8895
 msgid "column"
 msgstr "kolom"
 
-#: ../libqalculate/Calculator.cc:8875
+#: ../libqalculate/Calculator.cc:8898
 msgid "Column "
 msgstr "Kolom "
 
-#: ../libqalculate/Calculator.cc:8951 ../libqalculate/Calculator.cc:8998
+#: ../libqalculate/Calculator.cc:8974 ../libqalculate/Calculator.cc:9021
 msgid "timed out"
 msgstr "tijd is verlopen"
 
-#: ../libqalculate/Calculator.cc:9167 ../libqalculate/Calculator.cc:9168
-#: ../libqalculate/Calculator.cc:9171
+#: ../libqalculate/Calculator.cc:9190 ../libqalculate/Calculator.cc:9191
+#: ../libqalculate/Calculator.cc:9194
 #, c-format
 msgid "Failed to download exchange rates from ECB: %s"
 msgstr "Het ophalen van wisselkoersen van ECB is niet gelukt: %s"
 
-#: ../libqalculate/Calculator.cc:9239 ../libqalculate/Calculator.cc:9267
-#: ../libqalculate/Calculator.cc:9295 ../libqalculate/Calculator.cc:9584
+#: ../libqalculate/Calculator.cc:9262 ../libqalculate/Calculator.cc:9290
+#: ../libqalculate/Calculator.cc:9318 ../libqalculate/Calculator.cc:9607
 msgid "It took too long to generate the plot data."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:9330
+#: ../libqalculate/Calculator.cc:9353
 msgid "No extension in file name. Saving as PNG image."
 msgstr ""
 "Geen extensie opgegeven voor bestandsnaam. Wordt opgeslagen als PNG-"
 "afbeelding."
 
-#: ../libqalculate/Calculator.cc:9349
+#: ../libqalculate/Calculator.cc:9372
 msgid "Unknown extension in file name. Saving as PNG image."
 msgstr ""
 "Onbekende extensie in bestandsnaam. Wordt opgeslagen als PNG-afbeelding."
 
-#: ../libqalculate/Calculator.cc:9544
+#: ../libqalculate/Calculator.cc:9567
 #, c-format
 msgid "Could not create temporary file %s"
 msgstr "Kon tijdelijk bestand %s niet aanmaken"
 
-#: ../libqalculate/Calculator.cc:9599
+#: ../libqalculate/Calculator.cc:9622
 #, c-format
 msgid ""
 "Series %s contains non-numerical data (\"%s\" first of %s) which can not be "
@@ -2039,7 +2038,7 @@ msgstr ""
 "Rij %s bevat niet-numerieke gegevens (\"%s\" eerste van %s) die niet goed "
 "kunnen worden geplot."
 
-#: ../libqalculate/Calculator.cc:9601
+#: ../libqalculate/Calculator.cc:9624
 #, c-format
 msgid ""
 "Series %s contains non-real data (\"%s\" first of %s) which can not be "
@@ -2048,22 +2047,22 @@ msgstr ""
 "Rij %s bevat niet-reële gegevens (\"%s\" eerste van %s) die niet goed kunnen "
 "worden geplot."
 
-#: ../libqalculate/Calculator.cc:9637
+#: ../libqalculate/Calculator.cc:9660
 msgid ""
 "Failed to invoke gnuplot. Make sure that you have gnuplot installed in your "
 "path."
 msgstr ""
 "Gnuplot aanroepen mislukt. Controleer uw path of gnuplot daarin is te vinden."
 
-#: ../libqalculate/Calculator.cc:9746
+#: ../libqalculate/Calculator.cc:9785
 msgid "today"
 msgstr "vandaag"
 
-#: ../libqalculate/Calculator.cc:9749
+#: ../libqalculate/Calculator.cc:9788
 msgid "tomorrow"
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:9753
+#: ../libqalculate/Calculator.cc:9792
 msgid "yesterday"
 msgstr ""
 
@@ -2506,6 +2505,12 @@ msgstr "Aan"
 #: ../libqalculate/util.cc:185
 msgid "Off"
 msgstr "Uit"
+
+#, fuzzy
+#~ msgid "An global unit or variable with the same name already exists."
+#~ msgstr ""
+#~ "Er bestaat al een eenheid of variabele met deze naam.\n"
+#~ "Wilt u die overschrijven (standaard is nee)?"
 
 #~ msgid ""
 #~ "You need the download exchange rates to be able to convert between "
