@@ -1,3 +1,7 @@
+2017-08-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix trigonometric functions with angle unit other than radian 
+
 2017-08-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Include system-wide exchange rates file to avoid issues with missing currencies and the need to ask first-time users questions

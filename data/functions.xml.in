@@ -1295,7 +1295,7 @@
       <_title>Means</_title>
       <function>
         <_title>Mean</_title>
-        <_names>r:mean,average</_names>
+        <_names>r:mean,average,au:x&#x0304;</_names>
         <expression>total(\x)/dimension(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>

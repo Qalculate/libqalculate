@@ -13423,15 +13423,11 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 		return convert(((CompositeUnit*) u)->generateMathStructure(false, true), convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
 	}
 	if(m_type == STRUCT_UNIT) {
-		/*if(!convert_complex_relations && u->hasComplexRelationTo(o_unit)) {
-			if(found_complex_relations) *found_complex_relations = true;
-			return false;
-		}*/
 		if(u->hasComplexRelationTo(o_unit)) {
 			if(found_complex_relations) *found_complex_relations = true;			
 			if(!convert_complex_relations) return false;
 		}
-		if(testDissolveCompositeUnit(u)) {
+		if(o_unit->baseUnit() != u->baseUnit() && testDissolveCompositeUnit(u)) {
 			convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
 			return true;
 		}
