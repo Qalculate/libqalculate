@@ -3788,7 +3788,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	} else if(isInteger()) {
 		
 		long int length = mpz_sizeinbase(mpq_numref(r_value), base);
-		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < length && (approx || (po.min_exp != 0 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)))) {
+		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < length && (approx || (po.min_exp != 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)))) {
 			mpfr_clear_flags();
 			mpfr_t if_value;
 			long int new_precision = precision;
@@ -3814,7 +3814,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		bool exact = true;
 
 		integer_rerun:
-
+		
 		string mpz_str = printMPZ(ivalue, base, false, BASE_DISPLAY_NONE, po.lower_case_numbers);
 		if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 		
@@ -3858,7 +3858,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				precision2 = min_decimals + nondecimals;
 				if(approx && precision2 > i_precision_base) precision2 = i_precision_base;
 			}
-			if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals && (!approx || po.max_decimals + nondecimals < precision2) && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+			if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals && (!approx || po.max_decimals + nondecimals < precision2) && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 				mpz_t i_rem, i_quo, i_div;
 				mpz_inits(i_rem, i_quo, i_div, NULL);
 				mpz_ui_pow_ui(i_div, (unsigned long int) base, (unsigned long int) -(po.max_decimals - expo));
@@ -3886,7 +3886,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					goto integer_rerun;
 				}
 				mpz_clears(i_rem, i_quo, i_div, NULL);
-			} else if(precision2 < length && (approx || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+			} else if(precision2 < length && (approx || po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 
 				mpq_t qvalue;
 				mpq_init(qvalue);
@@ -3991,6 +3991,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				dp_added = false;
 			}
 		}
+
 		if(!exact && po.is_approximate) *po.is_approximate = true;
 		if(po.show_ending_zeroes && (!exact || approx) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
 			precision = precision_base;
@@ -4355,6 +4356,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(po.number_fraction_format == FRACTION_DECIMAL_EXACT && !isApproximate()) {
 				PrintOptions po2 = po;
 				po2.number_fraction_format = FRACTION_FRACTIONAL;
+				po2.restrict_fraction_length = true;
 				if(num_sign == 0 && po.use_max_decimals && po.max_decimals > 0) mpz_clears(num_bak, remainder_bak, NULL); 
 				mpz_clears(num, d, remainder, remainder2, exp, NULL);
 				return print(po2, ips);
@@ -4492,7 +4494,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			num.setApproximate();
 			den.setApproximate();
 		}
-		str = num.print(po, ips);
+		bool approximately_displayed = false;
+		PrintOptions po2 = po;
+		po2.is_approximate = &approximately_displayed;
+		str = num.print(po2, ips);
+		if(approximately_displayed && !isApproximate() && base != BASE_ROMAN_NUMERALS) {
+			po2 = po;
+			po2.number_fraction_format = FRACTION_DECIMAL;
+			return print(po2, ips);
+		}
 		if(ips.num) *ips.num = str;
 		if(po.spacious) str += " ";
 		if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION, po.can_display_unicode_string_arg))) {
@@ -4505,9 +4515,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(po.spacious) str += " ";
 		InternalPrintStruct ips_n = ips;
 		ips_n.minus = NULL;
-		string str2 = den.print(po, ips_n);
+		string str2 = den.print(po2, ips_n);
+		if(approximately_displayed && !isApproximate() && base != BASE_ROMAN_NUMERALS) {
+			po2 = po;
+			po2.number_fraction_format = FRACTION_DECIMAL;
+			return print(po2, ips);
+		}
 		if(ips.den) *ips.den = str2;
 		str += str2;
+		if(po.is_approximate && approximately_displayed) *po.is_approximate = true;
 	}
 	return str;
 }

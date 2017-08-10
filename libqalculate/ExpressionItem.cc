@@ -356,6 +356,7 @@ bool ExpressionItem::isLocal() const {
 	return b_local;
 }
 bool ExpressionItem::setLocal(bool is_local, int will_be_active) {
+	if(b_builtin) return false;
 	if(is_local != b_local) {
 		if(!b_local) {
 			bool was_active = b_active;
