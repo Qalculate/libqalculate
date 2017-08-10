@@ -11337,18 +11337,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					o_number.trunc();
 					add_nocopy(num);
 				}
-			} else if((po.number_fraction_format == FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS) && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger()) {
-				Number num(o_number.numerator());
-				Number den(o_number.denominator());
-				clear(true);
-				if(num.isOne()) {
-					m_type = STRUCT_INVERSE;
-				} else {
-					m_type = STRUCT_DIVISION;
-					APPEND_NEW(num);
-				}
-				APPEND_NEW(den);
-			} else if(po.number_fraction_format == FRACTION_DECIMAL_EXACT && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && !o_number.isApproximate()) {
+			} else if((po.number_fraction_format == FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS || po.number_fraction_format == FRACTION_DECIMAL_EXACT) && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && !o_number.isApproximate()) {
 				string str_den = "";
 				InternalPrintStruct ips_n;
 				if(isApproximate()) ips_n.parent_approximate = true;

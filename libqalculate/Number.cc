@@ -3788,7 +3788,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	} else if(isInteger()) {
 		
 		long int length = mpz_sizeinbase(mpq_numref(r_value), base);
-		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < length && (approx || (po.min_exp != 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)))) {
+		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < length && ((approx || (po.min_exp != 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT))) || length > 1000000L)) {
 			mpfr_clear_flags();
 			mpfr_t if_value;
 			long int new_precision = precision;
@@ -4067,7 +4067,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		long int i_log = mpfr_get_si(f_log, MPFR_RNDN);
 		if(base == 10) {
 			expo = i_log;
-			if(po.min_exp == EXP_PRECISION) {
+			if(po.min_exp == EXP_PRECISION || (po.min_exp == 0 && expo > 1000000L)) {
 				if((expo > -precision && expo < precision) || (expo < 3 && expo > -3 && PRECISION >= 3)) { 
 					expo = 0;
 				}
@@ -4356,7 +4356,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(po.number_fraction_format == FRACTION_DECIMAL_EXACT && !isApproximate()) {
 				PrintOptions po2 = po;
 				po2.number_fraction_format = FRACTION_FRACTIONAL;
-				po2.restrict_fraction_length = true;
+				if(expo != 0) po2.restrict_fraction_length = true;
 				if(num_sign == 0 && po.use_max_decimals && po.max_decimals > 0) mpz_clears(num_bak, remainder_bak, NULL); 
 				mpz_clears(num, d, remainder, remainder2, exp, NULL);
 				return print(po2, ips);
@@ -4498,7 +4498,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		PrintOptions po2 = po;
 		po2.is_approximate = &approximately_displayed;
 		str = num.print(po2, ips);
-		if(approximately_displayed && !isApproximate() && base != BASE_ROMAN_NUMERALS) {
+		if(approximately_displayed && base != BASE_ROMAN_NUMERALS) {
 			po2 = po;
 			po2.number_fraction_format = FRACTION_DECIMAL;
 			return print(po2, ips);
@@ -4516,7 +4516,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		InternalPrintStruct ips_n = ips;
 		ips_n.minus = NULL;
 		string str2 = den.print(po2, ips_n);
-		if(approximately_displayed && !isApproximate() && base != BASE_ROMAN_NUMERALS) {
+		if(approximately_displayed && base != BASE_ROMAN_NUMERALS) {
 			po2 = po;
 			po2.number_fraction_format = FRACTION_DECIMAL;
 			return print(po2, ips);
