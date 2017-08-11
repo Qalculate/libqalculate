@@ -1280,8 +1280,8 @@ void Calculator::addBuiltinVariables() {
 	v_minf = (KnownVariable*) addVariable(new KnownVariable("", "minus_infinity", mstruct, "-Infinity", false, true));
 	mstruct.setUndefined();
 	v_undef = (KnownVariable*) addVariable(new KnownVariable("", "undefined", mstruct, "Undefined", false, true));
-	addVariable(new EulerVariable());
-	addVariable(new CatalanVariable());
+	v_euler = (KnownVariable*) addVariable(new EulerVariable());
+	v_catalan = (KnownVariable*) addVariable(new CatalanVariable());
 	v_x = (UnknownVariable*) addVariable(new UnknownVariable("", "x", "", true, false));
 	v_y = (UnknownVariable*) addVariable(new UnknownVariable("", "y", "", true, false));
 	v_z = (UnknownVariable*) addVariable(new UnknownVariable("", "z", "", true, false));
@@ -1379,6 +1379,7 @@ void Calculator::addBuiltinFunctions() {
 
 	f_zeta = addFunction(new ZetaFunction());
 	f_gamma = addFunction(new GammaFunction());
+	f_digamma = addFunction(new DigammaFunction());
 	f_beta = addFunction(new BetaFunction());
 
 	f_total = addFunction(new TotalFunction());

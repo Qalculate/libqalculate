@@ -863,6 +863,7 @@ Number Number::realPart() const {
 }
 Number Number::imaginaryPart() const {
 	if(isInfinite()) return *this;
+	if(!i_value) return Number();
 	return *i_value;
 }
 Number Number::numerator() const {
@@ -1009,7 +1010,12 @@ bool Number::testErrors(int error_level) const {
 	return false;
 }
 bool Number::testFloatResult(int error_level) {
-	if(testErrors(error_level)) return false;
+	if(mpfr_underflow_p()) {if(error_level) CALCULATOR->error(error_level, _("Floating point underflow"), NULL); return true;}
+	if(mpfr_overflow_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point overflow"), NULL); return true;}
+	if(mpfr_divby0_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point division by zero exception"), NULL); return true;}
+	if(mpfr_erangeflag_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point range exception"), NULL); return true;}
+	if(mpfr_nan_p(f_value)) return false;
+	if(mpfr_nanflag_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point not a number exception"), NULL); return true;}
 	if(mpfr_inexflag_p()) {
 		b_approx = true;
 		if(i_precision < 0 || i_precision > PRECISION) i_precision = PRECISION;
@@ -2561,6 +2567,28 @@ bool Number::zeta() {
 	n_type = NUMBER_TYPE_FLOAT;
 	return true;
 }
+bool Number::gamma() {
+	Number nr_bak(*this);
+	mpfr_clear_flags();
+	setToFloatingPoint();
+	mpfr_gamma(f_value, f_value, MPFR_RNDN);
+	if(!testFloatResult()) {
+		set(nr_bak);
+		return false;
+	}
+	return true;
+}
+bool Number::digamma() {
+	Number nr_bak(*this);
+	mpfr_clear_flags();
+	setToFloatingPoint();
+	mpfr_digamma(f_value, f_value, MPFR_RNDN);
+	if(!testFloatResult()) {
+		set(nr_bak);
+		return false;
+	}
+	return true;
+}
 
 bool Number::sin() {
 	if(isInfinite()) return false;
@@ -3337,9 +3365,10 @@ bool Number::factorial() {
 		return false;
 	}
 	if(isNegative()) {
-		if(b_imag) return false;
+		/*if(b_imag) return false;
 		setPlusInfinity();
-		return true;
+		return true;*/
+		return false;
 	}
 	if(isZero()) {
 		set(1);

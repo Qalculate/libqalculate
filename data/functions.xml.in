@@ -631,6 +631,17 @@
         <_title>2nd value</_title>
       </argument>
     </builtin_function>
+    <function>
+      <_title>Fibonacci Number</_title>
+      <_names>r:fibonacci</_names>
+      <_description>Returns the n-th term of the Fibonacci sequence.</_description>
+      <expression>(golden^\x−(1−golden)^\x)/sqrt(5)</expression>
+      <argument type="integer" index="1">
+        <_title>Index (n)</_title>
+        <min>0</min>
+        <test>false</test>
+      </argument>
+    </function>
     <category>
       <_title>Rounding</_title>
       <builtin_function name="round">
@@ -794,7 +805,45 @@
     </function>
   </category>
   <category>
-    <_title>Analysis</_title>
+    <_title>Special Functions</_title>
+    <builtin_function name="gamma">
+      <_title>Gamma Function</_title>
+      <_names>r:gamma</_names>
+    </builtin_function>
+    <builtin_function name="digamma">
+      <_title>Digamma Function</_title>
+      <_names>r:digamma,psi</_names>
+    </builtin_function>
+    <builtin_function name="beta">
+      <_title>Beta Function</_title>
+      <_names>r:beta</_names>
+    </builtin_function>
+    <builtin_function name="zeta">
+      <_title>Riemann Zeta</_title>
+      <_names>r:zeta</_names>
+      <argument index="1">
+        <_title>Integral point</_title>
+      </argument>
+    </builtin_function>
+    <function>
+      <_title>Kronecker Delta</_title>
+      <_names>r:kronecker</_names>
+      <_description>Returns 0 if i != j and 1 if i = j.</_description>
+      <expression>\x=\Y{0}</expression>
+      <argument type="number" index="1">
+        <_title>Value 1 (i)</_title>
+	<complex_allowed>false</complex_allowed>
+        <test>false</test>
+      </argument>
+      <argument type="number" index="2">
+        <_title>Value 2 (j)</_title>
+	<complex_allowed>false</complex_allowed>
+        <test>false</test>
+      </argument>
+    </function>
+  </category>
+  <category>
+    <_title>Complex Numbers</_title>
     <builtin_function name="re">
       <_title>Real Part</_title>
       <_names>r:re</_names>
@@ -809,14 +858,23 @@
         <_title>Complex number</_title>
       </argument>
     </builtin_function>
-    <builtin_function name="gamma">
-      <_title>Gamma Function</_title>
-      <_names>r:gamma</_names>
-    </builtin_function>
-    <builtin_function name="beta">
-      <_title>Beta Function</_title>
-      <_names>r:beta</_names>
-    </builtin_function>
+    <function>
+      <_title>Principal Argument</_title>
+      <_names>r:arg</_names>
+      <expression>atan2(im(\x);re(\x))</expression>
+      <argument type="number" index="1">
+        <_title>Complex number</_title>
+      </argument>
+    </function>
+    <function>
+      <_title>Complex Conjugate</_title>
+      <_names>r:conj</_names>
+      <expression>re(\x)-i*im(\x)</expression>
+      <argument type="number" index="1">
+        <_title>Complex number</_title>
+        <test>false</test>
+      </argument>
+    </function>
   </category>
   <category>
     <_title>Exponents &amp; Logarithms</_title>
@@ -1119,13 +1177,6 @@
         <_title>Length</_title>
       </argument>
     </function>
-    <builtin_function name="zeta">
-      <_title>Riemann Zeta</_title>
-      <_names>r:zeta</_names>
-      <argument index="1">
-        <_title>Integral point</_title>
-      </argument>
-    </builtin_function>
     <builtin_function name="roman">
       <_title>Roman Number</_title>
       <_names>r:roman</_names>
@@ -1134,33 +1185,6 @@
         <_title>Roman number</_title>
       </argument>
     </builtin_function>
-    <function>
-      <_title>Kronecker Delta</_title>
-      <_names>r:kronecker</_names>
-      <_description>Returns 0 if i != j and 1 if i = j.</_description>
-      <expression>\x=\Y{0}</expression>
-      <argument type="number" index="1">
-        <_title>Value 1 (i)</_title>
-	<complex_allowed>false</complex_allowed>
-        <test>false</test>
-      </argument>
-      <argument type="number" index="2">
-        <_title>Value 2 (j)</_title>
-	<complex_allowed>false</complex_allowed>
-        <test>false</test>
-      </argument>
-    </function>
-    <function>
-      <_title>Fibonacci Number</_title>
-      <_names>r:fibonacci</_names>
-      <_description>Returns the n-th term of the Fibonacci sequence.</_description>
-      <expression>(golden^\x−(1−golden)^\x)/sqrt(5)</expression>
-      <argument type="integer" index="1">
-        <_title>Index (n)</_title>
-        <min>0</min>
-        <test>false</test>
-      </argument>
-    </function>
   </category>
   <category>
     <_title>Statistics</_title>

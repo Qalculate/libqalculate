@@ -408,7 +408,10 @@ class Number {
 		*
  		* @return true if the calculation was successful.
  		*/
-		bool zeta();			
+		bool zeta();
+		
+		bool gamma();
+		bool digamma();
 		
 		bool sin();
 		bool asin();

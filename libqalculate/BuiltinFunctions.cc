@@ -354,9 +354,9 @@ int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 GammaFunction::GammaFunction() : MathFunction("gamma", 1, 1, SIGN_CAPITAL_GAMMA) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
-int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	if(vargs[0].number().isRational()) {
-		if(vargs[0].number().isInteger()) {
+int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].number().isRational() && (eo.approximation == APPROXIMATION_EXACT || (eo.approximation == APPROXIMATION_TRY_EXACT && vargs[0].number().isLessThan(1000)))) {
+		if(vargs[0].number().isInteger() && vargs[0].number().isPositive()) {
 			mstruct.set(CALCULATOR->f_factorial, &vargs[0], NULL);
 			mstruct[0] -= 1;
 			return 1;
@@ -398,7 +398,19 @@ int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			}
 		}
 	}
-	CALCULATOR->error(false, _("%s() does at the moment only support integers and fractions of two."), preferredDisplayName().name.c_str(), NULL); 
+	FR_FUNCTION(gamma)
+	return 0;
+}
+DigammaFunction::DigammaFunction() : MathFunction("digamma", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+int DigammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].number().isOne()) {
+		mstruct.set(CALCULATOR->v_euler);
+		mstruct.negate();
+		return 1;
+	}
+	FR_FUNCTION(digamma)
 	return 0;
 }
 BetaFunction::BetaFunction() : MathFunction("beta", 2, 2, SIGN_CAPITAL_BETA) {
@@ -416,7 +428,7 @@ int BetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 }
 
 FactorialFunction::FactorialFunction() : MathFunction("factorial", 1) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, false, INTEGER_TYPE_SLONG));
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, false, INTEGER_TYPE_SLONG));
 }
 int FactorialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(factorial)

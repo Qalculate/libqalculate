@@ -268,7 +268,7 @@ class Calculator {
 	
   public:
 
-	KnownVariable *v_pi, *v_e, *v_i, *v_inf, *v_pinf, *v_minf, *v_undef;
+	KnownVariable *v_pi, *v_e, *v_euler, *v_catalan, *v_i, *v_inf, *v_pinf, *v_minf, *v_undef;
 	UnknownVariable *v_x, *v_y, *v_z;
 	MathFunction *f_vector, *f_sort, *f_rank, *f_limits, *f_component, *f_dimension, *f_merge_vectors;
 	MathFunction *f_matrix, *f_matrix_to_vector, *f_area, *f_rows, *f_columns, *f_row, *f_column, *f_elements, *f_element, *f_transpose, *f_identity, *f_determinant, *f_permanent, *f_adjoint, *f_cofactor, *f_inverse; 
@@ -282,7 +282,7 @@ class Calculator {
 	MathFunction *f_ln, *f_logn;
 	MathFunction *f_lambert_w;
 	MathFunction *f_sin, *f_cos, *f_tan, *f_asin, *f_acos, *f_atan, *f_sinh, *f_cosh, *f_tanh, *f_asinh, *f_acosh, *f_atanh, *f_atan2, *f_radians_to_default_angle_unit;
-	MathFunction *f_zeta, *f_gamma, *f_beta;
+	MathFunction *f_zeta, *f_gamma, *f_digamma, *f_beta;
 	MathFunction *f_total, *f_percentile, *f_min, *f_max, *f_mode, *f_rand;
 	MathFunction *f_isodate, *f_localdate, *f_timestamp, *f_stamptodate, *f_days, *f_yearfrac, *f_week, *f_weekday, *f_month, *f_day, *f_year, *f_yearday, *f_time, *f_add_days, *f_add_months, *f_add_years;
 	MathFunction *f_bin, *f_oct, *f_hex, *f_base, *f_roman;
