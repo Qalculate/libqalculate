@@ -1,3 +1,12 @@
+2017-08-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Enhance gamma(). Add digamma(), arg(), conj(), besselj(), bessely(), airy(), erf(), erfc()
+
+2017-08-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix decimal exact fractional format for large numerators and denominators
+	* Avoid display of numbers with extremely large number of digits (> 10000000) for all options
+
 2017-08-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix trigonometric functions with angle unit other than radian 

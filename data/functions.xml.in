@@ -818,6 +818,38 @@
       <_title>Beta Function</_title>
       <_names>r:beta</_names>
     </builtin_function>
+    <builtin_function name="erf">
+      <_title>Error Function</_title>
+      <_names>r:erf</_names>
+    </builtin_function>
+    <builtin_function name="erfc">
+      <_title>Complementary Error Function</_title>
+      <_names>r:erfc</_names>
+    </builtin_function>
+    <builtin_function name="airy">
+      <_title>Airy Function</_title>
+      <_names>r:airy</_names>
+    </builtin_function>
+    <builtin_function name="besselj">
+      <_title>Bessel Function of the First Kind</_title>
+      <_names>r:besselj</_names>
+      <argument index="1">
+        <_title>Order</_title>
+      </argument>
+      <argument index="2">
+        <_title>Argument</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="bessely">
+      <_title>Bessel Function of the Second Kind</_title>
+      <_names>r:bessely</_names>
+      <argument index="1">
+        <_title>Order</_title>
+      </argument>
+      <argument index="2">
+        <_title>Argument</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="zeta">
       <_title>Riemann Zeta</_title>
       <_names>r:zeta</_names>

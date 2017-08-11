@@ -1381,6 +1381,11 @@ void Calculator::addBuiltinFunctions() {
 	f_gamma = addFunction(new GammaFunction());
 	f_digamma = addFunction(new DigammaFunction());
 	f_beta = addFunction(new BetaFunction());
+	f_airy = addFunction(new AiryFunction());
+	f_besselj = addFunction(new BesseljFunction());
+	f_bessely = addFunction(new BesselyFunction());
+	f_erf = addFunction(new ErfFunction());
+	f_erfc = addFunction(new ErfcFunction());
 
 	f_total = addFunction(new TotalFunction());
 	f_percentile = addFunction(new PercentileFunction());

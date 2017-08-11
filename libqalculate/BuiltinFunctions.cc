@@ -24,6 +24,7 @@
 
 #define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) {return 0;} else {mstruct.set(nr); return 1;}
 #define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite() && !vargs[1].number().isInfinite())) {return 0;} else {mstruct.set(nr); return 1;}
+#define FR_FUNCTION_2R(FUNC)	Number nr(vargs[1].number()); if(!nr.FUNC(vargs[0].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite() && !vargs[1].number().isInfinite())) {return 0;} else {mstruct.set(nr); return 1;}
 
 #define REPRESENTS_FUNCTION(x, y) x::x() : MathFunction(#y, 1) {} int x::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {mstruct = vargs[0]; mstruct.eval(eo); if(mstruct.y()) {mstruct.clear(); mstruct.number().setTrue();} else {mstruct.clear(); mstruct.number().setFalse();} return 1;}
 
@@ -352,7 +353,7 @@ int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	FR_FUNCTION(zeta)
 }
 GammaFunction::GammaFunction() : MathFunction("gamma", 1, 1, SIGN_CAPITAL_GAMMA) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	NON_COMPLEX_NUMBER_ARGUMENT(1);
 }
 int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].number().isRational() && (eo.approximation == APPROXIMATION_EXACT || (eo.approximation == APPROXIMATION_TRY_EXACT && vargs[0].number().isLessThan(1000)))) {
@@ -399,10 +400,9 @@ int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		}
 	}
 	FR_FUNCTION(gamma)
-	return 0;
 }
 DigammaFunction::DigammaFunction() : MathFunction("digamma", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	NON_COMPLEX_NUMBER_ARGUMENT(1);
 }
 int DigammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].number().isOne()) {
@@ -411,11 +411,10 @@ int DigammaFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		return 1;
 	}
 	FR_FUNCTION(digamma)
-	return 0;
 }
 BetaFunction::BetaFunction() : MathFunction("beta", 2, 2, SIGN_CAPITAL_BETA) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false));
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
 }
 int BetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct = vargs[0]; 
@@ -425,6 +424,43 @@ int BetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct2[0] += vargs[0];
 	mstruct /= mstruct2;
 	return 1;
+}
+AiryFunction::AiryFunction() : MathFunction("airy", 1) {
+	NumberArgument *arg = new NumberArgument();
+	Number fr(-500, 1, 0);
+	arg->setMin(&fr);
+	fr.set(500, 1, 0);
+	arg->setMax(&fr);
+	setArgumentDefinition(1, arg);
+}
+int AiryFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(airy)
+}
+BesseljFunction::BesseljFunction() : MathFunction("besselj", 2) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
+	NON_COMPLEX_NUMBER_ARGUMENT(2);
+}
+int BesseljFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION_2R(besselj)
+}
+BesselyFunction::BesselyFunction() : MathFunction("bessely", 2) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
+	NON_COMPLEX_NUMBER_ARGUMENT(2);
+}
+int BesselyFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION_2R(bessely)
+}
+ErfFunction::ErfFunction() : MathFunction("erf", 1) {
+	NON_COMPLEX_NUMBER_ARGUMENT(1);
+}
+int ErfFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(erf)
+}
+ErfcFunction::ErfcFunction() : MathFunction("erfc", 1) {
+	NON_COMPLEX_NUMBER_ARGUMENT(1);
+}
+int ErfcFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(erfc)
 }
 
 FactorialFunction::FactorialFunction() : MathFunction("factorial", 1) {
@@ -2126,7 +2162,30 @@ Atan2Function::Atan2Function() : MathFunction("atan2", 2) {
 }
 bool Atan2Function::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[0].representsNumber() && vargs[1].representsNumber();}
 int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	FR_FUNCTION_2(atan2)
+	Number nr = vargs[0].number();
+	if(!nr.atan2(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) return 0;
+	mstruct = nr;
+	switch(eo.parse_options.angle_unit) {
+		case ANGLE_UNIT_DEGREES: {
+			mstruct.multiply_nocopy(new MathStructure(180, 1, 0));
+			mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
+			break;
+		}
+		case ANGLE_UNIT_GRADIANS: {
+			mstruct.multiply_nocopy(new MathStructure(200, 1, 0));
+			mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi));
+			break;
+		}
+		case ANGLE_UNIT_RADIANS: {
+			break;
+		}
+		default: {
+			if(CALCULATOR->getRadUnit()) {
+				mstruct *= CALCULATOR->getRadUnit();
+			}
+		}
+	}
+	return 1;
 }
 
 RadiansToDefaultAngleUnitFunction::RadiansToDefaultAngleUnitFunction() : MathFunction("radtodef", 1) {
@@ -4013,3 +4072,4 @@ int UncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &
 	return 1;
 	
 }
+

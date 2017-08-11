@@ -96,9 +96,9 @@ class Number {
 		
 		void set(string number, const ParseOptions &po = default_parse_options);
 		void set(long int numerator, long int denominator = 1, long int exp_10 = 0, bool keep_precision = false, bool keep_imag = false);
-		void setInfinity();
-		void setPlusInfinity();
-		void setMinusInfinity();
+		void setInfinity(bool keep_precision = false);
+		void setPlusInfinity(bool keep_precision = false);
+		void setMinusInfinity(bool keep_precision = false);
 		void setFloat(double d_value);
 
 		void setInternal(const mpz_t &mpz_value, bool keep_precision = false, bool keep_imag = false);
@@ -412,6 +412,11 @@ class Number {
 		
 		bool gamma();
 		bool digamma();
+		bool airy();
+		bool erf();
+		bool erfc();
+		bool besselj(const Number &o);
+		bool bessely(const Number &o);
 		
 		bool sin();
 		bool asin();
