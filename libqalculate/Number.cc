@@ -170,13 +170,21 @@ string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, Base
 	mp_get_memory_functions (NULL, NULL, &freefunc);
 	freefunc(tmp, strlen(tmp) + 1);
 	
-	if(lower_case) {
-		for(size_t i = 0; i < cl_str.length(); i++) {
-			if(cl_str[i] >= 'A' && cl_str[i] <= 'Z') {
-				cl_str[i] += 32;
+	if(base > 10) {
+		if(lower_case) {
+			for(size_t i = 0; i < cl_str.length(); i++) {
+				if(cl_str[i] >= 'A' && cl_str[i] <= 'Z') {
+					cl_str[i] += 32;
+				}
+			}
+		} else {
+			for(size_t i = 0; i < cl_str.length(); i++) {
+				if(cl_str[i] >= 'a' && cl_str[i] <= 'z') {
+					cl_str[i] -= 32;
+				}
 			}
 		}
-	}		
+	}
 	if(cl_str[cl_str.length() - 1] == '.') {
 		cl_str.erase(cl_str.length() - 1, 1);
 	}
