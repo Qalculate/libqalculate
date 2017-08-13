@@ -528,9 +528,8 @@ static const struct ParseOptions {
 	MathStructure *unended_function;
 	/// Preserve the expression structure as much as possible. Default: false
 	bool preserve_format;
-	/// Defaukt dataset. Used for object.property syntax without a preceeding data set. Default: NULL
+	/// Default dataset. Used for object.property syntax without a preceeding data set. Default: NULL
 	DataSet *default_dataset;
-	/// Convert degree Celsius and Fahrenheit to Kelvin already when parsing the expression. Turn off when parsing unit expression to convert to. Default: true
 	/// Parsing mode. Default: PARSING_MODE_ADAPTIVE
 	ParsingMode parsing_mode;
 	

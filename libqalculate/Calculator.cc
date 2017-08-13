@@ -2204,6 +2204,31 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 	}
 	return true;
 }
+bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOptions &eo, string to_str) {
+	b_busy = true;
+	if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
+	bool had_msecs = msecs > 0;
+	expression_to_calculate = "";
+	tmp_evaluationoptions = eo;
+	tmp_proc_command = PROC_NO_COMMAND;
+	tmp_rpn_mstruct = NULL;
+	tmp_parsedstruct = NULL;
+	if(!to_str.empty()) tmp_tostruct = new MathStructure(to_str);
+	else tmp_tostruct = NULL;
+	tmp_tostruct = NULL;
+	tmp_maketodivision = false;
+	if(!calculate_thread->write(false)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
+	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
+	while(msecs > 0 && b_busy) {
+		sleep_ms(10);
+		msecs -= 10;
+	}	
+	if(had_msecs && b_busy) {
+		if(!abort()) mstruct->setAborted();
+		return false;
+	}
+	return true;
+}
 bool Calculator::hasToExpression(const string &str) const {
 	return str.rfind(_(" to ")) != string::npos || str.rfind(" to ") != string::npos;
 }

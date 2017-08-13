@@ -356,6 +356,17 @@ class Calculator {
 	*/
 	MathStructure calculate(string str, const EvaluationOptions &eo = default_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
 	/** Calculates a parsed value.
+	* This function starts the calculation in a separate thread and will return when the calculation has started unless a maximum time has been specified.
+	* The calculation can then be stopped with abort().
+	*
+	* @param[out] mstruct Parsed value to evaluate and fill with the result.
+	* @param msecs The maximum time for the calculation in milliseconds. If msecs <= 0 the time will be unlimited.
+	* @param eo Options for the evaluation of the expression.
+	* @param to_str "to" expression for conversion.
+	* @returns The result of the calculation.
+	*/
+	bool calculate(MathStructure *mstruct, int msecs, const EvaluationOptions &eo = default_evaluation_options, string to_str = "");
+	/** Calculates a parsed value.
 	*
 	* @param mstruct Parsed value to evaluate.
 	* @param eo Options for the evaluation of the expression.

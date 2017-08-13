@@ -65,6 +65,7 @@
     </unit>
     <unit type="alias">
       <_title>U.S. Survey Inch</_title>
+      <system>US Survey</system>
       <_names>ar:US_in,US_inch,p:US_inches</_names>
       <base>
         <unit>m</unit>
@@ -74,6 +75,7 @@
     </unit>
     <unit type="alias">
       <_title>Inch</_title>
+      <system>Imperial/US</system>
       <_names>ar:in,inch,p:inches</_names>
       <base>
         <unit>m</unit>
@@ -83,6 +85,7 @@
     </unit>
     <unit type="alias">
       <_title>Hand</_title>
+      <system>Imperial/US</system>
       <_names>r:hand,p:hands</_names>
       <base>
         <unit>in</unit>
@@ -93,6 +96,7 @@
     </unit>
     <unit type="alias">
       <_title>Foot</_title>
+      <system>Imperial/US</system>
       <_names>ar:ft,foot,p:feet</_names>
       <base>
         <unit>hand</unit>
@@ -103,6 +107,7 @@
     </unit>
     <unit type="alias">
       <_title>U.S. Survey Foot</_title>
+      <system>US Survey</system>
       <_names>ar:US_ft,US_foot,p:US_feet</_names>
       <base>
         <unit>US_in</unit>
@@ -113,6 +118,7 @@
     </unit>
     <unit type="alias">
       <_title>Link</_title>
+      <system>Imperial/US</system>
       <_names>ar:li,link,p:links</_names>
       <base>
         <unit>in</unit>
@@ -123,6 +129,7 @@
     </unit>
     <unit type="alias">
       <_title>Yard</_title>
+      <system>Imperial/US</system>
       <_names>ar:yd,yard,p:yards</_names>
       <base>
         <unit>ft</unit>
@@ -133,6 +140,7 @@
     </unit>
     <unit type="alias">
       <_title>Rod (pole/perch)</_title>
+      <system>US Survey</system>
       <_names>ar:rd,rod,p:rods</_names>
       <base>
         <unit>US_ft</unit>
@@ -143,6 +151,7 @@
     </unit>
     <unit type="alias">
       <_title>Fathom</_title>
+      <system>Imperial/US</system>
       <_names>r:fathom,p:fathoms</_names>
       <base>
         <unit>yd</unit>
@@ -153,6 +162,7 @@
     </unit>
     <unit type="alias">
       <_title>Chain</_title>
+      <system>Imperial/US</system>
       <_names>ar:ch,chain,p:chains</_names>
       <base>
         <unit>li</unit>
@@ -163,6 +173,7 @@
     </unit>
     <unit type="alias">
       <_title>Furlong</_title>
+      <system>Imperial/US</system>
       <_names>ar:fur,furlong,p:furlongs</_names>
       <base>
         <unit>ch</unit>
@@ -173,6 +184,7 @@
     </unit>
     <unit type="alias">
       <_title>Mile</_title>
+      <system>Imperial/US</system>
       <_names>ar:mi,mile,p:miles</_names>
       <base>
         <unit>yd</unit>
@@ -183,6 +195,7 @@
     </unit>
     <unit type="alias">
       <_title>U.S. Survey Mile</_title>
+      <system>US Survey</system>
       <_names>ar:US_mi,US_mile,p:US_miles</_names>
       <base>
         <unit>US_ft</unit>
@@ -193,6 +206,7 @@
     </unit>
     <unit type="alias">
       <_title>Mil (1/1000 in)</_title>
+      <system>Imperial/US</system>
       <_names>r:mil,p:mils</_names>
       <base>
         <unit>in</unit>
@@ -444,6 +458,7 @@
     </unit>
     <unit type="alias">
       <_title>Grain</_title>
+      <system>Troy</system>
       <_names>ar:gr,grain,p:grains</_names>
       <base>
         <unit>g</unit>
@@ -453,6 +468,7 @@
     </unit>
     <unit type="alias">
       <_title>Pennyweight</_title>
+      <system>Troy</system>
       <_names>ar:pwt,pennyweight,p:pennyweights</_names>
       <base>
         <unit>gr</unit>
@@ -463,6 +479,7 @@
     </unit>
     <unit type="alias">
       <_title>Ounce (troy)</_title>
+      <system>Troy</system>
       <_names>ar:oz_t,troy_ounce,p:troy_ounces</_names>
       <base>
         <unit>pwt</unit>
@@ -473,6 +490,7 @@
     </unit>
     <unit type="alias">
       <_title>Pound (troy)</_title>
+      <system>Troy</system>
       <_names>ar:lb_t,troy_pound,p:troy_pounds</_names>
       <base>
         <unit>oz_t</unit>
@@ -483,6 +501,7 @@
     </unit>
     <unit type="alias">
       <_title>Dram</_title>
+      <system>Imperial/US</system>
       <_names>ar:dr,dram,p:drams</_names>
       <base>
         <unit>g</unit>
@@ -492,6 +511,7 @@
     </unit>
     <unit type="alias">
       <_title>Ounce</_title>
+      <system>Imperial/US</system>
       <_names>ar:oz,ounce,p:ounces</_names>
       <base>
         <unit>dr</unit>
@@ -501,6 +521,7 @@
     </unit>
     <unit type="alias">
       <_title>Pound</_title>
+      <system>Imperial/US</system>
       <_names>ar:lb,pound,p:pounds</_names>
       <base>
         <unit>oz</unit>
@@ -510,8 +531,9 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Short Hundredweight</_title>
-      <_names>ar:cwt,hundredweight,p:hundredweights</_names>
+      <_title>Short Hundredweight (Cental)</_title>
+      <system>US</system>
+      <_names>ar:cwt,hundredweight,cental,p:hundredweights,centals</_names>
       <base>
         <unit>lb</unit>
         <relation>100</relation>
@@ -520,6 +542,7 @@
     </unit>
     <unit type="alias">
       <_title>Long Hundredweight</_title>
+      <system>Imperial</system>
       <_names>ar:l_cwt,long_hundredweight,p:long_hundredweights</_names>
       <base>
         <unit>lb</unit>
@@ -529,6 +552,7 @@
     </unit>
     <unit type="alias">
       <_title>Short Ton</_title>
+      <system>US</system>
       <_names>ar:s_ton,short_ton,p:short_tons</_names>
       <base>
         <unit>lb</unit>
@@ -538,6 +562,7 @@
     </unit>
     <unit type="alias">
       <_title>Long Ton</_title>
+      <system>Imperial</system>
       <_names>ar:l_ton,long_ton,p:long_tons</_names>
       <base>
         <unit>lb</unit>
@@ -547,21 +572,13 @@
     </unit>
     <unit type="alias">
       <_title>Stone</_title>
+      <system>Imperial</system>
       <_names>r:stone,p:stones</_names>
       <base>
         <unit>lb</unit>
         <relation>14</relation>
         <exponent>1</exponent>
         <mix>2</mix>
-      </base>
-    </unit>
-    <unit type="alias">
-      <_title>Cental</_title>
-      <_names>r:cental,p:centals</_names>
-      <base>
-        <unit>lb</unit>
-        <relation>100</relation>
-        <exponent>1</exponent>
       </base>
     </unit>
     <unit type="alias">
@@ -1155,6 +1172,7 @@
     </unit>
     <unit type="alias">
       <_title>Degree Rankine</_title>
+      <system>Imperial/US</system>
       <_names>ar:oR,au:&#xB0;R,r:rankine</_names>
       <base>
         <unit>K</unit>
@@ -1164,6 +1182,7 @@
     </unit>
     <unit type="alias">
       <_title>Degree Fahrenheit</_title>
+      <system>Imperial/US</system>
       <_names>ar:oF,au:&#xB0;F,au:&#x2109;,r:fahrenheit</_names>
       <base>
         <unit>K</unit>
@@ -1356,6 +1375,7 @@
       </unit>
       <unit type="alias">
         <_title>Foot-Candle</_title>
+        <system>Imperial/US</system>
         <_names>ar:fc,footcandle,p:footcandles</_names>
         <base>
           <unit>lm_p_sqft</unit>
@@ -1521,6 +1541,7 @@
     </unit>
     <unit type="alias">
       <_title>Rood</_title>
+      <system>Imperial</system>
       <_names>r:rood,p:roods</_names>
       <base>
         <unit>yd</unit>
@@ -1530,6 +1551,7 @@
     </unit>
     <unit type="alias">
       <_title>Acre</_title>
+      <system>Imperial</system>
       <_names>r:acre,p:acres</_names>
       <base>
         <unit>ch</unit>
@@ -1539,15 +1561,17 @@
     </unit>
     <unit type="alias">
       <_title>Section</_title>
+      <system>US Survey</system>
       <_names>r:section,p:sections</_names>
       <base>
-        <unit>mi</unit>
+        <unit>US_mi</unit>
         <relation>1</relation>
         <exponent>2</exponent>
       </base>
     </unit>
     <unit type="alias">
       <_title>Township</_title>
+      <system>US Survey</system>
       <_names>r:township,p:townships</_names>
       <base>
         <unit>section</unit>
@@ -1558,6 +1582,7 @@
     </unit>
     <unit type="composite">
       <_title>Square Foot</_title>
+      <system>Imperial/US</system>
       <names>r:sqft</names>
       <part>
         <unit>ft</unit>
@@ -1567,6 +1592,7 @@
     </unit>
     <unit type="composite">
       <_title>Square Inch</_title>
+      <system>Imperial/US</system>
       <names>r:sqin</names>
       <part>
         <unit>in</unit>
@@ -1576,6 +1602,7 @@
     </unit>
     <unit type="composite">
       <_title>Square Mile</_title>
+      <system>Imperial/US</system>
       <names>r:sqmi</names>
       <part>
         <unit>mi</unit>
@@ -1634,6 +1661,7 @@
     </unit>
     <unit type="composite">
       <_title>Cubic Inch</_title>
+      <system>Imperial/US</system>
       <names>r:cuin</names>
       <part>
         <unit>in</unit>
@@ -1674,6 +1702,7 @@
       <unit type="composite">
         <hidden>true</hidden>
         <_title>Miles per Gallon</_title>
+        <system>US</system>
         <names>r:mile_p_gal</names>
         <part>
           <unit>mi</unit>
@@ -1688,6 +1717,7 @@
       </unit>
       <unit type="alias">
         <_title>Miles per Gallon</_title>
+        <system>US</system>
         <_names>a-cr:mpg</_names>
         <base>
           <unit>mile_p_gal</unit>
@@ -1730,6 +1760,7 @@
       </unit>
       <unit type="alias">
         <_title>Cup (U.S.)</_title>
+        <system>US</system>
         <_names>r:cup,p:cups</_names>
         <base>
           <unit>L</unit>
@@ -1742,6 +1773,7 @@
       <_title>Imperial Capacity</_title>
       <unit type="alias">
         <_title>Imperial Fluid Ounce</_title>
+        <system>Imperial</system>
         <_names>ar:UK_fl_oz,imperial_fluid_ounce,p:imperial_fluid_ounces</_names>
         <base>
           <unit>L</unit>
@@ -1751,6 +1783,7 @@
       </unit>
       <unit type="alias">
         <_title>Imperial Gill</_title>
+        <system>Imperial</system>
         <_names>ar:UK_gi,imperial_gill,p:imperial_gills</_names>
         <base>
           <unit>UK_fl_oz</unit>
@@ -1761,6 +1794,7 @@
       </unit>
       <unit type="alias">
         <_title>Imperial Pint</_title>
+        <system>Imperial</system>
         <_names>ar:UK_pt,imperial_pint,p:imperial_pints</_names>
         <base>
           <unit>UK_gi</unit>
@@ -1771,6 +1805,7 @@
       </unit>
       <unit type="alias">
         <_title>Imperial Quart</_title>
+        <system>Imperial</system>
         <_names>ar:UK_qt,imperial_quart,p:imperial_quarts</_names>
         <base>
           <unit>UK_pt</unit>
@@ -1781,6 +1816,7 @@
       </unit>
       <unit type="alias">
         <_title>Imperial Gallon</_title>
+        <system>Imperial</system>
         <_names>ar:UK_gal,imperial_gallon,p:imperial_gallons</_names>
         <base>
           <unit>UK_qt</unit>
@@ -1791,6 +1827,7 @@
       </unit>
       <unit type="alias">
         <_title>Imperial Minim</_title>
+        <system>Imperial</system>
         <_names>r:imperial_minim,p:imperial_minims</_names>
         <base>
           <unit>UK_fl_oz</unit>
@@ -1800,6 +1837,7 @@
       </unit>
       <unit type="alias">
         <_title>Imperial Fluid Scuple</_title>
+        <system>Imperial</system>
         <_names>r:imperial_fluid_scuple,p:imperial_fluid_scuples</_names>
         <base>
           <unit>imperial_minim</unit>
@@ -1809,6 +1847,7 @@
       </unit>
       <unit type="alias">
         <_title>Imperial Fluid Drachm</_title>
+        <system>Imperial</system>
         <_names>ar:UK_fl_dr,imperial_fluid_drachm,p:imperial_fluid_drachms</_names>
         <base>
           <unit>imperial_fluid_scuple</unit>
@@ -1818,6 +1857,7 @@
       </unit>
       <unit type="alias">
         <_title>Imperial Bushel</_title>
+        <system>Imperial</system>
         <_names>ar:UK_bu,imperial_bushel,p:imperial_bushels</_names>
         <base>
           <unit>UK_gal</unit>
@@ -1831,6 +1871,7 @@
       <_title>U.S. Capacity</_title>
       <unit type="alias">
         <_title>U.S. Fluid Ounce</_title>
+        <system>US</system>
         <_names>ar:fl_oz,fluid_ounce,p:fluid_ounces</_names>
         <base>
           <unit>in</unit>
@@ -1840,6 +1881,7 @@
       </unit>
       <unit type="alias">
         <_title>U.S. Gill</_title>
+        <system>US</system>
         <_names>ar:gi,gill,p:gills</_names>
         <base>
           <unit>fl_oz</unit>
@@ -1849,6 +1891,7 @@
       </unit>
       <unit type="alias">
         <_title>U.S. Liquid Pints</_title>
+        <system>US</system>
         <_names>ar:liq_pt,liquid_pint,p:liquid_pints</_names>
         <base>
           <unit>gi</unit>
@@ -1858,6 +1901,7 @@
       </unit>
       <unit type="alias">
         <_title>U.S. Liquid Quarts</_title>
+        <system>US</system>
         <_names>ar:liq_qt,liquid_quart,p:liquid_quarts</_names>
         <base>
           <unit>liq_pt</unit>
@@ -1867,6 +1911,7 @@
       </unit>
       <unit type="alias">
         <_title>U.S. Minim</_title>
+        <system>US</system>
         <_names>r:minim,p:minims</_names>
         <base>
           <unit>fl_oz</unit>
@@ -1876,6 +1921,7 @@
       </unit>
       <unit type="alias">
         <_title>U.S. Fluid Drachm</_title>
+        <system>US</system>
         <_names>ar:fl_dr,fluid_drachm,p:fluid_drachms</_names>
         <base>
           <unit>minim</unit>
@@ -1885,6 +1931,7 @@
       </unit>
       <unit type="alias">
         <_title>U.S. Dry Pint</_title>
+        <system>US</system>
         <_names>ar:dry_pt,dry_pint,p:dry_pints</_names>
         <base>
           <unit>in</unit>
@@ -1894,6 +1941,7 @@
       </unit>
       <unit type="alias">
         <_title>U.S. Dry Quart</_title>
+        <system>US</system>
         <_names>ar:dry_qt,dry_quart,p:dry_quarts</_names>
         <base>
           <unit>dry_pt</unit>
@@ -1903,6 +1951,7 @@
       </unit>
       <unit type="alias">
         <_title>U.S. Peck</_title>
+        <system>US</system>
         <_names>ar:pk,peck,p:pecks</_names>
         <base>
           <unit>dry_qt</unit>
@@ -1912,6 +1961,7 @@
       </unit>
       <unit type="alias">
         <_title>U.S. Bushel</_title>
+        <system>US</system>
         <_names>ar:bu,bushel,p:bushels</_names>
         <base>
           <unit>pk</unit>
@@ -1921,6 +1971,7 @@
       </unit>
       <unit type="alias">
         <_title>U.S. Gallon</_title>
+        <system>US</system>
         <_names>ar:gal,gallon,p:gallons</_names>
         <base>
           <unit>liq_qt</unit>
@@ -1930,6 +1981,7 @@
       </unit>
       <unit type="alias">
         <_title>U.S. Barrel (oil)</_title>
+        <system>US</system>
         <_names>ar:bbl,barrel,p:barrels</_names>
         <base>
           <unit>gal</unit>
@@ -2014,6 +2066,7 @@
     <unit type="composite">
       <hidden>true</hidden>
       <_title>Miles per Hour</_title>
+      <system>Imperial/US</system>
       <names>r:mile_p_h</names>
       <part>
         <unit>mi</unit>
@@ -2028,6 +2081,7 @@
     </unit>
     <unit type="alias">
       <_title>Miles per Hour</_title>
+      <system>Imperial/US</system>
       <_names>a-cr:mph</_names>
       <base>
         <unit>mile_p_h</unit>
@@ -2326,6 +2380,7 @@
       </unit>
       <unit type="composite">
         <_title>Pound-force per Square Inch</_title>
+        <system>Imperial/US</system>
         <hidden>true</hidden>
         <names>r:lbf_p_sqin</names>
         <part>
@@ -2351,6 +2406,7 @@
       </unit>
       <unit type="alias">
         <_title>Pound-force per Square Inch (psi)</_title>
+        <system>Imperial/US</system>
         <_names>a-cr:psi</_names>
         <base>
           <unit>lbf_p_sqin</unit>
