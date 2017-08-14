@@ -1,3 +1,7 @@
+2017-08-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Derivatives of inverse and hyberbolic functions
+
 2017-08-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Enhance gamma(). Add digamma(), arg(), conj(), besselj(), bessely(), airy(), erf(), erfc()

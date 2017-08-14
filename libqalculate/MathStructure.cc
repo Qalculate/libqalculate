@@ -14074,6 +14074,84 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct, true);
 				if(CALCULATOR->getRadUnit()) divide(CALCULATOR->getRadUnit());
+			} else if(o_function == CALCULATOR->f_tan && SIZE == 1) {
+				o_function = CALCULATOR->f_tan;
+				MathStructure mstruct(CHILD(0));
+				raise(2);
+				add(nr_one);
+				mstruct.differentiate(x_var, eo);
+				multiply(mstruct, true);
+				if(CALCULATOR->getRadUnit()) divide(CALCULATOR->getRadUnit());
+			} else if(o_function == CALCULATOR->f_sinh && SIZE == 1) {
+				o_function = CALCULATOR->f_cosh;
+				MathStructure mstruct(CHILD(0));
+				mstruct.differentiate(x_var, eo);
+				multiply(mstruct);
+			} else if(o_function == CALCULATOR->f_cosh && SIZE == 1) {
+				o_function = CALCULATOR->f_sinh;
+				MathStructure mstruct(CHILD(0));
+				mstruct.differentiate(x_var, eo);
+				multiply(mstruct, true);
+			} else if(o_function == CALCULATOR->f_tanh && SIZE == 1) {
+				o_function = CALCULATOR->f_tanh;
+				MathStructure mstruct(CHILD(0));
+				raise(2);
+				negate();
+				add(nr_one);
+				mstruct.differentiate(x_var, eo);
+				multiply(mstruct, true);
+			} else if(o_function == CALCULATOR->f_asin && SIZE == 1) {
+				MathStructure mstruct(CHILD(0));
+				mstruct.differentiate(x_var, eo);
+				SET_CHILD_MAP(0);
+				raise(2);
+				negate();
+				add(m_one);
+				raise(Number(-1, 2));
+				multiply(mstruct);
+			} else if(o_function == CALCULATOR->f_acos && SIZE == 1) {
+				MathStructure mstruct(CHILD(0));
+				mstruct.differentiate(x_var, eo);
+				SET_CHILD_MAP(0);
+				raise(2);
+				negate();
+				add(m_one);
+				raise(Number(-1, 2));
+				negate();
+				multiply(mstruct);
+			} else if(o_function == CALCULATOR->f_atan && SIZE == 1) {
+				MathStructure mstruct(CHILD(0));
+				mstruct.differentiate(x_var, eo);
+				SET_CHILD_MAP(0);
+				raise(2);
+				add(m_one);
+				raise(m_minus_one);
+				multiply(mstruct);
+			} else if(o_function == CALCULATOR->f_asinh && SIZE == 1) {
+				MathStructure mstruct(CHILD(0));
+				mstruct.differentiate(x_var, eo);
+				SET_CHILD_MAP(0);
+				raise(2);
+				add(m_one);
+				raise(Number(-1, 2));
+				multiply(mstruct);
+			} else if(o_function == CALCULATOR->f_acosh && SIZE == 1) {
+				MathStructure mstruct(CHILD(0));
+				mstruct.differentiate(x_var, eo);
+				SET_CHILD_MAP(0);
+				raise(2);
+				add(m_minus_one);
+				raise(Number(-1, 2));
+				multiply(mstruct);
+			} else if(o_function == CALCULATOR->f_atanh && SIZE == 1) {
+				MathStructure mstruct(CHILD(0));
+				mstruct.differentiate(x_var, eo);
+				SET_CHILD_MAP(0);
+				raise(2);
+				negate();
+				add(m_one);
+				raise(m_minus_one);
+				multiply(mstruct);
 			} else if(o_function == CALCULATOR->f_integrate && SIZE == 2 && CHILD(1) == x_var) {
 				setToChild(1, true);
 			} else if(o_function == CALCULATOR->f_diff && SIZE == 3 && CHILD(1) == x_var) {
