@@ -54,7 +54,7 @@ class Number {
 	
 		void testInteger();
 		bool testErrors(int error_level = 1) const;
-		bool testFloatResult(int error_level = 1);
+		bool testFloatResult(bool allow_infinite_result = true, int error_level = 1, bool test_integer = true);
 		void setPrecisionAndApproximateFrom(const Number &o);
 
 		mpq_t r_value;
@@ -121,7 +121,7 @@ class Number {
 		Number *internalImaginary() const;
 		void markAsImaginaryPart(bool is_imag = true);
 		const NumberType &internalType() const;
-		void setToFloatingPoint();
+		bool setToFloatingPoint();
 		
 		double floatValue() const;
 		/**

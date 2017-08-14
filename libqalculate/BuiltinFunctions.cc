@@ -2868,6 +2868,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mcount = vargs[3];
 		mcount.replace(vargs[1], mcounter);
 		mcounter = mcount;
+		mcounter.calculatesub(eo, eo, false);
 	}
 	return 1;
 

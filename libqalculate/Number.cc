@@ -740,13 +740,19 @@ void Number::markAsImaginaryPart(bool is_imag) {
 const NumberType &Number::internalType() const {
 	return n_type;
 }
-void Number::setToFloatingPoint() {
+bool Number::setToFloatingPoint() {
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		mpfr_init2(f_value, BIT_PRECISION);
+		mpfr_clear_flags();
 		mpfr_set_q(f_value, r_value, MPFR_RNDN);
+		if(!testFloatResult(false, 1, false)) {
+			mpfr_clear(f_value);
+			return false;
+		}
 		mpq_set_ui(r_value, 0, 1);
 		n_type = NUMBER_TYPE_FLOAT;
 	}
+	return true;
 }
 
 double Number::floatValue() const {
@@ -1017,26 +1023,26 @@ bool Number::testErrors(int error_level) const {
 	if(mpfr_erangeflag_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point range exception"), NULL); return true;}
 	return false;
 }
-bool Number::testFloatResult(int error_level) {
-	if(mpfr_underflow_p()) {if(error_level) CALCULATOR->error(error_level, _("Floating point underflow"), NULL); return true;}
-	if(mpfr_overflow_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point overflow"), NULL); return true;}
-	if(mpfr_divby0_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point division by zero exception"), NULL); return true;}
-	if(mpfr_erangeflag_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point range exception"), NULL); return true;}
+bool Number::testFloatResult(bool allow_infinite_result, int error_level, bool test_integer) {
+	if(mpfr_underflow_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point underflow"), NULL); return false;}
+	if(mpfr_overflow_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point overflow"), NULL); return false;}
+	if(mpfr_divby0_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point division by zero exception"), NULL); return false;}
+	if(mpfr_erangeflag_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point range exception"), NULL); return false;}
 	if(mpfr_nan_p(f_value)) return false;
-	if(mpfr_nanflag_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point not a number exception"), NULL); return true;}
+	if(mpfr_nanflag_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point not a number exception"), NULL); return false;}
 	if(mpfr_inexflag_p()) {
 		b_approx = true;
 		if(i_precision < 0 || i_precision > PRECISION) i_precision = PRECISION;
 	}
 	mpfr_clear_flags();
 	if(mpfr_inf_p(f_value)) {
-		if(b_imag) return false;
+		if(b_imag || !allow_infinite_result) return false;
 		int sign = mpfr_sgn(f_value);
 		if(sign > 0) n_type = NUMBER_TYPE_PLUS_INFINITY;
 		else if(sign < 0) n_type = NUMBER_TYPE_MINUS_INFINITY;
 		else n_type = NUMBER_TYPE_INFINITY;
 		mpfr_clear(f_value);
-	} else if(mpfr_integer_p(f_value)) {
+	} else if(test_integer && mpfr_integer_p(f_value)) {
 		mpfr_get_z(mpq_numref(r_value), f_value, MPFR_RNDN);
 		mpfr_clear(f_value);
 		n_type = NUMBER_TYPE_RATIONAL;
@@ -1464,7 +1470,7 @@ bool Number::add(const Number &o) {
 			if(o.isFloatingPoint()) mpfr_add(f_value, f_value, o.internalFloat(), MPFR_RNDN);
 			else mpfr_add_q(f_value, f_value, o.internalRational(), MPFR_RNDN);
 		}
-		if(!testFloatResult()) {
+		if(!testFloatResult(false)) {
 			set(nr_bak);
 			return false;
 		}
@@ -1481,7 +1487,7 @@ bool Number::add(long int i) {
 		Number nr_bak(*this);
 		mpfr_clear_flags();
 		mpfr_add_si(f_value, f_value, i, MPFR_RNDN);
-		if(!testFloatResult()) {
+		if(!testFloatResult(false)) {
 			set(nr_bak);
 			return false;
 		}
@@ -1539,7 +1545,7 @@ bool Number::subtract(const Number &o) {
 			if(o.isFloatingPoint()) mpfr_sub(f_value, f_value, o.internalFloat(), MPFR_RNDN);
 			else mpfr_sub_q(f_value, f_value, o.internalRational(), MPFR_RNDN);
 		}
-		if(!testFloatResult()) {
+		if(!testFloatResult(false)) {
 			set(nr_bak);
 			return false;
 		}
@@ -1556,7 +1562,7 @@ bool Number::subtract(long int i) {
 		Number nr_bak(*this);
 		mpfr_clear_flags();
 		mpfr_sub_si(f_value, f_value, i, MPFR_RNDN);
-		if(!testFloatResult()) {
+		if(!testFloatResult(false)) {
 			set(nr_bak);
 			return false;
 		}
@@ -1662,7 +1668,7 @@ bool Number::multiply(const Number &o) {
 			if(o.isFloatingPoint()) mpfr_mul(f_value, f_value, o.internalFloat(), MPFR_RNDN);
 			else mpfr_mul_q(f_value, f_value, o.internalRational(), MPFR_RNDN);
 		}
-		if(!testFloatResult()) {
+		if(!testFloatResult(false)) {
 			set(nr_bak);
 			return false;
 		}
@@ -1703,7 +1709,7 @@ bool Number::multiply(long int i) {
 		}
 		mpfr_clear_flags();
 		mpfr_mul_si(f_value, f_value, i, MPFR_RNDN);
-		if(!testFloatResult()) {
+		if(!testFloatResult(false)) {
 			set(nr_bak);
 			return false;
 		}
@@ -1768,11 +1774,11 @@ bool Number::divide(const Number &o) {
 			if(!i_value->divide(o)) return false;
 			setPrecisionAndApproximateFrom(*i_value);
 		}
+		if(!setToFloatingPoint()) {set(nr_bak); return false;}
 		mpfr_clear_flags();
-		setToFloatingPoint();
 		if(o.isFloatingPoint()) mpfr_div(f_value, f_value, o.internalFloat(), MPFR_RNDN);
 		else mpfr_div_q(f_value, f_value, o.internalRational(), MPFR_RNDN);
-		if(!testFloatResult()) {
+		if(!testFloatResult(false)) {
 			set(nr_bak);
 			return false;
 		}
@@ -1809,7 +1815,7 @@ bool Number::divide(long int i) {
 		}
 		mpfr_clear_flags();
 		mpfr_div_si(f_value, f_value, i, MPFR_RNDN);
-		if(!testFloatResult()) {
+		if(!testFloatResult(false)) {
 			set(nr_bak);
 			return false;
 		}
@@ -1858,7 +1864,7 @@ bool Number::recip() {
 	if(n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
 		mpfr_ui_div(f_value, 1, f_value, MPFR_RNDN);
-		if(!testFloatResult()) {
+		if(!testFloatResult(false)) {
 			set(nr_bak);
 			return false;
 		}
@@ -1985,7 +1991,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 			size_t length1 = mpz_sizeinbase(mpq_numref(r_value), 10);
 			size_t length2 = mpz_sizeinbase(mpq_denref(r_value), 10);
 			if(length2 > length1) length1 = length2;
-			if(((!try_exact && i_root <= 2 && (long long int) labs(i_pow) * length1 < 1000) || (try_exact && (long long int) labs(i_pow) * length2 < 1000000LL && i_root < 1000000L))) {
+			if(((!try_exact && i_root <= 2 && (long long int) labs(i_pow) * length1 < 1000) || (try_exact && (long long int) labs(i_pow) * length1 < 1000000LL && i_root < 1000000L))) {
 				bool complex_result = false;
 				if(i_root != 1) {
 					mpq_t r_test;
@@ -2055,11 +2061,10 @@ bool Number::raise(const Number &o, bool try_exact) {
 		}
 	}
 	Number nr_bak(*this);
-	mpfr_clear_flags();
 	
-	if(n_type == NUMBER_TYPE_RATIONAL) {
-		setToFloatingPoint();
-	}
+	if(!setToFloatingPoint()) return false;
+	mpfr_clear_flags();
+
 	bool try_complex = false;
 	if(o.isFloatingPoint()) {
 		bool is_neg = mpfr_sgn(f_value) < 0;
@@ -2103,7 +2108,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		return true;
 	}
 	
-	if(!testFloatResult()) {
+	if(!testFloatResult(false)) {
 		set(nr_bak);
 		return false;
 	}
@@ -2195,7 +2200,7 @@ bool Number::negate() {
 		case NUMBER_TYPE_FLOAT: {
 			mpfr_clear_flags();
 			mpfr_neg(f_value, f_value, MPFR_RNDN);
-			testFloatResult(2);
+			testFloatResult(false, 2);
 			break;
 		}
 		default: {break;}
@@ -2219,7 +2224,7 @@ void Number::setNegative(bool is_negative) {
 		case NUMBER_TYPE_FLOAT: {
 			mpfr_clear_flags();
 			if(is_negative != (mpfr_sgn(f_value) < 0)) mpfr_neg(f_value, f_value, MPFR_RNDN);
-			testFloatResult(2);
+			testFloatResult(false, 2);
 			break;
 		}
 		default: {break;}
@@ -2394,7 +2399,7 @@ bool Number::mod(const Number &o) {
 		if(!divide(o) || !frac()) return false;
 		if(isNegative()) {
 			(*this)++;
-			testFloatResult(2);
+			testFloatResult(false, 2);
 		}
 		return multiply(o);
 	}
@@ -2412,7 +2417,7 @@ bool Number::frac() {
 	} else {
 		mpfr_clear_flags();
 		mpfr_frac(f_value, f_value, MPFR_RNDN);
-		testFloatResult(2);
+		testFloatResult(false, 2);
 	}
 	return true;
 }
@@ -2578,8 +2583,8 @@ bool Number::zeta() {
 bool Number::gamma() {
 	if(!isReal()) return false;
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_gamma(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2590,8 +2595,8 @@ bool Number::gamma() {
 bool Number::digamma() {
 	if(!isReal()) return false;
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_digamma(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2602,8 +2607,8 @@ bool Number::digamma() {
 bool Number::erf() {
 	if(!isReal()) return false;
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_erf(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2614,8 +2619,8 @@ bool Number::erf() {
 bool Number::erfc() {
 	if(!isReal()) return false;
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_erfc(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2627,8 +2632,8 @@ bool Number::airy() {
 	if(!isReal()) return false;
 	if(isGreaterThan(500) || isLessThan(-500)) return false;
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_ai(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2646,8 +2651,8 @@ bool Number::besselj(const Number &o) {
 	if(!mpz_fits_slong_p(mpq_numref(o.internalRational()))) return false;
 	long int n = mpz_get_si(mpq_numref(o.internalRational()));
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_jn(f_value, n, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2669,8 +2674,8 @@ bool Number::bessely(const Number &o) {
 	if(!mpz_fits_slong_p(mpq_numref(o.internalRational()))) return false;
 	long int n = mpz_get_si(mpq_numref(o.internalRational()));
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_yn(f_value, n, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2702,12 +2707,12 @@ bool Number::sin() {
 		}
 	}
 	Number nr_bak(*this);
-	mpfr_clear_flags();
 	bool do_pi = true;
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		if(mpz_cmp_ui(mpq_denref(r_value), 1000000L) < 0) do_pi = false;
-		setToFloatingPoint();
+		if(!setToFloatingPoint()) return false;
 	}
+	mpfr_clear_flags();
 	if(do_pi) {
 		mpfr_t f_pi, f_quo;
 		mpz_t f_int;
@@ -2771,8 +2776,8 @@ bool Number::asin() {
 		return true;
 	}
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_asin(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2803,8 +2808,8 @@ bool Number::sinh() {
 		}
 	}
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_sinh(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2825,8 +2830,8 @@ bool Number::asinh() {
 		return true;
 	}
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_asinh(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2861,12 +2866,12 @@ bool Number::cos() {
 		}
 	}
 	Number nr_bak(*this);
-	mpfr_clear_flags();
 	bool do_pi = true, do_negate = false;
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		if(mpz_cmp_ui(mpq_denref(r_value), 1000000L) < 0) do_pi = false;
-		setToFloatingPoint();
+		if(!setToFloatingPoint()) return false;
 	}
+	mpfr_clear_flags();
 	if(do_pi) {
 		mpfr_t f_pi, f_quo;
 		mpz_t f_int;
@@ -2931,8 +2936,8 @@ bool Number::acos() {
 		return true;
 	}
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_acos(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2971,8 +2976,8 @@ bool Number::cosh() {
 		}
 	}
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_cosh(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -2996,8 +3001,8 @@ bool Number::acosh() {
 		return true;
 	}
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_acosh(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -3015,12 +3020,12 @@ bool Number::tan() {
 		return true;
 	}
 	Number nr_bak(*this);
-	mpfr_clear_flags();
 	bool do_pi = true;
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		if(mpz_cmp_ui(mpq_denref(r_value), 1000000L) < 0) do_pi = false;
-		setToFloatingPoint();
+		if(!setToFloatingPoint()) return false;
 	}
+	mpfr_clear_flags();
 	if(do_pi) {
 		mpfr_t f_pi, f_quo;
 		mpfr_init2(f_pi, BIT_PRECISION);
@@ -3062,8 +3067,8 @@ bool Number::atan() {
 		return true;
 	}
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_atan(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -3076,8 +3081,8 @@ bool Number::atan2(const Number &o) {
 	if(isComplex() || o.isComplex()) return false;
 	if(isZero() && o.isZero()) return false;
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	if(o.isFloatingPoint()) {
 		mpfr_atan2(f_value, f_value, o.internalFloat(), MPFR_RNDN);
 	} else {
@@ -3105,8 +3110,8 @@ bool Number::tanh() {
 		return true;
 	}
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_tanh(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -3135,8 +3140,8 @@ bool Number::atanh() {
 		return true;
 	}
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_atanh(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -3177,8 +3182,8 @@ bool Number::ln() {
 		return true;
 	}
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	
 	
 	if(nr_e.isZero() || ((i_precision < 0 && nr_e.precision() != PRECISION) || (i_precision >= 0 && nr_e.precision() != i_precision))) {
@@ -3193,7 +3198,7 @@ bool Number::ln() {
 	}
 	
 	mpfr_log(f_value, f_value, MPFR_RNDN);
-	if(!testFloatResult()) {
+	if(!testFloatResult(false)) {
 		set(nr_bak);
 		return false;
 	}
@@ -3234,8 +3239,8 @@ bool Number::log(const Number &o) {
 		return true;
 	}
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	if(o.isRational()) {
 		if(o == 2) {
 			mpfr_log2(f_value, f_value, MPFR_RNDN);
@@ -3259,7 +3264,7 @@ bool Number::log(const Number &o) {
 		mpfr_div(f_value, f_value, f_base, MPFR_RNDN);
 		mpfr_clear(f_base);
 	}
-	if(!testFloatResult()) {
+	if(!testFloatResult(false)) {
 		set(nr_bak);
 		return false;
 	}
@@ -3281,10 +3286,10 @@ bool Number::exp() {
 		return true;
 	}
 	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	setToFloatingPoint();
 	mpfr_exp(f_value, f_value, MPFR_RNDN);
-	if(!testFloatResult()) {
+	if(!testFloatResult(false)) {
 		set(nr_bak);
 		return false;
 	}
@@ -3366,7 +3371,7 @@ bool Number::lambertW() {
 	}
 	mpfr_set(f_value, w, MPFR_RNDN);
 	mpfr_clears(x, m1_div_exp1, w, wPrec, wTimesExpW, wPlusOneTimesExpW, testXW, tmp1, tmp2, NULL);
-	if(!testFloatResult()) {
+	if(!testFloatResult(false)) {
 		set(nr_bak);
 		return false;
 	}
@@ -3915,14 +3920,17 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			mpfr_init2(if_value, PRECISION_TO_BITS(new_precision));
 			mpfr_set_z(if_value, mpq_numref(r_value), MPFR_RNDN);
-			Number nr;
-			nr.setInternal(if_value);
-			mpfr_clear(if_value);
-			nr.setPrecision(new_precision);
-			if(!testErrors(0)) {
-				str = nr.print(po, ips);
-				return str;
+			if(!mpfr_inf_p(if_value) && !mpfr_nan_p(if_value)) {
+				Number nr;
+				nr.setInternal(if_value);
+				nr.setPrecision(new_precision);
+				if(!testErrors(0)) {
+					mpfr_clear(if_value);
+					str = nr.print(po, ips);
+					return str;
+				}
 			}
+			mpfr_clear(if_value);
 		}
 		
 		mpz_t ivalue;
@@ -4288,8 +4296,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(po.is_approximate && mpfr_inexflag_p()) *po.is_approximate = true;
 		testErrors(2);
 
-	} else if(base != BASE_ROMAN_NUMERALS && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
-
+	} else if((base != BASE_ROMAN_NUMERALS || mpz_cmpabs_ui(mpq_numref(r_value), 9999) > 0 || mpz_cmp_ui(mpq_denref(r_value), 9999) > 0) && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+		if(base == BASE_ROMAN_NUMERALS) {
+			CALCULATOR->error(false, _("Cannot display numbers greater than 9999 or less than -9999 as roman numerals."), NULL);
+			base = 10;
+		}
 		long int numlength = mpz_sizeinbase(mpq_numref(r_value), base);
 		long int denlength = mpz_sizeinbase(mpq_denref(r_value), base);
 		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < labs(numlength - denlength) && (approx || po.min_exp != 0)) {
@@ -4301,14 +4312,17 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			mpfr_init2(rf_value, PRECISION_TO_BITS(new_precision));
 			mpfr_set_q(rf_value, r_value, MPFR_RNDN);
-			Number nr;
-			nr.setInternal(rf_value);
-			mpfr_clear(rf_value);
-			nr.setPrecision(new_precision);
-			if(!testErrors(0)) {
-				str = nr.print(po, ips);
-				return str;
+			if(!mpfr_inf_p(rf_value) && !mpfr_nan_p(rf_value)) {
+				Number nr;
+				nr.setInternal(rf_value);
+				nr.setPrecision(new_precision);
+				if(!testErrors(0)) {
+					mpfr_clear(rf_value);
+					str = nr.print(po, ips);
+					return str;
+				}
 			}
+			mpfr_clear(rf_value);
 		}
 		mpz_t num, d, remainder, remainder2, exp;
 		mpz_inits(num, d, remainder, remainder2, exp, NULL);
