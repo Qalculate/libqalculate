@@ -9225,7 +9225,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	curl_global_cleanup();
 	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from ECB: %s"), error_buffer, NULL); return false;}
 	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from ECB: %s"), "Document empty", NULL); return false;}
-	ofstream file(getExchangeRatesFileName(), ios::out | ios::trunc | ios::binary);
+	ofstream file(getExchangeRatesFileName().c_str(), ios::out | ios::trunc | ios::binary);
 	if(!file.is_open()) {
 		error(true, _("Failed to download exchange rates from ECB: %s"), strerror(errno), NULL);
 		return false;

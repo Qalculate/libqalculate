@@ -172,7 +172,7 @@ bool ask_question(const char *question, bool default_answer = false) {
 		free(rlbuffer);
 #else
 		fputs(" ", stdout);
-		fgets(buffer, 1000, stdin);
+		if(!fgets(buffer, 1000, stdin)) return false;
 		string str = buffer;
 #endif		
 		remove_blank_ends(str);
@@ -1299,8 +1299,9 @@ int main(int argc, char *argv[]) {
 			}
 #else
 			fputs("> ", stdout);
-			fgets(buffer, 1000, stdin);
-			if(!printops.use_unicode_signs && contains_unicode_char(buffer)) {
+			if(!fgets(buffer, 1000, stdin)) {
+				str = "";
+			} else if(!printops.use_unicode_signs && contains_unicode_char(buffer)) {
 				char *gstr = locale_to_utf8(buffer);
 				if(gstr) {
 					str = gstr;
@@ -2978,10 +2979,13 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			} else {
 				if(wait_for_key_press(100)) {
 #ifdef HAVE_LIBREADLINE		
-					if(use_readline) c = rl_read_key();
-					else read(STDIN_FILENO, &c, 1);
+					if(use_readline) {
+						c = rl_read_key();
+					} else {
+						if(read(STDIN_FILENO, &c, 1) == -1) c = 0;
+					}
 #else
-					read(STDIN_FILENO, &c, 1);
+					if(read(STDIN_FILENO, &c, 1) == -1) c = 0;
 #endif			
 					if(c == '\n') {
 						on_abort_display();
@@ -3198,10 +3202,13 @@ void execute_command(int command_type, bool show_result) {
 			} else {
 				if(wait_for_key_press(100)) {
 #ifdef HAVE_LIBREADLINE
-					if(use_readline) c = rl_read_key();
-					else read(STDIN_FILENO, &c, 1);
+					if(use_readline) {
+						c = rl_read_key();
+					} else {
+						if(read(STDIN_FILENO, &c, 1) == -1) c = 0;
+					}
 #else
-					read(STDIN_FILENO, &c, 1);
+					if(read(STDIN_FILENO, &c, 1) == -1) c = 0;
 #endif			
 					if(c == '\n') {
 						on_abort_command();
@@ -3492,10 +3499,13 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			} else {
 				if(wait_for_key_press(100)) {
 #ifdef HAVE_LIBREADLINE		
-					if(use_readline) c = rl_read_key();
-					else read(STDIN_FILENO, &c, 1);
+					if(use_readline) {
+						c = rl_read_key();
+					} else {
+						if(read(STDIN_FILENO, &c, 1) == -1) c = 0;
+					}
 #else
-					read(STDIN_FILENO, &c, 1);
+					if(read(STDIN_FILENO, &c, 1) == -1) c = 0;
 #endif			
 					if(c == '\n') {
 						CALCULATOR->abort();
@@ -3740,8 +3750,7 @@ void load_preferences() {
 		size_t i;
 		int v;
 		while(true) {
-			if(fgets(line, 10000, file) == NULL)
-				break;
+			if(fgets(line, 10000, file) == NULL) break;
 			stmp = line;
 			remove_blank_ends(stmp);
 			if((i = stmp.find_first_of("=")) != string::npos) {

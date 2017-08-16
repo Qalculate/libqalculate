@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-14 09:35+0200\n"
+"POT-Creation-Date: 2017-08-14 19:08+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -4464,18 +4464,14 @@ msgid "Price variable"
 msgstr "Prisvariabel"
 
 #: ../data/functions.xml.in.h:795
-msgid "Finance"
-msgstr "Finans"
-
-#: ../data/functions.xml.in.h:796
 msgid "Sum-of-Years Digits Depreciation"
 msgstr "Årlig avskrivningssumma"
 
-#: ../data/functions.xml.in.h:797
+#: ../data/functions.xml.in.h:796
 msgid "r:syd"
 msgstr ""
 
-#: ../data/functions.xml.in.h:798
+#: ../data/functions.xml.in.h:797
 msgid ""
 "Calculates the sum-of-years digits depreciation for an asset based on its "
 "cost, salvage value, anticipated life, and a particular period. This method "
@@ -4490,31 +4486,31 @@ msgstr ""
 "Den avskrivbara kostnaden är den faktiskta kostnaden minus slutvärdet. "
 "Livslängden är den period (anges ofta i år) som värdeminskningen pågår."
 
-#: ../data/functions.xml.in.h:799
+#: ../data/functions.xml.in.h:798
 msgid "Cost"
 msgstr "Kostnad"
 
-#: ../data/functions.xml.in.h:800
+#: ../data/functions.xml.in.h:799
 msgid "Salvage value"
 msgstr "Slutvärde"
 
-#: ../data/functions.xml.in.h:801
+#: ../data/functions.xml.in.h:800
 msgid "Life"
 msgstr "Livslängd"
 
-#: ../data/functions.xml.in.h:802
+#: ../data/functions.xml.in.h:801
 msgid "Period"
 msgstr "Period"
 
-#: ../data/functions.xml.in.h:803
+#: ../data/functions.xml.in.h:802
 msgid "Straight Line Depreciation"
 msgstr "Linjär avskrivning"
 
-#: ../data/functions.xml.in.h:804
+#: ../data/functions.xml.in.h:803
 msgid "r:sln"
 msgstr ""
 
-#: ../data/functions.xml.in.h:805
+#: ../data/functions.xml.in.h:804
 msgid ""
 "Determines the straight line depreciation of an asset for a single period."
 "&#10;&#10;Cost is the amount you paid for the asset. Salvage is the value of "
@@ -4523,187 +4519,197 @@ msgid ""
 "asset."
 msgstr ""
 
-#: ../data/functions.xml.in.h:806
+#: ../data/functions.xml.in.h:805
 msgid "Present Value"
 msgstr "Nuvärde"
 
-#: ../data/functions.xml.in.h:807
+#: ../data/functions.xml.in.h:806
 msgid "r:pv"
 msgstr ""
 
-#: ../data/functions.xml.in.h:808
+#: ../data/functions.xml.in.h:807
 msgid ""
 "Returns the present value of an investment.&#10;&#10;If type = 1 then the "
 "payment is made at the beginning of the period, If type = 0 (or omitted) it "
 "is made at the end of each period."
 msgstr ""
 
-#: ../data/functions.xml.in.h:809
+#: ../data/functions.xml.in.h:808
 msgid "Interest rate"
 msgstr "Räntesats"
 
-#: ../data/functions.xml.in.h:810
+#: ../data/functions.xml.in.h:809
 msgid "Number of periods"
 msgstr "Antal perioder"
 
-#: ../data/functions.xml.in.h:811
+#: ../data/functions.xml.in.h:810
 msgid "Payment made each period"
 msgstr "Periodisk avbetalning "
 
-#: ../data/functions.xml.in.h:812
+#: ../data/functions.xml.in.h:811
 msgid "Future value"
 msgstr "Framtida värde"
 
-#: ../data/functions.xml.in.h:813
+#: ../data/functions.xml.in.h:812
 msgid "Type"
 msgstr "Typ"
 
-#: ../data/functions.xml.in.h:814
+#: ../data/functions.xml.in.h:813
 msgid "Nominal Interest Rate"
 msgstr "Nominell räntesats"
 
-#: ../data/functions.xml.in.h:815
+#: ../data/functions.xml.in.h:814
 msgid "r:nominal"
 msgstr ""
 
-#: ../data/functions.xml.in.h:816
+#: ../data/functions.xml.in.h:815
 msgid ""
 "Calculates the nominal interest rate from a given effective interest rate "
 "compounded at given intervals."
 msgstr "Beräknar den nominella räntesatsen från en given effektiv ränta."
 
-#: ../data/functions.xml.in.h:817
+#: ../data/functions.xml.in.h:816
 msgid "Effective interest rate"
 msgstr "Effektiv räntesats"
 
-#: ../data/functions.xml.in.h:818
+#: ../data/functions.xml.in.h:817
 msgid "Periods"
 msgstr "Antal perioder"
 
-#: ../data/functions.xml.in.h:819
+#: ../data/functions.xml.in.h:818
 msgid "Zero Coupon"
 msgstr "Nollkupong"
 
-#: ../data/functions.xml.in.h:820
+#: ../data/functions.xml.in.h:819
 msgid "r:zero_coupon"
 msgstr ""
 
-#: ../data/functions.xml.in.h:821
+#: ../data/functions.xml.in.h:820
 msgid "Calculates the value of a zero-coupon (pure discount) bond."
 msgstr ""
 
-#: ../data/functions.xml.in.h:822
+#: ../data/functions.xml.in.h:821
 msgid "Face value"
 msgstr "Nominellt värde"
 
-#: ../data/functions.xml.in.h:823
+#: ../data/functions.xml.in.h:822
 msgid "Treasury Bill Yield"
 msgstr "Avkastningen för statsskuldväxel"
 
-#: ../data/functions.xml.in.h:824
+#: ../data/functions.xml.in.h:823
 msgid "r:tbillyield"
 msgstr ""
 
-#: ../data/functions.xml.in.h:825
+#: ../data/functions.xml.in.h:824
 msgid "Returns the yield for a treasury bill."
 msgstr ""
 
-#: ../data/functions.xml.in.h:826
+#: ../data/functions.xml.in.h:825
 msgid "Settlement date"
 msgstr "Avräkningsdatum"
 
-#: ../data/functions.xml.in.h:827
+#: ../data/functions.xml.in.h:826
 msgid "Maturity date"
 msgstr "Mognadsdatum"
 
-#: ../data/functions.xml.in.h:828
+#: ../data/functions.xml.in.h:827
 msgid "Price per $100 face value"
 msgstr "Pris per 100 kr nominellt värde"
 
-#: ../data/functions.xml.in.h:829
+#: ../data/functions.xml.in.h:828
 msgid "Treasury Bill Price"
 msgstr "Värde för statsskuldväxel"
 
-#: ../data/functions.xml.in.h:830
+#: ../data/functions.xml.in.h:829
 msgid "r:tbillprice"
 msgstr ""
 
-#: ../data/functions.xml.in.h:831
+#: ../data/functions.xml.in.h:830
 msgid "Returns the price per $100 value for a treasury bill."
 msgstr ""
 
-#: ../data/functions.xml.in.h:832
+#: ../data/functions.xml.in.h:831
 msgid "Discount rate"
 msgstr "Diskonto"
 
-#: ../data/functions.xml.in.h:833
+#: ../data/functions.xml.in.h:832
 msgid "Treasury Bill Equivalent"
 msgstr "Statsskultväxelavkastning motsvarande obligation"
 
-#: ../data/functions.xml.in.h:834
+#: ../data/functions.xml.in.h:833
 msgid "r:tbilleq"
 msgstr ""
 
-#: ../data/functions.xml.in.h:835
+#: ../data/functions.xml.in.h:834
 msgid "Returns the bond equivalent for a treasury bill."
 msgstr ""
 
-#: ../data/functions.xml.in.h:836
+#: ../data/functions.xml.in.h:835
 msgid "Interest paid on a given period of an investment (ISPMT)"
 msgstr "Ränta betalad under specifik betalningsperiod (ISPMT)"
 
-#: ../data/functions.xml.in.h:837
+#: ../data/functions.xml.in.h:836
 msgid "r:ispmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:838
+#: ../data/functions.xml.in.h:837
 msgid "Calculates the interest paid on a given period of an investment."
 msgstr "Beräknar den betalda räntan för en viss period av en investering."
 
-#: ../data/functions.xml.in.h:839
+#: ../data/functions.xml.in.h:838
 msgid "Periodic interest rate"
 msgstr "Periodisk räntesats"
 
-#: ../data/functions.xml.in.h:840
+#: ../data/functions.xml.in.h:839
 msgid "Amortizement period"
 msgstr "Amorteringsperiod"
 
-#: ../data/functions.xml.in.h:841
+#: ../data/functions.xml.in.h:840
 msgid "Present value"
 msgstr "Nuvärde"
 
-#: ../data/functions.xml.in.h:842
+#: ../data/functions.xml.in.h:841
 msgid "Payment for a loan"
 msgstr "Betalning för ett lån"
 
-#: ../data/functions.xml.in.h:843
+#: ../data/functions.xml.in.h:842
 msgid "r:pmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:844
+#: ../data/functions.xml.in.h:843
 msgid ""
-"Returns the amount of payment for a loan based on a constant interest rate "
-"and constant payments (each payment is equal amount).&#10;&#10;If type = 1 "
-"then the payment is made at the beginning of the period, If type = 0 (or "
-"omitted) it is made at the end of each period.&#10;&#10;Note that the "
-"interest rate here refers to the rate for each period and if you calculate "
-"with an annual rate, each period will be interpreted as a whole year (to get "
-"monthly payments, divide the result by 12)."
+"Returns the amount of payment (negative) each period for a loan based on a "
+"constant interest rate and constant payments (each payment is equal amount)."
+"&#10;&#10;If type = 1 then the payment is made at the beginning of the "
+"period, If type = 0 (or omitted) it is made at the end of each period.&#10;"
+"&#10;Note that the interest rate here refers to the rate for each period and "
+"if you calculate with an annual rate, each period will be interpreted as a "
+"whole year. To get monthly payments divide the annual interest rate by 12 "
+"and enter the total number of months (12 times number of year) in the "
+"periods field."
 msgstr ""
+"Returnerar storleken på betalningar (negativt) under varje period för ett "
+"lån baserat på en fast räntesats och fasta betalningar (varje betalning är "
+"lika stor).&#10;&#10;Om typ = 1 så sker betalningen vid början av perioden, "
+"om typ = 2 görs betalningarna i slutet av varje period.&#10;&#10;Observera "
+"att räntan här syftar på räntan för varje period och om du anger årsräntan "
+"tolkas varje period som ett helt år. För att erhålla månatliga betalningar, "
+"dela årsräntan med 12 och ange det totala antalet månader (12 gånger antalet "
+"år) i fältet för period."
 
-#: ../data/functions.xml.in.h:845
+#: ../data/functions.xml.in.h:844
 msgid "Rate"
 msgstr "Räntesats"
 
-#: ../data/functions.xml.in.h:846
+#: ../data/functions.xml.in.h:845
 msgid "Periods of an investment"
 msgstr "Perioder för en investering"
 
-#: ../data/functions.xml.in.h:847
+#: ../data/functions.xml.in.h:846
 msgid "r:nper"
 msgstr ""
 
-#: ../data/functions.xml.in.h:848
+#: ../data/functions.xml.in.h:847
 msgid ""
 "Calculates number of periods of an investment based on periodic constant "
 "payments and a constant interest rate.&#10;&#10;Type defines the due date. 1 "
@@ -4715,15 +4721,15 @@ msgstr ""
 "för betalning i början av perioden och 0 (förvald) för betalning i slutet av "
 "perioden."
 
-#: ../data/functions.xml.in.h:849
+#: ../data/functions.xml.in.h:848
 msgid "Periods for investment to attain desired value"
 msgstr "Perioder för investering att uppnå önskat värde"
 
-#: ../data/functions.xml.in.h:850
+#: ../data/functions.xml.in.h:849
 msgid "r:g_duration"
 msgstr ""
 
-#: ../data/functions.xml.in.h:851
+#: ../data/functions.xml.in.h:850
 msgid ""
 "Returns the number of periods needed for an investment to attain a desired "
 "value."
@@ -4731,15 +4737,15 @@ msgstr ""
 "Returnerar antalet perioder som krävs för en investering att uppnå ett "
 "önskat värde."
 
-#: ../data/functions.xml.in.h:852
+#: ../data/functions.xml.in.h:851
 msgid "Payment of an annuity going towards principal (PPMT)"
 msgstr "Betalning för livränta som går mot kapital (PPMT)"
 
-#: ../data/functions.xml.in.h:853
+#: ../data/functions.xml.in.h:852
 msgid "r:ppmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:854
+#: ../data/functions.xml.in.h:853
 msgid ""
 "Calculates the amount of a payment of an annuity going towards principal."
 "&#10;&#10;Type defines the due date. 1 for payment at the beginning of a "
@@ -4749,35 +4755,35 @@ msgstr ""
 "Typ anger när betalningarna sker. 1 för betalning i början av perioden och 0 "
 "(förvald) för betalning i slutet av perioden."
 
-#: ../data/functions.xml.in.h:855
+#: ../data/functions.xml.in.h:854
 msgid "Desired future value"
 msgstr "Önskat framtida värde"
 
-#: ../data/functions.xml.in.h:856
+#: ../data/functions.xml.in.h:855
 msgid "Effective Interest Rate"
 msgstr "Effektiv räntesats"
 
-#: ../data/functions.xml.in.h:857
+#: ../data/functions.xml.in.h:856
 msgid "r:effect"
 msgstr ""
 
-#: ../data/functions.xml.in.h:858
+#: ../data/functions.xml.in.h:857
 msgid "Calculates the effective interest for a given nominal rate."
 msgstr "Beräknar den effektiva räntan från en given nominell räntesats."
 
-#: ../data/functions.xml.in.h:859
+#: ../data/functions.xml.in.h:858
 msgid "Nominal interest rate"
 msgstr "Nominell räntesats"
 
-#: ../data/functions.xml.in.h:860
+#: ../data/functions.xml.in.h:859
 msgid "Future Value"
 msgstr "Framtida värde"
 
-#: ../data/functions.xml.in.h:861
+#: ../data/functions.xml.in.h:860
 msgid "r:fv"
 msgstr ""
 
-#: ../data/functions.xml.in.h:862
+#: ../data/functions.xml.in.h:861
 msgid ""
 "Computes the future value of an investment. This is based on periodic, "
 "constant payments and a constant interest rate.&#10;&#10;If type = 1 then "
@@ -4789,51 +4795,51 @@ msgstr ""
 "för betalning i början av perioden och 0 (förvald) för betalning i slutet av "
 "perioden."
 
-#: ../data/functions.xml.in.h:863
+#: ../data/functions.xml.in.h:862
 msgid "Return on continuously compounded interest"
 msgstr "Avkastning på fortlöpande sammansatt ränta"
 
-#: ../data/functions.xml.in.h:864
+#: ../data/functions.xml.in.h:863
 msgid "r:continuous"
 msgstr ""
 
-#: ../data/functions.xml.in.h:865
+#: ../data/functions.xml.in.h:864
 msgid ""
 "Calculates the return on continuously compounded interest, given the "
 "principal, nominal rate and time in years."
 msgstr ""
 
-#: ../data/functions.xml.in.h:866
+#: ../data/functions.xml.in.h:865
 msgid "Principal"
 msgstr ""
 
-#: ../data/functions.xml.in.h:867
+#: ../data/functions.xml.in.h:866
 msgid "Compound"
 msgstr "Sammansatt"
 
-#: ../data/functions.xml.in.h:868
+#: ../data/functions.xml.in.h:867
 msgid "r:compound"
 msgstr ""
 
-#: ../data/functions.xml.in.h:869
+#: ../data/functions.xml.in.h:868
 msgid ""
 "Returns the value of an investment, given the principal, nominal interest "
 "rate, compounding frequency and time."
 msgstr ""
 
-#: ../data/functions.xml.in.h:870
+#: ../data/functions.xml.in.h:869
 msgid "Periods per year"
 msgstr "Perioder per år"
 
-#: ../data/functions.xml.in.h:871
+#: ../data/functions.xml.in.h:870
 msgid "Payment of an annuity going towards interest (IPMT)"
 msgstr "Betalning för livränta som går mot ränta (IPMT)"
 
-#: ../data/functions.xml.in.h:872
+#: ../data/functions.xml.in.h:871
 msgid "r:ipmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:873
+#: ../data/functions.xml.in.h:872
 msgid ""
 "Calculates the amount of a payment of an annuity going towards interest.&#10;"
 "&#10;Type defines the due date. 1 for payment at the beginning of a period "
@@ -4843,77 +4849,77 @@ msgstr ""
 "Typ anger när betalningarna sker. 1 för betalning i början av perioden och 0 "
 "(förvald) för betalning i slutet av perioden."
 
-#: ../data/functions.xml.in.h:874
+#: ../data/functions.xml.in.h:873
 msgid "Interest rate for a fully invested security"
 msgstr "Räntesats för betalt värdepapper"
 
-#: ../data/functions.xml.in.h:875
+#: ../data/functions.xml.in.h:874
 msgid "r:intrate"
 msgstr ""
 
-#: ../data/functions.xml.in.h:876
+#: ../data/functions.xml.in.h:875
 msgid ""
 "Returns the interest rate for a fully invested security.&#10;&#10;Basis is "
 "the type of day counting you want to use: 0: US 30/360 (default), 1: real "
 "days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 
-#: ../data/functions.xml.in.h:877
+#: ../data/functions.xml.in.h:876
 msgid "Investment"
 msgstr "Investering"
 
-#: ../data/functions.xml.in.h:878
+#: ../data/functions.xml.in.h:877
 msgid "Redemption"
 msgstr "Utlösande summa"
 
-#: ../data/functions.xml.in.h:879
+#: ../data/functions.xml.in.h:878
 msgid "Dollar Fraction"
 msgstr "Kronor till bråktal"
 
-#: ../data/functions.xml.in.h:880
+#: ../data/functions.xml.in.h:879
 msgid "r:dollarfr"
 msgstr ""
 
-#: ../data/functions.xml.in.h:881
+#: ../data/functions.xml.in.h:880
 msgid ""
 "Converts a decimal dollar price into a dollar price expressed as a fraction."
 msgstr ""
 
-#: ../data/functions.xml.in.h:882
+#: ../data/functions.xml.in.h:881
 msgid "Decimal dollar"
 msgstr "Bråktal till kronor"
 
-#: ../data/functions.xml.in.h:883
+#: ../data/functions.xml.in.h:882
 msgid "Denominator of fraction"
 msgstr "Bråktalets nämnare "
 
-#: ../data/functions.xml.in.h:884
+#: ../data/functions.xml.in.h:883
 msgid "Dollar Decimal"
 msgstr "Decimaltal"
 
-#: ../data/functions.xml.in.h:885
+#: ../data/functions.xml.in.h:884
 msgid "r:dollarde"
 msgstr ""
 
-#: ../data/functions.xml.in.h:886
+#: ../data/functions.xml.in.h:885
 msgid ""
 "Converts a dollar price expressed as a fraction into a dollar price "
 "expressed as a decimal number."
 msgstr ""
 
-#: ../data/functions.xml.in.h:887
+#: ../data/functions.xml.in.h:886
 msgid "Fractional dollar"
 msgstr "Bråktal"
 
-#: ../data/functions.xml.in.h:888
+#: ../data/functions.xml.in.h:887
 msgid "Amount received at maturity for a security bond"
 msgstr "Erhållet belopp för en säkerhet vid mognad"
 
-#: ../data/functions.xml.in.h:889
+#: ../data/functions.xml.in.h:888
 msgid "r:received"
 msgstr ""
 
-#: ../data/functions.xml.in.h:890
+#: ../data/functions.xml.in.h:889
 msgid ""
 "Returns the amount received at the maturity date for an invested security."
 "&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 "
@@ -4921,30 +4927,30 @@ msgid ""
 "30/360. The settlement date must be before maturity date."
 msgstr ""
 
-#: ../data/functions.xml.in.h:891
+#: ../data/functions.xml.in.h:890
 msgid "Discount rate for a security"
 msgstr "Reduceringshastighet för säkerhet"
 
-#: ../data/functions.xml.in.h:892
+#: ../data/functions.xml.in.h:891
 msgid "r:disc"
 msgstr ""
 
-#: ../data/functions.xml.in.h:893
+#: ../data/functions.xml.in.h:892
 msgid ""
 "Returns the discount rate for a security.&#10;&#10;Basis is the type of day "
 "counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
 "days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 
-#: ../data/functions.xml.in.h:894
+#: ../data/functions.xml.in.h:893
 msgid "Accrued interest of security paying at maturity"
 msgstr "Ränta för en säkerhet från start till mognad"
 
-#: ../data/functions.xml.in.h:895
+#: ../data/functions.xml.in.h:894
 msgid "r:accrintm"
 msgstr ""
 
-#: ../data/functions.xml.in.h:896
+#: ../data/functions.xml.in.h:895
 msgid ""
 "Returns the accrued interest for a security which pays interest at maturity "
 "date.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
@@ -4952,27 +4958,27 @@ msgid ""
 "European 30/360."
 msgstr ""
 
-#: ../data/functions.xml.in.h:897
+#: ../data/functions.xml.in.h:896
 msgid "Issue date"
 msgstr "Startdatum"
 
-#: ../data/functions.xml.in.h:898
+#: ../data/functions.xml.in.h:897
 msgid "Annual rate of security"
 msgstr "Årlig hastighet"
 
-#: ../data/functions.xml.in.h:899
+#: ../data/functions.xml.in.h:898
 msgid "Par value"
 msgstr "Nominellt värde"
 
-#: ../data/functions.xml.in.h:900
+#: ../data/functions.xml.in.h:899
 msgid "Accrued interest of security with periodic interest payments"
 msgstr "Ränta för en säkerhet med periodisk ränta"
 
-#: ../data/functions.xml.in.h:901
+#: ../data/functions.xml.in.h:900
 msgid "r:accrint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:902
+#: ../data/functions.xml.in.h:901
 msgid ""
 "Returns accrued interest for a security which pays periodic interest.&#10;"
 "&#10;Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. "
@@ -4980,23 +4986,23 @@ msgid ""
 "1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 
-#: ../data/functions.xml.in.h:903
+#: ../data/functions.xml.in.h:902
 msgid "First interest"
 msgstr "Första ränteinbetalning"
 
-#: ../data/functions.xml.in.h:904
+#: ../data/functions.xml.in.h:903
 msgid "Frequency"
 msgstr "Frekvens"
 
-#: ../data/functions.xml.in.h:905
+#: ../data/functions.xml.in.h:904
 msgid "Number of coupons to be paid"
 msgstr "Antal förfallande kuponger"
 
-#: ../data/functions.xml.in.h:906
+#: ../data/functions.xml.in.h:905
 msgid "r:coupnum"
 msgstr ""
 
-#: ../data/functions.xml.in.h:907
+#: ../data/functions.xml.in.h:906
 msgid ""
 "Returns the number of coupons to be paid between the settlement and the "
 "maturity.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
@@ -5004,15 +5010,15 @@ msgid ""
 "European 30/360."
 msgstr ""
 
-#: ../data/functions.xml.in.h:908
+#: ../data/functions.xml.in.h:907
 msgid "Price per $100 face value of a discounted security"
 msgstr "Pris per 100 kr nominellt värde för diskonterat värdepapper"
 
-#: ../data/functions.xml.in.h:909
+#: ../data/functions.xml.in.h:908
 msgid "r:pricedisc"
 msgstr ""
 
-#: ../data/functions.xml.in.h:910
+#: ../data/functions.xml.in.h:909
 msgid ""
 "Calculates and returns the price per $100 face value of a discounted "
 "security. The security does not pay interest at maturity.&#10;&#10;Basis is "
@@ -5024,19 +5030,19 @@ msgstr ""
 "vara: 0: Amerikanskt 30/360 (förvald), 1: verkliga dagar, 2: verkliga "
 "dagar/360, 3: verkliga dagar/365, eller 4: Europeiskt 30/360"
 
-#: ../data/functions.xml.in.h:911
+#: ../data/functions.xml.in.h:910
 msgid "Discount"
 msgstr "Diskonto"
 
-#: ../data/functions.xml.in.h:912
+#: ../data/functions.xml.in.h:911
 msgid "Price per $100 face value of a security"
 msgstr "Pris per 100 kr nominellt värde för säkerhet"
 
-#: ../data/functions.xml.in.h:913
+#: ../data/functions.xml.in.h:912
 msgid "r:pricemat"
 msgstr ""
 
-#: ../data/functions.xml.in.h:914
+#: ../data/functions.xml.in.h:913
 msgid ""
 "Calculates and returns the price per $100 face value of a security. The "
 "security pays interest at maturity.&#10;&#10;Basis is the type of day "
@@ -5048,31 +5054,31 @@ msgstr ""
 "Amerikanskt 30/360 (förvald), 1: verkliga dagar, 2: verkliga dagar/360, 3: "
 "verkliga dagar/365, eller 4: Europeiskt 30/360"
 
-#: ../data/functions.xml.in.h:915
+#: ../data/functions.xml.in.h:914
 msgid "Annual yield"
 msgstr "Årlig avkastning"
 
-#: ../data/functions.xml.in.h:916
+#: ../data/functions.xml.in.h:915
 msgid "Level-Coupon Bond"
 msgstr "Jämn kupongobligation"
 
-#: ../data/functions.xml.in.h:917
+#: ../data/functions.xml.in.h:916
 msgid "r:level_coupon"
 msgstr ""
 
-#: ../data/functions.xml.in.h:918
+#: ../data/functions.xml.in.h:917
 msgid "Calculates the value of a level-coupon bond."
 msgstr ""
 
-#: ../data/functions.xml.in.h:919
+#: ../data/functions.xml.in.h:918
 msgid "Coupon rate"
 msgstr "Kupongränta"
 
-#: ../data/functions.xml.in.h:920
+#: ../data/functions.xml.in.h:919
 msgid "Coupons per year"
 msgstr "Antal kuponger per år"
 
-#: ../data/functions.xml.in.h:921
+#: ../data/functions.xml.in.h:920
 msgid "Market interest rate"
 msgstr "Marknadsränta"
 
@@ -7918,6 +7924,9 @@ msgstr ""
 #: ../data/variables.xml.in.h:170
 msgid "r:z"
 msgstr ""
+
+#~ msgid "Finance"
+#~ msgstr "Finans"
 
 #, fuzzy
 #~ msgid "Do expression"
