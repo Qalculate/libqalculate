@@ -3315,7 +3315,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(!CALCULATOR->variableNameIsValid(vargs[1].symbol())) {
-		CALCULATOR->error(true, _("Invalid variable name (%s)."), vargs[1].symbol(), NULL);
+		CALCULATOR->error(true, _("Invalid variable name (%s)."), vargs[1].symbol().c_str(), NULL);
 		return -1;
 	}
 	if(CALCULATOR->variableNameTaken(vargs[1].symbol())) {
