@@ -5,7 +5,7 @@ Qalculate! library and CLI
 
 Qalculate! is a multi-purpose cross-platform desktop calculator. It is small and simple to use but with much power and versatility underneath. Features include customizable functions, units, arbitrary precision, plotting, and a user-friendly interface (GTK+ and CLI).
 
-##Installation
+## Installation
 In a terminal window in the top source code directory run
 * `./autogen.sh` *(not required if using a release source tarball, only if using the git version)*
 * `./configure`
@@ -13,19 +13,19 @@ In a terminal window in the top source code directory run
 * `make install` (as root)
 If libqalculate is installed in /usr/local (default) you may need to add /usr/local/lib to the library path of the system (add /usr/local/lib to a file under /etc/ld.so.conf.d/ and run ldconfig).
 
-##Requirements
+## Requirements
 * GMP and MPFR
 * libxml2
 * libcurl, icu, gettext (recommended)
 * iconv, readline (recommended for CLI)
 * Gnuplot (optional)
 
-##API Documentation
+## API Documentation
 The API documentation is included in the package and is installed in $docdir/libqalculate/html (usually /usr/share/doc/libqalculate/html). It is generated when running autogen.sh.
 
 It is also available online at http://qalculate.github.io/reference/index.html.
 
-##Using the CLI program 'qalc'
+## Using the CLI program 'qalc'
 To calculate a single expression from the command line (non-interactive mode) enter
 `qalc mathematical expression` *(e.g. qalc 5+2)*
 
@@ -33,7 +33,7 @@ To calculate a single expression from the command line (non-interactive mode) en
 
 If you run `qalc` without any mathematical expression the program will start in interactive mode, where you can enter multiple expressions with history and completion, manipulate the result and change settings. Type `help` in interactive mode for more information.
 
-##Other Applications
+## Other Applications
 The main user interface for libqalculate is qalculate-gtk (https://github.com/Qalculate/qalculate-gtk).
 
 Other software using libqalculate include
@@ -42,7 +42,7 @@ Other software using libqalculate include
 * Step (http://kde.org/applications/education/step/)
 * Qalculate widget for KDE Plasma (https://store.kde.org/p/1155946/)
 
-##Features
+## Features
 * Calculation and parsing:
    * Basic operations and operators: + - * / ^ E () && || ! < > >= <= != ~ & | << >>
    * Fault-tolerant parsing of strings: log 5 / 2 .5 (3) + (2( 3 +5 = ln(5) / (2.5 * 3) + 2 * (3 + 5)
