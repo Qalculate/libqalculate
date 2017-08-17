@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-14 19:08+0200\n"
+"POT-Creation-Date: 2017-08-17 10:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3808,7 +3808,7 @@ msgid "Algebra"
 msgstr ""
 
 #: ../data/functions.xml.in.h:659
-msgid "Sum"
+msgid "Summation"
 msgstr ""
 
 #: ../data/functions.xml.in.h:660
@@ -3817,8 +3817,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:661
 msgid ""
-"Corresponds to the sum symbol. Adds terms for each x ranging from the lower "
-"to the upper limit."
+"Corresponds to the summation symbol. Adds terms for each x ranging from the "
+"lower to the upper limit."
 msgstr ""
 
 #: ../data/functions.xml.in.h:662
@@ -3834,7 +3834,7 @@ msgid "Upper limit (n)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:665
-msgid "Product"
+msgid "Product of a sequence"
 msgstr ""
 
 #: ../data/functions.xml.in.h:666

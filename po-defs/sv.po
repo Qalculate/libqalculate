@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-14 19:08+0200\n"
+"POT-Creation-Date: 2017-08-17 10:10+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -3883,7 +3883,7 @@ msgid "Algebra"
 msgstr "Algebra"
 
 #: ../data/functions.xml.in.h:659
-msgid "Sum"
+msgid "Summation"
 msgstr "Summa"
 
 #: ../data/functions.xml.in.h:660
@@ -3892,8 +3892,8 @@ msgstr "au:&#x3A3;,summa"
 
 #: ../data/functions.xml.in.h:661
 msgid ""
-"Corresponds to the sum symbol. Adds terms for each x ranging from the lower "
-"to the upper limit."
+"Corresponds to the summation symbol. Adds terms for each x ranging from the "
+"lower to the upper limit."
 msgstr ""
 "Motsvarar summasymbolen. Adderar termer för varje x från den undre till den "
 "övre gränsen."
@@ -3911,8 +3911,8 @@ msgid "Upper limit (n)"
 msgstr "Övre gräns (n)"
 
 #: ../data/functions.xml.in.h:665
-msgid "Product"
-msgstr "Produkt"
+msgid "Product of a sequence"
+msgstr ""
 
 #: ../data/functions.xml.in.h:666
 msgid "au:&#x3A0;,r:product"
@@ -7924,6 +7924,12 @@ msgstr ""
 #: ../data/variables.xml.in.h:170
 msgid "r:z"
 msgstr ""
+
+#~ msgid "Sum"
+#~ msgstr "Summa"
+
+#~ msgid "Product"
+#~ msgstr "Produkt"
 
 #~ msgid "Finance"
 #~ msgstr "Finans"

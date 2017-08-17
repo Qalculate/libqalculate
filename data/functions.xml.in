@@ -2162,9 +2162,9 @@
   <category>
     <_title>Algebra</_title>
     <builtin_function name="sum">
-      <_title>Sum</_title>
+      <_title>Summation</_title>
       <_names>au:&#x3A3;,r:sum</_names>
-      <_description>Corresponds to the sum symbol. Adds terms for each x ranging from the lower to the upper limit.</_description>
+      <_description>Corresponds to the summation symbol. Adds terms for each x ranging from the lower to the upper limit.</_description>
       <example>$name(x^2, 1, 5) = 1^2 + 2^2 + 3^2 + 4^2 + 5^2 = 55</example>
       <argument index="1">
         <_title>Term expression</_title>
@@ -2180,7 +2180,7 @@
       </argument>
     </builtin_function>
     <builtin_function name="product">
-      <_title>Product</_title>
+      <_title>Product of a sequence</_title>
       <_names>au:&#x3A0;,r:product</_names>
       <_description>Corresponds to the product symbol. Multiplies factors for each x ranging from the lower to the upper limit.</_description>
       <example>$name(x^2, 1, 5) = 1^2 * 2^2 * 3^2 * 4^2 * 5^2 = 1440</example>

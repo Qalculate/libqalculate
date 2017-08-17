@@ -207,6 +207,7 @@ enum {
 	PROC_RPN_SET,
 	PROC_RPN_OPERATION_1,
 	PROC_RPN_OPERATION_2,
+	PROC_RPN_OPERATION_F,
 	PROC_NO_COMMAND
 };
 
@@ -275,6 +276,17 @@ void CalculateThread::run() {
 					CALCULATOR->deleteRPNRegister(1);
 				}
 				if(CALCULATOR->RPNStackSize() > 0) {
+					CALCULATOR->setRPNRegister(1, mstruct, false);
+				} else {
+					CALCULATOR->RPNStackEnter(mstruct, false);
+				}
+				break;
+			}
+			case PROC_RPN_OPERATION_F: {
+				for(size_t i = 0; (CALCULATOR->tmp_proc_registers < 0 || (int) i < CALCULATOR->tmp_proc_registers - 1) && CALCULATOR->RPNStackSize() > 1; i++) {
+					CALCULATOR->deleteRPNRegister(1);
+				}
+				if(CALCULATOR->RPNStackSize() > 0 && CALCULATOR->tmp_proc_registers != 0) {
 					CALCULATOR->setRPNRegister(1, mstruct, false);
 				} else {
 					CALCULATOR->RPNStackEnter(mstruct, false);
@@ -1805,7 +1817,7 @@ bool Calculator::calculateRPNRegister(size_t index, int msecs, const EvaluationO
 	return calculateRPN(new MathStructure(*rpn_stack[rpn_stack.size() - index]), PROC_RPN_SET, index, msecs, eo);
 }
 
-bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index, int msecs, const EvaluationOptions &eo) {
+bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index, int msecs, const EvaluationOptions &eo, int function_arguments) {
 	b_busy = true;
 	if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
 	bool had_msecs = msecs > 0;
@@ -1813,6 +1825,7 @@ bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index,
 	tmp_proc_command = command;
 	tmp_rpnindex = index;
 	tmp_rpn_mstruct = mstruct;
+	tmp_proc_registers = function_arguments;
 	if(!calculate_thread->write(false)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	while(msecs > 0 && b_busy) {
@@ -1825,7 +1838,7 @@ bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index,
 	}
 	return true;
 }
-bool Calculator::calculateRPN(string str, int command, size_t index, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
+bool Calculator::calculateRPN(string str, int command, size_t index, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division, int function_arguments) {
 	MathStructure *mstruct = new MathStructure();
 	b_busy = true;
 	if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
@@ -1838,6 +1851,7 @@ bool Calculator::calculateRPN(string str, int command, size_t index, int msecs, 
 	tmp_parsedstruct = parsed_struct;
 	tmp_tostruct = to_struct;
 	tmp_maketodivision = make_to_division;
+	tmp_proc_registers = function_arguments;
 	if(!calculate_thread->write(true)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	while(msecs > 0 && b_busy) {
@@ -1893,30 +1907,50 @@ bool Calculator::calculateRPN(MathOperation op, int msecs, const EvaluationOptio
 }
 bool Calculator::calculateRPN(MathFunction *f, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct) {
 	MathStructure *mstruct = new MathStructure(f, NULL);
+	int iregs = 0;
 	if(f->args() != 0) {
-		if(rpn_stack.size() == 0) mstruct->addChild(m_zero);
-		else mstruct->addChild(*rpn_stack.back());
-		f->appendDefaultValues(*mstruct);
-		if(f->getArgumentDefinition(1) && f->getArgumentDefinition(1)->type() == ARGUMENT_TYPE_ANGLE) {
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {
-					(*mstruct)[0].multiply(getDegUnit());
-					break;
+		size_t i = f->minargs();
+		bool fill_vector = (i > 0 && f->getArgumentDefinition(i) && f->getArgumentDefinition(i)->type() == ARGUMENT_TYPE_VECTOR);
+		if(fill_vector && rpn_stack.size() < i) fill_vector = false;
+		if(fill_vector && rpn_stack.size() > 0 && rpn_stack.back()->isVector()) fill_vector = false;
+		if(fill_vector) {
+			i = rpn_stack.size();
+		} else if(i < 1) {
+			i = 1;
+		}
+		for(; i > 0; i--) {
+			if(i > rpn_stack.size()) {
+				error(false, _("Stack is empty. Filling remaining function arguments with zeroes."), NULL);
+				mstruct->addChild(m_zero);
+			} else {
+				if(fill_vector && rpn_stack.size() - i == (size_t) f->minargs() - 1) mstruct->addChild(m_empty_vector);
+				if(fill_vector && rpn_stack.size() - i >= (size_t) f->minargs() - 1) mstruct->getChild(f->minargs())->addChild(*rpn_stack[rpn_stack.size() - i]);
+				else mstruct->addChild(*rpn_stack[rpn_stack.size() - i]);
+				iregs++;
+			}
+			if(!fill_vector && f->getArgumentDefinition(i) && f->getArgumentDefinition(i)->type() == ARGUMENT_TYPE_ANGLE) {
+				switch(eo.parse_options.angle_unit) {
+					case ANGLE_UNIT_DEGREES: {
+						(*mstruct)[i - 1].multiply(getDegUnit());
+						break;
+					}
+					case ANGLE_UNIT_GRADIANS: {
+						(*mstruct)[i - 1].multiply(getGraUnit());
+						break;
+					}
+					case ANGLE_UNIT_RADIANS: {
+						(*mstruct)[i - 1].multiply(getRadUnit());
+						break;
+					}
+					default: {}
 				}
-				case ANGLE_UNIT_GRADIANS: {
-					(*mstruct)[0].multiply(getGraUnit());
-					break;
-				}
-				case ANGLE_UNIT_RADIANS: {
-					(*mstruct)[0].multiply(getRadUnit());
-					break;
-				}
-				default: {}
 			}
 		}
+		if(fill_vector) mstruct->childrenUpdated();
+		f->appendDefaultValues(*mstruct);
 	}
 	if(parsed_struct) parsed_struct->set(*mstruct);
-	return calculateRPN(mstruct, PROC_RPN_OPERATION_1, 0, msecs, eo);
+	return calculateRPN(mstruct, PROC_RPN_OPERATION_F, 0, msecs, eo, iregs);
 }
 bool Calculator::calculateRPNBitwiseNot(int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct) {
 	MathStructure *mstruct;
@@ -1993,34 +2027,59 @@ MathStructure *Calculator::calculateRPN(MathOperation op, const EvaluationOption
 }
 MathStructure *Calculator::calculateRPN(MathFunction *f, const EvaluationOptions &eo, MathStructure *parsed_struct) {
 	MathStructure *mstruct = new MathStructure(f, NULL);
+	size_t iregs = 0;
 	if(f->args() != 0) {
-		if(rpn_stack.size() == 0) mstruct->addChild(m_zero);
-		else mstruct->addChild(*rpn_stack.back());
-		f->appendDefaultValues(*mstruct);
-		if(f->getArgumentDefinition(1) && f->getArgumentDefinition(1)->type() == ARGUMENT_TYPE_ANGLE) {
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {
-					(*mstruct)[0].multiply(getDegUnit());
-					break;
+		size_t i = f->minargs();
+		bool fill_vector = (i > 0 && f->getArgumentDefinition(i) && f->getArgumentDefinition(i)->type() == ARGUMENT_TYPE_VECTOR);
+		if(fill_vector && rpn_stack.size() < i) fill_vector = false;
+		if(fill_vector && rpn_stack.size() > 0 && rpn_stack.back()->isVector()) fill_vector = false;
+		if(fill_vector) {
+			i = rpn_stack.size();
+		} else if(i < 1) {
+			i = 1;
+		}
+		for(; i > 0; i--) {
+			if(i > rpn_stack.size()) {
+				error(false, _("Stack is empty. Filling remaining function arguments with zeroes."), NULL);
+				mstruct->addChild(m_zero);
+			} else {
+				if(fill_vector && rpn_stack.size() - i == (size_t) f->minargs() - 1) mstruct->addChild(m_empty_vector);
+				if(fill_vector && rpn_stack.size() - i >= (size_t) f->minargs() - 1) mstruct->getChild(f->minargs())->addChild(*rpn_stack[rpn_stack.size() - i]);
+				else mstruct->addChild(*rpn_stack[rpn_stack.size() - i]);
+				iregs++;
+			}
+			if(!fill_vector && f->getArgumentDefinition(i) && f->getArgumentDefinition(i)->type() == ARGUMENT_TYPE_ANGLE) {
+				switch(eo.parse_options.angle_unit) {
+					case ANGLE_UNIT_DEGREES: {
+						(*mstruct)[i - 1].multiply(getDegUnit());
+						break;
+					}
+					case ANGLE_UNIT_GRADIANS: {
+						(*mstruct)[i - 1].multiply(getGraUnit());
+						break;
+					}
+					case ANGLE_UNIT_RADIANS: {
+						(*mstruct)[i - 1].multiply(getRadUnit());
+						break;
+					}
+					default: {}
 				}
-				case ANGLE_UNIT_GRADIANS: {
-					(*mstruct)[0].multiply(getGraUnit());
-					break;
-				}
-				case ANGLE_UNIT_RADIANS: {
-					(*mstruct)[0].multiply(getRadUnit());
-					break;
-				}
-				default: {}
 			}
 		}
+		if(fill_vector) mstruct->childrenUpdated();
+		f->appendDefaultValues(*mstruct);
 	}
 	if(parsed_struct) parsed_struct->set(*mstruct);
 	mstruct->eval(eo);
 	autoConvert(*mstruct, *mstruct, eo);
-	if(rpn_stack.size() == 0) {
+	if(iregs == 0) {
 		rpn_stack.push_back(mstruct);
 	} else {
+		for(size_t i = 0; i < iregs - 1 && rpn_stack.size() > 1; i++) {
+			rpn_stack.back()->unref();
+			rpn_stack.pop_back();
+			CALCULATOR->deleteRPNRegister(1);
+		}
 		rpn_stack.back()->unref();
 		rpn_stack.back() = mstruct;
 	}

@@ -1,3 +1,7 @@
+2017-08-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Ability to apply functions with multiple arguments to the rpn stack (including using the whole stack for functions with a vector as argument)
+
 2017-08-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Derivatives of inverse and hyberbolic functions

@@ -3433,11 +3433,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					if(in_par) f = CALCULATOR->getActiveFunction(str2.substr(0, in_par));
 					else f = CALCULATOR->getActiveFunction(str2);
 				}
-				if(f && f->minargs() > 1) {
-					printf("Can only apply functions wich requires one argument on RPN stack.\n");
-					f = NULL;
-					return;
-				}
 				if(f && f->minargs() > 0) {
 					do_mathoperation = true;
 					CALCULATOR->calculateRPN(f, 0, evalops, parsed_mstruct);

@@ -263,8 +263,8 @@ class Calculator {
 
 	vector<MathStructure*> rpn_stack;
 
-	bool calculateRPN(MathStructure *mstruct, int command, size_t index, int msecs, const EvaluationOptions &eo);
-	bool calculateRPN(string str, int command, size_t index, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division);
+	bool calculateRPN(MathStructure *mstruct, int command, size_t index, int msecs, const EvaluationOptions &eo, int function_arguments = 0);
+	bool calculateRPN(string str, int command, size_t index, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division, int function_arguments = 0);
 	
   public:
 
@@ -312,6 +312,7 @@ class Calculator {
 	MathStructure *tmp_rpn_mstruct;
 	bool tmp_maketodivision;
 	int tmp_proc_command;
+	int tmp_proc_registers;
 	size_t tmp_rpnindex;
 	
 	PrintOptions save_printoptions;	
