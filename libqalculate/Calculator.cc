@@ -353,6 +353,7 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_DIVISION_SLASH, DIVISION);	
 	addStringAlternative(SIGN_MULTIPLICATION, MULTIPLICATION);		
 	addStringAlternative(SIGN_MULTIDOT, MULTIPLICATION);
+	addStringAlternative(SIGN_MIDDLEDOT, MULTIPLICATION);
 	addStringAlternative(SIGN_MULTIBULLET, MULTIPLICATION);
 	addStringAlternative(SIGN_SMALLCIRCLE, MULTIPLICATION);
 	addStringAlternative(SIGN_MINUS, MINUS);		

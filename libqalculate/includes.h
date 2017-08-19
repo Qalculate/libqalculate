@@ -308,7 +308,8 @@ static const struct SortOptions {
 typedef enum {
 	MULTIPLICATION_SIGN_ASTERISK,
 	MULTIPLICATION_SIGN_DOT,
-	MULTIPLICATION_SIGN_X
+	MULTIPLICATION_SIGN_X,
+	MULTIPLICATION_SIGN_ALTDOT
 } MultiplicationSign;
 
 typedef enum {
@@ -616,6 +617,7 @@ extern Calculator *calculator;
 #define SIGN_PI				"π"
 #define SIGN_MULTIPLICATION		"×"
 #define SIGN_MULTIDOT			"⋅"
+#define SIGN_MIDDLEDOT			"·"
 #define SIGN_MULTIBULLET		"∙"
 #define SIGN_SMALLCIRCLE		"•"
 #define SIGN_DIVISION_SLASH		"∕"

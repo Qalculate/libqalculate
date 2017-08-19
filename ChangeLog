@@ -1,6 +1,7 @@
 2017-08-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Enable plotting on Windows (gnuplot must be installed separately)
+	* Support middle dot (00B7) as multiplication sign
 
 2017-08-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
