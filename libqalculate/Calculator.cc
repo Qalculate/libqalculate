@@ -9334,7 +9334,9 @@ void Calculator::setExchangeRatesUsed() {
 
 bool Calculator::canPlot() {
 #ifdef _WIN32
-	return false;
+	LPSTR lpFilePart;
+	char filename[MAX_PATH]; 
+	return SearchPath(NULL, "gnuplot", ".exe", MAX_PATH, filename, &lpFilePart);
 #else
 	FILE *pipe = popen("gnuplot -", "w");
 	if(!pipe) return false;
@@ -9434,9 +9436,6 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 	if(param->filename.empty()) {
 		if(!param->color) {
 			commandline_extra += " -mono";
-		}
-		if(param->font.empty()) {
-			commandline_extra += " -font \"-*-helvetica-bold-r-*-*-14-*-*-*-*-*-*-*\"";
 		}
 		plot += "set terminal pop\n";
 	} else {
@@ -9601,8 +9600,12 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			}
 			string filename = "gnuplot_data";
 			filename += i2s(i + 1);
+			filename = buildPath(homedir, filename);
+#ifdef _WIN32
+			gsub("\\", "\\\\", filename);
+#endif
 			plot += "\"";
-			plot += buildPath(homedir, filename);
+			plot += filename;
 			plot += "\"";
 			if(i < pdps.size()) {
 				switch(pdps[i]->smoothing) {
@@ -9727,17 +9730,6 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 	
 	return invokeGnuplot(plot, commandline_extra, persistent);
 }
-#ifdef _WIN32
-bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
-	return false;
-}
-bool Calculator::closeGnuplot() {
-	return true;
-}
-bool Calculator::gnuplotOpen() {
-	return false;
-}
-#else
 bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
 	FILE *pipe = NULL;
 	if(!b_gnuplot_open || !gnuplot_pipe || persistent || commandline_extra != gnuplot_cmdline) {
@@ -9750,7 +9742,11 @@ bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool p
 		}
 		commandline += commandline_extra;
 		commandline += " -";
+#ifdef _WIN32
+		pipe = _popen(commandline.c_str(), "w");
+#else
 		pipe = popen(commandline.c_str(), "w");
+#endif
 		if(!pipe) {
 			error(true, _("Failed to invoke gnuplot. Make sure that you have gnuplot installed in your path."), NULL);
 			return false;
@@ -9779,7 +9775,11 @@ bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool p
 }
 bool Calculator::closeGnuplot() {
 	if(gnuplot_pipe) {
+#ifdef _WIN32
+		int rv = _pclose(gnuplot_pipe);
+#else
 		int rv = pclose(gnuplot_pipe);
+#endif
 		gnuplot_pipe = NULL;
 		b_gnuplot_open = false;
 		return rv == 0;
@@ -9791,7 +9791,6 @@ bool Calculator::closeGnuplot() {
 bool Calculator::gnuplotOpen() {
 	return b_gnuplot_open && gnuplot_pipe;
 }
-#endif
 
 bool isLeapYear(long int year) {
 	return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);

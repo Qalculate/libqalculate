@@ -1086,7 +1086,7 @@ msgid ""
 "github.io/manual/index.html)."
 msgstr ""
 "För mer information om matematiska uttryck, olika alternativ, och en "
-"komplett förteckning över funktioner, variabler och enheter, se relavanta "
+"komplett förteckning över funktioner, variabler och enheter, se relevanta "
 "avsnitt i instruktionsboken för det grafiska användargränssnittet "
 "(tillgänglig på http://qalculate.github.io/manual/index.html)."
 

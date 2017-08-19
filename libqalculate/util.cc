@@ -487,7 +487,9 @@ string getLocalTmpDir() {
 	char path[MAX_PATH];
 	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
 	string str = path;
-	return str + "\\cache\\Qalculate";
+	str += "\\cache";
+	_mkdir(str.c_str());
+	return str + "\\Qalculate";
 #else
 	const char *homedir;
 	if((homedir = getenv("XDG_CACHE_HOME")) == NULL) {
