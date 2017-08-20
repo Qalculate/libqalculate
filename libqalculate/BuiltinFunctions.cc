@@ -3957,7 +3957,9 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	eo2.parse_options.read_precision = DONT_READ_PRECISION;
 	bool use_step_size = vargs[5].number().getBoolean();
 	mstruct = vargs[0];
+	eo2.calculate_functions = false;
 	mstruct.eval(eo2);
+	eo2.calculate_functions = eo.calculate_functions;
 	vector<MathStructure> x_vectors, y_vectors;
 	vector<PlotDataParameters*> dpds;
 	if(mstruct.isMatrix() && mstruct.columns() == 2) {
@@ -4012,7 +4014,10 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						if(steps <= 1000000 && !overflow) y_vector.set(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], steps, &x_vector, eo2));
 						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
 					}
-					if(CALCULATOR->aborted()) return 1;
+					if(CALCULATOR->aborted()) {
+						mstruct.clear();
+						return 1;
+					}
 					if(y_vector.size() > 0) {
 						x_vectors.push_back(x_vector);
 						y_vectors.push_back(y_vector);
@@ -4043,7 +4048,10 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			if(steps <= 1000000 && !overflow) y_vector.set(mstruct.generateVector(vargs[4], vargs[1], vargs[2], steps, &x_vector, eo2));
 			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
 		}
-		if(CALCULATOR->aborted()) return 1;
+		if(CALCULATOR->aborted()) {
+			mstruct.clear();
+			return 1;
+		}
 		if(y_vector.size() > 0) {
 			x_vectors.push_back(x_vector);
 			y_vectors.push_back(y_vector);
@@ -4059,6 +4067,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			if(dpds[i]) delete dpds[i];
 		}
 	}
+	mstruct.clear();
 	return 1;
 
 }

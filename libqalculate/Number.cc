@@ -3785,7 +3785,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		bool neg = nr.isNegative();
 		nr.setNegative(false);
 		nr.trunc();
-		string str = nr.printNumerator(10, false);
+		PrintOptions po2 = po;
+		po2.base = 10;
+		po2.number_fraction_format = FRACTION_FRACTIONAL;
+		string str = nr.print(po2);
 		if(po.base == BASE_SEXAGESIMAL) {
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DEGREE, po.can_display_unicode_string_arg))) {
 				str += SIGN_DEGREE;
@@ -3850,7 +3853,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(po.base <= 1 && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_TIME) base = 10;
 	else if(po.base > 36 && po.base != BASE_SEXAGESIMAL) base = 36;
 	else base = po.base;
-	if(isFloatingPoint() && po.base == BASE_ROMAN_NUMERALS) base = 10;
+	if(po.base == BASE_ROMAN_NUMERALS) {
+		if(!isRational()) {
+			CALCULATOR->error(false, _("Can only display rational numbers as roman numerals."), NULL);
+			base = 10;
+		} else if(mpz_cmpabs_ui(mpq_numref(r_value), 9999) > 0 || mpz_cmp_ui(mpq_denref(r_value), 9999) > 0) {
+			CALCULATOR->error(false, _("Cannot display numbers greater than 9999 or less than -9999 as roman numerals."), NULL);
+			base = 10;
+		}
+	}
 	long int precision = PRECISION;
 	if(b_approx && i_precision > 0 && i_precision < PRECISION) precision = i_precision;
 	long int precision_base = precision;
@@ -3984,7 +3995,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				precision2 = min_decimals + nondecimals;
 				if(approx && precision2 > i_precision_base) precision2 = i_precision_base;
 			}
-			if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals && (!approx || po.max_decimals + nondecimals < precision2) && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+			if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals && (!approx || po.max_decimals + nondecimals < precision2) && (po.restrict_fraction_length || (base == 10 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)))) {
 				mpz_t i_rem, i_quo, i_div;
 				mpz_inits(i_rem, i_quo, i_div, NULL);
 				mpz_ui_pow_ui(i_div, (unsigned long int) base, (unsigned long int) -(po.max_decimals - expo));
@@ -4012,7 +4023,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					goto integer_rerun;
 				}
 				mpz_clears(i_rem, i_quo, i_div, NULL);
-			} else if(precision2 < length && (approx || po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+			} else if(precision2 < length && (approx || po.restrict_fraction_length || (base == 10 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)))) {
 
 				mpq_t qvalue;
 				mpq_init(qvalue);
@@ -4296,11 +4307,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(po.is_approximate && mpfr_inexflag_p()) *po.is_approximate = true;
 		testErrors(2);
 
-	} else if((base != BASE_ROMAN_NUMERALS || mpz_cmpabs_ui(mpq_numref(r_value), 9999) > 0 || mpz_cmp_ui(mpq_denref(r_value), 9999) > 0) && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
-		if(base == BASE_ROMAN_NUMERALS) {
-			CALCULATOR->error(false, _("Cannot display numbers greater than 9999 or less than -9999 as roman numerals."), NULL);
-			base = 10;
-		}
+	} else if(base != BASE_ROMAN_NUMERALS && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 		long int numlength = mpz_sizeinbase(mpq_numref(r_value), base);
 		long int denlength = mpz_sizeinbase(mpq_denref(r_value), base);
 		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < labs(numlength - denlength) && (approx || po.min_exp != 0)) {
@@ -4601,7 +4608,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		str = format_number_string(str, base, po.base_display, !ips.minus && neg, !has_decimal);
 		
 		if(infinite_series) {
-			str += "...";
+			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("…", po.can_display_unicode_string_arg))) str += "…";
+			else str += "...";
 		}
 		if(expo != 0) {
 			if(ips.exp) {
