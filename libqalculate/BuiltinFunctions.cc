@@ -2891,7 +2891,11 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		nr.subtract(i_nr);
 		if(nr.isGreaterThan(100)) eo2.approximation = APPROXIMATION_APPROXIMATE;
 	}
+	CALCULATOR->beginTemporaryStopMessages();
 	m1.eval(eo2);
+	int im = 0;
+	CALCULATOR->endTemporaryStopMessages(&im);
+	if(im > 0) m1 = vargs[0];
 	eo2.calculate_functions = eo.calculate_functions;
 	mstruct.clear();
 	MathStructure mstruct_calc;
@@ -2939,7 +2943,11 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		nr.subtract(i_nr);
 		if(nr.isGreaterThan(100)) eo2.approximation = APPROXIMATION_APPROXIMATE;
 	}
+	CALCULATOR->beginTemporaryStopMessages();
 	m1.eval(eo2);
+	int im = 0;
+	CALCULATOR->endTemporaryStopMessages(&im);
+	if(im > 0) m1 = vargs[0];
 	eo2.calculate_functions = eo.calculate_functions;
 	mstruct.clear();
 	MathStructure mstruct_calc;
@@ -3958,7 +3966,11 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	bool use_step_size = vargs[5].number().getBoolean();
 	mstruct = vargs[0];
 	eo2.calculate_functions = false;
+	CALCULATOR->beginTemporaryStopMessages();
 	mstruct.eval(eo2);
+	int im = 0;
+	CALCULATOR->endTemporaryStopMessages(&im);
+	if(im > 0) mstruct = vargs[0];
 	eo2.calculate_functions = eo.calculate_functions;
 	vector<MathStructure> x_vectors, y_vectors;
 	vector<PlotDataParameters*> dpds;
