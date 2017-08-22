@@ -1295,6 +1295,7 @@ void Calculator::addBuiltinVariables() {
 	v_undef = (KnownVariable*) addVariable(new KnownVariable("", "undefined", mstruct, "Undefined", false, true));
 	v_euler = (KnownVariable*) addVariable(new EulerVariable());
 	v_catalan = (KnownVariable*) addVariable(new CatalanVariable());
+	v_precision = (KnownVariable*) addVariable(new PrecisionVariable());
 	v_x = (UnknownVariable*) addVariable(new UnknownVariable("", "x", "", true, false));
 	v_y = (UnknownVariable*) addVariable(new UnknownVariable("", "y", "", true, false));
 	v_z = (UnknownVariable*) addVariable(new UnknownVariable("", "z", "", true, false));

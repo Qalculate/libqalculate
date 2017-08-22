@@ -380,6 +380,8 @@ DECLARE_BUILTIN_VARIABLE(EVariable)
 DECLARE_BUILTIN_VARIABLE(EulerVariable)
 /// Dynamic variable for Catalan's constant
 DECLARE_BUILTIN_VARIABLE(CatalanVariable)
+/// Dynamic variable for current precision
+DECLARE_BUILTIN_VARIABLE(PrecisionVariable)
 
 
 #endif
