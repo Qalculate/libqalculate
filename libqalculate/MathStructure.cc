@@ -76,6 +76,23 @@
 	}
 }*/
 
+bool flattenMultiplication(MathStructure &mstruct) {
+	bool retval = false;
+	for(size_t i = 0; i < mstruct.size();) {
+		if(mstruct[i].isMultiplication()) {
+			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+				mstruct[i][i2].ref();
+				mstruct.insertChild_nocopy(&mstruct[i][i2], i + i2 + 2);
+			}
+			mstruct.delChild(i + 1);
+			retval = true;
+		} else {
+			i++;
+		}
+	}
+	return retval;
+}
+
 bool warn_about_denominators_assumed_nonzero(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	EvaluationOptions eo2 = eo;
 	eo2.assume_denominators_nonzero = false;
@@ -7694,8 +7711,8 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 	d = prim_d;
 	
 	MathStructure r;
-	MathStructure ri(1, 1);
-	MathStructure psi(1, 1);
+	MathStructure ri(1, 1, 0);
+	MathStructure psi(1, 1, 0);
 	Number delta(cdeg);
 	delta -= ddeg;
 
@@ -9038,7 +9055,7 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 			}
 		}
 	}
-
+	
 	if(mpoly.isZero()) {
 		if(!CALCULATOR->aborted()) CALCULATOR->error(true, "mpoly is zero: %s. %s", tmp.print().c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
@@ -9153,28 +9170,202 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				MathStructure mcopy(msqrfree);
 				EvaluationOptions eo2 = eo;
 				eo2.expand = true;
+				eo2.calculate_functions = false;
+				CALCULATOR->beginTemporaryStopMessages();
 				mcopy.calculatesub(eo2, eo2);
+				CALCULATOR->endTemporaryStopMessages();
 				if(!equals(mcopy)) {
 					if(CALCULATOR->aborted()) return false;
 					CALCULATOR->error(true, "factorized result is wrong: %s. %s", msqrfree.print().c_str(), _("This is a bug. Please report it."), NULL);
 				} else {
 					set(msqrfree);
 					if(!isAddition()) {
-						factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+						if(isMultiplication()) flattenMultiplication(*this);
 						if(isMultiplication() && SIZE >= 2 && CHILD(0).isNumber()) {
 							for(size_t i = 1; i < SIZE; i++) {
-								if(CHILD(i).isPower() && CHILD(i)[0].isMultiplication() && CHILD(i)[0].size() >= 2 && CHILD(i)[0][0].isNumber() && CHILD(i)[0][0].number().isRational() && !CHILD(i)[0][0].number().isInteger() && CHILD(i)[1].isInteger()) {
+								if(CHILD(i).isNumber()) {
+									CHILD(i).number() *= CHILD(0).number();
+									CHILD(0).set(CHILD(i));
+									delChild(i);
+								} else if(CHILD(i).isPower() && CHILD(i)[0].isMultiplication() && CHILD(i)[0].size() >= 2 && CHILD(i)[0][0].isNumber() && CHILD(i)[0][0].number().isRational() && !CHILD(i)[0][0].number().isInteger() && CHILD(i)[1].isInteger()) {
 									CHILD(i)[0][0].number().raise(CHILD(i)[1].number());
 									CHILD(0).number().multiply(CHILD(i)[0][0].number());
 									CHILD(i)[0].delChild(1);
 									if(CHILD(i)[0].size() == 1) CHILD(i)[0].setToChild(1, true);
 								}
 							}
-							if(CHILD(0).isOne()) {
+							if(SIZE > 1 && CHILD(0).isOne()) {
 								ERASE(0);
-								if(SIZE == 1) SET_CHILD_MAP(0);
+							}
+							if(SIZE == 1) SET_CHILD_MAP(0);
+						}
+						if(isMultiplication() && SIZE >= 2 && CHILD(0).isNumber() && CHILD(0).number().isRational() && !CHILD(0).number().isInteger()) {
+							Number den = CHILD(0).number().denominator();
+							for(size_t i = 1; i < SIZE; i++) {
+								if(CHILD(i).isAddition()) {
+									bool b = true;
+									for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+										if(CHILD(i)[i2].isNumber()) {
+											if(!CHILD(i)[i2].number().isIntegerDivisible(den)) {b = false; break;}
+										} else if(CHILD(i)[i2].isMultiplication() && CHILD(i)[i2][0].isNumber()) {
+											if(!CHILD(i)[i2][0].number().isIntegerDivisible(den)) {b = false; break;}
+										} else {
+											b = false;
+											break;
+										}
+									}
+									if(b) {
+										for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+											if(CHILD(i)[i2].isNumber()) {
+												CHILD(i)[i2].number().divide(den);
+											} else if(CHILD(i)[i2].isMultiplication()) {
+												CHILD(i)[i2][0].number().divide(den);
+												if(CHILD(i)[i2][0].isOne() && CHILD(i)[i2].size() > 1) {
+													CHILD(i)[i2].delChild(1);
+													if(CHILD(i)[i2].size() == 1) {
+														CHILD(i)[i2].setToChild(1, true);
+													}
+												}
+											}
+										}
+										CHILD(0).set(CHILD(0).number().numerator(), true);
+										if(SIZE > 1 && CHILD(0).isOne()) {
+											ERASE(0);
+										}
+										if(SIZE == 1) SET_CHILD_MAP(0);
+										break;
+									}
+								}
 							}
 						}
+						if(isMultiplication()) {
+							for(size_t i = 0; i < SIZE; i++) {
+								if(CHILD(i).isPower() && CHILD(i)[1].isInteger()) {
+									if(CHILD(i)[0].isAddition()) {
+										bool b = true;
+										for(size_t i2 = 0; i2 < CHILD(i)[0].size(); i2++) {
+											if((!CHILD(i)[0][i2].isNumber() || !CHILD(i)[0][i2].number().isNegative()) && (!CHILD(i)[0][i2].isMultiplication() || CHILD(i)[0][i2].size() < 2 || !CHILD(i)[0][i2][0].isNumber() || !CHILD(i)[0][i2][0].number().isNegative())) {
+												b = false;
+												break;
+											}
+										}
+										if(b) {
+											for(size_t i2 = 0; i2 < CHILD(i)[0].size(); i2++) {
+												if(CHILD(i)[0][i2].isNumber()) {
+													CHILD(i)[0][i2].number().negate();
+												} else {
+													CHILD(i)[0][i2][0].number().negate();
+													if(CHILD(i)[0][i2][0].isOne() && CHILD(i)[0][i2].size() > 1) {
+														CHILD(i)[0][i2].delChild(1);
+														if(CHILD(i)[0][i2].size() == 1) {
+															CHILD(i)[0][i2].setToChild(1, true);
+														}
+													}
+												}
+											}
+											if(CHILD(i)[1].number().isOdd()) {
+												if(CHILD(0).isNumber()) CHILD(0).number().negate();
+												else {
+													PREPEND(MathStructure(-1, 1, 0));
+													i++;
+												}
+											}
+										}
+									} else if(CHILD(i)[0].isMultiplication() && CHILD(i)[0].size() >= 2 && CHILD(i)[0][0].isNumber() && CHILD(i)[0][0].number().isNegative()) {
+										CHILD(i)[0][0].number().negate();
+										if(CHILD(i)[0][0].isOne() && CHILD(i)[0].size() > 1) {
+											CHILD(i)[0].delChild(1);
+											if(CHILD(i)[0].size() == 1) {
+												CHILD(i)[0].setToChild(1, true);
+											}
+										}
+										if(CHILD(i)[1].number().isOdd()) {
+											if(CHILD(0).isNumber()) CHILD(0).number().negate();
+											else {
+												PREPEND(MathStructure(-1, 1, 0));
+												i++;
+											}
+										}
+									}
+								} else if(CHILD(i).isAddition()) {
+									bool b = true;
+									for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+										if((!CHILD(i)[i2].isNumber() || !CHILD(i)[i2].number().isNegative()) && (!CHILD(i)[i2].isMultiplication() || CHILD(i)[i2].size() < 2 || !CHILD(i)[i2][0].isNumber() || !CHILD(i)[i2][0].number().isNegative())) {
+											b = false;
+											break;
+										}
+									}
+									if(b) {
+										for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+											if(CHILD(i)[i2].isNumber()) {
+												CHILD(i)[i2].number().negate();
+											} else {
+												CHILD(i)[i2][0].number().negate();
+												if(CHILD(i)[i2][0].isOne() && CHILD(i)[i2].size() > 1) {
+													CHILD(i)[i2].delChild(1);
+													if(CHILD(i)[i2].size() == 1) {
+														CHILD(i)[i2].setToChild(1, true);
+													}
+												}
+											}
+										}
+										if(CHILD(0).isNumber()) CHILD(0).number().negate();
+										else {
+											PREPEND(MathStructure(-1, 1, 0));
+											i++;
+										}
+									}
+								}
+							}
+							if(SIZE > 1 && CHILD(0).isOne()) {
+								ERASE(0);
+							}
+							if(SIZE == 1) SET_CHILD_MAP(0);
+						}
+						if(isPower() && CHILD(1).isInteger()) {
+							if(CHILD(0).isAddition()) {
+								bool b = true;
+								for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
+									if((!CHILD(0)[i2].isNumber() || !CHILD(0)[i2].number().isNegative()) && (!CHILD(0)[i2].isMultiplication() || CHILD(0)[i2].size() < 2 || !CHILD(0)[i2][0].isNumber() || !CHILD(0)[i2][0].number().isNegative())) {
+										b = false;
+										break;
+									}
+								}
+								if(b) {
+									for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
+										if(CHILD(0)[i2].isNumber()) {
+											CHILD(0)[i2].number().negate();
+										} else {
+											CHILD(0)[i2][0].number().negate();
+											if(CHILD(0)[i2][0].isOne() && CHILD(0)[i2].size() > 1) {
+												CHILD(0)[i2].delChild(1);
+												if(CHILD(0)[i2].size() == 1) {
+													CHILD(0)[i2].setToChild(1, true);
+												}
+											}
+										}
+									}
+									if(CHILD(1).number().isOdd()) {
+										multiply(MathStructure(-1, 1, 0));
+										CHILD_TO_FRONT(1)
+									}
+								}
+							} else if(CHILD(0).isMultiplication() && CHILD(0).size() >= 2 && CHILD(0)[0].isNumber() && CHILD(0)[0].number().isNegative()) {
+								CHILD(0)[0].number().negate();
+								if(CHILD(0)[0].isOne() && CHILD(0).size() > 1) {
+									CHILD(0).delChild(1);
+									if(CHILD(0).size() == 1) {
+										CHILD(0).setToChild(1, true);
+									}
+								}
+								if(CHILD(1).number().isOdd()) {
+									multiply(MathStructure(-1, 1, 0));
+									CHILD_TO_FRONT(1)
+								}
+							}
+						}
+						evalSort(true);
+						factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
 						return true;
 					}
 				}
@@ -9742,6 +9933,31 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					}
 				}
 			}
+			//-x-y = -(x+y)
+			bool b = true;
+			for(size_t i2 = 0; i2 < SIZE; i2++) {
+				if((!CHILD(i2).isNumber() || !CHILD(i2).number().isNegative()) && (!CHILD(i2).isMultiplication() || CHILD(i2).size() < 2 || !CHILD(i2)[0].isNumber() || !CHILD(i2)[0].number().isNegative())) {
+					b = false;
+					break;
+				}
+			}
+			if(b) {
+				for(size_t i2 = 0; i2 < SIZE; i2++) {
+					if(CHILD(i2).isNumber()) {
+						CHILD(i2).number().negate();
+					} else {
+						CHILD(i2)[0].number().negate();
+						if(CHILD(i2)[0].isOne() && CHILD(i2).size() > 1) {
+							CHILD(i2).delChild(1);
+							if(CHILD(i2).size() == 1) {
+								CHILD(i2).setToChild(1, true);
+							}
+						}
+					}
+				}
+				multiply(MathStructure(-1, 1, 0));
+				CHILD_TO_FRONT(1)
+			}
 			//Try factorize combinations of terms
 			if(term_combination_levels != 0 && SIZE > 2) {
 				int start_index = rand() % SIZE;
@@ -9768,7 +9984,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						clock_gettime(CLOCK_MONOTONIC, &curtime);
 						if(curtime.tv_sec > endtime_p->tv_sec || (curtime.tv_sec == endtime_p->tv_sec && curtime.tv_nsec / 1000 > endtime_p->tv_usec)) {
 #endif
-							CALCULATOR->error(false, _("Because of time constraints only a limited number of combinations of terms were tried during factorization. Repeat factorization to try other randon combinations."), NULL);
+							CALCULATOR->error(false, _("Because of time constraints only a limited number of combinations of terms were tried during factorization. Repeat factorization to try other random combinations."), NULL);
 							break;
 						}
 					}
@@ -9790,7 +10006,17 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						if(b) {
 							mbest = mtest;
 							best_index = index;
-							if(mbest.isPower()) break;
+							if(mbest.isPower()) {
+								if(!mbest[0].isAddition()) break;
+								bool do_break = false;
+								for(size_t i = 0; i < mbest[0].size(); i++) {
+									if(!mbest[0].hasNegativeSign()) {
+										do_break = true;
+										break;
+									}
+								}
+								if(do_break) break;
+							}
 						}
 					}
 					index++;
@@ -13297,22 +13523,6 @@ bool searchSubMultiplicationsForComplexRelations(Unit *u, const MathStructure &m
 		}
 	}
 	return false;
-}
-bool flattenMultiplication(MathStructure &mstruct) {
-	bool retval = false;
-	for(size_t i = 0; i < mstruct.size();) {
-		if(mstruct[i].isMultiplication()) {
-			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
-				mstruct[i][i2].ref();
-				mstruct.insertChild_nocopy(&mstruct[i][i2], i + i2 + 2);
-			}
-			mstruct.delChild(i + 1);
-			retval = true;
-		} else {
-			i++;
-		}
-	}
-	return retval;
 }
 bool MathStructure::convertToBaseUnits(bool convert_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo) {
 	if(m_type == STRUCT_UNIT) {
