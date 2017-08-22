@@ -327,6 +327,8 @@ Calculator::Calculator() {
 	ucm = ucasemap_open(NULL, 0, &err);
 #endif
 
+	srand(time(NULL));
+
 	exchange_rates_time = 0;
 	exchange_rates_check_time = 0;
 	b_exchange_rates_warning_enabled = true;

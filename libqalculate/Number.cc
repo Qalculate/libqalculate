@@ -2485,6 +2485,10 @@ bool Number::iquo(const Number &o, Number &r) {
 	mpz_tdiv_qr(mpq_numref(r_value), mpq_numref(r.internalRational()), mpq_numref(r_value), mpq_numref(o.internalRational()));
 	return true;
 }
+bool Number::isIntegerDivisible(const Number &o) const {
+	if(!isInteger() || !o.isInteger()) return false;
+	return mpz_divisible_p(mpq_numref(r_value), mpq_numref(o.internalRational()));
+}
 bool Number::isqrt() {
 	if(isInteger()) {
 		if(mpz_sgn(mpq_numref(r_value)) < 0) return false;

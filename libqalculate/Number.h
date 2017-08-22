@@ -371,6 +371,7 @@ class Number {
 		bool ceil(const Number &o);
 		bool trunc(const Number &o);
 		bool mod(const Number &o);
+		bool isIntegerDivisible(const Number &o) const;
 		bool isqrt();
 		bool round();
 		bool floor();
