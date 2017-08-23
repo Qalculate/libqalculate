@@ -9202,8 +9202,6 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								}
 							}
 							if(SIZE > 1 && CHILD(0).isOne()) {
-<<<<<<< HEAD
-=======
 								ERASE(0);
 							}
 							if(SIZE == 1) SET_CHILD_MAP(0);
@@ -9327,137 +9325,10 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								}
 							}
 							if(SIZE > 1 && CHILD(0).isOne()) {
->>>>>>> 7c61b91bc6dc07c8e40487a91cc9522ebdd2baa7
 								ERASE(0);
 							}
 							if(SIZE == 1) SET_CHILD_MAP(0);
 						}
-<<<<<<< HEAD
-						if(isMultiplication() && SIZE >= 2 && CHILD(0).isNumber() && CHILD(0).number().isRational() && !CHILD(0).number().isInteger()) {
-							Number den = CHILD(0).number().denominator();
-							for(size_t i = 1; i < SIZE; i++) {
-								if(CHILD(i).isAddition()) {
-									bool b = true;
-									for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-										if(CHILD(i)[i2].isNumber()) {
-											if(!CHILD(i)[i2].number().isIntegerDivisible(den)) {b = false; break;}
-										} else if(CHILD(i)[i2].isMultiplication() && CHILD(i)[i2][0].isNumber()) {
-											if(!CHILD(i)[i2][0].number().isIntegerDivisible(den)) {b = false; break;}
-										} else {
-											b = false;
-											break;
-										}
-									}
-									if(b) {
-										for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-											if(CHILD(i)[i2].isNumber()) {
-												CHILD(i)[i2].number().divide(den);
-											} else if(CHILD(i)[i2].isMultiplication()) {
-												CHILD(i)[i2][0].number().divide(den);
-												if(CHILD(i)[i2][0].isOne() && CHILD(i)[i2].size() > 1) {
-													CHILD(i)[i2].delChild(1);
-													if(CHILD(i)[i2].size() == 1) {
-														CHILD(i)[i2].setToChild(1, true);
-													}
-												}
-											}
-										}
-										CHILD(0).set(CHILD(0).number().numerator(), true);
-										if(SIZE > 1 && CHILD(0).isOne()) {
-											ERASE(0);
-										}
-										if(SIZE == 1) SET_CHILD_MAP(0);
-										break;
-									}
-								}
-							}
-						}
-						if(isMultiplication()) {
-							for(size_t i = 0; i < SIZE; i++) {
-								if(CHILD(i).isPower() && CHILD(i)[1].isInteger()) {
-									if(CHILD(i)[0].isAddition()) {
-										bool b = true;
-										for(size_t i2 = 0; i2 < CHILD(i)[0].size(); i2++) {
-											if((!CHILD(i)[0][i2].isNumber() || !CHILD(i)[0][i2].number().isNegative()) && (!CHILD(i)[0][i2].isMultiplication() || CHILD(i)[0][i2].size() < 2 || !CHILD(i)[0][i2][0].isNumber() || !CHILD(i)[0][i2][0].number().isNegative())) {
-												b = false;
-												break;
-											}
-										}
-										if(b) {
-											for(size_t i2 = 0; i2 < CHILD(i)[0].size(); i2++) {
-												if(CHILD(i)[0][i2].isNumber()) {
-													CHILD(i)[0][i2].number().negate();
-												} else {
-													CHILD(i)[0][i2][0].number().negate();
-													if(CHILD(i)[0][i2][0].isOne() && CHILD(i)[0][i2].size() > 1) {
-														CHILD(i)[0][i2].delChild(1);
-														if(CHILD(i)[0][i2].size() == 1) {
-															CHILD(i)[0][i2].setToChild(1, true);
-														}
-													}
-												}
-											}
-											if(CHILD(i)[1].number().isOdd()) {
-												if(CHILD(0).isNumber()) CHILD(0).number().negate();
-												else {
-													PREPEND(MathStructure(-1, 1, 0));
-													i++;
-												}
-											}
-										}
-									} else if(CHILD(i)[0].isMultiplication() && CHILD(i)[0].size() >= 2 && CHILD(i)[0][0].isNumber() && CHILD(i)[0][0].number().isNegative()) {
-										CHILD(i)[0][0].number().negate();
-										if(CHILD(i)[0][0].isOne() && CHILD(i)[0].size() > 1) {
-											CHILD(i)[0].delChild(1);
-											if(CHILD(i)[0].size() == 1) {
-												CHILD(i)[0].setToChild(1, true);
-											}
-										}
-										if(CHILD(i)[1].number().isOdd()) {
-											if(CHILD(0).isNumber()) CHILD(0).number().negate();
-											else {
-												PREPEND(MathStructure(-1, 1, 0));
-												i++;
-											}
-										}
-									}
-								} else if(CHILD(i).isAddition()) {
-									bool b = true;
-									for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-										if((!CHILD(i)[i2].isNumber() || !CHILD(i)[i2].number().isNegative()) && (!CHILD(i)[i2].isMultiplication() || CHILD(i)[i2].size() < 2 || !CHILD(i)[i2][0].isNumber() || !CHILD(i)[i2][0].number().isNegative())) {
-											b = false;
-											break;
-										}
-									}
-									if(b) {
-										for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-											if(CHILD(i)[i2].isNumber()) {
-												CHILD(i)[i2].number().negate();
-											} else {
-												CHILD(i)[i2][0].number().negate();
-												if(CHILD(i)[i2][0].isOne() && CHILD(i)[i2].size() > 1) {
-													CHILD(i)[i2].delChild(1);
-													if(CHILD(i)[i2].size() == 1) {
-														CHILD(i)[i2].setToChild(1, true);
-													}
-												}
-											}
-										}
-										if(CHILD(0).isNumber()) CHILD(0).number().negate();
-										else {
-											PREPEND(MathStructure(-1, 1, 0));
-											i++;
-										}
-									}
-								}
-							}
-							if(SIZE > 1 && CHILD(0).isOne()) {
-								ERASE(0);
-							}
-							if(SIZE == 1) SET_CHILD_MAP(0);
-						}
-=======
->>>>>>> 7c61b91bc6dc07c8e40487a91cc9522ebdd2baa7
 						if(isPower() && CHILD(1).isInteger()) {
 							if(CHILD(0).isAddition()) {
 								bool b = true;
@@ -10143,15 +10014,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 							mbest = mtest;
 							best_index = index;
 							if(mbest.isPower()) {
-								if(!mbest[0].isAddition()) break;
-								bool do_break = false;
-								for(size_t i = 0; i < mbest[0].size(); i++) {
-									if(!mbest[0].hasNegativeSign()) {
-										do_break = true;
-										break;
-									}
-								}
-								if(do_break) break;
+								break;
 							}
 						}
 					}
