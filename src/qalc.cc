@@ -2780,7 +2780,15 @@ int main(int argc, char *argv[]) {
 			}
 		}
 #ifdef HAVE_LIBREADLINE
-		if(!cfile) {		
+		if(!cfile) {
+			for(int i = history_length - 1; i >= 0; i--) {
+				HIST_ENTRY *hist = history_get(i + history_base);
+				if(hist && hist->line && strcmp(hist->line, rlbuffer) == 0) {
+					hist = remove_history(i);
+					if(hist) free_history_entry(hist);
+					break;
+				}
+			}
 			add_history(rlbuffer);
 			free(rlbuffer);
 		}
