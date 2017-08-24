@@ -4027,7 +4027,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					goto integer_rerun;
 				}
 				mpz_clears(i_rem, i_quo, i_div, NULL);
-			} else if(precision2 < length && (approx || po.restrict_fraction_length || (base == 10 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)))) {
+			} else if(precision2 < length && (approx || po.restrict_fraction_length || (base == 10 && expo != 0 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)))) {
 
 				mpq_t qvalue;
 				mpq_init(qvalue);
