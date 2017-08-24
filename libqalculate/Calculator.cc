@@ -5868,7 +5868,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos) {
 		bool b = false, append = false;
 		while(i != string::npos) {
-			if(str[i - 1] != POWER_CH && (i < 2 || (str[i - 1] != MINUS_CH && str[i - 2] != POWER_CH))) {
+			if(str[i - 1] != POWER_CH && (i < 2 || str[i - 1] != MINUS_CH || str[i - 2] != POWER_CH)) {
 				str2 = str.substr(0, i);
 				str = str.substr(i, str.length() - i);
 				if(b) {
@@ -5898,7 +5898,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 	if((i = str.find(POWER_CH, 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i);
-		str = str.substr(i + 1, str.length() - (i + 1));		
+		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_RAISE);
 	} else if(po.base >= 2 && po.base <= 10 && (i = str.find_first_of(EXPS, 1)) != string::npos && i + 1 != str.length()) {

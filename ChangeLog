@@ -1,3 +1,23 @@
+2017-08-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix inconsistent parsing - x^22x=x^22*x, x^2x=x^(2*x) (now x^2x=x^2*x)
+	* Do not round exact integers in EXP_NONE/"Simple" mode (its only annoying)
+	
+2017-08-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Remove duplicate history entries in qalc
+	* Fix factorization issues
+
+2017-08-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Precision variable
+
+2017-08-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix sum(x/x,0,10) and avoid warning for sum(x/x,1,10), and similar
+	* Unicode ellipsis
+	* Return zero for plot()
+
 2017-08-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Enable plotting on Windows (gnuplot must be installed separately)
@@ -6,10 +26,17 @@
 2017-08-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Ability to apply functions with multiple arguments to the rpn stack (including using the whole stack for functions with a vector as argument)
+	* Fix clang compilation
+
+2017-08-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix compilation on Ubuntu 16.04
+	* Move function in fincance to parent category and update description of pmt()
 
 2017-08-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Derivatives of inverse and hyberbolic functions
+	* Make for() more efficient
 
 2017-08-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
