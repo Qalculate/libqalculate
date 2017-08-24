@@ -11492,7 +11492,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					CHILD(1).setToChild(1, true);
 					transform(STRUCT_INVERSE);
 				}
-				formatsub(po, parent, pindex, false);
+				formatsub(po, parent, pindex, true);
 			} else if(po.halfexp_to_sqrt && ((CHILD(1).isDivision() && CHILD(1)[0].isNumber() && CHILD(1)[0].number().isInteger() && CHILD(1)[1].isNumber() && CHILD(1)[1].number().isTwo() && ((!po.negative_exponents && CHILD(0).countChildren() == 0) || CHILD(1)[0].isOne())) || (CHILD(1).isNumber() && CHILD(1).number().denominatorIsTwo() && ((!po.negative_exponents && CHILD(0).countChildren() == 0) || CHILD(1).number().numeratorIsOne())) || (CHILD(1).isInverse() && CHILD(1)[0].isNumber() && CHILD(1)[0].number() == 2))) {
 				if(CHILD(1).isInverse() || (CHILD(1).isDivision() && CHILD(1)[0].number().isOne()) || (CHILD(1).isNumber() && CHILD(1).number().numeratorIsOne())) {
 					m_type = STRUCT_FUNCTION;
