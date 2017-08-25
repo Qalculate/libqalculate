@@ -2133,6 +2133,11 @@ bool Calculator::RPNStackEnter(MathStructure *mstruct, int msecs, const Evaluati
 	return calculateRPN(mstruct, PROC_RPN_ADD, 0, msecs, eo);
 }
 bool Calculator::RPNStackEnter(string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
+	remove_blank_ends(str);
+	if(str.empty() && rpn_stack.size() > 0) {
+		rpn_stack.push_back(new MathStructure(*rpn_stack.back()));
+		return true;
+	}
 	return calculateRPN(str, PROC_RPN_ADD, 0, msecs, eo, parsed_struct, to_struct, make_to_division);
 }
 void Calculator::RPNStackEnter(MathStructure *mstruct, bool eval, const EvaluationOptions &eo) {
@@ -2144,7 +2149,8 @@ void Calculator::RPNStackEnter(MathStructure *mstruct, bool eval, const Evaluati
 }
 void Calculator::RPNStackEnter(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
 	remove_blank_ends(str);
-	rpn_stack.push_back(new MathStructure(calculate(str, eo, parsed_struct, to_struct, make_to_division)));
+	if(str.empty() && rpn_stack.size() > 0) rpn_stack.push_back(new MathStructure(*rpn_stack.back()));
+	else rpn_stack.push_back(new MathStructure(calculate(str, eo, parsed_struct, to_struct, make_to_division)));
 }
 bool Calculator::setRPNRegister(size_t index, MathStructure *mstruct, int msecs, const EvaluationOptions &eo) {
 	if(mstruct == NULL) {

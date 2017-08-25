@@ -1,3 +1,7 @@
+2017-08-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Duplicate the RPN register at the top, instead of pushing zeroes, on RPN enter with empty expression (fixes qalculate-gtk issue #22)
+
 2017-08-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix inconsistent parsing - x^22x=x^22*x, x^2x=x^(2*x) (now x^2x=x^2*x)
