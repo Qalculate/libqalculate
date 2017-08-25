@@ -2226,53 +2226,122 @@ int TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	}
 	return 1;
 }
-PercentileFunction::PercentileFunction() : MathFunction("percentile", 2) {
+PercentileFunction::PercentileFunction() : MathFunction("percentile", 2, 3) {
 	setArgumentDefinition(1, new VectorArgument(""));
 	NumberArgument *arg = new NumberArgument();
 	Number fr;
 	arg->setMin(&fr);
-	fr.set(99, 1, 0);
+	fr.set(100, 1, 0);
 	arg->setMax(&fr);
-	arg->setIncludeEqualsMin(false);
-	arg->setIncludeEqualsMax(false);
+	arg->setIncludeEqualsMin(true);
+	arg->setIncludeEqualsMax(true);
 	setArgumentDefinition(2, arg);
+	IntegerArgument *iarg = new IntegerArgument();
+	fr.set(1, 1, 0);
+	iarg->setMin(&fr);
+	fr.set(9, 1, 0);
+	iarg->setMax(&fr);
+	setArgumentDefinition(3, iarg);
+	setDefaultValue(3, "8");
 }
 int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	MathStructure v(vargs[0]);
+	if(v.size() == 0) {mstruct.clear(); return 1;}
 	MathStructure *mp;
 	Number fr100(100, 1, 0);
+	int i_variant = vargs[2].number().intValue();
 	if(!v.sortVector()) {
 		return 0;
 	} else {
 		Number pfr(vargs[1].number());
-		pfr /= 100;
-		pfr *= (int) v.countChildren() + 1;
-/*		Number cfr(v->countChildren());
-		if(pfr.isZero() || pfr.numerator()->isLessThan(pfr.denominator()) || pfr.isGreaterThan(&cfr)) {
-			CALCULATOR->error(true, _("Not enough samples."), NULL);
-		}*/
-		if(pfr.isInteger()) {
-			mp = v.getChild((size_t) pfr.uintValue());
-			if(!mp) return 0;
-			mstruct = *mp;
-		} else {
-			Number ufr(pfr);
-			ufr.ceil();
-			Number lfr(pfr);
-			lfr.floor();
-			pfr -= lfr;
-			mp = v.getChild((size_t) ufr.uintValue());
-			if(!mp) return 0;
-			MathStructure gap(*mp);
-			mp = v.getChild((size_t) lfr.uintValue());
-			if(!mp) return 0;
-			gap -= *mp;
-			gap *= pfr;
-			mp = v.getChild((size_t) lfr.uintValue());
-			if(!mp) return 0;
-			mstruct = *mp;
-			mstruct += gap;
+		if(pfr == fr100) {
+			// Max value
+			mstruct = v[v.size() - 1];
+			return 1;
+		} else if(pfr.isZero()) {
+			// Min value
+			mstruct = v[0];
+			return 1;
 		}
+		pfr /= 100;
+		if(pfr == nr_half) {
+			// Median
+			if(v.size() % 2 == 1) {
+				mstruct = v[v.size() / 2];
+			} else {
+				mstruct = v[v.size() / 2 - 1];
+				mstruct += v[v.size() / 2];
+				mstruct *= nr_half;
+			}
+			return 1;
+		}
+		// Method numbers as in R
+		switch(i_variant) {
+			case 2: {
+				Number ufr(pfr);
+				ufr *= (long int) v.countChildren();
+				if(ufr.isInteger()) {
+					pfr = ufr;
+					ufr++;
+					mstruct = v[pfr.uintValue() - 1];
+					if(ufr.uintValue() > v.size()) return 1;
+					mstruct += v[ufr.uintValue() - 1];
+					mstruct *= nr_half;
+					return 1;
+				}
+			}
+			case 1: {
+				pfr *= (long int) v.countChildren();
+				pfr.ceil();
+				size_t index = pfr.uintValue();
+				if(index > v.size()) index = v.size();
+				if(index == 0) index = 1;
+				mstruct = v[index - 1];
+				return 1;
+			}
+			case 3: {
+				pfr *= (long int) v.countChildren();
+				pfr.round();
+				size_t index = pfr.uintValue();
+				if(index > v.size()) index = v.size();
+				if(index == 0) index = 1;
+				mstruct = v[index - 1];
+				return 1;
+			}
+			case 4: {pfr *= (long int) v.countChildren(); break;}
+			case 5: {pfr *= (long int) v.countChildren(); pfr += nr_half; break;}
+			case 6: {pfr *= (long int) v.countChildren() + 1; break;}
+			case 7: {pfr *= (long int) v.countChildren() - 1; pfr += 1; break;}
+			case 9: {pfr *= Number(v.countChildren() * 4 + 1, 4); pfr += Number(3, 8); break;}
+			case 8: {}
+			default: {pfr *= Number(v.countChildren() * 3 + 1, 3); pfr += Number(1, 3); break;}
+		}
+		Number ufr(pfr);
+		ufr.ceil();
+		Number lfr(pfr);
+		lfr.floor();
+		pfr -= lfr;
+		size_t u_index = ufr.uintValue();
+		size_t l_index = lfr.uintValue();
+		if(u_index > v.size()) {
+			mstruct = v[v.size() - 1];
+			return 1;
+		}
+		if(l_index == 0) {
+			mstruct = v[0];
+			return 1;
+		}
+		mp = v.getChild(u_index);
+		if(!mp) return 0;
+		MathStructure gap(*mp);
+		mp = v.getChild(l_index);
+		if(!mp) return 0;
+		gap -= *mp;
+		gap *= pfr;
+		mp = v.getChild(l_index);
+		if(!mp) return 0;
+		mstruct = *mp;
+		mstruct += gap;
 	}
 	return 1;
 }

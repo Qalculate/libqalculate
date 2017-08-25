@@ -1,6 +1,7 @@
 2017-08-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Duplicate the RPN register at the top, instead of pushing zeroes, on RPN enter with empty expression (fixes qalculate-gtk issue #22)
+	* Implementation of all R algorithms in percentile function
 
 2017-08-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

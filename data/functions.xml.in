@@ -1238,6 +1238,9 @@
         <argument index="2">
           <_title>Percentile (%)</_title>
         </argument>
+        <argument index="3">
+          <_title>Quantile Algorithm (as in R)</_title>
+        </argument>
       </builtin_function>
       <builtin_function name="min">
         <_title>Min</_title>
@@ -1283,37 +1286,52 @@
       <function>
         <_title>Quartile</_title>
         <_names>r:quartile</_names>
-        <expression>percentile(\x,25*\y)</expression>
+        <expression>percentile(\x,25*\y,\Z{8})</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
         <argument type="integer" index="2">
           <_title>Quartile</_title>
+          <min>0</min>
+          <max>4</max>
+        </argument>
+        <argument type="integer" index="3">
+          <_title>Quantile Algorithm (as in R)</_title>
           <min>1</min>
-	  <max>3</max>
+          <max>9</max>
         </argument>
       </function>
       <function>
         <_title>Decile</_title>
         <_names>r:decile</_names>
-        <expression>percentile(\x,10*\y)</expression>
+        <expression>percentile(\x,10*\y,\Z{8})</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
-        <argument type="number" index="2">
+        <argument type="integer" index="2">
           <_title>Decile</_title>
-          <min include_equals="true">0</min>
-	  <max include_equals="true">100</max>
+          <min>0</min>
+          <max>10</max>
+        </argument>
+        <argument type="integer" index="3">
+          <_title>Quantile Algorithm (as in R)</_title>
+          <min>1</min>
+          <max>9</max>
         </argument>
       </function>
       <function>
         <_title>Interquartile Range</_title>
         <_names>r:iqr</_names>
         <_description>Calculates the difference between the first and third quartile.</_description>
-        <expression>quartile(\x,3)-quartile(\x,1)</expression>
+        <expression>quartile(\x,3,\Y{8})-quartile(\x,1,\Y{8})</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
+        <argument type="integer" index="2">
+          <_title>Quantile Algorithm (as in R)</_title>
+          <min>1</min>
+	  <max>9</max>
+	</argument>
       </function>
       <function>
         <_title>Number of Samples</_title>
