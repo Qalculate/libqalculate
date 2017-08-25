@@ -6,7 +6,7 @@ dnl  ----------------------
 dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
-AC_INIT([libqalculate], [1.0.99])
+AC_INIT([libqalculate], [2.0.0])
 AC_CONFIG_SRCDIR(libqalculate/Calculator.cc)
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)

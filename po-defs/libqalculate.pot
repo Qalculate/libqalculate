@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-17 10:10+0200\n"
+"POT-Creation-Date: 2017-08-24 19:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7763,33 +7763,41 @@ msgid "r:undefined"
 msgstr ""
 
 #: ../data/variables.xml.in.h:163
-msgid "False"
+msgid "Precision"
 msgstr ""
 
 #: ../data/variables.xml.in.h:164
-msgid "r:false,r:no"
+msgid "r:precision"
 msgstr ""
 
 #: ../data/variables.xml.in.h:165
-msgid "True"
+msgid "False"
 msgstr ""
 
 #: ../data/variables.xml.in.h:166
-msgid "r:true,r:yes"
+msgid "r:false,r:no"
 msgstr ""
 
 #: ../data/variables.xml.in.h:167
-msgid "Unknowns"
+msgid "True"
 msgstr ""
 
 #: ../data/variables.xml.in.h:168
-msgid "r:x"
+msgid "r:true,r:yes"
 msgstr ""
 
 #: ../data/variables.xml.in.h:169
-msgid "r:y"
+msgid "Unknowns"
 msgstr ""
 
 #: ../data/variables.xml.in.h:170
+msgid "r:x"
+msgstr ""
+
+#: ../data/variables.xml.in.h:171
+msgid "r:y"
+msgstr ""
+
+#: ../data/variables.xml.in.h:172
 msgid "r:z"
 msgstr ""

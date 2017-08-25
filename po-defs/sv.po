@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-17 10:10+0200\n"
+"POT-Creation-Date: 2017-08-24 19:06+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -7894,34 +7894,42 @@ msgid "r:undefined"
 msgstr "odefinierad"
 
 #: ../data/variables.xml.in.h:163
+msgid "Precision"
+msgstr "Precision"
+
+#: ../data/variables.xml.in.h:164
+msgid "r:precision"
+msgstr ""
+
+#: ../data/variables.xml.in.h:165
 msgid "False"
 msgstr "Falskt"
 
-#: ../data/variables.xml.in.h:164
+#: ../data/variables.xml.in.h:166
 msgid "r:false,r:no"
 msgstr "falskt,nej"
 
-#: ../data/variables.xml.in.h:165
+#: ../data/variables.xml.in.h:167
 msgid "True"
 msgstr "Sant"
 
-#: ../data/variables.xml.in.h:166
+#: ../data/variables.xml.in.h:168
 msgid "r:true,r:yes"
 msgstr "sant,ja"
 
-#: ../data/variables.xml.in.h:167
+#: ../data/variables.xml.in.h:169
 msgid "Unknowns"
 msgstr "Okända"
 
-#: ../data/variables.xml.in.h:168
+#: ../data/variables.xml.in.h:170
 msgid "r:x"
 msgstr ""
 
-#: ../data/variables.xml.in.h:169
+#: ../data/variables.xml.in.h:171
 msgid "r:y"
 msgstr ""
 
-#: ../data/variables.xml.in.h:170
+#: ../data/variables.xml.in.h:172
 msgid "r:z"
 msgstr ""
 

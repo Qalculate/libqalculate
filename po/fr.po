@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-23 00:49+0200\n"
+"POT-Creation-Date: 2017-08-24 19:05+0200\n"
 "PO-Revision-Date: 2006-11-08 21:13-0500\n"
 "Last-Translator: Nicolas Laug <Nicolas.Laug@users.sourceforge.net>\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -150,7 +150,7 @@ msgstr "Valeur illégale"
 #: ../src/qalc.cc:410 ../src/qalc.cc:601 ../src/qalc.cc:1551
 #: ../src/qalc.cc:1822 ../src/qalc.cc:1902 ../src/qalc.cc:1906
 #: ../src/qalc.cc:2041 ../src/qalc.cc:2459 ../src/qalc.cc:2467
-#: ../src/qalc.cc:2704 ../src/qalc.cc:3311
+#: ../src/qalc.cc:2704 ../src/qalc.cc:3319
 msgid "base"
 msgstr ""
 
@@ -176,7 +176,7 @@ msgstr "temps"
 msgid "hex"
 msgstr ""
 
-#: ../src/qalc.cc:415 ../src/qalc.cc:1760 ../src/qalc.cc:3266
+#: ../src/qalc.cc:415 ../src/qalc.cc:1760 ../src/qalc.cc:3274
 msgid "hexadecimal"
 msgstr "hexadécimal"
 
@@ -184,7 +184,7 @@ msgstr "hexadécimal"
 msgid "bin"
 msgstr ""
 
-#: ../src/qalc.cc:416 ../src/qalc.cc:1765 ../src/qalc.cc:3275
+#: ../src/qalc.cc:416 ../src/qalc.cc:1765 ../src/qalc.cc:3283
 msgid "binary"
 msgstr "binaire"
 
@@ -192,7 +192,7 @@ msgstr "binaire"
 msgid "oct"
 msgstr ""
 
-#: ../src/qalc.cc:417 ../src/qalc.cc:1770 ../src/qalc.cc:3284
+#: ../src/qalc.cc:417 ../src/qalc.cc:1770 ../src/qalc.cc:3292
 msgid "octal"
 msgstr ""
 
@@ -490,13 +490,13 @@ msgid "optimalsi"
 msgstr "optionnel"
 
 #: ../src/qalc.cc:600 ../src/qalc.cc:1816 ../src/qalc.cc:1901
-#: ../src/qalc.cc:2457 ../src/qalc.cc:3302
+#: ../src/qalc.cc:2457 ../src/qalc.cc:3310
 #, fuzzy
 msgid "optimal"
 msgstr "optionnel"
 
 #: ../src/qalc.cc:602 ../src/qalc.cc:1897 ../src/qalc.cc:2463
-#: ../src/qalc.cc:3320
+#: ../src/qalc.cc:3328
 msgid "mixed"
 msgstr ""
 
@@ -974,16 +974,16 @@ msgstr "convertir"
 msgid "to"
 msgstr "vers"
 
-#: ../src/qalc.cc:1775 ../src/qalc.cc:3299
+#: ../src/qalc.cc:1775 ../src/qalc.cc:3307
 msgid "bases"
 msgstr ""
 
-#: ../src/qalc.cc:1808 ../src/qalc.cc:3293
+#: ../src/qalc.cc:1808 ../src/qalc.cc:3301
 #, fuzzy
 msgid "fraction"
 msgstr "fonction"
 
-#: ../src/qalc.cc:1814 ../src/qalc.cc:3296
+#: ../src/qalc.cc:1814 ../src/qalc.cc:3304
 #, fuzzy
 msgid "factors"
 msgstr "facteur"
@@ -1499,50 +1499,50 @@ msgid ""
 "mode (\"sqrt 2x = sqrt(2x)\")."
 msgstr ""
 
-#: ../src/qalc.cc:2811
+#: ../src/qalc.cc:2819
 msgid "error"
 msgstr "erreur"
 
-#: ../src/qalc.cc:2813
+#: ../src/qalc.cc:2821
 msgid "warning"
 msgstr "avertissement"
 
-#: ../src/qalc.cc:2865 ../src/qalc.cc:2903 ../src/qalc.cc:3165
-#: ../src/qalc.cc:3467 ../libqalculate/Calculator.cc:9121
+#: ../src/qalc.cc:2873 ../src/qalc.cc:2911 ../src/qalc.cc:3173
+#: ../src/qalc.cc:3475 ../libqalculate/Calculator.cc:9121
 #: ../libqalculate/MathStructure.cc:517
 #, c-format
 msgid "aborted"
 msgstr "interrompu"
 
-#: ../src/qalc.cc:2915
+#: ../src/qalc.cc:2923
 msgid "RPN Register Moved"
 msgstr "Registre NPI déplacé"
 
-#: ../src/qalc.cc:2966
+#: ../src/qalc.cc:2974
 msgid "Processing (press Enter to abort)"
 msgstr "Calcul en cours (appuyez sur Entrée pour interrompre)"
 
-#: ../src/qalc.cc:3039 ../src/qalc.cc:3606
+#: ../src/qalc.cc:3047 ../src/qalc.cc:3614
 msgid "approx."
 msgstr ""
 
-#: ../src/qalc.cc:3182
+#: ../src/qalc.cc:3190
 msgid "Factorizing (press Enter to abort)"
 msgstr "Factorisation en cours (appuyez sur Entrée pour interrompre)"
 
-#: ../src/qalc.cc:3186
+#: ../src/qalc.cc:3194
 msgid "Simplifying (press Enter to abort)"
 msgstr "Simplification en cours (appuyez sur Entrée pour interrompre)"
 
-#: ../src/qalc.cc:3481
+#: ../src/qalc.cc:3489
 msgid "Calculating (press Enter to abort)"
 msgstr "Calcul en cours (appuyez sur Entrée pour interrompre)"
 
-#: ../src/qalc.cc:3566
+#: ../src/qalc.cc:3574
 msgid "RPN Operation"
 msgstr "Opération NPI"
 
-#: ../src/qalc.cc:3949
+#: ../src/qalc.cc:3957
 #, c-format
 msgid ""
 "Couldn't write preferences to\n"
@@ -1551,7 +1551,7 @@ msgstr ""
 "Impossible d'écrire les préférences pour\n"
 " %s"
 
-#: ../src/qalc.cc:4028
+#: ../src/qalc.cc:4036
 msgid "Couldn't write definitions"
 msgstr "Impossible d'écrire les définitions"
 
@@ -1822,7 +1822,7 @@ msgstr ""
 msgid "minus"
 msgstr "moins"
 
-#: ../libqalculate/Calculator.cc:381 ../libqalculate/MathStructure.cc:12315
+#: ../libqalculate/Calculator.cc:381 ../libqalculate/MathStructure.cc:12314
 #: ../libqalculate/Function.cc:1163 ../libqalculate/Function.cc:1171
 #: ../libqalculate/Function.cc:1583 ../libqalculate/Function.cc:1744
 #: ../libqalculate/Function.cc:1752
@@ -1830,7 +1830,7 @@ msgid "and"
 msgstr "et"
 
 #: ../libqalculate/Calculator.cc:385 ../libqalculate/DataSet.cc:1050
-#: ../libqalculate/DataSet.cc:1113 ../libqalculate/MathStructure.cc:12330
+#: ../libqalculate/DataSet.cc:1113 ../libqalculate/MathStructure.cc:12329
 #: ../libqalculate/Function.cc:2083 ../libqalculate/Function.cc:2099
 msgid "or"
 msgstr "ou"
@@ -2125,64 +2125,64 @@ msgstr ""
 #: ../libqalculate/MathStructure.cc:5461 ../libqalculate/MathStructure.cc:5517
 #: ../libqalculate/MathStructure.cc:5537 ../libqalculate/MathStructure.cc:5556
 #: ../libqalculate/MathStructure.cc:5575 ../libqalculate/MathStructure.cc:5594
-#: ../libqalculate/MathStructure.cc:5684 ../libqalculate/MathStructure.cc:9060
-#: ../libqalculate/MathStructure.cc:9071 ../libqalculate/MathStructure.cc:9179
+#: ../libqalculate/MathStructure.cc:5684 ../libqalculate/MathStructure.cc:9067
+#: ../libqalculate/MathStructure.cc:9078 ../libqalculate/MathStructure.cc:9186
 msgid "This is a bug. Please report it."
 msgstr "Ceci est un bogue. Merci de le reporter."
 
-#: ../libqalculate/MathStructure.cc:9987
+#: ../libqalculate/MathStructure.cc:9994
 msgid ""
 "Because of time constraints only a limited number of combinations of terms "
 "were tried during factorization. Repeat factorization to try other random "
 "combinations."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:12413
+#: ../libqalculate/MathStructure.cc:12412
 msgid "undefined"
 msgstr "indéfini"
 
-#: ../libqalculate/MathStructure.cc:12464
+#: ../libqalculate/MathStructure.cc:12463
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to rank vector."
 msgstr ""
 "Comparaison impossible à l'élément %s en essayant de classer le vecteur."
 
-#: ../libqalculate/MathStructure.cc:12514
+#: ../libqalculate/MathStructure.cc:12513
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to sort vector."
 msgstr "Comparaison impossible à l'élément %s en essayant de trier le vecteur."
 
-#: ../libqalculate/MathStructure.cc:12939
+#: ../libqalculate/MathStructure.cc:12938
 msgid "The determinant can only be calculated for square matrices."
 msgstr "Le déterminant ne peut être calculé que pour les matrices carrées."
 
-#: ../libqalculate/MathStructure.cc:13002
+#: ../libqalculate/MathStructure.cc:13001
 msgid "The permanent can only be calculated for square matrices."
 msgstr "Le permanent ne peut être calculé que pour les matrice carrées."
 
-#: ../libqalculate/MathStructure.cc:13091
+#: ../libqalculate/MathStructure.cc:13090
 msgid "Inverse of singular matrix."
 msgstr "Inverse d'une matrice singulière."
 
-#: ../libqalculate/MathStructure.cc:13430
+#: ../libqalculate/MathStructure.cc:13429
 msgid ""
 "Calculations involving conversion of units without proportional linear "
 "relationship (e.g. with multiple temperature units), might give unexpected "
 "results and is not recommended."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:14123
-#: ../libqalculate/MathStructure.cc:14161
+#: ../libqalculate/MathStructure.cc:14122
+#: ../libqalculate/MathStructure.cc:14160
 msgid "Too many data points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:14130
+#: ../libqalculate/MathStructure.cc:14129
 msgid ""
 "The selected min and max do not result in a positive, finite number of data "
 "points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:14158
+#: ../libqalculate/MathStructure.cc:14157
 msgid ""
 "The selected min, max and step size do not result in a positive, finite "
 "number of data points"

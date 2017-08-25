@@ -2143,6 +2143,7 @@ void Calculator::RPNStackEnter(MathStructure *mstruct, bool eval, const Evaluati
 	rpn_stack.push_back(mstruct);
 }
 void Calculator::RPNStackEnter(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
+	remove_blank_ends(str);
 	rpn_stack.push_back(new MathStructure(calculate(str, eo, parsed_struct, to_struct, make_to_division)));
 }
 bool Calculator::setRPNRegister(size_t index, MathStructure *mstruct, int msecs, const EvaluationOptions &eo) {
@@ -6691,7 +6692,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {1, 0, 0};
+	int version_numbers[] = {2, 0, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

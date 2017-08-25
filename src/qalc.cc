@@ -3275,28 +3275,28 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_HEXADECIMAL;
+				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
-				evalops.parse_options.units_enabled = b_units_saved;
 				return;
 			} else if(equalsIgnoreCase(to_str, "bin") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "binary", _("binary"))) {
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_BINARY;
+				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
-				evalops.parse_options.units_enabled = b_units_saved;
 				return;
 			} else if(equalsIgnoreCase(to_str, "oct") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "octal", _("octal"))) {
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_OCTAL;
+				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
-				evalops.parse_options.units_enabled = b_units_saved;
 				return;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction"))) {
 				str = from_str;
