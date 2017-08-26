@@ -2,6 +2,8 @@
 * Quoted ")" in function
 * Replace pointers to unit when unit type has changed (a different object must be created)
 
+* Enhanced integration
+
 * More functions
 * More units
 

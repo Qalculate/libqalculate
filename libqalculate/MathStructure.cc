@@ -14575,10 +14575,9 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 				}
 			} else if(CHILD(1).equals(x_var) && CHILD(0).containsRepresentativeOf(x_var, true, true) == 0 && CHILD(0).representsPositive(false)) {
 				MathStructure mstruct(CALCULATOR->f_ln, &CHILD(0), NULL);
-				CHILD(1) *= mstruct;
-				CHILD(0) = CALCULATOR->v_e;
-				CHILDREN_UPDATED;
-				return integrate(x_var, eo);
+				mstruct.raise(m_minus_one);
+				multiply(mstruct);
+				break;
 			}
 			MathStructure mstruct(CALCULATOR->f_integrate, this, &x_var, NULL);
 			set(mstruct);

@@ -91,7 +91,7 @@ void generate_units_tree_struct() {
 					break;
 				}
 			}
-			if(!b) ia_units.push_back((void*) CALCULATOR->units[i]);						
+			if(!b) ia_units.push_back((void*) CALCULATOR->units[i]);
 		} else {
 			tree_struct *item = &unit_cats;
 			if(!CALCULATOR->units[i]->category().empty()) {
@@ -167,7 +167,7 @@ void generate_variables_tree_struct() {
 					break;
 				}
 			}
-			if(!b) ia_variables.push_back((void*) CALCULATOR->variables[i]);											
+			if(!b) ia_variables.push_back((void*) CALCULATOR->variables[i]);
 		} else {
 			tree_struct *item = &variable_cats;
 			if(!CALCULATOR->variables[i]->category().empty()) {
@@ -244,7 +244,7 @@ void generate_functions_tree_struct() {
 					break;
 				}
 			}
-			if(!b) ia_functions.push_back((void*) CALCULATOR->functions[i]);								
+			if(!b) ia_functions.push_back((void*) CALCULATOR->functions[i]);
 		} else {
 			tree_struct *item = &function_cats;
 			if(!CALCULATOR->functions[i]->category().empty()) {
@@ -454,7 +454,9 @@ void print_variable(Variable *v) {
 		if(is_answer_variable(v)) {
 			value = _("a previous result");
 		} else if(v->isKnown()) {
-			if(((KnownVariable*) v)->isExpression()) {
+			if(v == CALCULATOR->v_precision) {
+				value = _("current precision");
+			} else if(((KnownVariable*) v)->isExpression()) {
 				value = fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->expression()));
 				if(value.length() > 40) {
 					value = value.substr(0, 30);
@@ -495,9 +497,15 @@ void print_variable(Variable *v) {
 			}		
 		}
 		if(v->isApproximate()) {
-			value += " (";
-			value += _("approximate");
-			value += ")";
+			if(v == CALCULATOR->v_pi || v == CALCULATOR->v_e || v == CALCULATOR->v_euler || v == CALCULATOR->v_catalan) {
+				value += " (";
+				value += _("variable precision");
+				value += ")";
+			} else {
+				value += " (";
+				value += _("approximate");
+				value += ")";
+			}
 		}
 		fprintf(vfile, "<entry><para>%s</para></entry>\n", value.c_str());
 		fputs("</row>\n", vfile);

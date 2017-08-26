@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-24 19:05+0200\n"
+"POT-Creation-Date: 2017-08-26 08:54+0200\n"
 "PO-Revision-Date: 2007-07-31 15:34+0800\n"
 "Last-Translator: Roy Qu <royqh1979@gmail.com>\n"
 "Language-Team: Simplified Chinese\n"
@@ -122,7 +122,7 @@ msgstr "non-positive"
 msgid "Unrecognized assumption."
 msgstr "未被承认的假设"
 
-#: ../src/qalc.cc:364 ../libqalculate/Calculator.cc:9319
+#: ../src/qalc.cc:364 ../libqalculate/Calculator.cc:9326
 #, fuzzy, c-format
 msgid "It has been %s day(s) since the exchange rates last were updated."
 msgstr "距离最后一次汇率更新已超过一周了。"
@@ -760,7 +760,7 @@ msgstr "ans"
 
 #: ../src/qalc.cc:1133 ../src/qalc.cc:1136 ../src/qalc.cc:1137
 #: ../src/qalc.cc:1138 ../src/qalc.cc:1139 ../src/qalc.cc:1364
-#: ../libqalculate/Calculator.cc:8049 ../libqalculate/Calculator.cc:8065
+#: ../libqalculate/Calculator.cc:8056 ../libqalculate/Calculator.cc:8072
 msgid "Temporary"
 msgstr "临时"
 
@@ -1023,7 +1023,7 @@ msgstr ""
 
 #. qalc command
 #: ../src/qalc.cc:2050 ../src/qalc.cc:2088 ../src/qalc.cc:2644
-#: ../libqalculate/Calculator.cc:8703 ../libqalculate/DataSet.cc:359
+#: ../libqalculate/Calculator.cc:8710 ../libqalculate/DataSet.cc:359
 #: ../libqalculate/DataSet.cc:386 ../libqalculate/DataSet.cc:1016
 msgid "info"
 msgstr "info"
@@ -1502,7 +1502,7 @@ msgid "warning"
 msgstr "警告"
 
 #: ../src/qalc.cc:2873 ../src/qalc.cc:2911 ../src/qalc.cc:3173
-#: ../src/qalc.cc:3475 ../libqalculate/Calculator.cc:9121
+#: ../src/qalc.cc:3475 ../libqalculate/Calculator.cc:9128
 #: ../libqalculate/MathStructure.cc:517
 #, c-format
 msgid "aborted"
@@ -1582,139 +1582,139 @@ msgstr "在向量中不存在元素%s。"
 msgid "Argument for %s() must be a real number greater than or equal to -1/e."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:2297
-#: ../libqalculate/BuiltinFunctions.cc:2340
+#: ../libqalculate/BuiltinFunctions.cc:2366
+#: ../libqalculate/BuiltinFunctions.cc:2409
 #, c-format
 msgid "Unsolvable comparison in %s()."
 msgstr "在%s()中无法进行比较。"
 
-#: ../libqalculate/BuiltinFunctions.cc:2429
-#: ../libqalculate/BuiltinFunctions.cc:2442
-#: ../libqalculate/BuiltinFunctions.cc:2461
-#: ../libqalculate/BuiltinFunctions.cc:2487
-#: ../libqalculate/BuiltinFunctions.cc:2502
-#: ../libqalculate/BuiltinFunctions.cc:2517
-#: ../libqalculate/BuiltinFunctions.cc:2541
-#: ../libqalculate/BuiltinFunctions.cc:2565
-#: ../libqalculate/BuiltinFunctions.cc:2582
-#: ../libqalculate/BuiltinFunctions.cc:2598
-#: ../libqalculate/BuiltinFunctions.cc:2617
-#: ../libqalculate/BuiltinFunctions.cc:2632
-#: ../libqalculate/BuiltinFunctions.cc:2645
-#: ../libqalculate/BuiltinFunctions.cc:2658
+#: ../libqalculate/BuiltinFunctions.cc:2498
+#: ../libqalculate/BuiltinFunctions.cc:2511
+#: ../libqalculate/BuiltinFunctions.cc:2530
+#: ../libqalculate/BuiltinFunctions.cc:2556
+#: ../libqalculate/BuiltinFunctions.cc:2571
+#: ../libqalculate/BuiltinFunctions.cc:2586
+#: ../libqalculate/BuiltinFunctions.cc:2610
+#: ../libqalculate/BuiltinFunctions.cc:2634
+#: ../libqalculate/BuiltinFunctions.cc:2651
+#: ../libqalculate/BuiltinFunctions.cc:2667
+#: ../libqalculate/BuiltinFunctions.cc:2686
+#: ../libqalculate/BuiltinFunctions.cc:2701
+#: ../libqalculate/BuiltinFunctions.cc:2714
+#: ../libqalculate/BuiltinFunctions.cc:2727
 #, c-format
 msgid "Error in date format for function %s()."
 msgstr "函数%s()的日期格式错误。"
 
-#: ../libqalculate/BuiltinFunctions.cc:2455 ../libqalculate/Calculator.cc:9883
+#: ../libqalculate/BuiltinFunctions.cc:2524 ../libqalculate/Calculator.cc:9890
 msgid "now"
 msgstr "now"
 
-#: ../libqalculate/BuiltinFunctions.cc:2835
+#: ../libqalculate/BuiltinFunctions.cc:2904
 msgid ""
 "The number of requested elements in generate vector function must be a "
 "positive integer."
 msgstr "在常规向量函数中，需求的元素个数必须为正整数。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3138
-#: ../libqalculate/BuiltinFunctions.cc:3142
+#: ../libqalculate/BuiltinFunctions.cc:3207
+#: ../libqalculate/BuiltinFunctions.cc:3211
 #, c-format
 msgid "Too few elements (%s) in vector (%s required)"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3191
-#: ../libqalculate/BuiltinFunctions.cc:3208
+#: ../libqalculate/BuiltinFunctions.cc:3260
+#: ../libqalculate/BuiltinFunctions.cc:3277
 msgid "Comparison failed."
 msgstr "比较失败。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3196
-#: ../libqalculate/BuiltinFunctions.cc:3226
+#: ../libqalculate/BuiltinFunctions.cc:3265
+#: ../libqalculate/BuiltinFunctions.cc:3295
 msgid "No matching item found."
 msgstr "未能找到匹配项。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3308
+#: ../libqalculate/BuiltinFunctions.cc:3377
 #, c-format
 msgid "Object %s does not exist."
 msgstr "对象%s不存在。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3326
+#: ../libqalculate/BuiltinFunctions.cc:3395
 #, fuzzy, c-format
 msgid "Invalid variable name (%s)."
 msgstr "一个合法的变量名"
 
-#: ../libqalculate/BuiltinFunctions.cc:3343
+#: ../libqalculate/BuiltinFunctions.cc:3412
 msgid ""
 "A global unit or variable was deactivated. It will be restored after the new "
 "variable has been removed."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3358
+#: ../libqalculate/BuiltinFunctions.cc:3427
 #, c-format
 msgid "Register %s does not exist. Returning zero."
 msgstr "寄存器%s不存在。返回零。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3402
+#: ../libqalculate/BuiltinFunctions.cc:3471
 #, c-format
 msgid ""
 "The %s function is incomplete, unreliable and unstable. Use at your own risk "
 "and avoid complex expressions."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3413
-#: ../libqalculate/BuiltinFunctions.cc:3424
+#: ../libqalculate/BuiltinFunctions.cc:3482
+#: ../libqalculate/BuiltinFunctions.cc:3493
 #, fuzzy
 msgid "Unable to integrate the expression."
 msgstr "无法分离%s。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3419
+#: ../libqalculate/BuiltinFunctions.cc:3488
 msgid ""
 "Both the lower and upper limit must be set to get the definite integral."
 msgstr "必须同时设置积分上下限，才能获得定积分。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3560
+#: ../libqalculate/BuiltinFunctions.cc:3629
 msgid ""
 "No equality or inequality to solve. The entered expression to solve is not "
 "correct (ex. \"x + 5 = 3\" is correct)"
 msgstr "无法解等式或不等式。 输入的表达式不正确（例如：\"x + 5 = 3\"是正确的)"
 
-#: ../libqalculate/BuiltinFunctions.cc:3607
+#: ../libqalculate/BuiltinFunctions.cc:3676
 #, c-format
 msgid "The comparison is true for all %s (with current assumptions)."
 msgstr "此比较对所有%s为真。 (按照目前的假设)"
 
-#: ../libqalculate/BuiltinFunctions.cc:3611
+#: ../libqalculate/BuiltinFunctions.cc:3680
 msgid "No possible solution was found (with current assumptions)."
 msgstr "未找到可行解。 (按照目前的假设)"
 
-#: ../libqalculate/BuiltinFunctions.cc:3615
+#: ../libqalculate/BuiltinFunctions.cc:3684
 #, c-format
 msgid "Was unable to completely isolate %s."
 msgstr "无法完成分离%s/"
 
-#: ../libqalculate/BuiltinFunctions.cc:3619
-#: ../libqalculate/BuiltinFunctions.cc:3747
-#: ../libqalculate/BuiltinFunctions.cc:3842
+#: ../libqalculate/BuiltinFunctions.cc:3688
+#: ../libqalculate/BuiltinFunctions.cc:3816
+#: ../libqalculate/BuiltinFunctions.cc:3911
 #, c-format
 msgid "The comparison is true for all %s if %s."
 msgstr "此比较对所有%s为真，如果%s。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3623
+#: ../libqalculate/BuiltinFunctions.cc:3692
 #, c-format
 msgid "Was unable to isolate %s."
 msgstr "无法分离%s。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3706
-#: ../libqalculate/BuiltinFunctions.cc:3733
-#: ../libqalculate/BuiltinFunctions.cc:3816
+#: ../libqalculate/BuiltinFunctions.cc:3775
+#: ../libqalculate/BuiltinFunctions.cc:3802
+#: ../libqalculate/BuiltinFunctions.cc:3885
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed sign was "
 "therefor temporarily set as unknown."
 msgstr "按照当前的假设条件无法分离%s。 因此，假设符号暂时已被设成了未知。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3709
-#: ../libqalculate/BuiltinFunctions.cc:3736
-#: ../libqalculate/BuiltinFunctions.cc:3819
+#: ../libqalculate/BuiltinFunctions.cc:3778
+#: ../libqalculate/BuiltinFunctions.cc:3805
+#: ../libqalculate/BuiltinFunctions.cc:3888
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed type and "
@@ -1722,18 +1722,18 @@ msgid ""
 msgstr ""
 "按照当前的假设条件无法分离%s。 因此，假设类型和符号暂时都已被设成了未知。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3742
-#: ../libqalculate/BuiltinFunctions.cc:3827
+#: ../libqalculate/BuiltinFunctions.cc:3811
+#: ../libqalculate/BuiltinFunctions.cc:3896
 #, c-format
 msgid "The solution requires that %s."
 msgstr "解需要%s。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3835
+#: ../libqalculate/BuiltinFunctions.cc:3904
 #, c-format
 msgid "Solution %s requires that %s."
 msgstr "解%s需要%s。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3903
+#: ../libqalculate/BuiltinFunctions.cc:3972
 #, fuzzy, c-format
 msgid ""
 "Unable to isolate %s.\n"
@@ -1747,42 +1747,42 @@ msgstr ""
 "您可能需要按照正确的顺序排列等式和变量，这样每个等式都至少包含一个对应变量。 "
 "(如果自动排序失败的话)。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3905
-#: ../libqalculate/BuiltinFunctions.cc:3919
-#: ../libqalculate/BuiltinFunctions.cc:3928
+#: ../libqalculate/BuiltinFunctions.cc:3974
+#: ../libqalculate/BuiltinFunctions.cc:3988
+#: ../libqalculate/BuiltinFunctions.cc:3997
 #, c-format
 msgid "Unable to isolate %s."
 msgstr "无法分离%s。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3912
+#: ../libqalculate/BuiltinFunctions.cc:3981
 #, c-format
 msgid "Inequalities is not allowed in %s()."
 msgstr "在%s中不允许不等式。"
 
-#: ../libqalculate/BuiltinFunctions.cc:3984
-#: ../libqalculate/BuiltinFunctions.cc:3998
+#: ../libqalculate/BuiltinFunctions.cc:4053
+#: ../libqalculate/BuiltinFunctions.cc:4067
 #, fuzzy
 msgid "Matrix"
 msgstr "matrix"
 
-#: ../libqalculate/BuiltinFunctions.cc:4009
-#: ../libqalculate/BuiltinFunctions.cc:4047
+#: ../libqalculate/BuiltinFunctions.cc:4078
+#: ../libqalculate/BuiltinFunctions.cc:4116
 #, fuzzy
 msgid "Vector"
 msgstr "vector"
 
-#: ../libqalculate/BuiltinFunctions.cc:4020
-#: ../libqalculate/BuiltinFunctions.cc:4054 ../libqalculate/Calculator.cc:9395
+#: ../libqalculate/BuiltinFunctions.cc:4089
+#: ../libqalculate/BuiltinFunctions.cc:4123 ../libqalculate/Calculator.cc:9402
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr "按照当前的最大、最小和步长，无法生成绘图数据。"
 
-#: ../libqalculate/BuiltinFunctions.cc:4022
-#: ../libqalculate/BuiltinFunctions.cc:4056
+#: ../libqalculate/BuiltinFunctions.cc:4091
+#: ../libqalculate/BuiltinFunctions.cc:4125
 msgid "Sampling rate must be a positive integer."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:4027
-#: ../libqalculate/BuiltinFunctions.cc:4061 ../libqalculate/Calculator.cc:9367
+#: ../libqalculate/BuiltinFunctions.cc:4096
+#: ../libqalculate/BuiltinFunctions.cc:4130 ../libqalculate/Calculator.cc:9374
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr "按照当前的最大、最小和采样率，无法生成绘图数据。"
 
@@ -1816,8 +1816,8 @@ msgid "or"
 msgstr "or"
 
 #: ../libqalculate/Calculator.cc:429 ../libqalculate/Calculator.cc:1142
-#: ../libqalculate/Calculator.cc:2296 ../libqalculate/Calculator.cc:2301
-#: ../libqalculate/Calculator.cc:2302
+#: ../libqalculate/Calculator.cc:2303 ../libqalculate/Calculator.cc:2308
+#: ../libqalculate/Calculator.cc:2309
 msgid " to "
 msgstr " to "
 
@@ -1838,7 +1838,7 @@ msgstr "弧度单位丢失。自动为本会话创建了一个。"
 msgid "Degrees unit is missing. Creating one for this session."
 msgstr "角度单位丢失。自动为本会话创建了一个。"
 
-#: ../libqalculate/Calculator.cc:1499 ../libqalculate/Calculator.cc:9185
+#: ../libqalculate/Calculator.cc:1499 ../libqalculate/Calculator.cc:9192
 msgid "Currency"
 msgstr "货币"
 
@@ -1852,165 +1852,165 @@ msgstr ""
 msgid "Stack is empty. Filling remaining function arguments with zeroes."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:2247
+#: ../libqalculate/Calculator.cc:2254
 msgid "calculating..."
 msgstr "正在计算"
 
-#: ../libqalculate/Calculator.cc:3770
+#: ../libqalculate/Calculator.cc:3777
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
 "the variable will be lost."
 msgstr "在名称中不再允许使用\"%s\"。请修改名称\"%s\"，否则此变量将消失。"
 
-#: ../libqalculate/Calculator.cc:3788
+#: ../libqalculate/Calculator.cc:3795
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the function will be lost."
 msgstr "在名称中不再允许使用\"%s\"。请修改名称\"%s\"，否则此函数将消失。"
 
-#: ../libqalculate/Calculator.cc:3805
+#: ../libqalculate/Calculator.cc:3812
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the unit will be lost."
 msgstr "在名称中不再允许使用\"%s\"。请修改名称\"%s\"，否则此单位将消失。"
 
-#: ../libqalculate/Calculator.cc:4954 ../libqalculate/Calculator.cc:5728
-#: ../libqalculate/Calculator.cc:5740 ../libqalculate/Calculator.cc:5766
-#: ../libqalculate/Calculator.cc:5792
+#: ../libqalculate/Calculator.cc:4961 ../libqalculate/Calculator.cc:5735
+#: ../libqalculate/Calculator.cc:5747 ../libqalculate/Calculator.cc:5773
+#: ../libqalculate/Calculator.cc:5799
 #, c-format
 msgid "Misplaced operator(s) \"%s\" ignored"
 msgstr "已忽略放错地方的运算符\"%s\"。"
 
-#: ../libqalculate/Calculator.cc:4978 ../libqalculate/Calculator.cc:5816
+#: ../libqalculate/Calculator.cc:4985 ../libqalculate/Calculator.cc:5823
 #, c-format
 msgid "Misplaced '%c' ignored"
 msgstr "已忽略放错地方的\"%c\"。"
 
-#: ../libqalculate/Calculator.cc:5005 ../libqalculate/Function.cc:1311
+#: ../libqalculate/Calculator.cc:5012 ../libqalculate/Function.cc:1311
 #: ../libqalculate/Function.cc:1342
 #, c-format
 msgid "Internal id %s does not exist."
 msgstr "内部id %s不存在。"
 
-#: ../libqalculate/Calculator.cc:5023
+#: ../libqalculate/Calculator.cc:5030
 #, c-format
 msgid "\"%s\" is not a valid variable/function/unit."
 msgstr "\"%s\"不是合法的变量/函数/单位。"
 
-#: ../libqalculate/Calculator.cc:5038
+#: ../libqalculate/Calculator.cc:5045
 #, c-format
 msgid ""
 "Trailing characters \"%s\" (not a valid variable/function/unit) in number "
 "\"%s\" was ignored."
 msgstr "尾部字符\"%s\"(不是合法的变量/函数/单位) in 数字\"%s\"已被忽略。"
 
-#: ../libqalculate/Calculator.cc:5419
+#: ../libqalculate/Calculator.cc:5426
 msgid "RPN syntax error. Values left at the end of the RPN expression."
 msgstr "RPN语法错误。在逆波兰表达式的最后剩下了数值。"
 
-#: ../libqalculate/Calculator.cc:5422
+#: ../libqalculate/Calculator.cc:5429
 msgid "Unused stack values."
 msgstr "栈内还有值未被使用。"
 
-#: ../libqalculate/Calculator.cc:5461 ../libqalculate/Calculator.cc:5529
+#: ../libqalculate/Calculator.cc:5468 ../libqalculate/Calculator.cc:5536
 #, fuzzy, c-format
 msgid "RPN syntax error. Operator '%c' not supported."
 msgstr "RPN语法错误。栈内是空的。"
 
-#: ../libqalculate/Calculator.cc:5489
+#: ../libqalculate/Calculator.cc:5496
 msgid "RPN syntax error. Stack is empty."
 msgstr "RPN语法错误。栈内是空的。"
 
-#: ../libqalculate/Calculator.cc:5491
+#: ../libqalculate/Calculator.cc:5498
 msgid "RPN syntax error. Operator ignored as there where only one stack value."
 msgstr "RPN语法错误。栈内只有一个值，因此运算符已被忽略。"
 
-#: ../libqalculate/Calculator.cc:6017
+#: ../libqalculate/Calculator.cc:6024
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "名称\"%s\"已被使用。替换为\"%s\"。"
 
-#: ../libqalculate/Calculator.cc:6690 ../libqalculate/DataSet.cc:533
+#: ../libqalculate/Calculator.cc:6697 ../libqalculate/DataSet.cc:533
 #, c-format
 msgid "File not identified as Qalculate! definitions file: %s."
 msgstr "指定的文件无法被Qalculate!识别！ 定义文件：%s。"
 
-#: ../libqalculate/Calculator.cc:8686 ../libqalculate/DataSet.cc:357
+#: ../libqalculate/Calculator.cc:8693 ../libqalculate/DataSet.cc:357
 msgid "Object"
 msgstr "对象"
 
-#: ../libqalculate/Calculator.cc:8695 ../libqalculate/DataSet.cc:358
+#: ../libqalculate/Calculator.cc:8702 ../libqalculate/DataSet.cc:358
 msgid "Property"
 msgstr "属性"
 
-#: ../libqalculate/Calculator.cc:8994
+#: ../libqalculate/Calculator.cc:9001
 msgid "column"
 msgstr "column"
 
-#: ../libqalculate/Calculator.cc:8997
+#: ../libqalculate/Calculator.cc:9004
 msgid "Column "
 msgstr "列"
 
-#: ../libqalculate/Calculator.cc:9073 ../libqalculate/Calculator.cc:9120
+#: ../libqalculate/Calculator.cc:9080 ../libqalculate/Calculator.cc:9127
 msgid "timed out"
 msgstr "已超时"
 
-#: ../libqalculate/Calculator.cc:9289 ../libqalculate/Calculator.cc:9290
-#: ../libqalculate/Calculator.cc:9293
+#: ../libqalculate/Calculator.cc:9296 ../libqalculate/Calculator.cc:9297
+#: ../libqalculate/Calculator.cc:9300
 #, c-format
 msgid "Failed to download exchange rates from ECB: %s"
 msgstr "从ECB下载汇率失败：%s"
 
-#: ../libqalculate/Calculator.cc:9363 ../libqalculate/Calculator.cc:9391
-#: ../libqalculate/Calculator.cc:9419 ../libqalculate/Calculator.cc:9709
+#: ../libqalculate/Calculator.cc:9370 ../libqalculate/Calculator.cc:9398
+#: ../libqalculate/Calculator.cc:9426 ../libqalculate/Calculator.cc:9716
 msgid "It took too long to generate the plot data."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:9451
+#: ../libqalculate/Calculator.cc:9458
 msgid "No extension in file name. Saving as PNG image."
 msgstr "未指定文件扩展名。保存为PNG图像。"
 
-#: ../libqalculate/Calculator.cc:9470
+#: ../libqalculate/Calculator.cc:9477
 msgid "Unknown extension in file name. Saving as PNG image."
 msgstr "未知的文件扩展名。保存为PNG图像。"
 
-#: ../libqalculate/Calculator.cc:9669
+#: ../libqalculate/Calculator.cc:9676
 #, c-format
 msgid "Could not create temporary file %s"
 msgstr "无法创建临时文件%s"
 
-#: ../libqalculate/Calculator.cc:9724
+#: ../libqalculate/Calculator.cc:9731
 #, c-format
 msgid ""
 "Series %s contains non-numerical data (\"%s\" first of %s) which can not be "
 "properly plotted."
 msgstr "序列%s中包含无法被正确绘制的非数字型数据(\"%s\"first of %s)。"
 
-#: ../libqalculate/Calculator.cc:9726
+#: ../libqalculate/Calculator.cc:9733
 #, c-format
 msgid ""
 "Series %s contains non-real data (\"%s\" first of %s) which can not be "
 "properly plotted."
 msgstr "序列%s中包含无法被正确绘制的非实数数据(\"%s\"first of %s)。"
 
-#: ../libqalculate/Calculator.cc:9755
+#: ../libqalculate/Calculator.cc:9762
 msgid ""
 "Failed to invoke gnuplot. Make sure that you have gnuplot installed in your "
 "path."
 msgstr "调用gnuplot失败。请确认在您的路径中包含gnuplot。"
 
-#: ../libqalculate/Calculator.cc:9883
+#: ../libqalculate/Calculator.cc:9890
 msgid "today"
 msgstr "today"
 
-#: ../libqalculate/Calculator.cc:9886
+#: ../libqalculate/Calculator.cc:9893
 msgid "tomorrow"
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:9890
+#: ../libqalculate/Calculator.cc:9897
 msgid "yesterday"
 msgstr ""
 

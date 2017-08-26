@@ -376,7 +376,9 @@ CatalanVariable::CatalanVariable() : DynamicVariable("Constants", "catalan") {}
 void CatalanVariable::calculate() const {
 	Number nr; nr.catalan(); mstruct->set(nr);
 }
-PrecisionVariable::PrecisionVariable() : DynamicVariable("", "precision") {}
+PrecisionVariable::PrecisionVariable() : DynamicVariable("", "precision") {
+	setApproximate(false);
+}
 void PrecisionVariable::calculate() const {
 	mstruct->set(PRECISION, 1, 0);
 }
