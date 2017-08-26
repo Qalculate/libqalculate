@@ -6862,7 +6862,7 @@ bool combination_factorize(MathStructure &mstruct) {
 				for(size_t i = 0; i < mstruct_units.size(); i++) {
 					if(mstruct_units[i].isMultiplication()) {
 						for(size_t i2 = 0; i2 < mstruct_units[i].size();) {
-							if(!mstruct_units[i][i2].isUnit_exp() && !mstruct_units[i][i2].isUnknown_exp()) {
+							if(!mstruct_units[i][i2].containsType(STRUCT_UNIT, true) && !mstruct_units[i][i2].containsUnknowns()) {
 								mstruct_units[i].delChild(i2 + 1);
 							} else {
 								i2++;
@@ -6871,7 +6871,7 @@ bool combination_factorize(MathStructure &mstruct) {
 						if(mstruct_units[i].size() == 0) mstruct_units[i].setUndefined();
 						else if(mstruct_units[i].size() == 1) mstruct_units[i].setToChild(1);
 						for(size_t i2 = 0; i2 < mstruct_new[i].size();) {
-							if(mstruct_new[i][i2].isUnit_exp() || mstruct_new[i][i2].isUnknown_exp()) {
+							if(mstruct_new[i][i2].containsType(STRUCT_UNIT, true) || mstruct_new[i][i2].containsUnknowns()) {
 								mstruct_new[i].delChild(i2 + 1);
 							} else {
 								i2++;
@@ -6879,7 +6879,7 @@ bool combination_factorize(MathStructure &mstruct) {
 						}
 						if(mstruct_new[i].size() == 0) mstruct_new[i].set(1, 1, 0);
 						else if(mstruct_new[i].size() == 1) mstruct_new[i].setToChild(1);
-					} else if(mstruct_new[i].isUnit_exp() || mstruct_units[i].isUnknown_exp()) {
+					} else if(mstruct_units[i].containsType(STRUCT_UNIT, true) || mstruct_units[i].containsUnknowns()) {
 						mstruct_new[i].set(1, 1, 0);
 					} else {
 						mstruct_units[i].setUndefined();
@@ -14361,7 +14361,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				add(m_one);
 				raise(m_minus_one);
 				multiply(mstruct);
-			} else if(o_function == CALCULATOR->f_integrate && SIZE == 2 && CHILD(1) == x_var) {
+			} else if(o_function == CALCULATOR->f_integrate && SIZE == 4 && CHILD(1) == x_var) {
 				setToChild(1, true);
 			} else if(o_function == CALCULATOR->f_diff && SIZE == 3 && CHILD(1) == x_var) {
 				CHILD(2) += m_one;
@@ -14642,6 +14642,50 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 				}
 				integrate(x_var, eo);
 				multiply(mstruct);
+			} else if(SIZE == 2) {
+				size_t u_index = SIZE;
+				int best_type = 10;
+				for(size_t i = 0; i < SIZE; i++) {
+					if(best_type > 0 && (CHILD(i) == x_var || (CHILD(i).isPower() && CHILD(i)[0] == x_var && !CHILD(i)[1].contains(x_var) && CHILD(i)[1].representsNonNegative()))) {
+						u_index = i;
+						best_type = 0;
+					} else if(CHILD(i).isFunction() && (CHILD(i).function() == CALCULATOR->f_ln && CHILD(i).size() == 1 && CHILD(i)[0] == x_var)) {
+						u_index = i;
+						break;
+					} else if(best_type > 1 && CHILD(i).isFunction() && (CHILD(i).function() == CALCULATOR->f_sin && CHILD(i).size() == 1 && CHILD(i)[0] == x_var)) {
+						u_index = i;
+						best_type = 1;
+					} else if(best_type > 2 && CHILD(i).isFunction() && (CHILD(i).function() == CALCULATOR->f_cos && CHILD(i).size() == 1 && CHILD(i)[0] == x_var)) {
+						u_index = i;
+						best_type = 2;
+					}
+				}
+				if(u_index < SIZE) {
+					// integration by parts
+					MathStructure mstruct_u(CHILD(u_index));
+					MathStructure mstruct_v;
+					MathStructure minteg_v;
+					if(SIZE == 2 && u_index == 0) mstruct_v = CHILD(1);
+					else if(SIZE == 2 && u_index == 1) mstruct_v = CHILD(0);
+					else {mstruct_v = *this; mstruct_v.delChild(u_index);}
+					MathStructure mdiff_u(mstruct_u);
+					mdiff_u.differentiate(x_var, eo);
+					mstruct_v.eval(eo);
+					minteg_v = mstruct_v;
+					minteg_v.integrate(x_var, eo);
+					if(mdiff_u.isOne()) mdiff_u = minteg_v;
+					else mdiff_u *= minteg_v;
+					mdiff_u.eval(eo);
+					mdiff_u.integrate(x_var, eo);
+					mdiff_u.negate();
+					set(mstruct_u);
+					multiply(minteg_v);
+					add(mdiff_u);
+				} else {			
+					MathStructure mstruct(CALCULATOR->f_integrate, this, &x_var, NULL);
+					set(mstruct);
+					return false;
+				}
 			} else {
 				MathStructure mstruct(CALCULATOR->f_integrate, this, &x_var, NULL);
 				set(mstruct);
