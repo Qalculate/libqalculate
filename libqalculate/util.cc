@@ -549,7 +549,6 @@ string getPackageDataDir() {
 	} else if(datadir.substr(datadir.length() - 6) == "\\.libs") {
 		datadir.resize(datadir.find_last_of('\\'));
 		datadir.resize(datadir.find_last_of('\\'));
-		return datadir;
 	}
 	return datadir;
 #endif

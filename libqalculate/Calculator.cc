@@ -9290,6 +9290,17 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
 	curl_easy_setopt(curl, CURLOPT_FILETIME, &file_time);
+#ifdef WIN32
+	char exepath[MAX_PATH];
+	GetModuleFileName(NULL, exepath, MAX_PATH);
+	string datadir(exepath);
+	datadir.resize(datadir.find_last_of('\\'));
+	if(datadir.substr(datadir.length() - 4) != "\\bin" && datadir.substr(datadir.length() - 6) != "\\.libs") {
+		string cainfo = buildPath(datadir, "ssl", "certs", "ca-bundle.crt");
+		gsub("\\", "/", cainfo);
+		curl_easy_setopt(curl, CURLOPT_CAINFO, cainfo.c_str());
+	}
+#endif
 	res = curl_easy_perform(curl);
 	curl_easy_cleanup(curl);
 	curl_global_cleanup();
