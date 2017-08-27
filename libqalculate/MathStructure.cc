@@ -791,7 +791,7 @@ bool MathStructure::isInverse() const {return m_type == STRUCT_INVERSE;}
 bool MathStructure::isDivision() const {return m_type == STRUCT_DIVISION;}
 bool MathStructure::isNegate() const {return m_type == STRUCT_NEGATE;}
 bool MathStructure::isInfinity() const {return m_type == STRUCT_NUMBER && o_number.isInfinite();}
-bool MathStructure::isUndefined() const {return m_type == STRUCT_UNDEFINED || (m_type == STRUCT_NUMBER && o_number.isUndefined());}
+bool MathStructure::isUndefined() const {return m_type == STRUCT_UNDEFINED || (m_type == STRUCT_NUMBER && o_number.isUndefined()) || (m_type == STRUCT_VARIABLE && o_variable == CALCULATOR->v_undef);}
 bool MathStructure::isInteger() const {return m_type == STRUCT_NUMBER && o_number.isInteger();}
 bool MathStructure::isNumber() const {return m_type == STRUCT_NUMBER;}
 bool MathStructure::isZero() const {return m_type == STRUCT_NUMBER && o_number.isZero();}
@@ -14362,7 +14362,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				raise(m_minus_one);
 				multiply(mstruct);
 			} else if(o_function == CALCULATOR->f_integrate && CHILD(1) == x_var && (SIZE == 2 || (SIZE == 4 && CHILD(2).isUndefined() && CHILD(3).isUndefined()))) {
-				setToChild(1, true);
+				SET_CHILD_MAP(0);
 			} else if(o_function == CALCULATOR->f_diff && SIZE == 3 && CHILD(1) == x_var) {
 				CHILD(2) += m_one;
 			} else if(o_function == CALCULATOR->f_diff && SIZE == 2 && CHILD(1) == x_var) {
@@ -14543,41 +14543,48 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 					divide(mstruct);
 					break;
 				}
-			} else if(CHILD(0).isVariable() && CHILD(0).variable() == CALCULATOR->v_e) {
-				if(CHILD(1).equals(x_var)) {
-					break;
-				} else if(CHILD(1).isMultiplication()) {
-					bool b = false;
-					size_t i = 0;
-					for(; i < CHILD(1).size(); i++) {
-						if(CHILD(1)[i].equals(x_var)) {
-							b = true;
-							break;
-						}
-					}
-					if(b) {
-						MathStructure mstruct;
-						if(CHILD(1).size() == 2) {
-							if(i == 0) {
-								mstruct = CHILD(1)[1];
-							} else {
-								mstruct = CHILD(1)[0];
-							}
-						} else {
-							mstruct = CHILD(1);
-							mstruct.delChild(i + 1);
-						}
-						if(mstruct.representsNonZero(false) && mstruct.containsRepresentativeOf(x_var, true, true) == 0) {
-							divide(mstruct);
-							break;
-						}
+			} else if((CHILD(1) == x_var || (CHILD(1).isMultiplication() && CHILD(1).size() >= 2)) && ((CHILD(0).isNumber() && CHILD(0).number().isPositive() && !CHILD(0).number().isOne()) || (!CHILD(0).isNumber() && CHILD(0).representsPositive() && eo.approximation == APPROXIMATION_EXACT))) {
+				if(!CHILD(0).isNumber()) {
+					ComparisonResult cr = CHILD(0).compareApproximately(m_one);
+					if(!COMPARISON_IS_NOT_EQUAL(cr)) {
+						MathStructure mstruct(CALCULATOR->f_integrate, this, &x_var, NULL);
+						set(mstruct);
+						return false;
 					}
 				}
-			} else if(CHILD(1).equals(x_var) && CHILD(0).containsRepresentativeOf(x_var, true, true) == 0 && CHILD(0).representsPositive(false)) {
-				MathStructure mstruct(CALCULATOR->f_ln, &CHILD(0), NULL);
-				mstruct.raise(m_minus_one);
-				multiply(mstruct);
-				break;
+				if(CHILD(1).isMultiplication()) {
+					size_t index_x = CHILD(1).size();
+					for(size_t i = 0; i < CHILD(1).size(); i++) {
+						if(index_x == CHILD(1).size() && CHILD(1)[i] == x_var) {
+							index_x = i;
+						} else if(CHILD(1)[0].containsRepresentativeOf(x_var, true, true) != 0) {
+							index_x = CHILD(1).size();
+							break;
+						}
+					}
+					if(index_x < CHILD(1).size()) {
+						MathStructure mstruct_c(CHILD(1));
+						mstruct_c.delChild(index_x + 1);
+						if(mstruct_c.size() == 1) mstruct_c.setToChild(1);
+						if(CHILD(0).isVariable() && CHILD(0).variable() == CALCULATOR->v_e) {
+							mstruct_c.raise(m_minus_one);
+							multiply(mstruct_c);
+						} else {
+							MathStructure mstruct(CALCULATOR->f_ln, &CHILD(0), NULL);
+							mstruct *= mstruct_c;
+							mstruct.raise(m_minus_one);
+							multiply(mstruct);
+						}
+						break;
+					}
+				} else {
+					if(!CHILD(0).isVariable() || CHILD(0).variable() != CALCULATOR->v_e) {
+						MathStructure mstruct(CALCULATOR->f_ln, &CHILD(0), NULL);
+						mstruct.raise(m_minus_one);
+						multiply(mstruct);
+					}
+					break;
+				}
 			}
 			MathStructure mstruct(CALCULATOR->f_integrate, this, &x_var, NULL);
 			set(mstruct);

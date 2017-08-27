@@ -2716,6 +2716,10 @@ bool Number::sin() {
 		if(mpz_cmp_ui(mpq_denref(r_value), 1000000L) < 0) do_pi = false;
 		if(!setToFloatingPoint()) return false;
 	}
+	if(mpfr_custom_get_exp(f_value) > 2000000L) {
+		set(nr_bak);
+		return false;
+	}
 	mpfr_clear_flags();
 	if(do_pi) {
 		mpfr_t f_pi, f_quo;
@@ -2875,6 +2879,10 @@ bool Number::cos() {
 		if(mpz_cmp_ui(mpq_denref(r_value), 1000000L) < 0) do_pi = false;
 		if(!setToFloatingPoint()) return false;
 	}
+	if(mpfr_custom_get_exp(f_value) > 2000000L) {
+		set(nr_bak);
+		return false;
+	}
 	mpfr_clear_flags();
 	if(do_pi) {
 		mpfr_t f_pi, f_quo;
@@ -3028,6 +3036,10 @@ bool Number::tan() {
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		if(mpz_cmp_ui(mpq_denref(r_value), 1000000L) < 0) do_pi = false;
 		if(!setToFloatingPoint()) return false;
+	}
+	if(mpfr_custom_get_exp(f_value) > 2000000L) {
+		set(nr_bak);
+		return false;
 	}
 	mpfr_clear_flags();
 	if(do_pi) {

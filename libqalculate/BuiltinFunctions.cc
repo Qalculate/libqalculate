@@ -3482,8 +3482,8 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			return -1;
 		}
 	}
-	if(!vargs[2].isUndefined() && vargs[2] != CALCULATOR->v_undef) {
-		if(!vargs[3].isUndefined() && vargs[3] != CALCULATOR->v_undef) {
+	if(!vargs[2].isUndefined()) {
+		if(!vargs[3].isUndefined()) {
 			CALCULATOR->error(true, _("Both the lower and upper limit must be set to get the definite integral."), NULL);
 			mstruct = vargs[0];
 			return -1;
