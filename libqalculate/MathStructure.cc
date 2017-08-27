@@ -824,7 +824,7 @@ bool MathStructure::representsBoolean() const {
 
 bool MathStructure::representsNumber(bool allow_units) const {
 	switch(m_type) {
-		case STRUCT_NUMBER: {return true;}
+		case STRUCT_NUMBER: {return !o_number.isInfinite();}
 		case STRUCT_VARIABLE: {return o_variable->representsNumber(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNumber();}
 		case STRUCT_FUNCTION: {return (function_value && function_value->representsNumber(allow_units)) || o_function->representsNumber(*this, allow_units);}
@@ -3108,12 +3108,12 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					return 0;
 				}
 				default: {
-					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, true, true) == 0 || (isUnit() && unit() == CALCULATOR->u_rad)) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
+					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, false, true) <= 0 || (isUnit() && unit() == CALCULATOR->u_rad)) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
 						clear(true); 
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
 					}
-					if(isZero() && !mstruct.representsUndefined(true, true, !eo.assume_denominators_nonzero) && (!eo.keep_zero_units || mstruct.containsType(STRUCT_UNIT, true, true) == 0 || (mstruct.isUnit() && mstruct.unit() == CALCULATOR->u_rad)) && mstruct.representsNonMatrix()) {
+					if(isZero() && !mstruct.representsUndefined(true, true, !eo.assume_denominators_nonzero) && (!eo.keep_zero_units || mstruct.containsType(STRUCT_UNIT, false, true) <= 0 || (mstruct.isUnit() && mstruct.unit() == CALCULATOR->u_rad)) && mstruct.representsNonMatrix()) {
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 2;
 					}
@@ -14361,7 +14361,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				add(m_one);
 				raise(m_minus_one);
 				multiply(mstruct);
-			} else if(o_function == CALCULATOR->f_integrate && SIZE == 4 && CHILD(1) == x_var) {
+			} else if(o_function == CALCULATOR->f_integrate && CHILD(1) == x_var && (SIZE == 2 || (SIZE == 4 && CHILD(2).isUndefined() && CHILD(3).isUndefined()))) {
 				setToChild(1, true);
 			} else if(o_function == CALCULATOR->f_diff && SIZE == 3 && CHILD(1) == x_var) {
 				CHILD(2) += m_one;
@@ -14670,12 +14670,10 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 					else {mstruct_v = *this; mstruct_v.delChild(u_index);}
 					MathStructure mdiff_u(mstruct_u);
 					mdiff_u.differentiate(x_var, eo);
-					mstruct_v.eval(eo);
 					minteg_v = mstruct_v;
 					minteg_v.integrate(x_var, eo);
 					if(mdiff_u.isOne()) mdiff_u = minteg_v;
 					else mdiff_u *= minteg_v;
-					mdiff_u.eval(eo);
 					mdiff_u.integrate(x_var, eo);
 					mdiff_u.negate();
 					set(mstruct_u);

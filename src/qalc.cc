@@ -199,9 +199,9 @@ void set_assumption(const string &str, bool first_of_two = false) {
 	/*} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "none", _("none"))) {
 		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NONE);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "non-matrix", _("non-matrix"))) {
-		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NONMATRIX);*/
+		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NONMATRIX);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "complex", _("complex"))) {
-		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_COMPLEX);
+		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_COMPLEX);*/
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "real", _("real"))) {
 		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_REAL);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "number", _("number"))) {
@@ -2442,8 +2442,8 @@ int main(int argc, char *argv[]) {
 				if(ass->type() == ASSUMPTION_TYPE_NONMATRIX) str += "*";
 				str += ", ";*/ str += _("number");
 				if(ass->type() == ASSUMPTION_TYPE_NUMBER) str += "*";
-				str += ", "; str += _("complex");
-				if(ass->type() == ASSUMPTION_TYPE_COMPLEX) str += "*";
+				/*str += ", "; str += _("complex");
+				if(ass->type() == ASSUMPTION_TYPE_COMPLEX) str += "*";*/
 				str += ", "; str += _("real");
 				if(ass->type() == ASSUMPTION_TYPE_REAL) str += "*";
 				str += ", "; str += _("rational");
@@ -2593,8 +2593,8 @@ int main(int argc, char *argv[]) {
 				if(ass->type() == ASSUMPTION_TYPE_NONMATRIX) str += "*";
 				str += ", "; */str += _("number");
 				if(ass->type() == ASSUMPTION_TYPE_NUMBER) str += "*";
-				str += ", "; str += _("complex");
-				if(ass->type() == ASSUMPTION_TYPE_COMPLEX) str += "*";
+				/*str += ", "; str += _("complex");
+				if(ass->type() == ASSUMPTION_TYPE_COMPLEX) str += "*";*/
 				str += ", "; str += _("real");
 				if(ass->type() == ASSUMPTION_TYPE_REAL) str += "*";
 				str += ", "; str += _("rational");
@@ -3914,7 +3914,8 @@ void load_preferences() {
 					evalops.parse_options.rpn = v;
 				} else if(svar == "default_assumption_type") {
 					if(v >= ASSUMPTION_TYPE_NONE && v <= ASSUMPTION_TYPE_INTEGER) {
-						if(v < ASSUMPTION_TYPE_NUMBER && version_numbers[0] == 0 && (version_numbers[1] < 9 || (version_numbers[1] == 9 && version_numbers[2] <= 12))) v = ASSUMPTION_TYPE_NUMBER;
+						if(v < ASSUMPTION_TYPE_NUMBER && version_numbers[0] < 1) v = ASSUMPTION_TYPE_NUMBER;
+						if(v == ASSUMPTION_TYPE_COMPLEX && version_numbers[0] < 2) v = ASSUMPTION_TYPE_NUMBER;
 						CALCULATOR->defaultAssumptions()->setType((AssumptionType) v);
 					}
 				} else if(svar == "default_assumption_sign") {
