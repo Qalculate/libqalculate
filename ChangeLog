@@ -2,6 +2,7 @@
 
 	* Duplicate the RPN register at the top, instead of pushing zeroes, on RPN enter with empty expression (fixes qalculate-gtk issue #22)
 	* Implementation of all R algorithms in percentile function
+	* Use a formula for exponentiation with a complex power that preserves precision better
 
 2017-08-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

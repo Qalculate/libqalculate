@@ -1944,15 +1944,36 @@ bool Number::raise(const Number &o, bool try_exact) {
 	}
 	if(o.isComplex()) {
 		if(b_imag) return false;
-		Number tcos(*this);
-		if(!tcos.ln() || !tcos.multiply(*o.internalImaginary())) return false;
-		Number tsin(tcos);
-		if(!tcos.cos() || !tsin.sin() || !tsin.multiply(nr_one_i) || !tcos.add(tsin)) return false;
-		if(o.hasRealPart()) {
-			Number mul(*this);
-			if(!mul.raise(o.realPart(), false) || !tcos.multiply(mul)) return false;
+		Number nr_a, nr_b, nr_c, nr_d;
+		if(hasImaginaryPart()) {
+			if(hasRealPart()) nr_a = realPart();
+			nr_b = imaginaryPart();
+		} else {
+			nr_a.set(*this);
 		}
-		set(tcos);
+		if(o.hasRealPart()) nr_c = o.realPart();
+		nr_d = o.imaginaryPart();
+		Number a2b2c2(1, 1);
+		Number a2b2(nr_a);
+		Number b2(nr_b);
+		if(!a2b2.square() || !b2.square() || !a2b2.add(b2)) return false;
+		if(!nr_c.isZero()) {
+			Number chalf(nr_c);
+			a2b2c2 = a2b2;
+			if(!chalf.multiply(nr_half) || !a2b2c2.raise(chalf)) return false;
+		}
+		Number nr_arg(nr_b);
+		if(!nr_arg.atan2(nr_a)) return false;
+		Number eraised, nexp(nr_d);
+		eraised.e();
+		if(!nexp.negate() || !nexp.multiply(nr_arg) || !eraised.raise(nexp)) return false;
+		
+		if(!nr_arg.multiply(nr_c) || !nr_d.multiply(nr_half) || !a2b2.ln() || !nr_d.multiply(a2b2) || !nr_arg.add(nr_d)) return false;
+		Number nr_cos(nr_arg);
+		Number nr_sin(nr_arg);
+		if(!nr_cos.cos() || !nr_sin.sin() || !nr_sin.multiply(nr_one_i) || !nr_cos.add(nr_sin)) return false;
+		if(!eraised.multiply(a2b2c2) || !eraised.multiply(nr_cos)) return false;
+		set(eraised);
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
