@@ -9899,14 +9899,14 @@ bool QalculateDate::set(long int newtimestamp) {
 bool QalculateDate::set(string str) {
 	remove_blank_ends(str);
 	if(equalsIgnoreCase(str, _("today")) || equalsIgnoreCase(str, "today") || equalsIgnoreCase(str, _("now")) || equalsIgnoreCase(str, "now")) {
-		set(time(NULL));
+		set((long int) time(NULL));
 		return true;
 	} else if(equalsIgnoreCase(str, _("tomorrow")) || equalsIgnoreCase(str, "tomorrow")) {
-		set(time(NULL));
+		set((long int) time(NULL));
 		addDays(1);
 		return true;
 	} else if(equalsIgnoreCase(str, _("yesterday")) || equalsIgnoreCase(str, "yesterday")) {
-		set(time(NULL));
+		set((long int) time(NULL));
 		addDays(-1);
 		return true;
 	}

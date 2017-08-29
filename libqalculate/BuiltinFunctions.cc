@@ -2521,7 +2521,7 @@ int TimestampFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	string str = vargs[0].symbol();
 	remove_blank_ends(str);
 	if(str == _("now") || str == "now") {
-		mstruct.set(time(NULL), 1L, 0L);
+		mstruct.set((long int) time(NULL), 1L, 0L);
 		return 1;
 	}
 	QalculateDate date;
