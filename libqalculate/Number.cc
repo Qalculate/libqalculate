@@ -2656,6 +2656,10 @@ bool Number::besselj(const Number &o) {
 	long int n = mpz_get_si(mpq_numref(o.internalRational()));
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
+	if(mpfr_custom_get_exp(f_value) > 2000000L) {
+		set(nr_bak);
+		return false;
+	}
 	mpfr_clear_flags();
 	mpfr_jn(f_value, n, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {
@@ -2679,6 +2683,10 @@ bool Number::bessely(const Number &o) {
 	long int n = mpz_get_si(mpq_numref(o.internalRational()));
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
+	if(mpfr_custom_get_exp(f_value) > 2000000L) {
+		set(nr_bak);
+		return false;
+	}
 	mpfr_clear_flags();
 	mpfr_yn(f_value, n, f_value, MPFR_RNDN);
 	if(!testFloatResult()) {

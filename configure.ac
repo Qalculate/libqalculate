@@ -97,7 +97,7 @@ dnl  --------------------------------
 
 AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
 
-AC_CHECK_HEADERS(mpfr.h, [LIBS="$LIBS -lmpfr -lgmp"])
+AC_CHECK_HEADERS(mpfr.h, [LIBS="$LIBS -lmpfr -lgmp"], [AC_MSG_ERROR([Unable to find mpfr header])])
 
 AC_LANG([C++])
 
