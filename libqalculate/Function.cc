@@ -1840,7 +1840,7 @@ bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 		value.eval(eo);
 	//}
 	if(!value.isVector()) {
-		if(isLastArgument() && subargs.size() == 0) value.transform(STRUCT_VECTOR);
+		if(isLastArgument()) value.transform(STRUCT_VECTOR);
 		else return false;
 	}
 	if(b_argloop && subargs.size() > 0) {
