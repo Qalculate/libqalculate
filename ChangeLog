@@ -1,3 +1,7 @@
+2017-08-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix solving of (a+x)/(b+x)=c
+
 2017-08-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Duplicate the RPN register at the top, instead of pushing zeroes, on RPN enter with empty expression (fixes qalculate-gtk issue #22)

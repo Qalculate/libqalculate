@@ -6931,18 +6931,15 @@ bool MathStructure::structure(StructuringMode structuring, const EvaluationOptio
 			return factorize(eo, restore_first);
 		}
 		case STRUCTURING_HYBRID: {
-			if(isAddition()) {
-				if(restore_first) {
-					unformat();
-					EvaluationOptions eo2 = eo;
-					eo2.expand = true;
-					eo2.combine_divisions = false;
-					eo2.sync_units = false;
-					calculatesub(eo2, eo2);
-				}
-				return combination_factorize(*this);
+			if(restore_first) {
+				unformat();
+				EvaluationOptions eo2 = eo;
+				eo2.expand = true;
+				eo2.combine_divisions = false;
+				eo2.sync_units = false;
+				calculatesub(eo2, eo2);
 			}
-			return false;
+			return combination_factorize(*this);
 		}
 		default: {
 			if(restore_first) {
@@ -14988,7 +14985,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			}*/
 			if(!eo2.expand) break;
 			MathStructure mtest(*this);
-			if(!CHILD(1).isZero()) {
+			if(!mtest[1].isZero()) {
 				mtest[0].calculateSubtract(CHILD(1), eo2);
 				mtest[1].clear();
 				mtest.childrenUpdated();
@@ -15476,6 +15473,26 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 					return true;
 					
+				}
+			} else if(CHILD(1).isNumber() && ct_comp == COMPARISON_EQUALS) {
+				for(size_t i = 0; i < CHILD(0).size(); i++) {
+					if(CHILD(0)[i].isPower() && CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().isMinusOne()) {
+						MathStructure mtest(*this);
+						mtest[1].multiply(CHILD(0)[i][0]);
+						MathStructure mcheck(CHILD(0)[i][0]);
+						mcheck.add(m_zero, OPERATION_NOT_EQUALS);
+						mcheck.isolate_x_sub(eo, eo2, x_var);
+						mtest[0].delChild(i + 1);
+						if(mtest[0].size() == 1) mtest[0].setToChild(1);
+						if(mtest[0].calculateSubtract(mtest[1], eo)) {
+							mtest[1].clear();
+							set_nocopy(mtest);
+							isolate_x_sub(eo, eo2, x_var, morig);
+							add(mcheck, OPERATION_LOGICAL_AND, true);
+							calculatesub(eo2, eo, false);
+							return true;
+						}
+					}
 				}
 			}
 			if(!eo2.expand) break;
