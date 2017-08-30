@@ -19,6 +19,8 @@
 #include "Number.h"
 #include "Unit.h"
 
+#include <limits.h>
+
 #if HAVE_UNORDERED_MAP
 #	include <unordered_map>
 #elif 	defined(__GNUC__)
