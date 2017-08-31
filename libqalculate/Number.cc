@@ -819,7 +819,7 @@ unsigned long int Number::ulintValue(bool *overflow) const {
 			if(mpz_sgn(mpq_numref(r_value)) == -1) return 0;
 			return ULONG_MAX;
 		}
-		return mpz_get_si(mpq_numref(r_value));
+		return mpz_get_ui(mpq_numref(r_value));
 	} else {
 		Number nr;
 		nr.set(*this, false, true);
@@ -2097,8 +2097,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 	} else if(o.isInteger()) {
 		mpfr_pow_z(f_value, f_value, mpq_numref(o.internalRational()), MPFR_RNDN);
 	} else {
-		if(mpfr_sgn(f_value) < 0 && !mpz_even_p(mpq_numref(o.internalRational()))) {
-			if(b_imag) return false;
+		if(mpfr_sgn(f_value) < 0) {
 			if(mpz_cmp_ui(mpq_denref(o.internalRational()), 2) == 0) {
 				if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
 				i_value->set(*this, false, true);
@@ -2109,7 +2108,13 @@ bool Number::raise(const Number &o, bool try_exact) {
 				setPrecisionAndApproximateFrom(*i_value);
 				return true;
 			}
-			try_complex = true;
+			if(mpz_even_p(mpq_denref(o.internalRational())) || mpz_cmp_ui(mpq_numref(o.internalRational()), 1) != 0) {
+				try_complex = true;
+			} else if(mpz_fits_ulong_p(mpq_denref(o.internalRational()))) {
+				mpfr_root(f_value, f_value, mpz_get_si(mpq_denref(o.internalRational())), MPFR_RNDN);
+			} else {
+				try_complex = true;
+			}
 		} else {
 			mpfr_t f_pow;
 			mpfr_init2(f_pow, BIT_PRECISION);
@@ -2126,6 +2131,10 @@ bool Number::raise(const Number &o, bool try_exact) {
 		if(!nexp.multiply(o)) return false;
 		if(!nbase.raise(nexp, false)) return false;
 		set(nbase);
+		if(isComplex() && b_imag) {
+			set(nr_bak);
+			return false;
+		}
 		return true;
 	}
 	
