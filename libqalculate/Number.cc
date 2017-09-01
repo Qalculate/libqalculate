@@ -2003,7 +2003,8 @@ bool Number::raise(const Number &o, bool try_exact) {
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
-
+	
+	bool use_real_root = false;
 	if(n_type == NUMBER_TYPE_RATIONAL && !o.isFloatingPoint()) {
 		bool success = false;
 		if(mpz_fits_slong_p(mpq_numref(o.internalRational())) != 0 && mpz_fits_ulong_p(mpq_denref(o.internalRational())) != 0) {
@@ -2012,7 +2013,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 			size_t length1 = mpz_sizeinbase(mpq_numref(r_value), 10);
 			size_t length2 = mpz_sizeinbase(mpq_denref(r_value), 10);
 			if(length2 > length1) length1 = length2;
-			if(((!try_exact && i_root <= 2 && (long long int) labs(i_pow) * length1 < 1000) || (try_exact && (long long int) labs(i_pow) * length1 < 1000000LL && i_root < 1000000L))) {
+			if((use_real_root || i_root <= 2 || (i_root == 3 && (i_pow == 1 || i_pow == -1)) || mpq_sgn(r_value) > 0) && ((!try_exact && i_root <= 2 && (long long int) labs(i_pow) * length1 < 1000) || (try_exact && (long long int) labs(i_pow) * length1 < 1000000LL && i_root < 1000000L))) {
 				bool complex_result = false;
 				if(i_root != 1) {
 					mpq_t r_test;
@@ -2085,6 +2086,30 @@ bool Number::raise(const Number &o, bool try_exact) {
 	
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
+	
+	if(use_real_root && !o.isInteger() && mpfr_sgn(f_value) < 0) {
+		Number nr_mul(-1, 1, 0);
+		if(!nr_mul.raise(o) || (b_imag && nr_mul.isComplex())) {
+			set(nr_bak);
+			return false;
+		}
+		mpfr_neg(f_value, f_value, MPFR_RNDN);
+		if(o.isFloatingPoint()) {
+			mpfr_pow(f_value, f_value, o.internalFloat(), MPFR_RNDN);
+		} else {
+			mpfr_t f_pow;
+			mpfr_init2(f_pow, BIT_PRECISION);
+			mpfr_set_q(f_pow, o.internalRational(), MPFR_RNDN);
+			mpfr_pow(f_value, f_value, f_pow, MPFR_RNDN);
+			mpfr_clear(f_pow);
+		}
+		if(!testFloatResult(false) || !multiply(nr_mul)) {
+			set(nr_bak);
+			return false;
+		}
+		setPrecisionAndApproximateFrom(o);
+		return true;
+	}
 
 	bool try_complex = false;
 	if(o.isFloatingPoint()) {
@@ -2107,11 +2132,9 @@ bool Number::raise(const Number &o, bool try_exact) {
 				clearReal();
 				setPrecisionAndApproximateFrom(*i_value);
 				return true;
-			}
-			if(mpz_even_p(mpq_denref(o.internalRational())) || mpz_cmp_ui(mpq_numref(o.internalRational()), 1) != 0) {
-				try_complex = true;
-			} else if(mpz_fits_ulong_p(mpq_denref(o.internalRational()))) {
-				mpfr_root(f_value, f_value, mpz_get_si(mpq_denref(o.internalRational())), MPFR_RNDN);
+			} else if(mpz_cmp_ui(mpq_denref(o.internalRational()), 3) == 0 && mpz_cmp_ui(mpq_numref(o.internalRational()), 1) == 0) {
+				mpfr_cbrt(f_value, f_value, MPFR_RNDN);
+				return true;
 			} else {
 				try_complex = true;
 			}
