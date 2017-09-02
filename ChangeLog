@@ -1,3 +1,8 @@
+2017-09-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Option to use real or principal root for negative bases
+	* cbrt() now always returns real root
+
 2017-08-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix solving of (a+x)/(b+x)=c

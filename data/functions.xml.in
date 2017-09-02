@@ -917,6 +917,13 @@
         <_title>Value</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="cbrt">
+      <_title>Cube Root</_title>
+      <_names>au:&#x221B;,r:cbrt</_names>
+      <argument type="free" index="1">
+        <_title>Value</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="sq">
       <_title>Square</_title>
       <_names>r:sq</_names>
@@ -1000,14 +1007,6 @@
       <expression>10^\x</expression>
       <argument type="free" index="1">
         <_title>Exponent</_title>
-      </argument>
-    </function>
-    <function>
-      <_title>Cube Root</_title>
-      <_names>au:&#x221B;,r:cbrt</_names>
-      <expression>\x^(1/3)</expression>
-      <argument type="free" index="1">
-        <_title>Value</_title>
       </argument>
     </function>
     <function>

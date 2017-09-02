@@ -277,7 +277,7 @@ class Calculator {
 	MathFunction *f_abs, *f_gcd, *f_lcm, *f_signum, *f_round, *f_floor, *f_ceil, *f_trunc, *f_int, *f_frac, *f_rem, *f_mod;	
 	MathFunction *f_polynomial_unit, *f_polynomial_primpart, *f_polynomial_content, *f_coeff, *f_lcoeff, *f_tcoeff, *f_degree, *f_ldegree;
 	MathFunction *f_re, *f_im, *f_arg, *f_numerator, *f_denominator;
-  	MathFunction *f_sqrt, *f_sq;
+  	MathFunction *f_sqrt, *f_cbrt, *f_sq;
 	MathFunction *f_exp;
 	MathFunction *f_ln, *f_logn;
 	MathFunction *f_lambert_w;

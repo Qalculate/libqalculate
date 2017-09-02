@@ -1064,6 +1064,20 @@ int SqrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct ^= MathStructure(1, 2, 0);
 	return 1;
 }
+CbrtFunction::CbrtFunction() : MathFunction("cbrt", 1) {
+}
+int CbrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	if(!eo.real_roots && !mstruct.representsNonNegative()) {
+		mstruct.eval(eo);
+		EvaluationOptions eo2 = eo;
+		eo2.real_roots = true;
+		mstruct.calculateRaise(MathStructure(1, 3, 0), eo2);
+		return 1;
+	}
+	mstruct ^= MathStructure(1, 3, 0);
+	return 1;
+}
 SquareFunction::SquareFunction() : MathFunction("sq", 1) {
 }
 int SquareFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {

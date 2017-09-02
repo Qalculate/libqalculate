@@ -3148,7 +3148,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 	if(mstruct.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
 		// number^number
 		Number nr(o_number);
-		if(nr.raise(mstruct.number(), eo.approximation != APPROXIMATION_APPROXIMATE) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
+		if(nr.raise(mstruct.number(), eo.approximation != APPROXIMATION_APPROXIMATE, eo.real_roots) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
 			// Exponentiation succeeded without inappropriate change in approximation status
 			if(o_number == nr) {
 				o_number = nr;
@@ -3161,10 +3161,10 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		}
 		if(mstruct.number().isRational()) {
 			Number exp_num(mstruct.number().numerator());
-			if(!exp_num.isOne() && !exp_num.isMinusOne() && o_number.isPositive() && test_if_numerator_not_too_large(o_number, exp_num)) {
+			if(!exp_num.isOne() && !exp_num.isMinusOne() && (o_number.isPositive() || (eo.real_roots && (mstruct.number().numeratorIsEven() || !mstruct.number().denominatorIsEven()))) && test_if_numerator_not_too_large(o_number, exp_num)) {
 				// Try raise by exponent numerator if not very large
 				nr = o_number;
-				if(nr.raise(exp_num) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
+				if(nr.raise(exp_num, eo.approximation != APPROXIMATION_APPROXIMATE, eo.real_roots) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
 					o_number = nr;
 					numberUpdated();
 					nr.set(mstruct.number().denominator());
@@ -3563,8 +3563,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			goto default_power_merge;
 		}
 		case STRUCT_POWER: {
-			bool use_real_power = false;
-			if(use_real_power) {
+			if(eo.real_roots) {
 				if(mstruct.representsInteger() || (mstruct.isNumber() && mstruct.number().isRational() && !mstruct.number().denominatorIsEven()) || representsNonNegative(true)) {
 					if(CHILD(1).isNumber() && CHILD(1).number().isRational() && (CHILD(1).isInteger() || CHILD(1).number().denominatorIsEven() || (!CHILD(1).number().numeratorIsEven() && mstruct.representsOdd()) || CHILD(0).representsNonNegative(true)) && (eo.allow_complex || !CHILD(1).number().denominatorIsEven() || CHILD(0).representsPositive(true) || CHILD(0).representsComplex())) {
 						if(CHILD(1).number().numeratorIsEven() && !mstruct.representsInteger()) {
@@ -3735,7 +3734,6 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					}
 				}
 			} else if(mstruct.isNumber() && mstruct.number().isRational() && !mstruct.number().isInteger() && !mstruct.number().numeratorIsOne() && !mstruct.number().numeratorIsMinusOne()) {
-				bool use_real_power = false;
 				if(representsNonNegative(true) && (m_type != STRUCT_FUNCTION || o_function != CALCULATOR->f_abs)) {
 					bool b;
 					if(mstruct.number().isNegative()) {
@@ -3757,7 +3755,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					}
 					if(b) calculateRaiseExponent(eo);
 					return 1;
-				} else if(use_real_power && (mstruct.number().denominatorIsEven() || !mstruct.number().numeratorIsEven())) {
+				} else if(eo.real_roots && (mstruct.number().denominatorIsEven() || !mstruct.number().numeratorIsEven())) {
 					raise(m_one);
 					CHILD(1).number() /= mstruct.number().denominator();
 					if(calculateRaiseExponent(eo)) {

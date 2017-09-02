@@ -1873,7 +1873,7 @@ bool Number::recip() {
 	}
 	return true;
 }
-bool Number::raise(const Number &o, bool try_exact) {
+bool Number::raise(const Number &o, bool try_exact, bool use_real_root) {
 	if(o.isInfinity()) return false;
 	if(isInfinite()) {	
 		if(o.isNegative()) {
@@ -1966,7 +1966,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		if(!nr_arg.atan2(nr_a)) return false;
 		Number eraised, nexp(nr_d);
 		eraised.e();
-		if(!nexp.negate() || !nexp.multiply(nr_arg) || !eraised.raise(nexp)) return false;
+		if(!nexp.negate() || !nexp.multiply(nr_arg) || !eraised.raise(nexp, false, false)) return false;
 		
 		if(!nr_arg.multiply(nr_c) || !nr_d.multiply(nr_half) || !a2b2.ln() || !nr_d.multiply(a2b2) || !nr_arg.add(nr_d)) return false;
 		Number nr_cos(nr_arg);
@@ -1981,18 +1981,18 @@ bool Number::raise(const Number &o, bool try_exact) {
 		if(o.isNegative()) {
 			if(o.isMinusOne()) return recip();
 			Number ninv(*this), opos(o);
-			if(!ninv.recip() ||!opos.negate() || !ninv.raise(opos, false)) return false;
+			if(!ninv.recip() ||!opos.negate() || !ninv.raise(opos, false, false)) return false;
 			set(ninv);
 			return true;
 		}
 		if(hasRealPart() || !o.isInteger()) {
 			Number nbase, nexp(*this);
 			nbase.e();
-			if(!nexp.ln() || !nexp.multiply(o) || !nbase.raise(nexp, false)) return false;
+			if(!nexp.ln() || !nexp.multiply(o) || !nbase.raise(nexp, false, false)) return false;
 			set(nbase);
 			return true;
 		}
-		if(!i_value->raise(o, try_exact)) return false;
+		if(!i_value->raise(o, try_exact, false)) return false;
 		i_value->negate();
 		if(o.isEven()) {
 			set(*i_value, true, true);
@@ -2003,8 +2003,32 @@ bool Number::raise(const Number &o, bool try_exact) {
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
+
 	
-	bool use_real_root = false;
+	if(isMinusOne() && o.isRational()) {
+		if(o.isInteger()) {
+			if(o.isEven()) set(1, 1, 0, true);
+			setPrecisionAndApproximateFrom(o);
+			return true;
+		} else if(o.denominatorIsTwo()) {
+			if(b_imag) return false;
+			clear(true);
+			if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
+			i_value->set(1, 1, 0);
+			setPrecisionAndApproximateFrom(o);
+			return true;
+		} else if(use_real_root) {
+			if(o.numeratorIsEven()) {
+				set(1, 1, 0, true);
+				setPrecisionAndApproximateFrom(o);
+				return true;
+			} else if(!o.denominatorIsEven()) {
+				setPrecisionAndApproximateFrom(o);
+				return true;
+			}
+		}
+	}
+
 	if(n_type == NUMBER_TYPE_RATIONAL && !o.isFloatingPoint()) {
 		bool success = false;
 		if(mpz_fits_slong_p(mpq_numref(o.internalRational())) != 0 && mpz_fits_ulong_p(mpq_denref(o.internalRational())) != 0) {
@@ -2013,7 +2037,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 			size_t length1 = mpz_sizeinbase(mpq_numref(r_value), 10);
 			size_t length2 = mpz_sizeinbase(mpq_denref(r_value), 10);
 			if(length2 > length1) length1 = length2;
-			if((use_real_root || i_root <= 2 || (i_root == 3 && (i_pow == 1 || i_pow == -1)) || mpq_sgn(r_value) > 0) && ((!try_exact && i_root <= 2 && (long long int) labs(i_pow) * length1 < 1000) || (try_exact && (long long int) labs(i_pow) * length1 < 1000000LL && i_root < 1000000L))) {
+			if((use_real_root || i_root <= 2  || mpq_sgn(r_value) > 0) && ((!try_exact && i_root <= 2 && (long long int) labs(i_pow) * length1 < 1000) || (try_exact && (long long int) labs(i_pow) * length1 < 1000000LL && i_root < 1000000L))) {
 				bool complex_result = false;
 				if(i_root != 1) {
 					mpq_t r_test;
@@ -2087,12 +2111,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
 	
-	if(use_real_root && !o.isInteger() && mpfr_sgn(f_value) < 0) {
-		Number nr_mul(-1, 1, 0);
-		if(!nr_mul.raise(o) || (b_imag && nr_mul.isComplex())) {
-			set(nr_bak);
-			return false;
-		}
+	if(use_real_root && o.isRational() && mpfr_sgn(f_value) < 0 && (!o.denominatorIsEven() || o.numeratorIsEven())) {
 		mpfr_neg(f_value, f_value, MPFR_RNDN);
 		if(o.isFloatingPoint()) {
 			mpfr_pow(f_value, f_value, o.internalFloat(), MPFR_RNDN);
@@ -2103,7 +2122,8 @@ bool Number::raise(const Number &o, bool try_exact) {
 			mpfr_pow(f_value, f_value, f_pow, MPFR_RNDN);
 			mpfr_clear(f_pow);
 		}
-		if(!testFloatResult(false) || !multiply(nr_mul)) {
+		if(!o.numeratorIsEven()) mpfr_neg(f_value, f_value, MPFR_RNDN);
+		if(!testFloatResult(false)) {
 			set(nr_bak);
 			return false;
 		}
@@ -2114,8 +2134,9 @@ bool Number::raise(const Number &o, bool try_exact) {
 	bool try_complex = false;
 	if(o.isFloatingPoint()) {
 		bool is_neg = mpfr_sgn(f_value) < 0;
-		mpfr_pow(f_value, f_value, o.internalFloat(), MPFR_RNDN);
-		if(is_neg && mpfr_nan_p(f_value)) {
+		if(is_neg && !use_real_root) try_complex = true;
+		else mpfr_pow(f_value, f_value, o.internalFloat(), MPFR_RNDN);
+		if(use_real_root && is_neg && mpfr_nan_p(f_value)) {
 			mpfr_clear_nanflag();
 			try_complex = true;
 		}
@@ -2131,9 +2152,6 @@ bool Number::raise(const Number &o, bool try_exact) {
 				}
 				clearReal();
 				setPrecisionAndApproximateFrom(*i_value);
-				return true;
-			} else if(mpz_cmp_ui(mpq_denref(o.internalRational()), 3) == 0 && mpz_cmp_ui(mpq_numref(o.internalRational()), 1) == 0) {
-				mpfr_cbrt(f_value, f_value, MPFR_RNDN);
 				return true;
 			} else {
 				try_complex = true;
@@ -2152,7 +2170,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		nbase.e();
 		if(!nexp.ln()) return false;
 		if(!nexp.multiply(o)) return false;
-		if(!nbase.raise(nexp, false)) return false;
+		if(!nbase.raise(nexp, false, false)) return false;
 		set(nbase);
 		if(isComplex() && b_imag) {
 			set(nr_bak);

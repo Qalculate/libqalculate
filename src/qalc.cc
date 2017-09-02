@@ -470,6 +470,7 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate variables", _("calculate variables"))) SET_BOOL_E(evalops.calculate_variables)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate functions", _("calculate functions"))) SET_BOOL_E(evalops.calculate_functions)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "sync units", _("sync units"))) SET_BOOL_E(evalops.sync_units)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "real roots", _("real roots"))) SET_BOOL_E(evalops.real_roots)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even"))) SET_BOOL_D(printops.round_halfway_to_even)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn syntax", _("rpn syntax"))) SET_BOOL_PF(evalops.parse_options.rpn)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn", _("rpn")) && svalue.find(" ") == string::npos) {SET_BOOL(rpn_mode) if(!rpn_mode) CALCULATOR->clearRPNStack();} 
@@ -1923,7 +1924,7 @@ int main(int argc, char *argv[]) {
 			if(CALCULATOR->getDecimalPoint() != COMMA) {
 				PRINT_AND_COLON_TABS(_("comma as separator")); PUTS_UNICODE(b2oo(evalops.parse_options.comma_as_separator, false)); CHECK_IF_SCREEN_FILLED
 			}
-			PRINT_AND_COLON_TABS(_("complex numbers")); PUTS_UNICODE(b2oo(evalops.allow_complex, false)); CHECK_IF_SCREEN_FILLED			
+			PRINT_AND_COLON_TABS(_("complex numbers")); PUTS_UNICODE(b2oo(evalops.allow_complex, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("denominator prefixes")); PUTS_UNICODE(b2oo(printops.use_denominator_prefix, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("division sign"));
 			switch(printops.division_sign) {
@@ -2004,6 +2005,7 @@ int main(int argc, char *argv[]) {
 				case READ_PRECISION_WHEN_DECIMALS: {PUTS_UNICODE(_("when decimals")); break;}
 			}
 			CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("real roots")); PUTS_UNICODE(b2oo(evalops.real_roots, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("round to even")); PUTS_UNICODE(b2oo(printops.round_halfway_to_even, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("rpn")); PUTS_UNICODE(b2oo(rpn_mode, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("rpn syntax")); PUTS_UNICODE(b2oo(evalops.parse_options.rpn, false)); CHECK_IF_SCREEN_FILLED
@@ -2544,6 +2546,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS(_("precision"));  str += "(> 0) "; str += i2s(CALCULATOR->getPrecision()); str += "*"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("prefixes"), printops.use_unit_prefixes);
 				STR_AND_TABS_2(_("read precision"), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
+				STR_AND_TABS_BOOL(_("real roots"), evalops.real_roots);
 				STR_AND_TABS_BOOL(_("round to even"), printops.round_halfway_to_even);
 				STR_AND_TABS_BOOL(_("rpn"), rpn_mode);
 				STR_AND_TABS_BOOL(_("rpn syntax"), evalops.parse_options.rpn);
@@ -3694,6 +3697,7 @@ void load_preferences() {
 	evalops.parse_options.read_precision = DONT_READ_PRECISION;
 	evalops.parse_options.base = BASE_DECIMAL;
 	evalops.allow_complex = true;
+	evalops.real_roots = true;
 	evalops.allow_infinite = true;
 	evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL;
 	evalops.assume_denominators_nonzero = true;
@@ -3856,6 +3860,8 @@ void load_preferences() {
 					evalops.parse_options.units_enabled = v;
 				} else if(svar == "allow_complex") {
 					evalops.allow_complex = v;
+				} else if(svar == "real_roots") {
+					evalops.real_roots = v;
 				} else if(svar == "allow_infinite") {
 					evalops.allow_infinite = v;
 				} else if(svar == "use_short_units") {
@@ -4011,6 +4017,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "unknownvariables_enabled=%i\n", saved_evalops.parse_options.unknowns_enabled);
 	fprintf(file, "units_enabled=%i\n", saved_evalops.parse_options.units_enabled);
 	fprintf(file, "allow_complex=%i\n", saved_evalops.allow_complex);
+	fprintf(file, "real_roots=%i\n", saved_evalops.real_roots);
 	fprintf(file, "allow_infinite=%i\n", saved_evalops.allow_infinite);
 	fprintf(file, "indicate_infinite_series=%i\n", saved_printops.indicate_infinite_series);
 	fprintf(file, "show_ending_zeroes=%i\n", saved_printops.show_ending_zeroes);

@@ -75,7 +75,7 @@ AC_DEFINE([HAVE_PTHREADS],1,
 dnl libtool versioning for libqalculate
 
 dnl increment if the interface has additions, changes, removals.
-QALCULATE_CURRENT=11
+QALCULATE_CURRENT=12
 
 dnl increment any time the source changes; set to 
 dnl  0 if you increment CURRENT
