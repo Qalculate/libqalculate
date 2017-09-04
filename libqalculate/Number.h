@@ -330,7 +330,10 @@ class Number {
 		* @param use_real_root If true return the real root (if exists), otherwise return the principal root.
  		* @return true if the operation was successful.
  		*/
-		bool raise(const Number &o, bool try_exact = true, bool use_real_root = false);
+		bool raise(const Number &o, bool try_exact = true, bool real_root = false);
+		bool sqrt();
+		bool cbrt();
+		bool root(const Number &o);
 		/** Multiply the number with a power of ten (x*10^o).
 		*
 		* @param o Number to raise 10 by.

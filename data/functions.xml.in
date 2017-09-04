@@ -924,6 +924,16 @@
         <_title>Value</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="root">
+      <_title>Nth root</_title>
+      <_names>r:root</_names>
+      <argument type="free" index="1">
+        <_title>Base</_title>
+      </argument>
+      <argument type="free" index="2">
+        <_title>Exponent</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="sq">
       <_title>Square</_title>
       <_names>r:sq</_names>
@@ -1006,17 +1016,6 @@
       <_names>rs:exp10</_names>
       <expression>10^\x</expression>
       <argument type="free" index="1">
-        <_title>Exponent</_title>
-      </argument>
-    </function>
-    <function>
-      <_title>Nth root</_title>
-      <_names>r:root</_names>
-      <expression>\x^(1/\y)</expression>
-      <argument type="free" index="1">
-        <_title>Base</_title>
-      </argument>
-      <argument type="free" index="2">
         <_title>Exponent</_title>
       </argument>
     </function>

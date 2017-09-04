@@ -2037,7 +2037,7 @@ bool Number::raise(const Number &o, bool try_exact, bool use_real_root) {
 			size_t length1 = mpz_sizeinbase(mpq_numref(r_value), 10);
 			size_t length2 = mpz_sizeinbase(mpq_denref(r_value), 10);
 			if(length2 > length1) length1 = length2;
-			if((use_real_root || i_root <= 2  || mpq_sgn(r_value) > 0) && ((!try_exact && i_root <= 2 && (long long int) labs(i_pow) * length1 < 1000) || (try_exact && (long long int) labs(i_pow) * length1 < 1000000LL && i_root < 1000000L))) {
+			if((use_real_root || i_root <= 2  || mpq_sgn(r_value) > 0) && ((!try_exact && i_root <= 3 && (long long int) labs(i_pow) * length1 < 1000) || (try_exact && (long long int) labs(i_pow) * length1 < 1000000LL && i_root < 1000000L))) {
 				bool complex_result = false;
 				if(i_root != 1) {
 					mpq_t r_test;
@@ -2184,6 +2184,87 @@ bool Number::raise(const Number &o, bool try_exact, bool use_real_root) {
 		return false;
 	}
 	setPrecisionAndApproximateFrom(o);
+	return true;
+}
+bool Number::sqrt() {
+	if(!isReal()) return raise(Number(1, 2, 0), true, false);
+	if(isNegative()) {
+		if(b_imag) return false;
+		if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
+		i_value->set(*this, false, true);
+		if(!i_value->negate() || !i_value->sqrt()) {
+			i_value->clear();
+			return false;
+		}
+		clearReal();
+		setPrecisionAndApproximateFrom(*i_value);
+		return true;
+	}
+	if(n_type == NUMBER_TYPE_RATIONAL) {
+		if(mpz_perfect_square_p(mpq_numref(r_value)) && mpz_perfect_square_p(mpq_denref(r_value))) {
+			mpz_sqrt(mpq_numref(r_value), mpq_numref(r_value));
+			mpz_sqrt(mpq_denref(r_value), mpq_denref(r_value));
+			return true;
+		}
+	}
+	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
+	mpfr_clear_flags();
+	mpfr_sqrt(f_value, f_value, MPFR_RNDN);
+	if(!testFloatResult(false)) {
+		set(nr_bak);
+		return false;
+	}
+	return true;
+}
+bool Number::cbrt() {
+	if(!isReal()) return raise(Number(1, 3, 0), true, false);
+	if(isOne() || isMinusOne() || isZero()) return true;
+	Number nr_bak(*this);
+	if(n_type == NUMBER_TYPE_RATIONAL) {
+		if(mpz_root(mpq_numref(r_value), mpq_numref(r_value), 3) && mpz_root(mpq_denref(r_value), mpq_denref(r_value), 3)) {
+			return true;
+		}
+		set(nr_bak);
+		if(!setToFloatingPoint()) return false;
+	}
+	mpfr_clear_flags();
+	mpfr_cbrt(f_value, f_value, MPFR_RNDN);
+	if(!testFloatResult(false)) {
+		set(nr_bak);
+		return false;
+	}
+	return true;
+}
+bool Number::root(const Number &o) {
+	if(!o.isInteger() || !o.isPositive()) return false;
+	if(o.isTwo()) return sqrt();
+	if(!isReal() || (isNegative() && o.isEven())) {
+		Number o_inv(o);
+		o_inv.recip();
+		return raise(o_inv, true, false);
+	}
+	if(isOne() || o.isOne() || isZero() || isMinusOne()) return true;
+	if(!mpz_fits_ulong_p(mpq_numref(o.internalRational()))) {
+		Number o_inv(o);
+		o_inv.recip();
+		return raise(o_inv, false, true);
+	}
+	unsigned long int i_root = mpz_get_ui(mpq_numref(o.internalRational()));
+	Number nr_bak(*this);
+	if(n_type == NUMBER_TYPE_RATIONAL) {
+		if(mpz_root(mpq_numref(r_value), mpq_numref(r_value), i_root) && mpz_root(mpq_denref(r_value), mpq_denref(r_value), i_root)) {
+			return true;
+		}
+		set(nr_bak);
+		if(!setToFloatingPoint()) return false;
+	}
+	mpfr_clear_flags();
+	mpfr_root(f_value, f_value, i_root, MPFR_RNDN);
+	if(!testFloatResult(false)) {
+		set(nr_bak);
+		return false;
+	}
 	return true;
 }
 bool Number::exp10(const Number &o) {

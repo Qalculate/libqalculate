@@ -3099,6 +3099,22 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			}
 			return -1;
 		}
+		case STRUCT_FUNCTION: {
+			if(o_function == CALCULATOR->f_sqrt && SIZE == 1) {
+				if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_sqrt && mstruct.size() == 1 && CHILD(0) == mstruct[0]) {
+					SET_CHILD_MAP(0)
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
+				}
+			} else if(o_function == CALCULATOR->f_abs && SIZE == 1) {
+				if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1 && mstruct[0] == CHILD(0) && CHILD(0).representsReal(true)) {
+					SET_CHILD_MAP(0)
+					MERGE_APPROX_AND_PREC(mstruct)
+					calculateRaise(MathStructure(2, 1, 0), eo);
+					return 1;
+				}
+			}
+		}
 		default: {
 			switch(mstruct.type()) {
 				case STRUCT_VECTOR: {}
@@ -3148,7 +3164,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 	if(mstruct.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
 		// number^number
 		Number nr(o_number);
-		if(nr.raise(mstruct.number(), eo.approximation != APPROXIMATION_APPROXIMATE, eo.real_roots) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
+		if(nr.raise(mstruct.number(), eo.approximation != APPROXIMATION_APPROXIMATE) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
 			// Exponentiation succeeded without inappropriate change in approximation status
 			if(o_number == nr) {
 				o_number = nr;
@@ -3161,10 +3177,10 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		}
 		if(mstruct.number().isRational()) {
 			Number exp_num(mstruct.number().numerator());
-			if(!exp_num.isOne() && !exp_num.isMinusOne() && (o_number.isPositive() || (eo.real_roots && (mstruct.number().numeratorIsEven() || !mstruct.number().denominatorIsEven()))) && test_if_numerator_not_too_large(o_number, exp_num)) {
+			if(!exp_num.isOne() && !exp_num.isMinusOne() && o_number.isPositive() && test_if_numerator_not_too_large(o_number, exp_num)) {
 				// Try raise by exponent numerator if not very large
 				nr = o_number;
-				if(nr.raise(exp_num, eo.approximation != APPROXIMATION_APPROXIMATE, eo.real_roots) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
+				if(nr.raise(exp_num, eo.approximation != APPROXIMATION_APPROXIMATE) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
 					o_number = nr;
 					numberUpdated();
 					nr.set(mstruct.number().denominator());
@@ -3563,49 +3579,21 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			goto default_power_merge;
 		}
 		case STRUCT_POWER: {
-			if(eo.real_roots) {
-				if(mstruct.representsInteger() || (mstruct.isNumber() && mstruct.number().isRational() && !mstruct.number().denominatorIsEven()) || representsNonNegative(true)) {
-					if(CHILD(1).isNumber() && CHILD(1).number().isRational() && (CHILD(1).isInteger() || CHILD(1).number().denominatorIsEven() || (!CHILD(1).number().numeratorIsEven() && mstruct.representsOdd()) || CHILD(0).representsNonNegative(true)) && (eo.allow_complex || !CHILD(1).number().denominatorIsEven() || CHILD(0).representsPositive(true) || CHILD(0).representsComplex())) {
-						if(CHILD(1).number().numeratorIsEven() && !mstruct.representsInteger()) {
-							if(CHILD(0).representsNegative(true)) {
-								CHILD(0).calculateNegate(eo);
-							} else if(!CHILD(0).representsNonNegative(true)) {
-								MathStructure mstruct_base(CHILD(0));
-								CHILD(0).set(CALCULATOR->f_abs, &mstruct_base, NULL);
-							}
-						}
-						mstruct.ref();
-						MERGE_APPROX_AND_PREC(mstruct)
-						CHILD(1).multiply_nocopy(&mstruct, true);
-						CHILD(1).calculateMultiplyLast(eo, true, this, 1);
-						calculateRaiseExponent(eo, mparent, index_this);
-						return 1;
-					} else if(CHILD(0).representsNonNegative(true) || CHILD(1).representsInteger()) {
-						mstruct.ref();
-						MERGE_APPROX_AND_PREC(mstruct)
-						CHILD(1).multiply_nocopy(&mstruct, true);
-						CHILD(1).calculateMultiplyLast(eo, true, this, 1);
-						calculateRaiseExponent(eo, mparent, index_this);
-						return 1;
+			if((mstruct.representsInteger() && CHILD(1).representsInteger()) || representsNonNegative(true) || (CHILD(1).representsInteger() && mstruct.isNumber() && mstruct.number().denominatorIsTwo() && CHILD(0).representsReal(true)) || (eo.allow_complex && CHILD(1).isNumber() && CHILD(1).number().denominatorIsTwo() && mstruct.representsInteger())) {
+				if(CHILD(1).representsEven() && !mstruct.representsEven()) {
+					if(CHILD(0).representsNegative(true)) {
+						CHILD(0).calculateNegate(eo);
+					} else if(!CHILD(0).representsNonNegative(true)) {
+						MathStructure mstruct_base(CHILD(0));
+						CHILD(0).set(CALCULATOR->f_abs, &mstruct_base, NULL);
 					}
 				}
-			} else {
-				if((mstruct.representsInteger() && CHILD(1).representsInteger()) || representsNonNegative(true) || (CHILD(1).representsInteger() && mstruct.isNumber() && mstruct.number().denominatorIsTwo()) || (eo.allow_complex && CHILD(1).isNumber() && CHILD(1).number().denominatorIsTwo() && mstruct.representsInteger())) {
-					if(CHILD(1).representsEven() && !mstruct.representsEven()) {
-						if(CHILD(0).representsNegative(true)) {
-							CHILD(0).calculateNegate(eo);
-						} else if(!CHILD(0).representsNonNegative(true)) {
-							MathStructure mstruct_base(CHILD(0));
-							CHILD(0).set(CALCULATOR->f_abs, &mstruct_base, NULL);
-						}
-					}
-					mstruct.ref();
-					MERGE_APPROX_AND_PREC(mstruct)
-					CHILD(1).multiply_nocopy(&mstruct, true);
-					CHILD(1).calculateMultiplyLast(eo, true, this, 1);
-					calculateRaiseExponent(eo, mparent, index_this);
-					return 1;
-				}
+				mstruct.ref();
+				MERGE_APPROX_AND_PREC(mstruct)
+				CHILD(1).multiply_nocopy(&mstruct, true);
+				CHILD(1).calculateMultiplyLast(eo, true, this, 1);
+				calculateRaiseExponent(eo, mparent, index_this);
+				return 1;
 			}
 			goto default_power_merge;
 		}
@@ -3651,12 +3639,47 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			goto default_power_merge;
 		}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_abs && size() == 1 && mstruct.representsEven()) {
-				setToChild(1);
+			if(o_function == CALCULATOR->f_abs && SIZE == 1 && mstruct.representsEven()) {
+				SET_CHILD_MAP(0);
 				mstruct.ref();
 				raise_nocopy(&mstruct);
 				calculateRaiseExponent(eo);
 				return 1;
+			} else if(o_function == CALCULATOR->f_sqrt && SIZE == 1) {
+				if(mstruct.isNumber() && mstruct.number().isTwo()) {
+					SET_CHILD_MAP(0);
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
+				} else if(mstruct.representsEven()) {
+					mstruct.calculateMultiply(nr_half, eo);
+					mstruct.ref();
+					SET_CHILD_MAP(0);
+					raise_nocopy(&mstruct);
+					calculateRaiseExponent(eo);
+					return 1;
+				}
+			} else if(o_function == CALCULATOR->f_root && SIZE == 2 && CHILD(1).isNumber() && CHILD(1).number().isInteger() && CHILD(1).number().isPositive()) {
+				if(mstruct.isNumber() && mstruct.number().isInteger()) {
+					if(mstruct == CHILD(1)) {
+						SET_CHILD_MAP(0)
+						MERGE_APPROX_AND_PREC(mstruct)
+						return 1;
+					} else if(mstruct.number().isIntegerDivisible(CHILD(1).number())) {
+						mstruct.calculateDivide(CHILD(1).number(), eo);
+						mstruct.ref();
+						SET_CHILD_MAP(0)
+						raise_nocopy(&mstruct);
+						return 1;
+					} else if(CHILD(1).number().isIntegerDivisible(mstruct.number())) {
+						Number nr(CHILD(1).number());
+						if(nr.divide(mstruct.number()) && (nr.isTwo() || nr.isEven() == CHILD(1).number().isEven() || CHILD(0).representsNonNegative(true) || CHILD(0).representsComplex(true))) {
+							CHILD(1) = nr;
+							CHILD_UPDATED(1)
+							MERGE_APPROX_AND_PREC(mstruct)
+							return 1;
+						}
+					}
+				}
 			}
 			goto default_power_merge;
 		}
@@ -3754,17 +3777,6 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						CHILD(1).number() /= mstruct.number().denominator();
 					}
 					if(b) calculateRaiseExponent(eo);
-					return 1;
-				} else if(eo.real_roots && (mstruct.number().denominatorIsEven() || !mstruct.number().numeratorIsEven())) {
-					raise(m_one);
-					CHILD(1).number() /= mstruct.number().denominator();
-					if(calculateRaiseExponent(eo)) {
-						calculateRaise(mstruct.number().numerator(), eo);
-					} else {
-						setToChild(1);
-						break;
-						raise(mstruct.number().numerator());
-					}
 					return 1;
 				}
 			}
@@ -5273,7 +5285,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			break;
 		}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_abs) {
+			if(o_function == CALCULATOR->f_abs || o_function == CALCULATOR->f_sqrt || o_function == CALCULATOR->f_root) {
 				b = calculateFunctions(eo, false);
 				unformat(eo);
 				if(b) calculatesub(eo, feo, true, mparent, index_this);
@@ -5284,7 +5296,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			if(recursive) {
 				for(size_t i = 0; i < SIZE; i++) {
 					if(CHILD(i).calculatesub(eo, feo, true, this, i)) b = true;
-				}				
+				}
 				CHILDREN_UPDATED;
 			}
 			if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, NULL, true, feo)) {
@@ -11520,7 +11532,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				if(CHILD(1).isInverse() || (CHILD(1).isDivision() && CHILD(1)[0].number().isOne()) || (CHILD(1).isNumber() && CHILD(1).number().numeratorIsOne())) {
 					m_type = STRUCT_FUNCTION;
 					ERASE(1)
-					o_function = CALCULATOR->f_sqrt;
+					setFunction(CALCULATOR->f_sqrt);
 				} else {
 					if(CHILD(1).isNumber()) {
 						CHILD(1).number() -= nr_half;
@@ -14294,20 +14306,20 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				mstruct->multiply(CHILD(0));
 				divide_nocopy(mstruct);
 			} else if(o_function == CALCULATOR->f_sin && SIZE == 1) {
-				o_function = CALCULATOR->f_cos;
+				setFunction(CALCULATOR->f_cos);
 				MathStructure mstruct(CHILD(0));
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
 				if(CALCULATOR->getRadUnit()) divide(CALCULATOR->getRadUnit());
 			} else if(o_function == CALCULATOR->f_cos && SIZE == 1) {
-				o_function = CALCULATOR->f_sin;
+				setFunction(CALCULATOR->f_sin);
 				MathStructure mstruct(CHILD(0));
 				negate();
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct, true);
 				if(CALCULATOR->getRadUnit()) divide(CALCULATOR->getRadUnit());
 			} else if(o_function == CALCULATOR->f_tan && SIZE == 1) {
-				o_function = CALCULATOR->f_tan;
+				setFunction(CALCULATOR->f_tan);
 				MathStructure mstruct(CHILD(0));
 				raise(2);
 				add(nr_one);
@@ -14315,17 +14327,17 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				multiply(mstruct, true);
 				if(CALCULATOR->getRadUnit()) divide(CALCULATOR->getRadUnit());
 			} else if(o_function == CALCULATOR->f_sinh && SIZE == 1) {
-				o_function = CALCULATOR->f_cosh;
+				setFunction(CALCULATOR->f_cosh);
 				MathStructure mstruct(CHILD(0));
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
 			} else if(o_function == CALCULATOR->f_cosh && SIZE == 1) {
-				o_function = CALCULATOR->f_sinh;
+				setFunction(CALCULATOR->f_sinh);
 				MathStructure mstruct(CHILD(0));
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct, true);
 			} else if(o_function == CALCULATOR->f_tanh && SIZE == 1) {
-				o_function = CALCULATOR->f_tanh;
+				setFunction(CALCULATOR->f_tanh);
 				MathStructure mstruct(CHILD(0));
 				raise(2);
 				negate();
@@ -14624,10 +14636,10 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 				add_nocopy(mthis);
 				multiply(x_var);
 			} else if(o_function == CALCULATOR->f_sin && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0] == x_var && CHILD(0)[1] == CALCULATOR->getRadUnit()) {
-				o_function = CALCULATOR->f_cos;
+				setFunction(CALCULATOR->f_cos);
 				multiply(m_minus_one);
 			} else if(o_function == CALCULATOR->f_cos && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0] == x_var && CHILD(0)[1] == CALCULATOR->getRadUnit()) {
-				o_function = CALCULATOR->f_sin;
+				setFunction(CALCULATOR->f_sin);
 			} else if(o_function == CALCULATOR->f_diff && SIZE == 3 && CHILD(1) == x_var) {
 				if(CHILD(2).isOne()) {
 					setToChild(1, true);

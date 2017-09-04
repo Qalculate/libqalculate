@@ -1059,25 +1059,270 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 
 SqrtFunction::SqrtFunction() : MathFunction("sqrt", 1) {
 }
-int SqrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	mstruct = vargs[0];
-	mstruct ^= MathStructure(1, 2, 0);
-	return 1;
+int SqrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	bool eval_mstruct = !vargs[0].isNumber();
+	Number nr;
+	if(eval_mstruct) {
+		mstruct = vargs[0];
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_EXACT;
+			mstruct.eval(eo2);
+		} else {
+			mstruct.eval(eo);
+		}
+		if(!mstruct.isNumber()) {
+			if(mstruct.isPower() && mstruct[0].representsReal(true)) {
+				if(mstruct[1].isNumber() && mstruct[1].number().isTwo()) {
+					mstruct.delChild(2);
+					mstruct.setType(STRUCT_FUNCTION);
+					mstruct.setFunction(CALCULATOR->f_abs);
+					return 1;
+				} else if(mstruct[1].representsEven()) {
+					if(mstruct[0].representsNegative(true)) {
+						mstruct[0].calculateNegate(eo);
+					} else if(!mstruct[0].representsNonNegative(true)) {
+						MathStructure mstruct_base(mstruct[0]);
+						mstruct[0].set(CALCULATOR->f_abs, &mstruct_base, NULL);
+					}
+					mstruct[1].multiply(nr_half);
+					return 1;
+				}
+			} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_sqrt && mstruct.size() == 1) {
+				if(mstruct[0].representsPositive(true)) {
+					mstruct.addChild(Number(4, 1, 0));
+					mstruct.setFunction(CALCULATOR->f_root);
+					return 1;
+				}
+			} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_root && mstruct.size() == 2 && mstruct[1].isNumber() && mstruct[1].number().isInteger() && mstruct[1].number().isPositive()) {
+				if(mstruct[1].number().isEven() || mstruct[0].representsPositive(true) || mstruct[0].representsComplex(true)) {
+					Number new_root(mstruct[1].number());
+					new_root.multiply(Number(2, 1, 0));
+					mstruct[1] = new_root;
+					return 1;
+				}
+			} else if(mstruct.isMultiplication()) {
+				MathStructure mnew;
+				mnew.setType(STRUCT_MULTIPLICATION);
+				for(size_t i = 0; i < mstruct.size();) {
+					if(mstruct[i].representsNonNegative(true)) {
+						mnew.addChild_nocopy(new MathStructure(this, &mstruct[i], NULL));
+						mstruct.delChild(i + 1);
+					} else if(mstruct[i].isNumber() && mstruct[i].number().isNegative() && !mstruct[i].isMinusOne()) {
+						mstruct[i].number().negate();
+						mnew.addChild_nocopy(new MathStructure(this, &mstruct[i], NULL));
+						mstruct[i].number().set(-1, 1, 0);
+						i++;
+					} else {
+						i++;
+					}
+				}
+				if(mnew.size() > 0) {
+					if(mstruct.size() > 0) {
+						if(mstruct.size() == 1) mstruct.setToChild(1);
+						mnew.addChild_nocopy(new MathStructure(this, &mstruct, NULL));
+					}
+					mstruct = mnew;
+					return 1;
+				}
+			}
+			return -1;
+		}
+		nr = mstruct.number();
+	} else {
+		nr = vargs[0].number(); 
+	}
+	if(!nr.sqrt() || (eo.approximation != APPROXIMATION_APPROXIMATE && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) {
+		if(!eval_mstruct) return 0;
+	} else {
+		mstruct.set(nr); 
+		return 1;
+	}
+	return -1;
 }
+bool SqrtFunction::representsPositive(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsPositive(allow_units);}
+bool SqrtFunction::representsNegative(const MathStructure&, bool) const {return false;}
+bool SqrtFunction::representsNonNegative(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNonNegative(allow_units);}
+bool SqrtFunction::representsNonPositive(const MathStructure&, bool) const {return false;}
+bool SqrtFunction::representsInteger(const MathStructure&, bool) const {return false;}
+bool SqrtFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNumber(allow_units);}
+bool SqrtFunction::representsRational(const MathStructure&, bool) const {return false;}
+bool SqrtFunction::representsReal(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNonNegative(allow_units);}
+bool SqrtFunction::representsComplex(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNegative(allow_units);}
+bool SqrtFunction::representsNonZero(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNonZero(allow_units);}
+bool SqrtFunction::representsEven(const MathStructure&, bool) const {return false;}
+bool SqrtFunction::representsOdd(const MathStructure&, bool) const {return false;}
+bool SqrtFunction::representsUndefined(const MathStructure&) const {return false;}
 CbrtFunction::CbrtFunction() : MathFunction("cbrt", 1) {
 }
 int CbrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = vargs[0];
-	if(!eo.real_roots && !mstruct.representsNonNegative()) {
-		mstruct.eval(eo);
-		EvaluationOptions eo2 = eo;
-		eo2.real_roots = true;
-		mstruct.calculateRaise(MathStructure(1, 3, 0), eo2);
-		return 1;
-	}
-	mstruct ^= MathStructure(1, 3, 0);
+	MathStructure mroot(3, 1, 0);
+	mstruct.set(CALCULATOR->f_root, &vargs[0], &mroot, NULL);
 	return 1;
 }
+RootFunction::RootFunction() : MathFunction("root", 2) {
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, false, true));
+}
+int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[1].number().isOne()) {
+		mstruct = vargs[0];
+		return 1;
+	}
+	if(vargs[1].number().isTwo()) {
+		mstruct.set(CALCULATOR->f_sqrt, &vargs[0], NULL);
+		return 1;
+	}
+	bool eval_mstruct = !vargs[0].isNumber();
+	Number nr;
+	if(eval_mstruct) {
+		mstruct = vargs[0];
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_EXACT;
+			mstruct.eval(eo2);
+		} else {
+			mstruct.eval(eo);
+		}
+		if(!mstruct.isNumber()) {
+			if(mstruct.isPower() && mstruct[1].isNumber() && mstruct[1].number().isInteger() && mstruct[0].representsReal(true) && ((vargs[1].number().isOdd() && (mstruct[1].number().isOdd() || mstruct[1].number().isGreaterThan(vargs[1].number()))) || mstruct[0].representsNonNegative(true))) {
+				if(mstruct[1] == vargs[1]) {
+					if(mstruct[1].number().isEven()) {
+						mstruct.delChild(2);
+						mstruct.setType(STRUCT_FUNCTION);
+						mstruct.setFunction(CALCULATOR->f_abs);
+					} else {
+						mstruct.setToChild(1);
+					}
+					return 1;
+				} else if(mstruct[1].number().isIntegerDivisible(vargs[1].number())) {
+					mstruct[1].divide(vargs[1].number());
+					return 1;
+				} else if(!mstruct[1].number().isMinusOne() && vargs[1].number().isIntegerDivisible(mstruct[1].number())) {
+					Number new_root(vargs[1].number());
+					new_root.divide(mstruct[1].number());
+					bool bdiv = new_root.isNegative();
+					if(bdiv) new_root.negate();
+					mstruct[1] = new_root;
+					mstruct.setType(STRUCT_FUNCTION);
+					mstruct.setFunction(this);
+					if(bdiv) mstruct.raise(nr_minus_one);
+					return 1;
+				}
+			} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_sqrt && mstruct.size() == 1) {
+				if(mstruct[0].representsPositive(true)) {
+					Number new_root(vargs[1].number());
+					new_root.multiply(Number(2, 1, 0));
+					mstruct.addChild(new_root);
+					mstruct.setFunction(this);
+					return 1;
+				}
+			} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_root && mstruct.size() == 2 && mstruct[1].isNumber() && mstruct[1].number().isInteger() && mstruct[1].number().isPositive()) {
+				if(mstruct[1].number().isEven() || vargs[1].number().isOdd() || mstruct[0].representsPositive(true) || mstruct[0].representsComplex(true)) {
+					Number new_root(vargs[1].number());
+					new_root.multiply(mstruct[1].number());
+					mstruct[1] = new_root;
+					return 1;
+				}
+			} else if(mstruct.isMultiplication() && vargs[1].number().isOdd()) {
+				bool b = true;
+				for(size_t i = 0; i < mstruct.size(); i++) {
+					if(!mstruct[i].representsReal(true)) {
+						b = false;
+						break;
+					}
+				}
+				if(b) {
+					bool b_neg = false;
+					for(size_t i = 0; i < mstruct.size(); i++) {
+						if(mstruct[i].isNumber() && mstruct[i].number().isNegative() && !mstruct[i].isMinusOne()) {
+							mstruct[i].negate();
+							b_neg = !b_neg;
+						}
+						mstruct[i].transform(STRUCT_FUNCTION, vargs[1]);
+						mstruct[i].setFunction(this);
+					}
+					if(b_neg) mstruct.insertChild_nocopy(new MathStructure(-1, 1, 0), 1);
+					return 1;
+				}
+			}
+			return -1;
+		}
+		nr = mstruct.number();
+	} else {
+		nr = vargs[0].number(); 
+	}
+	if(!nr.root(vargs[1].number()) || (eo.approximation != APPROXIMATION_APPROXIMATE && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) {
+		if(eo.approximation == APPROXIMATION_EXACT && vargs[1].number().isGreaterThan(3)) {
+			if(eval_mstruct) nr = mstruct.number();
+			else nr = vargs[0].number();
+			if(nr.isReal()) {
+				if(nr.isPositive() && vargs[1].number().isEven()) {
+					if(nr.sqrt() && !nr.isApproximate()) {
+						Number new_root(vargs[1].number());
+						new_root.multiply(nr_half);
+						mstruct = nr;
+						mstruct.transform(STRUCT_FUNCTION, new_root);
+						mstruct.setFunction(this);
+						return 1;
+					} else {
+						if(eval_mstruct) nr = mstruct.number();
+						else nr = vargs[0].number();
+					}
+				}
+				if(nr.isPositive() || vargs[1].number().isOdd()) {
+					for(size_t i = 1; i < NR_OF_PRIMES; i++) {
+						if(vargs[1].number().isIntegerDivisible(PRIMES[i])) {
+							if(nr.root(Number(PRIMES[i], 1)) && !nr.isApproximate()) {
+								Number new_root(vargs[1].number());
+								new_root.multiply(Number(1, PRIMES[i], 0));
+								mstruct = nr;
+								mstruct.transform(STRUCT_FUNCTION, new_root);
+								mstruct.setFunction(this);
+								return 1;
+							} else {
+								if(eval_mstruct) nr = mstruct.number();
+								else nr = vargs[0].number();
+							}
+						}
+					}
+				}
+			}
+		}
+		if(!eval_mstruct) {
+			if(vargs[0].number().isNegative() && vargs[1].number().isOdd()) {
+				mstruct.set(this, &vargs[0], &vargs[1], NULL);
+				mstruct[0].number().negate();
+				mstruct.negate();
+				return 1;
+			}
+			return 0;
+		} else if(mstruct.number().isNegative() && vargs[1].number().isOdd()) {
+			mstruct.number().negate();
+			mstruct.transform(STRUCT_FUNCTION, vargs[1]);
+			mstruct.setFunction(this);
+			mstruct.negate();
+			return 1;
+		}
+	} else {
+		mstruct.set(nr); 
+		return 1;
+	}
+	return -1;
+}
+bool RootFunction::representsPositive(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsPositive(allow_units);}
+bool RootFunction::representsNegative(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[1].representsOdd() && vargs[1].representsPositive() && vargs[0].representsNegative(allow_units);}
+bool RootFunction::representsNonNegative(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsNonNegative(allow_units);}
+bool RootFunction::representsNonPositive(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[1].representsOdd() && vargs[1].representsPositive() && vargs[0].representsNonPositive(allow_units);}
+bool RootFunction::representsInteger(const MathStructure&, bool) const {return false;}
+bool RootFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsNumber(allow_units);}
+bool RootFunction::representsRational(const MathStructure&, bool) const {return false;}
+bool RootFunction::representsReal(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsReal(allow_units) && (vargs[0].representsNonNegative(allow_units) || vargs[1].representsOdd());}
+bool RootFunction::representsComplex(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && (vargs[0].representsComplex(allow_units) || (vargs[1].representsEven() && vargs[0].representsNegative(allow_units)));}
+bool RootFunction::representsNonZero(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsNonZero(allow_units);}
+bool RootFunction::representsEven(const MathStructure&, bool) const {return false;}
+bool RootFunction::representsOdd(const MathStructure&, bool) const {return false;}
+bool RootFunction::representsUndefined(const MathStructure&) const {return false;}
+
 SquareFunction::SquareFunction() : MathFunction("sq", 1) {
 }
 int SquareFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
