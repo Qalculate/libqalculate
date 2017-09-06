@@ -1110,7 +1110,7 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		return 1;
 	} else if(vargs[0].representsNegative(true)) {
 		mstruct = vargs[0];
-		mstruct[0].negate();
+		mstruct.negate();
 		Number nr_exp(vargs[1].number());
 		nr_exp.recip();
 		mstruct.raise(nr_exp);
@@ -1134,7 +1134,7 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			mstruct.raise(nr_exp);
 			return 1;
 		} else if(vargs[0].representsNegative(true)) {
-			mstruct[0].negate();
+			mstruct.negate();
 			Number nr_exp(vargs[1].number());
 			nr_exp.recip();
 			mstruct.raise(nr_exp);

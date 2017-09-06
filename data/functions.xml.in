@@ -913,6 +913,7 @@
     <builtin_function name="sqrt">
       <_title>Square Root</_title>
       <_names>au:&#x221A;,r:sqrt</_names>
+      <_description>Returns the principal square root (for positive values the positive root is returned).</_description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -920,6 +921,7 @@
     <builtin_function name="cbrt">
       <_title>Cube Root</_title>
       <_names>au:&#x221B;,r:cbrt</_names>
+      <_description>Returns the third real root for real values, or the principal root for complex values.</_description>
       <argument type="free" index="1">
         <_title>Value</_title>
       </argument>
@@ -927,11 +929,12 @@
     <builtin_function name="root">
       <_title>Nth root</_title>
       <_names>r:root</_names>
+      <_description>For negative values, the root of odd degrees returns the real root, otherwise the principal root is returned.</_description>
       <argument type="free" index="1">
-        <_title>Base</_title>
+        <_title>Value</_title>
       </argument>
       <argument type="free" index="2">
-        <_title>Exponent</_title>
+        <_title>Degree</_title>
       </argument>
     </builtin_function>
     <builtin_function name="sq">
