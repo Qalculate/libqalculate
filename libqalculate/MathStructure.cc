@@ -79,6 +79,8 @@
 	}
 }*/
 
+bool polynomial_long_division(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar_pre, MathStructure &mquotient, MathStructure &mrem, const EvaluationOptions &eo, bool check_args = false, bool for_newtonraphson = false);
+
 bool flattenMultiplication(MathStructure &mstruct) {
 	bool retval = false;
 	for(size_t i = 0; i < mstruct.size();) {
@@ -3051,9 +3053,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								if(mstruct2.calculatesub(eo, eo, false)) {
 									if(b_warn && !warn_about_denominators_assumed_nonzero_llgg(CHILD(0), CHILD(1), mstruct[1], eo)) return -1;
 									CHILD(1) = mstruct2;
-									cout << print() << endl;
 									calculateRaiseExponent(eo, mparent, index_this);
-									cout << print() << endl;
 									return 1;
 								}
 							}
@@ -4745,6 +4745,142 @@ int MathStructure::merge_bitwise_xor(MathStructure &mstruct, const EvaluationOpt
 					} else {\
 						evalSort();\
 					}
+					
+bool try_polynomial_division(MathStructure &mstruct, const EvaluationOptions &eo) {
+	if(!mstruct.isAddition() || !eo.reduce_divisions || !eo.expand) return false;
+	MathStructure divs;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(mstruct[i].isMultiplication()) {
+			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+				if(mstruct[i][i2].isPower() && mstruct[i][i2][0].isAddition() && mstruct[i][i2][1].isMinusOne() && mstruct[i][i2][0].isRationalPolynomial()) {
+					bool b_found = false;
+					for(size_t i3 = 0; i3 < divs.size(); i3++) {
+						if(divs[i3] == mstruct[i][i2][0]) {
+							divs[i3].number()++;
+							b_found = true;
+							break;
+						}
+					}
+					if(!b_found) divs.addChild(mstruct[i][i2][0]);
+					break;
+				}
+			}
+		} else if(mstruct[i].isPower() && mstruct[i][0].isAddition() && mstruct[i][1].isMinusOne() && mstruct[i][0].isRationalPolynomial()) {
+			bool b_found = false;
+			for(size_t i3 = 0; i3 < divs.size(); i3++) {
+				if(divs[i3] == mstruct[i][0]) {
+					divs[i3].number()++;
+					b_found = true;
+					break;
+				}
+			}
+			if(!b_found) divs.addChild(mstruct[i][0]);
+		}
+	}
+	for(size_t i = 0; i < divs.size(); ) {
+		if(divs[i].number().isZero() || (!eo.assume_denominators_nonzero && !divs[i].representsNonZero(true)) || divs[i].representsZero(true)) divs.delChild(i + 1);
+		else i++;
+	}
+	if(divs.size() == 0) return false;
+	MathStructure nums;
+	nums.resizeVector(divs.size(), m_zero);
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(mstruct[i].isMultiplication()) {
+			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+				if(mstruct[i][i2].isPower() && mstruct[i][i2][0].isAddition() && mstruct[i][i2][1].isMinusOne() && mstruct[i][i2][0].isRationalPolynomial()) {
+					for(size_t i3 = 0; i3 < divs.size(); i3++) {
+						if(divs[i3] == mstruct[i][i2][0]) {
+							if(mstruct[i].size() == 1) nums[i3].addChild(m_one);
+							else if(mstruct[i].size() == 2) nums[i3].addChild(mstruct[i][i2 == 0 ? 1 : 0]);
+							else {nums[i3].addChild(mstruct[i]); nums[i3][nums[i3].size() - 1].delChild(i2 + 1);}
+							break;
+						}
+					}
+					break;
+				}
+			}
+		} else if(mstruct[i].isPower() && mstruct[i][0].isAddition() && mstruct[i][1].isMinusOne() && mstruct[i][0].isRationalPolynomial()) {
+			for(size_t i3 = 0; i3 < divs.size(); i3++) {
+				if(divs[i3] == mstruct[i][0]) {
+					nums[i3].addChild(m_one);
+					break;
+				}
+			}
+		}
+	}
+	bool b = false;
+	for(size_t i = 0; i < divs.size(); i++) {
+		if(nums[i].size() > 1) {
+			nums[i].setType(STRUCT_ADDITION);
+			if(nums[i].isRationalPolynomial()) {
+				MathStructure mquo, mrem;
+				if(polynomial_long_division(nums[i], divs[i], CALCULATOR->v_x, mquo, mrem, eo, false) && mrem != nums[i] && (!mquo.isNumber() || mrem.isZero())) {
+					if(mrem.isZero() && divs[i].representsNonZero(true) && eo.warn_about_denominators_assumed_nonzero && !warn_about_denominators_assumed_nonzero(divs[i], eo)) {
+						nums[i].clear();
+					} else {
+						if(mquo.size() + mrem.size() <= nums[i].size() + divs[i].size()) {
+							nums[i].set(mquo);
+							if(!mrem.isZero()) {
+								mrem.calculateDivide(divs[i], eo);
+								nums[i].calculateAdd(mrem, eo);
+							}
+							b = true;
+						} else {
+							nums[i].clear();
+						}
+					}
+				} else {
+					nums[i].clear();
+				}
+			}
+		} else {
+			nums[i].clear();
+		}
+	}
+	if(!b) return false;
+	for(size_t i = 0; i < mstruct.size(); ) {
+		bool b_del = false;
+		if(mstruct[i].isMultiplication()) {
+			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+				if(mstruct[i][i2].isPower() && mstruct[i][i2][0].isAddition() && mstruct[i][i2][1].isMinusOne() && mstruct[i][i2][0].isRationalPolynomial()) {
+					for(size_t i3 = 0; i3 < divs.size(); i3++) {
+						if(divs[i3] == mstruct[i][i2][0]) {
+							b_del = !nums[i3].isZero();
+							break;
+						}
+					}
+					break;
+				}
+			}
+		} else if(mstruct[i].isPower() && mstruct[i][0].isAddition() && mstruct[i][1].isMinusOne() && mstruct[i][0].isRationalPolynomial()) {
+			for(size_t i3 = 0; i3 < divs.size(); i3++) {
+				if(divs[i3] == mstruct[i][0]) {
+					b_del = !nums[i3].isZero();
+					break;
+				}
+			}
+		}
+		if(b_del) mstruct.delChild(i + 1);
+		else i++;
+	}
+	for(size_t i = 0; i < nums.size(); ) {
+		if(nums[i].isZero()) {
+			nums.delChild(i + 1);
+		} else {
+			nums[i].evalSort();
+			i++;
+		}
+	}
+	if(mstruct.size() == 0 && nums.size() == 1) {
+		mstruct.set(nums[0]);
+	} else {
+		for(size_t i = 0; i < nums.size(); i++) {
+			mstruct.addChild(nums[i]);
+		}
+		mstruct.evalSort();
+	}
+	return true;
+}
 
 bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo, bool recursive, MathStructure *mparent, size_t index_this) {	
 	if(b_protected) return false;
@@ -4796,6 +4932,12 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			}
 			MERGE_ALL(merge_addition, try_add)
 			MERGE_ALL2
+			
+			if(try_polynomial_division(*this, eo)) {
+				calculatesub(eo, feo, recursive, mparent, index_this);
+				b = true;
+			}
+
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
@@ -8309,12 +8451,15 @@ void MathStructure::coefficient(const MathStructure &xvar, const Number &pownr, 
 				}
 				if(b2) {
 					if(mcoeff.isZero()) {
+						if(mcur->size() == 1) mcoeff.set(1, 1, 0);
 						for(size_t i3 = 0; i3 < mcur->size(); i3++) {
 							if(i3 != i2) {
 								if(mcoeff.isZero()) mcoeff = (*mcur)[i3];
 								else mcoeff.multiply((*mcur)[i3], true);
 							}
 						}
+					} else if(mcur->size() == 1) {
+						mcoeff.add(m_one, true);
 					} else {
 						mcoeff.add(m_zero, true);
 						for(size_t i3 = 0; i3 < mcur->size(); i3++) {
@@ -8418,6 +8563,102 @@ bool MathStructure::polynomialQuotient(const MathStructure &mnum, const MathStru
 		numcoeff.calculateMultiply(mden, eo);
 		mrem.calculateSubtract(numcoeff, eo);
 		if(mrem.isZero()) break;
+		numdeg = mrem.degree(xvar);
+	}
+	return true;
+
+}
+
+bool polynomial_long_division(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar_pre, MathStructure &mquotient, MathStructure &mrem, const EvaluationOptions &eo, bool check_args, bool for_newtonraphson) {
+	mquotient.clear();
+	mrem.clear();
+	if(mden.isZero()) {
+		//division by zero
+		mrem.set(mnum);
+		return false;
+	}
+	if(mnum.isZero()) {
+		mquotient.clear();
+		return true;
+	}
+	if(mden.isNumber() && mnum.isNumber()) {
+		mquotient = mnum;
+		if(IS_REAL(mden) && IS_REAL(mnum)) {
+			mquotient.number() /= mden.number();
+		} else {
+			mquotient.calculateDivide(mden, eo);
+		}
+		return true;
+	} else if(mnum.isNumber()) {
+		mrem.set(mnum);
+		return false;
+	}
+	if(mnum == mden) {
+		mquotient.set(1, 1, 0);
+		return true;
+	}
+	
+	mrem.set(mnum);
+	
+	if(check_args && (!mnum.isRationalPolynomial() || !mden.isRationalPolynomial())) {
+		return false;
+	}
+	
+	MathStructure xvar(xvar_pre);
+	if(xvar.isZero() && !get_first_symbol(mnum, xvar) && !get_first_symbol(mden, xvar)) return false;
+
+	Number numdeg = mnum.degree(xvar);
+	Number dendeg = mden.degree(xvar);
+	MathStructure dencoeff;
+	mden.coefficient(xvar, dendeg, dencoeff);
+	while(numdeg.isGreaterThanOrEqualTo(dendeg)) {
+		MathStructure numcoeff;
+		mrem.coefficient(xvar, numdeg, numcoeff);
+		numdeg -= dendeg;
+		if(numcoeff == dencoeff) {
+			if(numdeg.isZero()) {
+				numcoeff.set(1, 1, 0);
+			} else {
+				numcoeff = xvar;
+				if(!numdeg.isOne()) {
+					numcoeff.raise(numdeg);
+				}
+			}
+		} else {
+			if(dencoeff.isNumber()) {
+				if(numcoeff.isNumber()) {
+					numcoeff.number() /= dencoeff.number();
+				} else {
+					numcoeff.calculateDivide(dencoeff, eo);
+				}
+			} else {
+				if(for_newtonraphson) return false;
+				MathStructure mcopy(numcoeff);
+				if(!MathStructure::polynomialDivide(mcopy, dencoeff, numcoeff, eo, false)) {
+					mrem = mcopy;
+					break;
+				}
+			}
+			if(!numdeg.isZero() && !numcoeff.isZero()) {
+				if(numcoeff.isOne()) {
+					numcoeff = xvar;
+					if(!numdeg.isOne()) {
+						numcoeff.raise(numdeg);
+					}
+				} else {
+					numcoeff.multiply(xvar, true);
+					if(!numdeg.isOne()) {
+						numcoeff[numcoeff.size() - 1].raise(numdeg);
+					}
+					numcoeff.calculateMultiplyLast(eo);
+				}
+			}
+		}
+		if(mquotient.isZero()) mquotient = numcoeff;
+		else mquotient.calculateAdd(numcoeff, eo);
+		numcoeff.calculateMultiply(mden, eo);
+		mrem.calculateSubtract(numcoeff, eo);
+		if(mrem.isZero() || (for_newtonraphson && mrem.isNumber())) break;
 		numdeg = mrem.degree(xvar);
 	}
 	return true;
@@ -14923,8 +15164,24 @@ bool isx_deabsify(MathStructure &mstruct) {
 	return false;
 }
 
-int newtonRaphson(const MathStructure &mstruct, MathStructure &x_value, const MathStructure &x_var, const EvaluationOptions &eo) {
-	if(!mstruct.isAddition()) return false;
+int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const MathStructure &x_var, const EvaluationOptions &eo) {
+	if(mstruct == x_var) {
+		x_value = m_zero;
+		return 1;
+	}
+	if(!mstruct.isAddition()) return -1;
+	if(mstruct.size() == 2) {
+		if(mstruct[1] == x_var && mstruct[0].isNumber() && mstruct[0].number().isReal()) {
+			x_value = mstruct[0];
+			x_value.number().negate();
+			return 1;
+		}
+		if(mstruct[0] == x_var && mstruct[1].isNumber() && mstruct[1].number().isReal()) {
+			x_value = mstruct[1];
+			x_value.number().negate();
+			return 1;
+		}
+	}
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(mstruct[i] != x_var) {
 			switch(mstruct[i].type()) {
@@ -14982,7 +15239,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 		printf("isolate_x_sub: not comparison\n");
 		return false;
 	}
-	if(CHILD(0) == x_var) return false;	
+	if(CHILD(0) == x_var) return false;
 	switch(CHILD(0).type()) {
 		case STRUCT_ADDITION: {
 			bool b = false;
@@ -15007,6 +15264,65 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				isolate_x_sub(eo, eo2, x_var, morig);
 				return true;
 			}
+
+			if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
+				MathStructure mdiv;
+				for(size_t i = 0; i < CHILD(0).size(); i++) {
+					if(CHILD(0)[i].isMultiplication()) {
+						for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+							if(CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1].isMinusOne()) {
+								mdiv = CHILD(0)[i][i2][0];
+								break;
+							}
+						}
+						if(!mdiv.isZero()) break;
+					} else if(CHILD(0)[i].isPower() && CHILD(0)[i][1].isMinusOne()) {
+						mdiv = CHILD(0)[i][0];
+						break;
+					}
+				}
+				cout << CHILD(0).print() << endl;
+				cout << mdiv.print() << endl;
+				if(!mdiv.isZero()) {
+					EvaluationOptions eo3 = eo2;
+					eo3.expand = true;
+					for(size_t i3 = 0; i3 < CHILD(0).size(); i3++) {
+						bool b = false;
+						if(CHILD(0)[i3].isPower() && CHILD(0)[i3][1].isMinusOne() && CHILD(0)[i3][0] == mdiv) {
+							CHILD(0)[i3].set(1, 1, 0, true);
+							b = true;
+						} else if(CHILD(0)[i3].isMultiplication()) {
+							for(size_t i4 = 0; i4 < CHILD(0)[i3].size(); i4++) {
+								if(CHILD(0)[i3][i4].isPower() && CHILD(0)[i3][i4][1].isMinusOne() && CHILD(0)[i3][i4][0] == mdiv) {
+									b = true;
+									CHILD(0)[i3].delChild(i4 + 1);
+									if(CHILD(0)[i3].size() == 0) CHILD(0)[i3].set(1, 1, 0, true);
+									else if(CHILD(0)[i3].size() == 1) CHILD(0)[i3].setToChild(1, true);
+									break;
+								}
+							}
+						}
+						cout << b << endl;
+						cout << CHILD(0)[i3].print() << endl;
+						if(!b) CHILD(0)[i3].calculateMultiply(mdiv, eo3);
+					}
+					CHILD(0).childrenUpdated();
+					CHILD(0).evalSort();
+					cout << CHILD(0).print() << endl;
+					CHILD(1).calculateMultiply(mdiv, eo3);
+					bool not_equals = ct_comp == COMPARISON_NOT_EQUALS;
+					isolate_x_sub(eo, eo2, x_var, morig);
+					if(!mdiv.representsNonZero(true)) {
+						MathStructure *mtest = new MathStructure(mdiv);
+						mtest->add(m_zero, not_equals ? OPERATION_EQUALS : OPERATION_NOT_EQUALS);
+						mtest->isolate_x_sub(eo, eo2, x_var);
+						add_nocopy(mtest, not_equals ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+						calculatesub(eo2, eo, false);
+					}
+					return true;
+				}
+			}
+
 			if(CHILD(0).size() == 2 && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
 				bool sqpow = false;
 				bool nopow = false;
@@ -15108,44 +15424,6 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 			}
-			/*if(!CHILD(1).representsNonZero(true)) {
-				int index1 = -1;
-				int index2 = -1;
-				for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
-					if(index1 < 0 && CHILD(0)[i2].isMultiplication()) {
-						for(size_t i = 0; i < CHILD(0)[i2].size(); i++) {
-							if(CHILD(0)[i2][i].isPower() && CHILD(0)[i2][i][1].isNumber() && CHILD(0)[i2][i][1].number().isMinusOne() && CHILD(0)[i2][i][0].contains(x_var) && CHILD(0)[i2][i][0].representsNonZero(true)) {
-								index1 = i2;
-								index2 = i;
-								break;
-							}
-						}
-					} else if(!CHILD(0)[i2].representsNonZero(true)) {
-						index1 = -1;
-						break;
-					}
-				}
-				if(index1 >= 0) {
-					MathStructure msave(CHILD(0)[index1]);
-					CHILD(0).delChild(index1 + 1);
-					if(CHILD(0).size() == 0) {
-						CHILD(0).clear(true);
-					} else if(CHILD(0).size() == 1) {
-						CHILD(0).setToChild(1, true);
-					}
-					CHILD(0).calculateSubtract(CHILD(1), eo2);
-					CHILD(1).clear();
-					CHILD(0).calculateMultiply(msave[index2][0], eo2);
-					msave.delChild(index2 + 1);
-					if(msave.size() == 1) {
-						msave.setToChild(1, true);
-					}
-					CHILD(0).calculateAdd(msave, eo2);
-					CHILDREN_UPDATED;
-					isolate_x_sub(eo, eo2, x_var, morig);
-					return true;
-				}
-			}*/
 			if(!eo2.expand) break;
 			MathStructure mtest(*this);
 			if(!mtest[1].isZero()) {
@@ -16048,13 +16326,16 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const EvaluationOptio
 	if(!check_result) {
 		bool b = isolate_x_sub(feo, eo2, x_var);
 		MathStructure x_value;
-		if(isComparison() && comparisonType() == COMPARISON_EQUALS && (CHILD(0) != x_var || !CHILD(1).isNumber()) && eo.approximation == APPROXIMATION_APPROXIMATE) {
+		if(isComparison() && comparisonType() == COMPARISON_EQUALS && (CHILD(0) != x_var || !CHILD(1).isNumber()) && eo.approximation != APPROXIMATION_EXACT) {
 			MathStructure mtest(CHILD(0));
 			mtest.subtract(CHILD(1));
 			mtest.simplify(feo);
 			MathStructure mbak(*this);
 			int ret = -1;
-			while((ret = newtonRaphson(mtest, x_value, x_var, eo)) > 0) {
+			EvaluationOptions eo3 = eo2;
+			eo3.approximation = APPROXIMATION_APPROXIMATE;
+			eo3.expand = true;
+			while((ret = newton_raphson(mtest, x_value, x_var, eo3)) > 0) {
 				if(isComparison() && CHILD(0) != x_var) {
 					CHILD(0) = x_var;
 					CHILD(1) = x_value;
@@ -16065,9 +16346,16 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const EvaluationOptio
 					mnew.setComparisonType(COMPARISON_EQUALS);
 					addChild(mnew);
 				}
+				
 				MathStructure mdiv(x_var);
-				mdiv.subtract(x_value);
-				mtest.divide(mdiv);
+				mdiv.calculateSubtract(x_value, eo3);
+				MathStructure mtestcopy(mtest);
+				MathStructure mrem;
+				if(!polynomial_long_division(mtestcopy, mdiv, x_var, mtest, mrem, eo3, false, true) || !mrem.isNumber()) {
+					ret = -1;
+					break;
+				}
+				if(!mtest.contains(x_var)) break;
 			}
 			if(ret < 0) {
 				set(mbak);
@@ -16098,13 +16386,16 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const EvaluationOptio
 		b = test_comparisons(msave, *this, x_var, eo) >= 0;
 	}
 	MathStructure x_value;
-	if(isComparison() && comparisonType() == COMPARISON_EQUALS && (CHILD(0) != x_var || !CHILD(1).isNumber()) && eo.approximation == APPROXIMATION_APPROXIMATE) {
+	if(isComparison() && comparisonType() == COMPARISON_EQUALS && (CHILD(0) != x_var || !CHILD(1).isNumber()) && eo.approximation != APPROXIMATION_EXACT) {
 		MathStructure mtest(CHILD(0));
 		mtest.subtract(CHILD(1));
 		mtest.simplify(feo);
 		MathStructure mbak(*this);
 		int ret = -1;
-		while((ret = newtonRaphson(mtest, x_value, x_var, eo)) > 0) {
+		EvaluationOptions eo3 = eo2;
+		eo3.approximation = APPROXIMATION_APPROXIMATE;
+		eo3.expand = true;
+		while((ret = newton_raphson(mtest, x_value, x_var, eo3)) > 0) {
 			if(isComparison() && CHILD(0) != x_var) {
 				CHILD(0) = x_var;
 				CHILD(1) = x_value;
@@ -16115,9 +16406,16 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const EvaluationOptio
 				mnew.setComparisonType(COMPARISON_EQUALS);
 				addChild(mnew);
 			}
+
 			MathStructure mdiv(x_var);
-			mdiv.subtract(x_value);
-			mtest.divide(mdiv);
+			mdiv.calculateSubtract(x_value, eo3);
+			MathStructure mtestcopy(mtest);
+			MathStructure mrem;
+			if(!polynomial_long_division(mtestcopy, mdiv, x_var, mtest, mrem, eo3, false, true) || !mrem.isNumber()) {
+				ret = -1;
+				break;
+			}
+			if(!mtest.contains(x_var)) break;
 		}
 		if(ret < 0) {
 			set(mbak);
