@@ -701,17 +701,26 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	mstruct = vargs[0]; 
 	mstruct.eval(eo);
 	if(mstruct.isNumber()) {
-		Number nr = mstruct.number(); 
+		Number nr(mstruct.number());
 		if(!nr.abs() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) {
-			return 0;
-		} else {
-			mstruct = nr; 
-			return 1;
+			return -1;
 		}
-	} else if(mstruct.representsNegative(true)) {
+		mstruct = nr; 
+		return 1;
+	}
+	if(mstruct.representsNegative(true)) {
 		mstruct.negate();
 		return 1;
-	} else if(mstruct.representsNonNegative(true)) {
+	}
+	if(mstruct.representsNonNegative(true)) {
+		return 1;
+	}
+	if(mstruct.isMultiplication()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			mstruct[i].transform(STRUCT_FUNCTION);
+			mstruct[i].setFunction(this);
+		}
+		mstruct.childrenUpdated();
 		return 1;
 	}
 	return -1;
@@ -737,10 +746,64 @@ int LcmFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	return 0;
 }
 SignumFunction::SignumFunction() : MathFunction("sgn", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
+bool SignumFunction::representsPositive(const MathStructure&, bool allow_units) const {return false;}
+bool SignumFunction::representsNegative(const MathStructure&, bool) const {return false;}
+bool SignumFunction::representsNonNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonNegative(true);}
+bool SignumFunction::representsNonPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonPositive(true);}
+bool SignumFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal(true);}
+bool SignumFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber(true);}
+bool SignumFunction::representsRational(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal(true);}
+bool SignumFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal(true);}
+bool SignumFunction::representsComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsComplex(true);}
+bool SignumFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonZero(true);}
+bool SignumFunction::representsEven(const MathStructure&, bool) const {return false;}
+bool SignumFunction::representsOdd(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonZero(true);}
+bool SignumFunction::representsUndefined(const MathStructure &vargs) const {return vargs.size() == 1 && vargs[0].representsUndefined();}
 int SignumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	FR_FUNCTION(signum)
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(mstruct.isNumber()) {
+		Number nr(mstruct.number()); 
+		if(!nr.signum() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate())) {
+			if(!mstruct.number().isZero()) {
+				MathStructure *mabs = new MathStructure(mstruct);
+				mabs->transform(STRUCT_FUNCTION);
+				mabs->setFunction(CALCULATOR->f_abs);
+				mstruct.divide_nocopy(mabs);
+				return 1;
+			}
+			return -1;
+		} else {
+			mstruct = nr; 
+			return 1;
+		}
+	}
+	if(mstruct.representsPositive(true)) {
+		mstruct.set(1, 1, 0);
+		return 1;
+	}
+	if(mstruct.representsNegative(true)) {
+		mstruct.set(-1, 1, 0);
+		return 1;
+	}
+	if(mstruct.isMultiplication()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			mstruct[i].transform(STRUCT_FUNCTION);
+			mstruct[i].setFunction(this);
+		}
+		mstruct.childrenUpdated();
+		return 1;
+	}
+	if(mstruct.representsNonZero(true)) {
+		MathStructure *mabs = new MathStructure(mstruct);
+		mabs->transform(STRUCT_FUNCTION);
+		mabs->setFunction(CALCULATOR->f_abs);
+		mstruct.divide_nocopy(mabs);
+		return 1;
+	}
+	return -1;
 }
 
 CeilFunction::CeilFunction() : MathFunction("ceil", 1) {
@@ -1133,12 +1196,22 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			nr_exp.recip();
 			mstruct.raise(nr_exp);
 			return 1;
-		} else if(vargs[0].representsNegative(true)) {
+		} else if(mstruct.representsNegative(true)) {
 			mstruct.negate();
 			Number nr_exp(vargs[1].number());
 			nr_exp.recip();
 			mstruct.raise(nr_exp);
 			mstruct.negate();
+			return 1;
+		} else if(mstruct.representsReal(true)) {
+			mstruct.transform(STRUCT_FUNCTION);
+			MathStructure *msgn = new MathStructure(mstruct);
+			mstruct.setFunction(CALCULATOR->f_abs);
+			msgn->setFunction(CALCULATOR->f_signum);
+			Number nr_exp(vargs[1].number());
+			nr_exp.recip();
+			mstruct.raise(nr_exp);
+			mstruct.multiply_nocopy(msgn);
 			return 1;
 		}
 		if(!mstruct.isNumber()) {

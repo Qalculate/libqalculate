@@ -4075,6 +4075,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			ips_n.minus = &neg;
 			string str2 = i_value->print(po, ips_n);
 			if(ips.im) *ips.im = str2;
+			if(!po.short_multiplication && str2 != "1") {
+				if(po.spacious) {
+					str2 += " * ";
+				} else {
+					str2 += "*";
+				}
+			}
+			if(str2 == "1") str2 = "i";
+			else str2 += "i";
 			if(*ips_n.minus) {
 				str += " - ";
 			} else {
@@ -4084,16 +4093,16 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		} else {
 			str = i_value->print(po, ips);
 			if(ips.im) *ips.im = str;
-		}
-		if(!po.short_multiplication && str != "1") {
-			if(po.spacious) {
-				str += " * ";
-			} else {
-				str += "*";
+			if(!po.short_multiplication && str != "1") {
+				if(po.spacious) {
+					str += " * ";
+				} else {
+					str += "*";
+				}
 			}
+			if(str == "1") str = "i";
+			else str += "i";
 		}
-		if(str == "1") str = "i";
-		else str += "i";
 		if(ips.num) *ips.num = str;
 	} else if(isInteger()) {
 		
