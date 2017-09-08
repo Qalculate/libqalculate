@@ -415,7 +415,9 @@ static const struct PrintOptions {
 	bool restrict_to_parent_precision;
 	/// Restrict the length of numerators and demonitor as integers in decimal mode for fractional display of numbers. Default: false
 	bool restrict_fraction_length;
-	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), lower_case_e(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(false), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_all_units(false), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), limit_implicit_multiplication(false), allow_non_usable(false), use_unicode_signs(false), multiplication_sign(MULTIPLICATION_SIGN_DOT), division_sign(DIVISION_SIGN_DIVISION_SLASH), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL), can_display_unicode_string_function(NULL), can_display_unicode_string_arg(NULL), hide_underscore_spaces(false), preserve_format(false), allow_factorization(false), spell_out_logical_operators(false), restrict_to_parent_precision(true), restrict_fraction_length(false) {}
+	/// Transform exponentiation positive base and unit fraction exponent (if denominator < 10) to root function. Default: false
+	bool exp_to_root;
+	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), lower_case_e(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(false), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_all_units(false), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), limit_implicit_multiplication(false), allow_non_usable(false), use_unicode_signs(false), multiplication_sign(MULTIPLICATION_SIGN_DOT), division_sign(DIVISION_SIGN_DIVISION_SLASH), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL), can_display_unicode_string_function(NULL), can_display_unicode_string_arg(NULL), hide_underscore_spaces(false), preserve_format(false), allow_factorization(false), spell_out_logical_operators(false), restrict_to_parent_precision(true), restrict_fraction_length(false), exp_to_root(false) {}
 	/// Returns the comma sign used (default sign or comma_sign)
 	const string &comma() const;
 	/// Returns the decimal sign used (default sign or decimalpoint_sign)
@@ -554,7 +556,7 @@ static const struct EvaluationOptions {
 	/// If comparisons will be evaluated (ex. 5>2 => 1). Default: true
 	bool test_comparisons;
 	/// If a varaible will be isolated to the left side in equations/comparisons (ex. x+y=2 => x=2-y). Default: true
-	bool  isolate_x;
+	bool isolate_x;
 	/// If factors (and bases) containing addition will be expanded (ex. z(x+y)=zx+zy). Default: true
 	int expand;
 	/// Use behaviour from version <= 0.9.12 which returns (x+y)/z instead of x/y+y/z if expand = true

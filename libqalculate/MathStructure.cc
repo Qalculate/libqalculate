@@ -4808,26 +4808,32 @@ bool try_polynomial_division(MathStructure &mstruct, const EvaluationOptions &eo
 			}
 		}
 	}
-	bool b = false;
+	vector<long int> points(nums.size(), -1);
+	bool b = false, b_ready_candidate = false;
 	for(size_t i = 0; i < divs.size(); i++) {
 		if(nums[i].size() > 1) {
 			nums[i].setType(STRUCT_ADDITION);
 			if(nums[i].isRationalPolynomial()) {
 				MathStructure mquo, mrem;
-				if(polynomial_long_division(nums[i], divs[i], CALCULATOR->v_x, mquo, mrem, eo, false) && mrem != nums[i] && (!mquo.isNumber() || mrem.isZero())) {
+				if(polynomial_long_division(nums[i], divs[i], m_zero, mquo, mrem, eo, false) && mrem != nums[i] && (!mquo.isNumber() || mrem.isZero())) {
 					if(mrem.isZero() && divs[i].representsNonZero(true) && eo.warn_about_denominators_assumed_nonzero && !warn_about_denominators_assumed_nonzero(divs[i], eo)) {
 						nums[i].clear();
 					} else {
-						if(mquo.size() + mrem.size() <= nums[i].size() + divs[i].size()) {
-							nums[i].set(mquo);
-							if(!mrem.isZero()) {
-								mrem.calculateDivide(divs[i], eo);
-								nums[i].calculateAdd(mrem, eo);
-							}
-							b = true;
-						} else {
-							nums[i].clear();
+						long int point = 1;
+						nums[i].set(mquo);
+						if(!mrem.isZero()) {
+							point = nums[i].size();
+							if(mquo.isAddition()) point -= mquo.size();
+							else point--;
+							if(mrem.isAddition()) point -= mrem.size();
+							else point--;
+							mrem.calculateDivide(divs[i], eo);
+							nums[i].calculateAdd(mrem, eo);
 						}
+						b = true;
+						points[i] = point;
+						if(point >= 0) {b_ready_candidate = true;}
+						else if(b_ready_candidate) nums[i].clear();
 					}
 				} else {
 					nums[i].clear();
@@ -4835,6 +4841,54 @@ bool try_polynomial_division(MathStructure &mstruct, const EvaluationOptions &eo
 			}
 		} else {
 			nums[i].clear();
+		}
+	}
+	if(!b) return false;
+	if(b_ready_candidate) {
+		for(size_t i = 0; i < nums.size(); i++) {
+			if(!nums[i].isZero() && points[i] < 0) nums[i].clear();
+		}
+	} else {
+		b = false;
+		for(size_t i = 0; i < nums.size(); i++) {
+			if(!nums[i].isZero()) {
+				if(b) {
+					nums[i].clear();
+				} else {
+					long int point = points[i];
+					for(size_t i2 = 0; i2 < nums[i].size(); i2++) {
+						bool b2 = false;
+						if(!nums[i][i2].contains(divs[i], false, false, false)) {
+							MathStructure mtest1(mstruct), mtest2(nums[i][i2]);
+							for(size_t i3 = 0; i3 < mtest1.size(); i3++) {
+								if(!mtest1[i3].contains(divs[i], false, false, false)) {
+								cout << mtest1[i3].print() << endl;
+								cout << nums[i][i2].print() << endl;
+									int ret = mtest1[i3].merge_addition(mtest2, eo);
+									if(ret > 0) {
+										b2 = true;
+										point++;
+										if(mtest1[i3].isZero()) point++;
+										break;
+									}
+									if(ret == 0) ret = mtest2.merge_addition(mtest1[i3], eo);
+									if(ret > 0) {
+										b2 = true;
+										point++;
+										if(mtest2.isZero()) point++;
+										break;
+									}
+								}
+							}
+							if(b2) break;
+						}
+						if(point >= 0) break;
+					}
+					if(point >= 0) b = true;
+					else nums[i].clear();
+					cout << point << endl;
+				}
+			}
 		}
 	}
 	if(!b) return false;
@@ -11813,6 +11867,15 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 						}
 					}
 				}
+				formatsub(po, parent, pindex, false);
+			} else if(po.exp_to_root && ((CHILD(1).isInverse() && CHILD(1)[0].isNumber() && CHILD(1)[0].number().isInteger() && CHILD(1)[0].number().isPositive() && CHILD(1)[0].number().isLessThan(10)) || (CHILD(1).isNumber() && CHILD(1).number().isRational() && CHILD(1).number().numeratorIsOne() && CHILD(1).number().denominator().isLessThan(10))) && CHILD(0).representsPositive(true)) {
+				m_type = STRUCT_FUNCTION;
+				if(CHILD(1).isInverse()) {
+					CHILD(1).setToChild(1);
+				} else if(CHILD(1).isNumber()) {
+					CHILD(1).number().recip();
+				}
+				setFunction(CALCULATOR->f_root);
 				formatsub(po, parent, pindex, false);
 			} else if(CHILD(0).isUnit_exp() && (!parent || (!parent->isPower() && !parent->isMultiplication() && !parent->isInverse() && !(parent->isDivision() && pindex == 2)))) {
 				multiply(m_one);
