@@ -2681,7 +2681,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 		} else if(mstruct.function() == CALCULATOR->f_signum && mstruct.size() == 1) {
 			if(equals(mstruct[0]) && representsReal(true)) {
 				transform(STRUCT_FUNCTION);
-				o_function = CALCULATOR->f_abs;
+				setFunction(CALCULATOR->f_abs);
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			} else if(isPower() && CHILD(1).representsOdd() && mstruct[0] == CHILD(0) && CHILD(0).representsReal(true)) {
@@ -3154,9 +3154,9 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				}
 			} else if(o_function == CALCULATOR->f_signum && SIZE == 1) {
 				if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_signum && mstruct.size() == 1 && mstruct[0] == CHILD(0) && CHILD(0).representsReal(true)) {
-					o_function = CALCULATOR->f_abs;
+					setFunction(CALCULATOR->f_abs);
 					transform(STRUCT_FUNCTION);
-					o_function = CALCULATOR->f_signum;
+					setFunction(CALCULATOR->f_signum);
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 1;
 				} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1 && mstruct[0] == CHILD(0) && CHILD(0).representsScalar()) {
@@ -3164,7 +3164,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 1;
 				} else if(mstruct == CHILD(0) && CHILD(0).representsReal(true)) {
-					o_function = CALCULATOR->f_abs;
+					setFunction(CALCULATOR->f_abs);
 					return 1;
 				} else if(mstruct.isPower() && mstruct[1].representsOdd() && mstruct[0] == CHILD(0) && CHILD(0).representsReal(true)) {
 					mstruct[0].transform(STRUCT_FUNCTION);
@@ -3208,6 +3208,18 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					mstruct.setType(STRUCT_POWER);
 					multiply_nocopy(&mstruct);
 					calculateMultiplyLast(eo);
+					return 1;
+				}
+			} else if(o_function == CALCULATOR->f_tan && SIZE == 1) {
+				if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_cos && mstruct.size() == 1 && mstruct[0] == CHILD(0)) {
+					setFunction(CALCULATOR->f_sin);
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
+				}
+			} else if(o_function == CALCULATOR->f_cos && SIZE == 1) {
+				if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_tan && mstruct.size() == 1 && mstruct[0] == CHILD(0)) {
+					setFunction(CALCULATOR->f_sin);
+					MERGE_APPROX_AND_PREC(mstruct)
 					return 1;
 				}
 			}
@@ -3717,7 +3729,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			goto default_power_merge;
 		}
 		case STRUCT_POWER: {
-			if((mstruct.representsInteger() && CHILD(1).representsInteger()) || representsNonNegative(true) || (CHILD(1).representsInteger() && mstruct.isNumber() && mstruct.number().denominatorIsTwo() && CHILD(0).representsReal(true)) || (eo.allow_complex && CHILD(1).isNumber() && CHILD(1).number().denominatorIsTwo() && mstruct.representsInteger())) {
+			if((eo.allow_complex && CHILD(1).isNumber() && CHILD(1).number().isFraction()) || (mstruct.representsInteger() && (eo.allow_complex || CHILD(0).representsInteger())) || representsNonNegative(true) || (CHILD(1).representsInteger() && mstruct.isNumber() && mstruct.number().denominatorIsTwo())) {
 				if(CHILD(1).representsEven() && !mstruct.representsEven()) {
 					if(CHILD(0).representsNegative(true)) {
 						CHILD(0).calculateNegate(eo);
@@ -3788,9 +3800,9 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 1;
 				} else if(mstruct.representsEven()) {
-					o_function = CALCULATOR->f_abs;
+					setFunction(CALCULATOR->f_abs);
 					transform(STRUCT_FUNCTION);
-					o_function = CALCULATOR->f_signum;
+					setFunction(CALCULATOR->f_signum);
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 1;
 				}
@@ -11964,7 +11976,8 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					transform(STRUCT_INVERSE);
 				}
 				formatsub(po, parent, pindex, true);
-			} else if(po.halfexp_to_sqrt && ((CHILD(1).isDivision() && CHILD(1)[0].isNumber() && CHILD(1)[0].number().isInteger() && CHILD(1)[1].isNumber() && CHILD(1)[1].number().isTwo() && ((!po.negative_exponents && CHILD(0).countChildren() == 0) || CHILD(1)[0].isOne())) || (CHILD(1).isNumber() && CHILD(1).number().denominatorIsTwo() && ((!po.negative_exponents && CHILD(0).countChildren() == 0) || CHILD(1).number().numeratorIsOne())) || (CHILD(1).isInverse() && CHILD(1)[0].isNumber() && CHILD(1)[0].number() == 2))) {
+				break;
+			} else if(po.halfexp_to_sqrt && ((CHILD(1).isDivision() && CHILD(1)[0].isNumber() && CHILD(1)[0].number().isInteger() && CHILD(1)[1].isNumber() && CHILD(1)[1].number().isTwo() && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1)[0].isOne())) || (CHILD(1).isNumber() && CHILD(1).number().denominatorIsTwo() && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1).number().numeratorIsOne())) || (CHILD(1).isInverse() && CHILD(1)[0].isNumber() && CHILD(1)[0].number() == 2))) {
 				if(CHILD(1).isInverse() || (CHILD(1).isDivision() && CHILD(1)[0].number().isOne()) || (CHILD(1).isNumber() && CHILD(1).number().numeratorIsOne())) {
 					m_type = STRUCT_FUNCTION;
 					ERASE(1)
@@ -11994,16 +12007,45 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					}
 				}
 				formatsub(po, parent, pindex, false);
-			} else if(po.exp_to_root && ((CHILD(1).isInverse() && CHILD(1)[0].isNumber() && CHILD(1)[0].number().isInteger() && CHILD(1)[0].number().isPositive() && CHILD(1)[0].number().isLessThan(10)) || (CHILD(1).isNumber() && CHILD(1).number().isRational() && CHILD(1).number().numeratorIsOne() && CHILD(1).number().denominator().isLessThan(10))) && CHILD(0).representsNonNegative(true)) {
-				m_type = STRUCT_FUNCTION;
-				if(CHILD(1).isInverse()) {
-					CHILD(1).setToChild(1);
-				} else if(CHILD(1).isNumber()) {
-					CHILD(1).number().recip();
+				break;
+			} else if(po.exp_to_root && ((CHILD(1).isDivision() && CHILD(1)[0].isNumber() && CHILD(1)[0].number().isInteger() && CHILD(1)[1].isNumber() && CHILD(1)[1].number().isGreaterThan(1) && CHILD(1)[1].number().isLessThan(10) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1)[0].isOne())) || (CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().isInteger() && CHILD(1).number().denominator().isLessThan(10) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1).number().numeratorIsOne())) || (CHILD(1).isInverse() && CHILD(1)[0].isNumber()  && CHILD(1)[0].number().isInteger() && CHILD(1)[0].number().isPositive() && CHILD(1)[0].number().isLessThan(10)))) {
+				Number nr_int, nr_num, nr_den;
+				if(CHILD(1).isNumber()) {
+					nr_num = CHILD(1).number().numerator();
+					nr_den = CHILD(1).number().denominator();
+				} else if(CHILD(1).isDivision()) {
+					nr_num.set(CHILD(1)[0].number());
+					nr_den.set(CHILD(1)[1].number());
+				} else if(CHILD(1).isInverse()) {
+					nr_num.set(1, 1, 0);
+					nr_den.set(CHILD(1)[0].number());
 				}
-				setFunction(CALCULATOR->f_root);
-				formatsub(po, parent, pindex, false);
-			} else if(CHILD(0).isUnit_exp() && (!parent || (!parent->isPower() && !parent->isMultiplication() && !parent->isInverse() && !(parent->isDivision() && pindex == 2)))) {
+				if(!nr_num.isOne() && (nr_num - 1).isIntegerDivisible(nr_den)) {
+					nr_int = nr_num;
+					nr_int--;
+					nr_int.divide(nr_den);
+					nr_num = 1;
+				}
+				if(nr_den.isEven() || CHILD(0).representsNonNegative(true) || CHILD(0).representsComplex(true)) {
+					MathStructure mbase(CHILD(0));
+					CHILD(1) = nr_den;
+					m_type = STRUCT_FUNCTION;
+					setFunction(CALCULATOR->f_root);
+					formatsub(po, parent, pindex, false);
+					if(!nr_num.isOne()) {
+						raise(nr_num);
+						formatsub(po, parent, pindex, false);
+					}
+					if(!nr_int.isZero()) {
+						if(!nr_int.isOne()) mbase.raise(nr_int);
+						multiply(mbase);
+						sort(po);
+						formatsub(po, parent, pindex, false);
+					}
+					break;
+				}
+			}
+			if(CHILD(0).isUnit_exp() && (!parent || (!parent->isPower() && !parent->isMultiplication() && !parent->isInverse() && !(parent->isDivision() && pindex == 2)))) {
 				multiply(m_one);
 				SWAP_CHILDREN(0, 1);
 			}
@@ -12013,7 +12055,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 			if(po.preserve_format) break;
 			if(o_function == CALCULATOR->f_root && SIZE == 2 && CHILD(1) == 3) {
 				ERASE(1)
-				o_function = CALCULATOR->f_cbrt;
+				setFunction(CALCULATOR->f_cbrt);
 			}
 			break;
 		}
@@ -15126,6 +15168,20 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 				multiply(m_minus_one);
 			} else if(o_function == CALCULATOR->f_cos && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0] == x_var && CHILD(0)[1] == CALCULATOR->getRadUnit()) {
 				setFunction(CALCULATOR->f_sin);
+			} else if(o_function == CALCULATOR->f_sin && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0] == x_var && CHILD(0)[1] == CALCULATOR->getRadUnit()) {
+				setFunction(CALCULATOR->f_cos);
+				transform(STRUCT_FUNCTION);
+				setFunction(CALCULATOR->f_abs);
+				transform(STRUCT_FUNCTION);
+				setFunction(CALCULATOR->f_ln);
+				multiply(m_minus_one);
+			} else if(o_function == CALCULATOR->f_root && THIS_VALID_ROOT && CHILD(0) == x_var) {
+				Number nr_mul(CHILD(1).number());
+				nr_mul.recip();
+				nr_mul++;
+				nr_mul.recip();
+				multiply(x_var);
+				multiply(nr_mul);
 			} else if(o_function == CALCULATOR->f_diff && SIZE == 3 && CHILD(1) == x_var) {
 				if(CHILD(2).isOne()) {
 					setToChild(1, true);
