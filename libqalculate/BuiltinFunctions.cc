@@ -723,6 +723,12 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct.childrenUpdated();
 		return 1;
 	}
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_signum && mstruct.size() == 1) {
+		mstruct.setFunction(this);
+		mstruct.transform(STRUCT_FUNCTION);
+		mstruct.setFunction(CALCULATOR->f_signum);
+		return 1;
+	}
 	return -1;
 }
 GcdFunction::GcdFunction() : MathFunction("gcd", 2) {
@@ -796,13 +802,13 @@ int SignumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		mstruct.childrenUpdated();
 		return 1;
 	}
-	if(mstruct.representsNonZero(true)) {
+	/*if(mstruct.representsNonZero(true)) {
 		MathStructure *mabs = new MathStructure(mstruct);
 		mabs->transform(STRUCT_FUNCTION);
 		mabs->setFunction(CALCULATOR->f_abs);
 		mstruct.divide_nocopy(mabs);
 		return 1;
-	}
+	}*/
 	return -1;
 }
 
@@ -1203,7 +1209,7 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			mstruct.raise(nr_exp);
 			mstruct.negate();
 			return 1;
-		} else if(mstruct.representsReal(true)) {
+		} /*else if(mstruct.representsReal(true)) {
 			mstruct.transform(STRUCT_FUNCTION);
 			MathStructure *msgn = new MathStructure(mstruct);
 			mstruct.setFunction(CALCULATOR->f_abs);
@@ -1213,7 +1219,7 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			mstruct.raise(nr_exp);
 			mstruct.multiply_nocopy(msgn);
 			return 1;
-		}
+		}*/
 		if(!mstruct.isNumber()) {
 			if(mstruct.isPower() && mstruct[1].isNumber() && mstruct[1].number().isInteger() && mstruct[0].representsReal(true) && (vargs[1].number().isOdd() || mstruct[1].number().isEven() || mstruct[0].representsNonNegative(true))) {
 				if(mstruct[1] == vargs[1]) {
