@@ -1574,7 +1574,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 
 bool is_real_angle_value(const MathStructure &mstruct) {
 	if(mstruct.isUnit()) {
-		return mstruct.unit() == CALCULATOR->getRadUnit() || mstruct.unit() == CALCULATOR->getDegUnit() || mstruct.unit() == CALCULATOR->getGraUnit() ;
+		return mstruct.unit() == CALCULATOR->getRadUnit() || mstruct.unit() == CALCULATOR->getDegUnit() || mstruct.unit() == CALCULATOR->getGraUnit();
 	} else if(mstruct.isMultiplication()) {
 		bool b = false;
 		for(size_t i = 0; i < mstruct.size(); i++) {
