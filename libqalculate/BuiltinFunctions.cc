@@ -3231,6 +3231,7 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	MathStructure m1(vargs[0]);
 	EvaluationOptions eo2 = eo;
 	eo2.calculate_functions = false;
+	eo2.expand = false;
 	Number i_nr(vargs[1].number());
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
 		Number nr(vargs[2].number());
@@ -3243,6 +3244,7 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	CALCULATOR->endTemporaryStopMessages(&im);
 	if(im > 0) m1 = vargs[0];
 	eo2.calculate_functions = eo.calculate_functions;
+	eo2.expand = eo.expand;
 	mstruct.clear();
 	MathStructure mstruct_calc;
 	bool started = false;
@@ -3283,6 +3285,7 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	MathStructure m1(vargs[0]);
 	EvaluationOptions eo2 = eo;
 	eo2.calculate_functions = false;
+	eo2.expand = false;
 	Number i_nr(vargs[1].number());
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
 		Number nr(vargs[2].number());
@@ -3295,6 +3298,7 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	CALCULATOR->endTemporaryStopMessages(&im);
 	if(im > 0) m1 = vargs[0];
 	eo2.calculate_functions = eo.calculate_functions;
+	eo2.expand = eo.expand;
 	mstruct.clear();
 	MathStructure mstruct_calc;
 	bool started = false;
@@ -4312,12 +4316,14 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	bool use_step_size = vargs[5].number().getBoolean();
 	mstruct = vargs[0];
 	eo2.calculate_functions = false;
+	eo2.expand = false;
 	CALCULATOR->beginTemporaryStopMessages();
 	mstruct.eval(eo2);
 	int im = 0;
 	CALCULATOR->endTemporaryStopMessages(&im);
 	if(im > 0) mstruct = vargs[0];
 	eo2.calculate_functions = eo.calculate_functions;
+	eo2.expand = eo.expand;
 	vector<MathStructure> x_vectors, y_vectors;
 	vector<PlotDataParameters*> dpds;
 	if(mstruct.isMatrix() && mstruct.columns() == 2) {

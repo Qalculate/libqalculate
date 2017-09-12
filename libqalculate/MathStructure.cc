@@ -15936,23 +15936,26 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 			}
 			MathStructure x_value;
-			if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(1).isNumber() && eo.approximation != APPROXIMATION_EXACT && x_var.representsReal(true)) {
+			if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(1).isNumber() && eo.approximation != APPROXIMATION_EXACT && !x_var.representsComplex(true)) {
 				MathStructure mtest(CHILD(0));
 				if(!CHILD(0).isZero()) mtest.calculateSubtract(CHILD(1), eo2);
 				MathStructure mbak(*this);
 				int ret = -1;
 				EvaluationOptions eo3 = eo2;
 				eo3.approximation = APPROXIMATION_APPROXIMATE;
+				if(ct_comp == COMPARISON_EQUALS) clear(true);
+				else set(1, 1, 0, true);
 				while((ret = newton_raphson(mtest, x_value, x_var, eo3)) > 0) {
-					if(isComparison() && CHILD(0) != x_var) {
-						CHILD(0) = x_var;
-						CHILD(1) = x_value;
+					if(isNumber()) {
+						set(x_var, true);
+						transform(STRUCT_COMPARISON, x_value);
+						setComparisonType(mbak.comparisonType());
 					} else {
 						if(isComparison()) transform(mbak.comparisonType() == COMPARISON_NOT_EQUALS ? STRUCT_LOGICAL_AND : STRUCT_LOGICAL_OR);
-						MathStructure mnew(x_var);
-						mnew.transform(STRUCT_COMPARISON, x_value);
-						mnew.setComparisonType(mbak.comparisonType());
-						addChild(mnew);
+						MathStructure *mnew = new MathStructure(x_var);
+						mnew->transform(STRUCT_COMPARISON, x_value);
+						mnew->setComparisonType(mbak.comparisonType());
+						addChild_nocopy(mnew);
 					}
 				
 					MathStructure mdiv(x_var);
@@ -15968,6 +15971,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				if(ret < 0) {
 					set(mbak);
 				} else {
+					if(!x_var.representsReal()) CALCULATOR->error(false, "Not all complex roots where calculated for %s.", mbak.print().c_str(), NULL);
 					setApproximate(true);
 					return true;
 				}
@@ -16638,15 +16642,19 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						if(!b_even && !CHILD(0)[1].representsOdd()) return false;
 						bool b_real = CHILD(0)[0].representsReal(true);
 						bool b_complex = !b_real && CHILD(0)[0].representsComplex(true);
+						bool warn_complex = false;
 						bool check_complex = false;
-						if(!b_real && (!b_even || !CHILD(0)[1].isNumber() || !CHILD(0)[1].number().isTwo())) {
-							if(b_complex) return false;
-							check_complex = true;
+						if(!b_real && (!CHILD(0)[1].isNumber() || !CHILD(0)[1].number().isTwo())) {
+							if(b_complex) {
+								warn_complex = true;
+							} else {
+								check_complex = true;
+							}
 						}
 						if(b_even) {
 							if(!CHILD(1).representsNonNegative(true)) {
-								if((ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) || !b_real) return false;
-								if(CHILD(1).representsNegative()) {
+								if((ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) || (!b_real && !CHILD(1).representsComplex(true))) return false;
+								if(CHILD(1).representsNegative(true) || (b_real && CHILD(1).representsComplex(true))) {
 									if(ct_comp == COMPARISON_EQUALS) {
 										clear(true);
 									} else if(ct_comp == COMPARISON_NOT_EQUALS) {
@@ -16677,29 +16685,31 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 						if(check_complex) {
 							if(!isComparison() || CHILD(0) != x_var) {
-								set_nocopy(mbak);
-								return false;
+								warn_complex = true;
 							}
 							MathStructure mtest(mbak[0][0]);
-							mtest.replace(x_var, CHILD(1));
-							if(mtest.representsReal(true)) return true;
-							if(mtest.representsComplex(true)) {
-								set_nocopy(mbak);
-								return false;
+							if(!warn_complex && check_complex) {
+								mtest.replace(x_var, CHILD(1));
+								if(mtest.representsReal(true)) check_complex = false;
+								if(mtest.representsComplex(true)) {
+									warn_complex = true;
+								}
 							}
-							CALCULATOR->beginTemporaryStopMessages();
-							EvaluationOptions eo3 = eo;
-							eo3.approximation = APPROXIMATION_APPROXIMATE;
-							mtest.eval(eo3);
-							if(CALCULATOR->endTemporaryStopMessages() || !mtest.representsReal(true)) {
-								set_nocopy(mbak);
-								return false;
+							if(!warn_complex && check_complex) {
+								CALCULATOR->beginTemporaryStopMessages();
+								EvaluationOptions eo3 = eo;
+								eo3.approximation = APPROXIMATION_APPROXIMATE;
+								mtest.eval(eo3);
+								if(CALCULATOR->endTemporaryStopMessages() || !mtest.representsReal(true)) {
+									warn_complex = true;
+								}
 							}
 						}
+						if(warn_complex) CALCULATOR->error(false, "Only one or two of the roots where calculated for %s.", mbak.print().c_str(), NULL);
 					} else if(CHILD(0)[1].isNumber() && CHILD(0)[1].number().isRational()) {
 						MathStructure *mposcheck = NULL;
 						if(!CHILD(1).representsNonNegative(true)) {
-							if((ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) || !CHILD(0)[0].representsReal(true)) return false;
+							if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) return false;
 							if(CHILD(1).representsNegative(true)) {
 								if(ct_comp == COMPARISON_EQUALS) {
 									clear(true);
@@ -16708,9 +16718,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								}
 								return true;
 							}
-							mposcheck = new MathStructure(CHILD(1));
-							mposcheck->add(m_zero, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LESS : OPERATION_EQUALS_GREATER);
-							mposcheck->isolate_x_sub(eo, eo2, x_var);
+							if(!CHILD(1).representsComplex(true)) {
+								if(!CHILD(1).representsReal(true)) return false;
+								mposcheck = new MathStructure(CHILD(1));
+								mposcheck->add(m_zero, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LESS : OPERATION_EQUALS_GREATER);
+								mposcheck->isolate_x_sub(eo, eo2, x_var);
+							}
 						}
 						CHILD(0)[1].number().recip();
 						CHILD(1).calculateRaise(CHILD(0)[1], eo);

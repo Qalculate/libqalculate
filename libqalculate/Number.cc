@@ -1986,6 +1986,20 @@ bool Number::raise(const Number &o, bool try_exact, bool use_real_root) {
 			return true;
 		}
 		if(hasRealPart() || !o.isInteger()) {
+			if(try_exact && !isFloatingPoint() && !i_value->isFloatingPoint() && o.isInteger() && o.isLessThan(100)) {
+				int i = o.intValue();
+				Number nr_init(*this);
+				while(i > 1) {
+					if(CALCULATOR->aborted()) return false;
+					if(!multiply(nr_init)) {
+						set(nr_init);
+						return false;
+					}
+					i--;
+				}
+				setPrecisionAndApproximateFrom(o);
+				return true;
+			}
 			Number nbase, nexp(*this);
 			nbase.e();
 			if(!nexp.ln() || !nexp.multiply(o) || !nbase.raise(nexp, false, false)) return false;
@@ -1993,7 +2007,9 @@ bool Number::raise(const Number &o, bool try_exact, bool use_real_root) {
 			return true;
 		}
 		if(!i_value->raise(o, try_exact, false)) return false;
-		i_value->negate();
+		Number ibneg(o);
+		if(!ibneg.iquo(2)) return false;
+		if(!ibneg.isEven() && !i_value->negate()) return false;
 		if(o.isEven()) {
 			set(*i_value, true, true);
 			clearImaginary();
