@@ -887,13 +887,15 @@ void list_defs(bool in_interactive, char list_type = 0) {
 		if(list_type == 'f') i_end = CALCULATOR->functions.size();
 		if(list_type == 'v') i_end = CALCULATOR->variables.size();
 		if(list_type == 'u') i_end = CALCULATOR->units.size();
+		if(list_type == 'c') i_end = CALCULATOR->units.size();
 		ExpressionItem *item = NULL;
 		string name_str, name_str2;
 		for(int i = 0; i < i_end; i++) {
 			if(list_type == 'f') item = CALCULATOR->functions[i];
 			if(list_type == 'v') item = CALCULATOR->variables[i];
 			if(list_type == 'u') item = CALCULATOR->units[i];
-			if(!item->isHidden() && item->isActive() && (list_type != 'u' || item->subtype() != SUBTYPE_COMPOSITE_UNIT)) {
+			if(list_type == 'c') item = CALCULATOR->units[i];
+			if((!item->isHidden() || list_type == 'c') && item->isActive() && (list_type != 'u' || (item->subtype() != SUBTYPE_COMPOSITE_UNIT && ((Unit*) item)->baseUnit() != CALCULATOR->u_euro)) && (list_type != 'c' || ((Unit*) item)->baseUnit() == CALCULATOR->u_euro)) {
 				const ExpressionName &ename1 = item->preferredInputName(false, false);
 				name_str = ename1.name;
 				size_t name_i = 1;
@@ -2080,9 +2082,10 @@ int main(int argc, char *argv[]) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
 			char list_type = 0;
-			if(EQUALS_IGNORECASE_AND_LOCAL(str, "functions", _("functions"))) list_type = 'f';
-			if(EQUALS_IGNORECASE_AND_LOCAL(str, "variables", _("variables"))) list_type = 'v';
-			if(EQUALS_IGNORECASE_AND_LOCAL(str, "units", _("units"))) list_type = 'u';
+			if(EQUALS_IGNORECASE_AND_LOCAL(str, "currencies", _("currencies"))) list_type = 'c';
+			else if(EQUALS_IGNORECASE_AND_LOCAL(str, "functions", _("functions"))) list_type = 'f';
+			else if(EQUALS_IGNORECASE_AND_LOCAL(str, "variables", _("variables"))) list_type = 'v';
+			else if(EQUALS_IGNORECASE_AND_LOCAL(str, "units", _("units"))) list_type = 'u';
 			list_defs(true, list_type);
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "info", _("info"))) {
@@ -2637,7 +2640,7 @@ int main(int argc, char *argv[]) {
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "list", _("list"))) {
 				puts("");
 				PUTS_UNICODE(_("Displays a list of all user-defined variables, functions and units."));
-				PUTS_UNICODE(_("Enter with argument 'functions', 'variables' or 'units' to show a list of all functions, variables or units."));
+				PUTS_UNICODE(_("Enter with argument 'currencies', 'functions', 'variables' or 'units' to show a list of all currencies, functions, variables or units."));
 				puts("");
 				PUTS_UNICODE(_("Example: list functions."));
 				puts("");

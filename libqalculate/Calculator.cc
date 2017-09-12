@@ -39,6 +39,7 @@
 #include <dirent.h>
 #include <queue>
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #ifdef HAVE_LIBCURL
 #	include <curl/curl.h>
@@ -9191,9 +9192,11 @@ bool Calculator::loadExchangeRates() {
 					rate = "1/" + rate;
 					u = getUnit(currency);
 					if(!u) {
-						addUnit(new AliasUnit(_("Currency"), currency, "", "", "", u_euro, rate, 1, "", false, true));
+						u = addUnit(new AliasUnit(_("Currency"), currency, "", "", "", u_euro, rate, 1, "", false, true));
+						if(u) u->setChanged(false);
 					} else if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
 						((AliasUnit*) u)->setExpression(rate);
+						u->setChanged(false);
 					}
 				}
 			}
@@ -9210,42 +9213,95 @@ bool Calculator::loadExchangeRates() {
 		}
 	}
 	xmlFreeDoc(doc);
-	if(!sdate.empty()) return true;
-	struct stat stats;
-	if(stat(filename.c_str(), &stats) == 0) {
-		if(exchange_rates_time >= stats.st_mtime) {
+	if(sdate.empty()) {
+		struct stat stats;
+		if(stat(filename.c_str(), &stats) == 0) {
+			if(exchange_rates_time >= stats.st_mtime) {
 #ifdef _WIN32
-			struct _utimbuf new_times;
+				struct _utimbuf new_times;
 #else
-			struct utimbuf new_times;
+				struct utimbuf new_times;
 #endif
-			struct tm *temptm = localtime(&exchange_rates_time);
-			if(temptm) {
-				struct tm extm = *temptm;
-				time_t time_now = time(NULL);
-				struct tm *newtm = localtime(&time_now);
-				if(newtm && newtm->tm_mday != extm.tm_mday) {
-					newtm->tm_hour = extm.tm_hour;
-					newtm->tm_min = extm.tm_min;
-					newtm->tm_sec = extm.tm_sec;
-					exchange_rates_time = mktime(newtm);
+				struct tm *temptm = localtime(&exchange_rates_time);
+				if(temptm) {
+					struct tm extm = *temptm;
+					time_t time_now = time(NULL);
+					struct tm *newtm = localtime(&time_now);
+					if(newtm && newtm->tm_mday != extm.tm_mday) {
+						newtm->tm_hour = extm.tm_hour;
+						newtm->tm_min = extm.tm_min;
+						newtm->tm_sec = extm.tm_sec;
+						exchange_rates_time = mktime(newtm);
+					} else {
+						time(&exchange_rates_time);
+					}
 				} else {
 					time(&exchange_rates_time);
 				}
-			} else {
-				time(&exchange_rates_time);
-			}
-			new_times.modtime = exchange_rates_time;
+				new_times.modtime = exchange_rates_time;
 #ifdef _WIN32
-			_utime(filename.c_str(), &new_times);
+				_utime(filename.c_str(), &new_times);
 #else
-			utime(filename.c_str(), &new_times);
+				utime(filename.c_str(), &new_times);
 #endif
-		} else {
-			exchange_rates_time = stats.st_mtime;
-			if(exchange_rates_time > exchange_rates_check_time) exchange_rates_check_time = exchange_rates_time;
+			} else {
+				exchange_rates_time = stats.st_mtime;
+				if(exchange_rates_time > exchange_rates_check_time) exchange_rates_check_time = exchange_rates_time;
+			}
 		}
 	}
+	Unit *u_usd = getUnit("USD");
+	if(!u_usd) return true;
+	filename = buildPath(getLocalDataDir(), "rates.json");
+	ifstream file(filename.c_str());
+	if(!file.is_open()) return true;
+	std::stringstream ssbuffer;
+	ssbuffer << file.rdbuf();
+	string sbuffer = ssbuffer.str();
+	file >> sbuffer;
+	string sname;
+	size_t i = sbuffer.find("\"currency_code\":");
+	while(i != string::npos) {
+		i += 16;
+		size_t i2 = sbuffer.find("\"", i);
+		if(i2 == string::npos) break;
+		size_t i3 = sbuffer.find("\"", i2 + 1);
+		if(i3 != string::npos && i3 - (i2 + 1) == 3) {
+			currency = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
+			u = getUnit(currency);
+			if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd)) {
+				i2 = sbuffer.find("\"rate\":", i3 + 1);
+				size_t i4 = sbuffer.find("}", i3 + 1);
+				if(i2 != string::npos && i2 < i4) {
+					i3 = sbuffer.find(",", i2 + 7);
+					rate = sbuffer.substr(i2 + 7, i3 - (i2 + 7));
+					rate = "1/" + rate;
+					if(!u) {
+						i2 = sbuffer.find("\"name\":\"", i3 + 1);
+						if(i2 != string::npos && i2 < i4) {
+							i3 = sbuffer.find("\"", i2 + 8);
+							if(i3 != string::npos) {
+								sname = sbuffer.substr(i2 + 8, i3 - (i2 + 8));
+								remove_blank_ends(sname);
+							}
+						} else {
+							sname = "";
+						}
+						u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
+						if(u) {
+							u->setHidden(true);
+							u->setChanged(false);
+						}
+					} else {
+						((AliasUnit*) u)->setExpression(rate);
+						u->setChanged(false);
+					}
+				}
+			}
+		}
+		i = sbuffer.find("\"currency_code\":", i);
+	}
+	file.close();
 	return true;
 }
 bool Calculator::hasGVFS() {
@@ -9304,13 +9360,13 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	}
 #endif
 	res = curl_easy_perform(curl);
-	curl_easy_cleanup(curl);
-	curl_global_cleanup();
-	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from ECB: %s"), error_buffer, NULL); return false;}
-	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from ECB: %s"), "Document empty", NULL); return false;}
+	
+	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from ECB: %s"), error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
+	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from ECB: %s"), "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
 	ofstream file(getExchangeRatesFileName().c_str(), ios::out | ios::trunc | ios::binary);
 	if(!file.is_open()) {
 		error(true, _("Failed to download exchange rates from ECB: %s"), strerror(errno), NULL);
+		curl_easy_cleanup(curl); curl_global_cleanup(); 
 		return false;
 	}
 	file << sbuffer;
@@ -9328,6 +9384,28 @@ bool Calculator::fetchExchangeRates(int timeout) {
 		utime(getExchangeRatesFileName().c_str(), &new_times);
 #endif
 	}
+	
+	sbuffer = "";
+	curl_easy_setopt(curl, CURLOPT_URL, "http://www.mycurrency.net/service/rates");
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
+	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+	res = curl_easy_perform(curl);
+	
+	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from mycurrency.net: %s"), error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
+	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from mycurrency.net: %s"), "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
+	ofstream file2(buildPath(getLocalDataDir(), "rates.json").c_str(), ios::out | ios::trunc | ios::binary);
+	if(!file2.is_open()) {
+		error(true, _("Failed to download exchange rates from mycurrency.net: %s"), strerror(errno), NULL);
+		curl_easy_cleanup(curl); curl_global_cleanup(); 
+		return false;
+	}
+	file2 << sbuffer;
+	file2.close();
+	
+	curl_easy_cleanup(curl); curl_global_cleanup(); 
+	
 	return true;
 #else
 	return false;
