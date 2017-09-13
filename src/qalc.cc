@@ -1145,7 +1145,7 @@ int main(int argc, char *argv[]) {
 		bool b = true;
 		if(load_units && !CALCULATOR->loadGlobalPrefixes()) b = false;
 		if(load_units && !CALCULATOR->loadGlobalUnits()) b = false;
-		else if(load_currencies && !CALCULATOR->loadGlobalCurrencies()) b = false;
+		else if(!load_units && load_currencies && !CALCULATOR->loadGlobalCurrencies()) b = false;
 		if(load_functions && !CALCULATOR->loadGlobalFunctions()) b = false;
 		if(load_datasets && !CALCULATOR->loadGlobalDataSets()) b = false;
 		if(load_variables && !CALCULATOR->loadGlobalVariables()) b = false;

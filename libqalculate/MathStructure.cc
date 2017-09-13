@@ -15476,10 +15476,11 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 			return 1;
 		}
 	}
+	Number nr;
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(mstruct[i] != x_var) {
 			switch(mstruct[i].type()) {
-				case STRUCT_NUMBER: {break;}
+				case STRUCT_NUMBER: {nr = mstruct[i].number(); break;}
 				case STRUCT_MULTIPLICATION: {
 					if(mstruct[i].size() == 2 && mstruct[i][0].isNumber() && (mstruct[i][1] == x_var || (mstruct[i][1].isPower() && mstruct[i][1][0] == x_var && mstruct[i][1][1].isNumber() && mstruct[i][1][1].number().isInteger() && mstruct[i][1][1].number().isPositive()))) {
 						break;
@@ -15507,13 +15508,15 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 	nr_target_low -= nr_target_high;
 	nr_target_high++;
 	MathStructure mguess(2, 1, 0);
-	if(mstruct.isAddition() && mstruct[0].isNumber()) {
-		mguess = mstruct[0];
-		Number ndeg(mstruct.degree(x_var));
-		ndeg.recip();
-		mguess.number().raise(ndeg);
+	Number ndeg(mstruct.degree(x_var));
+	bool overflow = false;
+	int ideg = ndeg.intValue(&overflow);
+	if(overflow || ideg > 100) return -1;
+	if(!nr.isZero()) {
+		if(nr.isNegative()) nr.negate();
+		if(nr.root(ndeg)) mguess = nr;
 	}
-	for(int i = 0; i < 100 + PRECISION; i++) {
+	for(int i = 0; i < 100 + PRECISION + ideg * 2; i++) {
 		if(CALCULATOR->aborted()) return -1;
 		MathStructure mtest(minit);
 		mtest.replace(x_var, mguess);
@@ -15805,20 +15808,57 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			}
 			MathStructure mbase;
 			b = true;
+			Number nr_root;
+			bool b_f_root = false;
 			for(size_t i = 0; i < CHILD(0).size(); i++) {
 				if(!mbase.isZero() && CHILD(0)[i] == mbase) {
-				} else if(CHILD(0)[i].isPower() && CHILD(0)[i].isNumber() && CHILD(0)[i].number().isPositive()) {
-					if(mbase.isZero()) mbase = CHILD(0)[i][0];
-					else if(mbase != CHILD(0)[i][0]) {b = false; break;}
+				} else if(CHILD(0)[i].isPower() && CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().isPositive() && CHILD(0)[i][1].number().isRational()) {
+					if(CHILD(0)[i][0].isFunction() && CHILD(0)[i][0].function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0)[i][0]) && CHILD(0)[i][0][0].representsReal(true) && CHILD(0)[i][0][1].number().isOdd()) {
+						if(mbase.isZero()) mbase = CHILD(0)[i][0][0];
+						else if(mbase != CHILD(0)[i][0][0]) {b = false; break;}
+						if(!nr_root.isZero()) {
+							if(!b_f_root) {b = false; break;}
+							nr_root.lcm(CHILD(0)[i][0][1].number());
+						} else {
+							nr_root = CHILD(0)[i][0][1].number();
+						}
+						b_f_root = true;
+					} else {
+						if(mbase.isZero()) mbase = CHILD(0)[i][0];
+						else if(mbase != CHILD(0)[i][0]) {b = false; break;}
+						if(!CHILD(0)[i][1].number().isInteger()) {
+							if(b_f_root) {b = false; break;}
+							if(!nr_root.isZero()) {
+								nr_root.lcm(CHILD(0)[i][1].number().denominator());
+							} else {
+								nr_root = CHILD(0)[i][1].number().denominator();
+							}
+						}
+					}
 				} else if(CHILD(0)[i].isMultiplication()) {
 					for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
 						if(!mbase.isZero() && CHILD(0)[i][i2] == mbase) {
-						} else if(CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2].isNumber() && CHILD(0)[i][i2].number().isPositive()) {
+						} else if(CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().isPositive() && CHILD(0)[i][i2][1].number().isRational()) {
 							if(mbase.isZero()) mbase = CHILD(0)[i][i2][0];
 							else if(mbase != CHILD(0)[i][i2][0]) {b = false; break;}
+							if(!CHILD(0)[i][i2][1].number().isInteger()) {
+								if(b_f_root) {b = false; break;}
+								if(!nr_root.isZero()) {
+									nr_root.lcm(CHILD(0)[i][i2][1].number().denominator());
+								} else {
+									nr_root = CHILD(0)[i][i2][1].number().denominator();
+								}
+							}
 						} else if(CHILD(0)[i][i2].isFunction() && CHILD(0)[i][i2].function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0)[i][i2]) && CHILD(0)[i][i2][0].representsReal(true) && CHILD(0)[i][i2][1].number().isOdd()) {
 							if(mbase.isZero()) mbase = CHILD(0)[i][i2][0];
 							else if(mbase != CHILD(0)[i][i2][0]) {b = false; break;}
+							if(!nr_root.isZero()) {
+								if(!b_f_root) {b = false; break;}
+								nr_root.lcm(CHILD(0)[i][i2][1].number());
+							} else {
+								nr_root = CHILD(0)[i][i2][1].number();
+							}
+							b_f_root = true;
 						} else if(CHILD(0)[i][i2].isNumber() && !CHILD(0)[i][i2].number().isZero()) {
 						} else if(mbase.isZero()) {
 							mbase = CHILD(0)[i][i2];
@@ -15830,37 +15870,106 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				} else if(CHILD(0)[i].isFunction() && CHILD(0)[i].function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0)[i]) && CHILD(0)[i][0].representsReal(true) && CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().isOdd()) {
 					if(mbase.isZero()) mbase = CHILD(0)[i][0];
 					else if(mbase != CHILD(0)[i][0]) {b = false; break;}
+					if(!nr_root.isZero()) {
+						if(!b_f_root) {b = false; break;}
+						nr_root.lcm(CHILD(0)[i][1].number());
+					} else {
+						nr_root = CHILD(0)[i][1].number();
+					}
+					b_f_root = true;
 				} else if(mbase.isZero()) {
 					mbase = CHILD(0)[i];
 				} else {
 					b = false; break;
 				}
 			}
-			if(b && !mbase.isZero()) {
+			if(b && !mbase.isZero() && nr_root.isLessThan(100)) {
 				if(CHILD(1).isZero()) {
 					CHILD(0) = mbase;
 					isolate_x_sub(eo, eo2, x_var);
 					return true;
 				} else {
-					if(mbase != x_var) {
-						UnknownVariable *var = new UnknownVariable("", "u");
+					MathStructure mvar(mbase);
+					if(!nr_root.isZero()) {
+						if(b_f_root) {
+							MathStructure mroot(nr_root);
+							mvar.set(CALCULATOR->f_root, &mbase, &mroot, NULL);
+						} else {
+							Number nr_pow(nr_root);
+							nr_pow.recip();
+							mvar.raise(nr_pow);
+						}
+					}
+					UnknownVariable *var = NULL;
+					if(mvar != x_var) {
+						var = new UnknownVariable("", "u");
 						Assumptions *ass = new Assumptions();
-						if(mbase.representsPositive(true)) ass->setSign(ASSUMPTION_SIGN_POSITIVE);
-						else if(mbase.representsNegative(true)) ass->setSign(ASSUMPTION_SIGN_NEGATIVE);
-						else if(mbase.representsNonPositive(true)) ass->setSign(ASSUMPTION_SIGN_NONPOSITIVE);
-						else if(mbase.representsNonNegative(true)) ass->setSign(ASSUMPTION_SIGN_NONNEGATIVE);
-						else if(mbase.representsNonZero(true)) ass->setSign(ASSUMPTION_SIGN_NONZERO);
-						if(mbase.representsInteger(true)) ass->setType(ASSUMPTION_TYPE_INTEGER);
-						else if(mbase.representsRational(true)) ass->setType(ASSUMPTION_TYPE_RATIONAL);
-						else if(mbase.representsReal(true)) ass->setType(ASSUMPTION_TYPE_REAL);
-						else if(mbase.representsNumber(true)) ass->setType(ASSUMPTION_TYPE_NUMBER);
-						else if(mbase.representsComplex(true)) ass->setType(ASSUMPTION_TYPE_COMPLEX);
-						else if(mbase.representsNonMatrix()) ass->setType(ASSUMPTION_TYPE_NONMATRIX);
+						if(mvar.representsPositive(true)) ass->setSign(ASSUMPTION_SIGN_POSITIVE);
+						else if(mvar.representsNegative(true)) ass->setSign(ASSUMPTION_SIGN_NEGATIVE);
+						else if(mvar.representsNonPositive(true)) ass->setSign(ASSUMPTION_SIGN_NONPOSITIVE);
+						else if(mvar.representsNonNegative(true)) ass->setSign(ASSUMPTION_SIGN_NONNEGATIVE);
+						else if(mvar.representsNonZero(true)) ass->setSign(ASSUMPTION_SIGN_NONZERO);
+						if(mvar.representsInteger(true)) ass->setType(ASSUMPTION_TYPE_INTEGER);
+						else if(mvar.representsRational(true)) ass->setType(ASSUMPTION_TYPE_RATIONAL);
+						else if(mvar.representsReal(true)) ass->setType(ASSUMPTION_TYPE_REAL);
+						else if(mvar.representsNumber(true)) ass->setType(ASSUMPTION_TYPE_NUMBER);
+						else if(mvar.representsComplex(true)) ass->setType(ASSUMPTION_TYPE_COMPLEX);
+						else if(mvar.representsNonMatrix()) ass->setType(ASSUMPTION_TYPE_NONMATRIX);
 						var->setAssumptions(ass);
+					}
+					if(!nr_root.isZero()) {
+						for(size_t i = 0; i < CHILD(0).size(); i++) {
+							if(CHILD(0)[i] == mbase) {
+								CHILD(0)[i] = var;
+								CHILD(0)[i].raise(nr_root);
+							} else if(CHILD(0)[i].isPower() && CHILD(0)[i][1].isNumber()) {
+								if(CHILD(0)[i][0].isFunction() && CHILD(0)[i][0].function() == CALCULATOR->f_root && CHILD(0)[i][0] != mbase) {
+									CHILD(0)[i][1].number().multiply(nr_root);
+									CHILD(0)[i][1].number().divide(CHILD(0)[i][0][1].number());
+									CHILD(0)[i][0] = var;
+								} else if(CHILD(0)[i][0] == mbase) {
+									CHILD(0)[i][1].number().multiply(nr_root);
+									CHILD(0)[i][0] = var;
+								} else {
+									// should not happen
+								}
+							} else if(CHILD(0)[i].isMultiplication()) {
+								for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+									if(CHILD(0)[i][i2] == mbase) {
+										CHILD(0)[i][i2] = var;
+										CHILD(0)[i][i2].raise(nr_root);
+									} else if(CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][0] == mbase) {
+										CHILD(0)[i][i2][1].number().multiply(nr_root);
+										CHILD(0)[i][i2][0] = var;
+									} else if(CHILD(0)[i][i2].isFunction() && CHILD(0)[i][i2].function() == CALCULATOR->f_root) {
+										CHILD(0)[i][i2][1].number().divide(nr_root);
+										CHILD(0)[i][i2][0] = var;
+										CHILD(0)[i][i2].setType(STRUCT_POWER);
+									} else if(CHILD(0)[i][i2].isNumber() && !CHILD(0)[i][i2].number().isZero()) {
+									} else {
+										// should not happen
+									}
+								}
+							} else if(CHILD(0)[i].isFunction() && CHILD(0)[i].function() == CALCULATOR->f_root) {
+								CHILD(0)[i][1].number().divide(nr_root);
+								CHILD(0)[i][0] = var;
+								CHILD(0)[i].setType(STRUCT_POWER);
+							} else {
+								// should not happen
+							}
+						}
 						MathStructure u_var(var);
-						replace(mbase, u_var);
+						replace(mvar, u_var);
 						b = isolate_x_sub(eo, eo2, u_var);
-						replace(u_var, mbase);
+						replace(u_var, mvar);
+						var->unref();
+						if(b) isolate_x(eo, eo2, x_var);
+						return true;
+					} else if(mvar != x_var) {
+						MathStructure u_var(var);
+						replace(mvar, u_var);
+						b = isolate_x_sub(eo, eo2, u_var);
+						replace(u_var, mvar);
 						var->unref();
 						if(b) isolate_x(eo, eo2, x_var);
 						return b;

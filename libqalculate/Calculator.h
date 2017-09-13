@@ -1010,11 +1010,13 @@ class Calculator {
 	* @returns name of local exchange rates file.
 	*/
 	string getExchangeRatesFileName();
+	string getExchangeRatesFileName2();
 	/** Url of the exchange rates file on the Internet.
 	*
 	* @returns Url of exchange rates file.
 	*/
 	string getExchangeRatesUrl();
+	string getExchangeRatesUrl2();
 	/** Modification time of the exchange rates file.
 	*
 	* @returns Returns exchange rates modification time.

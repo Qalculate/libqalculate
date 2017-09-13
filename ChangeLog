@@ -1,3 +1,12 @@
+2017-09-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Additional exchange rates source (mycurrency.net with over 100 additional currencies)
+	* Enhanced equation solving
+
+2017-09-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* abs() and sgn() enhancements
+
 2017-09-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* cbrt() and root() now always returns real root
@@ -16,7 +25,7 @@
 
 	* Fix inconsistent parsing - x^22x=x^22*x, x^2x=x^(2*x) (now x^2x=x^2*x)
 	* Do not round exact integers in EXP_NONE/"Simple" mode (its only annoying)
-	
+
 2017-08-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Remove duplicate history entries in qalc

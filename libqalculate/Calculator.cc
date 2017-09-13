@@ -7568,7 +7568,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						u->setChanged(false);
 					}
 					done_something = true;
-				} else if(type == "alias") {	
+				} else if(type == "alias") {
 					if(VERSION_BEFORE(0, 6, 3)) {
 						XML_GET_STRING_FROM_PROP(cur, "name", name)
 					} else {
@@ -7579,6 +7579,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					child = cur->xmlChildrenNode;
 					singular = ""; best_singular = false; next_best_singular = false;
 					plural = ""; best_plural = false; next_best_plural = false;
+					bool b_currency = false;
 					use_with_prefixes_set = false;
 					usystem = "";
 					prec = -1;
@@ -7597,6 +7598,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
 									XML_GET_STRING_FROM_TEXT(child2, base);
 									u = getUnit(base);
+									b_currency = (!is_user_defs && u && u == u_euro);
 									if(!u) {
 										u = getCompositeUnit(base);
 									}
@@ -7675,6 +7677,10 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						} else {
 							ITEM_SET_NAME_2
 							ITEM_SET_NAME_3
+						}
+						if(b_currency && !au->referenceName().empty()) {
+							u = getUnit(au->referenceName());
+							if(u && u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->baseUnit() == u_euro) u->destroy();
 						}
 						if(au->countNames() == 0) {
 							au->destroy();
@@ -9252,13 +9258,24 @@ bool Calculator::loadExchangeRates() {
 	}
 	Unit *u_usd = getUnit("USD");
 	if(!u_usd) return true;
+	string sbuffer;
 	filename = buildPath(getLocalDataDir(), "rates.json");
 	ifstream file(filename.c_str());
-	if(!file.is_open()) return true;
-	std::stringstream ssbuffer;
-	ssbuffer << file.rdbuf();
-	string sbuffer = ssbuffer.str();
-	file >> sbuffer;
+	if(file.is_open()) {
+		std::stringstream ssbuffer;
+		ssbuffer << file.rdbuf();
+		sbuffer = ssbuffer.str();
+	}
+	if(sbuffer.empty()) {
+		if(file.is_open()) file.close();
+		file.clear();
+		filename = buildPath(getGlobalDefinitionsDir(), "rates.json");
+		file.open(filename.c_str());
+		if(!file.is_open()) return true;
+		std::stringstream ssbuffer;
+		ssbuffer << file.rdbuf();
+		sbuffer = ssbuffer.str();
+	}
 	string sname;
 	size_t i = sbuffer.find("\"currency_code\":");
 	while(i != string::npos) {
@@ -9268,33 +9285,35 @@ bool Calculator::loadExchangeRates() {
 		size_t i3 = sbuffer.find("\"", i2 + 1);
 		if(i3 != string::npos && i3 - (i2 + 1) == 3) {
 			currency = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
-			u = getUnit(currency);
-			if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd)) {
-				i2 = sbuffer.find("\"rate\":", i3 + 1);
-				size_t i4 = sbuffer.find("}", i3 + 1);
-				if(i2 != string::npos && i2 < i4) {
-					i3 = sbuffer.find(",", i2 + 7);
-					rate = sbuffer.substr(i2 + 7, i3 - (i2 + 7));
-					rate = "1/" + rate;
-					if(!u) {
-						i2 = sbuffer.find("\"name\":\"", i3 + 1);
-						if(i2 != string::npos && i2 < i4) {
-							i3 = sbuffer.find("\"", i2 + 8);
-							if(i3 != string::npos) {
-								sname = sbuffer.substr(i2 + 8, i3 - (i2 + 8));
-								remove_blank_ends(sname);
+			if(currency.length() == 3 && currency[0] >= 'A' && currency[0] <= 'Z') {
+				u = getUnit(currency);
+				if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd)) {
+					i2 = sbuffer.find("\"rate\":", i3 + 1);
+					size_t i4 = sbuffer.find("}", i3 + 1);
+					if(i2 != string::npos && i2 < i4) {
+						i3 = sbuffer.find(",", i2 + 7);
+						rate = sbuffer.substr(i2 + 7, i3 - (i2 + 7));
+						rate = "1/" + rate;
+						if(!u) {
+							i2 = sbuffer.find("\"name\":\"", i3 + 1);
+							if(i2 != string::npos && i2 < i4) {
+								i3 = sbuffer.find("\"", i2 + 8);
+								if(i3 != string::npos) {
+									sname = sbuffer.substr(i2 + 8, i3 - (i2 + 8));
+									remove_blank_ends(sname);
+								}
+							} else {
+								sname = "";
+							}
+							u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
+							if(u) {
+								u->setHidden(true);
+								u->setChanged(false);
 							}
 						} else {
-							sname = "";
-						}
-						u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
-						if(u) {
-							u->setHidden(true);
+							((AliasUnit*) u)->setExpression(rate);
 							u->setChanged(false);
 						}
-					} else {
-						((AliasUnit*) u)->setExpression(rate);
-						u->setChanged(false);
 					}
 				}
 			}
@@ -9320,11 +9339,17 @@ bool Calculator::canFetch() {
 string Calculator::getExchangeRatesFileName() {
 	return buildPath(getLocalDataDir(), "eurofxref-daily.xml");
 }
+string Calculator::getExchangeRatesFileName2() {
+	return buildPath(getLocalDataDir(), "rates.json");
+}
 time_t Calculator::getExchangeRatesTime() {
 	return exchange_rates_time;
 }
 string Calculator::getExchangeRatesUrl() {
 	return "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+}
+string Calculator::getExchangeRatesUrl2() {
+	return "http://www.mycurrency.net/service/rates";
 }
 bool Calculator::fetchExchangeRates(int timeout, string) {return fetchExchangeRates(timeout);}
 size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer) {
@@ -9386,7 +9411,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	}
 	
 	sbuffer = "";
-	curl_easy_setopt(curl, CURLOPT_URL, "http://www.mycurrency.net/service/rates");
+	curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl2().c_str());
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
@@ -9395,7 +9420,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	
 	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from mycurrency.net: %s"), error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
 	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from mycurrency.net: %s"), "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
-	ofstream file2(buildPath(getLocalDataDir(), "rates.json").c_str(), ios::out | ios::trunc | ios::binary);
+	ofstream file2(getExchangeRatesFileName2().c_str(), ios::out | ios::trunc | ios::binary);
 	if(!file2.is_open()) {
 		error(true, _("Failed to download exchange rates from mycurrency.net: %s"), strerror(errno), NULL);
 		curl_easy_cleanup(curl); curl_global_cleanup(); 
