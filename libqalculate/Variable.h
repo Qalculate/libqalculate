@@ -148,6 +148,8 @@ class Variable : public ExpressionItem {
 	virtual bool representsNonNegative(bool = false) {return false;}
 	virtual bool representsNonPositive(bool = false) {return false;}
 	virtual bool representsInteger(bool = false) {return false;}
+	virtual bool representsNonInteger(bool = false) {return false;}
+	virtual bool representsFraction(bool = false) {return false;}
 	virtual bool representsNumber(bool = false) {return false;}
 	virtual bool representsRational(bool = false) {return false;}
 	virtual bool representsReal(bool = false) {return false;}
@@ -309,6 +311,8 @@ class KnownVariable : public Variable {
 	virtual bool representsNonNegative(bool = false);
 	virtual bool representsNonPositive(bool = false);
 	virtual bool representsInteger(bool = false);
+	virtual bool representsNonInteger(bool = false);
+	virtual bool representsFraction(bool = false);
 	virtual bool representsNumber(bool = false);
 	virtual bool representsRational(bool = false);
 	virtual bool representsReal(bool = false);
@@ -358,6 +362,7 @@ class DynamicVariable : public KnownVariable {
 	virtual bool representsNonNegative(bool = false) {return true;}
 	virtual bool representsNonPositive(bool = false) {return false;}
 	virtual bool representsInteger(bool = false) {return false;}
+	virtual bool representsNonInteger(bool = false) {return true;}
 	virtual bool representsNumber(bool = false) {return true;}
 	virtual bool representsRational(bool = false) {return false;}
 	virtual bool representsReal(bool = false) {return true;}
@@ -381,7 +386,15 @@ DECLARE_BUILTIN_VARIABLE(EulerVariable)
 /// Dynamic variable for Catalan's constant
 DECLARE_BUILTIN_VARIABLE(CatalanVariable)
 /// Dynamic variable for current precision
-DECLARE_BUILTIN_VARIABLE(PrecisionVariable)
-
+class PrecisionVariable : public DynamicVariable {
+  private:
+	void calculate() const;
+  public: \
+	PrecisionVariable();
+	PrecisionVariable(const PrecisionVariable *variable) {set(variable);}
+	ExpressionItem *copy() const {return new PrecisionVariable(this);}
+	bool representsInteger(bool = false) {return true;}
+	bool representsNonInteger(bool = false) {return false;}
+};
 
 #endif

@@ -486,8 +486,10 @@ class MathStructure {
 		bool representsNonNegative(bool allow_units = false) const;
 		bool representsNonPositive(bool allow_units = false) const;
 		bool representsInteger(bool allow_units = false) const;
+		bool representsNonInteger(bool allow_units = false) const;
 		bool representsNumber(bool allow_units = false) const;
 		bool representsRational(bool allow_units = false) const;
+		bool representsFraction(bool allow_units = false) const;
 		bool representsReal(bool allow_units = false) const;
 		bool representsComplex(bool allow_units = false) const;
 		bool representsNonZero(bool allow_units = false) const;
