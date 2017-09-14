@@ -25,6 +25,11 @@
 #include <iconv.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sstream>
+#include <fstream>
+#ifdef HAVE_LIBCURL
+#	include <curl/curl.h>
+#endif
 #ifdef HAVE_ICU
 #	include <unicode/ucasemap.h>
 #endif
@@ -702,6 +707,90 @@ char *utf8_strdown(const char *str, int l) {
 	return NULL;
 #else
 	return NULL;
+#endif
+}
+
+extern size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer);
+int checkAvailableVersion(const char *version_id, const char *current_version, string *available_version, int timeout) {
+#ifdef HAVE_LIBCURL
+	string sbuffer;
+	char error_buffer[CURL_ERROR_SIZE];
+	CURL *curl;
+	CURLcode res;
+	long int file_time;
+	curl_global_init(CURL_GLOBAL_DEFAULT);
+	curl = curl_easy_init();
+	if(!curl) {return -1;}
+	curl_easy_setopt(curl, CURLOPT_URL, "https://qalculate.github.io/CURRENT_VERSIONS");
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
+	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+	curl_easy_setopt(curl, CURLOPT_FILETIME, &file_time);
+#ifdef WIN32
+	char exepath[MAX_PATH];
+	GetModuleFileName(NULL, exepath, MAX_PATH);
+	string datadir(exepath);
+	datadir.resize(datadir.find_last_of('\\'));
+	if(datadir.substr(datadir.length() - 4) != "\\bin" && datadir.substr(datadir.length() - 6) != "\\.libs") {
+		string cainfo = buildPath(datadir, "ssl", "certs", "ca-bundle.crt");
+		gsub("\\", "/", cainfo);
+		curl_easy_setopt(curl, CURLOPT_CAINFO, cainfo.c_str());
+	}
+#endif
+	res = curl_easy_perform(curl);
+	curl_easy_cleanup(curl);
+	curl_global_cleanup(); 
+	
+	if(res != CURLE_OK || sbuffer.empty()) {return -1;}
+		
+	size_t i = sbuffer.find(version_id);
+	if(i == string::npos) return -1;
+	size_t i2 = sbuffer.find('\n', i + strlen(version_id) + 1);
+	
+	string s_version;
+	if(i2 == string::npos) s_version = sbuffer.substr(i + strlen(version_id) + 1);
+	else s_version = sbuffer.substr(i + strlen(version_id) + 1, i2 - (i + strlen(version_id) + 1));
+	remove_blank_ends(s_version);
+	if(s_version.empty()) return -1;
+	if(available_version) *available_version = s_version;
+	
+	if(s_version != current_version) {
+		vector<int> version_parts_old, version_parts_new;
+		
+		string s_old_version = current_version;
+		while((i = s_old_version.find('.', 0)) != string::npos) {
+			version_parts_old.push_back(s2i(s_old_version.substr(0, i)));
+			s_old_version = s_old_version.substr(i + 1);
+		}
+		i = s_old_version.find_first_not_of("0123456789", 1);
+		if(i != string::npos) {
+			version_parts_old.push_back(s2i(s_old_version.substr(0, i)));
+			s_old_version = s_old_version.substr(i + 1);
+		}
+		version_parts_old.push_back(s2i(s_old_version));
+		
+		while((i = s_version.find('.', 0)) != string::npos) {
+			version_parts_new.push_back(s2i(s_version.substr(0, i)));
+			s_version = s_version.substr(i + 1);
+		}
+		i = s_version.find_first_not_of("0123456789", 1);
+		if(i != string::npos) {
+			version_parts_new.push_back(s2i(s_version.substr(0, i)));
+			s_version = s_version.substr(i + 1);
+		}
+		version_parts_new.push_back(s2i(s_version));
+		
+		for(i = 0; i < version_parts_new.size(); i++) {
+			if(i == version_parts_old.size() || version_parts_new[i] > version_parts_old[i]) return true;
+			else if(version_parts_new[i] < version_parts_old[i]) return false;
+		}
+		
+	}
+	
+	return 0;
+#else
+	return -1;
 #endif
 }
 

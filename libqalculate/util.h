@@ -105,6 +105,8 @@ bool makeDir(string dirpath);
 bool removeDir(string dirpath);
 bool move_file(const char *from_file, const char *to_file);
 
+int checkAvailableVersion(const char *version_id, const char *current_version, string *avaible_version = NULL, int timeout = 1);
+
 class Thread {
 public:
 	Thread();
