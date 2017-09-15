@@ -1151,6 +1151,14 @@ class QalculateDate {
 		QalculateDate(long int initialyear, int initialmonth, int initialday);
 		QalculateDate(long int initialtimestamp);
 		QalculateDate(string date_string);
+		bool operator > (const QalculateDate &date2) const;
+		bool operator < (const QalculateDate &date2) const;
+		bool operator >= (const QalculateDate &date2) const;
+		bool operator <= (const QalculateDate &date2) const;
+		bool operator != (const QalculateDate &date2) const;
+		bool operator == (const QalculateDate &date2) const;
+		bool isFutureDate() const;
+		bool isPastDate() const;
 		void setToCurrentDate();
 		bool set(long int newyear, int newmonth, int newday);
 		bool set(long int newtimestamp);

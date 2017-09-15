@@ -9969,6 +9969,38 @@ QalculateDate::QalculateDate(string date_string) : i_year(0), i_month(1), i_day(
 void QalculateDate::setToCurrentDate() {
 	set((long int) time(NULL));
 }
+bool QalculateDate::operator > (const QalculateDate &date2) const {
+	if(i_year != date2.year()) return i_year > date2.year();
+	if(i_month != date2.month()) return i_month > date2.month();
+	return i_day > date2.day();
+}
+bool QalculateDate::operator < (const QalculateDate &date2) const {
+	if(i_year != date2.year()) return i_year < date2.year();
+	if(i_month != date2.month()) return i_month < date2.month();
+	return i_day < date2.day();
+}
+bool QalculateDate::operator >= (const QalculateDate &date2) const {
+	return !(*this < date2);
+}
+bool QalculateDate::operator <= (const QalculateDate &date2) const {
+	return !(*this > date2);
+}
+bool QalculateDate::operator != (const QalculateDate &date2) const  {
+	return i_year != date2.year() || i_month != date2.month() || i_day > date2.day();
+}
+bool QalculateDate::operator == (const QalculateDate &date2) const {
+	return i_year == date2.year() && i_month == date2.month() && i_day == date2.day();
+}
+bool QalculateDate::isFutureDate() const {
+	QalculateDate current_date;
+	current_date.setToCurrentDate();
+	return *this > current_date;
+}
+bool QalculateDate::isPastDate() const {
+	QalculateDate current_date;
+	current_date.setToCurrentDate();
+	return *this < current_date;
+}
 bool QalculateDate::set(long int newyear, int newmonth, int newday) {
 	if(newmonth < 1 || newmonth > 12) return false;
 	if(newday < 1 || newday > daysPerMonth(newmonth, newyear)) return false;

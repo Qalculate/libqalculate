@@ -1,3 +1,11 @@
+2017-09-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Comparison functions for date class
+
+2017-09-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Version check function
+
 2017-09-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Additional exchange rates source (mycurrency.net with over 100 additional currencies)
