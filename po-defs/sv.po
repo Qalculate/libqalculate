@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-06 18:44+0200\n"
+"POT-Creation-Date: 2017-09-17 20:10+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -2379,7 +2379,8 @@ msgid ""
 "Returns the principal square root (for positive values the positive root is "
 "returned)."
 msgstr ""
-"Returnerar principalkvadratroten (för positiva värden returneras den positiva roten)."
+"Returnerar principalkvadratroten (för positiva värden returneras den "
+"positiva roten)."
 
 #: ../data/functions.xml.in.h:295
 msgid "Cube Root"
@@ -2390,12 +2391,8 @@ msgid "au:&#x221B;,r:cbrt"
 msgstr ""
 
 #: ../data/functions.xml.in.h:297
-msgid ""
-"Returns the third real root for real values, or the principal root for "
-"complex values."
-msgstr ""
-"Returnerar tredje gradens reella rot för reella värden och principalroten "
-"för komplexa värden."
+msgid "Returns the third real root."
+msgstr "Returnerar den tredje reella roten."
 
 #: ../data/functions.xml.in.h:298
 msgid "Nth root"
@@ -2407,11 +2404,11 @@ msgstr "rot"
 
 #: ../data/functions.xml.in.h:300
 msgid ""
-"For negative values, the root of odd degrees returns the real root, "
-"otherwise the principal root is returned."
+"Returns the real root. For negative values the degree must be odd. Complex "
+"values are not allowed."
 msgstr ""
-"För negativa värden och rötter av ojämn grad returneras den reella roten. "
-"I andra fall returneras principalroten."
+"Returnerar den reella roten. För negativa värden krävs en udda grad. Komplexa  "
+"värden är inte tillåtna."
 
 #: ../data/functions.xml.in.h:301 ../data/units.xml.in.h:61
 msgid "Degree"
@@ -7959,6 +7956,15 @@ msgstr ""
 #: ../data/variables.xml.in.h:172
 msgid "r:z"
 msgstr ""
+
+#~ msgid ""
+#~ "For negative values, the root of odd degrees returns the real root.&#10;"
+#~ "&#10;For even degrees and complex values the root that satisfies the "
+#~ "condition root(root(x,a),b)^c=root(x,a*b/c) is returned."
+#~ msgstr ""
+#~ "För negativa värden och rötter av ojämn grad returneras den reella roten."
+#~ "&#10;&#10;För jämna grader och komplexa värden returneras roten som "
+#~ "uppfyller villkoret root(root(x;a);b)^c=root(x;a*b/c)."
 
 #~ msgid "au:&#x222b;,r:integrate"
 #~ msgstr "au:&#x222b;,integrera"

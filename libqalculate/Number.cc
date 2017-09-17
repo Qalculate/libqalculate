@@ -2253,14 +2253,37 @@ bool Number::cbrt() {
 	return true;
 }
 bool Number::root(const Number &o) {
-	if(!o.isInteger() || !o.isPositive()) return false;
+	if(!o.isInteger() || !o.isPositive() || isComplex() || (o.isEven() && isNegative())) return false;
+	if(isOne() || o.isOne() || isZero()) return true;
 	if(o.isTwo()) return sqrt();
-	if(!isReal() || (isNegative() && o.isEven())) {
+	if(isInfinite()) {
 		Number o_inv(o);
-		o_inv.recip();
+		if(!o_inv.recip()) return false;
 		return raise(o_inv, true, false);
 	}
-	if(isOne() || o.isOne() || isZero() || isMinusOne()) return true;
+	/*if(o.isEven() && (!isReal() || isNegative())) {
+		Number o_odd_factor(o);
+		Number o_even_factor(1, 1, 0);
+		while(o_odd_factor.isEven() && !o_odd_factor.isTwo()) {
+			if(!o_odd_factor.multiply(nr_half) || !o_even_factor.multiply(2)) return false;
+			if(CALCULATOR->aborted()) return false;
+		}
+		if(!o_even_factor.recip()) return false;
+		Number nr_bak(*this);
+		if(!root(o_odd_factor)) return false;
+		if(!raise(o_even_factor)) {set(nr_bak); return false;}
+		return true;
+	}
+	if(!isReal()) {
+		if(!hasRealPart()) {
+			Number nr_o(o);
+			if(!nr_o.irem(4) || !i_value->root(o)) return false;
+			if(!nr_o.isOne()) i_value->negate();
+			return true;
+		}
+		return false;
+	}*/
+	if(isMinusOne()) return true;
 	if(!mpz_fits_ulong_p(mpq_numref(o.internalRational()))) {
 		Number o_inv(o);
 		o_inv.recip();
@@ -2280,6 +2303,39 @@ bool Number::root(const Number &o) {
 	if(!testFloatResult(false)) {
 		set(nr_bak);
 		return false;
+	}
+	return true;
+}
+bool Number::allroots(const Number &o, vector<Number> &roots) {
+	if(!o.isInteger() || !o.isPositive()) return false;
+	if(isOne() || o.isOne() || isZero()) {
+		roots.push_back(*this);
+		return true;
+	}
+	if(o.isTwo()) {
+		Number nr(*this);
+		if(!nr.sqrt()) return false;
+		roots.push_back(nr);
+		if(!nr.negate()) return false;
+		roots.push_back(nr);
+		return true;
+	}
+	if(isInfinite()) return false;
+	Number o_inv(o);
+	if(!o_inv.recip()) return false;
+	Number nr_arg;
+	nr_arg.set(*this, false, true);
+	if(!nr_arg.atan2(*i_value)) return false;
+	Number nr_pi2;
+	nr_pi2.pi();
+	nr_pi2 *= 2;
+	Number nr_i;
+	while(nr_i.isLessThan(o)) {
+		if(CALCULATOR->aborted()) return false;
+		Number nr(nr_pi2);
+		if(!nr.multiply(nr_i) || !nr.add(nr_arg) || !nr.multiply(nr_one_i) || !nr.multiply(o_inv) || !nr.exp()) return false;
+		roots.push_back(nr);
+		nr_i--;
 	}
 	return true;
 }
@@ -3271,7 +3327,14 @@ bool Number::atan() {
 bool Number::atan2(const Number &o) {
 	if(isInfinite() || o.isInfinite()) return false;
 	if(isComplex() || o.isComplex()) return false;
-	if(isZero() && o.isZero()) return false;
+	if(isZero()) {
+		if(o.isZero()) return false;
+		if(o.isPositive()) {
+			clear();
+			setPrecisionAndApproximateFrom(o);
+			return true;
+		}
+	}
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
@@ -3288,6 +3351,34 @@ bool Number::atan2(const Number &o) {
 		set(nr_bak);
 		return false;
 	}
+	return true;
+}
+bool Number::arg() {
+	if(isInfinite()) return false;
+	if(isZero()) return false;
+	if(!isComplex()) {
+		if(isNegative()) {
+			pi();
+		} else {
+			clear(true);
+		}
+		return true;
+	}
+	if(!hasRealPart()) {
+		bool b_neg = i_value->isNegative();
+		pi();
+		multiply(nr_half);
+		if(b_neg) negate();
+		return true;
+	}
+	Number *i_value2 = i_value;
+	i_value = NULL;
+	if(!i_value2->atan2(*this)) {
+		i_value = i_value2;
+		return false;
+	}
+	set(*i_value2);
+	delete i_value2;
 	return true;
 }
 bool Number::tanh() {

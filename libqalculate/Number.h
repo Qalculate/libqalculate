@@ -334,6 +334,7 @@ class Number {
 		bool sqrt();
 		bool cbrt();
 		bool root(const Number &o);
+		bool allroots(const Number &o, vector<Number> &roots);
 		/** Multiply the number with a power of ten (x*10^o).
 		*
 		* @param o Number to raise 10 by.
@@ -434,6 +435,7 @@ class Number {
 		bool tan();
 		bool atan();
 		bool atan2(const Number &o);
+		bool arg();
 		bool tanh();
 		bool atanh();
 		bool ln();

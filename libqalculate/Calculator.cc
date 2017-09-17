@@ -1365,7 +1365,7 @@ void Calculator::addBuiltinFunctions() {
 
 	f_re = addFunction(new ReFunction());
 	f_im = addFunction(new ImFunction());
-	//f_arg = addFunction(new ArgFunction());
+	f_arg = addFunction(new ArgFunction());
 	f_numerator = addFunction(new NumeratorFunction());
 	f_denominator = addFunction(new DenominatorFunction());	
 
@@ -9386,11 +9386,11 @@ bool Calculator::fetchExchangeRates(int timeout) {
 #endif
 	res = curl_easy_perform(curl);
 	
-	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from ECB: %s"), error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
-	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from ECB: %s"), "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
+	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "ECB", error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
+	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "ECB", "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
 	ofstream file(getExchangeRatesFileName().c_str(), ios::out | ios::trunc | ios::binary);
 	if(!file.is_open()) {
-		error(true, _("Failed to download exchange rates from ECB: %s"), strerror(errno), NULL);
+		error(true, _("Failed to download exchange rates from %s: %s."), "ECB", strerror(errno), NULL);
 		curl_easy_cleanup(curl); curl_global_cleanup(); 
 		return false;
 	}
@@ -9418,11 +9418,11 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
 	res = curl_easy_perform(curl);
 	
-	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from mycurrency.net: %s"), error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
-	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from mycurrency.net: %s"), "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
+	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
+	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
 	ofstream file2(getExchangeRatesFileName2().c_str(), ios::out | ios::trunc | ios::binary);
 	if(!file2.is_open()) {
-		error(true, _("Failed to download exchange rates from mycurrency.net: %s"), strerror(errno), NULL);
+		error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", strerror(errno), NULL);
 		curl_easy_cleanup(curl); curl_global_cleanup(); 
 		return false;
 	}

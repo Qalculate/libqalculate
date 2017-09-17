@@ -3338,7 +3338,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			numberUpdated();
 			return 1;
 		}
-		if(mstruct.number().isRational()) {
+		if(mstruct.number().isRational() && !mstruct.isInteger()) {
 			Number exp_num(mstruct.number().numerator());
 			if(!exp_num.isOne() && !exp_num.isMinusOne() && o_number.isPositive() && test_if_numerator_not_too_large(o_number, exp_num)) {
 				// Try raise by exponent numerator if not very large
@@ -3351,71 +3351,80 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					calculateRaise(nr, eo, mparent, index_this);
 					return 1;
 				}
-			} else if(eo.split_squares && o_number.isInteger() && mstruct.number().denominatorIsTwo()) {
-				nr.set(1, 1, 0);
-				bool b = true, overflow;
-				long int val;
-				while(b) {
-					if(CALCULATOR->aborted()) break;
-					b = false;
-					overflow = false;
-					val = o_number.lintValue(&overflow);
-					if(overflow) {
-						mpz_srcptr cval = mpq_numref(o_number.internalRational());
-						for(size_t i = 0; i < NR_OF_SQUARE_PRIMES; i++) {
-							if(CALCULATOR->aborted()) break;
-							if(mpz_divisible_ui_p(cval, (unsigned long int) SQUARE_PRIMES[i])) {
-								nr *= PRIMES[i];
-								o_number /= SQUARE_PRIMES[i];
-								b = true;
-								break;
+			}
+			if(o_number.isPositive()) {
+				Number nr_root(mstruct.number().denominator());
+				if(eo.split_squares && o_number.isInteger() && nr_root.isLessThanOrEqualTo(LARGEST_RAISED_PRIME_EXPONENT)) {
+					int root = nr_root.intValue();
+					nr.set(1, 1, 0);
+					bool b = true, overflow;
+					long int val;
+					while(b) {
+						if(CALCULATOR->aborted()) break;
+						b = false;
+						overflow = false;
+						val = o_number.lintValue(&overflow);
+						if(overflow) {
+							mpz_srcptr cval = mpq_numref(o_number.internalRational());
+							for(size_t i = 0; root == 2 ? (i < NR_OF_SQUARE_PRIMES) : (RAISED_PRIMES[root - 3][i] != 0); i++) {
+								if(CALCULATOR->aborted()) break;
+								if(mpz_divisible_ui_p(cval, (unsigned long int) (root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]))) {
+									nr *= PRIMES[i];
+									o_number /= (root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]);
+									b = true;
+									break;
+								}
 							}
-						}
-					} else {
-						for(size_t i = 0; i < NR_OF_SQUARE_PRIMES; i++) {
-							if(CALCULATOR->aborted()) break;
-							if(SQUARE_PRIMES[i] > val) {
-								break;
-							} else if(val % SQUARE_PRIMES[i] == 0) {
-								nr *= PRIMES[i];
-								o_number /= SQUARE_PRIMES[i];
-								b = true;
-								break;
+						} else {
+							for(size_t i = 0; root == 2 ? (i < NR_OF_SQUARE_PRIMES) : (RAISED_PRIMES[root - 3][i] != 0); i++) {
+								if(CALCULATOR->aborted()) break;
+								if((root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]) > val) {
+									break;
+								} else if(val % (root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]) == 0) {
+									nr *= PRIMES[i];
+									o_number /= (root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]);
+									b = true;
+									break;
+								}
 							}
 						}
 					}
-				}
-				if(!nr.isOne()) {
-					transform(STRUCT_MULTIPLICATION);
-					CHILD(0).calculateRaise(mstruct, eo, this, 0);
-					PREPEND(nr);
-					calculateMultiplyIndex(0, eo, true, mparent, index_this);
-					return 1;
-				}
-			} else if(eo.split_squares && o_number.isPositive() && !mstruct.number().isInteger() && !mstruct.number().denominatorIsTwo()) {
-				// partial roots, e.g. 9^(1/4)=3^(1/2)
-				if(mstruct.number().denominatorIsEven()) {
-					Number nr(o_number);
-					if(nr.sqrt() && !nr.isApproximate()) {
-						o_number = nr;
-						mstruct.number().multiply(2);
-						mstruct.ref();
-						raise_nocopy(&mstruct);
-						calculateRaiseExponent(eo, mparent, index_this);
+					if(!nr.isOne()) {
+						transform(STRUCT_MULTIPLICATION);
+						CHILD(0).calculateRaise(mstruct, eo, this, 0);
+						PREPEND(nr);
+						if(!mstruct.number().numeratorIsOne()) {
+							CHILD(0).calculateRaise(mstruct.number().numerator(), eo, this, 0);
+						}
+						calculateMultiplyIndex(0, eo, true, mparent, index_this);
 						return 1;
 					}
 				}
-				Number nr_root(mstruct.number().denominator());
-				for(size_t i = 1; i < NR_OF_PRIMES; i++) {
-					if(nr_root.isIntegerDivisible(PRIMES[i])) {
+				if(eo.split_squares && nr_root != 2) {
+					// partial roots, e.g. 9^(1/4)=3^(1/2)
+					if(nr_root.isEven()) {
 						Number nr(o_number);
-						if(nr.root(Number(PRIMES[i], 1)) && !nr.isApproximate()) {
+						if(nr.sqrt() && !nr.isApproximate()) {
 							o_number = nr;
-							mstruct.number().multiply(PRIMES[i]);
+							mstruct.number().multiply(2);
 							mstruct.ref();
 							raise_nocopy(&mstruct);
 							calculateRaiseExponent(eo, mparent, index_this);
 							return 1;
+						}
+					}
+					for(size_t i = 1; i < NR_OF_PRIMES; i++) {
+						if(nr_root.isLessThanOrEqualTo(PRIMES[i])) break;
+						if(nr_root.isIntegerDivisible(PRIMES[i])) {
+							Number nr(o_number);
+							if(nr.root(Number(PRIMES[i], 1)) && !nr.isApproximate()) {
+								o_number = nr;
+								mstruct.number().multiply(PRIMES[i]);
+								mstruct.ref();
+								raise_nocopy(&mstruct);
+								calculateRaiseExponent(eo, mparent, index_this);
+								return 1;
+							}
 						}
 					}
 				}
@@ -3903,7 +3912,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					} else if(CHILD(1).number().isIntegerDivisible(mstruct.number())) {
 						// root(x, 3a)^(a)=root(x, 3)
 						Number nr(CHILD(1).number());
-						if(nr.divide(mstruct.number()) && (nr.isTwo() || nr.isEven() == CHILD(1).number().isEven() || CHILD(0).representsNonNegative(true) || CHILD(0).representsComplex(true))) {
+						if(nr.divide(mstruct.number())) {
 							CHILD(1) = nr;
 							CHILD_UPDATED(1)
 							MERGE_APPROX_AND_PREC(mstruct)
@@ -12138,7 +12147,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				}
 				formatsub(po, parent, pindex, false);
 				break;
-			} else if(po.exp_to_root && ((CHILD(1).isDivision() && CHILD(1)[0].isNumber() && CHILD(1)[0].number().isInteger() && CHILD(1)[1].isNumber() && CHILD(1)[1].number().isGreaterThan(1) && CHILD(1)[1].number().isLessThan(10) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1)[0].isOne())) || (CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().isInteger() && CHILD(1).number().denominator().isLessThan(10) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1).number().numeratorIsOne())) || (CHILD(1).isInverse() && CHILD(1)[0].isNumber()  && CHILD(1)[0].number().isInteger() && CHILD(1)[0].number().isPositive() && CHILD(1)[0].number().isLessThan(10)))) {
+			} else if(po.exp_to_root && CHILD(0).representsNonNegative(true) && ((CHILD(1).isDivision() && CHILD(1)[0].isNumber() && CHILD(1)[0].number().isInteger() && CHILD(1)[1].isNumber() && CHILD(1)[1].number().isGreaterThan(1) && CHILD(1)[1].number().isLessThan(10) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1)[0].isOne())) || (CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().isInteger() && CHILD(1).number().denominator().isLessThan(10) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1).number().numeratorIsOne())) || (CHILD(1).isInverse() && CHILD(1)[0].isNumber()  && CHILD(1)[0].number().isInteger() && CHILD(1)[0].number().isPositive() && CHILD(1)[0].number().isLessThan(10)))) {
 				Number nr_int, nr_num, nr_den;
 				if(CHILD(1).isNumber()) {
 					nr_num = CHILD(1).number().numerator();
@@ -12156,24 +12165,22 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					nr_int.divide(nr_den);
 					nr_num = 1;
 				}
-				if(nr_den.isEven() || CHILD(0).representsNonNegative(true) || CHILD(0).representsComplex(true)) {
-					MathStructure mbase(CHILD(0));
-					CHILD(1) = nr_den;
-					m_type = STRUCT_FUNCTION;
-					setFunction(CALCULATOR->f_root);
+				MathStructure mbase(CHILD(0));
+				CHILD(1) = nr_den;
+				m_type = STRUCT_FUNCTION;
+				setFunction(CALCULATOR->f_root);
+				formatsub(po, parent, pindex, false);
+				if(!nr_num.isOne()) {
+					raise(nr_num);
 					formatsub(po, parent, pindex, false);
-					if(!nr_num.isOne()) {
-						raise(nr_num);
-						formatsub(po, parent, pindex, false);
-					}
-					if(!nr_int.isZero()) {
-						if(!nr_int.isOne()) mbase.raise(nr_int);
-						multiply(mbase);
-						sort(po);
-						formatsub(po, parent, pindex, false);
-					}
-					break;
 				}
+				if(!nr_int.isZero()) {
+					if(!nr_int.isOne()) mbase.raise(nr_int);
+					multiply(mbase);
+					sort(po);
+					formatsub(po, parent, pindex, false);
+				}
+				break;
 			}
 			if(CHILD(0).isUnit_exp() && (!parent || (!parent->isPower() && !parent->isMultiplication() && !parent->isInverse() && !(parent->isDivision() && pindex == 2)))) {
 				multiply(m_one);
@@ -15925,7 +15932,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			for(size_t i = 0; i < CHILD(0).size(); i++) {
 				if(!mbase.isZero() && CHILD(0)[i] == mbase) {
 				} else if(CHILD(0)[i].isPower() && CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().isPositive() && CHILD(0)[i][1].number().isRational()) {
-					if(CHILD(0)[i][0].isFunction() && CHILD(0)[i][0].function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0)[i][0]) && CHILD(0)[i][0][0].representsReal(true) && CHILD(0)[i][0][1].number().isOdd()) {
+					if(CHILD(0)[i][0].isFunction() && CHILD(0)[i][0].function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0)[i][0])) {
 						if(mbase.isZero()) mbase = CHILD(0)[i][0][0];
 						else if(mbase != CHILD(0)[i][0][0]) {b = false; break;}
 						if(!nr_root.isZero()) {
@@ -15951,7 +15958,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
 						if(!mbase.isZero() && CHILD(0)[i][i2] == mbase) {
 						} else if(CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().isPositive() && CHILD(0)[i][i2][1].number().isRational()) {
-							if(CHILD(0)[i][i2][0].isFunction() && CHILD(0)[i][i2][0].function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0)[i][i2][0]) && CHILD(0)[i][i2][0][0].representsReal(true) && CHILD(0)[i][i2][0][1].number().isOdd()) {
+							if(CHILD(0)[i][i2][0].isFunction() && CHILD(0)[i][i2][0].function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0)[i][i2][0])) {
 								if(mbase.isZero()) mbase = CHILD(0)[i][i2][0][0];
 								else if(mbase != CHILD(0)[i][i2][0][0]) {b = false; break;}
 								if(!nr_root.isZero()) {
@@ -15973,7 +15980,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									}
 								}
 							}
-						} else if(CHILD(0)[i][i2].isFunction() && CHILD(0)[i][i2].function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0)[i][i2]) && CHILD(0)[i][i2][0].representsReal(true) && CHILD(0)[i][i2][1].number().isOdd()) {
+						} else if(CHILD(0)[i][i2].isFunction() && CHILD(0)[i][i2].function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0)[i][i2])) {
 							if(mbase.isZero()) mbase = CHILD(0)[i][i2][0];
 							else if(mbase != CHILD(0)[i][i2][0]) {b = false; break;}
 							if(!nr_root.isZero()) {
@@ -15991,7 +15998,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 					}
 					if(!b) break;
-				} else if(CHILD(0)[i].isFunction() && CHILD(0)[i].function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0)[i]) && CHILD(0)[i][0].representsReal(true) && CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().isOdd()) {
+				} else if(CHILD(0)[i].isFunction() && CHILD(0)[i].function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0)[i])) {
 					if(mbase.isZero()) mbase = CHILD(0)[i][0];
 					else if(mbase != CHILD(0)[i][0]) {b = false; break;}
 					if(!nr_root.isZero()) {
@@ -16217,7 +16224,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				if(ret < 0) {
 					set(mbak);
 				} else {
-					if(!x_var.representsReal()) CALCULATOR->error(false, "Not all complex roots where calculated for %s.", mbak.print().c_str(), NULL);
+					if(!x_var.representsReal()) CALCULATOR->error(false, _("Not all complex roots where calculated for %s."), mbak.print().c_str(), NULL);
 					setApproximate(true);
 					return true;
 				}
@@ -16959,7 +16966,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								}
 							}
 						}
-						if(warn_complex) CALCULATOR->error(false, "Only one or two of the roots where calculated for %s.", mbak.print().c_str(), NULL);
+						if(warn_complex) CALCULATOR->error(false, _("Only one or two of the roots where calculated for %s."), mbak.print().c_str(), NULL);
 					} else if(CHILD(0)[1].isNumber() && CHILD(0)[1].number().isRational()) {
 						MathStructure *mposcheck = NULL;
 						if(!CHILD(1).representsNonNegative(true)) {
@@ -17063,7 +17070,6 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 		case STRUCT_FUNCTION: {
 			if(CHILD(0).function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0))) {
 				if(CHILD(0)[0].contains(x_var)) {
-					if(!CHILD(0)[0].representsReal(true) && !CHILD(1).representsNonNegative(true)) return false;
 					MathStructure *mposcheck = NULL;
 					if(CHILD(0)[1].number().isEven() && !CHILD(1).representsNonNegative(true)) {
 						if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) return false;
@@ -17075,9 +17081,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							}
 							return true;
 						}
-						mposcheck = new MathStructure(CHILD(1));
-						mposcheck->add(m_zero, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LESS : OPERATION_EQUALS_GREATER);
-						mposcheck->isolate_x_sub(eo, eo2, x_var);
+						if(!CHILD(1).representsComplex(true)) {
+							if(!CHILD(1).representsReal(true)) return false;
+							mposcheck = new MathStructure(CHILD(1));
+							mposcheck->add(m_zero, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LESS : OPERATION_EQUALS_GREATER);
+							mposcheck->isolate_x_sub(eo, eo2, x_var);
+						}
 					}				
 					CHILD(1).calculateRaise(CHILD(0)[1], eo);
 					CHILD(0).setToChild(1);

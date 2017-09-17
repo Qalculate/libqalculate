@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-06 18:44+0200\n"
+"POT-Creation-Date: 2017-09-17 20:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2342,9 +2342,7 @@ msgid "au:&#x221B;,r:cbrt"
 msgstr ""
 
 #: ../data/functions.xml.in.h:297
-msgid ""
-"Returns the third real root for real values, or the principal root for "
-"complex values."
+msgid "Returns the third real root."
 msgstr ""
 
 #: ../data/functions.xml.in.h:298
@@ -2357,8 +2355,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:300
 msgid ""
-"For negative values, the root of odd degrees returns the real root, "
-"otherwise the principal root is returned."
+"Returns the real root. For negative values the degree must be odd. Complex "
+"values are not allowed."
 msgstr ""
 
 #: ../data/functions.xml.in.h:301 ../data/units.xml.in.h:61

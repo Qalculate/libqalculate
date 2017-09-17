@@ -890,14 +890,13 @@
         <_title>Complex number</_title>
       </argument>
     </builtin_function>
-    <function>
+    <builtin_function name="arg">
       <_title>Principal Argument</_title>
       <_names>r:arg</_names>
-      <expression>atan2(im(\x);re(\x))</expression>
-      <argument type="number" index="1">
+      <argument index="1">
         <_title>Complex number</_title>
       </argument>
-    </function>
+    </builtin_function>
     <function>
       <_title>Complex Conjugate</_title>
       <_names>r:conj</_names>
@@ -921,7 +920,7 @@
     <builtin_function name="cbrt">
       <_title>Cube Root</_title>
       <_names>au:&#x221B;,r:cbrt</_names>
-      <_description>Returns the third real root for real values, or the principal root for complex values.</_description>
+      <_description>Returns the third real root.</_description>
       <argument type="free" index="1">
         <_title>Value</_title>
       </argument>
@@ -929,7 +928,7 @@
     <builtin_function name="root">
       <_title>Nth root</_title>
       <_names>r:root</_names>
-      <_description>For negative values, the root of odd degrees returns the real root, otherwise the principal root is returned.</_description>
+      <_description>Returns the real root. For negative values the degree must be odd. Complex values are not allowed.</_description>
       <argument type="free" index="1">
         <_title>Value</_title>
       </argument>
