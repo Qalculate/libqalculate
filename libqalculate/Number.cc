@@ -2330,12 +2330,16 @@ bool Number::allroots(const Number &o, vector<Number> &roots) {
 	nr_pi2.pi();
 	nr_pi2 *= 2;
 	Number nr_i;
+	Number nr_re;
+	nr_re.set(*this, false, true);
+	Number nr_im(*i_value);
+	if(!nr_re.square() || !nr_im.square() || !nr_re.add(nr_im) || !nr_re.sqrt() || !nr_re.raise(o_inv)) return false;
 	while(nr_i.isLessThan(o)) {
 		if(CALCULATOR->aborted()) return false;
 		Number nr(nr_pi2);
-		if(!nr.multiply(nr_i) || !nr.add(nr_arg) || !nr.multiply(nr_one_i) || !nr.multiply(o_inv) || !nr.exp()) return false;
+		if(!nr.multiply(nr_i) || !nr.add(nr_arg) || !nr.multiply(nr_one_i) || !nr.multiply(o_inv) || !nr.exp() || !nr.multiply(nr_re)) return false;
 		roots.push_back(nr);
-		nr_i--;
+		nr_i++;
 	}
 	return true;
 }

@@ -2445,8 +2445,8 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 ArgFunction::ArgFunction() : MathFunction("arg", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
-bool ArgFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
-bool ArgFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool ArgFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber(true);}
+bool ArgFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber(true);}
 int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	mstruct.eval(eo);
@@ -2462,15 +2462,15 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			if(b_neg) mstruct.negate();
 		} else {
 			Number nr(mstruct.number().imaginaryPart());
-			if(!nr.atan2(mstruct.number().realPart()) || (eo.approximation == APPROXIMATION_EXACT && mstruct.number().isApproximate()) || (!eo.allow_complex && nr.isComplex()) || (!eo.allow_infinite && nr.isInfinite())) return -1;
+			if(!nr.atan2(mstruct.number().realPart()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex()) || (!eo.allow_infinite && nr.isInfinite())) return -1;
 			mstruct = nr;
 		}
 	} else {
-		if(mstruct.representsPositive()) {
+		if(mstruct.representsPositive(true)) {
 			mstruct.clear();
 			return 1;
 		}
-		if(mstruct.representsNegative()) {
+		if(mstruct.representsNegative(true)) {
 			mstruct.set(CALCULATOR->v_pi);
 			return 1;
 		}
