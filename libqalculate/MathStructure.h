@@ -767,7 +767,7 @@ class MathStructure {
 
 		/** @name Functions for unit conversion */
 		//@{
-		int isUnitCompatible(const MathStructure &mstruct);
+		int isUnitCompatible(const MathStructure &mstruct) const;
 		bool syncUnits(bool sync_complex_relations = false, bool *found_complex_relations = NULL, bool calculate_new_functions = false, const EvaluationOptions &feo = default_evaluation_options);
 		bool testDissolveCompositeUnit(Unit *u);
 		bool testCompositeUnit(Unit *u);	

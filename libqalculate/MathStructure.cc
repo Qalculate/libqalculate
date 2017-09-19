@@ -5666,6 +5666,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			}			
 			int incomp = 0;
 			if(mtest->isAddition()) {
+				mtest->evalSort(true);
 				incomp = compare_check_incompability(mtest);
 			}
 			if(incomp < 0) {				
@@ -13920,42 +13921,49 @@ void gatherInformation(const MathStructure &mstruct, vector<Unit*> &base_units, 
 
 }
 
-int MathStructure::isUnitCompatible(const MathStructure &mstruct) {
+int MathStructure::isUnitCompatible(const MathStructure &mstruct) const {
+	if(!isMultiplication() && mstruct.isMultiplication()) return mstruct.isUnitCompatible(*this);
 	int b1 = mstruct.containsRepresentativeOfType(STRUCT_UNIT, true, true);
 	int b2 = containsRepresentativeOfType(STRUCT_UNIT, true, true);
 	if(b1 < 0 || b2 < 0) return -1;
 	if(b1 != b2) return false;
 	if(!b1) return true;
-	if(mstruct.isMultiplication()) {
+	if(isMultiplication()) {
+		size_t unit_count1 = 0, unit_count2 = 0;
+		for(size_t i = 0; i < SIZE; i++) {
+			if(CHILD(i).isUnit_exp()) unit_count1++;
+			else if(CHILD(i).containsRepresentativeOfType(STRUCT_UNIT, true, true) != 0) return -1;
+		}
+		if(mstruct.isMultiplication()) {
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				if(mstruct[i].isUnit_exp()) unit_count2++;
+				else if(mstruct[i].containsRepresentativeOfType(STRUCT_UNIT, true, true) != 0) return -1;
+			}
+		} else if(mstruct.isUnit_exp()) {
+			if(unit_count1 > 1) return false;
+			for(size_t i = 0; i < SIZE; i++) {
+				if(CHILD(i).isUnit_exp()) return CHILD(1) == mstruct;
+			}
+		} else {
+			return -1;
+		}
+		if(unit_count1 != unit_count2) return false;
 		size_t i2 = 0;
 		for(size_t i = 0; i < SIZE; i++) {
-			if(CHILD(i).containsType(STRUCT_UNIT)) {
-				bool b = false;
+			if(CHILD(i).isUnit_exp()) {
 				for(; i2 < mstruct.size(); i2++) {
-					if(mstruct[i2].containsType(STRUCT_UNIT)) {
-						if(!CHILD(i).isUnitCompatible(mstruct[i2])) {
-							return false;
-						}
+					if(mstruct[i2].isUnit_exp()) {
+						if(CHILD(i) != mstruct[i2]) return false;
 						i2++;
-						b = true;
 						break;
 					}
 				}
-				if(!b) return false;
 			}
 		}
-		for(; i2 < mstruct.size(); i2++) {
-			if(mstruct[i2].containsType(STRUCT_UNIT)) {
-				return false;
-			}	
-		}
+	} else if(isUnit_exp()) {
+		if(mstruct.isUnit_exp()) return equals(mstruct);
 	}
-	if(isUnit()) {
-		return equals(mstruct);
-	} else if(isPower()) {
-		return equals(mstruct);
-	}
-	return true;
+	return -1;
 }
 
 bool MathStructure::syncUnits(bool sync_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo) {
@@ -15677,6 +15685,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 		return false;
 	}
 	if(CHILD(0) == x_var) return false;
+
 	switch(CHILD(0).type()) {
 		case STRUCT_ADDITION: {
 			bool b = false;
@@ -15808,35 +15817,34 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					ac.calculateMultiply(mstruct_a, eo2);
 					ac.calculateMultiply(CHILD(1), eo2);
 					b2.calculateAdd(ac, eo2);
-					if(eo.allow_complex || b2.representsNonNegative()) {
-						b2.calculateRaise(MathStructure(1, 2, 0), eo2);	
-						mstruct_b.calculateNegate(eo2);
-						MathStructure mstruct_1(mstruct_b);
-						mstruct_1.calculateAdd(b2, eo2);
-						MathStructure mstruct_2(mstruct_b);
-						mstruct_2.calculateSubtract(b2, eo2);
-						mstruct_a.calculateMultiply(MathStructure(2, 1, 0), eo2);
-						mstruct_a.calculateInverse(eo2);
-						mstruct_1.calculateMultiply(mstruct_a, eo2);
-						mstruct_2.calculateMultiply(mstruct_a, eo2);
-						CHILD(0) = x_var;
-						if(mstruct_1 != mstruct_2) {
-							CHILD(1) = mstruct_1;
-							MathStructure *mchild2 = new MathStructure(CHILD(0));
-							mchild2->transform(STRUCT_COMPARISON, mstruct_2);
-							mchild2->setComparisonType(ct_comp);
-							if(ct_comp == COMPARISON_NOT_EQUALS) {
-								transform_nocopy(STRUCT_LOGICAL_AND, mchild2);
-							} else {
-								transform_nocopy(STRUCT_LOGICAL_OR, mchild2);
-							}
-							calculatesub(eo2, eo, false);
+						
+					b2.calculateRaise(MathStructure(1, 2, 0), eo2);	
+					mstruct_b.calculateNegate(eo2);
+					MathStructure mstruct_1(mstruct_b);
+					mstruct_1.calculateAdd(b2, eo2);
+					MathStructure mstruct_2(mstruct_b);
+					mstruct_2.calculateSubtract(b2, eo2);
+					mstruct_a.calculateMultiply(MathStructure(2, 1, 0), eo2);
+					mstruct_a.calculateInverse(eo2);
+					mstruct_1.calculateMultiply(mstruct_a, eo2);
+					mstruct_2.calculateMultiply(mstruct_a, eo2);
+					CHILD(0) = x_var;
+					if(mstruct_1 != mstruct_2) {
+						CHILD(1) = mstruct_1;
+						MathStructure *mchild2 = new MathStructure(CHILD(0));
+						mchild2->transform(STRUCT_COMPARISON, mstruct_2);
+						mchild2->setComparisonType(ct_comp);
+						if(ct_comp == COMPARISON_NOT_EQUALS) {
+							transform_nocopy(STRUCT_LOGICAL_AND, mchild2);
 						} else {
-							CHILD(1) = mstruct_1;
+							transform_nocopy(STRUCT_LOGICAL_OR, mchild2);
 						}
-						CHILDREN_UPDATED;
-						return true;
+						calculatesub(eo2, eo, false);
+					} else {
+						CHILD(1) = mstruct_1;
 					}
+					CHILDREN_UPDATED;
+					return true;
 				}
 			}
 			// x+x^(1/a)=b => x=(b-x)^a
