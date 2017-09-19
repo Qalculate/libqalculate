@@ -1,3 +1,15 @@
+2017-09-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix convert cbrt(L) to optimal unit
+	* Fix automatic prefixes for negative numbers
+
+2017-09-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix ^4 and ^5 unicode signs
+	* Fix for sqrt(a)=b*sqrt(c)
+	* Calculate all complex roots for x^a=b
+	* arg() enchements
+
 2017-09-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Comparison functions for date class

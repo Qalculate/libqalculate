@@ -11369,67 +11369,68 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 								PREPEND(po.prefix->value(exp));
 								CHILD(0).number().recip();
 							}
-							if(b2) {
-								exp10 = CHILD(0).number();
-								exp10.log(10);
-								exp10.floor();
-							}
 						}
-					} else if(po.use_unit_prefixes && CHILD(0).isNumber() && CHILD(0).number().isLessThanOrEqualTo(Number(1, 1, 1000)) && CHILD(0).number().isGreaterThanOrEqualTo(Number(1, 1, -1000)) && exp.isInteger()) {
+					} else if(po.use_unit_prefixes && CHILD(0).isNumber() && exp.isInteger()) {
 						exp10 = CHILD(0).number();
-						exp10.log(10);
-						exp10.floor();
-						if(b2) {	
-							Number tmp_exp(exp10);
-							tmp_exp.setNegative(false);
-							Number e1(3, 1, 0);
-							e1 *= exp;
-							Number e2(3, 1, 0);
-							e2 *= exp2;
-							e2.setNegative(false);
-							int i4 = 0;
-							while(true) {
-								tmp_exp -= e1;
-								if(!tmp_exp.isPositive()) {
-									break;
+						exp10.abs();
+						if(exp10.isLessThanOrEqualTo(Number(1, 1, 1000)) && exp10.isGreaterThanOrEqualTo(Number(1, 1, -1000))) {
+							exp10.log(10);
+							exp10.floor();
+							if(b2) {	
+								Number tmp_exp(exp10);
+								tmp_exp.setNegative(false);
+								Number e1(3, 1, 0);
+								e1 *= exp;
+								Number e2(3, 1, 0);
+								e2 *= exp2;
+								e2.setNegative(false);
+								int i4 = 0;
+								while(true) {
+									tmp_exp -= e1;
+									if(!tmp_exp.isPositive()) {
+										break;
+									}
+									if(exp10.isNegative()) i4++;
+									tmp_exp -= e2;
+									if(tmp_exp.isNegative()) {
+										break;
+									}
+									if(!exp10.isNegative())	i4++;
 								}
-								if(exp10.isNegative()) i4++;
-								tmp_exp -= e2;
-								if(tmp_exp.isNegative()) {
-									break;
-								}
-								if(!exp10.isNegative())	i4++;
+								e2.setNegative(exp10.isNegative());
+								e2 *= i4;
+								exp10 -= e2;
 							}
-							e2.setNegative(exp10.isNegative());
-							e2 *= i4;
-							exp10 -= e2;
-						}
-						DecimalPrefix *p = CALCULATOR->getBestDecimalPrefix(exp10, exp, po.use_all_prefixes);
-						if(p) {
-							Number test_exp(exp10);
-							test_exp -= p->exponent(exp);
-							if(test_exp.isInteger()) {
-								if((exp10.isPositive() && exp10.compare(test_exp) == COMPARISON_RESULT_LESS) || (exp10.isNegative() && exp10.compare(test_exp) == COMPARISON_RESULT_GREATER)) {
-									CHILD(0).number() /= p->value(exp);
-									if(munit->isUnit()) munit->setPrefix(p);
-									else (*munit)[0].setPrefix(p);
+							DecimalPrefix *p = CALCULATOR->getBestDecimalPrefix(exp10, exp, po.use_all_prefixes);
+							if(p) {
+								Number test_exp(exp10);
+								test_exp -= p->exponent(exp);
+								if(test_exp.isInteger()) {
+									if((exp10.isPositive() && exp10.compare(test_exp) == COMPARISON_RESULT_LESS) || (exp10.isNegative() && exp10.compare(test_exp) == COMPARISON_RESULT_GREATER)) {
+										CHILD(0).number() /= p->value(exp);
+										if(munit->isUnit()) munit->setPrefix(p);
+										else (*munit)[0].setPrefix(p);
+									}
 								}
 							}
 						}
 					}
 					if(b2 && CHILD(0).isNumber() && (po.prefix || po.use_unit_prefixes) && (po.prefix != CALCULATOR->decimal_null_prefix && po.prefix != CALCULATOR->binary_null_prefix)) {
 						exp10 = CHILD(0).number();
-						exp10.log(10);
-						exp10.floor();
-						DecimalPrefix *p = CALCULATOR->getBestDecimalPrefix(exp10, exp2, po.use_all_prefixes);
-						if(p) {
-							Number test_exp(exp10);
-							test_exp -= p->exponent(exp2);
-							if(test_exp.isInteger()) {
-								if((exp10.isPositive() && exp10.compare(test_exp) == COMPARISON_RESULT_LESS) || (exp10.isNegative() && exp10.compare(test_exp) == COMPARISON_RESULT_GREATER)) {
-									CHILD(0).number() /= p->value(exp2);
-									if(munit2->isUnit()) munit2->setPrefix(p);
-									else (*munit2)[0].setPrefix(p);
+						exp10.abs();
+						if(exp10.isLessThanOrEqualTo(Number(1, 1, 1000)) && exp10.isGreaterThanOrEqualTo(Number(1, 1, -1000))) {
+							exp10.log(10);
+							exp10.floor();
+							DecimalPrefix *p = CALCULATOR->getBestDecimalPrefix(exp10, exp2, po.use_all_prefixes);
+							if(p) {
+								Number test_exp(exp10);
+								test_exp -= p->exponent(exp2);
+								if(test_exp.isInteger()) {
+									if((exp10.isPositive() && exp10.compare(test_exp) == COMPARISON_RESULT_LESS) || (exp10.isNegative() && exp10.compare(test_exp) == COMPARISON_RESULT_GREATER)) {
+										CHILD(0).number() /= p->value(exp2);
+										if(munit2->isUnit()) munit2->setPrefix(p);
+										else (*munit2)[0].setPrefix(p);
+									}
 								}
 							}
 						}
@@ -16950,11 +16951,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								marg_pi.set(1, 1, 0);
 							} else if(!CHILD(1).representsNegative(true)) {
 								if(CHILD(1).isNumber() && !CHILD(1).number().hasRealPart()) {
-									if(CHILD(1).number().imaginaryPart().isNegative()) marg_pi.set(-1, 2, 0);
+									if(CHILD(1).number().imaginaryPartIsNegative()) marg_pi.set(-1, 2, 0);
 									else marg_pi.set(1, 2, 0);
 								} else {
 									marg.set(CALCULATOR->f_arg, &CHILD(1), NULL);
 									marg.calculateFunctions(eo);
+									marg.calculatesub(eo2, eo, true);
 								}
 							}
 							MathStructure minv(mdeg);

@@ -3066,9 +3066,11 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 	eo2.sync_units = false;
 	switch(mstruct.type()) {
 		case STRUCT_POWER: {
-			if(mstruct.base()->isUnit() && mstruct.exponent()->isNumber() && mstruct.exponent()->number().isInteger()) {
+			if(mstruct.base()->isUnit() && mstruct.exponent()->isNumber() && mstruct.exponent()->number().isRational()) {
 				MathStructure mstruct_new(mstruct);
-				int old_points = mstruct_new.exponent()->number().intValue();
+				int old_points = 0;
+				if(mstruct_new.exponent()->isInteger()) old_points = mstruct_new.exponent()->number().intValue();
+				else old_points = mstruct_new.exponent()->number().numerator().intValue() + mstruct_new.exponent()->number().denominator().intValue() * (mstruct_new.exponent()->number().isNegative() ? -1 : 1);
 				bool old_minus = false;
 				if(old_points < 0) {
 					old_points = -old_points;
@@ -3099,8 +3101,10 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 							if(new_is_si_units && !mstruct_new.getChild(i)->unit()->isSIUnit()) new_is_si_units = false;
 							new_points++;
 							new_minus = false;
-						} else if(mstruct_new.getChild(i)->isPower() && mstruct_new.getChild(i)->base()->isUnit() && mstruct_new.getChild(i)->exponent()->isNumber() && mstruct_new.getChild(i)->exponent()->number().isInteger()) {
-							int points = mstruct_new.getChild(i)->exponent()->number().intValue();
+						} else if(mstruct_new.getChild(i)->isPower() && mstruct_new.getChild(i)->base()->isUnit() && mstruct_new.getChild(i)->exponent()->isNumber() && mstruct_new.getChild(i)->exponent()->number().isRational()) {
+							int points = 0;
+							if(mstruct_new.getChild(i)->exponent()->isInteger()) points = mstruct_new.getChild(i)->exponent()->number().intValue();
+							else points = mstruct_new.getChild(i)->exponent()->number().numerator().intValue() + mstruct_new.getChild(i)->exponent()->number().denominator().intValue() * (mstruct_new.getChild(i)->exponent()->number().isNegative() ? -1 : 1);
 							if(new_is_si_units && !mstruct_new.getChild(i)->base()->unit()->isSIUnit()) new_is_si_units = false;
 							if(points < 0) {
 								new_points -= points;
@@ -3110,8 +3114,10 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 							}
 						}
 					}
-				} else if(mstruct_new.isPower() && mstruct_new.base()->isUnit() && mstruct_new.exponent()->isNumber() && mstruct_new.exponent()->number().isInteger()) {
-					int points = mstruct_new.exponent()->number().intValue();
+				} else if(mstruct_new.isPower() && mstruct_new.base()->isUnit() && mstruct_new.exponent()->isNumber() && mstruct_new.exponent()->number().isRational()) {
+					int points = 0;
+					if(mstruct_new.exponent()->isInteger()) points = mstruct_new.exponent()->number().intValue();
+					else points = mstruct_new.exponent()->number().numerator().intValue() + mstruct_new.exponent()->number().denominator().intValue() * (mstruct_new.exponent()->number().isNegative() ? -1 : 1);
 					if(new_is_si_units && !mstruct_new.base()->unit()->isSIUnit()) new_is_si_units = false;
 					if(points < 0) {
 						new_points = -points;
@@ -3178,8 +3184,10 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 					if(is_si_units && !mstruct_old.getChild(i)->unit()->isSIUnit()) is_si_units = false;
 					old_points++;
 					old_minus = false;
-				} else if(mstruct_old.getChild(i)->isPower() && mstruct_old.getChild(i)->base()->isUnit() && mstruct_old.getChild(i)->exponent()->isNumber() && mstruct_old.getChild(i)->exponent()->number().isInteger()) {
-					int points = mstruct_old.getChild(i)->exponent()->number().intValue();
+				} else if(mstruct_old.getChild(i)->isPower() && mstruct_old.getChild(i)->base()->isUnit() && mstruct_old.getChild(i)->exponent()->isNumber() && mstruct_old.getChild(i)->exponent()->number().isRational()) {
+					int points = 0;
+					if(mstruct_old.getChild(i)->exponent()->number().isInteger()) points = mstruct_old.getChild(i)->exponent()->number().intValue();
+					else points = mstruct_old.getChild(i)->exponent()->number().numerator().intValue() + mstruct_old.getChild(i)->exponent()->number().denominator().intValue() * (mstruct_old.getChild(i)->exponent()->number().isNegative() ? -1 : 1);;
 					if(is_si_units && !mstruct_old.getChild(i)->base()->unit()->isSIUnit()) is_si_units = false;
 					if(points < 0) {
 						old_points -= points;
@@ -3244,8 +3252,10 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 						if(new_is_si_units && !mstruct_new.getChild(i)->unit()->isSIUnit()) new_is_si_units = false;
 						new_points++;
 						new_minus = false;
-					} else if(mstruct_new.getChild(i)->isPower() && mstruct_new.getChild(i)->base()->isUnit() && mstruct_new.getChild(i)->exponent()->isNumber() && mstruct_new.getChild(i)->exponent()->number().isInteger()) {
-						int points = mstruct_new.getChild(i)->exponent()->number().intValue();
+					} else if(mstruct_new.getChild(i)->isPower() && mstruct_new.getChild(i)->base()->isUnit() && mstruct_new.getChild(i)->exponent()->isNumber() && mstruct_new.getChild(i)->exponent()->number().isRational()) {
+						int points = 0;
+						if(mstruct_new.getChild(i)->exponent()->number().isInteger()) points = mstruct_new.getChild(i)->exponent()->number().intValue();
+						else points = mstruct_new.getChild(i)->exponent()->number().numerator().intValue() + mstruct_new.getChild(i)->exponent()->number().denominator().intValue() * (mstruct_new.getChild(i)->exponent()->number().isNegative() ? -1 : 1);
 						if(new_is_si_units && !mstruct_new.getChild(i)->base()->unit()->isSIUnit()) new_is_si_units = false;
 						if(points < 0) {
 							new_points -= points;
@@ -3255,8 +3265,10 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 						}
 					}
 				}
-			} else if(mstruct_new.isPower() && mstruct_new.base()->isUnit() && mstruct_new.exponent()->isNumber() && mstruct_new.exponent()->number().isInteger()) {
-				int points = mstruct_new.exponent()->number().intValue();
+			} else if(mstruct_new.isPower() && mstruct_new.base()->isUnit() && mstruct_new.exponent()->isNumber() && mstruct_new.exponent()->number().isRational()) {
+				int points = 0;
+				if(mstruct_new.exponent()->number().isInteger()) points = mstruct_new.exponent()->number().intValue();
+				else points = mstruct_new.exponent()->number().numerator().intValue() + mstruct_new.exponent()->number().denominator().intValue() * (mstruct_new.exponent()->number().isNegative() ? -1 : 1);
 				if(new_is_si_units && !mstruct_new.base()->unit()->isSIUnit()) new_is_si_units = false;
 				if(points < 0) {
 					new_points = -points;

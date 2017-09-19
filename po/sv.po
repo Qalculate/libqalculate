@@ -2191,7 +2191,7 @@ msgstr ""
 #: ../libqalculate/MathStructure.cc:16227
 #, c-format
 msgid "Not all complex roots where calculated for %s."
-msgstr "Alla komplexa beräknades ej för %s."
+msgstr "Alla komplexa rötter beräknades ej för %s."
 
 #: ../libqalculate/MathStructure.cc:16969
 #, c-format
