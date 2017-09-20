@@ -194,7 +194,7 @@ bool Calculator::delDefaultStringAlternative(string replacement, string standard
 Calculator *calculator = NULL;
 
 MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one, m_one_i;
-Number nr_zero, nr_one, nr_minus_one, nr_one_i, nr_minus_i, nr_half, nr_minus_half;
+Number nr_zero, nr_one, nr_two, nr_three, nr_minus_one, nr_one_i, nr_minus_i, nr_half, nr_minus_half;
 EvaluationOptions no_evaluation;
 ExpressionName empty_expression_name;
 extern gmp_randstate_t randstate;
@@ -442,6 +442,8 @@ Calculator::Calculator() {
 	m_minus_one.set(-1, 1, 0);
 	nr_zero.clear();
 	nr_one.set(1, 1, 0);
+	nr_two.set(2, 1, 0);
+	nr_three.set(3, 1, 0);
 	nr_half.set(1, 2, 0);
 	nr_minus_half.set(-1, 2, 0);
 	nr_one_i.setImaginaryPart(1, 1, 0);
@@ -467,8 +469,8 @@ Calculator::Calculator() {
 	
 	b_save_called = false;
 
-	ILLEGAL_IN_NAMES = DOT_S + RESERVED OPERATORS SPACES PARENTHESISS VECTOR_WRAPS;
-	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = DOT_S + RESERVED OPERATORS PARENTHESISS VECTOR_WRAPS;
+	ILLEGAL_IN_NAMES = DOT_S + RESERVED OPERATORS SPACES PARENTHESISS VECTOR_WRAPS COMMAS;
+	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = DOT_S + RESERVED OPERATORS PARENTHESISS VECTOR_WRAPS COMMAS;
 	ILLEGAL_IN_UNITNAMES = ILLEGAL_IN_NAMES + NUMBERS;
 	b_argument_errors = true;
 	current_stage = MESSAGE_STAGE_UNSET;

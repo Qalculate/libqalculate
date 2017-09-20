@@ -413,7 +413,7 @@ class MathStructure {
 		void childToFront(size_t index);
 		void addChild(const MathStructure &o);
 		void addChild_nocopy(MathStructure *o);
-		void delChild(size_t index);
+		void delChild(size_t index, bool check_size = false);
 		void insertChild(const MathStructure &o, size_t index);
 		void insertChild_nocopy(MathStructure *o, size_t index);
 		void setChild(const MathStructure &o, size_t index = 1, bool merge_precision = false);
@@ -630,7 +630,7 @@ class MathStructure {
 		bool equals(string sym) const;
 		
 		ComparisonResult compare(const MathStructure &o) const;
-		ComparisonResult compareApproximately(const MathStructure &o) const;
+		ComparisonResult compareApproximately(const MathStructure &o, const EvaluationOptions &eo = default_evaluation_options) const;
 
 		bool operator == (const MathStructure &o) const;
 		bool operator == (const Number &o) const;

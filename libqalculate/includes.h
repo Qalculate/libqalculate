@@ -613,7 +613,7 @@ static const struct EvaluationOptions {
 } default_evaluation_options;
 
 extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one, m_one_i;
-extern Number nr_zero, nr_one, nr_minus_one, nr_one_i, nr_minus_i, nr_half, nr_minus_half;
+extern Number nr_zero, nr_one, nr_two, nr_three, nr_minus_one, nr_one_i, nr_minus_i, nr_half, nr_minus_half;
 extern EvaluationOptions no_evaluation;
 extern ExpressionName empty_expression_name;
 
