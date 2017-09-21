@@ -359,7 +359,8 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_MIDDLEDOT, MULTIPLICATION);
 	addStringAlternative(SIGN_MULTIBULLET, MULTIPLICATION);
 	addStringAlternative(SIGN_SMALLCIRCLE, MULTIPLICATION);
-	addStringAlternative(SIGN_MINUS, MINUS);		
+	addStringAlternative(SIGN_MINUS, MINUS);
+	addStringAlternative("–", MINUS);
 	addStringAlternative(SIGN_PLUS, PLUS);
 	addStringAlternative(SIGN_NOT_EQUAL, " " NOT EQUALS);		
 	addStringAlternative(SIGN_GREATER_OR_EQUAL, GREATER EQUALS);	

@@ -15866,20 +15866,33 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			if(eo2.expand && CHILD(0).size() <= 10 && CHILD(0).size() > 1) {
 				int i_root = 0;
 				size_t root_index = 0;
-				size_t root_index2 = 0;
 				for(size_t i = 0; i < CHILD(0).size(); i++) {
 					if(CHILD(0)[i].isPower()) {
-						if(!i_root && CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().numeratorIsOne() && CHILD(0)[i][1].number().denominator().isLessThan(10)) {
-							i_root = CHILD(0)[i][1].number().denominator().intValue();
-							root_index = i;
+						if(CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().numeratorIsOne() && CHILD(0)[i][1].number().denominator().isLessThan(10)) {
+							if(i_root) {
+								if(i_root != CHILD(0)[i][1].number().denominator().intValue()) {
+									i_root = 0;
+									break;
+								}
+							} else {
+								i_root = CHILD(0)[i][1].number().denominator().intValue();
+								root_index = i;
+							}
 						} else if(!CHILD(0)[i][1].isNumber() || !CHILD(0)[i][1].number().isInteger()) {
 							i_root = 0;
 							break;
 						}
 					} else if(CHILD(0)[i].isFunction() && CHILD(0)[i].function() == CALCULATOR->f_root) {
-						if(!i_root && VALID_ROOT(CHILD(0)[i]) && CHILD(0)[i][1].number().isLessThan(10)) {
-							i_root = CHILD(0)[i][1].number().intValue();
-							root_index = i;
+						if(VALID_ROOT(CHILD(0)[i]) && CHILD(0)[i][1].number().isLessThan(10)) {
+							if(i_root) {
+								if(i_root != CHILD(0)[i][1].number().intValue()) {
+									i_root = 0;
+									break;
+								}
+							} else {
+								i_root = CHILD(0)[i][1].number().intValue();
+								root_index = i;
+							}
 						} else {
 							i_root = 0;
 							break;
@@ -15891,20 +15904,32 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								if(CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().isInteger()) {
 									if(i_root && root_index == i) {b_break = true; break;}
 									b_xvar = true;
-								} else if(!i_root && !b_xvar && CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().numeratorIsOne() && CHILD(0)[i][i2][1].number().denominator().isLessThan(10)) {
-									i_root = CHILD(0)[i][i2][1].number().denominator().intValue();
-									root_index = i;
-									root_index2 = i2;
+								} else if(!b_xvar && CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().numeratorIsOne() && CHILD(0)[i][i2][1].number().denominator().isLessThan(10)) {
+									if(i_root) {
+										if(i_root != CHILD(0)[i][i2][1].number().denominator().intValue()) {
+											i_root = 0;
+											break;
+										}
+									} else {
+										i_root = CHILD(0)[i][i2][1].number().denominator().intValue();
+										root_index = i;
+									}
 								} else {
 									i_root = 0;
 									b_break = true;
 									break;
 								}
 							} else if(CHILD(0)[i][i2].isFunction() && CHILD(0)[i][i2].function() == CALCULATOR->f_root) {
-								if(!i_root && !b_xvar && VALID_ROOT(CHILD(0)[i][i2]) && CHILD(0)[i][i2][1].number().isLessThan(10)) {
-									i_root = CHILD(0)[i][i2][1].number().intValue();
-									root_index = i;
-									root_index2 = i2;
+								if(!b_xvar && VALID_ROOT(CHILD(0)[i][i2]) && CHILD(0)[i][i2][1].number().isLessThan(10)) {
+									if(i_root) {
+										if(i_root != CHILD(0)[i][i2][1].number().intValue()) {
+											i_root = 0;
+											break;
+										}
+									} else {
+										i_root = CHILD(0)[i][i2][1].number().intValue();
+										root_index = i;
+									}
 								} else {
 									i_root = 0;
 									b_break = true;
@@ -15929,23 +15954,16 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 					mtest[0].setToChild(root_index + 1);
 					mtest[1].calculateSubtract(msub, eo2);
-					if(mtest[0].isMultiplication()) {
-						if(mtest[0].size() == 2) {
-							mtest[1].calculateDivide(mtest[0][root_index2 == 0 ? 1 : 0], eo2);
-						} else if(mtest[0].size() > 2) {
-							MathStructure mdiv(mtest[1]);
-							mdiv.delChild(root_index2 + 1);
-							mtest[1].calculateDivide(mdiv, eo2);
+					if(mtest[0].calculateRaise(i_root, eo2) && mtest[1].calculateRaise(i_root, eo2)) {
+						mtest.childrenUpdated();
+						if(mtest.isolate_x(eo2, eo, x_var)) {
+							if(test_comparisons(*this, mtest, x_var, eo) >= 0) {
+								set(mtest);
+								return true;
+							}
 						}
-						mtest[0].setToChild(root_index2 + 1);
 					}
-					mtest.childrenUpdated();
-					if(mtest.isolate_x_sub(eo, eo2, x_var, morig)) {
-						set(mtest);
-						isolate_x(eo2, eo, x_var);
-						return true;
-					}
-					break;
+					
 				}
 			}
 
@@ -16454,8 +16472,14 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								return true;
 							}
 						} else if(eo3.allow_complex) {
-
-							mC.calculateRaise(Number(1, 3, 0), eo3);
+							
+							if(mC.representsNegative(true)) {
+								mC.calculateNegate(eo3);
+								mC.calculateRaise(Number(1, 3, 0), eo3);
+								mC.calculateNegate(eo3);
+							} else {
+								mC.calculateRaise(Number(1, 3, 0), eo3);
+							}
 						
 							// x = -1/(3a)*(b + C + delta0/C)
 						
@@ -16911,7 +16935,6 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 			}
-			
 			bool b = false;
 			int zero1;
 			if(CHILD(1).isZero()) zero1 = 1;
@@ -16920,7 +16943,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			MathStructure *mcheckmulti = NULL, *mtryzero = NULL, *mchecknegative = NULL, *mchecknonzeropow = NULL;
 			MathStructure mchild2(CHILD(1));
 			ComparisonType ct_orig = ct_comp;
-			for(size_t i = 0; i < CHILD(0).size(); i++) {			
+			for(size_t i = 0; i < CHILD(0).size(); i++) {
 				if(!CHILD(0)[i].contains(x_var)) {
 					bool nonzero = false;
 					if(CHILD(0)[i].isPower() && !CHILD(0)[i][1].representsNonNegative(true) && !CHILD(0)[i][0].representsNonZero(true)) {
@@ -17295,6 +17318,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				} else if(CHILD(0)[1].isNumber() && CHILD(0)[1].number().isRational()) {
 					// x^a=b
 					bool b_neg = CHILD(0)[1].number().isNegative();
+					if(b_neg && ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) return false;
 					bool b_nonzero = !CHILD(1).isZero() && CHILD(1).representsNonZero(true);
 					if(b_neg && CHILD(1).isZero()) {
 						if(ct_comp == COMPARISON_EQUALS) {
@@ -17340,7 +17364,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 					MathStructure mbak(*this);
 					if(CHILD(0)[1].number().isMinusOne()) {
-						CHILD(1).raise(m_minus_one);
+						CHILD(0).setToChild(1, true);
+						CHILD(1).calculateRaise(m_minus_one, eo2);
 						CHILDREN_UPDATED
 						isolate_x_sub(eo, eo2, x_var, morig);
 					} else if(CHILD(0)[1].number().isInteger()) {
@@ -17551,6 +17576,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						if(warn_complex) CALCULATOR->error(false, _("Only one or two of the roots where calculated for %s."), mbak.print().c_str(), NULL);
 					} else {
 						MathStructure *mposcheck = NULL;
+						bool b_test = false;
 						if(!CHILD(1).representsNonNegative(true)) {
 							if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) return false;
 							if(CHILD(1).representsNegative(true)) {
@@ -17561,11 +17587,13 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								}
 								return true;
 							}
-							if(!CHILD(1).representsComplex(true)) {
-								if(!CHILD(1).representsReal(true)) return false;
+							if(CHILD(1).representsReal(true)) {
 								mposcheck = new MathStructure(CHILD(1));
 								mposcheck->add(m_zero, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LESS : OPERATION_EQUALS_GREATER);
 								mposcheck->isolate_x_sub(eo, eo2, x_var);
+							} else {
+								b_test = true;
+								mposcheck = new MathStructure(*this);
 							}
 						}
 						CHILD(0)[1].number().recip();
@@ -17573,7 +17601,13 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						CHILD(0).setToChild(1);
 						CHILDREN_UPDATED
 						isolate_x_sub(eo, eo2, x_var, morig);
-						if(mposcheck) {
+						if(b_test) {
+							if(test_comparisons(*mposcheck, *this, x_var, eo) < 0) {
+								mposcheck->unref();
+								return false;
+							}
+							mposcheck->unref();
+						} else if(mposcheck) {
 							add_nocopy(mposcheck, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 							calculatesub(eo2, eo, false);
 						}
@@ -17652,6 +17686,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			if(CHILD(0).function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0))) {
 				if(CHILD(0)[0].contains(x_var)) {
 					MathStructure *mposcheck = NULL;
+					bool b_test = false;
 					if(CHILD(0)[1].number().isEven() && !CHILD(1).representsNonNegative(true)) {
 						if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) return false;
 						if(CHILD(1).representsNegative(true)) {
@@ -17662,21 +17697,30 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							}
 							return true;
 						}
-						if(!CHILD(1).representsComplex(true)) {
-							if(!CHILD(1).representsReal(true)) return false;
+						if(CHILD(1).representsReal(true)) {
 							mposcheck = new MathStructure(CHILD(1));
 							mposcheck->add(m_zero, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LESS : OPERATION_EQUALS_GREATER);
 							mposcheck->isolate_x_sub(eo, eo2, x_var);
+						} else {
+							b_test = true;
+							mposcheck = new MathStructure(*this);
 						}
-					}				
+					}
 					CHILD(1).calculateRaise(CHILD(0)[1], eo);
 					CHILD(0).setToChild(1);
 					CHILDREN_UPDATED
 					isolate_x_sub(eo, eo2, x_var, morig);
-					if(mposcheck) {
+					if(b_test) {
+						if(test_comparisons(*mposcheck, *this, x_var, eo) < 0) {
+							mposcheck->unref();
+							return false;
+						}
+						mposcheck->unref();
+					} else if(mposcheck) {
 						add_nocopy(mposcheck, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 						calculatesub(eo2, eo, false);
 					}
+					return true;
 				}
 			} else if(CHILD(0).function() == CALCULATOR->f_ln && CHILD(0).size() == 1) {
 				if(CHILD(0)[0].contains(x_var)) {
