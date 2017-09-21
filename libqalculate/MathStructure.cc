@@ -9794,6 +9794,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 	}
 	MathStructure mden, mnum;
 	evalSort(true);
+
 	if(term_combination_levels >= -1 && isAddition() && isRationalPolynomial()) {
 		MathStructure msqrfree(*this);
 		if(sqrfree(msqrfree, eo)) {
@@ -10152,6 +10153,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				MathStructure mnew;
 				if(factorize_find_multiplier(*this, mnew, *factor_mstruct)) {
 					mnew.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+					factor_mstruct->factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
 					clear(true);
 					m_type = STRUCT_MULTIPLICATION;
 					APPEND_REF(factor_mstruct);
@@ -10493,6 +10495,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						}
 					}
 				}
+
 				//x^2-y^2=(x+y)(x-y)
 				if(SIZE == 2 && CHILD(0).isPower() && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isTwo() && CHILD(1).isMultiplication() && CHILD(1).size() == 2 && CHILD(1)[0].isMinusOne() && CHILD(1)[1].isPower() && CHILD(1)[1][1].isNumber() && CHILD(1)[1][1].number().isTwo()) {
 					if(CHILD(0)[0].representsNonMatrix() && CHILD(1)[1][0].representsNonMatrix()) {
@@ -10587,6 +10590,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				multiply(MathStructure(-1, 1, 0));
 				CHILD_TO_FRONT(1)
 			}
+
 			//Try factorize combinations of terms
 			if(term_combination_levels != 0 && SIZE > 2) {
 				int start_index = rand() % SIZE;
@@ -10653,7 +10657,9 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				if(best_index >= 0) {
 					mbest.add(CHILD(best_index), true);
 					set(mbest);
-					if(term_combination_levels >= -1 && run_index > 0) factorize(eo, false, term_combination_levels, 0, only_integers, true, endtime_p);
+					if(term_combination_levels >= -1 && (run_index > 0 || recursive)) {
+						factorize(eo, false, term_combination_levels, 0, only_integers, true, endtime_p);
+					}
 					return true;
 				}
 			}
