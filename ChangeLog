@@ -8,7 +8,7 @@
 	* Fix ^4 and ^5 unicode signs
 	* Fix for sqrt(a)=b*sqrt(c)
 	* Calculate all complex roots for x^a=b
-	* arg() enchements
+	* arg() enhancements
 
 2017-09-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
