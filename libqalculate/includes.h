@@ -592,7 +592,7 @@ static const struct EvaluationOptions {
 	/// If infinite numbers will be used for evaluation. Default: true
 	bool allow_infinite;
 	/// If simplification will be made easier by assuming that denominators with unknown value not is zero. Default: false
-	bool assume_denominators_nonzero;
+	int assume_denominators_nonzero;
 	/// Warn if a denominator with unknown value was assumed non-zero (with assume_denominators_nonzero set to true) to allow simplification. Default: false
 	bool warn_about_denominators_assumed_nonzero;
 	/// If powers with exponent 1/2 that only have an approximate result will be split to the least base (sqrt(8) = 2 * sqrt(2)). Default: true

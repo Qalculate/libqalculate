@@ -16,3 +16,5 @@
 * Uncertainty propagation
 
 * Load data set from csv file
+
+* Fix factorization with variable raised to 1 (should normally not happen)
