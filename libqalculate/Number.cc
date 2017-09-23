@@ -1398,10 +1398,78 @@ bool Number::isLessThanOrEqualTo(const Number &o) const {
 	}
 	return false;
 }
-bool Number::isGreaterThan(long int i) const {return isGreaterThan(Number(i, 1));}
-bool Number::isLessThan(long int i) const {return isLessThan(Number(i, 1));}
-bool Number::isGreaterThanOrEqualTo(long int i) const {return isGreaterThanOrEqualTo(Number(i, 1));}
-bool Number::isLessThanOrEqualTo(long int i) const {return isLessThanOrEqualTo(Number(i, 1));}
+bool Number::isGreaterThan(long int i) const {
+	if(n_type == NUMBER_TYPE_MINUS_INFINITY || n_type == NUMBER_TYPE_INFINITY) return false;
+	if(n_type == NUMBER_TYPE_PLUS_INFINITY) return true;
+	if(isComplex()) return false;
+	if(n_type == NUMBER_TYPE_FLOAT) {
+		return mpfr_cmp_si(f_value, i) > 0;
+	}
+	return mpq_cmp_si(r_value, i, 1) > 0;
+}
+bool Number::isLessThan(long int i) const {
+	if(n_type == NUMBER_TYPE_INFINITY || n_type == NUMBER_TYPE_PLUS_INFINITY) return false;
+	if(n_type == NUMBER_TYPE_MINUS_INFINITY) return true;
+	if(isComplex()) return false;
+	if(n_type == NUMBER_TYPE_FLOAT) {
+		return mpfr_cmp_si(f_value, i) < 0;
+	}
+	return mpq_cmp_si(r_value, i, 1) < 0;
+}
+bool Number::isGreaterThanOrEqualTo(long int i) const {
+	if(n_type == NUMBER_TYPE_MINUS_INFINITY || n_type == NUMBER_TYPE_INFINITY) return false;
+	if(n_type == NUMBER_TYPE_PLUS_INFINITY) return true;
+	if(isComplex()) return false;
+	if(n_type == NUMBER_TYPE_FLOAT) {
+		return mpfr_cmp_si(f_value, i) >= 0;
+	}
+	return mpq_cmp_si(r_value, i, 1) >= 0;
+}
+bool Number::isLessThanOrEqualTo(long int i) const {
+	if(n_type == NUMBER_TYPE_INFINITY || n_type == NUMBER_TYPE_PLUS_INFINITY) return false;
+	if(n_type == NUMBER_TYPE_MINUS_INFINITY) return true;
+	if(isComplex()) return false;
+	if(n_type == NUMBER_TYPE_FLOAT) {
+		return mpfr_cmp_si(f_value, i) <= 0;
+	}
+	return mpq_cmp_si(r_value, i, 1) <= 0;
+}
+bool Number::numeratorIsGreaterThan(long int i) const {
+	if(!isRational()) return false;
+	return mpz_cmp_si(mpq_numref(r_value), i) > 0;
+}
+bool Number::numeratorIsLessThan(long int i) const {
+	if(!isRational()) return false;
+	return mpz_cmp_si(mpq_numref(r_value), i) < 0;
+}
+bool Number::numeratorEquals(long int i) const {
+	if(!isRational()) return false;
+	return mpz_cmp_si(mpq_numref(r_value), i) == 0;
+}
+bool Number::denominatorIsGreaterThan(long int i) const {
+	if(!isRational()) return false;
+	return mpz_cmp_si(mpq_denref(r_value), i) > 0;
+}
+bool Number::denominatorIsLessThan(long int i) const {
+	if(!isRational()) return false;
+	return mpz_cmp_si(mpq_denref(r_value), i) < 0;
+}
+bool Number::denominatorEquals(long int i) const {
+	if(!isRational()) return false;
+	return mpz_cmp_si(mpq_denref(r_value), i) == 0;
+}
+bool Number::denominatorIsGreater(const Number &o) const {
+	if(!isRational() || !o.isRational()) return false;
+	return mpz_cmp(mpq_denref(r_value), mpq_denref(o.internalRational())) > 0;
+}
+bool Number::denominatorIsLess(const Number &o) const {
+	if(!isRational() || !o.isRational()) return false;
+	return mpz_cmp(mpq_denref(r_value), mpq_denref(o.internalRational())) < 0;
+}
+bool Number::denominatorIsEqual(const Number &o) const {
+	if(!isRational() || !o.isRational()) return false;
+	return mpz_cmp(mpq_denref(r_value), mpq_denref(o.internalRational())) == 0;
+}
 bool Number::isEven() const {
 	return isInteger() && mpz_even_p(mpq_numref(r_value));
 }

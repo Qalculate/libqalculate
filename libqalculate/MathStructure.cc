@@ -2754,7 +2754,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			}
 		}
 	}
-	
+
 	switch(m_type) {
 		case STRUCT_VECTOR: {
 			switch(mstruct.type()) {
@@ -3550,108 +3550,111 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		case STRUCT_ADDITION: {
 			if(mstruct.isNumber() && mstruct.number().isInteger()) {
 				if(mstruct.number().isMinusOne()) {
-					return -1;
-					bool bnum = false;
-					for(size_t i = 0; !bnum && i < SIZE; i++) {
+					int bnum = -1, bden = -1;
+					int inegs = 0;
+					bool b_break = false;
+					for(size_t i = 0; i < SIZE && !b_break; i++) {
 						switch(CHILD(i).type()) {
 							case STRUCT_NUMBER: {
-								if(!CHILD(i).number().isZero() && CHILD(i).number().isReal()) {
-									bnum = true;
+								if(!CHILD(i).number().isRational() || CHILD(i).number().numeratorIsGreaterThan(1000000L) || CHILD(i).number().numeratorIsLessThan(-1000000L) || CHILD(i).number().denominatorIsGreaterThan(1000L)) {
+									bnum = 0; bden = 0; inegs = 0; b_break = true;
 								}
+								if(bden != 0 && !CHILD(i).number().isInteger()) bden = 1;
+								if(bnum != 0 && !CHILD(i).isZero()) {
+									if(CHILD(i).number().numeratorIsOne() || CHILD(i).number().numeratorIsMinusOne()) bnum = 0;
+									else bnum = 1;
+								}
+								if(CHILD(i).number().isNegative()) inegs++;
+								else if(!CHILD(i).number().isZero()) inegs--;
 								break;
 							}
 							case STRUCT_MULTIPLICATION: {
 								if(CHILD(i).size() > 0 && CHILD(i)[0].isNumber()) {
-									if(!CHILD(i)[0].number().isZero() && CHILD(i)[0].number().isReal()) {
-										bnum = true;
+									if(!CHILD(i)[0].number().isRational() || CHILD(i)[0].number().numeratorIsGreaterThan(1000000L) || CHILD(i)[0].number().numeratorIsLessThan(-1000000L) || CHILD(i)[0].number().denominatorIsGreaterThan(1000L)) {
+										bnum = 0; bden = 0; inegs = 0; b_break = true;
 									}
+									if(bden != 0 && !CHILD(i)[0].number().isInteger()) bden = 1;
+									if(bnum != 0 && !CHILD(i)[0].isZero()) {
+										if(CHILD(i)[0].number().numeratorIsOne() || CHILD(i)[0].number().numeratorIsMinusOne()) bnum = 0;
+										else bnum = 1;
+									}
+									if(CHILD(i)[0].number().isNegative()) inegs++;
+									else if(!CHILD(i)[0].number().isZero()) inegs--;
 									break;
 								}
 							}
-							default: {}
+							default: {
+								bnum = 0;
+								inegs--;
+								break;
+							}
 						}
 					}
-					if(bnum) {
-						Number nr;
-						size_t negs = 0;
-						for(size_t i = 0; i < SIZE; i++) {
+					if(bden < 0) bden = 0;
+					if(bnum < 0) bnum = 0;
+					if(bnum || bden) {
+						Number nr_num, nr_den(1, 1, 0);
+						for(size_t i = 0; i < SIZE && !nr_den.isZero(); i++) {
 							switch(CHILD(i).type()) {
 								case STRUCT_NUMBER: {
-									if(!CHILD(i).number().isZero() && CHILD(i).number().isReal()) {
-										if(CHILD(i).number().isNegative()) negs++;
-										if(nr.isZero()) {
-											nr = CHILD(i).number();
-										} else {
-											if(negs) {
-												if(CHILD(i).number().isNegative()) {
-													nr.setNegative(true);
-													if(CHILD(i).number().isGreaterThan(nr)) {
-														nr = CHILD(i).number();
-													}
-													break;
-												} else {
-													nr.setNegative(false);
-												}
-											}
-											if(CHILD(i).number().isLessThan(nr)) {
-												nr = CHILD(i).number();
-											}
+									if(CHILD(i).number().isInteger()) {
+										if(bnum && !nr_num.isOne() && !CHILD(i).number().isZero()) {
+											if(nr_num.isZero()) nr_num = CHILD(i).number();
+											else nr_num.gcd(CHILD(i).number());
+										}
+									} else {
+										if(bnum && !nr_num.isOne() && !CHILD(i).number().isZero()) {
+											if(nr_num.isZero()) nr_num = CHILD(i).number().numerator();
+											else nr_num.gcd(CHILD(i).number().numerator());
+										}
+										if(bden) {
+											nr_den.lcm(CHILD(i).number().denominator());
+											if(nr_den.isGreaterThan(1000000L)) nr_den.clear();
 										}
 									}
 									break;
 								}
 								case STRUCT_MULTIPLICATION: {
 									if(CHILD(i).size() > 0 && CHILD(i)[0].isNumber()) {
-										if(!CHILD(i)[0].number().isZero() && CHILD(i)[0].number().isReal()) {
-											if(CHILD(i)[0].number().isNegative()) negs++;
-											if(nr.isZero()) {
-												nr = CHILD(i)[0].number();
-											} else {
-												if(negs) {
-													if(CHILD(i)[0].number().isNegative()) {
-														nr.setNegative(true);
-														if(CHILD(i)[0].number().isGreaterThan(nr)) {
-															nr = CHILD(i)[0].number();
-														}
-														break;
-													} else {
-														nr.setNegative(false);
-													}
-												}
-												if(CHILD(i)[0].number().isLessThan(nr)) {
-													nr = CHILD(i)[0].number();
-												}
+										if(CHILD(i)[0].number().isInteger()) {
+											if(bnum && !nr_num.isOne() && !CHILD(i)[0].number().isZero()) {
+												if(nr_num.isZero()) nr_num = CHILD(i)[0].number();
+												else nr_num.gcd(CHILD(i)[0].number());
+											}
+										} else {
+											if(bnum && !nr_num.isOne() && !CHILD(i)[0].number().isZero()) {
+												if(nr_num.isZero()) nr_num = CHILD(i)[0].number().numerator();
+												else nr_num.gcd(CHILD(i)[0].number().numerator());
+											}
+											if(bden) {
+												nr_den.lcm(CHILD(i)[0].number().denominator());
+												if(nr_den.isGreaterThan(1000000L)) nr_den.clear();
 											}
 										}
 										break;
 									}
 								}
 								default: {
-									if(nr.isZero() || !nr.isFraction()) {
-										nr.set(1, 1, 0);
-									}
+									break;
 								}
 							}
-							
 						}
-						nr.setNegative(negs > SIZE - negs);
-						if(bnum && !nr.isOne() && !nr.isZero()) {
-							nr.recip();
+						if(!nr_den.isZero() && (!nr_den.isOne() || !nr_num.isOne())) {
+							Number nr(nr_den);
+							nr.divide(nr_num);
+							nr.setNegative(inegs > 0);
 							for(size_t i = 0; i < SIZE; i++) {
 								switch(CHILD(i).type()) {
 									case STRUCT_NUMBER: {
-										if(IS_REAL(CHILD(i))) CHILD(i).number() *= nr;
-										else CHILD(i).calculateMultiply(nr, eo);
+										CHILD(i).number() *= nr;
 										break;
 									}
 									case STRUCT_MULTIPLICATION: {
-										if(IS_REAL(CHILD(i)[0])) {
+										if(CHILD(i).size() > 0 && CHILD(i)[0].isNumber()) {
 											CHILD(i)[0].number() *= nr;
 											CHILD(i).calculateMultiplyIndex(0, eo, true, this, i);
-										} else {
-											CHILD(i).calculateMultiply(nr, eo, this, i);
+											break;
 										}
-										break;
 									}
 									default: {
 										CHILD(i).calculateMultiply(nr, eo);
@@ -3665,6 +3668,24 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							calculateMultiply(nr, eo, mparent, index_this);
 							return 1;
 						}
+					} else if(inegs > 0) {
+						for(size_t i = 0; i < SIZE; i++) {
+							switch(CHILD(i).type()) {
+								case STRUCT_NUMBER: {CHILD(i).number().negate(); break;}
+								case STRUCT_MULTIPLICATION: {
+									if(CHILD(i).size() > 0 && CHILD(i)[0].isNumber()) {
+										CHILD(i)[0].number().negate();
+										CHILD(i).calculateMultiplyIndex(0, eo, true, this, i);
+										break;
+									}
+								}
+								default: {
+									CHILD(i).calculateNegate(eo);
+								}
+							}
+						}
+						raise_nocopy(&mstruct);
+						return 1;
 					}
 				} else if(eo.expand != 0 && !mstruct.number().isZero()) {
 					bool b = true;
@@ -6856,7 +6877,7 @@ void MathStructure::sort(const PrintOptions &po, bool recursive) {
 			CHILD(i).sort(po);
 		}
 	}
-	if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION && m_type != STRUCT_BITWISE_AND && m_type != STRUCT_BITWISE_OR && m_type != STRUCT_BITWISE_XOR) return;
+	if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION && m_type != STRUCT_BITWISE_AND && m_type != STRUCT_BITWISE_OR && m_type != STRUCT_BITWISE_XOR && m_type != STRUCT_LOGICAL_AND && m_type != STRUCT_LOGICAL_OR) return;
 	vector<size_t> sorted;
 	bool b;
 	PrintOptions po2 = po;
@@ -7643,7 +7664,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	}
 
 	structure(eo.structuring, eo2, false);
-	
+
 	clean_multiplications(*this);
 	
 	return *this;
@@ -10693,6 +10714,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				EvaluationOptions eo2 = eo;
 				eo2.expand = false;
 				calculatesub(eo2, eo2, false);
+				return true;
 			}
 		}
 	}
@@ -12163,7 +12185,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				}
 				formatsub(po, parent, pindex, false);
 				break;
-			} else if(po.exp_to_root && CHILD(0).representsNonNegative(true) && ((CHILD(1).isDivision() && CHILD(1)[0].isNumber() && CHILD(1)[0].number().isInteger() && CHILD(1)[1].isNumber() && CHILD(1)[1].number().isGreaterThan(1) && CHILD(1)[1].number().isLessThan(10) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1)[0].isOne())) || (CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().isInteger() && CHILD(1).number().denominator().isLessThan(10) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1).number().numeratorIsOne())) || (CHILD(1).isInverse() && CHILD(1)[0].isNumber()  && CHILD(1)[0].number().isInteger() && CHILD(1)[0].number().isPositive() && CHILD(1)[0].number().isLessThan(10)))) {
+			} else if(po.exp_to_root && CHILD(0).representsNonNegative(true) && ((CHILD(1).isDivision() && CHILD(1)[0].isNumber() && CHILD(1)[0].number().isInteger() && CHILD(1)[1].isNumber() && CHILD(1)[1].number().isGreaterThan(1) && CHILD(1)[1].number().isLessThan(10) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1)[0].isOne())) || (CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().isInteger() && CHILD(1).number().denominatorIsLessThan(10) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1).number().numeratorIsOne())) || (CHILD(1).isInverse() && CHILD(1)[0].isNumber()  && CHILD(1)[0].number().isInteger() && CHILD(1)[0].number().isPositive() && CHILD(1)[0].number().isLessThan(10)))) {
 				Number nr_int, nr_num, nr_den;
 				if(CHILD(1).isNumber()) {
 					nr_num = CHILD(1).number().numerator();
@@ -15905,7 +15927,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				size_t root_index = 0;
 				for(size_t i = 0; i < CHILD(0).size(); i++) {
 					if(CHILD(0)[i].isPower()) {
-						if(CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().numeratorIsOne() && CHILD(0)[i][1].number().denominator().isLessThan(10)) {
+						if(CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().numeratorIsOne() && CHILD(0)[i][1].number().denominatorIsLessThan(10)) {
 							if(i_root) {
 								if(i_root != CHILD(0)[i][1].number().denominator().intValue()) {
 									i_root = 0;
@@ -15941,7 +15963,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								if(CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().isInteger()) {
 									if(i_root && root_index == i) {b_break = true; break;}
 									b_xvar = true;
-								} else if(!b_xvar && CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().numeratorIsOne() && CHILD(0)[i][i2][1].number().denominator().isLessThan(10)) {
+								} else if(!b_xvar && CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().numeratorIsOne() && CHILD(0)[i][i2][1].number().denominatorIsLessThan(10)) {
 									if(i_root) {
 										if(i_root != CHILD(0)[i][i2][1].number().denominator().intValue()) {
 											i_root = 0;
@@ -17491,7 +17513,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							if(!CHILD(1).representsNonNegative(true)) {
 								if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
 									if(CHILD(1).representsNegative(true)) {
-										clear(true);
+										if(ct_comp == COMPARISON_EQUALS_LESS || ct_comp == COMPARISON_LESS) clear(true);
+										else set(1, 1, 0, true);
 										return true;
 									}
 									return false;
@@ -17698,7 +17721,14 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						MathStructure *mposcheck = NULL;
 						bool b_test = false;
 						if(!CHILD(1).representsNonNegative(true)) {
-							if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) return false;
+							if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
+								if(CHILD(1).representsNegative(true)) {
+									if(ct_comp == COMPARISON_EQUALS_LESS || ct_comp == COMPARISON_LESS) clear(true);
+									else set(1, 1, 0, true);
+									return true;
+								}
+								return false;
+							}
 							if(CHILD(1).representsNegative(true)) {
 								if(ct_comp == COMPARISON_EQUALS) {
 									clear(true);
@@ -17808,7 +17838,14 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					MathStructure *mposcheck = NULL;
 					bool b_test = false;
 					if(CHILD(0)[1].number().isEven() && !CHILD(1).representsNonNegative(true)) {
-						if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) return false;
+						if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
+							if(CHILD(1).representsNegative(true)) {
+								if(ct_comp == COMPARISON_EQUALS_LESS || ct_comp == COMPARISON_LESS) clear(true);
+								else set(1, 1, 0, true);
+								return true;
+							}
+							return false;
+						}
 						if(CHILD(1).representsNegative(true)) {
 							if(ct_comp == COMPARISON_EQUALS) {
 								clear(true);

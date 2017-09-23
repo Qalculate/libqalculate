@@ -537,7 +537,7 @@ void print_unit(Unit *u) {
 					base_unit += POWER;
 					base_unit += i2s(au->firstBaseExponent());
 				}
-				if(au->firstBaseUnit() == CALCULATOR->u_euro && au->isBuiltin()) {
+				if(au->baseUnit() == CALCULATOR->u_euro && au->isBuiltin()) {
 					relation = "exchange rate";
 				} else {
 					relation = fix(CALCULATOR->localizeExpression(au->expression()).c_str());

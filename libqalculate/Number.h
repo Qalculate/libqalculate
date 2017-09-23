@@ -281,6 +281,15 @@ class Number {
 		bool isGreaterThanOrEqualTo(long int i) const;
 		bool isLessThanOrEqualTo(long int i) const;
 		bool isEven() const;
+		bool numeratorIsGreaterThan(long int i) const;
+		bool numeratorIsLessThan(long int i) const;
+		bool numeratorEquals(long int i) const;
+		bool denominatorIsGreaterThan(long int i) const;
+		bool denominatorIsLessThan(long int i) const;
+		bool denominatorEquals(long int i) const;
+		bool denominatorIsGreater(const Number &o) const;
+		bool denominatorIsLess(const Number &o) const;
+		bool denominatorIsEqual(const Number &o) const;
 		bool denominatorIsEven() const;
 		bool denominatorIsTwo() const;
 		bool numeratorIsEven() const;

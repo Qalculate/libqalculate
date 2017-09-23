@@ -1,3 +1,9 @@
+2017-09-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix 5/(x−y)−3/(2x−2y)=7(2x-2y)
+	* Factorization fixes
+	* sqrt(-a)=sqrt(a)*i
+
 2017-09-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix convert cbrt(L) to optimal unit

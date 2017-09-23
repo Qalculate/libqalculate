@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-16 19:57+0200\n"
+"POT-Creation-Date: 2017-09-22 18:24+0200\n"
 "PO-Revision-Date: 2006-11-08 21:13-0500\n"
 "Last-Translator: Nicolas Laug <Nicolas.Laug@users.sourceforge.net>\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -121,7 +121,7 @@ msgstr "négatif"
 msgid "Unrecognized assumption."
 msgstr "Hypothèse non reconnue"
 
-#: ../src/qalc.cc:364 ../libqalculate/Calculator.cc:9442
+#: ../src/qalc.cc:364 ../libqalculate/Calculator.cc:9457
 #, fuzzy, c-format
 msgid "It has been %s day(s) since the exchange rates last were updated."
 msgstr "La dernière mise à jour des taux d'échange date de plus d'une semaine."
@@ -768,7 +768,7 @@ msgstr ""
 
 #: ../src/qalc.cc:1135 ../src/qalc.cc:1138 ../src/qalc.cc:1139
 #: ../src/qalc.cc:1140 ../src/qalc.cc:1141 ../src/qalc.cc:1366
-#: ../libqalculate/Calculator.cc:8065 ../libqalculate/Calculator.cc:8081
+#: ../libqalculate/Calculator.cc:8080 ../libqalculate/Calculator.cc:8096
 msgid "Temporary"
 msgstr "Temporaire"
 
@@ -1029,7 +1029,7 @@ msgstr ""
 
 #. qalc command
 #: ../src/qalc.cc:2052 ../src/qalc.cc:2091 ../src/qalc.cc:2647
-#: ../libqalculate/Calculator.cc:8719 ../libqalculate/DataSet.cc:359
+#: ../libqalculate/Calculator.cc:8734 ../libqalculate/DataSet.cc:359
 #: ../libqalculate/DataSet.cc:386 ../libqalculate/DataSet.cc:1016
 msgid "info"
 msgstr ""
@@ -1516,7 +1516,7 @@ msgid "warning"
 msgstr "avertissement"
 
 #: ../src/qalc.cc:2876 ../src/qalc.cc:2914 ../src/qalc.cc:3176
-#: ../src/qalc.cc:3478 ../libqalculate/Calculator.cc:9137
+#: ../src/qalc.cc:3478 ../libqalculate/Calculator.cc:9152
 #: ../libqalculate/MathStructure.cc:522
 #, c-format
 msgid "aborted"
@@ -1591,40 +1591,40 @@ msgstr "Le troisième argument, %s, est ignoré pour les vecteurs."
 msgid "Element %s does not exist in vector."
 msgstr "L'élément %s n'existe pas dans le vecteur."
 
-#: ../libqalculate/BuiltinFunctions.cc:1574
+#: ../libqalculate/BuiltinFunctions.cc:1534
 #, c-format
 msgid "Argument for %s() must be a real number greater than or equal to -1/e."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:2651
-#: ../libqalculate/BuiltinFunctions.cc:2694
+#: ../libqalculate/BuiltinFunctions.cc:2737
+#: ../libqalculate/BuiltinFunctions.cc:2780
 #, c-format
 msgid "Unsolvable comparison in %s()."
 msgstr "Comparaison impossible à résoudre dans %s()."
 
-#: ../libqalculate/BuiltinFunctions.cc:2783
-#: ../libqalculate/BuiltinFunctions.cc:2796
-#: ../libqalculate/BuiltinFunctions.cc:2815
-#: ../libqalculate/BuiltinFunctions.cc:2841
-#: ../libqalculate/BuiltinFunctions.cc:2856
-#: ../libqalculate/BuiltinFunctions.cc:2871
-#: ../libqalculate/BuiltinFunctions.cc:2895
-#: ../libqalculate/BuiltinFunctions.cc:2919
-#: ../libqalculate/BuiltinFunctions.cc:2936
-#: ../libqalculate/BuiltinFunctions.cc:2952
-#: ../libqalculate/BuiltinFunctions.cc:2971
-#: ../libqalculate/BuiltinFunctions.cc:2986
-#: ../libqalculate/BuiltinFunctions.cc:2999
-#: ../libqalculate/BuiltinFunctions.cc:3012
+#: ../libqalculate/BuiltinFunctions.cc:2869
+#: ../libqalculate/BuiltinFunctions.cc:2882
+#: ../libqalculate/BuiltinFunctions.cc:2901
+#: ../libqalculate/BuiltinFunctions.cc:2927
+#: ../libqalculate/BuiltinFunctions.cc:2942
+#: ../libqalculate/BuiltinFunctions.cc:2957
+#: ../libqalculate/BuiltinFunctions.cc:2981
+#: ../libqalculate/BuiltinFunctions.cc:3005
+#: ../libqalculate/BuiltinFunctions.cc:3022
+#: ../libqalculate/BuiltinFunctions.cc:3038
+#: ../libqalculate/BuiltinFunctions.cc:3057
+#: ../libqalculate/BuiltinFunctions.cc:3072
+#: ../libqalculate/BuiltinFunctions.cc:3085
+#: ../libqalculate/BuiltinFunctions.cc:3098
 #, c-format
 msgid "Error in date format for function %s()."
 msgstr "Erreur dans le format de date pour la fonction %s()."
 
-#: ../libqalculate/BuiltinFunctions.cc:2809 ../libqalculate/Calculator.cc:10038
+#: ../libqalculate/BuiltinFunctions.cc:2895 ../libqalculate/Calculator.cc:10053
 msgid "now"
 msgstr "maintenant"
 
-#: ../libqalculate/BuiltinFunctions.cc:3189
+#: ../libqalculate/BuiltinFunctions.cc:3275
 msgid ""
 "The number of requested elements in generate vector function must be a "
 "positive integer."
@@ -1632,62 +1632,62 @@ msgstr ""
 "Le nombre d'éléments requis pour générer une fonction vectorielle doit être "
 "un entier positif."
 
-#: ../libqalculate/BuiltinFunctions.cc:3496
-#: ../libqalculate/BuiltinFunctions.cc:3500
+#: ../libqalculate/BuiltinFunctions.cc:3582
+#: ../libqalculate/BuiltinFunctions.cc:3586
 #, c-format
 msgid "Too few elements (%s) in vector (%s required)"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3549
-#: ../libqalculate/BuiltinFunctions.cc:3566
+#: ../libqalculate/BuiltinFunctions.cc:3635
+#: ../libqalculate/BuiltinFunctions.cc:3652
 msgid "Comparison failed."
 msgstr "La comparaison a échoué."
 
-#: ../libqalculate/BuiltinFunctions.cc:3554
-#: ../libqalculate/BuiltinFunctions.cc:3584
+#: ../libqalculate/BuiltinFunctions.cc:3640
+#: ../libqalculate/BuiltinFunctions.cc:3670
 msgid "No matching item found."
 msgstr "Aucun élément correspondant trouvé."
 
-#: ../libqalculate/BuiltinFunctions.cc:3666
+#: ../libqalculate/BuiltinFunctions.cc:3752
 #, c-format
 msgid "Object %s does not exist."
 msgstr "L'objet %s n'existe pas."
 
-#: ../libqalculate/BuiltinFunctions.cc:3684
+#: ../libqalculate/BuiltinFunctions.cc:3770
 #, fuzzy, c-format
 msgid "Invalid variable name (%s)."
 msgstr "un nom de variable valide"
 
-#: ../libqalculate/BuiltinFunctions.cc:3701
+#: ../libqalculate/BuiltinFunctions.cc:3787
 msgid ""
 "A global unit or variable was deactivated. It will be restored after the new "
 "variable has been removed."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3716
+#: ../libqalculate/BuiltinFunctions.cc:3802
 #, c-format
 msgid "Register %s does not exist. Returning zero."
 msgstr "Le registre %s n'existe pas. Valeur renvoyée : zéro."
 
-#: ../libqalculate/BuiltinFunctions.cc:3760
+#: ../libqalculate/BuiltinFunctions.cc:3846
 #, c-format
 msgid ""
 "The %s function is incomplete, unreliable and unstable. Use at your own risk "
 "and avoid complex expressions."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3771
-#: ../libqalculate/BuiltinFunctions.cc:3782
+#: ../libqalculate/BuiltinFunctions.cc:3857
+#: ../libqalculate/BuiltinFunctions.cc:3868
 #, fuzzy
 msgid "Unable to integrate the expression."
 msgstr "Impossible d'isoler %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:3777
+#: ../libqalculate/BuiltinFunctions.cc:3863
 msgid ""
 "Both the lower and upper limit must be set to get the definite integral."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:3918
+#: ../libqalculate/BuiltinFunctions.cc:4004
 msgid ""
 "No equality or inequality to solve. The entered expression to solve is not "
 "correct (ex. \"x + 5 = 3\" is correct)"
@@ -1695,37 +1695,37 @@ msgstr ""
 "Pas d'égalité ou d'inégalité à résoudre. L'expression à résoudre que vous "
 "avez entrée est incorrecte (ex : \"x + 5 = 3\" est correcte)"
 
-#: ../libqalculate/BuiltinFunctions.cc:3965
+#: ../libqalculate/BuiltinFunctions.cc:4051
 #, c-format
 msgid "The comparison is true for all %s (with current assumptions)."
 msgstr ""
 "La comparaison est vraie pour tous les %s (avec les hypothèses courantes)."
 
-#: ../libqalculate/BuiltinFunctions.cc:3969
+#: ../libqalculate/BuiltinFunctions.cc:4055
 msgid "No possible solution was found (with current assumptions)."
 msgstr ""
 "Aucune solution possible n'a été trouvée (avec les hypothèses courantes)."
 
-#: ../libqalculate/BuiltinFunctions.cc:3973
+#: ../libqalculate/BuiltinFunctions.cc:4059
 #, c-format
 msgid "Was unable to completely isolate %s."
 msgstr "Impossible d'isoler complètement %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:3977
-#: ../libqalculate/BuiltinFunctions.cc:4105
-#: ../libqalculate/BuiltinFunctions.cc:4200
+#: ../libqalculate/BuiltinFunctions.cc:4063
+#: ../libqalculate/BuiltinFunctions.cc:4191
+#: ../libqalculate/BuiltinFunctions.cc:4286
 #, c-format
 msgid "The comparison is true for all %s if %s."
 msgstr "La comparaison est vraie pour tous les %s si %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:3981
+#: ../libqalculate/BuiltinFunctions.cc:4067
 #, c-format
 msgid "Was unable to isolate %s."
 msgstr "Impossible d'isoler %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:4064
-#: ../libqalculate/BuiltinFunctions.cc:4091
-#: ../libqalculate/BuiltinFunctions.cc:4174
+#: ../libqalculate/BuiltinFunctions.cc:4150
+#: ../libqalculate/BuiltinFunctions.cc:4177
+#: ../libqalculate/BuiltinFunctions.cc:4260
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed sign was "
@@ -1734,9 +1734,9 @@ msgstr ""
 "Impossible d'isoler %s avec les hypothèses courantes. Le signe supposé a été "
 "temporairement défini comme inconnu."
 
-#: ../libqalculate/BuiltinFunctions.cc:4067
-#: ../libqalculate/BuiltinFunctions.cc:4094
-#: ../libqalculate/BuiltinFunctions.cc:4177
+#: ../libqalculate/BuiltinFunctions.cc:4153
+#: ../libqalculate/BuiltinFunctions.cc:4180
+#: ../libqalculate/BuiltinFunctions.cc:4263
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed type and "
@@ -1745,18 +1745,18 @@ msgstr ""
 "Impossible d'isoler %s avec les hypothèses courantes. Le type et le signe "
 "supposés ont été temporairement définis comme inconnus."
 
-#: ../libqalculate/BuiltinFunctions.cc:4100
-#: ../libqalculate/BuiltinFunctions.cc:4185
+#: ../libqalculate/BuiltinFunctions.cc:4186
+#: ../libqalculate/BuiltinFunctions.cc:4271
 #, c-format
 msgid "The solution requires that %s."
 msgstr "La solution exige que %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:4193
+#: ../libqalculate/BuiltinFunctions.cc:4279
 #, c-format
 msgid "Solution %s requires that %s."
 msgstr "La solution %s exige que %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:4261
+#: ../libqalculate/BuiltinFunctions.cc:4347
 #, c-format
 msgid ""
 "Unable to isolate %s.\n"
@@ -1771,121 +1771,121 @@ msgstr ""
 "pour que chaque équation contienne au moins la variable correspondante (si "
 "le réordonnement automatique a échoué)."
 
-#: ../libqalculate/BuiltinFunctions.cc:4263
-#: ../libqalculate/BuiltinFunctions.cc:4277
-#: ../libqalculate/BuiltinFunctions.cc:4286
+#: ../libqalculate/BuiltinFunctions.cc:4349
+#: ../libqalculate/BuiltinFunctions.cc:4363
+#: ../libqalculate/BuiltinFunctions.cc:4372
 #, c-format
 msgid "Unable to isolate %s."
 msgstr "Impossible d'isoler %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:4270
+#: ../libqalculate/BuiltinFunctions.cc:4356
 #, c-format
 msgid "Inequalities is not allowed in %s()."
 msgstr "Les inégalités ne sont pas autorisées dans %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:4344
-#: ../libqalculate/BuiltinFunctions.cc:4358
+#: ../libqalculate/BuiltinFunctions.cc:4430
+#: ../libqalculate/BuiltinFunctions.cc:4444
 #, fuzzy
 msgid "Matrix"
 msgstr "matrice"
 
-#: ../libqalculate/BuiltinFunctions.cc:4369
-#: ../libqalculate/BuiltinFunctions.cc:4407
+#: ../libqalculate/BuiltinFunctions.cc:4455
+#: ../libqalculate/BuiltinFunctions.cc:4493
 #, fuzzy
 msgid "Vector"
 msgstr "vecteur"
 
-#: ../libqalculate/BuiltinFunctions.cc:4380
-#: ../libqalculate/BuiltinFunctions.cc:4414 ../libqalculate/Calculator.cc:9518
+#: ../libqalculate/BuiltinFunctions.cc:4466
+#: ../libqalculate/BuiltinFunctions.cc:4500 ../libqalculate/Calculator.cc:9533
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr ""
 "Impossible de générer des données graphiques avec les valeurs actuelles min, "
 "max et pas."
 
-#: ../libqalculate/BuiltinFunctions.cc:4382
-#: ../libqalculate/BuiltinFunctions.cc:4416
+#: ../libqalculate/BuiltinFunctions.cc:4468
+#: ../libqalculate/BuiltinFunctions.cc:4502
 msgid "Sampling rate must be a positive integer."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions.cc:4387
-#: ../libqalculate/BuiltinFunctions.cc:4421 ../libqalculate/Calculator.cc:9490
+#: ../libqalculate/BuiltinFunctions.cc:4473
+#: ../libqalculate/BuiltinFunctions.cc:4507 ../libqalculate/Calculator.cc:9505
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr ""
 "Impossible de générer des données graphiques avec les valeurs actuelles min, "
 "max et taux d'échantillonage."
 
-#: ../libqalculate/Calculator.cc:374
+#: ../libqalculate/Calculator.cc:375
 msgid "per"
 msgstr "par"
 
-#: ../libqalculate/Calculator.cc:376
+#: ../libqalculate/Calculator.cc:377
 msgid "times"
 msgstr "fois"
 
-#: ../libqalculate/Calculator.cc:378
+#: ../libqalculate/Calculator.cc:379
 msgid "plus"
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:380
+#: ../libqalculate/Calculator.cc:381
 msgid "minus"
 msgstr "moins"
 
-#: ../libqalculate/Calculator.cc:382 ../libqalculate/MathStructure.cc:12981
+#: ../libqalculate/Calculator.cc:383 ../libqalculate/MathStructure.cc:12997
 #: ../libqalculate/Function.cc:1165 ../libqalculate/Function.cc:1173
 #: ../libqalculate/Function.cc:1585 ../libqalculate/Function.cc:1746
 #: ../libqalculate/Function.cc:1754
 msgid "and"
 msgstr "et"
 
-#: ../libqalculate/Calculator.cc:386 ../libqalculate/DataSet.cc:1050
-#: ../libqalculate/DataSet.cc:1113 ../libqalculate/MathStructure.cc:12996
+#: ../libqalculate/Calculator.cc:387 ../libqalculate/DataSet.cc:1050
+#: ../libqalculate/DataSet.cc:1113 ../libqalculate/MathStructure.cc:13012
 #: ../libqalculate/Function.cc:2085 ../libqalculate/Function.cc:2101
 msgid "or"
 msgstr "ou"
 
-#: ../libqalculate/Calculator.cc:430 ../libqalculate/Calculator.cc:1143
-#: ../libqalculate/Calculator.cc:2306 ../libqalculate/Calculator.cc:2311
-#: ../libqalculate/Calculator.cc:2312
+#: ../libqalculate/Calculator.cc:431 ../libqalculate/Calculator.cc:1146
+#: ../libqalculate/Calculator.cc:2309 ../libqalculate/Calculator.cc:2314
+#: ../libqalculate/Calculator.cc:2315
 msgid " to "
 msgstr " à "
 
-#: ../libqalculate/Calculator.cc:502
+#: ../libqalculate/Calculator.cc:505
 msgid "Gradians unit is missing. Creating one for this session."
 msgstr "L'unité grade manque. Création pour cette session."
 
-#: ../libqalculate/Calculator.cc:503 ../libqalculate/Calculator.cc:511
-#: ../libqalculate/Calculator.cc:519
+#: ../libqalculate/Calculator.cc:506 ../libqalculate/Calculator.cc:514
+#: ../libqalculate/Calculator.cc:522
 msgid "Angle/Plane Angle"
 msgstr "Angle Plan/Solide"
 
-#: ../libqalculate/Calculator.cc:510
+#: ../libqalculate/Calculator.cc:513
 msgid "Radians unit is missing. Creating one for this session."
 msgstr "L'unité radian manque. Création pour cette session."
 
-#: ../libqalculate/Calculator.cc:518
+#: ../libqalculate/Calculator.cc:521
 msgid "Degrees unit is missing. Creating one for this session."
 msgstr "L'unité degré manque. Création pour cette session."
 
-#: ../libqalculate/Calculator.cc:1502 ../libqalculate/Calculator.cc:9201
-#: ../libqalculate/Calculator.cc:9308
+#: ../libqalculate/Calculator.cc:1505 ../libqalculate/Calculator.cc:9216
+#: ../libqalculate/Calculator.cc:9323
 msgid "Currency"
 msgstr "Devise"
 
-#: ../libqalculate/Calculator.cc:1660
+#: ../libqalculate/Calculator.cc:1663
 msgid ""
 "The calculation has been forcibly terminated. Please restart the application "
 "and report this as a bug."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:1930 ../libqalculate/Calculator.cc:2050
+#: ../libqalculate/Calculator.cc:1933 ../libqalculate/Calculator.cc:2053
 msgid "Stack is empty. Filling remaining function arguments with zeroes."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:2257
+#: ../libqalculate/Calculator.cc:2260
 msgid "calculating..."
 msgstr "calculs en cours..."
 
-#: ../libqalculate/Calculator.cc:3780
+#: ../libqalculate/Calculator.cc:3795
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
@@ -1894,7 +1894,7 @@ msgstr ""
 "\"%s\" n'est plus autorisé dans les noms. Changez s'il vous plaît le nom de "
 "\"%s\", ou la variable sera perdue."
 
-#: ../libqalculate/Calculator.cc:3798
+#: ../libqalculate/Calculator.cc:3813
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -1903,7 +1903,7 @@ msgstr ""
 "\"%s\" n'est plus autorisé dans les noms. Changez s'il vous plaît le nom \"%s"
 "\", ou la fonction sera perdue."
 
-#: ../libqalculate/Calculator.cc:3815
+#: ../libqalculate/Calculator.cc:3830
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -1912,30 +1912,30 @@ msgstr ""
 "\"%s\" n'est plus autorisé dans les noms. Changez s'il vous plaît le nom \"%s"
 "\", ou l'unité sera perdue."
 
-#: ../libqalculate/Calculator.cc:4964 ../libqalculate/Calculator.cc:5738
-#: ../libqalculate/Calculator.cc:5750 ../libqalculate/Calculator.cc:5776
-#: ../libqalculate/Calculator.cc:5802
+#: ../libqalculate/Calculator.cc:4979 ../libqalculate/Calculator.cc:5753
+#: ../libqalculate/Calculator.cc:5765 ../libqalculate/Calculator.cc:5791
+#: ../libqalculate/Calculator.cc:5817
 #, c-format
 msgid "Misplaced operator(s) \"%s\" ignored"
 msgstr "Opérateur(s) mal placé(s), \"%s\" ignoré"
 
-#: ../libqalculate/Calculator.cc:4988 ../libqalculate/Calculator.cc:5826
+#: ../libqalculate/Calculator.cc:5003 ../libqalculate/Calculator.cc:5841
 #, c-format
 msgid "Misplaced '%c' ignored"
 msgstr "L'élément mal placé '%c' ignoré"
 
-#: ../libqalculate/Calculator.cc:5015 ../libqalculate/Function.cc:1313
+#: ../libqalculate/Calculator.cc:5030 ../libqalculate/Function.cc:1313
 #: ../libqalculate/Function.cc:1344
 #, c-format
 msgid "Internal id %s does not exist."
 msgstr "L'identificateur interne %s n'existe pas."
 
-#: ../libqalculate/Calculator.cc:5033
+#: ../libqalculate/Calculator.cc:5048
 #, c-format
 msgid "\"%s\" is not a valid variable/function/unit."
 msgstr "\"%s\" n'est pas une variable/fonction/unité valide."
 
-#: ../libqalculate/Calculator.cc:5048
+#: ../libqalculate/Calculator.cc:5063
 #, c-format
 msgid ""
 "Trailing characters \"%s\" (not a valid variable/function/unit) in number "
@@ -1944,88 +1944,88 @@ msgstr ""
 "Les caractères de fin \"%s\" (variable/fonction/unité non valide) dans le "
 "nombre \"%s\" ont été ignorés."
 
-#: ../libqalculate/Calculator.cc:5429
+#: ../libqalculate/Calculator.cc:5444
 msgid "RPN syntax error. Values left at the end of the RPN expression."
 msgstr ""
 "Erreur de syntaxe NPI. Des valeurs subsistent à la fin de l'expression NPI."
 
-#: ../libqalculate/Calculator.cc:5432
+#: ../libqalculate/Calculator.cc:5447
 msgid "Unused stack values."
 msgstr "Valeurs de pile inutilisées."
 
-#: ../libqalculate/Calculator.cc:5471 ../libqalculate/Calculator.cc:5539
+#: ../libqalculate/Calculator.cc:5486 ../libqalculate/Calculator.cc:5554
 #, fuzzy, c-format
 msgid "RPN syntax error. Operator '%c' not supported."
 msgstr "Erreur de syntaxe NPI. La pile est vide."
 
-#: ../libqalculate/Calculator.cc:5499
+#: ../libqalculate/Calculator.cc:5514
 msgid "RPN syntax error. Stack is empty."
 msgstr "Erreur de syntaxe NPI. La pile est vide."
 
-#: ../libqalculate/Calculator.cc:5501
+#: ../libqalculate/Calculator.cc:5516
 msgid "RPN syntax error. Operator ignored as there where only one stack value."
 msgstr ""
 "Erreur de syntaxe NPI. L'opérateur a été ignoré comme si il n'y avait qu'une "
 "seule valeur de pile."
 
-#: ../libqalculate/Calculator.cc:6027
+#: ../libqalculate/Calculator.cc:6042
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "Le nom \"%s\" est utilisé. Remplacement par \"%s\"."
 
-#: ../libqalculate/Calculator.cc:6700 ../libqalculate/DataSet.cc:533
+#: ../libqalculate/Calculator.cc:6715 ../libqalculate/DataSet.cc:533
 #, c-format
 msgid "File not identified as Qalculate! definitions file: %s."
 msgstr "Fichier non identifié comme fichier de définitions Qalculate! : %s."
 
-#: ../libqalculate/Calculator.cc:8702 ../libqalculate/DataSet.cc:357
+#: ../libqalculate/Calculator.cc:8717 ../libqalculate/DataSet.cc:357
 msgid "Object"
 msgstr "Objet"
 
-#: ../libqalculate/Calculator.cc:8711 ../libqalculate/DataSet.cc:358
+#: ../libqalculate/Calculator.cc:8726 ../libqalculate/DataSet.cc:358
 msgid "Property"
 msgstr "Propriété"
 
-#: ../libqalculate/Calculator.cc:9010
+#: ../libqalculate/Calculator.cc:9025
 msgid "column"
 msgstr "colonne"
 
-#: ../libqalculate/Calculator.cc:9013
+#: ../libqalculate/Calculator.cc:9028
 msgid "Column "
 msgstr "Colonne"
 
-#: ../libqalculate/Calculator.cc:9089 ../libqalculate/Calculator.cc:9136
+#: ../libqalculate/Calculator.cc:9104 ../libqalculate/Calculator.cc:9151
 msgid "timed out"
 msgstr "délai expiré"
 
-#: ../libqalculate/Calculator.cc:9389 ../libqalculate/Calculator.cc:9390
-#: ../libqalculate/Calculator.cc:9393 ../libqalculate/Calculator.cc:9421
-#: ../libqalculate/Calculator.cc:9422 ../libqalculate/Calculator.cc:9425
+#: ../libqalculate/Calculator.cc:9404 ../libqalculate/Calculator.cc:9405
+#: ../libqalculate/Calculator.cc:9408 ../libqalculate/Calculator.cc:9436
+#: ../libqalculate/Calculator.cc:9437 ../libqalculate/Calculator.cc:9440
 #, c-format
 msgid "Failed to download exchange rates from %s: %s."
 msgstr "Échec du téléchargement des taux d'échange sur %s: %s."
 
-#: ../libqalculate/Calculator.cc:9486 ../libqalculate/Calculator.cc:9514
-#: ../libqalculate/Calculator.cc:9542 ../libqalculate/Calculator.cc:9832
+#: ../libqalculate/Calculator.cc:9501 ../libqalculate/Calculator.cc:9529
+#: ../libqalculate/Calculator.cc:9557 ../libqalculate/Calculator.cc:9847
 msgid "It took too long to generate the plot data."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:9574
+#: ../libqalculate/Calculator.cc:9589
 msgid "No extension in file name. Saving as PNG image."
 msgstr ""
 "Pas d'extension dans le nom de fichier. Enregistrement comme image PNG."
 
-#: ../libqalculate/Calculator.cc:9593
+#: ../libqalculate/Calculator.cc:9608
 msgid "Unknown extension in file name. Saving as PNG image."
 msgstr ""
 "Extension inconnu dans le nom de fichier. Enregistrement comme fichier PNG."
 
-#: ../libqalculate/Calculator.cc:9792
+#: ../libqalculate/Calculator.cc:9807
 #, c-format
 msgid "Could not create temporary file %s"
 msgstr "Impossible de créer le fichier temporaire %s"
 
-#: ../libqalculate/Calculator.cc:9847
+#: ../libqalculate/Calculator.cc:9862
 #, c-format
 msgid ""
 "Series %s contains non-numerical data (\"%s\" first of %s) which can not be "
@@ -2034,7 +2034,7 @@ msgstr ""
 "La suite %s contient des données non numériques (\"%s\" premier de %s) qui "
 "ne peut pas être correctement tracé."
 
-#: ../libqalculate/Calculator.cc:9849
+#: ../libqalculate/Calculator.cc:9864
 #, c-format
 msgid ""
 "Series %s contains non-real data (\"%s\" first of %s) which can not be "
@@ -2043,7 +2043,7 @@ msgstr ""
 "La suite %s contient des données non réelles (\"%s\" premier de %s) qui ne "
 "peut pas être correctement tracé."
 
-#: ../libqalculate/Calculator.cc:9878
+#: ../libqalculate/Calculator.cc:9893
 msgid ""
 "Failed to invoke gnuplot. Make sure that you have gnuplot installed in your "
 "path."
@@ -2051,15 +2051,15 @@ msgstr ""
 "Impossible d'appeler gnuplot. Assurez vous que gnuplot est installé dans "
 "votre path."
 
-#: ../libqalculate/Calculator.cc:10038
+#: ../libqalculate/Calculator.cc:10053
 msgid "today"
 msgstr "aujourd'hui"
 
-#: ../libqalculate/Calculator.cc:10041
+#: ../libqalculate/Calculator.cc:10056
 msgid "tomorrow"
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:10045
+#: ../libqalculate/Calculator.cc:10060
 msgid "yesterday"
 msgstr ""
 
@@ -2121,7 +2121,7 @@ msgstr "utilisation"
 msgid "To avoid division by zero, the following must be true: %s."
 msgstr "Pour éviter la division par zéro, ce qui suit doit être vrai : %s"
 
-#: ../libqalculate/MathStructure.cc:2766 ../libqalculate/MathStructure.cc:2787
+#: ../libqalculate/MathStructure.cc:2767 ../libqalculate/MathStructure.cc:2788
 #, c-format
 msgid ""
 "The second matrix must have as many rows (was %s) as the first has columns "
@@ -2131,79 +2131,79 @@ msgstr ""
 "première a de colonnes (valeur actuelle : %s) pour la multiplication "
 "matricielle."
 
-#: ../libqalculate/MathStructure.cc:5903 ../libqalculate/MathStructure.cc:5944
-#: ../libqalculate/MathStructure.cc:5977 ../libqalculate/MathStructure.cc:6033
-#: ../libqalculate/MathStructure.cc:6053 ../libqalculate/MathStructure.cc:6072
-#: ../libqalculate/MathStructure.cc:6091 ../libqalculate/MathStructure.cc:6110
-#: ../libqalculate/MathStructure.cc:6200 ../libqalculate/MathStructure.cc:9689
-#: ../libqalculate/MathStructure.cc:9700 ../libqalculate/MathStructure.cc:9808
+#: ../libqalculate/MathStructure.cc:5910 ../libqalculate/MathStructure.cc:5951
+#: ../libqalculate/MathStructure.cc:5984 ../libqalculate/MathStructure.cc:6040
+#: ../libqalculate/MathStructure.cc:6060 ../libqalculate/MathStructure.cc:6079
+#: ../libqalculate/MathStructure.cc:6098 ../libqalculate/MathStructure.cc:6117
+#: ../libqalculate/MathStructure.cc:6207 ../libqalculate/MathStructure.cc:9696
+#: ../libqalculate/MathStructure.cc:9707 ../libqalculate/MathStructure.cc:9816
 msgid "This is a bug. Please report it."
 msgstr "Ceci est un bogue. Merci de le reporter."
 
-#: ../libqalculate/MathStructure.cc:10616
+#: ../libqalculate/MathStructure.cc:10625
 msgid ""
 "Because of time constraints only a limited number of combinations of terms "
 "were tried during factorization. Repeat factorization to try other random "
 "combinations."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:13079
+#: ../libqalculate/MathStructure.cc:13095
 msgid "undefined"
 msgstr "indéfini"
 
-#: ../libqalculate/MathStructure.cc:13130
+#: ../libqalculate/MathStructure.cc:13146
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to rank vector."
 msgstr ""
 "Comparaison impossible à l'élément %s en essayant de classer le vecteur."
 
-#: ../libqalculate/MathStructure.cc:13180
+#: ../libqalculate/MathStructure.cc:13196
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to sort vector."
 msgstr "Comparaison impossible à l'élément %s en essayant de trier le vecteur."
 
-#: ../libqalculate/MathStructure.cc:13605
+#: ../libqalculate/MathStructure.cc:13621
 msgid "The determinant can only be calculated for square matrices."
 msgstr "Le déterminant ne peut être calculé que pour les matrices carrées."
 
-#: ../libqalculate/MathStructure.cc:13668
+#: ../libqalculate/MathStructure.cc:13684
 msgid "The permanent can only be calculated for square matrices."
 msgstr "Le permanent ne peut être calculé que pour les matrice carrées."
 
-#: ../libqalculate/MathStructure.cc:13757
+#: ../libqalculate/MathStructure.cc:13773
 msgid "Inverse of singular matrix."
 msgstr "Inverse d'une matrice singulière."
 
-#: ../libqalculate/MathStructure.cc:14096
+#: ../libqalculate/MathStructure.cc:14119
 msgid ""
 "Calculations involving conversion of units without proportional linear "
 "relationship (e.g. with multiple temperature units), might give unexpected "
 "results and is not recommended."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:14789
-#: ../libqalculate/MathStructure.cc:14827
+#: ../libqalculate/MathStructure.cc:14812
+#: ../libqalculate/MathStructure.cc:14850
 msgid "Too many data points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:14796
+#: ../libqalculate/MathStructure.cc:14819
 msgid ""
 "The selected min and max do not result in a positive, finite number of data "
 "points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:14824
+#: ../libqalculate/MathStructure.cc:14847
 msgid ""
 "The selected min, max and step size do not result in a positive, finite "
 "number of data points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:16227
+#: ../libqalculate/MathStructure.cc:16743
 #, c-format
 msgid "Not all complex roots where calculated for %s."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:16969
+#: ../libqalculate/MathStructure.cc:17696
 #, c-format
 msgid "Only one or two of the roots where calculated for %s."
 msgstr ""
@@ -2386,7 +2386,7 @@ msgstr ""
 msgid "an angle or a number (using the default angle unit)"
 msgstr "un angle ou un nombre (en utilisant l'unité d'angle par défaut)"
 
-#: ../libqalculate/Number.cc:154 ../libqalculate/Number.cc:4102
+#: ../libqalculate/Number.cc:154 ../libqalculate/Number.cc:4148
 msgid ""
 "Cannot display numbers greater than 9999 or less than -9999 as roman "
 "numerals."
@@ -2468,27 +2468,27 @@ msgstr "0^0 sera considéré comme indéfini"
 msgid "The result of 0^i is possibly undefined"
 msgstr ""
 
-#: ../libqalculate/Number.cc:2789
+#: ../libqalculate/Number.cc:2800
 msgid "Can only handle Riemann Zeta with an integer argument (s) >= 1"
 msgstr ""
 "La fonction Zeta de Riemann ne peut être supportée qu'avec un argument "
 "entier >= 1"
 
-#: ../libqalculate/Number.cc:2795
+#: ../libqalculate/Number.cc:2806
 msgid "Cannot handle an argument (s) that large for Riemann Zeta."
 msgstr ""
 "Impossible de supporter la fonction Zeta de Riemann pour un argument aussi "
 "grand."
 
-#: ../libqalculate/Number.cc:4099
+#: ../libqalculate/Number.cc:4145
 #, fuzzy
 msgid "Can only display rational numbers as roman numerals."
 msgstr ""
 "Impossible 'afficher des nombres plus grands que 9999 ou plus petits que "
 "-9999 en chiffres romains."
 
-#: ../libqalculate/Number.cc:4415 ../libqalculate/Number.cc:4422
-#: ../libqalculate/Number.cc:4429
+#: ../libqalculate/Number.cc:4461 ../libqalculate/Number.cc:4468
+#: ../libqalculate/Number.cc:4475
 msgid "infinity"
 msgstr "infini"
 
