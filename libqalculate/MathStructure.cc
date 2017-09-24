@@ -3339,101 +3339,108 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			numberUpdated();
 			return 1;
 		}
-		if(mstruct.number().isRational() && !mstruct.isInteger()) {
-			Number exp_num(mstruct.number().numerator());
-			if(!exp_num.isOne() && !exp_num.isMinusOne() && o_number.isPositive() && test_if_numerator_not_too_large(o_number, exp_num)) {
-				// Try raise by exponent numerator if not very large
-				nr = o_number;
-				if(nr.raise(exp_num, eo.approximation != APPROXIMATION_APPROXIMATE) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
-					o_number = nr;
-					numberUpdated();
-					nr.set(mstruct.number().denominator());
-					nr.recip();
-					calculateRaise(nr, eo, mparent, index_this);
+		if(!o_number.isMinusOne() && mstruct.number().isRational() && !mstruct.isInteger()) {
+			if(o_number.isNegative()) {
+				MathStructure mtest(*this);
+				if(mtest.number().negate() && mtest.calculateRaise(mstruct, eo)) {
+					set(mtest);
+					MathStructure *mmul = new MathStructure(-1, 1, 0);
+					mmul->calculateRaise(mstruct, eo);
+					multiply_nocopy(mmul);
+					calculateMultiplyLast(eo);
 					return 1;
 				}
-			}
-			if(o_number.isPositive()) {
-				Number nr_root(mstruct.number().denominator());
-				if(eo.split_squares && o_number.isInteger() && nr_root.isLessThanOrEqualTo(LARGEST_RAISED_PRIME_EXPONENT)) {
-					int root = nr_root.intValue();
-					nr.set(1, 1, 0);
-					bool b = true, overflow;
-					long int val;
-					while(b) {
-						if(CALCULATOR->aborted()) break;
-						b = false;
-						overflow = false;
-						val = o_number.lintValue(&overflow);
-						if(overflow) {
-							mpz_srcptr cval = mpq_numref(o_number.internalRational());
-							for(size_t i = 0; root == 2 ? (i < NR_OF_SQUARE_PRIMES) : (RAISED_PRIMES[root - 3][i] != 0); i++) {
-								if(CALCULATOR->aborted()) break;
-								if(mpz_divisible_ui_p(cval, (unsigned long int) (root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]))) {
-									nr *= PRIMES[i];
-									o_number /= (root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]);
-									b = true;
-									break;
-								}
-							}
-						} else {
-							for(size_t i = 0; root == 2 ? (i < NR_OF_SQUARE_PRIMES) : (RAISED_PRIMES[root - 3][i] != 0); i++) {
-								if(CALCULATOR->aborted()) break;
-								if((root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]) > val) {
-									break;
-								} else if(val % (root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]) == 0) {
-									nr *= PRIMES[i];
-									o_number /= (root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]);
-									b = true;
-									break;
-								}
-							}
-						}
-					}
-					if(!nr.isOne()) {
-						transform(STRUCT_MULTIPLICATION);
-						CHILD(0).calculateRaise(mstruct, eo, this, 0);
-						PREPEND(nr);
-						if(!mstruct.number().numeratorIsOne()) {
-							CHILD(0).calculateRaise(mstruct.number().numerator(), eo, this, 0);
-						}
-						calculateMultiplyIndex(0, eo, true, mparent, index_this);
+			} else {
+				Number exp_num(mstruct.number().numerator());
+				if(!exp_num.isOne() && !exp_num.isMinusOne() && o_number.isPositive() && test_if_numerator_not_too_large(o_number, exp_num)) {
+					// Try raise by exponent numerator if not very large
+					nr = o_number;
+					if(nr.raise(exp_num, eo.approximation != APPROXIMATION_APPROXIMATE) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || o_number.isInfinite() || mstruct.number().isInfinite())) {
+						o_number = nr;
+						numberUpdated();
+						nr.set(mstruct.number().denominator());
+						nr.recip();
+						calculateRaise(nr, eo, mparent, index_this);
 						return 1;
 					}
 				}
-				if(eo.split_squares && nr_root != 2) {
-					// partial roots, e.g. 9^(1/4)=3^(1/2)
-					if(nr_root.isEven()) {
-						Number nr(o_number);
-						if(nr.sqrt() && !nr.isApproximate()) {
-							o_number = nr;
-							mstruct.number().multiply(2);
-							mstruct.ref();
-							raise_nocopy(&mstruct);
-							calculateRaiseExponent(eo, mparent, index_this);
+				if(o_number.isPositive()) {
+					Number nr_root(mstruct.number().denominator());
+					if(eo.split_squares && o_number.isInteger() && nr_root.isLessThanOrEqualTo(LARGEST_RAISED_PRIME_EXPONENT)) {
+						int root = nr_root.intValue();
+						nr.set(1, 1, 0);
+						bool b = true, overflow;
+						long int val;
+						while(b) {
+							if(CALCULATOR->aborted()) break;
+							b = false;
+							overflow = false;
+							val = o_number.lintValue(&overflow);
+							if(overflow) {
+								mpz_srcptr cval = mpq_numref(o_number.internalRational());
+								for(size_t i = 0; root == 2 ? (i < NR_OF_SQUARE_PRIMES) : (RAISED_PRIMES[root - 3][i] != 0); i++) {
+									if(CALCULATOR->aborted()) break;
+									if(mpz_divisible_ui_p(cval, (unsigned long int) (root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]))) {
+										nr *= PRIMES[i];
+										o_number /= (root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]);
+										b = true;
+										break;
+									}
+								}
+							} else {
+								for(size_t i = 0; root == 2 ? (i < NR_OF_SQUARE_PRIMES) : (RAISED_PRIMES[root - 3][i] != 0); i++) {
+									if(CALCULATOR->aborted()) break;
+									if((root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]) > val) {
+										break;
+									} else if(val % (root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]) == 0) {
+										nr *= PRIMES[i];
+										o_number /= (root == 2 ? SQUARE_PRIMES[i] : RAISED_PRIMES[root - 3][i]);
+										b = true;
+										break;
+									}
+								}
+							}
+						}
+						if(!nr.isOne()) {
+							transform(STRUCT_MULTIPLICATION);
+							CHILD(0).calculateRaise(mstruct, eo, this, 0);
+							PREPEND(nr);
+							if(!mstruct.number().numeratorIsOne()) {
+								CHILD(0).calculateRaise(mstruct.number().numerator(), eo, this, 0);
+							}
+							calculateMultiplyIndex(0, eo, true, mparent, index_this);
 							return 1;
 						}
 					}
-					for(size_t i = 1; i < NR_OF_PRIMES; i++) {
-						if(nr_root.isLessThanOrEqualTo(PRIMES[i])) break;
-						if(nr_root.isIntegerDivisible(PRIMES[i])) {
+					if(eo.split_squares && nr_root != 2) {
+						// partial roots, e.g. 9^(1/4)=3^(1/2)
+						if(nr_root.isEven()) {
 							Number nr(o_number);
-							if(nr.root(Number(PRIMES[i], 1)) && !nr.isApproximate()) {
+							if(nr.sqrt() && !nr.isApproximate()) {
 								o_number = nr;
-								mstruct.number().multiply(PRIMES[i]);
+								mstruct.number().multiply(2);
 								mstruct.ref();
 								raise_nocopy(&mstruct);
 								calculateRaiseExponent(eo, mparent, index_this);
 								return 1;
 							}
 						}
+						for(size_t i = 1; i < NR_OF_PRIMES; i++) {
+							if(nr_root.isLessThanOrEqualTo(PRIMES[i])) break;
+							if(nr_root.isIntegerDivisible(PRIMES[i])) {
+								Number nr(o_number);
+								if(nr.root(Number(PRIMES[i], 1)) && !nr.isApproximate()) {
+									o_number = nr;
+									mstruct.number().multiply(PRIMES[i]);
+									mstruct.ref();
+									raise_nocopy(&mstruct);
+									calculateRaiseExponent(eo, mparent, index_this);
+									return 1;
+								}
+							}
+						}
 					}
 				}
-			} else if(eo.allow_complex && o_number.isNegative() && mstruct.number().denominatorIsTwo()) {
-				o_number.negate();
-				calculateRaise(mstruct, eo);
-				calculateMultiply(nr_one_i, eo);
-				return true;
 			}
 		}
 		// If base numerator is larger than denominator, invert base and negate exponent
@@ -3828,12 +3835,12 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			goto default_power_merge;
 		}
 		case STRUCT_POWER: {
-			if((eo.allow_complex && CHILD(1).representsFraction()) || (mstruct.representsInteger() && (eo.allow_complex || CHILD(0).representsInteger())) || representsNonNegative(true) || (CHILD(1).representsInteger() && mstruct.isNumber() && mstruct.number().denominatorIsTwo())) {
+			if((eo.allow_complex && CHILD(1).representsFraction()) || (mstruct.representsInteger() && (eo.allow_complex || CHILD(0).representsInteger())) || representsNonNegative(true)) {
 				if((((!eo.assume_denominators_nonzero || eo.warn_about_denominators_assumed_nonzero) && !CHILD(0).representsNonZero(true)) || CHILD(0).isZero()) && CHILD(1).representsNegative(true) && CHILD(1).representsNegative(true)) {
 					if(!eo.assume_denominators_nonzero || CHILD(0).isZero() || !warn_about_denominators_assumed_nonzero(CHILD(0), eo)) break;
 				}
-				if(!CHILD(1).representsNonInteger() && !mstruct.representsEven()) {
-					if(CHILD(1).representsEven()) {
+				if(!CHILD(1).representsNonInteger() && !mstruct.representsInteger()) {
+					if(CHILD(1).representsEven() && CHILD(0).representsReal(true)) {
 						if(CHILD(0).representsNegative(true)) {
 							CHILD(0).calculateNegate(eo);
 						} else if(!CHILD(0).representsNonNegative(true)) {
@@ -15987,7 +15994,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			}
 
 			// x+x^(1/a)=b => x=(b-x)^a
-			if(eo2.expand && CHILD(0).size() <= 10 && CHILD(0).size() > 1) {
+			if(eo2.expand && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(0).size() <= 10 && CHILD(0).size() > 1) {
 				int i_root = 0;
 				size_t root_index = 0;
 				for(size_t i = 0; i < CHILD(0).size(); i++) {
@@ -17370,31 +17377,33 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				return true;
 			}
 			
-			// x*(x+a)^(1/b)=c => (x*(x+a)^(1/b))^b=c^b
-			Number nrexp;
-			for(size_t i = 0; i < CHILD(0).size(); i++) {
-				if(CHILD(0)[i].isPower() && CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().isRational()) {
-					if(!CHILD(0)[i][1].number().isInteger()) {
-						if(nrexp.isZero()) nrexp = CHILD(0)[i][1].number().denominator();
-						else nrexp.lcm(CHILD(0)[i][1].number().denominator());
+			if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
+				// x*(x+a)^(1/b)=c => (x*(x+a)^(1/b))^b=c^b
+				Number nrexp;
+				for(size_t i = 0; i < CHILD(0).size(); i++) {
+					if(CHILD(0)[i].isPower() && CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().isRational()) {
+						if(!CHILD(0)[i][1].number().isInteger()) {
+							if(nrexp.isZero()) nrexp = CHILD(0)[i][1].number().denominator();
+							else nrexp.lcm(CHILD(0)[i][1].number().denominator());
+						}
+					} else if(CHILD(0)[i].isFunction() && CHILD(0)[i].function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0)[i])) {
+						if(nrexp.isZero()) nrexp = CHILD(0)[i][1].number();
+						else nrexp.lcm(CHILD(0)[i][1].number());
+					} else if(CHILD(0)[i] != x_var && !(CHILD(0)[i].isFunction() && CHILD(0)[i].function() == CALCULATOR->f_abs && CHILD(0)[i].size() == 1 && CHILD(0)[i][0].representsReal(true))) {
+						nrexp.clear();
+						break;
 					}
-				} else if(CHILD(0)[i].isFunction() && CHILD(0)[i].function() == CALCULATOR->f_root && VALID_ROOT(CHILD(0)[i])) {
-					if(nrexp.isZero()) nrexp = CHILD(0)[i][1].number();
-					else nrexp.lcm(CHILD(0)[i][1].number());
-				} else if(CHILD(0)[i] != x_var && !(CHILD(0)[i].isFunction() && CHILD(0)[i].function() == CALCULATOR->f_abs && CHILD(0)[i].size() == 1 && CHILD(0)[i][0].representsReal(true))) {
-					nrexp.clear();
-					break;
 				}
-			}
-			if(!nrexp.isZero()) {
-				MathStructure mtest(*this);
-				if(mtest[0].calculateRaise(nrexp, eo2)) {
-					mtest[1].calculateRaise(nrexp, eo2);
-					mtest.childrenUpdated();
-					if(mtest.isolate_x(eo2, eo, x_var)) {
-						if(test_comparisons(*this, mtest, x_var, eo) >= 0) {
-							set(mtest);
-							return true;
+				if(!nrexp.isZero()) {
+					MathStructure mtest(*this);
+					if(mtest[0].calculateRaise(nrexp, eo2)) {
+						mtest[1].calculateRaise(nrexp, eo2);
+						mtest.childrenUpdated();
+						if(mtest.isolate_x(eo2, eo, x_var)) {
+							if(test_comparisons(*this, mtest, x_var, eo) >= 0) {
+								set(mtest);
+								return true;
+							}
 						}
 					}
 				}

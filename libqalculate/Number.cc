@@ -2098,7 +2098,18 @@ bool Number::raise(const Number &o, bool try_exact, bool use_real_root) {
 			if(b_imag) return false;
 			clear(true);
 			if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
-			i_value->set(1, 1, 0);
+			if(o.numeratorIsOne()) {
+				i_value->set(1, 1, 0);
+			} else {
+				mpz_t zrem;
+				mpz_init(zrem);
+				mpz_tdiv_r_ui(zrem, mpq_numref(o.internalRational()), 4);
+				if(mpz_cmp_ui(zrem, 1) == 0 || mpz_cmp_si(zrem, -3) == 0) {
+					i_value->set(1, 1, 0);
+				} else {
+					i_value->set(-1, 1, 0);
+				}
+			}
 			setPrecisionAndApproximateFrom(o);
 			return true;
 		} else if(use_real_root) {
@@ -2164,6 +2175,7 @@ bool Number::raise(const Number &o, bool try_exact, bool use_real_root) {
 						if(complex_result) {
 							if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
 							i_value->setInternal(r_test, false, true);
+							if(i_pow % 4 == 3) i_value->negate();
 							mpq_set_ui(r_value, 0, 1);
 						} else {
 							mpq_set(r_value, r_test);
@@ -2233,6 +2245,12 @@ bool Number::raise(const Number &o, bool try_exact, bool use_real_root) {
 				i_value->set(*this, false, true);
 				if(!i_value->negate() || !i_value->raise(o)) {
 					i_value->clear();
+				}
+				if(!o.numeratorIsOne()) {
+					mpz_t zrem;
+					mpz_init(zrem);
+					mpz_tdiv_r_ui(zrem, mpq_numref(o.internalRational()), 4);
+					if(mpz_cmp_ui(zrem, 1) != 0 && mpz_cmp_si(zrem, -3) != 0) i_value->negate();
 				}
 				clearReal();
 				setPrecisionAndApproximateFrom(*i_value);
