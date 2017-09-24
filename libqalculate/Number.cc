@@ -2049,7 +2049,7 @@ bool Number::raise(const Number &o, bool try_exact, bool use_real_root) {
 		if(o.isNegative()) {
 			if(o.isMinusOne()) return recip();
 			Number ninv(*this), opos(o);
-			if(!ninv.recip() ||!opos.negate() || !ninv.raise(opos, false, false)) return false;
+			if(!ninv.recip() ||!opos.negate() || !ninv.raise(opos, try_exact, false)) return false;
 			set(ninv);
 			return true;
 		}
