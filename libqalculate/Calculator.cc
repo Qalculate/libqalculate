@@ -491,6 +491,8 @@ Calculator::Calculator() {
 }
 Calculator::~Calculator() {
 	closeGnuplot();
+	abort();
+	terminateThreads();
 	delete priv;
 	delete calculate_thread;
 	gmp_randclear(randstate);
@@ -1673,7 +1675,11 @@ bool Calculator::busy() {
 }
 void Calculator::terminateThreads() {
 	if(calculate_thread->running) {
-		calculate_thread->cancel();
+		if(!calculate_thread->write(false) || !calculate_thread->write(NULL)) calculate_thread->cancel();
+		for(size_t i = 0; i < 10 && calculate_thread->running; i++) {
+			sleep_ms(1);
+		}
+		if(calculate_thread->running) calculate_thread->cancel();
 	}
 }
 

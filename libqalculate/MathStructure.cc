@@ -15999,7 +15999,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				size_t root_index = 0;
 				for(size_t i = 0; i < CHILD(0).size(); i++) {
 					if(CHILD(0)[i].isPower()) {
-						if(CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().numeratorIsOne() && CHILD(0)[i][1].number().denominatorIsLessThan(10)) {
+						if(CHILD(0)[i][1].isNumber() && !CHILD(0)[i][1].isInteger() && CHILD(0)[i][1].number().numeratorIsOne() && CHILD(0)[i][1].number().denominatorIsLessThan(10)) {
 							if(i_root) {
 								if(i_root != CHILD(0)[i][1].number().denominator().intValue()) {
 									i_root = 0;
@@ -16029,46 +16029,44 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							break;
 						}
 					} else if(CHILD(0)[i].isMultiplication()) {
-						bool b_xvar = false, b_break = false;
+						bool b_break = false;
 						for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
-							if(CHILD(0)[i][i2].isPower()) {
-								if(CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().isInteger()) {
-									if(i_root && root_index == i) {b_break = true; break;}
-									b_xvar = true;
-								} else if(!b_xvar && CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().numeratorIsOne() && CHILD(0)[i][i2][1].number().denominatorIsLessThan(10)) {
-									if(i_root) {
-										if(i_root != CHILD(0)[i][i2][1].number().denominator().intValue()) {
-											i_root = 0;
-											break;
+							if(CHILD(0)[i][i2].contains(x_var)) {
+								if(CHILD(0)[i][i2].isPower()) {
+									if(CHILD(0)[i][i2][1].isNumber() && !CHILD(0)[i][i2][1].number().isInteger() && CHILD(0)[i][i2][1].number().numeratorIsOne() && CHILD(0)[i][i2][1].number().denominatorIsLessThan(10)) {
+										if(i_root) {
+											if(i_root != CHILD(0)[i][i2][1].number().denominator().intValue()) {
+												i_root = 0;
+												b_break = true;
+												break;
+											}
+										} else {
+											i_root = CHILD(0)[i][i2][1].number().denominator().intValue();
+											root_index = i;
+										}
+									} else if(!CHILD(0)[i][i2][1].isNumber() || !CHILD(0)[i][i2][1].number().isInteger()) {
+										i_root = 0;
+										b_break = true;
+										break;
+									}
+								} else if(CHILD(0)[i][i2].isFunction() && CHILD(0)[i][i2].function() == CALCULATOR->f_root) {
+									if(VALID_ROOT(CHILD(0)[i][i2]) && CHILD(0)[i][i2][1].number().isLessThan(10)) {
+										if(i_root) {
+											if(i_root != CHILD(0)[i][i2][1].number().intValue()) {
+												i_root = 0;
+												b_break = true;
+												break;
+											}
+										} else {
+											i_root = CHILD(0)[i][i2][1].number().intValue();
+											root_index = i;
 										}
 									} else {
-										i_root = CHILD(0)[i][i2][1].number().denominator().intValue();
-										root_index = i;
+										i_root = 0;
+										b_break = true;
+										break;
 									}
-								} else {
-									i_root = 0;
-									b_break = true;
-									break;
 								}
-							} else if(CHILD(0)[i][i2].isFunction() && CHILD(0)[i][i2].function() == CALCULATOR->f_root) {
-								if(!b_xvar && VALID_ROOT(CHILD(0)[i][i2]) && CHILD(0)[i][i2][1].number().isLessThan(10)) {
-									if(i_root) {
-										if(i_root != CHILD(0)[i][i2][1].number().intValue()) {
-											i_root = 0;
-											break;
-										}
-									} else {
-										i_root = CHILD(0)[i][i2][1].number().intValue();
-										root_index = i;
-									}
-								} else {
-									i_root = 0;
-									b_break = true;
-									break;
-								}
-							} else if(!b_xvar && !CHILD(0)[i][i2].representsNonZero(true)) {
-								if(i_root && root_index == i) {b_break = true; break;}
-								b_xvar = true;
 							}
 						}
 						if(b_break) break;

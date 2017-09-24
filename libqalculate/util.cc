@@ -801,6 +801,7 @@ Thread::Thread() : running(false), m_thread(NULL), m_threadReadyEvent(NULL), m_t
 }
 
 Thread::~Thread() {
+	cancel();
 	CloseHandle(m_threadReadyEvent);
 }
 
@@ -827,9 +828,10 @@ bool Thread::start() {
 }
 
 bool Thread::cancel() {
+	if(!running) return true;
 	// FIXME: this is dangerous
 	int ret = TerminateThread(m_thread, 0);
-	if (ret == 0) return false;
+	if(ret == 0) return false;
 	CloseHandle(m_thread);
 	m_thread = NULL;
 	m_threadID = 0;
@@ -849,6 +851,7 @@ Thread::Thread() : running(false), m_pipe_r(NULL), m_pipe_w(NULL) {
 }
 
 Thread::~Thread() {
+	cancel();
 	fclose(m_pipe_r);
 	fclose(m_pipe_w);
 	pthread_attr_destroy(&m_thread_attr);
