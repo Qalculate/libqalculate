@@ -9843,10 +9843,9 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 						plot_data += " ";
 					}
 				}	
-				if(!invalid_nr) {
-					plot_data += y_vectors[serie].getChild(i)->print(po);
-					plot_data += "\n";	
-				}
+				if(!invalid_nr) plot_data += y_vectors[serie].getChild(i)->print(po);
+				else plot_data += "  ";
+				plot_data += "\n";
 				if(aborted()) {
 					fclose(fdata);
 					if(msecs > 0) {
@@ -9857,7 +9856,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 				}
 			}
 			if(msecs > 0) stopControl();
-			if(non_numerical > 0 || non_real > 0) {
+			/*if(non_numerical > 0 || non_real > 0) {
 				string stitle;
 				if(serie < pdps.size() && !pdps[serie]->title.empty()) {
 					stitle = pdps[serie]->title.c_str();
@@ -9869,7 +9868,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 				} else {
 					error(true, _("Series %s contains non-real data (\"%s\" first of %s) which can not be properly plotted."), stitle.c_str(), str.c_str(), i2s(non_real).c_str(), NULL);
 				}
-			}
+			}*/
 			fputs(plot_data.c_str(), fdata);
 			fflush(fdata);
 			fclose(fdata);

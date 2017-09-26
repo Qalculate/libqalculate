@@ -1,3 +1,8 @@
+2017-09-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Enhanced simplification of expressions with polynomial division
+	* Data with invalid values are plotted as discontinuous function
+
 2017-09-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix thread not terminated on Calculator deletion (issue #45)

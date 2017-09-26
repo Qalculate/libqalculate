@@ -79,7 +79,37 @@
 	}
 }*/
 
+struct sym_desc {
+	MathStructure sym;
+	Number deg_a;
+	Number deg_b;
+	Number ldeg_a;
+	Number ldeg_b;
+	Number max_deg;
+	size_t max_lcnops;
+	bool operator<(const sym_desc &x) const {
+		if (max_deg == x.max_deg) return max_lcnops < x.max_lcnops;
+		else return max_deg.isLessThan(x.max_deg);
+	}
+};
+typedef std::vector<sym_desc> sym_desc_vec;
+
 bool polynomial_long_division(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar_pre, MathStructure &mquotient, MathStructure &mrem, const EvaluationOptions &eo, bool check_args = false, bool for_newtonraphson = false);
+void integer_content(const MathStructure &mpoly, Number &icontent);
+void interpolate(const MathStructure &gamma, const Number &xi, const MathStructure &xvar, MathStructure &minterp, const EvaluationOptions &eo);
+bool get_first_symbol(const MathStructure &mpoly, MathStructure &xvar);
+bool divide_in_z(const MathStructure &mnum, const MathStructure &mden, MathStructure &mquotient, const sym_desc_vec &sym_stats, size_t var_i, const EvaluationOptions &eo);
+bool prem(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar, MathStructure &mrem, const EvaluationOptions &eo, bool check_args = true);
+bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgcd, const sym_desc_vec &sym_stats, size_t var_i, const EvaluationOptions &eo);
+void polynomial_smod(const MathStructure &mpoly, const Number &xi, MathStructure &msmod, const EvaluationOptions &eo, MathStructure *mparent = NULL, size_t index_smod = 0);
+bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgcd, const EvaluationOptions &eo, MathStructure *ca, MathStructure *cb, const sym_desc_vec &sym_stats, size_t var_i);
+void add_symbol(const MathStructure &mpoly, sym_desc_vec &v);
+void collect_symbols(const MathStructure &mpoly, sym_desc_vec &v);
+void add_symbol(const MathStructure &mpoly, vector<MathStructure> &v);
+void collect_symbols(const MathStructure &mpoly, vector<MathStructure> &v);
+void get_symbol_stats(const MathStructure &m1, const MathStructure &m2, sym_desc_vec &v);
+bool sqrfree(MathStructure &mpoly, const EvaluationOptions &eo);
+bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const EvaluationOptions &eo);
 
 bool flattenMultiplication(MathStructure &mstruct) {
 	bool retval = false;
@@ -5039,16 +5069,275 @@ int MathStructure::merge_bitwise_xor(MathStructure &mstruct, const EvaluationOpt
 					} else {\
 						evalSort();\
 					}
-					
-bool try_polynomial_division(MathStructure &mstruct, const EvaluationOptions &eo) {
-	if(!mstruct.isAddition() || !eo.reduce_divisions || !eo.expand) return false;
 
+bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool combine_divisions = false, bool only_gcd = false, bool combine_only = false, bool recursive = true);
+					
+bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool combine_divisions, bool only_gcd, bool combine_only, bool recursive) {
+
+	if(!eo.expand || !eo.assume_denominators_nonzero) return false;
+
+	if(recursive) {
+		bool b = false;
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			b = do_simplification(mstruct[i], eo, combine_divisions, true, combine_only, true) || b;
+			if(CALCULATOR->aborted()) return b;
+		}
+		if(b) mstruct.calculatesub(eo, eo, false);
+		return do_simplification(mstruct, eo, combine_divisions, only_gcd, combine_only, false) || b;
+	}
+	if(mstruct.isPower() && mstruct[1].isNumber() && mstruct[1].number().isRational() && !mstruct[1].number().isInteger() && mstruct[0].isRationalPolynomial()) {
+		MathStructure msqrfree(mstruct[0]);
+		if(sqrfree(msqrfree, eo) && msqrfree.isPower() && msqrfree.calculateRaise(mstruct[1], eo)) {
+			mstruct = msqrfree;
+			return true;
+		}
+	} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_root && VALID_ROOT(mstruct) && mstruct[0].isRationalPolynomial()) {
+		MathStructure msqrfree(mstruct[0]);
+		if(sqrfree(msqrfree, eo) && msqrfree.isPower() && msqrfree[1].isInteger() && msqrfree[1].number().isPositive()) {
+			if(msqrfree[1] == mstruct[1]) {
+				if(msqrfree[1].number().isEven()) {
+					if(!msqrfree[0].representsReal(true)) return false;
+					msqrfree.delChild(2);
+					msqrfree.setType(STRUCT_FUNCTION);
+					msqrfree.setFunction(CALCULATOR->f_abs);
+					mstruct = msqrfree;
+				} else {
+					mstruct = msqrfree[0];
+				}
+				return true;
+			} else if(msqrfree[1].number().isIntegerDivisible(mstruct[1].number())) {
+				if(msqrfree[1].number().isEven()) {
+					if(!msqrfree[0].representsReal(true)) return false;
+					msqrfree[0].transform(STRUCT_FUNCTION);
+					msqrfree[0].setFunction(CALCULATOR->f_abs);
+				}
+				msqrfree[1].number().divide(mstruct[1].number());
+				mstruct = msqrfree;
+				mstruct.calculatesub(eo, eo, false);
+				return true;
+			} else if(mstruct[1].number().isIntegerDivisible(msqrfree[1].number())) {
+				if(msqrfree[1].number().isEven()) {
+					if(!msqrfree[0].representsReal(true)) return false;
+					msqrfree[0].transform(STRUCT_FUNCTION);
+					msqrfree[0].setFunction(CALCULATOR->f_abs);
+				}
+				Number new_root(mstruct[1].number());
+				new_root.divide(msqrfree[1].number());
+				mstruct[0] = msqrfree[0];
+				mstruct[1] = new_root;
+				return true;
+			}
+		}
+	}
+	if(!mstruct.isAddition()) return false;
+
+	if(combine_divisions) {
+
+		MathStructure divs, nums, numleft, mleft;
+
+		// find division by polynomial
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(CALCULATOR->aborted()) return false;
+			bool b = false;
+			if(mstruct[i].isMultiplication()) {
+				MathStructure div, num;
+				for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+					if(mstruct[i][i2].isPower() && mstruct[i][i2][1].isMinusOne() && mstruct[i][i2][0].isRationalPolynomial()) {
+						if(div.isZero()) div = mstruct[i][i2][0];
+						else div.multiply(mstruct[i][i2][0], true);
+					} else if(mstruct[i][i2].isPower() && mstruct[i][i2][1].isInteger() && mstruct[i][i2][1].number().isNegative() && mstruct[i][i2][0].isRationalPolynomial()) {
+						mstruct[i][i2][1].number().negate();
+						if(div.isZero()) div = mstruct[i][i2];
+						else div.multiply(mstruct[i][i2], true);
+						mstruct[i][i2][1].number().negate();
+					} else if(mstruct[i][i2].isRationalPolynomial()) {
+						if(num.isZero()) num = mstruct[i][i2];
+						else num.multiply(mstruct[i][i2], true);
+					} else {
+						div.clear();
+						break;
+					}
+				}
+				if(!div.isZero()) {
+					bool b_found = false;
+					for(size_t i3 = 0; i3 < divs.size(); i3++) {
+						if(divs[i3] == div) {
+							nums[i3].add(num, true);
+							b_found = true;
+							break;
+						}
+					}
+					if(!b_found && (eo.assume_denominators_nonzero || div.representsNonZero(true)) && !div.representsZero(true)) {
+						divs.addChild(div);
+						nums.addChild(num);
+					}
+					b = true;
+				}
+			} else if(mstruct[i].isPower() && mstruct[i][1].isMinusOne() && mstruct[i][0].isRationalPolynomial()) {
+				bool b_found = false;
+				for(size_t i3 = 0; i3 < divs.size(); i3++) {
+					if(divs[i3] == mstruct[i][0]) {
+						nums[i3].add(m_one, true);
+						b_found = true;
+						break;
+					}
+				}
+				if(!b_found && (eo.assume_denominators_nonzero || mstruct[i][0].representsNonZero(true)) && !mstruct[i][0].representsZero(true)) {
+					divs.addChild(mstruct[i][0]);
+					nums.addChild(m_one);
+				}
+				b = true;
+			} else if(mstruct[i].isPower() && mstruct[i][1].isInteger() && mstruct[i][1].number().isNegative() && mstruct[i][0].isRationalPolynomial()) {
+				mstruct[i][1].number().negate();
+				bool b_found = false;
+				for(size_t i3 = 0; i3 < divs.size(); i3++) {
+					if(divs[i3] == mstruct[i]) {
+						nums[i3].add(m_one, true);
+						b_found = true;
+						break;
+					}
+				}
+				if(!b_found && (eo.assume_denominators_nonzero || mstruct[i][0].representsNonZero(true)) && !mstruct[i][0].representsZero(true)) {
+					divs.addChild(mstruct[i]);
+					nums.addChild(m_one);
+				}
+				mstruct[i][1].number().negate();
+				b = true;
+			}
+			if(!b) {
+				if(mstruct[i].isRationalPolynomial()) numleft.addChild(mstruct[i]);
+				else mleft.addChild(mstruct[i]);
+			}
+		}
+
+		if(divs.size() == 0) return false;
+
+		EvaluationOptions eo2 = eo;
+		eo2.do_polynomial_division = false;
+		eo2.keep_zero_units = false;
+	
+		if(divs.size() == 0) return false;
+		bool b_ret = false;
+		if(divs.size() > 1 || numleft.size() > 0) b_ret = true;
+		if(numleft.size() == 1) numleft.setToChild(1);
+		else if(numleft.size() > 1) numleft.setType(STRUCT_ADDITION);
+		while(divs.size() > 0) {
+			bool b = true;
+			if(!combine_only && divs[0].isAddition() && nums[0].isAddition()) {
+				MathStructure ca, cb, mgcd;
+				if(MathStructure::gcd(nums[0], divs[0], mgcd, eo2, &ca, &cb, false) && !mgcd.isOne()) {
+					if(mgcd.representsNonZero(true) || !eo.warn_about_denominators_assumed_nonzero || warn_about_denominators_assumed_nonzero(mgcd, eo)) {
+						if(cb.isOne()) {
+							numleft.addChild(ca);
+							nums.delChild(1);
+							divs.delChild(1);
+							b = false;
+						} else {
+							nums[0] = ca;
+							divs[0] = cb;
+						}
+						b_ret = true;
+					}
+				}
+			}
+			if(CALCULATOR->aborted()) return false;
+			if(b && divs.size() > 1) {
+				if(!combine_only && divs[1].isAddition() && nums[1].isAddition()) {
+					MathStructure ca, cb, mgcd;
+					if(MathStructure::gcd(nums[1], divs[1], mgcd, eo2, &ca, &cb, false) && !mgcd.isOne()) {
+						if(mgcd.representsNonZero(true) || !eo.warn_about_denominators_assumed_nonzero || warn_about_denominators_assumed_nonzero(mgcd, eo)) {
+							if(cb.isOne()) {
+								numleft.addChild(ca);
+								nums.delChild(2);
+								divs.delChild(2);
+								b = false;
+							} else {
+								nums[1] = ca;
+								divs[1] = cb;
+							}
+						}
+					}
+				}
+				if(CALCULATOR->aborted()) return false;
+				if(b) {
+					MathStructure ca, cb, mgcd;
+					b = MathStructure::gcd(divs[0], divs[1], mgcd, eo2, &ca, &cb, false) && !mgcd.isOne();
+					if(b) {
+						if(!cb.isOne()) {
+							divs[0].calculateMultiply(cb, eo);
+							nums[0].calculateMultiply(cb, eo);
+						}
+						if(!ca.isOne()) {
+							nums[1].calculateMultiply(ca, eo);
+						}
+					} else {
+						nums[0].calculateMultiply(divs[1], eo);
+						nums[1].calculateMultiply(divs[0], eo);
+						divs[0].calculateMultiply(divs[1], eo);
+					}
+					nums[0].calculateAdd(nums[1], eo);
+					nums.delChild(2);
+					divs.delChild(2);
+				}
+			} else if(b && !numleft.isZero()) {
+				numleft.calculateMultiply(divs[0], eo);
+				nums[0].calculateAdd(numleft, eo);
+				numleft.clear();
+			} else if(b) break;
+		}
+		if(!combine_only && !only_gcd && divs.size() > 0 && nums[0].isAddition() && divs[0].isAddition()) {
+			MathStructure mquo, mrem;
+			if(polynomial_long_division(nums[0], divs[0], m_zero, mquo, mrem, eo2, false) && !mquo.isZero() && mrem != nums[0]) {
+				if(!mrem.isZero() || divs[0].representsNonZero(true) || (eo.warn_about_denominators_assumed_nonzero && !warn_about_denominators_assumed_nonzero(divs[0], eo))) {
+					if(mrem.isZero()) {
+						mleft.addChild(mquo);
+						divs.clear();
+						b_ret = true;
+					} else {
+						long int point = nums[0].size();
+						if(mquo.isAddition()) point -= mquo.size();
+						else point--;
+						if(mrem.isAddition()) point -= mrem.size();
+						else point--;
+						if(point >= 0) {
+							mleft.addChild(mquo);
+							mrem.calculateDivide(divs[0], eo);
+							mleft.addChild(mrem);
+							divs.clear();
+							b_ret = true;
+						}
+					}
+				}
+			}
+		}
+		if(!b_ret) return false;
+		mstruct.clear(true);
+		if(divs.size() > 0) {
+			mstruct = nums[0];
+			if(only_gcd || combine_only) {
+				divs[0].inverse();
+				mstruct.multiply(divs[0], true);
+			} else {
+				mstruct.calculateDivide(divs[0], eo);
+			}
+		}
+		for(size_t i = 0; i < mleft.size(); i++) {
+			if(i == 0 && mstruct.isZero()) mstruct = mleft[i];
+			else mstruct.calculateAdd(mleft[i], eo);
+		}
+		for(size_t i = 0; i < numleft.size(); i++) {
+			if(i == 0 && mstruct.isZero()) mstruct = numleft[i];
+			else mstruct.calculateAdd(numleft[i], eo);
+		}
+		return true;
+	}
+	
 	MathStructure divs;
 	// find division by polynomial
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(mstruct[i].isMultiplication()) {
 			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
-				if(mstruct[i][i2].isPower() && mstruct[i][i2][0].isAddition() && mstruct[i][i2][1].isMinusOne() && mstruct[i][i2][0].isRationalPolynomial()) {
+				if(mstruct[i][i2].isPower() && (mstruct[i][i2][0].isAddition() || combine_divisions) && mstruct[i][i2][1].isMinusOne() && mstruct[i][i2][0].isRationalPolynomial()) {
 					bool b_found = false;
 					for(size_t i3 = 0; i3 < divs.size(); i3++) {
 						if(divs[i3] == mstruct[i][i2][0]) {
@@ -5061,7 +5350,7 @@ bool try_polynomial_division(MathStructure &mstruct, const EvaluationOptions &eo
 					break;
 				}
 			}
-		} else if(mstruct[i].isPower() && mstruct[i][0].isAddition() && mstruct[i][1].isMinusOne() && mstruct[i][0].isRationalPolynomial()) {
+		} else if(mstruct[i].isPower() && (mstruct[i][0].isAddition() || combine_divisions) && mstruct[i][1].isMinusOne() && mstruct[i][0].isRationalPolynomial()) {
 			bool b_found = false;
 			for(size_t i3 = 0; i3 < divs.size(); i3++) {
 				if(divs[i3] == mstruct[i][0]) {
@@ -5076,50 +5365,85 @@ bool try_polynomial_division(MathStructure &mstruct, const EvaluationOptions &eo
 
 	// check if denominators is zero
 	for(size_t i = 0; i < divs.size(); ) {
-		if(divs[i].number().isZero() || (!eo.assume_denominators_nonzero && !divs[i].representsNonZero(true)) || divs[i].representsZero(true)) divs.delChild(i + 1);
+		if((!combine_divisions && divs[i].number().isZero()) || (!eo.assume_denominators_nonzero && !divs[i].representsNonZero(true)) || divs[i].representsZero(true)) divs.delChild(i + 1);
 		else i++;
 	}
 
 	if(divs.size() == 0) return false;
 
 	// combine numerators with same denominator
-	MathStructure nums;
+	MathStructure nums, numleft, mleft;
 	nums.resizeVector(divs.size(), m_zero);
 	for(size_t i = 0; i < mstruct.size(); i++) {
+		bool b = false;
 		if(mstruct[i].isMultiplication()) {
 			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
-				if(mstruct[i][i2].isPower() && mstruct[i][i2][0].isAddition() && mstruct[i][i2][1].isMinusOne() && mstruct[i][i2][0].isRationalPolynomial()) {
+				if(mstruct[i][i2].isPower() && (mstruct[i][i2][0].isAddition() || combine_divisions) && mstruct[i][i2][1].isMinusOne() && mstruct[i][i2][0].isRationalPolynomial()) {
 					for(size_t i3 = 0; i3 < divs.size(); i3++) {
 						if(divs[i3] == mstruct[i][i2][0]) {
 							if(mstruct[i].size() == 1) nums[i3].addChild(m_one);
 							else if(mstruct[i].size() == 2) nums[i3].addChild(mstruct[i][i2 == 0 ? 1 : 0]);
 							else {nums[i3].addChild(mstruct[i]); nums[i3][nums[i3].size() - 1].delChild(i2 + 1);}
+							b = true;
 							break;
 						}
 					}
 					break;
 				}
 			}
-		} else if(mstruct[i].isPower() && mstruct[i][0].isAddition() && mstruct[i][1].isMinusOne() && mstruct[i][0].isRationalPolynomial()) {
+		} else if(mstruct[i].isPower() && (mstruct[i][0].isAddition() || combine_divisions) && mstruct[i][1].isMinusOne() && mstruct[i][0].isRationalPolynomial()) {
 			for(size_t i3 = 0; i3 < divs.size(); i3++) {
 				if(divs[i3] == mstruct[i][0]) {
 					nums[i3].addChild(m_one);
+					b = true;
 					break;
 				}
 			}
 		}
+		if(!b && combine_divisions) {
+			if(mstruct[i].isRationalPolynomial()) numleft.addChild(mstruct[i]);
+			else mleft.addChild(mstruct[i]);
+		}
 	}
 
+	EvaluationOptions eo2 = eo;
+	eo2.do_polynomial_division = false;
+	eo2.keep_zero_units = false;
+	
 	// do polynomial division; give points to incomplete division
 	vector<long int> points(nums.size(), -1);
 	bool b = false, b_ready_candidate = false;
 	for(size_t i = 0; i < divs.size(); i++) {
-		if(nums[i].size() > 1) {
+		if(CALCULATOR->aborted()) return false;
+		if(nums[i].size() > 1 && divs[i].isAddition()) {
 			nums[i].setType(STRUCT_ADDITION);
-			if(nums[i].isRationalPolynomial()) {
-				MathStructure mquo, mrem;
-				if(polynomial_long_division(nums[i], divs[i], m_zero, mquo, mrem, eo, false) && !mquo.isZero() && mrem != nums[i]) {
-					if(mrem.isZero() && divs[i].representsNonZero(true) && eo.warn_about_denominators_assumed_nonzero && !warn_about_denominators_assumed_nonzero(divs[i], eo)) {
+			MathStructure xvar;
+			get_first_symbol(nums[i], xvar);
+			if(nums[i].isRationalPolynomial() && nums[i].degree(xvar).isLessThan(100) && divs[i].degree(xvar).isLessThan(100)) {
+				MathStructure mquo, mrem, ca, cb;
+				if(MathStructure::gcd(nums[i], divs[i], mquo, eo2, &ca, &cb, false) && !mquo.isOne()) {
+					if(!mquo.representsNonZero(true) && eo.warn_about_denominators_assumed_nonzero && !warn_about_denominators_assumed_nonzero(mquo, eo)) {
+						nums[i].clear();
+					} else {
+						points[i] = 1;
+						b_ready_candidate = true;
+						b = true;
+					}
+					if(ca.isOne()) {
+						if(cb.isOne()) {
+							nums[i].set(1, 1, 0, true);
+						} else {
+							nums[i] = cb;
+							nums[i].inverse();
+						}
+					} else if(cb.isOne()) {
+						nums[i] = ca;
+					} else {
+						nums[i] = ca;
+						nums[i].calculateDivide(cb, eo);
+					}
+				} else if(!only_gcd && polynomial_long_division(nums[i], divs[i], xvar, mquo, mrem, eo2, false) && !mquo.isZero() && mrem != nums[i]) {
+					if(mrem.isZero() && !divs[i].representsNonZero(true) && eo.warn_about_denominators_assumed_nonzero && !warn_about_denominators_assumed_nonzero(divs[i], eo)) {
 						nums[i].clear();
 					} else {
 						long int point = 1;
@@ -5130,8 +5454,8 @@ bool try_polynomial_division(MathStructure &mstruct, const EvaluationOptions &eo
 							else point--;
 							if(mrem.isAddition()) point -= mrem.size();
 							else point--;
-							mrem.calculateDivide(divs[i], eo);
-							nums[i].calculateAdd(mrem, eo);
+							mrem.calculateDivide(divs[i], eo2);
+							nums[i].calculateAdd(mrem, eo2);
 						}
 						b = true;
 						points[i] = point;
@@ -5293,10 +5617,6 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			MERGE_ALL(merge_addition, try_add)
 			MERGE_ALL2
 			
-			if(try_polynomial_division(*this, eo)) {
-				calculatesub(eo, feo, recursive, mparent, index_this);
-				b = true;
-			}
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
@@ -7348,6 +7668,7 @@ bool MathStructure::simplify(const EvaluationOptions &eo, bool unfactorize) {
 		eo2.combine_divisions = false;
 		eo2.sync_units = false;
 		calculatesub(eo2, eo2);
+		do_simplification(*this, eo2, true, true, false);
 	}
 	return false;
 
@@ -7596,7 +7917,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	unformat(eo);
 	
 	EvaluationOptions feo = eo;
-	feo.structuring = STRUCTURING_SIMPLIFY;
+	feo.structuring = STRUCTURING_NONE;
+	feo.do_polynomial_division = false;
 	EvaluationOptions eo2 = eo;
 	eo2.structuring = STRUCTURING_NONE;
 	eo2.expand = false;
@@ -7656,6 +7978,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		if(b) {
 			calculatesub(eo2, feo);
 			if(CALCULATOR->aborted()) return *this;
+			if(eo.do_polynomial_division) do_simplification(*this, eo2, true, eo.structuring != STRUCTURING_SIMPLIFY && eo.structuring != STRUCTURING_HYBRID);
+			if(CALCULATOR->aborted()) return *this;
 			if(eo2.isolate_x) {
 				eo2.assume_denominators_nonzero = false;
 				if(isolate_x(eo2, feo)) {
@@ -7676,7 +8000,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			if(CALCULATOR->aborted()) return *this;
 		}
 	}
-
+	
 	structure(eo.structuring, eo2, false);
 
 	clean_multiplications(*this);
@@ -7925,35 +8249,6 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 	}
 	return false;
 }
-
-struct sym_desc {
-	MathStructure sym;
-	Number deg_a;
-	Number deg_b;
-	Number ldeg_a;
-	Number ldeg_b;
-	Number max_deg;
-	size_t max_lcnops;
-	bool operator<(const sym_desc &x) const {
-		if (max_deg == x.max_deg) return max_lcnops < x.max_lcnops;
-		else return max_deg.isLessThan(x.max_deg);
-	}
-};
-typedef std::vector<sym_desc> sym_desc_vec;
-
-void integer_content(const MathStructure &mpoly, Number &icontent);
-void interpolate(const MathStructure &gamma, const Number &xi, const MathStructure &xvar, MathStructure &minterp, const EvaluationOptions &eo);
-bool get_first_symbol(const MathStructure &mpoly, MathStructure &xvar);
-bool divide_in_z(const MathStructure &mnum, const MathStructure &mden, MathStructure &mquotient, const sym_desc_vec &sym_stats, size_t var_i, const EvaluationOptions &eo);
-bool prem(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar, MathStructure &mrem, const EvaluationOptions &eo, bool check_args = true);
-bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgcd, const sym_desc_vec &sym_stats, size_t var_i, const EvaluationOptions &eo);
-void polynomial_smod(const MathStructure &mpoly, const Number &xi, MathStructure &msmod, const EvaluationOptions &eo, MathStructure *mparent = NULL, size_t index_smod = 0);
-bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgcd, const EvaluationOptions &eo, MathStructure *ca, MathStructure *cb, const sym_desc_vec &sym_stats, size_t var_i);
-void add_symbol(const MathStructure &mpoly, sym_desc_vec &v);
-void collect_symbols(const MathStructure &mpoly, sym_desc_vec &v);
-void add_symbol(const MathStructure &mpoly, vector<MathStructure> &v);
-void collect_symbols(const MathStructure &mpoly, vector<MathStructure> &v);
-void get_symbol_stats(const MathStructure &m1, const MathStructure &m2, sym_desc_vec &v);
 
 bool get_first_symbol(const MathStructure &mpoly, MathStructure &xvar) {
 	if(IS_A_SYMBOL(mpoly) || mpoly.isUnit()) {
@@ -8979,6 +9274,7 @@ bool polynomial_long_division(const MathStructure &mnum, const MathStructure &md
 	
 	EvaluationOptions eo2 = eo;
 	eo2.keep_zero_units = false;
+	eo2.do_polynomial_division = false;
 
 	Number numdeg = mnum.degree(xvar);
 	Number dendeg = mden.degree(xvar);
@@ -9103,7 +9399,10 @@ void get_symbol_stats(const MathStructure &m1, const MathStructure &m2, sym_desc
 
 }
 
-bool MathStructure::gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mresult, const EvaluationOptions &eo, MathStructure *ca, MathStructure *cb, bool check_args) {
+bool MathStructure::gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mresult, const EvaluationOptions &eo2, MathStructure *ca, MathStructure *cb, bool check_args) {
+
+	EvaluationOptions eo = eo2;
+	eo.keep_zero_units = false;
 
 	if(ca) *ca = m1;
 	if(cb) *cb = m2;
@@ -9661,7 +9960,6 @@ void multiply_lcm(const MathStructure &e, const Number &lcm, MathStructure &mmul
 }
 
 //from GiNaC
-bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const EvaluationOptions &eo);
 bool sqrfree(MathStructure &mpoly, const EvaluationOptions &eo) {
 	vector<MathStructure> symbols;
 	collect_symbols(mpoly, symbols);
@@ -9674,6 +9972,7 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 	eo2.warn_about_denominators_assumed_nonzero = false;
 	eo2.reduce_divisions = true;
 	eo2.keep_zero_units = false;
+	eo2.do_polynomial_division = false;
 	eo2.sync_units = false;
 	eo2.expand = true;
 
@@ -9824,6 +10123,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 	}
 	EvaluationOptions eo = eo_pre;
 	eo.sync_units = false;
+	eo.structuring = STRUCTURING_NONE;
 	if(unfactorize) {
 		unformat();
 		EvaluationOptions eo2 = eo;
@@ -9831,7 +10131,9 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 		eo2.combine_divisions = false;
 		eo2.sync_units = false;
 		calculatesub(eo2, eo2);
+		do_simplification(*this, eo, true, false, true);
 	}
+
 	MathStructure mden, mnum;
 	evalSort(true);
 
@@ -10036,10 +10338,10 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								}
 							}
 						}
-						evalSort(true);
-						factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
-						return true;
 					}
+					evalSort(true);
+					factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+					return true;
 				}
 			}
 		}
@@ -10184,6 +10486,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								EvaluationOptions eo2 = eo;
 								eo2.expand = false;
 								calculatesub(eo2, eo2, false);
+								evalSort(true);
 								return true;
 							}
 						}
@@ -10202,6 +10505,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					eo2.expand = false;
 					calculatesub(eo2, eo2, false);
 					factor_mstruct->unref();
+					evalSort(true);
 					return true;
 				}
 				factor_mstruct->unref();
@@ -10530,6 +10834,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 									eo2.expand = false;
 									calculatesub(eo2, eo2, false);
 								}
+								evalSort(true);
 								return true;
 							}
 						}
@@ -10547,6 +10852,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						eo2.expand = false;
 						calculatesub(eo2, eo2, false);
 						multiply_nocopy(m2, true);
+						evalSort(true);
 						return true;
 					}
 				}
@@ -10561,6 +10867,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						eo2.expand = false;
 						calculatesub(eo2, eo2, false);
 						multiply_nocopy(m2, true);
+						evalSort(true);
 						return true;
 					}
 				}
@@ -10581,6 +10888,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						add_nocopy(m3, true);
 						calculatesub(eo2, eo2, false);
 						multiply_nocopy(m2, true);
+						evalSort(true);
 						return true;
 					}
 				}
@@ -10601,6 +10909,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						add_nocopy(m3, true);
 						calculatesub(eo2, eo2, false);
 						multiply_nocopy(m2, true);
+						evalSort(true);
 						return true;
 					}
 				}
@@ -10728,6 +11037,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				EvaluationOptions eo2 = eo;
 				eo2.expand = false;
 				calculatesub(eo2, eo2, false);
+				evalSort(true);
 				return true;
 			}
 		}
@@ -15819,96 +16129,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				isolate_x_sub(eo, eo2, x_var, morig);
 				return true;
 			}
-
-			// x+y/x=z => x*x+y=z*x
-			MathStructure mdiv;
-			MathStructure mdiv_inv;
-			for(size_t i = 0; i < CHILD(0).size(); i++) {
-				if(CHILD(0)[i].isMultiplication()) {
-					for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
-						if(CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().isReal() && CHILD(0)[i][i2][1].number().isNegative()) {
-							mdiv = CHILD(0)[i][i2];
-							break;
-						}
-					}
-					if(!mdiv.isZero()) break;
-				} else if(CHILD(0)[i].isPower() && CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().isReal() && CHILD(0)[i][1].number().isNegative()) {
-					mdiv = CHILD(0)[i];
-					break;
-				}
-			}
-			if(!mdiv.isZero()) {
-				if(mdiv[1].isMinusOne()) {
-					mdiv_inv = mdiv[0];
-				} else {
-					mdiv_inv = mdiv;
-					mdiv_inv[1].number().negate();
-				}
-				EvaluationOptions eo3 = eo2;
-				eo3.expand = true;
-				for(size_t i3 = 0; i3 < CHILD(0).size(); i3++) {
-					bool b = false;
-					if(CHILD(0)[i3].isPower() && CHILD(0)[i3] == mdiv) {
-						CHILD(0)[i3].set(1, 1, 0, true);
-						b = true;
-					} else if(CHILD(0)[i3].isMultiplication()) {
-						for(size_t i4 = 0; i4 < CHILD(0)[i3].size(); i4++) {
-							if(CHILD(0)[i3][i4].isPower() && CHILD(0)[i3][i4] == mdiv) {
-								b = true;
-								CHILD(0)[i3].delChild(i4 + 1);
-								if(CHILD(0)[i3].size() == 0) CHILD(0)[i3].set(1, 1, 0, true);
-								else if(CHILD(0)[i3].size() == 1) CHILD(0)[i3].setToChild(1, true);
-								break;
-							}
-						}
-					}
-					if(!b) CHILD(0)[i3].calculateMultiply(mdiv_inv, eo3);
-				}
-				CHILD(0).childrenUpdated();
-				CHILD(0).evalSort();
-				CHILD(0).calculatesub(eo2, eo, false);
-				CHILD(1).calculateMultiply(mdiv_inv, eo3);
-				CHILDREN_UPDATED
-				if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
-					bool not_equals = ct_comp == COMPARISON_NOT_EQUALS;
-					isolate_x(eo2, eo, x_var, false);
-					if(!mdiv[0].representsNonZero(true)) {
-						MathStructure *mtest = new MathStructure(mdiv[0]);
-						mtest->add(m_zero, not_equals ? OPERATION_EQUALS : OPERATION_NOT_EQUALS);
-						mtest->isolate_x_sub(eo, eo2, x_var);
-						add_nocopy(mtest, not_equals ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-						calculatesub(eo2, eo, false);
-					}
-				} else {
-					MathStructure *malt = new MathStructure(*this);
-					if(ct_comp == COMPARISON_EQUALS_GREATER) {
-						ct_comp = COMPARISON_EQUALS_LESS;
-					} else if(ct_comp == COMPARISON_GREATER) {
-						ct_comp = COMPARISON_LESS;
-					} else if(ct_comp == COMPARISON_EQUALS_LESS) {
-						ct_comp = COMPARISON_EQUALS_GREATER;
-					} else if(ct_comp == COMPARISON_LESS) {
-						ct_comp = COMPARISON_GREATER;
-					}
-					isolate_x(eo, eo2, x_var, morig);
-					MathStructure *mtest = new MathStructure(mdiv);
-					mtest->add(m_zero, OPERATION_LESS);
-					MathStructure *mtest_alt = new MathStructure(*mtest);
-					mtest_alt->setComparisonType(COMPARISON_GREATER);
-					mtest->isolate_x_sub(eo, eo2, x_var);
-					add_nocopy(mtest, OPERATION_LOGICAL_AND);
-					calculatesub(eo2, eo, false);
-					malt->isolate_x(eo, eo2, x_var, morig);
-					mtest_alt->isolate_x_sub(eo, eo2, x_var);
-					malt->add_nocopy(mtest_alt, OPERATION_LOGICAL_AND);
-					malt->calculatesub(eo2, eo, false);
-					add_nocopy(malt, OPERATION_LOGICAL_OR);
-					calculatesub(eo2, eo, false);
-					return true;
-				}
-				return true;
-			}
-
+			
 			// ax^2+bx=c
 			if(CHILD(0).size() >= 2 && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
 				bool sqpow = false, nopow = false;
@@ -16094,6 +16315,95 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 					
 				}
+			}
+			
+			// x+y/x=z => x*x+y=z*x
+			MathStructure mdiv;
+			MathStructure mdiv_inv;
+			for(size_t i = 0; i < CHILD(0).size(); i++) {
+				if(CHILD(0)[i].isMultiplication()) {
+					for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+						if(CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().isReal() && CHILD(0)[i][i2][1].number().isNegative()) {
+							mdiv = CHILD(0)[i][i2];
+							break;
+						}
+					}
+					if(!mdiv.isZero()) break;
+				} else if(CHILD(0)[i].isPower() && CHILD(0)[i][1].isNumber() && CHILD(0)[i][1].number().isReal() && CHILD(0)[i][1].number().isNegative()) {
+					mdiv = CHILD(0)[i];
+					break;
+				}
+			}
+			if(!mdiv.isZero()) {
+				if(mdiv[1].isMinusOne()) {
+					mdiv_inv = mdiv[0];
+				} else {
+					mdiv_inv = mdiv;
+					mdiv_inv[1].number().negate();
+				}
+				EvaluationOptions eo3 = eo2;
+				eo3.expand = true;
+				for(size_t i3 = 0; i3 < CHILD(0).size(); i3++) {
+					bool b = false;
+					if(CHILD(0)[i3].isPower() && CHILD(0)[i3] == mdiv) {
+						CHILD(0)[i3].set(1, 1, 0, true);
+						b = true;
+					} else if(CHILD(0)[i3].isMultiplication()) {
+						for(size_t i4 = 0; i4 < CHILD(0)[i3].size(); i4++) {
+							if(CHILD(0)[i3][i4].isPower() && CHILD(0)[i3][i4] == mdiv) {
+								b = true;
+								CHILD(0)[i3].delChild(i4 + 1);
+								if(CHILD(0)[i3].size() == 0) CHILD(0)[i3].set(1, 1, 0, true);
+								else if(CHILD(0)[i3].size() == 1) CHILD(0)[i3].setToChild(1, true);
+								break;
+							}
+						}
+					}
+					if(!b) CHILD(0)[i3].calculateMultiply(mdiv_inv, eo3);
+				}
+				CHILD(0).childrenUpdated();
+				CHILD(0).evalSort();
+				CHILD(0).calculatesub(eo2, eo, false);
+				CHILD(1).calculateMultiply(mdiv_inv, eo3);
+				CHILDREN_UPDATED
+				if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
+					bool not_equals = ct_comp == COMPARISON_NOT_EQUALS;
+					isolate_x(eo2, eo, x_var, false);
+					if(!mdiv[0].representsNonZero(true)) {
+						MathStructure *mtest = new MathStructure(mdiv[0]);
+						mtest->add(m_zero, not_equals ? OPERATION_EQUALS : OPERATION_NOT_EQUALS);
+						mtest->isolate_x_sub(eo, eo2, x_var);
+						add_nocopy(mtest, not_equals ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+						calculatesub(eo2, eo, false);
+					}
+				} else {
+					MathStructure *malt = new MathStructure(*this);
+					if(ct_comp == COMPARISON_EQUALS_GREATER) {
+						ct_comp = COMPARISON_EQUALS_LESS;
+					} else if(ct_comp == COMPARISON_GREATER) {
+						ct_comp = COMPARISON_LESS;
+					} else if(ct_comp == COMPARISON_EQUALS_LESS) {
+						ct_comp = COMPARISON_EQUALS_GREATER;
+					} else if(ct_comp == COMPARISON_LESS) {
+						ct_comp = COMPARISON_GREATER;
+					}
+					isolate_x(eo, eo2, x_var, morig);
+					MathStructure *mtest = new MathStructure(mdiv);
+					mtest->add(m_zero, OPERATION_LESS);
+					MathStructure *mtest_alt = new MathStructure(*mtest);
+					mtest_alt->setComparisonType(COMPARISON_GREATER);
+					mtest->isolate_x_sub(eo, eo2, x_var);
+					add_nocopy(mtest, OPERATION_LOGICAL_AND);
+					calculatesub(eo2, eo, false);
+					malt->isolate_x(eo, eo2, x_var, morig);
+					mtest_alt->isolate_x_sub(eo, eo2, x_var);
+					malt->add_nocopy(mtest_alt, OPERATION_LOGICAL_AND);
+					malt->calculatesub(eo2, eo, false);
+					add_nocopy(malt, OPERATION_LOGICAL_OR);
+					calculatesub(eo2, eo, false);
+					return true;
+				}
+				return true;
 			}
 
 			// x^a+x^(b/c)=d => x^(1/c)^(a*c)+x^(1/c)^b=d; f(x)^a+f(x)^b=c => u^a+u^b=c
@@ -18218,7 +18528,7 @@ bool MathStructure::isRationalPolynomial() const {
 			return true;
 		}
 		case STRUCT_POWER: {
-			return CHILD(1).isInteger() && CHILD(1).number().isNonNegative() && !CHILD(0).isMultiplication() && !CHILD(0).isAddition() && !CHILD(0).isPower() && CHILD(0).isRationalPolynomial();
+			return CHILD(1).isInteger() && CHILD(1).number().isNonNegative() && CHILD(1).number().isLessThan(100) && !CHILD(0).isMultiplication() && !CHILD(0).isAddition() && !CHILD(0).isPower() && CHILD(0).isRationalPolynomial();
 		}
 		case STRUCT_FUNCTION: {}
 		case STRUCT_UNIT: {}		
