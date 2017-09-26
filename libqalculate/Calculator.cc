@@ -9502,7 +9502,10 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	po2.read_precision = DONT_READ_PRECISION;
 	eo.parse_options = po2;
 	if(msecs > 0) startControl(msecs);
-	MathStructure y_vector(parse(expression, po2).generateVector(x_mstruct, min, max, steps, x_vector, eo));
+	MathStructure mparse(parse(expression, po2));
+	CALCULATOR->beginTemporaryStopMessages();
+	MathStructure y_vector(mparse.generateVector(x_mstruct, min, max, steps, x_vector, eo));
+	CALCULATOR->endTemporaryStopMessages();
 	if(msecs > 0) {
 		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
 		stopControl();
@@ -9530,7 +9533,10 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	po2.read_precision = DONT_READ_PRECISION;
 	eo.parse_options = po2;
 	if(msecs > 0) startControl(msecs);
-	MathStructure y_vector(parse(expression, po2).generateVector(x_mstruct, min, max, step, x_vector, eo));
+	MathStructure mparse(parse(expression, po2));
+	CALCULATOR->beginTemporaryStopMessages();
+	MathStructure y_vector(mparse.generateVector(x_mstruct, min, max, step, x_vector, eo));
+	CALCULATOR->endTemporaryStopMessages();
 	if(msecs > 0) {
 		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
 		stopControl();
@@ -9558,7 +9564,10 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	po2.read_precision = DONT_READ_PRECISION;
 	eo.parse_options = po2;
 	if(msecs > 0) startControl(msecs);
-	MathStructure y_vector(parse(expression, po2).generateVector(x_mstruct, x_vector, eo).eval(eo));
+	MathStructure mparse(parse(expression, po2));
+	CALCULATOR->beginTemporaryStopMessages();
+	MathStructure y_vector(mparse.generateVector(x_mstruct, x_vector, eo).eval(eo));
+	CALCULATOR->endTemporaryStopMessages();
 	if(msecs > 0) {
 		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
 		stopControl();
