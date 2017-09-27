@@ -819,6 +819,7 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	eo.keep_prefixes = true;
 	eo.structuring = STRUCTURING_NONE;
 	eo.reduce_divisions = false;
+	eo.do_polynomial_division = false;
 	ParseOptions po;
 	po.variables_enabled = false;
 	po.functions_enabled = false;

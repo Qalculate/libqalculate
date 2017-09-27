@@ -474,7 +474,7 @@ typedef enum {
 	STRUCTURING_SIMPLIFY,
 	/// Factorize the result
 	STRUCTURING_FACTORIZE,
-	/// Make some factorizations to enhance visibility of the result (e.g. x/z+y/z=(x+y)/z and 2*x+pi*x=(2+pi)*x)
+	/// Deprecated: use STRUCTURING_SIMPLIFY instead
 	STRUCTURING_HYBRID
 } StructuringMode;
 

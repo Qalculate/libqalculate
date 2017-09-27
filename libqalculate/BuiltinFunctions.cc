@@ -1111,19 +1111,15 @@ bool SqrtFunction::representsUndefined(const MathStructure&) const {return false
 CbrtFunction::CbrtFunction() : MathFunction("cbrt", 1) {
 }
 int CbrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-cout << "1" << endl;
 	if(vargs[0].representsNegative(true)) {
-	cout << "2" << endl;
 		mstruct = vargs[0];
 		mstruct.negate();
 		mstruct.raise(Number(1, 3, 0));
 		mstruct.negate();
 	} else if(vargs[0].representsNonNegative(true)) {
-	cout << "3" << endl;
 		mstruct = vargs[0];
 		mstruct.raise(Number(1, 3, 0));
 	} else {
-	cout << "4" << endl;
 		MathStructure mroot(3, 1, 0);
 		mstruct.set(CALCULATOR->f_root, &vargs[0], &mroot, NULL);
 	}
