@@ -2811,6 +2811,13 @@ bool Number::isqrt() {
 	}
 	return false;
 }
+bool Number::isPerfectSquare() const {
+	if(isInteger()) {
+		if(mpz_sgn(mpq_numref(r_value)) < 0) return false;
+		return mpz_perfect_square_p(mpq_numref(r_value)) != 0;
+	}
+	return false;
+}
 
 int Number::getBoolean() const {
 	if(isPositive()) {

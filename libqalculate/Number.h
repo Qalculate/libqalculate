@@ -387,6 +387,7 @@ class Number {
 		bool mod(const Number &o);
 		bool isIntegerDivisible(const Number &o) const;
 		bool isqrt();
+		bool isPerfectSquare() const;
 		bool round();
 		bool floor();
 		bool ceil();
