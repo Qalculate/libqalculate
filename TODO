@@ -17,4 +17,6 @@
 
 * Load data set from csv file
 
-* Fix factorization with variable raised to 1 (should normally not happen)
+* Complete non-square free factorization
+
+* Simplification of division by polynomial with roots

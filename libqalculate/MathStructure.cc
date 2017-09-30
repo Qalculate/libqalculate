@@ -5072,7 +5072,7 @@ int MathStructure::merge_bitwise_xor(MathStructure &mstruct, const EvaluationOpt
 						evalSort();\
 					}
 
-bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool combine_divisions = false, bool only_gcd = false, bool combine_only = false, bool recursive = true, bool limit_size = false);
+bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool combine_divisions = true, bool only_gcd = false, bool combine_only = false, bool recursive = true, bool limit_size = false);
 
 bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool combine_divisions, bool only_gcd, bool combine_only, bool recursive, bool limit_size) {
 
@@ -7884,7 +7884,7 @@ bool MathStructure::simplify(const EvaluationOptions &eo, bool unfactorize) {
 		eo2.combine_divisions = false;
 		eo2.sync_units = false;
 		calculatesub(eo2, eo2);
-		bool b = do_simplification(*this, eo2, true, true, false);
+		bool b = do_simplification(*this, eo2, true, false, false);
 		return combination_factorize(*this) || b;
 	}
 	return combination_factorize(*this);
@@ -10226,7 +10226,7 @@ size_t count_powers(const MathStructure &mstruct) {
 	}
 	return c;
 }
-bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, int term_combination_levels, int max_msecs, bool only_integers, bool recursive, struct timeval *endtime_p) {
+bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, int term_combination_levels, int max_msecs, bool only_integers, int recursive, struct timeval *endtime_p) {
 	if(CALCULATOR->aborted()) return false;
 	struct timeval endtime;
 	if(max_msecs > 0 && !endtime_p) {
@@ -11275,7 +11275,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						b = true;
 					}
 				}
-			} else if(recursive) {
+			} else if(recursive && (recursive > 1 || !isAddition())) {
 				for(size_t i = 0; i < SIZE; i++) {
 					if(CHILD(i).factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p)) {
 						CHILD_UPDATED(i);
