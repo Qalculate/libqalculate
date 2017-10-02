@@ -703,7 +703,6 @@ char *utf8_strdown(const char *str, int l) {
 			return buffer;
 		}
 	}
-	cout << u_errorName(err) << endl;
 	return NULL;
 #else
 	return NULL;
@@ -727,7 +726,7 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
 	curl_easy_setopt(curl, CURLOPT_FILETIME, &file_time);
-#ifdef WIN32
+#ifdef _WIN32
 	char exepath[MAX_PATH];
 	GetModuleFileName(NULL, exepath, MAX_PATH);
 	string datadir(exepath);
@@ -741,20 +740,16 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 	res = curl_easy_perform(curl);
 	curl_easy_cleanup(curl);
 	curl_global_cleanup(); 
-	
 	if(res != CURLE_OK || sbuffer.empty()) {return -1;}
-		
 	size_t i = sbuffer.find(version_id);
 	if(i == string::npos) return -1;
 	size_t i2 = sbuffer.find('\n', i + strlen(version_id) + 1);
-	
 	string s_version;
 	if(i2 == string::npos) s_version = sbuffer.substr(i + strlen(version_id) + 1);
 	else s_version = sbuffer.substr(i + strlen(version_id) + 1, i2 - (i + strlen(version_id) + 1));
 	remove_blank_ends(s_version);
 	if(s_version.empty()) return -1;
 	if(available_version) *available_version = s_version;
-	
 	if(s_version != current_version) {
 		vector<int> version_parts_old, version_parts_new;
 		

@@ -9394,7 +9394,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
 	curl_easy_setopt(curl, CURLOPT_FILETIME, &file_time);
-#ifdef WIN32
+#ifdef _WIN32
 	char exepath[MAX_PATH];
 	GetModuleFileName(NULL, exepath, MAX_PATH);
 	string datadir(exepath);

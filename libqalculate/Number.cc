@@ -1023,6 +1023,19 @@ bool Number::testErrors(int error_level) const {
 	if(mpfr_erangeflag_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point range exception"), NULL); return true;}
 	return false;
 }
+bool testComplex(Number *this_nr, Number *i_nr) {
+	if(i_nr && !i_nr->isZero() && i_nr->isFloatingPoint()) {
+		Number test1;
+		test1.set(*this_nr, false, true);
+		Number test2(test1);
+		test2.add(*i_nr);
+		if(test1 == test2) {
+			i_nr->clear(true);
+			return true;
+		}
+	}
+	return false;
+}
 bool Number::testFloatResult(bool allow_infinite_result, int error_level, bool test_integer) {
 	if(mpfr_underflow_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point underflow"), NULL); return false;}
 	if(mpfr_overflow_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point overflow"), NULL); return false;}
@@ -1047,6 +1060,7 @@ bool Number::testFloatResult(bool allow_infinite_result, int error_level, bool t
 		mpfr_clear(f_value);
 		n_type = NUMBER_TYPE_RATIONAL;
 	}
+	if(!b_imag) testComplex(this, i_value);
 	return true;
 }
 void Number::testInteger() {
@@ -1216,13 +1230,21 @@ bool Number::equals(long int i) const {
 	if(n_type == NUMBER_TYPE_FLOAT) return mpfr_cmp_si(f_value, i) == 0;
 	return mpq_cmp_si(r_value, i, 1) == 0;
 }
-bool Number::equalsApproximately(const Number &o, int prec) const {
+int Number::equalsApproximately(const Number &o, int prec) const {
 	if(isInfinite() || o.isInfinite()) return false;
 	if(equals(o)) return true;
+	int b = 1;
 	if(o.isComplex()) {
-		if(!i_value || !i_value->equalsApproximately(*o.internalImaginary(), prec)) return false;
+		if(i_value) {
+			b = i_value->equalsApproximately(*o.internalImaginary(), prec);
+			if(b == 0) return b;
+		} else {
+			b = o.internalImaginary()->equalsApproximately(nr_zero, prec);
+			if(b == 0) return b;
+		}
 	} else if(isComplex()) {
-		return false;
+		b = i_value->equalsApproximately(nr_zero, prec);
+		if(b == 0) return b;
 	}
 	bool prec_choosen = prec >= 0;
 	if(prec == EQUALS_PRECISION_LOWEST) {
@@ -1243,11 +1265,15 @@ bool Number::equalsApproximately(const Number &o, int prec) const {
 		else mpfr_set_q(test1, r_value, MPFR_RNDN);
 		if(o.isFloatingPoint()) mpfr_set(test2, o.internalFloat(), MPFR_RNDN);
 		else mpfr_set_q(test2, o.internalRational(), MPFR_RNDN);
-		bool b = mpfr_equal_p(test1, test2);
+		bool b2 = mpfr_equal_p(test1, test2);
+		if(!b2) {
+			b = 0;
+		}
 		mpfr_clears(test1, test2, NULL);
 		return b;
 	}
-	return false;
+	if(b == 1) b = 0;
+	return b;
 }
 ComparisonResult Number::compare(long int i) const {return compare(Number(i, 1));}
 ComparisonResult Number::compare(const Number &o) const {
@@ -1292,7 +1318,9 @@ ComparisonResult Number::compareApproximately(const Number &o, int prec) const {
 	}
 	if(o.isPlusInfinity()) return COMPARISON_RESULT_GREATER;
 	if(o.isMinusInfinity()) return COMPARISON_RESULT_LESS;
-	if(equalsApproximately(o, prec)) return COMPARISON_RESULT_EQUAL;
+	int b = equalsApproximately(o, prec);
+	if(b > 0) return COMPARISON_RESULT_EQUAL;
+	else if(b < 0) return COMPARISON_RESULT_UNKNOWN;
 	if(!isComplex() && !o.isComplex()) {
 		int i = 0;
 		if(o.isFloatingPoint() && n_type != NUMBER_TYPE_FLOAT) {

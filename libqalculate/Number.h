@@ -266,7 +266,7 @@ class Number {
 		bool equalsZero() const;
 		bool equals(const Number &o) const;
 		bool equals(long int i) const;
-		bool equalsApproximately(const Number &o, int prec) const;
+		int equalsApproximately(const Number &o, int prec) const;
 		ComparisonResult compare(const Number &o) const;
 		ComparisonResult compare(long int i) const;
 		ComparisonResult compareApproximately(const Number &o, int prec = EQUALS_PRECISION_LOWEST) const;
