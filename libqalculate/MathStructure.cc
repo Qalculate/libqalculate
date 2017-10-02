@@ -1967,6 +1967,8 @@ ComparisonResult MathStructure::compareApproximately(const MathStructure &o, con
 	}
 	if(equals(o)) return COMPARISON_RESULT_EQUAL;
 	if(o.representsZero(true) && representsZero(true)) return COMPARISON_RESULT_EQUAL;
+	if(o.representsReal(true) && representsComplex(true)) return COMPARISON_RESULT_NOT_EQUAL;
+	if(representsReal(true) && o.representsComplex(true)) return COMPARISON_RESULT_NOT_EQUAL;
 	MathStructure mtest(*this), mtest2(o);
 	EvaluationOptions eo = eo2;
 	eo.expand = true;
@@ -6117,26 +6119,6 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					break;
 				}
 			}
-			if(eo.approximation == APPROXIMATION_EXACT && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
-				eo2.approximation = APPROXIMATION_APPROXIMATE;
-				eo2.test_comparisons = false;
-				MathStructure mtest(*this);
-				if(mtest[0].isAddition() && mtest[0].size() > 1 && mtest[1].isZero()) {
-					mtest[1] = mtest[0][0];
-					mtest[1].negate();
-					mtest[0].delChild(1, true);
-				}
-				CALCULATOR->beginTemporaryStopMessages();
-				mtest.calculatesub(eo2, feo, true);
-				if(CALCULATOR->endTemporaryStopMessages() == 0 && ((ct_comp == COMPARISON_EQUALS && mtest.isZero()) || (ct_comp == COMPARISON_NOT_EQUALS && mtest.isOne()))) {
-					if(mtest.isZero()) clear(true);
-					else set(1, 1, 0, true);
-					b = true;
-					break;
-				}
-			}
-			eo2 = eo;
-			if(eo2.assume_denominators_nonzero == 1) eo2.assume_denominators_nonzero = false;
 			
 			if((CHILD(0).representsUndefined() && !CHILD(1).representsUndefined(true, true, true)) || (CHILD(1).representsUndefined() && !CHILD(0).representsUndefined(true, true, true))) {
 				if(ct_comp == COMPARISON_EQUALS) {
@@ -6173,15 +6155,14 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				}
 			}
 			if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
-				if((CHILD(0).representsReal(false) && CHILD(1).representsComplex(false)) || (CHILD(1).representsReal(false) && CHILD(0).representsComplex(false))) {
+				if((CHILD(0).representsReal(true) && CHILD(1).representsComplex(true)) || (CHILD(1).representsReal(true) && CHILD(0).representsComplex(true))) {
 					if(ct_comp == COMPARISON_EQUALS) {
 						clear(true);
 					} else {
 						set(1, 1, 0, true);
 					}
 					b = true;
-				}
-				if((CHILD(0).representsZero(true) && CHILD(1).representsZero(true))) {
+				} else if((CHILD(0).representsZero(true) && CHILD(1).representsZero(true))) {
 					if(ct_comp != COMPARISON_EQUALS) {
 						clear(true);
 					} else {
@@ -6191,6 +6172,27 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				}
 			}
 			if(b) break;
+			
+			if(eo.approximation == APPROXIMATION_EXACT && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
+				eo2.approximation = APPROXIMATION_APPROXIMATE;
+				eo2.test_comparisons = false;
+				MathStructure mtest(*this);
+				if(mtest[0].isAddition() && mtest[0].size() > 1 && mtest[1].isZero()) {
+					mtest[1] = mtest[0][0];
+					mtest[1].negate();
+					mtest[0].delChild(1, true);
+				}
+				CALCULATOR->beginTemporaryStopMessages();
+				mtest.calculatesub(eo2, feo, true);
+				if(CALCULATOR->endTemporaryStopMessages() == 0 && ((ct_comp == COMPARISON_EQUALS && mtest.isZero()) || (ct_comp == COMPARISON_NOT_EQUALS && mtest.isOne()))) {
+					if(mtest.isZero()) clear(true);
+					else set(1, 1, 0, true);
+					b = true;
+					break;
+				}
+			}
+			eo2 = eo;
+			if(eo2.assume_denominators_nonzero == 1) eo2.assume_denominators_nonzero = false;
 
 			bool mtest_new = false;
 			MathStructure *mtest;
