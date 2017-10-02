@@ -2367,7 +2367,9 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		endTemporaryStopMessages();
 	}
 	current_stage = MESSAGE_STAGE_CALCULATION;
+
 	mstruct.eval(eo);
+
 	current_stage = MESSAGE_STAGE_UNSET;
 	if(aborted() || !mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
 	if(u) {
@@ -2394,7 +2396,9 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 			default: {}
 		}
 	}
+
 	if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo));
+
 	current_stage = MESSAGE_STAGE_UNSET;
 	return mstruct;
 }
@@ -2479,7 +2483,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 						MathStructure mstruct_nr(nr);
 						MathStructure m_exp(m_one);
 						aui->convertFromFirstBaseUnit(mstruct_nr, m_exp);
-						mstruct_nr.eval();
+						mstruct_nr.eval(eo);
 						if(mstruct_nr.isNumber() && m_exp.isOne() && mstruct_nr.number().isLessThan(nr) && mstruct_nr.number().isGreaterThanOrEqualTo(nr_one) && (!best_u || mstruct_nr.number().isLessThan(best_nr))) {
 							best_u = ui;
 							best_nr = mstruct_nr.number();
@@ -2511,12 +2515,12 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 			MathStructure mstruct_nr(nr);
 			MathStructure m_exp(m_one);
 			((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
-			mstruct_nr.eval();
+			mstruct_nr.eval(eo);
 			while(!accept_obsolete && ((AliasUnit*) u)->firstBaseUnit()->subtype() == SUBTYPE_ALIAS_UNIT && abs(((AliasUnit*) ((AliasUnit*) u)->firstBaseUnit())->mixWithBase()) > 1) {
 				u = ((AliasUnit*) u)->firstBaseUnit();
 				if(((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() != 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos))) {
 					((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
-					mstruct_nr.eval();
+					mstruct_nr.eval(eo);
 					if(!mstruct_nr.isNumber() || !m_exp.isOne()) break;
 				} else {
 					mstruct_nr.setUndefined();
@@ -2732,6 +2736,8 @@ MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const
 	if(mstruct_new != mstruct) {
 		EvaluationOptions eo2 = eo;
 		eo2.keep_prefixes = false;
+		eo2.isolate_x = false;
+		eo2.test_comparisons = false;
 		//eo2.calculate_functions = false;
 		mstruct_new.eval(eo2);
 	}
@@ -3073,6 +3079,8 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 	EvaluationOptions eo2 = eo;
 	//eo2.calculate_functions = false;
 	eo2.sync_units = false;
+	eo2.isolate_x = false;
+	eo2.test_comparisons = false;
 	switch(mstruct.type()) {
 		case STRUCT_POWER: {
 			if(mstruct.base()->isUnit() && mstruct.exponent()->isNumber() && mstruct.exponent()->number().isRational()) {
