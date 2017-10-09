@@ -170,7 +170,7 @@ string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, Base
 	mp_get_memory_functions (NULL, NULL, &freefunc);
 	freefunc(tmp, strlen(tmp) + 1);
 	
-	if(base == 12) {
+	if(base == BASE_DUODECIMAL) {
 		for(size_t i = 0; i < cl_str.length(); i++) {
 			if(cl_str[i] == 'A' || cl_str[i] == 'a') {
 				if(use_unicode) {cl_str.replace(i, 1, "↊"); i += strlen("↊") - 1;}
@@ -469,7 +469,7 @@ void Number::set(string number, const ParseOptions &po) {
 			}
 			readprec++;
 			numbers_started = true;
-		} else if(base == 12 && (number[index] == 'X' || number[index] == 'E' || number[index] == 'x' || number[index] == 'e')) {
+		} else if(base == BASE_DUODECIMAL && (number[index] == 'X' || number[index] == 'E' || number[index] == 'x' || number[index] == 'e')) {
 			mpz_mul_si(num, num, base);
 			mpz_add_ui(num, num, (number[index] == 'E' || number[index] == 'e') ? 11L : 10L);
 			if(in_decimals) {

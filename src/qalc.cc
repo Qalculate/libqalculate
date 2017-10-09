@@ -412,11 +412,12 @@ void set_option(string str) {
 		bool b_in = EQUALS_IGNORECASE_AND_LOCAL(svar, "input base", _("input base"));
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "roman", _("roman"))) v = BASE_ROMAN_NUMERALS;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "time", _("time"))) {if(b_in) v = 0; else v = BASE_TIME;}
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "hex", _("hex")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "hexadecimal", _("hexadecimal"))) v = BASE_HEXADECIMAL;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "bin", _("bin")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "binary", _("binary"))) v = BASE_BINARY;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "oct", _("oct")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "octal", _("octal"))) v = BASE_HEXADECIMAL;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "dec", _("dec")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "decimal", _("decimal"))) v = BASE_DECIMAL;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "sex", _("sex")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "sexagesimal", _("sexagesimal"))) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
+		else if(equalsIgnoreCase(svalue, "hex") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "hexadecimal", _("hexadecimal"))) v = BASE_HEXADECIMAL;
+		else if(equalsIgnoreCase(svalue, "duo") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "duodecimal", _("duodecimal"))) v = 12;
+		else if(equalsIgnoreCase(svalue, "bin") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "binary", _("binary"))) v = BASE_BINARY;
+		else if(equalsIgnoreCase(svalue, "oct") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "octal", _("octal"))) v = BASE_OCTAL;
+		else if(equalsIgnoreCase(svalue, "dec") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "decimal", _("decimal"))) v = BASE_DECIMAL;
+		else if(equalsIgnoreCase(svalue, "sex") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "sexagesimal", _("sexagesimal"))) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 			if((v < 2 || v > 36) && (b_in || v != 60)) {
@@ -1773,6 +1774,11 @@ int main(int argc, char *argv[]) {
 				printops.base = BASE_OCTAL;
 				setResult(NULL, false);
 				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(str, "duodecimal", _("duodecimal"))) {
+				int save_base = printops.base;
+				printops.base = 12;
+				setResult(NULL, false);
+				printops.base = save_base;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "bases", _("bases"))) {
 				int save_base = printops.base;
 				string save_result_text = result_text;
@@ -2730,6 +2736,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("- bin / binary (show as binary number)"));
 				PUTS_UNICODE(_("- oct / octal (show as octal number)"));
+				PUTS_UNICODE(_("- duo / duodecimal (show as duodecimal number)"));
 				PUTS_UNICODE(_("- hex / hexadecimal (show as hexadecimal number)"));
 				PUTS_UNICODE(_("- bases (show as binary, octal, decimal and hexadecimal number)"));
 				puts("");
@@ -3294,6 +3301,15 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_OCTAL;
+				evalops.parse_options.units_enabled = b_units_saved;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.base = save_base;
+				expression_str = str;
+				return;
+			} else if(equalsIgnoreCase(to_str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "duodecimal", _("duodecimal"))) {
+				int save_base = printops.base;
+				expression_str = from_str;
+				printops.base = 12;
 				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;

@@ -1505,6 +1505,7 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "3900.99", 1, "", false, true, true));
 }
 void Calculator::error(bool critical, int message_category, const char *TEMPLATE, ...) {
 	va_list ap;
@@ -4075,7 +4076,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 	parseSigns(str);
 	
-	if(po.base == 12) {
+	if(po.base == BASE_DUODECIMAL) {
 		gsub("↊", "X", str);
 		gsub("↋", "E", str);
 	}
@@ -4099,10 +4100,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		return;
 	}
 
-	if(((po.base >= 2 && po.base <= 10) || po.base == 12) && po.default_dataset != NULL && str.length() > 1) {
+	if(((po.base >= 2 && po.base <= 10) || po.base == BASE_DUODECIMAL) && po.default_dataset != NULL && str.length() > 1) {
 		size_t str_index = str.find(DOT_CH, 1);
 		while(str_index != string::npos) {
-			if(str_index + 1 < str.length() && ((is_not_in(po.base == 12 ? NUMBERS NOT_IN_NAMES "EX" : NUMBERS NOT_IN_NAMES, str[str_index + 1]) && is_not_in(NOT_IN_NAMES, str[str_index - 1])) || (is_not_in(NOT_IN_NAMES, str[str_index + 1]) && is_not_in(po.base == 12 ? NUMBERS NOT_IN_NAMES "EX" : NUMBERS NOT_IN_NAMES, str[str_index - 1])))) {
+			if(str_index + 1 < str.length() && ((is_not_in(po.base == BASE_DUODECIMAL ? NUMBERS NOT_IN_NAMES "EX" : NUMBERS NOT_IN_NAMES, str[str_index + 1]) && is_not_in(NOT_IN_NAMES, str[str_index - 1])) || (is_not_in(NOT_IN_NAMES, str[str_index + 1]) && is_not_in(po.base == BASE_DUODECIMAL ? NUMBERS NOT_IN_NAMES "EX" : NUMBERS NOT_IN_NAMES, str[str_index - 1])))) {
 				size_t dot_index = str.find_first_of(NOT_IN_NAMES DOT, str_index + 1);
 				if(dot_index != string::npos && str[dot_index] == DOT_CH) {
 					str_index = dot_index;
@@ -4187,7 +4188,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				str.replace(str_index, name_length, stmp);
 				str_index += stmp.length() - 1;
 			}
-		} else if(((po.base >= 2 && po.base <= 10) || po.base == 12) && str[str_index] == '!' && po.functions_enabled) {
+		} else if(((po.base >= 2 && po.base <= 10) || po.base == BASE_DUODECIMAL) && str[str_index] == '!' && po.functions_enabled) {
 			if(str_index > 0 && (str.length() - str_index == 1 || str[str_index + 1] != EQUALS_CH)) {
 				stmp = "";
 				size_t i5 = str.find_last_not_of(SPACE, str_index - 1);
@@ -4347,7 +4348,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				str.replace(str_index, name_length, stmp);
 				str_index += stmp.length() - 1;*/
 			}
-		} else if((po.base >= 2 && po.base <= 10 && is_not_in(NUMBERS NOT_IN_NAMES, str[str_index])) || (po.base == 12 && is_not_in(NUMBERS NOT_IN_NAMES "EX", str[str_index]))) {
+		} else if((po.base >= 2 && po.base <= 10 && is_not_in(NUMBERS NOT_IN_NAMES, str[str_index])) || (po.base == BASE_DUODECIMAL && is_not_in(NUMBERS NOT_IN_NAMES "EX", str[str_index]))) {
 			bool p_mode = false;
 			void *best_p_object = NULL;
 			Prefix *best_p = NULL;
@@ -5062,7 +5063,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		return true;
 	}
 	size_t itmp;
-	if(((po.base >= 2 && po.base <= 10) || po.base == 12) && (itmp = str.find_first_not_of(po.base == 12 ? NUMBER_ELEMENTS MINUS "EX" : NUMBER_ELEMENTS MINUS, 0)) != string::npos) {
+	if(((po.base >= 2 && po.base <= 10) || po.base == BASE_DUODECIMAL) && (itmp = str.find_first_not_of(po.base == BASE_DUODECIMAL ? NUMBER_ELEMENTS MINUS "EX" : NUMBER_ELEMENTS MINUS, 0)) != string::npos) {
 		if(itmp == 0) {
 			error(true, _("\"%s\" is not a valid variable/function/unit."), str.c_str(), NULL);
 			if(minus_count % 2 == 1 && !po.preserve_format) {
@@ -9355,6 +9356,23 @@ bool Calculator::loadExchangeRates() {
 		i = sbuffer.find("\"currency_code\":", i);
 	}
 	file.close();
+	
+	filename = buildPath(getLocalDataDir(), "btc.json");
+	ifstream file2(filename.c_str());
+	if(!file2.is_open()) return true;
+	std::stringstream ssbuffer2;
+	ssbuffer2 << file2.rdbuf();
+	sbuffer = ssbuffer2.str();
+	i = sbuffer.find("\"amount\":");
+	if(i != string::npos) {
+		i = sbuffer.find("\"", i + 9);
+		if(i != string::npos) {
+			size_t i2 = sbuffer.find("\"", i + 1);
+			((AliasUnit*) u_btc)->setExpression(sbuffer.substr(i + 1, i2 - (i + 1)));
+			cout << ((AliasUnit*) u_btc)->expression() << endl;
+		}
+	}
+	file2.close();
 	return true;
 }
 bool Calculator::hasGVFS() {
@@ -9376,6 +9394,9 @@ string Calculator::getExchangeRatesFileName() {
 string Calculator::getExchangeRatesFileName2() {
 	return buildPath(getLocalDataDir(), "rates.json");
 }
+string Calculator::getBitcoinRateFileName() {
+	return buildPath(getLocalDataDir(), "btc.json");
+}
 time_t Calculator::getExchangeRatesTime() {
 	return exchange_rates_time;
 }
@@ -9384,6 +9405,9 @@ string Calculator::getExchangeRatesUrl() {
 }
 string Calculator::getExchangeRatesUrl2() {
 	return "http://www.mycurrency.net/service/rates";
+}
+string Calculator::getBitcoinRateUrl() {
+	return "https://api.coinbase.com/v2/prices/spot?currency=EUR";
 }
 bool Calculator::fetchExchangeRates(int timeout, string) {return fetchExchangeRates(timeout);}
 size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer) {
@@ -9462,6 +9486,26 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	}
 	file2 << sbuffer;
 	file2.close();
+	
+	sbuffer = "";
+	curl_easy_setopt(curl, CURLOPT_URL, getBitcoinRateUrl().c_str());
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
+	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+
+	res = curl_easy_perform(curl);
+	
+	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
+	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
+	ofstream file3(getBitcoinRateFileName().c_str(), ios::out | ios::trunc | ios::binary);
+	if(!file3.is_open()) {
+		error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", strerror(errno), NULL);
+		curl_easy_cleanup(curl); curl_global_cleanup(); 
+		return false;
+	}
+	file3 << sbuffer;
+	file3.close();
 	
 	curl_easy_cleanup(curl); curl_global_cleanup(); 
 	

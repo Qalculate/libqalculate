@@ -296,7 +296,7 @@ class Calculator {
 	MathFunction *f_plot;
 	MathFunction *f_uncertainty;
 	
-	Unit *u_rad, *u_gra, *u_deg, *u_euro;
+	Unit *u_rad, *u_gra, *u_deg, *u_euro, *u_btc;
 	DecimalPrefix *decimal_null_prefix;
 	BinaryPrefix *binary_null_prefix;
 
@@ -1011,12 +1011,14 @@ class Calculator {
 	*/
 	string getExchangeRatesFileName();
 	string getExchangeRatesFileName2();
+	string getBitcoinRateFileName();
 	/** Url of the exchange rates file on the Internet.
 	*
 	* @returns Url of exchange rates file.
 	*/
 	string getExchangeRatesUrl();
 	string getExchangeRatesUrl2();
+	string getBitcoinRateUrl();
 	/** Modification time of the exchange rates file.
 	*
 	* @returns Returns exchange rates modification time.
