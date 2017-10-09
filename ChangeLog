@@ -1,3 +1,8 @@
+2017-10-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use 'X' and 'E' (or approprioate unicode characters) instead of 'A' and 'B' in duodecimal numbers
+	* Set approximate flag in zeta
+
 2017-09-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Enhanced simplification of expressions with polynomial division

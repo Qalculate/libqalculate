@@ -63,7 +63,7 @@ string format_number_string(string cl_str, int base, BaseDisplay base_display, b
 	return str;
 }
 
-string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) {
+string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false, bool use_unicode = false) {
 	int sign = mpz_sgn(integ_pre);
 	if(base == BASE_ROMAN_NUMERALS) {
 		if(sign != 0 && mpz_cmpabs_ui(integ_pre, 10000) == -1) {
@@ -170,7 +170,17 @@ string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, Base
 	mp_get_memory_functions (NULL, NULL, &freefunc);
 	freefunc(tmp, strlen(tmp) + 1);
 	
-	if(base > 10) {
+	if(base == 12) {
+		for(size_t i = 0; i < cl_str.length(); i++) {
+			if(cl_str[i] == 'A' || cl_str[i] == 'a') {
+				if(use_unicode) {cl_str.replace(i, 1, "↊"); i += strlen("↊") - 1;}
+				else cl_str[i] = 'X';
+			} else if(cl_str[i] == 'B' || cl_str[i] == 'b') {
+				if(use_unicode) {cl_str.replace(i, 1, "↋"); i += strlen("↋") - 1;}
+				else cl_str[i] = 'E';
+			}
+		}
+	} else if(base > 10) {
 		if(lower_case) {
 			for(size_t i = 0; i < cl_str.length(); i++) {
 				if(cl_str[i] >= 'A' && cl_str[i] <= 'Z') {
@@ -185,6 +195,7 @@ string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, Base
 			}
 		}
 	}
+	
 	if(cl_str[cl_str.length() - 1] == '.') {
 		cl_str.erase(cl_str.length() - 1, 1);
 	}
@@ -456,6 +467,16 @@ void Number::set(string number, const ParseOptions &po) {
 			if(in_decimals) {
 				mpz_mul_si(den, den, base);
 			}
+			readprec++;
+			numbers_started = true;
+		} else if(base == 12 && (number[index] == 'X' || number[index] == 'E' || number[index] == 'x' || number[index] == 'e')) {
+			mpz_mul_si(num, num, base);
+			mpz_add_ui(num, num, (number[index] == 'E' || number[index] == 'e') ? 11L : 10L);
+			if(in_decimals) {
+				mpz_mul_si(den, den, base);
+			}
+			if(!had_nonzero) readprec = 0;
+			had_nonzero = true;
 			readprec++;
 			numbers_started = true;
 		} else if(base > 10 && number[index] >= 'a' && number[index] < 'a' + base - 10) {
@@ -2927,10 +2948,18 @@ bool Number::zeta() {
 		CALCULATOR->error(true, _("Cannot handle an argument (s) that large for Riemann Zeta."), NULL);
 		return false;
 	}
-	mpfr_init2(f_value, BIT_PRECISION);
+	
+	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
+	mpfr_clear_flags();
+
 	mpfr_zeta_ui(f_value, (unsigned long int) i, MPFR_RNDN);
 	mpq_set_ui(r_value, 0, 1);
-	n_type = NUMBER_TYPE_FLOAT;
+	
+	if(!testFloatResult()) {
+		set(nr_bak);
+		return false;
+	}
 	return true;
 }
 bool Number::gamma() {
@@ -4369,7 +4398,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		integer_rerun:
 		
-		string mpz_str = printMPZ(ivalue, base, false, BASE_DISPLAY_NONE, po.lower_case_numbers);
+		string mpz_str = printMPZ(ivalue, base, false, BASE_DISPLAY_NONE, po.lower_case_numbers, po.use_unicode_signs);
 		if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 		
 		length = mpz_str.length();
@@ -4662,7 +4691,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpz_init(ivalue);
 		mpfr_get_z(ivalue, v, MPFR_RNDN);
 
-		str = printMPZ(ivalue, base, true, BASE_DISPLAY_NONE, po.lower_case_numbers);
+		str = printMPZ(ivalue, base, true, BASE_DISPLAY_NONE, po.lower_case_numbers, po.use_unicode_signs);
 		
 		bool has_decimal = false;
 		if(l10 > 0) {
@@ -4763,7 +4792,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		int num_sign = mpz_sgn(num);
 		if(num_sign != 0) {
 
-			str = printMPZ(num, base, true, BASE_DISPLAY_NONE);
+			str = printMPZ(num, base, true, BASE_DISPLAY_NONE, po.use_unicode_signs);
 
 			if(CALCULATOR->aborted()) {mpz_clears(num, d, remainder, remainder2, exp, NULL); return CALCULATOR->abortedMessage();}
 			
@@ -4919,7 +4948,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			if(po.is_approximate) *po.is_approximate = true;
 		}
-		str = printMPZ(num, base, true, BASE_DISPLAY_NONE, po.lower_case_numbers);
+		str = printMPZ(num, base, true, BASE_DISPLAY_NONE, po.lower_case_numbers, po.use_unicode_signs);
 		if(base == 10 && !rerun) {
 			expo = str.length() - l10 - 1;
 			if(po.min_exp == EXP_PRECISION) {

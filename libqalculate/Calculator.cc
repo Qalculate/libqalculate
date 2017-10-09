@@ -4075,6 +4075,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 	parseSigns(str);
 	
+	if(po.base == 12) {
+		gsub("↊", "X", str);
+		gsub("↋", "E", str);
+	}
+	
 	remove_blank_ends(str);
 	remove_duplicate_blanks(str);	
 	
@@ -4094,10 +4099,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		return;
 	}
 
-	if(po.base >= 2 && po.base <= 10 && po.default_dataset != NULL && str.length() > 1) {
+	if(((po.base >= 2 && po.base <= 10) || po.base == 12) && po.default_dataset != NULL && str.length() > 1) {
 		size_t str_index = str.find(DOT_CH, 1);
 		while(str_index != string::npos) {
-			if(str_index + 1 < str.length() && ((is_not_in(NUMBERS NOT_IN_NAMES, str[str_index + 1]) && is_not_in(NOT_IN_NAMES, str[str_index - 1])) || (is_not_in(NOT_IN_NAMES, str[str_index + 1]) && is_not_in(NUMBERS NOT_IN_NAMES, str[str_index - 1])))) {
+			if(str_index + 1 < str.length() && ((is_not_in(po.base == 12 ? NUMBERS NOT_IN_NAMES "EX" : NUMBERS NOT_IN_NAMES, str[str_index + 1]) && is_not_in(NOT_IN_NAMES, str[str_index - 1])) || (is_not_in(NOT_IN_NAMES, str[str_index + 1]) && is_not_in(po.base == 12 ? NUMBERS NOT_IN_NAMES "EX" : NUMBERS NOT_IN_NAMES, str[str_index - 1])))) {
 				size_t dot_index = str.find_first_of(NOT_IN_NAMES DOT, str_index + 1);
 				if(dot_index != string::npos && str[dot_index] == DOT_CH) {
 					str_index = dot_index;
@@ -4182,7 +4187,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				str.replace(str_index, name_length, stmp);
 				str_index += stmp.length() - 1;
 			}
-		} else if(po.base >= 2 && po.base <= 10 && str[str_index] == '!' && po.functions_enabled) {
+		} else if(((po.base >= 2 && po.base <= 10) || po.base == 12) && str[str_index] == '!' && po.functions_enabled) {
 			if(str_index > 0 && (str.length() - str_index == 1 || str[str_index + 1] != EQUALS_CH)) {
 				stmp = "";
 				size_t i5 = str.find_last_not_of(SPACE, str_index - 1);
@@ -4342,7 +4347,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				str.replace(str_index, name_length, stmp);
 				str_index += stmp.length() - 1;*/
 			}
-		} else if(po.base >= 2 && po.base <= 10 && is_not_in(NUMBERS NOT_IN_NAMES, str[str_index])) {
+		} else if((po.base >= 2 && po.base <= 10 && is_not_in(NUMBERS NOT_IN_NAMES, str[str_index])) || (po.base == 12 && is_not_in(NUMBERS NOT_IN_NAMES "EX", str[str_index]))) {
 			bool p_mode = false;
 			void *best_p_object = NULL;
 			Prefix *best_p = NULL;
@@ -5057,7 +5062,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		return true;
 	}
 	size_t itmp;
-	if(po.base >= 2 && po.base <= 10 && (itmp = str.find_first_not_of(NUMBER_ELEMENTS MINUS, 0)) != string::npos) {
+	if(((po.base >= 2 && po.base <= 10) || po.base == 12) && (itmp = str.find_first_not_of(po.base == 12 ? NUMBER_ELEMENTS MINUS "EX" : NUMBER_ELEMENTS MINUS, 0)) != string::npos) {
 		if(itmp == 0) {
 			error(true, _("\"%s\" is not a valid variable/function/unit."), str.c_str(), NULL);
 			if(minus_count % 2 == 1 && !po.preserve_format) {
