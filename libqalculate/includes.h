@@ -300,7 +300,7 @@ typedef enum {
 #define BASE_BINARY		2
 #define BASE_OCTAL		8
 #define BASE_DECIMAL		10
-#define BASE_DUODECIMAL		10
+#define BASE_DUODECIMAL		12
 #define BASE_HEXADECIMAL	16
 #define BASE_SEXAGESIMAL	60
 
