@@ -1006,19 +1006,19 @@ class Calculator {
 	*/
 	bool loadExchangeRates();
 	/** Name of the exchange rates file on local disc.
+	* Multiple exchange rates sources might be used. Iterate over these, using the index parameter, until an empty string is returned.
 	*
+	* @param index The index (starting at one) of the exchange rate source
 	* @returns name of local exchange rates file.
 	*/
-	string getExchangeRatesFileName();
-	string getExchangeRatesFileName2();
-	string getBitcoinRateFileName();
+	string getExchangeRatesFileName(int index = 1);
 	/** Url of the exchange rates file on the Internet.
+	* Multiple exchange rates sources might be used. Iterate over these, using the index parameter, until an empty string is returned.
 	*
+	* @param index The index (starting at one) of the exchange rate source
 	* @returns Url of exchange rates file.
 	*/
-	string getExchangeRatesUrl();
-	string getExchangeRatesUrl2();
-	string getBitcoinRateUrl();
+	string getExchangeRatesUrl(int index = 1);
 	/** Modification time of the exchange rates file.
 	*
 	* @returns Returns exchange rates modification time.

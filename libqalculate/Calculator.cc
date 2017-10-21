@@ -1506,6 +1506,7 @@ void Calculator::addBuiltinFunctions() {
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
 	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "3900.99", 1, "", false, true, true));
+	u_btc->setApproximate();
 }
 void Calculator::error(bool critical, int message_category, const char *TEMPLATE, ...) {
 	va_list ap;
@@ -9239,6 +9240,7 @@ bool Calculator::loadExchangeRates() {
 						((AliasUnit*) u)->setExpression(rate);
 						u->setChanged(false);
 					}
+					u->setApproximate();
 				}
 			}
 		}
@@ -9349,6 +9351,7 @@ bool Calculator::loadExchangeRates() {
 							((AliasUnit*) u)->setExpression(rate);
 							u->setChanged(false);
 						}
+						u->setApproximate();
 					}
 				}
 			}
@@ -9369,7 +9372,6 @@ bool Calculator::loadExchangeRates() {
 		if(i != string::npos) {
 			size_t i2 = sbuffer.find("\"", i + 1);
 			((AliasUnit*) u_btc)->setExpression(sbuffer.substr(i + 1, i2 - (i + 1)));
-			cout << ((AliasUnit*) u_btc)->expression() << endl;
 		}
 	}
 	file2.close();
@@ -9388,26 +9390,26 @@ bool Calculator::canFetch() {
 	return false;
 #endif
 }
-string Calculator::getExchangeRatesFileName() {
-	return buildPath(getLocalDataDir(), "eurofxref-daily.xml");
-}
-string Calculator::getExchangeRatesFileName2() {
-	return buildPath(getLocalDataDir(), "rates.json");
-}
-string Calculator::getBitcoinRateFileName() {
-	return buildPath(getLocalDataDir(), "btc.json");
+string Calculator::getExchangeRatesFileName(int index) {
+	switch(index) {
+		case 1: {return buildPath(getLocalDataDir(), "eurofxref-daily.xml");}
+		case 2: {return buildPath(getLocalDataDir(), "rates.json");}
+		case 3: {return buildPath(getLocalDataDir(), "btc.json");}
+		default: {}
+	}
+	return "";
 }
 time_t Calculator::getExchangeRatesTime() {
 	return exchange_rates_time;
 }
-string Calculator::getExchangeRatesUrl() {
-	return "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
-}
-string Calculator::getExchangeRatesUrl2() {
-	return "http://www.mycurrency.net/service/rates";
-}
-string Calculator::getBitcoinRateUrl() {
-	return "https://api.coinbase.com/v2/prices/spot?currency=EUR";
+string Calculator::getExchangeRatesUrl(int index) {
+	switch(index) {
+		case 1: {return "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";}
+		case 2: {return "http://www.mycurrency.net/service/rates";}
+		case 3: {return "https://api.coinbase.com/v2/prices/spot?currency=EUR";}
+		default: {}
+	}
+	return "";
 }
 bool Calculator::fetchExchangeRates(int timeout, string) {return fetchExchangeRates(timeout);}
 size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer) {
@@ -9425,7 +9427,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	curl = curl_easy_init();
 	if(!curl) {return false;}
-	curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl().c_str());
+	curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl(1).c_str());
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
@@ -9446,7 +9448,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	
 	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "ECB", error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
 	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "ECB", "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
-	ofstream file(getExchangeRatesFileName().c_str(), ios::out | ios::trunc | ios::binary);
+	ofstream file(getExchangeRatesFileName(1).c_str(), ios::out | ios::trunc | ios::binary);
 	if(!file.is_open()) {
 		error(true, _("Failed to download exchange rates from %s: %s."), "ECB", strerror(errno), NULL);
 		curl_easy_cleanup(curl); curl_global_cleanup(); 
@@ -9462,14 +9464,14 @@ bool Calculator::fetchExchangeRates(int timeout) {
 #endif
 		new_times.modtime = (time_t) file_time;
 #ifdef _WIN32
-		_utime(getExchangeRatesFileName().c_str(), &new_times);
+		_utime(getExchangeRatesFileName(1).c_str(), &new_times);
 #else
-		utime(getExchangeRatesFileName().c_str(), &new_times);
+		utime(getExchangeRatesFileName(1).c_str(), &new_times);
 #endif
 	}
 	
 	sbuffer = "";
-	curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl2().c_str());
+	curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl(2).c_str());
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
@@ -9478,7 +9480,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	
 	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
 	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
-	ofstream file2(getExchangeRatesFileName2().c_str(), ios::out | ios::trunc | ios::binary);
+	ofstream file2(getExchangeRatesFileName(2).c_str(), ios::out | ios::trunc | ios::binary);
 	if(!file2.is_open()) {
 		error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", strerror(errno), NULL);
 		curl_easy_cleanup(curl); curl_global_cleanup(); 
@@ -9488,7 +9490,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	file2.close();
 	
 	sbuffer = "";
-	curl_easy_setopt(curl, CURLOPT_URL, getBitcoinRateUrl().c_str());
+	curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl(3).c_str());
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
@@ -9498,7 +9500,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	
 	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
 	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
-	ofstream file3(getBitcoinRateFileName().c_str(), ios::out | ios::trunc | ios::binary);
+	ofstream file3(getExchangeRatesFileName(3).c_str(), ios::out | ios::trunc | ios::binary);
 	if(!file3.is_open()) {
 		error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", strerror(errno), NULL);
 		curl_easy_cleanup(curl); curl_global_cleanup(); 

@@ -65,7 +65,7 @@ class Number {
 		NumberType n_type;
 		
 		bool b_approx, b_imag;
-		int i_precision;
+		long int i_precision;
 
 	public:
 	
@@ -157,6 +157,9 @@ class Number {
  		*/
 		int precision() const;
 		void setPrecision(int prec);
+		
+		long int bitPrecision() const;
+		void setBitPrecision(long int prec);
 		
 		bool isUndefined() const;
 		/** Returns true if the number is infinity, plus infinity or minus infinity.

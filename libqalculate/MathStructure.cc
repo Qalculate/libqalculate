@@ -26,7 +26,7 @@
 #define SET_CHILD_MAP(i)		setToChild(i + 1, true);
 #define SET_MAP(o)			set(o, true);
 #define SET_MAP_NOCOPY(o)		set_nocopy(o, true);
-#define MERGE_APPROX_AND_PREC(o)	if(!b_approx && o.isApproximate()) b_approx = true; if(o.precision() > 0 && (i_precision < 1 || o.precision() < i_precision)) i_precision = o.precision();
+#define MERGE_APPROX_AND_PREC(o)	if(!b_approx && o.isApproximate()) setApproximate(); if(o.precision() > 0 && (i_precision < 0 || o.precision() < i_precision)) setPrecision(o.precision());
 #define CHILD_UPDATED(i)		if(!b_approx && CHILD(i).isApproximate()) b_approx = true; if(CHILD(i).precision() > 0 && (i_precision < 1 || CHILD(i).precision() < i_precision)) i_precision = CHILD(i).precision();
 #define CHILDREN_UPDATED		for(size_t child_i = 0; child_i < SIZE; child_i++) {if(!b_approx && CHILD(child_i).isApproximate()) b_approx = true; if(CHILD(child_i).precision() > 0 && (i_precision < 1 || CHILD(child_i).precision() < i_precision)) i_precision = CHILD(child_i).precision();}
 
@@ -711,7 +711,8 @@ Number &MathStructure::number() {
 }
 void MathStructure::numberUpdated() {
 	if(m_type != STRUCT_NUMBER) return;
-	MERGE_APPROX_AND_PREC(o_number)
+	if(o_number.precision() >= 0) i_precision = o_number.precision();
+	b_approx = b_approx || o_number.isApproximate();
 }
 void MathStructure::childUpdated(size_t index, bool recursive) {
 	if(index > SIZE || index < 1) return;
@@ -1326,7 +1327,7 @@ int MathStructure::precision() const {
 }
 void MathStructure::setPrecision(int prec, bool recursive) {
 	i_precision = prec;
-	if(i_precision > 0) b_approx = true;
+	if(i_precision >= 0) b_approx = true;
 	if(recursive) {
 		if(m_type == STRUCT_NUMBER) {
 			o_number.setPrecision(prec);
@@ -16489,6 +16490,8 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 		}
 		if(mguess.number().isLessThan(nr_target_high) && mguess.number().isGreaterThan(nr_target_low)) {
 			x_value = mtest;
+			x_value.number().setPrecision(PRECISION + 10);
+			x_value.numberUpdated();
 			return 1;
 		}
 		mguess = mtest;
@@ -17613,7 +17616,6 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					set(mbak);
 				} else {
 					if(!x_var.representsReal()) CALCULATOR->error(false, _("Not all complex roots where calculated for %s."), mbak.print().c_str(), NULL);
-					setApproximate(true);
 					return true;
 				}
 			}

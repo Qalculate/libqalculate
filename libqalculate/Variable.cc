@@ -283,12 +283,12 @@ const MathStructure &KnownVariable::get() {
 		mstruct = new MathStructure();
 		mstruct->setAborted();
 		ParseOptions po;
-		if(isApproximate() && precision() < 1) {
-			po.read_precision = READ_PRECISION_WHEN_DECIMALS;
+		if(isApproximate() && precision() < 0) {
+			po.read_precision = ALWAYS_READ_PRECISION;
 		}
 		CALCULATOR->parse(mstruct, sexpression, po);
-		if(precision() > 0) {
-			if(mstruct->precision() < 1 || precision() < mstruct->precision()) {
+		if(precision() >= 0) {
+			if(mstruct->precision() < 0 || precision() < mstruct->precision()) {
 				if(!set_precision_of_numbers(*mstruct, precision())) mstruct->setPrecision(precision(), true);
 			}
 		} else if(isApproximate()) {
