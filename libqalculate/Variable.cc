@@ -263,7 +263,7 @@ bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
 				mstruct.number().setApproximate();
 				mstruct.numberUpdated();
 			}
-		} else if(mstruct.number().precision() < 1 || mstruct.number().precision() < i_prec) {
+		} else if(mstruct.number().precision() < 0 || mstruct.number().precision() < i_prec) {
 			mstruct.number().setPrecision(i_prec);
 			mstruct.numberUpdated();
 		}

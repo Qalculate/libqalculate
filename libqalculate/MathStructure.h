@@ -413,7 +413,7 @@ class MathStructure {
 		void childToFront(size_t index);
 		void addChild(const MathStructure &o);
 		void addChild_nocopy(MathStructure *o);
-		void delChild(size_t index, bool check_size = false);
+		void delChild(size_t index, bool check_size = false, bool preserve_precision = true);
 		void insertChild(const MathStructure &o, size_t index);
 		void insertChild_nocopy(MathStructure *o, size_t index);
 		void setChild(const MathStructure &o, size_t index = 1, bool merge_precision = false);
@@ -503,11 +503,13 @@ class MathStructure {
 	
 		/** @name Functions for precision */
 		//@{
-		void setApproximate(bool is_approx = true, bool recuresive = false);
-		bool isApproximate() const;		
+		void setApproximate(bool is_approx = true, bool recursive = false);
+		bool isApproximate() const;
 		void setPrecision(int prec, bool recursive = false);
-		int precision() const;
-		void mergePrecision(const MathStructure &o);
+		int precision(bool recursive = true, size_t exclude_index = 0) const;
+		void mergePrecision(const MathStructure &o, bool recursive = true, size_t exclude_index = 0);
+		void mergePrecision(bool approx, int prec);
+		
 		//@}
 
 		/** @name Operators for structural transformations and additions 

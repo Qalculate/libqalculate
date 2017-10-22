@@ -26,25 +26,26 @@
 #define SET_CHILD_MAP(i)		setToChild(i + 1, true);
 #define SET_MAP(o)			set(o, true);
 #define SET_MAP_NOCOPY(o)		set_nocopy(o, true);
-#define MERGE_APPROX_AND_PREC(o)	if(!b_approx && o.isApproximate()) setApproximate(); if(o.precision() > 0 && (i_precision < 0 || o.precision() < i_precision)) setPrecision(o.precision());
-#define CHILD_UPDATED(i)		if(!b_approx && CHILD(i).isApproximate()) b_approx = true; if(CHILD(i).precision() > 0 && (i_precision < 1 || CHILD(i).precision() < i_precision)) i_precision = CHILD(i).precision();
-#define CHILDREN_UPDATED		for(size_t child_i = 0; child_i < SIZE; child_i++) {if(!b_approx && CHILD(child_i).isApproximate()) b_approx = true; if(CHILD(child_i).precision() > 0 && (i_precision < 1 || CHILD(child_i).precision() < i_precision)) i_precision = CHILD(child_i).precision();}
+#define MERGE_APPROX_AND_PREC(o)	mergePrecision(o, true);
+#define CHILD_UPDATED(i)		if(!b_approx && CHILD(i).isApproximate()) b_approx = true;
+#define CHILDREN_UPDATED		for(size_t child_i = 0; child_i < SIZE; child_i++) {if(!b_approx && CHILD(child_i).isApproximate()) b_approx = true;}
 
-#define APPEND(o)		v_order.push_back(v_subs.size()); v_subs.push_back(new MathStructure(o)); if(!b_approx && o.isApproximate()) b_approx = true; if(o.precision() > 0 && (i_precision < 1 || o.precision() < i_precision)) i_precision = o.precision();
-#define APPEND_NEW(o)		{v_order.push_back(v_subs.size()); MathStructure *m_append_new = new MathStructure(o); v_subs.push_back(m_append_new); if(!b_approx && m_append_new->isApproximate()) b_approx = true; if(m_append_new->precision() > 0 && (i_precision < 1 || m_append_new->precision() < i_precision)) i_precision = m_append_new->precision();}
-#define APPEND_COPY(o)		v_order.push_back(v_subs.size()); v_subs.push_back(new MathStructure(*(o))); if(!b_approx && (o)->isApproximate()) b_approx = true; if((o)->precision() > 0 && (i_precision < 1 || (o)->precision() < i_precision)) i_precision = (o)->precision();
-#define APPEND_POINTER(o)	v_order.push_back(v_subs.size()); v_subs.push_back(o); if(!b_approx && (o)->isApproximate()) b_approx = true; if((o)->precision() > 0 && (i_precision < 1 || (o)->precision() < i_precision)) i_precision = (o)->precision();
-#define APPEND_REF(o)		v_order.push_back(v_subs.size()); v_subs.push_back(o); (o)->ref(); if(!b_approx && (o)->isApproximate()) b_approx = true; if((o)->precision() > 0 && (i_precision < 1 || (o)->precision() < i_precision)) i_precision = (o)->precision();
-#define PREPEND(o)		v_order.insert(v_order.begin(), v_subs.size()); v_subs.push_back(new MathStructure(o)); if(!b_approx && o.isApproximate()) b_approx = true; if(o.precision() > 0 && (i_precision < 1 || o.precision() < i_precision)) i_precision = o.precision();
-#define PREPEND_REF(o)		v_order.insert(v_order.begin(), v_subs.size()); v_subs.push_back(o); (o)->ref(); if(!b_approx && (o)->isApproximate()) b_approx = true; if((o)->precision() > 0 && (i_precision < 1 || (o)->precision() < i_precision)) i_precision = (o)->precision();
-#define INSERT_REF(o, i)	v_order.insert(v_order.begin() + i, v_subs.size()); v_subs.push_back(o); (o)->ref(); if(!b_approx && (o)->isApproximate()) b_approx = true; if((o)->precision() > 0 && (i_precision < 1 || (o)->precision() < i_precision)) i_precision = (o)->precision();
+#define APPEND(o)		v_order.push_back(v_subs.size()); v_subs.push_back(new MathStructure(o)); if(!b_approx && o.isApproximate()) b_approx = true;
+#define APPEND_NEW(o)		{v_order.push_back(v_subs.size()); MathStructure *m_append_new = new MathStructure(o); v_subs.push_back(m_append_new); if(!b_approx && m_append_new->isApproximate()) b_approx = true;}
+#define APPEND_COPY(o)		v_order.push_back(v_subs.size()); v_subs.push_back(new MathStructure(*(o))); if(!b_approx && (o)->isApproximate()) b_approx = true;
+#define APPEND_POINTER(o)	v_order.push_back(v_subs.size()); v_subs.push_back(o); if(!b_approx && (o)->isApproximate()) b_approx = true;
+#define APPEND_REF(o)		v_order.push_back(v_subs.size()); v_subs.push_back(o); (o)->ref(); if(!b_approx && (o)->isApproximate()) b_approx = true;
+#define PREPEND(o)		v_order.insert(v_order.begin(), v_subs.size()); v_subs.push_back(new MathStructure(o)); if(!b_approx && o.isApproximate()) b_approx = true;
+#define PREPEND_REF(o)		v_order.insert(v_order.begin(), v_subs.size()); v_subs.push_back(o); (o)->ref(); if(!b_approx && (o)->isApproximate()) b_approx = true;
+#define INSERT_REF(o, i)	v_order.insert(v_order.begin() + i, v_subs.size()); v_subs.push_back(o); (o)->ref(); if(!b_approx && (o)->isApproximate()) b_approx = true;
 #define CLEAR			v_order.clear(); for(size_t i = 0; i < v_subs.size(); i++) {v_subs[i]->unref();} v_subs.clear();
 //#define REDUCE(v_size)		for(size_t v_index = v_size; v_index < v_order.size(); v_index++) {v_subs[v_order[v_index]]->unref(); v_subs.erase(v_subs.begin() + v_order[v_index]);} v_order.resize(v_size);
 #define REDUCE(v_size)          {vector<size_t> v_tmp; v_tmp.resize(SIZE, 0); for(size_t v_index = v_size; v_index < v_order.size(); v_index++) {v_subs[v_order[v_index]]->unref(); v_subs[v_order[v_index]] = NULL; v_tmp[v_order[v_index]] = 1;} v_order.resize(v_size); for(vector<MathStructure*>::iterator v_it = v_subs.begin(); v_it != v_subs.end();) {if(*v_it == NULL) v_it = v_subs.erase(v_it); else ++v_it;} size_t i_change = 0; for(size_t v_index = 0; v_index < v_tmp.size(); v_index++) {if(v_tmp[v_index] == 1) i_change++; v_tmp[v_index] = i_change;} for(size_t v_index = 0; v_index < v_order.size(); v_index++) v_order[v_index] -= v_tmp[v_index];}
 #define CHILD(v_index)		(*v_subs[v_order[v_index]])
 #define SIZE			v_order.size()
 #define LAST			(*v_subs[v_order[v_order.size() - 1]])
-#define ERASE(v_index)		v_subs[v_order[v_index]]->unref(); v_subs.erase(v_subs.begin() + v_order[v_index]); for(size_t v_index2 = 0; v_index2 < v_order.size(); v_index2++) {if(v_order[v_index2] > v_order[v_index]) v_order[v_index2]--;} v_order.erase(v_order.begin() + (v_index));
+#define ERASE(v_index)		delChild(v_index + 1, false, true);
+#define ERASE_NOPRC(v_index)	delChild(v_index + 1, false, false);
 
 #define IS_REAL(o)		(o.isNumber() && o.number().isReal())
 #define IS_RATIONAL(o)		(o.isNumber() && o.number().isRational())
@@ -216,7 +217,19 @@ void unnegate_sign(MathStructure &mstruct) {
 	}
 }
 
-void MathStructure::mergePrecision(const MathStructure &o) {MERGE_APPROX_AND_PREC(o)}
+void MathStructure::mergePrecision(const MathStructure &o, bool recursive, size_t exclude_index) {
+	if(!b_approx && o.isApproximate()) setApproximate(); 
+	int o_prec = o.precision(recursive, exclude_index);
+	if(o_prec >= 0 && (i_precision < 0 || o_prec < i_precision)) {
+		setPrecision(o_prec);
+	}
+}
+void MathStructure::mergePrecision(bool approx, int prec) {
+	if(!b_approx && approx) setApproximate(); 
+	if(prec >= 0 && (i_precision < 0 || prec < i_precision)) {
+		setPrecision(prec);
+	}
+}
 
 void idm1(const MathStructure &mnum, bool &bfrac, bool &bint);
 void idm2(const MathStructure &mnum, bool &bfrac, bool &bint, Number &nr);
@@ -365,10 +378,10 @@ void MathStructure::set(const MathStructure &o, bool merge_precision) {
 		APPEND_COPY((&o[i]))
 	}
 	if(merge_precision) {
-		MERGE_APPROX_AND_PREC(o);
+		mergePrecision(o, false);
 	} else {
 		b_approx = o.isApproximate();
-		i_precision = o.precision();
+		setPrecision(o.precision(false));
 	}
 	if(o.uncertainty()) {
 		o_uncertainty = new MathStructure(*o.uncertainty());
@@ -420,10 +433,10 @@ void MathStructure::set_nocopy(MathStructure &o, bool merge_precision) {
 		APPEND_REF((&o[i]))
 	}
 	if(merge_precision) {
-		MERGE_APPROX_AND_PREC(o);
+		mergePrecision(o, false);
 	} else {
 		b_approx = o.isApproximate();
-		i_precision = o.precision();
+		setPrecision(o.precision(false));
 	}
 	if(o.uncertainty()) {
 		o_uncertainty = (MathStructure*) o.uncertainty();
@@ -444,7 +457,7 @@ void MathStructure::setToChild(size_t index, bool preserve_precision, MathStruct
 }
 void MathStructure::set(long int num, long int den, long int exp10, bool preserve_precision) {
 	clear(preserve_precision);
-	o_number.set(num, den, exp10);
+	o_number.set(num, den, exp10, true);
 	if(preserve_precision) {
 		MERGE_APPROX_AND_PREC(o_number);
 	} else {
@@ -455,7 +468,7 @@ void MathStructure::set(long int num, long int den, long int exp10, bool preserv
 }
 void MathStructure::set(int num, int den, int exp10, bool preserve_precision) {
 	clear(preserve_precision);
-	o_number.set(num, den, exp10);
+	o_number.set(num, den, exp10, true);
 	if(preserve_precision) {
 		MERGE_APPROX_AND_PREC(o_number);
 	} else {
@@ -686,6 +699,8 @@ void MathStructure::clear(bool preserve_precision) {
 	if(!preserve_precision) {
 		i_precision = -1;
 		b_approx = false;
+	} else if(i_precision >= 0) {
+		o_number.setPrecision(i_precision);
 	}
 }
 void MathStructure::clearVector(bool preserve_precision) {
@@ -717,12 +732,12 @@ void MathStructure::numberUpdated() {
 void MathStructure::childUpdated(size_t index, bool recursive) {
 	if(index > SIZE || index < 1) return;
 	if(recursive) CHILD(index - 1).childrenUpdated(true);
-	MERGE_APPROX_AND_PREC(CHILD(index - 1))
+	if(!b_approx && CHILD(index - 1).isApproximate()) b_approx = true;
 }
 void MathStructure::childrenUpdated(bool recursive) {
 	for(size_t i = 0; i < SIZE; i++) {
 		if(recursive) CHILD(i).childrenUpdated(true);
-		MERGE_APPROX_AND_PREC(CHILD(i))
+		if(!b_approx && CHILD(i).isApproximate()) b_approx = true;
 	}
 }
 const string &MathStructure::symbol() const {
@@ -1322,16 +1337,26 @@ bool MathStructure::isApproximate() const {
 	return b_approx;
 }
 
-int MathStructure::precision() const {
+int MathStructure::precision(bool recursive, size_t exclude_index) const {
+	if(recursive && SIZE > 0) {
+		int prec = i_precision;
+		for(size_t i = 0; i < SIZE; i++) {
+			if(exclude_index <= 0 || exclude_index - 1 != i) {
+				int prec_i = CHILD(i).precision(true);
+				if(prec_i >= 0 && (prec < 0 || prec_i < prec)) prec = prec_i;
+			}
+		}
+		return prec;
+	}
 	return i_precision;
 }
 void MathStructure::setPrecision(int prec, bool recursive) {
 	i_precision = prec;
 	if(i_precision >= 0) b_approx = true;
+	if(m_type == STRUCT_NUMBER) {
+		o_number.setPrecision(prec);
+	}
 	if(recursive) {
-		if(m_type == STRUCT_NUMBER) {
-			o_number.setPrecision(prec);
-		}
 		for(size_t i = 0; i < SIZE; i++) {
 			CHILD(i).setPrecision(prec, true);
 		}
@@ -1341,7 +1366,7 @@ void MathStructure::setPrecision(int prec, bool recursive) {
 void MathStructure::transform(StructureType mtype, const MathStructure &o) {
 	MathStructure *struct_this = new MathStructure();
 	struct_this->set_nocopy(*this);
-	clear(true);
+	clear(false);
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND(o);
@@ -1349,7 +1374,7 @@ void MathStructure::transform(StructureType mtype, const MathStructure &o) {
 void MathStructure::transform(StructureType mtype, const Number &o) {
 	MathStructure *struct_this = new MathStructure();
 	struct_this->set_nocopy(*this);
-	clear(true);
+	clear(false);
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND_NEW(o);
@@ -1357,7 +1382,7 @@ void MathStructure::transform(StructureType mtype, const Number &o) {
 void MathStructure::transform(StructureType mtype, int i) {
 	MathStructure *struct_this = new MathStructure();
 	struct_this->set_nocopy(*this);
-	clear(true);
+	clear(false);
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND_POINTER(new MathStructure(i, 1, 0));
@@ -1365,7 +1390,7 @@ void MathStructure::transform(StructureType mtype, int i) {
 void MathStructure::transform(StructureType mtype, Unit *u) {
 	MathStructure *struct_this = new MathStructure();
 	struct_this->set_nocopy(*this);
-	clear(true);
+	clear(false);
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND_NEW(u);
@@ -1373,7 +1398,7 @@ void MathStructure::transform(StructureType mtype, Unit *u) {
 void MathStructure::transform(StructureType mtype, Variable *v) {
 	MathStructure *struct_this = new MathStructure();
 	struct_this->set_nocopy(*this);
-	clear(true);
+	clear(false);
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND_NEW(v);
@@ -1381,7 +1406,7 @@ void MathStructure::transform(StructureType mtype, Variable *v) {
 void MathStructure::transform(StructureType mtype, string sym) {
 	MathStructure *struct_this = new MathStructure();
 	struct_this->set_nocopy(*this);
-	clear(true);
+	clear(false);
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND_NEW(sym);
@@ -1389,7 +1414,7 @@ void MathStructure::transform(StructureType mtype, string sym) {
 void MathStructure::transform_nocopy(StructureType mtype, MathStructure *o) {
 	MathStructure *struct_this = new MathStructure();
 	struct_this->set_nocopy(*this);
-	clear(true);
+	clear(false);
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND_POINTER(o);
@@ -1397,7 +1422,7 @@ void MathStructure::transform_nocopy(StructureType mtype, MathStructure *o) {
 void MathStructure::transform(StructureType mtype) {
 	MathStructure *struct_this = new MathStructure();
 	struct_this->set_nocopy(*this);
-	clear(true);
+	clear(false);
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 }
@@ -2151,6 +2176,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 							}
 						}
 						if(b) {
+							for(size_t i = i1; i < SIZE; i++) CHILD(i).mergePrecision(mstruct[i + i2 - i1]);
 							if(i1 == 0) {
 								PREPEND(m_one);
 							}
@@ -2159,7 +2185,8 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 							} else {
 								CHILD(0).number() += mstruct[0].number();
 							}
-							MERGE_APPROX_AND_PREC(mstruct)
+							CHILD(0).numberUpdated();
+							mergePrecision(mstruct, false);
 							calculateMultiplyIndex(0, eo, true, mparent, index_this);
 							return 1;
 						}
@@ -2906,7 +2933,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								LAST.calculateMultiplyLast(eo, true, this, SIZE - 1);
 							}
 						}
-						MERGE_APPROX_AND_PREC(mstruct)
+						mergePrecision(mstruct, false);
 						calculatesub(eo, eo, false, mparent, index_this);
 						return 1;
 					} else {
@@ -2990,7 +3017,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 										mdiv->multiply(mstruct);
 										mdiv->setChild_nocopy(&CHILD(i - merges), 1);
 									}
-									ERASE(i - merges);
+									ERASE_NOPRC(i - merges);
 									merges++;
 								}
 							}
@@ -3021,7 +3048,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							CHILD(i).calculateMultiplyLast(eo, true, this, i);
 						}
 					}
-					MERGE_APPROX_AND_PREC(mstruct)
+					mergePrecision(mstruct, false);
 					calculatesub(eo, eo, false, mparent, index_this);
 					return 1;
 				}
@@ -3049,7 +3076,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							calculateMultiplyLast(eo, false);
 						}
 					}
-					MERGE_APPROX_AND_PREC(mstruct)
+					mergePrecision(mstruct, false);
 					if(SIZE == 1) {
 						setToChild(1, false, mparent, index_this + 1);
 					} else if(SIZE == 0) {
@@ -3100,7 +3127,6 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				}
 				default: {
 					if(do_append) {
-						MERGE_APPROX_AND_PREC(mstruct)
 						if(reversed) {
 							PREPEND_REF(&mstruct);
 							calculateMultiplyIndex(0, eo, true, mparent, index_this);
@@ -3866,7 +3892,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					if(CHILD(i).representsNonNegative(true)) {
 						CHILD(i).ref();
 						mnew.addChild_nocopy(&CHILD(i));
-						ERASE(i);
+						ERASE_NOPRC(i);
 					} else if(CHILD(i).isNumber() && CHILD(i).number().isNegative() && !CHILD(i).number().isMinusOne()) {
 						// (-5)^z=5^z*(-1)^z
 						CHILD(i).number().negate();
@@ -5050,7 +5076,7 @@ int MathStructure::merge_bitwise_xor(MathStructure &mstruct, const EvaluationOpt
 								}\
 							}\
 							if(r >= 1) {\
-								ERASE(i);\
+								ERASE_NOPRC(i);\
 								b = true;\
 								i3 = i;\
 								i = i2;\
@@ -5073,7 +5099,7 @@ int MathStructure::merge_bitwise_xor(MathStructure &mstruct, const EvaluationOpt
 								}\
 							}\
 							if(r >= 1) {\
-								ERASE(i2);\
+								ERASE_NOPRC(i2);\
 								b = true;\
 								if(r != 2) {\
 									i2 = 0;\
@@ -5727,6 +5753,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				unformat(eo);
 				MERGE_RECURSE
 			}
+
 			if(representsNonMatrix()) {
 				MERGE_ALL(merge_multiplication, try_multiply)
 			} else {
@@ -5746,7 +5773,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 								}
 							}
 							if(r >= 1) {
-								ERASE(i);
+								ERASE_NOPRC(i);
 								b = true;
 								i3 = i;
 								i = i2;
@@ -5773,7 +5800,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 							}
 						}
 						if(r >= 1) {
-							ERASE(i2);
+							ERASE_NOPRC(i2);
 							b = true;
 							if(r != 2) {
 								i2 = 0;
@@ -6364,7 +6391,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 							}\
 						}\
 						if(r >= 1) {\
-							ERASE(index);\
+							ERASE_NOPRC(index);\
 							if(!b && r == 2) {\
 								b = true;\
 								index = SIZE;\
@@ -6391,7 +6418,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 							}\
 						}\
 						if(r >= 1) {\
-							ERASE(i);\
+							ERASE_NOPRC(i);\
 							if(!b && r == 3) {\
 								b = true;\
 								break;\
@@ -6689,7 +6716,7 @@ bool MathStructure::calculateMultiplyIndex(size_t index, const EvaluationOptions
 				}
 			}
 			if(r >= 1) {
-				ERASE(index);
+				ERASE_NOPRC(index);
 				if(!b && r == 2) {
 					b = true;
 					index = SIZE;
@@ -6722,13 +6749,13 @@ bool MathStructure::calculateMultiplyIndex(size_t index, const EvaluationOptions
 			}
 		}
 		if(r >= 1) {
-			ERASE(i);
+			ERASE_NOPRC(i);
 			if(!b && r == 3) {
 				b = true;
 				break;
 			}
-			b = true;							
-			if(r != 2) {								
+			b = true;
+			if(r != 2) {
 				goto try_multiply_matrix_index;
 			}
 			i--;
@@ -11478,9 +11505,27 @@ void MathStructure::addChild(const MathStructure &o) {
 void MathStructure::addChild_nocopy(MathStructure *o) {
 	APPEND_POINTER(o);
 }
-void MathStructure::delChild(size_t index, bool check_size) {
-	if(index > 0 && index <= SIZE) {
-		ERASE(index - 1);
+void MathStructure::delChild(size_t v_index, bool check_size, bool preserve_precision) {
+	if(v_index > 0 && v_index <= SIZE) {
+		v_index--;
+		
+		int prec_i = 0;
+		if(preserve_precision) prec_i = v_subs[v_order[v_index]]->precision(true);
+		
+		v_subs[v_order[v_index]]->unref(); 
+		v_subs.erase(v_subs.begin() + v_order[v_index]); 
+		for(size_t v_index2 = 0; v_index2 < v_order.size(); v_index2++) {
+			if(v_order[v_index2] > v_order[v_index]) v_order[v_index2]--;
+		}
+		v_order.erase(v_order.begin() + (v_index));
+		
+		if(preserve_precision) {
+			int prec = precision();
+			if(prec_i >= 0 && (prec < 0 || prec_i < prec)) {
+				setPrecision(prec_i);
+			}
+		}
+
 		if(check_size) {
 			if(SIZE == 1) setToChild(1, true);
 			else if(SIZE == 0) clear(true);
@@ -11516,7 +11561,7 @@ void MathStructure::setChild_nocopy(MathStructure *o, size_t index, bool merge_p
 		MathStructure *o_prev = v_subs[v_order[index - 1]];
 		if(merge_precision) {
 			if(!o->isApproximate() && o_prev->isApproximate()) o->setApproximate(true);
-			if(o_prev->precision() > 0 && (o->precision() < 1 || o_prev->precision() < o->precision())) o->setPrecision(o_prev->precision()); 
+			if(o_prev->precision() >= 0 && (o->precision() < 1 || o_prev->precision() < o->precision())) o->setPrecision(o_prev->precision()); 
 		}
 		o_prev->unref();
 		v_subs[v_order[index - 1]] = o;
@@ -13546,7 +13591,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 	string print_str;
 	InternalPrintStruct ips_n = ips;
 	if(isApproximate()) ips_n.parent_approximate = true;
-	if(precision() > 0 && (ips_n.parent_precision < 1 || precision() < ips_n.parent_precision)) ips_n.parent_precision = precision();
+	if(precision() >= 0 && (ips_n.parent_precision < 0 || precision() < ips_n.parent_precision)) ips_n.parent_precision = precision();
 	switch(m_type) {
 		case STRUCT_NUMBER: {
 			print_str = o_number.print(po, ips_n);

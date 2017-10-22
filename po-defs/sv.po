@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-02 08:37+0200\n"
+"POT-Creation-Date: 2017-10-21 16:27+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -173,11 +173,11 @@ msgid "ar:PLN,au:z&#x0142;,zloty"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:40
-msgid "Romanian New Leu"
-msgstr "Rumänska nya leu"
+msgid "Romanian Leu"
+msgstr "Rumänska leu"
 
 #: ../data/currencies.xml.in.h:41
-msgid "leu,ar:RON"
+msgid "ar:RON"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:42
@@ -277,171 +277,179 @@ msgid "ar:BRL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:66
+msgid "bitcoins"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:67
+msgid "ar:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:68
 msgid "Euro Cent"
 msgstr "Eurocent"
 
-#: ../data/currencies.xml.in.h:67
+#: ../data/currencies.xml.in.h:69
 msgid "r:eurocent,p:eurocents"
 msgstr "eurocent"
 
-#: ../data/currencies.xml.in.h:68
+#: ../data/currencies.xml.in.h:70
 msgid "Cent (USD)"
 msgstr "Cent (USD)"
 
-#: ../data/currencies.xml.in.h:69
+#: ../data/currencies.xml.in.h:71
 msgid "au:&#xA2;,r:cent,p:cents"
 msgstr "au:&#xA2;,cent"
 
-#: ../data/currencies.xml.in.h:70
+#: ../data/currencies.xml.in.h:72
 msgid "Belgian Franc"
 msgstr "Belgiska franc"
 
-#: ../data/currencies.xml.in.h:71
+#: ../data/currencies.xml.in.h:73
 msgid "ar:BEF"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:72
+#: ../data/currencies.xml.in.h:74
 msgid "Greek Drachma"
 msgstr "Grekiska drachmer"
 
-#: ../data/currencies.xml.in.h:73
-msgid "ar:GRD,au:&#x20AF;,drachma"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:74
-msgid "French Franc"
-msgstr "Franska franc"
-
 #: ../data/currencies.xml.in.h:75
-msgid "ar:FRF,au:&#x20A3;,franc"
+msgid "ar:GRD,au:&#x20AF;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:76
+msgid "French Franc"
+msgstr "Franska franc"
+
+#: ../data/currencies.xml.in.h:77
+msgid "ar:FRF,au:&#x20A3;"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:78
 msgid "Italian Lira"
 msgstr "Italienska lire"
 
-#: ../data/currencies.xml.in.h:77
-msgid "ar:ITL,au:&#x20A4;,lira"
-msgstr "a:ITL,au:&#x20A4;,lire"
+#: ../data/currencies.xml.in.h:79
+msgid "ar:ITL"
+msgstr ""
 
-#: ../data/currencies.xml.in.h:78
+#: ../data/currencies.xml.in.h:80
 msgid "Dutch Guilder"
 msgstr "Nederländska gulden"
 
-#: ../data/currencies.xml.in.h:79
-msgid "ar:NLG,guilder"
-msgstr "a:NLG,gulden"
-
-#: ../data/currencies.xml.in.h:80
-msgid "Portuguese Escudo"
-msgstr "Portugisiska escudos"
-
 #: ../data/currencies.xml.in.h:81
-msgid "ar:PTE,escudo"
+msgid "ar:NLG"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:82
-msgid "Deutsche Mark"
-msgstr "Tyska mark"
+msgid "Portuguese Escudo"
+msgstr "Portugisiska escudos"
 
 #: ../data/currencies.xml.in.h:83
-msgid "ar:DEM,mark"
+msgid "ar:PTE"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:84
-msgid "Spanish Peseta"
-msgstr "Spanska pesetas"
+msgid "Deutsche Mark"
+msgstr "Tyska mark"
 
 #: ../data/currencies.xml.in.h:85
-msgid "ar:ESP,au:&#x20A7;,peseta,p:pesetas"
+msgid "ar:DEM"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:86
-msgid "Irish Pound"
-msgstr "Irländska pund"
+msgid "Spanish Peseta"
+msgstr "Spanska pesetas"
 
 #: ../data/currencies.xml.in.h:87
-msgid "ar:IEP"
+msgid "ar:ESP,au:&#x20A7;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:88
-msgid "Luxembourg Franc"
-msgstr "Luxemburgfranc"
+msgid "Irish Pound"
+msgstr "Irländska pund"
 
 #: ../data/currencies.xml.in.h:89
-msgid "ar:LUF"
+msgid "ar:IEP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:90
-msgid "Austrian Schilling"
-msgstr "Österrikiska schilling"
+msgid "Luxembourg Franc"
+msgstr "Luxemburgfranc"
 
 #: ../data/currencies.xml.in.h:91
-msgid "ar:ATS,schilling"
+msgid "ar:LUF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:92
-msgid "Finnish Markka"
-msgstr "Finska mark"
+msgid "Austrian Schilling"
+msgstr "Österrikiska schilling"
 
 #: ../data/currencies.xml.in.h:93
-msgid "ar:FIM,markka"
+msgid "ar:ATS"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:94
-msgid "Slovenian Tolar"
-msgstr "Slovenska tolar"
+msgid "Finnish Markka"
+msgstr "Finska mark"
 
 #: ../data/currencies.xml.in.h:95
-msgid "ar:SIT,tolar"
+msgid "ar:FIM"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:96
-msgid "Cypriot Pound"
-msgstr "Cypriotiska pund"
+msgid "Slovenian Tolar"
+msgstr "Slovenska tolar"
 
 #: ../data/currencies.xml.in.h:97
-msgid "ar:CYP"
+msgid "ar:SIT"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:98
-msgid "Estonian Kroon"
-msgstr "Estoniska kroon"
+msgid "Cypriot Pound"
+msgstr "Cypriotiska pund"
 
 #: ../data/currencies.xml.in.h:99
-msgid "ar:EEK,kroon,p:krooni"
+msgid "ar:CYP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:100
-msgid "Slovak Koruna"
-msgstr "Slovakiska koruna"
+msgid "Estonian Kroon"
+msgstr "Estoniska kroon"
 
 #: ../data/currencies.xml.in.h:101
-msgid "ar:SKK"
+msgid "ar:EEK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:102
-msgid "Maltese Lira"
-msgstr "Maltesiska lire"
+msgid "Slovak Koruna"
+msgstr "Slovakiska koruna"
 
 #: ../data/currencies.xml.in.h:103
-msgid "ar:MTL"
+msgid "ar:SKK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:104
-msgid "Latvian Lats"
-msgstr "Lettiska lats"
+msgid "Maltese Lira"
+msgstr "Maltesiska lire"
 
 #: ../data/currencies.xml.in.h:105
-msgid "lats,ar:LVL"
+msgid "ar:MTL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:106
+msgid "Latvian Lats"
+msgstr "Lettiska lats"
+
+#: ../data/currencies.xml.in.h:107
+msgid "ar:LVL"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:108
 msgid "Lithuanian Litas"
 msgstr "Litauiska litas"
 
-#: ../data/currencies.xml.in.h:107
-msgid "litas,ar:LTL"
+#: ../data/currencies.xml.in.h:109
+msgid "ar:LTL"
 msgstr ""
 
 #: ../data/datasets.xml.in.h:1

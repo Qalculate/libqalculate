@@ -9240,6 +9240,7 @@ bool Calculator::loadExchangeRates() {
 						((AliasUnit*) u)->setExpression(rate);
 						u->setChanged(false);
 					}
+					u->setPrecision(5);
 					u->setApproximate();
 				}
 			}
@@ -9351,6 +9352,7 @@ bool Calculator::loadExchangeRates() {
 							((AliasUnit*) u)->setExpression(rate);
 							u->setChanged(false);
 						}
+						u->setPrecision(5);
 						u->setApproximate();
 					}
 				}

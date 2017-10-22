@@ -1635,9 +1635,8 @@ bool Number::add(const Number &o) {
 					if(!nr_o.setToFloatingPoint() || !add(nr_o)) {set(nr_bak); return false;}
 					return true;
 				}
-
 				mpfr_exp_t e1 = 0;
-				if(mpfr_regular_p(f_value)) mpfr_get_exp(f_value);
+				if(mpfr_regular_p(f_value)) e1 = mpfr_get_exp(f_value);
 				
 				mpfr_add_q(f_value, f_value, o.internalRational(), MPFR_RNDN);
 				
@@ -1675,7 +1674,7 @@ bool Number::add(long int i) {
 		mpfr_clear_flags();
 		
 		mpfr_exp_t e1 = 0;
-		if(mpfr_regular_p(f_value)) mpfr_get_exp(f_value);
+		if(mpfr_regular_p(f_value)) e1 = mpfr_get_exp(f_value);
 		
 		mpfr_add_si(f_value, f_value, i, MPFR_RNDN);
 	
@@ -1790,7 +1789,7 @@ bool Number::subtract(const Number &o) {
 				}
 
 				mpfr_exp_t e1 = 0;
-				if(mpfr_regular_p(f_value)) mpfr_get_exp(f_value);
+				if(mpfr_regular_p(f_value)) e1 = mpfr_get_exp(f_value);
 				
 				mpfr_sub_q(f_value, f_value, o.internalRational(), MPFR_RNDN);
 				
@@ -1827,7 +1826,7 @@ bool Number::subtract(long int i) {
 		mpfr_clear_flags();
 		
 		mpfr_exp_t e1 = 0;
-		if(mpfr_regular_p(f_value)) mpfr_get_exp(f_value);
+		if(mpfr_regular_p(f_value)) e1 = mpfr_get_exp(f_value);
 
 		mpfr_sub_si(f_value, f_value, i, MPFR_RNDN);
 	

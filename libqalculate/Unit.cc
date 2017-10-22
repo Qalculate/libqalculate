@@ -334,7 +334,8 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 	if(i_exp != 1) mexp /= i_exp;
 	ParseOptions po;
 	if(isApproximate() && precision() < 1) {
-		po.read_precision = ALWAYS_READ_PRECISION;
+		if(sinverse.find(DOT) || svalue.find(DOT)) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
+		else po.read_precision = ALWAYS_READ_PRECISION;
 	}
 	if(sinverse.empty()) {
 		if(svalue.find("\\x") != string::npos) {
@@ -352,7 +353,7 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 			CALCULATOR->parse(&mvalue, stmp, po);
 			CALCULATOR->delId(x_id);
 			CALCULATOR->delId(y_id);
-			if(precision() > 0 && (mvalue.precision() < 1 || precision() < mvalue.precision())) mvalue.setPrecision(precision(), true);
+			if(precision() > 0 && (mvalue.precision() < 0 || precision() < mvalue.precision())) mvalue.setPrecision(precision(), true);
 			if(isApproximate()) mvalue.setApproximate(true, true);
 		} else {
 			MathStructure *mstruct = new MathStructure();
@@ -364,12 +365,12 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 						mstruct->numberUpdated();
 					}
 				} else if(mstruct->isMultiplication() && mstruct->getChild(1)->isNumber()) {
-					if(mstruct->getChild(1)->number().precision() < 1 || precision() < mstruct->getChild(1)->number().precision()) {
+					if(mstruct->getChild(1)->number().precision() < 0 || precision() < mstruct->getChild(1)->number().precision()) {
 						mstruct->getChild(1)->number().setPrecision(precision());
 						mstruct->getChild(1)->numberUpdated();
 						mstruct->childUpdated(1);
 					}
-				} else if(mstruct->precision() < 1 || precision() < mstruct->precision()) {
+				} else if(mstruct->precision() < 0 || precision() < mstruct->precision()) {
 					mstruct->setPrecision(precision(), true);
 				}
 			} else if(isApproximate() && !mstruct->isApproximate()) {
@@ -394,24 +395,24 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 			CALCULATOR->parse(&mvalue, stmp, po);
 			CALCULATOR->delId(x_id);
 			CALCULATOR->delId(y_id);
-			if(precision() > 0 && (mvalue.precision() < 1 || precision() < mvalue.precision())) mvalue.setPrecision(precision(), true);
+			if(precision() > 0 && (mvalue.precision() < 0|| precision() < mvalue.precision())) mvalue.setPrecision(precision(), true);
 			if(isApproximate()) mvalue.setApproximate(true, true);
 		} else {
 			MathStructure *mstruct = new MathStructure();
 			CALCULATOR->parse(mstruct, sinverse, po);
 			if(precision() > 0) {
 				if(mstruct->isNumber()) {
-					if(mstruct->number().precision() < 1 || precision() < mstruct->number().precision()) {
+					if(mstruct->number().precision() < 0 || precision() < mstruct->number().precision()) {
 						mstruct->number().setPrecision(precision());
 						mstruct->numberUpdated();
 					}
 				} else if(mstruct->isMultiplication() && mstruct->getChild(1)->isNumber()) {
-					if(mstruct->getChild(1)->number().precision() < 1 || precision() < mstruct->getChild(1)->number().precision()) {
+					if(mstruct->getChild(1)->number().precision() < 0 || precision() < mstruct->getChild(1)->number().precision()) {
 						mstruct->getChild(1)->number().setPrecision(precision());
 						mstruct->getChild(1)->numberUpdated();
 						mstruct->childUpdated(1);
 					}
-				} else if(mstruct->precision() < 1 || precision() < mstruct->precision()) {
+				} else if(mstruct->precision() < 0 || precision() < mstruct->precision()) {
 					mstruct->setPrecision(precision(), true);
 				}
 			} else if(isApproximate() && !mstruct->isApproximate()) {
@@ -426,7 +427,8 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const {
 	ParseOptions po;
 	if(isApproximate() && precision() < 1) {
-		po.read_precision = ALWAYS_READ_PRECISION;
+		if(svalue.find(DOT)) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
+		else po.read_precision = ALWAYS_READ_PRECISION;
 	}
 	if(svalue.find("\\x") != string::npos) {
 		string stmp = svalue;
@@ -450,24 +452,24 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 		} else {
 			CALCULATOR->delId(y_id);
 		}
-		if(precision() > 0 && (mvalue.precision() < 1 || precision() < mvalue.precision())) mvalue.setPrecision(precision(), true);
+		if(precision() > 0 && (mvalue.precision() < 0 || precision() < mvalue.precision())) mvalue.setPrecision(precision(), true);
 		if(isApproximate()) mvalue.setApproximate(true, true);
 	} else {
 		MathStructure *mstruct = new MathStructure();
 		CALCULATOR->parse(mstruct, svalue, po);
 		if(precision() > 0) {
 			if(mstruct->isNumber()) {
-				if(mstruct->number().precision() < 1 || precision() < mstruct->number().precision()) {
+				if(mstruct->number().precision() < 0 || precision() < mstruct->number().precision()) {
 					mstruct->number().setPrecision(precision());
 					mstruct->numberUpdated();
 				}
 			} else if(mstruct->isMultiplication() && mstruct->getChild(1)->isNumber()) {
-				if(mstruct->getChild(1)->number().precision() < 1 || precision() < mstruct->getChild(1)->number().precision()) {
+				if(mstruct->getChild(1)->number().precision() < 0 || precision() < mstruct->getChild(1)->number().precision()) {
 					mstruct->getChild(1)->number().setPrecision(precision());
 					mstruct->getChild(1)->numberUpdated();
 					mstruct->childUpdated(1);
 				}
-			} else if(mstruct->precision() < 1 || precision() < mstruct->precision()) {
+			} else if(mstruct->precision() < 0 || precision() < mstruct->precision()) {
 				mstruct->setPrecision(precision(), true);
 			}
 		} else if(isApproximate() && !mstruct->isApproximate()) {
