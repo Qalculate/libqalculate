@@ -458,8 +458,10 @@ Calculator::Calculator() {
 	save_printoptions.decimalpoint_sign = ".";
 	save_printoptions.comma_sign = ",";
 	save_printoptions.use_reference_names = true;
-	save_printoptions.show_ending_zeroes = true;
-	save_printoptions.number_fraction_format = FRACTION_DECIMAL_EXACT;
+	save_printoptions.preserve_precision = true;
+	save_printoptions.limit_implicit_multiplication = true;
+	save_printoptions.spacious = false;
+	save_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
 	save_printoptions.short_multiplication = false;
 
 	default_assumptions = new Assumptions;
@@ -1507,6 +1509,8 @@ void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
 	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "3900.99", 1, "", false, true, true));
 	u_btc->setApproximate();
+	u_btc->setPrecision(-2);
+	u_btc->setChanged(false);
 }
 void Calculator::error(bool critical, int message_category, const char *TEMPLATE, ...) {
 	va_list ap;
@@ -8194,13 +8198,16 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 				}
 				if(!variables[i]->isBuiltin()) {
 					if(variables[i]->isKnown()) {
+						bool is_approx = false;
+						save_printoptions.is_approximate = &is_approx;
 						if(((KnownVariable*) variables[i])->isExpression()) {
 							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) ((KnownVariable*) variables[i])->expression().c_str());
 						} else {
 							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) ((KnownVariable*) variables[i])->get().print(save_printoptions).c_str());
 						}
-						if(variables[i]->isApproximate()) xmlNewProp(newnode2, (xmlChar*) "approximate", (xmlChar*) "true");
-						if(variables[i]->precision() > 0) xmlNewProp(newnode2, (xmlChar*) "precision", (xmlChar*) i2s(variables[i]->precision()).c_str());
+						save_printoptions.is_approximate = NULL;
+						if(variables[i]->isApproximate() || is_approx) xmlNewProp(newnode2, (xmlChar*) "approximate", (xmlChar*) "true");
+						if(variables[i]->precision() >= 0) xmlNewProp(newnode2, (xmlChar*) "precision", (xmlChar*) i2s(variables[i]->precision()).c_str());
 					} else {
 						if(((UnknownVariable*) variables[i])->assumptions()) {
 							switch(((UnknownVariable*) variables[i])->assumptions()->type()) {
@@ -8419,7 +8426,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 						xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) au->firstBaseUnit()->referenceName().c_str());								
 						newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "relation", (xmlChar*) au->expression().c_str());
 						if(au->isApproximate()) xmlNewProp(newnode3, (xmlChar*) "approximate", (xmlChar*) "true");
-						if(au->precision() > 0) xmlNewProp(newnode3, (xmlChar*) "precision", (xmlChar*) i2s(u->precision()).c_str());
+						if(au->precision() >= 0) xmlNewProp(newnode3, (xmlChar*) "precision", (xmlChar*) i2s(u->precision()).c_str());
 						if(!au->inverseExpression().empty()) {
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "inverse_relation", (xmlChar*) au->inverseExpression().c_str());
 						}
@@ -8548,7 +8555,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 					}
 					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "expression", (xmlChar*) ((UserFunction*) functions[i])->formula().c_str());
 					if(functions[i]->isApproximate()) xmlNewProp(newnode2, (xmlChar*) "approximate", (xmlChar*) "true");
-					if(functions[i]->precision() > 0) xmlNewProp(newnode2, (xmlChar*) "precision", (xmlChar*) i2s(functions[i]->precision()).c_str());
+					if(functions[i]->precision() >= 0) xmlNewProp(newnode2, (xmlChar*) "precision", (xmlChar*) i2s(functions[i]->precision()).c_str());
 					if(!functions[i]->condition().empty()) {
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "condition", (xmlChar*) functions[i]->condition().c_str());
 					}
@@ -9235,13 +9242,14 @@ bool Calculator::loadExchangeRates() {
 					u = getUnit(currency);
 					if(!u) {
 						u = addUnit(new AliasUnit(_("Currency"), currency, "", "", "", u_euro, rate, 1, "", false, true));
-						if(u) u->setChanged(false);
 					} else if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
 						((AliasUnit*) u)->setExpression(rate);
+					}
+					if(u) {
+						u->setApproximate();
+						u->setPrecision(-2);
 						u->setChanged(false);
 					}
-					u->setPrecision(5);
-					u->setApproximate();
 				}
 			}
 		}
@@ -9346,14 +9354,15 @@ bool Calculator::loadExchangeRates() {
 							u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
 							if(u) {
 								u->setHidden(true);
-								u->setChanged(false);
 							}
 						} else {
 							((AliasUnit*) u)->setExpression(rate);
+						}
+						if(u) {
+							u->setApproximate();
+							u->setPrecision(-2);
 							u->setChanged(false);
 						}
-						u->setPrecision(5);
-						u->setApproximate();
 					}
 				}
 			}

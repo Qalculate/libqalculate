@@ -196,12 +196,12 @@ KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, 
 	setPrecision(mstruct->precision());
 	b_expression = false;
 	sexpression = "";
-	calculated_precision = 0;
+	calculated_precision = -1;
 	setChanged(false);
 }
 KnownVariable::KnownVariable(string cat_, string name_, string expression_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
 	mstruct = NULL;
-	calculated_precision = 0;
+	calculated_precision = -1;
 	set(expression_);
 	setChanged(false);
 }
@@ -226,7 +226,7 @@ string KnownVariable::expression() const {
 }
 void KnownVariable::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_VARIABLE && item->subtype() == SUBTYPE_KNOWN_VARIABLE) {
-		calculated_precision = 0;
+		calculated_precision = -1;
 		sexpression = ((KnownVariable*) item)->expression();
 		b_expression = ((KnownVariable*) item)->isExpression();
 		if(!b_expression) {
@@ -240,7 +240,7 @@ void KnownVariable::set(const MathStructure &o) {
 	else mstruct->set(o);
 	setApproximate(mstruct->isApproximate());
 	setPrecision(mstruct->precision());
-	calculated_precision = 0;
+	calculated_precision = -1;
 	b_expression = false;
 	sexpression = "";
 	setChanged(true);
@@ -253,12 +253,12 @@ void KnownVariable::set(string expression_) {
 	b_expression = true;
 	sexpression = expression_;
 	remove_blank_ends(sexpression);
-	calculated_precision = 0;
+	calculated_precision = -1;
 	setChanged(true);
 }
 bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
 	if(mstruct.isNumber()) {
-		if(i_prec < 1) {
+		if(i_prec < 0) {
 			if(!mstruct.number().isApproximate()) {
 				mstruct.number().setApproximate();
 				mstruct.numberUpdated();
@@ -283,7 +283,7 @@ const MathStructure &KnownVariable::get() {
 		mstruct = new MathStructure();
 		mstruct->setAborted();
 		ParseOptions po;
-		if(isApproximate() && precision() < 0) {
+		if(isApproximate() && precision() == -1) {
 			po.read_precision = ALWAYS_READ_PRECISION;
 		}
 		CALCULATOR->parse(mstruct, sexpression, po);
@@ -324,7 +324,7 @@ bool KnownVariable::representsScalar() {return get().representsScalar();}
 
 DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : KnownVariable(cat_, name_, MathStructure(), title_, is_local, is_builtin, is_active) {
 	mstruct = NULL;
-	calculated_precision = 0;
+	calculated_precision = -1;
 	setApproximate();
 	setChanged(false);
 }
@@ -336,7 +336,7 @@ DynamicVariable::DynamicVariable(const DynamicVariable *variable) {
 }
 DynamicVariable::DynamicVariable() : KnownVariable() {
 	mstruct = NULL;
-	calculated_precision = 0;
+	calculated_precision = -1;
 	setApproximate();	
 	setChanged(false);
 }

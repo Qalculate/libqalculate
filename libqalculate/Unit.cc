@@ -426,7 +426,7 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 }
 MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const {
 	ParseOptions po;
-	if(isApproximate() && precision() < 1) {
+	if(isApproximate() && precision() == -1) {
 		if(svalue.find(DOT)) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
 		else po.read_precision = ALWAYS_READ_PRECISION;
 	}
@@ -452,12 +452,12 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 		} else {
 			CALCULATOR->delId(y_id);
 		}
-		if(precision() > 0 && (mvalue.precision() < 0 || precision() < mvalue.precision())) mvalue.setPrecision(precision(), true);
+		if(precision() >= 0 && (mvalue.precision() < 0 || precision() < mvalue.precision())) mvalue.setPrecision(precision(), true);
 		if(isApproximate()) mvalue.setApproximate(true, true);
 	} else {
 		MathStructure *mstruct = new MathStructure();
 		CALCULATOR->parse(mstruct, svalue, po);
-		if(precision() > 0) {
+		if(precision() >= 0) {
 			if(mstruct->isNumber()) {
 				if(mstruct->number().precision() < 0 || precision() < mstruct->number().precision()) {
 					mstruct->number().setPrecision(precision());

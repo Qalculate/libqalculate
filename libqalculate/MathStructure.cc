@@ -1319,14 +1319,13 @@ bool MathStructure::representsScalar() const {
 
 void MathStructure::setApproximate(bool is_approx, bool recursive) {
 	b_approx = is_approx;
-	if(b_approx) {
-		if(i_precision < 1) i_precision = PRECISION;
-	} else {
+	if(!b_approx) {
 		i_precision = -1;
 	}
 	if(recursive) {
 		if(m_type == STRUCT_NUMBER) {
 			o_number.setApproximate(is_approx);
+			if(i_precision < 0 || i_precision > o_number.precision()) i_precision = o_number.precision();
 		}
 		for(size_t i = 0; i < SIZE; i++) {
 			CHILD(i).setApproximate(is_approx, true);
@@ -11561,7 +11560,7 @@ void MathStructure::setChild_nocopy(MathStructure *o, size_t index, bool merge_p
 		MathStructure *o_prev = v_subs[v_order[index - 1]];
 		if(merge_precision) {
 			if(!o->isApproximate() && o_prev->isApproximate()) o->setApproximate(true);
-			if(o_prev->precision() >= 0 && (o->precision() < 1 || o_prev->precision() < o->precision())) o->setPrecision(o_prev->precision()); 
+			if(o_prev->precision() >= 0 && (o->precision() < 0 || o_prev->precision() < o->precision())) o->setPrecision(o_prev->precision()); 
 		}
 		o_prev->unref();
 		v_subs[v_order[index - 1]] = o;

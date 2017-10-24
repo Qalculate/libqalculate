@@ -539,7 +539,7 @@ MathStructure MathFunction::calculate(MathStructure &vargs, const EvaluationOpti
 			}
 			return createFunctionMathStructureFromVArgs(vargs);
 		}
-		if(precision() > 0 && (precision() < mstruct.precision() || mstruct.precision() < 1)) mstruct.setPrecision(precision(), true);
+		if(precision() >= 0 && (precision() < mstruct.precision() || mstruct.precision() < 1)) mstruct.setPrecision(precision(), true);
 		if(isApproximate()) mstruct.setApproximate(true, true);
 		return mstruct;
 	} else {
@@ -922,11 +922,11 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		for(size_t i = 0; i < v_id.size(); i++) {
 			CALCULATOR->delId(v_id[i]);
 		}
-		if(precision() > 0) mstruct.setPrecision(precision(), true);
+		if(precision() >= 0) mstruct.setPrecision(precision(), true);
 		if(isApproximate()) mstruct.setApproximate(true, true);
 	} else {
 		CALCULATOR->parse(&mstruct, sformula_calc, po);
-		if(precision() > 0) mstruct.setPrecision(precision(), true);
+		if(precision() >= 0) mstruct.setPrecision(precision(), true);
 		if(isApproximate()) mstruct.setApproximate(true, true);
 	}
 	return 1;

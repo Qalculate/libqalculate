@@ -4503,7 +4503,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	}
 
 	long int precision = PRECISION;
-	if(b_approx && i_precision >= 0 && FROM_BIT_PRECISION(i_precision) < PRECISION) precision = FROM_BIT_PRECISION(i_precision);
+	if(b_approx && i_precision >= 0 && (po.preserve_precision || FROM_BIT_PRECISION(i_precision) < PRECISION)) precision = FROM_BIT_PRECISION(i_precision);
 	if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < precision) precision = ips.parent_precision;
 	long int precision_base = precision;
 	if(base != 10 && base >= 2 && base <= 36) {
