@@ -58,6 +58,8 @@ class Number {
 		void setPrecisionAndApproximateFrom(const Number &o);
 
 		mpq_t r_value;
+		mpfr_t fu_value;
+		mpfr_t fl_value;
 		mpfr_t f_value;
 		
 		Number *i_value;
@@ -65,7 +67,7 @@ class Number {
 		NumberType n_type;
 		
 		bool b_approx, b_imag;
-		long int i_precision;
+		int i_precision;
 
 	public:
 	
@@ -116,7 +118,11 @@ class Number {
 		
 		const mpq_t &internalRational() const;
 		const mpfr_t &internalFloat() const;
+		const mpfr_t &internalUpperFloat() const;
+		const mpfr_t &internalLowerFloat() const;
 		mpq_t &internalRational();
+		mpfr_t &internalUpperFloat();
+		mpfr_t &internalLowerFloat();
 		mpfr_t &internalFloat();
 		Number *internalImaginary() const;
 		void markAsImaginaryPart(bool is_imag = true);
@@ -157,9 +163,6 @@ class Number {
  		*/
 		int precision() const;
 		void setPrecision(int prec);
-		
-		long int bitPrecision() const;
-		void setBitPrecision(long int prec);
 		
 		bool isUndefined() const;
 		/** Returns true if the number is infinity, plus infinity or minus infinity.
@@ -251,6 +254,7 @@ class Number {
 		bool isReal() const;
 		bool isFraction() const;
 		bool isZero() const;
+		bool isNonZero() const;
 		bool isOne() const;
 		bool isTwo() const;
 		bool isI() const;
@@ -339,10 +343,9 @@ class Number {
 		*
 		* @param o Number to raise to.
 		* @param try_exact If an exact solution should be tried first (might be slow).
-		* @param use_real_root If true return the real root (if exists), otherwise return the principal root.
  		* @return true if the operation was successful.
  		*/
-		bool raise(const Number &o, bool try_exact = true, bool real_root = false);
+		bool raise(const Number &o, bool try_exact = true);
 		bool sqrt();
 		bool cbrt();
 		bool root(const Number &o);

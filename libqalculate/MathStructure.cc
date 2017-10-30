@@ -141,6 +141,7 @@ bool warn_about_denominators_assumed_nonzero(const MathStructure &mstruct, const
 	mnonzero.eval(eo2);
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
+	if(mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
 	PrintOptions po;
 	po.spell_out_logical_operators = true;
 	mnonzero.format(po);
@@ -162,6 +163,7 @@ bool warn_about_denominators_assumed_nonzero_or_positive(const MathStructure &ms
 	mnonzero.eval(eo2);
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
+	if(mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
 	PrintOptions po;
 	po.spell_out_logical_operators = true;
 	mnonzero.format(po);
@@ -192,6 +194,7 @@ bool warn_about_denominators_assumed_nonzero_llgg(const MathStructure &mstruct, 
 	mnonzero.eval(eo2);
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
+	if(mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
 	PrintOptions po;
 	po.spell_out_logical_operators = true;
 	mnonzero.format(po);
@@ -846,6 +849,7 @@ bool MathStructure::isUndefined() const {return m_type == STRUCT_UNDEFINED || (m
 bool MathStructure::isInteger() const {return m_type == STRUCT_NUMBER && o_number.isInteger();}
 bool MathStructure::isNumber() const {return m_type == STRUCT_NUMBER;}
 bool MathStructure::isZero() const {return m_type == STRUCT_NUMBER && o_number.isZero();}
+bool MathStructure::isApproximatelyZero() const {return m_type == STRUCT_NUMBER && !o_number.isNonZero();}
 bool MathStructure::isOne() const {return m_type == STRUCT_NUMBER && o_number.isOne();}
 bool MathStructure::isMinusOne() const {return m_type == STRUCT_NUMBER && o_number.isMinusOne();}
 
@@ -1158,7 +1162,7 @@ bool MathStructure::representsComplex(bool allow_units) const {
 }
 bool MathStructure::representsNonZero(bool allow_units) const {
 	switch(m_type) {
-		case STRUCT_NUMBER: {return !o_number.isZero();}
+		case STRUCT_NUMBER: {return o_number.isNonZero();}
 		case STRUCT_VARIABLE: {return o_variable->representsNonZero(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonZero();}
 		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonZero(allow_units)) || o_function->representsNonZero(*this, allow_units);}
@@ -1184,7 +1188,7 @@ bool MathStructure::representsNonZero(bool allow_units) const {
 			return true;
 		}
 		case STRUCT_POWER: {
-			return CHILD(0).representsNonZero(allow_units) || (!CHILD(0).isZero() && CHILD(1).representsNonPositive());
+			return CHILD(0).representsNonZero(allow_units) || (!CHILD(0).isApproximatelyZero() && CHILD(1).representsNonPositive());
 		}
 		default: {return false;}
 	}
@@ -1216,6 +1220,34 @@ bool MathStructure::representsZero(bool allow_units) const {
 		default: {return false;}
 	}
 }
+bool MathStructure::representsApproximatelyZero(bool allow_units) const {
+	switch(m_type) {
+		case STRUCT_NUMBER: {return !o_number.isNonZero();}
+		case STRUCT_VARIABLE: {return o_variable->isKnown() && !o_variable->representsNonZero(allow_units) && ((KnownVariable*) o_variable)->get().representsApproximatelyZero();}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsApproximatelyZero(allow_units));}
+		case STRUCT_ADDITION: {
+			for(size_t i = 0; i < SIZE; i++) {
+				if(!CHILD(i).representsApproximatelyZero(allow_units)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		case STRUCT_MULTIPLICATION: {
+			for(size_t i = 0; i < SIZE; i++) {
+				if(CHILD(i).representsApproximatelyZero(allow_units)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		case STRUCT_POWER: {
+			return CHILD(0).representsApproximatelyZero(allow_units) && CHILD(1).representsPositive(allow_units);
+		}
+		default: {return false;}
+	}
+}
+
 bool MathStructure::representsEven(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isEven();}
