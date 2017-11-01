@@ -475,6 +475,7 @@ class MathStructure {
 		bool isInteger() const;
 		bool isNumber() const;
 		bool isZero() const;
+		bool isApproximatelyZero() const;
 		bool isOne() const;
 		bool isMinusOne() const;
 		
@@ -494,6 +495,7 @@ class MathStructure {
 		bool representsComplex(bool allow_units = false) const;
 		bool representsNonZero(bool allow_units = false) const;
 		bool representsZero(bool allow_units = false) const;
+		bool representsApproximatelyZero(bool allow_units = false) const;
 		bool representsEven(bool allow_units = false) const;
 		bool representsOdd(bool allow_units = false) const;
 		bool representsUndefined(bool include_childs = false, bool include_infinite = false, bool be_strict = false) const;
