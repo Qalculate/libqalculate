@@ -459,6 +459,8 @@ Calculator::Calculator() {
 	save_printoptions.comma_sign = ",";
 	save_printoptions.use_reference_names = true;
 	save_printoptions.preserve_precision = true;
+	save_printoptions.interval_display = INTERVAL_DISPLAY_INTERVAL;
+	save_printoptions.use_reference_names = true;
 	save_printoptions.limit_implicit_multiplication = true;
 	save_printoptions.spacious = false;
 	save_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
@@ -1374,7 +1376,9 @@ void Calculator::addBuiltinFunctions() {
 	f_im = addFunction(new ImFunction());
 	f_arg = addFunction(new ArgFunction());
 	f_numerator = addFunction(new NumeratorFunction());
-	f_denominator = addFunction(new DenominatorFunction());	
+	f_denominator = addFunction(new DenominatorFunction());
+	
+	f_interval = addFunction(new IntervalFunction());
 
 	f_sqrt = addFunction(new SqrtFunction());
 	f_cbrt = addFunction(new CbrtFunction());

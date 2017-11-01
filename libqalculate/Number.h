@@ -102,6 +102,7 @@ class Number {
 		void setPlusInfinity(bool keep_precision = false);
 		void setMinusInfinity(bool keep_precision = false);
 		void setFloat(double d_value);
+		void setInterval(const Number &nr_lower, const Number &nr_upper, bool keep_precision = false);
 
 		void setInternal(const mpz_t &mpz_value, bool keep_precision = false, bool keep_imag = false);
 		void setInternal(mpz_srcptr mpz_value, bool keep_precision = false, bool keep_imag = false);

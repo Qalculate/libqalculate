@@ -2559,6 +2559,22 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	return -1;
 }
 
+IntervalFunction::IntervalFunction() : MathFunction("interval", 2) {
+	NumberArgument *arg = new NumberArgument();
+	arg->setComplexAllowed(false);
+	setArgumentDefinition(1, arg);
+	arg = new NumberArgument();
+	arg->setComplexAllowed(false);
+	setArgumentDefinition(2, arg);
+}
+int IntervalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	Number nr;
+	nr.setInterval(vargs[0].number(), vargs[1].number());
+	mstruct = nr;
+	return 1;
+}
+
+
 RadiansToDefaultAngleUnitFunction::RadiansToDefaultAngleUnitFunction() : MathFunction("radtodef", 1) {
 }
 int RadiansToDefaultAngleUnitFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {

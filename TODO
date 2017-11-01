@@ -1,4 +1,3 @@
-* Handle reduced precision with many approximate calculations (e.g. when calculating sine using sum() function)
 * Quoted ")" in function
 * Replace pointers to unit when unit type has changed (a different object must be created)
 

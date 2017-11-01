@@ -13,6 +13,7 @@
 
 #include "Number.h"
 #include "Calculator.h"
+#include "Function.h"
 
 #include <limits.h>
 #include <sstream>
@@ -656,6 +657,29 @@ void Number::setFloat(double d_value) {
 	mpq_set_ui(r_value, 0, 1);
 	if(i_value) i_value->clear();
 }
+void Number::setInterval(const Number &nr_lower, const Number &nr_upper, bool keep_precision) {
+
+	clear(keep_precision);
+
+	mpfr_init2(fu_value, BIT_PRECISION);
+	mpfr_init2(fl_value, BIT_PRECISION);
+	
+	Number nr_l(nr_lower), nr_u(nr_upper);
+	nr_l.setToFloatingPoint();
+	nr_u.setToFloatingPoint();
+	
+	mpfr_clear_flags();
+
+	mpfr_set(fu_value, nr_u.internalLowerFloat(), MPFR_RNDD);
+	mpfr_set(fl_value, nr_l.internalUpperFloat(), MPFR_RNDU);
+	
+	setPrecisionAndApproximateFrom(nr_l);
+	setPrecisionAndApproximateFrom(nr_u);
+	
+	n_type = NUMBER_TYPE_FLOAT;
+
+}
+
 void Number::setInternal(mpz_srcptr mpz_value, bool keep_precision, bool keep_imag) {
 	if(!keep_precision) {
 		b_approx = false;
@@ -2446,8 +2470,6 @@ bool Number::raise(const Number &o, bool try_exact) {
 		if(sgn_l < 0) {
 			try_complex = true;
 		} else {
-			mpfr_pow(f_value, f_value, o.internalFloat(), MPFR_RNDN);
-			
 			if(sgn_ol < 0) {
 				if(sgn_ou < 0) {
 					mpfr_pow(fu_value, fu_value, o.internalUpperFloat(), MPFR_RNDD);
@@ -2484,9 +2506,6 @@ bool Number::raise(const Number &o, bool try_exact) {
 			return false;
 		}
 		if(o.isInteger()) {
-
-			mpfr_pow_z(f_value, f_value, mpq_numref(o.internalRational()), MPFR_RNDN);
-			
 			if(o.isEven() && sgn_l < 0 && sgn_u >= 0) {
 				if(mpfr_cmpabs(fu_value, fl_value) < 0) {
 					mpfr_pow_z(fu_value, fl_value, mpq_numref(o.internalRational()), MPFR_RNDU);
@@ -2533,11 +2552,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 					try_complex = true;
 				}
 			} else {
-				mpfr_t f_pow, f_pow_u, f_pow_l;
-				mpfr_init2(f_pow, BIT_PRECISION);
-				mpfr_set_q(f_pow, o.internalRational(), MPFR_RNDN);
-				mpfr_pow(f_value, f_value, f_pow, MPFR_RNDN);
-			
+				mpfr_t f_pow_u, f_pow_l;
 				mpfr_init2(f_pow_u, BIT_PRECISION);
 				mpfr_init2(f_pow_l, BIT_PRECISION);
 				mpfr_set_q(f_pow_u, o.internalRational(), MPFR_RNDU);
@@ -2550,8 +2565,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 					mpfr_pow(fu_value, fu_value, f_pow_u, MPFR_RNDU);
 					mpfr_pow(fl_value, fl_value, f_pow_l, MPFR_RNDD);
 				}
-			
-				mpfr_clears(f_pow, f_pow_u, f_pow_l, NULL);
+				mpfr_clears(f_pow_u, f_pow_l, NULL);
 			}
 		}
 	}
@@ -4722,9 +4736,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		precmax.floor();
 		precision_base = precmax.lintValue();
 	}
-	long int i_precision_base = precision;
-	if(FROM_BIT_PRECISION(BIT_PRECISION) > precision) {
-		i_precision_base = FROM_BIT_PRECISION(BIT_PRECISION);
+	long int i_precision_base = precision_base;
+	if((i_precision < 0 && FROM_BIT_PRECISION(BIT_PRECISION) > precision) || i_precision > precision) {
+		if(i_precision < 0) i_precision_base = FROM_BIT_PRECISION(BIT_PRECISION);
+		else i_precision_base = i_precision;
 		if(base != 10 && base >= 2 && base <= 36) {
 			Number precmax(10);
 			precmax.raise(i_precision_base);
@@ -5008,7 +5023,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			nr_u.setInternal(fu_value);
 			PrintOptions po2 = po;
 			po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
-			str = "interval";
+			str = CALCULATOR->f_interval->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
 			str += LEFT_PARENTHESIS;
 			str += nr_l.print(po2);
 			str += COMMA SPACE;
@@ -5057,18 +5072,18 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDU);
 						ilogl = -mpfr_get_si(f_logl, MPFR_RNDU);
 						if(ilogl >= 0) {
-							mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogl, MPFR_RNDU);
+							mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogl + 1, MPFR_RNDU);
 							mpfr_mul(vl, fl_value, f_logl, MPFR_RNDD);
 							mpfr_neg(vl, vl, MPFR_RNDU);
 							if(mpfr_cmp_q(vl, base_half) <= 0) ilogl++;
 						}
 					}
-					if(mpfr_sgn(fl_value) > 0) {
+					if(mpfr_sgn(fu_value) > 0) {
 						mpfr_log(f_logl, fu_value, MPFR_RNDU);
 						mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDU);
 						ilogu = -mpfr_get_si(f_logl, MPFR_RNDU);
 						if(ilogu >= 0) {
-							mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogu, MPFR_RNDU);
+							mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogu + 1, MPFR_RNDU);
 							mpfr_mul(vu, fu_value, f_logl, MPFR_RNDU);
 							if(mpfr_cmp_q(vu, base_half) <= 0) ilogu++;
 						}
@@ -5090,11 +5105,12 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					po2.use_max_decimals = true;
 					return nr_zero.print(po2, ips);
 				}
-			
+				
 				float_interval_prec_rerun:
 				
 				mpfr_set(vl, fl_value, MPFR_RNDN);
 				mpfr_set(vu, fu_value, MPFR_RNDN);
+				mpfr_nextbelow(vu);
 				bool negl = (mpfr_sgn(vl) < 0);
 				bool negu = (mpfr_sgn(vu) < 0);
 				if(negl) mpfr_neg(vl, vl, MPFR_RNDN);
@@ -5102,50 +5118,55 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpfr_log(f_logl, vl, MPFR_RNDN);
 				mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDN);
 				mpfr_floor(f_logl, f_logl);
-				mpfr_sub_si(f_logl, f_logl, i_precision_base - 1, MPFR_RNDN);
+				mpfr_sub_si(f_logl, f_logl, i_precision_base, MPFR_RNDN);
 				mpfr_pow(f_logl, f_base, f_logl, MPFR_RNDN);
-				mpfr_div(vl, vl, f_logl, MPFR_RNDN);
-				mpfr_div(vu, vu, f_logl, MPFR_RNDN);
-				mpfr_ceil(vl, vl);
-				mpfr_floor(vu, vu);
+				mpfr_div(vl, vl, f_logl, MPFR_RNDU);
+				mpfr_div(vu, vu, f_logl, MPFR_RNDD);
+				mpfr_round(vl, vl);
+				mpfr_round(vu, vu);
 				mpz_t ivalue;
 				mpz_init(ivalue);
 				mpfr_get_z(ivalue, vl, MPFR_RNDN);
 				string str_l = printMPZ(ivalue, base, true, BASE_DISPLAY_NONE, false, false);
 				mpfr_get_z(ivalue, vu, MPFR_RNDN);
 				string str_u = printMPZ(ivalue, base, true, BASE_DISPLAY_NONE, false, false);
+				cout << str_l << endl;
+				cout << str_u << endl;
 				
 				if(str_u.length() > str_l.length()) {
 					str_l.insert(0, str_u.length() - str_l.length(), '0');
 				}
-				for(size_t i = 0; i_precision_base != 0 && i < str_l.size(); i++) {
-					if(str_l[i] != str_u[i] || (negl != negu && str_l[i] != '0')) {
+				for(size_t i = 0; i < str_l.size(); i++) {
+					if(str_l[i] != str_u[i]) {
 						if(char2val(str_l[i], base) + 1 == char2val(str_u[i], base)) {
 							i++;
-							bool b_rerun = false;
+							bool do_rerun = false;
 							for(; i < str_l.size(); i++) {
 								if(char2val(str_l[i], base) == base - 1) {
-									b_rerun = true;
+									do_rerun = true;
 								} else if(char2val(str_l[i], base) >= base / 2) {
-									b_rerun = true;
+									do_rerun = true;
 									break;
 								} else {
 									i--;
 									break;
 								}
 							}
-							if(b_rerun) {
+							if(do_rerun) {
+								i--;
 								if(i >= (size_t) i_precision_base) i_precision_base--;
 								else i_precision_base = i;
-								if(i_precision_base < precision_base) precision_base = i_precision_base;
 								goto float_interval_prec_rerun;
 							}
 						}
-						i_precision_base = i;
-						if(i_precision_base < precision_base) precision_base = i_precision_base;
-						break;
+						i_precision_base = i - 1;
+						b_rerun = true;
+						goto float_interval_prec_rerun;
+					} else if(i == str_l.size() - 1) {
+						i_precision_base = i + 1;
 					}
 				}
+				if(i_precision_base < precision_base) precision_base = i_precision_base;
 				
 				if(i_precision_base <= 0) {
 					if(negl) mpfr_neg(vl, fl_value, MPFR_RNDN);
@@ -5157,7 +5178,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDU);
 					long int ilogl = -mpfr_get_si(f_logl, MPFR_RNDU);
 					if(ilogl >= 0) {
-						mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogl, MPFR_RNDU);
+						mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogl + 1, MPFR_RNDU);
 						mpfr_mul(vl, fl_value, f_logl, MPFR_RNDD);
 						mpfr_neg(vl, vl, MPFR_RNDU);
 						if(mpfr_cmp_q(vl, base_half) <= 0) ilogl++;
@@ -5166,7 +5187,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDU);
 					long int ilogu = -mpfr_get_si(f_logl, MPFR_RNDU);
 					if(ilogu >= 0) {
-						mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogu, MPFR_RNDU);
+						mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogu + 1, MPFR_RNDU);
 						mpfr_mul(vu, fu_value, f_logl, MPFR_RNDU);
 						if(mpfr_cmp_q(vu, base_half) <= 0) ilogu++;
 					}
@@ -5227,7 +5248,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(base == 10) {
 			expo = i_log;
 			if(po.min_exp == EXP_PRECISION || (po.min_exp == 0 && expo > 1000000L)) {
-				if((expo > -precision && expo < precision) || (expo < 3 && expo > -3 && PRECISION >= 3)) { 
+				if((expo > -precision && expo < precision) || (expo < 0 && expo > -3 && PRECISION >= 3)) { 
 					expo = 0;
 				}
 			} else if(po.min_exp < -1) {
