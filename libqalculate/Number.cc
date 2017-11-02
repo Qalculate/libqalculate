@@ -848,8 +848,13 @@ bool Number::setToFloatingPoint() {
 		
 		mpfr_clear_flags();
 
-		mpfr_set_q(fu_value, r_value, MPFR_RNDU);
-		mpfr_set_q(fl_value, r_value, MPFR_RNDD);
+		if(b_imag) {
+			mpfr_set_q(fl_value, r_value, MPFR_RNDN);
+			mpfr_set(fu_value, fl_value, MPFR_RNDN);
+		} else {
+			mpfr_set_q(fu_value, r_value, MPFR_RNDU);
+			mpfr_set_q(fl_value, r_value, MPFR_RNDD);
+		}
 
 		if(!testFloatResult(false, 1, false)) {
 			mpfr_clears(fu_value, fl_value, NULL);
@@ -857,6 +862,22 @@ bool Number::setToFloatingPoint() {
 		}
 		mpq_set_ui(r_value, 0, 1);
 		n_type = NUMBER_TYPE_FLOAT;
+	}
+	return true;
+}
+void Number::precisionToInterval() {
+	if(i_precision >= 0) {
+	}
+}
+bool Number::intervalToPrecision() {
+	if(n_type == NUMBER_TYPE_FLOAT && !mpfr_equal_p(fl_value, fu_value)) {
+		mpfr_t f_diff, f_mid;
+		mpfr_inits2(mpfr_get_prec(fl_value), f_diff, f_mid, NULL);
+		mpfr_sub(f_diff, fu_value, fl_value, MPFR_RNDN);
+		mpfr_div_ui(f_diff, f_diff, 2, MPFR_RNDN);
+		mpfr_add(f_mid, fl_value, f_diff, MPFR_RNDN);
+		mpfr_clear(f_diff);
+		b_approx = true;
 	}
 	return true;
 }
@@ -1153,7 +1174,7 @@ bool Number::testFloatResult(bool allow_infinite_result, int error_level, bool t
 	if(mpfr_nanflag_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point not a number exception"), NULL); return false;}
 	if(mpfr_inexflag_p()) {
 		b_approx = true;
-		if(i_precision < 0 || i_precision > PRECISION) i_precision = PRECISION;
+		if(b_imag && (i_precision < 0 || i_precision > FROM_BIT_PRECISION(BIT_PRECISION))) i_precision = FROM_BIT_PRECISION(BIT_PRECISION);
 	}
 	mpfr_clear_flags();
 	if(mpfr_inf_p(fl_value) && mpfr_inf_p(fu_value) && mpfr_sgn(fl_value) == mpfr_sgn(fu_value)) {
@@ -3094,18 +3115,23 @@ bool Number::frac() {
 		}
 	} else {
 		mpfr_clear_flags();
-		mpfr_t testf, testu;
-		mpfr_inits2(mpfr_get_prec(fl_value), testf, testu, NULL);
-		mpfr_frac(testf, fl_value, MPFR_RNDU);
-		mpfr_frac(testu, fu_value, MPFR_RNDU);
-		if(mpfr_cmp(testf, testu) > 0) {
-			mpfr_frac(fu_value, fl_value, MPFR_RNDU);
-			mpfr_frac(fl_value, fu_value, MPFR_RNDD);
+		if(b_imag) {
+			mpfr_frac(fl_value, fl_value, MPFR_RNDN);
+			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else {
-			mpfr_frac(fl_value, fl_value, MPFR_RNDD);
-			mpfr_frac(fu_value, fu_value, MPFR_RNDU);
+			mpfr_t testf, testu;
+			mpfr_inits2(mpfr_get_prec(fl_value), testf, testu, NULL);
+			mpfr_frac(testf, fl_value, MPFR_RNDU);
+			mpfr_frac(testu, fu_value, MPFR_RNDU);
+			if(mpfr_cmp(testf, testu) > 0) {
+				mpfr_frac(fu_value, fl_value, MPFR_RNDU);
+				mpfr_frac(fl_value, fu_value, MPFR_RNDD);
+			} else {
+				mpfr_frac(fl_value, fl_value, MPFR_RNDD);
+				mpfr_frac(fu_value, fu_value, MPFR_RNDU);
+			}
+			mpfr_clears(testf, testu, NULL);
 		}
-		mpfr_clears(testf, testu, NULL);
 		testFloatResult(false, 2);
 	}
 	return true;
@@ -3235,9 +3261,16 @@ void Number::e(bool use_cached_number) {
 			if(mpfr_get_prec(fl_value) < BIT_PRECISION) mpfr_set_prec(fl_value, BIT_PRECISION);
 		}
 		n_type = NUMBER_TYPE_FLOAT;
-		mpfr_set_ui(fl_value, 1, MPFR_RNDN);
-		mpfr_exp(fu_value, fl_value, MPFR_RNDU);
-		mpfr_exp(fl_value, fl_value, MPFR_RNDD);
+		if(b_imag) {
+			mpfr_set_ui(fl_value, 1, MPFR_RNDN);
+			mpfr_exp(fl_value, fl_value, MPFR_RNDN);
+			mpfr_set(fu_value, fl_value, MPFR_RNDN);
+		} else {
+			mpfr_set_ui(fl_value, 1, MPFR_RNDD);
+			mpfr_set_ui(fu_value, 1, MPFR_RNDU);
+			mpfr_exp(fu_value, fu_value, MPFR_RNDU);
+			mpfr_exp(fl_value, fl_value, MPFR_RNDD);
+		}
 		b_approx = true;
 		i_precision = PRECISION;
 	}
@@ -3252,8 +3285,13 @@ void Number::pi() {
 		if(mpfr_get_prec(fl_value) < BIT_PRECISION) mpfr_set_prec(fl_value, BIT_PRECISION);
 	}
 	n_type = NUMBER_TYPE_FLOAT;
-	mpfr_const_pi(fu_value, MPFR_RNDU);
-	mpfr_const_pi(fl_value, MPFR_RNDD);
+	if(b_imag) {
+		mpfr_const_pi(fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_const_pi(fu_value, MPFR_RNDU);
+		mpfr_const_pi(fl_value, MPFR_RNDD);
+	}
 	b_approx = true;
 	i_precision = PRECISION;
 }
@@ -3267,8 +3305,13 @@ void Number::catalan() {
 		if(mpfr_get_prec(fl_value) < BIT_PRECISION) mpfr_set_prec(fl_value, BIT_PRECISION);
 	}
 	n_type = NUMBER_TYPE_FLOAT;
-	mpfr_const_catalan(fu_value, MPFR_RNDU);
-	mpfr_const_catalan(fl_value, MPFR_RNDD);
+	if(b_imag) {
+		mpfr_const_catalan(fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_const_catalan(fu_value, MPFR_RNDU);
+		mpfr_const_catalan(fl_value, MPFR_RNDD);
+	}
 	b_approx = true;
 	i_precision = PRECISION;
 }
@@ -3282,8 +3325,13 @@ void Number::euler() {
 		if(mpfr_get_prec(fl_value) < BIT_PRECISION) mpfr_set_prec(fl_value, BIT_PRECISION);
 	}
 	n_type = NUMBER_TYPE_FLOAT;
-	mpfr_const_euler(fu_value, MPFR_RNDU);
-	mpfr_const_euler(fl_value, MPFR_RNDD);
+	if(b_imag) {
+		mpfr_const_euler(fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_const_euler(fu_value, MPFR_RNDU);
+		mpfr_const_euler(fl_value, MPFR_RNDD);
+	}
 	b_approx = true;
 	i_precision = PRECISION;
 }
@@ -3307,8 +3355,13 @@ bool Number::zeta() {
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
 	
-	mpfr_zeta_ui(fu_value, (unsigned long int) i, MPFR_RNDU);
-	mpfr_zeta_ui(fl_value, (unsigned long int) i, MPFR_RNDD);
+	if(b_imag) {
+		mpfr_zeta_ui(fl_value, (unsigned long int) i, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_zeta_ui(fu_value, (unsigned long int) i, MPFR_RNDU);
+		mpfr_zeta_ui(fl_value, (unsigned long int) i, MPFR_RNDD);
+	}
 	
 	mpq_set_ui(r_value, 0, 1);
 	n_type = NUMBER_TYPE_FLOAT;
@@ -3325,8 +3378,13 @@ bool Number::gamma() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	mpfr_gamma(fu_value, fu_value, MPFR_RNDU);
-	mpfr_gamma(fl_value, fl_value, MPFR_RNDD);
+	if(b_imag) {
+		mpfr_gamma(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_gamma(fu_value, fu_value, MPFR_RNDU);
+		mpfr_gamma(fl_value, fl_value, MPFR_RNDD);
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -3338,8 +3396,13 @@ bool Number::digamma() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	mpfr_digamma(fu_value, fu_value, MPFR_RNDU);
-	mpfr_digamma(fl_value, fl_value, MPFR_RNDD);
+	if(b_imag) {
+		mpfr_digamma(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_digamma(fu_value, fu_value, MPFR_RNDU);
+		mpfr_digamma(fl_value, fl_value, MPFR_RNDD);
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -3351,8 +3414,13 @@ bool Number::erf() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	mpfr_erf(fu_value, fu_value, MPFR_RNDU);
-	mpfr_erf(fl_value, fl_value, MPFR_RNDD);
+	if(b_imag) {
+		mpfr_erf(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_erf(fu_value, fu_value, MPFR_RNDU);
+		mpfr_erf(fl_value, fl_value, MPFR_RNDD);
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -3364,9 +3432,14 @@ bool Number::erfc() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	mpfr_erfc(fu_value, fu_value, MPFR_RNDD);
-	mpfr_erfc(fl_value, fl_value, MPFR_RNDU);
-	mpfr_swap(fu_value, fl_value);
+	if(b_imag) {
+		mpfr_erfc(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_erfc(fu_value, fu_value, MPFR_RNDD);
+		mpfr_erfc(fl_value, fl_value, MPFR_RNDU);
+		mpfr_swap(fu_value, fl_value);
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -3543,7 +3616,13 @@ bool Number::asin() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	mpfr_asin(f_value, f_value, MPFR_RNDN);
+	if(b_imag) {
+		mpfr_asin(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_asin(fl_value, fl_value, MPFR_RNDD);
+		mpfr_asin(fu_value, fu_value, MPFR_RNDU);
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -3575,7 +3654,13 @@ bool Number::sinh() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	mpfr_sinh(f_value, f_value, MPFR_RNDN);
+	if(b_imag) {
+		mpfr_sinh(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_sinh(fl_value, fl_value, MPFR_RNDD);
+		mpfr_sinh(fu_value, fu_value, MPFR_RNDU);
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -3597,7 +3682,13 @@ bool Number::asinh() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	mpfr_asinh(f_value, f_value, MPFR_RNDN);
+	if(b_imag) {
+		mpfr_asinh(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_asinh(fl_value, fl_value, MPFR_RNDD);
+		mpfr_asinh(fu_value, fu_value, MPFR_RNDU);
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -3708,6 +3799,14 @@ bool Number::acos() {
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
 	mpfr_acos(f_value, f_value, MPFR_RNDN);
+	if(b_imag) {
+		mpfr_acos(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_acos(fl_value, fl_value, MPFR_RNDU);
+		mpfr_acos(fu_value, fu_value, MPFR_RNDD);
+		mpfr_swap(fl_value, fu_value);
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -3747,7 +3846,30 @@ bool Number::cosh() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	mpfr_cosh(f_value, f_value, MPFR_RNDN);
+	if(b_imag) {
+		mpfr_cosh(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		if(mpfr_sgn(fl_value) < 0) {
+			if(mpfr_sgn(fu_value) == 0) {
+				mpfr_cosh(fu_value, fl_value, MPFR_RNDU);
+				mpfr_set_ui(fl_value, 1, MPFR_RNDD);
+			} else if(mpfr_sgn(fu_value) > 0) {
+				mpfr_cosh(fl_value, fl_value, MPFR_RNDU);
+				mpfr_cosh(fu_value, fu_value, MPFR_RNDD);
+				if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
+				mpfr_set_ui(fl_value, 1, MPFR_RNDD);
+			} else {
+				mpfr_cosh(fl_value, fl_value, MPFR_RNDU);
+				mpfr_cosh(fu_value, fu_value, MPFR_RNDD);
+				mpfr_swap(fl_value, fu_value);
+			}
+		} else {
+			mpfr_cosh(fu_value, fu_value, MPFR_RNDU);
+			if(mpfr_sgn(fl_value) == 0) mpfr_set_ui(fl_value, 1, MPFR_RNDD);
+			else mpfr_cosh(fl_value, fl_value, MPFR_RNDD);
+		}
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -3772,7 +3894,13 @@ bool Number::acosh() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	mpfr_acosh(f_value, f_value, MPFR_RNDN);
+	if(b_imag) {
+		mpfr_acosh(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_acosh(fl_value, fl_value, MPFR_RNDD);
+		mpfr_acosh(fu_value, fu_value, MPFR_RNDU);
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -3842,7 +3970,13 @@ bool Number::atan() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	mpfr_atan(f_value, f_value, MPFR_RNDN);
+	if(b_imag) {
+		mpfr_atan(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_atan(fl_value, fl_value, MPFR_RNDD);
+		mpfr_atan(fu_value, fu_value, MPFR_RNDU);
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -3920,7 +4054,13 @@ bool Number::tanh() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	mpfr_tanh(f_value, f_value, MPFR_RNDN);
+	if(b_imag) {
+		mpfr_tanh(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_tanh(fl_value, fl_value, MPFR_RNDD);
+		mpfr_tanh(fu_value, fu_value, MPFR_RNDU);
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -3950,7 +4090,13 @@ bool Number::atanh() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	mpfr_atanh(f_value, f_value, MPFR_RNDN);
+	if(b_imag) {
+		mpfr_atanh(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_atanh(fl_value, fl_value, MPFR_RNDD);
+		mpfr_atanh(fu_value, fu_value, MPFR_RNDU);
+	}
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
@@ -3974,17 +4120,18 @@ bool Number::ln() {
 		Number new_r(*this);
 		Number this_r;
 		this_r.set(*this, false, true);
-		if(!new_i.atan2(this_r) || !new_r.abs()) return false;
-		if(new_r.isComplex() || !new_r.ln()) return false;
+		if(!new_i.atan2(this_r) || !new_r.abs() || new_i.isComplex() || !new_i.intervalToPrecision()) return false;
+		if(new_r.isComplex() || !new_r.ln() || !new_r.intervalToPrecision()) return false;
 		set(new_r);
 		setImaginaryPart(new_i);
 		return true;
 	} else if(isNegative()) {
 		if(b_imag) return false;
 		Number new_i;
+		new_i.markAsImaginaryPart();
 		new_i.pi();
 		Number new_r(*this);
-		if(!new_r.abs() || !new_r.ln()) return false;
+		if(!new_r.abs() || !new_r.ln() || !new_r.intervalToPrecision()) return false;
 		set(new_r);
 		setImaginaryPart(new_i);
 		return true;
@@ -3992,20 +4139,15 @@ bool Number::ln() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	
-	
-	if(nr_e.isZero() || ((i_precision < 0 && nr_e.precision() != PRECISION) || (i_precision >= 0 && nr_e.precision() != i_precision))) {
-		nr_e.e(false);
-	}
-
-	if(mpfr_equal_p(f_value, nr_e.internalFloat())) {
-		set(1, 1);
-		b_approx = true;
-		if(i_precision < 0 || i_precision > PRECISION) i_precision = PRECISION;
-		return true;
+		
+	if(b_imag) {
+		mpfr_log(fl_value, fl_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else {
+		mpfr_log(fl_value, fl_value, MPFR_RNDD);
+		mpfr_log(fu_value, fu_value, MPFR_RNDU);
 	}
 	
-	mpfr_log(f_value, f_value, MPFR_RNDN);
 	if(!testFloatResult(false)) {
 		set(nr_bak);
 		return false;
@@ -4049,29 +4191,56 @@ bool Number::log(const Number &o) {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(o.isRational()) {
-		if(o == 2) {
-			mpfr_log2(f_value, f_value, MPFR_RNDN);
-		} else if(o == 10) {
-			mpfr_log10(f_value, f_value, MPFR_RNDN);
+	if(o.isRational() && o == 2) {
+		if(b_imag) {
+			mpfr_log2(fl_value, fl_value, MPFR_RNDN);
 		} else {
-			mpfr_t f_base;
-			mpfr_init2(f_base, BIT_PRECISION);
-			mpfr_set_q(f_base, o.internalRational(), MPFR_RNDN);
-			mpfr_log(f_value, f_value, MPFR_RNDN);
-			mpfr_log(f_base, f_base, MPFR_RNDN);
-			mpfr_div(f_value, f_value, f_base, MPFR_RNDN);
-			mpfr_clear(f_base);
+			mpfr_log2(fl_value, fl_value, MPFR_RNDD);
+			mpfr_log2(fu_value, fu_value, MPFR_RNDU);
+		}
+	} else if(o.isRational() && o == 10) {
+		if(b_imag) {
+			mpfr_log10(fl_value, fl_value, MPFR_RNDN);
+		} else {
+			mpfr_log10(fl_value, fl_value, MPFR_RNDD);
+			mpfr_log10(fu_value, fu_value, MPFR_RNDU);
 		}
 	} else {
-		mpfr_t f_base;
-		mpfr_init2(f_base, BIT_PRECISION);
-		mpfr_set(f_base, o.internalFloat(), MPFR_RNDN);
-		mpfr_log(f_value, f_value, MPFR_RNDN);
-		mpfr_log(f_base, f_base, MPFR_RNDN);
-		mpfr_div(f_value, f_value, f_base, MPFR_RNDN);
-		mpfr_clear(f_base);
+		if(b_imag) {
+			mpfr_t fl_base;
+			mpfr_inits2(BIT_PRECISION, fl_base, NULL);
+			if(o.isRational()) {
+				mpfr_set_q(fl_base, o.internalRational(), MPFR_RNDN);
+			} else {
+				Number nr(o);
+				if(nr.intervalToPrecision()) {set(nr_bak); return false;}
+				mpfr_set(fl_base, nr.internalLowerFloat(), MPFR_RNDN);
+				setPrecisionAndApproximateFrom(nr);
+			}
+			mpfr_log(fl_value, fl_value, MPFR_RNDN);
+			mpfr_log(fl_base, fl_base, MPFR_RNDN);
+			mpfr_div(fl_value, fl_value, fl_base, MPFR_RNDN);
+			mpfr_clear(fl_base);
+		} else {
+			mpfr_t fl_base, fu_base;
+			mpfr_inits2(BIT_PRECISION, fl_base, fu_base, NULL);
+			if(o.isRational()) {
+				mpfr_set_q(fl_base, o.internalRational(), MPFR_RNDD);
+				mpfr_set_q(fu_base, o.internalRational(), MPFR_RNDU);
+			} else {
+				mpfr_set(fl_base, o.internalLowerFloat(), MPFR_RNDD);
+				mpfr_set(fu_base, o.internalUpperFloat(), MPFR_RNDU);
+			}
+			mpfr_log(fl_value, fl_value, MPFR_RNDD);
+			mpfr_log(fu_value, fu_value, MPFR_RNDU);
+			mpfr_log(fl_base, fl_base, MPFR_RNDD);
+			mpfr_log(fu_base, fu_base, MPFR_RNDU);
+			mpfr_div(fl_value, fl_value, fu_base, MPFR_RNDD);
+			mpfr_div(fu_value, fu_value, fl_base, MPFR_RNDU);
+			mpfr_clears(fl_base, fu_base, NULL);
+		}
 	}
+	if(b_imag) mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	if(!testFloatResult(false)) {
 		set(nr_bak);
 		return false;
@@ -5045,175 +5214,174 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(mpfr_equal_p(fl_value, fu_value)) {
 			mpfr_init2(f_mid, mpfr_get_prec(fl_value));
 			mpfr_set(f_mid, fl_value, MPFR_RNDN);
-		} else {
+		} else if(po.interval_display == INTERVAL_DISPLAY_MIDPOINT) {
 			mpfr_inits2(mpfr_get_prec(fl_value), f_diff, f_mid, NULL);
 			mpfr_sub(f_diff, fu_value, fl_value, MPFR_RNDN);
 			mpfr_div_ui(f_diff, f_diff, 2, MPFR_RNDN);
 			mpfr_add(f_mid, fl_value, f_diff, MPFR_RNDN);
 			mpfr_clear(f_diff);
-			if(po.interval_display != INTERVAL_DISPLAY_MIDPOINT) {
+			if(po.is_approximate) *po.is_approximate = true;
+		} else {
+			mpfr_t vl, vu, f_logl, f_base, f_log_base;
+			mpfr_inits2(mpfr_get_prec(fl_value), f_mid, vl, vu, f_logl, f_base, f_log_base, NULL);
+		
+			mpfr_set_si(f_base, base, MPFR_RNDN);
+			mpfr_log(f_log_base, f_base, MPFR_RNDN);
 			
-				mpfr_t vl, vu, f_logl, f_base, f_log_base;
-				mpfr_inits2(mpfr_get_prec(fl_value), vl, vu, f_logl, f_base, f_log_base, NULL);
-			
-				mpfr_set_si(f_base, base, MPFR_RNDN);
-				mpfr_log(f_log_base, f_base, MPFR_RNDN);
-				
-				mpq_t base_half;
-				mpq_init(base_half);
-				mpq_set_ui(base_half, base, 2);
-				mpq_canonicalize(base_half);
-			
-				if(mpfr_sgn(fl_value) != mpfr_sgn(fu_value)) {
-					long int ilogl = i_precision_base, ilogu = i_precision_base;
-					if(mpfr_sgn(fl_value) < 0) {
-						mpfr_neg(f_logl, fl_value, MPFR_RNDU);
-						mpfr_log(f_logl, f_logl, MPFR_RNDU);
-						mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDU);
-						ilogl = -mpfr_get_si(f_logl, MPFR_RNDU);
-						if(ilogl >= 0) {
-							mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogl + 1, MPFR_RNDU);
-							mpfr_mul(vl, fl_value, f_logl, MPFR_RNDD);
-							mpfr_neg(vl, vl, MPFR_RNDU);
-							if(mpfr_cmp_q(vl, base_half) <= 0) ilogl++;
-						}
-					}
-					if(mpfr_sgn(fu_value) > 0) {
-						mpfr_log(f_logl, fu_value, MPFR_RNDU);
-						mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDU);
-						ilogu = -mpfr_get_si(f_logl, MPFR_RNDU);
-						if(ilogu >= 0) {
-							mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogu + 1, MPFR_RNDU);
-							mpfr_mul(vu, fu_value, f_logl, MPFR_RNDU);
-							if(mpfr_cmp_q(vu, base_half) <= 0) ilogu++;
-						}
-					}
-					mpfr_clears(vu, vl, f_logl, f_mid, f_base, f_log_base, NULL);
-					mpq_clear(base_half);
-					if(ilogu < ilogl) ilogl = ilogu;
-					if(ilogl <= 0) {
-						PrintOptions po2 = po;
-						po2.interval_display = INTERVAL_DISPLAY_INTERVAL;
-						return print(po2, ips);
-					} else {
-						i_precision_base = ilogl;
-					}
-					Number nr_zero;
-					nr_zero.setApproximate(true);
-					PrintOptions po2 = po;
-					po2.max_decimals = i_precision_base - 1;
-					po2.use_max_decimals = true;
-					return nr_zero.print(po2, ips);
-				}
-				
-				float_interval_prec_rerun:
-				
-				mpfr_set(vl, fl_value, MPFR_RNDN);
-				mpfr_set(vu, fu_value, MPFR_RNDN);
-				mpfr_nextbelow(vu);
-				bool negl = (mpfr_sgn(vl) < 0);
-				bool negu = (mpfr_sgn(vu) < 0);
-				if(negl) mpfr_neg(vl, vl, MPFR_RNDN);
-				if(negu) mpfr_neg(vu, vu, MPFR_RNDN);
-				mpfr_log(f_logl, vl, MPFR_RNDN);
-				mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDN);
-				mpfr_floor(f_logl, f_logl);
-				mpfr_sub_si(f_logl, f_logl, i_precision_base, MPFR_RNDN);
-				mpfr_pow(f_logl, f_base, f_logl, MPFR_RNDN);
-				mpfr_div(vl, vl, f_logl, MPFR_RNDU);
-				mpfr_div(vu, vu, f_logl, MPFR_RNDD);
-				mpfr_round(vl, vl);
-				mpfr_round(vu, vu);
-				mpz_t ivalue;
-				mpz_init(ivalue);
-				mpfr_get_z(ivalue, vl, MPFR_RNDN);
-				string str_l = printMPZ(ivalue, base, true, BASE_DISPLAY_NONE, false, false);
-				mpfr_get_z(ivalue, vu, MPFR_RNDN);
-				string str_u = printMPZ(ivalue, base, true, BASE_DISPLAY_NONE, false, false);
-				cout << str_l << endl;
-				cout << str_u << endl;
-				
-				if(str_u.length() > str_l.length()) {
-					str_l.insert(0, str_u.length() - str_l.length(), '0');
-				}
-				for(size_t i = 0; i < str_l.size(); i++) {
-					if(str_l[i] != str_u[i]) {
-						if(char2val(str_l[i], base) + 1 == char2val(str_u[i], base)) {
-							i++;
-							bool do_rerun = false;
-							for(; i < str_l.size(); i++) {
-								if(char2val(str_l[i], base) == base - 1) {
-									do_rerun = true;
-								} else if(char2val(str_l[i], base) >= base / 2) {
-									do_rerun = true;
-									break;
-								} else {
-									i--;
-									break;
-								}
-							}
-							if(do_rerun) {
-								i--;
-								if(i >= (size_t) i_precision_base) i_precision_base--;
-								else i_precision_base = i;
-								goto float_interval_prec_rerun;
-							}
-						}
-						i_precision_base = i - 1;
-						b_rerun = true;
-						goto float_interval_prec_rerun;
-					} else if(i == str_l.size() - 1) {
-						i_precision_base = i + 1;
-					}
-				}
-				if(i_precision_base < precision_base) precision_base = i_precision_base;
-				
-				if(i_precision_base <= 0) {
-					if(negl) mpfr_neg(vl, fl_value, MPFR_RNDN);
-					else mpfr_set(vl, fl_value, MPFR_RNDN);
-					if(negu) mpfr_neg(vu, fu_value, MPFR_RNDN);
-					else mpfr_set(vu, fu_value, MPFR_RNDN);
-					mpfr_set(vu, fu_value, MPFR_RNDN);
-					mpfr_log(f_logl, vl, MPFR_RNDU);
+			mpq_t base_half;
+			mpq_init(base_half);
+			mpq_set_ui(base_half, base, 2);
+			mpq_canonicalize(base_half);
+		
+			if(mpfr_sgn(fl_value) != mpfr_sgn(fu_value)) {
+				long int ilogl = i_precision_base, ilogu = i_precision_base;
+				if(mpfr_sgn(fl_value) < 0) {
+					mpfr_neg(f_logl, fl_value, MPFR_RNDU);
+					mpfr_log(f_logl, f_logl, MPFR_RNDU);
 					mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDU);
-					long int ilogl = -mpfr_get_si(f_logl, MPFR_RNDU);
+					ilogl = -mpfr_get_si(f_logl, MPFR_RNDU);
 					if(ilogl >= 0) {
 						mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogl + 1, MPFR_RNDU);
 						mpfr_mul(vl, fl_value, f_logl, MPFR_RNDD);
 						mpfr_neg(vl, vl, MPFR_RNDU);
 						if(mpfr_cmp_q(vl, base_half) <= 0) ilogl++;
 					}
-					mpfr_log(f_logl, vu, MPFR_RNDU);
+				}
+				if(mpfr_sgn(fu_value) > 0) {
+					mpfr_log(f_logl, fu_value, MPFR_RNDU);
 					mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDU);
-					long int ilogu = -mpfr_get_si(f_logl, MPFR_RNDU);
+					ilogu = -mpfr_get_si(f_logl, MPFR_RNDU);
 					if(ilogu >= 0) {
 						mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogu + 1, MPFR_RNDU);
 						mpfr_mul(vu, fu_value, f_logl, MPFR_RNDU);
 						if(mpfr_cmp_q(vu, base_half) <= 0) ilogu++;
 					}
-					mpfr_clears(vu, vl, f_logl, f_mid, f_base, f_log_base, NULL);
-					mpq_clear(base_half);
-					if(ilogu < ilogl) ilogl = ilogu;
-					if(ilogl <= 0) {
-						PrintOptions po2 = po;
-						po2.interval_display = INTERVAL_DISPLAY_INTERVAL;
-						return print(po2, ips);
-					} else {
-						i_precision_base = ilogl;
-					}
-					Number nr_zero;
-					nr_zero.setApproximate(true);
-					PrintOptions po2 = po;
-					po2.max_decimals = i_precision_base - 1;
-					po2.use_max_decimals = true;
-					return nr_zero.print(po2, ips);
 				}
-				
-				mpfr_clears(vl, vu, f_logl, f_base, f_log_base, NULL);
+				mpfr_clears(vu, vl, f_logl, f_mid, f_base, f_log_base, NULL);
 				mpq_clear(base_half);
-				
+				if(ilogu < ilogl) ilogl = ilogu;
+				if(ilogl <= 0) {
+					PrintOptions po2 = po;
+					po2.interval_display = INTERVAL_DISPLAY_INTERVAL;
+					return print(po2, ips);
+				} else {
+					i_precision_base = ilogl;
+				}
+				Number nr_zero;
+				nr_zero.setApproximate(true);
+				PrintOptions po2 = po;
+				po2.max_decimals = i_precision_base - 1;
+				po2.use_max_decimals = true;
+				return nr_zero.print(po2, ips);
 			}
 			
+			float_interval_prec_rerun:
+			
+			mpfr_set(vl, fl_value, MPFR_RNDN);
+			mpfr_set(vu, fu_value, MPFR_RNDN);
+			mpfr_nextbelow(vu);
+			bool negl = (mpfr_sgn(vl) < 0);
+			bool negu = (mpfr_sgn(vu) < 0);
+			if(negl) mpfr_neg(vl, vl, MPFR_RNDN);
+			if(negu) mpfr_neg(vu, vu, MPFR_RNDN);
+			mpfr_log(f_logl, vl, MPFR_RNDN);
+			mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDN);
+			mpfr_floor(f_logl, f_logl);
+			mpfr_sub_si(f_logl, f_logl, i_precision_base, MPFR_RNDN);
+			mpfr_pow(f_logl, f_base, f_logl, MPFR_RNDN);
+			mpfr_div(vl, vl, f_logl, MPFR_RNDU);
+			mpfr_div(vu, vu, f_logl, MPFR_RNDD);
+			mpfr_round(vl, vl);
+			mpfr_round(vu, vu);
+			mpz_t ivalue;
+			mpz_init(ivalue);
+			mpfr_get_z(ivalue, vl, MPFR_RNDN);
+			string str_l = printMPZ(ivalue, base, true, BASE_DISPLAY_NONE, false, false);
+			mpfr_get_z(ivalue, vu, MPFR_RNDN);
+			string str_u = printMPZ(ivalue, base, true, BASE_DISPLAY_NONE, false, false);
+			cout << str_l << endl;
+			cout << str_u << endl;
+			
+			if(str_u.length() > str_l.length()) {
+				str_l.insert(0, str_u.length() - str_l.length(), '0');
+			}
+			for(size_t i = 0; i < str_l.size(); i++) {
+				if(str_l[i] != str_u[i]) {
+					if(char2val(str_l[i], base) + 1 == char2val(str_u[i], base)) {
+						i++;
+						bool do_rerun = false;
+						for(; i < str_l.size(); i++) {
+							if(char2val(str_l[i], base) == base - 1) {
+								do_rerun = true;
+							} else if(char2val(str_l[i], base) >= base / 2) {
+								do_rerun = true;
+								break;
+							} else {
+								i--;
+								break;
+							}
+						}
+						if(do_rerun) {
+							i--;
+							if(i >= (size_t) i_precision_base) i_precision_base--;
+							else i_precision_base = i;
+							goto float_interval_prec_rerun;
+						}
+					}
+					if(i - 1 >= (size_t) i_precision_base) i_precision_base--;
+					else i_precision_base = i - 1;
+					goto float_interval_prec_rerun;
+				} else if(i == str_l.size() - 1) {
+					i_precision_base = i + 1;
+				}
+			}
+			mpfr_mul(f_mid, vu, f_logl, MPFR_RNDN);
+			if(i_precision_base < precision_base) precision_base = i_precision_base;
+			
+			if(i_precision_base <= 0) {
+				if(negl) mpfr_neg(vl, fl_value, MPFR_RNDN);
+				else mpfr_set(vl, fl_value, MPFR_RNDN);
+				if(negu) mpfr_neg(vu, fu_value, MPFR_RNDN);
+				else mpfr_set(vu, fu_value, MPFR_RNDN);
+				mpfr_set(vu, fu_value, MPFR_RNDN);
+				mpfr_log(f_logl, vl, MPFR_RNDU);
+				mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDU);
+				long int ilogl = -mpfr_get_si(f_logl, MPFR_RNDU);
+				if(ilogl >= 0) {
+					mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogl + 1, MPFR_RNDU);
+					mpfr_mul(vl, fl_value, f_logl, MPFR_RNDD);
+					mpfr_neg(vl, vl, MPFR_RNDU);
+					if(mpfr_cmp_q(vl, base_half) <= 0) ilogl++;
+				}
+				mpfr_log(f_logl, vu, MPFR_RNDU);
+				mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDU);
+				long int ilogu = -mpfr_get_si(f_logl, MPFR_RNDU);
+				if(ilogu >= 0) {
+					mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogu + 1, MPFR_RNDU);
+					mpfr_mul(vu, fu_value, f_logl, MPFR_RNDU);
+					if(mpfr_cmp_q(vu, base_half) <= 0) ilogu++;
+				}
+				mpfr_clears(vu, vl, f_logl, f_mid, f_base, f_log_base, NULL);
+				mpq_clear(base_half);
+				if(ilogu < ilogl) ilogl = ilogu;
+				if(ilogl <= 0) {
+					PrintOptions po2 = po;
+					po2.interval_display = INTERVAL_DISPLAY_INTERVAL;
+					return print(po2, ips);
+				} else {
+					i_precision_base = ilogl;
+				}
+				Number nr_zero;
+				nr_zero.setApproximate(true);
+				PrintOptions po2 = po;
+				po2.max_decimals = i_precision_base - 1;
+				po2.use_max_decimals = true;
+				return nr_zero.print(po2, ips);
+			}
+			
+			mpfr_clears(vl, vu, f_logl, f_base, f_log_base, NULL);
+			mpq_clear(base_half);
+				
 			if(po.is_approximate) *po.is_approximate = true;
 		}
 		

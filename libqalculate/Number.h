@@ -129,6 +129,8 @@ class Number {
 		void markAsImaginaryPart(bool is_imag = true);
 		const NumberType &internalType() const;
 		bool setToFloatingPoint();
+		void precisionToInterval();
+		bool intervalToPrecision();
 		
 		double floatValue() const;
 		/**
