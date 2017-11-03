@@ -60,7 +60,6 @@ class Number {
 		mpq_t r_value;
 		mpfr_t fu_value;
 		mpfr_t fl_value;
-		mpfr_t f_value;
 		
 		Number *i_value;
 		
@@ -118,13 +117,11 @@ class Number {
 		void clearImaginary();
 		
 		const mpq_t &internalRational() const;
-		const mpfr_t &internalFloat() const;
 		const mpfr_t &internalUpperFloat() const;
 		const mpfr_t &internalLowerFloat() const;
 		mpq_t &internalRational();
 		mpfr_t &internalUpperFloat();
 		mpfr_t &internalLowerFloat();
-		mpfr_t &internalFloat();
 		Number *internalImaginary() const;
 		void markAsImaginaryPart(bool is_imag = true);
 		const NumberType &internalType() const;
@@ -154,6 +151,9 @@ class Number {
  		* @return true if the number has an approximate representation.
  		*/
 		bool isFloatingPoint() const;
+		
+		bool isInterval() const;
+		
 		/** Defines the number as approximate or exact.
 		*
  		* @param is_approximate If the number shall be regarded as approximate.
