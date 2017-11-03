@@ -66,7 +66,7 @@ class Number {
 		
 		NumberType n_type;
 		
-		bool b_approx, b_imag;
+		bool b_approx, b_imag, b_nointerval;
 		int i_precision;
 
 	public:
@@ -269,8 +269,10 @@ class Number {
 		bool isNonPositive() const;
 		bool realPartIsNegative() const;
 		bool realPartIsPositive() const;
+		bool realPartIsNonZero() const;
 		bool imaginaryPartIsNegative() const;
 		bool imaginaryPartIsPositive() const;
+		bool imaginaryPartIsNonZero() const;
 		bool hasNegativeSign() const;
 		bool hasPositiveSign() const;
 		bool equalsZero() const;

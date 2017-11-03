@@ -352,7 +352,9 @@ typedef enum {
 typedef enum {
 	INTERVAL_DISPLAY_SIGNIFICANT_DIGITS,
 	INTERVAL_DISPLAY_INTERVAL,
-	INTERVAL_DISPLAY_MIDPOINT
+	INTERVAL_DISPLAY_MIDPOINT,
+	INTERVAL_DISPLAY_LOWER,
+	INTERVAL_DISPLAY_UPPER
 } IntervalDisplay;
 
 /// Options for formatting and display of mathematical structures/results.
