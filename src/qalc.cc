@@ -48,6 +48,7 @@ EvaluationOptions evalops, saved_evalops;
 AssumptionType saved_assumption_type;
 AssumptionSign saved_assumption_sign;
 int saved_precision;
+bool saved_interval;
 Thread *view_thread, *command_thread;
 bool command_aborted = false;
 volatile bool b_busy = false;
@@ -682,6 +683,13 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			CALCULATOR->setPrecision(v);
+			expression_calculation_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval", _("interval"))) {
+		bool b = CALCULATOR->usesIntervalArithmetics();
+		SET_BOOL(b)
+		if(b != CALCULATOR->usesIntervalArithmetics()) {
+			CALCULATOR->useIntervalArithmetics(b);
 			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "max decimals", _("max decimals"))) {
@@ -1871,7 +1879,7 @@ int main(int argc, char *argv[]) {
 			switch(evalops.approximation) {
 				case APPROXIMATION_EXACT: {PUTS_UNICODE(_("exact")); break;}
 				case APPROXIMATION_TRY_EXACT: {PUTS_UNICODE(_("try exact")); break;}
-				case APPROXIMATION_APPROXIMATE: {PUTS_UNICODE(_("approximate")); break;}
+				default: {PUTS_UNICODE(_("approximate")); break;}
 			}
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("assume nonzero denominators")); PUTS_UNICODE(b2oo(evalops.assume_denominators_nonzero, false)); CHECK_IF_SCREEN_FILLED
@@ -1969,6 +1977,7 @@ int main(int argc, char *argv[]) {
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("indicate infinite series")); PUTS_UNICODE(b2oo(printops.indicate_infinite_series, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("infinite numbers")); PUTS_UNICODE(b2oo(evalops.allow_infinite, false)); CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("interval")); PUTS_UNICODE(b2oo(CALCULATOR->usesIntervalArithmetics(), false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("limit implicit multiplication")); PUTS_UNICODE(b2oo(evalops.parse_options.limit_implicit_multiplication, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("lowercase e")); PUTS_UNICODE(b2oo(printops.lower_case_e, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("lowercase numbers")); PUTS_UNICODE(b2oo(printops.lower_case_numbers, false)); CHECK_IF_SCREEN_FILLED
@@ -3660,6 +3669,7 @@ bool save_mode() {
 */
 void set_saved_mode() {
 	saved_precision = CALCULATOR->getPrecision();
+	saved_interval = CALCULATOR->usesIntervalArithmetics();
 	saved_printops = printops;
 	saved_printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
 	saved_evalops = evalops;
@@ -3719,6 +3729,8 @@ void load_preferences() {
 	evalops.parse_options.dot_as_separator = CALCULATOR->default_dot_as_separator;
 	evalops.parse_options.comma_as_separator = false;
 	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;
+	
+	CALCULATOR->useIntervalArithmetics(true);
 
 	rpn_mode = false;
 	
@@ -3799,6 +3811,8 @@ void load_preferences() {
 					printops.use_max_decimals = v;
 				} else if(svar == "precision") {
 					CALCULATOR->setPrecision(v);
+				} else if(svar == "interval_arithmetics") {
+					CALCULATOR->useIntervalArithmetics(v);
 				} else if(svar == "min_exp") {
 					printops.min_exp = v;
 				} else if(svar == "negative_exponents") {
@@ -4000,6 +4014,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "max_deci=%i\n", saved_printops.max_decimals);
 	fprintf(file, "use_max_deci=%i\n", saved_printops.use_max_decimals);	
 	fprintf(file, "precision=%i\n", saved_precision);
+	fprintf(file, "interval_arithmetics=%i\n", saved_interval);
 	fprintf(file, "min_exp=%i\n", saved_printops.min_exp);
 	fprintf(file, "negative_exponents=%i\n", saved_printops.negative_exponents);
 	fprintf(file, "sort_minus_last=%i\n", saved_printops.sort_options.minus_last);

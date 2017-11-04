@@ -340,6 +340,7 @@ Calculator::Calculator() {
 	i_timeout = 0;
 	
 	setPrecision(DEFAULT_PRECISION);
+	b_interval = false;
 
 	addStringAlternative(SIGN_POWER_0, "^(0)");
 	addStringAlternative(SIGN_POWER_1, "^(1)");

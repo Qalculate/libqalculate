@@ -476,7 +476,9 @@ typedef enum {
 	/// Try to make the result as exact as possible
 	APPROXIMATION_TRY_EXACT,
 	/// Calculate the result approximately directly
-	APPROXIMATION_APPROXIMATE
+	APPROXIMATION_APPROXIMATE,
+	/// Used internally
+	APPROXIMATION_EXACT_VARIABLES
 } ApproximationMode;
 
 typedef enum {

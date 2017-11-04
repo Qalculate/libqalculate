@@ -554,7 +554,7 @@ int BitXorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	mstruct.add(vargs[1], OPERATION_BITWISE_XOR);
 	if(vargs[0].isNumber() && vargs[1].isNumber()) {
 		Number nr(vargs[0].number());
-		if(nr.bitXor(vargs[1].number()) && (eo.approximation == APPROXIMATION_APPROXIMATE || !nr.isApproximate() || vargs[0].number().isApproximate() || vargs[1].number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || vargs[0].number().isComplex() || vargs[1].number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || vargs[0].number().isInfinite() || vargs[1].number().isInfinite())) {
+		if(nr.bitXor(vargs[1].number()) && (eo.approximation >= APPROXIMATION_APPROXIMATE || !nr.isApproximate() || vargs[0].number().isApproximate() || vargs[1].number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || vargs[0].number().isComplex() || vargs[1].number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || vargs[0].number().isInfinite() || vargs[1].number().isInfinite())) {
 			mstruct.set(nr, true);
 			return 1;
 		}
@@ -1274,7 +1274,7 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	} else {
 		nr = vargs[0].number(); 
 	}
-	if(!nr.root(vargs[1].number()) || (eo.approximation != APPROXIMATION_APPROXIMATE && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) {
+	if(!nr.root(vargs[1].number()) || (eo.approximation < APPROXIMATION_APPROXIMATE && nr.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) {
 		if(!eval_mstruct) {
 			if(vargs[0].number().isNegative() && vargs[1].number().isOdd()) {
 				mstruct.set(this, &vargs[0], &vargs[1], NULL);
