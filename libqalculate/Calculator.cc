@@ -1145,6 +1145,8 @@ void Calculator::setPrecision(int precision) {
 int Calculator::getPrecision() const {
 	return i_precision;
 }
+void Calculator::useIntervalArithmetics(bool use_interval_arithmetics) {b_interval = use_interval_arithmetics;}
+bool Calculator::usesIntervalArithmetics() const {return b_interval;}
 
 const string &Calculator::getDecimalPoint() const {return DOT_STR;}
 const string &Calculator::getComma() const {return COMMA_STR;}

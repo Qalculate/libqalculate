@@ -208,6 +208,7 @@ class Calculator {
 
 	int ianglemode;
 	int i_precision;
+	bool b_interval;
 	char vbuffer[200];
 	vector<void*> ufvl;
 	vector<char> ufvl_t;
@@ -1078,6 +1079,14 @@ class Calculator {
 	/** Returns default precision for approximate calculations.
 	*/
 	int getPrecision() const;
+	/** Set if interval arithmetics should be used for approximate calculations.
+	*
+	* @param use_interval_arithmetics Set true to activate, or false to deactivate, interval arithmetics.
+	*/
+	void useIntervalArithmetics(bool use_interval_arithmetics = true);
+	/** Returns true if interval arithmetics are activated.
+	*/
+	bool usesIntervalArithmetics() const;
 	//@}
 
 	/** @name Functions for localization */

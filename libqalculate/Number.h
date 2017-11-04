@@ -65,7 +65,7 @@ class Number {
 		
 		NumberType n_type;
 		
-		bool b_approx, b_imag, b_nointerval;
+		bool b_approx, b_imag;
 		int i_precision;
 
 	public:

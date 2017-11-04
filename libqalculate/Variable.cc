@@ -197,11 +197,13 @@ KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, 
 	b_expression = false;
 	sexpression = "";
 	calculated_precision = -1;
+	calculated_with_interval = false;
 	setChanged(false);
 }
 KnownVariable::KnownVariable(string cat_, string name_, string expression_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
 	mstruct = NULL;
 	calculated_precision = -1;
+	calculated_with_interval = false;
 	set(expression_);
 	setChanged(false);
 }
@@ -227,6 +229,7 @@ string KnownVariable::expression() const {
 void KnownVariable::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_VARIABLE && item->subtype() == SUBTYPE_KNOWN_VARIABLE) {
 		calculated_precision = -1;
+		calculated_with_interval = false;
 		sexpression = ((KnownVariable*) item)->expression();
 		b_expression = ((KnownVariable*) item)->isExpression();
 		if(!b_expression) {
@@ -241,6 +244,7 @@ void KnownVariable::set(const MathStructure &o) {
 	setApproximate(mstruct->isApproximate());
 	setPrecision(mstruct->precision());
 	calculated_precision = -1;
+	calculated_with_interval = false;
 	b_expression = false;
 	sexpression = "";
 	setChanged(true);
@@ -254,6 +258,7 @@ void KnownVariable::set(string expression_) {
 	sexpression = expression_;
 	remove_blank_ends(sexpression);
 	calculated_precision = -1;
+	calculated_with_interval = false;
 	setChanged(true);
 }
 bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
@@ -325,6 +330,7 @@ bool KnownVariable::representsScalar() {return get().representsScalar();}
 DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : KnownVariable(cat_, name_, MathStructure(), title_, is_local, is_builtin, is_active) {
 	mstruct = NULL;
 	calculated_precision = -1;
+	calculated_with_interval = false;
 	setApproximate();
 	setChanged(false);
 }
@@ -337,7 +343,8 @@ DynamicVariable::DynamicVariable(const DynamicVariable *variable) {
 DynamicVariable::DynamicVariable() : KnownVariable() {
 	mstruct = NULL;
 	calculated_precision = -1;
-	setApproximate();	
+	calculated_with_interval = false;
+	setApproximate();
 	setChanged(false);
 }
 DynamicVariable::~DynamicVariable() {
@@ -349,10 +356,11 @@ void DynamicVariable::set(const ExpressionItem *item) {
 void DynamicVariable::set(const MathStructure&) {}
 void DynamicVariable::set(string) {}
 const MathStructure &DynamicVariable::get() {
-	if(calculated_precision != CALCULATOR->getPrecision() || !mstruct || mstruct->isAborted()) {
+	if(calculated_with_interval != CALCULATOR->usesIntervalArithmetics() || calculated_precision != CALCULATOR->getPrecision() || !mstruct || mstruct->isAborted()) {
 		mstruct = new MathStructure();
 		mstruct->setAborted();
 		calculated_precision = CALCULATOR->getPrecision();
+		calculated_with_interval = CALCULATOR->usesIntervalArithmetics();
 		calculate();
 	}
 	return *mstruct;
@@ -360,7 +368,9 @@ const MathStructure &DynamicVariable::get() {
 int DynamicVariable::calculatedPrecision() const {
 	return calculated_precision;
 }
-
+bool DynamicVariable::calculatedWithInterval() const {
+	return calculated_with_interval;
+}
 
 PiVariable::PiVariable() : DynamicVariable("Constants", "pi") {}
 void PiVariable::calculate() const {

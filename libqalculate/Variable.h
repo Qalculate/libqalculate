@@ -238,6 +238,7 @@ class KnownVariable : public Variable {
 	MathStructure *mstruct;
 	bool b_expression;
  	int calculated_precision;
+ 	bool calculated_with_interval;
 	string sexpression;
 
   public:
@@ -356,6 +357,7 @@ class DynamicVariable : public KnownVariable {
 	* @returns Precision of the calculated value or zero if the value has not yet been calculated.
 	*/
 	int calculatedPrecision() const;
+	bool calculatedWithInterval() const;
 	
 	virtual bool representsPositive(bool = false) {return true;}
 	virtual bool representsNegative(bool = false) {return false;}
