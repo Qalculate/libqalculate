@@ -880,10 +880,66 @@ bool Number::intervalToPrecision() {
 		mpfr_sub(f_diff, fu_value, fl_value, MPFR_RNDN);
 		mpfr_div_ui(f_diff, f_diff, 2, MPFR_RNDN);
 		mpfr_add(f_mid, fl_value, f_diff, MPFR_RNDN);
-		mpfr_clear(f_diff);
+		mpfr_mul_ui(f_diff, f_diff, 2, MPFR_RNDN);
+		mpfr_div(f_diff, f_mid, f_diff, MPFR_RNDU);
+		mpfr_log10(f_diff, f_diff, MPFR_RNDD);
+		long int i_prec = mpfr_get_si(f_diff, MPFR_RNDD);
+		if(i_prec < 0) i_prec = 0;
+		if(i_precision < 0 || i_prec < i_precision) i_precision = i_prec;
+		mpfr_clears(f_diff, f_mid, NULL);
 		b_approx = true;
 	}
 	return true;
+}
+void Number::setUncertainty(const Number &o) {
+	if(!o.isReal() || !isReal()) return;
+	if(CALCULATOR->usesIntervalArithmetics()) {
+		mpfr_clear_flags();
+		if(isRational()) {
+			mpfr_inits2(BIT_PRECISION, fl_value, fu_value, NULL);
+			if(o.isRational()) {
+				mpfr_set_q(fl_value, r_value, MPFR_RNDD);
+				mpfr_set_q(fu_value, r_value, MPFR_RNDU);
+				mpq_set_ui(r_value, 0, 1);
+				n_type = NUMBER_TYPE_FLOAT;
+			}
+			if(!setToFloatingPoint()) return;
+		}
+		if(o.isRational()) {
+			mpfr_sub_q(fl_value, fl_value, o.internalRational(), MPFR_RNDD);
+			mpfr_add_q(fu_value, fu_value, o.internalRational(), MPFR_RNDU);
+		} else if(isRational()) {
+			mpfr_sub_q(fl_value, o.internalUpperFloat(), r_value, MPFR_RNDU);
+			mpfr_neg(fl_value, fl_value, MPFR_RNDD);
+			mpfr_add_q(fu_value, o.internalUpperFloat(), r_value, MPFR_RNDU);
+			mpq_set_ui(r_value, 0, 1);
+			n_type = NUMBER_TYPE_FLOAT;
+		} else {
+			mpfr_sub(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDD);
+			mpfr_add(fu_value, fu_value, o.internalUpperFloat(), MPFR_RNDU);
+		}
+		testErrors(2);
+	} else {
+		Number nr(*this);
+		nr.divide(o);
+		nr.divide(2);
+		nr.log(10);
+		nr.trunc();
+		long int i_prec = nr.lintValue();
+		if(i_prec < 0) i_prec = 0;
+		if(i_precision < 0 || i_prec < i_precision) i_precision = i_prec;
+	}
+	b_approx = true;
+}
+Number Number::uncertainty() const {
+	if(!isInterval()) return Number();
+	mpfr_t f_mid;
+	mpfr_init2(f_mid, BIT_PRECISION);
+	mpfr_sub(f_mid, fu_value, fl_value, MPFR_RNDU);
+	mpfr_div_ui(f_mid, f_mid, 2, MPFR_RNDU);
+	Number nr;
+	nr.setInternal(f_mid);
+	return nr;
 }
 
 double Number::floatValue() const {
@@ -5533,7 +5589,18 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(base < 2 || base > 36) base = 10;
 		mpfr_clear_flags();
 		
-		if(po.interval_display == INTERVAL_DISPLAY_INTERVAL) {
+		if(po.interval_display == INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) {
+			PrintOptions po3 = po;
+			po3.interval_display = INTERVAL_DISPLAY_INTERVAL;
+			cout << print(po3) << endl;
+		}
+		
+		mpfr_t f_diff, f_mid;
+		
+		if(mpfr_equal_p(fl_value, fu_value)) {
+			mpfr_init2(f_mid, mpfr_get_prec(fl_value));
+			mpfr_set(f_mid, fl_value, MPFR_RNDN);
+		} else if(po.interval_display == INTERVAL_DISPLAY_INTERVAL) {
 			str = CALCULATOR->f_interval->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
 			str += LEFT_PARENTHESIS;
 			PrintOptions po2 = po;
@@ -5546,19 +5613,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(ips.minus) *ips.minus = false;
 			if(ips.num) *ips.num = str;
 			return str;
-		}
-		
-		if(po.interval_display == INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) {
-			PrintOptions po3 = po;
-			po3.interval_display = INTERVAL_DISPLAY_INTERVAL;
-			cout << print(po3) << endl;
-		}
-		
-		mpfr_t f_diff, f_mid;
-		
-		if(mpfr_equal_p(fl_value, fu_value)) {
-			mpfr_init2(f_mid, mpfr_get_prec(fl_value));
-			mpfr_set(f_mid, fl_value, MPFR_RNDN);
 		} else if(po.interval_display == INTERVAL_DISPLAY_MIDPOINT) {
 			mpfr_inits2(mpfr_get_prec(fl_value), f_diff, f_mid, NULL);
 			mpfr_sub(f_diff, fu_value, fl_value, MPFR_RNDN);

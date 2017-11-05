@@ -128,6 +128,8 @@ class Number {
 		bool setToFloatingPoint();
 		void precisionToInterval();
 		bool intervalToPrecision();
+		void setUncertainty(const Number &o);
+		Number uncertainty() const;
 		
 		double floatValue() const;
 		/**
