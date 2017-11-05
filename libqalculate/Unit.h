@@ -167,7 +167,7 @@ class AliasUnit : public Unit {
 
   protected:
 
-	string svalue, sinverse;
+	string svalue, sinverse, suncertainty;
 	int i_exp, i_mix, i_mix_min;
 	Unit *o_unit;
 
@@ -186,6 +186,7 @@ class AliasUnit : public Unit {
 	virtual void setBaseUnit(Unit *alias);
 	virtual string expression() const;
 	virtual string inverseExpression() const;
+	virtual string uncertainty() const;
 	/**
 	* Sets the relation expression.
 	*/
@@ -194,6 +195,7 @@ class AliasUnit : public Unit {
 	* Sets the inverse relation expression.
 	*/
 	virtual void setInverseExpression(string inverse);
+	virtual void setUncertainty(string standard_uncertainty);
 	virtual MathStructure &convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
 	virtual MathStructure &convertFromFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
 	virtual MathStructure &convertToBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;

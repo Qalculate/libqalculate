@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="0.9.11">
+<QALCULATE version="2.2.0">
   <category>
     <!-- Unit category -->
     <_title>!units!Length</_title>
@@ -879,7 +879,7 @@
         <_names>r:statcoulomb,p:statcoulombs,a:statC,franklin,a:Fr,p:franklins</_names>
         <base>
           <unit>C</unit>
-          <relation approximate="true">3.3356410E-10</relation>
+          <relation>1/2997924580</relation>
           <exponent>1</exponent>
         </base>
       </unit>
@@ -1037,7 +1037,7 @@
         <_names>r:statohm,p:statohms,au:stat&#x3A9;</_names>
         <base>
           <unit>ohm</unit>
-          <relation approximate="true">8.9875517874E11</relation>
+          <relation>8.9875517873681764E11</relation>
           <exponent>1</exponent>
         </base>
       </unit>
@@ -2652,7 +2652,7 @@
       <_names>ar:eV,electron_volt,p:electron_volts</_names>
       <base>
         <unit>J</unit>
-        <relation approximate="true" precision="7">1.602176620770032661E-19</relation>
+        <relation uncertainty="9.8E-28">1.6021766208E-19</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -2695,7 +2695,7 @@
       <_names>ar:Ha,as:E_h,hartree</_names>
       <base>
         <unit>J</unit>
-        <relation approximate="true" precision="7">4.359744650E-18</relation>
+        <relation uncertainty="5.4E-26">4.359744650E-18</relation>
         <exponent>1</exponent>
       </base>
     </unit>

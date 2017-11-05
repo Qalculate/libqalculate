@@ -685,7 +685,24 @@ void set_option(string str) {
 			CALCULATOR->setPrecision(v);
 			expression_calculation_updated();
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval", _("interval"))) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval display", _("interval display"))) {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "significant", _("significant"))) v = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "interval", _("interval"))) v = INTERVAL_DISPLAY_INTERVAL;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "plusminus", _("plusminus"))) v = INTERVAL_DISPLAY_PLUSMINUS;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "midpoint", _("midpoint"))) v = INTERVAL_DISPLAY_MIDPOINT;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "upper", _("upper"))) v = INTERVAL_DISPLAY_UPPER;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "lower", _("lower"))) v = INTERVAL_DISPLAY_LOWER;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < INTERVAL_DISPLAY_SIGNIFICANT_DIGITS || v > INTERVAL_DISPLAY_UPPER) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			printops.interval_display = (IntervalDisplay) v;
+			result_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval", _("interval")) && svalue.find("display") == string::npos && svalue.find(_("display")) == string::npos) {
 		bool b = CALCULATOR->usesIntervalArithmetics();
 		SET_BOOL(b)
 		if(b != CALCULATOR->usesIntervalArithmetics()) {
@@ -1978,6 +1995,17 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("indicate infinite series")); PUTS_UNICODE(b2oo(printops.indicate_infinite_series, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("infinite numbers")); PUTS_UNICODE(b2oo(evalops.allow_infinite, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("interval")); PUTS_UNICODE(b2oo(CALCULATOR->usesIntervalArithmetics(), false)); CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("interval display"));
+			switch(printops.interval_display) {
+				case INTERVAL_DISPLAY_SIGNIFICANT_DIGITS: {PUTS_UNICODE(_("significant")); break;}
+				case INTERVAL_DISPLAY_INTERVAL: {PUTS_UNICODE(_("interval")); break;}
+				case INTERVAL_DISPLAY_PLUSMINUS: {PUTS_UNICODE(_("plusminus")); break;}
+				case INTERVAL_DISPLAY_MIDPOINT: {PUTS_UNICODE(_("midpoint")); break;}
+				case INTERVAL_DISPLAY_LOWER: {PUTS_UNICODE(_("lower")); break;}
+				case INTERVAL_DISPLAY_UPPER: {PUTS_UNICODE(_("upper")); break;}
+				default: {printf("%i\n", printops.interval_display); break;}
+			}
+			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("limit implicit multiplication")); PUTS_UNICODE(b2oo(evalops.parse_options.limit_implicit_multiplication, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("lowercase e")); PUTS_UNICODE(b2oo(printops.lower_case_e, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("lowercase numbers")); PUTS_UNICODE(b2oo(printops.lower_case_numbers, false)); CHECK_IF_SCREEN_FILLED
@@ -3813,6 +3841,10 @@ void load_preferences() {
 					CALCULATOR->setPrecision(v);
 				} else if(svar == "interval_arithmetics") {
 					CALCULATOR->useIntervalArithmetics(v);
+				} else if(svar == "interval_display") {
+					if(v >= INTERVAL_DISPLAY_SIGNIFICANT_DIGITS && v <= INTERVAL_DISPLAY_UPPER) {
+						printops.interval_display = (IntervalDisplay) v;
+					}
 				} else if(svar == "min_exp") {
 					printops.min_exp = v;
 				} else if(svar == "negative_exponents") {
@@ -4015,6 +4047,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "use_max_deci=%i\n", saved_printops.use_max_decimals);	
 	fprintf(file, "precision=%i\n", saved_precision);
 	fprintf(file, "interval_arithmetics=%i\n", saved_interval);
+	fprintf(file, "interval_display=%i\n", saved_printops.interval_display);
 	fprintf(file, "min_exp=%i\n", saved_printops.min_exp);
 	fprintf(file, "negative_exponents=%i\n", saved_printops.negative_exponents);
 	fprintf(file, "sort_minus_last=%i\n", saved_printops.sort_options.minus_last);

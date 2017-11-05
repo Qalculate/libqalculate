@@ -239,7 +239,7 @@ class KnownVariable : public Variable {
 	bool b_expression;
  	int calculated_precision;
  	bool calculated_with_interval;
-	string sexpression, suncertainty;
+	string sexpression, suncertainty, sunit;
 
   public:
   
@@ -289,6 +289,8 @@ class KnownVariable : public Variable {
 	*/
 	virtual string expression() const;
 	virtual string uncertainty() const;
+	virtual string unit() const;
+	
 	int subtype() const {return SUBTYPE_KNOWN_VARIABLE;}
 
 	/** Sets the value of the variable. If expression is set, it is cleared.
@@ -302,6 +304,7 @@ class KnownVariable : public Variable {
 	*/
 	virtual void set(string expression_);
 	virtual void setUncertainty(string standard_uncertainty);
+	virtual void setUnit(string unit_expression);
 
 	/** Returns the value of the variable. If no value is set or parsed and an expression is set, the expression is parsed and resulting value returned.
 	*

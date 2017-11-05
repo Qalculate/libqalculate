@@ -893,43 +893,44 @@ bool Number::intervalToPrecision() {
 }
 void Number::setUncertainty(const Number &o) {
 	if(!o.isReal() || !isReal()) return;
-	if(CALCULATOR->usesIntervalArithmetics()) {
-		mpfr_clear_flags();
-		if(isRational()) {
-			mpfr_inits2(BIT_PRECISION, fl_value, fu_value, NULL);
-			if(o.isRational()) {
-				mpfr_set_q(fl_value, r_value, MPFR_RNDD);
-				mpfr_set_q(fu_value, r_value, MPFR_RNDU);
-				mpq_set_ui(r_value, 0, 1);
-				n_type = NUMBER_TYPE_FLOAT;
-			}
-			if(!setToFloatingPoint()) return;
-		}
-		if(o.isRational()) {
-			mpfr_sub_q(fl_value, fl_value, o.internalRational(), MPFR_RNDD);
-			mpfr_add_q(fu_value, fu_value, o.internalRational(), MPFR_RNDU);
-		} else if(isRational()) {
-			mpfr_sub_q(fl_value, o.internalUpperFloat(), r_value, MPFR_RNDU);
-			mpfr_neg(fl_value, fl_value, MPFR_RNDD);
-			mpfr_add_q(fu_value, o.internalUpperFloat(), r_value, MPFR_RNDU);
-			mpq_set_ui(r_value, 0, 1);
-			n_type = NUMBER_TYPE_FLOAT;
-		} else {
-			mpfr_sub(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDD);
-			mpfr_add(fu_value, fu_value, o.internalUpperFloat(), MPFR_RNDU);
-		}
-		testErrors(2);
-	} else {
+	b_approx = true;
+	if(!CALCULATOR->usesIntervalArithmetics()) {
 		Number nr(*this);
 		nr.divide(o);
 		nr.divide(2);
 		nr.log(10);
 		nr.trunc();
 		long int i_prec = nr.lintValue();
-		if(i_prec < 0) i_prec = 0;
-		if(i_precision < 0 || i_prec < i_precision) i_precision = i_prec;
+		if(i_prec > 0) {
+			if(i_precision < 0 || i_prec < i_precision) i_precision = i_prec;
+			return;
+		}
 	}
-	b_approx = true;
+	mpfr_clear_flags();
+	if(isRational()) {
+		mpfr_inits2(BIT_PRECISION, fl_value, fu_value, NULL);
+		if(o.isRational()) {
+			mpfr_set_q(fl_value, r_value, MPFR_RNDD);
+			mpfr_set_q(fu_value, r_value, MPFR_RNDU);
+			mpq_set_ui(r_value, 0, 1);
+			n_type = NUMBER_TYPE_FLOAT;
+		}
+		if(!setToFloatingPoint()) return;
+	}
+	if(o.isRational()) {
+		mpfr_sub_q(fl_value, fl_value, o.internalRational(), MPFR_RNDD);
+		mpfr_add_q(fu_value, fu_value, o.internalRational(), MPFR_RNDU);
+	} else if(isRational()) {
+		mpfr_sub_q(fl_value, o.internalUpperFloat(), r_value, MPFR_RNDU);
+		mpfr_neg(fl_value, fl_value, MPFR_RNDD);
+		mpfr_add_q(fu_value, o.internalUpperFloat(), r_value, MPFR_RNDU);
+		mpq_set_ui(r_value, 0, 1);
+		n_type = NUMBER_TYPE_FLOAT;
+	} else {
+		mpfr_sub(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDD);
+		mpfr_add(fu_value, fu_value, o.internalUpperFloat(), MPFR_RNDU);
+	}
+	testErrors(2);
 }
 Number Number::uncertainty() const {
 	if(!isInterval()) return Number();
@@ -1022,7 +1023,7 @@ bool Number::isFloatingPoint() const {
 	return (n_type == NUMBER_TYPE_FLOAT);
 }
 bool Number::isInterval() const {
-	return n_type == NUMBER_TYPE_FLOAT && mpfr_equal_p(fl_value, fu_value) != 0;
+	return n_type == NUMBER_TYPE_FLOAT && !mpfr_equal_p(fl_value, fu_value);
 }
 void Number::setApproximate(bool is_approximate) {
 	if(is_approximate != isApproximate()) {
@@ -5601,16 +5602,28 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpfr_init2(f_mid, mpfr_get_prec(fl_value));
 			mpfr_set(f_mid, fl_value, MPFR_RNDN);
 		} else if(po.interval_display == INTERVAL_DISPLAY_INTERVAL) {
-			str = CALCULATOR->f_interval->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
-			str += LEFT_PARENTHESIS;
 			PrintOptions po2 = po;
 			po2.interval_display = INTERVAL_DISPLAY_LOWER;
-			str += print(po2);
-			str += COMMA SPACE;
+			string str1 = print(po2);
 			po2.interval_display = INTERVAL_DISPLAY_UPPER;
-			str += print(po2);
+			string str2 = print(po2);
+			if(str1 == str2) return print(po2, ips);
+			str = CALCULATOR->f_interval->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
+			str += LEFT_PARENTHESIS;
+			str += str1;
+			str += COMMA SPACE;
+			str += str2;
 			str += RIGHT_PARENTHESIS;
 			if(ips.minus) *ips.minus = false;
+			if(ips.num) *ips.num = str;
+			return str;
+		} else if(po.interval_display == INTERVAL_DISPLAY_PLUSMINUS) {
+			PrintOptions po2 = po;
+			po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
+			str += print(po2, ips);
+			str += "±";
+			po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+			str += uncertainty().print(po2);
 			if(ips.num) *ips.num = str;
 			return str;
 		} else if(po.interval_display == INTERVAL_DISPLAY_MIDPOINT) {

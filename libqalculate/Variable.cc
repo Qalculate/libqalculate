@@ -197,6 +197,7 @@ KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, 
 	b_expression = false;
 	sexpression = "";
 	suncertainty = "";
+	sunit = "";
 	calculated_precision = -1;
 	calculated_with_interval = false;
 	setChanged(false);
@@ -206,6 +207,7 @@ KnownVariable::KnownVariable(string cat_, string name_, string expression_, stri
 	calculated_precision = -1;
 	calculated_with_interval = false;
 	suncertainty = "";
+	sunit = "";
 	set(expression_);
 	setChanged(false);
 }
@@ -231,11 +233,16 @@ string KnownVariable::expression() const {
 string KnownVariable::uncertainty() const {
 	return suncertainty;
 }
+string KnownVariable::unit() const {
+	return sunit;
+}
 void KnownVariable::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_VARIABLE && item->subtype() == SUBTYPE_KNOWN_VARIABLE) {
 		calculated_precision = -1;
 		calculated_with_interval = false;
 		sexpression = ((KnownVariable*) item)->expression();
+		suncertainty = ((KnownVariable*) item)->uncertainty();
+		sunit = ((KnownVariable*) item)->unit();
 		b_expression = ((KnownVariable*) item)->isExpression();
 		if(!b_expression) {
 			set(((KnownVariable*) item)->get());
@@ -277,6 +284,17 @@ void KnownVariable::setUncertainty(string standard_uncertainty) {
 	calculated_with_interval = false;
 	setChanged(true);
 }
+void KnownVariable::setUnit(string unit_expression) {
+	if(mstruct) {
+		delete mstruct;
+	}	
+	mstruct = NULL;
+	sunit = unit_expression;
+	remove_blank_ends(sunit);
+	calculated_precision = -1;
+	calculated_with_interval = false;
+	setChanged(true);
+}
 bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
 	if(mstruct.isNumber()) {
 		if(i_prec < 0) {
@@ -303,16 +321,24 @@ const MathStructure &KnownVariable::get() {
 	if(b_expression && ((!mstruct || mstruct->isAborted()) || (!suncertainty.empty() && calculated_with_interval != CALCULATOR->usesIntervalArithmetics()))) {
 		if(mstruct) mstruct->unref();
 		mstruct = new MathStructure();
-		mstruct->setAborted();
 		ParseOptions po;
-		if(isApproximate() && precision() == -1) {
+		if(isApproximate() && precision() == -1 && suncertainty.empty()) {
 			po.read_precision = ALWAYS_READ_PRECISION;
 		}
-		CALCULATOR->parse(mstruct, sexpression, po);
+		if(sunit.empty()) {
+			mstruct->setAborted();
+			CALCULATOR->parse(mstruct, sexpression, po);
+		} else {
+			mstruct->number().set(sexpression, po);
+			mstruct->numberUpdated();
+		}
 		if(!suncertainty.empty()) {
 			Number nr_u(suncertainty);
-			if(mstruct->isNumber()) mstruct->number().setUncertainty(nr_u);
-			else if(mstruct->isMultiplication() && (*mstruct)[0].isNumber()) (*mstruct)[0].number().setUncertainty(nr_u);
+			if(mstruct->isNumber()) {
+				mstruct->number().setUncertainty(nr_u);
+			} else if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber()) {
+				(*mstruct)[0].number().setUncertainty(nr_u);
+			}
 		} else if(precision() >= 0) {
 			if(mstruct->precision() < 0 || precision() < mstruct->precision()) {
 				if(!set_precision_of_numbers(*mstruct, precision())) mstruct->setPrecision(precision(), true);
@@ -322,6 +348,13 @@ const MathStructure &KnownVariable::get() {
 				if(!set_precision_of_numbers(*mstruct, precision())) mstruct->setApproximate(true, true);
 			}
 		}
+		if(!sunit.empty()) {
+			MathStructure *mstruct_unit = new MathStructure;
+			mstruct_unit->setAborted();
+			CALCULATOR->parse(mstruct_unit, sunit, po);
+			mstruct->multiply_nocopy(mstruct_unit);
+		}
+		calculated_with_interval = CALCULATOR->usesIntervalArithmetics();
 	}
 	if(mstruct->contains(this, false, true, true) > 0) {
 		CALCULATOR->error(true, _("Recursive variable: %s = %s"), name().c_str(), mstruct->print().c_str(), NULL);

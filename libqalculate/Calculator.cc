@@ -5151,7 +5151,11 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 					mstruct2->unref();
 					return false;
 				}
-				if(s == OPERATION_DIVIDE && po.preserve_format) {
+				if(s == OPERATION_EXP10 && !po.preserve_format && mstruct->isNumber() && mstruct2->isNumber()) {
+					mstruct->number().exp10(mstruct2->number());
+					mstruct->numberUpdated();
+					mstruct->mergePrecision(*mstruct2);
+				} else if(s == OPERATION_DIVIDE && po.preserve_format) {
 					mstruct->transform_nocopy(STRUCT_DIVISION, mstruct2);
 				} else if(s == OPERATION_SUBTRACT && po.preserve_format) {
 					mstruct2->transform(STRUCT_NEGATE);
@@ -6655,7 +6659,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 
 	xmlDocPtr doc;
 	xmlNodePtr cur, child, child2, child3;
-	string version, stmp, name, uname, type, svalue, sexp, plural, singular, category_title, category, description, title, inverse, base, argname, usystem;
+	string version, stmp, name, uname, type, svalue, sexp, plural, singular, category_title, category, description, title, inverse, suncertainty, base, argname, usystem;
 	bool best_title, next_best_title, best_category_title, next_best_category_title, best_description, next_best_description;
 	bool best_plural, next_best_plural, best_singular, next_best_singular, best_argname, next_best_argname;
 	bool best_proptitle, next_best_proptitle, best_propdescr, next_best_propdescr;
@@ -7492,6 +7496,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				while(child != NULL) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "value")) {
 						XML_DO_FROM_TEXT(child, ((KnownVariable*) v)->set);
+						XML_DO_FROM_PROP(child, "uncertainty", ((KnownVariable*) v)->setUncertainty)
+						XML_DO_FROM_PROP(child, "unit", ((KnownVariable*) v)->setUnit)
 						XML_GET_PREC_FROM_PROP(child, prec)
 						v->setPrecision(prec);
 						XML_GET_APPROX_FROM_PROP(child, b);
@@ -7640,6 +7646,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							mix_min = 0;
 							svalue = "";
 							inverse = "";
+							suncertainty = "";
 							b = true;
 							while(child2 != NULL) {
 								if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
@@ -7653,6 +7660,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 									XML_GET_STRING_FROM_TEXT(child2, svalue);
 									XML_GET_APPROX_FROM_PROP(child2, b)
 									XML_GET_PREC_FROM_PROP(child2, prec)
+									XML_GET_STRING_FROM_PROP(child2, "uncertainty", suncertainty)
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "reverse_relation")) {
 									XML_GET_STRING_FROM_TEXT(child2, inverse);
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "inverse_relation")) {
@@ -7712,6 +7720,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						au->setDescription(description);
 						au->setPrecision(prec);
 						au->setApproximate(b);
+						au->setUncertainty(suncertainty);
 						au->setHidden(hidden);
 						au->setSystem(usystem);
 						if(use_with_prefixes_set) {
@@ -8209,6 +8218,8 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 						save_printoptions.is_approximate = &is_approx;
 						if(((KnownVariable*) variables[i])->isExpression()) {
 							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) ((KnownVariable*) variables[i])->expression().c_str());
+							if(!((KnownVariable*) variables[i])->uncertainty().empty()) xmlNewProp(newnode2, (xmlChar*) "uncertainty", (xmlChar*) ((KnownVariable*) variables[i])->uncertainty().c_str());
+							if(!((KnownVariable*) variables[i])->unit().empty()) xmlNewProp(newnode2, (xmlChar*) "unit", (xmlChar*) ((KnownVariable*) variables[i])->uncertainty().c_str());
 						} else {
 							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) ((KnownVariable*) variables[i])->get().print(save_printoptions).c_str());
 						}
@@ -8434,6 +8445,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 						newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "relation", (xmlChar*) au->expression().c_str());
 						if(au->isApproximate()) xmlNewProp(newnode3, (xmlChar*) "approximate", (xmlChar*) "true");
 						if(au->precision() >= 0) xmlNewProp(newnode3, (xmlChar*) "precision", (xmlChar*) i2s(u->precision()).c_str());
+						if(!au->uncertainty().empty()) xmlNewProp(newnode3, (xmlChar*) "uncertainty", (xmlChar*) au->uncertainty().c_str());
 						if(!au->inverseExpression().empty()) {
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "inverse_relation", (xmlChar*) au->inverseExpression().c_str());
 						}

@@ -220,6 +220,7 @@ AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_nam
 	remove_blank_ends(inverse);
 	svalue = relation;
 	sinverse = inverse;
+	suncertainty = "";
 	i_exp = exp;
 	i_mix = 0;
 	i_mix_min = 0;
@@ -228,6 +229,7 @@ AliasUnit::AliasUnit() {
 	o_unit = NULL;
 	svalue = "";
 	sinverse = "";
+	suncertainty = "";
 	i_exp = 1;
 	i_mix = 0;
 	i_mix_min = 0;
@@ -248,6 +250,7 @@ void AliasUnit::set(const ExpressionItem *item) {
 			i_exp = u->firstBaseExponent();
 			svalue = u->expression();
 			sinverse = u->inverseExpression();
+			suncertainty = u->uncertainty();
 			i_mix = u->mixWithBase();
 			i_mix_min = u->mixWithBaseMinimum();
 		}
@@ -271,6 +274,9 @@ string AliasUnit::expression() const {
 string AliasUnit::inverseExpression() const {
 	return sinverse;
 }
+string AliasUnit::uncertainty() const {
+	return suncertainty;
+}
 void AliasUnit::setExpression(string relation) {
 	remove_blank_ends(relation);
 	if(relation.empty()) {
@@ -283,6 +289,11 @@ void AliasUnit::setExpression(string relation) {
 void AliasUnit::setInverseExpression(string inverse) {
 	remove_blank_ends(inverse);
 	sinverse = inverse;
+	setChanged(true);
+}
+void AliasUnit::setUncertainty(string standard_uncertainty) {
+	remove_blank_ends(standard_uncertainty);
+	suncertainty = standard_uncertainty;
 	setChanged(true);
 }
 MathStructure &AliasUnit::convertToBaseUnit(MathStructure &mvalue, MathStructure &mexp) const {
@@ -333,7 +344,7 @@ int AliasUnit::baseExponent(int exp) const {
 MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const {
 	if(i_exp != 1) mexp /= i_exp;
 	ParseOptions po;
-	if(isApproximate() && precision() < 1) {
+	if(isApproximate() && suncertainty.empty() && precision() == -1) {
 		if(sinverse.find(DOT) || svalue.find(DOT)) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
 		else po.read_precision = ALWAYS_READ_PRECISION;
 	}
@@ -357,8 +368,20 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 			if(isApproximate()) mvalue.setApproximate(true, true);
 		} else {
 			MathStructure *mstruct = new MathStructure();
-			CALCULATOR->parse(mstruct, svalue, po);
-			if(precision() > 0) {
+			if(suncertainty.empty()) {
+				CALCULATOR->parse(mstruct, svalue, po);
+			} else {
+				mstruct->number().set(svalue, po);
+				mstruct->numberUpdated();
+			}
+			if(!suncertainty.empty()) {
+				Number nr_u(suncertainty);
+				if(mstruct->isNumber()) {
+					mstruct->number().setUncertainty(nr_u);
+				} else if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber()) {
+					(*mstruct)[0].number().setUncertainty(nr_u);
+				}
+			} else if(precision() > 0) {
 				if(mstruct->isNumber()) {
 					if(mstruct->number().precision() < 1 || precision() < mstruct->number().precision()) {
 						mstruct->number().setPrecision(precision());
@@ -426,7 +449,7 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 }
 MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const {
 	ParseOptions po;
-	if(isApproximate() && precision() == -1) {
+	if(isApproximate() && suncertainty.empty() && precision() == -1) {
 		if(svalue.find(DOT)) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
 		else po.read_precision = ALWAYS_READ_PRECISION;
 	}
@@ -456,8 +479,20 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 		if(isApproximate()) mvalue.setApproximate(true, true);
 	} else {
 		MathStructure *mstruct = new MathStructure();
-		CALCULATOR->parse(mstruct, svalue, po);
-		if(precision() >= 0) {
+		if(suncertainty.empty()) {
+			CALCULATOR->parse(mstruct, svalue, po);
+		} else {
+			mstruct->number().set(svalue, po);
+			mstruct->numberUpdated();
+		}
+		if(!suncertainty.empty()) {
+			Number nr_u(suncertainty);
+			if(mstruct->isNumber()) {
+				mstruct->number().setUncertainty(nr_u);
+			} else if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber()) {
+				(*mstruct)[0].number().setUncertainty(nr_u);
+			}
+		} else if(precision() >= 0) {
 			if(mstruct->isNumber()) {
 				if(mstruct->number().precision() < 0 || precision() < mstruct->number().precision()) {
 					mstruct->number().setPrecision(precision());
