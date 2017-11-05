@@ -11875,6 +11875,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po) {
 					}
 					if(inum == 0) {
 						PREPEND(MathStructure(nr));
+						index1 += 1;
 					} else if(inum > 1 && !CHILD(index2).isNumber()) {
 						idm3(*this, nr, !po.allow_factorization);
 					} else {
