@@ -870,7 +870,18 @@ bool Number::setToFloatingPoint() {
 	return true;
 }
 void Number::precisionToInterval() {
-	if(i_precision >= 0) {
+	if(i_precision >= 0 && isReal() && !isInterval()) {
+		if(!setToFloatingPoint()) return;
+		mpfr_t f_log;
+		mpfr_init2(f_log, mpfr_get_prec(fl_value));
+		mpfr_log10(f_log, fu_value, MPFR_RNDN);
+		mpfr_floor(f_log, f_log);
+		mpfr_sub_ui(f_log, f_log, i_precision, MPFR_RNDN);
+		mpfr_ui_pow(f_log, 10, f_log, MPFR_RNDD);
+		mpfr_div_ui(f_log, f_log, 2, MPFR_RNDD);
+		mpfr_sub(fl_value, fl_value, f_log, MPFR_RNDU);
+		mpfr_add(fu_value, fu_value, f_log, MPFR_RNDD);
+		mpfr_clear(f_log);
 	}
 }
 bool Number::intervalToPrecision() {
@@ -899,7 +910,7 @@ void Number::setUncertainty(const Number &o) {
 		nr.divide(o);
 		nr.divide(2);
 		nr.log(10);
-		nr.trunc();
+		nr.floor();
 		long int i_prec = nr.lintValue();
 		if(i_prec > 0) {
 			if(i_precision < 0 || i_prec < i_precision) i_precision = i_prec;
@@ -940,6 +951,20 @@ Number Number::uncertainty() const {
 	mpfr_div_ui(f_mid, f_mid, 2, MPFR_RNDU);
 	Number nr;
 	nr.setInternal(f_mid);
+	mpfr_clear(f_mid);
+	return nr;
+}
+Number Number::relativeUncertainty() const {
+	if(!isInterval()) return Number();
+	mpfr_t f_mid, f_diff;
+	mpfr_inits2(BIT_PRECISION, f_mid, f_diff, NULL);
+	mpfr_sub(f_mid, fu_value, fl_value, MPFR_RNDU);
+	mpfr_div_ui(f_diff, f_diff, 2, MPFR_RNDU);
+	mpfr_add(f_mid, fl_value, f_diff, MPFR_RNDN);
+	mpfr_div(f_mid, f_diff, f_mid, MPFR_RNDN);
+	Number nr;
+	nr.setInternal(f_mid);
+	mpfr_clears(f_mid, f_diff, NULL);
 	return nr;
 }
 
@@ -1404,7 +1429,6 @@ bool Number::imaginaryPartIsPositive() const {
 	return i_value && i_value->isPositive();
 }
 bool Number::imaginaryPartIsNonZero() const {
-	if(isInfinite()) return false;
 	return i_value && i_value->isNonZero();
 }
 bool Number::hasNegativeSign() const {
@@ -1470,7 +1494,7 @@ int Number::equalsApproximately(const Number &o, int prec) const {
 	}
 	if(prec_choosen || isApproximate() || o.isApproximate()) {
 		mpfr_t test1, test2;
-		mpfr_inits2(::ceil(PRECISION * 3.3219281), test1, test2, NULL);
+		mpfr_inits2(::ceil(prec * 3.3219281), test1, test2, NULL);
 		if(n_type == NUMBER_TYPE_FLOAT) {
 			mpfr_t test_c;
 			mpfr_init2(test_c, BIT_PRECISION);
@@ -5265,6 +5289,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	}
 	
 	if(isComplex()) {
+		if(!i_value->isNonZero()) {
+			Number nr;
+			nr.set(*this, false, true);
+			return nr.print(po, ips);
+		}
 		bool bre = hasRealPart();
 		if(bre) {
 			Number r_nr(*this);
@@ -5376,7 +5405,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				long int precexp = i_precision_base;
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
-				if((expo > -precexp && expo < precexp) || (expo < 0 && expo > -PRECISION - (PRECISION < 8 ? 2 : 3))) {
+				if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
 					expo = 0;
 				}
 			} else if(po.min_exp < -1) {
@@ -5618,13 +5647,36 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(ips.num) *ips.num = str;
 			return str;
 		} else if(po.interval_display == INTERVAL_DISPLAY_PLUSMINUS) {
+			mpfr_t f_mid, f_diff, f_log, f_log_diff;
+			mpfr_inits2(BIT_PRECISION, f_mid, f_diff, f_log, f_log_diff, NULL);
+			mpfr_sub(f_diff, fu_value, fl_value, MPFR_RNDU);
+			mpfr_div_ui(f_diff, f_diff, 2, MPFR_RNDU);
+			mpfr_add(f_mid, fl_value, f_diff, MPFR_RNDN);
+			mpfr_log10(f_log, f_mid, MPFR_RNDN);
+			mpfr_floor(f_log, f_log);
+			mpfr_log10(f_log_diff, f_diff, MPFR_RNDN);
+			mpfr_floor(f_log_diff, f_log_diff);
+			mpfr_sub(f_log_diff, f_log_diff, f_log, MPFR_RNDN);
+			long int i_log_diff = mpfr_get_si(f_log_diff, MPFR_RNDN);
+			
 			PrintOptions po2 = po;
-			po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
-			str += print(po2, ips);
-			str += "±";
-			po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-			str += uncertainty().print(po2);
+			if(precision + i_log_diff > 0) {
+				po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
+				po2.min_decimals = 0;
+				po2.use_max_decimals = false;
+				str = print(po2, ips);
+				str += "±";
+				po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+				Number nr;
+				nr.setInternal(f_diff);
+				nr.setPrecision(precision + i_log_diff);
+				str += nr.print(po2);
+			} else {
+				po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+				str = print(po2, ips);
+			}
 			if(ips.num) *ips.num = str;
+			mpfr_clears(f_diff, f_mid, f_log, f_log_diff, NULL);
 			return str;
 		} else if(po.interval_display == INTERVAL_DISPLAY_MIDPOINT) {
 			mpfr_inits2(mpfr_get_prec(fl_value), f_diff, f_mid, NULL);
@@ -5853,7 +5905,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				long int precexp = i_precision_base;
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
-				if((expo > -precexp && expo < precexp) || (expo < 0 && expo > -PRECISION - (PRECISION < 8 ? 2 : 3))) {
+				if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
 					expo = 0;
 				}
 			} else if(po.min_exp < -1) {
@@ -5993,7 +6045,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					long int precexp = i_precision_base;
 					if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 					else if(precexp > precision + 3) precexp = precision + 3;
-					if((expo > -precexp && expo < precexp) || (expo < 0 && expo > -PRECISION - (PRECISION < 8 ? 2 : 3))) {
+					if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
 						expo = 0;
 					}
 				} else if(po.min_exp < -1) {
@@ -6146,7 +6198,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				long int precexp = i_precision_base;
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
-				if((expo > -precexp && expo < precexp) || (expo < 0 && expo > -PRECISION - (PRECISION < 8 ? 2 : 3))) {
+				if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
 					expo = 0;
 				}
 			} else if(po.min_exp < -1) {

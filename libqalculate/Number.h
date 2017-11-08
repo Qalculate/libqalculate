@@ -130,6 +130,7 @@ class Number {
 		bool intervalToPrecision();
 		void setUncertainty(const Number &o);
 		Number uncertainty() const;
+		Number relativeUncertainty() const;
 		
 		double floatValue() const;
 		/**
