@@ -1123,16 +1123,26 @@ void Number::operator -- (int) {
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		mpz_sub(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
 	} else if(n_type == NUMBER_TYPE_FLOAT) {
-		mpfr_sub_ui(fu_value, fu_value, 1, MPFR_RNDU);
-		mpfr_sub_ui(fl_value, fl_value, 1, MPFR_RNDD);
+		if(!CALCULATOR->usesIntervalArithmetics() && !isInterval()) {
+			mpfr_sub_ui(fl_value, fl_value, 1, MPFR_RNDN);
+			mpfr_set(fu_value, fl_value, MPFR_RNDN);
+		} else {
+			mpfr_sub_ui(fu_value, fu_value, 1, MPFR_RNDU);
+			mpfr_sub_ui(fl_value, fl_value, 1, MPFR_RNDD);
+		}
 	}
 }
 void Number::operator ++ (int) {
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		mpz_add(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
 	} else if(n_type == NUMBER_TYPE_FLOAT) {
-		mpfr_add_ui(fu_value, fu_value, 1, MPFR_RNDU);
-		mpfr_add_ui(fl_value, fl_value, 1, MPFR_RNDD);
+		if(!CALCULATOR->usesIntervalArithmetics() && !isInterval()) {
+			mpfr_add_ui(fl_value, fl_value, 1, MPFR_RNDN);
+			mpfr_set(fu_value, fl_value, MPFR_RNDN);
+		} else {
+			mpfr_add_ui(fu_value, fu_value, 1, MPFR_RNDU);
+			mpfr_add_ui(fl_value, fl_value, 1, MPFR_RNDD);
+		}
 	}
 }
 Number Number::operator - () const {Number o(*this); o.negate(); return o;}
@@ -1496,22 +1506,30 @@ int Number::equalsApproximately(const Number &o, int prec) const {
 		mpfr_t test1, test2;
 		mpfr_inits2(::ceil(prec * 3.3219281), test1, test2, NULL);
 		if(n_type == NUMBER_TYPE_FLOAT) {
-			mpfr_t test_c;
-			mpfr_init2(test_c, BIT_PRECISION);
-			mpfr_sub(test_c, fu_value, fl_value, MPFR_RNDN);
-			mpfr_div_ui(test_c, test_c, 2, MPFR_RNDN);
-			mpfr_add(test1, fl_value, test_c, MPFR_RNDN);
-			mpfr_clear(test_c);
+			if(!CALCULATOR->usesIntervalArithmetics() && !isInterval()) {
+				mpfr_set(test1, fl_value, MPFR_RNDN);
+			} else {
+				mpfr_t test_c;
+				mpfr_init2(test_c, BIT_PRECISION);
+				mpfr_sub(test_c, fu_value, fl_value, MPFR_RNDN);
+				mpfr_div_ui(test_c, test_c, 2, MPFR_RNDN);
+				mpfr_add(test1, fl_value, test_c, MPFR_RNDN);
+				mpfr_clear(test_c);
+			}
 		} else {
 			mpfr_set_q(test1, r_value, MPFR_RNDN);
 		}
 		if(o.isFloatingPoint()) {
-			mpfr_t test_c;
-			mpfr_init2(test_c, BIT_PRECISION);
-			mpfr_sub(test_c, o.internalUpperFloat(), o.internalLowerFloat(), MPFR_RNDN);
-			mpfr_div_ui(test_c, test_c, 2, MPFR_RNDN);
-			mpfr_add(test2, o.internalLowerFloat(), test_c, MPFR_RNDN);
-			mpfr_clear(test_c);
+			if(!CALCULATOR->usesIntervalArithmetics() && !o.isInterval()) {
+				mpfr_set(test2, o.internalLowerFloat(), MPFR_RNDN);
+			} else {
+				mpfr_t test_c;
+				mpfr_init2(test_c, BIT_PRECISION);
+				mpfr_sub(test_c, o.internalUpperFloat(), o.internalLowerFloat(), MPFR_RNDN);
+				mpfr_div_ui(test_c, test_c, 2, MPFR_RNDN);
+				mpfr_add(test2, o.internalLowerFloat(), test_c, MPFR_RNDN);
+				mpfr_clear(test_c);
+			}
 		} else {
 			mpfr_set_q(test2, o.internalRational(), MPFR_RNDN);
 		}
@@ -2109,7 +2127,7 @@ bool Number::multiply(const Number &o) {
 			mpfr_init2(fu_value, BIT_PRECISION);
 			mpfr_init2(fl_value, BIT_PRECISION);
 			n_type = NUMBER_TYPE_FLOAT;
-			if(!CALCULATOR->usesIntervalArithmetics() && o.isInterval()) {
+			if(!CALCULATOR->usesIntervalArithmetics() && !o.isInterval()) {
 				mpfr_mul_q(fl_value, o.internalLowerFloat(), r_value, MPFR_RNDN);
 				mpfr_set(fu_value, fl_value, MPFR_RNDN);
 			} else {
@@ -3327,7 +3345,7 @@ bool Number::mod(const Number &o) {
 			mpq_mul(r_value, r_value, o.internalRational());
 		}
 	} else {
-	//FIXME
+		// TODO: Interval too wide when o is interval
 		if(!divide(o) || !frac()) return false;
 		if(isNegative()) {
 			(*this)++;
@@ -3392,10 +3410,7 @@ bool Number::rem(const Number &o) {
 			mpq_mul(r_value, r_value, o.internalRational());
 		}
 	} else {
-//FIXME
-		if(!!CALCULATOR->usesIntervalArithmetics() && !isInterval() && o.isFloatingPoint()) {
-			
-		}
+		// TODO: Interval too wide when o is interval
 		return divide(o) && frac() && multiply(o);
 	}
 	setPrecisionAndApproximateFrom(o);
@@ -5204,6 +5219,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.exp) *ips.exp = "";
 	if(ips.re) *ips.re = "";
 	if(ips.im) *ips.im = "";
+	if(ips.iexp) *ips.iexp = 0;
 	if(po.is_approximate && isApproximate()) *po.is_approximate = true;
 	if((po.base == BASE_SEXAGESIMAL || po.base == BASE_TIME) && isReal()) {
 		Number nr(*this);
@@ -5578,7 +5594,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				str += "0";
 			}
 		}
-		if(expo != 0) { 
+		if(expo != 0) {
+			if(ips.iexp) *ips.iexp = expo;
 			if(ips.exp) {
 				if(ips.exp_minus) {
 					*ips.exp_minus = expo < 0;
@@ -5627,6 +5644,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		
 		mpfr_t f_diff, f_mid;
 		
+		if(!mpfr_equal_p(fl_value, fu_value)) cout << "INTERVAL" << endl;
+		
 		if(mpfr_equal_p(fl_value, fu_value)) {
 			mpfr_init2(f_mid, mpfr_get_prec(fl_value));
 			mpfr_set(f_mid, fl_value, MPFR_RNDN);
@@ -5658,19 +5677,48 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpfr_floor(f_log_diff, f_log_diff);
 			mpfr_sub(f_log_diff, f_log_diff, f_log, MPFR_RNDN);
 			long int i_log_diff = mpfr_get_si(f_log_diff, MPFR_RNDN);
-			
+
 			PrintOptions po2 = po;
 			if(precision + i_log_diff > 0) {
+				long int iexp = 0, deci = 0;
+				InternalPrintStruct ips2 = ips;
+				ips2.iexp = &iexp;
+				ips2.decimals = &deci;
 				po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
 				po2.min_decimals = 0;
 				po2.use_max_decimals = false;
-				str = print(po2, ips);
+				str = print(po2, ips2);
+				if(ips.iexp) *ips.iexp = iexp;
+				if(ips.decimals) *ips.decimals = deci;
 				str += "±";
 				po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+				precision += i_log_diff;
+				if(iexp > 0) {
+					mpfr_ui_pow_ui(f_log, 10, iexp, MPFR_RNDN);
+					mpfr_div(f_diff, f_diff, f_log, MPFR_RNDN);
+				} else if(iexp < 0) {
+					mpfr_ui_pow_ui(f_log, 10, -iexp, MPFR_RNDN);
+					mpfr_mul(f_diff, f_diff, f_log, MPFR_RNDN);
+				} else {
+					long int i_log = mpfr_get_si(f_log, MPFR_RNDN);
+					if(i_log < 0) i_log = -i_log;
+					if(i_log + 1 > precision) precision = i_log + i_log_diff + 1;
+				}
+				po2.min_exp = 0;
 				Number nr;
 				nr.setInternal(f_diff);
-				nr.setPrecision(precision + i_log_diff);
+				if(po.preserve_precision) {
+					if(i_precision < 0) precision = FROM_BIT_PRECISION(BIT_PRECISION);
+					precision += i_log_diff;
+					if(precision < 0) precision = 0;
+				}
+				nr.setPrecision(precision);
 				str += nr.print(po2);
+				if(iexp != 0 && !ips.exp) {
+					if(po.lower_case_e) str += "e";
+					else str += "E";
+					str += i2s(iexp);
+				}
 			} else {
 				po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 				str = print(po2, ips);
@@ -5873,6 +5921,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		
 		precision = precision_base;
 		
+		cout << i_precision_base << ":" << precision << endl;
+		
 		if(mpfr_zero_p(f_mid)) {
 			Number nr_zero;
 			nr_zero.setApproximate(true);
@@ -5935,6 +5985,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				goto float_rerun;
 			}
 		}
+		if(expo == 0 && i_log > precision) {
+			precision = (i_precision_base > i_log + 1) ? i_log + 1 : i_precision_base;
+		}
 		mpfr_sub_si(f_log, f_log, (po.use_max_decimals && po.max_decimals >= 0 && precision > po.max_decimals + i_log - expo) ? po.max_decimals + i_log - expo: precision - 1, MPFR_RNDN);
 		l10 = expo - mpfr_get_si(f_log, MPFR_RNDN);
 		mpfr_pow(f_log, f_base, f_log, MPFR_RNDN);
@@ -5989,6 +6042,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		str = format_number_string(str, base, po.base_display, !ips.minus && neg, !has_decimal);
 		
 		if(expo != 0) {
+			if(ips.iexp) *ips.iexp = expo;
 			if(ips.exp) {
 				if(ips.exp_minus) {
 					*ips.exp_minus = expo < 0;
@@ -6304,6 +6358,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			else str += "...";
 		}
 		if(expo != 0) {
+			if(ips.iexp) *ips.iexp = expo;
 			if(ips.exp) {
 				if(ips.exp_minus) {
 					*ips.exp_minus = expo < 0;

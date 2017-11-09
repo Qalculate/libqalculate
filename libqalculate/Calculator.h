@@ -209,6 +209,7 @@ class Calculator {
 	int ianglemode;
 	int i_precision;
 	bool b_interval;
+	int i_stop_interval = 0;
 	char vbuffer[200];
 	vector<void*> ufvl;
 	vector<char> ufvl_t;
@@ -911,7 +912,7 @@ class Calculator {
 	CalculatorMessage *nextMessage();
 	bool showArgumentErrors() const;
 	void beginTemporaryStopMessages();
-	int endTemporaryStopMessages(int *message_count = NULL, int *warning_count = NULL);	
+	int endTemporaryStopMessages(int *message_count = NULL, int *warning_count = NULL);
 	//@}
 
 	/** @name Functions for loading and saving definitions (variables, functions, units, etc.). */
@@ -1087,6 +1088,8 @@ class Calculator {
 	/** Returns true if interval arithmetics are activated.
 	*/
 	bool usesIntervalArithmetics() const;
+	void beginTemporaryStopIntervalArithmetics();
+	void endTemporaryStopIntervalArithmetics();
 	//@}
 
 	/** @name Functions for localization */

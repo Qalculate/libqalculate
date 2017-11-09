@@ -341,6 +341,7 @@ Calculator::Calculator() {
 	
 	setPrecision(DEFAULT_PRECISION);
 	b_interval = false;
+	i_stop_interval = 0;
 
 	addStringAlternative(SIGN_POWER_0, "^(0)");
 	addStringAlternative(SIGN_POWER_1, "^(1)");
@@ -1147,7 +1148,13 @@ int Calculator::getPrecision() const {
 	return i_precision;
 }
 void Calculator::useIntervalArithmetics(bool use_interval_arithmetics) {b_interval = use_interval_arithmetics;}
-bool Calculator::usesIntervalArithmetics() const {return b_interval;}
+bool Calculator::usesIntervalArithmetics() const {return b_interval && i_stop_interval <= 0;}
+void Calculator::beginTemporaryStopIntervalArithmetics() {
+	i_stop_interval++;
+}
+void Calculator::endTemporaryStopIntervalArithmetics() {
+	i_stop_interval--;
+}
 
 const string &Calculator::getDecimalPoint() const {return DOT_STR;}
 const string &Calculator::getComma() const {return COMMA_STR;}

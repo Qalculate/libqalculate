@@ -94,6 +94,7 @@ struct sym_desc {
 };
 typedef std::vector<sym_desc> sym_desc_vec;
 
+bool contains_interval(const MathStructure &mstruct);
 bool polynomial_long_division(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar_pre, MathStructure &mquotient, MathStructure &mrem, const EvaluationOptions &eo, bool check_args = false, bool for_newtonraphson = false);
 void integer_content(const MathStructure &mpoly, Number &icontent);
 void interpolate(const MathStructure &gamma, const Number &xi, const MathStructure &xvar, MathStructure &minterp, const EvaluationOptions &eo);
@@ -5736,7 +5737,7 @@ bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo) {
 	return false;
 }
 
-bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo, bool recursive, MathStructure *mparent, size_t index_this) {	
+bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo, bool recursive, MathStructure *mparent, size_t index_this) {
 	if(b_protected) return false;
 	bool b = false;
 	switch(m_type) {
@@ -9635,6 +9636,37 @@ bool MathStructure::polynomialQuotient(const MathStructure &mnum, const MathStru
 
 }
 
+bool remove_zerointerval_multiplier(MathStructure &mstruct, const EvaluationOptions &eo) {
+	if(mstruct.isAddition()) {
+		bool b;
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(remove_zerointerval_multiplier(mstruct[i], eo)) b = true;
+		}
+		if(b) {
+			mstruct.calculatesub(eo, eo, false);
+			return true;
+		}
+	} else if(mstruct.isMultiplication()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(mstruct[i].isNumber() && !mstruct[i].number().isNonZero()) {
+				mstruct.clear(true);
+				return true;
+			}
+		}
+	} else if(mstruct.isNumber() && !mstruct.number().isNonZero()) {
+		mstruct.clear(true);
+		return true;
+	}
+	return false;
+}
+bool contains_interval(const MathStructure &mstruct) {
+	if(mstruct.isNumber()) return mstruct.number().isInterval();
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(contains_interval(mstruct[i])) return true;
+	}
+	return false;
+}
+
 bool polynomial_long_division(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar_pre, MathStructure &mquotient, MathStructure &mrem, const EvaluationOptions &eo, bool check_args, bool for_newtonraphson) {
 	mquotient.clear();
 	mrem.clear();
@@ -9667,7 +9699,7 @@ bool polynomial_long_division(const MathStructure &mnum, const MathStructure &md
 	
 	mrem.set(mnum);
 	
-	if(check_args && (!mnum.isRationalPolynomial() || !mden.isRationalPolynomial())) {
+	if((check_args && (!mnum.isRationalPolynomial() || !mden.isRationalPolynomial())) || contains_interval(mnum) || contains_interval(mden)) {
 		return false;
 	}
 	
@@ -9731,6 +9763,10 @@ bool polynomial_long_division(const MathStructure &mnum, const MathStructure &md
 		else mquotient.calculateAdd(numcoeff, eo2);
 		numcoeff.calculateMultiply(mden, eo2);
 		mrem.calculateSubtract(numcoeff, eo2);
+		/*if(for_newtonraphson) {
+			remove_zerointerval_multiplier(mrem, eo2);
+			remove_zerointerval_multiplier(mquotient, eo2);
+		}*/
 		if(mrem.isZero() || (for_newtonraphson && mrem.isNumber())) break;
 		numdeg = mrem.degree(xvar);
 	}
@@ -16703,7 +16739,9 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 		if(nr.isNegative()) nr.negate();
 		if(nr.root(ndeg)) mguess = nr;
 	}
-
+	PrintOptions po;
+	po.interval_display = INTERVAL_DISPLAY_INTERVAL;
+	
 	for(int i = 0; i < 100 + PRECISION + ideg * 2; i++) {
 
 		if(CALCULATOR->aborted()) return -1;
@@ -16713,13 +16751,15 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 		mtest.eval(eo);
 
 		Number nrdiv(mguess.number());
-		if(!mtest.isNumber() || nrdiv.divide(mtest.number())) {
+		if(!mtest.isNumber() || !nrdiv.divide(mtest.number())) {
 			return -1;
 		}
+
 		if(nrdiv.isLessThan(nr_target_high) && nrdiv.isGreaterThan(nr_target_low)) {
 			if(CALCULATOR->usesIntervalArithmetics()) {
 				x_value.number().setInterval(mguess.number(), mtest.number());
 			} else {
+				x_value = mtest;
 				if(x_value.number().precision() < 0 || x_value.number().precision() > PRECISION + 10) x_value.number().setPrecision(PRECISION + 10);
 			}
 			x_value.numberUpdated();
@@ -17815,6 +17855,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(1).isNumber() && eo.approximation != APPROXIMATION_EXACT && !x_var.representsComplex(true)) {
 				MathStructure mtest(CHILD(0));
 				if(!CHILD(0).isZero()) mtest.calculateSubtract(CHILD(1), eo2);
+				CALCULATOR->beginTemporaryStopIntervalArithmetics();
+				fix_intervals(mtest, eo2);
 				MathStructure mbak(*this);
 				int ret = -1;
 				EvaluationOptions eo3 = eo2;
@@ -17843,6 +17885,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 					if(!mtest.contains(x_var)) break;
 				}
+				CALCULATOR->endTemporaryStopIntervalArithmetics();
 				if(ret < 0) {
 					set(mbak);
 				} else {

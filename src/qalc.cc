@@ -399,14 +399,23 @@ bool check_exchange_rates() {
 void set_option(string str) {
 	remove_blank_ends(str);
 	string svalue, svar;
+	size_t i_underscore = str.find("_");
 	size_t index;
-	if((index = str.find_first_of(SPACES)) != string::npos) {
-		svalue = str.substr(index + 1, str.length() - (index + 1));
-		remove_blank_ends(svalue);
+	if(i_underscore != string::npos) {
+		index = str.find_first_of(SPACES);
+		if(index != string::npos && i_underscore > index) i_underscore = string::npos;
 	}
-	svar = str.substr(0, index);
-	remove_blank_ends(svar);
-	gsub("_", " ", svar);
+	if(i_underscore == string::npos) index = str.find_last_of(SPACES);
+	if(index != string::npos) {
+		svar = str.substr(0, index);
+		remove_blank_ends(svar);
+		svalue = str.substr(index + 1);
+		remove_blank_ends(svalue);
+	} else {
+		svar = str;
+	}
+	if(i_underscore != string::npos) gsub("_", " ", svar);
+
 	set_option_place:
 	if(EQUALS_IGNORECASE_AND_LOCAL(svar, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(svar, "input base", _("input base")) || EQUALS_IGNORECASE_AND_LOCAL(svar, "output base", _("output base"))) {
 		int v = 0;
@@ -702,7 +711,7 @@ void set_option(string str) {
 			printops.interval_display = (IntervalDisplay) v;
 			result_format_updated();
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval", _("interval")) && svalue.find("display") == string::npos && svalue.find(_("display")) == string::npos) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval", _("interval"))) {
 		bool b = CALCULATOR->usesIntervalArithmetics();
 		SET_BOOL(b)
 		if(b != CALCULATOR->usesIntervalArithmetics()) {
@@ -764,15 +773,13 @@ void set_option(string str) {
 			expression_format_updated(true);
 		}
 	} else {
-		if(index != string::npos) {
-			if((index = svalue.find_first_of(SPACES)) != string::npos) {
-				str = svalue;
-				svalue = str.substr(index + 1, str.length() - (index + 1));
-				remove_blank_ends(svalue);
-				svar += " ";
-				str = str.substr(0, index);
+		if(i_underscore == string::npos && index != string::npos) {
+			if((index = svar.find_last_of(SPACES)) != string::npos) {
+				svar = svar.substr(0, index);
+				remove_blank_ends(svar);
+				str = str.substr(index + 1);
 				remove_blank_ends(str);
-				svar += str;
+				svalue += str;
 				gsub("_", " ", svar);
 				goto set_option_place;
 			}

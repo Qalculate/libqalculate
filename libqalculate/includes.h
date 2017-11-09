@@ -472,8 +472,8 @@ static const struct InternalPrintStruct {
 	bool *minus, *exp_minus;
 	bool parent_approximate;
 	int parent_precision;
-	long int *exp10;
-	InternalPrintStruct() : depth(0), power_depth(0), division_depth(0), wrap(false), num(NULL), den(NULL), re(NULL), im(NULL), exp(NULL), minus(NULL), exp_minus(NULL), parent_approximate(false), parent_precision(-1), exp10(NULL) {}
+	long int *iexp, *decimals;
+	InternalPrintStruct() : depth(0), power_depth(0), division_depth(0), wrap(false), num(NULL), den(NULL), re(NULL), im(NULL), exp(NULL), minus(NULL), exp_minus(NULL), parent_approximate(false), parent_precision(-1), iexp(NULL), decimals(NULL) {}
 } top_ips;
 
 typedef enum {
