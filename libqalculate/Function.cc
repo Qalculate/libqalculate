@@ -1510,8 +1510,12 @@ bool NumberArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 	if(!value.isNumber()) {
 		value.eval(eo);
 	}
-	if(!value.isNumber() || (b_rational_number && !value.number().isRational()) || (!b_complex && value.number().isComplex())) {
+	if(!value.isNumber() || (b_rational_number && !value.number().isRational())) {
 		return false;
+	}
+	if(!b_complex && value.number().isComplex()) {
+		if(!value.number().imaginaryPartIsNonZero()) value.number().clearImaginary();
+		else return false;
 	}
 	if(fmin) {
 		ComparisonResult cmpr = fmin->compare(value.number());

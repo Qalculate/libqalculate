@@ -1617,7 +1617,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(mstruct[0].number().isInteger()) {
 			mstruct.clear();
 			b = true;
-		} else if(!mstruct[0].number().isComplex() && !mstruct[0].number().isInfinite()) {
+		} else if(!mstruct[0].number().isComplex() && !mstruct[0].number().isInfinite() && !mstruct[0].number().isInterval()) {
 			Number nr(mstruct[0].number());
 			nr.frac();
 			Number nr_int(mstruct[0].number());
@@ -1756,7 +1756,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct = -1;
 			}
 			b = true;
-		} else if(!mstruct[0].number().isComplex() && !mstruct[0].number().isInfinite()) {
+		} else if(!mstruct[0].number().isComplex() && !mstruct[0].number().isInfinite() && !mstruct[0].number().isInterval()) {
 			Number nr(mstruct[0].number());
 			nr.frac();
 			Number nr_int(mstruct[0].number());
@@ -1895,7 +1895,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(mstruct[0].number().isInteger()) {
 			mstruct.clear();
 			b = true;
-		} else if(!mstruct[0].number().isComplex() && !mstruct[0].number().isInfinite()) {
+		} else if(!mstruct[0].number().isComplex() && !mstruct[0].number().isInfinite() && !mstruct[0].number().isInterval()) {
 			Number nr(mstruct[0].number());
 			nr.frac();
 			bool b_neg = nr.isNegative();

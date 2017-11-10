@@ -606,6 +606,8 @@ void Number::set(string number, const ParseOptions &po) {
 
 		n_type = NUMBER_TYPE_FLOAT;
 		
+		b_approx = true;
+		
 		testErrors(2);
 		
 		if(b_cplx) {
@@ -872,20 +874,31 @@ bool Number::setToFloatingPoint() {
 void Number::precisionToInterval() {
 	if(i_precision >= 0 && isReal() && !isInterval()) {
 		if(!setToFloatingPoint()) return;
+		mpfr_clear_flags();
 		mpfr_t f_log;
 		mpfr_init2(f_log, mpfr_get_prec(fl_value));
-		mpfr_log10(f_log, fu_value, MPFR_RNDN);
+		mpfr_abs(f_log, fu_value, MPFR_RNDN);
+		mpfr_log10(f_log, f_log, MPFR_RNDN);
 		mpfr_floor(f_log, f_log);
+		PRINT_MPFR(f_log, 10);
 		mpfr_sub_ui(f_log, f_log, i_precision, MPFR_RNDN);
+		PRINT_MPFR(f_log, 10);
 		mpfr_ui_pow(f_log, 10, f_log, MPFR_RNDD);
+		PRINT_MPFR(f_log, 10);
 		mpfr_div_ui(f_log, f_log, 2, MPFR_RNDD);
+		PRINT_MPFR(f_log, 10);
 		mpfr_sub(fl_value, fl_value, f_log, MPFR_RNDU);
+		PRINT_MPFR(fl_value, 10);
 		mpfr_add(fu_value, fu_value, f_log, MPFR_RNDD);
+		PRINT_MPFR(fu_value, 10);
 		mpfr_clear(f_log);
+		testErrors(2);
+		i_precision = -1;
 	}
 }
 bool Number::intervalToPrecision() {
 	if(n_type == NUMBER_TYPE_FLOAT && !mpfr_equal_p(fl_value, fu_value)) {
+		mpfr_clear_flags();
 		mpfr_t f_diff, f_mid;
 		mpfr_inits2(mpfr_get_prec(fl_value), f_diff, f_mid, NULL);
 		mpfr_sub(f_diff, fu_value, fl_value, MPFR_RNDN);
@@ -893,12 +906,16 @@ bool Number::intervalToPrecision() {
 		mpfr_add(f_mid, fl_value, f_diff, MPFR_RNDN);
 		mpfr_mul_ui(f_diff, f_diff, 2, MPFR_RNDN);
 		mpfr_div(f_diff, f_mid, f_diff, MPFR_RNDU);
+		mpfr_abs(f_diff, f_diff, MPFR_RNDN);
 		mpfr_log10(f_diff, f_diff, MPFR_RNDD);
-		long int i_prec = mpfr_get_si(f_diff, MPFR_RNDD);
+		long int i_prec = mpfr_get_si(f_diff, MPFR_RNDD) + 1;
 		if(i_prec < 0) i_prec = 0;
 		if(i_precision < 0 || i_prec < i_precision) i_precision = i_prec;
+		mpfr_set(fl_value, f_mid, MPFR_RNDN);
+		mpfr_set(fu_value, f_mid, MPFR_RNDN);
 		mpfr_clears(f_diff, f_mid, NULL);
 		b_approx = true;
+		testErrors(2);
 	}
 	return true;
 }
@@ -907,6 +924,7 @@ void Number::setUncertainty(const Number &o) {
 	b_approx = true;
 	if(!CALCULATOR->usesIntervalArithmetics()) {
 		Number nr(*this);
+		nr.abs();
 		nr.divide(o);
 		nr.divide(2);
 		nr.log(10);
@@ -958,9 +976,10 @@ Number Number::relativeUncertainty() const {
 	if(!isInterval()) return Number();
 	mpfr_t f_mid, f_diff;
 	mpfr_inits2(BIT_PRECISION, f_mid, f_diff, NULL);
-	mpfr_sub(f_mid, fu_value, fl_value, MPFR_RNDU);
+	mpfr_sub(f_diff, fu_value, fl_value, MPFR_RNDU);
 	mpfr_div_ui(f_diff, f_diff, 2, MPFR_RNDU);
 	mpfr_add(f_mid, fl_value, f_diff, MPFR_RNDN);
+	mpfr_abs(f_mid, f_mid, MPFR_RNDN);
 	mpfr_div(f_mid, f_diff, f_mid, MPFR_RNDN);
 	Number nr;
 	nr.setInternal(f_mid);
@@ -2676,8 +2695,8 @@ bool Number::raise(const Number &o, bool try_exact) {
 				mpfr_set(fu_value, fl_value, MPFR_RNDN);
 			} else if(sgn_ol < 0) {
 				if(sgn_ou < 0) {
-					mpfr_pow(fu_value, fu_value, o.internalUpperFloat(), MPFR_RNDD);
-					mpfr_pow(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDU);
+					mpfr_pow(fu_value, fu_value, o.internalLowerFloat(), MPFR_RNDD);
+					mpfr_pow(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDU);
 					mpfr_swap(fu_value, fl_value);
 				} else {
 					mpfr_t fu_value2, fl_value2;
@@ -5679,39 +5698,38 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			long int i_log_diff = mpfr_get_si(f_log_diff, MPFR_RNDN);
 
 			PrintOptions po2 = po;
-			if(precision + i_log_diff > 0) {
-				long int iexp = 0, deci = 0;
-				InternalPrintStruct ips2 = ips;
-				ips2.iexp = &iexp;
-				ips2.decimals = &deci;
-				po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
-				po2.min_decimals = 0;
-				po2.use_max_decimals = false;
-				str = print(po2, ips2);
-				if(ips.iexp) *ips.iexp = iexp;
-				if(ips.decimals) *ips.decimals = deci;
+			long int iexp = 0, deci = 0;
+			InternalPrintStruct ips2 = ips;
+			ips2.iexp = &iexp;
+			ips2.decimals = &deci;
+			po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
+			po2.min_decimals = 0;
+			po2.use_max_decimals = false;
+			str = print(po2, ips2);
+			if(ips.iexp) *ips.iexp = iexp;
+			if(ips.decimals) *ips.decimals = deci;
+			po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+			if(po.preserve_precision) {
+				if(i_precision < 0) precision = FROM_BIT_PRECISION(BIT_PRECISION);
+				else precision = i_precision;
+			}
+			if(iexp > 0) {
+				mpfr_ui_pow_ui(f_log, 10, iexp, MPFR_RNDN);
+				mpfr_div(f_diff, f_diff, f_log, MPFR_RNDN);
+			} else if(iexp < 0) {
+				mpfr_ui_pow_ui(f_log, 10, -iexp, MPFR_RNDN);
+				mpfr_mul(f_diff, f_diff, f_log, MPFR_RNDN);
+			} else {
+				long int i_log = mpfr_get_si(f_log, MPFR_RNDN);
+				if(i_log < 0) i_log = -i_log;
+				if(i_log + 1 > precision) precision = i_log + 1;
+			}
+			po2.min_exp = 0;
+			Number nr;
+			nr.setInternal(f_diff);
+			precision += i_log_diff;
+			if(precision > 0) {
 				str += "±";
-				po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-				precision += i_log_diff;
-				if(iexp > 0) {
-					mpfr_ui_pow_ui(f_log, 10, iexp, MPFR_RNDN);
-					mpfr_div(f_diff, f_diff, f_log, MPFR_RNDN);
-				} else if(iexp < 0) {
-					mpfr_ui_pow_ui(f_log, 10, -iexp, MPFR_RNDN);
-					mpfr_mul(f_diff, f_diff, f_log, MPFR_RNDN);
-				} else {
-					long int i_log = mpfr_get_si(f_log, MPFR_RNDN);
-					if(i_log < 0) i_log = -i_log;
-					if(i_log + 1 > precision) precision = i_log + i_log_diff + 1;
-				}
-				po2.min_exp = 0;
-				Number nr;
-				nr.setInternal(f_diff);
-				if(po.preserve_precision) {
-					if(i_precision < 0) precision = FROM_BIT_PRECISION(BIT_PRECISION);
-					precision += i_log_diff;
-					if(precision < 0) precision = 0;
-				}
 				nr.setPrecision(precision);
 				str += nr.print(po2);
 				if(iexp != 0 && !ips.exp) {
@@ -5719,9 +5737,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					else str += "E";
 					str += i2s(iexp);
 				}
-			} else {
-				po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-				str = print(po2, ips);
 			}
 			if(ips.num) *ips.num = str;
 			mpfr_clears(f_diff, f_mid, f_log, f_log_diff, NULL);

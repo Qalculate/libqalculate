@@ -8209,6 +8209,7 @@ void factorize_variable(MathStructure &mstruct, const MathStructure &mvar) {
 
 bool var_contains_interval(const MathStructure &mstruct) {
 	if(mstruct.isNumber()) return mstruct.number().isInterval();
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_interval) return true;
 	if(mstruct.isVariable() && mstruct.variable()->isKnown()) return var_contains_interval(((KnownVariable*) mstruct.variable())->get());
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(var_contains_interval(mstruct[i])) return true;
@@ -8216,7 +8217,7 @@ bool var_contains_interval(const MathStructure &mstruct) {
 	return false;
 }
 
-bool factorize_variables(MathStructure &mstruct) {
+bool factorize_variables(MathStructure &mstruct, const EvaluationOptions &eo) {
 	bool b = false;
 	if(mstruct.type() == STRUCT_ADDITION) {
 		vector<MathStructure> variables;
@@ -8249,7 +8250,7 @@ bool factorize_variables(MathStructure &mstruct) {
 			} else if(variable_count[i] == mstruct.size()) {
 				factorize_variable(mstruct, variables[i]);
 				if(CALCULATOR->aborted()) return true;
-				factorize_variables(mstruct);
+				factorize_variables(mstruct, eo);
 				return true;
 			} else {
 				i++;
@@ -8263,13 +8264,19 @@ bool factorize_variables(MathStructure &mstruct) {
 		size_t u_index = 0;
 		for(size_t i = 0; i < variables.size(); i++) {
 			const MathStructure *v_ms;
-			const Number *nr = NULL;
+			Number nr;
 			if(variables[i].isPower()) v_ms = &((KnownVariable*) variables[i][0].variable())->get();
 			else v_ms = &((KnownVariable*) variables[i].variable())->get();
-			if(v_ms->isNumber()) nr = &v_ms->number();
-			else if(v_ms->isMultiplication() && v_ms->size() > 0 && (*v_ms)[0].isNumber()) nr = &(v_ms)[0].number();
-			if(nr && nr->isInterval()) {
-				Number u_candidate(nr->uncertainty());
+			if(v_ms->isNumber()) nr = v_ms->number();
+			else if(v_ms->isMultiplication() && v_ms->size() > 0 && (*v_ms)[0].isNumber()) nr = (v_ms)[0].number();
+			else {
+				MathStructure mtest(*v_ms);
+				mtest.calculatesub(eo, eo, true);
+				if(mtest.isNumber()) nr = mtest.number();
+				else if(mtest.isMultiplication() && mtest.size() > 0 && mtest[0].isNumber()) nr = mtest[0].number();
+			}
+			if(nr.isInterval()) {
+				Number u_candidate(nr.uncertainty());
 				if(variables[i].isPower() && variables[i][1].isNumber() && variables[i][1].number().isReal()) u_candidate.raise(variables[i][1].number());
 				u_candidate.multiply(variable_count[i]);
 				if(u_candidate.isGreaterThan(uncertainty)) {
@@ -8281,12 +8288,12 @@ bool factorize_variables(MathStructure &mstruct) {
 		if(!uncertainty.isZero()) {
 			factorize_variable(mstruct, variables[u_index]);
 			if(CALCULATOR->aborted()) return true;
-			factorize_variables(mstruct);
+			factorize_variables(mstruct, eo);
 			return true;
 		}
 	}
 	for(size_t i = 0; i < mstruct.size(); i++) {
-		if(factorize_variables(mstruct[i])) {
+		if(factorize_variables(mstruct[i], eo)) {
 			mstruct.childUpdated(i + 1);
 			b = true;
 		}
@@ -8324,13 +8331,15 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		eo3.assume_denominators_nonzero = false;
 		calculatesub(eo3, feo);
 		if(m_type == STRUCT_NUMBER) return *this;
-		if(eo.expand != 0 && !containsType(STRUCT_COMPARISON, true, true, true)) {
+		if(!CALCULATOR->usesIntervalArithmetics() && eo.expand != 0 && !containsType(STRUCT_COMPARISON, true, true, true)) {
 			unformat(eo);
-			eo3.expand = (CALCULATOR->usesIntervalArithmetics()) ? -2 : -1;
+			//eo3.expand = (CALCULATOR->usesIntervalArithmetics()) ? -2 : -1;
+			eo3.expand = -1;
 			calculatesub(eo3, feo);
 		}
+		eo3.approximation = APPROXIMATION_APPROXIMATE;
+		factorize_variables(*this, eo3);
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
-		factorize_variables(*this);
 	}
 
 	calculatesub(eo2, feo);
@@ -17890,6 +17899,9 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					set(mbak);
 				} else {
 					if(!x_var.representsReal()) CALCULATOR->error(false, _("Not all complex roots where calculated for %s."), mbak.print().c_str(), NULL);
+					cout << print() << ":1" <<  endl;
+					fix_intervals(*this, eo2);
+					cout << print() << ":2" << endl;
 					return true;
 				}
 			}
