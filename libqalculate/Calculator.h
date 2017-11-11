@@ -604,7 +604,7 @@ class Calculator {
 	bool separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers = false) const;	
 	bool hasToExpression(const string &str) const;
 
-	void parseSigns(string &str) const;
+	void parseSigns(string &str, bool convert_to_internal_representation = false) const;
 	/** Parse an expression and place in a MathStructure object.
 	*
 	* @param str Expression

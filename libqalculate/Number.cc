@@ -253,6 +253,20 @@ Number::~Number() {
 
 void Number::set(string number, const ParseOptions &po) {
 
+	size_t pm_index = number.find("±");
+	if(pm_index == string::npos) pm_index = number.find("+/-");
+	if(pm_index != string::npos) {
+		ParseOptions po2 = po;
+		po2.read_precision = DONT_READ_PRECISION;
+		set(number.substr(0, pm_index), po2);
+		number = number.substr(pm_index + (number[pm_index] == '+' ? strlen("+/-") : strlen("±")));
+		if(!number.empty()) {
+			Number pm_nr(number, po2);
+			setUncertainty(pm_nr, true);
+		}
+		return;
+	}
+
 	if(po.base == BASE_ROMAN_NUMERALS) {
 		remove_blanks(number);
 		Number nr;
@@ -913,10 +927,10 @@ bool Number::intervalToPrecision() {
 	}
 	return true;
 }
-void Number::setUncertainty(const Number &o) {
+void Number::setUncertainty(const Number &o, bool force_interval) {
 	if(!o.isReal() || !isReal()) return;
 	b_approx = true;
-	if(!CALCULATOR->usesIntervalArithmetics()) {
+	if(!force_interval && !CALCULATOR->usesIntervalArithmetics() && !isInterval()) {
 		Number nr(*this);
 		nr.abs();
 		nr.divide(o);
@@ -938,7 +952,6 @@ void Number::setUncertainty(const Number &o) {
 			mpq_set_ui(r_value, 0, 1);
 			n_type = NUMBER_TYPE_FLOAT;
 		}
-		if(!setToFloatingPoint()) return;
 	}
 	if(o.isRational()) {
 		mpfr_sub_q(fl_value, fl_value, o.internalRational(), MPFR_RNDD);
@@ -2163,8 +2176,8 @@ bool Number::multiply(const Number &o) {
 					if((sgn_l < 0) != (sgn_u < 0)) {
 						if((sgn_ol < 0) != (sgn_ou < 0)) {
 							mpfr_t fu_value2, fl_value2;
-							mpfr_init2(fu_value, BIT_PRECISION);
-							mpfr_init2(fl_value, BIT_PRECISION);
+							mpfr_init2(fu_value2, BIT_PRECISION);
+							mpfr_init2(fl_value2, BIT_PRECISION);
 							mpfr_mul(fu_value2, fl_value, o.internalLowerFloat(), MPFR_RNDU);
 							mpfr_mul(fl_value2, fu_value, o.internalLowerFloat(), MPFR_RNDD);
 							mpfr_mul(fu_value, fu_value, o.internalUpperFloat(), MPFR_RNDU);
@@ -2191,8 +2204,8 @@ bool Number::multiply(const Number &o) {
 					} else if(sgn_l < 0) {
 						if(sgn_ol < 0) {
 							mpfr_mul(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDU);
-							mpfr_mul(fu_value, fu_value, o.internalLowerFloat(), MPFR_RNDD);
-							if(mpq_sgn(o.internalRational()) < 0) mpfr_swap(fu_value, fl_value);
+							mpfr_mul(fu_value, fu_value, o.internalUpperFloat(), MPFR_RNDD);
+							mpfr_swap(fl_value, fu_value);
 						} else {
 							mpfr_mul(fu_value, fu_value, o.internalLowerFloat(), MPFR_RNDU);
 							mpfr_mul(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDD);
@@ -2210,10 +2223,13 @@ bool Number::multiply(const Number &o) {
 				if(!CALCULATOR->usesIntervalArithmetics() && !isInterval()) {
 					mpfr_mul_q(fl_value, fl_value, o.internalRational(), MPFR_RNDN);
 					mpfr_set(fu_value, fl_value, MPFR_RNDN);
+				} else if(mpq_sgn(o.internalRational()) < 0) {
+					mpfr_mul_q(fu_value, fu_value, o.internalRational(), MPFR_RNDD);
+					mpfr_mul_q(fl_value, fl_value, o.internalRational(), MPFR_RNDU);
+					mpfr_swap(fu_value, fl_value);
 				} else {
 					mpfr_mul_q(fu_value, fu_value, o.internalRational(), MPFR_RNDU);
 					mpfr_mul_q(fl_value, fl_value, o.internalRational(), MPFR_RNDD);
-					if(mpq_sgn(o.internalRational()) < 0) mpfr_swap(fu_value, fl_value);
 				}
 			}
 		}
@@ -5759,7 +5775,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			str = CALCULATOR->f_interval->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
 			str += LEFT_PARENTHESIS;
 			str += str1;
-			str += COMMA SPACE;
+			str += po.comma();
+			str += SPACE;
 			str += str2;
 			str += RIGHT_PARENTHESIS;
 			if(ips.minus) *ips.minus = false;
@@ -6088,8 +6105,17 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		l10 = expo - mpfr_get_si(f_log, MPFR_RNDN);
 		mpfr_pow(f_log, f_base, f_log, MPFR_RNDN);
 		mpfr_div(v, v, f_log, MPFR_RNDN);
-		if(po.round_halfway_to_even) mpfr_rint(v, v, MPFR_RNDN);
-		else mpfr_round(v, v);
+		if(po.interval_display == INTERVAL_DISPLAY_LOWER) {
+			if(neg) mpfr_ceil(v, v);
+			else mpfr_floor(v, v);
+		} else if(po.interval_display == INTERVAL_DISPLAY_UPPER) {
+			if(!neg) mpfr_ceil(v, v);
+			else mpfr_floor(v, v);
+		} else if(po.round_halfway_to_even) {
+			mpfr_rint(v, v, MPFR_RNDN);
+		} else {
+			mpfr_round(v, v);
+		}
 		mpz_t ivalue;
 		mpz_init(ivalue);
 		mpfr_get_z(ivalue, v, MPFR_RNDN);

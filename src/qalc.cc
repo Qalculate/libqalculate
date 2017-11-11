@@ -827,6 +827,14 @@ void list_defs(bool in_interactive, char list_type = 0) {
 				if(v->isKnown()) {
 					if(((KnownVariable*) v)->isExpression()) {
 						value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression());
+						if(!((KnownVariable*) v)->uncertainty().empty()) {
+							value += "±";
+							value += CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty());
+						}
+						if(!((KnownVariable*) v)->unit().empty()) {
+							value += " ";
+							value += CALCULATOR->localizeExpression(((KnownVariable*) v)->unit());
+						}
 						if(value.length() > 40) {
 							value = value.substr(0, 30);
 							value += "...";
@@ -2386,10 +2394,6 @@ int main(int argc, char *argv[]) {
 						} else if(v->isKnown()) {
 							if(((KnownVariable*) v)->isExpression()) {
 								value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression());
-								if(value.length() > 40) {
-									value = value.substr(0, 30);
-									value += "...";
-								}
 							} else {
 								if(((KnownVariable*) v)->get().isMatrix()) {
 									value = _("matrix");
@@ -2427,12 +2431,20 @@ int main(int argc, char *argv[]) {
 						puts("");
 						PRINT_AND_COLON_TABS_INFO(_("Value"));
 						FPUTS_UNICODE(value.c_str(), stdout);
-						if(item->isApproximate()) {
+						if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->uncertainty().empty()) {
+							puts("");
+							PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));
+							PUTS_UNICODE(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()).c_str())
+						} else if(item->isApproximate()) {
 							fputs(" (", stdout);
 							FPUTS_UNICODE(_("approximate"), stdout);
 							fputs(")", stdout);
+							puts("");
 						}
-						puts("");
+						if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->unit().empty()) {
+							PRINT_AND_COLON_TABS_INFO(_("Unit"));
+							PUTS_UNICODE(CALCULATOR->localizeExpression(((KnownVariable*) v)->unit()).c_str())
+						}
 						if(!item->description().empty()) {
 							fputs("\n", stdout);
 							FPUTS_UNICODE(item->description().c_str(), stdout);
