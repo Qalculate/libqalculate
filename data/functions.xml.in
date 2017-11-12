@@ -1142,7 +1142,7 @@
     <function>
       <_title>Cotangent</_title>
       <_names>r:cot</_names>
-      <expression>cos(\x)/sin(\x)</expression>
+      <expression>1/tan(\x)</expression>
       <argument type="angle" index="1">
         <_title>Angle</_title>
         <test>false</test>
@@ -1161,7 +1161,7 @@
     <function>
       <_title>Hyperbolic Cotangent</_title>
       <_names>r:coth</_names>
-      <expression>cosh(\x)/sinh(\x)</expression>
+      <expression>1/tanh(\x)</expression>
     </function>
     <function>
       <_title>Inverse Secant</_title>
@@ -2104,6 +2104,16 @@
         <_title>Value</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="interval">
+      <_title>Interval</_title>
+      <_names>r:interval</_names>
+      <argument index="1">
+        <_title>Lower endpoint</_title>
+      </argument>
+      <argument index="2">
+        <_title>Upper endpoint</_title>
+      </argument>
+    </builtin_function>
   </category>
   <category>
     <_title>Logical</_title>
@@ -2342,14 +2352,17 @@
         </argument>
       </function>
       <function>
-        <_title>Triangle Perimeter</_title>
+        <_title>Triangle Perimeter (of right triangle)</_title>
         <_names>r:triangle_perimeter</_names>
-        <expression>\x+\y+hypot(\x,\y)</expression>
+        <expression>\x+\y+\z</expression>
         <argument type="free" index="1">
           <_title>Side A</_title>
         </argument>
         <argument type="free" index="2">
           <_title>Side B</_title>
+        </argument>
+        <argument type="free" index="3">
+          <_title>Side C</_title>
         </argument>
       </function>
     </category>

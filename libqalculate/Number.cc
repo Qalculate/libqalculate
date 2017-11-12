@@ -5752,15 +5752,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(base < 2 || base > 36) base = 10;
 		mpfr_clear_flags();
 		
-		if(po.interval_display == INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) {
-			PrintOptions po3 = po;
-			po3.interval_display = INTERVAL_DISPLAY_INTERVAL;
-			cout << print(po3) << endl;
-		}
-		
 		mpfr_t f_diff, f_mid;
-		
-		if(!mpfr_equal_p(fl_value, fu_value)) cout << "INTERVAL" << endl;
 		
 		if(mpfr_equal_p(fl_value, fu_value)) {
 			mpfr_init2(f_mid, mpfr_get_prec(fl_value));
@@ -5893,7 +5885,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(ilogu < ilogl) ilogl = ilogu;
 				if(ilogl <= 0) {
 					PrintOptions po2 = po;
-					po2.interval_display = INTERVAL_DISPLAY_INTERVAL;
+					po2.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 					return print(po2, ips);
 				} else {
 					i_precision_base = ilogl;
@@ -5933,8 +5925,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			string str_l = printMPZ(ivalue, base, true, BASE_DISPLAY_NONE, false, false);
 			mpfr_get_z(ivalue, vu, MPFR_RNDN);
 			string str_u = printMPZ(ivalue, base, true, BASE_DISPLAY_NONE, false, false);
-			cout << str_l << endl;
-			cout << str_u << endl;
 			
 			PRINT_MPFR(fl_value, 2);
 			PRINT_MPFR(fu_value, 2);
@@ -6010,7 +6000,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(ilogu < ilogl) ilogl = ilogu;
 				if(ilogl <= 0) {
 					PrintOptions po2 = po;
-					po2.interval_display = INTERVAL_DISPLAY_INTERVAL;
+					po2.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 					return print(po2, ips);
 				} else {
 					i_precision_base = ilogl;
@@ -6028,13 +6018,18 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			
 			mpfr_clears(vl, vu, f_logl, f_base, f_log_base, NULL);
 			mpq_clear(base_half);
+			
+			if(precision_base <= 1 && (mpfr_cmp_abs(f_mid, fu_value) > 0 || mpfr_cmp_abs(f_mid, fl_value) < 0)) {
+				PrintOptions po2 = po;
+				po2.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+				return print(po2, ips);
+				mpfr_clear(f_mid);
+			}
 				
 			if(po.is_approximate) *po.is_approximate = true;
 		}
 		
 		precision = precision_base;
-		
-		cout << i_precision_base << ":" << precision << endl;
 		
 		if(mpfr_zero_p(f_mid)) {
 			Number nr_zero;
