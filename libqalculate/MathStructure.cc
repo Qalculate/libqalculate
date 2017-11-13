@@ -8176,6 +8176,8 @@ bool expandVariablesWithUnits(MathStructure &mstruct, const EvaluationOptions &e
 
 #define IS_VAR_EXP(x) ((x.isVariable() && x.variable()->isKnown()) || (x.isPower() && x[0].isVariable() && x[0].variable()->isKnown()))
 
+// ax^2+bx = (sqrt(a)*x+(b/sqrt(a))/2)^2-((b/sqrt(a))/2)^2
+
 void factorize_variable(MathStructure &mstruct, const MathStructure &mvar) {
 	vector<MathStructure*> left_structs;
 	for(size_t i2 = 0; i2 < mstruct.size();) {
@@ -16595,7 +16597,6 @@ int test_comparisons(const MathStructure &msave, MathStructure &mthis, const Mat
 			if(CALCULATOR->usesIntervalArithmetics()) {
 				MathStructure mtest2(mtest[0]);
 				if(!mtest[1].isZero()) {
-					MathStructure mtest2(mtest[0]);
 					mtest2.subtract(mtest[1]);
 				}
 				mtest2.eval(eo2);
@@ -16621,6 +16622,7 @@ int test_comparisons(const MathStructure &msave, MathStructure &mthis, const Mat
 				mtest[0].delChild(1, true);
 			}
 			mtest.eval(eo2);
+
 			if(CALCULATOR->endTemporaryStopMessages() > 0) {
 				if(!sub) mthis = msave;
 				return -1;
@@ -16802,6 +16804,21 @@ MathStructure *find_abs_sgn(MathStructure &mstruct, const MathStructure &x_var) 
 		default: {break;}
 	}
 	return NULL;
+}
+
+bool solve_x_pow_x(Number &nr) {
+	// x^x=a => x=ln(a)/lambertw(ln(a))
+	Number n_ln_z(nr);
+	if(n_ln_z.ln()) {
+		Number n_ln_z_w(n_ln_z);
+		if(n_ln_z_w.lambertW()) {
+			if(n_ln_z.divide(n_ln_z_w)) {
+				nr = n_ln_z;
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions &eo2, const MathStructure &x_var, MathStructure *morig) {
@@ -17858,7 +17875,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					return true;
 				}
 			}
-			
+
 			// Use newton raphson to calculate approximate solution for polynomial
 			MathStructure x_value;
 			if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(1).isNumber() && eo.approximation != APPROXIMATION_EXACT && !x_var.representsComplex(true)) {
@@ -17899,9 +17916,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					set(mbak);
 				} else {
 					if(!x_var.representsReal()) CALCULATOR->error(false, _("Not all complex roots where calculated for %s."), mbak.print().c_str(), NULL);
-					cout << print() << ":1" <<  endl;
 					fix_intervals(*this, eo2);
-					cout << print() << ":2" << endl;
 					return true;
 				}
 			}
@@ -18585,12 +18600,17 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			if(CHILD(0)[0].contains(x_var)) {
 				if(ct_comp == COMPARISON_EQUALS && eo2.approximation != APPROXIMATION_EXACT && CHILD(1).isNumber() && CHILD(1).number().isPositive() && CHILD(0)[1] == x_var && CHILD(0)[0] == x_var && CHILD(0)[0].representsReal(true)) {
 					// x^x=a => x=ln(a)/lambertw(ln(a))
-					Number n_ln_z(CHILD(1).number());
-					if(n_ln_z.ln()) {
-						Number n_ln_z_w(n_ln_z);
-						if(n_ln_z_w.lambertW()) {
-							CHILD(1).number() = n_ln_z;
-							CHILD(1).number() /= n_ln_z_w;
+					if(CHILD(1).number().isInterval() && CHILD(1).number().isPositive()) {
+						Number nrlow(CHILD(1).number().lowerEndPoint());
+						Number nrhigh(CHILD(1).number().upperEndPoint());
+						if(solve_x_pow_x(nrlow) && solve_x_pow_x(nrhigh)) {
+							CHILD(1).number().setInterval(nrlow, nrhigh, true);
+							CHILD(0) = x_var;
+							CHILDREN_UPDATED
+							return true;
+						}
+					} else {
+						if(solve_x_pow_x(CHILD(1).number())) {
 							CHILD(0) = x_var;
 							CHILDREN_UPDATED
 							return true;

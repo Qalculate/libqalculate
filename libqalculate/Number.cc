@@ -1122,6 +1122,20 @@ Number Number::imaginaryPart() const {
 	if(!i_value) return Number();
 	return *i_value;
 }
+Number Number::lowerEndPoint() const {
+	if(!isInterval()) return *this;
+	Number nr;
+	nr.setInternal(fl_value);
+	nr.setPrecisionAndApproximateFrom(*this);
+	return nr;
+}
+Number Number::upperEndPoint() const {
+	if(!isInterval()) return *this;
+	Number nr;
+	nr.setInternal(fu_value);
+	nr.setPrecisionAndApproximateFrom(*this);
+	return nr;
+}
 Number Number::numerator() const {
 	Number num;
 	num.setInternal(mpq_numref(r_value));
@@ -5471,7 +5485,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 	long int precision = PRECISION;
 	if(b_approx && i_precision >= 0 && (po.preserve_precision || i_precision < PRECISION)) precision = i_precision;
-	if(b_approx && i_precision < 0 && po.preserve_precision && FROM_BIT_PRECISION(BIT_PRECISION) > precision) precision = FROM_BIT_PRECISION(BIT_PRECISION);
+	else if(b_approx && i_precision < 0 && po.preserve_precision && FROM_BIT_PRECISION(BIT_PRECISION) > precision) precision = FROM_BIT_PRECISION(BIT_PRECISION);
+	if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < precision) precision = ips.parent_precision;
 	long int precision_base = precision;
 	if(base != 10 && base >= 2 && base <= 36) {
 		Number precmax(10);
@@ -5485,6 +5500,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if((i_precision < 0 && FROM_BIT_PRECISION(BIT_PRECISION) > precision) || i_precision > precision) {
 		if(i_precision < 0) i_precision_base = FROM_BIT_PRECISION(BIT_PRECISION);
 		else i_precision_base = i_precision;
+		if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < i_precision_base) i_precision_base = ips.parent_precision;
 		if(base != 10 && base >= 2 && base <= 36) {
 			Number precmax(10);
 			precmax.raise(i_precision_base);
@@ -5494,11 +5510,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			i_precision_base = precmax.lintValue();
 		}
 	}
-	if(po.restrict_to_parent_precision && ips.parent_precision > 0 && ips.parent_precision < precision) precision = ips.parent_precision;
 	bool approx = isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision);
-	
+
 	if(isInteger()) {
-		
+
 		long int length = mpz_sizeinbase(mpq_numref(r_value), base);
 		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < length && ((approx || (po.min_exp != 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT))) || length > 1000000L)) {
 			Number nr(*this);
@@ -5753,16 +5768,19 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpfr_clear_flags();
 		
 		mpfr_t f_diff, f_mid;
-		
+
 		if(mpfr_equal_p(fl_value, fu_value)) {
 			mpfr_init2(f_mid, mpfr_get_prec(fl_value));
 			mpfr_set(f_mid, fl_value, MPFR_RNDN);
 		} else if(po.interval_display == INTERVAL_DISPLAY_INTERVAL) {
 			PrintOptions po2 = po;
+			InternalPrintStruct ips2;
+			ips2.parent_approximate = ips.parent_approximate;
+			ips2.parent_precision = ips.parent_precision;
 			po2.interval_display = INTERVAL_DISPLAY_LOWER;
-			string str1 = print(po2);
+			string str1 = print(po2, ips2);
 			po2.interval_display = INTERVAL_DISPLAY_UPPER;
-			string str2 = print(po2);
+			string str2 = print(po2, ips2);
 			if(str1 == str2) return print(po2, ips);
 			str = CALCULATOR->f_interval->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
 			str += LEFT_PARENTHESIS;
@@ -5788,16 +5806,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			long int i_log_diff = mpfr_get_si(f_log_diff, MPFR_RNDN);
 
 			PrintOptions po2 = po;
-			long int iexp = 0, deci = 0;
+			long int iexp = 0;
 			InternalPrintStruct ips2 = ips;
 			ips2.iexp = &iexp;
-			ips2.decimals = &deci;
 			po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
 			po2.min_decimals = 0;
 			po2.use_max_decimals = false;
 			str = print(po2, ips2);
 			if(ips.iexp) *ips.iexp = iexp;
-			if(ips.decimals) *ips.decimals = deci;
 			po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 			if(po.preserve_precision) {
 				if(i_precision < 0) precision = FROM_BIT_PRECISION(BIT_PRECISION);
@@ -5814,6 +5830,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(i_log < 0) i_log = -i_log;
 				if(i_log + 1 > precision) precision = i_log + 1;
 			}
+
 			po2.min_exp = 0;
 			Number nr;
 			nr.setInternal(f_diff);
@@ -5821,11 +5838,18 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(precision > 0) {
 				str += "±";
 				nr.setPrecision(precision);
-				str += nr.print(po2);
+				InternalPrintStruct ips3;
+				ips3.parent_approximate = ips.parent_approximate;
+				ips3.parent_precision = ips.parent_precision;
+				str += nr.print(po2, ips3);
 				if(iexp != 0 && !ips.exp) {
 					if(po.lower_case_e) str += "e";
 					else str += "E";
 					str += i2s(iexp);
+				}
+				if(ips.depth > 0) {
+					str.insert(0, LEFT_PARENTHESIS);
+					str += RIGHT_PARENTHESIS;
 				}
 			}
 			if(ips.num) *ips.num = str;
@@ -5926,9 +5950,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpfr_get_z(ivalue, vu, MPFR_RNDN);
 			string str_u = printMPZ(ivalue, base, true, BASE_DISPLAY_NONE, false, false);
 			
-			PRINT_MPFR(fl_value, 2);
-			PRINT_MPFR(fu_value, 2);
-			
 			if(str_u.length() > str_l.length()) {
 				str_l.insert(0, str_u.length() - str_l.length(), '0');
 			}
@@ -6020,10 +6041,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpq_clear(base_half);
 			
 			if(precision_base <= 1 && (mpfr_cmp_abs(f_mid, fu_value) > 0 || mpfr_cmp_abs(f_mid, fl_value) < 0)) {
+				mpfr_clear(f_mid);
 				PrintOptions po2 = po;
 				po2.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 				return print(po2, ips);
-				mpfr_clear(f_mid);
 			}
 				
 			if(po.is_approximate) *po.is_approximate = true;

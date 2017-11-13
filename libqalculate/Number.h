@@ -206,6 +206,8 @@ class Number {
 		Number denominator() const;
 		Number complexNumerator() const;
 		Number complexDenominator() const;
+		Number lowerEndPoint() const;
+		Number upperEndPoint() const;
 
 		void operator = (const Number &o);
 		void operator = (long int i);

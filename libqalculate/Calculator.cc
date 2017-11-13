@@ -9653,7 +9653,9 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	if(msecs > 0) startControl(msecs);
 	MathStructure mparse(parse(expression, po2));
 	CALCULATOR->beginTemporaryStopMessages();
+	CALCULATOR->beginTemporaryStopIntervalArithmetics();
 	MathStructure y_vector(mparse.generateVector(x_mstruct, min, max, step, x_vector, eo));
+	CALCULATOR->endTemporaryStopIntervalArithmetics();
 	CALCULATOR->endTemporaryStopMessages();
 	if(msecs > 0) {
 		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
@@ -9684,7 +9686,9 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	if(msecs > 0) startControl(msecs);
 	MathStructure mparse(parse(expression, po2));
 	CALCULATOR->beginTemporaryStopMessages();
+	CALCULATOR->beginTemporaryStopIntervalArithmetics();
 	MathStructure y_vector(mparse.generateVector(x_mstruct, x_vector, eo).eval(eo));
+	CALCULATOR->endTemporaryStopIntervalArithmetics();
 	CALCULATOR->endTemporaryStopMessages();
 	if(msecs > 0) {
 		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
