@@ -6427,6 +6427,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(expo != 0) {
 			l10 += expo;
 		}
+		while(l10 < 0) {
+			str += '0';
+			l10++;
+		}
 		if(num_sign == 0 && po.use_max_decimals && po.max_decimals > 0) mpz_clears(num_bak, remainder_bak, NULL); 
 		mpz_clears(num, d, remainder, remainder2, exp, NULL);
 		if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
@@ -6436,7 +6440,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(l10 < 1) {
 				str.insert(str.begin(), 1 - l10, '0');
 				l10 = 1;
-			}				
+			}
 			str.insert(l10, po.decimalpoint());
 			has_decimal = true;
 			int l2 = 0;
