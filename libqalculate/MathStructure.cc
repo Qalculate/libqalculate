@@ -8176,7 +8176,7 @@ bool expandVariablesWithUnits(MathStructure &mstruct, const EvaluationOptions &e
 
 #define IS_VAR_EXP(x) ((x.isVariable() && x.variable()->isKnown()) || (x.isPower() && x[0].isVariable() && x[0].variable()->isKnown()))
 
-// ax^2+bx = (sqrt(a)*x+(b/sqrt(a))/2)^2-((b/sqrt(a))/2)^2
+// TODO: ax^2+bx = (sqrt(a)*x+(b/sqrt(a))/2)^2-((b/sqrt(a))/2)^2
 
 void factorize_variable(MathStructure &mstruct, const MathStructure &mvar) {
 	vector<MathStructure*> left_structs;
@@ -8224,6 +8224,7 @@ bool factorize_variables(MathStructure &mstruct, const EvaluationOptions &eo) {
 	if(mstruct.type() == STRUCT_ADDITION) {
 		vector<MathStructure> variables;
 		vector<size_t> variable_count;
+		vector<int> term_sgn;
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			if(CALCULATOR->aborted()) break;
 			if(mstruct[i].isMultiplication()) {
@@ -8232,21 +8233,45 @@ bool factorize_variables(MathStructure &mstruct, const EvaluationOptions &eo) {
 					if(IS_VAR_EXP(mstruct[i][i2])) {
 						bool b_found = false;
 						for(size_t i3 = 0; i3 < variables.size(); i3++) {
-							if(variables[i3] == mstruct[i][i2]) {variable_count[i3]++; b_found = true; break;}
+							if(variables[i3] == mstruct[i][i2]) {
+								variable_count[i3]++;
+								b_found = true;
+								if(term_sgn[i3] == 1 && !mstruct[i].representsNonNegative(true)) term_sgn[i3] = 0;
+								else if(term_sgn[i3] == -1 && !mstruct[i].representsNonPositive(true)) term_sgn[i3] = 0;
+								break;
+							}
 						}
-						if(!b_found) {variables.push_back(mstruct[i][i2]); variable_count.push_back(1);}
+						if(!b_found) {
+							variables.push_back(mstruct[i][i2]);
+							variable_count.push_back(1);
+							if(mstruct[i].representsNonNegative(true)) term_sgn.push_back(1);
+							else if(mstruct[i].representsNonPositive(true)) term_sgn.push_back(-1);
+							else term_sgn.push_back(0);
+						}
 					}
 				}
 			} else if(IS_VAR_EXP(mstruct[i])) {
 				bool b_found = false;
 				for(size_t i3 = 0; i3 < variables.size(); i3++) {
-					if(variables[i3] == mstruct[i]) {variable_count[i3]++; b_found = true; break;}
+					if(variables[i3] == mstruct[i]) {
+						variable_count[i3]++;
+						b_found = true;
+						if(term_sgn[i3] == 1 && !mstruct[i].representsNonNegative(true)) term_sgn[i3] = 0;
+						else if(term_sgn[i3] == -1 && !mstruct[i].representsNonPositive(true)) term_sgn[i3] = 0;
+						break;
+					}
 				}
-				if(!b_found) {variables.push_back(mstruct[i]); variable_count.push_back(1);}
+				if(!b_found) {
+					variables.push_back(mstruct[i]);
+					variable_count.push_back(1);
+					if(mstruct[i].representsNonNegative(true)) term_sgn.push_back(1);
+					else if(mstruct[i].representsNonPositive(true)) term_sgn.push_back(-1);
+					else term_sgn.push_back(0);
+				}
 			}
 		}
 		for(size_t i = 0; i < variables.size();) {
-			if(variable_count[i] == 1 || !var_contains_interval(variables[i])) {
+			if(term_sgn[i] != 0 || variable_count[i] == 1 || !var_contains_interval(variables[i])) {
 				variable_count.erase(variable_count.begin() + i);
 				variables.erase(variables.begin() + i);
 			} else if(variable_count[i] == mstruct.size()) {
@@ -8260,6 +8285,8 @@ bool factorize_variables(MathStructure &mstruct, const EvaluationOptions &eo) {
 		}
 		if(variables.size() == 1) {
 			factorize_variable(mstruct, variables[0]);
+			if(CALCULATOR->aborted()) return true;
+			factorize_variables(mstruct, eo);
 			return true;
 		}
 		Number uncertainty;
@@ -8293,6 +8320,7 @@ bool factorize_variables(MathStructure &mstruct, const EvaluationOptions &eo) {
 			factorize_variables(mstruct, eo);
 			return true;
 		}
+		
 	}
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(factorize_variables(mstruct[i], eo)) {
@@ -17440,6 +17468,11 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 				if(b) {
+				
+					MathStructure mbak(*this);
+					
+					CALCULATOR->beginTemporaryStopIntervalArithmetics();
+					fix_intervals(*this, eo2);
 
 					EvaluationOptions eo3 = eo2;
 					eo3.keep_zero_units = false;
@@ -17478,7 +17511,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mdelta.add_nocopy(mdelta_e, true);
 					mdelta.calculatesub(eo3, eo);
 					
-					if(CALCULATOR->aborted()) return false;
+					if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetics(); set(mbak); return false;}
 					
 					int b_zero = -1;
 					int b_real = -1;
@@ -17506,7 +17539,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					MathStructure mdelta0;
 					int b0_zero = -1;
 					
-					if(CALCULATOR->aborted()) return false;
+					if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetics(); set(mbak); return false;}
 					
 					if(b_zero >= 0) {
 						// b^2 - 3ac
@@ -17529,7 +17562,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 					}
 					
-					if(CALCULATOR->aborted()) return false;
+					if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetics(); set(mbak); return false;}
 					
 					if(b_zero == 1) {
 						if(b0_zero == 1) {
@@ -17539,6 +17572,9 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							CHILD(1).calculateMultiply(mstruct_b, eo3);
 							CHILD(1).calculateDivide(mstruct_a, eo3);
 							CHILDREN_UPDATED;
+							CALCULATOR->endTemporaryStopIntervalArithmetics();
+							if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || contains_interval(mbak))) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+							fix_intervals(*this, eo2);
 							return true;
 						} else if(b0_zero == 0) {
 							MathStructure *malt1 = new MathStructure(x_var);
@@ -17592,6 +17628,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							addChild_nocopy(malt2);
 							
 							calculatesub(eo2, eo, false);
+							
+							CALCULATOR->endTemporaryStopIntervalArithmetics();
+							if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || contains_interval(mbak))) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+							fix_intervals(*this, eo2);
 
 							return true;
 						}
@@ -17626,11 +17666,28 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							} else if(!mdelta1.representsPositive(true)) {
 								if(mdelta1.representsZero(true)) {
 									// -b/(3a)
+									CHILD(0) = x_var;
+									CHILD(1).set(-1, 3);
+									CHILD(1).calculateMultiply(mstruct_b, eo3);
+									CHILD(1).calculateDivide(mstruct_a, eo3);
+									CHILDREN_UPDATED;
+									CALCULATOR->endTemporaryStopIntervalArithmetics();
+									if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || contains_interval(mbak))) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+									fix_intervals(*this, eo2);
+									return true;
 									return true;
 								}
 								ComparisonResult cr = mdelta1.compareApproximately(m_zero, eo);
 								if(cr == COMPARISON_RESULT_EQUAL) {
 									// -b/(3a)
+									CHILD(0) = x_var;
+									CHILD(1).set(-1, 3);
+									CHILD(1).calculateMultiply(mstruct_b, eo3);
+									CHILD(1).calculateDivide(mstruct_a, eo3);
+									CHILDREN_UPDATED;
+									CALCULATOR->endTemporaryStopIntervalArithmetics();
+									if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || contains_interval(mbak))) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+									fix_intervals(*this, eo2);
 									return true;
 								} else if(cr == COMPARISON_RESULT_LESS) {
 									b_neg = true;
@@ -17656,7 +17713,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						if(b_neg) md1_2->calculateNegate(eo3);
 						md1_2->calculatesub(eo3, eo, true); 
 						
-						if(CALCULATOR->aborted()) return false;
+						if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetics(); set(mbak); return false;}
 					
 						mC = mdelta1;
 						mC.add_nocopy(md1_2);
@@ -17679,6 +17736,9 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								CHILD(1).multiply_nocopy(malt1_2b);
 								CHILD(1).calculateMultiplyLast(eo3);
 								CHILDREN_UPDATED;
+								CALCULATOR->endTemporaryStopIntervalArithmetics();
+								if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || contains_interval(mbak))) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+								fix_intervals(*this, eo2);
 								return true;
 							}
 						} else if(eo3.allow_complex) {
@@ -17794,6 +17854,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								addChild_nocopy(malt3);
 							
 								calculatesub(eo2, eo, false);
+								
+								CALCULATOR->endTemporaryStopIntervalArithmetics();
+								if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || contains_interval(mbak))) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+								fix_intervals(*this, eo2);
 							
 								return true;
 							}
@@ -17915,7 +17979,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				if(ret < 0) {
 					set(mbak);
 				} else {
-					if(!x_var.representsReal()) CALCULATOR->error(false, _("Not all complex roots where calculated for %s."), mbak.print().c_str(), NULL);
+					if(!x_var.representsReal()) CALCULATOR->error(false, _("Not all complex roots were calculated for %s."), mbak.print().c_str(), NULL);
+					if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || contains_interval(mbak))) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
 					fix_intervals(*this, eo2);
 					return true;
 				}

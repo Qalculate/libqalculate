@@ -2572,6 +2572,7 @@ IntervalFunction::IntervalFunction() : MathFunction("interval", 2) {
 	setArgumentDefinition(2, arg);
 }
 int IntervalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	// TODO: allow non-numbers
 	Number nr;
 	nr.setInterval(vargs[0].number(), vargs[1].number());
 	mstruct = nr;

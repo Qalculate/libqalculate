@@ -2127,10 +2127,18 @@ bool Number::multiply(const Number &o) {
 			Number nr_bak(*this);
 			Number nr_copy;
 			if(hasImaginaryPart()) {
+				if(hasRealPart()) {
+					nr_copy.set(*this, false, true);
+					if(!nr_copy.multiply(o)) return false;
+					Number nr_copy2;
+					nr_copy2.setImaginaryPart(*i_value);
+					if(!nr_copy2.multiply(o) || !nr_copy.add(nr_copy2)) return false;
+					set(nr_copy);
+					return true;
+				}
 				nr_copy.set(*i_value);
 				nr_copy.negate();
-			}
-			if(hasRealPart()) {
+			} else if(hasRealPart()) {
 				nr_copy.setImaginaryPart(*this);
 			}
 			if(!nr_copy.multiply(o.imaginaryPart())) return false;
@@ -2546,6 +2554,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		if(!eraised.multiply(a2b2c2) || !eraised.multiply(nr_cos)) return false;
 		set(eraised);
 		setPrecisionAndApproximateFrom(o);
+		if(CALCULATOR->usesIntervalArithmetics() || isInterval() || (i_value && i_value->isInterval())) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		return true;
 	}
 	if(isComplex()) {
@@ -3583,7 +3592,7 @@ void Number::setLogicalNot() {
 
 void Number::e(bool use_cached_number) {
 	if(use_cached_number) {
-		if(nr_e.isZero() || CALCULATOR->usesIntervalArithmetics() != isInterval() || mpfr_get_prec(nr_e.internalLowerFloat()) != BIT_PRECISION) {
+		if(nr_e.isZero() || CALCULATOR->usesIntervalArithmetics() != nr_e.isInterval() || mpfr_get_prec(nr_e.internalLowerFloat()) != BIT_PRECISION) {
 			nr_e.e(false);
 		}
 		set(nr_e);
@@ -3597,7 +3606,7 @@ void Number::e(bool use_cached_number) {
 			if(mpfr_get_prec(fl_value) < BIT_PRECISION) mpfr_set_prec(fl_value, BIT_PRECISION);
 		}
 		n_type = NUMBER_TYPE_FLOAT;
-		if(!CALCULATOR->usesIntervalArithmetics() && !isInterval()) {
+		if(!CALCULATOR->usesIntervalArithmetics()) {
 			mpfr_set_ui(fl_value, 1, MPFR_RNDN);
 			mpfr_exp(fl_value, fl_value, MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
@@ -3621,7 +3630,7 @@ void Number::pi() {
 		if(mpfr_get_prec(fl_value) < BIT_PRECISION) mpfr_set_prec(fl_value, BIT_PRECISION);
 	}
 	n_type = NUMBER_TYPE_FLOAT;
-	if(!CALCULATOR->usesIntervalArithmetics() && !isInterval()) {
+	if(!CALCULATOR->usesIntervalArithmetics()) {
 		mpfr_const_pi(fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		i_precision = FROM_BIT_PRECISION(BIT_PRECISION);
@@ -3641,7 +3650,7 @@ void Number::catalan() {
 		if(mpfr_get_prec(fl_value) < BIT_PRECISION) mpfr_set_prec(fl_value, BIT_PRECISION);
 	}
 	n_type = NUMBER_TYPE_FLOAT;
-	if(!CALCULATOR->usesIntervalArithmetics() && !isInterval()) {
+	if(!CALCULATOR->usesIntervalArithmetics()) {
 		mpfr_const_catalan(fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		i_precision = FROM_BIT_PRECISION(BIT_PRECISION);
@@ -3661,7 +3670,7 @@ void Number::euler() {
 		if(mpfr_get_prec(fl_value) < BIT_PRECISION) mpfr_set_prec(fl_value, BIT_PRECISION);
 	}
 	n_type = NUMBER_TYPE_FLOAT;
-	if(!CALCULATOR->usesIntervalArithmetics() && !isInterval()) {
+	if(!CALCULATOR->usesIntervalArithmetics()) {
 		mpfr_const_euler(fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		i_precision = FROM_BIT_PRECISION(BIT_PRECISION);
@@ -4067,6 +4076,7 @@ bool Number::asin() {
 		Number i_z(*this);
 		if(!i_z.multiply(nr_one_i)) return false;
 		if(!z_sqln.square() || !z_sqln.negate() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !z_sqln.add(i_z) || !z_sqln.ln() || !z_sqln.multiply(nr_minus_i)) return false;
+		if(isComplex() && (CALCULATOR->usesIntervalArithmetics() || isInterval() || (i_value && i_value->isInterval()))) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		set(z_sqln);
 		return true;
 	}
@@ -4133,6 +4143,7 @@ bool Number::asinh() {
 		//If zero, it means that the precision is too low (since infinity is not the correct value). Happens with number less than -(10^1000)i
 		if(z_sqln.isZero()) return false;
 		if(!z_sqln.ln()) return false;
+		if(isComplex() && (CALCULATOR->usesIntervalArithmetics() || isInterval() || (i_value && i_value->isInterval()))) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		set(z_sqln);
 		return true;
 	}
@@ -4296,6 +4307,7 @@ bool Number::acos() {
 		if(b_imag) return false;
 		Number z_sqln(*this);
 		if(!z_sqln.square() || !z_sqln.negate() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !z_sqln.multiply(nr_one_i) || !z_sqln.add(*this) || !z_sqln.ln() || !z_sqln.multiply(nr_minus_i)) return false;
+		if(isComplex() && (CALCULATOR->usesIntervalArithmetics() || isInterval() || (i_value && i_value->isInterval()))) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		set(z_sqln);
 		return true;
 	}
@@ -4392,6 +4404,7 @@ bool Number::acosh() {
 		Number ipz(*this), imz(*this);
 		if(!ipz.add(1) || !imz.subtract(1)) return false;
 		if(!ipz.raise(nr_half) || !imz.raise(nr_half) || !ipz.multiply(imz) || !ipz.add(*this) || !ipz.ln()) return false;
+		if(isComplex() && (CALCULATOR->usesIntervalArithmetics() || isInterval() || (i_value && i_value->isInterval()))) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		set(ipz);
 		return true;
 	}
@@ -4415,10 +4428,25 @@ bool Number::tan() {
 	if(isInfinite()) return false;
 	if(isZero()) return true;
 	if(isComplex()) {
-		Number num(*this), den(*this);
-		if(!num.sin() || !den.cos() || !num.divide(den)) return false;
-		set(num, true);
-		return true;
+		if(hasRealPart()) {
+			Number t1a, t1b, t2a, t2b;
+			t1a.set(*this, false, true);
+			t1b.set(*i_value, false, true);
+			if(!t1a.multiply(2) || !t1b.multiply(2)) return false;
+			t2a.set(t1a);
+			t2b.set(t1b);
+			if(!t1a.sin() || !t1b.sinh() || !t2a.cos() || !t2b.cosh() || !t2a.add(t2b) || !t1a.divide(t2a) ||  !t1b.divide(t2a)) return false;
+			if(!t1a.isReal() || !t1b.isReal()) return false;
+			set(t1a, true, true);
+			i_value->set(t1b, true, true);
+			setPrecisionAndApproximateFrom(*i_value);
+			if(CALCULATOR->usesIntervalArithmetics() || isInterval() || (i_value && i_value->isInterval())) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
+			return true;
+		} else {
+			if(!i_value->tanh()) return false;
+			setPrecisionAndApproximateFrom(*i_value);
+			return true;
+		}
 	}
 	Number nr_bak(*this);
 	bool do_pi = true;
@@ -4500,6 +4528,7 @@ bool Number::atan() {
 		if(!ipz.add(*this) || !imz.subtract(*this)) return false;
 		if(!ipz.divide(imz) || !ipz.ln() || !ipz.multiply(nr_one_i) || !ipz.divide(2)) return false;
 		set(ipz);
+		if(CALCULATOR->usesIntervalArithmetics() || isInterval() || (i_value && i_value->isInterval())) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		return true;
 	}
 	Number nr_bak(*this);
@@ -4532,14 +4561,27 @@ bool Number::atan2(const Number &o) {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
+	mpfr_t fl_test, fu_test;
+	mpfr_inits2(BIT_PRECISION, fl_test, fu_test, NULL);
 	if(o.isFloatingPoint()) {
 		if(!CALCULATOR->usesIntervalArithmetics() && !isInterval() && !o.isInterval()) {
 			mpfr_atan2(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else {
 			if(!o.isNonZero() && (mpfr_sgn(fl_value) != mpfr_sgn(fu_value) || mpfr_sgn(fl_value) == 0)) {set(nr_bak); return false;}
-			mpfr_atan2(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDD);
-			mpfr_atan2(fu_value, fu_value, o.internalLowerFloat(), MPFR_RNDU);
+			mpfr_t fl_test, fu_test;
+			mpfr_inits2(BIT_PRECISION, fl_test, fu_test, NULL);
+			mpfr_atan2(fl_test, fl_value, o.internalUpperFloat(), MPFR_RNDN);
+			mpfr_atan2(fu_test, fu_value, o.internalLowerFloat(), MPFR_RNDN);
+			if(mpfr_cmp(fl_test, fu_test) > 0) {
+				mpfr_atan2(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDU);
+				mpfr_atan2(fu_value, fu_value, o.internalLowerFloat(), MPFR_RNDD);
+				mpfr_swap(fl_value, fu_value);
+			} else {
+				mpfr_atan2(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDD);
+				mpfr_atan2(fu_value, fu_value, o.internalLowerFloat(), MPFR_RNDU);
+			}
+			mpfr_clears(fu_test, fl_test, NULL);
 		}
 	} else {
 		if(!CALCULATOR->usesIntervalArithmetics() && !isInterval()) {
@@ -4554,8 +4596,19 @@ bool Number::atan2(const Number &o) {
 			mpfr_inits2(BIT_PRECISION, ofl_value, ofu_value, NULL);
 			mpfr_set_q(ofl_value, o.internalRational(), MPFR_RNDD);
 			mpfr_set_q(ofu_value, o.internalRational(), MPFR_RNDU);
-			mpfr_atan2(fl_value, fl_value, ofl_value, MPFR_RNDD);
-			mpfr_atan2(fu_value, fu_value, ofu_value, MPFR_RNDU);
+			mpfr_t fl_test, fu_test;
+			mpfr_inits2(BIT_PRECISION, fl_test, fu_test, NULL);
+			mpfr_atan2(fl_test, fl_value, ofu_value, MPFR_RNDN);
+			mpfr_atan2(fu_test, fu_value, ofl_value, MPFR_RNDN);
+			if(mpfr_cmp(fl_test, fu_test) > 0) {
+				mpfr_atan2(fl_value, fl_value, ofu_value, MPFR_RNDU);
+				mpfr_atan2(fu_value, fu_value, ofl_value, MPFR_RNDD);
+				mpfr_swap(fl_value, fu_value);
+			} else {
+				mpfr_atan2(fl_value, fl_value, ofu_value, MPFR_RNDD);
+				mpfr_atan2(fu_value, fu_value, ofl_value, MPFR_RNDU);
+			}
+			mpfr_clears(fu_test, fl_test, NULL);
 			mpfr_clears(ofl_value, ofu_value, NULL);
 		}
 	}
@@ -4599,10 +4652,23 @@ bool Number::tanh() {
 	if(isMinusInfinity()) set(-1);
 	if(isZero()) return true;
 	if(isComplex()) {
-		Number num(*this), den(*this);
-		if(!num.sinh() || !den.cosh() || !num.divide(den)) return false;
-		set(num, true);
-		return true;
+		if(hasRealPart()) {
+			Number t1a, t1b, t2a, t2b;
+			t1a.set(*this, false, true);
+			t1b.set(*this, false);
+			t1b.clearReal();
+			if(!t1a.tanh() || !t1b.tanh()) return false;
+			t2a.set(t1a);
+			t2b.set(t1b);
+			if(!t1a.add(t1b) || !t2a.multiply(t2b) || !t2a.add(1) || !t1a.divide(t2a)) return false;
+			set(t1a, true);
+			if(CALCULATOR->usesIntervalArithmetics() || isInterval() || (i_value && i_value->isInterval())) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
+			return true;
+		} else {
+			if(!i_value->tan()) return false;
+			setPrecisionAndApproximateFrom(*i_value);
+			return true;
+		}
 	}
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
@@ -4638,6 +4704,7 @@ bool Number::atanh() {
 		Number ipz(nr_one), imz(nr_one);
 		if(!ipz.add(*this) || !imz.subtract(*this) || !ipz.divide(imz) || !ipz.ln() || !ipz.divide(2)) return false;
 		set(ipz);
+		if(CALCULATOR->usesIntervalArithmetics() || isInterval() || (i_value && i_value->isInterval())) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		return true;
 	}
 	Number nr_bak(*this);
