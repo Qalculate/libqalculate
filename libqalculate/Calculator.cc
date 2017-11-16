@@ -342,6 +342,8 @@ Calculator::Calculator() {
 	setPrecision(DEFAULT_PRECISION);
 	b_interval = false;
 	i_stop_interval = 0;
+	
+	b_var_units = true;
 
 	addStringAlternative(SIGN_POWER_0, "^(0)");
 	addStringAlternative(SIGN_POWER_1, "^(1)");
@@ -1528,6 +1530,14 @@ void Calculator::addBuiltinUnits() {
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
 }
+
+void Calculator::setVariableUnitsEnabled(bool enable_variable_units) {
+	b_var_units = enable_variable_units;
+}
+bool Calculator::variableUnitsEnabled() const {
+	return b_var_units;
+}
+
 void Calculator::error(bool critical, int message_category, const char *TEMPLATE, ...) {
 	va_list ap;
 	va_start(ap, TEMPLATE);
@@ -7538,7 +7548,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						XML_GET_PREC_FROM_PROP(child, prec)
 						v->setPrecision(prec);
 						XML_GET_APPROX_FROM_PROP(child, b);
-						v->setApproximate(b);
+						if(b) v->setApproximate(true);
 					} else ITEM_READ_NAME(variableNameIsValid)
 					 else ITEM_READ_DTH
 					 else {
@@ -7756,7 +7766,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						}
 						au->setDescription(description);
 						au->setPrecision(prec);
-						au->setApproximate(b);
+						if(b) au->setApproximate(true);
 						au->setUncertainty(suncertainty);
 						au->setHidden(hidden);
 						au->setSystem(usystem);

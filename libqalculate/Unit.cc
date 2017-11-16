@@ -294,6 +294,7 @@ void AliasUnit::setInverseExpression(string inverse) {
 void AliasUnit::setUncertainty(string standard_uncertainty) {
 	remove_blank_ends(standard_uncertainty);
 	suncertainty = standard_uncertainty;
+	if(!suncertainty.empty()) setApproximate(true);
 	setChanged(true);
 }
 MathStructure &AliasUnit::convertToBaseUnit(MathStructure &mvalue, MathStructure &mexp) const {

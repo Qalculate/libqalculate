@@ -238,7 +238,7 @@ class KnownVariable : public Variable {
 	MathStructure *mstruct;
 	bool b_expression;
  	int calculated_precision;
- 	bool calculated_with_interval;
+ 	bool calculated_with_interval, calculated_with_units;
 	string sexpression, suncertainty, sunit;
 
   public:

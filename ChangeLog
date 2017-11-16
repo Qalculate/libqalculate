@@ -1,3 +1,7 @@
+2017-11-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Option to disable units in physical constants
+
 2017-11-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix engineering mode (exp mode < -1) for rational numbers < 1 with few decimals

@@ -221,10 +221,10 @@ class Calculator {
 	
 	class Calculator_p *priv;
 	
-	vector<string> signs;	
+	vector<string> signs;
 	vector<string> real_signs;
-	vector<string> default_signs;	
-	vector<string> default_real_signs;	
+	vector<string> default_signs;
+	vector<string> default_real_signs;
 	char *saved_locale;
 	int disable_errors_ref;
 	vector<int> stopped_errors_count;
@@ -252,6 +252,8 @@ class Calculator {
 	vector<Variable*> deleted_variables;
 	vector<MathFunction*> deleted_functions;
 	vector<Unit*> deleted_units;
+	
+	bool b_var_units;
 	
 	bool b_save_called;
 	
@@ -853,6 +855,9 @@ class Calculator {
 	/** Adds builtin units. Called automatically when the calculator is created. */
 	void addBuiltinUnits();
 	//@}
+	
+	void setVariableUnitsEnabled(bool enable_variable_units = true);
+	bool variableUnitsEnabled() const;
 
 	/** @name Functions for testing validity of functions, variable and unit names. */
 	//@{

@@ -2566,17 +2566,70 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 IntervalFunction::IntervalFunction() : MathFunction("interval", 2) {
 	NumberArgument *arg = new NumberArgument();
 	arg->setComplexAllowed(false);
+	arg->setTests(false);
 	setArgumentDefinition(1, arg);
 	arg = new NumberArgument();
 	arg->setComplexAllowed(false);
+	arg->setTests(false);
 	setArgumentDefinition(2, arg);
 }
 int IntervalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	// TODO: allow non-numbers
-	Number nr;
-	nr.setInterval(vargs[0].number(), vargs[1].number());
-	mstruct = nr;
-	return 1;
+	if(vargs[0].isNumber() && vargs[1].isNumber() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) {
+		Number nr;
+		nr.setInterval(vargs[0].number(), vargs[1].number());
+		mstruct = nr;
+		return 1;
+	}
+	MathStructure margs(vargs);
+	margs.eval(eo);
+	if(margs[0] == margs[1]) {
+		mstruct = margs[0];
+		return 1;
+	} else if(margs[0].isMultiplication() && margs[1].isMultiplication() && margs[0].size() > 1 && margs[1].size() > 1) {
+		size_t i0 = 0, i1 = 0;
+		if(margs[0][0].isNumber()) i0++;
+		if(margs[1][0].isNumber()) i1++;
+		if(i0 == 0 && i1 == 0) {
+			if(margs[0] == margs[1]) {
+				mstruct = margs[0];
+				return 1;
+			}
+			return 0;
+		}
+		if(i0 == 1 && margs[0][0].number().isComplex()) return 0;
+		if(i1 == 1 && margs[1][0].number().isComplex()) return 0;
+		if(margs[0].size() - i0 != margs[1].size() - i1) return 0;
+		for(size_t i = 0; i < margs[0].size() - i0; i++) {
+			if(margs[0][i + i0] != margs[1][i + i1]) {
+				return 0;
+			}
+		}
+		Number nr;
+		nr.setInterval(i0 == 1 ? margs[0][0].number() : nr_one, i1 == 1 ? margs[1][0].number() : nr_one);
+		mstruct = margs[0];
+		if(i0 == 1) mstruct.delChild(1, true);
+		mstruct *= nr;
+		mstruct.evalSort(false);
+		return 1;
+	} else if(margs[0].isMultiplication() && margs[0].size() == 2 && margs[0][0].isNumber() && !margs[0][0].number().isComplex() && margs[1] == margs[0][1]) {
+		Number nr;
+		nr.setInterval(margs[0][0].number(), nr_one);
+		mstruct = nr;
+		mstruct *= margs[1];
+		return 1;
+	} else if(margs[1].isMultiplication() && margs[1].size() == 2 && margs[1][0].isNumber() && !margs[1][0].number().isComplex() && margs[0] == margs[1][1]) {
+		Number nr;
+		nr.setInterval(nr_one, margs[1][0].number());
+		mstruct = nr;
+		mstruct *= margs[0];
+		return 1;
+	} else if(margs[0].isNumber() && margs[1].isNumber() && !margs[0].number().isComplex() && !margs[1].number().isComplex()) {
+		Number nr;
+		nr.setInterval(margs[0].number(), margs[1].number());
+		mstruct = nr;
+		return 1;
+	}
+	return 0;
 }
 
 

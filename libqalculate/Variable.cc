@@ -200,12 +200,14 @@ KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, 
 	sunit = "";
 	calculated_precision = -1;
 	calculated_with_interval = false;
+	calculated_with_units = false;
 	setChanged(false);
 }
 KnownVariable::KnownVariable(string cat_, string name_, string expression_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
 	mstruct = NULL;
 	calculated_precision = -1;
 	calculated_with_interval = false;
+	calculated_with_units = false;
 	suncertainty = "";
 	sunit = "";
 	set(expression_);
@@ -240,6 +242,7 @@ void KnownVariable::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_VARIABLE && item->subtype() == SUBTYPE_KNOWN_VARIABLE) {
 		calculated_precision = -1;
 		calculated_with_interval = false;
+		calculated_with_units = false;
 		sexpression = ((KnownVariable*) item)->expression();
 		suncertainty = ((KnownVariable*) item)->uncertainty();
 		sunit = ((KnownVariable*) item)->unit();
@@ -257,6 +260,7 @@ void KnownVariable::set(const MathStructure &o) {
 	setPrecision(mstruct->precision());
 	calculated_precision = -1;
 	calculated_with_interval = false;
+	calculated_with_units = false;
 	b_expression = false;
 	sexpression = "";
 	setChanged(true);
@@ -271,6 +275,7 @@ void KnownVariable::set(string expression_) {
 	remove_blank_ends(sexpression);
 	calculated_precision = -1;
 	calculated_with_interval = false;
+	calculated_with_units = false;
 	setChanged(true);
 }
 void KnownVariable::setUncertainty(string standard_uncertainty) {
@@ -282,6 +287,8 @@ void KnownVariable::setUncertainty(string standard_uncertainty) {
 	remove_blank_ends(suncertainty);
 	calculated_precision = -1;
 	calculated_with_interval = false;
+	calculated_with_units = false;
+	if(!suncertainty.empty()) setApproximate(true);
 	setChanged(true);
 }
 void KnownVariable::setUnit(string unit_expression) {
@@ -293,6 +300,7 @@ void KnownVariable::setUnit(string unit_expression) {
 	remove_blank_ends(sunit);
 	calculated_precision = -1;
 	calculated_with_interval = false;
+	calculated_with_units = false;
 	setChanged(true);
 }
 bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
@@ -318,7 +326,7 @@ bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
 	return b;
 }
 const MathStructure &KnownVariable::get() {
-	if(b_expression && ((!mstruct || mstruct->isAborted()) || (!suncertainty.empty() && calculated_with_interval != CALCULATOR->usesIntervalArithmetics()))) {
+	if(b_expression && ((!mstruct || mstruct->isAborted()) || calculated_with_interval != CALCULATOR->usesIntervalArithmetics() || (!sunit.empty() && calculated_with_units != CALCULATOR->variableUnitsEnabled()))) {
 		if(mstruct) mstruct->unref();
 		mstruct = new MathStructure();
 		ParseOptions po;
@@ -348,13 +356,14 @@ const MathStructure &KnownVariable::get() {
 				if(!set_precision_of_numbers(*mstruct, precision())) mstruct->setApproximate(true, true);
 			}
 		}
-		if(!sunit.empty()) {
+		if(!sunit.empty() && CALCULATOR->variableUnitsEnabled()) {
 			MathStructure *mstruct_unit = new MathStructure;
 			mstruct_unit->setAborted();
 			CALCULATOR->parse(mstruct_unit, sunit, po);
 			mstruct->multiply_nocopy(mstruct_unit);
 		}
 		calculated_with_interval = CALCULATOR->usesIntervalArithmetics();
+		calculated_with_units = CALCULATOR->variableUnitsEnabled();
 	}
 	if(mstruct->contains(this, false, true, true) > 0) {
 		CALCULATOR->error(true, _("Recursive variable: %s = %s"), name().c_str(), mstruct->print().c_str(), NULL);
@@ -385,6 +394,7 @@ DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool 
 	mstruct = NULL;
 	calculated_precision = -1;
 	calculated_with_interval = false;
+	calculated_with_units = false;
 	setApproximate();
 	setChanged(false);
 }
@@ -398,6 +408,7 @@ DynamicVariable::DynamicVariable() : KnownVariable() {
 	mstruct = NULL;
 	calculated_precision = -1;
 	calculated_with_interval = false;
+	calculated_with_units = false;
 	setApproximate();
 	setChanged(false);
 }

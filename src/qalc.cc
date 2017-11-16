@@ -48,7 +48,7 @@ EvaluationOptions evalops, saved_evalops;
 AssumptionType saved_assumption_type;
 AssumptionSign saved_assumption_sign;
 int saved_precision;
-bool saved_interval, saved_adaptive_interval_display;
+bool saved_interval, saved_adaptive_interval_display, saved_variable_units_enabled;
 bool adaptive_interval_display;
 Thread *view_thread, *command_thread;
 bool command_aborted = false;
@@ -726,6 +726,13 @@ void set_option(string str) {
 		SET_BOOL(b)
 		if(b != CALCULATOR->usesIntervalArithmetics()) {
 			CALCULATOR->useIntervalArithmetics(b);
+			expression_calculation_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "variable units", _("variable units"))) {
+		bool b = CALCULATOR->variableUnitsEnabled();
+		SET_BOOL(b)
+		if(b != CALCULATOR->variableUnitsEnabled()) {
+			CALCULATOR->setVariableUnitsEnabled(b);
 			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "max decimals", _("max decimals"))) {
@@ -2100,6 +2107,7 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("variables")); PUTS_UNICODE(b2oo(evalops.parse_options.variables_enabled, false)); CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("variable units")); PUTS_UNICODE(b2oo(CALCULATOR->variableUnitsEnabled(), false)); CHECK_IF_SCREEN_FILLED
 			puts("");
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "help", _("help")) || str == "?") {
@@ -2649,6 +2657,7 @@ int main(int argc, char *argv[]) {
 				if(auto_update_exchange_rates > 0) {str += " "; str += i2s(auto_update_exchange_rates); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("variables"), evalops.parse_options.variables_enabled);
+				STR_AND_TABS_BOOL(_("variable units"), CALCULATOR->variableUnitsEnabled());
 				CHECK_IF_SCREEN_FILLED_PUTS(_("The current value is marked with '*'."));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("Example: set base 16."));				
@@ -3745,6 +3754,7 @@ void set_saved_mode() {
 	saved_precision = CALCULATOR->getPrecision();
 	saved_interval = CALCULATOR->usesIntervalArithmetics();
 	saved_adaptive_interval_display = adaptive_interval_display;
+	saved_variable_units_enabled = CALCULATOR->variableUnitsEnabled();
 	saved_printops = printops;
 	saved_printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
 	saved_evalops = evalops;
@@ -3923,6 +3933,8 @@ void load_preferences() {
 					}
 				} else if(svar == "place_units_separately") {
 					printops.place_units_separately = v;
+				} else if(svar == "variable_units_enabled") {
+					CALCULATOR->setVariableUnitsEnabled(v);
 				} else if(svar == "use_prefixes") {
 					printops.use_unit_prefixes = v;
 				} else if(svar == "use_prefixes_for_all_units") {
@@ -4129,6 +4141,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "variables_enabled=%i\n", saved_evalops.parse_options.variables_enabled);
 	fprintf(file, "calculate_variables=%i\n", saved_evalops.calculate_variables);
 	fprintf(file, "calculate_functions=%i\n", saved_evalops.calculate_functions);
+	fprintf(file, "variable_units_enabled=%i\n", saved_variable_units_enabled);
 	fprintf(file, "sync_units=%i\n", saved_evalops.sync_units);
 	fprintf(file, "unknownvariables_enabled=%i\n", saved_evalops.parse_options.unknowns_enabled);
 	fprintf(file, "units_enabled=%i\n", saved_evalops.parse_options.units_enabled);
