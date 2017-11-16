@@ -4736,8 +4736,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									}
 									if(f == f_vector) {
 										stmp += i2s(parseAddVectorId(stmp2, po));
+									} else if(f == f_interval && po.read_precision != DONT_READ_PRECISION) {
+										ParseOptions po2 = po;
+										po2.read_precision = DONT_READ_PRECISION;
+										stmp += i2s(parseAddId(f, stmp2, po2));
 									} else {
-										stmp += i2s(parseAddId(f, stmp2, po));										
+										stmp += i2s(parseAddId(f, stmp2, po));
 									}
 									po.unended_function = NULL;
 									stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
@@ -4778,6 +4782,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									}
 									if(f == f_vector) {
 										stmp += i2s(parseAddVectorId(stmp2, po));
+									} else if(f == f_interval && po.read_precision != DONT_READ_PRECISION) {
+										ParseOptions po2 = po;
+										po2.read_precision = DONT_READ_PRECISION;
+										stmp += i2s(parseAddId(f, stmp2, po2));
 									} else {
 										stmp += i2s(parseAddId(f, stmp2, po));
 									}
@@ -9932,6 +9940,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 	string plot_data;
 	PrintOptions po;
 	po.number_fraction_format = FRACTION_DECIMAL;
+	po.interval_display = INTERVAL_DISPLAY_MIDPOINT;
 	po.decimalpoint_sign = ".";
 	po.comma_sign = ",";
 	for(size_t serie = 0; serie < y_vectors.size(); serie++) {

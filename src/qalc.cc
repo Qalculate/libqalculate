@@ -48,7 +48,8 @@ EvaluationOptions evalops, saved_evalops;
 AssumptionType saved_assumption_type;
 AssumptionSign saved_assumption_sign;
 int saved_precision;
-bool saved_interval;
+bool saved_interval, saved_adaptive_interval_display;
+bool adaptive_interval_display;
 Thread *view_thread, *command_thread;
 bool command_aborted = false;
 volatile bool b_busy = false;
@@ -696,20 +697,29 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval display", _("interval display"))) {
 		int v = -1;
-		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "significant", _("significant"))) v = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "interval", _("interval"))) v = INTERVAL_DISPLAY_INTERVAL;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "plusminus", _("plusminus"))) v = INTERVAL_DISPLAY_PLUSMINUS;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "midpoint", _("midpoint"))) v = INTERVAL_DISPLAY_MIDPOINT;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "upper", _("upper"))) v = INTERVAL_DISPLAY_UPPER;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "lower", _("lower"))) v = INTERVAL_DISPLAY_LOWER;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "adaptive", _("adaptive"))) v = 0;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "significant", _("significant"))) v = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS + 1;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "interval", _("interval"))) v = INTERVAL_DISPLAY_INTERVAL + 1;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "plusminus", _("plusminus"))) v = INTERVAL_DISPLAY_PLUSMINUS + 1;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "midpoint", _("midpoint"))) v = INTERVAL_DISPLAY_MIDPOINT + 1;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "upper", _("upper"))) v = INTERVAL_DISPLAY_UPPER + 1;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "lower", _("lower"))) v = INTERVAL_DISPLAY_LOWER + 1;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
-		if(v < INTERVAL_DISPLAY_SIGNIFICANT_DIGITS || v > INTERVAL_DISPLAY_UPPER) {
-			PUTS_UNICODE(_("Illegal value."));
-		} else {
-			printops.interval_display = (IntervalDisplay) v;
+		if(v == 0) {
+			adaptive_interval_display = true;
+			printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 			result_format_updated();
+		} else {
+			v--;
+			if(v < INTERVAL_DISPLAY_SIGNIFICANT_DIGITS || v > INTERVAL_DISPLAY_UPPER) {
+				PUTS_UNICODE(_("Illegal value."));
+			} else {
+				adaptive_interval_display = false;
+				printops.interval_display = (IntervalDisplay) v;
+				result_format_updated();
+			}
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval", _("interval"))) {
 		bool b = CALCULATOR->usesIntervalArithmetics();
@@ -845,7 +855,9 @@ void list_defs(bool in_interactive, char list_type = 0) {
 						} else if(((KnownVariable*) v)->get().isVector()) {
 							value = _("vector");
 						} else {
-							value = CALCULATOR->print(((KnownVariable*) v)->get(), 30);
+							PrintOptions po;
+							po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+							value = CALCULATOR->print(((KnownVariable*) v)->get(), 30, po);
 						}
 					}
 				} else {
@@ -2011,14 +2023,18 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("infinite numbers")); PUTS_UNICODE(b2oo(evalops.allow_infinite, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("interval")); PUTS_UNICODE(b2oo(CALCULATOR->usesIntervalArithmetics(), false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("interval display"));
-			switch(printops.interval_display) {
-				case INTERVAL_DISPLAY_SIGNIFICANT_DIGITS: {PUTS_UNICODE(_("significant")); break;}
-				case INTERVAL_DISPLAY_INTERVAL: {PUTS_UNICODE(_("interval")); break;}
-				case INTERVAL_DISPLAY_PLUSMINUS: {PUTS_UNICODE(_("plusminus")); break;}
-				case INTERVAL_DISPLAY_MIDPOINT: {PUTS_UNICODE(_("midpoint")); break;}
-				case INTERVAL_DISPLAY_LOWER: {PUTS_UNICODE(_("lower")); break;}
-				case INTERVAL_DISPLAY_UPPER: {PUTS_UNICODE(_("upper")); break;}
-				default: {printf("%i\n", printops.interval_display); break;}
+			if(adaptive_interval_display) {
+				PUTS_UNICODE(_("adaptive")); break;
+			} else {
+				switch(printops.interval_display) {
+					case INTERVAL_DISPLAY_SIGNIFICANT_DIGITS: {PUTS_UNICODE(_("significant")); break;}
+					case INTERVAL_DISPLAY_INTERVAL: {PUTS_UNICODE(_("interval")); break;}
+					case INTERVAL_DISPLAY_PLUSMINUS: {PUTS_UNICODE(_("plusminus")); break;}
+					case INTERVAL_DISPLAY_MIDPOINT: {PUTS_UNICODE(_("midpoint")); break;}
+					case INTERVAL_DISPLAY_LOWER: {PUTS_UNICODE(_("lower")); break;}
+					case INTERVAL_DISPLAY_UPPER: {PUTS_UNICODE(_("upper")); break;}
+					default: {printf("%i\n", printops.interval_display + 1); break;}
+				}
 			}
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("limit implicit multiplication")); PUTS_UNICODE(b2oo(evalops.parse_options.limit_implicit_multiplication, false)); CHECK_IF_SCREEN_FILLED
@@ -2400,7 +2416,9 @@ int main(int argc, char *argv[]) {
 								} else if(((KnownVariable*) v)->get().isVector()) {
 									value = _("vector");
 								} else {
-									value = CALCULATOR->print(((KnownVariable*) v)->get(), 30);
+									PrintOptions po;
+									po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+									value = CALCULATOR->print(((KnownVariable*) v)->get(), 30, po);
 								}
 							}
 						} else {
@@ -2473,6 +2491,7 @@ int main(int argc, char *argv[]) {
 #define STR_AND_TABS_YESNO(s, v) STR_AND_TABS(s); str += "("; str += _("yes"); if(v) {str += "*";} str += ", "; str += _("no"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_2(s, v, s0, s1, s2) STR_AND_TABS(s); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_3(s, v, s0, s1, s2, s3) STR_AND_TABS(s); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+#define STR_AND_TABS_7(s, v, s0, s1, s2, s3, s4, s5, s6) STR_AND_TABS(s); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ", 5"; if(v == 5) {str += "*";} str += " = "; str += s5; str += ", 6"; if(v == 6) {str += "*";} str += " = "; str += s6; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("Sets the value of an option."));				
 				CHECK_IF_SCREEN_FILLED_PUTS("");
@@ -2588,6 +2607,8 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("infinite numbers"), evalops.allow_infinite);
 				STR_AND_TABS_BOOL(_("indicate infinite series"), printops.indicate_infinite_series);
+				STR_AND_TABS_BOOL(_("interval"), CALCULATOR->usesIntervalArithmetics());
+				STR_AND_TABS_7(_("interval display"), (adaptive_interval_display ? 0 : printops.interval_display + 1), _("adaptive"), _("significant"), _("interval"), _("plusminus"), _("midpoint"), _("upper"), _("lower"))
 				STR_AND_TABS_BOOL(_("limit implicit multiplication"), evalops.parse_options.limit_implicit_multiplication);
 				STR_AND_TABS_BOOL(_("lowercase e"), printops.lower_case_e);
 				STR_AND_TABS_BOOL(_("lowercase numbers"), printops.lower_case_numbers);
@@ -2910,7 +2931,7 @@ void ViewThread::run() {
 		if(x) {
 			PrintOptions po;
 			po.preserve_format = true;
-			po.show_ending_zeroes = true;
+			po.show_ending_zeroes = evalops.parse_options.read_precision != DONT_READ_PRECISION && !CALCULATOR->usesIntervalArithmetics();
 			po.lower_case_e = printops.lower_case_e;
 			po.lower_case_numbers = printops.lower_case_numbers;
 			po.base_display = printops.base_display;
@@ -2923,6 +2944,7 @@ void ViewThread::run() {
 			po.improve_division_multipliers = false;
 			po.restrict_to_parent_precision = false;
 			po.spell_out_logical_operators = printops.spell_out_logical_operators;
+			po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 			MathStructure mp(*((MathStructure*) x));
 			read(&po.is_approximate);
 			mp.format(po);
@@ -2997,6 +3019,11 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		if(!view_thread->write((void*) mreg)) {b_busy = false; view_thread->cancel(); return;}
 	}
 	if(update_parse) {
+		if(adaptive_interval_display) {
+			if(parsed_mstruct && parsed_mstruct->containsFunction(CALCULATOR->f_interval)) printops.interval_display = INTERVAL_DISPLAY_INTERVAL;
+			else if(result_text.find("+/-") != string::npos || result_text.find("+/" SIGN_MINUS) != string::npos || result_text.find("±") != string::npos) printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+			else printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+		}
 		if(!view_thread->write((void *) parsed_mstruct)) {b_busy = false; view_thread->cancel(); return;}
 		bool *parsed_approx_p = &parsed_approx;
 		if(!view_thread->write(parsed_approx_p)) {b_busy = false; view_thread->cancel(); return;}
@@ -3717,6 +3744,7 @@ bool save_mode() {
 void set_saved_mode() {
 	saved_precision = CALCULATOR->getPrecision();
 	saved_interval = CALCULATOR->usesIntervalArithmetics();
+	saved_adaptive_interval_display = adaptive_interval_display;
 	saved_printops = printops;
 	saved_printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
 	saved_evalops = evalops;
@@ -3759,6 +3787,7 @@ void load_preferences() {
 	printops.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
 	printops.allow_factorization = false;
 	printops.spell_out_logical_operators = true;
+	printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	
 	evalops.parse_options.parsing_mode = PARSING_MODE_ADAPTIVE;
 	evalops.approximation = APPROXIMATION_TRY_EXACT;
@@ -3777,7 +3806,9 @@ void load_preferences() {
 	evalops.parse_options.comma_as_separator = false;
 	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;
 	
-	CALCULATOR->useIntervalArithmetics(true);
+	adaptive_interval_display = true;
+	
+	CALCULATOR->useIntervalArithmetics(false);
 
 	rpn_mode = false;
 	
@@ -3861,8 +3892,15 @@ void load_preferences() {
 				} else if(svar == "interval_arithmetics") {
 					CALCULATOR->useIntervalArithmetics(v);
 				} else if(svar == "interval_display") {
-					if(v >= INTERVAL_DISPLAY_SIGNIFICANT_DIGITS && v <= INTERVAL_DISPLAY_UPPER) {
-						printops.interval_display = (IntervalDisplay) v;
+					if(v == 0) {
+						adaptive_interval_display = true;
+						printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+					} else {
+						v--;
+						if(v >= INTERVAL_DISPLAY_SIGNIFICANT_DIGITS && v <= INTERVAL_DISPLAY_UPPER) {
+							printops.interval_display = (IntervalDisplay) v;
+							adaptive_interval_display = false;
+						}
 					}
 				} else if(svar == "min_exp") {
 					printops.min_exp = v;
@@ -4057,8 +4095,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "comma_as_separator=%i\n", evalops.parse_options.comma_as_separator);
 	fprintf(file, "multiplication_sign=%i\n", printops.multiplication_sign);
 	fprintf(file, "division_sign=%i\n", printops.division_sign);
-	if(mode)
-		set_saved_mode();
+	if(mode) set_saved_mode();
 	fprintf(file, "\n[Mode]\n");
 	fprintf(file, "min_deci=%i\n", saved_printops.min_decimals);
 	fprintf(file, "use_min_deci=%i\n", saved_printops.use_min_decimals);
@@ -4066,12 +4103,13 @@ bool save_preferences(bool mode)
 	fprintf(file, "use_max_deci=%i\n", saved_printops.use_max_decimals);	
 	fprintf(file, "precision=%i\n", saved_precision);
 	fprintf(file, "interval_arithmetics=%i\n", saved_interval);
-	fprintf(file, "interval_display=%i\n", saved_printops.interval_display);
+	if(saved_adaptive_interval_display) fprintf(file, "interval_display=%i\n", 0);
+	else fprintf(file, "interval_display=%i\n", saved_printops.interval_display + 1);
 	fprintf(file, "min_exp=%i\n", saved_printops.min_exp);
 	fprintf(file, "negative_exponents=%i\n", saved_printops.negative_exponents);
 	fprintf(file, "sort_minus_last=%i\n", saved_printops.sort_options.minus_last);
-	fprintf(file, "number_fraction_format=%i\n", saved_printops.number_fraction_format);	
-	fprintf(file, "use_prefixes=%i\n", saved_printops.use_unit_prefixes);	
+	fprintf(file, "number_fraction_format=%i\n", saved_printops.number_fraction_format);
+	fprintf(file, "use_prefixes=%i\n", saved_printops.use_unit_prefixes);
 	fprintf(file, "use_prefixes_for_all_units=%i\n", saved_printops.use_prefixes_for_all_units);
 	fprintf(file, "use_prefixes_for_currencies=%i\n", saved_printops.use_prefixes_for_currencies);
 	fprintf(file, "abbreviate_names=%i\n", saved_printops.abbreviate_names);
@@ -4089,8 +4127,8 @@ bool save_preferences(bool mode)
 	fprintf(file, "angle_unit=%i\n", saved_evalops.parse_options.angle_unit);
 	fprintf(file, "functions_enabled=%i\n", saved_evalops.parse_options.functions_enabled);
 	fprintf(file, "variables_enabled=%i\n", saved_evalops.parse_options.variables_enabled);
-	fprintf(file, "calculate_variables=%i\n", saved_evalops.calculate_variables);	
-	fprintf(file, "calculate_functions=%i\n", saved_evalops.calculate_functions);	
+	fprintf(file, "calculate_variables=%i\n", saved_evalops.calculate_variables);
+	fprintf(file, "calculate_functions=%i\n", saved_evalops.calculate_functions);
 	fprintf(file, "sync_units=%i\n", saved_evalops.sync_units);
 	fprintf(file, "unknownvariables_enabled=%i\n", saved_evalops.parse_options.unknowns_enabled);
 	fprintf(file, "units_enabled=%i\n", saved_evalops.parse_options.units_enabled);
@@ -4099,7 +4137,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "indicate_infinite_series=%i\n", saved_printops.indicate_infinite_series);
 	fprintf(file, "show_ending_zeroes=%i\n", saved_printops.show_ending_zeroes);
 	fprintf(file, "round_halfway_to_even=%i\n", saved_printops.round_halfway_to_even);
-	fprintf(file, "approximation=%i\n", saved_evalops.approximation);	
+	fprintf(file, "approximation=%i\n", saved_evalops.approximation);
 	fprintf(file, "in_rpn_mode=%i\n", rpn_mode);
 	fprintf(file, "rpn_syntax=%i\n", saved_evalops.parse_options.rpn);
 	fprintf(file, "limit_implicit_multiplication=%i\n", evalops.parse_options.limit_implicit_multiplication);

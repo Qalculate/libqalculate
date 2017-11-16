@@ -6187,16 +6187,17 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpfr_sub_si(f_log, f_log, (po.use_max_decimals && po.max_decimals >= 0 && precision > po.max_decimals + i_log - expo) ? po.max_decimals + i_log - expo: precision - 1, MPFR_RNDN);
 		l10 = expo - mpfr_get_si(f_log, MPFR_RNDN);
 		mpfr_pow(f_log, f_base, f_log, MPFR_RNDN);
-		mpfr_div(v, v, f_log, MPFR_RNDN);
-		if(po.interval_display == INTERVAL_DISPLAY_LOWER) {
-			if(neg) mpfr_ceil(v, v);
-			else mpfr_floor(v, v);
-		} else if(po.interval_display == INTERVAL_DISPLAY_UPPER) {
-			if(!neg) mpfr_ceil(v, v);
-			else mpfr_floor(v, v);
+		if((!neg && po.interval_display == INTERVAL_DISPLAY_LOWER) || (neg && po.interval_display == INTERVAL_DISPLAY_UPPER)) {
+			mpfr_div(v, v, f_log, MPFR_RNDU);
+			mpfr_floor(v, v);
+		} else if((neg && po.interval_display == INTERVAL_DISPLAY_LOWER) || (!neg && po.interval_display == INTERVAL_DISPLAY_UPPER)) {
+			mpfr_div(v, v, f_log, MPFR_RNDD);
+			mpfr_ceil(v, v);
 		} else if(po.round_halfway_to_even) {
+			mpfr_div(v, v, f_log, MPFR_RNDN);
 			mpfr_rint(v, v, MPFR_RNDN);
 		} else {
+			mpfr_div(v, v, f_log, MPFR_RNDN);
 			mpfr_round(v, v);
 		}
 		mpz_t ivalue;
