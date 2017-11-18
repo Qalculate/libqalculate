@@ -20,7 +20,7 @@
 #include <string.h>
 #include "util.h"
 
-#define BIT_PRECISION (((PRECISION) * 3.3219281) + 100)
+#define BIT_PRECISION ((long int) ((PRECISION) * 3.3219281) + 100)
 #define PRECISION_TO_BITS(p) (((p) * 3.3219281) + 100)
 #define BITS_TO_PRECISION(p) (::ceil(((p) - 100) / 3.3219281))
 
@@ -675,8 +675,13 @@ void Number::set(long int numerator, long int denominator, long int exp_10, bool
 void Number::setFloat(double d_value) {
 	b_approx = true;
 	if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(fu_value, BIT_PRECISION); mpfr_init2(fl_value, BIT_PRECISION);}
-	mpfr_set_d(fu_value, d_value, MPFR_RNDU);
-	mpfr_set_d(fl_value, d_value, MPFR_RNDD);
+	if(CALCULATOR->usesIntervalArithmetics()) {
+		mpfr_set_d(fu_value, d_value, MPFR_RNDU);
+		mpfr_set_d(fl_value, d_value, MPFR_RNDD);
+	} else {
+		mpfr_set_d(fl_value, d_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	}
 	n_type = NUMBER_TYPE_FLOAT;
 	mpq_set_ui(r_value, 0, 1);
 	if(i_value) i_value->clear();
@@ -701,6 +706,15 @@ void Number::setInterval(const Number &nr_lower, const Number &nr_upper, bool ke
 	
 	setPrecisionAndApproximateFrom(nr_l);
 	setPrecisionAndApproximateFrom(nr_u);
+	
+	
+	if(!b_imag && (nr_lower.isComplex() || nr_upper.isComplex())) {
+		if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
+		i_value->setInterval(nr_lower.imaginaryPart(), nr_upper.imaginaryPart());
+		setPrecisionAndApproximateFrom(*i_value);
+	}
+	
+	b_approx = true;
 	
 	n_type = NUMBER_TYPE_FLOAT;
 
@@ -754,15 +768,16 @@ void Number::setInternal(const mpz_t &mpz_num, const mpz_t &mpz_den, bool keep_p
 void Number::setInternal(const mpfr_t &mpfr_value, bool merge_precision, bool keep_imag) {
 	b_approx = true;
 	if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(fu_value, BIT_PRECISION); mpfr_init2(fl_value, BIT_PRECISION);}
-	mpfr_set(fu_value, mpfr_value, MPFR_RNDU);
-	mpfr_set(fl_value, mpfr_value, MPFR_RNDD);
+	if(CALCULATOR->usesIntervalArithmetics()) {
+		mpfr_set(fu_value, mpfr_value, MPFR_RNDU);
+		mpfr_set(fl_value, mpfr_value, MPFR_RNDD);
+	} else {
+		mpfr_set(fl_value, mpfr_value, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	}
 	n_type = NUMBER_TYPE_FLOAT;
 	mpq_set_ui(r_value, 0, 1);
 	if(!keep_imag && i_value) i_value->clear();
-	if(!merge_precision && (i_precision < 0 || i_precision > PRECISION)) {
-		i_precision = PRECISION;
-		if(i_value) setPrecisionAndApproximateFrom(*i_value);
-	}
 }
 
 void Number::setImaginaryPart(const Number &o) {
@@ -778,8 +793,13 @@ void Number::set(const Number &o, bool merge_precision, bool keep_imag) {
 	mpq_set(r_value, o.internalRational());
 	if(o.internalType() == NUMBER_TYPE_FLOAT) {
 		if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(fu_value, BIT_PRECISION); mpfr_init2(fl_value, BIT_PRECISION);}
-		mpfr_set(fu_value, o.internalUpperFloat(), MPFR_RNDU);
-		mpfr_set(fl_value, o.internalLowerFloat(), MPFR_RNDD);
+		if(CALCULATOR->usesIntervalArithmetics() || o.isInterval()) {
+			mpfr_set(fu_value, o.internalUpperFloat(), MPFR_RNDU);
+			mpfr_set(fl_value, o.internalLowerFloat(), MPFR_RNDD);
+		} else {
+			mpfr_set(fl_value, o.internalLowerFloat(), MPFR_RNDN);
+			mpfr_set(fu_value, fl_value, MPFR_RNDN);
+		}
 	}
 	n_type = o.internalType();
 	if(!merge_precision) {
@@ -3592,7 +3612,7 @@ void Number::setLogicalNot() {
 
 void Number::e(bool use_cached_number) {
 	if(use_cached_number) {
-		if(nr_e.isZero() || CALCULATOR->usesIntervalArithmetics() != nr_e.isInterval() || mpfr_get_prec(nr_e.internalLowerFloat()) != BIT_PRECISION) {
+		if(nr_e.isZero() || CALCULATOR->usesIntervalArithmetics() != nr_e.isInterval() || mpfr_get_prec(nr_e.internalLowerFloat()) < BIT_PRECISION) {
 			nr_e.e(false);
 		}
 		set(nr_e);

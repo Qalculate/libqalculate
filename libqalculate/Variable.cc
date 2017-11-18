@@ -263,6 +263,7 @@ void KnownVariable::set(const MathStructure &o) {
 	calculated_with_units = false;
 	b_expression = false;
 	sexpression = "";
+	setApproximate(o.isApproximate());
 	setChanged(true);
 }
 void KnownVariable::set(string expression_) {

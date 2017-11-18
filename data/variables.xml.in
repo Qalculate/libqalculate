@@ -153,7 +153,7 @@
       <variable>
         <_title>Speed of Light in Vacuum</_title>
         <_names>ar:c,speed_of_light</_names>
-        <value>299792458*m*s^(-1)</value>
+        <value unit="m*s^(-1)">299792458</value>
       </variable>
       <variable>
         <_title>Planck Time</_title>
@@ -193,17 +193,17 @@
       <variable>
         <_title>Electric Constant (Permittivity of Free Space)</_title>
         <_names>r:electric_constant,aisu:&#x3B5;_0</_names>
-        <value>1/(4E-7*pi*299792458^2)*F*m^(-1)</value>
+        <value unit="F*m^(-1)">1/(4E-7*pi*299792458^2)</value>
       </variable>
       <variable>
         <_title>Magnetic Constant (Permeability of Free Space)</_title>
         <_names>r:magnetic_constant,aisu:&#x3BC;_0</_names>
-        <value>4E-7*pi*N*A^(-2)</value>
+        <value unit="N*A^(-2)">4E-7*pi</value>
       </variable>
       <variable>
         <_title>Characteristic Impedance of Vacuum</_title>
         <_names>r:characteristic_impedance,ais:Z_0</_names>
-        <value>4E-7*pi*299792458*ohm</value>
+        <value unit="ohm">4E-7*pi*299792458</value>
       </variable>
     </category>
     <category>

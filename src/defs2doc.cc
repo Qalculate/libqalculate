@@ -458,6 +458,14 @@ void print_variable(Variable *v) {
 				value = _("current precision");
 			} else if(((KnownVariable*) v)->isExpression()) {
 				value = fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->expression()));
+				if(!((KnownVariable*) v)->uncertainty().empty()) {
+					value += "±";
+					value += fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()));
+				}
+				if(!((KnownVariable*) v)->unit().empty()) {
+					value += " ";
+					value += fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->unit()));
+				}
 				if(value.length() > 40) {
 					value = value.substr(0, 30);
 					value += "...";
@@ -541,6 +549,10 @@ void print_unit(Unit *u) {
 					relation = "exchange rate";
 				} else {
 					relation = fix(CALCULATOR->localizeExpression(au->expression()).c_str());
+					if(!au->uncertainty().empty()) {
+						relation += "±";
+						relation += fix(CALCULATOR->localizeExpression(au->uncertainty()));
+					}
 				}
 				if(u->isApproximate()) {
 					relation += " (";
