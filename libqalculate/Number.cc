@@ -933,17 +933,16 @@ bool Number::intervalToPrecision() {
 		mpfr_div_ui(f_diff, f_diff, 2, MPFR_RNDN);
 		mpfr_add(f_mid, fl_value, f_diff, MPFR_RNDN);
 		mpfr_mul_ui(f_diff, f_diff, 2, MPFR_RNDN);
-		mpfr_div(f_diff, f_mid, f_diff, MPFR_RNDU);
+		mpfr_div(f_diff, f_mid, f_diff, MPFR_RNDN);
 		mpfr_abs(f_diff, f_diff, MPFR_RNDN);
-		mpfr_log10(f_diff, f_diff, MPFR_RNDD);
+		mpfr_log10(f_diff, f_diff, MPFR_RNDN);
 		long int i_prec = mpfr_get_si(f_diff, MPFR_RNDD) + 1;
-		if(i_prec < 0) i_prec = 0;
+		if(i_prec <= 1 || testErrors(0)) return false;
 		if(i_precision < 0 || i_prec < i_precision) i_precision = i_prec;
 		mpfr_set(fl_value, f_mid, MPFR_RNDN);
 		mpfr_set(fu_value, f_mid, MPFR_RNDN);
 		mpfr_clears(f_diff, f_mid, NULL);
 		b_approx = true;
-		testErrors(2);
 	}
 	return true;
 }
@@ -3786,7 +3785,7 @@ bool Number::gamma() {
 			mpfr_gamma(fu_value, fu_value, MPFR_RNDN);
 			mpfr_gamma(fl_value, fl_value, MPFR_RNDN);
 			if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-			CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_gamma->name());
+			CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_gamma->name().c_str(), NULL);
 			mpfr_clears(fu_test, fl_test, NULL);
 		}
 	}
@@ -3880,7 +3879,7 @@ bool Number::airy() {
 		mpfr_ai(fl_value, fl_value, MPFR_RNDN);
 		mpfr_ai(fu_value, fu_value, MPFR_RNDN);
 		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_airy->name());
+		CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_airy->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -3911,7 +3910,7 @@ bool Number::besselj(const Number &o) {
 		mpfr_jn(fl_value, n, fl_value, MPFR_RNDN);
 		mpfr_jn(fu_value, n, fu_value, MPFR_RNDN);
 		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_besselj->name());
+		CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_besselj->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -3946,7 +3945,7 @@ bool Number::bessely(const Number &o) {
 		mpfr_yn(fl_value, n, fl_value, MPFR_RNDN);
 		mpfr_yn(fu_value, n, fu_value, MPFR_RNDN);
 		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_bessely->name());
+		CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_bessely->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -5605,7 +5604,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < length && ((approx || (po.min_exp != 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT))) || length > 1000000L)) {
 			Number nr(*this);
 			if(nr.setToFloatingPoint()) {
-				str = nr.print(po, ips);
+				PrintOptions po2 = po;
+				po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
+				str = nr.print(po2, ips);
 				return str;
 			}
 		}
@@ -6293,7 +6294,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < labs(numlength - denlength) && (approx || po.min_exp != 0)) {
 			Number nr(*this);
 			if(nr.setToFloatingPoint()) {
-				str = nr.print(po, ips);
+				PrintOptions po2 = po;
+				po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
+				str = nr.print(po2, ips);
 				return str;
 			}
 		}

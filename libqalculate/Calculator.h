@@ -209,7 +209,7 @@ class Calculator {
 	int ianglemode;
 	int i_precision;
 	bool b_interval;
-	int i_stop_interval = 0;
+	int i_stop_interval;
 	char vbuffer[200];
 	vector<void*> ufvl;
 	vector<char> ufvl_t;

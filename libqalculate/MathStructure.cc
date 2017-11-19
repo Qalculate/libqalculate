@@ -5702,7 +5702,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 	return true;
 }
 
-bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo) {
+bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL) {
 	if(mstruct.type() == STRUCT_NUMBER) {
 		if(CALCULATOR->usesIntervalArithmetics()) {
 			if(!mstruct.number().isInterval() && mstruct.number().precision() >= 0) {
@@ -5712,7 +5712,10 @@ bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo) {
 				return true;
 			}
 		} else if(mstruct.number().isInterval()) {
-			mstruct.number().intervalToPrecision();
+			if(!mstruct.number().intervalToPrecision()) {
+				if(failed) *failed = true;
+				return false;
+			}
 			mstruct.numberUpdated();
 			return true;
 		}
@@ -5720,13 +5723,13 @@ bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo) {
 		bool b = mstruct.calculateFunctions(eo, false);
 		mstruct.unformat(eo);
 		if(b) {
-			fix_intervals(mstruct, eo);
+			fix_intervals(mstruct, eo, failed);
 			return true;
 		}
 	} else {
 		bool b = false;
 		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(fix_intervals(mstruct[i], eo)) {
+			if(fix_intervals(mstruct[i], eo, failed)) {
 				mstruct.childUpdated(i + 1);
 				b = true;
 			}
@@ -17615,371 +17618,152 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					MathStructure mbak(*this);
 					
 					CALCULATOR->beginTemporaryStopIntervalArithmetics();
-					fix_intervals(*this, eo2);
+					bool failed = false;
+					fix_intervals(*this, eo2, &failed);
+					if(failed) {
+						set(mbak);
+						CALCULATOR->endTemporaryStopIntervalArithmetics();
+					} else {
 
-					EvaluationOptions eo3 = eo2;
-					eo3.keep_zero_units = false;
-					
-					MathStructure mstruct_d(CHILD(1));
-					mstruct_d.calculateNegate(eo2);
-					
-					// 18abcd - 4b^3*d + b^2*c^2 - 4a*c^3 - 27a^2*d^2
-					MathStructure mdelta(18, 1, 0);
-					mdelta.multiply(mstruct_a);
-					mdelta.multiply(mstruct_b, true);
-					mdelta.multiply(mstruct_c, true);
-					mdelta.multiply(mstruct_d, true);
-					MathStructure *mdelta_b = new MathStructure(mstruct_b);
-					mdelta_b->raise(nr_three);
-					mdelta_b->multiply(Number(-4, 1, 0));
-					mdelta_b->multiply(mstruct_d);
-					MathStructure *mdelta_c = new MathStructure(mstruct_b);
-					mdelta_c->raise(nr_two);
-					MathStructure *mdelta_c2 = new MathStructure(mstruct_c);
-					mdelta_c2->raise(nr_two);
-					mdelta_c->multiply_nocopy(mdelta_c2);
-					MathStructure *mdelta_d = new MathStructure(mstruct_c);
-					mdelta_d->raise(nr_three);
-					mdelta_d->multiply(Number(-4, 1, 0));
-					mdelta_d->multiply(mstruct_a, true);
-					MathStructure *mdelta_e = new MathStructure(mstruct_a);
-					mdelta_e->raise(nr_two);
-					MathStructure *mdelta_e2 = new MathStructure(mstruct_d);
-					mdelta_e2->raise(nr_two);
-					mdelta_e->multiply_nocopy(mdelta_e2);
-					mdelta_e->multiply(Number(-27, 1, 0));
-					mdelta.add_nocopy(mdelta_b);
-					mdelta.add_nocopy(mdelta_c, true);
-					mdelta.add_nocopy(mdelta_d, true);
-					mdelta.add_nocopy(mdelta_e, true);
-					mdelta.calculatesub(eo3, eo);
-					
-					if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetics(); set(mbak); return false;}
-					
-					int b_zero = -1;
-					int b_real = -1;
-					if(mdelta.representsNonZero(true)) b_zero = 0;
-					else if(mdelta.representsZero(true)) b_zero = 1;
-					if(b_zero == 0) {
-						if(mdelta.representsPositive(true)) {
-							b_real = 1;
-						} else if(mdelta.representsNegative(true)) {
-							b_real = 0;
-						}
-					} else if(b_zero < 0) {
-						ComparisonResult cr = mdelta.compareApproximately(m_zero, eo);
-						if(cr == COMPARISON_RESULT_EQUAL) {
-							b_zero = 1;
-						} else if(COMPARISON_IS_NOT_EQUAL(cr)) {
-							if(cr == COMPARISON_RESULT_LESS) b_real = 0;
-							else if(cr == COMPARISON_RESULT_GREATER) b_real = 1;
-							b_zero = 0;
-						}
-					}
-					if(b_real < 0 && mdelta.representsComplex(true)) b_real = -2;
-					if(b_real == -1) b_zero = -1;
-					
-					MathStructure mdelta0;
-					int b0_zero = -1;
-					
-					if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetics(); set(mbak); return false;}
-					
-					if(b_zero >= 0) {
-						// b^2 - 3ac
-						mdelta0 = mstruct_b;
-						mdelta0.raise(nr_two);
-						MathStructure *mdelta0_b = new MathStructure(-3, 1, 0);
-						mdelta0_b->multiply(mstruct_a);
-						mdelta0_b->multiply(mstruct_c, true);
-						mdelta0.add_nocopy(mdelta0_b);
-						mdelta0.calculatesub(eo3, eo, true);
-						if(mdelta0.representsNonZero(true)) b0_zero = 0;
-						else if(mdelta0.representsZero(true)) b0_zero = 1;
-						else {
-							ComparisonResult cr = mdelta0.compareApproximately(m_zero, eo);
-							if(cr == COMPARISON_RESULT_EQUAL) {
-								b0_zero = 1;
-							} else if(COMPARISON_IS_NOT_EQUAL(cr)) {
-								b0_zero = 0;
-							}
-						}
-					}
-					
-					if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetics(); set(mbak); return false;}
-					
-					if(b_zero == 1) {
-						if(b0_zero == 1) {
-							// -b/(3a)
-							CHILD(0) = x_var;
-							CHILD(1).set(-1, 3);
-							CHILD(1).calculateMultiply(mstruct_b, eo3);
-							CHILD(1).calculateDivide(mstruct_a, eo3);
-							CHILDREN_UPDATED;
-							CALCULATOR->endTemporaryStopIntervalArithmetics();
-							if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || mbak.containsInterval())) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
-							fix_intervals(*this, eo2);
-							return true;
-						} else if(b0_zero == 0) {
-							MathStructure *malt1 = new MathStructure(x_var);
-							malt1->transform(STRUCT_COMPARISON, m_zero);
-							malt1->setComparisonType(comparisonType());
-							MathStructure *malt2 = new MathStructure(*malt1);
-							
-							// (9ad - bc) / (2*delta0)
-							(*malt1)[1].set(9, 1, 0);
-							(*malt1)[1].calculateMultiply(mstruct_a, eo3);
-							(*malt1)[1].calculateMultiply(mstruct_d, eo3);
-							MathStructure *malt1_2b = new MathStructure(-1, 1, 0);
-							malt1_2b->calculateMultiply(mstruct_b, eo3);
-							malt1_2b->calculateMultiply(mstruct_c, eo3);
-							(*malt1)[1].add_nocopy(malt1_2b);
-							(*malt1)[1].calculateAddLast(eo3);
-							(*malt1)[1].calculateDivide(nr_two, eo3);
-							(*malt1)[1].calculateDivide(mdelta0, eo3);
-							
-							// (4abc - 9a^2*d - b^3) / (a*delta0)
-							(*malt2)[1].set(4, 1, 0);
-							(*malt2)[1].calculateMultiply(mstruct_a, eo3);
-							(*malt2)[1].calculateMultiply(mstruct_b, eo3);
-							(*malt2)[1].calculateMultiply(mstruct_c, eo3);
-							MathStructure *malt2_2b = new MathStructure(mstruct_a);
-							malt2_2b->calculateRaise(nr_two, eo3);
-							malt2_2b->calculateMultiply(Number(-9, 1, 0), eo3);
-							malt2_2b->calculateMultiply(mstruct_d, eo3);
-							(*malt2)[1].add_nocopy(malt2_2b);
-							(*malt2)[1].calculateAddLast(eo3);
-							MathStructure *malt2_2c = new MathStructure(mstruct_b);
-							malt2_2c->calculateRaise(nr_three, eo3);
-							malt2_2c->calculateNegate(eo3);
-							(*malt2)[1].add_nocopy(malt2_2c);
-							(*malt2)[1].calculateAddLast(eo3);
-							(*malt2)[1].calculateDivide(mstruct_a, eo3);
-							(*malt2)[1].calculateDivide(mdelta0, eo3);
-							
-							if(ct_comp == COMPARISON_NOT_EQUALS) {
-								clear(true);
-								setType(STRUCT_LOGICAL_AND);
-							} else {
-								clear(true);
-								setType(STRUCT_LOGICAL_OR);
-							}
-							
-							malt1->childUpdated(2);
-							malt2->childUpdated(2);
-							
-							addChild_nocopy(malt1);
-							addChild_nocopy(malt2);
-							
-							calculatesub(eo2, eo, false);
-							
-							CALCULATOR->endTemporaryStopIntervalArithmetics();
-							if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || mbak.containsInterval())) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
-							fix_intervals(*this, eo2);
-
-							return true;
-						}
-					}
-					
-					if(CALCULATOR->aborted()) return false;
-					
-					MathStructure mdelta1;
-					bool b_neg = false;
-					
-					if(b_zero == 0 && b0_zero >= 0) {
-
-						// 2b^3 - 9abc + 27a^2*d
-						mdelta1 = mstruct_b;
-						mdelta1.raise(nr_three);
-						mdelta1.multiply(nr_two);
-						MathStructure *mdelta1_b = new MathStructure(-9, 1, 0);
-						mdelta1_b->multiply(mstruct_a);
-						mdelta1_b->multiply(mstruct_b, true);
-						mdelta1_b->multiply(mstruct_c, true);
-						MathStructure *mdelta1_c = new MathStructure(mstruct_a);
-						mdelta1_c->raise(nr_two);
-						mdelta1_c->multiply(Number(27, 1, 0));
-						mdelta1_c->multiply(mstruct_d, true);
-						mdelta1.add_nocopy(mdelta1_b);
-						mdelta1.add_nocopy(mdelta1_c, true);
-						mdelta1.calculatesub(eo3, eo, true);
+						EvaluationOptions eo3 = eo2;
+						eo3.keep_zero_units = false;
 						
-						if(b0_zero == 1) {
-							if(mdelta1.representsNegative(true)) {
-								b_neg = true;
-							} else if(!mdelta1.representsPositive(true)) {
-								if(mdelta1.representsZero(true)) {
-									// -b/(3a)
-									CHILD(0) = x_var;
-									CHILD(1).set(-1, 3);
-									CHILD(1).calculateMultiply(mstruct_b, eo3);
-									CHILD(1).calculateDivide(mstruct_a, eo3);
-									CHILDREN_UPDATED;
-									CALCULATOR->endTemporaryStopIntervalArithmetics();
-									if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || mbak.containsInterval())) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
-									fix_intervals(*this, eo2);
-									return true;
-									return true;
-								}
-								ComparisonResult cr = mdelta1.compareApproximately(m_zero, eo);
-								if(cr == COMPARISON_RESULT_EQUAL) {
-									// -b/(3a)
-									CHILD(0) = x_var;
-									CHILD(1).set(-1, 3);
-									CHILD(1).calculateMultiply(mstruct_b, eo3);
-									CHILD(1).calculateDivide(mstruct_a, eo3);
-									CHILDREN_UPDATED;
-									CALCULATOR->endTemporaryStopIntervalArithmetics();
-									if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || mbak.containsInterval())) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
-									fix_intervals(*this, eo2);
-									return true;
-								} else if(cr == COMPARISON_RESULT_LESS) {
-									b_neg = true;
-								} else if(cr != COMPARISON_RESULT_GREATER) {
-									b_zero = -1;
-								}
-							}
-						}
-					
-					}
-					
-					if(b_zero == 0 && b0_zero == 0) {
-					
-						// ((delta1 +-sqrt(delta1^2-4*delta0^3))/2)^(1/3)
-						MathStructure mC;
-						MathStructure *md0_43 = new MathStructure(mdelta0);
-						md0_43->raise(nr_three);
-						md0_43->multiply(Number(-4, 1, 0));
-						MathStructure *md1_2 = new MathStructure(mdelta1);
-						md1_2->raise(nr_two);
-						md1_2->add_nocopy(md0_43);
-						md1_2->raise(nr_half);
-						if(b_neg) md1_2->calculateNegate(eo3);
-						md1_2->calculatesub(eo3, eo, true); 
+						MathStructure mstruct_d(CHILD(1));
+						mstruct_d.calculateNegate(eo2);
+						
+						// 18abcd - 4b^3*d + b^2*c^2 - 4a*c^3 - 27a^2*d^2
+						MathStructure mdelta(18, 1, 0);
+						mdelta.multiply(mstruct_a);
+						mdelta.multiply(mstruct_b, true);
+						mdelta.multiply(mstruct_c, true);
+						mdelta.multiply(mstruct_d, true);
+						MathStructure *mdelta_b = new MathStructure(mstruct_b);
+						mdelta_b->raise(nr_three);
+						mdelta_b->multiply(Number(-4, 1, 0));
+						mdelta_b->multiply(mstruct_d);
+						MathStructure *mdelta_c = new MathStructure(mstruct_b);
+						mdelta_c->raise(nr_two);
+						MathStructure *mdelta_c2 = new MathStructure(mstruct_c);
+						mdelta_c2->raise(nr_two);
+						mdelta_c->multiply_nocopy(mdelta_c2);
+						MathStructure *mdelta_d = new MathStructure(mstruct_c);
+						mdelta_d->raise(nr_three);
+						mdelta_d->multiply(Number(-4, 1, 0));
+						mdelta_d->multiply(mstruct_a, true);
+						MathStructure *mdelta_e = new MathStructure(mstruct_a);
+						mdelta_e->raise(nr_two);
+						MathStructure *mdelta_e2 = new MathStructure(mstruct_d);
+						mdelta_e2->raise(nr_two);
+						mdelta_e->multiply_nocopy(mdelta_e2);
+						mdelta_e->multiply(Number(-27, 1, 0));
+						mdelta.add_nocopy(mdelta_b);
+						mdelta.add_nocopy(mdelta_c, true);
+						mdelta.add_nocopy(mdelta_d, true);
+						mdelta.add_nocopy(mdelta_e, true);
+						mdelta.calculatesub(eo3, eo);
 						
 						if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetics(); set(mbak); return false;}
-					
-						mC = mdelta1;
-						mC.add_nocopy(md1_2);
-						mC.calculateAddLast(eo3);
-						mC.calculateDivide(nr_two, eo3);
-						if(b_real == 0 && x_var.representsReal(true)) {
-							if(!mC.representsComplex(true)) {
-								mC.transform(STRUCT_FUNCTION);
-								mC.addChild(nr_three);
-								mC.setFunction(CALCULATOR->f_root);
-								mC.calculateFunctions(eo);
-								// x = -1/(3a)*(b + C + delta0/C)
+						
+						int b_zero = -1;
+						int b_real = -1;
+						if(mdelta.representsNonZero(true)) b_zero = 0;
+						else if(mdelta.representsZero(true)) b_zero = 1;
+						if(b_zero == 0) {
+							if(mdelta.representsPositive(true)) {
+								b_real = 1;
+							} else if(mdelta.representsNegative(true)) {
+								b_real = 0;
+							}
+						} else if(b_zero < 0) {
+							ComparisonResult cr = mdelta.compareApproximately(m_zero, eo);
+							if(cr == COMPARISON_RESULT_EQUAL) {
+								b_zero = 1;
+							} else if(COMPARISON_IS_NOT_EQUAL(cr)) {
+								if(cr == COMPARISON_RESULT_LESS) b_real = 0;
+								else if(cr == COMPARISON_RESULT_GREATER) b_real = 1;
+								b_zero = 0;
+							}
+						}
+						if(b_real < 0 && mdelta.representsComplex(true)) b_real = -2;
+						if(b_real == -1) b_zero = -1;
+						
+						MathStructure mdelta0;
+						int b0_zero = -1;
+						
+						if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetics(); set(mbak); return false;}
+						
+						if(b_zero >= 0) {
+							// b^2 - 3ac
+							mdelta0 = mstruct_b;
+							mdelta0.raise(nr_two);
+							MathStructure *mdelta0_b = new MathStructure(-3, 1, 0);
+							mdelta0_b->multiply(mstruct_a);
+							mdelta0_b->multiply(mstruct_c, true);
+							mdelta0.add_nocopy(mdelta0_b);
+							mdelta0.calculatesub(eo3, eo, true);
+							if(mdelta0.representsNonZero(true)) b0_zero = 0;
+							else if(mdelta0.representsZero(true)) b0_zero = 1;
+							else {
+								ComparisonResult cr = mdelta0.compareApproximately(m_zero, eo);
+								if(cr == COMPARISON_RESULT_EQUAL) {
+									b0_zero = 1;
+								} else if(COMPARISON_IS_NOT_EQUAL(cr)) {
+									b0_zero = 0;
+								}
+							}
+						}
+						
+						if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetics(); set(mbak); return false;}
+						
+						if(b_zero == 1) {
+							if(b0_zero == 1) {
+								// -b/(3a)
 								CHILD(0) = x_var;
-								CHILD(1).set(-1, 3, 0);
+								CHILD(1).set(-1, 3);
+								CHILD(1).calculateMultiply(mstruct_b, eo3);
 								CHILD(1).calculateDivide(mstruct_a, eo3);
-								MathStructure *malt1_2b = new MathStructure(mdelta0);
-								malt1_2b->calculateDivide(mC, eo3);
-								malt1_2b->calculateAdd(mC, eo3);
-								malt1_2b->calculateAdd(mstruct_b, eo3);
-								CHILD(1).multiply_nocopy(malt1_2b);
-								CHILD(1).calculateMultiplyLast(eo3);
 								CHILDREN_UPDATED;
 								CALCULATOR->endTemporaryStopIntervalArithmetics();
 								if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || mbak.containsInterval())) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
 								fix_intervals(*this, eo2);
 								return true;
-							}
-						} else if(eo3.allow_complex) {
-							
-							if(mC.representsNegative(true)) {
-								mC.calculateNegate(eo3);
-								mC.calculateRaise(Number(1, 3, 0), eo3);
-								mC.calculateNegate(eo3);
-							} else {
-								mC.calculateRaise(Number(1, 3, 0), eo3);
-							}
-						
-							// x = -1/(3a)*(b + C + delta0/C)
-						
-							MathStructure *malt1 = new MathStructure(x_var);
-							malt1->transform(STRUCT_COMPARISON, Number(-1, 3, 0));
-							malt1->setComparisonType(comparisonType());
-							(*malt1)[1].calculateDivide(mstruct_a, eo3);
-							
-							MathStructure *malt2 = new MathStructure(*malt1);
-							MathStructure *malt3 = new MathStructure(*malt1);
-
-							MathStructure *malt1_2b = new MathStructure(mdelta0);
-							malt1_2b->calculateDivide(mC, eo3);
-							malt1_2b->calculateAdd(mC, eo3);
-							malt1_2b->calculateAdd(mstruct_b, eo3);
-							(*malt1)[1].multiply_nocopy(malt1_2b);
-							(*malt1)[1].calculateMultiplyLast(eo3);
-							
-							MathStructure cbrt_mul(nr_three);
-							cbrt_mul.calculateRaise(nr_half, eo3);
-							cbrt_mul.calculateMultiply(nr_one_i, eo3);
-							MathStructure cbrt_mul2(cbrt_mul);
-							cbrt_mul.calculateMultiply(nr_half, eo3);
-							cbrt_mul.calculateAdd(Number(-1, 2, 0), eo3);
-							cbrt_mul2.calculateMultiply(Number(-1, 2, 0), eo3);
-							cbrt_mul2.calculateAdd(Number(-1, 2, 0), eo3);
-							
-							MathStructure mC2(mC);
-							mC2.calculateMultiply(cbrt_mul, eo3);
-							MathStructure mC3(mC);
-							mC3.calculateMultiply(cbrt_mul2, eo3);
-							
-							MathStructure *malt2_2b = new MathStructure(mdelta0);
-							malt2_2b->calculateDivide(mC2, eo3);
-							malt2_2b->calculateAdd(mC2, eo3);
-							malt2_2b->calculateAdd(mstruct_b, eo3);
-							(*malt2)[1].multiply_nocopy(malt2_2b);
-							(*malt2)[1].calculateMultiplyLast(eo3);
-							
-							MathStructure *malt3_2b = new MathStructure(mdelta0);
-							malt3_2b->calculateDivide(mC3, eo3);
-							malt3_2b->calculateAdd(mC3, eo3);
-							malt3_2b->calculateAdd(mstruct_b, eo3);
-							(*malt3)[1].multiply_nocopy(malt3_2b);
-							(*malt3)[1].calculateMultiplyLast(eo3);
-							
-							if(b_real == 1) {
-								if((*malt1)[1].isNumber()) {
-									(*malt1)[1].number().clearImaginary();
-								} else if((*malt1)[1].isMultiplication() && (*malt1)[1][0].isNumber()) {
-									bool b = true;
-									for(size_t i = 1; i < (*malt1)[1].size(); i++) {
-										if(!(*malt1)[1][i].representsReal(true)) {
-											b = false;
-											break;
-										}
-									}
-									if(b) (*malt1)[1][0].number().clearImaginary();
-								}
-								if((*malt2)[1].isNumber()) {
-									(*malt2)[1].number().clearImaginary();
-								} else if((*malt2)[1].isMultiplication() && (*malt2)[1][0].isNumber()) {
-									bool b = true;
-									for(size_t i = 1; i < (*malt2)[1].size(); i++) {
-										if(!(*malt2)[1][i].representsReal(true)) {
-											b = false;
-											break;
-										}
-									}
-									if(b) (*malt2)[1][0].number().clearImaginary();
-								}
-								if((*malt3)[1].isNumber()) {
-									(*malt3)[1].number().clearImaginary();
-								} else if((*malt3)[1].isMultiplication() && (*malt3)[1][0].isNumber()) {
-									bool b = true;
-									for(size_t i = 1; i < (*malt3)[1].size(); i++) {
-										if(!(*malt3)[1][i].representsReal(true)) {
-											b = false;
-											break;
-										}
-									}
-									if(b) (*malt3)[1][0].number().clearImaginary();
-								}
-							}
-							
-							if(b_real < 1 || !x_var.representsReal(true) || (!(*malt1)[1].representsComplex(true) && !(*malt2)[1].representsComplex(true) && !(*malt3)[1].representsComplex(true))) {
-							
+							} else if(b0_zero == 0) {
+								MathStructure *malt1 = new MathStructure(x_var);
+								malt1->transform(STRUCT_COMPARISON, m_zero);
+								malt1->setComparisonType(comparisonType());
+								MathStructure *malt2 = new MathStructure(*malt1);
+								
+								// (9ad - bc) / (2*delta0)
+								(*malt1)[1].set(9, 1, 0);
+								(*malt1)[1].calculateMultiply(mstruct_a, eo3);
+								(*malt1)[1].calculateMultiply(mstruct_d, eo3);
+								MathStructure *malt1_2b = new MathStructure(-1, 1, 0);
+								malt1_2b->calculateMultiply(mstruct_b, eo3);
+								malt1_2b->calculateMultiply(mstruct_c, eo3);
+								(*malt1)[1].add_nocopy(malt1_2b);
+								(*malt1)[1].calculateAddLast(eo3);
+								(*malt1)[1].calculateDivide(nr_two, eo3);
+								(*malt1)[1].calculateDivide(mdelta0, eo3);
+								
+								// (4abc - 9a^2*d - b^3) / (a*delta0)
+								(*malt2)[1].set(4, 1, 0);
+								(*malt2)[1].calculateMultiply(mstruct_a, eo3);
+								(*malt2)[1].calculateMultiply(mstruct_b, eo3);
+								(*malt2)[1].calculateMultiply(mstruct_c, eo3);
+								MathStructure *malt2_2b = new MathStructure(mstruct_a);
+								malt2_2b->calculateRaise(nr_two, eo3);
+								malt2_2b->calculateMultiply(Number(-9, 1, 0), eo3);
+								malt2_2b->calculateMultiply(mstruct_d, eo3);
+								(*malt2)[1].add_nocopy(malt2_2b);
+								(*malt2)[1].calculateAddLast(eo3);
+								MathStructure *malt2_2c = new MathStructure(mstruct_b);
+								malt2_2c->calculateRaise(nr_three, eo3);
+								malt2_2c->calculateNegate(eo3);
+								(*malt2)[1].add_nocopy(malt2_2c);
+								(*malt2)[1].calculateAddLast(eo3);
+								(*malt2)[1].calculateDivide(mstruct_a, eo3);
+								(*malt2)[1].calculateDivide(mdelta0, eo3);
+								
 								if(ct_comp == COMPARISON_NOT_EQUALS) {
 									clear(true);
 									setType(STRUCT_LOGICAL_AND);
@@ -17990,19 +17774,244 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								
 								malt1->childUpdated(2);
 								malt2->childUpdated(2);
-								malt3->childUpdated(2);
-							
+								
 								addChild_nocopy(malt1);
 								addChild_nocopy(malt2);
-								addChild_nocopy(malt3);
-							
+								
 								calculatesub(eo2, eo, false);
 								
 								CALCULATOR->endTemporaryStopIntervalArithmetics();
 								if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || mbak.containsInterval())) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
 								fix_intervals(*this, eo2);
-							
+
 								return true;
+							}
+						}
+						
+						if(CALCULATOR->aborted()) return false;
+						
+						MathStructure mdelta1;
+						bool b_neg = false;
+						
+						if(b_zero == 0 && b0_zero >= 0) {
+
+							// 2b^3 - 9abc + 27a^2*d
+							mdelta1 = mstruct_b;
+							mdelta1.raise(nr_three);
+							mdelta1.multiply(nr_two);
+							MathStructure *mdelta1_b = new MathStructure(-9, 1, 0);
+							mdelta1_b->multiply(mstruct_a);
+							mdelta1_b->multiply(mstruct_b, true);
+							mdelta1_b->multiply(mstruct_c, true);
+							MathStructure *mdelta1_c = new MathStructure(mstruct_a);
+							mdelta1_c->raise(nr_two);
+							mdelta1_c->multiply(Number(27, 1, 0));
+							mdelta1_c->multiply(mstruct_d, true);
+							mdelta1.add_nocopy(mdelta1_b);
+							mdelta1.add_nocopy(mdelta1_c, true);
+							mdelta1.calculatesub(eo3, eo, true);
+							
+							if(b0_zero == 1) {
+								if(mdelta1.representsNegative(true)) {
+									b_neg = true;
+								} else if(!mdelta1.representsPositive(true)) {
+									if(mdelta1.representsZero(true)) {
+										// -b/(3a)
+										CHILD(0) = x_var;
+										CHILD(1).set(-1, 3);
+										CHILD(1).calculateMultiply(mstruct_b, eo3);
+										CHILD(1).calculateDivide(mstruct_a, eo3);
+										CHILDREN_UPDATED;
+										CALCULATOR->endTemporaryStopIntervalArithmetics();
+										if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || mbak.containsInterval())) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+										fix_intervals(*this, eo2);
+										return true;
+										return true;
+									}
+									ComparisonResult cr = mdelta1.compareApproximately(m_zero, eo);
+									if(cr == COMPARISON_RESULT_EQUAL) {
+										// -b/(3a)
+										CHILD(0) = x_var;
+										CHILD(1).set(-1, 3);
+										CHILD(1).calculateMultiply(mstruct_b, eo3);
+										CHILD(1).calculateDivide(mstruct_a, eo3);
+										CHILDREN_UPDATED;
+										CALCULATOR->endTemporaryStopIntervalArithmetics();
+										if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || mbak.containsInterval())) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+										fix_intervals(*this, eo2);
+										return true;
+									} else if(cr == COMPARISON_RESULT_LESS) {
+										b_neg = true;
+									} else if(cr != COMPARISON_RESULT_GREATER) {
+										b_zero = -1;
+									}
+								}
+							}
+						
+						}
+						
+						if(b_zero == 0 && b0_zero == 0) {
+						
+							// ((delta1 +-sqrt(delta1^2-4*delta0^3))/2)^(1/3)
+							MathStructure mC;
+							MathStructure *md0_43 = new MathStructure(mdelta0);
+							md0_43->raise(nr_three);
+							md0_43->multiply(Number(-4, 1, 0));
+							MathStructure *md1_2 = new MathStructure(mdelta1);
+							md1_2->raise(nr_two);
+							md1_2->add_nocopy(md0_43);
+							md1_2->raise(nr_half);
+							if(b_neg) md1_2->calculateNegate(eo3);
+							md1_2->calculatesub(eo3, eo, true); 
+							
+							if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetics(); set(mbak); return false;}
+						
+							mC = mdelta1;
+							mC.add_nocopy(md1_2);
+							mC.calculateAddLast(eo3);
+							mC.calculateDivide(nr_two, eo3);
+							if(b_real == 0 && x_var.representsReal(true)) {
+								if(!mC.representsComplex(true)) {
+									mC.transform(STRUCT_FUNCTION);
+									mC.addChild(nr_three);
+									mC.setFunction(CALCULATOR->f_root);
+									mC.calculateFunctions(eo);
+									// x = -1/(3a)*(b + C + delta0/C)
+									CHILD(0) = x_var;
+									CHILD(1).set(-1, 3, 0);
+									CHILD(1).calculateDivide(mstruct_a, eo3);
+									MathStructure *malt1_2b = new MathStructure(mdelta0);
+									malt1_2b->calculateDivide(mC, eo3);
+									malt1_2b->calculateAdd(mC, eo3);
+									malt1_2b->calculateAdd(mstruct_b, eo3);
+									CHILD(1).multiply_nocopy(malt1_2b);
+									CHILD(1).calculateMultiplyLast(eo3);
+									CHILDREN_UPDATED;
+									CALCULATOR->endTemporaryStopIntervalArithmetics();
+									if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || mbak.containsInterval())) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+									fix_intervals(*this, eo2);
+									return true;
+								}
+							} else if(eo3.allow_complex) {
+								
+								if(mC.representsNegative(true)) {
+									mC.calculateNegate(eo3);
+									mC.calculateRaise(Number(1, 3, 0), eo3);
+									mC.calculateNegate(eo3);
+								} else {
+									mC.calculateRaise(Number(1, 3, 0), eo3);
+								}
+							
+								// x = -1/(3a)*(b + C + delta0/C)
+							
+								MathStructure *malt1 = new MathStructure(x_var);
+								malt1->transform(STRUCT_COMPARISON, Number(-1, 3, 0));
+								malt1->setComparisonType(comparisonType());
+								(*malt1)[1].calculateDivide(mstruct_a, eo3);
+								
+								MathStructure *malt2 = new MathStructure(*malt1);
+								MathStructure *malt3 = new MathStructure(*malt1);
+
+								MathStructure *malt1_2b = new MathStructure(mdelta0);
+								malt1_2b->calculateDivide(mC, eo3);
+								malt1_2b->calculateAdd(mC, eo3);
+								malt1_2b->calculateAdd(mstruct_b, eo3);
+								(*malt1)[1].multiply_nocopy(malt1_2b);
+								(*malt1)[1].calculateMultiplyLast(eo3);
+								
+								MathStructure cbrt_mul(nr_three);
+								cbrt_mul.calculateRaise(nr_half, eo3);
+								cbrt_mul.calculateMultiply(nr_one_i, eo3);
+								MathStructure cbrt_mul2(cbrt_mul);
+								cbrt_mul.calculateMultiply(nr_half, eo3);
+								cbrt_mul.calculateAdd(Number(-1, 2, 0), eo3);
+								cbrt_mul2.calculateMultiply(Number(-1, 2, 0), eo3);
+								cbrt_mul2.calculateAdd(Number(-1, 2, 0), eo3);
+								
+								MathStructure mC2(mC);
+								mC2.calculateMultiply(cbrt_mul, eo3);
+								MathStructure mC3(mC);
+								mC3.calculateMultiply(cbrt_mul2, eo3);
+								
+								MathStructure *malt2_2b = new MathStructure(mdelta0);
+								malt2_2b->calculateDivide(mC2, eo3);
+								malt2_2b->calculateAdd(mC2, eo3);
+								malt2_2b->calculateAdd(mstruct_b, eo3);
+								(*malt2)[1].multiply_nocopy(malt2_2b);
+								(*malt2)[1].calculateMultiplyLast(eo3);
+								
+								MathStructure *malt3_2b = new MathStructure(mdelta0);
+								malt3_2b->calculateDivide(mC3, eo3);
+								malt3_2b->calculateAdd(mC3, eo3);
+								malt3_2b->calculateAdd(mstruct_b, eo3);
+								(*malt3)[1].multiply_nocopy(malt3_2b);
+								(*malt3)[1].calculateMultiplyLast(eo3);
+								
+								if(b_real == 1) {
+									if((*malt1)[1].isNumber()) {
+										(*malt1)[1].number().clearImaginary();
+									} else if((*malt1)[1].isMultiplication() && (*malt1)[1][0].isNumber()) {
+										bool b = true;
+										for(size_t i = 1; i < (*malt1)[1].size(); i++) {
+											if(!(*malt1)[1][i].representsReal(true)) {
+												b = false;
+												break;
+											}
+										}
+										if(b) (*malt1)[1][0].number().clearImaginary();
+									}
+									if((*malt2)[1].isNumber()) {
+										(*malt2)[1].number().clearImaginary();
+									} else if((*malt2)[1].isMultiplication() && (*malt2)[1][0].isNumber()) {
+										bool b = true;
+										for(size_t i = 1; i < (*malt2)[1].size(); i++) {
+											if(!(*malt2)[1][i].representsReal(true)) {
+												b = false;
+												break;
+											}
+										}
+										if(b) (*malt2)[1][0].number().clearImaginary();
+									}
+									if((*malt3)[1].isNumber()) {
+										(*malt3)[1].number().clearImaginary();
+									} else if((*malt3)[1].isMultiplication() && (*malt3)[1][0].isNumber()) {
+										bool b = true;
+										for(size_t i = 1; i < (*malt3)[1].size(); i++) {
+											if(!(*malt3)[1][i].representsReal(true)) {
+												b = false;
+												break;
+											}
+										}
+										if(b) (*malt3)[1][0].number().clearImaginary();
+									}
+								}
+								
+								if(b_real < 1 || !x_var.representsReal(true) || (!(*malt1)[1].representsComplex(true) && !(*malt2)[1].representsComplex(true) && !(*malt3)[1].representsComplex(true))) {
+								
+									if(ct_comp == COMPARISON_NOT_EQUALS) {
+										clear(true);
+										setType(STRUCT_LOGICAL_AND);
+									} else {
+										clear(true);
+										setType(STRUCT_LOGICAL_OR);
+									}
+									
+									malt1->childUpdated(2);
+									malt2->childUpdated(2);
+									malt3->childUpdated(2);
+								
+									addChild_nocopy(malt1);
+									addChild_nocopy(malt2);
+									addChild_nocopy(malt3);
+								
+									calculatesub(eo2, eo, false);
+									
+									CALCULATOR->endTemporaryStopIntervalArithmetics();
+									if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || mbak.containsInterval())) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+									fix_intervals(*this, eo2);
+								
+									return true;
+								}
 							}
 						}
 					}
@@ -18089,43 +18098,48 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				MathStructure mtest(CHILD(0));
 				if(!CHILD(0).isZero()) mtest.calculateSubtract(CHILD(1), eo2);
 				CALCULATOR->beginTemporaryStopIntervalArithmetics();
-				fix_intervals(mtest, eo2);
-				MathStructure mbak(*this);
-				int ret = -1;
-				EvaluationOptions eo3 = eo2;
-				eo3.approximation = APPROXIMATION_APPROXIMATE;
-				if(ct_comp == COMPARISON_EQUALS) clear(true);
-				else set(1, 1, 0, true);
-				while((ret = newton_raphson(mtest, x_value, x_var, eo3)) > 0) {
-					if(isNumber()) {
-						set(x_var, true);
-						transform(STRUCT_COMPARISON, x_value);
-						setComparisonType(mbak.comparisonType());
-					} else {
-						if(isComparison()) transform(mbak.comparisonType() == COMPARISON_NOT_EQUALS ? STRUCT_LOGICAL_AND : STRUCT_LOGICAL_OR);
-						MathStructure *mnew = new MathStructure(x_var);
-						mnew->transform(STRUCT_COMPARISON, x_value);
-						mnew->setComparisonType(mbak.comparisonType());
-						addChild_nocopy(mnew);
-					}
-					MathStructure mdiv(x_var);
-					mdiv.calculateSubtract(x_value, eo3);
-					MathStructure mtestcopy(mtest);
-					MathStructure mrem;
-					if(!polynomial_long_division(mtestcopy, mdiv, x_var, mtest, mrem, eo3, false, true) || !mrem.isNumber()) {
-						ret = -1;
-						break;
-					}
-					if(!mtest.contains(x_var)) break;
-				}
-				CALCULATOR->endTemporaryStopIntervalArithmetics();
-				if(ret < 0) {
-					set(mbak);
+				bool failed = false;
+				fix_intervals(mtest, eo2, &failed);
+				if(failed) {
+					CALCULATOR->endTemporaryStopIntervalArithmetics();
 				} else {
-					if(!x_var.representsReal()) CALCULATOR->error(false, _("Not all complex roots were calculated for %s."), mbak.print().c_str(), NULL);
-					if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || mbak.containsInterval())) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
-					fix_intervals(*this, eo2);
-					return true;
+					MathStructure mbak(*this);
+					int ret = -1;
+					EvaluationOptions eo3 = eo2;
+					eo3.approximation = APPROXIMATION_APPROXIMATE;
+					if(ct_comp == COMPARISON_EQUALS) clear(true);
+					else set(1, 1, 0, true);
+					while((ret = newton_raphson(mtest, x_value, x_var, eo3)) > 0) {
+						if(isNumber()) {
+							set(x_var, true);
+							transform(STRUCT_COMPARISON, x_value);
+							setComparisonType(mbak.comparisonType());
+						} else {
+							if(isComparison()) transform(mbak.comparisonType() == COMPARISON_NOT_EQUALS ? STRUCT_LOGICAL_AND : STRUCT_LOGICAL_OR);
+							MathStructure *mnew = new MathStructure(x_var);
+							mnew->transform(STRUCT_COMPARISON, x_value);
+							mnew->setComparisonType(mbak.comparisonType());
+							addChild_nocopy(mnew);
+						}
+						MathStructure mdiv(x_var);
+						mdiv.calculateSubtract(x_value, eo3);
+						MathStructure mtestcopy(mtest);
+						MathStructure mrem;
+						if(!polynomial_long_division(mtestcopy, mdiv, x_var, mtest, mrem, eo3, false, true) || !mrem.isNumber()) {
+							ret = -1;
+							break;
+						}
+						if(!mtest.contains(x_var)) break;
+					}
+					CALCULATOR->endTemporaryStopIntervalArithmetics();
+					if(ret < 0) {
+						set(mbak);
+					} else {
+						if(!x_var.representsReal()) CALCULATOR->error(false, _("Not all complex roots were calculated for %s."), mbak.print().c_str(), NULL);
+						if(CALCULATOR->usesIntervalArithmetics() && (eo.approximation != APPROXIMATION_EXACT || mbak.containsInterval())) CALCULATOR->error(false, _("Interval arithmetics was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+						fix_intervals(*this, eo2);
+						return true;
+					}
 				}
 			}
 			// Try factorization
