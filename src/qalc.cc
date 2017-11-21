@@ -2852,6 +2852,10 @@ int main(int argc, char *argv[]) {
 				puts("");
 				puts(_("Function arguments without parentheses are an exception, where implicit multiplication in front of variables and units is parsed first regardless of mode (\"sqrt 2x = sqrt(2x)\")."));
 				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "interval", _("interval"))) {
+				puts("");
+				PUTS_UNICODE(_("Enables/disables use of interval arithmetics to determine the precision of the result."));
+				puts("");
 			} else {
 				goto show_info;
 			}
@@ -2954,6 +2958,7 @@ void ViewThread::run() {
 			po.restrict_to_parent_precision = false;
 			po.spell_out_logical_operators = printops.spell_out_logical_operators;
 			po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+			po.preserve_precision = true;
 			MathStructure mp(*((MathStructure*) x));
 			read(&po.is_approximate);
 			mp.format(po);

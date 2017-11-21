@@ -5426,6 +5426,30 @@ int char2val(const char &c, const int &base) {
 	else return c - 'A' + 10;
 }
 
+void insert_thousands_separator(string &str, const PrintOptions &po) {
+	if(!po.thousandsseparator().empty()) {
+		size_t i_deci = str.rfind(po.decimalpoint());
+		size_t i;
+		if(i_deci != string::npos) {
+			i = i_deci;
+			/*i += 3 + po.decimalpoint().length();
+			while(i < str.length()) {
+				str.insert(i, po.thousandsseparator());
+				i += 3 + po.thousandsseparator().length();
+			}
+			i = i_deci;*/
+		} else {
+			i = str.length();
+		}
+		if(i > 4 || i_deci == string::npos) {
+			while(i > 3) {
+				i -= 3;
+				str.insert(i, po.thousandsseparator());
+			}
+		}
+	}
+}
+
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
 	if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 	if(ips.minus) *ips.minus = false;
@@ -5625,7 +5649,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		length = mpz_str.length();
 		
 		long int expo = 0;
-		if(base == 10) {
+		if(base == 10 && !po.preserve_format) {
 			if(mpz_str.length() > 0 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 				expo = length - 1;
 			} else if(mpz_str.length() > 0) {
@@ -5636,7 +5660,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					expo++;
 				} 
 			}
-			if(po.min_exp == EXP_PRECISION) {	
+			if(po.min_exp == EXP_PRECISION) {
 				long int precexp = i_precision_base;
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
@@ -5813,6 +5837,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				str += "0";
 			}
 		}
+		if(base == 10) insert_thousands_separator(str, po);
 		if(expo != 0) {
 			if(ips.iexp) *ips.iexp = expo;
 			if(ips.exp) {
@@ -6166,7 +6191,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpfr_div(f_log, f_log, f_log_base, MPFR_RNDN);
 		mpfr_floor(f_log, f_log);
 		long int i_log = mpfr_get_si(f_log, MPFR_RNDN);
-		if(base == 10) {
+		if(base == 10 && !po.preserve_format) {
 			expo = i_log;
 			if(po.min_exp == EXP_PRECISION || (po.min_exp == 0 && expo > 1000000L)) {
 				long int precexp = i_precision_base;
@@ -6267,6 +6292,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		
 		str = format_number_string(str, base, po.base_display, !ips.minus && neg, !has_decimal);
+		if(base == 10) insert_thousands_separator(str, po);
 		
 		if(expo != 0) {
 			if(ips.iexp) *ips.iexp = expo;
@@ -6320,7 +6346,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(CALCULATOR->aborted()) {mpz_clears(num, d, remainder, remainder2, exp, NULL); return CALCULATOR->abortedMessage();}
 			
 			long int length = str.length();
-			if(base != 10) {
+			if(base != 10 || po.preserve_format) {
 				expo = 0;
 			} else {
 				expo = length - 1;
@@ -6347,6 +6373,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			
 			precision2 -= length;
 			if(!approx && min_decimals + nondecimals > precision) precision2 = (min_decimals + nondecimals) - length;
+			if(po.preserve_format) precision2 += 20;
 			
 			int do_div = 0;
 			
@@ -6405,6 +6432,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpz_set(num, num_bak);
 			mpz_set(remainder, remainder_bak);
 		}
+		if(po.preserve_format) precision2 += 20;
 		while(!exact && precision2 > 0) {
 			if(try_infinite_series) {
 				mpz_t *remcopy = new mpz_t[1];
@@ -6463,19 +6491,16 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			mpq_clears(q_base_half, q_rem, NULL);
 		}
-		if(!exact && !infinite_series) {
-			if(po.number_fraction_format == FRACTION_DECIMAL_EXACT && !isApproximate()) {
-				PrintOptions po2 = po;
-				po2.number_fraction_format = FRACTION_FRACTIONAL;
-				if(expo != 0) po2.restrict_fraction_length = true;
-				if(num_sign == 0 && po.use_max_decimals && po.max_decimals > 0) mpz_clears(num_bak, remainder_bak, NULL); 
-				mpz_clears(num, d, remainder, remainder2, exp, NULL);
-				return print(po2, ips);
-			}
-			if(po.is_approximate) *po.is_approximate = true;
+		if(!exact && !infinite_series && po.number_fraction_format == FRACTION_DECIMAL_EXACT && !isApproximate()) {
+			PrintOptions po2 = po;
+			po2.number_fraction_format = FRACTION_FRACTIONAL;
+			if(expo != 0) po2.restrict_fraction_length = true;
+			if(num_sign == 0 && po.use_max_decimals && po.max_decimals > 0) mpz_clears(num_bak, remainder_bak, NULL); 
+			mpz_clears(num, d, remainder, remainder2, exp, NULL);
+			return print(po2, ips);
 		}
 		str = printMPZ(num, base, true, BASE_DISPLAY_NONE, po.lower_case_numbers, po.use_unicode_signs);
-		if(base == 10 && !rerun) {
+		if(base == 10 && !rerun && !po.preserve_format) {
 			expo = str.length() - l10 - 1;
 			if(po.min_exp == EXP_PRECISION) {
 				long int precexp = i_precision_base;
@@ -6509,12 +6534,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			started = false;
 			goto rational_rerun;
 		}
-		if(!rerun && !approx && !exact && num_sign == 0 && expo < 0 && min_decimals > 0 && l10 + expo < min_decimals) {
+		if(!rerun && !approx && !exact && num_sign == 0 && expo <= 0 && min_decimals > 0 && l10 + expo < min_decimals) {
 			precision2 = min_decimals + (str.length() - l10 - expo);
 			rerun = true;
 			started = false;
 			goto rational_rerun;
 		}
+		if(po.is_approximate && !exact && !infinite_series) *po.is_approximate = true;
 		if(expo != 0) {
 			l10 += expo;
 		}
@@ -6585,6 +6611,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		
 		str = format_number_string(str, base, po.base_display, !ips.minus && neg, !has_decimal);
+		if(base == 10) insert_thousands_separator(str, po);
 		
 		if(infinite_series) {
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("…", po.can_display_unicode_string_arg))) str += "…";
