@@ -2052,7 +2052,7 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("interval")); PUTS_UNICODE(b2oo(CALCULATOR->usesIntervalArithmetics(), false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("interval display"));
 			if(adaptive_interval_display) {
-				PUTS_UNICODE(_("adaptive")); break;
+				PUTS_UNICODE(_("adaptive"));
 			} else {
 				switch(printops.interval_display) {
 					case INTERVAL_DISPLAY_SIGNIFICANT_DIGITS: {PUTS_UNICODE(_("significant")); break;}
