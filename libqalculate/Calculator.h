@@ -234,7 +234,6 @@ class Calculator {
 	Thread *calculate_thread;
 
 	string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
-	string local_thousands_separator;
 
 	bool b_argument_errors;
 	int current_stage;
@@ -308,6 +307,7 @@ class Calculator {
   	bool place_currency_code_before, place_currency_sign_before;
 	bool place_currency_code_before_negative, place_currency_sign_before_negative;
 	bool default_dot_as_separator;
+	string local_digit_group_separator, local_digit_group_format;
   
   	bool b_busy;
 	string expression_to_calculate;
@@ -1105,8 +1105,6 @@ class Calculator {
 	const string &getDecimalPoint() const;
 	/** Returns the preferred comma character for separating arguments.*/
 	const string &getComma() const;
-	/** Returns the thousand separator specified by the current locale.*/
-	const string &getLocalThousandsSeparator() const;
 	/** Sets argument separator and decimal sign from the current locale. Mainly for internal use. */
 	void setLocale();
 	void useDecimalComma();

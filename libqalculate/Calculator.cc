@@ -98,22 +98,6 @@
 
 const string &PrintOptions::comma() const {if(comma_sign.empty()) return CALCULATOR->getComma(); return comma_sign;}
 const string &PrintOptions::decimalpoint() const {if(decimalpoint_sign.empty()) return CALCULATOR->getDecimalPoint(); return decimalpoint_sign;}
-string PrintOptions::thousandsseparator() const {
-	if(thousands_separator == THOUSANDS_SEPARATOR_SPACE) {
-		if(use_unicode_signs && (!can_display_unicode_string_function || (*can_display_unicode_string_function) (" ", can_display_unicode_string_arg))) {
-			return " ";
-		} else {
-			return SPACE;
-		}
-	} else if(thousands_separator == THOUSANDS_SEPARATOR_LOCALE) {
-		if(use_unicode_signs && CALCULATOR->getLocalThousandsSeparator() == SPACE && (!can_display_unicode_string_function || (*can_display_unicode_string_function) (" ", can_display_unicode_string_arg))) {
-			return " ";
-		} else {
-			return CALCULATOR->getLocalThousandsSeparator();
-		}
-	}
-	return empty_string;
-}
 
 /*#include <time.h>
 #include <sys/time.h>
@@ -433,8 +417,10 @@ Calculator::Calculator() {
 #endif	
 	place_currency_sign_before = lc->p_cs_precedes;
 	place_currency_sign_before_negative = lc->n_cs_precedes;
-	local_thousands_separator = lc->thousands_sep;
-	default_dot_as_separator = (local_thousands_separator == ".");
+	local_digit_group_separator = lc->thousands_sep;
+	local_digit_group_format = lc->grouping;
+	remove_blank_ends(local_digit_group_format);
+	default_dot_as_separator = (local_digit_group_separator == ".");
 	if(strcmp(lc->decimal_point, ",") == 0) {
 		DOT_STR = ",";
 		DOT_S = ".,";	
@@ -1179,7 +1165,6 @@ void Calculator::endTemporaryStopIntervalArithmetics() {
 
 const string &Calculator::getDecimalPoint() const {return DOT_STR;}
 const string &Calculator::getComma() const {return COMMA_STR;}
-const string &Calculator::getLocalThousandsSeparator() const {return local_thousands_separator;}
 string Calculator::localToString() const {
 	return _(" to ");
 }

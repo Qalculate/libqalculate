@@ -491,8 +491,8 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "base display", _("base display"))) {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = BASE_DISPLAY_NONE;
-		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "normal", _("normal"))) v = BASE_DISPLAY_NORMAL;
-		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "alternative", _("alternative"))) v = BASE_DISPLAY_ALTERNATIVE;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "normal", _("normal"))) v = BASE_DISPLAY_NORMAL;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "alternative", _("alternative"))) v = BASE_DISPLAY_ALTERNATIVE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
@@ -500,6 +500,21 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			printops.base_display = (BaseDisplay) v;
+			result_display_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "digit grouping", _("digit grouping"))) {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = DIGIT_GROUPING_NONE;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = DIGIT_GROUPING_NONE;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "standard", _("standard"))) v = DIGIT_GROUPING_STANDARD;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "locale", _("locale"))) v = DIGIT_GROUPING_LOCALE;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < DIGIT_GROUPING_NONE || v > DIGIT_GROUPING_LOCALE) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			printops.digit_grouping = (DigitGrouping) v;
 			result_display_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spell out logical", _("spell out logical"))) SET_BOOL_D(printops.spell_out_logical_operators)
@@ -519,7 +534,7 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "variables", _("variables"))) SET_BOOL_PV(evalops.parse_options.variables_enabled)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "abbreviations", _("abbreviations"))) SET_BOOL_D(printops.abbreviate_names)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "show ending zeroes", _("show ending zeroes"))) SET_BOOL_D(printops.show_ending_zeroes)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "indicate infinite series", _("indicate infinite series"))) SET_BOOL_D(printops.indicate_infinite_series)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "repeating decimals", _("repeating decimals"))) SET_BOOL_D(printops.indicate_infinite_series)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "angle unit", _("angle unit"))) {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rad", _("rad")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "radians", _("radians"))) v = ANGLE_UNIT_RADIANS;
@@ -1990,6 +2005,13 @@ int main(int argc, char *argv[]) {
 			}
 			PRINT_AND_COLON_TABS(_("complex numbers")); PUTS_UNICODE(b2oo(evalops.allow_complex, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("denominator prefixes")); PUTS_UNICODE(b2oo(printops.use_denominator_prefix, false)); CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("digit grouping"));
+			switch(printops.digit_grouping) {
+				case DIGIT_GROUPING_NONE: {PUTS_UNICODE(_("off")); break;}
+				case DIGIT_GROUPING_STANDARD: {PUTS_UNICODE(_("standard")); break;}
+				case DIGIT_GROUPING_LOCALE: {PUTS_UNICODE(_("locale")); break;}
+			}
+			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("division sign"));
 			switch(printops.division_sign) {
 				case DIVISION_SIGN_DIVISION_SLASH: {puts(SIGN_DIVISION_SLASH); break;}
@@ -2026,7 +2048,6 @@ int main(int argc, char *argv[]) {
 				default: {printf("%i\n", evalops.parse_options.base);}
 			}
 			CHECK_IF_SCREEN_FILLED
-			PRINT_AND_COLON_TABS(_("indicate infinite series")); PUTS_UNICODE(b2oo(printops.indicate_infinite_series, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("infinite numbers")); PUTS_UNICODE(b2oo(evalops.allow_infinite, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("interval")); PUTS_UNICODE(b2oo(CALCULATOR->usesIntervalArithmetics(), false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("interval display"));
@@ -2085,6 +2106,7 @@ int main(int argc, char *argv[]) {
 				case READ_PRECISION_WHEN_DECIMALS: {PUTS_UNICODE(_("when decimals")); break;}
 			}
 			CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("repeating decimals")); PUTS_UNICODE(b2oo(printops.indicate_infinite_series, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("round to even")); PUTS_UNICODE(b2oo(printops.round_halfway_to_even, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("rpn")); PUTS_UNICODE(b2oo(rpn_mode, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("rpn syntax")); PUTS_UNICODE(b2oo(evalops.parse_options.rpn, false)); CHECK_IF_SCREEN_FILLED
@@ -2579,6 +2601,7 @@ int main(int argc, char *argv[]) {
 				}
 				STR_AND_TABS_BOOL(_("complex numbers"), evalops.allow_complex);
 				STR_AND_TABS_BOOL(_("denominator prefixes"), printops.use_denominator_prefix);
+				STR_AND_TABS_2(_("digit grouping"), printops.digit_grouping, _("off"), _("standard"), _("locale"));
 				STR_AND_TABS_2(_("division sign"), printops.division_sign, "/", SIGN_DIVISION_SLASH, SIGN_DIVISION);
 				if(CALCULATOR->getDecimalPoint() != DOT) {
 					STR_AND_TABS_BOOL(_("dot as separator"), evalops.parse_options.dot_as_separator);
@@ -2614,7 +2637,6 @@ int main(int argc, char *argv[]) {
 				if(evalops.parse_options.base > 2 && evalops.parse_options.base != BASE_OCTAL && evalops.parse_options.base != BASE_DECIMAL && evalops.parse_options.base != BASE_HEXADECIMAL) {str += " "; str += i2s(evalops.parse_options.base); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("infinite numbers"), evalops.allow_infinite);
-				STR_AND_TABS_BOOL(_("indicate infinite series"), printops.indicate_infinite_series);
 				STR_AND_TABS_BOOL(_("interval"), CALCULATOR->usesIntervalArithmetics());
 				STR_AND_TABS_7(_("interval display"), (adaptive_interval_display ? 0 : printops.interval_display + 1), _("adaptive"), _("significant"), _("interval"), _("plusminus"), _("midpoint"), _("upper"), _("lower"))
 				STR_AND_TABS_BOOL(_("limit implicit multiplication"), evalops.parse_options.limit_implicit_multiplication);
@@ -2636,6 +2658,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS(_("precision"));  str += "(> 0) "; str += i2s(CALCULATOR->getPrecision()); str += "*"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("prefixes"), printops.use_unit_prefixes);
 				STR_AND_TABS_2(_("read precision"), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
+				STR_AND_TABS_BOOL(_("repeating decimals"), printops.indicate_infinite_series);
 				STR_AND_TABS_BOOL(_("round to even"), printops.round_halfway_to_even);
 				STR_AND_TABS_BOOL(_("rpn"), rpn_mode);
 				STR_AND_TABS_BOOL(_("rpn syntax"), evalops.parse_options.rpn);
@@ -2948,7 +2971,9 @@ void ViewThread::run() {
 			po.lower_case_e = printops.lower_case_e;
 			po.lower_case_numbers = printops.lower_case_numbers;
 			po.base_display = printops.base_display;
+			po.base = evalops.parse_options.base;
 			po.abbreviate_names = false;
+			po.digit_grouping = printops.digit_grouping;
 			po.use_unicode_signs = printops.use_unicode_signs;
 			po.multiplication_sign = printops.multiplication_sign;
 			po.division_sign = printops.division_sign;
@@ -2958,7 +2983,6 @@ void ViewThread::run() {
 			po.restrict_to_parent_precision = false;
 			po.spell_out_logical_operators = printops.spell_out_logical_operators;
 			po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
-			po.preserve_precision = true;
 			MathStructure mp(*((MathStructure*) x));
 			read(&po.is_approximate);
 			mp.format(po);
@@ -3783,6 +3807,7 @@ void load_preferences() {
 	printops.sort_options.minus_last = true;
 	printops.indicate_infinite_series = false;
 	printops.show_ending_zeroes = false;
+	printops.digit_grouping = DIGIT_GROUPING_NONE;
 	printops.round_halfway_to_even = false;
 	printops.number_fraction_format = FRACTION_DECIMAL;
 	printops.abbreviate_names = true;
@@ -4039,10 +4064,14 @@ void load_preferences() {
 					printops.indicate_infinite_series = v;
 				} else if(svar == "show_ending_zeroes") {
 					printops.show_ending_zeroes = v;
+				} else if(svar == "digit_grouping") {
+					if(v >= DIGIT_GROUPING_NONE && v <= DIGIT_GROUPING_LOCALE) {
+						printops.digit_grouping = (DigitGrouping) v;
+					}
 				} else if(svar == "round_halfway_to_even") {
-					printops.round_halfway_to_even = v;	
+					printops.round_halfway_to_even = v;
 				} else if(svar == "approximation") {
-					if(v >= APPROXIMATION_EXACT && v <= APPROXIMATION_APPROXIMATE) {					
+					if(v >= APPROXIMATION_EXACT && v <= APPROXIMATION_APPROXIMATE) {
 						evalops.approximation = (ApproximationMode) v;
 					}
 				} else if(svar == "in_rpn_mode") {
@@ -4108,6 +4137,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);
 	fprintf(file, "base_display=%i\n", printops.base_display);
 	fprintf(file, "spell_out_logical_operators=%i\n", printops.spell_out_logical_operators);
+	fprintf(file, "digit_grouping=%i\n", printops.digit_grouping);
 	fprintf(file, "dot_as_separator=%i\n", evalops.parse_options.dot_as_separator);
 	fprintf(file, "comma_as_separator=%i\n", evalops.parse_options.comma_as_separator);
 	fprintf(file, "multiplication_sign=%i\n", printops.multiplication_sign);

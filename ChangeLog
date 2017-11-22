@@ -1,3 +1,10 @@
+2017-11-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Enhanced display of repeating decimals
+	* Fix numbers less than 1 when max decimals is 0
+	* Enhanced display of parsed expression
+	* Digit grouping
+
 2017-11-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Option to disable units in physical constants

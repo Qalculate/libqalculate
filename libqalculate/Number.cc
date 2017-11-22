@@ -5427,24 +5427,42 @@ int char2val(const char &c, const int &base) {
 }
 
 void insert_thousands_separator(string &str, const PrintOptions &po) {
-	if(!po.thousandsseparator().empty()) {
+	if(po.digit_grouping != DIGIT_GROUPING_NONE && (po.digit_grouping != DIGIT_GROUPING_LOCALE || !CALCULATOR->local_digit_group_separator.empty())) {
 		size_t i_deci = str.rfind(po.decimalpoint());
 		size_t i;
 		if(i_deci != string::npos) {
 			i = i_deci;
-			/*i += 3 + po.decimalpoint().length();
+			/*i += 5 + po.decimalpoint().length();
 			while(i < str.length()) {
 				str.insert(i, po.thousandsseparator());
-				i += 3 + po.thousandsseparator().length();
+				i += 5 + po.thousandsseparator().length();
 			}
 			i = i_deci;*/
 		} else {
 			i = str.length();
 		}
-		if(i > 4 || i_deci == string::npos) {
-			while(i > 3) {
-				i -= 3;
-				str.insert(i, po.thousandsseparator());
+		size_t group_size = 3, i_format = 0;
+		if(po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_format.size() > i_format) {
+			if(CALCULATOR->local_digit_group_format[i_format] == CHAR_MAX) return;
+			if(CALCULATOR->local_digit_group_format[i_format] > 0) group_size = CALCULATOR->local_digit_group_format[i_format];
+		}
+		if(i > group_size + 1) {
+			while(i > group_size) {
+				i -= group_size;
+				if(po.digit_grouping != DIGIT_GROUPING_LOCALE || CALCULATOR->local_digit_group_separator == " ") {
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
+						str.insert(i, " ");
+					} else {
+						str.insert(i, " ");
+					}
+				} else {
+					str.insert(i, CALCULATOR->local_digit_group_separator);
+				}
+				if(po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_format.size() - 1 > i_format) {
+					i_format++;
+					if(CALCULATOR->local_digit_group_format[i_format] == CHAR_MAX) break;
+					if(CALCULATOR->local_digit_group_format[i_format] > 0) group_size = CALCULATOR->local_digit_group_format[i_format];
+				}
 			}
 		}
 	}
@@ -5594,8 +5612,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	}
 
 	long int precision = PRECISION;
-	if(b_approx && i_precision >= 0 && (po.preserve_precision || i_precision < PRECISION)) precision = i_precision;
+	if(b_approx && i_precision >= 0 && (po.preserve_precision || po.preserve_format || i_precision < PRECISION)) precision = i_precision;
 	else if(b_approx && i_precision < 0 && po.preserve_precision && FROM_BIT_PRECISION(BIT_PRECISION) > precision) precision = FROM_BIT_PRECISION(BIT_PRECISION);
+	else if(b_approx && i_precision < 0 && po.preserve_format && FROM_BIT_PRECISION(BIT_PRECISION) - 1 > precision) precision = FROM_BIT_PRECISION(BIT_PRECISION) - 1;
 	if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < precision) precision = ips.parent_precision;
 	long int precision_base = precision;
 	if(base != 10 && base >= 2 && base <= 36) {
@@ -5930,6 +5949,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 			if(po.preserve_precision) {
 				if(i_precision < 0) precision = FROM_BIT_PRECISION(BIT_PRECISION);
+				else precision = i_precision;
+			} else if(po.preserve_format) {
+				if(i_precision < 0) precision = FROM_BIT_PRECISION(BIT_PRECISION) - 1;
 				else precision = i_precision;
 			}
 			if(iexp > 0) {
@@ -6326,6 +6348,22 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				return str;
 			}
 		}
+		if(po.use_max_decimals && po.max_decimals == 0 && isFraction()) {
+			bool neg = isNegative();
+			if(!neg && ((po.round_halfway_to_even && isGreaterThan(Number(1, 2))) || (!po.round_halfway_to_even && isGreaterThanOrEqualTo(Number(1, 2))))) {
+				str = "1";
+			} else if(neg && ((po.round_halfway_to_even && isLessThan(Number(-1, 2))) || (!po.round_halfway_to_even && isLessThanOrEqualTo(Number(-1, 2))))) {
+				str = "1";
+			} else {
+				str = "0";
+				neg = false;
+			}
+			if(po.is_approximate) *po.is_approximate = true;
+			str = format_number_string(str, base, po.base_display, !ips.minus && neg, true);
+			if(ips.minus) *ips.minus = neg;
+			if(ips.num) *ips.num = str;
+			return str;
+		}
 		mpz_t num, d, remainder, remainder2, exp;
 		mpz_inits(num, d, remainder, remainder2, exp, NULL);
 		mpz_set(d, mpq_denref(r_value));
@@ -6373,7 +6411,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			
 			precision2 -= length;
 			if(!approx && min_decimals + nondecimals > precision) precision2 = (min_decimals + nondecimals) - length;
-			if(po.preserve_format) precision2 += 20;
+			if(po.preserve_format) precision2 += 100;
 			
 			int do_div = 0;
 			
@@ -6415,7 +6453,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(po.use_max_decimals && po.max_decimals >= 0 && precision2 > po.max_decimals - decimals) precision2 = po.max_decimals - decimals;
 		}
 
-		bool try_infinite_series = po.indicate_infinite_series && !isFloatingPoint();
+		bool try_infinite_series = po.indicate_infinite_series && i_precision < 0 && !isFloatingPoint();
 
 		mpz_t remainder_bak, num_bak;
 		if(num_sign == 0 && ((po.use_max_decimals && po.max_decimals > 0) || min_decimals > 0)) {
@@ -6426,14 +6464,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		
 		rational_rerun:
 
-		bool infinite_series = false;
+		int infinite_series = 0;
 		long int l10 = 0;
 		if(rerun) {
 			mpz_set(num, num_bak);
 			mpz_set(remainder, remainder_bak);
 		}
-		if(po.preserve_format) precision2 += 20;
-		while(!exact && precision2 > 0) {
+		if(po.preserve_format) precision2 += 100;
+		while(!exact && precision2 > 0 && !infinite_series) {
 			if(try_infinite_series) {
 				mpz_t *remcopy = new mpz_t[1];
 				mpz_init_set(*remcopy, remainder);
@@ -6460,7 +6498,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				for(size_t i = 0; i < remainders.size(); i++) {
 					if(CALCULATOR->aborted()) {mpz_clears(num, d, remainder, remainder2, exp, NULL); return CALCULATOR->abortedMessage();}
 					if(!mpz_cmp(*remainders[i], remainder)) {
-						infinite_series = true;
+						infinite_series = remainders.size() - i;
 						try_infinite_series = false;
 						break;
 					}
@@ -6534,7 +6572,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			started = false;
 			goto rational_rerun;
 		}
-		if(!rerun && !approx && !exact && num_sign == 0 && expo <= 0 && min_decimals > 0 && l10 + expo < min_decimals) {
+		if(!rerun && !approx && !infinite_series && !exact && num_sign == 0 && expo <= 0 && min_decimals > 0 && l10 + expo < min_decimals) {
 			precision2 = min_decimals + (str.length() - l10 - expo);
 			rerun = true;
 			started = false;
@@ -6609,14 +6647,32 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			str.erase(str.end() - 1);
 			has_decimal = false;
 		}
-		
+		if(infinite_series && has_decimal && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals >= decimals + infinite_series)) {
+			if(infinite_series == 1) {
+				if(str[str.length() - 2] != po.decimalpoint()[po.decimalpoint().length() - 1]) {
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) str.insert(str.length() - 1, " ");
+					else str.insert(str.length() - 1, " ");
+				}
+				for(size_t i = 0; (i < 2 || decimals < min_decimals) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals); i++) {
+					str += str[str.length() - 1];
+					decimals++;
+				}
+			} else {
+				for(size_t i = 0; i < 1 || decimals < min_decimals; i++) {
+					str += str.substr(str.length() - infinite_series);
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) str.insert(str.length() - infinite_series, " ");
+					else str.insert(str.length() - infinite_series, " ");
+					decimals += infinite_series;
+				}
+			}
+			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("…", po.can_display_unicode_string_arg))) str += "…";
+			else str += "...";
+		} else if(infinite_series && has_decimal && po.use_max_decimals && po.max_decimals > decimals) {
+			str += str.substr(str.length() - infinite_series, (po.max_decimals - decimals));
+		}
 		str = format_number_string(str, base, po.base_display, !ips.minus && neg, !has_decimal);
 		if(base == 10) insert_thousands_separator(str, po);
 		
-		if(infinite_series) {
-			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("…", po.can_display_unicode_string_arg))) str += "…";
-			else str += "...";
-		}
 		if(expo != 0) {
 			if(ips.iexp) *ips.iexp = expo;
 			if(ips.exp) {
