@@ -129,6 +129,7 @@ class Number {
 		void precisionToInterval();
 		bool intervalToPrecision();
 		void intervalToMidValue();
+		bool mergeInterval(const Number &o, bool set_to_overlap = false);
 		void setUncertainty(const Number &o, bool force_interval = false);
 		Number uncertainty() const;
 		Number relativeUncertainty() const;
@@ -282,7 +283,7 @@ class Number {
 		bool hasNegativeSign() const;
 		bool hasPositiveSign() const;
 		bool equalsZero() const;
-		bool equals(const Number &o) const;
+		bool equals(const Number &o, bool allow_interval = false) const;
 		bool equals(long int i) const;
 		int equalsApproximately(const Number &o, int prec) const;
 		ComparisonResult compare(const Number &o) const;

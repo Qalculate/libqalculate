@@ -618,8 +618,8 @@ class MathStructure {
 		/** @name Functions/operators for comparisons */
 		//@{
 
-		bool equals(const MathStructure &o) const;
-		bool equals(const Number &o) const;
+		bool equals(const MathStructure &o, bool allow_interval = false) const;
+		bool equals(const Number &o, bool allow_interval = false) const;
 		bool equals(int i) const;
 		bool equals(Unit *u) const;
 		bool equals(Variable *v) const;
@@ -627,6 +627,8 @@ class MathStructure {
 		
 		ComparisonResult compare(const MathStructure &o) const;
 		ComparisonResult compareApproximately(const MathStructure &o, const EvaluationOptions &eo = default_evaluation_options) const;
+		
+		bool mergeInterval(const MathStructure &o, bool set_to_overlap = false);
 
 		bool operator == (const MathStructure &o) const;
 		bool operator == (const Number &o) const;
@@ -787,7 +789,7 @@ class MathStructure {
 		bool containsDivision() const;
 		size_t countFunctions(bool count_subfunctions = true) const;
 		void findAllUnknowns(MathStructure &unknowns_vector);
-		bool replace(const MathStructure &mfrom, const MathStructure &mto);
+		bool replace(const MathStructure &mfrom, const MathStructure &mto, bool once_only = false, bool allow_interval = false);
 		bool calculateReplace(const MathStructure &mfrom, const MathStructure &mto, const EvaluationOptions &eo);
 		bool replace(const MathStructure &mfrom1, const MathStructure &mto1, const MathStructure &mfrom2, const MathStructure &mto2);
 		bool removeType(StructureType mtype);

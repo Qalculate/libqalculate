@@ -4048,7 +4048,7 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 	return is - str_index;
 }
 
-const char *internal_signs[] = {"±", "\b", "+/-", "\b"};
+const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b"};
 #define INTERNAL_SIGNS_COUNT 4
 #define INTERNAL_NUMBER_CHARS "\b"
 #define DUODECIMAL_CHARS "EX"

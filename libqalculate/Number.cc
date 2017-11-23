@@ -253,13 +253,13 @@ Number::~Number() {
 
 void Number::set(string number, const ParseOptions &po) {
 
-	size_t pm_index = number.find("±");
+	size_t pm_index = number.find(SIGN_PLUSMINUS);
 	if(pm_index == string::npos) pm_index = number.find("+/-");
 	if(pm_index != string::npos) {
 		ParseOptions po2 = po;
 		po2.read_precision = DONT_READ_PRECISION;
 		set(number.substr(0, pm_index), po2);
-		number = number.substr(pm_index + (number[pm_index] == '+' ? strlen("+/-") : strlen("±")));
+		number = number.substr(pm_index + (number[pm_index] == '+' ? strlen("+/-") : strlen(SIGN_PLUSMINUS)));
 		if(!number.empty()) {
 			Number pm_nr(number, po2);
 			setUncertainty(pm_nr, true);
@@ -688,12 +688,13 @@ void Number::setFloat(double d_value) {
 }
 void Number::setInterval(const Number &nr_lower, const Number &nr_upper, bool keep_precision) {
 
+	Number nr_l(nr_lower), nr_u(nr_upper);
+
 	clear(keep_precision);
 
 	mpfr_init2(fu_value, BIT_PRECISION);
 	mpfr_init2(fl_value, BIT_PRECISION);
 	
-	Number nr_l(nr_lower), nr_u(nr_upper);
 	nr_l.setToFloatingPoint();
 	nr_u.setToFloatingPoint();
 	
@@ -953,6 +954,77 @@ void Number::intervalToMidValue() {
 		mpfr_add(fl_value, fl_value, fu_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	}
+}
+bool Number::mergeInterval(const Number &o, bool set_to_overlap) {
+	if(equals(o)) return true;
+	if(!isReal() || !o.isReal()) return false;
+	if(isRational()) {
+		mpfr_init2(fu_value, BIT_PRECISION);
+		mpfr_init2(fl_value, BIT_PRECISION);
+		
+		mpfr_clear_flags();
+
+		if(o.isRational()) {
+			if(set_to_overlap) {mpfr_clears(fu_value, fl_value, NULL); return false;}
+			if(mpq_cmp(r_value, o.internalRational()) > 0) {
+				mpfr_set_q(fl_value, o.internalRational(), MPFR_RNDD);
+				mpfr_set_q(fu_value, r_value, MPFR_RNDU);
+			} else {
+				mpfr_set_q(fu_value, o.internalRational(), MPFR_RNDU);
+				mpfr_set_q(fl_value, r_value, MPFR_RNDD);
+			}
+		} else {
+			if(mpfr_cmp_q(o.internalUpperFloat(), r_value) < 0) {
+				if(set_to_overlap) {mpfr_clears(fu_value, fl_value, NULL); return false;}
+				mpfr_set(fl_value, o.internalLowerFloat(), MPFR_RNDD);
+				mpfr_set_q(fu_value, r_value, MPFR_RNDU);
+			} else if(mpfr_cmp_q(o.internalLowerFloat(), r_value) > 0) {
+				if(set_to_overlap) {mpfr_clears(fu_value, fl_value, NULL); return false;}
+				mpfr_set(fu_value, o.internalUpperFloat(), MPFR_RNDU);
+				mpfr_set_q(fl_value, r_value, MPFR_RNDD);
+			} else {
+				if(set_to_overlap) {
+					mpfr_clears(fu_value, fl_value, NULL);
+					setPrecisionAndApproximateFrom(o);
+					return true;
+				}
+				mpfr_set(fl_value, o.internalLowerFloat(), MPFR_RNDD);
+				mpfr_set(fu_value, o.internalUpperFloat(), MPFR_RNDU);
+			}
+		}
+		
+		if(!testFloatResult(false, 1, false)) {
+			mpfr_clears(fu_value, fl_value, NULL);
+			return false;
+		}
+		mpq_set_ui(r_value, 0, 1);
+		n_type = NUMBER_TYPE_FLOAT;
+	} else if(o.isRational()) {
+		if(mpfr_cmp_q(fu_value, o.internalRational()) < 0) {
+			if(set_to_overlap) return false;
+			mpfr_set_q(fu_value, o.internalRational(), MPFR_RNDU);
+		} else if(mpfr_cmp_q(fl_value, o.internalRational()) > 0) {
+			if(set_to_overlap) return false;
+			mpfr_set_q(fl_value, o.internalRational(), MPFR_RNDD);
+		} else {
+			if(set_to_overlap) {
+				set(o, true);
+				return true;
+			}
+		}
+	} else if(set_to_overlap) {
+		if(mpfr_cmp(fl_value, o.internalUpperFloat()) > 0 || mpfr_cmp(fu_value, o.internalLowerFloat()) < 0) {
+			return false;
+		} else {
+			if(mpfr_cmp(fl_value, o.internalLowerFloat()) < 0) mpfr_set(fl_value, o.internalLowerFloat(), MPFR_RNDD);
+			if(mpfr_cmp(fu_value, o.internalUpperFloat()) > 0) mpfr_set(fu_value, o.internalUpperFloat(), MPFR_RNDU);
+		}
+	} else {
+		if(mpfr_cmp(fl_value, o.internalLowerFloat()) > 0) mpfr_set(fl_value, o.internalLowerFloat(), MPFR_RNDD);
+		if(mpfr_cmp(fu_value, o.internalUpperFloat()) < 0) mpfr_set(fu_value, o.internalUpperFloat(), MPFR_RNDU);
+	}
+	setPrecisionAndApproximateFrom(o);
+	return true;
 }
 
 void Number::setUncertainty(const Number &o, bool force_interval) {
@@ -1520,7 +1592,7 @@ bool Number::hasPositiveSign() const {
 bool Number::equalsZero() const {
 	return isZero();
 }
-bool Number::equals(const Number &o) const {
+bool Number::equals(const Number &o, bool allow_interval) const {
 	if(isInfinite() || o.isInfinite()) return false;
 	if(o.isInfinite()) return false;
 	if(o.isComplex()) {
@@ -1531,7 +1603,7 @@ bool Number::equals(const Number &o) const {
 	if(o.isFloatingPoint() && n_type != NUMBER_TYPE_FLOAT) {
 		return mpfr_cmp_q(o.internalLowerFloat(), r_value) == 0 && mpfr_cmp_q(o.internalUpperFloat(), r_value) == 0;
 	} else if(n_type == NUMBER_TYPE_FLOAT) {
-		if(o.isFloatingPoint()) return mpfr_equal_p(fu_value, fl_value) && mpfr_equal_p(fl_value, o.internalLowerFloat()) && mpfr_equal_p(fu_value, o.internalUpperFloat());
+		if(o.isFloatingPoint()) return (allow_interval || mpfr_equal_p(fu_value, fl_value)) && mpfr_equal_p(fl_value, o.internalLowerFloat()) && mpfr_equal_p(fu_value, o.internalUpperFloat());
 		else return mpfr_cmp_q(fu_value, o.internalRational()) == 0 && mpfr_cmp_q(fl_value, o.internalRational()) == 0;
 	}
 	return mpq_cmp(r_value, o.internalRational()) == 0;
@@ -1630,13 +1702,30 @@ ComparisonResult Number::compare(const Number &o) const {
 		if(o.isFloatingPoint() && n_type != NUMBER_TYPE_FLOAT) {
 			i = mpfr_cmp_q(o.internalLowerFloat(), r_value);
 			i2 = mpfr_cmp_q(o.internalUpperFloat(), r_value);
+			if(i != i2) return COMPARISON_RESULT_CONTAINS;
 		} else if(n_type == NUMBER_TYPE_FLOAT) {
 			if(o.isFloatingPoint()) {
 				i = mpfr_cmp(o.internalUpperFloat(), fl_value);
 				i2 = mpfr_cmp(o.internalLowerFloat(), fu_value);
+				if(i != i2 && i2 <= 0 && i >= 0) {
+					i = mpfr_cmp(o.internalLowerFloat(), fl_value);
+					i2 = mpfr_cmp(o.internalUpperFloat(), fu_value);
+					if(i > 0) {
+						if(i2 <= 0) return COMPARISON_RESULT_CONTAINED;
+						else return COMPARISON_RESULT_OVERLAPPING_GREATER;
+					} else if(i < 0) {
+						if(i2 >= 0) return COMPARISON_RESULT_CONTAINS;
+						else return COMPARISON_RESULT_OVERLAPPING_LESS;
+					} else {
+						if(i2 == 0) return COMPARISON_RESULT_EQUAL_LIMITS;
+						else if(i2 > 0) return COMPARISON_RESULT_CONTAINS;
+						else return COMPARISON_RESULT_CONTAINED;
+					}
+				}
 			} else {
 				i = -mpfr_cmp_q(fl_value, o.internalRational());
 				i2 = -mpfr_cmp_q(fu_value, o.internalRational());
+				if(i != i2) return COMPARISON_RESULT_CONTAINED;
 			}
 		} else {
 			i = mpq_cmp(o.internalRational(), r_value);
@@ -1676,13 +1765,30 @@ ComparisonResult Number::compareApproximately(const Number &o, int prec) const {
 		if(o.isFloatingPoint() && n_type != NUMBER_TYPE_FLOAT) {
 			i = mpfr_cmp_q(o.internalLowerFloat(), r_value);
 			i2 = mpfr_cmp_q(o.internalUpperFloat(), r_value);
+			if(i != i2) return COMPARISON_RESULT_CONTAINS;
 		} else if(n_type == NUMBER_TYPE_FLOAT) {
 			if(o.isFloatingPoint()) {
 				i = mpfr_cmp(o.internalUpperFloat(), fl_value);
 				i2 = mpfr_cmp(o.internalLowerFloat(), fu_value);
+				if(i != i2 && i2 <= 0 && i >= 0) {
+					i = mpfr_cmp(o.internalLowerFloat(), fl_value);
+					i2 = mpfr_cmp(o.internalUpperFloat(), fu_value);
+					if(i > 0) {
+						if(i2 <= 0) return COMPARISON_RESULT_CONTAINED;
+						else return COMPARISON_RESULT_OVERLAPPING_GREATER;
+					} else if(i < 0) {
+						if(i2 >= 0) return COMPARISON_RESULT_CONTAINS;
+						else return COMPARISON_RESULT_OVERLAPPING_LESS;
+					} else {
+						if(i2 == 0) return COMPARISON_RESULT_EQUAL_LIMITS;
+						else if(i2 > 0) return COMPARISON_RESULT_CONTAINS;
+						else return COMPARISON_RESULT_CONTAINED;
+					}
+				}
 			} else {
 				i = -mpfr_cmp_q(fl_value, o.internalRational());
 				i2 = -mpfr_cmp_q(fu_value, o.internalRational());
+				if(i != i2) return COMPARISON_RESULT_CONTAINED;
 			}
 		} else {
 			i = mpq_cmp(o.internalRational(), r_value);
@@ -5293,10 +5399,10 @@ bool Number::add(const Number &o, MathOperation op) {
 			Number nr;
 			ComparisonResult i1 = compare(nr);
 			ComparisonResult i2 = o.compare(nr);
-			if(i1 == COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_NOT_EQUAL) i1 = COMPARISON_RESULT_UNKNOWN;
-			if(i2 == COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_NOT_EQUAL) i2 = COMPARISON_RESULT_UNKNOWN;
-			if(i1 == COMPARISON_RESULT_UNKNOWN && (i2 == COMPARISON_RESULT_UNKNOWN || i2 != COMPARISON_RESULT_LESS)) return false;
-			if(i2 == COMPARISON_RESULT_UNKNOWN && (i1 != COMPARISON_RESULT_LESS)) return false;
+			if(i1 >= COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_NOT_EQUAL) i1 = COMPARISON_RESULT_UNKNOWN;
+			if(i2 >= COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_NOT_EQUAL) i2 = COMPARISON_RESULT_UNKNOWN;
+			if(i1 >= COMPARISON_RESULT_UNKNOWN && (i2 == COMPARISON_RESULT_UNKNOWN || i2 != COMPARISON_RESULT_LESS)) return false;
+			if(i2 >= COMPARISON_RESULT_UNKNOWN && (i1 != COMPARISON_RESULT_LESS)) return false;
 			setTrue(i1 == COMPARISON_RESULT_LESS || i2 == COMPARISON_RESULT_LESS);
 			return true;
 		}
@@ -5304,8 +5410,8 @@ bool Number::add(const Number &o, MathOperation op) {
 			Number nr;
 			ComparisonResult i1 = compare(nr);
 			ComparisonResult i2 = o.compare(nr);
-			if(i1 == COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_NOT_EQUAL) return false;
-			if(i2 == COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_NOT_EQUAL) return false;
+			if(i1 >= COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_NOT_EQUAL) return false;
+			if(i2 >= COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_NOT_EQUAL) return false;
 			if(i1 == COMPARISON_RESULT_LESS) setTrue(i2 != COMPARISON_RESULT_LESS);
 			else setTrue(i2 == COMPARISON_RESULT_LESS);
 			return true;
@@ -5314,16 +5420,16 @@ bool Number::add(const Number &o, MathOperation op) {
 			Number nr;
 			ComparisonResult i1 = compare(nr);
 			ComparisonResult i2 = o.compare(nr);
-			if(i1 == COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_NOT_EQUAL) i1 = COMPARISON_RESULT_UNKNOWN;
-			if(i2 == COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_NOT_EQUAL) i2 = COMPARISON_RESULT_UNKNOWN;
-			if(i1 == COMPARISON_RESULT_UNKNOWN && (i2 == COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_LESS)) return false;
-			if(i2 == COMPARISON_RESULT_UNKNOWN && (i1 == COMPARISON_RESULT_LESS)) return false;
+			if(i1 >= COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_NOT_EQUAL) i1 = COMPARISON_RESULT_UNKNOWN;
+			if(i2 >= COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_NOT_EQUAL) i2 = COMPARISON_RESULT_UNKNOWN;
+			if(i1 >= COMPARISON_RESULT_UNKNOWN && (i2 == COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_LESS)) return false;
+			if(i2 >= COMPARISON_RESULT_UNKNOWN && (i1 == COMPARISON_RESULT_LESS)) return false;
 			setTrue(i1 == COMPARISON_RESULT_LESS && i2 == COMPARISON_RESULT_LESS);
 			return true;
 		}
 		case OPERATION_EQUALS: {
 			ComparisonResult i = compare(o);
-			if(i == COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_EQUAL_OR_GREATER || i == COMPARISON_RESULT_EQUAL_OR_LESS) return false;
+			if(i >= COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_EQUAL_OR_GREATER || i == COMPARISON_RESULT_EQUAL_OR_LESS) return false;
 			setTrue(i == COMPARISON_RESULT_EQUAL);
 			return true;
 		}
@@ -5403,7 +5509,7 @@ bool Number::add(const Number &o, MathOperation op) {
 		}
 		case OPERATION_NOT_EQUALS: {
 			ComparisonResult i = compare(o);
-			if(i == COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_EQUAL_OR_GREATER || i == COMPARISON_RESULT_EQUAL_OR_LESS) return false;
+			if(i >= COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_EQUAL_OR_GREATER || i == COMPARISON_RESULT_EQUAL_OR_LESS) return false;
 			setTrue(i == COMPARISON_RESULT_NOT_EQUAL || i == COMPARISON_RESULT_GREATER || i == COMPARISON_RESULT_LESS);
 			return true;
 		}
@@ -5987,7 +6093,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			nr.setInternal(f_diff);
 			precision += i_log_diff;
 			if(precision > 0) {
-				str += "±";
+				str += SIGN_PLUSMINUS;
 				nr.setPrecision(precision);
 				InternalPrintStruct ips3;
 				ips3.parent_approximate = ips.parent_approximate;
