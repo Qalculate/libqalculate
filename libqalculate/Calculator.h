@@ -298,7 +298,6 @@ class Calculator {
 	MathFunction *f_error, *f_warning, *f_message, *f_save, *f_load, *f_export, *f_title;
 	MathFunction *f_register, *f_stack;
 	MathFunction *f_plot;
-	MathFunction *f_uncertainty;
 	
 	Unit *u_rad, *u_gra, *u_deg, *u_euro, *u_btc;
 	DecimalPrefix *decimal_null_prefix;

@@ -1510,8 +1510,6 @@ void Calculator::addBuiltinFunctions() {
 	
 	if(canPlot()) f_plot = addFunction(new PlotFunction());
 	
-	//f_uncertainty = addFunction(new UncertaintyFunction());
-
 	/*void *plugin = dlopen("", RTLD_NOW);
 	if(plugin) {
 		CREATEPLUG_PROC createproc = (CREATEPLUG_PROC) dlsym(plugin, "createPlugin");
@@ -3089,7 +3087,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 						}
 						if(!b) cu_new->add(u2);
 					}
-					if(!u2->isRegistered()) delete u2;
+					if(!u2->isRegistered() && u2 != cu2) delete u2;
 				}
 				delete cu2;
 				if(return_cu) {

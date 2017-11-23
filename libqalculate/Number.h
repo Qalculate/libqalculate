@@ -128,6 +128,7 @@ class Number {
 		bool setToFloatingPoint();
 		void precisionToInterval();
 		bool intervalToPrecision();
+		void intervalToMidValue();
 		void setUncertainty(const Number &o, bool force_interval = false);
 		Number uncertainty() const;
 		Number relativeUncertainty() const;

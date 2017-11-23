@@ -272,6 +272,4 @@ DECLARE_BUILTIN_FUNCTION(SolveMultipleFunction)
 
 DECLARE_BUILTIN_FUNCTION(PlotFunction)
 
-DECLARE_BUILTIN_FUNCTION(UncertaintyFunction)
-
 #endif

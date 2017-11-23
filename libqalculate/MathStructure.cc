@@ -252,7 +252,6 @@ inline void MathStructure::init() {
 	i_ref = 1;
 	function_value = NULL;
 	b_protected = false;
-	o_uncertainty = NULL;
 	o_variable = NULL;
 	o_function = NULL;
 	o_unit = NULL;
@@ -379,9 +378,6 @@ void MathStructure::set(const MathStructure &o, bool merge_precision) {
 		b_approx = o.isApproximate();
 		i_precision = o.precision();
 	}
-	if(o.uncertainty()) {
-		o_uncertainty = new MathStructure(*o.uncertainty());
-	}
 	m_type = o.type();
 }
 void MathStructure::set_nocopy(MathStructure &o, bool merge_precision) {
@@ -433,10 +429,6 @@ void MathStructure::set_nocopy(MathStructure &o, bool merge_precision) {
 	} else {
 		b_approx = o.isApproximate();
 		i_precision = o.precision();
-	}
-	if(o.uncertainty()) {
-		o_uncertainty = (MathStructure*) o.uncertainty();
-		o_uncertainty->ref();
 	}
 	m_type = o.type();
 	o.unref();
@@ -678,10 +670,6 @@ void MathStructure::clear(bool preserve_precision) {
 		function_value->unref();
 		function_value = NULL;
 	}
-	if(o_uncertainty) {
-		o_uncertainty->unref();
-		o_uncertainty = NULL;
-	}
 	if(o_function) o_function->unref();
 	o_function = NULL;
 	if(o_variable) o_variable->unref();
@@ -792,13 +780,6 @@ MathFunction *MathStructure::function() const {
 }
 Variable *MathStructure::variable() const {
 	return o_variable;
-}
-void MathStructure::setUncertainty(const MathStructure &o) {
-	if(o_uncertainty) o_uncertainty->set(o);
-	else o_uncertainty = new MathStructure(o);
-}
-const MathStructure *MathStructure::uncertainty() const {
-	return o_uncertainty;
 }
 
 bool MathStructure::isAddition() const {return m_type == STRUCT_ADDITION;}
@@ -1891,8 +1872,6 @@ bool MathStructure::equals(const MathStructure &o) const {
 		}
 		default: {}
 	}
-	if((o_uncertainty == NULL) != (o.uncertainty() == NULL)) return false;
-	if(o_uncertainty && !o_uncertainty->equals(*o.uncertainty())) return false;
 	if(SIZE < 1) return false;
 	for(size_t i = 0; i < SIZE; i++) {
 		if(!CHILD(i).equals(o[i])) return false;
@@ -5802,6 +5781,21 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			}
 
 			if(representsNonMatrix()) {
+				if(SIZE > 2 && CALCULATOR->usesIntervalArithmetics()) {
+					int nonintervals = 0, had_interval = false;
+					for(size_t i = 0; i < SIZE; i++) {
+						if(CHILD(i).isNumber()) {
+							if(CHILD(i).number().isInterval()) {
+								had_interval = true;
+								if(nonintervals >= 2) break;
+							} else if(nonintervals < 2) {
+								nonintervals++;
+								if(nonintervals == 2 && had_interval) break;
+							}
+						}
+					}
+					if(had_interval && nonintervals >= 2) evalSort(false);
+				}
 				MERGE_ALL(merge_multiplication, try_multiply)
 			} else {
 				size_t i2, i3 = SIZE;
@@ -5867,6 +5861,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					}
 				}
 			}
+			
 			MERGE_ALL2
 
 			break;
@@ -7078,6 +7073,12 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 		case STRUCT_NUMBER: {
 			if(CALCULATOR->aborted()) return 0;
 			if(!mstruct1.number().isComplex() && !mstruct2.number().isComplex()) {
+				if(mstruct1.number().isFloatingPoint()) {
+					if(!mstruct2.number().isFloatingPoint()) return 1;
+					if(mstruct1.number().isInterval()) {
+						if(!mstruct2.number().isInterval()) return 1;
+					} else if(mstruct2.number().isInterval()) return -1;
+				} else if(mstruct2.number().isFloatingPoint()) return -1;
 				ComparisonResult cmp = mstruct1.number().compare(mstruct2.number());
 				if(cmp == COMPARISON_RESULT_LESS) return -1;
 				else if(cmp == COMPARISON_RESULT_GREATER) return 1;
@@ -8115,29 +8116,6 @@ void clean_multiplications(MathStructure &mstruct) {
 	}
 }
 
-void MathStructure::calculateUncertaintyPropagation(const EvaluationOptions &eo) {
-	if(o_uncertainty) return;	
-	MathStructure *new_uncertainty = NULL;
-	for(size_t i = 0; i < SIZE; i++) {
-		if(CHILD(i).isFunction() && CHILD(i).function() == CALCULATOR->f_uncertainty) {
-			MathStructure mstruct = CHILD(i)[1];
-			CHILD(i).setToChild(1);
-			if(o_uncertainty == NULL) {
-				new_uncertainty = new MathStructure();
-				new_uncertainty->set(CALCULATOR->f_diff, this, &CHILD(i), NULL);
-				new_uncertainty->multiply(mstruct);
-			} else {
-				MathStructure *uncertainty_add = new MathStructure(CALCULATOR->f_diff, this, &CHILD(i), NULL);
-				uncertainty_add->multiply(mstruct);
-				new_uncertainty->add_nocopy(uncertainty_add, true);
-			}
-			new_uncertainty->eval(eo);
-			break;
-		}
-	}
-	o_uncertainty = new_uncertainty;
-}
-
 bool containsComplexUnits(const MathStructure &mstruct) {
 	if(mstruct.type() == STRUCT_UNIT && mstruct.unit()->hasComplexRelationTo(mstruct.unit()->baseUnit())) return true;
 	for(size_t i = 0; i < mstruct.size(); i++) {
@@ -8470,7 +8448,6 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	eo2.expand = false;
 	eo2.test_comparisons = false;
 
-	//calculateUncertaintyPropagation(eo);
 	if(eo.calculate_functions && calculateFunctions(feo)) {
 		unformat(eo);
 	}
@@ -8560,7 +8537,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	structure(eo.structuring, eo2, false);
 
 	clean_multiplications(*this);
-	
+
 	return *this;
 }
 
@@ -12538,10 +12515,12 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 					} else if(po.use_unit_prefixes && CHILD(0).isNumber() && exp.isInteger()) {
 						exp10 = CHILD(0).number();
 						exp10.abs();
+						exp10.intervalToMidValue();
 						if(exp10.isLessThanOrEqualTo(Number(1, 1, 1000)) && exp10.isGreaterThanOrEqualTo(Number(1, 1, -1000))) {
 							exp10.log(10);
+							exp10.intervalToMidValue();
 							exp10.floor();
-							if(b2) {	
+							if(b2) {
 								Number tmp_exp(exp10);
 								tmp_exp.setNegative(false);
 								Number e1(3, 1, 0);
@@ -12583,8 +12562,10 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 					if(b2 && CHILD(0).isNumber() && (po.prefix || po.use_unit_prefixes) && (po.prefix != CALCULATOR->decimal_null_prefix && po.prefix != CALCULATOR->binary_null_prefix)) {
 						exp10 = CHILD(0).number();
 						exp10.abs();
+						exp10.intervalToMidValue();
 						if(exp10.isLessThanOrEqualTo(Number(1, 1, 1000)) && exp10.isGreaterThanOrEqualTo(Number(1, 1, -1000))) {
 							exp10.log(10);
+							exp10.intervalToMidValue();
 							exp10.floor();
 							DecimalPrefix *p = CALCULATOR->getBestDecimalPrefix(exp10, exp2, po.use_all_prefixes);
 							if(p) {
@@ -13541,7 +13522,6 @@ int namelen(const MathStructure &mstruct, const PrintOptions &po, const Internal
 }
 
 bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, size_t index, bool flat_division, bool) const {
-	if(o_uncertainty) return true;
 	switch(parent.type()) {
 		case STRUCT_MULTIPLICATION: {
 			switch(m_type) {
@@ -14305,16 +14285,6 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		}
 	}
 	if(CALCULATOR->aborted()) print_str = CALCULATOR->abortedMessage();
-	if(o_uncertainty) {
-		if(SIZE > 0) {
-			print_str.insert(0, "(");
-			print_str += ")";
-		}
-		print_str += SIGN_PLUSMINUS;
-		if(o_uncertainty->size() > 0) print_str += "(";
-		print_str += o_uncertainty->print(po);
-		if(o_uncertainty->size() > 0) print_str += ")";
-	}
 	if(ips.wrap) {
 		print_str.insert(0, "(");
 		print_str += ")";
