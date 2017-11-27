@@ -1,3 +1,7 @@
+2017-11-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix (a+b*i)^0
+
 2017-11-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Enhanced display of repeating decimals

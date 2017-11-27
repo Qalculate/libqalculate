@@ -4027,7 +4027,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							//e^(i*pi)=-1
 							set(m_minus_one, true);
 							return 1;
-						} else if(mstruct[0].number().isComplex() && !mstruct[0].number().hasRealPart()) {
+						} else if(mstruct[0].number().hasImaginaryPart() && !mstruct[0].number().hasRealPart()) {
 							Number img(mstruct[0].number().imaginaryPart());
 							// e^(a*i*pi)=+-1; e^(a/2*i*pi)=+-1 (a is integer)
 							if(img.isInteger()) {
@@ -7158,7 +7158,7 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 	switch(mstruct1.type()) {
 		case STRUCT_NUMBER: {
 			if(CALCULATOR->aborted()) return 0;
-			if(!mstruct1.number().isComplex() && !mstruct2.number().isComplex()) {
+			if(!mstruct1.number().hasImaginaryPart() && !mstruct2.number().hasImaginaryPart()) {
 				if(mstruct1.number().isFloatingPoint()) {
 					if(!mstruct2.number().isFloatingPoint()) return 1;
 					if(mstruct1.number().isInterval()) {
@@ -7460,7 +7460,7 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 	}
 	switch(mstruct1.type()) {
 		case STRUCT_NUMBER: {
-			if(!mstruct1.number().isComplex() && !mstruct2.number().isComplex()) {
+			if(!mstruct1.number().hasImaginaryPart() && !mstruct2.number().hasImaginaryPart()) {
 				ComparisonResult cmp;
 				if(parent.isMultiplication() && mstruct2.number().isNegative() != mstruct1.number().isNegative()) cmp = mstruct2.number().compare(mstruct1.number());
 				else cmp = mstruct1.number().compare(mstruct2.number());
@@ -13541,7 +13541,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					}
 					APPEND_NEW(den);
 				}
-			} else if(o_number.isComplex()) {
+			} else if(o_number.hasImaginaryPart()) {
 				if(o_number.hasRealPart()) {
 					Number re(o_number.realPart());
 					Number im(o_number.imaginaryPart());

@@ -1617,7 +1617,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(mstruct[0].number().isInteger()) {
 			mstruct.clear();
 			b = true;
-		} else if(!mstruct[0].number().isComplex() && !mstruct[0].number().isInfinite() && !mstruct[0].number().isInterval()) {
+		} else if(!mstruct[0].number().hasImaginaryPart() && !mstruct[0].number().isInfinite() && !mstruct[0].number().isInterval()) {
 			Number nr(mstruct[0].number());
 			nr.frac();
 			Number nr_int(mstruct[0].number());
@@ -1756,7 +1756,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct = -1;
 			}
 			b = true;
-		} else if(!mstruct[0].number().isComplex() && !mstruct[0].number().isInfinite() && !mstruct[0].number().isInterval()) {
+		} else if(!mstruct[0].number().hasImaginaryPart() && !mstruct[0].number().isInfinite() && !mstruct[0].number().isInterval()) {
 			Number nr(mstruct[0].number());
 			nr.frac();
 			Number nr_int(mstruct[0].number());
@@ -1895,7 +1895,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(mstruct[0].number().isInteger()) {
 			mstruct.clear();
 			b = true;
-		} else if(!mstruct[0].number().isComplex() && !mstruct[0].number().isInfinite() && !mstruct[0].number().isInterval()) {
+		} else if(!mstruct[0].number().hasImaginaryPart() && !mstruct[0].number().isInfinite() && !mstruct[0].number().isInterval()) {
 			Number nr(mstruct[0].number());
 			nr.frac();
 			bool b_neg = nr.isNegative();
@@ -2465,7 +2465,7 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isNumber()) {
-		if(!mstruct.number().isComplex()) {
+		if(!mstruct.number().hasImaginaryPart()) {
 			if(!mstruct.number().isNonZero() || mstruct.number().isInfinity()) return -1;
 			if(mstruct.number().isNegative()) {
 				switch(eo.parse_options.angle_unit) {

@@ -1513,7 +1513,7 @@ bool NumberArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 	if(!value.isNumber() || (b_rational_number && !value.number().isRational())) {
 		return false;
 	}
-	if(!b_complex && value.number().isComplex()) {
+	if(!b_complex && value.number().hasImaginaryPart()) {
 		if(!value.number().imaginaryPartIsNonZero()) value.number().clearImaginary();
 		else return false;
 	}
