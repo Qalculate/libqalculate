@@ -22,9 +22,9 @@
 #include <time.h>
 #include <limits>
 
-#define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) {return 0;} else {mstruct.set(nr); return 1;}
-#define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite() && !vargs[1].number().isInfinite())) {return 0;} else {mstruct.set(nr); return 1;}
-#define FR_FUNCTION_2R(FUNC)	Number nr(vargs[1].number()); if(!nr.FUNC(vargs[0].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite() && !vargs[1].number().isInfinite())) {return 0;} else {mstruct.set(nr); return 1;}
+#define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
+#define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
+#define FR_FUNCTION_2R(FUNC)	Number nr(vargs[1].number()); if(!nr.FUNC(vargs[0].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
 
 #define REPRESENTS_FUNCTION(x, y) x::x() : MathFunction(#y, 1) {} int x::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {mstruct = vargs[0]; mstruct.eval(eo); if(mstruct.y()) {mstruct.clear(); mstruct.number().setTrue();} else {mstruct.clear(); mstruct.number().setFalse();} return 1;}
 
@@ -554,7 +554,7 @@ int BitXorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	mstruct.add(vargs[1], OPERATION_BITWISE_XOR);
 	if(vargs[0].isNumber() && vargs[1].isNumber()) {
 		Number nr(vargs[0].number());
-		if(nr.bitXor(vargs[1].number()) && (eo.approximation >= APPROXIMATION_APPROXIMATE || !nr.isApproximate() || vargs[0].number().isApproximate() || vargs[1].number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || vargs[0].number().isComplex() || vargs[1].number().isComplex()) && (eo.allow_infinite || !nr.isInfinite() || vargs[0].number().isInfinite() || vargs[1].number().isInfinite())) {
+		if(nr.bitXor(vargs[1].number()) && (eo.approximation >= APPROXIMATION_APPROXIMATE || !nr.isApproximate() || vargs[0].number().isApproximate() || vargs[1].number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || vargs[0].number().isComplex() || vargs[1].number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || vargs[0].number().includesInfinity() || vargs[1].number().includesInfinity())) {
 			mstruct.set(nr, true);
 			return 1;
 		}
@@ -1274,7 +1274,7 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	} else {
 		nr = vargs[0].number(); 
 	}
-	if(!nr.root(vargs[1].number()) || (eo.approximation < APPROXIMATION_APPROXIMATE && nr.isApproximate() && !vargs[0].isApproximate() && !mstruct.isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) {
+	if(!nr.root(vargs[1].number()) || (eo.approximation < APPROXIMATION_APPROXIMATE && nr.isApproximate() && !vargs[0].isApproximate() && !mstruct.isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {
 		if(!eval_mstruct) {
 			if(vargs[0].number().isNegative() && vargs[1].number().isOdd()) {
 				mstruct.set(this, &vargs[0], &vargs[1], NULL);
@@ -1423,7 +1423,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			return 1;
 		}
 		Number nr(mstruct.number());
-		if(nr.ln() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) {
+		if(nr.ln() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			mstruct.set(nr, true);
 			return 1;
 		}
@@ -1473,7 +1473,7 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	} else if(mstruct.isNumber() && mstructv2.isNumber()) {
 		Number nr(mstruct.number());
-		if(nr.log(mstructv2.number()) && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) {
+		if(nr.log(mstructv2.number()) && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			mstruct.set(nr, true);
 			return 1;
 		}
@@ -1532,7 +1532,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		Number nr(mstruct.number());
 		if(!nr.lambertW()) {
 			if(!CALCULATOR->aborted()) CALCULATOR->error(false, _("Argument for %s() must be a real number greater than or equal to -1/e."), preferredDisplayName().name.c_str(), NULL);
-		} else if(!(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) {
+		} else if(!(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			mstruct.set(nr, true);
 			return 1;
 		}
@@ -1617,7 +1617,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(mstruct[0].number().isInteger()) {
 			mstruct.clear();
 			b = true;
-		} else if(!mstruct[0].number().hasImaginaryPart() && !mstruct[0].number().isInfinite() && !mstruct[0].number().isInterval()) {
+		} else if(!mstruct[0].number().hasImaginaryPart() && !mstruct[0].number().includesInfinity() && !mstruct[0].number().isInterval()) {
 			Number nr(mstruct[0].number());
 			nr.frac();
 			Number nr_int(mstruct[0].number());
@@ -1699,7 +1699,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
-		if(nr.sin() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) {
+		if(nr.sin() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			mstruct.set(nr, true);
 			return 1;
 		}
@@ -1756,7 +1756,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct = -1;
 			}
 			b = true;
-		} else if(!mstruct[0].number().hasImaginaryPart() && !mstruct[0].number().isInfinite() && !mstruct[0].number().isInterval()) {
+		} else if(!mstruct[0].number().hasImaginaryPart() && !mstruct[0].number().includesInfinity() && !mstruct[0].number().isInterval()) {
 			Number nr(mstruct[0].number());
 			nr.frac();
 			Number nr_int(mstruct[0].number());
@@ -1851,7 +1851,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
-		if(nr.cos() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) {
+		if(nr.cos() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			mstruct.set(nr, true);
 			return 1;
 		}
@@ -1895,7 +1895,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(mstruct[0].number().isInteger()) {
 			mstruct.clear();
 			b = true;
-		} else if(!mstruct[0].number().hasImaginaryPart() && !mstruct[0].number().isInfinite() && !mstruct[0].number().isInterval()) {
+		} else if(!mstruct[0].number().hasImaginaryPart() && !mstruct[0].number().includesInfinity() && !mstruct[0].number().isInterval()) {
 			Number nr(mstruct[0].number());
 			nr.frac();
 			bool b_neg = nr.isNegative();
@@ -1988,7 +1988,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
-		if(nr.tan() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) {
+		if(nr.tan() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			mstruct.set(nr, true);
 			return 1;
 		}
@@ -2083,7 +2083,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	} else {
 		Number nr = vargs[0].number();
-		if(!nr.asin() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !mstruct.number().isInfinite())) return 0;
+		if(!nr.asin() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) return 0;
 		mstruct = nr;
 		switch(eo.parse_options.angle_unit) {
 			case ANGLE_UNIT_DEGREES: {
@@ -2187,7 +2187,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	} else {
 		Number nr = vargs[0].number();
-		if(!nr.acos() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) return 0;
+		if(!nr.acos() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) return 0;
 		mstruct = nr;
 		switch(eo.parse_options.angle_unit) {
 			case ANGLE_UNIT_DEGREES: {
@@ -2325,7 +2325,7 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	} else {
 		Number nr = vargs[0].number();
-		if(!nr.atan() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.isInfinite() && !vargs[0].number().isInfinite())) return 0;
+		if(!nr.atan() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) return 0;
 		mstruct = nr;
 		switch(eo.parse_options.angle_unit) {
 			case ANGLE_UNIT_DEGREES: {
@@ -2574,7 +2574,7 @@ IntervalFunction::IntervalFunction() : MathFunction("interval", 2) {
 int IntervalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isNumber() && vargs[1].isNumber()) {
 		Number nr;
-		nr.setInterval(vargs[0].number(), vargs[1].number());
+		if(!nr.setInterval(vargs[0].number(), vargs[1].number())) return 0;
 		mstruct = nr;
 		return 1;
 	}
@@ -2601,7 +2601,7 @@ int IntervalFunction::calculate(MathStructure &mstruct, const MathStructure &var
 			}
 		}
 		Number nr;
-		nr.setInterval(i0 == 1 ? margs[0][0].number() : nr_one, i1 == 1 ? margs[1][0].number() : nr_one);
+		if(!nr.setInterval(i0 == 1 ? margs[0][0].number() : nr_one, i1 == 1 ? margs[1][0].number() : nr_one)) return 0;
 		mstruct = margs[0];
 		if(i0 == 1) mstruct.delChild(1, true);
 		mstruct *= nr;
@@ -2609,19 +2609,19 @@ int IntervalFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		return 1;
 	} else if(margs[0].isMultiplication() && margs[0].size() == 2 && margs[0][0].isNumber() && margs[1] == margs[0][1]) {
 		Number nr;
-		nr.setInterval(margs[0][0].number(), nr_one);
+		if(!nr.setInterval(margs[0][0].number(), nr_one)) return 0;
 		mstruct = nr;
 		mstruct *= margs[1];
 		return 1;
 	} else if(margs[1].isMultiplication() && margs[1].size() == 2 && margs[1][0].isNumber() && margs[0] == margs[1][1]) {
 		Number nr;
-		nr.setInterval(nr_one, margs[1][0].number());
+		if(!nr.setInterval(nr_one, margs[1][0].number())) return 0;
 		mstruct = nr;
 		mstruct *= margs[0];
 		return 1;
 	} else if(margs[0].isNumber() && margs[1].isNumber()) {
 		Number nr;
-		nr.setInterval(margs[0].number(), margs[1].number());
+		if(!nr.setInterval(margs[0].number(), margs[1].number())) return 0;
 		mstruct = nr;
 		return 1;
 	}

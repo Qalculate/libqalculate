@@ -101,7 +101,7 @@ class Number {
 		void setPlusInfinity(bool keep_precision = false);
 		void setMinusInfinity(bool keep_precision = false);
 		void setFloat(double d_value);
-		void setInterval(const Number &nr_lower, const Number &nr_upper, bool keep_precision = false);
+		bool setInterval(const Number &nr_lower, const Number &nr_upper, bool keep_precision = false);
 
 		void setInternal(const mpz_t &mpz_value, bool keep_precision = false, bool keep_imag = false);
 		void setInternal(mpz_srcptr mpz_value, bool keep_precision = false, bool keep_imag = false);
@@ -193,6 +193,10 @@ class Number {
  		* @return true if the number is minus infinity.
  		*/
 		bool isMinusInfinity() const;
+
+		bool includesInfinity() const;
+		bool includesPlusInfinity() const;
+		bool includesMinusInfinity() const;
 		
 		/** Returns the real part of the number if it is complex, or a copy if it is real.
 		*
@@ -462,7 +466,7 @@ class Number {
 		bool acosh();
 		bool tan();
 		bool atan();
-		bool atan2(const Number &o);
+		bool atan2(const Number &o, bool allow_zero = false);
 		bool arg();
 		bool tanh();
 		bool atanh();
