@@ -26,7 +26,6 @@
 typedef enum {
 	NUMBER_TYPE_RATIONAL,
 	NUMBER_TYPE_FLOAT,
-	NUMBER_TYPE_INFINITY,
 	NUMBER_TYPE_PLUS_INFINITY,
 	NUMBER_TYPE_MINUS_INFINITY
 } NumberType;
@@ -97,9 +96,8 @@ class Number {
 		
 		void set(string number, const ParseOptions &po = default_parse_options);
 		void set(long int numerator, long int denominator = 1, long int exp_10 = 0, bool keep_precision = false, bool keep_imag = false);
-		void setInfinity(bool keep_precision = false);
-		void setPlusInfinity(bool keep_precision = false);
-		void setMinusInfinity(bool keep_precision = false);
+		void setPlusInfinity(bool keep_precision = false, bool keep_imag = false);
+		void setMinusInfinity(bool keep_precision = false, bool keep_imag = false);
 		void setFloat(double d_value);
 		bool setInterval(const Number &nr_lower, const Number &nr_upper, bool keep_precision = false);
 
@@ -157,7 +155,8 @@ class Number {
  		*/
 		bool isFloatingPoint() const;
 		
-		bool isInterval() const;
+		bool isInterval(bool ignore_imag = true) const;
+		bool imaginaryPartIsInterval() const;
 		
 		/** Defines the number as approximate or exact.
 		*
@@ -177,22 +176,17 @@ class Number {
 		*
  		* @return true if the number is infinite.
  		*/
-		bool isInfinite() const;
-		/** Returns true if the number is infinity, if the number is plus or minus infinity (which is not known).
-		*
- 		* @return true if the number is infinity.
- 		*/
-		bool isInfinity() const;
+		bool isInfinite(bool ignore_imag = true) const;
 		/** Returns true if the number is plus infinity.
 		*
  		* @return true if the number is plus infinity.
  		*/
-		bool isPlusInfinity() const;
+		bool isPlusInfinity(bool ignore_imag = false) const;
 		/** Returns true if the number is minus infinity.
 		*
  		* @return true if the number is minus infinity.
  		*/
-		bool isMinusInfinity() const;
+		bool isMinusInfinity(bool ignore_imag = false) const;
 
 		bool includesInfinity() const;
 		bool includesPlusInfinity() const;
@@ -281,6 +275,7 @@ class Number {
 		bool realPartIsNegative() const;
 		bool realPartIsPositive() const;
 		bool realPartIsNonZero() const;
+		bool realPartIsRational() const;
 		bool imaginaryPartIsNegative() const;
 		bool imaginaryPartIsPositive() const;
 		bool imaginaryPartIsNonZero() const;

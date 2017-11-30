@@ -291,7 +291,6 @@ class MathStructure {
 		* @param preserve_precision Preserve the current precision (unless the new value has a lower precision).
 		*/
 		void set(const Number &o, bool preserve_precision = false);
-		void setInfinity(bool preserve_precision = false);
 		/** Set the value of the structure to undefined.
 		*
 		* @param preserve_precision Preserve the current precision.

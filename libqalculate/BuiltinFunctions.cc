@@ -315,11 +315,20 @@ int InverseFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 }
 
 ZetaFunction::ZetaFunction() : MathFunction("zeta", 1, 1, SIGN_ZETA) {
-	IntegerArgument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SLONG);
+	IntegerArgument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG);
 	setArgumentDefinition(1, arg);
 }
 int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].number() == 2) {
+	if(vargs[0].number().isZero()) {
+		mstruct.set(1, 2, 0);
+		return 1;
+	} else if(vargs[0].number().isMinusOne()) {
+		mstruct.set(1, 12, 0);
+		return 1;
+	} else if(vargs[0].number().isNegative() && vargs[0].number().isEven()) {
+		mstruct.clear();
+		return 1;
+	} else if(vargs[0].number() == 2) {
 		mstruct.set(CALCULATOR->v_pi);
 		mstruct.raise(2);
 		mstruct.divide(6);
@@ -2225,11 +2234,11 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct.clear();
 	} else if(eo.allow_infinite && vargs[0].number().isI()) {
 		mstruct = vargs[0];
-		Number nr; nr.setInfinity();
+		Number nr; nr.setImaginaryPart(nr_plus_inf);
 		mstruct *= nr;
 	} else if(eo.allow_infinite && vargs[0].number().isMinusI()) {
 		mstruct = vargs[0];
-		Number nr; nr.setInfinity();
+		Number nr; nr.setImaginaryPart(nr_minus_inf);
 		mstruct *= nr;
 	} else if(vargs[0].number().isPlusInfinity()) {
 		switch(eo.parse_options.angle_unit) {
@@ -2408,7 +2417,7 @@ Atan2Function::Atan2Function() : MathFunction("atan2", 2) {
 bool Atan2Function::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[0].representsNumber() && vargs[1].representsNumber();}
 int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].number().isZero()) {
-		if(!vargs[1].number().isNonZero() || vargs[1].number().isInfinity()) return 0;
+		if(!vargs[1].number().isNonZero()) return 0;
 		if(vargs[1].number().isNegative()) {
 			switch(eo.parse_options.angle_unit) {
 				case ANGLE_UNIT_DEGREES: {mstruct.set(180, 1, 0); break;}
@@ -2466,7 +2475,7 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	mstruct.eval(eo);
 	if(mstruct.isNumber()) {
 		if(!mstruct.number().hasImaginaryPart()) {
-			if(!mstruct.number().isNonZero() || mstruct.number().isInfinity()) return -1;
+			if(!mstruct.number().isNonZero()) return -1;
 			if(mstruct.number().isNegative()) {
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {mstruct.set(180, 1, 0); break;}

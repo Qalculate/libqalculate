@@ -537,11 +537,6 @@ void MathStructure::set(const Number &o, bool preserve_precision) {
 	}
 	m_type = STRUCT_NUMBER;
 }
-void MathStructure::setInfinity(bool preserve_precision) {
-	clear(preserve_precision);
-	o_number.setInfinity();
-	m_type = STRUCT_NUMBER;
-}
 void MathStructure::setUndefined(bool preserve_precision) {
 	clear(preserve_precision);
 	m_type = STRUCT_UNDEFINED;
@@ -814,7 +809,7 @@ bool MathStructure::isBitwiseNot() const {return m_type == STRUCT_BITWISE_NOT;}
 bool MathStructure::isInverse() const {return m_type == STRUCT_INVERSE;}
 bool MathStructure::isDivision() const {return m_type == STRUCT_DIVISION;}
 bool MathStructure::isNegate() const {return m_type == STRUCT_NEGATE;}
-bool MathStructure::isInfinity() const {return m_type == STRUCT_NUMBER && o_number.isInfinite();}
+bool MathStructure::isInfinity() const {return m_type == STRUCT_NUMBER && o_number.isInfinite(true);}
 bool MathStructure::isUndefined() const {return m_type == STRUCT_UNDEFINED || (m_type == STRUCT_NUMBER && o_number.isUndefined()) || (m_type == STRUCT_VARIABLE && o_variable == CALCULATOR->v_undef);}
 bool MathStructure::isInteger() const {return m_type == STRUCT_NUMBER && o_number.isInteger();}
 bool MathStructure::isNumber() const {return m_type == STRUCT_NUMBER;}
@@ -2626,11 +2621,6 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				return 1;
 			}
 		}
-		if(mstruct.representsReal(false) && mstruct.representsNonZero(false)) {
-			o_number.setInfinity();
-			MERGE_APPROX_AND_PREC(mstruct)
-			return 1;
-		}
 	} else if(mstruct.isNumber() && mstruct.number().isInfinite()) {
 		if(mstruct.number().isMinusInfinity()) {
 			if(representsPositive(false)) {
@@ -2656,12 +2646,6 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			}
-		}
-		if(representsReal(false) && representsNonZero(false)) {
-			clear(true);
-			o_number.setInfinity();
-			MERGE_APPROX_AND_PREC(mstruct)
-			return 1;
 		}
 	}
 
@@ -3613,12 +3597,12 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 2;
 	}
-	if(m_type == STRUCT_NUMBER && o_number.isInfinite()) {
+	if(m_type == STRUCT_NUMBER && o_number.isInfinite(false)) {
 		if(mstruct.representsNegative(false)) {
 			o_number.clear();
 			MERGE_APPROX_AND_PREC(mstruct)
 			return 1;
-		} else if(mstruct.representsNonZero(false) && mstruct.representsNumber(false)) {
+		} else if(mstruct.representsNonZero(false) && mstruct.representsPositive(false)) {
 			if(o_number.isMinusInfinity()) {
 				if(mstruct.representsEven(false)) {
 					o_number.setPlusInfinity();
@@ -3627,29 +3611,40 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				} else if(mstruct.representsOdd(false)) {
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 1;
-				} else if(mstruct.representsInteger(false)) {
-					o_number.setInfinity();
-					MERGE_APPROX_AND_PREC(mstruct)
-					return 1;
 				}
-			}
-		}
-	} else if(mstruct.isNumber() && mstruct.number().isInfinite()) {
-		if(mstruct.number().isInfinity()) {
-		} else if(mstruct.number().isMinusInfinity()) {
-			if(representsReal(false) && representsNonZero(false)) {
-				clear(true);
+			} else if(o_number.isPlusInfinity()) {
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			}
-		} else if(mstruct.number().isPlusInfinity()) {
-			if(representsPositive(false)) {
-				if(mparent) {
-					mparent->swapChildren(index_this + 1, index_mstruct + 1);
-				} else {
-					set_nocopy(mstruct, true);
+		}
+	} else if(mstruct.isNumber() && mstruct.number().isInfinite(false)) {
+		if(m_type == STRUCT_VARIABLE && o_variable->isKnown() && ((KnownVariable*) o_variable)->get().isNumber()) {
+			if(((KnownVariable*) o_variable)->get().number().isGreaterThan(1) || ((KnownVariable*) o_variable)->get().number().isLessThan(1)) {
+				if(mstruct.number().isPlusInfinity()) {
+					if(mparent) {
+						mparent->swapChildren(index_this + 1, index_mstruct + 1);
+					} else {
+						set_nocopy(mstruct, true);
+					}
+					return 1;
+				} else if(mstruct.number().isMinusInfinity()) {
+					clear(true);
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
 				}
-				return 1;
+			} else if(((KnownVariable*) o_variable)->get().number().isNonZero() || ((KnownVariable*) o_variable)->get().number().isFraction()) {
+				if(mstruct.number().isPlusInfinity()) {
+					clear(true);
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
+				} else if(mstruct.number().isMinusInfinity()) {
+					if(mparent) {
+						mparent->swapChildren(index_this + 1, index_mstruct + 1);
+					} else {
+						set_nocopy(mstruct, true);
+					}
+					return 1;
+				}
 			}
 		}
 	}
@@ -5769,13 +5764,13 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL) {
 	if(mstruct.type() == STRUCT_NUMBER) {
 		if(CALCULATOR->usesIntervalArithmetics()) {
-			if(!mstruct.number().isInterval() && mstruct.number().precision() >= 0) {
+			if(!mstruct.number().isInterval(false) && mstruct.number().precision() >= 0) {
 				mstruct.number().precisionToInterval();
 				mstruct.setPrecision(-1);
 				mstruct.numberUpdated();
 				return true;
 			}
-		} else if(mstruct.number().isInterval()) {
+		} else if(mstruct.number().isInterval(false)) {
 			if(!mstruct.number().intervalToPrecision()) {
 				if(failed) *failed = true;
 				return false;
@@ -13487,7 +13482,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 			break;
 		}
 		case STRUCT_VARIABLE: {
-			if(o_variable == CALCULATOR->v_pinf || o_variable == CALCULATOR->v_minf || o_variable == CALCULATOR->v_inf) {
+			if(o_variable == CALCULATOR->v_pinf || o_variable == CALCULATOR->v_minf) {
 				set(((KnownVariable*) o_variable)->get());
 			}
 			break;
@@ -15853,7 +15848,7 @@ int MathStructure::containsFunction(MathFunction *f, bool structural_only, bool 
 	return 0;
 }
 int MathStructure::containsInterval(bool structural_only, bool check_variables, bool check_functions) const {
-	if(m_type == STRUCT_NUMBER && o_number.isInterval()) return 1;
+	if(m_type == STRUCT_NUMBER && o_number.isInterval(false)) return 1;
 	if(structural_only) {
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CHILD(i).containsInterval()) return 1;

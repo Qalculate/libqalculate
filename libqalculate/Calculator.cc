@@ -194,7 +194,7 @@ bool Calculator::delDefaultStringAlternative(string replacement, string standard
 Calculator *calculator = NULL;
 
 MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one, m_one_i;
-Number nr_zero, nr_one, nr_two, nr_three, nr_minus_one, nr_one_i, nr_minus_i, nr_half, nr_minus_half;
+Number nr_zero, nr_one, nr_two, nr_three, nr_minus_one, nr_one_i, nr_minus_i, nr_half, nr_minus_half, nr_plus_inf, nr_minus_inf;
 EvaluationOptions no_evaluation;
 ExpressionName empty_expression_name;
 extern gmp_randstate_t randstate;
@@ -369,8 +369,6 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_NOT_EQUAL, " " NOT EQUALS);		
 	addStringAlternative(SIGN_GREATER_OR_EQUAL, GREATER EQUALS);	
 	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);
-	addStringAlternative("(+infinity)", "plus_infinity");
-	addStringAlternative("(-infinity)", "minus_infinity");
 	addStringAlternative(";", COMMA);
 	addStringAlternative("\t", SPACE);
 	addStringAlternative("\n", SPACE);
@@ -460,6 +458,8 @@ Calculator::Calculator() {
 	nr_minus_i.setImaginaryPart(-1, 1, 0);
 	m_one_i.set(nr_one_i);
 	nr_minus_one.set(-1, 1, 0);
+	nr_plus_inf.setPlusInfinity();
+	nr_minus_inf.setMinusInfinity();
 	no_evaluation.approximation = APPROXIMATION_EXACT;
 	no_evaluation.structuring = STRUCTURING_NONE;
 	no_evaluation.sync_units = false;
@@ -1313,9 +1313,6 @@ void Calculator::addBuiltinVariables() {
 	MathStructure mstruct;
 	mstruct.number().setImaginaryPart(nr);
 	v_i = (KnownVariable*) addVariable(new KnownVariable("", "i", mstruct, "Imaginary i (sqrt(-1))", false, true));
-	mstruct.number().setInfinity();
-	v_inf = (KnownVariable*) addVariable(new KnownVariable("", SIGN_INFINITY, mstruct, "Infinity", false, true));
-	v_inf->addName("infinity");
 	mstruct.number().setPlusInfinity();
 	v_pinf = (KnownVariable*) addVariable(new KnownVariable("", "plus_infinity", mstruct, "+Infinity", false, true));
 	mstruct.number().setMinusInfinity();
@@ -10514,7 +10511,7 @@ Number QalculateDate::daysTo(const QalculateDate &date, int basis, bool date_fun
 			bool check_aborted = years > 10000L;
 			for(year1 += 1; year1 < year2; year1++) {
 				if(check_aborted && CALCULATOR && CALCULATOR->aborted()) {
-					nr.setInfinity();
+					nr.setPlusInfinity();
 					return nr;
 				}
 				if(isLeapYear(year1)) nr += 366;
@@ -10567,7 +10564,7 @@ Number QalculateDate::yearsTo(const QalculateDate &date, int basis, bool date_fu
 			Number days_of_years;
 			for(int year = year1; year <= year2; year++) {
 				if(check_aborted && CALCULATOR && CALCULATOR->aborted()) {
-					nr.setInfinity();
+					nr.setPlusInfinity();
 					return nr;
 				}
 				days_of_years += daysPerYear(year, basis);
