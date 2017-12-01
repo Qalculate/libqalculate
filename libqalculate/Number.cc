@@ -4946,33 +4946,47 @@ bool Number::atan2(const Number &o, bool allow_zero) {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	mpfr_t fl_test, fu_test;
-	mpfr_inits2(BIT_PRECISION, fl_test, fu_test, NULL);
 	if(o.isFloatingPoint()) {
 		if(!CALCULATOR->usesIntervalArithmetics() && !isInterval() && !o.isInterval()) {
 			mpfr_atan2(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else {
-			if(!allow_zero && !o.isNonZero() && (mpfr_sgn(fl_value) != mpfr_sgn(fu_value) || mpfr_sgn(fl_value) == 0)) {set(nr_bak); return false;}
-			mpfr_t fl_test, fu_test;
-			mpfr_inits2(BIT_PRECISION, fl_test, fu_test, NULL);
-			if(allow_zero && mpfr_zero_p(fl_value) && mpfr_zero_p(o.internalUpperFloat())) mpfr_set_zero(fl_test, mpfr_sgn(fl_value));
-			else mpfr_atan2(fl_test, fl_value, o.internalUpperFloat(), MPFR_RNDN);
-			if(allow_zero && mpfr_zero_p(fu_value) && mpfr_zero_p(o.internalLowerFloat())) mpfr_set_zero(fu_test, mpfr_sgn(fl_value));
-			else mpfr_atan2(fu_test, fu_value, o.internalLowerFloat(), MPFR_RNDN);
-			if(mpfr_cmp(fl_test, fu_test) > 0) {
-				if(allow_zero && mpfr_zero_p(fl_value) && mpfr_zero_p(o.internalUpperFloat())) mpfr_set_zero(fl_value, mpfr_sgn(fl_value));
-				else mpfr_atan2(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDU);
-				if(allow_zero && mpfr_zero_p(fu_value) && mpfr_zero_p(o.internalLowerFloat())) mpfr_set_zero(fu_value, mpfr_sgn(fu_value));
-				else mpfr_atan2(fu_value, fu_value, o.internalLowerFloat(), MPFR_RNDD);
-				mpfr_swap(fl_value, fu_value);
+			int sgn_l = mpfr_sgn(fl_value);
+			int sgn_u = mpfr_sgn(fu_value);
+			if(!allow_zero && !o.isNonZero() && (sgn_l != sgn_u || sgn_l == 0)) {set(nr_bak); return false;}
+			int sgn_lo = mpfr_sgn(o.internalLowerFloat());
+			int sgn_uo = mpfr_sgn(o.internalUpperFloat());
+			if(sgn_lo < 0) {
+				if(sgn_u >= 0) {
+					if(sgn_l < 0) {
+						mpfr_const_pi(fu_value, MPFR_RNDD);
+						mpfr_neg(fu_value, fu_value, MPFR_RNDD);
+					} else if(sgn_uo >= 0) {
+						if(sgn_l == 0) mpfr_set_zero(fu_value, 0);
+						else mpfr_atan2(fu_value, fl_value, o.internalUpperFloat(), MPFR_RNDD);
+					} else {
+						mpfr_atan2(fu_value, fu_value, o.internalUpperFloat(), MPFR_RNDD);
+					}
+					if(sgn_l <= 0) mpfr_const_pi(fl_value, MPFR_RNDU);
+					else mpfr_atan2(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDU);
+					mpfr_swap(fl_value, fu_value);
+				} else {
+					mpfr_atan2(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDU);
+					mpfr_atan2(fu_value, fu_value, o.internalLowerFloat(), MPFR_RNDD);
+					mpfr_swap(fl_value, fu_value);
+				}
 			} else {
-				if(allow_zero && mpfr_zero_p(fl_value) && mpfr_zero_p(o.internalUpperFloat())) mpfr_set_zero(fl_value, mpfr_sgn(fl_value));
-				else mpfr_atan2(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDD);
-				if(allow_zero && mpfr_zero_p(fu_value) && mpfr_zero_p(o.internalLowerFloat())) mpfr_set_zero(fu_value, mpfr_sgn(fu_value));
-				else mpfr_atan2(fu_value, fu_value, o.internalLowerFloat(), MPFR_RNDU);
+				if(sgn_u >= 0) {
+					if(sgn_u == 0) mpfr_set_zero(fu_value, 0);
+					else mpfr_atan2(fu_value, fu_value, o.internalLowerFloat(), MPFR_RNDU);
+					if(sgn_l == 0) mpfr_set_zero(fl_value, 0);
+					else if(sgn_l < 0) mpfr_atan2(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDD);
+					else mpfr_atan2(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDD);
+				} else {
+					mpfr_atan2(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDD);
+					mpfr_atan2(fu_value, fu_value, o.internalUpperFloat(), MPFR_RNDU);
+				}
 			}
-			mpfr_clears(fu_test, fl_test, NULL);
 		}
 	} else {
 		if(!CALCULATOR->usesIntervalArithmetics() && !isInterval()) {
@@ -4985,32 +4999,9 @@ bool Number::atan2(const Number &o, bool allow_zero) {
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 			mpfr_clear(of_value);
 		} else {
-			mpfr_t ofl_value, ofu_value;
-			if(!allow_zero && o.isZero() && (mpfr_sgn(fl_value) != mpfr_sgn(fu_value) || mpfr_sgn(fl_value) == 0)) {set(nr_bak); return false;}
-			mpfr_inits2(BIT_PRECISION, ofl_value, ofu_value, NULL);
-			if(o.isPlusInfinity()) {mpfr_set_inf(ofl_value, 1); mpfr_set_inf(ofu_value, 1);}
-			else if(o.isMinusInfinity()) {mpfr_set_inf(ofl_value, -1); mpfr_set_inf(ofu_value, -1);}
-			else {mpfr_set_q(ofl_value, o.internalRational(), MPFR_RNDD); mpfr_set_q(ofu_value, o.internalRational(), MPFR_RNDU);}
-			mpfr_t fl_test, fu_test;
-			mpfr_inits2(BIT_PRECISION, fl_test, fu_test, NULL);
-			if(allow_zero && mpfr_zero_p(fl_value) && mpfr_zero_p(ofu_value)) mpfr_set_zero(fl_test, mpfr_sgn(fl_value));
-			else mpfr_atan2(fl_test, fl_value, ofu_value, MPFR_RNDN);
-			if(allow_zero && mpfr_zero_p(fu_value) && mpfr_zero_p(ofl_value)) mpfr_set_zero(fu_test, mpfr_sgn(fu_value));
-			else mpfr_atan2(fu_test, fu_value, ofl_value, MPFR_RNDN);
-			if(mpfr_cmp(fl_test, fu_test) > 0) {
-				if(allow_zero && mpfr_zero_p(fl_value) && mpfr_zero_p(ofu_value)) mpfr_set_zero(fl_value, mpfr_sgn(fl_value));
-				else mpfr_atan2(fl_value, fl_value, ofu_value, MPFR_RNDU);
-				if(allow_zero && mpfr_zero_p(fu_value) && mpfr_zero_p(ofl_value)) mpfr_set_zero(fu_value, mpfr_sgn(fu_value));
-				else mpfr_atan2(fu_value, fu_value, ofl_value, MPFR_RNDD);
-				mpfr_swap(fl_value, fu_value);
-			} else {
-				if(allow_zero && mpfr_zero_p(fl_value) && mpfr_zero_p(ofu_value)) mpfr_set_zero(fl_value, mpfr_sgn(fl_value));
-				else mpfr_atan2(fl_value, fl_value, ofu_value, MPFR_RNDD);
-				if(allow_zero && mpfr_zero_p(fu_value) && mpfr_zero_p(ofl_value)) mpfr_set_zero(fu_value, mpfr_sgn(fu_value));
-				else mpfr_atan2(fu_value, fu_value, ofl_value, MPFR_RNDU);
-			}
-			mpfr_clears(fu_test, fl_test, NULL);
-			mpfr_clears(ofl_value, ofu_value, NULL);
+			Number nr_o(o);
+			if(!nr_o.setToFloatingPoint() || !atan2(nr_o)) return false;
+			return true;
 		}
 	}
 	if(!testFloatResult()) {
