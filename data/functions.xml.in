@@ -419,7 +419,7 @@
       </argument>
     </builtin_function>
     <category>
-      <_title>Arithmetics</_title>
+      <_title>Arithmetic</_title>
       <builtin_function name="sgn">
         <_title>Signum</_title>
         <_names>r:sgn</_names>
@@ -2352,7 +2352,7 @@
         </argument>
       </function>
       <function>
-        <_title>Triangle Perimeter (of right triangle)</_title>
+        <_title>Triangle Perimeter</_title>
         <_names>r:triangle_perimeter</_names>
         <expression>\x+\y+\z</expression>
         <argument type="free" index="1">

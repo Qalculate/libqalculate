@@ -206,8 +206,8 @@ class Number {
 		Number denominator() const;
 		Number complexNumerator() const;
 		Number complexDenominator() const;
-		Number lowerEndPoint() const;
-		Number upperEndPoint() const;
+		Number lowerEndPoint(bool include_imag = false) const;
+		Number upperEndPoint(bool include_imag = false) const;
 
 		void operator = (const Number &o);
 		void operator = (long int i);

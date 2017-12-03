@@ -4542,9 +4542,9 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					MathStructure y_vector;
 					if(use_step_size) {
 						CALCULATOR->beginTemporaryStopMessages();
-						CALCULATOR->beginTemporaryStopIntervalArithmetics();
+						CALCULATOR->beginTemporaryStopIntervalArithmetic();
 						y_vector.set(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], &x_vector, eo2));
-						CALCULATOR->endTemporaryStopIntervalArithmetics();
+						CALCULATOR->endTemporaryStopIntervalArithmetic();
 						CALCULATOR->endTemporaryStopMessages();
 						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
 					} else if(!vargs[3].isInteger() || !vargs[3].representsPositive()) {
@@ -4553,9 +4553,9 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						bool overflow = false;
 						int steps = vargs[3].number().intValue(&overflow);
 						CALCULATOR->beginTemporaryStopMessages();
-						CALCULATOR->beginTemporaryStopIntervalArithmetics();
+						CALCULATOR->beginTemporaryStopIntervalArithmetic();
 						if(steps <= 1000000 && !overflow) y_vector.set(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], steps, &x_vector, eo2));
-						CALCULATOR->endTemporaryStopIntervalArithmetics();
+						CALCULATOR->endTemporaryStopIntervalArithmetic();
 						CALCULATOR->endTemporaryStopMessages();
 						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
 					}
@@ -4584,9 +4584,9 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		MathStructure x_vector, y_vector;
 		if(use_step_size) {
 			CALCULATOR->beginTemporaryStopMessages();
-			CALCULATOR->beginTemporaryStopIntervalArithmetics();
+			CALCULATOR->beginTemporaryStopIntervalArithmetic();
 			y_vector.set(mstruct.generateVector(vargs[4], vargs[1], vargs[2], vargs[3], &x_vector, eo2));
-			CALCULATOR->endTemporaryStopIntervalArithmetics();
+			CALCULATOR->endTemporaryStopIntervalArithmetic();
 			CALCULATOR->endTemporaryStopMessages();
 			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
 		} else if(!vargs[3].isInteger() || !vargs[3].representsPositive()) {
@@ -4595,9 +4595,9 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			bool overflow = false;
 			int steps = vargs[3].number().intValue(&overflow);
 			CALCULATOR->beginTemporaryStopMessages();
-			CALCULATOR->beginTemporaryStopIntervalArithmetics();
+			CALCULATOR->beginTemporaryStopIntervalArithmetic();
 			if(steps <= 1000000 && !overflow) y_vector.set(mstruct.generateVector(vargs[4], vargs[1], vargs[2], steps, &x_vector, eo2));
-			CALCULATOR->endTemporaryStopIntervalArithmetics();
+			CALCULATOR->endTemporaryStopIntervalArithmetic();
 			CALCULATOR->endTemporaryStopMessages();
 			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
 		}

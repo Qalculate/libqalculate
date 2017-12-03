@@ -1085,16 +1085,16 @@ class Calculator {
 	/** Returns default precision for approximate calculations.
 	*/
 	int getPrecision() const;
-	/** Set if interval arithmetics should be used for approximate calculations.
+	/** Set if interval arithmetic should be used for approximate calculations.
 	*
-	* @param use_interval_arithmetics Set true to activate, or false to deactivate, interval arithmetics.
+	* @param use_interval_arithmetic Set true to activate, or false to deactivate, interval arithmetic.
 	*/
-	void useIntervalArithmetics(bool use_interval_arithmetics = true);
-	/** Returns true if interval arithmetics are activated.
+	void useIntervalArithmetic(bool use_interval_arithmetic = true);
+	/** Returns true if interval arithmetic are activated.
 	*/
-	bool usesIntervalArithmetics() const;
-	void beginTemporaryStopIntervalArithmetics();
-	void endTemporaryStopIntervalArithmetics();
+	bool usesIntervalArithmetic() const;
+	void beginTemporaryStopIntervalArithmetic();
+	void endTemporaryStopIntervalArithmetic();
 	//@}
 
 	/** @name Functions for localization */

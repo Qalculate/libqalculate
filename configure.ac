@@ -24,6 +24,11 @@ AC_ARG_ENABLE(defs2doc,
               enable_defs2doc=$enableval, 
               enable_defs2doc="no")
 
+AC_ARG_ENABLE(tests, 
+              [  --enable-tests	  Enable compiling test programs], 
+              enable_tests=$enableval, 
+              enable_tests="no")
+
 
 dnl  -------------------------------
 dnl | check for neccessary programs |------------------------------------------
@@ -222,6 +227,12 @@ if test "x$enable_defs2doc" = "xyes" ; then
 	QALCULATE_DEFS2DOC="defs2doc$EXEEXT"
 fi
 AC_SUBST(QALCULATE_DEFS2DOC)
+
+QALCULATE_TEST=""
+if test "x$enable_tests" = "xyes" ; then
+	QALCULATE_TEST="test$EXEEXT"
+fi
+AC_SUBST(QALCULATE_TEST)
 
 AC_SEARCH_LIBS([nanosleep],[rt posix4])
 

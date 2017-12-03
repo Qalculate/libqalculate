@@ -9,8 +9,8 @@ AM_CPPFLAGS = \
 	@LIBCURL_CFLAGS@ @LIBXML_CFLAGS@ @ICU_CFLAGS@
 
 bin_PROGRAMS = @QALCULATE_TEXT@
-noinst_PROGRAMS = @QALCULATE_DEFS2DOC@
-EXTRA_PROGRAMS = qalc defs2doc
+noinst_PROGRAMS = @QALCULATE_DEFS2DOC@ @QALCULATE_TEST@
+EXTRA_PROGRAMS = qalc defs2doc test
 
 qalc_SOURCES = qalc.cc
 
@@ -26,6 +26,16 @@ qalc_LDADD = \
 defs2doc_SOURCES = defs2doc.cc
 
 defs2doc_LDADD = \
+	@LIBXML_LIBS@ \
+	@LIBCURL_LIBS@ \
+	@ICU_LIBS@ \
+	@LTLIBINTL@ \
+	@LTLIBICONV@ \
+	../libqalculate/libqalculate.la
+
+test_SOURCES = test.cc
+
+test_LDADD = \
 	@LIBXML_LIBS@ \
 	@LIBCURL_LIBS@ \
 	@ICU_LIBS@ \

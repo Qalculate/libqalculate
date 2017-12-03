@@ -383,7 +383,7 @@
     </builtin_variable>
     <builtin_variable name="plus_infinity">
       <_title>Positive Infinity</_title>
-      <_names>a:&#x221E;,r:plus_infinity,infinity</_names>
+      <_names>a:&#x221E;,r:plus_infinity,r:infinity</_names>
     </builtin_variable>
     <builtin_variable name="minus_infinity">
       <_title>Negative Infinity</_title>

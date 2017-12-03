@@ -1815,7 +1815,7 @@ msgid "r:abs"
 msgstr ""
 
 #: ../data/functions.xml.in.h:148
-msgid "Arithmetics"
+msgid "Arithmetic"
 msgstr "Arithmétique"
 
 #: ../data/functions.xml.in.h:149

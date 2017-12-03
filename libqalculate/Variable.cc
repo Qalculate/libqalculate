@@ -327,7 +327,7 @@ bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
 	return b;
 }
 const MathStructure &KnownVariable::get() {
-	if(b_expression && ((!mstruct || mstruct->isAborted()) || calculated_with_interval != CALCULATOR->usesIntervalArithmetics() || (!sunit.empty() && calculated_with_units != CALCULATOR->variableUnitsEnabled()))) {
+	if(b_expression && ((!mstruct || mstruct->isAborted()) || calculated_with_interval != CALCULATOR->usesIntervalArithmetic() || (!sunit.empty() && calculated_with_units != CALCULATOR->variableUnitsEnabled()))) {
 		if(mstruct) mstruct->unref();
 		mstruct = new MathStructure();
 		ParseOptions po;
@@ -363,7 +363,7 @@ const MathStructure &KnownVariable::get() {
 			CALCULATOR->parse(mstruct_unit, sunit, po);
 			mstruct->multiply_nocopy(mstruct_unit);
 		}
-		calculated_with_interval = CALCULATOR->usesIntervalArithmetics();
+		calculated_with_interval = CALCULATOR->usesIntervalArithmetic();
 		calculated_with_units = CALCULATOR->variableUnitsEnabled();
 	}
 	if(mstruct->contains(this, false, true, true) > 0) {
@@ -422,12 +422,12 @@ void DynamicVariable::set(const ExpressionItem *item) {
 void DynamicVariable::set(const MathStructure&) {}
 void DynamicVariable::set(string) {}
 const MathStructure &DynamicVariable::get() {
-	if(calculated_with_interval != CALCULATOR->usesIntervalArithmetics() || calculated_precision != CALCULATOR->getPrecision() || !mstruct || mstruct->isAborted()) {
+	if(calculated_with_interval != CALCULATOR->usesIntervalArithmetic() || calculated_precision != CALCULATOR->getPrecision() || !mstruct || mstruct->isAborted()) {
 		if(mstruct) mstruct->unref();
 		mstruct = new MathStructure();
 		mstruct->setAborted();
 		calculated_precision = CALCULATOR->getPrecision();
-		calculated_with_interval = CALCULATOR->usesIntervalArithmetics();
+		calculated_with_interval = CALCULATOR->usesIntervalArithmetic();
 		calculate();
 	}
 	return *mstruct;

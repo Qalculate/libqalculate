@@ -1774,7 +1774,7 @@ msgid "r:abs"
 msgstr ""
 
 #: ../data/functions.xml.in.h:148
-msgid "Arithmetics"
+msgid "Arithmetic"
 msgstr "算术"
 
 #: ../data/functions.xml.in.h:149

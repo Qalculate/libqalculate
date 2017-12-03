@@ -737,10 +737,10 @@ void set_option(string str) {
 			}
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval", _("interval"))) {
-		bool b = CALCULATOR->usesIntervalArithmetics();
+		bool b = CALCULATOR->usesIntervalArithmetic();
 		SET_BOOL(b)
-		if(b != CALCULATOR->usesIntervalArithmetics()) {
-			CALCULATOR->useIntervalArithmetics(b);
+		if(b != CALCULATOR->usesIntervalArithmetic()) {
+			CALCULATOR->useIntervalArithmetic(b);
 			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "variable units", _("variable units"))) {
@@ -2049,7 +2049,7 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("infinite numbers")); PUTS_UNICODE(b2oo(evalops.allow_infinite, false)); CHECK_IF_SCREEN_FILLED
-			PRINT_AND_COLON_TABS(_("interval")); PUTS_UNICODE(b2oo(CALCULATOR->usesIntervalArithmetics(), false)); CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("interval")); PUTS_UNICODE(b2oo(CALCULATOR->usesIntervalArithmetic(), false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("interval display"));
 			if(adaptive_interval_display) {
 				PUTS_UNICODE(_("adaptive"));
@@ -2637,7 +2637,7 @@ int main(int argc, char *argv[]) {
 				if(evalops.parse_options.base > 2 && evalops.parse_options.base != BASE_OCTAL && evalops.parse_options.base != BASE_DECIMAL && evalops.parse_options.base != BASE_HEXADECIMAL) {str += " "; str += i2s(evalops.parse_options.base); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("infinite numbers"), evalops.allow_infinite);
-				STR_AND_TABS_BOOL(_("interval"), CALCULATOR->usesIntervalArithmetics());
+				STR_AND_TABS_BOOL(_("interval"), CALCULATOR->usesIntervalArithmetic());
 				STR_AND_TABS_7(_("interval display"), (adaptive_interval_display ? 0 : printops.interval_display + 1), _("adaptive"), _("significant"), _("interval"), _("plusminus"), _("midpoint"), _("upper"), _("lower"))
 				STR_AND_TABS_BOOL(_("limit implicit multiplication"), evalops.parse_options.limit_implicit_multiplication);
 				STR_AND_TABS_BOOL(_("lowercase e"), printops.lower_case_e);
@@ -2877,7 +2877,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "interval", _("interval"))) {
 				puts("");
-				PUTS_UNICODE(_("Enables/disables use of interval arithmetics to determine the precision of the result."));
+				PUTS_UNICODE(_("Enables/disables use of interval arithmetic to determine the precision of the result."));
 				puts("");
 			} else {
 				goto show_info;
@@ -2967,7 +2967,7 @@ void ViewThread::run() {
 		if(x) {
 			PrintOptions po;
 			po.preserve_format = true;
-			po.show_ending_zeroes = evalops.parse_options.read_precision != DONT_READ_PRECISION && !CALCULATOR->usesIntervalArithmetics();
+			po.show_ending_zeroes = evalops.parse_options.read_precision != DONT_READ_PRECISION && !CALCULATOR->usesIntervalArithmetic();
 			po.lower_case_e = printops.lower_case_e;
 			po.lower_case_numbers = printops.lower_case_numbers;
 			po.base_display = printops.base_display;
@@ -3781,7 +3781,7 @@ bool save_mode() {
 */
 void set_saved_mode() {
 	saved_precision = CALCULATOR->getPrecision();
-	saved_interval = CALCULATOR->usesIntervalArithmetics();
+	saved_interval = CALCULATOR->usesIntervalArithmetic();
 	saved_adaptive_interval_display = adaptive_interval_display;
 	saved_variable_units_enabled = CALCULATOR->variableUnitsEnabled();
 	saved_printops = printops;
@@ -3848,7 +3848,7 @@ void load_preferences() {
 	
 	adaptive_interval_display = true;
 	
-	CALCULATOR->useIntervalArithmetics(false);
+	CALCULATOR->useIntervalArithmetic(false);
 
 	rpn_mode = false;
 	
@@ -3929,8 +3929,8 @@ void load_preferences() {
 					printops.use_max_decimals = v;
 				} else if(svar == "precision") {
 					CALCULATOR->setPrecision(v);
-				} else if(svar == "interval_arithmetics") {
-					CALCULATOR->useIntervalArithmetics(v);
+				} else if(svar == "interval_arithmetic") {
+					CALCULATOR->useIntervalArithmetic(v);
 				} else if(svar == "interval_display") {
 					if(v == 0) {
 						adaptive_interval_display = true;
@@ -4149,7 +4149,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "max_deci=%i\n", saved_printops.max_decimals);
 	fprintf(file, "use_max_deci=%i\n", saved_printops.use_max_decimals);	
 	fprintf(file, "precision=%i\n", saved_precision);
-	fprintf(file, "interval_arithmetics=%i\n", saved_interval);
+	fprintf(file, "interval_arithmetic=%i\n", saved_interval);
 	if(saved_adaptive_interval_display) fprintf(file, "interval_display=%i\n", 0);
 	else fprintf(file, "interval_display=%i\n", saved_printops.interval_display + 1);
 	fprintf(file, "min_exp=%i\n", saved_printops.min_exp);

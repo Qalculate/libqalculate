@@ -1154,12 +1154,12 @@ void Calculator::setPrecision(int precision) {
 int Calculator::getPrecision() const {
 	return i_precision;
 }
-void Calculator::useIntervalArithmetics(bool use_interval_arithmetics) {b_interval = use_interval_arithmetics;}
-bool Calculator::usesIntervalArithmetics() const {return b_interval && i_stop_interval <= 0;}
-void Calculator::beginTemporaryStopIntervalArithmetics() {
+void Calculator::useIntervalArithmetic(bool use_interval_arithmetic) {b_interval = use_interval_arithmetic;}
+bool Calculator::usesIntervalArithmetic() const {return b_interval && i_stop_interval <= 0;}
+void Calculator::beginTemporaryStopIntervalArithmetic() {
 	i_stop_interval++;
 }
-void Calculator::endTemporaryStopIntervalArithmetics() {
+void Calculator::endTemporaryStopIntervalArithmetic() {
 	i_stop_interval--;
 }
 
@@ -9669,9 +9669,9 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	if(msecs > 0) startControl(msecs);
 	MathStructure mparse(parse(expression, po2));
 	CALCULATOR->beginTemporaryStopMessages();
-	CALCULATOR->beginTemporaryStopIntervalArithmetics();
+	CALCULATOR->beginTemporaryStopIntervalArithmetic();
 	MathStructure y_vector(mparse.generateVector(x_mstruct, min, max, step, x_vector, eo));
-	CALCULATOR->endTemporaryStopIntervalArithmetics();
+	CALCULATOR->endTemporaryStopIntervalArithmetic();
 	CALCULATOR->endTemporaryStopMessages();
 	if(msecs > 0) {
 		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
@@ -9702,9 +9702,9 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	if(msecs > 0) startControl(msecs);
 	MathStructure mparse(parse(expression, po2));
 	CALCULATOR->beginTemporaryStopMessages();
-	CALCULATOR->beginTemporaryStopIntervalArithmetics();
+	CALCULATOR->beginTemporaryStopIntervalArithmetic();
 	MathStructure y_vector(mparse.generateVector(x_mstruct, x_vector, eo).eval(eo));
-	CALCULATOR->endTemporaryStopIntervalArithmetics();
+	CALCULATOR->endTemporaryStopIntervalArithmetic();
 	CALCULATOR->endTemporaryStopMessages();
 	if(msecs > 0) {
 		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
