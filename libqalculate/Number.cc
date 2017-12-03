@@ -2707,6 +2707,9 @@ bool Number::recip() {
 	if(hasImaginaryPart()) {
 		if(hasRealPart()) {
 			if(isInterval(false)) {
+			
+				// 1/(x+yi) = (x-yi)/(x^2+y^2); max/min x/(x^2+y^2): x=abs(y), x=-abs(y) 
+			
 				Number nr_bak(*this);
 				if(!setToFloatingPoint()) return false;
 				if(!i_value->setToFloatingPoint()) return false;
@@ -2753,52 +2756,62 @@ bool Number::recip() {
 					}
 					if(mpfr_cmp(fl_tmp, abs_il) <= 0) {
 						if(mpfr_cmp(fu_tmp, abs_il) >= 0) {
-							//max = abs_il / (abs_il^2 + abs_il^2)
 							mpfr_sqr(ftmp1, abs_il, MPFR_RNDD);
 							mpfr_mul_ui(ftmp1, ftmp1, 2, MPFR_RNDD);
 							mpfr_div(fu_tmp, abs_il, ftmp1, MPFR_RNDU);
 						} else {
-							//max = fu_tmp / (abs_ru^2 + abs_il^2)
-							mpfr_sqr(ftmp1, abs_ru, MPFR_RNDD);
+							mpfr_sqr(ftmp1, fu_tmp, MPFR_RNDD);
 							mpfr_sqr(ftmp2, abs_il, MPFR_RNDD);
 							mpfr_add(ftmp1, ftmp1, ftmp2, MPFR_RNDD);
 							mpfr_div(fu_tmp, fu_tmp, ftmp1, MPFR_RNDU);
 						}
 					} else {
-						//max = fl_tmp / (abs_rl^2 + abs_il^2)
-						mpfr_sqr(ftmp1, abs_rl, MPFR_RNDD);
+						mpfr_sqr(ftmp1, fl_tmp, MPFR_RNDD);
 						mpfr_sqr(ftmp2, abs_il, MPFR_RNDD);
 						mpfr_add(ftmp1, ftmp1, ftmp2, MPFR_RNDD);
 						mpfr_div(fu_tmp, fl_tmp, ftmp1, MPFR_RNDU);
 					}
-					bool negl = mpfr_sgn(fl_tmp) < 0;
-					if(mpfr_cmp(fl_tmp, negl ? absm_il : absm_iu) <= 0) {
-						if(mpfr_cmp(fu_tmp, negl ? absm_il : absm_iu) >= 0) {
-							//min = absm_iu / (abs_iu^2 + abs_iu^2)
-							mpfr_sqr(ftmp1, negl ? abs_il : abs_iu, MPFR_RNDU);
+					if(mpfr_sgn(fl_tmp) < 0) {
+						if(mpfr_cmp(fl_tmp, absm_il) <= 0) {
+							mpfr_sqr(ftmp1, abs_il, MPFR_RNDU);
 							mpfr_mul_ui(ftmp1, ftmp1, 2, MPFR_RNDU);
-							mpfr_div(fl_tmp, negl ? absm_il : absm_iu, ftmp1, MPFR_RNDD);
+							mpfr_div(fl_tmp, absm_il, ftmp1, MPFR_RNDD);
 						} else {
-							//min = fu_tmp / (abs_ru^2 + abs_iu^2)
-							mpfr_sqr(ftmp1, abs_ru, MPFR_RNDU);
-							mpfr_sqr(ftmp2, negl ? abs_il : abs_iu, MPFR_RNDU);
-							mpfr_add(ftmp1, ftmp1, ftmp2, MPFR_RNDU);
-							mpfr_div(fl_tmp, fu_tmp, ftmp1, MPFR_RNDD);
+							mpfr_sqr(ftmp1, fl_tmp, MPFR_RNDD);
+							mpfr_sqr(ftmp2, abs_il, MPFR_RNDD);
+							mpfr_add(ftmp1, ftmp1, ftmp2, MPFR_RNDD);
+							mpfr_div(fl_tmp, fl_tmp, ftmp1, MPFR_RNDU);
 						}
-					} else {
-						//min = fl_tmp / (abs_rl^2 + abs_iu^2)
-						mpfr_sqr(ftmp1, abs_rl, MPFR_RNDU);
-						mpfr_sqr(ftmp2, abs_iu, MPFR_RNDU);
-						mpfr_add(ftmp1, ftmp1, ftmp2, MPFR_RNDU);
-						mpfr_div(fl_tmp, fl_tmp, ftmp1, MPFR_RNDD);
-						if(mpfr_cmp(fu_tmp, abs_iu) > 0) {
-							//or min = fu_tmp / (abs_ru^2 + abs_iu^2)
+					} else if(mpfr_cmp(fl_tmp, absm_iu) <= 0) {
+						if(mpfr_cmp(abs_ru, absm_iu) >= 0) {
+							mpfr_sqr(ftmp1, abs_iu, MPFR_RNDU);
+							mpfr_mul_ui(ftmp1, ftmp1, 2, MPFR_RNDU);
+							mpfr_div(fl_tmp, absm_iu, ftmp1, MPFR_RNDD);
+						} else {
 							mpfr_sqr(ftmp1, abs_ru, MPFR_RNDU);
 							mpfr_sqr(ftmp2, abs_iu, MPFR_RNDU);
 							mpfr_add(ftmp1, ftmp1, ftmp2, MPFR_RNDU);
-							mpfr_div(ftmp1, fu_tmp, ftmp1, MPFR_RNDD);
-							if(mpfr_cmp(ftmp1, fl_tmp) < 0) {
-								mpfr_swap(ftmp1, fl_tmp);
+							mpfr_div(fl_tmp, abs_ru, ftmp1, MPFR_RNDD);
+						}
+					} else {
+						if(mpfr_cmp(fl_tmp, abs_iu) > 0) {
+							mpfr_sqr(ftmp1, abs_ru, MPFR_RNDU);
+							mpfr_sqr(ftmp2, abs_iu, MPFR_RNDU);
+							mpfr_add(ftmp1, ftmp1, ftmp2, MPFR_RNDU);
+							mpfr_div(fl_tmp, abs_ru, ftmp1, MPFR_RNDD);
+						} else {
+							mpfr_sqr(ftmp1, abs_rl, MPFR_RNDU);
+							mpfr_sqr(ftmp2, abs_iu, MPFR_RNDU);
+							mpfr_add(ftmp1, ftmp1, ftmp2, MPFR_RNDU);
+							mpfr_div(fl_tmp, fl_tmp, ftmp1, MPFR_RNDD);
+							if(mpfr_cmp(abs_ru, abs_iu) > 0) {
+								mpfr_sqr(ftmp1, abs_ru, MPFR_RNDU);
+								mpfr_sqr(ftmp2, abs_iu, MPFR_RNDU);
+								mpfr_add(ftmp1, ftmp1, ftmp2, MPFR_RNDU);
+								mpfr_div(ftmp1, abs_ru, ftmp1, MPFR_RNDD);
+								if(mpfr_cmp(ftmp1, fl_tmp) < 0) {
+									mpfr_swap(ftmp1, fl_tmp);
+								}
 							}
 						}
 					}
