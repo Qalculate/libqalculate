@@ -9,10 +9,6 @@
     (at your option) any later version.
 */
 
-/*#if (defined(__clang__) && !defined char16_t)
-	typedef __CHAR16_TYPE__ char16_t;
-#endif*/
-
 #include "support.h"
 
 #include "Calculator.h"
@@ -1523,7 +1519,7 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "6830.55", 1, "", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "9818.67", 1, "", false, true, true));
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
@@ -9355,6 +9351,7 @@ bool Calculator::loadExchangeRates() {
 					time(&exchange_rates_time);
 				}
 				new_times.modtime = exchange_rates_time;
+				new_times.actime = exchange_rates_time;
 #ifdef _WIN32
 				_utime(filename.c_str(), &new_times);
 #else
@@ -9538,6 +9535,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 		struct utimbuf new_times;
 #endif
 		new_times.modtime = (time_t) file_time;
+		new_times.actime = (time_t) file_time;
 #ifdef _WIN32
 		_utime(getExchangeRatesFileName(1).c_str(), &new_times);
 #else

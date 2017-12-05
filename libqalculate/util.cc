@@ -15,11 +15,6 @@
 #include <stdarg.h>
 #include "Number.h"
 
-//Fixes clang compilation on my system, but breaks others
-/*#if (defined(__clang__) && !defined char16_t)
-	typedef __CHAR16_TYPE__ char16_t;
-#endif*/
-
 #include <string.h>
 #include <time.h>
 #include <iconv.h>

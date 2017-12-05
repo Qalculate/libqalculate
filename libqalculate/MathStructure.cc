@@ -2008,7 +2008,7 @@ ComparisonResult MathStructure::compare(const MathStructure &o) const {
 	}
 	if(incomp > 0) return COMPARISON_RESULT_NOT_EQUAL;
 	if(incomp == 0) {
-		if(mtest.isZero()) return COMPARISON_RESULT_EQUAL;
+		if(mtest.representsZero(true)) return COMPARISON_RESULT_EQUAL;
 		if(mtest.representsPositive(true)) return COMPARISON_RESULT_LESS;
 		if(mtest.representsNegative(true)) return COMPARISON_RESULT_GREATER;
 		if(mtest.representsNonZero(true)) return COMPARISON_RESULT_NOT_EQUAL;
@@ -5761,7 +5761,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 	return true;
 }
 
-bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL) {
+bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL, long int min_precision = 2) {
 	if(mstruct.type() == STRUCT_NUMBER) {
 		if(CALCULATOR->usesIntervalArithmetic()) {
 			if(!mstruct.number().isInterval(false) && mstruct.number().precision() >= 0) {
@@ -5771,7 +5771,7 @@ bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *fa
 				return true;
 			}
 		} else if(mstruct.number().isInterval(false)) {
-			if(!mstruct.number().intervalToPrecision()) {
+			if(!mstruct.number().intervalToPrecision(min_precision)) {
 				if(failed) *failed = true;
 				return false;
 			}
@@ -5810,7 +5810,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 						calculateFunctions(feo);
 						unformat(feo);
 					}
-					fix_intervals(*this, feo);
+					fix_intervals(*this, feo, NULL, PRECISION);
 					b = true;
 					calculatesub(eo, feo, true, mparent, index_this);
 				}

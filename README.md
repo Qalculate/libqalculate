@@ -47,6 +47,7 @@ Other software using libqalculate include
    * Basic operations and operators: + - * / ^ E () && || ! < > >= <= != ~ & | << >>
    * Fault-tolerant parsing of strings: log 5 / 2 .5 (3) + (2( 3 +5 = ln(5) / (2.5 * 3) + 2 * (3 + 5)
    * Supports complex and infinite numbers
+   * Interval arithmetic (for determination of the number of significant digits or direct calculation with intervals of numbers)
    * Supports all number bases from 2 to 36, time format and roman numerals
    * Ability to disable functions, variables, units or unknown variables for less confusion: ex. when you do not want (a+b)^2 to mean (are+barn)^2 but ("a"+"b")^2
    * Controllable implicit multiplication

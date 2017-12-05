@@ -1,3 +1,15 @@
+2017-12-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix x = 0 m && x != 0
+
+2017-12-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix exact calculation of sqrt(-1/8)
+
+2017-11-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Infinity fixes/enhancements. Unsigned infinity removed.
+
 2017-11-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix (a+b*i)^0

@@ -125,7 +125,7 @@ class Number {
 		const NumberType &internalType() const;
 		bool setToFloatingPoint();
 		void precisionToInterval();
-		bool intervalToPrecision();
+		bool intervalToPrecision(long int min_precision = 2);
 		void intervalToMidValue();
 		bool mergeInterval(const Number &o, bool set_to_overlap = false);
 		void setUncertainty(const Number &o, bool force_interval = false);
@@ -188,7 +188,7 @@ class Number {
  		*/
 		bool isMinusInfinity(bool ignore_imag = false) const;
 
-		bool includesInfinity() const;
+		bool includesInfinity(bool ignore_imag = false) const;
 		bool includesPlusInfinity() const;
 		bool includesMinusInfinity() const;
 		
@@ -273,6 +273,7 @@ class Number {
 		bool isPositive() const;
 		bool isNonPositive() const;
 		bool realPartIsNegative() const;
+		bool realPartIsNonNegative() const;
 		bool realPartIsPositive() const;
 		bool realPartIsNonZero() const;
 		bool realPartIsRational() const;
@@ -285,7 +286,7 @@ class Number {
 		bool equals(const Number &o, bool allow_interval = false) const;
 		bool equals(long int i) const;
 		int equalsApproximately(const Number &o, int prec) const;
-		ComparisonResult compare(const Number &o) const;
+		ComparisonResult compare(const Number &o, bool ignore_imag = false) const;
 		ComparisonResult compare(long int i) const;
 		ComparisonResult compareApproximately(const Number &o, int prec = EQUALS_PRECISION_LOWEST) const;
 		ComparisonResult compareImaginaryParts(const Number &o) const;

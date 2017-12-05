@@ -9,10 +9,6 @@
     (at your option) any later version.
 */
 
-/*#if (defined(__clang__) && !defined char16_t)
-	typedef __CHAR16_TYPE__ char16_t;
-#endif*/
-
 #include "support.h"
 
 #include "DataSet.h"
