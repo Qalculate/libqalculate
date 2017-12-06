@@ -17010,6 +17010,23 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 	return 0;
 }
 
+int find_interval_precision(const MathStructure &mstruct);
+
+int find_interval_precision(const MathStructure &mstruct) {
+	if(mstruct.isNumber()) {
+		return mstruct.number().precision(1);
+	}
+	int iv_prec = -1;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(iv_prec > -1) {
+		 	if(find_interval_precision(mstruct[i]) > -1) return 0;
+		} else {
+			iv_prec = find_interval_precision(mstruct[i]);
+		}
+	}
+	return iv_prec;
+}
+
 MathStructure *find_abs_sgn(MathStructure &mstruct, const MathStructure &x_var);
 MathStructure *find_abs_sgn(MathStructure &mstruct, const MathStructure &x_var) {
 	switch(mstruct.type()) {
@@ -17048,6 +17065,14 @@ bool solve_x_pow_x(Number &nr) {
 		}
 	}
 	return false;
+}
+
+bool is_units_with_multiplier(const MathStructure &mstruct) {
+	if(!mstruct.isMultiplication() || mstruct.size() == 0 || !mstruct[0].isNumber()) return false;
+	for(size_t i = 1; i < mstruct.size(); i++) {
+		if(!mstruct[i].isUnit_exp()) return false;
+	}
+	return true;
 }
 
 bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions &eo2, const MathStructure &x_var, MathStructure *morig) {
@@ -17145,40 +17170,290 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 				if(b) {
-					MathStructure b2(mstruct_b);
-					b2.calculateRaise(nr_two, eo2);
-					MathStructure ac(4, 1);
-					ac.calculateMultiply(mstruct_a, eo2);
-					ac.calculateMultiply(CHILD(1), eo2);
-					b2.calculateAdd(ac, eo2);
-						
-					b2.calculateRaise(nr_half, eo2);
-					mstruct_b.calculateNegate(eo2);
-					MathStructure mstruct_1(mstruct_b);
-					mstruct_1.calculateAdd(b2, eo2);
-					MathStructure mstruct_2(mstruct_b);
-					mstruct_2.calculateSubtract(b2, eo2);
-					mstruct_a.calculateMultiply(nr_two, eo2);
-					mstruct_a.calculateInverse(eo2);
-					mstruct_1.calculateMultiply(mstruct_a, eo2);
-					mstruct_2.calculateMultiply(mstruct_a, eo2);
-					CHILD(0) = x_var;
-					if(mstruct_1 != mstruct_2) {
-						CHILD(1) = mstruct_1;
-						MathStructure *mchild2 = new MathStructure(CHILD(0));
-						mchild2->transform(STRUCT_COMPARISON, mstruct_2);
-						mchild2->setComparisonType(ct_comp);
-						if(ct_comp == COMPARISON_NOT_EQUALS) {
-							transform_nocopy(STRUCT_LOGICAL_AND, mchild2);
-						} else {
-							transform_nocopy(STRUCT_LOGICAL_OR, mchild2);
+					int a_iv = find_interval_precision(mstruct_a);
+					int b_iv = find_interval_precision(mstruct_b);
+					int c_iv = find_interval_precision(CHILD(1));
+					if(a_iv >= 0 && (c_iv < 0 || c_iv > a_iv) && CHILD(1).representsNonZero()) {
+						//x=(-2c)/(b+/-sqrt(b^2-4ac))
+						MathStructure mbak(*this);
+						bool stop_iv = false;
+						if(c_iv >= 0 && c_iv <= PRECISION) {
+							stop_iv = true;
+						} else if(b_iv >= 0) {
+							MathStructure mstruct_bl;
+							MathStructure mstruct_bu;
+							stop_iv = true;
+							if(mstruct_b.isNumber() && mstruct_b.number().isNonZero() && !mstruct_b.number().hasImaginaryPart()) {
+								mstruct_bl = mstruct_b.number().lowerEndPoint();
+								mstruct_bu = mstruct_b.number().upperEndPoint();
+								stop_iv = false;
+							} else if(is_units_with_multiplier(mstruct_b) && mstruct_b[0].number().isNonZero() && !mstruct_b[0].number().hasImaginaryPart()) {
+								mstruct_bl = mstruct_b;
+								mstruct_bl[0].number() = mstruct_b[0].number().lowerEndPoint();
+								mstruct_bu = mstruct_b;
+								mstruct_bu[0].number() = mstruct_b[0].number().upperEndPoint();
+								stop_iv = false;
+							}
+							if(!stop_iv) {
+								// Lower b+sqrt(b^2-4ac)
+								MathStructure b2l(mstruct_bl);
+								b2l.calculateRaise(nr_two, eo2);
+								MathStructure ac(4, 1);
+								ac.calculateMultiply(mstruct_a, eo2);
+								ac.calculateMultiply(CHILD(1), eo2);
+								b2l.calculateAdd(ac, eo2);
+									
+								b2l.calculateRaise(nr_half, eo2);
+								MathStructure mstruct_1l(mstruct_bl);
+								mstruct_1l.calculateAdd(b2l, eo2);
+								
+								// Upper -b+sqrt(b^2-4ac)
+								MathStructure b2u(mstruct_bu);
+								b2u.calculateRaise(nr_two, eo2);
+								b2u.calculateAdd(ac, eo2);
+									
+								b2u.calculateRaise(nr_half, eo2);
+								MathStructure mstruct_1u(mstruct_bu);
+								mstruct_1u.calculateAdd(b2u, eo2);
+								
+								MathStructure mstruct_1(mstruct_1l);
+								mstruct_1.transform(STRUCT_FUNCTION, mstruct_1u);
+								mstruct_1.setFunction(CALCULATOR->f_interval);
+								mstruct_1.calculateFunctions(eo2, false);
+								
+								// Lower -b-sqrt(b^2-4ac)
+								MathStructure mstruct_2l(mstruct_bl);
+								mstruct_2l.calculateSubtract(b2l, eo2);
+								
+								// Upper -b-sqrt(b^2-4ac)
+								MathStructure mstruct_2u(mstruct_bu);
+								mstruct_2u.calculateSubtract(b2u, eo2);
+								
+								MathStructure mstruct_2(mstruct_2l);
+								mstruct_2.transform(STRUCT_FUNCTION, mstruct_2u);
+								mstruct_2.setFunction(CALCULATOR->f_interval);
+								mstruct_2.calculateFunctions(eo2, false);
+								
+								MathStructure mstruct_c(CHILD(1));
+								mstruct_c.calculateMultiply(nr_two, eo2);
+								
+								mstruct_1.calculateInverse(eo2);
+								mstruct_2.calculateInverse(eo2);
+								mstruct_1.calculateMultiply(mstruct_c, eo2);
+								mstruct_2.calculateMultiply(mstruct_c, eo2);
+								
+								CHILD(0) = x_var;
+								if(mstruct_1 == mstruct_2) {
+									CHILD(1) = mstruct_1;
+								} else {
+									CHILD(1) = mstruct_1;
+									MathStructure *mchild2 = new MathStructure(CHILD(0));
+									mchild2->transform(STRUCT_COMPARISON, mstruct_2);
+									mchild2->setComparisonType(ct_comp);
+									if(ct_comp == COMPARISON_NOT_EQUALS) {
+										transform_nocopy(STRUCT_LOGICAL_AND, mchild2);
+									} else {
+										transform_nocopy(STRUCT_LOGICAL_OR, mchild2);
+									}
+									calculatesub(eo2, eo, false);
+								}
+								CHILDREN_UPDATED
+								return true;
+							}
 						}
-						calculatesub(eo2, eo, false);
+						if(stop_iv) {
+							CALCULATOR->beginTemporaryStopIntervalArithmetic();
+							bool failed = false;
+							fix_intervals(*this, eo2, &failed);
+							if(failed) {
+								set(mbak);
+								CALCULATOR->endTemporaryStopIntervalArithmetic();
+								b = false;
+							}
+						}
+						if(b) {
+							MathStructure b2(mstruct_b);
+							b2.calculateRaise(nr_two, eo2);
+							MathStructure ac(4, 1);
+							ac.calculateMultiply(mstruct_a, eo2);
+							ac.calculateMultiply(CHILD(1), eo2);
+							b2.calculateAdd(ac, eo2);
+								
+							b2.calculateRaise(nr_half, eo2);
+							MathStructure mstruct_1(mstruct_b);
+							mstruct_1.calculateAdd(b2, eo2);
+							MathStructure mstruct_2(mstruct_b);
+							mstruct_2.calculateSubtract(b2, eo2);
+							
+							MathStructure mstruct_c(CHILD(1));
+							mstruct_c.calculateMultiply(nr_two, eo2);
+							
+							mstruct_1.calculateInverse(eo2);
+							mstruct_2.calculateInverse(eo2);
+							mstruct_1.calculateMultiply(mstruct_c, eo2);
+							mstruct_2.calculateMultiply(mstruct_c, eo2);
+							
+							CHILD(0) = x_var;
+							if(mstruct_1 == mstruct_2) {
+								CHILD(1) = mstruct_1;
+							} else {
+								CHILD(1) = mstruct_1;
+								MathStructure *mchild2 = new MathStructure(CHILD(0));
+								mchild2->transform(STRUCT_COMPARISON, mstruct_2);
+								mchild2->setComparisonType(ct_comp);
+								if(ct_comp == COMPARISON_NOT_EQUALS) {
+									transform_nocopy(STRUCT_LOGICAL_AND, mchild2);
+								} else {
+									transform_nocopy(STRUCT_LOGICAL_OR, mchild2);
+								}
+								calculatesub(eo2, eo, false);
+							}
+							CHILDREN_UPDATED;
+							if(stop_iv) {
+								CALCULATOR->endTemporaryStopIntervalArithmetic();
+								CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+								fix_intervals(*this, eo2);
+							}
+							return true;
+						}
 					} else {
-						CHILD(1) = mstruct_1;
+						//x=(-b+/-sqrt(b^2-4ac))/(2a)
+						MathStructure mbak(*this);
+						bool stop_iv = false;
+						if(a_iv >= 0 && a_iv <= PRECISION) {
+							stop_iv = true;
+						} else if(b_iv >= 0) {
+							MathStructure mstruct_bl;
+							MathStructure mstruct_bu;
+							stop_iv = true;
+							if(mstruct_b.isNumber() && mstruct_b.number().isNonZero() && !mstruct_b.number().hasImaginaryPart()) {
+								mstruct_bl = mstruct_b.number().lowerEndPoint();
+								mstruct_bu = mstruct_b.number().upperEndPoint();
+								stop_iv = false;
+							} else if(is_units_with_multiplier(mstruct_b) && mstruct_b[0].number().isNonZero() && !mstruct_b[0].number().hasImaginaryPart()) {
+								mstruct_bl = mstruct_b;
+								mstruct_bl[0].number() = mstruct_b[0].number().lowerEndPoint();
+								mstruct_bu = mstruct_b;
+								mstruct_bu[0].number() = mstruct_b[0].number().upperEndPoint();
+								stop_iv = false;
+							}
+							if(!stop_iv) {
+								// Lower -b+sqrt(b^2-4ac)
+								MathStructure b2l(mstruct_bl);
+								b2l.calculateRaise(nr_two, eo2);
+								MathStructure ac(4, 1);
+								ac.calculateMultiply(mstruct_a, eo2);
+								ac.calculateMultiply(CHILD(1), eo2);
+								b2l.calculateAdd(ac, eo2);
+									
+								b2l.calculateRaise(nr_half, eo2);
+								mstruct_bl.calculateNegate(eo2);
+								MathStructure mstruct_1l(mstruct_bl);
+								mstruct_1l.calculateAdd(b2l, eo2);
+								
+								// Upper -b+sqrt(b^2-4ac)
+								MathStructure b2u(mstruct_bu);
+								b2u.calculateRaise(nr_two, eo2);
+								b2u.calculateAdd(ac, eo2);
+									
+								b2u.calculateRaise(nr_half, eo2);
+								mstruct_bu.calculateNegate(eo2);
+								MathStructure mstruct_1u(mstruct_bu);
+								mstruct_1u.calculateAdd(b2u, eo2);
+								
+								MathStructure mstruct_1(mstruct_1l);
+								mstruct_1.transform(STRUCT_FUNCTION, mstruct_1u);
+								mstruct_1.setFunction(CALCULATOR->f_interval);
+								mstruct_1.calculateFunctions(eo2, false);
+								
+								// Lower -b-sqrt(b^2-4ac)
+								MathStructure mstruct_2l(mstruct_bl);
+								mstruct_2l.calculateSubtract(b2l, eo2);
+								
+								// Upper -b-sqrt(b^2-4ac)
+								MathStructure mstruct_2u(mstruct_bu);
+								mstruct_2u.calculateSubtract(b2u, eo2);
+								
+								MathStructure mstruct_2(mstruct_2l);
+								mstruct_2.transform(STRUCT_FUNCTION, mstruct_2u);
+								mstruct_2.setFunction(CALCULATOR->f_interval);
+								mstruct_2.calculateFunctions(eo2, false);
+								
+								mstruct_a.calculateMultiply(nr_two, eo2);
+								mstruct_a.calculateInverse(eo2);
+								mstruct_1.calculateMultiply(mstruct_a, eo2);
+								mstruct_2.calculateMultiply(mstruct_a, eo2);
+								CHILD(0) = x_var;
+								if(mstruct_1 == mstruct_2) {
+									CHILD(1) = mstruct_1;
+								} else {
+									CHILD(1) = mstruct_1;
+									MathStructure *mchild2 = new MathStructure(CHILD(0));
+									mchild2->transform(STRUCT_COMPARISON, mstruct_2);
+									mchild2->setComparisonType(ct_comp);
+									if(ct_comp == COMPARISON_NOT_EQUALS) {
+										transform_nocopy(STRUCT_LOGICAL_AND, mchild2);
+									} else {
+										transform_nocopy(STRUCT_LOGICAL_OR, mchild2);
+									}
+									calculatesub(eo2, eo, false);
+								}
+								CHILDREN_UPDATED
+								return true;
+							}
+						}
+						if(stop_iv) {
+							CALCULATOR->beginTemporaryStopIntervalArithmetic();
+							bool failed = false;
+							fix_intervals(*this, eo2, &failed);
+							if(failed) {
+								set(mbak);
+								CALCULATOR->endTemporaryStopIntervalArithmetic();
+								b = false;
+							}
+						}
+						if(b) {
+							MathStructure b2(mstruct_b);
+							b2.calculateRaise(nr_two, eo2);
+							MathStructure ac(4, 1);
+							ac.calculateMultiply(mstruct_a, eo2);
+							ac.calculateMultiply(CHILD(1), eo2);
+							b2.calculateAdd(ac, eo2);
+								
+							b2.calculateRaise(nr_half, eo2);
+							mstruct_b.calculateNegate(eo2);
+							MathStructure mstruct_1(mstruct_b);
+							mstruct_1.calculateAdd(b2, eo2);
+							MathStructure mstruct_2(mstruct_b);
+							mstruct_2.calculateSubtract(b2, eo2);
+							mstruct_a.calculateMultiply(nr_two, eo2);
+							mstruct_a.calculateInverse(eo2);
+							mstruct_1.calculateMultiply(mstruct_a, eo2);
+							mstruct_2.calculateMultiply(mstruct_a, eo2);
+							CHILD(0) = x_var;
+							if(mstruct_1 == mstruct_2) {
+								CHILD(1) = mstruct_1;
+							} else {
+								CHILD(1) = mstruct_1;
+								MathStructure *mchild2 = new MathStructure(CHILD(0));
+								mchild2->transform(STRUCT_COMPARISON, mstruct_2);
+								mchild2->setComparisonType(ct_comp);
+								if(ct_comp == COMPARISON_NOT_EQUALS) {
+									transform_nocopy(STRUCT_LOGICAL_AND, mchild2);
+								} else {
+									transform_nocopy(STRUCT_LOGICAL_OR, mchild2);
+								}
+								calculatesub(eo2, eo, false);
+							}
+							CHILDREN_UPDATED;
+							if(stop_iv) {
+								CALCULATOR->endTemporaryStopIntervalArithmetic();
+								CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+								fix_intervals(*this, eo2);
+							}
+							return true;
+						}
 					}
-					CHILDREN_UPDATED;
-					return true;
 				}
 			}
 			if(CALCULATOR->aborted()) return false;

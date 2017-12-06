@@ -168,7 +168,7 @@ class Number {
 		*
  		* @return Precision of the number or -1 if the number is exact or the precision has not been set.
  		*/
-		int precision() const;
+		int precision(int calculate_from_interval = 0) const;
 		void setPrecision(int prec);
 		
 		bool isUndefined() const;

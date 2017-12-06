@@ -1265,7 +1265,40 @@ void Number::setApproximate(bool is_approximate) {
 	}
 }
 
-int Number::precision() const {
+int Number::precision(int calculate_from_interval) const {
+	if(calculate_from_interval < 0) {
+		int iv_prec = precision(1);
+		if(i_precision < 0 || iv_prec < i_precision) return iv_prec;
+	} else if(calculate_from_interval > 0) {
+		if(n_type == NUMBER_TYPE_FLOAT && !mpfr_equal_p(fl_value, fu_value)) {
+			mpfr_clear_flags();
+			mpfr_t f_diff, f_mid;
+			mpfr_inits2(mpfr_get_prec(fl_value), f_diff, f_mid, NULL);
+			mpfr_sub(f_diff, fu_value, fl_value, MPFR_RNDN);
+			mpfr_div_ui(f_diff, f_diff, 2, MPFR_RNDN);
+			mpfr_add(f_mid, fl_value, f_diff, MPFR_RNDN);
+			mpfr_mul_ui(f_diff, f_diff, 2, MPFR_RNDN);
+			mpfr_div(f_diff, f_mid, f_diff, MPFR_RNDN);
+			mpfr_abs(f_diff, f_diff, MPFR_RNDN);
+			mpfr_log10(f_diff, f_diff, MPFR_RNDN);
+			int i_prec = -1;
+			if(mpfr_sgn(f_diff) < 0) {
+				i_prec = 0;
+			} else if(!mpfr_fits_sint_p(f_diff, MPFR_RNDU)) {
+				if(mpfr_sgn(f_diff) < 0) i_prec = 0;
+			} else {
+				i_prec = mpfr_get_si(f_diff, MPFR_RNDD) + 1;
+			}
+			if(i_value) {
+				int imag_prec = i_value->precision(1);
+				if(imag_prec >= 0 && (i_prec < 0 || imag_prec < i_prec)) i_prec = imag_prec;
+			}
+			mpfr_clears(f_diff, f_mid, NULL);
+			return i_prec;
+			
+		} else if(i_value) return i_value->precision(1);
+		return -1;
+	}
 	return i_precision;
 }
 void Number::setPrecision(int prec) {

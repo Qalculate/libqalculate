@@ -2403,7 +2403,7 @@
       <function>
         <_title>Surface Area of Cylinder</_title>
         <_names>r:cylinder_sa</_names>
-        <expression>2*(\x^2*pi)+2*pi*\x*\y</expression>
+        <expression>2*\x^2*pi+2*pi*\x*\y</expression>
         <argument type="free" index="1">
           <_title>Radius</_title>
         </argument>
