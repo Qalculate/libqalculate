@@ -63,12 +63,16 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 		if(po.digit_grouping == DIGIT_GROUPING_LOCALE || i > group_size + 1) {
 			while(i > group_size) {
 				i -= group_size;
-				if(po.digit_grouping != DIGIT_GROUPING_LOCALE || CALCULATOR->local_digit_group_separator == " ") {
+				if(po.digit_grouping != DIGIT_GROUPING_LOCALE) {
+#ifdef _WIN32
+					str.insert(i, " ");
+#else
 					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
 						str.insert(i, " ");
 					} else {
 						str.insert(i, " ");
 					}
+#endif
 				} else {
 					str.insert(i, CALCULATOR->local_digit_group_separator);
 				}
@@ -3061,7 +3065,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		Number nr_sin(nr_arg);
 		if(!nr_cos.cos() || !nr_sin.sin() || !nr_sin.multiply(nr_one_i) || !nr_cos.add(nr_sin)) return false;
 		if(!eraised.multiply(a2b2c2) || !eraised.multiply(nr_cos)) return false;
-		if(CALCULATOR->usesIntervalArithmetic() || isInterval(false) || o.isInterval(false)) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
+		if((hasImaginaryPart() || o.hasRealPart()) && eraised.isInterval(false) && eraised.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		set(eraised);
 		setPrecisionAndApproximateFrom(o);
 		return true;
@@ -4380,7 +4384,7 @@ bool Number::gamma() {
 			mpfr_gamma(fu_value, fu_value, MPFR_RNDN);
 			mpfr_gamma(fl_value, fl_value, MPFR_RNDN);
 			if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-			CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_gamma->name().c_str(), NULL);
+			if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_gamma->name().c_str(), NULL);
 			mpfr_clears(fu_test, fl_test, NULL);
 		}
 	}
@@ -4478,7 +4482,7 @@ bool Number::airy() {
 		mpfr_ai(fl_value, fl_value, MPFR_RNDN);
 		mpfr_ai(fu_value, fu_value, MPFR_RNDN);
 		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_airy->name().c_str(), NULL);
+		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_airy->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -4509,7 +4513,7 @@ bool Number::besselj(const Number &o) {
 		mpfr_jn(fl_value, n, fl_value, MPFR_RNDN);
 		mpfr_jn(fu_value, n, fu_value, MPFR_RNDN);
 		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_besselj->name().c_str(), NULL);
+		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_besselj->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -4540,7 +4544,7 @@ bool Number::bessely(const Number &o) {
 		mpfr_yn(fl_value, n, fl_value, MPFR_RNDN);
 		mpfr_yn(fu_value, n, fu_value, MPFR_RNDN);
 		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_bessely->name().c_str(), NULL);
+		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_bessely->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -4706,7 +4710,7 @@ bool Number::asin() {
 		if(!i_z.multiply(nr_one_i)) return false;
 		if(!z_sqln.square() || !z_sqln.negate() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !z_sqln.add(i_z) || !z_sqln.ln() || !z_sqln.multiply(nr_minus_i)) return false;
 		if(b_neg && !z_sqln.negate()) return false;
-		if(hasImaginaryPart() && (CALCULATOR->usesIntervalArithmetic() || isInterval(false))) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
+		if(hasImaginaryPart() && z_sqln.isInterval(false) && z_sqln.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		set(z_sqln);
 		return true;
 	}
@@ -4768,12 +4772,18 @@ bool Number::asinh() {
 	if(isInfinite()) return true;
 	if(isZero()) return true;
 	if(hasImaginaryPart()) {
+		 if(!hasRealPart()) {
+			Number inr(*i_value);
+			if(!inr.asin() || !inr.multiply(nr_one_i)) return false;
+			set(inr, true);
+			return true;
+		}
 		Number z_sqln(*this);
 		if(!z_sqln.square() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !z_sqln.add(*this)) return false;
 		//If zero, it means that the precision is too low (since infinity is not the correct value). Happens with number less than -(10^1000)i
 		if(z_sqln.isZero()) return false;
 		if(!z_sqln.ln()) return false;
-		if(hasImaginaryPart() && (CALCULATOR->usesIntervalArithmetic() || isInterval(false))) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
+		if(hasImaginaryPart() && z_sqln.isInterval(false) && z_sqln.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		set(z_sqln);
 		return true;
 	}
@@ -4959,7 +4969,7 @@ bool Number::acos() {
 		}
 		Number z_sqln(*this);
 		if(!z_sqln.square() || !z_sqln.negate() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !z_sqln.multiply(nr_one_i) || !z_sqln.add(*this) || !z_sqln.ln() || !z_sqln.multiply(nr_minus_i)) return false;
-		if(hasImaginaryPart() && (CALCULATOR->usesIntervalArithmetic() || isInterval(false))) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
+		if(hasImaginaryPart() && z_sqln.isInterval(false) && z_sqln.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		set(z_sqln);
 		return true;
 	}
@@ -5068,15 +5078,19 @@ bool Number::acosh() {
 				nriv.setImaginaryPart(nrivi);
 			}
 			if(!nriv.ln()) return false;
+			if(isGreaterThanOrEqualTo(nr_minus_one)) {
+				nriv.clearReal();
+			} else {
+				if(nriv.isInterval(false) && nriv.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
+			}
 			set(nriv);
 			if(i_value) testComplex(this, i_value);
-			CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 			return true;
 		}
 		Number ipz(*this), imz(*this);
 		if(!ipz.add(1) || !imz.subtract(1)) return false;
 		if(!ipz.raise(nr_half) || !imz.raise(nr_half) || !ipz.multiply(imz) || !ipz.add(*this) || !ipz.ln()) return false;
-		if(hasImaginaryPart() && (CALCULATOR->usesIntervalArithmetic() || isInterval())) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
+		if(hasImaginaryPart() && ipz.isInterval(false) && ipz.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		set(ipz);
 		return true;
 	}
@@ -5109,7 +5123,7 @@ bool Number::tan() {
 			t2b.set(t1b);
 			if(!t1a.sin() || !t1b.sinh() || !t2a.cos() || !t2b.cosh() || !t2a.add(t2b) || !t1a.divide(t2a) ||  !t1b.divide(t2a)) return false;
 			if(!t1a.isReal() || !t1b.isReal()) return false;
-			if(CALCULATOR->usesIntervalArithmetic() || isInterval(false)) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
+			if(t1a.isInterval(false) && t1a.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 			set(t1a, true, true);
 			i_value->set(t1b, true, true);
 			setPrecisionAndApproximateFrom(*i_value);
@@ -5204,7 +5218,7 @@ bool Number::atan() {
 		Number ipz(nr_one_i), imz(nr_one_i);
 		if(!ipz.add(*this) || !imz.subtract(*this)) return false;
 		if(!ipz.divide(imz) || !ipz.ln() || !ipz.multiply(nr_one_i) || !ipz.divide(2)) return false;
-		if(CALCULATOR->usesIntervalArithmetic() || isInterval(false)) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
+		if(ipz.isInterval(false) && ipz.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		set(ipz);
 		return true;
 	}
@@ -5347,7 +5361,7 @@ bool Number::tanh() {
 			t2a.set(t1a);
 			t2b.set(t1b);
 			if(!t1a.add(t1b) || !t2a.multiply(t2b) || !t2a.add(1) || !t1a.divide(t2a)) return false;
-			if(CALCULATOR->usesIntervalArithmetic() || isInterval(false)) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
+			if(t1a.isInterval(false) && t1a.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 			set(t1a, true);
 			return true;
 		} else {
@@ -5451,10 +5465,15 @@ bool Number::atanh() {
 				return false;
 			}
 			return true;
+		} else if(!hasRealPart()) {
+			Number inr(*i_value);
+			if(!inr.atan() || !inr.multiply(nr_one_i)) return false;
+			set(inr, true);
+			return true;
 		}
 		Number ipz(nr_one), imz(nr_one);
 		if(!ipz.add(*this) || !imz.subtract(*this) || !ipz.ln() || !imz.ln() || !imz.negate() || !ipz.add(imz) || !ipz.divide(2)) return false;
-		if(CALCULATOR->usesIntervalArithmetic() || isInterval(false)) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
+		if(ipz.isInterval(false) && ipz.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 		set(ipz);
 		return true;
 	}
@@ -7419,9 +7438,12 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(infinite_series) {
 			size_t i_dp = str.find(po.decimalpoint());
 			if(i_dp != string::npos && ((infinite_series == 1 && i_dp + po.decimalpoint().length() + 2 < str.length() - infinite_series) || (infinite_series > 1 && i_dp + po.decimalpoint().length() < str.length() - infinite_series))) {
-				
+#ifdef _WIN32
+				str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), " ");
+#else
 				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), " ");
 				else str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), " ");
+#endif
 			}
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("…", po.can_display_unicode_string_arg))) str += "…";
 			else str += "...";

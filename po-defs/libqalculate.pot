@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-03 09:07+0100\n"
+"POT-Creation-Date: 2017-12-06 18:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7783,7 +7783,7 @@ msgid "Positive Infinity"
 msgstr ""
 
 #: ../data/variables.xml.in.h:156
-msgid "a:&#x221E;,r:plus_infinity,infinity"
+msgid "a:&#x221E;,r:plus_infinity,r:infinity"
 msgstr ""
 
 #: ../data/variables.xml.in.h:157
