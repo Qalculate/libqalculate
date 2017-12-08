@@ -1193,6 +1193,11 @@
       <_names>r:acoth</_names>
       <expression>(ln(1+1/\x)-ln(1-1/\x))/2</expression>
     </function>
+    <function>
+      <_title>unnormalized sinc function</_title>
+      <_names>r:sinc,r:si</_names>
+      <expression>if(\x = 0,1,sin(\x)/\x)</expression>
+    </function>
   </category>
   <category>
     <_title>Miscellaneous</_title>
