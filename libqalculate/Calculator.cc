@@ -9618,7 +9618,7 @@ bool Calculator::canPlot() {
 	char filename[MAX_PATH]; 
 	return SearchPath(NULL, "gnuplot", ".exe", MAX_PATH, filename, &lpFilePart);
 #else
-	FILE *pipe = popen("gnuplot -", "w");
+	FILE *pipe = popen("gnuplot - 2>/dev/null", "w");
 	if(!pipe) return false;
 	return pclose(pipe) == 0;
 #endif
@@ -10034,10 +10034,11 @@ bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool p
 			commandline += " -persist";
 		}
 		commandline += commandline_extra;
-		commandline += " -";
 #ifdef _WIN32
+		commandline += " - 2>nul";
 		pipe = _popen(commandline.c_str(), "w");
 #else
+		commandline += " - 2>/dev/null";
 		pipe = popen(commandline.c_str(), "w");
 #endif
 		if(!pipe) {
