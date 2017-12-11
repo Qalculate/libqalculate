@@ -285,7 +285,7 @@ class Calculator {
 	MathFunction *f_exp;
 	MathFunction *f_ln, *f_logn;
 	MathFunction *f_lambert_w;
-	MathFunction *f_sin, *f_cos, *f_tan, *f_asin, *f_acos, *f_atan, *f_sinh, *f_cosh, *f_tanh, *f_asinh, *f_acosh, *f_atanh, *f_atan2, *f_radians_to_default_angle_unit;
+	MathFunction *f_sin, *f_cos, *f_tan, *f_asin, *f_acos, *f_atan, *f_sinh, *f_cosh, *f_tanh, *f_asinh, *f_acosh, *f_atanh, *f_atan2, *f_sinc, *f_radians_to_default_angle_unit;
 	MathFunction *f_zeta, *f_gamma, *f_digamma, *f_beta, *f_airy, *f_besselj, *f_bessely, *f_erf, *f_erfc;
 	MathFunction *f_total, *f_percentile, *f_min, *f_max, *f_mode, *f_rand;
 	MathFunction *f_isodate, *f_localdate, *f_timestamp, *f_stamptodate, *f_days, *f_yearfrac, *f_week, *f_weekday, *f_month, *f_day, *f_year, *f_yearday, *f_time, *f_add_days, *f_add_months, *f_add_years;

@@ -2572,6 +2572,32 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	return -1;
 }
 
+SincFunction::SincFunction() : MathFunction("sinc", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+}
+bool SincFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_number_angle_value(vargs[0]);}
+bool SincFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_real_angle_value(vargs[0]);}
+int SincFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(mstruct.containsType(STRUCT_UNIT) && CALCULATOR->getRadUnit()) {
+		mstruct.convert(CALCULATOR->getRadUnit());
+		mstruct /= CALCULATOR->getRadUnit();
+	}
+	if(mstruct.isZero()) {
+		mstruct.set(1, 1, 0, true);
+		return 1;
+	} else if(mstruct.representsNonZero(true)) {
+		MathStructure *m_sin = new MathStructure(CALCULATOR->f_sin, &mstruct, NULL);
+		if(CALCULATOR->getRadUnit()) (*m_sin)[0].multiply(CALCULATOR->getRadUnit());
+		mstruct.inverse();
+		mstruct.multiply_nocopy(m_sin);
+		return 1;
+	}
+	return -1;
+}
+
+
 IntervalFunction::IntervalFunction() : MathFunction("interval", 2) {
 	NumberArgument *arg = new NumberArgument();
 	arg->setTests(false);

@@ -1,3 +1,11 @@
+2017-12-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* sinc() function
+
+2017-12-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Suppress gnuplot error output in terminal
+
 2017-12-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix x = 0 m && x != 0

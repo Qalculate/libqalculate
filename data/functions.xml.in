@@ -1114,6 +1114,10 @@
         <_title>X</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="sinc">
+      <_title>Sine Cardinal</_title>
+      <_names>r:sinc</_names>
+    </builtin_function>
     <builtin_function name="radtodef">
       <_title>Radians to Default Angle Unit</_title>
       <_names>r:radtodef</_names>

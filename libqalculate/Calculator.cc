@@ -1415,6 +1415,7 @@ void Calculator::addBuiltinFunctions() {
 	f_acosh = addFunction(new AcoshFunction());
 	f_atanh = addFunction(new AtanhFunction());
 	f_atan2 = addFunction(new Atan2Function());
+	f_sinc = addFunction(new SincFunction());
 	f_radians_to_default_angle_unit = addFunction(new RadiansToDefaultAngleUnitFunction());
 
 	f_zeta = addFunction(new ZetaFunction());

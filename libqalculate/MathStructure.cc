@@ -16377,6 +16377,22 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				add(m_one);
 				raise(m_minus_one);
 				multiply(mstruct);
+			} else if(o_function == CALCULATOR->f_sinc && SIZE == 1) {
+				// diff(x)*(cos(x)/x-sin(x)/x^2)
+				MathStructure m_cos(CALCULATOR->f_cos, &CHILD(0), NULL);
+				if(CALCULATOR->getRadUnit()) m_cos[0].multiply(CALCULATOR->getRadUnit());
+				m_cos.divide(CHILD(0));
+				MathStructure m_sin(CALCULATOR->f_sin, &CHILD(0), NULL);
+				if(CALCULATOR->getRadUnit()) m_sin[0].multiply(CALCULATOR->getRadUnit());
+				MathStructure mstruct(CHILD(0));
+				mstruct.raise(Number(-2, 1, 0));
+				m_sin.multiply(mstruct);
+				MathStructure mdiff(CHILD(0));
+				mdiff.differentiate(x_var, eo);
+				set(m_sin);
+				negate();
+				add(m_cos);
+				multiply(mdiff);
 			} else if(o_function == CALCULATOR->f_integrate && CHILD(1) == x_var && (SIZE == 2 || (SIZE == 4 && CHILD(2).isUndefined() && CHILD(3).isUndefined()))) {
 				SET_CHILD_MAP(0);
 			} else if(o_function == CALCULATOR->f_diff && SIZE == 3 && CHILD(1) == x_var) {
