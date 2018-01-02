@@ -1,3 +1,7 @@
+2018-01-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix unicode signs in expressions with quotations
+
 2017-12-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* sinc() function
