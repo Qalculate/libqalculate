@@ -334,7 +334,7 @@ const MathStructure &KnownVariable::get() {
 		if(isApproximate() && precision() == -1 && suncertainty.empty()) {
 			po.read_precision = ALWAYS_READ_PRECISION;
 		}
-		if(sunit.empty()) {
+		if(suncertainty.empty()) {
 			mstruct->setAborted();
 			CALCULATOR->parse(mstruct, sexpression, po);
 		} else {
