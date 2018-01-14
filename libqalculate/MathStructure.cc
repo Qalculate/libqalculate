@@ -5798,6 +5798,24 @@ bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *fa
 	return false;
 }
 
+bool contains_zero_unit(const MathStructure &mstruct);
+bool contains_zero_unit(const MathStructure &mstruct) {
+	if(mstruct.isMultiplication() && mstruct.size() > 1 && mstruct[0].isZero()) {
+		bool b = true;
+		for(size_t i = 1; i < mstruct.size(); i++) {
+			if(!mstruct[i].isUnit_exp()) {
+				b = false;
+				break;
+			}
+		}
+		if(b) return true;
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(contains_zero_unit(mstruct[i])) return true;
+	}
+	return false;
+}
+
 bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo, bool recursive, MathStructure *mparent, size_t index_this) {
 	if(b_protected) return false;
 	bool b = false;
@@ -6259,7 +6277,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			if(!eo.test_comparisons) {
 				break;
 			}
-			if((CHILD(0).containsType(STRUCT_UNIT) && CHILD(0).contains(m_zero)) || (CHILD(1).containsType(STRUCT_UNIT) && CHILD(1).contains(m_zero))) {
+			if(eo2.keep_zero_units && contains_zero_unit(*this)) {
 				eo2.keep_zero_units = false;
 				MathStructure mtest(*this);
 				mtest.calculatesub(eo2, feo, true);

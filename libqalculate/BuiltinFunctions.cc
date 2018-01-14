@@ -4098,7 +4098,7 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	Assumptions *assumptions = NULL;
 	bool assumptions_added = false;	
 	AssumptionSign as = ASSUMPTION_SIGN_UNKNOWN;
-	AssumptionType at = ASSUMPTION_TYPE_NONMATRIX;
+	AssumptionType at = ASSUMPTION_TYPE_NUMBER;
 	MathStructure msave;
 	string strueforall;
 
@@ -4137,9 +4137,9 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			}
 		}
 		if(itry == 3) {
-			if(assumptions->type() > ASSUMPTION_TYPE_NONMATRIX) {
+			if(assumptions->type() > ASSUMPTION_TYPE_NUMBER) {
 				at = assumptions->type();
-				assumptions->setType(ASSUMPTION_TYPE_NONMATRIX);
+				assumptions->setType(ASSUMPTION_TYPE_NUMBER);
 				as = assumptions->sign();
 				assumptions->setSign(ASSUMPTION_SIGN_UNKNOWN);
 			} else {
@@ -4149,7 +4149,7 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		
 		if(itry > 3) {
 			if(as != ASSUMPTION_SIGN_UNKNOWN) assumptions->setSign(as);
-			if(at > ASSUMPTION_TYPE_NONMATRIX) assumptions->setType(at);
+			if(at > ASSUMPTION_TYPE_NUMBER) assumptions->setType(at);
 			if(assumptions_added) ((UnknownVariable*) vargs[1].variable())->setAssumptions(NULL);
 			switch(first_error) {
 				case 2: {
@@ -4177,7 +4177,7 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			return -1;
 		}
 
-		ComparisonType ct;
+		ComparisonType ct = COMPARISON_EQUALS;
 	
 		bool b = false;
 		bool b_partial = false;
