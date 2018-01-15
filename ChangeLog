@@ -1,3 +1,16 @@
+2018-01-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add vacuum_permeability and vacuum_permittivity as names for magnetic and electric constants
+	* Add completion only names to enable completion of greek letters from the roman letter names
+
+2018-01-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault on extremum(cot(x),x)
+
+2018-01-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix variables (including electric constant) with units parameter and pi in expression
+
 2018-01-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix unicode signs in expressions with quotations

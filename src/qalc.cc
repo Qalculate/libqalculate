@@ -239,57 +239,74 @@ char *qalc_completion(const char *text, int index) {
 	if(index == 0) {
 		if(strlen(text) < 1) return NULL;
 		matches.clear();
-		const string *str;
 		bool b_match;
 		size_t l = strlen(text);
 		for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
 			if(CALCULATOR->functions[i]->isActive()) {
-				str = &CALCULATOR->functions[i]->preferredInputName(printops.abbreviate_names, printops.use_unicode_signs).name;
-				if(l <= str->length()) {
-					b_match = true;
-					for(size_t i2 = 0; i2 < l; i2++) {
-						if((*str)[i2] != text[i2]) {
-							b_match = false;
-							break;
+				ExpressionItem *item = CALCULATOR->functions[i];
+				const ExpressionName *ename = NULL;
+				b_match = false;
+				for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
+					ename = &item->getName(name_i);
+					if(ename && l <= ename->name.length()) {
+						b_match = true;
+						for(size_t i2 = 0; i2 < l; i2++) {
+							if(ename->name[i2] != text[i2]) {
+								b_match = false;
+								break;
+							}
 						}
 					}
-					if(b_match) {
-						matches.push_back(str);
-					}
+				}
+				if(b_match && ename) {
+					if(ename->completion_only) ename = &item->preferredInputName(ename->abbreviation, printops.use_unicode_signs);
+					matches.push_back(&ename->name);
 				}
 			}
 		}
 		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 			if(CALCULATOR->variables[i]->isActive()) {
-				str = &CALCULATOR->variables[i]->preferredInputName(printops.abbreviate_names, printops.use_unicode_signs).name;
-				if(l <= str->length()) {
-					b_match = true;
-					for(size_t i2 = 0; i2 < l; i2++) {
-						if((*str)[i2] != text[i2]) {
-							b_match = false;
-							break;
+				ExpressionItem *item = CALCULATOR->variables[i];
+				const ExpressionName *ename = NULL;
+				b_match = false;
+				for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
+					ename = &item->getName(name_i);
+					if(ename && l <= ename->name.length()) {
+						b_match = true;
+						for(size_t i2 = 0; i2 < l; i2++) {
+							if(ename->name[i2] != text[i2]) {
+								b_match = false;
+								break;
+							}
 						}
 					}
-					if(b_match) {
-						matches.push_back(str);
-					}
+				}
+				if(b_match && ename) {
+					if(ename->completion_only) ename = &item->preferredInputName(ename->abbreviation, printops.use_unicode_signs);
+					matches.push_back(&ename->name);
 				}
 			}
 		}
 		for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
 			if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
-				str = &CALCULATOR->units[i]->preferredInputName(printops.abbreviate_names, printops.use_unicode_signs).name;
-				if(l <= str->length()) {
-					b_match = true;
-					for(size_t i2 = 0; i2 < l; i2++) {
-						if((*str)[i2] != text[i2]) {
-							b_match = false;
-							break;
+				ExpressionItem *item = CALCULATOR->units[i];
+				const ExpressionName *ename = NULL;
+				b_match = false;
+				for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
+					ename = &item->getName(name_i);
+					if(ename && l <= ename->name.length()) {
+						b_match = true;
+						for(size_t i2 = 0; i2 < l; i2++) {
+							if(ename->name[i2] != text[i2]) {
+								b_match = false;
+								break;
+							}
 						}
 					}
-					if(b_match) {
-						matches.push_back(str);
-					}
+				}
+				if(b_match && ename) {
+					if(ename->completion_only) ename = &item->preferredInputName(ename->abbreviation, printops.use_unicode_signs);
+					matches.push_back(&ename->name);
 				}
 			}
 		}
@@ -2361,7 +2378,7 @@ int main(int argc, char *argv[]) {
 							const ExpressionName *ename = &item->preferredName(true, printops.use_unicode_signs);
 							FPUTS_UNICODE(ename->name.c_str(), stdout);
 							for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
-								if(&item->getName(i2) != ename) {
+								if(&item->getName(i2) != ename && !item->getName(i2).completion_only) {
 									fputs(" / ", stdout);
 									FPUTS_UNICODE(item->getName(i2).name.c_str(), stdout);
 								}
@@ -2428,7 +2445,7 @@ int main(int argc, char *argv[]) {
 						const ExpressionName *ename = &item->preferredName(false, printops.use_unicode_signs);
 						FPUTS_UNICODE(ename->name.c_str(), stdout);
 						for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
-							if(&item->getName(i2) != ename) {
+							if(&item->getName(i2) != ename && !item->getName(i2).completion_only) {
 								fputs(" / ", stdout);
 								FPUTS_UNICODE(item->getName(i2).name.c_str(), stdout);
 							}
@@ -2487,6 +2504,8 @@ int main(int argc, char *argv[]) {
 							fputs(" (", stdout);
 							FPUTS_UNICODE(_("approximate"), stdout);
 							fputs(")", stdout);
+							puts("");
+						} else {
 							puts("");
 						}
 						if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->unit().empty()) {
