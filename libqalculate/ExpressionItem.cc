@@ -15,7 +15,7 @@
 #include "Calculator.h"
 #include "util.h"
 
-ExpressionName::ExpressionName(string sname) : suffix(false), unicode(false), plural(false), reference(false), avoid_input(false) {
+ExpressionName::ExpressionName(string sname) : suffix(false), unicode(false), plural(false), reference(false), avoid_input(false), completion_only(false) {
 	name = sname;
 	if(text_length_is_one(sname)) {
 		abbreviation = true;
@@ -25,7 +25,7 @@ ExpressionName::ExpressionName(string sname) : suffix(false), unicode(false), pl
 		case_sensitive = false;
 	}
 }
-ExpressionName::ExpressionName() : abbreviation(false), suffix(false), unicode(false), plural(false), reference(false), avoid_input(false), case_sensitive(false) {
+ExpressionName::ExpressionName() : abbreviation(false), suffix(false), unicode(false), plural(false), reference(false), avoid_input(false), case_sensitive(false), completion_only(false) {
 }
 void ExpressionName::operator = (const ExpressionName &ename) {
 	name = ename.name;
@@ -36,12 +36,13 @@ void ExpressionName::operator = (const ExpressionName &ename) {
 	plural = ename.plural;
 	reference = ename.reference;
 	avoid_input = ename.avoid_input;
+	completion_only = ename.completion_only;
 }
 bool ExpressionName::operator == (const ExpressionName &ename) const {
-	return name == ename.name && abbreviation == ename.abbreviation && case_sensitive == ename.case_sensitive && suffix == ename.suffix && unicode == ename.unicode && plural == ename.plural && reference == ename.reference && avoid_input == ename.avoid_input;
+	return name == ename.name && abbreviation == ename.abbreviation && case_sensitive == ename.case_sensitive && suffix == ename.suffix && unicode == ename.unicode && plural == ename.plural && reference == ename.reference && avoid_input == ename.avoid_input && completion_only == ename.completion_only;
 }
 bool ExpressionName::operator != (const ExpressionName &ename) const {
-	return name != ename.name || abbreviation != ename.abbreviation || case_sensitive != ename.case_sensitive || suffix != ename.suffix || unicode != ename.unicode || plural != ename.plural || reference != ename.reference || avoid_input != ename.avoid_input;
+	return name != ename.name || abbreviation != ename.abbreviation || case_sensitive != ename.case_sensitive || suffix != ename.suffix || unicode != ename.unicode || plural != ename.plural || reference != ename.reference || avoid_input != ename.avoid_input || completion_only != ename.completion_only;
 }
 
 ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string descr_, bool is_local, bool is_builtin, bool is_active) {
@@ -149,7 +150,7 @@ void ExpressionItem::setDescription(string descr_) {
 const string &ExpressionItem::name(bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
 	bool undisplayable_uni = false;
 	for(size_t i = 0; i < names.size(); i++) {
-		if(names[i].unicode == use_unicode) {
+		if(names[i].unicode == use_unicode && (!names[i].completion_only || i + 1 == names.size())) {
 			if(use_unicode && can_display_unicode_string_function && !((*can_display_unicode_string_function) (names[i].name.c_str(), can_display_unicode_string_arg))) {
 				undisplayable_uni = true;
 			} else {
@@ -175,9 +176,11 @@ const ExpressionName &ExpressionItem::preferredName(bool abbreviation, bool use_
 	if(names.size() == 1) return names[0];
 	int index = -1;
 	for(size_t i = 0; i < names.size(); i++) {
-		if((!reference || names[i].reference) && names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural && (!use_unicode || !can_display_unicode_string_function || (*can_display_unicode_string_function) (names[i].name.c_str(), can_display_unicode_string_arg))) return names[i];
+		if((!reference || names[i].reference) && names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural && !names[i].completion_only && (!use_unicode || !can_display_unicode_string_function || (*can_display_unicode_string_function) (names[i].name.c_str(), can_display_unicode_string_arg))) return names[i];
 		if(index < 0) {
 			index = i;
+		} else if(names[i].completion_only != names[index].completion_only) {
+			if(!names[i].completion_only) index = i;
 		} else if(reference && names[i].reference != names[index].reference) {
 			if(names[i].reference) index = i;
 		} else if(!use_unicode && names[i].unicode != names[index].unicode) {
@@ -200,9 +203,11 @@ const ExpressionName &ExpressionItem::preferredInputName(bool abbreviation, bool
 	if(names.size() == 1) return names[0];
 	int index = -1;
 	for(size_t i = 0; i < names.size(); i++) {
-		if((!reference || names[i].reference) && names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural && !names[i].avoid_input) return names[i];
+		if((!reference || names[i].reference) && names[i].abbreviation == abbreviation && names[i].unicode == use_unicode && names[i].plural == plural && !names[i].avoid_input && !names[i].completion_only) return names[i];
 		if(index < 0) {
 			index = i;
+		} else if(names[i].completion_only != names[index].completion_only) {
+			if(!names[i].completion_only) index = i;
 		} else if(reference && names[i].reference != names[index].reference) {
 			if(names[i].reference) index = i;
 		} else if(!use_unicode && names[i].unicode != names[index].unicode) {

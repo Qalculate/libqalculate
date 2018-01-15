@@ -35,6 +35,8 @@ struct ExpressionName {
 	bool avoid_input;
 	/// If the name is case sensitive. The default behavior is that abbreviations are case sensitive and other names are not.
 	bool case_sensitive;
+	/// Use only for completion (useful for unicode letter alternatives)
+	bool completion_only;
 	/// The name.
 	string name;
 	

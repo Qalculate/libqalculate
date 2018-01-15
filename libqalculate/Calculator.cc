@@ -6269,6 +6269,7 @@ bool Calculator::loadLocalDefinitions() {
 		ename.case_sensitive = false; \
 		ename.suffix = false; \
 		ename.avoid_input = false; \
+		ename.completion_only = false; \
 		ename.reference = false; \
 		ename.plural = false; \
 		if(i2 < names_i) { \
@@ -6283,6 +6284,7 @@ bool Calculator::loadLocalDefinitions() {
 					case 'r': {ename.reference = b; b = true; break;} \
 					case 's': {ename.suffix = b; b = true; break;} \
 					case 'u': {ename.unicode = b; b = true; break;} \
+					case 'o': {ename.completion_only = b; b = true; break;} \
 				} \
 			} \
 			i3++; \
@@ -6312,6 +6314,7 @@ bool Calculator::loadLocalDefinitions() {
 				ref_names[i].case_sensitive = enameptr->case_sensitive; \
 				ref_names[i].abbreviation = enameptr->abbreviation; \
 				ref_names[i].avoid_input = enameptr->avoid_input; \
+				ref_names[i].completion_only = enameptr->completion_only; \
 				ref_names[i].plural = enameptr->plural; \
 				ref_names[i].suffix = enameptr->suffix; \
 				item->setName(ref_names[i], i4); \
@@ -6346,6 +6349,7 @@ bool Calculator::loadLocalDefinitions() {
 			ename.case_sensitive = false; \
 			ename.suffix = false; \
 			ename.avoid_input = false; \
+			ename.completion_only = false; \
 			ename.reference = false; \
 			ename.plural = false; \
 			if(i2 < names_i) { \
@@ -6360,6 +6364,7 @@ bool Calculator::loadLocalDefinitions() {
 						case 'r': {ename.reference = b; b = true; break;} \
 						case 's': {ename.suffix = b; b = true; break;} \
 						case 'u': {ename.unicode = b; b = true; break;} \
+						case 'o': {ename.completion_only = b; b = true; break;} \
 					} \
 				} \
 				i3++; \
@@ -6375,6 +6380,7 @@ bool Calculator::loadLocalDefinitions() {
 					ename.suffix = enameptr->suffix; \
 					ename.abbreviation = enameptr->abbreviation; \
 					ename.avoid_input = enameptr->avoid_input; \
+					ename.completion_only = enameptr->completion_only; \
 					ename.plural = enameptr->plural; \
 					ename.case_sensitive = enameptr->case_sensitive; \
 					item->setName(ename, i4); \
@@ -6460,6 +6466,9 @@ bool Calculator::loadLocalDefinitions() {
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "avoid_input")) {\
 									XML_GET_BOOL_FROM_TEXT(child2, names[name_index].avoid_input)\
 									ref_names[name_index].avoid_input = names[name_index].avoid_input;\
+								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "completion_only")) {\
+									XML_GET_BOOL_FROM_TEXT(child2, names[name_index].completion_only)\
+									ref_names[name_index].completion_only = names[name_index].completion_only;\
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "plural")) {\
 									XML_GET_BOOL_FROM_TEXT(child2, names[name_index].plural)\
 									ref_names[name_index].plural = names[name_index].plural;\
@@ -6565,6 +6574,7 @@ bool Calculator::loadLocalDefinitions() {
 						ename.case_sensitive = text_length_is_one(ename.name);\
 						ename.suffix = false;\
 						ename.avoid_input = false;\
+						ename.completion_only = false;\
 						ename.reference = true;\
 						ename.plural = false;\
 						item->addName(ename);\
@@ -6613,6 +6623,7 @@ bool Calculator::loadLocalDefinitions() {
 						ename.case_sensitive = true;\
 						ename.suffix = false;\
 						ename.avoid_input = false;\
+						ename.completion_only = false;\
 						ename.reference = true;\
 						ename.plural = false;\
 						item->addName(ename);\
@@ -6626,6 +6637,7 @@ bool Calculator::loadLocalDefinitions() {
 						ename.case_sensitive = text_length_is_one(ename.name);\
 						ename.suffix = false;\
 						ename.avoid_input = false;\
+						ename.completion_only = false;\
 						ename.reference = false;\
 						ename.plural = false;\
 						item->addName(ename);\
@@ -6639,6 +6651,7 @@ bool Calculator::loadLocalDefinitions() {
 						ename.case_sensitive = text_length_is_one(ename.name);\
 						ename.suffix = false;\
 						ename.avoid_input = false;\
+						ename.completion_only = false;\
 						ename.reference = false;\
 						ename.plural = true;\
 						item->addName(ename);\
@@ -8141,6 +8154,7 @@ int Calculator::savePrefixes(const char* file_name, bool save_global) {
 					if(ename->case_sensitive && !b_cs) {str += 'c';}\
 					if(!ename->case_sensitive && b_cs) {str += "-c";}\
 					if(ename->avoid_input) {str += 'i';}\
+					if(ename->completion_only) {str += 'o';}\
 					if(ename->plural) {str += 'p';}\
 					if(ename->reference) {str += 'r';}\
 					if(ename->suffix) {str += 's';}\

@@ -976,7 +976,7 @@ void list_defs(bool in_interactive, char list_type = 0) {
 				while(true) {
 					const ExpressionName &ename = item->getName(name_i);
 					if(ename == empty_expression_name) break;
-					if(ename != ename1 && !ename.avoid_input && !ename.plural && (!ename.unicode || printops.use_unicode_signs)) {
+					if(ename != ename1 && !ename.avoid_input && !ename.plural && (!ename.unicode || printops.use_unicode_signs) && !ename.completion_only) {
 						name_str += " / ";
 						name_str += ename.name;
 					}

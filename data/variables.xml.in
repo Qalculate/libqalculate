@@ -192,12 +192,12 @@
       </variable>
       <variable>
         <_title>Electric Constant (Permittivity of Free Space)</_title>
-        <_names>r:electric_constant,aisu:&#x3B5;_0</_names>
+        <_names>r:electric_constant,asu:&#x3B5;_0,vacuum_permittivity,aos:epsilon_0</_names>
         <value unit="F*m^(-1)">1/(4E-7*pi*299792458^2)</value>
       </variable>
       <variable>
         <_title>Magnetic Constant (Permeability of Free Space)</_title>
-        <_names>r:magnetic_constant,aisu:&#x3BC;_0</_names>
+        <_names>r:magnetic_constant,asu:&#x3BC;_0,vacuum_permeability,aos:mu_0</_names>
         <value unit="N*A^(-2)">4E-7*pi</value>
       </variable>
       <variable>
@@ -210,7 +210,7 @@
       <_title>Electromagnetic Constants</_title>
       <variable>
         <_title>Bohr Magneton</_title>
-        <_names>r:bohr_magneton,aisu:&#x3BC;_B</_names>
+        <_names>r:bohr_magneton,asu:&#x3BC;_B,aos:mu_B</_names>
         <value uncertainty="5.7E-32" unit="J*T^(-1)">927.4009994E-26</value>
       </variable>
       <variable>
@@ -230,12 +230,12 @@
       </variable>
       <variable>
         <_title>Magnetic Flux Quantum</_title>
-        <_names>r:magnetic_flux_quantum,aisu:&#x3A6;_0</_names>
+        <_names>r:magnetic_flux_quantum,asu:&#x3A6;_0,aos:phi_0</_names>
         <value uncertainty="1.3E-23" unit="Wb">2.067833831E-15</value>
       </variable>
       <variable>
         <_title>Nuclear Magneton</_title>
-        <_names>r:nuclear_magneton,aisu:&#x3BC;_N</_names>
+        <_names>r:nuclear_magneton,asu:&#x3BC;_N,aos:mu_N</_names>
         <value uncertainty="3.1E-35" unit="J*T^(-1)">5.050783699E-27</value>
       </variable>
       <variable>
@@ -263,7 +263,7 @@
       </variable>
       <variable>
         <_title>Compton Wavelength</_title>
-        <_names>r:compton_wavelength,aisu:&#x3BB;_C</_names>
+        <_names>r:compton_wavelength,asu:&#x3BB;_C,aos:lambda_C</_names>
         <value uncertainty="1.1E-21" unit="m">2.4263102367E-12</value>
       </variable>
       <variable>
