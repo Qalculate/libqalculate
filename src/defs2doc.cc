@@ -344,7 +344,7 @@ void print_function(MathFunction *f) {
 		str += ")";
 		fprintf(ffile, "<para><command>%s</command></para>\n", str.c_str());
 		for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
-			if(&f->getName(i2) != ename) {
+			if(&f->getName(i2) != ename && !f->getName(i2).completion_only) {
 				fprintf(ffile, "<para><command>%s</command></para>", f->getName(i2).name.c_str());
 			}
 		}		
@@ -445,9 +445,13 @@ void print_variable(Variable *v) {
 		string value, str;
 		fputs("<row valign=\"top\">\n", vfile);
 		fprintf(vfile, "<entry><para>%s</para></entry>\n", v->title().c_str());
+		bool b_first = true;
 		for(size_t i2 = 1; i2 <= v->countNames(); i2++) {
-			if(i2 > 1) str += " / ";
-			str += v->getName(i2).name;
+			if(!v->getName(i2).completion_only) {
+				if(!b_first) str += " / ";
+				b_first = false;
+				str += v->getName(i2).name;
+			}
 		}
 		fprintf(vfile, "<entry><para>%s</para></entry>\n", str.c_str());
 		value = "";
@@ -523,9 +527,13 @@ void print_unit(Unit *u) {
 		string str, base_unit, relation;
 		fputs("<row valign=\"top\">\n", ufile);
 		fprintf(ufile, "<entry><para>%s</para></entry>\n", u->title().c_str());
+		bool b_first = true;
 		for(size_t i2 = 1; i2 <= u->countNames(); i2++) {
-			if(i2 > 1) str += " / ";
-			str += u->getName(i2).name;
+			if(!u->getName(i2).completion_only) {
+				if(!b_first) str += " / ";
+				b_first = false;
+				str += u->getName(i2).name;
+			}
 		}
 		if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			fprintf(ufile, "<entry><para>(%s)</para></entry>\n", str.c_str());

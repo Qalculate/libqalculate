@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-11 09:03+0100\n"
+"POT-Creation-Date: 2018-01-17 09:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2610,7 +2610,7 @@ msgid "X"
 msgstr ""
 
 #: ../data/functions.xml.in.h:361
-msgid "Sinc Function (Cardinal Sine)"
+msgid "Cardinal Sine (Sinc Function)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:362
@@ -7483,7 +7483,7 @@ msgid "Electric Constant (Permittivity of Free Space)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:79
-msgid "r:electric_constant,aisu:&#x3B5;_0"
+msgid "r:electric_constant,asu:&#x3B5;_0,vacuum_permittivity,aos:epsilon_0"
 msgstr ""
 
 #: ../data/variables.xml.in.h:80
@@ -7491,7 +7491,7 @@ msgid "Magnetic Constant (Permeability of Free Space)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:81
-msgid "r:magnetic_constant,aisu:&#x3BC;_0"
+msgid "r:magnetic_constant,asu:&#x3BC;_0,vacuum_permeability,aos:mu_0"
 msgstr ""
 
 #: ../data/variables.xml.in.h:82
@@ -7511,7 +7511,7 @@ msgid "Bohr Magneton"
 msgstr ""
 
 #: ../data/variables.xml.in.h:86
-msgid "r:bohr_magneton,aisu:&#x3BC;_B"
+msgid "r:bohr_magneton,asu:&#x3BC;_B,aos:mu_B"
 msgstr ""
 
 #: ../data/variables.xml.in.h:87
@@ -7543,7 +7543,7 @@ msgid "Magnetic Flux Quantum"
 msgstr ""
 
 #: ../data/variables.xml.in.h:94
-msgid "r:magnetic_flux_quantum,aisu:&#x3A6;_0"
+msgid "r:magnetic_flux_quantum,asu:&#x3A6;_0,aos:phi_0"
 msgstr ""
 
 #: ../data/variables.xml.in.h:95
@@ -7551,7 +7551,7 @@ msgid "Nuclear Magneton"
 msgstr ""
 
 #: ../data/variables.xml.in.h:96
-msgid "r:nuclear_magneton,aisu:&#x3BC;_N"
+msgid "r:nuclear_magneton,asu:&#x3BC;_N,aos:mu_N"
 msgstr ""
 
 #: ../data/variables.xml.in.h:97
@@ -7595,7 +7595,7 @@ msgid "Compton Wavelength"
 msgstr ""
 
 #: ../data/variables.xml.in.h:107
-msgid "r:compton_wavelength,aisu:&#x3BB;_C"
+msgid "r:compton_wavelength,asu:&#x3BB;_C,aos:lambda_C"
 msgstr ""
 
 #: ../data/variables.xml.in.h:108

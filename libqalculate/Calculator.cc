@@ -1520,7 +1520,7 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "9818.67", 1, "", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "8982.36", 1, "", false, true, true));
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
@@ -6818,7 +6818,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {2, 2, 0};
+	int version_numbers[] = {2, 2, 1};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

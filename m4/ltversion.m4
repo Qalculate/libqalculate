@@ -12,11 +12,11 @@
 # serial 4219 ltversion.m4
 # This file is part of GNU Libtool
 
-m4_define([LT_PACKAGE_VERSION], [2.4.6.40-6ca5])
+m4_define([LT_PACKAGE_VERSION], [2.4.6.40-6ca5-dirty])
 m4_define([LT_PACKAGE_REVISION], [2.4.6.40])
 
 AC_DEFUN([LTVERSION_VERSION],
-[macro_version='2.4.6.40-6ca5'
+[macro_version='2.4.6.40-6ca5-dirty'
 macro_revision='2.4.6.40'
 _LT_DECL(, macro_version, 0, [Which release of libtool.m4 was used?])
 _LT_DECL(, macro_revision, 0)
