@@ -4499,7 +4499,7 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, 6) {
 	arg->setComplexAllowed(false);
 	setArgumentDefinition(3, arg);
 	setDefaultValue(3, "10");
-	setDefaultValue(4, "101");
+	setDefaultValue(4, "1001");
 	setArgumentDefinition(5, new SymbolicArgument());
 	setDefaultValue(5, "x");
 	setArgumentDefinition(6, new BooleanArgument());

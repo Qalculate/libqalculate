@@ -9877,11 +9877,17 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 	}
 	if(param->grid) {
 		plot += "set grid\n";
+	
 	}
-	if(param->y_log) {
-		plot += "set logscale y ";
-		plot += i2s(param->y_log_base);
+	if(!param->auto_y_min || !param->auto_y_max) {
+		plot += "set yrange [";
+		if(!param->auto_y_min) plot += d2s(param->y_min);
+		plot += ":";
+		if(!param->auto_y_max) plot += d2s(param->y_max);
+		plot += "]";
 		plot += "\n";
+	} else {
+		plot += "set yrange restore\n";
 	}
 	if(param->x_log) {
 		plot += "set logscale x ";
