@@ -128,6 +128,7 @@ PlotDataParameters::PlotDataParameters() {
 	xaxis2 = false;
 	style = PLOT_STYLE_LINES;
 	smoothing = PLOT_SMOOTHING_NONE;
+	test_continuous = false;
 }
 
 CalculatorMessage::CalculatorMessage(string message_, MessageType type_, int cat_, int stage_) {
@@ -9886,8 +9887,6 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 		if(!param->auto_y_max) plot += d2s(param->y_max);
 		plot += "]";
 		plot += "\n";
-	} else {
-		plot += "set yrange restore\n";
 	}
 	if(param->x_log) {
 		plot += "set logscale x ";
@@ -9995,7 +9994,11 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			int non_numerical = 0, non_real = 0;
 			string str = "";
 			if(msecs > 0) startControl(msecs);
+			ComparisonResult ct1 = COMPARISON_RESULT_EQUAL, ct2 = COMPARISON_RESULT_EQUAL;
+			size_t last_index = string::npos, last_index2 = string::npos;
+			bool check_continuous = pdps[serie]->test_continuous && (pdps[serie]->style == PLOT_STYLE_LINES || pdps[serie]->style == PLOT_STYLE_POINTS_LINES);
 			for(size_t i = 1; i <= y_vectors[serie].countChildren(); i++) {
+				ComparisonResult ct = COMPARISON_RESULT_UNKNOWN;
 				bool invalid_nr = false;
 				if(!y_vectors[serie].getChild(i)->isNumber()) {
 					invalid_nr = true;
@@ -10020,10 +10023,24 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 						plot_data += x_vectors[serie].getChild(i)->print(po);
 						plot_data += " ";
 					}
-				}	
-				if(!invalid_nr) plot_data += y_vectors[serie].getChild(i)->print(po);
-				else plot_data += "  ";
+				}
+				if(!invalid_nr) {
+					if(check_continuous) {
+						if(i == 1 || ct2 == COMPARISON_RESULT_UNKNOWN) ct = COMPARISON_RESULT_EQUAL;
+						else ct = y_vectors[serie].getChild(i - 1)->number().compare(y_vectors[serie].getChild(i)->number());
+						if((ct == COMPARISON_RESULT_GREATER || ct == COMPARISON_RESULT_LESS) && (ct1 == COMPARISON_RESULT_GREATER || ct1 == COMPARISON_RESULT_LESS) && (ct2 == COMPARISON_RESULT_GREATER || ct2 == COMPARISON_RESULT_LESS) && ct1 != ct2 && ct != ct2) {
+							if(last_index2 != string::npos) plot_data.insert(last_index2, "  \n");
+						}
+					}
+					plot_data += y_vectors[serie].getChild(i)->print(po);
+				} else {
+					plot_data += "  ";
+				}
 				plot_data += "\n";
+				last_index2 = last_index;
+				last_index = plot_data.length() - 1;
+				ct1 = ct2;
+				ct2 = ct;
 				if(aborted()) {
 					fclose(fdata);
 					if(msecs > 0) {

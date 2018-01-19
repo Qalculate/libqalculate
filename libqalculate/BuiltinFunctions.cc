@@ -4594,6 +4594,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						y_vectors.push_back(y_vector);
 						PlotDataParameters *dpd = new PlotDataParameters;
 						dpd->title = mstruct[i].print();
+						dpd->test_continuous = true;
 						dpds.push_back(dpd);
 					}
 				}
@@ -4636,6 +4637,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			y_vectors.push_back(y_vector);
 			PlotDataParameters *dpd = new PlotDataParameters;
 			dpd->title = mstruct.print();
+			dpd->test_continuous = true;
 			dpds.push_back(dpd);
 		}
 	}

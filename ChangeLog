@@ -1,3 +1,12 @@
+2018-01-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Check if plot data is continuous
+
+2018-01-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use auto_y_min/auto_y_max/y_min/y_max plot parameters
+	* Increase default number of plot samples
+
 2018-01-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add vacuum_permeability and vacuum_permittivity as names for magnetic and electric constants

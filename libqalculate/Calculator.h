@@ -125,6 +125,8 @@ struct PlotDataParameters {
 	bool yaxis2;
 	/// Use scale on second x-axis
 	bool xaxis2;
+	/// Check if data is continuous
+	bool test_continuous;
 	PlotDataParameters();
 };
 
