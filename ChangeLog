@@ -1,3 +1,7 @@
+2018-01-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Set Gnuplot samples to avoid unsmooth smoothed curve
+
 2018-01-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Check if plot data is continuous

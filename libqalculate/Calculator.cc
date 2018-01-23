@@ -9916,6 +9916,15 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 		}
 		plot += "set xtics nomirror\nset ytics nomirror\n";
 	}
+	size_t samples = 1000;
+	for(size_t i = 0; i < y_vectors.size(); i++) {
+		if(!y_vectors[i].isUndefined()) {
+			if(y_vectors[i].size() * 2 > samples) samples = y_vectors[i].size() * 2;
+		}
+	}
+	plot += "set samples ";
+	plot += i2s(samples);
+	plot += "\n";
 	plot += "plot ";
 	for(size_t i = 0; i < y_vectors.size(); i++) {
 		if(!y_vectors[i].isUndefined()) {
@@ -9997,6 +10006,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			ComparisonResult ct1 = COMPARISON_RESULT_EQUAL, ct2 = COMPARISON_RESULT_EQUAL;
 			size_t last_index = string::npos, last_index2 = string::npos;
 			bool check_continuous = pdps[serie]->test_continuous && (pdps[serie]->style == PLOT_STYLE_LINES || pdps[serie]->style == PLOT_STYLE_POINTS_LINES);
+			bool prev_failed = false;
 			for(size_t i = 1; i <= y_vectors[serie].countChildren(); i++) {
 				ComparisonResult ct = COMPARISON_RESULT_UNKNOWN;
 				bool invalid_nr = false;
@@ -10025,18 +10035,21 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 					}
 				}
 				if(!invalid_nr) {
-					if(check_continuous) {
+					if(check_continuous && !prev_failed) {
 						if(i == 1 || ct2 == COMPARISON_RESULT_UNKNOWN) ct = COMPARISON_RESULT_EQUAL;
 						else ct = y_vectors[serie].getChild(i - 1)->number().compare(y_vectors[serie].getChild(i)->number());
 						if((ct == COMPARISON_RESULT_GREATER || ct == COMPARISON_RESULT_LESS) && (ct1 == COMPARISON_RESULT_GREATER || ct1 == COMPARISON_RESULT_LESS) && (ct2 == COMPARISON_RESULT_GREATER || ct2 == COMPARISON_RESULT_LESS) && ct1 != ct2 && ct != ct2) {
-							if(last_index2 != string::npos) plot_data.insert(last_index2, "  \n");
+							if(last_index2 != string::npos) plot_data.insert(last_index2 + 1, "  \n");
 						}
 					}
 					plot_data += y_vectors[serie].getChild(i)->print(po);
-				} else {
-					plot_data += "  ";
+					plot_data += "\n";
+					prev_failed = false;
+				} else if(!prev_failed) {
+					ct = COMPARISON_RESULT_UNKNOWN;
+					plot_data += "  \n";
+					prev_failed = true;
 				}
-				plot_data += "\n";
 				last_index2 = last_index;
 				last_index = plot_data.length() - 1;
 				ct1 = ct2;
