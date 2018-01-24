@@ -537,9 +537,8 @@ bool MultiFactorialFunction::representsOdd(const MathStructure&, bool) const {re
 bool MultiFactorialFunction::representsUndefined(const MathStructure&) const {return false;}
 
 BinomialFunction::BinomialFunction() : MathFunction("binomial", 2) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true));
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, true, INTEGER_TYPE_ULONG));
-	setCondition("\\x >= \\y");
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
 }
 int BinomialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	Number nr;

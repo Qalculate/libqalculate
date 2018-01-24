@@ -5901,10 +5901,23 @@ bool Number::doubleFactorial() {
 }
 bool Number::binomial(const Number &m, const Number &k) {
 	if(!m.isInteger() || !k.isInteger()) return false;
-	if(k.isNegative()) return false;
-	if(m.isZero() || m.isNegative()) return false;
-	if(k.isGreaterThan(m)) return false;
+	if(m.isNegative()) {
+		if(k.isNegative()) return false;
+		Number m2(m);
+		if(!m2.negate() || !m2.add(k) || !m2.add(nr_minus_one) || !binomial(m2, k)) return false;
+		if(k.isOdd()) negate();
+		return true;
+	}
+	if(k.isNegative() || k.isGreaterThan(m)) {
+		clear();
+		return true;
+	}
+	if(m.isZero() || m.equals(k)) {
+		set(1, 1, 0);
+		return true;
+	}
 	if(!mpz_fits_ulong_p(mpq_numref(k.internalRational()))) return false;
+	clear();
 	mpz_bin_ui(mpq_numref(r_value), mpq_numref(m.internalRational()), mpz_get_ui(mpq_numref(k.internalRational())));
 	return true;
 }
