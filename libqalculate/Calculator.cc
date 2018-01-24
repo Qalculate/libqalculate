@@ -9919,6 +9919,10 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 	size_t samples = 1000;
 	for(size_t i = 0; i < y_vectors.size(); i++) {
 		if(!y_vectors[i].isUndefined()) {
+			if(y_vectors[i].size() > 3000) {
+				samples = 6000;
+				break;
+			}
 			if(y_vectors[i].size() * 2 > samples) samples = y_vectors[i].size() * 2;
 		}
 	}
