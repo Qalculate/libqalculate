@@ -3570,11 +3570,20 @@ bool Number::root(const Number &o) {
 		mpfr_clear_flags();
 	
 		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+#if MPFR_VERSION_MAJOR < 4
 			mpfr_root(fl_value, fl_value, i_root, MPFR_RNDN);
+#else
+			mpfr_rootn_ui(fl_value, fl_value, i_root, MPFR_RNDN);
+#endif
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else {
+#if MPFR_VERSION_MAJOR < 4
 			mpfr_root(fu_value, fu_value, i_root, MPFR_RNDU);
 			mpfr_root(fl_value, fl_value, i_root, MPFR_RNDD);
+#else
+			mpfr_rootn_ui(fu_value, fu_value, i_root, MPFR_RNDU);
+			mpfr_rootn_ui(fl_value, fl_value, i_root, MPFR_RNDD);
+#endif
 		}
 	}
 	
