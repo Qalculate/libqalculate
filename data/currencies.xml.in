@@ -130,6 +130,10 @@
       <_title>Brazilian Real</_title>
       <_names>ar:BRL</_names>
     </builtin_unit>
+    <builtin_unit name="ISK">
+      <_title>Icelandic Krónur</_title>
+      <_names>ar:ISK</_names>
+    </builtin_unit>
     <builtin_unit name="BTC">
       <_title>bitcoins</_title>
       <_names>ar:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins</_names>
