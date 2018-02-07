@@ -1502,6 +1502,7 @@ void Calculator::addBuiltinFunctions() {
 	f_integrate = addFunction(new IntegrateFunction());
 	f_solve = addFunction(new SolveFunction());
 	f_multisolve = addFunction(new SolveMultipleFunction());
+	f_dsolve = addFunction(new DSolveFunction());
 	
 	if(canPlot()) f_plot = addFunction(new PlotFunction());
 	

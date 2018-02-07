@@ -16655,12 +16655,54 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 				mthis->inverse();
 				add_nocopy(mthis);
 				multiply(x_var);
-			} else if(o_function == CALCULATOR->f_sin && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0] == x_var && CHILD(0)[1] == CALCULATOR->getRadUnit()) {
+			} else if(o_function == CALCULATOR->f_sin && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() >= 2) {
+				bool b_x = false;
+				bool b_rad = false;
+				MathStructure mmul;
+				mmul.setType(STRUCT_MULTIPLICATION);
+				for(size_t i = 0; i < CHILD(0).size(); i++) {
+					if(!b_x && CHILD(0)[i] == x_var) {
+						b_x = true;
+					} else if(!b_rad && CHILD(0)[i] == CALCULATOR->getRadUnit()) {
+						b_rad = true;
+					} else if(CHILD(0)[i].contains(x_var)) {
+						return false;
+					} else {
+						mmul.addChild(CHILD(0)[i]);
+					}
+				}
+				if(!b_x || !b_rad) return false;
 				setFunction(CALCULATOR->f_cos);
 				multiply(m_minus_one);
-			} else if(o_function == CALCULATOR->f_cos && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0] == x_var && CHILD(0)[1] == CALCULATOR->getRadUnit()) {
+				if(mmul.size() > 0) {
+					if(mmul.size() == 1) mmul.setToChild(1);
+					mmul.inverse();
+					multiply(mmul);
+				}
+			} else if(o_function == CALCULATOR->f_cos && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() >= 2) {
+				bool b_x = false;
+				bool b_rad = false;
+				MathStructure mmul;
+				mmul.setType(STRUCT_MULTIPLICATION);
+				for(size_t i = 0; i < CHILD(0).size(); i++) {
+					if(!b_x && CHILD(0)[i] == x_var) {
+						b_x = true;
+					} else if(!b_rad && CHILD(0)[i] == CALCULATOR->getRadUnit()) {
+						b_rad = true;
+					} else if(CHILD(0)[i].contains(x_var)) {
+						return false;
+					} else {
+						mmul.addChild(CHILD(0)[i]);
+					}
+				}
+				if(!b_x || !b_rad) return false;
 				setFunction(CALCULATOR->f_sin);
-			} else if(o_function == CALCULATOR->f_sin && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0] == x_var && CHILD(0)[1] == CALCULATOR->getRadUnit()) {
+				if(mmul.size() > 0) {
+					if(mmul.size() == 1) mmul.setToChild(1);
+					mmul.inverse();
+					multiply(mmul);
+				}
+			} else if(o_function == CALCULATOR->f_tan && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0] == x_var && CHILD(0)[1] == CALCULATOR->getRadUnit()) {
 				setFunction(CALCULATOR->f_cos);
 				transform(STRUCT_FUNCTION);
 				setFunction(CALCULATOR->f_abs);

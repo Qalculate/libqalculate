@@ -296,7 +296,7 @@ class Calculator {
 	MathFunction *f_length, *f_concatenate;
 	MathFunction *f_replace, *f_stripunits;
 	MathFunction *f_genvector, *f_for, *f_sum, *f_product, *f_process, *f_process_matrix, *f_csum, *f_if, *f_is_number, *f_is_real, *f_is_rational, *f_is_integer, *f_represents_number, *f_represents_real, *f_represents_rational, *f_represents_integer, *f_function, *f_select;
-	MathFunction *f_diff, *f_integrate, *f_solve, *f_multisolve;
+	MathFunction *f_diff, *f_integrate, *f_solve, *f_multisolve, *f_dsolve;
 	MathFunction *f_error, *f_warning, *f_message, *f_save, *f_load, *f_export, *f_title;
 	MathFunction *f_register, *f_stack;
 	MathFunction *f_plot;

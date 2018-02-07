@@ -4489,6 +4489,33 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 	
 }
 
+DSolveFunction::DSolveFunction() : MathFunction("dsolve", 1, 2) {
+	setArgumentDefinition(2, new SymbolicArgument());
+	setDefaultValue(2, "x");
+}
+int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(!vargs[0].isComparison() || vargs[0].comparisonType() != COMPARISON_EQUALS) return 0;
+	if(!vargs[0][0].isFunction() || vargs[0][0].function() != CALCULATOR->f_diff || vargs[0][0].size() != 3 || !vargs[0][0][2].isInteger() || !vargs[0][0][2].number().isPositive() || !vargs[0][0][2].number().isLessThanOrEqualTo(10)) return 0;
+	MathStructure m_y(vargs[0][0][0]), m_x(vargs[0][0][1]);
+	if(!vargs[0][1].contains(m_y)) {
+		MathStructure m1(vargs[0][1]);
+		for(int i = vargs[0][0][2].number().intValue(); i > 0; i--) {
+			m1.transform(STRUCT_FUNCTION);
+			m1.setFunction(CALCULATOR->f_integrate);
+			m1.addChild(m_x);
+			m1.addChild(m_undefined);
+			m1.addChild(m_undefined);
+		}
+		MathStructure m(m_y);
+		m.transform(STRUCT_COMPARISON, m1);
+		m.setComparisonType(vargs[0].comparisonType());
+		mstruct.set(CALCULATOR->f_solve, &m, &m_y, NULL);
+		return 1;
+	}
+	return 0;
+}
+
+
 PlotFunction::PlotFunction() : MathFunction("plot", 1, 6) {
 	NumberArgument *arg = new NumberArgument();
 	arg->setComplexAllowed(false);
