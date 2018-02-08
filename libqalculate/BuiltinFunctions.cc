@@ -3947,7 +3947,7 @@ IntegrateFunction::IntegrateFunction() : MathFunction("integrate", 1, 4) {
 	setDefaultValue(4, "undefined");
 }
 int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	CALCULATOR->error(false, _("The %s function is incomplete, unreliable and unstable. Use at your own risk and avoid complex expressions."), preferredDisplayName().name.c_str(), NULL);
+	//CALCULATOR->error(false, _("The %s function is incomplete, unreliable and unstable. Use at your own risk and avoid complex expressions."), preferredDisplayName().name.c_str(), NULL);
 	mstruct = vargs[0];
 	if(!mstruct.integrate(vargs[1], eo)) {
 		mstruct = vargs[0];
@@ -3961,9 +3961,10 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 			return -1;
 		}
+		mstruct += "C";
 	}
 	if(!vargs[2].isUndefined()) {
-		if(!vargs[3].isUndefined()) {
+		if(vargs[3].isUndefined()) {
 			CALCULATOR->error(true, _("Both the lower and upper limit must be set to get the definite integral."), NULL);
 			mstruct = vargs[0];
 			return -1;
@@ -4489,30 +4490,91 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 	
 }
 
-DSolveFunction::DSolveFunction() : MathFunction("dsolve", 1, 2) {
-	setArgumentDefinition(2, new SymbolicArgument());
-	setDefaultValue(2, "x");
+MathStructure *find_deqn(MathStructure &mstruct);
+MathStructure *find_deqn(MathStructure &mstruct) {
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_diff) return &mstruct;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		MathStructure *m = find_deqn(mstruct[i]);
+		if(m) return m;
+	}
+	return NULL;
 }
+
+DSolveFunction::DSolveFunction() : MathFunction("dsolve", 1) {}
 int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(!vargs[0].isComparison() || vargs[0].comparisonType() != COMPARISON_EQUALS) return 0;
-	if(!vargs[0][0].isFunction() || vargs[0][0].function() != CALCULATOR->f_diff || vargs[0][0].size() != 3 || !vargs[0][0][2].isInteger() || !vargs[0][0][2].number().isPositive() || !vargs[0][0][2].number().isLessThanOrEqualTo(10)) return 0;
-	MathStructure m_y(vargs[0][0][0]), m_x(vargs[0][0][1]);
-	if(!vargs[0][1].contains(m_y)) {
-		MathStructure m1(vargs[0][1]);
-		for(int i = vargs[0][0][2].number().intValue(); i > 0; i--) {
-			m1.transform(STRUCT_FUNCTION);
-			m1.setFunction(CALCULATOR->f_integrate);
-			m1.addChild(m_x);
-			m1.addChild(m_undefined);
-			m1.addChild(m_undefined);
+	MathStructure m_eqn(vargs[0]);
+	EvaluationOptions eo2 = eo;
+	eo2.isolate_x = false;
+	eo2.protected_function = CALCULATOR->f_diff;
+	m_eqn.eval(eo2);
+	if(!m_eqn.isComparison() || m_eqn.comparisonType() != COMPARISON_EQUALS) {
+		CALCULATOR->error(true, _("No differential equation found."), NULL);
+		mstruct = m_eqn; return -1;
+	}
+	MathStructure *m_diff_p = find_deqn(m_eqn[0]);
+	if(!m_diff_p) {
+		m_diff_p = find_deqn(m_eqn[1]);
+		if(!m_diff_p) {
+			CALCULATOR->error(true, _("No differential equation found."), NULL);
+			mstruct = m_eqn; return -1;
 		}
-		MathStructure m(m_y);
-		m.transform(STRUCT_COMPARISON, m1);
-		m.setComparisonType(vargs[0].comparisonType());
-		mstruct.set(CALCULATOR->f_solve, &m, &m_y, NULL);
+	}
+	MathStructure m_diff(*m_diff_p);
+	if(m_diff.size() != 3 || (!m_diff[0].isSymbolic() && !m_diff[0].isVariable()) || (!m_diff[1].isSymbolic() && !m_diff[1].isVariable()) || !m_diff[2].isInteger() || !m_diff[2].number().isPositive() || !m_diff[2].number().isLessThanOrEqualTo(10)) {
+		CALCULATOR->error(true, _("No differential equation found."), NULL);
+		mstruct = m_eqn; return -1;
+	}
+	if(!m_eqn.isolate_x(eo2, m_diff) || m_eqn[0] != m_diff) {
+		CALCULATOR->error(true, _("Unable to isolate deravitive."), NULL);
+		mstruct = m_eqn; return -1;
+	}
+	MathStructure m_y(m_diff[0]), m_x(m_diff[1]);
+	if(!m_eqn[1].contains(m_y)) {
+		mstruct = m_eqn[1];
+		for(int i = m_diff[2].number().intValue(); i > 0; i--) {
+			mstruct.transform(STRUCT_FUNCTION);
+			mstruct.setFunction(CALCULATOR->f_integrate);
+			mstruct.addChild(m_x);
+			mstruct.addChild(m_undefined);
+			mstruct.addChild(m_undefined);
+		}
 		return 1;
 	}
-	return 0;
+	if(m_eqn[1] == m_y) {
+		mstruct = CALCULATOR->v_e;
+		mstruct ^= m_x;
+		return 1;
+	}
+	if(m_eqn[1].isMultiplication() && m_eqn[1].size() >= 2) {
+		size_t i_my;
+		bool b = false;
+		for(size_t i = 0; i < m_eqn[1].size(); i++) {
+			if(!b && m_eqn[1][i] == m_y) {
+				i_my = i;
+				b = true;
+			} else if(m_eqn[1][i].contains(m_y)) {
+				b = false;
+				break;
+			}
+		}
+		if(b) {
+			MathStructure m_a(m_eqn[1]);
+			m_a.delChild(i_my + 1, true);
+			m_a *= m_x;
+			mstruct = CALCULATOR->v_e;
+			mstruct ^= m_a;
+			mstruct *= "C";
+			return 1;
+		}
+	}
+	m_eqn.isolate_x(eo2, m_y);
+	if(!m_eqn[1].contains(m_y)) {
+		if(m_eqn.isMultiplication()) {
+		} else if(m_eqn.isAddition()) {
+		}
+	}
+	mstruct = m_eqn;
+	return -1;
 }
 
 
