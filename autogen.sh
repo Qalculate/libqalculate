@@ -137,7 +137,11 @@ else
 fi
 
 cd $srcdir/docs/reference
-echo "Generating API docs"
+echo "Generating API documentation"
 doxygen Doxyfile
+cd ../../
 cd $srcdir
-
+if [ ! -d "$srcdir/docs/reference/html" ]; then
+  echo "API documentation is missing. Please install doxygen and run autogen.sh again."
+  exit 1
+fi
