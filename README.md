@@ -19,6 +19,7 @@ If libqalculate is installed in /usr/local (default) you may need to add /usr/lo
 * libcurl, icu, gettext (recommended)
 * iconv, readline (recommended for CLI)
 * Gnuplot (optional)
+* doxygen (for compilation of git version)
 
 ## API Documentation
 The API documentation is included in the package and is installed in $docdir/libqalculate/html (usually /usr/share/doc/libqalculate/html). It is generated when running autogen.sh.
