@@ -828,7 +828,7 @@ void set_option(string str) {
 				remove_blank_ends(svar);
 				str = str.substr(index + 1);
 				remove_blank_ends(str);
-				svalue += str;
+				svalue = str;
 				gsub("_", " ", svar);
 				goto set_option_place;
 			}
