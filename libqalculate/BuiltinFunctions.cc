@@ -4192,6 +4192,14 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			ct = vargs[0][0].comparisonType();
 			mstruct = vargs[0];
 			b = true;
+		} else if(vargs[0].isLogicalOr() && vargs[0].size() > 0 && vargs[0][0].isComparison()) {
+			ct = vargs[0][0].comparisonType();
+			mstruct = vargs[0];
+			b = true;
+		} else if(vargs[0].isLogicalOr() && vargs[0].size() > 0 && vargs[0][0].isLogicalAnd() && vargs[0][0].size() > 0 && vargs[0][0][0].isComparison()) {
+			ct = vargs[0][0][0].comparisonType();
+			mstruct = vargs[0];
+			b = true;
 		} else if(vargs[0].isVariable() && vargs[0].variable()->isKnown() && (eo.approximation != APPROXIMATION_EXACT || !vargs[0].variable()->isApproximate()) && ((KnownVariable*) vargs[0].variable())->get().isComparison()) {
 			mstruct = ((KnownVariable*) vargs[0].variable())->get();
 			ct = vargs[0].comparisonType();
@@ -4208,6 +4216,12 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				b = true;
 			} else if(mstruct.isLogicalAnd() && mstruct.size() > 0 && mstruct[0].isComparison()) {
 				ct = mstruct[0].comparisonType();
+				b = true;
+			} else if(mstruct.isLogicalOr() && mstruct.size() > 0 && mstruct[0].isComparison()) {
+				ct = mstruct[0].comparisonType();
+				b = true;
+			} else if(mstruct.isLogicalOr() && mstruct.size() > 0 && mstruct[0].isLogicalAnd() && mstruct[0].size() > 0 && mstruct[0][0].isComparison()) {
+				ct = mstruct[0][0].comparisonType();
 				b = true;
 			}
 		}	
@@ -4512,192 +4526,174 @@ bool contains_ignore_diff(const MathStructure &m, const MathStructure &mstruct, 
 	return false;
 }
 
-DSolveFunction::DSolveFunction() : MathFunction("dsolve", 1) {}
-int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	MathStructure m_eqn(vargs[0]);
-	EvaluationOptions eo2 = eo;
-	eo2.isolate_x = false;
-	eo2.protected_function = CALCULATOR->f_diff;
-	m_eqn.eval(eo2);
-	if(!m_eqn.isComparison() || m_eqn.comparisonType() != COMPARISON_EQUALS) {
-		CALCULATOR->error(true, _("No differential equation found."), NULL);
-		mstruct = m_eqn; return -1;
-	}
-	MathStructure *m_diff_p = find_deqn(m_eqn[0]);
-	if(!m_diff_p) {
-		m_diff_p = find_deqn(m_eqn[1]);
-		if(!m_diff_p) {
-			CALCULATOR->error(true, _("No differential equation found."), NULL);
-			mstruct = m_eqn; return -1;
-		}
-		m_eqn.swapChildren(1, 2);
-	}
-	MathStructure m_diff(*m_diff_p);
-	if(m_diff.size() != 3 || (!m_diff[0].isSymbolic() && !m_diff[0].isVariable()) || (!m_diff[1].isSymbolic() && !m_diff[1].isVariable()) || !m_diff[2].isInteger() || !m_diff[2].number().isPositive() || !m_diff[2].number().isLessThanOrEqualTo(10)) {
-		CALCULATOR->error(true, _("No differential equation found."), NULL);
-		mstruct = m_eqn; return -1;
-	}
+bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructure &m_diff) {
 	int i_deg = m_diff[2].number().intValue();
 	MathStructure m_y(m_diff[0]), m_x(m_diff[1]);
-	if(m_eqn.isolate_x(eo2, m_diff)) {
-		/*if(m_eqn.isLogicalAnd()) {
-			for(size_t i = 0; i < m_eqn.size() i++
-		}*/
-		if(m_eqn[0] == m_diff) {
-			if(!m_eqn[1].contains(m_y)) {
-				// y'=f(x)
-				mstruct = m_eqn[1];
-				for(int i = i_deg; i > 0; i--) {
-					mstruct.transform(STRUCT_FUNCTION);
-					mstruct.setFunction(CALCULATOR->f_integrate);
-					mstruct.addChild(m_x);
-					mstruct.addChild(m_undefined);
-					mstruct.addChild(m_undefined);
-				}
+	if(m_eqn[0] == m_diff) {
+		if(!m_eqn[1].contains(m_y)) {
+			// y'=f(x)
+			m_eqn[0] = m_y;
+			for(int i = i_deg; i > 0; i--) {
+				m_eqn[1].transform(STRUCT_FUNCTION);
+				m_eqn[1].setFunction(CALCULATOR->f_integrate);
+				m_eqn[1].addChild(m_x);
+				m_eqn[1].addChild(m_undefined);
+				m_eqn[1].addChild(m_undefined);
+			}
+			m_eqn.childrenUpdated();
+			return 1;
+		}
+		if(i_deg == 1) {
+			if(m_eqn[1] == m_y) {
+				m_eqn[1] = CALCULATOR->v_e;
+				m_eqn[1] ^= m_x;
+				m_eqn.childrenUpdated();
 				return 1;
 			}
-			if(i_deg == 1) {
-				if(m_eqn[1] == m_y) {
-					mstruct = CALCULATOR->v_e;
-					mstruct ^= m_x;
+			if(m_eqn[1].isMultiplication() && m_eqn[1].size() >= 2) {
+				size_t i_my = 0;
+				bool b = false;
+				for(size_t i = 0; i < m_eqn[1].size(); i++) {
+					if(!b && m_eqn[1][i] == m_y) {
+						i_my = i;
+						b = true;
+					} else if(m_eqn[1][i].contains(m_y)) {
+						b = false;
+						break;
+					}
+				}
+				if(b) {
+					// y'=a*y
+					m_eqn[0] = m_y;
+					MathStructure mpow(m_eqn[1]);
+					mpow.delChild(i_my + 1, true);
+					mpow *= m_x;
+					m_eqn[1] = CALCULATOR->v_e;
+					m_eqn[1] ^= mpow;
+					m_eqn[1] *= "C";
+					m_eqn.childrenUpdated();
 					return 1;
 				}
-				if(m_eqn[1].isMultiplication() && m_eqn[1].size() >= 2) {
-					size_t i_my;
-					bool b = false;
+			} else if(m_eqn[1].isAddition()) {
+				MathStructure m_left;
+				MathStructure m_muly;
+				MathStructure m_mul_exp;
+				MathStructure m_exp;
+				bool b = true;
 					for(size_t i = 0; i < m_eqn[1].size(); i++) {
-						if(!b && m_eqn[1][i] == m_y) {
-							i_my = i;
-							b = true;
-						} else if(m_eqn[1][i].contains(m_y)) {
-							b = false;
-							break;
-						}
-					}
-					if(b) {
-						// y'=a*y
-						m_eqn[1].delChild(i_my + 1, true);
-						m_eqn[1] *= m_x;
-						mstruct = CALCULATOR->v_e;
-						mstruct ^= m_eqn[1];
-						mstruct *= "C";
-						return 1;
-					}
-				} else if(m_eqn[1].isAddition()) {
-					MathStructure m_left;
-					MathStructure m_muly;
-					MathStructure m_mul_exp;
-					MathStructure m_exp;
-					bool b = true;
-						for(size_t i = 0; i < m_eqn[1].size(); i++) {
-						if(m_eqn[1][i] == m_y) {
-								if(m_muly.isZero()) m_muly = m_one;
-							else m_muly.add(m_one, true);
-						} else if(m_eqn[1][i].contains(m_y)) {
-								if(m_left.isZero() && m_eqn[1][i].isPower() && m_eqn[1][i][0] == m_y && (m_mul_exp.isZero() || m_eqn[1][i][1] == m_exp)) {
-									if(m_mul_exp.isZero()) {
-									m_exp = m_eqn[1][i][1];
-									m_mul_exp = m_one;
-								} else {
-									m_mul_exp.add(m_one, true);
-								}
-							} else if(m_eqn[1][i].isMultiplication()) {
-									size_t i_my = 0;
-								bool b2 = false, b2_exp = false;
-								for(size_t i2 = 0; i2 < m_eqn[1][i].size(); i2++) {
-										if(!b2 && m_eqn[1][i][i2] == m_y) {
-										i_my = i2;
-										b2 = true;
-									} else if(!b2 && m_left.isZero() && m_eqn[1][i][i2].isPower() && m_eqn[1][i][i2][0] == m_y && (m_mul_exp.isZero() || m_eqn[1][i][i2][1] == m_exp)) {
-										i_my = i2;
-										b2 = true;
-										b2_exp = true;
-									} else if(m_eqn[1][i][i2].contains(m_y)) {
-										b2 = false;
-										break;
-									}
-								}
-								if(b2) {
-									MathStructure m_a(m_eqn[1][i]);
-									m_a.delChild(i_my + 1, true);
-									if(b2_exp) {
-											if(m_mul_exp.isZero()) {
-											m_exp = m_eqn[1][i][i_my][1];
-											m_mul_exp = m_a;
-										} else {
-											m_mul_exp.add(m_a, true);
-										}
-									} else {
-										if(m_muly.isZero()) m_muly = m_a;
-										else m_muly.add(m_a, true);
-									}
-								} else {
-									b = false;
+					if(m_eqn[1][i] == m_y) {
+							if(m_muly.isZero()) m_muly = m_one;
+						else m_muly.add(m_one, true);
+					} else if(m_eqn[1][i].contains(m_y)) {
+							if(m_left.isZero() && m_eqn[1][i].isPower() && m_eqn[1][i][0] == m_y && (m_mul_exp.isZero() || m_eqn[1][i][1] == m_exp)) {
+								if(m_mul_exp.isZero()) {
+								m_exp = m_eqn[1][i][1];
+								m_mul_exp = m_one;
+							} else {
+								m_mul_exp.add(m_one, true);
+							}
+						} else if(m_eqn[1][i].isMultiplication()) {
+								size_t i_my = 0;
+							bool b2 = false, b2_exp = false;
+							for(size_t i2 = 0; i2 < m_eqn[1][i].size(); i2++) {
+									if(!b2 && m_eqn[1][i][i2] == m_y) {
+									i_my = i2;
+									b2 = true;
+								} else if(!b2 && m_left.isZero() && m_eqn[1][i][i2].isPower() && m_eqn[1][i][i2][0] == m_y && (m_mul_exp.isZero() || m_eqn[1][i][i2][1] == m_exp)) {
+									i_my = i2;
+									b2 = true;
+									b2_exp = true;
+								} else if(m_eqn[1][i][i2].contains(m_y)) {
+									b2 = false;
 									break;
+								}
+							}
+							if(b2) {
+								MathStructure m_a(m_eqn[1][i]);
+								m_a.delChild(i_my + 1, true);
+								if(b2_exp) {
+										if(m_mul_exp.isZero()) {
+										m_exp = m_eqn[1][i][i_my][1];
+										m_mul_exp = m_a;
+									} else {
+										m_mul_exp.add(m_a, true);
+									}
+								} else {
+									if(m_muly.isZero()) m_muly = m_a;
+									else m_muly.add(m_a, true);
 								}
 							} else {
 								b = false;
 								break;
 							}
 						} else {
-							if(!m_mul_exp.isZero()) {
-								b = false;
-								break;
-							}
-							if(m_left.isZero()) m_left = m_eqn[1][i];
-							else m_left.add(m_eqn[1][i], true);
+							b = false;
+							break;
 						}
-					}
-					if(b && !m_muly.isZero()) {
+					} else {
 						if(!m_mul_exp.isZero()) {
-								// y' = a*y+b*y^c
-							m_muly.calculateNegate(eo);
-							m_exp.negate();
-							m_exp += m_one;
-							m_muly *= m_exp;
-							if(m_muly.integrate(m_x, eo)) {
-								mstruct = CALCULATOR->v_e;
-								mstruct ^= m_muly;
-								m_mul_exp *= m_exp;
-								mstruct *= m_mul_exp;
-								mstruct.transform(STRUCT_FUNCTION);
-								mstruct.setFunction(CALCULATOR->f_integrate);
-								mstruct.addChild(m_x);
-								mstruct.addChild(m_undefined);
-								mstruct.addChild(m_undefined);
-								MathStructure m_megx = CALCULATOR->v_e;
-								m_muly.negate();
-								m_megx ^= m_muly;
-								mstruct *= m_megx;
-								m_exp.inverse();
-								mstruct ^= m_exp;
-								return 1;
-							}
-						} else if(m_left.isZero()) {
-							// y'=a*y+b*y
-							m_muly *= m_x;
-							mstruct = CALCULATOR->v_e;
-							mstruct ^= m_muly;
-							mstruct *= "C";
+							b = false;
+							break;
+						}
+						if(m_left.isZero()) m_left = m_eqn[1][i];
+						else m_left.add(m_eqn[1][i], true);
+					}
+				}
+				if(b && !m_muly.isZero()) {
+					if(!m_mul_exp.isZero()) {
+						// y' = a*y+b*y^c
+						m_muly.calculateNegate(eo);
+						m_exp.negate();
+						m_exp += m_one;
+						m_muly *= m_exp;
+						if(m_muly.integrate(m_x, eo)) {
+							m_eqn[0] = m_y;
+							m_eqn[1] = CALCULATOR->v_e;
+							m_eqn[1] ^= m_muly;
+							m_mul_exp *= m_exp;
+							m_eqn[1] *= m_mul_exp;
+							m_eqn[1].transform(STRUCT_FUNCTION);
+							m_eqn[1].setFunction(CALCULATOR->f_integrate);
+							m_eqn[1].addChild(m_x);
+							m_eqn[1].addChild(m_undefined);
+							m_eqn[1].addChild(m_undefined);
+							MathStructure m_megx = CALCULATOR->v_e;
+							m_muly.negate();
+							m_megx ^= m_muly;
+							m_eqn[1] *= m_megx;
+							m_exp.inverse();
+							m_eqn[1] ^= m_exp;
+							m_eqn.childrenUpdated();
 							return 1;
-						} else {
-							// y'=a*y+f(x)
-							m_muly.calculateNegate(eo);
-							if(m_muly.integrate(m_x, eo)) {
-								mstruct = CALCULATOR->v_e;
-								mstruct ^= m_muly;
-								mstruct *= m_left;
-								mstruct.transform(STRUCT_FUNCTION);
-								mstruct.setFunction(CALCULATOR->f_integrate);
-								mstruct.addChild(m_x);
-								mstruct.addChild(m_undefined);
-								mstruct.addChild(m_undefined);
-								MathStructure m_megx = CALCULATOR->v_e;
-								m_muly.negate();
-								m_megx ^= m_muly;
-								mstruct *= m_megx;
-								return 1;
-							}
+						}
+					} else if(m_left.isZero()) {
+						// y'=a*y+b*y
+						m_muly *= m_x;
+						m_eqn[0] = m_y;
+						m_eqn[1] = CALCULATOR->v_e;
+						m_eqn[1] ^= m_muly;
+						m_eqn[1] *= "C";
+						m_eqn.childrenUpdated();
+						return 1;
+					} else {
+						// y'=a*y+f(x)
+						m_muly.calculateNegate(eo);
+						if(m_muly.integrate(m_x, eo)) {
+							m_eqn[0] = m_y;
+							m_eqn[1] = CALCULATOR->v_e;
+							m_eqn[1] ^= m_muly;
+							m_eqn[1] *= m_left;
+							m_eqn[1].transform(STRUCT_FUNCTION);
+							m_eqn[1].setFunction(CALCULATOR->f_integrate);
+							m_eqn[1].addChild(m_x);
+							m_eqn[1].addChild(m_undefined);
+							m_eqn[1].addChild(m_undefined);
+							MathStructure m_megx = CALCULATOR->v_e;
+							m_muly.negate();
+							m_megx ^= m_muly;
+							m_eqn[1] *= m_megx;
+							m_eqn.childrenUpdated();
+							return 1;
 						}
 					}
 				}
@@ -4705,12 +4701,6 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		}
 	}
 	if(i_deg == 1) {
-		m_eqn.isolate_x(eo2, m_y);
-		/*if(m_eqn.isLogicalAnd()) {
-			for(size_t i = 0; i < m_eqn.size(); i++) {
-				if(m_eqn[i].isComparison() && m_eqn[0][i]
-			}
-		}*/
 		if(!m_eqn[1].contains(m_y) && !contains_ignore_diff(m_eqn[0], m_x, m_diff)) {
 			if(m_eqn[0].isMultiplication() && m_eqn[0].size() >= 2) {
 				size_t i_dy = 0;
@@ -4734,8 +4724,10 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 						m_eqn[1].addChild(m_undefined);
 						m_eqn[1].addChild(m_undefined);
 						m_eqn.childrenUpdated();
-						mstruct.set(CALCULATOR->f_solve, &m_eqn, &m_y, NULL);
-						return 1;
+						m_eqn.isolate_x(eo, m_y);
+						if(m_eqn[0] == m_y) {
+							return 1;
+						}
 					}
 				}
 			} else if(m_eqn[0].isAddition()) {
@@ -4781,16 +4773,98 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 						m_eqn[1].addChild(m_undefined);
 						m_eqn[1].addChild(m_undefined);
 						m_eqn.childrenUpdated();
-						mstruct.set(CALCULATOR->f_solve, &m_eqn, &m_y, NULL);
-						return 1;
+						m_eqn.isolate_x(eo, m_y);
+						if(m_eqn[0] == m_y) {
+							return 1;
+						}
 					}
 				}
 			}
 		}
 	}
-	CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
-	mstruct = m_eqn;
-	return -1;
+	return false;
+}
+
+DSolveFunction::DSolveFunction() : MathFunction("dsolve", 1) {}
+int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	MathStructure m_eqn(vargs[0]);
+	EvaluationOptions eo2 = eo;
+	eo2.isolate_x = false;
+	eo2.protected_function = CALCULATOR->f_diff;
+	m_eqn.eval(eo2);
+	MathStructure *m_diff_p = NULL;
+	if(m_eqn.isLogicalAnd()) {
+		for(size_t i = 0; i < m_eqn.size(); i++) {
+			if(m_eqn[i].isComparison() && m_eqn.comparisonType() == COMPARISON_EQUALS) {
+				m_diff_p = find_deqn(m_eqn[i]);
+				if(m_diff_p) break;
+			}
+		}
+	} else if(m_eqn.isComparison() && m_eqn.comparisonType() == COMPARISON_EQUALS) {
+		m_diff_p = find_deqn(m_eqn);
+	}
+	if(!m_diff_p) {
+		CALCULATOR->error(true, _("No differential equation found."), NULL);
+		mstruct = m_eqn; return -1;
+	}
+	MathStructure m_diff(*m_diff_p);
+	if(m_diff.size() != 3 || (!m_diff[0].isSymbolic() && !m_diff[0].isVariable()) || (!m_diff[1].isSymbolic() && !m_diff[1].isVariable()) || !m_diff[2].isInteger() || !m_diff[2].number().isPositive() || !m_diff[2].number().isLessThanOrEqualTo(10)) {
+		CALCULATOR->error(true, _("No differential equation found."), NULL);
+		mstruct = m_eqn; return -1;
+	}
+	m_eqn.isolate_x(eo2, m_diff);
+	if(m_eqn.isLogicalAnd()) {
+		for(size_t i = 0; i < m_eqn.size(); i++) {
+			if(m_eqn[i].isComparison() && m_eqn[i].comparisonType() == COMPARISON_EQUALS && m_eqn[i][0] == m_diff) {
+				dsolve(m_eqn[i], eo, m_diff);
+			}
+		}
+	} else if(m_eqn.isLogicalOr()) {
+		for(size_t i = 0; i < m_eqn.size(); i++) {
+			if(m_eqn[i].isComparison() && m_eqn[i].comparisonType() == COMPARISON_EQUALS && m_eqn[i][0] == m_diff) {
+				dsolve(m_eqn[i], eo, m_diff);
+			} else if(m_eqn[i].isLogicalAnd()) {
+				for(size_t i2 = 0; i2 < m_eqn[i].size(); i2++) {
+					if(m_eqn[i][i2].isComparison() && m_eqn[i][i2].comparisonType() == COMPARISON_EQUALS && m_eqn[i][i2][0] == m_diff) {
+						dsolve(m_eqn[i][i2], eo, m_diff);
+					}
+				}
+			}
+		}
+	} else if(m_eqn.isComparison() && m_eqn.comparisonType() == COMPARISON_EQUALS && m_eqn[0] == m_diff) {
+		dsolve(m_eqn, eo, m_diff);
+	}
+	if(m_eqn.contains(m_diff)) {
+		m_eqn.isolate_x(eo2, m_diff[0]);
+		if(m_eqn.isLogicalAnd()) {
+			for(size_t i = 0; i < m_eqn.size(); i++) {
+				if(m_eqn[i].isComparison() && m_eqn[i].comparisonType() == COMPARISON_EQUALS && m_eqn[i][0].contains(m_diff)) {
+					dsolve(m_eqn[i], eo, m_diff);
+				}
+			}
+		} else if(m_eqn.isLogicalOr()) {
+			for(size_t i = 0; i < m_eqn.size(); i++) {
+				if(m_eqn[i].isComparison() && m_eqn[i].comparisonType() == COMPARISON_EQUALS && m_eqn[i][0].contains(m_diff)) {
+					dsolve(m_eqn[i], eo, m_diff);
+				} else if(m_eqn[i].isLogicalAnd()) {
+					for(size_t i2 = 0; i2 < m_eqn[i].size(); i2++) {
+						if(m_eqn[i][i2].isComparison() && m_eqn[i][i2].comparisonType() == COMPARISON_EQUALS && m_eqn[i][i2][0].contains(m_diff)) {
+							dsolve(m_eqn[i][i2], eo, m_diff);
+						}
+					}
+				}
+			}
+		} else if(m_eqn.isComparison() && m_eqn.comparisonType() == COMPARISON_EQUALS && m_eqn[0].contains(m_diff)) {
+			dsolve(m_eqn, eo, m_diff);
+		}
+	}
+	if(m_eqn.contains(m_diff)) {
+		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
+		mstruct = m_eqn;
+		return -1;
+	}
+	mstruct.set(CALCULATOR->f_solve, &m_eqn, &m_diff[0], NULL);
+	return 1;
 }
 
 

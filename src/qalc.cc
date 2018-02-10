@@ -191,9 +191,9 @@ bool ask_question(const char *question, bool default_answer = false) {
 	}
 }
 
-void set_assumption(const string &str, bool first_of_two = false) {
+void set_assumption(const string &str, bool last_of_two = false) {
 	if(EQUALS_IGNORECASE_AND_LOCAL(str, "unknown", _("unknown"))) {
-		if(first_of_two) {
+		if(!last_of_two) {
 			CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_UNKNOWN);
 		} else {
 			CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
@@ -224,7 +224,29 @@ void set_assumption(const string &str, bool first_of_two = false) {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONPOSITIVE);
 	} else {
 		PUTS_UNICODE(_("Unrecognized assumption."));
+		return;
 	}
+	string value;
+	switch(CALCULATOR->defaultAssumptions()->sign()) {
+		case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
+		case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
+		case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
+		case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
+		case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
+		default: {}
+	}
+	if(!value.empty() && CALCULATOR->defaultAssumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
+	switch(CALCULATOR->defaultAssumptions()->type()) {
+		case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
+		case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
+		case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
+		case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
+		case ASSUMPTION_TYPE_NUMBER: {value += _("number"); break;}
+		case ASSUMPTION_TYPE_NONMATRIX: {value += _("non-matrix"); break;}
+		default: {}
+	}
+	if(value.empty()) value = _("unknown");
+	FPUTS_UNICODE(_("assumptions"), stdout); fputs(": ", stdout); PUTS_UNICODE(value.c_str());
 }
 
 vector<const string*> matches;
@@ -478,8 +500,8 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assumptions", _("assumptions"))) {
 		size_t i = svalue.find_first_of(SPACES);
 		if(i != string::npos) {			
-			set_assumption(svalue.substr(0, i), true);
-			set_assumption(svalue.substr(i + 1, svalue.length() - (i + 1)), false);
+			set_assumption(svalue.substr(0, i), false);
+			set_assumption(svalue.substr(i + 1, svalue.length() - (i + 1)), true);
 		} else {
 			set_assumption(svalue, false);
 		}
