@@ -3931,6 +3931,7 @@ int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	mstruct = vargs[0];
 	bool b = false;
 	while(i) {
+		if(i > 0) mstruct.calculatesub(eo, eo, true);
 		if(CALCULATOR->aborted()) return 0;
 		if(!mstruct.differentiate(vargs[1], eo) && !b) {
 			return 0;
