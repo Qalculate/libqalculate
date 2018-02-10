@@ -16307,16 +16307,20 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 			} else if(o_function == CALCULATOR->f_sin && SIZE == 1) {
 				setFunction(CALCULATOR->f_cos);
 				MathStructure mstruct(CHILD(0));
-				mstruct.differentiate(x_var, eo);
-				multiply(mstruct);
-				if(CALCULATOR->getRadUnit()) divide(CALCULATOR->getRadUnit());
+				mstruct.calculateDivide(CALCULATOR->getRadUnit(), eo);
+				if(mstruct != x_var) {
+					mstruct.differentiate(x_var, eo);
+					multiply(mstruct);
+				}
 			} else if(o_function == CALCULATOR->f_cos && SIZE == 1) {
 				setFunction(CALCULATOR->f_sin);
 				MathStructure mstruct(CHILD(0));
 				negate();
-				mstruct.differentiate(x_var, eo);
-				multiply(mstruct, true);
-				if(CALCULATOR->getRadUnit()) divide(CALCULATOR->getRadUnit());
+				mstruct.calculateDivide(CALCULATOR->getRadUnit(), eo);
+				if(mstruct != x_var) {
+					mstruct.differentiate(x_var, eo);
+					multiply(mstruct);
+				}
 			} else if(o_function == CALCULATOR->f_tan && SIZE == 1) {
 				setFunction(CALCULATOR->f_tan);
 				MathStructure mstruct(CHILD(0));
@@ -16646,9 +16650,66 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 			return false;
 		}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_ln && SIZE == 1 && CHILD(0) == x_var) {
-				multiply(x_var);
-				subtract(x_var);
+			if(o_function == CALCULATOR->f_ln && SIZE == 1) {
+				if(CHILD(0) == x_var) {
+					multiply(x_var);
+					subtract(x_var);
+				} else if(CHILD(0).isMultiplication()) {
+					bool b_x = false;
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(!b_x && CHILD(0)[i] == x_var) {
+							b_x = true;
+						} else if(CHILD(0)[i].contains(x_var)) {
+							return false;
+						}
+					}
+					if(!b_x) return false;
+					multiply(x_var);
+					subtract(x_var);
+				} else if(CHILD(0).isAddition()) {
+					MathStructure mmul;
+					mmul.setType(STRUCT_ADDITION);
+					MathStructure madd;
+					madd.setType(STRUCT_ADDITION);
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(CHILD(0)[i] == x_var) {
+							mmul.addChild(m_one);
+						} else if(CHILD(0)[i].contains(x_var)) {
+							bool b = false;
+							size_t x_i = 0;
+							if(CHILD(0)[i].isMultiplication()) {
+								for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+									if(!b && CHILD(0)[i][i2] == x_var) {
+										x_i = i2;
+										b = true;
+									} else if(CHILD(0)[i][i2].contains(x_var)) {
+										return false;
+									}
+								}
+							}
+							if(!b) return false;
+							mmul.addChild(CHILD(0)[i]);
+							mmul[mmul.size() - 1].delChild(x_i + 1);
+							mmul.childUpdated(mmul.size());
+						} else {
+							madd.addChild(CHILD(0)[i]);
+						}
+					}
+					if(mmul.size() == 0) return false;
+					if(mmul.size() == 1) mmul.setToChild(1);
+					if(madd.size() == 0) {
+						multiply(x_var);
+						subtract(x_var);
+					} else {
+						multiply(CHILD(0));
+						MathStructure mmulx(mmul);
+						mmulx *= x_var;
+						subtract(mmulx);
+						divide(mmul);
+					}
+				} else {
+					return false;
+				}
 			} else if(o_function == CALCULATOR->f_lambert_w && SIZE == 1 && CHILD(0) == x_var) {
 				MathStructure *mthis = new MathStructure(*this);
 				subtract(m_one);
@@ -16676,8 +16737,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 				multiply(m_minus_one);
 				if(mmul.size() > 0) {
 					if(mmul.size() == 1) mmul.setToChild(1);
-					mmul.inverse();
-					multiply(mmul);
+					divide(mmul);
 				}
 			} else if(o_function == CALCULATOR->f_cos && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() >= 2) {
 				bool b_x = false;
@@ -16699,16 +16759,294 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 				setFunction(CALCULATOR->f_sin);
 				if(mmul.size() > 0) {
 					if(mmul.size() == 1) mmul.setToChild(1);
-					mmul.inverse();
-					multiply(mmul);
+					divide(mmul);
 				}
-			} else if(o_function == CALCULATOR->f_tan && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0] == x_var && CHILD(0)[1] == CALCULATOR->getRadUnit()) {
+			} else if(o_function == CALCULATOR->f_tan && SIZE == 1 && CHILD(0).isMultiplication() && CHILD(0).size() >= 2) {
+				bool b_x = false;
+				bool b_rad = false;
+				MathStructure mmul;
+				mmul.setType(STRUCT_MULTIPLICATION);
+				for(size_t i = 0; i < CHILD(0).size(); i++) {
+					if(!b_x && CHILD(0)[i] == x_var) {
+						b_x = true;
+					} else if(!b_rad && CHILD(0)[i] == CALCULATOR->getRadUnit()) {
+						b_rad = true;
+					} else if(CHILD(0)[i].contains(x_var)) {
+						return false;
+					} else {
+						mmul.addChild(CHILD(0)[i]);
+					}
+				}
+				if(!b_x || !b_rad) return false;
 				setFunction(CALCULATOR->f_cos);
 				transform(STRUCT_FUNCTION);
 				setFunction(CALCULATOR->f_abs);
 				transform(STRUCT_FUNCTION);
 				setFunction(CALCULATOR->f_ln);
-				multiply(m_minus_one);
+				negate();
+				if(mmul.size() > 0) {
+					if(mmul.size() == 1) mmul.setToChild(1);
+					divide(mmul);
+				}
+			} else if(o_function == CALCULATOR->f_asin && SIZE == 1) {
+				bool b_x = false;
+				MathStructure mmul;
+				mmul.setType(STRUCT_MULTIPLICATION);
+				if(CHILD(0) == x_var) {
+					b_x = true;
+				} else if(CHILD(0).isMultiplication()) {
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(!b_x && CHILD(0)[i] == x_var) {
+							b_x = true;
+						} else if(CHILD(0)[i].contains(x_var)) {
+							return false;
+						} else {
+							mmul.addChild(CHILD(0)[i]);
+						}
+					}
+				}
+				if(!b_x) return false;
+				multiply(x_var);
+				MathStructure mterm(x_var);
+				mterm ^= nr_two;
+				if(mmul.size() > 0) {
+					if(mmul.size() == 1) mmul.setToChild(1);
+					MathStructure mmul2(mmul);
+					mmul ^= 2;
+					mterm *= mmul;
+				}
+				mterm.negate();
+				mterm += m_one;
+				mterm ^= nr_half;
+				if(mmul.size() > 0) {
+					mterm /= mmul;
+				}
+				add(mterm);
+			} else if(o_function == CALCULATOR->f_acos && SIZE == 1) {
+				bool b_x = false;
+				MathStructure mmul;
+				mmul.setType(STRUCT_MULTIPLICATION);
+				if(CHILD(0) == x_var) {
+					b_x = true;
+				} else if(CHILD(0).isMultiplication()) {
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(!b_x && CHILD(0)[i] == x_var) {
+							b_x = true;
+						} else if(CHILD(0)[i].contains(x_var)) {
+							return false;
+						} else {
+							mmul.addChild(CHILD(0)[i]);
+						}
+					}
+				}
+				if(!b_x) return false;
+				multiply(x_var);
+				MathStructure mterm(x_var);
+				mterm ^= nr_two;
+				if(mmul.size() > 0) {
+					if(mmul.size() == 1) mmul.setToChild(1);
+					MathStructure mmul2(mmul);
+					mmul ^= 2;
+					mterm *= mmul;
+				}
+				mterm.negate();
+				mterm += m_one;
+				mterm ^= nr_half;
+				if(mmul.size() > 0) {
+					mmul.inverse();
+					mterm /= mmul;
+				}
+				subtract(mterm);
+			} else if(o_function == CALCULATOR->f_atan && SIZE == 1) {
+				bool b_x = false;
+				MathStructure mmul;
+				mmul.setType(STRUCT_MULTIPLICATION);
+				if(CHILD(0) == x_var) {
+					b_x = true;
+				} else if(CHILD(0).isMultiplication()) {
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(!b_x && CHILD(0)[i] == x_var) {
+							b_x = true;
+						} else if(CHILD(0)[i].contains(x_var)) {
+							return false;
+						} else {
+							mmul.addChild(CHILD(0)[i]);
+						}
+					}
+				}
+				if(!b_x) return false;
+				multiply(x_var);
+				setFunction(CALCULATOR->f_cos);
+				MathStructure mterm(x_var);
+				mterm ^= nr_two;
+				if(mmul.size() > 0) {
+					if(mmul.size() == 1) mmul.setToChild(1);
+					MathStructure mmul2(mmul);
+					mmul ^= 2;
+					mterm *= mmul;
+				}
+				mterm += m_one;
+				mterm.transform(STRUCT_FUNCTION);
+				mterm.setFunction(CALCULATOR->f_ln);
+				if(mmul.size() > 0) {
+					mmul.inverse();
+					mmul *= nr_two;
+					mterm /= mmul;
+				}
+				subtract(mterm);
+			} else if(o_function == CALCULATOR->f_sinh && SIZE == 1) {
+				bool b_x = false;
+				MathStructure mmul;
+				mmul.setType(STRUCT_MULTIPLICATION);
+				if(CHILD(0) == x_var) {
+					b_x = true;
+				} else if(CHILD(0).isMultiplication()) {
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(!b_x && CHILD(0)[i] == x_var) {
+							b_x = true;
+						} else if(CHILD(0)[i].contains(x_var)) {
+							return false;
+						} else {
+							mmul.addChild(CHILD(0)[i]);
+						}
+					}
+				}
+				if(!b_x) return false;
+				setFunction(CALCULATOR->f_cosh);
+				if(mmul.size() > 0) {
+					if(mmul.size() == 1) mmul.setToChild(1);
+					divide(mmul);
+				}
+			} else if(o_function == CALCULATOR->f_cosh && SIZE == 1) {
+				bool b_x = false;
+				MathStructure mmul;
+				mmul.setType(STRUCT_MULTIPLICATION);
+				if(CHILD(0) == x_var) {
+					b_x = true;
+				} else if(CHILD(0).isMultiplication()) {
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(!b_x && CHILD(0)[i] == x_var) {
+							b_x = true;
+						} else if(CHILD(0)[i].contains(x_var)) {
+							return false;
+						} else {
+							mmul.addChild(CHILD(0)[i]);
+						}
+					}
+				}
+				if(!b_x) return false;
+				setFunction(CALCULATOR->f_sinh);
+				if(mmul.size() > 0) {
+					if(mmul.size() == 1) mmul.setToChild(1);
+					divide(mmul);
+				}
+			} else if(o_function == CALCULATOR->f_tanh && SIZE == 1 && CHILD(0) == x_var) {
+				setFunction(CALCULATOR->f_cosh);
+				transform(STRUCT_FUNCTION);
+				setFunction(CALCULATOR->f_ln);
+			} else if(o_function == CALCULATOR->f_asinh && SIZE == 1) {
+				bool b_x = false;
+				MathStructure mmul;
+				mmul.setType(STRUCT_MULTIPLICATION);
+				if(CHILD(0) == x_var) {
+					b_x = true;
+				} else if(CHILD(0).isMultiplication()) {
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(!b_x && CHILD(0)[i] == x_var) {
+							b_x = true;
+						} else if(CHILD(0)[i].contains(x_var)) {
+							return false;
+						} else {
+							mmul.addChild(CHILD(0)[i]);
+						}
+					}
+				}
+				if(!b_x) return false;
+				multiply(x_var);
+				MathStructure mterm(x_var);
+				mterm ^= nr_two;
+				if(mmul.size() > 0) {
+					if(mmul.size() == 1) mmul.setToChild(1);
+					MathStructure mmul2(mmul);
+					mmul ^= 2;
+					mterm *= mmul;
+				}
+				mterm += m_one;
+				mterm ^= nr_half;
+				if(mmul.size() > 0) {
+					mterm /= mmul;
+				}
+				subtract(mterm);
+			} else if(o_function == CALCULATOR->f_acosh && SIZE == 1) {
+				bool b_x = false;
+				MathStructure mmul;
+				mmul.setType(STRUCT_MULTIPLICATION);
+				if(CHILD(0) == x_var) {
+					b_x = true;
+				} else if(CHILD(0).isMultiplication()) {
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(!b_x && CHILD(0)[i] == x_var) {
+							b_x = true;
+						} else if(CHILD(0)[i].contains(x_var)) {
+							return false;
+						} else {
+							mmul.addChild(CHILD(0)[i]);
+						}
+					}
+				}
+				if(!b_x) return false;
+				multiply(x_var);
+				MathStructure mterm(CHILD(0));
+				mterm += m_one;
+				mterm ^= nr_half;
+				MathStructure msqrt2(CHILD(0));
+				msqrt2 += m_minus_one;
+				msqrt2 ^= nr_half;
+				mterm *= msqrt2;
+				if(mmul.size() > 0) {
+					if(mmul.size() == 1) mmul.setToChild(1);
+					mmul.inverse();
+					mterm /= mmul;
+				}
+				subtract(mterm);
+			} else if(o_function == CALCULATOR->f_atanh && SIZE == 1) {
+				bool b_x = false;
+				MathStructure mmul;
+				mmul.setType(STRUCT_MULTIPLICATION);
+				if(CHILD(0) == x_var) {
+					b_x = true;
+				} else if(CHILD(0).isMultiplication()) {
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(!b_x && CHILD(0)[i] == x_var) {
+							b_x = true;
+						} else if(CHILD(0)[i].contains(x_var)) {
+							return false;
+						} else {
+							mmul.addChild(CHILD(0)[i]);
+						}
+					}
+				}
+				if(!b_x) return false;
+				multiply(x_var);
+				setFunction(CALCULATOR->f_cos);
+				MathStructure mterm(x_var);
+				mterm ^= nr_two;
+				if(mmul.size() > 0) {
+					if(mmul.size() == 1) mmul.setToChild(1);
+					MathStructure mmul2(mmul);
+					mmul ^= 2;
+					mterm *= mmul;
+				}
+				mterm.negate();
+				mterm += m_one;
+				mterm.transform(STRUCT_FUNCTION);
+				mterm.setFunction(CALCULATOR->f_ln);
+				if(mmul.size() > 0) {
+					mmul.inverse();
+					mmul *= nr_two;
+					mterm /= mmul;
+				}
+				add(mterm);
 			} else if(o_function == CALCULATOR->f_root && THIS_VALID_ROOT && CHILD(0) == x_var) {
 				Number nr_mul(CHILD(1).number());
 				nr_mul.recip();
