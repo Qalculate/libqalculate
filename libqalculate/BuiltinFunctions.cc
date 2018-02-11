@@ -3948,33 +3948,24 @@ IntegrateFunction::IntegrateFunction() : MathFunction("integrate", 1, 4) {
 	setDefaultValue(4, "undefined");
 }
 int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	//CALCULATOR->error(false, _("The %s function is incomplete, unreliable and unstable. Use at your own risk and avoid complex expressions."), preferredDisplayName().name.c_str(), NULL);
 	mstruct = vargs[0];
+	mstruct.eval(eo);
+	MathStructure mbak(mstruct);
 	if(!mstruct.integrate(vargs[1], eo)) {
-		mstruct = vargs[0];
-		mstruct.eval(eo);
-		if(mstruct == vargs[0]) {
-			return 0;
-		}
-		MathStructure mstruct2(mstruct);
-		if(!mstruct.integrate(vargs[1], eo)) {
-			mstruct = mstruct2;
-			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
-			return -1;
-		}
-		mstruct += "C";
-	} else {
-		mstruct += "C";
+		mstruct = mbak;
+		CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
+		return -1;
 	}
+	mstruct += "C";
 	if(!vargs[2].isUndefined()) {
 		if(vargs[3].isUndefined()) {
 			CALCULATOR->error(true, _("Both the lower and upper limit must be set to get the definite integral."), NULL);
-			mstruct = vargs[0];
+			mstruct = mbak;
 			return -1;
 		}
 		if(mstruct.containsFunction(this, false, true, true) > 0) {
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
-			mstruct = vargs[0];
+			mstruct = mbak;
 			return -1;
 		}
 		MathStructure mstruct_lower(mstruct);
@@ -4524,6 +4515,13 @@ bool contains_ignore_diff(const MathStructure &m, const MathStructure &mstruct, 
 	for(size_t i = 0; i < m.size(); i++) {
 		if(contains_ignore_diff(m[i], mstruct, mdiff)) return true;
 	}
+	if(m.isVariable() && m.variable()->isKnown()) {
+		return contains_ignore_diff(((KnownVariable*) m.variable())->get(), mstruct, mdiff);
+	} else if(m.isVariable()) {
+		if(mstruct.isNumber() || !m.representsNumber()) return true;
+	} else if(m.isAborted()) {
+		return true;
+	}
 	return false;
 }
 
@@ -4531,7 +4529,7 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 	int i_deg = m_diff[2].number().intValue();
 	MathStructure m_y(m_diff[0]), m_x(m_diff[1]);
 	if(m_eqn[0] == m_diff) {
-		if(!m_eqn[1].contains(m_y)) {
+		if(m_eqn[1].containsRepresentativeOf(m_y, true, true) == 0) {
 			// y'=f(x)
 			m_eqn[0] = m_y;
 			for(int i = i_deg; i > 0; i--) {
@@ -4558,7 +4556,7 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 					if(!b && m_eqn[1][i] == m_y) {
 						i_my = i;
 						b = true;
-					} else if(m_eqn[1][i].contains(m_y)) {
+					} else if(m_eqn[1][i].containsRepresentativeOf(m_y, true, true) != 0) {
 						b = false;
 						break;
 					}
@@ -4585,7 +4583,7 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 					if(m_eqn[1][i] == m_y) {
 							if(m_muly.isZero()) m_muly = m_one;
 						else m_muly.add(m_one, true);
-					} else if(m_eqn[1][i].contains(m_y)) {
+					} else if(m_eqn[1][i].containsRepresentativeOf(m_y, true, true) != 0) {
 							if(m_left.isZero() && m_eqn[1][i].isPower() && m_eqn[1][i][0] == m_y && (m_mul_exp.isZero() || m_eqn[1][i][1] == m_exp)) {
 								if(m_mul_exp.isZero()) {
 								m_exp = m_eqn[1][i][1];
@@ -4604,7 +4602,7 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 									i_my = i2;
 									b2 = true;
 									b2_exp = true;
-								} else if(m_eqn[1][i][i2].contains(m_y)) {
+								} else if(m_eqn[1][i][i2].containsRepresentativeOf(m_y, true, true) != 0) {
 									b2 = false;
 									break;
 								}
@@ -4702,7 +4700,7 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 		}
 	}
 	if(i_deg == 1) {
-		if(!m_eqn[1].contains(m_y) && !contains_ignore_diff(m_eqn[0], m_x, m_diff)) {
+		if(m_eqn[1].containsRepresentativeOf(m_y, true, true) == 0 && !contains_ignore_diff(m_eqn[0], m_x, m_diff)) {
 			if(m_eqn[0].isMultiplication() && m_eqn[0].size() >= 2) {
 				size_t i_dy = 0;
 				bool b = false;
@@ -4710,7 +4708,7 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 					if(!b && m_eqn[0][i] == m_diff) {
 						i_dy = i;
 						b = true;
-					} else if(m_eqn[0][i].contains(m_diff)) {
+					} else if(m_eqn[0][i].containsRepresentativeOf(m_diff, true, true) != 0) {
 						b = false;
 						break;
 					}
@@ -4745,7 +4743,7 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 							if(!b2 && m_eqn[0][i][i2] == m_diff) {
 								i_dy = i2;
 								b2 = true;
-							} else if(m_eqn[1][i][i2].contains(m_diff)) {
+							} else if(m_eqn[1][i][i2].containsRepresentativeOf(m_diff, true, true) != 0) {
 								b2 = false;
 								break;
 							}
