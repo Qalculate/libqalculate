@@ -285,7 +285,7 @@ class Calculator {
 	MathFunction *f_re, *f_im, *f_arg, *f_numerator, *f_denominator, *f_interval;
   	MathFunction *f_sqrt, *f_cbrt, *f_root, *f_sq;
 	MathFunction *f_exp;
-	MathFunction *f_ln, *f_logn;
+	MathFunction *f_ln, *f_logn, *f_li;
 	MathFunction *f_lambert_w;
 	MathFunction *f_sin, *f_cos, *f_tan, *f_asin, *f_acos, *f_atan, *f_sinh, *f_cosh, *f_tanh, *f_asinh, *f_acosh, *f_atanh, *f_atan2, *f_sinc, *f_radians_to_default_angle_unit;
 	MathFunction *f_zeta, *f_gamma, *f_digamma, *f_beta, *f_airy, *f_besselj, *f_bessely, *f_erf, *f_erfc;
