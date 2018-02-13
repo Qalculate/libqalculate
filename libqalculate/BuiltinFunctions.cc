@@ -3959,10 +3959,12 @@ IntegrateFunction::IntegrateFunction() : MathFunction("integrate", 1, 4) {
 	setDefaultValue(4, "undefined");
 }
 int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	EvaluationOptions eo2 = eo;
+	eo2.do_polynomial_division = true;
 	mstruct = vargs[0];
-	mstruct.eval(eo);
+	mstruct.eval(eo2);
 	MathStructure mbak(mstruct);
-	if(!mstruct.integrate(vargs[1], eo)) {
+	if(!mstruct.integrate(vargs[1], eo, true)) {
 		mstruct = mbak;
 		CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 		return -1;
