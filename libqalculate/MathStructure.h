@@ -612,6 +612,7 @@ class MathStructure {
 		void transform(StructureType mtype, string sym);
 		void transform_nocopy(StructureType mtype, MathStructure *o);
 		void transform(StructureType mtype);
+		void transform(MathFunction *o);
 		//@}
 		
 		/** @name Functions/operators for comparisons */
