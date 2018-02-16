@@ -2912,15 +2912,32 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				calculateMultiplyLast(eo);
 				return 1;
 			}
-		} else if((mstruct.function() == CALCULATOR->f_ln || mstruct.function() == CALCULATOR->f_Ei) && mstruct.size() == 1 && isZero() && mstruct[0].representsNumber()) {
-			if(mstruct[0].representsNonZero() || warn_about_assumed_not_value(mstruct[0], m_zero, eo)) {
-				MERGE_APPROX_AND_PREC(mstruct)
-				return 2;
+		}
+	}
+	if(isZero()) {
+		if(mstruct.isFunction()) {
+			if((mstruct.function() == CALCULATOR->f_ln || mstruct.function() == CALCULATOR->f_Ei) && mstruct.size() == 1) {
+				if(mstruct[0].representsNonZero() || warn_about_assumed_not_value(mstruct[0], m_zero, eo)) {
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 2;
+				}
+			} else if(mstruct.function() == CALCULATOR->f_li && mstruct.size() == 1) {
+				if(mstruct.representsNumber(true) || warn_about_assumed_not_value(mstruct[0], m_one, eo)) {
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 2;
+				}
 			}
-		} else if(mstruct.function() == CALCULATOR->f_li && mstruct.size() == 1 && isZero()) {
-			if(mstruct.representsNumber(true) || warn_about_assumed_not_value(mstruct[0], m_one, eo)) {
-				MERGE_APPROX_AND_PREC(mstruct)
-				return 2;
+		} else if(mstruct.isPower() && mstruct[0].isFunction() && mstruct[1].representsNumber()) {
+			if((mstruct[0].function() == CALCULATOR->f_ln || mstruct[0].function() == CALCULATOR->f_Ei) && mstruct[0].size() == 1) {
+				if(mstruct[0][0].representsNonZero() || warn_about_assumed_not_value(mstruct[0][0], m_zero, eo)) {
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 2;
+				}
+			} else if(mstruct[0].function() == CALCULATOR->f_li && mstruct[0].size() == 1) {
+				if(mstruct[0].representsNumber(true) || warn_about_assumed_not_value(mstruct[0][0], m_one, eo)) {
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 2;
+				}
 			}
 		}
 	}
@@ -3346,6 +3363,21 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
 					}
+					if(CHILD(0).isFunction() && mstruct.isZero() && CHILD(1).representsNumber()) {
+						if((CHILD(0).function() == CALCULATOR->f_ln || CHILD(0).function() == CALCULATOR->f_Ei) && SIZE == 1) {
+							if(CHILD(0)[0].representsNonZero() || warn_about_assumed_not_value(CHILD(0)[0], m_zero, eo)) {
+								clear(true);
+								MERGE_APPROX_AND_PREC(mstruct)
+								return 3;
+							}
+						} else if(CHILD(0).function() == CALCULATOR->f_li && SIZE == 1) {
+							if(CHILD(0).representsNumber(true) || warn_about_assumed_not_value(CHILD(0)[0], m_one, eo)) {
+								clear(true);
+								MERGE_APPROX_AND_PREC(mstruct)
+								return 3;
+							}
+						}
+					}
 					break;
 				}
 			}
@@ -3455,7 +3487,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 1;
 				}
-			} else if((o_function == CALCULATOR->f_ln || o_function == CALCULATOR->f_Ei) && SIZE == 1 && mstruct.isZero() && CHILD(0).representsNumber()) {
+			} else if((o_function == CALCULATOR->f_ln || o_function == CALCULATOR->f_Ei) && SIZE == 1 && mstruct.isZero()) {
 				if(CHILD(0).representsNonZero() || warn_about_assumed_not_value(CHILD(0), m_zero, eo)) {
 					clear(true);
 					MERGE_APPROX_AND_PREC(mstruct)
@@ -17007,127 +17039,333 @@ bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, cons
 		mstruct.add_nocopy(mthis);
 		mstruct.multiply(x_var);
 	} else if(mstruct.function() == CALCULATOR->f_sin && mstruct.size() == 1) {
-		if(!mfac.isOne() || !mpow.isNumber() || !mpow.number().isInteger() || !mpow.number().isLessThanOrEqualTo(10) || !mpow.number().isGreaterThanOrEqualTo(-2) || mpow.isZero()) return false;
+		if(!mpow.isNumber() || !mpow.number().isInteger() || !mpow.number().isLessThanOrEqualTo(100) || !mpow.number().isGreaterThanOrEqualTo(-2) || mpow.isZero()) return false;
 		MathStructure mexp, mmul, madd;
 		if(!integrate_info(mstruct[0], x_var, madd, mmul, mexp, true) || !mexp.isOne()) return false;
-		if(mpow.isOne()) {
-			mstruct.setFunction(CALCULATOR->f_cos);
-			mstruct.multiply(m_minus_one);
-			if(!mmul.isOne()) mstruct.divide(mmul);
-		} else if(mpow.number().isTwo()) {
-			if(!madd.isZero()) {
-				mstruct[0] = x_var;
-				mstruct[0] *= CALCULATOR->getRadUnit();
-			}
-			mstruct[0] *= nr_two;
-			mstruct /= 4;
-			if(madd.isZero() && !mmul.isOne()) mstruct /= mmul;
-			mstruct.negate();
-			MathStructure xhalf(x_var);
-			xhalf *= nr_half;
-			mstruct += xhalf;
-			if(!madd.isZero()) {
-				MathStructure marg(x_var);
-				if(!mmul.isOne()) marg *= mmul;
-				marg += madd;
-				mstruct.replace(x_var, marg);
+		if(mfac.isOne()) {
+			if(mpow.isOne()) {
+				mstruct.setFunction(CALCULATOR->f_cos);
+				mstruct.multiply(m_minus_one);
 				if(!mmul.isOne()) mstruct.divide(mmul);
+			} else if(mpow.number().isTwo()) {
+				if(!madd.isZero()) {
+					mstruct[0] = x_var;
+					mstruct[0] *= CALCULATOR->getRadUnit();
+				}
+				mstruct[0] *= nr_two;
+				mstruct /= 4;
+				if(madd.isZero() && !mmul.isOne()) mstruct /= mmul;
+				mstruct.negate();
+				MathStructure xhalf(x_var);
+				xhalf *= nr_half;
+				mstruct += xhalf;
+				if(!madd.isZero()) {
+					MathStructure marg(x_var);
+					if(!mmul.isOne()) marg *= mmul;
+					marg += madd;
+					mstruct.replace(x_var, marg);
+					if(!mmul.isOne()) mstruct.divide(mmul);
+				}
+			} else if(mpow.number().isMinusOne()) {
+				MathStructure mcot(mstruct);
+				mcot.setFunction(CALCULATOR->f_tan);
+				mcot.inverse();
+				mstruct.inverse();
+				mstruct += mcot;
+				mstruct.transform(STRUCT_FUNCTION);
+				mstruct.setFunction(CALCULATOR->f_abs);
+				mstruct.transform(STRUCT_FUNCTION);
+				mstruct.setFunction(CALCULATOR->f_ln);
+				if(!mmul.isOne()) mstruct.divide(mmul);
+				mstruct.negate();
+			} else if(mpow.number() == -2) {
+				mstruct.setFunction(CALCULATOR->f_tan);
+				mstruct.inverse();
+				mstruct.negate();
+				if(!mmul.isOne()) mstruct.divide(mmul);
+			} else {
+				MathStructure mbak(mstruct);
+				MathStructure nm1(mpow);
+				nm1 += nr_minus_one;
+				mstruct ^= nm1;
+				MathStructure mcos(mbak);
+				mcos.setFunction(CALCULATOR->f_cos);
+				mstruct *= mcos;
+				mstruct.negate();
+				mmul *= mpow;
+				mstruct /= mmul;
+				MathStructure minteg(mbak);
+				MathStructure nm2(mpow);
+				nm2 += Number(-2, 1);
+				minteg ^= nm2;
+				minteg.integrate(x_var, eo);
+				minteg *= nm1;
+				minteg /= mpow;
+				mstruct += minteg;
 			}
-		} else if(mpow.number().isMinusOne()) {
-			MathStructure mcot(mstruct);
-			mcot.setFunction(CALCULATOR->f_tan);
-			mcot.inverse();
-			mstruct.inverse();
-			mstruct += mcot;
-			mstruct.transform(STRUCT_FUNCTION);
-			mstruct.setFunction(CALCULATOR->f_abs);
-			mstruct.transform(STRUCT_FUNCTION);
-			mstruct.setFunction(CALCULATOR->f_ln);
-			if(!mmul.isOne()) mstruct.divide(mmul);
-			mstruct.negate();
-		} else if(mpow.number() == -2) {
-			mstruct.setFunction(CALCULATOR->f_tan);
-			mstruct.inverse();
-			mstruct.negate();
-			if(!mmul.isOne()) mstruct.divide(mmul);
-		} else {
-			MathStructure mbak(mstruct);
-			MathStructure nm1(mpow);
-			nm1 -= m_one;
-			mstruct ^= nm1;
-			MathStructure mcos(mbak);
-			mcos.setFunction(CALCULATOR->f_cos);
-			mstruct *= mcos;
-			mstruct.negate();
-			mmul *= mpow;
-			mstruct /= mmul;
-			MathStructure minteg(mbak);
-			MathStructure nm2(mpow);
-			nm2 -= nr_two;
-			minteg ^= nm2;
-			minteg.integrate(x_var, eo);
-			minteg *= nm1;
-			minteg /= mpow;
-			mstruct += minteg;
+			return true;
+		} else if(mfac == x_var || (mfac.isPower() && mfac[0] == x_var && mfac[1].containsRepresentativeOf(x_var, true, true) == 0)) {
+			MathStructure mfacexp(1, 1, 0);
+			if(mfac != x_var) mfacexp = mfac[1];
+			if(mpow.isOne()) {
+				if(mfacexp.isOne()) {
+					MathStructure mterm2(mstruct);
+					mterm2.setFunction(CALCULATOR->f_cos);
+					mterm2 *= x_var;
+					if(!mmul.isOne()) {
+						mterm2 /= mmul;
+						mmul ^= nr_two;
+						mstruct /= mmul;
+					}
+					mstruct -= mterm2;
+					return true;
+				} else if(mfacexp.isInteger() && mfacexp.number().isPositive() && mfacexp.number().isLessThan(100)) {
+					mstruct.setFunction(CALCULATOR->f_cos);
+					MathStructure mterm2(mstruct);
+					mterm2 *= x_var;
+					mterm2.last() ^= mfacexp;
+					if(!mmul.isOne()) mterm2 /= mmul;
+					mstruct *= x_var;
+					mstruct.last() ^= mfacexp;
+					mstruct.last().last() += nr_minus_one;
+					mstruct.integrate(x_var, eo);
+					mstruct *= mfacexp;
+					if(!mmul.isOne()) mstruct /= mmul;
+					mstruct.subtract(mterm2);
+					return true;
+				}
+			} else if(mpow.number().isTwo()) {
+				if(mfacexp.isOne()) {
+					MathStructure mterm2(mstruct);
+					MathStructure mterm3(x_var);
+					mterm3 ^= nr_two;
+					mterm3 *= Number(1, 4);
+					mterm2[0] *= nr_two;
+					mterm2 *= x_var;
+					if(!mmul.isOne()) mterm2 /= mmul;
+					mterm2 *= Number(-1, 4);
+					mstruct.setFunction(CALCULATOR->f_cos);
+					mstruct[0] *= nr_two;
+					if(!mmul.isOne()) {
+						mmul ^= nr_two;
+						mstruct /= mmul;
+					}
+					mstruct *= Number(-1, 8);
+					mstruct += mterm2;
+					mstruct += mterm3;
+					return true;
+				} else if(mfacexp.number().isTwo()) {
+					MathStructure mterm2(mstruct);
+					MathStructure mterm3(x_var);
+					mterm3 ^= nr_three;
+					mterm3 *= Number(1, 6);
+					mterm2[0] *= nr_two;
+					MathStructure mterm21(1, 8, 0);
+					if(!mmul.isOne()) {
+						mterm21 *= mmul;
+						mterm21.last() ^= Number(-3, 1);
+					}
+					MathStructure mterm22(x_var);
+					mterm22 ^= 2;
+					if(!mmul.isOne()) mterm22 /= mmul;
+					mterm22 *= Number(-1, 4);
+					mterm21 += mterm22;
+					mterm2 *= mterm21;
+					mstruct.setFunction(CALCULATOR->f_cos);
+					mstruct[0] *= nr_two;
+					mstruct *= x_var;
+					if(!mmul.isOne()) {
+						mmul ^= nr_two;
+						mstruct /= mmul;
+					}
+					mstruct *= Number(-1, 4);
+					mstruct += mterm2;
+					mstruct += mterm3;
+					return true;
+				}
+			}
+		} else if(mfac.isFunction() && mpow.isOne()) {
+			if(mfac.function() == CALCULATOR->f_sin && mfac.size() == 1) {
+				MathStructure mexpf, mmulf, maddf;
+				if(!integrate_info(mfac[0], x_var, maddf, mmulf, mexpf, true) || !mexpf.isOne()) return false;
+				MathStructure mterm2(mstruct);
+				mterm2[0] += mfac[0];
+				mstruct[0] -= mfac[0];
+				MathStructure mden1(mmul);
+				mden1 -= mmulf;
+				mden1 *= 2;
+				MathStructure mden2(mmul);
+				mden2 += mmulf;
+				mden2 *= 2;
+				mterm2 /= mden2;
+				mstruct /= mden1;
+				mstruct -= mterm2;
+				return true;
+			}
 		}
+		return false;
 	} else if(mstruct.function() == CALCULATOR->f_cos && mstruct.size() == 1) {
-		if(!mfac.isOne() || !mpow.isNumber() || !mpow.number().isInteger() || !mpow.number().isLessThanOrEqualTo(10) || !mpow.number().isGreaterThanOrEqualTo(-2) || mpow.isZero()) return false;
+		if(!mpow.isNumber() || !mpow.number().isInteger() || !mpow.number().isLessThanOrEqualTo(100) || !mpow.number().isGreaterThanOrEqualTo(-2) || mpow.isZero()) return false;
 		MathStructure mexp, mmul, madd;
 		if(!integrate_info(mstruct[0], x_var, madd, mmul, mexp, true) || !mexp.isOne()) return false;
-		if(mpow.isOne()) {
-			mstruct.setFunction(CALCULATOR->f_sin);
-			if(!mmul.isOne()) mstruct.divide(mmul);
-		} else if(mpow.number().isTwo()) {
-			mstruct.setFunction(CALCULATOR->f_sin);
-			if(!madd.isZero()) {
-				mstruct[0] = x_var;
-				mstruct[0] *= CALCULATOR->getRadUnit();
-			}
-			mstruct[0] *= nr_two;
-			mstruct /= 4;
-			if(madd.isZero() && !mmul.isOne()) mstruct /= mmul;
-			MathStructure xhalf(x_var);
-			xhalf *= nr_half;
-			mstruct += xhalf;
-			if(!madd.isZero()) {
-				MathStructure marg(x_var);
-				if(!mmul.isOne()) marg *= mmul;
-				marg += madd;
-				mstruct.replace(x_var, marg);
+		if(mfac.isOne()) {
+			if(mpow.isOne()) {
+				mstruct.setFunction(CALCULATOR->f_sin);
 				if(!mmul.isOne()) mstruct.divide(mmul);
+			} else if(mpow.number().isTwo()) {
+				mstruct.setFunction(CALCULATOR->f_sin);
+				if(!madd.isZero()) {
+					mstruct[0] = x_var;
+					mstruct[0] *= CALCULATOR->getRadUnit();
+				}
+				mstruct[0] *= nr_two;
+				mstruct /= 4;
+				if(madd.isZero() && !mmul.isOne()) mstruct /= mmul;
+				MathStructure xhalf(x_var);
+				xhalf *= nr_half;
+				mstruct += xhalf;
+				if(!madd.isZero()) {
+					MathStructure marg(x_var);
+					if(!mmul.isOne()) marg *= mmul;
+					marg += madd;
+					mstruct.replace(x_var, marg);
+					if(!mmul.isOne()) mstruct.divide(mmul);
+				}
+			} else if(mpow.number().isMinusOne()) {
+				MathStructure mtan(mstruct);
+				mtan.setFunction(CALCULATOR->f_tan);
+				mstruct.inverse();
+				mstruct += mtan;
+				mstruct.transform(STRUCT_FUNCTION);
+				mstruct.setFunction(CALCULATOR->f_abs);
+				mstruct.transform(STRUCT_FUNCTION);
+				mstruct.setFunction(CALCULATOR->f_ln);
+				if(!mmul.isOne()) mstruct.divide(mmul);
+			} else if(mpow.number() == -2) {
+				mstruct.setFunction(CALCULATOR->f_tan);
+				if(!mmul.isOne()) mstruct.divide(mmul);
+			} else {
+				MathStructure mbak(mstruct);
+				MathStructure nm1(mpow);
+				nm1 += nr_minus_one;
+				mstruct ^= nm1;
+				MathStructure msin(mbak);
+				msin.setFunction(CALCULATOR->f_sin);
+				mstruct *= msin;
+				mmul *= mpow;
+				mstruct /= mmul;
+				MathStructure minteg(mbak);
+				MathStructure nm2(mpow);
+				nm2 += Number(-2, 1);
+				minteg ^= nm2;
+				minteg.integrate(x_var, eo);
+				minteg *= nm1;
+				minteg /= mpow;
+				mstruct += minteg;
 			}
-		} else if(mpow.number().isMinusOne()) {
-			MathStructure mtan(mstruct);
-			mtan.setFunction(CALCULATOR->f_tan);
-			mstruct.inverse();
-			mstruct += mtan;
-			mstruct.transform(STRUCT_FUNCTION);
-			mstruct.setFunction(CALCULATOR->f_abs);
-			mstruct.transform(STRUCT_FUNCTION);
-			mstruct.setFunction(CALCULATOR->f_ln);
-			if(!mmul.isOne()) mstruct.divide(mmul);
-		} else if(mpow.number() == -2) {
-			mstruct.setFunction(CALCULATOR->f_tan);
-			if(!mmul.isOne()) mstruct.divide(mmul);
-		} else {
-			MathStructure mbak(mstruct);
-			MathStructure nm1(mpow);
-			nm1 -= m_one;
-			mstruct ^= nm1;
-			MathStructure msin(mbak);
-			msin.setFunction(CALCULATOR->f_sin);
-			mstruct *= msin;
-			mmul *= mpow;
-			mstruct /= mmul;
-			MathStructure minteg(mbak);
-			MathStructure nm2(mpow);
-			nm2 -= nr_two;
-			minteg ^= nm2;
-			minteg.integrate(x_var, eo);
-			minteg *= nm1;
-			minteg /= mpow;
-			mstruct += minteg;
+			return true;
+		} else if(mfac == x_var || (mfac.isPower() && mfac[0] == x_var && mfac[1].containsRepresentativeOf(x_var, true, true) == 0)) {
+			MathStructure mfacexp(1, 1, 0);
+			if(mfac != x_var) mfacexp = mfac[1];
+			if(mpow.isOne()) {
+				if(mfacexp.isOne()) {
+					MathStructure mterm2(mstruct);
+					mterm2.setFunction(CALCULATOR->f_sin);
+					mterm2 *= x_var;
+					if(!mmul.isOne()) {
+						mterm2 /= mmul;
+						mmul ^= nr_two;
+						mstruct /= mmul;
+					}
+					mstruct += mterm2;
+					return true;
+				} else if(mfacexp.isInteger() && mfacexp.number().isPositive() && mfacexp.number().isLessThan(100)) {
+					mstruct.setFunction(CALCULATOR->f_sin);
+					MathStructure mterm2(mstruct);
+					mterm2 *= x_var;
+					mterm2.last() ^= mfacexp;
+					if(!mmul.isOne()) mterm2 /= mmul;
+					mstruct *= x_var;
+					mstruct.last() ^= mfacexp;
+					mstruct.last().last() += nr_minus_one;
+					mstruct.integrate(x_var, eo);
+					mstruct *= mfacexp;
+					if(!mmul.isOne()) mstruct /= mmul;
+					mstruct.negate();
+					mstruct += mterm2;
+					return true;
+				}
+			} else if(mpow.number().isTwo()) {
+				if(mfacexp.isOne()) {
+					MathStructure mterm2(mstruct);
+					mterm2.setFunction(CALCULATOR->f_sin);
+					MathStructure mterm3(x_var);
+					mterm3 ^= nr_two;
+					mterm3 *= Number(1, 4);
+					mterm2[0] *= nr_two;
+					mterm2 *= x_var;
+					if(!mmul.isOne()) mterm2 /= mmul;
+					mterm2 *= Number(1, 4);
+					mstruct[0] *= nr_two;
+					if(!mmul.isOne()) {
+						mmul ^= nr_two;
+						mstruct /= mmul;
+					}
+					mstruct *= Number(1, 8);
+					mstruct += mterm2;
+					mstruct += mterm3;
+					return true;
+				} else if(mfacexp.number().isTwo()) {
+					MathStructure mterm2(mstruct);
+					mterm2.setFunction(CALCULATOR->f_sin);
+					MathStructure mterm3(x_var);
+					mterm3 ^= nr_three;
+					mterm3 *= Number(1, 6);
+					mterm2[0] *= nr_two;
+					MathStructure mterm21(-1, 8, 0);
+					if(!mmul.isOne()) {
+						mterm21 *= mmul;
+						mterm21.last() ^= Number(-3, 1);
+					}
+					MathStructure mterm22(x_var);
+					mterm22 ^= 2;
+					if(!mmul.isOne()) mterm22 /= mmul;
+					mterm22 *= Number(1, 4);
+					mterm21 += mterm22;
+					mterm2 *= mterm21;
+					mstruct[0] *= nr_two;
+					mstruct *= x_var;
+					if(!mmul.isOne()) {
+						mmul ^= nr_two;
+						mstruct /= mmul;
+					}
+					mstruct *= Number(1, 4);
+					mstruct += mterm2;
+					mstruct += mterm3;
+					return true;
+				}
+			}
+		} else if(mfac.isFunction() && mpow.isOne()) {
+			if(mfac.function() == CALCULATOR->f_cos && mfac.size() == 1) {
+				MathStructure mexpf, mmulf, maddf;
+				if(!integrate_info(mfac[0], x_var, maddf, mmulf, mexpf, true) || !mexpf.isOne()) return false;
+				mstruct.setFunction(CALCULATOR->f_sin);
+				MathStructure mterm2(mstruct);
+				mterm2[0] += mfac[0];
+				mstruct[0] -= mfac[0];
+				MathStructure mden1(mmul);
+				mden1 -= mmulf;
+				mden1 *= 2;
+				MathStructure mden2(mmul);
+				mden2 += mmulf;
+				mden2 *= 2;
+				mterm2 /= mden2;
+				mstruct /= mden1;
+				mstruct += mterm2;
+				return true;
+			}
 		}
+		return false;
 	} else if(mstruct.function() == CALCULATOR->f_tan && mstruct.size() == 1) {
 		if(!mfac.isOne() || !mpow.isNumber() || !mpow.number().isInteger() || !mpow.number().isLessThanOrEqualTo(10) || !mpow.number().isGreaterThanOrEqualTo(-1) || mpow.isZero()) return false;
 		MathStructure mexp, mmul, madd;
@@ -17156,12 +17394,12 @@ bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, cons
 		} else {
 			MathStructure minteg(mstruct);
 			MathStructure nm1(mpow);
-			nm1 -= m_one;
+			nm1 += nr_minus_one;
 			mstruct ^= nm1;
 			mmul *= nm1;
 			mstruct /= mmul;
 			MathStructure nm2(mpow);
-			nm2 -= nr_two;
+			nm2 += Number(-2, 1);
 			minteg ^= nm2;
 			minteg.integrate(x_var, eo);
 			mstruct -= minteg;
@@ -17271,7 +17509,7 @@ bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, cons
 		} else {
 			MathStructure mbak(mstruct);
 			MathStructure nm1(mpow);
-			nm1 -= m_one;
+			nm1 += nr_minus_one;
 			mstruct ^= nm1;
 			MathStructure mcos(mbak);
 			mcos.setFunction(CALCULATOR->f_cosh);
@@ -17280,7 +17518,7 @@ bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, cons
 			mstruct /= mmul;
 			MathStructure minteg(mbak);
 			MathStructure nm2(mpow);
-			nm2 -= nr_two;
+			nm2 += Number(-2, 1);
 			minteg ^= nm2;
 			minteg.integrate(x_var, eo);
 			minteg *= nm1;
@@ -17316,7 +17554,7 @@ bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, cons
 		} else {
 			MathStructure mbak(mstruct);
 			MathStructure nm1(mpow);
-			nm1 -= m_one;
+			nm1 += nr_minus_one;
 			mstruct ^= nm1;
 			MathStructure msin(mbak);
 			msin.setFunction(CALCULATOR->f_sinh);
@@ -17325,7 +17563,7 @@ bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, cons
 			mstruct /= mmul;
 			MathStructure minteg(mbak);
 			MathStructure nm2(mpow);
-			nm2 -= nr_two;
+			nm2 += Number(-2, 1);
 			minteg ^= nm2;
 			minteg.integrate(x_var, eo);
 			minteg *= nm1;
@@ -17361,13 +17599,13 @@ bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, cons
 		} else {
 			MathStructure minteg(mstruct);
 			MathStructure nm1(mpow);
-			nm1 -= m_one;
+			nm1 += nr_minus_one;
 			mstruct ^= nm1;
 			mmul *= nm1;
 			mstruct /= mmul;
 			mstruct.negate();
 			MathStructure nm2(mpow);
-			nm2 -= nr_two;
+			nm2 += Number(-2, 1);
 			minteg ^= nm2;
 			minteg.integrate(x_var, eo);
 			mstruct += minteg;
@@ -17863,8 +18101,8 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 									MathStructure nm1(mexp);
 									nm1.negate();
 									MathStructure nm2(nm1);
-									nm1 -= m_one;
-									nm2 -= nr_two;
+									nm1 += nr_minus_one;
+									nm2 += Number(-2, 1);
 									raise(nm1);
 									multiply(nm2);
 									multiply(nm1);
