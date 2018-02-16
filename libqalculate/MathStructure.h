@@ -399,6 +399,8 @@ class MathStructure {
 		* @param index Index (starting at zero).
 		*/
 		const MathStructure &operator [] (size_t index) const;
+		MathStructure &last();
+		const MathStructure last() const;
 		void setToChild(size_t index, bool merge_precision = false, MathStructure *mparent = NULL, size_t index_this = 1);
 		void swapChildren(size_t index1, size_t index2);
 		void childToFront(size_t index);

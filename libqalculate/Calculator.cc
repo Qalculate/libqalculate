@@ -1401,6 +1401,7 @@ void Calculator::addBuiltinFunctions() {
 	f_ln = addFunction(new LogFunction());
 	f_logn = addFunction(new LognFunction());
 	f_li = addFunction(new LiFunction());
+	f_Ei = addFunction(new EiFunction());
 
 	f_lambert_w = addFunction(new LambertWFunction());
 
