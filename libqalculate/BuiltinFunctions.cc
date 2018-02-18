@@ -460,7 +460,7 @@ int BesselyFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	FR_FUNCTION_2R(bessely)
 }
 ErfFunction::ErfFunction() : MathFunction("erf", 1) {
-	NON_COMPLEX_NUMBER_ARGUMENT(1);
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1);
 }
 int ErfFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(erf)
