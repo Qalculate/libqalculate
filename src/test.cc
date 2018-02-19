@@ -4,27 +4,30 @@ void test_integration4(const MathStructure &mstruct) {
 	MathStructure x_var(CALCULATOR->v_x);
 	cout << "Integration test: " << mstruct.print() << endl;
 	MathStructure mstruct2(mstruct);
-	mstruct2.integrate(x_var, default_evaluation_options);
-	mstruct2.differentiate(x_var, default_evaluation_options);
+	EvaluationOptions eo;
+	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
+	mstruct2.integrate(x_var, eo);
+	if(mstruct2.containsFunction(CALCULATOR->f_integrate)) return;
+	mstruct2.differentiate(x_var, eo);
 	MathStructure mstruct3(mstruct2);
 	mstruct3.replace(x_var, 3);
-	mstruct3.eval();
+	mstruct3.eval(eo);
 	string str1 = mstruct3.print();
 	cout << str1 << endl;
 	mstruct3 = mstruct;
 	mstruct3.replace(x_var, 3);
-	mstruct3.eval();
+	mstruct3.eval(eo);
 	string str2 = mstruct3.print();
 	cout << str2 << endl;
 	if(str1 != str2) cout << "!!!" << endl;
 	mstruct3 = mstruct2;
 	mstruct3.replace(x_var, -5);
-	mstruct3.eval();
+	mstruct3.eval(eo);
 	str1 = mstruct3.print();
 	cout << str1 << endl;
 	mstruct3 = mstruct;
 	mstruct3.replace(x_var, -5);
-	mstruct3.eval();
+	mstruct3.eval(eo);
 	str2 = mstruct3.print();
 	cout << str2 << endl;
 	if(str1 != str2) cout << "!!!" << endl;
@@ -114,9 +117,9 @@ void test_integration() {
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "-2.3x");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "x+5");
+	CALCULATOR->parse(&mstruct, "x+6");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "x-3");
+	CALCULATOR->parse(&mstruct, "x-7");
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "x");
 	test_integration2(mstruct);
@@ -136,7 +139,6 @@ int main(int argc, char *argv[]) {
 	CALCULATOR->setPrecision(10);
 	
 	test_integration();
-	return 0;
 
 #define TEST_INTERVALS
 

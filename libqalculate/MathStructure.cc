@@ -18786,6 +18786,8 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 										a2 ^= nr_two;
 										a2 *= nr_two;
 										mterm /= a2;
+									} else {
+										mterm /= nr_two;
 									}
 									if(!madd.isZero()) {
 										transform(STRUCT_FUNCTION);
@@ -18965,14 +18967,66 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 								return true;
 							} else if(CHILD(0).isPower() && CHILD(0)[0] == x_var && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isInteger()) {
 								if(CHILD(0)[1].number() == 2) {
-									//TODO
-								} else if(CHILD(0)[1].number() == 3) {
-									//TODO
+									if(num == nr_half) {
+										SET_CHILD_MAP(1)
+										MathStructure mterm2(*this);
+										if(!mmul2.isOne()) {
+											mterm2 *= mmul2;
+											mterm2.last() ^= nr_half;
+										}
+										mterm2 += x_var;
+										if(!mmul2.isOne()) mterm2.last() *= mmul2;
+										mterm2.transform(CALCULATOR->f_ln);
+										mterm2.multiply(madd);
+										mterm2.last() ^= nr_two;
+										multiply(x_var);
+										if(!mmul2.isOne()) {
+											multiply(mmul2);
+											LAST ^= nr_half;
+										}
+										multiply(x_var);
+										LAST ^= nr_two;
+										if(!mmul2.isOne()) LAST *= mmul2;
+										LAST *= nr_two;
+										LAST += madd;
+										subtract(mterm2);
+										multiply(Number(1, 8));
+										if(!mmul2.isOne()) {
+											multiply(mmul2);
+											LAST ^= Number(-3, 2);
+										}
+										return true;
+									}
 								} else if(CHILD(0)[1].number() == -1) {
 									if(num == nr_minus_half) {
 										SET_CHILD_MAP(1)
-										CHILD(1).number().set(1, 2 ,0, true);
-										divide(mmul2);
+										SET_CHILD_MAP(0)
+										raise(nr_half);
+										multiply(madd);
+										LAST ^= nr_half;
+										add(madd);
+										transform(CALCULATOR->f_ln);
+										negate();
+										add(x_var);
+										LAST.transform(CALCULATOR->f_ln);
+										multiply(madd);
+										LAST ^= nr_minus_half;
+										return true;
+									} else if(num == nr_half) {
+										SET_CHILD_MAP(1)
+										MathStructure mterm2(*this);
+										mterm2 *= madd;
+										mterm2.last() ^= nr_half;
+										mterm2 += madd;
+										mterm2.transform(CALCULATOR->f_ln);
+										mterm2 *= madd;
+										mterm2.last() ^= nr_half;
+										MathStructure mterm3(x_var);
+										mterm3.transform(CALCULATOR->f_ln);
+										mterm3 *= madd;
+										mterm3.last() ^= nr_half;
+										subtract(mterm2);
+										add(mterm3);
 										return true;
 									}
 								}
