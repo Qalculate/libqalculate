@@ -16599,9 +16599,12 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				MathStructure mstruct(CHILD(0));
 				mstruct.differentiate(x_var, eo);
 				SET_CHILD_MAP(0);
-				raise(2);
+				MathStructure mfac(*this);
 				add(m_minus_one);
 				raise(Number(-1, 2));
+				mfac.add(m_one);
+				mfac.raise(Number(-1, 2));
+				multiply(mfac);
 				multiply(mstruct);
 			} else if(o_function == CALCULATOR->f_atanh && SIZE == 1) {
 				MathStructure mstruct(CHILD(0));

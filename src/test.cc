@@ -1,11 +1,142 @@
 #include <libqalculate/qalculate.h>
 
+void test_integration4(const MathStructure &mstruct) {
+	MathStructure x_var(CALCULATOR->v_x);
+	cout << "Integration test: " << mstruct.print() << endl;
+	MathStructure mstruct2(mstruct);
+	mstruct2.integrate(x_var, default_evaluation_options);
+	mstruct2.differentiate(x_var, default_evaluation_options);
+	MathStructure mstruct3(mstruct2);
+	mstruct3.replace(x_var, 3);
+	mstruct3.eval();
+	string str1 = mstruct3.print();
+	cout << str1 << endl;
+	mstruct3 = mstruct;
+	mstruct3.replace(x_var, 3);
+	mstruct3.eval();
+	string str2 = mstruct3.print();
+	cout << str2 << endl;
+	if(str1 != str2) cout << "!!!" << endl;
+	mstruct3 = mstruct2;
+	mstruct3.replace(x_var, -5);
+	mstruct3.eval();
+	str1 = mstruct3.print();
+	cout << str1 << endl;
+	mstruct3 = mstruct;
+	mstruct3.replace(x_var, -5);
+	mstruct3.eval();
+	str2 = mstruct3.print();
+	cout << str2 << endl;
+	if(str1 != str2) cout << "!!!" << endl;
+	cout << "________________________________________________" << endl;
+}
+void test_integration3(const MathStructure &mstruct) {
+	MathStructure mstruct2(mstruct);
+	test_integration4(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2 *= CALCULATOR->v_x;
+	test_integration4(mstruct2);
+	mstruct2.last() ^= nr_two;
+	test_integration4(mstruct2);
+	mstruct2.last()[1] = nr_minus_one;
+	test_integration4(mstruct2);
+}
+void test_integration2(const MathStructure &mstruct) {
+	MathStructure mstruct2(mstruct);
+	mstruct2.transform(CALCULATOR->f_ln);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2 *= CALCULATOR->getRadUnit();
+	mstruct2.transform(CALCULATOR->f_sin);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2 *= CALCULATOR->getRadUnit();
+	mstruct2.transform(CALCULATOR->f_cos);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2 *= CALCULATOR->getRadUnit();
+	mstruct2.transform(CALCULATOR->f_tan);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2.transform(CALCULATOR->f_asin);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2.transform(CALCULATOR->f_acos);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2.transform(CALCULATOR->f_atan);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2.transform(CALCULATOR->f_sinh);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2.transform(CALCULATOR->f_cosh);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2.transform(CALCULATOR->f_tanh);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2.transform(CALCULATOR->f_asinh);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2.transform(CALCULATOR->f_acosh);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2.transform(CALCULATOR->f_atanh);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2 ^= nr_two;
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2 ^= nr_minus_one;
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2 ^= Number(-2, 1);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2 ^= Number(3, 1);
+	test_integration3(mstruct2);
+	mstruct2 = mstruct;
+	mstruct2 ^= Number(-3, 1);
+	test_integration3(mstruct2);
+}
+void test_integration() {
+	MathStructure mstruct;
+	CALCULATOR->parse(&mstruct, "4x+5");
+	test_integration2(mstruct);
+	CALCULATOR->parse(&mstruct, "-2x+7");
+	test_integration2(mstruct);
+	CALCULATOR->parse(&mstruct, "4.7x-5.2");
+	test_integration2(mstruct);
+	CALCULATOR->parse(&mstruct, "-4.3x-5");
+	test_integration2(mstruct);
+	CALCULATOR->parse(&mstruct, "4x");
+	test_integration2(mstruct);
+	CALCULATOR->parse(&mstruct, "-2.3x");
+	test_integration2(mstruct);
+	CALCULATOR->parse(&mstruct, "x+5");
+	test_integration2(mstruct);
+	CALCULATOR->parse(&mstruct, "x-3");
+	test_integration2(mstruct);
+	CALCULATOR->parse(&mstruct, "x");
+	test_integration2(mstruct);
+	CALCULATOR->parse(&mstruct, "x^2");
+	test_integration2(mstruct);
+	CALCULATOR->parse(&mstruct, "2x^2+5");
+	test_integration2(mstruct);
+	CALCULATOR->parse(&mstruct, "-2x^2-5");
+	test_integration2(mstruct);
+}
+
 int main(int argc, char *argv[]) {
 
 	new Calculator();
 	CALCULATOR->loadGlobalDefinitions();
 	
 	CALCULATOR->setPrecision(10);
+	
+	test_integration();
+	return 0;
 
 #define TEST_INTERVALS
 

@@ -3153,7 +3153,8 @@ bool Number::raise(const Number &o, bool try_exact) {
 				if(i_root != 1) {
 					mpq_t r_test;
 					mpq_init(r_test);
-					if(i_pow < 0) {
+					bool b_neg = i_pow < 0;
+					if(b_neg) {
 						mpq_inv(r_test, r_value);
 						i_pow = -i_pow;
 					} else {
@@ -3189,6 +3190,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 					}
 					if(success) {
 						if(complex_result) {
+							if(b_neg) mpq_neg(r_test, r_test);
 							if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
 							i_value->setInternal(r_test, false, true);
 							if(i_pow % 4 == 3) i_value->negate();
