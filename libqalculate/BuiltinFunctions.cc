@@ -3968,6 +3968,10 @@ IntegrateFunction::IntegrateFunction() : MathFunction("integrate", 1, 4) {
 	setDefaultValue(4, "undefined");
 }
 int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[2].isUndefined() != vargs[3].isUndefined()) {
+		CALCULATOR->error(true, _("Both the lower and upper limit must be set to get the definite integral."), NULL);
+		return 0;
+	}
 	EvaluationOptions eo2 = eo;
 	eo2.do_polynomial_division = true;
 	mstruct = vargs[0];
@@ -3975,27 +3979,98 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	MathStructure mbak(mstruct);
 	if(!mstruct.integrate(vargs[1], eo, true)) {
 		mstruct = mbak;
-		CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
-		return -1;
-	}
-	mstruct += "C";
-	if(!vargs[2].isUndefined()) {
-		if(vargs[3].isUndefined()) {
-			CALCULATOR->error(true, _("Both the lower and upper limit must be set to get the definite integral."), NULL);
-			mstruct = mbak;
-			return -1;
-		}
-		if(mstruct.containsFunction(this, false, true, true) > 0) {
+		if(vargs[2].isUndefined()) {
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
-			mstruct = mbak;
 			return -1;
 		}
+	} else if(vargs[2].isUndefined()) {
+		mstruct += "C";
+		return 1;
+	} else if(mstruct.containsFunction(this, false, true, true) <= 0) {
 		MathStructure mstruct_lower(mstruct);
 		mstruct_lower.replace(vargs[1], vargs[2]);
 		mstruct.replace(vargs[1], vargs[3]);
 		mstruct -= mstruct_lower;
+		return 1;
 	}
-	return 1;
+	CALCULATOR->beginTemporaryStopIntervalArithmetic();
+	eo2.do_polynomial_division = false;
+	if(mstruct.containsInterval()) {
+		mstruct = vargs[0];
+		mstruct.eval(eo2);
+	}
+	eo2.approximation = APPROXIMATION_APPROXIMATE;
+	MathStructure m1(vargs[2]), m2(vargs[3]);
+	m1.eval(eo2);
+	m2.eval(eo2);
+	if(m1.isNumber() && m1.number().isReal() && m2.isNumber() && m2.number().isReal()) {
+		Number nr_begin, nr_end;
+		if(m1.number().isGreaterThan(m2.number())) {
+			nr_begin = m2.number();
+			nr_end = m1.number();
+		} else {
+			nr_begin = m1.number();
+			nr_end = m2.number();
+		}
+		Number nr_step(nr_end);
+		nr_step -= nr_begin;
+		Number nr_samples(CALCULATOR->getPrecision(), 1);
+		nr_samples.ceil();
+		nr_samples.round();
+		nr_samples *= 100; 
+		nr_step /= nr_samples;
+		MathStructure m_a = mstruct;
+		m_a.replace(vargs[1], nr_begin);
+		Number nr_half_step(nr_step);
+		nr_half_step /= 2;
+		Number nr_sixth_step(nr_step);
+		nr_sixth_step /= 6;
+		nr_begin += nr_half_step;
+		MathStructure mvalue;
+		bool b_last = false;
+		while(true) {
+			if(CALCULATOR->aborted()) {
+				mstruct = mbak;
+				return -1;
+			}
+			MathStructure m_m(mstruct);
+			m_m.replace(vargs[1], nr_begin);
+			m_m *= Number(4, 1);
+			nr_begin += nr_half_step;
+			MathStructure m_b(mstruct);
+			m_b.replace(vargs[1], nr_begin);
+			m_m += m_a;
+			m_m += m_b;
+			m_m *= nr_sixth_step;
+			m_m.eval(eo2);
+			mvalue.calculateAdd(m_m, eo2);
+			if(b_last) break;
+			nr_begin += nr_half_step;
+			if(nr_begin.isGreaterThan(nr_end)) {
+				nr_begin -= nr_half_step;
+				if(nr_begin.isLessThan(nr_end)) {
+					nr_step = nr_end;
+					nr_step -= nr_begin;
+					nr_half_step = nr_step;
+					nr_half_step /= 2;
+					nr_sixth_step = nr_step;
+					nr_sixth_step /= 6;
+					b_last = true;
+				} else {
+					break;
+				}
+				nr_begin += nr_half_step;
+			}
+			m_a = m_b;
+		}
+		CALCULATOR->error(false, _("Definite integral was approximated."), NULL);
+		mstruct = mvalue;
+		mstruct.setApproximate(true);
+		return 1;
+	}
+	CALCULATOR->endTemporaryStopIntervalArithmetic();
+	CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
+	return -1;
 }
 SolveFunction::SolveFunction() : MathFunction("solve", 1, 2) {
 	setArgumentDefinition(2, new SymbolicArgument());
