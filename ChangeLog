@@ -1,6 +1,26 @@
+2018-02-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Enhanced integration
+	* Numerical approximation of definitive integral (using Simpson's rule)
+	* Fix exact (-a)^(-b/c)
+	* Fix derivative of acosh
+
 2018-02-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* dsolve() function for differential equations
+	* Simplify result inbetween each run for high order derivatives to increase performance
+
+2018-02-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	Show a more informative message and fail in autogen.sh when doxygen and API docs is missing
+
+2018-02-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Icelandic Krónur added to ECB data
+
+2018-01-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	Use mpfr_rootn_ui with mpfr version >= 4.0.0
 
 2018-01-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

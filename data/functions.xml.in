@@ -826,6 +826,14 @@
       <_title>Complementary Error Function</_title>
       <_names>r:erfc</_names>
     </builtin_function>
+    <builtin_function name="li">
+      <_title>Logarithmic Integral</_title>
+      <_names>r:li</_names>
+    </builtin_function>
+    <builtin_function name="Ei">
+      <_title>Exponential Integral</_title>
+      <_names>r:Ei</_names>
+    </builtin_function>
     <builtin_function name="airy">
       <_title>Airy Function</_title>
       <_names>r:airy</_names>
@@ -2247,6 +2255,13 @@
       </argument>
       <argument index="2">
         <_title>With respect to</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="dsolve">
+      <_title>Solve differential equation</_title>
+      <_names>r:solve</_names>
+      <argument index="1">
+        <_title>Equation</_title>
       </argument>
     </builtin_function>
     <function>
