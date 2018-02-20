@@ -4395,7 +4395,7 @@ bool Number::gamma() {
 			mpfr_gamma(fu_value, fu_value, MPFR_RNDN);
 			mpfr_gamma(fl_value, fl_value, MPFR_RNDN);
 			if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-			if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_gamma->name().c_str(), NULL);
+			if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(true, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_gamma->name().c_str(), NULL);
 			mpfr_clears(fu_test, fl_test, NULL);
 		}
 	}
@@ -4493,7 +4493,7 @@ bool Number::airy() {
 		mpfr_ai(fl_value, fl_value, MPFR_RNDN);
 		mpfr_ai(fu_value, fu_value, MPFR_RNDN);
 		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_airy->name().c_str(), NULL);
+		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(true, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_airy->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -4524,7 +4524,7 @@ bool Number::besselj(const Number &o) {
 		mpfr_jn(fl_value, n, fl_value, MPFR_RNDN);
 		mpfr_jn(fu_value, n, fu_value, MPFR_RNDN);
 		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_besselj->name().c_str(), NULL);
+		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(true, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_besselj->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -4555,7 +4555,7 @@ bool Number::bessely(const Number &o) {
 		mpfr_yn(fl_value, n, fl_value, MPFR_RNDN);
 		mpfr_yn(fu_value, n, fu_value, MPFR_RNDN);
 		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_bessely->name().c_str(), NULL);
+		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(true, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_bessely->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
