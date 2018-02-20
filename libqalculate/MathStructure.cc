@@ -19113,6 +19113,64 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 							return true;
 						}
 					}
+					if(mexp.isMinusOne() && CHILD(0) != x_var && CHILD(0).isPower() && CHILD(0)[0] == x_var && CHILD(0)[1].isInteger()) {
+						MathStructure madd, mmul, mpow;
+						if(integrate_info(CHILD(1)[0], x_var, madd, mmul, mpow, false, false) && mpow.isInteger()) {
+							if(CHILD(0)[1].number().isMinusOne()) {
+								if(mpow.number().isNegative()) {
+									set(x_var, true);
+									mpow.number().negate();
+									raise(mpow);
+									multiply(madd);
+									if(!mmul.isOne()) add(mmul);
+									transform(CALCULATOR->f_ln);
+									divide(mpow);
+									if(!mmul.isOne()) divide(mmul);
+								} else {
+									SET_CHILD_MAP(1)
+									SET_CHILD_MAP(0)
+									transform(CALCULATOR->f_ln);
+									add(x_var);
+									LAST.transform(CALCULATOR->f_ln);
+									LAST *= mpow;
+									LAST.negate();
+									negate();
+									divide(mpow);
+									divide(madd);
+								}
+								return true;
+							} else {
+								Number mpowmexp(mpow.number());
+								mpowmexp -= CHILD(0)[1].number();
+								if(mpowmexp.isOne()) {
+									if(mpow.number().isNegative()) {
+										set(x_var, true);
+										mpow.number().negate();
+										raise(mpow);
+										multiply(madd);
+										if(!mmul.isOne()) add(mmul);
+										transform(CALCULATOR->f_ln);
+										divide(mpow);
+										divide(madd);
+										add(x_var);
+										LAST.transform(CALCULATOR->f_ln);
+										LAST *= mpow;
+										LAST.negate();
+										divide(mpow);
+										divide(madd);
+										negate();
+									} else {
+										SET_CHILD_MAP(1)
+										SET_CHILD_MAP(0)
+										transform(CALCULATOR->f_ln);
+										divide(mpow);
+										if(!mmul.isOne()) divide(mmul);
+									}
+									return true;
+								}
+							}
+						}
+					}
 					if(CHILD(1)[1].number().isMinusOne() && CHILD(1)[0].isMultiplication() && CHILD(1)[0].size() == 2 && CHILD(1)[0][0].isAddition() && CHILD(1)[0][1].isAddition() && (CHILD(0) == x_var || (CHILD(0).isPower() && CHILD(0)[0] == x_var && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isTwo()))) {
 						MathStructure madd1, mmul1, mexp1;
 						if(integrate_info(CHILD(1)[0][0], x_var, madd1, mmul1, mexp1) && mexp1.isOne()) {
@@ -19193,11 +19251,11 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 					MathStructure mexp(1, 1, 0);
 					if(CHILD(0).isPower() && CHILD(0)[0] == x_var && CHILD(0)[1].isInteger()) mexp = CHILD(0)[1];
 					else if(CHILD(0) != x_var) CANNOT_INTEGRATE;
-					MathStructure madd, mmul, mmul2;
-					if(integrate_info(CHILD(1)[1], x_var, madd, mmul, mmul2, false, true)) {
-						if(mmul2.isZero() && madd.isZero()) {
-							bool b_e = CHILD(1)[0] == CALCULATOR->v_e;
-							if(b_e || CHILD(1)[0].isNumber() || warn_about_assumed_not_value(CHILD(1)[0], m_one, eo)) {
+					MathStructure madd, mmul, mpow;
+					if(integrate_info(CHILD(1)[1], x_var, madd, mmul, mpow, false, false) && mpow.isInteger()) {
+						bool b_e = CHILD(1)[0] == CALCULATOR->v_e;
+						if(b_e || CHILD(1)[0].isNumber() || warn_about_assumed_not_value(CHILD(1)[0], m_one, eo)) {
+							if(mpow.isOne()) {
 								SET_CHILD_MAP(1)
 								if(!b_e) {
 									if(mmul.isOne()) {
@@ -19270,6 +19328,39 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 									add(mterm2);
 								}
 								return true;
+							} else {
+								Number mpowmexp(mpow.number());
+								mpowmexp -= mexp.number();
+								if(mpowmexp.isOne()) {
+									SET_CHILD_MAP(1)
+									MathStructure malog(CALCULATOR->f_ln, &CHILD(0), NULL);
+									divide(mpow);
+									if(!mmul.isOne()) divide(mmul);
+									if(!b_e) divide(malog);
+									return true;
+								} else if(mexp.isMinusOne() && mpow.number().isPositive()) {
+									MathStructure malog;
+									if(b_e) {
+										malog = x_var;
+										malog ^= mpow;
+									} else {
+										malog.set(CALCULATOR->f_ln, &CHILD(1)[0], NULL);
+										malog *= x_var;
+										malog.last() ^= mpow;
+									}
+									if(!mmul.isOne()) malog *= mmul;
+									malog.transform(CALCULATOR->f_Ei);
+									if(madd.isZero()) {
+										set(malog, true);
+									} else {
+										SET_CHILD_MAP(1)
+										SET_CHILD_MAP(0)
+										raise(madd);
+										multiply(malog);
+									}
+									divide(mpow);
+									return true;
+								}
 							}
 						}
 					}
