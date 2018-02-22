@@ -203,6 +203,7 @@ class UnknownVariable : public Variable {
 	* @param ass Assumptions.
 	*/
 	void setAssumptions(Assumptions *ass);
+	void setAssumptions(const MathStructure &mvar);
 	/** Returns the assumptions of the unknown variable.
 	*
 	* @returns Assumptions of the unknown variable.

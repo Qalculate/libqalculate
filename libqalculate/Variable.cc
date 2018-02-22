@@ -138,6 +138,22 @@ void UnknownVariable::setAssumptions(Assumptions *ass) {
 	if(o_assumption) delete o_assumption;
 	o_assumption = ass;
 }
+void UnknownVariable::setAssumptions(const MathStructure &mvar) {
+	Assumptions *ass = new Assumptions();
+	if(mvar.representsPositive(true)) ass->setSign(ASSUMPTION_SIGN_POSITIVE);
+	else if(mvar.representsNegative(true)) ass->setSign(ASSUMPTION_SIGN_NEGATIVE);
+	else if(mvar.representsNonPositive(true)) ass->setSign(ASSUMPTION_SIGN_NONPOSITIVE);
+	else if(mvar.representsNonNegative(true)) ass->setSign(ASSUMPTION_SIGN_NONNEGATIVE);
+	else if(mvar.representsNonZero(true)) ass->setSign(ASSUMPTION_SIGN_NONZERO);
+	if(mvar.representsInteger(true)) ass->setType(ASSUMPTION_TYPE_INTEGER);
+	else if(mvar.representsRational(true)) ass->setType(ASSUMPTION_TYPE_RATIONAL);
+	else if(mvar.representsReal(true)) ass->setType(ASSUMPTION_TYPE_REAL);
+	else if(mvar.representsComplex(true)) ass->setType(ASSUMPTION_TYPE_COMPLEX);
+	else if(mvar.representsNumber(true)) ass->setType(ASSUMPTION_TYPE_NUMBER);
+	else if(mvar.representsNonMatrix()) ass->setType(ASSUMPTION_TYPE_NONMATRIX);
+	if(o_assumption) delete o_assumption;
+	o_assumption = ass;
+}
 Assumptions *UnknownVariable::assumptions() {
 	return o_assumption;
 }

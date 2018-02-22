@@ -4011,7 +4011,14 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	mstruct = vargs[0];
 	mstruct.eval(eo2);
 	MathStructure mbak(mstruct);
-	if(!mstruct.integrate(vargs[1], eo, true)) {
+	CALCULATOR->beginTemporaryStopIntervalArithmetic();
+	eo2.approximation = APPROXIMATION_APPROXIMATE;
+	MathStructure m1(vargs[2]), m2(vargs[3]);
+	m1.eval(eo2);
+	m2.eval(eo2);
+	CALCULATOR->endTemporaryStopIntervalArithmetic();
+	eo2.approximation = eo.approximation;
+	if(!mstruct.integrate(vargs[1], eo, true, m1, m2)) {
 		mstruct = mbak;
 		if(vargs[2].isUndefined()) {
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
@@ -4034,9 +4041,6 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		mstruct.eval(eo2);
 	}
 	eo2.approximation = APPROXIMATION_APPROXIMATE;
-	MathStructure m1(vargs[2]), m2(vargs[3]);
-	m1.eval(eo2);
-	m2.eval(eo2);
 	if(m1.isNumber() && m1.number().isReal() && m2.isNumber() && m2.number().isReal()) {
 		Number nr_begin, nr_end;
 		if(m1.number().isGreaterThan(m2.number())) {
@@ -4162,9 +4166,10 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 								mstruct = mbak;
 								break;
 							}
-							mstruct.setPrecision(nr_rel_prec.intValue(), true);
 							if((b_limited_samples && !b_first) || nr_rel_prec.intValue() >= CALCULATOR->getPrecision()) {
 								CALCULATOR->endTemporaryStopIntervalArithmetic();
+								mstruct.number().setUncertainty(nr_prec); 
+								mstruct.numberUpdated();
 								CALCULATOR->error(false, _("Definite integral was approximated."), NULL);
 								return 1;
 							}

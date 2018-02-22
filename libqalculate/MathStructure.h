@@ -615,6 +615,7 @@ class MathStructure {
 		void transform_nocopy(StructureType mtype, MathStructure *o);
 		void transform(StructureType mtype);
 		void transform(MathFunction *o);
+		void transform(ComparisonType ctype, const MathStructure &o);
 		//@}
 		
 		/** @name Functions/operators for comparisons */
@@ -807,7 +808,7 @@ class MathStructure {
 		/** @name Differentiation and integration */
 		//@{
 		bool differentiate(const MathStructure &x_var, const EvaluationOptions &eo);
-		bool integrate(const MathStructure &x_var, const EvaluationOptions &eo, bool simplify_first = true);
+		bool integrate(const MathStructure &x_var, const EvaluationOptions &eo, bool simplify_first = true, const MathStructure &m_lower = m_undefined, const MathStructure &m_upper = m_undefined);
 		//@}
 
 		/** @name Functions for polynomials */
