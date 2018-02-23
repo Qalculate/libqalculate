@@ -841,6 +841,8 @@ class MathStructure {
 		void polynomialUnitContentPrimpart(const MathStructure &xvar, int &munit, MathStructure &mcontent, MathStructure &mprim, const EvaluationOptions &eo) const;
 		//@}
 
+		bool decomposeFractions(const MathStructure &x_var, const EvaluationOptions &eo);
+		
 		static bool polynomialDivide(const MathStructure &mnum, const MathStructure &mden, MathStructure &mquotient, const EvaluationOptions &eo, bool check_args = true);
 		static bool polynomialQuotient(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar, MathStructure &mquotient, const EvaluationOptions &eo, bool check_args = true);
 		static bool lcm(const MathStructure &m1, const MathStructure &m2, MathStructure &mlcm, const EvaluationOptions &eo, bool check_args = true);
@@ -854,5 +856,7 @@ class MathStructure {
 		//@}
 		
 };
+
+ostream& operator << (ostream &os, const MathStructure&);
 
 #endif

@@ -6173,6 +6173,10 @@ string Number::printImaginaryDenominator(int base, bool display_sign, BaseDispla
 	return format_number_string(printMPZ(mpq_denref(i_value ? i_value->internalRational() : nr_zero.internalRational()), base, false, lower_case), base, base_display, display_sign);
 }
 
+ostream& operator << (ostream &os, const Number &nr) {
+	os << nr.print();
+	return os;
+}
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
 	if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 	if(ips.minus) *ips.minus = false;

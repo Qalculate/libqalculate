@@ -493,4 +493,6 @@ class Number {
 	
 };
 
+ostream& operator << (ostream &os, const Number&);
+
 #endif

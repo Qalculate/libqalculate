@@ -17,7 +17,7 @@
 #include "MathStructure.h"
 #include "Number.h"
 
-Assumptions::Assumptions() : i_type(ASSUMPTION_TYPE_NONE), i_sign(ASSUMPTION_SIGN_UNKNOWN), fmin(NULL), fmax(NULL), b_incl_min(true), b_incl_max(true) {}
+Assumptions::Assumptions() : i_type(ASSUMPTION_TYPE_NUMBER), i_sign(ASSUMPTION_SIGN_UNKNOWN), fmin(NULL), fmax(NULL), b_incl_min(true), b_incl_max(true) {}
 Assumptions::~Assumptions() {}
 
 bool Assumptions::isPositive() {return i_sign == ASSUMPTION_SIGN_POSITIVE || (fmin && (fmin->isPositive() || (!b_incl_min && fmin->isNonNegative())));}
