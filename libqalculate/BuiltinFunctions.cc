@@ -4017,30 +4017,52 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	m1.eval(eo2);
 	m2.eval(eo2);
 	CALCULATOR->endTemporaryStopIntervalArithmetic();
-	eo2.approximation = eo.approximation;
-	if(!mstruct.integrate(vargs[1], eo, true, m1, m2)) {
+	bool b = mstruct.integrate(vargs[1], eo, true, m1, m2);
+	if(eo.approximation != APPROXIMATION_EXACT && mstruct.isApproximate() && (!b || mstruct.containsFunction(this, true) > 0)) {
+		MathStructure mbak_integ(mstruct);
+		eo2.approximation = APPROXIMATION_EXACT;
+		mstruct = vargs[0];
+		mstruct.eval(eo2);
+		eo2.approximation = eo.approximation;
+		EvaluationOptions eo3 = eo;
+		eo3.approximation = APPROXIMATION_EXACT;
+		if(mstruct.integrate(vargs[1], eo3, true, m1, m2) && (!b || mstruct.containsFunction(this, true) <= 0)) {
+			b = true;
+		} else if(b) {
+			mstruct = mbak_integ;
+		}
+	}
+	if(b) {
+		if(vargs[2].isUndefined()) {
+			mstruct += "C";
+			return 1;
+		} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_li, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Ei, true) <= 0) {
+			MathStructure mstruct_lower(mstruct);
+			mstruct_lower.replace(vargs[1], vargs[2]);
+			mstruct.replace(vargs[1], vargs[3]);
+			mstruct -= mstruct_lower;
+			return 1;
+		} else {
+			mstruct = mbak;
+		}
+	} else {
 		mstruct = mbak;
 		if(vargs[2].isUndefined()) {
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 			return -1;
 		}
-	} else if(vargs[2].isUndefined()) {
-		mstruct += "C";
-		return 1;
-	} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_li, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Ei, true) <= 0) {
-		MathStructure mstruct_lower(mstruct);
-		mstruct_lower.replace(vargs[1], vargs[2]);
-		mstruct.replace(vargs[1], vargs[3]);
-		mstruct -= mstruct_lower;
-		return 1;
 	}
 	CALCULATOR->beginTemporaryStopIntervalArithmetic();
 	eo2.do_polynomial_division = false;
+	if(eo.approximation != APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_APPROXIMATE;
 	if(mstruct.containsInterval()) {
+		if(eo.approximation == APPROXIMATION_EXACT) {
+			CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
+			return -1;
+		}
 		mstruct = vargs[0];
 		mstruct.eval(eo2);
 	}
-	eo2.approximation = APPROXIMATION_APPROXIMATE;
 	if(m1.isNumber() && m1.number().isReal() && m2.isNumber() && m2.number().isReal()) {
 		Number nr_begin, nr_end;
 		if(m1.number().isGreaterThan(m2.number())) {
@@ -4070,6 +4092,10 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				CALCULATOR->endTemporaryStopIntervalArithmetic();
 				return 1;
 			}
+		} else if(eo.approximation == APPROXIMATION_EXACT) {
+			CALCULATOR->endTemporaryStopIntervalArithmetic();
+			CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
+			return -1;
 		} else {
 			MathStructure mtr = mstruct;
 			mtr.replace(vargs[1], nr_end);

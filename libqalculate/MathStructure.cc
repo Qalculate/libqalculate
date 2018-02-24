@@ -10897,7 +10897,7 @@ size_t count_powers(const MathStructure &mstruct) {
 	}
 	return c;
 }
-bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, int term_combination_levels, int max_msecs, bool only_integers, int recursive, struct timeval *endtime_p) {
+bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, int term_combination_levels, int max_msecs, bool only_integers, int recursive, struct timeval *endtime_p, const MathStructure &force_factorization) {
 	if(CALCULATOR->aborted()) return false;
 	struct timeval endtime;
 	if(max_msecs > 0 && !endtime_p) {
@@ -10919,6 +10919,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 		max_msecs = 0;
 		endtime_p = &endtime;
 	}
+
 	EvaluationOptions eo = eo_pre;
 	eo.sync_units = false;
 	eo.structuring = STRUCTURING_NONE;
@@ -11137,7 +11138,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						}
 					}
 					evalSort(true);
-					factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+					factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization);
 					return true;
 				}
 			}
@@ -11247,6 +11248,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						}
 					}
 				}*/
+
 				if(SIZE <= 3 && SIZE > 1) {
 					MathStructure *xvar = NULL;
 					Number nr2(1, 1);
@@ -11393,8 +11395,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				MathStructure *factor_mstruct = new MathStructure(1, 1, 0);
 				MathStructure mnew;
 				if(factorize_find_multiplier(*this, mnew, *factor_mstruct)) {
-					mnew.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
-					factor_mstruct->factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+					mnew.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization);
+					factor_mstruct->factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization);
 					clear(true);
 					m_type = STRUCT_MULTIPLICATION;
 					APPEND_REF(factor_mstruct);
@@ -11609,7 +11611,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 										}
 									}
 								}
-								mleft.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+								mleft.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization);
 								vector<long int> powers;
 								vector<size_t> powers_i;
 								int dupsfound = 0;
@@ -11739,7 +11741,6 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					}
 				}
 
-				//x^2-y^2=(x+y)(x-y)
 				if(SIZE == 2) {
 					Number nr1(1, 1, 0), nr2(1, 1, 0);
 					bool b = true;
@@ -11841,8 +11842,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 							mmul->childUpdated(i + 1);
 						}
 						if(recursive) {
-							factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
-							mmul->factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+							factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization);
+							mmul->factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization);
 						}
 						multiply_nocopy(mmul);
 						evalSort(true);
@@ -11893,6 +11894,124 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					}
 				}
 
+				if(!only_integers && !force_factorization.isUndefined()) {
+					if(SIZE >= 2) {
+						bool b = false;
+						MathStructure mdiv(1, 1, 0);
+						size_t x_i = 0;
+						size_t xp_i = 0;
+						for(size_t i2 = 0; i2 < SIZE; i2++) {
+							if(CHILD(i2).isPower() && CHILD(i2)[0] == force_factorization && CHILD(i2)[1].isInteger() && CHILD(i2)[1].number().isGreaterThan(nr_two)) {
+								b = true;
+								xp_i = i2;
+								break;
+							} else if(CHILD(i2).isMultiplication() && CHILD(i2).size() >= 2) {
+								for(size_t i = 0; i < CHILD(i2).size(); i++) {
+									if(!b && CHILD(i2)[i].isPower() && CHILD(i2)[i][0] == force_factorization) {
+										if(CHILD(i2)[i][1].isInteger() && CHILD(i2)[i][1].number().isGreaterThan(nr_two)) {
+											b = true;
+											x_i = i;
+										} else {
+											b = false;
+											break;
+										}
+									} else if(CHILD(i2)[i].contains(force_factorization, true)) {
+										b = false;
+										break;
+									}
+								}
+								if(b) {
+									xp_i = i2;
+									mdiv = CHILD(i2);
+									mdiv.delChild(x_i + 1, true);
+								}
+							}
+						}
+						if(b) {
+							for(size_t i = 0; i < SIZE; i++) {
+								if(i != xp_i && CHILD(i).contains(force_factorization, true)) {
+									b = false;
+									break;
+								}
+							}
+						}
+						if(b) {
+							if(xp_i != 0) SWAP_CHILDREN(xp_i, 0)
+							if(!mdiv.isOne()) {
+								CHILD(0).setToChild(x_i + 1);
+								for(size_t i = 1; i < SIZE; i++) {
+									CHILD(i).calculateDivide(mdiv, eo);
+								}
+								childrenUpdated();
+							}
+							if(SIZE > 2) {
+								MathStructure *m0 = &CHILD(0);
+								m0->ref();
+								ERASE(0)
+								multiply_nocopy(m0);
+								SWAP_CHILDREN(0, 1)
+							}
+							int n = CHILD(0)[1].number().intValue();
+							if(n % 4 == 0) {
+								int i_u = 1;
+								if(n != 4) {
+									i_u = n / 4;
+								}
+								MathStructure m_sqrt2(2, 1, 0);
+								m_sqrt2.calculateRaise(nr_half, eo);
+								MathStructure m_sqrtb(CHILD(1));
+								m_sqrtb.calculateRaise(nr_half, eo);
+								MathStructure m_bfourth(CHILD(1));
+								m_bfourth.calculateRaise(Number(1, 4), eo);
+								m_sqrt2.calculateMultiply(m_bfourth, eo);
+								MathStructure m_x(force_factorization);
+								if(i_u != 1) m_x ^= i_u;
+								m_sqrt2.calculateMultiply(m_x, eo);
+								MathStructure *m2 = new MathStructure(force_factorization);
+								m2->raise(Number(i_u * 2, 1));
+								m2->add(m_sqrtb);
+								m2->calculateAdd(m_sqrt2, eo);
+								set(force_factorization, true);
+								raise(Number(i_u * 2, 1));
+								add(m_sqrtb);
+								calculateSubtract(m_sqrt2, eo);
+								multiply_nocopy(m2);
+							} else {
+								int i_u = 1;
+								if(n % 2 == 0) {
+									i_u = 2;
+									n /= 2;
+								}
+								MathStructure *m2 = new MathStructure(CHILD(1));
+								m2->calculateRaise(Number(n - 1, n), eo);
+								for(int i = 1; i < n - 1; i++) {
+									MathStructure *mterm = new MathStructure(CHILD(1));
+									mterm->calculateRaise(Number(n - i - 1, n), eo);
+									mterm->multiply(force_factorization);
+									if(i != 1 || i_u != 1) {
+										mterm->last().raise(Number(i * i_u, 1));
+										mterm->childUpdated(mterm->size());
+									}
+									if(i % 2 == 1) mterm->calculateMultiply(m_minus_one, eo);
+									m2->add_nocopy(mterm, true);
+								}
+								MathStructure *mterm = new MathStructure(force_factorization);
+								mterm->raise(Number((n - 1) * i_u, 1));
+								m2->add_nocopy(mterm, true);
+								mterm = new MathStructure(force_factorization);
+								if(i_u != 1) mterm->raise(Number(i_u, 1));
+								SET_CHILD_MAP(1)
+								calculateRaise(Number(1, n), eo);
+								add_nocopy(mterm);
+								multiply_nocopy(m2);
+							}
+							if(!mdiv.isOne()) multiply(mdiv, true);
+							evalSort(true);
+							return true;
+						}
+					}
+				}
+
 				//-x-y = -(x+y)
 				bool b = true;
 				for(size_t i2 = 0; i2 < SIZE; i2++) {
@@ -11937,7 +12056,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 												CHILD_UPDATED(i)
 												delChild(i3, true);
 												evalSort(true);
-												factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+												factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization);
 												return true;
 											}
 										}
@@ -11952,7 +12071,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 										add(m_one, true);
 										multiply(mtest);
 										evalSort(true);
-										factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+										factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization);
 										return true;
 									}
 								}
@@ -11996,7 +12115,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 
 					MathStructure mtest(*this);
 					mtest.delChild(index + 1);
-					if(mtest.factorize(eo, false, run_index == 0 ? 0 : -1 - run_index, 0, only_integers, false, endtime_p)) {
+					if(mtest.factorize(eo, false, run_index == 0 ? 0 : -1 - run_index, 0, only_integers, false, endtime_p, force_factorization)) {
 						bool b = best_index < 0 || (mbest.isAddition() && !mtest.isAddition());
 						if(!b && (mtest.isAddition() == mbest.isAddition())) {
 							b = mtest.isAddition() && (mtest.size() < mbest.size());
@@ -12031,7 +12150,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					mbest.add(CHILD(best_index), true);
 					set(mbest);
 					if(term_combination_levels >= -1 && (run_index > 0 || recursive)) {
-						factorize(eo, false, term_combination_levels, 0, only_integers, true, endtime_p);
+						factorize(eo, false, term_combination_levels, 0, only_integers, true, endtime_p, force_factorization);
 					}
 					return true;
 				}
@@ -12045,14 +12164,14 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				EvaluationOptions eo2 = eo;
 				eo2.assume_denominators_nonzero = false;
 				for(size_t i = 0; i < SIZE; i++) {
-					if(CHILD(i).factorize(eo2, false, term_combination_levels, 0, only_integers, recursive, endtime_p)) {
+					if(CHILD(i).factorize(eo2, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization)) {
 						CHILD_UPDATED(i);
 						b = true;
 					}
 				}
 			} else if(recursive && (recursive > 1 || !isAddition())) {
 				for(size_t i = 0; i < SIZE; i++) {
-					if(CHILD(i).factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p)) {
+					if(CHILD(i).factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization)) {
 						CHILD_UPDATED(i);
 						b = true;
 					}
@@ -12083,7 +12202,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 													CHILD_UPDATED(i)
 													delChild(i3 + 1, true);
 													evalSort(true);
-													factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+													factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization);
 													return true;
 												}
 											}
@@ -12098,7 +12217,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 											add(m_one, true);
 											multiply(mtest);
 											evalSort(true);
-											factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p);
+											factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization);
 											return true;
 										}
 									}
@@ -17828,6 +17947,7 @@ bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, cons
 			mstruct.replace(x_var, marg);
 			if(!mmul.isOne()) mstruct.divide(mmul);
 		}
+		return true;
 	} else if(mstruct.function() == CALCULATOR->f_sinh && mstruct.size() == 1) {
 		if(!mpow.isNumber() || !mpow.number().isInteger() || !mpow.number().isLessThanOrEqualTo(100) || !mpow.number().isGreaterThanOrEqualTo(-1) || mpow.isZero()) return false;
 		MathStructure mexp, mmul, madd;
@@ -18359,7 +18479,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 		}
 	} else if(isMultiplication() && SIZE == 2) {
 		for(size_t i = 0; i < SIZE; i++) {
-			if(CHILD(i).isPower() && CHILD(i)[1].isMinusOne() && CHILD(i)[0].isMultiplication() && CHILD(i)[0].size() >= 0) {
+			if(CHILD(i).isPower() && CHILD(i)[1].isMinusOne() && (CHILD(i)[0].isPower() || CHILD(i)[0].isMultiplication())) {
 				mtest2 = CHILD(i)[0];
 				b = true;
 			} else if(CHILD(i) == x_var) {
@@ -18371,6 +18491,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 		if(mmul_i == 0) b = false;
 	}
 	if(b) {
+		if(!mtest2.isMultiplication()) mtest2.transform(STRUCT_MULTIPLICATION);
 		MathStructure mfacs, mnew;
 		mnew.setType(STRUCT_ADDITION);
 		mfacs.setType(STRUCT_ADDITION);
@@ -18431,8 +18552,11 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 			MathStructure mvar(var);
 			for(size_t i = 0; i < mtest2.size(); i++) {
 				if(i_degrees[i] == 1) {
-					MathStructure mnum(mtest2);
-					mnum.delChild(i + 1, true);
+					MathStructure mnum(1, 1, 0);
+					if(mtest2.size() != 1) {
+						mnum = mtest2;
+						mnum.delChild(i + 1, true);
+					}
 					MathStructure mx(mtest2[i]);
 					mx.transform(COMPARISON_EQUALS, m_zero);
 					mx.replace(x_var, mvar);
@@ -18441,15 +18565,19 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 					if(mx.isLogicalOr()) mx.setToChild(1);
 					if(!mx.isComparison() || mx[0] != var) {b = false; break;}
 					mx.setToChild(2);
-					mfacs.addChild(mnum);
-					mnum.replace(x_var, mx);
-					mnum.inverse();
+					if(mtest2.size() != 1) {
+						mfacs.addChild(mnum);
+						mnum.replace(x_var, mx);
+						mnum.inverse();
+					}
 					if(mmul_i > 0) {
 						mx ^= Number(mmul_i, 1);
-						mnum *= mx;
+						if(mtest2.size() == 1) mnum = mx;
+						else mnum *= mx;
 					}
 					mnum.calculatesub(eo, eo, true);
-					mfacs.last() *= mnum;
+					if(mtest2.size() == 1) mfacs.addChild(mnum);
+					else mfacs.last() *= mnum;
 					mnums3.addChild(mnum);
 					mtest3.addChild(mtest2[i]);
 				}
@@ -18469,10 +18597,16 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 							mtest3.addChild(mtest2[i]);
 							if(i_exp_n != i_exp) mtest3.last()[1].number() = i_exp_n;
 						}
-						mfacs.addChild(mtest2);
-						if(i_exp - i_exp_n == 0) mfacs.last().delChild(i + 1, true);
-						else if(i_exp - i_exp_n == 1) mfacs.last()[i].setToChild(1);
-						else mfacs.last()[i][1].number() = i_exp - i_exp_n;
+						if(i_exp ==  i_exp_n) {
+							if(mtest2.size() > 1) {
+								mfacs.addChild(mtest2);
+								mfacs.last().delChild(i + 1, true);
+							}
+						} else {
+							mfacs.addChild(mtest2);
+							if(i_exp - i_exp_n == 1) mfacs.last()[i].setToChild(1);
+							else mfacs.last()[i][1].number() = i_exp - i_exp_n;
+						}
 						if(i_degrees[i] == 1) {
 							UnknownVariable *var = new UnknownVariable("", string("a") + i2s(mtest3.size()));
 							mnums3.addChild_nocopy(new MathStructure(var));
@@ -18481,7 +18615,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 							mnums3.addChild_nocopy(new MathStructure());
 							mnums3.last().setType(STRUCT_ADDITION);
 							for(int i2 = 1; i2 <= i_degrees[i]; i2++) {
-								UnknownVariable *var = new UnknownVariable("", string("a") + i2s(mtest3.size()));
+								UnknownVariable *var = new UnknownVariable("", string("a") + i2s(mtest3.size()) + i2s(i2));
 								if(i2 == 1) {
 									mnums3.last().addChild_nocopy(new MathStructure(var));
 								} else {
@@ -18492,17 +18626,20 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 								vars.push_back(var);
 							}
 						}
-						mfacs.last() *= mnums3.last();
+						if(i_exp != i_exp_n || mtest2.size() > 1) mfacs.last() *= mnums3.last();
+						else mfacs.addChild(mnums3.last());
 						b_solve = true;
 					}
 				} else if(i_degrees[i] > 1) {
 					mtest3.addChild(mtest2[i]);
-					mfacs.addChild(mtest2);
-					mfacs.last().delChild(i + 1, true);
+					if(mtest2.size() > 1) {
+						mfacs.addChild(mtest2);
+						mfacs.last().delChild(i + 1, true);
+					}
 					mnums3.addChild_nocopy(new MathStructure());
 					mnums3.last().setType(STRUCT_ADDITION);
 					for(int i2 = 1; i2 <= i_degrees[i]; i2++) {
-						UnknownVariable *var = new UnknownVariable("", string("a") + i2s(mtest3.size()));
+						UnknownVariable *var = new UnknownVariable("", string("a") + i2s(mtest3.size()) + i2s(i2));
 						if(i2 == 1) {
 							mnums3.last().addChild_nocopy(new MathStructure(var));
 						} else {
@@ -18512,7 +18649,8 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 						}
 						vars.push_back(var);
 					}
-					mfacs.last() *= mnums3.last();
+					if(mtest2.size() > 1) mfacs.last() *= mnums3.last();
+					else mfacs.addChild(mnums3.last());
 					b_solve = true;
 				}
 			}
@@ -18561,7 +18699,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 						}
 					}
 					if(mfac_expand.size() == 0 && m_eqs.size() >= vars.size()) {
-						for(size_t i = 0; i < m_eqs.size(); i++) {
+						for(size_t i = 0; i < m_eqs.size();) {
 							if(!m_eqs[i].isZero()) {
 								m_eqs[i].transform(COMPARISON_EQUALS, i == (size_t) mmul_i ? m_one : m_zero);
 								i++;
@@ -18602,7 +18740,11 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 									}
 								}
 							}
-							if(vars_m.size() == 0) {
+							for(size_t i = 0; i < m_eqs.size(); i++) {
+								m_eqs[i].calculatesub(eo, eo);
+								if(m_eqs[i].isZero()) {b = false; break;}
+							}
+							if(b && vars_m.size() == 0) {
 								for(size_t i = 0; i < vars.size(); i++) {
 									for(size_t i2 = 0; i2 < m_eqs.size(); i2++) {
 										if(m_eqs[i2][0] == vars[i]) {
@@ -18625,12 +18767,23 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 			}
 			if(b) {
 				for(size_t i = 0; i < mnums3.size(); i++) {
-					mnew.addChild(mnums3[i]);
-					mnew.last() /= mtest3[i];
+					mnums3.calculatesub(eo, eo, true);
+					if(!mnums3[i].isZero()) {
+						if(mnums3[i].isOne()) {
+							mnew.addChild(mtest3[i]);
+							mnew.last().inverse();
+						} else {
+							mnew.addChild(mnums3[i]);
+							mnew.last() /= mtest3[i];
+						}
+					}
 				}
 			}
 			if(b) {
+				if(mnew.size() == 0) mnew.clear();
+				else if(mnew.size() == 1) mnew.setToChild(1);
 				mnew.childrenUpdated();
+				if(equals(mnew, true)) return false;
 				set(mnew, true);
 				return true;
 			}
@@ -18895,7 +19048,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 				}
 				if(CHILD(0).isAddition()) {
 					MathStructure mtest(*this);
-					if(mtest[0].factorize(eo, false, 0, 0, false, false)) {
+					if(mtest[0].factorize(eo, false, 0, 0, false, false, NULL, x_var)) {
 						mmul = m_one;
 						while(mtest[0].isMultiplication() && mtest[0].size() >= 2 && mtest[0][0].containsRepresentativeOf(x_var, true, true) == 0) {
 							if(mmul.isOne()) mmul = mtest[0][0];
@@ -18916,6 +19069,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 							}
 							if(b) {
 								set(mtest2, true);
+								if(!mmul.isOne()) multiply(mmul);
 								return true;
 							}
 						}
@@ -19454,35 +19608,38 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 							return true;
 						}
 					}
-					if(CHILD(0) != x_var && CHILD(0).isPower() && CHILD(0)[0] == x_var && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isRational()) {
+					if(CHILD(0) == x_var || (CHILD(0).isPower() && CHILD(0)[0] == x_var && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isRational())) {
 						MathStructure madd, mmul, mpow;
-						if(integrate_info(CHILD(1)[0], x_var, madd, mmul, mpow, false, false) && mpow.isInteger()) {
-							if(mexp.isMinusOne() && CHILD(0)[1].number().isMinusOne()) {
-								if(mpow.number().isNegative()) {
-									set(x_var, true);
-									mpow.number().negate();
-									raise(mpow);
-									multiply(madd);
-									if(!mmul.isOne()) add(mmul);
-									transform(CALCULATOR->f_ln);
-									divide(mpow);
-									if(!mmul.isOne()) divide(mmul);
-								} else {
-									SET_CHILD_MAP(1)
-									SET_CHILD_MAP(0)
-									transform(CALCULATOR->f_ln);
-									add(x_var);
-									LAST.transform(CALCULATOR->f_ln);
-									LAST *= mpow;
-									LAST.negate();
-									negate();
-									divide(mpow);
-									divide(madd);
+						if(integrate_info(CHILD(1)[0], x_var, madd, mmul, mpow, false, false) && mpow.isNumber() && mpow.number().isRational() & !mpow.number().isOne()) {
+							Number nexp(1, 1, 0);
+							if(CHILD(0).isPower()) nexp = CHILD(0)[1].number();
+							if(!nexp.isOne() && mpow.isInteger()) {
+								if(mexp.isMinusOne() && CHILD(0)[1].number().isMinusOne()) {
+									if(mpow.number().isNegative()) {
+										set(x_var, true);
+										mpow.number().negate();
+										raise(mpow);
+										multiply(madd);
+										if(!mmul.isOne()) add(mmul);
+										transform(CALCULATOR->f_ln);
+										divide(mpow);
+										if(!mmul.isOne()) divide(mmul);
+									} else {
+										SET_CHILD_MAP(1)
+										SET_CHILD_MAP(0)
+										transform(CALCULATOR->f_ln);
+										add(x_var);
+										LAST.transform(CALCULATOR->f_ln);
+										LAST *= mpow;
+										LAST.negate();
+										negate();
+										divide(mpow);
+										divide(madd);
+									}
+									return true;
 								}
-								return true;
-							} else {
 								Number mpowmexp(mpow.number());
-								mpowmexp -= CHILD(0)[1].number();
+								mpowmexp -= nexp;
 								if(mpowmexp.isOne()) {
 									if(mexp.isMinusOne()) {
 										if(mpow.number().isNegative()) {
@@ -19521,6 +19678,65 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 									return true;
 								}
 							}
+							for(int i = 1; i <= 3; i++) {
+								if(i > 1 && (!mpow.isInteger() || !mpow.number().isIntegerDivisible(i) || mpow.number() == i)) break;
+								UnknownVariable *var = new UnknownVariable("", "u");
+								MathStructure m_replace(x_var);
+								MathStructure mtest(CHILD(1));
+								Number new_pow(nexp);
+								b = false;
+								if(i == 1) {
+									m_replace ^= mpow;
+									mtest.replace(m_replace, var);
+									new_pow++;
+									new_pow -= mpow.number();
+									new_pow /= mpow.number();
+									b = true;
+								} else if(i == 2) {
+									new_pow = nexp;
+									new_pow++;
+									new_pow -= 2;
+									new_pow /= 2;
+									if(new_pow.isInteger()) {
+										b = true;
+										m_replace ^= nr_two;
+										MathStructure m_prev(x_var), m_new(var);
+										m_prev ^= mpow;
+										m_new ^= mpow;
+										m_new[1].number() /= 2;
+										mtest.replace(m_prev, m_new);
+									}
+								} else if(i == 3) {
+									new_pow++;
+									new_pow -= 3;
+									new_pow /= 3;
+									if(new_pow.isInteger()) {
+										b = true;
+										m_replace ^= nr_three;
+										MathStructure m_prev(x_var), m_new(var);
+										m_prev ^= mpow;
+										m_new ^= mpow;
+										m_new[1].number() /= 3;
+										mtest.replace(m_prev, m_new);
+									}
+								}
+								if(b) {
+									var->setAssumptions(m_replace);
+									if(!new_pow.isZero()) {
+										mtest *= var;
+										mtest.swapChildren(1, mtest.size());
+										if(!new_pow.isOne()) mtest[0] ^= new_pow;
+									}
+									if(mtest.integrate(var, eo, false, m_lower, m_upper)) {
+										mtest.replace(var, m_replace);
+										set(mtest, true);
+										divide(m_replace[1]);
+										var->unref();
+										return true;
+									}
+									var->unref();
+								}
+							}
 						}
 					}
 					if(CHILD(1)[1].number().isMinusOne() && CHILD(1)[0].isMultiplication() && CHILD(1)[0].size() == 2 && CHILD(1)[0][0].isAddition() && CHILD(1)[0][1].isAddition() && (CHILD(0) == x_var || (CHILD(0).isPower() && CHILD(0)[0] == x_var && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isTwo()))) {
@@ -19556,8 +19772,23 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 						}
 					}
 					if(CHILD(1)[0].isAddition()) {
+						if(CHILD(1)[1].isMinusOne()) {
+							MathStructure mquo, mrem;
+							if(polynomial_long_division(CHILD(0), CHILD(1)[0], x_var, mquo, mrem, eo, true) && !mquo.isZero()) {
+								MathStructure mtest(mquo);
+								if(!mrem.isZero()) {
+									mtest += mrem;
+									mtest.last() *= CHILD(1);
+									mtest.childrenUpdated();
+									if(mtest.integrate(x_var, eo, false, m_lower, m_upper)) {
+										set(mtest, true);
+										return true;
+									}
+								}
+							}
+						}
 						MathStructure mtest(*this);
-						if(mtest[1][0].factorize(eo, false, 0, 0, false, false)) {
+						if(mtest[1][0].factorize(eo, false, 0, 0, false, false, NULL, x_var)) {
 							mmul = m_one;
 							while(mtest[1][0].isMultiplication() && mtest[1][0].size() >= 2 && mtest[1][0][0].containsRepresentativeOf(x_var, true, true) == 0) {
 								if(mmul.isOne()) mmul = mtest[1][0][0];
@@ -19579,6 +19810,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 									}
 									if(b) {
 										set(mtest2, true);
+										if(!mmul.isOne()) multiply(mmul);
 										return true;
 									}
 								}
@@ -19596,6 +19828,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 										}
 										if(b) {
 											set(mtest2, true);
+											if(!mmul.isOne()) multiply(mmul);
 											return true;
 										}
 									}
@@ -19771,18 +20004,94 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 						}
 					}
 				}
-				for(size_t i = 0; i < SIZE; i++) {
-					if(CHILD(i) == x_var) {
-						MathStructure minteg(*this);
-						minteg.delChild(i + 1, true);
-						if(minteg.integrate(x_var, eo, false, m_lower, m_upper) && !equals(minteg)) {
-							MathStructure minteg2(minteg);
-							if(minteg2.integrate(x_var, eo, false, m_lower, m_upper)) {
-								SET_CHILD_MAP(0)
-								multiply(minteg);
-								subtract(minteg2);
+				if(CHILD(0) == x_var || (CHILD(0).isPower() && CHILD(0)[0] == x_var && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isRational())) {
+					Number nexp(1, 1, 0);
+					if(CHILD(0).isPower()) nexp = CHILD(0)[1].number();
+					MathStructure mpow(1, 1, 0);
+					bool b = true;
+					MathStructure madd, mmul, mpown;
+					for(size_t i = 1; i < SIZE; i++) {
+						if((CHILD(i).isFunction() && CHILD(i).size() == 1) || (SIZE > 2 && CHILD(i).isPower() && CHILD(i)[1].containsRepresentativeOf(x_var, true, true) == 0)) {
+							if(!integrate_info(CHILD(i)[0], x_var, madd, mmul, mpown, false, false) || !mpown.isNumber() || !mpown.number().isRational() || mpown.number().isOne() || (!mpow.isOne() && mpow != mpown)) {
+								b = false;
+								break;
 							}
-							return true;
+							mpow = mpown;
+						} else if(CHILD(i).isPower() && CHILD(i)[0].containsRepresentativeOf(x_var, true, true) == 0) {
+							if(!integrate_info(CHILD(i)[1], x_var, madd, mmul, mpown, false, false) || !mpown.isNumber() || !mpown.number().isRational() || mpown.number().isOne() || (!mpow.isOne() && mpow != mpown)) {
+								b = false;
+								break;
+							}
+							mpow = mpown;
+						} else {
+							b = false;
+							break;
+						}
+
+					}
+					if(b) {
+						for(int i = 1; i <= 3; i++) {
+						cout << print() << endl;
+							if(i > 1 && (!mpow.isInteger() || !mpow.number().isIntegerDivisible(i) || mpow.number() == i)) break;
+							UnknownVariable *var = new UnknownVariable("", "u");
+							MathStructure m_replace(x_var);
+							MathStructure mtest(*this);
+							mtest.delChild(1, true);
+							Number new_pow(nexp);
+							b = false;
+							if(i == 1) {
+								m_replace ^= mpow;
+								mtest.replace(m_replace, var);
+								new_pow++;
+								new_pow -= mpow.number();
+								new_pow /= mpow.number();
+								b = true;
+							} else if(i == 2) {
+								new_pow = nexp;
+								new_pow++;
+								new_pow -= 2;
+								new_pow /= 2;
+								if(new_pow.isInteger()) {
+									b = true;
+									m_replace ^= nr_two;
+									MathStructure m_prev(x_var), m_new(var);
+									m_prev ^= mpow;
+									m_new ^= mpow;
+									m_new[1].number() /= 2;
+									mtest.replace(m_prev, m_new);
+								}
+							} else if(i == 3) {
+								new_pow++;
+								new_pow -= 3;
+								new_pow /= 3;
+								if(new_pow.isInteger()) {
+									b = true;
+									m_replace ^= nr_three;
+									MathStructure m_prev(x_var), m_new(var);
+									m_prev ^= mpow;
+									m_new ^= mpow;
+									m_new[1].number() /= 3;
+									mtest.replace(m_prev, m_new);
+								}
+							}
+							if(b) {
+								var->setAssumptions(m_replace);
+								if(!new_pow.isZero()) {
+									mtest *= var;
+									mtest.swapChildren(1, mtest.size());
+									if(!new_pow.isOne()) mtest[0] ^= new_pow;
+								}
+								cout << "i: " << mtest << endl;
+								if(mtest.integrate(var, eo, false, m_lower, m_upper)) {
+								cout << "D" << mtest << endl;
+									mtest.replace(var, m_replace);
+									set(mtest, true);
+									divide(m_replace[1]);
+									var->unref();
+									return true;
+								}
+								var->unref();
+							}
 						}
 					}
 				}
