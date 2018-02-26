@@ -3942,15 +3942,54 @@ int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 1;
 }
 
-LiFunction::LiFunction() : MathFunction("li", 1) {
+liFunction::liFunction() : MathFunction("li", 1) {
+	names[0].case_sensitive = true;
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
 }
-bool LiFunction::representsReal(const MathStructure &vargs, bool) const {
+bool liFunction::representsReal(const MathStructure &vargs, bool) const {
 	return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonNegative() && ((vargs[0].isNumber() && !vargs[0].number().isOne()) || (vargs[0].isVariable() && vargs[0].variable()->isKnown() && ((KnownVariable*) vargs[0].variable())->get().isNumber() && !((KnownVariable*) vargs[0].variable())->get().number().isOne()));
 }
-bool LiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber() && ((vargs[0].isNumber() && !vargs[0].number().isOne()) || (vargs[0].isVariable() && vargs[0].variable()->isKnown() && ((KnownVariable*) vargs[0].variable())->get().isNumber() && !((KnownVariable*) vargs[0].variable())->get().number().isOne()));}
-int LiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+bool liFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber() && ((vargs[0].isNumber() && !vargs[0].number().isOne()) || (vargs[0].isVariable() && vargs[0].variable()->isKnown() && ((KnownVariable*) vargs[0].variable())->get().isNumber() && !((KnownVariable*) vargs[0].variable())->get().number().isOne()));}
+int liFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	return false;
+}
+LiFunction::LiFunction() : MathFunction("Li", 2) {
+	names[0].case_sensitive = true;
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	setArgumentDefinition(2, new IntegerArgument());
+}
+bool LiFunction::representsReal(const MathStructure &vargs, bool) const {
+	return vargs.size() == 1 && vargs[1].representsInteger() && vargs[0].representsReal() && vargs[0].representsNonNegative() && ((vargs[1].representsPositive() || ((vargs[0].isNumber() && !vargs[0].number().isOne()) || (vargs[0].isVariable() && vargs[0].variable()->isKnown() && ((KnownVariable*) vargs[0].variable())->get().isNumber() && !((KnownVariable*) vargs[0].variable())->get().number().isOne()))));
+}
+bool LiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[1].representsInteger() && (vargs[1].representsPositive() || (vargs[0].representsNumber() && ((vargs[0].isNumber() && !vargs[0].number().isOne()) || (vargs[0].isVariable() && vargs[0].variable()->isKnown() && ((KnownVariable*) vargs[0].variable())->get().isNumber() && !((KnownVariable*) vargs[0].variable())->get().number().isOne()))));}
+int LiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[1].isOne()) {
+		mstruct.set(1, 1, 0);
+		mstruct -= vargs[0];
+		mstruct.transform(CALCULATOR->f_ln);
+		mstruct.negate();
+		return true;
+	} else if(vargs[1].isZero()) {
+		mstruct.set(1, 1, 0);
+		mstruct -= vargs[0];
+		mstruct.inverse();
+		mstruct *= vargs[0];
+		return true;
+	} else if(vargs[1].isMinusOne()) {
+		mstruct.set(1, 1, 0);
+		mstruct -= vargs[0];
+		mstruct.raise(Number(-2, 1));
+		mstruct *= vargs[0];
+		return true;
+	}
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(vargs[1].number().isPositive() && vargs[0].isOne()) {
+		mstruct = vargs[1];
+		mstruct.transform(CALCULATOR->f_zeta);
+		return true;
+	}
+	return -1;
 }
 EiFunction::EiFunction() : MathFunction("Ei", 1) {
 	names[0].case_sensitive = true;

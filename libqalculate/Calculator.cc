@@ -1504,7 +1504,8 @@ void Calculator::addBuiltinFunctions() {
 	f_multisolve = addFunction(new SolveMultipleFunction());
 	f_dsolve = addFunction(new DSolveFunction());
 	
-	f_li = addFunction(new LiFunction());
+	f_li = addFunction(new liFunction());
+	f_Li = addFunction(new LiFunction());
 	f_Ei = addFunction(new EiFunction());
 	f_Si = addFunction(new SiFunction());
 	f_Ci = addFunction(new CiFunction());
