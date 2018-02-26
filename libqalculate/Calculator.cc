@@ -1400,8 +1400,6 @@ void Calculator::addBuiltinFunctions() {
 
 	f_ln = addFunction(new LogFunction());
 	f_logn = addFunction(new LognFunction());
-	f_li = addFunction(new LiFunction());
-	f_Ei = addFunction(new EiFunction());
 
 	f_lambert_w = addFunction(new LambertWFunction());
 
@@ -1505,6 +1503,13 @@ void Calculator::addBuiltinFunctions() {
 	f_solve = addFunction(new SolveFunction());
 	f_multisolve = addFunction(new SolveMultipleFunction());
 	f_dsolve = addFunction(new DSolveFunction());
+	
+	f_li = addFunction(new LiFunction());
+	f_Ei = addFunction(new EiFunction());
+	f_Si = addFunction(new SiFunction());
+	f_Ci = addFunction(new CiFunction());
+	f_Shi = addFunction(new ShiFunction());
+	f_Chi = addFunction(new ChiFunction());
 	
 	if(canPlot()) f_plot = addFunction(new PlotFunction());
 	
