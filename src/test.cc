@@ -1,5 +1,16 @@
 #include <libqalculate/qalculate.h>
 
+void display_errors() {
+	if(!CALCULATOR->message()) return;
+	while(true) {
+		MessageType mtype = CALCULATOR->message()->type();
+		if(mtype == MESSAGE_ERROR) cout << "error: ";
+		else if(mtype == MESSAGE_WARNING) cout << "warning: ";
+		cout << CALCULATOR->message()->message() << endl;
+		if(!CALCULATOR->nextMessage()) break;
+	}
+}
+
 void test_integration4(const MathStructure &mstruct) {
 	MathStructure x_var(CALCULATOR->v_x);
 	cout << "Integration test: " << mstruct.print() << endl;
@@ -12,22 +23,26 @@ void test_integration4(const MathStructure &mstruct) {
 	MathStructure mstruct3(mstruct2);
 	mstruct3.replace(x_var, 3);
 	mstruct3.eval(eo);
+	display_errors();
 	string str1 = mstruct3.print();
 	cout << str1 << endl;
 	mstruct3 = mstruct;
 	mstruct3.replace(x_var, 3);
 	mstruct3.eval(eo);
+	display_errors();
 	string str2 = mstruct3.print();
 	cout << str2 << endl;
 	if(str1 != str2) cout << "!!!" << endl;
 	mstruct3 = mstruct2;
 	mstruct3.replace(x_var, -5);
 	mstruct3.eval(eo);
+	display_errors();
 	str1 = mstruct3.print();
 	cout << str1 << endl;
 	mstruct3 = mstruct;
 	mstruct3.replace(x_var, -5);
 	mstruct3.eval(eo);
+	display_errors();
 	str2 = mstruct3.print();
 	cout << str2 << endl;
 	if(str1 != str2) cout << "!!!" << endl;
@@ -131,26 +146,16 @@ void test_integration() {
 	test_integration2(mstruct);
 }
 
-int main(int argc, char *argv[]) {
+void test_intervals(bool use_interval) {
 
-	new Calculator();
-	CALCULATOR->loadGlobalDefinitions();
-	
-	CALCULATOR->setPrecision(10);
-	
-	test_integration();
-
-#define TEST_INTERVALS
-
-	CALCULATOR->useIntervalArithmetic(true);
+	CALCULATOR->useIntervalArithmetic(use_interval);
 	PrintOptions po;
 	//po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	
 	vector<Number> nrs;
-#ifdef TEST_INTERVALS
+
 	nrs.push_back(nr_plus_inf);
 	nrs.push_back(nr_minus_inf);
-#endif
 	nrs.push_back(nr_zero);
 	nrs.push_back(nr_half);
 	nrs.push_back(nr_minus_half);
@@ -158,7 +163,7 @@ int main(int argc, char *argv[]) {
 	nrs.push_back(nr_minus_one);
 	nrs.push_back(nr_two);
 	Number nr;
-#ifdef TEST_INTERVALS
+
 #define INCLUDES_INFINITY(x) (x.includesInfinity())
 #define IS_INTERVAL(x) (x.isInterval(false))
 	nr.setInterval(nr_minus_half, nr_half); nrs.push_back(nr); 
@@ -187,10 +192,6 @@ int main(int argc, char *argv[]) {
 	nr.setInterval(nr_plus_inf, nr_minus_one); nrs.push_back(nr);
 	nr.setInterval(nr_plus_inf, nr_one); nrs.push_back(nr);
 	nr.setImaginaryPart(nrs[nrs.size() - 2]); nrs.push_back(nr); nr.setImaginaryPart(nr_one); nrs.push_back(nr); nr.setImaginaryPart(nr_minus_inf); nrs.push_back(nr);
-#else
-#define INCLUDES_INFINITY(x) (false)
-#define IS_INTERVAL(x) (false)
-#endif
 	nr.setFloat(0.5); nrs.push_back(nr);
 	nr.setFloat(-0.5); nrs.push_back(nr);
 	nr.setImaginaryPart(nrs[nrs.size() - 2]); nr.setImaginaryPart(nr_one); nrs.push_back(nr);
@@ -573,7 +574,6 @@ int main(int argc, char *argv[]) {
 		else cout << "FAILED" << endl;
 			if(!INCLUDES_INFINITY(nr)) nrsum3 += nr;
 	}
-	return 0;
 	
 	/*Number nr1, nr2, nr3, nr4, nr5;
 	nr1.setInterval(Number(1, 1), Number(2, 1));
@@ -793,8 +793,20 @@ int main(int argc, char *argv[]) {
 	nrm = nr4; nrm.divide(-2);
 	cout << "4: " << nrm.print() << endl;
 	nrm = nr5; nrm.add(-2);
-	cout << "5: " << nrm.print() << endl;
+	cout << "5: " << nrm.print() << endl;*/
+
+}
+
+int main(int argc, char *argv[]) {
+
+	new Calculator();
+	CALCULATOR->loadGlobalDefinitions();
 	
-	return 0;*/
+	CALCULATOR->setPrecision(10);
+	
+	test_integration();
+	test_intervals(true);
+
+	return 0;
 
 }

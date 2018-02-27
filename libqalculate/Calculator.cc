@@ -560,17 +560,64 @@ void Calculator::beginTemporaryStopMessages() {
 	stopped_errors_count.push_back(0);
 	stopped_warnings_count.push_back(0);
 	stopped_messages_count.push_back(0);
+	vector<CalculatorMessage> vcm;
+	stopped_messages.push_back(vcm);
 }
-int Calculator::endTemporaryStopMessages(int *message_count, int *warning_count) {
+int Calculator::endTemporaryStopMessages(int *message_count, int *warning_count, int release_messages_if_no_equal_or_greater_than_message_type) {
 	if(disable_errors_ref <= 0) return -1;
 	disable_errors_ref--;
 	int ret = stopped_errors_count[disable_errors_ref];
+	bool release_messages = false;
+	if(release_messages_if_no_equal_or_greater_than_message_type >= MESSAGE_INFORMATION) {
+		if(ret > 0) release_messages = true;
+		if(release_messages_if_no_equal_or_greater_than_message_type == MESSAGE_WARNING && stopped_warnings_count[disable_errors_ref] > 0) release_messages = true;
+		else if(release_messages_if_no_equal_or_greater_than_message_type == MESSAGE_INFORMATION && stopped_messages_count[disable_errors_ref] > 0) release_messages = true;
+	}
 	if(message_count) *message_count = stopped_messages_count[disable_errors_ref];
 	if(warning_count) *warning_count = stopped_warnings_count[disable_errors_ref];
 	stopped_errors_count.pop_back();
 	stopped_warnings_count.pop_back();
 	stopped_messages_count.pop_back();
+	if(release_messages) addMessages(&stopped_messages[disable_errors_ref]);
+	stopped_messages.pop_back();
 	return ret;
+}
+void Calculator::endTemporaryStopMessages(bool release_messages, vector<CalculatorMessage> *blocked_messages) {
+	if(disable_errors_ref <= 0) return;
+	disable_errors_ref--;
+	stopped_errors_count.pop_back();
+	stopped_warnings_count.pop_back();
+	stopped_messages_count.pop_back();
+	if(blocked_messages) *blocked_messages = stopped_messages[disable_errors_ref];
+	if(release_messages) addMessages(&stopped_messages[disable_errors_ref]);
+	stopped_messages.pop_back();
+}
+void Calculator::addMessages(vector<CalculatorMessage> *message_vector) {
+	for(size_t i3 = 0; i3 < message_vector->size(); i3++) {
+		string error_str = (*message_vector)[i3].message();
+		bool dup_error = false;
+		for(size_t i = 0; i < messages.size(); i++) {
+			if(error_str == messages[i].message()) {
+				dup_error = true;
+				break;
+			}
+		}
+		if(!dup_error) {
+			if(disable_errors_ref > 0) {
+				for(size_t i2 = 0; !dup_error && i2 < (size_t) disable_errors_ref; i2++) {
+					for(size_t i = 0; i < stopped_messages[i2].size(); i++) {
+						if(error_str == stopped_messages[i2][i].message()) {
+							dup_error = true;
+							break;
+						}
+					}
+				}
+				if(!dup_error) stopped_messages[disable_errors_ref - 1].push_back((*message_vector)[i3]);
+			} else {
+				messages.push_back((*message_vector)[i3]);
+			}
+		}
+	}
 }
 Variable *Calculator::getVariable(size_t index) const {
 	if(index < variables.size()) {
@@ -1575,7 +1622,6 @@ void Calculator::message(MessageType mtype, int message_category, const char *TE
 		} else if(mtype == MESSAGE_WARNING) {
 			stopped_warnings_count[disable_errors_ref - 1]++;
 		}
-		return;
 	}
 	string error_str = TEMPLATE;
 	size_t i = 0;
@@ -1614,8 +1660,19 @@ void Calculator::message(MessageType mtype, int message_category, const char *TE
 			break;
 		}
 	}
+	if(disable_errors_ref > 0) {
+		for(size_t i2 = 0; !dup_error && i2 < (size_t) disable_errors_ref; i2++) {
+			for(i = 0; i < stopped_messages[i2].size(); i++) {
+				if(error_str == stopped_messages[i2][i].message()) {
+					dup_error = true;
+					break;
+				}
+			}
+		}
+	}
 	if(!dup_error) {
-		messages.push_back(CalculatorMessage(error_str, mtype, message_category, current_stage));
+		if(disable_errors_ref > 0) stopped_messages[disable_errors_ref - 1].push_back(CalculatorMessage(error_str, mtype, message_category, current_stage));
+		else messages.push_back(CalculatorMessage(error_str, mtype, message_category, current_stage));
 	}
 }
 CalculatorMessage* Calculator::message() {
@@ -1696,6 +1753,7 @@ bool Calculator::abort() {
 			stopped_messages_count.clear();
 			stopped_warnings_count.clear();
 			stopped_errors_count.clear();
+			stopped_messages.clear();
 			disable_errors_ref = 0;
 			if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
 			tmp_rpn_mstruct = NULL;
@@ -5066,12 +5124,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 	mstruct->clear();
 	if(str.empty()) return false;
 	if(str.find_first_not_of(OPERATORS SPACE) == string::npos) {
-		if(disable_errors_ref > 0) {
-			stopped_messages_count[disable_errors_ref - 1]++;
-			stopped_warnings_count[disable_errors_ref - 1]++;
-		} else {
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
-		}
+		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
 	}
 	int minus_count = 0;
@@ -5090,12 +5143,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		} else if(str[i] == COMMA_CH && DOT_S == ".") {
 			str.erase(i, 1);
 		} else if(is_in(OPERATORS, str[i])) {
-			if(disable_errors_ref > 0) {
-				stopped_messages_count[disable_errors_ref - 1]++;
-				stopped_warnings_count[disable_errors_ref - 1]++;
-			} else {
-				error(false, _("Misplaced '%c' ignored"), str[i], NULL);
-			}
+			error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
 		} else {
 			had_non_sign = true;
@@ -5845,24 +5893,14 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		while(i != string::npos && i + 1 != str.length()) {
 			if(i < 1) {
 				if(i < 1 && str.find_first_not_of(MULTIPLICATION_2 OPERATORS EXPS) == string::npos) {
-					if(disable_errors_ref > 0) {
-						stopped_messages_count[disable_errors_ref - 1]++;
-						stopped_warnings_count[disable_errors_ref - 1]++;
-					} else {
-						error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
-					}
+					error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 					return b;
 				}
 				i = 1;
 				while(i < str.length() && is_in(MULTIPLICATION DIVISION, str[i])) {
 					i++;
 				}
-				if(disable_errors_ref > 0) {
-					stopped_messages_count[disable_errors_ref - 1]++;
-					stopped_warnings_count[disable_errors_ref - 1]++;
-				} else {
-					error(false, _("Misplaced operator(s) \"%s\" ignored"), str.substr(0, i).c_str(), NULL);
-				}
+				error(false, _("Misplaced operator(s) \"%s\" ignored"), str.substr(0, i).c_str(), NULL);
 				str = str.substr(i, str.length() - i);
 				i = str.find_first_of(MULTIPLICATION DIVISION, 0);
 			} else {
@@ -5883,12 +5921,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					while(i2 + i + 1 != str.length() && is_in(MULTIPLICATION DIVISION, str[i2 + i + 1])) {
 						i2++;
 					}
-					if(disable_errors_ref > 0) {
-						stopped_messages_count[disable_errors_ref - 1]++;
-						stopped_warnings_count[disable_errors_ref - 1]++;
-					} else {
-						error(false, _("Misplaced operator(s) \"%s\" ignored"), str.substr(i, i2).c_str(), NULL);
-					}
+					error(false, _("Misplaced operator(s) \"%s\" ignored"), str.substr(i, i2).c_str(), NULL);
 					i += i2;
 				}
 				div = str[i] == DIVISION_CH;
@@ -5909,12 +5942,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 
 	if(str.empty()) return false;
 	if(str.find_first_not_of(OPERATORS SPACE) == string::npos) {
-		if(disable_errors_ref > 0) {
-			stopped_messages_count[disable_errors_ref - 1]++;
-			stopped_warnings_count[disable_errors_ref - 1]++;
-		} else {
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
-		}
+		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
 	}
 	
@@ -5933,12 +5961,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		} else if(str[i] == SPACE_CH) {
 			str.erase(i, 1);
 		} else if(is_in(OPERATORS, str[i])) {
-			if(disable_errors_ref > 0) {
-				stopped_messages_count[disable_errors_ref - 1]++;
-				stopped_warnings_count[disable_errors_ref - 1]++;
-			} else {
-				error(false, _("Misplaced '%c' ignored"), str[i], NULL);
-			}
+			error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
 		} else {
 			break;

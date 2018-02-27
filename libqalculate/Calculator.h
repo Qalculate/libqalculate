@@ -232,6 +232,7 @@ class Calculator {
 	vector<int> stopped_errors_count;
 	vector<int> stopped_warnings_count;
 	vector<int> stopped_messages_count;
+	vector<vector<CalculatorMessage>> stopped_messages;
 
 	Thread *calculate_thread;
 
@@ -920,7 +921,9 @@ class Calculator {
 	CalculatorMessage *nextMessage();
 	bool showArgumentErrors() const;
 	void beginTemporaryStopMessages();
-	int endTemporaryStopMessages(int *message_count = NULL, int *warning_count = NULL);
+	int endTemporaryStopMessages(int *message_count = NULL, int *warning_count = NULL, int release_messages_if_no_equal_or_greater_than_message_type = -1);
+	void endTemporaryStopMessages(bool release_messages, vector<CalculatorMessage> *blocked_messages = NULL);
+	void addMessages(vector<CalculatorMessage> *message_vector);
 	//@}
 
 	/** @name Functions for loading and saving definitions (variables, functions, units, etc.). */
