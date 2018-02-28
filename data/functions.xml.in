@@ -2261,9 +2261,15 @@
     </builtin_function>
     <builtin_function name="dsolve">
       <_title>Solve differential equation</_title>
-      <_names>r:solve</_names>
+      <_names>r:dsolve</_names>
       <argument index="1">
         <_title>Equation</_title>
+      </argument>
+      <argument index="2">
+        <_title>Initial condition: function value (y)</_title>
+      </argument>
+      <argument index="3">
+        <_title>Initial condition: argument value (x)</_title>
       </argument>
     </builtin_function>
     <function>

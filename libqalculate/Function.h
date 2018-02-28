@@ -193,6 +193,7 @@ class MathFunction : public ExpressionItem {
 	virtual bool representsInteger(const MathStructure&, bool = false) const;
 	virtual bool representsNumber(const MathStructure&, bool = false) const;
 	virtual bool representsRational(const MathStructure&, bool = false) const;
+	virtual bool representsNonComplex(const MathStructure&, bool = false) const;
 	virtual bool representsReal(const MathStructure&, bool = false) const;
 	virtual bool representsComplex(const MathStructure&, bool = false) const;
 	virtual bool representsNonZero(const MathStructure&, bool = false) const;

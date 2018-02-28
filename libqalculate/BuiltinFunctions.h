@@ -68,6 +68,7 @@
 						bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
 						bool representsRational(const MathStructure &vargs, bool allow_units = false) const;\
 						bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
 						bool representsComplex(const MathStructure &vargs, bool allow_units = false) const;\
 						bool representsNonZero(const MathStructure &vargs, bool allow_units = false) const;\
 						bool representsEven(const MathStructure &vargs, bool allow_units = false) const;\
@@ -83,6 +84,7 @@
 						ExpressionItem *copy() const {return new x(this);} \
 						bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
 						bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
 					};
 #define DECLARE_BUILTIN_FUNCTION_R1(x)	class x : public MathFunction { \
 					  public: \

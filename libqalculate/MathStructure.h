@@ -485,6 +485,7 @@ class MathStructure {
 		bool representsRational(bool allow_units = false) const;
 		bool representsFraction(bool allow_units = false) const;
 		bool representsReal(bool allow_units = false) const;
+		bool representsNonComplex(bool allow_units = false) const;
 		bool representsComplex(bool allow_units = false) const;
 		bool representsNonZero(bool allow_units = false) const;
 		bool representsZero(bool allow_units = false) const;
@@ -808,7 +809,7 @@ class MathStructure {
 		/** @name Differentiation and integration */
 		//@{
 		bool differentiate(const MathStructure &x_var, const EvaluationOptions &eo);
-		bool integrate(const MathStructure &x_var, const EvaluationOptions &eo, bool simplify_first = true, const MathStructure &m_lower = m_undefined, const MathStructure &m_upper = m_undefined, int max_part_depth = 5, vector<MathStructure*> *parent_parts = NULL);
+		bool integrate(const MathStructure &x_var, const EvaluationOptions &eo, bool simplify_first = true, bool use_abs = true, const MathStructure &m_lower = m_undefined, const MathStructure &m_upper = m_undefined, int max_part_depth = 5, vector<MathStructure*> *parent_parts = NULL);
 		//@}
 
 		/** @name Functions for polynomials */
