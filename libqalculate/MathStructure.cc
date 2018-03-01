@@ -56,7 +56,7 @@
 #define VALID_ROOT(o)		(o.size() == 2 && o[1].isNumber() && o[1].number().isInteger() && o[1].number().isPositive())
 #define THIS_VALID_ROOT		(SIZE == 2 && CHILD(1).isNumber() && CHILD(1).number().isInteger() && CHILD(1).number().isPositive())
 
-/*void printRecursive(const MathStructure &mstruct) {
+void printRecursive(const MathStructure &mstruct) {
 	std::cout << "RECURSIVE " << mstruct.print() << std::endl;
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		std::cout << i << ": " << mstruct[i].print() << std::endl;
@@ -76,7 +76,7 @@
 			}
 		}
 	}
-}*/
+}
 
 struct sym_desc {
 	MathStructure sym;
@@ -20711,7 +20711,6 @@ int test_comparisons(const MathStructure &msave, MathStructure &mthis, const Mat
 				mtest[0].delChild(1, true);
 			}
 			mtest.eval(eo2);
-
 			if(CALCULATOR->endTemporaryStopMessages() > 0) {
 				if(!sub) mthis = msave;
 				return -1;

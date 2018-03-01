@@ -2271,6 +2271,8 @@
       <argument index="3">
         <_title>Initial condition: argument value (x)</_title>
       </argument>
+      <_description>Solves a differential equation and returns the value of y(x). The derivative in the equation should be in the format diff(y, x). Only first-order differential equations are currently supported.</_description>
+      <example>$name(2 * diff(y, x) - y = 4x, 5, 2) = 21e^(x/2) / e - 4x - 8</example>
     </builtin_function>
     <function>
       <_title>Solve for two variables</_title>

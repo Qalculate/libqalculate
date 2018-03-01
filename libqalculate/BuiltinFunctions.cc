@@ -3894,7 +3894,7 @@ int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	mstruct = vargs[0];
 	bool b = false;
 	while(i) {
-		if(i > 0) mstruct.calculatesub(eo, eo, true);
+		if(i > 0) mstruct.eval(eo);
 		if(CALCULATOR->aborted()) return 0;
 		if(!mstruct.differentiate(vargs[1], eo) && !b) {
 			return 0;
@@ -4473,6 +4473,10 @@ int test_equation(MathStructure &mstruct, const EvaluationOptions &eo, const Mat
 		MathStructure mtest2(y_var);
 		mtest2.transform(COMPARISON_EQUALS, y_value);
 		CALCULATOR->beginTemporaryStopMessages();
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_APPROXIMATE;
+		mtest.calculateFunctions(eo2);
+		mtest2.calculateFunctions(eo2);
 		int b = test_comparisons(mtest, mtest2, y_var, eo);
 		CALCULATOR->endTemporaryStopMessages();
 		if(!b) mstruct.clear(true);
@@ -5105,7 +5109,11 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 								m_eqn[0] = m_y;
 								m_eqn[0] ^= m_exp;
 								m_eqn[0] *= m_y1_exp;
-								b = true;
+								add_C(m_eqn, m_x, m_y, x_value, y_value);
+								m_eqn[0].delChild(m_eqn[0].size());
+								m_eqn[1] /= m_y1_exp;
+								m_eqn.childrenUpdated();
+								return 1;
 							}
 						}
 					} else if(m_left.isZero()) {
@@ -5141,11 +5149,14 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 									MathStructure m_fx(m_left);
 									m_fx *= integ_fac;
 									if(m_fx.integrate(m_x, eo, true, false)) {
-										MathStructure m_fy(m_y);
-										m_fy *= integ_fac;
-										m_eqn[0] = m_fy;
+										m_eqn[0] = m_y;
+										m_eqn[0] *= integ_fac;
 										m_eqn[1] = m_fx;
-										b = true;
+										add_C(m_eqn, m_x, m_y, x_value, y_value);
+										m_eqn[0] = m_y;
+										m_eqn[1] /= integ_fac;
+										m_eqn.childrenUpdated();
+										return 1;
 									}
 								} else if(m_eqn2.isLogicalOr() && m_eqn2.size() >= 2) {
 									b = true;
@@ -5168,6 +5179,10 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 												m_eqn_new.addChild(m_fy);
 												m_eqn_new.last().transform(COMPARISON_EQUALS, m_fx);
 												add_C(m_eqn_new.last(), m_x, m_y, x_value, y_value);
+												m_eqn_new.last()[0] = m_y;
+												m_eqn_new.last()[1] /= integ_fac;
+												m_eqn_new.last().childrenUpdated();
+												m_eqn_new.childUpdated(m_eqn_new.size());
 											} else {
 												b = false;
 												break;
@@ -5234,32 +5249,33 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	}
 	m_eqn.isolate_x(eo2, m_diff);
 	mstruct = m_eqn;
+	if(eo.approximation == APPROXIMATION_TRY_EXACT) eo2.approximation = APPROXIMATION_EXACT;
 	if(m_eqn.isLogicalAnd()) {
 		for(size_t i = 0; i < m_eqn.size(); i++) {
 			if(m_eqn[i].isComparison() && m_eqn[i].comparisonType() == COMPARISON_EQUALS && m_eqn[i][0] == m_diff) {
-				dsolve(m_eqn[i], eo, m_diff, vargs[1], vargs[2]);
+				dsolve(m_eqn[i], eo2, m_diff, vargs[1], vargs[2]);
 			}
 		}
 	} else if(m_eqn.isLogicalOr()) {
 		for(size_t i = 0; i < m_eqn.size(); i++) {
 			if(m_eqn[i].isComparison() && m_eqn[i].comparisonType() == COMPARISON_EQUALS && m_eqn[i][0] == m_diff) {
-				dsolve(m_eqn[i], eo, m_diff, vargs[1], vargs[2]);
+				dsolve(m_eqn[i], eo2, m_diff, vargs[1], vargs[2]);
 			} else if(m_eqn[i].isLogicalAnd()) {
 				for(size_t i2 = 0; i2 < m_eqn[i].size(); i2++) {
 					if(m_eqn[i][i2].isComparison() && m_eqn[i][i2].comparisonType() == COMPARISON_EQUALS && m_eqn[i][i2][0] == m_diff) {
-						dsolve(m_eqn[i][i2], eo, m_diff, vargs[1], vargs[2]);
+						dsolve(m_eqn[i][i2], eo2, m_diff, vargs[1], vargs[2]);
 					}
 				}
 			}
 		}
 	} else if(m_eqn.isComparison() && m_eqn.comparisonType() == COMPARISON_EQUALS && m_eqn[0] == m_diff) {
-		dsolve(m_eqn, eo, m_diff, vargs[1], vargs[2]);
+		dsolve(m_eqn, eo2, m_diff, vargs[1], vargs[2]);
 	}
 	if(m_eqn.contains(m_diff)) {
 		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
 		return -1;
 	}
-	m_eqn.calculatesub(eo, eo, true);
+	m_eqn.calculatesub(eo2, eo2, true);
 	MathStructure msolve(m_eqn);
 	if(solve_equation(msolve, m_eqn, m_diff[0], eo, true, m_diff[1], MathStructure(string("C")), vargs[2], vargs[1]) <= 0) {
 		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
