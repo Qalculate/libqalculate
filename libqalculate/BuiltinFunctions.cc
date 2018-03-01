@@ -4096,6 +4096,8 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				mstruct = mbak_integ;
 			}
 		}
+	} else {
+		CALCULATOR->endTemporaryStopMessages(true);
 	}
 	eo2.approximation = eo.approximation;
 	if(b) {
@@ -4329,12 +4331,12 @@ bool is_comparison_structure(const MathStructure &mstruct, const MathStructure &
 	return false;
 }
 
-MathStructure *solve_handle_logical_and(MathStructure &mstruct, MathStructure **mtruefor, ComparisonType ct, bool &b_partial, const MathStructure &vargs) {
+MathStructure *solve_handle_logical_and(MathStructure &mstruct, MathStructure **mtruefor, ComparisonType ct, bool &b_partial, const MathStructure &x_var) {
 	MathStructure *mcondition = NULL;
 	for(size_t i2 = 0; i2 < mstruct.size(); ) {
 		if(ct == COMPARISON_EQUALS) {
-			if(mstruct[i2].isComparison() && ct == mstruct[i2].comparisonType() && mstruct[i2][0].contains(vargs[1])) {
-				if(mstruct[i2][0] == vargs[1]) {
+			if(mstruct[i2].isComparison() && ct == mstruct[i2].comparisonType() && mstruct[i2][0].contains(x_var)) {
+				if(mstruct[i2][0] == x_var) {
 					if(mstruct.size() == 2) {
 						if(i2 == 0) {
 							mstruct[1].ref();
@@ -4358,11 +4360,11 @@ MathStructure *solve_handle_logical_and(MathStructure &mstruct, MathStructure **
 				i2++;
 			}
 		} else {
-			if(mstruct[i2].isComparison() && mstruct[i2][0].contains(vargs[1])) {
-				i2++;												
+			if(mstruct[i2].isComparison() && mstruct[i2][0].contains(x_var)) {
+				i2++;
 			} else {
 				mstruct[i2].ref();
-				if(mcondition) {									
+				if(mcondition) {
 					mcondition->add_nocopy(&mstruct[i2], OPERATION_LOGICAL_AND, true);
 				} else {
 					mcondition = &mstruct[i2];
@@ -4403,7 +4405,89 @@ MathStructure *solve_handle_logical_and(MathStructure &mstruct, MathStructure **
 	return mcondition;
 }
 
-int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+void simplify_constant(MathStructure &mstruct, const MathStructure &x_var, const MathStructure &y_var, const MathStructure &c_var, bool in_comparison = false, bool in_or = false, bool in_and = false);
+void simplify_constant(MathStructure &mstruct, const MathStructure &x_var, const MathStructure &y_var, const MathStructure &c_var, bool in_comparison, bool in_or, bool in_and) {
+	if(!in_comparison && mstruct.isComparison()) {
+		if(mstruct[0] == c_var) {
+			if(in_or) mstruct.clear(true);
+			else mstruct.set(1, 1, 0);
+		} else if(mstruct[0] == y_var) {
+			if(mstruct[1].contains(y_var, true) <= 0) simplify_constant(mstruct[1], x_var, y_var, c_var, true);
+		} else if(mstruct[0].contains(y_var, true) <= 0 && mstruct.contains(c_var, true) > 0) {
+			if(in_or) mstruct.clear(true);
+			else mstruct.set(1, 1, 0);
+		}
+	}
+	if(in_comparison) {
+		if(mstruct.contains(y_var, true) <= 0 && mstruct.contains(x_var, true) <= 0 && mstruct.contains(c_var, true) > 0) {
+			mstruct = c_var;
+			return;
+		}
+	}
+	if(in_comparison) {
+		int n_c = 0, b_cx = false;
+		size_t i_c = 0;
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(mstruct[i].contains(c_var, true) > 0) {
+				n_c++;
+				i_c = i;
+				if(!b_cx && mstruct[i].contains(x_var, true) > 0) {
+					b_cx = true;
+				}
+			}
+		}
+		if(!b_cx && n_c >= 1 && (mstruct.isAddition() || mstruct.isMultiplication())) {
+			bool b_c = false;
+			for(size_t i = 0; i < mstruct.size();) {
+				if(mstruct[i].contains(c_var, true) > 0) {
+					if(b_c) {
+						mstruct.delChild(i + 1);
+					} else {
+						b_c = true;
+						mstruct[i] = c_var;
+						i++;
+					}
+				} else if(mstruct[i].contains(x_var, true) <= 0) {
+					mstruct.delChild(i + 1);
+				} else {
+					i++;
+				}
+			}
+			if(mstruct.size() == 1) mstruct.setToChild(1, true);
+		} else if(n_c == 1) {
+			if(b_cx) simplify_constant(mstruct[i_c], x_var, y_var, c_var, true);
+			else mstruct[i_c] = c_var;
+		}
+	} else {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			simplify_constant(mstruct[i], x_var, y_var, c_var, false, mstruct.isLogicalOr(), mstruct.isLogicalAnd());
+		}
+	}
+}
+
+extern int test_comparisons(const MathStructure &msave, MathStructure &mthis, const MathStructure &x_var, const EvaluationOptions &eo, bool sub = false);
+int test_equation(MathStructure &mstruct, const EvaluationOptions &eo, const MathStructure &x_var, const MathStructure &y_var, const MathStructure &x_value, const MathStructure &y_value) {
+	if(mstruct.isComparison() && mstruct.comparisonType() == COMPARISON_EQUALS && mstruct[0] == y_var) {
+		MathStructure mtest(mstruct);
+		mtest.replace(x_var, x_value);
+		MathStructure mtest2(y_var);
+		mtest2.transform(COMPARISON_EQUALS, y_value);
+		CALCULATOR->beginTemporaryStopMessages();
+		int b = test_comparisons(mtest, mtest2, y_var, eo);
+		CALCULATOR->endTemporaryStopMessages();
+		if(!b) mstruct.clear(true);
+		return b;
+	}
+	bool b_ret = 0;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		int b = test_equation(mstruct[i], eo, x_var, y_var, x_value, y_value);
+		if(b < 0) return b;
+		else if(b > 0) b_ret = 1;
+	}
+	return b_ret;
+}
+
+int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const MathStructure &y_var, const EvaluationOptions &eo, bool dsolve = false, const MathStructure &x_var = m_undefined, const MathStructure &c_var = m_undefined, const MathStructure &x_value = m_undefined, const MathStructure &y_value = m_undefined) {
 
 	int itry = 0;	
 	int ierror = 0;
@@ -4420,7 +4504,7 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	
 		if(itry == 1) {
 			if(ierror == 1) {
-				CALCULATOR->error(true, _("No equality or inequality to solve. The entered expression to solve is not correct (ex. \"x + 5 = 3\" is correct)"), NULL);
+				if(!dsolve) CALCULATOR->error(true, _("No equality or inequality to solve. The entered expression to solve is not correct (ex. \"x + 5 = 3\" is correct)"), NULL);
 				return -1;
 			} else {
 				first_error = ierror;
@@ -4431,13 +4515,13 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		itry++;
 		
 		if(itry == 2) {
-			if(vargs[1].isVariable() && vargs[1].variable()->subtype() == SUBTYPE_UNKNOWN_VARIABLE) {
-				assumptions = ((UnknownVariable*) vargs[1].variable())->assumptions();
+			if(y_var.isVariable() && y_var.variable()->subtype() == SUBTYPE_UNKNOWN_VARIABLE) {
+				assumptions = ((UnknownVariable*) y_var.variable())->assumptions();
 				if(!assumptions) {
 					assumptions = new Assumptions();
 					assumptions->setSign(CALCULATOR->defaultAssumptions()->sign());
 					assumptions->setType(CALCULATOR->defaultAssumptions()->type());
-					((UnknownVariable*) vargs[1].variable())->setAssumptions(assumptions);
+					((UnknownVariable*) y_var.variable())->setAssumptions(assumptions);
 					assumptions_added = true;
 				}
 			} else {
@@ -4464,10 +4548,10 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		if(itry > 3) {
 			if(as != ASSUMPTION_SIGN_UNKNOWN) assumptions->setSign(as);
 			if(at > ASSUMPTION_TYPE_NUMBER) assumptions->setType(at);
-			if(assumptions_added) ((UnknownVariable*) vargs[1].variable())->setAssumptions(NULL);
+			if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			switch(first_error) {
 				case 2: {
-					CALCULATOR->error(true, _("The comparison is true for all %s (with current assumptions)."), vargs[1].print().c_str(), NULL);
+					CALCULATOR->error(true, _("The comparison is true for all %s (with current assumptions)."), y_var.print().c_str(), NULL);
 					break;
 				}
 				case 3: {
@@ -4475,15 +4559,15 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 					break;
 				}
 				case 4: {
-					CALCULATOR->error(true, _("Was unable to completely isolate %s."), vargs[1].print().c_str(), NULL);
+					CALCULATOR->error(true, _("Was unable to completely isolate %s."), y_var.print().c_str(), NULL);
 					break;
 				}
 				case 7: {					
-					CALCULATOR->error(false, _("The comparison is true for all %s if %s."), vargs[1].print().c_str(), strueforall.c_str(), NULL);
+					CALCULATOR->error(false, _("The comparison is true for all %s if %s."), y_var.print().c_str(), strueforall.c_str(), NULL);
 					break;
 				}
 				default: {
-					CALCULATOR->error(true, _("Was unable to isolate %s."), vargs[1].print().c_str(), NULL);
+					CALCULATOR->error(true, _("Was unable to isolate %s."), y_var.print().c_str(), NULL);
 					break;
 				}
 			}
@@ -4496,32 +4580,32 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		bool b = false;
 		bool b_partial = false;
 
-		if(vargs[0].isComparison()) {
-			ct = vargs[0].comparisonType();
-			mstruct = vargs[0];
+		if(m_eqn.isComparison()) {
+			ct = m_eqn.comparisonType();
+			mstruct = m_eqn;
 			b = true;
-		} else if(vargs[0].isLogicalAnd() && vargs[0].size() > 0 && vargs[0][0].isComparison()) {
-			ct = vargs[0][0].comparisonType();
-			mstruct = vargs[0];
+		} else if(m_eqn.isLogicalAnd() && m_eqn.size() > 0 && m_eqn[0].isComparison()) {
+			ct = m_eqn[0].comparisonType();
+			mstruct = m_eqn;
 			b = true;
-		} else if(vargs[0].isLogicalOr() && vargs[0].size() > 0 && vargs[0][0].isComparison()) {
-			ct = vargs[0][0].comparisonType();
-			mstruct = vargs[0];
+		} else if(m_eqn.isLogicalOr() && m_eqn.size() > 0 && m_eqn[0].isComparison()) {
+			ct = m_eqn[0].comparisonType();
+			mstruct = m_eqn;
 			b = true;
-		} else if(vargs[0].isLogicalOr() && vargs[0].size() > 0 && vargs[0][0].isLogicalAnd() && vargs[0][0].size() > 0 && vargs[0][0][0].isComparison()) {
-			ct = vargs[0][0][0].comparisonType();
-			mstruct = vargs[0];
+		} else if(m_eqn.isLogicalOr() && m_eqn.size() > 0 && m_eqn[0].isLogicalAnd() && m_eqn[0].size() > 0 && m_eqn[0][0].isComparison()) {
+			ct = m_eqn[0][0].comparisonType();
+			mstruct = m_eqn;
 			b = true;
-		} else if(vargs[0].isVariable() && vargs[0].variable()->isKnown() && (eo.approximation != APPROXIMATION_EXACT || !vargs[0].variable()->isApproximate()) && ((KnownVariable*) vargs[0].variable())->get().isComparison()) {
-			mstruct = ((KnownVariable*) vargs[0].variable())->get();
-			ct = vargs[0].comparisonType();
+		} else if(m_eqn.isVariable() && m_eqn.variable()->isKnown() && (eo.approximation != APPROXIMATION_EXACT || !m_eqn.variable()->isApproximate()) && ((KnownVariable*) m_eqn.variable())->get().isComparison()) {
+			mstruct = ((KnownVariable*) m_eqn.variable())->get();
+			ct = m_eqn.comparisonType();
 			b = true;
 		} else {
 			EvaluationOptions eo2 = eo;
 			eo2.test_comparisons = false;
 			eo2.assume_denominators_nonzero = false;
 			eo2.isolate_x = false;
-			mstruct = vargs[0];
+			mstruct = m_eqn;
 			mstruct.eval(eo2);
 			if(mstruct.isComparison()) {
 				ct = mstruct.comparisonType();
@@ -4538,21 +4622,35 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			}
 		}	
 
-		if(!b) {		
+		if(!b) {
 			ierror = 1;
 			continue;
 		}
 	
 		EvaluationOptions eo2 = eo;
-		eo2.isolate_var = &vargs[1];
+		eo2.isolate_var = &y_var;
 		eo2.isolate_x = true;
 		eo2.test_comparisons = true;
 		mstruct.eval(eo2);
+		if(dsolve) {
+			if(x_value.isUndefined() || y_value.isUndefined()) {
+				simplify_constant(mstruct, x_var, y_var, c_var);
+				mstruct.eval(eo2);
+			} else {
+				int test_r = test_equation(mstruct, eo2, x_var, y_var, x_value, y_value);
+				if(test_r < 0) {
+					ierror = 8;
+					continue;
+				} else if(test_r > 0) {
+					mstruct.eval(eo2);
+				}
+			}
+		}
 
-		if(mstruct.isOne()) {		
+		if(mstruct.isOne()) {
 			ierror = 2;
 			continue;
-		} else if(mstruct.isZero()) {		
+		} else if(mstruct.isZero()) {
 			ierror = 3;
 			continue;
 		}
@@ -4561,14 +4659,14 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		po.spell_out_logical_operators = true;
 	
 		if(mstruct.isComparison()) {
-			if((ct == COMPARISON_EQUALS && mstruct.comparisonType() != COMPARISON_EQUALS) || !mstruct.contains(vargs[1])) {
+			if((ct == COMPARISON_EQUALS && mstruct.comparisonType() != COMPARISON_EQUALS) || !mstruct.contains(y_var)) {
 				if(itry == 1) {
 					mstruct.format(po);
 					strueforall = mstruct.print(po);
 				}
 				ierror = 7;
 				continue;
-			} else if(ct == COMPARISON_EQUALS && mstruct[0] != vargs[1]) {
+			} else if(ct == COMPARISON_EQUALS && mstruct[0] != y_var) {
 				ierror = 4;
 				continue;
 			}
@@ -4580,20 +4678,20 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			if(itry > 1) {
 				assumptions->setSign(as);
 				if(itry == 2) {
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), vargs[1].print().c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), y_var.print().c_str(), NULL);
 				} else if(itry == 3) {
 					assumptions->setType(at);
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), vargs[1].print().c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), y_var.print().c_str(), NULL);
 				}
-				if(assumptions_added) ((UnknownVariable*) vargs[1].variable())->setAssumptions(NULL);
+				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			}
 			return 1;
 		} else if(mstruct.isLogicalAnd()) {
 			MathStructure *mtruefor = NULL;
 			bool b_partial;
 			MathStructure mcopy(mstruct);
-			MathStructure *mcondition = solve_handle_logical_and(mstruct, &mtruefor, ct, b_partial, vargs);
-			if((!mstruct.isComparison() && !mstruct.isLogicalAnd()) || (ct == COMPARISON_EQUALS && (!mstruct.isComparison() || mstruct.comparisonType() != COMPARISON_EQUALS || mstruct[0] != vargs[1])) || !mstruct.contains(vargs[1])) {
+			MathStructure *mcondition = solve_handle_logical_and(mstruct, &mtruefor, ct, b_partial, y_var);
+			if((!mstruct.isComparison() && !mstruct.isLogicalAnd()) || (ct == COMPARISON_EQUALS && (!mstruct.isComparison() || mstruct.comparisonType() != COMPARISON_EQUALS || mstruct[0] != y_var)) || !mstruct.contains(y_var)) {
 				if(mtruefor) delete mtruefor;
 				if(mcondition) delete mcondition;
 				if(b_partial) {
@@ -4607,12 +4705,12 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			if(itry > 1) {
 				assumptions->setSign(as);
 				if(itry == 2) {
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), vargs[1].print().c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), y_var.print().c_str(), NULL);
 				} else if(itry == 3) {
 					assumptions->setType(at);
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), vargs[1].print().c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), y_var.print().c_str(), NULL);
 				}
-				if(assumptions_added) ((UnknownVariable*) vargs[1].variable())->setAssumptions(NULL);
+				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			}			
 			if(mcondition) {
 				mcondition->format(po);
@@ -4621,7 +4719,7 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			}
 			if(mtruefor) {
 				mtruefor->format(po);
-				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), vargs[1].print().c_str(), mtruefor->print(po).c_str(), NULL);
+				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), y_var.print().c_str(), mtruefor->print(po).c_str(), NULL);
 				delete mtruefor;
 			}
 			if(ct == COMPARISON_EQUALS) mstruct.setToChild(2, true);
@@ -4634,7 +4732,7 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				MathStructure *mcondition = NULL;
 				bool b_and = false;
 				if(mstruct[i].isLogicalAnd()) {
-					mcondition = solve_handle_logical_and(mstruct[i], &mtruefor, ct, b_partial, vargs);	
+					mcondition = solve_handle_logical_and(mstruct[i], &mtruefor, ct, b_partial, y_var);
 					b_and = true;
 				}
 				if(!mstruct[i].isZero()) {
@@ -4649,9 +4747,9 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 					}
 				}	
 				bool b_del = false;		
-				if((!mstruct[i].isComparison() && !mstruct[i].isLogicalAnd()) || (ct == COMPARISON_EQUALS && (!mstruct[i].isComparison() || mstruct[i].comparisonType() != COMPARISON_EQUALS)) || !mstruct[i].contains(vargs[1])) {
+				if((!mstruct[i].isComparison() && !mstruct[i].isLogicalAnd()) || (ct == COMPARISON_EQUALS && (!mstruct[i].isComparison() || mstruct[i].comparisonType() != COMPARISON_EQUALS)) || !mstruct[i].contains(y_var)) {
 					b_del = true;
-				} else if(ct == COMPARISON_EQUALS && mstruct[i][0] != vargs[1]) {
+				} else if(ct == COMPARISON_EQUALS && mstruct[i][0] != y_var) {
 					b_partial = true;
 					b_del = true;
 				}
@@ -4690,12 +4788,12 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			if(itry > 1) {
 				assumptions->setSign(as);
 				if(itry == 2) {
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), vargs[1].print().c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), y_var.print().c_str(), NULL);
 				} else if(itry == 3) {
 					assumptions->setType(at);
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), vargs[1].print().c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), y_var.print().c_str(), NULL);
 				}
-				if(assumptions_added) ((UnknownVariable*) vargs[1].variable())->setAssumptions(NULL);
+				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			}
 			
 			if(mconditions.size() == 1) {
@@ -4716,7 +4814,7 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			}
 			if(mtruefor) {
 				mtruefor->format(po);
-				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), vargs[1].print().c_str(), mtruefor->print(po).c_str(), NULL);
+				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), y_var.print().c_str(), mtruefor->print(po).c_str(), NULL);
 				delete mtruefor;
 			}
 			return 1;
@@ -4726,6 +4824,10 @@ int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	}
 	return -1;
 	
+}
+
+int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	return solve_equation(mstruct, vargs[0], vargs[1], eo);
 }
 
 SolveMultipleFunction::SolveMultipleFunction() : MathFunction("multisolve", 2) {
@@ -4845,15 +4947,29 @@ bool contains_ignore_diff(const MathStructure &m, const MathStructure &mstruct, 
 	return false;
 }
 
+void add_C(MathStructure &m_eqn, const MathStructure &m_x, const MathStructure &m_y, const MathStructure &x_value, const MathStructure &y_value) {
+	if(!y_value.isUndefined() && !x_value.isUndefined()) {
+		MathStructure m_c(m_eqn);
+		m_c.replace(m_x, x_value);
+		m_c.replace(m_y, y_value);
+		m_c.setType(STRUCT_ADDITION);
+		m_c[1].negate();
+		m_c.childUpdated(2);
+		m_eqn[1] += m_c;
+	} else {
+		m_eqn[1] += "C";
+	}
+	m_eqn.childrenUpdated();
+}
+
 bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructure &m_diff, const MathStructure &y_value, const MathStructure &x_value) {
 	MathStructure m_y(m_diff[0]), m_x(m_diff[1]);
-	cout << m_eqn << endl;
 	bool b = false;
 	if(m_eqn[0] == m_diff) {
 		if(m_eqn[1].containsRepresentativeOf(m_y, true, true) == 0) {
 			// y'=f(x)
 			MathStructure m_fx(m_eqn[1]);
-			if(m_fx.integrate(m_x, eo, true, !y_value.isUndefined() && !x_value.isUndefined())) {
+			if(m_fx.integrate(m_x, eo, true, false)) {
 				m_eqn[0] = m_y;
 				m_eqn[1] = m_fx;
 				b = true;
@@ -4861,14 +4977,13 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 		} else if(m_eqn[1].containsRepresentativeOf(m_x, true, true) == 0) {
 			MathStructure m_fy(m_eqn[1]);
 			m_fy.inverse();
-			cout << m_fy << endl;
-			if(m_fy.integrate(m_y, eo, true, !y_value.isUndefined() && !x_value.isUndefined())) {
+			if(m_fy.integrate(m_y, eo, true, false)) {
 				m_eqn[0] = m_fy;
 				m_eqn[1] = m_x;
 				b = true;
 			}
 		} else if(m_eqn[1].isMultiplication() && m_eqn[1].size() >= 2) {
-			bool b = true;
+			b = true;
 			MathStructure m_fx(1, 1, 0), m_fy(1, 1, 0);
 			for(size_t i = 0; i < m_eqn[1].size(); i++) {
 				if(m_eqn[1][i].containsRepresentativeOf(m_y, true, true) != 0) {
@@ -4886,19 +5001,29 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 			if(b) {
 				// y'=f(x)*f(y)
 				m_fy.inverse();
-				if(m_fy.integrate(m_y, eo, true, !y_value.isUndefined() && !x_value.isUndefined()) && m_fx.integrate(m_x, eo, true, !y_value.isUndefined() && !x_value.isUndefined())) {
+				if(m_fy.integrate(m_y, eo, true, false) && m_fx.integrate(m_x, eo, true, false)) {
 					m_eqn[0] = m_fy;
 					m_eqn[1] = m_fx;
-					b = true;
+				} else {
+					b = false;
 				}
 			}
 		} else {
-			/*if(m_eqn[1].isAddition()) {
+			MathStructure mfactor(m_eqn);
+			mfactor[1].factorize(eo, false, 0, 0, false, false, NULL, m_x);
+			if(mfactor[1].isMultiplication()&& mfactor[1].size() >= 2) {
+				mfactor.childUpdated(2);
+				if(dsolve(mfactor, eo, m_diff, y_value, x_value)) {
+					m_eqn = mfactor;
+					return 1;
+				}
+			}
+			if(m_eqn[1].isAddition()) {
 				MathStructure m_left;
 				MathStructure m_muly;
 				MathStructure m_mul_exp;
 				MathStructure m_exp;
-				bool b = true;
+				b = true;
 				for(size_t i = 0; i < m_eqn[1].size(); i++) {
 					if(m_eqn[1][i] == m_y) {
 						if(m_muly.isZero()) m_muly = m_one;
@@ -4960,84 +5085,118 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 				}
 				if(b && !m_muly.isZero()) {
 					if(!m_mul_exp.isZero()) {
-						// y' = a*y+b*y^c
+						if(m_exp.isOne() || !m_left.isZero()) return false;
+						// y' = f(x)*y+g(x)*y^c
+						b = false;
 						m_muly.calculateNegate(eo);
-						m_exp.negate();
-						m_exp += m_one;
-						m_muly *= m_exp;
-						if(m_muly.integrate(m_x, eo, true, !y_value.isUndefined() && !x_value.isUndefined())) {
-							m_eqn[0] = m_y;
-							m_eqn[1] = CALCULATOR->v_e;
-							m_eqn[1] ^= m_muly;
-							m_mul_exp *= m_exp;
-							m_eqn[1] *= m_mul_exp;
-							m_eqn[1].transform(STRUCT_FUNCTION);
-							m_eqn[1].setFunction(CALCULATOR->f_integrate);
-							m_eqn[1].addChild(m_x);
-							m_eqn[1].addChild(m_undefined);
-							m_eqn[1].addChild(m_undefined);
-							MathStructure m_megx = CALCULATOR->v_e;
-							m_muly.negate();
-							m_megx ^= m_muly;
-							m_eqn[1] *= m_megx;
-							m_exp.inverse();
-							m_eqn[1] ^= m_exp;
-							m_eqn.childrenUpdated();
-							return 1;
+						MathStructure m_y1_integ(m_muly);
+						if(m_y1_integ.integrate(m_x, eo, true, false)) {
+							m_exp.negate();
+							m_exp += m_one;
+							MathStructure m_y1_exp(m_exp);
+							m_y1_exp *= m_y1_integ;
+							m_y1_exp.transform(STRUCT_POWER, CALCULATOR->v_e);
+							m_y1_exp.swapChildren(1, 2);
+							MathStructure m_y1_exp_integ(m_y1_exp);
+							m_y1_exp_integ *= m_mul_exp;
+							if(m_y1_exp_integ.integrate(m_x, eo, true, false)) {
+								m_eqn[1] = m_exp;
+								m_eqn[1] *= m_y1_exp_integ;
+								m_eqn[0] = m_y;
+								m_eqn[0] ^= m_exp;
+								m_eqn[0] *= m_y1_exp;
+								b = true;
+							}
+						}
+					} else if(m_left.isZero()) {
+						// y'=f(x)*y+g(x)*y
+						MathStructure mtest(m_eqn);
+						MathStructure m_fy(m_y);
+						m_fy.inverse();
+						MathStructure m_fx(m_muly);
+						if(m_fy.integrate(m_y, eo, true, false) && m_fx.integrate(m_x, eo, true, false)) {
+							m_eqn[0] = m_fy;
+							m_eqn[1] = m_fx;
+							b = true;
 						}
 					} else {
-						// y'=a*y+f(x)
+						// y'=f(x)*y+g(x)
 						MathStructure integ_fac(m_muly);
 						integ_fac.negate();
-						integ_fac *= m_x;
-						integ_fac.transform(STRUCT_POWER);
-						integ_fac.insertChild(CALCULATOR->v_e, 1);
-						MathStructure m_fx(m_left);
-						m_fx *= integ_fac;
-						if(m_fx.integrate(m_x, eo, true, !y_value.isUndefined() && !x_value.isUndefined())) {
-							m_eqn[0] = m_y;
-							m_eqn[1] = m_fx;
-							m_eqn[1] += "C";
-							m_eqn[1] /= integ_fac;
-							return 1;
+						if(integ_fac.integrate(m_x, eo, true, false)) {
+							UnknownVariable *var = new UnknownVariable("", "u");
+							Assumptions *ass = new Assumptions();
+							if(false) {
+								ass->setType(ASSUMPTION_TYPE_REAL);
+							}
+							var->setAssumptions(ass);
+							MathStructure m_u(var);
+							m_u.inverse();
+							if(m_u.integrate(var, eo, false, false)) {
+								MathStructure m_eqn2(integ_fac);
+								m_eqn2.transform(COMPARISON_EQUALS, m_u);
+								m_eqn2.isolate_x(eo, var);
+								if(m_eqn2.isComparison() && m_eqn2.comparisonType() == COMPARISON_EQUALS && m_eqn2[0] == var) {
+									integ_fac = m_eqn2[1];
+									MathStructure m_fx(m_left);
+									m_fx *= integ_fac;
+									if(m_fx.integrate(m_x, eo, true, false)) {
+										MathStructure m_fy(m_y);
+										m_fy *= integ_fac;
+										m_eqn[0] = m_fy;
+										m_eqn[1] = m_fx;
+										b = true;
+									}
+								} else if(m_eqn2.isLogicalOr() && m_eqn2.size() >= 2) {
+									b = true;
+									for(size_t i = 0; i < m_eqn2.size(); i++) {
+										if(!m_eqn2[i].isComparison() || m_eqn2[i].comparisonType() != COMPARISON_EQUALS || m_eqn2[i][0] != var) {
+											b = false;
+											break;
+										}
+									}
+									if(b) {
+										MathStructure m_eqn_new;
+										m_eqn_new.setType(STRUCT_LOGICAL_OR);
+										for(size_t i = 0; i < m_eqn2.size(); i++) {
+											integ_fac = m_eqn2[i][1];
+											MathStructure m_fx(m_left);
+											m_fx *= integ_fac;
+											if(m_fx.integrate(m_x, eo, true, false)) {
+												MathStructure m_fy(m_y);
+												m_fy *= integ_fac;
+												m_eqn_new.addChild(m_fy);
+												m_eqn_new.last().transform(COMPARISON_EQUALS, m_fx);
+												add_C(m_eqn_new.last(), m_x, m_y, x_value, y_value);
+											} else {
+												b = false;
+												break;
+											}
+										}
+										if(b) {
+											m_eqn_new.childrenUpdated();
+											m_eqn = m_eqn_new;
+											return 1;
+										}
+									}
+								}
+							}
+							var->unref();
 						}
 					}
-				}
-			}*/
-			MathStructure mfactor(m_eqn);
-			mfactor[1].factorize(eo, false, 0, 0, false, false, NULL, m_x);
-			if(mfactor[1].isMultiplication()) {
-				mfactor.childUpdated(2);
-				if(dsolve(mfactor, eo, m_diff, y_value, x_value)) {
-					m_eqn = mfactor;
-					return 1;
+				} else {
+					b = false;
 				}
 			}
 		}
 		if(b) {
-			cout << m_eqn << endl;
-			cout << y_value << endl;
-			cout << x_value << endl;
-			if(!y_value.isUndefined() && !x_value.isUndefined()) {
-				MathStructure m_c(m_eqn);
-				m_c.replace(m_x, x_value);
-				m_c.replace(m_y, y_value);
-				cout << m_c << endl;
-				m_c.setType(STRUCT_ADDITION);
-				m_c[1].negate();
-				m_c.childUpdated(2);
-				m_eqn[1] += m_c;
-			} else {
-				m_eqn[1] += "C";
-			}
-			cout << m_eqn << endl;
-			m_eqn.childrenUpdated();
+			add_C(m_eqn, m_x, m_y, x_value, y_value);
 			return 1;
 		}
 	}
 	return false;
 }
-extern int test_comparisons(const MathStructure &msave, MathStructure &mthis, const MathStructure &x_var, const EvaluationOptions &eo, bool sub = false);
+
 DSolveFunction::DSolveFunction() : MathFunction("dsolve", 1, 3) {
 	setDefaultValue(2, "undefined");
 	setDefaultValue(3, "0");
@@ -5101,39 +5260,10 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		return -1;
 	}
 	m_eqn.calculatesub(eo, eo, true);
-	MathStructure msolve(CALCULATOR->f_solve, &m_eqn, &m_diff[0], NULL);
-	cout << "EQUATION: " << m_eqn << endl;
-	msolve.calculateFunctions(eo);
-	if(msolve.isFunction() && msolve.function() == CALCULATOR->f_solve) {
+	MathStructure msolve(m_eqn);
+	if(solve_equation(msolve, m_eqn, m_diff[0], eo, true, m_diff[1], MathStructure(string("C")), vargs[2], vargs[1]) <= 0) {
 		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
 		return -1;
-	}
-	if(!vargs[1].isUndefined() && !vargs[2].isUndefined()) {
-		cout << "A" << endl;
-		for(size_t i = 0; i < 1 || (msolve.isVector() && i < msolve.size());) {
-			MathStructure mtest;
-			if(msolve.isVector()) mtest = msolve[i];
-			else mtest = msolve;
-			mtest.replace(m_diff[1], vargs[2]);
-			MathStructure mtest2(m_diff[0]);
-			mtest2.transform(COMPARISON_EQUALS, vargs[1]);
-			int b = -1;
-			CALCULATOR->beginTemporaryStopMessages();
-			if(mtest.containsType(STRUCT_COMPARISON, true) <= 0) mtest.transform(COMPARISON_EQUALS, m_diff[0]);
-			cout << mtest << endl;
-			cout << mtest2 << endl;
-			b = test_comparisons(mtest, mtest2, m_diff[0], eo);
-			CALCULATOR->endTemporaryStopMessages();
-			if(b < 0 || (!b && (!msolve.isVector() || msolve.size() == 1))) {
-				CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
-				return -1;
-			} else if(!b) {
-				msolve.delChild(i + 1);
-			} else {
-				i++;
-			}
-		}
-		if(msolve.isVector() && msolve.size() == 1) msolve.setToChild(1);
 	}
 	mstruct = msolve;
 	return 1;

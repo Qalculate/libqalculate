@@ -5976,7 +5976,6 @@ bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *fa
 		}
 	} else if(mstruct.type() == STRUCT_FUNCTION && mstruct.function() == CALCULATOR->f_interval) {
 		bool b = mstruct.calculateFunctions(eo, false);
-		mstruct.unformat(eo);
 		if(b) {
 			fix_intervals(mstruct, eo, failed);
 			return true;
@@ -6022,7 +6021,6 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					set(((KnownVariable*) o_variable)->get());
 					if(eo.calculate_functions) {
 						calculateFunctions(feo);
-						unformat(feo);
 					}
 					fix_intervals(*this, feo, NULL, PRECISION);
 					b = true;
@@ -6685,7 +6683,6 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		case STRUCT_FUNCTION: {
 			if(o_function == CALCULATOR->f_abs || o_function == CALCULATOR->f_root || o_function == CALCULATOR->f_interval) {
 				b = calculateFunctions(eo, false);
-				unformat(eo);
 				if(b) calculatesub(eo, feo, true, mparent, index_this);
 				break;
 			}
@@ -7144,7 +7141,7 @@ bool MathStructure::calculateSubtract(const MathStructure &msub, const Evaluatio
 	return calculateAddIndex(SIZE - 1, eo, true, mparent, index_this);
 }
 
-bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursive) {
+bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursive, bool do_unformat) {
 
 	if(m_type == STRUCT_FUNCTION && o_function != eo.protected_function) {
 
@@ -7201,18 +7198,21 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 			set_nocopy(*mstruct, true);
 			if(recursive) calculateFunctions(eo);
 			mstruct->unref();
+			if(do_unformat) unformat(eo);
 			return true;
 		} else {
 			if(i < 0) {
 				i = -i;
 				if(o_function->maxargs() > 0 && i > o_function->maxargs()) {
 					if(mstruct->isVector()) {
+						if(do_unformat) mstruct->unformat(eo);
 						for(size_t arg_i = 1; arg_i <= SIZE && arg_i <= mstruct->size(); arg_i++) {
 							mstruct->getChild(arg_i)->ref();
 							setChild_nocopy(mstruct->getChild(arg_i), arg_i);
 						}
 					}
 				} else if(i <= (long int) SIZE) {
+					if(do_unformat) mstruct->unformat(eo);
 					mstruct->ref();
 					setChild_nocopy(mstruct, i);
 				}
@@ -7232,7 +7232,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 					function_value = NULL;
 				}
 			}*/
-			m_type = STRUCT_FUNCTION;			
+			m_type = STRUCT_FUNCTION;
 			mstruct->unref();
 			return false;
 		}
@@ -7856,8 +7856,10 @@ bool try_isolate_x(MathStructure &mstruct, EvaluationOptions &eo3, const Evaluat
 		const MathStructure *x_var2;
 		if(eo.isolate_var) x_var2 = eo.isolate_var;
 		else x_var2 = &mstruct.find_x_var();
-		if(x_var2->isUndefined()) return false;
-		if(mtest[0] == *x_var2 && !mtest[1].contains(*x_var2)) return false;
+		if(x_var2->isUndefined() || (mtest[0] == *x_var2 && !mtest[1].contains(*x_var2))) {
+			CALCULATOR->endTemporaryStopMessages();
+			 return false;
+		}
 		if(mtest.isolate_x(eo3, eo, *x_var2, false)) {
 			if(test_comparisons(mstruct, mtest, *x_var2, eo3) >= 0) {
 				CALCULATOR->endTemporaryStopMessages(true);
@@ -16036,13 +16038,13 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 				divide(new_prefix->value());
 			}
 			if(!exp->isOne()) {
-				if(calculate_new_functions) exp->calculateFunctions(feo, true);
+				if(calculate_new_functions) exp->calculateFunctions(feo, true, false);
 				raise_nocopy(exp);
 			} else {
 				exp->unref();
 			}			
 			if(!mstruct->isOne()) {
-				if(calculate_new_functions) mstruct->calculateFunctions(feo, true);
+				if(calculate_new_functions) mstruct->calculateFunctions(feo, true, false);
 				multiply_nocopy(mstruct);
 			} else {
 				mstruct->unref();
@@ -16141,14 +16143,14 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 						}
 						set(u);
 						if(!exp.isOne()) {
-							if(calculate_new_functions && exp.countFunctions() > efc) exp.calculateFunctions(feo, true);
+							if(calculate_new_functions && exp.countFunctions() > efc) exp.calculateFunctions(feo, true, false);
 							raise(exp);
 						}
 						if(!mstruct2.isOne()) {
 							multiply(mstruct2);
 						}
 						if(!mstruct.isOne()) {
-							if(calculate_new_functions && mstruct.countFunctions() > mfc) mstruct.calculateFunctions(feo, true);
+							if(calculate_new_functions && mstruct.countFunctions() > mfc) mstruct.calculateFunctions(feo, true, false);
 							multiply(mstruct);
 						}
 						return true;
@@ -16176,11 +16178,11 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 						if(u->convert(CHILD(0).unit(), mstruct, exp)) {
 							set(u);
 							if(!exp.isOne()) {
-								if(calculate_new_functions && exp.countFunctions() > efc) exp.calculateFunctions(feo, true);
+								if(calculate_new_functions && exp.countFunctions() > efc) exp.calculateFunctions(feo, true, false);
 								raise(exp);
 							}
 							if(!mstruct.isOne()) {
-								if(calculate_new_functions) mstruct.calculateFunctions(feo, true);
+								if(calculate_new_functions) mstruct.calculateFunctions(feo, true, false);
 								multiply(mstruct);
 							}
 							return true;
@@ -22941,6 +22943,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
 				MathStructure *m = find_abs_sgn(CHILD(0), x_var);
 				if(m && m->function() == CALCULATOR->f_abs) {
+
 					MathStructure mabs(*m);
 
 					ComparisonType cmp_type = ct_comp;

@@ -680,7 +680,7 @@ class MathStructure {
 		bool calculateAddIndex(size_t index, const EvaluationOptions &eo, bool check_size = true, MathStructure *mparent = NULL, size_t index_this = 1);
 		bool calculateAdd(const MathStructure &madd, const EvaluationOptions &eo, MathStructure *mparent = NULL, size_t index_this = 1);
 		bool calculateSubtract(const MathStructure &msub, const EvaluationOptions &eo, MathStructure *mparent = NULL, size_t index_this = 1);
-		bool calculateFunctions(const EvaluationOptions &eo, bool recursive = true);
+		bool calculateFunctions(const EvaluationOptions &eo, bool recursive = true, bool do_unformat = true);
 		int merge_addition(MathStructure &mstruct, const EvaluationOptions &eo, MathStructure *mparent = NULL, size_t index_this = 1, size_t index_that = 2, bool reversed = false);
 		int merge_multiplication(MathStructure &mstruct, const EvaluationOptions &eo, MathStructure *mparent = NULL, size_t index_this = 1, size_t index_that = 2, bool reversed = false, bool do_append = true);
 		int merge_power(MathStructure &mstruct, const EvaluationOptions &eo, MathStructure *mparent = NULL, size_t index_this = 1, size_t index_that = 2, bool reversed = false);
