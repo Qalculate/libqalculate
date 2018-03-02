@@ -56,7 +56,7 @@
 #define VALID_ROOT(o)		(o.size() == 2 && o[1].isNumber() && o[1].number().isInteger() && o[1].number().isPositive())
 #define THIS_VALID_ROOT		(SIZE == 2 && CHILD(1).isNumber() && CHILD(1).number().isInteger() && CHILD(1).number().isPositive())
 
-void printRecursive(const MathStructure &mstruct) {
+/*void printRecursive(const MathStructure &mstruct) {
 	std::cout << "RECURSIVE " << mstruct.print() << std::endl;
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		std::cout << i << ": " << mstruct[i].print() << std::endl;
@@ -76,7 +76,7 @@ void printRecursive(const MathStructure &mstruct) {
 			}
 		}
 	}
-}
+}*/
 
 struct sym_desc {
 	MathStructure sym;
@@ -1107,14 +1107,14 @@ bool MathStructure::representsReal(bool allow_units) const {
 		}
 		case STRUCT_POWER: {
 			return (CHILD(0).representsPositive(allow_units) && CHILD(1).representsReal(false)) 
-			|| (CHILD(0).representsReal(allow_units) && ((CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().denominatorIsEven()) || (CHILD(1).representsEven(false) && CHILD(1).representsInteger(false))) && (CHILD(1).representsPositive(false) || CHILD(0).representsNonZero(allow_units)));
+			|| (CHILD(0).representsReal(allow_units) && (CHILD(1).representsInteger(false) || (CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().denominatorIsEven())) && (CHILD(1).representsPositive(false) || CHILD(0).representsNonZero(allow_units)));
 		}
 		default: {return false;}
 	}
 }
 bool MathStructure::representsNonComplex(bool allow_units) const {
 	switch(m_type) {
-		case STRUCT_NUMBER: {return o_number.isComplex();}
+		case STRUCT_NUMBER: {return !o_number.isComplex();}
 		case STRUCT_VARIABLE: {
 			if(o_variable->isKnown()) return ((KnownVariable*) o_variable)->get().representsNonComplex(allow_units);
 			return o_variable->representsReal(allow_units);
@@ -1138,7 +1138,7 @@ bool MathStructure::representsNonComplex(bool allow_units) const {
 		}
 		case STRUCT_POWER: {
 			return (CHILD(0).representsPositive(allow_units) && CHILD(1).representsReal(false)) 
-			|| (CHILD(0).representsReal(allow_units) && ((CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().denominatorIsEven()) || (CHILD(1).representsEven(false) && CHILD(1).representsInteger(false))));
+			|| (CHILD(0).representsReal(allow_units) && (CHILD(1).representsInteger(false) || (CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().denominatorIsEven())));
 		}
 		default: {return false;}
 	}
@@ -2737,7 +2737,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 	}
 
 	if(representsUndefined() || mstruct.representsUndefined()) return -1;
-	
+
 	// x/(x^2+x)=1/(x+1)
 	const MathStructure *mnum = NULL, *mden = NULL;
 	bool b_nonzero = false;
@@ -2764,6 +2764,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			}
 		}
 	}
+
 	if(mnum && mden && eo.reduce_divisions) {
 		switch(mnum->type()) {
 			case STRUCT_ADDITION: {
@@ -2928,6 +2929,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			}
 		}
 	}
+
 	if(mstruct.isFunction()) {
 		if(((mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1 && mstruct[0].isFunction() && mstruct[0].function() == CALCULATOR->f_signum && mstruct[0].size() == 1) || (mstruct.function() == CALCULATOR->f_signum && mstruct.size() == 1 && mstruct[0].isFunction() && mstruct[0].function() == CALCULATOR->f_abs && mstruct[0].size() == 1)) && (equals(mstruct[0][0]) || (isFunction() && o_function == CALCULATOR->f_abs && SIZE == 1 && CHILD(0) == mstruct[0][0]) || (isPower() && CHILD(0) == mstruct[0][0]) || (isPower() && CHILD(0).isFunction() && CHILD(0).function() == CALCULATOR->f_abs && CHILD(0).size() == 1 && CHILD(0)[0] == mstruct[0][0]))) {
 				// sgn(abs(x))*x^y=x^y
@@ -8834,7 +8836,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			if(containsType(STRUCT_ADDITION, false) == 1 && eo.do_polynomial_division) do_simplification(*this, eo2, true, eo.structuring == STRUCTURING_NONE || eo.structuring == STRUCTURING_FACTORIZE, false, true, true);
 		}
 	}
-	
+
 	if(CALCULATOR->aborted()) return *this;
 	
 	structure(eo.structuring, eo2, false);
@@ -17250,7 +17252,6 @@ bool integrate_info(const MathStructure &mstruct, const MathStructure &x_var, Ma
 }
 
 bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, const EvaluationOptions &eo, const MathStructure &mpow, const MathStructure &mfac, bool use_abs, const MathStructure &m_lower, const MathStructure &m_upper, int max_part_depth, vector<MathStructure*> *parent_parts) {
-	//bool x_real = (m_lower.isUndefined() && x_var.representsReal()) || (m_lower.representsReal(true) && m_upper.representsReal(true));
 	if(mstruct.function() == CALCULATOR->f_ln && mstruct.size() == 1) {
 		if(mstruct[0].isFunction() && mstruct[0].function() == CALCULATOR->f_abs && mstruct[0].size() == 1 && mpow.isOne() && mfac.isOne() && mstruct[0][0].representsReal()) {
 			MathStructure mexp, mmul, madd;
@@ -17607,6 +17608,7 @@ bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, cons
 						if(!mexp.isOne()) mstruct /= mexp;
 						mstruct.negate();
 						mstruct += x_var;
+						if(use_abs && mstruct.last().representsNonComplex(true)) mstruct.last().transform(CALCULATOR->f_abs);
 						mstruct.last().transform(CALCULATOR->f_ln);
 						mstruct *= nr_half;
 						return true;
@@ -17841,7 +17843,7 @@ bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, cons
 				mtan.setFunction(CALCULATOR->f_tan);
 				mstruct.inverse();
 				mstruct += mtan;
-				if(use_abs) mstruct.transform(CALCULATOR->f_abs);
+				if(use_abs && mstruct.representsNonComplex(true)) mstruct.transform(CALCULATOR->f_abs);
 				mstruct.transform(CALCULATOR->f_ln);
 				if(!mmul.isOne()) mstruct.divide(mmul);
 			} else if(mpow.number() == -2) {
@@ -18037,13 +18039,13 @@ bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, cons
 		if(!integrate_info(mstruct[0], x_var, madd, mmul, mexp, true) || !mexp.isOne()) return false;
 		if(mpow.isOne()) {
 			mstruct.setFunction(CALCULATOR->f_cos);
-			if(use_abs) mstruct.transform(CALCULATOR->f_abs);
+			if(use_abs && mstruct.representsNonComplex(true)) mstruct.transform(CALCULATOR->f_abs);
 			mstruct.transform(CALCULATOR->f_ln);
 			mstruct.negate();
 			if(!mmul.isOne()) mstruct.divide(mmul);
 		} else if(mpow.number().isMinusOne()) {
 			mstruct.setFunction(CALCULATOR->f_sin);
-			if(use_abs) mstruct.transform(CALCULATOR->f_abs);
+			if(use_abs && mstruct.representsNonComplex(true)) mstruct.transform(CALCULATOR->f_abs);
 			mstruct.transform(CALCULATOR->f_ln);
 			if(!mmul.isOne()) mstruct.divide(mmul);
 		} else if(mpow.number().isTwo()) {
@@ -18262,7 +18264,7 @@ bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, cons
 			} else if(mpow.number().isMinusOne()) {
 				mstruct.setFunction(CALCULATOR->f_tanh);
 				mstruct[0] *= nr_half;
-				if(use_abs) mstruct.transform(CALCULATOR->f_abs);
+				if(use_abs && mstruct.representsNonComplex(true)) mstruct.transform(CALCULATOR->f_abs);
 				mstruct.transform(CALCULATOR->f_ln);
 				if(!mmul.isOne()) mstruct.divide(mmul);
 			} else {
@@ -18583,7 +18585,7 @@ bool integrate_function(MathStructure &mstruct, const MathStructure &x_var, cons
 			}
 		} else if(mpow.number().isMinusOne()) {
 			mstruct.setFunction(CALCULATOR->f_sinh);
-			if(use_abs) mstruct.transform(CALCULATOR->f_abs);
+			if(use_abs && mstruct.representsNonComplex(true)) mstruct.transform(CALCULATOR->f_abs);
 			mstruct.transform(CALCULATOR->f_ln);
 			if(!mmul.isOne()) mstruct.divide(mmul);
 		} else {
@@ -19219,7 +19221,6 @@ int contains_unsolved_integrate(const MathStructure &mstruct, MathStructure *thi
 
 bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions &eo, bool simplify_first, bool use_abs, const MathStructure &m_lower, const MathStructure &m_upper, int max_part_depth, vector<MathStructure*> *parent_parts) {
 	if(CALCULATOR->aborted()) CANNOT_INTEGRATE
-	//bool x_real = (m_lower.isUndefined() && x_var.representsReal()) || (m_lower.representsReal(true) && m_upper.representsReal(true));
 	EvaluationOptions eo2 = eo;
 	eo2.expand = true;
 	eo2.combine_divisions = false;
@@ -19268,7 +19269,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 					if(mmul2.isZero()) {
 						if(madd.isZero() && mmul.isOne()) {
 							if(b_minusone) {
-								if(use_abs) {
+								if(use_abs && representsNonComplex(true)) {
 									MathStructure mstruct(CALCULATOR->f_abs, &x_var, NULL);
 									set(CALCULATOR->f_ln, &mstruct, NULL);
 								} else {
@@ -19282,7 +19283,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 							return true;
 						} else if(b_minusone) {
 							SET_CHILD_MAP(0);
-							if(use_abs) transform(CALCULATOR->f_abs);
+							if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 							transform(CALCULATOR->f_ln);
 							if(!mmul.isOne()) divide(mmul);
 							return true;
@@ -19303,6 +19304,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 							MathStructure mthis(*this);
 							add(x_var);
 							if(!mmul2.isOne()) LAST *= mmulsqrt2;
+							if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 							transform(CALCULATOR->f_ln);
 							multiply(madd);
 							mthis *= x_var;
@@ -19318,6 +19320,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 							MathStructure mterm2(*this);
 							add(x_var);
 							if(!mmul2.isOne()) LAST *= mmulsqrt2;
+							if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 							transform(CALCULATOR->f_ln);
 							multiply(madd);
 							LAST ^= nr_two;
@@ -19348,6 +19351,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 							if(!mmul2.isOne()) mterm2 *= mmulsqrt2;
 							mterm2 += x_var;
 							if(!mmul2.isOne()) mterm2[mterm2.size() - 1] *= mmul2;
+							if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 							mterm2.transform(CALCULATOR->f_ln);
 							mterm2 *= madd;
 							mterm2.last() ^= nr_three;
@@ -19372,6 +19376,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 							if(!mmul2.isOne()) multiply(mmulsqrt2);
 							add(x_var);
 							if(!mmul2.isOne()) LAST.multiply(mmul2);
+							if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 							transform(CALCULATOR->f_ln);
 							if(!mmul2.isOne()) divide(mmulsqrt2);
 							return true;
@@ -19419,7 +19424,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 							multiply(m2axpb);
 							LAST += mb2m4ac;
 							LAST ^= nr_minus_one;
-							if(use_abs) transform(CALCULATOR->f_abs);
+							if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 							transform(CALCULATOR->f_ln);
 							divide(mb2m4ac);
 							return true;
@@ -19621,7 +19626,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 									MathStructure mterm(x_var);
 									if(!mmul.isOne()) mterm /= mmul;
 									if(!madd.isZero()) {
-										if(use_abs) transform(CALCULATOR->f_abs);
+										if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 										transform(CALCULATOR->f_ln);
 										multiply(madd);
 										if(!mmul.isOne()) {
@@ -19636,7 +19641,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 									}
 								} else if(mexp.number() == -2) {
 									MathStructure mterm(*this);
-									if(use_abs) transform(CALCULATOR->f_abs);
+									if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 									transform(CALCULATOR->f_ln);
 									MathStructure a2(mmul);
 									if(!mmul.isOne()) {
@@ -19713,7 +19718,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 										mterm /= nr_two;
 									}
 									if(!madd.isZero()) {
-										if(use_abs) transform(CALCULATOR->f_abs);
+										if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 										transform(CALCULATOR->f_ln);
 										MathStructure b2(madd);
 										b2 ^= nr_two;
@@ -19732,7 +19737,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 									if(!mmul.isOne()) mterm1 *= mmul;
 									if(!madd.isZero()) {
 										MathStructure mterm2(*this);
-										if(use_abs) mterm2.transform(CALCULATOR->f_abs);
+										if(use_abs && mterm2.representsNonComplex(true)) mterm2.transform(CALCULATOR->f_abs);
 										mterm2.transform(CALCULATOR->f_ln);
 										mterm2 *= madd;
 										mterm2 *= -2;
@@ -19765,12 +19770,12 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 										madd ^= nr_two;
 										mterm3 *= madd;
 										mterm3.negate();
-										if(use_abs) transform(CALCULATOR->f_abs);
+										if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 										transform(CALCULATOR->f_ln);
 										add(mterm2);
 										add(mterm3);
 									} else {
-										if(use_abs) transform(CALCULATOR->f_abs);
+										if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 										transform(CALCULATOR->f_ln);
 									}
 									if(!mmul.isOne()) {
@@ -19816,7 +19821,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 									SET_CHILD_MAP(1)
 									SET_CHILD_MAP(0)
 									divide(x_var);
-									if(use_abs) transform(CALCULATOR->f_abs);
+									if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 									transform(CALCULATOR->f_ln);
 									divide(madd);
 									negate();
@@ -19827,7 +19832,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 									SET_CHILD_MAP(1)
 									SET_CHILD_MAP(0)
 									divide(x_var);
-									if(use_abs) transform(CALCULATOR->f_abs);
+									if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 									transform(CALCULATOR->f_ln);
 									MathStructure madd2(madd);
 									madd2 ^= nr_two;
@@ -19846,7 +19851,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 									mterm2 *= *this;
 									mterm2.inverse();
 									divide(x_var);
-									if(use_abs) transform(CALCULATOR->f_abs);
+									if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 									transform(CALCULATOR->f_ln);
 									MathStructure madd3(madd);
 									madd3 ^= nr_three;
@@ -19885,6 +19890,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 										}
 										mterm2 += x_var;
 										if(!mmul2.isOne()) mterm2.last() *= mmul2;
+										if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 										mterm2.transform(CALCULATOR->f_ln);
 										mterm2.multiply(madd);
 										mterm2.last() ^= nr_two;
@@ -19917,6 +19923,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 										transform(CALCULATOR->f_ln);
 										negate();
 										add(x_var);
+										if(use_abs && LAST.representsNonComplex(true)) LAST.transform(CALCULATOR->f_abs);
 										LAST.transform(CALCULATOR->f_ln);
 										multiply(madd);
 										LAST ^= nr_minus_half;
@@ -19931,6 +19938,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 										mterm2 *= madd;
 										mterm2.last() ^= nr_half;
 										MathStructure mterm3(x_var);
+										if(use_abs && mterm3.representsNonComplex(true)) mterm3.transform(CALCULATOR->f_abs);
 										mterm3.transform(CALCULATOR->f_ln);
 										mterm3 *= madd;
 										mterm3.last() ^= nr_half;
@@ -19966,7 +19974,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 							multiply(mmul);
 							divide(mmul2);
 							multiply(Number(-1, 2));
-							if(use_abs) mterm2.transform(CALCULATOR->f_abs);
+							if(use_abs && mterm2.representsNonComplex(true)) mterm2.transform(CALCULATOR->f_abs);
 							mterm2.transform(CALCULATOR->f_ln);
 							mterm2 /= mmul2;
 							mterm2 *= nr_half;
@@ -19982,7 +19990,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 							mterm2.inverse();
 							mterm2 *= x_var;
 							mterm2.last() ^= nr_two;
-							if(use_abs) mterm2.transform(CALCULATOR->f_abs);
+							if(use_abs && mterm2.representsNonComplex(true)) mterm2.transform(CALCULATOR->f_abs);
 							mterm2.transform(CALCULATOR->f_ln);
 							mterm2 /= madd;
 							mterm2 *= nr_half;
@@ -20028,21 +20036,24 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 							Number nexp(1, 1, 0);
 							if(CHILD(0).isPower()) nexp = CHILD(0)[1].number();
 							if(!nexp.isOne() && mpow.isInteger()) {
-								if(mexp.isMinusOne() && CHILD(0)[1].number().isMinusOne()) {
+								if(mexp.isMinusOne() && nexp.isMinusOne()) {
 									if(mpow.number().isNegative()) {
 										set(x_var, true);
 										mpow.number().negate();
 										raise(mpow);
 										multiply(madd);
 										if(!mmul.isOne()) add(mmul);
+										if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 										transform(CALCULATOR->f_ln);
 										divide(mpow);
 										if(!mmul.isOne()) divide(mmul);
 									} else {
 										SET_CHILD_MAP(1)
 										SET_CHILD_MAP(0)
+										if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 										transform(CALCULATOR->f_ln);
 										add(x_var);
+										if(use_abs && LAST.representsNonComplex(true)) LAST.transform(CALCULATOR->f_abs);
 										LAST.transform(CALCULATOR->f_ln);
 										LAST *= mpow;
 										LAST.negate();
@@ -20062,10 +20073,12 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 											raise(mpow);
 											multiply(madd);
 											if(!mmul.isOne()) add(mmul);
+											if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 											transform(CALCULATOR->f_ln);
 											divide(mpow);
 											divide(madd);
 											add(x_var);
+											if(use_abs && LAST.representsNonComplex(true)) LAST.transform(CALCULATOR->f_abs);
 											LAST.transform(CALCULATOR->f_ln);
 											LAST *= mpow;
 											LAST.negate();
@@ -20075,6 +20088,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 										} else {
 											SET_CHILD_MAP(1)
 											SET_CHILD_MAP(0)
+											if(use_abs && representsNonComplex(true)) transform(CALCULATOR->f_abs);
 											transform(CALCULATOR->f_ln);
 											divide(mpow);
 											if(!mmul.isOne()) divide(mmul);
@@ -20101,6 +20115,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 								b = false;
 								if(i == 1) {
 									m_replace ^= mpow;
+									var->setAssumptions(m_replace);
 									mtest.replace(m_replace, var);
 									new_pow++;
 									new_pow -= mpow.number();
@@ -20118,6 +20133,7 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 										m_prev ^= mpow;
 										m_new ^= mpow;
 										m_new[1].number() /= 2;
+										var->setAssumptions(m_prev);
 										mtest.replace(m_prev, m_new);
 									}
 								} else if(i == 3) {
@@ -20131,11 +20147,11 @@ bool MathStructure::integrate(const MathStructure &x_var, const EvaluationOption
 										m_prev ^= mpow;
 										m_new ^= mpow;
 										m_new[1].number() /= 3;
+										var->setAssumptions(m_prev);
 										mtest.replace(m_prev, m_new);
 									}
 								}
 								if(b) {
-									var->setAssumptions(m_replace);
 									if(!new_pow.isZero()) {
 										mtest *= var;
 										mtest.swapChildren(1, mtest.size());
@@ -21706,16 +21722,20 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 					MathStructure u_var(var);
 					replace(mvar, u_var);
+					CHILD(0).calculatesub(eo2, eo2, true);
+					CHILD_UPDATED(0)
 					b = isolate_x_sub(eo, eo2, u_var);
-					replace(u_var, mvar);
+					calculateReplace(u_var, mvar, eo2);
 					var->unref();
 					if(b) isolate_x(eo, eo2, x_var);
 					return b;
 				} else if(mvar != x_var) {
 					MathStructure u_var(var);
 					replace(mvar, u_var);
+					CHILD(0).calculatesub(eo2, eo2, true);
+					CHILD_UPDATED(0)
 					b = isolate_x_sub(eo, eo2, u_var);
-					replace(u_var, mvar);
+					calculateReplace(u_var, mvar, eo2);
 					var->unref();
 					if(b) isolate_x(eo, eo2, x_var);
 					return b;

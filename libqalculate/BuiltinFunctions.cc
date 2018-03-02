@@ -4070,12 +4070,28 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) eo2.approximation = APPROXIMATION_EXACT;
 	CALCULATOR->beginTemporaryStopMessages();
 	eo2.do_polynomial_division = true;
-	mstruct = vargs[0];
+	MathStructure mstruct_pre = vargs[0];
+	MathStructure x_var = vargs[1];
+	if(!vargs[2].isUndefined()) {
+		MathStructure m_interval(CALCULATOR->f_interval, &m1, &m2, NULL);
+		CALCULATOR->beginTemporaryStopMessages();
+		EvaluationOptions eo3 = eo;
+		eo3.approximation = APPROXIMATION_APPROXIMATE;
+		m_interval.calculateFunctions(eo3);
+		CALCULATOR->endTemporaryStopMessages();
+		UnknownVariable *var = new UnknownVariable("", "u");
+		var->setAssumptions(m_interval);
+		x_var.set(var);
+		mstruct_pre.replace(vargs[1], x_var);
+		var->unref();
+	}
+
+	mstruct = mstruct_pre;
 	mstruct.eval(eo2);
 	eo2.do_polynomial_division = eo.do_polynomial_division;
 	MathStructure mbak(mstruct);
 	
-	bool b = mstruct.integrate(vargs[1], eo2, true, true, m1, m2);
+	bool b = mstruct.integrate(x_var, eo2, true, true, m1, m2);
 	if((eo.approximation == APPROXIMATION_TRY_EXACT || (eo.approximation == APPROXIMATION_APPROXIMATE && mstruct.isApproximate())) && (!b || mstruct.containsFunction(this, true) > 0)) {
 		vector<CalculatorMessage> blocked_messages;
 		CALCULATOR->endTemporaryStopMessages(false, &blocked_messages);
@@ -4083,10 +4099,10 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		MathStructure mbak_integ(mstruct);
 		if(eo.approximation == APPROXIMATION_APPROXIMATE) eo2.approximation = APPROXIMATION_EXACT;
 		eo2.do_polynomial_division = true;
-		mstruct = vargs[0];
+		mstruct = mstruct_pre;
 		mstruct.eval(eo2);
 		eo2.do_polynomial_division = eo.do_polynomial_division;
-		if(mstruct.integrate(vargs[1], eo2, true, true, m1, m2) && (!b || mstruct.containsFunction(this, true) <= 0)) {
+		if(mstruct.integrate(x_var, eo2, true, true, m1, m2) && (!b || mstruct.containsFunction(this, true) <= 0)) {
 			CALCULATOR->endTemporaryStopMessages(true);
 			b = true;
 		} else {
@@ -4108,8 +4124,8 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_li, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Ei, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Ci, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Shi, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Chi, true) <= 0) {
 			CALCULATOR->endTemporaryStopMessages(true);
 			MathStructure mstruct_lower(mstruct);
-			mstruct_lower.replace(vargs[1], vargs[2]);
-			mstruct.replace(vargs[1], vargs[3]);
+			mstruct_lower.replace(x_var, vargs[2]);
+			mstruct.replace(x_var, vargs[3]);
 			mstruct -= mstruct_lower;
 			return 1;
 		} else {
@@ -4123,16 +4139,17 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			return -1;
 		}
 	}
-	
+
 	CALCULATOR->endTemporaryStopMessages();
 	
 	CALCULATOR->beginTemporaryStopIntervalArithmetic();
 	if(eo.approximation != APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_APPROXIMATE;
 	if(mstruct.containsInterval() && eo.approximation == APPROXIMATION_EXACT) {
 		CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
+		mstruct.replace(x_var, vargs[1]);
 		return -1;
 	}
-	mstruct = vargs[0];
+	mstruct = mstruct_pre;
 	mstruct.eval(eo2);
 	if(m1.isNumber() && m1.number().isReal() && m2.isNumber() && m2.number().isReal()) {
 		Number nr_begin, nr_end;
@@ -4148,7 +4165,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		MathStructure merr(mstruct);
 		bool b_unknown_precision = false;
 		for(size_t i = 0; i < 4; i++) {
-			if(merr.containsFunction(CALCULATOR->f_diff, true) > 0 || !merr.differentiate(vargs[1], eo2)) {
+			if(merr.containsFunction(CALCULATOR->f_diff, true) > 0 || !merr.differentiate(x_var, eo2)) {
 				b_unknown_precision = true;
 				break;
 			}
@@ -4159,20 +4176,21 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		
 		Number nr_samples;
 		if(b_exact) {
-			if(numerical_integration(mstruct, vargs[1], eo2, nr_begin, nr_end, 10)) {
+			if(numerical_integration(mstruct, x_var, eo2, nr_begin, nr_end, 10)) {
 				CALCULATOR->endTemporaryStopIntervalArithmetic();
 				return 1;
 			}
 		} else if(eo.approximation == APPROXIMATION_EXACT) {
 			CALCULATOR->endTemporaryStopIntervalArithmetic();
 			CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
+			mstruct.replace(x_var, vargs[1]);
 			return -1;
 		} else {
 			MathStructure mtr = mstruct;
-			mtr.replace(vargs[1], nr_end);
+			mtr.replace(x_var, nr_end);
 			mtr.eval(eo2);
 			MathStructure mtr2 = mstruct;
-			mtr2.replace(vargs[1], nr_begin);
+			mtr2.replace(x_var, nr_begin);
 			mtr2.eval(eo2);
 			if(!mtr2.isNumber() || !mtr2.number().isReal() || !mtr.isNumber() || !mtr2.number().isReal()) b_unknown_precision = true;
 			if(!b_unknown_precision) {
@@ -4191,7 +4209,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				if(!b_interval) CALCULATOR->useIntervalArithmetic(true);
 				MathStructure m_interval(nr_interval);
 				KnownVariable v("", "", m_interval);
-				merr.replace(vargs[1], &v);
+				merr.replace(x_var, &v);
 				CALCULATOR->beginTemporaryStopMessages();
 				merr.eval(eo2);
 				if(CALCULATOR->endTemporaryStopMessages() > 0) b_unknown_precision = true;
@@ -4240,7 +4258,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 								}
 							}
 						}
-						if(numerical_integration(mstruct, vargs[1], eo2, nr_begin, nr_end, nr_samples.intValue())) {
+						if(numerical_integration(mstruct, x_var, eo2, nr_begin, nr_end, nr_samples.intValue())) {
 							if(!mstruct.isNumber() || !mstruct.number().isReal()) {
 								CALCULATOR->endTemporaryStopIntervalArithmetic();
 								CALCULATOR->error(true, _("Definite integral was approximated with unknown precision."), NULL);
@@ -4284,7 +4302,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				nr_samples.raise(Number(3, 4));
 				nr_samples.ceil();
 				nr_samples *= 100; 
-				if(numerical_integration(mstruct, vargs[1], eo2, nr_begin, nr_end, nr_samples.intValue())) {
+				if(numerical_integration(mstruct, x_var, eo2, nr_begin, nr_end, nr_samples.intValue())) {
 					CALCULATOR->endTemporaryStopIntervalArithmetic();
 					CALCULATOR->error(true, _("Definite integral was approximated with unknown precision."), NULL);
 					mstruct.setApproximate(true, true);
@@ -4293,6 +4311,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			}
 		}
 	}
+	mstruct.replace(x_var, vargs[1]);
 	CALCULATOR->endTemporaryStopIntervalArithmetic();
 	CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 	return -1;
@@ -4590,6 +4609,12 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			b = true;
 		} else if(m_eqn.isLogicalAnd() && m_eqn.size() > 0 && m_eqn[0].isComparison()) {
 			ct = m_eqn[0].comparisonType();
+			for(size_t i = 0; i < m_eqn.size(); i++) {
+				if(m_eqn[i].isComparison() && m_eqn[i].contains(y_var, true) > 0) {
+					ct = m_eqn[i].comparisonType();
+					break;
+				}
+			}
 			mstruct = m_eqn;
 			b = true;
 		} else if(m_eqn.isLogicalOr() && m_eqn.size() > 0 && m_eqn[0].isComparison()) {
@@ -4598,6 +4623,12 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			b = true;
 		} else if(m_eqn.isLogicalOr() && m_eqn.size() > 0 && m_eqn[0].isLogicalAnd() && m_eqn[0].size() > 0 && m_eqn[0][0].isComparison()) {
 			ct = m_eqn[0][0].comparisonType();
+			for(size_t i = 0; i < m_eqn[0].size(); i++) {
+				if(m_eqn[0][i].isComparison() && m_eqn[0][i].contains(y_var, true) > 0) {
+					ct = m_eqn[0][i].comparisonType();
+					break;
+				}
+			}
 			mstruct = m_eqn;
 			b = true;
 		} else if(m_eqn.isVariable() && m_eqn.variable()->isKnown() && (eo.approximation != APPROXIMATION_EXACT || !m_eqn.variable()->isApproximate()) && ((KnownVariable*) m_eqn.variable())->get().isComparison()) {
@@ -4749,8 +4780,8 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 							break;
 						}
 					}
-				}	
-				bool b_del = false;		
+				}
+				bool b_del = false;
 				if((!mstruct[i].isComparison() && !mstruct[i].isLogicalAnd()) || (ct == COMPARISON_EQUALS && (!mstruct[i].isComparison() || mstruct[i].comparisonType() != COMPARISON_EQUALS)) || !mstruct[i].contains(y_var)) {
 					b_del = true;
 				} else if(ct == COMPARISON_EQUALS && mstruct[i][0] != y_var) {
@@ -4775,7 +4806,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			}
 			if(ct == COMPARISON_EQUALS) {
 				for(size_t i = 0; i < mstruct.size(); i++) {
-					mstruct[i].setToChild(2, true);
+					if(mstruct[i].isComparison() && mstruct[i].comparisonType() == ct) mstruct[i].setToChild(2, true);
 				}
 			}
 			if(mstruct.size() == 1) {
