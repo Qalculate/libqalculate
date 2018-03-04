@@ -828,7 +828,7 @@
     </builtin_function>
     <builtin_function name="Li">
       <_title>Polylogarithm</_title>
-      <_names>rc:Li</_names>
+      <_names>rc:Li,polylog</_names>
       <argument index="1">
         <_title>Order</_title>
       </argument>
@@ -2357,34 +2357,43 @@
       <_title>Named Integrals</_title>
       <builtin_function name="li">
         <_title>Logarithmic Integral</_title>
-        <_names>rc:li</_names>
+        <_names>rc:li,logint</_names>
         <_description>The integral of 1/ln(x).</_description>
       </builtin_function>
       <builtin_function name="Ei">
         <_title>Exponential Integral</_title>
-        <_names>rc:Ei</_names>
+        <_names>rc:Ei,expint</_names>
         <_description>The integral of e^x/x.</_description>
       </builtin_function>
       <builtin_function name="Si">
         <_title>Sine Integral</_title>
-        <_names>rc:Si</_names>
+        <_names>rc:Si,sinint</_names>
         <_description>The integral of sin(x)/x.</_description>
       </builtin_function>
       <builtin_function name="Ci">
         <_title>Cosine Integral</_title>
-        <_names>rc:Ci</_names>
+        <_names>rc:Ci,cosint</_names>
         <_description>The integral of cos(x)/x.</_description>
       </builtin_function>
       <builtin_function name="Shi">
         <_title>Hyperbolic Sine Integral</_title>
-        <_names>rc:Shi</_names>
+        <_names>rc:Shi,sinhint</_names>
         <_description>The integral of sinh(x)/x.</_description>
       </builtin_function>
       <builtin_function name="Chi">
         <_title>Hyperbolic Cosine Integral</_title>
-        <_names>rc:Chi</_names>
+        <_names>rc:Chi,coshint</_names>
         <_description>The integral of cosh(x)/x.</_description>
       </builtin_function>
+      <builtin_function name="igamma">
+        <_title>Upper Incomplete Gamma Function</_title>
+        <_names>r:igamma</_names>
+      </builtin_function>
+      <function>
+        <_title>Lower Incomplete Gamma Function</_title>
+        <_names>r:gammainc</_names>
+        <expression>1-igamma(\x,\y)/gamma(\x)</expression>
+      </function>
     </category>
   </category>
   <category>

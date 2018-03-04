@@ -1558,6 +1558,7 @@ void Calculator::addBuiltinFunctions() {
 	f_Ci = addFunction(new CiFunction());
 	f_Shi = addFunction(new ShiFunction());
 	f_Chi = addFunction(new ChiFunction());
+	f_igamma = addFunction(new IGammaFunction());
 	
 	if(canPlot()) f_plot = addFunction(new PlotFunction());
 	

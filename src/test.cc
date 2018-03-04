@@ -804,6 +804,8 @@ int main(int argc, char *argv[]) {
 	
 	CALCULATOR->setPrecision(10);
 	
+	cout << CALCULATOR->defaultAssumptions()->type() << endl;
+	
 	test_integration();
 	test_intervals(true);
 

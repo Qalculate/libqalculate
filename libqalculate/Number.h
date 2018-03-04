@@ -473,6 +473,15 @@ class Number {
 		bool gcd(const Number &o);
 		bool lcm(const Number &o);
 		
+		bool polylog(const Number &o);
+		bool igamma(const Number &o);
+		bool expint();
+		bool logint();
+		bool sinint();
+		bool sinhint();
+		bool cosint();
+		bool coshint();
+		
 		bool factorial();
 		bool multiFactorial(const Number &o);
 		bool doubleFactorial();
