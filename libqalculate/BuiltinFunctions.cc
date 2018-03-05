@@ -24,7 +24,6 @@
 
 #define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
 #define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
-#define FR_FUNCTION_2R_RM2(FUNC)	Number nr(vargs[1].number()); if(!nr.FUNC(vargs[0].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return -2;} else {mstruct.set(nr); return 1;}
 #define FR_FUNCTION_2R(FUNC)	Number nr(vargs[1].number()); if(!nr.FUNC(vargs[0].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
 
 #define REPRESENTS_FUNCTION(x, y) x::x() : MathFunction(#y, 1) {} int x::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {mstruct = vargs[0]; mstruct.eval(eo); if(mstruct.y()) {mstruct.clear(); mstruct.number().setTrue();} else {mstruct.clear(); mstruct.number().setFalse();} return 1;}
@@ -3954,12 +3953,18 @@ int LiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	}
 	mstruct = vargs[1];
 	mstruct.eval(eo);
-	if(vargs[0].number().isPositive() && vargs[1].isOne()) {
+	if(vargs[0].number().isPositive() && mstruct.isOne()) {
 		mstruct = vargs[0];
 		mstruct.transform(CALCULATOR->f_zeta);
 		return true;
 	}
-	FR_FUNCTION_2R_RM2(polylog)
+	if(mstruct.isNumber()) {
+		Number nr(mstruct.number());
+		if(nr.polylog(vargs[0].number()) && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || vargs[0].isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || vargs[0].number().isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || vargs[0].number().includesInfinity() || mstruct.number().includesInfinity())) {
+			mstruct.set(nr); return 1;
+		}
+	}
+	return -2;
 }
 EiFunction::EiFunction() : MathFunction("Ei", 1) {
 	names[0].case_sensitive = true;
@@ -3974,23 +3979,51 @@ int EiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 
 SiFunction::SiFunction() : MathFunction("Si", 1) {
 	names[0].case_sensitive = true;
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
+	setArgumentDefinition(1, new AngleArgument());
 }
-bool SiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_real_angle_value(vargs[0]);}
 bool SiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_number_angle_value(vargs[0]);}
+bool SiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_real_angle_value(vargs[0]);}
 bool SiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	FR_FUNCTION(sinint)
+	mstruct = vargs[0]; 
+	if(CALCULATOR->getRadUnit()) {
+		mstruct.convert(CALCULATOR->getRadUnit());
+		mstruct /= CALCULATOR->getRadUnit();
+	}
+	mstruct.eval(eo);
+	if(mstruct.isNumber()) {
+		Number nr(mstruct.number()); 
+		if(nr.sinint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
+			mstruct.set(nr); 
+			return 1;
+		}
+	}
+	if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+	return -1;
 }
 CiFunction::CiFunction() : MathFunction("Ci", 1) {
 	names[0].case_sensitive = true;
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
+	setArgumentDefinition(1, new AngleArgument());
 }
 bool CiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_real_angle_value(vargs[0]);}
 bool CiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_number_angle_value(vargs[0]);}
 bool CiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	FR_FUNCTION(cosint)
+	mstruct = vargs[0]; 
+	if(CALCULATOR->getRadUnit()) {
+		mstruct.convert(CALCULATOR->getRadUnit());
+		mstruct /= CALCULATOR->getRadUnit();
+	}
+	mstruct.eval(eo);
+	if(mstruct.isNumber()) {
+		Number nr(mstruct.number()); 
+		if(nr.cosint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
+			mstruct.set(nr); 
+			return 1;
+		}
+	}
+	if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+	return -1;
 }
 ShiFunction::ShiFunction() : MathFunction("Shi", 1) {
 	names[0].case_sensitive = true;

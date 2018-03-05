@@ -786,7 +786,7 @@ class MathStructure {
 		int containsType(StructureType mtype, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
 		int containsRepresentativeOfType(StructureType mtype, bool check_variables = false, bool check_functions = false) const;
 		int containsFunction(MathFunction *f, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
-		int containsInterval(bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
+		int containsInterval(bool structural_only = true, bool check_variables = false, bool check_functions = false, bool ignore_high_precision_interval = false) const;
 		bool containsOpaqueContents() const;
 		bool containsAdditionPower() const;
 		bool containsUnknowns() const;
