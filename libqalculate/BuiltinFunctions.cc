@@ -1593,11 +1593,18 @@ bool SinFunction::representsReal(const MathStructure &vargs, bool) const {return
 bool SinFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
-	mstruct = vargs[0]; 
 	if(CALCULATOR->getRadUnit()) {
-		mstruct.convert(CALCULATOR->getRadUnit());
-		mstruct /= CALCULATOR->getRadUnit();
+		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
+			mstruct = vargs[0][0];
+		} else {
+			mstruct = vargs[0]; 
+			mstruct.convert(CALCULATOR->getRadUnit());
+			mstruct /= CALCULATOR->getRadUnit();
+		}
+	} else {
+		mstruct = vargs[0];
 	}
+
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
@@ -1714,10 +1721,16 @@ bool CosFunction::representsReal(const MathStructure &vargs, bool) const {return
 bool CosFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
-	mstruct = vargs[0]; 
 	if(CALCULATOR->getRadUnit()) {
-		mstruct.convert(CALCULATOR->getRadUnit());
-		mstruct /= CALCULATOR->getRadUnit();
+		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
+			mstruct = vargs[0][0];
+		} else {
+			mstruct = vargs[0]; 
+			mstruct.convert(CALCULATOR->getRadUnit());
+			mstruct /= CALCULATOR->getRadUnit();
+		}
+	} else {
+		mstruct = vargs[0];
 	}
 	
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
@@ -1846,11 +1859,19 @@ bool TanFunction::representsNumber(const MathStructure &vargs, bool) const {retu
 bool TanFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_real_angle_value(vargs[0]);}
 bool TanFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = vargs[0]; 
+	
 	if(CALCULATOR->getRadUnit()) {
-		mstruct.convert(CALCULATOR->getRadUnit());
-		mstruct /= CALCULATOR->getRadUnit();
+		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
+			mstruct = vargs[0][0];
+		} else {
+			mstruct = vargs[0]; 
+			mstruct.convert(CALCULATOR->getRadUnit());
+			mstruct /= CALCULATOR->getRadUnit();
+		}
+	} else {
+		mstruct = vargs[0];
 	}
+
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
@@ -4193,7 +4214,11 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			CALCULATOR->endTemporaryStopMessages(true);
 			mstruct += "C";
 			return 1;
-		} else if(mstruct.containsFunction(this, true) <= 0 || mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 || mstruct.containsFunction(CALCULATOR->f_Ci, true) <= 0 || mstruct.containsFunction(CALCULATOR->f_Shi, true) <= 0 || mstruct.containsFunction(CALCULATOR->f_Chi, true) <= 0 || (m1.representsNonNegative() && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0)) {
+#if MPFR_VERSION_MAJOR < 4
+		} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Ci, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Shi, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Chi, true) <= 0 && (m1.representsNonNegative() && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0)) {
+#else
+		} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Ci, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Shi, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Chi, true) <= 0 && (m1.representsNonNegative() && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0)) {
+#endif
 			CALCULATOR->endTemporaryStopMessages(true);
 			MathStructure mstruct_lower(mstruct);
 			mstruct_lower.replace(x_var, vargs[2]);
