@@ -797,15 +797,124 @@ void test_intervals(bool use_interval) {
 
 }
 
+void speed_test() {
+		
+	/*UserFunction f1("", "", "x^2/3");
+	UserFunction f2("", "", "1/x");
+	UserFunction f3("", "", "x/4-3");
+	UserFunction f4("", "", "sin(x rad)");
+	
+	MathStructure v;
+	v.clearVector();
+	MathStructure m1 = f1.calculate*/
+	
+	Number nr(1);
+	Number nr_change(1, 20000);
+	for(size_t i = 0; i < 20000; i++) {
+		Number n(nr);
+		n ^= 2;
+		n /= 3;
+		nr += nr_change;
+	}
+	nr.set(1);
+	for(size_t i = 0; i < 20000; i++) {
+		Number n(nr);
+		n.recip();
+		nr += nr_change;
+	}
+	nr.set(1);
+	for(size_t i = 0; i < 20000; i++) {
+		Number n(nr);
+		n /= 4;
+		n -= 3;
+		nr += nr_change;
+	}
+	nr.set(1);
+	for(size_t i = 0; i < 20000; i++) {
+		Number n(nr);
+		n.sin();
+		nr += nr_change;
+	}
+	
+	EvaluationOptions eo;
+	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
+	eo.approximation = APPROXIMATION_TRY_EXACT;
+	//eo.sync_units = false;
+	
+	/*Number n1;
+	for(size_t i = 0; i < 4000000; i++) {
+		n1 += nr_one;
+	}*/
+	
+	/*MathStructure m1;
+	for(size_t i = 0; i < 1000000; i++) {
+		m1.calculateAdd(m_one, eo);
+	}*/
+	
+	/*for(size_t i = 0; i < 2000000; i++) {
+		MathStructure *m1 = new MathStructure();
+	}*/
+	
+	/*for(size_t i = 0; i < 2000000; i++) {
+		Number *m1 = new Number();
+	}*/
+	
+	/*MathStructure m = CALCULATOR->parse("x^2/2+sin(x+3)^2", eo.parse_options);
+	m.eval(eo);
+	MathStructure mx(CALCULATOR->v_x);
+	Number nr;
+	nr.setFloat(4.0);
+	MathStructure mnr(nr);
+	for(size_t i = 0; i < 1000000; i++) {
+		MathStructure r(m);
+		r.replace(mx, mnr);
+		r.eval(eo);
+	}*/
+	MathStructure m = CALCULATOR->parse("x^20000", eo.parse_options);
+	eo.expand = false;
+	m.eval(eo);
+	MathStructure v1 = m.generateVector(CALCULATOR->v_x, 1, 10, 2000, NULL, eo);
+	/*m = CALCULATOR->parse("1/x");
+	m.eval(eo);
+	MathStructure v2 = m.generateVector(CALCULATOR->v_x, 1, 100, 20000, NULL, eo);
+	m = CALCULATOR->parse("x/4-3");
+	m.eval(eo);
+	MathStructure v3 = m.generateVector(CALCULATOR->v_x, 1, 100, 20000, NULL, eo);
+	m = CALCULATOR->parse("sin(x)", eo.parse_options);
+	m.eval(eo);
+	MathStructure v4 = m.generateVector(CALCULATOR->v_x, 1, 100, 20000, NULL, eo);*/
+	//cout << v4.size() << ":" << v4[0] << ":" << v4[v4.size() - 1] << endl;
+}
+
 int main(int argc, char *argv[]) {
 
 	new Calculator();
 	CALCULATOR->loadGlobalDefinitions();
+	CALCULATOR->loadLocalDefinitions();
 	
-	CALCULATOR->setPrecision(10);
+	EvaluationOptions evalops;
+	/*evalops.approximation = APPROXIMATION_TRY_EXACT;
+	evalops.sync_units = true;
+	evalops.structuring = STRUCTURING_SIMPLIFY;
+	evalops.parse_options.unknowns_enabled = false;
+	evalops.parse_options.read_precision = DONT_READ_PRECISION;*/
+	/*evalops.parse_options.base = BASE_DECIMAL;
+	evalops.allow_complex = true;
+	evalops.allow_infinite = true;*/
+	//evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL;
+	evalops.assume_denominators_nonzero = true;
+	//evalops.warn_about_denominators_assumed_nonzero = true;
+	//evalops.parse_options.limit_implicit_multiplication = false;
+	//evalops.parse_options.parsing_mode = PARSING_MODE_ADAPTIVE;
+	evalops.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
+	/*evalops.parse_options.dot_as_separator = CALCULATOR->default_dot_as_separator;
+	evalops.parse_options.comma_as_separator = false;
+	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;*/
 	
+	
+	//speed_test();
 	test_integration();
-	test_intervals(true);
+	//test_intervals(true);
 
 	return 0;
 

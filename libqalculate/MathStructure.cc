@@ -6941,6 +6941,15 @@ bool MathStructure::calculateInverse(const EvaluationOptions &eo, MathStructure 
 	return calculateRaise(m_minus_one, eo, mparent, index_this);
 }
 bool MathStructure::calculateNegate(const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
+	if(m_type == STRUCT_NUMBER) {
+		Number nr(o_number);
+		if(nr.negate() && (eo.approximation >= APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate())) {
+			o_number = nr;
+			numberUpdated();
+			return true;
+		}
+		return false;
+	}
 	if(!isMultiplication()) transform(STRUCT_MULTIPLICATION);
 	PREPEND(m_minus_one);
 	return calculateMultiplyIndex(0, eo, true, mparent, index_this);
@@ -6965,6 +6974,14 @@ bool MathStructure::calculateRaiseExponent(const EvaluationOptions &eo, MathStru
 	return false;
 }
 bool MathStructure::calculateRaise(const MathStructure &mexp, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
+	if(mexp.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
+		Number nr(o_number);
+		if(nr.raise(mexp.number(), eo.approximation < APPROXIMATION_APPROXIMATE) && (eo.approximation >= APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mexp.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mexp.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || o_number.includesInfinity() || mexp.number().includesInfinity())) {
+			o_number = nr;
+			numberUpdated();
+			return true;
+		}
+	}
 	raise(mexp);
 	LAST.evalSort();
 	return calculateRaiseExponent(eo, mparent, index_this);
@@ -7108,11 +7125,29 @@ bool MathStructure::calculateMultiplyIndex(size_t index, const EvaluationOptions
 
 }
 bool MathStructure::calculateMultiply(const MathStructure &mmul, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
+	if(mmul.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
+		Number nr(o_number);
+		if(nr.multiply(mmul.number()) && (eo.approximation >= APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mmul.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mmul.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || o_number.includesInfinity() || mmul.number().includesInfinity())) {
+			o_number = nr;
+			numberUpdated();
+			return true;
+		}
+		return false;
+	}
 	multiply(mmul, true);
 	LAST.evalSort();
 	return calculateMultiplyIndex(SIZE - 1, eo, true, mparent, index_this);
 }
 bool MathStructure::calculateDivide(const MathStructure &mdiv, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
+	if(mdiv.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
+		Number nr(o_number);
+		if(nr.divide(mdiv.number()) && (eo.approximation >= APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mdiv.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mdiv.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || o_number.includesInfinity() || mdiv.number().includesInfinity())) {
+			o_number = nr;
+			numberUpdated();
+			return true;
+		}
+		return false;
+	}
 	MathStructure *mmul = new MathStructure(mdiv);
 	mmul->evalSort();
 	multiply_nocopy(mmul, true);
@@ -7134,11 +7169,29 @@ bool MathStructure::calculateAddIndex(size_t index, const EvaluationOptions &eo,
 	
 }
 bool MathStructure::calculateAdd(const MathStructure &madd, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
+	if(madd.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
+		Number nr(o_number);
+		if(nr.add(madd.number()) && (eo.approximation >= APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || madd.number().isApproximate())) {
+			o_number = nr;
+			numberUpdated();
+			return true;
+		}
+		return false;
+	}
 	add(madd, true);
 	LAST.evalSort();
 	return calculateAddIndex(SIZE - 1, eo, true, mparent, index_this);
 }
 bool MathStructure::calculateSubtract(const MathStructure &msub, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
+	if(msub.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
+		Number nr(o_number);
+		if(nr.subtract(msub.number()) && (eo.approximation >= APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || msub.number().isApproximate())) {
+			o_number = nr;
+			numberUpdated();
+			return true;
+		}
+		return false;
+	}
 	MathStructure *madd = new MathStructure(msub);
 	madd->evalSort();	
 	add_nocopy(madd, true);
@@ -15637,6 +15690,7 @@ void gatherInformation(const MathStructure &mstruct, vector<Unit*> &base_units, 
 					gatherInformation(mstruct[i], base_units, alias_units);
 				}
 			}
+			break;
 		}
 		default: {
 			for(size_t i = 0; i < mstruct.size(); i++) {
@@ -16575,16 +16629,21 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 		CALCULATOR->error(true, _("The selected min and max do not result in a positive, finite number of data points"), NULL);
 		return y_vector;
 	}
+	y_vector.resizeVector(steps, m_zero);
+	if(x_vector) x_vector->resizeVector(steps, m_zero);
 	for(int i = 0; i < steps; i++) {
 		if(x_vector) {
-			x_vector->addChild(x_value);
+			(*x_vector)[i] = x_value;
 		}
 		y_value = *this;
 		y_value.replace(x_mstruct, x_value);
 		y_value.eval(eo);
-		y_vector.addChild(y_value);
-		x_value.calculateAdd(step, eo);
+		y_vector[i] = y_value;
+		if(x_value.isNumber()) x_value.number().add(step.number());
+		else x_value.calculateAdd(step, eo);
 		if(CALCULATOR->aborted()) {
+			y_vector.resizeVector(i, m_zero);
+			if(x_vector) x_vector->resizeVector(i, m_zero);
 			return y_vector;
 		}
 	}
@@ -16606,20 +16665,35 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 			CALCULATOR->error(true, _("Too many data points"), NULL);
 			return y_vector;
 		}
+		mtest.number().round();
+		unsigned int steps = mtest.number().uintValue();
+		y_vector.resizeVector(steps, m_zero);
+		if(x_vector) x_vector->resizeVector(steps, m_zero);
 	}
 	ComparisonResult cr = max.compare(x_value);
+	size_t i = 0;
 	while(COMPARISON_IS_EQUAL_OR_LESS(cr)) {
 		if(x_vector) {
-			x_vector->addChild(x_value);
+			if(i >= x_vector->size()) x_vector->addChild(x_value);
+			else (*x_vector)[i] = x_value;
 		}
 		y_value = *this;
 		y_value.replace(x_mstruct, x_value);
 		y_value.eval(eo);
-		y_vector.addChild(y_value);
-		x_value.calculateAdd(step, eo);
+		if(i >= y_vector.size()) y_vector.addChild(y_value);
+		else y_vector[i] = y_value;
+		if(x_value.isNumber()) x_value.number().add(step.number());
+		else x_value.calculateAdd(step, eo);
 		cr = max.compare(x_value);
-		if(CALCULATOR->aborted()) return y_vector;
+		if(CALCULATOR->aborted()) {
+			y_vector.resizeVector(i, m_zero);
+			if(x_vector) x_vector->resizeVector(i, m_zero);
+			return y_vector;
+		}
+		i++;
 	}
+	y_vector.resizeVector(i, m_zero);
+	if(x_vector) x_vector->resizeVector(i, m_zero);
 	return y_vector;
 }
 MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathStructure &x_vector, const EvaluationOptions &eo) const {
@@ -17262,15 +17336,13 @@ bool integrate_info(const MathStructure &mstruct, const MathStructure &x_var, Ma
 
 bool transform_absln(MathStructure &mstruct, int use_abs, const MathStructure &m_lower, const MathStructure &m_upper, const MathStructure &x_var, const EvaluationOptions &eo) {
 	if(use_abs != 0 && !m_lower.isUndefined()) {
-		if(mstruct.representsNonZero(true)) {
-			if(mstruct.representsNonComplex(true)) {
-				mstruct.transform(CALCULATOR->f_abs);
-				mstruct.transform(CALCULATOR->f_ln);
-				return true;
-			} else if(mstruct.representsComplex(true)) {
-				mstruct.transform(CALCULATOR->f_ln);
-				return true;
-			}
+		if(mstruct.representsNonComplex(true)) {
+			mstruct.transform(CALCULATOR->f_abs);
+			mstruct.transform(CALCULATOR->f_ln);
+			return true;
+		} else if(mstruct.representsComplex(true)) {
+			mstruct.transform(CALCULATOR->f_ln);
+			return true;
 		}
 		CALCULATOR->beginTemporaryStopMessages();
 		MathStructure m_interval;
@@ -17285,7 +17357,6 @@ bool transform_absln(MathStructure &mstruct, int use_abs, const MathStructure &m
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		mtest.eval(eo2);
 		CALCULATOR->endTemporaryStopMessages();
-		if(!mtest.representsNonZero(true)) return false;
 		if((use_abs > 0 && !mtest.representsComplex(true)) || (use_abs < 0 && mtest.representsNonComplex(true))) {
 			mstruct.transform(CALCULATOR->f_abs);
 			mstruct.transform(CALCULATOR->f_ln);
@@ -19471,8 +19542,10 @@ int contains_unsolved_integrate(const MathStructure &mstruct, MathStructure *thi
 	return ret;
 }
 
-int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions &eo, bool simplify_first, int use_abs, const MathStructure &m_lower, const MathStructure &m_upper, int max_part_depth, vector<MathStructure*> *parent_parts) {
+int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions &eo_pre, bool simplify_first, int use_abs, const MathStructure &m_lower, const MathStructure &m_upper, int max_part_depth, vector<MathStructure*> *parent_parts) {
 	if(CALCULATOR->aborted()) CANNOT_INTEGRATE
+	EvaluationOptions eo = eo_pre;
+	eo.protected_function = CALCULATOR->f_integrate;
 	EvaluationOptions eo2 = eo;
 	eo2.expand = true;
 	eo2.combine_divisions = false;
@@ -20567,14 +20640,14 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 									mtest += mrem;
 									mtest.last() *= CHILD(1);
 									mtest.childrenUpdated();
-									CALCULATOR->beginTemporaryStopMessages();
-									if(mtest.integrate(x_var, eo, false, use_abs, m_lower, m_upper, max_part_depth, parent_parts) > 0) {
-										CALCULATOR->endTemporaryStopMessages(true);
-										set(mtest, true);
-										return true;
-									}
-									CALCULATOR->endTemporaryStopMessages();
 								}
+								CALCULATOR->beginTemporaryStopMessages();
+								if(mtest.integrate(x_var, eo, false, use_abs, m_lower, m_upper, max_part_depth, parent_parts) > 0) {
+									CALCULATOR->endTemporaryStopMessages(true);
+									set(mtest, true);
+									return true;
+								}
+								CALCULATOR->endTemporaryStopMessages();
 							}
 						}
 						MathStructure mtest(*this);
@@ -20908,7 +20981,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 				}
 				size_t pp_size = parent_parts->size();
 				bool b = false;
-				for(size_t i = 0; !b && max_part_depth > 0 && (i < SIZE || (SIZE == 3 && i < SIZE * 2)); i++) {
+				for(size_t i = 0; !b && max_part_depth > 0 && (i < SIZE || (SIZE == 3 && i < SIZE * 2)) && SIZE < 10; i++) {
 					if(CALCULATOR->aborted()) CANNOT_INTEGRATE
 					CALCULATOR->beginTemporaryStopMessages();
 					// integration by parts
@@ -20933,6 +21006,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							parent_parts->push_back(this);
 							MathStructure minteg_2(minteg_v);
 							if(!mdiff_u.isOne()) minteg_2 *= mdiff_u;
+							minteg_2.calculateFunctions(eo2);
 							minteg_2.calculatesub(eo2, eo2, true);
 							if(minteg_2.countTotalChildren() < 100 && minteg_2.integrate(x_var, eo, false, use_abs, m_lower, m_upper, max_part_depth - 1, parent_parts) > 0) {
 								int cui = contains_unsolved_integrate(minteg_2, this, parent_parts);

@@ -746,6 +746,7 @@ int UserFunction::subtype() const {
 int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	ParseOptions po;
+	if(b_local) po.angle_unit = eo.parse_options.angle_unit;
 	if(args() != 0) {
 		string stmp = sformula_calc;
 		string svar;

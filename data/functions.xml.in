@@ -2368,11 +2368,17 @@
       <builtin_function name="Si">
         <_title>Sine Integral</_title>
         <_names>rc:Si,sinint</_names>
+        <argument index="1">
+          <_title>Angle</_title>
+        </argument>
         <_description>The integral of sin(x)/x.</_description>
       </builtin_function>
       <builtin_function name="Ci">
         <_title>Cosine Integral</_title>
         <_names>rc:Ci,cosint</_names>
+        <argument index="1">
+          <_title>Angle</_title>
+        </argument>
         <_description>The integral of cos(x)/x.</_description>
       </builtin_function>
       <builtin_function name="Shi">

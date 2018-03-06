@@ -1386,7 +1386,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct.setToChild(2, true);
 				b = true;
 			}
-		} else if(mstruct[1].representsPositive() || (mstruct[1].representsNegative() && mstruct[0].representsPositive())) {
+		} else if(mstruct[0].representsPositive()) {
 			MathStructure mstruct2;
 			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
 			mstruct2 *= mstruct[1];
@@ -1460,7 +1460,7 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	MathStructure mstructv2 = vargs[1];
 	mstructv2.eval(eo);
 	if(mstruct.isPower()) {
-		if(mstruct[1].representsPositive() || (mstruct[1].representsNegative() && mstruct[0].representsPositive())) {
+		if(mstruct[0].representsPositive()) {
 			MathStructure mstruct2;
 			mstruct2.set(CALCULATOR->f_logn, &mstruct[0], &mstructv2, NULL);
 			mstruct2 *= mstruct[1];
@@ -1596,6 +1596,14 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(CALCULATOR->getRadUnit()) {
 		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
 			mstruct = vargs[0][0];
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
+			mstruct = vargs[0][0];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= Number(1, 180);
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
+			mstruct = vargs[0][0];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= Number(1, 200);
 		} else {
 			mstruct = vargs[0]; 
 			mstruct.convert(CALCULATOR->getRadUnit());
@@ -1724,6 +1732,14 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(CALCULATOR->getRadUnit()) {
 		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
 			mstruct = vargs[0][0];
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
+			mstruct = vargs[0][0];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= Number(1, 180);
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
+			mstruct = vargs[0][0];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= Number(1, 200);
 		} else {
 			mstruct = vargs[0]; 
 			mstruct.convert(CALCULATOR->getRadUnit());
@@ -1863,6 +1879,14 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(CALCULATOR->getRadUnit()) {
 		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
 			mstruct = vargs[0][0];
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
+			mstruct = vargs[0][0];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= Number(1, 180);
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
+			mstruct = vargs[0][0];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= Number(1, 200);
 		} else {
 			mstruct = vargs[0]; 
 			mstruct.convert(CALCULATOR->getRadUnit());
@@ -4126,6 +4150,52 @@ bool contains_complex(const MathStructure &mstruct) {
 	}
 	return false;
 }
+
+bool check_denominators(const MathStructure &m, const MathStructure &mi, const MathStructure &mx, const EvaluationOptions &eo) {
+	if(m.contains(mx, false, true, true) == 0) return true;
+	if(m.isPower()) {
+		bool b_neg = m[1].representsNegative();
+		if(!m[1].representsNonNegative()) {
+			if(!m[0].representsNonZero()) {
+				EvaluationOptions eo2 = eo;
+				eo2.approximation = APPROXIMATION_APPROXIMATE;
+				CALCULATOR->beginTemporaryStopMessages();
+				MathStructure mpow(m[1]);
+				mpow.replace(mx, mi);
+				mpow.eval(eo2);
+				b_neg = mpow.representsNegative();
+				CALCULATOR->endTemporaryStopMessages();
+			}
+		}
+		if(b_neg && !m[0].representsNonZero()) {
+			if(m[0].isZero()) return false;
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			CALCULATOR->beginTemporaryStopMessages();
+			MathStructure mbase(m[0]);
+			mbase.replace(mx, mi);
+			mbase.eval(eo2);
+			CALCULATOR->endTemporaryStopMessages();
+			if(mbase.isNumber() && !mbase.number().isNonZero()) return false;
+		}
+	} else if(m.isVariable()) {
+		if(m.variable()->isKnown() && !check_denominators(((KnownVariable*) m.variable())->get(), mi, mx, eo)) return false;
+	} else if(m.isFunction()) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_APPROXIMATE;
+		eo2.assume_denominators_nonzero = false;
+		CALCULATOR->beginTemporaryStopMessages();
+		MathStructure mfunc(m);
+		mfunc.replace(mx, mi);
+		bool b = mfunc.calculateFunctions(eo2);
+		CALCULATOR->endTemporaryStopMessages();
+		if(b && !check_denominators(mfunc, mi, mx, eo)) return false;
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(!check_denominators(m[i], mi, mx, eo)) return false;
+	}
+	return true;
+}
 int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[2].isUndefined() != vargs[3].isUndefined()) {
 		CALCULATOR->error(true, _("Both the lower and upper limit must be set to get the definite integral."), NULL);
@@ -4152,6 +4222,12 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		eo3.approximation = APPROXIMATION_APPROXIMATE;
 		m_interval.calculateFunctions(eo3);
 		CALCULATOR->endTemporaryStopMessages();
+		if(!check_denominators(mstruct_pre, m_interval, x_var, eo)) {
+			CALCULATOR->endTemporaryStopMessages();
+			CALCULATOR->endTemporaryStopMessages(true);
+			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
+			return false;
+		}
 		UnknownVariable *var = new UnknownVariable("", "u");
 		var->setAssumptions(m_interval);
 		x_var.set(var);
@@ -4163,6 +4239,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	mstruct.eval(eo2);
 	eo2.do_polynomial_division = eo.do_polynomial_division;
 	MathStructure mbak(mstruct);
+
 	
 	int use_abs = -1;
 	if(vargs[2].isUndefined() && x_var.representsReal() && !contains_complex(mstruct)) {
@@ -4172,6 +4249,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	int b = mstruct.integrate(x_var, eo2, true, use_abs, m1, m2);
 	if(b < 0) {
 		mstruct = mbak;
+		mstruct.replace(x_var, vargs[1]);
 		CALCULATOR->endTemporaryStopMessages(true);
 		CALCULATOR->endTemporaryStopMessages(true);
 		CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
@@ -4190,6 +4268,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		int b2 = mstruct.integrate(x_var, eo2, true, use_abs, m1, m2);
 		if(b2 < 0) {
 			mstruct = mbak;
+			mstruct.replace(x_var, vargs[1]);
 			CALCULATOR->endTemporaryStopMessages(true);
 			CALCULATOR->endTemporaryStopMessages(true);
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
