@@ -4160,11 +4160,13 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 				EvaluationOptions eo2 = eo;
 				eo2.approximation = APPROXIMATION_APPROXIMATE;
 				CALCULATOR->beginTemporaryStopMessages();
+				KnownVariable *v = new KnownVariable("", "", mi);
 				MathStructure mpow(m[1]);
-				mpow.replace(mx, mi);
+				mpow.replace(mx, v, true);
 				mpow.eval(eo2);
 				b_neg = mpow.representsNegative();
 				CALCULATOR->endTemporaryStopMessages();
+				v->destroy();
 			}
 		}
 		if(b_neg && !m[0].representsNonZero()) {
@@ -4173,10 +4175,68 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 			eo2.approximation = APPROXIMATION_APPROXIMATE;
 			CALCULATOR->beginTemporaryStopMessages();
 			MathStructure mbase(m[0]);
-			mbase.replace(mx, mi);
+			KnownVariable *v = new KnownVariable("", "", mi);
+			mbase.replace(mx, v, true);
+			bool b_multiple = mbase.contains(mx, true) > 0;
+			if(b_multiple) mbase.replace(mx, v);
 			mbase.eval(eo2);
 			CALCULATOR->endTemporaryStopMessages();
-			if(mbase.isNumber() && !mbase.number().isNonZero()) return false;
+			if(!b_multiple && mbase.isNumber()) {
+				if(!mbase.number().isNonZero()) {v->destroy(); return false;}
+			} else if(!mbase.isNumber() || !mbase.number().isNonZero()) {
+				mbase = m[0];
+				eo2.isolate_x = true;
+				eo2.isolate_var = &mx;
+				eo2.test_comparisons = true;
+				mbase.transform(COMPARISON_NOT_EQUALS, m_zero);
+				mbase.eval(eo2);
+				eo2.isolate_x = false;
+				eo2.isolate_var = NULL;
+				if(!mbase.isOne()) {
+					if(mbase.isZero()) {v->destroy(); return false;}
+					bool b = false;
+					if(mbase.isComparison() && mbase.comparisonType() == COMPARISON_NOT_EQUALS && (mbase[0] == mx || mbase[0].isFunction()) && mbase[1].isNumber() && mi.isNumber()) {
+						ComparisonResult cr = COMPARISON_RESULT_UNKNOWN;
+						if(mbase[0].isFunction()) {
+							MathStructure mfunc(mbase[0]);
+							mfunc.replace(mx, v);
+							mfunc.eval(eo2);
+							if(mfunc.isNumber()) cr = mbase[1].number().compare(mfunc.number());
+						} else {
+							cr = mbase[1].number().compare(mi.number());
+						}
+						b = COMPARISON_IS_NOT_EQUAL(cr);
+						if(!b && cr != COMPARISON_RESULT_UNKNOWN) {v->destroy(); return false;}
+					} else if(mbase.isLogicalAnd()) {
+						for(size_t i = 0; i < mbase.size(); i++) {
+							if(mbase[i].isComparison() && mbase[i].comparisonType() == COMPARISON_NOT_EQUALS && (mbase[i][0] == mx || mbase[i][0].isFunction()) && mbase[i][1].isNumber() && mi.isNumber()) {
+								ComparisonResult cr = COMPARISON_RESULT_UNKNOWN;
+								if(mbase[i][0].isFunction()) {
+									MathStructure mfunc(mbase[i][0]);
+									mfunc.replace(mx, v);
+									mfunc.eval(eo2);
+									if(mfunc.isNumber()) cr = mbase[i][1].number().compare(mfunc.number());
+								} else {
+									cr = mbase[i][1].number().compare(mi.number());
+								}
+								b = COMPARISON_IS_NOT_EQUAL(cr);
+								if(!b && cr != COMPARISON_RESULT_UNKNOWN) {v->destroy(); return false;}
+							}
+						}
+					}
+					if(!b) {
+						PrintOptions po;
+						po.spell_out_logical_operators = true;
+						mbase.format(po);
+						CALCULATOR->endTemporaryStopMessages();
+						CALCULATOR->endTemporaryStopMessages();
+						CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), mbase.print(po).c_str(), NULL);
+						CALCULATOR->beginTemporaryStopMessages();
+						CALCULATOR->beginTemporaryStopMessages();
+					}
+				}
+			}
+			v->destroy();
 		}
 	} else if(m.isVariable()) {
 		if(m.variable()->isKnown() && !check_denominators(((KnownVariable*) m.variable())->get(), mi, mx, eo)) return false;
@@ -4232,7 +4292,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		var->setAssumptions(m_interval);
 		x_var.set(var);
 		mstruct_pre.replace(vargs[1], x_var);
-		var->unref();
+		var->destroy();
 	}
 
 	mstruct = mstruct_pre;
@@ -4240,7 +4300,6 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	eo2.do_polynomial_division = eo.do_polynomial_division;
 	MathStructure mbak(mstruct);
 
-	
 	int use_abs = -1;
 	if(vargs[2].isUndefined() && x_var.representsReal() && !contains_complex(mstruct)) {
 		use_abs = 1;
@@ -4384,14 +4443,15 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				bool b_interval = CALCULATOR->usesIntervalArithmetic();
 				if(!b_interval) CALCULATOR->useIntervalArithmetic(true);
 				MathStructure m_interval(nr_interval);
-				KnownVariable v("", "", m_interval);
-				merr.replace(x_var, &v);
+				KnownVariable *v = new KnownVariable("", "", m_interval);
+				merr.replace(x_var, v);
 				CALCULATOR->beginTemporaryStopMessages();
 				merr.eval(eo2);
 				if(CALCULATOR->endTemporaryStopMessages() > 0) b_unknown_precision = true;
 				if(!b_interval) CALCULATOR->useIntervalArithmetic(false);
 				CALCULATOR->beginTemporaryStopIntervalArithmetic();
 				if(!merr.isNumber() || !merr.number().isReal()) b_unknown_precision = true;
+				v->destroy();
 				if(!b_unknown_precision) {
 					nr_interval = merr.number();
 					Number nr1(nr_interval.upperEndPoint());
@@ -5403,7 +5463,7 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 									}
 								}
 							}
-							var->unref();
+							var->destroy();
 						}
 					}
 				} else {

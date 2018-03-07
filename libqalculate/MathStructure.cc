@@ -1403,12 +1403,13 @@ void MathStructure::setPrecision(int prec, bool recursive) {
 }
 
 void MathStructure::transform(StructureType mtype, const MathStructure &o) {
+	MathStructure *struct_o = new MathStructure(o);
 	MathStructure *struct_this = new MathStructure();
 	struct_this->set_nocopy(*this);
 	clear(true);
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
-	APPEND(o);
+	APPEND_POINTER(struct_o);
 }
 void MathStructure::transform(StructureType mtype, const Number &o) {
 	MathStructure *struct_this = new MathStructure();
@@ -1470,13 +1471,14 @@ void MathStructure::transform(MathFunction *o) {
 	setFunction(o);
 }
 void MathStructure::transform(ComparisonType ctype, const MathStructure &o) {
+	MathStructure *struct_o = new MathStructure(o);
 	MathStructure *struct_this = new MathStructure();
 	struct_this->set_nocopy(*this);
 	clear(true);
 	m_type = STRUCT_COMPARISON;
 	ct_comp = ctype;
 	APPEND_POINTER(struct_this);
-	APPEND(o);
+	APPEND_POINTER(struct_o);
 }
 void transform(ComparisonType ctype, const MathStructure &o);
 void MathStructure::add(const MathStructure &o, MathOperation op, bool append) {
@@ -4287,6 +4289,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					CHILD(0).setFunction(CALCULATOR->f_abs);
 					CHILD(1).number().recip();
 					m_type = STRUCT_POWER;
+					mstruct.ref();
 					raise_nocopy(&mstruct);
 					calculateRaiseExponent(eo);
 					return 1;
@@ -17661,6 +17664,38 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 				}
 			}
 		}
+	} else if(mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1 && mstruct[0].representsReal(true)) {
+		UnknownVariable *var = new UnknownVariable("", "u");
+		var->setAssumptions(mstruct[0]);
+		MathStructure mtest(var);
+		mtest *= mstruct[0];
+		if(!mpow.isOne()) mtest ^= mpow;
+		if(!mfac.isOne()) mtest *= mfac;
+		if(mtest.integrate(x_var, eo, true, use_abs, m_lower, m_upper, max_part_depth, parent_parts) > 0 && mtest.containsFunction(CALCULATOR->f_integrate, true) <= 0) {
+			mstruct.setFunction(CALCULATOR->f_signum);
+			mtest.replace(var, mstruct);
+			mstruct = mtest;
+			var->destroy();
+			return true;
+		}
+		var->destroy();
+	} else if(mstruct.function() == CALCULATOR->f_signum && mstruct.size() == 1 && mstruct[0].representsReal(true)) {
+		if(mpow.isOne() && mfac.isOne()) {
+			mstruct *= x_var;
+			return true;
+		}
+		UnknownVariable *var = new UnknownVariable("", "u");
+		var->setAssumptions(mstruct);
+		MathStructure mtest(var);
+		if(!mpow.isOne()) mtest ^= mpow;
+		if(!mfac.isOne()) mtest *= mfac;
+		if(mtest.integrate(x_var, eo, true, use_abs, m_lower, m_upper, max_part_depth, parent_parts) > 0 && mtest.containsFunction(CALCULATOR->f_integrate, true) <= 0) {
+			mtest.replace(var, mstruct);
+			mstruct = mtest;
+			var->destroy();
+			return true;
+		}
+		var->destroy();
 	} else if(mstruct.function() == CALCULATOR->f_lambert_w && mstruct.size() == 1 && mstruct[0] == x_var) {
 		if(mpow.isOne() && mfac.isOne()) {
 			MathStructure *mthis = new MathStructure(mstruct);
@@ -17906,12 +17941,12 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 						if(mtest.integrate(var, eo, false, use_abs, m_lower, m_upper, max_part_depth, parent_parts) > 0) {
 							CALCULATOR->endTemporaryStopMessages(true);
 							mtest.replace(var, mstruct);
-							var->unref();
+							var->destroy();
 							mstruct = mtest;
 							return true;
 						}
 						CALCULATOR->endTemporaryStopMessages();
-						var->unref();
+						var->destroy();
 					} else if(mpow.isOne()) {
 						MathStructure mexpf, mmulf, maddf;
 						if(integrate_info(mfac[0], x_var, maddf, mmulf, mexpf, true) && mexpf.isOne()) {
@@ -18185,12 +18220,12 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 						if(mtest.integrate(var, eo, false, use_abs, m_lower, m_upper, max_part_depth, parent_parts) > 0) {
 							CALCULATOR->endTemporaryStopMessages(true);
 							mtest.replace(var, mstruct);
-							var->unref();
+							var->destroy();
 							mstruct = mtest;
 							return true;
 						}
 						CALCULATOR->endTemporaryStopMessages();
-						var->unref();
+						var->destroy();
 					}
 				}
 			}
@@ -18565,12 +18600,12 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 						if(mtest.integrate(var, eo, false, use_abs, m_lower, m_upper, max_part_depth, parent_parts) > 0) {
 							CALCULATOR->endTemporaryStopMessages(true);
 							mtest.replace(var, mstruct);
-							var->unref();
+							var->destroy();
 							mstruct = mtest;
 							return true;
 						}
 						CALCULATOR->endTemporaryStopMessages();
-						var->unref();
+						var->destroy();
 					}
 				}
 			}
@@ -18742,12 +18777,12 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 						if(mtest.integrate(var, eo, false, use_abs, m_lower, m_upper, max_part_depth, parent_parts) > 0) {
 							CALCULATOR->endTemporaryStopMessages(true);
 							mtest.replace(var, mstruct);
-							var->unref();
+							var->destroy();
 							mstruct = mtest;
 							return true;
 						}
 						CALCULATOR->endTemporaryStopMessages();
-						var->unref();
+						var->destroy();
 					}
 				}
 			}
@@ -18994,6 +19029,25 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 				return true;
 			}
 		}
+		if(mstruct[1].number().isOdd() && mstruct[0].representsReal(true)) {
+			UnknownVariable *var = new UnknownVariable("", "u");
+			MathStructure msgn(CALCULATOR->f_signum, &mstruct[0], NULL);
+			var->setAssumptions(msgn);
+			MathStructure mtest(var);
+			mtest *= mstruct[0];
+			mtest ^= mstruct[1];
+			mtest[1].inverse();
+			mtest *= mstruct[0];
+			if(!mpow.isOne()) mtest ^= mpow;
+			if(!mfac.isOne()) mtest *= mfac;
+			if(mtest.integrate(x_var, eo, true, use_abs, m_lower, m_upper, max_part_depth, parent_parts) > 0 && mtest.containsFunction(CALCULATOR->f_integrate, true) <= 0) {
+				mtest.replace(var, msgn);
+				mstruct = mtest;
+				var->destroy();
+				return true;
+			}
+			var->destroy();
+		}
 	} else if(mstruct.function() == CALCULATOR->f_erf && mstruct.size() == 1) {
 		MathStructure madd, mmul, mexp;
 		if(mpow.isOne() && mfac.isOne() && integrate_info(mstruct[0], x_var, madd, mmul, mexp) && mexp.isOne()) {
@@ -19082,10 +19136,10 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 				mstruct.set(mtest, true);
 				mstruct.replace(var, morig);
 				mstruct.multiply(den);
-				var->unref();
+				var->destroy();
 				return true;
 			}
-			var->unref();
+			var->destroy();
 		}
 	}
 	MathStructure *m_func = NULL, *m_pow = NULL;
@@ -19163,11 +19217,11 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					mstruct.set(mtest, true);
 					mstruct.replace(var, m_orig);
 					if(!mmul.isOne()) mstruct /= mmul;
-					var->unref();
+					var->destroy();
 					return true;
 				}
 			}
-			var->unref();
+			var->destroy();
 		}
 	}
 	if(m_pow) {
@@ -19185,11 +19239,11 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					MathStructure m_ln(CALCULATOR->f_ln, &m_orig[0], NULL);
 					mstruct /= m_ln;
 					if(!mmul.isOne()) mstruct /= mmul;
-					var->unref();
+					var->destroy();
 					return true;
 				}
 			}
-			var->unref();
+			var->destroy();
 		}
 	}
 	return false;
@@ -19312,7 +19366,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 					mtest3.addChild(mtest2[i]);
 				}
 			}
-			var->unref();
+			var->destroy();
 		}
 		if(b) {
 			vector<UnknownVariable*> vars;
@@ -19492,7 +19546,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 				}
 			}
 			for(size_t i = 0; i < vars.size(); i++) {
-				vars[i]->unref();
+				vars[i]->destroy();
 			}
 			if(b) {
 				for(size_t i = 0; i < mnums3.size(); i++) {
@@ -19835,10 +19889,10 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							set(mtest, true);
 							replace(var, morig);
 							multiply(den);
-							var->unref();
+							var->destroy();
 							return true;
 						}
-						var->unref();
+						var->destroy();
 					}
 				}
 				if(CHILD(0).isFunction()) {
@@ -19977,10 +20031,10 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 								set(mtest, true);
 								replace(var, morig);
 								multiply(den);
-								var->unref();
+								var->destroy();
 								return true;
 							}
-							var->unref();
+							var->destroy();
 						}
 						//integrate(a^(bx^c)) = -igamma(1/c, -b*ln(a)*x^c)/(c(-1)^(1/c)*b^(1/c)*ln(a)^(1/c))
 						MathStructure mbase(CHILD(0));
@@ -20020,7 +20074,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 		case STRUCT_MULTIPLICATION: {
 			MathStructure mstruct;
 			bool b = false;
-			for(size_t i = 0; i < SIZE; i++) {
+			for(size_t i = 0; i < SIZE;) {
 				if(CHILD(i).containsRepresentativeOf(x_var, true, true) == 0) {
 					if(b) {
 						mstruct *= CHILD(i);
@@ -20029,6 +20083,8 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						b = true;
 					}
 					ERASE(i);
+				} else {
+					i++;
 				}
 			}
 			if(b) {
@@ -20043,7 +20099,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 					CANNOT_INTEGRATE_INTERVAL
 				}
 				multiply(mstruct);
-				return true;
+				break;
 			} else if(SIZE == 2) {
 				if(CHILD(0) != x_var && (CHILD(1) == x_var || (CHILD(1).isPower() && CHILD(1)[0] == x_var))) SWAP_CHILDREN(0, 1);
 				if(CHILD(1).isPower() && CHILD(1)[1].containsRepresentativeOf(x_var, true, true) == 0) {
@@ -20587,11 +20643,11 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 										mtest.replace(var, m_replace);
 										set(mtest, true);
 										divide(m_replace[1]);
-										var->unref();
+										var->destroy();
 										return true;
 									}
 									CALCULATOR->endTemporaryStopMessages();
-									var->unref();
+									var->destroy();
 								}
 							}
 						}
@@ -20962,11 +21018,11 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 									mtest.replace(var, m_replace);
 									set(mtest, true);
 									divide(m_replace[1]);
-									var->unref();
+									var->destroy();
 									return true;
 								}
 								CALCULATOR->endTemporaryStopMessages();
-								var->unref();
+								var->destroy();
 							}
 						}
 					}
@@ -22156,7 +22212,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					CHILD_UPDATED(0)
 					b = isolate_x_sub(eo, eo2, u_var);
 					calculateReplace(u_var, mvar, eo2);
-					var->unref();
+					var->destroy();
 					if(b) isolate_x(eo, eo2, x_var);
 					return b;
 				} else if(mvar != x_var) {
@@ -22166,7 +22222,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					CHILD_UPDATED(0)
 					b = isolate_x_sub(eo, eo2, u_var);
 					calculateReplace(u_var, mvar, eo2);
-					var->unref();
+					var->destroy();
 					if(b) isolate_x(eo, eo2, x_var);
 					return b;
 				}
