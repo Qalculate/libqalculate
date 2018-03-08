@@ -4288,7 +4288,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 			return false;
 		}
-		UnknownVariable *var = new UnknownVariable("", "u");
+		UnknownVariable *var = new UnknownVariable("", "x");
 		var->setAssumptions(m_interval);
 		x_var.set(var);
 		mstruct_pre.replace(vargs[1], x_var);

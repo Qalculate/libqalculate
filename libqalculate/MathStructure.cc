@@ -17338,51 +17338,56 @@ bool integrate_info(const MathStructure &mstruct, const MathStructure &x_var, Ma
 }
 
 bool transform_absln(MathStructure &mstruct, int use_abs, const MathStructure &m_lower, const MathStructure &m_upper, const MathStructure &x_var, const EvaluationOptions &eo) {
-	if(use_abs != 0 && !m_lower.isUndefined()) {
-		if(mstruct.representsNonComplex(true)) {
-			mstruct.transform(CALCULATOR->f_abs);
-			mstruct.transform(CALCULATOR->f_ln);
-			return true;
-		} else if(mstruct.representsComplex(true)) {
-			mstruct.transform(CALCULATOR->f_ln);
-			return true;
-		}
+	if(use_abs != 0 && mstruct.representsNonComplex(true)) {
+		mstruct.transform(CALCULATOR->f_abs);
+		mstruct.transform(CALCULATOR->f_ln);
+	} else if(use_abs != 0 && !mstruct.representsComplex(true)) {
+		if(!m_lower.isUndefined()) use_abs = -1;
 		CALCULATOR->beginTemporaryStopMessages();
-		MathStructure m_interval;
-		if(m_lower.isNumber() && m_upper.isNumber()) {
-			m_interval.number().setInterval(m_lower.number(), m_upper.number());
-		} else {
-			m_interval.set(CALCULATOR->f_interval, &m_lower, &m_upper, NULL);
-		}
 		MathStructure mtest(mstruct);
-		mtest.replace(x_var, m_interval);
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		mtest.eval(eo2);
 		CALCULATOR->endTemporaryStopMessages();
 		if((use_abs > 0 && !mtest.representsComplex(true)) || (use_abs < 0 && mtest.representsNonComplex(true))) {
+			if(use_abs > 0 && !mtest.representsNonComplex(true)) CALCULATOR->error(false, "%s assumed real", mtest.print().c_str(), NULL);
 			mstruct.transform(CALCULATOR->f_abs);
 			mstruct.transform(CALCULATOR->f_ln);
-		} else if(use_abs < 0 && !mtest.representsComplex(true)) {
+		} else if(use_abs > 0 || mtest.representsComplex(true)) {
+			mstruct.transform(CALCULATOR->f_ln);
+		} else {
 			MathStructure marg(CALCULATOR->f_arg, &mstruct, NULL);
 			marg *= nr_one_i;
 			mstruct.transform(CALCULATOR->f_abs);
 			mstruct.transform(CALCULATOR->f_ln);
 			mstruct += marg;
-		} else {
-			mstruct.transform(CALCULATOR->f_ln);
 		}
-		return true;
-	}
-	if((use_abs > 0 && !mstruct.representsComplex(true)) || (use_abs < 0 && mstruct.representsNonComplex(true))) {
-		mstruct.transform(CALCULATOR->f_abs);
-		mstruct.transform(CALCULATOR->f_ln);
-	} else if(use_abs < 0 && !mstruct.representsComplex(true)) {
-		MathStructure marg(CALCULATOR->f_arg, &mstruct, NULL);
-		marg *= nr_one_i;
-		mstruct.transform(CALCULATOR->f_abs);
-		mstruct.transform(CALCULATOR->f_ln);
-		mstruct += marg;
+		if(!m_lower.isUndefined()) {
+			CALCULATOR->beginTemporaryStopMessages();
+			MathStructure m_interval;
+			if(m_lower.isNumber() && m_upper.isNumber()) {
+				m_interval.number().setInterval(m_lower.number(), m_upper.number());
+			} else {
+				m_interval.set(CALCULATOR->f_interval, &m_lower, &m_upper, NULL);
+			}
+			mtest.replace(x_var, m_interval);
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			mtest.eval(eo2);
+			CALCULATOR->endTemporaryStopMessages();
+			if((use_abs > 0 && !mtest.representsComplex(true)) || (use_abs < 0 && mtest.representsNonComplex(true))) {
+				mstruct.transform(CALCULATOR->f_abs);
+				mstruct.transform(CALCULATOR->f_ln);
+			} else if(use_abs < 0 && !mtest.representsComplex(true)) {
+				MathStructure marg(CALCULATOR->f_arg, &mstruct, NULL);
+				marg *= nr_one_i;
+				mstruct.transform(CALCULATOR->f_abs);
+				mstruct.transform(CALCULATOR->f_ln);
+				mstruct += marg;
+			} else {
+				mstruct.transform(CALCULATOR->f_ln);
+			}
+		}
 	} else {
 		mstruct.transform(CALCULATOR->f_ln);
 	}
@@ -17657,6 +17662,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 				if(minteg.differentiate(x_var, eo) && minteg.containsFunction(CALCULATOR->f_diff, true) <= 0) {
 					minteg *= x_var;
 					if(minteg.integrate(x_var, eo, true, use_abs, m_lower, m_upper, max_part_depth - 1, parent_parts) > 0 && minteg.containsFunction(CALCULATOR->f_integrate, true) <= 0) {
+						mstruct ^= mpow;
 						mstruct.multiply(x_var);
 						mstruct.subtract(minteg);
 						return true;
@@ -17665,26 +17671,27 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 			}
 		}
 	} else if(mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1 && mstruct[0].representsReal(true)) {
-		UnknownVariable *var = new UnknownVariable("", "u");
+		mstruct.setFunction(CALCULATOR->f_signum);
+		UnknownVariable *var = new UnknownVariable("", mstruct.print());
 		var->setAssumptions(mstruct[0]);
 		MathStructure mtest(var);
 		mtest *= mstruct[0];
 		if(!mpow.isOne()) mtest ^= mpow;
 		if(!mfac.isOne()) mtest *= mfac;
 		if(mtest.integrate(x_var, eo, true, use_abs, m_lower, m_upper, max_part_depth, parent_parts) > 0 && mtest.containsFunction(CALCULATOR->f_integrate, true) <= 0) {
-			mstruct.setFunction(CALCULATOR->f_signum);
 			mtest.replace(var, mstruct);
 			mstruct = mtest;
 			var->destroy();
 			return true;
 		}
+		mstruct.setFunction(CALCULATOR->f_abs);
 		var->destroy();
 	} else if(mstruct.function() == CALCULATOR->f_signum && mstruct.size() == 1 && mstruct[0].representsReal(true)) {
 		if(mpow.isOne() && mfac.isOne()) {
 			mstruct *= x_var;
 			return true;
 		}
-		UnknownVariable *var = new UnknownVariable("", "u");
+		UnknownVariable *var = new UnknownVariable("", mstruct.print());
 		var->setAssumptions(mstruct);
 		MathStructure mtest(var);
 		if(!mpow.isOne()) mtest ^= mpow;
@@ -17933,7 +17940,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					}
 				} else if(mfac.function() == CALCULATOR->f_cos && mfac.size() == 1) {
 					if(mstruct[0] == mfac[0]) {
-						UnknownVariable *var = new UnknownVariable("", "u");
+						UnknownVariable *var = new UnknownVariable("", mstruct.print());
 						var->setAssumptions(mstruct);
 						MathStructure mtest(var);
 						if(!mpow.isOne()) mtest ^= mpow;
@@ -18211,7 +18218,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					}
 				} else if(mfac.function() == CALCULATOR->f_sin && mfac.size() == 1) {
 					if(mstruct[0] == mfac[0]) {
-						UnknownVariable *var = new UnknownVariable("", "u");
+						UnknownVariable *var = new UnknownVariable("", mstruct.print());
 						var->setAssumptions(mstruct);
 						MathStructure mtest(var);
 						if(!mpow.isOne()) mtest ^= mpow;
@@ -18592,7 +18599,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					}
 				} else if(mfac.function() == CALCULATOR->f_cosh && mfac.size() == 1) {
 					if(mstruct[0] == mfac[0]) {
-						UnknownVariable *var = new UnknownVariable("", "u");
+						UnknownVariable *var = new UnknownVariable("", mstruct.print());
 						var->setAssumptions(mstruct);
 						MathStructure mtest(var);
 						if(!mpow.isOne()) mtest ^= mpow;
@@ -18769,7 +18776,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					}
 				} else if(mfac.function() == CALCULATOR->f_sinh && mfac.size() == 1) {
 					if(mstruct[0] == mfac[0]) {
-						UnknownVariable *var = new UnknownVariable("", "u");
+						UnknownVariable *var = new UnknownVariable("", mstruct.print());
 						var->setAssumptions(mstruct);
 						MathStructure mtest(var);
 						if(!mpow.isOne()) mtest ^= mpow;
@@ -19030,8 +19037,8 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 			}
 		}
 		if(mstruct[1].number().isOdd() && mstruct[0].representsReal(true)) {
-			UnknownVariable *var = new UnknownVariable("", "u");
 			MathStructure msgn(CALCULATOR->f_signum, &mstruct[0], NULL);
+			UnknownVariable *var = new UnknownVariable("", msgn.print());
 			var->setAssumptions(msgn);
 			MathStructure mtest(var);
 			mtest *= mstruct[0];
@@ -19112,12 +19119,12 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 		Number num(mexp.number().numerator());
 		Number den(mexp.number().denominator());
 		if(num.isPositive() || num.isMinusOne()) {
-			UnknownVariable *var = new UnknownVariable("", "u");
 			MathStructure morig(x_var);
 			if(num.isNegative()) den.negate();
 			Number den_inv(den);
 			den_inv.recip();
 			morig ^= den_inv;
+			UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + morig.print() + RIGHT_PARENTHESIS);
 			var->setAssumptions(morig);
 			Number den_m1(den);
 			den_m1--;
@@ -19183,8 +19190,8 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 	if(m_func && m_pow) return false;
 	if(m_func) {
 		if((m_func->function() == CALCULATOR->f_ln || m_func->function() == CALCULATOR->f_asin || m_func->function() == CALCULATOR->f_acos || m_func->function() == CALCULATOR->f_asinh || m_func->function() == CALCULATOR->f_acosh) && m_func->size() == 1 && integrate_info((*m_func)[0], x_var, madd, mmul, mexp) && mexp.isOne()) {
-			UnknownVariable *var = new UnknownVariable("", "u");
 			MathStructure m_orig(*m_func);
+			UnknownVariable *var = new UnknownVariable("", m_orig.print());
 			var->setAssumptions(m_orig);
 			MathStructure mtest(mstruct);
 			mtest[0].replace(m_orig, var);
@@ -19226,8 +19233,8 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 	}
 	if(m_pow) {
 		if((*m_pow)[0].containsRepresentativeOf(x_var, true, true) == 0 && integrate_info((*m_pow)[1], x_var, madd, mmul, mexp) && mexp.isOne()) {
-			UnknownVariable *var = new UnknownVariable("", "u");
 			MathStructure m_orig(*m_pow);
+			UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + m_orig.print() + RIGHT_PARENTHESIS);
 			MathStructure mtest(mstruct);
 			mtest[0].replace(m_orig, var);
 			var->setAssumptions(m_orig);
@@ -19851,7 +19858,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						return true;
 					}
 				} else if(integrate_info(CHILD(0), x_var, madd, mmul, mexp, false, false) && mexp.isNumber() && !mexp.number().isOne()) {
-					if(mexp.number().isNegative()) {
+					if(CHILD(1).isMinusOne() && mexp.number().isNegative() && mexp.number().isInteger()) {
 						if(!madd.isZero()) {
 							Number nexp(mexp.number());
 							nexp.negate();
@@ -19870,11 +19877,11 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 					} else if(mexp.number().isRational() && !mexp.number().isInteger()) {
 						Number num(mexp.number().numerator());
 						Number den(mexp.number().denominator());
-						UnknownVariable *var = new UnknownVariable("", "u");
 						MathStructure morig(x_var);
 						Number den_inv(den);
 						den_inv.recip();
 						morig ^= den_inv;
+						UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + morig.print() + RIGHT_PARENTHESIS);
 						var->setAssumptions(morig);
 						Number den_m1(den);
 						den_m1--;
@@ -19882,7 +19889,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						if(!num.isOne()) mtest ^= num;
 						if(!mmul.isOne()) mtest *= mmul;
 						mtest += madd;
-						mtest.inverse();
+						mtest ^= CHILD(1);
 						mtest *= var;
 						if(!den_m1.isOne()) mtest.last() ^= den_m1;
 						if(mtest.integrate(var, eo, true, use_abs, m_lower, m_upper, max_part_depth, parent_parts) > 0 && mtest.containsFunction(CALCULATOR->f_integrate) <= 0) {
@@ -20011,11 +20018,11 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						if(mexp.number().isRational() && !mexp.isInteger()) {
 							Number num(mexp.number().numerator());
 							Number den(mexp.number().denominator());
-							UnknownVariable *var = new UnknownVariable("", "u");
 							MathStructure morig(x_var);
 							Number den_inv(den);
 							den_inv.recip();
 							morig ^= den_inv;
+							UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + morig.print() + RIGHT_PARENTHESIS);
 							var->setAssumptions(morig);
 							MathStructure mvar(var);
 							if(!num.isOne()) mvar ^= num;
@@ -20588,13 +20595,14 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							}
 							for(int i = 1; i <= 3; i++) {
 								if(i > 1 && (!mpow.isInteger() || !mpow.number().isIntegerDivisible(i) || mpow.number() == i)) break;
-								UnknownVariable *var = new UnknownVariable("", "u");
+								UnknownVariable *var = NULL;
 								MathStructure m_replace(x_var);
 								MathStructure mtest(CHILD(1));
 								Number new_pow(nexp);
 								b = false;
 								if(i == 1) {
 									m_replace ^= mpow;
+									var = new UnknownVariable("", string(LEFT_PARENTHESIS) + m_replace.print() + RIGHT_PARENTHESIS);
 									var->setAssumptions(m_replace);
 									mtest.replace(m_replace, var);
 									new_pow++;
@@ -20609,11 +20617,12 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 									if(new_pow.isInteger()) {
 										b = true;
 										m_replace ^= nr_two;
+										var = new UnknownVariable("", string(LEFT_PARENTHESIS) + m_replace.print() + RIGHT_PARENTHESIS);
 										MathStructure m_prev(x_var), m_new(var);
 										m_prev ^= mpow;
 										m_new ^= mpow;
 										m_new[1].number() /= 2;
-										var->setAssumptions(m_prev);
+										var->setAssumptions(m_replace);
 										mtest.replace(m_prev, m_new);
 									}
 								} else if(i == 3) {
@@ -20623,11 +20632,12 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 									if(new_pow.isInteger()) {
 										b = true;
 										m_replace ^= nr_three;
+										var = new UnknownVariable("", string(LEFT_PARENTHESIS) + m_replace.print() + RIGHT_PARENTHESIS);
 										MathStructure m_prev(x_var), m_new(var);
 										m_prev ^= mpow;
 										m_new ^= mpow;
 										m_new[1].number() /= 3;
-										var->setAssumptions(m_prev);
+										var->setAssumptions(m_replace);
 										mtest.replace(m_prev, m_new);
 									}
 								}
@@ -20964,7 +20974,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						for(int i = 1; i <= 3; i++) {
 							if(i > 1 && (!mpow.isInteger() || !mpow.number().isIntegerDivisible(i) || mpow.number() == i)) break;
 							if(CALCULATOR->aborted()) CANNOT_INTEGRATE
-							UnknownVariable *var = new UnknownVariable("", "u");
+							UnknownVariable *var = NULL;
 							MathStructure m_replace(x_var);
 							MathStructure mtest(*this);
 							mtest.delChild(1, true);
@@ -20972,6 +20982,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							b = false;
 							if(i == 1) {
 								m_replace ^= mpow;
+								var = new UnknownVariable("", string(LEFT_PARENTHESIS) + m_replace.print() + RIGHT_PARENTHESIS);
 								mtest.replace(m_replace, var);
 								new_pow++;
 								new_pow -= mpow.number();
@@ -20985,6 +20996,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 								if(new_pow.isInteger()) {
 									b = true;
 									m_replace ^= nr_two;
+									var = new UnknownVariable("", string(LEFT_PARENTHESIS) + m_replace.print() + RIGHT_PARENTHESIS);
 									MathStructure m_prev(x_var), m_new(var);
 									m_prev ^= mpow;
 									m_new ^= mpow;
@@ -20998,6 +21010,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 								if(new_pow.isInteger()) {
 									b = true;
 									m_replace ^= nr_three;
+									var = new UnknownVariable("", string(LEFT_PARENTHESIS) + m_replace.print() + RIGHT_PARENTHESIS);
 									MathStructure m_prev(x_var), m_new(var);
 									m_prev ^= mpow;
 									m_new ^= mpow;
@@ -21067,8 +21080,8 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							if(minteg_2.countTotalChildren() < 100 && minteg_2.integrate(x_var, eo, false, use_abs, m_lower, m_upper, max_part_depth - 1, parent_parts) > 0) {
 								int cui = contains_unsolved_integrate(minteg_2, this, parent_parts);
 								if(cui == 3) {
-									UnknownVariable *var = new UnknownVariable("", "u");
 									MathStructure mfunc(CALCULATOR->f_integrate, this, &x_var, &m_lower, &m_upper, NULL);
+									UnknownVariable *var = new UnknownVariable("", mfunc.print());
 									MathStructure mvar(var);
 									minteg_2.replace(mfunc, mvar);
 									MathStructure msolve(mstruct_u);
@@ -22144,7 +22157,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 				UnknownVariable *var = NULL;
 				if(mvar != x_var) {
-					var = new UnknownVariable("", "u");
+					var = new UnknownVariable("", string(LEFT_PARENTHESIS) + mvar.print() + RIGHT_PARENTHESIS);
 					var->setAssumptions(mvar);
 				}
 				if(!nr_root.isZero()) {
