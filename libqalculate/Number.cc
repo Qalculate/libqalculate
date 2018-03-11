@@ -6482,7 +6482,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				long int precexp = i_precision_base;
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
-				if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
+				if((expo > 0 && expo < (isApproximate() ? PRECISION : precexp)) || (expo < 0 && expo > -PRECISION)) {
+					if(expo >= PRECISION) precision_base = expo + 1;
 					expo = 0;
 				}
 			} else if(po.min_exp < -1) {
@@ -7060,10 +7061,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(base == 10 && !po.preserve_format) {
 			expo = i_log;
 			if(po.min_exp == EXP_PRECISION || (po.min_exp == 0 && expo > 1000000L)) {
-				long int precexp = i_precision_base;
-				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
-				else if(precexp > precision + 3) precexp = precision + 3;
-				if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
+				if((expo > 0 && expo < PRECISION) || (expo < 0 && expo > -PRECISION)) {
 					expo = 0;
 				}
 			} else if(po.min_exp < -1) {
@@ -7117,7 +7115,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpfr_get_z(ivalue, v, MPFR_RNDN);
 
 		str = printMPZ(ivalue, base, false, po.lower_case_numbers);
-		
+
 		bool has_decimal = false;
 		if(l10 > 0) {
 			l10 = str.length() - l10;
@@ -7224,7 +7222,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					long int precexp = i_precision_base;
 					if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 					else if(precexp > precision + 3) precexp = precision + 3;
-					if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
+					if((expo > 0 && expo < (isApproximate() ? PRECISION : precexp)) || (expo < 0 && expo > -PRECISION)) {
+						if(expo >= PRECISION) precision = expo + 1;
+						if(expo >= PRECISION) precision2 = expo + 1;
 						expo = 0;
 					}
 				} else if(po.min_exp < -1) {
@@ -7427,7 +7427,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				long int precexp = i_precision_base;
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
-				if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
+				if((expo > 0 && expo < (isApproximate() ? PRECISION : precexp)) || (expo < 0 && expo > -PRECISION)) {
+					if(expo >= PRECISION) precision = expo + 1;
+					if(expo >= PRECISION) precision2 = expo + 1;
 					expo = 0;
 				}
 			} else if(po.min_exp < -1) {

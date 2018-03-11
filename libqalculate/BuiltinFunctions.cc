@@ -3337,7 +3337,7 @@ ReplaceFunction::ReplaceFunction() : MathFunction("replace", 3, 4) {
 }
 int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	if(vargs[3].number().getBoolean()) mstruct.eval(eo);
+	if(vargs[3].number().getBoolean() || mstruct.contains(vargs[1], true) <= 0) mstruct.eval(eo);
 	mstruct.replace(vargs[1], vargs[2]);
 	return 1;
 }
@@ -4320,6 +4320,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		CALCULATOR->beginTemporaryStopMessages();
 		MathStructure mbak_integ(mstruct);
 		if(eo.approximation == APPROXIMATION_APPROXIMATE) eo2.approximation = APPROXIMATION_EXACT;
+		else eo2.approximation = eo.approximation;
 		eo2.do_polynomial_division = true;
 		mstruct = mstruct_pre;
 		mstruct.eval(eo2);

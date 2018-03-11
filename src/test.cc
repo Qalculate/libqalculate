@@ -17,11 +17,12 @@ void test_integration4(const MathStructure &mstruct) {
 	MathStructure mstruct2(mstruct);
 	EvaluationOptions eo;
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
-	cout << mstruct2.integrate(x_var, eo) << endl;
-	cout << mstruct2 << endl;
+	eo.assume_denominators_nonzero = true;
+	mstruct2.integrate(x_var, eo);
 	if(mstruct2.containsFunction(CALCULATOR->f_integrate)) return;
 	mstruct2.differentiate(x_var, eo);
 	MathStructure mstruct3(mstruct2);
+	mstruct3.eval(eo);
 	mstruct3.replace(x_var, 3);
 	mstruct3.eval(eo);
 	display_errors();
@@ -834,7 +835,7 @@ void speed_test() {
 	v.clearVector();
 	MathStructure m1 = f1.calculate*/
 	
-	Number nr(1);
+	/*Number nr(1);
 	Number nr_change(1, 20000);
 	for(size_t i = 0; i < 20000; i++) {
 		Number n(nr);
@@ -860,11 +861,11 @@ void speed_test() {
 		Number n(nr);
 		n.sin();
 		nr += nr_change;
-	}
+	}*/
 	
 	EvaluationOptions eo;
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
-	eo.approximation = APPROXIMATION_TRY_EXACT;
+	eo.approximation = APPROXIMATION_APPROXIMATE;
 	//eo.sync_units = false;
 	
 	/*Number n1;
@@ -896,11 +897,11 @@ void speed_test() {
 		r.replace(mx, mnr);
 		r.eval(eo);
 	}*/
-	MathStructure m = CALCULATOR->parse("x^20000", eo.parse_options);
+	MathStructure m = CALCULATOR->parse("x^2/3", eo.parse_options);
 	eo.expand = false;
 	m.eval(eo);
-	MathStructure v1 = m.generateVector(CALCULATOR->v_x, 1, 10, 2000, NULL, eo);
-	/*m = CALCULATOR->parse("1/x");
+	MathStructure v1 = m.generateVector(CALCULATOR->v_x, 1, 100, 20000, NULL, eo);
+	m = CALCULATOR->parse("1/x");
 	m.eval(eo);
 	MathStructure v2 = m.generateVector(CALCULATOR->v_x, 1, 100, 20000, NULL, eo);
 	m = CALCULATOR->parse("x/4-3");
@@ -908,7 +909,7 @@ void speed_test() {
 	MathStructure v3 = m.generateVector(CALCULATOR->v_x, 1, 100, 20000, NULL, eo);
 	m = CALCULATOR->parse("sin(x)", eo.parse_options);
 	m.eval(eo);
-	MathStructure v4 = m.generateVector(CALCULATOR->v_x, 1, 100, 20000, NULL, eo);*/
+	MathStructure v4 = m.generateVector(CALCULATOR->v_x, 1, 100, 20000, NULL, eo);
 	//cout << v4.size() << ":" << v4[0] << ":" << v4[v4.size() - 1] << endl;
 }
 
@@ -937,7 +938,14 @@ int main(int argc, char *argv[]) {
 	evalops.parse_options.comma_as_separator = false;
 	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;*/
 	
-	
+	/*MathStructure mstruct = CALCULATOR->calculate("atanh(2x^2+5)*x^2", evalops);
+	cout << mstruct.integrate(CALCULATOR->v_x, evalops) << endl;
+	mstruct.eval(evalops);
+	cout << mstruct << endl;*/
+	/*mstruct = CALCULATOR->calculate("atanh(3x-2)*x", evalops);
+	mstruct.integrate(CALCULATOR->v_x, evalops);
+	mstruct.eval(evalops);
+	cout << mstruct << endl;*/
 	//speed_test();
 	test_integration();
 	//test_intervals(true);

@@ -793,7 +793,7 @@ class MathStructure {
 		bool containsDivision() const;
 		size_t countFunctions(bool count_subfunctions = true) const;
 		void findAllUnknowns(MathStructure &unknowns_vector);
-		bool replace(const MathStructure &mfrom, const MathStructure &mto, bool once_only = false, bool allow_interval = false);
+		bool replace(const MathStructure &mfrom, const MathStructure &mto, bool once_only = false);
 		bool calculateReplace(const MathStructure &mfrom, const MathStructure &mto, const EvaluationOptions &eo);
 		bool replace(const MathStructure &mfrom1, const MathStructure &mto1, const MathStructure &mfrom2, const MathStructure &mto2);
 		bool removeType(StructureType mtype);
@@ -827,7 +827,7 @@ class MathStructure {
 		*
 		* @returns true if structure represents a rational polynomial.
 		*/
-		bool isRationalPolynomial() const;
+		bool isRationalPolynomial(bool allow_non_rational_coefficient = false, bool allow_interval_coefficient = false) const;
 		const Number &overallCoefficient() const;
 		const Number &degree(const MathStructure &xvar) const;
 		const Number &ldegree(const MathStructure &xvar) const;
