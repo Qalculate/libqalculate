@@ -19,6 +19,8 @@ void test_integration4(const MathStructure &mstruct) {
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	eo.assume_denominators_nonzero = true;
 	mstruct2.integrate(x_var, eo);
+	mstruct2.eval(eo);
+	MathStructure minteg(mstruct2);
 	if(mstruct2.containsFunction(CALCULATOR->f_integrate)) return;
 	mstruct2.differentiate(x_var, eo);
 	MathStructure mstruct3(mstruct2);
@@ -34,8 +36,8 @@ void test_integration4(const MathStructure &mstruct) {
 	display_errors();
 	string str2 = mstruct3.print();
 	cout << str2 << endl;
-	if(str1 != str2) cout << "!!!" << endl;
-	/*mstruct3 = mstruct2;
+	if(str1 != str2) cout << "!!!" << minteg << endl;
+	mstruct3 = mstruct2;
 	mstruct3.replace(x_var, -5);
 	mstruct3.eval(eo);
 	display_errors();
@@ -47,7 +49,7 @@ void test_integration4(const MathStructure &mstruct) {
 	display_errors();
 	str2 = mstruct3.print();
 	cout << str2 << endl;
-	if(str1 != str2) cout << "!!!" << endl;*/
+	if(str1 != str2) cout << "!!!" << minteg << endl;
 	cout << "________________________________________________" << endl;
 }
 void test_integration3(const MathStructure &mstruct, const MathStructure &mstruct_arg) {
@@ -131,7 +133,7 @@ void test_integration2(const MathStructure &mstruct) {
 }
 void test_integration() {
 	MathStructure mstruct;
-	CALCULATOR->parse(&mstruct, "4x+5");
+	/*CALCULATOR->parse(&mstruct, "4x+5");
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "-2x+7");
 	test_integration2(mstruct);
@@ -166,11 +168,11 @@ void test_integration() {
 	CALCULATOR->parse(&mstruct, "(3x+3)^(1/3)");
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "cbrt(x)");
-	test_integration2(mstruct);
+	test_integration2(mstruct);*/
 	CALCULATOR->parse(&mstruct, "x^(1/3)");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "5^x");
-	test_integration2(mstruct);
+	/*CALCULATOR->parse(&mstruct, "5^x");
+	test_integration2(mstruct);*/
 }
 
 void test_intervals(bool use_interval) {
@@ -835,34 +837,97 @@ void speed_test() {
 	v.clearVector();
 	MathStructure m1 = f1.calculate*/
 	
-	/*Number nr(1);
-	Number nr_change(1, 20000);
-	for(size_t i = 0; i < 20000; i++) {
+	//Number nr(1);
+	//Number nr_change(1, 8000);
+	/*for(size_t i = 0; i < 800000; i++) {
 		Number n(nr);
 		n ^= 2;
 		n /= 3;
 		nr += nr_change;
 	}
 	nr.set(1);
-	for(size_t i = 0; i < 20000; i++) {
+	for(size_t i = 0; i < 800000; i++) {
 		Number n(nr);
 		n.recip();
 		nr += nr_change;
 	}
 	nr.set(1);
-	for(size_t i = 0; i < 20000; i++) {
+	for(size_t i = 0; i < 800000; i++) {
 		Number n(nr);
 		n /= 4;
 		n -= 3;
 		nr += nr_change;
-	}
-	nr.set(1);
-	for(size_t i = 0; i < 20000; i++) {
+	}*/
+	/*nr.set(1);
+	for(size_t i = 0; i < 800000; i++) {
 		Number n(nr);
 		n.sin();
+		n *= 2;
+		n -= nr;
+		n.cos();
 		nr += nr_change;
 	}*/
 	
+	/*mpfr_set_default_prec(32);
+	mpfr_t nr;
+	mpfr_init(nr);
+	mpfr_set_ui(nr, 1, MPFR_RNDN);
+	mpfr_t nr_change;
+	mpfr_init(nr_change);
+	mpfr_set_ui(nr_change, 1, MPFR_RNDN);
+	mpfr_div_ui(nr_change, nr_change, 8000, MPFR_RNDN);
+	mpfr_t n;
+	mpfr_init(n);*/
+	/*for(size_t i = 0; i < 800000; i++) {
+		mpfr_pow_ui(n, nr, 2, MPFR_RNDN);
+		mpfr_div_ui(n, n, 3, MPFR_RNDN);
+		mpfr_add(nr, nr, nr_change, MPFR_RNDN);
+	}
+	mpfr_set_ui(nr, 1, MPFR_RNDN);
+	for(size_t i = 0; i < 800000; i++) {
+		mpfr_ui_div(n, 1, nr, MPFR_RNDN);
+		mpfr_add(nr, nr, nr_change, MPFR_RNDN);
+	}
+	mpfr_set_ui(nr, 1, MPFR_RNDN);
+	for(size_t i = 0; i < 800000; i++) {
+		mpfr_div_ui(n, nr, 4, MPFR_RNDN);
+		mpfr_sub_ui(n, n, 3, MPFR_RNDN);
+		mpfr_add(nr, nr, nr_change, MPFR_RNDN);
+	}*/
+	/*mpfr_set_ui(nr, 1, MPFR_RNDN);
+	for(size_t i = 0; i < 800000; i++) {
+		mpfr_sin(n, nr, MPFR_RNDN);
+		mpfr_mul_ui(n, nr, 2, MPFR_RNDN);
+		mpfr_sub(n, n, nr, MPFR_RNDN);
+		mpfr_cos(n, n, MPFR_RNDN);
+		mpfr_add(nr, nr, nr_change, MPFR_RNDN);
+	}*/
+	
+	/*double nr = 1.0;
+	double change = 1.0 / 8000;
+	double n;
+	for(size_t i = 0; i < 800000; i++) {
+		n = pow(nr, 2);
+		n /= 3;
+		nr += change;
+	}
+	nr = 1.0;
+	for(size_t i = 0; i < 800000; i++) {
+		n = 1.0 / nr;
+		nr += change;
+	}
+	nr = 1.0;
+	for(size_t i = 0; i < 800000; i++) {
+		n = nr / 4.0;
+		n -= 3.0;
+		nr += change;
+	}
+	nr = 1.0;
+	for(size_t i = 0; i < 800000; i++) {
+		n = sin(nr);
+		nr += change;
+	}*/
+
 	EvaluationOptions eo;
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
@@ -897,19 +962,28 @@ void speed_test() {
 		r.replace(mx, mnr);
 		r.eval(eo);
 	}*/
-	MathStructure m = CALCULATOR->parse("x^2/3", eo.parse_options);
+	/*MathStructure m = CALCULATOR->parse("sin('y')+'y'+'y'+'x'^2/3+'x'+'y'", eo.parse_options);
+	MathStructure mx("x");
+	MathStructure my("y");
+	for(size_t i = 0; i < 500000; i++) {
+		MathStructure m2(m);
+		//m2.replace(mx, m_one);
+		//m2.replace(my, m_one);
+		m2.replace(mx, m_one, my, m_one);
+	}*/
+	/*MathStructure m = CALCULATOR->parse("x^2/3", eo.parse_options);
 	eo.expand = false;
 	m.eval(eo);
-	MathStructure v1 = m.generateVector(CALCULATOR->v_x, 1, 100, 20000, NULL, eo);
+	MathStructure v1 = m.generateVector(CALCULATOR->v_x, 1, 100, 800000, NULL, eo);
 	m = CALCULATOR->parse("1/x");
 	m.eval(eo);
-	MathStructure v2 = m.generateVector(CALCULATOR->v_x, 1, 100, 20000, NULL, eo);
+	MathStructure v2 = m.generateVector(CALCULATOR->v_x, 1, 100, 800000, NULL, eo);
 	m = CALCULATOR->parse("x/4-3");
 	m.eval(eo);
-	MathStructure v3 = m.generateVector(CALCULATOR->v_x, 1, 100, 20000, NULL, eo);
+	MathStructure v3 = m.generateVector(CALCULATOR->v_x, 1, 100, 800000, NULL, eo);
 	m = CALCULATOR->parse("sin(x)", eo.parse_options);
 	m.eval(eo);
-	MathStructure v4 = m.generateVector(CALCULATOR->v_x, 1, 100, 20000, NULL, eo);
+	MathStructure v4 = m.generateVector(CALCULATOR->v_x, 1, 100, 800000, NULL, eo);*/
 	//cout << v4.size() << ":" << v4[0] << ":" << v4[v4.size() - 1] << endl;
 }
 

@@ -1596,12 +1596,22 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(CALCULATOR->getRadUnit()) {
 		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
 			mstruct = vargs[0][0];
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getRadUnit()) {
+			mstruct = vargs[0][1];
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][0];
 			mstruct *= CALCULATOR->v_pi;
 			mstruct *= Number(1, 180);
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
+			mstruct = vargs[0][1];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= Number(1, 180);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][0];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= Number(1, 200);
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
+			mstruct = vargs[0][1];
 			mstruct *= CALCULATOR->v_pi;
 			mstruct *= Number(1, 200);
 		} else {
@@ -1732,12 +1742,22 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(CALCULATOR->getRadUnit()) {
 		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
 			mstruct = vargs[0][0];
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getRadUnit()) {
+			mstruct = vargs[0][1];
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][0];
 			mstruct *= CALCULATOR->v_pi;
 			mstruct *= Number(1, 180);
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
+			mstruct = vargs[0][1];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= Number(1, 180);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][0];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= Number(1, 200);
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
+			mstruct = vargs[0][1];
 			mstruct *= CALCULATOR->v_pi;
 			mstruct *= Number(1, 200);
 		} else {
@@ -1879,12 +1899,22 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(CALCULATOR->getRadUnit()) {
 		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
 			mstruct = vargs[0][0];
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getRadUnit()) {
+			mstruct = vargs[0][1];
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][0];
 			mstruct *= CALCULATOR->v_pi;
 			mstruct *= Number(1, 180);
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
+			mstruct = vargs[0][1];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= Number(1, 180);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][0];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= Number(1, 200);
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
+			mstruct = vargs[0][1];
 			mstruct *= CALCULATOR->v_pi;
 			mstruct *= Number(1, 200);
 		} else {
@@ -4354,9 +4384,9 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			mstruct += "C";
 			return 1;
 #if MPFR_VERSION_MAJOR < 4
-		} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Ci, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Shi, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Chi, true) <= 0 && (m1.representsNonNegative() && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0)) {
+		} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Ci, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Shi, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Chi, true) <= 0 && (mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 || m1.representsNonNegative())) {
 #else
-		} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Ci, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Shi, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Chi, true) <= 0 && (m1.representsNonNegative() && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0)) {
+		} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Ci, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Shi, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Chi, true) <= 0 && (mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 || m1.representsNonNegative())) {
 #endif
 			CALCULATOR->endTemporaryStopMessages(true);
 			MathStructure mstruct_lower(mstruct);
@@ -4463,6 +4493,12 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 					else nr_interval = nr2;
 					bool b_first = true;
 					while(true) {
+						if(CALCULATOR->aborted()) {
+							mstruct.replace(x_var, vargs[1]);
+							CALCULATOR->endTemporaryStopIntervalArithmetic();
+							CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
+							return -1;
+						}
 						Number prec_exp(1, 1, CALCULATOR->getPrecision() + 2);
 						prec_exp /= ntr;
 						nr_samples = nr_range;
