@@ -153,6 +153,7 @@ class Variable : public ExpressionItem {
 	virtual bool representsNumber(bool = false) {return false;}
 	virtual bool representsRational(bool = false) {return false;}
 	virtual bool representsReal(bool = false) {return false;}
+	virtual bool representsNonComplex(bool b = false) {return representsReal(b);}
 	virtual bool representsComplex(bool = false) {return false;}
 	virtual bool representsNonZero(bool = false) {return false;}
 	virtual bool representsEven(bool = false) {return false;}
@@ -172,6 +173,7 @@ class UnknownVariable : public Variable {
   protected:
   
   	Assumptions *o_assumption;
+  	MathStructure *mstruct;
   
   public:
 
@@ -209,6 +211,10 @@ class UnknownVariable : public Variable {
 	* @returns Assumptions of the unknown variable.
 	*/
 	Assumptions *assumptions();
+	
+	const MathStructure &interval() const;
+	void setInterval(const MathStructure &o);
+	
 	int subtype() const {return SUBTYPE_UNKNOWN_VARIABLE;}
 
 	virtual bool representsPositive(bool = false);
@@ -219,6 +225,7 @@ class UnknownVariable : public Variable {
 	virtual bool representsNumber(bool = false);
 	virtual bool representsRational(bool = false);
 	virtual bool representsReal(bool = false);
+	virtual bool representsNonComplex(bool = false);
 	virtual bool representsComplex(bool = false);
 	virtual bool representsNonZero(bool = false);
 	virtual bool representsNonMatrix();
@@ -323,6 +330,7 @@ class KnownVariable : public Variable {
 	virtual bool representsNumber(bool = false);
 	virtual bool representsRational(bool = false);
 	virtual bool representsReal(bool = false);
+	virtual bool representsNonComplex(bool = false);
 	virtual bool representsComplex(bool = false);
 	virtual bool representsNonZero(bool = false);
 	virtual bool representsEven(bool = false);

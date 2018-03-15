@@ -4287,14 +4287,15 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 	return true;
 }
 int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[2].isUndefined() != vargs[3].isUndefined()) {
-		CALCULATOR->error(true, _("Both the lower and upper limit must be set to get the definite integral."), NULL);
-		return 0;
-	}
 	CALCULATOR->beginTemporaryStopIntervalArithmetic();
 	MathStructure m1(vargs[2]), m2(vargs[3]);
+	if(vargs[2].isUndefined() != vargs[3].isUndefined()) {
+		if(vargs[2].isUndefined()) m1.set(nr_minus_inf);
+		else m2.set(nr_plus_inf);
+	}
 	m1.eval(eo);
 	m2.eval(eo);
+	bool definite_integral = !vargs[2].isUndefined() && !vargs[3].isUndefined() && (!m1.isNumber() || !m1.number().isMinusInfinity()) && (!m2.isNumber() || !m2.number().isPlusInfinity());
 	CALCULATOR->endTemporaryStopIntervalArithmetic();
 	
 	CALCULATOR->beginTemporaryStopMessages();
@@ -4305,21 +4306,21 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	eo2.do_polynomial_division = true;
 	MathStructure mstruct_pre = vargs[0];
 	MathStructure x_var = vargs[1];
-	if(!vargs[2].isUndefined()) {
+	if(!m1.isUndefined()) {
 		MathStructure m_interval(CALCULATOR->f_interval, &m1, &m2, NULL);
 		CALCULATOR->beginTemporaryStopMessages();
 		EvaluationOptions eo3 = eo;
 		eo3.approximation = APPROXIMATION_APPROXIMATE;
 		m_interval.calculateFunctions(eo3);
 		CALCULATOR->endTemporaryStopMessages();
-		if(!check_denominators(mstruct_pre, m_interval, x_var, eo)) {
+		if(definite_integral && !check_denominators(mstruct_pre, m_interval, x_var, eo)) {
 			CALCULATOR->endTemporaryStopMessages();
 			CALCULATOR->endTemporaryStopMessages(true);
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 			return false;
 		}
 		UnknownVariable *var = new UnknownVariable("", "x");
-		var->setAssumptions(m_interval);
+		var->setInterval(m_interval);
 		x_var.set(var);
 		mstruct_pre.replace(vargs[1], x_var);
 		var->destroy();
@@ -4331,11 +4332,11 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	MathStructure mbak(mstruct);
 
 	int use_abs = -1;
-	if(vargs[2].isUndefined() && x_var.representsReal() && !contains_complex(mstruct)) {
+	if(m1.isUndefined() && x_var.representsReal() && !contains_complex(mstruct)) {
 		use_abs = 1;
 	}
 	
-	int b = mstruct.integrate(x_var, eo2, true, use_abs, m1, m2);
+	int b = mstruct.integrate(x_var, eo2, true, use_abs, definite_integral);
 	if(b < 0) {
 		mstruct = mbak;
 		mstruct.replace(x_var, vargs[1]);
@@ -4355,7 +4356,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		mstruct = mstruct_pre;
 		mstruct.eval(eo2);
 		eo2.do_polynomial_division = eo.do_polynomial_division;
-		int b2 = mstruct.integrate(x_var, eo2, true, use_abs, m1, m2);
+		int b2 = mstruct.integrate(x_var, eo2, true, use_abs, definite_integral);
 		if(b2 < 0) {
 			mstruct = mbak;
 			mstruct.replace(x_var, vargs[1]);
@@ -4379,7 +4380,8 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	}
 	eo2.approximation = eo.approximation;
 	if(b) {
-		if(vargs[2].isUndefined()) {
+		if(!definite_integral) {
+			if(!m1.isUndefined()) mstruct.replace(x_var, vargs[1]);
 			CALCULATOR->endTemporaryStopMessages(true);
 			mstruct += "C";
 			return 1;
@@ -4399,7 +4401,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		}
 	} else {
 		mstruct = mbak;
-		if(vargs[2].isUndefined()) {
+		if(!definite_integral) {
 			CALCULATOR->endTemporaryStopMessages(true);
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 			return -1;

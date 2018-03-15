@@ -10,6 +10,12 @@ void display_errors() {
 		if(!CALCULATOR->nextMessage()) break;
 	}
 }
+void clear_errors() {
+	if(!CALCULATOR->message()) return;
+	while(true) {
+		if(!CALCULATOR->nextMessage()) break;
+	}
+}
 
 void test_integration4(const MathStructure &mstruct) {
 	MathStructure x_var(CALCULATOR->v_x);
@@ -20,8 +26,7 @@ void test_integration4(const MathStructure &mstruct) {
 	eo.assume_denominators_nonzero = true;
 	mstruct2.integrate(x_var, eo);
 	mstruct2.eval(eo);
-	MathStructure minteg(mstruct2);
-	if(mstruct2.containsFunction(CALCULATOR->f_integrate)) return;
+	if(mstruct2.containsFunction(CALCULATOR->f_integrate)) {clear_errors(); return;}
 	mstruct2.differentiate(x_var, eo);
 	MathStructure mstruct3(mstruct2);
 	mstruct3.eval(eo);
@@ -36,7 +41,7 @@ void test_integration4(const MathStructure &mstruct) {
 	display_errors();
 	string str2 = mstruct3.print();
 	cout << str2 << endl;
-	if(str1 != str2) cout << "!!!" << minteg << endl;
+	if(str1 != str2) cout << "!!!" << endl;
 	mstruct3 = mstruct2;
 	mstruct3.replace(x_var, -5);
 	mstruct3.eval(eo);
@@ -49,7 +54,7 @@ void test_integration4(const MathStructure &mstruct) {
 	display_errors();
 	str2 = mstruct3.print();
 	cout << str2 << endl;
-	if(str1 != str2) cout << "!!!" << minteg << endl;
+	if(str1 != str2) cout << "!!!" << endl;
 	cout << "________________________________________________" << endl;
 }
 void test_integration3(const MathStructure &mstruct, const MathStructure &mstruct_arg) {
@@ -133,7 +138,7 @@ void test_integration2(const MathStructure &mstruct) {
 }
 void test_integration() {
 	MathStructure mstruct;
-	/*CALCULATOR->parse(&mstruct, "4x+5");
+	CALCULATOR->parse(&mstruct, "4x+5");
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "-2x+7");
 	test_integration2(mstruct);
@@ -168,11 +173,11 @@ void test_integration() {
 	CALCULATOR->parse(&mstruct, "(3x+3)^(1/3)");
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "cbrt(x)");
-	test_integration2(mstruct);*/
+	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "x^(1/3)");
 	test_integration2(mstruct);
-	/*CALCULATOR->parse(&mstruct, "5^x");
-	test_integration2(mstruct);*/
+	CALCULATOR->parse(&mstruct, "5^x");
+	test_integration2(mstruct);
 }
 
 void test_intervals(bool use_interval) {

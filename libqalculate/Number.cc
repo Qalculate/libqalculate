@@ -6463,12 +6463,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		
 		string mpz_str = printMPZ(ivalue, base, false, po.lower_case_numbers);
 		if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
-		
+
 		length = mpz_str.length();
-		
 		long int expo = 0;
 		if(base == 10 && !po.preserve_format) {
-			if(mpz_str.length() > 0 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+			if(mpz_str.length() > 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 				expo = length - 1;
 			} else if(mpz_str.length() > 0) {
 				for(long int i = mpz_str.length() - 1; i >= 0; i--) {
@@ -6476,14 +6475,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						break;
 					}
 					expo++;
-				} 
+				}
 			}
 			if(po.min_exp == EXP_PRECISION) {
 				long int precexp = i_precision_base;
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
-				if((expo > 0 && expo < (isApproximate() ? PRECISION : precexp)) || (expo < 0 && expo > -PRECISION)) {
-					if(expo >= PRECISION) precision_base = expo + 1;
+				if(exact && ((expo >= 0 && length - 1 < precexp) || (expo < 0 && expo > -PRECISION))) {
+					if(precision_base >= precision) precision_base = length;
 					expo = 0;
 				}
 			} else if(po.min_exp < -1) {
@@ -6508,7 +6507,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				precision2 = min_decimals + nondecimals;
 				if(approx && precision2 > i_precision_base) precision2 = i_precision_base;
 			}
-			if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals && (!approx || po.max_decimals + nondecimals < precision2) && (po.restrict_fraction_length || (base == 10 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)))) {
+			if(po.use_max_decimals && po.max_decimals >= 0 && decimals > po.max_decimals && (!approx || po.max_decimals + nondecimals < precision2) && (base == 10 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT))) {
 				mpz_t i_rem, i_quo, i_div;
 				mpz_inits(i_rem, i_quo, i_div, NULL);
 				mpz_ui_pow_ui(i_div, (unsigned long int) base, (unsigned long int) -(po.max_decimals - expo));
@@ -6536,7 +6535,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					goto integer_rerun;
 				}
 				mpz_clears(i_rem, i_quo, i_div, NULL);
-			} else if(precision2 < length && (approx || po.restrict_fraction_length || (base == 10 && expo != 0 && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)))) {
+			} else if(precision2 < length && (approx || (base == 10 && expo != 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)))) {
 
 				mpq_t qvalue;
 				mpq_init(qvalue);
@@ -6601,11 +6600,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		decimals = 0;
 		if(expo > 0) {
-			if(po.number_fraction_format == FRACTION_DECIMAL) {
-				mpz_str.insert(mpz_str.length() - expo, po.decimalpoint());
-				dp_added = true;
-				decimals = expo;
-			} else if(po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
+			if(po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
 				mpz_str.insert(mpz_str.length() - expo, po.decimalpoint());
 				dp_added = true;
 				decimals = expo;
@@ -6614,7 +6609,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		
-		if(base != BASE_ROMAN_NUMERALS && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+		if(base != BASE_ROMAN_NUMERALS && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 			int pos = mpz_str.length() - 1;
 			for(; pos >= (int) mpz_str.length() + min_decimals - decimals; pos--) {
 				if(mpz_str[pos] != '0') {
@@ -7061,7 +7056,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(base == 10 && !po.preserve_format) {
 			expo = i_log;
 			if(po.min_exp == EXP_PRECISION || (po.min_exp == 0 && expo > 1000000L)) {
-				if((expo > 0 && expo < PRECISION) || (expo < 0 && expo > -PRECISION)) {
+				long int precexp = i_precision_base;
+				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
+				else if(precexp > precision + 3) precexp = precision + 3;
+				if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
+					if(expo >= i_precision_base) i_precision_base = expo + 1;
+					if(expo >= precision_base) precision_base = expo + 1;
+					if(expo >= precision) precision = expo + 1;
 					expo = 0;
 				}
 			} else if(po.min_exp < -1) {
@@ -7222,9 +7223,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					long int precexp = i_precision_base;
 					if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 					else if(precexp > precision + 3) precexp = precision + 3;
-					if((expo > 0 && expo < (isApproximate() ? PRECISION : precexp)) || (expo < 0 && expo > -PRECISION)) {
-						if(expo >= PRECISION) precision = expo + 1;
-						if(expo >= PRECISION) precision2 = expo + 1;
+					if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
+						if(expo >= precision) precision = expo + 1;
+						if(expo >= precision2) precision2 = expo + 1;
 						expo = 0;
 					}
 				} else if(po.min_exp < -1) {
@@ -7414,7 +7415,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(!exact && !infinite_series && po.number_fraction_format == FRACTION_DECIMAL_EXACT && !approx) {
 			PrintOptions po2 = po;
 			po2.number_fraction_format = FRACTION_FRACTIONAL;
-			if(expo != 0) po2.restrict_fraction_length = true;
+			po2.restrict_fraction_length = true;
 			if(b_bak) mpz_clears(num_bak, remainder_bak, NULL); 
 			mpz_clears(num, d, remainder, remainder2, exp, NULL);
 			return print(po2, ips);
@@ -7427,9 +7428,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				long int precexp = i_precision_base;
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
-				if((expo > 0 && expo < (isApproximate() ? PRECISION : precexp)) || (expo < 0 && expo > -PRECISION)) {
-					if(expo >= PRECISION) precision = expo + 1;
-					if(expo >= PRECISION) precision2 = expo + 1;
+				if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
+					if(expo >= precision) precision = expo + 1;
+					if(expo >= precision2) precision2 = expo + 1;
 					expo = 0;
 				}
 			} else if(po.min_exp < -1) {
