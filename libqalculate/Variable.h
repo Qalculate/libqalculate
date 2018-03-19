@@ -215,7 +215,7 @@ class UnknownVariable : public Variable {
 	const MathStructure &interval() const;
 	void setInterval(const MathStructure &o);
 	
-	int subtype() const {return SUBTYPE_UNKNOWN_VARIABLE;}
+	virtual int subtype() const {return SUBTYPE_UNKNOWN_VARIABLE;}
 
 	virtual bool representsPositive(bool = false);
 	virtual bool representsNegative(bool = false);

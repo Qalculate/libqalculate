@@ -427,6 +427,9 @@
           <!-- A numerical value -->
           <_title>Number</_title>
         </argument>
+        <argument index="2">
+          <_title>Value for zero</_title>
+        </argument>
       </builtin_function>
       <builtin_function name="numerator">
         <_title>Numerator</_title>
@@ -745,17 +748,16 @@
   </category>
   <category>
     <_title>Step Functions</_title>
-    <function>
+    <builtin_function name="heaviside">
       <_title>Heaviside Step Function</_title>
-      <_names>r:heaviside</_names>
+      <_names>r:heaviside,au:&#x03B8;</_names>
       <_description>Discontinuous function also known as "unit step function". Returns 0 if x &lt; 0, 1 if x &gt; 0, and 1/2 if x = 0.</_description>
-      <expression>(1/2)*(1+sgn(\x))</expression>
-      <argument type="number" index="1">
-        <_title>Value</_title>
-	<complex_allowed>false</complex_allowed>
-        <test>false</test>
-      </argument>
-    </function>
+    </builtin_function>
+    <builtin_function name="dirac">
+      <_title>Dirac Delta Function</_title>
+      <_names>r:dirac,au:&#x3B4;</_names>
+      <_description>Returns 0 if x is non-zero, and infinity if x is zero.</_description>
+    </builtin_function>
     <function>
       <_title>Ramp Function</_title>
       <_names>r:ramp</_names>

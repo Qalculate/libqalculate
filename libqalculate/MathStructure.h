@@ -809,7 +809,7 @@ class MathStructure {
 		/** @name Differentiation and integration */
 		//@{
 		bool differentiate(const MathStructure &x_var, const EvaluationOptions &eo);
-		int integrate(const MathStructure &x_var, const EvaluationOptions &eo, bool simplify_first = true, int use_abs = 1, bool definite_integral = false, int max_part_depth = 5, vector<MathStructure*> *parent_parts = NULL);
+		int integrate(const MathStructure &x_var, const EvaluationOptions &eo, bool simplify_first = true, int use_abs = 1, bool definite_integral = false, bool try_abs = true, int max_part_depth = 5, vector<MathStructure*> *parent_parts = NULL);
 		//@}
 
 		/** @name Functions for polynomials */

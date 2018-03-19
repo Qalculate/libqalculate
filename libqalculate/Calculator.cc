@@ -1410,6 +1410,8 @@ void Calculator::addBuiltinFunctions() {
 	
 	f_abs = addFunction(new AbsFunction());
 	f_signum = addFunction(new SignumFunction());
+	f_heaviside = addFunction(new HeavisideFunction());
+	f_dirac = addFunction(new DiracFunction());
 	f_gcd = addFunction(new GcdFunction());
 	f_lcm = addFunction(new LcmFunction());
 	f_round = addFunction(new RoundFunction());
