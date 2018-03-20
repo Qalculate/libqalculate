@@ -135,7 +135,7 @@
       <_names>ar:ISK</_names>
     </builtin_unit>
     <builtin_unit name="BTC">
-      <_title>bitcoins</_title>
+      <_title>Bitcoins</_title>
       <_names>ar:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins</_names>
     </builtin_unit>
     <unit type="alias">

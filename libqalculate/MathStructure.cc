@@ -16910,17 +16910,22 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 		}
 		case STRUCT_COMPARISON: {
 			if(containsRepresentativeOf(x_var, true, true) != 0) {
-				/*if(ct_comp == COMPARISON_GREATER || ct_comp == COMPARISON_EQUALS_GREATER || ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS) {
+				if(ct_comp == COMPARISON_GREATER || ct_comp == COMPARISON_EQUALS_GREATER || ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS) {
 					if(!CHILD(1).isZero()) CHILD(0) -= CHILD(1);
 					SET_CHILD_MAP(0)
-					if(ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS) negate();
+					if(ct_comp == COMPARISON_GREATER || ct_comp == COMPARISON_EQUALS_LESS) negate();
 					MathStructure mstruct(*this);
+					MathStructure mstruct2(*this);
+					transform(CALCULATOR->f_heaviside);
 					transform(CALCULATOR->f_dirac);
-					multiply_nocopy(new MathStructure(2, 1, 0));
+					mstruct2.transform(CALCULATOR->f_dirac);
+					multiply(mstruct2);
+					if(ct_comp == COMPARISON_EQUALS_GREATER || ct_comp == COMPARISON_EQUALS_LESS) multiply_nocopy(new MathStructure(2, 1, 0));
+					else multiply_nocopy(new MathStructure(-2, 1, 0));
 					mstruct.differentiate(x_var, eo);
 					multiply(mstruct);
 					return true;
-				}*/
+				}
 				MathStructure mstruct(CALCULATOR->f_diff, this, &x_var, &m_one, NULL);
 				set(mstruct);
 				return false;
@@ -20183,6 +20188,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 		calculatesub(eo2, eo2);
 		if(CALCULATOR->aborted()) CANNOT_INTEGRATE
 	}
+
 	bool recalc = false;
 	if(fix_abs_x(*this, x_var)) recalc = true;
 	MathStructure *mfound = NULL;
@@ -20226,18 +20232,60 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 		MathStructure mtest_m(mtest);
 		replace_abs_x(mtest, *mfound, false);
 		replace_abs_x(mtest_m, *mfound, true);
-		int bint1 = mtest.integrate(x_var, eo, true, use_abs, true, definite_integral, max_part_depth, parent_parts);
-		if(bint1 < 0) CANNOT_INTEGRATE_INTERVAL
-		if(bint1 == 0) CANNOT_INTEGRATE;
-		int bint2 = mtest_m.integrate(x_var, eo, true, use_abs, false, definite_integral, max_part_depth, parent_parts);
-		if(bint2 < 0) CANNOT_INTEGRATE_INTERVAL
+		eo_t.isolate_x = true;
+		eo_t.isolate_var = &x_var;
+		CALCULATOR->beginTemporaryStopMessages();
+		MathStructure mpos(*mfound);
+		mpos.transform(COMPARISON_EQUALS_GREATER, m_zero);
+		mpos.eval(eo_t);
+		UnknownVariable *var_p = NULL, *var_m = NULL;
+		if(!CALCULATOR->endTemporaryStopMessages() && mpos.isComparison() && (mpos.comparisonType() == COMPARISON_EQUALS_GREATER || mpos.comparisonType() == COMPARISON_EQUALS_LESS) && mpos[0] == x_var && mpos[1].isNumber()) {
+			var_p = new UnknownVariable("", x_var.print());
+			var_m = new UnknownVariable("", x_var.print());
+			Number nr_interval_p, nr_interval_m;
+			if(x_var.isVariable() && !x_var.variable()->isKnown() && ((UnknownVariable*) x_var.variable())->interval().isNumber() && ((UnknownVariable*) x_var.variable())->interval().number().isInterval() && ((UnknownVariable*) x_var.variable())->interval().number().isReal() && ((UnknownVariable*) x_var.variable())->interval().number().upperEndPoint().isGreaterThanOrEqualTo(mpos[1].number()) && ((UnknownVariable*) x_var.variable())->interval().number().lowerEndPoint().isLessThanOrEqualTo(mpos[1].number())) {
+				if(mpos.comparisonType() == COMPARISON_EQUALS_GREATER) {
+					nr_interval_p.setInterval(mpos[1].number(), ((UnknownVariable*) x_var.variable())->interval().number().upperEndPoint());
+					nr_interval_m.setInterval(((UnknownVariable*) x_var.variable())->interval().number().lowerEndPoint(), mpos[1].number());
+				} else {
+					nr_interval_m.setInterval(mpos[1].number(), ((UnknownVariable*) x_var.variable())->interval().number().upperEndPoint());
+					nr_interval_p.setInterval(((UnknownVariable*) x_var.variable())->interval().number().lowerEndPoint(), mpos[1].number());
+				}
+			} else {
+				
+				if(mpos.comparisonType() == COMPARISON_EQUALS_GREATER) {
+					nr_interval_p.setInterval(mpos[1].number(), nr_plus_inf);
+					nr_interval_m.setInterval(nr_minus_inf, mpos[1].number());
+				} else {
+					nr_interval_m.setInterval(mpos[1].number(), nr_plus_inf);
+					nr_interval_p.setInterval(nr_minus_inf, mpos[1].number());
+				}
+			}
+			var_p->setInterval(nr_interval_p);
+			var_m->setInterval(nr_interval_m);
+			mtest.replace(x_var, var_p);
+			mtest_m.replace(x_var, var_m);
+		}
+		int bint1 = mtest.integrate(var_p ? var_p : x_var, eo, true, use_abs, true, definite_integral, max_part_depth, parent_parts);
+		if(var_p) {
+			mtest.replace(var_p, x_var);
+			var_p->destroy();
+		}
+		if(bint1 <= 0) {
+			if(var_m) var_m->destroy();
+			if(bint1 < 0) CANNOT_INTEGRATE_INTERVAL
+			CANNOT_INTEGRATE;
+		}
+		int bint2 = mtest_m.integrate(var_m ? var_m : x_var, eo, true, use_abs, false, definite_integral, max_part_depth, parent_parts);
+		if(var_m) {mtest_m.replace(var_m, x_var);
+			var_m->destroy();
+			if(bint2 < 0) CANNOT_INTEGRATE_INTERVAL
+		}
 		if(bint2 == 0) CANNOT_INTEGRATE;
 		MathStructure m1(mtest), m2(mtest_m);
 		CALCULATOR->beginTemporaryStopMessages();
 		MathStructure mzero(*mfound);
 		mzero.transform(COMPARISON_EQUALS, m_zero);
-		eo_t.isolate_x = true;
-		eo_t.isolate_var = &x_var;
 		mzero.eval(eo_t);
 		if(!CALCULATOR->endTemporaryStopMessages() && mzero.isComparison() && mzero.comparisonType() == COMPARISON_EQUALS && mzero[0] == x_var) {
 			mzero.setToChild(1);
@@ -20263,6 +20311,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 		add(mtest_m);
 		return true;
 	}
+
 	switch(m_type) {
 		case STRUCT_ADDITION: {
 			bool b = false;

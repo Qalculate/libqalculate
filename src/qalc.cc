@@ -1128,6 +1128,8 @@ int main(int argc, char *argv[]) {
 			fputs("\t", stdout); PUTS_UNICODE(_("reduces output to just the result of the input expression"));
 			fputs("\n\t-/+u8\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("turn on/off unicode support"));
+			fputs("\n\t-v, -version\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("show application version and exit"));
 			puts("");
 			PUTS_UNICODE(_("The program will start in interactive mode if no expression and no file is specified (or interactive mode is explicitly selected)."));
 			puts("");
@@ -1149,6 +1151,9 @@ int main(int argc, char *argv[]) {
 			set_option_strings.push_back(set_base_str);
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-terse") == 0 || strcmp(argv[i], "--terse") == 0 || strcmp(argv[i], "-t") == 0)) {
 			result_only = true;
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-version") == 0 || strcmp(argv[i], "--version") == 0 || strcmp(argv[i], "-v") == 0)) {
+			puts(VERSION);
+			return true;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-interactive") == 0 || strcmp(argv[i], "--interactive") == 0 || strcmp(argv[i], "-i") == 0)) {
 			interactive_mode = true;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-list") == 0 || strcmp(argv[i], "--list") == 0 || strcmp(argv[i], "-l") == 0)) {
