@@ -6207,7 +6207,7 @@ bool Calculator::loadLocalDefinitions() {
 		string homedir_old = buildPath(getOldLocalDir(), "definitions");
 		if(dirExists(homedir)) {
 			if(!dirExists(getLocalDataDir())) {
-				makeDir(getLocalDataDir());
+				recursiveMakeDir(getLocalDataDir());
 			}
 			if(makeDir(homedir)) {
 				list<string> eps_old;
@@ -8117,7 +8117,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 }
 bool Calculator::saveDefinitions() {
 
-	makeDir(getLocalDataDir());
+	recursiveMakeDir(getLocalDataDir());
 	string homedir = buildPath(getLocalDataDir(), "definitions");
 	makeDir(homedir);
 	bool b = true;
@@ -9326,7 +9326,7 @@ bool Calculator::loadExchangeRates() {
 		if(fileExists(filename)) {
 			doc = xmlParseFile(filename_old.c_str());
 			if(doc) {
-				makeDir(getLocalDataDir());
+				recursiveMakeDir(getLocalDataDir());
 				move_file(filename_old.c_str(), filename.c_str());
 				removeDir(getOldLocalDir());
 			}
@@ -9552,7 +9552,7 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer) {
 }
 bool Calculator::fetchExchangeRates(int timeout) {
 #ifdef HAVE_LIBCURL
-	makeDir(getLocalDataDir());
+	recursiveMakeDir(getLocalDataDir());
 	string sbuffer;
 	char error_buffer[CURL_ERROR_SIZE];
 	CURL *curl;
@@ -9776,7 +9776,7 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent, int msecs) {
 
 	string homedir = getLocalTmpDir();
-	makeDir(homedir);
+	recursiveMakeDir(homedir);
 
 	string commandline_extra;
 	string title;

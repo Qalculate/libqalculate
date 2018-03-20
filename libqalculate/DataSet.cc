@@ -441,7 +441,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 				string filepath_old = buildPath(getOldLocalDir(), "definitions", "datasets", sfile.substr(i + 1, sfile.length() - (i + 1)));
 				if(loadObjects(filepath_old.c_str(), true)) {
 					b = true;
-					makeDir(getLocalDataDir());
+					recursiveMakeDir(getLocalDataDir());
 					makeDir(buildPath(getLocalDataDir(), "definitions"));
 					makeDir(buildPath(getLocalDataDir(), "definitions", "datasets"));
 					move_file(filepath_old.c_str(), filepath.c_str());
@@ -463,7 +463,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 			string filepath_old = buildPath(getOldLocalDir(), "definitions", "datasets", sfile);
 			if(loadObjects(filepath_old.c_str(), true)) {
 				b = true;
-				makeDir(getLocalDataDir());
+				recursiveMakeDir(getLocalDataDir());
 				makeDir(buildPath(getLocalDataDir(), "definitions"));
 				makeDir(buildPath(getLocalDataDir(), "definitions", "datasets"));
 				move_file(filepath_old.c_str(), filepath.c_str());
@@ -718,7 +718,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 int DataSet::saveObjects(const char *file_name, bool save_global) {
 	string str, filename;
 	if(!save_global && !file_name) {
-		makeDir(getLocalDataDir());
+		recursiveMakeDir(getLocalDataDir());
 		filename = buildPath(getLocalDataDir(), "definitions");
 		makeDir(filename);
 		filename = buildPath(filename, "datasets");

@@ -102,6 +102,7 @@ string buildPath(string dir1, string dir2, string dir3, string filename);
 bool dirExists(string dirpath);
 bool fileExists(string dirpath);
 bool makeDir(string dirpath);
+bool recursiveMakeDir(string dirpath);
 bool removeDir(string dirpath);
 bool move_file(const char *from_file, const char *to_file);
 
