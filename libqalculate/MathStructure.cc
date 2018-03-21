@@ -3728,6 +3728,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				case STRUCT_POWER: {
 					return 0;
 				}
+				case STRUCT_COMPARISON: {
+					if(isComparison()) {
+						mstruct.ref();
+						transform_nocopy(STRUCT_LOGICAL_AND, &mstruct);
+						return 1;
+					}
+				}
 				default: {
 					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, false, true) <= 0 || (isUnit() && unit() == CALCULATOR->u_rad)) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
 						clear(true); 
@@ -6799,8 +6806,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		case STRUCT_FUNCTION: {
 			if(o_function == CALCULATOR->f_abs || o_function == CALCULATOR->f_root || o_function == CALCULATOR->f_interval || o_function == CALCULATOR->f_signum || o_function == CALCULATOR->f_dirac || o_function == CALCULATOR->f_heaviside) {
 				b = calculateFunctions(eo, false);
-				if(b) calculatesub(eo, feo, true, mparent, index_this);
-				break;
+				if(b) {
+					calculatesub(eo, feo, true, mparent, index_this);
+					break;
+				}
 			}
 		}
 		default: {
@@ -7420,14 +7429,14 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 
 }
 
-int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent);
-int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent) {
+int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent, bool b_abs = false);
+int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent, bool b_abs) {
 	if(parent.isMultiplication()) {
 		if((!mstruct1.representsNonMatrix() && !mstruct2.representsScalar()) || (!mstruct2.representsNonMatrix() && !mstruct1.representsScalar())) {
 			return 0;
 		}
 	}
-	if(parent.isAddition()) {
+	if(b_abs || parent.isAddition()) {
 		if(mstruct1.isMultiplication() && mstruct1.size() > 0) {
 			size_t start = 0;
 			while(mstruct1[start].isNumber() && mstruct1.size() > start + 1) {
@@ -7445,7 +7454,7 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 						if(i + start >= mstruct1.size()) {
 							if(start2 == start) {
 								for(size_t i3 = 0; i3 < start; i3++) {
-									i2 = evalSortCompare(mstruct1[i3], mstruct2[i3], parent);
+									i2 = evalSortCompare(mstruct1[i3], mstruct2[i3], parent, b_abs);
 									if(i2 != 0) return i2;
 								}
 								return 0;
@@ -7455,14 +7464,15 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 						return 1;
 					}
 					if(i + start >= mstruct1.size()) return -1;
-					i2 = evalSortCompare(mstruct1[i + start], mstruct2[i + start2], parent);
+					i2 = evalSortCompare(mstruct1[i + start], mstruct2[i + start2], parent, b_abs);
 					if(i2 != 0) return i2;
 				}
 				if(mstruct1.size() - start == mstruct2.size() - start2) return 0;
 				return -1;
 			} else {
-				i2 = evalSortCompare(mstruct1[start], mstruct2, parent);
+				i2 = evalSortCompare(mstruct1[start], mstruct2, parent, b_abs);
 				if(i2 != 0) return i2;
+				if(b_abs && start == 1 && (mstruct1[0].isMinusOne() || mstruct1[0].isOne())) return 0;
 				return 1;
 			}
 		} else if(mstruct2.isMultiplication() && mstruct2.size() > 0) {
@@ -7474,8 +7484,9 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 			if(mstruct1.isMultiplication()) {
 				return 1;
 			} else {
-				i2 = evalSortCompare(mstruct1, mstruct2[start], parent);
+				i2 = evalSortCompare(mstruct1, mstruct2[start], parent, b_abs);
 				if(i2 != 0) return i2;
+				if(b_abs && start == 1 && (mstruct2[0].isMinusOne() || mstruct2[0].isOne())) return 0;
 				return -1;
 			}
 		} 
@@ -7487,16 +7498,16 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 		}
 		if(!parent.isMultiplication() || (!mstruct1.isNumber() && !mstruct2.isNumber())) {
 			if(mstruct2.isPower()) {
-				int i = evalSortCompare(mstruct1, mstruct2[0], parent);
+				int i = evalSortCompare(mstruct1, mstruct2[0], parent, b_abs);
 				if(i == 0) {
-					return evalSortCompare(m_one, mstruct2[1], parent);
+					return evalSortCompare(m_one, mstruct2[1], parent, b_abs);
 				}
 				return i;
 			}
 			if(mstruct1.isPower()) {
-				int i = evalSortCompare(mstruct1[0], mstruct2, parent);
+				int i = evalSortCompare(mstruct1[0], mstruct2, parent, b_abs);
 				if(i == 0) {
-					return evalSortCompare(mstruct1[1], m_one, parent);
+					return evalSortCompare(mstruct1[1], m_one, parent, b_abs);
 				}
 				return i;
 			}
@@ -7552,6 +7563,12 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 	switch(mstruct1.type()) {
 		case STRUCT_NUMBER: {
 			if(CALCULATOR->aborted()) return 0;
+			if(b_abs) {
+				ComparisonResult cmp = mstruct1.number().compareAbsolute(mstruct2.number());
+				if(cmp == COMPARISON_RESULT_LESS) return -1;
+				else if(cmp == COMPARISON_RESULT_GREATER) return 1;
+				return 0;
+			}
 			if(!mstruct1.number().hasImaginaryPart() && !mstruct2.number().hasImaginaryPart()) {
 				if(mstruct1.number().isFloatingPoint()) {
 					if(!mstruct2.number().isFloatingPoint()) return 1;
@@ -7609,7 +7626,7 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 					if(i >= mstruct1.size()) {
 						return -1;	
 					}
-					int i2 = evalSortCompare(mstruct1[i], mstruct2[i], parent);
+					int i2 = evalSortCompare(mstruct1[i], mstruct2[i], parent, b_abs);
 					if(i2 != 0) return i2;
 				}
 				return 0;
@@ -7617,9 +7634,9 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 			return 1;
 		}
 		case STRUCT_POWER: {
-			int i = evalSortCompare(mstruct1[0], mstruct2[0], parent);
+			int i = evalSortCompare(mstruct1[0], mstruct2[0], parent, b_abs);
 			if(i == 0) {
-				return evalSortCompare(mstruct1[1], mstruct2[1], parent);
+				return evalSortCompare(mstruct1[1], mstruct2[1], parent, b_abs);
 			}
 			return i;
 		}
@@ -7628,7 +7645,7 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 			else if(mstruct2.size() > mstruct1.size()) return 1;
 			int ie;
 			for(size_t i = 0; i < mstruct1.size(); i++) {
-				ie = evalSortCompare(mstruct1[i], mstruct2[i], parent);
+				ie = evalSortCompare(mstruct1[i], mstruct2[i], parent, b_abs);
 				if(ie != 0) {
 					return ie;
 				}
@@ -7638,10 +7655,10 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 	return 0;
 }
 
-void MathStructure::evalSort(bool recursive) {
+void MathStructure::evalSort(bool recursive, bool b_abs) {
 	if(recursive) {
 		for(size_t i = 0; i < SIZE; i++) {
-			CHILD(i).evalSort(true);
+			CHILD(i).evalSort(true, b_abs);
 		}
 	}
 	//if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION && m_type != STRUCT_LOGICAL_AND && m_type != STRUCT_LOGICAL_OR && m_type != STRUCT_LOGICAL_XOR && m_type != STRUCT_BITWISE_AND && m_type != STRUCT_BITWISE_OR && m_type != STRUCT_BITWISE_XOR) return;
@@ -7652,13 +7669,13 @@ void MathStructure::evalSort(bool recursive) {
 		if(i == 0) {
 			sorted.push_back(v_order[i]);
 		} else {
-			if(evalSortCompare(CHILD(i), *v_subs[sorted.back()], *this) >= 0) {
+			if(evalSortCompare(CHILD(i), *v_subs[sorted.back()], *this, b_abs) >= 0) {
 				sorted.push_back(v_order[i]);
 			} else if(sorted.size() == 1) {
 				sorted.insert(sorted.begin(), v_order[i]);
 			} else {
 				for(size_t i2 = sorted.size() - 2; ; i2--) {
-					if(evalSortCompare(CHILD(i), *v_subs[sorted[i2]], *this) >= 0) {	
+					if(evalSortCompare(CHILD(i), *v_subs[sorted[i2]], *this, b_abs) >= 0) {	
 						sorted.insert(sorted.begin() + i2 + 1, v_order[i]);
 						break;
 					}
@@ -16894,10 +16911,23 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 			}
 			break;
 		}
+		case STRUCT_LOGICAL_AND: {
+			bool b = true;
+			for(size_t i = 0; i < SIZE; i++) {
+				if(!CHILD(i).isComparison()) {b = false; break;}
+			}
+			if(b) {
+				MathStructure mtest(*this);
+				mtest.setType(STRUCT_MULTIPLICATION);
+				if(mtest.differentiate(x_var, eo) && mtest.containsFunction(CALCULATOR->f_diff, true) <= 0) {
+					set(mtest);
+					break;
+				}
+			}
+		}
 		case STRUCT_BITWISE_AND: {}
 		case STRUCT_BITWISE_OR: {}
 		case STRUCT_BITWISE_XOR: {}
-		case STRUCT_LOGICAL_AND: {}
 		case STRUCT_LOGICAL_OR: {}
 		case STRUCT_LOGICAL_XOR: {
 			if(containsRepresentativeOf(x_var, true, true) != 0) {
@@ -17554,8 +17584,6 @@ bool transform_absln(MathStructure &mstruct, int use_abs, bool definite_integral
 		else if(!mstruct.representsNonNegative(true)) mstruct.transform(CALCULATOR->f_abs);
 		mstruct.transform(CALCULATOR->f_ln);
 	} else if(use_abs != 0 && !mstruct.representsComplex(true)) {
-		MathStructure m_interval(m_undefined);
-		if(x_var.isVariable() && !x_var.variable()->isKnown()) m_interval = ((UnknownVariable*) x_var.variable())->interval();
 		if(definite_integral) use_abs = -1;
 		CALCULATOR->beginTemporaryStopMessages();
 		MathStructure mtest(mstruct);
@@ -17570,9 +17598,10 @@ bool transform_absln(MathStructure &mstruct, int use_abs, bool definite_integral
 		} else if(mtest.representsComplex(true)) {
 			mstruct.transform(CALCULATOR->f_ln);
 		} else {
-			if(!m_interval.isUndefined()) {
+			if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
 				CALCULATOR->beginTemporaryStopMessages();
-				mtest.replace(x_var, m_interval);
+				KnownVariable *var = new KnownVariable("", x_var.print(), ((UnknownVariable*) x_var.variable())->interval());
+				mtest.replace(x_var, var);
 				EvaluationOptions eo2 = eo;
 				eo2.approximation = APPROXIMATION_APPROXIMATE;
 				mtest.eval(eo2);
@@ -17590,6 +17619,7 @@ bool transform_absln(MathStructure &mstruct, int use_abs, bool definite_integral
 				} else {
 					mstruct.transform(CALCULATOR->f_ln);
 				}
+				var->destroy();
 			} else if(use_abs < 0) {
 				MathStructure marg(CALCULATOR->f_arg, &mstruct, NULL);
 				marg *= nr_one_i;
@@ -17652,7 +17682,7 @@ bool test_real(MathStructure &mstruct, int use_abs, bool definite_integral, cons
 
 int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const EvaluationOptions &eo, const MathStructure &mpow, const MathStructure &mfac, int use_abs, bool definite_integral, int max_part_depth, vector<MathStructure*> *parent_parts) {
 	if(mstruct.function() == CALCULATOR->f_ln && mstruct.size() == 1) {
-		if(mstruct[0].isFunction() && mstruct[0].function() == CALCULATOR->f_abs && mstruct[0].size() == 1 && mpow.isOne() && mfac.isOne() && mstruct[0][0].representsReal()) {
+		if(mstruct[0].isFunction() && mstruct[0].function() == CALCULATOR->f_abs && mstruct[0].size() == 1 && mpow.isOne() && mfac.isOne() && mstruct[0][0].representsNonComplex(true)) {
 			MathStructure mexp, mmul, madd;
 			if(integrate_info(mstruct[0][0], x_var, madd, mmul, mexp) && mexp.isOne()) {
 				MathStructure marg(mstruct[0][0]);
@@ -17922,7 +17952,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 		}
 		return false;
 	} else if(mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1) {
-		if(mstruct[0].representsReal(true) && mpow.representsReal(true)) {
+		if(mstruct[0].representsNonComplex(true) && mpow.representsNonComplex(true)) {
 			if(mpow.isOne()) {
 				MathStructure minteg(x_var);
 				if(!mfac.isOne()) minteg *= mfac;
@@ -17956,7 +17986,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 			}
 		}
 	} else if(mstruct.function() == CALCULATOR->f_signum && mstruct.size() == 2) {
-		if(mstruct[0].representsReal(true) && mpow.isNumber() && mpow.number().isRational() && mpow.number().isPositive()) {
+		if(mstruct[0].representsNonComplex(true) && mpow.isNumber() && mpow.number().isRational() && mpow.number().isPositive()) {
 			MathStructure minteg(x_var);
 			if(!mfac.isOne()) {
 				minteg = mfac;
@@ -17985,7 +18015,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 			mstruct *= minteg;
 			return true;
 		}
-	} else if(mstruct.function() == CALCULATOR->f_dirac && mstruct.size() == 1 && mstruct[0].representsReal(true)) {
+	} else if(mstruct.function() == CALCULATOR->f_dirac && mstruct.size() == 1 && mstruct[0].representsNonComplex(true)) {
 		MathStructure mexp, mmul, madd;
 		if(mpow.isOne() && integrate_info(mstruct[0], x_var, madd, mmul, mexp) && mexp.isOne()) {
 			if(mfac == x_var && madd.representsNonZero()) {
@@ -20035,7 +20065,7 @@ int contains_unsolved_integrate(const MathStructure &mstruct, MathStructure *thi
 
 bool fix_abs_x(MathStructure &mstruct, const MathStructure &x_var) {
 	bool b = false;
-	if(mstruct.isFunction() && mstruct.size() == 1 && mstruct[0].isFunction() && mstruct[0].function() == CALCULATOR->f_abs && mstruct[0].size() == 1 && mstruct[0][0].representsReal(true)) {
+	if(mstruct.isFunction() && mstruct.size() == 1 && mstruct[0].isFunction() && mstruct[0].function() == CALCULATOR->f_abs && mstruct[0].size() == 1 && mstruct[0][0].representsNonComplex(true)) {
 		if(mstruct.function() == CALCULATOR->f_sin || mstruct.function() == CALCULATOR->f_tan || mstruct.function() == CALCULATOR->f_sinh || mstruct.function() == CALCULATOR->f_tanh || mstruct.function() == CALCULATOR->f_asin || mstruct.function() == CALCULATOR->f_atan || mstruct.function() == CALCULATOR->f_asinh || mstruct.function() == CALCULATOR->f_atanh) {
 			mstruct[0].setToChild(1, true);
 			mstruct.multiply_nocopy(new MathStructure(CALCULATOR->f_signum, &mstruct[0], &m_zero, NULL));
@@ -20052,7 +20082,7 @@ bool fix_abs_x(MathStructure &mstruct, const MathStructure &x_var) {
 	return b;
 }
 MathStructure *find_abs_x(MathStructure &mstruct, const MathStructure &x_var) {
-	if(mstruct.isFunction() && ((mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1) || (mstruct.function() == CALCULATOR->f_root && VALID_ROOT(mstruct) && mstruct[1].number().isOdd())) && mstruct[0].contains(x_var, true) > 0 && mstruct[0].representsReal(true)) {
+	if(mstruct.isFunction() && ((mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1) || (mstruct.function() == CALCULATOR->f_root && VALID_ROOT(mstruct) && mstruct[1].number().isOdd())) && mstruct[0].contains(x_var, true) > 0 && mstruct[0].representsNonComplex(true)) {
 		return &mstruct[0];
 	}
 	for(size_t i = 0; i < mstruct.size(); i++) {
@@ -20064,10 +20094,11 @@ MathStructure *find_abs_x(MathStructure &mstruct, const MathStructure &x_var) {
 bool fix_sgn_x(MathStructure &mstruct, const MathStructure &x_var, const EvaluationOptions &eo) {
 	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_signum && mstruct.size() == 2) {
 		MathStructure mtest(mstruct);
-		mtest.replace(x_var, ((UnknownVariable*) x_var.variable())->interval());
-		
+		KnownVariable *var = new KnownVariable("", x_var.print(), ((UnknownVariable*) x_var.variable())->interval());
+		mtest.replace(x_var, var);
 		CALCULATOR->beginTemporaryStopMessages();
 		mtest.eval(eo);
+		var->destroy();
 		if(!CALCULATOR->endTemporaryStopMessages() && !mtest.isFunction()) {
 			mstruct.set(mtest);
 			return true;
@@ -20114,6 +20145,12 @@ bool replace_abs_x(MathStructure &mstruct, const MathStructure &marg, bool b_min
 }
 
 bool test_sign_zero(const MathStructure &m, const MathStructure &x_var, const MathStructure &mzero, const EvaluationOptions &eo) {
+	if(m.contains(x_var, true) <= 0) return false;
+	if(m.isMultiplication()) {
+		for(size_t i = 0; i < m.size(); i++) {
+			if(m[i].isPower() && m[i][1].representsNegative() && test_sign_zero(m[i][0], x_var, mzero, eo)) return true;
+		}
+	}
 	CALCULATOR->beginTemporaryStopMessages();
 	MathStructure mtest(m);
 	mtest.replace(x_var, mzero);
@@ -20122,15 +20159,17 @@ bool test_sign_zero(const MathStructure &m, const MathStructure &x_var, const Ma
 	return !CALCULATOR->endTemporaryStopMessages() && mtest.isOne();
 }
 
-bool try_sign(MathStructure &m1, MathStructure &m2, const MathStructure &marg, const MathStructure &x_var, const MathStructure &mzero, const EvaluationOptions &eo) {
+bool try_sign(MathStructure &m1, MathStructure &m2, const MathStructure &marg, const MathStructure &x_var, const MathStructure &mzero, const EvaluationOptions &eo, bool *test_zero = NULL) {
 	if(m1.equals(m2, true)) return true;
 	if(m1.isNumber() && m1.number().isReal() && m2.isNumber() && m2.number().isReal()) {
 		m2.number().negate();
-		if(m1.number() == m2.number()) {
+		if(m1.number().equals(m2.number(), true)) {
 			m2.number().negate();
-			if(test_sign_zero(m1, x_var, mzero, eo)) {
-				m1 *= MathStructure(CALCULATOR->f_signum, &marg, &m_zero, NULL);
+			if(!test_sign_zero(m1, x_var, mzero, eo)) {
+				if(!test_zero) return false;
+				*test_zero = true;
 			}
+			if(!test_zero || !(*test_zero)) m1 *= MathStructure(CALCULATOR->f_signum, &marg, &m_zero, NULL);
 			return true;
 		}
 		m2.number().negate();
@@ -20138,10 +20177,12 @@ bool try_sign(MathStructure &m1, MathStructure &m2, const MathStructure &marg, c
 	}
 	if(m1.type() != m2.type()) {
 		if((m1.isMultiplication() && m1.size() == 2 && m1[0].isMinusOne() && try_sign(m1[1], m2, marg, x_var, mzero, eo)) || (m2.isMultiplication() && m2.size() == 2 && m2[0].isMinusOne() && try_sign(m1, m2[1], marg, x_var, mzero, eo))) {
-			if(test_sign_zero(m1, x_var, mzero, eo)) {
-				m1 *= MathStructure(CALCULATOR->f_signum, &marg, &m_zero, NULL);
-				return true;
+			if(!test_sign_zero(m1, x_var, mzero, eo)) {
+				if(!test_zero) return false;
+				*test_zero = true;
 			}
+			if(!test_zero || !(*test_zero)) m1 *= MathStructure(CALCULATOR->f_signum, &marg, &m_zero, NULL);
+			return true;
 		}
 		return false;
 	}
@@ -20157,17 +20198,54 @@ bool try_sign(MathStructure &m1, MathStructure &m2, const MathStructure &marg, c
 					if(!try_sign(m1[i], m2[i + 1], marg, x_var, mzero, eo)) return false;
 				}
 			}
-			if(test_sign_zero(m1, x_var, mzero, eo)) {
-				m1 *= MathStructure(CALCULATOR->f_signum, &marg, &m_zero, NULL);
-				return true;
+			if(!test_sign_zero(m1, x_var, mzero, eo)) {
+				if(!test_zero) return false;
+				*test_zero = true;
 			}
+			if(!test_zero || !(*test_zero)) m1 *= MathStructure(CALCULATOR->f_signum, &marg, &m_zero, NULL);
+			return true;
 		}
 		return false;
 	}
 	if(m1.isFunction() && m1.function() != m2.function()) return false;
 	if(m1.isComparison() && m1.comparisonType() != m2.comparisonType()) return false;
+	if(m1.isMultiplication() && m1.size() > 1 && m1[0].isNumber() && !m1[0].equals(m2[0], true)) {
+		if(!m1[0].isNumber()) return false;
+		m2[0].number().negate();
+		if(m1[0].number().equals(m2[0].number(), true)) {
+			m2[0].number().negate();
+			for(size_t i = 1; i < m1.size(); i++) {
+				if(!try_sign(m1[i], m2[i], marg, x_var, mzero, eo)) return false;
+			}
+			if(!test_sign_zero(m1, x_var, mzero, eo)) {
+				if(!test_zero) return false;
+				*test_zero = true;
+			}
+			if(!test_zero || !(*test_zero)) m1 *= MathStructure(CALCULATOR->f_signum, &marg, &m_zero, NULL);
+			return true;
+		}
+		m2[0].number().negate();
+		return false;
+	}/* else if(m1.isPower()) {
+		bool b_tz = false;
+		if(!try_sign(m1[0], m2[0], marg, x_var, mzero, eo, &b_tz) || b_tz) return false;
+		if(!try_sign(m1[1], m2[1], marg, x_var, mzero, eo, &b_tz)) return false;
+		if(b_tz && (test_sign_zero(m1[1], x_var, mzero, eo) || !test_sign_zero(m1[0], x_var, mzero, eo))) return false;
+		return true;
+	}*/
+	bool b_tz = false;
+	bool b_equal = false;
 	for(size_t i = 0; i < m1.size(); i++) {
-		if(!try_sign(m1[i], m2[i], marg, x_var, mzero, eo)) return false;
+		if(!b_equal && m1.isAddition() && m1[i].equals(m2[i], true)) b_equal = true;
+		else if(!try_sign(m1[i], m2[i], marg, x_var, mzero, eo, m1.isAddition() ? &b_tz : NULL)) return false;
+		if(b_tz && b_equal) break;
+	}
+	if(b_tz) {
+		if(!test_sign_zero(m1, x_var, mzero, eo)) {
+			if(!test_zero) return false;
+			*test_zero = true;
+		}
+		if(!test_zero || !(*test_zero)) m1 *= MathStructure(CALCULATOR->f_signum, &marg, &m_zero, NULL);
 	}
 	return true;
 }
@@ -20188,7 +20266,6 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 		calculatesub(eo2, eo2);
 		if(CALCULATOR->aborted()) CANNOT_INTEGRATE
 	}
-
 	bool recalc = false;
 	if(fix_abs_x(*this, x_var)) recalc = true;
 	MathStructure *mfound = NULL;
@@ -20271,27 +20348,30 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 			mtest.replace(var_p, x_var);
 			var_p->destroy();
 		}
-		if(bint1 <= 0) {
+		if(bint1 <= 0 || mtest.containsFunction(CALCULATOR->f_integrate, true) > 0) {
 			if(var_m) var_m->destroy();
 			if(bint1 < 0) CANNOT_INTEGRATE_INTERVAL
 			CANNOT_INTEGRATE;
 		}
 		int bint2 = mtest_m.integrate(var_m ? var_m : x_var, eo, true, use_abs, false, definite_integral, max_part_depth, parent_parts);
-		if(var_m) {mtest_m.replace(var_m, x_var);
+		if(var_m) {
+			mtest_m.replace(var_m, x_var);
 			var_m->destroy();
-			if(bint2 < 0) CANNOT_INTEGRATE_INTERVAL
 		}
-		if(bint2 == 0) CANNOT_INTEGRATE;
+		if(bint2 < 0) CANNOT_INTEGRATE_INTERVAL
+		if(bint2 == 0 || mtest_m.containsFunction(CALCULATOR->f_integrate, true) > 0) CANNOT_INTEGRATE;
 		MathStructure m1(mtest), m2(mtest_m);
 		CALCULATOR->beginTemporaryStopMessages();
 		MathStructure mzero(*mfound);
 		mzero.transform(COMPARISON_EQUALS, m_zero);
 		mzero.eval(eo_t);
 		if(!CALCULATOR->endTemporaryStopMessages() && mzero.isComparison() && mzero.comparisonType() == COMPARISON_EQUALS && mzero[0] == x_var) {
-			mzero.setToChild(1);
+			mzero.setToChild(2);
 			CALCULATOR->beginTemporaryStopMessages();
 			m1.calculatesub(eo2, eo2, true);
 			m2.calculatesub(eo2, eo2, true);
+			m1.evalSort(true, true);
+			m2.evalSort(true, true);
 			eo_t.test_comparisons = true;
 			eo_t.isolate_x = false;
 			eo_t.isolate_var = NULL;
@@ -20328,13 +20408,6 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 			if(!b) return false;
 			break;
 		}
-		case STRUCT_BITWISE_AND: {}
-		case STRUCT_BITWISE_OR: {}
-		case STRUCT_BITWISE_XOR: {}
-		case STRUCT_LOGICAL_AND: {}
-		case STRUCT_LOGICAL_OR: {}
-		case STRUCT_LOGICAL_XOR: {}
-		case STRUCT_COMPARISON: {}
 		case STRUCT_UNIT: {}
 		case STRUCT_NUMBER: {
 			multiply(x_var);
@@ -21638,24 +21711,27 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 			}
 			if(SIZE >= 2) {
 				for(size_t i = 0; i < SIZE; i++) {
-					if(CHILD(i).isFunction()) {
+					if((CHILD(i).isFunction() && CHILD(i).function() == CALCULATOR->f_signum) || (CHILD(i).isPower() && CHILD(i)[0].isFunction() && CHILD(i)[0].function() == CALCULATOR->f_signum)) {
+						MathStructure mfunc(CHILD(i).isPower() ? CHILD(i)[0] : CHILD(i));
 						MathStructure mmul(*this);
 						mmul.delChild(i + 1, true);
-						MathStructure mfunc(CHILD(i));
 						CALCULATOR->beginTemporaryStopMessages();
-						int bint = integrate_function(mfunc, x_var, eo, m_one, mmul, use_abs, definite_integral, max_part_depth, parent_parts);
+						int bint = integrate_function(mfunc, x_var, eo, CHILD(i).isPower() ? CHILD(i)[1] : m_one, mmul, use_abs, definite_integral, max_part_depth, parent_parts);
 						CALCULATOR->endTemporaryStopMessages(bint > 0);
 						if(bint < 0) CANNOT_INTEGRATE_INTERVAL
 						if(bint) {
 							set(mfunc, true);
 							return true;
 						}
-					} else if(CHILD(i).isPower() && CHILD(i)[0].isFunction()) {
+					}
+				}
+				for(size_t i = 0; i < SIZE; i++) {
+					if((CHILD(i).isFunction() && CHILD(i).function() != CALCULATOR->f_signum) || (CHILD(i).isPower() && CHILD(i)[0].isFunction() && CHILD(i)[0].function() != CALCULATOR->f_signum)) {
+						MathStructure mfunc(CHILD(i).isPower() ? CHILD(i)[0] : CHILD(i));
 						MathStructure mmul(*this);
 						mmul.delChild(i + 1, true);
-						MathStructure mfunc(CHILD(i)[0]);
 						CALCULATOR->beginTemporaryStopMessages();
-						int bint = integrate_function(mfunc, x_var, eo, CHILD(i)[1], mmul, use_abs, definite_integral, max_part_depth, parent_parts);
+						int bint = integrate_function(mfunc, x_var, eo, CHILD(i).isPower() ? CHILD(i)[1] : m_one, mmul, use_abs, definite_integral, max_part_depth, parent_parts);
 						CALCULATOR->endTemporaryStopMessages(bint > 0);
 						if(bint < 0) CANNOT_INTEGRATE_INTERVAL
 						if(bint) {
@@ -22026,7 +22102,7 @@ bool isx_deabsify(MathStructure &mstruct);
 bool isx_deabsify(MathStructure &mstruct) {
 	switch(mstruct.type()) {
 		case STRUCT_FUNCTION: {
-			if(mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1 && mstruct[0].representsReal(true)) {
+			if(mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1 && mstruct[0].representsNonComplex(true)) {
 				mstruct.setToChild(1, true);
 				return true;
 			}

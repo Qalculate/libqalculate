@@ -1988,6 +1988,26 @@ ComparisonResult Number::compare(const Number &o, bool ignore_imag) const {
 		return COMPARISON_RESULT_NOT_EQUAL;
 	}
 }
+ComparisonResult Number::compareAbsolute(const Number &o, bool ignore_imag) const {
+	if(isPositive()) {
+		if(o.isPositive()) return compare(o, ignore_imag);
+		Number nr(o);
+		nr.negate();
+		return compare(nr, ignore_imag);
+	} else if(o.isPositive()) {
+		Number nr(*this);
+		nr.negate();
+		return nr.compare(o, ignore_imag);
+	}
+	if(!ignore_imag && (hasImaginaryPart() || o.hasImaginaryPart())) {
+		Number nr1(*this);
+		nr1.negate();
+		Number nr2(o);
+		nr2.negate();
+		return nr1.compare(nr2, ignore_imag);
+	}
+	return o.compare(*this, ignore_imag);
+}
 ComparisonResult Number::compareApproximately(const Number &o, int prec) const {
 	if(isPlusInfinity()) {
 		if(o.hasImaginaryPart() || o.includesPlusInfinity()) return COMPARISON_RESULT_UNKNOWN;

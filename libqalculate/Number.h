@@ -287,6 +287,7 @@ class Number {
 		bool equals(long int i) const;
 		int equalsApproximately(const Number &o, int prec) const;
 		ComparisonResult compare(const Number &o, bool ignore_imag = false) const;
+		ComparisonResult compareAbsolute(const Number &o, bool ignore_imag = false) const;
 		ComparisonResult compare(long int i) const;
 		ComparisonResult compareApproximately(const Number &o, int prec = EQUALS_PRECISION_LOWEST) const;
 		ComparisonResult compareImaginaryParts(const Number &o) const;
@@ -299,6 +300,8 @@ class Number {
 		bool isLessThan(long int i) const;
 		bool isGreaterThanOrEqualTo(long int i) const;
 		bool isLessThanOrEqualTo(long int i) const;
+		bool absIsGreaterThan(const Number &o) const;
+		bool absIsLessThan(const Number &o) const;
 		bool isEven() const;
 		bool numeratorIsGreaterThan(long int i) const;
 		bool numeratorIsLessThan(long int i) const;
