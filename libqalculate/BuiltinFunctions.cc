@@ -362,7 +362,7 @@ int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	FR_FUNCTION(zeta)
 }
 GammaFunction::GammaFunction() : MathFunction("gamma", 1, 1, SIGN_CAPITAL_GAMMA) {
-	NON_COMPLEX_NUMBER_ARGUMENT(1);
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1);
 }
 int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].number().isRational() && (eo.approximation == APPROXIMATION_EXACT || (eo.approximation == APPROXIMATION_TRY_EXACT && vargs[0].number().isLessThan(1000)))) {
@@ -411,7 +411,7 @@ int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	FR_FUNCTION(gamma)
 }
 DigammaFunction::DigammaFunction() : MathFunction("digamma", 1) {
-	NON_COMPLEX_NUMBER_ARGUMENT(1);
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1);
 }
 int DigammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].number().isOne()) {
@@ -447,7 +447,7 @@ int AiryFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 }
 BesseljFunction::BesseljFunction() : MathFunction("besselj", 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
-	NON_COMPLEX_NUMBER_ARGUMENT(2);
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(2);
 }
 int BesseljFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION_2R(besselj)
@@ -466,7 +466,7 @@ int ErfFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	FR_FUNCTION(erf)
 }
 ErfcFunction::ErfcFunction() : MathFunction("erfc", 1) {
-	NON_COMPLEX_NUMBER_ARGUMENT(1);
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1);
 }
 int ErfcFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(erfc)
