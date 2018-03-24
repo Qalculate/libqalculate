@@ -1452,6 +1452,24 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 
 	mstruct = vargs[0]; 
 
+	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_e) {
+		mstruct.set(m_one);
+		return true;
+	} else if(mstruct.isPower()) {
+		if(mstruct[0].isVariable() && mstruct[0].variable() == CALCULATOR->v_e) {
+			if(mstruct[1].representsReal()) {
+				mstruct.setToChild(2, true);
+				return true;
+			}
+		} else if(mstruct[0].representsPositive()) {
+			MathStructure mstruct2;
+			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
+			mstruct2 *= mstruct[1];
+			mstruct = mstruct2;
+			return true;
+		}
+	}
+
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
@@ -2666,7 +2684,7 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					mstruct.delChild(i + 1);
 					b = true;
 				} else {
-					if(!mstruct.isMinusOne() && mstruct[i].representsNegative()) {
+					if(!mstruct[i].isMinusOne() && mstruct[i].representsNegative()) {
 						mstruct[i].set(-1, 1, 0, true);
 						b = true;
 					}

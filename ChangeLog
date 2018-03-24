@@ -1,3 +1,7 @@
+2018-03-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segmentation fault when calculating arg(-x)
+
 2018-03-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Derivative of gamma(), besselj(), heaviside(), Ci(), Si(), Shi(), Chi(), Ei(), Li(), li(), erf(), erfc(), sinc(),

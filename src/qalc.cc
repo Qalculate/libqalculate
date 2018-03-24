@@ -1153,7 +1153,7 @@ int main(int argc, char *argv[]) {
 			result_only = true;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-version") == 0 || strcmp(argv[i], "--version") == 0 || strcmp(argv[i], "-v") == 0)) {
 			puts(VERSION);
-			return true;
+			return 0;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-interactive") == 0 || strcmp(argv[i], "--interactive") == 0 || strcmp(argv[i], "-i") == 0)) {
 			interactive_mode = true;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-list") == 0 || strcmp(argv[i], "--list") == 0 || strcmp(argv[i], "-l") == 0)) {
@@ -3938,7 +3938,7 @@ void load_preferences() {
 #endif
 
 	
-	int version_numbers[] = {2, 2, 1};
+	int version_numbers[] = {2, 3, 0};
 	
 	if(file) {
 		char line[10000];

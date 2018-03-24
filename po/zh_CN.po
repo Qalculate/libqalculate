@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-21 14:14+0100\n"
+"POT-Creation-Date: 2018-03-23 14:52+0100\n"
 "PO-Revision-Date: 2007-07-31 15:34+0800\n"
 "Last-Translator: Roy Qu <royqh1979@gmail.com>\n"
 "Language-Team: Simplified Chinese\n"
@@ -1913,7 +1913,7 @@ msgstr "plus"
 msgid "minus"
 msgstr "minus"
 
-#: ../libqalculate/Calculator.cc:384 ../libqalculate/MathStructure.cc:14942
+#: ../libqalculate/Calculator.cc:384 ../libqalculate/MathStructure.cc:15140
 #: ../libqalculate/Function.cc:1167 ../libqalculate/Function.cc:1175
 #: ../libqalculate/Function.cc:1591 ../libqalculate/Function.cc:1752
 #: ../libqalculate/Function.cc:1760
@@ -1921,7 +1921,7 @@ msgid "and"
 msgstr "and"
 
 #: ../libqalculate/Calculator.cc:388 ../libqalculate/DataSet.cc:1046
-#: ../libqalculate/DataSet.cc:1109 ../libqalculate/MathStructure.cc:14957
+#: ../libqalculate/DataSet.cc:1109 ../libqalculate/MathStructure.cc:15155
 #: ../libqalculate/Function.cc:2091 ../libqalculate/Function.cc:2107
 msgid "or"
 msgstr "or"
@@ -2182,87 +2182,87 @@ msgstr "在矩阵乘法中，第二个向量的列数(%s)必须与第一个向�
 #: ../libqalculate/MathStructure.cc:7115 ../libqalculate/MathStructure.cc:7134
 #: ../libqalculate/MathStructure.cc:7153 ../libqalculate/MathStructure.cc:7172
 #: ../libqalculate/MathStructure.cc:7283 ../libqalculate/MathStructure.cc:11157
-#: ../libqalculate/MathStructure.cc:11284
+#: ../libqalculate/MathStructure.cc:11431
 msgid "This is a bug. Please report it."
 msgstr "这是个bug。请想我们报告它。"
 
-#: ../libqalculate/MathStructure.cc:12445
+#: ../libqalculate/MathStructure.cc:12643
 msgid ""
 "Because of time constraints only a limited number of combinations of terms "
 "were tried during factorization. Repeat factorization to try other random "
 "combinations."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:15041
+#: ../libqalculate/MathStructure.cc:15239
 msgid "undefined"
 msgstr "undefined"
 
-#: ../libqalculate/MathStructure.cc:15082
+#: ../libqalculate/MathStructure.cc:15280
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to rank vector."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:15132
+#: ../libqalculate/MathStructure.cc:15330
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to sort vector."
 msgstr "试图为向量排序，但无法比较元素%s。"
 
-#: ../libqalculate/MathStructure.cc:15557
+#: ../libqalculate/MathStructure.cc:15755
 msgid "The determinant can only be calculated for square matrices."
 msgstr "只能为方阵计算行列式"
 
-#: ../libqalculate/MathStructure.cc:15620
+#: ../libqalculate/MathStructure.cc:15818
 msgid "The permanent can only be calculated for square matrices."
 msgstr "只能为方阵计算不变积和式"
 
-#: ../libqalculate/MathStructure.cc:15709
+#: ../libqalculate/MathStructure.cc:15907
 msgid "Inverse of singular matrix."
 msgstr "奇异矩阵的逆。"
 
-#: ../libqalculate/MathStructure.cc:16056
+#: ../libqalculate/MathStructure.cc:16254
 msgid ""
 "Calculations involving conversion of units without proportional linear "
 "relationship (e.g. with multiple temperature units), might give unexpected "
 "results and is not recommended."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:16792
-#: ../libqalculate/MathStructure.cc:16835
+#: ../libqalculate/MathStructure.cc:16990
+#: ../libqalculate/MathStructure.cc:17033
 msgid "Too many data points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:16799
+#: ../libqalculate/MathStructure.cc:16997
 msgid ""
 "The selected min and max do not result in a positive, finite number of data "
 "points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:16832
+#: ../libqalculate/MathStructure.cc:17030
 msgid ""
 "The selected min, max and step size do not result in a positive, finite "
 "number of data points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:22524
-#: ../libqalculate/MathStructure.cc:22661
-#: ../libqalculate/MathStructure.cc:22802
-#: ../libqalculate/MathStructure.cc:23283
-#: ../libqalculate/MathStructure.cc:23340
-#: ../libqalculate/MathStructure.cc:23382
-#: ../libqalculate/MathStructure.cc:23396
-#: ../libqalculate/MathStructure.cc:23447
-#: ../libqalculate/MathStructure.cc:23566
-#: ../libqalculate/MathStructure.cc:23700
+#: ../libqalculate/MathStructure.cc:23004
+#: ../libqalculate/MathStructure.cc:23141
+#: ../libqalculate/MathStructure.cc:23282
+#: ../libqalculate/MathStructure.cc:23763
+#: ../libqalculate/MathStructure.cc:23820
+#: ../libqalculate/MathStructure.cc:23862
+#: ../libqalculate/MathStructure.cc:23876
+#: ../libqalculate/MathStructure.cc:23927
+#: ../libqalculate/MathStructure.cc:24046
+#: ../libqalculate/MathStructure.cc:24180
 #, c-format
 msgid "Interval arithmetic was disabled during calculation of %s."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:23699
+#: ../libqalculate/MathStructure.cc:24179
 #, c-format
 msgid "Not all complex roots were calculated for %s."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:24723
+#: ../libqalculate/MathStructure.cc:25203
 #, c-format
 msgid "Only one or two of the roots where calculated for %s."
 msgstr ""

@@ -232,7 +232,7 @@ class Calculator {
 	vector<int> stopped_errors_count;
 	vector<int> stopped_warnings_count;
 	vector<int> stopped_messages_count;
-	vector<vector<CalculatorMessage>> stopped_messages;
+	vector<vector<CalculatorMessage> > stopped_messages;
 
 	Thread *calculate_thread;
 
