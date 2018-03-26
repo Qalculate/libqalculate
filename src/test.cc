@@ -18,13 +18,10 @@ void clear_errors() {
 }
 
 void test_integration4(const MathStructure &mstruct) {
-	PrintOptions po;
-	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	MathStructure x_var(CALCULATOR->v_x);
-	cout << "Integration test: " << mstruct.print(po) << endl;
+	cout << "Integration test: " << mstruct.print() << endl;
 	MathStructure mstruct2(mstruct);
 	EvaluationOptions eo;
-	eo.approximation = APPROXIMATION_APPROXIMATE;
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	eo.assume_denominators_nonzero = true;
 	mstruct2.integrate(x_var, eo);
@@ -36,26 +33,26 @@ void test_integration4(const MathStructure &mstruct) {
 	mstruct3.replace(x_var, 3);
 	mstruct3.eval(eo);
 	display_errors();
-	string str1 = mstruct3.print(po);
+	string str1 = mstruct3.print();
 	cout << str1 << endl;
 	mstruct3 = mstruct;
 	mstruct3.replace(x_var, 3);
 	mstruct3.eval(eo);
 	display_errors();
-	string str2 = mstruct3.print(po);
+	string str2 = mstruct3.print();
 	cout << str2 << endl;
 	if(str1 != str2) cout << "!!!" << endl;
 	mstruct3 = mstruct2;
 	mstruct3.replace(x_var, -5);
 	mstruct3.eval(eo);
 	display_errors();
-	str1 = mstruct3.print(po);
+	str1 = mstruct3.print();
 	cout << str1 << endl;
 	mstruct3 = mstruct;
 	mstruct3.replace(x_var, -5);
 	mstruct3.eval(eo);
 	display_errors();
-	str2 = mstruct3.print(po);
+	str2 = mstruct3.print();
 	cout << str2 << endl;
 	if(str1 != str2) cout << "!!!" << endl;
 	cout << "________________________________________________" << endl;
@@ -140,48 +137,46 @@ void test_integration2(const MathStructure &mstruct) {
 	test_integration3(mstruct2, mstruct);
 }
 void test_integration() {
-	ParseOptions po;
-	po.read_precision = READ_PRECISION_WHEN_DECIMALS;
 	MathStructure mstruct;
-	CALCULATOR->parse(&mstruct, "4x+sqrt(5)", po);
+	CALCULATOR->parse(&mstruct, "4x+5");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "-2x+2pi", po);
+	CALCULATOR->parse(&mstruct, "-2x+7");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "4.7x-2e", po);
+	CALCULATOR->parse(&mstruct, "4.7x-5.2");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "-4.3x+e*x-pi", po);
+	CALCULATOR->parse(&mstruct, "-4.3x-5");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "4.24345x", po);
+	CALCULATOR->parse(&mstruct, "4x");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "-2.3434x", po);
+	CALCULATOR->parse(&mstruct, "-2.3x");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "x+6.2345", po);
+	CALCULATOR->parse(&mstruct, "x+6");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "x-pi", po);
+	CALCULATOR->parse(&mstruct, "x-7");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "x", po);
+	CALCULATOR->parse(&mstruct, "x");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "x^e", po);
+	CALCULATOR->parse(&mstruct, "x^2");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "e*x^2+2pi", po);
+	CALCULATOR->parse(&mstruct, "2x^2+5");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "-2x^2-pi", po);
+	CALCULATOR->parse(&mstruct, "-2x^2-5");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "sqrt(x)", po);
+	CALCULATOR->parse(&mstruct, "sqrt(x)");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "sqrt(pi*x+e*x+3)", po);
+	CALCULATOR->parse(&mstruct, "sqrt(3x+3)");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "5*sqrt(e*x)-2", po);
+	CALCULATOR->parse(&mstruct, "5*sqrt(3x)-2");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "cbrt(e*+2x+pi)", po);
+	CALCULATOR->parse(&mstruct, "cbrt(3x+3)");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "(e*x+2x+pi)^(1/3)", po);
+	CALCULATOR->parse(&mstruct, "(3x+3)^(1/3)");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "cbrt(x)", po);
+	CALCULATOR->parse(&mstruct, "cbrt(x)");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "x^(1/e)", po);
+	CALCULATOR->parse(&mstruct, "x^(1/3)");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "e^x", po);
+	CALCULATOR->parse(&mstruct, "5^x");
 	test_integration2(mstruct);
 }
 
@@ -1002,7 +997,6 @@ int main(int argc, char *argv[]) {
 	new Calculator();
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
-	CALCULATOR->useIntervalArithmetic(true);
 	
 	EvaluationOptions evalops;
 	/*evalops.approximation = APPROXIMATION_TRY_EXACT;

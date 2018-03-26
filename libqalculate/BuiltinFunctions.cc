@@ -1461,7 +1461,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct.setToChild(2, true);
 				return true;
 			}
-		} else if(mstruct[0].representsPositive()) {
+		} else if(eo.approximation != APPROXIMATION_APPROXIMATE && (mstruct[0].representsPositive(true) || (mstruct[1].isNumber() && mstruct[1].number().isFraction()))) {
 			MathStructure mstruct2;
 			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
 			mstruct2 *= mstruct[1];
@@ -1488,7 +1488,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct.setToChild(2, true);
 				b = true;
 			}
-		} else if(mstruct[0].representsPositive()) {
+		} else if(mstruct[0].representsPositive(true) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
 			MathStructure mstruct2;
 			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
 			mstruct2 *= mstruct[1];
@@ -1541,6 +1541,28 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(nr.ln() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			mstruct.set(nr, true);
 			return 1;
+		}
+	} else if(mstruct.isPower()) {
+		if(mstruct[0].representsPositive(true) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
+			MathStructure mstruct2;
+			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
+			mstruct2 *= mstruct[1];
+			mstruct = mstruct2;
+			return 1;
+		}
+		if(eo.approximation == APPROXIMATION_EXACT && !mstruct[1].isNumber()) {
+			CALCULATOR->beginTemporaryStopMessages();
+			MathStructure mtest(mstruct[1]);
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			mtest.eval(eo2);
+			if(!CALCULATOR->endTemporaryStopMessages() && mtest.isNumber() && mtest.number().isFraction()) {
+				MathStructure mstruct2;
+				mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
+				mstruct2 *= mstruct[1];
+				mstruct = mstruct2;
+				return 1;
+			}
 		}
 	}
 	return -1;

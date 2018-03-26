@@ -5245,13 +5245,19 @@ bool Number::atan() {
 		return true;
 	}
 	if(hasImaginaryPart()) {
-		if(b_imag) return false;
-		Number ipz(nr_one_i), imz(nr_one_i);
-		if(!ipz.add(*this) || !imz.subtract(*this)) return false;
-		if(!ipz.divide(imz) || !ipz.ln() || !ipz.multiply(nr_one_i) || !ipz.divide(2)) return false;
-		if(ipz.isInterval(false) && ipz.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
-		set(ipz);
-		return true;
+		if(hasRealPart()) {
+			Number ipz(*this), imz(*this);
+			if(!ipz.multiply(nr_one_i) || !imz.multiply(nr_minus_i) || !ipz.add(1) || !imz.add(1)) return false;
+			if(!ipz.ln() || !imz.ln() || !imz.subtract(ipz) || !imz.multiply(nr_one_i) || !imz.divide(2)) return false;
+			if(imz.isInterval(false) && imz.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
+			set(imz);
+			return true;
+		} else {
+			Number nri(*i_value);
+			if(!nri.atanh() || !nri.multiply(nr_one_i)) return false;
+			set(nri, true);
+			return true;
+		}
 	}
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
@@ -6944,7 +6950,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			string str_l = printMPZ(ivalue, base, false, false);
 			mpfr_get_z(ivalue, vu, MPFR_RNDN);
 			string str_u = printMPZ(ivalue, base, false, false);
-			
+
 			if(str_u.length() > str_l.length()) {
 				str_l.insert(0, str_u.length() - str_l.length(), '0');
 			}
@@ -7028,20 +7034,25 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				po2.use_max_decimals = true;
 				return nr_zero.print(po2, ips);
 			}
-			
-			mpfr_mul(f_mid, vu, f_logl, MPFR_RNDN);
-			if(negl) mpfr_neg(f_mid, f_mid, MPFR_RNDN);
-			
-			mpfr_clears(vl, vu, f_logl, f_base, f_log_base, NULL);
+
 			mpq_clear(base_half);
 			
-			if(precision_base <= 1 && (mpfr_cmp_abs(f_mid, fu_value) > 0 || mpfr_cmp_abs(f_mid, fl_value) < 0)) {
-				mpfr_clear(f_mid);
-				PrintOptions po2 = po;
-				po2.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
-				return print(po2, ips);
+			if(precision_base <= 1) {
+				mpfr_mul(f_mid, vu, f_logl, MPFR_RNDN);
+				if(negl) mpfr_neg(f_mid, f_mid, MPFR_RNDN);
+				if(mpfr_cmp_abs(f_mid, fu_value) > 0 || mpfr_cmp_abs(f_mid, fl_value) < 0) {
+					mpfr_clears(vl, vu, f_logl, f_base, f_log_base, NULL);
+					mpfr_clear(f_mid);
+					PrintOptions po2 = po;
+					po2.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+					return print(po2, ips);
+				}
+			} else {
+				mpfr_set(f_mid, fl_value, MPFR_RNDN);
 			}
-				
+
+			mpfr_clears(vl, vu, f_logl, f_base, f_log_base, NULL);
+
 			if(po.is_approximate) *po.is_approximate = true;
 		}
 		
