@@ -1216,7 +1216,7 @@ bool MathStructure::representsNonComplex(bool allow_units) const {
 			return o_variable->representsNonComplex(allow_units);
 		}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isReal();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonComplex(allow_units)) || o_function->representsReal(*this, allow_units);}
+		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonComplex(allow_units)) || o_function->representsNonComplex(*this, allow_units);}
 		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
@@ -17874,11 +17874,43 @@ bool integrate_info(const MathStructure &mstruct, const MathStructure &x_var, Ma
 	return false;
 }
 
+bool test_absln_comp_cmplx(const MathStructure &mstruct) {
+	if(mstruct.number().isComplex() && (!mstruct.number().hasRealPart() || mstruct.number().hasPositiveSign()) && mstruct.number().internalImaginary()->isPositive()) return true;
+	if(mstruct.isPower() && mstruct[1].isNumber() && mstruct[1].number().numeratorIsOne() && mstruct[0].representsNonComplex(true)) return true;
+	if(mstruct.isMultiplication()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(!mstruct[i].representsNonNegative(true)) {
+				if(!test_absln_comp_cmplx(mstruct[i])) {
+					return false;
+				}
+			}
+		}
+		return true;
+	} else if(mstruct.isAddition()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(!mstruct[i].representsNonNegative(true)) {
+				if(!test_absln_comp_cmplx(mstruct[i])) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
 bool transform_absln(MathStructure &mstruct, int use_abs, bool definite_integral, const MathStructure &x_var, const EvaluationOptions &eo) {
-	if(use_abs != 0 && mstruct.representsNonComplex(true)) {
-		if(mstruct.representsNonPositive(true)) mstruct.negate();
-		else if(!mstruct.representsNonNegative(true)) mstruct.transform(CALCULATOR->f_abs);
-		mstruct.transform(CALCULATOR->f_ln);
+	if(use_abs != 0 && (mstruct.representsNonComplex(true) || test_absln_comp_cmplx(mstruct))) {
+		if(mstruct.representsNonPositive(true)) {
+			mstruct.negate();
+			mstruct.transform(CALCULATOR->f_ln);
+		} else if(!mstruct.representsNonNegative(true)) {
+			mstruct ^= nr_two;
+			mstruct.transform(CALCULATOR->f_ln);
+			mstruct /= nr_two;
+		} else {
+			mstruct.transform(CALCULATOR->f_ln);
+		}
 	} else if(use_abs != 0 && !mstruct.representsComplex(true)) {
 		if(definite_integral) use_abs = -1;
 		CALCULATOR->beginTemporaryStopMessages();
@@ -17888,8 +17920,11 @@ bool transform_absln(MathStructure &mstruct, int use_abs, bool definite_integral
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		mtest.eval(eo2);
 		CALCULATOR->endTemporaryStopMessages();
-		if(mtest.representsNonComplex(true)) {
-			if(!mtest.representsNonNegative(true)) {
+		if(mtest.representsNonComplex(true) || test_absln_comp_cmplx(mtest)) {
+			if(mstruct.representsNonPositive(true)) {
+				mstruct.negate();
+				mstruct.transform(CALCULATOR->f_ln);
+			} else if(!mtest.representsNonNegative(true)) {
 				mstruct ^= nr_two;
 				mstruct.transform(CALCULATOR->f_ln);
 				mstruct /= nr_two;
@@ -17907,21 +17942,30 @@ bool transform_absln(MathStructure &mstruct, int use_abs, bool definite_integral
 				eo2.approximation = APPROXIMATION_APPROXIMATE;
 				mtest.eval(eo2);
 				CALCULATOR->endTemporaryStopMessages();
-				if((use_abs > 0 && !mtest.representsComplex(true)) || (use_abs < 0 && mtest.representsNonComplex(true))) {
-					if(use_abs > 0 && !mtest.representsNonComplex(true)) CALCULATOR->error(false, "Integral assumed real", NULL);
-					if(!mtest.representsNonNegative(true)) {
+				if(mtest.representsNonComplex(true) || test_absln_comp_cmplx(mtest)) {
+					if(mstruct.representsNonPositive(true)) {
+						mstruct.negate();
+						mstruct.transform(CALCULATOR->f_ln);
+					} else if(!mtest.representsNonNegative(true)) {
 						mstruct ^= nr_two;
 						mstruct.transform(CALCULATOR->f_ln);
 						mstruct /= nr_two;
 					} else {
 						mstruct.transform(CALCULATOR->f_ln);
 					}
-				} else if(use_abs < 0 && !mtest.representsComplex(true)) {
-					MathStructure marg(CALCULATOR->f_arg, &mstruct, NULL);
-					marg *= nr_one_i;
-					mstruct.transform(CALCULATOR->f_abs);
-					mstruct.transform(CALCULATOR->f_ln);
-					mstruct += marg;
+				} else if(!mtest.representsComplex(true)) {
+					if(use_abs > 0) {
+						CALCULATOR->error(false, "Integral assumed real", NULL);
+						mstruct ^= nr_two;
+						mstruct.transform(CALCULATOR->f_ln);
+						mstruct /= nr_two;
+					} else {
+						MathStructure marg(CALCULATOR->f_arg, &mstruct, NULL);
+						marg *= nr_one_i;
+						mstruct.transform(CALCULATOR->f_abs);
+						mstruct.transform(CALCULATOR->f_ln);
+						mstruct += marg;
+					}
 				} else {
 					mstruct.transform(CALCULATOR->f_ln);
 				}
@@ -20616,16 +20660,16 @@ int contains_unsolved_integrate(const MathStructure &mstruct, MathStructure *thi
 
 bool fix_abs_x(MathStructure &mstruct, const MathStructure &x_var) {
 	bool b = false;
-	if(mstruct.isFunction() && mstruct.size() == 1 && mstruct[0].isFunction() && mstruct[0].function() == CALCULATOR->f_abs && mstruct[0].size() == 1 && mstruct[0][0].representsNonComplex(true)) {
-		if(mstruct.function() == CALCULATOR->f_sin || mstruct.function() == CALCULATOR->f_tan || mstruct.function() == CALCULATOR->f_sinh || mstruct.function() == CALCULATOR->f_tanh || mstruct.function() == CALCULATOR->f_asin || mstruct.function() == CALCULATOR->f_atan || mstruct.function() == CALCULATOR->f_asinh || mstruct.function() == CALCULATOR->f_atanh) {
+	if(mstruct.isFunction() && mstruct.size() == 1 && mstruct[0].isFunction() && mstruct[0].function() == CALCULATOR->f_abs && mstruct[0].size() == 1) {
+		if((mstruct.function() == CALCULATOR->f_sin || mstruct.function() == CALCULATOR->f_tan || mstruct.function() == CALCULATOR->f_sinh || mstruct.function() == CALCULATOR->f_tanh || mstruct.function() == CALCULATOR->f_asin || mstruct.function() == CALCULATOR->f_atan || mstruct.function() == CALCULATOR->f_asinh || mstruct.function() == CALCULATOR->f_atanh) && mstruct[0][0].representsNonComplex(true)) {
 			mstruct[0].setToChild(1, true);
 			mstruct.multiply_nocopy(new MathStructure(CALCULATOR->f_signum, &mstruct[0], &m_zero, NULL));
 			mstruct.evalSort(false);
 			b = true;
-		} else if(mstruct.function() == CALCULATOR->f_cos || mstruct.function() == CALCULATOR->f_cosh) {
+		} else if((mstruct.function() == CALCULATOR->f_cos || mstruct.function() == CALCULATOR->f_cosh) && mstruct[0][0].representsNonComplex(true)) {
 			mstruct[0].setToChild(1, true);
 			b = true;
-		} else if(mstruct.function() == CALCULATOR->f_ln) {
+		} else if(mstruct.function() == CALCULATOR->f_ln && (mstruct[0][0].representsNonComplex(true) || test_absln_comp_cmplx(mstruct[0][0]))) {
 			mstruct[0].setToChild(1, true);
 			mstruct[0] ^= nr_two;
 			mstruct /= nr_two;

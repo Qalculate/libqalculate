@@ -1,3 +1,9 @@
+2018-03-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix complex atan()
+	* Derivative of arg()
+	* ln(x^a)=ln(x)*a if 1>a>-1 and a!=0
+
 2018-03-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segmentation fault when calculating arg(-x)

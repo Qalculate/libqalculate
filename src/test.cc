@@ -24,7 +24,7 @@ void test_integration4(const MathStructure &mstruct) {
 	EvaluationOptions eo;
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	eo.assume_denominators_nonzero = true;
-	mstruct2.integrate(x_var, eo);
+	mstruct2.integrate(x_var, eo, true, 1);
 	mstruct2.eval(eo);
 	if(mstruct2.containsFunction(CALCULATOR->f_integrate)) {clear_errors(); return;}
 	mstruct2.differentiate(x_var, eo);

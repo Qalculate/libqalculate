@@ -1685,6 +1685,11 @@ bool is_real_angle_value(const MathStructure &mstruct) {
 			}
 		}
 		return b;
+	} else if(mstruct.isAddition()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(!is_real_angle_value(mstruct[i])) return false;
+		}
+		return true;
 	}
 	return false;
 }
@@ -1705,6 +1710,11 @@ bool is_number_angle_value(const MathStructure &mstruct) {
 			}
 		}
 		return b;
+	} else if(mstruct.isAddition()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(!is_number_angle_value(mstruct[i])) return false;
+		}
+		return true;
 	}
 	return false;
 }
