@@ -1,3 +1,8 @@
+2018-03-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow ParseOptions::comma_as_separator to have effect on unlocalizeExpression() 
+	  even if Calculator::useDecimalPoint(true) has not been called.
+
 2018-03-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix complex atan()

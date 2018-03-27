@@ -418,14 +418,14 @@ Calculator::Calculator() {
 	default_dot_as_separator = (local_digit_group_separator == ".");
 	if(strcmp(lc->decimal_point, ",") == 0) {
 		DOT_STR = ",";
-		DOT_S = ".,";	
+		DOT_S = ".,";
 		COMMA_STR = ";";
-		COMMA_S = ";";		
+		COMMA_S = ";";
 	} else {
-		DOT_STR = ".";	
-		DOT_S = ".";	
+		DOT_STR = ".";
+		DOT_S = ".";
 		COMMA_STR = ",";
-		COMMA_S = ",;";		
+		COMMA_S = ",;";
 	}
 	setlocale(LC_NUMERIC, "C");
 
@@ -1217,14 +1217,14 @@ void Calculator::setLocale() {
 	lconv *locale = localeconv();
 	if(strcmp(locale->decimal_point, ",") == 0) {
 		DOT_STR = ",";
-		DOT_S = ".,";	
+		DOT_S = ".,";
 		COMMA_STR = ";";
-		COMMA_S = ";";		
+		COMMA_S = ";";
 	} else {
-		DOT_STR = ".";	
-		DOT_S = ".";	
+		DOT_STR = ".";
+		DOT_S = ".";
 		COMMA_STR = ",";
-		COMMA_S = ",;";		
+		COMMA_S = ",;";
 	}
 	setlocale(LC_NUMERIC, "C");
 }
@@ -1889,7 +1889,8 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 			}
 		}
 	}
-	if(COMMA_STR != COMMA) {
+	if(COMMA_STR != COMMA || po.comma_as_separator) {
+		bool b_alt_comma = po.comma_as_separator && COMMA_STR == COMMA;
 		if(po.comma_as_separator) {
 			size_t ui = str.find(COMMA);
 			while(ui != string::npos) {
@@ -1907,19 +1908,19 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 				}
 			}	
 		}
-		size_t ui = str.find(COMMA_STR);
+		size_t ui = str.find(b_alt_comma ? ";" : COMMA_STR);
 		while(ui != string::npos) {
 			bool b = false;
 			for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
 				if(ui <= q_end[ui2] && ui >= q_begin[ui2]) {
-					ui = str.find(COMMA_STR, q_end[ui2] + 1);
+					ui = str.find(b_alt_comma ? ";" : COMMA_STR, q_end[ui2] + 1);
 					b = true;
 					break;
 				}
 			}
 			if(!b) {
-				str.replace(ui, COMMA_STR.length(), COMMA);
-				ui = str.find(COMMA_STR, ui + strlen(COMMA));
+				str.replace(ui, b_alt_comma ? 1 : COMMA_STR.length(), COMMA);
+				ui = str.find(b_alt_comma ? ";" : COMMA_STR, ui + strlen(COMMA));
 			}
 		}
 	}
