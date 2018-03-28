@@ -1,6 +1,6 @@
-2018-03-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2018-03-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Allow ParseOptions::comma_as_separator to have effect on unlocalizeExpression() 
+	* Allow ParseOptions::comma_as_separator to have effect on unlocalizeExpression() and localizeExpression() 
 	  even if Calculator::useDecimalPoint(true) has not been called.
 
 2018-03-26 Hanna Knutsson <hanna.knutsson@protonmail.com>

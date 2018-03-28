@@ -593,7 +593,7 @@ class Calculator {
 	* @param str The expression to localize.
 	* @returns A localized expression.
 	*/
-	string localizeExpression(string str) const;
+	string localizeExpression(string str, const ParseOptions &po = default_parse_options) const;
 	/** Returns an unlocalized expressions. Affects decimal signs and argument separators.
 	*
 	* @param str The expression to unlocalize.
@@ -1114,7 +1114,7 @@ class Calculator {
 	void setLocale();
 	void useDecimalComma();
 	/** Use point as decimal separator. 
-	* To use comma as an ignored separator in numbers, must be invoked with comma_as_separator = true, before using ParseOptions::comma_as_separator.
+	* To use comma as an ignored separator in numbers, must be invoked with comma_as_separator = true, to change the default function argument separator to semicolon, in addition to using ParseOptions::comma_as_separator.
 	*/	
 	void useDecimalPoint(bool comma_as_separator = false);
 	/** Resets argument separator and decimal sign. Mainly for internal use. */

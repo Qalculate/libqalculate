@@ -585,7 +585,7 @@ static const struct ParseOptions {
 	ReadPrecisionMode read_precision;
 	/// If true dots will ignored if another character is the default decimal sign, to allow dots to be used as thousand separator. Default: false
 	bool dot_as_separator;
-	/// If true commas will ignored if another character is the default decimal sign, to allow commas to be used as thousand separator. You also need to call CALCULATOR->useDecimalPoint(true). Default: false
+	/// If true commas will ignored if another character is the default decimal sign, to allow commas to be used as thousand separator. You should also call CALCULATOR->useDecimalPoint(true). Default: false
 	bool comma_as_separator;
 	///Interpret square brackets equally to parentheses (not only for vectors/matrices). Default; false
 	bool brackets_as_parentheses;
@@ -641,7 +641,7 @@ static const struct EvaluationOptions {
 	bool keep_zero_units;
 	/// If and how units will be automatically converted. Does not affect syncing of units. Default: POST_CONVERSION_NONE
 	AutoPostConversion auto_post_conversion;
-	/// Shows time as h + min + s, imperial length as ft + in, etc.
+	/// Shows time as h + min + s, imperial length as ft + in, etc. Default: MIXED_UNITS_CONVERSION_DEFAULT
 	MixedUnitsConversion mixed_units_conversion;
 	/// If the evaluation result will be simplified or factorized Default: STRUCTURING_NONE
 	StructuringMode structuring;
@@ -649,7 +649,9 @@ static const struct EvaluationOptions {
 	ParseOptions parse_options;
 	/// If set will decide which variable to isolate in an equation. Default: NULL
 	const MathStructure *isolate_var;
+	/// Use polynomial division to simplify the result. Default: true
 	bool do_polynomial_division;
+	/// Do not calculate the specified function. Default: NULL
 	MathFunction *protected_function;
 	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), expand(true), combine_divisions(false), reduce_divisions(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(false), warn_about_denominators_assumed_nonzero(false), split_squares(true), keep_zero_units(true), auto_post_conversion(POST_CONVERSION_NONE), mixed_units_conversion(MIXED_UNITS_CONVERSION_DEFAULT), structuring(STRUCTURING_SIMPLIFY), isolate_var(NULL), do_polynomial_division(true), protected_function(NULL) {}
 } default_evaluation_options;

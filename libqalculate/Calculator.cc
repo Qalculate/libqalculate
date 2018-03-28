@@ -1781,8 +1781,8 @@ void Calculator::terminateThreads() {
 	}
 }
 
-string Calculator::localizeExpression(string str) const {
-	if(DOT_STR == DOT && COMMA_STR == COMMA) return str;
+string Calculator::localizeExpression(string str, const ParseOptions &po) const {
+	if(DOT_STR == DOT && COMMA_STR == COMMA && !po.comma_as_separator) return str;
 	vector<size_t> q_begin;
 	vector<size_t> q_end;
 	size_t i3 = 0;
@@ -1800,7 +1800,8 @@ string Calculator::localizeExpression(string str) const {
 		q_end.push_back(i3);
 		i3++;
 	}
-	if(COMMA_STR != COMMA) {
+	if(COMMA_STR != COMMA || po.comma_as_separator) {
+		bool b_alt_comma = po.comma_as_separator && COMMA_STR == COMMA;
 		size_t ui = str.find(COMMA);
 		while(ui != string::npos) {
 			bool b = false;
@@ -1812,8 +1813,8 @@ string Calculator::localizeExpression(string str) const {
 				}
 			}
 			if(!b) {
-				str.replace(ui, strlen(COMMA), COMMA_STR);
-				ui = str.find(COMMA, ui + COMMA_STR.length());
+				str.replace(ui, strlen(COMMA), b_alt_comma ? ";" : COMMA_STR);
+				ui = str.find(COMMA, ui + (b_alt_comma ? 1 : COMMA_STR.length()));
 			}
 		}
 	}
@@ -1837,7 +1838,7 @@ string Calculator::localizeExpression(string str) const {
 	return str;
 }
 string Calculator::unlocalizeExpression(string str, const ParseOptions &po) const {
-	if(DOT_STR == DOT && COMMA_STR == COMMA) return str;
+	if(DOT_STR == DOT && COMMA_STR == COMMA && !po.comma_as_separator) return str;
 	vector<size_t> q_begin;
 	vector<size_t> q_end;
 	size_t i3 = 0;
