@@ -5731,12 +5731,20 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						parseAdd(str2, mstruct, po, OPERATION_ADD, append);
 					}
 					append = true;
-					if(mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad)) {
+					if((min && (mstruct->last().isNegate() || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last()[0].isMinusOne())) && mstruct->last().last().isMultiplication() && mstruct->last().last().size() == 2 && (mstruct->last().last().last().variable() && (mstruct->last().last().last().variable() == v_percent || mstruct->last().last().last().variable() == v_permille || mstruct->last().last().last().variable() == v_permyriad))) || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && (mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad)))) {
+						bool b_neg = false;
+						if(mstruct->last().isNegate()) {
+							mstruct->last().setToChild(1, true);
+							b_neg = true;
+						} else if(mstruct->last()[0].isMinusOne()) {
+							mstruct->last().setToChild(2, true);
+							b_neg = true;
+						}
 						if(mstruct->last()[0].isNumber()) {
-							if(min) mstruct->last()[0].number().negate();
+							if(b_neg) mstruct->last()[0].number().negate();
 							mstruct->last()[0].number().add(100);
 						} else {
-							if(min) mstruct->last()[0].negate();
+							if(b_neg) mstruct->last()[0].negate();
 							mstruct->last()[0] += Number(100, 1);
 							mstruct->last()[0].swapChildren(1, 2);
 						}
@@ -5783,12 +5791,20 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				} else {
 					parseAdd(str, mstruct, po, OPERATION_ADD, append);
 				}
-				if(mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad)) {
+				if((min && (mstruct->last().isNegate() || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last()[0].isMinusOne())) && mstruct->last().last().isMultiplication() && mstruct->last().last().size() == 2 && (mstruct->last().last().last().variable() && (mstruct->last().last().last().variable() == v_percent || mstruct->last().last().last().variable() == v_permille || mstruct->last().last().last().variable() == v_permyriad))) || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && (mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad)))) {
+					bool b_neg = false;
+					if(mstruct->last().isNegate()) {
+						mstruct->last().setToChild(1, true);
+						b_neg = true;
+					} else if(mstruct->last()[0].isMinusOne()) {
+						mstruct->last().setToChild(2, true);
+						b_neg = true;
+					}
 					if(mstruct->last()[0].isNumber()) {
-						if(min) mstruct->last()[0].number().negate();
+						if(b_neg) mstruct->last()[0].number().negate();
 						mstruct->last()[0].number().add(100);
 					} else {
-						if(min) mstruct->last()[0].negate();
+						if(b_neg) mstruct->last()[0].negate();
 						mstruct->last()[0] += Number(100, 1);
 						mstruct->last()[0].swapChildren(1, 2);
 					}
