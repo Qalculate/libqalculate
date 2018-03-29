@@ -1366,6 +1366,9 @@ void Calculator::addBuiltinVariables() {
 	v_euler = (KnownVariable*) addVariable(new EulerVariable());
 	v_catalan = (KnownVariable*) addVariable(new CatalanVariable());
 	v_precision = (KnownVariable*) addVariable(new PrecisionVariable());
+	v_percent = (KnownVariable*) addVariable(new KnownVariable("", "%", MathStructure(1, 1, -2), "Percent", false, true));
+	v_permille = (KnownVariable*) addVariable(new KnownVariable("", "permille", MathStructure(1, 1, -3), "Per Mille", false, true));
+	v_permyriad = (KnownVariable*) addVariable(new KnownVariable("", "permyriad", MathStructure(1, 1, -4), "Per Myriad", false, true));
 	v_x = (UnknownVariable*) addVariable(new UnknownVariable("", "x", "", true, false));
 	v_y = (UnknownVariable*) addVariable(new UnknownVariable("", "y", "", true, false));
 	v_z = (UnknownVariable*) addVariable(new UnknownVariable("", "z", "", true, false));
@@ -5728,6 +5731,24 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						parseAdd(str2, mstruct, po, OPERATION_ADD, append);
 					}
 					append = true;
+					if(mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad)) {
+						if(mstruct->last()[0].isNumber()) {
+							if(min) mstruct->last()[0].number().negate();
+							mstruct->last()[0].number().add(100);
+						} else {
+							if(min) mstruct->last()[0].negate();
+							mstruct->last()[0] += Number(100, 1);
+							mstruct->last()[0].swapChildren(1, 2);
+						}
+						if(mstruct->size() == 2) {
+							mstruct->setType(STRUCT_MULTIPLICATION);
+						} else {
+							MathStructure *mpercent = &mstruct->last();
+							mpercent->ref();
+							mstruct->delChild(mstruct->size());
+							mstruct->multiply_nocopy(mpercent);
+						}
+					}
 				} else {
 					if(!b && str2.empty()) {
 						c = true;
@@ -5761,6 +5782,24 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					parseAdd(str, mstruct, po, OPERATION_SUBTRACT, append);
 				} else {
 					parseAdd(str, mstruct, po, OPERATION_ADD, append);
+				}
+				if(mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad)) {
+					if(mstruct->last()[0].isNumber()) {
+						if(min) mstruct->last()[0].number().negate();
+						mstruct->last()[0].number().add(100);
+					} else {
+						if(min) mstruct->last()[0].negate();
+						mstruct->last()[0] += Number(100, 1);
+						mstruct->last()[0].swapChildren(1, 2);
+					}
+					if(mstruct->size() == 2) {
+						mstruct->setType(STRUCT_MULTIPLICATION);
+					} else {
+						MathStructure *mpercent = &mstruct->last();
+						mpercent->ref();
+						mstruct->delChild(mstruct->size());
+						mstruct->multiply_nocopy(mpercent);
+					}
 				}
 			}
 			return true;

@@ -1,22 +1,19 @@
 <?xml version="1.0"?>
-<QALCULATE version="2.2.1">
+<QALCULATE version="2.3.1">
   <category>
     <_title>Small Numbers</_title>
-    <variable>
+    <builtin_variable name="permille">
       <_title>Per Mille</_title>
       <_names>r:permille,au:&#x2030;</_names>
-      <value>1/1000</value>
-    </variable>
-    <variable>
+    </builtin_variable>
+    <builtin_variable name="permyriad">
       <_title>Per Myriad</_title>
       <_names>r:permyriad,au:&#x2031;</_names>
-      <value>1/10000</value>
-    </variable>
-    <variable>
+    </builtin_variable>
+    <builtin_variable name="%">
       <_title>Percent</_title>
       <_names>a:%,r:percent</_names>
-      <value>1/100</value>
-    </variable>
+    </builtin_variable>
   </category>
   <category>
     <_title>Large Numbers</_title>

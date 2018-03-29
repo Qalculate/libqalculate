@@ -276,6 +276,7 @@ class Calculator {
   public:
 
 	KnownVariable *v_pi, *v_e, *v_euler, *v_catalan, *v_i, *v_pinf, *v_minf, *v_undef, *v_precision;
+	KnownVariable *v_percent, *v_permille, *v_permyriad;
 	UnknownVariable *v_x, *v_y, *v_z;
 	MathFunction *f_vector, *f_sort, *f_rank, *f_limits, *f_component, *f_dimension, *f_merge_vectors;
 	MathFunction *f_matrix, *f_matrix_to_vector, *f_area, *f_rows, *f_columns, *f_row, *f_column, *f_elements, *f_element, *f_transpose, *f_identity, *f_determinant, *f_permanent, *f_adjoint, *f_cofactor, *f_inverse; 
