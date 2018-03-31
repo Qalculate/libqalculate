@@ -1,7 +1,7 @@
 /*
     Qalculate (library)
 
-    Copyright (C) 2003-2007, 2008, 2016-2017  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2018  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +14,10 @@
 
 #include <libqalculate/includes.h>
 #include <libqalculate/Number.h>
+#include <libqalculate/QalculateDateTime.h>
 #include <sys/time.h>
+
+class QalculateDate;
 
 /** @file */
 
@@ -42,7 +45,8 @@ typedef enum {
 	STRUCT_LOGICAL_NOT,
 	STRUCT_COMPARISON,
 	STRUCT_UNDEFINED,
-	STRUCT_ABORTED
+	STRUCT_ABORTED,
+	STRUCT_DATETIME
 } StructureType;
 
 enum {
@@ -158,6 +162,7 @@ class MathStructure {
 		
 		MathFunction *o_function;
 		MathStructure *function_value;
+		QalculateDateTime *o_datetime;
 		
 		ComparisonType ct_comp;
 		bool b_protected;
@@ -187,8 +192,14 @@ class MathStructure {
 		/** Create a new symbolic/text structure.
 		*
 		* @param sym Symbolic/text value.
+		* @param force_symbol Do not check for undefined or date value.
 		*/
-		MathStructure(string sym);
+		MathStructure(string sym, bool force_symbol = false);
+		/** Create a new date and time structure.
+		*
+		* @param sym Date and time value.
+		*/
+		MathStructure(const QalculateDateTime &o_dt);
 		/** Create a new numeric structure with floating point value. Uses Number::setFloat().
 		*
 		* @param o Numeric value.
@@ -252,8 +263,15 @@ class MathStructure {
 		*
 		* @param o The new symolic/text value.
 		* @param preserve_precision Preserve the current precision.
+		* @param force_symbol Do not check for undefined or date value.
 		*/
-		void set(string sym, bool preserve_precision = false);
+		void set(string sym, bool preserve_precision = false, bool force_symbol = false);
+		/** Set the structure to a date and time value.
+		*
+		* @param o The new data and time value.
+		* @param preserve_precision Preserve the current precision.
+		*/
+		void set(const QalculateDateTime &o_dt, bool preserve_precision = false);
 		/** Set the structure to a number with a floating point value. Uses Number::setFloat().
 		*
 		* @param o The new numeric value.
@@ -350,6 +368,12 @@ class MathStructure {
 		//@{
 		const string &symbol() const;
 		//@}
+		
+		/** @name Functions for date and time */
+		//@{
+		const QalculateDateTime *datetime() const;
+		QalculateDateTime *datetime();
+		//@}
 
 		/** @name Functions for units */
 		//@{
@@ -440,6 +464,7 @@ class MathStructure {
 		bool isMultiplication() const;
 		bool isPower() const;
 		bool isSymbolic() const;
+		bool isDateTime() const;
 		bool isAborted() const;
 		bool isEmptySymbol() const;
 		bool isVector() const;

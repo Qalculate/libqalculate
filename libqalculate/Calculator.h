@@ -1,7 +1,7 @@
 /*
     Qalculate    
 
-    Copyright (C) 2003-2007, 2008, 2016  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2018  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -292,7 +292,7 @@ class Calculator {
 	MathFunction *f_sin, *f_cos, *f_tan, *f_asin, *f_acos, *f_atan, *f_sinh, *f_cosh, *f_tanh, *f_asinh, *f_acosh, *f_atanh, *f_atan2, *f_sinc, *f_radians_to_default_angle_unit;
 	MathFunction *f_zeta, *f_gamma, *f_digamma, *f_beta, *f_airy, *f_besselj, *f_bessely, *f_erf, *f_erfc;
 	MathFunction *f_total, *f_percentile, *f_min, *f_max, *f_mode, *f_rand;
-	MathFunction *f_isodate, *f_localdate, *f_timestamp, *f_stamptodate, *f_days, *f_yearfrac, *f_week, *f_weekday, *f_month, *f_day, *f_year, *f_yearday, *f_time, *f_add_days, *f_add_months, *f_add_years;
+	MathFunction *f_timestamp, *f_stamptodate, *f_days, *f_yearfrac, *f_week, *f_weekday, *f_month, *f_day, *f_year, *f_yearday, *f_time, *f_add_days, *f_add_months, *f_add_years;
 	MathFunction *f_bin, *f_oct, *f_hex, *f_base, *f_roman;
 	MathFunction *f_ascii, *f_char;
 	MathFunction *f_length, *f_concatenate;
@@ -304,7 +304,7 @@ class Calculator {
 	MathFunction *f_register, *f_stack;
 	MathFunction *f_plot;
 	
-	Unit *u_rad, *u_gra, *u_deg, *u_euro, *u_btc;
+	Unit *u_rad, *u_gra, *u_deg, *u_euro, *u_btc, *u_second, *u_year, *u_month, *u_day;
 	DecimalPrefix *decimal_null_prefix;
 	BinaryPrefix *binary_null_prefix;
 
@@ -1166,44 +1166,5 @@ class Calculator {
 	//@}
 		
 };
-
-class QalculateDate {
-	protected:
-		long int i_year;
-		long int i_month;
-		long int i_day;
-	public:
-		QalculateDate();
-		QalculateDate(long int initialyear, int initialmonth, int initialday);
-		QalculateDate(long int initialtimestamp);
-		QalculateDate(string date_string);
-		bool operator > (const QalculateDate &date2) const;
-		bool operator < (const QalculateDate &date2) const;
-		bool operator >= (const QalculateDate &date2) const;
-		bool operator <= (const QalculateDate &date2) const;
-		bool operator != (const QalculateDate &date2) const;
-		bool operator == (const QalculateDate &date2) const;
-		bool isFutureDate() const;
-		bool isPastDate() const;
-		void setToCurrentDate();
-		bool set(long int newyear, int newmonth, int newday);
-		bool set(long int newtimestamp);
-		bool set(string date_string);
-		string toISOString() const;
-		string toLocalString() const;
-		long int year() const;
-		long int month() const;
-		long int day() const;
-		bool addDays(long int days);
-		bool addMonths(long int months);
-		bool addYears(long int years);
-		int weekday() const;
-		int week(bool start_sunday = false) const;
-		int yearday() const;
-		Number timestamp() const;
-		Number daysTo(const QalculateDate &date, int basis = 1, bool date_func = true) const;
-		Number yearsTo(const QalculateDate &date, int basis = 1, bool date_func = true) const;
-};
-
 
 #endif

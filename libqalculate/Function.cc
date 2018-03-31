@@ -1329,7 +1329,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 		}
 		size_t i = str.find(ID_WRAP_LEFT, pars);
 		if(i == string::npos || i >= str.length() - pars) {
-			mstruct->set(str.substr(pars, str.length() - pars * 2));
+			mstruct->set(str.substr(pars, str.length() - pars * 2), false, true);
 			return;
 		}
 		string str2 = str.substr(pars, str.length() - pars * 2);
@@ -1353,7 +1353,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 			str2.replace(i, i2 - i + 1, str3);
 			i += str3.length();
 		}
-		mstruct->set(str2);
+		mstruct->set(str2, false, true);
 		return;
 	} else {
 		CALCULATOR->parse(mstruct, str, po);
@@ -1802,22 +1802,22 @@ string TextArgument::print() const {return _("text");}
 string TextArgument::subprintlong() const {return _("a text string");}
 bool TextArgument::suggestsQuotes() const {return false;}
 
-DateArgument::DateArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
-DateArgument::DateArgument(const DateArgument *arg) {set(arg); b_text = true;}
+DateArgument::DateArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
+DateArgument::DateArgument(const DateArgument *arg) {set(arg);}
 DateArgument::~DateArgument() {}
 void DateArgument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
-	if(b_text && str.find_first_of(PARENTHESISS, 1) != string::npos) {
-		CALCULATOR->parse(mstruct, str, po);
+	QalculateDateTime dt_test;
+	if(dt_test.set(str)) {
+		mstruct->set(dt_test);
 	} else {
 		Argument::parse(mstruct, str, po);
 	}
 }
 bool DateArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	if(!value.isSymbolic()) {
+	if(!value.isDateTime()) {
 		value.eval(eo);
 	}
-	QalculateDate date;
-	return value.isSymbolic() && date.set(value.symbol());
+	return value.isDateTime();
 }
 int DateArgument::type() const {return ARGUMENT_TYPE_DATE;}
 Argument *DateArgument::copy() const {return new DateArgument(this);}

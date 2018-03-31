@@ -784,6 +784,15 @@
         <mix>2</mix>
       </base>
     </unit>
+    <unit type="alias">
+      <_title>Month</_title>
+      <_names>r:month,p:months</_names>
+      <base>
+        <unit>d</unit>
+        <relation>30.4375</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
     <category>
       <!-- Unit category -->
       <_title>!units!Frequency</_title>

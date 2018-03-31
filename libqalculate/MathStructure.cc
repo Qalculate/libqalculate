@@ -1,7 +1,7 @@
 /*
     Qalculate (library)
 
-    Copyright (C) 2003-2007, 2008, 2016-2017  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2018  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -326,6 +326,7 @@ inline void MathStructure::init() {
 	o_function = NULL;
 	o_unit = NULL;
 	o_prefix = NULL;
+	o_datetime = NULL;
 }
 
 MathStructure::MathStructure() {
@@ -343,7 +344,11 @@ MathStructure::MathStructure(const MathStructure &o) {
 			s_sym = o.symbol();
 			break;
 		}
-		case STRUCT_FUNCTION: {			
+		case STRUCT_DATETIME: {
+			o_datetime = new QalculateDateTime(*o.datetime());
+			break;
+		}
+		case STRUCT_FUNCTION: {
 			o_function = o.function();
 			if(o_function) o.function()->ref();
 			if(o.functionValue()) function_value = new MathStructure(*o.functionValue());
@@ -383,14 +388,28 @@ MathStructure::MathStructure(int num, int den, int exp10) {
 	init();
 	o_number.set(num, den, exp10);
 }
-MathStructure::MathStructure(string sym) {
+MathStructure::MathStructure(string sym, bool force_symbol) {
 	init();
-	if (sym == "undefined") {
-		setUndefined(true);
-		return;
+	if(!force_symbol && sym.length() > 1) {
+		if(sym == "undefined") {
+			setUndefined(false);
+			return;
+		}
+		o_datetime = new QalculateDateTime();
+		if(o_datetime->set(sym)) {
+			m_type = STRUCT_DATETIME;
+			return;
+		}
+		delete o_datetime;
+		o_datetime = NULL;
 	}
 	s_sym = sym;
 	m_type = STRUCT_SYMBOLIC;
+}
+MathStructure::MathStructure(const QalculateDateTime &o_dt) {
+	init();
+	o_datetime = new QalculateDateTime(o_dt);
+	m_type = STRUCT_DATETIME;
 }
 MathStructure::MathStructure(double float_value) {
 	init();
@@ -462,7 +481,11 @@ void MathStructure::set(const MathStructure &o, bool merge_precision) {
 			s_sym = o.symbol();
 			break;
 		}
-		case STRUCT_FUNCTION: {			
+		case STRUCT_DATETIME: {
+			o_datetime = new QalculateDateTime(*o.datetime());
+			break;
+		}
+		case STRUCT_FUNCTION: {
 			o_function = o.function();
 			if(o_function) o.function()->ref();
 			if(o.functionValue()) function_value = new MathStructure(*o.functionValue());
@@ -509,6 +532,10 @@ void MathStructure::set_nocopy(MathStructure &o, bool merge_precision) {
 		case STRUCT_ABORTED: {}
 		case STRUCT_SYMBOLIC: {
 			s_sym = o.symbol();
+			break;
+		}
+		case STRUCT_DATETIME: {
+			o_datetime = new QalculateDateTime(*o.datetime());
 			break;
 		}
 		case STRUCT_FUNCTION: {
@@ -590,14 +617,28 @@ void MathStructure::set(double float_value, bool preserve_precision) {
 	}
 	m_type = STRUCT_NUMBER;
 }
-void MathStructure::set(string sym, bool preserve_precision) {
-	if(sym == "undefined") {
-		setUndefined(true);
-		return;
-	}
+void MathStructure::set(string sym, bool preserve_precision, bool force_symbol) {
 	clear(preserve_precision);
+	if(!force_symbol && sym.length() > 1) {
+		if(sym == "undefined") {
+			setUndefined(true);
+			return;
+		}
+		o_datetime = new QalculateDateTime();
+		if(o_datetime->set(sym)) {
+			m_type = STRUCT_DATETIME;
+			return;
+		}
+		delete o_datetime;
+		o_datetime = NULL;
+	}
 	s_sym = sym;
 	m_type = STRUCT_SYMBOLIC;
+}
+void MathStructure::set(const QalculateDateTime &o_dt, bool preserve_precision) {
+	clear(preserve_precision);
+	o_datetime = new QalculateDateTime(o_dt);
+	m_type = STRUCT_DATETIME;
 }
 void MathStructure::setVector(const MathStructure *o, ...) {
 	clear();
@@ -788,6 +829,8 @@ void MathStructure::clear(bool preserve_precision) {
 	o_variable = NULL;
 	if(o_unit) o_unit->unref();
 	o_unit = NULL;
+	if(o_datetime) delete o_datetime;
+	o_datetime = NULL;
 	o_prefix = NULL;
 	b_plural = false;
 	b_protected = false;
@@ -835,6 +878,12 @@ void MathStructure::childrenUpdated(bool recursive) {
 }
 const string &MathStructure::symbol() const {
 	return s_sym;
+}
+const QalculateDateTime *MathStructure::datetime() const {
+	return o_datetime;
+}
+QalculateDateTime *MathStructure::datetime() {
+	return o_datetime;
 }
 ComparisonType MathStructure::comparisonType() const {
 	return ct_comp;
@@ -898,6 +947,7 @@ bool MathStructure::isAddition() const {return m_type == STRUCT_ADDITION;}
 bool MathStructure::isMultiplication() const {return m_type == STRUCT_MULTIPLICATION;}
 bool MathStructure::isPower() const {return m_type == STRUCT_POWER;}
 bool MathStructure::isSymbolic() const {return m_type == STRUCT_SYMBOLIC;}
+bool MathStructure::isDateTime() const {return m_type == STRUCT_DATETIME;}
 bool MathStructure::isAborted() const {return m_type == STRUCT_ABORTED;}
 bool MathStructure::isEmptySymbol() const {return m_type == STRUCT_SYMBOLIC && s_sym.empty();}
 bool MathStructure::isVector() const {return m_type == STRUCT_VECTOR;}
@@ -967,6 +1017,7 @@ bool MathStructure::representsNumber(bool allow_units) const {
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNumber();}
 		case STRUCT_FUNCTION: {return (function_value && function_value->representsNumber(allow_units)) || o_function->representsNumber(*this, allow_units);}
 		case STRUCT_UNIT: {return allow_units;}
+		case STRUCT_DATETIME: {return allow_units;}
 		case STRUCT_ADDITION: {}
 		case STRUCT_POWER: {}
 		case STRUCT_MULTIPLICATION: {
@@ -1187,6 +1238,7 @@ bool MathStructure::representsReal(bool allow_units) const {
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isReal();}
 		case STRUCT_FUNCTION: {return (function_value && function_value->representsReal(allow_units)) || o_function->representsReal(*this, allow_units);}
 		case STRUCT_UNIT: {return allow_units;}
+		case STRUCT_DATETIME: {return allow_units;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
 				if(!CHILD(i).representsReal(allow_units)) return false;
@@ -1218,6 +1270,7 @@ bool MathStructure::representsNonComplex(bool allow_units) const {
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isReal();}
 		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonComplex(allow_units)) || o_function->representsNonComplex(*this, allow_units);}
 		case STRUCT_UNIT: {return allow_units;}
+		case STRUCT_DATETIME: {return allow_units;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
 				if(!CHILD(i).representsNonComplex(allow_units)) return false;
@@ -2618,7 +2671,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 						calculateMultiplyIndex(0, eo, true, mparent, index_this);
 						return 1;
 					}
-					if(mstruct.type() == STRUCT_FUNCTION && mstruct.function() == CALCULATOR->f_signum && eo.protected_function != CALCULATOR->f_signum) {
+					if(mstruct.type() == STRUCT_DATETIME || (mstruct.type() == STRUCT_FUNCTION && mstruct.function() == CALCULATOR->f_signum && eo.protected_function != CALCULATOR->f_signum)) {
 						return 0;
 					}
 				}
@@ -2634,6 +2687,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 					return 1;
 				}
 			}
+			goto default_addition_merge;
 		}
 		case STRUCT_FUNCTION: {
 			if(o_function == CALCULATOR->f_signum && mstruct.isMultiplication() && eo.protected_function != CALCULATOR->f_signum) {
@@ -2652,10 +2706,78 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 					}
 				}
 			}
+			goto default_addition_merge;
+		}
+		case STRUCT_DATETIME: {
+			if(mstruct.isDateTime()) {
+				if(o_datetime->add(*mstruct.datetime())) {
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
+				}
+			} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne() && mstruct[1].isDateTime() && (CALCULATOR->u_second || CALCULATOR->u_day)) {
+				Number ndays = mstruct.datetime()->daysTo(*o_datetime);
+				set(ndays, true);
+				if(CALCULATOR->u_day) {
+					multiply(CALCULATOR->u_day);
+				} else {
+					multiply(Number(86400, 1));
+					multiply(CALCULATOR->u_second, true);
+				}
+				MERGE_APPROX_AND_PREC(mstruct)
+				return 1;
+			} else if(CALCULATOR->u_second && ((mstruct.isUnit() && mstruct.unit()->baseUnit() == CALCULATOR->u_second && mstruct.unit()->baseExponent() == 1 && !mstruct.unit()->hasComplexRelationTo(CALCULATOR->u_second)) || (mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[0].number().isReal() && !mstruct[0].number().isInterval() && mstruct[1].isUnit() && mstruct[1].unit()->baseUnit() == CALCULATOR->u_second && mstruct[1].unit()->baseExponent() == 1 && !mstruct[1].unit()->hasComplexRelationTo(CALCULATOR->u_second)))) {
+				MathStructure mmul(1, 1, 0);
+				Unit *u;
+				if(mstruct.isMultiplication()) {
+					mmul = mstruct[0];
+					u = mstruct[1].unit();
+				} else {
+					u = mstruct.unit();
+				}
+				if(CALCULATOR->u_month && u != CALCULATOR->u_year && (u == CALCULATOR->u_month || u->isChildOf(CALCULATOR->u_month))) {
+					if(u != CALCULATOR->u_month) {
+						CALCULATOR->u_month->convert(u, mmul);
+						mmul.eval(eo);
+					}
+					if(mmul.isNumber() && o_datetime->addMonths(mmul.number())) {
+						MERGE_APPROX_AND_PREC(mstruct)
+						return 1;
+					}
+				} else if(CALCULATOR->u_year && (u == CALCULATOR->u_year || u->isChildOf(CALCULATOR->u_year))) {
+					if(u != CALCULATOR->u_year) {
+						CALCULATOR->u_year->convert(u, mmul);
+						mmul.eval(eo);
+					}
+					if(mmul.isNumber() && o_datetime->addYears(mmul.number())) {
+						MERGE_APPROX_AND_PREC(mstruct)
+						return 1;
+					}
+				} else if(CALCULATOR->u_day && (u == CALCULATOR->u_day || u->isChildOf(CALCULATOR->u_day))) {
+					if(u != CALCULATOR->u_day) {
+						CALCULATOR->u_day->convert(u, mmul);
+						mmul.eval(eo);
+					}
+					if(mmul.isNumber() && o_datetime->addDays(mmul.number())) {
+						MERGE_APPROX_AND_PREC(mstruct)
+						return 1;
+					}
+				} else {
+					if(u != CALCULATOR->u_second) {
+						u->convertToBaseUnit(mmul);
+						mmul.eval(eo);
+					}
+					if(mmul.isNumber() && o_datetime->addSeconds(mmul.number())) {
+						MERGE_APPROX_AND_PREC(mstruct)
+						return 1;
+					}
+				}
+			}
 		}
 		default: {
+			default_addition_merge:
 			switch(mstruct.type()) {
 				case STRUCT_VECTOR: {return -1;}
+				case STRUCT_DATETIME: {}
 				case STRUCT_ADDITION: {}
 				case STRUCT_MULTIPLICATION: {
 					return 0;
@@ -14934,6 +15056,10 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				print_str += s_sym;
 				print_str += "\"";
 			}
+			break;
+		}
+		case STRUCT_DATETIME: {
+			print_str = o_datetime->print(po);
 			break;
 		}
 		case STRUCT_ADDITION: {

@@ -1755,20 +1755,6 @@
       <_title>Current Time</_title>
       <_names>r:time</_names>
     </builtin_function>
-    <builtin_function name="isodate">
-      <_title>Standard Date Format</_title>
-      <_names>r:isodate</_names>
-      <argument index="1">
-        <_title>Date</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="localdate">
-      <_title>Local Date Format</_title>
-      <_names>r:localdate</_names>
-      <argument index="1">
-        <_title>Date</_title>
-      </argument>
-    </builtin_function>
     <builtin_function name="timestamp">
       <_title>Date to Unix Timestamp</_title>
       <_names>r:timestamp</_names>
