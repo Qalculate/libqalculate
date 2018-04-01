@@ -120,7 +120,7 @@ bool QalculateDateTime::set(string str) {
 
 	remove_blank_ends(str);
 	if(equalsIgnoreCase(str, _("now")) || equalsIgnoreCase(str, "now")) {
-		set((long int) ::time(NULL));
+		set(::time(NULL));
 		return true;
 	} else if(equalsIgnoreCase(str, _("today")) || equalsIgnoreCase(str, "today")) {
 		struct tm tmdate;
@@ -157,7 +157,29 @@ bool QalculateDateTime::set(string str) {
 		addDays(-1);
 		return true;
 	}
-	
+	bool b_t = false;
+	size_t i_t = str.find("T");
+	int newhour = 0, newmin = 0, newsec = 0;
+	if(i_t != string::npos && i_t < str.length() - 1 && is_in(NUMBERS, str[i_t + 1])) {
+		b_t = true;
+		string time_str = str.substr(i_t + 1);
+		str.resize(i_t);
+		if(sscanf(time_str.c_str(), "%u:%u:%u", &newhour, &newmin, &newsec) < 2) {
+#ifndef _WIN32
+			struct tm tmdate;
+			if(strptime(time_str.c_str(), "%X", &tmdate) || strptime(time_str.c_str(), "%EX", &tmdate)) {
+				newhour = tmdate.tm_hour;
+				newmin = tmdate.tm_min;
+				newsec = tmdate.tm_sec;
+			} else {
+				return false;
+			}
+#else
+			return false;
+#endif
+		}
+	}
+	gsub(SIGN_MINUS, MINUS, str);
 	if(sscanf(str.c_str(), "%ld-%lu-%lu", &newyear, &newmonth, &newday) != 3) {
 		if(sscanf(str.c_str(), "%4ld%2lu%2lu", &newyear, &newmonth, &newday) != 3) {
 #ifndef _WIN32
@@ -207,7 +229,16 @@ bool QalculateDateTime::set(string str) {
 		}
 #endif
 	}
-	return set(newyear, newmonth, newday);
+	if(!set(newyear, newmonth, newday)) return false;
+	if(b_t) {
+		b_time = true;
+		n_time = newhour;
+		n_time *= 60;
+		n_time += newmin;
+		n_time *= 60;
+		n_time += newsec;
+	}
+	return true;
 }
 void QalculateDateTime::set(const QalculateDateTime &date) {
 	i_year = date.year();
@@ -251,7 +282,7 @@ string QalculateDateTime::toISOString() const {
 			if(n_rem.isLessThan(10)) str += "0";
 			str += n_rem.print();
 		}
-		str += "Z" << endl;
+		str += "Z";
 	}
 	return str;
 }
@@ -280,8 +311,13 @@ string QalculateDateTime::toLocalString() const {
 }
 string QalculateDateTime::print(const PrintOptions &po) const {
 	if(po.is_approximate && !n_time.isInteger()) *po.is_approximate = true;
-	if(po.date_time_format == DATE_TIME_FORMAT_LOCALE) return toLocalString();
-	return toISOString();
+	string str;
+	if(po.date_time_format == DATE_TIME_FORMAT_LOCALE) str = toLocalString();
+	else str = toISOString();
+	if(po.use_unicode_signs && i_year < 0 && str.length() > 0 && str[0] == MINUS_CH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
+		str.replace(0, 1, SIGN_MINUS);
+	}
+	return str;
 }
 long int QalculateDateTime::year() const {return i_year;}
 long int QalculateDateTime::month() const {return i_month;}

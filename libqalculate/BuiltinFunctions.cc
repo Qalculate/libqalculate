@@ -1642,10 +1642,10 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	if(mstruct.isZero()) {
 		b = true;
 	} else if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_e) {
-		mstruct.set(m_one);
+		mstruct.set(1, 1, 0, true);
 		b = true;
 	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne() && mstruct[1].isPower() && mstruct[1][0].isVariable() && mstruct[1][0].variable() == CALCULATOR->v_e && mstruct[1][1].isMinusOne()) {
-		mstruct = -1;
+		mstruct.set(-1, 1, 0, true);
 		b = true;		
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(b);

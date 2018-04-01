@@ -2369,7 +2369,7 @@ void Calculator::moveRPNRegisterDown(size_t index) {
 }
 
 bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
-	mstruct->set(string(_("calculating...")));
+	mstruct->set(string(_("calculating...")), false, true);
 	b_busy = true;
 	if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
 	bool had_msecs = msecs > 0;

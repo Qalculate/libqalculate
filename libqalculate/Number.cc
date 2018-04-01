@@ -5764,7 +5764,6 @@ bool Number::lambertW() {
 			mpfr_div(testXW, testXW, wPlusOneTimesExpW, MPFR_RNDN);
 			mpfr_abs(testXW, testXW, MPFR_RNDN);
 			if(mpfr_cmp(wPrec, testXW) > 0) {
-				
 				break;
 			}
 			mpfr_sub(wTimesExpW, wTimesExpW, x, MPFR_RNDN);
