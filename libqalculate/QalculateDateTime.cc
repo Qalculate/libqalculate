@@ -13,6 +13,9 @@
 #include "support.h"
 #include "util.h"
 #include "Calculator.h"
+#include "limits"
+#include <sstream>
+#include <iomanip>
 
 #define SECONDS_PER_DAY 86400
 
@@ -59,23 +62,69 @@ int daysPerMonth(int month, long int year) {
 	}
 }
 
+int dateTimeZone(struct tm *tmd, bool b_utc) {
+	struct tm tmdate = *tmd;
+	time_t rawtime;
+	rawtime = mktime(&tmdate);
+	if(b_utc) rawtime += dateTimeZone(tmd, false);
+	tmdate = *localtime(&rawtime);
+	std::ostringstream os;
+	os << std::put_time(&tmdate, "%z");
+	std::string s = os.str();
+	int h = s2i(s.substr(0, 3));
+	int m = s2i(s.substr(3));
+	return h * 3600 + m * 60;
+}
+int dateTimeZone(const QalculateDateTime &dt, bool b_utc) {
+	struct tm tmdate;
+	if(dt.year() > 2200) tmdate.tm_year = 300;
+	else if(dt.year() < 0) tmdate.tm_year = -1900;
+	else tmdate.tm_year = dt.year() - 1900;
+	tmdate.tm_mon = dt.month() - 1;
+	tmdate.tm_mday = dt.day();
+	Number ntimei(dt.timeValue());
+	ntimei.trunc();
+	if(!ntimei.isZero()) {
+		long int i_time = ntimei.lintValue();
+		tmdate.tm_hour = i_time / 3600;
+		i_time = i_time % 3600;
+		tmdate.tm_min = i_time / 60;
+		i_time = i_time % 60;
+		tmdate.tm_sec = i_time;
+	} else {
+		tmdate.tm_hour = 0;
+		tmdate.tm_min = 0;
+		tmdate.tm_sec = 0;
+	}
+	return dateTimeZone(&tmdate, b_utc);
+}
+
 QalculateDateTime::QalculateDateTime() : i_year(0), i_month(1), i_day(1), b_time(false) {}
 QalculateDateTime::QalculateDateTime(long int initialyear, int initialmonth, int initialday) : i_year(0), i_month(1), i_day(1), b_time(false) {set(initialyear, initialmonth, initialday);}
 QalculateDateTime::QalculateDateTime(const Number &initialtimestamp) : i_year(0), i_month(1), i_day(1), b_time(false) {set(initialtimestamp);}
 QalculateDateTime::QalculateDateTime(string date_string) : i_year(0), i_month(1), i_day(1), b_time(false) {set(date_string);}
 QalculateDateTime::QalculateDateTime(const QalculateDateTime &date) : i_year(date.year()), i_month(date.month()), i_day(date.day()), n_time(date.timeValue()), b_time(date.timeIsSet()) {}
 void QalculateDateTime::setToCurrentDate() {
-	set((long int) ::time(NULL));
+	struct tm tmdate;
+	time_t rawtime;
+	::time(&rawtime);
+	tmdate = *localtime(&rawtime);
+	set(tmdate.tm_year + 1900, tmdate.tm_mon + 1, tmdate.tm_mday);
+}
+void QalculateDateTime::setToCurrentTime() {
+	set(::time(NULL));
 }
 bool QalculateDateTime::operator > (const QalculateDateTime &date2) const {
 	if(i_year != date2.year()) return i_year > date2.year();
 	if(i_month != date2.month()) return i_month > date2.month();
-	return i_day > date2.day();
+	if(i_day != date2.day()) return i_day > date2.day();
+	return n_time.isGreaterThan(date2.timeValue());
 }
 bool QalculateDateTime::operator < (const QalculateDateTime &date2) const {
 	if(i_year != date2.year()) return i_year < date2.year();
 	if(i_month != date2.month()) return i_month < date2.month();
-	return i_day < date2.day();
+	if(i_day != date2.day()) return i_day < date2.day();
+	return n_time.isLessThan(date2.timeValue());
 }
 bool QalculateDateTime::operator >= (const QalculateDateTime &date2) const {
 	return !(*this < date2);
@@ -83,20 +132,28 @@ bool QalculateDateTime::operator >= (const QalculateDateTime &date2) const {
 bool QalculateDateTime::operator <= (const QalculateDateTime &date2) const {
 	return !(*this > date2);
 }
-bool QalculateDateTime::operator != (const QalculateDateTime &date2) const  {
-	return i_year != date2.year() || i_month != date2.month() || i_day > date2.day();
+bool QalculateDateTime::operator != (const QalculateDateTime &date2) const {
+	return i_year != date2.year() || i_month != date2.month() || i_day > date2.day() || !n_time.equals(date2.timeValue());
 }
 bool QalculateDateTime::operator == (const QalculateDateTime &date2) const {
-	return i_year == date2.year() && i_month == date2.month() && i_day == date2.day();
+	return i_year == date2.year() && i_month == date2.month() && i_day == date2.day() && n_time.equals(date2.timeValue());
 }
 bool QalculateDateTime::isFutureDate() const {
 	QalculateDateTime current_date;
-	current_date.setToCurrentDate();
+	if(!b_time && n_time.isZero()) {
+		current_date.setToCurrentDate();
+	} else {
+		current_date.setToCurrentTime();
+	}
 	return *this > current_date;
 }
 bool QalculateDateTime::isPastDate() const {
 	QalculateDateTime current_date;
-	current_date.setToCurrentDate();
+	if(!b_time && n_time.isZero()) {
+		current_date.setToCurrentDate();
+	} else {
+		current_date.setToCurrentTime();
+	}
 	return *this < current_date;
 }
 bool QalculateDateTime::set(long int newyear, int newmonth, int newday) {
@@ -105,14 +162,36 @@ bool QalculateDateTime::set(long int newyear, int newmonth, int newday) {
 	i_year = newyear;
 	i_month = newmonth;
 	i_day = newday;
+	b_time = false;
 	return true;
 }
 bool QalculateDateTime::set(const Number &newtimestamp) {
+	if(!newtimestamp.isReal() || newtimestamp.isInterval()) return false;
+	QalculateDateTime tmbak(*this);
 	i_year = 1970;
 	i_month = 1;
 	i_day = 1;
 	b_time = true;
-	return addSeconds(newtimestamp);
+	if(newtimestamp.isNegative()) {
+		if(!addSeconds(newtimestamp)) {
+			set(tmbak);
+			return false;
+		}
+	} else {
+		Number ndays(newtimestamp);
+		ndays /= SECONDS_PER_DAY;
+		ndays.trunc();
+		bool overflow = false;
+		long int new_days = ndays.lintValue(&overflow);
+		if(overflow || !addDays(new_days)) {
+			set(tmbak);
+			return false;
+		}
+		ndays *= SECONDS_PER_DAY;
+		n_time = newtimestamp;
+		n_time -= ndays;
+	}
+	return true;
 }
 bool QalculateDateTime::set(string str) {
 
@@ -120,40 +199,17 @@ bool QalculateDateTime::set(string str) {
 
 	remove_blank_ends(str);
 	if(equalsIgnoreCase(str, _("now")) || equalsIgnoreCase(str, "now")) {
-		set(::time(NULL));
+		setToCurrentTime();
 		return true;
 	} else if(equalsIgnoreCase(str, _("today")) || equalsIgnoreCase(str, "today")) {
-		struct tm tmdate;
-		time_t rawtime;
-		::time(&rawtime);
-		tmdate = *localtime(&rawtime);
-		b_time = false;
-		newyear = tmdate.tm_year + 1900;
-		newmonth = tmdate.tm_mon + 1;
-		newday = tmdate.tm_mday;
-		return set(newyear, newmonth, newday);
+		setToCurrentDate();
+		return true;
 	} else if(equalsIgnoreCase(str, _("tomorrow")) || equalsIgnoreCase(str, "tomorrow")) {
-		struct tm tmdate;
-		time_t rawtime;
-		::time(&rawtime);
-		tmdate = *localtime(&rawtime);
-		b_time = false;
-		newyear = tmdate.tm_year + 1900;
-		newmonth = tmdate.tm_mon + 1;
-		newday = tmdate.tm_mday;
-		if(set(newyear, newmonth, newday)) return false;
+		setToCurrentDate();
 		addDays(1);
 		return true;
 	} else if(equalsIgnoreCase(str, _("yesterday")) || equalsIgnoreCase(str, "yesterday")) {
-		struct tm tmdate;
-		time_t rawtime;
-		::time(&rawtime);
-		tmdate = *localtime(&rawtime);
-		b_time = false;
-		newyear = tmdate.tm_year + 1900;
-		newmonth = tmdate.tm_mon + 1;
-		newday = tmdate.tm_mday;
-		if(set(newyear, newmonth, newday)) return false;
+		setToCurrentDate();
 		addDays(-1);
 		return true;
 	}
@@ -165,20 +221,23 @@ bool QalculateDateTime::set(string str) {
 		string time_str = str.substr(i_t + 1);
 		str.resize(i_t);
 		if(sscanf(time_str.c_str(), "%u:%u:%u", &newhour, &newmin, &newsec) < 2) {
+			if(sscanf(time_str.c_str(), "%2u%2u%2u", &newhour, &newmin, &newsec) < 2) {
 #ifndef _WIN32
-			struct tm tmdate;
-			if(strptime(time_str.c_str(), "%X", &tmdate) || strptime(time_str.c_str(), "%EX", &tmdate)) {
-				newhour = tmdate.tm_hour;
-				newmin = tmdate.tm_min;
-				newsec = tmdate.tm_sec;
-			} else {
-				return false;
-			}
+				struct tm tmdate;
+				if(strptime(time_str.c_str(), "%X", &tmdate) || strptime(time_str.c_str(), "%EX", &tmdate)) {
+					newhour = tmdate.tm_hour;
+					newmin = tmdate.tm_min;
+					newsec = tmdate.tm_sec;
+				} else {
+					return false;
+				}
 #else
-			return false;
+				return false;
 #endif
+			}
 		}
 	}
+	if(newhour >= 24 || newmin >= 60 || newsec > 60) return false;
 	gsub(SIGN_MINUS, MINUS, str);
 	if(sscanf(str.c_str(), "%ld-%lu-%lu", &newyear, &newmonth, &newday) != 3) {
 		if(sscanf(str.c_str(), "%4ld%2lu%2lu", &newyear, &newmonth, &newday) != 3) {
@@ -237,6 +296,7 @@ bool QalculateDateTime::set(string str) {
 		n_time += newmin;
 		n_time *= 60;
 		n_time += newsec;
+		addSeconds(-dateTimeZone(*this, false));
 	}
 	return true;
 }
@@ -245,8 +305,14 @@ void QalculateDateTime::set(const QalculateDateTime &date) {
 	i_month = date.month();
 	i_day = date.day();
 	n_time = date.timeValue();
+	b_time = date.timeIsSet();
 }
-string QalculateDateTime::toISOString() const {
+string QalculateDateTime::toISOString(bool local) const {
+	if(local && timeIsSet()) {
+		QalculateDateTime dtloc(*this);
+		dtloc.addSeconds(dateTimeZone(*this, true));
+		return dtloc.toISOString(false);
+	}
 	string str = i2s(i_year);
 	str += "-";
 	if(i_month < 10) {
@@ -277,33 +343,40 @@ string QalculateDateTime::toISOString() const {
 		str += n_min.print();
 		n_min *= 60;
 		n_rem -= n_min;
-		if(!n_rem.isZero()) {
-			str += ":";
-			if(n_rem.isLessThan(10)) str += "0";
-			str += n_rem.print();
-		}
-		str += "Z";
+		str += ":";
+		if(n_rem.isLessThan(10)) str += "0";
+		str += n_rem.print();
 	}
 	return str;
 }
-string QalculateDateTime::toLocalString() const {
+string QalculateDateTime::toLocalString(bool local) const {
+	if(local && timeIsSet()) {
+		QalculateDateTime dtloc(*this);
+		dtloc.addSeconds(dateTimeZone(*this, true));
+		return dtloc.toLocalString(false);
+	}
+	if(i_year > INT_MAX + 1900L || i_year < INT_MIN + 1900) return toISOString(local);
 	struct tm tmdate;
 	tmdate.tm_year = i_year - 1900;
 	tmdate.tm_mon = i_month - 1;
 	tmdate.tm_mday = i_day;
 	Number ntimei(n_time);
 	ntimei.trunc();
-	if(b_time) {
+	if(b_time || !ntimei.isZero()) {
 		long int i_time = ntimei.lintValue();
 		tmdate.tm_hour = i_time / 3600;
 		i_time = i_time % 3600;
 		tmdate.tm_min = i_time / 60;
 		i_time = i_time % 60;
 		tmdate.tm_sec = i_time;
+	} else {
+		tmdate.tm_hour = 0;
+		tmdate.tm_min = 0;
+		tmdate.tm_sec = 0;
 	}
 	char *buffer = (char*) malloc(100 * sizeof(char));
-	if(!strftime(buffer, 100, "%xT%XZ", &tmdate)) {
-		return toISOString();
+	if(!strftime(buffer, 100, "%xT%X", &tmdate)) {
+		return toISOString(local);
 	}
 	string str = buffer;
 	free(buffer);
@@ -312,17 +385,45 @@ string QalculateDateTime::toLocalString() const {
 string QalculateDateTime::print(const PrintOptions &po) const {
 	if(po.is_approximate && !n_time.isInteger()) *po.is_approximate = true;
 	string str;
-	if(po.date_time_format == DATE_TIME_FORMAT_LOCALE) str = toLocalString();
-	else str = toISOString();
+	if(po.date_time_format == DATE_TIME_FORMAT_LOCALE) str = toLocalString(true);
+	else str = toISOString(true);
 	if(po.use_unicode_signs && i_year < 0 && str.length() > 0 && str[0] == MINUS_CH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
 		str.replace(0, 1, SIGN_MINUS);
 	}
 	return str;
 }
-long int QalculateDateTime::year() const {return i_year;}
-long int QalculateDateTime::month() const {return i_month;}
-long int QalculateDateTime::day() const {return i_day;}
-const Number &QalculateDateTime::timeValue() const {return n_time;}
+long int QalculateDateTime::year(bool local) const {
+	if(local && timeIsSet()) {
+		QalculateDateTime dtloc(*this);
+		dtloc.addSeconds(dateTimeZone(*this, true));
+		return dtloc.year(false);
+	}
+	return i_year;
+}
+long int QalculateDateTime::month(bool local) const {
+	if(local && timeIsSet()) {
+		QalculateDateTime dtloc(*this);
+		dtloc.addSeconds(dateTimeZone(*this, true));
+		return dtloc.month(false);
+	}
+	return i_month;
+}
+long int QalculateDateTime::day(bool local) const {
+	if(local && timeIsSet()) {
+		QalculateDateTime dtloc(*this);
+		dtloc.addSeconds(dateTimeZone(*this, true));
+		return dtloc.day(false);
+	}
+	return i_day;
+}
+const Number &QalculateDateTime::timeValue(bool local) const {
+	if(local && timeIsSet()) {
+		QalculateDateTime dtloc(*this);
+		dtloc.addSeconds(dateTimeZone(*this, true));
+		return dtloc.timeValue(false);
+	}
+	return n_time;
+}
 bool QalculateDateTime::timeIsSet() const {return b_time;}
 bool QalculateDateTime::addDays(const Number &ndays) {
 	if(!ndays.isReal() || ndays.isInterval()) return false;
@@ -512,7 +613,11 @@ bool QalculateDateTime::addYears(const Number &nyears) {
 	}
 	return true;
 }
-bool QalculateDateTime::addSeconds(const Number &seconds) {
+bool QalculateDateTime::addSeconds(const Number &seconds_pre) {
+	if(!seconds_pre.isReal() || seconds_pre.isInterval()) return false;
+	Number seconds(seconds_pre);
+	QalculateDateTime dtbak(*this);
+	if(!b_time) seconds -= dateTimeZone(*this, false);
 	Number new_time(n_time);
 	if(!new_time.add(seconds)) return false;
 	if(new_time.isNegative()) {
@@ -534,8 +639,7 @@ bool QalculateDateTime::addSeconds(const Number &seconds) {
 			if(!addDays(-1)) return false;
 		}
 		if(!new_time.isZero()) {
-			new_time = SECONDS_PER_DAY;
-			new_time.add(new_time);
+			new_time.add(SECONDS_PER_DAY);
 		}
 	} else if(new_time.isGreaterThanOrEqualTo(SECONDS_PER_DAY)) {
 		Number ndays(new_time);
@@ -560,6 +664,12 @@ bool QalculateDateTime::add(const QalculateDateTime &date) {
 	return true;
 }
 int QalculateDateTime::weekday() const {
+	if(timeIsSet()) {
+		QalculateDateTime dtloc(*this);
+		dtloc.addSeconds(dateTimeZone(*this, true));
+		dtloc.set(dtloc.year(), dtloc.month(), dtloc.day());
+		return dtloc.weekday();
+	}
 	Number nr(daysTo(QalculateDateTime(2017, 7, 31)));
 	if(nr.isInfinite()) return -1;
 	nr.negate();
@@ -568,6 +678,12 @@ int QalculateDateTime::weekday() const {
 	return nr.intValue() + 1;
 }
 int QalculateDateTime::week(bool start_sunday) const {
+	if(timeIsSet()) {
+		QalculateDateTime dtloc(*this);
+		dtloc.addSeconds(dateTimeZone(*this, true));
+		dtloc.set(dtloc.year(), dtloc.month(), dtloc.day());
+		return dtloc.week();
+	}
 	if(start_sunday) {
 		int yday = yearday();
 		QalculateDateTime date1(i_year, 1, 1);
@@ -607,6 +723,12 @@ int QalculateDateTime::week(bool start_sunday) const {
 	}
 }
 int QalculateDateTime::yearday() const {
+	if(timeIsSet()) {
+		QalculateDateTime dtloc(*this);
+		dtloc.addSeconds(dateTimeZone(*this, true));
+		dtloc.set(dtloc.year(), dtloc.month(), dtloc.day());
+		return dtloc.yearday();
+	}
 	int yday = 0;
 	for(long int i = 1; i < i_month; i++) {
 		yday += daysPerMonth(i, i_year);
@@ -616,7 +738,7 @@ int QalculateDateTime::yearday() const {
 Number QalculateDateTime::timestamp() const {
 	QalculateDateTime date(nr_zero);
 	Number nr(date.daysTo(*this));
-	nr *= (60 * 60 * 24);
+	nr *= SECONDS_PER_DAY;
 	return nr;
 }
 Number QalculateDateTime::daysTo(const QalculateDateTime &date, int basis, bool date_func) const {
@@ -625,17 +747,41 @@ Number QalculateDateTime::daysTo(const QalculateDateTime &date, int basis, bool 
 	
 	if(basis < 0 || basis > 4) basis = 1;
 	
+	if(timeIsSet() || date.timeIsSet()) {
+		if(basis != 1 || !date_func) {
+			QalculateDateTime dt1(*this), dt2(date);
+			if(timeIsSet()) dt1.addSeconds(dateTimeZone(*this, true));
+			if(date.timeIsSet()) dt2.addSeconds(dateTimeZone(date, true));
+			dt1.set(dt1.year(), dt1.month(), dt1.day());
+			dt2.set(dt2.year(), dt2.month(), dt2.day());
+			return dt1.daysTo(dt2, basis, date_func);
+		}
+		if(!date.timeIsSet()) {
+			QalculateDateTime dtutc(date);
+			dtutc.addSeconds(-dateTimeZone(date, false));
+			return daysTo(dtutc, basis, date_func);
+		}
+		if(!timeIsSet()) {
+			QalculateDateTime dtutc(*this);
+			dtutc.addSeconds(-dateTimeZone(*this, false));
+			return dtutc.daysTo(date, basis, date_func);
+		}
+	}
+	
 	bool neg = false;
 	bool isleap = false;
 	long int days, years;
 	
 	long int day1 = i_day, month1 = i_month, year1 = i_year;
 	long int day2 = date.day(), month2 = date.month(), year2 = date.year();
+	Number t1(n_time), t2(date.timeValue());
 
-	if(year1 > year2 || (year1 == year2 && month1 > month2) || (year1 == year2 && month1 == month2 && day1 > day2)) {
+	if(year1 > year2 || (year1 == year2 && month1 > month2) || (year1 == year2 && month1 == month2 && day1 > day2) || (basis == 1 && date_func && year1 == year2 && month1 == month2 && day1 == day2 && t1.isGreaterThan(t2))) {
 		int year3 = year1, month3 = month1, day3 = day1;
 		year1 = year2; month1 = month2; day1 = day2;
 		year2 = year3; month2 = month3; day2 = day3;
+		Number t3(t1);
+		t1 = t2; t2 = t3;
 		neg = true;
 	}
 
@@ -700,7 +846,12 @@ Number QalculateDateTime::daysTo(const QalculateDateTime &date, int basis, bool 
 				}
 				if(isLeapYear(year1)) nr += 366;
 				else nr += 365;
-			} 
+			}
+			if(basis == 1 && !t1.equals(t2)) {
+				t2 -= t1;
+				t2 /= 86400;
+				nr += t2;
+			}
 			break;
 		} 
 		case 4: {
@@ -722,6 +873,26 @@ Number QalculateDateTime::daysTo(const QalculateDateTime &date, int basis, bool 
 Number QalculateDateTime::yearsTo(const QalculateDateTime &date, int basis, bool date_func) const {
 	Number nr;
 	if(basis < 0 || basis > 4) basis = 1;
+	if(timeIsSet() || date.timeIsSet()) {
+		if(basis != 1 || !date_func) {
+			QalculateDateTime dt1(*this), dt2(date);
+			if(timeIsSet()) dt1.addSeconds(dateTimeZone(*this, true));
+			if(date.timeIsSet()) dt2.addSeconds(dateTimeZone(date, true));
+			dt1.set(dt1.year(), dt1.month(), dt1.day());
+			dt2.set(dt2.year(), dt2.month(), dt2.day());
+			return dt1.daysTo(dt2, basis, date_func);
+		}
+		if(!date.timeIsSet()) {
+			QalculateDateTime dtutc(date);
+			dtutc.addSeconds(-dateTimeZone(date, false));
+			return daysTo(dtutc, basis, date_func);
+		}
+		if(!timeIsSet()) {
+			QalculateDateTime dtutc(*this);
+			dtutc.addSeconds(-dateTimeZone(*this, false));
+			return dtutc.daysTo(date, basis, date_func);
+		}
+	}
 	if(basis == 1) {
 		if(date.year() == i_year) {
 			nr.set(daysTo(date, basis, date_func));
@@ -730,20 +901,27 @@ Number QalculateDateTime::yearsTo(const QalculateDateTime &date, int basis, bool
 			bool neg = false;
 			long int day1 = i_day, month1 = i_month, year1 = i_year;
 			long int day2 = date.day(), month2 = date.month(), year2 = date.year();
+			Number t1(n_time), t2(date.timeValue());
 			if(year1 > year2) {
 				int year3 = year1, month3 = month1, day3 = day1;
 				year1 = year2; month1 = month2; day1 = day2;
 				year2 = year3; month2 = month3; day2 = day3;
+				Number t3(t1);
+				t1 = t2; t2 = t3;
 				neg = true;
 			}
+			t1 /= 86400;
+			t2 /= 86400;
 			for(int month = 12; month > month1; month--) {
 				nr += daysPerMonth(month, year1);
 			}
 			nr += daysPerMonth(month1, year1) - day1 + 1;
+			nr -= t1;
 			for(int month = 1; month < month2; month++) {
 				nr += daysPerMonth(month, year2);
 			}
 			nr += day2 - 1;
+			nr += t2;
 			bool check_aborted = (year2 - year1) > 10000L;
 			Number days_of_years;
 			for(int year = year1; year <= year2; year++) {

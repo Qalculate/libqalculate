@@ -3292,7 +3292,7 @@ MonthFunction::MonthFunction() : MathFunction("month", 0, 1) {
 }
 int MonthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDateTime date(*vargs[0].datetime());
-	mstruct.set(date.month(), 1L, 0L);
+	mstruct.set(date.month(true), 1L, 0L);
 	return 1;
 }
 DayFunction::DayFunction() : MathFunction("day", 0, 1) {
@@ -3301,7 +3301,7 @@ DayFunction::DayFunction() : MathFunction("day", 0, 1) {
 }
 int DayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDateTime date(*vargs[0].datetime());
-	mstruct.set(date.day(), 1L, 0L);
+	mstruct.set(date.day(true), 1L, 0L);
 	return 1;
 }
 YearFunction::YearFunction() : MathFunction("year", 0, 1) {
@@ -3310,7 +3310,7 @@ YearFunction::YearFunction() : MathFunction("year", 0, 1) {
 }
 int YearFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDateTime date(*vargs[0].datetime());
-	mstruct.set(date.year(), 1L, 0L);
+	mstruct.set(date.year(true), 1L, 0L);
 	return 1;
 }
 TimeFunction::TimeFunction() : MathFunction("time", 0) {

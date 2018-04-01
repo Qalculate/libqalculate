@@ -1334,6 +1334,7 @@ bool MathStructure::representsNonZero(bool allow_units) const {
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonZero();}
 		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonZero(allow_units)) || o_function->representsNonZero(*this, allow_units);}
 		case STRUCT_UNIT: {return allow_units;}
+		case STRUCT_DATETIME: {return allow_units;}
 		case STRUCT_ADDITION: {
 			bool neg = false, started = false;
 			for(size_t i = 0; i < SIZE; i++) {
@@ -2044,6 +2045,7 @@ bool MathStructure::equals(const MathStructure &o, bool allow_interval) const {
 	switch(m_type) {
 		case STRUCT_UNDEFINED: {return true;}
 		case STRUCT_SYMBOLIC: {return s_sym == o.symbol();}
+		case STRUCT_DATETIME: {return *o_datetime == *o.datetime();}
 		case STRUCT_NUMBER: {return o_number.equals(o.number(), allow_interval);}
 		case STRUCT_VARIABLE: {return o_variable == o.variable();}
 		case STRUCT_UNIT: {
@@ -2193,6 +2195,11 @@ ComparisonResult MathStructure::compare(const MathStructure &o) const {
 	if(isNumber() && o.isNumber()) {
 		return o_number.compare(o.number());
 	}
+	if(isDateTime() && o.isDateTime()) {
+		if(*o_datetime == *o.datetime()) return COMPARISON_RESULT_EQUAL;
+		if(*o_datetime > *o.datetime()) return COMPARISON_RESULT_LESS;
+		return COMPARISON_RESULT_GREATER;
+	}
 	if(equals(o)) return COMPARISON_RESULT_EQUAL;
 	if(isMultiplication() && SIZE > 1 && CHILD(0).isNumber()) {
 		if(o.isMultiplication() && o.size() > 1) {
@@ -2253,6 +2260,11 @@ ComparisonResult MathStructure::compare(const MathStructure &o) const {
 ComparisonResult MathStructure::compareApproximately(const MathStructure &o, const EvaluationOptions &eo2) const {
 	if(isNumber() && o.isNumber()) {
 		return o_number.compareApproximately(o.number());
+	}
+	if(isDateTime() && o.isDateTime()) {
+		if(*o_datetime == *o.datetime()) return COMPARISON_RESULT_EQUAL;
+		if(*o_datetime < *o.datetime()) return COMPARISON_RESULT_LESS;
+		return COMPARISON_RESULT_GREATER;
 	}
 	if(equals(o)) return COMPARISON_RESULT_EQUAL;
 	if(isMultiplication() && SIZE > 1 && CHILD(0).isNumber()) {
@@ -6697,8 +6709,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				if(CHILD(1).size() == 1) CHILD(1).setToChild(1, true);
 				else if(CHILD(1).size() == 0) CHILD(1).set(1, 1, 0, true);
 			}
-			if(CHILD(0).isNumber() && CHILD(1).isNumber()) {
-				ComparisonResult cr = CHILD(1).number().compareApproximately(CHILD(0).number());
+			if((CHILD(0).isNumber() && CHILD(1).isNumber()) || (CHILD(0).isDateTime() && CHILD(1).isDateTime())) {
+				ComparisonResult cr;
+				if(CHILD(0).isNumber()) cr = CHILD(1).number().compareApproximately(CHILD(0).number());
+				else cr = CHILD(1).compare(CHILD(0));
 				if(cr >= COMPARISON_RESULT_UNKNOWN) {
 					break;
 				}
@@ -15059,7 +15073,9 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			break;
 		}
 		case STRUCT_DATETIME: {
-			print_str = o_datetime->print(po);
+			print_str = "\"";
+			print_str += o_datetime->print(po);
+			print_str += "\"";
 			break;
 		}
 		case STRUCT_ADDITION: {
