@@ -5693,100 +5693,104 @@ bool Number::lambertW() {
 	if(!isReal()) return false;
 	if(isZero()) return true;
 	
+	if(isInterval()) {
+		Number nr_l, nr_u;
+		nr_l.setInternal(fl_value);
+		nr_u.setInternal(fu_value);
+		nr_l.intervalToPrecision();
+		nr_u.intervalToPrecision();
+		if(!nr_l.lambertW() || !nr_u.lambertW()) return false;
+		setPrecisionAndApproximateFrom(nr_l);
+		setPrecisionAndApproximateFrom(nr_u);
+		return setInterval(nr_l, nr_u, true);
+	}
+	
 	Number nr_bak(*this);
 	mpfr_clear_flags();
 	
-	for(size_t i = 0; i < 2 && (CALCULATOR->usesIntervalArithmetic() || isInterval() || i < 1); i++) {
-		mpfr_t x, m1_div_exp1;
-		mpfr_inits2(BIT_PRECISION, x, m1_div_exp1, NULL);
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
-			if(n_type != NUMBER_TYPE_FLOAT) mpfr_set_q(x, r_value, MPFR_RNDN);
-			else mpfr_set(x, fl_value, MPFR_RNDN);
-		} else if(i == 0) {
-			if(n_type != NUMBER_TYPE_FLOAT) mpfr_set_q(x, r_value, MPFR_RNDD);
-			else mpfr_set(x, fl_value, MPFR_RNDD);
-		} else if(i == 1) {
-			if(n_type != NUMBER_TYPE_FLOAT) mpfr_set_q(x, r_value, MPFR_RNDU);
-			else mpfr_set(x, fu_value, MPFR_RNDU);
-		}
-		mpfr_set_ui(m1_div_exp1, 1, MPFR_RNDN);
-		mpfr_exp(m1_div_exp1, m1_div_exp1, MPFR_RNDN);
-		mpfr_ui_div(m1_div_exp1, 1, m1_div_exp1, MPFR_RNDN);
-		mpfr_neg(m1_div_exp1, m1_div_exp1, MPFR_RNDN);
-		int cmp = mpfr_cmp(x, m1_div_exp1);
-		if(cmp == 0) {
-			mpfr_clears(x, m1_div_exp1, NULL);
-			if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
-				set(-1, 1);
-				b_approx = true;
-				i_precision = PRECISION;
-				return true;
-			} else if(i == 0) {
-				mpfr_set_ui(fl_value, -1, MPFR_RNDD);
-			} else {
-				mpfr_set_ui(fu_value, -1, MPFR_RNDU);
-			}
-		} else if(cmp < 0) {
-			mpfr_clears(x, m1_div_exp1, NULL);
-			set(nr_bak);
-			return false;
+	mpfr_t x, m1_div_exp1;
+	mpfr_inits2(BIT_PRECISION, x, m1_div_exp1, NULL);
+	if(n_type == NUMBER_TYPE_RATIONAL) mpfr_set_q(x, r_value, MPFR_RNDN);
+	else mpfr_set(x, fl_value, MPFR_RNDN);
+	mpfr_set_ui(m1_div_exp1, 1, MPFR_RNDN);
+	mpfr_exp(m1_div_exp1, m1_div_exp1, MPFR_RNDN);
+	mpfr_ui_div(m1_div_exp1, 1, m1_div_exp1, MPFR_RNDN);
+	mpfr_neg(m1_div_exp1, m1_div_exp1, MPFR_RNDN);
+	int cmp = mpfr_cmp(x, m1_div_exp1);
+	if(cmp == 0) {
+		mpfr_clears(x, m1_div_exp1, NULL);
+		if(!CALCULATOR->usesIntervalArithmetic()) {
+			set(-1, 1);
+			b_approx = true;
+			i_precision = PRECISION;
+			return true;
 		} else {
-			mpfr_t w;
-			mpfr_init2(w, BIT_PRECISION);
-			mpfr_set_zero(w, 0);
-			cmp = mpfr_cmp_ui(x, 10);
-			if(cmp > 0) {
-				mpfr_log(w, x, MPFR_RNDN);
-				mpfr_t wln;
-				mpfr_init2(wln, BIT_PRECISION);
-				mpfr_log(wln, w, MPFR_RNDN);
-				mpfr_sub(w, w, wln, MPFR_RNDN);
-				mpfr_clear(wln);
+			mpfr_set_ui(fl_value, -1, MPFR_RNDD);
+			mpfr_set_ui(fu_value, -1, MPFR_RNDU);
+		}
+	} else if(cmp < 0) {
+		mpfr_clears(x, m1_div_exp1, NULL);
+		set(nr_bak);
+		return false;
+	} else {
+		mpfr_t w;
+		mpfr_init2(w, BIT_PRECISION);
+		mpfr_set_zero(w, 0);
+		cmp = mpfr_cmp_ui(x, 10);
+		if(cmp > 0) {
+			mpfr_log(w, x, MPFR_RNDN);
+			mpfr_t wln;
+			mpfr_init2(wln, BIT_PRECISION);
+			mpfr_log(wln, w, MPFR_RNDN);
+			mpfr_sub(w, w, wln, MPFR_RNDN);
+			mpfr_clear(wln);
+		}
+		
+		mpfr_t wPrec, wTimesExpW, wPlusOneTimesExpW, testXW, tmp1, tmp2;
+		mpfr_inits2(BIT_PRECISION, wPrec, wTimesExpW, wPlusOneTimesExpW, testXW, tmp1, tmp2, NULL);
+		mpfr_set_si(wPrec, -(BIT_PRECISION - 30), MPFR_RNDN);
+		mpfr_exp2(wPrec, wPrec, MPFR_RNDN);
+		while(true) {
+			if(CALCULATOR->aborted() || testErrors()) {
+				mpfr_clears(x, m1_div_exp1, w, wPrec, wTimesExpW, wPlusOneTimesExpW, testXW, tmp1, tmp2, NULL);
+				set(nr_bak);
+				return false;
 			}
-			
-			mpfr_t wPrec, wTimesExpW, wPlusOneTimesExpW, testXW, tmp1, tmp2;
-			mpfr_inits2(BIT_PRECISION, wPrec, wTimesExpW, wPlusOneTimesExpW, testXW, tmp1, tmp2, NULL);
-			mpfr_set_si(wPrec, -(BIT_PRECISION - 30), MPFR_RNDN);
-			mpfr_exp2(wPrec, wPrec, MPFR_RNDN);
-			while(true) {
-				if(CALCULATOR->aborted() || testErrors()) {
-					mpfr_clears(x, m1_div_exp1, w, wPrec, wTimesExpW, wPlusOneTimesExpW, testXW, tmp1, tmp2, NULL);
-					set(nr_bak);
-					return false;
-				}
-				mpfr_exp(wTimesExpW, w, MPFR_RNDN);
-				mpfr_set(wPlusOneTimesExpW, wTimesExpW, MPFR_RNDN);
-				mpfr_mul(wTimesExpW, wTimesExpW, w, MPFR_RNDN);
-				mpfr_add(wPlusOneTimesExpW, wPlusOneTimesExpW, wTimesExpW, MPFR_RNDN);
-				mpfr_sub(testXW, x, wTimesExpW, MPFR_RNDN);
-				mpfr_div(testXW, testXW, wPlusOneTimesExpW, MPFR_RNDN);
-				mpfr_abs(testXW, testXW, MPFR_RNDN);
-				if(mpfr_cmp(wPrec, testXW) > 0) {
-					break;
-				}
-				mpfr_sub(wTimesExpW, wTimesExpW, x, MPFR_RNDN);
-				mpfr_add_ui(tmp1, w, 2, MPFR_RNDN);
-				mpfr_mul(tmp2, wTimesExpW, tmp1, MPFR_RNDN);
-				mpfr_mul_ui(tmp1, w, 2, MPFR_RNDN);
-				mpfr_add_ui(tmp1, tmp1, 2, MPFR_RNDN);
-				mpfr_div(tmp2, tmp2, tmp1, MPFR_RNDN);
-				mpfr_sub(wPlusOneTimesExpW, wPlusOneTimesExpW, tmp2, MPFR_RNDN);
-				mpfr_div(wTimesExpW, wTimesExpW, wPlusOneTimesExpW, MPFR_RNDN);
-				mpfr_sub(w, w, wTimesExpW, MPFR_RNDN);
+			mpfr_exp(wTimesExpW, w, MPFR_RNDN);
+			mpfr_set(wPlusOneTimesExpW, wTimesExpW, MPFR_RNDN);
+			mpfr_mul(wTimesExpW, wTimesExpW, w, MPFR_RNDN);
+			mpfr_add(wPlusOneTimesExpW, wPlusOneTimesExpW, wTimesExpW, MPFR_RNDN);
+			mpfr_sub(testXW, x, wTimesExpW, MPFR_RNDN);
+			mpfr_div(testXW, testXW, wPlusOneTimesExpW, MPFR_RNDN);
+			mpfr_abs(testXW, testXW, MPFR_RNDN);
+			if(mpfr_cmp(wPrec, testXW) > 0) {
+				
+				break;
 			}
-			if(n_type == NUMBER_TYPE_RATIONAL) {
-				mpfr_init2(fl_value, BIT_PRECISION);
-				n_type = NUMBER_TYPE_FLOAT;
-				mpq_set_ui(r_value, 0, 1);
-			}
-			if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) mpfr_set(fl_value, w, MPFR_RNDN);
-			else if(i == 0) mpfr_set(fl_value, w, MPFR_RNDD);
-			else if(i == 1) mpfr_set(fu_value, w, MPFR_RNDU);
-			mpfr_clears(x, m1_div_exp1, w, wPrec, wTimesExpW, wPlusOneTimesExpW, testXW, tmp1, tmp2, NULL);
-			if(i_precision < 0 || i_precision > PRECISION) i_precision = FROM_BIT_PRECISION(BIT_PRECISION - 30);
+			mpfr_sub(wTimesExpW, wTimesExpW, x, MPFR_RNDN);
+			mpfr_add_ui(tmp1, w, 2, MPFR_RNDN);
+			mpfr_mul(tmp2, wTimesExpW, tmp1, MPFR_RNDN);
+			mpfr_mul_ui(tmp1, w, 2, MPFR_RNDN);
+			mpfr_add_ui(tmp1, tmp1, 2, MPFR_RNDN);
+			mpfr_div(tmp2, tmp2, tmp1, MPFR_RNDN);
+			mpfr_sub(wPlusOneTimesExpW, wPlusOneTimesExpW, tmp2, MPFR_RNDN);
+			mpfr_div(wTimesExpW, wTimesExpW, wPlusOneTimesExpW, MPFR_RNDN);
+			mpfr_sub(w, w, wTimesExpW, MPFR_RNDN);
+		}
+		if(n_type == NUMBER_TYPE_RATIONAL) {
+			mpfr_init2(fl_value, BIT_PRECISION);
+			mpfr_init2(fu_value, BIT_PRECISION);
+			n_type = NUMBER_TYPE_FLOAT;
+			mpq_set_ui(r_value, 0, 1);
+		}
+		mpfr_set(fl_value, w, MPFR_RNDN);
+		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+		mpfr_clears(x, m1_div_exp1, w, wPrec, wTimesExpW, wPlusOneTimesExpW, testXW, tmp1, tmp2, NULL);
+		if(i_precision < 0 || i_precision > PRECISION) i_precision = FROM_BIT_PRECISION(BIT_PRECISION - 30);
+		if(CALCULATOR->usesIntervalArithmetic()) {
+			precisionToInterval();
 		}
 	}
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	if(!testFloatResult(true)) {
 		set(nr_bak);
 		return false;
