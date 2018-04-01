@@ -62,6 +62,7 @@ bool use_readline = true;
 bool interactive_mode;
 bool ask_questions;
 bool canfetch = true;
+int b_decimal_comma = -1;
 long int i_maxtime = 0;
 struct timeval t_end;
 
@@ -557,11 +558,30 @@ void set_option(string str) {
 			result_display_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spell out logical", _("spell out logical"))) SET_BOOL_D(printops.spell_out_logical_operators)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "dot as separator", _("dot as separator")) && CALCULATOR->getDecimalPoint() != DOT) SET_BOOL_PF(evalops.parse_options.dot_as_separator)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "comma as separator", _("comma as separator")) && CALCULATOR->getDecimalPoint() != COMMA) {
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore dot", _("ignore dot")) && CALCULATOR->getDecimalPoint() != DOT) SET_BOOL_PF(evalops.parse_options.dot_as_separator)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore comma", _("ignore comma")) && CALCULATOR->getDecimalPoint() != COMMA) {
 		SET_BOOL(evalops.parse_options.comma_as_separator)
 		CALCULATOR->useDecimalPoint(evalops.parse_options.comma_as_separator);
 		expression_format_updated(false);
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "decimal comma", _("decimal comma"))) {
+		int v = -2;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = 0;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = 1;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "locale", _("locale"))) v = -1;
+		else if(svalue.find_first_not_of(SPACES MINUS NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < -1 || v > 1) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			b_decimal_comma = v;
+			if(b_decimal_comma > 0) CALCULATOR->useDecimalComma();
+			else if(b_decimal_comma == 0) CALCULATOR->useDecimalPoint(evalops.parse_options.comma_as_separator);
+			if(v >= 0) {
+				expression_format_updated(false);
+				result_display_updated();
+			}
+		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "limit implicit multiplication", _("limit implicit multiplication"))) {
 		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {printops.limit_implicit_multiplication = v; evalops.parse_options.limit_implicit_multiplication = v; expression_format_updated(true);}		
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spacious", _("spacious"))) SET_BOOL_D(printops.spacious)
@@ -2044,10 +2064,11 @@ int main(int argc, char *argv[]) {
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("calculate functions")); PUTS_UNICODE(b2oo(evalops.calculate_functions, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("calculate variables")); PUTS_UNICODE(b2oo(evalops.calculate_variables, false)); CHECK_IF_SCREEN_FILLED
-			if(CALCULATOR->getDecimalPoint() != COMMA) {
-				PRINT_AND_COLON_TABS(_("comma as separator")); PUTS_UNICODE(b2oo(evalops.parse_options.comma_as_separator, false)); CHECK_IF_SCREEN_FILLED
-			}
 			PRINT_AND_COLON_TABS(_("complex numbers")); PUTS_UNICODE(b2oo(evalops.allow_complex, false)); CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("decimal comma"));
+			if(b_decimal_comma < 0) {PUTS_UNICODE(_("locale"));}
+			else if(b_decimal_comma == 0) {PUTS_UNICODE(_("off"));}
+			else {PUTS_UNICODE(_("on"));}
 			PRINT_AND_COLON_TABS(_("denominator prefixes")); PUTS_UNICODE(b2oo(printops.use_denominator_prefix, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("digit grouping"));
 			switch(printops.digit_grouping) {
@@ -2063,9 +2084,6 @@ int main(int argc, char *argv[]) {
 				default: {puts("/"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED
-			if(CALCULATOR->getDecimalPoint() != DOT) {
-				PRINT_AND_COLON_TABS(_("dot as separator")); PUTS_UNICODE(b2oo(evalops.parse_options.dot_as_separator, false)); CHECK_IF_SCREEN_FILLED
-			}
 			PRINT_AND_COLON_TABS(_("excessive parentheses")); PUTS_UNICODE(b2oo(printops.excessive_parenthesis, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("exp mode"));
 			switch(printops.min_exp) {
@@ -2086,6 +2104,12 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("functions")); PUTS_UNICODE(b2oo(evalops.parse_options.functions_enabled, false)); CHECK_IF_SCREEN_FILLED
+			if(CALCULATOR->getDecimalPoint() != COMMA) {
+				PRINT_AND_COLON_TABS(_("ignore comma")); PUTS_UNICODE(b2oo(evalops.parse_options.comma_as_separator, false)); CHECK_IF_SCREEN_FILLED
+			}
+			if(CALCULATOR->getDecimalPoint() != DOT) {
+				PRINT_AND_COLON_TABS(_("ignore dot")); PUTS_UNICODE(b2oo(evalops.parse_options.dot_as_separator, false)); CHECK_IF_SCREEN_FILLED
+			}
 			PRINT_AND_COLON_TABS(_("input base")); 
 			switch(evalops.parse_options.base) {
 				case BASE_ROMAN_NUMERALS: {PUTS_UNICODE(_("roman")); break;}
@@ -2642,16 +2666,18 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_2(_("base display"), printops.base_display, _("none"), _("normal"), _("alternative"));
 				STR_AND_TABS_BOOL(_("calculate functions"), evalops.calculate_functions);
 				STR_AND_TABS_BOOL(_("calculate variables"), evalops.calculate_variables);
-				if(CALCULATOR->getDecimalPoint() != COMMA) {
-					STR_AND_TABS_BOOL(_("comma as separator"), evalops.parse_options.comma_as_separator);
-				}
 				STR_AND_TABS_BOOL(_("complex numbers"), evalops.allow_complex);
+				STR_AND_TABS(_("decimal comma")); str += "("; str += _("locale"); 
+				if(b_decimal_comma < 0) str += "*";
+				str += ", "; str += _("off");
+				if(b_decimal_comma == 0) str += "*";
+				str += ", "; str += _("on");
+				if(b_decimal_comma > 0) str += "*";
+				str += ")";
+				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("denominator prefixes"), printops.use_denominator_prefix);
 				STR_AND_TABS_2(_("digit grouping"), printops.digit_grouping, _("off"), _("standard"), _("locale"));
 				STR_AND_TABS_2(_("division sign"), printops.division_sign, "/", SIGN_DIVISION_SLASH, SIGN_DIVISION);
-				if(CALCULATOR->getDecimalPoint() != DOT) {
-					STR_AND_TABS_BOOL(_("dot as separator"), evalops.parse_options.dot_as_separator);
-				}
 				STR_AND_TABS_BOOL(_("exact"), (evalops.approximation == APPROXIMATION_EXACT));
 				STR_AND_TABS_BOOL(_("excessive parentheses"), printops.excessive_parenthesis);
 				STR_AND_TABS(_("exp mode")); str += "("; str += _("off"); 
@@ -2669,6 +2695,12 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_3(_("fractions"), printops.number_fraction_format, _("off"), _("exact"), _("on"), _("combined"));
 				STR_AND_TABS_BOOL(_("functions"), evalops.parse_options.functions_enabled);
+				if(CALCULATOR->getDecimalPoint() != COMMA) {
+					STR_AND_TABS_BOOL(_("ignore_comma"), evalops.parse_options.comma_as_separator);
+				}
+				if(CALCULATOR->getDecimalPoint() != DOT) {
+					STR_AND_TABS_BOOL(_("ignore dot"), evalops.parse_options.dot_as_separator);
+				}
 				STR_AND_TABS(_("input base")); str += "(2 - 36"; str += ", "; str += _("bin");
 				if(evalops.parse_options.base == BASE_BINARY) str += "*";
 				str += ", "; str += _("oct");
@@ -3891,6 +3923,7 @@ void load_preferences() {
 	evalops.parse_options.dot_as_separator = CALCULATOR->default_dot_as_separator;
 	evalops.parse_options.comma_as_separator = false;
 	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;
+	b_decimal_comma = -1;
 	
 	adaptive_interval_display = true;
 	
@@ -4095,11 +4128,15 @@ void load_preferences() {
 					if(v >= BASE_DISPLAY_NONE && v <= BASE_DISPLAY_ALTERNATIVE) printops.base_display = (BaseDisplay) v;
 				} else if(svar == "spell_out_logical_operators") {
 						printops.spell_out_logical_operators = v;
+				} else if(svar == "decimal_comma") {
+					b_decimal_comma = v;
+					if(v == 0) CALCULATOR->useDecimalPoint(evalops.parse_options.comma_as_separator);
+					else if(v > 0) CALCULATOR->useDecimalComma();
 				} else if(svar == "dot_as_separator") {
 					evalops.parse_options.dot_as_separator = v;
 				} else if(svar == "comma_as_separator") {
 					evalops.parse_options.comma_as_separator = v;
-					if(CALCULATOR->getDecimalPoint() != ",") {						
+					if(CALCULATOR->getDecimalPoint() != COMMA) {
 						CALCULATOR->useDecimalPoint(evalops.parse_options.comma_as_separator);
 					}
 				} else if(svar == "multiplication_sign") {
@@ -4184,6 +4221,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "base_display=%i\n", printops.base_display);
 	fprintf(file, "spell_out_logical_operators=%i\n", printops.spell_out_logical_operators);
 	fprintf(file, "digit_grouping=%i\n", printops.digit_grouping);
+	fprintf(file, "decimal_comma=%i\n", b_decimal_comma);
 	fprintf(file, "dot_as_separator=%i\n", evalops.parse_options.dot_as_separator);
 	fprintf(file, "comma_as_separator=%i\n", evalops.parse_options.comma_as_separator);
 	fprintf(file, "multiplication_sign=%i\n", printops.multiplication_sign);
