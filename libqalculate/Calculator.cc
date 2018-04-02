@@ -2934,11 +2934,33 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 	switch(u->subtype()) {
 		case SUBTYPE_BASE_UNIT: {
+			if(u == u_euro) {
+				struct lconv *lc = localeconv();
+				if(lc) {
+					string local_currency = lc->int_curr_symbol;
+					remove_blank_ends(local_currency);
+					if(!local_currency.empty()) {
+						Unit *u_local_currency = CALCULATOR->getActiveUnit(local_currency);
+						if(u_local_currency) return u_local_currency;
+					}
+				}
+			}
 			return u;
 		}
 		case SUBTYPE_ALIAS_UNIT: {
 			AliasUnit *au = (AliasUnit*) u;
 			if(au->baseExponent() == 1 && au->baseUnit()->subtype() == SUBTYPE_BASE_UNIT) {
+				if(au->baseUnit() == u_euro) {
+					struct lconv *lc = localeconv();
+					if(lc) {
+						string local_currency = lc->int_curr_symbol;
+						remove_blank_ends(local_currency);
+						if(!local_currency.empty()) {
+							Unit *u_local_currency = CALCULATOR->getActiveUnit(local_currency);
+							if(u_local_currency) return u_local_currency;
+						}
+					}
+				}
 				return (Unit*) au->baseUnit();
 			} else if(au->isSIUnit() && (au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT || au->firstBaseExponent() != 1)) {
 				return u;
