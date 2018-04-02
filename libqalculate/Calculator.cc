@@ -3240,10 +3240,12 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				int new_points = 0;
 				bool new_is_si_units = true;
 				bool new_minus = true;
+				bool is_currency = false;
 				if(mstruct_new.isMultiplication()) {
 					for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
 						if(mstruct_new.getChild(i)->isUnit()) {
 							if(new_is_si_units && !mstruct_new.getChild(i)->unit()->isSIUnit()) new_is_si_units = false;
+							is_currency = mstruct_new.getChild(i)->unit()->isCurrency();
 							new_points++;
 							new_minus = false;
 						} else if(mstruct_new.getChild(i)->isPower() && mstruct_new.getChild(i)->base()->isUnit() && mstruct_new.getChild(i)->exponent()->isNumber() && mstruct_new.getChild(i)->exponent()->number().isRational()) {
@@ -3251,12 +3253,14 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 							if(mstruct_new.getChild(i)->exponent()->isInteger()) points = mstruct_new.getChild(i)->exponent()->number().intValue();
 							else points = mstruct_new.getChild(i)->exponent()->number().numerator().intValue() + mstruct_new.getChild(i)->exponent()->number().denominator().intValue() * (mstruct_new.getChild(i)->exponent()->number().isNegative() ? -1 : 1);
 							if(new_is_si_units && !mstruct_new.getChild(i)->base()->unit()->isSIUnit()) new_is_si_units = false;
+							is_currency = mstruct_new.getChild(i)->base()->unit()->isCurrency();
 							if(points < 0) {
 								new_points -= points;
 							} else {
 								new_points += points;
 								new_minus = false;
 							}
+
 						}
 					}
 				} else if(mstruct_new.isPower() && mstruct_new.base()->isUnit() && mstruct_new.exponent()->isNumber() && mstruct_new.exponent()->number().isRational()) {
@@ -3264,6 +3268,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 					if(mstruct_new.exponent()->isInteger()) points = mstruct_new.exponent()->number().intValue();
 					else points = mstruct_new.exponent()->number().numerator().intValue() + mstruct_new.exponent()->number().denominator().intValue() * (mstruct_new.exponent()->number().isNegative() ? -1 : 1);
 					if(new_is_si_units && !mstruct_new.base()->unit()->isSIUnit()) new_is_si_units = false;
+					is_currency = mstruct_new.base()->unit()->isCurrency();
 					if(points < 0) {
 						new_points = -points;
 					} else {
@@ -3272,11 +3277,12 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 					}
 				} else if(mstruct_new.isUnit()) {
 					if(!mstruct_new.unit()->isSIUnit()) new_is_si_units = false;
+					is_currency = mstruct_new.unit()->isCurrency();
 					new_points = 1;
 					new_minus = false;
 				}
 				if(new_points == 0) return mstruct;
-				if((new_points > old_points && (!convert_to_si_units || is_si_units)) || (new_points == old_points && (new_minus || !old_minus) && (!convert_to_si_units || (is_si_units && !new_is_si_units)))) return mstruct;
+				if((new_points > old_points && (!convert_to_si_units || is_si_units)) || (new_points == old_points && (new_minus || !old_minus) && !is_currency && (!convert_to_si_units || (is_si_units && !new_is_si_units)))) return mstruct;
 				return mstruct_new;
 			}
 		}
@@ -3307,7 +3313,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 			return mstruct_new;
 		}
 		case STRUCT_UNIT: {
-			if(!convert_to_si_units || mstruct.unit()->isSIUnit()) return mstruct;
+			if(mstruct.unit()->isCurrency() && (!convert_to_si_units || mstruct.unit()->isSIUnit())) return mstruct;
 			Unit *u = getBestUnit(mstruct.unit());
 			if(u != mstruct.unit()) {
 				MathStructure mstruct_new = convert(mstruct, u, eo, true);
@@ -3390,11 +3396,13 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 			int new_points = 0;
 			bool new_minus = true;
 			bool new_is_si_units = true;
+			bool is_currency = false;
 			if(mstruct_new.isMultiplication()) {
 				for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
 					if(mstruct_new.countChildren() > 100 && aborted()) return mstruct_old;
 					if(mstruct_new.getChild(i)->isUnit()) {
 						if(new_is_si_units && !mstruct_new.getChild(i)->unit()->isSIUnit()) new_is_si_units = false;
+						is_currency = mstruct_new.getChild(i)->unit()->isCurrency();
 						new_points++;
 						new_minus = false;
 					} else if(mstruct_new.getChild(i)->isPower() && mstruct_new.getChild(i)->base()->isUnit() && mstruct_new.getChild(i)->exponent()->isNumber() && mstruct_new.getChild(i)->exponent()->number().isRational()) {
@@ -3402,6 +3410,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 						if(mstruct_new.getChild(i)->exponent()->number().isInteger()) points = mstruct_new.getChild(i)->exponent()->number().intValue();
 						else points = mstruct_new.getChild(i)->exponent()->number().numerator().intValue() + mstruct_new.getChild(i)->exponent()->number().denominator().intValue() * (mstruct_new.getChild(i)->exponent()->number().isNegative() ? -1 : 1);
 						if(new_is_si_units && !mstruct_new.getChild(i)->base()->unit()->isSIUnit()) new_is_si_units = false;
+						is_currency = mstruct_new.getChild(i)->base()->unit()->isCurrency();
 						if(points < 0) {
 							new_points -= points;
 						} else {
@@ -3415,6 +3424,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				if(mstruct_new.exponent()->number().isInteger()) points = mstruct_new.exponent()->number().intValue();
 				else points = mstruct_new.exponent()->number().numerator().intValue() + mstruct_new.exponent()->number().denominator().intValue() * (mstruct_new.exponent()->number().isNegative() ? -1 : 1);
 				if(new_is_si_units && !mstruct_new.base()->unit()->isSIUnit()) new_is_si_units = false;
+				is_currency = mstruct_new.base()->unit()->isCurrency();
 				if(points < 0) {
 					new_points = -points;
 				} else {
@@ -3423,11 +3433,12 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				}
 			} else if(mstruct_new.isUnit()) {
 				if(!mstruct_new.unit()->isSIUnit()) new_is_si_units = false;
+				is_currency = mstruct_new.unit()->isCurrency();
 				new_points = 1;
 				new_minus = false;
 			}
 			if(new_points == 0) return mstruct_old;
-			if((new_points > old_points && (!convert_to_si_units || is_si_units)) || (new_points == old_points && (new_minus || !old_minus) && (!convert_to_si_units || (is_si_units && !new_is_si_units)))) return mstruct_old;
+			if((new_points > old_points && (!convert_to_si_units || is_si_units)) || (new_points == old_points && (new_minus || !old_minus) && !is_currency && (!convert_to_si_units || (is_si_units && !new_is_si_units)))) return mstruct_old;
 			return mstruct_new;
 		}
 		default: {}
