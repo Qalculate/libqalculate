@@ -127,10 +127,12 @@ int countLeapSeconds(const QalculateDateTime &date1, const QalculateDateTime &da
 	size_t halfyear2 = 0;
 	if(date2.year() >= LS_FIRST_YEAR) {
 		halfyear2 = (date2.year() - LS_FIRST_YEAR) * 2;
-		if(date2.month() <= 6) halfyear2--;
+		if(date2.month() <= 6) {
+			if(halfyear2 == 0) return 0;
+			halfyear2--;
+		}
 	}
 	if(date1.second().isGreaterThanOrEqualTo(60) && date1.minute() == 59 && date1.hour() == 23 && ((date1.month() == 12 && date1.day() == 31) || (date1.month() == 6 && date1.day() == 30))) halfyear1++;
-	if(date2.second().isGreaterThanOrEqualTo(60) && date2.minute() == 59 && date2.hour() == 23 && ((date2.month() == 12 && date2.day() == 31) || (date2.month() == 6 && date2.day() == 30))) halfyear2--;
 	int i_ls = 0;
 	for(size_t i = halfyear1; i <= halfyear2 && i < sizeof(has_leap_second); i++) {
 		if(has_leap_second[i]) {
@@ -163,9 +165,11 @@ QalculateDateTime prevLeapSecond(const QalculateDateTime &date) {
 	size_t halfyear = sizeof(has_leap_second);
 	if(date.year() <= LS_LAST_YEAR) {
 		halfyear = (date.year() - LS_FIRST_YEAR) * 2;
-		if(date.month() <= 6) halfyear--;
+		if(date.month() <= 6) {
+			if(halfyear == 0) return QalculateDateTime();
+			halfyear--;
+		}
 	}
-	if(date.second().isGreaterThanOrEqualTo(60) && date.minute() == 59 && date.hour() == 23 && ((date.month() == 12 && date.day() == 31) || (date.month() == 6 && date.day() == 30))) halfyear--;
 	for(int i = halfyear; i >= 0; i--) {
 		if(has_leap_second[(size_t) i]) {
 			QalculateDateTime dt;
@@ -498,7 +502,7 @@ string QalculateDateTime::toLocalString() const {
 	return str;
 }
 string QalculateDateTime::print(const PrintOptions &po) const {
-	if(po.is_approximate && !n_sec.isInteger()) *po.is_approximate = true;
+	if(po.is_approximate && (!n_sec.isInteger() || n_sec.isApproximate())) *po.is_approximate = true;
 	string str;
 	if(po.time_zone == TIME_ZONE_LOCAL) {
 		if(po.date_time_format == DATE_TIME_FORMAT_LOCALE) str = toLocalString();
@@ -589,8 +593,8 @@ bool QalculateDateTime::addMinutes(const Number &nminutes, bool remove_leap_seco
 	nhours.trunc();
 	nmins.frac();
 	nmins *= 60;
-	i_min = i_min + nmins.lintValue();
-	if(i_min > 60) {
+	i_min += nmins.lintValue();
+	if(i_min >= 60) {
 		i_min -= 60;
 		nhours++;
 	} else if(i_min < 0) {
@@ -635,7 +639,7 @@ bool QalculateDateTime::addDays(const Number &ndays) {
 		}
 		return true;
 	}
-	bool overflow;
+	bool overflow = false;
 	long int days = ndays.lintValue(&overflow);
 	if(overflow) return false;
 	long int newday = i_day, newmonth = i_month, newyear = i_year;
@@ -724,7 +728,7 @@ bool QalculateDateTime::addMonths(const Number &nmonths) {
 		}
 		return true;
 	}
-	bool overflow;
+	bool overflow = false;
 	long int months = nmonths.lintValue(&overflow);
 	if(overflow) return false;
 	if(i_year > 0 && months > 0 && (unsigned long int) months / 12 + i_year > (unsigned long int) LONG_MAX) return false;
@@ -796,7 +800,7 @@ bool QalculateDateTime::addYears(const Number &nyears) {
 		}
 		return true;
 	}
-	bool overflow;
+	bool overflow = false;
 	long int years = nyears.lintValue(&overflow);
 	if(overflow) return false;
 	if(i_year > 0 && years > 0 && (unsigned long int) years + i_year > (unsigned long int) LONG_MAX) return false;
@@ -836,7 +840,14 @@ bool QalculateDateTime::addSeconds(const Number &seconds, bool count_leap_second
 			Number nsum(i_hour * 3600 + i_min * 60);
 			nsum += n_sec;
 			nsum += seconds;
-			if(nsum.isPositive()) {
+			if(nsum.isZero()) {
+				i_hour = 0;
+				i_min = 0;
+				n_sec.clear(true);
+				if(convert_to_utc) {
+					if(!addMinutes(dateTimeZone(*this, true), false, false)) {set(dtbak); return false;}
+				}
+			} else if(nsum.isPositive()) {
 				if(!addSeconds(seconds, false, false)) {set(dtbak); return false;}
 				if(convert_to_utc) {
 					if(!addMinutes(dateTimeZone(*this, true), false, false)) {set(dtbak); return false;}
@@ -866,7 +877,7 @@ bool QalculateDateTime::addSeconds(const Number &seconds, bool count_leap_second
 			}
 			QalculateDateTime dt_nls = prevLeapSecond(*this);
 			while(dt_nls.year() != 0) {
-				Number n_sto = secondsTo(dt_nls, false, false);
+				Number n_sto = secondsTo(dt_nls, true, false);
 				n_sto--;
 				if(n_sto.isLessThan(secnew)) {
 					secnew += nr_frac;
@@ -897,7 +908,7 @@ bool QalculateDateTime::addSeconds(const Number &seconds, bool count_leap_second
 			}
 			QalculateDateTime dt_nls = nextLeapSecond(*this);
 			while(dt_nls.year() != 0) {
-				Number n_sto = secondsTo(dt_nls, false, false);
+				Number n_sto = secondsTo(dt_nls, true, false);
 				if(n_sto.isGreaterThan(secnew)) {
 					secnew += nr_frac;
 					break;
