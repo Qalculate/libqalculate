@@ -292,7 +292,7 @@ class Calculator {
 	MathFunction *f_sin, *f_cos, *f_tan, *f_asin, *f_acos, *f_atan, *f_sinh, *f_cosh, *f_tanh, *f_asinh, *f_acosh, *f_atanh, *f_atan2, *f_sinc, *f_radians_to_default_angle_unit;
 	MathFunction *f_zeta, *f_gamma, *f_digamma, *f_beta, *f_airy, *f_besselj, *f_bessely, *f_erf, *f_erfc;
 	MathFunction *f_total, *f_percentile, *f_min, *f_max, *f_mode, *f_rand;
-	MathFunction *f_timestamp, *f_stamptodate, *f_days, *f_yearfrac, *f_week, *f_weekday, *f_month, *f_day, *f_year, *f_yearday, *f_time, *f_add_days, *f_add_months, *f_add_years;
+	MathFunction *f_date, *f_timestamp, *f_stamptodate, *f_days, *f_yearfrac, *f_week, *f_weekday, *f_month, *f_day, *f_year, *f_yearday, *f_time, *f_add_days, *f_add_months, *f_add_years;
 	MathFunction *f_bin, *f_oct, *f_hex, *f_base, *f_roman;
 	MathFunction *f_ascii, *f_char;
 	MathFunction *f_length, *f_concatenate;
@@ -304,7 +304,7 @@ class Calculator {
 	MathFunction *f_register, *f_stack;
 	MathFunction *f_plot;
 	
-	Unit *u_rad, *u_gra, *u_deg, *u_euro, *u_btc, *u_second, *u_year, *u_month, *u_day;
+	Unit *u_rad, *u_gra, *u_deg, *u_euro, *u_btc, *u_second, *u_minute, *u_hour, *u_year, *u_month, *u_day;
 	DecimalPrefix *decimal_null_prefix;
 	BinaryPrefix *binary_null_prefix;
 

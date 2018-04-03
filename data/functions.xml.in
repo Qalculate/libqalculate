@@ -1669,6 +1669,28 @@
   </category>
   <category>
     <_title>Date &amp; Time</_title>
+    <builtin_function name="date">
+      <_title>Construct Date</_title>
+      <_names>r:date</_names>
+      <argument index="1">
+        <_title>Year</_title>
+      </argument>
+      <argument index="2">
+        <_title>Month</_title>
+      </argument>
+      <argument index="3">
+        <_title>Day</_title>
+      </argument>
+      <argument index="4">
+        <_title>Hour</_title>
+      </argument>
+      <argument index="5">
+        <_title>Minute</_title>
+      </argument>
+      <argument index="6">
+        <_title>Second</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="days">
       <_title>Days between two dates</_title>
       <_names>r:days</_names>

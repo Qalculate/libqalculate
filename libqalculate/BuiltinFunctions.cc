@@ -3138,6 +3138,52 @@ bool RandFunction::representsReal(const MathStructure&, bool) const {return true
 bool RandFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() > 0 && vargs[0].isNumber() && vargs[0].number().isPositive();}
 bool RandFunction::representsNonNegative(const MathStructure&, bool) const {return true;}
 
+
+DateFunction::DateFunction() : MathFunction("date", 1, 6) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
+	IntegerArgument *iarg = new IntegerArgument();
+	Number fr(1, 1, 0);
+	iarg->setMin(&fr);
+	fr.set(12, 1, 0);
+	iarg->setMax(&fr);
+	setArgumentDefinition(2, iarg);
+	setDefaultValue(2, "1");
+	iarg = new IntegerArgument();
+	fr.set(1, 1, 0);
+	iarg->setMin(&fr);
+	fr.set(31, 1, 0);
+	iarg->setMax(&fr);
+	setDefaultValue(3, "1");
+	setArgumentDefinition(3, iarg);
+	iarg = new IntegerArgument();
+	iarg->setMin(&nr_zero);
+	fr.set(23, 1, 0);
+	iarg->setMax(&fr);
+	setArgumentDefinition(4, iarg);
+	setDefaultValue(4, "0");
+	iarg = new IntegerArgument();
+	iarg->setMin(&nr_zero);
+	fr.set(59, 1, 0);
+	iarg->setMax(&fr);
+	setArgumentDefinition(5, iarg);
+	setDefaultValue(5, "0");
+	NumberArgument *narg = new NumberArgument();
+	narg->setMin(&nr_zero);
+	fr.set(61, 1, 0);
+	narg->setMax(&fr);
+	narg->setIncludeEqualsMax(false);
+	setArgumentDefinition(6, narg);
+	setDefaultValue(6, "0");
+}	
+int DateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	QalculateDateTime dt;
+	if(!dt.set(vargs[0].number().lintValue(), vargs[1].number().lintValue(), vargs[2].number().lintValue())) return 0;
+	if(!vargs[3].isZero() || !vargs[4].isZero() || !vargs[5].isZero()) {
+		if(!dt.setTime(vargs[3].number().lintValue(), vargs[4].number().lintValue(), vargs[5].number())) return 0;
+	}
+	mstruct.set(dt);
+	return 1;
+}
 TimestampFunction::TimestampFunction() : MathFunction("timestamp", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
 	setDefaultValue(1, "now");
@@ -3292,7 +3338,7 @@ MonthFunction::MonthFunction() : MathFunction("month", 0, 1) {
 }
 int MonthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDateTime date(*vargs[0].datetime());
-	mstruct.set(date.month(true), 1L, 0L);
+	mstruct.set(date.month(), 1L, 0L);
 	return 1;
 }
 DayFunction::DayFunction() : MathFunction("day", 0, 1) {
@@ -3301,7 +3347,7 @@ DayFunction::DayFunction() : MathFunction("day", 0, 1) {
 }
 int DayFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDateTime date(*vargs[0].datetime());
-	mstruct.set(date.day(true), 1L, 0L);
+	mstruct.set(date.day(), 1L, 0L);
 	return 1;
 }
 YearFunction::YearFunction() : MathFunction("year", 0, 1) {
@@ -3310,7 +3356,7 @@ YearFunction::YearFunction() : MathFunction("year", 0, 1) {
 }
 int YearFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDateTime date(*vargs[0].datetime());
-	mstruct.set(date.year(true), 1L, 0L);
+	mstruct.set(date.year(), 1L, 0L);
 	return 1;
 }
 TimeFunction::TimeFunction() : MathFunction("time", 0) {

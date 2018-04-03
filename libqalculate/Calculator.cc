@@ -1489,6 +1489,7 @@ void Calculator::addBuiltinFunctions() {
 	f_mode = addFunction(new ModeFunction());
 	f_rand = addFunction(new RandFunction());
 
+	f_date = addFunction(new DateFunction());
 	f_timestamp = addFunction(new TimestampFunction());
 	f_stamptodate = addFunction(new TimestampToDateFunction());
 	f_days = addFunction(new DaysFunction());
@@ -1587,6 +1588,8 @@ void Calculator::addBuiltinUnits() {
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
 	u_second = NULL;
+	u_minute = NULL;
+	u_hour = NULL;
 	u_day = NULL;
 	u_month = NULL;
 	u_year = NULL;
@@ -3355,7 +3358,6 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 					child_updated = true;
 				}
 			}
-			cout << "A" << endl;
 			if(child_updated) mstruct_old.eval(eo2);
 			if(!is_currency && (!convert_to_si_units || is_si_units) && old_points <= 1 && !old_minus) {
 				return mstruct_old;
@@ -3384,7 +3386,6 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				bool is_converted = false;
 				if(b) {
 					Unit *u = getBestUnit(cu);
-					cout << u->name() << endl;
 					if(u != cu) {
 						mstruct_new = convert(mstruct_new, u, eo, true);
 						if(!u->isRegistered()) delete u;
@@ -3402,7 +3403,6 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 			bool new_minus = true;
 			bool new_is_si_units = true;
 			bool new_is_currency = false;
-			cout << "B" << endl;
 			if(mstruct_new.isMultiplication()) {
 				for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
 					if(mstruct_new.countChildren() > 100 && aborted()) return mstruct_old;
@@ -3444,7 +3444,6 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				new_minus = false;
 			}
 			if(new_points == 0) return mstruct_old;
-			cout << is_currency << endl;
 			if((new_points > old_points && (!convert_to_si_units || is_si_units)) || (new_points == old_points && (new_minus || !old_minus) && !new_is_currency && (!convert_to_si_units || (is_si_units && !new_is_si_units)))) return mstruct_old;
 			return mstruct_new;
 		}
@@ -7972,6 +7971,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 								if(au->referenceName() == "d" || au->referenceName() == "day") u_day = au;
 								else if(au->referenceName() == "year") u_year = au;
 								else if(au->referenceName() == "month") u_month = au;
+								else if(au->referenceName() == "min") u_minute = au;
+								else if(au->referenceName() == "h") u_hour = au;
 							}
 							addUnit(au, true, is_user_defs);
 							au->setChanged(false);

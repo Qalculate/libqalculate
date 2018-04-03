@@ -1026,7 +1026,7 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	test_integration();
+	//test_integration();
 	//test_intervals(true);
 
 	return 0;

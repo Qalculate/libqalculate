@@ -1917,6 +1917,10 @@ int main(int argc, char *argv[]) {
 				printops.base = 12;
 				setResult(NULL, false);
 				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "utc") || equalsIgnoreCase(str, "gmt")) {
+				printops.time_zone = TIME_ZONE_UTC;
+				setResult(NULL, false);
+				printops.time_zone = TIME_ZONE_LOCAL;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "bases", _("bases"))) {
 				int save_base = printops.base;
 				string save_result_text = result_text;
@@ -2696,7 +2700,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_3(_("fractions"), printops.number_fraction_format, _("off"), _("exact"), _("on"), _("combined"));
 				STR_AND_TABS_BOOL(_("functions"), evalops.parse_options.functions_enabled);
 				if(CALCULATOR->getDecimalPoint() != COMMA) {
-					STR_AND_TABS_BOOL(_("ignore_comma"), evalops.parse_options.comma_as_separator);
+					STR_AND_TABS_BOOL(_("ignore comma"), evalops.parse_options.comma_as_separator);
 				}
 				if(CALCULATOR->getDecimalPoint() != DOT) {
 					STR_AND_TABS_BOOL(_("ignore dot"), evalops.parse_options.dot_as_separator);
@@ -2929,6 +2933,8 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("- fraction (show result in combined fractional format)"));
 				PUTS_UNICODE(_("- factors (factorize result)"));
+				puts("");
+				PUTS_UNICODE(_("- utc (show UTC date)"));
 				puts("");
 				PUTS_UNICODE(_("Example: to ?g"));
 				puts("");
@@ -3512,6 +3518,14 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
+				expression_str = str;
+				return;
+			} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
+				expression_str = from_str;
+				printops.time_zone = TIME_ZONE_UTC;
+				evalops.parse_options.units_enabled = b_units_saved;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.time_zone = TIME_ZONE_LOCAL;
 				expression_str = str;
 				return;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction"))) {

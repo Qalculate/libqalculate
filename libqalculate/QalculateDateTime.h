@@ -20,7 +20,9 @@ class QalculateDateTime {
 		long int i_year;
 		long int i_month;
 		long int i_day;
-		Number n_time;
+		long int i_hour;
+		long int i_min;
+		Number n_sec;
 		bool b_time;
 	public:
 		QalculateDateTime();
@@ -42,25 +44,32 @@ class QalculateDateTime {
 		bool set(const Number &newtimestamp);
 		bool set(string date_string);
 		void set(const QalculateDateTime &date);
-		string toISOString(bool local = false) const;
-		string toLocalString(bool local = false) const;
+		string toISOString() const;
+		string toLocalString() const;
 		string print(const PrintOptions &po = default_print_options) const;
-		long int year(bool local = false) const;
-		long int month(bool local = false) const;
-		long int day(bool local = false) const;
-		const Number &timeValue(bool local = false) const;
+		long int year() const;
+		long int month() const;
+		long int day() const;
+		long int hour() const;
+		long int minute() const;
+		const Number &second() const;
+		void setYear(long int newyear);
+		bool setTime(long int ihour, long int imin, const Number &nsec);
 		bool timeIsSet() const;
 		bool addDays(const Number &ndays);
 		bool addMonths(const Number &nmonths);
 		bool addYears(const Number &nyears);
-		bool addSeconds(const Number &seconds);
+		bool addHours(const Number &nhours);
+		bool addMinutes(const Number &nminutes, bool remove_leap_second = true, bool convert_to_utc = true);
+		bool addSeconds(const Number &seconds, bool count_leap_seconds = true, bool convert_to_utc = true);
 		bool add(const QalculateDateTime &date);
 		int weekday() const;
 		int week(bool start_sunday = false) const;
 		int yearday() const;
-		Number timestamp() const;
-		Number daysTo(const QalculateDateTime &date, int basis = 1, bool date_func = true) const;
-		Number yearsTo(const QalculateDateTime &date, int basis = 1, bool date_func = true) const;
+		Number timestamp(bool reverse_utc = false) const;
+		Number secondsTo(const QalculateDateTime &date, bool count_leap_seconds = true, bool convert_to_utc = true) const;
+		Number daysTo(const QalculateDateTime &date, int basis = 1, bool date_func = true, bool remove_leap_seconds = true) const;
+		Number yearsTo(const QalculateDateTime &date, int basis = 1, bool date_func = true, bool remove_leap_seconds = true) const;
 };
 
 #endif

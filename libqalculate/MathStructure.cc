@@ -2727,12 +2727,13 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 					return 1;
 				}
 			} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne() && mstruct[1].isDateTime() && (CALCULATOR->u_second || CALCULATOR->u_day)) {
-				Number ndays = mstruct.datetime()->daysTo(*o_datetime);
-				set(ndays, true);
-				if(CALCULATOR->u_day) {
+				if(CALCULATOR->u_day && !mstruct.datetime()->timeIsSet() && o_datetime->timeIsSet()) {
+					Number ndays = mstruct.datetime()->daysTo(*o_datetime);
+					set(ndays, true);
 					multiply(CALCULATOR->u_day);
 				} else {
-					multiply(Number(86400, 1));
+					Number nsecs = mstruct.datetime()->secondsTo(*o_datetime, true);
+					set(nsecs, true);
 					multiply(CALCULATOR->u_second, true);
 				}
 				MERGE_APPROX_AND_PREC(mstruct)
@@ -2773,12 +2774,31 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
 					}
+				} else if(CALCULATOR->u_hour && (u == CALCULATOR->u_hour || u->isChildOf(CALCULATOR->u_hour))) {
+					if(u != CALCULATOR->u_hour) {
+						CALCULATOR->u_hour->convert(u, mmul);
+						mmul.eval(eo);
+					}
+					if(mmul.isNumber() && o_datetime->addHours(mmul.number())) {
+						MERGE_APPROX_AND_PREC(mstruct)
+						return 1;
+					}
+				} else if(CALCULATOR->u_minute && (u == CALCULATOR->u_minute || u->isChildOf(CALCULATOR->u_minute))) {
+					if(u != CALCULATOR->u_minute) {
+						CALCULATOR->u_minute->convert(u, mmul);
+						mmul.eval(eo);
+					}
+					if(mmul.isNumber() && o_datetime->addMinutes(mmul.number())) {
+						MERGE_APPROX_AND_PREC(mstruct)
+						return 1;
+					}
 				} else {
+					MathStructure mmulb(mmul);
 					if(u != CALCULATOR->u_second) {
 						u->convertToBaseUnit(mmul);
 						mmul.eval(eo);
 					}
-					if(mmul.isNumber() && o_datetime->addSeconds(mmul.number())) {
+					if(mmul.isNumber() && o_datetime->addSeconds(mmul.number(), true)) {
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
 					}

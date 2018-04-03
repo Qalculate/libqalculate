@@ -1,3 +1,27 @@
+2018-04-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Direct date and time calculation
+	* Return date and time in stamptodate()
+	* Time zone conversion
+
+2018-04-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use local currency as "optimal" currency unit
+
+2018-04-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow user to change decimal separator (and consequently argument separator)
+	* Fix lambertw()
+
+2018-03-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix display of parsed sexagesimal number
+	* Do not remove spaces within quotation marks
+
+2018-02-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Change how percent (and permille, permyriad) addition and subtract is calculated (100+20%=120)
+
 2018-03-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Allow ParseOptions::comma_as_separator to have effect on unlocalizeExpression() and localizeExpression() 
