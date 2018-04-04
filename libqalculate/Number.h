@@ -142,7 +142,7 @@ class Number {
 		int intValue(bool *overflow = NULL) const;
 		unsigned int uintValue(bool *overflow = NULL) const;
 		long int lintValue(bool *overflow = NULL) const;
-		long long int llintValue(bool *overflow = NULL) const;
+		long long int llintValue() const;
 		unsigned long int ulintValue(bool *overflow = NULL) const;
 		
 		/** Returns true if the number is approximate.

@@ -1228,20 +1228,18 @@ long int Number::lintValue(bool *overflow) const {
 		return nr.lintValue(overflow);
 	}
 }
-long long int Number::llintValue(bool *overflow) const {
+long long int Number::llintValue() const {
 	if(includesInfinity()) return 0;
 	if(n_type == NUMBER_TYPE_RATIONAL) {
-		if(mpz_fits_slong_p(mpq_numref(r_value)) == 0) {
-			if(overflow) *overflow = true;
-			if(mpz_sgn(mpq_numref(r_value)) == -1) return LONG_LONG_MIN;
-			return LONG_LONG_MAX;
-		}
-		return mpz_get_si(mpq_numref(r_value));
+		long long result = 0;
+		mpz_export(&result, 0, -1, sizeof result, 0, 0, mpq_numref(r_value));
+		if(mpq_sgn(r_value) < 0) return -result;
+		return result;
 	} else {
 		Number nr;
 		nr.set(*this, false, true);
 		nr.round();
-		return nr.lintValue(overflow);
+		return nr.llintValue();
 	}
 }
 unsigned long int Number::ulintValue(bool *overflow) const {

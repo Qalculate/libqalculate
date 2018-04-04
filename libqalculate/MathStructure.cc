@@ -2727,12 +2727,12 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 					return 1;
 				}
 			} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne() && mstruct[1].isDateTime() && (CALCULATOR->u_second || CALCULATOR->u_day)) {
-				if(CALCULATOR->u_day && !mstruct.datetime()->timeIsSet() && o_datetime->timeIsSet()) {
-					Number ndays = mstruct.datetime()->daysTo(*o_datetime);
+				if(CALCULATOR->u_day && !mstruct[1].datetime()->timeIsSet() && !o_datetime->timeIsSet()) {
+					Number ndays = mstruct[1].datetime()->daysTo(*o_datetime);
 					set(ndays, true);
 					multiply(CALCULATOR->u_day);
 				} else {
-					Number nsecs = mstruct.datetime()->secondsTo(*o_datetime, true);
+					Number nsecs = mstruct[1].datetime()->secondsTo(*o_datetime, true);
 					set(nsecs, true);
 					multiply(CALCULATOR->u_second, true);
 				}
@@ -7769,6 +7769,8 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 		if(mstruct1.isSymbolic()) return 1;
 		if(mstruct2.isVariable()) return -1;
 		if(mstruct1.isVariable()) return 1;
+		if(mstruct2.isDateTime()) return -1;
+		if(mstruct1.isDateTime()) return 1;
 		if(parent.isMultiplication()) {
 			if(mstruct2.isNumber()) return -1;
 			if(mstruct1.isNumber()) return 1;
@@ -8081,6 +8083,8 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 		if(mstruct1.isSymbolic()) return 1;
 		if(mstruct2.isVariable()) return -1;
 		if(mstruct1.isVariable()) return 1;
+		if(mstruct2.isDateTime()) return -1;
+		if(mstruct1.isDateTime()) return 1;
 		if(parent.isMultiplication()) {
 			if(mstruct2.isNumber()) return -1;
 			if(mstruct1.isNumber()) return 1;

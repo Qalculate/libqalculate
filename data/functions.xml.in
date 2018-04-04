@@ -1777,6 +1777,14 @@
       <_title>Current Time</_title>
       <_names>r:time</_names>
     </builtin_function>
+    <builtin_function name="timevalue">
+      <_title>Time Value</_title>
+      <_names>r:timevalue</_names>
+      <_description>Returns the time part, in fractional hours, of a date and time value.</_description>
+      <argument index="1">
+        <_title>Date</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="timestamp">
       <_title>Date to Unix Timestamp</_title>
       <_names>r:timestamp</_names>
@@ -1786,7 +1794,7 @@
     </builtin_function>
     <builtin_function name="stamptodate">
       <_title>Unix Timestamp to Date</_title>
-      <_names>r:stamptodate</_names>
+      <_names>r:stamptodate,unix2date</_names>
       <_description>Returns the local date and time represented by the specified Unix timestamp (seconds, excluding leap seconds, since 1970-01-01). Supports time units.</_description>
       <argument index="1">
         <_title>Timestamp</_title>
@@ -1826,13 +1834,13 @@
       <_title>Add Time</_title>
       <_names>r:addTime</_names>
       <_description>Adds a time value to a date. The value can be positive or negative, but must use a unit based on seconds (such as day and year). Fractions of days are truncated.</_description>
-      <expression>addDays(\x,trunc(\y/d))</expression>
+      <expression>\x+\y</expression>
       <argument type="date" index="1">
         <_title>Date</_title>
       </argument>
       <argument index="2">
         <_title>Time</_title>
-	<condition>isNumber(\x/d)</condition>
+        <condition>isNumber(\x/s)</condition>
       </argument>
     </function>
   </category>

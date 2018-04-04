@@ -3184,6 +3184,19 @@ int DateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct.set(dt);
 	return 1;
 }
+TimeValueFunction::TimeValueFunction() : MathFunction("timevalue", 0, 1) {
+	setArgumentDefinition(1, new DateArgument());
+	setDefaultValue(1, "now");
+}
+int TimeValueFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	Number nr(vargs[0].datetime()->second());
+	nr /= 60;
+	nr += vargs[0].datetime()->minute();
+	nr /= 60;
+	nr += vargs[0].datetime()->hour();
+	mstruct.set(nr);
+	return 1;
+}
 TimestampFunction::TimestampFunction() : MathFunction("timestamp", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
 	setDefaultValue(1, "now");
@@ -3224,32 +3237,28 @@ int TimestampToDateFunction::calculate(MathStructure &mstruct, const MathStructu
 
 AddDaysFunction::AddDaysFunction() : MathFunction("addDays", 2) {
 	setArgumentDefinition(1, new DateArgument());
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
+	setArgumentDefinition(2, new NumberArgument());
 }	
 int AddDaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct = vargs[0];
-	long int i = vargs[1].number().lintValue();
-	if(!mstruct.datetime()->addDays(i)) return 0;
+	if(!mstruct.datetime()->addDays(vargs[1].number())) return 0;
 	return 1;
 }
 AddMonthsFunction::AddMonthsFunction() : MathFunction("addMonths", 2) {
 	setArgumentDefinition(1, new DateArgument());
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
+	setArgumentDefinition(2, new NumberArgument());
 }	
 int AddMonthsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	mstruct = vargs[0];
-	long int i = vargs[1].number().lintValue();
-	if(!mstruct.datetime()->addMonths(i)) return 0;
+	if(!mstruct.datetime()->addMonths(vargs[1].number())) return 0;
 	return 1;
 }
 AddYearsFunction::AddYearsFunction() : MathFunction("addYears", 2) {
 	setArgumentDefinition(1, new DateArgument());
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
+	setArgumentDefinition(2, new NumberArgument());
 }	
 int AddYearsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {	
 	mstruct = vargs[0];
-	long int i = vargs[1].number().lintValue();
-	if(!mstruct.datetime()->addYears(i)) return 0;
+	if(!mstruct.datetime()->addYears(vargs[1].number())) return 0;
 	return 1;
 }
 

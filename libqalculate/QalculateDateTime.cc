@@ -646,6 +646,16 @@ bool QalculateDateTime::addDays(const Number &ndays) {
 	newnday += i_day;
 	if(ndays.isNegative()) {
 		bool check_aborted = newnday.isLessThan(-1000000L);
+		while(newnday.isLessThanOrEqualTo(-14609700L)) {
+			newnday += 14609700L;
+			newyear -= 40000L;
+			if(check_aborted && CALCULATOR && CALCULATOR->aborted()) return false;
+		}
+		while(newnday.isLessThanOrEqualTo(-146097L)) {
+			newnday += 146097L;
+			newyear -= 400;
+			if(check_aborted && CALCULATOR && CALCULATOR->aborted()) return false;
+		}
 		while(newnday.isLessThanOrEqualTo(-daysPerYear(newmonth <= 2 ? newyear - 1 : newyear))) {
 			newnday += daysPerYear(newmonth <= 2 ? newyear - 1 : newyear);
 			newyear--;
@@ -661,6 +671,16 @@ bool QalculateDateTime::addDays(const Number &ndays) {
 		}
 	} else {
 		bool check_aborted = newnday.isGreaterThan(1000000L);
+		while(newnday.isGreaterThan(14609700L)) {
+			newnday -= 14609700L;
+			newyear += 40000;
+			if(check_aborted && CALCULATOR && CALCULATOR->aborted()) return false;
+		}
+		while(newnday.isGreaterThan(146097L)) {
+			newnday -= 146097L;
+			newyear += 400;
+			if(check_aborted && CALCULATOR && CALCULATOR->aborted()) return false;
+		}
 		while(newnday.isGreaterThan(daysPerYear(newmonth <= 2 ? newyear : newyear + 1))) {
 			newnday -= daysPerYear(newmonth <= 2 ? newyear : newyear + 1);
 			newyear++;
