@@ -5656,6 +5656,7 @@ int MathStructure::merge_bitwise_xor(MathStructure &mstruct, const EvaluationOpt
 
 #define MERGE_ALL(FUNC, TRY_LABEL) 	size_t i2, i3 = SIZE;\
 					bool large_size = (i3 > 100); \
+					bool do_abort = false; \
 					for(size_t i = 0; i < SIZE - 1; i++) {\
 						if(large_size && CALCULATOR->aborted()) break;\
 						i2 = i + 1;\
@@ -5701,8 +5702,12 @@ int MathStructure::merge_bitwise_xor(MathStructure &mstruct, const EvaluationOpt
 									goto TRY_LABEL;\
 								}\
 								i2--;\
+							} else if(CHILD(i).isDateTime()) {\
+								do_abort = true;\
+								break;\
 							}\
 						}\
+						if(do_abort) break;\
 						if(i3 < SIZE) {\
 							if(i3 == SIZE - 1) break;\
 							i = i3;\
@@ -6375,7 +6380,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		case STRUCT_ADDITION: {
 			MERGE_RECURSE
 			bool found_complex_relations = false;
-			if(eo.sync_units && (syncUnits(false, &found_complex_relations, true, feo) || (found_complex_relations && eo.sync_complex_unit_relations))) {
+			if(eo.sync_units && containsType(STRUCT_DATETIME, false, true, false) <= 0 && (syncUnits(false, &found_complex_relations, true, feo) || (found_complex_relations && eo.sync_complex_unit_relations))) {
 				if(found_complex_relations && eo.sync_complex_unit_relations) {
 					EvaluationOptions eo2 = eo;
 					eo2.expand = -3;
@@ -7873,6 +7878,7 @@ void MathStructure::evalSort(bool recursive, bool b_abs) {
 	}
 	//if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION && m_type != STRUCT_LOGICAL_AND && m_type != STRUCT_LOGICAL_OR && m_type != STRUCT_LOGICAL_XOR && m_type != STRUCT_BITWISE_AND && m_type != STRUCT_BITWISE_OR && m_type != STRUCT_BITWISE_XOR) return;
 	if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION && m_type != STRUCT_BITWISE_AND && m_type != STRUCT_BITWISE_OR && m_type != STRUCT_BITWISE_XOR) return;
+	if(m_type == STRUCT_ADDITION && containsType(STRUCT_DATETIME, false, true, false) > 0) return;
 	vector<size_t> sorted;
 	sorted.reserve(SIZE);
 	for(size_t i = 0; i < SIZE; i++) {
@@ -8196,6 +8202,7 @@ void MathStructure::sort(const PrintOptions &po, bool recursive) {
 		}
 	}
 	if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION && m_type != STRUCT_BITWISE_AND && m_type != STRUCT_BITWISE_OR && m_type != STRUCT_BITWISE_XOR && m_type != STRUCT_LOGICAL_AND && m_type != STRUCT_LOGICAL_OR) return;
+	if(m_type == STRUCT_ADDITION && containsType(STRUCT_DATETIME, false, true, false) > 0) return;
 	vector<size_t> sorted;
 	bool b;
 	PrintOptions po2 = po;
@@ -8777,7 +8784,6 @@ bool combination_factorize(MathStructure &mstruct) {
 bool MathStructure::simplify(const EvaluationOptions &eo, bool unfactorize) {
 
 	if(SIZE == 0) return false;
-
 	if(unfactorize) {
 		unformat();
 		EvaluationOptions eo2 = eo;
@@ -14044,6 +14050,7 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure*, size
 bool MathStructure::factorizeUnits() {
 	switch(m_type) {
 		case STRUCT_ADDITION: {
+			if(containsType(STRUCT_DATETIME, false, true, false) > 0) return false;
 			bool b = false;
 			MathStructure mstruct_units(*this);
 			MathStructure mstruct_new(*this);
@@ -14706,6 +14713,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return po.excessive_parenthesis;}
+				case STRUCT_DATETIME: {return false;}
 				default: {return true;}
 			}
 		}
@@ -14735,6 +14743,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
+				case STRUCT_DATETIME: {return false;}
 				default: {return true;}
 			}
 		}
@@ -14763,6 +14772,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
+				case STRUCT_DATETIME: {return false;}
 				default: {return true;}
 			}
 		}
@@ -14849,6 +14859,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
+				case STRUCT_DATETIME: {return false;}
 				default: {return true;}
 			}
 		}
@@ -14907,6 +14918,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_SYMBOLIC: {return false;}
 				case STRUCT_UNIT: {return false;}
 				case STRUCT_UNDEFINED: {return false;}
+				case STRUCT_DATETIME: {return false;}
 				default: {return true;}
 			}
 		}
@@ -20893,8 +20905,8 @@ bool replace_abs_x(MathStructure &mstruct, const MathStructure &marg, bool b_min
 			return true;
 		}
 		if((!parent || parent->isMultiplication() || parent->isAddition()) && level <= 2 && mstruct.function() == CALCULATOR->f_ln && mstruct.size() == 1) {
-			if((mstruct[0].isFunction() && mstruct[0].function() == CALCULATOR->f_root) || (mstruct[0].isPower() && mstruct[0][1].isInteger() && mstruct[0][0].isFunction() && mstruct[0][0].function() == CALCULATOR->f_root)) return NULL;
-			if(mstruct[0].isMultiplication() && mstruct[0].size() == 2 && ((mstruct[0][1].isFunction() && mstruct[0][1].function() == CALCULATOR->f_root) || (mstruct[0][1].isPower() && mstruct[0][1][1].isInteger() && mstruct[0][1][0].isFunction() && mstruct[0][1][0].function() == CALCULATOR->f_root))) return NULL;
+			if((mstruct[0].isFunction() && mstruct[0].function() == CALCULATOR->f_root) || (mstruct[0].isPower() && mstruct[0][1].isInteger() && mstruct[0][0].isFunction() && mstruct[0][0].function() == CALCULATOR->f_root)) return false;
+			if(mstruct[0].isMultiplication() && mstruct[0].size() == 2 && ((mstruct[0][1].isFunction() && mstruct[0][1].function() == CALCULATOR->f_root) || (mstruct[0][1].isPower() && mstruct[0][1][1].isInteger() && mstruct[0][1][0].isFunction() && mstruct[0][1][0].function() == CALCULATOR->f_root))) return false;
 		}
 	}
 	if(mstruct.isPower() && mstruct[1].isInteger() && mstruct[1].number().isOdd() && mstruct[0].isFunction() && mstruct[0].function() == CALCULATOR->f_root && VALID_ROOT(mstruct[0]) && mstruct[0][1].number().isOdd() && mstruct[0][0].equals(marg, true)) {

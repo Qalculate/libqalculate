@@ -5797,6 +5797,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					}
 					append = true;
 					if((min && (mstruct->last().isNegate() || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last()[0].isMinusOne())) && mstruct->last().last().isMultiplication() && mstruct->last().last().size() == 2 && (mstruct->last().last().last().variable() && (mstruct->last().last().last().variable() == v_percent || mstruct->last().last().last().variable() == v_permille || mstruct->last().last().last().variable() == v_permyriad))) || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && (mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad)))) {
+						Variable *v;
+						if(mstruct->last().last().isVariable()) v = mstruct->last().last().variable();
+						else v = mstruct->last().last().last().variable();
 						bool b_neg = false;
 						if(mstruct->last().isNegate()) {
 							mstruct->last().setToChild(1, true);
@@ -5807,10 +5810,14 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						}
 						if(mstruct->last()[0].isNumber()) {
 							if(b_neg) mstruct->last()[0].number().negate();
-							mstruct->last()[0].number().add(100);
+							if(v == CALCULATOR->v_percent) mstruct->last()[0].number().add(100);
+							else if(v == CALCULATOR->v_permille) mstruct->last()[0].number().add(1000);
+							else mstruct->last()[0].number().add(10000);
 						} else {
 							if(b_neg) mstruct->last()[0].negate();
-							mstruct->last()[0] += Number(100, 1);
+							if(v == CALCULATOR->v_percent) mstruct->last()[0] += Number(100, 1);
+							else if(v == CALCULATOR->v_permille) mstruct->last()[0] += Number(1000, 1);
+							else mstruct->last()[0] += Number(10000, 1);
 							mstruct->last()[0].swapChildren(1, 2);
 						}
 						if(mstruct->size() == 2) {
@@ -5857,6 +5864,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					parseAdd(str, mstruct, po, OPERATION_ADD, append);
 				}
 				if((min && (mstruct->last().isNegate() || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last()[0].isMinusOne())) && mstruct->last().last().isMultiplication() && mstruct->last().last().size() == 2 && (mstruct->last().last().last().variable() && (mstruct->last().last().last().variable() == v_percent || mstruct->last().last().last().variable() == v_permille || mstruct->last().last().last().variable() == v_permyriad))) || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && (mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad)))) {
+					Variable *v;
+					if(mstruct->last().last().isVariable()) v = mstruct->last().last().variable();
+					else v = mstruct->last().last().last().variable();
 					bool b_neg = false;
 					if(mstruct->last().isNegate()) {
 						mstruct->last().setToChild(1, true);
@@ -5867,10 +5877,14 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					}
 					if(mstruct->last()[0].isNumber()) {
 						if(b_neg) mstruct->last()[0].number().negate();
-						mstruct->last()[0].number().add(100);
+						if(v == CALCULATOR->v_percent) mstruct->last()[0].number().add(100);
+						else if(v == CALCULATOR->v_permille) mstruct->last()[0].number().add(1000);
+						else mstruct->last()[0].number().add(10000);
 					} else {
 						if(b_neg) mstruct->last()[0].negate();
-						mstruct->last()[0] += Number(100, 1);
+						if(v == CALCULATOR->v_percent) mstruct->last()[0] += Number(100, 1);
+						else if(v == CALCULATOR->v_permille) mstruct->last()[0] += Number(1000, 1);
+						else mstruct->last()[0] += Number(10000, 1);
 						mstruct->last()[0].swapChildren(1, 2);
 					}
 					if(mstruct->size() == 2) {
@@ -6976,7 +6990,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {2, 3, 0};
+	int version_numbers[] = {2, 3, 1};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

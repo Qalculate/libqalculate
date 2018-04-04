@@ -14,9 +14,7 @@
 #include "util.h"
 #include "Calculator.h"
 #include "limits"
-#include <sstream>
 #include <stdlib.h>
-#include <iomanip>
 
 static const bool has_leap_second[] = {
 // 30/6, 31/12
@@ -184,9 +182,11 @@ QalculateDateTime prevLeapSecond(const QalculateDateTime &date) {
 
 int dateTimeZone(time_t rawtime) {
 	struct tm tmdate = *localtime(&rawtime);
-	std::ostringstream os;
-	os << std::put_time(&tmdate, "%z");
-	std::string s = os.str();
+	char buffer[10];
+	if(!strftime(buffer, 10, "%z", &tmdate)) {
+		return 0;
+	}
+	string s = buffer;
 	int h = s2i(s.substr(0, 3));
 	int m = s2i(s.substr(3));
 	return h * 60 + m;
@@ -348,20 +348,22 @@ bool QalculateDateTime::set(string str) {
 		string time_str = str.substr(i_t + 1);
 		str.resize(i_t);
 		char tzstr[10] = "";
-		if(sscanf(time_str.c_str(), "%2u:%2u:%2u%9s", &newhour, &newmin, &newsec, tzstr) < 2) {
-			if(sscanf(time_str.c_str(), "%2u%2u%2u%9s", &newhour, &newmin, &newsec, tzstr) < 2) {
+		if(sscanf(time_str.c_str(), "%2u:%2u:%2u%9s", &newhour, &newmin, &newsec, tzstr) < 3) {
+			if(sscanf(time_str.c_str(), "%2u:%2u%9s", &newhour, &newmin, tzstr) < 2) {
+				if(sscanf(time_str.c_str(), "%2u%2u%2u%9s", &newhour, &newmin, &newsec, tzstr) < 2) {
 #ifndef _WIN32
-				struct tm tmdate;
-				if(strptime(time_str.c_str(), "%X", &tmdate) || strptime(time_str.c_str(), "%EX", &tmdate)) {
-					newhour = tmdate.tm_hour;
-					newmin = tmdate.tm_min;
-					newsec = tmdate.tm_sec;
-				} else {
-					return false;
-				}
+					struct tm tmdate;
+					if(strptime(time_str.c_str(), "%X", &tmdate) || strptime(time_str.c_str(), "%EX", &tmdate)) {
+						newhour = tmdate.tm_hour;
+						newmin = tmdate.tm_min;
+						newsec = tmdate.tm_sec;
+					} else {
+						return false;
+					}
 #else
-				return false;
+					return false;
 #endif
+				}
 			}
 		}
 		string stz = tzstr;
@@ -493,13 +495,11 @@ string QalculateDateTime::toLocalString() const {
 		tmdate.tm_min = 0;
 		tmdate.tm_sec = 0;
 	}
-	char *buffer = (char*) malloc(100 * sizeof(char));
+	char buffer[100];
 	if(!strftime(buffer, 100, "%xT%X", &tmdate)) {
 		return toISOString();
 	}
-	string str = buffer;
-	free(buffer);
-	return str;
+	return buffer;
 }
 string QalculateDateTime::print(const PrintOptions &po) const {
 	if(po.is_approximate && (!n_sec.isInteger() || n_sec.isApproximate())) *po.is_approximate = true;
@@ -625,6 +625,7 @@ bool QalculateDateTime::addMinutes(const Number &nminutes, bool remove_leap_seco
 }
 bool QalculateDateTime::addDays(const Number &ndays) {
 	if(!ndays.isReal() || ndays.isInterval()) return false;
+	if(ndays.isZero()) return true;
 	if(!ndays.isInteger()) {
 		Number newdays(ndays);
 		newdays.trunc();
@@ -639,44 +640,44 @@ bool QalculateDateTime::addDays(const Number &ndays) {
 		}
 		return true;
 	}
-	bool overflow = false;
-	long int days = ndays.lintValue(&overflow);
-	if(overflow) return false;
-	long int newday = i_day, newmonth = i_month, newyear = i_year;
-	if(days > 0) {
-		if(i_day > 0 && (unsigned long int) days + i_day > (unsigned long int) LONG_MAX) return false;
-		newday += days;
-		bool check_aborted = days > 1000000L;
-		while(newday > daysPerYear(newyear)) {
-			newday -= daysPerYear(newyear);
+
+	long int newmonth = i_month, newyear = i_year;
+	Number newnday(ndays);
+	newnday += i_day;
+	if(ndays.isNegative()) {
+		bool check_aborted = newnday.isLessThan(-1000000L);
+		while(newnday.isLessThanOrEqualTo(-daysPerYear(newmonth <= 2 ? newyear - 1 : newyear))) {
+			newnday += daysPerYear(newmonth <= 2 ? newyear - 1 : newyear);
+			newyear--;
+			if(check_aborted && CALCULATOR && CALCULATOR->aborted()) return false;
+		}
+		while(newnday.isLessThan(1)) {
+			newmonth--;
+			if(newmonth < 1) {
+				newyear--;
+				newmonth = 12;
+			}
+			newnday += daysPerMonth(newmonth, newyear);
+		}
+	} else {
+		bool check_aborted = newnday.isGreaterThan(1000000L);
+		while(newnday.isGreaterThan(daysPerYear(newmonth <= 2 ? newyear : newyear + 1))) {
+			newnday -= daysPerYear(newmonth <= 2 ? newyear : newyear + 1);
 			newyear++;
 			if(check_aborted && CALCULATOR && CALCULATOR->aborted()) return false;
 		}
-		while(newday > daysPerMonth(newmonth, newyear)) {
-			newday -= daysPerMonth(newmonth, newyear);
+		while(newnday.isGreaterThan(daysPerMonth(newmonth, newyear))) {
+			newnday -= daysPerMonth(newmonth, newyear);
 			newmonth++;
 			if(newmonth > 12) {
 				newyear++;
 				newmonth = 1;
 			}
 		}
-	} else if(days < 0) {
-		newday += days;
-		bool check_aborted = days < -1000000L;
-		while(-newday > daysPerYear(newyear - 1)) {
-			newyear--;
-			newday += daysPerYear(newyear);
-			if(check_aborted && CALCULATOR && CALCULATOR->aborted()) return false;
-		}
-		while(newday < 1) {
-			newmonth--;
-			if(newmonth < 1) {
-				newyear--;
-				newmonth = 12;
-			}
-			newday += daysPerMonth(newmonth, newyear);
-		}
 	}
+	bool overflow = false;
+	long int newday = newnday.lintValue(&overflow);
+	if(overflow) return false;
 	i_day = newday;
 	i_month = newmonth;
 	i_year = newyear;
