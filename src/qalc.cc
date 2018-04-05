@@ -1218,12 +1218,7 @@ int main(int argc, char *argv[]) {
 				puts(_("No file specified."));
 			}
 		} else {
-			if(strlen(argv[i]) >= 2 && ((argv[i][0] == '\"' && argv[i][strlen(argv[i] - 1)] == '\"') || (argv[i][0] == '\'' && argv[i][strlen(argv[i] - 1)] == '\''))) {
-				calc_arg += argv[i] + 1;
-				calc_arg.erase(calc_arg.length() - 1);
-			} else {
-				calc_arg += argv[i];
-			}
+			calc_arg += argv[i];
 			calc_arg_begun = true;
 		}
 	}
@@ -1336,6 +1331,9 @@ int main(int argc, char *argv[]) {
 		t_end.tv_sec += usecs / 1000000;
 	}
 	if(!cfile && !calc_arg.empty()) {
+		if(calc_arg.length() > 2 && ((calc_arg[0] == '\"' && calc_arg.find('\"', 1) == calc_arg.length() - 1) || (calc_arg[0] == '\'' && calc_arg.find('\'', 1) == calc_arg.length() - 1))) {
+			calc_arg = calc_arg.substr(1, calc_arg.length() - 2);
+		}
 		if(!printops.use_unicode_signs && contains_unicode_char(calc_arg.c_str())) {
 			char *gstr = locale_to_utf8(calc_arg.c_str());
 			if(gstr) {
@@ -2998,7 +2996,7 @@ int main(int argc, char *argv[]) {
 			free(rlbuffer);
 		}
 #endif
-    	}
+	}
 	if(cfile && cfile != stdin) {
 		fclose(cfile);
 	}

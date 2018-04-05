@@ -212,12 +212,20 @@ int dateTimeZone(const QalculateDateTime &dt, bool b_utc) {
 	tmdate.tm_sec = nsect.intValue();
 	rawtime = mktime(&tmdate);
 	if(rawtime == (time_t) -1) {
-		if(dt.year() > 2038) {
-			if(isLeapYear(dt.year())) tmdate.tm_year = 2036 - 1900;
-			else tmdate.tm_year = 2038 - 1900;
+		if(dt.year() >= 2038) {
+			if(isLeapYear(dt.year())) tmdate.tm_year = 136;
+			else tmdate.tm_year = 137;
 			rawtime = mktime(&tmdate);
 		} else if(dt.year() < 1970 || (!b_utc && dt.year() == 1970)) {
-			if(dt.year() < 0) {
+			if(std::numeric_limits<time_t>::min() == 0) {
+				if(isLeapYear(dt.year())) tmdate.tm_year = 72;
+				else tmdate.tm_year = b_utc ? 70 : 71;
+				rawtime = mktime(&tmdate);
+			} else if(std::numeric_limits<time_t>::min() > LONG_MIN) {
+				rawtime = INT_MIN;
+			} else if(std::numeric_limits<time_t>::min() > LONG_LONG_MIN) {
+				rawtime = LONG_MIN;
+			} else if(dt.year() < 0) {
 				rawtime = (time_t) -62167219200LL;
 			} else {
 				Number nstamp = dt.timestamp(true);
