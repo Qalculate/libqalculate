@@ -81,6 +81,7 @@ class MathFunction : public ExpressionItem {
 	virtual MathStructure createFunctionMathStructureFromSVArgs(vector<string> &svargs);	
 	string scondition;
 	string sexample;
+	bool b_calculate_elements;
 	
   public:
   
@@ -100,6 +101,9 @@ class MathFunction : public ExpressionItem {
 	
 	string example(bool raw_format = false, string name_string = "") const;
 	void setExample(string new_example);
+	
+	bool calculatesEachElement() const;
+	void setCalculateEachElement(bool b = true);
 
 	bool testArgumentCount(int itmp);
 	virtual MathStructure calculate(const string &eq, const EvaluationOptions &eo = default_evaluation_options);
@@ -411,7 +415,7 @@ class Argument {
 	
 	bool matrixAllowed() const;
 	void setMatrixAllowed(bool allow_matrix);
-
+	
 	bool isLastArgument() const;
 	void setIsLastArgument(bool is_last);
 

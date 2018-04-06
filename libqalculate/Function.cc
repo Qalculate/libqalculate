@@ -72,6 +72,7 @@ MathFunction::MathFunction(string name_, int argc_, int max_argc_, string cat_, 
 		}
 	}
 	last_argdef_index = 0;
+	b_calculate_elements = false;
 }
 MathFunction::MathFunction(const MathFunction *function) {
 	priv = new MathFunction_p;
@@ -82,6 +83,7 @@ MathFunction::MathFunction() {
 	argc = 0;
 	max_argc = 0;
 	last_argdef_index = 0;
+	b_calculate_elements = false;
 }
 MathFunction::~MathFunction() {
 	clearArgumentDefinitions();
@@ -105,6 +107,7 @@ void MathFunction::set(const ExpressionItem *item) {
 				setArgumentDefinition(i, f->getArgumentDefinition(i)->copy());
 			}
 		}
+		b_calculate_elements = f->calculatesEachElement();
 	}
 	ExpressionItem::set(item);
 }
@@ -124,6 +127,9 @@ string MathFunction::example(bool raw_format, string name_string) const {
 void MathFunction::setExample(string new_example) {
 	sexample = new_example;
 }
+
+bool MathFunction::calculatesEachElement() const {return b_calculate_elements;}
+void MathFunction::setCalculateEachElement(bool b) {b_calculate_elements = b;} 
 
 /*int MathFunction::countArgOccurence(size_t arg_) {
 	if((int) arg_ > argc && max_argc < 0) {
@@ -232,7 +238,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 	bool last_is_vctr = false, vctr_started = false;
 	if(maxargs() > 0) {
 		arg = getArgumentDefinition(maxargs());
-		last_is_vctr = (arg && arg->type() == ARGUMENT_TYPE_VECTOR);
+		last_is_vctr = (arg && arg->type() == ARGUMENT_TYPE_VECTOR) || (maxargs() == 1 && calculatesEachElement());
 	}
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		switch(str[str_index]) {
@@ -435,7 +441,7 @@ void MathFunction::setArgumentDefinition(size_t index, Argument *argdef) {
 }
 bool MathFunction::testArgumentCount(int itmp) {
 	if(itmp >= minargs()) {
-		if(itmp > maxargs() && maxargs() >= 0) {
+		if(itmp > maxargs() && maxargs() >= 0 && (!calculatesEachElement() || maxargs() > 1)) {
 			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str(), NULL);
 		}
 		return true;	
@@ -705,8 +711,14 @@ bool MathFunction::representsEven(const MathStructure&, bool) const {return fals
 bool MathFunction::representsOdd(const MathStructure&, bool) const {return false;}
 bool MathFunction::representsUndefined(const MathStructure&) const {return false;}
 bool MathFunction::representsBoolean(const MathStructure&) const {return false;}
-bool MathFunction::representsNonMatrix(const MathStructure &vargs) const {return representsNumber(vargs, true);}
-bool MathFunction::representsScalar(const MathStructure &vargs) const {return representsNonMatrix(vargs);}
+bool MathFunction::representsNonMatrix(const MathStructure &vargs) const {
+	if(calculatesEachElement()) return vargs.size() > 0 && vargs[0].representsNonMatrix();
+	return representsNumber(vargs, true);
+}
+bool MathFunction::representsScalar(const MathStructure &vargs) const {
+	if(calculatesEachElement()) return vargs.size() > 0 && vargs[0].representsScalar();
+	return representsNonMatrix(vargs);
+}
 
 UserFunction::UserFunction(string cat_, string name_, string formula_, bool is_local, int argc_, string title_, string descr_, int max_argc_, bool is_active) : MathFunction(name_, argc_, max_argc_, cat_, title_, descr_, is_active) {
 	b_local = is_local;
@@ -1230,6 +1242,13 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 		gsub("\\x", ids, expression);
 		b = CALCULATOR->testCondition(expression);
 		CALCULATOR->delId(id);
+	}
+	if(!b && index == 1 && f->calculatesEachElement() && value.isVector()) {
+		if(!evaled && !value.isVector()) {
+			value.eval(eo);
+			evaled = true;
+		}
+		if(value.isVector()) return false;
 	}
 	if(!b) {
 		if(b_error) {

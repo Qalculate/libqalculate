@@ -418,4 +418,23 @@
       <_names>r:z</_names>
     </unknown>
   </category>
+  <category>
+    <_title>Date &amp; Time</_title>
+    <builtin_variable name="today">
+      <_title>Today</_title>
+      <_names>r:today</_names>
+    </builtin_variable>
+    <builtin_variable name="tomorrow">
+      <_title>Tomorrow</_title>
+      <_names>r:tomorrow</_names>
+    </builtin_variable>
+    <builtin_variable name="yesterday">
+      <_title>Yesterday</_title>
+      <_names>r:yesterday</_names>
+    </builtin_variable>
+    <builtin_variable name="now">
+      <_title>Now</_title>
+      <_names>r:now</_names>
+    </builtin_variable>
+  </category>
 </QALCULATE>

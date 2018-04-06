@@ -88,6 +88,7 @@
 #define XML_GET_STRING_FROM_TEXT(node, str)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = "";
 #define XML_DO_FROM_PROP(node, name, action)		value = xmlGetProp(node, (xmlChar*) name); if(value) action((char*) value); else action(""); if(value) xmlFree(value);
 #define XML_DO_FROM_TEXT(node, action)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {action((char*) value); xmlFree(value);} else action("");
+#define XML_DO_BOOL_FROM_TEXT(node, action)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value && !xmlStrcmp(value, (const xmlChar*) "true")) {action(true);} else {action(false);} if(value) xmlFree(value);
 #define XML_GET_INT_FROM_PROP(node, name, i)		value = xmlGetProp(node, (xmlChar*) name); if(value) {i = s2i((char*) value); xmlFree(value);}
 #define XML_GET_INT_FROM_TEXT(node, i)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {i = s2i((char*) value); xmlFree(value);}
 #define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && strlen((char*) lang) >= 2 && fulfilled_translation == 0 && lang[0] == localebase[0] && lang[1] == localebase[1]) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
@@ -1373,6 +1374,10 @@ void Calculator::addBuiltinVariables() {
 	v_x = (UnknownVariable*) addVariable(new UnknownVariable("", "x", "", true, false));
 	v_y = (UnknownVariable*) addVariable(new UnknownVariable("", "y", "", true, false));
 	v_z = (UnknownVariable*) addVariable(new UnknownVariable("", "z", "", true, false));
+	v_today = (KnownVariable*) addVariable(new TodayVariable());
+	v_yesterday = (KnownVariable*) addVariable(new YesterdayVariable());
+	v_tomorrow = (KnownVariable*) addVariable(new TomorrowVariable());
+	v_now = (KnownVariable*) addVariable(new NowVariable());
 	
 }
 void Calculator::addBuiltinFunctions() {
@@ -7075,6 +7080,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						f->setApproximate(b);
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "condition")) {
 						XML_DO_FROM_TEXT(child, f->setCondition);
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "handlevector")) {
+						XML_DO_BOOL_FROM_TEXT(child, f->setCalculateEachElement);
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "subfunction")) {
 						XML_GET_FALSE_FROM_PROP(child, "precalculate", b);
 						value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 

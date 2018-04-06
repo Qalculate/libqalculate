@@ -456,14 +456,16 @@ DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool 
 	calculated_precision = -1;
 	calculated_with_interval = false;
 	calculated_with_units = false;
+	always_recalculate = false;
 	setApproximate();
 	setChanged(false);
 }
 DynamicVariable::DynamicVariable(const DynamicVariable *variable) {
 	mstruct = NULL;
 	set(variable);
-	setApproximate();	
+	setApproximate();
 	setChanged(false);
+	always_recalculate = false;
 }
 DynamicVariable::DynamicVariable() : KnownVariable() {
 	mstruct = NULL;
@@ -472,6 +474,7 @@ DynamicVariable::DynamicVariable() : KnownVariable() {
 	calculated_with_units = false;
 	setApproximate();
 	setChanged(false);
+	always_recalculate = false;
 }
 DynamicVariable::~DynamicVariable() {
 	if(mstruct) delete mstruct;
@@ -482,7 +485,7 @@ void DynamicVariable::set(const ExpressionItem *item) {
 void DynamicVariable::set(const MathStructure&) {}
 void DynamicVariable::set(string) {}
 const MathStructure &DynamicVariable::get() {
-	if(calculated_with_interval != CALCULATOR->usesIntervalArithmetic() || calculated_precision != CALCULATOR->getPrecision() || !mstruct || mstruct->isAborted()) {
+	if(always_recalculate || calculated_with_interval != CALCULATOR->usesIntervalArithmetic() || calculated_precision != CALCULATOR->getPrecision() || !mstruct || mstruct->isAborted()) {
 		if(mstruct) mstruct->unref();
 		mstruct = new MathStructure();
 		mstruct->setAborted();
@@ -520,5 +523,44 @@ PrecisionVariable::PrecisionVariable() : DynamicVariable("", "precision") {
 }
 void PrecisionVariable::calculate() const {
 	mstruct->set(PRECISION, 1, 0);
+}
+
+TodayVariable::TodayVariable() : DynamicVariable("", "today") {
+	setApproximate(false);
+	always_recalculate = true;
+}
+void TodayVariable::calculate() const {
+	QalculateDateTime dt;
+	dt.setToCurrentDate();
+	mstruct->set(dt);
+}
+YesterdayVariable::YesterdayVariable() : DynamicVariable("", "yesterday") {
+	setApproximate(false);
+	always_recalculate = true;
+}
+void YesterdayVariable::calculate() const {
+	QalculateDateTime dt;
+	dt.setToCurrentDate();
+	dt.addDays(-1);
+	mstruct->set(dt);
+}
+TomorrowVariable::TomorrowVariable() : DynamicVariable("", "tomorrow") {
+	setApproximate(false);
+	always_recalculate = true;
+}
+void TomorrowVariable::calculate() const {
+	QalculateDateTime dt;
+	dt.setToCurrentDate();
+	dt.addDays(1);
+	mstruct->set(dt);
+}
+NowVariable::NowVariable() : DynamicVariable("", "now") {
+	setApproximate(false);
+	always_recalculate = true;
+}
+void NowVariable::calculate() const {
+	QalculateDateTime dt;
+	dt.setToCurrentTime();
+	mstruct->set(dt);
 }
 

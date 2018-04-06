@@ -1,3 +1,8 @@
+2018-04-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Calculate each vector element (and each extra argument) separately in many functions
+	  (e.g. sin(5, 2, 3) = [-0.95892427, 0.90929743, 0.14112001])
+
 2018-04-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Only remove quotation marks at beginning and end of command line expression if they are the only ones

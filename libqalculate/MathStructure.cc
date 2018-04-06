@@ -3368,6 +3368,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			}
 		}
 		case STRUCT_ADDITION: {
+			if(eo.expand != 0 && containsType(STRUCT_DATETIME, false, true, false) > 0) return -1;
 			switch(mstruct.type()) {
 				case STRUCT_ADDITION: {
 					if(eo.expand != 0 && (eo.expand > -2 || (!containsInterval(true, false, false, eo.expand == -2) && !mstruct.containsInterval(true, false, false, eo.expand == -2)) || (representsNonNegative(true) && mstruct.representsNonNegative(true)))) {
@@ -3522,7 +3523,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			switch(mstruct.type()) {
 				case STRUCT_VECTOR: {}
 				case STRUCT_ADDITION: {
-					if(eo.expand == 0) {
+					if(eo.expand == 0 || containsType(STRUCT_DATETIME, false, true, false) > 0) {
 						if(!do_append) return -1;
 						APPEND_REF(&mstruct);
 						return 1;
@@ -4225,7 +4226,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			goto default_power_merge;
 		}
 		case STRUCT_ADDITION: {
-			if(mstruct.isNumber() && mstruct.number().isInteger()) {
+			if(mstruct.isNumber() && mstruct.number().isInteger() && containsType(STRUCT_DATETIME, false, true, false) <= 0) {
 				if(eo.reduce_divisions && mstruct.number().isMinusOne()) {
 					int bnum = -1, bden = -1;
 					int inegs = 0;
@@ -6380,7 +6381,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		case STRUCT_ADDITION: {
 			MERGE_RECURSE
 			bool found_complex_relations = false;
-			if(eo.sync_units && containsType(STRUCT_DATETIME, false, true, false) <= 0 && (syncUnits(false, &found_complex_relations, true, feo) || (found_complex_relations && eo.sync_complex_unit_relations))) {
+			if(eo.sync_units && (syncUnits(false, &found_complex_relations, true, feo) || (found_complex_relations && eo.sync_complex_unit_relations))) {
 				if(found_complex_relations && eo.sync_complex_unit_relations) {
 					EvaluationOptions eo2 = eo;
 					eo2.expand = -3;
@@ -7548,6 +7549,14 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 		}
 
 		if(o_function->maxargs() > -1 && (long int) SIZE > o_function->maxargs()) {
+			if(o_function->maxargs() == 1 && o_function->calculatesEachElement()) {
+				for(size_t i2 = 0; i2 < SIZE; i2++) {
+					CHILD(i2).transform(o_function);
+				}
+				o_function->unref();
+				m_type = STRUCT_VECTOR;
+				return calculateFunctions(eo, recursive, do_unformat);
+			}
 			REDUCE(o_function->maxargs());
 		}
 		m_type = STRUCT_VECTOR;
@@ -7556,10 +7565,35 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 
 		for(size_t i = 0; i < SIZE; i++) {
 			arg = o_function->getArgumentDefinition(i + 1);
-			if(arg) {
+			if(i == 0 && o_function->calculatesEachElement() && (!arg || !arg->tests())) {
+				if(!CHILD(i).isVector() && !CHILD(i).representsScalar()) {
+					CHILD(i).eval(eo);
+					CHILD_UPDATED(i);
+				}
+				if(CHILD(i).isVector()) {
+					for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
+						CHILD(0)[i2].transform(o_function);
+						for(size_t i3 = 1; i3 < SIZE; i3++) {
+							CHILD(0)[i2].addChild(CHILD(i3));
+						}
+					}
+					SET_CHILD_MAP(0);
+					return calculateFunctions(eo, recursive, do_unformat);
+				}
+			} else if(arg) {
 				last_arg = arg;
 				last_i = i;
 				if(!arg->test(CHILD(i), i + 1, o_function, eo)) {
+					if(i == 0 && o_function->calculatesEachElement() && CHILD(i).isVector()) {
+						for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
+							CHILD(0)[i2].transform(o_function);
+							for(size_t i3 = 1; i3 < SIZE; i3++) {
+								CHILD(0)[i2].addChild(CHILD(i3));
+							}
+						}
+						SET_CHILD_MAP(0);
+						return calculateFunctions(eo, recursive, do_unformat);
+					}
 					m_type = STRUCT_FUNCTION;
 					CHILD_UPDATED(i);
 					return false;
@@ -7627,6 +7661,23 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 			}*/
 			m_type = STRUCT_FUNCTION;
 			mstruct->unref();
+			if(SIZE > 0 && o_function->calculatesEachElement() && CHILD(0).isVector()) {
+				if(!CHILD(0).isVector()) {
+					CHILD(0).calculatesub(eo, eo, false);
+					if(!CHILD(0).isVector()) return false;
+				}
+				bool b = false;
+				for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
+					CHILD(0)[i2].transform(o_function);
+					for(size_t i3 = 1; i3 < SIZE; i3++) {
+						CHILD(0)[i2].addChild(CHILD(i3));
+					}
+					if(CHILD(0)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
+					CHILD(0).childUpdated(i2 + 1);
+				}
+				SET_CHILD_MAP(0);
+				return b;
+			}
 			return false;
 		}
 	}
@@ -16663,6 +16714,7 @@ bool MathStructure::convertToBaseUnits(bool convert_complex_relations, bool *fou
 	return b;
 }
 bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo, Prefix *new_prefix) {
+	if(m_type == STRUCT_ADDITION && containsType(STRUCT_DATETIME, false, true, false) > 0) return false;
 	bool b = false;
 	if(m_type == STRUCT_UNIT && o_unit == u) {
 		if((new_prefix || o_prefix) && o_prefix != new_prefix) {
