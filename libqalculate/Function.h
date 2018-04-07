@@ -81,7 +81,6 @@ class MathFunction : public ExpressionItem {
 	virtual MathStructure createFunctionMathStructureFromSVArgs(vector<string> &svargs);	
 	string scondition;
 	string sexample;
-	bool b_calculate_elements;
 	
   public:
   
@@ -102,9 +101,6 @@ class MathFunction : public ExpressionItem {
 	string example(bool raw_format = false, string name_string = "") const;
 	void setExample(string new_example);
 	
-	bool calculatesEachElement() const;
-	void setCalculateEachElement(bool b = true);
-
 	bool testArgumentCount(int itmp);
 	virtual MathStructure calculate(const string &eq, const EvaluationOptions &eo = default_evaluation_options);
 	virtual MathStructure parse(const string &eq, const ParseOptions &po = default_parse_options);
@@ -281,7 +277,7 @@ class Argument {
   protected:
   
   	string sname, scondition;
-	bool b_zero, b_test, b_matrix, b_text, b_error, b_rational, b_last;
+	bool b_zero, b_test, b_matrix, b_text, b_error, b_rational, b_last, b_handle_vector;
 	/** This function is called from Argument::test() and performs validation specific to the argument definition type.
 	* Should be reimplemented by all subclasses.
 	*
@@ -415,6 +411,9 @@ class Argument {
 	
 	bool matrixAllowed() const;
 	void setMatrixAllowed(bool allow_matrix);
+	
+	bool handlesVector() const;
+	void setHandleVector(bool handle_vector);
 	
 	bool isLastArgument() const;
 	void setIsLastArgument(bool is_last);

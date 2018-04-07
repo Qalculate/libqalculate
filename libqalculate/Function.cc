@@ -72,7 +72,6 @@ MathFunction::MathFunction(string name_, int argc_, int max_argc_, string cat_, 
 		}
 	}
 	last_argdef_index = 0;
-	b_calculate_elements = false;
 }
 MathFunction::MathFunction(const MathFunction *function) {
 	priv = new MathFunction_p;
@@ -83,7 +82,6 @@ MathFunction::MathFunction() {
 	argc = 0;
 	max_argc = 0;
 	last_argdef_index = 0;
-	b_calculate_elements = false;
 }
 MathFunction::~MathFunction() {
 	clearArgumentDefinitions();
@@ -107,7 +105,6 @@ void MathFunction::set(const ExpressionItem *item) {
 				setArgumentDefinition(i, f->getArgumentDefinition(i)->copy());
 			}
 		}
-		b_calculate_elements = f->calculatesEachElement();
 	}
 	ExpressionItem::set(item);
 }
@@ -127,9 +124,6 @@ string MathFunction::example(bool raw_format, string name_string) const {
 void MathFunction::setExample(string new_example) {
 	sexample = new_example;
 }
-
-bool MathFunction::calculatesEachElement() const {return b_calculate_elements;}
-void MathFunction::setCalculateEachElement(bool b) {b_calculate_elements = b;} 
 
 /*int MathFunction::countArgOccurence(size_t arg_) {
 	if((int) arg_ > argc && max_argc < 0) {
@@ -238,7 +232,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 	bool last_is_vctr = false, vctr_started = false;
 	if(maxargs() > 0) {
 		arg = getArgumentDefinition(maxargs());
-		last_is_vctr = (arg && arg->type() == ARGUMENT_TYPE_VECTOR) || (maxargs() == 1 && calculatesEachElement());
+		last_is_vctr = arg && ((arg->type() == ARGUMENT_TYPE_VECTOR) || (maxargs() == 1 && arg->handlesVector()));
 	}
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		switch(str[str_index]) {
@@ -441,10 +435,10 @@ void MathFunction::setArgumentDefinition(size_t index, Argument *argdef) {
 }
 bool MathFunction::testArgumentCount(int itmp) {
 	if(itmp >= minargs()) {
-		if(itmp > maxargs() && maxargs() >= 0 && (!calculatesEachElement() || maxargs() > 1)) {
+		if(itmp > maxargs() && maxargs() >= 0 && (maxargs() > 1 || !getArgumentDefinition(1) || !getArgumentDefinition(1)->handlesVector())) {
 			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str(), NULL);
 		}
-		return true;	
+		return true;
 	}
 	string str;
 	Argument *arg;
@@ -712,11 +706,9 @@ bool MathFunction::representsOdd(const MathStructure&, bool) const {return false
 bool MathFunction::representsUndefined(const MathStructure&) const {return false;}
 bool MathFunction::representsBoolean(const MathStructure&) const {return false;}
 bool MathFunction::representsNonMatrix(const MathStructure &vargs) const {
-	if(calculatesEachElement()) return vargs.size() > 0 && vargs[0].representsNonMatrix();
 	return representsNumber(vargs, true);
 }
 bool MathFunction::representsScalar(const MathStructure &vargs) const {
-	if(calculatesEachElement()) return vargs.size() > 0 && vargs[0].representsScalar();
 	return representsNonMatrix(vargs);
 }
 
@@ -1156,6 +1148,7 @@ Argument::Argument(string name_, bool does_test, bool does_error) {
 	b_error = does_error;
 	b_rational = false;
 	b_last = false;
+	b_handle_vector = false;
 }
 Argument::Argument(const Argument *arg) {
 	b_text = false;
@@ -1205,6 +1198,7 @@ void Argument::set(const Argument *arg) {
 	b_matrix = arg->matrixAllowed();
 	b_rational = arg->rationalPolynomial();
 	b_last = arg->isLastArgument();
+	b_handle_vector = arg->handlesVector();
 }
 bool Argument::test(MathStructure &value, int index, MathFunction *f, const EvaluationOptions &eo) const {
 	if(!b_test) {
@@ -1243,7 +1237,7 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 		b = CALCULATOR->testCondition(expression);
 		CALCULATOR->delId(id);
 	}
-	if(!b && index == 1 && f->calculatesEachElement() && value.isVector()) {
+	if(!b && b_handle_vector) {
 		if(!evaled && !value.isVector()) {
 			value.eval(eo);
 			evaled = true;
@@ -1298,10 +1292,12 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 		if(str.length() >= 2 + pars * 2) {
 			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH && str.find(ID_WRAP_RIGHT, pars + 1) == str.length() - 1 - pars) {
 				CALCULATOR->parse(mstruct, str.substr(pars, str.length() - pars * 2), po);
+				if(mstruct->isDateTime() && !mstruct->datetime()->parsed_string.empty()) mstruct->set(mstruct->datetime()->parsed_string, false, true);
 				return;
 			}
 			if(str[pars] == '\\' && str[str.length() - 1 - pars] == '\\') {
 				CALCULATOR->parse(mstruct, str.substr(1 + pars, str.length() - 2 - pars * 2), po);
+				if(mstruct->isDateTime() && !mstruct->datetime()->parsed_string.empty()) mstruct->set(mstruct->datetime()->parsed_string, false, true);
 				return;
 			}	
 			if((str[pars] == '\"' && str[str.length() - 1 - pars] == '\"') || (str[pars] == '\'' && str[str.length() - 1 - pars] == '\'')) {
@@ -1341,7 +1337,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 						str2.replace(i, i2 - i + 1, str3);
 						i += str3.length();
 					}
-					mstruct->set(str2);
+					mstruct->set(str2, false, true);
 					return;
 				}
 			}
@@ -1423,6 +1419,8 @@ int Argument::type() const {
 }
 bool Argument::matrixAllowed() const {return b_matrix;}
 void Argument::setMatrixAllowed(bool allow_matrix) {b_matrix = allow_matrix;}
+bool Argument::handlesVector() const {return b_handle_vector;}
+void Argument::setHandleVector(bool handle_vector) {b_handle_vector = handle_vector;}
 bool Argument::isLastArgument() const {return b_last;}
 void Argument::setIsLastArgument(bool is_last) {b_last = is_last;}
 bool Argument::rationalPolynomial() const {return b_rational;}
@@ -1456,6 +1454,7 @@ NumberArgument::NumberArgument(string name_, ArgumentMinMaxPreDefinition minmax,
 		}
 		default: {}
 	}
+	b_handle_vector = does_test;
 }
 NumberArgument::NumberArgument(const NumberArgument *arg) {
 	fmin = NULL;
@@ -1643,7 +1642,8 @@ IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minma
 			break;
 		}	
 		default: {}	
-	}	
+	}
+	b_handle_vector = does_test;
 }
 IntegerArgument::IntegerArgument(const IntegerArgument *arg) {
 	imin = NULL;

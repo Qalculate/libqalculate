@@ -1141,85 +1141,112 @@
       <_title>Secant</_title>
       <_names>r:sec</_names>
       <expression>1/cos(\x)</expression>
-      <handlevector>true</handlevector>
       <argument type="angle" index="1">
         <_title>Angle</_title>
         <test>false</test>
+        <handle_vector>true</handle_vector>
       </argument>
     </function>
     <function>
       <_title>Cosecant</_title>
       <_names>r:csc</_names>
       <expression>1/sin(\x)</expression>
-      <handlevector>true</handlevector>
       <argument type="angle" index="1">
         <_title>Angle</_title>
         <test>false</test>
+        <handle_vector>true</handle_vector>
       </argument>
     </function>
     <function>
       <_title>Cotangent</_title>
       <_names>r:cot</_names>
       <expression>1/tan(\x)</expression>
-      <handlevector>true</handlevector>
       <argument type="angle" index="1">
         <_title>Angle</_title>
         <test>false</test>
+        <handle_vector>true</handle_vector>
       </argument>
     </function>
     <function>
       <_title>Hyperbolic Secant</_title>
       <_names>r:sech</_names>
       <expression>1/cosh(\x)</expression>
-      <handlevector>true</handlevector>
+      <argument type="number" index="1">
+        <test>false</test>
+        <handle_vector>true</handle_vector>
+      </argument>
     </function>
     <function>
       <_title>Hyperbolic Cosecant</_title>
       <_names>r:csch</_names>
       <expression>1/sinh(\x)</expression>
-      <handlevector>true</handlevector>
+      <argument type="number" index="1">
+        <test>false</test>
+        <handle_vector>true</handle_vector>
+      </argument>
     </function>
     <function>
       <_title>Hyperbolic Cotangent</_title>
       <_names>r:coth</_names>
       <expression>1/tanh(\x)</expression>
-      <handlevector>true</handlevector>
+      <argument type="number" index="1">
+        <test>false</test>
+        <handle_vector>true</handle_vector>
+      </argument>
     </function>
     <function>
       <_title>Inverse Secant</_title>
       <_names>r:asec</_names>
       <expression>radtodef(0.5pi+i*ln(sqrt(1-1\x^2)+i/\x))</expression>
-      <handlevector>true</handlevector>
+      <argument type="number" index="1">
+        <test>false</test>
+        <handle_vector>true</handle_vector>
+      </argument>
     </function>
     <function>
       <_title>Inverse Cosecant</_title>
       <_names>r:acsc</_names>
       <expression>radtodef(-i*ln(sqrt(1-1\x^2)+i/\x))</expression>
-      <handlevector>true</handlevector>
+      <argument type="number" index="1">
+        <test>false</test>
+        <handle_vector>true</handle_vector>
+      </argument>
     </function>
     <function>
       <_title>Inverse Cotangent</_title>
       <_names>r:acot</_names>
       <expression>radtodef(i/2*(ln((\x-i)/\x)-ln((\x+i)/\x)))</expression>
-      <handlevector>true</handlevector>
+      <argument type="number" index="1">
+        <test>false</test>
+        <handle_vector>true</handle_vector>
+      </argument>
     </function>
     <function>
       <_title>Inverse Hyperbolic Secant</_title>
       <_names>r:asech</_names>
       <expression>ln(sqrt(1/\x-1)*sqrt(1/\x+1)+1/\x)</expression>
-      <handlevector>true</handlevector>
+      <argument type="number" index="1">
+        <test>false</test>
+        <handle_vector>true</handle_vector>
+      </argument>
     </function>
     <function>
       <_title>Inverse Hyperbolic Cosecant</_title>
       <_names>r:acsch</_names>
       <expression>ln(sqrt(1+1/\x^2)+1/\x)</expression>
-      <handlevector>true</handlevector>
+      <argument type="number" index="1">
+        <test>false</test>
+        <handle_vector>true</handle_vector>
+      </argument>
     </function>
     <function>
       <_title>Inverse Hyperbolic Cotangent</_title>
       <_names>r:acoth</_names>
       <expression>(ln(1+1/\x)-ln(1-1/\x))/2</expression>
-      <handlevector>true</handlevector>
+      <argument type="number" index="1">
+        <test>false</test>
+        <handle_vector>true</handle_vector>
+      </argument>
     </function>
   </category>
   <category>
@@ -1232,9 +1259,11 @@
       <expression>(\x/(1000g))/(\y/m)^2</expression>
       <argument type="free" index="1">
         <_title>Weight</_title>
+        <handle_vector>true</handle_vector>
       </argument>
       <argument type="free" index="2">
         <_title>Length</_title>
+        <handle_vector>true</handle_vector>
       </argument>
     </function>
     <builtin_function name="roman">

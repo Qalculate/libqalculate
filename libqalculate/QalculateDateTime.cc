@@ -242,8 +242,9 @@ QalculateDateTime::QalculateDateTime() : i_year(0), i_month(1), i_day(1), i_hour
 QalculateDateTime::QalculateDateTime(long int initialyear, int initialmonth, int initialday) : i_year(0), i_month(1), i_day(1), i_hour(0), i_min(0), b_time(false) {set(initialyear, initialmonth, initialday);}
 QalculateDateTime::QalculateDateTime(const Number &initialtimestamp) : i_year(0), i_month(1), i_day(1), i_hour(0), i_min(0), b_time(false) {set(initialtimestamp);}
 QalculateDateTime::QalculateDateTime(string date_string) : i_year(0), i_month(1), i_day(1), i_hour(0), i_min(0), b_time(false) {set(date_string);}
-QalculateDateTime::QalculateDateTime(const QalculateDateTime &date) : i_year(date.year()), i_month(date.month()), i_day(date.day()), i_hour(date.hour()), i_min(date.minute()), n_sec(date.second()), b_time(date.timeIsSet()) {}
+QalculateDateTime::QalculateDateTime(const QalculateDateTime &date) : i_year(date.year()), i_month(date.month()), i_day(date.day()), i_hour(date.hour()), i_min(date.minute()), n_sec(date.second()), b_time(date.timeIsSet()), parsed_string(date.parsed_string) {}
 void QalculateDateTime::setToCurrentDate() {
+	parsed_string.clear();
 	struct tm tmdate;
 	time_t rawtime;
 	::time(&rawtime);
@@ -251,6 +252,7 @@ void QalculateDateTime::setToCurrentDate() {
 	set(tmdate.tm_year + 1900, tmdate.tm_mon + 1, tmdate.tm_mday);
 }
 void QalculateDateTime::setToCurrentTime() {
+	parsed_string.clear();
 	set(::time(NULL));
 }
 bool QalculateDateTime::operator > (const QalculateDateTime &date2) const {
@@ -300,6 +302,7 @@ bool QalculateDateTime::isPastDate() const {
 	return *this < current_date;
 }
 bool QalculateDateTime::set(long int newyear, int newmonth, int newday) {
+	parsed_string.clear();
 	if(newmonth < 1 || newmonth > 12) return false;
 	if(newday < 1 || newday > daysPerMonth(newmonth, newyear)) return false;
 	i_year = newyear;
@@ -312,6 +315,7 @@ bool QalculateDateTime::set(long int newyear, int newmonth, int newday) {
 	return true;
 }
 bool QalculateDateTime::set(const Number &newtimestamp) {
+	parsed_string.clear();
 	if(!newtimestamp.isReal() || newtimestamp.isInterval()) return false;
 	QalculateDateTime tmbak(*this);
 	i_year = 1970;
@@ -330,21 +334,27 @@ bool QalculateDateTime::set(const Number &newtimestamp) {
 bool QalculateDateTime::set(string str) {
 
 	long int newyear = 0, newmonth = 0, newday = 0;
+	
+	string str_bak(str);
 
 	remove_blank_ends(str);
 	if(equalsIgnoreCase(str, _("now")) || equalsIgnoreCase(str, "now")) {
 		setToCurrentTime();
+		parsed_string = str_bak;
 		return true;
 	} else if(equalsIgnoreCase(str, _("today")) || equalsIgnoreCase(str, "today")) {
 		setToCurrentDate();
+		parsed_string = str_bak;
 		return true;
 	} else if(equalsIgnoreCase(str, _("tomorrow")) || equalsIgnoreCase(str, "tomorrow")) {
 		setToCurrentDate();
 		addDays(1);
+		parsed_string = str_bak;
 		return true;
 	} else if(equalsIgnoreCase(str, _("yesterday")) || equalsIgnoreCase(str, "yesterday")) {
 		setToCurrentDate();
 		addDays(-1);
+		parsed_string = str_bak;
 		return true;
 	}
 	bool b_t = false, b_tz = false;
@@ -448,9 +458,11 @@ bool QalculateDateTime::set(string str) {
 			addMinutes(dateTimeZone(*this, true) - itz, false, false);
 		}
 	}
+	parsed_string = str_bak;
 	return true;
 }
 void QalculateDateTime::set(const QalculateDateTime &date) {
+	parsed_string = date.parsed_string;
 	i_year = date.year();
 	i_month = date.month();
 	i_day = date.day();
@@ -582,6 +594,7 @@ const Number &QalculateDateTime::second() const {
 void QalculateDateTime::setYear(long int newyear) {i_year = newyear;}
 bool QalculateDateTime::timeIsSet() const {return b_time;}
 bool QalculateDateTime::setTime(long int ihour, long int imin, const Number &nsec) {
+	parsed_string.clear();
 	i_hour = ihour;
 	i_min = imin;
 	n_sec = nsec;
@@ -594,6 +607,7 @@ bool QalculateDateTime::addHours(const Number &nhours) {
 	return addMinutes(nmins, true, true);
 }
 bool QalculateDateTime::addMinutes(const Number &nminutes, bool remove_leap_second, bool convert_to_utc) {
+	parsed_string.clear();
 	if(!nminutes.isReal() || nminutes.isInterval()) return false;
 	if(!nminutes.isInteger()) {
 		Number newmins(nminutes);
@@ -653,6 +667,7 @@ bool QalculateDateTime::addMinutes(const Number &nminutes, bool remove_leap_seco
 	return true;
 }
 bool QalculateDateTime::addDays(const Number &ndays) {
+	parsed_string.clear();
 	if(!ndays.isReal() || ndays.isInterval()) return false;
 	if(ndays.isZero()) return true;
 	if(!ndays.isInteger()) {
@@ -733,6 +748,7 @@ bool QalculateDateTime::addDays(const Number &ndays) {
 	return true;
 }
 bool QalculateDateTime::addMonths(const Number &nmonths) {
+	parsed_string.clear();
 	if(!nmonths.isReal() || nmonths.isInterval()) return false;
 	if(!nmonths.isInteger()) {
 		Number newmonths(nmonths);
@@ -803,6 +819,7 @@ bool QalculateDateTime::addMonths(const Number &nmonths) {
 	return true;
 }
 bool QalculateDateTime::addYears(const Number &nyears) {
+	parsed_string.clear();
 	if(!nyears.isReal() || nyears.isInterval()) return false;
 	if(!nyears.isInteger()) {
 		Number newyears(nyears);
@@ -867,6 +884,7 @@ bool QalculateDateTime::addYears(const Number &nyears) {
 	return true;
 }
 bool QalculateDateTime::addSeconds(const Number &seconds, bool count_leap_seconds, bool convert_to_utc) {
+	parsed_string.clear();
 	if(!seconds.isReal() || seconds.isInterval()) return false;
 	if(seconds.isZero()) return true;
 	QalculateDateTime dtbak(*this);
@@ -1018,6 +1036,7 @@ bool QalculateDateTime::addSeconds(const Number &seconds, bool count_leap_second
 	return true;
 }
 bool QalculateDateTime::add(const QalculateDateTime &date) {
+	parsed_string.clear();
 	QalculateDateTime dtbak(*this);
 	if(date.timeIsSet()) b_time = true;
 	if(!addYears(date.year()) || !addMonths(date.month()) || !addDays(date.day())) {

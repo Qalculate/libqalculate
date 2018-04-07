@@ -7549,13 +7549,15 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 		}
 
 		if(o_function->maxargs() > -1 && (long int) SIZE > o_function->maxargs()) {
-			if(o_function->maxargs() == 1 && o_function->calculatesEachElement()) {
-				for(size_t i2 = 0; i2 < SIZE; i2++) {
-					CHILD(i2).transform(o_function);
+			if(o_function->maxargs() == 1 && o_function->getArgumentDefinition(1) && o_function->getArgumentDefinition(1)->handlesVector()) {
+				bool b = false;
+				for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
+					CHILD(0)[i2].transform(o_function);
+					if(CHILD(0)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
+					CHILD(0).childUpdated(i2 + 1);
 				}
-				o_function->unref();
-				m_type = STRUCT_VECTOR;
-				return calculateFunctions(eo, recursive, do_unformat);
+				SET_CHILD_MAP(0)
+				return b;
 			}
 			REDUCE(o_function->maxargs());
 		}
@@ -7565,40 +7567,49 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 
 		for(size_t i = 0; i < SIZE; i++) {
 			arg = o_function->getArgumentDefinition(i + 1);
-			if(i == 0 && o_function->calculatesEachElement() && (!arg || !arg->tests())) {
-				if(!CHILD(i).isVector() && !CHILD(i).representsScalar()) {
-					CHILD(i).eval(eo);
-					CHILD_UPDATED(i);
-				}
-				if(CHILD(i).isVector()) {
-					for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
-						CHILD(0)[i2].transform(o_function);
-						for(size_t i3 = 1; i3 < SIZE; i3++) {
-							CHILD(0)[i2].addChild(CHILD(i3));
-						}
-					}
-					SET_CHILD_MAP(0);
-					return calculateFunctions(eo, recursive, do_unformat);
-				}
-			} else if(arg) {
+			if(arg) {
 				last_arg = arg;
 				last_i = i;
 				if(!arg->test(CHILD(i), i + 1, o_function, eo)) {
-					if(i == 0 && o_function->calculatesEachElement() && CHILD(i).isVector()) {
-						for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
-							CHILD(0)[i2].transform(o_function);
-							for(size_t i3 = 1; i3 < SIZE; i3++) {
-								CHILD(0)[i2].addChild(CHILD(i3));
+					if(arg->handlesVector() && CHILD(i).isVector()) {
+						bool b = false;
+						for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+							CHILD(i)[i2].transform(o_function);
+							for(size_t i3 = 0; i3 < SIZE; i3++) {
+								if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
+								else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
 							}
+							if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
+							CHILD(i).childUpdated(i2 + 1);
 						}
-						SET_CHILD_MAP(0);
-						return calculateFunctions(eo, recursive, do_unformat);
+						SET_CHILD_MAP(i);
+						return b;
 					}
 					m_type = STRUCT_FUNCTION;
 					CHILD_UPDATED(i);
 					return false;
 				} else {
 					CHILD_UPDATED(i);
+				}
+				if(arg->handlesVector()) {
+					if(!CHILD(i).isVector() && !CHILD(i).representsScalar()) {
+						CHILD(i).eval(eo);
+						CHILD_UPDATED(i);
+					}
+					if(CHILD(i).isVector()) {
+						bool b = false;
+						for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+							CHILD(i)[i2].transform(o_function);
+							for(size_t i3 = 0; i3 < SIZE; i3++) {
+								if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
+								else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
+							}
+							if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
+							CHILD(i).childUpdated(i2 + 1);
+						}
+						SET_CHILD_MAP(i);
+						return b;
+					}
 				}
 			}
 		}
@@ -7620,17 +7631,17 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 			return false;
 		}
 		MathStructure *mstruct = new MathStructure();
-		int i = o_function->calculate(*mstruct, *this, eo);
-		if(i > 0) {
+		int ret = o_function->calculate(*mstruct, *this, eo);
+		if(ret > 0) {
 			set_nocopy(*mstruct, true);
 			if(recursive) calculateFunctions(eo);
 			mstruct->unref();
 			if(do_unformat) unformat(eo);
 			return true;
 		} else {
-			if(i < 0) {
-				i = -i;
-				if(o_function->maxargs() > 0 && i > o_function->maxargs()) {
+			if(ret < 0) {
+				ret = -ret;
+				if(o_function->maxargs() > 0 && ret > o_function->maxargs()) {
 					if(mstruct->isVector()) {
 						if(do_unformat) mstruct->unformat(eo);
 						for(size_t arg_i = 1; arg_i <= SIZE && arg_i <= mstruct->size(); arg_i++) {
@@ -7638,10 +7649,10 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 							setChild_nocopy(mstruct->getChild(arg_i), arg_i);
 						}
 					}
-				} else if(i <= (long int) SIZE) {
+				} else if(ret <= (long int) SIZE) {
 					if(do_unformat) mstruct->unformat(eo);
 					mstruct->ref();
-					setChild_nocopy(mstruct, i);
+					setChild_nocopy(mstruct, ret);
 				}
 			}
 			/*if(eo.approximation == APPROXIMATION_EXACT) {
@@ -7661,22 +7672,26 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 			}*/
 			m_type = STRUCT_FUNCTION;
 			mstruct->unref();
-			if(SIZE > 0 && o_function->calculatesEachElement() && CHILD(0).isVector()) {
-				if(!CHILD(0).isVector()) {
-					CHILD(0).calculatesub(eo, eo, false);
-					if(!CHILD(0).isVector()) return false;
-				}
-				bool b = false;
-				for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
-					CHILD(0)[i2].transform(o_function);
-					for(size_t i3 = 1; i3 < SIZE; i3++) {
-						CHILD(0)[i2].addChild(CHILD(i3));
+			for(size_t i = 0; i < SIZE; i++) {
+				arg = o_function->getArgumentDefinition(i + 1);
+				if(arg && arg->handlesVector()) {
+					if(!CHILD(i).isVector()) {
+						CHILD(i).calculatesub(eo, eo, false);
+						if(!CHILD(i).isVector()) return false;
 					}
-					if(CHILD(0)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
-					CHILD(0).childUpdated(i2 + 1);
+					bool b = false;
+					for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+						CHILD(i)[i2].transform(o_function);
+						for(size_t i3 = 0; i3 < SIZE; i3++) {
+							if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
+							else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
+						}
+						if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
+						CHILD(i).childUpdated(i2 + 1);
+					}
+					SET_CHILD_MAP(i);
+					return b;
 				}
-				SET_CHILD_MAP(0);
-				return b;
 			}
 			return false;
 		}

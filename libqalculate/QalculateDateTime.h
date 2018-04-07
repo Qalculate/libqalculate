@@ -70,6 +70,8 @@ class QalculateDateTime {
 		Number secondsTo(const QalculateDateTime &date, bool count_leap_seconds = true, bool convert_to_utc = true) const;
 		Number daysTo(const QalculateDateTime &date, int basis = 1, bool date_func = true, bool remove_leap_seconds = true) const;
 		Number yearsTo(const QalculateDateTime &date, int basis = 1, bool date_func = true, bool remove_leap_seconds = true) const;
+		
+		string parsed_string;
 };
 
 #endif

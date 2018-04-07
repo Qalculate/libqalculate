@@ -88,7 +88,6 @@
 #define XML_GET_STRING_FROM_TEXT(node, str)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = "";
 #define XML_DO_FROM_PROP(node, name, action)		value = xmlGetProp(node, (xmlChar*) name); if(value) action((char*) value); else action(""); if(value) xmlFree(value);
 #define XML_DO_FROM_TEXT(node, action)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {action((char*) value); xmlFree(value);} else action("");
-#define XML_DO_BOOL_FROM_TEXT(node, action)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value && !xmlStrcmp(value, (const xmlChar*) "true")) {action(true);} else {action(false);} if(value) xmlFree(value);
 #define XML_GET_INT_FROM_PROP(node, name, i)		value = xmlGetProp(node, (xmlChar*) name); if(value) {i = s2i((char*) value); xmlFree(value);}
 #define XML_GET_INT_FROM_TEXT(node, i)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {i = s2i((char*) value); xmlFree(value);}
 #define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && strlen((char*) lang) >= 2 && fulfilled_translation == 0 && lang[0] == localebase[0] && lang[1] == localebase[1]) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
@@ -5796,13 +5795,14 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			if(is_not_in(MULTIPLICATION_2 OPERATORS EXPS, str[i - 1])) {
 				str2 = str.substr(0, i);
 				if(!c && b) {
+					bool b_add;
 					if(min) {
-						parseAdd(str2, mstruct, po, OPERATION_SUBTRACT, append);
+						b_add = parseAdd(str2, mstruct, po, OPERATION_SUBTRACT, append) && mstruct->isAddition();
 					} else {
-						parseAdd(str2, mstruct, po, OPERATION_ADD, append);
+						b_add = parseAdd(str2, mstruct, po, OPERATION_ADD, append) && mstruct->isAddition();
 					}
 					append = true;
-					if((min && (mstruct->last().isNegate() || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last()[0].isMinusOne())) && mstruct->last().last().isMultiplication() && mstruct->last().last().size() == 2 && (mstruct->last().last().last().variable() && (mstruct->last().last().last().variable() == v_percent || mstruct->last().last().last().variable() == v_permille || mstruct->last().last().last().variable() == v_permyriad))) || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && (mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad)))) {
+					if(b_add && ((min && (mstruct->last().isNegate() || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last()[0].isMinusOne())) && mstruct->last().last().isMultiplication() && mstruct->last().last().size() == 2 && (mstruct->last().last().last().variable() && (mstruct->last().last().last().variable() == v_percent || mstruct->last().last().last().variable() == v_permille || mstruct->last().last().last().variable() == v_permyriad))) || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && (mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad))))) {
 						Variable *v;
 						if(mstruct->last().last().isVariable()) v = mstruct->last().last().variable();
 						else v = mstruct->last().last().last().variable();
@@ -5820,7 +5820,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							else if(v == CALCULATOR->v_permille) mstruct->last()[0].number().add(1000);
 							else mstruct->last()[0].number().add(10000);
 						} else {
-							if(b_neg) mstruct->last()[0].negate();
+							if(b_neg && po.preserve_format) mstruct->last()[0].transform(STRUCT_NEGATE);
+							else if(b_neg) mstruct->last()[0].negate();
 							if(v == CALCULATOR->v_percent) mstruct->last()[0] += Number(100, 1);
 							else if(v == CALCULATOR->v_permille) mstruct->last()[0] += Number(1000, 1);
 							else mstruct->last()[0] += Number(10000, 1);
@@ -5864,12 +5865,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				}
 				return b;
 			} else {
+				bool b_add;
 				if(min) {
-					parseAdd(str, mstruct, po, OPERATION_SUBTRACT, append);
+					b_add = parseAdd(str, mstruct, po, OPERATION_SUBTRACT, append) && mstruct->isAddition();
 				} else {
-					parseAdd(str, mstruct, po, OPERATION_ADD, append);
+					b_add = parseAdd(str, mstruct, po, OPERATION_ADD, append) && mstruct->isAddition();
 				}
-				if((min && (mstruct->last().isNegate() || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last()[0].isMinusOne())) && mstruct->last().last().isMultiplication() && mstruct->last().last().size() == 2 && (mstruct->last().last().last().variable() && (mstruct->last().last().last().variable() == v_percent || mstruct->last().last().last().variable() == v_permille || mstruct->last().last().last().variable() == v_permyriad))) || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && (mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad)))) {
+				if(b_add && ((min && (mstruct->last().isNegate() || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last()[0].isMinusOne())) && mstruct->last().last().isMultiplication() && mstruct->last().last().size() == 2 && (mstruct->last().last().last().variable() && (mstruct->last().last().last().variable() == v_percent || mstruct->last().last().last().variable() == v_permille || mstruct->last().last().last().variable() == v_permyriad))) || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && (mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad))))) {
 					Variable *v;
 					if(mstruct->last().last().isVariable()) v = mstruct->last().last().variable();
 					else v = mstruct->last().last().last().variable();
@@ -5887,7 +5889,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						else if(v == CALCULATOR->v_permille) mstruct->last()[0].number().add(1000);
 						else mstruct->last()[0].number().add(10000);
 					} else {
-						if(b_neg) mstruct->last()[0].negate();
+						if(b_neg && po.preserve_format) mstruct->last()[0].transform(STRUCT_NEGATE);
+						else if(b_neg) mstruct->last()[0].negate();
 						if(v == CALCULATOR->v_percent) mstruct->last()[0] += Number(100, 1);
 						else if(v == CALCULATOR->v_permille) mstruct->last()[0] += Number(1000, 1);
 						else mstruct->last()[0] += Number(10000, 1);
@@ -7080,8 +7083,6 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						f->setApproximate(b);
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "condition")) {
 						XML_DO_FROM_TEXT(child, f->setCondition);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "handlevector")) {
-						XML_DO_BOOL_FROM_TEXT(child, f->setCalculateEachElement);
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "subfunction")) {
 						XML_GET_FALSE_FROM_PROP(child, "precalculate", b);
 						value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 
@@ -7126,6 +7127,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						} else {
 							arg = new Argument();
 						}
+						int handle_vector = -1;
 						child2 = child->xmlChildrenNode;
 						argname = ""; best_argname = false; next_best_argname = false;
 						while(child2 != NULL) {
@@ -7167,10 +7169,14 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "test")) {
 								XML_GET_FALSE_FROM_TEXT(child2, b);
 								arg->setTests(b);
+								if(!b && handle_vector < 0) handle_vector = 0;
+							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "handle_vector")) {
+								XML_GET_FALSE_FROM_TEXT(child2, handle_vector);
 							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "alert")) {
 								XML_GET_FALSE_FROM_TEXT(child2, b);
 								arg->setAlerts(b);
 							}
+							if(handle_vector >= 0) arg->setHandleVector(handle_vector);
 							child2 = child2->next;
 						}
 						if(!argname.empty() && argname[0] == '!') {
