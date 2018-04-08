@@ -6999,7 +6999,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {2, 3, 1};
+	int version_numbers[] = {2, 4, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);
@@ -7127,7 +7127,6 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						} else {
 							arg = new Argument();
 						}
-						int handle_vector = -1;
 						child2 = child->xmlChildrenNode;
 						argname = ""; best_argname = false; next_best_argname = false;
 						while(child2 != NULL) {
@@ -7169,14 +7168,13 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "test")) {
 								XML_GET_FALSE_FROM_TEXT(child2, b);
 								arg->setTests(b);
-								if(!b && handle_vector < 0) handle_vector = 0;
 							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "handle_vector")) {
-								XML_GET_FALSE_FROM_TEXT(child2, handle_vector);
+								XML_GET_FALSE_FROM_TEXT(child2, b);
+								arg->setHandleVector(b);
 							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "alert")) {
 								XML_GET_FALSE_FROM_TEXT(child2, b);
 								arg->setAlerts(b);
 							}
-							if(handle_vector >= 0) arg->setHandleVector(handle_vector);
 							child2 = child2->next;
 						}
 						if(!argname.empty() && argname[0] == '!') {

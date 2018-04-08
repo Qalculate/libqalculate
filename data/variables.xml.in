@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="2.3.1">
+<QALCULATE version="2.4.0">
   <category>
     <_title>Small Numbers</_title>
     <builtin_variable name="permille">
@@ -433,7 +433,7 @@
       <_names>r:yesterday</_names>
     </builtin_variable>
     <builtin_variable name="now">
-      <_title>Now</_title>
+      <_title>Now (date and time)</_title>
       <_names>r:now</_names>
     </builtin_variable>
   </category>

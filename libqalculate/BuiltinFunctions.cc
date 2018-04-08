@@ -35,7 +35,8 @@
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(i)		NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 #define RATIONAL_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_rational##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_rational##i->setRationalNumber(true); setArgumentDefinition(i, arg_rational##i);
-#define RATIONAL_POLYNOMIAL_ARGUMENT(i)				Argument *arg_poly##i = new Argument(); arg_poly##i->setRationalPolynomial(true); arg_poly##i->setHandleVector(true); setArgumentDefinition(i, arg_poly##i);
+#define RATIONAL_POLYNOMIAL_ARGUMENT(i)				Argument *arg_poly##i = new Argument(); arg_poly##i->setRationalPolynomial(true); setArgumentDefinition(i, arg_poly##i);
+#define RATIONAL_POLYNOMIAL_ARGUMENT_HV(i)			Argument *arg_poly##i = new Argument(); arg_poly##i->setRationalPolynomial(true); arg_poly##i->setHandleVector(true); setArgumentDefinition(i, arg_poly##i);
 
 
 VectorFunction::VectorFunction() : MathFunction("vector", -1) {
@@ -46,8 +47,12 @@ int VectorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 1;
 }
 MatrixFunction::MatrixFunction() : MathFunction("matrix", 3) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
+	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
+	arg->setHandleVector(false);
+	setArgumentDefinition(1, arg);
+	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
+	arg->setHandleVector(false);
+	setArgumentDefinition(2, arg);
 	setArgumentDefinition(3, new VectorArgument());
 }
 int MatrixFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
@@ -224,8 +229,12 @@ int ComponentFunction::calculate(MathStructure &mstruct, const MathStructure &va
 }
 LimitsFunction::LimitsFunction() : MathFunction("limits", 3) {
 	setArgumentDefinition(1, new VectorArgument(""));
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT));
-	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT));
+	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
+	arg->setHandleVector(false);
+	setArgumentDefinition(2, arg);
+	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
+	arg->setHandleVector(false);
+	setArgumentDefinition(3, arg);
 }
 int LimitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	vargs[0].getRange(vargs[1].number().intValue(), vargs[2].number().intValue(), mstruct);
@@ -233,10 +242,18 @@ int LimitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 }
 AreaFunction::AreaFunction() : MathFunction("area", 5) {
 	setArgumentDefinition(1, new MatrixArgument(""));
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
-	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
-	setArgumentDefinition(4, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
-	setArgumentDefinition(5, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
+	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
+	arg->setHandleVector(false);
+	setArgumentDefinition(2, arg);
+	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
+	arg->setHandleVector(false);
+	setArgumentDefinition(3, arg);
+	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
+	arg->setHandleVector(false);
+	setArgumentDefinition(4, arg);
+	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
+	arg->setHandleVector(false);
+	setArgumentDefinition(5, arg);
 }
 int AreaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	vargs[0].getArea(vargs[1].number().uintValue(), vargs[2].number().uintValue(), vargs[3].number().uintValue(), vargs[4].number().uintValue(), mstruct);
@@ -657,6 +674,7 @@ int OddFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	mstruct = vargs[0];
 	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
 	if(mstruct.representsOdd()) {
 		mstruct.set(1, 1, 0);
 		return 1;
@@ -670,7 +688,7 @@ EvenFunction::EvenFunction() : MathFunction("even", 1) {
 	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
-	}
+}
 int EvenFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
 	if(vargs[0].representsEven()) {
@@ -682,6 +700,7 @@ int EvenFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	mstruct = vargs[0];
 	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
 	if(mstruct.representsEven()) {
 		mstruct.set(1, 1, 0);
 		return 1;
@@ -722,6 +741,7 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0]; 
 	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(!nr.abs() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate())) {
@@ -753,8 +773,8 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	return -1;
 }
 GcdFunction::GcdFunction() : MathFunction("gcd", 2) {
-	RATIONAL_POLYNOMIAL_ARGUMENT(1)
-	RATIONAL_POLYNOMIAL_ARGUMENT(2)
+	RATIONAL_POLYNOMIAL_ARGUMENT_HV(1)
+	RATIONAL_POLYNOMIAL_ARGUMENT_HV(2)
 }
 int GcdFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(MathStructure::gcd(vargs[0], vargs[1], mstruct, eo)) {	
@@ -763,8 +783,8 @@ int GcdFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	return 0;
 }
 LcmFunction::LcmFunction() : MathFunction("lcm", 2) {
-	RATIONAL_POLYNOMIAL_ARGUMENT(1)
-	RATIONAL_POLYNOMIAL_ARGUMENT(2)
+	RATIONAL_POLYNOMIAL_ARGUMENT_HV(1)
+	RATIONAL_POLYNOMIAL_ARGUMENT_HV(2)
 }
 int LcmFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(MathStructure::lcm(vargs[0], vargs[1], mstruct, eo)) {
@@ -1045,6 +1065,7 @@ int NumeratorFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	}
 	mstruct = vargs[0];
 	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
 	if(mstruct.representsInteger()) {
 		return 1;
 	} else if(mstruct.isNumber() && mstruct.number().isRational()) {
@@ -1160,6 +1181,7 @@ int ImFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
 	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
 		mstruct = mstruct.number().imaginaryPart();
 		return 1;
@@ -1193,6 +1215,7 @@ int ReFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
 	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
 		mstruct = mstruct.number().realPart();
 		return 1;
@@ -1277,7 +1300,7 @@ RootFunction::RootFunction() : MathFunction("root", 2) {
 }
 int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
-	if(vargs[1].number().isOne()) {
+	if(vargs[1].number().isOne() && vargs[0].representsScalar()) {
 		mstruct = vargs[0];
 		return 1;
 	}
@@ -1300,14 +1323,14 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	Number nr;
 	if(eval_mstruct) {
 		mstruct = vargs[0];
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		if(eo.approximation == APPROXIMATION_TRY_EXACT && mstruct.representsScalar()) {
 			EvaluationOptions eo2 = eo;
 			eo2.approximation = APPROXIMATION_EXACT;
 			mstruct.eval(eo2);
 		} else {
 			mstruct.eval(eo);
 		}
-		if(mstruct.isVector()) return 0;
+		if(mstruct.isVector()) return -1;
 		if(mstruct.representsNonNegative(true)) {
 			Number nr_exp(vargs[1].number());
 			nr_exp.recip();
@@ -1458,6 +1481,9 @@ bool RootFunction::representsOdd(const MathStructure&, bool) const {return false
 bool RootFunction::representsUndefined(const MathStructure&) const {return false;}
 
 SquareFunction::SquareFunction() : MathFunction("sq", 1) {
+	Argument *arg = new Argument("", false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 int SquareFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct = vargs[0];
@@ -1466,6 +1492,9 @@ int SquareFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 }
 
 ExpFunction::ExpFunction() : MathFunction("exp", 1) {
+	Argument *arg = new Argument("", false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 int ExpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct = CALCULATOR->v_e;
@@ -1624,15 +1653,17 @@ LognFunction::LognFunction() : MathFunction("log", 1, 2) {
 	setDefaultValue(2, "e");
 }
 int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-
+	if(vargs[0].isVector() || vargs[1].isVector()) return 0;
 	if(vargs[1].isVariable() && vargs[1].variable() == CALCULATOR->v_e) {
 		mstruct.set(CALCULATOR->f_ln, &vargs[0], NULL);
 		return 1;
 	}
 	mstruct = vargs[0];
 	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
 	MathStructure mstructv2 = vargs[1];
 	mstructv2.eval(eo);
+	if(mstructv2.isVector()) return -2;
 	if(mstruct.isPower()) {
 		if(mstruct[0].representsPositive()) {
 			MathStructure mstruct2;
@@ -3256,6 +3287,7 @@ bool RandFunction::representsNonNegative(const MathStructure&, bool) const {retu
 DateFunction::DateFunction() : MathFunction("date", 1, 6) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
 	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setHandleVector(false);
 	Number fr(1, 1, 0);
 	iarg->setMin(&fr);
 	fr.set(12, 1, 0);
@@ -3263,6 +3295,7 @@ DateFunction::DateFunction() : MathFunction("date", 1, 6) {
 	setArgumentDefinition(2, iarg);
 	setDefaultValue(2, "1");
 	iarg = new IntegerArgument();
+	iarg->setHandleVector(false);
 	fr.set(1, 1, 0);
 	iarg->setMin(&fr);
 	fr.set(31, 1, 0);
@@ -3270,18 +3303,21 @@ DateFunction::DateFunction() : MathFunction("date", 1, 6) {
 	setDefaultValue(3, "1");
 	setArgumentDefinition(3, iarg);
 	iarg = new IntegerArgument();
+	iarg->setHandleVector(false);
 	iarg->setMin(&nr_zero);
 	fr.set(23, 1, 0);
 	iarg->setMax(&fr);
 	setArgumentDefinition(4, iarg);
 	setDefaultValue(4, "0");
 	iarg = new IntegerArgument();
+	iarg->setHandleVector(false);
 	iarg->setMin(&nr_zero);
 	fr.set(59, 1, 0);
 	iarg->setMax(&fr);
 	setArgumentDefinition(5, iarg);
 	setDefaultValue(5, "0");
 	NumberArgument *narg = new NumberArgument();
+	narg->setHandleVector(false);
 	narg->setMin(&nr_zero);
 	fr.set(61, 1, 0);
 	narg->setMax(&fr);
@@ -3363,6 +3399,7 @@ AddMonthsFunction::AddMonthsFunction() : MathFunction("addMonths", 2) {
 	setArgumentDefinition(2, new NumberArgument());
 }	
 int AddMonthsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	mstruct = vargs[0];
 	if(!mstruct.datetime()->addMonths(vargs[1].number())) return 0;
 	return 1;
 }
@@ -3694,8 +3731,12 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 
 }
 SumFunction::SumFunction() : MathFunction("sum", 3, 4) {
-	setArgumentDefinition(2, new IntegerArgument());
-	setArgumentDefinition(3, new IntegerArgument());	
+	Argument *arg = new IntegerArgument();
+	arg->setHandleVector(false);
+	setArgumentDefinition(2, arg);
+	arg = new IntegerArgument();
+	arg->setHandleVector(false);
+	setArgumentDefinition(3, arg);
 	setArgumentDefinition(4, new SymbolicArgument());
 	setDefaultValue(4, "x");
 	setCondition("\\z >= \\y");
@@ -3747,8 +3788,12 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	
 }
 ProductFunction::ProductFunction() : MathFunction("product", 3, 4) {
-	setArgumentDefinition(2, new IntegerArgument());
-	setArgumentDefinition(3, new IntegerArgument());	
+	Argument *arg = new IntegerArgument();
+	arg->setHandleVector(false);
+	setArgumentDefinition(2, arg);
+	arg = new IntegerArgument();
+	arg->setHandleVector(false);
+	setArgumentDefinition(3, arg);
 	setArgumentDefinition(4, new SymbolicArgument());
 	setDefaultValue(4, "x");
 	setCondition("\\z >= \\y");
@@ -3938,8 +3983,11 @@ bool csum_replace(MathStructure &mprocess, const MathStructure &mstruct, const M
 	return b;
 }
 CustomSumFunction::CustomSumFunction() : MathFunction("csum", 7, 9) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SINT)); //begin
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT)); //end
+	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SINT);
+	setArgumentDefinition(1, arg); //begin
+	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
+	arg->setHandleVector(false);
+	setArgumentDefinition(2, arg); //end
 	//3. initial
 	//4. function
 	setArgumentDefinition(5, new SymbolicArgument()); //x var
@@ -4050,19 +4098,33 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	}
 	return 1;
 }
-IFFunction::IFFunction() : MathFunction("if", 3) {
-	NON_COMPLEX_NUMBER_ARGUMENT(1)
-}
-int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	int result = vargs[0].number().getBoolean();
-	if(result) {			
-		mstruct = vargs[1];
-	} else if(result == 0) {			
-		mstruct = vargs[2];
-	} else {
-		return 0;
-	}	
-	return 1;
+IFFunction::IFFunction() : MathFunction("if", 3) {}
+int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isNumber()) {
+		int result = vargs[0].number().getBoolean();
+		if(result) {
+			mstruct = vargs[1];
+		} else if(result == 0) {
+			mstruct = vargs[2];
+		} else {
+			return 0;
+		}
+		return 1;
+	}
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(mstruct.isNumber()) {
+		int result = mstruct.number().getBoolean();
+		if(result) {
+			mstruct = vargs[1];
+		} else if(result == 0) {
+			mstruct = vargs[2];
+		} else {
+			return -1;
+		}
+		return 1;
+	}
+	return -1;
 }
 
 IsNumberFunction::IsNumberFunction() : MathFunction("isNumber", 1) {
@@ -4088,7 +4150,9 @@ REPRESENTS_FUNCTION(RepresentsNumberFunction, representsNumber)
 
 LoadFunction::LoadFunction() : MathFunction("load", 1, 3) {
 	setArgumentDefinition(1, new FileArgument());
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SINT));
+	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SINT);
+	arg->setHandleVector(false);
+	setArgumentDefinition(2, arg);
 	setDefaultValue(2, "1");
 	setArgumentDefinition(3, new TextArgument());
 	setDefaultValue(3, ",");	
@@ -4197,8 +4261,10 @@ int StackFunction::calculate(MathStructure &mstruct, const MathStructure&, const
 DeriveFunction::DeriveFunction() : MathFunction("diff", 1, 3) {
 	setArgumentDefinition(2, new SymbolicArgument());
 	setDefaultValue(2, "x");
-	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SINT));
-	setDefaultValue(3, "1");		
+	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SINT);
+	arg->setHandleVector(false);
+	setArgumentDefinition(3, arg);
+	setDefaultValue(3, "1");
 }
 int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int i = vargs[2].number().intValue();
@@ -4233,7 +4299,9 @@ int liFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 LiFunction::LiFunction() : MathFunction("Li", 2) {
 	names[0].case_sensitive = true;
 	setArgumentDefinition(1, new IntegerArgument());
-	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(2, arg);
 }
 bool LiFunction::representsReal(const MathStructure &vargs, bool) const {
 	return vargs.size() == 2 && vargs[0].representsInteger() && vargs[1].representsReal() && (vargs[1].representsNonPositive() || vargs[1].representsNonPositive() || ((vargs[1].isNumber() && !vargs[1].number().isLessThanOrEqualTo(1)) || (vargs[1].isVariable() && vargs[1].variable()->isKnown() && ((KnownVariable*) vargs[1].variable())->get().isNumber() && !((KnownVariable*) vargs[1].variable())->get().number().isLessThanOrEqualTo(1)))) && ((vargs[0].representsPositive() || ((vargs[1].isNumber() && !vargs[1].number().isOne()) || (vargs[1].isVariable() && vargs[1].variable()->isKnown() && ((KnownVariable*) vargs[1].variable())->get().isNumber() && !((KnownVariable*) vargs[1].variable())->get().number().isOne()))));
@@ -4243,6 +4311,7 @@ bool LiFunction::representsNonComplex(const MathStructure &vargs, bool) const {
 }
 bool LiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[0].representsInteger() && (vargs[0].representsPositive() || (vargs[1].representsNumber() && ((vargs[1].isNumber() && !vargs[1].number().isOne()) || (vargs[1].isVariable() && vargs[1].variable()->isKnown() && ((KnownVariable*) vargs[1].variable())->get().isNumber() && !((KnownVariable*) vargs[1].variable())->get().number().isOne()))));}
 int LiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[1].isVector()) return 0;
 	if(vargs[0].isOne()) {
 		mstruct.set(1, 1, 0);
 		mstruct -= vargs[1];
@@ -4264,6 +4333,7 @@ int LiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	}
 	mstruct = vargs[1];
 	mstruct.eval(eo);
+	if(mstruct.isVector()) return -2;
 	if(vargs[0].number().isPositive() && mstruct.isOne()) {
 		mstruct = vargs[0];
 		mstruct.transform(CALCULATOR->f_zeta);
@@ -4290,12 +4360,15 @@ int EiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 
 SiFunction::SiFunction() : MathFunction("Si", 1) {
 	names[0].case_sensitive = true;
-	setArgumentDefinition(1, new AngleArgument());
+	Argument *arg = new AngleArgument();
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 bool SiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_number_angle_value(vargs[0]);}
 bool SiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_real_angle_value(vargs[0]);}
 bool SiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0]; 
 	if(CALCULATOR->getRadUnit()) {
 		mstruct.convert(CALCULATOR->getRadUnit());
@@ -4309,17 +4382,28 @@ int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			return 1;
 		}
 	}
-	if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+	if(CALCULATOR->getRadUnit()) {
+		if(mstruct.isVector()) {
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				mstruct[i] *= CALCULATOR->getRadUnit();
+			}
+		} else {
+			mstruct *= CALCULATOR->getRadUnit();
+		}
+	}
 	return -1;
 }
 CiFunction::CiFunction() : MathFunction("Ci", 1) {
 	names[0].case_sensitive = true;
-	setArgumentDefinition(1, new AngleArgument());
+	Argument *arg = new AngleArgument();
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 bool CiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_real_angle_value(vargs[0]);}
 bool CiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_number_angle_value(vargs[0]);}
 bool CiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0]; 
 	if(CALCULATOR->getRadUnit()) {
 		mstruct.convert(CALCULATOR->getRadUnit());
@@ -4333,7 +4417,15 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			return 1;
 		}
 	}
-	if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+	if(CALCULATOR->getRadUnit()) {
+		if(mstruct.isVector()) {
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				mstruct[i] *= CALCULATOR->getRadUnit();
+			}
+		} else {
+			mstruct *= CALCULATOR->getRadUnit();
+		}
+	}
 	return -1;
 }
 ShiFunction::ShiFunction() : MathFunction("Shi", 1) {
@@ -5831,9 +5923,11 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 PlotFunction::PlotFunction() : MathFunction("plot", 1, 6) {
 	NumberArgument *arg = new NumberArgument();
 	arg->setComplexAllowed(false);
+	arg->setHandleVector(false);
 	setArgumentDefinition(2, arg);
 	setDefaultValue(2, "0");
 	arg = new NumberArgument();
+	arg->setHandleVector(false);
 	arg->setComplexAllowed(false);
 	setArgumentDefinition(3, arg);
 	setDefaultValue(3, "10");

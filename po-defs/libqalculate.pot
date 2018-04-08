@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-04 17:52+0200\n"
+"POT-Creation-Date: 2018-04-08 09:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3226,7 +3226,7 @@ msgid ""
 "scale parameter. (from Gnumeric)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:512
+#: ../data/functions.xml.in.h:512 ../data/variables.xml.in.h:171
 msgid "Date &amp; Time"
 msgstr ""
 
@@ -8009,4 +8009,36 @@ msgstr ""
 
 #: ../data/variables.xml.in.h:170
 msgid "r:z"
+msgstr ""
+
+#: ../data/variables.xml.in.h:172
+msgid "Today"
+msgstr ""
+
+#: ../data/variables.xml.in.h:173
+msgid "r:today"
+msgstr ""
+
+#: ../data/variables.xml.in.h:174
+msgid "Tomorrow"
+msgstr ""
+
+#: ../data/variables.xml.in.h:175
+msgid "r:tomorrow"
+msgstr ""
+
+#: ../data/variables.xml.in.h:176
+msgid "Yesterday"
+msgstr ""
+
+#: ../data/variables.xml.in.h:177
+msgid "r:yesterday"
+msgstr ""
+
+#: ../data/variables.xml.in.h:178
+msgid "Now (date and time)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:179
+msgid "r:now"
 msgstr ""
