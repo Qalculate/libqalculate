@@ -754,13 +754,14 @@ bool QalculateDateTime::addMonths(const Number &nmonths) {
 		Number newmonths(nmonths);
 		newmonths.trunc();
 		QalculateDateTime dtbak(*this);
-		if(!addYears(newmonths)) return false;
+		if(!addMonths(newmonths)) return false;
 		Number nday(nmonths);
 		nday.frac();
 		if(nday.isNegative()) {
-			if(nday.isLessThan(i_day - 1)) {
-				nday *= daysPerYear(i_year);
-			} else {
+			nday.negate();
+			nday *= daysPerMonth(i_month, i_year);
+			if(nday.isGreaterThanOrEqualTo(i_day - 1)) {
+				nday /= daysPerMonth(i_month, i_year);
 				Number idayfrac(i_day - 1);
 				Number secfrac(i_hour * 3600 + i_min * 60);
 				secfrac += n_sec;
@@ -772,11 +773,12 @@ bool QalculateDateTime::addMonths(const Number &nmonths) {
 				idayfrac *= daysPerMonth(i_month, i_year);
 				nday += idayfrac;
 			}
+			nday.negate();
 		} else {
-			if(nday.isLessThan(daysPerYear(i_year) - i_day)) {
-				nday *= daysPerYear(i_year);
-			} else {
-				Number idayfrac(i_day - 1);
+			nday *= daysPerMonth(i_month, i_year);
+			if(nday.isGreaterThanOrEqualTo(daysPerMonth(i_month, i_year) - i_day)) {
+				nday /= daysPerMonth(i_month, i_year);
+				Number idayfrac(daysPerMonth(i_month, i_year) - i_day);
 				Number secfrac(i_hour * 3600 + i_min * 60);
 				secfrac += n_sec;
 				secfrac /= 86400;
@@ -831,9 +833,10 @@ bool QalculateDateTime::addYears(const Number &nyears) {
 		if(nday.isZero()) return true;
 		long int idoy = yearday();
 		if(nday.isNegative()) {
-			if(nday.isLessThan(idoy - 1)) {
-				nday *= daysPerYear(i_year);
-			} else {
+			nday.negate();
+			nday *= daysPerYear(i_year);
+			if(nday.isGreaterThanOrEqualTo(idoy - 1)) {
+				nday /= daysPerYear(i_year);
 				Number idayfrac(idoy - 1);
 				Number secfrac(i_hour * 3600 + i_min * 60);
 				secfrac += n_sec;
@@ -845,10 +848,11 @@ bool QalculateDateTime::addYears(const Number &nyears) {
 				idayfrac *= daysPerYear(i_year);
 				nday += idayfrac;
 			}
+			nday.negate();
 		} else {
-			if(nday.isLessThan(daysPerYear(i_year) - idoy)) {
-				nday *= daysPerYear(i_year);
-			} else {
+			nday *= daysPerYear(i_year);
+			if(nday.isGreaterThanOrEqualTo(daysPerYear(i_year) - idoy)) {
+				nday /= daysPerYear(i_year);
 				Number idayfrac(idoy - 1);
 				Number secfrac(i_hour * 3600 + i_min * 60);
 				secfrac += n_sec;
@@ -948,7 +952,6 @@ bool QalculateDateTime::addSeconds(const Number &seconds, bool count_leap_second
 				Number n_sto = secondsTo(dt_nls, true, false);
 				n_sto--;
 				if(n_sto.isLessThan(secnew)) {
-					secnew += nr_frac;
 					break;
 				} else if(n_sto.equals(secnew)) {
 					set(dt_nls);
@@ -978,7 +981,6 @@ bool QalculateDateTime::addSeconds(const Number &seconds, bool count_leap_second
 			while(dt_nls.year() != 0) {
 				Number n_sto = secondsTo(dt_nls, true, false);
 				if(n_sto.isGreaterThan(secnew)) {
-					secnew += nr_frac;
 					break;
 				} else if(n_sto.equals(secnew)) {
 					set(dt_nls);

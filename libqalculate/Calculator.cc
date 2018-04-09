@@ -2730,6 +2730,22 @@ MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit, co
 	mstruct.eval(eo);
 	return mstruct;
 }
+MathStructure Calculator::convert(const MathStructure &mstruct, KnownVariable *to_var, const EvaluationOptions &eo) {
+	if(!to_var->unit().empty() && to_var->isExpression()) {
+		CompositeUnit cu("", "temporary_composite_convert", "", to_var->unit());
+		if(cu.countUnits() > 0) {
+			AliasUnit au("", "temporary_alias_convert", "", "", "", &cu, to_var->expression());
+			MathStructure mstruct_new(convert(mstruct, &au, eo, false, false));
+			mstruct_new.replace(&au, to_var);
+			return mstruct_new;
+		}
+	}
+	MathStructure mstruct_new(mstruct);
+	mstruct_new /= to_var->get();
+	mstruct_new.eval(eo);
+	mstruct_new *= to_var;
+	return mstruct_new;
+}
 MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units) {
 	if(!mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
 	CompositeUnit *cu = NULL;
@@ -3480,34 +3496,38 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 	MathStructure mstruct;
 	bool b = false;
 	Unit *u = getUnit(str2);
+	Variable *v = NULL;
+	if(!u) v = getVariable(str2);
+	if(!u && !v) {
+		for(size_t i = 0; i < signs.size(); i++) {
+			if(str2 == signs[i]) {
+				u = getUnit(real_signs[i]);
+				if(!u) v = getVariable(real_signs[i]);
+				break;
+			}
+		}
+	}
+	if(v && (!v->isKnown() || ((KnownVariable*) v)->unit().empty())) v = NULL;
 	if(u) {
 		if(to_struct) to_struct->set(u);
 		mstruct.set(convert(mstruct_to_convert, u, eo2, false, false));
 		b = true;
+	} else if(v) {
+		if(to_struct) to_struct->set(v);
+		mstruct.set(convert(mstruct_to_convert, (KnownVariable*) v, eo2));
+		b = true;
 	} else {
-		for(size_t i = 0; i < signs.size(); i++) {
-			if(str2 == signs[i]) {
-				u = getUnit(real_signs[i]);
-				break;
-			}
-		}
-		if(u) {
-			if(to_struct) to_struct->set(u);
-			mstruct.set(convert(mstruct_to_convert, u, eo2, false, false));
+		current_stage = MESSAGE_STAGE_CONVERSION_PARSING;
+		CompositeUnit cu("", "temporary_composite_convert", "", str2);
+		current_stage = MESSAGE_STAGE_CONVERSION;
+		if(to_struct) to_struct->set(cu.generateMathStructure());
+		if(cu.countUnits() > 0) {
+			mstruct.set(convert(mstruct_to_convert, &cu, eo2, false, false));
 			b = true;
-		} else {
-			current_stage = MESSAGE_STAGE_CONVERSION_PARSING;
-			CompositeUnit cu("", "temporary_composite_convert", "", str2);
-			current_stage = MESSAGE_STAGE_CONVERSION;
-			if(to_struct) to_struct->set(cu.generateMathStructure());
-			if(cu.countUnits() > 0) {
-				mstruct.set(convert(mstruct_to_convert, &cu, eo2, false, false));
-				b = true;
-			}
 		}
 	}
 	if(!b) return mstruct_to_convert;
-	if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo2));
+	if(!v && eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo2));
 	current_stage = MESSAGE_STAGE_UNSET;
 	return mstruct;
 }
@@ -5372,6 +5392,14 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 	return true;
 }
 
+MathStructure *get_out_of_negate(MathStructure &mstruct, int *i_neg) {
+	if(mstruct.isNegate() || (mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne())) {
+		(*i_neg)++;
+		return get_out_of_negate(mstruct.last(), i_neg);
+	}
+	return &mstruct;
+}
+
 bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseOptions &po) {
 	string save_str = str;
 	mstruct->clear();
@@ -5802,38 +5830,47 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						b_add = parseAdd(str2, mstruct, po, OPERATION_ADD, append) && mstruct->isAddition();
 					}
 					append = true;
-					if(b_add && ((min && (mstruct->last().isNegate() || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last()[0].isMinusOne())) && mstruct->last().last().isMultiplication() && mstruct->last().last().size() == 2 && (mstruct->last().last().last().variable() && (mstruct->last().last().last().variable() == v_percent || mstruct->last().last().last().variable() == v_permille || mstruct->last().last().last().variable() == v_permyriad))) || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && (mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad))))) {
-						Variable *v;
-						if(mstruct->last().last().isVariable()) v = mstruct->last().last().variable();
-						else v = mstruct->last().last().last().variable();
-						bool b_neg = false;
-						if(mstruct->last().isNegate()) {
-							mstruct->last().setToChild(1, true);
-							b_neg = true;
-						} else if(mstruct->last()[0].isMinusOne()) {
-							mstruct->last().setToChild(2, true);
-							b_neg = true;
-						}
-						if(mstruct->last()[0].isNumber()) {
-							if(b_neg) mstruct->last()[0].number().negate();
-							if(v == CALCULATOR->v_percent) mstruct->last()[0].number().add(100);
-							else if(v == CALCULATOR->v_permille) mstruct->last()[0].number().add(1000);
-							else mstruct->last()[0].number().add(10000);
-						} else {
-							if(b_neg && po.preserve_format) mstruct->last()[0].transform(STRUCT_NEGATE);
-							else if(b_neg) mstruct->last()[0].negate();
-							if(v == CALCULATOR->v_percent) mstruct->last()[0] += Number(100, 1);
-							else if(v == CALCULATOR->v_permille) mstruct->last()[0] += Number(1000, 1);
-							else mstruct->last()[0] += Number(10000, 1);
-							mstruct->last()[0].swapChildren(1, 2);
-						}
-						if(mstruct->size() == 2) {
-							mstruct->setType(STRUCT_MULTIPLICATION);
-						} else {
-							MathStructure *mpercent = &mstruct->last();
-							mpercent->ref();
-							mstruct->delChild(mstruct->size());
-							mstruct->multiply_nocopy(mpercent);
+					if(b_add) {
+						int i_neg = 0;
+						MathStructure *mstruct_a = get_out_of_negate(mstruct->last(), &i_neg);
+						MathStructure *mstruct_b = mstruct_a;
+						if(mstruct_a->isMultiplication() && mstruct_a->size() >= 2) mstruct_b = &mstruct_a->last();
+						if(mstruct_b->isVariable() && (mstruct_b->variable() == v_percent || mstruct_b->variable() == v_permille || mstruct_b->variable() == v_permyriad)) {
+							Variable *v = mstruct_b->variable();
+							bool b_neg = (i_neg % 2 == 1);
+							while(i_neg > 0) {
+								mstruct->last().setToChild(mstruct->last().size());
+								i_neg--;
+							}
+							if(mstruct->last().isVariable()) {
+								mstruct->last().multiply(m_one);
+								mstruct->last().swapChildren(1, 2);
+							}
+							if(mstruct->last().size() > 2) {
+								mstruct->last().delChild(mstruct->last().size());
+								mstruct->last().multiply(v);
+							}
+							if(mstruct->last()[0].isNumber()) {
+								if(b_neg) mstruct->last()[0].number().negate();
+								if(v == CALCULATOR->v_percent) mstruct->last()[0].number().add(100);
+								else if(v == CALCULATOR->v_permille) mstruct->last()[0].number().add(1000);
+								else mstruct->last()[0].number().add(10000);
+							} else {
+								if(b_neg && po.preserve_format) mstruct->last()[0].transform(STRUCT_NEGATE);
+								else if(b_neg) mstruct->last()[0].negate();
+								if(v == CALCULATOR->v_percent) mstruct->last()[0] += Number(100, 1);
+								else if(v == CALCULATOR->v_permille) mstruct->last()[0] += Number(1000, 1);
+								else mstruct->last()[0] += Number(10000, 1);
+								mstruct->last()[0].swapChildren(1, 2);
+							}
+							if(mstruct->size() == 2) {
+								mstruct->setType(STRUCT_MULTIPLICATION);
+							} else {
+								MathStructure *mpercent = &mstruct->last();
+								mpercent->ref();
+								mstruct->delChild(mstruct->size());
+								mstruct->multiply_nocopy(mpercent);
+							}
 						}
 					}
 				} else {
@@ -5871,38 +5908,47 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				} else {
 					b_add = parseAdd(str, mstruct, po, OPERATION_ADD, append) && mstruct->isAddition();
 				}
-				if(b_add && ((min && (mstruct->last().isNegate() || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && mstruct->last()[0].isMinusOne())) && mstruct->last().last().isMultiplication() && mstruct->last().last().size() == 2 && (mstruct->last().last().last().variable() && (mstruct->last().last().last().variable() == v_percent || mstruct->last().last().last().variable() == v_permille || mstruct->last().last().last().variable() == v_permyriad))) || (mstruct->last().isMultiplication() && mstruct->last().size() == 2 && (mstruct->last().last().isVariable() && (mstruct->last().last().variable() == v_percent || mstruct->last().last().variable() == v_permille || mstruct->last().last().variable() == v_permyriad))))) {
-					Variable *v;
-					if(mstruct->last().last().isVariable()) v = mstruct->last().last().variable();
-					else v = mstruct->last().last().last().variable();
-					bool b_neg = false;
-					if(mstruct->last().isNegate()) {
-						mstruct->last().setToChild(1, true);
-						b_neg = true;
-					} else if(mstruct->last()[0].isMinusOne()) {
-						mstruct->last().setToChild(2, true);
-						b_neg = true;
-					}
-					if(mstruct->last()[0].isNumber()) {
-						if(b_neg) mstruct->last()[0].number().negate();
-						if(v == CALCULATOR->v_percent) mstruct->last()[0].number().add(100);
-						else if(v == CALCULATOR->v_permille) mstruct->last()[0].number().add(1000);
-						else mstruct->last()[0].number().add(10000);
-					} else {
-						if(b_neg && po.preserve_format) mstruct->last()[0].transform(STRUCT_NEGATE);
-						else if(b_neg) mstruct->last()[0].negate();
-						if(v == CALCULATOR->v_percent) mstruct->last()[0] += Number(100, 1);
-						else if(v == CALCULATOR->v_permille) mstruct->last()[0] += Number(1000, 1);
-						else mstruct->last()[0] += Number(10000, 1);
-						mstruct->last()[0].swapChildren(1, 2);
-					}
-					if(mstruct->size() == 2) {
-						mstruct->setType(STRUCT_MULTIPLICATION);
-					} else {
-						MathStructure *mpercent = &mstruct->last();
-						mpercent->ref();
-						mstruct->delChild(mstruct->size());
-						mstruct->multiply_nocopy(mpercent);
+				if(b_add) {
+					int i_neg = 0;
+					MathStructure *mstruct_a = get_out_of_negate(mstruct->last(), &i_neg);
+					MathStructure *mstruct_b = mstruct_a;
+					if(mstruct_a->isMultiplication() && mstruct_a->size() >= 2) mstruct_b = &mstruct_a->last();
+					if(mstruct_b->isVariable() && (mstruct_b->variable() == v_percent || mstruct_b->variable() == v_permille || mstruct_b->variable() == v_permyriad)) {
+						Variable *v = mstruct_b->variable();
+						bool b_neg = (i_neg % 2 == 1);
+						while(i_neg > 0) {
+							mstruct->last().setToChild(mstruct->last().size());
+							i_neg--;
+						}
+						if(mstruct->last().isVariable()) {
+							mstruct->last().multiply(m_one);
+							mstruct->last().swapChildren(1, 2);
+						}
+						if(mstruct->last().size() > 2) {
+							mstruct->last().delChild(mstruct->last().size());
+							mstruct->last().multiply(v);
+						}
+						if(mstruct->last()[0].isNumber()) {
+							if(b_neg) mstruct->last()[0].number().negate();
+							if(v == CALCULATOR->v_percent) mstruct->last()[0].number().add(100);
+							else if(v == CALCULATOR->v_permille) mstruct->last()[0].number().add(1000);
+							else mstruct->last()[0].number().add(10000);
+						} else {
+							if(b_neg && po.preserve_format) mstruct->last()[0].transform(STRUCT_NEGATE);
+							else if(b_neg) mstruct->last()[0].negate();
+							if(v == CALCULATOR->v_percent) mstruct->last()[0] += Number(100, 1);
+							else if(v == CALCULATOR->v_permille) mstruct->last()[0] += Number(1000, 1);
+							else mstruct->last()[0] += Number(10000, 1);
+							mstruct->last()[0].swapChildren(1, 2);
+						}
+						if(mstruct->size() == 2) {
+							mstruct->setType(STRUCT_MULTIPLICATION);
+						} else {
+							MathStructure *mpercent = &mstruct->last();
+							mpercent->ref();
+							mstruct->delChild(mstruct->size());
+							mstruct->multiply_nocopy(mpercent);
+						}
 					}
 				}
 			}

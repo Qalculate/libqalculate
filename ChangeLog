@@ -1,3 +1,7 @@
+2018-04-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* "to"-conversion for unit-like variables (such as c)
+
 2018-04-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Calculate each vector element (and each extra argument) separately in many functions

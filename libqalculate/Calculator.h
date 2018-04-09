@@ -649,6 +649,7 @@ class Calculator {
 	* @returns Converted value.
 	*/
 	MathStructure convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options, bool always_convert = true, bool convert_to_mixed_units = true);
+	MathStructure convert(const MathStructure &mstruct, KnownVariable *to_var, const EvaluationOptions &eo = default_evaluation_options);
 	MathStructure convert(double value, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options);
 	MathStructure convert(string str, Unit *from_unit, Unit *to_unit, int milliseconds, const EvaluationOptions &eo = default_evaluation_options);
 	/** Depecated: use convert() */
