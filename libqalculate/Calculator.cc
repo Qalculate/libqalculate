@@ -3179,6 +3179,10 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 						b = true;
 						cu2->add(cu_mstruct.getChild(i)->unit());
 					} else if(cu_mstruct.getChild(i)->isPower() && cu_mstruct.getChild(i)->base()->isUnit() && cu_mstruct.getChild(i)->exponent()->isNumber() && cu_mstruct.getChild(i)->exponent()->number().isInteger()) {
+						if(cu_mstruct.getChild(i)->exponent()->number().isGreaterThan(1000) || cu_mstruct.getChild(i)->exponent()->number().isLessThan(-1000)) {
+							b = false;
+							break;
+						}
 						b = true;
 						cu2->add(cu_mstruct.getChild(i)->base()->unit(), cu_mstruct.getChild(i)->exponent()->number().intValue());
 					}
