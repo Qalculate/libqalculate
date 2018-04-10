@@ -12,11 +12,6 @@
 #ifndef INCLUDES_H
 #define INCLUDES_H
 
-//Fixes clang compilation on my system, but breaks others
-/*#if (defined(__clang__) && !defined char16_t)
-	typedef __CHAR16_TYPE__ char16_t;
-#endif*/
-
 /** @file */
 
 #include <vector>

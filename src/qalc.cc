@@ -2919,7 +2919,7 @@ int main(int argc, char *argv[]) {
 				PUTS_UNICODE(_("prepend with ? to request the optimal prefix"));
 				PUTS_UNICODE(_("prepend with + or - to force/disable use of mixed units"));
 				PUTS_UNICODE(_("- a unit expression (e.g. km/h)"));
-				PUTS_UNICODE(_("- a unit-like variable (e.g. c)"));
+				PUTS_UNICODE(_("- a physical constant (e.g. c)"));
 				PUTS_UNICODE(_("- base (convert to base units)"));
 				PUTS_UNICODE(_("- optimal (convert to optimal unit)"));
 				PUTS_UNICODE(_("- mixed (convert to mixed units, e.g. hours + minutes)"));

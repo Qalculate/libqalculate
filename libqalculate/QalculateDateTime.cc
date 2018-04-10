@@ -194,9 +194,9 @@ int dateTimeZone(time_t rawtime) {
 int dateTimeZone(const QalculateDateTime &dt, bool b_utc) {
 	struct tm tmdate;
 	time_t rawtime;
-	if(dt.year() > 2200) {
-		if(isLeapYear(dt.year())) tmdate.tm_year = 2200 - 1900;
-		else tmdate.tm_year = 2199 - 1900;
+	if(dt.year() > 2038) {
+		if(isLeapYear(dt.year())) tmdate.tm_year = 136;
+		else tmdate.tm_year = 137;
 	} else if(dt.year() < 0) {
 		if(isLeapYear(dt.year())) tmdate.tm_year = -1900;
 		else tmdate.tm_year = 1 - 1900;
@@ -211,30 +211,18 @@ int dateTimeZone(const QalculateDateTime &dt, bool b_utc) {
 	nsect.trunc();
 	tmdate.tm_sec = nsect.intValue();
 	rawtime = mktime(&tmdate);
-	if(rawtime == (time_t) -1) {
-		if(dt.year() >= 2038) {
-			if(isLeapYear(dt.year())) tmdate.tm_year = 136;
-			else tmdate.tm_year = 137;
-			rawtime = mktime(&tmdate);
-		} else if(dt.year() < 1970 || (!b_utc && dt.year() == 1970)) {
-			if(std::numeric_limits<time_t>::min() == 0) {
-				if(isLeapYear(dt.year())) tmdate.tm_year = 72;
-				else tmdate.tm_year = b_utc ? 70 : 71;
-				rawtime = mktime(&tmdate);
-			} else if(std::numeric_limits<time_t>::min() > LONG_MIN) {
-				rawtime = INT_MIN;
-			} else if(std::numeric_limits<time_t>::min() > LONG_LONG_MIN) {
-				rawtime = LONG_MIN;
-			} else if(dt.year() < 0) {
-				rawtime = (time_t) -62167219200LL;
-			} else {
-				Number nstamp = dt.timestamp(true);
-				nstamp.trunc();
-				rawtime = (time_t) nstamp.llintValue();
-			}
-		}
+	if(rawtime == (time_t) -1 && (dt.year() != 1969 || dt.month() != 12 || dt.day() != 31 || dt.hour() != 23 || dt.minute() != 59 || !nsect.equals(59))) {
+		if(isLeapYear(dt.year())) tmdate.tm_year = 72;
+		else tmdate.tm_year = b_utc ? 70 : 71;
+		rawtime = mktime(&tmdate);
 	}
 	if(b_utc) rawtime += dateTimeZone(rawtime) * 60;
+	if(rawtime < 0 && !localtime(&rawtime)) {
+		if(isLeapYear(dt.year())) tmdate.tm_year = 72;
+		else tmdate.tm_year = b_utc ? 70 : 71;
+		rawtime = mktime(&tmdate);
+		if(b_utc) rawtime += dateTimeZone(rawtime) * 60;
+	}
 	return dateTimeZone(rawtime);
 }
 
@@ -499,7 +487,7 @@ string QalculateDateTime::toISOString() const {
 	return str;
 }
 string QalculateDateTime::toLocalString() const {
-	if(i_year > INT_MAX + 1900L || i_year < INT_MIN + 1900) return toISOString();
+	if(i_year > INT_MAX || i_year < INT_MIN + 1900) return toISOString();
 	struct tm tmdate;
 	tmdate.tm_year = i_year - 1900;
 	tmdate.tm_mon = i_month - 1;

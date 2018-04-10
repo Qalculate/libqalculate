@@ -1588,7 +1588,7 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "6797.94", 1, "", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "5461.47", 1, "", false, true, true));
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
@@ -2731,10 +2731,14 @@ MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit, co
 	return mstruct;
 }
 MathStructure Calculator::convert(const MathStructure &mstruct, KnownVariable *to_var, const EvaluationOptions &eo) {
+	if(mstruct.contains(to_var, true) > 0) return mstruct;
 	if(!to_var->unit().empty() && to_var->isExpression()) {
 		CompositeUnit cu("", "temporary_composite_convert", "", to_var->unit());
 		if(cu.countUnits() > 0) {
 			AliasUnit au("", "temporary_alias_convert", "", "", "", &cu, to_var->expression());
+			au.setUncertainty(to_var->uncertainty());
+			au.setApproximate(to_var->isApproximate());
+			au.setPrecision(to_var->precision());
 			MathStructure mstruct_new(convert(mstruct, &au, eo, false, false));
 			mstruct_new.replace(&au, to_var);
 			return mstruct_new;

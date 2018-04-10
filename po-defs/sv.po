@@ -1,4 +1,3 @@
-# translation of sv.po to Swedish
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # Hanna Knutsson <hanna.knutsson@protonmail.com>, 2003.
@@ -7710,7 +7709,7 @@ msgstr "hundra"
 
 #: ../data/variables.xml.in.h:60
 msgid "Physical Constants"
-msgstr "Fysiska konstanter"
+msgstr "Fysikaliska konstanter"
 
 #: ../data/variables.xml.in.h:61
 msgid "Universal Constants"

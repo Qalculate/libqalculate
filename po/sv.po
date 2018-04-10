@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-09 14:14+0200\n"
+"POT-Creation-Date: 2018-04-10 08:44+0200\n"
 "PO-Revision-Date: 2006-05-04 12:29+0200\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -123,7 +123,7 @@ msgstr "ej positiv"
 msgid "Unrecognized assumption."
 msgstr "Okänt antagande."
 
-#: ../src/qalc.cc:385 ../libqalculate/Calculator.cc:9859
+#: ../src/qalc.cc:385 ../libqalculate/Calculator.cc:9863
 #, c-format
 msgid "It has been %s day(s) since the exchange rates last were updated."
 msgstr "Det var %s dag(ar) sedan växelkurserna senast updaterades."
@@ -799,7 +799,7 @@ msgstr "ans"
 
 #: ../src/qalc.cc:1268 ../src/qalc.cc:1271 ../src/qalc.cc:1272
 #: ../src/qalc.cc:1273 ../src/qalc.cc:1274 ../src/qalc.cc:1502
-#: ../libqalculate/Calculator.cc:8426 ../libqalculate/Calculator.cc:8442
+#: ../libqalculate/Calculator.cc:8430 ../libqalculate/Calculator.cc:8446
 msgid "Temporary"
 msgstr "Temporära"
 
@@ -1056,7 +1056,7 @@ msgstr "UTTRYCK"
 
 #. qalc command
 #: ../src/qalc.cc:2224 ../src/qalc.cc:2263 ../src/qalc.cc:2840
-#: ../libqalculate/Calculator.cc:9086 ../libqalculate/DataSet.cc:355
+#: ../libqalculate/Calculator.cc:9090 ../libqalculate/DataSet.cc:355
 #: ../libqalculate/DataSet.cc:382 ../libqalculate/DataSet.cc:1012
 msgid "info"
 msgstr "info"
@@ -1475,8 +1475,8 @@ msgid "- a unit expression (e.g. km/h)"
 msgstr "- ett enhetsuttryck (t.ex. km/h)"
 
 #: ../src/qalc.cc:2922
-msgid "- a unit-like variable (e.g. c)"
-msgstr "- en enhets-liknande variabel (t.ex. c)"
+msgid "- a physical constant (e.g. c)"
+msgstr "- en fysikalisk konstant (t.ex. c)"
 
 #: ../src/qalc.cc:2923
 msgid "- base (convert to base units)"
@@ -1593,7 +1593,7 @@ msgid "warning"
 msgstr "varning"
 
 #: ../src/qalc.cc:3080 ../src/qalc.cc:3118 ../src/qalc.cc:3385
-#: ../src/qalc.cc:3704 ../libqalculate/Calculator.cc:9504
+#: ../src/qalc.cc:3704 ../libqalculate/Calculator.cc:9508
 #: ../libqalculate/MathStructure.cc:703
 #, c-format
 msgid "aborted"
@@ -1872,7 +1872,7 @@ msgid "Vector"
 msgstr "Vektor"
 
 #: ../libqalculate/BuiltinFunctions.cc:6006
-#: ../libqalculate/BuiltinFunctions.cc:6049 ../libqalculate/Calculator.cc:9943
+#: ../libqalculate/BuiltinFunctions.cc:6049 ../libqalculate/Calculator.cc:9947
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr "Kunde inte generera diagramdata med angivet min, max och stegstorlek."
 
@@ -1882,7 +1882,7 @@ msgid "Sampling rate must be a positive integer."
 msgstr "Frekvens måste vara ett positivt heltal."
 
 #: ../libqalculate/BuiltinFunctions.cc:6017
-#: ../libqalculate/BuiltinFunctions.cc:6060 ../libqalculate/Calculator.cc:9910
+#: ../libqalculate/BuiltinFunctions.cc:6060 ../libqalculate/Calculator.cc:9914
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr "Kunde inte generera diagramdata med angivet min, max och frekvens."
 
@@ -1939,7 +1939,7 @@ msgid "Degrees unit is missing. Creating one for this session."
 msgstr "Gradenheten saknas. Skapar en för nuvarande session."
 
 #: ../libqalculate/Calculator.cc:1590 ../libqalculate/Calculator.cc:1591
-#: ../libqalculate/Calculator.cc:9568 ../libqalculate/Calculator.cc:9679
+#: ../libqalculate/Calculator.cc:9572 ../libqalculate/Calculator.cc:9683
 msgid "Currency"
 msgstr "Valuta"
 
@@ -1959,7 +1959,7 @@ msgstr "RPN-stacken är tom. Fyller återstående funktionsparametrar med nollor
 msgid "calculating..."
 msgstr "beräknar..."
 
-#: ../libqalculate/Calculator.cc:3979
+#: ../libqalculate/Calculator.cc:3983
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
@@ -1968,7 +1968,7 @@ msgstr ""
 "\"%s\" tillåts inte längre i namn. Vänligen ändra namnet på \"%s\". Annars "
 "kommer variabeln att gå förlorad."
 
-#: ../libqalculate/Calculator.cc:3997
+#: ../libqalculate/Calculator.cc:4001
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -1977,7 +1977,7 @@ msgstr ""
 "\"%s\" tillåts inte längre i namn. Vänligen ändra namnet på \"%s\". Annars "
 "kommer funktionen att gå förlorad."
 
-#: ../libqalculate/Calculator.cc:4014
+#: ../libqalculate/Calculator.cc:4018
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -1986,30 +1986,30 @@ msgstr ""
 "\"%s\" tillåts inte längre i namn. Vänligen ändra namnet på \"%s\". Annars "
 "kommer enheten att gå förlorad."
 
-#: ../libqalculate/Calculator.cc:5206 ../libqalculate/Calculator.cc:6090
-#: ../libqalculate/Calculator.cc:6097 ../libqalculate/Calculator.cc:6118
-#: ../libqalculate/Calculator.cc:6139
+#: ../libqalculate/Calculator.cc:5210 ../libqalculate/Calculator.cc:6094
+#: ../libqalculate/Calculator.cc:6101 ../libqalculate/Calculator.cc:6122
+#: ../libqalculate/Calculator.cc:6143
 #, c-format
 msgid "Misplaced operator(s) \"%s\" ignored"
 msgstr "Malplacerad(e) \"%s\" ignorerades"
 
-#: ../libqalculate/Calculator.cc:5232 ../libqalculate/Calculator.cc:6158
+#: ../libqalculate/Calculator.cc:5236 ../libqalculate/Calculator.cc:6162
 #, c-format
 msgid "Misplaced '%c' ignored"
 msgstr "Malplacerat '%c' ignorerades"
 
-#: ../libqalculate/Calculator.cc:5258 ../libqalculate/Function.cc:1330
+#: ../libqalculate/Calculator.cc:5262 ../libqalculate/Function.cc:1330
 #: ../libqalculate/Function.cc:1361
 #, c-format
 msgid "Internal id %s does not exist."
 msgstr "Internt id %s finns inte."
 
-#: ../libqalculate/Calculator.cc:5276
+#: ../libqalculate/Calculator.cc:5280
 #, c-format
 msgid "\"%s\" is not a valid variable/function/unit."
 msgstr "\"%s\" motsvarar inte någon giltig variabel/funktion/enhet."
 
-#: ../libqalculate/Calculator.cc:5291
+#: ../libqalculate/Calculator.cc:5295
 #, c-format
 msgid ""
 "Trailing characters \"%s\" (not a valid variable/function/unit) in number "
@@ -2018,87 +2018,87 @@ msgstr ""
 "Överblivna tecken i uttrycket \"%s\" (inte någon giltig variabel/funktion/"
 "enhet) ignorerades i talet \"%s\"."
 
-#: ../libqalculate/Calculator.cc:5697
+#: ../libqalculate/Calculator.cc:5701
 msgid "RPN syntax error. Values left at the end of the RPN expression."
 msgstr "RPN syntaxfel. Värden kvar i slutet av RPN uttryck."
 
-#: ../libqalculate/Calculator.cc:5700
+#: ../libqalculate/Calculator.cc:5704
 msgid "Unused stack values."
 msgstr "Oanvända stackvärden."
 
-#: ../libqalculate/Calculator.cc:5739 ../libqalculate/Calculator.cc:5807
+#: ../libqalculate/Calculator.cc:5743 ../libqalculate/Calculator.cc:5811
 #, c-format
 msgid "RPN syntax error. Operator '%c' not supported."
 msgstr "RPN syntaxfel. Operator '%c' stöds ej."
 
-#: ../libqalculate/Calculator.cc:5767
+#: ../libqalculate/Calculator.cc:5771
 msgid "RPN syntax error. Stack is empty."
 msgstr "RPN syntaxfel. Stacken är tom."
 
-#: ../libqalculate/Calculator.cc:5769
+#: ../libqalculate/Calculator.cc:5773
 msgid "RPN syntax error. Operator ignored as there where only one stack value."
 msgstr ""
 "RPN syntaxfel. Operatorn ignorerades eftersom det enbart fanns ett "
 "stackvärde kvar."
 
-#: ../libqalculate/Calculator.cc:6358
+#: ../libqalculate/Calculator.cc:6362
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "Namnet \"%s\" är upptaget. Ändrar till \"%s\"."
 
-#: ../libqalculate/Calculator.cc:7044 ../libqalculate/DataSet.cc:529
+#: ../libqalculate/Calculator.cc:7048 ../libqalculate/DataSet.cc:529
 #, c-format
 msgid "File not identified as Qalculate! definitions file: %s."
 msgstr "Filen identifierades inte som en Qalculate! definitionsfil: %s."
 
-#: ../libqalculate/Calculator.cc:9069 ../libqalculate/DataSet.cc:353
+#: ../libqalculate/Calculator.cc:9073 ../libqalculate/DataSet.cc:353
 msgid "Object"
 msgstr "Objekt"
 
-#: ../libqalculate/Calculator.cc:9078 ../libqalculate/DataSet.cc:354
+#: ../libqalculate/Calculator.cc:9082 ../libqalculate/DataSet.cc:354
 msgid "Property"
 msgstr "Egenskap"
 
-#: ../libqalculate/Calculator.cc:9377
+#: ../libqalculate/Calculator.cc:9381
 msgid "column"
 msgstr "kolumn"
 
-#: ../libqalculate/Calculator.cc:9380
+#: ../libqalculate/Calculator.cc:9384
 msgid "Column "
 msgstr "Kolumn"
 
-#: ../libqalculate/Calculator.cc:9456 ../libqalculate/Calculator.cc:9503
+#: ../libqalculate/Calculator.cc:9460 ../libqalculate/Calculator.cc:9507
 msgid "timed out"
 msgstr "tiden rann ut"
 
-#: ../libqalculate/Calculator.cc:9785 ../libqalculate/Calculator.cc:9786
-#: ../libqalculate/Calculator.cc:9789 ../libqalculate/Calculator.cc:9818
-#: ../libqalculate/Calculator.cc:9819 ../libqalculate/Calculator.cc:9822
-#: ../libqalculate/Calculator.cc:9838 ../libqalculate/Calculator.cc:9839
-#: ../libqalculate/Calculator.cc:9842
+#: ../libqalculate/Calculator.cc:9789 ../libqalculate/Calculator.cc:9790
+#: ../libqalculate/Calculator.cc:9793 ../libqalculate/Calculator.cc:9822
+#: ../libqalculate/Calculator.cc:9823 ../libqalculate/Calculator.cc:9826
+#: ../libqalculate/Calculator.cc:9842 ../libqalculate/Calculator.cc:9843
+#: ../libqalculate/Calculator.cc:9846
 #, c-format
 msgid "Failed to download exchange rates from %s: %s."
 msgstr "Misslyckades med att ladda ner växelkurser från %s: %s."
 
-#: ../libqalculate/Calculator.cc:9906 ../libqalculate/Calculator.cc:9939
-#: ../libqalculate/Calculator.cc:9972 ../libqalculate/Calculator.cc:10301
+#: ../libqalculate/Calculator.cc:9910 ../libqalculate/Calculator.cc:9943
+#: ../libqalculate/Calculator.cc:9976 ../libqalculate/Calculator.cc:10305
 msgid "It took too long to generate the plot data."
 msgstr "Det tog för lång tid att generara data till diagrammet."
 
-#: ../libqalculate/Calculator.cc:10004
+#: ../libqalculate/Calculator.cc:10008
 msgid "No extension in file name. Saving as PNG image."
 msgstr "Inget tillägg i filnamnet. Sparar som PNG-bild."
 
-#: ../libqalculate/Calculator.cc:10023
+#: ../libqalculate/Calculator.cc:10027
 msgid "Unknown extension in file name. Saving as PNG image."
 msgstr "Okänt tillägg i filnamnet. Sparar som PNG-bild."
 
-#: ../libqalculate/Calculator.cc:10240
+#: ../libqalculate/Calculator.cc:10244
 #, c-format
 msgid "Could not create temporary file %s"
 msgstr "Kunde inte skapa temporär fil %s"
 
-#: ../libqalculate/Calculator.cc:10348
+#: ../libqalculate/Calculator.cc:10352
 msgid ""
 "Failed to invoke gnuplot. Make sure that you have gnuplot installed in your "
 "path."
@@ -2584,6 +2584,9 @@ msgstr "På"
 #: ../libqalculate/util.cc:189
 msgid "Off"
 msgstr "Av"
+
+#~ msgid "- a unit-like variable (e.g. c)"
+#~ msgstr "- en enhets-liknande variabel (t.ex. c)"
 
 #~ msgid "dot as separator"
 #~ msgstr "punkt som avgränsare"
