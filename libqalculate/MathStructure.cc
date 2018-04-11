@@ -13809,8 +13809,9 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 						}
 					}	
 				}
-				break;
+				return;
 			}
+			break;
 		}
 		case STRUCT_UNIT: {
 			if(!o_prefix && (po.prefix && po.prefix != CALCULATOR->decimal_null_prefix && po.prefix != CALCULATOR->binary_null_prefix)) {
@@ -13818,7 +13819,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 				SWAP_CHILDREN(0, 1);
 				setPrefixes(po, parent, pindex);
 			}
-			break;
+			return;
 		}
 		case STRUCT_POWER: {
 			if(CHILD(0).isUnit()) {
@@ -13827,15 +13828,15 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 					SWAP_CHILDREN(0, 1);
 					setPrefixes(po, parent, pindex);
 				}
-				break;
+				return;
 			}
+			break;
 		}
-		default: {
-			if(po.prefix || !has_prefix(*this)) {
-				for(size_t i = 0; i < SIZE; i++) {
-					CHILD(i).setPrefixes(po, this, i + 1);
-				}
-			}
+		default: {}
+	}
+	if(po.prefix || !has_prefix(*this)) {
+		for(size_t i = 0; i < SIZE; i++) {
+			CHILD(i).setPrefixes(po, this, i + 1);
 		}
 	}
 }
