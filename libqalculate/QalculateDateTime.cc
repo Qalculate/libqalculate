@@ -213,13 +213,13 @@ int dateTimeZone(const QalculateDateTime &dt, bool b_utc) {
 	rawtime = mktime(&tmdate);
 	if(rawtime == (time_t) -1 && (dt.year() != 1969 || dt.month() != 12 || dt.day() != 31 || dt.hour() != 23 || dt.minute() != 59 || !nsect.equals(59))) {
 		if(isLeapYear(dt.year())) tmdate.tm_year = 72;
-		else tmdate.tm_year = b_utc ? 70 : 71;
+		else tmdate.tm_year = 71;
 		rawtime = mktime(&tmdate);
 	}
-	if(b_utc) rawtime += dateTimeZone(rawtime) * 60;
+	if(b_utc && (rawtime >= 0 || localtime(&rawtime))) rawtime += dateTimeZone(rawtime) * 60;
 	if(rawtime < 0 && !localtime(&rawtime)) {
 		if(isLeapYear(dt.year())) tmdate.tm_year = 72;
-		else tmdate.tm_year = b_utc ? 70 : 71;
+		else tmdate.tm_year = 71;
 		rawtime = mktime(&tmdate);
 		if(b_utc) rawtime += dateTimeZone(rawtime) * 60;
 	}
