@@ -9,6 +9,7 @@ libqalculate/MathStructure.cc
 libqalculate/Function.cc
 libqalculate/Number.cc
 libqalculate/Prefix.cc
+libqalculate/QalculateDateTime.cc
 libqalculate/Unit.cc
 libqalculate/Variable.cc
 libqalculate/util.cc
