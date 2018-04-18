@@ -1794,12 +1794,16 @@ bool Number::hasPositiveSign() const {
 bool Number::equalsZero() const {
 	return isZero();
 }
-bool Number::equals(const Number &o, bool allow_interval) const {
-	if(includesInfinity() || o.includesInfinity()) return false;
+bool Number::equals(const Number &o, bool allow_interval, bool allow_infinite) const {
+	if(!allow_infinite && (includesInfinity() || o.includesInfinity())) return false;
 	if(o.hasImaginaryPart()) {
-		if(!i_value || !i_value->equals(*o.internalImaginary())) return false;
+		if(!i_value || !i_value->equals(*o.internalImaginary(), allow_interval, allow_infinite)) return false;
 	} else if(hasImaginaryPart()) {
 		return false;
+	}
+	if(allow_infinite) {
+		if(o.isPlusInfinity()) return isPlusInfinity();
+		if(o.isMinusInfinity()) return isMinusInfinity();
 	}
 	if(o.isFloatingPoint() && n_type != NUMBER_TYPE_FLOAT) {
 		return mpfr_cmp_q(o.internalLowerFloat(), r_value) == 0 && mpfr_cmp_q(o.internalUpperFloat(), r_value) == 0;

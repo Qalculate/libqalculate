@@ -284,7 +284,7 @@ class Number {
 		bool hasNegativeSign() const;
 		bool hasPositiveSign() const;
 		bool equalsZero() const;
-		bool equals(const Number &o, bool allow_interval = false) const;
+		bool equals(const Number &o, bool allow_interval = false, bool allow_infinite = false) const;
 		bool equals(long int i) const;
 		int equalsApproximately(const Number &o, int prec) const;
 		ComparisonResult compare(const Number &o, bool ignore_imag = false) const;

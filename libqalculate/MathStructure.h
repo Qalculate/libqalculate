@@ -647,8 +647,8 @@ class MathStructure {
 		/** @name Functions/operators for comparisons */
 		//@{
 
-		bool equals(const MathStructure &o, bool allow_interval = false) const;
-		bool equals(const Number &o, bool allow_interval = false) const;
+		bool equals(const MathStructure &o, bool allow_interval = false, bool allow_infinity = false) const;
+		bool equals(const Number &o, bool allow_interval = false, bool allow_infinity = false) const;
 		bool equals(int i) const;
 		bool equals(Unit *u) const;
 		bool equals(Variable *v) const;
@@ -806,7 +806,7 @@ class MathStructure {
 		
 		/** @name Functions for recursive search and replace */
 		//@{
-		int contains(const MathStructure &mstruct, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
+		int contains(const MathStructure &mstruct, bool structural_only = true, bool check_variables = false, bool check_functions = false, bool loose_equals = false) const;
 		int containsRepresentativeOf(const MathStructure &mstruct, bool check_variables = false, bool check_functions = false) const;
 		int containsType(StructureType mtype, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
 		int containsRepresentativeOfType(StructureType mtype, bool check_variables = false, bool check_functions = false) const;

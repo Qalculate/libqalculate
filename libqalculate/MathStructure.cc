@@ -2041,14 +2041,14 @@ void MathStructure::setBitwiseNot() {
 	transform(STRUCT_BITWISE_NOT);
 }		
 
-bool MathStructure::equals(const MathStructure &o, bool allow_interval) const {
+bool MathStructure::equals(const MathStructure &o, bool allow_interval, bool allow_infinite) const {
 	if(m_type != o.type()) return false;
 	if(SIZE != o.size()) return false;
 	switch(m_type) {
 		case STRUCT_UNDEFINED: {return true;}
 		case STRUCT_SYMBOLIC: {return s_sym == o.symbol();}
 		case STRUCT_DATETIME: {return *o_datetime == *o.datetime();}
-		case STRUCT_NUMBER: {return o_number.equals(o.number(), allow_interval);}
+		case STRUCT_NUMBER: {return o_number.equals(o.number(), allow_interval, allow_infinite);}
 		case STRUCT_VARIABLE: {return o_variable == o.variable();}
 		case STRUCT_UNIT: {
 			Prefix *p1 = (o_prefix == NULL || o_prefix == CALCULATOR->decimal_null_prefix || o_prefix == CALCULATOR->binary_null_prefix) ? NULL : o_prefix;
@@ -2094,9 +2094,9 @@ bool MathStructure::equals(const MathStructure &o, bool allow_interval) const {
 	}
 	return true;
 }
-bool MathStructure::equals(const Number &o, bool allow_interval) const {
+bool MathStructure::equals(const Number &o, bool allow_interval, bool allow_infinite) const {
 	if(m_type != STRUCT_NUMBER) return false;
-	return o_number.equals(o, allow_interval);
+	return o_number.equals(o, allow_interval, allow_infinite);
 }
 bool MathStructure::equals(int i) const {
 	if(m_type != STRUCT_NUMBER) return false;
@@ -9421,14 +9421,14 @@ bool is_poly_term(const MathStructure &mstruct, const MathStructure &x_var, Numb
 					b_x = true;
 					ndeg = mstruct[i][1].number();
 				}
-			} else if(mstruct[i].contains(x_var, true)) {
+			} else if(!mstruct[i].representsReal(true) || (mstruct[i].contains(x_var, true) && !(mstruct[i].isFunction() && (mstruct[i].function() == CALCULATOR->f_sin || mstruct[i].function() == CALCULATOR->f_cos)))) {
 				return false;
 			} else if(mcoeff) {
 				if(mcoeff->isOne()) *mcoeff = mstruct[i];
 				else mcoeff->multiply(mstruct[i], true);
 			}
 		}
-		if(b_x) return true;
+		if(b_x || check_other) return true;
 	} else if(mstruct.isPower() && (mstruct[0] == x_var || (mstruct[0].isAddition() && mstruct[0].representsReal(true)))  && mstruct[1].isNumber() && mstruct[1].number().isNonZero()) {
 		if(mstruct[0].isAddition()) {
 			Number subdeg, newsdeg;
@@ -9451,7 +9451,9 @@ bool is_poly_term(const MathStructure &mstruct, const MathStructure &x_var, Numb
 		ndeg = mstruct[1].number();
 		return true;
 	} else if(check_other) {
-		if(!mstruct.representsReal(true) || (mstruct.contains(x_var, true) && !(mstruct.isFunction() && (mstruct.function() == CALCULATOR->f_sin || mstruct.function() == CALCULATOR->f_cos)))) return false;
+		if(!mstruct.representsReal(true) || (mstruct.contains(x_var, true) && !(mstruct.isFunction() && (mstruct.function() == CALCULATOR->f_sin || mstruct.function() == CALCULATOR->f_cos)))) {
+			return false;
+		}
 		return true;
 	}
 	return false;
@@ -9701,7 +9703,6 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 			if(limit_combine_divisions(mstruct) && !mstruct.isAddition()) {
 				return calculate_limit_sub(mstruct, x_var, nr_limit, eo, approach_direction, polydeg, lhop_depth);
 			}
-			bool b_inf = false;
 			if(nr_limit.isInfinite()) {
 				MathStructure mdegs;
 				mdegs.clearVector();
@@ -9711,16 +9712,16 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 					if(is_poly_term(mstruct[i], x_var, newdeg, NULL)) {
 						if(newdeg.isGreaterThan(ndeg)) {
 							ndeg = newdeg;
-							b_inf = true;
 						}
 						mdegs[i] = newdeg;
-						if(newdeg.isZero()) calculate_limit_sub(mstruct[i], x_var, nr_limit, eo, approach_direction);
+						if(newdeg.isZero()) {
+							calculate_limit_sub(mstruct[i], x_var, nr_limit, eo, approach_direction);
+						}
 					} else {
 						newdeg.clear();
 						calculate_limit_sub(mstruct[i], x_var, nr_limit, eo, approach_direction, &newdeg);
 						if(mstruct[i].isNumber() && mstruct[i].number().isInfinite()) {
 							if(newdeg.isGreaterThan(ndeg)) ndeg = newdeg;
-							b_inf = true;
 						}
 						mdegs[i] = newdeg;
 					}
@@ -9751,26 +9752,10 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 			} else {
 				for(size_t i = 0; i < mstruct.size(); i++) {
 					calculate_limit_sub(mstruct[i], x_var, nr_limit, eo, approach_direction);
-					if(!b_inf && mstruct[i].isNumber() && mstruct[i].number().isInfinite()) b_inf = true;
 				}
 			}
 			mstruct.childrenUpdated();
-			if(b_inf) {
-				for(size_t i = 0; i < mstruct.size();) {
-					if(mstruct[i].isFunction() && (mstruct.function() == CALCULATOR->f_sin || mstruct.function() == CALCULATOR->f_cos)) {
-						mstruct.delChild(i + 1, false);
-					} else {
-						i++;
-					}
-				}
-			}
-			if(mstruct.size() == 1) {
-				mstruct.setToChild(1, true);
-			} else if(mstruct.size() == 0) {
-				mstruct.clear(true);
-			} else {
-				mstruct.calculatesub(eo, eo, false);
-			}
+			mstruct.calculatesub(eo, eo, false);
 			break;
 		}
 		default: {
@@ -9794,7 +9779,7 @@ bool limit_contains_undefined(const MathStructure &mstruct) {
 			if(b_infinity) return true;
 			b_zero = true;
 		}
-		if(mstruct[i].contains(nr_minus_inf, true) || mstruct[i].contains(nr_plus_inf, true)) {
+		if(mstruct[i].contains(nr_minus_inf, true, false, false, true) || mstruct[i].contains(nr_plus_inf, true, false, false, true)) {
 			if(b_infinity || b_zero) return true;
 			b_infinity = true;
 		}
@@ -9822,7 +9807,7 @@ bool MathStructure::calculateLimit(const MathStructure &x_var, Number nr_limit, 
 	eval(eo);
 	MathStructure mbak(*this);
 	calculate_limit_sub(*this, var, nr_limit, eo, approach_direction);
-	if(limit_contains_undefined(*this)) {
+	if(CALCULATOR->aborted() || limit_contains_undefined(*this)) {
 		set(mbak);
 		replace(var, x_var);
 		var->destroy();
@@ -17573,26 +17558,26 @@ bool MathStructure::convert(const MathStructure unit_mstruct, bool convert_compl
 	return b;
 }
 
-int MathStructure::contains(const MathStructure &mstruct, bool structural_only, bool check_variables, bool check_functions) const {
-	if(equals(mstruct)) return 1;
+int MathStructure::contains(const MathStructure &mstruct, bool structural_only, bool check_variables, bool check_functions, bool loose_equals) const {
+	if(equals(mstruct, loose_equals, loose_equals)) return 1;
 	if(structural_only) {
 		for(size_t i = 0; i < SIZE; i++) {
-			if(CHILD(i).contains(mstruct)) return 1;
+			if(CHILD(i).contains(mstruct, structural_only, check_variables, check_functions, loose_equals)) return 1;
 		}
 	} else {
 		int ret = 0;
 		if(m_type != STRUCT_FUNCTION) {
 			for(size_t i = 0; i < SIZE; i++) {
-				int retval = CHILD(i).contains(mstruct, structural_only, check_variables, check_functions);
+				int retval = CHILD(i).contains(mstruct, structural_only, check_variables, check_functions, loose_equals);
 				if(retval == 1) return 1;
 				else if(retval < 0) ret = retval;
 			}
 		}
 		if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
-			return ((KnownVariable*) o_variable)->get().contains(mstruct, structural_only, check_variables, check_functions);
+			return ((KnownVariable*) o_variable)->get().contains(mstruct, structural_only, check_variables, check_functions, loose_equals);
 		} else if(m_type == STRUCT_FUNCTION && check_functions) {
 			if(function_value) {
-				return function_value->contains(mstruct, structural_only, check_variables, check_functions);
+				return function_value->contains(mstruct, structural_only, check_variables, check_functions, loose_equals);
 			}
 			return -1;
 		} else if(isAborted()) {
@@ -17805,7 +17790,7 @@ void MathStructure::findAllUnknowns(MathStructure &unknowns_vector) {
 }
 bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto, bool once_only) {
 	if(b_protected) b_protected = false;
-	if(equals(mfrom, true)) {
+	if(equals(mfrom, true, true)) {
 		set(mto);
 		return true;
 	}
@@ -17820,7 +17805,7 @@ bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto
 	return b;
 }
 bool MathStructure::calculateReplace(const MathStructure &mfrom, const MathStructure &mto, const EvaluationOptions &eo) {
-	if(equals(mfrom, true)) {
+	if(equals(mfrom, true, true)) {
 		set(mto);
 		return true;
 	}
@@ -17838,11 +17823,11 @@ bool MathStructure::calculateReplace(const MathStructure &mfrom, const MathStruc
 }
 
 bool MathStructure::replace(const MathStructure &mfrom1, const MathStructure &mto1, const MathStructure &mfrom2, const MathStructure &mto2) {
-	if(equals(mfrom1, true)) {
+	if(equals(mfrom1, true, true)) {
 		set(mto1);
 		return true;
 	}
-	if(equals(mfrom2, true)) {
+	if(equals(mfrom2, true, true)) {
 		set(mto2);
 		return true;
 	}
