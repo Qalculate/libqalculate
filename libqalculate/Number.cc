@@ -3033,6 +3033,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 				if(hasRealPart()) return false;
 				if(!o.isFloatingPoint() && !i_value->raise(o)) return false;
 			} else if(isGreaterThan(1)) {
+				setPlusInfinity();
 			} else if(isPositive() && isLessThan(1)) {
 				if(!o.isFloatingPoint()) clear(true);
 			} else {
