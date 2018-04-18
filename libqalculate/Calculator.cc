@@ -1560,6 +1560,7 @@ void Calculator::addBuiltinFunctions() {
 	f_solve = addFunction(new SolveFunction());
 	f_multisolve = addFunction(new SolveMultipleFunction());
 	f_dsolve = addFunction(new DSolveFunction());
+	f_limit = addFunction(new LimitFunction());
 	
 	f_li = addFunction(new liFunction());
 	f_Li = addFunction(new LiFunction());

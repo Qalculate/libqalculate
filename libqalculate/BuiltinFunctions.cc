@@ -5919,6 +5919,29 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 1;
 }
 
+LimitFunction::LimitFunction() : MathFunction("limit", 2, 4) {
+	NumberArgument *arg = new NumberArgument();
+	arg->setComplexAllowed(false);
+	setArgumentDefinition(2, arg);
+	setArgumentDefinition(3, new SymbolicArgument());
+	setDefaultValue(3, "x");
+	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setMin(&nr_minus_one);
+	iarg->setMax(&nr_one);
+	setArgumentDefinition(4, iarg);
+	setDefaultValue(4, "0");
+}
+int LimitFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_EXACT;
+		if(mstruct.calculateLimit(vargs[2], vargs[1].number(), eo2, vargs[3].number().intValue())) return 1;
+	}
+	if(mstruct.calculateLimit(vargs[2], vargs[1].number(), eo, vargs[3].number().intValue())) return 1;
+	CALCULATOR->error(true, _("Unable to find limit."), NULL);
+	return -1;
+}
 
 PlotFunction::PlotFunction() : MathFunction("plot", 1, 6) {
 	NumberArgument *arg = new NumberArgument();

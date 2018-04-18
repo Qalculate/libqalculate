@@ -2407,6 +2407,23 @@
         <_title>Upper limit</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="limit">
+      <_title>Limit</_title>
+      <_description>Returns the two-sided limit of the function if direction is zero, limit from left (below) if direction is negative, or limit from right (above) if direction is positive.</_description>
+      <_names>r:limit</_names>
+      <argument index="1">
+        <_title>Function</_title>
+      </argument>
+      <argument index="2">
+        <_title>Value to approach</_title>
+      </argument>
+      <argument index="3">
+        <_title>Variable</_title>
+      </argument>
+      <argument index="4">
+        <_title>Direction</_title>
+      </argument>
+    </builtin_function>
     <function>
       <_title>Extreme Values</_title>
       <_names>r:extremum</_names>

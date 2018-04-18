@@ -385,6 +385,25 @@ bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
 	}
 	return b;
 }
+bool replace_f_interval(MathStructure &mstruct) {
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_interval && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isNumber()) {
+		Number nr;
+		if(nr.setInterval(mstruct[0].number(), mstruct[1].number())) {
+			mstruct.set(nr, true);
+			return true;
+		}
+	} else {
+		bool b = false;
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(replace_f_interval(mstruct[i])) {
+				mstruct.childUpdated(i + 1);
+				b = true;
+			}
+		}
+		return b;
+	}
+	return false;
+}
 const MathStructure &KnownVariable::get() {
 	if(b_expression && ((!mstruct || mstruct->isAborted()) || calculated_with_interval != CALCULATOR->usesIntervalArithmetic() || (!sunit.empty() && calculated_with_units != CALCULATOR->variableUnitsEnabled()))) {
 		if(mstruct) mstruct->unref();
@@ -422,6 +441,7 @@ const MathStructure &KnownVariable::get() {
 			CALCULATOR->parse(mstruct_unit, sunit, po);
 			mstruct->multiply_nocopy(mstruct_unit);
 		}
+		replace_f_interval(*mstruct);
 		calculated_with_interval = CALCULATOR->usesIntervalArithmetic();
 		calculated_with_units = CALCULATOR->variableUnitsEnabled();
 	}

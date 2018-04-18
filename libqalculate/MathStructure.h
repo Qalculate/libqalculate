@@ -866,6 +866,8 @@ class MathStructure {
 		void polynomialPrimpart(const MathStructure &xvar, const MathStructure &c, MathStructure &mprim, const EvaluationOptions &eo) const;
 		void polynomialUnitContentPrimpart(const MathStructure &xvar, int &munit, MathStructure &mcontent, MathStructure &mprim, const EvaluationOptions &eo) const;
 		//@}
+		
+		bool calculateLimit(const MathStructure &x_var, Number nr_limit, const EvaluationOptions &eo_pre, int approach_direction = 0);
 
 		bool decomposeFractions(const MathStructure &x_var, const EvaluationOptions &eo);
 		
