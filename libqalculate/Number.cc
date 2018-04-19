@@ -534,7 +534,7 @@ void Number::set(string number, const ParseOptions &po) {
 	} else if(base == 2 && number.length() >= 2 && number[0] == '0' && (number[1] == 'b' || number[1] == 'B')) {
 		number = number.substr(2, number.length() - 2);
 	}
-	bool b_twos = po.binary_twos && base == 2 && number.length() > 0 && number[0] == '1';
+	bool b_twos = po.twos_complement && base == 2 && number.length() > 0 && number[0] == '1';
 	if(base > 36) base = 36;
 	if(base < 0) base = 10;
 	long int readprec = 0;
@@ -6340,7 +6340,7 @@ ostream& operator << (ostream &os, const Number &nr) {
 }
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
 	if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
-	if(po.base == 2 && po.binary_twos && isReal()) {
+	if(po.base == 2 && po.twos_complement && isReal()) {
 		if(isNegative()) {
 			Number nr;
 			unsigned int bits = po.binary_bits;
@@ -6362,7 +6362,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			nr.exp2();
 			nr += *this;
 			PrintOptions po2 = po;
-			po2.binary_twos = false;
+			po2.twos_complement = false;
 			po2.binary_bits = bits;
 			return nr.print(po2, ips);
 		} else if(po.binary_bits == 0) {
