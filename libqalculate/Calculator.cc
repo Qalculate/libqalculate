@@ -2554,7 +2554,7 @@ MathStructure Calculator::calculate(const MathStructure &mstruct_to_calculate, c
 string Calculator::print(const MathStructure &mstruct, int msecs, const PrintOptions &po) {
 	startControl(msecs);
 	MathStructure mstruct2(mstruct);
-	mstruct2.format();
+	mstruct2.format(po);
 	string print_result = mstruct2.print(po);
 	stopControl();
 	return print_result;

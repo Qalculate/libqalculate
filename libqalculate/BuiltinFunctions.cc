@@ -1316,18 +1316,45 @@ int CbrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return 1;
 }
 RootFunction::RootFunction() : MathFunction("root", 2) {
-	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_POSITIVE, false, false);
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
-	IntegerArgument *arg2 = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true);
+	NumberArgument *arg2 = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
+	arg2->setComplexAllowed(false);
+	arg2->setRationalNumber(true);
 	arg2->setHandleVector(true);
 	setArgumentDefinition(2, arg2);
 }
 int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
-	if(vargs[1].number().isOne() && vargs[0].representsScalar()) {
+	if(vargs[1].number().isOne()) {
 		mstruct = vargs[0];
+		return 1;
+	}
+	if(!vargs[1].number().isInteger() || !vargs[1].number().isPositive()) {
+		mstruct = vargs[0];
+		if(!vargs[0].representsScalar()) {
+			mstruct.eval(eo);
+		}
+		if(mstruct.isVector()) return -1;
+		Number nr_root(vargs[1].number().numerator());
+		nr_root.setPrecisionAndApproximateFrom(vargs[1].number());
+		Number nr_pow(vargs[1].number().denominator());
+		nr_pow.setPrecisionAndApproximateFrom(vargs[1].number());
+		if(nr_root.isNegative()) {
+			nr_root.negate();
+			nr_pow.negate();
+		}
+		if(nr_root.isOne()) {
+			mstruct ^= nr_pow;
+		} else if(nr_root.isZero()) {
+			mstruct ^= nr_zero;
+		} else {
+			mstruct ^= nr_pow;
+			mstruct.transform(this);
+			mstruct.addChild(nr_root);
+		}
 		return 1;
 	}
 	if(vargs[0].representsNonNegative(true)) {
