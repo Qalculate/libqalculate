@@ -3613,7 +3613,7 @@ int BinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	//mstruct = Number(vargs[0].symbol(), 2);
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_BINARY;
-	po.binary_twos = vargs[1].number().getBoolean();
+	po.twos_complement = vargs[1].number().getBoolean();
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }

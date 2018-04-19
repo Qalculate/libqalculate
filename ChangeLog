@@ -1,3 +1,15 @@
+2018-04-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Two's complement representation
+	* bitcmp() function
+	* Option to interprete binary number using two's complement representation in bin()
+	* Allow all rational numbers for second argument of root()
+
+2018-04-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix a^infinity when a > 1
+	* limit() function
+
 2018-04-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault when prefix is set in some cases

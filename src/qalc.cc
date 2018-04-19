@@ -542,7 +542,8 @@ void set_option(string str) {
 			printops.base_display = (BaseDisplay) v;
 			result_display_updated();
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "digit grouping", _("digit grouping"))) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "two's complement", _("two's complement"))) SET_BOOL_D(printops.twos_complement)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "digit grouping", _("digit grouping"))) {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = DIGIT_GROUPING_NONE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = DIGIT_GROUPING_NONE;
@@ -2064,6 +2065,7 @@ int main(int argc, char *argv[]) {
 				case BASE_DISPLAY_ALTERNATIVE: {PUTS_UNICODE(_("alternative")); break;}
 			}
 			CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("two's complement")); PUTS_UNICODE(b2oo(printops.twos_complement, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("calculate functions")); PUTS_UNICODE(b2oo(evalops.calculate_functions, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("calculate variables")); PUTS_UNICODE(b2oo(evalops.calculate_variables, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("complex numbers")); PUTS_UNICODE(b2oo(evalops.allow_complex, false)); CHECK_IF_SCREEN_FILLED
@@ -2666,6 +2668,7 @@ int main(int argc, char *argv[]) {
 				if(printops.base > 2 && printops.base <= 36 && printops.base != BASE_OCTAL && printops.base != BASE_DECIMAL && printops.base != BASE_HEXADECIMAL) {str += " "; str += i2s(printops.base); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_2(_("base display"), printops.base_display, _("none"), _("normal"), _("alternative"));
+				STR_AND_TABS_BOOL(_("two's complement"), printops.twos_complement);
 				STR_AND_TABS_BOOL(_("calculate functions"), evalops.calculate_functions);
 				STR_AND_TABS_BOOL(_("calculate variables"), evalops.calculate_variables);
 				STR_AND_TABS_BOOL(_("complex numbers"), evalops.allow_complex);
@@ -3054,6 +3057,7 @@ void ViewThread::run() {
 			po.lower_case_e = printops.lower_case_e;
 			po.lower_case_numbers = printops.lower_case_numbers;
 			po.base_display = printops.base_display;
+			po.twos_complement = printops.twos_complement;
 			po.base = evalops.parse_options.base;
 			po.abbreviate_names = false;
 			po.digit_grouping = printops.digit_grouping;
@@ -3914,6 +3918,7 @@ void load_preferences() {
 	printops.lower_case_numbers = false;
 	printops.lower_case_e = false;
 	printops.base_display = BASE_DISPLAY_NORMAL;
+	printops.twos_complement = true;
 	printops.division_sign = DIVISION_SIGN_SLASH;
 	printops.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
 	printops.allow_factorization = false;
@@ -4139,6 +4144,8 @@ void load_preferences() {
 					printops.lower_case_e = v;
 				} else if(svar == "base_display") {
 					if(v >= BASE_DISPLAY_NONE && v <= BASE_DISPLAY_ALTERNATIVE) printops.base_display = (BaseDisplay) v;
+				} else if(svar == "twos_complement") {
+					printops.twos_complement = v;
 				} else if(svar == "spell_out_logical_operators") {
 						printops.spell_out_logical_operators = v;
 				} else if(svar == "decimal_comma") {
@@ -4232,6 +4239,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "lower_case_numbers=%i\n", printops.lower_case_numbers);
 	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);
 	fprintf(file, "base_display=%i\n", printops.base_display);
+	fprintf(file, "twos_complement=%i\n", printops.twos_complement);
 	fprintf(file, "spell_out_logical_operators=%i\n", printops.spell_out_logical_operators);
 	fprintf(file, "digit_grouping=%i\n", printops.digit_grouping);
 	fprintf(file, "decimal_comma=%i\n", b_decimal_comma);
