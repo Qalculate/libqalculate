@@ -249,6 +249,7 @@ class Number {
 		bool bitOr(const Number &o);
 		bool bitXor(const Number &o);
 		bool bitNot();
+		bool bitCmp(unsigned int bits);
 		bool bitEqv(const Number &o);
 		bool shiftLeft(const Number &o);
 		bool shiftRight(const Number &o);

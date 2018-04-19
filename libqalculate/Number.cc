@@ -88,15 +88,20 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 
 string format_number_string(string cl_str, int base, BaseDisplay base_display, bool show_neg, bool format_base_two = true, const PrintOptions &po = default_print_options) {
 	if(format_base_two && base == 2 && base_display != BASE_DISPLAY_NONE) {
-		int i2 = cl_str.length() % 4;
-		if(i2 != 0) i2 = 4 - i2;
+		unsigned int bits = po.binary_bits;
+		if(bits == 0) {
+			bits = cl_str.length();
+			if(bits % 4 != 0) bits += 4 - bits % 4;
+		}
+		if(cl_str.length() < bits) {
+			string str;
+			str.resize(bits - cl_str.length(), '0');
+			cl_str = str + cl_str;
+		}
 		if(base_display == BASE_DISPLAY_NORMAL) {
 			for(int i = (int) cl_str.length() - 4; i > 0; i -= 4) {
 				cl_str.insert(i, 1, ' ');
 			}
-		}
-		for(; i2 > 0; i2--) {
-			cl_str.insert(cl_str.begin(), 1, '0');
 		}
 	}	
 	string str = "";
@@ -529,6 +534,7 @@ void Number::set(string number, const ParseOptions &po) {
 	} else if(base == 2 && number.length() >= 2 && number[0] == '0' && (number[1] == 'b' || number[1] == 'B')) {
 		number = number.substr(2, number.length() - 2);
 	}
+	bool b_twos = po.binary_twos && base == 2 && number.length() > 0 && number[0] == '1';
 	if(base > 36) base = 36;
 	if(base < 0) base = 10;
 	long int readprec = 0;
@@ -536,6 +542,10 @@ void Number::set(string number, const ParseOptions &po) {
 	for(size_t index = 0; index < number.size(); index++) {
 		if(number[index] >= '0' && ((base >= 10 && number[index] <= '9') || (base < 10 && number[index] < '0' + base))) {
 			mpz_mul_si(num, num, base);
+			if(b_twos) {
+				if(number[index] == '0') number[index] = '1';
+				else if(number[index] == '1') number[index] = '0';
+			}
 			if(number[index] != '0') {
 				mpz_add_ui(num, num, (unsigned long int) number[index] - '0');
 				if(!had_nonzero) readprec = 0;
@@ -646,6 +656,10 @@ void Number::set(string number, const ParseOptions &po) {
 		} else if(number[index] != ' ') {
 			CALCULATOR->error(true, _("Character \'%c\' was ignored in the number \"%s\" with base %s."), number[index], number.c_str(), i2s(base).c_str(), NULL);
 		}
+	}
+	if(b_twos) {
+		mpz_add_ui(num, num, 1);
+		minus = !minus;
 	}
 	clear();
 	if((po.read_precision == ALWAYS_READ_PRECISION || (in_decimals && po.read_precision == READ_PRECISION_WHEN_DECIMALS)) && CALCULATOR->usesIntervalArithmetic()) {
@@ -1472,6 +1486,16 @@ bool Number::bitXor(const Number &o) {
 bool Number::bitNot() {
 	if(!isInteger()) return false;
 	mpz_com(mpq_numref(r_value), mpq_numref(r_value));
+	return true;
+}
+bool Number::bitCmp(unsigned int bits) {
+	if(!isInteger()) return false;
+	if(isNegative()) {
+		return negate() && subtract(1);
+	}
+	for(unsigned int i = 0; i < bits; i++) {
+		mpz_combit(mpq_numref(r_value), i);
+	}
 	return true;
 }
 bool Number::bitEqv(const Number &o) {
@@ -6316,6 +6340,47 @@ ostream& operator << (ostream &os, const Number &nr) {
 }
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
 	if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+	if(po.base == 2 && po.binary_twos && isReal()) {
+		if(isNegative()) {
+			Number nr;
+			unsigned int bits = po.binary_bits;
+			if(bits == 0) {
+				nr = *this;
+				nr++;
+				bits = nr.integerLength() + 1;
+				if(bits <= 8) bits = 8;
+				else if(bits <= 16) bits = 16;
+				else if(bits <= 32) bits = 32;
+				else if(bits <= 64) bits = 64;
+				else if(bits <= 128) bits = 128;
+				else {
+					bits = (unsigned int) ::ceil(::log2(bits));
+					bits = ::pow(2, bits);
+				}
+			}
+			nr = bits;
+			nr.exp2();
+			nr += *this;
+			PrintOptions po2 = po;
+			po2.binary_twos = false;
+			po2.binary_bits = bits;
+			return nr.print(po2, ips);
+		} else if(po.binary_bits == 0) {
+			unsigned int bits = integerLength() + 1;
+			if(bits <= 8) bits = 8;
+			else if(bits <= 16) bits = 16;
+			else if(bits <= 32) bits = 32;
+			else if(bits <= 64) bits = 64;
+			else if(bits <= 128) bits = 128;
+			else {
+				bits = (unsigned int) ::ceil(::log2(bits));
+				bits = ::pow(2, bits);
+			}
+			PrintOptions po2 = po;
+			po2.binary_bits = bits;
+			return print(po2, ips);
+		}
+	}
 	if(ips.minus) *ips.minus = false;
 	if(ips.exp_minus) *ips.exp_minus = false;
 	if(ips.num) *ips.num = "";
@@ -6491,7 +6556,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(isInteger()) {
 
 		long int length = mpz_sizeinbase(mpq_numref(r_value), base);
-		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < length && ((approx || (po.min_exp != 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT))) || length > 1000000L)) {
+		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < length && ((approx || (base == 10 && po.min_exp != 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT))) || length > 1000000L)) {
 			Number nr(*this);
 			if(nr.setToFloatingPoint()) {
 				PrintOptions po2 = po;
@@ -7234,7 +7299,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	} else if(base != BASE_ROMAN_NUMERALS && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 		long int numlength = mpz_sizeinbase(mpq_numref(r_value), base);
 		long int denlength = mpz_sizeinbase(mpq_denref(r_value), base);
-		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < labs(numlength - denlength) && (approx || po.min_exp != 0)) {
+		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < labs(numlength - denlength) && (approx || (po.min_exp != 0 && base == 10))) {
 			Number nr(*this);
 			if(nr.setToFloatingPoint()) {
 				PrintOptions po2 = po;

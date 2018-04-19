@@ -1415,6 +1415,7 @@ void Calculator::addBuiltinFunctions() {
 	f_even = addFunction(new EvenFunction());
 	f_odd = addFunction(new OddFunction());
 	f_shift = addFunction(new ShiftFunction());
+	f_bitcmp = addFunction(new BitCmpFunction());
 	
 	f_abs = addFunction(new AbsFunction());
 	f_signum = addFunction(new SignumFunction());

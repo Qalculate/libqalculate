@@ -282,7 +282,7 @@ class Calculator {
 	MathFunction *f_vector, *f_sort, *f_rank, *f_limits, *f_component, *f_dimension, *f_merge_vectors;
 	MathFunction *f_matrix, *f_matrix_to_vector, *f_area, *f_rows, *f_columns, *f_row, *f_column, *f_elements, *f_element, *f_transpose, *f_identity, *f_determinant, *f_permanent, *f_adjoint, *f_cofactor, *f_inverse; 
 	MathFunction *f_factorial, *f_factorial2, *f_multifactorial, *f_binomial;
-	MathFunction *f_xor, *f_bitxor, *f_even, *f_odd, *f_shift;
+	MathFunction *f_xor, *f_bitxor, *f_even, *f_odd, *f_shift, *f_bitcmp;
 	MathFunction *f_abs, *f_gcd, *f_lcm, *f_signum, *f_heaviside, *f_dirac, *f_round, *f_floor, *f_ceil, *f_trunc, *f_int, *f_frac, *f_rem, *f_mod;	
 	MathFunction *f_polynomial_unit, *f_polynomial_primpart, *f_polynomial_content, *f_coeff, *f_lcoeff, *f_tcoeff, *f_degree, *f_ldegree;
 	MathFunction *f_re, *f_im, *f_arg, *f_numerator, *f_denominator, *f_interval;

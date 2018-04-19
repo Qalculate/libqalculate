@@ -713,9 +713,12 @@
       <builtin_function name="bin">
         <_title>Binary</_title>
         <_names>r:bin</_names>
-        <_description>Returns an integer from a binary number</_description>
+        <_description>Returns an integer from a binary number. If two's complement is true, numbers beginning with '1' is interpreted as negative binary numbers using two's complement.</_description>
         <argument index="1">
           <_title>Binary number</_title>
+        </argument>
+        <argument index="2">
+          <_title>Two's complement</_title>
         </argument>
       </builtin_function>
       <builtin_function name="oct">
@@ -2258,6 +2261,16 @@
     <builtin_function name="shift">
       <_title>Bitwise Shift</_title>
       <_names>r:shift</_names>
+      <argument index="1">
+        <_title>Number</_title>
+      </argument>
+      <argument index="2">
+        <_title>Bits</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="bitcmp">
+      <_title>Bitwise Complement (Not)</_title>
+      <_names>r:bitcmp</_names>
       <argument index="1">
         <_title>Number</_title>
       </argument>
