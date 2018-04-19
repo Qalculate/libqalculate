@@ -717,6 +717,32 @@ ShiftFunction::ShiftFunction() : MathFunction("shift", 2) {
 int ShiftFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION_2(shift)
 }
+BitCmpFunction::BitCmpFunction() : MathFunction("bitcmp", 1, 2) {
+	setArgumentDefinition(1, new IntegerArgument());
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
+	setDefaultValue(2, "0");
+}
+int BitCmpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	Number nr(vargs[0].number());
+	unsigned int bits = vargs[1].number().uintValue();
+	if(bits == 0) {
+		bits = nr.integerLength();
+		if(bits <= 8) bits = 8;
+		else if(bits <= 16) bits = 16;
+		else if(bits <= 32) bits = 32;
+		else if(bits <= 64) bits = 64;
+		else if(bits <= 128) bits = 128;
+		else {
+			bits = (unsigned int) ::ceil(::log2(bits));
+			bits = ::pow(2, bits);
+		}
+	}
+	if(nr.bitCmp(bits)) {
+		mstruct = nr;
+		return 1;
+	}
+	return 0;
+}
 
 AbsFunction::AbsFunction() : MathFunction("abs", 1) {
 	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
@@ -3551,13 +3577,16 @@ int TimeFunction::calculate(MathStructure &mstruct, const MathStructure&, const 
 	return 1;
 }
 
-BinFunction::BinFunction() : MathFunction("bin", 1) {
+BinFunction::BinFunction() : MathFunction("bin", 1, 2) {
 	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new BooleanArgument());
+	setDefaultValue(2, "0");
 }
 int BinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	//mstruct = Number(vargs[0].symbol(), 2);
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_BINARY;
+	po.binary_twos = vargs[1].number().getBoolean();
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }
