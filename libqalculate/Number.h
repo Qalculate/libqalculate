@@ -54,7 +54,6 @@ class Number {
 		void testInteger();
 		bool testErrors(int error_level = 1) const;
 		bool testFloatResult(bool allow_infinite_result = true, int error_level = 1, bool test_integer = true);
-		void setPrecisionAndApproximateFrom(const Number &o);
 
 		mpq_t r_value;
 		mpfr_t fu_value;
@@ -155,6 +154,8 @@ class Number {
  		* @return true if the number has an approximate representation.
  		*/
 		bool isFloatingPoint() const;
+		
+		void setPrecisionAndApproximateFrom(const Number &o);
 		
 		bool isInterval(bool ignore_imag = true) const;
 		bool imaginaryPartIsInterval() const;

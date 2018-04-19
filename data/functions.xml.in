@@ -702,7 +702,7 @@
       <builtin_function name="base">
         <_title>Number Base</_title>
         <_names>r:base</_names>
-        <_description>Returns an integer from a number of specified base between 2 and 36</_description>
+        <_description>Returns an value from an expression using a specified base between 2 and 36</_description>
         <argument index="1">
           <_title>Number</_title>
         </argument>
@@ -713,7 +713,7 @@
       <builtin_function name="bin">
         <_title>Binary</_title>
         <_names>r:bin</_names>
-        <_description>Returns an integer from a binary number. If two's complement is true, numbers beginning with '1' is interpreted as negative binary numbers using two's complement.</_description>
+        <_description>Returns a value from a binary expression. If two's complement is true, numbers beginning with '1' is interpreted as negative binary numbers using two's complement.</_description>
         <argument index="1">
           <_title>Binary number</_title>
         </argument>
@@ -724,7 +724,7 @@
       <builtin_function name="oct">
         <_title>Octal</_title>
         <_names>r:oct</_names>
-        <_description>Returns an integer from an octal number</_description>
+        <_description>Returns a value from an octal expression.</_description>
         <argument index="1">
           <_title>Octal number</_title>
         </argument>
@@ -732,7 +732,7 @@
       <builtin_function name="hex">
         <_title>Hexadecimal</_title>
         <_names>r:hex</_names>
-        <_description>Returns a value from a hexadecimal number</_description>
+        <_description>Returns a value from a hexadecimal expression.</_description>
         <argument index="1">
           <_title>Hexadecimal number</_title>
         </argument>
@@ -2422,7 +2422,7 @@
     </builtin_function>
     <builtin_function name="limit">
       <_title>Limit</_title>
-      <_description>Returns the two-sided limit of the function if direction is zero, limit from left (below) if direction is negative, or limit from right (above) if direction is positive.</_description>
+      <_description>Returns the two-sided limit of the function if direction is zero, limit from left (below) if direction is -1, or limit from right (above) if direction is +1.</_description>
       <_names>r:limit</_names>
       <argument index="1">
         <_title>Function</_title>
