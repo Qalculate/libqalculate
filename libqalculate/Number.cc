@@ -89,17 +89,20 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 string format_number_string(string cl_str, int base, BaseDisplay base_display, bool show_neg, bool format_base_two = true, const PrintOptions &po = default_print_options) {
 	if(format_base_two && base == 2 && base_display != BASE_DISPLAY_NONE) {
 		unsigned int bits = po.binary_bits;
+		size_t l = cl_str.find(po.decimalpoint());
+		if(l == string::npos) l = cl_str.length();
 		if(bits == 0) {
-			bits = cl_str.length();
+			bits = l;
 			if(bits % 4 != 0) bits += 4 - bits % 4;
 		}
-		if(cl_str.length() < bits) {
+		if(l < bits) {
 			string str;
-			str.resize(bits - cl_str.length(), '0');
+			str.resize(bits - l, '0');
 			cl_str = str + cl_str;
+			l = bits;
 		}
 		if(base_display == BASE_DISPLAY_NORMAL) {
-			for(int i = (int) cl_str.length() - 4; i > 0; i -= 4) {
+			for(int i = (int) l - 4; i > 0; i -= 4) {
 				cl_str.insert(i, 1, ' ');
 			}
 		}
@@ -6346,6 +6349,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			unsigned int bits = po.binary_bits;
 			if(bits == 0) {
 				nr = *this;
+				nr.floor();
 				nr++;
 				bits = nr.integerLength() + 1;
 				if(bits <= 8) bits = 8;
@@ -6366,7 +6370,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			po2.binary_bits = bits;
 			return nr.print(po2, ips);
 		} else if(po.binary_bits == 0) {
-			unsigned int bits = integerLength() + 1;
+			Number nr(*this);
+			nr.ceil();
+			unsigned int bits = nr.integerLength() + 1;
 			if(bits <= 8) bits = 8;
 			else if(bits <= 16) bits = 16;
 			else if(bits <= 32) bits = 32;
@@ -7235,7 +7241,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		str = printMPZ(ivalue, base, false, po.lower_case_numbers);
 
-		bool has_decimal = false;
 		if(l10 > 0) {
 			l10 = str.length() - l10;
 			if(l10 < 1) {
@@ -7243,7 +7248,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				l10 = 1;
 			}
 			str.insert(l10, po.decimalpoint());
-			has_decimal = true;
 			int l2 = 0;
 			while(str[str.length() - 1 - l2] == '0') {
 				l2++;
@@ -7257,7 +7261,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			if(str[str.length() - 1] == po.decimalpoint()[0]) {
 				str.erase(str.end() - 1);
-				has_decimal = false;
 			}
 		} else if(l10 < 0) {
 			while(l10 < 0) {
@@ -7271,10 +7274,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		if(str[str.length() - 1] == po.decimalpoint()[0]) {
 			str.erase(str.end() - 1);
-			has_decimal = false;
 		}
 		
-		str = format_number_string(str, base, po.base_display, !ips.minus && neg, !has_decimal, po);
+		str = format_number_string(str, base, po.base_display, !ips.minus && neg, true, po);
 		
 		if(expo != 0) {
 			if(ips.iexp) *ips.iexp = expo;
@@ -7614,7 +7616,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(b_bak) mpz_clears(num_bak, remainder_bak, NULL); 
 		mpz_clears(num, d, remainder, remainder2, exp, NULL);
 		if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
-		bool has_decimal = false;
 		if(l10 > 0) {
 			l10 = str.length() - l10;
 			if(l10 < 1) {
@@ -7622,7 +7623,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				l10 = 1;
 			}
 			str.insert(l10, po.decimalpoint());
-			has_decimal = true;
 			int l2 = 0;
 			while(str[str.length() - 1 - l2] == '0') {
 				l2++;
@@ -7643,7 +7643,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			if(str[str.length() - 1] == po.decimalpoint()[0]) {
 				str.erase(str.end() - 1);
-				has_decimal = false;
 			}
 		}
 
@@ -7663,7 +7662,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(decimals <= 0) {
 				str += po.decimalpoint();
 				decimals = 0;
-				has_decimal = true;
 			}
 			for(; decimals < min_decimals; decimals++) {
 				str += "0";
@@ -7671,7 +7669,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		if(str[str.length() - 1] == po.decimalpoint()[0]) {
 			str.erase(str.end() - 1);
-			has_decimal = false;
 		}
 		if(infinite_series) {
 			size_t i_dp = str.find(po.decimalpoint());
@@ -7687,7 +7684,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			else str += "...";
 		}
 
-		str = format_number_string(str, base, po.base_display, !ips.minus && neg, !has_decimal, po);
+		str = format_number_string(str, base, po.base_display, !ips.minus && neg, true, po);
 		
 		if(expo != 0) {
 			if(ips.iexp) *ips.iexp = expo;

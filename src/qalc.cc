@@ -409,12 +409,12 @@ bool check_exchange_rates() {
 #	define INIT_SCREEN_CHECK {}
 #endif
 
-#define SET_BOOL(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v;}}
-#define SET_BOOL_D(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; result_display_updated();}}
-#define SET_BOOL_E(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; expression_calculation_updated();}}
-#define SET_BOOL_PV(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; expression_format_updated(v);}}
-#define SET_BOOL_PT(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; expression_format_updated(true);}}
-#define SET_BOOL_PF(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {x = v; expression_format_updated(false);}}
+#define SET_BOOL(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v;}}
+#define SET_BOOL_D(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v; result_display_updated();}}
+#define SET_BOOL_E(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v; expression_calculation_updated();}}
+#define SET_BOOL_PV(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v; expression_format_updated(v);}}
+#define SET_BOOL_PT(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v; expression_format_updated(true);}}
+#define SET_BOOL_PF(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v; expression_format_updated(false);}}
 
 void set_option(string str) {
 	remove_blank_ends(str);
