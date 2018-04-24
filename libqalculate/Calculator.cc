@@ -7071,6 +7071,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 
 	category = "";
 	nodes.resize(1);
+	
+	Unit *u_usd = getUnit("USD");
 
 	while(true) {
 		if(!in_unfinished) {
@@ -8239,6 +8241,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						BUILTIN_NAMES_2
 					}
 					ITEM_SET_DTH
+					if(u_usd && u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd) u->setHidden(true);
 					u->setChanged(false);
 					done_something = true;
 				}
@@ -9689,9 +9692,7 @@ bool Calculator::loadExchangeRates() {
 								sname = "";
 							}
 							u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
-							if(u) {
-								u->setHidden(true);
-							}
+							if(u) u->setHidden(true);
 						} else {
 							((AliasUnit*) u)->setExpression(rate);
 						}
