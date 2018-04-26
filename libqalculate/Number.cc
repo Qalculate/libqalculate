@@ -2386,7 +2386,7 @@ bool Number::add(const Number &o) {
 }
 bool Number::add(long int i) {
 	if(i == 0) return true;
-	if(isInfinite(false)) return true;
+	if(isInfinite(true)) return true;
 	if(n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
 		mpfr_clear_flags();
@@ -2487,7 +2487,7 @@ bool Number::subtract(const Number &o) {
 }
 bool Number::subtract(long int i) {
 	if(i == 0) return true;
-	if(isInfinite(false)) return true;
+	if(isInfinite(true)) return true;
 	if(n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
 		mpfr_clear_flags();
@@ -4414,6 +4414,7 @@ bool Number::zeta() {
 	return true;
 }
 bool Number::gamma() {
+	if(isPlusInfinity()) return true;
 	if(!isReal()) return false;
 	if(!isNonZero()) return false;
 	Number nr_bak(*this);

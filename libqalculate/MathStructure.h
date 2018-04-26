@@ -491,6 +491,7 @@ class MathStructure {
 		bool isInfinity() const;
 		bool isUndefined() const;
 		bool isInteger() const;
+		bool isInfinite(bool ignore_imag = true) const;
 		bool isNumber() const;
 		bool isZero() const;
 		bool isApproximatelyZero() const;
@@ -812,6 +813,7 @@ class MathStructure {
 		int containsRepresentativeOfType(StructureType mtype, bool check_variables = false, bool check_functions = false) const;
 		int containsFunction(MathFunction *f, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
 		int containsInterval(bool structural_only = true, bool check_variables = false, bool check_functions = false, bool ignore_high_precision_interval = false) const;
+		int containsInfinity(bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
 		bool containsOpaqueContents() const;
 		bool containsAdditionPower() const;
 		bool containsUnknowns() const;
