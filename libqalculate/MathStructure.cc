@@ -7709,7 +7709,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 	if(recursive) {
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CALCULATOR->aborted()) break;
-			if(CHILD(i).calculateFunctions(eo)) {
+			if(CHILD(i).calculateFunctions(eo, recursive, do_unformat)) {
 				CHILD_UPDATED(i);
 				b = true;
 			}
@@ -8953,439 +8953,6 @@ bool expandVariablesWithUnits(MathStructure &mstruct, const EvaluationOptions &e
 	return retval;
 }
 
-#define IS_VAR_EXP(x) ((x.isVariable() && x.variable()->isKnown()) || (x.isPower() && x[0].isVariable() && x[0].variable()->isKnown()))
-
-void factorize_variable(MathStructure &mstruct, const MathStructure &mvar, bool deg2) {
-	if(deg2) {
-		// ax^2+bx = (sqrt(b)*x+(a/sqrt(b))/2)^2-((a/sqrt(b))/2)^2
-		MathStructure a_struct, b_struct, mul_struct(1, 1, 0);
-		for(size_t i2 = 0; i2 < mstruct.size();) {
-			bool b = false;
-			if(mstruct[i2] == mvar) {
-				a_struct.set(1, 1, 0);
-				b = true;
-			} else if(mstruct[i2].isPower() && mstruct[i2][0] == mvar && mstruct[i2][1].isNumber() && mstruct[i2][1].number().isTwo()) {
-				b_struct.set(1, 1, 0);
-				b = true;
-			} else if(mstruct[i2].isMultiplication()) {
-				for(size_t i3 = 0; i3 < mstruct[i2].size(); i3++) {
-					if(mstruct[i2][i3] == mvar) {
-						a_struct = mstruct[i2];
-						a_struct.delChild(i3 + 1);
-						b = true;
-						break;
-					} else if(mstruct[i2][i3].isPower() && mstruct[i2][i3][0] == mvar && mstruct[i2][i3][1].isNumber() && mstruct[i2][i3][1].number().isTwo()) {
-						b_struct = mstruct[i2];
-						b_struct.delChild(i3 + 1);
-						b = true;
-						break;
-					}
-				}
-			}
-			if(b) {
-				mstruct.delChild(i2 + 1);
-			} else {
-				i2++;
-			}
-		}
-		if(b_struct == a_struct) {
-			mul_struct = a_struct;
-			a_struct.set(1, 1, 0);
-			b_struct.set(1, 1, 0);
-		} else if(b_struct.isMultiplication() && a_struct.isMultiplication()) {
-			size_t i3 = 0;
-			for(size_t i = 0; i < a_struct.size();) {
-				bool b = false;
-				for(size_t i2 = i3; i2 < b_struct.size(); i2++) {
-					if(a_struct[i] == b_struct[i2]) {
-						i3 = i2;
-						if(mul_struct.isOne()) mul_struct = a_struct[i];
-						else mul_struct.multiply(a_struct[i], true);
-						a_struct.delChild(i + 1);
-						b_struct.delChild(i2 + 1);
-						b = true;
-						break;
-					}
-				}
-				if(!b) i++;
-			}
-		}
-		if(a_struct.isMultiplication() && a_struct.size() == 0) b_struct.set(1, 1, 0);
-		else if(a_struct.isMultiplication() && a_struct.size() == 1) b_struct.setToChild(1);
-		if(b_struct.isMultiplication() && b_struct.size() == 0) b_struct.set(1, 1, 0);
-		else if(b_struct.isMultiplication() && b_struct.size() == 1) b_struct.setToChild(1);
-		if(!b_struct.isOne()) {
-			b_struct.raise(nr_half);
-			a_struct.divide(b_struct);
-		}
-		a_struct.multiply(nr_half);
-		if(b_struct.isOne()) b_struct = mvar;
-		else b_struct *= mvar;
-		b_struct += a_struct;
-		b_struct.raise(nr_two);
-		a_struct.raise(nr_two);
-		a_struct.negate();
-		b_struct += a_struct;
-		if(mstruct.size() == 0) mstruct = b_struct;
-		else mstruct.addChild(b_struct);
-	} else {
-		vector<MathStructure*> left_structs;
-		for(size_t i2 = 0; i2 < mstruct.size();) {
-			bool b = false;
-			if(mstruct[i2] == mvar) {
-				mstruct[i2].set(1, 1, 0, true);
-				b = true;
-			} else if(mstruct[i2].isMultiplication()) {
-				for(size_t i3 = 0; i3 < mstruct[i2].size(); i3++) {
-					if(mstruct[i2][i3] == mvar) {
-						mstruct[i2].delChild(i3 + 1, true);
-						b = true;
-						break;
-					}
-				}
-			}
-			if(b) {
-				i2++;
-			} else {
-				mstruct[i2].ref();
-				left_structs.push_back(&mstruct[i2]);
-				mstruct.delChild(i2 + 1);
-			}
-		}
-		mstruct.multiply(mvar);
-		for(size_t i = 0; i < left_structs.size(); i++) {
-			mstruct.add_nocopy(left_structs[i], true);
-			mstruct.evalSort(false);
-		}
-	}
-}
-
-bool var_contains_interval(const MathStructure &mstruct) {
-	if(mstruct.isNumber()) return mstruct.number().isInterval();
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_interval) return true;
-	if(mstruct.isVariable() && mstruct.variable()->isKnown()) return var_contains_interval(((KnownVariable*) mstruct.variable())->get());
-	for(size_t i = 0; i < mstruct.size(); i++) {
-		if(var_contains_interval(mstruct[i])) return true;
-	}
-	return false;
-}
-
-bool factorize_variables(MathStructure &mstruct, const EvaluationOptions &eo) {
-	bool b = false;
-	if(mstruct.type() == STRUCT_ADDITION) {
-		vector<MathStructure> variables;
-		vector<size_t> variable_count;
-		vector<int> term_sgn;
-		vector<bool> term_deg2;
-		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(CALCULATOR->aborted()) break;
-			if(mstruct[i].isMultiplication()) {
-				for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
-					if(CALCULATOR->aborted()) break;
-					if(IS_VAR_EXP(mstruct[i][i2])) {
-						bool b_found = false;
-						for(size_t i3 = 0; i3 < variables.size(); i3++) {
-							if(variables[i3] == mstruct[i][i2]) {
-								variable_count[i3]++;
-								b_found = true;
-								if(term_sgn[i3] == 1 && !mstruct[i].representsNonNegative(true)) term_sgn[i3] = 0;
-								else if(term_sgn[i3] == -1 && !mstruct[i].representsNonPositive(true)) term_sgn[i3] = 0;
-								break;
-							}
-						}
-						if(!b_found) {
-							variables.push_back(mstruct[i][i2]);
-							variable_count.push_back(1);
-							term_deg2.push_back(false);
-							if(mstruct[i].representsNonNegative(true)) term_sgn.push_back(1);
-							else if(mstruct[i].representsNonPositive(true)) term_sgn.push_back(-1);
-							else term_sgn.push_back(0);
-						}
-					}
-				}
-			} else if(IS_VAR_EXP(mstruct[i])) {
-				bool b_found = false;
-				for(size_t i3 = 0; i3 < variables.size(); i3++) {
-					if(variables[i3] == mstruct[i]) {
-						variable_count[i3]++;
-						b_found = true;
-						if(term_sgn[i3] == 1 && !mstruct[i].representsNonNegative(true)) term_sgn[i3] = 0;
-						else if(term_sgn[i3] == -1 && !mstruct[i].representsNonPositive(true)) term_sgn[i3] = 0;
-						break;
-					}
-				}
-				if(!b_found) {
-					variables.push_back(mstruct[i]);
-					variable_count.push_back(1);
-					term_deg2.push_back(false);
-					if(mstruct[i].representsNonNegative(true)) term_sgn.push_back(1);
-					else if(mstruct[i].representsNonPositive(true)) term_sgn.push_back(-1);
-					else term_sgn.push_back(0);
-				}
-			}
-		}
-		for(size_t i = 0; i < variables.size();) {
-			bool b_erase = false;
-			if(!var_contains_interval(variables[i])) {
-				b_erase = true;
-			} else if(variable_count[i] == 1 || term_sgn[i] != 0) {
-				b_erase = true;
-				if(!variables[i].isPower() || (variables[i][1].isNumber() && variables[i][1].number().isTwo())) {
-					for(size_t i2 = i + 1; i2 < variables.size(); i2++) {
-						if((variables[i].isPower() && !variables[i2].isPower() && variables[i][0] == variables[i2])|| (!variables[i].isPower() && variables[i2].isPower() && variables[i2][0] == variables[i] && variables[i2][1].isNumber() && variables[i2][1].number().isTwo())) {
-							bool b_erase2 = false;
-							if(variable_count[i2] == 1) {
-								if(term_sgn[i] == 0 || term_sgn[i2] != term_sgn[i]) {
-									if(variable_count[i] == 1) {
-										term_deg2[i] = true;
-										variable_count[i] = 2;
-										term_sgn[i] = 0;
-										if(variables[i].isPower()) variables[i].setToChild(1);
-									} else {
-										term_sgn[i] = 0;
-									}
-									b_erase = false;
-								}
-								b_erase2 = true;
-							} else if(term_sgn[i2] != 0) {
-								if(term_sgn[i] == 0 || term_sgn[i2] != term_sgn[i]) {
-									if(variable_count[i] != 1) {
-										term_sgn[i] = 0;
-										b_erase = false;
-									}
-									term_sgn[i2] = 0;
-								} else {
-									b_erase2 = true;
-								}
-							}
-							if(b_erase2) {
-								variable_count.erase(variable_count.begin() + i2);
-								variables.erase(variables.begin() + i2);
-								term_deg2.erase(term_deg2.begin() + i2);
-								term_sgn.erase(term_sgn.begin() + i2);
-							}
-							break;
-						}
-					}
-				}
-			}
-			if(b_erase) {
-				variable_count.erase(variable_count.begin() + i);
-				variables.erase(variables.begin() + i);
-				term_deg2.erase(term_deg2.begin() + i);
-				term_sgn.erase(term_sgn.begin() + i);
-			} else if(variable_count[i] == mstruct.size()) {
-				factorize_variable(mstruct, variables[i], term_deg2[i]);
-				if(CALCULATOR->aborted()) return true;
-				factorize_variables(mstruct, eo);
-				return true;
-			} else {
-				i++;
-			}
-		}
-		if(variables.size() == 1) {
-			factorize_variable(mstruct, variables[0], term_deg2[0]);
-			if(CALCULATOR->aborted()) return true;
-			factorize_variables(mstruct, eo);
-			return true;
-		}
-		Number uncertainty;
-		size_t u_index = 0;
-		for(size_t i = 0; i < variables.size(); i++) {
-			const MathStructure *v_ms;
-			Number nr;
-			if(variables[i].isPower()) v_ms = &((KnownVariable*) variables[i][0].variable())->get();
-			else v_ms = &((KnownVariable*) variables[i].variable())->get();
-			if(v_ms->isNumber()) nr = v_ms->number();
-			else if(v_ms->isMultiplication() && v_ms->size() > 0 && (*v_ms)[0].isNumber()) nr = (v_ms)[0].number();
-			else {
-				MathStructure mtest(*v_ms);
-				mtest.calculatesub(eo, eo, true);
-				if(mtest.isNumber()) nr = mtest.number();
-				else if(mtest.isMultiplication() && mtest.size() > 0 && mtest[0].isNumber()) nr = mtest[0].number();
-			}
-			if(nr.isInterval()) {
-				Number u_candidate(nr.uncertainty());
-				if(variables[i].isPower() && variables[i][1].isNumber() && variables[i][1].number().isReal()) u_candidate.raise(variables[i][1].number());
-				u_candidate.multiply(variable_count[i]);
-				if(u_candidate.isGreaterThan(uncertainty)) {
-					uncertainty = u_candidate;
-					u_index = i;
-				}
-			}
-		}
-		if(!uncertainty.isZero()) {
-			factorize_variable(mstruct, variables[u_index], term_deg2[u_index]);
-			if(CALCULATOR->aborted()) return true;
-			factorize_variables(mstruct, eo);
-			return true;
-		}
-		
-	}
-	for(size_t i = 0; i < mstruct.size(); i++) {
-		if(factorize_variables(mstruct[i], eo)) {
-			mstruct.childUpdated(i + 1);
-			b = true;
-		}
-		if(CALCULATOR->aborted()) return b;
-	}
-	return b;
-}
-
-void find_interval_variables(const MathStructure &mstruct, vector<KnownVariable*> &vars, vector<int> &v_count, vector<int> &v_prec) {
-	if(mstruct.isVariable() && mstruct.variable()->isKnown()) {
-		KnownVariable *v = (KnownVariable*) mstruct.variable();
-		int var_prec = PRECISION + 11;
-		const MathStructure &mv = v->get();
-		for(size_t i = 0; i < vars.size(); i++) {
-			if(vars[i] == v) {
-				v_count[i]++;
-				return;
-			}
-		}
-		if(mv.isNumber() && mv.number().isInterval()) {
-			var_prec = mv.number().precision(1);
-		} else if(mv.isMultiplication()) {
-			for(size_t i = 0; i < mv.size(); i++) {
-				if(mv[i].isNumber() && mv[i].number().isInterval()) {
-					var_prec = mv.number().precision(1);
-					break;
-				}
-			}
-		}		
-		if(var_prec <= PRECISION + 10) {
-			bool b = false;
-			for(size_t i = 0; i < v_prec.size(); i++) {
-				if(var_prec < v_prec[i]) {
-					v_prec.insert(v_prec.begin() + i, var_prec);
-					v_count.insert(v_count.begin() + i, 1);
-					vars.insert(vars.begin() + i, v);
-					b = true;
-					break;
-				}
-			}
-			if(!b) {
-				v_prec.push_back(var_prec);
-				v_count.push_back(1);
-				vars.push_back(v);
-			}
-		}
-	}
-	for(size_t i = 0; i < mstruct.size(); i++) {
-		find_interval_variables(mstruct[i], vars, v_count, v_prec);
-	}
-}
-
-void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const EvaluationOptions &eo_pre) {
-	if(vars.size() > 0) {
-		EvaluationOptions eo = eo_pre;
-		eo.approximation = APPROXIMATION_EXACT_VARIABLES;
-		eo.expand = true;
-		KnownVariable *v = vars[0];
-		vars.erase(vars.begin());
-		UnknownVariable *u_var = new UnknownVariable("", "u");
-		Number nr_intval;
-		MathStructure mvar(u_var);
-		const MathStructure &mv = v->get();
-		MathStructure mmul(1, 1, 0);
-		if(mv.isMultiplication()) {
-			for(size_t i = 0; i < mv.size(); i++) {
-				if(mv[i].isNumber() && mv[i].number().isInterval()) {
-					mmul = mv;
-					mmul.delChild(i + 1, true);
-					mvar.multiply(mmul);
-					nr_intval = mv[i].number();
-					u_var->setInterval(mv[i]);
-					break;
-				}
-			}
-		} else {
-			nr_intval = mv.number();
-			u_var->setInterval(mv);
-		}
-		MathStructure msolve(mstruct);
-		msolve.replace(v, mvar);
-		bool b = true;
-		CALCULATOR->beginTemporaryStopMessages();
-		if(!msolve.differentiate(u_var, eo) || msolve.containsFunction(CALCULATOR->f_diff, true)) {
-			b = false;
-		}
-		MathStructure malts;
-		malts.clearVector();
-		if(b) {
-			msolve.calculatesub(eo, eo, true);
-			msolve.transform(COMPARISON_EQUALS, m_zero);
-			CALCULATOR->beginTemporaryStopIntervalArithmetic();
-			msolve.isolate_x(eo, eo, u_var);
-			CALCULATOR->endTemporaryStopIntervalArithmetic();
-			eo.test_comparisons = true;
-			malts.addChild(nr_intval.lowerEndPoint());
-			malts.addChild(nr_intval.upperEndPoint());
-			msolve.calculatesub(eo, eo, true);
-			if(msolve.isComparison() && msolve.comparisonType() == COMPARISON_EQUALS && msolve[0] == u_var) {
-				malts.addChild(msolve[1]);
-			} else if(msolve.isLogicalOr()) {
-				for(size_t i = 0; i < msolve.size(); i++) {
-					if(msolve[i].isComparison() && msolve[i].comparisonType() == COMPARISON_EQUALS && msolve[i][0] == u_var) {
-						malts.addChild(msolve[i][1]);
-					} else if(!msolve[i].isZero()) {
-						b = false;
-						break;
-					}
-				}
-			} else if(!msolve.isZero()) {
-				b = false;
-			}
-		}
-		CALCULATOR->beginTemporaryStopMessages();
-		if(b) {
-			MathStructure mnew;
-			for(size_t i = 0; i < malts.size(); i++) {
-				MathStructure mlim(mstruct);
-				if(!mmul.isOne()) malts[i] *= mmul;
-				mlim.replace(v, malts[i]);
-				mlim.calculatesub(eo, eo, true);
-				vector<KnownVariable*> vars2 = vars;
-				solve_intervals2(mlim, vars2, eo_pre);
-				if(i == 0) {
-					mnew = mlim;
-				} else {
-					mnew.transform(CALCULATOR->f_interval);
-					mnew.addChild(mlim);
-					mnew.calculateFunctions(eo);
-					if(mnew.isFunction() && mnew.function() == CALCULATOR->f_interval) {
-						b = false;
-						break;
-					}
-				}
-			}
-			if(b) mstruct = mnew;
-		}
-		CALCULATOR->endTemporaryStopMessages(b);
-		if(!b) {
-			CALCULATOR->error(false, _("Interval calculated wide."), NULL);
-			mstruct.replace(v, v->get());
-			solve_intervals2(mstruct, vars, eo_pre);
-		}
-		u_var->destroy();
-	}
-}
-
-void solve_intervals(MathStructure &mstruct, const EvaluationOptions &eo) {
-	vector<KnownVariable*> vars; vector<int> v_count; vector<int> v_prec;
-	find_interval_variables(mstruct, vars, v_count, v_prec);
-	for(size_t i = 0; i < v_count.size();) {
-		if(v_count[i] < 2) {
-			v_count.erase(v_count.begin() + i);
-			v_prec.erase(v_prec.begin() + i);
-			vars.erase(vars.begin() + i);
-		} else {
-			i++;
-		}
-	}
-	solve_intervals2(mstruct, vars, eo);
-}
-
 int limit_inf_cmp(const MathStructure &mstruct, const MathStructure &mcmp, const MathStructure &x_var) {
 	if(mstruct.equals(mcmp)) return 0;
 	bool b_multi1 = false, b_multi2 = false;
@@ -10236,6 +9803,506 @@ bool MathStructure::calculateLimit(const MathStructure &x_var, Number nr_limit, 
 	return true;
 }
 
+
+#define IS_VAR_EXP(x) ((x.isVariable() && x.variable()->isKnown()) || (x.isPower() && x[0].isVariable() && x[0].variable()->isKnown()))
+
+void factorize_variable(MathStructure &mstruct, const MathStructure &mvar, bool deg2) {
+	if(deg2) {
+		// ax^2+bx = (sqrt(b)*x+(a/sqrt(b))/2)^2-((a/sqrt(b))/2)^2
+		MathStructure a_struct, b_struct, mul_struct(1, 1, 0);
+		for(size_t i2 = 0; i2 < mstruct.size();) {
+			bool b = false;
+			if(mstruct[i2] == mvar) {
+				a_struct.set(1, 1, 0);
+				b = true;
+			} else if(mstruct[i2].isPower() && mstruct[i2][0] == mvar && mstruct[i2][1].isNumber() && mstruct[i2][1].number().isTwo()) {
+				b_struct.set(1, 1, 0);
+				b = true;
+			} else if(mstruct[i2].isMultiplication()) {
+				for(size_t i3 = 0; i3 < mstruct[i2].size(); i3++) {
+					if(mstruct[i2][i3] == mvar) {
+						a_struct = mstruct[i2];
+						a_struct.delChild(i3 + 1);
+						b = true;
+						break;
+					} else if(mstruct[i2][i3].isPower() && mstruct[i2][i3][0] == mvar && mstruct[i2][i3][1].isNumber() && mstruct[i2][i3][1].number().isTwo()) {
+						b_struct = mstruct[i2];
+						b_struct.delChild(i3 + 1);
+						b = true;
+						break;
+					}
+				}
+			}
+			if(b) {
+				mstruct.delChild(i2 + 1);
+			} else {
+				i2++;
+			}
+		}
+		if(b_struct == a_struct) {
+			mul_struct = a_struct;
+			a_struct.set(1, 1, 0);
+			b_struct.set(1, 1, 0);
+		} else if(b_struct.isMultiplication() && a_struct.isMultiplication()) {
+			size_t i3 = 0;
+			for(size_t i = 0; i < a_struct.size();) {
+				bool b = false;
+				for(size_t i2 = i3; i2 < b_struct.size(); i2++) {
+					if(a_struct[i] == b_struct[i2]) {
+						i3 = i2;
+						if(mul_struct.isOne()) mul_struct = a_struct[i];
+						else mul_struct.multiply(a_struct[i], true);
+						a_struct.delChild(i + 1);
+						b_struct.delChild(i2 + 1);
+						b = true;
+						break;
+					}
+				}
+				if(!b) i++;
+			}
+		}
+		if(a_struct.isMultiplication() && a_struct.size() == 0) b_struct.set(1, 1, 0);
+		else if(a_struct.isMultiplication() && a_struct.size() == 1) b_struct.setToChild(1);
+		if(b_struct.isMultiplication() && b_struct.size() == 0) b_struct.set(1, 1, 0);
+		else if(b_struct.isMultiplication() && b_struct.size() == 1) b_struct.setToChild(1);
+		if(!b_struct.isOne()) {
+			b_struct.raise(nr_half);
+			a_struct.divide(b_struct);
+		}
+		a_struct.multiply(nr_half);
+		if(b_struct.isOne()) b_struct = mvar;
+		else b_struct *= mvar;
+		b_struct += a_struct;
+		b_struct.raise(nr_two);
+		a_struct.raise(nr_two);
+		a_struct.negate();
+		b_struct += a_struct;
+		if(mstruct.size() == 0) mstruct = b_struct;
+		else mstruct.addChild(b_struct);
+	} else {
+		vector<MathStructure*> left_structs;
+		for(size_t i2 = 0; i2 < mstruct.size();) {
+			bool b = false;
+			if(mstruct[i2] == mvar) {
+				mstruct[i2].set(1, 1, 0, true);
+				b = true;
+			} else if(mstruct[i2].isMultiplication()) {
+				for(size_t i3 = 0; i3 < mstruct[i2].size(); i3++) {
+					if(mstruct[i2][i3] == mvar) {
+						mstruct[i2].delChild(i3 + 1, true);
+						b = true;
+						break;
+					}
+				}
+			}
+			if(b) {
+				i2++;
+			} else {
+				mstruct[i2].ref();
+				left_structs.push_back(&mstruct[i2]);
+				mstruct.delChild(i2 + 1);
+			}
+		}
+		mstruct.multiply(mvar);
+		for(size_t i = 0; i < left_structs.size(); i++) {
+			mstruct.add_nocopy(left_structs[i], true);
+			mstruct.evalSort(false);
+		}
+	}
+}
+
+bool var_contains_interval(const MathStructure &mstruct) {
+	if(mstruct.isNumber()) return mstruct.number().isInterval();
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_interval) return true;
+	if(mstruct.isVariable() && mstruct.variable()->isKnown()) return var_contains_interval(((KnownVariable*) mstruct.variable())->get());
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(var_contains_interval(mstruct[i])) return true;
+	}
+	return false;
+}
+
+bool factorize_variables(MathStructure &mstruct, const EvaluationOptions &eo) {
+	bool b = false;
+	if(mstruct.type() == STRUCT_ADDITION) {
+		vector<MathStructure> variables;
+		vector<size_t> variable_count;
+		vector<int> term_sgn;
+		vector<bool> term_deg2;
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(CALCULATOR->aborted()) break;
+			if(mstruct[i].isMultiplication()) {
+				for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+					if(CALCULATOR->aborted()) break;
+					if(IS_VAR_EXP(mstruct[i][i2])) {
+						bool b_found = false;
+						for(size_t i3 = 0; i3 < variables.size(); i3++) {
+							if(variables[i3] == mstruct[i][i2]) {
+								variable_count[i3]++;
+								b_found = true;
+								if(term_sgn[i3] == 1 && !mstruct[i].representsNonNegative(true)) term_sgn[i3] = 0;
+								else if(term_sgn[i3] == -1 && !mstruct[i].representsNonPositive(true)) term_sgn[i3] = 0;
+								break;
+							}
+						}
+						if(!b_found) {
+							variables.push_back(mstruct[i][i2]);
+							variable_count.push_back(1);
+							term_deg2.push_back(false);
+							if(mstruct[i].representsNonNegative(true)) term_sgn.push_back(1);
+							else if(mstruct[i].representsNonPositive(true)) term_sgn.push_back(-1);
+							else term_sgn.push_back(0);
+						}
+					}
+				}
+			} else if(IS_VAR_EXP(mstruct[i])) {
+				bool b_found = false;
+				for(size_t i3 = 0; i3 < variables.size(); i3++) {
+					if(variables[i3] == mstruct[i]) {
+						variable_count[i3]++;
+						b_found = true;
+						if(term_sgn[i3] == 1 && !mstruct[i].representsNonNegative(true)) term_sgn[i3] = 0;
+						else if(term_sgn[i3] == -1 && !mstruct[i].representsNonPositive(true)) term_sgn[i3] = 0;
+						break;
+					}
+				}
+				if(!b_found) {
+					variables.push_back(mstruct[i]);
+					variable_count.push_back(1);
+					term_deg2.push_back(false);
+					if(mstruct[i].representsNonNegative(true)) term_sgn.push_back(1);
+					else if(mstruct[i].representsNonPositive(true)) term_sgn.push_back(-1);
+					else term_sgn.push_back(0);
+				}
+			}
+		}
+		for(size_t i = 0; i < variables.size();) {
+			bool b_erase = false;
+			if(!var_contains_interval(variables[i])) {
+				b_erase = true;
+			} else if(variable_count[i] == 1 || term_sgn[i] != 0) {
+				b_erase = true;
+				if(!variables[i].isPower() || (variables[i][1].isNumber() && variables[i][1].number().isTwo())) {
+					for(size_t i2 = i + 1; i2 < variables.size(); i2++) {
+						if((variables[i].isPower() && !variables[i2].isPower() && variables[i][0] == variables[i2])|| (!variables[i].isPower() && variables[i2].isPower() && variables[i2][0] == variables[i] && variables[i2][1].isNumber() && variables[i2][1].number().isTwo())) {
+							bool b_erase2 = false;
+							if(variable_count[i2] == 1) {
+								if(term_sgn[i] == 0 || term_sgn[i2] != term_sgn[i]) {
+									if(variable_count[i] == 1) {
+										term_deg2[i] = true;
+										variable_count[i] = 2;
+										term_sgn[i] = 0;
+										if(variables[i].isPower()) variables[i].setToChild(1);
+									} else {
+										term_sgn[i] = 0;
+									}
+									b_erase = false;
+								}
+								b_erase2 = true;
+							} else if(term_sgn[i2] != 0) {
+								if(term_sgn[i] == 0 || term_sgn[i2] != term_sgn[i]) {
+									if(variable_count[i] != 1) {
+										term_sgn[i] = 0;
+										b_erase = false;
+									}
+									term_sgn[i2] = 0;
+								} else {
+									b_erase2 = true;
+								}
+							}
+							if(b_erase2) {
+								variable_count.erase(variable_count.begin() + i2);
+								variables.erase(variables.begin() + i2);
+								term_deg2.erase(term_deg2.begin() + i2);
+								term_sgn.erase(term_sgn.begin() + i2);
+							}
+							break;
+						}
+					}
+				}
+			}
+			if(b_erase) {
+				variable_count.erase(variable_count.begin() + i);
+				variables.erase(variables.begin() + i);
+				term_deg2.erase(term_deg2.begin() + i);
+				term_sgn.erase(term_sgn.begin() + i);
+			} else if(variable_count[i] == mstruct.size()) {
+				factorize_variable(mstruct, variables[i], term_deg2[i]);
+				if(CALCULATOR->aborted()) return true;
+				factorize_variables(mstruct, eo);
+				return true;
+			} else {
+				i++;
+			}
+		}
+		if(variables.size() == 1) {
+			factorize_variable(mstruct, variables[0], term_deg2[0]);
+			if(CALCULATOR->aborted()) return true;
+			factorize_variables(mstruct, eo);
+			return true;
+		}
+		Number uncertainty;
+		size_t u_index = 0;
+		for(size_t i = 0; i < variables.size(); i++) {
+			const MathStructure *v_ms;
+			Number nr;
+			if(variables[i].isPower()) v_ms = &((KnownVariable*) variables[i][0].variable())->get();
+			else v_ms = &((KnownVariable*) variables[i].variable())->get();
+			if(v_ms->isNumber()) nr = v_ms->number();
+			else if(v_ms->isMultiplication() && v_ms->size() > 0 && (*v_ms)[0].isNumber()) nr = (v_ms)[0].number();
+			else {
+				MathStructure mtest(*v_ms);
+				mtest.calculatesub(eo, eo, true);
+				if(mtest.isNumber()) nr = mtest.number();
+				else if(mtest.isMultiplication() && mtest.size() > 0 && mtest[0].isNumber()) nr = mtest[0].number();
+			}
+			if(nr.isInterval()) {
+				Number u_candidate(nr.uncertainty());
+				if(variables[i].isPower() && variables[i][1].isNumber() && variables[i][1].number().isReal()) u_candidate.raise(variables[i][1].number());
+				u_candidate.multiply(variable_count[i]);
+				if(u_candidate.isGreaterThan(uncertainty)) {
+					uncertainty = u_candidate;
+					u_index = i;
+				}
+			}
+		}
+		if(!uncertainty.isZero()) {
+			factorize_variable(mstruct, variables[u_index], term_deg2[u_index]);
+			if(CALCULATOR->aborted()) return true;
+			factorize_variables(mstruct, eo);
+			return true;
+		}
+		
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(factorize_variables(mstruct[i], eo)) {
+			mstruct.childUpdated(i + 1);
+			b = true;
+		}
+		if(CALCULATOR->aborted()) return b;
+	}
+	return b;
+}
+
+void find_interval_variables(const MathStructure &mstruct, vector<KnownVariable*> &vars, vector<int> &v_count, vector<int> &v_prec) {
+	if(mstruct.isVariable() && mstruct.variable()->isKnown()) {
+		KnownVariable *v = (KnownVariable*) mstruct.variable();
+		int var_prec = PRECISION + 11;
+		const MathStructure &mv = v->get();
+		for(size_t i = 0; i < vars.size(); i++) {
+			if(vars[i] == v) {
+				v_count[i]++;
+				return;
+			}
+		}
+		if(mv.isNumber() && mv.number().isInterval()) {
+			var_prec = mv.number().precision(1);
+		} else if(mv.isMultiplication()) {
+			for(size_t i = 0; i < mv.size(); i++) {
+				if(mv[i].isNumber() && mv[i].number().isInterval()) {
+					var_prec = mv.number().precision(1);
+					break;
+				}
+			}
+		}		
+		if(var_prec <= PRECISION + 10) {
+			bool b = false;
+			for(size_t i = 0; i < v_prec.size(); i++) {
+				if(var_prec < v_prec[i]) {
+					v_prec.insert(v_prec.begin() + i, var_prec);
+					v_count.insert(v_count.begin() + i, 1);
+					vars.insert(vars.begin() + i, v);
+					b = true;
+					break;
+				}
+			}
+			if(!b) {
+				v_prec.push_back(var_prec);
+				v_count.push_back(1);
+				vars.push_back(v);
+			}
+		}
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		find_interval_variables(mstruct[i], vars, v_count, v_prec);
+	}
+}
+
+bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, const MathStructure &mvar, Number &nr_intval, const EvaluationOptions &eo) {
+	MathStructure mtest(mstruct);
+	mtest.replace(mvar, nr_intval);
+	mtest.eval(eo);
+	ComparisonResult cmp = mtest.compare(m_zero);
+	if(COMPARISON_IS_NOT_EQUAL(cmp)) {
+		return true;
+	} else if(cmp > COMPARISON_RESULT_UNKNOWN) {
+		if(nr_intval.precision(1) > PRECISION + 10) {
+			Number nr_mid(nr_intval);
+			nr_mid.intervalToMidValue();
+			malts.addChild(nr_mid);
+			return true;
+		}
+		vector<Number> splits;
+		nr_intval.splitInterval(2, splits);
+		for(size_t i = 0; i < splits.size(); i++) {
+			if(!find_interval_zeroes(mstruct, malts, mvar, splits[i], eo)) return false;
+		}
+		return true;
+	}
+	return false;
+}
+
+bool function_differentiable(MathFunction *o_function) {
+	return (o_function == CALCULATOR->f_sqrt || o_function == CALCULATOR->f_root || o_function == CALCULATOR->f_ln || o_function == CALCULATOR->f_arg || o_function == CALCULATOR->f_gamma || o_function == CALCULATOR->f_abs || o_function == CALCULATOR->f_factorial || o_function == CALCULATOR->f_besselj || o_function == CALCULATOR->f_erf || o_function == CALCULATOR->f_erfc || o_function == CALCULATOR->f_li || o_function == CALCULATOR->f_Li || o_function == CALCULATOR->f_Ei || o_function == CALCULATOR->f_Si || o_function == CALCULATOR->f_Ci || o_function == CALCULATOR->f_Shi || o_function == CALCULATOR->f_Chi || o_function == CALCULATOR->f_abs || o_function == CALCULATOR->f_signum || o_function == CALCULATOR->f_heaviside || o_function == CALCULATOR->f_lambert_w || o_function == CALCULATOR->f_sinc || o_function == CALCULATOR->f_sin || o_function == CALCULATOR->f_cos || o_function == CALCULATOR->f_tan || o_function == CALCULATOR->f_asin || o_function == CALCULATOR->f_acos || o_function == CALCULATOR->f_atan || o_function == CALCULATOR->f_sinh || o_function == CALCULATOR->f_cosh || o_function == CALCULATOR->f_tanh || o_function == CALCULATOR->f_asinh || o_function == CALCULATOR->f_acosh || o_function == CALCULATOR->f_atanh);
+}
+
+bool calculate_differentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive = true, bool do_unformat = true) {
+	if(m.isFunction() && m.function() != eo.protected_function && function_differentiable(m.function())) {
+		return m.calculateFunctions(eo, recursive, do_unformat);
+	}
+	bool b = false;
+	if(recursive) {
+		for(size_t i = 0; i < m.size(); i++) {
+			if(CALCULATOR->aborted()) break;
+			if(calculate_differentiable_functions(m[i], eo, recursive, do_unformat)) {
+				m.childUpdated(i + 1);
+				b = true;
+			}
+		}
+	}
+	return b;
+}
+bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive = true, bool do_unformat = true) {
+	if(m.isFunction() && m.function() != eo.protected_function && !function_differentiable(m.function())) {
+		return m.calculateFunctions(eo, recursive, do_unformat);
+	}
+	bool b = false;
+	if(recursive) {
+		for(size_t i = 0; i < m.size(); i++) {
+			if(CALCULATOR->aborted()) break;
+			if(calculate_nondifferentiable_functions(m[i], eo, recursive, do_unformat)) {
+				m.childUpdated(i + 1);
+				b = true;
+			}
+		}
+	}
+	return b;
+}
+
+void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const EvaluationOptions &eo_pre) {
+	if(vars.size() > 0) {
+		EvaluationOptions eo = eo_pre;
+		eo.approximation = APPROXIMATION_EXACT_VARIABLES;
+		eo.expand = true;
+		if(eo.calculate_functions) calculate_differentiable_functions(mstruct, eo);
+		KnownVariable *v = vars[0];
+		vars.erase(vars.begin());
+		UnknownVariable *u_var = new UnknownVariable("", "u");
+		Number nr_intval;
+		MathStructure mvar(u_var);
+		const MathStructure &mv = v->get();
+		MathStructure mmul(1, 1, 0);
+		if(mv.isMultiplication()) {
+			for(size_t i = 0; i < mv.size(); i++) {
+				if(mv[i].isNumber() && mv[i].number().isInterval()) {
+					mmul = mv;
+					mmul.delChild(i + 1, true);
+					mvar.multiply(mmul);
+					nr_intval = mv[i].number();
+					u_var->setInterval(mv[i]);
+					break;
+				}
+			}
+		} else {
+			nr_intval = mv.number();
+			u_var->setInterval(mv);
+		}
+		MathStructure msolve(mstruct);
+		msolve.replace(v, mvar);
+		bool b = true;
+		CALCULATOR->beginTemporaryStopMessages();
+		if(!msolve.differentiate(u_var, eo) || msolve.containsFunction(CALCULATOR->f_diff, true)) {
+			b = false;
+		}
+		MathStructure malts;
+		malts.clearVector();
+		if(b) {
+			msolve.calculatesub(eo, eo, true);
+			b = find_interval_zeroes(msolve, malts, mvar, nr_intval, eo);
+			/*msolve.transform(COMPARISON_EQUALS, m_zero);
+			CALCULATOR->beginTemporaryStopIntervalArithmetic();
+			msolve.isolate_x(eo, eo, u_var);
+			CALCULATOR->endTemporaryStopIntervalArithmetic();
+			eo.test_comparisons = true;
+			malts.addChild(nr_intval.lowerEndPoint());
+			malts.addChild(nr_intval.upperEndPoint());
+			msolve.calculatesub(eo, eo, true);
+			if(msolve.isComparison() && msolve.comparisonType() == COMPARISON_EQUALS && msolve[0] == u_var) {
+				malts.addChild(msolve[1]);
+			} else if(msolve.isLogicalOr()) {
+				for(size_t i = 0; i < msolve.size(); i++) {
+					if(msolve[i].isComparison() && msolve[i].comparisonType() == COMPARISON_EQUALS && msolve[i][0] == u_var) {
+						malts.addChild(msolve[i][1]);
+					} else if(!msolve[i].isZero()) {
+						b = false;
+						break;
+					}
+				}
+			} else if(!msolve.isZero()) {
+				b = false;
+			}*/
+		}
+		CALCULATOR->endTemporaryStopMessages();
+		CALCULATOR->beginTemporaryStopMessages();
+		if(b) {
+			malts.addChild(nr_intval.lowerEndPoint());
+			malts.addChild(nr_intval.upperEndPoint());
+			MathStructure mnew;
+			for(size_t i = 0; i < malts.size(); i++) {
+				MathStructure mlim(mstruct);
+				if(!mmul.isOne()) malts[i] *= mmul;
+				mlim.replace(v, malts[i]);
+				mlim.calculatesub(eo, eo, true);
+				vector<KnownVariable*> vars2 = vars;
+				solve_intervals2(mlim, vars2, eo_pre);
+				if(i == 0) {
+					mnew = mlim;
+				} else {
+					mnew.transform(CALCULATOR->f_interval);
+					mnew.addChild(mlim);
+					mnew.calculateFunctions(eo);
+					if(mnew.isFunction() && mnew.function() == CALCULATOR->f_interval) {
+						b = false;
+						break;
+					}
+				}
+			}
+			if(b) mstruct = mnew;
+		}
+		CALCULATOR->endTemporaryStopMessages(b);
+		if(!b) {
+			CALCULATOR->error(false, _("Interval possibly calculated wide."), NULL);
+			mstruct.replace(v, v->get());
+			solve_intervals2(mstruct, vars, eo_pre);
+		}
+		u_var->destroy();
+	}
+}
+
+void solve_intervals(MathStructure &mstruct, const EvaluationOptions &eo) {
+	vector<KnownVariable*> vars; vector<int> v_count; vector<int> v_prec;
+	find_interval_variables(mstruct, vars, v_count, v_prec);
+	for(size_t i = 0; i < v_count.size();) {
+		if(v_count[i] < 2) {
+			v_count.erase(v_count.begin() + i);
+			v_prec.erase(v_prec.begin() + i);
+			vars.erase(vars.begin() + i);
+		} else {
+			i++;
+		}
+	}
+	solve_intervals2(mstruct, vars, eo);
+}
+
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(m_type == STRUCT_NUMBER) return *this;
@@ -10249,9 +10316,16 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	eo2.structuring = STRUCTURING_NONE;
 	eo2.expand = false;
 	eo2.test_comparisons = false;
-
-	if(eo.calculate_functions && calculateFunctions(feo)) {
-		unformat(eo);
+	
+	if(eo.approximation != APPROXIMATION_EXACT && containsInterval(true, true, false, true)) {
+		if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo);
+		EvaluationOptions eo3 = eo2;
+		eo3.split_squares = false;
+		eo3.assume_denominators_nonzero = false;
+		solve_intervals(*this, eo3);
+		if(eo.calculate_functions) calculate_differentiable_functions(*this, feo);
+	} else {
+		if(eo.calculate_functions) calculateFunctions(feo);
 	}
 
 	if(m_type == STRUCT_NUMBER) return *this;
@@ -10272,7 +10346,6 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		eo3.approximation = APPROXIMATION_APPROXIMATE;
 		factorize_variables(*this, eo3);
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
-		solve_intervals(*this, eo3);
 	}
 
 	calculatesub(eo2, feo);
@@ -17982,6 +18055,13 @@ int MathStructure::contains(const MathStructure &mstruct, bool structural_only, 
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CHILD(i).contains(mstruct, structural_only, check_variables, check_functions, loose_equals)) return 1;
 		}
+		if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
+			return ((KnownVariable*) o_variable)->get().contains(mstruct, structural_only, check_variables, check_functions, loose_equals);
+		} else if(m_type == STRUCT_FUNCTION && check_functions) {
+			if(function_value) {
+				return function_value->contains(mstruct, structural_only, check_variables, check_functions, loose_equals);
+			}
+		}
 	} else {
 		int ret = 0;
 		if(m_type != STRUCT_FUNCTION) {
@@ -18009,7 +18089,14 @@ int MathStructure::containsFunction(MathFunction *f, bool structural_only, bool 
 	if(m_type == STRUCT_FUNCTION && o_function == f) return 1;
 	if(structural_only) {
 		for(size_t i = 0; i < SIZE; i++) {
-			if(CHILD(i).containsFunction(f)) return 1;
+			if(CHILD(i).containsFunction(f, structural_only, check_variables, check_functions)) return 1;
+		}
+		if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
+			return ((KnownVariable*) o_variable)->get().containsFunction(f, structural_only, check_variables, check_functions);
+		} else if(m_type == STRUCT_FUNCTION && check_functions) {
+			if(function_value) {
+				return function_value->containsFunction(f, structural_only, check_variables, check_functions);
+			}
 		}
 	} else {
 		int ret = 0;
@@ -18045,6 +18132,13 @@ int MathStructure::containsInterval(bool structural_only, bool check_variables, 
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CHILD(i).containsInterval(structural_only, check_variables, check_functions, ignore_high_precision_interval)) return 1;
 		}
+		if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
+			return ((KnownVariable*) o_variable)->get().containsInterval(structural_only, check_variables, check_functions, ignore_high_precision_interval);
+		} else if(m_type == STRUCT_FUNCTION && check_functions) {
+			if(function_value) {
+				return function_value->containsInterval(structural_only, check_variables, check_functions, ignore_high_precision_interval);
+			}
+		}
 	} else {
 		int ret = 0;
 		if(m_type != STRUCT_FUNCTION) {
@@ -18075,6 +18169,13 @@ int MathStructure::containsInfinity(bool structural_only, bool check_variables, 
 	if(structural_only) {
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CHILD(i).containsInfinity(structural_only, check_variables, check_functions)) return 1;
+		}
+		if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
+			return ((KnownVariable*) o_variable)->get().containsInfinity(structural_only, check_variables, check_functions);
+		} else if(m_type == STRUCT_FUNCTION && check_functions) {
+			if(function_value) {
+				return function_value->containsInfinity(structural_only, check_variables, check_functions);
+			}
 		}
 	} else {
 		int ret = 0;
@@ -18109,6 +18210,13 @@ int MathStructure::containsRepresentativeOf(const MathStructure &mstruct, bool c
 			if(retval == 1) return 1;
 			else if(retval < 0) ret = retval;
 		}
+		if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
+			return ((KnownVariable*) o_variable)->get().containsRepresentativeOf(mstruct, check_variables, check_functions);
+		} else if(m_type == STRUCT_FUNCTION && check_functions) {
+			if(function_value) {
+				return function_value->containsRepresentativeOf(mstruct, check_variables, check_functions);
+			}
+		}
 	}
 	if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
 		return ((KnownVariable*) o_variable)->get().containsRepresentativeOf(mstruct, check_variables, check_functions);
@@ -18135,6 +18243,13 @@ int MathStructure::containsType(StructureType mtype, bool structural_only, bool 
 	if(structural_only) {
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CHILD(i).containsType(mtype, true, check_variables, check_functions)) return 1;
+		}
+		if(check_variables && m_type == STRUCT_VARIABLE && o_variable->isKnown()) {
+			return ((KnownVariable*) o_variable)->get().containsType(mtype, false, check_variables, check_functions);
+		} else if(check_functions && m_type == STRUCT_FUNCTION) {
+			if(function_value) {
+				return function_value->containsType(mtype, false, check_variables, check_functions);
+			}
 		}
 		return 0;
 	} else {
