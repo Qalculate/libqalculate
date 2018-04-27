@@ -1050,7 +1050,7 @@ void Number::intervalToMidValue() {
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	}
 }
-void Number::splitInterval(unsigned int nr_of_parts, vector<Number> &v) {
+void Number::splitInterval(unsigned int nr_of_parts, vector<Number> &v) const {
 	if(n_type == NUMBER_TYPE_FLOAT && isReal()) {
 		if(nr_of_parts == 2) {
 			mpfr_t f_mid;
@@ -1079,6 +1079,47 @@ void Number::splitInterval(unsigned int nr_of_parts, vector<Number> &v) {
 			}
 		}
 	}
+}
+bool Number::getCentralInteger(Number &nr_int, bool *b_multiple, vector<Number> *v) const {
+	if(!isInterval() || !isReal()) {
+		if(b_multiple) *b_multiple = false;
+		return false;
+	}
+	mpfr_t fintl, fintu;
+	mpfr_init2(fintl, mpfr_get_prec(fl_value));
+	mpfr_init2(fintu, mpfr_get_prec(fu_value));
+	mpfr_floor(fintu, fu_value);
+	mpfr_ceil(fintl, fl_value);
+	int cmp = mpfr_cmp(fintl, fintu);
+	if(cmp == 0) {
+		mpz_t z_int;
+		mpz_init(z_int);
+		mpfr_get_z(z_int, fl_value, MPFR_RNDN);
+		nr_int.setInternal(z_int);
+		if(b_multiple) *b_multiple = false;
+		if(v) {
+			mpfr_t f_prec;
+			mpfr_init2(f_prec, mpfr_get_prec(fl_value));
+			mpfr_ui_pow_ui(f_prec, 10, PRECISION + 10, MPFR_RNDN);
+			mpfr_div(f_prec, fintl, f_prec, MPFR_RNDN);
+			if(mpfr_cmp(fintl, fl_value) > 0) {
+				mpfr_sub(fintl, fintl, f_prec, MPFR_RNDD);
+				v->push_back(*this);
+				mpfr_set(v->back().internalUpperFloat(), fintl, MPFR_RNDD);
+			}
+			if(mpfr_cmp(fintu, fu_value) < 0) {
+				mpfr_add(fintu, fintu, f_prec, MPFR_RNDU);
+				v->push_back(*this);
+				mpfr_set(v->back().internalLowerFloat(), fintu, MPFR_RNDU);
+			}
+		}
+		return true;
+	} else if(cmp > 0) {
+		if(b_multiple) *b_multiple = false;
+	} else {
+		if(b_multiple) *b_multiple = true;
+	}
+	return false;
 }
 bool Number::mergeInterval(const Number &o, bool set_to_overlap) {
 	if(equals(o)) return true;

@@ -2991,65 +2991,78 @@ int SincFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return -1;
 }
 
+bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2) {
+	if(m1 == m2) {
+		mstruct = m1;
+		return 1;
+	} else if(m1.isNumber() && m2.isNumber()) {
+		Number nr;
+		if(!nr.setInterval(m1.number(), m2.number())) return false;
+		mstruct = nr;
+		return true;
+	} else if(m1.isMultiplication() && m2.isMultiplication() && m1.size() > 1 && m2.size() > 1) {
+		size_t i0 = 0, i1 = 0;
+		if(m1[0].isNumber()) i0++;
+		if(m2[0].isNumber()) i1++;
+		if(i0 == 0 && i1 == 0) return false;
+		if(m1.size() - i0 != m2.size() - i1) return false;
+		for(size_t i = 0; i < m1.size() - i0; i++) {
+			if(!m1[i + i0].equals(m2[i + i1], true)) {
+				return false;
+			}
+		}
+		Number nr;
+		if(!nr.setInterval(i0 == 1 ? m1[0].number() : nr_one, i1 == 1 ? m2[0].number() : nr_one)) return 0;
+		mstruct = m1;
+		if(i0 == 1) mstruct.delChild(1, true);
+		mstruct *= nr;
+		mstruct.evalSort(false);
+		return 1;
+	} else if(m1.isAddition() && m2.isAddition() && m1.size() > 1 && m2.size() > 1) {
+		size_t i0 = 0, i1 = 0;
+		if(m1.last().isNumber()) i0++;
+		if(m2.last().isNumber()) i1++;
+		if(i0 == 0 && i1 == 0) return false;
+		if(m1.size() - i0 != m2.size() - i1) return false;
+		for(size_t i = 0; i < m1.size() - i0; i++) {
+			if(!m1[i].equals(m2[i], true)) {
+				return false;
+			}
+		}
+		Number nr;
+		if(!nr.setInterval(i0 == 1 ? m1.last().number() : nr_one, i1 == 1 ? m2.last().number() : nr_one)) return false;
+		mstruct = m1;
+		if(i0 == 1) mstruct.delChild(mstruct.size(), true);
+		mstruct += nr;
+		mstruct.evalSort(false);
+		return true;
+	} else if(m1.isMultiplication() && m1.size() == 2 && m1[0].isNumber() && m2.equals(m1[1], true)) {
+		Number nr;
+		if(!nr.setInterval(m1[0].number(), nr_one)) return false;
+		mstruct = nr;
+		mstruct *= m2;
+		return true;
+	} else if(m2.isMultiplication() && m2.size() == 2 && m2[0].isNumber() && m1.equals(m2[1], true)) {
+		Number nr;
+		if(!nr.setInterval(nr_one, m2[0].number())) return false;
+		mstruct = nr;
+		mstruct *= m1;
+		return true;
+	}
+	return false;
+}
 
 IntervalFunction::IntervalFunction() : MathFunction("interval", 2) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
 	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
 }
 int IntervalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].isNumber() && vargs[1].isNumber()) {
-		Number nr;
-		if(!nr.setInterval(vargs[0].number(), vargs[1].number())) return 0;
-		mstruct = nr;
-		return 1;
-	}
-	MathStructure margs(vargs);
-	margs.eval(eo);
-	if(margs[0] == margs[1]) {
-		mstruct = margs[0];
-		return 1;
-	} else if(margs[0].isMultiplication() && margs[1].isMultiplication() && margs[0].size() > 1 && margs[1].size() > 1) {
-		size_t i0 = 0, i1 = 0;
-		if(margs[0][0].isNumber()) i0++;
-		if(margs[1][0].isNumber()) i1++;
-		if(i0 == 0 && i1 == 0) {
-			if(margs[0] == margs[1]) {
-				mstruct = margs[0];
-				return 1;
-			}
-			return 0;
-		}
-		if(margs[0].size() - i0 != margs[1].size() - i1) return 0;
-		for(size_t i = 0; i < margs[0].size() - i0; i++) {
-			if(margs[0][i + i0] != margs[1][i + i1]) {
-				return 0;
-			}
-		}
-		Number nr;
-		if(!nr.setInterval(i0 == 1 ? margs[0][0].number() : nr_one, i1 == 1 ? margs[1][0].number() : nr_one)) return 0;
-		mstruct = margs[0];
-		if(i0 == 1) mstruct.delChild(1, true);
-		mstruct *= nr;
-		mstruct.evalSort(false);
-		return 1;
-	} else if(margs[0].isMultiplication() && margs[0].size() == 2 && margs[0][0].isNumber() && margs[1] == margs[0][1]) {
-		Number nr;
-		if(!nr.setInterval(margs[0][0].number(), nr_one)) return 0;
-		mstruct = nr;
-		mstruct *= margs[1];
-		return 1;
-	} else if(margs[1].isMultiplication() && margs[1].size() == 2 && margs[1][0].isNumber() && margs[0] == margs[1][1]) {
-		Number nr;
-		if(!nr.setInterval(nr_one, margs[1][0].number())) return 0;
-		mstruct = nr;
-		mstruct *= margs[0];
-		return 1;
-	} else if(margs[0].isNumber() && margs[1].isNumber()) {
-		Number nr;
-		if(!nr.setInterval(margs[0].number(), margs[1].number())) return 0;
-		mstruct = nr;
-		return 1;
-	}
+	if(create_interval(mstruct, vargs[0], vargs[1])) return 1;
+	MathStructure marg1(vargs[0]);
+	marg1.eval(eo);
+	MathStructure marg2(vargs[1]);
+	marg2.eval(eo);
+	if(create_interval(mstruct, marg1, marg2)) return 1;
 	return 0;
 }
 

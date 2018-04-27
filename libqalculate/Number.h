@@ -126,7 +126,8 @@ class Number {
 		void precisionToInterval();
 		bool intervalToPrecision(long int min_precision = 2);
 		void intervalToMidValue();
-		void splitInterval(unsigned int nr_of_parts, vector<Number> &v);
+		void splitInterval(unsigned int nr_of_parts, vector<Number> &v) const;
+		bool getCentralInteger(Number &nr_int, bool *b_multiple = NULL, vector<Number> *v = NULL) const;
 		bool mergeInterval(const Number &o, bool set_to_overlap = false);
 		void setUncertainty(const Number &o, bool force_interval = false);
 		Number uncertainty() const;
