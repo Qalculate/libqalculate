@@ -2271,7 +2271,16 @@ ComparisonResult MathStructure::compareApproximately(const MathStructure &o, con
 	}
 	if(equals(o)) return COMPARISON_RESULT_EQUAL;
 	if(isMultiplication() && SIZE > 1 && CHILD(0).isNumber()) {
-		if(o.isMultiplication() && o.size() > 1) {
+		if(o.isZero()) {
+			bool b = true;
+			for(size_t i = 1; i < SIZE; i++) {
+				if(!CHILD(i).representsNonZero(true)) {
+					b = false;
+					break;
+				}
+			}
+			if(b) return CHILD(0).number().compareApproximately(o.number());
+		} else if(o.isMultiplication() && o.size() > 1) {
 			if(SIZE == o.size() + (o[0].isNumber() ? 0 : 1)) {
 				bool b = true;
 				for(size_t i = 1; i < SIZE; i++) {
@@ -2326,6 +2335,16 @@ ComparisonResult MathStructure::compareApproximately(const MathStructure &o, con
 		} else {
 			return mtest.number().compareApproximately(o.number());
 		}
+	}
+	if(mtest2.isZero() && mtest.isMultiplication() && mtest.size() > 0 && mtest[0].isNumber()) {
+		bool b = true;
+		for(size_t i = 1; i < SIZE; i++) {
+			if(!CHILD(i).representsNonZero(true)) {
+				b = false;
+				break;
+			}
+		}
+		if(b) return CHILD(0).number().compareApproximately(o.number());
 	}
 	CALCULATOR->beginTemporaryStopMessages();
 	mtest -= o;
@@ -10127,24 +10146,34 @@ void find_interval_variables(const MathStructure &mstruct, vector<KnownVariable*
 	}
 }
 
-bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, const MathStructure &mvar, Number &nr_intval, const EvaluationOptions &eo) {
+bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, const MathStructure &mvar, Number &nr_intval, const EvaluationOptions &eo, bool test_integer = true) {
 	MathStructure mtest(mstruct);
 	mtest.replace(mvar, nr_intval);
 	mtest.eval(eo);
-	ComparisonResult cmp = mtest.compare(m_zero);
+	ComparisonResult cmp = mtest.compareApproximately(m_zero);
 	if(COMPARISON_IS_NOT_EQUAL(cmp)) {
 		return true;
-	} else if(cmp > COMPARISON_RESULT_UNKNOWN) {
-		if(nr_intval.precision(1) > PRECISION + 10) {
+	} else if(cmp > COMPARISON_RESULT_UNKNOWN || cmp == COMPARISON_RESULT_EQUAL) {
+		vector<Number> splits;
+		if(test_integer) {
+			Number nr_int;
+			if(nr_intval.getCentralInteger(nr_int, &test_integer, &splits)) {
+				if(!find_interval_zeroes(mstruct, malts, mvar, nr_int, eo, false)) return false;
+				for(size_t i = 0; i < splits.size(); i++) {
+					if(!find_interval_zeroes(mstruct, malts, mvar, splits[i], eo, test_integer)) return false;
+				}
+				return true;
+			}
+		}
+		if(cmp == COMPARISON_RESULT_EQUAL || nr_intval.precision(1) > PRECISION + 10) {
 			Number nr_mid(nr_intval);
 			nr_mid.intervalToMidValue();
 			malts.addChild(nr_mid);
 			return true;
 		}
-		vector<Number> splits;
 		nr_intval.splitInterval(2, splits);
 		for(size_t i = 0; i < splits.size(); i++) {
-			if(!find_interval_zeroes(mstruct, malts, mvar, splits[i], eo)) return false;
+			if(!find_interval_zeroes(mstruct, malts, mvar, splits[i], eo, test_integer)) return false;
 		}
 		return true;
 	}
@@ -10188,6 +10217,7 @@ bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOpt
 	return b;
 }
 
+extern bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
 void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const EvaluationOptions &eo_pre) {
 	if(vars.size() > 0) {
 		EvaluationOptions eo = eo_pre;
@@ -10227,7 +10257,13 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 		malts.clearVector();
 		if(b) {
 			msolve.calculatesub(eo, eo, true);
-			b = find_interval_zeroes(msolve, malts, mvar, nr_intval, eo);
+			if(msolve.containsInterval(true, true, false, true)) {
+				b = false;
+			} else {
+				eo.approximation = APPROXIMATION_APPROXIMATE;
+				b = find_interval_zeroes(msolve, malts, mvar, nr_intval, eo);
+				eo.approximation = APPROXIMATION_EXACT_VARIABLES;
+			}
 			/*msolve.transform(COMPARISON_EQUALS, m_zero);
 			CALCULATOR->beginTemporaryStopIntervalArithmetic();
 			msolve.isolate_x(eo, eo, u_var);
@@ -10267,12 +10303,18 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 				if(i == 0) {
 					mnew = mlim;
 				} else {
-					mnew.transform(CALCULATOR->f_interval);
-					mnew.addChild(mlim);
-					mnew.calculateFunctions(eo);
-					if(mnew.isFunction() && mnew.function() == CALCULATOR->f_interval) {
-						b = false;
-						break;
+					MathStructure mlim1(mnew);
+					if(!create_interval(mnew, mlim1, mlim)) {
+						eo.approximation = APPROXIMATION_APPROXIMATE;
+						mlim.eval(eo);
+						eo.approximation = APPROXIMATION_EXACT_VARIABLES;
+						if(!create_interval(mnew, mlim1, mlim)) {
+							mlim1.eval(eo);
+							if(!create_interval(mnew, mlim1, mlim)) {
+								b = false;
+								break;
+							}
+						}
 					}
 				}
 			}
@@ -10280,7 +10322,7 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 		}
 		CALCULATOR->endTemporaryStopMessages(b);
 		if(!b) {
-			CALCULATOR->error(false, _("Interval possibly calculated wide."), NULL);
+			CALCULATOR->error(false, _("Interval potentially calculated wide."), NULL);
 			mstruct.replace(v, v->get());
 			solve_intervals2(mstruct, vars, eo_pre);
 		}
@@ -10300,6 +10342,12 @@ void solve_intervals(MathStructure &mstruct, const EvaluationOptions &eo) {
 			i++;
 		}
 	}
+	if(mstruct.isComparison()) {
+		mstruct[0].subtract(mstruct[1]);
+		solve_intervals2(mstruct[0], vars, eo);
+		mstruct[1].clear(true);
+		return;
+	}
 	solve_intervals2(mstruct, vars, eo);
 }
 
@@ -10317,11 +10365,16 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	eo2.expand = false;
 	eo2.test_comparisons = false;
 	
-	if(eo.approximation != APPROXIMATION_EXACT && containsInterval(true, true, false, true)) {
+	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && containsInterval(true, true, false, true)) {
 		if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo);
 		EvaluationOptions eo3 = eo2;
 		eo3.split_squares = false;
 		eo3.assume_denominators_nonzero = false;
+		if(eo.approximation == APPROXIMATION_APPROXIMATE && !containsUnknowns()) eo3.approximation = APPROXIMATION_EXACT_VARIABLES;
+		else eo3.approximation = APPROXIMATION_EXACT;
+		calculatesub(eo3, feo);
+		eo3.approximation = APPROXIMATION_APPROXIMATE;
+		factorize_variables(*this, eo3);
 		solve_intervals(*this, eo3);
 		if(eo.calculate_functions) calculate_differentiable_functions(*this, feo);
 	} else {
