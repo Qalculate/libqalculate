@@ -9880,8 +9880,8 @@ void factorize_variable(MathStructure &mstruct, const MathStructure &mvar, bool 
 				if(!b) i++;
 			}
 		}
-		if(a_struct.isMultiplication() && a_struct.size() == 0) b_struct.set(1, 1, 0);
-		else if(a_struct.isMultiplication() && a_struct.size() == 1) b_struct.setToChild(1);
+		if(a_struct.isMultiplication() && a_struct.size() == 0) a_struct.set(1, 1, 0);
+		else if(a_struct.isMultiplication() && a_struct.size() == 1) a_struct.setToChild(1);
 		if(b_struct.isMultiplication() && b_struct.size() == 0) b_struct.set(1, 1, 0);
 		else if(b_struct.isMultiplication() && b_struct.size() == 1) b_struct.setToChild(1);
 		if(!b_struct.isOne()) {
@@ -9896,6 +9896,7 @@ void factorize_variable(MathStructure &mstruct, const MathStructure &mvar, bool 
 		a_struct.raise(nr_two);
 		a_struct.negate();
 		b_struct += a_struct;
+		if(!mul_struct.isOne()) b_struct *= mul_struct;
 		if(mstruct.size() == 0) mstruct = b_struct;
 		else mstruct.addChild(b_struct);
 	} else {
@@ -10151,7 +10152,9 @@ bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, co
 	mtest.replace(mvar, nr_intval);
 	mtest.eval(eo);
 	ComparisonResult cmp = mtest.compareApproximately(m_zero);
-	if(COMPARISON_IS_NOT_EQUAL(cmp)) {
+	if(!COMPARISON_IS_NOT_EQUAL(cmp) && cmp <= COMPARISON_RESULT_UNKNOWN && cmp != COMPARISON_RESULT_EQUAL) {
+		mtest.factorize();
+	} else if(COMPARISON_IS_NOT_EQUAL(cmp)) {
 		return true;
 	} else if(cmp > COMPARISON_RESULT_UNKNOWN || cmp == COMPARISON_RESULT_EQUAL) {
 		vector<Number> splits;
@@ -10222,7 +10225,6 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 	if(vars.size() > 0) {
 		EvaluationOptions eo = eo_pre;
 		eo.approximation = APPROXIMATION_EXACT_VARIABLES;
-		eo.expand = true;
 		if(eo.calculate_functions) calculate_differentiable_functions(mstruct, eo);
 		KnownVariable *v = vars[0];
 		vars.erase(vars.begin());
@@ -10307,9 +10309,9 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 					if(!create_interval(mnew, mlim1, mlim)) {
 						eo.approximation = APPROXIMATION_APPROXIMATE;
 						mlim.eval(eo);
-						eo.approximation = APPROXIMATION_EXACT_VARIABLES;
 						if(!create_interval(mnew, mlim1, mlim)) {
 							mlim1.eval(eo);
+							eo.approximation = APPROXIMATION_EXACT_VARIABLES;
 							if(!create_interval(mnew, mlim1, mlim)) {
 								b = false;
 								break;
@@ -10375,6 +10377,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		calculatesub(eo3, feo);
 		eo3.approximation = APPROXIMATION_APPROXIMATE;
 		factorize_variables(*this, eo3);
+		eo3.expand = eo.expand;
+		eo3.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 		solve_intervals(*this, eo3);
 		if(eo.calculate_functions) calculate_differentiable_functions(*this, feo);
 	} else {
