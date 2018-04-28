@@ -1362,7 +1362,7 @@ bool Number::imaginaryPartIsInterval() const {
 void Number::setApproximate(bool is_approximate) {
 	if(is_approximate != isApproximate()) {
 		if(is_approximate) {
-			i_precision = PRECISION;
+			//i_precision = PRECISION;
 			b_approx = true;
 		} else {
 			i_precision = -1;
