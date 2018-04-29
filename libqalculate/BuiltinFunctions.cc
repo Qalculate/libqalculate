@@ -4891,7 +4891,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				bool b_interval = CALCULATOR->usesIntervalArithmetic();
 				if(!b_interval) CALCULATOR->useIntervalArithmetic(true);
 				MathStructure m_interval(nr_interval);
-				KnownVariable *v = new KnownVariable("", "", m_interval);
+				KnownVariable *v = new KnownVariable("", "v", m_interval);
 				merr.replace(x_var, v);
 				CALCULATOR->beginTemporaryStopMessages();
 				merr.eval(eo2);
@@ -6007,8 +6007,9 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 }
 
 LimitFunction::LimitFunction() : MathFunction("limit", 2, 4) {
-	NumberArgument *arg = new NumberArgument();
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setComplexAllowed(false);
+	arg->setHandleVector(true);
 	setArgumentDefinition(2, arg);
 	setArgumentDefinition(3, new SymbolicArgument());
 	setDefaultValue(3, "x");
@@ -6019,13 +6020,14 @@ LimitFunction::LimitFunction() : MathFunction("limit", 2, 4) {
 	setDefaultValue(4, "0");
 }
 int LimitFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[1].isVector()) return 0;
 	mstruct = vargs[0];
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
-		if(mstruct.calculateLimit(vargs[2], vargs[1].number(), eo2, vargs[3].number().intValue())) return 1;
+		if(mstruct.calculateLimit(vargs[2], vargs[1], eo2, vargs[3].number().intValue())) return 1;
 	}
-	if(mstruct.calculateLimit(vargs[2], vargs[1].number(), eo, vargs[3].number().intValue())) return 1;
+	if(mstruct.calculateLimit(vargs[2], vargs[1], eo, vargs[3].number().intValue())) return 1;
 	CALCULATOR->error(true, _("Unable to find limit."), NULL);
 	return -1;
 }
