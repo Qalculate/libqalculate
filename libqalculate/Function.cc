@@ -746,9 +746,52 @@ void UserFunction::set(const ExpressionItem *item) {
 int UserFunction::subtype() const {
 	return SUBTYPE_USER_FUNCTION;
 }
-
+bool replace_intervals(MathStructure &mstruct) {
+	if(mstruct.isNumber() && mstruct.number().isInterval(false)) {
+		Variable *v = new KnownVariable("", "u", mstruct);
+		v->ref();
+		mstruct.set(v, true);
+		v->destroy();
+		return true;
+	}
+	bool b = false;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(replace_intervals(mstruct[i])) {
+			mstruct.childUpdated(i + 1);
+			b = true;
+		}
+	}
+	return b;
+}
+extern bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
+bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_interval && mstruct.size() == 2) {
+		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
+			Number nr;
+			if(nr.setInterval(mstruct[0].number(), mstruct[1].number())) {
+				mstruct.set(nr, true);
+				return true;
+			}
+		} else {
+			MathStructure m1(mstruct[0]);
+			MathStructure m2(mstruct[1]);
+			if(create_interval(mstruct, m1, m2)) return true;
+			m1.eval(eo);
+			m2.eval(eo);
+			if(create_interval(mstruct, m1, m2)) return true;
+		}
+		return false;
+	}
+	bool b = false;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(replace_f_interval(mstruct[i], eo)) {
+			mstruct.childUpdated(i + 1);
+			b = true;
+		}
+	}
+	return b;
+}
 int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-
 	ParseOptions po;
 	if(b_local) po.angle_unit = eo.parse_options.angle_unit;
 	if(args() != 0) {
@@ -764,7 +807,14 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		
 		for(int i = 0; i < i_args; i++) {
-			v_id.push_back(CALCULATOR->addId(new MathStructure(vargs[i]), true));
+			if(vargs[i].containsInterval(true) || vargs[i].containsFunction(CALCULATOR->f_interval, true)) {
+				MathStructure *mv = new MathStructure(vargs[i]);
+				replace_f_interval(*mv, eo);
+				replace_intervals(*mv);
+				v_id.push_back(CALCULATOR->addId(mv, true));
+			} else {
+				v_id.push_back(CALCULATOR->addId(new MathStructure(vargs[i]), true));
+			}
 			v_strs.push_back(LEFT_PARENTHESIS ID_WRAP_LEFT);
 			v_strs[i] += i2s(v_id[i]);
 			v_strs[i] += ID_WRAP_RIGHT RIGHT_PARENTHESIS;

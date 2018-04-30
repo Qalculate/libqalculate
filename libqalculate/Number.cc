@@ -1059,9 +1059,10 @@ void Number::splitInterval(unsigned int nr_of_parts, vector<Number> &v) const {
 			mpfr_div_ui(f_mid, f_mid, 2, MPFR_RNDN);
 			mpfr_add(f_mid, f_mid, fl_value, MPFR_RNDN);
 			v.push_back(*this);
-			mpfr_set(v.back().internalUpperFloat(), f_mid, MPFR_RNDD);
+			mpfr_set(v.back().internalUpperFloat(), f_mid, MPFR_RNDU);
 			v.push_back(*this);
-			mpfr_set(v.back().internalLowerFloat(), f_mid, MPFR_RNDU);
+			//mpfr_nextabove(f_mid);
+			mpfr_set(v.back().internalLowerFloat(), f_mid, MPFR_RNDD);
 		} else {
 			mpfr_t value_diff, lower_value, upper_value, value_add;
 			mpfr_inits2(mpfr_get_prec(fl_value), value_diff, lower_value, upper_value, value_add, NULL);
