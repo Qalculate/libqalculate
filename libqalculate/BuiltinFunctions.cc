@@ -2993,12 +2993,12 @@ int SincFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 
 bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2) {
 	if(m1 == m2) {
-		mstruct = m1;
+		mstruct.set(m1, true);
 		return 1;
 	} else if(m1.isNumber() && m2.isNumber()) {
 		Number nr;
 		if(!nr.setInterval(m1.number(), m2.number())) return false;
-		mstruct = nr;
+		mstruct.set(nr, true);
 		return true;
 	} else if(m1.isMultiplication() && m2.isMultiplication() && m1.size() > 1 && m2.size() > 1) {
 		size_t i0 = 0, i1 = 0;
@@ -3013,7 +3013,7 @@ bool create_interval(MathStructure &mstruct, const MathStructure &m1, const Math
 		}
 		Number nr;
 		if(!nr.setInterval(i0 == 1 ? m1[0].number() : nr_one, i1 == 1 ? m2[0].number() : nr_one)) return 0;
-		mstruct = m1;
+		mstruct.set(m1, true);
 		if(i0 == 1) mstruct.delChild(1, true);
 		mstruct *= nr;
 		mstruct.evalSort(false);
@@ -3031,7 +3031,7 @@ bool create_interval(MathStructure &mstruct, const MathStructure &m1, const Math
 		}
 		Number nr;
 		if(!nr.setInterval(i0 == 1 ? m1.last().number() : nr_one, i1 == 1 ? m2.last().number() : nr_one)) return false;
-		mstruct = m1;
+		mstruct.set(m1, true);
 		if(i0 == 1) mstruct.delChild(mstruct.size(), true);
 		mstruct += nr;
 		mstruct.evalSort(false);
@@ -3039,13 +3039,13 @@ bool create_interval(MathStructure &mstruct, const MathStructure &m1, const Math
 	} else if(m1.isMultiplication() && m1.size() == 2 && m1[0].isNumber() && m2.equals(m1[1], true)) {
 		Number nr;
 		if(!nr.setInterval(m1[0].number(), nr_one)) return false;
-		mstruct = nr;
+		mstruct.set(nr, true);
 		mstruct *= m2;
 		return true;
 	} else if(m2.isMultiplication() && m2.size() == 2 && m2[0].isNumber() && m1.equals(m2[1], true)) {
 		Number nr;
 		if(!nr.setInterval(nr_one, m2[0].number())) return false;
-		mstruct = nr;
+		mstruct.set(nr, true);
 		mstruct *= m1;
 		return true;
 	}
@@ -4606,6 +4606,7 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 				eo2.approximation = APPROXIMATION_APPROXIMATE;
 				CALCULATOR->beginTemporaryStopMessages();
 				KnownVariable *v = new KnownVariable("", "", mi);
+				v->ref();
 				MathStructure mpow(m[1]);
 				mpow.replace(mx, v, true);
 				mpow.eval(eo2);
@@ -4621,6 +4622,7 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 			CALCULATOR->beginTemporaryStopMessages();
 			MathStructure mbase(m[0]);
 			KnownVariable *v = new KnownVariable("", "", mi);
+			v->ref();
 			mbase.replace(mx, v, true);
 			bool b_multiple = mbase.contains(mx, true) > 0;
 			if(b_multiple) mbase.replace(mx, v);
@@ -4735,6 +4737,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			return false;
 		}
 		UnknownVariable *var = new UnknownVariable("", "x");
+		var->ref();
 		var->setInterval(m_interval);
 		x_var.set(var);
 		mstruct_pre.replace(vargs[1], x_var);
@@ -4892,6 +4895,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				if(!b_interval) CALCULATOR->useIntervalArithmetic(true);
 				MathStructure m_interval(nr_interval);
 				KnownVariable *v = new KnownVariable("", "v", m_interval);
+				v->ref();
 				merr.replace(x_var, v);
 				CALCULATOR->beginTemporaryStopMessages();
 				merr.eval(eo2);
@@ -5854,6 +5858,7 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 						integ_fac.negate();
 						if(integ_fac.integrate(m_x, eo, true, false) > 0) {
 							UnknownVariable *var = new UnknownVariable("", "u");
+							var->ref();
 							Assumptions *ass = new Assumptions();
 							if(false) {
 								ass->setType(ASSUMPTION_TYPE_REAL);

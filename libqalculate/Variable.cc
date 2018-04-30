@@ -385,12 +385,19 @@ bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
 	}
 	return b;
 }
+extern bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
 bool replace_f_interval(MathStructure &mstruct) {
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_interval && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isNumber()) {
-		Number nr;
-		if(nr.setInterval(mstruct[0].number(), mstruct[1].number())) {
-			mstruct.set(nr, true);
-			return true;
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_interval && mstruct.size() == 2) {
+		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
+			Number nr;
+			if(nr.setInterval(mstruct[0].number(), mstruct[1].number())) {
+				mstruct.set(nr, true);
+				return true;
+			}
+		} else {
+			MathStructure m1(mstruct[0]);
+			MathStructure m2(mstruct[1]);
+			if(create_interval(mstruct, m1, m2)) return true;
 		}
 	} else {
 		bool b = false;
