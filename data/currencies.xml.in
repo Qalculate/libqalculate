@@ -199,7 +199,7 @@
       <_names>ar:BBD</_names>
     </builtin_unit>
     <builtin_unit name="BYR">
-      <_title>Belarusian Ruble p.</_title>
+      <_title>Belarusian Ruble p. (obsolete)</_title>
       <_names>ar:BYR</_names>
     </builtin_unit>
     <builtin_unit name="BZD">
@@ -423,7 +423,7 @@
       <_names>ar:MVR,au:&#x0783;</_names>
     </builtin_unit>
     <builtin_unit name="MRO">
-      <_title>Mauritanian Ouguiya (old)</_title>
+      <_title>Mauritanian Ouguiya (obsolete)</_title>
       <_names>ar:MRO</_names>
     </builtin_unit>
     <builtin_unit name="MUR">
@@ -611,7 +611,7 @@
       <_names>ar:YER</_names>
     </builtin_unit>
     <builtin_unit name="ZMK">
-      <_title>Zambian Kwacha (old)</_title>
+      <_title>Zambian Kwacha (obsolete)</_title>
       <_names>ar:ZMK</_names>
     </builtin_unit>
     <unit type="alias">
@@ -634,7 +634,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Belgian Franc</_title>
+      <_title>Belgian Franc (obsolete)</_title>
       <_names>ar:BEF</_names>
       <base>
         <unit>EUR</unit>
@@ -644,7 +644,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Greek Drachma</_title>
+      <_title>Greek Drachma (obsolete)</_title>
       <_names>ar:GRD,au:&#x20AF;</_names>
       <base>
         <unit>EUR</unit>
@@ -654,7 +654,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>French Franc</_title>
+      <_title>French Franc (obsolete)</_title>
       <_names>ar:FRF,au:&#x20A3;</_names>
       <base>
         <unit>EUR</unit>
@@ -664,7 +664,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Italian Lira</_title>
+      <_title>Italian Lira (obsolete)</_title>
       <_names>ar:ITL</_names>
       <base>
         <unit>EUR</unit>
@@ -674,7 +674,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Dutch Guilder</_title>
+      <_title>Dutch Guilder (obsolete)</_title>
       <_names>ar:NLG</_names>
       <base>
         <unit>EUR</unit>
@@ -684,7 +684,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Portuguese Escudo</_title>
+      <_title>Portuguese Escudo (obsolete)</_title>
       <_names>ar:PTE</_names>
       <base>
         <unit>EUR</unit>
@@ -694,7 +694,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Deutsche Mark</_title>
+      <_title>Deutsche Mark (obsolete)</_title>
       <_names>ar:DEM</_names>
       <base>
         <unit>EUR</unit>
@@ -704,7 +704,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Spanish Peseta</_title>
+      <_title>Spanish Peseta (obsolete)</_title>
       <_names>ar:ESP,au:&#x20A7;</_names>
       <base>
         <unit>EUR</unit>
@@ -714,7 +714,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Irish Pound</_title>
+      <_title>Irish Pound (obsolete)</_title>
       <_names>ar:IEP</_names>
       <base>
         <unit>EUR</unit>
@@ -724,7 +724,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Luxembourg Franc</_title>
+      <_title>Luxembourg Franc (obsolete)</_title>
       <_names>ar:LUF</_names>
       <base>
         <unit>EUR</unit>
@@ -734,7 +734,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Austrian Schilling</_title>
+      <_title>Austrian Schilling (obsolete)</_title>
       <_names>ar:ATS</_names>
       <base>
         <unit>EUR</unit>
@@ -744,7 +744,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Finnish Markka</_title>
+      <_title>Finnish Markka (obsolete)</_title>
       <_names>ar:FIM</_names>
       <base>
         <unit>EUR</unit>
@@ -754,7 +754,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Slovenian Tolar</_title>
+      <_title>Slovenian Tolar (obsolete)</_title>
       <_names>ar:SIT</_names>
       <base>
         <unit>EUR</unit>
@@ -764,7 +764,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Cypriot Pound</_title>
+      <_title>Cypriot Pound (obsolete)</_title>
       <_names>ar:CYP</_names>
       <base>
         <unit>EUR</unit>
@@ -774,7 +774,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Estonian Kroon</_title>
+      <_title>Estonian Kroon (obsolete)</_title>
       <_names>ar:EEK</_names>
       <base>
         <unit>EUR</unit>
@@ -784,7 +784,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Slovak Koruna</_title>
+      <_title>Slovak Koruna (obsolete)</_title>
       <_names>ar:SKK</_names>
       <base>
         <unit>EUR</unit>
@@ -794,7 +794,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Maltese Lira</_title>
+      <_title>Maltese Lira (obsolete)</_title>
       <_names>ar:MTL</_names>
       <base>
         <unit>EUR</unit>
@@ -804,7 +804,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Latvian Lats</_title>
+      <_title>Latvian Lats (obsolete)</_title>
       <_names>ar:LVL</_names>
       <base>
         <unit>EUR</unit>
@@ -814,7 +814,7 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <_title>Lithuanian Litas</_title>
+      <_title>Lithuanian Litas (obsolete)</_title>
       <_names>ar:LTL</_names>
       <base>
         <unit>EUR</unit>

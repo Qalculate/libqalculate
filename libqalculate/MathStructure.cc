@@ -9628,12 +9628,12 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 								if(i_sgn > 0) nr.setInterval(nr_high, nr_plus_inf);
 								else if(i_sgn < 0) nr.setInterval(nr_minus_inf, nr_high);
 								mstruct.set(nr, true);
-								if(b_test) CALCULATOR->error(false, _("Limit for %s determined graphically"), mbak.print().c_str(), NULL);
+								if(b_test) CALCULATOR->error(false, _("Limit for %s determined graphically."), mbak.print().c_str(), NULL);
 								break;
 							}
 						}
 					} else {
-						if(b_test) CALCULATOR->error(false, _("Limit for %s determined graphically"), mbak.print().c_str(), NULL);
+						if(b_test) CALCULATOR->error(false, _("Limit for %s determined graphically."), mbak.print().c_str(), NULL);
 						if(i_sgn > 0) mstruct.set(nr_plus_inf, true);
 						else if(i_sgn < 0) mstruct.set(nr_minus_inf, true);
 						break;
@@ -10265,11 +10265,34 @@ bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOpt
 	return b;
 }
 
+void remove_nonzero_mul(MathStructure &msolve, const MathStructure &u_var, const EvaluationOptions &eo) {
+	if(!msolve.isMultiplication()) return;
+	for(size_t i = 0; i < msolve.size();) {
+		if(!msolve[i].contains(u_var, true)) {
+			msolve[i].eval(eo);
+			if(msolve[i].representsNonZero(true)) {
+				if(msolve.size() == 2) {
+					msolve.delChild(i + 1, true);
+					break;
+				}
+				msolve.delChild(i + 1, true);
+			} else {
+				remove_nonzero_mul(msolve[i], u_var, eo);
+				i++;
+			}
+		} else {
+			remove_nonzero_mul(msolve[i], u_var, eo);
+			i++;
+		}
+	}
+}
+
 extern bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
 void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const EvaluationOptions &eo_pre) {
 	if(vars.size() > 0) {
 		EvaluationOptions eo = eo_pre;
 		eo.approximation = APPROXIMATION_EXACT_VARIABLES;
+		eo.expand = false;
 		if(eo.calculate_functions) calculate_differentiable_functions(mstruct, eo);
 		KnownVariable *v = vars[0];
 		vars.erase(vars.begin());
@@ -10304,11 +10327,20 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 		MathStructure malts;
 		malts.clearVector();
 		if(b) {
+			eo.keep_zero_units = false;
 			msolve.calculatesub(eo, eo, true);
+			eo.approximation = APPROXIMATION_APPROXIMATE;
+			eo.expand = eo_pre.expand;
+			msolve.factorize(eo, false, false, 0, false, true);
+			remove_nonzero_mul(msolve, u_var, eo);
 			if(contains_undefined(msolve) || msolve.countTotalChildren(false) > 1000 || msolve.containsInterval(true, true, false, true, true)) {
-				b = false;
+				msolve.replace(u_var, nr_intval);
+				msolve.eval(eo);
+				ComparisonResult cmp = msolve.compare(m_zero);
+				if(COMPARISON_MIGHT_BE_EQUAL(cmp)) {
+					b = false;
+				}
 			} else {
-				eo.approximation = APPROXIMATION_APPROXIMATE;
 				MathStructure mtest(mstruct);
 				mtest.replace(v, u_var);
 				mtest.calculatesub(eo, eo, true);
@@ -10319,30 +10351,10 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 					nr_prec *= nr_intval.uncertainty();
 					b = find_interval_zeroes(msolve, malts, u_var, nr_intval, eo, 0, nr_prec);
 				}
-				eo.approximation = APPROXIMATION_EXACT_VARIABLES;
 			}
-			/*msolve.transform(COMPARISON_EQUALS, m_zero);
-			CALCULATOR->beginTemporaryStopIntervalArithmetic();
-			msolve.isolate_x(eo, eo, u_var);
-			CALCULATOR->endTemporaryStopIntervalArithmetic();
-			eo.test_comparisons = true;
-			malts.addChild(nr_intval.lowerEndPoint());
-			malts.addChild(nr_intval.upperEndPoint());
-			msolve.calculatesub(eo, eo, true);
-			if(msolve.isComparison() && msolve.comparisonType() == COMPARISON_EQUALS && msolve[0] == u_var) {
-				malts.addChild(msolve[1]);
-			} else if(msolve.isLogicalOr()) {
-				for(size_t i = 0; i < msolve.size(); i++) {
-					if(msolve[i].isComparison() && msolve[i].comparisonType() == COMPARISON_EQUALS && msolve[i][0] == u_var) {
-						malts.addChild(msolve[i][1]);
-					} else if(!msolve[i].isZero()) {
-						b = false;
-						break;
-					}
-				}
-			} else if(!msolve.isZero()) {
-				b = false;
-			}*/
+			eo.expand = false;
+			eo.approximation = APPROXIMATION_EXACT_VARIABLES;
+			eo.keep_zero_units = eo_pre.keep_zero_units;
 		}
 		CALCULATOR->endTemporaryStopMessages();
 		CALCULATOR->beginTemporaryStopMessages();
@@ -10363,9 +10375,11 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 					MathStructure mlim1(mnew);
 					if(!create_interval(mnew, mlim1, mlim)) {
 						eo.approximation = APPROXIMATION_APPROXIMATE;
+						eo.expand = eo_pre.expand;
 						mlim.eval(eo);
 						if(!create_interval(mnew, mlim1, mlim)) {
 							mlim1.eval(eo);
+							eo.expand = false;
 							eo.approximation = APPROXIMATION_EXACT_VARIABLES;
 							if(!create_interval(mnew, mlim1, mlim)) {
 								b = false;
