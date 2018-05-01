@@ -9694,6 +9694,7 @@ bool Calculator::loadExchangeRates() {
 							u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
 							if(u) u->setHidden(true);
 						} else {
+							((AliasUnit*) u)->setBaseUnit(u_usd);
 							((AliasUnit*) u)->setExpression(rate);
 						}
 						if(u) {
