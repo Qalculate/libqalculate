@@ -71,6 +71,7 @@ void Unit::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_UNIT) {
 		b_si = ((Unit*) item)->isSIUnit();
 		ssystem = ((Unit*) item)->system();
+		scountries = ((Unit*) item)->countries();
 	}
 	ExpressionItem::set(item);
 }
@@ -111,6 +112,14 @@ void Unit::setUseWithPrefixesByDefault(bool use_with_prefixes) {
 }
 bool Unit::isCurrency() const {
 	return baseUnit() == CALCULATOR->u_euro;
+}
+const string &Unit::countries() const {return scountries;}
+void Unit::setCountries(string country_names) {
+	remove_blank_ends(country_names);
+	if(scountries != country_names) {
+		scountries = country_names;
+		setChanged(true);
+	}
 }
 bool Unit::isUsedByOtherUnits() const {
 	return CALCULATOR->unitIsUsedByOtherUnits(this);

@@ -6964,9 +6964,9 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 
 	xmlDocPtr doc;
 	xmlNodePtr cur, child, child2, child3;
-	string version, stmp, name, uname, type, svalue, sexp, plural, singular, category_title, category, description, title, inverse, suncertainty, base, argname, usystem;
+	string version, stmp, name, uname, type, svalue, sexp, plural, countries, singular, category_title, category, description, title, inverse, suncertainty, base, argname, usystem;
 	bool best_title, next_best_title, best_category_title, next_best_category_title, best_description, next_best_description;
-	bool best_plural, next_best_plural, best_singular, next_best_singular, best_argname, next_best_argname;
+	bool best_plural, next_best_plural, best_singular, next_best_singular, best_argname, next_best_argname, best_countries, next_best_countries;
 	bool best_proptitle, next_best_proptitle, best_propdescr, next_best_propdescr;
 	string proptitle, propdescr;
 	ExpressionName names[10];
@@ -7883,6 +7883,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					child = cur->xmlChildrenNode;
 					singular = ""; best_singular = false; next_best_singular = false;
 					plural = ""; best_plural = false; next_best_plural = false;
+					countries = "", best_countries = false, next_best_countries = false;
 					use_with_prefixes_set = false;
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
@@ -7902,6 +7903,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							if(!unitNameIsValid(plural, version_numbers, is_user_defs)) {
 								plural = "";
 							}
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "countries")) {
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, countries, best_countries, next_best_countries)
 						} else ITEM_READ_NAME(unitNameIsValid)
 						 else ITEM_READ_DTH
 						 else {
@@ -7909,6 +7912,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						}
 						child = child->next;
 					}
+					u->setCountries(countries);
 					if(new_names) {
 						ITEM_SET_BEST_NAMES(unitNameIsValid)
 						ITEM_SET_REFERENCE_NAMES(unitNameIsValid)
@@ -7943,6 +7947,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					child = cur->xmlChildrenNode;
 					singular = ""; best_singular = false; next_best_singular = false;
 					plural = ""; best_plural = false; next_best_plural = false;
+					countries = "", best_countries = false, next_best_countries = false;
 					bool b_currency = false;
 					use_with_prefixes_set = false;
 					usystem = "";
@@ -8009,6 +8014,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							if(!unitNameIsValid(plural, version_numbers, is_user_defs)) {
 								plural = "";
 							}
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "countries")) {
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, countries, best_countries, next_best_countries)
 						} else ITEM_READ_NAME(unitNameIsValid)
 						 else ITEM_READ_DTH
 						 else {
@@ -8024,6 +8031,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						}
 					} else {
 						au = new AliasUnit(category, name, plural, singular, title, u, svalue, exponent, inverse, is_user_defs, false, active);
+						au->setCountries(countries);
 						if(mix_priority > 0) {
 							au->setMixWithBase(mix_priority);
 							au->setMixWithBaseMinimum(mix_min);
@@ -8200,6 +8208,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					child = cur->xmlChildrenNode;
 					singular = ""; best_singular = false; next_best_singular = false;
 					plural = ""; best_plural = false; next_best_plural = false;
+					countries = "", best_countries = false, next_best_countries = false;
 					use_with_prefixes_set = false;
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
@@ -8217,6 +8226,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "use_with_prefixes")) {
 							XML_GET_TRUE_FROM_TEXT(child, use_with_prefixes)
 							use_with_prefixes_set = true;
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "countries")) {
+							XML_GET_LOCALE_STRING_FROM_TEXT(child, countries, best_countries, next_best_countries)
 						} else ITEM_READ_NAME(unitNameIsValid)
 						 else ITEM_READ_DTH
 						 else {
@@ -8227,6 +8238,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					if(use_with_prefixes_set) {
 						u->setUseWithPrefixesByDefault(use_with_prefixes);
 					}
+					u->setCountries(countries);
 					if(new_names) {
 						ITEM_SAVE_BUILTIN_NAMES
 						ITEM_SET_BEST_NAMES(unitNameIsValid)

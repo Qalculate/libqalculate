@@ -39,7 +39,7 @@ class Unit : public ExpressionItem {
 
   protected:
 
-	string ssystem;
+	string ssystem, scountries;
 	bool b_si;
 	bool b_use_with_prefixes;
 
@@ -84,6 +84,8 @@ class Unit : public ExpressionItem {
 	* @returns true if the unit is a currency.
 	*/
 	bool isCurrency() const;
+	const string &countries() const;
+	void setCountries(string country_names);
 	/** Returns a display string representing the unit in an expression.
 	*
 	* Equivalent to preferredName() for Unit and AliasUnit, but closer to MathStructure::print() for CompositeUnit (prints out base expression).
