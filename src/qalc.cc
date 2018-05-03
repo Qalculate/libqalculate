@@ -1042,6 +1042,11 @@ void list_defs(bool in_interactive, char list_type = 0) {
 					}
 					name_i++;
 				}
+				if(list_type == 'c' && !item->title(false).empty()) {
+					name_str += " (";
+					name_str += item->title(false);
+					name_str += ")";
+				}
 				if((int) name_str.length() > max_l) max_l = name_str.length();
 				name_list.push_front(name_str);
 			}
