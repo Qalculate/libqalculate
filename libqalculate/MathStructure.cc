@@ -10149,7 +10149,7 @@ void find_interval_variables(const MathStructure &mstruct, vector<KnownVariable*
 				}
 			}
 		}		
-		if(var_prec <= CALCULATOR->usesIntervalArithmetic() ? PRECISION + 10 : PRECISION) {
+		if(var_prec <= (CALCULATOR->usesIntervalArithmetic() ? PRECISION + 10 : PRECISION)) {
 			bool b = false;
 			for(size_t i = 0; i < v_prec.size(); i++) {
 				if(var_prec < v_prec[i]) {
@@ -10401,7 +10401,96 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 	}
 }
 
-void solve_intervals(MathStructure &mstruct, const EvaluationOptions &eo) {
+
+bool contains_interval_variable(const MathStructure &m) {
+	if(m.isVariable() && m.containsInterval(true, true, false, true)) return true;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_interval_variable(m[i])) return true;
+	}
+	return false;
+}
+KnownVariable *fix_find_interval_variable(MathStructure &mstruct) {
+	if(mstruct.isVariable() && mstruct.variable()->isKnown()) {
+		const MathStructure &m = ((KnownVariable*) mstruct.variable())->get();
+		if(contains_interval_variable(m)) return (KnownVariable*) mstruct.variable();
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		KnownVariable *v = fix_find_interval_variable(mstruct[i]);
+		if(v) return v;
+	}
+	return NULL;
+}
+KnownVariable *fix_find_interval_variable2(MathStructure &mstruct) {
+	if(mstruct.isVariable() && mstruct.variable()->isKnown()) {
+		const MathStructure &m = ((KnownVariable*) mstruct.variable())->get();
+		if(m.isNumber()) return NULL;
+		if(m.isMultiplication()) {
+			bool b_intfound = false;;
+			for(size_t i = 0; i < m.size(); i++) {
+				if(m[i].containsInterval(true, false, false, true)) {
+					if(b_intfound || !m[i].isNumber()) return (KnownVariable*) mstruct.variable();
+					b_intfound = true;
+				}
+			}
+		} else if(m.containsInterval(true, false, false, true)) {
+			return (KnownVariable*) mstruct.variable();
+		}
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		KnownVariable *v = fix_find_interval_variable2(mstruct[i]);
+		if(v) return v;
+	}
+	return NULL;
+}
+bool replace_intervals(MathStructure &m) {
+	if(m.isNumber()) {
+		int var_prec = 0;
+		if(m.number().isInterval()) var_prec = m.number().precision(1);
+		else if(CALCULATOR->usesIntervalArithmetic() && m.number().precision() >= 0) var_prec = m.number().precision();
+		if(var_prec <= (CALCULATOR->usesIntervalArithmetic() ? PRECISION + 10 : PRECISION)) {
+			Variable *v = new KnownVariable("", m.print(), m);
+			v->ref();
+			m.set(v, true);
+			v->destroy();
+		}
+	}
+	bool b = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(replace_intervals(m[i])) {
+			m.childUpdated(i + 1);
+			b = true;
+		}
+	}
+	return b;
+}
+void fix_interval_variable(KnownVariable *v, MathStructure &mvar) {
+	mvar = v->get();
+	replace_intervals(mvar);
+}
+
+void solve_intervals(MathStructure &mstruct, const EvaluationOptions &eo, const EvaluationOptions &feo) {
+	bool b = false;
+	while(true) {
+		KnownVariable *v = fix_find_interval_variable(mstruct);
+		if(!v) break;
+		b = true;
+		MathStructure mvar;
+		fix_interval_variable(v, mvar);
+		mstruct.replace(v, mvar);
+	}
+	while(true) {
+		KnownVariable *v = fix_find_interval_variable2(mstruct);
+		if(!v) break;
+		b = true;
+		MathStructure mvar;
+		fix_interval_variable(v, mvar);
+		mstruct.replace(v, mvar);
+	}
+	if(b) {
+		EvaluationOptions eo2 = eo;
+		eo2.expand = false;
+		mstruct.calculatesub(eo2, feo, true);
+	}
 	vector<KnownVariable*> vars; vector<int> v_count; vector<int> v_prec;
 	find_interval_variables(mstruct, vars, v_count, v_prec);
 	for(size_t i = 0; i < v_count.size();) {
@@ -10445,14 +10534,15 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		calculatesub(eo3, feo);
 		eo3.approximation = APPROXIMATION_APPROXIMATE;
 		factorize_variables(*this, eo3);
+		if(eo.approximation == APPROXIMATION_APPROXIMATE && !containsUnknowns()) eo3.approximation = APPROXIMATION_EXACT_VARIABLES;
+		else eo3.approximation = APPROXIMATION_EXACT;
 		eo3.expand = eo.expand;
 		eo3.assume_denominators_nonzero = eo.assume_denominators_nonzero;
-		solve_intervals(*this, eo3);
+		solve_intervals(*this, eo3, feo);
 		if(eo.calculate_functions) calculate_differentiable_functions(*this, feo);
 	} else {
 		if(eo.calculate_functions) calculateFunctions(feo);
 	}
-
 	if(m_type == STRUCT_NUMBER) return *this;
 
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT || (eo2.approximation == APPROXIMATION_APPROXIMATE && (containsUnknowns() || containsInterval(false, true, false, false)))) {
@@ -18250,7 +18340,7 @@ int contains_interval_var(const MathStructure &m, bool structural_only, bool che
 	if(m.type() == STRUCT_NUMBER) {
 		if(m.number().isInterval(false)) {
 			if(ignore_high_precision_interval) {
-				if(m.number().precision(true) > PRECISION + 10) return 0;
+				if(m.number().precision(true) > (CALCULATOR->usesIntervalArithmetic() ? PRECISION + 10 : PRECISION)) return 0;
 			}
 			return 1;
 		} else if(CALCULATOR->usesIntervalArithmetic() && m.number().precision() >= 0) {
