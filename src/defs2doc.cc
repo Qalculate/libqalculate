@@ -493,7 +493,7 @@ void print_variable(Variable *v) {
 					case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
 					default: {}
 				}
-				if(!value.empty() && !((UnknownVariable*) v)->assumptions()->type() == ASSUMPTION_TYPE_NONE) value += " ";
+				if(!value.empty() && ((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
 				switch(((UnknownVariable*) v)->assumptions()->type()) {
 					case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
 					case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}

@@ -746,9 +746,9 @@ void UserFunction::set(const ExpressionItem *item) {
 int UserFunction::subtype() const {
 	return SUBTYPE_USER_FUNCTION;
 }
-bool replace_intervals(MathStructure &mstruct) {
-	if(mstruct.isNumber() && mstruct.number().isInterval(false)) {
-		Variable *v = new KnownVariable("", "u", mstruct);
+bool replace_intervals_f(MathStructure &mstruct) {
+	if(mstruct.isNumber() && (mstruct.number().isInterval(false) || (CALCULATOR->usesIntervalArithmetic() && mstruct.number().precision() >= 0))) {
+		Variable *v = new KnownVariable("", mstruct.print(), mstruct);
 		v->ref();
 		mstruct.set(v, true);
 		v->destroy();
@@ -756,7 +756,7 @@ bool replace_intervals(MathStructure &mstruct) {
 	}
 	bool b = false;
 	for(size_t i = 0; i < mstruct.size(); i++) {
-		if(replace_intervals(mstruct[i])) {
+		if(replace_intervals_f(mstruct[i])) {
 			mstruct.childUpdated(i + 1);
 			b = true;
 		}
@@ -810,7 +810,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			if(vargs[i].containsInterval(true) || vargs[i].containsFunction(CALCULATOR->f_interval, true)) {
 				MathStructure *mv = new MathStructure(vargs[i]);
 				replace_f_interval(*mv, eo);
-				replace_intervals(*mv);
+				replace_intervals_f(*mv);
 				v_id.push_back(CALCULATOR->addId(mv, true));
 			} else {
 				v_id.push_back(CALCULATOR->addId(new MathStructure(vargs[i]), true));
