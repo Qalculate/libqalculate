@@ -6141,7 +6141,13 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						x_vectors.push_back(x_vector);
 						y_vectors.push_back(y_vector);
 						PlotDataParameters *dpd = new PlotDataParameters;
-						dpd->title = mstruct[i].print();
+						MathStructure mprint;
+						if(vargs[0].isVector() && vargs[0].size() == mstruct.size()) mprint = vargs[0][i];
+						else mprint = mstruct[i];
+						PrintOptions po;
+						po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+						mprint.format(po);
+						dpd->title = mprint.print(po);
 						dpd->test_continuous = true;
 						dpds.push_back(dpd);
 					}
@@ -6184,7 +6190,11 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			x_vectors.push_back(x_vector);
 			y_vectors.push_back(y_vector);
 			PlotDataParameters *dpd = new PlotDataParameters;
-			dpd->title = mstruct.print();
+			MathStructure mprint(vargs[0]);
+			PrintOptions po;
+			po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+			mprint.format(po);
+			dpd->title = mprint.print(po);
 			dpd->test_continuous = true;
 			dpds.push_back(dpd);
 		}
