@@ -1,6 +1,21 @@
+2018-05-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improved series titles in plot()
+	* Derivative for bessely()
+	* Improved product log deriative
+
+2018-05-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add titles to currency list in qalc
+
+2018-05-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add countries property to currencies
+	* Add "(obsolote)" to relevant currencies titles
+
 2018-04-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Enhanced interval arithmetic with variables
+	* Enhanced interval arithmetic with dependent intervals
 
 2018-04-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
