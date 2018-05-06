@@ -10233,7 +10233,7 @@ bool contains_interval_variable(const MathStructure &m) {
 	return false;
 }
 bool function_differentiable(MathFunction *o_function) {
-	return (o_function == CALCULATOR->f_sqrt || o_function == CALCULATOR->f_root || o_function == CALCULATOR->f_cbrt || o_function == CALCULATOR->f_ln || o_function == CALCULATOR->f_logn || o_function == CALCULATOR->f_arg || o_function == CALCULATOR->f_gamma || o_function == CALCULATOR->f_beta || o_function == CALCULATOR->f_abs || o_function == CALCULATOR->f_factorial || o_function == CALCULATOR->f_besselj || o_function == CALCULATOR->f_erf || o_function == CALCULATOR->f_erfc || o_function == CALCULATOR->f_li || o_function == CALCULATOR->f_Li || o_function == CALCULATOR->f_Ei || o_function == CALCULATOR->f_Si || o_function == CALCULATOR->f_Ci || o_function == CALCULATOR->f_Shi || o_function == CALCULATOR->f_Chi || o_function == CALCULATOR->f_abs || o_function == CALCULATOR->f_signum || o_function == CALCULATOR->f_heaviside || o_function == CALCULATOR->f_lambert_w || o_function == CALCULATOR->f_sinc || o_function == CALCULATOR->f_sin || o_function == CALCULATOR->f_cos || o_function == CALCULATOR->f_tan || o_function == CALCULATOR->f_asin || o_function == CALCULATOR->f_acos || o_function == CALCULATOR->f_atan || o_function == CALCULATOR->f_sinh || o_function == CALCULATOR->f_cosh || o_function == CALCULATOR->f_tanh || o_function == CALCULATOR->f_asinh || o_function == CALCULATOR->f_acosh || o_function == CALCULATOR->f_atanh);
+	return (o_function == CALCULATOR->f_sqrt || o_function == CALCULATOR->f_root || o_function == CALCULATOR->f_cbrt || o_function == CALCULATOR->f_ln || o_function == CALCULATOR->f_logn || o_function == CALCULATOR->f_arg || o_function == CALCULATOR->f_gamma || o_function == CALCULATOR->f_beta || o_function == CALCULATOR->f_abs || o_function == CALCULATOR->f_factorial || o_function == CALCULATOR->f_besselj || o_function == CALCULATOR->f_bessely || o_function == CALCULATOR->f_erf || o_function == CALCULATOR->f_erfc || o_function == CALCULATOR->f_li || o_function == CALCULATOR->f_Li || o_function == CALCULATOR->f_Ei || o_function == CALCULATOR->f_Si || o_function == CALCULATOR->f_Ci || o_function == CALCULATOR->f_Shi || o_function == CALCULATOR->f_Chi || o_function == CALCULATOR->f_abs || o_function == CALCULATOR->f_signum || o_function == CALCULATOR->f_heaviside || o_function == CALCULATOR->f_lambert_w || o_function == CALCULATOR->f_sinc || o_function == CALCULATOR->f_sin || o_function == CALCULATOR->f_cos || o_function == CALCULATOR->f_tan || o_function == CALCULATOR->f_asin || o_function == CALCULATOR->f_acos || o_function == CALCULATOR->f_atan || o_function == CALCULATOR->f_sinh || o_function == CALCULATOR->f_cosh || o_function == CALCULATOR->f_tanh || o_function == CALCULATOR->f_asinh || o_function == CALCULATOR->f_acosh || o_function == CALCULATOR->f_atanh);
 }
 
 bool calculate_differentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive = true, bool do_unformat = true) {
@@ -19059,6 +19059,15 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
 				multiply(nr_half);
+			} else if(o_function == CALCULATOR->f_bessely && SIZE == 2 && CHILD(0).isInteger()) {
+				MathStructure mstruct(CHILD(1));
+				MathStructure mstruct2(*this);
+				CHILD(0) += m_minus_one;
+				mstruct2[0] += m_one;
+				subtract(mstruct2);
+				mstruct.differentiate(x_var, eo);
+				multiply(mstruct);
+				multiply(nr_half);
 			} else if(o_function == CALCULATOR->f_erf && SIZE == 1) {
 				MathStructure mdiff(CHILD(0));
 				MathStructure mexp(CHILD(0));
@@ -19150,10 +19159,13 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				setFunction(CALCULATOR->f_dirac);
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
-			} else if(o_function == CALCULATOR->f_lambert_w && SIZE == 1 && CHILD(0) == x_var) {
+			} else if(o_function == CALCULATOR->f_lambert_w && SIZE == 1) {
 				MathStructure *mstruct = new MathStructure(*this);
+				MathStructure *mstruct2 = new MathStructure(CHILD(0));
 				mstruct->add(m_one);
 				mstruct->multiply(CHILD(0));
+				mstruct2->differentiate(x_var, eo);
+				multiply_nocopy(mstruct2);
 				divide_nocopy(mstruct);
 			} else if(o_function == CALCULATOR->f_sin && SIZE == 1) {
 				setFunction(CALCULATOR->f_cos);
