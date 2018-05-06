@@ -10206,10 +10206,11 @@ bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, co
 	} else if(cmp > COMPARISON_RESULT_UNKNOWN || cmp == COMPARISON_RESULT_EQUAL || contains_undefined(mtest)) {
 		if(cmp == COMPARISON_RESULT_EQUAL || (nr_intval.precision(1) > (orig_prec > PRECISION ? orig_prec + 5 : PRECISION + 5) || (!nr_intval.isNonZero() && nr_intval.uncertainty().isLessThan(nr_prec)))) {
 			if(cmp == COMPARISON_RESULT_EQUAL && depth <= 3) return false;
-			
 			if(malts.size() > 0 && (cmp = malts.last().compare(nr_intval)) != COMPARISON_RESULT_UNKNOWN && COMPARISON_MIGHT_BE_EQUAL(cmp)) {
 				malts.last().number().setInterval(malts.last().number(), nr_intval);
-				if(malts.last().number().precision(1) < orig_prec + 3) return false;
+				if(malts.last().number().precision(1) < (orig_prec > PRECISION ? orig_prec + 3 : PRECISION + 3)) {
+					return false;
+				}
 			} else {
 				malts.addChild(nr_intval);
 			}
@@ -10224,9 +10225,15 @@ bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, co
 	}
 	return false;
 }
-
+bool contains_interval_variable(const MathStructure &m) {
+	if(m.isVariable() && m.containsInterval(true, true, false, true)) return true;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_interval_variable(m[i])) return true;
+	}
+	return false;
+}
 bool function_differentiable(MathFunction *o_function) {
-	return (o_function == CALCULATOR->f_sqrt || o_function == CALCULATOR->f_root || o_function == CALCULATOR->f_ln || o_function == CALCULATOR->f_arg || o_function == CALCULATOR->f_gamma || o_function == CALCULATOR->f_abs || o_function == CALCULATOR->f_factorial || o_function == CALCULATOR->f_besselj || o_function == CALCULATOR->f_erf || o_function == CALCULATOR->f_erfc || o_function == CALCULATOR->f_li || o_function == CALCULATOR->f_Li || o_function == CALCULATOR->f_Ei || o_function == CALCULATOR->f_Si || o_function == CALCULATOR->f_Ci || o_function == CALCULATOR->f_Shi || o_function == CALCULATOR->f_Chi || o_function == CALCULATOR->f_abs || o_function == CALCULATOR->f_signum || o_function == CALCULATOR->f_heaviside || o_function == CALCULATOR->f_lambert_w || o_function == CALCULATOR->f_sinc || o_function == CALCULATOR->f_sin || o_function == CALCULATOR->f_cos || o_function == CALCULATOR->f_tan || o_function == CALCULATOR->f_asin || o_function == CALCULATOR->f_acos || o_function == CALCULATOR->f_atan || o_function == CALCULATOR->f_sinh || o_function == CALCULATOR->f_cosh || o_function == CALCULATOR->f_tanh || o_function == CALCULATOR->f_asinh || o_function == CALCULATOR->f_acosh || o_function == CALCULATOR->f_atanh);
+	return (o_function == CALCULATOR->f_sqrt || o_function == CALCULATOR->f_root || o_function == CALCULATOR->f_cbrt || o_function == CALCULATOR->f_ln || o_function == CALCULATOR->f_logn || o_function == CALCULATOR->f_arg || o_function == CALCULATOR->f_gamma || o_function == CALCULATOR->f_beta || o_function == CALCULATOR->f_abs || o_function == CALCULATOR->f_factorial || o_function == CALCULATOR->f_besselj || o_function == CALCULATOR->f_erf || o_function == CALCULATOR->f_erfc || o_function == CALCULATOR->f_li || o_function == CALCULATOR->f_Li || o_function == CALCULATOR->f_Ei || o_function == CALCULATOR->f_Si || o_function == CALCULATOR->f_Ci || o_function == CALCULATOR->f_Shi || o_function == CALCULATOR->f_Chi || o_function == CALCULATOR->f_abs || o_function == CALCULATOR->f_signum || o_function == CALCULATOR->f_heaviside || o_function == CALCULATOR->f_lambert_w || o_function == CALCULATOR->f_sinc || o_function == CALCULATOR->f_sin || o_function == CALCULATOR->f_cos || o_function == CALCULATOR->f_tan || o_function == CALCULATOR->f_asin || o_function == CALCULATOR->f_acos || o_function == CALCULATOR->f_atan || o_function == CALCULATOR->f_sinh || o_function == CALCULATOR->f_cosh || o_function == CALCULATOR->f_tanh || o_function == CALCULATOR->f_asinh || o_function == CALCULATOR->f_acosh || o_function == CALCULATOR->f_atanh);
 }
 
 bool calculate_differentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive = true, bool do_unformat = true) {
@@ -10246,10 +10253,56 @@ bool calculate_differentiable_functions(MathStructure &m, const EvaluationOption
 	return b;
 }
 bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive = true, bool do_unformat = true) {
-	if(m.isFunction() && m.function() != eo.protected_function && !function_differentiable(m.function())) {
-		if(m.calculateFunctions(eo, false, do_unformat)) {
-			if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat);
-			return true;
+	if(m.isFunction() && m.function() != eo.protected_function) {
+		if(!function_differentiable(m.function()) || !contains_interval_variable(m)) {
+			if(m.calculateFunctions(eo, false, do_unformat)) {
+				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat);
+				return true;
+			}
+		} else if(m.function() == CALCULATOR->f_abs && m.size() == 1) {
+			EvaluationOptions eo3 = eo;
+			eo3.split_squares = false;
+			eo3.assume_denominators_nonzero = false;
+			if(eo.approximation == APPROXIMATION_APPROXIMATE && !m.containsUnknowns()) eo3.approximation = APPROXIMATION_EXACT_VARIABLES;
+			else eo3.approximation = APPROXIMATION_EXACT;
+			m[0].calculatesub(eo3, eo);
+			m.childUpdated(1);
+			if(m[0].representsNegative(true)) {
+				m.setToChild(1);
+				m.negate();
+				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat);
+				return true;
+			}
+			if(m[0].representsNonNegative(true)) {
+				m.setToChild(1);
+				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat);
+				return true;
+			}
+			if(m[0].isMultiplication()) {
+				m.setToChild(1);
+				for(size_t i = 0; i < m.size(); i++) {
+					m[i].transform(CALCULATOR->f_abs);
+				}
+				m.childrenUpdated();
+				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat);
+				return true;
+			}
+			if(eo.approximation != APPROXIMATION_EXACT) {
+				eo3.approximation = APPROXIMATION_APPROXIMATE;
+				MathStructure mtest(m[0]);
+				mtest.calculatesub(eo3, eo);
+				if(mtest.representsNegative(true)) {
+					m.setToChild(1);
+					m.negate();
+					if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat);
+					return true;
+				}
+				if(mtest.representsNonNegative(true)) {
+					m.setToChild(1);
+					if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat);
+					return true;
+				}
+			}
 		}
 	}
 	bool b = false;
@@ -10399,15 +10452,6 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 		}
 		u_var->destroy();
 	}
-}
-
-
-bool contains_interval_variable(const MathStructure &m) {
-	if(m.isVariable() && m.containsInterval(true, true, false, true)) return true;
-	for(size_t i = 0; i < m.size(); i++) {
-		if(contains_interval_variable(m[i])) return true;
-	}
-	return false;
 }
 KnownVariable *fix_find_interval_variable(MathStructure &mstruct) {
 	if(mstruct.isVariable() && mstruct.variable()->isKnown()) {
@@ -18960,7 +19004,25 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				} else {
 					clear(true);
 				}
+			} else if(o_function == CALCULATOR->f_cbrt && SIZE == 1) {
+				MathStructure base_mstruct(CHILD(0));
+				raise(Number(-2, 1, 0));
+				divide(nr_three);
+				base_mstruct.differentiate(x_var, eo);
+				multiply(base_mstruct);
 			} else if(o_function == CALCULATOR->f_ln && SIZE == 1) {
+				MathStructure mstruct(CHILD(0));
+				setToChild(1, true);
+				inverse();
+				mstruct.differentiate(x_var, eo);
+				multiply(mstruct);
+			} else if(o_function == CALCULATOR->f_logn && SIZE == 2) {
+				MathStructure mstruct(CALCULATOR->f_ln, &CHILD(1), NULL);
+				setFunction(CALCULATOR->f_ln);
+				ERASE(1)
+				divide(mstruct);
+				return differentiate(x_var, eo);
+			} else if(o_function == CALCULATOR->f_beta && SIZE == 2) {
 				MathStructure mstruct(CHILD(0));
 				setToChild(1, true);
 				inverse();
