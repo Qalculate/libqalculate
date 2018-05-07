@@ -1848,7 +1848,7 @@ bool is_infinite_angle_value(const MathStructure &mstruct) {
 	}
 	return false;
 }
-bool is_number_angle_value(const MathStructure &mstruct) {
+bool is_number_angle_value(const MathStructure &mstruct, bool allow_infinity = false) {
 	if(mstruct.isUnit()) {
 		return mstruct.unit() == CALCULATOR->getRadUnit() || mstruct.unit() == CALCULATOR->getDegUnit() || mstruct.unit() == CALCULATOR->getGraUnit();
 	} else if(mstruct.isMultiplication()) {
@@ -1861,7 +1861,9 @@ bool is_number_angle_value(const MathStructure &mstruct) {
 					return false;
 				}
 			} else if(!mstruct[i].representsNumber()) {
-				return false;
+				if(!allow_infinity || ((!mstruct[i].isNumber() || !mstruct[i].number().isInfinite()) && (!mstruct[i].isPower() || !mstruct[i][0].representsNumber() || !mstruct[i][1].representsNumber()))) {
+					return false;
+				}
 			}
 		}
 		return b;
@@ -1879,7 +1881,7 @@ SinFunction::SinFunction() : MathFunction("sin", 1) {
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
 }
-bool SinFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && (is_number_angle_value(vargs[0]) || is_infinite_angle_value(vargs[0]));}
+bool SinFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_number_angle_value(vargs[0], true);}
 bool SinFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && (is_real_angle_value(vargs[0]) || is_infinite_angle_value(vargs[0]));}
 bool SinFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -2045,7 +2047,7 @@ CosFunction::CosFunction() : MathFunction("cos", 1) {
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
 }
-bool CosFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && (is_number_angle_value(vargs[0]) || is_infinite_angle_value(vargs[0]));}
+bool CosFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_number_angle_value(vargs[0], true);}
 bool CosFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && (is_real_angle_value(vargs[0]) || is_infinite_angle_value(vargs[0]));}
 bool CosFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
