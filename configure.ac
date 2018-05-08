@@ -107,6 +107,7 @@ AC_CHECK_HEADERS(mpfr.h, [LIBS="$LIBS -lmpfr -lgmp"], [AC_MSG_ERROR([Unable to f
 AC_LANG([C++])
 
 AC_CHECK_HEADERS([unordered_map])
+AC_CHECK_FUNCS([pipe2])
 
 AC_ARG_WITH([libcurl], AS_HELP_STRING([--with-libcurl], [support for built-in retrieval of exchange rates]), [], [with_libcurl=yes])
 AS_IF([test "x$with_libcurl" = "xyes"], [
