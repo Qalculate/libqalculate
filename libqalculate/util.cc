@@ -38,6 +38,7 @@
 #	include <initguid.h>
 #	include <shlobj.h>
 #else
+#	include <fcntl.h>
 #	include <utime.h>
 #	include <unistd.h>
 #	include <pwd.h>
@@ -856,7 +857,7 @@ bool Thread::cancel() {
 Thread::Thread() : running(false), m_pipe_r(NULL), m_pipe_w(NULL) {
 	pthread_attr_init(&m_thread_attr);
 	int pipe_wr[] = {0, 0};
-	if(pipe(pipe_wr) == 0) {
+	if(pipe2(pipe_wr, O_CLOEXEC) == 0) {
 		m_pipe_r = fdopen(pipe_wr[0], "r");
 		m_pipe_w = fdopen(pipe_wr[1], "w");
 	}
