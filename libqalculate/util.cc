@@ -38,7 +38,9 @@
 #	include <initguid.h>
 #	include <shlobj.h>
 #else
-#	include <fcntl.h>
+#	ifdef HAVE_PIPE2
+#		include <fcntl.h>
+#	endif
 #	include <utime.h>
 #	include <unistd.h>
 #	include <pwd.h>
@@ -857,7 +859,11 @@ bool Thread::cancel() {
 Thread::Thread() : running(false), m_pipe_r(NULL), m_pipe_w(NULL) {
 	pthread_attr_init(&m_thread_attr);
 	int pipe_wr[] = {0, 0};
+#ifdef HAVE_PIPE2
 	if(pipe2(pipe_wr, O_CLOEXEC) == 0) {
+#else
+	if(pipe(pipe_wr) == 0) {
+#endif
 		m_pipe_r = fdopen(pipe_wr[0], "r");
 		m_pipe_w = fdopen(pipe_wr[1], "w");
 	}
