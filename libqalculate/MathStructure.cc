@@ -9045,10 +9045,13 @@ int limit_inf_cmp(const MathStructure &mstruct, const MathStructure &mcmp, const
 		cr = m1->getChild(1)->compare(*m2->getChild(1));
 	} else if(itype1 == 3) {
 		if(m1->exponent()->equals(*m2->exponent())) {
-			//cr = m1->base()->compare(*m2->base());
-			int cmp = limit_inf_cmp(*m1->base(), *m2->base(), x_var);
-			if(cmp > 0) cr = COMPARISON_RESULT_LESS;
-			else if(cmp == -1) cr = COMPARISON_RESULT_GREATER;
+			if(m1->base()->contains(x_var, true) || m2->base()->contains(x_var, true)) {
+				int cmp = limit_inf_cmp(*m1->base(), *m2->base(), x_var);
+				if(cmp > 0) cr = COMPARISON_RESULT_LESS;
+				else if(cmp == -1) cr = COMPARISON_RESULT_GREATER;
+			} else {
+				cr = m1->base()->compare(*m2->base());
+			}
 		} else if(m1->base()->equals(*m2->base())) {
 			int cmp = limit_inf_cmp(*m1->exponent(), *m2->exponent(), x_var);
 			if(cmp > 0) cr = COMPARISON_RESULT_LESS;
@@ -9290,6 +9293,14 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 		case STRUCT_MULTIPLICATION: {
 			MathStructure mden(1, 1, 0);
 			for(size_t i = 0; i < mstruct.size(); i++) {
+				if(mstruct[i].isPower() && mstruct[i][0].isPower() && mstruct[i][0][0].contains(x_var, true) && !mstruct[i][0][0].representsNonPositive()) {
+					MathStructure mtest(mstruct[i][0][0]);
+					calculate_limit_sub(mtest, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
+					if(mtest.representsPositive()) {
+						mstruct[i][0][1].calculateMultiply(mstruct[i][1], eo);
+						mstruct[i].setToChild(1);
+					}
+				}
 				if(mstruct[i].isPower() && mstruct[i][1].representsNegative()) {
 					if(mden.isOne()) {
 						if(mstruct[i][1].isMinusOne()) {
@@ -9335,8 +9346,7 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 								mstruct.calculateDivide(mden, eo2);
 								if(!mstruct.contains(x_var)) return true;
 							}
-							MathStructure mnum_b, mden_b;
-							if(keep_inf_x) {mnum_b = mnum; mden_b = mden;}
+							MathStructure mnum_b(mnum), mden_b(mden);
 							calculate_limit_sub(mnum, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
 							calculate_limit_sub(mden, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
 							if(mnum.isInfinite(false) && mden.isInfinite(false)) {
@@ -9352,6 +9362,76 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 								} else if(cmp == -1) {
 									mstruct.clear(true);
 									break;
+								}
+								if(mnum_b.isPower() && mden_b.isPower() && mnum_b[1].contains(x_var, true) && mden_b[1].contains(x_var, true)) {
+									bool b = true;
+									if(mden_b[1] != mnum_b[1]) {
+										b = false;
+										Number npow1(1, 1, 0), npow2;
+										MathStructure *x_p = &mnum_b[1];
+										if(mnum_b[1].isMultiplication() && mnum_b[1].size() == 2 && mnum_b[1][0].isNumber()) {
+											npow1 = mnum_b[1][0].number();
+											x_p = &mnum_b[1][1];
+										}
+										if(mden_b[1] == *x_p) npow2.set(1, 1, 0);
+										else if(mden_b[1].isMultiplication() && mden_b[1].size() == 2 && mden_b[1][0].isNumber() && mden_b[1][1] == *x_p) npow2 = mden_b[1][0].number();
+										if(!npow2.isZero() && npow1.isRational() && npow2.isRational()) {
+											if(npow1.isGreaterThan(npow2)) {
+												npow1 /= npow2;
+												npow2 = npow1.denominator();
+												npow1 = npow1.numerator();
+											}
+											if(mnum.number().isMinusInfinity() && !npow1.isOne()) {
+												if(npow2.isOne() && mden.number().isPlusInfinity()) {
+													mden_b[0].factorize(eo, false, false, 0, false, false, NULL, m_undefined, false, true);
+													if(mden_b[0].isPower() && mden_b[0][1].isInteger()) {
+														mden_b[0][1].number() /= npow1;
+														if(mden_b[0][1].number().isInteger()) {
+															mden_b[0].calculateRaiseExponent(eo);
+															b = true;
+														}
+													}
+												}
+											} else if(mden.number().isMinusInfinity() && !npow2.isOne()) {
+												if(npow1.isOne() && mnum.number().isPlusInfinity()) {
+													mnum_b[0].factorize(eo, false, false, 0, false, false, NULL, m_undefined, false, true);
+													if(mnum_b[0].isPower() && mnum_b[0][1].isInteger()) {
+														mnum_b[0][1].number() /= npow2;
+														if(mnum_b[0][1].number().isInteger()) {
+															mnum_b[0].calculateRaiseExponent(eo);
+															mnum_b[1] = mden_b[1];
+															b = true;
+														}
+													}
+												}
+											} else {
+												if(!npow1.isOne()) mnum_b[0].calculateRaise(npow1, eo);
+												if(!npow2.isOne()) mden_b[0].calculateRaise(npow2, eo);
+												mnum_b.childUpdated(1);
+												mden_b.childUpdated(1);
+												if(!npow1.isOne()) {
+													if(&mnum_b[1] == x_p) {
+														npow1.recip();
+														mnum_b[1] *= npow1;
+														mnum_b[1].swapChildren(1, 2);
+													} else {
+														mnum_b[1][0].number() /= npow1;
+													}
+												}
+												b = true;
+											}
+										}
+									}
+									if(b) {
+										mstruct.set(mnum_b[0], true);
+										mstruct /= mden_b[0];
+										mstruct.transform(CALCULATOR->f_ln);
+										mstruct *= mnum_b[1];
+										mstruct.raise(CALCULATOR->v_e);
+										mstruct.swapChildren(1, 2);
+										calculate_limit_sub(mstruct, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, keep_inf_x);
+										break;
+									}
 								}
 							}
 						} else if(mnum.contains(x_var, true)) {
@@ -9390,7 +9470,7 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 			MathStructure mbak(mstruct);
 			bool b_inf = false;
 			for(size_t i = 0; i < mstruct.size(); i++) {
-				calculate_limit_sub(mstruct[i], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, keep_inf_x);
+				calculate_limit_sub(mstruct[i], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
 				if(mstruct[i].isZero()) {
 					if(mzero.isOne()) mzero = mbak[i];
 					else mzero.multiply(mbak[i], true);
@@ -9399,7 +9479,6 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 				}
 			}
 			if(lhop_depth < 5 && b_inf && !mzero.isOne()) {
-				mzero.inverse();
 				MathStructure minf(1, 1, 0);
 				for(size_t i = 0; i < mstruct.size(); i++) {
 					if(!mstruct[i].isZero()) {
@@ -9407,17 +9486,24 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 						else minf.multiply(mbak[i], true);
 					}
 				}
+				MathStructure *minf_p = &minf, *mzero_p = &mzero;
+				if(nr_limit.isInfinite(false)) {
+					minf_p = &mzero;
+					mzero_p = &minf;
+				}
+				mzero_p->inverse();
 				//L'Hôpital's rule
-				if(minf.differentiate(x_var, eo) && !minf.containsFunction(CALCULATOR->f_diff, true) && mzero.differentiate(x_var, eo) && !mzero.containsFunction(CALCULATOR->f_diff, true)) {
-					minf /= mzero;
-					minf.eval(eo);
-					calculate_limit_sub(minf, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth + 1);
-					mstruct.set(minf, true);
+				if(minf_p->differentiate(x_var, eo) && !minf_p->containsFunction(CALCULATOR->f_diff, true) && mzero_p->differentiate(x_var, eo) && !mzero_p->containsFunction(CALCULATOR->f_diff, true)) {
+					minf_p->divide(*mzero_p);
+					minf_p->eval(eo);
+					calculate_limit_sub(*minf_p, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth + 1);
+					mstruct.set(*minf_p, true);
 					break;
 				}
 			}
 			mstruct.childrenUpdated();
 			mstruct.calculatesub(eo, eo, false);
+			if(keep_inf_x && mstruct.isInfinite(false)) mstruct = mbak;
 			break;
 		}
 		case STRUCT_ADDITION: {
@@ -9494,118 +9580,14 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 			if(nr_limit.isInfinite(false)) {
 				calculate_limit_sub(mstruct[0], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
 				calculate_limit_sub(mstruct[1], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
-				if(mstruct[1].isInfinite(false) && mstruct[0].isOne() && mbak[1].contains(x_var, true) && mbak[0].isAddition() && mbak[0].contains(x_var, true)) {
-					bool b_one = false;
-					for(size_t i = 0; i < mbak[0].size(); i++) {
-						if(mbak[0][i].isOne()) {
-							b_one = true;
-							break;
-						}
-					}
-					if(b_one) {
-						MathStructure *mpow = NULL;
-						MathStructure *mmul = NULL;
-						MathStructure mbase(mbak[0]);
-						limit_combine_divisions(mbase);
-						if(mbase.isAddition() && mbase.size() == 2) {
-							if(mbase[0].isOne()) mpow = &mbase[1];
-							else if(mbase[1].isOne()) mpow = &mbase[0];
-						}
-						if(mpow) {
-							if(mpow->isMultiplication()) {
-								MathStructure *mpow2 = NULL;
-								for(size_t i = 0; i < mpow->size(); i++) {
-									MathStructure *mchild = mpow->getChild(i + 1);
-									if(!mpow2 && mchild->isPower() && mchild->base()->contains(x_var, true) && mchild->exponent()->representsNegative()) {
-										mpow2 = mchild;
-									} else if(mchild->contains(x_var, true)) {
-										mpow2 = NULL;
-										break;
-									}
-								}
-								mmul = mpow;
-								mpow = mpow2;
-							} else if(!mpow->isPower() || !mpow->exponent()->representsNegative() || !mpow->base()->contains(x_var, true)) {
-								mpow = NULL;
-							}
-						}
-						if(mpow) {
-							const Number *npow = NULL;
-							if(mpow->exponent()->isVariable() && mpow->exponent()->variable()->isKnown() && ((KnownVariable*) mpow->exponent()->variable())->get().isNumber()) {
-								npow = &((KnownVariable*) mpow->exponent()->variable())->get().number();
-							} else if(mpow->exponent()->isNumber()) {
-								npow = &mpow->exponent()->number();
-							}
-							if(npow) {
-								MathStructure mexp(mbak[1]);
-								calculate_limit_sub(mexp, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, true);
-								MathStructure mbase2(*mpow->base());
-								if(!npow->isMinusOne()) {
-									mbase2 ^= *npow;
-									mbase2.last().calculateNegate(eo);
-								}
-								calculate_limit_sub(mbase2, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, true);
-								int cmp = limit_inf_cmp(mexp, mbase2, x_var);
-								if(cmp > 0) {
-									calculate_limit_sub(mbase2, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
-									if(mbase2.isInfinite(false)) {
-										if(mmul) {
-											MathStructure mmul2(*mmul);
-											for(size_t i = 0; i < mmul->size(); i++) {
-												if(mmul->getChild(i + 1) == mpow) {
-													mmul2.delChild(i + 1, true);
-													break;
-												}
-											}
-											if(mmul2.representsNegative()) {
-												if(mbase2.number().isPlusInfinity()) {
-													if(mstruct[1].number().isPlusInfinity()) mstruct.clear(true);
-													else mstruct.set(nr_plus_inf, true);
-												} else {
-													if(mstruct[1].number().isMinusInfinity()) mstruct.clear(true);
-													else mstruct.set(nr_plus_inf, true);
-												}
-												break;
-											} else if(mmul2.representsPositive()) {
-												if(mbase2.number().isMinusInfinity()) {
-													if(mstruct[1].number().isPlusInfinity()) mstruct.clear(true);
-													else mstruct.set(nr_plus_inf, true);
-												} else {
-													if(mstruct[1].number().isMinusInfinity()) mstruct.clear(true);
-													else mstruct.set(nr_plus_inf, true);
-												}
-												break;
-											}
-										} else {
-											if(mbase2.number().isMinusInfinity()) {
-												if(mstruct[1].number().isPlusInfinity()) mstruct.clear(true);
-												else mstruct.set(nr_plus_inf, true);
-											} else {
-												if(mstruct[1].number().isMinusInfinity()) mstruct.clear(true);
-												else mstruct.set(nr_plus_inf, true);
-											}
-											break;
-										}
-									}
-								} else if(cmp == -1) {
-									mstruct.set(1, 1, 0, true);
-									break;
-								} else if(cmp == 0) {
-									mstruct.set(CALCULATOR->v_e, true);
-									if(mmul) {
-										mstruct ^= *mmul;
-										for(size_t i = 0; i < mmul->size(); i++) {
-											if(mmul->getChild(i + 1) == mpow) {
-												mstruct.last().delChild(i + 1, true);
-												break;
-											}
-										}
-									}
-									break;
-								}
-							}
-						}
-					}
+				if(mstruct[1].isInfinite(false) && mstruct[0].isOne() && mbak[1].contains(x_var, true) && mbak[0].contains(x_var, true)) {
+					mstruct.set(mbak[0], true);
+					mstruct.transform(CALCULATOR->f_ln);
+					mstruct *= mbak[1];
+					mstruct.raise(CALCULATOR->v_e);
+					mstruct.swapChildren(1, 2);
+					calculate_limit_sub(mstruct, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, keep_inf_x);
+					break;
 				}
 				if(keep_inf_x && (mstruct[0].isInfinite(false) || mstruct[1].isInfinite(false))) {
 					MathStructure mbak2(mstruct);
@@ -9644,56 +9626,65 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 						b_test = false;
 					} else {
 						MathStructure mpow(mbak[0]);
-						if(!mstruct[1].isMinusOne()) {
+						if(mstruct[1].isMinusOne()) {
+							MathStructure mfac(mpow);
+							mfac.factorize(eo, false, false, 0, false, false, NULL, m_undefined, false, true);
+							if(mfac.isPower() && mfac[1].representsEven()) {
+								i_sgn = 1;
+								b_test = false;
+							}
+						} else {
 							mpow ^= mstruct[1];
 							mpow.last().calculateNegate(eo);
 						}
-						MathStructure mdiff(mpow);
-						if(mdiff.differentiate(x_var, eo) && !mdiff.containsFunction(CALCULATOR->f_diff, true)) {
-							mdiff.replace(x_var, nr_limit);
-							CALCULATOR->beginTemporaryStopMessages();
-							mdiff.eval(eo);
-							if(!CALCULATOR->endTemporaryStopMessages()) {
-								if(mdiff.representsPositive()) {
-									b_test = false;
-									if(approach_direction > 0) i_sgn = 1;
-									else if(approach_direction < 0) i_sgn = -1;
-								} else if(mdiff.representsNegative()) {
-									b_test = false;
-									if(approach_direction > 0) i_sgn = -1;
-									else if(approach_direction < 0) i_sgn = 1;
+						if(b_test) {
+							MathStructure mdiff(mpow);
+							if(mdiff.differentiate(x_var, eo) && !mdiff.containsFunction(CALCULATOR->f_diff, true)) {
+								mdiff.replace(x_var, nr_limit);
+								CALCULATOR->beginTemporaryStopMessages();
+								mdiff.eval(eo);
+								if(!CALCULATOR->endTemporaryStopMessages()) {
+									if(mdiff.representsPositive()) {
+										b_test = false;
+										if(approach_direction > 0) i_sgn = 1;
+										else if(approach_direction < 0) i_sgn = -1;
+									} else if(mdiff.representsNegative()) {
+										b_test = false;
+										if(approach_direction > 0) i_sgn = -1;
+										else if(approach_direction < 0) i_sgn = 1;
+									}
 								}
 							}
-						}
-						if(b_test) {
-							MathStructure mtestn(nr_limit);
-							if(eo.approximation != APPROXIMATION_EXACT) {
-								EvaluationOptions eo2 = eo;
-								eo2.approximation = APPROXIMATION_APPROXIMATE;
-								mtestn.eval(eo2);
-							}
-							if(mtestn.isNumber() && mtestn.number().isReal()) {
-								for(int i = 10; i < 20; i++) {
-									if(approach_direction == 0 || (i % 2 == (approach_direction < 0))) {
-										Number nr_test(i % 2 == 0 ? 1 : -1, 1, -(i / 2));
-										if(!mtestn.number().isZero()) {
-											nr_test++;
-											if(!nr_test.multiply(mtestn.number())) {i_sgn = 0; break;} 
+							if(b_test) {
+								MathStructure mtestn(nr_limit);
+								if(eo.approximation != APPROXIMATION_EXACT) {
+									EvaluationOptions eo2 = eo;
+									eo2.approximation = APPROXIMATION_APPROXIMATE;
+									mtestn.eval(eo2);
+								}
+								if(mtestn.isNumber() && mtestn.number().isReal()) {
+									for(int i = 10; i < 20; i++) {
+										if(approach_direction == 0 || (i % 2 == (approach_direction < 0))) {
+											Number nr_test(i % 2 == 0 ? 1 : -1, 1, -(i / 2));
+											if(!mtestn.number().isZero()) {
+												nr_test++;
+												if(!nr_test.multiply(mtestn.number())) {i_sgn = 0; break;} 
+											}
+											MathStructure mtest(mpow);
+											mtest.replace(x_var, nr_test);
+											CALCULATOR->beginTemporaryStopMessages();
+											mtest.eval(eo);
+											if(CALCULATOR->endTemporaryStopMessages()) {i_sgn = 0; break;}
+											int new_sgn = 0;
+											if(mtest.representsPositive()) new_sgn = 1;
+											else if(mtest.representsNegative()) new_sgn = -1;
+											if(new_sgn != 0 || mtest.isNumber()) {
+												if(new_sgn == 0 || (i_sgn != 0 && i_sgn != new_sgn)) {i_sgn = 0; break;}
+												i_sgn = new_sgn;
+											}
 										}
-										MathStructure mtest(mpow);
-										mtest.replace(x_var, nr_test);
-										CALCULATOR->beginTemporaryStopMessages();
-										mtest.eval(eo);
-										if(CALCULATOR->endTemporaryStopMessages()) {i_sgn = 0; break;}
-										int new_sgn = 0;
-										if(mtest.representsPositive()) new_sgn = 1;
-										else if(mtest.representsNegative()) new_sgn = -1;
-										if(new_sgn != 0 || mtest.isNumber()) {
-											if(new_sgn == 0 || (i_sgn != 0 && i_sgn != new_sgn)) {i_sgn = 0; break;}
-											i_sgn = new_sgn;
-										}
+										if(CALCULATOR->aborted()) {i_sgn = 0; break;}
 									}
-									if(CALCULATOR->aborted()) {i_sgn = 0; break;}
 								}
 							}
 						}
