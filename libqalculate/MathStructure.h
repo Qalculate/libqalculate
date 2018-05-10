@@ -808,6 +808,7 @@ class MathStructure {
 		/** @name Functions for recursive search and replace */
 		//@{
 		int contains(const MathStructure &mstruct, bool structural_only = true, bool check_variables = false, bool check_functions = false, bool loose_equals = false) const;
+		size_t countOccurrences(const MathStructure &mstruct) const;
 		int containsRepresentativeOf(const MathStructure &mstruct, bool check_variables = false, bool check_functions = false) const;
 		int containsType(StructureType mtype, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
 		int containsRepresentativeOfType(StructureType mtype, bool check_variables = false, bool check_functions = false) const;
