@@ -1,3 +1,12 @@
+2018-05-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Ignore empty lines and lines beginning with # or // in batch file
+
+2018-05-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix never ending loop in (-x)^(2/3) if x is assumed negative
+	* Fix x/(x^(3/4)+x) and similar when x is assumed positive
+
 2018-05-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Improved series titles in plot()

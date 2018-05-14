@@ -1426,6 +1426,8 @@ int main(int argc, char *argv[]) {
 			} else {
 				str = buffer;
 			}
+			remove_blank_ends(str);
+			if(str.empty() || str[0] == '#' || (str.length() >= 2 && str[0] == '/' && str[1] == '/')) continue;
 		} else {
 #ifdef HAVE_LIBREADLINE
 			rlbuffer = readline("> ");
