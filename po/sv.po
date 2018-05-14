@@ -2539,7 +2539,7 @@ msgstr "0^0 kan anses vara odefinierat"
 
 #: ../libqalculate/Number.cc:3161
 msgid "The result of 0^i is possibly undefined"
-msgstr "Resulatatet av 0^i är möjligen idefinierat"
+msgstr "Resulatatet av 0^i är möjligen odefinierat"
 
 #: ../libqalculate/Number.cc:3206 ../libqalculate/Number.cc:4863
 #: ../libqalculate/Number.cc:4936 ../libqalculate/Number.cc:5122
