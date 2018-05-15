@@ -6029,12 +6029,9 @@ LimitFunction::LimitFunction() : MathFunction("limit", 2, 4) {
 int LimitFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[1].isVector()) return 0;
 	mstruct = vargs[0];
-	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
-		EvaluationOptions eo2 = eo;
-		eo2.approximation = APPROXIMATION_EXACT;
-		if(mstruct.calculateLimit(vargs[2], vargs[1], eo2, vargs[3].number().intValue())) return 1;
-	}
-	if(mstruct.calculateLimit(vargs[2], vargs[1], eo, vargs[3].number().intValue())) return 1;
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_EXACT;
+	if(mstruct.calculateLimit(vargs[2], vargs[1], eo2, vargs[3].number().intValue())) return 1;
 	CALCULATOR->error(true, _("Unable to find limit."), NULL);
 	return -1;
 }
