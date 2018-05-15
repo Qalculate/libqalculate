@@ -3,7 +3,7 @@ Qalculate! library and CLI
 
 ![Image of qalc](http://qalculate.github.io/images/qalc.png)
 
-Qalculate! is a multi-purpose cross-platform desktop calculator. It is small and simple to use but with much power and versatility underneath. Features include customizable functions, units, arbitrary precision, plotting, and a user-friendly interface (GTK+ and CLI).
+Qalculate! is a multi-purpose cross-platform desktop calculator. It is simple to use but provides power and versatility normally reserved for complicated math packages, as well as useful tools for everyday needs (such as currency conversion and percent calculation). Features include a large library of customizable functions, unit calculations and conversion, symbolic calculations (including integrals and equations), arbitrary precision, interval arithmetic, plotting, and a user-friendly interface (GTK+ and CLI).
 
 ## Installation
 In a terminal window in the top source code directory run
@@ -47,6 +47,7 @@ Other software using libqalculate include
 * Calculation and parsing:
    * Basic operations and operators: + - * / ^ E () && || ! < > >= <= != ~ & | << >>
    * Fault-tolerant parsing of strings: log 5 / 2 .5 (3) + (2( 3 +5 = ln(5) / (2.5 * 3) + 2 * (3 + 5)
+   * Expressions may contain any combination of numbers, functions, units, variables, vectors and matrices, and dates
    * Supports complex and infinite numbers
    * Interval arithmetic (for determination of the number of significant digits or direct calculation with intervals of numbers)
    * Supports all number bases from 2 to 36, time format and roman numerals
