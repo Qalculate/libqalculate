@@ -1,3 +1,7 @@
+2018-05-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Treat rates.json with "Internal Server Error" message as failed exchange rates download
+
 2018-05-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Ignore empty lines and lines beginning with # or // in batch file
