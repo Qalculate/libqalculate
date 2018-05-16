@@ -9842,7 +9842,7 @@ bool Calculator::fetchExchangeRates(int timeout) {
 	res = curl_easy_perform(curl);
 	
 	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
-	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
+	if(sbuffer.empty() || sbuffer.find("Internal Server Error") != string::npos) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
 	ofstream file2(getExchangeRatesFileName(2).c_str(), ios::out | ios::trunc | ios::binary);
 	if(!file2.is_open()) {
 		error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", strerror(errno), NULL);
