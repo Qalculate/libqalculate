@@ -5537,7 +5537,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		return true;
 	}
 	if((i = str.find_first_of(LESS GREATER EQUALS NOT, 0)) != string::npos) {
-		while((i != string::npos && (str[i] == LESS_CH && i + 1 < str.length() && str[i + 1] == LESS_CH)) || (str[i] == GREATER_CH && i + 1 < str.length() && str[i + 1] == GREATER_CH)) {
+		while(i != string::npos && ((str[i] == LESS_CH && i + 1 < str.length() && str[i + 1] == LESS_CH) || (str[i] == GREATER_CH && i + 1 < str.length() && str[i + 1] == GREATER_CH))) {
 			i = str.find_first_of(LESS GREATER NOT EQUALS, i + 2);
 		}
 	}
@@ -5552,7 +5552,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		MathOperation s = OPERATION_ADD;
 		while(!c) {
-			while((i != string::npos && (str[i] == LESS_CH && i + 1 < str.length() && str[i + 1] == LESS_CH)) || (str[i] == GREATER_CH && i + 1 < str.length() && str[i + 1] == GREATER_CH)) {
+			while(i != string::npos && ((str[i] == LESS_CH && i + 1 < str.length() && str[i + 1] == LESS_CH) || (str[i] == GREATER_CH && i + 1 < str.length() && str[i + 1] == GREATER_CH))) {
 				i = str.find_first_of(LESS GREATER NOT EQUALS, i + 2);
 				while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
 					i++;
