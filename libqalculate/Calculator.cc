@@ -4202,11 +4202,11 @@ const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b"};
 #define INTERNAL_NUMBER_CHARS "\b"
 #define DUODECIMAL_CHARS "EX"
 
-void Calculator::parseSigns(string &str, bool convert_to_internal_representation) const {
+void Calculator::parseSigns(string &str, bool convert_to_internal_representation, bool ignore_quotes) const {
 	vector<size_t> q_begin;
 	vector<size_t> q_end;
 	size_t quote_index = 0;
-	while(true) {
+	while(!ignore_quotes) {
 		quote_index = str.find_first_of("\"\'", quote_index);
 		if(quote_index == string::npos) {
 			break;
@@ -4292,9 +4292,97 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 	const string *name = NULL;
 	string stmp, stmp2;
-
-	parseSigns(str, true);
 	
+	bool b_prime_quote = true;
+	
+	size_t i_degree = str.find(SIGN_DEGREE);
+	if(i_degree != string::npos && i_degree < str.length() - strlen(SIGN_DEGREE) && is_not_in(NOT_IN_NAMES NUMBER_ELEMENTS, str[i_degree + strlen(SIGN_DEGREE)])) i_degree = string::npos;
+	
+	if(i_degree == string::npos) {
+		size_t i_quote = str.find('\'', 0);
+		size_t i_quote2 = str.find('\"', 0);
+		if(i_quote == 0 || i_quote2 == 0) {
+			b_prime_quote = false;
+		} else if((i_quote != string::npos && i_quote < str.length() - 1 && str.find('\'', i_quote + 1) != string::npos) || (i_quote != string::npos && i_quote2 == i_quote + 1) || (i_quote2 != string::npos && i_quote2 < str.length() - 1 && str.find('\"', i_quote2 + 1) != string::npos)) {
+			b_prime_quote = false;
+			while(i_quote != string::npos && i_quote2 != string::npos) {
+				i_quote2 = str.find('\"', i_quote + 2);
+				if(i_quote2 == string::npos) break;
+				size_t i_prev = str.find_last_not_of(SPACES, i_quote - 1);
+				if(i_prev != string::npos && is_in(NUMBER_ELEMENTS, str[i_prev])) {
+					if(is_in(NUMBER_ELEMENTS, str[str.find_first_not_of(SPACES, i_quote + 1)]) && str.find_first_not_of(SPACES NUMBER_ELEMENTS, i_quote + 1) == i_quote2) {
+						b_prime_quote = true;
+						break;
+					}
+				}
+				i_quote = str.find('\"', i_quote2 + 2);
+			}
+		}
+	}
+	if(b_prime_quote) {
+		gsub("\'", "′", str);
+		gsub("\"", "″", str);
+	}
+
+	parseSigns(str, true, b_prime_quote);
+
+	if(b_prime_quote) {
+		if(i_degree == string::npos) {
+			size_t i_quote = str.find("′");
+			size_t i_dquote = str.find("″");
+			while(i_quote != string::npos || i_dquote != string::npos) {
+				if(i_quote == string::npos || i_dquote < i_quote) {
+					cout << "C" << endl;
+					str.replace(i_dquote, strlen("″"), "in");
+					i_dquote = str.find("″", i_dquote);
+					if(i_quote != string::npos) {i_quote += 2; i_quote -= strlen("″");}
+				} else {
+					size_t i_op = str.find_first_not_of(SPACE, i_quote + strlen("′"));
+					if(i_op != string::npos) {
+						i_op = str.find_first_not_of(SPACE, i_quote + strlen("′"));
+						cout << i_op << endl;
+						if(is_in(NUMBER_ELEMENTS, str[i_op])) i_op = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op);
+						else i_op = 0;
+						cout << i_op << endl;
+					}
+					size_t i_prev = string::npos;
+					if(i_op == string::npos || i_op == i_dquote && i_quote != 0) {
+						cout << "D" << endl;
+						i_prev = str.find_last_not_of(SPACE, i_quote - 1);
+						cout << i_prev << endl;
+						if(i_prev != string::npos) {
+							if(is_in(NUMBER_ELEMENTS, str[i_prev])) {
+								i_prev = str.find_last_not_of(NUMBER_ELEMENTS SPACE, i_prev);
+								if(i_prev == string::npos) i_prev = 0;
+								else i_prev++;
+							} else {
+								i_prev = string::npos;
+							}
+						}
+					}
+					if(i_prev != string::npos) {
+						cout << "A" << endl;
+						cout << i_prev << endl;
+						str.insert(i_prev, LEFT_PARENTHESIS);
+						i_quote++;
+						if(i_op == string::npos) str += "in" RIGHT_PARENTHESIS;
+						else str.replace(i_op + 1, strlen("″"), "in" RIGHT_PARENTHESIS);
+						str.replace(i_quote, strlen("′"), "ft" PLUS);
+						if(i_op == string::npos) break;
+						i_op++;
+						i_dquote = str.find("″", i_op);
+						i_quote = str.find("′", i_op);
+					} else {
+						str.replace(i_quote, strlen("′"), "ft");
+						i_quote = str.find("′", i_quote);
+						if(i_dquote != string::npos) {i_dquote += 2; i_dquote -= strlen("′");}
+					}
+				}
+				cout << str << ":" << i_quote << ":" << i_dquote << endl;
+			}
+		} else {
+		}
+	}
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		if(str[str_index] == '\"' || str[str_index] == '\'') {
 			if(str_index == str.length() - 1) {
