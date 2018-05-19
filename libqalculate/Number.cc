@@ -6498,7 +6498,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		str += nr.printNumerator(10, false);
 		if(po.base == BASE_SEXAGESIMAL) {
-			str += "'";
+			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("′", po.can_display_unicode_string_arg))) {
+				str += "′";
+			} else {
+				str += "'";
+			}
 		}	
 		nr2.frac();
 		if(!nr2.isZero() || po.base == BASE_SEXAGESIMAL) {
@@ -6520,7 +6524,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			str += nr.printNumerator(10, false);
 			if(po.base == BASE_SEXAGESIMAL) {
-				str += "\"";
+				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("″", po.can_display_unicode_string_arg))) {
+					str += "″";
+				} else {
+					str += "\"";
+				}
 			}
 		}
 		if(ips.minus) {
