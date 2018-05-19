@@ -18064,7 +18064,7 @@ bool MathStructure::syncUnits(bool sync_complex_relations, bool *found_complex_r
 				}
 			}
 			for(size_t i2 = 0; !do_erase && i2 < alias_units.size(); i2++) {
-				if(i != i2 && cu->containsRelativeTo(alias_units[i2])) {
+				if(i != i2 && alias_units[i2]->baseUnit() != cu && cu->containsRelativeTo(alias_units[i2])) {
 					for(size_t i3 = 0; i3 < composite_units.size(); i3++) {
 						if(composite_units[i3] == cu) {
 							b = true;
@@ -18164,7 +18164,7 @@ bool MathStructure::syncUnits(bool sync_complex_relations, bool *found_complex_r
 	bool fcr = false;
 	for(size_t i = 0; i < composite_units.size(); i++) {
 		if(convert(composite_units[i], sync_complex_relations, &fcr, calculate_new_functions, feo)) b = true;
-	}	
+	}
 	if(dissolveAllCompositeUnits()) b = true;
 	for(size_t i = 0; i < base_units.size(); i++) {
 		if(convert(base_units[i], sync_complex_relations, &fcr, calculate_new_functions, feo)) b = true;
@@ -18369,7 +18369,7 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 	}
 	if(m_type == STRUCT_UNIT) {
 		if(u->hasComplexRelationTo(o_unit)) {
-			if(found_complex_relations) *found_complex_relations = true;			
+			if(found_complex_relations) *found_complex_relations = true;
 			if(!convert_complex_relations) return false;
 		}
 		if(o_unit->baseUnit() != u->baseUnit() && testDissolveCompositeUnit(u)) {

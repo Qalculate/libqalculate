@@ -329,7 +329,7 @@
       </unit>
       <unit type="alias">
         <_title>Arcminute</_title>
-        <_names>r:arcminute,p:arcminutes</_names>
+        <_names>ar:arcmin,arcminute,p:arcminutes</_names>
         <base>
           <unit>deg</unit>
           <relation>1/60</relation>
@@ -338,9 +338,9 @@
       </unit>
       <unit type="alias">
         <_title>Arcsecond</_title>
-        <_names>r:arcsecond,p:arcseconds</_names>
+        <_names>ar:arcsec,arcsecond,p:arcseconds</_names>
         <base>
-          <unit>arcminute</unit>
+          <unit>arcmin</unit>
           <relation>1/60</relation>
           <exponent>1</exponent>
         </base>

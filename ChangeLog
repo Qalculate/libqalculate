@@ -1,3 +1,16 @@
+2018-05-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not automatically convert to broken down composite unit c for x*a+x*b (and similar),
+	  if a and b are both aliases for c
+	* Allow 1°2'3" format for degree, arminute and arcsecond
+	* Add arcsec and armin reference name to Arcminute and Arcsecond
+	* Use prime symbols for sexagesimal output format
+
+2018-05-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix crash when expression contains '>', '<' or '=', and libqalculate is compiled with -D_GLIBCXX_ASSERTIONS
+	* Allow 5'8" format for feet and inches
+
 2018-05-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Treat rates.json with "Internal Server Error" message as failed exchange rates download
