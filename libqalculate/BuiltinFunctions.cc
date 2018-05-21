@@ -1693,6 +1693,13 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			}
 		}
 	}
+	if(eo.allow_complex && mstruct.representsNegative()) {
+		mstruct.negate();
+		mstruct.transform(CALCULATOR->f_ln);
+		mstruct += CALCULATOR->v_pi;
+		mstruct.last() *= nr_one_i;
+		return 1;
+	}
 	return -1;
 	
 }
