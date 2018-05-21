@@ -1,3 +1,7 @@
+2018-05-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Search for matching functions, variables and units using 'list' (or 'find') command in qalc
+
 2018-05-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not automatically convert to broken down composite unit c for x*a+x*b (and similar),

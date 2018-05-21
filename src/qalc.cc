@@ -884,7 +884,107 @@ void set_option(string str) {
 #define PRINT_AND_COLON_TABS(x) FPUTS_UNICODE(x, stdout); pctl = unicode_length_check(x); if(pctl >= 32) fputs("\t", stdout); else if(pctl >= 24) fputs("\t\t", stdout); else if(pctl >= 16) fputs("\t\t\t", stdout); else if(pctl >= 8) fputs("\t\t\t\t", stdout); else fputs("\t\t\t\t\t", stdout);
 #define PUTS_BOLD(x) str = "\033[1m"; str += x; str += "\033[0m"; puts(str.c_str());
 
-void list_defs(bool in_interactive, char list_type = 0) {
+bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t i2_end, size_t minlength) {
+	if(str1.empty() || str2.empty()) return false;
+	size_t l = 0;
+	if(i2_end == string::npos) i2_end = str2.length();
+	for(size_t i1 = 0;; i1++, i2++) {
+		if(i2 >= i2_end) {
+			return i1 >= str1.length();
+		}
+		if(i1 >= str1.length()) break;
+		if((str1[i1] < 0 && i1 + 1 < str1.length()) || (str2[i2] < 0 && i2 + 1 < str2.length())) {
+			size_t iu1 = 1, iu2 = 1;
+			if(str1[i1] < 0) {
+				while(iu1 + i1 < str1.length() && str1[i1 + iu1] < 0) {
+					iu1++;
+				}
+			}
+			if(str2[i2] < 0) {
+				while(iu2 + i2 < str2.length() && str2[i2 + iu2] < 0) {
+					iu2++;
+				}
+			}
+			bool isequal = (iu1 == iu2);
+			if(isequal) {
+				for(size_t i = 0; i < iu1; i++) {
+					if(str1[i1 + i] != str2[i2 + i]) {
+						isequal = false;
+						break;
+					}
+				}
+			}
+			if(!isequal) {
+				char *gstr1 = utf8_strdown(str1.c_str() + (sizeof(char) * i1), iu1);
+				char *gstr2 = utf8_strdown(str2.c_str() + (sizeof(char) * i2), iu2);
+				if(!gstr1 || !gstr2) return false;
+				bool b = strcmp(gstr1, gstr2) == 0;
+				free(gstr1);
+				free(gstr2);
+				if(!b) return false;
+			}
+			i1 += iu1 - 1;
+			i2 += iu2 - 1;
+		} else if(str1[i1] != str2[i2] && !((str1[i1] >= 'a' && str1[i1] <= 'z') && str1[i1] - 32 == str2[i2]) && !((str1[i1] <= 'Z' && str1[i1] >= 'A') && str1[i1] + 32 == str2[i2])) {
+			return false;
+		}
+		l++;
+	}
+	return l >= minlength;
+}
+
+bool title_matches(ExpressionItem *item, const string &str, size_t minlength = 0) {
+	const string &title = item->title(true);
+	size_t i = 0;
+	while(true) {
+		while(true) {
+			if(i >= title.length()) return false;
+			if(title[i] != ' ') break;
+			i++;
+		}
+		size_t i2 = title.find(' ', i);
+		if(equalsIgnoreCase(str, title, i, i2, minlength)) {
+			return true;
+		}
+		if(i2 == string::npos) break;
+		i = i2 + 1;
+	}
+	return false;
+}
+bool name_matches(ExpressionItem *item, const string &str) {
+	for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
+		if(item->getName(i2).case_sensitive) {
+			if(str == item->getName(i2).name.substr(0, str.length())) {
+				return true;
+			}
+		} else {
+			if(equalsIgnoreCase(str, item->getName(i2).name, 0, str.length(), 0)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+bool country_matches(Unit *u, const string &str, size_t minlength = 0) {
+	const string &countries = u->countries();
+	size_t i = 0;
+	while(true) {
+		while(true) {
+			if(i >= countries.length()) return false;
+			if(countries[i] != ' ') break;
+			i++;
+		}
+		size_t i2 = countries.find(',', i);
+		if(equalsIgnoreCase(str, countries, i, i2, minlength)) {
+			return true;
+		}
+		if(i2 == string::npos) break;
+		i = i2 + 1;
+	}
+	return false;
+}
+
+void list_defs(bool in_interactive, char list_type = 0, string search_str = "") {
 #ifdef HAVE_LIBREADLINE
 	int rows, cols, rcount = 0; 
 	if(in_interactive && !cfile) {
@@ -896,7 +996,83 @@ void list_defs(bool in_interactive, char list_type = 0) {
 	int cols = 80; 
 #endif
 	string str;
-	if(list_type == 0) {
+	if(!search_str.empty()) {
+		int max_l = 0;
+		list<string> name_list;
+		int i_end = 0;
+		size_t i2 = 0;
+		if(list_type == 'v') i2 = 1;
+		else if(list_type == 'u' || list_type == 'c') i2 = 2;
+		for(; i2 <= 2; i2++) {
+			if(i2 == 0) i_end = CALCULATOR->functions.size();
+			else if(i2 == 1) i_end = CALCULATOR->variables.size();
+			else if(i2 == 2) i_end = CALCULATOR->units.size();
+			ExpressionItem *item = NULL;
+			string name_str, name_str2;
+			for(int i = 0; i < i_end; i++) {
+				if(i2 == 0) item = CALCULATOR->functions[i];
+				else if(i2 == 1) item = CALCULATOR->variables[i];
+				else if(i2 == 2) item = CALCULATOR->units[i];
+				if((!item->isHidden() || (i2 == 2 && ((Unit*) item)->isCurrency())) && item->isActive() && (i2 != 2 || (item->subtype() != SUBTYPE_COMPOSITE_UNIT)) && (list_type != 'c' || ((Unit*) item)->isCurrency())) {
+					bool b_match = name_matches(item, search_str);
+					if(!b_match && title_matches(item, search_str, list_type == 'c' ? 0 : 3)) b_match = true;
+					if(!b_match && i2 == 2 && country_matches((Unit*) item, search_str, list_type == 'c' ? 0 : 3)) b_match = true;
+					if(b_match) {
+						const ExpressionName &ename1 = item->preferredInputName(false, false);
+						name_str = ename1.name;
+						size_t name_i = 1;
+						while(true) {
+							const ExpressionName &ename = item->getName(name_i);
+							if(ename == empty_expression_name) break;
+							if(ename != ename1 && !ename.avoid_input && !ename.plural && (!ename.unicode || printops.use_unicode_signs) && !ename.completion_only) {
+								name_str += " / ";
+								name_str += ename.name;
+							}
+							name_i++;
+						}
+						if(!item->title(false).empty()) {
+							name_str += " (";
+							name_str += item->title(false);
+							name_str += ")";
+						}
+						if((int) name_str.length() > max_l) max_l = name_str.length();
+						name_list.push_front(name_str);
+					}
+				}
+			}
+			if(list_type != 0) break;
+		}
+		name_list.sort();
+		list<string>::iterator it = name_list.begin();
+		list<string>::iterator it_e = name_list.end();
+		int c = 0;
+		int max_tabs = (max_l / 8) + 1;
+		int max_c = cols / (max_tabs * 8);
+		if(cfile) max_c = 0;
+		while(it != it_e) {
+			c++;
+			if(c >= max_c) {
+				c = 0;
+				PUTS_UNICODE(it->c_str());
+			} else {
+				if(c == 1 && in_interactive) {CHECK_IF_SCREEN_FILLED}
+				int l = unicode_length_check(it->c_str());
+				int nr_of_tabs = max_tabs - (l / 8);
+				for(int tab_nr = 0; tab_nr < nr_of_tabs; tab_nr++) {
+					*it += "\t";
+				}
+				FPUTS_UNICODE(it->c_str(), stdout);
+			}
+			++it;
+		}
+		if(c > 0) puts("");
+		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+		puts("");
+		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+		puts(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));
+		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+		puts("");
+	} else if(list_type == 0) {
 		puts("");
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED;}
 		bool b_variables = false, b_functions = false, b_units = false;
@@ -1029,7 +1205,7 @@ void list_defs(bool in_interactive, char list_type = 0) {
 			if(list_type == 'v') item = CALCULATOR->variables[i];
 			if(list_type == 'u') item = CALCULATOR->units[i];
 			if(list_type == 'c') item = CALCULATOR->units[i];
-			if((!item->isHidden() || list_type == 'c') && item->isActive() && (list_type != 'u' || (item->subtype() != SUBTYPE_COMPOSITE_UNIT && ((Unit*) item)->baseUnit() != CALCULATOR->u_euro)) && (list_type != 'c' || ((Unit*) item)->baseUnit() == CALCULATOR->u_euro)) {
+			if((!item->isHidden() || list_type == 'c') && item->isActive() && (list_type != 'u' || (item->subtype() != SUBTYPE_COMPOSITE_UNIT && ((Unit*) item)->baseUnit() != CALCULATOR->u_euro)) && (list_type != 'c' || ((Unit*) item)->isCurrency())) {
 				const ExpressionName &ename1 = item->preferredInputName(false, false);
 				name_str = ename1.name;
 				size_t name_i = 1;
@@ -1098,7 +1274,7 @@ int main(int argc, char *argv[]) {
 	printops.use_unicode_signs = false;
 	fetch_exchange_rates_at_startup = false;
 	char list_type = 'n';
-	
+	string search_str;
 	
 #ifdef ENABLE_NLS
 	bindtextdomain (GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
@@ -1126,14 +1302,14 @@ int main(int argc, char *argv[]) {
 			fputs("\t", stdout); PUTS_UNICODE(_("executes commands from a file first"));
 			fputs("\n\t-i, -interactive\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("start in interactive mode"));
-			fputs("\n\t-l, -list\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all user-defined variables, functions and units."));
-			fputs("\n\t--list-functions\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all functions."));
-			fputs("\n\t--list-units\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all units."));
-			fputs("\n\t--list-variables\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all variables."));
+			fputs("\n\t-l, -list", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all user-defined or matching variables, functions and units."));
+			fputs("\n\t--list-functions", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all or matching functions."));
+			fputs("\n\t--list-units", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all or matching units."));
+			fputs("\n\t--list-variables", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all or matching variables."));
 			fputs("\n\t-m, -time", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("MILLISECONDS"), stdout); fputs("\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("terminate calculation and display of result after specified amount of time"));
 			fputs("\n\t-n, -nodefs\n", stdout);
@@ -1184,12 +1360,32 @@ int main(int argc, char *argv[]) {
 			interactive_mode = true;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-list") == 0 || strcmp(argv[i], "--list") == 0 || strcmp(argv[i], "-l") == 0)) {
 			list_type = 0;
+			if(i + 1 < argc && strlen(argv[i + 1]) > 0 && argv[i + 1][0] != '-' && argv[i + 1][0] != '+') {
+				i++;
+				search_str = argv[i];
+				remove_blank_ends(search_str);
+			}
 		} else if(!calc_arg_begun && strcmp(argv[i], "--list-functions") == 0) {
 			list_type = 'f';
+			if(i + 1 < argc && strlen(argv[i + 1]) > 0 && argv[i + 1][0] != '-' && argv[i + 1][0] != '+') {
+				i++;
+				search_str = argv[i];
+				remove_blank_ends(search_str);
+			}
 		} else if(!calc_arg_begun && strcmp(argv[i], "--list-units") == 0) {
 			list_type = 'u';
+			if(i + 1 < argc && strlen(argv[i + 1]) > 0 && argv[i + 1][0] != '-' && argv[i + 1][0] != '+') {
+				i++;
+				search_str = argv[i];
+				remove_blank_ends(search_str);
+			}
 		} else if(!calc_arg_begun && strcmp(argv[i], "--list-variables") == 0) {
 			list_type = 'v';
+			if(i + 1 < argc && strlen(argv[i + 1]) > 0 && argv[i + 1][0] != '-' && argv[i + 1][0] != '+') {
+				i++;
+				search_str = argv[i];
+				remove_blank_ends(search_str);
+			}
 		} else if(!calc_arg_begun && strcmp(argv[i], "-nounits") == 0) {
 			load_units = false;
 		} else if(!calc_arg_begun && strcmp(argv[i], "-nocurrencies") == 0) {
@@ -1296,7 +1492,7 @@ int main(int argc, char *argv[]) {
 	
 	if(list_type != 'n') {
 		CALCULATOR->terminateThreads();
-		list_defs(false, list_type);
+		list_defs(false, list_type, search_str);
 		return 0;
 	}
 
@@ -2229,11 +2425,10 @@ int main(int argc, char *argv[]) {
 			}
 			puts(""); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("factor")); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("find"), stdout); fputs("/", stdout); PUTS_UNICODE(_("list")); CHECK_IF_SCREEN_FILLED;
 			FPUTS_UNICODE(_("function"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("EXPRESSION")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("info")); CHECK_IF_SCREEN_FILLED
-			PUTS_UNICODE(_("list")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("mode")); CHECK_IF_SCREEN_FILLED
-			
 			FPUTS_UNICODE(_("save"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("store"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("CATEGORY"), stdout); fputs("] [", stdout); FPUTS_UNICODE(_("TITLE"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("save definitions")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("save mode")); CHECK_IF_SCREEN_FILLED
@@ -2259,15 +2454,31 @@ int main(int argc, char *argv[]) {
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "list", _("list"))) {
 			list_defs(true);
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "list", _("list"))) {			
-			str = str.substr(ispace + 1, slen - (ispace + 1));
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "list", _("list")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "find", _("find"))) {
+			str = str.substr(ispace + 1);
 			remove_blank_ends(str);
+			size_t i = str.find_first_of(SPACES);
+			string str1, str2;
+			if(i == string::npos) {
+				str1 = str;
+			} else {
+				str1 = str.substr(0, i);
+				str2 = str.substr(i + 1);
+				remove_blank_ends(str2);
+			}
 			char list_type = 0;
-			if(EQUALS_IGNORECASE_AND_LOCAL(str, "currencies", _("currencies"))) list_type = 'c';
-			else if(EQUALS_IGNORECASE_AND_LOCAL(str, "functions", _("functions"))) list_type = 'f';
-			else if(EQUALS_IGNORECASE_AND_LOCAL(str, "variables", _("variables"))) list_type = 'v';
-			else if(EQUALS_IGNORECASE_AND_LOCAL(str, "units", _("units"))) list_type = 'u';
-			list_defs(true, list_type);
+			if(EQUALS_IGNORECASE_AND_LOCAL(str1, "currencies", _("currencies"))) list_type = 'c';
+			else if(EQUALS_IGNORECASE_AND_LOCAL(str1, "functions", _("functions"))) list_type = 'f';
+			else if(EQUALS_IGNORECASE_AND_LOCAL(str1, "variables", _("variables"))) list_type = 'v';
+			else if(EQUALS_IGNORECASE_AND_LOCAL(str1, "units", _("units"))) list_type = 'u';
+			else if(!str2.empty()) {
+				if(equalsIgnoreCase(str, _("currencies"))) list_type = 'c';
+				else if(equalsIgnoreCase(str, _("functions"))) list_type = 'f';
+				else if(equalsIgnoreCase(str, _("variables"))) list_type = 'v';
+				else if(equalsIgnoreCase(str, _("units"))) list_type = 'u';
+				if(list_type != 0) str2 = "";
+			} else str2 = str;
+			list_defs(true, list_type, str2);
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "info", _("info"))) {
 			int pctl;
@@ -2840,12 +3051,14 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Displays the current mode."));
 				puts("");
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "list", _("list"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "list", _("list")) || EQUALS_IGNORECASE_AND_LOCAL(str, "find", _("find"))) {
 				puts("");
-				PUTS_UNICODE(_("Displays a list of all user-defined variables, functions and units."));
-				PUTS_UNICODE(_("Enter with argument 'currencies', 'functions', 'variables' or 'units' to show a list of all currencies, functions, variables or units."));
+				PUTS_UNICODE(_("Displays a list of variables, functions and units."));
+				PUTS_UNICODE(_("Enter with argument 'currencies', 'functions', 'variables' or 'units' to show a list of all currencies, functions, variables or units. Enter a search term to find matching variables, functions, and/or units. If command is called with no argument all user-definied objects are listed."));
 				puts("");
 				PUTS_UNICODE(_("Example: list functions."));
+				PUTS_UNICODE(_("Example: find dinar."));
+				PUTS_UNICODE(_("Example: find variables planck."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "info", _("info"))) {
 				puts("");
