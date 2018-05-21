@@ -1670,6 +1670,36 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct.set(nr, true);
 			return 1;
 		}
+		if(mstruct.number().isRational() && mstruct.number().isPositive()) {
+			if(mstruct.number().isInteger()) {
+				if(mstruct.number().isLessThanOrEqualTo(PRIMES[NR_OF_PRIMES - 1])) {
+					vector<Number> factors;
+					mstruct.number().factorize(factors);
+					if(factors.size() > 1) {
+						mstruct.clear(true);
+						mstruct.setType(STRUCT_ADDITION);
+						for(size_t i = 0; i < factors.size(); i++) {
+							if(i > 0 && factors[i] == factors[i - 1]) {
+								if(mstruct.last().isMultiplication()) mstruct.last().last().number()++;
+								else mstruct.last() *= nr_two;
+							} else {
+								mstruct.addChild(MathStructure(CALCULATOR->f_ln, NULL));
+								mstruct.last().addChild(factors[i]);
+							}
+						}
+						if(mstruct.size() == 1) mstruct.setToChild(1, true);
+						return 1;
+					}
+				}
+			} else {
+				MathStructure mstruct2(CALCULATOR->f_ln, NULL);
+				mstruct2.addChild(mstruct.number().denominator());
+				mstruct.number().set(mstruct.number().numerator());
+				mstruct.transform(CALCULATOR->f_ln);
+				mstruct -= mstruct2;
+				return 1;
+			}
+		}
 	} else if(mstruct.isPower()) {
 		if(mstruct[0].representsPositive(true) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
 			MathStructure mstruct2;
