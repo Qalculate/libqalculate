@@ -2751,6 +2751,15 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 						}
 					}
 				}
+			} else if(o_function == CALCULATOR->f_ln && SIZE == 1 && mstruct.isFunction() && mstruct.function() == CALCULATOR->f_ln && mstruct.size() == 1 && eo.protected_function != CALCULATOR->f_ln && CHILD(0).representsPositive() && mstruct[0].representsPositive()) {
+				int ret = CHILD(0).merge_multiplication(mstruct[0], eo, NULL, 0, 0, false, false);
+				if(ret == 0) {
+					return 0;
+				} else if(ret == 1) {
+					CHILD_UPDATED(0);
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
+				}
 			}
 			goto default_addition_merge;
 		}
@@ -3383,6 +3392,15 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				mstruct.ref();
 				multiply_nocopy(&mstruct);
 				calculateMultiplyLast(eo);
+				return 1;
+			}
+		} else if(mstruct.function() == CALCULATOR->f_ln && mstruct.size() == 1 && mstruct[0].representsPositive()) {
+			MathStructure m(mstruct[0]);
+			EvaluationOptions eo2 = eo;
+			eo2.expand = false;
+			if(m.merge_power(*this, eo2, NULL, 0, 0, false) > 0) {
+				set(CALCULATOR->f_ln, &m, NULL);
+				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			}
 		}
@@ -4044,6 +4062,14 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						clear(true);
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
+					}
+				} else if(o_function == CALCULATOR->f_ln && SIZE == 1 && CHILD(0).representsPositive() && mstruct.representsReal()) {
+					EvaluationOptions eo2 = eo;
+					eo2.expand = false;
+					if(CHILD(0).merge_power(mstruct, eo2, NULL, 0, 0, false) > 0) {
+						CHILD_UPDATED(0)
+						MERGE_APPROX_AND_PREC(mstruct)
+						return 1;
 					}
 				}
 			}
