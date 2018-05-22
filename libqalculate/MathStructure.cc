@@ -3490,7 +3490,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			if(eo.expand != 0 && containsType(STRUCT_DATETIME, false, true, false) > 0) return -1;
 			switch(mstruct.type()) {
 				case STRUCT_ADDITION: {
-					if(eo.expand != 0 && (eo.expand > -2 || (!containsInterval(true, false, false, eo.expand == -2) && !mstruct.containsInterval(true, false, false, eo.expand == -2)) || (representsNonNegative(true) && mstruct.representsNonNegative(true)))) {
+					if(eo.expand != 0 && SIZE < 1000 && mstruct.size() < 1000 && (SIZE * mstruct.size() < (eo.expand == -1 ? 50 : 500)) && (eo.expand > -2 || (!containsInterval(true, false, false, eo.expand == -2) && !mstruct.containsInterval(true, false, false, eo.expand == -2)) || (representsNonNegative(true) && mstruct.representsNonNegative(true)))) {
 						MathStructure msave(*this);
 						CLEAR;
 						for(size_t i = 0; i < mstruct.size(); i++) {
@@ -4512,24 +4512,19 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					bool neg = mstruct.number().isNegative();
 					Number m(mstruct.number());
 					m.setNegative(false);
-					if(eo.expand == -1 && SIZE > 1) {
+					if(SIZE > 1) {
 						Number num_max;
 						switch(SIZE) {
-							case 14: {}
-							case 13: {}
-							case 12: {}
-							case 11: {}
-							case 10: {num_max.set(2, 1, 0); break;}
-							case 9: {}
-							case 8: {num_max.set(3, 1, 0); break;}
-							case 7: {num_max.set(4, 1, 0); break;}
-							case 6: {num_max.set(5, 1, 0); break;}
-							case 5: {num_max.set(7, 1, 0); break;}
-							case 4: {num_max.set(12, 1, 0); break;}
-							case 3: {num_max.set(28, 1, 0); break;}
-							case 2: {num_max.set(150, 1, 0); break;}
+							case 8: {num_max.set(eo.expand == -1 ? 2 : 3, 1, 0); break;}
+							case 7: {num_max.set(eo.expand == -1 ? 2 : 4, 1, 0); break;}
+							case 6: {num_max.set(eo.expand == -1 ? 2 : 5, 1, 0); break;}
+							case 5: {num_max.set(eo.expand == -1 ? 2 : 7, 1, 0); break;}
+							case 4: {num_max.set(eo.expand == -1 ? 3 : 12, 1, 0); break;}
+							case 3: {num_max.set(eo.expand == -1 ? 5 : 28, 1, 0); break;}
+							case 2: {num_max.set(eo.expand == -1 ? 10 : 150, 1, 0); break;}
 							default: {
-								b = false;
+								if(SIZE > 20 || (SIZE > 8 && eo.expand == -1)) b = false;
+								else num_max.set(2, 1, 0);
 								break;
 							}
 						}
@@ -10925,6 +10920,72 @@ void solve_intervals(MathStructure &mstruct, const EvaluationOptions &eo, const 
 	solve_intervals2(mstruct, vars, eo);
 }
 
+bool simplify_ln(MathStructure &mstruct) {
+	bool b_ret = false;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(simplify_ln(mstruct[i])) b_ret = true;
+	}
+	if(mstruct.isAddition()) {
+		size_t i_ln = (size_t) -1, i_ln_m = (size_t) -1;
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(mstruct[i].isFunction() && mstruct[i].function() == CALCULATOR->f_ln && mstruct[i].size() == 1 && mstruct[i][0].isNumber()) {
+				if(i_ln == (size_t) -1) {
+					i_ln = i;
+				} else {
+					bool b = true;
+					if(mstruct[i_ln].isMultiplication()) {
+						if(mstruct[i_ln][1][0].number().raise(mstruct[i_ln][0].number(), true)) {mstruct[i_ln].setToChild(2, true); b_ret = true;}
+						else b = false;
+					}
+					if(b && mstruct[i_ln][0].number().multiply(mstruct[i][0].number())) {
+						mstruct.delChild(i + 1);
+						i--;
+						b_ret = true;
+					}
+				}
+			} else if(mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1].isFunction() && mstruct[i][1].function() == CALCULATOR->f_ln && mstruct[i][1].size() == 1 && mstruct[i][1][0].isNumber() && mstruct[i][0].isInteger() && mstruct[i][0].number().isLessThan(1000) && mstruct[i][0].number().isGreaterThan(-1000)) {
+				if(mstruct[i][0].number().isPositive()) {
+					if(i_ln == (size_t) -1) {
+						i_ln = i;
+					} else {
+						bool b = true;
+						if(mstruct[i_ln].isMultiplication()) {
+							if(mstruct[i_ln][1][0].number().raise(mstruct[i_ln][0].number())) {mstruct[i_ln].setToChild(2, true); b_ret = true;}
+							else b = false;
+						}
+						if(b && mstruct[i][1][0].number().raise(mstruct[i][0].number(), true)) {
+							if(mstruct[i_ln][0].number().multiply(mstruct[i][1][0].number())) {
+								mstruct.delChild(i + 1);
+								i--;
+							} else {
+								mstruct[i].setToChild(1, true);
+							}
+							b_ret = true;
+						}
+					}
+				} else if(mstruct[i][0].number().isNegative()) {
+					if(i_ln_m == (size_t) -1) {
+						i_ln_m = i;
+					} else {
+						bool b = mstruct[i_ln_m][0].number().isMinusOne();
+						if(!b && mstruct[i_ln_m][1][0].number().raise(-mstruct[i_ln_m][0].number())) {mstruct[i_ln_m][0].set(m_minus_one, true); b_ret = true; b = true;}
+						bool b_m1 = b && mstruct[i][0].number().isMinusOne();
+						if(b && (b_m1 || mstruct[i][1][0].number().raise(-mstruct[i][0].number(), true))) {
+							if(mstruct[i_ln_m][1][0].number().multiply(mstruct[i][1][0].number())) {
+								mstruct.delChild(i + 1);
+								b_ret = true;
+								i--;
+							} else if(!b_m1) b_ret = true;
+						}
+					}
+				}
+			}
+		}
+		if(mstruct.size() == 1) mstruct.setToChild(1, true);
+	}
+	return b_ret;
+}
+
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(m_type == STRUCT_NUMBER) return *this;
@@ -10967,7 +11028,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		eo3.assume_denominators_nonzero = false;
 		calculatesub(eo3, feo);
 		if(m_type == STRUCT_NUMBER) return *this;
-		if(!CALCULATOR->usesIntervalArithmetic() && eo.expand != 0 && !containsType(STRUCT_COMPARISON, true, true, true)) {
+		if(!CALCULATOR->usesIntervalArithmetic() && eo.expand && eo.expand >= -1 && !containsType(STRUCT_COMPARISON, true, true, true)) {
 			unformat(eo);
 			eo3.expand = -1;
 			calculatesub(eo3, feo);
@@ -11040,8 +11101,12 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(CALCULATOR->aborted()) return *this;
 	
+	if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
+	
 	structure(eo.structuring, eo2, false);
-
+	
+	if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
+	
 	clean_multiplications(*this);
 
 	return *this;
