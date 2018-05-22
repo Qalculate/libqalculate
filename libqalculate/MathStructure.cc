@@ -22703,9 +22703,11 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 									}
 								}
 							}
-							for(size_t i = 0; i < m_eqs.size(); i++) {
+							for(size_t i = 0; i < m_eqs.size();) {
 								m_eqs[i].calculatesub(eo, eo);
 								if(m_eqs[i].isZero()) {b = false; break;}
+								if(m_eqs[i].isOne()) m_eqs.delChild(i + 1);
+								else i++;
 							}
 							if(b && vars_m.size() == 0) {
 								for(size_t i = 0; i < vars.size(); i++) {
