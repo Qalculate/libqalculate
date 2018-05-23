@@ -89,7 +89,8 @@ FILE *cfile;
 
 enum {
 	COMMAND_FACTORIZE,
-	COMMAND_SIMPLIFY
+	COMMAND_SIMPLIFY,
+	COMMAND_EXPAND_PARTIAL_FRACTIONS
 };
 
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
@@ -2099,6 +2100,7 @@ int main(int argc, char *argv[]) {
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to"))) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
+			remove_duplicate_blanks(str);
 			if(equalsIgnoreCase(str, "hex") || EQUALS_IGNORECASE_AND_LOCAL(str, "hexadecimal", _("hexadecimal"))) {
 				int save_base = printops.base;
 				printops.base = BASE_HEXADECIMAL;
@@ -2164,6 +2166,8 @@ int main(int argc, char *argv[]) {
 				printops.number_fraction_format = save_format;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "factors", _("factors"))) {
 				execute_command(COMMAND_FACTORIZE);
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "partial fraction", _("partial fraction"))) {
+				execute_command(COMMAND_EXPAND_PARTIAL_FRACTIONS);
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "best", _("best")) || EQUALS_IGNORECASE_AND_LOCAL(str, "optimal", _("optimal"))) {
 				CALCULATOR->resetExchangeRatesUsed();
 				MathStructure mstruct_new(CALCULATOR->convertToBestUnit(*mstruct, evalops, true));
@@ -2186,6 +2190,9 @@ int main(int argc, char *argv[]) {
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "factor", _("factor"))) {
 			execute_command(COMMAND_FACTORIZE);
+		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "partial fraction", _("partial fraction"))) {
+			execute_command(COMMAND_EXPAND_PARTIAL_FRACTIONS);
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "simplify", _("simplify"))) {
 			execute_command(COMMAND_SIMPLIFY);
@@ -2429,6 +2436,7 @@ int main(int argc, char *argv[]) {
 			FPUTS_UNICODE(_("function"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("EXPRESSION")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("info")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("mode")); CHECK_IF_SCREEN_FILLED
+			PUTS_UNICODE(_("partial fraction")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("save"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("store"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("CATEGORY"), stdout); fputs("] [", stdout); FPUTS_UNICODE(_("TITLE"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("save definitions")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("save mode")); CHECK_IF_SCREEN_FILLED
@@ -2798,9 +2806,14 @@ int main(int argc, char *argv[]) {
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "help", _("help"))) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
+			remove_duplicate_blanks(str);
 			if(EQUALS_IGNORECASE_AND_LOCAL(str, "factor", _("factor"))) {
 				puts("");
 				PUTS_UNICODE(_("Factorizes the current result."));
+				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "partial fraction", _("partial fraction"))) {
+				puts("");
+				PUTS_UNICODE(_("Applies partial fraction decomposition to the current result."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "simplify", _("simplify"))) {
 				puts("");
@@ -3548,6 +3561,9 @@ void on_abort_command() {
 	}
 }
 
+extern bool polynomial_long_division(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar_pre, MathStructure &mquotient, MathStructure &mrem, const EvaluationOptions &eo, bool check_args = false, bool for_newtonraphson = false);
+extern bool expand_partial_fractions(MathStructure &m, const EvaluationOptions &eo, bool do_simplify = true);
+
 void CommandThread::run() {
 
 	enableAsynchronousCancel();
@@ -3563,6 +3579,10 @@ void CommandThread::run() {
 				if(!((MathStructure*) x)->integerFactorize()) {
 					((MathStructure*) x)->factorize(evalops, true, -1, 0, true, 2);
 				}
+				break;
+			}
+			case COMMAND_EXPAND_PARTIAL_FRACTIONS: {
+				expand_partial_fractions(*((MathStructure*) x), evalops);
 				break;
 			}
 			case COMMAND_SIMPLIFY: {
@@ -3626,6 +3646,10 @@ void execute_command(int command_type, bool show_result) {
 						FPUTS_UNICODE(_("Factorizing (press Enter to abort)"), stdout);
 						break;
 					}
+					case COMMAND_EXPAND_PARTIAL_FRACTIONS: {
+						FPUTS_UNICODE(_("Expanding partial fractions…"), stdout);
+						break;
+					}
 					case COMMAND_SIMPLIFY: {
 						FPUTS_UNICODE(_("Simplifying (press Enter to abort)"), stdout);
 						break;
@@ -3685,6 +3709,9 @@ void execute_command(int command_type, bool show_result) {
 				printops.allow_factorization = false;
 				break;
 			}
+			default: {
+				printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
+			}
 		}
 		if(show_result) setResult(NULL, false);
 	}
@@ -3697,7 +3724,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	if(i_maxtime < 0) return;
 
 	string str;
-	bool do_bases = false, do_factors = false, do_fraction = false;
+	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false;;
 	avoid_recalculation = false;
 	if(!interactive_mode) goto_input = false;
 	if(do_stack) {
@@ -3707,6 +3734,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		bool b_units_saved = evalops.parse_options.units_enabled;
 		evalops.parse_options.units_enabled = true;
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
+			remove_duplicate_blanks(to_str);
 			if(equalsIgnoreCase(to_str, "hex") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "hexadecimal", _("hexadecimal"))) {
 				int save_base = printops.base;
 				expression_str = from_str;
@@ -3757,6 +3785,9 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "factors", _("factors"))) {
 				str = from_str;
 				do_factors = true;
+			}  else if(equalsIgnoreCase(to_str, "partial fraction") || equalsIgnoreCase(to_str, _("partial fraction"))) {
+				str = from_str;
+				do_pfe = true;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "bases", _("bases"))) {
 				do_bases = true;
 				str = from_str;
@@ -3993,14 +4024,14 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		return;
 	}
 	
-	if(do_factors) {
+	if(do_factors || do_pfe) {
 		if(do_stack && stack_index != 0) {
 			MathStructure *save_mstruct = mstruct;
 			mstruct = CALCULATOR->getRPNRegister(stack_index + 1);
-			execute_command(COMMAND_FACTORIZE, false);
+			execute_command(do_pfe ? COMMAND_EXPAND_PARTIAL_FRACTIONS : COMMAND_FACTORIZE, false);
 			mstruct = save_mstruct;
 		} else {
-			execute_command(COMMAND_FACTORIZE, false);
+			execute_command(do_pfe ? COMMAND_EXPAND_PARTIAL_FRACTIONS : COMMAND_FACTORIZE, false);
 		}
 	}
 	
