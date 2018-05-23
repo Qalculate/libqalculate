@@ -3406,8 +3406,219 @@ bool RandFunction::representsReal(const MathStructure&, bool) const {return true
 bool RandFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() > 0 && vargs[0].isNumber() && vargs[0].number().isPositive();}
 bool RandFunction::representsNonNegative(const MathStructure&, bool) const {return true;}
 
+int calender_to_id(const string &str) {
+	if(str == "1" || equalsIgnoreCase(str, "gregorian") || equalsIgnoreCase(str, _("gregorian"))) return 1;
+	if(str == "2" || equalsIgnoreCase(str, "milankovic") || equalsIgnoreCase(str, "milanković") || equalsIgnoreCase(str, _("milankovic"))) return 2;
+	if(str == "3" || equalsIgnoreCase(str, "julian") || equalsIgnoreCase(str, _("julian"))) return 3;
+	if(str == "4" || equalsIgnoreCase(str, "islamic") || equalsIgnoreCase(str, _("islamic"))) return 4;
+	if(str == "5" || equalsIgnoreCase(str, "hebrew") || equalsIgnoreCase(str, _("hebrew"))) return 5;
+	if(str == "6" || equalsIgnoreCase(str, "egyptian") || equalsIgnoreCase(str, _("egyptian"))) return 6;
+	//if(str == "7" || equalsIgnoreCase(str, "babylonian") || equalsIgnoreCase(str, _("babylonian"))) return 7;
+	return 0;
+}
 
-DateFunction::DateFunction() : MathFunction("date", 1, 6) {
+void cal_div(const Number &nr_n, long int nr_d, Number &nr_q, Number &nr_r) {
+	nr_q = nr_n; nr_q /= nr_d; nr_q.floor();
+	nr_r = nr_n; nr_r.mod(nr_d);
+}
+
+Number date_to_cjdn(long int j, long int m, long int d, int ct) {
+	Number J;
+	if(ct == 1) {
+		Number c0(m); c0 -= 3; c0 /= 12; c0.floor();
+		Number x4(j); x4 += c0;
+		Number x2, x3; cal_div(x4, 100, x3, x2);
+		Number x1(m); c0 *= 12; x1 -= c0; x1 -= 3;
+		x3 *= 146097; x3 /= 4; x3.floor();
+		x2 *= 36525; x2 /= 100; x2.floor();
+		x1 *= 153; x1 += 2; x1 /= 5; x1.floor();
+		J = x3; J += x2; J += x1; J += d; J += 1721119;
+	} else if(ct == 2) {
+		Number c0(m); c0 -= 3; c0 /= 12; c0.floor();
+		Number x4(j); x4 += c0;
+		Number x2, x3; cal_div(x4, 100, x3, x2);
+		Number x1(m); c0 *= 12; x1 -= c0; x1 -= 3;
+		x3 *= 328718; x3 += 6; x3 /= 9; x3.floor();
+		x2 *= 36525; x2 /= 100; x2.floor();
+		x1 *= 153; x1 += 2; x1 /= 5; x1.floor();
+		J = x3; J += x2; J += x1; J += d; J += 1721119;
+	} else if(ct == 3) {
+		Number c0(m); c0 -= 3; c0 /= 12; c0.floor();
+		Number j1(j); j1 += c0; j1 *= 1461; j1 /= 4; j1.floor();
+		Number j2(m); j2 *= 153; c0 *= 1836; j2 -= c0; j2 -= 457; j2 /= 5; j2.floor();
+		J = 1721117L; J += j1; J += j2; J += d;
+	} else if(ct == 4) {
+		Number x1(j); x1 *= 10631; x1 -= 10617; x1 /= 30; x1.floor();
+		Number x2(m); x2 *= 325; x2 -= 320; x2 /= 11; x2.floor();
+		J = x1; J += x2; J += d; J += 1948439L;
+		return J;
+	} else if(ct == 5) {
+		Number c0, x1, x3, z4;
+		c0 = 13; c0 -= m; c0 /= 7; c0.floor();
+		x1 = j; x1--; x1 += c0;
+		x3 = m; x3--;
+		z4 = d; z4--;
+		Number c1x1, qx1, rx1, v1x1, v2x1;
+		c1x1 = x1; c1x1 *= 235; c1x1++; c1x1 /= 19; c1x1.floor();
+		qx1 = c1x1; qx1 /= 1095; qx1.floor();
+		rx1 = c1x1; rx1.mod(1095);
+		v1x1 = qx1; v1x1 *= 15; rx1 *= 765433L; v1x1 += rx1; v1x1 += 12084; v1x1 /= 25920; v1x1.floor(); qx1 *= 32336; v1x1 += qx1;
+		v2x1 = v1x1; v2x1.mod(7); v2x1 *= 6; v2x1 /= 7; v2x1.floor(); v2x1.mod(2); v2x1 += v1x1;
+		Number x1p1, c1x1p1, qx1p1, rx1p1, v1x1p1, v2x1p1;
+		x1p1 = x1; x1p1++;
+		c1x1p1 = x1p1; c1x1p1 *= 235; c1x1p1++; c1x1p1 /= 19; c1x1p1.floor();
+		qx1p1 = c1x1p1; qx1p1 /= 1095; qx1p1.floor();
+		rx1p1 = c1x1p1; rx1p1.mod(1095);
+		v1x1p1 = qx1p1; v1x1p1 *= 15; rx1p1 *= 765433L; v1x1p1 += rx1p1; v1x1p1 += 12084; v1x1p1 /= 25920; v1x1p1.floor(); qx1p1 *= 32336; v1x1p1 += qx1p1;
+		v2x1p1 = v1x1p1; v2x1p1.mod(7); v2x1p1 *= 6; v2x1p1 /= 7; v2x1p1.floor(); v2x1p1.mod(2); v2x1p1 += v1x1p1;
+		Number x1m1, c1x1m1, qx1m1, rx1m1, v1x1m1, v2x1m1;
+		x1m1 = x1; x1m1--;
+		c1x1m1 = x1m1; c1x1m1 *= 235; c1x1m1++; c1x1m1 /= 19; c1x1m1.floor();
+		qx1m1 = c1x1m1; qx1m1 /= 1095; qx1m1.floor();
+		rx1m1 = c1x1m1; rx1m1.mod(1095);
+		v1x1m1 = qx1m1; v1x1m1 *= 15; rx1m1 *= 765433L; v1x1m1 += rx1m1; v1x1m1 += 12084; v1x1m1 /= 25920; v1x1m1.floor(); qx1m1 *= 32336; v1x1m1 += qx1m1;
+		v2x1m1 = v1x1m1; v2x1m1.mod(7); v2x1m1 *= 6; v2x1m1 /= 7; v2x1m1.floor(); v2x1m1.mod(2); v2x1m1 += v1x1m1;
+		Number x1p2, c1x1p2, qx1p2, rx1p2, v1x1p2, v2x1p2;
+		x1p2 = x1; x1p2 += 2;
+		c1x1p2 = x1p2; c1x1p2 *= 235; c1x1p2++; c1x1p2 /= 19; c1x1p2.floor();
+		qx1p2 = c1x1p2; qx1p2 /= 1095; qx1p2.floor();
+		rx1p2 = c1x1p2; rx1p2.mod(1095);
+		v1x1p2 = qx1p2; v1x1p2 *= 15; rx1p2 *= 765433L; v1x1p2 += rx1p2; v1x1p2 += 12084; v1x1p2 /= 25920; v1x1p2.floor(); qx1p2 *= 32336; v1x1p2 += qx1p2;
+		v2x1p2 = v1x1p2; v2x1p2.mod(7); v2x1p2 *= 6; v2x1p2 /= 7; v2x1p2.floor(); v2x1p2.mod(2); v2x1p2 += v1x1p2;
+		Number L2x1, L2x1m1, v3x1, v4x1, c2x1;
+		L2x1 = v2x1p1; L2x1 -= v2x1;
+		L2x1m1 = v2x1; L2x1m1 -= v2x1m1;
+		v3x1 = L2x1; v3x1 += 19; v3x1 /= 15; v3x1.floor(); v3x1.mod(2); v3x1 *= 2;
+		v4x1 = L2x1m1; v4x1 += 7; v4x1 /= 15; v4x1.floor(); v4x1.mod(2);
+		c2x1 = v2x1; c2x1 += v3x1; c2x1 += v4x1;
+		Number L2x1p1, v3x1p1, v4x1p1, c2x1p1;
+		L2x1p1 = v2x1p2; L2x1p1 -= v2x1p1;
+		v3x1p1 = L2x1p1; v3x1p1 += 19; v3x1p1 /= 15; v3x1p1.floor(); v3x1p1.mod(2); v3x1p1 *= 2;
+		v4x1p1 = L2x1; v4x1p1 += 7; v4x1p1 /= 15; v4x1p1.floor(); v4x1p1.mod(2);
+		c2x1p1 = v2x1p1; c2x1p1 += v3x1p1; c2x1p1 += v4x1p1;
+		Number L, c8, c9, c3, c4;
+		L = c2x1p1; L -= c2x1;
+		c8 = L; c8 += 7; c8 /= 2; c8.floor(); c8.mod(15);
+		c9 = 385; c9 -= L; c9 /= 2; c9.floor(); c9.mod(15); c9.negate();
+		Number x3a(x3), x3b(x3), x3c(x3);
+		x3a *= 384; x3a += 7; x3a /= 13; x3a.floor(); x3b += 4; x3b /= 12; x3b.floor(); x3c += 3; x3c /= 12; x3c.floor();
+		c3 = x3a; c8 *= x3b; c3 += c8; c9 *= x3c; c3 += c9;
+		J = 347821L; J += c2x1; J += c3; J += z4;
+	} else if(ct == 6) {
+		j *= 365; m *= 30;
+		J = j; J += m; J += d; J+= 1448242L;
+	} else if(ct == 7) {
+		Number y1(j); y1 *= 235; y1 -= 241; y1 /= 19; y1.floor(); y1 += m;
+		J = y1; J *= 6940; J /= 235; J.floor(); J += d; J += 1607557L;
+	}
+	return J;
+}
+void cjdn_to_date(Number J, Number &j, long int &m, long int &d, int ct) {
+	if(ct == 1) {
+		Number x3, r3, x2, r2, x1, r1;
+		J *= 4; J -= 6884477L;
+		cal_div(J, 146097, x3, r3);
+		r3 /= 4; r3.floor(); r3 *= 100; r3 += 99;
+		cal_div(r3, 36525, x2, r2);
+		r2 /= 100; r2.floor(); r2 *= 5; r2 += 2;
+		cal_div(r2, 153, x1, r1);
+		r1 /= 5; r1.floor(); r1++; d = r1.lintValue();
+		Number c0(x1); c0 += 2; c0 /= 12; c0.floor();
+		j = x3; j *= 100; j += x2; j += c0;
+		c0 *= -12; c0 += x1; c0 += 3; m = c0.lintValue();
+	} else if(ct == 2) {
+		Number x3, r3, x2, r2, x1, r1, c0;
+		J -= 1721120L; J *= 9; J += 2;
+		cal_div(J, 328718L, x3, r3);
+		r3 *= 100; r3 += 99;
+		cal_div(r3, 36525, x2, r2);
+		r2 *= 5; r2 += 2;
+		cal_div(r2, 153, x1, r1);
+		c0 = x1; c0 += 2; c0 /= 12; c0.floor();
+		j = x3; j *= 100; j += x2; j += c0;
+		c0 *= 12; x1 -= c0; x1 += 3; m = x1.lintValue();
+		r1.mod(153); r1 /= 5; r1.floor(); r1++; d = r1.lintValue(); 
+	} else if(ct == 3) {
+		Number y2, k2, k1, x2, x1, c0;
+		y2 = J; y2 -= 1721118L;
+		k2 = y2; k2 *= 4; k2 += 3;
+		k1 = k2; k1.mod(1461); k1 /= 4; k1.floor(); k1 *= 5; k1 += 2;
+		x1 = k1; x1 /= 153; x1.floor();
+		c0 = x1; c0 += 2; c0 /= 12; c0.floor();
+		j = k2; j /= 1461; j.floor(); j += c0;
+		c0 *= 12; x1 -= c0; x1 += 3; m = x1.lintValue();
+		k1.mod(153); k1 /= 5; k1.floor(); k1++; d = k1.lintValue();
+	} else if(ct == 4) {
+		Number k2, k1;
+		k2 = J; k2 -= 1948440L; k2 *= 30; k2 += 15;
+		k1 = k2; k1.mod(10631); k1 /= 30; k1.floor(); k1 *= 11; k1 += 5;
+		j = k2; j /= 10631; j.floor(); j++;
+		k2 = k1; k2 /= 325; k2.floor(); k2++; m = k2.lintValue();
+		k1.mod(153); k1 /= 11; k1.floor(); k1++; d = k1.lintValue();
+	} else if(ct == 5) {
+	} else if(ct == 6) {
+		Number y2, x2, y1;
+		y2 = J; x2 = y2; x2 /= 365; x2.floor(); y1 = y2; y1.mod(365);
+		j = x2; j++;
+		y2 = y1; y2 /= 30; y2.floor(); y2++; m = y2.lintValue();
+		y1.mod(30); y1++; d = y1.lintValue();
+	} else if(ct == 7) {
+		Number k2, k1;
+		k2 = J; k2 -= 1607558L; k2 *= 235; k2 += 234;
+		k1 = k2; k1 /= 6940; k1.floor(); k1 *= 19; k1 += 5;
+		j = k1; j /= 235; j.floor(); j++;
+		k1.mod(325); k1 /= 19; k1.floor(); k1++; m = k1.lintValue();
+		k1.mod(6940); k1 /= 235; k2.floor(); k2++; d = k2.lintValue();
+	}
+}
+
+DateFunction::DateFunction() : MathFunction("date", 1, 4) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
+	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setHandleVector(false);
+	Number fr(1, 1, 0);
+	iarg->setMin(&fr);
+	fr.set(12, 1, 0);
+	iarg->setMax(&fr);
+	setArgumentDefinition(2, iarg);
+	setDefaultValue(2, "1");
+	iarg = new IntegerArgument();
+	iarg->setHandleVector(false);
+	fr.set(1, 1, 0);
+	iarg->setMin(&fr);
+	fr.set(31, 1, 0);
+	iarg->setMax(&fr);
+	setDefaultValue(3, "1");
+	setArgumentDefinition(3, iarg);
+	TextArgument *targ = new TextArgument();
+	setArgumentDefinition(4, targ);
+	setDefaultValue(4, _("gregorian"));
+}	
+int DateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	int ct = calender_to_id(vargs[3].symbol());
+	if(ct <= 0) {
+		CALCULATOR->error(true, "Unrecognized calendar.", NULL);
+		return 0;
+	}
+	if(ct == 1) {
+		QalculateDateTime dt;
+		if(!dt.set(vargs[0].number().lintValue(), vargs[1].number().lintValue(), vargs[2].number().lintValue())) return 0;
+		mstruct.set(dt);
+		return 1;
+	}
+	Number J = date_to_cjdn(vargs[0].number().lintValue(), vargs[1].number().lintValue(), vargs[2].number().lintValue(), ct);
+	Number j; long int m, d;
+	cjdn_to_date(J, j, m, d, 1);
+	cout << J << endl;
+	bool overflow = false;
+	long int y = j.lintValue(&overflow);
+	if(overflow) return 0;
+	QalculateDateTime dt;
+	if(!dt.set(y, m, d)) return 0;
+	mstruct.set(dt);
+	return 1;
+}
+/*DateTimeFunction::DateTimeFunction() : MathFunction("datetime", 1, 6) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
 	IntegerArgument *iarg = new IntegerArgument();
 	iarg->setHandleVector(false);
@@ -3448,7 +3659,7 @@ DateFunction::DateFunction() : MathFunction("date", 1, 6) {
 	setArgumentDefinition(6, narg);
 	setDefaultValue(6, "0");
 }	
-int DateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+int DateTimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDateTime dt;
 	if(!dt.set(vargs[0].number().lintValue(), vargs[1].number().lintValue(), vargs[2].number().lintValue())) return 0;
 	if(!vargs[3].isZero() || !vargs[4].isZero() || !vargs[5].isZero()) {
@@ -3456,7 +3667,7 @@ int DateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	mstruct.set(dt);
 	return 1;
-}
+}*/
 TimeValueFunction::TimeValueFunction() : MathFunction("timevalue", 0, 1) {
 	setArgumentDefinition(1, new DateArgument());
 	setDefaultValue(1, "now");
