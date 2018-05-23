@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-21 08:40+0200\n"
+"POT-Creation-Date: 2018-05-23 18:38+0200\n"
 "PO-Revision-Date: 2006-05-04 12:29+0200\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -16,48 +16,48 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/qalc.cc:115 ../src/qalc.cc:182 ../src/qalc.cc:2813
+#: ../src/qalc.cc:116 ../src/qalc.cc:183 ../src/qalc.cc:2826
 #: ../libqalculate/util.cc:178
 msgid "yes"
 msgstr "ja"
 
-#: ../src/qalc.cc:116 ../src/qalc.cc:184 ../src/qalc.cc:2813
+#: ../src/qalc.cc:117 ../src/qalc.cc:185 ../src/qalc.cc:2826
 #: ../libqalculate/util.cc:179
 msgid "no"
 msgstr "nej"
 
-#: ../src/qalc.cc:117 ../libqalculate/util.cc:186
+#: ../src/qalc.cc:118 ../libqalculate/util.cc:186
 msgid "true"
 msgstr "sant"
 
-#: ../src/qalc.cc:118 ../libqalculate/util.cc:187
+#: ../src/qalc.cc:119 ../libqalculate/util.cc:187
 msgid "false"
 msgstr "falskt"
 
-#: ../src/qalc.cc:119 ../src/qalc.cc:570 ../src/qalc.cc:842 ../src/qalc.cc:857
-#: ../src/qalc.cc:2278 ../src/qalc.cc:2309 ../src/qalc.cc:2812
-#: ../src/qalc.cc:2897 ../src/qalc.cc:2919 ../libqalculate/util.cc:194
+#: ../src/qalc.cc:120 ../src/qalc.cc:571 ../src/qalc.cc:843 ../src/qalc.cc:858
+#: ../src/qalc.cc:2285 ../src/qalc.cc:2316 ../src/qalc.cc:2825
+#: ../src/qalc.cc:2910 ../src/qalc.cc:2932 ../libqalculate/util.cc:194
 msgid "on"
 msgstr "på"
 
-#: ../src/qalc.cc:120 ../src/qalc.cc:548 ../src/qalc.cc:569 ../src/qalc.cc:751
-#: ../src/qalc.cc:815 ../src/qalc.cc:827 ../src/qalc.cc:840 ../src/qalc.cc:855
-#: ../src/qalc.cc:2277 ../src/qalc.cc:2282 ../src/qalc.cc:2297
-#: ../src/qalc.cc:2307 ../src/qalc.cc:2350 ../src/qalc.cc:2357
-#: ../src/qalc.cc:2379 ../src/qalc.cc:2812 ../src/qalc.cc:2895
-#: ../src/qalc.cc:2902 ../src/qalc.cc:2906 ../src/qalc.cc:2919
-#: ../src/qalc.cc:2946 ../src/qalc.cc:2951 ../src/qalc.cc:2961
+#: ../src/qalc.cc:121 ../src/qalc.cc:549 ../src/qalc.cc:570 ../src/qalc.cc:752
+#: ../src/qalc.cc:816 ../src/qalc.cc:828 ../src/qalc.cc:841 ../src/qalc.cc:856
+#: ../src/qalc.cc:2284 ../src/qalc.cc:2289 ../src/qalc.cc:2304
+#: ../src/qalc.cc:2314 ../src/qalc.cc:2357 ../src/qalc.cc:2364
+#: ../src/qalc.cc:2386 ../src/qalc.cc:2825 ../src/qalc.cc:2908
+#: ../src/qalc.cc:2915 ../src/qalc.cc:2919 ../src/qalc.cc:2932
+#: ../src/qalc.cc:2959 ../src/qalc.cc:2964 ../src/qalc.cc:2974
 #: ../libqalculate/util.cc:195
 msgid "off"
 msgstr "av"
 
-#: ../src/qalc.cc:189
+#: ../src/qalc.cc:190
 msgid "Please answer yes or no"
 msgstr "Vänligen svara ja eller nej"
 
-#: ../src/qalc.cc:196 ../src/qalc.cc:507 ../src/qalc.cc:1141
-#: ../src/qalc.cc:2242 ../src/qalc.cc:2764 ../src/qalc.cc:2831
-#: ../src/qalc.cc:2995
+#: ../src/qalc.cc:197 ../src/qalc.cc:508 ../src/qalc.cc:1142
+#: ../src/qalc.cc:2249 ../src/qalc.cc:2772 ../src/qalc.cc:2844
+#: ../src/qalc.cc:3008
 msgid "unknown"
 msgstr "okänd"
 
@@ -69,9 +69,9 @@ msgstr "okänd"
 #. CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_COMPLEX);
 #. str += ", "; str += _("complex");
 #. if(ass->type() == ASSUMPTION_TYPE_COMPLEX) str += "*";
-#: ../src/qalc.cc:208 ../src/qalc.cc:501 ../src/qalc.cc:1135
-#: ../src/qalc.cc:2236 ../src/qalc.cc:2758 ../src/qalc.cc:2851
-#: ../src/qalc.cc:3015
+#: ../src/qalc.cc:209 ../src/qalc.cc:502 ../src/qalc.cc:1136
+#: ../src/qalc.cc:2243 ../src/qalc.cc:2766 ../src/qalc.cc:2864
+#: ../src/qalc.cc:3028
 msgid "real"
 msgstr "reell"
 
@@ -80,66 +80,66 @@ msgstr "reell"
 #. str += ", "; str += _("non-matrix");
 #. if(ass->type() == ASSUMPTION_TYPE_NONMATRIX) str += "*";
 #. str += ", ";
-#: ../src/qalc.cc:210 ../src/qalc.cc:503 ../src/qalc.cc:1137
-#: ../src/qalc.cc:2238 ../src/qalc.cc:2760 ../src/qalc.cc:2847
-#: ../src/qalc.cc:3011 ../libqalculate/Function.cc:1635
+#: ../src/qalc.cc:211 ../src/qalc.cc:504 ../src/qalc.cc:1138
+#: ../src/qalc.cc:2245 ../src/qalc.cc:2768 ../src/qalc.cc:2860
+#: ../src/qalc.cc:3024 ../libqalculate/Function.cc:1635
 msgid "number"
 msgstr "nummer"
 
-#: ../src/qalc.cc:212 ../src/qalc.cc:500 ../src/qalc.cc:1134
-#: ../src/qalc.cc:2235 ../src/qalc.cc:2757 ../src/qalc.cc:2853
-#: ../src/qalc.cc:3017
+#: ../src/qalc.cc:213 ../src/qalc.cc:501 ../src/qalc.cc:1135
+#: ../src/qalc.cc:2242 ../src/qalc.cc:2765 ../src/qalc.cc:2866
+#: ../src/qalc.cc:3030
 msgid "rational"
 msgstr "rationell"
 
-#: ../src/qalc.cc:214 ../src/qalc.cc:499 ../src/qalc.cc:1133
-#: ../src/qalc.cc:2234 ../src/qalc.cc:2756 ../src/qalc.cc:2855
-#: ../src/qalc.cc:3019 ../libqalculate/Function.cc:1796
+#: ../src/qalc.cc:215 ../src/qalc.cc:500 ../src/qalc.cc:1134
+#: ../src/qalc.cc:2241 ../src/qalc.cc:2764 ../src/qalc.cc:2868
+#: ../src/qalc.cc:3032 ../libqalculate/Function.cc:1796
 msgid "integer"
 msgstr "heltal"
 
-#: ../src/qalc.cc:216 ../src/qalc.cc:494 ../src/qalc.cc:1128
-#: ../src/qalc.cc:2229 ../src/qalc.cc:2751 ../src/qalc.cc:2833
-#: ../src/qalc.cc:2997
+#: ../src/qalc.cc:217 ../src/qalc.cc:495 ../src/qalc.cc:1129
+#: ../src/qalc.cc:2236 ../src/qalc.cc:2759 ../src/qalc.cc:2846
+#: ../src/qalc.cc:3010
 msgid "non-zero"
 msgstr "ej noll"
 
-#: ../src/qalc.cc:218 ../src/qalc.cc:490 ../src/qalc.cc:1124
-#: ../src/qalc.cc:2225 ../src/qalc.cc:2747 ../src/qalc.cc:2835
-#: ../src/qalc.cc:2999
+#: ../src/qalc.cc:219 ../src/qalc.cc:491 ../src/qalc.cc:1125
+#: ../src/qalc.cc:2232 ../src/qalc.cc:2755 ../src/qalc.cc:2848
+#: ../src/qalc.cc:3012
 msgid "positive"
 msgstr "positiv"
 
-#: ../src/qalc.cc:220 ../src/qalc.cc:493 ../src/qalc.cc:1127
-#: ../src/qalc.cc:2228 ../src/qalc.cc:2750 ../src/qalc.cc:2841
-#: ../src/qalc.cc:3005
+#: ../src/qalc.cc:221 ../src/qalc.cc:494 ../src/qalc.cc:1128
+#: ../src/qalc.cc:2235 ../src/qalc.cc:2758 ../src/qalc.cc:2854
+#: ../src/qalc.cc:3018
 msgid "non-negative"
 msgstr "ej negativ"
 
-#: ../src/qalc.cc:222
+#: ../src/qalc.cc:223
 msgid "negatve"
 msgstr "negativ"
 
-#: ../src/qalc.cc:224 ../src/qalc.cc:491 ../src/qalc.cc:1125
-#: ../src/qalc.cc:2226 ../src/qalc.cc:2748 ../src/qalc.cc:2839
-#: ../src/qalc.cc:3003
+#: ../src/qalc.cc:225 ../src/qalc.cc:492 ../src/qalc.cc:1126
+#: ../src/qalc.cc:2233 ../src/qalc.cc:2756 ../src/qalc.cc:2852
+#: ../src/qalc.cc:3016
 msgid "non-positive"
 msgstr "ej positiv"
 
-#: ../src/qalc.cc:227
+#: ../src/qalc.cc:228
 msgid "Unrecognized assumption."
 msgstr "Okänt antagande."
 
-#: ../src/qalc.cc:385 ../libqalculate/Calculator.cc:10050
+#: ../src/qalc.cc:386 ../libqalculate/Calculator.cc:10050
 #, c-format
 msgid "It has been %s day(s) since the exchange rates last were updated."
 msgstr "Det var %s dag(ar) sedan växelkurserna senast updaterades."
 
-#: ../src/qalc.cc:390
+#: ../src/qalc.cc:391
 msgid "Do you wish to update the exchange rates now?"
 msgstr "Vill du uppdatera växelkurserna nu?"
 
-#: ../src/qalc.cc:403 ../src/qalc.cc:404
+#: ../src/qalc.cc:404 ../src/qalc.cc:405
 msgid ""
 "\n"
 "Press Enter to continue."
@@ -147,499 +147,499 @@ msgstr ""
 "\n"
 "Tryck Enter för att fortsätta."
 
-#: ../src/qalc.cc:412 ../src/qalc.cc:413 ../src/qalc.cc:414 ../src/qalc.cc:415
-#: ../src/qalc.cc:416 ../src/qalc.cc:417 ../src/qalc.cc:587 ../src/qalc.cc:590
-#: ../src/qalc.cc:722 ../src/qalc.cc:733 ../src/qalc.cc:742 ../src/qalc.cc:1915
-#: ../src/qalc.cc:2037
+#: ../src/qalc.cc:413 ../src/qalc.cc:414 ../src/qalc.cc:415 ../src/qalc.cc:416
+#: ../src/qalc.cc:417 ../src/qalc.cc:418 ../src/qalc.cc:588 ../src/qalc.cc:591
+#: ../src/qalc.cc:723 ../src/qalc.cc:734 ../src/qalc.cc:743 ../src/qalc.cc:1916
+#: ../src/qalc.cc:2038
 msgid "Illegal value"
 msgstr "Otillåtet värde"
 
 #. qalc command
-#: ../src/qalc.cc:440 ../src/qalc.cc:688 ../src/qalc.cc:1893
-#: ../src/qalc.cc:2173 ../src/qalc.cc:2252 ../src/qalc.cc:2256
-#: ../src/qalc.cc:2420 ../src/qalc.cc:2863 ../src/qalc.cc:2871
-#: ../src/qalc.cc:3123 ../src/qalc.cc:3772
+#: ../src/qalc.cc:441 ../src/qalc.cc:689 ../src/qalc.cc:1894
+#: ../src/qalc.cc:2177 ../src/qalc.cc:2259 ../src/qalc.cc:2263
+#: ../src/qalc.cc:2427 ../src/qalc.cc:2876 ../src/qalc.cc:2884
+#: ../src/qalc.cc:3136 ../src/qalc.cc:3803
 msgid "base"
 msgstr "bas"
 
-#: ../src/qalc.cc:440 ../src/qalc.cc:442 ../src/qalc.cc:2320
-#: ../src/qalc.cc:2927
+#: ../src/qalc.cc:441 ../src/qalc.cc:443 ../src/qalc.cc:2327
+#: ../src/qalc.cc:2940
 msgid "input base"
 msgstr "indatabas"
 
-#: ../src/qalc.cc:440
+#: ../src/qalc.cc:441
 msgid "output base"
 msgstr "utdatabas"
 
-#: ../src/qalc.cc:443 ../src/qalc.cc:2258 ../src/qalc.cc:2322
-#: ../src/qalc.cc:2883 ../src/qalc.cc:2935
+#: ../src/qalc.cc:444 ../src/qalc.cc:2265 ../src/qalc.cc:2329
+#: ../src/qalc.cc:2896 ../src/qalc.cc:2948
 msgid "roman"
 msgstr "romersk"
 
-#: ../src/qalc.cc:444 ../src/qalc.cc:2260 ../src/qalc.cc:2881
+#: ../src/qalc.cc:445 ../src/qalc.cc:2267 ../src/qalc.cc:2894
 msgid "time"
 msgstr "tid"
 
-#: ../src/qalc.cc:445 ../src/qalc.cc:2102 ../src/qalc.cc:3710
+#: ../src/qalc.cc:446 ../src/qalc.cc:2104 ../src/qalc.cc:3738
 msgid "hexadecimal"
 msgstr "hexadecimal"
 
-#: ../src/qalc.cc:446 ../src/qalc.cc:2117 ../src/qalc.cc:3737
+#: ../src/qalc.cc:447 ../src/qalc.cc:2119 ../src/qalc.cc:3765
 msgid "duodecimal"
 msgstr "duodecimal"
 
-#: ../src/qalc.cc:447 ../src/qalc.cc:2107 ../src/qalc.cc:3719
+#: ../src/qalc.cc:448 ../src/qalc.cc:2109 ../src/qalc.cc:3747
 msgid "binary"
 msgstr "binär"
 
-#: ../src/qalc.cc:448 ../src/qalc.cc:2112 ../src/qalc.cc:3728
+#: ../src/qalc.cc:449 ../src/qalc.cc:2114 ../src/qalc.cc:3756
 msgid "octal"
 msgstr "oktal"
 
-#: ../src/qalc.cc:449
+#: ../src/qalc.cc:450
 msgid "decimal"
 msgstr "decimal"
 
-#: ../src/qalc.cc:450 ../src/qalc.cc:2259
+#: ../src/qalc.cc:451 ../src/qalc.cc:2266
 msgid "sexagesimal"
 msgstr "sexagesimal"
 
-#: ../src/qalc.cc:467 ../src/qalc.cc:531 ../src/qalc.cc:2264
-#: ../src/qalc.cc:2888
+#: ../src/qalc.cc:468 ../src/qalc.cc:532 ../src/qalc.cc:2271
+#: ../src/qalc.cc:2901
 msgid "base display"
 msgstr "basvisning"
 
-#: ../src/qalc.cc:472
+#: ../src/qalc.cc:473
 msgid "Illegal base."
 msgstr "Otillåten bas."
 
-#: ../src/qalc.cc:480 ../src/qalc.cc:508 ../src/qalc.cc:2243
-#: ../src/qalc.cc:2830
+#: ../src/qalc.cc:481 ../src/qalc.cc:509 ../src/qalc.cc:2250
+#: ../src/qalc.cc:2843
 msgid "assumptions"
 msgstr "antaganden"
 
-#: ../src/qalc.cc:492 ../src/qalc.cc:1126 ../src/qalc.cc:2227
-#: ../src/qalc.cc:2749 ../src/qalc.cc:2837 ../src/qalc.cc:3001
+#: ../src/qalc.cc:493 ../src/qalc.cc:1127 ../src/qalc.cc:2234
+#: ../src/qalc.cc:2757 ../src/qalc.cc:2850 ../src/qalc.cc:3014
 msgid "negative"
 msgstr "negativ"
 
-#: ../src/qalc.cc:502 ../src/qalc.cc:1136 ../src/qalc.cc:2237
-#: ../src/qalc.cc:2759
+#: ../src/qalc.cc:503 ../src/qalc.cc:1137 ../src/qalc.cc:2244
+#: ../src/qalc.cc:2767
 msgid "complex"
 msgstr "komplex"
 
-#: ../src/qalc.cc:504 ../src/qalc.cc:1138 ../src/qalc.cc:2239
-#: ../src/qalc.cc:2761
+#: ../src/qalc.cc:505 ../src/qalc.cc:1139 ../src/qalc.cc:2246
+#: ../src/qalc.cc:2769
 msgid "non-matrix"
 msgstr "ej matris"
 
-#: ../src/qalc.cc:511 ../src/qalc.cc:2205 ../src/qalc.cc:2824
+#: ../src/qalc.cc:512 ../src/qalc.cc:2212 ../src/qalc.cc:2837
 msgid "all prefixes"
 msgstr "alla prefix"
 
-#: ../src/qalc.cc:512 ../src/qalc.cc:2274 ../src/qalc.cc:2892
+#: ../src/qalc.cc:513 ../src/qalc.cc:2281 ../src/qalc.cc:2905
 msgid "complex numbers"
 msgstr "komplexa tal"
 
-#: ../src/qalc.cc:513 ../src/qalc.cc:2294 ../src/qalc.cc:2905
+#: ../src/qalc.cc:514 ../src/qalc.cc:2301 ../src/qalc.cc:2918
 msgid "excessive parentheses"
 msgstr "överdrivna parenteser"
 
-#: ../src/qalc.cc:514 ../src/qalc.cc:2313 ../src/qalc.cc:2471
-#: ../src/qalc.cc:2476 ../src/qalc.cc:2920
+#: ../src/qalc.cc:515 ../src/qalc.cc:2320 ../src/qalc.cc:2479
+#: ../src/qalc.cc:2484 ../src/qalc.cc:2933
 msgid "functions"
 msgstr "funktioner"
 
-#: ../src/qalc.cc:515 ../src/qalc.cc:2326 ../src/qalc.cc:2940
+#: ../src/qalc.cc:516 ../src/qalc.cc:2333 ../src/qalc.cc:2953
 msgid "infinite numbers"
 msgstr "oändliga tal"
 
-#: ../src/qalc.cc:516 ../src/qalc.cc:2391 ../src/qalc.cc:2969
+#: ../src/qalc.cc:517 ../src/qalc.cc:2398 ../src/qalc.cc:2982
 msgid "show negative exponents"
 msgstr "visa negativa exponenter"
 
-#: ../src/qalc.cc:517 ../src/qalc.cc:2221 ../src/qalc.cc:2827
+#: ../src/qalc.cc:518 ../src/qalc.cc:2228 ../src/qalc.cc:2840
 msgid "assume nonzero denominators"
 msgstr "antag nämnare ej noll"
 
-#: ../src/qalc.cc:518 ../src/qalc.cc:2222 ../src/qalc.cc:2828
+#: ../src/qalc.cc:519 ../src/qalc.cc:2229 ../src/qalc.cc:2841
 msgid "warn nonzero denominators"
 msgstr "varna nämnare ej noll"
 
-#: ../src/qalc.cc:519 ../src/qalc.cc:2376 ../src/qalc.cc:2960
+#: ../src/qalc.cc:520 ../src/qalc.cc:2383 ../src/qalc.cc:2973
 msgid "prefixes"
 msgstr "prefix"
 
-#: ../src/qalc.cc:520 ../src/qalc.cc:2279 ../src/qalc.cc:2901
+#: ../src/qalc.cc:521 ../src/qalc.cc:2286 ../src/qalc.cc:2914
 msgid "denominator prefixes"
 msgstr "nämnarprefix"
 
-#: ../src/qalc.cc:521 ../src/qalc.cc:2374 ../src/qalc.cc:2958
+#: ../src/qalc.cc:522 ../src/qalc.cc:2381 ../src/qalc.cc:2971
 msgid "place units separately"
 msgstr "placera enheter separat"
 
-#: ../src/qalc.cc:522 ../src/qalc.cc:2273 ../src/qalc.cc:2891
+#: ../src/qalc.cc:523 ../src/qalc.cc:2280 ../src/qalc.cc:2904
 msgid "calculate variables"
 msgstr "beräkna variabler"
 
-#: ../src/qalc.cc:523 ../src/qalc.cc:2272 ../src/qalc.cc:2890
+#: ../src/qalc.cc:524 ../src/qalc.cc:2279 ../src/qalc.cc:2903
 msgid "calculate functions"
 msgstr "beräkna funktioner"
 
-#: ../src/qalc.cc:524 ../src/qalc.cc:2395 ../src/qalc.cc:2973
+#: ../src/qalc.cc:525 ../src/qalc.cc:2402 ../src/qalc.cc:2986
 msgid "sync units"
 msgstr "synkronisera enheter"
 
-#: ../src/qalc.cc:525 ../src/qalc.cc:2385 ../src/qalc.cc:2963
+#: ../src/qalc.cc:526 ../src/qalc.cc:2392 ../src/qalc.cc:2976
 msgid "round to even"
 msgstr "avrunda till jämnt"
 
-#: ../src/qalc.cc:526 ../src/qalc.cc:2387 ../src/qalc.cc:2965
+#: ../src/qalc.cc:527 ../src/qalc.cc:2394 ../src/qalc.cc:2978
 msgid "rpn syntax"
 msgstr "rpnsyntax"
 
 #. qalc command
-#: ../src/qalc.cc:527 ../src/qalc.cc:1896 ../src/qalc.cc:2386
-#: ../src/qalc.cc:2441 ../src/qalc.cc:2964 ../src/qalc.cc:3073
+#: ../src/qalc.cc:528 ../src/qalc.cc:1897 ../src/qalc.cc:2393
+#: ../src/qalc.cc:2449 ../src/qalc.cc:2977 ../src/qalc.cc:3086
 msgid "rpn"
 msgstr "rpn"
 
-#: ../src/qalc.cc:528 ../src/qalc.cc:2392 ../src/qalc.cc:2970
+#: ../src/qalc.cc:529 ../src/qalc.cc:2399 ../src/qalc.cc:2983
 msgid "short multiplication"
 msgstr "kort multiplikation"
 
-#: ../src/qalc.cc:529 ../src/qalc.cc:2344 ../src/qalc.cc:2944
+#: ../src/qalc.cc:530 ../src/qalc.cc:2351 ../src/qalc.cc:2957
 msgid "lowercase e"
 msgstr "litet e"
 
-#: ../src/qalc.cc:530 ../src/qalc.cc:2345 ../src/qalc.cc:2945
+#: ../src/qalc.cc:531 ../src/qalc.cc:2352 ../src/qalc.cc:2958
 msgid "lowercase numbers"
 msgstr "små nummer"
 
-#: ../src/qalc.cc:533 ../src/qalc.cc:549 ../src/qalc.cc:603 ../src/qalc.cc:684
-#: ../src/qalc.cc:706 ../src/qalc.cc:2200 ../src/qalc.cc:2211
-#: ../src/qalc.cc:2248 ../src/qalc.cc:2266 ../src/qalc.cc:2823
-#: ../src/qalc.cc:2825 ../src/qalc.cc:2859 ../src/qalc.cc:2888
+#: ../src/qalc.cc:534 ../src/qalc.cc:550 ../src/qalc.cc:604 ../src/qalc.cc:685
+#: ../src/qalc.cc:707 ../src/qalc.cc:2207 ../src/qalc.cc:2218
+#: ../src/qalc.cc:2255 ../src/qalc.cc:2273 ../src/qalc.cc:2836
+#: ../src/qalc.cc:2838 ../src/qalc.cc:2872 ../src/qalc.cc:2901
 msgid "none"
 msgstr "ingen"
 
-#: ../src/qalc.cc:534 ../src/qalc.cc:2267 ../src/qalc.cc:2888
+#: ../src/qalc.cc:535 ../src/qalc.cc:2274 ../src/qalc.cc:2901
 msgid "normal"
 msgstr "normal"
 
-#: ../src/qalc.cc:535 ../src/qalc.cc:2268 ../src/qalc.cc:2888
+#: ../src/qalc.cc:536 ../src/qalc.cc:2275 ../src/qalc.cc:2901
 msgid "alternative"
 msgstr "alternativ"
 
-#: ../src/qalc.cc:540 ../src/qalc.cc:556 ../src/qalc.cc:576 ../src/qalc.cc:608
-#: ../src/qalc.cc:624 ../src/qalc.cc:648 ../src/qalc.cc:662 ../src/qalc.cc:676
-#: ../src/qalc.cc:698 ../src/qalc.cc:713 ../src/qalc.cc:762 ../src/qalc.cc:768
-#: ../src/qalc.cc:792 ../src/qalc.cc:848 ../src/qalc.cc:862
+#: ../src/qalc.cc:541 ../src/qalc.cc:557 ../src/qalc.cc:577 ../src/qalc.cc:609
+#: ../src/qalc.cc:625 ../src/qalc.cc:649 ../src/qalc.cc:663 ../src/qalc.cc:677
+#: ../src/qalc.cc:699 ../src/qalc.cc:714 ../src/qalc.cc:763 ../src/qalc.cc:769
+#: ../src/qalc.cc:793 ../src/qalc.cc:849 ../src/qalc.cc:863
 msgid "Illegal value."
 msgstr "Otillåtet värde."
 
-#: ../src/qalc.cc:545 ../src/qalc.cc:2271 ../src/qalc.cc:2889
+#: ../src/qalc.cc:546 ../src/qalc.cc:2278 ../src/qalc.cc:2902
 msgid "two's complement"
 msgstr "tvåkomplement"
 
-#: ../src/qalc.cc:546 ../src/qalc.cc:2280 ../src/qalc.cc:2902
+#: ../src/qalc.cc:547 ../src/qalc.cc:2287 ../src/qalc.cc:2915
 msgid "digit grouping"
 msgstr "siffergruppering"
 
-#: ../src/qalc.cc:550 ../src/qalc.cc:2283 ../src/qalc.cc:2902
+#: ../src/qalc.cc:551 ../src/qalc.cc:2290 ../src/qalc.cc:2915
 msgid "standard"
 msgstr "standard"
 
-#: ../src/qalc.cc:551 ../src/qalc.cc:571 ../src/qalc.cc:2276
-#: ../src/qalc.cc:2284 ../src/qalc.cc:2893 ../src/qalc.cc:2902
+#: ../src/qalc.cc:552 ../src/qalc.cc:572 ../src/qalc.cc:2283
+#: ../src/qalc.cc:2291 ../src/qalc.cc:2906 ../src/qalc.cc:2915
 msgid "locale"
 msgstr "locale"
 
-#: ../src/qalc.cc:561 ../src/qalc.cc:2394 ../src/qalc.cc:2972
+#: ../src/qalc.cc:562 ../src/qalc.cc:2401 ../src/qalc.cc:2985
 msgid "spell out logical"
 msgstr "skriv ut logiska"
 
-#: ../src/qalc.cc:562 ../src/qalc.cc:2318 ../src/qalc.cc:2925
+#: ../src/qalc.cc:563 ../src/qalc.cc:2325 ../src/qalc.cc:2938
 msgid "ignore dot"
 msgstr "ignorera punkt"
 
-#: ../src/qalc.cc:563 ../src/qalc.cc:2315 ../src/qalc.cc:2922
+#: ../src/qalc.cc:564 ../src/qalc.cc:2322 ../src/qalc.cc:2935
 msgid "ignore comma"
 msgstr "ignorera komma"
 
-#: ../src/qalc.cc:567 ../src/qalc.cc:2275 ../src/qalc.cc:2893
+#: ../src/qalc.cc:568 ../src/qalc.cc:2282 ../src/qalc.cc:2906
 msgid "decimal comma"
 msgstr "decimalkomma"
 
-#: ../src/qalc.cc:586 ../src/qalc.cc:2343 ../src/qalc.cc:2943
+#: ../src/qalc.cc:587 ../src/qalc.cc:2350 ../src/qalc.cc:2956
 msgid "limit implicit multiplication"
 msgstr "begränsa implicit multiplikation"
 
-#: ../src/qalc.cc:588 ../src/qalc.cc:2393 ../src/qalc.cc:2971
+#: ../src/qalc.cc:589 ../src/qalc.cc:2400 ../src/qalc.cc:2984
 msgid "spacious"
 msgstr "rymlig"
 
-#: ../src/qalc.cc:589 ../src/qalc.cc:2396 ../src/qalc.cc:2974
+#: ../src/qalc.cc:590 ../src/qalc.cc:2403 ../src/qalc.cc:2987
 msgid "unicode"
 msgstr "unicode"
 
-#: ../src/qalc.cc:592 ../src/qalc.cc:2397 ../src/qalc.cc:2473
-#: ../src/qalc.cc:2478 ../src/qalc.cc:2975
+#: ../src/qalc.cc:593 ../src/qalc.cc:2404 ../src/qalc.cc:2481
+#: ../src/qalc.cc:2486 ../src/qalc.cc:2988
 msgid "units"
 msgstr "enheter"
 
-#: ../src/qalc.cc:593 ../src/qalc.cc:2398 ../src/qalc.cc:2976
+#: ../src/qalc.cc:594 ../src/qalc.cc:2405 ../src/qalc.cc:2989
 msgid "unknowns"
 msgstr "okända"
 
-#: ../src/qalc.cc:594 ../src/qalc.cc:2406 ../src/qalc.cc:2472
-#: ../src/qalc.cc:2477 ../src/qalc.cc:2983
+#: ../src/qalc.cc:595 ../src/qalc.cc:2413 ../src/qalc.cc:2480
+#: ../src/qalc.cc:2485 ../src/qalc.cc:2996
 msgid "variables"
 msgstr "variabler"
 
-#: ../src/qalc.cc:595 ../src/qalc.cc:2197 ../src/qalc.cc:2822
+#: ../src/qalc.cc:596 ../src/qalc.cc:2204 ../src/qalc.cc:2835
 msgid "abbreviations"
 msgstr "förkortningar"
 
-#: ../src/qalc.cc:596 ../src/qalc.cc:2390 ../src/qalc.cc:2968
+#: ../src/qalc.cc:597 ../src/qalc.cc:2397 ../src/qalc.cc:2981
 msgid "show ending zeroes"
 msgstr "visa avslutande nollor"
 
-#: ../src/qalc.cc:597 ../src/qalc.cc:2384 ../src/qalc.cc:2962
+#: ../src/qalc.cc:598 ../src/qalc.cc:2391 ../src/qalc.cc:2975
 msgid "repeating decimals"
 msgstr "upprepande decimaler"
 
-#: ../src/qalc.cc:598 ../src/qalc.cc:2206 ../src/qalc.cc:2825
+#: ../src/qalc.cc:599 ../src/qalc.cc:2213 ../src/qalc.cc:2838
 msgid "angle unit"
 msgstr "vinkelenhet"
 
-#: ../src/qalc.cc:600 ../src/qalc.cc:2208 ../src/qalc.cc:2209
+#: ../src/qalc.cc:601 ../src/qalc.cc:2215 ../src/qalc.cc:2216
 msgid "rad"
 msgstr "rad"
 
-#: ../src/qalc.cc:600 ../src/qalc.cc:2825
+#: ../src/qalc.cc:601 ../src/qalc.cc:2838
 msgid "radians"
 msgstr "radianer"
 
-#: ../src/qalc.cc:601
+#: ../src/qalc.cc:602
 msgid "deg"
 msgstr "deg"
 
-#: ../src/qalc.cc:601 ../src/qalc.cc:2825
+#: ../src/qalc.cc:602 ../src/qalc.cc:2838
 msgid "degrees"
 msgstr "grader"
 
-#: ../src/qalc.cc:602 ../src/qalc.cc:2210
+#: ../src/qalc.cc:603 ../src/qalc.cc:2217
 msgid "gra"
 msgstr "gra"
 
-#: ../src/qalc.cc:602 ../src/qalc.cc:2825
+#: ../src/qalc.cc:603 ../src/qalc.cc:2838
 msgid "gradians"
 msgstr "gradienter"
 
-#: ../src/qalc.cc:615 ../src/qalc.cc:2367 ../src/qalc.cc:2957
-#: ../src/qalc.cc:3171
+#: ../src/qalc.cc:616 ../src/qalc.cc:2374 ../src/qalc.cc:2970
+#: ../src/qalc.cc:3184
 msgid "parsing mode"
 msgstr "tolkningsläge"
 
-#: ../src/qalc.cc:617 ../src/qalc.cc:775 ../src/qalc.cc:2330
-#: ../src/qalc.cc:2369 ../src/qalc.cc:2942 ../src/qalc.cc:2957
-#: ../src/qalc.cc:3179
+#: ../src/qalc.cc:618 ../src/qalc.cc:776 ../src/qalc.cc:2337
+#: ../src/qalc.cc:2376 ../src/qalc.cc:2955 ../src/qalc.cc:2970
+#: ../src/qalc.cc:3192
 msgid "adaptive"
 msgstr "anpassad"
 
-#: ../src/qalc.cc:618 ../src/qalc.cc:2370 ../src/qalc.cc:2957
-#: ../src/qalc.cc:3176
+#: ../src/qalc.cc:619 ../src/qalc.cc:2377 ../src/qalc.cc:2970
+#: ../src/qalc.cc:3189
 msgid "implicit first"
 msgstr "implicit först"
 
-#: ../src/qalc.cc:619 ../src/qalc.cc:2371 ../src/qalc.cc:2957
-#: ../src/qalc.cc:3173
+#: ../src/qalc.cc:620 ../src/qalc.cc:2378 ../src/qalc.cc:2970
+#: ../src/qalc.cc:3186
 msgid "conventional"
 msgstr "konventionell"
 
-#: ../src/qalc.cc:629 ../src/qalc.cc:1299 ../src/qalc.cc:2399
-#: ../src/qalc.cc:2977
+#: ../src/qalc.cc:630 ../src/qalc.cc:1300 ../src/qalc.cc:2406
+#: ../src/qalc.cc:2990
 msgid "update exchange rates"
 msgstr "updatering av växelkurser"
 
-#: ../src/qalc.cc:630 ../src/qalc.cc:2402 ../src/qalc.cc:2979
+#: ../src/qalc.cc:631 ../src/qalc.cc:2409 ../src/qalc.cc:2992
 msgid "never"
 msgstr "aldrig"
 
-#: ../src/qalc.cc:632 ../src/qalc.cc:2401 ../src/qalc.cc:2978
+#: ../src/qalc.cc:633 ../src/qalc.cc:2408 ../src/qalc.cc:2991
 msgid "ask"
 msgstr "fråga"
 
-#: ../src/qalc.cc:639 ../src/qalc.cc:2360 ../src/qalc.cc:2956
+#: ../src/qalc.cc:640 ../src/qalc.cc:2367 ../src/qalc.cc:2969
 msgid "multiplication sign"
 msgstr "multiplikationstecken"
 
-#: ../src/qalc.cc:653 ../src/qalc.cc:2287 ../src/qalc.cc:2903
+#: ../src/qalc.cc:654 ../src/qalc.cc:2294 ../src/qalc.cc:2916
 msgid "division sign"
 msgstr "divisionstecken"
 
-#: ../src/qalc.cc:667 ../src/qalc.cc:2214 ../src/qalc.cc:2826
+#: ../src/qalc.cc:668 ../src/qalc.cc:2221 ../src/qalc.cc:2839
 msgid "approximation"
 msgstr "approximering"
 
 #. qalc command
-#: ../src/qalc.cc:669 ../src/qalc.cc:719 ../src/qalc.cc:841 ../src/qalc.cc:2087
-#: ../src/qalc.cc:2216 ../src/qalc.cc:2308 ../src/qalc.cc:2422
-#: ../src/qalc.cc:2826 ../src/qalc.cc:2904 ../src/qalc.cc:2919
-#: ../src/qalc.cc:3127
+#: ../src/qalc.cc:670 ../src/qalc.cc:720 ../src/qalc.cc:842 ../src/qalc.cc:2088
+#: ../src/qalc.cc:2223 ../src/qalc.cc:2315 ../src/qalc.cc:2429
+#: ../src/qalc.cc:2839 ../src/qalc.cc:2917 ../src/qalc.cc:2932
+#: ../src/qalc.cc:3140
 msgid "exact"
 msgstr "exakt"
 
-#: ../src/qalc.cc:670 ../src/qalc.cc:2217 ../src/qalc.cc:2826
+#: ../src/qalc.cc:671 ../src/qalc.cc:2224 ../src/qalc.cc:2839
 msgid "try exact"
 msgstr "försök exakt"
 
 #. qalc command
-#: ../src/qalc.cc:671 ../src/qalc.cc:1149 ../src/qalc.cc:2093
-#: ../src/qalc.cc:2218 ../src/qalc.cc:2418 ../src/qalc.cc:2678
-#: ../src/qalc.cc:2688 ../src/qalc.cc:2778 ../src/qalc.cc:2826
-#: ../src/qalc.cc:3131
+#: ../src/qalc.cc:672 ../src/qalc.cc:1150 ../src/qalc.cc:2094
+#: ../src/qalc.cc:2225 ../src/qalc.cc:2425 ../src/qalc.cc:2686
+#: ../src/qalc.cc:2696 ../src/qalc.cc:2786 ../src/qalc.cc:2839
+#: ../src/qalc.cc:3144
 msgid "approximate"
 msgstr "approximerat"
 
-#: ../src/qalc.cc:681 ../src/qalc.cc:2244 ../src/qalc.cc:2858
+#: ../src/qalc.cc:682 ../src/qalc.cc:2251 ../src/qalc.cc:2871
 msgid "autoconversion"
 msgstr "autoomvandling"
 
-#: ../src/qalc.cc:685 ../src/qalc.cc:2167
+#: ../src/qalc.cc:686 ../src/qalc.cc:2171
 msgid "best"
 msgstr "bästa"
 
-#: ../src/qalc.cc:686 ../src/qalc.cc:2253 ../src/qalc.cc:2865
+#: ../src/qalc.cc:687 ../src/qalc.cc:2260 ../src/qalc.cc:2878
 msgid "optimalsi"
 msgstr "optimalsi"
 
-#: ../src/qalc.cc:687 ../src/qalc.cc:2167 ../src/qalc.cc:2251
-#: ../src/qalc.cc:2861 ../src/qalc.cc:3763
+#: ../src/qalc.cc:688 ../src/qalc.cc:2171 ../src/qalc.cc:2258
+#: ../src/qalc.cc:2874 ../src/qalc.cc:3794
 msgid "optimal"
 msgstr "optimal"
 
-#: ../src/qalc.cc:689 ../src/qalc.cc:2247 ../src/qalc.cc:2867
-#: ../src/qalc.cc:3781
+#: ../src/qalc.cc:690 ../src/qalc.cc:2254 ../src/qalc.cc:2880
+#: ../src/qalc.cc:3812
 msgid "mixed"
 msgstr "blandade"
 
-#: ../src/qalc.cc:704 ../src/qalc.cc:2198 ../src/qalc.cc:2823
+#: ../src/qalc.cc:705 ../src/qalc.cc:2205 ../src/qalc.cc:2836
 msgid "algebra mode"
 msgstr "algebraiskt läge"
 
 #. qalc command
-#: ../src/qalc.cc:707 ../src/qalc.cc:2190 ../src/qalc.cc:2202
-#: ../src/qalc.cc:2436 ../src/qalc.cc:2805 ../src/qalc.cc:2823
+#: ../src/qalc.cc:708 ../src/qalc.cc:2197 ../src/qalc.cc:2209
+#: ../src/qalc.cc:2444 ../src/qalc.cc:2818 ../src/qalc.cc:2836
 msgid "simplify"
 msgstr "förenkla"
 
-#: ../src/qalc.cc:708 ../src/qalc.cc:2201 ../src/qalc.cc:2823
+#: ../src/qalc.cc:709 ../src/qalc.cc:2208 ../src/qalc.cc:2836
 msgid "factorize"
 msgstr "faktorisera"
 
-#: ../src/qalc.cc:730 ../src/qalc.cc:2389 ../src/qalc.cc:2434
-#: ../src/qalc.cc:2967
+#: ../src/qalc.cc:731 ../src/qalc.cc:2396 ../src/qalc.cc:2442
+#: ../src/qalc.cc:2980
 msgid "save mode"
 msgstr "spara läge"
 
-#: ../src/qalc.cc:739 ../src/qalc.cc:2388 ../src/qalc.cc:2433
-#: ../src/qalc.cc:2966
+#: ../src/qalc.cc:740 ../src/qalc.cc:2395 ../src/qalc.cc:2441
+#: ../src/qalc.cc:2979
 msgid "save definitions"
 msgstr "spara definitioner"
 
-#: ../src/qalc.cc:748 ../src/qalc.cc:2295 ../src/qalc.cc:2906
+#: ../src/qalc.cc:749 ../src/qalc.cc:2302 ../src/qalc.cc:2919
 msgid "exp mode"
 msgstr "exp-läge"
 
-#: ../src/qalc.cc:752 ../src/qalc.cc:2298 ../src/qalc.cc:2908
+#: ../src/qalc.cc:753 ../src/qalc.cc:2305 ../src/qalc.cc:2921
 msgid "auto"
 msgstr "auto"
 
-#: ../src/qalc.cc:753 ../src/qalc.cc:2299 ../src/qalc.cc:2912
+#: ../src/qalc.cc:754 ../src/qalc.cc:2306 ../src/qalc.cc:2925
 msgid "pure"
 msgstr "ren"
 
-#: ../src/qalc.cc:754 ../src/qalc.cc:2300 ../src/qalc.cc:2914
+#: ../src/qalc.cc:755 ../src/qalc.cc:2307 ../src/qalc.cc:2927
 msgid "scientific"
 msgstr "vetenskaplig"
 
-#: ../src/qalc.cc:755 ../src/qalc.cc:2301 ../src/qalc.cc:2910
+#: ../src/qalc.cc:756 ../src/qalc.cc:2308 ../src/qalc.cc:2923
 msgid "engineering"
 msgstr "teknisk"
 
-#: ../src/qalc.cc:764 ../src/qalc.cc:2375 ../src/qalc.cc:2959
+#: ../src/qalc.cc:765 ../src/qalc.cc:2382 ../src/qalc.cc:2972
 msgid "precision"
 msgstr "precision"
 
-#: ../src/qalc.cc:773 ../src/qalc.cc:2328 ../src/qalc.cc:2942
+#: ../src/qalc.cc:774 ../src/qalc.cc:2335 ../src/qalc.cc:2955
 msgid "interval display"
 msgstr "intervallvisning"
 
-#: ../src/qalc.cc:776 ../src/qalc.cc:2333 ../src/qalc.cc:2942
+#: ../src/qalc.cc:777 ../src/qalc.cc:2340 ../src/qalc.cc:2955
 msgid "significant"
 msgstr "signifikant"
 
-#: ../src/qalc.cc:777 ../src/qalc.cc:799 ../src/qalc.cc:2327
-#: ../src/qalc.cc:2334 ../src/qalc.cc:2941 ../src/qalc.cc:2942
-#: ../src/qalc.cc:3184
+#: ../src/qalc.cc:778 ../src/qalc.cc:800 ../src/qalc.cc:2334
+#: ../src/qalc.cc:2341 ../src/qalc.cc:2954 ../src/qalc.cc:2955
+#: ../src/qalc.cc:3197
 msgid "interval"
 msgstr "intervall"
 
-#: ../src/qalc.cc:778 ../src/qalc.cc:2335 ../src/qalc.cc:2942
+#: ../src/qalc.cc:779 ../src/qalc.cc:2342 ../src/qalc.cc:2955
 msgid "plusminus"
 msgstr "plusminus"
 
-#: ../src/qalc.cc:779 ../src/qalc.cc:2336 ../src/qalc.cc:2942
+#: ../src/qalc.cc:780 ../src/qalc.cc:2343 ../src/qalc.cc:2955
 msgid "midpoint"
 msgstr "mittpunkt"
 
-#: ../src/qalc.cc:780 ../src/qalc.cc:2338 ../src/qalc.cc:2942
+#: ../src/qalc.cc:781 ../src/qalc.cc:2345 ../src/qalc.cc:2955
 msgid "upper"
 msgstr "övre"
 
-#: ../src/qalc.cc:781 ../src/qalc.cc:2337 ../src/qalc.cc:2942
+#: ../src/qalc.cc:782 ../src/qalc.cc:2344 ../src/qalc.cc:2955
 msgid "lower"
 msgstr "undre"
 
-#: ../src/qalc.cc:806 ../src/qalc.cc:2407 ../src/qalc.cc:2984
+#: ../src/qalc.cc:807 ../src/qalc.cc:2414 ../src/qalc.cc:2997
 msgid "variable units"
 msgstr "variabelenheter"
 
-#: ../src/qalc.cc:813 ../src/qalc.cc:2346 ../src/qalc.cc:2946
+#: ../src/qalc.cc:814 ../src/qalc.cc:2353 ../src/qalc.cc:2959
 msgid "max decimals"
 msgstr "max decimaler"
 
-#: ../src/qalc.cc:825 ../src/qalc.cc:2353 ../src/qalc.cc:2951
+#: ../src/qalc.cc:826 ../src/qalc.cc:2360 ../src/qalc.cc:2964
 msgid "min decimals"
 msgstr "min decimaler"
 
-#: ../src/qalc.cc:838 ../src/qalc.cc:2305 ../src/qalc.cc:2919
+#: ../src/qalc.cc:839 ../src/qalc.cc:2312 ../src/qalc.cc:2932
 msgid "fractions"
 msgstr "bråktal"
 
-#: ../src/qalc.cc:843 ../src/qalc.cc:2310 ../src/qalc.cc:2919
+#: ../src/qalc.cc:844 ../src/qalc.cc:2317 ../src/qalc.cc:2932
 msgid "combined"
 msgstr "kombinerad"
 
-#: ../src/qalc.cc:853 ../src/qalc.cc:2377 ../src/qalc.cc:2961
+#: ../src/qalc.cc:854 ../src/qalc.cc:2384 ../src/qalc.cc:2974
 msgid "read precision"
 msgstr "läs precision"
 
-#: ../src/qalc.cc:856 ../src/qalc.cc:2380 ../src/qalc.cc:2961
+#: ../src/qalc.cc:857 ../src/qalc.cc:2387 ../src/qalc.cc:2974
 msgid "always"
 msgstr "alltid"
 
-#: ../src/qalc.cc:857 ../src/qalc.cc:2381 ../src/qalc.cc:2961
+#: ../src/qalc.cc:858 ../src/qalc.cc:2388 ../src/qalc.cc:2974
 msgid "when decimals"
 msgstr "när decimaler"
 
-#: ../src/qalc.cc:879
+#: ../src/qalc.cc:880
 msgid "Unrecognized option."
 msgstr "Okänd inställning."
 
-#: ../src/qalc.cc:1072 ../src/qalc.cc:1190 ../src/qalc.cc:1257
+#: ../src/qalc.cc:1073 ../src/qalc.cc:1191 ../src/qalc.cc:1258
 msgid ""
 "For more information about a specific function, variable or unit, please use "
 "the info command (in interactive mode)."
@@ -647,76 +647,76 @@ msgstr ""
 "För mer information om en specifik funktion, variabel eller enhet, vänligen "
 "använd info-kommandot (i interaktivt läge)."
 
-#: ../src/qalc.cc:1085
+#: ../src/qalc.cc:1086
 msgid "Variables:"
 msgstr "Variabler:"
 
-#: ../src/qalc.cc:1087
+#: ../src/qalc.cc:1088
 msgid "Name"
 msgstr "Namn"
 
-#: ../src/qalc.cc:1088 ../src/qalc.cc:2770
+#: ../src/qalc.cc:1089 ../src/qalc.cc:2778
 msgid "Value"
 msgstr "Värde"
 
-#: ../src/qalc.cc:1112 ../src/qalc.cc:2735 ../libqalculate/Function.cc:2001
+#: ../src/qalc.cc:1113 ../src/qalc.cc:2743 ../libqalculate/Function.cc:2001
 msgid "matrix"
 msgstr "matris"
 
-#: ../src/qalc.cc:1114 ../src/qalc.cc:2737 ../libqalculate/Function.cc:1940
+#: ../src/qalc.cc:1115 ../src/qalc.cc:2745 ../libqalculate/Function.cc:1940
 msgid "vector"
 msgstr "vektor"
 
-#: ../src/qalc.cc:1143 ../src/qalc.cc:2766
+#: ../src/qalc.cc:1144 ../src/qalc.cc:2774
 msgid "default assumptions"
 msgstr "förvalda antaganden"
 
-#: ../src/qalc.cc:1164
+#: ../src/qalc.cc:1165
 msgid "Functions:"
 msgstr "Funktioner:"
 
-#: ../src/qalc.cc:1178
+#: ../src/qalc.cc:1179
 msgid "Units:"
 msgstr "Enheter:"
 
-#: ../src/qalc.cc:1185
+#: ../src/qalc.cc:1186
 msgid "No local variables, functions or units have been defined."
 msgstr "Inga lokala variabler, funktioner eller enheter har definierats."
 
-#: ../src/qalc.cc:1292
+#: ../src/qalc.cc:1293
 msgid "usage: qalc [options] [expression]"
 msgstr "användning: qalc [alternative] [uttryck]"
 
-#: ../src/qalc.cc:1294
+#: ../src/qalc.cc:1295
 msgid "where options are:"
 msgstr "där alternativen är:"
 
-#: ../src/qalc.cc:1295 ../src/qalc.cc:2420
+#: ../src/qalc.cc:1296 ../src/qalc.cc:2427
 msgid "BASE"
 msgstr "BAS"
 
-#: ../src/qalc.cc:1296
+#: ../src/qalc.cc:1297
 msgid "set the result number base"
 msgstr "ange nummerbas för resultat"
 
-#: ../src/qalc.cc:1301
+#: ../src/qalc.cc:1302
 msgid "FILE"
 msgstr "FIL"
 
-#: ../src/qalc.cc:1302
+#: ../src/qalc.cc:1303
 msgid "executes commands from a file first"
 msgstr "utför kommandon från en fil först"
 
-#: ../src/qalc.cc:1304
+#: ../src/qalc.cc:1305
 msgid "start in interactive mode"
 msgstr "starta i interaktivt läge"
 
-#: ../src/qalc.cc:1305 ../src/qalc.cc:1307 ../src/qalc.cc:1309
-#: ../src/qalc.cc:1311
+#: ../src/qalc.cc:1306 ../src/qalc.cc:1308 ../src/qalc.cc:1310
+#: ../src/qalc.cc:1312
 msgid "SEARCH TERM"
 msgstr "SÖKTERM"
 
-#: ../src/qalc.cc:1306
+#: ../src/qalc.cc:1307
 msgid ""
 "displays a list of all user-defined or matching variables, functions and "
 "units."
@@ -724,78 +724,78 @@ msgstr ""
 "visar en lista över alla användardefinierade eller matchande variabler, "
 "funktioner och enheter."
 
-#: ../src/qalc.cc:1308
+#: ../src/qalc.cc:1309
 msgid "displays a list of all or matching functions."
 msgstr "visar en lista över alla eller matchande funktioner."
 
-#: ../src/qalc.cc:1310
+#: ../src/qalc.cc:1311
 msgid "displays a list of all or matching units."
 msgstr "visar en lista över alla eller matchande enheter."
 
-#: ../src/qalc.cc:1312
+#: ../src/qalc.cc:1313
 msgid "displays a list of all or matching variables."
 msgstr "visar en lista över alla eller matchande variabler."
 
-#: ../src/qalc.cc:1313
+#: ../src/qalc.cc:1314
 msgid "MILLISECONDS"
 msgstr "MILLISEKUNDER"
 
-#: ../src/qalc.cc:1314
+#: ../src/qalc.cc:1315
 msgid ""
 "terminate calculation and display of result after specified amount of time"
 msgstr "avbryt beräkning eller visning av resultat efter en specificerad tid"
 
-#: ../src/qalc.cc:1316
+#: ../src/qalc.cc:1317
 msgid "do not load any functions, units, or variables from file"
 msgstr "läs inte in några funktioner, enheter, eller variabler från datafiler"
 
-#: ../src/qalc.cc:1318
+#: ../src/qalc.cc:1319
 msgid "do not load any global currencies from file"
 msgstr "läs inte in några systemvida valutor"
 
-#: ../src/qalc.cc:1320
+#: ../src/qalc.cc:1321
 msgid "do not load any global data sets from file"
 msgstr "läs inte in några systemvida dataset"
 
-#: ../src/qalc.cc:1322
+#: ../src/qalc.cc:1323
 msgid "do not load any global functions from file"
 msgstr "läs inte in några systemvida funktioner"
 
-#: ../src/qalc.cc:1324
+#: ../src/qalc.cc:1325
 msgid "do not load any global units from file"
 msgstr "läs inte in några systemvida enheter"
 
-#: ../src/qalc.cc:1326
+#: ../src/qalc.cc:1327
 msgid "do not load any global variables from file"
 msgstr "läs inte in några systemvida variabler"
 
-#: ../src/qalc.cc:1327 ../src/qalc.cc:2435
+#: ../src/qalc.cc:1328 ../src/qalc.cc:2443
 msgid "OPTION"
 msgstr "INSTÄLLNING"
 
-#: ../src/qalc.cc:1327 ../src/qalc.cc:2435
+#: ../src/qalc.cc:1328 ../src/qalc.cc:2443
 msgid "VALUE"
 msgstr "VÄRDE"
 
-#: ../src/qalc.cc:1328
+#: ../src/qalc.cc:1329
 msgid "as set command in interactive program session (ex. -set \"base 16\")"
 msgstr ""
 "fungerar som set (sätt) kommandot i en interaktiv programsession (ex. -set "
 "\"bas 16\")"
 
-#: ../src/qalc.cc:1330
+#: ../src/qalc.cc:1331
 msgid "reduces output to just the result of the input expression"
 msgstr "begränsar utdata till enbart resultatet av angett uttryck"
 
-#: ../src/qalc.cc:1332
+#: ../src/qalc.cc:1333
 msgid "turn on/off unicode support"
 msgstr "aktivera/avaktivera unicode-stöd"
 
-#: ../src/qalc.cc:1334
+#: ../src/qalc.cc:1335
 msgid "show application version and exit"
 msgstr "visa programversion och avsluta"
 
-#: ../src/qalc.cc:1336
+#: ../src/qalc.cc:1337
 msgid ""
 "The program will start in interactive mode if no expression and no file is "
 "specified (or interactive mode is explicitly selected)."
@@ -803,101 +803,101 @@ msgstr ""
 "Programmet startar i interaktivt läge om inget uttryck och ingen fil har "
 "angetts (eller om interaktivt läga explicit har valts)."
 
-#: ../src/qalc.cc:1412
+#: ../src/qalc.cc:1413
 msgid "No option and value specified for set command."
 msgstr "Ingen inställning och värde angett för set (sätt) kommandot."
 
-#: ../src/qalc.cc:1420
+#: ../src/qalc.cc:1421
 msgid "No file specified."
 msgstr "Ingen fil specificerad."
 
-#: ../src/qalc.cc:1469
+#: ../src/qalc.cc:1470
 msgid "ans"
 msgstr "ans"
 
-#: ../src/qalc.cc:1470 ../src/qalc.cc:1473 ../src/qalc.cc:1474
-#: ../src/qalc.cc:1475 ../src/qalc.cc:1476 ../src/qalc.cc:1706
+#: ../src/qalc.cc:1471 ../src/qalc.cc:1474 ../src/qalc.cc:1475
+#: ../src/qalc.cc:1476 ../src/qalc.cc:1477 ../src/qalc.cc:1707
 #: ../libqalculate/Calculator.cc:8618 ../libqalculate/Calculator.cc:8634
 msgid "Temporary"
 msgstr "Temporära"
 
-#: ../src/qalc.cc:1470
+#: ../src/qalc.cc:1471
 msgid "Last Answer"
 msgstr "Senaste svaret"
 
-#: ../src/qalc.cc:1471
+#: ../src/qalc.cc:1472
 msgid "answer"
 msgstr "svar"
 
-#: ../src/qalc.cc:1473
+#: ../src/qalc.cc:1474
 msgid "Answer 2"
 msgstr "Svar 2"
 
-#: ../src/qalc.cc:1474
+#: ../src/qalc.cc:1475
 msgid "Answer 3"
 msgstr "Svar 3"
 
-#: ../src/qalc.cc:1475
+#: ../src/qalc.cc:1476
 msgid "Answer 4"
 msgstr "Svar 4"
 
-#: ../src/qalc.cc:1476
+#: ../src/qalc.cc:1477
 msgid "Answer 5"
 msgstr "Svar 5"
 
-#: ../src/qalc.cc:1487
+#: ../src/qalc.cc:1488
 msgid "Failed to load global definitions!"
 msgstr "Kunde inte inhämta systemvida definitioner!"
 
-#: ../src/qalc.cc:1512
+#: ../src/qalc.cc:1513
 #, c-format
 msgid "Could not open \"%s\".\n"
 msgstr "Kunde inte öppna \"%s\".\n"
 
-#: ../src/qalc.cc:1552 ../src/qalc.cc:1604 ../src/qalc.cc:3202
+#: ../src/qalc.cc:1553 ../src/qalc.cc:1605 ../src/qalc.cc:3215
 #, c-format
 msgid "Illegal character, '%c', in expression."
 msgstr "Otillåtet tecken, '%c', i uttryck."
 
 #. The qalc command "set" as in "set precision 10". The original text string for commands is kept in addition to the translation.
-#: ../src/qalc.cc:1668 ../src/qalc.cc:2435 ../src/qalc.cc:2809
+#: ../src/qalc.cc:1669 ../src/qalc.cc:2443 ../src/qalc.cc:2822
 msgid "set"
 msgstr "ange"
 
 #. qalc command
-#: ../src/qalc.cc:1672 ../src/qalc.cc:2432 ../src/qalc.cc:3024
+#: ../src/qalc.cc:1673 ../src/qalc.cc:2440 ../src/qalc.cc:3037
 msgid "save"
 msgstr "spara"
 
-#: ../src/qalc.cc:1672 ../src/qalc.cc:2432 ../src/qalc.cc:3024
+#: ../src/qalc.cc:1673 ../src/qalc.cc:2440 ../src/qalc.cc:3037
 msgid "store"
 msgstr "lagra"
 
 #. qalc command
-#: ../src/qalc.cc:1675 ../src/qalc.cc:2193 ../src/qalc.cc:2431
-#: ../src/qalc.cc:3050
+#: ../src/qalc.cc:1676 ../src/qalc.cc:2200 ../src/qalc.cc:2438
+#: ../src/qalc.cc:3063
 msgid "mode"
 msgstr "läge"
 
-#: ../src/qalc.cc:1677
+#: ../src/qalc.cc:1678
 msgid "mode saved"
 msgstr "läge sparades"
 
-#: ../src/qalc.cc:1679
+#: ../src/qalc.cc:1680
 msgid "definitions"
 msgstr "definitioner"
 
-#: ../src/qalc.cc:1681
+#: ../src/qalc.cc:1682
 msgid "definitions saved"
 msgstr "definitioner sparades"
 
-#: ../src/qalc.cc:1728 ../src/qalc.cc:1730 ../src/qalc.cc:1788
-#: ../src/qalc.cc:1790 ../src/qalc.cc:1845 ../src/qalc.cc:1847
+#: ../src/qalc.cc:1729 ../src/qalc.cc:1731 ../src/qalc.cc:1789
+#: ../src/qalc.cc:1791 ../src/qalc.cc:1846 ../src/qalc.cc:1848
 #, c-format
 msgid "Illegal name. Save as %s instead (default: no)?"
 msgstr "Otillåtet namn. Vill du spara som %s i stället (förvalt: nej)?"
 
-#: ../src/qalc.cc:1737 ../src/qalc.cc:1797
+#: ../src/qalc.cc:1738 ../src/qalc.cc:1798
 msgid ""
 "An unit or variable with the same name already exists.\n"
 "Do you want to overwrite it (default: no)?"
@@ -906,18 +906,18 @@ msgstr ""
 "Vill du ersätta den (förvalt: nej)?"
 
 #. qalc command
-#: ../src/qalc.cc:1760 ../src/qalc.cc:2438 ../src/qalc.cc:3031
+#: ../src/qalc.cc:1761 ../src/qalc.cc:2446 ../src/qalc.cc:3044
 #: ../libqalculate/Function.cc:2063
 msgid "variable"
 msgstr "variabel"
 
 #. qalc command
-#: ../src/qalc.cc:1817 ../src/qalc.cc:2429 ../src/qalc.cc:3037
+#: ../src/qalc.cc:1818 ../src/qalc.cc:2436 ../src/qalc.cc:3050
 #: ../libqalculate/Function.cc:2035
 msgid "function"
 msgstr "funktion"
 
-#: ../src/qalc.cc:1854
+#: ../src/qalc.cc:1855
 msgid ""
 "An function with the same name already exists.\n"
 "Do you want to overwrite it (default: no)?"
@@ -926,219 +926,225 @@ msgstr ""
 "Vill du ersätta den (förvalt: nej)?"
 
 #. qalc command
-#: ../src/qalc.cc:1874 ../src/qalc.cc:2421 ../src/qalc.cc:3044
+#: ../src/qalc.cc:1875 ../src/qalc.cc:2428 ../src/qalc.cc:3057
 msgid "delete"
 msgstr "frigör"
 
-#: ../src/qalc.cc:1885
+#: ../src/qalc.cc:1886
 msgid "No user-defined variable or function with the specified name exist."
 msgstr ""
 "Ingen användardefinierad variabel eller funktion med det angivna namnet "
 "existerar."
 
 #. qalc command
-#: ../src/qalc.cc:1889 ../src/qalc.cc:2419 ../src/qalc.cc:2991
+#: ../src/qalc.cc:1890 ../src/qalc.cc:2426 ../src/qalc.cc:3004
 msgid "assume"
 msgstr "antag"
 
-#: ../src/qalc.cc:1899
+#: ../src/qalc.cc:1900
 msgid "syntax"
 msgstr "syntax"
 
 #. qalc command
-#: ../src/qalc.cc:1906 ../src/qalc.cc:1930 ../src/qalc.cc:2442
-#: ../src/qalc.cc:3089
+#: ../src/qalc.cc:1907 ../src/qalc.cc:1931 ../src/qalc.cc:2450
+#: ../src/qalc.cc:3102
 msgid "stack"
 msgstr "stack"
 
 #. qalc command
-#: ../src/qalc.cc:1926 ../src/qalc.cc:2424 ../src/qalc.cc:3069
+#: ../src/qalc.cc:1927 ../src/qalc.cc:2431 ../src/qalc.cc:3082
 msgid "exrates"
 msgstr "växelkurser"
 
-#: ../src/qalc.cc:1932 ../src/qalc.cc:1946 ../src/qalc.cc:1955
-#: ../src/qalc.cc:1988 ../src/qalc.cc:2017 ../src/qalc.cc:2026
-#: ../src/qalc.cc:2043 ../src/qalc.cc:2050 ../src/qalc.cc:2068
-#: ../src/qalc.cc:2075
+#: ../src/qalc.cc:1933 ../src/qalc.cc:1947 ../src/qalc.cc:1956
+#: ../src/qalc.cc:1989 ../src/qalc.cc:2018 ../src/qalc.cc:2027
+#: ../src/qalc.cc:2044 ../src/qalc.cc:2051 ../src/qalc.cc:2069
+#: ../src/qalc.cc:2076
 msgid "The RPN stack is empty."
 msgstr "RPN-stacken är tom."
 
 #. qalc command
-#: ../src/qalc.cc:1944 ../src/qalc.cc:1953 ../src/qalc.cc:2448
-#: ../src/qalc.cc:3093
+#: ../src/qalc.cc:1945 ../src/qalc.cc:1954 ../src/qalc.cc:2456
+#: ../src/qalc.cc:3106
 msgid "swap"
 msgstr "swap"
 
-#: ../src/qalc.cc:1948 ../src/qalc.cc:1957 ../src/qalc.cc:1990
-#: ../src/qalc.cc:2019 ../src/qalc.cc:2028
+#: ../src/qalc.cc:1949 ../src/qalc.cc:1958 ../src/qalc.cc:1991
+#: ../src/qalc.cc:2020 ../src/qalc.cc:2029
 msgid "The RPN stack only contains one value."
 msgstr "RPN-stacken innehåller endast ett värde."
 
-#: ../src/qalc.cc:1976 ../src/qalc.cc:2009 ../src/qalc.cc:2057
-#: ../src/qalc.cc:2081
+#: ../src/qalc.cc:1977 ../src/qalc.cc:2010 ../src/qalc.cc:2058
+#: ../src/qalc.cc:2082
 msgid "The specified RPN stack index does not exist."
 msgstr "Angivet index på RPN-stacken finns inte."
 
 #. qalc command
-#: ../src/qalc.cc:1986 ../src/qalc.cc:2445 ../src/qalc.cc:3115
+#: ../src/qalc.cc:1987 ../src/qalc.cc:2453 ../src/qalc.cc:3128
 msgid "move"
 msgstr "flytta"
 
 #. qalc command
-#: ../src/qalc.cc:2015 ../src/qalc.cc:2024 ../src/qalc.cc:2447
-#: ../src/qalc.cc:3111
+#: ../src/qalc.cc:2016 ../src/qalc.cc:2025 ../src/qalc.cc:2455
+#: ../src/qalc.cc:3124
 msgid "rotate"
 msgstr "rotera"
 
-#: ../src/qalc.cc:2032
+#: ../src/qalc.cc:2033
 msgid "up"
 msgstr "upp"
 
-#: ../src/qalc.cc:2034
+#: ../src/qalc.cc:2035
 msgid "down"
 msgstr "ner"
 
 #. qalc command
-#: ../src/qalc.cc:2041 ../src/qalc.cc:2048 ../src/qalc.cc:2444
-#: ../src/qalc.cc:3103
+#: ../src/qalc.cc:2042 ../src/qalc.cc:2049 ../src/qalc.cc:2452
+#: ../src/qalc.cc:3116
 msgid "copy"
 msgstr "kopiera"
 
 #. qalc command
-#: ../src/qalc.cc:2063 ../src/qalc.cc:2443 ../src/qalc.cc:3079
+#: ../src/qalc.cc:2064 ../src/qalc.cc:2451 ../src/qalc.cc:3092
 msgid "clear stack"
 msgstr "töm stacken"
 
 #. qalc command
-#: ../src/qalc.cc:2066 ../src/qalc.cc:2073 ../src/qalc.cc:2446
-#: ../src/qalc.cc:3083
+#: ../src/qalc.cc:2067 ../src/qalc.cc:2074 ../src/qalc.cc:2454
+#: ../src/qalc.cc:3096
 msgid "pop"
 msgstr "pop"
 
 #. qalc command
-#: ../src/qalc.cc:2099 ../src/qalc.cc:2437 ../src/qalc.cc:3135
+#: ../src/qalc.cc:2100 ../src/qalc.cc:2445 ../src/qalc.cc:3148
 msgid "convert"
 msgstr "omvandla"
 
-#: ../src/qalc.cc:2099 ../src/qalc.cc:2437 ../src/qalc.cc:3135
-#: ../src/qalc.cc:3163
+#: ../src/qalc.cc:2100 ../src/qalc.cc:2445 ../src/qalc.cc:3148
+#: ../src/qalc.cc:3176
 msgid "to"
 msgstr "till"
 
-#: ../src/qalc.cc:2126 ../src/qalc.cc:3760
+#: ../src/qalc.cc:2128 ../src/qalc.cc:3791
 msgid "bases"
 msgstr "baser"
 
-#: ../src/qalc.cc:2159 ../src/qalc.cc:3754
+#: ../src/qalc.cc:2161 ../src/qalc.cc:3782
 msgid "fraction"
 msgstr "bråktal"
 
-#: ../src/qalc.cc:2165 ../src/qalc.cc:3757
+#: ../src/qalc.cc:2167 ../src/qalc.cc:3785
 msgid "factors"
 msgstr "faktorer"
 
 #. qalc command
-#: ../src/qalc.cc:2187 ../src/qalc.cc:2427 ../src/qalc.cc:2801
+#: ../src/qalc.cc:2169 ../src/qalc.cc:2194 ../src/qalc.cc:2439
+#: ../src/qalc.cc:2814 ../src/qalc.cc:3788
+msgid "partial fraction"
+msgstr "partialbråktal"
+
+#. qalc command
+#: ../src/qalc.cc:2191 ../src/qalc.cc:2434 ../src/qalc.cc:2810
 msgid "factor"
 msgstr "faktor"
 
 #. qalc command
-#: ../src/qalc.cc:2410 ../src/qalc.cc:2798
+#: ../src/qalc.cc:2417 ../src/qalc.cc:2806
 msgid "help"
 msgstr "hjälp"
 
-#: ../src/qalc.cc:2413
+#: ../src/qalc.cc:2420
 msgid "Enter a mathematical expression or a command and press enter."
 msgstr "Skriv in ett matematiskt uttryck eller ett kommando och tryck enter."
 
-#: ../src/qalc.cc:2414
+#: ../src/qalc.cc:2421
 msgid "Complete functions, units and variables with the tabulator key."
 msgstr "Avsluta funktions-, enhets- och variabelnamn med tabulatortangenten."
 
-#: ../src/qalc.cc:2416
+#: ../src/qalc.cc:2423
 msgid "Available commands are:"
 msgstr "Tillgängliga kommandon:"
 
-#: ../src/qalc.cc:2419
+#: ../src/qalc.cc:2426
 msgid "ASSUMPTIONS"
 msgstr "ANTAGANDEN"
 
-#: ../src/qalc.cc:2421 ../src/qalc.cc:2429 ../src/qalc.cc:2432
-#: ../src/qalc.cc:2438
+#: ../src/qalc.cc:2428 ../src/qalc.cc:2436 ../src/qalc.cc:2440
+#: ../src/qalc.cc:2446
 msgid "NAME"
 msgstr "NAMN"
 
-#: ../src/qalc.cc:2428 ../src/qalc.cc:2457 ../src/qalc.cc:3054
+#: ../src/qalc.cc:2435 ../src/qalc.cc:2465 ../src/qalc.cc:3067
 msgid "find"
 msgstr "hitta"
 
 #. qalc command
-#: ../src/qalc.cc:2428 ../src/qalc.cc:2455 ../src/qalc.cc:2457
-#: ../src/qalc.cc:3054
+#: ../src/qalc.cc:2435 ../src/qalc.cc:2463 ../src/qalc.cc:2465
+#: ../src/qalc.cc:3067
 msgid "list"
 msgstr "lista"
 
-#: ../src/qalc.cc:2429 ../src/qalc.cc:2438
+#: ../src/qalc.cc:2436 ../src/qalc.cc:2446
 msgid "EXPRESSION"
 msgstr "UTTRYCK"
 
 #. qalc command
-#: ../src/qalc.cc:2430 ../src/qalc.cc:2483 ../src/qalc.cc:3063
+#: ../src/qalc.cc:2437 ../src/qalc.cc:2491 ../src/qalc.cc:3076
 #: ../libqalculate/Calculator.cc:9278 ../libqalculate/DataSet.cc:355
 #: ../libqalculate/DataSet.cc:382 ../libqalculate/DataSet.cc:1012
 msgid "info"
 msgstr "info"
 
-#: ../src/qalc.cc:2432
+#: ../src/qalc.cc:2440
 msgid "CATEGORY"
 msgstr "KATEGORI"
 
-#: ../src/qalc.cc:2432
+#: ../src/qalc.cc:2440
 msgid "TITLE"
 msgstr "TITEL"
 
-#: ../src/qalc.cc:2437
+#: ../src/qalc.cc:2445
 msgid "UNIT or \"TO\" COMMAND"
 msgstr "ENHET eller \"TILL\"-KOMMANDO"
 
 #. qalc command
-#: ../src/qalc.cc:2439 ../src/qalc.cc:3167 ../src/qalc.cc:3192
+#: ../src/qalc.cc:2447 ../src/qalc.cc:3180 ../src/qalc.cc:3205
 msgid "quit"
 msgstr "avsluta"
 
-#: ../src/qalc.cc:2439 ../src/qalc.cc:3167 ../src/qalc.cc:3192
+#: ../src/qalc.cc:2447 ../src/qalc.cc:3180 ../src/qalc.cc:3205
 msgid "exit"
 msgstr "exit"
 
-#: ../src/qalc.cc:2440
+#: ../src/qalc.cc:2448
 msgid "Commands for RPN mode:"
 msgstr "Kommandon för RPN-läget:"
 
-#: ../src/qalc.cc:2441
+#: ../src/qalc.cc:2449
 msgid "STATE"
 msgstr "LÄGE"
 
-#: ../src/qalc.cc:2444 ../src/qalc.cc:2446
+#: ../src/qalc.cc:2452 ../src/qalc.cc:2454
 msgid "INDEX"
 msgstr "INDEX"
 
-#: ../src/qalc.cc:2445 ../src/qalc.cc:2448
+#: ../src/qalc.cc:2453 ../src/qalc.cc:2456
 msgid "INDEX 1"
 msgstr "INDEX 1"
 
-#: ../src/qalc.cc:2445 ../src/qalc.cc:2448
+#: ../src/qalc.cc:2453 ../src/qalc.cc:2456
 msgid "INDEX 2"
 msgstr "INDEX 2"
 
-#: ../src/qalc.cc:2447
+#: ../src/qalc.cc:2455
 msgid "DIRECTION"
 msgstr "RIKTNING"
 
-#: ../src/qalc.cc:2450
+#: ../src/qalc.cc:2458
 msgid "Type help COMMAND for more information (example: help save)."
 msgstr "Skriv in hjälp KOMMANDO för mer information (exemel: hjälp save)."
 
-#: ../src/qalc.cc:2451
+#: ../src/qalc.cc:2459
 msgid ""
 "Type info NAME for information about a function, variable or unit (example: "
 "info sin)."
@@ -1146,7 +1152,7 @@ msgstr ""
 "Skriv info NAMN för information om en funktion, variabel eller enhet "
 "(exempel: info sin)."
 
-#: ../src/qalc.cc:2452
+#: ../src/qalc.cc:2460
 msgid ""
 "For more information about mathematical expression, different options, and a "
 "complete list of functions, variables and units, see the relevant sections "
@@ -1158,23 +1164,23 @@ msgstr ""
 "avsnitt i instruktionsboken för det grafiska användargränssnittet "
 "(tillgänglig på http://qalculate.github.io/manual/index.html)."
 
-#: ../src/qalc.cc:2470 ../src/qalc.cc:2475
+#: ../src/qalc.cc:2478 ../src/qalc.cc:2483
 msgid "currencies"
 msgstr "valutor"
 
-#: ../src/qalc.cc:2491
+#: ../src/qalc.cc:2499
 msgid "No function, variable or unit with specified name exist."
 msgstr "Ingen funktion, variabel eller enhet med det angivna namnet existerar."
 
-#: ../src/qalc.cc:2501
+#: ../src/qalc.cc:2509
 msgid "Function"
 msgstr "Funktion"
 
-#: ../src/qalc.cc:2528 ../libqalculate/Function.cc:201
+#: ../src/qalc.cc:2536 ../libqalculate/Function.cc:201
 msgid "argument"
 msgstr "parameter"
 
-#: ../src/qalc.cc:2552
+#: ../src/qalc.cc:2560
 #, c-format
 msgid ""
 "Retrieves data from the %s data set for a given object and property. If "
@@ -1183,129 +1189,133 @@ msgstr ""
 "Hämtar data från dataset %s för ett givet objekt och egenskap. Om \"info\" "
 "är angivet som egenskap, kommer alla objektets egenskaper att listas."
 
-#: ../src/qalc.cc:2561
+#: ../src/qalc.cc:2569
 msgid "Example:"
 msgstr "Exempel:"
 
-#: ../src/qalc.cc:2570
+#: ../src/qalc.cc:2578
 msgid "Arguments"
 msgstr "Parametrar"
 
 #. optional argument, in description
-#: ../src/qalc.cc:2587
+#: ../src/qalc.cc:2595
 msgid "optional"
 msgstr "frivillig"
 
 #. argument default, in description
-#: ../src/qalc.cc:2591
+#: ../src/qalc.cc:2599
 msgid "default: "
 msgstr "förval: "
 
-#: ../src/qalc.cc:2602
+#: ../src/qalc.cc:2610
 msgid "Requirement"
 msgstr "Krav"
 
-#: ../src/qalc.cc:2610
+#: ../src/qalc.cc:2618
 msgid "Properties"
 msgstr "Egenskaper"
 
-#: ../src/qalc.cc:2625
+#: ../src/qalc.cc:2633
 msgid "key"
 msgstr "nyckel"
 
-#: ../src/qalc.cc:2643 ../src/qalc.cc:2646 ../src/qalc.cc:2785
+#: ../src/qalc.cc:2651 ../src/qalc.cc:2654 ../src/qalc.cc:2793
 msgid "Unit"
 msgstr "Enhet"
 
-#: ../src/qalc.cc:2649 ../src/qalc.cc:2717
+#: ../src/qalc.cc:2657 ../src/qalc.cc:2725
 msgid "Names"
 msgstr "Namn"
 
-#: ../src/qalc.cc:2667
+#: ../src/qalc.cc:2675
 msgid "Base Unit"
 msgstr "Grundenhet"
 
-#: ../src/qalc.cc:2674
+#: ../src/qalc.cc:2682
 msgid "Relation"
 msgstr "Relation"
 
-#: ../src/qalc.cc:2684
+#: ../src/qalc.cc:2692
 msgid "Inverse Relation"
 msgstr "Omvänd relation"
 
-#: ../src/qalc.cc:2696
+#: ../src/qalc.cc:2704
 msgid "Base Units"
 msgstr "Grundenheter"
 
-#: ../src/qalc.cc:2711 ../src/qalc.cc:2714
+#: ../src/qalc.cc:2719 ../src/qalc.cc:2722
 msgid "Variable"
 msgstr "Variabel"
 
-#: ../src/qalc.cc:2729
+#: ../src/qalc.cc:2737
 msgid "a previous result"
 msgstr "ett föregående resultat"
 
-#: ../src/qalc.cc:2774
+#: ../src/qalc.cc:2782
 msgid "Uncertainty"
 msgstr "Osäkerhet"
 
-#: ../src/qalc.cc:2803
+#: ../src/qalc.cc:2812
 msgid "Factorizes the current result."
 msgstr "Faktoriserar nuvaranda resultat."
 
-#: ../src/qalc.cc:2807
+#: ../src/qalc.cc:2816
+msgid "Applies partial fraction decomposition to the current result."
+msgstr "Tillämpar partialbråksuppdelning på det nuvarande resultatet."
+
+#: ../src/qalc.cc:2820
 msgid "Simplifies the current result."
 msgstr "Förenklar nuvaranda resultat."
 
-#: ../src/qalc.cc:2818
+#: ../src/qalc.cc:2831
 msgid "Sets the value of an option."
 msgstr "Anger värdet för en inställning."
 
-#: ../src/qalc.cc:2820
+#: ../src/qalc.cc:2833
 msgid "Available options and accepted values are:"
 msgstr "Tillgängliga inställningar och accepterade värden:"
 
-#: ../src/qalc.cc:2871 ../src/qalc.cc:2927
+#: ../src/qalc.cc:2884 ../src/qalc.cc:2940
 msgid "bin"
 msgstr "bin"
 
-#: ../src/qalc.cc:2873 ../src/qalc.cc:2929
+#: ../src/qalc.cc:2886 ../src/qalc.cc:2942
 msgid "oct"
 msgstr "okt"
 
-#: ../src/qalc.cc:2875 ../src/qalc.cc:2931
+#: ../src/qalc.cc:2888 ../src/qalc.cc:2944
 msgid "dec"
 msgstr "dec"
 
-#: ../src/qalc.cc:2877 ../src/qalc.cc:2933
+#: ../src/qalc.cc:2890 ../src/qalc.cc:2946
 msgid "hex"
 msgstr "hex"
 
-#: ../src/qalc.cc:2879
+#: ../src/qalc.cc:2892
 msgid "sex"
 msgstr "sex"
 
-#: ../src/qalc.cc:2980
+#: ../src/qalc.cc:2993
 msgid "days"
 msgstr "dagar"
 
-#: ../src/qalc.cc:2985
+#: ../src/qalc.cc:2998
 msgid "The current value is marked with '*'."
 msgstr "Det nuvarande värdet är markerat med '*'."
 
-#: ../src/qalc.cc:2987
+#: ../src/qalc.cc:3000
 msgid "Example: set base 16."
 msgstr "Exempel: set bas 16."
 
-#: ../src/qalc.cc:2989
+#: ../src/qalc.cc:3002
 msgid "Some options have additional help text (e.g. help parsing mode)."
 msgstr "Visa alternativ har ytterliga hjälptext (t.ex. hjälp tolkningsläge)."
 
-#: ../src/qalc.cc:2993
+#: ../src/qalc.cc:3006
 msgid "Set default assumptions for unknown variables."
 msgstr "Ange färvalda antaganden för okända variabler."
 
-#: ../src/qalc.cc:3026
+#: ../src/qalc.cc:3039
 msgid ""
 "Saves the current result in a variable with the specified name. You may "
 "optionally also provide a category (default \"Temporary\") and a title."
@@ -1313,7 +1323,7 @@ msgstr ""
 "Sparar nuvarande resultat i en variabel med angivet namn. Du kan välja att "
 "också ange en kategori (förvald är \"Temporära\") och en titel."
 
-#: ../src/qalc.cc:3027
+#: ../src/qalc.cc:3040
 msgid ""
 "If name equals \"mode\" or \"definitions\", the current mode and "
 "definitions, respectively, will be saved."
@@ -1321,49 +1331,49 @@ msgstr ""
 "Om angivet namn är \"läge\" eller \"definitioner\", sparas nuvarande läge "
 "respektive definitioner."
 
-#: ../src/qalc.cc:3029
+#: ../src/qalc.cc:3042
 msgid "Example: store var1."
 msgstr "Exempel: store var1."
 
-#: ../src/qalc.cc:3033
+#: ../src/qalc.cc:3046
 msgid "Create a variables with the specified name and expression."
 msgstr "Skapa en variabel med det angivna namnet och uttrycket."
 
-#: ../src/qalc.cc:3035
+#: ../src/qalc.cc:3048
 msgid "Example: variable var1 pi / 2."
 msgstr "Exempel: variabel var1 pi / 2."
 
-#: ../src/qalc.cc:3039
+#: ../src/qalc.cc:3052
 msgid "Creates a function with the specified name and expression."
 msgstr "Skapar en function med det angivna namnet och uttrycket."
 
-#: ../src/qalc.cc:3040
+#: ../src/qalc.cc:3053
 msgid "Use '\\x', '\\y', '\\z', '\\a', etc. for arguments in the expression."
 msgstr "Använd '\\x', '\\y', '\\z', '\\a', etc. för argument i uttrycket"
 
-#: ../src/qalc.cc:3042
+#: ../src/qalc.cc:3055
 msgid "Example: function func1 5*\\x."
 msgstr "Exempel: funktion func1 5*\\x."
 
-#: ../src/qalc.cc:3046
+#: ../src/qalc.cc:3059
 msgid "Removes the user-defined variable or function with the specified name."
 msgstr ""
 "Tar bort den användardefinierade variabeln eller funktionen med det angivna "
 "namnet."
 
-#: ../src/qalc.cc:3048
+#: ../src/qalc.cc:3061
 msgid "Example: delete var1."
 msgstr "Exempel: frigör var1."
 
-#: ../src/qalc.cc:3052
+#: ../src/qalc.cc:3065
 msgid "Displays the current mode."
 msgstr "Visar nuvarande läge."
 
-#: ../src/qalc.cc:3056
+#: ../src/qalc.cc:3069
 msgid "Displays a list of variables, functions and units."
 msgstr "Visar en lista över variabler, funktioner och enheter."
 
-#: ../src/qalc.cc:3057
+#: ../src/qalc.cc:3070
 msgid ""
 "Enter with argument 'currencies', 'functions', 'variables' or 'units' to "
 "show a list of all currencies, functions, variables or units. Enter a search "
@@ -1375,51 +1385,51 @@ msgstr ""
 "sökterm för att hitta matchande variabler, funktioner, och/eller enheter. Om "
 "kommandot körs utan några parametrar visas alla användardefinierade objekt."
 
-#: ../src/qalc.cc:3059
+#: ../src/qalc.cc:3072
 msgid "Example: list functions."
 msgstr "Exempel: lista funktioner."
 
-#: ../src/qalc.cc:3060
+#: ../src/qalc.cc:3073
 msgid "Example: find dinar."
 msgstr "Exempel: hitta dinar."
 
-#: ../src/qalc.cc:3061
+#: ../src/qalc.cc:3074
 msgid "Example: find variables planck."
 msgstr "Exempel: hitta variabler planck."
 
-#: ../src/qalc.cc:3065
+#: ../src/qalc.cc:3078
 msgid "Displays information about a function, variable or unit."
 msgstr "Visar information om en funktion, variabel eller enhet."
 
-#: ../src/qalc.cc:3067
+#: ../src/qalc.cc:3080
 msgid "Example: info sin."
 msgstr "Exempel: info sin."
 
-#: ../src/qalc.cc:3071
+#: ../src/qalc.cc:3084
 msgid "Downloads current exchange rates from the Internet."
 msgstr "Hämtar nuvarande växelkurser från internet."
 
-#: ../src/qalc.cc:3075
+#: ../src/qalc.cc:3088
 msgid "(De)activates the Reverse Polish Notation stack and syntax."
 msgstr "(Av)aktiverar stack och syntax för omvänd polsk notation."
 
-#: ../src/qalc.cc:3077
+#: ../src/qalc.cc:3090
 msgid ""
 "\"syntax\" activates only the RPN syntax and \"stack\" enables the RPN stack."
 msgstr ""
 "\"syntax\" aktiverar enbart RPN-syntaxen och \"stack\" aktiverar RPN-stacken."
 
-#: ../src/qalc.cc:3081
+#: ../src/qalc.cc:3094
 msgid "Clears the entire RPN stack."
 msgstr "Tömmer hela RPN-stacken."
 
-#: ../src/qalc.cc:3085
+#: ../src/qalc.cc:3098
 msgid "Removes the top of the RPN stack or the value at the specified index."
 msgstr ""
 "Avlägsnar det översta värdet på RPN-stacken eller värdet med angivet index."
 
-#: ../src/qalc.cc:3087 ../src/qalc.cc:3099 ../src/qalc.cc:3109
-#: ../src/qalc.cc:3119
+#: ../src/qalc.cc:3100 ../src/qalc.cc:3112 ../src/qalc.cc:3122
+#: ../src/qalc.cc:3132
 msgid ""
 "Index 1 is the top of stack and negative index values counts from the bottom "
 "of the stack."
@@ -1427,15 +1437,15 @@ msgstr ""
 "Index 1 anger toppen på stacken och negativa indexvärden räknar från botten "
 "på stacken."
 
-#: ../src/qalc.cc:3091
+#: ../src/qalc.cc:3104
 msgid "Displays the RPN stack."
 msgstr "Visar RPN-stacken."
 
-#: ../src/qalc.cc:3095
+#: ../src/qalc.cc:3108
 msgid "Swaps position of values on the RPN stack."
 msgstr "Byter position på värden på RPN-stacken"
 
-#: ../src/qalc.cc:3097
+#: ../src/qalc.cc:3110
 msgid ""
 "If no index is specified, the values on the top of the stack (index 1 and "
 "index 2) will be swapped and if only one index is specified, the value at "
@@ -1445,120 +1455,120 @@ msgstr ""
 "plats och om enbart ett index anges, så byter värdet med angivet index plats "
 "med värdet överst på stacken."
 
-#: ../src/qalc.cc:3101
+#: ../src/qalc.cc:3114
 msgid "Example: swap 2 4"
 msgstr "Exempel: swap 2 4"
 
-#: ../src/qalc.cc:3105
+#: ../src/qalc.cc:3118
 msgid "Duplicates a value on the RPN stack to the top of the stack."
 msgstr "Kopierar ett värde på RPN-stacken och placerar det överst på stacken."
 
-#: ../src/qalc.cc:3107
+#: ../src/qalc.cc:3120
 msgid "If no index is specified, the top of the stack is duplicated."
 msgstr "Om inget index anges kopierar värdet överst på stacken."
 
-#: ../src/qalc.cc:3113
+#: ../src/qalc.cc:3126
 msgid "Rotates the RPN stack up (default) or down."
 msgstr "Roterar RPN-stacken upp (förvalt) eller ner."
 
-#: ../src/qalc.cc:3117
+#: ../src/qalc.cc:3130
 msgid "Changes the position of a value on the RPN stack."
 msgstr "Byter position på ett värdet på RPN-stacken."
 
-#: ../src/qalc.cc:3121
+#: ../src/qalc.cc:3134
 msgid "Example: move 2 4"
 msgstr "Exempel: flytta 2 4"
 
-#: ../src/qalc.cc:3125
+#: ../src/qalc.cc:3138
 msgid "Sets the result number base (equivalent to set base)."
 msgstr "Anger nummerbas för resultat (liktydigt med ange bas)."
 
-#: ../src/qalc.cc:3129
+#: ../src/qalc.cc:3142
 msgid "Equivalent to set approximation exact."
 msgstr "Liktydigt med ange approximation exakt."
 
-#: ../src/qalc.cc:3133
+#: ../src/qalc.cc:3146
 msgid "Equivalent to set approximation try exact."
 msgstr "Liktydigt med ange approximation försök exakt."
 
-#: ../src/qalc.cc:3137
+#: ../src/qalc.cc:3150
 msgid "Converts units or changes number base in current result."
 msgstr "Omvandlar enheter eller ändrar nummerbas i nuvarande resultat."
 
-#: ../src/qalc.cc:3139
+#: ../src/qalc.cc:3152
 msgid "Possible values:"
 msgstr "Möjliga värden:"
 
-#: ../src/qalc.cc:3141
+#: ../src/qalc.cc:3154
 msgid "- a unit (e.g. meter)"
 msgstr "- en enhet (t.ex. meter)"
 
-#: ../src/qalc.cc:3142
+#: ../src/qalc.cc:3155
 msgid "prepend with ? to request the optimal prefix"
 msgstr "inled med ? för att eftefråga optimalt prefix"
 
-#: ../src/qalc.cc:3143
+#: ../src/qalc.cc:3156
 msgid "prepend with + or - to force/disable use of mixed units"
 msgstr ""
 "inled med + eller - för att tvinga/avaktivera användning a blandade enheter"
 
-#: ../src/qalc.cc:3144
+#: ../src/qalc.cc:3157
 msgid "- a unit expression (e.g. km/h)"
 msgstr "- ett enhetsuttryck (t.ex. km/h)"
 
-#: ../src/qalc.cc:3145
+#: ../src/qalc.cc:3158
 msgid "- a physical constant (e.g. c)"
 msgstr "- en fysikalisk konstant (t.ex. c)"
 
-#: ../src/qalc.cc:3146
+#: ../src/qalc.cc:3159
 msgid "- base (convert to base units)"
 msgstr "- bas (omvandla till basenheter)"
 
-#: ../src/qalc.cc:3147
+#: ../src/qalc.cc:3160
 msgid "- optimal (convert to optimal unit)"
 msgstr "- optimal (omvandla till optimal enhet)"
 
-#: ../src/qalc.cc:3148
+#: ../src/qalc.cc:3161
 msgid "- mixed (convert to mixed units, e.g. hours + minutes)"
 msgstr "- blandade (omvandla till blandade enheter, t.ex. timmar + minuter)"
 
-#: ../src/qalc.cc:3150
+#: ../src/qalc.cc:3163
 msgid "- bin / binary (show as binary number)"
 msgstr "- bin / binär (visa som binärt tal)"
 
-#: ../src/qalc.cc:3151
+#: ../src/qalc.cc:3164
 msgid "- oct / octal (show as octal number)"
 msgstr "- oct / oktal (visa som oktalt tal)"
 
-#: ../src/qalc.cc:3152
+#: ../src/qalc.cc:3165
 msgid "- duo / duodecimal (show as duodecimal number)"
 msgstr "- duo / duodecimal (visa som duodecimalt tal)"
 
-#: ../src/qalc.cc:3153
+#: ../src/qalc.cc:3166
 msgid "- hex / hexadecimal (show as hexadecimal number)"
 msgstr "- hex / hexadecimal (visa som hexadecimalt tal)"
 
-#: ../src/qalc.cc:3154
+#: ../src/qalc.cc:3167
 msgid "- bases (show as binary, octal, decimal and hexadecimal number)"
 msgstr "- baser (visa som binärt, otkalt, decimalt och hexadecimalt tal)"
 
-#: ../src/qalc.cc:3156
+#: ../src/qalc.cc:3169
 msgid "- fraction (show result in combined fractional format)"
 msgstr "- bråktal (visa resultatet som kombinerat bråktal)"
 
-#: ../src/qalc.cc:3157
+#: ../src/qalc.cc:3170
 msgid "- factors (factorize result)"
 msgstr "- faktorer (faktoriserar resultatet)"
 
-#: ../src/qalc.cc:3159
+#: ../src/qalc.cc:3172
 msgid "- utc (show UTC date)"
 msgstr "- utc (visa UTC-datum)"
 
-#: ../src/qalc.cc:3161
+#: ../src/qalc.cc:3174
 msgid "Example: to ?g"
 msgstr "Exempel: till ?g"
 
-#: ../src/qalc.cc:3164
+#: ../src/qalc.cc:3177
 msgid ""
 "This command can also be typed directly at the end of the mathematical "
 "expression."
@@ -1566,11 +1576,11 @@ msgstr ""
 "Det här kommandot kan även skrivas direkt i slutet av det matematiska "
 "uttrycket."
 
-#: ../src/qalc.cc:3169
+#: ../src/qalc.cc:3182
 msgid "Terminates this program."
 msgstr "Avslutar det här programmet."
 
-#: ../src/qalc.cc:3174
+#: ../src/qalc.cc:3187
 msgid ""
 "Implicit multiplication does not differ from explicit multiplication "
 "(\"12/2(1+2) = 12/2*3 = 18\", \"5x/5y = 5*x/5*y = xy\")."
@@ -1578,7 +1588,7 @@ msgstr ""
 "Implicit multiplikation särskiljer sig inte från explicit multiplikation "
 "(\"12/2(1+2) = 12/2*3 = 18\", \"5x/5y = 5*x/5*y = xy\")."
 
-#: ../src/qalc.cc:3177
+#: ../src/qalc.cc:3190
 msgid ""
 "Implicit multiplication is parsed before explicit multiplication "
 "(\"12/2(1+2) = 12/(2*3) = 2\", \"5x/5y = (5*x)/(5*y) = x/y\")."
@@ -1586,7 +1596,7 @@ msgstr ""
 "Implicit multiplikation tolkas före explicit multiplikation (\"12/2(1+2) = "
 "12/(2*3) = 2\", \"5x/5y = (5*x)/(5*y) = x/y\")."
 
-#: ../src/qalc.cc:3180
+#: ../src/qalc.cc:3193
 msgid ""
 "The default adaptive mode works as the \"implicit first\" mode, unless "
 "spaces are found (\"1/5x = 1/(5*x)\", but \"1/5 x = (1/5)*x\"). In the "
@@ -1598,7 +1608,7 @@ msgstr ""
 "adaptivt läge tolkas enhetsuttryck separat (\"5 m/5 m/s = (5*m)/(5*(m/s)) = "
 "1 s\")."
 
-#: ../src/qalc.cc:3182
+#: ../src/qalc.cc:3195
 msgid ""
 "Function arguments without parentheses are an exception, where implicit "
 "multiplication in front of variables and units is parsed first regardless of "
@@ -1608,7 +1618,7 @@ msgstr ""
 "multiplikation frmför variabler och enheter tolkas först oavsett läge "
 "(\"sqrt 2x = sqrt(2x)\")."
 
-#: ../src/qalc.cc:3186
+#: ../src/qalc.cc:3199
 msgid ""
 "Enables/disables use of interval arithmetic to determine the precision of "
 "the result."
@@ -1616,50 +1626,54 @@ msgstr ""
 "(Av)aktiverar användning av intervallaritmetik för att avgöra precisionen i "
 "resultat."
 
-#: ../src/qalc.cc:3246
+#: ../src/qalc.cc:3259
 msgid "error"
 msgstr "fel"
 
-#: ../src/qalc.cc:3248
+#: ../src/qalc.cc:3261
 msgid "warning"
 msgstr "varning"
 
-#: ../src/qalc.cc:3304 ../src/qalc.cc:3342 ../src/qalc.cc:3609
-#: ../src/qalc.cc:3928 ../libqalculate/Calculator.cc:9696
+#: ../src/qalc.cc:3317 ../src/qalc.cc:3355 ../src/qalc.cc:3629
+#: ../src/qalc.cc:3959 ../libqalculate/Calculator.cc:9696
 #: ../libqalculate/MathStructure.cc:703
 #, c-format
 msgid "aborted"
 msgstr "avbruten"
 
-#: ../src/qalc.cc:3354
+#: ../src/qalc.cc:3367
 msgid "RPN Register Moved"
 msgstr "RPN-register flyttades"
 
-#: ../src/qalc.cc:3410
+#: ../src/qalc.cc:3423
 msgid "Processing (press Enter to abort)"
 msgstr "Behandlar (tryck Enter för att avbryta)"
 
-#: ../src/qalc.cc:3483 ../src/qalc.cc:4067
+#: ../src/qalc.cc:3496 ../src/qalc.cc:4098
 msgid "approx."
 msgstr "ca"
 
-#: ../src/qalc.cc:3626
+#: ../src/qalc.cc:3646
 msgid "Factorizing (press Enter to abort)"
 msgstr "Faktoriserar (tryck Enter för att avbryta)"
 
-#: ../src/qalc.cc:3630
+#: ../src/qalc.cc:3650
+msgid "Expanding partial fractions…"
+msgstr "Expandarer partialbråk…"
+
+#: ../src/qalc.cc:3654
 msgid "Simplifying (press Enter to abort)"
 msgstr "Förenklar (tryck Enter för att avbryta)"
 
-#: ../src/qalc.cc:3942
+#: ../src/qalc.cc:3973
 msgid "Calculating (press Enter to abort)"
 msgstr "Beräknar (tryck Enter för att avbryta)"
 
-#: ../src/qalc.cc:4027
+#: ../src/qalc.cc:4058
 msgid "RPN Operation"
 msgstr "RPN-operation"
 
-#: ../src/qalc.cc:4447
+#: ../src/qalc.cc:4478
 #, c-format
 msgid ""
 "Couldn't write preferences to\n"
@@ -1668,7 +1682,7 @@ msgstr ""
 "Kunde inte spara inställningar till\n"
 "%s"
 
-#: ../src/qalc.cc:4532
+#: ../src/qalc.cc:4563
 msgid "Couldn't write definitions"
 msgstr "Kunde inte spara definitioner"
 
@@ -1700,18 +1714,43 @@ msgstr "Parameter 3, %s, bortses från för vektorer."
 msgid "Element %s does not exist in vector."
 msgstr "Element %s finns inte i vektorn."
 
-#: ../libqalculate/BuiltinFunctions.cc:1799
+#: ../libqalculate/BuiltinFunctions.cc:1836
 #, c-format
 msgid "Argument for %s() must be a real number greater than or equal to -1/e."
 msgstr "Parameter för %s() måste vara reellt tal större eller lika med -1/e."
 
-#: ../libqalculate/BuiltinFunctions.cc:3247
-#: ../libqalculate/BuiltinFunctions.cc:3290
+#: ../libqalculate/BuiltinFunctions.cc:3284
+#: ../libqalculate/BuiltinFunctions.cc:3327
 #, c-format
 msgid "Unsolvable comparison in %s()."
 msgstr "Olöslig jämförelse i %s()."
 
-#: ../libqalculate/BuiltinFunctions.cc:3781
+#: ../libqalculate/BuiltinFunctions.cc:3410
+#: ../libqalculate/BuiltinFunctions.cc:3595
+msgid "gregorian"
+msgstr "gregoriansk"
+
+#: ../libqalculate/BuiltinFunctions.cc:3411
+msgid "milankovic"
+msgstr "milankovic"
+
+#: ../libqalculate/BuiltinFunctions.cc:3412
+msgid "julian"
+msgstr "juliansk"
+
+#: ../libqalculate/BuiltinFunctions.cc:3413
+msgid "islamic"
+msgstr "muslimsk"
+
+#: ../libqalculate/BuiltinFunctions.cc:3414
+msgid "hebrew"
+msgstr "hebreisk"
+
+#: ../libqalculate/BuiltinFunctions.cc:3415
+msgid "egyptian"
+msgstr "egyptisk"
+
+#: ../libqalculate/BuiltinFunctions.cc:4029
 msgid ""
 "The number of requested elements in generate vector function must be a "
 "positive integer."
@@ -1719,33 +1758,33 @@ msgstr ""
 "Antalet efterfrågade element i generera vektor-funktionen måste vara ett "
 "positivt heltal."
 
-#: ../libqalculate/BuiltinFunctions.cc:4097
-#: ../libqalculate/BuiltinFunctions.cc:4101
+#: ../libqalculate/BuiltinFunctions.cc:4345
+#: ../libqalculate/BuiltinFunctions.cc:4349
 #, c-format
 msgid "Too few elements (%s) in vector (%s required)"
 msgstr "För få element (%s) i vektor (%s krävs)"
 
-#: ../libqalculate/BuiltinFunctions.cc:4150
-#: ../libqalculate/BuiltinFunctions.cc:4167
+#: ../libqalculate/BuiltinFunctions.cc:4398
+#: ../libqalculate/BuiltinFunctions.cc:4415
 msgid "Comparison failed."
 msgstr "Jämförelse misslyckades."
 
-#: ../libqalculate/BuiltinFunctions.cc:4155
-#: ../libqalculate/BuiltinFunctions.cc:4185
+#: ../libqalculate/BuiltinFunctions.cc:4403
+#: ../libqalculate/BuiltinFunctions.cc:4433
 msgid "No matching item found."
 msgstr "Inga matchande poster funna."
 
-#: ../libqalculate/BuiltinFunctions.cc:4283
+#: ../libqalculate/BuiltinFunctions.cc:4531
 #, c-format
 msgid "Object %s does not exist."
 msgstr "Okjektet %s finns inte."
 
-#: ../libqalculate/BuiltinFunctions.cc:4301
+#: ../libqalculate/BuiltinFunctions.cc:4549
 #, c-format
 msgid "Invalid variable name (%s)."
 msgstr "Ogiltigt variabelnamn (%s)."
 
-#: ../libqalculate/BuiltinFunctions.cc:4318
+#: ../libqalculate/BuiltinFunctions.cc:4566
 msgid ""
 "A global unit or variable was deactivated. It will be restored after the new "
 "variable has been removed."
@@ -1753,42 +1792,42 @@ msgstr ""
 "En systemvid enhet eller variabel har avaktiverats. Den återaktiveras efter "
 "att den nya variabeln har tagits bort."
 
-#: ../libqalculate/BuiltinFunctions.cc:4333
+#: ../libqalculate/BuiltinFunctions.cc:4581
 #, c-format
 msgid "Register %s does not exist. Returning zero."
 msgstr "RPN-registret %s finns inte. Returnerar noll."
 
-#: ../libqalculate/BuiltinFunctions.cc:4682
+#: ../libqalculate/BuiltinFunctions.cc:4930
 #: ../libqalculate/MathStructure.cc:191 ../libqalculate/MathStructure.cc:226
 #: ../libqalculate/MathStructure.cc:270
 #, c-format
 msgid "To avoid division by zero, the following must be true: %s."
 msgstr "För att undvika division med noll, krävs att följande är sant: %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:4738
-#: ../libqalculate/BuiltinFunctions.cc:4765
-#: ../libqalculate/BuiltinFunctions.cc:4785
-#: ../libqalculate/BuiltinFunctions.cc:4826
-#: ../libqalculate/BuiltinFunctions.cc:4922
-#: ../libqalculate/BuiltinFunctions.cc:5012
+#: ../libqalculate/BuiltinFunctions.cc:4986
+#: ../libqalculate/BuiltinFunctions.cc:5013
+#: ../libqalculate/BuiltinFunctions.cc:5033
+#: ../libqalculate/BuiltinFunctions.cc:5074
+#: ../libqalculate/BuiltinFunctions.cc:5170
+#: ../libqalculate/BuiltinFunctions.cc:5260
 msgid "Unable to integrate the expression."
 msgstr "Kan inte integrera uttrycket."
 
-#: ../libqalculate/BuiltinFunctions.cc:4836
-#: ../libqalculate/BuiltinFunctions.cc:4873
+#: ../libqalculate/BuiltinFunctions.cc:5084
+#: ../libqalculate/BuiltinFunctions.cc:5121
 msgid "Unable to integrate the expression exact."
 msgstr "Kan inte integrera uttrycket exakt."
 
-#: ../libqalculate/BuiltinFunctions.cc:4960
-#: ../libqalculate/BuiltinFunctions.cc:5003
+#: ../libqalculate/BuiltinFunctions.cc:5208
+#: ../libqalculate/BuiltinFunctions.cc:5251
 msgid "Definite integral was approximated with unknown precision."
 msgstr "Definitiv integral approximerades med okänd precision."
 
-#: ../libqalculate/BuiltinFunctions.cc:4984
+#: ../libqalculate/BuiltinFunctions.cc:5232
 msgid "Definite integral was approximated."
 msgstr "Definitiv integral approximerades."
 
-#: ../libqalculate/BuiltinFunctions.cc:5226
+#: ../libqalculate/BuiltinFunctions.cc:5474
 msgid ""
 "No equality or inequality to solve. The entered expression to solve is not "
 "correct (ex. \"x + 5 = 3\" is correct)"
@@ -1796,35 +1835,35 @@ msgstr ""
 "Ingen ekvation eller olikhet att lösa. Angett uttryck att lösa var inte "
 "korrekt (t ex \"x + 5 = 3\" är korrekt)"
 
-#: ../libqalculate/BuiltinFunctions.cc:5273
+#: ../libqalculate/BuiltinFunctions.cc:5521
 #, c-format
 msgid "The comparison is true for all %s (with current assumptions)."
 msgstr "Jämförelsen är sann för alla %s (med nuvarande antaganden)."
 
-#: ../libqalculate/BuiltinFunctions.cc:5277
+#: ../libqalculate/BuiltinFunctions.cc:5525
 msgid "No possible solution was found (with current assumptions)."
 msgstr "Ingen möjlig lösning funnen (med nuvarande antaganden)."
 
-#: ../libqalculate/BuiltinFunctions.cc:5281
+#: ../libqalculate/BuiltinFunctions.cc:5529
 #, c-format
 msgid "Was unable to completely isolate %s."
 msgstr "Kunde inte isolera %s fullständigt."
 
-#: ../libqalculate/BuiltinFunctions.cc:5285
-#: ../libqalculate/BuiltinFunctions.cc:5453
-#: ../libqalculate/BuiltinFunctions.cc:5548
+#: ../libqalculate/BuiltinFunctions.cc:5533
+#: ../libqalculate/BuiltinFunctions.cc:5701
+#: ../libqalculate/BuiltinFunctions.cc:5796
 #, c-format
 msgid "The comparison is true for all %s if %s."
 msgstr "Jämförelsen är sann för alla %s om %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:5289
+#: ../libqalculate/BuiltinFunctions.cc:5537
 #, c-format
 msgid "Was unable to isolate %s."
 msgstr "Kunde inte isolera %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:5412
-#: ../libqalculate/BuiltinFunctions.cc:5439
-#: ../libqalculate/BuiltinFunctions.cc:5522
+#: ../libqalculate/BuiltinFunctions.cc:5660
+#: ../libqalculate/BuiltinFunctions.cc:5687
+#: ../libqalculate/BuiltinFunctions.cc:5770
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed sign was "
@@ -1833,9 +1872,9 @@ msgstr ""
 "Kunde inte isolera %s med nuvarande antaganden. Antaget tecken sattes därför "
 "temporärt till okänt."
 
-#: ../libqalculate/BuiltinFunctions.cc:5415
-#: ../libqalculate/BuiltinFunctions.cc:5442
-#: ../libqalculate/BuiltinFunctions.cc:5525
+#: ../libqalculate/BuiltinFunctions.cc:5663
+#: ../libqalculate/BuiltinFunctions.cc:5690
+#: ../libqalculate/BuiltinFunctions.cc:5773
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed type and "
@@ -1844,18 +1883,18 @@ msgstr ""
 "Kunde inte isolera %s med nuvarande antaganden. Antagen typ sattes därför "
 "temporärt till okänd."
 
-#: ../libqalculate/BuiltinFunctions.cc:5448
-#: ../libqalculate/BuiltinFunctions.cc:5533
+#: ../libqalculate/BuiltinFunctions.cc:5696
+#: ../libqalculate/BuiltinFunctions.cc:5781
 #, c-format
 msgid "The solution requires that %s."
 msgstr "Lösningen kräver att %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:5541
+#: ../libqalculate/BuiltinFunctions.cc:5789
 #, c-format
 msgid "Solution %s requires that %s."
 msgstr "Lösning %s kräver att %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:5613
+#: ../libqalculate/BuiltinFunctions.cc:5861
 #, c-format
 msgid ""
 "Unable to isolate %s.\n"
@@ -1870,55 +1909,55 @@ msgstr ""
 "att varje ekvation åtminstone innehåller motsvarande variabel (om automatisk "
 "omsortering misslyckades)."
 
-#: ../libqalculate/BuiltinFunctions.cc:5615
-#: ../libqalculate/BuiltinFunctions.cc:5629
-#: ../libqalculate/BuiltinFunctions.cc:5638
+#: ../libqalculate/BuiltinFunctions.cc:5863
+#: ../libqalculate/BuiltinFunctions.cc:5877
+#: ../libqalculate/BuiltinFunctions.cc:5886
 #, c-format
 msgid "Unable to isolate %s."
 msgstr "Kan inte isolera %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:5622
+#: ../libqalculate/BuiltinFunctions.cc:5870
 #, c-format
 msgid "Inequalities is not allowed in %s()."
 msgstr "Olikheter är inte tillåtna i %s()."
 
-#: ../libqalculate/BuiltinFunctions.cc:5965
-#: ../libqalculate/BuiltinFunctions.cc:5970
+#: ../libqalculate/BuiltinFunctions.cc:6213
+#: ../libqalculate/BuiltinFunctions.cc:6218
 msgid "No differential equation found."
 msgstr "Ingen differentialekvation funnen."
 
-#: ../libqalculate/BuiltinFunctions.cc:5974
-#: ../libqalculate/BuiltinFunctions.cc:6003
-#: ../libqalculate/BuiltinFunctions.cc:6009
+#: ../libqalculate/BuiltinFunctions.cc:6222
+#: ../libqalculate/BuiltinFunctions.cc:6251
+#: ../libqalculate/BuiltinFunctions.cc:6257
 msgid "Unable to solve differential equation."
 msgstr "Kunde inte lösa differentialekvation."
 
-#: ../libqalculate/BuiltinFunctions.cc:6035
+#: ../libqalculate/BuiltinFunctions.cc:6283
 msgid "Unable to find limit."
 msgstr "Kan inte hitta gränsvärdet."
 
-#: ../libqalculate/BuiltinFunctions.cc:6082
-#: ../libqalculate/BuiltinFunctions.cc:6096
+#: ../libqalculate/BuiltinFunctions.cc:6330
+#: ../libqalculate/BuiltinFunctions.cc:6344
 msgid "Matrix"
 msgstr "Matris"
 
-#: ../libqalculate/BuiltinFunctions.cc:6107
-#: ../libqalculate/BuiltinFunctions.cc:6160
+#: ../libqalculate/BuiltinFunctions.cc:6355
+#: ../libqalculate/BuiltinFunctions.cc:6408
 msgid "Vector"
 msgstr "Vektor"
 
-#: ../libqalculate/BuiltinFunctions.cc:6122
-#: ../libqalculate/BuiltinFunctions.cc:6171 ../libqalculate/Calculator.cc:10134
+#: ../libqalculate/BuiltinFunctions.cc:6370
+#: ../libqalculate/BuiltinFunctions.cc:6419 ../libqalculate/Calculator.cc:10134
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr "Kunde inte generera diagramdata med angivet min, max och stegstorlek."
 
-#: ../libqalculate/BuiltinFunctions.cc:6124
-#: ../libqalculate/BuiltinFunctions.cc:6173
+#: ../libqalculate/BuiltinFunctions.cc:6372
+#: ../libqalculate/BuiltinFunctions.cc:6421
 msgid "Sampling rate must be a positive integer."
 msgstr "Frekvens måste vara ett positivt heltal."
 
-#: ../libqalculate/BuiltinFunctions.cc:6133
-#: ../libqalculate/BuiltinFunctions.cc:6182 ../libqalculate/Calculator.cc:10101
+#: ../libqalculate/BuiltinFunctions.cc:6381
+#: ../libqalculate/BuiltinFunctions.cc:6430 ../libqalculate/Calculator.cc:10101
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr "Kunde inte generera diagramdata med angivet min, max och frekvens."
 
@@ -1938,7 +1977,7 @@ msgstr "plus"
 msgid "minus"
 msgstr "minus"
 
-#: ../libqalculate/Calculator.cc:385 ../libqalculate/MathStructure.cc:17061
+#: ../libqalculate/Calculator.cc:385 ../libqalculate/MathStructure.cc:17126
 #: ../libqalculate/Function.cc:1222 ../libqalculate/Function.cc:1230
 #: ../libqalculate/Function.cc:1659 ../libqalculate/Function.cc:1821
 #: ../libqalculate/Function.cc:1829
@@ -1946,7 +1985,7 @@ msgid "and"
 msgstr "och"
 
 #: ../libqalculate/Calculator.cc:389 ../libqalculate/DataSet.cc:1046
-#: ../libqalculate/DataSet.cc:1109 ../libqalculate/MathStructure.cc:17076
+#: ../libqalculate/DataSet.cc:1109 ../libqalculate/MathStructure.cc:17141
 #: ../libqalculate/Function.cc:2160 ../libqalculate/Function.cc:2176
 msgid "or"
 msgstr "eller"
@@ -2207,26 +2246,26 @@ msgstr ""
 "Den andra matrisen måste ha lika många rader (var %s) som den första har "
 "kolumner (var %s) för matrismultiplikation."
 
-#: ../libqalculate/MathStructure.cc:7332 ../libqalculate/MathStructure.cc:7373
-#: ../libqalculate/MathStructure.cc:7406 ../libqalculate/MathStructure.cc:7473
-#: ../libqalculate/MathStructure.cc:7501 ../libqalculate/MathStructure.cc:7520
-#: ../libqalculate/MathStructure.cc:7539 ../libqalculate/MathStructure.cc:7558
-#: ../libqalculate/MathStructure.cc:7667 ../libqalculate/MathStructure.cc:13163
-#: ../libqalculate/MathStructure.cc:13437
+#: ../libqalculate/MathStructure.cc:7327 ../libqalculate/MathStructure.cc:7368
+#: ../libqalculate/MathStructure.cc:7401 ../libqalculate/MathStructure.cc:7468
+#: ../libqalculate/MathStructure.cc:7496 ../libqalculate/MathStructure.cc:7515
+#: ../libqalculate/MathStructure.cc:7534 ../libqalculate/MathStructure.cc:7553
+#: ../libqalculate/MathStructure.cc:7662 ../libqalculate/MathStructure.cc:13228
+#: ../libqalculate/MathStructure.cc:13502
 msgid "This is a bug. Please report it."
 msgstr "Detta är en bug. Var vänlig rapportera felet."
 
+#: ../libqalculate/MathStructure.cc:10029
 #: ../libqalculate/MathStructure.cc:10034
-#: ../libqalculate/MathStructure.cc:10039
 #, c-format
 msgid "Limit for %s determined graphically."
 msgstr "Gränsvärde för %s bestämt grafiskt."
 
-#: ../libqalculate/MathStructure.cc:10819
+#: ../libqalculate/MathStructure.cc:10814
 msgid "Interval potentially calculated wide."
 msgstr "Intervall potentiellt beräknat brett."
 
-#: ../libqalculate/MathStructure.cc:14551
+#: ../libqalculate/MathStructure.cc:14616
 msgid ""
 "Because of time constraints only a limited number of combinations of terms "
 "were tried during factorization. Repeat factorization to try other random "
@@ -2236,33 +2275,33 @@ msgstr ""
 "kombinationer av termer under faktorisering. Uprepa faktoriseringen för att "
 "pröva andra slumpmässiga kombinationer."
 
-#: ../libqalculate/MathStructure.cc:17160
+#: ../libqalculate/MathStructure.cc:17225
 msgid "undefined"
 msgstr "odefinierad"
 
-#: ../libqalculate/MathStructure.cc:17201
+#: ../libqalculate/MathStructure.cc:17266
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to rank vector."
 msgstr "Olöslig jämförelse vid element %s, vid rangordning av vektor."
 
-#: ../libqalculate/MathStructure.cc:17251
+#: ../libqalculate/MathStructure.cc:17316
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to sort vector."
 msgstr "Olöslig jämförelse vid element %s, vid sortering av vektor."
 
-#: ../libqalculate/MathStructure.cc:17676
+#: ../libqalculate/MathStructure.cc:17741
 msgid "The determinant can only be calculated for square matrices."
 msgstr "Determinanten kan enbart beräknas för kvadratiska matriser."
 
-#: ../libqalculate/MathStructure.cc:17739
+#: ../libqalculate/MathStructure.cc:17804
 msgid "The permanent can only be calculated for square matrices."
 msgstr "Permanenten kan enbart beräknas för kvadratiska matriser."
 
-#: ../libqalculate/MathStructure.cc:17828
+#: ../libqalculate/MathStructure.cc:17893
 msgid "Inverse of singular matrix."
 msgstr "Invers av singulär matrs."
 
-#: ../libqalculate/MathStructure.cc:18175
+#: ../libqalculate/MathStructure.cc:18240
 msgid ""
 "Calculations involving conversion of units without proportional linear "
 "relationship (e.g. with multiple temperature units), might give unexpected "
@@ -2272,19 +2311,19 @@ msgstr ""
 "linjära förhållanden (t.ex. med flera olika temperaturenheter), kan ge "
 "oförutsedda svar och rekommenderas ej."
 
-#: ../libqalculate/MathStructure.cc:19043
-#: ../libqalculate/MathStructure.cc:19086
+#: ../libqalculate/MathStructure.cc:19108
+#: ../libqalculate/MathStructure.cc:19151
 msgid "Too many data points"
 msgstr "För många datapunkter"
 
-#: ../libqalculate/MathStructure.cc:19050
+#: ../libqalculate/MathStructure.cc:19115
 msgid ""
 "The selected min and max do not result in a positive, finite number of data "
 "points"
 msgstr ""
 "Valt min och max resulterar inte i ett positive, ändligt antal datapunkter"
 
-#: ../libqalculate/MathStructure.cc:19083
+#: ../libqalculate/MathStructure.cc:19148
 msgid ""
 "The selected min, max and step size do not result in a positive, finite "
 "number of data points"
@@ -2292,26 +2331,26 @@ msgstr ""
 "Valt min, max och stegstorlek resulterar inte i ett positive, ändligt antal "
 "datapunkter"
 
-#: ../libqalculate/MathStructure.cc:25290
-#: ../libqalculate/MathStructure.cc:25427
-#: ../libqalculate/MathStructure.cc:25568
-#: ../libqalculate/MathStructure.cc:26048
-#: ../libqalculate/MathStructure.cc:26105
-#: ../libqalculate/MathStructure.cc:26147
-#: ../libqalculate/MathStructure.cc:26161
-#: ../libqalculate/MathStructure.cc:26211
-#: ../libqalculate/MathStructure.cc:26330
-#: ../libqalculate/MathStructure.cc:26464
+#: ../libqalculate/MathStructure.cc:25458
+#: ../libqalculate/MathStructure.cc:25595
+#: ../libqalculate/MathStructure.cc:25736
+#: ../libqalculate/MathStructure.cc:26216
+#: ../libqalculate/MathStructure.cc:26273
+#: ../libqalculate/MathStructure.cc:26315
+#: ../libqalculate/MathStructure.cc:26329
+#: ../libqalculate/MathStructure.cc:26379
+#: ../libqalculate/MathStructure.cc:26498
+#: ../libqalculate/MathStructure.cc:26632
 #, c-format
 msgid "Interval arithmetic was disabled during calculation of %s."
 msgstr "Intervallarithmetik inaktiverades under beräkning av %s."
 
-#: ../libqalculate/MathStructure.cc:26463
+#: ../libqalculate/MathStructure.cc:26631
 #, c-format
 msgid "Not all complex roots were calculated for %s."
 msgstr "Alla komplexa rötter beräknades ej för %s."
 
-#: ../libqalculate/MathStructure.cc:27489
+#: ../libqalculate/MathStructure.cc:27657
 #, c-format
 msgid "Only one or two of the roots where calculated for %s."
 msgstr "Enbart en eller två av rötterna beräknades för %s."

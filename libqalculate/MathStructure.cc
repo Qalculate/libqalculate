@@ -22509,6 +22509,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 		mtest3.clearVector();
 		if(b) {
 			UnknownVariable *var = new UnknownVariable("", string("a"));
+			var->setAssumptions(new Assumptions());
 			var->ref();
 			MathStructure mvar(var);
 			for(size_t i = 0; i < mtest2.size(); i++) {
@@ -22570,6 +22571,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 						}
 						if(i_degrees[i] == 1) {
 							UnknownVariable *var = new UnknownVariable("", string("a") + i2s(mtest3.size()));
+							var->setAssumptions(new Assumptions());
 							var->ref();
 							mnums3.addChild_nocopy(new MathStructure(var));
 							vars.push_back(var);
@@ -22578,6 +22580,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 							mnums3.last().setType(STRUCT_ADDITION);
 							for(int i2 = 1; i2 <= i_degrees[i]; i2++) {
 								UnknownVariable *var = new UnknownVariable("", string("a") + i2s(mtest3.size()) + i2s(i2));
+								var->setAssumptions(new Assumptions());
 								var->ref();
 								if(i2 == 1) {
 									mnums3.last().addChild_nocopy(new MathStructure(var));
@@ -22603,6 +22606,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 					mnums3.last().setType(STRUCT_ADDITION);
 					for(int i2 = 1; i2 <= i_degrees[i]; i2++) {
 						UnknownVariable *var = new UnknownVariable("", string("a") + i2s(mtest3.size()) + i2s(i2));
+						var->setAssumptions(new Assumptions());
 						if(i2 == 1) {
 							mnums3.last().addChild_nocopy(new MathStructure(var));
 						} else {
@@ -22756,6 +22760,103 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 	}
 	return false;
 }
+
+bool expand_partial_fractions(MathStructure &m, const EvaluationOptions &eo, bool do_simplify = true) {
+	MathStructure mtest(m);
+	if(do_simplify) {
+		mtest.simplify(eo);
+		mtest.calculatesub(eo, eo, true);
+	}
+	if(mtest.isPower() && mtest[1].representsNegative()) {
+		MathStructure x_var = mtest[0].find_x_var();
+		if(!x_var.isUndefined() && mtest[0].factorize(eo, false, 0, 0, false, false, NULL, x_var)) {
+			if(mtest.decomposeFractions(x_var, eo) && mtest.isAddition()) {
+				m = mtest;
+				return true;
+			}
+		}
+	} else if(mtest.isMultiplication()) {
+		for(size_t i = 0; i < mtest.size(); i++) {
+			if(mtest[i].isPower() && mtest[i][1].isMinusOne() && mtest[i][0].isAddition()) {
+				MathStructure x_var = mtest[i][0].find_x_var();
+				if(!x_var.isUndefined()) {
+					MathStructure mfac(mtest);
+					mfac.delChild(i + 1, true);
+					bool b_poly = true;
+					if(mfac.contains(x_var, true)) {
+						MathStructure mquo, mrem;
+						b_poly = polynomial_long_division(mfac, mtest[i][0], x_var, mquo, mrem, eo, true);
+						if(b_poly && !mquo.isZero()) {
+							MathStructure m = mquo;
+							if(!mrem.isZero()) {
+								m += mrem;
+								m.last() *= mtest[i];
+								m.childrenUpdated();
+							}
+							expand_partial_fractions(m, eo, false);
+							return true;
+						}
+					}
+					if(b_poly && mtest[i][0].factorize(eo, false, 0, 0, false, false, NULL, x_var)) {
+						MathStructure mmul(1, 1, 0);
+						while(mtest[i][0].isMultiplication() && mtest[i][0].size() >= 2 && !mtest[i][0][0].containsRepresentativeOf(x_var, true)) {
+							if(mmul.isOne()) {
+								mmul = mtest[i][0][0];
+								mmul.calculateInverse(eo);
+							} else {
+								mmul *= mtest[i][0][0];
+								mmul.last().calculateInverse(eo);
+								mmul.calculateMultiplyLast(eo);
+							}
+							mtest[i][0].delChild(1, true);
+						}
+						for(size_t i2 = 0; i2 < mtest.size();) {
+							if(i2 != i && !mtest[i2].containsRepresentativeOf(x_var, true)) {
+								if(mmul.isOne()) {
+									mmul = mtest[i2];
+								} else {
+									mmul.calculateMultiply(mtest[i2], eo);
+								}
+								if(mtest.size() == 2) {
+									mtest.setToChild(i + 1, true);
+									break;
+								} else {
+									mtest.delChild(i2 + 1);
+									if(i2 < i) i--;
+								}
+							} else {
+								i2++;
+							}
+						}
+						if(mtest.decomposeFractions(x_var, eo) && mtest.isAddition()) {
+							m = mtest;
+							if(!mmul.isOne()) {
+								for(size_t i2 = 0; i2 < m.size(); i2++) {
+									m[i2].calculateMultiply(mmul, eo);
+								}
+							}
+							return true;
+						}
+					}
+				}
+			}
+		}
+	} else {
+		bool b = false;
+		for(size_t i = 0; i < mtest.size(); i++) {
+			if(expand_partial_fractions(mtest[i], eo, false)) {
+				b = true;
+			}
+		}
+		if(b) {
+			m = mtest;
+			m.calculatesub(eo, eo, false);
+			return true;
+		}
+	}
+	return false;
+}
+
 
 int contains_unsolved_integrate(const MathStructure &mstruct, MathStructure *this_mstruct, MathStructure *parent_parts);
 int contains_unsolved_integrate(const MathStructure &mstruct, MathStructure *this_mstruct, vector<MathStructure*> *parent_parts) {
