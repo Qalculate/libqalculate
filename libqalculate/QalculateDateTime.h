@@ -74,4 +74,20 @@ class QalculateDateTime {
 		string parsed_string;
 };
 
+typedef enum {
+	CALENDAR_GREGORIAN,
+	CALENDAR_MILANKOVIC,
+	CALENDAR_JULIAN,
+	CALENDAR_ISLAMIC,
+	CALENDAR_HEBREW,
+	CALENDAR_EGYPTIAN,
+	CALENDAR_PERSIAN,
+	CALENDAR_COPTIC,
+	CALENDAR_ETHIOPIC
+} CalendarSystem;
+
+bool calendarToDate(QalculateDateTime &date, long int y, long int m, long int d, CalendarSystem ct);
+bool dateToCalendar(const QalculateDateTime &date, long int &y, long int &m, long int &d, CalendarSystem ct);
+
+
 #endif

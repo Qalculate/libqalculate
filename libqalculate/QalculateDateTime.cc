@@ -1291,3 +1291,337 @@ Number QalculateDateTime::yearsTo(const QalculateDateTime &date, int basis, bool
 	return nr;
 }
 
+
+
+
+long int quotient(long int i, long int d) {
+	i /= d;
+	if((i < 0) != (d < 0)) i--;
+	return i;
+}
+Number quotient(Number nr, long int d) {
+	nr /= d;
+	nr.floor();
+	return nr;
+}
+
+bool gregorian_leap_year(long int year) {
+	return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+}
+bool julian_leap_year(long int year) {
+	if(year < 0) return year % 4 == -1;
+	return year % 4 == 0;
+}
+bool coptic_leap_year(long int year) {
+	if(year < 0) return year % 4 == -1;
+	return year % 4 == 2;
+}
+
+void cal_div(const Number &nr_n, long int nr_d, Number &nr_q, Number &nr_r) {
+	nr_q = nr_n; nr_q /= nr_d; nr_q.floor();
+	nr_r = nr_n; nr_r.mod(nr_d);
+}
+void cal_div(const Number &nr_n, long int nr_d, Number &nr_q) {
+	nr_q = nr_n; nr_q /= nr_d; nr_q.floor();
+}
+void cal_div(Number &nr_n, long int nr_d) {
+	nr_n /= nr_d; nr_n.floor();
+}
+
+#define JULIAN_EPOCH -1 // (date_to_fixed(0, 12, 30, 1))
+#define ISLAMIC_EPOCH 227012 // date_to_fixed(622, 7, 16, 3)
+#define PERSIAN_EPOCH 226894 // date_to_fixed(622, 3, 22, 3)
+#define COPTIC_EPOCH 103605
+#define ETHIOPIC_EPOCH 2796
+#define MEAN_TROPICAL_YEAR (Number("365.242189"))
+#define MEAN_SIDEREAL_YEAR (Number("365.25636"))
+#define MEAN_SYNODIC_MONTH (Number("29.530588861"))
+#define JD_EPOCH (Number("-1721424.5"))
+#define EGYPTIAN_EPOCH (jd_to_fixed(1448638)) //226894
+
+Number jd_to_fixed(Number jd) {
+	jd += JD_EPOCH;
+	jd.floor();
+	return jd;
+}
+
+bool cjdn_to_date(Number J, long int &y, long int &m, long int &d, CalendarSystem ct);
+Number date_to_cjdn(long int j, long int m, long int d, CalendarSystem ct);
+bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarSystem ct);
+Number date_to_fixed(long int y, long int m, long int d, CalendarSystem ct);
+
+Number date_to_fixed(long int y, long int m, long int d, CalendarSystem ct) {
+	Number fixed;
+	if(ct == CALENDAR_GREGORIAN) {
+		Number year(y); year--;
+		fixed = year; fixed *= 365; fixed += quotient(year, 4); fixed -= quotient(year, 100); fixed += quotient(year, 400);
+		fixed += quotient((367 * m) - 362, 12); 
+		if(m > 2) fixed -= (gregorian_leap_year(y) ? 1 : 2);
+		fixed += d;
+	} else if(ct == CALENDAR_JULIAN) {
+		Number y2(y); if(!y2.isNegative()) y2--;
+		fixed = JULIAN_EPOCH; fixed--;
+		fixed += y2 * 365;
+		fixed += quotient(y2, 4);
+		fixed += quotient((367 * m) - 362, 12); 
+		if(m > 2) fixed -= (julian_leap_year(y) ? 1 : 2);
+		fixed += d;
+	} else if(ct == CALENDAR_ISLAMIC) {
+		Number year(y);
+		fixed = ISLAMIC_EPOCH; fixed--;
+		fixed += (year - 1) * 354;
+		year *= 11; year += 30; cal_div(year, 30); fixed += year;
+		fixed += (m - 1) * 29; 
+		fixed += quotient(m, 2);
+		fixed += d;
+	} else if(ct == CALENDAR_EGYPTIAN) {
+		Number year(y);
+		fixed = EGYPTIAN_EPOCH;
+		fixed += (year - 1) * 365;
+		fixed += 30 * (m - 1);
+		fixed += d - 1; 
+	} else if(ct == CALENDAR_COPTIC) {
+		Number year(y);
+		fixed = COPTIC_EPOCH; fixed--;
+		fixed += (year - 1) * 365;
+		fixed += quotient(year, 4);
+		fixed += 30 * (m - 1);
+		fixed += d; 
+	} else if(ct == CALENDAR_ETHIOPIC) {
+		Number year(y);
+		fixed = ETHIOPIC_EPOCH;
+		fixed += date_to_fixed(y, m, d, CALENDAR_COPTIC);
+		fixed -= COPTIC_EPOCH;
+	} else {
+		return date_to_cjdn(y, m, d, ct) - 1721425L;
+	}
+	return fixed;
+}
+bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarSystem ct) {
+	if(ct == CALENDAR_GREGORIAN) {
+		Number d0, n400, d1, n100, d2, n4, d3, n1, year;
+		d0 = date; d0 -= 1;
+		cal_div(d0, 146097, n400, d1);
+		cal_div(d1, 36524, n100, d2);
+		cal_div(d2, 1461, n4, d3);
+		cal_div(d3, 365, n1);
+		if(!n100.equals(4) && !n1.equals(4)) year = 1;
+		else year = 0;
+		n400 *= 400; n100 *= 100; n4 *= 4; year += n400; year += n100; year += n4; year += n1;
+		bool overflow = false;
+		y = year.lintValue(&overflow);
+		if(overflow) return false;
+		Number prior_days(date); prior_days -= date_to_fixed(y, 1, 1, ct);
+		if(date.isGreaterThanOrEqualTo(date_to_fixed(y, 3, 1, CALENDAR_GREGORIAN))) prior_days += gregorian_leap_year(y) ? 1 : 2;
+		prior_days *= 12; prior_days += 373;
+		cal_div(prior_days, 367);
+		m = prior_days.lintValue();
+		date -= date_to_fixed(y, m, 1, CALENDAR_GREGORIAN); date++;
+		d = date.lintValue();
+		return true;
+	} else if(ct == CALENDAR_JULIAN) {
+		Number approx(date); approx -= JULIAN_EPOCH; approx *= 4; approx += 1464; cal_div(approx, 1461);
+		if(!approx.isPositive()) approx--;
+		bool overflow = false;
+		y = approx.lintValue(&overflow);
+		if(overflow) return false;
+		Number prior_days(date); prior_days -= date_to_fixed(y, 1, 1, ct);
+		if(date.isGreaterThanOrEqualTo(date_to_fixed(y, 3, 1, CALENDAR_GREGORIAN))) prior_days += julian_leap_year(y) ? 1 : 2;
+		prior_days *= 12; prior_days += 373;
+		cal_div(prior_days, 367);
+		m = prior_days.lintValue();
+		date -= date_to_fixed(y, m, 1, CALENDAR_GREGORIAN); date++;
+		d = date.lintValue();
+		return true;
+	} else if(ct == CALENDAR_ISLAMIC) {
+		Number year(date); year -= ISLAMIC_EPOCH; year *= 30; year += 10646; cal_div(year, 10631);
+		bool overflow = false;
+		y = year.lintValue(&overflow);
+		if(overflow) return false;
+		Number prior_days(date); prior_days -= date_to_fixed(y, 1, 1, ct);
+		prior_days *= 11; prior_days += 330; cal_div(prior_days, 325);
+		m = prior_days.lintValue();
+		date -= date_to_fixed(y, m, 1, ct); date++;
+		d = date.lintValue();
+		return true;
+	} else {
+		date += 1721425L;
+		return cjdn_to_date(date, y, m, d, ct);
+	}
+	return false;
+}
+Number date_to_cjdn(long int j, long int m, long int d, CalendarSystem ct) {
+	Number J;
+	if(ct == CALENDAR_GREGORIAN) {
+		Number c0(m); c0 -= 3; c0 /= 12; c0.floor();
+		Number x4(j); x4 += c0;
+		Number x2, x3; cal_div(x4, 100, x3, x2);
+		Number x1(m); c0 *= 12; x1 -= c0; x1 -= 3;
+		x3 *= 146097; x3 /= 4; x3.floor();
+		x2 *= 36525; x2 /= 100; x2.floor();
+		x1 *= 153; x1 += 2; x1 /= 5; x1.floor();
+		J = x3; J += x2; J += x1; J += d; J += 1721119;
+	} else if(ct == CALENDAR_MILANKOVIC) {
+		Number c0(m); c0 -= 3; c0 /= 12; c0.floor();
+		Number x4(j); x4 += c0;
+		Number x2, x3; cal_div(x4, 100, x3, x2);
+		Number x1(m); c0 *= 12; x1 -= c0; x1 -= 3;
+		x3 *= 328718; x3 += 6; x3 /= 9; x3.floor();
+		x2 *= 36525; x2 /= 100; x2.floor();
+		x1 *= 153; x1 += 2; x1 /= 5; x1.floor();
+		J = x3; J += x2; J += x1; J += d; J += 1721119;
+	} else if(ct == CALENDAR_JULIAN) {
+		Number c0(m); c0 -= 3; c0 /= 12; c0.floor();
+		Number j1(j); j1 += c0; j1 *= 1461; j1 /= 4; j1.floor();
+		Number j2(m); j2 *= 153; c0 *= 1836; j2 -= c0; j2 -= 457; j2 /= 5; j2.floor();
+		J = 1721117L; J += j1; J += j2; J += d;
+	} else if(ct == CALENDAR_ISLAMIC) {
+		Number x1(j); x1 *= 10631; x1 -= 10617; x1 /= 30; x1.floor();
+		Number x2(m); x2 *= 325; x2 -= 320; x2 /= 11; x2.floor();
+		J = x1; J += x2; J += d; J += 1948439L;
+		return J;
+	} else if(ct == CALENDAR_HEBREW) {
+		Number c0, x1, x3, z4;
+		c0 = 13; c0 -= m; c0 /= 7; c0.floor();
+		x1 = j; x1--; x1 += c0;
+		x3 = m; x3--;
+		z4 = d; z4--;
+		Number c1x1, qx1, rx1, v1x1, v2x1;
+		c1x1 = x1; c1x1 *= 235; c1x1++; c1x1 /= 19; c1x1.floor();
+		qx1 = c1x1; qx1 /= 1095; qx1.floor();
+		rx1 = c1x1; rx1.mod(1095);
+		v1x1 = qx1; v1x1 *= 15; rx1 *= 765433L; v1x1 += rx1; v1x1 += 12084; v1x1 /= 25920; v1x1.floor(); qx1 *= 32336; v1x1 += qx1;
+		v2x1 = v1x1; v2x1.mod(7); v2x1 *= 6; v2x1 /= 7; v2x1.floor(); v2x1.mod(2); v2x1 += v1x1;
+		Number x1p1, c1x1p1, qx1p1, rx1p1, v1x1p1, v2x1p1;
+		x1p1 = x1; x1p1++;
+		c1x1p1 = x1p1; c1x1p1 *= 235; c1x1p1++; c1x1p1 /= 19; c1x1p1.floor();
+		qx1p1 = c1x1p1; qx1p1 /= 1095; qx1p1.floor();
+		rx1p1 = c1x1p1; rx1p1.mod(1095);
+		v1x1p1 = qx1p1; v1x1p1 *= 15; rx1p1 *= 765433L; v1x1p1 += rx1p1; v1x1p1 += 12084; v1x1p1 /= 25920; v1x1p1.floor(); qx1p1 *= 32336; v1x1p1 += qx1p1;
+		v2x1p1 = v1x1p1; v2x1p1.mod(7); v2x1p1 *= 6; v2x1p1 /= 7; v2x1p1.floor(); v2x1p1.mod(2); v2x1p1 += v1x1p1;
+		Number x1m1, c1x1m1, qx1m1, rx1m1, v1x1m1, v2x1m1;
+		x1m1 = x1; x1m1--;
+		c1x1m1 = x1m1; c1x1m1 *= 235; c1x1m1++; c1x1m1 /= 19; c1x1m1.floor();
+		qx1m1 = c1x1m1; qx1m1 /= 1095; qx1m1.floor();
+		rx1m1 = c1x1m1; rx1m1.mod(1095);
+		v1x1m1 = qx1m1; v1x1m1 *= 15; rx1m1 *= 765433L; v1x1m1 += rx1m1; v1x1m1 += 12084; v1x1m1 /= 25920; v1x1m1.floor(); qx1m1 *= 32336; v1x1m1 += qx1m1;
+		v2x1m1 = v1x1m1; v2x1m1.mod(7); v2x1m1 *= 6; v2x1m1 /= 7; v2x1m1.floor(); v2x1m1.mod(2); v2x1m1 += v1x1m1;
+		Number x1p2, c1x1p2, qx1p2, rx1p2, v1x1p2, v2x1p2;
+		x1p2 = x1; x1p2 += 2;
+		c1x1p2 = x1p2; c1x1p2 *= 235; c1x1p2++; c1x1p2 /= 19; c1x1p2.floor();
+		qx1p2 = c1x1p2; qx1p2 /= 1095; qx1p2.floor();
+		rx1p2 = c1x1p2; rx1p2.mod(1095);
+		v1x1p2 = qx1p2; v1x1p2 *= 15; rx1p2 *= 765433L; v1x1p2 += rx1p2; v1x1p2 += 12084; v1x1p2 /= 25920; v1x1p2.floor(); qx1p2 *= 32336; v1x1p2 += qx1p2;
+		v2x1p2 = v1x1p2; v2x1p2.mod(7); v2x1p2 *= 6; v2x1p2 /= 7; v2x1p2.floor(); v2x1p2.mod(2); v2x1p2 += v1x1p2;
+		Number L2x1, L2x1m1, v3x1, v4x1, c2x1;
+		L2x1 = v2x1p1; L2x1 -= v2x1;
+		L2x1m1 = v2x1; L2x1m1 -= v2x1m1;
+		v3x1 = L2x1; v3x1 += 19; v3x1 /= 15; v3x1.floor(); v3x1.mod(2); v3x1 *= 2;
+		v4x1 = L2x1m1; v4x1 += 7; v4x1 /= 15; v4x1.floor(); v4x1.mod(2);
+		c2x1 = v2x1; c2x1 += v3x1; c2x1 += v4x1;
+		Number L2x1p1, v3x1p1, v4x1p1, c2x1p1;
+		L2x1p1 = v2x1p2; L2x1p1 -= v2x1p1;
+		v3x1p1 = L2x1p1; v3x1p1 += 19; v3x1p1 /= 15; v3x1p1.floor(); v3x1p1.mod(2); v3x1p1 *= 2;
+		v4x1p1 = L2x1; v4x1p1 += 7; v4x1p1 /= 15; v4x1p1.floor(); v4x1p1.mod(2);
+		c2x1p1 = v2x1p1; c2x1p1 += v3x1p1; c2x1p1 += v4x1p1;
+		Number L, c8, c9, c3, c4;
+		L = c2x1p1; L -= c2x1;
+		c8 = L; c8 += 7; c8 /= 2; c8.floor(); c8.mod(15);
+		c9 = 385; c9 -= L; c9 /= 2; c9.floor(); c9.mod(15); c9.negate();
+		Number x3a(x3), x3b(x3), x3c(x3);
+		x3a *= 384; x3a += 7; x3a /= 13; x3a.floor(); x3b += 4; x3b /= 12; x3b.floor(); x3c += 3; x3c /= 12; x3c.floor();
+		c3 = x3a; c8 *= x3b; c3 += c8; c9 *= x3c; c3 += c9;
+		J = 347821L; J += c2x1; J += c3; J += z4;
+	} else if(ct == CALENDAR_EGYPTIAN) {
+		j *= 365; m *= 30;
+		J = j; J += m; J += d; J+= 1448242L;
+	} else {
+		return date_to_fixed(j, m, d, ct) + 1721425L;
+	}
+	return J;
+}
+bool cjdn_to_date(Number J, long int &y, long int &m, long int &d, CalendarSystem ct) {
+	if(ct == CALENDAR_GREGORIAN) {
+		Number x3, r3, x2, r2, x1, r1, j;
+		J *= 4; J -= 6884477L;
+		cal_div(J, 146097, x3, r3);
+		r3 /= 4; r3.floor(); r3 *= 100; r3 += 99;
+		cal_div(r3, 36525, x2, r2);
+		r2 /= 100; r2.floor(); r2 *= 5; r2 += 2;
+		cal_div(r2, 153, x1, r1);
+		r1 /= 5; r1.floor(); r1++; d = r1.lintValue();
+		Number c0(x1); c0 += 2; c0 /= 12; c0.floor();
+		j = x3; j *= 100; j += x2; j += c0;
+		bool overflow = false; y = j.lintValue(&overflow); if(overflow) return false;
+		c0 *= -12; c0 += x1; c0 += 3; m = c0.lintValue();
+		return true;
+	} else if(ct == CALENDAR_MILANKOVIC) {
+		Number x3, r3, x2, r2, x1, r1, c0, j;
+		J -= 1721120L; J *= 9; J += 2;
+		cal_div(J, 328718L, x3, r3);
+		r3 *= 100; r3 += 99;
+		cal_div(r3, 36525, x2, r2);
+		r2 *= 5; r2 += 2;
+		cal_div(r2, 153, x1, r1);
+		c0 = x1; c0 += 2; c0 /= 12; c0.floor();
+		j = x3; j *= 100; j += x2; j += c0;
+		bool overflow = false; y = j.lintValue(&overflow); if(overflow) return false;
+		c0 *= 12; x1 -= c0; x1 += 3; m = x1.lintValue();
+		r1.mod(153); r1 /= 5; r1.floor(); r1++; d = r1.lintValue(); 
+		return true;
+	} else if(ct == CALENDAR_JULIAN) {
+		Number y2, k2, k1, x2, x1, c0, j;
+		y2 = J; y2 -= 1721118L;
+		k2 = y2; k2 *= 4; k2 += 3;
+		k1 = k2; k1.mod(1461); k1 /= 4; k1.floor(); k1 *= 5; k1 += 2;
+		x1 = k1; x1 /= 153; x1.floor();
+		c0 = x1; c0 += 2; c0 /= 12; c0.floor();
+		j = k2; j /= 1461; j.floor(); j += c0;
+		bool overflow = false; y = j.lintValue(&overflow); if(overflow) return false;
+		c0 *= 12; x1 -= c0; x1 += 3; m = x1.lintValue();
+		k1.mod(153); k1 /= 5; k1.floor(); k1++; d = k1.lintValue();
+		return true;
+	} else if(ct == CALENDAR_ISLAMIC) {
+		Number k2, k1, j;
+		k2 = J; k2 -= 1948440L; k2 *= 30; k2 += 15;
+		k1 = k2; k1.mod(10631); k1 /= 30; k1.floor(); k1 *= 11; k1 += 5;
+		j = k2; j /= 10631; j.floor(); j++;
+		bool overflow = false; y = j.lintValue(&overflow); if(overflow) return false;
+		k2 = k1; k2 /= 325; k2.floor(); k2++; m = k2.lintValue();
+		k1.mod(153); k1 /= 11; k1.floor(); k1++; d = k1.lintValue();
+		return true;
+	} else if(ct == CALENDAR_HEBREW) {
+	} else if(ct == CALENDAR_EGYPTIAN) {
+		Number y2, x2, y1, j;
+		y2 = J; x2 = y2; x2 /= 365; x2.floor(); y1 = y2; y1.mod(365);
+		j = x2; j++;
+		bool overflow = false; y = j.lintValue(&overflow); if(overflow) return false;
+		y2 = y1; y2 /= 30; y2.floor(); y2++; m = y2.lintValue();
+		y1.mod(30); y1++; d = y1.lintValue();
+		return true;
+	} else {
+		J -= 1721425L;
+		return fixed_to_date(J, y, m, d, ct);
+	}
+	return false;
+}
+
+bool calendarToDate(QalculateDateTime &date, long int y, long int m, long int d, CalendarSystem ct) {
+	long int new_y, new_m, new_d;
+	if(!cjdn_to_date(date_to_cjdn(y, m, d, ct), new_y, new_m, new_d, CALENDAR_GREGORIAN)) return false;
+	cout << new_y << "-" << new_m << "-" << new_d << endl;
+	if(!fixed_to_date(date_to_fixed(y, m, d, ct), new_y, new_m, new_d, CALENDAR_GREGORIAN)) return false;
+	date.set(new_y, new_m, new_d);
+	return true;
+}
+bool dateToCalendar(const QalculateDateTime &date, long int &y, long int &m, long int &d, CalendarSystem ct) {
+	if(ct == CALENDAR_GREGORIAN) {
+		y = date.year(); m = date.month(); d = date.day();
+		return true;
+	}
+	if(!cjdn_to_date(date_to_cjdn(date.year(), date.month(), date.day(), CALENDAR_GREGORIAN), y, m, d, ct)) return false;
+	cout << y << "-" << m << "-" << d << endl;
+	if(!fixed_to_date(date_to_fixed(date.year(), date.month(), date.day(), CALENDAR_GREGORIAN), y, m, d, ct)) return false;
+	return true;
+}
+
