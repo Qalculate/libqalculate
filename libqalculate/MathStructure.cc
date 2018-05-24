@@ -22856,7 +22856,9 @@ bool expand_partial_fractions(MathStructure &m, const EvaluationOptions &eo, boo
 	}
 	return false;
 }
-
+bool MathStructure::expandPartialFractions(const EvaluationOptions &eo) {
+	return expand_partial_fractions(*this, eo, true);
+}
 
 int contains_unsolved_integrate(const MathStructure &mstruct, MathStructure *this_mstruct, MathStructure *parent_parts);
 int contains_unsolved_integrate(const MathStructure &mstruct, MathStructure *this_mstruct, vector<MathStructure*> *parent_parts) {

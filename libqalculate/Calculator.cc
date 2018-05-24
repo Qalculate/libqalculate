@@ -1495,6 +1495,7 @@ void Calculator::addBuiltinFunctions() {
 	f_rand = addFunction(new RandFunction());
 
 	f_date = addFunction(new DateFunction());
+	f_datetime = addFunction(new DateTimeFunction());
 	f_timevalue = addFunction(new TimeValueFunction());
 	f_timestamp = addFunction(new TimestampFunction());
 	f_stamptodate = addFunction(new TimestampToDateFunction());

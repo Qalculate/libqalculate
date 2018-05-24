@@ -3561,9 +3561,6 @@ void on_abort_command() {
 	}
 }
 
-extern bool polynomial_long_division(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar_pre, MathStructure &mquotient, MathStructure &mrem, const EvaluationOptions &eo, bool check_args = false, bool for_newtonraphson = false);
-extern bool expand_partial_fractions(MathStructure &m, const EvaluationOptions &eo, bool do_simplify = true);
-
 void CommandThread::run() {
 
 	enableAsynchronousCancel();
@@ -3582,7 +3579,7 @@ void CommandThread::run() {
 				break;
 			}
 			case COMMAND_EXPAND_PARTIAL_FRACTIONS: {
-				expand_partial_fractions(*((MathStructure*) x), evalops);
+				((MathStructure*) x)->expandPartialFractions(evalops);
 				break;
 			}
 			case COMMAND_SIMPLIFY: {

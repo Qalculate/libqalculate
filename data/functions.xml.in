@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="2.5.0">
+<QALCULATE version="2.6.0">
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="vector">
@@ -1720,6 +1720,23 @@
     <_title>Date &amp; Time</_title>
     <builtin_function name="date">
       <_title>Construct Date</_title>
+      <_names>r:date</_names>
+      <_description>Returns a date. Available calendars gregorian (1), milankovic (2), julian (3), islamic (4), hebrew (5), egyptian (6), persian (7), coptic (8), ethiopic (9).</_description>
+      <argument index="1">
+        <_title>Year</_title>
+      </argument>
+      <argument index="2">
+        <_title>Month</_title>
+      </argument>
+      <argument index="3">
+        <_title>Day</_title>
+      </argument>
+      <argument index="4">
+        <_title>Calendar</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="datetime">
+      <_title>Construct Date and Time</_title>
       <_names>r:date</_names>
       <argument index="1">
         <_title>Year</_title>
