@@ -1309,18 +1309,6 @@ Number quotient(Number nr, long int d) {
 	return nr;
 }
 
-bool gregorian_leap_year(long int year) {
-	return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
-}
-bool julian_leap_year(long int year) {
-	if(year < 0) return year % 4 == -1;
-	return year % 4 == 0;
-}
-bool coptic_leap_year(long int year) {
-	if(year < 0) return year % 4 == -1;
-	return year % 4 == 2;
-}
-
 void cal_div(const Number &nr_n, long int nr_d, Number &nr_q, Number &nr_r) {
 	nr_q = nr_n; nr_q /= nr_d; nr_q.floor();
 	nr_r = nr_n; nr_r.mod(nr_d);
@@ -1333,15 +1321,16 @@ void cal_div(Number &nr_n, long int nr_d) {
 }
 
 #define JULIAN_EPOCH -1 // (date_to_fixed(0, 12, 30, 1))
-#define ISLAMIC_EPOCH 227012 // date_to_fixed(622, 7, 16, 3)
-#define PERSIAN_EPOCH 226894 // date_to_fixed(622, 3, 22, 3)
+#define ISLAMIC_EPOCH 227012 // date_to_fixed(622, 7, 16, 6)
+#define PERSIAN_EPOCH 226894 // date_to_fixed(622, 3, 22, 6)
+#define JD_EPOCH (Number("-1721424.5"))
+#define EGYPTIAN_EPOCH -272787L //jd_to_fixed(1448638))
+#define HEBREW_EPOCH -1373427 //date_to_fixed(-3761, 10,7, 6)
 #define COPTIC_EPOCH 103605
 #define ETHIOPIC_EPOCH 2796
 #define MEAN_TROPICAL_YEAR (Number("365.242189"))
 #define MEAN_SIDEREAL_YEAR (Number("365.25636"))
 #define MEAN_SYNODIC_MONTH (Number("29.530588861"))
-#define JD_EPOCH (Number("-1721424.5"))
-#define EGYPTIAN_EPOCH (jd_to_fixed(1448638)) //226894
 
 Number jd_to_fixed(Number jd) {
 	jd += JD_EPOCH;
@@ -1354,6 +1343,82 @@ Number date_to_cjdn(long int j, long int m, long int d, CalendarSystem ct);
 bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarSystem ct);
 Number date_to_fixed(long int y, long int m, long int d, CalendarSystem ct);
 
+bool gregorian_leap_year(long int year) {
+	return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+}
+bool julian_leap_year(long int year) {
+	if(year < 0) return year % 4 == -1;
+	return year % 4 == 0;
+}
+bool coptic_leap_year(long int year) {
+	if(year < 0) return year % 4 == -1;
+	return year % 4 == 2;
+}
+bool hebrew_leap_year(Number y) {
+	y *= 7; y++; y.mod(19);
+	return y.isLessThan(7);
+}
+long int last_month_of_hebrew_year(Number year) {
+	if(hebrew_leap_year(year)) return 13;
+	return 12;
+}
+bool hebrew_sabbatical_year(Number year) {
+	year.mod(7);
+	return year.isZero();
+}
+long int hebrew_calendar_elapsed_days(Number year) {
+	year *= 235; year -= 234; cal_div(year, 19);
+	Number months_elapsed(year);
+	Number parts_elapsed(months_elapsed);
+	months_elapsed *= 29;
+	cal_div(parts_elapsed, 25920);
+	Number days(months_elapsed); days += parts_elapsed;
+	long int d = days.lintValue();
+	days++; days *= 3; days.mod(7);
+	if(days.isLessThan(3)) d++;
+	return d;
+}
+long int hebrew_year_length_correction(Number year) {
+	Number ny0, ny1, ny2;
+	year--;
+	ny0 = hebrew_calendar_elapsed_days(year);
+	year++;
+	ny1 = hebrew_calendar_elapsed_days(year);
+	year++;
+	ny2 -= ny1;
+	if(ny2 == 356) return 2;
+	ny1 -= ny0;
+	if(ny1 == 382) return 1;
+	return 0;
+}
+Number hebrew_new_year(Number year) {
+	Number d(HEBREW_EPOCH); d += hebrew_calendar_elapsed_days(year); d += hebrew_year_length_correction(year); return d;
+}
+
+long int days_in_hebrew_year(Number year) {
+	Number d1(hebrew_new_year(year));
+	d1.negate();
+	year++;
+	d1 += hebrew_new_year(year);
+	return d1.lintValue();
+}
+bool long_marheshvan(Number year) {
+	long int d = days_in_hebrew_year(year);
+	return d == 355 || d == 385;
+}
+bool short_kislev(Number year) {
+	long int d = days_in_hebrew_year(year);
+	return d == 353 || d == 383;
+}
+
+long int last_day_of_hebrew_month(Number year, Number month) {
+	if(month == 2 || month == 4 || month == 6 || month == 10 || month == 13) return 29;
+	if(month == 12 && !hebrew_leap_year(year)) return 29;
+	if(month == 8 && !long_marheshvan(year)) return 29;
+	if(month == 9 && short_kislev(year)) return 29;
+	return 30;
+}
+
 Number date_to_fixed(long int y, long int m, long int d, CalendarSystem ct) {
 	Number fixed;
 	if(ct == CALENDAR_GREGORIAN) {
@@ -1362,6 +1427,16 @@ Number date_to_fixed(long int y, long int m, long int d, CalendarSystem ct) {
 		fixed += quotient((367 * m) - 362, 12); 
 		if(m > 2) fixed -= (gregorian_leap_year(y) ? 1 : 2);
 		fixed += d;
+	} else if(ct == CALENDAR_HEBREW) {
+		fixed = hebrew_new_year(y);
+		fixed += d - 1;
+		if(m < 7) {
+			long int l = last_month_of_hebrew_year(y);
+			for(long int i = 7; i <= l; i++) fixed += last_day_of_hebrew_month(y, i);
+			for(long int i = 1; i <= m; i++) fixed += last_day_of_hebrew_month(y, i);
+		} else {
+			for(long int i = 7; i <= m; i++) fixed += last_day_of_hebrew_month(y, i);
+		}
 	} else if(ct == CALENDAR_JULIAN) {
 		Number y2(y); if(!y2.isNegative()) y2--;
 		fixed = JULIAN_EPOCH; fixed--;
@@ -1401,6 +1476,7 @@ Number date_to_fixed(long int y, long int m, long int d, CalendarSystem ct) {
 	}
 	return fixed;
 }
+
 bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarSystem ct) {
 	if(ct == CALENDAR_GREGORIAN) {
 		Number d0, n400, d1, n100, d2, n4, d3, n1, year;
@@ -1416,11 +1492,25 @@ bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarS
 		y = year.lintValue(&overflow);
 		if(overflow) return false;
 		Number prior_days(date); prior_days -= date_to_fixed(y, 1, 1, ct);
-		if(date.isGreaterThanOrEqualTo(date_to_fixed(y, 3, 1, CALENDAR_GREGORIAN))) prior_days += gregorian_leap_year(y) ? 1 : 2;
+		if(date.isGreaterThanOrEqualTo(date_to_fixed(y, 3, 1, ct))) prior_days += gregorian_leap_year(y) ? 1 : 2;
 		prior_days *= 12; prior_days += 373;
 		cal_div(prior_days, 367);
 		m = prior_days.lintValue();
-		date -= date_to_fixed(y, m, 1, CALENDAR_GREGORIAN); date++;
+		date -= date_to_fixed(y, m, 1, ct); date++;
+		d = date.lintValue();
+		return true;
+	} else if(ct == CALENDAR_HEBREW) {
+		Number approx(date); date -= HEBREW_EPOCH; approx *= 35975351L; approx /= 98496; approx.floor();
+		Number year(approx); year--;
+		while(date.isGreaterThan(hebrew_new_year(year))) {cout << hebrew_new_year(year) << endl; year++;}
+		year--;
+		bool overflow = false;
+		y = year.lintValue(&overflow);
+		if(overflow) return false;
+		m = 1;
+		if(date.isLessThan(date_to_fixed(y, 1, 1, ct))) m = 7;
+		while(date.isGreaterThan(date_to_fixed(y, m, last_day_of_hebrew_month(y, m), ct))) m++;
+		date -= date_to_fixed(y, m, 1, ct); date++;
 		d = date.lintValue();
 		return true;
 	} else if(ct == CALENDAR_JULIAN) {
@@ -1430,11 +1520,11 @@ bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarS
 		y = approx.lintValue(&overflow);
 		if(overflow) return false;
 		Number prior_days(date); prior_days -= date_to_fixed(y, 1, 1, ct);
-		if(date.isGreaterThanOrEqualTo(date_to_fixed(y, 3, 1, CALENDAR_GREGORIAN))) prior_days += julian_leap_year(y) ? 1 : 2;
+		if(date.isGreaterThanOrEqualTo(date_to_fixed(y, 3, 1, ct))) prior_days += julian_leap_year(y) ? 1 : 2;
 		prior_days *= 12; prior_days += 373;
 		cal_div(prior_days, 367);
 		m = prior_days.lintValue();
-		date -= date_to_fixed(y, m, 1, CALENDAR_GREGORIAN); date++;
+		date -= date_to_fixed(y, m, 1, ct); date++;
 		d = date.lintValue();
 		return true;
 	} else if(ct == CALENDAR_ISLAMIC) {
@@ -1448,6 +1538,31 @@ bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarS
 		date -= date_to_fixed(y, m, 1, ct); date++;
 		d = date.lintValue();
 		return true;
+	} else if(ct == CALENDAR_EGYPTIAN) {
+		date -= EGYPTIAN_EPOCH;
+		Number year(date); cal_div(year, 365); year++;
+		bool overflow = false;
+		y = year.lintValue(&overflow);
+		if(overflow) return false;
+		Number month(date); month.mod(365); cal_div(month, 30); month++;
+		m = month.lintValue();
+		year--; year *= 365; month--; month *= 30; date -= year; date -= month; date++;
+		d = date.lintValue();
+		return true;
+	} else if(ct == CALENDAR_COPTIC) {
+		Number year(date); year -= COPTIC_EPOCH; year *= 4; year += 1463; cal_div(year, 1461);
+		bool overflow = false;
+		y = year.lintValue(&overflow);
+		if(overflow) return false;
+		Number month(date); month -= date_to_fixed(y, 1, 1, ct); cal_div(month, 30); month++;
+		m = month.lintValue();
+		Number day(date); day -= date_to_fixed(y, m, 1, ct); day++;
+		d = day.lintValue();
+		return true;
+	} else if(ct == CALENDAR_ETHIOPIC) {
+		date -= ETHIOPIC_EPOCH;
+		date += COPTIC_EPOCH;
+		return fixed_to_date(date, y, m, d, CALENDAR_COPTIC);
 	} else {
 		date += 1721425L;
 		return cjdn_to_date(date, y, m, d, ct);
@@ -1539,6 +1654,19 @@ Number date_to_cjdn(long int j, long int m, long int d, CalendarSystem ct) {
 	} else if(ct == CALENDAR_EGYPTIAN) {
 		j *= 365; m *= 30;
 		J = j; J += m; J += d; J+= 1448242L;
+	} else if(ct == CALENDAR_INDIAN) {
+		j += 78;
+		bool leap = gregorian_leap_year(j);
+		J = date_to_cjdn(j, 3, leap ? 21 : 22, CALENDAR_GREGORIAN);
+		if(m != 1) {
+			J += leap ? 31 : 30;
+			long int m2 = m - 2;
+			if(m2 > 5) m2 = 5;
+			J += m2 * 31;
+			if(m >= 8) J += (m - 7) * 30;
+		}
+		J += d;
+		J--;
 	} else {
 		return date_to_fixed(j, m, d, ct) + 1721425L;
 	}
@@ -1594,7 +1722,6 @@ bool cjdn_to_date(Number J, long int &y, long int &m, long int &d, CalendarSyste
 		k2 = k1; k2 /= 325; k2.floor(); k2++; m = k2.lintValue();
 		k1.mod(153); k1 /= 11; k1.floor(); k1++; d = k1.lintValue();
 		return true;
-	} else if(ct == CALENDAR_HEBREW) {
 	} else if(ct == CALENDAR_EGYPTIAN) {
 		Number y2, x2, y1, j;
 		y2 = J; x2 = y2; x2 /= 365; x2.floor(); y1 = y2; y1.mod(365);
@@ -1602,6 +1729,36 @@ bool cjdn_to_date(Number J, long int &y, long int &m, long int &d, CalendarSyste
 		bool overflow = false; y = j.lintValue(&overflow); if(overflow) return false;
 		y2 = y1; y2 /= 30; y2.floor(); y2++; m = y2.lintValue();
 		y1.mod(30); y1++; d = y1.lintValue();
+		return true;
+	} else if(ct == CALENDAR_INDIAN) {
+		if(!cjdn_to_date(J, y, m, d, CALENDAR_GREGORIAN)) return false;
+		bool leap = gregorian_leap_year(y);
+		Number j(y); j -= 78;
+		Number J0;
+		J0 = date_to_cjdn(y, 1, 1, CALENDAR_GREGORIAN);
+		Number yday(J); yday -= J0;
+		if(yday.isLessThan(80)) {j--; yday += (leap ? 31 : 30) + (31 * 5) + (30 * 3) + 10 + 80;}
+		yday -= 80;
+		if(yday.isLessThan(leap ? 31 : 30)) {
+			m = 1;
+			yday++;
+			d = yday.lintValue();
+		} else {
+			Number mday(yday); mday -= (leap ? 31 : 30);
+			if(mday.isLessThan(31 * 5)) {
+				m = quotient(mday, 31).lintValue() + 2;
+				mday.rem(31);
+				mday++;
+				d = mday.lintValue();
+			} else {
+				mday -= 31 * 5;
+				m = quotient(mday, 30).lintValue() + 7;
+				mday.rem(30);
+				mday++;
+				d = mday.lintValue();
+			}
+		}
+		bool overflow = false; y = j.lintValue(&overflow); if(overflow) return false;
 		return true;
 	} else {
 		J -= 1721425L;

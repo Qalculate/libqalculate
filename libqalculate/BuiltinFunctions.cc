@@ -3408,14 +3408,15 @@ bool RandFunction::representsNonNegative(const MathStructure&, bool) const {retu
 
 int calender_to_id(const string &str) {
 	if(str == "1" || equalsIgnoreCase(str, "gregorian") || equalsIgnoreCase(str, _("gregorian"))) return CALENDAR_GREGORIAN;
-	if(str == "6" || equalsIgnoreCase(str, "milankovic") || equalsIgnoreCase(str, "milanković") || equalsIgnoreCase(str, _("milankovic"))) return CALENDAR_MILANKOVIC;
-	if(str == "5" || equalsIgnoreCase(str, "julian") || equalsIgnoreCase(str, _("julian"))) return CALENDAR_JULIAN;
+	if(str == "7" || equalsIgnoreCase(str, "milankovic") || equalsIgnoreCase(str, "milanković") || equalsIgnoreCase(str, _("milankovic"))) return CALENDAR_MILANKOVIC;
+	if(str == "6" || equalsIgnoreCase(str, "julian") || equalsIgnoreCase(str, _("julian"))) return CALENDAR_JULIAN;
 	if(str == "3" || equalsIgnoreCase(str, "islamic") || equalsIgnoreCase(str, _("islamic"))) return CALENDAR_ISLAMIC;
 	if(str == "2" || equalsIgnoreCase(str, "hebrew") || equalsIgnoreCase(str, _("hebrew"))) return CALENDAR_HEBREW;
-	if(str == "9" || equalsIgnoreCase(str, "egyptian") || equalsIgnoreCase(str, _("egyptian"))) return CALENDAR_EGYPTIAN;
+	if(str == "10" || equalsIgnoreCase(str, "egyptian") || equalsIgnoreCase(str, _("egyptian"))) return CALENDAR_EGYPTIAN;
 	if(str == "4" || equalsIgnoreCase(str, "persian") || equalsIgnoreCase(str, _("persian"))) return CALENDAR_PERSIAN;
-	if(str == "7" || equalsIgnoreCase(str, "coptic") || equalsIgnoreCase(str, _("coptic"))) return CALENDAR_COPTIC;
-	if(str == "8" || equalsIgnoreCase(str, "ethiopic") || equalsIgnoreCase(str, _("ethiopic"))) return CALENDAR_ETHIOPIC;
+	if(str == "8" || equalsIgnoreCase(str, "coptic") || equalsIgnoreCase(str, _("coptic"))) return CALENDAR_COPTIC;
+	if(str == "9" || equalsIgnoreCase(str, "ethiopic") || equalsIgnoreCase(str, _("ethiopic"))) return CALENDAR_ETHIOPIC;
+	if(str == "5" || equalsIgnoreCase(str, "indian") || equalsIgnoreCase(str, _("indian"))) return CALENDAR_INDIAN;
 	return -1;
 }
 
