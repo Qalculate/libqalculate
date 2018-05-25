@@ -86,8 +86,12 @@ typedef enum {
 	CALENDAR_ETHIOPIC
 } CalendarSystem;
 
+#define NUMBER_OF_CALENDARS 9
+
 bool calendarToDate(QalculateDateTime &date, long int y, long int m, long int d, CalendarSystem ct);
 bool dateToCalendar(const QalculateDateTime &date, long int &y, long int &m, long int &d, CalendarSystem ct);
+int numberOfMonths(CalendarSystem ct);
+string monthName(long int month, CalendarSystem ct);
 
 
 #endif

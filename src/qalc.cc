@@ -881,7 +881,11 @@ void set_option(string str) {
 	}
 }
 
-#define STR_AND_TABS(x) str = x; pctl = unicode_length_check(x); if(pctl >= 32) {str += "\t";} else if(pctl >= 24) {str += "\t\t";} else if(pctl >= 16) {str += "\t\t\t";} else if(pctl >= 8) {str += "\t\t\t\t";} else {str += "\t\t\t\t\t";}
+#define STR_AND_TABS(x) str = x; pctl = unicode_length(str); if(pctl >= 32) {str += "\t";} else if(pctl >= 24) {str += "\t\t";} else if(pctl >= 16) {str += "\t\t\t";} else if(pctl >= 8) {str += "\t\t\t\t";} else {str += "\t\t\t\t\t";}
+#define STR_AND_TABS_T1(x) str = x; pctl = unicode_length(str); str += "\t";
+#define STR_AND_TABS_T2(x) str = x; pctl = unicode_length(str); if(pctl >= 8) {str += "\t";} else {str += "\t\t";}
+#define STR_AND_TABS_T3(x) str = x; pctl = unicode_length(str); if(pctl >= 16) {str += "\t";} else if(pctl >= 8) {str += "\t\t";} else {str += "\t\t\t";}
+#define STR_AND_TABS_T4(x) str = x; pctl = unicode_length(str); if(pctl >= 24) {str += "\t";} else if(pctl >= 16) {str += "\t\t";} else if(pctl >= 8) {str += "\t\t\t";} else {str += "\t\t\t\t";}
 #define PRINT_AND_COLON_TABS(x) FPUTS_UNICODE(x, stdout); pctl = unicode_length_check(x); if(pctl >= 32) fputs("\t", stdout); else if(pctl >= 24) fputs("\t\t", stdout); else if(pctl >= 16) fputs("\t\t\t", stdout); else if(pctl >= 8) fputs("\t\t\t\t", stdout); else fputs("\t\t\t\t\t", stdout);
 #define PUTS_BOLD(x) str = "\033[1m"; str += x; str += "\033[0m"; puts(str.c_str());
 
@@ -983,6 +987,23 @@ bool country_matches(Unit *u, const string &str, size_t minlength = 0) {
 		i = i2 + 1;
 	}
 	return false;
+}
+
+void show_calendars(const QalculateDateTime &date, bool indentation = true) {
+	string str, calstr;
+	int pctl;
+	long int y, m, d;
+	STR_AND_TABS_T3((indentation ? string("  ") + _("Calendar") : _("Calendar"))); str += _("Day"); str += ", "; str += _("Month"); str += ", "; str += _("Year"); PUTS_UNICODE(str.c_str());
+#define PUTS_CALENDAR(x, c)	dateToCalendar(date, y, m, d, c); calstr = "\033[1m"; STR_AND_TABS_T3((indentation ? string("  ") + x : x)); calstr += str; calstr += "\033[0m"; calstr += i2s(d); calstr += " "; calstr += monthName(m, c); calstr += " ("; calstr += i2s(m); calstr += ")"; calstr += " "; calstr += i2s(y); PUTS_UNICODE(calstr.c_str());
+	PUTS_CALENDAR(string(_("Gregorian:")), CALENDAR_GREGORIAN);
+	//PUTS_CALENDAR(string(_("Hebrew:")), CALENDAR_HEBREW);
+	PUTS_CALENDAR(string(_("Islamic:")), CALENDAR_ISLAMIC);
+	//PUTS_CALENDAR(string(_("Persian:")), CALENDAR_PERSIAN);
+	PUTS_CALENDAR(string(_("Julian:")), CALENDAR_JULIAN);
+	PUTS_CALENDAR(string(_("Revised julian:")), CALENDAR_MILANKOVIC);
+	//PUTS_CALENDAR(string(_("Coptic:")), CALENDAR_COPTIC);
+	//PUTS_CALENDAR(string(_("Ethiopic:")), CALENDAR_ETHIOPIC);
+	//PUTS_CALENDAR(string(_("Egyptian:")), CALENDAR_EGYPTIAN);
 }
 
 void list_defs(bool in_interactive, char list_type = 0, string search_str = "") {
@@ -2158,6 +2179,16 @@ int main(int argc, char *argv[]) {
 				PUTS_UNICODE(base_str.c_str());
 				printops.base = save_base;
 				result_text = save_result_text;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "calendar", _("calendars"))) {
+				QalculateDateTime date;
+				if(mstruct->isDateTime()) {
+					date.set(*mstruct->datetime());
+				} else {
+					date.setToCurrentDate();
+				}
+				puts("");
+				show_calendars(date);
+				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "fraction", _("fraction"))) {
 				NumberFractionFormat save_format = printops.number_fraction_format;
 				if(mstruct->isNumber()) printops.number_fraction_format = FRACTION_COMBINED;
@@ -3170,6 +3201,7 @@ int main(int argc, char *argv[]) {
 				PUTS_UNICODE(_("- factors (factorize result)"));
 				puts("");
 				PUTS_UNICODE(_("- utc (show UTC date)"));
+				PUTS_UNICODE(_("- calendars"));
 				puts("");
 				PUTS_UNICODE(_("Example: to ?g"));
 				puts("");
@@ -3721,7 +3753,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	if(i_maxtime < 0) return;
 
 	string str;
-	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false;;
+	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false;
 	avoid_recalculation = false;
 	if(!interactive_mode) goto_input = false;
 	if(do_stack) {
@@ -3787,6 +3819,9 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				do_pfe = true;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "bases", _("bases"))) {
 				do_bases = true;
+				str = from_str;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "calendars", _("calendars"))) {
+				do_calendars = true;
 				str = from_str;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "optimal", _("optimal"))) {
 				expression_str = from_str;
@@ -4065,7 +4100,12 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		}
 	}
 	
-	if(do_bases) {
+	if(do_calendars && mstruct->isDateTime()) {
+		setResult(NULL, (!do_stack || stack_index == 0), false, do_stack ? stack_index : 0, false, true);
+		if(goto_input) printf("\n");
+		show_calendars(*mstruct->datetime(), goto_input);
+		if(goto_input) printf("\n");
+	} else if(do_bases) {
 		int save_base = printops.base;
 		printops.base = BASE_BINARY;
 		setResult(NULL, (!do_stack || stack_index == 0), false, do_stack ? stack_index : 0, false, true);
