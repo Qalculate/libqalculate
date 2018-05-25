@@ -16,6 +16,9 @@
 #include "limits"
 #include <stdlib.h>
 
+static const char *HEBREW_MONTHS[] = {"Nisan", "Iyar", "Sivan", "Tammuz", "Av", "Elul", "Tishrei", "Marcheshvan", "Kislev", "Tevet", "Shevat", "Adar", "Adar II"};
+static const char *STANDARD_MONTHS[] = {N_("January"), N_("February"), N_("March"), N_("April"), N_("May"), N_("June"), N_("July"), N_("August"), N_("September"), N_("October"), N_("November"), N_("December")};
+
 static const bool has_leap_second[] = {
 // 30/6, 31/12
 true, true, //1972
@@ -64,6 +67,7 @@ false, false,
 true, false,
 false, true //2016
 };
+
 #define LS_FIRST_YEAR 1972
 #define LS_LAST_YEAR 2016
 #define INITIAL_LS 10
@@ -1559,9 +1563,9 @@ bool cjdn_to_date(Number J, long int &y, long int &m, long int &d, CalendarSyste
 		Number x3, r3, x2, r2, x1, r1, c0, j;
 		J -= 1721120L; J *= 9; J += 2;
 		cal_div(J, 328718L, x3, r3);
-		r3 *= 100; r3 += 99;
+		r3 /= 9; r3.floor(); r3 *= 100; r3 += 99;
 		cal_div(r3, 36525, x2, r2);
-		r2 *= 5; r2 += 2;
+		r2 /= 100; r2.floor(); r2 *= 5; r2 += 2;
 		cal_div(r2, 153, x1, r1);
 		c0 = x1; c0 += 2; c0 /= 12; c0.floor();
 		j = x3; j *= 100; j += x2; j += c0;
@@ -1623,5 +1627,18 @@ bool dateToCalendar(const QalculateDateTime &date, long int &y, long int &m, lon
 	cout << y << "-" << m << "-" << d << endl;
 	if(!fixed_to_date(date_to_fixed(date.year(), date.month(), date.day(), CALENDAR_GREGORIAN), y, m, d, ct)) return false;
 	return true;
+}
+
+int numberOfMonths(CalendarSystem ct) {
+	if(ct == CALENDAR_HEBREW || ct == CALENDAR_COPTIC || ct == CALENDAR_EGYPTIAN || ct == CALENDAR_ETHIOPIC) return 13;
+	return 12;
+}
+string monthName(long int month, CalendarSystem ct) {
+	if(month > 13 || month < 1) return i2s(month);
+	if(ct == CALENDAR_HEBREW) {
+		return HEBREW_MONTHS[month - 1];
+	}
+	if(month > 12 || numberOfMonths(ct) > 12) return i2s(month);
+	return _(STANDARD_MONTHS[month - 1]);
 }
 

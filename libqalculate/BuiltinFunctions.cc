@@ -3407,15 +3407,15 @@ bool RandFunction::representsInteger(const MathStructure &vargs, bool) const {re
 bool RandFunction::representsNonNegative(const MathStructure&, bool) const {return true;}
 
 int calender_to_id(const string &str) {
-	if(str == i2s(CALENDAR_GREGORIAN + 1) || equalsIgnoreCase(str, "gregorian") || equalsIgnoreCase(str, _("gregorian"))) return CALENDAR_GREGORIAN;
-	if(str == i2s(CALENDAR_MILANKOVIC + 1) || equalsIgnoreCase(str, "milankovic") || equalsIgnoreCase(str, "milanković") || equalsIgnoreCase(str, _("milankovic"))) return CALENDAR_MILANKOVIC;
-	if(str == i2s(CALENDAR_JULIAN + 1) || equalsIgnoreCase(str, "julian") || equalsIgnoreCase(str, _("julian"))) return CALENDAR_JULIAN;
-	if(str == i2s(CALENDAR_ISLAMIC + 1) || equalsIgnoreCase(str, "islamic") || equalsIgnoreCase(str, _("islamic"))) return CALENDAR_ISLAMIC;
-	if(str == i2s(CALENDAR_HEBREW + 1) || equalsIgnoreCase(str, "hebrew") || equalsIgnoreCase(str, _("hebrew"))) return CALENDAR_HEBREW;
-	if(str == i2s(CALENDAR_EGYPTIAN + 1) || equalsIgnoreCase(str, "egyptian") || equalsIgnoreCase(str, _("egyptian"))) return CALENDAR_EGYPTIAN;
-	if(str == i2s(CALENDAR_PERSIAN + 1) || equalsIgnoreCase(str, "persian") || equalsIgnoreCase(str, _("persian"))) return CALENDAR_PERSIAN;
-	if(str == i2s(CALENDAR_COPTIC + 1) || equalsIgnoreCase(str, "coptic") || equalsIgnoreCase(str, _("coptic"))) return CALENDAR_COPTIC;
-	if(str == i2s(CALENDAR_ETHIOPIC + 1) || equalsIgnoreCase(str, "ethiopic") || equalsIgnoreCase(str, _("ethiopic"))) return CALENDAR_ETHIOPIC;
+	if(str == "1" || equalsIgnoreCase(str, "gregorian") || equalsIgnoreCase(str, _("gregorian"))) return CALENDAR_GREGORIAN;
+	if(str == "6" || equalsIgnoreCase(str, "milankovic") || equalsIgnoreCase(str, "milanković") || equalsIgnoreCase(str, _("milankovic"))) return CALENDAR_MILANKOVIC;
+	if(str == "5" || equalsIgnoreCase(str, "julian") || equalsIgnoreCase(str, _("julian"))) return CALENDAR_JULIAN;
+	if(str == "3" || equalsIgnoreCase(str, "islamic") || equalsIgnoreCase(str, _("islamic"))) return CALENDAR_ISLAMIC;
+	if(str == "2" || equalsIgnoreCase(str, "hebrew") || equalsIgnoreCase(str, _("hebrew"))) return CALENDAR_HEBREW;
+	if(str == "9" || equalsIgnoreCase(str, "egyptian") || equalsIgnoreCase(str, _("egyptian"))) return CALENDAR_EGYPTIAN;
+	if(str == "4" || equalsIgnoreCase(str, "persian") || equalsIgnoreCase(str, _("persian"))) return CALENDAR_PERSIAN;
+	if(str == "7" || equalsIgnoreCase(str, "coptic") || equalsIgnoreCase(str, _("coptic"))) return CALENDAR_COPTIC;
+	if(str == "8" || equalsIgnoreCase(str, "ethiopic") || equalsIgnoreCase(str, _("ethiopic"))) return CALENDAR_ETHIOPIC;
 	return -1;
 }
 
