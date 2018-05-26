@@ -83,16 +83,15 @@ typedef enum {
 	CALENDAR_EGYPTIAN,
 	CALENDAR_PERSIAN,
 	CALENDAR_COPTIC,
-	CALENDAR_ETHIOPIC,
+	CALENDAR_ETHIOPIAN,
 	CALENDAR_INDIAN
 } CalendarSystem;
 
-#define NUMBER_OF_CALENDARS 9
+#define NUMBER_OF_CALENDARS 10
 
 bool calendarToDate(QalculateDateTime &date, long int y, long int m, long int d, CalendarSystem ct);
 bool dateToCalendar(const QalculateDateTime &date, long int &y, long int &m, long int &d, CalendarSystem ct);
 int numberOfMonths(CalendarSystem ct);
-string monthName(long int month, CalendarSystem ct);
-
+string monthName(long int month, CalendarSystem ct, bool append_number = false);
 
 #endif

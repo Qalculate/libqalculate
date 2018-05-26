@@ -751,14 +751,14 @@ void Number::set(long int numerator, long int denominator, long int exp_10, bool
 	if(!keep_imag && i_value) i_value->clear();
 	else if(i_value) setPrecisionAndApproximateFrom(*i_value);
 }
-void Number::setFloat(double d_value) {
+void Number::setFloat(long double d_value) {
 	b_approx = true;
 	if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(fu_value, BIT_PRECISION); mpfr_init2(fl_value, BIT_PRECISION);}
 	if(CALCULATOR->usesIntervalArithmetic()) {
-		mpfr_set_d(fu_value, d_value, MPFR_RNDU);
-		mpfr_set_d(fl_value, d_value, MPFR_RNDD);
+		mpfr_set_ld(fu_value, d_value, MPFR_RNDU);
+		mpfr_set_ld(fl_value, d_value, MPFR_RNDD);
 	} else {
-		mpfr_set_d(fl_value, d_value, MPFR_RNDN);
+		mpfr_set_ld(fl_value, d_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	}
 	n_type = NUMBER_TYPE_FLOAT;
@@ -1537,8 +1537,16 @@ void Number::operator ^= (long int i) {raise(i);}
 	
 bool Number::operator == (const Number &o) const {return equals(o);}
 bool Number::operator != (const Number &o) const {return !equals(o);}
+bool Number::operator < (const Number &o) const {return isLessThan(o);}
+bool Number::operator <= (const Number &o) const {return isLessThanOrEqualTo(o);}
+bool Number::operator > (const Number &o) const {return isGreaterThan(o);}
+bool Number::operator >= (const Number &o) const {return isGreaterThanOrEqualTo(o);}
 bool Number::operator == (long int i) const {return equals(i);}
 bool Number::operator != (long int i) const {return !equals(i);}
+bool Number::operator < (long int i) const {return isLessThan(i);}
+bool Number::operator <= (long int i) const {return isLessThanOrEqualTo(i);}
+bool Number::operator > (long int i) const {return isGreaterThan(i);}
+bool Number::operator >= (long int i) const {return isGreaterThanOrEqualTo(i);}
 
 bool Number::bitAnd(const Number &o) {
 	if(!o.isInteger() || !isInteger()) return false;

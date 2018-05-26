@@ -3415,7 +3415,7 @@ int calender_to_id(const string &str) {
 	if(str == "10" || equalsIgnoreCase(str, "egyptian") || equalsIgnoreCase(str, _("egyptian"))) return CALENDAR_EGYPTIAN;
 	if(str == "4" || equalsIgnoreCase(str, "persian") || equalsIgnoreCase(str, _("persian"))) return CALENDAR_PERSIAN;
 	if(str == "8" || equalsIgnoreCase(str, "coptic") || equalsIgnoreCase(str, _("coptic"))) return CALENDAR_COPTIC;
-	if(str == "9" || equalsIgnoreCase(str, "ethiopic") || equalsIgnoreCase(str, _("ethiopic"))) return CALENDAR_ETHIOPIC;
+	if(str == "9" || equalsIgnoreCase(str, "ethiopian") || equalsIgnoreCase(str, _("ethiopian"))) return CALENDAR_ETHIOPIAN;
 	if(str == "5" || equalsIgnoreCase(str, "indian") || equalsIgnoreCase(str, _("indian"))) return CALENDAR_INDIAN;
 	return -1;
 }
