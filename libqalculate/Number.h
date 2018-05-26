@@ -97,7 +97,7 @@ class Number {
 		void set(long int numerator, long int denominator = 1, long int exp_10 = 0, bool keep_precision = false, bool keep_imag = false);
 		void setPlusInfinity(bool keep_precision = false, bool keep_imag = false);
 		void setMinusInfinity(bool keep_precision = false, bool keep_imag = false);
-		void setFloat(double d_value);
+		void setFloat(long double d_value);
 		bool setInterval(const Number &nr_lower, const Number &nr_upper, bool keep_precision = false);
 
 		void setInternal(const mpz_t &mpz_value, bool keep_precision = false, bool keep_imag = false);
@@ -245,6 +245,14 @@ class Number {
 		
 		bool operator == (const Number &o) const;
 		bool operator != (const Number &o) const;
+		bool operator < (const Number &o) const;
+		bool operator <= (const Number &o) const;
+		bool operator > (const Number &o) const;
+		bool operator >= (const Number &o) const;
+		bool operator < (long int i) const;
+		bool operator <= (long int i) const;
+		bool operator > (long int i) const;
+		bool operator >= (long int i) const;
 		bool operator == (long int i) const;
 		bool operator != (long int i) const;
 		

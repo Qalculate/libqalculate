@@ -2693,31 +2693,31 @@ msgstr "oändlighet"
 
 #: ../libqalculate/QalculateDateTime.cc:20
 msgid "January"
-msgstr "januari"
+msgstr "Januari"
 
 #: ../libqalculate/QalculateDateTime.cc:20
 msgid "February"
-msgstr "februari"
+msgstr "Februari"
 
 #: ../libqalculate/QalculateDateTime.cc:20
 msgid "March"
-msgstr "mars"
+msgstr "Mars"
 
 #: ../libqalculate/QalculateDateTime.cc:20
 msgid "April"
-msgstr "april"
+msgstr "April"
 
 #: ../libqalculate/QalculateDateTime.cc:20
 msgid "May"
-msgstr "maj"
+msgstr "Maj"
 
 #: ../libqalculate/QalculateDateTime.cc:20
 msgid "June"
-msgstr "juni"
+msgstr "Juni"
 
 #: ../libqalculate/QalculateDateTime.cc:20
 msgid "July"
-msgstr "juli"
+msgstr "Juli"
 
 #: ../libqalculate/QalculateDateTime.cc:20
 msgid "August"
@@ -2725,19 +2725,19 @@ msgstr "augusti"
 
 #: ../libqalculate/QalculateDateTime.cc:20
 msgid "September"
-msgstr "september"
+msgstr "September"
 
 #: ../libqalculate/QalculateDateTime.cc:20
 msgid "October"
-msgstr "oktober"
+msgstr "Oktober"
 
 #: ../libqalculate/QalculateDateTime.cc:20
 msgid "November"
-msgstr "november"
+msgstr "November"
 
 #: ../libqalculate/QalculateDateTime.cc:20
 msgid "December"
-msgstr "december"
+msgstr "December"
 
 #: ../libqalculate/QalculateDateTime.cc:333
 msgid "now"

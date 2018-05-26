@@ -994,7 +994,7 @@ void show_calendars(const QalculateDateTime &date, bool indentation = true) {
 	int pctl;
 	long int y, m, d;
 	STR_AND_TABS((indentation ? string("  ") + _("Calendar") : _("Calendar"))); str += _("Day"); str += ", "; str += _("Month"); str += ", "; str += _("Year"); PUTS_UNICODE(str.c_str());
-#define PUTS_CALENDAR(x, c)	calstr = "\033[1m"; STR_AND_TABS((indentation ? string("  ") + x : x)); calstr += str; calstr += "\033[0m"; if(!dateToCalendar(date, y, m, d, c)) calstr += _("failed"); else {calstr += i2s(d); calstr += " "; calstr += monthName(m, c); calstr += " ("; calstr += i2s(m); calstr += ")"; calstr += " "; calstr += i2s(y);} PUTS_UNICODE(calstr.c_str());
+#define PUTS_CALENDAR(x, c)	calstr = "\033[1m"; STR_AND_TABS((indentation ? string("  ") + x : x)); calstr += str; calstr += "\033[0m"; if(!dateToCalendar(date, y, m, d, c)) calstr += _("failed"); else {calstr += i2s(d); calstr += " "; calstr += monthName(m, c, true); calstr += " "; calstr += i2s(y);} PUTS_UNICODE(calstr.c_str());
 	PUTS_CALENDAR(string(_("Gregorian:")), CALENDAR_GREGORIAN);
 	PUTS_CALENDAR(string(_("Hebrew:")), CALENDAR_HEBREW);
 	PUTS_CALENDAR(string(_("Islamic:")), CALENDAR_ISLAMIC);
@@ -1003,8 +1003,8 @@ void show_calendars(const QalculateDateTime &date, bool indentation = true) {
 	PUTS_CALENDAR(string(_("Julian:")), CALENDAR_JULIAN);
 	PUTS_CALENDAR(string(_("Revised julian:")), CALENDAR_MILANKOVIC);
 	PUTS_CALENDAR(string(_("Coptic:")), CALENDAR_COPTIC);
-	PUTS_CALENDAR(string(_("Ethiopic:")), CALENDAR_ETHIOPIC);
-	PUTS_CALENDAR(string(_("Egyptian:")), CALENDAR_EGYPTIAN);
+	PUTS_CALENDAR(string(_("Ethiopian:")), CALENDAR_ETHIOPIAN);
+	//PUTS_CALENDAR(string(_("Egyptian:")), CALENDAR_EGYPTIAN);
 }
 
 void list_defs(bool in_interactive, char list_type = 0, string search_str = "") {
