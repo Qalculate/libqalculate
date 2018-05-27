@@ -1328,7 +1328,7 @@ void cal_div(Number &nr_n, long int nr_d) {
 #define GREGORIAN_EPOCH 1
 #define JULIAN_EPOCH -1 // (date_to_fixed(0, 12, 30, 1))
 #define ISLAMIC_EPOCH 227015 // date_to_fixed(622, 7, 16, 6)
-#define PERSIAN_EPOCH 226899 // date_to_fixed(622, 3, 22, 6)
+#define PERSIAN_EPOCH 226896 // date_to_fixed(622, 3, 19, 6)
 #define JD_EPOCH (Number("-1721424.5"))
 #define EGYPTIAN_EPOCH -272787L //jd_to_fixed(1448638))
 #define HEBREW_EPOCH -1373427 //date_to_fixed(-3761, 10, 7, 6)
@@ -1400,15 +1400,15 @@ long int gregorian_year_from_fixed(Number date) {
 }
 
 Number gregorian_date_difference(long int y1, long int m1, long int d1, long int y2, long int m2, long int d2) {
-	Number f1 = date_to_fixed(y1, m1, d1, CALENDAR_GREGORIAN);
-	f1 -= date_to_fixed(y2, m2, d2, CALENDAR_GREGORIAN);
+	Number f1 = date_to_fixed(y2, m2, d2, CALENDAR_GREGORIAN);
+	f1 -= date_to_fixed(y1, m1, d1, CALENDAR_GREGORIAN);
 	return f1;
 }
 
 Number ephemeris_correction(Number tee) {
 	tee.floor();
 	Number year = gregorian_year_from_fixed(tee);
-	if(year < -500) {
+	if(year > 2150 || year < -500) {
 		year -= 1820; year /= 100;
 		Number x(year);
 		Number t, a;
@@ -1497,8 +1497,8 @@ Number ephemeris_correction(Number tee) {
 		year -= 2000;
 		Number x(year);
 		Number t, a;
-		t.setFloat(62.92L); a += t;
-		t.setFloat(0.32217L); t *= x; a += t;
+		t.setFloat(63.86L); a += t;
+		t.setFloat(0.3345L); t *= x; a += t;
 		x *= year; t.setFloat(-0.060374L); t *= x; a += t;
 		x *= year; t.setFloat(0.0017275L); t *= x; a += t;
 		x *= year; t.setFloat(0.000651814L); t *= x; a += t;
@@ -1516,7 +1516,7 @@ Number ephemeris_correction(Number tee) {
 		return a;
 	} else {
 		Number year2(year); year2 -= 1820; year2 /= 100; year2.square(); year2 *= 32; year2 -= 20;
-		year -= 2150; year *= Number(5628, 10000); year += year2; year /= 86400;
+		year.negate(); year += 2150; year *= Number(5628, 10000); year += year2; year /= 86400;
 		return year;
 	}
 }
@@ -1559,7 +1559,6 @@ Number nutation(Number tee) {
 
 Number aberration(Number tee) {
 	Number c = julian_centuries(tee);
-	Number cap_a; 
 	Number t;
 	t.setFloat(35999.01848L);
 	c *= t;
@@ -1572,7 +1571,7 @@ Number aberration(Number tee) {
 	c *= t;
 	t.setFloat(0.005575L);
 	c -= t;
-	return t;
+	return c;
 }
 
 Number solar_longitude(Number tee) {
@@ -1605,15 +1604,27 @@ Number solar_longitude(Number tee) {
 Number obliquity(Number tee) {
 	Number c = julian_centuries(tee);
 	tee.setFloat(21.448L); tee /= 60; tee += 26; tee /= 60; tee += 23;
-	Number t;
-	t.setFloat(-46.8150L); t /= 3600; tee += t;
-	t.setFloat(-0.00059L); t /= 3600; t *= c; tee += t;
-	c.square(); t.setFloat(0.001813L); t /= 3600; t *= c; tee += t;
+	Number t, x(c);
+	t.setFloat(-46.8150L); t /= 3600; t *= x; tee += t;
+	x *= c; t.setFloat(-0.00059L); t /= 3600; t *= x; tee += t;
+	x *= c; t.setFloat(0.001813L); t /= 3600; t *= x; tee += t;
 	return tee;
+}
+
+Number cal_poly(Number x, vector<long double> a) {
+	size_t n = a.size() - 1;
+	Number p, a_i; p.setFloat(a[n]);
+	for(size_t i = 1; i <= n; i++) {
+		a_i.setFloat(a[n - i]);
+		p *= x;
+		p += a_i;
+	}
+	return p;
 }
 
 Number equation_of_time(Number tee) {
 	Number c = julian_centuries(tee);
+	vector<long double> a;
 	Number lam, anomaly, eccentricity;
 	Number t, x(c);
 	t.setFloat(280.46645L); lam += t;
@@ -1637,7 +1648,7 @@ Number equation_of_time(Number tee) {
 	Number e3(lam); e3 *= 2; e3 *= nr_pi; e3 /= 180; e3.cos(); e3 *= e2; e3 *= y; e3 *= 4; e2 *= -2;
 	Number e4(lam); e4 *= 4; e4 *= nr_pi; e4 /= 180; e4.sin(); e4 *= y; e4 *= y; e4 /= -2;
 	Number e5(anomaly); e5 *= 2; e5 *= nr_pi; e5 /= 180; e5.sin(); e5 *= eccentricity; e5 *= eccentricity; e5 *= -5; e5 /= 4;
-	e1 += e2; e1 += e3; e1 += e4; e1 += e5; equation *= e5;
+	e1 += e2; e1 += e3; e1 += e4; e1 += e5; equation *= e1;
 	bool b_neg = equation.isNegative();
 	equation.abs();
 	if(equation < nr_half) {
@@ -1649,7 +1660,7 @@ Number equation_of_time(Number tee) {
 	}
 }
 Number zone_from_longitude(Number phi) {
-	phi / 360;
+	phi /= 360;
 	return phi;
 }
 Number universal_from_local(Number tee_ell, Number longitude) {
@@ -1663,22 +1674,36 @@ Number local_from_apparent(Number tee, Number longitude) {
 Number universal_from_apparent(Number tee, Number longitude) {
 	return universal_from_local(local_from_apparent(tee, longitude), longitude);
 }
+Number universal_from_standard(Number tee_rom_s, Number zone) {
+	tee_rom_s -= zone;
+	return tee_rom_s;
+}
+Number standard_from_universal(Number tee_rom_u, Number zone) {
+	tee_rom_u += zone;
+	return tee_rom_u;
+}
+Number standard_from_local(Number tee_ell, Number longitude, Number zone) {
+	return standard_from_universal(universal_from_local(tee_ell, longitude), zone);
+}
+Number midday2(Number date, Number longitude, Number zone) {
+	date += nr_half;
+	return standard_from_local(local_from_apparent(date, longitude), longitude, zone);
+}
 Number midday(Number date, Number longitude) {
 	date += nr_half;
 	return universal_from_apparent(date, longitude);
 }
 
 #define TEHRAN_LONGITUDE Number("51.42")
+#define TEHRAN_ZONE Number(7, 48)
+
 Number midday_in_tehran(Number date) {
 	return midday(date, TEHRAN_LONGITUDE);
 }
 
 Number estimate_prior_solar_longitude(Number lam, Number tee) {
 	Number rate = MEAN_TROPICAL_YEAR; rate /= 360;
-	Number tau = solar_longitude(tee);
-	tau -= lam;
-	tau.mod(360);
-	tau *= rate;
+	Number tau = solar_longitude(tee); tau -= lam; tau.mod(360); tau *= rate;
 	tau.negate();
 	tau += tee;
 	Number cap_delta = solar_longitude(tau); cap_delta -= lam; cap_delta += 180; cap_delta.mod(360); cap_delta -= 180;
@@ -1692,8 +1717,7 @@ Number persian_new_year_on_or_before(Number date) {
 	Number approx = estimate_prior_solar_longitude(nr_zero, midday_in_tehran(date));
 	approx.floor(); approx -= 1;
 	Number day(approx);
-	Number spr(-2);
-	while(spr.isGreaterThan(solar_longitude(midday_in_tehran(day)))) day++;
+	while(solar_longitude(midday_in_tehran(day)).isGreaterThan(2)) day++;
 	return day;
 }
 
@@ -1866,7 +1890,9 @@ bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarS
 	} else if(ct == CALENDAR_HEBREW) {
 		Number approx(date); approx -= HEBREW_EPOCH; approx /= 35975351L; approx *= 98496; approx.floor(); approx++;
 		Number year(approx); year--;
-		while(date.isGreaterThan(hebrew_new_year(year))) year++;
+		while(hebrew_new_year(year).isLessThanOrEqualTo(date)) {
+			year++;
+		}
 		year--;
 		bool overflow = false;
 		y = year.lintValue(&overflow);

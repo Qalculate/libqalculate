@@ -998,7 +998,7 @@ void show_calendars(const QalculateDateTime &date, bool indentation = true) {
 	PUTS_CALENDAR(string(_("Gregorian:")), CALENDAR_GREGORIAN);
 	PUTS_CALENDAR(string(_("Hebrew:")), CALENDAR_HEBREW);
 	PUTS_CALENDAR(string(_("Islamic:")), CALENDAR_ISLAMIC);
-	//PUTS_CALENDAR(string(_("Persian:")), CALENDAR_PERSIAN);
+	PUTS_CALENDAR(string(_("Persian:")), CALENDAR_PERSIAN);
 	PUTS_CALENDAR(string(_("Indian national:")), CALENDAR_INDIAN);
 	PUTS_CALENDAR(string(_("Julian:")), CALENDAR_JULIAN);
 	PUTS_CALENDAR(string(_("Revised julian:")), CALENDAR_MILANKOVIC);
