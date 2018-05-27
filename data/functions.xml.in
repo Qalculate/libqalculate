@@ -1721,7 +1721,7 @@
     <builtin_function name="date">
       <_title>Construct Date</_title>
       <_names>r:date</_names>
-      <_description>Returns a date. Available calendars gregorian (1), hebrew (2), islamic (3), persian (4), indian (5), julian (6), milankovic (7), coptic (8), ethiopic (9), egyptian (10).</_description>
+      <_description>Returns a date. Available calendars gregorian (1), hebrew (2), islamic (3), persian (4), indian (5), julian (6), milankovic (7), coptic (8), ethiopian (9), egyptian (10).</_description>
       <argument index="1">
         <_title>Year</_title>
       </argument>
@@ -1737,7 +1737,7 @@
     </builtin_function>
     <builtin_function name="datetime">
       <_title>Construct Date and Time</_title>
-      <_names>r:date</_names>
+      <_names>r:datetime</_names>
       <argument index="1">
         <_title>Year</_title>
       </argument>
