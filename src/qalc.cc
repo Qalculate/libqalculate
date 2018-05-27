@@ -2140,7 +2140,22 @@ int main(int argc, char *argv[]) {
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(str, "duodecimal", _("duodecimal"))) {
 				int save_base = printops.base;
-				printops.base = 12;
+				printops.base = BASE_DUODECIMAL;
+				setResult(NULL, false);
+				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "roman") || equalsIgnoreCase(str, _("roman"))) {
+				int save_base = printops.base;
+				printops.base = BASE_ROMAN_NUMERALS;
+				setResult(NULL, false);
+				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "sexa") || equalsIgnoreCase(str, "sexagesimal") || equalsIgnoreCase(str, _("sexagesimal"))) {
+				int save_base = printops.base;
+				printops.base = BASE_SEXAGESIMAL;
+				setResult(NULL, false);
+				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "time") || equalsIgnoreCase(str, _("time"))) {
+				int save_base = printops.base;
+				printops.base = BASE_TIME;
 				setResult(NULL, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "utc") || equalsIgnoreCase(str, "gmt")) {
@@ -3196,6 +3211,9 @@ int main(int argc, char *argv[]) {
 				PUTS_UNICODE(_("- oct / octal (show as octal number)"));
 				PUTS_UNICODE(_("- duo / duodecimal (show as duodecimal number)"));
 				PUTS_UNICODE(_("- hex / hexadecimal (show as hexadecimal number)"));
+				PUTS_UNICODE(_("- sex / sexagesimal (show as hexadecimal number)"));
+				PUTS_UNICODE(_("- roman / hexadecimal (show as roman numerals)"));
+				PUTS_UNICODE(_("- time (show in time format)"));
 				PUTS_UNICODE(_("- bases (show as binary, octal, decimal and hexadecimal number)"));
 				puts("");
 				PUTS_UNICODE(_("- fraction (show result in combined fractional format)"));
@@ -3795,7 +3813,34 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			} else if(equalsIgnoreCase(to_str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "duodecimal", _("duodecimal"))) {
 				int save_base = printops.base;
 				expression_str = from_str;
-				printops.base = 12;
+				printops.base = BASE_DUODECIMAL;
+				evalops.parse_options.units_enabled = b_units_saved;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.base = save_base;
+				expression_str = str;
+				return;
+			} else if(equalsIgnoreCase(to_str, "roman") || equalsIgnoreCase(to_str, _("roman"))) {
+				int save_base = printops.base;
+				expression_str = from_str;
+				printops.base = BASE_ROMAN_NUMERALS;
+				evalops.parse_options.units_enabled = b_units_saved;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.base = save_base;
+				expression_str = str;
+				return;
+			} else if(equalsIgnoreCase(to_str, "sexa") || equalsIgnoreCase(to_str, "sexagesimal") || equalsIgnoreCase(to_str, _("sexagesimal"))) {
+				int save_base = printops.base;
+				expression_str = from_str;
+				printops.base = BASE_SEXAGESIMAL;
+				evalops.parse_options.units_enabled = b_units_saved;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.base = save_base;
+				expression_str = str;
+				return;
+			} else if(equalsIgnoreCase(to_str, "time") || equalsIgnoreCase(to_str, _("time"))) {
+				int save_base = printops.base;
+				expression_str = from_str;
+				printops.base = BASE_TIME;
 				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
