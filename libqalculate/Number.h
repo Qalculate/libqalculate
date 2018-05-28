@@ -313,8 +313,6 @@ class Number {
 		bool isLessThan(long int i) const;
 		bool isGreaterThanOrEqualTo(long int i) const;
 		bool isLessThanOrEqualTo(long int i) const;
-		bool absIsGreaterThan(const Number &o) const;
-		bool absIsLessThan(const Number &o) const;
 		bool isEven() const;
 		bool numeratorIsGreaterThan(long int i) const;
 		bool numeratorIsLessThan(long int i) const;
