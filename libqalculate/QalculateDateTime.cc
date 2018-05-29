@@ -7,6 +7,11 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
+    
+    Many of the calendar conversion algorithms used here are adapted from
+    CALENDRICA 4.0 -- Common Lisp
+    Copyright (C) E. M. Reingold and N. Dershowitz
+    
 */
 
 #include "QalculateDateTime.h"
@@ -23,6 +28,8 @@ static const char *ETHIOPIAN_MONTHS[] = {N_("Mäskäräm"), N_("Ṭəqəmt"), N_
 static const char *ISLAMIC_MONTHS[] = {N_("Muḥarram"), N_("Ṣafar"), N_("Rabī‘ al-awwal"), N_("Rabī‘ ath-thānī"), N_("Jumādá al-ūlá"), N_("Jumādá al-ākhirah"), N_("Rajab"), N_("Sha‘bān"), N_("Ramaḍān"), N_("Shawwāl"), N_("Dhū al-Qa‘dah"), N_("Dhū al-Ḥijjah")};
 static const char *PERSIAN_MONTHS[] = {N_("Farvardin"), N_("Ordibehesht"), N_("Khordad"), N_("Tir"), N_("Mordad"), N_("Shahrivar"), N_("Mehr"), N_("Aban"), N_("Azar"), N_("Dey"), N_("Bahman"), N_("Esfand")};
 static const char *INDIAN_MONTHS[] = {N_("Chaitra"), N_("Vaishākha"), N_("Jyēshtha"), N_("Āshādha"), N_("Shrāvana"), N_("Bhaadra"), N_("Āshwin"), N_("Kārtika"), N_("Agrahayana"), N_("Pausha"), N_("Māgha"), N_("Phalguna")};
+static const char *CHINESE_ELEMENTS[] = {N_("Wood"), N_("Fire"), N_("Earth"), N_("Metal"), N_("Water")};
+static const char *CHINESE_ANIMALS[] = {N_("Rat"), N_("Ox"), N_("Tiger"), N_("Rabbit"), N_("Dragon"), N_("Snake"), N_("Horse"), N_("Goat"), N_("Monkey"), N_("Rooster"), N_("Dog"), N_("Pig")};
 
 static const bool has_leap_second[] = {
 // 30/6, 31/12
@@ -1326,14 +1333,15 @@ void cal_div(Number &nr_n, long int nr_d) {
 }
 
 #define GREGORIAN_EPOCH 1
-#define JULIAN_EPOCH -1 // (date_to_fixed(0, 12, 30, 1))
-#define ISLAMIC_EPOCH 227015 // date_to_fixed(622, 7, 16, 6)
-#define PERSIAN_EPOCH 226896 // date_to_fixed(622, 3, 19, 6)
+#define JULIAN_EPOCH -1 // (date_to_fixed(0, 12, 30, CALENDAR_GREGORIAN))
+#define ISLAMIC_EPOCH 227015 // date_to_fixed(622, 7, 16, CALENDAR_JULIAN)
+#define PERSIAN_EPOCH 226896 // date_to_fixed(622, 3, 19, CALENDAR_JULIAN)
 #define JD_EPOCH (Number("-1721424.5"))
 #define EGYPTIAN_EPOCH -272787L //jd_to_fixed(1448638))
-#define HEBREW_EPOCH -1373427 //date_to_fixed(-3761, 10, 7, 6)
+#define HEBREW_EPOCH -1373427 //date_to_fixed(-3761, 10, 7, CALENDAR_JULIAN)
 #define COPTIC_EPOCH 103605
 #define ETHIOPIAN_EPOCH 2796
+#define CHINESE_EPOCH -963099L //date_to_fixed(-2636, 2, 15, CALENDAR_GREGORIAN)
 #define MEAN_TROPICAL_YEAR (Number("365.242189"))
 #define MEAN_SIDEREAL_YEAR (Number("365.25636"))
 #define MEAN_SYNODIC_MONTH (Number("29.530588861"))
@@ -1348,43 +1356,6 @@ bool cjdn_to_date(Number J, long int &y, long int &m, long int &d, CalendarSyste
 Number date_to_cjdn(long int j, long int m, long int d, CalendarSystem ct);
 bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarSystem ct);
 Number date_to_fixed(long int y, long int m, long int d, CalendarSystem ct);
-
-static const long int coefficients[] {
-403406, 195207, 119433, 112392, 3891, 2819, 1721,
-660, 350, 334, 314, 268, 242, 234, 158, 132, 129, 114,
-99, 93, 86, 78, 72, 68, 64, 46, 38, 37, 32, 29, 28, 27, 27,
-25, 24, 21, 21, 20, 18, 17, 14, 13, 13, 13, 12, 10, 10, 10,
-10, -1
-};
-static const long double multipliers[] = {
-0.9287892L, 35999.1376958L, 35999.4089666L,
-35998.7287385L, 71998.20261L, 71998.4403L,
-36000.35726L, 71997.4812L, 32964.4678L,
--19.4410L, 445267.1117L, 45036.8840L, 3.1008L,
-22518.4434L, -19.9739L, 65928.9345L,
-9038.0293L, 3034.7684L, 33718.148L, 3034.448L,
--2280.773L, 29929.992L, 31556.493L, 149.588L,
-9037.750L, 107997.405L, -4444.176L, 151.771L,
-67555.316L, 31556.080L, -4561.540L,
-107996.706L, 1221.655L, 62894.167L,
-31437.369L, 14578.298L, -31931.757L,
-34777.243L, 1221.999L, 62894.511L,
--4442.039L, 107997.909L, 119.066L, 16859.071L,
--4.578L, 26895.292L, -39.127L, 12297.536L,
-90073.778L
-};
-static const long double addends[] = {
-270.54861L, 340.19128L, 63.91854L, 331.26220L,
-317.843L, 86.631L, 240.052L, 310.26L, 247.23L,
-260.87L, 297.82L, 343.14L, 166.79L, 81.53L,
-3.50L, 132.75L, 182.95L, 162.03L, 29.8L,
-266.4L, 249.2L, 157.6L, 257.8L, 185.1L, 69.9L,
-8.0L, 197.1L, 250.4L, 65.3L, 162.7L, 341.5L,
-291.6L, 98.5L, 146.7L, 110.0L, 5.2L, 342.6L,
-230.9L, 256.1L, 45.3L, 242.9L, 115.2L, 151.8L,
-285.3L, 53.3L, 126.6L, 205.7L, 85.9L,
-146.1L
-};
 
 long int gregorian_year_from_fixed(Number date) {
 	Number d0, n400, d1, n100, d2, n4, d3, n1, year;
@@ -1579,6 +1550,42 @@ Number solar_longitude(Number tee) {
 	Number lam; lam.setFloat(282.7771834L);
 	Number t2; t2.setFloat(36000.76953744L); t2 *= c;
 	Number t3;
+	long int coefficients[] {
+	403406, 195207, 119433, 112392, 3891, 2819, 1721,
+	660, 350, 334, 314, 268, 242, 234, 158, 132, 129, 114,
+	99, 93, 86, 78, 72, 68, 64, 46, 38, 37, 32, 29, 28, 27, 27,
+	25, 24, 21, 21, 20, 18, 17, 14, 13, 13, 13, 12, 10, 10, 10,
+	10, -1
+	};
+	long double multipliers[] = {
+	0.9287892L, 35999.1376958L, 35999.4089666L,
+	35998.7287385L, 71998.20261L, 71998.4403L,
+	36000.35726L, 71997.4812L, 32964.4678L,
+	-19.4410L, 445267.1117L, 45036.8840L, 3.1008L,
+	22518.4434L, -19.9739L, 65928.9345L,
+	9038.0293L, 3034.7684L, 33718.148L, 3034.448L,
+	-2280.773L, 29929.992L, 31556.493L, 149.588L,
+	9037.750L, 107997.405L, -4444.176L, 151.771L,
+	67555.316L, 31556.080L, -4561.540L,
+	107996.706L, 1221.655L, 62894.167L,
+	31437.369L, 14578.298L, -31931.757L,
+	34777.243L, 1221.999L, 62894.511L,
+	-4442.039L, 107997.909L, 119.066L, 16859.071L,
+	-4.578L, 26895.292L, -39.127L, 12297.536L,
+	90073.778L
+	};
+	long double addends[] = {
+	270.54861L, 340.19128L, 63.91854L, 331.26220L,
+	317.843L, 86.631L, 240.052L, 310.26L, 247.23L,
+	260.87L, 297.82L, 343.14L, 166.79L, 81.53L,
+	3.50L, 132.75L, 182.95L, 162.03L, 29.8L,
+	266.4L, 249.2L, 157.6L, 257.8L, 185.1L, 69.9L,
+	8.0L, 197.1L, 250.4L, 65.3L, 162.7L, 341.5L,
+	291.6L, 98.5L, 146.7L, 110.0L, 5.2L, 342.6L,
+	230.9L, 256.1L, 45.3L, 242.9L, 115.2L, 151.8L,
+	285.3L, 53.3L, 126.6L, 205.7L, 85.9L,
+	146.1L
+	};
 	Number x, y, z, nr_pi; nr_pi.pi();
 	for(size_t i = 0; coefficients[i] >= 0; i++) {
 		x = coefficients[i];
@@ -1601,6 +1608,26 @@ Number solar_longitude(Number tee) {
 	return lam;
 }
 
+Number solar_longitude_after(Number longitude, Number tee) {
+	Number rate = MEAN_TROPICAL_YEAR; rate /= 360;
+	Number tau(longitude); tau -= solar_longitude(tee); tau.mod(360); tau *= rate; tau += tee;
+	Number a(tau); a -= 5; if(tee > a) a = tee;
+	Number b(tau); b += 5;
+	Number blong = solar_longitude(b);
+	//Number precexp(1, 1, -PRECISION);
+	Number precexp(1, 1, -10);
+	Number long_low(longitude); long_low -= precexp;
+	Number long_high(longitude); long_high += precexp;
+	Number newlong;
+	Number test(a);
+	while(true) {
+		test = b; test -= a; test /= 2; test += a;
+		newlong = solar_longitude(test);
+		if(newlong >= long_low && newlong <= long_high) return test;
+		if(newlong > longitude && newlong <= blong) b = test;
+		else a = test;
+	}
+}
 Number obliquity(Number tee) {
 	Number c = julian_centuries(tee);
 	tee.setFloat(21.448L); tee /= 60; tee += 26; tee /= 60; tee += 23;
@@ -1611,15 +1638,18 @@ Number obliquity(Number tee) {
 	return tee;
 }
 
-Number cal_poly(Number x, vector<long double> a) {
-	size_t n = a.size() - 1;
-	Number p, a_i; p.setFloat(a[n]);
-	for(size_t i = 1; i <= n; i++) {
-		a_i.setFloat(a[n - i]);
-		p *= x;
-		p += a_i;
+Number cal_poly(Number c, size_t n, ...) {
+	va_list ap;
+	va_start(ap, n); 
+	Number x(1, 1, 0), t, poly;
+	for(size_t i = 0; i < n; i++) {
+		t.setFloat(va_arg(ap, long double));
+		t *= x;
+		poly += t;
+		x *= c;
 	}
-	return p;
+	va_end(ap);
+	return poly;
 }
 
 Number equation_of_time(Number tee) {
@@ -1701,6 +1731,16 @@ Number midday_in_tehran(Number date) {
 	return midday(date, TEHRAN_LONGITUDE);
 }
 
+Number chinese_zone(Number tee) {
+	tee.floor();
+	if(gregorian_year_from_fixed(tee) < 1929) return Number(1397, 4320);
+	return Number(1, 3);
+}
+
+Number midnight_in_china(Number date) {
+	return universal_from_standard(date, chinese_zone(date));
+}
+
 Number estimate_prior_solar_longitude(Number lam, Number tee) {
 	Number rate = MEAN_TROPICAL_YEAR; rate /= 360;
 	Number tau = solar_longitude(tee); tau -= lam; tau.mod(360); tau *= rate;
@@ -1719,6 +1759,252 @@ Number persian_new_year_on_or_before(Number date) {
 	Number day(approx);
 	while(solar_longitude(midday_in_tehran(day)).isGreaterThan(2)) day++;
 	return day;
+}
+
+Number universal_from_dynamical(Number tee) {
+	tee -= ephemeris_correction(tee);
+	return tee;
+}
+
+Number mean_lunar_longitude(Number c) {
+	c = cal_poly(c, 5, 218.3164477L, 481267.88123421L, -0.0015786L, 1.0L/538841.0L, -1.0L/65194000.0L);
+	c.mod(360);
+	return c;
+}
+Number lunar_elongation(Number c) {
+	c = cal_poly(c, 5, 297.8501921L, 445267.1114034L, -0.0018819L, 1.0L/545868.0L, -1.0L/113065000.0L);
+	c.mod(360);
+	return c;
+}
+Number solar_anomaly(Number c) {
+	c = cal_poly(c, 4, 357.5291092L, 35999.0502909L, -0.0001536L, 1.0L/24490000.0L);
+	c.mod(360);
+	return c;
+}
+Number lunar_anomaly(Number c) {
+	c = cal_poly(c, 5, 134.9633964L, 477198.8675055L, 0.0087414L, 1.0L/69699.0L, -1.0L/14712000.0L);
+	c.mod(360);
+	return c;
+}
+Number moon_node(Number c) {
+	c = cal_poly(c, 5, 93.2720950L, 483202.0175233L, -0.0036539L, -1.0L/3526000.0L, 1.0L/863310000.0L);
+	c.mod(360);
+	return c;
+}
+
+Number lunar_longitude(Number tee) {
+	Number c = julian_centuries(tee);
+	Number cap_L_prime = mean_lunar_longitude(c);
+	Number cap_D = lunar_elongation(c);
+	Number cap_M = solar_anomaly(c);
+	Number cap_M_prime = lunar_anomaly(c);
+	Number cap_F = moon_node(c);
+	Number cap_E = cal_poly(c, 3, 1.0L, -0.002516L, -0.0000074L);
+	Number correction;
+	int args_lunar_elongation[] = {
+	0, 2, 2, 0, 0, 0, 2, 2, 2, 2, 0, 1, 0, 2, 0, 0, 4, 0, 4, 2, 2, 1,
+	1, 2, 2, 4, 2, 0, 2, 2, 1, 2, 0, 0, 2, 2, 2, 4, 0, 3, 2, 4, 0, 2,
+	2, 2, 4, 0, 4, 1, 2, 0, 1, 3, 4, 2, 0, 1, 2, -1
+	};
+	int args_solar_anomaly[] = {
+	0, 0, 0, 0, 1, 0, 0, -1, 0, -1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1,
+	0, 1, -1, 0, 0, 0, 1, 0, -1, 0, -2, 1, 2, -2, 0, 0, -1, 0, 0, 1,
+	-1, 2, 2, 1, -1, 0, 0, -1, 0, 1, 0, 1, 0, 0, -1, 2, 1, 0
+	};
+	int args_lunar_anomaly[] = {
+	1, -1, 0, 2, 0, 0, -2, -1, 1, 0, -1, 0, 1, 0, 1, 1, -1, 3, -2,
+	-1, 0, -1, 0, 1, 2, 0, -3, -2, -1, -2, 1, 0, 2, 0, -1, 1, 0,
+	-1, 2, -1, 1, -2, -1, -1, -2, 0, 1, 4, 0, -2, 0, 2, 1, -2, -3,
+	2, 1, -1, 3
+	};
+	int args_moon_node[] = {
+	0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, -2, 2, -2, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, -2, 2, 0, 2, 0, 0, 0, 0,
+	0, 0, -2, 0, 0, 0, 0, -2, -2, 0, 0, 0, 0, 0, 0, 0 
+	};
+	long int sine_coeff[] {
+	6288774, 1274027, 658314, 213618, -185116, -114332,
+	58793, 57066, 53322, 45758, -40923, -34720, -30383,
+	15327, -12528, 10980, 10675, 10034, 8548, -7888,
+	-6766, -5163, 4987, 4036, 3994, 3861, 3665, -2689,
+	-2602, 2390, -2348, 2236, -2120, -2069, 2048, -1773,
+	-1595, 1215, -1110, -892, -810, 759, -713, -700, 691,
+	596, 549, 537, 520, -487, -399, -381, 351, -340, 330,
+	327, -323, 299, 294
+	};
+	Number v, w, x, x2, x3, y, z, nr_pi; nr_pi.pi();
+	for(size_t i = 0; args_lunar_elongation[i] >= 0; i++) {
+		v = sine_coeff[i];
+		w = args_lunar_elongation[i];
+		x = args_solar_anomaly[i];
+		y = args_lunar_anomaly[i];
+		z = args_moon_node[i];
+		x2 = x;
+		x2.abs();
+		x3 = cap_E;
+		x3 ^= x2;
+		v *= x3;
+		w *= cap_D;
+		x *= cap_M;
+		y *= cap_M_prime;
+		z *= cap_F;
+		w += x; w += y; w += z;
+		w *= nr_pi;
+		w /= 180;
+		w.sin();
+		v *= w;
+		correction += v;
+	}
+	correction *= Number(1, 1, -6);
+	Number venus; venus.setFloat(131.849L); venus *= c; v.setFloat(119.75L); venus += v; venus *= nr_pi; venus /= 180; venus.sin(); venus *= Number(3958, 1000000L);
+	Number jupiter; jupiter.setFloat(479264.29L); jupiter *= c; v.setFloat(53.09L); jupiter += v; jupiter *= nr_pi; jupiter /= 180; jupiter.sin(); jupiter *= Number(318, 1000000L);
+	Number flat_earth(cap_L_prime); flat_earth -= cap_F; flat_earth *= nr_pi; flat_earth /= 180; flat_earth.sin(); flat_earth *= Number(1962, 1000000L);
+	Number ret(cap_L_prime); ret += correction; ret += venus; ret += jupiter; ret += flat_earth; ret += nutation(tee); ret.mod(360);
+	return ret;
+}
+
+Number nth_new_moon(Number n) {
+	Number n0(24724);
+	Number k(n); k -= n0;
+	Number c; c.setFloat(1236.85L); c.recip(); c *= k;
+	Number approx = J2000; approx += cal_poly(c, 5, 5.09766L, 29.530588861L * 1236.85L, 0.00015437L, -0.000000150L, 0.00000000073L);
+	Number cap_E = cal_poly(c, 3, 1.0L, -0.002516L, -0.0000074L);
+	Number solar_anomaly_n = cal_poly(c, 4, 2.5534L, 1236.85L * 29.10535670L, -0.0000014L, -0.00000011L);
+	Number lunar_anomaly_n = cal_poly(c, 5, 201.5643L, 385.81693528L * 1236.85L, 0.0107582L, 0.00001238L, -0.000000058L);
+	Number moon_argument = cal_poly(c, 5, 160.7108L, 390.67050284L * 1236.85L, -0.0016118L, -0.00000227L, 0.000000011L);
+	Number cap_omega = cal_poly(c, 4, 124.7746L, -1.56375588L * 1236.85L, 0.0020672L, 0.00000215L);
+	int e_factor[] = {0, 1, 0, 0, 1, 1, 2, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1};
+	int solar_coeff[] = {0, 1, 0, 0, -1, 1, 2, 0, 0, 1, 0, 1, 1, -1, 2, 0, 3, 1, 0, 1, -1, -1, 1, 0};
+	int lunar_coeff[] = {1, 0, 2, 0, 1, 1, 0, 1, 1, 2, 3, 0, 0, 2, 1, 2, 0, 1, 2, 1, 1, 1, 3, 4};
+	int moon_coeff[] = {0, 0, 0, 2, 0, 0, 0, -2, 2, 0, 0, 2, -2, 0, 0, -2, 0, -2, 2, 2, 2, -2, 0, 0};
+	long double sine_coeff[] = { -0.40720L, 0.17241L, 0.01608L, 0.01039L, 0.00739L, -0.00514L, 0.00208L, -0.00111L, -0.00057L, 0.00056L, -0.00042L, 0.00042L, 0.00038L, -0.00024L, -0.00007L, 0.00004L, 0.00004L, 0.00003L, 0.00003L, -0.00003L, 0.00003L, -0.00002L, -0.00002L, 0.00002L};
+	Number v, w, x, x2, y, z, nr_pi; nr_pi.pi();
+	Number correction; correction.setFloat(-0.00017L); cap_omega *= nr_pi; cap_omega /= 180; cap_omega.sin(); correction *= cap_omega;
+	for(size_t i = 0; e_factor[i] >= 0; i++) {
+		v.setFloat(sine_coeff[i]);
+		w = e_factor[i];
+		x = solar_coeff[i];
+		y = lunar_coeff[i];
+		z = moon_coeff[i];
+		x *= solar_anomaly_n;
+		y *= lunar_anomaly_n;
+		z *= moon_argument;
+		x += y; x += z;
+		x *= nr_pi;
+		x /= 180;
+		x.sin();
+		x2 = cap_E; x2 ^= w;
+		v *= x2; v *= x;
+		correction += v;
+	}
+	long double add_const[] = {251.88L, 251.83L, 349.42L, 84.66L, 141.74L, 207.14L, 154.84L, 34.52L, 207.19L, 291.34L, 161.72L, 239.56L, 331.55L, -1.0L};
+	long double add_coeff[] = {0.016321L, 26.651886L, 36.412478L, 18.206239L, 53.303771L, 2.453732L, 7.306860L, 27.261239L, 0.121824L, 1.844379L, 24.198154L, 25.513099L, 3.592518L};
+	long double add_factor[] = {0.000165L, 0.000164L, 0.000126L, 0.000110L, 0.000062L, 0.000060L, 0.000056L, 0.000047L, 0.000042L, 0.000040L, 0.000037L, 0.000035L, 0.000023L};
+	Number extra = cal_poly(c, 3, 299.77L, 132.8475848L, -0.009173L); extra *= nr_pi; extra /= 180; extra.sin(); v.setFloat(0.000325L); extra *= v;
+	Number additional;
+	for(size_t i = 0; add_const[i] >= 0; i++) {
+		x.setFloat(add_const[i]);
+		y.setFloat(add_coeff[i]);
+		z.setFloat(add_factor[i]);
+		y *= k; y += x; y *= nr_pi; y /= 180; y.sin(); y *= z;
+		additional += y;
+	}
+	approx += correction; approx += extra; approx += additional;
+	return universal_from_dynamical(approx);
+}
+
+Number lunar_phase(Number tee) {
+	Number phi = lunar_longitude(tee); phi -= solar_longitude(tee); phi.mod(360);
+	Number t0 = nth_new_moon(0);
+	Number n(tee); n -= t0; n /= MEAN_SYNODIC_MONTH; n.round();
+	Number phi_prime(tee); phi_prime -= nth_new_moon(n); phi_prime /= MEAN_SYNODIC_MONTH; phi_prime.mod(1); phi_prime *= 360;
+	Number test(phi); test -= phi_prime; test.abs();
+	if(test > 180) return phi_prime;
+	return phi;
+}
+
+Number new_moon_at_or_after(Number tee) {
+	Number t0 = nth_new_moon(0);
+	Number phi = lunar_phase(tee); phi /= 360;
+	Number n(tee); n -= t0; n /= MEAN_SYNODIC_MONTH; n -= phi; n.round();
+	while(nth_new_moon(n) < tee) n++;
+	return nth_new_moon(n);
+}
+Number new_moon_before(Number tee) {
+	Number t0 = nth_new_moon(0);
+	Number phi = lunar_phase(tee); phi /= 360;
+	Number n(tee); n -= t0; n /= MEAN_SYNODIC_MONTH; n -= phi; n.round();
+	n--;
+	while(nth_new_moon(n) < tee) n++;
+	n--;
+	return nth_new_moon(n);
+}
+
+Number chinese_new_moon_on_or_after(Number date) {
+	Number tee = new_moon_at_or_after(midnight_in_china(date));
+	Number ret = standard_from_universal(tee, chinese_zone(tee));
+	ret.floor();
+	return ret;
+}
+Number chinese_new_moon_before(Number date) {
+	Number tee = new_moon_before(midnight_in_china(date));
+	Number ret = standard_from_universal(tee, chinese_zone(tee));
+	ret.floor();
+	return ret;
+}
+Number chinese_solar_longitude_on_or_after(Number lam, Number tee) {
+	Number sun = solar_longitude_after(lam, universal_from_standard(tee, chinese_zone(tee)));
+	return standard_from_universal(sun, chinese_zone(sun));
+}
+Number current_major_solar_term(Number date) {
+	Number s = solar_longitude(universal_from_standard(date, chinese_zone(date)));
+	cal_div(s, 30); s += 2; s.mod(-12); s += 12;
+	return s;
+}
+Number major_solar_term_on_or_after(Number date) {
+	Number s = solar_longitude(midnight_in_china(date));
+	Number l(s); l /= 30; l.ceil(); l *= 30; l.mod(360);
+	return chinese_solar_longitude_on_or_after(l, date);
+}
+Number current_minor_solar_term(Number date) {
+	Number s = solar_longitude(universal_from_standard(date, chinese_zone(date)));
+	s -= 15; cal_div(s, 30); s += 3; s.mod(-12); s += 12;
+	return s;
+}
+Number minor_solar_term_on_or_after(Number date) {
+	Number s = solar_longitude(midnight_in_china(date));
+	Number l(s); l -= 15; l /= 30; l.ceil(); l *= 30; l += 15; l.mod(360);
+	return chinese_solar_longitude_on_or_after(l, date);
+}
+bool chinese_no_major_solar_term(Number date) {
+	return current_major_solar_term(date) == current_major_solar_term(chinese_new_moon_on_or_after(date + 1));
+}
+bool chinese_prior_leap_month(Number m_prime, Number m) {
+	return m >= m_prime && (chinese_no_major_solar_term(m) || chinese_prior_leap_month(m_prime, chinese_new_moon_before(m)));
+}
+Number chinese_winter_solstice_on_or_before(Number date) {
+	date++;
+	Number approx = estimate_prior_solar_longitude(270, midnight_in_china(date));
+	approx.floor(); approx--;
+	while(solar_longitude(midnight_in_china(approx + 1)) <= 270) approx++;
+	return approx;
+}
+Number chinese_new_year_in_sui(Number date) {
+	Number s1 = chinese_winter_solstice_on_or_before(date);
+	Number s2 = chinese_winter_solstice_on_or_before(s1 + 370);
+	Number m12 = chinese_new_moon_on_or_after(s1 + 1);
+	Number m13 = chinese_new_moon_before(m12 + 1);
+	Number next_m11 = chinese_new_moon_before(s2 + 1);
+	Number m1 = chinese_new_moon_before(date + 1);
+	next_m11 -= m12; next_m11 /= MEAN_SYNODIC_MONTH; next_m11.round();
+	if(next_m11 == 12 && (chinese_no_major_solar_term(m12) || chinese_no_major_solar_term(m13))) {m13++; return chinese_new_moon_on_or_after(m13);}
+	return m13;
+}
+Number chinese_new_year_on_or_before(Number date) {
+	Number new_year = chinese_new_year_in_sui(date);
+	if(date >= new_year) return new_year;
+	date -= 180;
+	return chinese_new_year_in_sui(date);
 }
 
 bool gregorian_leap_year(long int year) {
@@ -1841,6 +2127,18 @@ Number date_to_fixed(long int y, long int m, long int d, CalendarSystem ct) {
 		if(m <= 7) fixed += 31 * (m - 1);
 		else fixed += (30 * (m - 1)) + 6;
 		fixed += d;
+	} else if(ct == CALENDAR_CHINESE) {
+		bool leap = (m > 12);
+		if(leap) m -= 12;
+		Number mid_year(y); mid_year -= 61; mid_year += nr_half; mid_year *= MEAN_TROPICAL_YEAR; mid_year += CHINESE_EPOCH;
+		Number new_year = chinese_new_year_on_or_before(mid_year);
+		new_year += (m - 1) * 29;
+		Number p = chinese_new_moon_on_or_after(new_year);
+		long int dy, dm, dd;
+		fixed_to_date(p, dy, dm, dd, ct);
+		bool dleap = (dm > 12); if(dleap) dm -= 12;
+		if(m != dm || leap != dleap) {p++; p = chinese_new_moon_on_or_after(p);}
+		fixed = d; fixed--; fixed += p;
 	} else if(ct == CALENDAR_EGYPTIAN) {
 		Number year(y);
 		fixed = EGYPTIAN_EPOCH;
@@ -1890,9 +2188,7 @@ bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarS
 	} else if(ct == CALENDAR_HEBREW) {
 		Number approx(date); approx -= HEBREW_EPOCH; approx /= 35975351L; approx *= 98496; approx.floor(); approx++;
 		Number year(approx); year--;
-		while(hebrew_new_year(year).isLessThanOrEqualTo(date)) {
-			year++;
-		}
+		while(hebrew_new_year(year).isLessThanOrEqualTo(date)) year++;
 		year--;
 		bool overflow = false;
 		y = year.lintValue(&overflow);
@@ -1943,6 +2239,28 @@ bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarS
 		m = month.lintValue();
 		date++; date -= date_to_fixed(y, m, 1, CALENDAR_PERSIAN);
 		d = date.lintValue();
+		return true;
+	} else if(ct == CALENDAR_CHINESE) {
+		Number s1 = chinese_winter_solstice_on_or_before(date);
+		Number s2 = chinese_winter_solstice_on_or_before(s1 + 370);
+		Number m12 = chinese_new_moon_on_or_after(s1 + 1);
+		Number next_m11 = chinese_new_moon_before(s2 + 1);
+		Number m1 = chinese_new_moon_before(date + 1);
+		Number test(next_m11); test -= m12; test /= MEAN_SYNODIC_MONTH; test.round();
+		bool leap_year = (test == 12);
+		Number month(m1); month -= m12; month /= MEAN_SYNODIC_MONTH; month.round();
+		if(leap_year && chinese_prior_leap_month(m12, m1)) month--;
+		month.mod(-12); month += 12;
+		m = month.lintValue();
+		bool leap_month = (leap_year && chinese_no_major_solar_term(m) && !chinese_prior_leap_month(m12, chinese_new_moon_before(m)));
+		if(leap_month) m += 12;
+		Number elapsed_years(date); elapsed_years -= CHINESE_EPOCH; elapsed_years /= MEAN_TROPICAL_YEAR; elapsed_years += Number(3, 2); month /= 12; elapsed_years -= month; elapsed_years.floor();
+		elapsed_years += 60; //epoch of 2697 BC
+		Number day(date); day -= m1; day++;
+		d = day.lintValue();
+		bool overflow = false;
+		y = elapsed_years.lintValue(&overflow);
+		if(overflow) return false;
 		return true;
 	} else if(ct == CALENDAR_EGYPTIAN) {
 		date -= EGYPTIAN_EPOCH;
@@ -2199,11 +2517,21 @@ bool dateToCalendar(const QalculateDateTime &date, long int &y, long int &m, lon
 }
 
 int numberOfMonths(CalendarSystem ct) {
+	if(ct == CALENDAR_CHINESE) return 24;
 	if(ct == CALENDAR_HEBREW || ct == CALENDAR_COPTIC || ct == CALENDAR_EGYPTIAN || ct == CALENDAR_ETHIOPIAN) return 13;
 	return 12;
 }
-string monthName(long int month, CalendarSystem ct, bool append_number) {
-	if(month > 13 || month < 1) return i2s(month);
+string monthName(long int month, CalendarSystem ct, bool append_number, bool append_leap) {
+	if(month < 1) return i2s(month);
+	if(ct == CALENDAR_CHINESE) {
+		if(month > 24) return i2s(month);
+		bool leap = month > 12;
+		if(leap) month -= 12;
+		string str = i2s(month); 
+		if(leap && append_leap) {str += " ("; str += _("leap month"); str += ")";}
+		return str;
+	}
+	if(month > 13) return i2s(month);
 	string str;
 	if(ct == CALENDAR_HEBREW) {
 		str = HEBREW_MONTHS[month - 1];
@@ -2228,5 +2556,51 @@ string monthName(long int month, CalendarSystem ct, bool append_number) {
 	}
 	if(append_number) {str += " ("; str += i2s(month); str += ")";}
 	return str;
+}
+
+void chineseYearInfo(long int year, long int &cycle, long int &year_in_cycle, long int &stem, long int &branch) {
+	cycle = (year - 1) / 60 + 1;
+	year_in_cycle = ((year - 1) % 60) + 1;
+	stem = ((year_in_cycle - 1) % 10) + 1;
+	branch = ((year_in_cycle - 1) % 12) + 1;
+}
+long int chineseCycleYearToYear(long int cycle, long int year_in_cycle) {
+	return ((cycle - 1) * 60) + year_in_cycle;
+}
+int chineseStemBranchToCycleYear(long int stem, long int branch) {
+	stem -= branch - 1;
+	if(stem < 1) stem += 10;
+	int cy = (stem - 1) * 6 + branch;
+	if(cy < 0 || cy > 60) return 0;
+	return cy;
+}
+string chineseStemName(long int stem) {
+	stem = (stem + 1) / 2;
+	if(stem < 1 || stem > 5) return empty_string;
+	return _(CHINESE_ELEMENTS[stem - 1]);
+}
+string chineseBranchName(long int branch) {
+	if(branch < 1 || branch > 12) return empty_string;
+	return _(CHINESE_ANIMALS[branch - 1]);
+}
+
+Number solarLongitude(const QalculateDateTime &date) {
+	Number fixed = date_to_fixed(date.year(), date.month(), date.day(), CALENDAR_GREGORIAN);
+	Number time = date.second(); time /= 60; time += date.minute(); time -= dateTimeZone(date, false); time /= 60; time += date.hour(); time /= 24;
+	fixed += time;
+	return solar_longitude(fixed);
+}
+QalculateDateTime findNextSolarLongitude(const QalculateDateTime &date, Number longitude) {
+	Number fixed = date_to_fixed(date.year(), date.month(), date.day(), CALENDAR_GREGORIAN);
+	Number time = date.second(); time /= 60; time += date.minute(); time -= dateTimeZone(date, false); time /= 60; time += date.hour(); time /= 24;
+	fixed += time;
+	fixed = solar_longitude_after(longitude, fixed);
+	long int y, m, d;
+	fixed_to_date(fixed, y, m, d, CALENDAR_GREGORIAN);
+	QalculateDateTime dt(y, m, d);
+	Number fixed2 = date_to_fixed(y, m, d, CALENDAR_GREGORIAN);
+	dt.addMinutes(dateTimeZone(dt, true));
+	dt.addDays(fixed - fixed2);
+	return dt;
 }
 

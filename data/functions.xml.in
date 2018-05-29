@@ -1721,7 +1721,7 @@
     <builtin_function name="date">
       <_title>Construct Date</_title>
       <_names>r:date</_names>
-      <_description>Returns a date. Available calendars gregorian (1), hebrew (2), islamic (3), persian (4), indian (5), julian (6), milankovic (7), coptic (8), ethiopian (9), egyptian (10).</_description>
+      <_description>Returns a date. Available calendars gregorian (1), hebrew (2), islamic (3), persian (4), indian (5), chinese (6), julian (7), milankovic (8), coptic (9), ethiopian (10), egyptian (11). The Chinese year uses an epoch of 2697 BEC and chinese leap months are indicated by adding 12 to the month number (e.g. leap month 4 = 16). </_description>
       <argument index="1">
         <_title>Year</_title>
       </argument>
