@@ -3708,7 +3708,6 @@ BinFunction::BinFunction() : MathFunction("bin", 1, 2) {
 	setDefaultValue(2, "0");
 }
 int BinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	//mstruct = Number(vargs[0].symbol(), 2);
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_BINARY;
 	po.twos_complement = vargs[1].number().getBoolean();
@@ -3719,7 +3718,6 @@ OctFunction::OctFunction() : MathFunction("oct", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int OctFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	//mstruct = Number(vargs[0].symbol(), 8);
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_OCTAL;
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
@@ -3729,7 +3727,6 @@ HexFunction::HexFunction() : MathFunction("hex", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int HexFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	//mstruct = Number(vargs[0].symbol(), 16);
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_HEXADECIMAL;
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
@@ -3745,7 +3742,6 @@ BaseFunction::BaseFunction() : MathFunction("base", 2) {
 	setArgumentDefinition(2, arg);
 }
 int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	//mstruct = Number(vargs[0].symbol(), vargs[1].number().intValue());
 	ParseOptions po = eo.parse_options;
 	po.base = vargs[1].number().intValue();
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
@@ -3755,7 +3751,13 @@ RomanFunction::RomanFunction() : MathFunction("roman", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	//mstruct = Number(vargs[0].symbol(), BASE_ROMAN_NUMERALS);
+	if(vargs[0].symbol().find_first_not_of("123456789.:" SIGNS) == string::npos) {
+		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
+		PrintOptions po; po.base = BASE_ROMAN_NUMERALS;
+		mstruct.eval(eo);
+		mstruct.set(mstruct.print(po), true, true);
+		return 1;
+	}
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_ROMAN_NUMERALS;
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
