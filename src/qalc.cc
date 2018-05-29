@@ -994,16 +994,20 @@ void show_calendars(const QalculateDateTime &date, bool indentation = true) {
 	int pctl;
 	long int y, m, d;
 	STR_AND_TABS((indentation ? string("  ") + _("Calendar") : _("Calendar"))); str += _("Day"); str += ", "; str += _("Month"); str += ", "; str += _("Year"); PUTS_UNICODE(str.c_str());
-#define PUTS_CALENDAR(x, c)	calstr = "\033[1m"; STR_AND_TABS((indentation ? string("  ") + x : x)); calstr += str; calstr += "\033[0m"; if(!dateToCalendar(date, y, m, d, c)) calstr += _("failed"); else {calstr += i2s(d); calstr += " "; calstr += monthName(m, c, true); calstr += " "; calstr += i2s(y);} PUTS_UNICODE(calstr.c_str());
-	PUTS_CALENDAR(string(_("Gregorian:")), CALENDAR_GREGORIAN);
-	PUTS_CALENDAR(string(_("Hebrew:")), CALENDAR_HEBREW);
-	PUTS_CALENDAR(string(_("Islamic:")), CALENDAR_ISLAMIC);
-	PUTS_CALENDAR(string(_("Persian:")), CALENDAR_PERSIAN);
-	PUTS_CALENDAR(string(_("Indian national:")), CALENDAR_INDIAN);
-	PUTS_CALENDAR(string(_("Julian:")), CALENDAR_JULIAN);
-	PUTS_CALENDAR(string(_("Revised julian:")), CALENDAR_MILANKOVIC);
-	PUTS_CALENDAR(string(_("Coptic:")), CALENDAR_COPTIC);
-	PUTS_CALENDAR(string(_("Ethiopian:")), CALENDAR_ETHIOPIAN);
+#define PUTS_CALENDAR(x, c)	calstr = "\033[1m"; STR_AND_TABS((indentation ? string("  ") + x : x)); calstr += str; calstr += "\033[0m"; if(!dateToCalendar(date, y, m, d, c)) calstr += _("failed"); else {calstr += i2s(d); calstr += " "; calstr += monthName(m, c, true); calstr += " "; calstr += i2s(y);} FPUTS_UNICODE(calstr.c_str(), stdout);
+	PUTS_CALENDAR(string(_("Gregorian:")), CALENDAR_GREGORIAN); puts("");
+	PUTS_CALENDAR(string(_("Hebrew:")), CALENDAR_HEBREW); puts("");
+	PUTS_CALENDAR(string(_("Islamic:")), CALENDAR_ISLAMIC); puts("");
+	PUTS_CALENDAR(string(_("Persian:")), CALENDAR_PERSIAN); puts("");
+	PUTS_CALENDAR(string(_("Indian national:")), CALENDAR_INDIAN); puts("");
+	PUTS_CALENDAR(string(_("Chinese:")), CALENDAR_CHINESE); 
+	long int cy, yc, st, br;
+	chineseYearInfo(y, cy, yc, st, br);
+	PUTS_UNICODE((string(" (") + chineseStemName(st) + string(" ") + chineseBranchName(br) + ")").c_str());
+	PUTS_CALENDAR(string(_("Julian:")), CALENDAR_JULIAN); puts("");
+	PUTS_CALENDAR(string(_("Revised julian:")), CALENDAR_MILANKOVIC); puts("");
+	PUTS_CALENDAR(string(_("Coptic:")), CALENDAR_COPTIC); puts("");
+	PUTS_CALENDAR(string(_("Ethiopian:")), CALENDAR_ETHIOPIAN); puts("");
 	//PUTS_CALENDAR(string(_("Egyptian:")), CALENDAR_EGYPTIAN);
 }
 
@@ -2148,7 +2152,7 @@ int main(int argc, char *argv[]) {
 				printops.base = BASE_ROMAN_NUMERALS;
 				setResult(NULL, false);
 				printops.base = save_base;
-			} else if(equalsIgnoreCase(str, "sexa") || equalsIgnoreCase(str, "sexagesimal") || equalsIgnoreCase(str, _("sexagesimal"))) {
+			} else if(equalsIgnoreCase(str, "sex") || equalsIgnoreCase(str, "sexagesimal") || equalsIgnoreCase(str, _("sexagesimal"))) {
 				int save_base = printops.base;
 				printops.base = BASE_SEXAGESIMAL;
 				setResult(NULL, false);
@@ -3211,8 +3215,8 @@ int main(int argc, char *argv[]) {
 				PUTS_UNICODE(_("- oct / octal (show as octal number)"));
 				PUTS_UNICODE(_("- duo / duodecimal (show as duodecimal number)"));
 				PUTS_UNICODE(_("- hex / hexadecimal (show as hexadecimal number)"));
-				PUTS_UNICODE(_("- sex / sexagesimal (show as hexadecimal number)"));
-				PUTS_UNICODE(_("- roman / hexadecimal (show as roman numerals)"));
+				PUTS_UNICODE(_("- sex / sexagesimal (show as sexagesimal number)"));
+				PUTS_UNICODE(_("- roman (show as roman numerals)"));
 				PUTS_UNICODE(_("- time (show in time format)"));
 				PUTS_UNICODE(_("- bases (show as binary, octal, decimal and hexadecimal number)"));
 				puts("");
@@ -3828,7 +3832,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				printops.base = save_base;
 				expression_str = str;
 				return;
-			} else if(equalsIgnoreCase(to_str, "sexa") || equalsIgnoreCase(to_str, "sexagesimal") || equalsIgnoreCase(to_str, _("sexagesimal"))) {
+			} else if(equalsIgnoreCase(to_str, "sex") || equalsIgnoreCase(to_str, "sexagesimal") || equalsIgnoreCase(to_str, _("sexagesimal"))) {
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_SEXAGESIMAL;

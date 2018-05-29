@@ -84,14 +84,29 @@ typedef enum {
 	CALENDAR_PERSIAN,
 	CALENDAR_COPTIC,
 	CALENDAR_ETHIOPIAN,
-	CALENDAR_INDIAN
+	CALENDAR_INDIAN,
+	CALENDAR_CHINESE
 } CalendarSystem;
 
-#define NUMBER_OF_CALENDARS 10
+#define NUMBER_OF_CALENDARS 11
+
+#define VERNAL_EQUINOX 0
+#define SUMMER_SOLSTICE 90
+#define AUTUMNAL_EXUINOX 180
+#define WINTER_SOLSTICE 270
+
+Number solarLongitude(const QalculateDateTime &date);
+QalculateDateTime findNextSolarLongitude(const QalculateDateTime &date, Number longitude);
 
 bool calendarToDate(QalculateDateTime &date, long int y, long int m, long int d, CalendarSystem ct);
 bool dateToCalendar(const QalculateDateTime &date, long int &y, long int &m, long int &d, CalendarSystem ct);
 int numberOfMonths(CalendarSystem ct);
-string monthName(long int month, CalendarSystem ct, bool append_number = false);
+string monthName(long int month, CalendarSystem ct, bool append_number = false, bool append_leap = true);
+void chineseYearInfo(long int year, long int &cycle, long int &year_in_cycle, long int &stem, long int &branch); //epoch of 2697 BC
+long int chineseCycleYearToYear(long int cycle, long int year_in_cycle);
+int chineseStemBranchToCycleYear(long int stem, long int branch);
+string chineseStemName(long int stem);
+string chineseBranchName(long int branch);
 
 #endif
+

@@ -343,7 +343,7 @@ void Number::set(string number, const ParseOptions &po) {
 		for(size_t i = 0; i < number.length(); i++) {
 			switch(number[i]) {
 				case 'I': {
-					if(!capital && i == number.length() - 1) {
+					if(!capital && i > 0 && i == number.length() - 1) {
 						cur.set(2);
 						CALCULATOR->error(false, _("Assuming the unusual practice of letting a last capital I mean 2 in a roman numeral."), NULL);
 						break;
