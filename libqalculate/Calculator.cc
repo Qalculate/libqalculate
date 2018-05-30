@@ -2464,7 +2464,6 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	string str2;
 	if(make_to_division) separateToExpression(str, str2, eo, true);
 	Unit *u = NULL;
-
 	if(to_struct) {
 		if(str2.empty()) {
 			if(to_struct->isSymbolic() && !to_struct->symbol().empty()) {
@@ -2491,13 +2490,16 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	mstruct.eval(eo);
 
 	current_stage = MESSAGE_STAGE_UNSET;
-	if(aborted() || !mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
-	if(u) {
+	if(aborted()) return mstruct;
+	bool b_units = mstruct.containsType(STRUCT_UNIT, true);
+	if(b_units && u) {
 		current_stage = MESSAGE_STAGE_CONVERSION;
 		if(to_struct) to_struct->set(u);
 		mstruct.set(convert(mstruct, u, eo, false, false));
 	} else if(!str2.empty()) {
 		return convert(mstruct, str2, eo);
+	} else if(!b_units) {
+		return mstruct;
 	} else {
 		current_stage = MESSAGE_STAGE_CONVERSION;
 		switch(eo.auto_post_conversion) {

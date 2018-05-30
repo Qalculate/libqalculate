@@ -3783,11 +3783,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:220
 msgid "Number Bases"
-msgstr "Nummerbaser"
+msgstr "Talbaser"
 
 #: ../data/functions.xml.in.h:221
 msgid "Number Base"
-msgstr "Nummerbas"
+msgstr "Talbas"
 
 #: ../data/functions.xml.in.h:222
 msgid "r:base"

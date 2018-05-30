@@ -2612,9 +2612,10 @@ long int chineseCycleYearToYear(long int cycle, long int year_in_cycle) {
 	return ((cycle - 1) * 60) + year_in_cycle;
 }
 int chineseStemBranchToCycleYear(long int stem, long int branch) {
-	stem -= branch - 1;
-	if(stem < 1) stem += 10;
-	int cy = (stem - 1) * 6 + branch;
+	stem = (stem + 1) / 2;
+	stem -= (branch - 1) / 2;
+	if(stem < 1) stem += 5;
+	int cy = (stem - 1) * 12 + branch;
 	if(cy < 0 || cy > 60) return 0;
 	return cy;
 }
