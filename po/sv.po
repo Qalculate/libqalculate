@@ -761,7 +761,7 @@ msgstr "BAS"
 
 #: ../src/qalc.cc:1322
 msgid "set the result number base"
-msgstr "ange nummerbas för resultat"
+msgstr "ange talbas för resultat"
 
 #: ../src/qalc.cc:1327
 msgid "FILE"
@@ -1549,7 +1549,7 @@ msgstr "Exempel: flytta 2 4"
 
 #: ../src/qalc.cc:3201
 msgid "Sets the result number base (equivalent to set base)."
-msgstr "Anger nummerbas för resultat (liktydigt med ange bas)."
+msgstr "Anger talbas för resultat (liktydigt med ange bas)."
 
 #: ../src/qalc.cc:3205
 msgid "Equivalent to set approximation exact."
@@ -1561,7 +1561,7 @@ msgstr "Liktydigt med ange approximation försök exakt."
 
 #: ../src/qalc.cc:3213
 msgid "Converts units or changes number base in current result."
-msgstr "Omvandlar enheter eller ändrar nummerbas i nuvarande resultat."
+msgstr "Omvandlar enheter eller ändrar talbas i nuvarande resultat."
 
 #: ../src/qalc.cc:3215
 msgid "Possible values:"
