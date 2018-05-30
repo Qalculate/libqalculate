@@ -1071,7 +1071,7 @@ int IntFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 NumeratorFunction::NumeratorFunction() : MathFunction("numerator", 1) {
 	NumberArgument *arg_rational_1 = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false); 
 	arg_rational_1->setRationalNumber(true);
-	arg_rational_1->setHandleVector(1);
+	arg_rational_1->setHandleVector(true);
 	setArgumentDefinition(1, arg_rational_1);
 }
 int NumeratorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -3700,6 +3700,32 @@ int TimeFunction::calculate(MathStructure &mstruct, const MathStructure&, const 
 	tnr /= 60;
 	tnr += hour;
 	mstruct = tnr;
+	return 1;
+}
+LunarPhaseFunction::LunarPhaseFunction() : MathFunction("lunarphase", 0, 1) {
+	setArgumentDefinition(1, new DateArgument());
+	setDefaultValue(1, "now");
+}
+int LunarPhaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	mstruct = lunarPhase(*vargs[0].datetime());
+	return 1;
+}
+NextLunarPhaseFunction::NextLunarPhaseFunction() : MathFunction("nextlunarphase", 1, 2) {
+	NumberArgument *arg = new NumberArgument();
+	Number fr;
+	arg->setMin(&fr);
+	fr.set(1, 1, 0);
+	arg->setMax(&fr);
+	arg->setIncludeEqualsMin(true);
+	arg->setIncludeEqualsMax(false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+	setArgumentDefinition(2, new DateArgument());
+	setDefaultValue(2, "now");
+}
+int NextLunarPhaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	mstruct = findNextLunarPhase(*vargs[1].datetime(), vargs[0].number());
+	if(CALCULATOR->aborted()) return 0;
 	return 1;
 }
 

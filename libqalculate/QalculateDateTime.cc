@@ -1613,19 +1613,31 @@ Number solar_longitude_after(Number longitude, Number tee) {
 	Number tau(longitude); tau -= solar_longitude(tee); tau.mod(360); tau *= rate; tau += tee;
 	Number a(tau); a -= 5; if(tee > a) a = tee;
 	Number b(tau); b += 5;
+	Number along = solar_longitude(a);
 	Number blong = solar_longitude(b);
-	//Number precexp(1, 1, -PRECISION);
-	Number precexp(1, 1, -10);
+	Number precexp(1, 1, -5);
 	Number long_low(longitude); long_low -= precexp;
 	Number long_high(longitude); long_high += precexp;
+	if(long_low < 0) long_low += 360;
+	if(long_high > 360) long_high -= 360;
 	Number newlong;
 	Number test(a);
 	while(true) {
+		if(CALCULATOR->aborted()) return nr_zero;
 		test = b; test -= a; test /= 2; test += a;
 		newlong = solar_longitude(test);
-		if(newlong >= long_low && newlong <= long_high) return test;
-		if(newlong > longitude && newlong <= blong) b = test;
-		else a = test;
+		if(long_high < long_low) {
+			if(newlong >= long_low || newlong <= long_high) return test;
+		} else {
+			if(newlong >= long_low && newlong <= long_high) return test;
+		}
+		if(along > blong) {
+			if((newlong > longitude && newlong < along) || (newlong < longitude && newlong < along)) b = test;
+			else a = test;
+		} else {
+			if(newlong > longitude) b = test;
+			else a = test;
+		}
 	}
 }
 Number obliquity(Number tee) {
@@ -1923,6 +1935,39 @@ Number lunar_phase(Number tee) {
 	return phi;
 }
 
+Number lunar_phase_at_or_after(Number phase, Number tee) {
+	Number rate = MEAN_SYNODIC_MONTH; rate /= 360;
+	Number tau(phase); tau -= lunar_phase(tee); tau.mod(360); tau *= rate; tau += tee;
+	Number a(tau); a -= 5; if(tee > a) a = tee;
+	Number b(tau); b += 5;
+	Number aphase = lunar_phase(a);
+	Number bphase = lunar_phase(b);
+	Number precexp(1, 1, -5);
+	Number phase_low(phase); phase_low -= precexp;
+	Number phase_high(phase); phase_high += precexp;
+	if(phase_low < 0) phase_low += 360;
+	if(phase_high > 360) phase_high -= 360;
+	Number newphase;
+	Number test(a);
+	while(true) {
+		if(CALCULATOR->aborted()) return nr_zero;
+		test = b; test -= a; test /= 2; test += a;
+		newphase = lunar_phase(test);
+		if(phase_high < phase_low) {
+			if(newphase >= phase_low || newphase <= phase_high) return test;
+		} else {
+			if(newphase >= phase_low && newphase <= phase_high) return test;
+		}
+		if(aphase > bphase) {
+			if((newphase > phase && newphase < aphase) || (newphase < phase && newphase < aphase)) b = test;
+			else a = test;
+		} else {
+			if(newphase > phase) b = test;
+			else a = test;
+		}
+	}
+}
+
 Number new_moon_at_or_after(Number tee) {
 	Number t0 = nth_new_moon(0);
 	Number phi = lunar_phase(tee); phi /= 360;
@@ -1993,9 +2038,8 @@ Number chinese_new_year_in_sui(Number date) {
 	Number s1 = chinese_winter_solstice_on_or_before(date);
 	Number s2 = chinese_winter_solstice_on_or_before(s1 + 370);
 	Number m12 = chinese_new_moon_on_or_after(s1 + 1);
-	Number m13 = chinese_new_moon_before(m12 + 1);
+	Number m13 = chinese_new_moon_on_or_after(m12 + 1);
 	Number next_m11 = chinese_new_moon_before(s2 + 1);
-	Number m1 = chinese_new_moon_before(date + 1);
 	next_m11 -= m12; next_m11 /= MEAN_SYNODIC_MONTH; next_m11.round();
 	if(next_m11 == 12 && (chinese_no_major_solar_term(m12) || chinese_no_major_solar_term(m13))) {m13++; return chinese_new_moon_on_or_after(m13);}
 	return m13;
@@ -2252,7 +2296,7 @@ bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarS
 		if(leap_year && chinese_prior_leap_month(m12, m1)) month--;
 		month.mod(-12); month += 12;
 		m = month.lintValue();
-		bool leap_month = (leap_year && chinese_no_major_solar_term(m) && !chinese_prior_leap_month(m12, chinese_new_moon_before(m)));
+		bool leap_month = (leap_year && chinese_no_major_solar_term(m1) && !chinese_prior_leap_month(m12, chinese_new_moon_before(m1)));
 		if(leap_month) m += 12;
 		Number elapsed_years(date); elapsed_years -= CHINESE_EPOCH; elapsed_years /= MEAN_TROPICAL_YEAR; elapsed_years += Number(3, 2); month /= 12; elapsed_years -= month; elapsed_years.floor();
 		elapsed_years += 60; //epoch of 2697 BC
@@ -2585,12 +2629,17 @@ string chineseBranchName(long int branch) {
 }
 
 Number solarLongitude(const QalculateDateTime &date) {
+	CALCULATOR->beginTemporaryStopIntervalArithmetic();
 	Number fixed = date_to_fixed(date.year(), date.month(), date.day(), CALENDAR_GREGORIAN);
 	Number time = date.second(); time /= 60; time += date.minute(); time -= dateTimeZone(date, false); time /= 60; time += date.hour(); time /= 24;
 	fixed += time;
-	return solar_longitude(fixed);
+	Number longitude = solar_longitude(fixed);
+	CALCULATOR->endTemporaryStopIntervalArithmetic();
+	longitude.setPrecision(8);
+	return longitude;
 }
 QalculateDateTime findNextSolarLongitude(const QalculateDateTime &date, Number longitude) {
+	CALCULATOR->beginTemporaryStopIntervalArithmetic();
 	Number fixed = date_to_fixed(date.year(), date.month(), date.day(), CALENDAR_GREGORIAN);
 	Number time = date.second(); time /= 60; time += date.minute(); time -= dateTimeZone(date, false); time /= 60; time += date.hour(); time /= 24;
 	fixed += time;
@@ -2601,6 +2650,33 @@ QalculateDateTime findNextSolarLongitude(const QalculateDateTime &date, Number l
 	Number fixed2 = date_to_fixed(y, m, d, CALENDAR_GREGORIAN);
 	dt.addMinutes(dateTimeZone(dt, true));
 	dt.addDays(fixed - fixed2);
+	CALCULATOR->endTemporaryStopIntervalArithmetic();
+	return dt;
+}
+Number lunarPhase(const QalculateDateTime &date) {
+	CALCULATOR->beginTemporaryStopIntervalArithmetic();
+	Number fixed = date_to_fixed(date.year(), date.month(), date.day(), CALENDAR_GREGORIAN);
+	Number time = date.second(); time /= 60; time += date.minute(); time -= dateTimeZone(date, false); time /= 60; time += date.hour(); time /= 24;
+	fixed += time;
+	Number phase = lunar_phase(fixed); phase /= 360;
+	CALCULATOR->endTemporaryStopIntervalArithmetic();
+	phase.setPrecision(8);
+	return phase;
+}
+QalculateDateTime findNextLunarPhase(const QalculateDateTime &date, Number phase) {
+	CALCULATOR->beginTemporaryStopIntervalArithmetic();
+	Number fixed = date_to_fixed(date.year(), date.month(), date.day(), CALENDAR_GREGORIAN);
+	Number time = date.second(); time /= 60; time += date.minute(); time -= dateTimeZone(date, false); time /= 60; time += date.hour(); time /= 24;
+	fixed += time;
+	phase *= 360;
+	fixed = lunar_phase_at_or_after(phase, fixed);
+	long int y, m, d;
+	fixed_to_date(fixed, y, m, d, CALENDAR_GREGORIAN);
+	QalculateDateTime dt(y, m, d);
+	Number fixed2 = date_to_fixed(y, m, d, CALENDAR_GREGORIAN);
+	dt.addMinutes(dateTimeZone(dt, true));
+	dt.addDays(fixed - fixed2);
+	CALCULATOR->endTemporaryStopIntervalArithmetic();
 	return dt;
 }
 

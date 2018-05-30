@@ -294,6 +294,7 @@ class Calculator {
 	MathFunction *f_zeta, *f_gamma, *f_digamma, *f_beta, *f_airy, *f_besselj, *f_bessely, *f_erf, *f_erfc;
 	MathFunction *f_total, *f_percentile, *f_min, *f_max, *f_mode, *f_rand;
 	MathFunction *f_date, *f_datetime, *f_timevalue, *f_timestamp, *f_stamptodate, *f_days, *f_yearfrac, *f_week, *f_weekday, *f_month, *f_day, *f_year, *f_yearday, *f_time, *f_add_days, *f_add_months, *f_add_years;
+	MathFunction *f_lunarphase, *f_nextlunarphase;
 	MathFunction *f_bin, *f_oct, *f_hex, *f_base, *f_roman;
 	MathFunction *f_ascii, *f_char;
 	MathFunction *f_length, *f_concatenate;
