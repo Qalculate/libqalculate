@@ -97,6 +97,8 @@ typedef enum {
 
 Number solarLongitude(const QalculateDateTime &date);
 QalculateDateTime findNextSolarLongitude(const QalculateDateTime &date, Number longitude);
+Number lunarPhase(const QalculateDateTime &date);
+QalculateDateTime findNextLunarPhase(const QalculateDateTime &date, Number phase);
 
 bool calendarToDate(QalculateDateTime &date, long int y, long int m, long int d, CalendarSystem ct);
 bool dateToCalendar(const QalculateDateTime &date, long int &y, long int &m, long int &d, CalendarSystem ct);

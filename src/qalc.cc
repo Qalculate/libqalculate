@@ -448,7 +448,7 @@ void set_option(string str) {
 		else if(equalsIgnoreCase(svalue, "bin") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "binary", _("binary"))) v = BASE_BINARY;
 		else if(equalsIgnoreCase(svalue, "oct") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "octal", _("octal"))) v = BASE_OCTAL;
 		else if(equalsIgnoreCase(svalue, "dec") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "decimal", _("decimal"))) v = BASE_DECIMAL;
-		else if(equalsIgnoreCase(svalue, "sex") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "sexagesimal", _("sexagesimal"))) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
+		else if(equalsIgnoreCase(svalue, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "sexagesimal", _("sexagesimal"))) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 			if((v < 2 || v > 36) && (b_in || v != 60)) {
@@ -469,7 +469,6 @@ void set_option(string str) {
 					goto set_option_place;
 				}
 			}
-			
 			PUTS_UNICODE(_("Illegal base."));
 		} else if(b_in) {
 			evalops.parse_options.base = v;
@@ -2126,6 +2125,14 @@ int main(int argc, char *argv[]) {
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to"))) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
+			string str1, str2;
+			size_t ispace2 = str.find_first_of(SPACES);
+			if(ispace2 != string::npos) {
+				str1 = str.substr(0, ispace2);
+				remove_blank_ends(str1);
+				str2 = str.substr(ispace2 + 1);
+				remove_blank_ends(str2);
+			}
 			remove_duplicate_blanks(str);
 			if(equalsIgnoreCase(str, "hex") || EQUALS_IGNORECASE_AND_LOCAL(str, "hexadecimal", _("hexadecimal"))) {
 				int save_base = printops.base;
@@ -2152,7 +2159,7 @@ int main(int argc, char *argv[]) {
 				printops.base = BASE_ROMAN_NUMERALS;
 				setResult(NULL, false);
 				printops.base = save_base;
-			} else if(equalsIgnoreCase(str, "sex") || equalsIgnoreCase(str, "sexagesimal") || equalsIgnoreCase(str, _("sexagesimal"))) {
+			} else if(equalsIgnoreCase(str, "sexa") || equalsIgnoreCase(str, "sexagesimal") || equalsIgnoreCase(str, _("sexagesimal"))) {
 				int save_base = printops.base;
 				printops.base = BASE_SEXAGESIMAL;
 				setResult(NULL, false);
@@ -2231,6 +2238,11 @@ int main(int argc, char *argv[]) {
 				if(check_exchange_rates()) mstruct->set(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
 				else mstruct->set(mstruct_new);
 				result_action_executed();
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str1, "base", _("base")) && s2i(str2) >= 2 && (s2i(str2) <= 32 || s2i(str2) == BASE_SEXAGESIMAL)) {
+				int save_base = printops.base;
+				printops.base = s2i(str2);
+				setResult(NULL, false);
+				printops.base = save_base;
 			} else {
 				CALCULATOR->resetExchangeRatesUsed();
 				MathStructure mstruct_new(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), evalops));
@@ -2940,7 +2952,7 @@ int main(int argc, char *argv[]) {
 				if(printops.base == BASE_DECIMAL) str += "*";
 				str += ", "; str += _("hex");
 				if(printops.base == BASE_HEXADECIMAL) str += "*";
-				str += ", "; str += _("sex");
+				str += ", "; str += _("sexa");
 				if(printops.base == BASE_SEXAGESIMAL) str += "*";
 				str += ", "; str += _("time");
 				if(printops.base == BASE_TIME) str += "*";
@@ -3787,6 +3799,14 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		evalops.parse_options.units_enabled = true;
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
 			remove_duplicate_blanks(to_str);
+			string to_str1, to_str2;
+			size_t ispace = to_str.find_first_of(SPACES);
+			if(ispace != string::npos) {
+				to_str1 = to_str.substr(0, ispace);
+				remove_blank_ends(to_str1);
+				to_str2 = to_str.substr(ispace + 1);
+				remove_blank_ends(to_str2);
+			}
 			if(equalsIgnoreCase(to_str, "hex") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "hexadecimal", _("hexadecimal"))) {
 				int save_base = printops.base;
 				expression_str = from_str;
@@ -3832,7 +3852,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				printops.base = save_base;
 				expression_str = str;
 				return;
-			} else if(equalsIgnoreCase(to_str, "sex") || equalsIgnoreCase(to_str, "sexagesimal") || equalsIgnoreCase(to_str, _("sexagesimal"))) {
+			} else if(equalsIgnoreCase(to_str, "sexa") || equalsIgnoreCase(to_str, "sexagesimal") || equalsIgnoreCase(to_str, _("sexagesimal"))) {
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_SEXAGESIMAL;
@@ -3890,6 +3910,15 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				evalops.auto_post_conversion = save_auto_post_conversion;
 				expression_str = str;
 				evalops.parse_options.units_enabled = b_units_saved;
+				return;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base")) && s2i(to_str2) >= 2 && (s2i(to_str2) <= 32 || s2i(to_str2) == BASE_SEXAGESIMAL)) {
+				int save_base = printops.base;
+				expression_str = from_str;
+				printops.base = s2i(to_str2);
+				evalops.parse_options.units_enabled = b_units_saved;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.base = save_base;
+				expression_str = str;
 				return;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _("mixed"))) {
 				expression_str = from_str;
@@ -4327,7 +4356,7 @@ void load_preferences() {
 #endif
 
 	
-	int version_numbers[] = {2, 5, 0};
+	int version_numbers[] = {2, 6, 0};
 	
 	if(file) {
 		char line[10000];

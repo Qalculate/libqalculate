@@ -1511,6 +1511,9 @@ void Calculator::addBuiltinFunctions() {
 	f_add_days = addFunction(new AddDaysFunction());
 	f_add_months = addFunction(new AddMonthsFunction());
 	f_add_years = addFunction(new AddYearsFunction());
+	
+	f_lunarphase = addFunction(new LunarPhaseFunction());
+	f_nextlunarphase = addFunction(new NextLunarPhaseFunction());
 
 	f_base = addFunction(new BaseFunction());
 	f_bin = addFunction(new BinFunction());
@@ -7223,7 +7226,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {2, 5, 0};
+	int version_numbers[] = {2, 6, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

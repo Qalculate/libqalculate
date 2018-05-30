@@ -1909,6 +1909,25 @@
         <condition>isNumber(\x/s)</condition>
       </argument>
     </function>
+    <builtin_function name="lunarphase">
+      <_title>Lunar Phase</_title>
+      <_names>r:lunarphase</_names>
+      <_description>Returns the lunar phase, as a number between 0 and 1, for the specified date. 0 represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons.</_description>
+      <argument type="date" index="1">
+        <_title>Date</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="nextlunarphase">
+      <_title>Find Lunar Phase</_title>
+      <_names>r:nextlunarphase</_names>
+      <_description>Returns the date when the specified lunar phase occurs. The function searches forward beginning at the specified date. The lunar phase are specified as a number between 0 and 1, where 0 represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons.</_description>
+      <argument type="date" index="1">
+        <_title>Lunar Phase</_title>
+      </argument>
+      <argument index="2">
+        <_title>Start Date</_title>
+      </argument>
+    </builtin_function>
   </category>
   <category>
     <_title>Utilities</_title>
