@@ -3708,6 +3708,7 @@ LunarPhaseFunction::LunarPhaseFunction() : MathFunction("lunarphase", 0, 1) {
 }
 int LunarPhaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct = lunarPhase(*vargs[0].datetime());
+	if(CALCULATOR->aborted()) return 0;
 	return 1;
 }
 NextLunarPhaseFunction::NextLunarPhaseFunction() : MathFunction("nextlunarphase", 1, 2) {

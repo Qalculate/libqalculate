@@ -1,3 +1,7 @@
+2018-05-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Treat definitions in non-standard user files as global (not directly editable), in order to avoid duplication
+
 2018-05-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add "to base #" conversion

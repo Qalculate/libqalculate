@@ -991,9 +991,10 @@ bool country_matches(Unit *u, const string &str, size_t minlength = 0) {
 void show_calendars(const QalculateDateTime &date, bool indentation = true) {
 	string str, calstr;
 	int pctl;
+	bool b_fail;
 	long int y, m, d;
 	STR_AND_TABS((indentation ? string("  ") + _("Calendar") : _("Calendar"))); str += _("Day"); str += ", "; str += _("Month"); str += ", "; str += _("Year"); PUTS_UNICODE(str.c_str());
-#define PUTS_CALENDAR(x, c)	calstr = "\033[1m"; STR_AND_TABS((indentation ? string("  ") + x : x)); calstr += str; calstr += "\033[0m"; if(!dateToCalendar(date, y, m, d, c)) calstr += _("failed"); else {calstr += i2s(d); calstr += " "; calstr += monthName(m, c, true); calstr += " "; calstr += i2s(y);} FPUTS_UNICODE(calstr.c_str(), stdout);
+#define PUTS_CALENDAR(x, c) calstr = "\033[1m"; STR_AND_TABS((indentation ? string("  ") + x : x)); calstr += str; calstr += "\033[0m"; b_fail = !dateToCalendar(date, y, m, d, c); if(b_fail) {calstr += _("failed");} else {calstr += i2s(d); calstr += " "; calstr += monthName(m, c, true); calstr += " "; calstr += i2s(y);} FPUTS_UNICODE(calstr.c_str(), stdout);
 	PUTS_CALENDAR(string(_("Gregorian:")), CALENDAR_GREGORIAN); puts("");
 	PUTS_CALENDAR(string(_("Hebrew:")), CALENDAR_HEBREW); puts("");
 	PUTS_CALENDAR(string(_("Islamic:")), CALENDAR_ISLAMIC); puts("");
@@ -1002,7 +1003,8 @@ void show_calendars(const QalculateDateTime &date, bool indentation = true) {
 	PUTS_CALENDAR(string(_("Chinese:")), CALENDAR_CHINESE); 
 	long int cy, yc, st, br;
 	chineseYearInfo(y, cy, yc, st, br);
-	PUTS_UNICODE((string(" (") + chineseStemName(st) + string(" ") + chineseBranchName(br) + ")").c_str());
+	if(!b_fail) {FPUTS_UNICODE((string(" (") + chineseStemName(st) + string(" ") + chineseBranchName(br) + ")").c_str(), stdout);}
+	 puts("");
 	PUTS_CALENDAR(string(_("Julian:")), CALENDAR_JULIAN); puts("");
 	PUTS_CALENDAR(string(_("Revised julian:")), CALENDAR_MILANKOVIC); puts("");
 	PUTS_CALENDAR(string(_("Coptic:")), CALENDAR_COPTIC); puts("");
