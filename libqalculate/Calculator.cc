@@ -6629,7 +6629,7 @@ bool Calculator::loadLocalDefinitions() {
 	}
 	eps.sort();
 	for(list<string>::iterator it = eps.begin(); it != eps.end(); ++it) {
-		loadDefinitions(buildPath(homedir, *it).c_str(), true);
+		loadDefinitions(buildPath(homedir, *it).c_str(), (*it) == "functions.xml" || (*it) == "variables.xml" || (*it) == "units.xml" || (*it) == "datasets.xml");
 	}
 	for(size_t i = 0; i < variables.size(); i++) {
 		if(!variables[i]->isLocal() && !variables[i]->isActive() && !getActiveExpressionItem(variables[i])) variables[i]->setActive(true);

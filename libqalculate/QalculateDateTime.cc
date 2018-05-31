@@ -1769,7 +1769,10 @@ Number persian_new_year_on_or_before(Number date) {
 	Number approx = estimate_prior_solar_longitude(nr_zero, midday_in_tehran(date));
 	approx.floor(); approx -= 1;
 	Number day(approx);
-	while(solar_longitude(midday_in_tehran(day)).isGreaterThan(2)) day++;
+	while(solar_longitude(midday_in_tehran(day)).isGreaterThan(2)) {
+		if(CALCULATOR->aborted()) break;
+		day++;
+	}
 	return day;
 }
 
@@ -1972,7 +1975,10 @@ Number new_moon_at_or_after(Number tee) {
 	Number t0 = nth_new_moon(0);
 	Number phi = lunar_phase(tee); phi /= 360;
 	Number n(tee); n -= t0; n /= MEAN_SYNODIC_MONTH; n -= phi; n.round();
-	while(nth_new_moon(n) < tee) n++;
+	while(nth_new_moon(n) < tee) {
+		if(CALCULATOR->aborted()) break;
+		n++;
+	}
 	return nth_new_moon(n);
 }
 Number new_moon_before(Number tee) {
@@ -1980,7 +1986,10 @@ Number new_moon_before(Number tee) {
 	Number phi = lunar_phase(tee); phi /= 360;
 	Number n(tee); n -= t0; n /= MEAN_SYNODIC_MONTH; n -= phi; n.round();
 	n--;
-	while(nth_new_moon(n) < tee) n++;
+	while(nth_new_moon(n) < tee) {
+		if(CALCULATOR->aborted()) break;
+		n++;
+	}
 	n--;
 	return nth_new_moon(n);
 }
@@ -2025,13 +2034,17 @@ bool chinese_no_major_solar_term(Number date) {
 	return current_major_solar_term(date) == current_major_solar_term(chinese_new_moon_on_or_after(date + 1));
 }
 bool chinese_prior_leap_month(Number m_prime, Number m) {
+	if(CALCULATOR->aborted()) return false;
 	return m >= m_prime && (chinese_no_major_solar_term(m) || chinese_prior_leap_month(m_prime, chinese_new_moon_before(m)));
 }
 Number chinese_winter_solstice_on_or_before(Number date) {
 	date++;
 	Number approx = estimate_prior_solar_longitude(270, midnight_in_china(date));
 	approx.floor(); approx--;
-	while(solar_longitude(midnight_in_china(approx + 1)) <= 270) approx++;
+	while(solar_longitude(midnight_in_china(approx + 1)) <= 270) {
+		if(CALCULATOR->aborted()) break;
+		approx++;
+	}
 	return approx;
 }
 Number chinese_new_year_in_sui(Number date) {
@@ -2041,7 +2054,10 @@ Number chinese_new_year_in_sui(Number date) {
 	Number m13 = chinese_new_moon_on_or_after(m12 + 1);
 	Number next_m11 = chinese_new_moon_before(s2 + 1);
 	next_m11 -= m12; next_m11 /= MEAN_SYNODIC_MONTH; next_m11.round();
-	if(next_m11 == 12 && (chinese_no_major_solar_term(m12) || chinese_no_major_solar_term(m13))) {m13++; return chinese_new_moon_on_or_after(m13);}
+	if(next_m11 == 12 && (chinese_no_major_solar_term(m12) || chinese_no_major_solar_term(m13))) {
+		m13++;
+		return chinese_new_moon_on_or_after(m13);
+	}
 	return m13;
 }
 Number chinese_new_year_on_or_before(Number date) {
@@ -2232,14 +2248,20 @@ bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarS
 	} else if(ct == CALENDAR_HEBREW) {
 		Number approx(date); approx -= HEBREW_EPOCH; approx /= 35975351L; approx *= 98496; approx.floor(); approx++;
 		Number year(approx); year--;
-		while(hebrew_new_year(year).isLessThanOrEqualTo(date)) year++;
+		while(hebrew_new_year(year).isLessThanOrEqualTo(date)) {
+			if(CALCULATOR->aborted()) return false;
+			year++;
+		}
 		year--;
 		bool overflow = false;
 		y = year.lintValue(&overflow);
 		if(overflow) return false;
 		m = 1;
 		if(date.isLessThan(date_to_fixed(y, 1, 1, ct))) m = 7;
-		while(date.isGreaterThan(date_to_fixed(y, m, last_day_of_hebrew_month(y, m), ct))) m++;
+		while(date.isGreaterThan(date_to_fixed(y, m, last_day_of_hebrew_month(y, m), ct))) {
+			if(CALCULATOR->aborted()) return false;
+			m++;
+		}
 		date -= date_to_fixed(y, m, 1, ct); date++;
 		d = date.lintValue();
 		return true;
@@ -2285,6 +2307,7 @@ bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarS
 		d = date.lintValue();
 		return true;
 	} else if(ct == CALENDAR_CHINESE) {
+		if(date > Number(1, 1, 8) || date < Number(-1, 1, 8)) return false;
 		Number s1 = chinese_winter_solstice_on_or_before(date);
 		Number s2 = chinese_winter_solstice_on_or_before(s1 + 370);
 		Number m12 = chinese_new_moon_on_or_after(s1 + 1);
@@ -2299,8 +2322,9 @@ bool fixed_to_date(Number date, long int &y, long int &m, long int &d, CalendarS
 		bool leap_month = (leap_year && chinese_no_major_solar_term(m1) && !chinese_prior_leap_month(m12, chinese_new_moon_before(m1)));
 		if(leap_month) m += 12;
 		Number elapsed_years(date); elapsed_years -= CHINESE_EPOCH; elapsed_years /= MEAN_TROPICAL_YEAR; elapsed_years += Number(3, 2); month /= 12; elapsed_years -= month; elapsed_years.floor();
-		elapsed_years += 60; //epoch of 2697 BC
+		elapsed_years += 60; //epoch of 2697 BCE
 		Number day(date); day -= m1; day++;
+		if(day <= 0) return false;
 		d = day.lintValue();
 		bool overflow = false;
 		y = elapsed_years.lintValue(&overflow);
@@ -2604,6 +2628,7 @@ string monthName(long int month, CalendarSystem ct, bool append_number, bool app
 
 void chineseYearInfo(long int year, long int &cycle, long int &year_in_cycle, long int &stem, long int &branch) {
 	cycle = (year - 1) / 60 + 1;
+	if(year <= 0) year += ((-year / 60) + 1) * 60;
 	year_in_cycle = ((year - 1) % 60) + 1;
 	stem = ((year_in_cycle - 1) % 10) + 1;
 	branch = ((year_in_cycle - 1) % 12) + 1;
