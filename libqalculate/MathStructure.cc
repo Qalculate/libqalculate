@@ -327,6 +327,7 @@ inline void MathStructure::init() {
 	o_unit = NULL;
 	o_prefix = NULL;
 	o_datetime = NULL;
+	b_parentheses = false;
 }
 
 MathStructure::MathStructure() {
@@ -379,6 +380,7 @@ MathStructure::MathStructure(const MathStructure &o) {
 	b_approx = o.isApproximate();
 	i_precision = o.precision();
 	m_type = o.type();
+	b_parentheses = o.inParentheses();
 }
 MathStructure::MathStructure(long int num, long int den, long int exp10) {
 	init();
@@ -519,6 +521,7 @@ void MathStructure::set(const MathStructure &o, bool merge_precision) {
 		b_approx = o.isApproximate();
 		i_precision = o.precision();
 	}
+	b_parentheses = o.inParentheses();
 	m_type = o.type();
 }
 void MathStructure::set_nocopy(MathStructure &o, bool merge_precision) {
@@ -575,6 +578,7 @@ void MathStructure::set_nocopy(MathStructure &o, bool merge_precision) {
 		b_approx = o.isApproximate();
 		i_precision = o.precision();
 	}
+	b_parentheses = o.inParentheses();
 	m_type = o.type();
 	o.unref();
 }
@@ -1563,6 +1567,7 @@ void MathStructure::transform(StructureType mtype, const MathStructure &o) {
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND_POINTER(struct_o);
+	b_parentheses = false;
 }
 void MathStructure::transform(StructureType mtype, const Number &o) {
 	MathStructure *struct_this = new MathStructure();
@@ -1571,6 +1576,7 @@ void MathStructure::transform(StructureType mtype, const Number &o) {
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND_NEW(o);
+	b_parentheses = false;
 }
 void MathStructure::transform(StructureType mtype, int i) {
 	MathStructure *struct_this = new MathStructure();
@@ -1579,6 +1585,7 @@ void MathStructure::transform(StructureType mtype, int i) {
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND_POINTER(new MathStructure(i, 1, 0));
+	b_parentheses = false;
 }
 void MathStructure::transform(StructureType mtype, Unit *u) {
 	MathStructure *struct_this = new MathStructure();
@@ -1587,6 +1594,7 @@ void MathStructure::transform(StructureType mtype, Unit *u) {
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND_NEW(u);
+	b_parentheses = false;
 }
 void MathStructure::transform(StructureType mtype, Variable *v) {
 	MathStructure *struct_this = new MathStructure();
@@ -1595,6 +1603,7 @@ void MathStructure::transform(StructureType mtype, Variable *v) {
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND_NEW(v);
+	b_parentheses = false;
 }
 void MathStructure::transform(StructureType mtype, string sym) {
 	MathStructure *struct_this = new MathStructure();
@@ -1603,6 +1612,7 @@ void MathStructure::transform(StructureType mtype, string sym) {
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND_NEW(sym);
+	b_parentheses = false;
 }
 void MathStructure::transform_nocopy(StructureType mtype, MathStructure *o) {
 	MathStructure *struct_this = new MathStructure();
@@ -1611,6 +1621,7 @@ void MathStructure::transform_nocopy(StructureType mtype, MathStructure *o) {
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
 	APPEND_POINTER(o);
+	b_parentheses = false;
 }
 void MathStructure::transform(StructureType mtype) {
 	MathStructure *struct_this = new MathStructure();
@@ -1618,10 +1629,12 @@ void MathStructure::transform(StructureType mtype) {
 	clear(true);
 	m_type = mtype;
 	APPEND_POINTER(struct_this);
+	b_parentheses = false;
 }
 void MathStructure::transform(MathFunction *o) {
 	transform(STRUCT_FUNCTION);
 	setFunction(o);
+	b_parentheses = false;
 }
 void MathStructure::transform(ComparisonType ctype, const MathStructure &o) {
 	MathStructure *struct_o = new MathStructure(o);
@@ -1632,6 +1645,7 @@ void MathStructure::transform(ComparisonType ctype, const MathStructure &o) {
 	ct_comp = ctype;
 	APPEND_POINTER(struct_this);
 	APPEND_POINTER(struct_o);
+	b_parentheses = false;
 }
 void transform(ComparisonType ctype, const MathStructure &o);
 void MathStructure::add(const MathStructure &o, MathOperation op, bool append) {
@@ -28098,4 +28112,8 @@ const Number &MathStructure::overallCoefficient() const {
 	}
 	return nr_zero;
 }
+
+bool MathStructure::inParentheses() const {return b_parentheses;}
+void MathStructure::setInParentheses(bool b) {b_parentheses = b;}
+
 

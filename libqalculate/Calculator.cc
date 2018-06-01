@@ -2382,6 +2382,134 @@ void Calculator::moveRPNRegisterDown(size_t index) {
 	}
 }
 
+#define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
+string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po) {
+	if(msecs > 0) startControl(msecs);
+	PrintOptions printops = po;
+	EvaluationOptions evalops = eo;
+	MathStructure mstruct;
+	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false;
+	string from_str = str, to_str;
+	if(separateToExpression(from_str, to_str, evalops, true)) {
+		remove_duplicate_blanks(to_str);
+		string to_str1, to_str2;
+		size_t ispace = to_str.find_first_of(SPACES);
+		if(ispace != string::npos) {
+			to_str1 = to_str.substr(0, ispace);
+			remove_blank_ends(to_str1);
+			to_str2 = to_str.substr(ispace + 1);
+			remove_blank_ends(to_str2);
+		}
+		if(equalsIgnoreCase(to_str, "hex") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "hexadecimal", _("hexadecimal"))) {
+			str = from_str;
+			printops.base = BASE_HEXADECIMAL;
+		} else if(equalsIgnoreCase(to_str, "bin") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "binary", _("binary"))) {
+			str = from_str;
+			printops.base = BASE_BINARY;
+		} else if(equalsIgnoreCase(to_str, "oct") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "octal", _("octal"))) {
+			str = from_str;
+			printops.base = BASE_OCTAL;
+		} else if(equalsIgnoreCase(to_str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "duodecimal", _("duodecimal"))) {
+			str = from_str;
+			printops.base = BASE_DUODECIMAL;
+		} else if(equalsIgnoreCase(to_str, "roman") || equalsIgnoreCase(to_str, _("roman"))) {
+			str = from_str;
+			printops.base = BASE_ROMAN_NUMERALS;
+		} else if(equalsIgnoreCase(to_str, "sexa") || equalsIgnoreCase(to_str, "sexagesimal") || equalsIgnoreCase(to_str, _("sexagesimal"))) {
+			str = from_str;
+			printops.base = BASE_SEXAGESIMAL;
+		} else if(equalsIgnoreCase(to_str, "time") || equalsIgnoreCase(to_str, _("time"))) {
+			str = from_str;
+			printops.base = BASE_TIME;
+		} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
+			str = from_str;
+			printops.time_zone = TIME_ZONE_UTC;
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction"))) {
+			str = from_str;
+			do_fraction = true;
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "factors", _("factors"))) {
+			str = from_str;
+			do_factors = true;
+		}  else if(equalsIgnoreCase(to_str, "partial fraction") || equalsIgnoreCase(to_str, _("partial fraction"))) {
+			str = from_str;
+			do_pfe = true;
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "bases", _("bases"))) {
+			do_bases = true;
+			str = from_str;
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "calendars", _("calendars"))) {
+			do_calendars = true;
+			str = from_str;
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "optimal", _("optimal"))) {
+			str = from_str;
+			evalops.parse_options.units_enabled = true;
+			evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "base", _("base"))) {
+			str = from_str;
+			evalops.parse_options.units_enabled = true;
+			evalops.auto_post_conversion = POST_CONVERSION_BASE;
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base")) && s2i(to_str2) >= 2 && (s2i(to_str2) <= 32 || s2i(to_str2) == BASE_SEXAGESIMAL)) {
+			str = from_str;
+			printops.base = s2i(to_str2);
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _("mixed"))) {
+			str = from_str;
+			evalops.parse_options.units_enabled = true;
+			evalops.auto_post_conversion = POST_CONVERSION_NONE;
+			evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
+		}
+	}		
+
+	mstruct = calculate(str, evalops);
+	
+	if(do_factors) {
+		if(!mstruct.integerFactorize()) mstruct.factorize(evalops, true, -1, 0, true, 2);
+	}
+	if(do_pfe) mstruct.expandPartialFractions(evalops);
+
+	printops.allow_factorization = printops.allow_factorization || evalops.structuring == STRUCTURING_FACTORIZE || do_factors;
+	
+	if(do_calendars && mstruct.isDateTime()) {
+		str = "";
+		bool b_fail;
+		long int y, m, d;
+#define PRINT_CALENDAR(x, c) if(!str.empty()) {str += "\n";} str += x; str += " "; b_fail = !dateToCalendar(*mstruct.datetime(), y, m, d, c); if(b_fail) {str += _("failed");} else {str += i2s(d); str += " "; str += monthName(m, c, true); str += " "; str += i2s(y);}
+		PRINT_CALENDAR(string(_("Gregorian:")), CALENDAR_GREGORIAN);
+		PRINT_CALENDAR(string(_("Hebrew:")), CALENDAR_HEBREW);
+		PRINT_CALENDAR(string(_("Islamic:")), CALENDAR_ISLAMIC);
+		PRINT_CALENDAR(string(_("Persian:")), CALENDAR_PERSIAN);
+		PRINT_CALENDAR(string(_("Indian national:")), CALENDAR_INDIAN);
+		PRINT_CALENDAR(string(_("Chinese:")), CALENDAR_CHINESE); 
+		long int cy, yc, st, br;
+		chineseYearInfo(y, cy, yc, st, br);
+		if(!b_fail) {str += " ("; str += chineseStemName(st); str += string(" "); str += chineseBranchName(br); str += ")";}
+		PRINT_CALENDAR(string(_("Julian:")), CALENDAR_JULIAN);
+		PRINT_CALENDAR(string(_("Revised julian:")), CALENDAR_MILANKOVIC);
+		PRINT_CALENDAR(string(_("Coptic:")), CALENDAR_COPTIC);
+		PRINT_CALENDAR(string(_("Ethiopian:")), CALENDAR_ETHIOPIAN);
+		stopControl();
+		return str;
+	} else if(do_bases) {
+		printops.base = BASE_BINARY;
+		str = print(mstruct, 0, printops);
+		str += " = ";
+		printops.base = BASE_OCTAL;
+		str += print(mstruct, 0, printops);
+		str += " = ";
+		printops.base = BASE_DECIMAL;
+		str += print(mstruct, 0, printops);
+		str += " = ";
+		printops.base = BASE_HEXADECIMAL;
+		str += print(mstruct, 0, printops);
+		stopControl();
+		return str;
+	} else if(do_fraction) {
+		if(mstruct.isNumber()) printops.number_fraction_format = FRACTION_COMBINED;
+		else printops.number_fraction_format = FRACTION_FRACTIONAL;
+	}
+	mstruct.format(printops);
+	str = mstruct.print(printops);
+	stopControl();
+	return str;
+}
 bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
 	mstruct->set(string(_("calculating...")), false, true);
 	b_busy = true;
@@ -4459,6 +4587,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				}
 			}
 			if(!b) {
+				if(str.length() >= i_dquote + strlen("″") && is_in(NUMBERS, str[i_dquote + strlen("″")])) str.insert(i_dquote + strlen("″"), " ");
 				str.replace(i_dquote, strlen("″"), b_degree ? "arcsec" : "in");
 				i_op = i_dquote;
 			}
@@ -4533,6 +4662,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					if(i_op == string::npos) break;
 					i_op++;
 				} else {
+					if(str.length() >= i_quote + strlen("′") && is_in(NUMBERS, str[i_quote + strlen("′")])) str.insert(i_quote + strlen("′"), " ");
 					str.replace(i_quote, strlen("′"), b_degree ? "arcmin" : "ft");
 					i_op = i_quote;
 				}
@@ -5149,17 +5279,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						}
 						case 'u': {
 							replace_text_by_unit_place:
-							/*if(str.length() > str_index + name_length && is_in(NUMBERS, str[str_index + name_length]) && (str.length() == str_index + name_length + 1 || is_not_in(NUMBERS, str[str_index + name_length + 1])) && !((Unit*) object)->isCurrency()) {
-								if(str_index + name_length + 1 == str.length()) {
-									str.insert(str_index + name_length, 1, POWER_CH);
-								} else {
-									str.insert(str_index + name_length + 1, 1, RIGHT_PARENTHESIS_CH);
-									str.insert(str_index + name_length, 1, POWER_CH);
-									str.insert(str_index, 1, LEFT_PARENTHESIS_CH);
-									str_index++;
-								}
-							}*/
-							if(str.length() > str_index + name_length && is_in(NUMBERS INTERNAL_NUMBER_CHARS, str[str_index + name_length]) && !((Unit*) object)->isCurrency()) {
+							if(str.length() > str_index + name_length && is_in("23", str[str_index + name_length]) && (str.length() == str_index + name_length + 1 || is_not_in(NUMBER_ELEMENTS, str[str_index + name_length + 1])) && *name != SIGN_DEGREE && !((Unit*) object)->isCurrency()) {
 								str.insert(str_index + name_length, 1, POWER_CH);
 							}
 							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
@@ -5653,6 +5773,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		} else {
 			parseOperators(mstruct2, str2, po);
 		}
+		mstruct2->setInParentheses(true);
 		str2 = ID_WRAP_LEFT;
 		str2 += i2s(addId(mstruct2));
 		str2 += ID_WRAP_RIGHT;
@@ -6378,6 +6499,47 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		if(b) {
 			parseAdd(str, mstruct, po, OPERATION_MULTIPLY, append);
+			if(po.parsing_mode == PARSING_MODE_ADAPTIVE && mstruct->isMultiplication() && mstruct->size() >= 2 && !(*mstruct)[0].inParentheses()) {
+				Unit *u1 = NULL; Prefix *p1 = NULL;
+				bool b_plus = false;
+				if((*mstruct)[0].isMultiplication() && (*mstruct)[0].size() == 2 && (*mstruct)[0][0].isNumber() && (*mstruct)[0][1].isUnit()) {u1 = (*mstruct)[0][1].unit(); p1 = (*mstruct)[0][1].prefix();}
+				if(u1 && u1->subtype() == SUBTYPE_BASE_UNIT && (u1->referenceName() == "m" || (!p1 && u1->referenceName() == "L")) && (!p1 || (p1->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p1)->exponent() <= 3 && ((DecimalPrefix*) p1)->exponent() > -3))) {
+					b_plus = true;
+					for(size_t i2 = 1; i2 < mstruct->size(); i2++) {
+						if(!(*mstruct)[i2].inParentheses() && (*mstruct)[i2].isMultiplication() && (*mstruct)[i2].size() == 2 && (*mstruct)[i2][0].isNumber() && (*mstruct)[i2][1].isUnit() && (*mstruct)[i2][1].unit() == u1) {
+							Prefix *p2 = (*mstruct)[i2][1].prefix();
+							if(p1 && p2) b_plus = p1->type() == PREFIX_DECIMAL && p2->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p1)->exponent() > ((DecimalPrefix*) p2)->exponent() && ((DecimalPrefix*) p2)->exponent() >= -3;
+							else if(p2) b_plus = p2->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p2)->exponent() < 0 && ((DecimalPrefix*) p2)->exponent() >= -3;
+							else if(p1) b_plus = p1->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p1)->exponent() > 1;
+							else b_plus = false;
+							if(!b_plus) break;
+							p1 = p2;
+						} else {
+							b_plus = false;
+							break;
+						}
+					}
+				} else if(u1 && !p1 && u1->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u1)->mixWithBase()) {
+					b_plus = true;
+					for(size_t i2 = 1; i2 < mstruct->size(); i2++) {
+						if(!(*mstruct)[i2].inParentheses() && (*mstruct)[i2].isMultiplication() && (*mstruct)[i2].size() == 2 && (*mstruct)[i2][0].isNumber() && (*mstruct)[i2][1].isUnit() && u1->isChildOf((*mstruct)[i2][1].unit()) && !(*mstruct)[i2][1].prefix() && (i2 == mstruct->size() - 1 || ((*mstruct)[i2][1].unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) (*mstruct)[i2][1].unit())->mixWithBase()))) {
+							while(((AliasUnit*) u1)->firstBaseUnit() != (*mstruct)[i2][1].unit()) {
+								u1 = ((AliasUnit*) u1)->firstBaseUnit();
+								if(u1->subtype() != SUBTYPE_ALIAS_UNIT || !((AliasUnit*) u1)->mixWithBase()) {
+									b_plus = false;
+									break;
+								}
+							}
+							if(!b_plus) break;
+							u1 = (*mstruct)[i2][1].unit();
+						} else {
+							b_plus = false;
+							break;
+						}
+					}
+				}
+				if(b_plus) mstruct->setType(STRUCT_ADDITION);
+			}
 			if(po.preserve_format) {
 				while(minus_count > 0) {
 					mstruct->transform(STRUCT_NEGATE);
