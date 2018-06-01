@@ -167,6 +167,8 @@ class MathStructure {
 		ComparisonType ct_comp;
 		bool b_protected;
 		
+		bool b_parentheses;
+		
 		bool isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions &eo2, const MathStructure &x_var, MathStructure *morig = NULL);
 		void init();
 	
@@ -887,6 +889,9 @@ class MathStructure {
 		bool isolate_x(const EvaluationOptions &eo, const EvaluationOptions &feo, const MathStructure &x_var = m_undefined, bool check_result = false);
 		//@}
 		
+		bool inParentheses() const;
+		void setInParentheses(bool b = true);
+
 };
 
 ostream& operator << (ostream &os, const MathStructure&);

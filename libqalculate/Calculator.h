@@ -27,19 +27,26 @@
 * The main parts of the library is the almighty Calculator class, the MathStructure class for mathematical expressions and classes for objects in an expression,
 * mostly of the class Numbers and sub classes of ExpressionItem.
 *
-* A simple application using libqalculate need only create a calculator object, perhaps load definitions (functions, variables, units, etc.) and use the calculate function as follows:
-* \code new Calculator();
+* A simple application using libqalculate need only create a calculator object, perhaps load definitions (functions, variables, units, etc.), and calculate (and output) an expression as follows:
+* \code 
+* new Calculator();
 * CALCULATOR->loadGlobalDefinitions();
 * CALCULATOR->loadLocalDefinitions();
+* cout << CALCULATOR->calculateAndPrint("1 + 1", 2000) << endl;\endcode
+* In the above example, the calculation is terminated after two seconds (2000 ms), if it is not finished before then.
+* Applications using localized numbers should first call Calculalor::unlocalizeExpression() on the expression.
+*
+* A less simple application might calculate and output the expression separately.
+* \code
 * EvaluationOptions eo;
 * MathStructure result;
-* CALCULATOR->calculate(&mstruct, "1 + 1", 2000, eo);\endcode
-* In the above example, the calculation is terminated after two seconds (2000 ms), if it is not finished before then.
+* CALCULATOR->calculate(&mstruct, unlocalizeExpression("1 + 1"), 2000, eo);\endcode
 *
 * More complex usage mainly involves manipulating objects of the MathStructure class directly.
 *
 * To display the resulting expression use Calculator::print() as follows:
-* \code PrintOptions po;
+* \code
+* PrintOptions po;
 * string result_str = CALCULATOR->print(result, 2000, po);\endcode
 * Alternatively MathStructure::format() followed by MathStructure::print() can be used, whithout the possiblity to specify a time limit.
 *
@@ -386,6 +393,19 @@ class Calculator {
 	* @returns The result of the calculation.
 	*/
 	MathStructure calculate(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options, string to_str = "");
+	/** Calculates an expression.and outputs the result to a text string. The expression should be unlocalized first with unlocalizeExpression().
+	* 
+	* Unlike other functions for expression evaluation this function handles ending "to"-commmands, in addition to unit conversion, such "to hexadecimal" or to "fractions", similar to the qalc application.
+	* 
+	*
+	* @param str Expression.
+	* @param msecs The maximum time for the calculation in milliseconds. If msecs <= 0 the time will be unlimited.
+	* @param eo Options for the evaluation and parsing of the expression.
+	* @param po Result formatting options.
+	* @returns The result of the calculation.
+	* \since 2.6.0
+	*/
+	string calculateAndPrint(string str, int msecs = 10000, const EvaluationOptions &eo = default_evaluation_options, const PrintOptions &po = default_print_options);
 	int testCondition(string expression);
 	//@}
 
