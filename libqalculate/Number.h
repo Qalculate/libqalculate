@@ -412,7 +412,7 @@ class Number {
 		void setNegative(bool is_negative);
 		bool abs();
 		bool signum();
-		bool round(const Number &o);
+		bool round(const Number &o, bool halfway_to_even = true);
 		bool floor(const Number &o);
 		bool ceil(const Number &o);
 		bool trunc(const Number &o);
@@ -420,7 +420,7 @@ class Number {
 		bool isIntegerDivisible(const Number &o) const;
 		bool isqrt();
 		bool isPerfectSquare() const;
-		bool round();
+		bool round(bool halfway_to_even = true);
 		bool floor();
 		bool ceil();
 		bool trunc();	

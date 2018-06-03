@@ -1,6 +1,12 @@
+2018-06-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* When using two's complement representation on negative non-integers,
+	  use the same number of decimals as without two's complement representation
+	* Fix round() for negative rational numbers!
+
 2018-06-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Interpret 5m 7cm (and similar, for m and L) as 5m+5cm, and 3h 5min (and similar) as 3h+5min
+	* Interpret 5m 7cm (and similar, for m and L) as 5m+7cm, and 3h 5min (and similar) as 3h+5min
 	* Interpret m2 and m3 as m^2 and m^3 (as before), but m4 as m*4
 
 2018-05-31 Hanna Knutsson <hanna.knutsson@protonmail.com>

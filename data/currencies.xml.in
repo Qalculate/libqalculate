@@ -291,7 +291,7 @@
     </builtin_unit>
     <builtin_unit name="KHR">
       <_title>Cambodian Riel</_title>
-      <_names>ar:KHR,au:&#x17DB;</_names>
+      <_names>ar:KHR,aiu:&#x17DB;</_names>
       <_countries>Cambodia</_countries>
     </builtin_unit>
     <builtin_unit name="XAF">
@@ -519,7 +519,7 @@
     </builtin_unit>
     <builtin_unit name="MVR">
       <_title>Maldivian Rufiyaa</_title>
-      <_names>ar:MVR,au:&#x0783;</_names>
+      <_names>ar:MVR</_names>
       <_countries>Maldives</_countries>
     </builtin_unit>
     <builtin_unit name="MRO">
