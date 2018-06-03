@@ -4084,7 +4084,7 @@ bool Number::signum() {
 	if(isNegative()) {set(-1, 1); return true;}
 	return false;
 }
-bool Number::round() {
+bool Number::round(bool halfway_to_even) {
 	if(includesInfinity() || hasImaginaryPart()) return false;
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		if(!isInteger()) {
@@ -4095,15 +4095,16 @@ bool Number::round() {
 			mpz_mul_ui(mpq_denref(r_value), mpq_denref(r_value), 2);
 			mpz_fdiv_qr(mpq_numref(r_value), i_rem, mpq_numref(r_value), mpq_denref(r_value));
 			mpz_set_ui(mpq_denref(r_value), 1);
-			if(mpz_sgn(i_rem) == 0 && mpz_odd_p(mpq_numref(r_value))) {
-				if(mpz_sgn(mpq_numref(r_value)) < 0) mpz_add(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
-				else mpz_sub(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
+			if(mpz_sgn(i_rem) == 0 && (!halfway_to_even || mpz_odd_p(mpq_numref(r_value)))) {
+				if(halfway_to_even) mpz_sub(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
+				else if(mpz_sgn(mpq_numref(r_value)) <= 0) mpz_sub(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
 			}
 			mpz_clear(i_rem);
 		}
 	} else {
 		mpz_set_ui(mpq_denref(r_value), 1);
 		intervalToMidValue();
+		if(!halfway_to_even) mpfr_rint_round(fl_value, fl_value, MPFR_RNDN);
 		mpfr_get_z(mpq_numref(r_value), fl_value, MPFR_RNDN);
 		n_type = NUMBER_TYPE_RATIONAL;
 		mpfr_clears(fl_value, fu_value, NULL);
@@ -4163,13 +4164,13 @@ bool Number::trunc() {
 	}
 	return true;
 }
-bool Number::round(const Number &o) {
+bool Number::round(const Number &o, bool halfway_to_even) {
 	if(isInfinite() || o.isInfinite()) {
 		return divide(o) && round();
 	}
 	if(hasImaginaryPart()) return false;
 	if(o.hasImaginaryPart()) return false;
-	return divide(o) && round();
+	return divide(o) && round(halfway_to_even);
 }
 bool Number::floor(const Number &o) {
 	if(isInfinite() || o.isInfinite()) {
@@ -6448,6 +6449,19 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			nr += *this;
 			PrintOptions po2 = po;
 			po2.twos_complement = false;
+			if(!nr.isInteger() && po2.number_fraction_format == FRACTION_DECIMAL) {
+				string str = print(po2);
+				size_t i = str.find(po2.decimalpoint());
+				if(i != string::npos) {
+					po2.min_decimals = str.length() - (i + po2.decimalpoint().length());
+					po2.max_decimals = po2.min_decimals;
+					po2.use_max_decimals = true;
+					po2.use_min_decimals = true;
+				} else {
+					po2.max_decimals = 0;
+					po2.use_max_decimals = true;
+				}
+			}
 			po2.binary_bits = bits;
 			return nr.print(po2, ips);
 		} else if(po.binary_bits == 0) {
@@ -7411,7 +7425,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		vector<mpz_t*> remainders;
 		bool started = false;
 		long int expo = 0;
-		long int precision2 = precision;
+		long int precision2 = precision_base;
 		int num_sign = mpz_sgn(num);
 		long int min_l10 = 0, max_l10 = 0;
 		bool applied_expo = false;
