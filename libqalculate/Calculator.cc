@@ -2447,7 +2447,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			str = from_str;
 			evalops.parse_options.units_enabled = true;
 			evalops.auto_post_conversion = POST_CONVERSION_BASE;
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base")) && s2i(to_str2) >= 2 && (s2i(to_str2) <= 32 || s2i(to_str2) == BASE_SEXAGESIMAL)) {
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base")) && s2i(to_str2) >= 2 && (s2i(to_str2) <= 36 || s2i(to_str2) == BASE_SEXAGESIMAL)) {
 			str = from_str;
 			printops.base = s2i(to_str2);
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _("mixed"))) {
