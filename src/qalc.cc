@@ -2240,7 +2240,7 @@ int main(int argc, char *argv[]) {
 				if(check_exchange_rates()) mstruct->set(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
 				else mstruct->set(mstruct_new);
 				result_action_executed();
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str1, "base", _("base")) && s2i(str2) >= 2 && (s2i(str2) <= 32 || s2i(str2) == BASE_SEXAGESIMAL)) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str1, "base", _("base")) && s2i(str2) >= 2 && (s2i(str2) <= 36 || s2i(str2) == BASE_SEXAGESIMAL)) {
 				int save_base = printops.base;
 				printops.base = s2i(str2);
 				setResult(NULL, false);

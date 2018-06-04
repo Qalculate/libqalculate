@@ -106,7 +106,7 @@ string format_number_string(string cl_str, int base, BaseDisplay base_display, b
 				cl_str.insert(i, 1, ' ');
 			}
 		}
-	}	
+	}
 	string str = "";
 	if(show_neg) {
 		if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str += SIGN_MINUS;
@@ -6425,63 +6425,6 @@ ostream& operator << (ostream &os, const Number &nr) {
 }
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
 	if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
-	if(po.base == 2 && po.twos_complement && isReal()) {
-		if(isNegative()) {
-			Number nr;
-			unsigned int bits = po.binary_bits;
-			if(bits == 0) {
-				nr = *this;
-				nr.floor();
-				nr++;
-				bits = nr.integerLength() + 1;
-				if(bits <= 8) bits = 8;
-				else if(bits <= 16) bits = 16;
-				else if(bits <= 32) bits = 32;
-				else if(bits <= 64) bits = 64;
-				else if(bits <= 128) bits = 128;
-				else {
-					bits = (unsigned int) ::ceil(::log2(bits));
-					bits = ::pow(2, bits);
-				}
-			}
-			nr = bits;
-			nr.exp2();
-			nr += *this;
-			PrintOptions po2 = po;
-			po2.twos_complement = false;
-			if(!nr.isInteger() && po2.number_fraction_format == FRACTION_DECIMAL) {
-				string str = print(po2);
-				size_t i = str.find(po2.decimalpoint());
-				if(i != string::npos) {
-					po2.min_decimals = str.length() - (i + po2.decimalpoint().length());
-					po2.max_decimals = po2.min_decimals;
-					po2.use_max_decimals = true;
-					po2.use_min_decimals = true;
-				} else {
-					po2.max_decimals = 0;
-					po2.use_max_decimals = true;
-				}
-			}
-			po2.binary_bits = bits;
-			return nr.print(po2, ips);
-		} else if(po.binary_bits == 0) {
-			Number nr(*this);
-			nr.ceil();
-			unsigned int bits = nr.integerLength() + 1;
-			if(bits <= 8) bits = 8;
-			else if(bits <= 16) bits = 16;
-			else if(bits <= 32) bits = 32;
-			else if(bits <= 64) bits = 64;
-			else if(bits <= 128) bits = 128;
-			else {
-				bits = (unsigned int) ::ceil(::log2(bits));
-				bits = ::pow(2, bits);
-			}
-			PrintOptions po2 = po;
-			po2.binary_bits = bits;
-			return print(po2, ips);
-		}
-	}
 	if(ips.minus) *ips.minus = false;
 	if(ips.exp_minus) *ips.exp_minus = false;
 	if(ips.num) *ips.num = "";
@@ -6665,16 +6608,74 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(isInteger()) {
 
 		long int length = mpz_sizeinbase(mpq_numref(r_value), base);
-		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < length && ((approx || (base == 10 && po.min_exp != 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT))) || length > 1000000L)) {
+		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < length && ((approx || (base == 10 && po.min_exp != 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT))) || length > (po.base == 10 ? 1000000L : 100000L))) {
 			Number nr(*this);
 			if(nr.setToFloatingPoint()) {
 				PrintOptions po2 = po;
 				po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
-				str = nr.print(po2, ips);
-				return str;
+				return nr.print(po2, ips);
 			}
 		}
 		
+		if(po.base == 2) {
+			if(po.twos_complement && isNegative()) {
+
+				Number nr;
+				unsigned int bits = po.binary_bits;
+				if(bits == 0) {
+					nr = *this;
+					nr.floor();
+					nr++;
+					bits = nr.integerLength() + 1;
+					if(bits <= 8) bits = 8;
+					else if(bits <= 16) bits = 16;
+					else if(bits <= 32) bits = 32;
+					else if(bits <= 64) bits = 64;
+					else if(bits <= 128) bits = 128;
+					else {
+						bits = (unsigned int) ::ceil(::log2(bits));
+						bits = ::pow(2, bits);
+					}
+				}
+				nr = bits;
+				nr.exp2();
+				nr += *this;
+				PrintOptions po2 = po;
+				po2.twos_complement = false;
+				if(!nr.isInteger() && po2.number_fraction_format == FRACTION_DECIMAL) {
+					string str = print(po2);
+					size_t i = str.find(po2.decimalpoint());
+					if(i != string::npos) {
+						po2.min_decimals = str.length() - (i + po2.decimalpoint().length());
+						po2.max_decimals = po2.min_decimals;
+						po2.use_max_decimals = true;
+						po2.use_min_decimals = true;
+					} else {
+						po2.max_decimals = 0;
+						po2.use_max_decimals = true;
+					}
+				}
+				po2.binary_bits = bits;
+				return nr.print(po2, ips);
+			} else if(po.binary_bits == 0) {
+				Number nr(*this);
+				nr.ceil();
+				unsigned int bits = nr.integerLength() + 1;
+				if(bits <= 8) bits = 8;
+				else if(bits <= 16) bits = 16;
+				else if(bits <= 32) bits = 32;
+				else if(bits <= 64) bits = 64;
+				else if(bits <= 128) bits = 128;
+				else {
+					bits = (unsigned int) ::ceil(::log2(bits));
+					bits = ::pow(2, bits);
+				}
+				PrintOptions po2 = po;
+				po2.binary_bits = bits;
+				return print(po2, ips);
+			}
+		}
+
 		mpz_t ivalue;
 		mpz_init_set(ivalue, mpq_numref(r_value));
 		bool neg = (mpz_sgn(ivalue) < 0);
@@ -7265,6 +7266,36 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		float_rerun:
 		
+		string str_bexp;
+		
+		if(base != 10 && mpfr_get_exp(f_mid) > 100000L) {
+			mpfr_t f_log, f_log_b;
+			mpfr_inits2(mpfr_get_prec(f_mid), f_log, f_log_b, NULL);
+			bool b_neg = mpfr_sgn(f_mid) < 0;
+			if(b_neg) mpfr_neg(f_mid, f_mid, MPFR_RNDN);
+			if(base == 2) {
+				mpfr_log2(f_log, f_mid, MPFR_RNDN);
+			} else {
+				mpfr_log(f_log, f_mid, MPFR_RNDN);
+				mpfr_log_ui(f_log_b, base, MPFR_RNDN);
+				mpfr_div(f_log, f_log, f_log_b, MPFR_RNDN);
+			}
+			mpfr_trunc(f_log, f_log);
+			PRINT_MPFR(f_log, 10);
+			mpz_t z_exp;
+			mpz_init(z_exp);
+			mpfr_get_z(z_exp, f_log, MPFR_RNDN);
+			Number nr_bexp;
+			nr_bexp.setInternal(z_exp);
+			PrintOptions po2 = po;
+			po2.twos_complement = false;
+			po2.binary_bits = 0;
+			str_bexp = nr_bexp.print(po2);
+			mpfr_ui_pow(f_log, base, f_log, MPFR_RNDN);
+			mpfr_div(f_mid, f_mid, f_log, MPFR_RNDN);
+			if(b_neg) mpfr_neg(f_mid, f_mid, MPFR_RNDN);
+		}
+		
 		mpfr_t v;
 		mpfr_init2(v, mpfr_get_prec(f_mid));
 		mpfr_t f_log, f_base, f_log_base;
@@ -7379,7 +7410,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			str.erase(str.end() - 1);
 		}
 		
-		str = format_number_string(str, base, po.base_display, !ips.minus && neg, true, po);
+		if(!str_bexp.empty()) {
+			PrintOptions po2 = po;
+			po2.binary_bits = 0;
+			str = format_number_string(str, base, po.base_display, !ips.minus && neg, true, po2);
+		} else {
+			str = format_number_string(str, base, po.base_display, !ips.minus && neg, true, po);
+		}
 		
 		if(expo != 0) {
 			if(ips.iexp) *ips.iexp = expo;
@@ -7395,6 +7432,25 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				str += i2s(expo);
 			}
 		}
+		if(!str_bexp.empty()) {
+			if(ips.exp) {
+				*ips.exp = str_bexp;
+			} else {
+				if(po.spacious) str += " ";
+				if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
+				else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
+				else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
+				else str += "*";
+				if(po.spacious) str += " ";
+				str += i2s(base);
+				str += "^";
+				str += str_bexp;
+				if(ips.depth > 0) {
+					str.insert(0, "(");
+					str += ")";
+				}
+			}
+		}
 		if(ips.minus) *ips.minus = neg;
 		if(ips.num) *ips.num = str;
 		mpfr_clears(f_mid, v, f_log, f_base, f_log_base, NULL);
@@ -7404,7 +7460,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	} else if(base != BASE_ROMAN_NUMERALS && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 		long int numlength = mpz_sizeinbase(mpq_numref(r_value), base);
 		long int denlength = mpz_sizeinbase(mpq_denref(r_value), base);
-		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < labs(numlength - denlength) && (approx || (po.min_exp != 0 && base == 10))) {
+		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < labs(numlength - denlength) && (approx || (po.min_exp != 0 && base == 10) || numlength - denlength > (po.base == 10 ? 1000000L : 100000L))) {
 			Number nr(*this);
 			if(nr.setToFloatingPoint()) {
 				PrintOptions po2 = po;

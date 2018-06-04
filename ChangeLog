@@ -1,3 +1,8 @@
+2018-06-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Only use two's complement representation for integers
+	* Use a * base^b for extremely long numbers in bases other than decimal
+
 2018-06-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* When using two's complement representation on negative non-integers,
