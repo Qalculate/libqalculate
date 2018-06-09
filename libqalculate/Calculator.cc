@@ -1594,7 +1594,7 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "7293.79", 1, "", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "6511.42", 1, "", false, true, true));
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
@@ -9989,7 +9989,7 @@ bool Calculator::loadExchangeRates() {
 	}
 	Unit *u_usd = getUnit("USD");
 	if(!u_usd) return true;
-	string sbuffer;
+	/*string sbuffer;
 	filename = buildPath(getLocalDataDir(), "rates.json");
 	ifstream file(filename.c_str());
 	if(file.is_open()) {
@@ -10053,6 +10053,79 @@ bool Calculator::loadExchangeRates() {
 		}
 		i = sbuffer.find("\"currency_code\":", i);
 	}
+	file.close();*/
+	
+	string sbuffer;
+	filename = buildPath(getLocalDataDir(), "rates.html");
+	ifstream file(filename.c_str());
+	if(file.is_open()) {
+		std::stringstream ssbuffer;
+		ssbuffer << file.rdbuf();
+		sbuffer = ssbuffer.str();
+	}
+	if(sbuffer.empty()) {
+		if(file.is_open()) file.close();
+		file.clear();
+		filename = buildPath(getGlobalDefinitionsDir(), "rates.html");
+		file.open(filename.c_str());
+		if(!file.is_open()) return true;
+		std::stringstream ssbuffer;
+		ssbuffer << file.rdbuf();
+		sbuffer = ssbuffer.str();
+	}
+	
+	string sname;
+	size_t i = sbuffer.find("class=\'country\'");
+	while(i != string::npos) {
+		currency = ""; sname = ""; rate = "";
+		i += 15;
+		size_t i2 = sbuffer.find("data-currency-code=\"", i);
+		if(i2 != string::npos) {
+			i2 += 19;
+			size_t i3 = sbuffer.find("\"", i2 + 1);
+			if(i3 != string::npos) {
+				currency = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
+				remove_blank_ends(currency);
+			}
+		}
+		i2 = sbuffer.find("data-currency-name=\'", i);
+		if(i2 != string::npos) {
+			i2 += 19;
+			size_t i3 = sbuffer.find("|", i2 + 1);
+			if(i3 != string::npos) {
+				sname = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
+				remove_blank_ends(sname);
+			}
+		}
+		i2 = sbuffer.find("data-rate=\'", i);
+		if(i2 != string::npos) {
+			i2 += 10;
+			size_t i3 = sbuffer.find("'", i2 + 1);
+			if(i3 != string::npos) {
+				rate = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
+				remove_blank_ends(rate);
+			}
+		}
+		if(currency.length() == 3 && currency[0] >= 'A' && currency[0] <= 'Z' && !rate.empty()) {
+			u = getUnit(currency);
+			if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd)) {
+				rate = "1/" + rate;
+				if(!u) {
+					u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
+					if(u) u->setHidden(true);
+				} else {
+					((AliasUnit*) u)->setBaseUnit(u_usd);
+					((AliasUnit*) u)->setExpression(rate);
+				}
+				if(u) {
+					u->setApproximate();
+					u->setPrecision(-2);
+					u->setChanged(false);
+				}
+			}
+		}
+		i = sbuffer.find("class=\'country\'", i);
+	}
 	file.close();
 	
 	filename = buildPath(getLocalDataDir(), "btc.json");
@@ -10088,7 +10161,8 @@ bool Calculator::canFetch() {
 string Calculator::getExchangeRatesFileName(int index) {
 	switch(index) {
 		case 1: {return buildPath(getLocalDataDir(), "eurofxref-daily.xml");}
-		case 2: {return buildPath(getLocalDataDir(), "rates.json");}
+		//case 2: {return buildPath(getLocalDataDir(), "rates.json");}
+		case 2: {return buildPath(getLocalDataDir(), "rates.html");}
 		case 3: {return buildPath(getLocalDataDir(), "btc.json");}
 		default: {}
 	}
@@ -10100,7 +10174,8 @@ time_t Calculator::getExchangeRatesTime() {
 string Calculator::getExchangeRatesUrl(int index) {
 	switch(index) {
 		case 1: {return "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";}
-		case 2: {return "http://www.mycurrency.net/service/rates";}
+		//case 2: {return "http://www.mycurrency.net/service/rates";}
+		case 2: {return "https://www.mycurrency.net/=US";}
 		case 3: {return "https://api.coinbase.com/v2/prices/spot?currency=EUR";}
 		default: {}
 	}

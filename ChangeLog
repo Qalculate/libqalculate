@@ -1,3 +1,7 @@
+2018-06-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use mycurrency.net html instead of the json data, which has not been for a month
+
 2018-06-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Only use two's complement representation for integers

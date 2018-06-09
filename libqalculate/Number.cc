@@ -7267,8 +7267,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		float_rerun:
 		
 		string str_bexp;
+		bool neg_bexp = false;
 		
-		if(base != 10 && mpfr_get_exp(f_mid) > 100000L) {
+		if(base != 10 && (mpfr_get_exp(f_mid) > 100000L || mpfr_get_exp(f_mid) < -100000L)) {
 			mpfr_t f_log, f_log_b;
 			mpfr_inits2(mpfr_get_prec(f_mid), f_log, f_log_b, NULL);
 			bool b_neg = mpfr_sgn(f_mid) < 0;
@@ -7280,11 +7281,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpfr_log_ui(f_log_b, base, MPFR_RNDN);
 				mpfr_div(f_log, f_log, f_log_b, MPFR_RNDN);
 			}
-			mpfr_trunc(f_log, f_log);
-			PRINT_MPFR(f_log, 10);
+			mpfr_floor(f_log, f_log);
 			mpz_t z_exp;
 			mpz_init(z_exp);
 			mpfr_get_z(z_exp, f_log, MPFR_RNDN);
+			if(mpz_sgn(z_exp) < 0) {
+				mpz_neg(z_exp, z_exp);
+				neg_bexp = true;
+			}
 			Number nr_bexp;
 			nr_bexp.setInternal(z_exp);
 			PrintOptions po2 = po;
@@ -7434,6 +7438,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		if(!str_bexp.empty()) {
 			if(ips.exp) {
+				if(ips.exp_minus) *ips.exp_minus = neg_bexp;
+				else str_bexp.insert(0, "-");
 				*ips.exp = str_bexp;
 			} else {
 				if(po.spacious) str += " ";
@@ -7444,6 +7450,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(po.spacious) str += " ";
 				str += i2s(base);
 				str += "^";
+				if(neg_bexp) {
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str += SIGN_MINUS;
+					else str = "-";
+				}
 				str += str_bexp;
 				if(ips.depth > 0) {
 					str.insert(0, "(");
@@ -7460,7 +7470,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	} else if(base != BASE_ROMAN_NUMERALS && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 		long int numlength = mpz_sizeinbase(mpq_numref(r_value), base);
 		long int denlength = mpz_sizeinbase(mpq_denref(r_value), base);
-		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < labs(numlength - denlength) && (approx || (po.min_exp != 0 && base == 10) || numlength - denlength > (po.base == 10 ? 1000000L : 100000L))) {
+		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < labs(numlength - denlength) && (approx || (po.min_exp != 0 && base == 10) || labs(numlength - denlength) > (po.base == 10 ? 1000000L : 100000L))) {
 			Number nr(*this);
 			if(nr.setToFloatingPoint()) {
 				PrintOptions po2 = po;
