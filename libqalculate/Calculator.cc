@@ -9987,10 +9987,29 @@ bool Calculator::loadExchangeRates() {
 			}
 		}
 	}
+	
+	filename = buildPath(getLocalDataDir(), "btc.json");
+	ifstream file2(filename.c_str());
+	if(file2.is_open()) {
+		std::stringstream ssbuffer2;
+		ssbuffer2 << file2.rdbuf();
+		string sbuffer = ssbuffer2.str();
+		size_t i = sbuffer.find("\"amount\":");
+		if(i != string::npos) {
+			i = sbuffer.find("\"", i + 9);
+			if(i != string::npos) {
+				size_t i2 = sbuffer.find("\"", i + 1);
+				((AliasUnit*) u_btc)->setExpression(sbuffer.substr(i + 1, i2 - (i + 1)));
+			}
+		}
+		file2.close();
+	}
+	
 	Unit *u_usd = getUnit("USD");
 	if(!u_usd) return true;
-	/*string sbuffer;
-	filename = buildPath(getLocalDataDir(), "rates.json");
+	
+	string sbuffer;
+	filename = buildPath(getLocalDataDir(), "rates.html");
 	ifstream file(filename.c_str());
 	if(file.is_open()) {
 		std::stringstream ssbuffer;
@@ -10006,144 +10025,111 @@ bool Calculator::loadExchangeRates() {
 		std::stringstream ssbuffer;
 		ssbuffer << file.rdbuf();
 		sbuffer = ssbuffer.str();
-	}
-	string sname;
-	size_t i = sbuffer.find("\"currency_code\":");
-	while(i != string::npos) {
-		i += 16;
-		size_t i2 = sbuffer.find("\"", i);
-		if(i2 == string::npos) break;
-		size_t i3 = sbuffer.find("\"", i2 + 1);
-		if(i3 != string::npos && i3 - (i2 + 1) == 3) {
-			currency = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
-			if(currency.length() == 3 && currency[0] >= 'A' && currency[0] <= 'Z') {
-				u = getUnit(currency);
-				if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd)) {
-					i2 = sbuffer.find("\"rate\":", i3 + 1);
-					size_t i4 = sbuffer.find("}", i3 + 1);
-					if(i2 != string::npos && i2 < i4) {
-						i3 = sbuffer.find(",", i2 + 7);
-						rate = sbuffer.substr(i2 + 7, i3 - (i2 + 7));
-						rate = "1/" + rate;
-						if(!u) {
-							i2 = sbuffer.find("\"name\":\"", i3 + 1);
-							if(i2 != string::npos && i2 < i4) {
-								i3 = sbuffer.find("\"", i2 + 8);
-								if(i3 != string::npos) {
-									sname = sbuffer.substr(i2 + 8, i3 - (i2 + 8));
-									remove_blank_ends(sname);
+		string sname;
+		size_t i = sbuffer.find("\"currency_code\":");
+		while(i != string::npos) {
+			i += 16;
+			size_t i2 = sbuffer.find("\"", i);
+			if(i2 == string::npos) break;
+			size_t i3 = sbuffer.find("\"", i2 + 1);
+			if(i3 != string::npos && i3 - (i2 + 1) == 3) {
+				currency = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
+				if(currency.length() == 3 && currency[0] >= 'A' && currency[0] <= 'Z') {
+					u = getUnit(currency);
+					if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd)) {
+						i2 = sbuffer.find("\"rate\":", i3 + 1);
+						size_t i4 = sbuffer.find("}", i3 + 1);
+						if(i2 != string::npos && i2 < i4) {
+							i3 = sbuffer.find(",", i2 + 7);
+							rate = sbuffer.substr(i2 + 7, i3 - (i2 + 7));
+							rate = "1/" + rate;
+							if(!u) {
+								i2 = sbuffer.find("\"name\":\"", i3 + 1);
+								if(i2 != string::npos && i2 < i4) {
+									i3 = sbuffer.find("\"", i2 + 8);
+									if(i3 != string::npos) {
+										sname = sbuffer.substr(i2 + 8, i3 - (i2 + 8));
+										remove_blank_ends(sname);
+									}
+								} else {
+									sname = "";
 								}
+								u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
+								if(u) u->setHidden(true);
 							} else {
-								sname = "";
+								((AliasUnit*) u)->setBaseUnit(u_usd);
+								((AliasUnit*) u)->setExpression(rate);
 							}
-							u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
-							if(u) u->setHidden(true);
-						} else {
-							((AliasUnit*) u)->setBaseUnit(u_usd);
-							((AliasUnit*) u)->setExpression(rate);
-						}
-						if(u) {
-							u->setApproximate();
-							u->setPrecision(-2);
-							u->setChanged(false);
+							if(u) {
+								u->setApproximate();
+								u->setPrecision(-2);
+								u->setChanged(false);
+							}
 						}
 					}
 				}
 			}
+			i = sbuffer.find("\"currency_code\":", i);
 		}
-		i = sbuffer.find("\"currency_code\":", i);
-	}
-	file.close();*/
-	
-	string sbuffer;
-	filename = buildPath(getLocalDataDir(), "rates.html");
-	ifstream file(filename.c_str());
-	if(file.is_open()) {
-		std::stringstream ssbuffer;
-		ssbuffer << file.rdbuf();
-		sbuffer = ssbuffer.str();
-	}
-	if(sbuffer.empty()) {
-		if(file.is_open()) file.close();
-		file.clear();
-		filename = buildPath(getGlobalDefinitionsDir(), "rates.html");
-		file.open(filename.c_str());
-		if(!file.is_open()) return true;
-		std::stringstream ssbuffer;
-		ssbuffer << file.rdbuf();
-		sbuffer = ssbuffer.str();
-	}
-	
-	string sname;
-	size_t i = sbuffer.find("class=\'country\'");
-	while(i != string::npos) {
-		currency = ""; sname = ""; rate = "";
-		i += 15;
-		size_t i2 = sbuffer.find("data-currency-code=\"", i);
-		if(i2 != string::npos) {
-			i2 += 19;
-			size_t i3 = sbuffer.find("\"", i2 + 1);
-			if(i3 != string::npos) {
-				currency = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
-				remove_blank_ends(currency);
-			}
-		}
-		i2 = sbuffer.find("data-currency-name=\'", i);
-		if(i2 != string::npos) {
-			i2 += 19;
-			size_t i3 = sbuffer.find("|", i2 + 1);
-			if(i3 != string::npos) {
-				sname = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
-				remove_blank_ends(sname);
-			}
-		}
-		i2 = sbuffer.find("data-rate=\'", i);
-		if(i2 != string::npos) {
-			i2 += 10;
-			size_t i3 = sbuffer.find("'", i2 + 1);
-			if(i3 != string::npos) {
-				rate = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
-				remove_blank_ends(rate);
-			}
-		}
-		if(currency.length() == 3 && currency[0] >= 'A' && currency[0] <= 'Z' && !rate.empty()) {
-			u = getUnit(currency);
-			if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd)) {
-				rate = "1/" + rate;
-				if(!u) {
-					u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
-					if(u) u->setHidden(true);
-				} else {
-					((AliasUnit*) u)->setBaseUnit(u_usd);
-					((AliasUnit*) u)->setExpression(rate);
-				}
-				if(u) {
-					u->setApproximate();
-					u->setPrecision(-2);
-					u->setChanged(false);
+		file.close();
+	} else {
+		string sname;
+		size_t i = sbuffer.find("class=\'country\'");
+		while(i != string::npos) {
+			currency = ""; sname = ""; rate = "";
+			i += 15;
+			size_t i2 = sbuffer.find("data-currency-code=\"", i);
+			if(i2 != string::npos) {
+				i2 += 19;
+				size_t i3 = sbuffer.find("\"", i2 + 1);
+				if(i3 != string::npos) {
+					currency = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
+					remove_blank_ends(currency);
 				}
 			}
+			i2 = sbuffer.find("data-currency-name=\'", i);
+			if(i2 != string::npos) {
+				i2 += 19;
+				size_t i3 = sbuffer.find("|", i2 + 1);
+				if(i3 != string::npos) {
+					sname = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
+					remove_blank_ends(sname);
+				}
+			}
+			i2 = sbuffer.find("data-rate=\'", i);
+			if(i2 != string::npos) {
+				i2 += 10;
+				size_t i3 = sbuffer.find("'", i2 + 1);
+				if(i3 != string::npos) {
+					rate = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
+					remove_blank_ends(rate);
+				}
+			}
+			if(currency.length() == 3 && currency[0] >= 'A' && currency[0] <= 'Z' && !rate.empty()) {
+				u = getUnit(currency);
+				if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd)) {
+					rate = "1/" + rate;
+					if(!u) {
+						u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
+						if(u) u->setHidden(true);
+					} else {
+						((AliasUnit*) u)->setBaseUnit(u_usd);
+						((AliasUnit*) u)->setExpression(rate);
+					}
+					if(u) {
+						u->setApproximate();
+						u->setPrecision(-2);
+						u->setChanged(false);
+					}
+				}
+			}
+			i = sbuffer.find("class=\'country\'", i);
 		}
-		i = sbuffer.find("class=\'country\'", i);
+		file.close();
 	}
-	file.close();
 	
-	filename = buildPath(getLocalDataDir(), "btc.json");
-	ifstream file2(filename.c_str());
-	if(!file2.is_open()) return true;
-	std::stringstream ssbuffer2;
-	ssbuffer2 << file2.rdbuf();
-	sbuffer = ssbuffer2.str();
-	i = sbuffer.find("\"amount\":");
-	if(i != string::npos) {
-		i = sbuffer.find("\"", i + 9);
-		if(i != string::npos) {
-			size_t i2 = sbuffer.find("\"", i + 1);
-			((AliasUnit*) u_btc)->setExpression(sbuffer.substr(i + 1, i2 - (i + 1)));
-		}
-	}
-	file2.close();
 	return true;
+
 }
 bool Calculator::hasGVFS() {
 	return false;
