@@ -10012,6 +10012,9 @@ bool Calculator::loadExchangeRates() {
 			exchange_rates_time[1] = stats.st_mtime;
 			if(exchange_rates_time[1] > exchange_rates_check_time[1]) exchange_rates_check_time[1] = exchange_rates_time[1];
 		}
+	} else {
+		exchange_rates_time[1] = ((time_t) 1531087L) * 1000;
+		if(exchange_rates_time[1] > exchange_rates_check_time[1]) exchange_rates_check_time[1] = exchange_rates_time[1];
 	}
 	
 	Unit *u_usd = getUnit("USD");
@@ -10198,9 +10201,11 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer) {
 	sbuffer->append((char*) ptr, size * nmemb);
 	return size * nmemb;
 }
+#define FETCH_FAIL_CLEANUP curl_easy_cleanup(curl); curl_global_cleanup(); time(&exchange_rates_check_time[0]); time(&exchange_rates_check_time[1]); time(&exchange_rates_check_time[2]);
 bool Calculator::fetchExchangeRates(int timeout, int n) {
 #ifdef HAVE_LIBCURL
 	if(n <= 0) n = 3;
+	
 	recursiveMakeDir(getLocalDataDir());
 	string sbuffer;
 	char error_buffer[CURL_ERROR_SIZE];
@@ -10229,12 +10234,12 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 #endif
 	res = curl_easy_perform(curl);
 	
-	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "ECB", error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
-	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "ECB", "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
+	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "ECB", error_buffer, NULL); FETCH_FAIL_CLEANUP; return false;}
+	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "ECB", "Document empty", NULL); FETCH_FAIL_CLEANUP; return false;}
 	ofstream file(getExchangeRatesFileName(1).c_str(), ios::out | ios::trunc | ios::binary);
 	if(!file.is_open()) {
 		error(true, _("Failed to download exchange rates from %s: %s."), "ECB", strerror(errno), NULL);
-		curl_easy_cleanup(curl); curl_global_cleanup(); 
+		FETCH_FAIL_CLEANUP
 		return false;
 	}
 	file << sbuffer;
@@ -10265,12 +10270,12 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 
 		res = curl_easy_perform(curl);
 		
-		if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
-		if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
+		if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", error_buffer, NULL); FETCH_FAIL_CLEANUP; return false;}
+		if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", "Document empty", NULL); FETCH_FAIL_CLEANUP; return false;}
 		ofstream file3(getExchangeRatesFileName(2).c_str(), ios::out | ios::trunc | ios::binary);
 		if(!file3.is_open()) {
 			error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", strerror(errno), NULL);
-			curl_easy_cleanup(curl); curl_global_cleanup(); 
+			FETCH_FAIL_CLEANUP
 			return false;
 		}
 		file3 << sbuffer;
@@ -10288,12 +10293,12 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
 		res = curl_easy_perform(curl);
 		
-		if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", error_buffer, NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
-		if(sbuffer.empty() || sbuffer.find("Internal Server Error") != string::npos) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", "Document empty", NULL); curl_easy_cleanup(curl); curl_global_cleanup(); return false;}
+		if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", error_buffer, NULL); FETCH_FAIL_CLEANUP; return false;}
+		if(sbuffer.empty() || sbuffer.find("Internal Server Error") != string::npos) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", "Document empty", NULL); FETCH_FAIL_CLEANUP; return false;}
 		ofstream file2(getExchangeRatesFileName(3).c_str(), ios::out | ios::trunc | ios::binary);
 		if(!file2.is_open()) {
 			error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", strerror(errno), NULL);
-			curl_easy_cleanup(curl); curl_global_cleanup(); 
+			FETCH_FAIL_CLEANUP
 			return false;
 		}
 		file2 << sbuffer;
@@ -10316,6 +10321,9 @@ bool Calculator::checkExchangeRatesDate(unsigned int n_days, bool force_check, b
 	time_t cextime = exchange_rates_check_time[0];
 	if(n > 1 && exchange_rates_check_time[1] < cextime) cextime = exchange_rates_check_time[1];
 	if(n > 2 && exchange_rates_check_time[2] < cextime) cextime = exchange_rates_check_time[2];
+	cout << exchange_rates_time[0] << ":" << exchange_rates_time[1] << ":" << exchange_rates_time[2] << endl;
+	cout << exchange_rates_check_time[0] << ":" << exchange_rates_check_time[1] << ":" << exchange_rates_check_time[2] << endl;
+	cout << n << ":" << cextime << ":" << extime << endl;
 	if(extime > 0 && ((!force_check && cextime > 0 && difftime(time(NULL), cextime) < 86400 * n_days) || difftime(time(NULL), extime) < (86400 * n_days) + 3600)) return true;
 	time(&exchange_rates_check_time[0]);
 	if(n > 1) time(&exchange_rates_check_time[1]);
@@ -10336,7 +10344,7 @@ void Calculator::resetExchangeRatesUsed() {
 	b_exchange_rates_used = 0;
 }
 void Calculator::setExchangeRatesUsed(int index) {
-	b_exchange_rates_used = index;
+	if(index > b_exchange_rates_used) b_exchange_rates_used = index;
 	if(b_exchange_rates_warning_enabled) checkExchangeRatesDate(7, false, true);
 }
 
