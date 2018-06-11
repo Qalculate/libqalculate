@@ -71,7 +71,7 @@ bool result_only;
 static char buffer[1000];
 
 void setResult(Prefix *prefix = NULL, bool update_parse = false, bool goto_input = true, size_t stack_index = 0, bool register_moved = false, bool noprint = false);
-void execute_expression(bool goto_input = true, bool do_mathoperation = false, MathOperation op = OPERATION_ADD, MathFunction *f = NULL, bool do_stack = false, size_t stack_index = 0);
+void execute_expression(bool goto_input = true, bool do_mathoperation = false, MathOperation op = OPERATION_ADD, MathFunction *f = NULL, bool do_stack = false, size_t stack_index = 0, bool check_exrates = true);
 void execute_command(int command_type, bool show_result = true);
 void load_preferences();
 bool save_preferences(bool mode = false);
@@ -3787,7 +3787,7 @@ void execute_command(int command_type, bool show_result) {
 }
 
 
-void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index) {
+void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates) {
 
 	if(i_maxtime < 0) return;
 
@@ -4134,8 +4134,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		else mstruct->ref();
 	}
 	
-	if(!do_mathoperation && check_exchange_rates()) {
-		execute_expression(goto_input, do_mathoperation, op, f, rpn_mode, do_stack ? stack_index : 0);
+	if(!do_mathoperation && check_exrates && check_exchange_rates()) {
+		execute_expression(goto_input, do_mathoperation, op, f, rpn_mode, do_stack ? stack_index : 0, false);
 		return;
 	}
 	
