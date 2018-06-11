@@ -207,19 +207,20 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 		u->convertToBaseUnit(mvalue, mexp);
 		convertFromBaseUnit(mvalue, mexp);
 		if(isCurrency() && u->isCurrency() && ((isBuiltin() && this != CALCULATOR->u_euro) || (u->isBuiltin() && u != CALCULATOR->u_euro))) {
-			CALCULATOR->setExchangeRatesUsed();
+			int i = 1;
+			if(u == CALCULATOR->u_btc || this == CALCULATOR->u_btc) i = 2;
+			if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
+				if(i < 2 && ((AliasUnit*) u)->firstBaseUnit() == CALCULATOR->u_btc) i = 2;
+				else if(((AliasUnit*) u)->firstBaseUnit() != CALCULATOR->u_euro) i = 3;
+			}
+			if(i < 3 && subtype() == SUBTYPE_ALIAS_UNIT) {
+				if(i < 2 && ((AliasUnit*) this)->firstBaseUnit() == CALCULATOR->u_btc) i = 2;
+				else if(((AliasUnit*) this)->firstBaseUnit() != CALCULATOR->u_euro) i = 3;
+			}
+			CALCULATOR->setExchangeRatesUsed(i);
 		}
 		return true;
 	}
-	/*} else if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-		bool b2 = false;
-		CompositeUnit *cu = (CompositeUnit*) u;
-		for(size_t i = 1; i <= cu->countUnits(); i++) {
-			convert(cu->getInternal(i), mvalue, mexp, &b2);
-			if(b2) b = true;
-		}
-	}*/
-	//if(CALCULATOR->alwaysExact() && mvalue->isApproximate()) b = false;
 	return false;
 }
 
