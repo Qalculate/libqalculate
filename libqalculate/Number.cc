@@ -7269,17 +7269,19 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		string str_bexp;
 		bool neg_bexp = false;
 		
+		mpfr_t f_log, f_base, f_log_base;
+		mpfr_inits2(mpfr_get_prec(f_mid), f_log, f_base, f_log_base, NULL);
+		mpfr_set_si(f_base, base, MPFR_RNDN);
+		mpfr_log(f_log_base, f_base, MPFR_RNDN);
+		
 		if(base != 10 && (mpfr_get_exp(f_mid) > 100000L || mpfr_get_exp(f_mid) < -100000L)) {
-			mpfr_t f_log, f_log_b;
-			mpfr_inits2(mpfr_get_prec(f_mid), f_log, f_log_b, NULL);
 			bool b_neg = mpfr_sgn(f_mid) < 0;
 			if(b_neg) mpfr_neg(f_mid, f_mid, MPFR_RNDN);
 			if(base == 2) {
 				mpfr_log2(f_log, f_mid, MPFR_RNDN);
 			} else {
 				mpfr_log(f_log, f_mid, MPFR_RNDN);
-				mpfr_log_ui(f_log_b, base, MPFR_RNDN);
-				mpfr_div(f_log, f_log, f_log_b, MPFR_RNDN);
+				mpfr_div(f_log, f_log, f_log_base, MPFR_RNDN);
 			}
 			mpfr_floor(f_log, f_log);
 			mpz_t z_exp;
@@ -7302,10 +7304,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		
 		mpfr_t v;
 		mpfr_init2(v, mpfr_get_prec(f_mid));
-		mpfr_t f_log, f_base, f_log_base;
-		mpfr_inits2(mpfr_get_prec(f_mid), f_log, f_base, f_log_base, NULL);
-		mpfr_set_si(f_base, base, MPFR_RNDN);
-		mpfr_log(f_log_base, f_base, MPFR_RNDN);
 		long int expo = 0;
 		long int l10 = 0;
 		mpfr_set(v, f_mid, MPFR_RNDN);
