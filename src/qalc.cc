@@ -376,14 +376,15 @@ int countRows(const char *str, int cols) {
 }
 
 bool check_exchange_rates() {
-	if(!CALCULATOR->exchangeRatesUsed()) return false;
-	if(CALCULATOR->checkExchangeRatesDate(auto_update_exchange_rates > 0 ? auto_update_exchange_rates : 7, false, auto_update_exchange_rates == 0 || (auto_update_exchange_rates < 0 && !ask_questions))) return false;
+	int i = CALCULATOR->exchangeRatesUsed();
+	if(i == 0) return false;
+	if(CALCULATOR->checkExchangeRatesDate(auto_update_exchange_rates > 0 ? auto_update_exchange_rates : 7, false, auto_update_exchange_rates == 0 || (auto_update_exchange_rates < 0 && !ask_questions), i)) return false;
 	if(auto_update_exchange_rates == 0 || (auto_update_exchange_rates < 0 && !ask_questions)) return false;
 	bool b = false;
 	if(auto_update_exchange_rates < 0) {
 		char buffer[1000];
 		string ask_str;
-		int cx = snprintf(buffer, 1000, _("It has been %s day(s) since the exchange rates last were updated."), i2s((int) floor(difftime(time(NULL), CALCULATOR->getExchangeRatesTime()) / 86400)).c_str());
+		int cx = snprintf(buffer, 1000, _("It has been %s day(s) since the exchange rates last were updated."), i2s((int) floor(difftime(time(NULL), CALCULATOR->getExchangeRatesTime(i)) / 86400)).c_str());
 		if(cx >= 0 && cx < 1000) {
 			ask_str = buffer;
 			ask_str += "\n";
@@ -392,7 +393,8 @@ bool check_exchange_rates() {
 		b = ask_question(ask_str.c_str());
 	}
 	if(b || auto_update_exchange_rates > 0) {
-		CALCULATOR->fetchExchangeRates(15);
+		if(auto_update_exchange_rates <= 0) i = -1;
+		CALCULATOR->fetchExchangeRates(15, i);
 		CALCULATOR->loadExchangeRates();
 		return true;
 	}

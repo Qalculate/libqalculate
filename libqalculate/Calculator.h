@@ -248,8 +248,9 @@ class Calculator {
 	bool b_argument_errors;
 	int current_stage;
 
-	time_t exchange_rates_time, exchange_rates_check_time;
-	bool b_exchange_rates_used, b_exchange_rates_warning_enabled;
+	time_t exchange_rates_time[3], exchange_rates_check_time[3];
+	int b_exchange_rates_used;
+	bool b_exchange_rates_warning_enabled;
 
 	bool b_gnuplot_open;
 	string gnuplot_cmdline;
@@ -1060,7 +1061,7 @@ class Calculator {
 	*
 	* @returns Returns exchange rates modification time.
 	*/
-	time_t getExchangeRatesTime();
+	time_t getExchangeRatesTime(int index = -1);
 	///Deprecated: wget arguments are not used
 	bool fetchExchangeRates(int seconds, string wget_args);
 	/** Download current exchange rates from the Internet to local disc with default wget arguments.
@@ -1068,7 +1069,7 @@ class Calculator {
 	* @param seconds Maximum time for donwload try
 	* @returns true if operation was successful.
 	*/
-	bool fetchExchangeRates(int seconds = 15);
+	bool fetchExchangeRates(int seconds = 15, int n = -1);
 	/** Check age of exchange rates on local disc. 
 	*
 	* @param n_days How old in days exchange rates may be before exchange rates need updating
@@ -1076,15 +1077,15 @@ class Calculator {
 	* @param send_warning If the standard exchange rates warning should be sent.
 	* @returns false if exchange.rates need updating
 	*/
-	bool checkExchangeRatesDate(unsigned int n_days = 7, bool force_check = false, bool send_warning = false);	
+	bool checkExchangeRatesDate(unsigned int n_days = 7, bool force_check = false, bool send_warning = false, int n = -1);
 	/// Enable or disable old exchange rates warning (initial state is true).
 	void setExchangeRatesWarningEnabled(bool enable);
 	bool exchangeRatesWarningEnabled() const;
 	/// Check if exchange rates has been used since resetExchangeRatesUsed() was last called
-	bool exchangeRatesUsed() const;
+	int exchangeRatesUsed() const;
 	void resetExchangeRatesUsed();
 	/// For internal use, called by currency units
-	void setExchangeRatesUsed();
+	void setExchangeRatesUsed(int index);
 	//@}
 
 	/** @name Functions for plotting */
