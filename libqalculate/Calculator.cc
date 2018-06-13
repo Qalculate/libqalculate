@@ -10321,9 +10321,6 @@ bool Calculator::checkExchangeRatesDate(unsigned int n_days, bool force_check, b
 	time_t cextime = exchange_rates_check_time[0];
 	if(n > 1 && exchange_rates_check_time[1] < cextime) cextime = exchange_rates_check_time[1];
 	if(n > 2 && exchange_rates_check_time[2] < cextime) cextime = exchange_rates_check_time[2];
-	cout << exchange_rates_time[0] << ":" << exchange_rates_time[1] << ":" << exchange_rates_time[2] << endl;
-	cout << exchange_rates_check_time[0] << ":" << exchange_rates_check_time[1] << ":" << exchange_rates_check_time[2] << endl;
-	cout << n << ":" << cextime << ":" << extime << endl;
 	if(extime > 0 && ((!force_check && cextime > 0 && difftime(time(NULL), cextime) < 86400 * n_days) || difftime(time(NULL), extime) < (86400 * n_days) + 3600)) return true;
 	time(&exchange_rates_check_time[0]);
 	if(n > 1) time(&exchange_rates_check_time[1]);
