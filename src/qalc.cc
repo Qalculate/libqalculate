@@ -220,7 +220,7 @@ void set_assumption(const string &str, bool last_of_two = false) {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_POSITIVE);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "non-negative", _("non-negative"))) {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONNEGATIVE);
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "negative", _("negatve"))) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "negative", _("negative"))) {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NEGATIVE);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "non-positive", _("non-positive"))) {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONPOSITIVE);
