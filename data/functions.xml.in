@@ -405,7 +405,7 @@
     <function>
       <_title>Derangements</_title>
       <_names>r:derangements</_names>
-      <_description>Returns the number of possible rearrangements of an ordered list, of a certain size, where none of the objects are on their original position. If the original list is [1, 2, 3], the possible derangements is [2, 3, 1] and [3, 1, 2], and thus the number of derangements is 2.</_description>
+      <_description>Returns the number of possible rearrangements of an ordered list, of a certain size, where none of the objects are on their original position. If the original list is [1, 2, 3], the possible derangements are [2, 3, 1] and [3, 1, 2], and thus the number of derangements is 2.</_description>
       <expression>factorial(\x)*sum(((-1)^"i")/factorial("i"),0,\x,"i")</expression>
       <argument type="integer" index="1">
         <_title>Number of elements</_title>
@@ -2894,7 +2894,7 @@
       <function>
         <_title>Elasticity</_title>
         <_names>r:elasticity</_names>
-        <_description>Calculates the demand elasticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand, with supply, or price with income...&#10;&#10;eg. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</_description>
+        <_description>Calculates the demand elasticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand with supply, or price with income...&#10;&#10;eg. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</_description>
         <expression>replace(diff(\x,\Z{x}),\Z,\y,1)*\y/replace(\x,\Z,\y)</expression>
         <argument type="free" index="1">
           <_title>Demand function</_title>

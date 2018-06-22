@@ -5,7 +5,7 @@
     <builtin_unit name="EUR">
       <_title>European Euros</_title>
       <_names>ar:EUR,au:&#x20AC;,euro,p:euros</_names>
-      <_countries>Andorra, Austria, Belgium, Cyprus, Estonia, Finland, France, Germany, Greece, Ireland, Italy, Lavia, Lihuania, Luxembourg, Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City</_countries>
+      <_countries>Andorra, Austria, Belgium, Cyprus, Estonia, Finland, France, Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City</_countries>
     </builtin_unit>
     <builtin_unit name="USD">
       <_title>U.S. Dollars</_title>
