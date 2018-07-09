@@ -16343,8 +16343,8 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 			break;
 		}
 		case STRUCT_NUMBER: {
-			if(o_number.isInteger() && (o_number.isNegative() || ((parent || po.interval_display != INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) && o_number.isInterval() && o_number.isNonPositive()))) {
-				if((po.base != 2 || !po.twos_complement) && (!o_number.isMinusInfinity() || (parent && parent->isAddition()))) {
+			if(o_number.isNegative() || ((parent || po.interval_display != INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) && o_number.isInterval() && o_number.isNonPositive())) {
+				if((po.base != 2 || !po.twos_complement || !o_number.isInteger()) && (!o_number.isMinusInfinity() || (parent && parent->isAddition()))) {
 					o_number.negate();
 					transform(STRUCT_NEGATE);
 					formatsub(po, parent, pindex, true, top_parent);
