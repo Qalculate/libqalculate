@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-30 12:17+0200\n"
+"POT-Creation-Date: 2018-07-08 16:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,7 +32,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:4
 msgid ""
 "Andorra, Austria, Belgium, Cyprus, Estonia, Finland, France, Germany, "
-"Greece, Ireland, Italy, Lavia, Lihuania, Luxembourg, Malta, Netherlands, "
+"Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, "
 "Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City"
 msgstr ""
 
@@ -718,7 +718,7 @@ msgid "Cambodian Riel"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:174
-msgid "ar:KHR,au:&#x17DB;"
+msgid "ar:KHR,aiu:&#x17DB;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:175
@@ -1264,7 +1264,7 @@ msgid "Maldivian Rufiyaa"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:310
-msgid "ar:MVR,au:&#x0783;"
+msgid "ar:MVR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:311
@@ -3322,7 +3322,7 @@ msgstr ""
 msgid ""
 "Returns the number of possible rearrangements of an ordered list, of a "
 "certain size, where none of the objects are on their original position. If "
-"the original list is [1, 2, 3], the possible derangements is [2, 3, 1] and "
+"the original list is [1, 2, 3], the possible derangements are [2, 3, 1] and "
 "[3, 1, 2], and thus the number of derangements is 2."
 msgstr ""
 
@@ -6260,8 +6260,8 @@ msgstr ""
 #: ../data/functions.xml.in.h:862
 msgid ""
 "Calculates the demand elasticity. Also works for supply elasticity, income "
-"elasticity, cross-price elasticity, etc. Just replace demand, with supply, "
-"or price with income...&#10;&#10;eg. elasticity(100-x^2, 3) calculates the "
+"elasticity, cross-price elasticity, etc. Just replace demand with supply, or "
+"price with income...&#10;&#10;eg. elasticity(100-x^2, 3) calculates the "
 "demand elasticity when the price is 3 for the function \"Q = 100 - x^2\" "
 "where x is the default price variable."
 msgstr ""
