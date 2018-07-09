@@ -4360,7 +4360,7 @@ void load_preferences() {
 #endif
 
 	
-	int version_numbers[] = {2, 6, 0};
+	int version_numbers[] = {2, 6, 1};
 	
 	if(file) {
 		char line[10000];

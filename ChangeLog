@@ -1,3 +1,8 @@
+2018-07-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix display of negative number interval with +/- interval display when uncertainty is lower than global precision
+	* Fix display of addition with negative non-integer number (show "x - a" instead of "x + -a")
+
 2018-06-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not automatically update all exchange rates sources if not needed
