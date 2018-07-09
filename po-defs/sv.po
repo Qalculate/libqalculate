@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-30 12:17+0200\n"
+"POT-Creation-Date: 2018-07-08 15:58+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -30,7 +30,7 @@ msgstr "a:EUR,au:&#x20AC;,euro"
 #: ../data/currencies.xml.in.h:4
 msgid ""
 "Andorra, Austria, Belgium, Cyprus, Estonia, Finland, France, Germany, "
-"Greece, Ireland, Italy, Lavia, Lihuania, Luxembourg, Malta, Netherlands, "
+"Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, "
 "Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City"
 msgstr ""
 
@@ -747,7 +747,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:174
 #, fuzzy
-msgid "ar:KHR,au:&#x17DB;"
+msgid "ar:KHR,aiu:&#x17DB;"
 msgstr "a:INR,au:&#x20B9;,rupie,p:rupier"
 
 #: ../data/currencies.xml.in.h:175
@@ -1320,9 +1320,8 @@ msgid "Maldivian Rufiyaa"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:310
-#, fuzzy
-msgid "ar:MVR,au:&#x0783;"
-msgstr "a:INR,au:&#x20B9;,rupie,p:rupier"
+msgid "ar:MVR"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:311
 msgid "Maldives"
@@ -3472,12 +3471,12 @@ msgstr "derangemang"
 msgid ""
 "Returns the number of possible rearrangements of an ordered list, of a "
 "certain size, where none of the objects are on their original position. If "
-"the original list is [1, 2, 3], the possible derangements is [2, 3, 1] and "
+"the original list is [1, 2, 3], the possible derangements are [2, 3, 1] and "
 "[3, 1, 2], and thus the number of derangements is 2."
 msgstr ""
 "Returnerar antalet möjliga omarrangemang av en ordnad lista, med en viss "
 "storlek, där inget av objekten är på sin ursprungliga position. Om den "
-"ursprungliga listan är [1, 2, 3], då är de möjliga omarrangemangent [2, 3, "
+"ursprungliga listan är [1, 2, 3], då är de möjliga omarrangemangen [2, 3, "
 "1] och [3, 1, 2], och därmed returneras 2."
 
 #: ../data/functions.xml.in.h:144
@@ -6485,13 +6484,13 @@ msgstr "elasticitet"
 #: ../data/functions.xml.in.h:862
 msgid ""
 "Calculates the demand elasticity. Also works for supply elasticity, income "
-"elasticity, cross-price elasticity, etc. Just replace demand, with supply, "
-"or price with income...&#10;&#10;eg. elasticity(100-x^2, 3) calculates the "
+"elasticity, cross-price elasticity, etc. Just replace demand with supply, or "
+"price with income...&#10;&#10;eg. elasticity(100-x^2, 3) calculates the "
 "demand elasticity when the price is 3 for the function \"Q = 100 - x^2\" "
 "where x is the default price variable."
 msgstr ""
 "Beräknar efterfrågeelasticitet. Fungerar lika bra för tillgång- och "
-"inkomstelasticitet, etc. Ersätt bara efterfrågan, med tillgång, eller pris "
+"inkomstelasticitet, etc. Ersätt bara efterfrågan med tillgång, eller pris "
 "med inkomst...&#10;&#10;t ex elasticity(100-x^2, 3) beräknar "
 "efterfrågeelasticiteten när priset är 3 för functionen \"Q = 100 - x^2\" där "
 "x är den förvalda prisvariabeln."
@@ -9985,6 +9984,10 @@ msgstr "Nu (datum och tid)"
 #: ../data/variables.xml.in.h:179
 msgid "r:now"
 msgstr ""
+
+#, fuzzy
+#~ msgid "ar:MVR,au:&#x0783;"
+#~ msgstr "a:INR,au:&#x20B9;,rupie,p:rupier"
 
 #~ msgid "r:arcminute,p:arcminutes,a:arcmin"
 #~ msgstr "bågminuter,p:bågminuter,a:arcmin"
