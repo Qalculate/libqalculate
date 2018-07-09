@@ -6960,7 +6960,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(mpfr_zero_p(f_mid)) {
 				mpfr_set_zero(f_log, 0);
 			} else {
-				mpfr_log10(f_log, f_mid, MPFR_RNDN);
+				mpfr_abs(f_log, f_mid, MPFR_RNDN);
+				mpfr_log10(f_log, f_log, MPFR_RNDN);
 				mpfr_floor(f_log, f_log);
 			}
 			mpfr_log10(f_log_diff, f_diff, MPFR_RNDN);
