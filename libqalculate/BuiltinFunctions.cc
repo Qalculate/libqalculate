@@ -1653,8 +1653,13 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct = CALCULATOR->v_i->get();
 			mstruct *= CALCULATOR->v_pi;
 			return 1;
-		} else if(mstruct.number().isI() || mstruct.number().isMinusI()) {
+		} else if(mstruct.number().isI()) {
 			mstruct.set(1, 2, 0);
+			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->v_i->get();
+			return 1;
+		} else if(mstruct.number().isMinusI()) {
+			mstruct.set(-1, 2, 0);
 			mstruct *= CALCULATOR->v_pi;
 			mstruct *= CALCULATOR->v_i->get();
 			return 1;
