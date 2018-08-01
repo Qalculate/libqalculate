@@ -1928,8 +1928,8 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 					}
 				}
 				if(!b) {
-					str.replace(ui, strlen(COMMA), SPACE);
-					ui = str.find(COMMA, ui + strlen(SPACE));
+					str.erase(ui, strlen(COMMA));
+					ui = str.find(COMMA, ui);
 				}
 			}	
 		}
