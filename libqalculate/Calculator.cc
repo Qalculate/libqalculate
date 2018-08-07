@@ -1214,8 +1214,9 @@ void Calculator::endTemporaryStopIntervalArithmetic() {
 
 const string &Calculator::getDecimalPoint() const {return DOT_STR;}
 const string &Calculator::getComma() const {return COMMA_STR;}
-string Calculator::localToString() const {
-	return _(" to ");
+string Calculator::localToString(bool include_spaces) const {
+	if(include_spaces) return _(" to ");
+	else return _("to");
 }
 void Calculator::setLocale() {
 	if(saved_locale) setlocale(LC_NUMERIC, saved_locale);
@@ -2563,30 +2564,38 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
 	}
 	return true;
 }
-bool Calculator::hasToExpression(const string &str) const {
-	return str.rfind(_(" to ")) != string::npos || str.rfind(" to ") != string::npos;
+bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const {
+	if(str.rfind(_(" to ")) != string::npos || str.rfind(" to ") != string::npos) return true;
+	if(allow_empty_from && (str.find("to ") == 0 || (str.find(_("to")) == 0 && str.length() > strlen(_("to")) && str[strlen(_("to"))] == ' '))) return true;
+	return false;
 }
-bool Calculator::separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers) const {
+bool Calculator::separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers, bool allow_empty_from) const {
 	to_str = "";
 	size_t i = 0;
 	if(eo.parse_options.units_enabled && (i = str.find(_(" to "))) != string::npos) {
 		size_t l = strlen(_(" to "));
 		to_str = str.substr(i + l, str.length() - i - l);
-		
 	} else if(eo.parse_options.units_enabled && (i = str.find(" to ")) != string::npos) {
 		size_t l = strlen(" to ");
-		to_str = str.substr(i + l, str.length() - i - l);		
+		to_str = str.substr(i + l, str.length() - i - l);
+	} else if(allow_empty_from && str.find("to ") == 0) {
+		to_str = str.substr(3);
+		i = 0;
+	} else if(allow_empty_from && (str.find(_("to")) == 0 && str.length() > strlen(_("to")) && str[strlen(_("to"))] == ' ')) {
+		to_str = str.substr(strlen(_("to")));
+		i = 0;
 	} else {
 		return false;
 	}
-	if(to_str.rfind(SIGN_MINUS, 0) == 0) {
-		to_str.replace(0, strlen(SIGN_MINUS), MINUS);
-	}
-	if(!keep_modifiers && !to_str.empty() && (to_str[0] == '0' || to_str[0] == '?' || to_str[0] == '+' || to_str[0] == '-')) {
-		to_str = to_str.substr(1, str.length() - 1);
-		remove_blank_ends(to_str);
-	}
 	if(!to_str.empty()) {
+		remove_blank_ends(to_str);
+		if(to_str.rfind(SIGN_MINUS, 0) == 0) {
+			to_str.replace(0, strlen(SIGN_MINUS), MINUS);
+		}
+		if(!keep_modifiers && !to_str.empty() && (to_str[0] == '0' || to_str[0] == '?' || to_str[0] == '+' || to_str[0] == '-')) {
+			to_str = to_str.substr(1, str.length() - 1);
+			remove_blank_ends(to_str);
+		}
 		str = str.substr(0, i);
 		return true;
 	}

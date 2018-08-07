@@ -631,8 +631,8 @@ class Calculator {
 	* @param eo Options for the evaluation and parsing of the expression (nothing will be done if units are not enabled).
 	* @returns true if " to " was found and the expression split.
 	*/
-	bool separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers = false) const;	
-	bool hasToExpression(const string &str) const;
+	bool separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers = false, bool allow_empty_from = false) const;	
+	bool hasToExpression(const string &str, bool allow_empty_from = false) const;
 
 	void parseSigns(string &str, bool convert_to_internal_representation = false) const;
 	/** Parse an expression and place in a MathStructure object.
@@ -1145,7 +1145,7 @@ class Calculator {
 	/** Resets argument separator and decimal sign. Mainly for internal use. */
 	void unsetLocale();
 	/** Returns the translated text string used in expressions for converting to a specific unit expression (ex "5 meters to feet.*/
-	string localToString() const;
+	string localToString(bool include_spaces = true) const;
 	//@}
 
 	/** @name Functions adding alternative symbols for operators and such */
