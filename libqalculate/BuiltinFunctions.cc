@@ -769,6 +769,16 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
+		if(eo.approximation != APPROXIMATION_APPROXIMATE && mstruct.number().hasImaginaryPart() && mstruct.number().hasRealPart()) {
+			MathStructure m_i(mstruct.number().imaginaryPart());
+			m_i ^= nr_two;
+			mstruct.number().clearImaginary();
+			mstruct.numberUpdated();
+			mstruct ^= nr_two;
+			mstruct += m_i;
+			mstruct ^= nr_half;
+			return 1;
+		}
 		Number nr(mstruct.number());
 		if(!nr.abs() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate())) {
 			return -1;

@@ -1,3 +1,15 @@
+2018-08-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Polar and exponential complex number forms
+
+2018-08-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix ignore comma for RPN syntax
+
+2018-07-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix ln(-i)
+
 2018-07-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix display of negative number interval with +/- interval display when uncertainty is lower than global precision

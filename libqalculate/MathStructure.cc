@@ -11002,17 +11002,23 @@ bool simplify_ln(MathStructure &mstruct) {
 
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
-	if(m_type == STRUCT_NUMBER) return *this;
+	if(m_type == STRUCT_NUMBER) {
+		if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
+		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
+		return *this;
+	}
 
 	unformat(eo);
 	
 	EvaluationOptions feo = eo;
 	feo.structuring = STRUCTURING_NONE;
 	feo.do_polynomial_division = false;
+	feo.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 	EvaluationOptions eo2 = eo;
 	eo2.structuring = STRUCTURING_NONE;
 	eo2.expand = false;
 	eo2.test_comparisons = false;
+	eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && containsInterval(true, true, false, true, true)) {
 		if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo);
 		EvaluationOptions eo3 = eo2;
@@ -11032,7 +11038,11 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	} else {
 		if(eo.calculate_functions) calculateFunctions(feo);
 	}
-	if(m_type == STRUCT_NUMBER) return *this;
+	if(m_type == STRUCT_NUMBER) {
+		if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
+		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
+		return *this;
+	}
 
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT || (eo2.approximation == APPROXIMATION_APPROXIMATE && (containsUnknowns() || containsInterval(false, true, false, false)))) {
 		EvaluationOptions eo3 = eo2;
@@ -11041,7 +11051,11 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		eo3.split_squares = false;
 		eo3.assume_denominators_nonzero = false;
 		calculatesub(eo3, feo);
-		if(m_type == STRUCT_NUMBER) return *this;
+		if(m_type == STRUCT_NUMBER) {
+			if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
+			else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
+			return *this;
+		}
 		if(!CALCULATOR->usesIntervalArithmetic() && eo.expand && eo.expand >= -1 && !containsType(STRUCT_COMPARISON, true, true, true)) {
 			unformat(eo);
 			eo3.expand = -1;
@@ -11053,7 +11067,12 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	}
 
 	calculatesub(eo2, feo);
-	if(m_type == STRUCT_NUMBER || CALCULATOR->aborted()) return *this;
+	if(m_type == STRUCT_NUMBER) {
+		if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
+		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
+		return *this;
+	}
+	if(CALCULATOR->aborted()) return *this;
 
 	eo2.sync_units = false;
 	
@@ -11122,6 +11141,9 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
 	
 	clean_multiplications(*this);
+	
+	if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
+	else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
 
 	return *this;
 }
@@ -16007,6 +16029,51 @@ void MathStructure::format(const PrintOptions &po) {
 		}
 	}
 }
+
+bool MathStructure::complexToExponentialForm(const EvaluationOptions &eo) {
+	if(m_type == STRUCT_NUMBER && o_number.hasImaginaryPart()) {
+		EvaluationOptions eo2 = eo;
+		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+		MathStructure mabs(CALCULATOR->f_abs, this, NULL);
+		MathStructure marg(CALCULATOR->f_arg, this, NULL);
+		marg *= nr_one_i;
+		marg.eval(eo2);
+		set(CALCULATOR->v_e, true);
+		raise(marg);
+		mabs.eval(eo2);
+		multiply(mabs);
+		evalSort(false);
+		return true;
+	}
+	bool b = false;
+	for(size_t i = 0; i < SIZE; i++) {
+		if(CHILD(i).complexToExponentialForm(eo)) {b = true; CHILD_UPDATED(i);}
+	}
+	return b;
+}
+bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
+	if(m_type == STRUCT_NUMBER && o_number.hasImaginaryPart()) {
+		MathStructure mabs(CALCULATOR->f_abs, this, NULL);
+		MathStructure marg(CALCULATOR->f_arg, this, NULL);
+		EvaluationOptions eo2 = eo;
+	eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+		mabs.eval(eo2);
+		marg.eval(eo2);
+		set(marg, true);
+		transform(CALCULATOR->f_sin);
+		multiply(nr_one_i);
+		add_nocopy(new MathStructure(CALCULATOR->f_cos, &marg, NULL));
+		multiply(mabs);
+		evalSort(true);
+		return true;
+	}
+	bool b = false;
+	for(size_t i = 0; i < SIZE; i++) {
+		if(CHILD(i).complexToPolarForm(eo)) {b = true; CHILD_UPDATED(i);}
+	}
+	return b;
+}
+
 void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, size_t pindex, bool recursive, MathStructure *top_parent) {
 
 	if(recursive) {
