@@ -90,7 +90,8 @@ FILE *cfile;
 enum {
 	COMMAND_FACTORIZE,
 	COMMAND_SIMPLIFY,
-	COMMAND_EXPAND_PARTIAL_FRACTIONS
+	COMMAND_EXPAND_PARTIAL_FRACTIONS,
+	COMMAND_EXECUTE
 };
 
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
@@ -851,6 +852,20 @@ void set_option(string str) {
 		} else {
 			printops.number_fraction_format = (NumberFractionFormat) v;
 			result_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "complex form", _("complex form"))) {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "cartesian", _("cartesian"))) v = COMPLEX_NUMBER_FORM_RECTANGULAR;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exponential", _("exponential"))) v = COMPLEX_NUMBER_FORM_EXPONENTIAL;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "polar", _("polar"))) v = COMPLEX_NUMBER_FORM_POLAR;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < 0 || v > 2) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			evalops.complex_number_form = (ComplexNumberForm) v;
+			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "read precision", _("read precision"))) {
 		int v = -1;
@@ -2163,12 +2178,12 @@ int main(int argc, char *argv[]) {
 				printops.base = BASE_ROMAN_NUMERALS;
 				setResult(NULL, false);
 				printops.base = save_base;
-			} else if(equalsIgnoreCase(str, "sexa") || equalsIgnoreCase(str, "sexagesimal") || equalsIgnoreCase(str, _("sexagesimal"))) {
+			} else if(equalsIgnoreCase(str, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(str, "sexagesimal", _("sexagesimal"))) {
 				int save_base = printops.base;
 				printops.base = BASE_SEXAGESIMAL;
 				setResult(NULL, false);
 				printops.base = save_base;
-			} else if(equalsIgnoreCase(str, "time") || equalsIgnoreCase(str, _("time"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "time", _("time"))) {
 				int save_base = printops.base;
 				printops.base = BASE_TIME;
 				setResult(NULL, false);
@@ -2177,6 +2192,24 @@ int main(int argc, char *argv[]) {
 				printops.time_zone = TIME_ZONE_UTC;
 				setResult(NULL, false);
 				printops.time_zone = TIME_ZONE_LOCAL;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(str, "cartesian", _("cartesian"))) {
+				avoid_recalculation = false;
+				ComplexNumberForm cnf_bak = evalops.complex_number_form;
+				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
+				expression_calculation_updated();
+				evalops.complex_number_form = cnf_bak;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exponential", _("exponential"))) {
+				avoid_recalculation = false;
+				ComplexNumberForm cnf_bak = evalops.complex_number_form;
+				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
+				expression_calculation_updated();
+				evalops.complex_number_form = cnf_bak;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "polar", _("polar"))) {
+				avoid_recalculation = false;
+				ComplexNumberForm cnf_bak = evalops.complex_number_form;
+				evalops.complex_number_form = COMPLEX_NUMBER_FORM_POLAR;
+				expression_calculation_updated();
+				evalops.complex_number_form = cnf_bak;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "bases", _("bases"))) {
 				int save_base = printops.base;
 				string save_result_text = result_text;
@@ -2342,9 +2375,15 @@ int main(int argc, char *argv[]) {
 				case BASE_DISPLAY_ALTERNATIVE: {PUTS_UNICODE(_("alternative")); break;}
 			}
 			CHECK_IF_SCREEN_FILLED
-			PRINT_AND_COLON_TABS(_("two's complement")); PUTS_UNICODE(b2oo(printops.twos_complement, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("calculate functions")); PUTS_UNICODE(b2oo(evalops.calculate_functions, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("calculate variables")); PUTS_UNICODE(b2oo(evalops.calculate_variables, false)); CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("complex form")); 
+			switch(evalops.complex_number_form) {
+				case COMPLEX_NUMBER_FORM_RECTANGULAR: {PUTS_UNICODE(_("rectangular")); break;}
+				case COMPLEX_NUMBER_FORM_EXPONENTIAL: {PUTS_UNICODE(_("exponential")); break;}
+				case COMPLEX_NUMBER_FORM_POLAR: {PUTS_UNICODE(_("polar")); break;}
+			}
+			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("complex numbers")); PUTS_UNICODE(b2oo(evalops.allow_complex, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("decimal comma"));
 			if(b_decimal_comma < 0) {PUTS_UNICODE(_("locale"));}
@@ -2467,6 +2506,7 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("spacious")); PUTS_UNICODE(b2oo(printops.spacious, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("spell out logical")); PUTS_UNICODE(b2oo(printops.spell_out_logical_operators, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("sync units")); PUTS_UNICODE(b2oo(evalops.sync_units, false)); CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("two's complement")); PUTS_UNICODE(b2oo(printops.twos_complement, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("unicode")); PUTS_UNICODE(b2oo(printops.use_unicode_signs, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("units")); PUTS_UNICODE(b2oo(evalops.parse_options.units_enabled, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("unknowns")); PUTS_UNICODE(b2oo(evalops.parse_options.unknowns_enabled, false)); CHECK_IF_SCREEN_FILLED
@@ -2966,9 +3006,9 @@ int main(int argc, char *argv[]) {
 				if(printops.base > 2 && printops.base <= 36 && printops.base != BASE_OCTAL && printops.base != BASE_DECIMAL && printops.base != BASE_HEXADECIMAL) {str += " "; str += i2s(printops.base); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_2(_("base display"), printops.base_display, _("none"), _("normal"), _("alternative"));
-				STR_AND_TABS_BOOL(_("two's complement"), printops.twos_complement);
 				STR_AND_TABS_BOOL(_("calculate functions"), evalops.calculate_functions);
 				STR_AND_TABS_BOOL(_("calculate variables"), evalops.calculate_variables);
+				STR_AND_TABS_2(_("complex form"), evalops.complex_number_form, _("rectangular"), _("exponential"), _("polar"));
 				STR_AND_TABS_BOOL(_("complex numbers"), evalops.allow_complex);
 				STR_AND_TABS(_("decimal comma")); str += "("; str += _("locale"); 
 				if(b_decimal_comma < 0) str += "*";
@@ -3051,6 +3091,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("spacious"), printops.spacious);
 				STR_AND_TABS_BOOL(_("spell out logical"), printops.spell_out_logical_operators);
 				STR_AND_TABS_BOOL(_("sync units"), evalops.sync_units);
+				STR_AND_TABS_BOOL(_("two's complement"), printops.twos_complement);
 				STR_AND_TABS_BOOL(_("unicode"), printops.use_unicode_signs);
 				STR_AND_TABS_BOOL(_("units"), evalops.parse_options.units_enabled);
 				STR_AND_TABS_BOOL(_("unknowns"), evalops.parse_options.unknowns_enabled);
@@ -3213,40 +3254,45 @@ int main(int argc, char *argv[]) {
 				PUTS_UNICODE(_("Equivalent to set approximation try exact."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to"))) {
-				puts("");
-				PUTS_UNICODE(_("Converts units or changes number base in current result."));
-				puts("");
-				PUTS_UNICODE(_("Possible values:"));
-				puts("");
-				PUTS_UNICODE(_("- a unit (e.g. meter)"));
-				PUTS_UNICODE(_("prepend with ? to request the optimal prefix"));
-				PUTS_UNICODE(_("prepend with + or - to force/disable use of mixed units"));
-				PUTS_UNICODE(_("- a unit expression (e.g. km/h)"));
-				PUTS_UNICODE(_("- a physical constant (e.g. c)"));
-				PUTS_UNICODE(_("- base (convert to base units)"));
-				PUTS_UNICODE(_("- optimal (convert to optimal unit)"));
-				PUTS_UNICODE(_("- mixed (convert to mixed units, e.g. hours + minutes)"));
-				puts("");
-				PUTS_UNICODE(_("- bin / binary (show as binary number)"));
-				PUTS_UNICODE(_("- oct / octal (show as octal number)"));
-				PUTS_UNICODE(_("- duo / duodecimal (show as duodecimal number)"));
-				PUTS_UNICODE(_("- hex / hexadecimal (show as hexadecimal number)"));
-				PUTS_UNICODE(_("- sex / sexagesimal (show as sexagesimal number)"));
-				PUTS_UNICODE(_("- roman (show as roman numerals)"));
-				PUTS_UNICODE(_("- time (show in time format)"));
-				PUTS_UNICODE(_("- bases (show as binary, octal, decimal and hexadecimal number)"));
-				puts("");
-				PUTS_UNICODE(_("- fraction (show result in combined fractional format)"));
-				PUTS_UNICODE(_("- factors (factorize result)"));
-				puts("");
-				PUTS_UNICODE(_("- utc (show UTC date)"));
-				PUTS_UNICODE(_("- calendars"));
-				puts("");
-				PUTS_UNICODE(_("Example: to ?g"));
-				puts("");
+				INIT_SCREEN_CHECK
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				CHECK_IF_SCREEN_FILLED_PUTS(_("Converts units or changes number base in current result."));
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				CHECK_IF_SCREEN_FILLED_PUTS(_("Possible values:"));
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- a unit (e.g. meter)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with ? to request the optimal prefix"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with + or - to force/disable use of mixed units"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- a unit expression (e.g. km/h)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- a physical constant (e.g. c)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- base (convert to base units)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- optimal (convert to optimal unit)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- mixed (convert to mixed units, e.g. hours + minutes)"));
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- bin / binary (show as binary number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- oct / octal (show as octal number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- duo / duodecimal (show as duodecimal number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex / hexadecimal (show as hexadecimal number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- sex / sexagesimal (show as sexagesimal number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- roman (show as roman numerals)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- time (show in time format)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- bases (show as binary, octal, decimal and hexadecimal number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- rectangular / cartesian (show complex numbers in rectangular form)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- exponential (show complex numbers in exponential form)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- polar (show complex numbers in polar form)"));
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- fraction (show result in combined fractional format)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- factors (factorize result)"));
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- utc (show UTC date)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- calendars"));
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				CHECK_IF_SCREEN_FILLED_PUTS(_("Example: to ?g"));
+				CHECK_IF_SCREEN_FILLED_PUTS("");
 				if(EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to"))) {
-					PUTS_UNICODE(_("This command can also be typed directly at the end of the mathematical expression."));
-					puts("");
+					CHECK_IF_SCREEN_FILLED_PUTS(_("This command can also be typed directly at the end of the mathematical expression."));
+					CHECK_IF_SCREEN_FILLED_PUTS("");
 				}
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "quit", _("quit")) || EQUALS_IGNORECASE_AND_LOCAL(str, "exit", _("exit"))) {
 				puts("");
@@ -3601,9 +3647,10 @@ void result_prefix_changed(Prefix *prefix) {
 	if(expression_executed) setResult(prefix, false);
 }
 void expression_calculation_updated() {
-	if(expression_executed && !rpn_mode && !avoid_recalculation) {
+	if(expression_executed && !avoid_recalculation) {
 		hide_parse_errors = true;
-		execute_expression();
+		if(rpn_mode) execute_command(COMMAND_EXECUTE);
+		else execute_expression();
 		hide_parse_errors = false;
 	}
 }
@@ -3655,6 +3702,10 @@ void CommandThread::run() {
 			}
 			case COMMAND_SIMPLIFY: {
 				((MathStructure*) x)->simplify(evalops);
+				break;
+			}
+			case COMMAND_EXECUTE: {
+				((MathStructure*) x)->eval(evalops);
 				break;
 			}
 		}
@@ -3720,6 +3771,10 @@ void execute_command(int command_type, bool show_result) {
 					}
 					case COMMAND_SIMPLIFY: {
 						FPUTS_UNICODE(_("Simplifying (press Enter to abort)"), stdout);
+						break;
+					}
+					case COMMAND_EXECUTE: {
+						FPUTS_UNICODE(_("Calculating (press Enter to abort)"), stdout);
 						break;
 					}
 				}
@@ -3799,8 +3854,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	} else {
 		str = expression_str;
 		string from_str = str, to_str;
-		bool b_units_saved = evalops.parse_options.units_enabled;
-		evalops.parse_options.units_enabled = true;
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
 			remove_duplicate_blanks(to_str);
 			string to_str1, to_str2;
@@ -3815,7 +3868,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_HEXADECIMAL;
-				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
@@ -3824,7 +3876,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_BINARY;
-				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
@@ -3833,7 +3884,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_OCTAL;
-				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
@@ -3842,7 +3892,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_DUODECIMAL;
-				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
@@ -3851,7 +3900,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_ROMAN_NUMERALS;
-				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
@@ -3860,7 +3908,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_SEXAGESIMAL;
-				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
@@ -3869,7 +3916,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_TIME;
-				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
@@ -3877,7 +3923,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
 				expression_str = from_str;
 				printops.time_zone = TIME_ZONE_UTC;
-				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.time_zone = TIME_ZONE_LOCAL;
 				expression_str = str;
@@ -3897,8 +3942,34 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "calendars", _("calendars"))) {
 				do_calendars = true;
 				str = from_str;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "cartesian", _("cartesian"))) {
+				expression_str = from_str;
+				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
+				evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				evalops.complex_number_form = save_complex_number_form;
+				expression_str = str;
+				return;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "exponential", _("exponential"))) {
+				expression_str = from_str;
+				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
+				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				evalops.complex_number_form = save_complex_number_form;
+				expression_str = str;
+				return;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "polar", _("polar"))) {
+				expression_str = from_str;
+				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
+				evalops.complex_number_form = COMPLEX_NUMBER_FORM_POLAR;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				evalops.complex_number_form = save_complex_number_form;
+				expression_str = str;
+				return;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "optimal", _("optimal"))) {
 				expression_str = from_str;
+				bool b_units_saved = evalops.parse_options.units_enabled;
+				evalops.parse_options.units_enabled = true;
 				AutoPostConversion save_auto_post_conversion = evalops.auto_post_conversion;
 				evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
@@ -3908,6 +3979,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				return;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "base", _("base"))) {
 				expression_str = from_str;
+				bool b_units_saved = evalops.parse_options.units_enabled;
+				evalops.parse_options.units_enabled = true;
 				AutoPostConversion save_auto_post_conversion = evalops.auto_post_conversion;
 				evalops.auto_post_conversion = POST_CONVERSION_BASE;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
@@ -3919,13 +3992,14 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = s2i(to_str2);
-				evalops.parse_options.units_enabled = b_units_saved;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
 				return;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _("mixed"))) {
 				expression_str = from_str;
+				bool b_units_saved = evalops.parse_options.units_enabled;
+				evalops.parse_options.units_enabled = true;
 				AutoPostConversion save_auto_post_conversion = evalops.auto_post_conversion;
 				MixedUnitsConversion save_mixed_units_conversion = evalops.mixed_units_conversion;
 				evalops.auto_post_conversion = POST_CONVERSION_NONE;
@@ -3937,8 +4011,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				evalops.parse_options.units_enabled = b_units_saved;
 				return;
 			}
-		}		
-		evalops.parse_options.units_enabled = b_units_saved;
+		}
 	}
 	
 	expression_executed = true;
@@ -4312,6 +4385,7 @@ void load_preferences() {
 	evalops.parse_options.dot_as_separator = CALCULATOR->default_dot_as_separator;
 	evalops.parse_options.comma_as_separator = false;
 	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;
+	evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 	b_decimal_comma = -1;
 	
 	adaptive_interval_display = true;
@@ -4442,6 +4516,10 @@ void load_preferences() {
 				} else if(svar == "number_fraction_format") {
 					if(v >= FRACTION_DECIMAL && v <= FRACTION_COMBINED) {
 						printops.number_fraction_format = (NumberFractionFormat) v;
+					}
+				} else if(svar == "complex_number_form") {
+					if(v >= COMPLEX_NUMBER_FORM_RECTANGULAR && v <= COMPLEX_NUMBER_FORM_POLAR) {
+						evalops.complex_number_form = (ComplexNumberForm) v;
 					}
 				} else if(svar == "number_base") {
 					printops.base = v;
@@ -4632,6 +4710,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "negative_exponents=%i\n", saved_printops.negative_exponents);
 	fprintf(file, "sort_minus_last=%i\n", saved_printops.sort_options.minus_last);
 	fprintf(file, "number_fraction_format=%i\n", saved_printops.number_fraction_format);
+	fprintf(file, "complex_number_form=%i\n", saved_evalops.complex_number_form);
 	fprintf(file, "use_prefixes=%i\n", saved_printops.use_unit_prefixes);
 	fprintf(file, "use_prefixes_for_all_units=%i\n", saved_printops.use_prefixes_for_all_units);
 	fprintf(file, "use_prefixes_for_currencies=%i\n", saved_printops.use_prefixes_for_currencies);
