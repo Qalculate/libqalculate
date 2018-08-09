@@ -6873,7 +6873,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 						}
 					} else if(CHILD(0)[i] == CHILD(1)) {
 						CHILD(1).clear(true);
-						CHILD(0).delChild(i2 + 1);
+						CHILD(0).delChild(i + 1);
 						break;
 					}
 					if(!CHILD(0).isAddition()) break;
