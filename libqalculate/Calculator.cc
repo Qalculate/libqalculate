@@ -2911,7 +2911,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 	if(mstruct_new.isAddition()) {
 		if(mstruct_new.size() > 100 && aborted()) return mstruct;
 		mstruct_new.factorizeUnits();
-		if(!b_changed && mstruct_new != mstruct) b_changed = true;
+		if(!b_changed && !mstruct_new.equals(mstruct, true, true)) b_changed = true;
 	}
 
 	if(!mstruct_new.isPower() && !mstruct_new.isUnit() && !mstruct_new.isMultiplication()) {
@@ -2920,7 +2920,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				if(mstruct_new.size() > 100 && aborted()) return mstruct;
 				if(!mstruct_new.isFunction() || !mstruct_new.function()->getArgumentDefinition(i + 1) || mstruct_new.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) { 
 					mstruct_new[i] = convert(mstruct_new[i], to_unit, eo, false, convert_to_mixed_units);
-					if(!b_changed && mstruct_new != mstruct[i]) b_changed = true;
+					if(!b_changed && !mstruct_new.equals(mstruct[i], true, true)) b_changed = true;
 				}
 			}
 			if(b_changed) {
@@ -3016,7 +3016,7 @@ MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const
 	if(!mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
 	MathStructure mstruct_new(mstruct);
 	mstruct_new.convertToBaseUnits(true, NULL, true, eo);
-	if(mstruct_new != mstruct) {
+	if(!mstruct_new.equals(mstruct, true, true)) {
 		EvaluationOptions eo2 = eo;
 		eo2.keep_prefixes = false;
 		eo2.isolate_x = false;
@@ -3487,7 +3487,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
 				if(mstruct_new.size() > 100 && aborted()) return mstruct;
 				mstruct_new[i] = convertToBestUnit(mstruct_new[i], eo, convert_to_si_units);
-				if(!b && mstruct_new[i] != mstruct[i]) b = true;
+				if(!b && !mstruct_new[i].equals(mstruct[i], true, true)) b = true;
 			}
 			if(b) {
 				mstruct_new.childrenUpdated();
@@ -3535,7 +3535,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				} else if(mstruct_old.getChild(i)->size() > 0) {
 					mstruct_old[i - 1] = convertToBestUnit(mstruct_old[i - 1], eo, convert_to_si_units);
 					mstruct_old.childUpdated(i);
-					if(mstruct_old[i - 1] != mstruct[i - 1]) child_updated = true;
+					if(!mstruct_old[i - 1].equals(mstruct[i - 1], true, true)) child_updated = true;
 				}
 			}
 			if(child_updated) mstruct_old.eval(eo2);
@@ -3561,7 +3561,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 						MathStructure m_i_old(mstruct_new[i - 1]);
 						mstruct_new[i - 1] = convertToBestUnit(mstruct_new[i - 1], eo, convert_to_si_units);
 						mstruct_new.childUpdated(i);
-						if(mstruct_new[i - 1] != m_i_old) child_updated = true;
+						if(!mstruct_new[i - 1].equals(m_i_old, true, true)) child_updated = true;
 					}
 				}
 				bool is_converted = false;
