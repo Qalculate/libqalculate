@@ -1,3 +1,7 @@
+2018-08-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix f(x)+b=b (e.g. x+1=1)
+
 2018-08-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Polar and exponential complex number forms
