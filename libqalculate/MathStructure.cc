@@ -16056,7 +16056,7 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		MathStructure mabs(CALCULATOR->f_abs, this, NULL);
 		MathStructure marg(CALCULATOR->f_arg, this, NULL);
 		EvaluationOptions eo2 = eo;
-	eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		mabs.eval(eo2);
 		marg.eval(eo2);
 		set(marg, true);

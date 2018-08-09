@@ -91,7 +91,7 @@ enum {
 	COMMAND_FACTORIZE,
 	COMMAND_SIMPLIFY,
 	COMMAND_EXPAND_PARTIAL_FRACTIONS,
-	COMMAND_EXECUTE
+	COMMAND_EVAL
 };
 
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
@@ -2196,19 +2196,28 @@ int main(int argc, char *argv[]) {
 				avoid_recalculation = false;
 				ComplexNumberForm cnf_bak = evalops.complex_number_form;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
-				expression_calculation_updated();
+				hide_parse_errors = true;
+				if(!rpn_mode) execute_command(COMMAND_EVAL);
+				else execute_expression();
+				hide_parse_errors = false;
 				evalops.complex_number_form = cnf_bak;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exponential", _("exponential"))) {
 				avoid_recalculation = false;
 				ComplexNumberForm cnf_bak = evalops.complex_number_form;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
-				expression_calculation_updated();
+				hide_parse_errors = true;
+				if(!rpn_mode) execute_command(COMMAND_EVAL);
+				else execute_expression();
+				hide_parse_errors = false;
 				evalops.complex_number_form = cnf_bak;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "polar", _("polar"))) {
 				avoid_recalculation = false;
 				ComplexNumberForm cnf_bak = evalops.complex_number_form;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_POLAR;
-				expression_calculation_updated();
+				hide_parse_errors = true;
+				if(!rpn_mode) execute_command(COMMAND_EVAL);
+				else execute_expression();
+				hide_parse_errors = false;
 				evalops.complex_number_form = cnf_bak;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "bases", _("bases"))) {
 				int save_base = printops.base;
@@ -3647,10 +3656,9 @@ void result_prefix_changed(Prefix *prefix) {
 	if(expression_executed) setResult(prefix, false);
 }
 void expression_calculation_updated() {
-	if(expression_executed && !avoid_recalculation) {
+	if(expression_executed && !avoid_recalculation && !rpn_mode) {
 		hide_parse_errors = true;
-		if(rpn_mode) execute_command(COMMAND_EXECUTE);
-		else execute_expression();
+		execute_expression();
 		hide_parse_errors = false;
 	}
 }
@@ -3704,7 +3712,7 @@ void CommandThread::run() {
 				((MathStructure*) x)->simplify(evalops);
 				break;
 			}
-			case COMMAND_EXECUTE: {
+			case COMMAND_EVAL: {
 				((MathStructure*) x)->eval(evalops);
 				break;
 			}
@@ -3773,7 +3781,7 @@ void execute_command(int command_type, bool show_result) {
 						FPUTS_UNICODE(_("Simplifying (press Enter to abort)"), stdout);
 						break;
 					}
-					case COMMAND_EXECUTE: {
+					case COMMAND_EVAL: {
 						FPUTS_UNICODE(_("Calculating (press Enter to abort)"), stdout);
 						break;
 					}
