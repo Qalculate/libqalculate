@@ -3535,7 +3535,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				} else if(mstruct_old.getChild(i)->size() > 0) {
 					mstruct_old[i - 1] = convertToBestUnit(mstruct_old[i - 1], eo, convert_to_si_units);
 					mstruct_old.childUpdated(i);
-					child_updated = true;
+					if(mstruct_old[i - 1] != mstruct[i - 1]) child_updated = true;
 				}
 			}
 			if(child_updated) mstruct_old.eval(eo2);
@@ -3558,9 +3558,10 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 						b = true;
 						cu->add(mstruct_new.getChild(i)->base()->unit(), mstruct_new.getChild(i)->exponent()->number().intValue());
 					} else if(mstruct_new.getChild(i)->size() > 0) {
+						MathStructure m_i_old(mstruct_new[i - 1]);
 						mstruct_new[i - 1] = convertToBestUnit(mstruct_new[i - 1], eo, convert_to_si_units);
 						mstruct_new.childUpdated(i);
-						child_updated = true;
+						if(mstruct_new[i - 1] != m_i_old) child_updated = true;
 					}
 				}
 				bool is_converted = false;
