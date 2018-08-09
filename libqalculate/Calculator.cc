@@ -221,15 +221,21 @@ void autoConvert(const MathStructure &morig, MathStructure &mconv, const Evaluat
 	switch(eo.auto_post_conversion) {
 		case POST_CONVERSION_OPTIMAL: {
 			mconv.set(CALCULATOR->convertToBestUnit(morig, eo, false));
+			break;
 		}
 		case POST_CONVERSION_BASE: {
 			mconv.set(CALCULATOR->convertToBaseUnits(morig, eo));
+			break;
 		}
 		case POST_CONVERSION_OPTIMAL_SI: {
 			mconv.set(CALCULATOR->convertToBestUnit(morig, eo, true));
+			break;
 		}
-		default: {}
+		default: {
+			if(&mconv != &morig) mconv.set(morig);
+		}
 	}
+	if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mconv.set(CALCULATOR->convertToMixedUnits(mconv, eo));
 }
 
 void CalculateThread::run() {
@@ -249,9 +255,7 @@ void CalculateThread::run() {
 		} else {
 			MathStructure meval(*mstruct);
 			mstruct->setAborted();
-			meval.eval(CALCULATOR->tmp_evaluationoptions);
-			if(CALCULATOR->tmp_evaluationoptions.auto_post_conversion == POST_CONVERSION_NONE) mstruct->set(meval);
-			else autoConvert(meval, *mstruct, CALCULATOR->tmp_evaluationoptions);
+			mstruct->set(CALCULATOR->calculate(meval, CALCULATOR->tmp_evaluationoptions));
 		}
 		switch(CALCULATOR->tmp_proc_command) {
 			case PROC_RPN_ADD: {
@@ -1599,7 +1603,7 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "6511.42", 1, "", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "5441.51", 1, "", false, true, true));
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
@@ -2118,6 +2122,7 @@ bool Calculator::calculateRPNLogicalNot(int msecs, const EvaluationOptions &eo, 
 	return calculateRPN(mstruct, PROC_RPN_OPERATION_1, 0, msecs, eo);
 }
 MathStructure *Calculator::calculateRPN(MathOperation op, const EvaluationOptions &eo, MathStructure *parsed_struct) {
+	current_stage = MESSAGE_STAGE_PARSING;
 	MathStructure *mstruct;
 	if(rpn_stack.size() == 0) {
 		mstruct = new MathStructure();
@@ -2152,8 +2157,11 @@ MathStructure *Calculator::calculateRPN(MathOperation op, const EvaluationOption
 		mstruct = new MathStructure(*rpn_stack[rpn_stack.size() - 2]);
 		mstruct->add(*rpn_stack.back(), op);
 	}
+	current_stage = MESSAGE_STAGE_CALCULATION;
 	mstruct->eval(eo);
+	current_stage = MESSAGE_STAGE_CONVERSION;
 	autoConvert(*mstruct, *mstruct, eo);
+	current_stage = MESSAGE_STAGE_UNSET;
 	if(rpn_stack.size() > 1) {
 		rpn_stack.back()->unref();
 		rpn_stack.erase(rpn_stack.begin() + (rpn_stack.size() - 1));
@@ -2167,6 +2175,7 @@ MathStructure *Calculator::calculateRPN(MathOperation op, const EvaluationOption
 	return rpn_stack.back();
 }
 MathStructure *Calculator::calculateRPN(MathFunction *f, const EvaluationOptions &eo, MathStructure *parsed_struct) {
+	current_stage = MESSAGE_STAGE_PARSING;
 	MathStructure *mstruct = new MathStructure(f, NULL);
 	size_t iregs = 0;
 	if(f->args() != 0) {
@@ -2211,8 +2220,11 @@ MathStructure *Calculator::calculateRPN(MathFunction *f, const EvaluationOptions
 		f->appendDefaultValues(*mstruct);
 	}
 	if(parsed_struct) parsed_struct->set(*mstruct);
+	current_stage = MESSAGE_STAGE_CALCULATION;
 	mstruct->eval(eo);
+	current_stage = MESSAGE_STAGE_CONVERSION;
 	autoConvert(*mstruct, *mstruct, eo);
+	current_stage = MESSAGE_STAGE_UNSET;
 	if(iregs == 0) {
 		rpn_stack.push_back(mstruct);
 	} else {
@@ -2227,6 +2239,7 @@ MathStructure *Calculator::calculateRPN(MathFunction *f, const EvaluationOptions
 	return rpn_stack.back();
 }
 MathStructure *Calculator::calculateRPNBitwiseNot(const EvaluationOptions &eo, MathStructure *parsed_struct) {
+	current_stage = MESSAGE_STAGE_PARSING;
 	MathStructure *mstruct;
 	if(rpn_stack.size() == 0) {
 		mstruct = new MathStructure();
@@ -2236,8 +2249,11 @@ MathStructure *Calculator::calculateRPNBitwiseNot(const EvaluationOptions &eo, M
 		mstruct->setBitwiseNot();
 	}
 	if(parsed_struct) parsed_struct->set(*mstruct);
+	current_stage = MESSAGE_STAGE_CALCULATION;
 	mstruct->eval(eo);
+	current_stage = MESSAGE_STAGE_CONVERSION;
 	autoConvert(*mstruct, *mstruct, eo);
+	current_stage = MESSAGE_STAGE_UNSET;
 	if(rpn_stack.size() == 0) {
 		rpn_stack.push_back(mstruct);
 	} else {
@@ -2247,6 +2263,7 @@ MathStructure *Calculator::calculateRPNBitwiseNot(const EvaluationOptions &eo, M
 	return rpn_stack.back();
 }
 MathStructure *Calculator::calculateRPNLogicalNot(const EvaluationOptions &eo, MathStructure *parsed_struct) {
+	current_stage = MESSAGE_STAGE_PARSING;
 	MathStructure *mstruct;
 	if(rpn_stack.size() == 0) {
 		mstruct = new MathStructure();
@@ -2256,8 +2273,11 @@ MathStructure *Calculator::calculateRPNLogicalNot(const EvaluationOptions &eo, M
 		mstruct->setLogicalNot();
 	}
 	if(parsed_struct) parsed_struct->set(*mstruct);
+	current_stage = MESSAGE_STAGE_CALCULATION;
 	mstruct->eval(eo);
+	current_stage = MESSAGE_STAGE_CONVERSION;
 	autoConvert(*mstruct, *mstruct, eo);
+	current_stage = MESSAGE_STAGE_UNSET;
 	if(rpn_stack.size() == 0) {
 		rpn_stack.push_back(mstruct);
 	} else {
@@ -2279,8 +2299,11 @@ bool Calculator::RPNStackEnter(string str, int msecs, const EvaluationOptions &e
 }
 void Calculator::RPNStackEnter(MathStructure *mstruct, bool eval, const EvaluationOptions &eo) {
 	if(eval) {
+		current_stage = MESSAGE_STAGE_CALCULATION;
 		mstruct->eval();
+		current_stage = MESSAGE_STAGE_CONVERSION;
 		autoConvert(*mstruct, *mstruct, eo);
+		current_stage = MESSAGE_STAGE_UNSET;
 	}
 	rpn_stack.push_back(mstruct);
 }
@@ -2307,8 +2330,11 @@ void Calculator::setRPNRegister(size_t index, MathStructure *mstruct, bool eval,
 		return;
 	}
 	if(eval) {
+		current_stage = MESSAGE_STAGE_CALCULATION;
 		mstruct->eval();
+		current_stage = MESSAGE_STAGE_CONVERSION;
 		autoConvert(*mstruct, *mstruct, eo);
+		current_stage = MESSAGE_STAGE_UNSET;
 	}
 	if(index <= 0 || index > rpn_stack.size()) return;
 	index = rpn_stack.size() - index;
@@ -2592,7 +2618,7 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 		if(to_str.rfind(SIGN_MINUS, 0) == 0) {
 			to_str.replace(0, strlen(SIGN_MINUS), MINUS);
 		}
-		if(!keep_modifiers && !to_str.empty() && (to_str[0] == '0' || to_str[0] == '?' || to_str[0] == '+' || to_str[0] == '-')) {
+		if(!keep_modifiers && (to_str[0] == '0' || to_str[0] == '?' || to_str[0] == '+' || to_str[0] == '-')) {
 			to_str = to_str.substr(1, str.length() - 1);
 			remove_blank_ends(to_str);
 		}
@@ -7404,7 +7430,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {2, 6, 1};
+	int version_numbers[] = {2, 6, 2};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

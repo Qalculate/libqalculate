@@ -2197,7 +2197,7 @@ int main(int argc, char *argv[]) {
 				ComplexNumberForm cnf_bak = evalops.complex_number_form;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
 				hide_parse_errors = true;
-				if(!rpn_mode) execute_command(COMMAND_EVAL);
+				if(rpn_mode) execute_command(COMMAND_EVAL);
 				else execute_expression();
 				hide_parse_errors = false;
 				evalops.complex_number_form = cnf_bak;
@@ -2206,7 +2206,7 @@ int main(int argc, char *argv[]) {
 				ComplexNumberForm cnf_bak = evalops.complex_number_form;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
 				hide_parse_errors = true;
-				if(!rpn_mode) execute_command(COMMAND_EVAL);
+				if(rpn_mode) execute_command(COMMAND_EVAL);
 				else execute_expression();
 				hide_parse_errors = false;
 				evalops.complex_number_form = cnf_bak;
@@ -2215,7 +2215,7 @@ int main(int argc, char *argv[]) {
 				ComplexNumberForm cnf_bak = evalops.complex_number_form;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_POLAR;
 				hide_parse_errors = true;
-				if(!rpn_mode) execute_command(COMMAND_EVAL);
+				if(rpn_mode) execute_command(COMMAND_EVAL);
 				else execute_expression();
 				hide_parse_errors = false;
 				evalops.complex_number_form = cnf_bak;
@@ -4442,7 +4442,7 @@ void load_preferences() {
 #endif
 
 	
-	int version_numbers[] = {2, 6, 1};
+	int version_numbers[] = {2, 6, 2};
 	
 	if(file) {
 		char line[10000];
