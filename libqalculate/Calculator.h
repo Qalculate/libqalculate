@@ -678,7 +678,7 @@ class Calculator {
 	MathStructure convertTimeOut(string str, Unit *from_unit, Unit *to_unit, int milliseconds, const EvaluationOptions &eo = default_evaluation_options);
 	MathStructure convert(string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options);	
 	MathStructure convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);
-	Unit *getBestUnit(Unit *u, bool allow_only_div = false);
+	Unit *getBestUnit(Unit *u, bool allow_only_div = false, bool convert_to_local_currency = true);
 	MathStructure convertToBestUnit(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options, bool convert_to_si_units = true);
 	MathStructure convertToCompositeUnit(const MathStructure &mstruct, CompositeUnit *cu, const EvaluationOptions &eo = default_evaluation_options, bool always_convert = true);
 	MathStructure convertToMixedUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);
@@ -821,6 +821,7 @@ class Calculator {
 	Unit* getUnit(string name_);
 	Unit* getActiveUnit(string name_);
 	Unit* getCompositeUnit(string internal_name_);
+	Unit* getLocalCurrency();
 	/** Returns prefix for an index (starting at zero). All prefixes can be traversed by starting at index zero and increasing the index until NULL is returned.
 	*
 	* @param index Index of prefix.
