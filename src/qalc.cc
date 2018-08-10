@@ -704,7 +704,8 @@ void set_option(string str) {
 			evalops.mixed_units_conversion = muc;
 			expression_calculation_updated();
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "algebra mode", _("algebra mode"))) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "currency conversion", _("currency conversion"))) SET_BOOL_E(evalops.local_currency_conversion)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "algebra mode", _("algebra mode"))) {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = STRUCTURING_NONE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "simplify", _("simplify"))) v = STRUCTURING_SIMPLIFY;
@@ -2394,6 +2395,7 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("complex numbers")); PUTS_UNICODE(b2oo(evalops.allow_complex, false)); CHECK_IF_SCREEN_FILLED
+			PRINT_AND_COLON_TABS(_("currency conversion")); PUTS_UNICODE(b2oo(evalops.local_currency_conversion, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("decimal comma"));
 			if(b_decimal_comma < 0) {PUTS_UNICODE(_("locale"));}
 			else if(b_decimal_comma == 0) {PUTS_UNICODE(_("off"));}
@@ -3019,6 +3021,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("calculate variables"), evalops.calculate_variables);
 				STR_AND_TABS_2(_("complex form"), evalops.complex_number_form, _("rectangular"), _("exponential"), _("polar"));
 				STR_AND_TABS_BOOL(_("complex numbers"), evalops.allow_complex);
+				STR_AND_TABS_BOOL(_("currency conversion"), evalops.local_currency_conversion);
 				STR_AND_TABS(_("decimal comma")); str += "("; str += _("locale"); 
 				if(b_decimal_comma < 0) str += "*";
 				str += ", "; str += _("off");
@@ -3325,7 +3328,32 @@ int main(int argc, char *argv[]) {
 				PUTS_UNICODE(_("Enables/disables use of interval arithmetic to determine the precision of the result."));
 				puts("");
 			} else {
-				goto show_info;
+				bool b = false;
+				size_t index = str.find(' ', 1);
+				if(index != string::npos) {
+					string sset = str.substr(0, index);
+					if(EQUALS_IGNORECASE_AND_LOCAL(sset, "set", _("set"))) {
+						str = str.substr(index);
+						remove_blank_ends(str);
+						remove_duplicate_blanks(str);
+						gsub("_", " ", str);
+						puts("");
+						if(EQUALS_IGNORECASE_AND_LOCAL(str, "currency conversion", _("currency conversion"))) {
+							PUTS_UNICODE(_("Enable/disables conversion to the local currency when optimal unit conversion is enabled."));
+						} else {
+							char buffer[1000];
+							int cx = snprintf(buffer, 1000, _("No help available for %s."), str.c_str());
+							if(cx >= 0 && cx < 1000) {
+								PUTS_UNICODE(buffer);
+							}
+						}
+						puts("");
+						b = true;
+					}
+				}
+				if(!b) {
+					goto show_info;
+				}
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "quit", _("quit")) || EQUALS_IGNORECASE_AND_LOCAL(str, "exit", _("exit"))) {
@@ -4394,6 +4422,7 @@ void load_preferences() {
 	evalops.parse_options.comma_as_separator = false;
 	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;
 	evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+	evalops.local_currency_conversion = true;
 	b_decimal_comma = -1;
 	
 	adaptive_interval_display = true;
@@ -4593,6 +4622,8 @@ void load_preferences() {
 					if(v >= MIXED_UNITS_CONVERSION_NONE && v <= MIXED_UNITS_CONVERSION_FORCE_ALL) {
 						evalops.mixed_units_conversion = (MixedUnitsConversion) v;
 					}
+				} else if(svar == "local_currency_conversion") {
+					evalops.local_currency_conversion = v;
 				} else if(svar == "use_unicode_signs") {
 					printops.use_unicode_signs = v;	
 				} else if(svar == "lower_case_numbers") {
@@ -4728,6 +4759,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "place_units_separately=%i\n", saved_printops.place_units_separately);
 	fprintf(file, "auto_post_conversion=%i\n", saved_evalops.auto_post_conversion);
 	fprintf(file, "mixed_units_conversion=%i\n", saved_evalops.mixed_units_conversion);
+	fprintf(file, "local_currency_conversion=%i\n", saved_evalops.local_currency_conversion);
 	fprintf(file, "number_base=%i\n", saved_printops.base);
 	fprintf(file, "number_base_expression=%i\n", saved_evalops.parse_options.base);
 	fprintf(file, "read_precision=%i\n", saved_evalops.parse_options.read_precision);

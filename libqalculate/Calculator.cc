@@ -218,6 +218,10 @@ class CalculateThread : public Thread {
 
 
 void autoConvert(const MathStructure &morig, MathStructure &mconv, const EvaluationOptions &eo) {
+	if(!morig.containsType(STRUCT_UNIT, true)) {
+		if(&mconv != &morig) mconv.set(morig);
+		return;
+	}
 	switch(eo.auto_post_conversion) {
 		case POST_CONVERSION_OPTIMAL: {
 			mconv.set(CALCULATOR->convertToBestUnit(morig, eo, false));
@@ -3134,35 +3138,22 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 	}
 	return NULL;
 }
-Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
+Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div, bool convert_to_local_currency) {
 	switch(u->subtype()) {
 		case SUBTYPE_BASE_UNIT: {
-			if(u == u_euro) {
-				struct lconv *lc = localeconv();
-				if(lc) {
-					string local_currency = lc->int_curr_symbol;
-					remove_blank_ends(local_currency);
-					if(!local_currency.empty()) {
-						Unit *u_local_currency = CALCULATOR->getActiveUnit(local_currency);
-						if(u_local_currency) return u_local_currency;
-					}
-				}
+			if(convert_to_local_currency && u->isCurrency()) {
+				Unit *u_local_currency = CALCULATOR->getLocalCurrency();
+				if(u_local_currency) return u_local_currency;
 			}
 			return u;
 		}
 		case SUBTYPE_ALIAS_UNIT: {
 			AliasUnit *au = (AliasUnit*) u;
 			if(au->baseExponent() == 1 && au->baseUnit()->subtype() == SUBTYPE_BASE_UNIT) {
-				if(au->baseUnit() == u_euro) {
-					struct lconv *lc = localeconv();
-					if(lc) {
-						string local_currency = lc->int_curr_symbol;
-						remove_blank_ends(local_currency);
-						if(!local_currency.empty()) {
-							Unit *u_local_currency = CALCULATOR->getActiveUnit(local_currency);
-							if(u_local_currency) return u_local_currency;
-						}
-					}
+				if(au->isCurrency()) {
+					if(!convert_to_local_currency) return u;
+					Unit *u_local_currency = CALCULATOR->getLocalCurrency();
+					if(u_local_currency) return u_local_currency;
 				}
 				return (Unit*) au->baseUnit();
 			} else if(au->isSIUnit() && (au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT || au->firstBaseExponent() != 1)) {
@@ -3334,7 +3325,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 				if(points >= max_points && !minus) break;
 			}
 			if(!best_u) return u;
-			best_u = getBestUnit(best_u);
+			best_u = getBestUnit(best_u, false, convert_to_local_currency);
 			if(points > 1 && points < max_points - 1) {
 				CompositeUnit *cu_new = new CompositeUnit("", "temporary_composite_convert");
 				bool return_cu = minus;
@@ -3365,7 +3356,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div) {
 					}
 				}
 				if(b) {
-					Unit *u2 = getBestUnit(cu2, true);
+					Unit *u2 = getBestUnit(cu2, true, convert_to_local_currency);
 					b = false;
 					if(u2->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 						for(size_t i3 = 1; i3 <= ((CompositeUnit*) u2)->countUnits(); i3++) {
@@ -3437,7 +3428,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				} else {
 					CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
 					cu->add(mstruct_new.base()->unit(), mstruct_new.exponent()->number().intValue());
-					Unit *u = getBestUnit(cu);
+					Unit *u = getBestUnit(cu, false, eo.local_currency_conversion);
 					if(u == cu) {
 						delete cu;
 						return mstruct_new;
@@ -3491,7 +3482,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 					new_minus = false;
 				}
 				if(new_points == 0) return mstruct;
-				if((new_points > old_points && (!convert_to_si_units || is_si_units)) || (new_points == old_points && (new_minus || !old_minus) && !is_currency && (!convert_to_si_units || (is_si_units && !new_is_si_units)))) return mstruct;
+				if((new_points > old_points && (!convert_to_si_units || is_si_units || !new_is_si_units)) || (new_points == old_points && (new_minus || !old_minus) && (!is_currency || !eo.local_currency_conversion) && (!convert_to_si_units || !new_is_si_units))) return mstruct;
 				return mstruct_new;
 			}
 		}
@@ -3522,9 +3513,9 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 			return mstruct_new;
 		}
 		case STRUCT_UNIT: {
-			if(!mstruct.unit()->isCurrency() && (!convert_to_si_units || mstruct.unit()->isSIUnit())) return mstruct;
-			Unit *u = getBestUnit(mstruct.unit());
-			if(u != mstruct.unit()) {
+			if((!mstruct.unit()->isCurrency() || !eo.local_currency_conversion) && (!convert_to_si_units || mstruct.unit()->isSIUnit())) return mstruct;
+			Unit *u = getBestUnit(mstruct.unit(), false, eo.local_currency_conversion);
+			if(u != mstruct.unit() && (u->isSIUnit() || (u->isCurrency() && eo.local_currency_conversion))) {
 				MathStructure mstruct_new = convert(mstruct, u, eo, true);
 				if(!u->isRegistered()) delete u;
 				return mstruct_new;
@@ -3565,7 +3556,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				}
 			}
 			if(child_updated) mstruct_old.eval(eo2);
-			if(!is_currency && (!convert_to_si_units || is_si_units) && old_points <= 1 && !old_minus) {
+			if((!is_currency || !eo.local_currency_conversion) && (!convert_to_si_units || is_si_units) && old_points <= 1 && !old_minus) {
 				return mstruct_old;
 			}
 			MathStructure mstruct_new(convertToBaseUnits(mstruct_old, eo));	
@@ -3592,7 +3583,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				}
 				bool is_converted = false;
 				if(b) {
-					Unit *u = getBestUnit(cu);
+					Unit *u = getBestUnit(cu, false, eo.local_currency_conversion);
 					if(u != cu) {
 						mstruct_new = convert(mstruct_new, u, eo, true);
 						if(!u->isRegistered()) delete u;
@@ -3651,7 +3642,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				new_minus = false;
 			}
 			if(new_points == 0) return mstruct_old;
-			if((new_points > old_points && (!convert_to_si_units || is_si_units)) || (new_points == old_points && (new_minus || !old_minus) && !new_is_currency && (!convert_to_si_units || (is_si_units && !new_is_si_units)))) return mstruct_old;
+			if((new_points > old_points && (!convert_to_si_units || is_si_units || !new_is_si_units)) || (new_points == old_points && (new_minus || !old_minus) && (!new_is_currency || !eo.local_currency_conversion) && (!convert_to_si_units || !new_is_si_units))) return mstruct_old;
 			return mstruct_new;
 		}
 		default: {}
@@ -3825,6 +3816,17 @@ Unit* Calculator::getActiveUnit(string name_) {
 	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i]->isActive() && units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT && units[i]->hasName(name_)) {
 			return units[i];
+		}
+	}
+	return NULL;
+}
+Unit* Calculator::getLocalCurrency() {
+	struct lconv *lc = localeconv();
+	if(lc) {
+		string local_currency = lc->int_curr_symbol;
+		remove_blank_ends(local_currency);
+		if(!local_currency.empty()) {
+			return CALCULATOR->getActiveUnit(local_currency);
 		}
 	}
 	return NULL;
