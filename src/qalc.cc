@@ -3033,7 +3033,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("denominator prefixes"), printops.use_denominator_prefix);
 				STR_AND_TABS_2(_("digit grouping"), printops.digit_grouping, _("off"), _("standard"), _("locale"));
 				STR_AND_TABS_2(_("division sign"), printops.division_sign, "/", SIGN_DIVISION_SLASH, SIGN_DIVISION);
-				STR_AND_TABS_BOOL(_("exact"), (evalops.approximation == APPROXIMATION_EXACT));
+				//STR_AND_TABS_BOOL(_("exact"), (evalops.approximation == APPROXIMATION_EXACT));
 				STR_AND_TABS_BOOL(_("excessive parentheses"), printops.excessive_parenthesis);
 				STR_AND_TABS(_("exp mode")); str += "("; str += _("off"); 
 				if(printops.min_exp == EXP_NONE) str += "*";
@@ -3323,10 +3323,6 @@ int main(int argc, char *argv[]) {
 				puts("");
 				puts(_("Function arguments without parentheses are an exception, where implicit multiplication in front of variables and units is parsed first regardless of mode (\"sqrt 2x = sqrt(2x)\")."));
 				puts("");
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "interval", _("interval"))) {
-				puts("");
-				PUTS_UNICODE(_("Enables/disables use of interval arithmetic to determine the precision of the result."));
-				puts("");
 			} else {
 				bool b = false;
 				size_t index = str.find(' ', 1);
@@ -3340,6 +3336,22 @@ int main(int argc, char *argv[]) {
 						puts("");
 						if(EQUALS_IGNORECASE_AND_LOCAL(str, "currency conversion", _("currency conversion"))) {
 							PUTS_UNICODE(_("Enable/disables conversion to the local currency when optimal unit conversion is enabled."));
+						} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "abbreviations", _("abbreviations"))) {
+							PUTS_UNICODE(_("Enable/disables abbreviation of unit, prefix, variable and function names in results."));
+						} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "all prefixes", _("all prefixes"))) {
+							PUTS_UNICODE(_("Enable/disables automatic use of centi, deci, deca and hekto prefixes in results."));
+						} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "interval", _("interval"))) {
+							PUTS_UNICODE(_("Enable/disables use of interval arithmetic for approximate calculations."));
+						} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "prefixes", _("prefixes"))) {
+							PUTS_UNICODE(_("Enable/disables automatic use of prefixes for units in results."));
+						} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rpn", _("rpn"))) {
+							PUTS_UNICODE(_("Enable/disables the RPN stack (indepent of RPN syntax in expression)."));
+						} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "two's complement", _("two's complement"))) {
+							PUTS_UNICODE(_("Enable/disables two's complement representation for display of negative binary numbers."));
+						} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "unknown", _("unknown"))) {
+							PUTS_UNICODE(_("If enabled undefined symbols in expressions are interpreted as unknown variables."));
+						} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "variable units", _("variable units"))) {
+							PUTS_UNICODE(_("Enable/disables inclusion of units in physical constants."));
 						} else {
 							char buffer[1000];
 							int cx = snprintf(buffer, 1000, _("No help available for %s."), str.c_str());
