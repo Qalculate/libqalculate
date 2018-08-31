@@ -10258,6 +10258,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+	error_buffer[0] = 0;
 	curl_easy_setopt(curl, CURLOPT_FILETIME, &file_time);
 #ifdef _WIN32
 	char exepath[MAX_PATH];
@@ -10272,7 +10273,12 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 #endif
 	res = curl_easy_perform(curl);
 	
-	if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "ECB", error_buffer, NULL); FETCH_FAIL_CLEANUP; return false;}
+	if(res != CURLE_OK) {
+		if(strlen(error_buffer)) error(true, _("Failed to download exchange rates from %s: %s."), "ECB", error_buffer, NULL);
+		else error(true, _("Failed to download exchange rates from %s: %s."), "ECB", curl_easy_strerror(res), NULL);
+		FETCH_FAIL_CLEANUP;
+		return false;
+	}
 	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "ECB", "Document empty", NULL); FETCH_FAIL_CLEANUP; return false;}
 	ofstream file(getExchangeRatesFileName(1).c_str(), ios::out | ios::trunc | ios::binary);
 	if(!file.is_open()) {
