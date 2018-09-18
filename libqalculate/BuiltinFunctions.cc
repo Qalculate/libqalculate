@@ -331,6 +331,46 @@ int InverseFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	mstruct = vargs[0];
 	return mstruct.invertMatrix(eo);
 }
+MagnitudeFunction::MagnitudeFunction() : MathFunction("magnitude", 1) {
+}
+int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	if(mstruct.isVector()) {
+		mstruct ^= nr_two;
+		mstruct.raise(nr_half);
+		return 1;
+	} else if(mstruct.representsScalar()) {
+		mstruct.transform(CALCULATOR->f_abs);
+		return 1;
+	}
+	mstruct.eval(eo);
+	if(mstruct.isVector()) {
+		mstruct ^= nr_two;
+		mstruct.raise(nr_half);
+		return 1;
+	}
+	mstruct = vargs[0];
+	mstruct.transform(CALCULATOR->f_abs);
+	return 1;
+}
+HadamardFunction::HadamardFunction() : MathFunction("hadamard", 2) {
+	setArgumentDefinition(1, new MatrixArgument());
+	setArgumentDefinition(2, new MatrixArgument());
+	setCondition("rows(\\x) = rows(\\y) && columns(\\x) = columns(\\y)");
+}
+int HadamardFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	mstruct = vargs[0];
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(mstruct[i].isVector()) {
+			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+				mstruct[i][i2] *= vargs[1][i][i2];
+			}
+		} else {
+			mstruct[i] *= vargs[1][i];
+		}
+	}
+	return 1;
+}
 
 ZetaFunction::ZetaFunction() : MathFunction("zeta", 1, 1, SIGN_ZETA) {
 	IntegerArgument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG);

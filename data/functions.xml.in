@@ -285,6 +285,25 @@
         <_title>Separator</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="maginute">
+      <_title>Magnitude</_title>
+      <_names>r:magnitude</_names>
+      <_description>Calculates the magnitude of a value. This function returns the same value as abs() for all values except vectors.</_description>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="hadamard">
+      <_title>Hadamard Product</_title>
+      <_names>r:hadamard,entrywise</_names>
+      <_description>Mulitplies each separate element in matrix 1 with the corresponding element in matrix 2.</_description>
+      <argument index="1">
+        <_title>Matrix 1</_title>
+      </argument>
+      <argument index="2">
+        <_title>Matrix 2</_title>
+      </argument>
+    </builtin_function>
     <function>
       <_title>Norm (length)</_title>
       <_names>r:norm</_names>
