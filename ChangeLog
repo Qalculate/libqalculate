@@ -1,6 +1,6 @@
 2018-09-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Add magnitude() and hadamard() functions
+	* Add magnitude(), entrywise() and hadamard() functions
 
 2018-08-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
