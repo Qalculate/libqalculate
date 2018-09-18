@@ -353,20 +353,32 @@ int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	mstruct.transform(CALCULATOR->f_abs);
 	return 1;
 }
-HadamardFunction::HadamardFunction() : MathFunction("hadamard", 2) {
-	setArgumentDefinition(1, new MatrixArgument());
+EntrywiseFunction::EntrywiseFunction() : MathFunction("entrywise", 3, 5) {
 	setArgumentDefinition(2, new MatrixArgument());
-	setCondition("rows(\\x) = rows(\\y) && columns(\\x) = columns(\\y)");
+	setArgumentDefinition(3, new MatrixArgument());
+	setArgumentDefinition(4, new SymbolicArgument());
+	setDefaultValue(4, "x");
+	setArgumentDefinition(5, new SymbolicArgument());
+	setDefaultValue(5, "y");
+	setCondition("rows(\\y) = rows(\\z) && columns(\\y) = columns(\\z)");
 }
-int HadamardFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	mstruct = vargs[0];
+int EntrywiseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	MathStructure mexpr(vargs[0]);
+	EvaluationOptions eo2 = eo;
+	eo2.calculate_functions = false;
+	mexpr.eval(eo2);
+	mstruct = vargs[1];
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(mstruct[i].isVector()) {
 			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
-				mstruct[i][i2] *= vargs[1][i][i2];
+				mstruct[i][i2] = mexpr;
+				mstruct[i][i2].replace(vargs[3], vargs[1][i][i2]);
+				mstruct[i][i2].replace(vargs[4], vargs[2][i][i2]);
 			}
 		} else {
-			mstruct[i] *= vargs[1][i];
+			mstruct[i] = mexpr;
+			mstruct[i].replace(vargs[3], vargs[1][i]);
+			mstruct[i].replace(vargs[4], vargs[2][i]);
 		}
 	}
 	return 1;
