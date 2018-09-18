@@ -84,6 +84,7 @@ void result_action_executed();
 void result_prefix_changed(Prefix *prefix = NULL);
 void expression_format_updated(bool reparse);
 void expression_calculation_updated();
+bool display_errors(bool goto_input = false);
 
 FILE *cfile;
 
@@ -1506,6 +1507,7 @@ int main(int argc, char *argv[]) {
 	//exchange rates
 	if(fetch_exchange_rates_at_startup && canfetch) {
 		CALCULATOR->fetchExchangeRates(15);
+		display_errors();
 	}
 	if(load_global_defs && load_currencies && canfetch) {
 		CALCULATOR->setExchangeRatesWarningEnabled(!interactive_mode && (!command_file.empty() || (result_only && !calc_arg.empty())));
@@ -1972,6 +1974,7 @@ int main(int argc, char *argv[]) {
 		} else if(canfetch && EQUALS_IGNORECASE_AND_LOCAL(str, "exrates", _("exrates"))) {
 			CALCULATOR->fetchExchangeRates(15);
 			CALCULATOR->loadExchangeRates();
+			display_errors();
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "stack", _("stack"))) {
 			if(CALCULATOR->RPNStackSize() == 0) {
