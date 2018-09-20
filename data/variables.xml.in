@@ -304,7 +304,7 @@
       <variable>
         <_title>Avogadro Constant</_title>
         <_names>r:avogadro,ais:N_A</_names>
-        <value uncertainty="7.4E25" unit="mol^(-1)">6.022140857E23</value>
+        <value uncertainty="7.4E15" unit="mol^(-1)">6.022140857E23</value>
       </variable>
       <variable>
         <_title>Boltzmann Constant</_title>
