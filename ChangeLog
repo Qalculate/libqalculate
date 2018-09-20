@@ -1,3 +1,7 @@
+2018-09-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Parse |x| and ||x|| as abs(x) and maginutude(x)
+
 2018-09-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add magnitude(), entrywise() and hadamard() functions
