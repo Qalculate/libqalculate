@@ -296,21 +296,21 @@
     <builtin_function name="entrywise">
       <_title>Entrywise Function</_title>
       <_names>r:entrywise</_names>
-      <_description>Calculates a new matrix using each separate element in matrix 1 and the corresponding (in the same row and column) elements in matrix2.</_description>
+      <_description>Calculates a new matrix or vector using each separate element in matrix/vector 1 and the corresponding (in the same row and column) elements in matrix/vector 2.</_description>
       <argument index="1">
         <_title>Function</_title>
       </argument>
       <argument index="2">
-        <_title>Matrix 1</_title>
+        <_title>Matrix/vector 1</_title>
       </argument>
       <argument index="1">
-        <_title>Matrix 2</_title>
+        <_title>Matrix/vector 2</_title>
       </argument>
       <argument index="2">
-        <_title>Variable for element in matrix 1</_title>
+        <_title>Variable for element in matrix/vector 1</_title>
       </argument>
       <argument index="1">
-        <_title>Variable for element in matrix 2</_title>
+        <_title>Variable for element in matrix/vector 2</_title>
       </argument>
     </builtin_function>
     <function>
@@ -342,10 +342,10 @@
       <_names>r:hadamard</_names>
       <_description>Mulitplies each separate element in matrix 1 with the corresponding element in matrix 2.</_description>
       <expression>entrywise("x"*"y",\x,\y,"x","y")</expression>
-      <argument type="matrix" index="1">
+      <argument type="vector" index="1">
         <_title>Matrix 1</_title>
       </argument>
-      <argument type="matrix" index="2">
+      <argument type="vector" index="2">
         <_title>Matrix 2</_title>
       </argument>
     </function>

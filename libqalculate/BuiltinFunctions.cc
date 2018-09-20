@@ -145,17 +145,19 @@ int ColumnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 1;
 }
 RowsFunction::RowsFunction() : MathFunction("rows", 1) {
-	setArgumentDefinition(1, new MatrixArgument(""));
+	setArgumentDefinition(1, new VectorArgument(""));
 }
 int RowsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	mstruct = (int) vargs[0].rows();
+	if(!vargs[0].isMatrix()) mstruct = m_one;
+	else mstruct = (int) vargs[0].rows();
 	return 1;
 }
 ColumnsFunction::ColumnsFunction() : MathFunction("columns", 1) {
-	setArgumentDefinition(1, new MatrixArgument(""));
+	setArgumentDefinition(1, new VectorArgument(""));
 }
 int ColumnsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	mstruct = (int) vargs[0].columns();
+	if(!vargs[0].isMatrix()) mstruct = (int) vargs[0].countChildren();
+	else mstruct = (int) vargs[0].columns();
 	return 1;
 }
 ElementsFunction::ElementsFunction() : MathFunction("elements", 1) {
@@ -354,8 +356,8 @@ int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	return 1;
 }
 EntrywiseFunction::EntrywiseFunction() : MathFunction("entrywise", 3, 5) {
-	setArgumentDefinition(2, new MatrixArgument());
-	setArgumentDefinition(3, new MatrixArgument());
+	setArgumentDefinition(2, new VectorArgument());
+	setArgumentDefinition(3, new VectorArgument());
 	setArgumentDefinition(4, new SymbolicArgument());
 	setDefaultValue(4, "x");
 	setArgumentDefinition(5, new SymbolicArgument());
@@ -363,13 +365,14 @@ EntrywiseFunction::EntrywiseFunction() : MathFunction("entrywise", 3, 5) {
 	setCondition("rows(\\y) = rows(\\z) && columns(\\y) = columns(\\z)");
 }
 int EntrywiseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	bool b_matrix = vargs[1].isMatrix() && vargs[2].isMatrix();
 	MathStructure mexpr(vargs[0]);
 	EvaluationOptions eo2 = eo;
 	eo2.calculate_functions = false;
 	mexpr.eval(eo2);
 	mstruct = vargs[1];
 	for(size_t i = 0; i < mstruct.size(); i++) {
-		if(mstruct[i].isVector()) {
+		if(b_matrix) {
 			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
 				mstruct[i][i2] = mexpr;
 				mstruct[i][i2].replace(vargs[3], vargs[1][i][i2]);

@@ -5824,6 +5824,54 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		str.replace(i, i2 - i + 1, str2);
 		mstruct->clear();
 	}
+	bool b_abs_or = false, b_bit_or = false;
+	i = 0;
+	while((i = str.find('|', i)) != string::npos) {
+		if(i == 0 || i == str.length() - 1 || is_in(po.rpn ? OPERATORS : OPERATORS SPACE, str[i - 1])) {b_abs_or = true; break;}
+		if(str[i + 1] == '|') {
+			if(b_bit_or) {
+				b_abs_or = true;
+				break;
+			}
+			i += 2;
+		} else {
+			b_bit_or = true;
+			i++;
+		}
+	}
+	if(b_abs_or) {
+		while((i = str.find('|', 0)) != string::npos && i + 1 != str.length()) {
+			if(str[i + 1] == '|') {
+				size_t depth = 1;
+				i2 = i;
+				while((i2 = str.find("||", i2 + 2)) != string::npos) {
+					if(is_in(OPERATORS, str[i2 - 2])) depth++;
+					else depth--;
+					if(depth == 0) break;
+				}
+				if(i2 == string::npos) i2 = str.length() + 1;
+				str2 = str.substr(i + 2, i2 - (i + 2));
+				str3 = ID_WRAP_LEFT;
+				str3 += i2s(parseAddId(f_magnitude, str2, po));
+				str3 += ID_WRAP_RIGHT;
+				str.replace(i, i2 - i + 2, str3);
+			} else {
+				size_t depth = 1;
+				i2 = i;
+				while((i2 = str.find('|', i2 + 1)) != string::npos) {
+					if(is_in(OPERATORS, str[i2 - 1])) depth++;
+					else depth--;
+					if(depth == 0) break;
+				}
+				if(i2 == string::npos) i2 = str.length();
+				str2 = str.substr(i + 1, i2 - (i + 1));
+				str3 = ID_WRAP_LEFT;
+				str3 += i2s(parseAddId(f_abs, str2, po));
+				str3 += ID_WRAP_RIGHT;
+				str.replace(i, i2 - i + 1, str3);
+			}
+		}
+	}
 	if((i = str.find(LOGICAL_AND, 1)) != string::npos && i + 2 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 2 != str.length()) {
