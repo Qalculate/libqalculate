@@ -293,6 +293,17 @@
         <_title>Value</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="hadamard">
+      <_title>Hadamard Product</_title>
+      <_names>r:hadamard</_names>
+      <_description>Mulitplies each separate element in matrix 1 with the corresponding element in matrix 2.</_description>
+      <argument index="1">
+        <_title>Matrix 1</_title>
+      </argument>
+      <argument index="2">
+        <_title>Matrix 2</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="entrywise">
       <_title>Entrywise Function</_title>
       <_names>r:entrywise</_names>
@@ -303,13 +314,13 @@
       <argument index="2">
         <_title>Matrix/vector 1</_title>
       </argument>
-      <argument index="1">
+      <argument index="3">
         <_title>Matrix/vector 2</_title>
       </argument>
-      <argument index="2">
+      <argument index="4">
         <_title>Variable for element in matrix/vector 1</_title>
       </argument>
-      <argument index="1">
+      <argument index="5">
         <_title>Variable for element in matrix/vector 2</_title>
       </argument>
     </builtin_function>
@@ -335,18 +346,6 @@
       <argument type="vector" index="2">
         <_title>Vector 2</_title>
         <condition>dimension(\x)==3</condition>
-      </argument>
-    </function>
-    <function>
-      <_title>Hadamard Product</_title>
-      <_names>r:hadamard</_names>
-      <_description>Mulitplies each separate element in matrix 1 with the corresponding element in matrix 2.</_description>
-      <expression>entrywise("x"*"y",\x,\y,"x","y")</expression>
-      <argument type="vector" index="1">
-        <_title>Matrix 1</_title>
-      </argument>
-      <argument type="vector" index="2">
-        <_title>Matrix 2</_title>
       </argument>
     </function>
   </category>

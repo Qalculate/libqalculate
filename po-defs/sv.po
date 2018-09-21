@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-20 13:15+0200\n"
+"POT-Creation-Date: 2018-09-21 09:11+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -3294,71 +3294,14 @@ msgid "Value"
 msgstr "Värde"
 
 #: ../data/functions.xml.in.h:110
-msgid "Entrywise Function"
-msgstr "Komponentvis funktion"
-
-#: ../data/functions.xml.in.h:111
-msgid "r:entrywise"
-msgstr ""
-
-#: ../data/functions.xml.in.h:112
-msgid ""
-"Calculates a new matrix or vector using each separate element in matrix/"
-"vector 1 and the corresponding (in the same row and column) elements in "
-"matrix/vector 2."
-msgstr ""
-"Beräknar en ny matris eller vektor utifrån varje separat element i matris/vektor 1 och "
-"motsvarande (i samma rad och kolumnen) element i matris/vektor 2."
-
-#: ../data/functions.xml.in.h:113
-msgid "Matrix/vector 1"
-msgstr "Matris/vektor 1"
-
-#: ../data/functions.xml.in.h:114
-msgid "Matrix/vector 2"
-msgstr "Matris/vektor 2"
-
-#: ../data/functions.xml.in.h:115
-msgid "Variable for element in matrix/vector 1"
-msgstr "Variabel för element i matris/vektor 1"
-
-#: ../data/functions.xml.in.h:116
-msgid "Variable for element in matrix/vector 2"
-msgstr "Variabel för element i matris/vektor 2"
-
-#: ../data/functions.xml.in.h:117
-msgid "Norm (length)"
-msgstr "Normal"
-
-#: ../data/functions.xml.in.h:118
-msgid "r:norm"
-msgstr ""
-
-#: ../data/functions.xml.in.h:119
-msgid "Calculates the norm/length of a vector."
-msgstr "Beräknar normalen för en vektor."
-
-#: ../data/functions.xml.in.h:120
-msgid "Cross Product"
-msgstr "Vektoriell produkt"
-
-#: ../data/functions.xml.in.h:121
-msgid "r:cross"
-msgstr "vektoriell"
-
-#: ../data/functions.xml.in.h:122
-msgid "Calculates the cross product of two 3-dimensional vectors."
-msgstr "Beräknar den vektoriella produkten för två 3-dimensionella vektorer."
-
-#: ../data/functions.xml.in.h:123
 msgid "Hadamard Product"
 msgstr "Hadamardprodukt"
 
-#: ../data/functions.xml.in.h:124
+#: ../data/functions.xml.in.h:111
 msgid "r:hadamard"
 msgstr ""
 
-#: ../data/functions.xml.in.h:125
+#: ../data/functions.xml.in.h:112
 msgid ""
 "Mulitplies each separate element in matrix 1 with the corresponding element "
 "in matrix 2."
@@ -3366,13 +3309,71 @@ msgstr ""
 "Multiplicerar varje separat element i matris 1 med motsvarande element i "
 "matrix 2."
 
-#: ../data/functions.xml.in.h:126
+#: ../data/functions.xml.in.h:113
 msgid "Matrix 1"
 msgstr "Matris 1"
 
-#: ../data/functions.xml.in.h:127
+#: ../data/functions.xml.in.h:114
 msgid "Matrix 2"
 msgstr "Matris 2"
+
+#: ../data/functions.xml.in.h:115
+msgid "Entrywise Function"
+msgstr "Komponentvis funktion"
+
+#: ../data/functions.xml.in.h:116
+msgid "r:entrywise"
+msgstr ""
+
+#: ../data/functions.xml.in.h:117
+msgid ""
+"Calculates a new matrix or vector using each separate element in matrix/"
+"vector 1 and the corresponding (in the same row and column) elements in "
+"matrix/vector 2."
+msgstr ""
+"Beräknar en ny matris eller vektor utifrån varje separat element i matris/"
+"vektor 1 och motsvarande (i samma rad och kolumnen) element i matris/vektor "
+"2."
+
+#: ../data/functions.xml.in.h:118
+msgid "Matrix/vector 1"
+msgstr "Matris/vektor 1"
+
+#: ../data/functions.xml.in.h:119
+msgid "Matrix/vector 2"
+msgstr "Matris/vektor 2"
+
+#: ../data/functions.xml.in.h:120
+msgid "Variable for element in matrix/vector 1"
+msgstr "Variabel för element i matris/vektor 1"
+
+#: ../data/functions.xml.in.h:121
+msgid "Variable for element in matrix/vector 2"
+msgstr "Variabel för element i matris/vektor 2"
+
+#: ../data/functions.xml.in.h:122
+msgid "Norm (length)"
+msgstr "Normal"
+
+#: ../data/functions.xml.in.h:123
+msgid "r:norm"
+msgstr ""
+
+#: ../data/functions.xml.in.h:124
+msgid "Calculates the norm/length of a vector."
+msgstr "Beräknar normalen för en vektor."
+
+#: ../data/functions.xml.in.h:125
+msgid "Cross Product"
+msgstr "Vektoriell produkt"
+
+#: ../data/functions.xml.in.h:126
+msgid "r:cross"
+msgstr "vektoriell"
+
+#: ../data/functions.xml.in.h:127
+msgid "Calculates the cross product of two 3-dimensional vectors."
+msgstr "Beräknar den vektoriella produkten för två 3-dimensionella vektorer."
 
 #: ../data/functions.xml.in.h:128
 msgid "Combinatorics"

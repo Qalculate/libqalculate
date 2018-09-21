@@ -355,6 +355,35 @@ int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	mstruct.transform(CALCULATOR->f_abs);
 	return 1;
 }
+HadamardFunction::HadamardFunction() : MathFunction("hadamard", 1, -1) {
+	setArgumentDefinition(1, new VectorArgument());
+	setArgumentDefinition(2, new VectorArgument());
+}
+int HadamardFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	bool b_matrix = vargs[0].isMatrix();
+	for(size_t i3 = 1; i3 < vargs.size(); i3++) {
+		if(b_matrix) {
+			if(!vargs[i3].isMatrix() || vargs[i3].columns() != vargs[0].columns() || vargs[i3].rows() != vargs[0].rows()) {
+				CALCULATOR->error(true, _("%s() requires that all arguments have the same dimensions."), preferredDisplayName().name.c_str(), NULL);
+				return 0;
+			}
+		} else if(vargs[i3].size() != vargs[0].size()) {
+			CALCULATOR->error(true, _("%s() requires that all arguments have the same dimensions."), preferredDisplayName().name.c_str(), NULL);
+			return 0;
+		}
+	}
+	mstruct = vargs[0];
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(b_matrix) {
+			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+				for(size_t i3 = 1; i3 < vargs.size(); i3++) mstruct[i][i2] *= vargs[i3][i][i2];
+			}
+		} else {
+			for(size_t i3 = 1; i3 < vargs.size(); i3++) mstruct[i] *= vargs[i3][i];
+		}
+	}
+	return 1;
+}
 EntrywiseFunction::EntrywiseFunction() : MathFunction("entrywise", 3, 5) {
 	setArgumentDefinition(2, new VectorArgument());
 	setArgumentDefinition(3, new VectorArgument());
