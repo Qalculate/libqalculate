@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-20 13:15+0200\n"
+"POT-Creation-Date: 2018-09-21 09:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3165,80 +3165,80 @@ msgid "Value"
 msgstr ""
 
 #: ../data/functions.xml.in.h:110
-msgid "Entrywise Function"
+msgid "Hadamard Product"
 msgstr ""
 
 #: ../data/functions.xml.in.h:111
-msgid "r:entrywise"
+msgid "r:hadamard"
 msgstr ""
 
 #: ../data/functions.xml.in.h:112
+msgid ""
+"Mulitplies each separate element in matrix 1 with the corresponding element "
+"in matrix 2."
+msgstr ""
+
+#: ../data/functions.xml.in.h:113
+msgid "Matrix 1"
+msgstr ""
+
+#: ../data/functions.xml.in.h:114
+msgid "Matrix 2"
+msgstr ""
+
+#: ../data/functions.xml.in.h:115
+msgid "Entrywise Function"
+msgstr ""
+
+#: ../data/functions.xml.in.h:116
+msgid "r:entrywise"
+msgstr ""
+
+#: ../data/functions.xml.in.h:117
 msgid ""
 "Calculates a new matrix or vector using each separate element in matrix/"
 "vector 1 and the corresponding (in the same row and column) elements in "
 "matrix/vector 2."
 msgstr ""
 
-#: ../data/functions.xml.in.h:113
+#: ../data/functions.xml.in.h:118
 msgid "Matrix/vector 1"
 msgstr ""
 
-#: ../data/functions.xml.in.h:114
+#: ../data/functions.xml.in.h:119
 msgid "Matrix/vector 2"
 msgstr ""
 
-#: ../data/functions.xml.in.h:115
+#: ../data/functions.xml.in.h:120
 msgid "Variable for element in matrix/vector 1"
 msgstr ""
 
-#: ../data/functions.xml.in.h:116
+#: ../data/functions.xml.in.h:121
 msgid "Variable for element in matrix/vector 2"
 msgstr ""
 
-#: ../data/functions.xml.in.h:117
+#: ../data/functions.xml.in.h:122
 msgid "Norm (length)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:118
+#: ../data/functions.xml.in.h:123
 msgid "r:norm"
 msgstr ""
 
-#: ../data/functions.xml.in.h:119
+#: ../data/functions.xml.in.h:124
 msgid "Calculates the norm/length of a vector."
 msgstr ""
 
-#: ../data/functions.xml.in.h:120
+#: ../data/functions.xml.in.h:125
 msgid "Cross Product"
 msgstr ""
 
-#: ../data/functions.xml.in.h:121
+#: ../data/functions.xml.in.h:126
 msgid "r:cross"
 msgstr ""
 
-#: ../data/functions.xml.in.h:122
-msgid "Calculates the cross product of two 3-dimensional vectors."
-msgstr ""
-
-#: ../data/functions.xml.in.h:123
-msgid "Hadamard Product"
-msgstr ""
-
-#: ../data/functions.xml.in.h:124
-msgid "r:hadamard"
-msgstr ""
-
-#: ../data/functions.xml.in.h:125
-msgid ""
-"Mulitplies each separate element in matrix 1 with the corresponding element "
-"in matrix 2."
-msgstr ""
-
-#: ../data/functions.xml.in.h:126
-msgid "Matrix 1"
-msgstr ""
-
 #: ../data/functions.xml.in.h:127
-msgid "Matrix 2"
+msgid "Calculates the cross product of two 3-dimensional vectors."
 msgstr ""
 
 #: ../data/functions.xml.in.h:128

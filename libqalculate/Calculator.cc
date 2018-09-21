@@ -1418,6 +1418,7 @@ void Calculator::addBuiltinFunctions() {
 	f_cofactor = addFunction(new CofactorFunction());
 	f_inverse = addFunction(new InverseFunction());
 	f_magnitude = addFunction(new MagnitudeFunction());
+	f_hadamard = addFunction(new HadamardFunction());
 	f_entrywise = addFunction(new EntrywiseFunction());
 
 	f_factorial = addFunction(new FactorialFunction());
