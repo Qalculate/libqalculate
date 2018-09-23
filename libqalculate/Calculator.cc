@@ -5830,6 +5830,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	while((i = str.find('|', i)) != string::npos) {
 		if(i == 0 || i == str.length() - 1 || is_in(po.rpn ? OPERATORS : OPERATORS SPACE, str[i - 1])) {b_abs_or = true; break;}
 		if(str[i + 1] == '|') {
+			if(i == str.length() - 2) {b_abs_or = true; break;}
 			if(b_bit_or) {
 				b_abs_or = true;
 				break;
@@ -5846,16 +5847,20 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				size_t depth = 1;
 				i2 = i;
 				while((i2 = str.find("||", i2 + 2)) != string::npos) {
-					if(is_in(OPERATORS, str[i2 - 2])) depth++;
+					cout << i2 << endl;
+					if(is_in(OPERATORS, str[i2 - 1])) depth++;
 					else depth--;
 					if(depth == 0) break;
 				}
-				if(i2 == string::npos) i2 = str.length() + 1;
-				str2 = str.substr(i + 2, i2 - (i + 2));
+				if(i2 == string::npos) str2 = str.substr(i + 2);
+				else str2 = str.substr(i + 2, i2 - (i + 2));
+				cout << str2 << endl;
 				str3 = ID_WRAP_LEFT;
 				str3 += i2s(parseAddId(f_magnitude, str2, po));
 				str3 += ID_WRAP_RIGHT;
-				str.replace(i, i2 - i + 2, str3);
+				if(i2 == string::npos) str.replace(i, str.length() - i, str3);
+				else str.replace(i, i2 - i + 2, str3);
+				cout << str << endl;
 			} else {
 				size_t depth = 1;
 				i2 = i;
@@ -5864,12 +5869,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					else depth--;
 					if(depth == 0) break;
 				}
-				if(i2 == string::npos) i2 = str.length();
-				str2 = str.substr(i + 1, i2 - (i + 1));
+				if(i2 == string::npos) str2 = str.substr(i + 1);
+				else str2 = str.substr(i + 1, i2 - (i + 1));
 				str3 = ID_WRAP_LEFT;
 				str3 += i2s(parseAddId(f_abs, str2, po));
 				str3 += ID_WRAP_RIGHT;
-				str.replace(i, i2 - i + 1, str3);
+				if(i2 == string::npos) str.replace(i, str.length() - i, str3);
+				else str.replace(i, i2 - i + 1, str3);
 			}
 		}
 	}
