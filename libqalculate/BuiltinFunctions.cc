@@ -364,11 +364,11 @@ int HadamardFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	for(size_t i3 = 1; i3 < vargs.size(); i3++) {
 		if(b_matrix) {
 			if(!vargs[i3].isMatrix() || vargs[i3].columns() != vargs[0].columns() || vargs[i3].rows() != vargs[0].rows()) {
-				CALCULATOR->error(true, _("%s() requires that all arguments have the same dimensions."), preferredDisplayName().name.c_str(), NULL);
+				CALCULATOR->error(true, _("%s() requires that all matrices/vectors have the same dimensions."), preferredDisplayName().name.c_str(), NULL);
 				return 0;
 			}
 		} else if(vargs[i3].size() != vargs[0].size()) {
-			CALCULATOR->error(true, _("%s() requires that all arguments have the same dimensions."), preferredDisplayName().name.c_str(), NULL);
+			CALCULATOR->error(true, _("%s() requires that all matrices/vectors have the same dimensions."), preferredDisplayName().name.c_str(), NULL);
 			return 0;
 		}
 	}
@@ -384,33 +384,48 @@ int HadamardFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	}
 	return 1;
 }
-EntrywiseFunction::EntrywiseFunction() : MathFunction("entrywise", 3, 5) {
-	setArgumentDefinition(2, new VectorArgument());
-	setArgumentDefinition(3, new VectorArgument());
-	setArgumentDefinition(4, new SymbolicArgument());
-	setDefaultValue(4, "x");
-	setArgumentDefinition(5, new SymbolicArgument());
-	setDefaultValue(5, "y");
-	setCondition("rows(\\y) = rows(\\z) && columns(\\y) = columns(\\z)");
+EntrywiseFunction::EntrywiseFunction() : MathFunction("entrywise", 2) {
+	VectorArgument *arg = new VectorArgument();
+	arg->addArgument(new VectorArgument());
+	arg->addArgument(new SymbolicArgument());
+	arg->setReoccuringArguments(true);
+	setArgumentDefinition(2, arg);
 }
 int EntrywiseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	bool b_matrix = vargs[1].isMatrix() && vargs[2].isMatrix();
+	if(vargs[1].size() == 0) {
+		mstruct = vargs[0];
+		return 1;
+	}
+	bool b_matrix = vargs[1][0].isMatrix();
+	for(size_t i3 = 2; i3 < vargs[1].size(); i3 += 2) {
+		if(b_matrix) {
+			if(!vargs[1][i3].isMatrix() || vargs[1][i3].columns() != vargs[1][0].columns() || vargs[1][i3].rows() != vargs[1][0].rows()) {
+				CALCULATOR->error(true, _("%s() requires that all matrices/vectors have the same dimensions."), preferredDisplayName().name.c_str(), NULL);
+				return 0;
+			}
+		} else if(vargs[1][i3].size() != vargs[1][0].size()) {
+			CALCULATOR->error(true, _("%s() requires that all matrices/vectors have the same dimensions."), preferredDisplayName().name.c_str(), NULL);
+			return 0;
+		}
+	}
 	MathStructure mexpr(vargs[0]);
 	EvaluationOptions eo2 = eo;
 	eo2.calculate_functions = false;
 	mexpr.eval(eo2);
-	mstruct = vargs[1];
+	mstruct = vargs[1][0];
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(b_matrix) {
 			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
 				mstruct[i][i2] = mexpr;
-				mstruct[i][i2].replace(vargs[3], vargs[1][i][i2]);
-				mstruct[i][i2].replace(vargs[4], vargs[2][i][i2]);
+				for(size_t i3 = 1; i3 < vargs[1].size(); i3 += 2) {
+					mstruct[i][i2].replace(vargs[1][i3], vargs[1][i3 - 1][i][i2]);
+				}
 			}
 		} else {
 			mstruct[i] = mexpr;
-			mstruct[i].replace(vargs[3], vargs[1][i]);
-			mstruct[i].replace(vargs[4], vargs[2][i]);
+			for(size_t i3 = 1; i3 < vargs[1].size(); i3 += 2) {
+				mstruct[i].replace(vargs[1][i3], vargs[1][i3 - 1][i]);
+			}
 		}
 	}
 	return 1;

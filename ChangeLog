@@ -1,3 +1,11 @@
+2018-09-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* f(a.b*pi+x) equals (-) f(0.b*pi+x) for sin(), cos() and tan(), e.g. sin(3.37pi+x)=-sin(0.37pi+x)
+
+2018-09-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Remove negative sign from trigonometric function argument (e.g. sin(-x)=-sin(x))
+
 2018-09-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Parse |x| and ||x|| as abs(x) and maginutude(x)

@@ -307,21 +307,13 @@
     <builtin_function name="entrywise">
       <_title>Entrywise Function</_title>
       <_names>r:entrywise</_names>
-      <_description>Calculates a new matrix or vector using each separate element in matrix/vector 1 and the corresponding (in the same row and column) elements in matrix/vector 2.</_description>
+      <_description>Calculates a new matrix or vector using each separate element in matrix/vector 1 and the corresponding (in the same row and column) elements in matrix/vector 2. An unlimited number of matrices/vectors can be specified, with each matrix/vector argument followed by the corresponding variable used in the function argument.</_description>
+      <example>$name(x / y, [4, 10, 12], x, [2, 2, 4], y) = [2, 5, 3]</example>
       <argument index="1">
         <_title>Function</_title>
       </argument>
       <argument index="2">
-        <_title>Matrix/vector 1</_title>
-      </argument>
-      <argument index="3">
-        <_title>Matrix/vector 2</_title>
-      </argument>
-      <argument index="4">
-        <_title>Variable for element in matrix/vector 1</_title>
-      </argument>
-      <argument index="5">
-        <_title>Variable for element in matrix/vector 2</_title>
+        <_title>Matrices/vectors and variables</_title>
       </argument>
     </builtin_function>
     <function>
