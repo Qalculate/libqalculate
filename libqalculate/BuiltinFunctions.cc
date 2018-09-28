@@ -2141,10 +2141,18 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				if(b_even) mstruct.set(1, 2, 0);
 				else mstruct.set(-1, 2, 0);
 				b = true;
-			} else if(eo.approximation == APPROXIMATION_EXACT && !mstruct[0].number().isFraction()) {
+			} else if(eo.approximation == APPROXIMATION_EXACT && (mstruct[0].number().isNegative() || !mstruct[0].number().isFraction() || mstruct[0].number().isGreaterThan(nr_half))) {
 				nr_int = mstruct[0].number();
 				nr_int.floor();
-				mstruct[0].number() -= nr_int;
+				Number nr_frac = mstruct[0].number();
+				nr_frac -= nr_int;
+				if(nr_frac.isGreaterThan(nr_half)) {
+					nr_frac -= nr_half;
+					mstruct[0].number() = nr_half;
+					mstruct[0].number() -= nr_frac;
+				} else {
+					mstruct[0].number() = nr_frac;
+				}
 				if(nr_int.isOdd()) {
 					if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 					mstruct.transform(this);
@@ -2342,10 +2350,19 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct.divide_nocopy(new MathStructure(2, 1, 0));
 				if(b_even) mstruct.negate();
 				b = true;
-			} else if(eo.approximation == APPROXIMATION_EXACT && !mstruct[0].number().isFraction()) {
+			} else if(eo.approximation == APPROXIMATION_EXACT && (mstruct[0].number().isNegative() || !mstruct[0].number().isFraction() || mstruct[0].number().isGreaterThan(nr_half))) {
 				nr_int = mstruct[0].number();
 				nr_int.floor();
-				mstruct[0].number() -= nr_int;
+				Number nr_frac = mstruct[0].number();
+				nr_frac -= nr_int;
+				if(nr_frac.isGreaterThan(nr_half)) {
+					nr_frac -= nr_half;
+					mstruct[0].number() = nr_half;
+					mstruct[0].number() -= nr_frac;
+					nr_int++;
+				} else {
+					mstruct[0].number() = nr_frac;
+				}
 				if(nr_int.isOdd()) {
 					if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 					mstruct.transform(this);
@@ -2530,10 +2547,22 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct.raise_nocopy(new MathStructure(-1, 2, 0));
 				if(!b_neg) mstruct.negate();
 				b = true;
-			} else if(eo.approximation == APPROXIMATION_EXACT && !mstruct[0].number().isFraction()) {
+			} else if(eo.approximation == APPROXIMATION_EXACT && (mstruct[0].number().isNegative() || !mstruct[0].number().isFraction() || mstruct[0].number().isGreaterThan(nr_half))) {
 				Number nr_int(mstruct[0].number());
 				nr_int.floor();
-				mstruct[0].number() -= nr_int;
+				Number nr_frac = mstruct[0].number();
+				nr_frac -= nr_int;
+				if(nr_frac.isGreaterThan(nr_half)) {
+					nr_frac -= nr_half;
+					mstruct[0].number() = nr_half;
+					mstruct[0].number() -= nr_frac;
+					if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+					mstruct.transform(this);
+					mstruct.negate();
+					b = true;
+				} else {
+					mstruct[0].number() = nr_frac;
+				}
 			}
 		}
 	} else if(mstruct.isAddition()) {
@@ -2721,7 +2750,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return 0;
 	if(!mstruct.isNumber()) {
-		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct += CALCULATOR->v_pi; mstruct.last() *= nr_half; return 1;}
+		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(CALCULATOR->f_asin); mstruct += CALCULATOR->v_pi; mstruct.last() *= nr_half; return 1;}
 		return -1;
 	}
 	if(mstruct.number().isZero()) {
@@ -2796,7 +2825,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	} else {
 		Number nr = mstruct.number();
 		if(!nr.acos() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
-			if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct += CALCULATOR->v_pi; mstruct.last() *= nr_half; return 1;}
+			if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(CALCULATOR->f_asin); mstruct += CALCULATOR->v_pi; mstruct.last() *= nr_half; return 1;}
 			return -1;
 		}
 		mstruct = nr;
@@ -5180,7 +5209,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		if(!definite_integral) {
 			if(!m1.isUndefined()) mstruct.replace(x_var, vargs[1]);
 			CALCULATOR->endTemporaryStopMessages(true);
-			mstruct += "C";
+			mstruct += CALCULATOR->v_C;
 			return 1;
 #if MPFR_VERSION_MAJOR < 4
 		} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Ci, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Shi, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Chi, true) <= 0 && (mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 || m1.representsNonNegative())) {
@@ -6065,7 +6094,7 @@ void add_C(MathStructure &m_eqn, const MathStructure &m_x, const MathStructure &
 		m_c.childUpdated(2);
 		m_eqn[1] += m_c;
 	} else {
-		m_eqn[1] += "C";
+		m_eqn[1] += CALCULATOR->v_C;
 	}
 	m_eqn.childrenUpdated();
 }
@@ -6382,7 +6411,7 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	}
 	m_eqn.calculatesub(eo2, eo2, true);
 	MathStructure msolve(m_eqn);
-	if(solve_equation(msolve, m_eqn, m_diff[0], eo, true, m_diff[1], MathStructure(string("C")), vargs[2], vargs[1]) <= 0) {
+	if(solve_equation(msolve, m_eqn, m_diff[0], eo, true, m_diff[1], MathStructure(CALCULATOR->v_C), vargs[2], vargs[1]) <= 0) {
 		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
 		return -1;
 	}
