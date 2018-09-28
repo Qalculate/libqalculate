@@ -8237,8 +8237,8 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			}
 		} 
 	}
-	if(mstruct1.isSymbolic() && mstruct1.symbol() == "C") return 1;
-	if(mstruct2.isSymbolic() && mstruct2.symbol() == "C") return -1;
+	if(mstruct1.isVariable() && mstruct1.variable() == CALCULATOR->v_C) return 1;
+	if(mstruct2.isVariable() && mstruct2.variable() == CALCULATOR->v_C) return -1;
 	if(mstruct1.type() != mstruct2.type()) {
 		if(mstruct1.isVariable() && mstruct2.isSymbolic()) {
 			if(parent.isMultiplication()) {
@@ -27198,6 +27198,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					if(multi_num) num /= CHILD(0)[0].number();
 					if(pow_num) num *= nr_pow;					
 					if(num.lambertW()) {
+						if(!x_var.representsReal()) CALCULATOR->error(false, _("Only real solutions were calculated for %s."), print().c_str(), NULL);
 						CHILD(1) = num;
 						if(e_power) {
 							CHILD(0)[e_index].setToChild(2, true);
@@ -27403,19 +27404,22 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 		} 
 		case STRUCT_POWER: {
 			if(CHILD(0)[0].contains(x_var)) {
-				if(ct_comp == COMPARISON_EQUALS && eo2.approximation != APPROXIMATION_EXACT && CHILD(1).isNumber() && CHILD(1).number().isPositive() && CHILD(0)[1] == x_var && CHILD(0)[0] == x_var && CHILD(0)[0].representsReal(true)) {
+				if(ct_comp == COMPARISON_EQUALS && eo2.approximation != APPROXIMATION_EXACT && CHILD(1).isNumber() && CHILD(1).number().isPositive() && CHILD(0)[1] == x_var && CHILD(0)[0] == x_var) {
 					// x^x=a => x=ln(a)/lambertw(ln(a))
 					if(CHILD(1).number().isInterval() && CHILD(1).number().isPositive()) {
 						Number nrlow(CHILD(1).number().lowerEndPoint());
 						Number nrhigh(CHILD(1).number().upperEndPoint());
 						if(solve_x_pow_x(nrlow) && solve_x_pow_x(nrhigh)) {
+							MathStructure mbak(*this);
 							if(!CHILD(1).number().setInterval(nrlow, nrhigh, true)) return false;
+							if(!x_var.representsReal()) CALCULATOR->error(false, _("Only real solutions were calculated for %s."), mbak.print().c_str(), NULL);
 							CHILD(0) = x_var;
 							CHILDREN_UPDATED
 							return true;
 						}
 					} else {
 						if(solve_x_pow_x(CHILD(1).number())) {
+							if(!x_var.representsReal()) CALCULATOR->error(false, _("Only real solutions were calculated for %s."), print().c_str(), NULL);
 							CHILD(0) = x_var;
 							CHILDREN_UPDATED
 							return true;
@@ -27811,7 +27815,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			} else if(CHILD(0)[1].contains(x_var) && CHILD(0)[0].representsNonNegative(true)) {
 				// a^x=b => x=log(b, a)
 				if(CHILD(1).isOne()) {
-					if(!CHILD(0)[0].representsUndefined(true, true)) {
+					if(!CHILD(0)[0].representsUndefined(true, true) && CHILD(0)[1].representsReal()) {
 						CHILD(0).setToChild(2, true);
 						CHILD(1).clear(true);
 						isolate_x_sub(eo, eo2, x_var, morig);
@@ -27842,9 +27846,17 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 				MathStructure msave(CHILD(1));
-				CHILD(1).set(CALCULATOR->f_logn, &msave, &CHILD(0)[0], NULL);
+				if(CHILD(0)[1].representsReal()) {
+					CHILD(1).set(CALCULATOR->f_logn, &msave, &CHILD(0)[0], NULL);
+				} else {
+					CHILD(1).set(CALCULATOR->f_ln, &msave, NULL);
+					CHILD(1) += nr_one_i;
+					CHILD(1)[1] *= CALCULATOR->v_pi;
+					CHILD(1)[1] *= CALCULATOR->v_n;
+					CHILD(1).divide_nocopy(new MathStructure(CALCULATOR->f_ln, &CHILD(0)[0], NULL));
+					CHILD(1).evalSort(true);
+				}
 				bool b = CHILD(1).calculateFunctions(eo);
-				CHILD(1).unformat(eo);
 				if(b) CHILD(1).calculatesub(eo2, eo, true);
 				CHILD(0).setToChild(2, true);
 				CHILDREN_UPDATED;
@@ -27961,6 +27973,70 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 					return true;
 				}
+			} else if((CHILD(0).function() == CALCULATOR->f_tan || CHILD(0).function() == CALCULATOR->f_sin || CHILD(0).function() == CALCULATOR->f_cos) && CHILD(0).size() == 1 && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
+				MathFunction *f = CHILD(0).function();
+				CHILD(0).setToChild(1, true);
+				if(f == CALCULATOR->f_sin) CHILD(1).transform(CALCULATOR->f_asin);
+				else if(f == CALCULATOR->f_cos) CHILD(1).transform(CALCULATOR->f_acos);
+				else CHILD(1).transform(CALCULATOR->f_atan);
+				CHILD(1).calculateFunctions(eo);
+				switch(eo.parse_options.angle_unit) {
+					case ANGLE_UNIT_DEGREES: {
+						EvaluationOptions eo3 = eo2;
+						eo3.sync_units = true;
+						CHILD(0) /= CALCULATOR->getDegUnit();
+						CHILD(0).calculatesub(eo3, eo, true);
+						CHILD(1) += Number(180, 1);
+						break;
+					}
+					case ANGLE_UNIT_GRADIANS: {
+						EvaluationOptions eo3 = eo2;
+						eo3.sync_units = true;
+						CHILD(0) /= CALCULATOR->getGraUnit();
+						CHILD(0).calculatesub(eo3, eo, true);
+						CHILD(1) += Number(200, 1);
+						break;
+					}
+					case ANGLE_UNIT_RADIANS: {
+						CHILD(0).calculateDivide(CALCULATOR->getRadUnit(), eo2);
+						CHILD(1) += CALCULATOR->v_pi;
+						break;
+					}
+					default: {
+						CHILD(1) += CALCULATOR->v_pi;
+						CHILD(1)[1] *= CALCULATOR->getRadUnit();
+					}
+				}
+				CHILD(1)[1] *= CALCULATOR->v_n;
+				if(f == CALCULATOR->f_sin || f == CALCULATOR->f_cos) {
+					CHILD(1)[1] *= 2;
+					MathStructure *malt = new MathStructure(*this);
+					(*malt)[1][0].negate();
+					if(f == CALCULATOR->f_sin) {
+						switch(eo.parse_options.angle_unit) {
+							case ANGLE_UNIT_DEGREES: {(*malt)[1].add(Number(200, 1), true); break;}
+							case ANGLE_UNIT_GRADIANS: {(*malt)[1].add(Number(200, 1), true); break;}
+							case ANGLE_UNIT_RADIANS: {(*malt)[1].add(CALCULATOR->v_pi, true); break;}
+							default: {(*malt)[1].add(CALCULATOR->v_pi, true); (*malt)[1].last() *= CALCULATOR->getRadUnit();}
+						}
+					}
+					CHILD(1).evalSort(true);
+					CHILD(1).calculatesub(eo2, eo, true);
+					(*malt)[1].evalSort(true);
+					(*malt)[1].calculatesub(eo2, eo, true);
+					CHILDREN_UPDATED;
+					malt->childrenUpdated();
+					isolate_x_sub(eo, eo2, x_var, morig);
+					malt->isolate_x_sub(eo, eo2, x_var, morig);
+					if(ct_comp == COMPARISON_NOT_EQUALS) add_nocopy(malt, OPERATION_LOGICAL_AND);
+					else add_nocopy(malt, OPERATION_LOGICAL_OR);
+				} else {
+					CHILD(1).evalSort(true);
+					CHILD(1).calculatesub(eo2, eo, true);
+					CHILDREN_UPDATED;
+					isolate_x_sub(eo, eo2, x_var, morig);
+				}
+				return true;
 			} else if(CHILD(0).function() == CALCULATOR->f_abs && CHILD(0).size() == 1) {
 				if(CHILD(0)[0].contains(x_var)) {
 					bool b_and = ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS;

@@ -287,6 +287,7 @@ class Calculator {
 	KnownVariable *v_percent, *v_permille, *v_permyriad;
 	KnownVariable *v_today, *v_yesterday, *v_tomorrow, *v_now;
 	UnknownVariable *v_x, *v_y, *v_z;
+	UnknownVariable *v_C, *v_n;
 	MathFunction *f_vector, *f_sort, *f_rank, *f_limits, *f_component, *f_dimension, *f_merge_vectors;
 	MathFunction *f_matrix, *f_matrix_to_vector, *f_area, *f_rows, *f_columns, *f_row, *f_column, *f_elements, *f_element, *f_transpose, *f_identity, *f_determinant, *f_permanent, *f_adjoint, *f_cofactor, *f_inverse, *f_magnitude, *f_hadamard, *f_entrywise; 
 	MathFunction *f_factorial, *f_factorial2, *f_multifactorial, *f_binomial;
