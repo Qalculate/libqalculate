@@ -2209,6 +2209,12 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct.set(nr, true);
 			return 1;
 		}
+		if(mstruct.number().hasImaginaryPart() && !mstruct.number().hasRealPart()) {
+			mstruct.number() /= nr_one_i;
+			mstruct.transform(CALCULATOR->f_sinh);
+			mstruct *= nr_one_i;
+			return 1;
+		}
 	}
 
 	if(has_predominately_negative_sign(mstruct)) {
@@ -2218,6 +2224,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct.negate();
 		return 1;
 	}
+	
 
 	if(CALCULATOR->getRadUnit()) {
 		if(mstruct.isVector()) {
@@ -2418,6 +2425,11 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct.set(nr, true);
 			return 1;
 		}
+		if(mstruct.number().hasImaginaryPart() && !mstruct.number().hasRealPart()) {
+			mstruct.number() /= nr_one_i;
+			mstruct.transform(CALCULATOR->f_cosh);
+			return 1;
+		}
 	}
 	if(has_predominately_negative_sign(mstruct)) {
 		mstruct.negate();
@@ -2602,6 +2614,12 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		Number nr(mstruct.number());
 		if(nr.tan() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			mstruct.set(nr, true);
+			return 1;
+		}
+		if(mstruct.number().hasImaginaryPart() && !mstruct.number().hasRealPart()) {
+			mstruct.number() /= nr_one_i;
+			mstruct.transform(CALCULATOR->f_tanh);
+			mstruct *= nr_one_i;
 			return 1;
 		}
 	}
