@@ -2061,19 +2061,19 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][0];
 			mstruct *= CALCULATOR->v_pi;
-			mstruct *= Number(1, 180);
+			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][1];
 			mstruct *= CALCULATOR->v_pi;
-			mstruct *= Number(1, 180);
+			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][0];
 			mstruct *= CALCULATOR->v_pi;
-			mstruct *= Number(1, 200);
+			mstruct.multiply(Number(1, 200), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][1];
 			mstruct *= CALCULATOR->v_pi;
-			mstruct *= Number(1, 200);
+			mstruct.multiply(Number(1, 200), true);
 		} else {
 			mstruct = vargs[0]; 
 			mstruct.convert(CALCULATOR->getRadUnit());
@@ -2083,14 +2083,22 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct = vargs[0];
 	}
 
+	MathFunction *f = NULL;
+	if(eo.approximation == APPROXIMATION_APPROXIMATE && (eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS)) {
+		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi && mstruct[2].isNumber() && mstruct[2].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
+			f = mstruct[0].function();
+		}
+	}
+
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
 		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
-	} else {
+	} else if(!f) {
 		mstruct.eval(eo);
 	}
+
 	if(mstruct.isVector()) {
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages();
 		if(CALCULATOR->getRadUnit()) {
@@ -2100,14 +2108,41 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		return -1;
 	}
+
 	bool b = false, b_recalc = true;
+
+	if(eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS) {
+		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi && mstruct[0].isNumber() && mstruct[0].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
+			f = mstruct[2].function();
+		}
+	} else if(mstruct.isFunction() && mstruct.size() == 1) {
+		f = mstruct.function();
+	}
+
 	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
 		mstruct.clear();
 		b = true;
-	} else if(mstruct.isFunction() && mstruct.size() == 1) {
-		if(mstruct.function() == CALCULATOR->f_asin) {
-			MathStructure mstruct_new(mstruct[0]);
-			mstruct = mstruct_new;
+	} else if(f) {
+		if(f == CALCULATOR->f_asin) {
+			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
+			mstruct.setToChild(1, true);
+			b = true;
+		} else if(f == CALCULATOR->f_acos) {
+			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
+			mstruct.setToChild(1);
+			mstruct ^= nr_two;
+			mstruct.negate();
+			mstruct += nr_one;
+			mstruct ^= nr_half;
+			b = true;
+		} else if(f == CALCULATOR->f_atan) {
+			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
+			mstruct.setToChild(1);
+			MathStructure *mmul = new MathStructure(mstruct);
+			mstruct ^= nr_two;
+			mstruct += nr_one;
+			mstruct ^= nr_minus_half;
+			mstruct.multiply_nocopy(mmul);
 			b = true;
 		}
 	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
@@ -2257,19 +2292,19 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][0];
 			mstruct *= CALCULATOR->v_pi;
-			mstruct *= Number(1, 180);
+			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][1];
 			mstruct *= CALCULATOR->v_pi;
-			mstruct *= Number(1, 180);
+			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][0];
 			mstruct *= CALCULATOR->v_pi;
-			mstruct *= Number(1, 200);
+			mstruct.multiply(Number(1, 200), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][1];
 			mstruct *= CALCULATOR->v_pi;
-			mstruct *= Number(1, 200);
+			mstruct.multiply(Number(1, 200), true);
 		} else {
 			mstruct = vargs[0]; 
 			mstruct.convert(CALCULATOR->getRadUnit());
@@ -2278,16 +2313,23 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	} else {
 		mstruct = vargs[0];
 	}
-	if(mstruct.isVector()) return -1;
 	
+	MathFunction *f = NULL;
+	if(eo.approximation == APPROXIMATION_APPROXIMATE && (eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS)) {
+		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi && mstruct[2].isNumber() && mstruct[2].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
+			f = mstruct[0].function();
+		}
+	}
+
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
 		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
-	} else {
+	} else if(!f) {
 		mstruct.eval(eo);
 	}
+
 	if(mstruct.isVector()) {
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages();
 		if(CALCULATOR->getRadUnit()) {
@@ -2297,14 +2339,39 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		return -1;
 	}
+
 	bool b = false, b_recalc = true;
+
+	if(eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS) {
+		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi && mstruct[0].isNumber() && mstruct[0].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
+			f = mstruct[2].function();
+		}
+	} else if(mstruct.isFunction() && mstruct.size() == 1) {
+		f = mstruct.function();
+	}
+
 	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
 		mstruct = -1;
 		b = true;
-	} else if(mstruct.isFunction() && mstruct.size() == 1) {
-		if(mstruct.function() == CALCULATOR->f_acos) {
-			MathStructure mstruct_new(mstruct[0]);
-			mstruct = mstruct_new;
+	} else if(f) {
+		if(f == CALCULATOR->f_acos) {
+			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
+			mstruct.setToChild(1, true);
+			b = true;
+		} else if(f == CALCULATOR->f_asin) {
+			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
+			mstruct.setToChild(1);
+			mstruct ^= nr_two;
+			mstruct.negate();
+			mstruct += nr_one;
+			mstruct ^= nr_half;
+			b = true;
+		} else if(f == CALCULATOR->f_atan) {
+			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
+			mstruct.setToChild(1);
+			mstruct ^= nr_two;
+			mstruct += nr_one;
+			mstruct ^= nr_minus_half;
 			b = true;
 		}
 	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
@@ -2465,19 +2532,19 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][0];
 			mstruct *= CALCULATOR->v_pi;
-			mstruct *= Number(1, 180);
+			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][1];
 			mstruct *= CALCULATOR->v_pi;
-			mstruct *= Number(1, 180);
+			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][0];
 			mstruct *= CALCULATOR->v_pi;
-			mstruct *= Number(1, 200);
+			mstruct.multiply(Number(1, 200), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][1];
 			mstruct *= CALCULATOR->v_pi;
-			mstruct *= Number(1, 200);
+			mstruct.multiply(Number(1, 200), true);
 		} else {
 			mstruct = vargs[0]; 
 			mstruct.convert(CALCULATOR->getRadUnit());
@@ -2487,14 +2554,22 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct = vargs[0];
 	}
 
+	MathFunction *f = NULL;
+	if(eo.approximation == APPROXIMATION_APPROXIMATE && (eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS)) {
+		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi && mstruct[2].isNumber() && mstruct[2].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
+			f = mstruct[0].function();
+		}
+	}
+
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
 		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
-	} else {
+	} else if(!f) {
 		mstruct.eval(eo);
 	}
+
 	if(mstruct.isVector()) {
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages();
 		if(CALCULATOR->getRadUnit()) {
@@ -2504,14 +2579,44 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		return -1;
 	}
+
 	bool b = false, b_recalc = true;
+
+	if(eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS) {
+		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi && mstruct[0].isNumber() && mstruct[0].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
+			f = mstruct[2].function();
+		}
+	} else if(mstruct.isFunction() && mstruct.size() == 1) {
+		f = mstruct.function();
+	}
+
 	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
 		mstruct.clear();
 		b = true;
-	} else if(mstruct.isFunction() && mstruct.size() == 1) {
-		if(mstruct.function() == CALCULATOR->f_atan) {
-			MathStructure mstruct_new(mstruct[0]);
-			mstruct = mstruct_new;
+	} else if(f) {
+		if(f == CALCULATOR->f_atan) {
+			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
+			mstruct.setToChild(1, true);
+			b = true;
+		} else if(f == CALCULATOR->f_asin) {
+			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
+			mstruct.setToChild(1);
+			MathStructure *mmul = new MathStructure(mstruct);
+			mstruct ^= nr_two;
+			mstruct.negate();
+			mstruct += nr_one;
+			mstruct ^= nr_minus_half;
+			mstruct.multiply_nocopy(mmul);
+			b = true;
+		} else if(f == CALCULATOR->f_acos) {
+			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
+			mstruct.setToChild(1);
+			MathStructure *mmul = new MathStructure(mstruct);
+			mstruct ^= nr_two;
+			mstruct.negate();
+			mstruct += nr_one;
+			mstruct ^= nr_half;
+			mstruct.divide_nocopy(mmul);
 			b = true;
 		}
 	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
@@ -3032,6 +3137,21 @@ int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return 0;
+	if(mstruct.isFunction() && mstruct.size() == 1) {
+		if(mstruct.function() == CALCULATOR->f_asinh) {
+			mstruct.setToChild(1, true);
+			return 1;
+		} else if(mstruct.function() == CALCULATOR->f_acosh) {
+			mstruct.setToChild(1);
+			MathStructure *mmul = new MathStructure(mstruct);
+			mstruct ^= nr_two;
+			mstruct.negate();
+			mstruct += nr_one;
+			mstruct ^= nr_minus_half;
+			mstruct.multiply_nocopy(mmul);
+			return 1;
+		}
+	}
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
@@ -3055,6 +3175,25 @@ int CoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return 0;
+	if(mstruct.isFunction() && mstruct.size() == 1) {
+		if(mstruct.function() == CALCULATOR->f_acosh) {
+			mstruct.setToChild(1, true);
+			return 1;
+		} else if(mstruct.function() == CALCULATOR->f_asinh) {
+			mstruct.setToChild(1);
+			mstruct ^= nr_two;
+			mstruct += nr_one;
+			mstruct ^= nr_half;
+			return 1;
+		} else if(mstruct.function() == CALCULATOR->f_atanh) {
+			mstruct.setToChild(1);
+			mstruct ^= nr_two;
+			mstruct.negate();
+			mstruct += nr_one;
+			mstruct ^= nr_minus_half;
+			return 1;
+		}
+	}
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); return -1;}
 		return -1;
@@ -3078,6 +3217,20 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return 0;
+	if(mstruct.isFunction() && mstruct.size() == 1) {
+		if(mstruct.function() == CALCULATOR->f_atanh) {
+			mstruct.setToChild(1, true);
+			return 1;
+		} else if(mstruct.function() == CALCULATOR->f_asinh) {
+			mstruct.setToChild(1);
+			MathStructure *mmul = new MathStructure(mstruct);
+			mstruct ^= nr_two;
+			mstruct += nr_one;
+			mstruct ^= nr_minus_half;
+			mstruct.multiply_nocopy(mmul);
+			return 1;
+		}
+	}
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
