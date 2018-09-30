@@ -2028,7 +2028,7 @@ bool is_number_angle_value(const MathStructure &mstruct, bool allow_infinity = f
 }
 
 bool has_predominately_negative_sign(const MathStructure &mstruct) {
-	if(mstruct.hasNegativeSign()) return true;
+	if(mstruct.hasNegativeSign() && !mstruct.containsType(STRUCT_ADDITION, true)) return true;
 	if(mstruct.isAddition() && mstruct.size() > 0) {
 		size_t p_count = 0;
 		for(size_t i = 0; i < mstruct.size(); i++) {
