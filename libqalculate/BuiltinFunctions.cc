@@ -2754,8 +2754,46 @@ bool AsinFunction::representsNumber(const MathStructure &vargs, bool) const {ret
 int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
-	mstruct.eval(eo);
-	if(mstruct.isVector()) return 0;
+	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_EXACT;
+		CALCULATOR->beginTemporaryStopMessages();
+		mstruct.eval(eo2);
+	} else {
+		mstruct.eval(eo);
+	}
+	if(mstruct.isVector()) {
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages();
+		return -1;
+	}
+	if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0] == nr_half && mstruct[1].isPower() && mstruct[1][1] == nr_half) {
+		if(mstruct[1][0] == nr_two) {
+			switch(eo.parse_options.angle_unit) {
+				case ANGLE_UNIT_DEGREES: {mstruct.set(45, 1, 0); break;}
+				case ANGLE_UNIT_GRADIANS: {mstruct.set(50, 1, 0); break;}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+				default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+			}
+			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
+			return 1;
+		} else if(mstruct[1][0] == nr_three) {
+			switch(eo.parse_options.angle_unit) {
+				case ANGLE_UNIT_DEGREES: {mstruct.set(60, 1, 0); break;}
+				case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 3, 0); break;}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 3, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+				default: {mstruct.set(1, 3, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+			}
+			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
+			return 1;
+		}
+	}
+	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
+		CALCULATOR->endTemporaryStopMessages(false);
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_APPROXIMATE;
+		mstruct = vargs[0];
+		mstruct.eval(eo2);
+	}
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
@@ -2870,8 +2908,46 @@ bool AcosFunction::representsNumber(const MathStructure &vargs, bool) const {ret
 int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
-	mstruct.eval(eo);
-	if(mstruct.isVector()) return 0;
+	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_EXACT;
+		CALCULATOR->beginTemporaryStopMessages();
+		mstruct.eval(eo2);
+	} else {
+		mstruct.eval(eo);
+	}
+	if(mstruct.isVector()) {
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages();
+		return -1;
+	}
+	if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0] == nr_half && mstruct[1].isPower() && mstruct[1][1] == nr_half) {
+		if(mstruct[1][0] == nr_two) {
+			switch(eo.parse_options.angle_unit) {
+				case ANGLE_UNIT_DEGREES: {mstruct.set(45, 1, 0); break;}
+				case ANGLE_UNIT_GRADIANS: {mstruct.set(50, 1, 0); break;}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+				default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+			}
+			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
+			return 1;
+		} else if(mstruct[1][0] == nr_three) {
+			switch(eo.parse_options.angle_unit) {
+				case ANGLE_UNIT_DEGREES: {mstruct.set(30, 1, 0); break;}
+				case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 3, 0); break;}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 6, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+				default: {mstruct.set(1, 6, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+			}
+			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
+			return 1;
+		}
+	}
+	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
+		CALCULATOR->endTemporaryStopMessages(false);
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_APPROXIMATE;
+		mstruct = vargs[0];
+		mstruct.eval(eo2);
+	}
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(CALCULATOR->f_asin); mstruct += CALCULATOR->v_pi; mstruct.last() *= nr_half; return 1;}
 		return -1;
@@ -2986,8 +3062,46 @@ bool AtanFunction::representsNonComplex(const MathStructure &vargs, bool) const 
 int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
-	mstruct.eval(eo);
-	if(mstruct.isVector()) return 0;
+	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_EXACT;
+		CALCULATOR->beginTemporaryStopMessages();
+		mstruct.eval(eo2);
+	} else {
+		mstruct.eval(eo);
+	}
+	if(mstruct.isVector()) {
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages();
+		return -1;
+	}
+	if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isPower() && mstruct[1][1] == nr_half && mstruct[1][0] == nr_three && mstruct[0].number() == Number(1, 3)) {
+		if(mstruct[1][0] == nr_three) {
+			switch(eo.parse_options.angle_unit) {
+				case ANGLE_UNIT_DEGREES: {mstruct.set(30, 1, 0); break;}
+				case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 3, 0); break;}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 6, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+				default: {mstruct.set(1, 6, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+			}
+			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
+			return 1;
+		}
+	} else if(mstruct.isPower() && mstruct[1] == nr_half && mstruct[0] == nr_three) {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {mstruct.set(60, 1, 0); break;}
+			case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 3, 0); break;}
+			case ANGLE_UNIT_RADIANS: {mstruct.set(1, 3, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+			default: {mstruct.set(1, 3, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+		}
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
+		return 1;
+	}
+	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
+		CALCULATOR->endTemporaryStopMessages(false);
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_APPROXIMATE;
+		mstruct = vargs[0];
+		mstruct.eval(eo2);
+	}
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
@@ -3136,7 +3250,7 @@ int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
 	mstruct.eval(eo);
-	if(mstruct.isVector()) return 0;
+	if(mstruct.isVector()) return -1;
 	if(mstruct.isFunction() && mstruct.size() == 1) {
 		if(mstruct.function() == CALCULATOR->f_asinh) {
 			mstruct.setToChild(1, true);
@@ -3174,7 +3288,7 @@ int CoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
 	mstruct.eval(eo);
-	if(mstruct.isVector()) return 0;
+	if(mstruct.isVector()) return -1;
 	if(mstruct.isFunction() && mstruct.size() == 1) {
 		if(mstruct.function() == CALCULATOR->f_acosh) {
 			mstruct.setToChild(1, true);
@@ -3216,7 +3330,7 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
 	mstruct.eval(eo);
-	if(mstruct.isVector()) return 0;
+	if(mstruct.isVector()) return -1;
 	if(mstruct.isFunction() && mstruct.size() == 1) {
 		if(mstruct.function() == CALCULATOR->f_atanh) {
 			mstruct.setToChild(1, true);
@@ -3253,7 +3367,7 @@ int AsinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
 	mstruct.eval(eo);
-	if(mstruct.isVector()) return 0;
+	if(mstruct.isVector()) return -1;
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
@@ -3280,7 +3394,7 @@ int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
 	mstruct.eval(eo);
-	if(mstruct.isVector()) return 0;
+	if(mstruct.isVector()) return -1;
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
