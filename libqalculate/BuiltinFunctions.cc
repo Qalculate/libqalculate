@@ -1697,7 +1697,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct.setToChild(2, true);
 				return true;
 			}
-		} else if(eo.approximation != APPROXIMATION_APPROXIMATE && (mstruct[0].representsPositive(true) || (mstruct[1].isNumber() && mstruct[1].number().isFraction()))) {
+		} else if(eo.approximation != APPROXIMATION_APPROXIMATE && ((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction()))) {
 			MathStructure mstruct2;
 			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
 			mstruct2 *= mstruct[1];
@@ -1725,7 +1725,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct.setToChild(2, true);
 				b = true;
 			}
-		} else if(mstruct[0].representsPositive(true) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
+		} else if((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
 			MathStructure mstruct2;
 			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
 			mstruct2 *= mstruct[1];
@@ -1815,7 +1815,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			}
 		}
 	} else if(mstruct.isPower()) {
-		if(mstruct[0].representsPositive(true) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
+		if((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
 			MathStructure mstruct2;
 			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
 			mstruct2 *= mstruct[1];
@@ -2786,6 +2786,15 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
 		}
+	} else if(mstruct.isPower() && mstruct[1] == nr_minus_half && mstruct[0] == nr_two) {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {mstruct.set(45, 1, 0); break;}
+			case ANGLE_UNIT_GRADIANS: {mstruct.set(50, 1, 0); break;}
+			case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+			default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+		}
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
+		return 1;
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
 		CALCULATOR->endTemporaryStopMessages(false);
@@ -2940,6 +2949,15 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
 		}
+	} else if(mstruct.isPower() && mstruct[1] == nr_minus_half && mstruct[0] == nr_two) {
+		switch(eo.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {mstruct.set(45, 1, 0); break;}
+			case ANGLE_UNIT_GRADIANS: {mstruct.set(50, 1, 0); break;}
+			case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+			default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+		}
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
+		return 1;
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
 		CALCULATOR->endTemporaryStopMessages(false);
@@ -3258,6 +3276,15 @@ int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		} else if(mstruct.function() == CALCULATOR->f_acosh) {
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
+			mstruct += nr_minus_one;
+			mstruct ^= nr_half;
+			*mmul += nr_one;
+			*mmul ^= nr_half;
+			mstruct.multiply_nocopy(mmul);
+			return 1;
+		} else if(mstruct.function() == CALCULATOR->f_atanh) {
+			mstruct.setToChild(1);
+			MathStructure *mmul = new MathStructure(mstruct);
 			mstruct ^= nr_two;
 			mstruct.negate();
 			mstruct += nr_one;
@@ -3342,6 +3369,18 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			mstruct += nr_one;
 			mstruct ^= nr_minus_half;
 			mstruct.multiply_nocopy(mmul);
+			return 1;
+		} else if(mstruct.function() == CALCULATOR->f_acosh) {
+			mstruct.setToChild(1);
+			MathStructure *mmul = new MathStructure(mstruct);
+			MathStructure *mmul2 = new MathStructure(mstruct);
+			*mmul2 ^= nr_minus_one;
+			mstruct += nr_minus_one;
+			mstruct ^= nr_half;
+			*mmul += nr_one;
+			*mmul ^= nr_half;
+			mstruct.multiply_nocopy(mmul);
+			mstruct.multiply_nocopy(mmul2);
 			return 1;
 		}
 	}
