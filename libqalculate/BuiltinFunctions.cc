@@ -1492,7 +1492,10 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		} else {
 			mstruct.eval(eo);
 		}
-		if(mstruct.isVector()) return -1;
+		if(mstruct.isVector()) {
+			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
+			return -1;
+		}
 		if(mstruct.representsNonNegative(true)) {
 			Number nr_exp(vargs[1].number());
 			nr_exp.recip();
@@ -1711,10 +1714,11 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		eo2.approximation = APPROXIMATION_EXACT;
 		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
+		if(mstruct.isVector()) {CALCULATOR->endTemporaryStopMessages(true); return -1;}
 	} else {
 		mstruct.eval(eo);
+		if(mstruct.isVector()) return -1;
 	}
-	if(mstruct.isVector()) return -1;
 	bool b = false;
 	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_e) {
 		mstruct.set(m_one);
@@ -1921,10 +1925,11 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		eo2.approximation = APPROXIMATION_EXACT;
 		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
+		if(mstruct.isVector()) {CALCULATOR->endTemporaryStopMessages(true); return -1;}
 	} else {
 		mstruct.eval(eo);
+		if(mstruct.isVector()) return -1;
 	}
-	if(mstruct.isVector()) return -1;
 	bool b = false;
 	if(mstruct.isZero()) {
 		b = true;
@@ -2100,7 +2105,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 
 	if(mstruct.isVector()) {
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages();
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		if(CALCULATOR->getRadUnit()) {
 			for(size_t i = 0; i < mstruct.size(); i++) {
 				mstruct[i] *= CALCULATOR->getRadUnit();
@@ -2331,7 +2336,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 
 	if(mstruct.isVector()) {
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages();
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		if(CALCULATOR->getRadUnit()) {
 			for(size_t i = 0; i < mstruct.size(); i++) {
 				mstruct[i] *= CALCULATOR->getRadUnit();
@@ -2571,7 +2576,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 
 	if(mstruct.isVector()) {
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages();
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		if(CALCULATOR->getRadUnit()) {
 			for(size_t i = 0; i < mstruct.size(); i++) {
 				mstruct[i] *= CALCULATOR->getRadUnit();
@@ -2763,7 +2768,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct.eval(eo);
 	}
 	if(mstruct.isVector()) {
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages();
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return -1;
 	}
 	if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0] == nr_half && mstruct[1].isPower() && mstruct[1][1] == nr_half) {
@@ -2796,12 +2801,16 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
 	}
-	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
-		CALCULATOR->endTemporaryStopMessages(false);
-		EvaluationOptions eo2 = eo;
-		eo2.approximation = APPROXIMATION_APPROXIMATE;
-		mstruct = vargs[0];
-		mstruct.eval(eo2);
+	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		if(!mstruct.isNumber()) {
+			CALCULATOR->endTemporaryStopMessages(false);
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			mstruct = vargs[0];
+			mstruct.eval(eo2);
+		} else {
+			CALCULATOR->endTemporaryStopMessages(true);
+		}
 	}
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
@@ -2926,7 +2935,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct.eval(eo);
 	}
 	if(mstruct.isVector()) {
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages();
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return -1;
 	}
 	if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0] == nr_half && mstruct[1].isPower() && mstruct[1][1] == nr_half) {
@@ -2959,12 +2968,16 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
 	}
-	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
-		CALCULATOR->endTemporaryStopMessages(false);
-		EvaluationOptions eo2 = eo;
-		eo2.approximation = APPROXIMATION_APPROXIMATE;
-		mstruct = vargs[0];
-		mstruct.eval(eo2);
+	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		if(!mstruct.isNumber()) {
+			CALCULATOR->endTemporaryStopMessages(false);
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			mstruct = vargs[0];
+			mstruct.eval(eo2);
+		} else {
+			CALCULATOR->endTemporaryStopMessages(true);
+		}
 	}
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(CALCULATOR->f_asin); mstruct += CALCULATOR->v_pi; mstruct.last() *= nr_half; return 1;}
@@ -3089,7 +3102,7 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct.eval(eo);
 	}
 	if(mstruct.isVector()) {
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages();
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return -1;
 	}
 	if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isPower() && mstruct[1][1] == nr_half && mstruct[1][0] == nr_three && mstruct[0].number() == Number(1, 3)) {
@@ -3113,12 +3126,16 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
 	}
-	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
-		CALCULATOR->endTemporaryStopMessages(false);
-		EvaluationOptions eo2 = eo;
-		eo2.approximation = APPROXIMATION_APPROXIMATE;
-		mstruct = vargs[0];
-		mstruct.eval(eo2);
+	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+		if(!mstruct.isNumber()) {
+			CALCULATOR->endTemporaryStopMessages(false);
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			mstruct = vargs[0];
+			mstruct.eval(eo2);
+		} else {
+			CALCULATOR->endTemporaryStopMessages(true);
+		}
 	}
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
