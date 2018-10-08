@@ -2042,7 +2042,7 @@ bool has_predominately_negative_sign(const MathStructure &mstruct) {
 				if(p_count > mstruct.size() / 2) return true;
 			}
 		}
-		if(p_count == mstruct.size() / 2) return mstruct[0].hasNegativeSign();
+		if(mstruct.size() % 2 == 0 && p_count == mstruct.size() / 2) return mstruct[0].hasNegativeSign();
 	}
 	return false;
 }
@@ -2527,7 +2527,7 @@ bool TanFunction::representsNumber(const MathStructure &vargs, bool) const {retu
 bool TanFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_real_angle_value(vargs[0]);}
 bool TanFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	
+
 	if(vargs[0].isVector()) return 0;
 	if(CALCULATOR->getRadUnit()) {
 		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
@@ -2733,6 +2733,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			return 1;
 		}
 	}
+
 	if(has_predominately_negative_sign(mstruct)) {
 		mstruct.negate();
 		if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
@@ -2740,6 +2741,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct.negate();
 		return 1;
 	}
+
 	if(CALCULATOR->getRadUnit()) {
 		if(mstruct.isVector()) {
 			for(size_t i = 0; i < mstruct.size(); i++) {
@@ -2749,6 +2751,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct *= CALCULATOR->getRadUnit();
 		}
 	}
+
 	return -1;
 }
 

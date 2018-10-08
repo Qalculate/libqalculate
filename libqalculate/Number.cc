@@ -4746,7 +4746,7 @@ bool Number::sin() {
 		if(mpz_cmp_ui(mpq_denref(r_value), 1000000L) < 0) do_pi = false;
 		if(!setToFloatingPoint()) return false;
 	}
-	if(mpfr_get_exp(fl_value) > 2000000L) {
+	if(mpfr_get_exp(fl_value) > BIT_PRECISION || mpfr_get_exp(fu_value) > BIT_PRECISION) {
 		set(nr_bak);
 		return false;
 	}
@@ -4865,6 +4865,10 @@ bool Number::asin() {
 		}
 		Number z_sqln(*this);
 		Number i_z(*this);
+		if(!b_neg && hasImaginaryPart()) {
+			if(hasRealPart()) b_neg = (realPartIsNegative() && !imaginaryPartIsNegative()) || (realPartIsPositive() && imaginaryPartIsPositive());
+			else b_neg = imaginaryPartIsNegative();
+		}
 		if(b_neg && (!z_sqln.negate() || !i_z.negate())) return false;
 		if(!i_z.multiply(nr_one_i)) return false;
 		if(!z_sqln.square() || !z_sqln.negate() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !z_sqln.add(i_z) || !z_sqln.ln() || !z_sqln.multiply(nr_minus_i)) return false;
@@ -5000,7 +5004,7 @@ bool Number::cos() {
 		if(mpz_cmp_ui(mpq_denref(r_value), 1000000L) < 0) do_pi = false;
 		if(!setToFloatingPoint()) return false;
 	}
-	if(mpfr_get_exp(fl_value) > 2000000L) {
+	if(mpfr_get_exp(fl_value) > BIT_PRECISION || mpfr_get_exp(fu_value) > BIT_PRECISION) {
 		set(nr_bak);
 		return false;
 	}
@@ -5110,26 +5114,12 @@ bool Number::acos() {
 	}
 	if(hasImaginaryPart() || !isFraction()) {
 		if(b_imag) return false;
-		if(realPartIsPositive()) {
-			Number z_sqln(*this);
-			Number this_i(*this);
-			Number nr_pi;
-			nr_pi.pi();
-			if(!z_sqln.square() || !z_sqln.negate() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !this_i.multiply(nr_one_i) || !z_sqln.add(this_i) || !z_sqln.ln() || !z_sqln.multiply(nr_one_i) || !nr_pi.multiply(nr_half) || !z_sqln.add(nr_pi)) return false;
-			set(z_sqln);
-			return true;
-		} else if(!realPartIsNegative()) {
-			Number nr(*this);
-			Number nr_pi;
-			nr_pi.pi();
-			if(!nr.asin() || !nr.multiply(2) || !nr.negate() || !nr.add(nr_pi) || !nr.multiply(nr_half)) return false;
-			set(nr);
-			return true;
-		}
-		Number z_sqln(*this);
-		if(!z_sqln.square() || !z_sqln.negate() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !z_sqln.multiply(nr_one_i) || !z_sqln.add(*this) || !z_sqln.ln() || !z_sqln.multiply(nr_minus_i)) return false;
-		if(hasImaginaryPart() && z_sqln.isInterval(false) && z_sqln.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
-		set(z_sqln);
+		//acos(x)=(pi-2*asin(x))/2
+		Number nr(*this);
+		Number nr_pi;
+		nr_pi.pi();
+		if(!nr.asin() || !nr.multiply(2) || !nr.negate() || !nr.add(nr_pi) || !nr.multiply(nr_half)) return false;
+		set(nr);
 		return true;
 	}
 	Number nr_bak(*this);
@@ -5299,7 +5289,7 @@ bool Number::tan() {
 		if(mpz_cmp_ui(mpq_denref(r_value), 1000000L) < 0) do_pi = false;
 		if(!setToFloatingPoint()) return false;
 	}
-	if(mpfr_get_exp(fl_value) > 2000000L) {
+	if(mpfr_get_exp(fl_value) > BIT_PRECISION || mpfr_get_exp(fu_value) > BIT_PRECISION) {
 		set(nr_bak);
 		return false;
 	}

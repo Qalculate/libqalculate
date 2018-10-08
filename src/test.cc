@@ -831,6 +831,108 @@ void test_intervals(bool use_interval) {
 
 }
 
+string rnd_number() {
+	string str;
+	bool par = false;
+	bool dot = false;
+	bool started = false;
+	if(rand() % 3 == 0) {str += '-'; par = true;}
+	while(true) {
+		int r = rand();
+		if(!started) r = r % 10 + 2;
+		else if(str.back() == '.') r = r % 10 + 1;
+		else r = r % ((dot ? 20 : 21) + str.length() * 10) + 1;
+		if(r > (dot ? 10 : 11)) break;
+		if(r == 11) {if(!started) str += '0'; str += '.'; dot = true;}
+		else str += '0' + (r - 1);
+		started = true;
+	}
+	if(rand() % 10 == 0) {str += 'i'; par = true;}
+	if(par) {str += ')'; str.insert(0, "(");}
+	return str;
+}
+
+string rnd_item(int &par, bool allow_function = true, bool allow_unknown = true) {
+	int r = rand() % (2 + allow_unknown) + 1;
+	string str;
+	if(r != 1) {
+		str = rnd_number();
+	} else {
+		r = (allow_unknown ? rand() % (allow_function ? 21 : 5) + 1 : rand() % (allow_function ? 18 : 2) + 4);
+		switch(r) {
+			case 1: {str = "x"; break;}
+			case 2: {str = "y"; break;}
+			case 3: {str = "z"; break;}
+			case 4: {str = "pi"; break;}
+			case 5: {str = "e"; break;}
+			case 6: {par++; str = "sin("; return str + rnd_item(par, true, allow_unknown);}
+			case 7: {par++; str = "cos("; return str + rnd_item(par, true, allow_unknown);}
+			case 8: {par++; str = "tan("; return str + rnd_item(par, true, allow_unknown);}
+			case 9: {par++; str = "sinh("; return str + rnd_item(par, true, allow_unknown);}
+			case 10: {par++; str = "cosh("; return str + rnd_item(par, true, allow_unknown);}
+			case 11: {par++; str = "tanh("; return str + rnd_item(par, true, allow_unknown);}
+			case 12: {par++; str = "asin("; return str + rnd_item(par, true, allow_unknown);}
+			case 13: {par++; str = "acos("; return str + rnd_item(par, true, allow_unknown);}
+			case 14: {par++; str = "atan("; return str + rnd_item(par, true, allow_unknown);}
+			case 15: {par++; str = "asinh("; return str + rnd_item(par, true, allow_unknown);}
+			case 16: {par++; str = "acosh("; return str + rnd_item(par, true, allow_unknown);}
+			case 17: {par++; str = "atanh("; return str + rnd_item(par, true, allow_unknown);}
+			case 18: {par++; str = "ln("; return str + rnd_item(par, true, allow_unknown);}
+			case 19: {par++; str = "abs("; return str + rnd_item(par, true, allow_unknown);}
+			case 20: {par++; str = "sqrt("; return str + rnd_item(par, true, allow_unknown);}
+			case 21: {par++; str = "cbrt("; return str + rnd_item(par, true, allow_unknown);}
+		}
+	}
+	r = rand() % (5 * (par + 1)) + 1;
+	if(r == 1) {
+		str.insert(0, "(");
+		par++;
+	}
+	return str;
+}
+string rnd_operator(int &par) {
+	int r = rand() % (par ? 10 : 5) + 1;
+	string str;
+	if(par > 0 && r > 5) {
+		par--;
+		str = ")";
+		r -= 5;
+	}
+	if(r == 5 && rand() % 3 != 0) r = rand() % 4 + 1;
+	switch(r) {
+		case 1: return str + "+";
+		case 2: return str + "-";
+		case 3: return str + "*";
+		case 4: return str + "/";
+		case 5: return str + "^";
+	}
+	return "";
+}
+
+void rnd_test(EvaluationOptions eo, bool allow_unknowns, bool allow_functions) {
+	int par = 0;
+	string str;
+	while(str.empty() || rand() % (str.length() > 40 ? 2 : 10 - str.length() / 5) != 0) {
+		str += rnd_item(par, allow_functions, allow_unknowns);
+		str += rnd_operator(par);
+	}
+	if(str.back() != ')') str += rnd_item(par, false, allow_unknowns);
+	MathStructure mp, m1, m2;
+	CALCULATOR->parse(&mp, str, eo.parse_options);
+	eo.approximation = APPROXIMATION_APPROXIMATE;
+	m1 = mp;
+	m1.eval(eo);
+	eo.approximation = APPROXIMATION_EXACT;
+	m2 = mp;
+	m2.eval(eo);
+	eo.approximation = APPROXIMATION_APPROXIMATE;
+	m2.eval(eo);
+	if((m1.isNumber() || m2.isNumber()) && m1 != m2 && m1.print() != m2.print()) {
+		cout << str << endl;
+		cout << "UNEQUAL" << m1.print() << ":" << m2.print() << endl;
+	}
+}
+
 void speed_test() {
 		
 	/*UserFunction f1("", "", "x^2/3");
@@ -1026,8 +1128,13 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	test_integration();
+	//test_integration();
 	//test_intervals(true);
+	
+	for(size_t i = 0; i < 10000; i++) {
+		rnd_test(evalops, false, true);
+	}
+	
 
 	return 0;
 
