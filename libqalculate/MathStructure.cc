@@ -4647,6 +4647,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			}
 		}
 	}
+
 	if(representsUndefined() || mstruct.representsUndefined()) return -1;
 	if(isZero() && mstruct.representsPositive()) {
 		return 1;
@@ -4656,6 +4657,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
 	}
+
 	switch(m_type) {
 		case STRUCT_VECTOR: {
 			if(mstruct.isNumber() && mstruct.number().isInteger()) {
@@ -5167,9 +5169,9 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				if(b) {
 					MathStructure mthis(*this);
 					for(size_t i = 0; i < mstruct.size(); i++) {
-						if(isZero() && !mstruct[i].representsPositive(true)) continue;
 						if(i == 0) mthis.raise(mstruct[i]);
-						else mthis[1] = mstruct[i];
+						if(isZero() && !mstruct[i].representsPositive(true)) continue;
+						if(i > 0) mthis[1] = mstruct[i];
 						EvaluationOptions eo2 = eo;
 						eo2.split_squares = false;
 						// avoid abs(x)^(2y) loop
