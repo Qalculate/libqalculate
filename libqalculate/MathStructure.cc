@@ -2599,12 +2599,13 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 										MathStructure madd;
 										madd1.delChild(i2 + 1, true);
 										madd2.delChild(i + 1, true);
+										if(mstruct[i][0].function() == CALCULATOR->f_sinh) madd = madd1;
+										else madd = madd2;
 										if(madd1.calculateAdd(madd2, eo)) {
 											SET_CHILD_MAP(i2);
 											setFunction(CALCULATOR->f_sinh);
 											calculateMultiply(madd1, eo);
-											if(mstruct[i][0].function() == CALCULATOR->f_sinh) {calculateAdd(madd1, eo);}
-											else {calculateAdd(madd2, eo);}
+											calculateAdd(madd, eo);
 											return 1;
 										}
 									}
@@ -2732,7 +2733,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 								if(eo.protected_function != mstruct[i2][0].function()) {
 									if(mstruct[i2][0].function() == CALCULATOR->f_sinh && mstruct.size() - 1 == SIZE) {
 										for(size_t i = 0; i < SIZE; i++) {
-											if(!CHILD(i).equals(CHILD(i2 > i ? i : i + 1))) break;
+											if(!CHILD(i).equals(mstruct[i2 > i ? i : i + 1])) break;
 											if(i == SIZE - 1) {
 												mstruct[i2][0].setFunction(CALCULATOR->f_cosh);
 												if(mparent) mparent->swapChildren(index_this + 1, index_mstruct + 1);
@@ -4355,7 +4356,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							setFunction(CALCULATOR->f_sin);
 							CHILD(0).calculateMultiply(nr_two, eo);
 							CHILD_UPDATED(0)
-							divide(nr_two);
+							calculateDivide(nr_two, eo);
 							MERGE_APPROX_AND_PREC(mstruct)
 							return 1;
 						}
@@ -4365,7 +4366,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							setFunction(CALCULATOR->f_sin);
 							CHILD(0).calculateMultiply(nr_two, eo);
 							CHILD_UPDATED(0)
-							divide(nr_two);
+							calculateDivide(nr_two, eo);
 							MERGE_APPROX_AND_PREC(mstruct)
 							return 1;
 						}
@@ -4375,7 +4376,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							setFunction(CALCULATOR->f_sinh);
 							CHILD(0).calculateMultiply(nr_two, eo);
 							CHILD_UPDATED(0)
-							divide(nr_two);
+							calculateDivide(nr_two, eo);
 							MERGE_APPROX_AND_PREC(mstruct)
 							return 1;
 						}
@@ -4385,7 +4386,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							setFunction(CALCULATOR->f_sinh);
 							CHILD(0).calculateMultiply(nr_two, eo);
 							CHILD_UPDATED(0)
-							divide(nr_two);
+							calculateDivide(nr_two, eo);
 							MERGE_APPROX_AND_PREC(mstruct)
 							return 1;
 						}
@@ -28739,10 +28740,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 
 bool contains_unsolved_equals(const MathStructure &mstruct, const MathStructure &x_var) {
 	if(mstruct.isComparison()) {
-		return mstruct.comparisonType() == COMPARISON_EQUALS && mstruct[0] != x_var && mstruct[1] != x_var;
+		return mstruct.comparisonType() == COMPARISON_EQUALS && mstruct[0] != x_var && mstruct[1] != x_var && mstruct.contains(x_var);
 	}
 	for(size_t i = 0; i < mstruct.size(); i++) {
-		if(contains_unsolved_equals(mstruct[i], x_var)) return true;
+		if(!contains_unsolved_equals(mstruct[i], x_var)) return false;
 	}
 	return false;
 }
@@ -28800,7 +28801,7 @@ void sync_find_cos_sin(const MathStructure &mstruct, const MathStructure &x_var,
 		if(b_sin && b_cos) return;
 	}
 	for(size_t i = 0; i < mstruct.size(); i++) {
-		sync_find_cos_sin(mstruct, x_var, b_sin, b_cos, b_hyp);
+		sync_find_cos_sin(mstruct[i], x_var, b_sin, b_cos, b_hyp);
 		if(b_sin && b_cos) return;
 	}
 }
@@ -28998,7 +28999,6 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const EvaluationOptio
 		}
 		return b;
 	}
-
 	MathStructure x_var(x_varp);
 	if(x_var.isUndefined()) {
 		const MathStructure *x_var2;
@@ -29021,44 +29021,8 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const EvaluationOptio
 	eo2.calculate_functions = false;
 	eo2.test_comparisons = false;
 	eo2.isolate_x = false;
-	if(!check_result) {
-		bool b = isolate_x_sub(feo, eo2, x_var);
-		if(CALCULATOR->aborted()) return b;
-		if(eo.expand > 0 && (!b || contains_unsolved_equals(*this, x_var))) {
-			MathStructure mtest(*this);
-			EvaluationOptions eo3 = eo;
-			eo3.transform_trigonometric_functions = false;
-			if(sync_trigonometric_functions(mtest, eo3, x_var)) {
-				eo2.transform_trigonometric_functions = false;
-				eo2.transform_trigonometric_functions = false;
-				calculatesub(eo3, feo);
-				if(CALCULATOR->aborted()) return b;
-				if(eo.do_polynomial_division) do_simplification(*this, eo3, true, eo.structuring == STRUCTURING_NONE || eo.structuring == STRUCTURING_FACTORIZE, false, true, true);
-				if(CALCULATOR->aborted()) return b;
-				if(mtest.isolate_x_sub(feo, eo2, x_var) && !contains_unsolved_equals(*this, x_var)) {
-					set(mtest);
-					b = true;
-				} else {
-					if(CALCULATOR->aborted()) return b;
-					mtest = *this;
-					if(sync_trigonometric_functions(mtest, eo3, x_var, true)) {
-						calculatesub(eo3, feo);
-						if(CALCULATOR->aborted()) return b;
-						if(eo.do_polynomial_division) do_simplification(*this, eo3, true, eo.structuring == STRUCTURING_NONE || eo.structuring == STRUCTURING_FACTORIZE, false, true, true);
-						if(CALCULATOR->aborted()) return b;
-						if(mtest.isolate_x_sub(feo, eo2, x_var) && !contains_unsolved_equals(*this, x_var)) {
-							b = true;
-							set(mtest);
-						}
-					}
-				}
-			}
-			
-		}
-		return b;
-	}
-
-	if(CHILD(1).isZero() && CHILD(0).isAddition()) {
+	
+	if(check_result && CHILD(1).isZero() && CHILD(0).isAddition()) {
 		bool found_1x = false;
 		for(size_t i = 0; i < CHILD(0).size(); i++) {
 			if(CHILD(0)[i] == x_var) {
@@ -29068,12 +29032,48 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const EvaluationOptio
 				break;
 			}
 		}
-		if(found_1x) return isolate_x_sub(feo, eo2, x_var);
+		if(found_1x) check_result = false;
+	}
+	
+	MathStructure msave;
+
+	if(check_result) msave = *this;
+	
+	bool b = isolate_x_sub(feo, eo2, x_var);
+
+	if(CALCULATOR->aborted()) return !check_result && b;
+	if(eo.expand > 0 && (b && contains_unsolved_equals(*this, x_var))) {
+		MathStructure mtest(*this);
+		EvaluationOptions eo3 = eo;
+		eo3.transform_trigonometric_functions = false;
+		eo2.transform_trigonometric_functions = false;
+		if(sync_trigonometric_functions(mtest, eo3, x_var)) {
+			calculatesub(eo3, feo);
+			if(CALCULATOR->aborted()) return !check_result && b;
+			if(eo.do_polynomial_division) do_simplification(*this, eo3, true, eo.structuring == STRUCTURING_NONE || eo.structuring == STRUCTURING_FACTORIZE, false, true, true);
+			if(CALCULATOR->aborted()) return !check_result && b;
+			if(mtest.isolate_x_sub(feo, eo2, x_var) && !contains_unsolved_equals(*this, x_var)) {
+				set(mtest);
+				b = true;
+			} else {
+				if(CALCULATOR->aborted()) return !check_result && b;
+				mtest = *this;
+				if(sync_trigonometric_functions(mtest, eo3, x_var, true)) {
+					calculatesub(eo3, feo);
+					if(CALCULATOR->aborted()) return !check_result && b;
+					if(eo.do_polynomial_division) do_simplification(*this, eo3, true, eo.structuring == STRUCTURING_NONE || eo.structuring == STRUCTURING_FACTORIZE, false, true, true);
+					if(CALCULATOR->aborted()) return !check_result && b;
+					if(mtest.isolate_x_sub(feo, eo2, x_var) && !contains_unsolved_equals(*this, x_var)) {
+						b = true;
+						set(mtest);
+					}
+				}
+			}
+		}
+		
 	}
 
-	MathStructure msave(*this);
-	bool b = isolate_x_sub(feo, eo2, x_var);
-	if(b) {
+	if(check_result && b) {
 		b = test_comparisons(msave, *this, x_var, eo) >= 0;
 	}
 
