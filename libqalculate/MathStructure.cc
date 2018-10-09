@@ -78,6 +78,15 @@
 	}
 }*/
 
+string format_and_print(const MathStructure &mstruct) {
+	MathStructure m_print(mstruct);
+	PrintOptions po;
+	po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+	po.spell_out_logical_operators = true;
+	m_print.format();
+	return m_print.print(po);
+}
+
 struct sym_desc {
 	MathStructure sym;
 	Number deg_a;
@@ -154,10 +163,7 @@ bool warn_about_assumed_not_value(const MathStructure &mstruct, const MathStruct
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
 	if(mvalue.isZero() && mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
-	PrintOptions po;
-	po.spell_out_logical_operators = true;
-	mnonzero.format(po);
-	CALCULATOR->error(false, _("Required assumption: %s."), mnonzero.print(po).c_str(), NULL);
+	CALCULATOR->error(false, _("Required assumption: %s."), format_and_print(mnonzero).c_str(), NULL);
 	return true;
 }
 bool warn_about_denominators_assumed_nonzero(const MathStructure &mstruct, const EvaluationOptions &eo) {
@@ -186,10 +192,7 @@ bool warn_about_denominators_assumed_nonzero(const MathStructure &mstruct, const
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
 	if(mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
-	PrintOptions po;
-	po.spell_out_logical_operators = true;
-	mnonzero.format(po);
-	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), mnonzero.print(po).c_str(), NULL);
+	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), format_and_print(mnonzero).c_str(), NULL);
 	return true;
 }
 bool warn_about_denominators_assumed_nonzero_or_positive(const MathStructure &mstruct, const MathStructure &mstruct2, const EvaluationOptions &eo) {
@@ -221,10 +224,7 @@ bool warn_about_denominators_assumed_nonzero_or_positive(const MathStructure &ms
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
 	if(mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
-	PrintOptions po;
-	po.spell_out_logical_operators = true;
-	mnonzero.format(po);
-	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), mnonzero.print(po).c_str(), NULL);
+	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), format_and_print(mnonzero).c_str(), NULL);
 	return true;
 }
 bool warn_about_denominators_assumed_nonzero_llgg(const MathStructure &mstruct, const MathStructure &mstruct2, const MathStructure &mstruct3, const EvaluationOptions &eo) {
@@ -265,10 +265,7 @@ bool warn_about_denominators_assumed_nonzero_llgg(const MathStructure &mstruct, 
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
 	if(mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
-	PrintOptions po;
-	po.spell_out_logical_operators = true;
-	mnonzero.format(po);
-	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), mnonzero.print(po).c_str(), NULL);
+	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), format_and_print(mnonzero).c_str(), NULL);
 	return true;
 }
 
@@ -7658,7 +7655,7 @@ bool MathStructure::calculateLogicalOrLast(const EvaluationOptions &eo, bool che
 bool MathStructure::calculateLogicalOrIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 
 	if(index >= SIZE || !isLogicalOr()) {
-		CALCULATOR->error(true, "calculateLogicalOrIndex() error: %s. %s", print().c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateLogicalOrIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
 
@@ -7699,7 +7696,7 @@ bool MathStructure::calculateLogicalOr(const MathStructure &mor, const Evaluatio
 bool MathStructure::calculateLogicalXorLast(const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
 
 	if(!isLogicalXor()) {
-		CALCULATOR->error(true, "calculateLogicalXorLast() error: %s. %s", print().c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateLogicalXorLast() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
 	if(CHILD(0).merge_logical_xor(CHILD(1), eo, this, 0, 1) >= 1) {
@@ -7732,7 +7729,7 @@ bool MathStructure::calculateLogicalAndLast(const EvaluationOptions &eo, bool ch
 bool MathStructure::calculateLogicalAndIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 
 	if(index >= SIZE || !isLogicalAnd()) {
-		CALCULATOR->error(true, "calculateLogicalAndIndex() error: %s. %s", print().c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateLogicalAndIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
 
@@ -7799,7 +7796,7 @@ bool MathStructure::calculateLogicalNot(const EvaluationOptions &eo, MathStructu
 }
 bool MathStructure::calculateRaiseExponent(const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
 	if(!isPower()) {
-		CALCULATOR->error(true, "calculateRaiseExponent() error: %s. %s", print().c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateRaiseExponent() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
 	if(CHILD(0).merge_power(CHILD(1), eo, this, 0, 1) >= 1) {
@@ -7827,7 +7824,7 @@ bool MathStructure::calculateBitwiseAndLast(const EvaluationOptions &eo, bool ch
 bool MathStructure::calculateBitwiseAndIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 
 	if(index >= SIZE || !isBitwiseAnd()) {
-		CALCULATOR->error(true, "calculateBitwiseAndIndex() error: %s. %s", print().c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateBitwiseAndIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
 
@@ -7846,7 +7843,7 @@ bool MathStructure::calculateBitwiseOrLast(const EvaluationOptions &eo, bool che
 bool MathStructure::calculateBitwiseOrIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 
 	if(index >= SIZE || !isBitwiseOr()) {
-		CALCULATOR->error(true, "calculateBitwiseOrIndex() error: %s. %s", print().c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateBitwiseOrIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
 
@@ -7865,7 +7862,7 @@ bool MathStructure::calculateBitwiseXorLast(const EvaluationOptions &eo, bool ch
 bool MathStructure::calculateBitwiseXorIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 
 	if(index >= SIZE || !isBitwiseXor()) {
-		CALCULATOR->error(true, "calculateBitwiseXorIndex() error: %s. %s", print().c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateBitwiseXorIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
 
@@ -7884,7 +7881,7 @@ bool MathStructure::calculateMultiplyLast(const EvaluationOptions &eo, bool chec
 bool MathStructure::calculateMultiplyIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 
 	if(index >= SIZE || !isMultiplication()) {
-		CALCULATOR->error(true, "calculateMultiplyIndex() error: %s. %s", print().c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateMultiplyIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
 
@@ -7993,7 +7990,7 @@ bool MathStructure::calculateAddLast(const EvaluationOptions &eo, bool check_siz
 bool MathStructure::calculateAddIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 	
 	if(index >= SIZE || !isAddition()) {
-		CALCULATOR->error(true, "calculateAddIndex() error: %s. %s", print().c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateAddIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
 
@@ -10362,12 +10359,12 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 								if(i_sgn > 0) nr.setInterval(nr_high, nr_plus_inf);
 								else if(i_sgn < 0) nr.setInterval(nr_minus_inf, nr_high);
 								mstruct.set(nr, true);
-								if(b_test) CALCULATOR->error(false, _("Limit for %s determined graphically."), mbak.print().c_str(), NULL);
+								if(b_test) CALCULATOR->error(false, _("Limit for %s determined graphically."), format_and_print(mbak).c_str(), NULL);
 								break;
 							}
 						}
 					} else {
-						if(b_test) CALCULATOR->error(false, _("Limit for %s determined graphically."), mbak.print().c_str(), NULL);
+						if(b_test) CALCULATOR->error(false, _("Limit for %s determined graphically."), format_and_print(mbak).c_str(), NULL);
 						if(i_sgn > 0) mstruct.set(nr_plus_inf, true);
 						else if(i_sgn < 0) mstruct.set(nr_minus_inf, true);
 						break;
@@ -10505,7 +10502,7 @@ bool MathStructure::calculateLimit(const MathStructure &x_var, const MathStructu
 	eo.assume_denominators_nonzero = true;
 	eo.warn_about_denominators_assumed_nonzero = false;
 	eo.do_polynomial_division = true;
-	UnknownVariable *var = new UnknownVariable("", x_var.print());
+	UnknownVariable *var = new UnknownVariable("", format_and_print(x_var));
 	var->ref();
 	Assumptions *ass = new Assumptions();
 	MathStructure nr_limit(limit);
@@ -11193,7 +11190,7 @@ bool replace_intervals(MathStructure &m) {
 		if(m.number().isInterval()) var_prec = m.number().precision(1);
 		else if(CALCULATOR->usesIntervalArithmetic() && m.number().precision() >= 0) var_prec = m.number().precision();
 		if(var_prec <= (CALCULATOR->usesIntervalArithmetic() ? PRECISION + 10 : PRECISION)) {
-			Variable *v = new KnownVariable("", m.print(), m);
+			Variable *v = new KnownVariable("", format_and_print(m), m);
 			v->ref();
 			m.set(v, true);
 			v->destroy();
@@ -13585,7 +13582,7 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 	
 	if(CALCULATOR->aborted()) return false;
 	if(mpoly.isZero()) {
-		CALCULATOR->error(true, "mpoly is zero: %s. %s", tmp.print().c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "mpoly is zero: %s. %s", format_and_print(tmp).c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
 	MathStructure mquo;
@@ -13598,7 +13595,7 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 
 	if(CALCULATOR->aborted()) return false;
 	if(mquo.isZero()) {
-		//CALCULATOR->error(true, "quo is zero: %s. %s", tmp.print().c_str(), _("This is a bug. Please report it."), NULL);
+		//CALCULATOR->error(true, "quo is zero: %s. %s", format_and_print(tmp).c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
 	if(newsymbols.size() > 0) {
@@ -13859,7 +13856,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				if(!equals(mcopy)) {
 					eo.protected_function = eo_pre.protected_function;
 					if(CALCULATOR->aborted()) return false;
-					CALCULATOR->error(true, "factorized result is wrong: %s. %s", msqrfree.print().c_str(), _("This is a bug. Please report it."), NULL);
+					CALCULATOR->error(true, "factorized result is wrong: %s. %s", format_and_print(msqrfree).c_str(), _("This is a bug. Please report it."), NULL);
 				} else {
 					eo.protected_function = eo_pre.protected_function;
 					set(msqrfree);
@@ -17260,7 +17257,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 }
 
 ostream& operator << (ostream &os, const MathStructure &mstruct) {
-	os << mstruct.print();
+	os << format_and_print(mstruct);
 	return os;
 }
 string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
@@ -20465,7 +20462,7 @@ bool transform_absln(MathStructure &mstruct, int use_abs, bool definite_integral
 		} else {
 			if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
 				CALCULATOR->beginTemporaryStopMessages();
-				KnownVariable *var = new KnownVariable("", x_var.print(), ((UnknownVariable*) x_var.variable())->interval());
+				KnownVariable *var = new KnownVariable("", format_and_print(x_var), ((UnknownVariable*) x_var.variable())->interval());
 				var->ref();
 				mtest.replace(x_var, var);
 				EvaluationOptions eo2 = eo;
@@ -21362,7 +21359,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					}
 				} else if(mfac.function() == CALCULATOR->f_cos && mfac.size() == 1) {
 					if(mstruct[0] == mfac[0]) {
-						UnknownVariable *var = new UnknownVariable("", mstruct.print());
+						UnknownVariable *var = new UnknownVariable("", format_and_print(mstruct));
 						var->ref();
 						MathStructure mtest(var);
 						if(!mpow.isOne()) mtest ^= mpow;
@@ -21647,7 +21644,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					}
 				} else if(mfac.function() == CALCULATOR->f_sin && mfac.size() == 1) {
 					if(mstruct[0] == mfac[0]) {
-						UnknownVariable *var = new UnknownVariable("", mstruct.print());
+						UnknownVariable *var = new UnknownVariable("", format_and_print(mstruct));
 						var->ref();
 						MathStructure mtest(var);
 						if(!mpow.isOne()) mtest ^= mpow;
@@ -22037,7 +22034,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					}
 				} else if(mfac.function() == CALCULATOR->f_cosh && mfac.size() == 1) {
 					if(mstruct[0] == mfac[0]) {
-						UnknownVariable *var = new UnknownVariable("", mstruct.print());
+						UnknownVariable *var = new UnknownVariable("", format_and_print(mstruct));
 						var->ref();
 						MathStructure mtest(var);
 						if(!mpow.isOne()) mtest ^= mpow;
@@ -22221,7 +22218,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					}
 				} else if(mfac.function() == CALCULATOR->f_sinh && mfac.size() == 1) {
 					if(mstruct[0] == mfac[0]) {
-						UnknownVariable *var = new UnknownVariable("", mstruct.print());
+						UnknownVariable *var = new UnknownVariable("", format_and_print(mstruct));
 						var->ref();
 						MathStructure mtest(var);
 						if(!mpow.isOne()) mtest ^= mpow;
@@ -22600,7 +22597,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 				Number den_inv(den);
 				den_inv.recip();
 				morig ^= den_inv;
-				UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + morig.print() + RIGHT_PARENTHESIS);
+				UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(morig) + RIGHT_PARENTHESIS);
 				var->ref();
 				Number den_m1(den);
 				den_m1--;
@@ -22637,7 +22634,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 		} else if((mfac.isOne() || mfac == x_var || (mfac.isPower() && mfac[0] == x_var && mfac[1].isInteger())) && (mexp.isPower() && mexp[0] != x_var && mexp[1].isNumber())) {
 			MathStructure madd2, mmul2, mexp2;
 			if(integrate_info(mexp[0], x_var, madd2, mmul2, mexp2) && (!madd.isZero() || mexp != x_var) && mexp2.isOne()) {
-				UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + mexp[0].print() + RIGHT_PARENTHESIS);
+				UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(mexp[0]) + RIGHT_PARENTHESIS);
 				var->ref();
 				if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
 					MathStructure m_interval(mexp[0]);
@@ -22744,7 +22741,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 	if(m_func) {
 		if((m_func->function() == CALCULATOR->f_ln || m_func->function() == CALCULATOR->f_asin || m_func->function() == CALCULATOR->f_acos || m_func->function() == CALCULATOR->f_asinh || m_func->function() == CALCULATOR->f_acosh) && m_func->size() == 1 && integrate_info((*m_func)[0], x_var, madd, mmul, mexp) && mexp.isOne()) {
 			MathStructure m_orig(*m_func);
-			UnknownVariable *var = new UnknownVariable("", m_orig.print());
+			UnknownVariable *var = new UnknownVariable("", format_and_print(m_orig));
 			var->ref();
 			MathStructure mtest(mstruct);
 			mtest[0].replace(m_orig, var, (*m_func)[0].containsInterval());
@@ -22797,7 +22794,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 	if(m_pow) {
 		if((*m_pow)[0].containsRepresentativeOf(x_var, true, true) == 0 && integrate_info((*m_pow)[1], x_var, madd, mmul, mexp) && mexp.isOne()) {
 			MathStructure m_orig(*m_pow);
-			UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + m_orig.print() + RIGHT_PARENTHESIS);
+			UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(m_orig) + RIGHT_PARENTHESIS);
 			var->ref();
 			MathStructure mtest(mstruct);
 			mtest[0].replace(m_orig, var, m_pow->containsInterval());
@@ -23347,7 +23344,7 @@ MathStructure *find_abs_x(MathStructure &mstruct, const MathStructure &x_var, co
 bool fix_sgn_x(MathStructure &mstruct, const MathStructure &x_var, const EvaluationOptions &eo) {
 	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_signum && mstruct.size() == 2) {
 		MathStructure mtest(mstruct);
-		KnownVariable *var = new KnownVariable("", x_var.print(), ((UnknownVariable*) x_var.variable())->interval());
+		KnownVariable *var = new KnownVariable("", format_and_print(x_var), ((UnknownVariable*) x_var.variable())->interval());
 		var->ref();
 		mtest.replace(x_var, var);
 		CALCULATOR->beginTemporaryStopMessages();
@@ -23574,8 +23571,8 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 		mpos.eval(eo_t);
 		UnknownVariable *var_p = NULL, *var_m = NULL;
 		if(!CALCULATOR->endTemporaryStopMessages() && mpos.isComparison() && (mpos.comparisonType() == COMPARISON_EQUALS_GREATER || mpos.comparisonType() == COMPARISON_EQUALS_LESS) && mpos[0] == x_var && mpos[1].isNumber()) {
-			var_p = new UnknownVariable("", x_var.print());
-			var_m = new UnknownVariable("", x_var.print());
+			var_p = new UnknownVariable("", format_and_print(x_var));
+			var_m = new UnknownVariable("", format_and_print(x_var));
 			var_p->ref();
 			var_m->ref();
 			Number nr_interval_p, nr_interval_m;
@@ -23913,7 +23910,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						Number den_inv(den);
 						den_inv.recip();
 						morig ^= den_inv;
-						UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + morig.print() + RIGHT_PARENTHESIS);
+						UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(morig) + RIGHT_PARENTHESIS);
 						var->ref();
 						Number den_m1(den);
 						den_m1--;
@@ -23956,7 +23953,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						MathStructure mbase(mexp[0]);
 						if(integrate_info(mbase, x_var, madd, mmul, mexp, false, false) && mexp.isOne() && (!madd.isZero() || !mmul.isOne())) {
 							MathStructure mtest(*this);
-							UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + mbase.print() + RIGHT_PARENTHESIS);
+							UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(mbase) + RIGHT_PARENTHESIS);
 							var->ref();
 							mtest.replace(mbase, var, mbase.containsInterval());
 							if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
@@ -24091,7 +24088,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							Number den_inv(den);
 							den_inv.recip();
 							morig ^= den_inv;
-							UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + morig.print() + RIGHT_PARENTHESIS);
+							UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(morig) + RIGHT_PARENTHESIS);
 							var->ref();
 							MathStructure mvar(var);
 							if(!num.isOne()) mvar ^= num;
@@ -24684,7 +24681,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 										b = false;
 										if(i == 1) {
 											m_replace ^= mpow;
-											var = new UnknownVariable("", string(LEFT_PARENTHESIS) + m_replace.print() + RIGHT_PARENTHESIS);
+											var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
 											mtest.replace(m_replace, var);
 											new_pow++;
 											new_pow -= mpow.number();
@@ -24698,7 +24695,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 											if(new_pow.isInteger()) {
 												b = true;
 												m_replace ^= nr_two;
-												var = new UnknownVariable("", string(LEFT_PARENTHESIS) + m_replace.print() + RIGHT_PARENTHESIS);
+												var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
 												MathStructure m_prev(x_var), m_new(var);
 												m_prev ^= mpow;
 												m_new ^= mpow;
@@ -24712,7 +24709,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 											if(new_pow.isInteger()) {
 												b = true;
 												m_replace ^= nr_three;
-												var = new UnknownVariable("", string(LEFT_PARENTHESIS) + m_replace.print() + RIGHT_PARENTHESIS);
+												var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
 												MathStructure m_prev(x_var), m_new(var);
 												m_prev ^= mpow;
 												m_new ^= mpow;
@@ -24752,7 +24749,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 								MathStructure mbase(mpow[0]);
 								if(integrate_info(mbase, x_var, madd, mmul, mpow, false, false) && mpow.isOne() && (!madd.isZero() || !mmul.isOne())) {
 									MathStructure mtest(CHILD(1));
-									UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + mbase.print() + RIGHT_PARENTHESIS);
+									UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(mbase) + RIGHT_PARENTHESIS);
 									var->ref();
 									mtest.replace(mbase, var, mbase.containsInterval());
 									if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
@@ -25209,7 +25206,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 									if(!new_pow.isOne()) mtest[0] ^= new_pow;
 								}
 								CALCULATOR->beginTemporaryStopMessages();
-								var->setName(string(LEFT_PARENTHESIS) + m_replace.print() + RIGHT_PARENTHESIS);
+								var->setName(string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
 								if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
 									MathStructure m_interval(m_replace);
 									m_interval.replace(x_var, ((UnknownVariable*) x_var.variable())->interval());
@@ -25273,7 +25270,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 								int cui = contains_unsolved_integrate(minteg_2, this, parent_parts);
 								if(cui == 3) {
 									MathStructure mfunc(CALCULATOR->f_integrate, this, &x_var, &m_undefined, &m_undefined, NULL);
-									UnknownVariable *var = new UnknownVariable("", mfunc.print());
+									UnknownVariable *var = new UnknownVariable("", format_and_print(mfunc));
 									var->setAssumptions(mfunc);
 									MathStructure mvar(var);
 									minteg_2.replace(mfunc, mvar);
@@ -25881,13 +25878,41 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							CHILDREN_UPDATED;
 							if(stop_iv) {
 								CALCULATOR->endTemporaryStopIntervalArithmetic();
-								CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+								CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 								fix_intervals(*this, eo2);
 							}
 							return true;
 						}
+					} else if(CHILD(1).isZero()) {
+						// x=0 || x=-a/b || (a=0 && b=0)
+						ComparisonType ct = ct_comp;
+						CHILD(0) = x_var;
+						CHILD(1) = mstruct_b;
+						CHILD(1).calculateDivide(mstruct_a, eo2);
+						CHILD(1).calculateNegate(eo2);
+						if(!mstruct_a.representsNonZero()) {
+							MathStructure *mtest = new MathStructure(mstruct_a);
+							mtest->transform(ct == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, m_zero);
+							mtest->calculatesub(eo2, eo, false);
+							transform_nocopy(ct == COMPARISON_NOT_EQUALS ? STRUCT_LOGICAL_OR : STRUCT_LOGICAL_AND, mtest);
+							calculatesub(eo2, eo, false);
+						}
+						MathStructure *mchild2 = new MathStructure(x_var);
+						mchild2->transform(ct, m_zero);
+						transform_nocopy(ct == COMPARISON_NOT_EQUALS ? STRUCT_LOGICAL_AND : STRUCT_LOGICAL_OR, mchild2);
+						if(!mstruct_b.representsNonZero() && !mstruct_a.representsNonZero()) {
+							MathStructure *mchild3a = new MathStructure(mstruct_a);
+							mchild3a->transform(ct, m_zero);
+							MathStructure *mchild3b = new MathStructure(mstruct_b);
+							mchild3b->transform(ct, m_zero);
+							mchild3a->transform_nocopy(ct == COMPARISON_NOT_EQUALS ? STRUCT_LOGICAL_OR : STRUCT_LOGICAL_AND, mchild3b);
+							mchild3a->calculatesub(eo2, eo, false);
+							add_nocopy(mchild3a, ct == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+						}
+						calculatesub(eo2, eo, false);
+						return true;
 					} else {
-						//x=(-b+/-sqrt(b^2-4ac))/(2a)
+						// x=(-b+/-sqrt(b^2-4ac))/(2a)
 						MathStructure mbak(*this);
 						bool stop_iv = false;
 						if(a_iv >= 0 && a_iv <= PRECISION) {
@@ -26018,7 +26043,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							CHILDREN_UPDATED;
 							if(stop_iv) {
 								CALCULATOR->endTemporaryStopIntervalArithmetic();
-								CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+								CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 								fix_intervals(*this, eo2);
 							}
 							return true;
@@ -26159,7 +26184,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				fix_intervals(*this, eo2, &failed);
 				if(!failed && isolate_x_sub(eo, eo2, x_var, morig)) {
 					CALCULATOR->endTemporaryStopIntervalArithmetic();
-					if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+					if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 					fix_intervals(*this, eo2);
 					return true;
 				}
@@ -26350,7 +26375,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 				UnknownVariable *var = NULL;
 				if(mvar != x_var) {
-					var = new UnknownVariable("", string(LEFT_PARENTHESIS) + mvar.print() + RIGHT_PARENTHESIS);
+					var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(mvar) + RIGHT_PARENTHESIS);
 					var->setInterval(mvar);
 					var->ref();
 				}
@@ -26658,7 +26683,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								CHILD(1).calculateDivide(mstruct_a, eo3);
 								CHILDREN_UPDATED;
 								CALCULATOR->endTemporaryStopIntervalArithmetic();
-								if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+								if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 								fix_intervals(*this, eo2);
 								return true;
 							} else if(b0_zero == 0) {
@@ -26715,7 +26740,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								calculatesub(eo2, eo, false);
 								
 								CALCULATOR->endTemporaryStopIntervalArithmetic();
-								if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+								if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 								fix_intervals(*this, eo2);
 
 								return true;
@@ -26757,7 +26782,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 										CHILD(1).calculateDivide(mstruct_a, eo3);
 										CHILDREN_UPDATED;
 										CALCULATOR->endTemporaryStopIntervalArithmetic();
-										if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+										if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 										fix_intervals(*this, eo2);
 										return true;
 										return true;
@@ -26771,7 +26796,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 										CHILD(1).calculateDivide(mstruct_a, eo3);
 										CHILDREN_UPDATED;
 										CALCULATOR->endTemporaryStopIntervalArithmetic();
-										if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+										if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 										fix_intervals(*this, eo2);
 										return true;
 									} else if(cr == COMPARISON_RESULT_LESS) {
@@ -26821,7 +26846,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									CHILD(1).calculateMultiplyLast(eo3);
 									CHILDREN_UPDATED;
 									CALCULATOR->endTemporaryStopIntervalArithmetic();
-									if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+									if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 									fix_intervals(*this, eo2);
 									return true;
 								}
@@ -26940,7 +26965,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									calculatesub(eo2, eo, false);
 									
 									CALCULATOR->endTemporaryStopIntervalArithmetic();
-									if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+									if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 									fix_intervals(*this, eo2);
 								
 									return true;
@@ -27073,8 +27098,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					if(ret < 0) {
 						set(mbak);
 					} else {
-						if(!x_var.representsReal()) CALCULATOR->error(false, _("Not all complex roots were calculated for %s."), mbak.print().c_str(), NULL);
-						if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), mbak.print().c_str(), NULL);
+						if(!x_var.representsReal()) CALCULATOR->error(false, _("Not all complex roots were calculated for %s."), format_and_print(mbak).c_str(), NULL);
+						if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 						fix_intervals(*this, eo2);
 						return true;
 					}
@@ -27560,7 +27585,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					if(multi_num) num /= CHILD(0)[0].number();
 					if(pow_num) num *= nr_pow;					
 					if(num.lambertW()) {
-						if(!x_var.representsReal()) CALCULATOR->error(false, _("Only real solutions were calculated for %s."), print().c_str(), NULL);
+						if(!x_var.representsReal()) CALCULATOR->error(false, _("Only real solutions were calculated for %s."), format_and_print(*this).c_str(), NULL);
 						CHILD(1) = num;
 						if(e_power) {
 							CHILD(0)[e_index].setToChild(2, true);
@@ -27774,14 +27799,14 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						if(solve_x_pow_x(nrlow) && solve_x_pow_x(nrhigh)) {
 							MathStructure mbak(*this);
 							if(!CHILD(1).number().setInterval(nrlow, nrhigh, true)) return false;
-							if(!x_var.representsReal()) CALCULATOR->error(false, _("Only real solutions were calculated for %s."), mbak.print().c_str(), NULL);
+							if(!x_var.representsReal()) CALCULATOR->error(false, _("Only real solutions were calculated for %s."), format_and_print(mbak).c_str(), NULL);
 							CHILD(0) = x_var;
 							CHILDREN_UPDATED
 							return true;
 						}
 					} else {
 						if(solve_x_pow_x(CHILD(1).number())) {
-							if(!x_var.representsReal()) CALCULATOR->error(false, _("Only real solutions were calculated for %s."), print().c_str(), NULL);
+							if(!x_var.representsReal()) CALCULATOR->error(false, _("Only real solutions were calculated for %s."), format_and_print(*this).c_str(), NULL);
 							CHILD(0) = x_var;
 							CHILDREN_UPDATED
 							return true;
@@ -28103,7 +28128,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								}
 							}
 						}
-						if(warn_complex) CALCULATOR->error(false, _("Only one or two of the roots where calculated for %s."), mbak.print().c_str(), NULL);
+						if(warn_complex) CALCULATOR->error(false, _("Only one or two of the roots where calculated for %s."), format_and_print(mbak).c_str(), NULL);
 					} else {
 						MathStructure *mposcheck = NULL;
 						bool b_test = false;

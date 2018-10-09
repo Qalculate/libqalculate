@@ -38,6 +38,7 @@
 #define RATIONAL_POLYNOMIAL_ARGUMENT(i)				Argument *arg_poly##i = new Argument(); arg_poly##i->setRationalPolynomial(true); setArgumentDefinition(i, arg_poly##i);
 #define RATIONAL_POLYNOMIAL_ARGUMENT_HV(i)			Argument *arg_poly##i = new Argument(); arg_poly##i->setRationalPolynomial(true); arg_poly##i->setHandleVector(true); setArgumentDefinition(i, arg_poly##i);
 
+extern string format_and_print(const MathStructure &mstruct);
 
 VectorFunction::VectorFunction() : MathFunction("vector", -1) {
 }
@@ -125,7 +126,7 @@ RowFunction::RowFunction() : MathFunction("row", 2) {
 int RowFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	size_t row = (size_t) vargs[1].number().uintValue();
 	if(row > vargs[0].rows()) {
-		CALCULATOR->error(true, _("Row %s does not exist in matrix."), vargs[1].print().c_str(), NULL);
+		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
 		return 0;
 	}
 	vargs[0].rowToVector(row, mstruct);
@@ -138,7 +139,7 @@ ColumnFunction::ColumnFunction() : MathFunction("column", 2) {
 int ColumnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	size_t col = (size_t) vargs[1].number().uintValue();
 	if(col > vargs[0].columns()) {
-		CALCULATOR->error(true, _("Column %s does not exist in matrix."), vargs[1].print().c_str(), NULL);
+		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
 		return 0;
 	}
 	vargs[0].columnToVector(col, mstruct);
@@ -183,11 +184,11 @@ int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		size_t col = (size_t) vargs[2].number().uintValue();
 		bool b = true;
 		if(col > vargs[0].columns()) {
-			CALCULATOR->error(true, _("Column %s does not exist in matrix."), vargs[2].print().c_str(), NULL);
+			CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[2]).c_str(), NULL);
 			b = false;
 		}
 		if(row > vargs[0].rows()) {
-			CALCULATOR->error(true, _("Row %s does not exist in matrix."), vargs[1].print().c_str(), NULL);
+			CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
 			b = false;
 		}
 		if(b) {
@@ -202,7 +203,7 @@ int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		}
 		size_t row = (size_t) vargs[1].number().uintValue();
 		if(row > vargs[0].countChildren()) {
-			CALCULATOR->error(true, _("Element %s does not exist in vector."), vargs[1].print().c_str(), NULL);
+			CALCULATOR->error(true, _("Element %s does not exist in vector."), format_and_print(vargs[1]).c_str(), NULL);
 			return 0;
 		}
 		mstruct = *vargs[0].getChild(row);
@@ -223,7 +224,7 @@ ComponentFunction::ComponentFunction() : MathFunction("component", 2) {
 int ComponentFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	size_t i = (size_t) vargs[0].number().uintValue();
 	if(i > vargs[1].countChildren()) {
-		CALCULATOR->error(true, _("Element %s does not exist in vector."), vargs[0].print().c_str(), NULL);
+		CALCULATOR->error(true, _("Element %s does not exist in vector."), format_and_print(vargs[0]).c_str(), NULL);
 		return 0;
 	}
 	mstruct = *vargs[1].getChild(i);
@@ -5080,7 +5081,7 @@ RegisterFunction::RegisterFunction() : MathFunction("register", 1) {
 }
 int RegisterFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	if(vargs[0].number().isGreaterThan(CALCULATOR->RPNStackSize())) {
-		CALCULATOR->error(false, _("Register %s does not exist. Returning zero."), vargs[0].print().c_str(), NULL);
+		CALCULATOR->error(false, _("Register %s does not exist. Returning zero."), format_and_print(vargs[0]).c_str(), NULL);
 		mstruct.clear();
 		return 1;
 	}
@@ -6020,7 +6021,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			switch(first_error) {
 				case 2: {
-					CALCULATOR->error(true, _("The comparison is true for all %s (with current assumptions)."), y_var.print().c_str(), NULL);
+					CALCULATOR->error(true, _("The comparison is true for all %s (with current assumptions)."), format_and_print(y_var).c_str(), NULL);
 					break;
 				}
 				case 3: {
@@ -6028,15 +6029,15 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 					break;
 				}
 				case 4: {
-					CALCULATOR->error(true, _("Was unable to completely isolate %s."), y_var.print().c_str(), NULL);
+					CALCULATOR->error(true, _("Was unable to completely isolate %s."), format_and_print(y_var).c_str(), NULL);
 					break;
 				}
 				case 7: {					
-					CALCULATOR->error(false, _("The comparison is true for all %s if %s."), y_var.print().c_str(), strueforall.c_str(), NULL);
+					CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), strueforall.c_str(), NULL);
 					break;
 				}
 				default: {
-					CALCULATOR->error(true, _("Was unable to isolate %s."), y_var.print().c_str(), NULL);
+					CALCULATOR->error(true, _("Was unable to isolate %s."), format_and_print(y_var).c_str(), NULL);
 					break;
 				}
 			}
@@ -6159,10 +6160,10 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			if(itry > 1) {
 				assumptions->setSign(as);
 				if(itry == 2) {
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), y_var.print().c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
 				} else if(itry == 3) {
 					assumptions->setType(at);
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), y_var.print().c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
 				}
 				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			}
@@ -6186,10 +6187,10 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			if(itry > 1) {
 				assumptions->setSign(as);
 				if(itry == 2) {
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), y_var.print().c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
 				} else if(itry == 3) {
 					assumptions->setType(at);
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), y_var.print().c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
 				}
 				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			}			
@@ -6200,7 +6201,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			}
 			if(mtruefor) {
 				mtruefor->format(po);
-				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), y_var.print().c_str(), mtruefor->print(po).c_str(), NULL);
+				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), mtruefor->print(po).c_str(), NULL);
 				delete mtruefor;
 			}
 			if(ct == COMPARISON_EQUALS) mstruct.setToChild(2, true);
@@ -6269,10 +6270,10 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			if(itry > 1) {
 				assumptions->setSign(as);
 				if(itry == 2) {
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), y_var.print().c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
 				} else if(itry == 3) {
 					assumptions->setType(at);
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), y_var.print().c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
 				}
 				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			}
@@ -6295,7 +6296,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			}
 			if(mtruefor) {
 				mtruefor->format(po);
-				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), y_var.print().c_str(), mtruefor->print(po).c_str(), NULL);
+				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), mtruefor->print(po).c_str(), NULL);
 				delete mtruefor;
 			}
 			return 1;
@@ -6360,9 +6361,9 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 		if(msolve.isComparison()) {
 			if(msolve[0] != vargs[1][i]) {
 				if(!b) {
-					CALCULATOR->error(true, _("Unable to isolate %s.\n\nYou might need to place the equations and variables in an appropriate order so that each equation at least contains the corresponding variable (if automatic reordering failed)."), vargs[1][i].print().c_str(), NULL);
+					CALCULATOR->error(true, _("Unable to isolate %s.\n\nYou might need to place the equations and variables in an appropriate order so that each equation at least contains the corresponding variable (if automatic reordering failed)."), format_and_print(vargs[1][i]).c_str(), NULL);
 				} else {
-					CALCULATOR->error(true, _("Unable to isolate %s."), vargs[1][i].print().c_str(), NULL);
+					CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
 				}
 				return 0;
 			} else {
@@ -6376,7 +6377,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 		} else if(msolve.isLogicalOr()) {
 			for(size_t i2 = 0; i2 < msolve.size(); i2++) {
 				if(!msolve[i2].isComparison() || msolve[i2].comparisonType() != COMPARISON_EQUALS || msolve[i2][0] != vargs[1][i]) {
-					CALCULATOR->error(true, _("Unable to isolate %s."), vargs[1][i].print().c_str(), NULL);
+					CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
 					return 0;
 				} else {
 					msolve[i2].setToChild(2, true);
@@ -6385,7 +6386,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 			msolve.setType(STRUCT_VECTOR);
 			mstruct.addChild(msolve);
 		} else {
-			CALCULATOR->error(true, _("Unable to isolate %s."), vargs[1][i].print().c_str(), NULL);
+			CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
 			return 0;
 		}
 		for(size_t i2 = 0; i2 < i; i2++) {
