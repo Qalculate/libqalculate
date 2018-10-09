@@ -3374,6 +3374,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 	int sgn_l = mpfr_sgn(fl_value), sgn_u = mpfr_sgn(fu_value);
 
 	bool try_complex = false;
+
 	if(o.isFloatingPoint()) {
 		int sgn_ol = mpfr_sgn(o.internalLowerFloat()), sgn_ou = mpfr_sgn(o.internalUpperFloat());
 		if(sgn_ol < 0 && (sgn_l == 0 || sgn_l != sgn_u)) {
@@ -3453,7 +3454,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 			set(nr_bak);
 			return false;
 		}
-		if(o.isInteger()) {
+		if(o.isInteger() && o.integerLength() < 1000000L) {
 			if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
 				mpfr_pow_z(fl_value, fl_value, mpq_numref(o.internalRational()), MPFR_RNDN);
 				mpfr_set(fu_value, fl_value, MPFR_RNDN);
@@ -4855,8 +4856,7 @@ bool Number::asin() {
 	}
 	if(hasImaginaryPart() || !isFraction()) {
 		if(b_imag) return false;
-		bool b_neg = isNegative();
-		if(!b_neg && !hasImaginaryPart() && !isNonNegative()) {
+		if(isInterval() && ((hasRealPart() && !realPartIsNonZero()) || (hasImaginaryPart() && !imaginaryPartIsNonZero()))) {
 			Number nr1(lowerEndPoint());
 			Number nr2(upperEndPoint());
 			if(!nr1.asin() || !nr2.asin()) return false;
@@ -4865,9 +4865,12 @@ bool Number::asin() {
 		}
 		Number z_sqln(*this);
 		Number i_z(*this);
-		if(!b_neg && hasImaginaryPart()) {
+		bool b_neg;
+		if(hasImaginaryPart()) {
 			if(hasRealPart()) b_neg = (realPartIsNegative() && !imaginaryPartIsNegative()) || (realPartIsPositive() && imaginaryPartIsPositive());
 			else b_neg = imaginaryPartIsNegative();
+		} else {
+			b_neg = isNegative();
 		}
 		if(b_neg && (!z_sqln.negate() || !i_z.negate())) return false;
 		if(!i_z.multiply(nr_one_i)) return false;

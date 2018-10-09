@@ -5301,21 +5301,7 @@ int MathStructure::merge_logical_and(MathStructure &mstruct, const EvaluationOpt
 		calculatesub(eo, eo, false);
 		return 1;
 	} else if(mstruct.isLogicalOr()) {
-		MathStructure mthis(*this);
-		MERGE_APPROX_AND_PREC(mstruct)
-		for(size_t i = 0; i < mstruct.size(); i++) {
-			mstruct[i].ref();
-			if(i == 0) {				
-				add_nocopy(&mstruct[i], OPERATION_LOGICAL_AND, true);
-				calculateLogicalAndLast(eo, true);
-			} else {
-				add(mthis, OPERATION_LOGICAL_OR, true);
-				LAST.add_nocopy(&mstruct[i], OPERATION_LOGICAL_AND, true);
-				LAST.calculateLogicalAndLast(eo, true, this, SIZE - 1);
-			}
-		}
-		calculatesub(eo, eo, false);
-		return 1;
+		return 0;
 	} else if(isComparison() && mstruct.isComparison()) {
 		if(CHILD(0) == mstruct[0]) {
 			ComparisonResult cr = mstruct[1].compare(CHILD(1));
@@ -5551,7 +5537,7 @@ int MathStructure::merge_logical_and(MathStructure &mstruct, const EvaluationOpt
 			calculateLogicalAndLast(eo);
 			return 1;
 		} else if(mstruct.comparisonType() == COMPARISON_EQUALS && !mstruct[0].isNumber() && !mstruct[0].containsInterval() && mstruct[1].isNumber() && contains(mstruct[0])) {
-			replace(mstruct[0], CHILD(1));
+			replace(mstruct[0], mstruct[1]);
 			calculatesub(eo, eo, true);
 			mstruct.ref();
 			add_nocopy(&mstruct, OPERATION_LOGICAL_AND);
@@ -5911,7 +5897,7 @@ int MathStructure::merge_logical_or(MathStructure &mstruct, const EvaluationOpti
 			calculateLogicalOrLast(eo);
 			return 1;
 		} else if(mstruct.comparisonType() == COMPARISON_NOT_EQUALS && !mstruct[0].isNumber() && !mstruct[0].containsInterval() && mstruct[1].isNumber() && contains(mstruct[0])) {
-			replace(mstruct[0], CHILD(1));
+			replace(mstruct[0], mstruct[1]);
 			calculatesub(eo, eo, true);
 			mstruct.ref();
 			add_nocopy(&mstruct, OPERATION_LOGICAL_OR);
@@ -7044,7 +7030,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			}
 			break;
 		}
-		case STRUCT_LOGICAL_AND: {			
+		case STRUCT_LOGICAL_AND: {
 			if(recursive) {
 				for(size_t i = 0; i < SIZE; i++) {
 					CHILD(i).calculatesub(eo, feo, true, this, i);
@@ -7055,7 +7041,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 						break;
 					}
 				}
-				if(b) break;				
+				if(b) break;
 			}
 			MERGE_ALL(merge_logical_and, try_logand)
 			if(SIZE == 1) {
@@ -29040,7 +29026,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const EvaluationOptio
 	MathStructure msave;
 
 	if(check_result) msave = *this;
-	
+
 	bool b = isolate_x_sub(feo, eo2, x_var);
 
 	if(CALCULATOR->aborted()) return !check_result && b;

@@ -852,17 +852,24 @@ string rnd_number() {
 	return str;
 }
 
-string rnd_item(int &par, bool allow_function = true, bool allow_unknown = true) {
-	int r = rand() % (2 + allow_unknown) + 1;
+string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1) {
+	int r = rand() % (2 + (allow_unknown > 0)) + 1;
 	string str;
 	if(r != 1) {
 		str = rnd_number();
 	} else {
-		r = (allow_unknown ? rand() % (allow_function ? 21 : 5) + 1 : rand() % (allow_function ? 18 : 2) + 4);
+		int au2 = 3 - allow_unknown % 3;
+		r = (rand() % ((allow_function ? 21 : 5) - au2)) + 4 - allow_unknown;
+		if(r < 4 - allow_unknown % 3) {
+			if(r < 0) r = -r;
+			if(allow_unknown % 3 == 1) r = 4;
+			else if(allow_unknown % 3 == 2) r = 2 + r % 2;
+			else r = 1 + r % 3;
+		}
 		switch(r) {
-			case 1: {str = "x"; break;}
+			case 1: {str = "z"; break;}
 			case 2: {str = "y"; break;}
-			case 3: {str = "z"; break;}
+			case 3: {str = "x"; break;}
 			case 4: {str = "pi"; break;}
 			case 5: {str = "e"; break;}
 			case 6: {par++; str = "sin("; return str + rnd_item(par, true, allow_unknown);}
@@ -909,7 +916,8 @@ string rnd_operator(int &par) {
 	return "";
 }
 
-void rnd_test(EvaluationOptions eo, bool allow_unknowns, bool allow_functions) {
+int rt1 = 0, rt2 = 0, rt3 = 0, rt4 = 0, rt5 = 0, rt6 = 0, rt7 = 0;
+void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions) {
 	int par = 0;
 	string str;
 	while(str.empty() || rand() % (str.length() > 40 ? 2 : 10 - str.length() / 5) != 0) {
@@ -921,15 +929,120 @@ void rnd_test(EvaluationOptions eo, bool allow_unknowns, bool allow_functions) {
 	CALCULATOR->parse(&mp, str, eo.parse_options);
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	m1 = mp;
-	m1.eval(eo);
+	CALCULATOR->calculate(&m1, 1000, eo);
+	if(m1.isAborted()) {cout << str << endl; cout << "ABORTED1" << endl; return;}
 	eo.approximation = APPROXIMATION_EXACT;
 	m2 = mp;
-	m2.eval(eo);
+	CALCULATOR->calculate(&m2, 1000, eo);
+	if(m2.isAborted()) {cout << str << endl; cout << "ABORTED2" << endl; return;}
 	eo.approximation = APPROXIMATION_APPROXIMATE;
-	m2.eval(eo);
-	if((m1.isNumber() || m2.isNumber()) && m1 != m2 && m1.print() != m2.print()) {
-		cout << str << endl;
-		cout << "UNEQUAL" << m1.print() << ":" << m2.print() << endl;
+	CALCULATOR->calculate(&m2, 1000, eo);
+	if(m2.isAborted()) {cout << str << endl; cout << "ABORTED3" << endl; return;}
+	if(m1.isNumber() || m2.isNumber()) {
+		rt1++;
+		if(m1 != m2 && m1.print() != m2.print()) {
+			rt2++;
+			cout << str << endl;
+			cout << "UNEQUAL1: " << m1.print() << ":" << m2.print() << endl;
+		}
+	}
+	if(mp.contains(CALCULATOR->v_x)) {
+		rt3++;
+		Number nr(rnd_number());
+		if(nr.hasImaginaryPart() && rand() % 2 == 0) nr += Number(rnd_number());
+		m1 = mp;
+		m1.replace(CALCULATOR->v_x, nr);
+		CALCULATOR->calculate(&m1, 1000, eo);
+		if(m1.isAborted()) {cout << str << endl; cout << "ABORTED4: " << nr << endl; return;}
+		m2 = mp;
+		eo.approximation = APPROXIMATION_TRY_EXACT;
+		CALCULATOR->calculate(&m2, 1000, eo);
+		if(m2.isAborted()) {cout << str << endl; cout << "ABORTED5: " << nr << endl; return;}
+		m2.replace(CALCULATOR->v_x, nr);
+		eo.approximation = APPROXIMATION_APPROXIMATE;
+		CALCULATOR->calculate(&m2, 1000, eo);
+		if(m2.isAborted()) {cout << str << endl; cout << "ABORTED6: " << nr << endl; return;}
+		if(m1.isNumber() || m2.isNumber()) {
+			rt4++;
+			if(m1 != m2 && m1.print() != m2.print()) {
+				rt5++;
+				cout << str << endl;
+				cout << "UNEQUAL2: " << m1.print() << ":" << m2.print() << endl;
+			}
+		}
+		
+		m1 = mp;
+		m1.transform(COMPARISON_EQUALS, m_zero);
+		cout << m1 << endl;
+		eo.approximation = APPROXIMATION_EXACT;
+		CALCULATOR->calculate(&m1, 1000, eo);
+		if(m1.isAborted()) {cout << str << endl; cout << "ABORTED7"; return;}
+		if(m1.isComparison() && m1.comparisonType() == COMPARISON_EQUALS && m1[0] == CALCULATOR->v_x) {
+			m2 = mp;
+			m2.replace(CALCULATOR->v_x, m1[1]);
+			eo.approximation = APPROXIMATION_APPROXIMATE;
+			CALCULATOR->calculate(&m2, 1000, eo);
+			if(m2.isAborted()) {cout << str << endl; cout << "ABORTED8: " << m1[1] << endl; return;}
+			if(m2.isNumber()) {
+				rt6++;
+				if(m2.number().isNonZero()) {
+					rt7++;
+					nr = m2.number();
+					nr.abs();
+					nr.log(10);
+					if(nr > -30) {
+						cout << str << endl;
+						cout << "UNEQUAL3: " << m1.print() << ":" << m2.print() << endl;
+					}
+				}
+			}
+		} else if(!m1.isComparison()) {
+			for(size_t i = 0; i < m1.size(); i++) {
+				if(m1[i].isComparison() && m1[i].comparisonType() == COMPARISON_EQUALS && m1[i][0] == CALCULATOR->v_x) {
+					m2 = mp;
+					m2.replace(CALCULATOR->v_x, m1[i][1]);
+					eo.approximation = APPROXIMATION_APPROXIMATE;
+					CALCULATOR->calculate(&m2, 1000, eo);
+					if(m2.isAborted()) {cout << str << endl; cout << "ABORTED8: " << m1[i][1] << endl; return;}
+					if(m2.isNumber()) {
+						rt6++;
+						if(m2.number().isNonZero()) {
+							nr = m2.number();
+							nr.abs();
+							nr.log(10);
+							if(nr > -30) {
+								rt7++;
+								cout << str << endl;
+								cout << "UNEQUAL3: " << m1[i].print() << ":" << m2.print() << endl;
+							}
+						}
+					}
+				} else if(!m1[i].isComparison()) {
+					for(size_t i2 = 0; i2 < m1[i].size(); i2++) {
+						if(m1[i][i2].isComparison() && m1[i][i2].comparisonType() == COMPARISON_EQUALS && m1[i][i2][0] == CALCULATOR->v_x) {
+							m2 = mp;
+							m2.replace(CALCULATOR->v_x, m1[i][i2][1]);
+							eo.approximation = APPROXIMATION_APPROXIMATE;
+							CALCULATOR->calculate(&m2, 1000, eo);
+							if(m2.isAborted()) {cout << str << endl; cout << "ABORTED8: " << m1[i][i2][1] << endl; return;}
+							if(m2.isNumber()) {
+								rt6++;
+								if(m2.number().isNonZero()) {
+									nr = m2.number();
+									nr.abs();
+									nr.log(10);
+									if(nr > -30) {
+										rt7++;
+										cout << str << endl;
+										cout << "UNEQUAL3: " << m1[i][i2].print() << ":" << m2.print() << endl;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -1131,10 +1244,10 @@ int main(int argc, char *argv[]) {
 	//test_integration();
 	//test_intervals(true);
 	
-	for(size_t i = 0; i < 10000; i++) {
-		rnd_test(evalops, false, true);
+	for(size_t i = 0; i < 1000; i++) {
+		rnd_test(evalops, 4, true);
 	}
-	
+	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << endl;
 
 	return 0;
 
