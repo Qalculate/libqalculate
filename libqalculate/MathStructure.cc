@@ -15561,6 +15561,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po) {
 }
 
 bool use_prefix_with_unit(Unit *u, const PrintOptions &po) {
+	if(!po.prefix && !po.use_unit_prefixes) return u->referenceName() == "g";
 	if(po.prefix) return true;
 	if(u->isCurrency()) return po.use_prefixes_for_currencies;
 	if(po.use_prefixes_for_all_units) return true;
