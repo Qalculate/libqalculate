@@ -15831,6 +15831,24 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 								}
 							}
 						}
+					} else if(!po.use_unit_prefixes) {
+						Prefix *p = NULL;
+						if(munit->isUnit() && munit->unit()->referenceName() == "g") {
+							p = CALCULATOR->getExactDecimalPrefix(3);
+							if(p) munit->setPrefix(p);
+							
+						} else if(munit->isPower() && (*munit)[0].unit()->referenceName() == "g") {
+							p = CALCULATOR->getExactDecimalPrefix(3);
+							if(p) (*munit)[0].setPrefix(p);
+						}
+						if(p) {
+							if(CHILD(0).isNumber()) {
+								CHILD(0).number() /= p->value(exp);
+							} else {
+								PREPEND(p->value(exp));
+								CHILD(0).number().recip();
+							}
+						}
 					}
 					if(b2 && CHILD(0).isNumber() && (po.prefix || po.use_unit_prefixes) && (po.prefix != CALCULATOR->decimal_null_prefix && po.prefix != CALCULATOR->binary_null_prefix)) {
 						exp10 = CHILD(0).number();
