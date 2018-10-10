@@ -83,6 +83,7 @@ string format_and_print(const MathStructure &mstruct) {
 	PrintOptions po;
 	po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 	po.spell_out_logical_operators = true;
+	po.preserve_format = true;
 	m_print.format();
 	return m_print.print(po);
 }
@@ -297,7 +298,7 @@ void MathStructure::mergePrecision(bool approx, int prec) {
 
 void idm1(const MathStructure &mnum, bool &bfrac, bool &bint);
 void idm2(const MathStructure &mnum, bool &bfrac, bool &bint, Number &nr);
-void idm3(MathStructure &mnum, Number &nr, bool expand);
+int idm3(MathStructure &mnum, Number &nr, bool expand);
 
 void MathStructure::ref() {
 	i_ref++;
@@ -15637,7 +15638,7 @@ void idm2(const MathStructure &mnum, bool &bfrac, bool &bint, Number &nr) {
 		default: {}
 	}
 }
-void idm3(MathStructure &mnum, Number &nr, bool expand) {
+int idm3(MathStructure &mnum, Number &nr, bool expand) {
 	switch(mnum.type()) {
 		case STRUCT_NUMBER: {
 			mnum.number() *= nr;
@@ -15648,20 +15649,19 @@ void idm3(MathStructure &mnum, Number &nr, bool expand) {
 			if(mnum.size() > 0 && mnum[0].isNumber()) {
 				mnum[0].number() *= nr;
 				if(mnum[0].number().isOne() && mnum.size() != 1) {
-					mnum.delChild(1);
-					if(mnum.size() == 1) mnum.setToChild(1, true);
+					mnum.delChild(1, true);
 				}
-				return;
+				return -1;
 			} else if(expand) {
 				for(size_t i = 0; i < mnum.size(); i++) {
 					if(mnum[i].isAddition()) {
 						idm3(mnum[i], nr, true);
-						return;
+						return -1;
 					}
 				}
 			}
 			mnum.insertChild(nr, 1);
-			break;
+			return 1;
 		}
 		case STRUCT_ADDITION: {
 			if(expand) {
@@ -15674,8 +15674,10 @@ void idm3(MathStructure &mnum, Number &nr, bool expand) {
 		default: {
 			mnum.transform(STRUCT_MULTIPLICATION);
 			mnum.insertChild(nr, 1);
+			return -1;
 		}
 	}
+	return 0;
 }
 
 bool is_unit_multiexp(const MathStructure &mstruct) {
@@ -15761,7 +15763,9 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po) {
 						PREPEND(MathStructure(nr));
 						index1 += 1;
 					} else if(inum > 1 && !CHILD(index2).isNumber()) {
-						idm3(*this, nr, !po.allow_factorization);
+						int i = idm3(*this, nr, !po.allow_factorization);
+						if(i == 1) index1++;
+						else if(i < 0) iden = 0;
 					} else {
 						idm3(CHILD(index2), nr, !po.allow_factorization);
 					}
