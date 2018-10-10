@@ -5523,6 +5523,22 @@ int MathStructure::merge_logical_and(MathStructure &mstruct, const EvaluationOpt
 					break;
 				}
 				default: {
+					if(!eo.test_comparisons) return -1;
+					if(comparisonType() == COMPARISON_EQUALS && !CHILD(1).contains(mstruct[0])) {
+						mstruct.replace(CHILD(0), CHILD(1));
+						mstruct.calculatesub(eo, eo, true);
+						mstruct.ref();
+						add_nocopy(&mstruct, OPERATION_LOGICAL_AND);
+						calculateLogicalAndLast(eo);
+						return 1;
+					} else if(mstruct.comparisonType() == COMPARISON_EQUALS && !mstruct[1].contains(CHILD(0))) {
+						replace(mstruct[0], mstruct[1]);
+						calculatesub(eo, eo, true);
+						mstruct.ref();
+						add_nocopy(&mstruct, OPERATION_LOGICAL_AND);
+						calculateLogicalAndLast(eo);
+						return 1;
+					}
 					return -1;
 				}
 			}
@@ -6834,6 +6850,44 @@ bool contains_zero_unit(const MathStructure &mstruct) {
 	return false;
 }
 
+bool test_var_int(const MathStructure &mstruct, bool *v = NULL) {
+	if(mstruct.isVariable() && (mstruct.variable() == CALCULATOR->v_e || mstruct.variable() == CALCULATOR->v_pi)) {
+		if(!v) return true;
+		if(*v) return false;
+		else *v = true;
+		return true;
+	}
+	if(mstruct.isNumber()) {
+		if(mstruct.isApproximate()) return false;
+		if(!v) {
+			return mstruct.number().isReal() && !mstruct.number().isInterval() && !mstruct.number().isInteger();
+		}
+		return mstruct.number().isRational();
+	}
+	if(mstruct.isMultiplication() || mstruct.isAddition() || (mstruct.isPower() && mstruct[1].isInteger())) {
+		bool v2 = false;
+		if(!v) v = &v2;
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(!test_var_int(mstruct[i], v)) return false;
+		}
+		if(*v) return true;
+	}
+	return false;
+}
+
+bool test_non_integer(const MathStructure &mstruct, const EvaluationOptions&) {
+	if(test_var_int(mstruct)) return true;
+	if(!mstruct.isApproximate()) {
+		if((mstruct.isMultiplication() || mstruct.isAddition()) && mstruct.size() >= 2 && mstruct[0].isNumber() && mstruct[0].number().isReal() && !mstruct[0].number().isInterval() && !mstruct[0].number().isInteger()) {
+			for(size_t i = 1; i < mstruct.size(); i++) {
+				if(!mstruct[i].representsInteger()) return false;
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
 bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo, bool recursive, MathStructure *mparent, size_t index_this) {
 	if(b_protected) return false;
 	bool b = false;
@@ -7366,13 +7420,20 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 						set(1, 1, 0, true);
 					}
 					b = true;
+				} else if(CHILD(0).isVariable() && !CHILD(0).variable()->isKnown() && CHILD(0).representsInteger() && test_non_integer(CHILD(1), eo)) {
+					if(ct_comp == COMPARISON_EQUALS) clear(true);
+					else set(1, 1, 0, true);
+					b = true;
 				}
 			}
 			if(b) break;
-			
-			if(eo.approximation == APPROXIMATION_EXACT && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
+			if(eo.approximation == APPROXIMATION_EXACT) {
+				bool b_intval = CALCULATOR->usesIntervalArithmetic();
+				if(!b_intval) CALCULATOR->useIntervalArithmetic(true);
+				EvaluationOptions eo3 = feo;
 				eo2.approximation = APPROXIMATION_APPROXIMATE;
-				eo2.test_comparisons = false;
+				eo3.approximation = APPROXIMATION_APPROXIMATE;
+				eo2.test_comparisons = true;
 				MathStructure mtest(*this);
 				if(mtest[0].isAddition() && mtest[0].size() > 1 && mtest[1].isZero()) {
 					mtest[1] = mtest[0][0];
@@ -7380,8 +7441,11 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					mtest[0].delChild(1, true);
 				}
 				CALCULATOR->beginTemporaryStopMessages();
-				mtest.calculatesub(eo2, feo, true);
-				if(CALCULATOR->endTemporaryStopMessages(NULL, NULL, MESSAGE_ERROR) == 0 && ((ct_comp == COMPARISON_EQUALS && mtest.isZero()) || (ct_comp == COMPARISON_NOT_EQUALS && mtest.isOne()))) {
+				mtest.calculateFunctions(eo3);
+				mtest.calculatesub(eo2, eo3, true);
+				if(!b_intval) CALCULATOR->useIntervalArithmetic(false);
+				int i_warnings = 0;
+				if(CALCULATOR->endTemporaryStopMessages(NULL, &i_warnings) == 0 && i_warnings == 0 && mtest.isNumber()) {
 					if(mtest.isZero()) clear(true);
 					else set(1, 1, 0, true);
 					b = true;
@@ -15209,15 +15273,18 @@ void MathStructure::unformat(const EvaluationOptions &eo) {
 	switch(m_type) {
 		case STRUCT_INVERSE: {
 			APPEND(m_minus_one);
-			m_type = STRUCT_POWER;	
+			m_type = STRUCT_POWER;
+			break;
 		}
 		case STRUCT_NEGATE: {
 			PREPEND(m_minus_one);
 			m_type = STRUCT_MULTIPLICATION;
+			break;
 		}
 		case STRUCT_DIVISION: {
 			CHILD(1).raise(m_minus_one);
 			m_type = STRUCT_MULTIPLICATION;
+			break;
 		}
 		case STRUCT_UNIT: {
 			if(o_prefix && !eo.keep_prefixes) {
@@ -15237,6 +15304,7 @@ void MathStructure::unformat(const EvaluationOptions &eo) {
 				break;
 			}
 			b_plural = false;
+			break;
 		}
 		default: {}
 	}
