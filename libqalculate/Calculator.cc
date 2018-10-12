@@ -484,6 +484,10 @@ Calculator::Calculator() {
 	save_printoptions.spacious = false;
 	save_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
 	save_printoptions.short_multiplication = false;
+	
+	message_printoptions.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+	message_printoptions.spell_out_logical_operators = true;
+	message_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
 
 	default_assumptions = new Assumptions;
 	default_assumptions->setType(ASSUMPTION_TYPE_REAL);
@@ -632,6 +636,9 @@ void Calculator::addMessages(vector<CalculatorMessage> *message_vector) {
 		}
 	}
 }
+const PrintOptions &Calculator::messagePrintOptions() const {return message_printoptions;}
+void Calculator::setMessagePrintOptions(const PrintOptions &po) {message_printoptions = po;}
+
 Variable *Calculator::getVariable(size_t index) const {
 	if(index < variables.size()) {
 		return variables[index];
@@ -1389,8 +1396,8 @@ void Calculator::addBuiltinVariables() {
 	v_C = new UnknownVariable("", "C", "", false, true);
 	v_C->setAssumptions(new Assumptions());
 	v_n = new UnknownVariable("", "n", "", false, true);
-	v_C->setAssumptions(new Assumptions());
-	v_C->assumptions()->setType(ASSUMPTION_TYPE_INTEGER);
+	v_n->setAssumptions(new Assumptions());
+	v_n->assumptions()->setType(ASSUMPTION_TYPE_INTEGER);
 	v_today = (KnownVariable*) addVariable(new TodayVariable());
 	v_yesterday = (KnownVariable*) addVariable(new YesterdayVariable());
 	v_tomorrow = (KnownVariable*) addVariable(new TomorrowVariable());

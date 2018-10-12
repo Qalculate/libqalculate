@@ -335,11 +335,11 @@ class Calculator {
 	int tmp_proc_registers;
 	size_t tmp_rpnindex;
 	
-	PrintOptions save_printoptions;	
+	PrintOptions save_printoptions, message_printoptions;
   
 	vector<Variable*> variables;
-	vector<MathFunction*> functions;	
-	vector<Unit*> units;	
+	vector<MathFunction*> functions;
+	vector<Unit*> units;
 	vector<Prefix*> prefixes;
 	vector<DecimalPrefix*> decimal_prefixes;
 	vector<BinaryPrefix*> binary_prefixes;
@@ -951,6 +951,8 @@ class Calculator {
 	int endTemporaryStopMessages(int *message_count = NULL, int *warning_count = NULL, int release_messages_if_no_equal_or_greater_than_message_type = -1);
 	void endTemporaryStopMessages(bool release_messages, vector<CalculatorMessage> *blocked_messages = NULL);
 	void addMessages(vector<CalculatorMessage> *message_vector);
+	const PrintOptions &messagePrintOptions() const;
+	void setMessagePrintOptions(const PrintOptions &po);
 	//@}
 
 	/** @name Functions for loading and saving definitions (variables, functions, units, etc.). */

@@ -1590,17 +1590,41 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					}
 				}
 				if(b) {
-					bool b_neg = false;
-					for(size_t i = 0; i < mstruct.size(); i++) {
-						if(mstruct[i].isNumber() && mstruct[i].number().isNegative() && !mstruct[i].isMinusOne()) {
-							mstruct[i].negate();
-							b_neg = !b_neg;
+					if(vargs[1].number().isOdd()) {
+						bool b_neg = false;
+						for(size_t i = 0; i < mstruct.size(); i++) {
+							if(mstruct[i].isNumber() && mstruct[i].number().isNegative() && !mstruct[i].isMinusOne()) {
+								mstruct[i].negate();
+								b_neg = !b_neg;
+							}
+							mstruct[i].transform(STRUCT_FUNCTION, vargs[1]);
+							mstruct[i].setFunction(this);
 						}
-						mstruct[i].transform(STRUCT_FUNCTION, vargs[1]);
-						mstruct[i].setFunction(this);
+						if(b_neg) mstruct.insertChild_nocopy(new MathStructure(-1, 1, 0), 1);
+						return 1;
+					} else {
+						for(size_t i = 0; i < mstruct.size(); i++) {
+							if(mstruct[i].isNumber() && mstruct[i].number().isNegative() && !mstruct[i].isMinusOne()) {
+								MathStructure *mmul = new MathStructure(this, &mstruct[i], &vargs[1], NULL);
+								(*mmul)[0].negate();
+								mstruct[i] = nr_minus_one;
+								mstruct.transform(STRUCT_FUNCTION, vargs[1]);
+								mstruct.setFunction(this);
+								mstruct.multiply_nocopy(mmul);
+								return true;
+							} else if(mstruct[i].representsPositive()) {
+								mstruct[i].transform(STRUCT_FUNCTION, vargs[1]);
+								mstruct[i].setFunction(this);
+								mstruct[i].ref();
+								MathStructure *mmul = &mstruct[i];
+								mstruct.delChild(i + 1, true);
+								mstruct.transform(STRUCT_FUNCTION, vargs[1]);
+								mstruct.setFunction(this);
+								mstruct.multiply_nocopy(mmul);
+								return true;
+							}
+						}
 					}
-					if(b_neg) mstruct.insertChild_nocopy(new MathStructure(-1, 1, 0), 1);
-					return 1;
 				}
 			}
 			return -1;
@@ -3458,6 +3482,19 @@ int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
+	}
+	if(mstruct.number().includesInfinity()) {
+		if(mstruct.number().isPlusInfinity() || (!mstruct.number().hasRealPart() && mstruct.number().hasImaginaryPart() && mstruct.number().internalImaginary()->isMinusInfinity())) {
+			mstruct = nr_minus_half;
+			mstruct *= nr_one_i;
+			mstruct *= CALCULATOR->v_pi;
+			return true;
+		} else if(mstruct.number().isMinusInfinity() || (!mstruct.number().hasRealPart() && mstruct.number().hasImaginaryPart() && mstruct.number().internalImaginary()->isPlusInfinity())) {
+			mstruct = nr_half;
+			mstruct *= nr_one_i;
+			mstruct *= CALCULATOR->v_pi;
+			return true;
+		}
 	}
 	Number nr = mstruct.number();
 	if(!nr.atanh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
