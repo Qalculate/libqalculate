@@ -5360,9 +5360,10 @@ bool Number::tan() {
 bool Number::atan() {
 	if(isZero()) return true;
 	if(isInfinite(false)) {
+		bool b_neg = isMinusInfinity();
 		pi();
 		divide(2);
-		if(isMinusInfinity()) negate();
+		if(b_neg) negate();
 		return true;
 	}
 	if(hasImaginaryPart()) {
