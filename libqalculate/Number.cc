@@ -6684,10 +6684,12 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		length = mpz_str.length();
 		long int expo = 0;
 		if(base == 10 && !po.preserve_format) {
-			if(mpz_str.length() > 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+			if(length == 1 && mpz_str[0] == '0') {
+				expo = 0;
+			} else if(length > 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 				expo = length - 1;
-			} else if(mpz_str.length() > 0) {
-				for(long int i = mpz_str.length() - 1; i >= 0; i--) {
+			} else if(length > 0) {
+				for(long int i = length - 1; i >= 0; i--) {
 					if(mpz_str[i] != '0') {
 						break;
 					}
@@ -7142,7 +7144,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			string str_l = printMPZ(ivalue, base, false, false);
 			mpfr_get_z(ivalue, vu, MPFR_RNDN);
 			string str_u = printMPZ(ivalue, base, false, false);
-
 			if(str_u.length() > str_l.length()) {
 				str_l.insert(0, str_u.length() - str_l.length(), '0');
 			}
@@ -7183,7 +7184,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 
 			if(i_precision_base < precision_base) precision_base = i_precision_base;
-			
 			if(i_precision_base <= 0) {
 				if(negl) {
 					mpfr_neg(vl, fl_value, MPFR_RNDN);
@@ -7240,7 +7240,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					return print(po2, ips);
 				}
 			} else {
-				mpfr_set(f_mid, fl_value, MPFR_RNDN);
+				mpfr_sub(f_mid, fu_value, fl_value, MPFR_RNDN);
+				mpfr_div_ui(f_mid, f_mid, 2, MPFR_RNDN);
+				mpfr_add(f_mid, fl_value, f_mid, MPFR_RNDN);
 			}
 
 			mpfr_clears(vl, vu, f_logl, f_base, f_log_base, NULL);
