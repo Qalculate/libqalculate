@@ -746,9 +746,10 @@ void UserFunction::set(const ExpressionItem *item) {
 int UserFunction::subtype() const {
 	return SUBTYPE_USER_FUNCTION;
 }
+extern string format_and_print(const MathStructure &mstruct);
 bool replace_intervals_f(MathStructure &mstruct) {
 	if(mstruct.isNumber() && (mstruct.number().isInterval(false) || (CALCULATOR->usesIntervalArithmetic() && mstruct.number().precision() >= 0))) {
-		Variable *v = new KnownVariable("", mstruct.print(), mstruct);
+		Variable *v = new KnownVariable("", format_and_print(mstruct), mstruct);
 		v->ref();
 		mstruct.set(v, true);
 		v->destroy();
