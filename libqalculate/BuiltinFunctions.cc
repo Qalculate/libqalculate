@@ -2072,6 +2072,28 @@ bool has_predominately_negative_sign(const MathStructure &mstruct) {
 	return false;
 }
 
+bool trig_remove_i(MathStructure &mstruct) {
+	if(mstruct.isNumber() && mstruct.number().hasImaginaryPart() && !mstruct.number().hasRealPart()) {
+		mstruct.number() /= nr_one_i;
+		return true;
+	} else if(mstruct.isMultiplication() && mstruct.size() > 1 && mstruct[0].isNumber() && mstruct[0].number().hasImaginaryPart() && !mstruct[0].number().hasRealPart()) {
+		mstruct[0].number() /= nr_one_i;
+		return true;
+	} else if(mstruct.isAddition() && mstruct.size() > 0) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(!(mstruct[i].isNumber() && mstruct[i].number().hasImaginaryPart() && !mstruct[i].number().hasRealPart()) && !(mstruct[i].isMultiplication() && mstruct[i].size() > 1 && mstruct[i][0].isNumber() && mstruct[i][0].number().hasImaginaryPart() && !mstruct[i][0].number().hasRealPart())) {
+				return false;
+			}
+		}
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(mstruct[i].isNumber()) mstruct[i].number() /= nr_one_i;
+			else mstruct[i][0].number() /= nr_one_i;
+		}
+		return true;
+	}
+	return false;
+}
+
 SinFunction::SinFunction() : MathFunction("sin", 1) {
 	Argument *arg = new AngleArgument();
 	arg->setHandleVector(true);
@@ -2274,12 +2296,12 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct.set(nr, true);
 			return 1;
 		}
-		if(mstruct.number().hasImaginaryPart() && !mstruct.number().hasRealPart()) {
-			mstruct.number() /= nr_one_i;
-			mstruct.transform(CALCULATOR->f_sinh);
-			mstruct *= nr_one_i;
-			return 1;
-		}
+	}
+	
+	if(trig_remove_i(mstruct)) {
+		mstruct.transform(CALCULATOR->f_sinh);
+		mstruct *= nr_one_i;
+		return 1;
 	}
 
 	if(has_predominately_negative_sign(mstruct)) {
@@ -2522,11 +2544,10 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct.set(nr, true);
 			return 1;
 		}
-		if(mstruct.number().hasImaginaryPart() && !mstruct.number().hasRealPart()) {
-			mstruct.number() /= nr_one_i;
-			mstruct.transform(CALCULATOR->f_cosh);
-			return 1;
-		}
+	}
+	if(trig_remove_i(mstruct)) {
+		mstruct.transform(CALCULATOR->f_cosh);
+		return 1;
 	}
 	if(has_predominately_negative_sign(mstruct)) {
 		mstruct.negate();
@@ -2751,12 +2772,12 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct.set(nr, true);
 			return 1;
 		}
-		if(mstruct.number().hasImaginaryPart() && !mstruct.number().hasRealPart()) {
-			mstruct.number() /= nr_one_i;
-			mstruct.transform(CALCULATOR->f_tanh);
-			mstruct *= nr_one_i;
-			return 1;
-		}
+	}
+	
+	if(trig_remove_i(mstruct)) {
+		mstruct.transform(CALCULATOR->f_tanh);
+		mstruct *= nr_one_i;
+		return 1;
 	}
 
 	if(has_predominately_negative_sign(mstruct)) {
@@ -2841,6 +2862,11 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	if(!mstruct.isNumber()) {
+		if(trig_remove_i(mstruct)) {
+			mstruct.transform(CALCULATOR->f_asinh);
+			mstruct *= nr_one_i;
+			return 1;
+		}
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
@@ -2918,9 +2944,15 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	} else {
 		Number nr = mstruct.number();
 		if(!nr.asin() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
+			if(trig_remove_i(mstruct)) {
+				mstruct.transform(CALCULATOR->f_asinh);
+				mstruct *= nr_one_i;
+				return 1;
+			}
 			if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 			return -1;
 		}
+		
 		mstruct = nr;
 		switch(eo.parse_options.angle_unit) {
 			case ANGLE_UNIT_DEGREES: {
@@ -3166,6 +3198,11 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	if(!mstruct.isNumber()) {
+		if(trig_remove_i(mstruct)) {
+			mstruct.transform(CALCULATOR->f_atanh);
+			mstruct *= nr_one_i;
+			return 1;
+		}
 		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
@@ -3274,6 +3311,11 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	} else {
 		Number nr = mstruct.number();
 		if(!nr.atan() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
+			if(trig_remove_i(mstruct)) {
+				mstruct.transform(CALCULATOR->f_atanh);
+				mstruct *= nr_one_i;
+				return 1;
+			}
 			if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 			return -1;
 		}
@@ -4512,6 +4554,10 @@ int LengthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 1;
 }
 
+extern bool replace_intervals_f(MathStructure &mstruct);
+extern bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
+extern bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo);
+
 ReplaceFunction::ReplaceFunction() : MathFunction("replace", 3, 4) {
 	setArgumentDefinition(4, new BooleanArgument());
 	setDefaultValue(4, "0");
@@ -4519,7 +4565,14 @@ ReplaceFunction::ReplaceFunction() : MathFunction("replace", 3, 4) {
 int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	if(vargs[3].number().getBoolean() || mstruct.contains(vargs[1], true) <= 0) mstruct.eval(eo);
-	mstruct.replace(vargs[1], vargs[2]);
+	if(vargs[2].containsInterval(true) || vargs[2].containsFunction(CALCULATOR->f_interval, true)) {
+		MathStructure mv(vargs[2]);
+		replace_f_interval(mv, eo);
+		replace_intervals_f(mv);
+		mstruct.replace(vargs[1], mv);
+	} else {
+		mstruct.replace(vargs[1], vargs[2]);
+	}
 	return 1;
 }
 StripUnitsFunction::StripUnitsFunction() : MathFunction("nounit", 1) {}
