@@ -3549,7 +3549,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	if(update_parse) {
 		if(adaptive_interval_display) {
 			if(parsed_mstruct && parsed_mstruct->containsFunction(CALCULATOR->f_interval)) printops.interval_display = INTERVAL_DISPLAY_INTERVAL;
-			else if(result_text.find("+/-") != string::npos || result_text.find("+/" SIGN_MINUS) != string::npos || result_text.find("±") != string::npos) printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+			else if(expression_str.find("+/-") != string::npos || expression_str.find("+/" SIGN_MINUS) != string::npos || expression_str.find("±") != string::npos) printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 			else printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 		}
 		if(!view_thread->write((void *) parsed_mstruct)) {b_busy = false; view_thread->cancel(); return;}
@@ -3685,6 +3685,10 @@ void viewresult(Prefix *prefix = NULL) {
 }
 
 void result_display_updated() {
+	IntervalDisplay ivdisp = printops.interval_display;
+	printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+	CALCULATOR->setMessagePrintOptions(printops);
+	printops.interval_display = ivdisp;
 	if(expression_executed) setResult(NULL, false);
 }
 void result_format_updated() {
@@ -4468,6 +4472,10 @@ void load_preferences() {
 		if(!file) {
 			first_time = true;
 			save_preferences(true);
+			IntervalDisplay ivdisp = printops.interval_display;
+			printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+			CALCULATOR->setMessagePrintOptions(printops);
+			printops.interval_display = ivdisp;
 			return;
 		}
 #ifdef HAVE_LIBREADLINE
@@ -4705,9 +4713,17 @@ void load_preferences() {
 		if(!oldfilename.empty()) {
 			move_file(oldfilename.c_str(), filename.c_str());
 		}
+		IntervalDisplay ivdisp = printops.interval_display;
+		printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+		CALCULATOR->setMessagePrintOptions(printops);
+		printops.interval_display = ivdisp;
 	} else {
 		first_time = true;
 		save_preferences(true);
+		IntervalDisplay ivdisp = printops.interval_display;
+		printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+		CALCULATOR->setMessagePrintOptions(printops);
+		printops.interval_display = ivdisp;
 		return;
 	}
 	//remember start mode for when we save preferences
