@@ -5567,7 +5567,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		return false;
 	}
 	int minus_count = 0;
-	bool has_sign = false, had_non_sign = false, b_dot = false;
+	bool has_sign = false, had_non_sign = false, b_dot = false, b_exp = false;
 	int i_colon = 0;
 	size_t i = 0;
 	while(i < str.length()) {
@@ -5580,11 +5580,16 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			str.erase(i, 1);
 		} else if(str[i] == SPACE_CH) {
 			str.erase(i, 1);
+		} else if(!b_exp && (po.base <= 10 && po.base >= 2) && (str[i] == EXP_CH || str[i] == EXP2_CH)) {
+			b_exp = true;
+			had_non_sign = true;
 		} else if(po.preserve_format && str[i] == DOT_CH) {
 			b_dot = true;
+			had_non_sign = true;
 			i++;
 		} else if(po.preserve_format && (!b_dot || i_colon > 0) && str[i] == ':') {
 			i_colon++;
+			had_non_sign = true;
 			i++;
 		} else if(str[i] == COMMA_CH && DOT_S == ".") {
 			str.erase(i, 1);
@@ -5631,7 +5636,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		return true;
 	}
 	size_t itmp;
-	if(((po.base >= 2 && po.base <= 10) || po.base == BASE_DUODECIMAL) && (itmp = str.find_first_not_of(po.base == BASE_DUODECIMAL ? NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS MINUS DUODECIMAL_CHARS : NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS MINUS, 0)) != string::npos) {
+	if(((po.base >= 2 && po.base <= 10) || po.base == BASE_DUODECIMAL) && (itmp = str.find_first_not_of(po.base == BASE_DUODECIMAL ? NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS MINUS DUODECIMAL_CHARS : NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS EXPS MINUS, 0)) != string::npos) {
 		if(itmp == 0) {
 			error(true, _("\"%s\" is not a valid variable/function/unit."), str.c_str(), NULL);
 			if(minus_count % 2 == 1 && !po.preserve_format) {
@@ -6698,7 +6703,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_RAISE);
-	} else if(po.base >= 2 && po.base <= 10 && (i = str.find_first_of(EXPS, 1)) != string::npos && i + 1 != str.length()) {
+	} else if(po.base >= 2 && po.base <= 10 && (i = str.find_first_of(EXPS, 1)) != string::npos && i + 1 != str.length() && str.find("\b") == string::npos) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);

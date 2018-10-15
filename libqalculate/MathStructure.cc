@@ -4222,7 +4222,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 									mstruct[0].setFunction(CALCULATOR->f_tan);
 									CHILD(1).number() += mstruct[1].number();
 									if(CHILD(1).number().isZero()) {
-										MERGE_APPROX_AND_PREC(mstruct)
+										set(mstruct, true);
 										return 1;
 									} else if(mstruct[1].number().isPositive() == CHILD(1).number().isPositive()) {
 										CHILD(0).setFunction(CALCULATOR->f_sin);
@@ -4238,7 +4238,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 									mstruct[0].setFunction(CALCULATOR->f_cos);
 									CHILD(1).number() += mstruct[1].number();
 									if(CHILD(1).number().isZero()) {
-										MERGE_APPROX_AND_PREC(mstruct)
+										set(mstruct, true);
 										return 1;
 									} else if(mstruct[1].number().isPositive() == CHILD(1).number().isPositive()) {
 										CHILD(0).setFunction(CALCULATOR->f_sin);
@@ -4284,7 +4284,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 									mstruct[0].setFunction(CALCULATOR->f_tanh);
 									CHILD(1).number() += mstruct[1].number();
 									if(CHILD(1).number().isZero()) {
-										MERGE_APPROX_AND_PREC(mstruct)
+										set(mstruct, true);
 										return 1;
 									} else if(mstruct[1].number().isPositive() == CHILD(1).number().isPositive()) {
 										CHILD(0).setFunction(CALCULATOR->f_sinh);
@@ -4300,7 +4300,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 									mstruct[0].setFunction(CALCULATOR->f_cosh);
 									CHILD(1).number() += mstruct[1].number();
 									if(CHILD(1).number().isZero()) {
-										MERGE_APPROX_AND_PREC(mstruct)
+										set(mstruct, true);
 										return 1;
 									} else if(mstruct[1].number().isPositive() == CHILD(1).number().isPositive()) {
 										CHILD(0).setFunction(CALCULATOR->f_sinh);
@@ -6730,6 +6730,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 		if(divs.size() == 0) return false;
 		bool b_ret = false;
 		if(divs.size() > 1 || numleft.size() > 0) b_ret = true;
+		
 		while(divs.size() > 0) {
 			bool b = true;
 			if(!divs[0].isRationalPolynomial() || !nums[0].isRationalPolynomial()) {
@@ -6829,9 +6830,11 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 				numleft.clear();
 			} else if(b) break;
 		}
+		
 		if(CALCULATOR->aborted()) return false;
 		if(!combine_only && !only_gcd && divs.size() > 0 && nums[0].isAddition() && divs[0].isAddition()) {
 			MathStructure mquo, mrem;
+			
 			if(polynomial_long_division(nums[0], divs[0], m_zero, mquo, mrem, eo2, false) && !mquo.isZero() && mrem != nums[0]) {
 				if(CALCULATOR->aborted()) return false;
 				if(!mrem.isZero() || divs[0].representsNonZero(true) || (eo.warn_about_denominators_assumed_nonzero && !warn_about_denominators_assumed_nonzero(divs[0], eo))) {
@@ -6861,6 +6864,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 				}
 			}
 		}
+
 		if(!b_ret) return false;
 		mstruct.clear(true);
 		if(divs.size() > 0) {
@@ -13249,7 +13253,6 @@ bool polynomial_long_division(const MathStructure &mnum, const MathStructure &md
 				MathStructure mcopy(numcoeff);
 				if(!MathStructure::polynomialDivide(mcopy, dencoeff, numcoeff, eo2, check_args)) {
 					if(CALCULATOR->aborted()) return false;
-					mrem = mcopy;
 					break;
 				}
 			}
@@ -26150,7 +26153,7 @@ bool fix_n_multiple(MathStructure &mstruct, const EvaluationOptions &eo, const E
 
 bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions &eo2, const MathStructure &x_var, MathStructure *morig) {
 	if(!isComparison()) {
-		printf("isolate_x_sub: not comparison\n");
+		cout << "isolate_x_sub: " << *this << " is not a comparison." << endl;
 		return false;
 	}
 	if(CHILD(0) == x_var) return false;
@@ -29843,7 +29846,7 @@ bool MathStructure::isRationalPolynomial(bool allow_non_rational_coefficient, bo
 			return CHILD(1).isInteger() && CHILD(1).number().isNonNegative() && !CHILD(1).number().isOne() && !CHILD(0).isMultiplication() && !CHILD(0).isAddition() && !CHILD(0).isPower() && CHILD(0).isRationalPolynomial(allow_non_rational_coefficient, allow_interval_coefficient);
 		}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_interval || containsInterval()) return false;
+			if(o_function == CALCULATOR->f_interval || containsInterval() || containsInfinity()) return false;
 		}
 		case STRUCT_UNIT: {}
 		case STRUCT_VARIABLE: {}

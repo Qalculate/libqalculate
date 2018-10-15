@@ -589,7 +589,7 @@ void Number::set(string number, const ParseOptions &po) {
 			had_nonzero = true;
 			readprec++;
 			numbers_started = true;
-		} else if(number[index] == 'E' && base <= 10) {
+		} else if((number[index] == 'E' || number[index] == 'e') && base <= 10) {
 			index++;
 			numbers_started = false;
 			bool exp_minus = false;
@@ -4856,6 +4856,12 @@ bool Number::asin() {
 	}
 	if(hasImaginaryPart() || !isFraction()) {
 		if(b_imag) return false;
+		if(hasImaginaryPart() && !hasRealPart()) {
+			Number nri(*i_value);
+			if(!nri.asinh() || !nri.multiply(nr_one_i)) return false;
+			set(nri, true);
+			return true;
+		}
 		if(isInterval() && ((hasRealPart() && !realPartIsNonZero()) || (hasImaginaryPart() && !imaginaryPartIsNonZero()))) {
 			Number nr1(lowerEndPoint());
 			Number nr2(upperEndPoint());
@@ -4867,8 +4873,7 @@ bool Number::asin() {
 		Number i_z(*this);
 		bool b_neg;
 		if(hasImaginaryPart()) {
-			if(hasRealPart()) b_neg = (realPartIsNegative() && !imaginaryPartIsNegative()) || (realPartIsPositive() && imaginaryPartIsPositive());
-			else b_neg = imaginaryPartIsNegative();
+			b_neg = (realPartIsNegative() && !imaginaryPartIsNegative()) || (realPartIsPositive() && imaginaryPartIsPositive());
 		} else {
 			b_neg = isNegative();
 		}

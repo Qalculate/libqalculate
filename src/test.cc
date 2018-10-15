@@ -1,14 +1,19 @@
 #include <libqalculate/qalculate.h>
 
-void display_errors() {
-	if(!CALCULATOR->message()) return;
+bool display_errors(bool show_only_errors = false) {
+	if(!CALCULATOR->message()) return false;
+	bool b_ret = false;
 	while(true) {
 		MessageType mtype = CALCULATOR->message()->type();
-		if(mtype == MESSAGE_ERROR) cout << "error: ";
-		else if(mtype == MESSAGE_WARNING) cout << "warning: ";
-		cout << CALCULATOR->message()->message() << endl;
+		if(!show_only_errors || mtype == MESSAGE_ERROR) {
+			if(mtype == MESSAGE_ERROR) cout << "error: ";
+			else if(mtype == MESSAGE_WARNING) cout << "warning: ";
+			cout << CALCULATOR->message()->message() << endl;
+			b_ret = true;
+		}
 		if(!CALCULATOR->nextMessage()) break;
 	}
+	return b_ret;
 }
 void clear_errors() {
 	if(!CALCULATOR->message()) return;
@@ -831,40 +836,46 @@ void test_intervals(bool use_interval) {
 
 }
 
-string rnd_number() {
+string rnd_expression(bool allow_unknowns, bool allow_functions, int length_factor1 = 10, int length_factor2 = 5);
+
+string rnd_number(bool use_par = true, bool only_integers = false, bool only_positive = false, bool allow_complex = true) {
 	string str;
 	bool par = false;
-	bool dot = false;
+	bool dot = only_integers;
 	bool started = false;
-	if(rand() % 3 == 0) {str += '-'; par = true;}
+	if(!only_positive && rand() % 3 == 0) {str += '-'; par = true;}
 	while(true) {
 		int r = rand();
-		if(!started) r = r % 10 + 2;
-		else if(str.back() == '.') r = r % 10 + 1;
-		else r = r % ((dot ? 20 : 21) + str.length() * 10) + 1;
-		if(r > (dot ? 10 : 11)) break;
-		if(r == 11) {if(!started) str += '0'; str += '.'; dot = true;}
-		else str += '0' + (r - 1);
+		if(!started) r = r % (only_positive ? 9 + 1 : 10 + 1);
+		else if(str.back() == '.') r = r % 10;
+		else r = r % ((dot ? 19 : 20) + str.length() * 10);
+		if(r > (dot ? 9 : 10)) break;
+		if(r == 10) {if(!started) str += '0'; str += '.'; dot = true;}
+		else str += char('0' + r);
 		started = true;
 	}
-	if(rand() % 10 == 0) {str += 'i'; par = true;}
-	if(par) {str += ')'; str.insert(0, "(");}
+	if(allow_complex && !only_integers && rand() % 10 == 0) {str += 'i'; par = true;}
+	if(par && use_par) {str += ')'; str.insert(0, "(");}
 	return str;
 }
 
 string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1) {
 	int r = rand() % (2 + (allow_unknown > 0)) + 1;
 	string str;
-	if(r != 1) {
+	if(r != 1 || (!allow_unknown && !allow_function)) {
 		str = rnd_number();
 	} else {
-		int au2 = 3 - allow_unknown % 3;
-		r = (rand() % ((allow_function ? 21 : 5) - au2)) + 4 - allow_unknown;
-		if(r < 4 - allow_unknown % 3) {
-			if(r < 0) r = -r;
-			if(allow_unknown % 3 == 1) r = 4;
-			else if(allow_unknown % 3 == 2) r = 2 + r % 2;
-			else r = 1 + r % 3;
+		if(!allow_unknown) {
+			r = rand() % 29 + 4;
+		} else {
+			int au2 = 3 - allow_unknown % 3;
+			r = (rand() % ((allow_function ? 31 : 5) - au2)) + 4 - allow_unknown;
+			if(r < 4 - allow_unknown % 3) {
+				if(r < 0) r = -r;
+				if(allow_unknown % 3 == 1) r = 3;
+				else if(allow_unknown % 3 == 2) r = 2 + r % 2;
+				else r = 1 + r % 3;
+			}
 		}
 		switch(r) {
 			case 1: {str = "z"; break;}
@@ -872,22 +883,66 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1) {
 			case 3: {str = "x"; break;}
 			case 4: {str = "pi"; break;}
 			case 5: {str = "e"; break;}
-			case 6: {par++; str = "sin("; return str + rnd_item(par, true, allow_unknown);}
-			case 7: {par++; str = "cos("; return str + rnd_item(par, true, allow_unknown);}
-			case 8: {par++; str = "tan("; return str + rnd_item(par, true, allow_unknown);}
-			case 9: {par++; str = "sinh("; return str + rnd_item(par, true, allow_unknown);}
-			case 10: {par++; str = "cosh("; return str + rnd_item(par, true, allow_unknown);}
-			case 11: {par++; str = "tanh("; return str + rnd_item(par, true, allow_unknown);}
-			case 12: {par++; str = "asin("; return str + rnd_item(par, true, allow_unknown);}
-			case 13: {par++; str = "acos("; return str + rnd_item(par, true, allow_unknown);}
-			case 14: {par++; str = "atan("; return str + rnd_item(par, true, allow_unknown);}
-			case 15: {par++; str = "asinh("; return str + rnd_item(par, true, allow_unknown);}
-			case 16: {par++; str = "acosh("; return str + rnd_item(par, true, allow_unknown);}
-			case 17: {par++; str = "atanh("; return str + rnd_item(par, true, allow_unknown);}
-			case 18: {par++; str = "ln("; return str + rnd_item(par, true, allow_unknown);}
-			case 19: {par++; str = "abs("; return str + rnd_item(par, true, allow_unknown);}
-			case 20: {par++; str = "sqrt("; return str + rnd_item(par, true, allow_unknown);}
-			case 21: {par++; str = "cbrt("; return str + rnd_item(par, true, allow_unknown);}
+			case 6: {str = "sin("; break;}
+			case 7: {str = "cos("; break;}
+			case 8: {str = "tan("; break;}
+			case 9: {str = "sinh("; break;}
+			case 10: {str = "cosh("; break;}
+			case 11: {str = "tanh("; break;}
+			case 12: {str = "asin("; break;}
+			case 13: {str = "acos("; break;}
+			case 14: {str = "atan("; break;}
+			case 15: {str = "asinh("; break;}
+			case 16: {str = "acosh("; break;}
+			case 17: {str = "atanh("; break;}
+			case 18: {str = "ln("; break;}
+			case 19: {str = "abs("; break;}
+			case 20: {str = "sqrt("; break;}
+			case 21: {str = "cbrt("; break;}
+			case 22: {str = "erf("; break;}
+			case 23: {str = "erfc("; break;}
+			case 24: {str = "airy("; break;}
+			case 25: {str = "root("; 
+				str += rnd_expression(allow_unknown, allow_function, 6, 3);
+				str += ',';
+				str += rnd_number(true, true, true, false);
+				str += ')';
+				return str;
+			}
+			case 26: {str = "bessely("; 
+				str += rnd_number(true, true, true, false);
+				str += ',';
+				str += rnd_expression(allow_unknown, allow_function, 6, 3);
+				str += ')';
+				return str;
+			}
+			case 27: {str = "besselj("; 
+				str += rnd_number(true, true, true, false);
+				str += ',';
+				str += rnd_expression(allow_unknown, allow_function, 6, 3);
+				str += ')';
+				return str;
+			}
+			case 28: {str = "Si("; break;}
+			case 29: {str = "Shi("; break;}
+			case 30: {str = "im("; break;}
+			case 31: {str = "re("; break;}
+			case 32: {str = "log("; 
+				str += rnd_expression(allow_unknown, allow_function, 6, 3);
+				str += ',';
+				str += rnd_number(true, true, true, false);
+				str += ')';
+				return str;
+			}
+		}
+		if(r > 5) {
+			if(allow_unknown && rand() % 2 == 1) {
+				str += "x)";
+				if(rand() % 3 == 1) str += "^2";
+			} else {
+				str += rnd_item(par, true, allow_unknown);
+				par++;
+			}
 		}
 	}
 	r = rand() % (5 * (par + 1)) + 1;
@@ -897,7 +952,7 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1) {
 	}
 	return str;
 }
-string rnd_operator(int &par) {
+string rnd_operator(int &par, bool allow_pow = true) {
 	int r = rand() % (par ? 10 : 5) + 1;
 	string str;
 	if(par > 0 && r > 5) {
@@ -905,136 +960,262 @@ string rnd_operator(int &par) {
 		str = ")";
 		r -= 5;
 	}
-	if(r == 5 && rand() % 3 != 0) r = rand() % 4 + 1;
+	if(r == 5 && !allow_pow) r = rand() % 4 + 1;
 	switch(r) {
 		case 1: return str + "+";
 		case 2: return str + "-";
 		case 3: return str + "*";
 		case 4: return str + "/";
-		case 5: return str + "^";
+		case 5: {
+			switch(rand() % 4 + 1) {
+				case 1: return str + "^";
+				case 2: return str + "^2" + rnd_operator(par, false);
+				case 3: return str + "^3" + rnd_operator(par, false);
+				case 4: return str + "^-1" + rnd_operator(par, false);
+			}
+		}
 	}
 	return "";
 }
 
-int rt1 = 0, rt2 = 0, rt3 = 0, rt4 = 0, rt5 = 0, rt6 = 0, rt7 = 0;
-void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions) {
+string rnd_expression(bool allow_unknowns, bool allow_functions, int length_factor1, int length_factor2) {
 	int par = 0;
 	string str;
-	while(str.empty() || rand() % (str.length() > 40 ? 2 : 10 - str.length() / 5) != 0) {
+	while(str.empty() || rand() % ((length_factor1 - (int) str.length() / length_factor2 < 2) ? 2 : (length_factor1 - (int) str.length() / length_factor2)) != 0) {
 		str += rnd_item(par, allow_functions, allow_unknowns);
 		str += rnd_operator(par);
 	}
 	if(str.back() != ')') str += rnd_item(par, false, allow_unknowns);
+	while(par > 0) {
+		str += ")";
+		par--;
+	}
+	return str;
+}
+
+KnownVariable *v;
+
+int rt1 = 0, rt2 = 0, rt3 = 0, rt4 = 0, rt5 = 0, rt6 = 0, rt7 = 0, rt8 = 0, rt9 = 0;
+void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bool test_interval = true, bool test_equation = true) {
+	string str = rnd_expression(allow_unknowns, allow_functions);
 	MathStructure mp, m1, m2;
 	CALCULATOR->parse(&mp, str, eo.parse_options);
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	m1 = mp;
-	CALCULATOR->calculate(&m1, 1000, eo);
+	cerr << mp << endl;
+	CALCULATOR->calculate(&m1, 5000, eo);
 	if(m1.isAborted()) {cout << str << endl; cout << "ABORTED1" << endl; return;}
 	eo.approximation = APPROXIMATION_EXACT;
 	m2 = mp;
-	CALCULATOR->calculate(&m2, 1000, eo);
+	CALCULATOR->calculate(&m2, 5000, eo);
 	if(m2.isAborted()) {cout << str << endl; cout << "ABORTED2" << endl; return;}
 	eo.approximation = APPROXIMATION_APPROXIMATE;
-	CALCULATOR->calculate(&m2, 1000, eo);
+	CALCULATOR->calculate(&m2, 5000, eo);
 	if(m2.isAborted()) {cout << str << endl; cout << "ABORTED3" << endl; return;}
-	if(m1.isNumber() || m2.isNumber()) {
+	if(m1.isNumber() && m2.isNumber()) {
 		rt1++;
 		if(m1 != m2 && m1.print() != m2.print()) {
 			rt2++;
-			cout << str << endl;
+			cout << mp << endl;
 			cout << "UNEQUAL1: " << m1.print() << ":" << m2.print() << endl;
 		}
 	}
+	cerr << "A" << endl;
 	if(mp.contains(CALCULATOR->v_x)) {
 		rt3++;
-		Number nr(rnd_number());
-		if(nr.hasImaginaryPart() && rand() % 2 == 0) nr += Number(rnd_number());
+		Number nr(rnd_number(false));
+		if(nr.hasImaginaryPart() && rand() % 2 == 0) nr += Number(rnd_number(false));
+		else CALCULATOR->v_x->setAssumptions(NULL);
 		m1 = mp;
 		m1.replace(CALCULATOR->v_x, nr);
-		CALCULATOR->calculate(&m1, 1000, eo);
-		if(m1.isAborted()) {cout << str << endl; cout << "ABORTED4: " << nr << endl; return;}
+		CALCULATOR->calculate(&m1, 5000, eo);
+		if(nr.hasImaginaryPart()) CALCULATOR->v_x->setAssumptions(NULL);
+		if(m1.isAborted()) {cout << mp << endl; cout << "ABORTED4: " << nr << endl; return;}
 		m2 = mp;
 		eo.approximation = APPROXIMATION_TRY_EXACT;
-		CALCULATOR->calculate(&m2, 1000, eo);
-		if(m2.isAborted()) {cout << str << endl; cout << "ABORTED5: " << nr << endl; return;}
+		CALCULATOR->calculate(&m2, 5000, eo);
+		if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED5: " << nr << endl; return;}
 		m2.replace(CALCULATOR->v_x, nr);
 		eo.approximation = APPROXIMATION_APPROXIMATE;
-		CALCULATOR->calculate(&m2, 1000, eo);
-		if(m2.isAborted()) {cout << str << endl; cout << "ABORTED6: " << nr << endl; return;}
-		if(m1.isNumber() || m2.isNumber()) {
+		CALCULATOR->calculate(&m2, 5000, eo);
+		if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED6: " << nr << endl; return;}
+		if(m1.isNumber() && m2.isNumber()) {
 			rt4++;
 			if(m1 != m2 && m1.print() != m2.print()) {
 				rt5++;
-				cout << str << endl;
+				cout << mp << ":" << nr << endl;
 				cout << "UNEQUAL2: " << m1.print() << ":" << m2.print() << endl;
 			}
 		}
-		
-		m1 = mp;
-		m1.transform(COMPARISON_EQUALS, m_zero);
-		cout << m1 << endl;
-		eo.approximation = APPROXIMATION_EXACT;
-		CALCULATOR->calculate(&m1, 1000, eo);
-		if(m1.isAborted()) {cout << str << endl; cout << "ABORTED7"; return;}
-		if(m1.isComparison() && m1.comparisonType() == COMPARISON_EQUALS && m1[0] == CALCULATOR->v_x) {
-			m2 = mp;
-			m2.replace(CALCULATOR->v_x, m1[1]);
-			eo.approximation = APPROXIMATION_APPROXIMATE;
-			CALCULATOR->calculate(&m2, 1000, eo);
-			if(m2.isAborted()) {cout << str << endl; cout << "ABORTED8: " << m1[1] << endl; return;}
-			if(m2.isNumber()) {
-				rt6++;
-				if(m2.number().isNonZero()) {
-					rt7++;
-					nr = m2.number();
-					nr.abs();
-					nr.log(10);
-					if(nr > -30) {
-						cout << str << endl;
-						cout << "UNEQUAL3: " << m1.print() << ":" << m2.print() << endl;
+		if(test_interval) {
+			cerr << "I1" << endl;
+			m1 = mp;
+			if(nr.hasImaginaryPart()) nr = rand() % 100 - 50;
+			nr.setPrecision(5);
+			Number nr_iv = nr;
+			nr_iv.precisionToInterval();
+			v->set(nr_iv);
+			m1.replace(CALCULATOR->v_x, v);
+			m2 = m1;
+			CALCULATOR->useIntervalArithmetic(true);
+			CALCULATOR->calculate(&m1, 5000, eo);
+			if(m1.isAborted()) {cout << mp << endl; cout << "ABORTED9"; return;}
+			CALCULATOR->useIntervalArithmetic(false);
+			v->set(nr);
+			cerr << "I2" << endl;
+			CALCULATOR->calculate(&m2, 5000, eo);
+			if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED10"; return;}
+			if(m1.isNumber() && m2.isNumber() && m1.number().precision(true) > 2) {
+				rt8++;
+				PrintOptions po;
+				po.min_exp = 1;
+				po.max_decimals = 2;
+				
+				po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+				if(m1 != m2) {
+					string si1 = m1.number().imaginaryPart().print(po);
+					string si2 = m2.number().imaginaryPart().print(po);
+					string sr1 = m1.number().realPart().print(po);
+					string sr2 = m2.number().realPart().print(po);
+					if(si1 != si2 && si1 == "0") {
+						nr = m2.number().imaginaryPart();
+						nr.abs();
+						nr.log(10);
+						if(nr < -20) {
+							si2 = "0";
+						}
+					}
+					if(sr1 != sr2 && sr1 == "0") {
+						nr = m2.number().realPart();
+						nr.abs();
+						nr.log(10);
+						if(nr < -20) {
+							sr2 = "0";
+						}
+					}
+					if(si1 != si2 && si2 == "0") {
+						nr = m1.number().imaginaryPart();
+						nr.abs();
+						nr.log(10);
+						if(nr < -20) {
+							si1 = "0";
+						}
+					}
+					if(sr1 != sr2 && sr2 == "0") {
+						nr = m1.number().realPart();
+						nr.abs();
+						nr.log(10);
+						if(nr < -20) {
+							sr1 = "0";
+						}
+					}
+					if(sr1 != sr2 || si1 != si2) {
+						rt9++;
+						cout << mp << ":" << nr_iv << endl;
+						cout << "UNEQUAL4: " << m1.print(po) << ":" << m2.print(po) << endl;
 					}
 				}
 			}
-		} else if(!m1.isComparison()) {
-			for(size_t i = 0; i < m1.size(); i++) {
-				if(m1[i].isComparison() && m1[i].comparisonType() == COMPARISON_EQUALS && m1[i][0] == CALCULATOR->v_x) {
-					m2 = mp;
-					m2.replace(CALCULATOR->v_x, m1[i][1]);
-					eo.approximation = APPROXIMATION_APPROXIMATE;
-					CALCULATOR->calculate(&m2, 1000, eo);
-					if(m2.isAborted()) {cout << str << endl; cout << "ABORTED8: " << m1[i][1] << endl; return;}
-					if(m2.isNumber()) {
-						rt6++;
-						if(m2.number().isNonZero()) {
-							nr = m2.number();
-							nr.abs();
-							nr.log(10);
-							if(nr > -30) {
-								rt7++;
-								cout << str << endl;
-								cout << "UNEQUAL3: " << m1[i].print() << ":" << m2.print() << endl;
+		}
+		
+		if(test_equation) {
+			m1 = mp;
+			cerr << "B" << endl;
+			m1.transform(COMPARISON_EQUALS, m_zero);
+			eo.approximation = APPROXIMATION_EXACT;
+			CALCULATOR->calculate(&m1, 5000, eo);
+			if(m1.isAborted()) {cout << mp << endl; cout << "ABORTED7"; return;}
+			if(m1.isComparison() && m1.comparisonType() == COMPARISON_EQUALS && m1[0] == CALCULATOR->v_x) {
+				m2 = mp;
+				m2.replace(CALCULATOR->v_x, m1[1]);
+				eo.approximation = APPROXIMATION_APPROXIMATE;
+				CALCULATOR->calculate(&m2, 5000, eo);
+				if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED8: " << m1[1] << endl; return;}
+				if(m2.isNumber()) {
+					rt6++;
+					if(m2.number().isNonZero()) {
+						nr = m2.number();
+						nr.abs();
+						nr.log(10);
+						if(nr > -20) {
+							rt7++;
+							cout << mp << endl;
+							cout << "UNEQUAL3: " << m1.print() << ":" << m2.print() << endl;
+						}
+					}
+				}
+			} else if(!m1.isComparison()) {
+				bool  b = true;
+				if(m1.type() == STRUCT_LOGICAL_AND) {
+					for(size_t i = 0; i < m1.size(); i++) {
+						if(m1[i].isComparison() && m1[i].comparisonType() != COMPARISON_EQUALS) {
+							eo.approximation = APPROXIMATION_APPROXIMATE;
+							CALCULATOR->calculate(&m1[i], 5000, eo);
+							if(m1[i].isAborted()) {cout << mp << endl; cout << "ABORTED9: " << m1[i] << endl; return;}
+							if(m1[i].isZero()) {
+								b = false;
+								break;
 							}
 						}
 					}
-				} else if(!m1[i].isComparison()) {
-					for(size_t i2 = 0; i2 < m1[i].size(); i2++) {
-						if(m1[i][i2].isComparison() && m1[i][i2].comparisonType() == COMPARISON_EQUALS && m1[i][i2][0] == CALCULATOR->v_x) {
+				}
+				if(b) {
+					for(size_t i = 0; i < m1.size(); i++) {
+						if(m1[i].isComparison() && m1[i].comparisonType() == COMPARISON_EQUALS && m1[i][0] == CALCULATOR->v_x) {
 							m2 = mp;
-							m2.replace(CALCULATOR->v_x, m1[i][i2][1]);
+							m2.replace(CALCULATOR->v_x, m1[i][1]);
 							eo.approximation = APPROXIMATION_APPROXIMATE;
-							CALCULATOR->calculate(&m2, 1000, eo);
-							if(m2.isAborted()) {cout << str << endl; cout << "ABORTED8: " << m1[i][i2][1] << endl; return;}
+							CALCULATOR->calculate(&m2, 5000, eo);
+							if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED8: " << m1[i][1] << endl; return;}
 							if(m2.isNumber()) {
 								rt6++;
 								if(m2.number().isNonZero()) {
 									nr = m2.number();
 									nr.abs();
 									nr.log(10);
-									if(nr > -30) {
+									if(nr > -20) {
 										rt7++;
-										cout << str << endl;
-										cout << "UNEQUAL3: " << m1[i][i2].print() << ":" << m2.print() << endl;
+										cout << mp << endl;
+										cout << "UNEQUAL3: " << m1[i].print() << ":" << m2.print() << endl;
+									}
+								}
+							}
+						} else if(!m1[i].isComparison()) {
+							b = true;
+							if(m1[i].type() == STRUCT_LOGICAL_AND) {
+								for(size_t i2 = 0; i2 < m1[i].size(); i2++) {
+									if(m1[i][i2].isComparison() && m1[i][i2].comparisonType() != COMPARISON_EQUALS) {
+										eo.approximation = APPROXIMATION_APPROXIMATE;
+										CALCULATOR->calculate(&m1[i][i2], 5000, eo);
+										if(m1[i][i2].isAborted()) {cout << mp << endl; cout << "ABORTED9: " << m1[i][i2] << endl; return;}
+										if(m1[i][i2].isZero()) {
+											b = false;
+											break;
+										}
+									}
+								}
+							}
+							if(b) {
+								for(size_t i2 = 0; i2 < m1[i].size(); i2++) {
+									if(m1[i][i2].isComparison() && m1[i][i2].comparisonType() == COMPARISON_EQUALS && m1[i][i2][0] == CALCULATOR->v_x) {
+										m2 = mp;
+										m2.replace(CALCULATOR->v_x, m1[i][i2][1]);
+										eo.approximation = APPROXIMATION_APPROXIMATE;
+										CALCULATOR->calculate(&m2, 5000, eo);
+										if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED8: " << m1[i][i2][1] << endl; return;}
+										if(m2.isNumber()) {
+											rt6++;
+											if(m2.number().isNonZero()) {
+												nr = m2.number();
+												nr.abs();
+												nr.log(10);
+												if(nr > -20) {
+													rt7++;
+													cout << mp << endl;
+													cout << "UNEQUAL3: " << m1[i][i2].print() << ":" << m2.print() << endl;
+												}
+											}
+										}
 									}
 								}
 							}
@@ -1044,6 +1225,130 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions) {
 			}
 		}
 	}
+	string str2 = rnd_expression(allow_unknowns, allow_functions, 6, 5);
+	MathStructure mp2;
+	CALCULATOR->parse(&mp2, str2, eo.parse_options);
+	mp /= mp2;
+	eo.approximation = APPROXIMATION_APPROXIMATE;
+	m1 = mp;
+	cerr << mp << endl;
+	CALCULATOR->calculate(&m1, 5000, eo);
+	if(m1.isAborted()) {cout << mp << endl; cout << "ABORTED1" << endl; return;}
+	eo.approximation = APPROXIMATION_EXACT;
+	m2 = mp;
+	CALCULATOR->calculate(&m2, 5000, eo);
+	if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED2" << endl; return;}
+	eo.approximation = APPROXIMATION_APPROXIMATE;
+	CALCULATOR->calculate(&m2, 5000, eo);
+	if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED3" << endl; return;}
+	if(m1.isNumber() && m2.isNumber()) {
+		rt1++;
+		if(m1 != m2 && m1.print() != m2.print()) {
+			rt2++;
+			cout << mp << endl;
+			cout << "UNEQUAL1: " << m1.print() << ":" << m2.print() << endl;
+		}
+	}
+	cerr << "C" << endl;
+	if(mp.contains(CALCULATOR->v_x)) {
+		rt3++;
+		Number nr(rnd_number(false));
+		if(nr.hasImaginaryPart() && rand() % 2 == 0) nr += Number(rnd_number(false));
+		if(nr.hasImaginaryPart()) CALCULATOR->v_x->setAssumptions(new Assumptions());
+		m1 = mp;
+		m1.replace(CALCULATOR->v_x, nr);
+		CALCULATOR->calculate(&m1, 5000, eo);
+		if(nr.hasImaginaryPart()) CALCULATOR->v_x->setAssumptions(NULL);
+		if(m1.isAborted()) {cout << mp << endl; cout << "ABORTED4: " << nr << endl; return;}
+		m2 = mp;
+		eo.approximation = APPROXIMATION_TRY_EXACT;
+		CALCULATOR->calculate(&m2, 5000, eo);
+		if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED5: " << nr << endl; return;}
+		m2.replace(CALCULATOR->v_x, nr);
+		eo.approximation = APPROXIMATION_APPROXIMATE;
+		CALCULATOR->calculate(&m2, 5000, eo);
+		if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED6: " << nr << endl; return;}
+		if(m1.isNumber() && m2.isNumber()) {
+			rt4++;
+			if(m1 != m2 && m1.print() != m2.print()) {
+				rt5++;
+				cout << mp << ":" << nr << endl;
+				cout << "UNEQUAL2: " << m1.print() << ":" << m2.print() << endl;
+			}
+		}
+		if(test_interval) {
+			cerr << "I1" << endl;
+			m1 = mp;
+			if(nr.hasImaginaryPart()) nr = rand() % 100 - 50;
+			nr.setPrecision(5);
+			Number nr_iv = nr;
+			nr_iv.precisionToInterval();
+			v->set(nr_iv);
+			m1.replace(CALCULATOR->v_x, v);
+			m2 = m1;
+			CALCULATOR->useIntervalArithmetic(true);
+			CALCULATOR->calculate(&m1, 5000, eo);
+			if(m1.isAborted()) {cout << mp << endl; cout << "ABORTED9"; return;}
+			CALCULATOR->useIntervalArithmetic(false);
+			v->set(nr);
+			cerr << "I2" << endl;
+			CALCULATOR->calculate(&m2, 5000, eo);
+			if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED10"; return;}
+			if(m1.isNumber() && m2.isNumber() && m1.number().precision(true) > 2) {
+				rt8++;
+				PrintOptions po;
+				po.min_exp = 1;
+				po.max_decimals = 2;
+				
+				po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+				if(m1 != m2) {
+					string si1 = m1.number().imaginaryPart().print(po);
+					string si2 = m2.number().imaginaryPart().print(po);
+					string sr1 = m1.number().realPart().print(po);
+					string sr2 = m2.number().realPart().print(po);
+					if(si1 != si2 && si1 == "0") {
+						nr = m2.number().imaginaryPart();
+						nr.abs();
+						nr.log(10);
+						if(nr < -20) {
+							si2 = "0";
+						}
+					}
+					if(sr1 != sr2 && sr1 == "0") {
+						nr = m2.number().realPart();
+						nr.abs();
+						nr.log(10);
+						if(nr < -20) {
+							sr2 = "0";
+						}
+					}
+					if(si1 != si2 && si2 == "0") {
+						nr = m1.number().imaginaryPart();
+						nr.abs();
+						nr.log(10);
+						if(nr < -20) {
+							si1 = "0";
+						}
+					}
+					if(sr1 != sr2 && sr2 == "0") {
+						nr = m1.number().realPart();
+						nr.abs();
+						nr.log(10);
+						if(nr < -20) {
+							sr1 = "0";
+						}
+					}
+					if(sr1 != sr2 || si1 != si2) {
+						rt9++;
+						cout << mp << ":" << nr_iv << endl;
+						cout << "UNEQUAL4: " << m1.print(po) << ":" << m2.print(po) << endl;
+					}
+				}
+			}
+		}
+	}
+	cerr << "D" << endl;
+	//if(display_errors(true)) cout << str << ":" << str2 << endl;
 }
 
 void speed_test() {
@@ -1212,6 +1517,7 @@ int main(int argc, char *argv[]) {
 	new Calculator();
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
+	//CALCULATOR->setPrecision(40);
 	
 	EvaluationOptions evalops;
 	/*evalops.approximation = APPROXIMATION_TRY_EXACT;
@@ -1244,10 +1550,18 @@ int main(int argc, char *argv[]) {
 	//test_integration();
 	//test_intervals(true);
 	
-	for(size_t i = 0; i < 1000; i++) {
-		rnd_test(evalops, 4, true);
+	CALCULATOR->setVariableUnitsEnabled(false);
+	
+	PrintOptions po = CALCULATOR->messagePrintOptions();
+	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+	CALCULATOR->setMessagePrintOptions(po);
+	
+	v = new KnownVariable("", "v", m_zero);
+	
+	for(size_t i = 0; i < 10000; i++) {
+		rnd_test(evalops, 0, true, false, false);
 	}
-	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << endl;
+	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl;
 
 	return 0;
 
