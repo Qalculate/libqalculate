@@ -3170,6 +3170,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		}
 		return true;
 	}
+	
 	if(o.isZero()) {
 		if(hasImaginaryPart() && i_value->includesInfinity()) return false;
 		set(1, 1, 0, false);
@@ -3178,6 +3179,9 @@ bool Number::raise(const Number &o, bool try_exact) {
 	}
 	if(o.isOne()) {
 		setPrecisionAndApproximateFrom(o);
+		return true;
+	}
+	if(isOne() && !o.includesInfinity()) {
 		return true;
 	}
 	if(o.hasImaginaryPart()) {
@@ -4925,6 +4929,10 @@ bool Number::sinh() {
 	}
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
+	if(mpfr_get_exp(fl_value) > 28 || mpfr_get_exp(fu_value) > 28) {
+		set(nr_bak);
+		return false;
+	}
 	mpfr_clear_flags();
 	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
 		mpfr_sinh(fl_value, fl_value, MPFR_RNDN);
@@ -5179,6 +5187,10 @@ bool Number::cosh() {
 	}
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
+	if(mpfr_get_exp(fl_value) > 28 || mpfr_get_exp(fu_value) > 28) {
+		set(nr_bak);
+		return false;
+	}
 	mpfr_clear_flags();
 	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
 		mpfr_cosh(fl_value, fl_value, MPFR_RNDN);
