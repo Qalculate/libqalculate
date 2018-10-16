@@ -866,10 +866,10 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1) {
 		str = rnd_number();
 	} else {
 		if(!allow_unknown) {
-			r = rand() % 29 + 4;
+			r = rand() % 27 + 4;
 		} else {
 			int au2 = 3 - allow_unknown % 3;
-			r = (rand() % ((allow_function ? 31 : 5) - au2)) + 4 - allow_unknown;
+			r = (rand() % ((allow_function ? 29 : 5) - au2)) + 4 - allow_unknown;
 			if(r < 4 - allow_unknown % 3) {
 				if(r < 0) r = -r;
 				if(allow_unknown % 3 == 1) r = 3;
@@ -909,25 +909,11 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1) {
 				str += ')';
 				return str;
 			}
-			case 26: {str = "bessely("; 
-				str += rnd_number(true, true, true, false);
-				str += ',';
-				str += rnd_expression(allow_unknown, allow_function, 6, 3);
-				str += ')';
-				return str;
-			}
-			case 27: {str = "besselj("; 
-				str += rnd_number(true, true, true, false);
-				str += ',';
-				str += rnd_expression(allow_unknown, allow_function, 6, 3);
-				str += ')';
-				return str;
-			}
-			case 28: {str = "Si("; break;}
-			case 29: {str = "Shi("; break;}
-			case 30: {str = "im("; break;}
-			case 31: {str = "re("; break;}
-			case 32: {str = "log("; 
+			case 26: {str = "Si("; break;}
+			case 27: {str = "Shi("; break;}
+			case 28: {str = "im("; break;}
+			case 29: {str = "re("; break;}
+			case 30: {str = "log("; 
 				str += rnd_expression(allow_unknown, allow_function, 6, 3);
 				str += ',';
 				str += rnd_number(true, true, true, false);
@@ -997,21 +983,24 @@ KnownVariable *v;
 
 int rt1 = 0, rt2 = 0, rt3 = 0, rt4 = 0, rt5 = 0, rt6 = 0, rt7 = 0, rt8 = 0, rt9 = 0;
 void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bool test_interval = true, bool test_equation = true) {
-	string str = rnd_expression(allow_unknowns, allow_functions);
+	cerr << "A0" << endl;
+	string str = rnd_expression(allow_unknowns, allow_functions, 8, 4);
+	cerr << "A2:" << str << endl;
 	MathStructure mp, m1, m2;
 	CALCULATOR->parse(&mp, str, eo.parse_options);
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	m1 = mp;
+	cerr << "A3" << endl;
 	cerr << mp << endl;
 	CALCULATOR->calculate(&m1, 5000, eo);
-	if(m1.isAborted()) {cout << str << endl; cout << "ABORTED1" << endl; return;}
+	if(m1.isAborted()) {cout << mp << endl; cout << "ABORTED1" << endl; return;}
 	eo.approximation = APPROXIMATION_EXACT;
 	m2 = mp;
 	CALCULATOR->calculate(&m2, 5000, eo);
-	if(m2.isAborted()) {cout << str << endl; cout << "ABORTED2" << endl; return;}
+	if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED2" << endl; return;}
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	CALCULATOR->calculate(&m2, 5000, eo);
-	if(m2.isAborted()) {cout << str << endl; cout << "ABORTED3" << endl; return;}
+	if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED3" << endl; return;}
 	if(m1.isNumber() && m2.isNumber()) {
 		rt1++;
 		if(m1 != m2 && m1.print() != m2.print()) {
@@ -1025,15 +1014,15 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 		rt3++;
 		Number nr(rnd_number(false));
 		if(nr.hasImaginaryPart() && rand() % 2 == 0) nr += Number(rnd_number(false));
-		else CALCULATOR->v_x->setAssumptions(NULL);
 		m1 = mp;
 		m1.replace(CALCULATOR->v_x, nr);
 		CALCULATOR->calculate(&m1, 5000, eo);
-		if(nr.hasImaginaryPart()) CALCULATOR->v_x->setAssumptions(NULL);
 		if(m1.isAborted()) {cout << mp << endl; cout << "ABORTED4: " << nr << endl; return;}
 		m2 = mp;
-		eo.approximation = APPROXIMATION_TRY_EXACT;
+		CALCULATOR->v_x->setAssumptions(nr);
+		eo.approximation = APPROXIMATION_EXACT;
 		CALCULATOR->calculate(&m2, 5000, eo);
+		CALCULATOR->v_x->setAssumptions(NULL);
 		if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED5: " << nr << endl; return;}
 		m2.replace(CALCULATOR->v_x, nr);
 		eo.approximation = APPROXIMATION_APPROXIMATE;
@@ -1254,15 +1243,15 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 		rt3++;
 		Number nr(rnd_number(false));
 		if(nr.hasImaginaryPart() && rand() % 2 == 0) nr += Number(rnd_number(false));
-		if(nr.hasImaginaryPart()) CALCULATOR->v_x->setAssumptions(new Assumptions());
 		m1 = mp;
 		m1.replace(CALCULATOR->v_x, nr);
 		CALCULATOR->calculate(&m1, 5000, eo);
-		if(nr.hasImaginaryPart()) CALCULATOR->v_x->setAssumptions(NULL);
 		if(m1.isAborted()) {cout << mp << endl; cout << "ABORTED4: " << nr << endl; return;}
 		m2 = mp;
-		eo.approximation = APPROXIMATION_TRY_EXACT;
+		eo.approximation = APPROXIMATION_EXACT;
+		CALCULATOR->v_x->setAssumptions(nr);
 		CALCULATOR->calculate(&m2, 5000, eo);
+		CALCULATOR->v_x->setAssumptions(NULL);
 		if(m2.isAborted()) {cout << mp << endl; cout << "ABORTED5: " << nr << endl; return;}
 		m2.replace(CALCULATOR->v_x, nr);
 		eo.approximation = APPROXIMATION_APPROXIMATE;
@@ -1550,7 +1539,7 @@ int main(int argc, char *argv[]) {
 	//test_integration();
 	//test_intervals(true);
 	
-	CALCULATOR->setVariableUnitsEnabled(false);
+	//CALCULATOR->setVariableUnitsEnabled(false);
 	
 	PrintOptions po = CALCULATOR->messagePrintOptions();
 	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
@@ -1558,8 +1547,8 @@ int main(int argc, char *argv[]) {
 	
 	v = new KnownVariable("", "v", m_zero);
 	
-	for(size_t i = 0; i < 10000; i++) {
-		rnd_test(evalops, 0, true, false, false);
+	for(size_t i = 0; i < 1000; i++) {
+		rnd_test(evalops, 4, true, false, true);
 	}
 	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl;
 

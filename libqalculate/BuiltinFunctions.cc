@@ -571,7 +571,10 @@ int BesseljFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	FR_FUNCTION_2R(besselj)
 }
 BesselyFunction::BesselyFunction() : MathFunction("bessely", 2) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG);
+	Number nmax(1000);
+	iarg->setMax(&nmax);
+	setArgumentDefinition(1, iarg);
 	NON_COMPLEX_NUMBER_ARGUMENT(2);
 }
 int BesselyFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -1898,7 +1901,7 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstructv2.eval(eo);
 	if(mstructv2.isVector()) return -2;
 	if(mstruct.isPower()) {
-		if(mstruct[0].representsPositive()) {
+		if((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
 			MathStructure mstruct2;
 			mstruct2.set(CALCULATOR->f_logn, &mstruct[0], &mstructv2, NULL);
 			mstruct2 *= mstruct[1];
