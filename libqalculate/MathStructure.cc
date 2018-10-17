@@ -5563,7 +5563,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 
 int MathStructure::merge_logical_and(MathStructure &mstruct, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this, size_t index_mstruct, bool) {
 
-	if(equals(mstruct)) {
+	if(equals(mstruct, true, true)) {
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 2;
 	}
@@ -5934,10 +5934,9 @@ int MathStructure::merge_logical_or(MathStructure &mstruct, const EvaluationOpti
 		}
 		return 3;
 	}
-	if(equals(mstruct)) {
+	if(equals(mstruct, true, true)) {
 		return 2;
 	}
-
 	if(isLogicalAnd()) {
 		if(mstruct.isLogicalAnd()) {
 			if(SIZE < mstruct.size()) {
@@ -29689,7 +29688,24 @@ bool contains_unsolved_equals(const MathStructure &mstruct, const MathStructure 
 }
 
 bool sync_sine(MathStructure &mstruct, const EvaluationOptions &eo, const MathStructure &x_var, bool use_cos, bool b_hyp = false, const MathStructure &mstruct_parent = m_undefined) {
-	if(mstruct.isPower() && mstruct[0].isFunction() && mstruct[1].isNumber() && mstruct[1].number().isEven() && mstruct[0].size() == 1) {
+	if(!mstruct_parent.isUndefined() && mstruct.isFunction() && mstruct.function() == (b_hyp ? CALCULATOR->f_sinh : CALCULATOR->f_sin) && mstruct[0].contains(x_var)) {
+		MathStructure m_half(mstruct);
+		m_half[0].calculateDivide(nr_two, eo);
+		bool b = mstruct_parent.contains(m_half);
+		if(!b) {
+			m_half.setFunction(b_hyp ? CALCULATOR->f_cosh : CALCULATOR->f_cos);
+			b = mstruct_parent.contains(m_half);
+			m_half.setFunction(b_hyp ? CALCULATOR->f_sinh : CALCULATOR->f_sin);
+		}
+		if(b) {
+			mstruct = m_half;
+			MathStructure *m_cos = new MathStructure(mstruct);
+			(*m_cos).setFunction(b_hyp ? CALCULATOR->f_cosh : CALCULATOR->f_cos);
+			mstruct.multiply_nocopy(m_cos);
+			mstruct.multiply(nr_two);
+			return true;
+		}
+	} else if(mstruct.isPower() && mstruct[0].isFunction() && mstruct[1].isNumber() && mstruct[1].number().isEven() && mstruct[0].size() == 1) {
 		if(!mstruct_parent.isUndefined() && mstruct[0].function() == (b_hyp ? CALCULATOR->f_sinh : CALCULATOR->f_sin) && mstruct[0][0].contains(x_var)) {
 			MathStructure m_half(mstruct[0]);
 			m_half[0].calculateDivide(nr_two, eo);
@@ -29704,7 +29720,7 @@ bool sync_sine(MathStructure &mstruct, const EvaluationOptions &eo, const MathSt
 				mmul->raise(mstruct[1]);
 				mstruct[0] = m_half;
 				MathStructure *m_cos = new MathStructure(mstruct);
-				(*m_cos)[0].setFunction(CALCULATOR->f_cos);
+				(*m_cos)[0].setFunction(b_hyp ? CALCULATOR->f_cosh : CALCULATOR->f_cos);
 				mstruct.multiply_nocopy(m_cos);
 				mstruct.multiply_nocopy(mmul);
 				sync_sine(mstruct, eo, x_var, use_cos, b_hyp, mstruct_parent);
@@ -29761,8 +29777,8 @@ void sync_find_cos_sin(const MathStructure &mstruct, const MathStructure &x_var,
 }
 bool sync_trigonometric_functions(MathStructure &mstruct, const EvaluationOptions &eo, const MathStructure &x_var, bool use_cos = false) {
 	bool b_ret = false;
-	if(sync_sine(mstruct, eo, x_var, use_cos) && !mstruct.containsFunction(use_cos ? CALCULATOR->f_sin : CALCULATOR->f_cos)) b_ret = true;
-	if(sync_sine(mstruct, eo, x_var, use_cos, true) && !mstruct.containsFunction(use_cos ? CALCULATOR->f_sinh : CALCULATOR->f_cosh)) b_ret = true;
+	if(sync_sine(mstruct, eo, x_var, use_cos)) b_ret = true;
+	if(sync_sine(mstruct, eo, x_var, use_cos, true)) b_ret = true;
 	return b_ret;
 }
 
