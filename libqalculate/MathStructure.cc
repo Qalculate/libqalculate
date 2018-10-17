@@ -28460,25 +28460,87 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 		} 
 		case STRUCT_POWER: {
 			if(CHILD(0)[0].contains(x_var)) {
-				if(ct_comp == COMPARISON_EQUALS && eo2.approximation != APPROXIMATION_EXACT && CHILD(1).isNumber() && CHILD(1).number().isPositive() && CHILD(0)[1] == x_var && CHILD(0)[0] == x_var) {
+				if(ct_comp == COMPARISON_EQUALS && CHILD(1).isNumber() && CHILD(1).number().isPositive() && CHILD(0)[1] == x_var && CHILD(0)[0] == x_var) {
 					// x^x=a => x=ln(a)/lambertw(ln(a))
-					if(CHILD(1).number().isInterval() && CHILD(1).number().isPositive()) {
-						Number nrlow(CHILD(1).number().lowerEndPoint());
-						Number nrhigh(CHILD(1).number().upperEndPoint());
-						if(solve_x_pow_x(nrlow) && solve_x_pow_x(nrhigh)) {
-							MathStructure mbak(*this);
-							if(!CHILD(1).number().setInterval(nrlow, nrhigh, true)) return false;
-							if(!x_var.representsReal()) CALCULATOR->error(false, _("Only real solutions were calculated for %s."), format_and_print(mbak).c_str(), NULL);
-							CHILD(0) = x_var;
-							CHILDREN_UPDATED
+					if(CHILD(1).number().isInteger()) {
+						if(CHILD(1).number().isOne()) {
+							CHILD(0).setToChild(1, true);
+							return true;
+						} else if(CHILD(1).number().isMinusOne()) {
+							CHILD(0).setToChild(1, true);
+							return true;
+						} else if(CHILD(1).number() == 4) {
+							CHILD(1).set(2, 1, 0, true);
+							CHILD(0).setToChild(1, true);
+							return true;
+						} else if(CHILD(1).number() == 27) {
+							CHILD(1).set(3, 1, 0, true);
+							CHILD(0).setToChild(1, true);
+							return true;
+						} else if(CHILD(1).number() == 256) {
+							CHILD(1).set(4, 1, 0, true);
+							CHILD(0).setToChild(1, true);
+							return true;
+						} else if(CHILD(1).number() == 3125) {
+							CHILD(1).set(5, 1, 0, true);
+							CHILD(0).setToChild(1, true);
+							return true;
+						} else if(CHILD(1).number() == 46656) {
+							CHILD(1).set(6, 1, 0, true);
+							CHILD(0).setToChild(1, true);
+							return true;
+						} else if(CHILD(1).number() == 823543) {
+							CHILD(1).set(7, 1, 0, true);
+							CHILD(0).setToChild(1, true);
 							return true;
 						}
-					} else {
-						if(solve_x_pow_x(CHILD(1).number())) {
-							if(!x_var.representsReal()) CALCULATOR->error(false, _("Only real solutions were calculated for %s."), format_and_print(*this).c_str(), NULL);
-							CHILD(0) = x_var;
-							CHILDREN_UPDATED
+					} else if(CHILD(1).number().numeratorIsOne()) {
+						Number nr_den = CHILD(1).number().denominator();
+						if(nr_den == 4) {
+							CHILD(1).set(-2, 1, 0, true);
+							CHILD(0).setToChild(1, true);
 							return true;
+						} else if(nr_den == 27) {
+							CHILD(1).set(-3, 1, 0, true);
+							CHILD(0).setToChild(1, true);
+							return true;
+						} else if(nr_den == 256) {
+							CHILD(1).set(-4, 1, 0, true);
+							CHILD(0).setToChild(1, true);
+							return true;
+						} else if(nr_den == 3125) {
+							CHILD(1).set(-5, 1, 0, true);
+							CHILD(0).setToChild(1, true);
+							return true;
+						} else if(nr_den == 46656) {
+							CHILD(1).set(-6, 1, 0, true);
+							CHILD(0).setToChild(1, true);
+							return true;
+						} else if(nr_den == 823543) {
+							CHILD(1).set(-7, 1, 0, true);
+							CHILD(0).setToChild(1, true);
+							return true;
+						}
+					}
+					if(eo2.approximation != APPROXIMATION_EXACT) {
+						if(CHILD(1).number().isInterval()) {
+							Number nrlow(CHILD(1).number().lowerEndPoint());
+							Number nrhigh(CHILD(1).number().upperEndPoint());
+							if(solve_x_pow_x(nrlow) && solve_x_pow_x(nrhigh)) {
+								MathStructure mbak(*this);
+								if(!CHILD(1).number().setInterval(nrlow, nrhigh, true)) return false;
+								if(!x_var.representsReal()) CALCULATOR->error(false, _("Only real solutions were calculated for %s."), format_and_print(mbak).c_str(), NULL);
+								CHILD(0) = x_var;
+								CHILDREN_UPDATED
+								return true;
+							}
+						} else {
+							if(solve_x_pow_x(CHILD(1).number())) {
+								if(!x_var.representsReal()) CALCULATOR->error(false, _("Only real solutions were calculated for %s."), format_and_print(*this).c_str(), NULL);
+								CHILD(0) = x_var;
+								CHILDREN_UPDATED
+								return true;
+							}
 						}
 					}
 				} else if(CHILD(0)[1].isNumber() && CHILD(0)[1].number().isRational()) {
@@ -28873,9 +28935,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 					return true;
 				}
-			} else if(CHILD(0)[1].contains(x_var) && CHILD(0)[0].representsNonNegative(true)) {
+			} else if(CHILD(0)[1].contains(x_var) && (!CHILD(0)[1].representsReal() || (CHILD(0)[0].representsNonNegative() || CHILD(0)[0].representsNegative()))) {
 				// a^x=b => x=log(b, a)
-				MathStructure *mtest = NULL, *m0 = NULL;
+				MathStructure *mtest = NULL, *m0 = NULL, *m1 = NULL;
+				if(CHILD(0)[0].isOne()) return false;
 				if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && !CHILD(0)[0].representsNonZero()) {
 					if(!CHILD(1).representsNonZero()) {
 						MathStructure *mtest2 = NULL;
@@ -28917,17 +28980,64 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mtest->calculatesub(eo2, eo, false);
 					}
 				}
-				if(CHILD(1).isOne()) {
-					if(!CHILD(0)[0].representsUndefined(true, true) && CHILD(0)[1].representsReal()) {
-						CHILD(0).setToChild(2, true);
-						CHILD(1).clear(true);
-						isolate_x_sub(eo, eo2, x_var, morig);
-						if(mtest) {
-							add_nocopy(mtest, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-							calculatesub(eo2, eo, false);
+				ComparisonResult cr1 = COMPARISON_RESULT_NOT_EQUAL;
+				if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
+					cr1 = CHILD(0)[0].compare(m_one);
+					if(cr1 == COMPARISON_RESULT_EQUAL) {
+						ComparisonResult cr2 = CHILD(1).compare(m_one);
+						if(cr2 == COMPARISON_RESULT_EQUAL) {
+							if(ct_comp == COMPARISON_EQUALS) set(1, 1, 0, true);
+							else clear(true);
+							return true;
+						} else if(COMPARISON_MIGHT_BE_EQUAL(cr2)) {
+							m1 = new MathStructure();
+							m1->setType(STRUCT_COMPARISON);
+							m1->setComparisonType(ct_comp);
+							m1->addChild(CHILD(1));
+							m1->addChild(m_one);
+							m1->isolate_x(eo2, eo);
 						}
-						return true;
+					} else if(COMPARISON_MIGHT_BE_EQUAL(cr1)) {
+						ComparisonResult cr2 = CHILD(1).compare(m_one);
+						if(cr2 == COMPARISON_RESULT_EQUAL) {
+							m1 = new MathStructure();
+							m1->setType(STRUCT_COMPARISON);
+							m1->setComparisonType(ct_comp);
+							m1->addChild(CHILD(0)[0]);
+							m1->addChild(m_one);
+							m1->isolate_x(eo2, eo);
+						} else if(COMPARISON_MIGHT_BE_EQUAL(cr2)) {
+							m1 = new MathStructure();
+							m1->setType(STRUCT_COMPARISON);
+							m1->setComparisonType(ct_comp);
+							m1->addChild(CHILD(1));
+							m1->addChild(m_one);
+							m1->isolate_x(eo2, eo);
+							MathStructure *m1b = new MathStructure();
+							m1b->setType(STRUCT_COMPARISON);
+							m1b->setComparisonType(ct_comp);
+							m1b->addChild(CHILD(0)[0]);
+							m1b->addChild(m_one);
+							m1b->isolate_x(eo2, eo);
+							m1->add_nocopy(m1b, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+							m1->calculatesub(eo2, eo, false);
+						}
 					}
+				}
+				ComparisonType ct = ct_comp;
+				if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(1).isOne() && CHILD(0)[1].representsReal()) {
+					CHILD(0).setToChild(2, true);
+					CHILD(1).clear(true);
+					isolate_x_sub(eo, eo2, x_var, morig);
+					if(m1) {
+						add_nocopy(m1, ct == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+						calculatesub(eo2, eo, false);
+					}
+					if(mtest) {
+						add_nocopy(mtest, ct == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+						calculatesub(eo2, eo, false);
+					}
+					return true;
 				}
 				if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
 					if(CHILD(0)[0].isNumber() && CHILD(0)[0].number().isReal() && CHILD(0)[0].number().isPositive()) {
@@ -28948,13 +29058,59 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								default: {}
 							}
 						}
+					} else if(CHILD(0)[0].isZero()) {
+						bool b_clear = false, b_gz = false;
+						switch(ct_comp) {
+							case COMPARISON_LESS: {b_gz = CHILD(1).representsPositive(); b_clear = !b_gz && CHILD(1).representsNonPositive(); break;}
+							case COMPARISON_GREATER: {b_gz = CHILD(1).representsNegative(); b_clear = !b_gz && CHILD(1).representsNonNegative(); break;}
+							case COMPARISON_EQUALS_LESS: {b_gz = CHILD(1).representsNonNegative(); b_clear = !b_gz && CHILD(1).representsNegative(); break;}
+							case COMPARISON_EQUALS_GREATER: {b_gz = CHILD(1).representsNonPositive(); b_clear = !b_gz && CHILD(1).representsPositive(); break;}
+							default: {}
+						}
+						if(b_clear) {
+							clear(true);
+							return true;
+						} else if(b_gz) {
+							ct_comp = COMPARISON_GREATER;
+							CHILD(1).clear(true);
+							CHILD(0).setToChild(2, true);
+							if(!CHILD(0).representsReal(true)) {
+								CHILD(0).transform(CALCULATOR->f_re);
+								CHILD(0).calculateFunctions(eo);
+							}
+							CHILDREN_UPDATED
+							isolate_x_sub(eo, eo2, x_var, morig);
+							return true;
+						} else {
+							return false;
+						}
 					} else {
 						return false;
 					}
 				}
 				MathStructure msave(CHILD(1));
 				if(CHILD(0)[1].representsReal()) {
-					CHILD(1).set(CALCULATOR->f_logn, &msave, &CHILD(0)[0], NULL);
+					if(CHILD(0)[0].representsNegative()) {
+						MathStructure mtest2(CALCULATOR->f_logn, &msave, &CHILD(0)[0], NULL);
+						mtest2[1].calculateNegate(eo2);
+						mtest2.childUpdated(2);
+						mtest2.calculateFunctions(eo);
+						mtest2.calculatesub(eo2, eo, true);
+						if(mtest) mtest->unref();
+						if(m0) m0->unref();
+						mtest = NULL;
+						if(!mtest2.isInteger()) return false;
+						if(mtest2.number().isOdd()) {
+							if(ct_comp == COMPARISON_NOT_EQUALS) set(1, 1, 0, true);
+							else clear(true);
+							return true;
+						}
+						CHILD(1).set(mtest2, true);
+					} else {
+						CHILD(1).set(CALCULATOR->f_logn, &msave, &CHILD(0)[0], NULL);
+						bool b = CHILD(1).calculateFunctions(eo);
+						if(b) CHILD(1).calculatesub(eo2, eo, true);
+					}
 				} else {
 					CHILD(1).set(CALCULATOR->f_ln, &msave, NULL);
 					CHILD(1) += nr_one_i;
@@ -28962,15 +29118,34 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					CHILD(1)[1] *= CALCULATOR->v_n;
 					CHILD(1).divide_nocopy(new MathStructure(CALCULATOR->f_ln, &CHILD(0)[0], NULL));
 					CHILD(1).evalSort(true);
+					bool b = CHILD(1).calculateFunctions(eo);
+					if(b) CHILD(1).calculatesub(eo2, eo, true);
 				}
-				bool b = CHILD(1).calculateFunctions(eo);
-				if(b) CHILD(1).calculatesub(eo2, eo, true);
+				MathStructure *mn1 = NULL;
+				if(COMPARISON_MIGHT_BE_EQUAL(cr1)) {
+					mn1 = new MathStructure();
+					mn1->setType(STRUCT_COMPARISON);
+					mn1->setComparisonType(ct == COMPARISON_EQUALS ? COMPARISON_NOT_EQUALS : COMPARISON_EQUALS);
+					mn1->addChild(CHILD(0)[0]);
+					mn1->addChild(m_one);
+					mn1->isolate_x(eo2, eo);
+				}
 				CHILD(0).setToChild(2, true);
 				CHILDREN_UPDATED;
 				isolate_x_sub(eo, eo2, x_var, morig);
+				if(mn1) {
+					add_nocopy(mn1, ct == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					calculatesub(eo2, eo, false);
+				}
+				if(m1) {
+					add_nocopy(m1, ct == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					calculatesub(eo2, eo, false);
+				}
 				if(mtest) {
-					add_nocopy(mtest, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-					if(m0) addChild_nocopy(m0);
+					add_nocopy(mtest, ct == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					if(m0) {
+						addChild_nocopy(m0);
+					}
 					calculatesub(eo2, eo, false);
 				}
 				fix_n_multiple(*this, eo2, eo, x_var);
