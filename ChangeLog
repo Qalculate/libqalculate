@@ -1,6 +1,7 @@
 2018-10-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Improve x^(a*x)=b
+	* Solve a*b^x+cx=0
+	* Improve x^(a*x^b)=c
 	* Simplification and factorization fixes
 	* sqrt(a)/a=1/sqrt(a) for rational numbers
 

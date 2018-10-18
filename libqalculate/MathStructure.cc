@@ -13052,11 +13052,12 @@ void MathStructure::coefficient(const MathStructure &xvar, const Number &pownr, 
 	mcoeff.evalSort();
 }
 
-bool get_multiplier(const MathStructure &mstruct, const MathStructure &xvar, MathStructure &mcoeff) {
+bool get_multiplier(const MathStructure &mstruct, const MathStructure &xvar, MathStructure &mcoeff, size_t exclude_i = (size_t) -1) {
 	const MathStructure *mcur = NULL;
 	mcoeff.clear();
 	for(size_t i = 0; ; i++) {
 		if(mstruct.isAddition()) {
+			if(i == exclude_i) i++;
 			if(i >= mstruct.size()) break;
 			mcur = &mstruct[i];
 		} else {
@@ -13105,6 +13106,34 @@ bool get_multiplier(const MathStructure &mstruct, const MathStructure &xvar, Mat
 	if(mcoeff.isZero()) return false;
 	mcoeff.evalSort();
 	return true;
+}
+
+bool get_power(const MathStructure &mstruct, const MathStructure &xvar, MathStructure &mpow) {
+	if(mstruct == xvar) {
+		mpow = m_one;
+		return true;
+	}
+	if(mstruct.isPower() && mstruct[0] == xvar) {
+		mpow = mstruct[1];
+		return true;
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(get_power(mstruct[i], xvar, mpow)) return true;
+	}
+	return false;
+}
+const MathStructure *get_power_term(const MathStructure &mstruct, const MathStructure &xvar) {
+	if(mstruct == xvar) {
+		return &mstruct;
+	}
+	if(mstruct.isPower() && mstruct[0] == xvar) {
+		return &mstruct;
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		const MathStructure *mterm = get_power_term(mstruct[i], xvar);
+		if(mterm) return mterm;
+	}
+	return NULL;
 }
 
 bool MathStructure::polynomialQuotient(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar, MathStructure &mquotient, const EvaluationOptions &eo, bool check_args) {
@@ -26771,6 +26800,62 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 			}
 			if(CALCULATOR->aborted()) return false;
+			
+			// a*b^x+cx=0 => -lambertw(a*log(b)/c)/log(b)
+			if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(1).isZero() && SIZE > 1) {
+				size_t i_px = 0, i_mpx = 0;
+				MathStructure *mvar = NULL;
+				for(size_t i = 0; i < CHILD(0).size(); i++) {
+					if(CHILD(0)[i].isMultiplication()) {
+						for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+							if(CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1].contains(x_var) && !CHILD(0)[i][i2][0].contains(x_var)) {
+								mvar = &CHILD(0)[i][i2][1];
+								i_px = i;
+								i_mpx = i2;
+								break;
+							}
+						}
+						if(mvar) break;
+					} else if(CHILD(0)[i].isPower() && CHILD(0)[i][1].contains(x_var) && !CHILD(0)[i][0].contains(x_var)) {
+						mvar = &CHILD(0)[i][1];
+						i_px = i;
+						break;
+					}
+				}
+				if(mvar && mvar->representsReal()) {
+					MathStructure m_c;
+					if(get_multiplier(CHILD(0), *mvar, m_c, i_px)) {
+						MathStructure mlogb(CALCULATOR->f_ln, CHILD(0)[i_px].isPower() ? &CHILD(0)[i_px][0] : &CHILD(0)[i_px][i_mpx][0], NULL);
+						mlogb.calculateFunctions(eo);
+						MathStructure *marg = new MathStructure(mlogb);
+						if(CHILD(0)[i_px].isMultiplication()) {
+							marg->multiply(CHILD(0)[i_px]);
+							marg->last().delChild(i_mpx + 1, true);
+							marg->calculateMultiplyLast(eo2);
+						}
+						if(!m_c.isOne()) marg->calculateDivide(m_c, eo2);
+						CALCULATOR->beginTemporaryStopMessages();
+						MathStructure mtest(*marg);
+						mtest.add(m_zero, OPERATION_EQUALS_GREATER);
+						EvaluationOptions eo3 = eo2;
+						eo3.test_comparisons = true;
+						cout << mtest << endl;
+						mtest.calculatesub(eo3, eo, false);
+						if(CALCULATOR->endTemporaryStopMessages() || !mtest.isOne()) {marg->unref(); return false;}
+						marg->transform(CALCULATOR->f_lambert_w);
+						marg->calculateFunctions(eo);
+						marg->calculateDivide(mlogb, eo2);
+						marg->calculateNegate(eo2);
+						setChild_nocopy(marg, 2, true);
+						mvar->ref();
+						CHILD(0).clear(true);
+						setChild_nocopy(mvar, 1, true);
+						CHILDREN_UPDATED
+						isolate_x_sub(eo, eo2, x_var, morig);
+						return true;
+					}
+				}
+			}
 
 			// x+x^(1/a)=b => x=(b-x)^a
 			if(eo2.expand && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(0).size() <= 10 && CHILD(0).size() > 1) {
@@ -28523,8 +28608,11 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(0)[0].representsReal()) {
 						// x^(a*x)=b => x=e^(lambertw(ln(x)/a)) if ln(x)/a >= 0
 						MathStructure mmul(1, 1, 0);
-						if(!get_multiplier(CHILD(0)[1], CHILD(0)[0], mmul) || mmul.contains(x_var)) return false;
-						if(mmul.isOne()) {
+						const MathStructure *mvar = get_power_term(CHILD(0)[1], CHILD(0)[0]);
+						if(!get_multiplier(CHILD(0)[1], *mvar, mmul) || mmul.contains(x_var)) return false;
+						MathStructure mexp(1, 1, 0);
+						if(mvar->isPower() && *mvar != CHILD(0)[0]) mexp = (*mvar)[1];
+						if(mmul.isOne() && mexp.isOne()) {
 							if(CHILD(1).number().isInteger()) {
 								if(CHILD(1).number().isOne()) {
 									CHILD(0).setToChild(1, true);
@@ -28592,18 +28680,21 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						if(!CHILD(1).representsPositive()) return false;
 						MathStructure *marg = new MathStructure(CALCULATOR->f_ln, &CHILD(1), NULL);
 						marg->calculateFunctions(eo);
+						if(!mexp.isOne()) marg->calculateMultiply(mexp, eo2);
 						if(!mmul.isOne()) marg->calculateDivide(mmul, eo2);
 						CALCULATOR->beginTemporaryStopMessages();
 						MathStructure mtest(*marg);
 						mtest.add(m_zero, OPERATION_EQUALS_GREATER);
 						EvaluationOptions eo3 = eo2;
 						eo3.test_comparisons = true;
+						cout << mtest << endl;
 						mtest.calculatesub(eo3, eo, false);
 						if(CALCULATOR->endTemporaryStopMessages() || !mtest.isOne()) {marg->unref(); return false;}
 						CHILD(0).setToChild(1, true);
 						CHILD(1).set(CALCULATOR->v_e);
 						marg->transform(CALCULATOR->f_lambert_w);
 						marg->calculateFunctions(eo);
+						if(!mexp.isOne()) marg->calculateDivide(mexp, eo2);
 						CHILD(1).raise_nocopy(marg);
 						CHILD(1).calculateRaiseExponent(eo2);
 						CHILDREN_UPDATED
