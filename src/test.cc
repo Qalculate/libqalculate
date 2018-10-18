@@ -849,8 +849,8 @@ string rnd_number(bool use_par = true, bool only_integers = false, bool only_pos
 		if(!started) r = r % (only_positive ? 9 + 1 : 10 + 1);
 		else if(str.back() == '.') r = r % 10;
 		else r = r % ((dot ? 19 : 20) + str.length() * 10);
-		if(r > (dot ? 9 : 10)) break;
-		if(r == 10) {if(!started) str += '0'; str += '.'; dot = true;}
+		if(r > (dot ? 9 : 15)) break;
+		if((r >= 10 && r <= 15) || (!dot && !started && r == 0)) {if(!started) str += '0'; str += '.'; dot = true;}
 		else str += char('0' + r);
 		started = true;
 	}
@@ -1548,7 +1548,7 @@ int main(int argc, char *argv[]) {
 	v = new KnownVariable("", "v", m_zero);
 	
 	for(size_t i = 0; i < 1000; i++) {
-		rnd_test(evalops, 4, true, false, true);
+		rnd_test(evalops, 4, false, false, true);
 	}
 	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl;
 

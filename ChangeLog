@@ -1,3 +1,119 @@
+2018-10-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve x^(a*x)=b
+	* Simplification and factorization fixes
+	* sqrt(a)/a=1/sqrt(a) for rational numbers
+
+2018-10-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow interval and infinity when determining if equal for logical and, and or
+	* Improve a^x=b
+	* Return exact result for x^x=a in some cases
+
+2018-10-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix a^x=b when a is zero
+	* Fix abs(x)=-a
+	* Fix segfault on 1^(a/b) in exact mode when a or b are extremely large
+	* 1^a always exactly 1 if not a is infinite
+	* Set maximum argument for cosh and sinh calculation (< 2^28)
+	* Set maximum order for bessely() to 1000 (too slow above)
+	* Fix log(a^x, b) when a is negative or x is complex
+	* Fix parsing of thin space in numbers
+
+2018-10-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix adaptive interval display (when +/- in expression)
+	* Fix E-notation for +/- (parse 1E4+/-1E2 as 10000+/-100)
+	* Improve precision of asin(a*i); Fix ln(a*ln(pi))
+	* Fix segfault in polynomial division
+	* Fix polynomial division in some complex cases
+	
+2018-10-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* sin(i*x)=i*sinh(x), etc.
+	* a^(b*c)!=(a^b)^c if b is complex
+	* Replace with temporary variable in replace() if replacement value is interval
+	* Replace n with single possible value in equation result for unknown variable with interval
+	
+2018-10-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix radian unit with prefix in trigonometric functions
+	* Fix critically slow handling of many AND OR combinations
+	* Fix segfault in aborted sort
+	* Fix rounding in some cases with intervals
+	* Fix display of zero with strict exp mode
+	* Fix factorization segfault
+	* Trigonometric simplification fix
+
+2018-10-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix illegal vales for acos(x)=a
+	* Fix atanh(-infinity*i)
+	* Set exact value for atanh() with infinite argument
+	* Fix root(-ax, n) when n is even
+	* Fix sinh(x)=a
+	* Use parentheses for complex numbers (not used if formatted)
+	* Do not use prefixes for angle units by default
+	* Set PrintOptions for messages
+	* Fix 'n' and 'C' variable assumptions
+	* Fix various segfaults
+	* Always place number/zero on right side of comparison in formatted result
+
+2018-10-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use quadratic equation formula directly for ax^d+bx^(2d)=c (solve for x^d)
+	* Fix/improve trigonometric transformations
+
+2018-10-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in during formatting*
+	* Fix 1/x=0 when x may be infinite
+	* Improve comparison tests
+	* Fix factorization segfault
+	* Fix MathStructure::unformat()
+
+2018-10-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve precision of ax+bx^2=0
+	* Improve formatting of values in error/warning output
+	* Use kilo as prefix for gram if automatic prefix is off
+	* Set max exponent for use of mpfr_pow_z
+	* Fix logical AND segfaults
+	* asin() fixes for complex interval
+
+2018-10-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+	
+	* Fix acosh(x)=a
+	* Add random expression testing
+	* Fix segfault on 0^(-e) and similar
+	* Fix asin() and acos() for complex numbers
+	* Restrict maximum argument value for sin(), cos() and tan() using current precision
+	* Trigonometric simplification improvements
+	
+2018-10-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* sqrt(a)/a=1/sqrt(a) for integers
+
+2018-10-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* a*sin(x)+b*cos(x)=a*sqrt((b/a)^2+1)*sin(x+atan(b/a)); sin(sqrt(3)/2)=pi/3, tan(sqrt(3)/3)=pi/6, etc.
+
+2018-09-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* sin(acos(x))=sqrt(1-x^2) and similar
+	
+2018-09-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Solve equations with trigonometric functions
+	* sin(a*i)=i*sinh(a), cos(a*i)=cosh(a), tan(a*i)=i*tanh(a)
+
+2018-09-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* If x might be complex solution for a^x = b is x = (i*pi*n + ln(a)) / ln(b) and similar
+	* Add "C" (for integrals) and "n" (integer) unknown variables (not user accessible)
+	* Trigonometric functions improvements/fixes
+
 2018-09-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* f(a.b*pi+x) equals (-) f(0.b*pi+x) for sin(), cos() and tan(), e.g. sin(3.37pi+x)=-sin(0.37pi+x)
