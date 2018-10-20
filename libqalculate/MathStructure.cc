@@ -13354,6 +13354,7 @@ bool polynomial_long_division(const MathStructure &mnum, const MathStructure &md
 	Number dendeg = mden.degree(xvar);
 	MathStructure dencoeff;
 	mden.coefficient(xvar, dendeg, dencoeff);
+
 	for(size_t i = 0; numdeg.isGreaterThanOrEqualTo(dendeg); i++) {
 		if(i > 10000 || CALCULATOR->aborted()) {
 			return false;
@@ -13404,8 +13405,9 @@ bool polynomial_long_division(const MathStructure &mnum, const MathStructure &md
 		else mquotient.calculateAdd(numcoeff, eo2);
 		numcoeff.calculateMultiply(mden, eo2);
 		mrem.calculateSubtract(numcoeff, eo2);
-		if(contains_zerointerval_multiplier(mrem) || contains_zerointerval_multiplier(mquotient)) return false;
+		if(contains_zerointerval_multiplier(mquotient)) return false;
 		if(mrem.isZero() || (for_newtonraphson && mrem.isNumber())) break;
+		if(contains_zerointerval_multiplier(mrem)) return false;
 		numdeg = mrem.degree(xvar);
 	}
 	return true;
@@ -14367,7 +14369,7 @@ bool gather_factors(const MathStructure &mstruct, const MathStructure &x_var, Ma
 
 
 bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, int term_combination_levels, int max_msecs, bool only_integers, int recursive, struct timeval *endtime_p, const MathStructure &force_factorization, bool complete_square, bool only_sqrfree) {
-term_combination_levels = 0;
+
 	if(CALCULATOR->aborted()) return false;
 	struct timeval endtime;
 	if(max_msecs > 0 && !endtime_p) {
@@ -14611,7 +14613,7 @@ term_combination_levels = 0;
 						}
 					}
 					evalSort(true);
-					factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+					factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
 					return true;
 				}
 			}
@@ -14770,7 +14772,7 @@ term_combination_levels = 0;
 				MathStructure mnew;
 				if(factorize_find_multiplier(*this, mnew, *factor_mstruct)) {
 					mnew.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
-					factor_mstruct->factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+					factor_mstruct->factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
 					clear(true);
 					m_type = STRUCT_MULTIPLICATION;
 					APPEND_REF(factor_mstruct);
@@ -14987,7 +14989,7 @@ term_combination_levels = 0;
 										}
 									}
 								}
-								mleft.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+								mleft.factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
 								vector<long int> powers;
 								vector<size_t> powers_i;
 								int dupsfound = 0;
@@ -15258,7 +15260,7 @@ term_combination_levels = 0;
 														MathStructure mthis(*this);
 														MathStructure mquo;
 														if(mtest.size() > 1 && polynomialDivide(mthis, mtest, mquo, eo, false)) {
-															mquo.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+															mquo.factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
 															set(mquo, true);
 															multiply(mtest, true);
 															return true;
@@ -15354,7 +15356,7 @@ term_combination_levels = 0;
 															MathStructure mthis(*this);
 															MathStructure mquo;
 															if(mtest.size() > 1 && polynomialDivide(mthis, mtest, mquo, eo, false)) {
-																mquo.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+																mquo.factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
 																set(mquo, true);
 																multiply(mtest, true);
 																return true;
@@ -15758,8 +15760,8 @@ term_combination_levels = 0;
 						m0.calculateAdd(m1, eo);
 						if(!m0.isZero()) add(m0);
 						if(recursive) {
-							CHILD(0).factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
-							CHILD(1).factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+							CHILD(0).factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+							CHILD(1).factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
 							CHILDREN_UPDATED
 						}
 						evalSort(true);
@@ -20773,7 +20775,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				setFunction(CALCULATOR->f_dirac);
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
-			} else if(o_function == CALCULATOR->f_lambert_w && SIZE == 1) {
+			} else if(o_function == CALCULATOR->f_lambert_w && (SIZE == 1 || (SIZE == 2 && CHILD(1).isZero()))) {
 				MathStructure *mstruct = new MathStructure(*this);
 				MathStructure *mstruct2 = new MathStructure(CHILD(0));
 				mstruct->add(m_one);
@@ -21815,7 +21817,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 				}
 			}
 		}
-	} else if(mstruct.function() == CALCULATOR->f_lambert_w && mstruct.size() == 1 && mstruct[0] == x_var) {
+	} else if(mstruct.function() == CALCULATOR->f_lambert_w && (mstruct.size() == 1 || (mstruct.size() == 2 && mstruct[1].isZero())) && mstruct[0] == x_var) {
 		if(mpow.isOne() && mfac.isOne()) {
 			MathStructure *mthis = new MathStructure(mstruct);
 			mstruct.subtract(m_one);
@@ -26385,12 +26387,19 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 	bool overflow = false;
 	int ideg = ndeg.intValue(&overflow);
 	if(overflow || ideg > 100) return -1;
+	nr.negate();
 	if(!nr.isZero()) {
-		if(nr.isNegative()) nr.negate();
-		if(nr.root(ndeg)) mguess = nr;
+		bool b_neg = nr.isNegative();
+		if(b_neg) nr.negate();
+		if(nr.root(ndeg)) {
+			if(ndeg.isOdd() && b_neg) nr.negate();
+			mguess = nr;
+		} else {
+			nr = mguess.number();
+		}
+	} else {
+		nr = mguess.number();
 	}
-	PrintOptions po;
-	po.interval_display = INTERVAL_DISPLAY_INTERVAL;
 	
 	for(int i = 0; i < 100 + PRECISION + ideg * 2; i++) {
 
@@ -26404,7 +26413,6 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 		if(!mtest.isNumber() || !nrdiv.divide(mtest.number())) {
 			return -1;
 		}
-
 		if(nrdiv.isLessThan(nr_target_high) && nrdiv.isGreaterThan(nr_target_low)) {
 			if(CALCULATOR->usesIntervalArithmetic()) {
 				if(!x_value.number().setInterval(mguess.number(), mtest.number())) return -1;
@@ -26417,7 +26425,36 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 		}
 		mguess = mtest;
 	}
+	
+	nr.negate();
+	mguess = nr;
+	for(int i = 0; i < 100 + PRECISION + ideg * 2; i++) {
+
+		if(CALCULATOR->aborted()) return -1;
+
+		MathStructure mtest(minit);
+		mtest.replace(x_var, mguess);
+		mtest.eval(eo);
+
+		Number nrdiv(mguess.number());
+		if(!mtest.isNumber() || !nrdiv.divide(mtest.number())) {
+			return -1;
+		}
+		if(nrdiv.isLessThan(nr_target_high) && nrdiv.isGreaterThan(nr_target_low)) {
+			if(CALCULATOR->usesIntervalArithmetic()) {
+				if(!x_value.number().setInterval(mguess.number(), mtest.number())) return -1;
+			} else {
+				x_value = mtest;
+				if(x_value.number().precision() < 0 || x_value.number().precision() > PRECISION + 10) x_value.number().setPrecision(PRECISION + 10);
+			}
+			x_value.numberUpdated();
+			return 1;
+		}
+		mguess = mtest;
+	}
+	
 	return 0;
+
 }
 
 int find_interval_precision(const MathStructure &mstruct);
@@ -27130,6 +27167,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mtest.calculatesub(eo3, eo, false);
 						if(!CALCULATOR->endTemporaryStopMessages() && mtest.isOne()) {
 							marg->transform(CALCULATOR->f_lambert_w);
+							marg->addChild(m_zero);
 							marg->calculateFunctions(eo);
 							marg->calculateDivide(mlogb, eo2);
 							marg->calculateNegate(eo2);
@@ -28679,6 +28717,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							CHILD(0).clear(true);
 							setChild_nocopy(mvar, 1, true);;
 							marg->transform(CALCULATOR->f_lambert_w);
+							marg->addChild(m_zero);
 							marg->calculateFunctions(eo);
 							if(!m_c.isOne()) marg->calculateDivide(m_c, eo2);
 							marg->calculateDivide(mln, eo2);
@@ -28969,6 +29008,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						CHILD(0).setToChild(1, true);
 						CHILD(1).set(CALCULATOR->v_e);
 						marg->transform(CALCULATOR->f_lambert_w);
+						marg->addChild(m_zero);
 						marg->calculateFunctions(eo);
 						if(!mexp.isOne()) marg->calculateDivide(mexp, eo2);
 						CHILD(1).raise_nocopy(marg);
@@ -29672,7 +29712,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 					return true;
 				}
-			} else if(CHILD(0).function() == CALCULATOR->f_lambert_w && CHILD(0).size() == 1 && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
+			} else if(CHILD(0).function() == CALCULATOR->f_lambert_w && (CHILD(0).size() == 1 || (CHILD(0).size() == 2 && CHILD(0)[1].isZero())) && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
 				if(CHILD(0)[0].contains(x_var)) {
 					MathStructure msave(CHILD(1));
 					CHILD(1).set(CALCULATOR->v_e);
