@@ -1937,13 +1937,17 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return 1;
 }
 
-LambertWFunction::LambertWFunction() : MathFunction("lambertw", 1) {
-	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false);
+LambertWFunction::LambertWFunction() : MathFunction("lambertw", 1, 2) {
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
+	setDefaultValue(2, "0");
 }
 int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	if(!vargs[1].isZero()) return 0;
 
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0]; 
