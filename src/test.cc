@@ -1114,6 +1114,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			eo.approximation = APPROXIMATION_EXACT;
 			CALCULATOR->calculate(&m1, 5000, eo);
 			if(m1.isAborted()) {cout << mp << endl; cout << "ABORTED7"; return;}
+			m1.replace(CALCULATOR->v_n, 3);
 			if(m1.isComparison() && m1.comparisonType() == COMPARISON_EQUALS && m1[0] == CALCULATOR->v_x) {
 				m2 = mp;
 				m2.replace(CALCULATOR->v_x, m1[1]);
@@ -1126,7 +1127,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 						nr = m2.number();
 						nr.abs();
 						nr.log(10);
-						if(nr > -20) {
+						if(nr > -10) {
 							rt7++;
 							cout << mp << endl;
 							cout << "UNEQUAL3: " << m1.print() << ":" << m2.print() << endl;
@@ -1162,7 +1163,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 									nr = m2.number();
 									nr.abs();
 									nr.log(10);
-									if(nr > -20) {
+									if(nr > -10) {
 										rt7++;
 										cout << mp << endl;
 										cout << "UNEQUAL3: " << m1[i].print() << ":" << m2.print() << endl;
@@ -1198,7 +1199,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 												nr = m2.number();
 												nr.abs();
 												nr.log(10);
-												if(nr > -20) {
+												if(nr > -10) {
 													rt7++;
 													cout << mp << endl;
 													cout << "UNEQUAL3: " << m1[i][i2].print() << ":" << m2.print() << endl;
@@ -1506,7 +1507,7 @@ int main(int argc, char *argv[]) {
 	new Calculator();
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
-	//CALCULATOR->setPrecision(40);
+	CALCULATOR->setPrecision(40);
 	
 	EvaluationOptions evalops;
 	/*evalops.approximation = APPROXIMATION_TRY_EXACT;
@@ -1541,13 +1542,16 @@ int main(int argc, char *argv[]) {
 	
 	//CALCULATOR->setVariableUnitsEnabled(false);
 	
+	CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
+	CALCULATOR->useIntervalArithmetic();
+	
 	PrintOptions po = CALCULATOR->messagePrintOptions();
 	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	CALCULATOR->setMessagePrintOptions(po);
 	
 	v = new KnownVariable("", "v", m_zero);
 	
-	for(size_t i = 0; i < 1000; i++) {
+	for(size_t i = 0; i < 10000; i++) {
 		rnd_test(evalops, 4, false, false, true);
 	}
 	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl;
