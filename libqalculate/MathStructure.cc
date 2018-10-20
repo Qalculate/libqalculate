@@ -15117,50 +15117,48 @@ term_combination_levels = 0;
 						if(b && b2 && degree > 3 && degree < 10) {
 							// Kronecker method
 							vector<long int> vnum;
-							if(b) {
-								vnum.resize(degree + 1, 0);
-								bool overflow = false;
-								for(size_t i = 0; b && i < SIZE; i++) {
-									switch(CHILD(i).type()) {
-										case STRUCT_POWER: {
-											if(CHILD(i)[0] == *xvar && CHILD(i)[1].isInteger()) {
-												int curdeg = CHILD(i)[1].number().intValue(&overflow);
+							vnum.resize(degree + 1, 0);
+							bool overflow = false;
+							for(size_t i = 0; b && i < SIZE; i++) {
+								switch(CHILD(i).type()) {
+									case STRUCT_POWER: {
+										if(CHILD(i)[0] == *xvar && CHILD(i)[1].isInteger()) {
+											int curdeg = CHILD(i)[1].number().intValue(&overflow);
+											if(curdeg < 0 || overflow || curdeg > degree) b = false;
+											else vnum[curdeg] += 1;
+										} else {
+											b = false;
+										}
+										break;
+									}
+									case STRUCT_MULTIPLICATION: {
+										if(CHILD(i).size() == 2 && CHILD(i)[0].isInteger()) {
+											long int icoeff = CHILD(i)[0].number().intValue(&overflow);
+											if(!overflow && CHILD(i)[1].isPower() && CHILD(i)[1][0] == *xvar && CHILD(i)[1][1].isInteger()) {
+												int curdeg = CHILD(i)[1][1].number().intValue(&overflow);
 												if(curdeg < 0 || overflow || curdeg > degree) b = false;
-												else vnum[curdeg] += 1;
+												else vnum[curdeg] += icoeff;
+											} else if(!overflow && CHILD(i)[1] == *xvar) {
+												vnum[1] += icoeff;
 											} else {
 												b = false;
 											}
-											break;
+										} else {
+											b = false;
 										}
-										case STRUCT_MULTIPLICATION: {
-											if(CHILD(i).size() == 2 && CHILD(i)[0].isInteger()) {
-												long int icoeff = CHILD(i)[0].number().intValue(&overflow);
-												if(!overflow && CHILD(i)[1].isPower() && CHILD(i)[1][0] == *xvar && CHILD(i)[1][1].isInteger()) {
-													int curdeg = CHILD(i)[1][1].number().intValue(&overflow);
-													if(curdeg < 0 || overflow || curdeg > degree) b = false;
-													else vnum[curdeg] += icoeff;
-												} else if(!overflow && CHILD(i)[1] == *xvar) {
-													vnum[1] += icoeff;
-												} else {
-													b = false;
-												}
-											} else {
-												b = false;
-											}
-											break;
+										break;
+									}
+									default: {
+										if(CHILD(i).isInteger()) {
+											long int icoeff = CHILD(i).number().intValue(&overflow);
+											if(overflow) b = false;
+											else vnum[0] += icoeff;
+										} else if(CHILD(i) == *xvar) {
+											vnum[1] += 1;
+										} else {
+											b = false;
 										}
-										default: {
-											if(CHILD(i).isInteger()) {
-												long int icoeff = CHILD(i).number().intValue(&overflow);
-												if(overflow) b = false;
-												else vnum[0] += icoeff;
-											} else if(CHILD(i) == *xvar) {
-												vnum[1] += 1;
-											} else {
-												b = false;
-											}
-											break;
-										}
+										break;
 									}
 								}
 							}
@@ -15216,7 +15214,7 @@ term_combination_levels = 0;
 											long int c1max = vs[2] - c0 - c2, c1min;
 											if(c1max < 0) {c1min = c1max; c1max = -vs[2] - c0 - c2;}
 											else {c1min = -vs[2] - c0 - c2;}
-											if(-(vs[0] - c0 - c2) < 0) {
+											if(-(vs[0] - c0 - c2) < -(-vs[0] - c0 - c2)) {
 												if(c1max > -(-vs[0] - c0 - c2)) c1max = -(-vs[0] - c0 - c2);
 												if(c1min < -(vs[0] - c0 - c2)) c1min = -(vs[0] - c0 - c2);
 											} else {
@@ -15287,16 +15285,16 @@ term_combination_levels = 0;
 												long int c2 = c2p / 2;
 												if(c2p % 2 == 1) c2 = -c2;
 												long int c1max = vs[2] - c0 - c2 - c3, c1min;
-												if(c1max < 0) {c1min = c1max; c1max = -vs[2] - c0 - c2 - c3;}
+												if(c1max < -vs[2] - c0 - c2 - c3) {c1min = c1max; c1max = -vs[2] - c0 - c2 - c3;}
 												else {c1min = -vs[2] - c0 - c2 - c3;}
-												if(-(vs[0] - c0 - c2 + c3) < 0) {
+												if(-(vs[0] - c0 - c2 + c3) < -(-vs[0] - c0 - c2 + c3)) {
 													if(c1max > -(-vs[0] - c0 - c2 + c3)) c1max = -(-vs[0] - c0 - c2 + c3);
 													if(c1min < -(vs[0] - c0 - c2 + c3)) c1min = -(vs[0] - c0 - c2 + c3);
 												} else {
 													if(c1max > -(vs[0] - c0 - c2 + c3)) c1max = -(vs[0] - c0 - c2 + c3);
 													if(c1min < -(-vs[0] - c0 - c2 + c3)) c1min = -(-vs[0] - c0 - c2 + c3);
 												}
-												if(vs[0] - c0 - c2 * 4 - c3 * 8 < 0) {
+												if(vs[0] - c0 - c2 * 4 - c3 * 8 < -vs[0] - c0 - c2 * 4 - c3 * 8) {
 													if(c1max > -vs[0] - c0 - c2 * 4 - c3 * 8) c1max = -vs[0] - c0 - c2 * 4 - c3 * 8;
 													if(c1min < vs[0] - c0 - c2 * 4 - c3 * 8) c1min = vs[0] - c0 - c2 * 4 - c3 * 8;
 												} else {
