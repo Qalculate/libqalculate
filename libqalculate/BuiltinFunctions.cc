@@ -1942,7 +1942,7 @@ LambertWFunction::LambertWFunction() : MathFunction("lambertw", 1, 2) {
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 	setDefaultValue(2, "0");
 }
 int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -1984,7 +1984,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(!nr.lambertW()) {
-			if(!CALCULATOR->aborted()) CALCULATOR->error(false, _("Argument for %s() must be a real number greater than or equal to -1/e."), preferredDisplayName().name.c_str(), NULL);
+			//if(!CALCULATOR->aborted()) CALCULATOR->error(false, _("Argument for %s() must be a real number greater than or equal to -1/e."), preferredDisplayName().name.c_str(), NULL);
 		} else if(!(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			mstruct.set(nr, true);
 			return 1;
