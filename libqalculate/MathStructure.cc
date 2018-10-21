@@ -15116,7 +15116,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								return true;
 							}
 						}
-						if(b && b2 && degree > 3 && degree < 10) {
+						if(b && b2 && degree > 3 && degree < 20) {
 							// Kronecker method
 							vector<long int> vnum;
 							vnum.resize(degree + 1, 0);
@@ -15168,16 +15168,16 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 							vector<int> vs;
 							if(b && lcoeff != 0) {
 								degree /= 2;
-								if(degree > 3) degree = 3;
-								for(int i = -1; i < degree; i++) {
+								if(degree > 4) degree = 4;
+								for(int i = 0; i <= degree; i++) {
 									MathStructure mcalc(*this);
-									mcalc.calculateReplace(*xvar, Number(i, 1), eo);
+									mcalc.calculateReplace(*xvar, Number(i == 4 ? -2 : i - 1, 1), eo);
 									mcalc.calculatesub(eo, eo, false);
 									if(!mcalc.isInteger()) break;
 									bool overflow = false;
 									int v = ::abs(mcalc.number().intValue(&overflow));
 									if(overflow) {
-										if(degree > 2 && i == degree - 1) degree--;
+										if(i > 2) degree = i;
 										else b = false;
 										break;
 									}
@@ -15272,7 +15272,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 									}
 								}
 								cmax = (long int) ::sqrt(cmax);
-								if(degree == 3 && cmax > 10) {
+								if(degree >= 3 && cmax > 10) {
 									long int c0;
 									vector<long int> vden;
 									vector<long int> vquo;
@@ -15296,12 +15296,12 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 													if(c1max > -(vs[0] - c0 - c2 + c3)) c1max = -(vs[0] - c0 - c2 + c3);
 													if(c1min < -(-vs[0] - c0 - c2 + c3)) c1min = -(-vs[0] - c0 - c2 + c3);
 												}
-												if(vs[0] - c0 - c2 * 4 - c3 * 8 < -vs[0] - c0 - c2 * 4 - c3 * 8) {
-													if(c1max > -vs[0] - c0 - c2 * 4 - c3 * 8) c1max = -vs[0] - c0 - c2 * 4 - c3 * 8;
-													if(c1min < vs[0] - c0 - c2 * 4 - c3 * 8) c1min = vs[0] - c0 - c2 * 4 - c3 * 8;
+												if(vs[3] - c0 - c2 * 4 - c3 * 8 < -vs[3] - c0 - c2 * 4 - c3 * 8) {
+													if(c1max > (-vs[3] - c0 - c2 * 4 - c3 * 8) / 2) c1max = (-vs[3] - c0 - c2 * 4 - c3 * 8) / 2;
+													if(c1min < (vs[3] - c0 - c2 * 4 - c3 * 8) / 2) c1min = (vs[3] - c0 - c2 * 4 - c3 * 8) / 2;
 												} else {
-													if(c1max > vs[0] - c0 - c2 * 4 - c3 * 8) c1max = vs[0] - c0 - c2 * 4 - c3 * 8;
-													if(c1min < -vs[0] - c0 - c2 * 4 - c3 * 8) c1min = -vs[0] - c0 - c2 * 4 - c3 * 8;
+													if(c1max > (vs[3] - c0 - c2 * 4 - c3 * 8) / 2) c1max = (vs[3] - c0 - c2 * 4 - c3 * 8) / 2;
+													if(c1min < (-vs[3] - c0 - c2 * 4 - c3 * 8) / 2) c1min = (-vs[3] - c0 - c2 * 4 - c3 * 8) / 2;
 												}
 												if(c1min < -cmax / 2) c1min = -cmax / 2;
 												for(long int c1 = c1min; c1 <= c1max && c1 <= cmax / 2; c1++) {
@@ -15360,6 +15360,130 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 																set(mquo, true);
 																multiply(mtest, true);
 																return true;
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+								cmax = (long int) ::sqrt(cmax);
+								if(degree >= 4 && cmax > 10) {
+									long int c0;
+									vector<long int> vden;
+									vector<long int> vquo;
+									vden.resize(5, 0);
+									for(size_t i = 0; i < factors0.size() * 2; i++) {
+										c0 = factors0[i / 2];
+										if(i % 2 == 1) c0 = -c0;
+										long int c4;
+										for(size_t i2 = 0; i2 < factorsl.size(); i2++) {
+											c4 = factorsl[i2];
+											for(long int c2p = 0; c2p <= 40 && c2p <= cmax; c2p++) {
+												long int c2 = c2p / 2;
+												if(c2p % 2 == 1) c2 = -c2;
+												for(long int c3p = 0; c3p <= 40 && c3p <= cmax; c3p++) {
+													long int c3 = c3p / 2;
+													if(c3p % 2 == 1) c3 = -c3;
+													long int c1max = vs[2] - c0 - c2 - c3 - c4, c1min;
+													if(c1max < -vs[2] - c0 - c2 - c3 - c4) {c1min = c1max; c1max = -vs[2] - c0 - c2 - c3 - c4;}
+													else {c1min = -vs[2] - c0 - c2 - c3 - c4;}
+													if(-(vs[0] - c0 - c2 + c3 - c4) < -(-vs[0] - c0 - c2 + c3 - c4)) {
+														if(c1max > -(-vs[0] - c0 - c2 + c3 - c4)) c1max = -(-vs[0] - c0 - c2 + c3 - c4);
+														if(c1min < -(vs[0] - c0 - c2 + c3 - c4)) c1min = -(vs[0] - c0 - c2 + c3 - c4);
+													} else {
+														if(c1max > -(vs[0] - c0 - c2 + c3 - c4)) c1max = -(vs[0] - c0 - c2 + c3 - c4);
+														if(c1min < -(-vs[0] - c0 - c2 + c3 - c4)) c1min = -(-vs[0] - c0 - c2 + c3 - c4);
+													}
+													if(vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16 < -vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) {
+														if(c1max > (-vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2) c1max = (-vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2;
+														if(c1min < (vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2) c1min = (vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2;
+													} else {
+														if(c1max > (vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2) c1max = (vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2;
+														if(c1min < (-vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2) c1min = (-vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2;
+													}
+													if(-(vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) < -(-vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16)) {
+														if(c1max > -(-vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2) c1max = -(-vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2;
+														if(c1min < -(vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2) c1min = -(vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2;
+													} else {
+														if(c1max > -(vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2) c1max = -(vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2;
+														if(c1min < -(-vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2) c1min = -(-vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2;
+													}
+													if(c1min < -cmax / 2) c1min = -cmax / 2;
+													for(long int c1 = c1min; c1 <= c1max && c1 <= cmax / 2; c1++) {
+														long int v1 = ::labs(c4 + c3 + c2 + c1 + c0);
+														long int v2 = ::labs(c4 + -c3 + c2 - c1 + c0);
+														long int v3 = ::labs(c4 * 16 + c3 * 8 + c2 * 4 + c1 * 2 + c0);
+														long int v4 = ::labs(c4 * 16 - c3 * 8 + c2 * 4 - c1 * 2 + c0);
+														if(v1 != 0 && v2 != 0 && v3 != 0 && v4 != 0 && v1 <= vs[2] && v2 <= vs[0] && v3 <= vs[3] && v4 <= vs[4] && vs[2] % v1 == 0 && vs[0] % v2 == 0 && vs[3] % v3 == 0 && vs[4] % v4 == 0) {
+															vden[0] = c0; vden[1] = c1; vden[2] = c2; vden[3] = c3; vden[4] = c4;
+															if(polynomial_divide_integers(vnum, vden, vquo)) {
+																MathStructure mtest;
+																mtest.setType(STRUCT_ADDITION);
+																if(c4 != 0) {
+																	MathStructure *mpow = new MathStructure();
+																	mpow->setType(STRUCT_POWER);
+																	mpow->addChild(*xvar);
+																	mpow->addChild_nocopy(new MathStructure(4, 1, 0));
+																	if(c3 == 1) {
+																		mtest.addChild_nocopy(mpow);
+																	} else {
+																		MathStructure *mterm = new MathStructure();
+																		mterm->setType(STRUCT_MULTIPLICATION);
+																		mterm->addChild_nocopy(new MathStructure(c4, 1L, 0L));
+																		mterm->addChild_nocopy(mpow);
+																		mtest.addChild_nocopy(mterm);
+																	}
+																}
+																if(c3 != 0) {
+																	MathStructure *mpow = new MathStructure();
+																	mpow->setType(STRUCT_POWER);
+																	mpow->addChild(*xvar);
+																	mpow->addChild_nocopy(new MathStructure(3, 1, 0));
+																	if(c3 == 1) {
+																		mtest.addChild_nocopy(mpow);
+																	} else {
+																		MathStructure *mterm = new MathStructure();
+																		mterm->setType(STRUCT_MULTIPLICATION);
+																		mterm->addChild_nocopy(new MathStructure(c3, 1L, 0L));
+																		mterm->addChild_nocopy(mpow);
+																		mtest.addChild_nocopy(mterm);
+																	}
+																}
+																if(c2 != 0) {
+																	MathStructure *mpow = new MathStructure();
+																	mpow->setType(STRUCT_POWER);
+																	mpow->addChild(*xvar);
+																	mpow->addChild_nocopy(new MathStructure(2, 1, 0));
+																	if(c2 == 1) {
+																		mtest.addChild_nocopy(mpow);
+																	} else {
+																		MathStructure *mterm = new MathStructure();
+																		mterm->setType(STRUCT_MULTIPLICATION);
+																		mterm->addChild_nocopy(new MathStructure(c2, 1L, 0L));
+																		mterm->addChild_nocopy(mpow);
+																		mtest.addChild_nocopy(mterm);
+																	}
+																}
+																if(c1 == 1) {
+																	mtest.addChild(*xvar);
+																} else if(c1 != 0) {
+																	MathStructure *mterm = new MathStructure();
+																	mterm->setType(STRUCT_MULTIPLICATION);
+																	mterm->addChild_nocopy(new MathStructure(c1, 1L, 0L));
+																	mterm->addChild(*xvar);
+																	mtest.addChild_nocopy(mterm);
+																}
+																mtest.addChild_nocopy(new MathStructure(c0, 1L, 0L));
+																MathStructure mthis(*this);
+																MathStructure mquo;
+																if(mtest.size() > 1 && polynomialDivide(mthis, mtest, mquo, eo, false)) {
+																	mquo.factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+																	set(mquo, true);
+																	multiply(mtest, true);
+																	return true;
+																}
 															}
 														}
 													}
@@ -29252,6 +29376,28 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				} else if(CHILD(0)[1].isNumber() && CHILD(0)[1].number().isRational()) {
 					// x^a=b
+					if(!CHILD(0)[1].number().isInteger() && !CHILD(0)[1].number().isFraction() && !CHILD(0).representsNonComplex(true)) {
+						MathStructure mvar(CHILD(0)[0]);
+						mvar.raise(CHILD(0)[1].number().numerator());
+						UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(mvar) + RIGHT_PARENTHESIS);
+						var->setInterval(mvar);
+						var->ref();
+						MathStructure mu(var);
+						MathStructure mtest(mu);
+						mtest.raise(CHILD(0)[1]);
+						mtest[1].number().divide(CHILD(0)[1].number().numerator());
+						mtest.transform(ct_comp, CHILD(1));
+						if(mtest.isolate_x_sub(eo, eo2, mu)) {
+							mtest.replace(mu, mvar);
+							if(mtest.isolate_x(eo2, eo, x_var) && test_comparisons(*this, mtest, x_var, eo) >= 0) {
+								var->destroy();
+								set(mtest, true);
+								return true;
+							}
+						}
+						var->destroy();
+						return false;
+					}
 					bool b_neg = CHILD(0)[1].number().isNegative();
 					bool b_nonzero = !CHILD(1).isZero() && CHILD(1).representsNonZero(true);
 					if(b_neg && CHILD(1).isZero()) {

@@ -1396,7 +1396,7 @@ void Calculator::addBuiltinVariables() {
 	v_z = (UnknownVariable*) addVariable(new UnknownVariable("", "z", "", true, false));
 	v_C = new UnknownVariable("", "C", "", false, true);
 	v_C->setAssumptions(new Assumptions());
-	v_n = new UnknownVariable("", "n", "", false, true);
+	v_n = (UnknownVariable*) addVariable(new UnknownVariable("", "n", "", false, true));
 	v_n->setAssumptions(new Assumptions());
 	v_n->assumptions()->setType(ASSUMPTION_TYPE_INTEGER);
 	v_today = (KnownVariable*) addVariable(new TodayVariable());
