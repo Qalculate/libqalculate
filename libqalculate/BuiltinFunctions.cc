@@ -1947,12 +1947,10 @@ LambertWFunction::LambertWFunction() : MathFunction("lambertw", 1, 2) {
 }
 int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
-	if(!vargs[1].isZero()) return 0;
-
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0]; 
 
-	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
+	if(eo.approximation == APPROXIMATION_TRY_EXACT && vargs[1].isZero()) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
 		CALCULATOR->beginTemporaryStopMessages();
@@ -1962,6 +1960,15 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		mstruct.eval(eo);
 		if(mstruct.isVector()) return -1;
 	}
+	
+	if(!vargs[1].isZero()) {
+		if(vargs[0].isZero()) {
+			mstruct.set(nr_minus_inf, true);
+			return 1;
+		}
+		return 0;
+	}
+	
 	bool b = false;
 	if(mstruct.isZero()) {
 		b = true;
