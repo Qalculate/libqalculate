@@ -2343,6 +2343,7 @@ ComparisonResult MathStructure::compareApproximately(const MathStructure &o, con
 	mtest2.calculateFunctions(eo);
 	mtest.calculatesub(eo, eo);
 	mtest2.calculatesub(eo, eo);
+	CALCULATOR->endTemporaryStopMessages();
 	if(mtest.equals(mtest2)) return COMPARISON_RESULT_EQUAL;
 	if(mtest.representsZero(true) && mtest2.representsZero(true)) return COMPARISON_RESULT_EQUAL;
 	if(mtest.isNumber() && mtest2.isNumber()) {
@@ -5330,6 +5331,30 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				CHILD(1).calculateMultiplyLast(eo, true, this, 1);
 				calculateRaiseExponent(eo, mparent, index_this);
 				return 1;
+			}
+			if(mstruct.isNumber() && CHILD(0).isVariable() && CHILD(0).variable() == CALCULATOR->v_e && CHILD(1).isNumber() && CHILD(1).number().hasImaginaryPart() && !CHILD(1).number().hasRealPart() && mstruct.number().isReal()) {
+				if(mstruct.number() == nr_half) {
+					Number nr(*CHILD(1).number().internalImaginary());
+					nr.abs();
+					nr.divide(CALCULATOR->v_pi->get().number());
+					nr.trunc();
+					nr++;
+					nr.iquo(nr_two);
+					mstruct.ref();
+					MERGE_APPROX_AND_PREC(mstruct)
+					CHILD(1).multiply_nocopy(&mstruct, true);
+					CHILD(1).calculateMultiplyLast(eo, true, this, 1);
+					calculateRaiseExponent(eo, mparent, index_this);
+					if(nr.isOdd()) calculateNegate(eo, mparent, index_this);
+					return 1;
+				} else if(CHILD(1).number().internalImaginary()->isLessThan(CALCULATOR->v_pi->get().number()) && CHILD(1).number().internalImaginary()->isGreaterThan(-CALCULATOR->v_pi->get().number())) {
+					mstruct.ref();
+					MERGE_APPROX_AND_PREC(mstruct)
+					CHILD(1).multiply_nocopy(&mstruct, true);
+					CHILD(1).calculateMultiplyLast(eo, true, this, 1);
+					calculateRaiseExponent(eo, mparent, index_this);
+					return 1;
+				}
 			}
 			goto default_power_merge;
 		}
