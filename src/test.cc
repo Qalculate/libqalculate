@@ -1507,7 +1507,7 @@ int main(int argc, char *argv[]) {
 	new Calculator();
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
-	CALCULATOR->setPrecision(40);
+	//CALCULATOR->setPrecision(40);
 	
 	EvaluationOptions evalops;
 	/*evalops.approximation = APPROXIMATION_TRY_EXACT;
@@ -1537,24 +1537,24 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	//test_integration();
+	test_integration();
 	//test_intervals(true);
 	
 	//CALCULATOR->setVariableUnitsEnabled(false);
 	
-	CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
-	CALCULATOR->useIntervalArithmetic();
+	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
+	//CALCULATOR->useIntervalArithmetic();
 	
-	PrintOptions po = CALCULATOR->messagePrintOptions();
+	/*PrintOptions po = CALCULATOR->messagePrintOptions();
 	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	CALCULATOR->setMessagePrintOptions(po);
 	
 	v = new KnownVariable("", "v", m_zero);
 	
-	for(size_t i = 0; i < 10000; i++) {
+	for(size_t i = 0; i < 1000; i++) {
 		rnd_test(evalops, 4, false, false, true);
 	}
-	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl;
+	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl;*/
 
 	return 0;
 

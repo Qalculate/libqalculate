@@ -418,7 +418,7 @@
       <_names>r:z</_names>
     </unknown>
     <builtin_variable name="n">
-      <_title>Unknown integer n</_title>
+      <_title>n (integer)</_title>
       <_names>r:n</_names>
     </builtin_variable>
   </category>
