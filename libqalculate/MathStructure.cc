@@ -4965,9 +4965,20 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		CALCULATOR->endTemporaryStopMessages();
 		CALCULATOR->useIntervalArithmetic(b_intval);
 		if(mtest.isNumber()) {
-			if(mtest.merge_power(mstruct, eo) > 0) {
-				set(mtest, true);
-				return 1;
+			if(mtest.merge_power(mstruct, eo) > 0 && mtest.isNumber()) {
+				if(mtest.number().isPlusInfinity()) {
+					set(nr_plus_inf, true);
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
+				} else if(mtest.number().isMinusInfinity()) {
+					set(nr_minus_inf, true);
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
+				} else if(mtest.number().isZero()) {
+					clear(true);
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
+				}
 			}
 		}
 	}
@@ -5334,19 +5345,29 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			}
 			if(mstruct.isNumber() && CHILD(0).isVariable() && CHILD(0).variable() == CALCULATOR->v_e && CHILD(1).isNumber() && CHILD(1).number().hasImaginaryPart() && !CHILD(1).number().hasRealPart() && mstruct.number().isReal()) {
 				if(mstruct.number() == nr_half) {
+					bool b_intval = CALCULATOR->usesIntervalArithmetic();
+					CALCULATOR->useIntervalArithmetic();
+					CALCULATOR->beginTemporaryStopMessages();
 					Number nr(*CHILD(1).number().internalImaginary());
 					nr.abs();
 					nr.divide(CALCULATOR->v_pi->get().number());
+					Number nr_u(nr.upperEndPoint());
+					nr = nr.lowerEndPoint();
+					CALCULATOR->endTemporaryStopMessages();
+					CALCULATOR->useIntervalArithmetic(b_intval);
+					nr_u.trunc();
 					nr.trunc();
-					nr++;
-					nr.iquo(nr_two);
-					mstruct.ref();
-					MERGE_APPROX_AND_PREC(mstruct)
-					CHILD(1).multiply_nocopy(&mstruct, true);
-					CHILD(1).calculateMultiplyLast(eo, true, this, 1);
-					calculateRaiseExponent(eo, mparent, index_this);
-					if(nr.isOdd()) calculateNegate(eo, mparent, index_this);
-					return 1;
+					if(nr == nr_u) {
+						nr++;
+						nr.iquo(nr_two);
+						mstruct.ref();
+						MERGE_APPROX_AND_PREC(mstruct)
+						CHILD(1).multiply_nocopy(&mstruct, true);
+						CHILD(1).calculateMultiplyLast(eo, true, this, 1);
+						calculateRaiseExponent(eo, mparent, index_this);
+						if(nr.isOdd()) calculateNegate(eo, mparent, index_this);
+						return 1;
+					}
 				} else if(CHILD(1).number().internalImaginary()->isLessThan(CALCULATOR->v_pi->get().number()) && CHILD(1).number().internalImaginary()->isGreaterThan(-CALCULATOR->v_pi->get().number())) {
 					mstruct.ref();
 					MERGE_APPROX_AND_PREC(mstruct)
@@ -11554,7 +11575,7 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 			msolve.calculatesub(eo, eo, true);
 			eo.approximation = APPROXIMATION_APPROXIMATE;
 			eo.expand = eo_pre.expand;
-			msolve.factorize(eo, false, false, 0, false, true);
+			msolve.factorize(eo, false, false, 0, false, true, NULL, m_undefined, false, false, 1);
 			remove_nonzero_mul(msolve, u_var, eo);
 			if(contains_undefined(msolve) || msolve.countTotalChildren(false) > 1000 || msolve.containsInterval(true, true, false, true, true)) {
 				msolve.replace(u_var, nr_intval);
@@ -12321,6 +12342,39 @@ bool polynomial_divide_integers(const vector<long int> &vnum, const vector<long 
 		numcoeff /= dencoeff;
 		vquotient[numdeg] += numcoeff;
 		for(size_t i = 0; i < vden.size(); i++) {
+			vrem[numdeg + i] -= vden[i] * numcoeff;
+		}
+		while(true) {
+			if(vrem.back() == 0) vrem.pop_back();
+			else break;
+			if(vrem.size() == 0) return true;
+		}
+		numdeg = vrem.size() - 1;
+	}
+	return false;
+}
+
+bool polynomial_divide_integers(const vector<long int> &vnum, const long int *vden, size_t dsize, vector<long int> &vquotient) {
+
+	vquotient.clear();
+
+	long int numdeg = vnum.size() - 1;
+	long int dendeg = dsize - 1;
+	long int dencoeff = vden[dendeg];
+	
+	if(numdeg < dendeg) return false;
+	
+	vquotient.resize(numdeg - dendeg + 1, 0);
+
+	vector<long int> vrem = vnum;
+
+	while(numdeg >= dendeg) {
+		long int numcoeff = vrem[numdeg];
+		numdeg -= dendeg;
+		if(numcoeff % dencoeff != 0) break;
+		numcoeff /= dencoeff;
+		vquotient[numdeg] += numcoeff;
+		for(size_t i = 0; i < dsize; i++) {
 			vrem[numdeg + i] -= vden[i] * numcoeff;
 		}
 		while(true) {
@@ -14435,7 +14489,7 @@ bool gather_factors(const MathStructure &mstruct, const MathStructure &x_var, Ma
 }
 
 
-bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, int term_combination_levels, int max_msecs, bool only_integers, int recursive, struct timeval *endtime_p, const MathStructure &force_factorization, bool complete_square, bool only_sqrfree) {
+bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize, int term_combination_levels, int max_msecs, bool only_integers, int recursive, struct timeval *endtime_p, const MathStructure &force_factorization, bool complete_square, bool only_sqrfree, int max_factor_degree) {
 
 	if(CALCULATOR->aborted()) return false;
 	struct timeval endtime;
@@ -14680,7 +14734,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						}
 					}
 					evalSort(true);
-					factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+					factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 					return true;
 				}
 			}
@@ -14690,7 +14744,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 	switch(type()) {
 		case STRUCT_ADDITION: {
 			if(CALCULATOR->aborted()) return false;
-			if(term_combination_levels >= -1 && !only_sqrfree) {
+			if(term_combination_levels >= -1 && !only_sqrfree && max_factor_degree != 0) {
 
 				if(SIZE <= 3 && SIZE > 1) {
 					MathStructure *xvar = NULL;
@@ -14838,8 +14892,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				MathStructure *factor_mstruct = new MathStructure(1, 1, 0);
 				MathStructure mnew;
 				if(factorize_find_multiplier(*this, mnew, *factor_mstruct)) {
-					mnew.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
-					factor_mstruct->factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+					mnew.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
+					factor_mstruct->factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 					clear(true);
 					m_type = STRUCT_MULTIPLICATION;
 					APPEND_REF(factor_mstruct);
@@ -14853,7 +14907,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				}
 				factor_mstruct->unref();
 
-				if(SIZE > 1 && CHILD(SIZE - 1).isNumber() && CHILD(SIZE - 1).number().isInteger()) {
+				if(SIZE > 1 && CHILD(SIZE - 1).isNumber() && CHILD(SIZE - 1).number().isInteger() && max_factor_degree != 0) {
 					MathStructure *xvar = NULL;
 					Number qnr(1, 1);
 					int degree = 1;
@@ -15056,7 +15110,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 										}
 									}
 								}
-								mleft.factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+								mleft.factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 								vector<long int> powers;
 								vector<size_t> powers_i;
 								int dupsfound = 0;
@@ -15183,7 +15237,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								return true;
 							}
 						}
-						if(b && b2 && degree > 3 && degree < 20) {
+						
+						if(b && b2 && (max_factor_degree < 0 || max_factor_degree >= 2) && degree > 3) {
 							// Kronecker method
 							vector<long int> vnum;
 							vnum.resize(degree + 1, 0);
@@ -15235,10 +15290,11 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 							vector<int> vs;
 							if(b && lcoeff != 0) {
 								degree /= 2;
-								if(degree > 4) degree = 4;
+								if(max_factor_degree > 0 && degree > max_factor_degree) degree = max_factor_degree;
 								for(int i = 0; i <= degree; i++) {
+									if(CALCULATOR->aborted()) return false;
 									MathStructure mcalc(*this);
-									mcalc.calculateReplace(*xvar, Number(i == 4 ? -2 : i - 1, 1), eo);
+									mcalc.calculateReplace(*xvar, Number((i / 2 + i % 2) * (i % 2 == 0 ? -1 : 1), 1), eo);
 									mcalc.calculatesub(eo, eo, false);
 									if(!mcalc.isInteger()) break;
 									bool overflow = false;
@@ -15254,12 +15310,12 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 							if(b) {
 								vector<int> factors0, factorsl;
 								factors0.push_back(1);
-								for(int i = 2; i < vs[1] / 3 && i < 1000; i++) {
-									if(vs[1] % i == 0) factors0.push_back(i);
+								for(int i = 2; i < vs[0] / 3 && i < 1000; i++) {
+									if(vs[0] % i == 0) factors0.push_back(i);
 								}
-								if(vs[1] % 3 == 0) factors0.push_back(vs[1] / 3);
-								if(vs[1] % 2 == 0) factors0.push_back(vs[1] / 2);
-								factors0.push_back(vs[1]);
+								if(vs[0] % 3 == 0) factors0.push_back(vs[0] / 3);
+								if(vs[0] % 2 == 0) factors0.push_back(vs[0] / 2);
+								factors0.push_back(vs[0]);
 								for(int i = 2; i < lcoeff / 3 && i < 1000; i++) {
 									if(lcoeff % i == 0) factorsl.push_back(i);
 								}
@@ -15268,7 +15324,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								if(lcoeff % 2 == 0) factorsl.push_back(lcoeff / 2);
 								factorsl.push_back(lcoeff);
 
-								long int cmax = 1000000L / (factors0.size() * factorsl.size());
+								long long int cmax = 500000LL / (factors0.size() * factorsl.size());
+								if(term_combination_levels != 0) cmax *= 10;
 								if(degree >= 2 && cmax > 10) {
 									vector<long int> vden;
 									vector<long int> vquo;
@@ -15280,22 +15337,23 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 										long int c2;
 										for(size_t i2 = 0; i2 < factorsl.size(); i2++) {
 											c2 = factorsl[i2];
-											long int c1max = vs[2] - c0 - c2, c1min;
-											if(c1max < 0) {c1min = c1max; c1max = -vs[2] - c0 - c2;}
-											else {c1min = -vs[2] - c0 - c2;}
-											if(-(vs[0] - c0 - c2) < -(-vs[0] - c0 - c2)) {
-												if(c1max > -(-vs[0] - c0 - c2)) c1max = -(-vs[0] - c0 - c2);
-												if(c1min < -(vs[0] - c0 - c2)) c1min = -(vs[0] - c0 - c2);
+											long int c1max = vs[1] - c0 - c2, c1min;
+											if(c1max < 0) {c1min = c1max; c1max = -vs[1] - c0 - c2;}
+											else {c1min = -vs[1] - c0 - c2;}
+											if(-(vs[2] - c0 - c2) < -(-vs[2] - c0 - c2)) {
+												if(c1max > -(-vs[2] - c0 - c2)) c1max = -(-vs[2] - c0 - c2);
+												if(c1min < -(vs[2] - c0 - c2)) c1min = -(vs[2] - c0 - c2);
 											} else {
-												if(c1max > -(vs[0] - c0 - c2)) c1max = -(vs[0] - c0 - c2);
-												if(c1min < -(-vs[0] - c0 - c2)) c1min = -(-vs[0] - c0 - c2);
+												if(c1max > -(vs[2] - c0 - c2)) c1max = -(vs[2] - c0 - c2);
+												if(c1min < -(-vs[2] - c0 - c2)) c1min = -(-vs[2] - c0 - c2);
 											}
 											if(c1min < -cmax / 2) c1min = -cmax / 2;
 											for(long int c1 = c1min; c1 <= c1max && c1 <= cmax / 2; c1++) {
 												long int v1 = ::labs(c2 + c1 + c0);
 												long int v2 = ::labs(c2 - c1 + c0);
-												if(v1 != 0 && v2 != 0 && v1 <= vs[2] && v2 <= vs[0] && (c1 != 0 || c2 != 0) && vs[2] % v1 == 0 && vs[0] % v2 == 0) {
+												if(v1 != 0 && v2 != 0 && v1 <= vs[1] && v2 <= vs[2] && (c1 != 0 || c2 != 0) && vs[1] % v1 == 0 && vs[2] % v2 == 0) {
 													vden[0] = c0; vden[1] = c1; vden[2] = c2;
+													if(CALCULATOR->aborted()) return false;
 													if(polynomial_divide_integers(vnum, vden, vquo)) {
 														MathStructure mtest;
 														mtest.setType(STRUCT_ADDITION);
@@ -15327,7 +15385,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 														MathStructure mthis(*this);
 														MathStructure mquo;
 														if(mtest.size() > 1 && polynomialDivide(mthis, mtest, mquo, eo, false)) {
-															mquo.factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+															mquo.factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 															set(mquo, true);
 															multiply(mtest, true);
 															return true;
@@ -15338,92 +15396,108 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 										}
 									}
 								}
-								cmax = (long int) ::sqrt(cmax);
-								if(degree >= 3 && cmax > 10) {
-									long int c0;
+								for(int i_d = 3; i_d <= degree; i_d++) {
+									if(CALCULATOR->aborted()) return false;
+									long int t1max = ::pow(cmax / (i_d - 1), 1.0 / (i_d - 1));
+									if(t1max < 1) break;
+									if(t1max > 1000) t1max = 1000;
+									long int c2totalmax = t1max;
+									long int c2cur;
+									for(int i = 0; i < i_d - 3; i++) {
+										c2totalmax *= t1max;
+									}
 									vector<long int> vden;
 									vector<long int> vquo;
-									vden.resize(4, 0);
+									long int *vc = (long int*) malloc(sizeof(long int) * (i_d + 1));
+									vden.resize(i_d + 1, 0);
+									int in = 0;
 									for(size_t i = 0; i < factors0.size() * 2; i++) {
-										c0 = factors0[i / 2];
-										if(i % 2 == 1) c0 = -c0;
-										long int c3;
+										vc[0] = factors0[i / 2] * (i % 2 == 1 ? -1 : 1);
 										for(size_t i2 = 0; i2 < factorsl.size(); i2++) {
-											c3 = factorsl[i2];
-											for(long int c2p = 0; c2p <= 40 && c2p <= cmax; c2p++) {
-												long int c2 = c2p / 2;
-												if(c2p % 2 == 1) c2 = -c2;
-												long int c1max = vs[2] - c0 - c2 - c3, c1min;
-												if(c1max < -vs[2] - c0 - c2 - c3) {c1min = c1max; c1max = -vs[2] - c0 - c2 - c3;}
-												else {c1min = -vs[2] - c0 - c2 - c3;}
-												if(-(vs[0] - c0 - c2 + c3) < -(-vs[0] - c0 - c2 + c3)) {
-													if(c1max > -(-vs[0] - c0 - c2 + c3)) c1max = -(-vs[0] - c0 - c2 + c3);
-													if(c1min < -(vs[0] - c0 - c2 + c3)) c1min = -(vs[0] - c0 - c2 + c3);
-												} else {
-													if(c1max > -(vs[0] - c0 - c2 + c3)) c1max = -(vs[0] - c0 - c2 + c3);
-													if(c1min < -(-vs[0] - c0 - c2 + c3)) c1min = -(-vs[0] - c0 - c2 + c3);
+											vc[i_d] = factorsl[i2];
+											for(long int c2p = 0; c2p <= c2totalmax; c2p++) {
+												c2cur = c2p;
+												for(int i = 2; i < i_d; i++) {
+													vc[i] = c2cur % t1max;
+													if(vc[i] % 2 == 1) vc[i] = -vc[i];
+													vc[i] = vc[i] / 2 + vc[i] % 2;
+													c2cur /= t1max;
 												}
-												if(vs[3] - c0 - c2 * 4 - c3 * 8 < -vs[3] - c0 - c2 * 4 - c3 * 8) {
-													if(c1max > (-vs[3] - c0 - c2 * 4 - c3 * 8) / 2) c1max = (-vs[3] - c0 - c2 * 4 - c3 * 8) / 2;
-													if(c1min < (vs[3] - c0 - c2 * 4 - c3 * 8) / 2) c1min = (vs[3] - c0 - c2 * 4 - c3 * 8) / 2;
-												} else {
-													if(c1max > (vs[3] - c0 - c2 * 4 - c3 * 8) / 2) c1max = (vs[3] - c0 - c2 * 4 - c3 * 8) / 2;
-													if(c1min < (-vs[3] - c0 - c2 * 4 - c3 * 8) / 2) c1min = (-vs[3] - c0 - c2 * 4 - c3 * 8) / 2;
+												long int c1max = t1max / 2 + t1max % 2, c1min = -t1max / 2 - t1max % 2;
+												for(size_t i = 1; i < vs.size(); i++) {
+													long int vsmax = vs[i] - vc[0];
+													long int vsmin = -vs[i] - vc[0];
+													int ix = (i / 2 + i % 2) * (i % 2 == 0 ? -1 : 1);
+													int ixi = ix;
+													for(int i2 = 2; i2 <= i_d; i2++) {
+														ixi *= ix;
+														vsmax -= vc[i2] * ixi;
+													}
+													vsmax /= ix;
+													vsmin /= ix;
+													if(vsmax < vsmin) {
+														if(c1max > vsmin) c1max = vsmin;
+														if(c1min < vsmax) c1min = vsmax;
+													} else {
+														if(c1max > vsmax) c1max = vsmax;
+														if(c1min < vsmin) c1min = vsmin;
+													}
 												}
-												if(c1min < -cmax / 2) c1min = -cmax / 2;
-												for(long int c1 = c1min; c1 <= c1max && c1 <= cmax / 2; c1++) {
-													long int v1 = ::labs(c3 + c2 + c1 + c0);
-													long int v2 = ::labs(-c3 + c2 - c1 + c0);
-													long int v3 = ::labs(c3 * 8 + c2 * 4 + c1 * 2 + c0);
-													if(v1 != 0 && v2 != 0 && v3 != 0 && v1 <= vs[2] && v2 <= vs[0] && v3 <= vs[3] && vs[2] % v1 == 0 && vs[0] % v2 == 0 && vs[3] % v3 == 0) {
-														vden[0] = c0; vden[1] = c1; vden[2] = c2; vden[3] = c3;
-														if(polynomial_divide_integers(vnum, vden, vquo)) {
+												for(long int c1 = c1min; c1 <= c1max; c1++) {
+													vc[1] = c1;
+													bool b = true;
+													for(size_t i = 1; i < vs.size(); i++) {
+														long int v = vc[0];
+														int ix = (i / 2 + i % 2) * (i % 2 == 0 ? -1 : 1);
+														int ixi = 1;
+														for(int i2 = 1; i2 <= i_d; i2++) {
+															ixi *= ix;
+															v += vc[i2] * ixi;
+														}
+														if(v < 0) v = -v;
+														if(v == 0 || v > vs[i] || vs[i] % v != 0) {
+															b = false;
+															break;
+														}
+													}
+													in++;
+													if(b) {
+														if(CALCULATOR->aborted()) return false;
+														if(polynomial_divide_integers(vnum, vc, i_d + 1, vquo)) {
 															MathStructure mtest;
 															mtest.setType(STRUCT_ADDITION);
-															if(c3 != 0) {
-																MathStructure *mpow = new MathStructure();
-																mpow->setType(STRUCT_POWER);
-																mpow->addChild(*xvar);
-																mpow->addChild_nocopy(new MathStructure(3, 1, 0));
-																if(c3 == 1) {
-																	mtest.addChild_nocopy(mpow);
-																} else {
-																	MathStructure *mterm = new MathStructure();
-																	mterm->setType(STRUCT_MULTIPLICATION);
-																	mterm->addChild_nocopy(new MathStructure(c3, 1L, 0L));
-																	mterm->addChild_nocopy(mpow);
-																	mtest.addChild_nocopy(mterm);
+															for(int i2 = i_d; i2 >= 2; i2--) {
+																if(vc[i2] != 0) {
+																	MathStructure *mpow = new MathStructure();
+																	mpow->setType(STRUCT_POWER);
+																	mpow->addChild(*xvar);
+																	mpow->addChild_nocopy(new MathStructure(i2, 1, 0));
+																	if(vc[i2] == 1) {
+																		mtest.addChild_nocopy(mpow);
+																	} else {
+																		MathStructure *mterm = new MathStructure();
+																		mterm->setType(STRUCT_MULTIPLICATION);
+																		mterm->addChild_nocopy(new MathStructure(vc[i2], 1L, 0L));
+																		mterm->addChild_nocopy(mpow);
+																		mtest.addChild_nocopy(mterm);
+																	}
 																}
 															}
-															if(c2 != 0) {
-																MathStructure *mpow = new MathStructure();
-																mpow->setType(STRUCT_POWER);
-																mpow->addChild(*xvar);
-																mpow->addChild_nocopy(new MathStructure(2, 1, 0));
-																if(c2 == 1) {
-																	mtest.addChild_nocopy(mpow);
-																} else {
-																	MathStructure *mterm = new MathStructure();
-																	mterm->setType(STRUCT_MULTIPLICATION);
-																	mterm->addChild_nocopy(new MathStructure(c2, 1L, 0L));
-																	mterm->addChild_nocopy(mpow);
-																	mtest.addChild_nocopy(mterm);
-																}
-															}
-															if(c1 == 1) {
+															if(vc[1] == 1) {
 																mtest.addChild(*xvar);
-															} else if(c1 != 0) {
+															} else if(vc[1] != 0) {
 																MathStructure *mterm = new MathStructure();
 																mterm->setType(STRUCT_MULTIPLICATION);
-																mterm->addChild_nocopy(new MathStructure(c1, 1L, 0L));
+																mterm->addChild_nocopy(new MathStructure(vc[1], 1L, 0L));
 																mterm->addChild(*xvar);
 																mtest.addChild_nocopy(mterm);
 															}
-															mtest.addChild_nocopy(new MathStructure(c0, 1L, 0L));
+															mtest.addChild_nocopy(new MathStructure(vc[0], 1L, 0L));
 															MathStructure mthis(*this);
 															MathStructure mquo;
 															if(mtest.size() > 1 && polynomialDivide(mthis, mtest, mquo, eo, false)) {
-																mquo.factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+																mquo.factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
+																free(vc);
 																set(mquo, true);
 																multiply(mtest, true);
 																return true;
@@ -15434,130 +15508,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 											}
 										}
 									}
-								}
-								cmax = (long int) ::sqrt(cmax);
-								if(degree >= 4 && cmax > 10) {
-									long int c0;
-									vector<long int> vden;
-									vector<long int> vquo;
-									vden.resize(5, 0);
-									for(size_t i = 0; i < factors0.size() * 2; i++) {
-										c0 = factors0[i / 2];
-										if(i % 2 == 1) c0 = -c0;
-										long int c4;
-										for(size_t i2 = 0; i2 < factorsl.size(); i2++) {
-											c4 = factorsl[i2];
-											for(long int c2p = 0; c2p <= 40 && c2p <= cmax; c2p++) {
-												long int c2 = c2p / 2;
-												if(c2p % 2 == 1) c2 = -c2;
-												for(long int c3p = 0; c3p <= 40 && c3p <= cmax; c3p++) {
-													long int c3 = c3p / 2;
-													if(c3p % 2 == 1) c3 = -c3;
-													long int c1max = vs[2] - c0 - c2 - c3 - c4, c1min;
-													if(c1max < -vs[2] - c0 - c2 - c3 - c4) {c1min = c1max; c1max = -vs[2] - c0 - c2 - c3 - c4;}
-													else {c1min = -vs[2] - c0 - c2 - c3 - c4;}
-													if(-(vs[0] - c0 - c2 + c3 - c4) < -(-vs[0] - c0 - c2 + c3 - c4)) {
-														if(c1max > -(-vs[0] - c0 - c2 + c3 - c4)) c1max = -(-vs[0] - c0 - c2 + c3 - c4);
-														if(c1min < -(vs[0] - c0 - c2 + c3 - c4)) c1min = -(vs[0] - c0 - c2 + c3 - c4);
-													} else {
-														if(c1max > -(vs[0] - c0 - c2 + c3 - c4)) c1max = -(vs[0] - c0 - c2 + c3 - c4);
-														if(c1min < -(-vs[0] - c0 - c2 + c3 - c4)) c1min = -(-vs[0] - c0 - c2 + c3 - c4);
-													}
-													if(vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16 < -vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) {
-														if(c1max > (-vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2) c1max = (-vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2;
-														if(c1min < (vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2) c1min = (vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2;
-													} else {
-														if(c1max > (vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2) c1max = (vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2;
-														if(c1min < (-vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2) c1min = (-vs[3] - c0 - c2 * 4 - c3 * 8 - c4 * 16) / 2;
-													}
-													if(-(vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) < -(-vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16)) {
-														if(c1max > -(-vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2) c1max = -(-vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2;
-														if(c1min < -(vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2) c1min = -(vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2;
-													} else {
-														if(c1max > -(vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2) c1max = -(vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2;
-														if(c1min < -(-vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2) c1min = -(-vs[4] - c0 - c2 * 4 + c3 * 8 - c4 * 16) / 2;
-													}
-													if(c1min < -cmax / 2) c1min = -cmax / 2;
-													for(long int c1 = c1min; c1 <= c1max && c1 <= cmax / 2; c1++) {
-														long int v1 = ::labs(c4 + c3 + c2 + c1 + c0);
-														long int v2 = ::labs(c4 + -c3 + c2 - c1 + c0);
-														long int v3 = ::labs(c4 * 16 + c3 * 8 + c2 * 4 + c1 * 2 + c0);
-														long int v4 = ::labs(c4 * 16 - c3 * 8 + c2 * 4 - c1 * 2 + c0);
-														if(v1 != 0 && v2 != 0 && v3 != 0 && v4 != 0 && v1 <= vs[2] && v2 <= vs[0] && v3 <= vs[3] && v4 <= vs[4] && vs[2] % v1 == 0 && vs[0] % v2 == 0 && vs[3] % v3 == 0 && vs[4] % v4 == 0) {
-															vden[0] = c0; vden[1] = c1; vden[2] = c2; vden[3] = c3; vden[4] = c4;
-															if(polynomial_divide_integers(vnum, vden, vquo)) {
-																MathStructure mtest;
-																mtest.setType(STRUCT_ADDITION);
-																if(c4 != 0) {
-																	MathStructure *mpow = new MathStructure();
-																	mpow->setType(STRUCT_POWER);
-																	mpow->addChild(*xvar);
-																	mpow->addChild_nocopy(new MathStructure(4, 1, 0));
-																	if(c3 == 1) {
-																		mtest.addChild_nocopy(mpow);
-																	} else {
-																		MathStructure *mterm = new MathStructure();
-																		mterm->setType(STRUCT_MULTIPLICATION);
-																		mterm->addChild_nocopy(new MathStructure(c4, 1L, 0L));
-																		mterm->addChild_nocopy(mpow);
-																		mtest.addChild_nocopy(mterm);
-																	}
-																}
-																if(c3 != 0) {
-																	MathStructure *mpow = new MathStructure();
-																	mpow->setType(STRUCT_POWER);
-																	mpow->addChild(*xvar);
-																	mpow->addChild_nocopy(new MathStructure(3, 1, 0));
-																	if(c3 == 1) {
-																		mtest.addChild_nocopy(mpow);
-																	} else {
-																		MathStructure *mterm = new MathStructure();
-																		mterm->setType(STRUCT_MULTIPLICATION);
-																		mterm->addChild_nocopy(new MathStructure(c3, 1L, 0L));
-																		mterm->addChild_nocopy(mpow);
-																		mtest.addChild_nocopy(mterm);
-																	}
-																}
-																if(c2 != 0) {
-																	MathStructure *mpow = new MathStructure();
-																	mpow->setType(STRUCT_POWER);
-																	mpow->addChild(*xvar);
-																	mpow->addChild_nocopy(new MathStructure(2, 1, 0));
-																	if(c2 == 1) {
-																		mtest.addChild_nocopy(mpow);
-																	} else {
-																		MathStructure *mterm = new MathStructure();
-																		mterm->setType(STRUCT_MULTIPLICATION);
-																		mterm->addChild_nocopy(new MathStructure(c2, 1L, 0L));
-																		mterm->addChild_nocopy(mpow);
-																		mtest.addChild_nocopy(mterm);
-																	}
-																}
-																if(c1 == 1) {
-																	mtest.addChild(*xvar);
-																} else if(c1 != 0) {
-																	MathStructure *mterm = new MathStructure();
-																	mterm->setType(STRUCT_MULTIPLICATION);
-																	mterm->addChild_nocopy(new MathStructure(c1, 1L, 0L));
-																	mterm->addChild(*xvar);
-																	mtest.addChild_nocopy(mterm);
-																}
-																mtest.addChild_nocopy(new MathStructure(c0, 1L, 0L));
-																MathStructure mthis(*this);
-																MathStructure mquo;
-																if(mtest.size() > 1 && polynomialDivide(mthis, mtest, mquo, eo, false)) {
-																	mquo.factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
-																	set(mquo, true);
-																	multiply(mtest, true);
-																	return true;
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
+									free(vc);
 								}
 							}
 						}
@@ -15565,7 +15516,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					}
 				}
 
-				if(SIZE == 2) {
+				if(SIZE == 2 && max_factor_degree != 0) {
 					Number nr1(1, 1, 0), nr2(1, 1, 0);
 					bool b = true;
 					bool b1_neg = false, b2_neg = false;
@@ -15672,8 +15623,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 							mmul->calculatesub(eo, eo, false);
 						}
 						if(recursive) {
-							factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
-							mmul->factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+							factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
+							mmul->factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 						}
 						multiply_nocopy(mmul);
 						evalSort(true);
@@ -15682,7 +15633,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				}
 
 				//x^3-y^3=(x-y)(x^2+xy+y^2)
-				if(SIZE == 2 && CHILD(0).isPower() && CHILD(0)[1].isNumber() && CHILD(0)[1].number() == 3 && CHILD(1).isMultiplication() && CHILD(1).size() == 2 && CHILD(1)[0].isMinusOne() && CHILD(1)[1].isPower() && CHILD(1)[1][1].isNumber() && CHILD(1)[1][1].number() == 3) {
+				if(max_factor_degree != 0 && SIZE == 2 && CHILD(0).isPower() && CHILD(0)[1].isNumber() && CHILD(0)[1].number() == 3 && CHILD(1).isMultiplication() && CHILD(1).size() == 2 && CHILD(1)[0].isMinusOne() && CHILD(1)[1].isPower() && CHILD(1)[1][1].isNumber() && CHILD(1)[1][1].number() == 3) {
 					if(CHILD(0)[0].representsNonMatrix() && CHILD(1)[1][0].representsNonMatrix()) {
 						MathStructure *m2 = new MathStructure(*this);
 						(*m2)[0].setToChild(1, true);
@@ -15703,7 +15654,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					}
 				}
 				//-x^3+y^3=(-x+y)(x^2+xy+y^2)
-				if(SIZE == 2 && CHILD(1).isPower() && CHILD(1)[1].isNumber() && CHILD(1)[1].number() == 3 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isMinusOne() && CHILD(0)[1].isPower() && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number() == 3) {
+				if(max_factor_degree != 0 && SIZE == 2 && CHILD(1).isPower() && CHILD(1)[1].isNumber() && CHILD(1)[1].number() == 3 && CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isMinusOne() && CHILD(0)[1].isPower() && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number() == 3) {
 					if(CHILD(1)[0].representsNonMatrix() && CHILD(0)[1][0].representsNonMatrix()) {
 						MathStructure *m2 = new MathStructure(*this);
 						(*m2)[1].setToChild(1, true);
@@ -15724,7 +15675,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					}
 				}
 
-				if(!only_integers && !force_factorization.isUndefined() && SIZE >= 2) {
+				if(max_factor_degree != 0 && !only_integers && !force_factorization.isUndefined() && SIZE >= 2) {
 					MathStructure mexp, madd, mmul;
 					if(gather_factors(*this, force_factorization, madd, mmul, mexp) && !madd.isZero() && !mmul.isZero() && mexp.isInteger() && mexp.number().isGreaterThan(nr_two)) {
 						if(!mmul.isOne()) madd.calculateDivide(mmul, eo);
@@ -15836,7 +15787,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 												CHILD_UPDATED(i)
 												delChild(i3, true);
 												evalSort(true);
-												factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+												factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 												return true;
 											}
 										}
@@ -15851,7 +15802,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 										add(m_one, true);
 										multiply(mtest);
 										evalSort(true);
-										factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+										factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 										return true;
 									}
 								}
@@ -15862,7 +15813,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 			}
 
 			//complete the square
-			if(term_combination_levels != 0 || complete_square) {
+			if(max_factor_degree != 0 && (term_combination_levels != 0 || complete_square)) {
 				if(only_integers) {
 					if(SIZE <= 3 && SIZE > 1) {
 						MathStructure *xvar = NULL;
@@ -15951,8 +15902,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						m0.calculateAdd(m1, eo);
 						if(!m0.isZero()) add(m0);
 						if(recursive) {
-							CHILD(0).factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
-							CHILD(1).factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+							CHILD(0).factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
+							CHILD(1).factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 							CHILDREN_UPDATED
 						}
 						evalSort(true);
@@ -15995,7 +15946,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 
 					MathStructure mtest(*this);
 					mtest.delChild(index + 1);
-					if(mtest.factorize(eo, false, run_index == 0 ? 0 : -1 - run_index, 0, only_integers, false, endtime_p, force_factorization, complete_square, only_sqrfree)) {
+					if(mtest.factorize(eo, false, run_index == 0 ? 0 : -1 - run_index, 0, only_integers, false, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree)) {
 						bool b = best_index < 0 || (mbest.isAddition() && !mtest.isAddition());
 						if(!b && (mtest.isAddition() == mbest.isAddition())) {
 							b = mtest.isAddition() && (mtest.size() < mbest.size());
@@ -16030,7 +15981,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					mbest.add(CHILD(best_index), true);
 					set(mbest);
 					if(term_combination_levels >= -1 && (run_index > 0 || recursive)) {
-						factorize(eo, false, term_combination_levels, 0, only_integers, true, endtime_p, force_factorization, complete_square, only_sqrfree);
+						factorize(eo, false, term_combination_levels, 0, only_integers, true, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 					}
 					return true;
 				}
@@ -16044,14 +15995,14 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				EvaluationOptions eo2 = eo;
 				eo2.assume_denominators_nonzero = false;
 				for(size_t i = 0; i < SIZE; i++) {
-					if(CHILD(i).factorize(eo2, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree)) {
+					if(CHILD(i).factorize(eo2, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree)) {
 						CHILD_UPDATED(i);
 						b = true;
 					}
 				}
 			} else if(recursive && (recursive > 1 || !isAddition())) {
 				for(size_t i = 0; i < SIZE; i++) {
-					if(CHILD(i).factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree)) {
+					if(CHILD(i).factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree)) {
 						CHILD_UPDATED(i);
 						b = true;
 					}
@@ -16082,7 +16033,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 													CHILD_UPDATED(i)
 													delChild(i3 + 1, true);
 													evalSort(true);
-													factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+													factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 													return true;
 												}
 											}
@@ -16097,7 +16048,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 											add(m_one, true);
 											multiply(mtest);
 											evalSort(true);
-											factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree);
+											factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 											return true;
 										}
 									}
@@ -28042,7 +27993,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							mtest.childrenUpdated();
 						}
 					}
-					if(mtest[0].factorize(eo2, false, false, 0, false, false) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && ((mtest[0][0].isNumber() && mtest[0][1].isAddition()) || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
+					if(mtest[0].factorize(eo2, false, false, 0, false, false, NULL, m_undefined, false, false, 3) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && ((mtest[0][0].isNumber() && mtest[0][1].isAddition()) || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
 						mtest.childUpdated(1);
 						if(mtest.isolate_x_sub(eo, eo2, x_var, this)) {
 							set_nocopy(mtest);
@@ -28663,7 +28614,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			// Try factorization
 			if((!morig || !equals(*morig)) && !CHILD(1).isZero()) {
 				MathStructure mtest(*this);
-				if(mtest[0].factorize(eo2, false, false, 0, false, false) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && (mtest[0][0].isNumber() || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
+				if(mtest[0].factorize(eo2, false, false, 0, false, false, NULL, m_undefined, false, false, 3) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && (mtest[0][0].isNumber() || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
 					mtest.childUpdated(1);
 					if(mtest.isolate_x_sub(eo, eo2, x_var, this)) {
 						set_nocopy(mtest);
@@ -29523,7 +29474,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				mtest[0].calculateSubtract(CHILD(1), eo2);
 				mtest[1].clear();
 				mtest.childrenUpdated();
-				if(mtest[0].factorize(eo2, false, false, 0, false, false) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && (mtest[0][0].isNumber() || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
+				if(mtest[0].factorize(eo2, false, false, 0, false, false, NULL, m_undefined, false, false, 3) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && (mtest[0][0].isNumber() || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
 					mtest.childUpdated(1);
 					if(mtest.isolate_x_sub(eo, eo2, x_var, this)) {
 						set_nocopy(mtest);

@@ -1,9 +1,32 @@
+2018-10-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Simplify (e^(a*i))^(b) when a and b are real numbers, and b equals 1/2 or abs(a) < pi
+	* Test result for ln(x)=a if a is complex
+	* Solutions for x*ln(a*x)=b and x^2*ln(a*x)=b, and a*x+ln(b*x)=c
+	* Fix precision property for a^(+/-infinity)
+
+2018-10-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Newton-raphson fixes/improvements
+	* Use Lambert W branches for complex solutions
+	* Add solution for a*b^x+cx=d when d != 0
+	* Calculate all complex solutions for x^(a/b)=c
+	* Make n variable available to user
+
+2018-10-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Univariate factorization (non-square free) for polynomial factors with degree >= 2 (simple algorithm based on Kronecker method)
+	* Add branch argument to lambertw() (only the principal branch is calculated)
+	* Fix segfault in gcd with very large polynomial degree (restrict to < 1000)
+
 2018-10-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
+	* Improve a*x*b^(c*x)=d
 	* Solve a*b^x+cx=0
 	* Improve x^(a*x^b)=c
 	* Simplification and factorization fixes
 	* sqrt(a)/a=1/sqrt(a) for rational numbers
+	* Fix a^x=b for complex x, and (-1)^x=1 and (-1)^x=1 for real x
 
 2018-10-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
