@@ -6597,7 +6597,7 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 		} else {
 			MathStructure mfactor(m_eqn);
 			mfactor[1].factorize(eo, false, 0, 0, false, false, NULL, m_x);
-			if(mfactor[1].isMultiplication()&& mfactor[1].size() >= 2) {
+			if(mfactor[1].isMultiplication() && mfactor[1].size() >= 2) {
 				mfactor.childUpdated(2);
 				if(dsolve(mfactor, eo, m_diff, y_value, x_value)) {
 					m_eqn = mfactor;
