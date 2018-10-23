@@ -1,3 +1,10 @@
+2018-10-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix endless loop with (x^8)^(52^(1/10)) and similar if x is assumed negative
+	* Fix simplification of a*log(b)+c*log(d) when b or d is complex
+	* Fix "E-" in +/- number interval specification
+	* Fix segfault in interval variable factorization
+
 2018-10-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Simplify (e^(a*i))^(b) when a and b are real numbers, and b equals 1/2 or abs(a) < pi

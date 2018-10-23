@@ -5568,9 +5568,10 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		return false;
 	}
 	int minus_count = 0;
-	bool has_sign = false, had_non_sign = false, b_dot = false, b_exp = false;
+	bool has_sign = false, had_non_sign = false, b_dot = false, b_exp = false, after_sign_e = false;
 	int i_colon = 0;
 	size_t i = 0;
+
 	while(i < str.length()) {
 		if(!had_non_sign && str[i] == MINUS_CH) {
 			has_sign = true;
@@ -5584,21 +5585,36 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		} else if(!b_exp && (po.base <= 10 && po.base >= 2) && (str[i] == EXP_CH || str[i] == EXP2_CH)) {
 			b_exp = true;
 			had_non_sign = true;
+			after_sign_e = true;
+			i++;
+		} else if(after_sign_e && (str[i] == MINUS_CH || str[i] == PLUS_CH)) {
+			after_sign_e = false;
+			i++;
 		} else if(po.preserve_format && str[i] == DOT_CH) {
 			b_dot = true;
 			had_non_sign = true;
+			after_sign_e = false;
 			i++;
 		} else if(po.preserve_format && (!b_dot || i_colon > 0) && str[i] == ':') {
 			i_colon++;
 			had_non_sign = true;
+			after_sign_e = false;
 			i++;
 		} else if(str[i] == COMMA_CH && DOT_S == ".") {
 			str.erase(i, 1);
+			after_sign_e = false;
+			had_non_sign = true;
 		} else if(is_in(OPERATORS, str[i])) {
 			error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
+		} else if(str[i] == '\b') {
+			b_exp = false;
+			had_non_sign = false;
+			after_sign_e = false;
+			i++;
 		} else {
 			had_non_sign = true;
+			after_sign_e = false;
 			i++;
 		}
 	}
@@ -5865,20 +5881,17 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				size_t depth = 1;
 				i2 = i;
 				while((i2 = str.find("||", i2 + 2)) != string::npos) {
-					cout << i2 << endl;
 					if(is_in(OPERATORS, str[i2 - 1])) depth++;
 					else depth--;
 					if(depth == 0) break;
 				}
 				if(i2 == string::npos) str2 = str.substr(i + 2);
 				else str2 = str.substr(i + 2, i2 - (i + 2));
-				cout << str2 << endl;
 				str3 = ID_WRAP_LEFT;
 				str3 += i2s(parseAddId(f_magnitude, str2, po));
 				str3 += ID_WRAP_RIGHT;
 				if(i2 == string::npos) str.replace(i, str.length() - i, str3);
 				else str.replace(i, i2 - i + 2, str3);
-				cout << str << endl;
 			} else {
 				size_t depth = 1;
 				i2 = i;
