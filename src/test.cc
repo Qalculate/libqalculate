@@ -1098,10 +1098,15 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 							sr1 = "0";
 						}
 					}
-					if(sr1 != sr2 || si1 != si2) {
-						rt9++;
-						cout << mp << ":" << nr_iv << endl;
-						cout << "UNEQUAL4: " << m1.print(po) << ":" << m2.print(po) << endl;
+					if((sr1 != sr2 && sr1.length() < 10) || (si1 != si2 && si1.length() < 10)) {
+						po.max_decimals = 1;
+						if(sr1 != sr2) sr2 = m2.number().realPart().print(po);
+						if(si1 != si2) si2 = m2.number().imaginaryPart().print(po);
+						if((sr1 != sr2 && sr1.length() < 10) || (si1 != si2 && si1.length() < 10)) {
+							rt9++;
+							cout << mp << ":" << nr_iv << endl;
+							cout << "UNEQUAL4: " << m1.print(po) << ":" << m2.print(po) << endl;
+						}
 					}
 				}
 			}
@@ -1328,10 +1333,15 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 							sr1 = "0";
 						}
 					}
-					if(sr1 != sr2 || si1 != si2) {
-						rt9++;
-						cout << mp << ":" << nr_iv << endl;
-						cout << "UNEQUAL4: " << m1.print(po) << ":" << m2.print(po) << endl;
+					if((sr1 != sr2 && sr1.length() < 10) || (si1 != si2 && si1.length() < 10)) {
+						po.max_decimals = 1;
+						if(sr1 != sr2) sr2 = m2.number().realPart().print(po);
+						if(si1 != si2) si2 = m2.number().imaginaryPart().print(po);
+						if((sr1 != sr2 && sr1.length() < 10) || (si1 != si2 && si1.length() < 10)) {
+							rt9++;
+							cout << mp << ":" << nr_iv << endl;
+							cout << "UNEQUAL4: " << m1.print(po) << ":" << m2.print(po) << endl;
+						}
 					}
 				}
 			}
@@ -1549,52 +1559,54 @@ int main(int argc, char *argv[]) {
 	v = new KnownVariable("", "v", m_zero);
 	
 	/*for(size_t i = 0; i < 10000; i++) {
-		rnd_test(evalops, false, true, false, false);
-	}
-	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl << endl;*/
-	
-	/*for(size_t i = 0; i < 10000; i++) {
-		rnd_test(evalops, false, false, false, false);
-	}
-	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl << endl;*/
-	
-	/*for(size_t i = 0; i < 10000; i++) {
 		rnd_test(evalops, 4, false, true, true);
 		if(i % 1000 == 0) cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl;
 	}
-	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl << endl;*/
-	
-	for(size_t i = 0; i < 10000; i++) {
-		rnd_test(evalops, 4, true, true, true);
-		if(i % 1000 == 0) cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl;
-	}
 	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl << endl;
+	
+	for(size_t i = 0; i < 5000; i++) {
+		rnd_test(evalops, 4, true, true, true);
+		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
+	}
+	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 	
 	CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 	
 	for(size_t i = 0; i < 10000; i++) {
 		rnd_test(evalops, 4, false, true, true);
-		if(i % 1000 == 0) cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl;
+		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
-	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl << endl;
+	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 	
-	for(size_t i = 0; i < 10000; i++) {
+	for(size_t i = 0; i < 5000; i++) {
 		rnd_test(evalops, 4, true, true, true);
-		if(i % 1000 == 0) cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl;
+		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
-	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl << endl;
+	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;*/
 	
 	CALCULATOR->useIntervalArithmetic();
 	
+	for(size_t i = 0; i < 5000; i++) {
+		rnd_test(evalops, 4, false, false, true);
+		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
+	}
+	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
+	
 	for(size_t i = 0; i < 10000; i++) {
-		rnd_test(evalops, 4, false, true, true);
-		if(i % 1000 == 0) cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl;
+		rnd_test(evalops, 4, true, false, true);
+		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
+	}
+	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
+	
+	CALCULATOR->useIntervalArithmetic(false);
+	
+	for(size_t i = 0; i < 10000; i++) {
+		rnd_test(evalops, false, true, false, false);
 	}
 	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl << endl;
 	
 	for(size_t i = 0; i < 10000; i++) {
-		rnd_test(evalops, 4, true, true, true);
-		if(i % 1000 == 0) cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl;
+		rnd_test(evalops, false, false, false, false);
 	}
 	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl << endl;
 

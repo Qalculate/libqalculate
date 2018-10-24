@@ -1633,6 +1633,46 @@ bool Number::testErrors(int error_level) const {
 	if(mpfr_erangeflag_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point range exception"), NULL); return true;}
 	return false;
 }
+bool testComplexZero(const Number *this_nr, const Number *i_nr) {
+	if(!i_nr) return false;
+	if(!this_nr->isInfinite(true) && !i_nr->isInfinite(true) && !i_nr->isZero() && !this_nr->isZero()) {
+		if(i_nr->isFloatingPoint()) {
+			mpfr_t thisf, testf;
+			mpfr_inits2(BIT_PRECISION - 10, thisf, testf, NULL);
+			bool b = true, b2 = false;
+			if(!this_nr->isInterval() || (!mpfr_zero_p(this_nr->internalLowerFloat()) && !mpfr_inf_p(this_nr->internalLowerFloat()))) {
+				b2 = true;
+				if(this_nr->isFloatingPoint()) {
+					mpfr_set(thisf, this_nr->internalLowerFloat(), MPFR_RNDN);
+				} else {
+					mpfr_set_q(thisf, this_nr->internalRational(), MPFR_RNDN);
+				}
+				mpfr_add(testf, thisf, i_nr->internalLowerFloat(), MPFR_RNDN);
+				b = mpfr_equal_p(thisf, testf);
+				if(b) {
+					mpfr_add(testf, thisf, i_nr->internalUpperFloat(), MPFR_RNDN);
+					b = mpfr_equal_p(thisf, testf);
+				}
+			}
+			if(b && this_nr->isInterval() && !mpfr_zero_p(this_nr->internalUpperFloat()) && !mpfr_inf_p(this_nr->internalUpperFloat())) {
+				b2 = true;
+				mpfr_set(thisf, this_nr->internalUpperFloat(), MPFR_RNDN);
+				mpfr_add(testf, thisf, i_nr->internalLowerFloat(), MPFR_RNDN);
+				b = mpfr_equal_p(thisf, testf);
+				if(b) {
+					mpfr_add(testf, thisf, i_nr->internalUpperFloat(), MPFR_RNDN);
+					b = mpfr_equal_p(thisf, testf);
+				}
+			}
+			mpfr_clears(thisf, testf, NULL);
+			if(b && b2) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 bool testComplex(Number *this_nr, Number *i_nr) {
 	if(!i_nr) return false;
 	if(!this_nr->isInfinite(true) && !i_nr->isInfinite(true) && !i_nr->isZero() && !this_nr->isZero()) {
@@ -1983,7 +2023,7 @@ int Number::equalsApproximately(const Number &o, int prec) const {
 				mpfr_add_ui(test2, fu_value, 1, MPFR_RNDN);
 				if(mpfr_equal_p(test1, test2)) b2 = true;
 				mpfr_clears(test1, test2, NULL);
-			} else if(o.isFloatingPoint()) {
+			} else {
 				mpfr_t test1, test2, test3;
 				mpfr_inits2(::ceil(prec * 3.3219281), test1, test2, test3, NULL);
 				mpfr_set(test1, fl_value, MPFR_RNDN);
@@ -7148,6 +7188,41 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpfr_log(f_logl, vu, MPFR_RNDN);
 			mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDN);
 			mpfr_floor(f_logl, f_logl);
+			if(po.use_max_decimals && po.max_decimals >= 0) {
+				long int i_log = mpfr_get_si(f_logl, MPFR_RNDN);
+				long int expo = 0;
+				if(!po.preserve_format && base == 10) {
+					expo = i_log;
+					if(po.min_exp == EXP_PRECISION || (po.min_exp == 0 && expo > 1000000L)) {
+						long int precexp = i_precision_base;
+						if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
+						else if(precexp > precision + 3) precexp = precision + 3;
+						if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
+							if(expo >= i_precision_base) i_precision_base = expo + 1;
+							if(expo >= precision_base) precision_base = expo + 1;
+							if(expo >= precision) precision = expo + 1;
+							expo = 0;
+						}
+					} else if(po.min_exp < -1) {
+						if(expo < 0) {
+							int expo_rem = (-expo) % (-po.min_exp);
+							if(expo_rem > 0) expo_rem = (-po.min_exp) - expo_rem;
+							expo -= expo_rem;
+							if(expo > 0) expo = 0;
+						} else if(expo > 0) {
+							expo -= expo % (-po.min_exp);
+							if(expo < 0) expo = 0;
+						}
+					} else if(po.min_exp != 0) {
+						if(expo > -po.min_exp && expo < po.min_exp) { 
+							expo = 0;
+						}
+					} else {
+						expo = 0;
+					}
+				}
+				if(i_log - expo + po.max_decimals < i_precision_base) i_precision_base = i_log - expo + po.max_decimals;
+			}
 			mpfr_sub_si(f_logl, f_logl, i_precision_base, MPFR_RNDN);
 			mpfr_pow(f_logl, f_base, f_logl, MPFR_RNDN);
 			mpfr_div(vl, vl, f_logl, MPFR_RNDU);

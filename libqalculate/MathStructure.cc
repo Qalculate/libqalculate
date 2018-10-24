@@ -2387,6 +2387,7 @@ ComparisonResult MathStructure::compareApproximately(const MathStructure &o, con
 	}
 	CALCULATOR->beginTemporaryStopMessages();
 	mtest -= o;
+	mtest.last().last().calculateFunctions(eo);
 	mtest.calculatesub(eo, eo);
 	CALCULATOR->endTemporaryStopMessages();
 	if(mtest.representsZero(true)) return COMPARISON_RESULT_EQUAL;
@@ -5585,7 +5586,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						EvaluationOptions eo2 = eo;
 						eo2.split_squares = false;
 						// avoid abs(x)^(2y) loop
-						if(mthis.calculateRaiseExponent(eo2) && (!mthis.isPower() || ((!isFunction() || o_function != CALCULATOR->f_abs || SIZE != 1 || CHILD(0) != mthis[0]) && (!is_negation(mthis[0], *this))))) {
+						if(mthis.calculateRaiseExponent(eo2) && (!mthis.isPower() || ((!isFunction() || o_function != CALCULATOR->f_abs || SIZE != 1 || !CHILD(0).equals(mthis[0], true, true)) && (!is_negation(mthis[0], *this))))) {
 							set(mthis);
 							if(mstruct.size() == 2) {
 								if(i == 0) {
@@ -5614,10 +5615,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							MathStructure mtest(CHILD(1));
 							b = mtest.calculateRaise(-mstruct.number().numerator(), eo);
 							if(b && mtest.isPower() && mtest[1] == -mstruct.number().numerator()) b = false;
-							if(!b) {
-								setToChild(1);
-								break;
-							}
+							if(!b) break;
 							set(mtest, true);
 							raise(m_minus_one);
 							CHILD(1).number() /= mstruct.number().denominator();
@@ -6764,7 +6762,15 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 					bool b_found = false;
 					for(size_t i3 = 0; i3 < divs.size(); i3++) {
 						if(divs[i3] == div) {
-							if(!num.representsZero(true)) nums[i3].add(num, true);
+							if(!num.representsZero(true)) {
+								if(num.isAddition()) {
+									for(size_t i4 = 0; i4 < num.size(); i4++) {
+										nums[i3].add(num[i4], true);
+									}
+								} else {
+									nums[i3].add(num, true);
+								}
+							}
 							b_found = true;
 							b = true;
 							break;
@@ -6973,6 +6979,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 		}
 
 		if(!b_ret) return false;
+
 		mstruct.clear(true);
 		if(divs.size() > 0) {
 			mstruct = nums[0];
@@ -6991,6 +6998,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 			if(i == 0 && mstruct.isZero()) mstruct = numleft[i];
 			else mstruct.calculateAdd(numleft[i], eo);
 		}
+
 		return true;
 	}
 	
@@ -7335,7 +7343,6 @@ bool test_non_integer(const MathStructure &mstruct, const EvaluationOptions&) {
 bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo, bool recursive, MathStructure *mparent, size_t index_this) {
 	if(b_protected) return false;
 	bool b = false;
-
 	switch(m_type) {
 		case STRUCT_VARIABLE: {
 			if(eo.calculate_variables && o_variable->isKnown()) {
@@ -12625,6 +12632,7 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 	MathStructure cont_c, cont_d;
 	c.polynomialContent(xvar, cont_c, eo);
 	d.polynomialContent(xvar, cont_d, eo);
+
 	MathStructure gamma;
 	if(!MathStructure::gcd(cont_c, cont_d, gamma, eo, NULL, NULL, false)) return false;
 	mgcd = gamma;
@@ -12645,7 +12653,7 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 	delta -= ddeg;
 
 	while(true) {
-	
+
 		if(CALCULATOR->aborted()) return false;
 
 		prem(c, d, xvar, r, eo, false);
@@ -12973,6 +12981,7 @@ void MathStructure::polynomialContent(const MathStructure &xvar, MathStructure &
 		if(!MathStructure::gcd(coeff, mtmp, mcontent, eo, NULL, NULL, false)) mcontent.set(1, 1, 0);
 		if(mcontent.isOne()) break;
 	}
+
 	if(!c.isOne()) mcontent.calculateMultiply(c, eo);
 
 }
@@ -13655,7 +13664,7 @@ bool MathStructure::gcd(const MathStructure &m1, const MathStructure &m2, MathSt
 	if(ca) *ca = m1;
 	if(cb) *cb = m2;
 	mresult.set(1, 1, 0);
-	
+
 	if(CALCULATOR->aborted()) return false;
 
 	if(m1.isOne() || m2.isOne()) {

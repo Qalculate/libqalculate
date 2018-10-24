@@ -10576,6 +10576,8 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	return y_vector;
 }
 
+extern bool testComplexZero(const Number *this_nr, const Number *i_nr);
+
 bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent, int msecs) {
 
 	string homedir = getLocalTmpDir();
@@ -10843,7 +10845,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			}
 			plot_data = "";
 			int non_numerical = 0, non_real = 0;
-			string str = "";
+			//string str = "";
 			if(msecs > 0) startControl(msecs);
 			ComparisonResult ct1 = COMPARISON_RESULT_EQUAL, ct2 = COMPARISON_RESULT_EQUAL;
 			size_t last_index = string::npos, last_index2 = string::npos;
@@ -10851,28 +10853,35 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			bool prev_failed = false;
 			for(size_t i = 1; i <= y_vectors[serie].countChildren(); i++) {
 				ComparisonResult ct = COMPARISON_RESULT_UNKNOWN;
-				bool invalid_nr = false;
+				bool invalid_nr = false, b_imagzero_x = false, b_imagzero_y = false;
 				if(!y_vectors[serie].getChild(i)->isNumber()) {
 					invalid_nr = true;
 					non_numerical++;
-					if(non_numerical == 1) str = y_vectors[serie].getChild(i)->print(po);
+					//if(non_numerical == 1) str = y_vectors[serie].getChild(i)->print(po);
 				} else if(!y_vectors[serie].getChild(i)->number().isReal()) {
-					invalid_nr = true;
-					non_real++;
-					if(non_numerical + non_real == 1) str = y_vectors[serie].getChild(i)->print(po);
+					b_imagzero_y = testComplexZero(&y_vectors[serie].getChild(i)->number(), y_vectors[serie].getChild(i)->number().internalImaginary());
+					if(!b_imagzero_y) {
+						invalid_nr = true;
+						non_real++;
+						//if(non_numerical + non_real == 1) str = y_vectors[serie].getChild(i)->print(po);
+					}
 				}
 				if(serie < x_vectors.size() && !x_vectors[serie].isUndefined() && x_vectors[serie].countChildren() == y_vectors[serie].countChildren()) {
 					if(!x_vectors[serie].getChild(i)->isNumber()) {
 						invalid_nr = true;
 						non_numerical++;
-						if(non_numerical == 1) str = x_vectors[serie].getChild(i)->print(po);
+						//if(non_numerical == 1) str = x_vectors[serie].getChild(i)->print(po);
 					} else if(!x_vectors[serie].getChild(i)->number().isReal()) {
-						invalid_nr = true;
-						non_real++;
-						if(non_numerical + non_real == 1) str = x_vectors[serie].getChild(i)->print(po);
+						b_imagzero_x = testComplexZero(&x_vectors[serie].getChild(i)->number(), x_vectors[serie].getChild(i)->number().internalImaginary());
+						if(!b_imagzero_x) {
+							invalid_nr = true;
+							non_real++;
+							//if(non_numerical + non_real == 1) str = x_vectors[serie].getChild(i)->print(po);
+						}
 					}
 					if(!invalid_nr) {
-						plot_data += x_vectors[serie].getChild(i)->print(po);
+						if(b_imagzero_y) plot_data += x_vectors[serie].getChild(i)->number().realPart().print(po);
+						else plot_data += x_vectors[serie].getChild(i)->print(po);
 						plot_data += " ";
 					}
 				}
@@ -10884,7 +10893,8 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 							if(last_index2 != string::npos) plot_data.insert(last_index2 + 1, "  \n");
 						}
 					}
-					plot_data += y_vectors[serie].getChild(i)->print(po);
+					if(b_imagzero_x) plot_data += y_vectors[serie].getChild(i)->number().realPart().print(po);
+					else plot_data += y_vectors[serie].getChild(i)->print(po);
 					plot_data += "\n";
 					prev_failed = false;
 				} else if(!prev_failed) {
