@@ -86,6 +86,21 @@
 						bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
 						bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
 					};
+					
+
+#define DECLARE_BUILTIN_FUNCTION_R3(x)	class x : public MathFunction { \
+					  public: \
+						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+						x(); \
+						x(const x *function) {set(function);} \
+						ExpressionItem *copy() const {return new x(this);} \
+						bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsComplex(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsNonZero(const MathStructure &vargs, bool allow_units = false) const;\
+					};
+										
 #define DECLARE_BUILTIN_FUNCTION_R1(x)	class x : public MathFunction { \
 					  public: \
 						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
@@ -178,7 +193,7 @@ DECLARE_BUILTIN_FUNCTION(ExpFunction)
 DECLARE_BUILTIN_FUNCTION_R(LogFunction)
 DECLARE_BUILTIN_FUNCTION(LognFunction)
 
-DECLARE_BUILTIN_FUNCTION(LambertWFunction)
+DECLARE_BUILTIN_FUNCTION_R3(LambertWFunction)
 
 DECLARE_BUILTIN_FUNCTION_R2(SinFunction)
 DECLARE_BUILTIN_FUNCTION_R2(CosFunction)

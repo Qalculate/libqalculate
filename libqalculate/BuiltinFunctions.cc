@@ -889,6 +889,21 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct = nr; 
 		return 1;
 	}
+	if(mstruct.isPower() && mstruct[0].representsPositive()) {
+		if(mstruct[1].isNumber() && !mstruct[1].number().hasRealPart()) {
+			mstruct.set(1, 1, 0, true);
+			return 1;
+		} else if(mstruct[1].isMultiplication() && mstruct.size() > 0 && mstruct[1][0].isNumber() && !mstruct[1][0].number().hasRealPart()) {
+			bool b = true;
+			for(size_t i = 1; i < mstruct[1].size(); i++) {
+				if(!mstruct[1][i].representsNonComplex()) {b = false; break;}
+			}
+			if(b) {
+				mstruct.set(1, 1, 0, true);
+				return 1;
+			}
+		}
+	}
 	if(mstruct.representsNegative(true)) {
 		mstruct.negate();
 		return 1;
@@ -1845,6 +1860,24 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct -= mstruct2;
 				return 1;
 			}
+		} else if(mstruct.number().hasImaginaryPart()) {
+			if(mstruct.number().hasRealPart()) {
+				MathStructure *marg = new MathStructure(CALCULATOR->f_arg, &mstruct, NULL);
+				mstruct.transform(CALCULATOR->f_abs);
+				mstruct.transform(CALCULATOR->f_ln);
+				marg->multiply(CALCULATOR->v_i->get());
+				mstruct.add_nocopy(marg);
+				return 1;
+			} else {
+				bool b_neg = mstruct.number().imaginaryPartIsNegative();
+				if(mstruct.number().abs()) {
+					mstruct.transform(this);
+					mstruct += b_neg ? nr_minus_half : nr_half;
+					mstruct.last() *= CALCULATOR->v_pi;
+					mstruct.last().multiply(CALCULATOR->v_i->get(), true);
+				}
+				return 1;
+			}
 		}
 	} else if(mstruct.isPower()) {
 		if((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
@@ -1867,6 +1900,19 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct = mstruct2;
 				return 1;
 			}
+		}
+	} else if(mstruct.isMultiplication() && mstruct.size() > 0 && mstruct[0].isNumber() && !mstruct[0].number().hasRealPart()) {
+		bool b = true;
+		for(size_t i = 1; i < mstruct.size(); i++) {
+			if(!mstruct[i].representsPositive() && !mstruct[i].representsNegative()) {b = false; break;}
+		}
+		if(b) {
+			MathStructure *marg = new MathStructure(CALCULATOR->f_arg, &mstruct, NULL);
+			mstruct.transform(CALCULATOR->f_abs);
+			mstruct.transform(CALCULATOR->f_ln);
+			marg->multiply(CALCULATOR->v_i->get());
+			mstruct.add_nocopy(marg);
+			return 1;
 		}
 	}
 	if(eo.allow_complex && mstruct.representsNegative()) {
@@ -1936,6 +1982,12 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct.divide_nocopy(new MathStructure(CALCULATOR->f_ln, &vargs[1], NULL));
 	return 1;
 }
+
+bool LambertWFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 2 && (vargs[0].representsNumber() && (vargs[1].isZero() || vargs[0].representsNonZero()));}
+bool LambertWFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 2 && (vargs[1].isZero() && vargs[0].representsNonNegative());}
+bool LambertWFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 2 && (vargs[0].isZero() || (vargs[1].isZero() && vargs[0].representsNonNegative()));}
+bool LambertWFunction::representsComplex(const MathStructure &vargs, bool) const {return vargs.size() == 2 && (vargs[0].representsComplex() || (vargs[0].representsNonZero() && (vargs[1].isInteger() && (!vargs[1].isMinusOne() || vargs[0].representsPositive()) && !vargs[1].isZero())));}
+bool LambertWFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 2 && (vargs[1].representsNonZero() || vargs[0].representsNonZero());}
 
 LambertWFunction::LambertWFunction() : MathFunction("lambertw", 1, 2) {
 	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
