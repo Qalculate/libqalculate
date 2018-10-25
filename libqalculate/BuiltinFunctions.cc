@@ -40,6 +40,8 @@
 
 extern string format_and_print(const MathStructure &mstruct);
 
+bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo);
+
 VectorFunction::VectorFunction() : MathFunction("vector", -1) {
 }
 int VectorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
@@ -847,6 +849,20 @@ int BitCmpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 0;
 }
 
+bool test_eval(MathStructure &mtest, const EvaluationOptions &eo) {
+	EvaluationOptions eo2 = eo;
+	eo2.assume_denominators_nonzero = false;
+	eo2.approximation = APPROXIMATION_APPROXIMATE;
+	bool b_intval = CALCULATOR->usesIntervalArithmetic();
+	CALCULATOR->useIntervalArithmetic();
+	CALCULATOR->beginTemporaryStopMessages();
+	mtest.calculateFunctions(eo2);
+	mtest.calculatesub(eo2, eo2, true);
+	CALCULATOR->useIntervalArithmetic(b_intval);
+	if(CALCULATOR->endTemporaryStopMessages()) return false;
+	return true;
+}
+
 AbsFunction::AbsFunction() : MathFunction("abs", 1) {
 	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setHandleVector(true);
@@ -924,6 +940,18 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct.childUpdated(1);
 		return 1;
 	}
+	if(eo.approximation == APPROXIMATION_EXACT) {
+		MathStructure mtest(mstruct);
+		if(test_eval(mtest, eo)) {
+			if(mtest.representsNegative(true)) {
+				mstruct.negate();
+				return 1;
+			}
+			if(mtest.representsNonNegative(true)) {
+				return 1;
+			}
+		}
+	}
 	return -1;
 }
 GcdFunction::GcdFunction() : MathFunction("gcd", 2) {
@@ -995,6 +1023,19 @@ int HeavisideFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		}
 		return 1;
 	}
+	if(eo.approximation == APPROXIMATION_EXACT) {
+		MathStructure mtest(mstruct);
+		if(test_eval(mtest, eo)) {
+			if(mtest.representsPositive(true)) {
+				mstruct.set(1, 1, 0);
+				return 1;
+			}
+			if(mtest.representsNegative(true)) {
+				mstruct.clear();
+				return 1;
+			}
+		}
+	}
 	return -1;
 }
 DiracFunction::DiracFunction() : MathFunction("dirac", 1) {
@@ -1031,6 +1072,15 @@ int DiracFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	if(mstruct.isNumber() && mstruct.number().isInterval() && !mstruct.number().isNonZero()) {
 		mstruct.number().setInterval(nr_zero, nr_plus_inf);
 		return 1;
+	}
+	if(eo.approximation == APPROXIMATION_EXACT) {
+		MathStructure mtest(mstruct);
+		if(test_eval(mtest, eo)) {
+			if(mtest.representsNonZero(true)) {
+				mstruct.clear();
+				return 1;
+			}
+		}
 	}
 	return -1;
 }
@@ -1096,6 +1146,19 @@ int SignumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	if(vargs.size() > 1 && mstruct.isZero()) {
 		mstruct.set(vargs[1], true);
 		return 1;
+	}
+	if(eo.approximation == APPROXIMATION_EXACT) {
+		MathStructure mtest(mstruct);
+		if(test_eval(mtest, eo)) {
+			if((vargs.size() > 1 && vargs[1].isOne() && mtest.representsNonNegative(true)) || mtest.representsPositive(true)) {
+				mstruct.set(1, 1, 0);
+				return 1;
+			}
+			if((vargs.size() > 1 && vargs[1].isMinusOne() && mtest.representsNonPositive(true)) || mtest.representsNegative(true)) {
+				mstruct.set(-1, 1, 0);
+				return 1;
+			}
+		}
 	}
 	return -1;
 }
@@ -1862,12 +1925,15 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			}
 		} else if(mstruct.number().hasImaginaryPart()) {
 			if(mstruct.number().hasRealPart()) {
-				MathStructure *marg = new MathStructure(CALCULATOR->f_arg, &mstruct, NULL);
-				mstruct.transform(CALCULATOR->f_abs);
-				mstruct.transform(CALCULATOR->f_ln);
-				marg->multiply(CALCULATOR->v_i->get());
-				mstruct.add_nocopy(marg);
-				return 1;
+				MathStructure *marg = new MathStructure(mstruct);
+				if(calculate_arg(*marg, eo)) {
+					mstruct.transform(CALCULATOR->f_abs);
+					mstruct.transform(CALCULATOR->f_ln);
+					marg->multiply(CALCULATOR->v_i->get());
+					mstruct.add_nocopy(marg);
+					return 1;
+				}
+				marg->unref();
 			} else {
 				bool b_neg = mstruct.number().imaginaryPartIsNegative();
 				if(mstruct.number().abs()) {
@@ -1901,19 +1967,6 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				return 1;
 			}
 		}
-	} else if(mstruct.isMultiplication() && mstruct.size() > 0 && mstruct[0].isNumber() && !mstruct[0].number().hasRealPart()) {
-		bool b = true;
-		for(size_t i = 1; i < mstruct.size(); i++) {
-			if(!mstruct[i].representsPositive() && !mstruct[i].representsNegative()) {b = false; break;}
-		}
-		if(b) {
-			MathStructure *marg = new MathStructure(CALCULATOR->f_arg, &mstruct, NULL);
-			mstruct.transform(CALCULATOR->f_abs);
-			mstruct.transform(CALCULATOR->f_ln);
-			marg->multiply(CALCULATOR->v_i->get());
-			mstruct.add_nocopy(marg);
-			return 1;
-		}
 	}
 	if(eo.allow_complex && mstruct.representsNegative()) {
 		mstruct.negate();
@@ -1921,6 +1974,17 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct += CALCULATOR->v_pi;
 		mstruct.last() *= nr_one_i;
 		return 1;
+	}
+	if(!mstruct.representsReal()) {
+		MathStructure *marg = new MathStructure(mstruct);
+		if(calculate_arg(*marg, eo)) {
+			mstruct.transform(CALCULATOR->f_abs);
+			mstruct.transform(CALCULATOR->f_ln);
+			marg->multiply(CALCULATOR->v_i->get());
+			mstruct.add_nocopy(marg);
+			return 1;
+		}
+		marg->unref();
 	}
 	return -1;
 	
@@ -3671,6 +3735,79 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	}
 	return 1;
 }
+
+bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
+
+	MathStructure msave;
+		
+	if(!mstruct.isNumber()) {
+		if(mstruct.isPower() && mstruct[0] == CALCULATOR->v_e && mstruct[1].isNumber() && mstruct[1].number().hasImaginaryPart() && !mstruct[1].number().hasRealPart()) {
+			bool b_intval = CALCULATOR->usesIntervalArithmetic();
+			CALCULATOR->useIntervalArithmetic();
+			CALCULATOR->beginTemporaryStopMessages();
+			Number nr(*mstruct[1].number().internalImaginary());
+			nr.add(CALCULATOR->v_pi->get().number());
+			nr.divide(CALCULATOR->v_pi->get().number() * 2);
+			Number nr_u(nr.upperEndPoint());
+			nr = nr.lowerEndPoint();
+			CALCULATOR->useIntervalArithmetic(b_intval);
+			nr_u.floor();
+			nr.floor();
+			if(!CALCULATOR->endTemporaryStopMessages() && nr == nr_u) {
+				nr.setApproximate(false);
+				nr *= 2;
+				nr.negate();
+				mstruct = mstruct[1].number().imaginaryPart();
+				if(!nr.isZero()) {
+					mstruct += nr;
+					mstruct.last() *= CALCULATOR->v_pi;
+				}
+				return true;
+			}
+		}
+		if(eo.approximation == APPROXIMATION_EXACT) {
+			msave = mstruct;
+			if(!test_eval(mstruct, eo)) {
+				mstruct = msave;
+				return false;
+			}
+		}
+	}
+	if(mstruct.isNumber()) {
+		if(!mstruct.number().hasImaginaryPart()) {
+			return false;
+		} else if(!mstruct.number().hasRealPart() && mstruct.number().imaginaryPartIsNonZero()) {
+			bool b_neg = mstruct.number().imaginaryPartIsNegative();
+			mstruct.set(CALCULATOR->v_pi); mstruct.multiply(nr_half);
+			if(b_neg) mstruct.negate();
+		} else if(!msave.isZero()) {
+			mstruct = msave;
+			return false;
+		} else if(!mstruct.number().realPartIsNonZero()) {
+			return false;
+		} else {
+			MathStructure new_nr(mstruct.number().imaginaryPart());
+			if(!new_nr.number().divide(mstruct.number().realPart())) return false;
+			if(mstruct.number().realPartIsNegative()) {
+				if(mstruct.number().imaginaryPartIsNegative()) {
+					mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+					mstruct.subtract(CALCULATOR->v_pi);
+				} else {
+					mstruct.add(CALCULATOR->v_pi);
+				}
+			} else {
+				mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+			}
+		}
+		return true;
+	}
+	if(!msave.isZero()) {
+		mstruct = msave;
+	}
+	return false;
+	
+}
+
 ArgFunction::ArgFunction() : MathFunction("arg", 1) {
 	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setHandleVector(true);
@@ -3684,57 +3821,11 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
-	if(mstruct.isNumber()) {
-		if(!mstruct.number().hasImaginaryPart()) {
-			if(!mstruct.number().isNonZero()) return -1;
-			if(mstruct.number().isNegative()) {
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {mstruct.set(180, 1, 0); break;}
-					case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 1, 0); break;}
-					case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->v_pi); break;}
-					default: {mstruct.set(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
-				}
-			} else {
-				mstruct.clear();
-			}
-		} else if(!mstruct.number().hasRealPart() && mstruct.number().imaginaryPartIsNonZero()) {
-			bool b_neg = mstruct.number().imaginaryPartIsNegative();
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.set(90, 1, 0); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 1, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->v_pi); mstruct.multiply(nr_half); break;}
-				default: {mstruct.set(CALCULATOR->v_pi); mstruct.multiply(nr_half); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
-			}
-			if(b_neg) mstruct.negate();
-		} else if(!mstruct.number().realPartIsNonZero()) {
-			FR_FUNCTION(arg)
-		} else {
-			MathStructure new_nr(mstruct.number().imaginaryPart());
-			if(!new_nr.number().divide(mstruct.number().realPart())) return -1;
-			if(mstruct.number().realPartIsNegative()) {
-				if(mstruct.number().imaginaryPartIsNegative()) {
-					mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
-					switch(eo.parse_options.angle_unit) {
-						case ANGLE_UNIT_DEGREES: {mstruct.add(-180); break;}
-						case ANGLE_UNIT_GRADIANS: {mstruct.add(-200); break;}
-						case ANGLE_UNIT_RADIANS: {mstruct.subtract(CALCULATOR->v_pi); break;}
-						default: {MathStructure msub(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) msub *= CALCULATOR->getRadUnit(); mstruct.subtract(msub);}
-					}
-				} else {
-					mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
-					switch(eo.parse_options.angle_unit) {
-						case ANGLE_UNIT_DEGREES: {mstruct.add(180); break;}
-						case ANGLE_UNIT_GRADIANS: {mstruct.add(200); break;}
-						case ANGLE_UNIT_RADIANS: {mstruct.add(CALCULATOR->v_pi); break;}
-						default: {MathStructure madd(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit(); mstruct.add(madd);}
-					}
-				}
-			} else {
-				mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
-			}
-		}
-		return 1;
-	} else {
+
+	MathStructure msave;
+		
+	arg_test_non_number:
+	if(!mstruct.isNumber()) {
 		if(mstruct.representsPositive(true)) {
 			mstruct.clear();
 			return 1;
@@ -3747,6 +3838,10 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				default: {mstruct.set(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
 			}
 			return 1;
+		}
+		if(!msave.isZero()) {
+			mstruct = msave;
+			return -1;
 		}
 		if(mstruct.isMultiplication()) {
 			bool b = false;
@@ -3779,6 +3874,97 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct[0].setFunction(this);
 			return 1;
 		}
+		if(mstruct.isPower() && mstruct[0] == CALCULATOR->v_e && mstruct[1].isNumber() && mstruct[1].number().hasImaginaryPart() && !mstruct[1].number().hasRealPart()) {
+			bool b_intval = CALCULATOR->usesIntervalArithmetic();
+			CALCULATOR->useIntervalArithmetic();
+			CALCULATOR->beginTemporaryStopMessages();
+			Number nr(*mstruct[1].number().internalImaginary());
+			nr.add(CALCULATOR->v_pi->get().number());
+			nr.divide(CALCULATOR->v_pi->get().number() * 2);
+			Number nr_u(nr.upperEndPoint());
+			nr = nr.lowerEndPoint();
+			CALCULATOR->useIntervalArithmetic(b_intval);
+			nr_u.floor();
+			nr.floor();
+			if(!CALCULATOR->endTemporaryStopMessages() && nr == nr_u) {
+				nr.setApproximate(false);
+				nr *= 2;
+				nr.negate();
+				mstruct = mstruct[1].number().imaginaryPart();
+				if(!nr.isZero()) {
+					mstruct += nr;
+					mstruct.last() *= CALCULATOR->v_pi;
+				}
+				return true;
+			}
+		}
+		if(eo.approximation == APPROXIMATION_EXACT) {
+			msave = mstruct;
+			if(!test_eval(mstruct, eo)) {
+				mstruct = msave;
+				return -1;
+			}
+		}
+	}
+	if(mstruct.isNumber()) {
+		if(!mstruct.number().hasImaginaryPart()) {
+			if(!mstruct.number().isNonZero()) {
+				if(!msave.isZero()) mstruct = msave;
+				return -1;
+			}
+			if(mstruct.number().isNegative()) {
+				switch(eo.parse_options.angle_unit) {
+					case ANGLE_UNIT_DEGREES: {mstruct.set(180, 1, 0); break;}
+					case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 1, 0); break;}
+					case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->v_pi); break;}
+					default: {mstruct.set(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
+				}
+			} else {
+				mstruct.clear();
+			}
+		} else if(!mstruct.number().hasRealPart() && mstruct.number().imaginaryPartIsNonZero()) {
+			bool b_neg = mstruct.number().imaginaryPartIsNegative();
+			switch(eo.parse_options.angle_unit) {
+				case ANGLE_UNIT_DEGREES: {mstruct.set(90, 1, 0); break;}
+				case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 1, 0); break;}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->v_pi); mstruct.multiply(nr_half); break;}
+				default: {mstruct.set(CALCULATOR->v_pi); mstruct.multiply(nr_half); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
+			}
+			if(b_neg) mstruct.negate();
+		} else if(!msave.isZero()) {
+			mstruct = msave;
+			return -1;
+		} else if(!mstruct.number().realPartIsNonZero()) {
+			FR_FUNCTION(arg)
+		} else {
+			MathStructure new_nr(mstruct.number().imaginaryPart());
+			if(!new_nr.number().divide(mstruct.number().realPart())) return -1;
+			if(mstruct.number().realPartIsNegative()) {
+				if(mstruct.number().imaginaryPartIsNegative()) {
+					mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+					switch(eo.parse_options.angle_unit) {
+						case ANGLE_UNIT_DEGREES: {mstruct.add(-180); break;}
+						case ANGLE_UNIT_GRADIANS: {mstruct.add(-200); break;}
+						case ANGLE_UNIT_RADIANS: {mstruct.subtract(CALCULATOR->v_pi); break;}
+						default: {MathStructure msub(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) msub *= CALCULATOR->getRadUnit(); mstruct.subtract(msub);}
+					}
+				} else {
+					mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+					switch(eo.parse_options.angle_unit) {
+						case ANGLE_UNIT_DEGREES: {mstruct.add(180); break;}
+						case ANGLE_UNIT_GRADIANS: {mstruct.add(200); break;}
+						case ANGLE_UNIT_RADIANS: {mstruct.add(CALCULATOR->v_pi); break;}
+						default: {MathStructure madd(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit(); mstruct.add(madd);}
+					}
+				}
+			} else {
+				mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+			}
+		}
+		return 1;
+	}
+	if(!msave.isZero()) {
+		goto arg_test_non_number;
 	}
 	return -1;
 }
