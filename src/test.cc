@@ -1584,7 +1584,7 @@ int main(int argc, char *argv[]) {
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;*/
 	
-	CALCULATOR->useIntervalArithmetic();
+	//CALCULATOR->useIntervalArithmetic();
 	
 	/*for(size_t i = 0; i < 5000; i++) {
 		rnd_test(evalops, 4, false, false, true);
@@ -1592,23 +1592,23 @@ int main(int argc, char *argv[]) {
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;*/
 	
-	for(size_t i = 0; i < 3000; i++) {
+	/*for(size_t i = 0; i < 3000; i++) {
 		rnd_test(evalops, 4, true, false, true);
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 	
-	CALCULATOR->useIntervalArithmetic(false);
+	CALCULATOR->useIntervalArithmetic(false);*/
 	
 	for(size_t i = 0; i < 10000; i++) {
 		rnd_test(evalops, false, true, false, false);
 	}
 	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl << endl;
 	
-	for(size_t i = 0; i < 10000; i++) {
+	/*for(size_t i = 0; i < 10000; i++) {
 		rnd_test(evalops, false, false, false, false);
 	}
-	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl << endl;
+	cout << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl << endl;*/
 
 	return 0;
 

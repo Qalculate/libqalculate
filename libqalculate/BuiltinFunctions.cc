@@ -3793,6 +3793,7 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 					mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
 					mstruct.subtract(CALCULATOR->v_pi);
 				} else {
+					mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
 					mstruct.add(CALCULATOR->v_pi);
 				}
 			} else {
