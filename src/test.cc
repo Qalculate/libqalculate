@@ -1586,13 +1586,13 @@ int main(int argc, char *argv[]) {
 	
 	CALCULATOR->useIntervalArithmetic();
 	
-	for(size_t i = 0; i < 5000; i++) {
+	/*for(size_t i = 0; i < 5000; i++) {
 		rnd_test(evalops, 4, false, false, true);
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
-	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
+	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;*/
 	
-	for(size_t i = 0; i < 10000; i++) {
+	for(size_t i = 0; i < 3000; i++) {
 		rnd_test(evalops, 4, true, false, true);
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}

@@ -1676,7 +1676,7 @@ bool testComplexZero(const Number *this_nr, const Number *i_nr) {
 bool testComplex(Number *this_nr, Number *i_nr) {
 	if(!i_nr) return false;
 	if(!this_nr->isInfinite(true) && !i_nr->isInfinite(true) && !i_nr->isZero() && !this_nr->isZero()) {
-		if(i_nr->isFloatingPoint()) {
+		if(i_nr->isFloatingPoint() && (!i_nr->isInterval() || !i_nr->isNonZero())) {
 			mpfr_t thisf, testf;
 			mpfr_inits2(BIT_PRECISION - 10, thisf, testf, NULL);
 			bool b = true, b2 = false;
@@ -1710,7 +1710,7 @@ bool testComplex(Number *this_nr, Number *i_nr) {
 				return true;
 			}
 		}
-		if(this_nr->isFloatingPoint()) {
+		if(this_nr->isFloatingPoint() && (!this_nr->isInterval() || !this_nr->isNonZero())) {
 			mpfr_t thisf, testf;
 			mpfr_inits2(BIT_PRECISION - 10, thisf, testf, NULL);
 			bool b = true, b2 = false;
