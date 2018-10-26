@@ -1636,7 +1636,7 @@ bool Number::testErrors(int error_level) const {
 bool testComplexZero(const Number *this_nr, const Number *i_nr) {
 	if(!i_nr) return false;
 	if(!this_nr->isInfinite(true) && !i_nr->isInfinite(true) && !i_nr->isZero() && !this_nr->isZero()) {
-		if(i_nr->isFloatingPoint()) {
+		if(i_nr->isFloatingPoint() && (!i_nr->isInterval() || !i_nr->isNonZero())) {
 			mpfr_t thisf, testf;
 			mpfr_inits2(BIT_PRECISION - 10, thisf, testf, NULL);
 			bool b = true, b2 = false;
@@ -1926,6 +1926,12 @@ bool Number::imaginaryPartIsNegative() const {
 }
 bool Number::imaginaryPartIsPositive() const {
 	return i_value && i_value->isPositive();
+}
+bool Number::imaginaryPartIsNonNegative() const {
+	return i_value && i_value->isNonNegative();
+}
+bool Number::imaginaryPartIsNonPositive() const {
+	return i_value && i_value->isNonPositive();
 }
 bool Number::imaginaryPartIsNonZero() const {
 	return i_value && i_value->isNonZero();

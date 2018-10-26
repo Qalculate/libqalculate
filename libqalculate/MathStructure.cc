@@ -2691,8 +2691,12 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 								if(equals(mstruct)) {
 									//asin(x)+acos(x)=pi/2
 									delChild(i2 + 1, true);
-									calculateMultiply(CALCULATOR->v_pi, eo);
-									calculateMultiply(nr_half, eo);
+									switch(eo.parse_options.angle_unit) {
+										case ANGLE_UNIT_DEGREES: {calculateMultiply(Number(90, 1, 0), eo); break;}
+										case ANGLE_UNIT_GRADIANS: {calculateMultiply(Number(100, 1, 0), eo); break;}
+										case ANGLE_UNIT_RADIANS: {calculateMultiply(CALCULATOR->v_pi, eo); calculateMultiply(nr_half, eo); break;}
+										default: {calculateMultiply(CALCULATOR->v_pi, eo); calculateMultiply(nr_half, eo); if(CALCULATOR->getRadUnit()) {calculateMultiply(CALCULATOR->getRadUnit(), eo);} break;}
+									}
 									MERGE_APPROX_AND_PREC(mstruct)
 									return 1;
 								}
@@ -3096,9 +3100,12 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 				}
 			} else if(mstruct.isFunction() && ((o_function == CALCULATOR->f_asin && mstruct.function() == CALCULATOR->f_acos) || (o_function == CALCULATOR->f_acos && mstruct.function() == CALCULATOR->f_asin)) && eo.protected_function != CALCULATOR->f_acos && eo.protected_function != CALCULATOR->f_asin && SIZE == 1 && mstruct.size() == 1 && CHILD(0) == mstruct[0]) {
 				//asin(x)+acos(x)=pi/2
-				set(CALCULATOR->v_pi, true);
-				multiply(nr_half);
-				calculatesub(eo, eo, true);
+				switch(eo.parse_options.angle_unit) {
+					case ANGLE_UNIT_DEGREES: {set(90, 1, 0, true); break;}
+					case ANGLE_UNIT_GRADIANS: {set(100, 1, 0, true); break;}
+					case ANGLE_UNIT_RADIANS: {set(CALCULATOR->v_pi, true); multiply(nr_half); calculatesub(eo, eo, true); break;}
+					default: {set(CALCULATOR->v_pi, true); multiply(nr_half); if(CALCULATOR->getRadUnit()) {multiply(CALCULATOR->getRadUnit(), true);} calculatesub(eo, eo, true); break;}
+				}
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			} else if(mstruct.isFunction() && ((o_function == CALCULATOR->f_sinh && mstruct.function() == CALCULATOR->f_cosh) || (o_function == CALCULATOR->f_cosh && mstruct.function() == CALCULATOR->f_sinh)) && eo.protected_function != CALCULATOR->f_cosh && eo.protected_function != CALCULATOR->f_sinh && SIZE == 1 && mstruct.size() == 1 && CHILD(0) == mstruct[0]) {
@@ -5257,23 +5264,27 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					Number m(mstruct.number());
 					m.setNegative(false);
 					if(SIZE > 1) {
-						Number num_max;
-						switch(SIZE) {
-							case 8: {num_max.set(eo.expand == -1 ? 2 : 3, 1, 0); break;}
-							case 7: {num_max.set(eo.expand == -1 ? 2 : 4, 1, 0); break;}
-							case 6: {num_max.set(eo.expand == -1 ? 2 : 5, 1, 0); break;}
-							case 5: {num_max.set(eo.expand == -1 ? 2 : 7, 1, 0); break;}
-							case 4: {num_max.set(eo.expand == -1 ? 3 : 12, 1, 0); break;}
-							case 3: {num_max.set(eo.expand == -1 ? 5 : 28, 1, 0); break;}
-							case 2: {num_max.set(eo.expand == -1 ? 10 : 150, 1, 0); break;}
-							default: {
-								if(SIZE > 20 || (SIZE > 8 && eo.expand == -1)) b = false;
-								else num_max.set(2, 1, 0);
-								break;
+						if(eo.expand == -1) {
+							switch(SIZE) {
+								case 4: {if(m.isGreaterThan(3)) {b = false;} break;}
+								case 3: {if(m.isGreaterThan(4)) {b = false;} break;}
+								case 2: {if(m.isGreaterThan(10)) {b = false;} break;}
+								default: {
+									if(SIZE > 8 || m.isGreaterThan(2)) b = false;
+								}
 							}
-						}
-						if(b && m.isGreaterThan(num_max)) {
+						} else {
 							b = false;
+							long int i_pow = m.lintValue(&b);
+							if(b || i_pow > 300) {
+								b = false;
+							} else {
+								Number num_terms;
+								if(num_terms.binomial(i_pow + (long int) SIZE - 1, (long int) SIZE - 1)) {
+									size_t tc = countTotalChildren() / SIZE - 4;
+									b = num_terms.isLessThanOrEqualTo(tc > 1 ? 300 / tc : 300);
+								}
+							}
 						}
 					}
 					if(b) {
@@ -27342,12 +27353,13 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			// a*b^x+cx=d => (d*log(b)-c*lambertw(a*b^(d/c)*log(b)/c))/(c*log(b))
 			if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(0).size() > 1) {
 				size_t i_px = 0, i_mpx = 0;
-				MathStructure *mvar = NULL;
+				MathStructure *mvar = NULL, *m_b_p;
 				for(size_t i = 0; i < CHILD(0).size(); i++) {
 					if(CHILD(0)[i].isMultiplication()) {
 						for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
 							if(CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1].contains(x_var) && !CHILD(0)[i][i2][0].contains(x_var)) {
 								mvar = &CHILD(0)[i][i2][1];
+								m_b_p = &CHILD(0)[i][i2][0];
 								i_px = i;
 								i_mpx = i2;
 								break;
@@ -27356,14 +27368,45 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						if(mvar) break;
 					} else if(CHILD(0)[i].isPower() && CHILD(0)[i][1].contains(x_var) && !CHILD(0)[i][0].contains(x_var)) {
 						mvar = &CHILD(0)[i][1];
+						m_b_p = &CHILD(0)[i][0];
 						i_px = i;
 						break;
 					}
 				}
 				if(mvar) {
+					MathStructure m_b(*m_b_p);
+					if((mvar->isAddition() || mvar->isMultiplication()) && m_b.representsPositive()) {
+						MathStructure *mvar2 = NULL;
+						if(mvar->isMultiplication()) {
+							for(size_t i = 0; i < mvar->size(); i++) {
+								if((*mvar)[i].contains(x_var)) {mvar2 = &(*mvar)[i]; break;}
+							}
+						} else if(mvar->isAddition()) {
+							for(size_t i = 0; i < mvar->size(); i++) {
+								if((*mvar)[i].contains(x_var)) {
+									mvar2 = &(*mvar)[i];
+									if(mvar->isMultiplication()) {
+										for(size_t i2 = 0; i < mvar2->size(); i2++) {
+											if((*mvar2)[i2].contains(x_var)) {mvar2 = &(*mvar2)[i2]; break;}
+										}
+									}
+									break;
+								}
+							}
+						}
+						if(mvar2) {
+							MathStructure m_b_exp;
+							if(get_multiplier(*mvar, *mvar2, m_b_exp) && m_b.representsReal() && !m_b.contains(x_var)) {
+								m_b ^= m_b_exp;
+								mvar = mvar2;
+							} else {
+								mvar = NULL;
+							}
+						}
+					}
 					MathStructure m_c;
-					if(get_multiplier(CHILD(0), *mvar, m_c, i_px) && m_c.representsNonZero()) {
-						MathStructure mlogb(CALCULATOR->f_ln, CHILD(0)[i_px].isPower() ? &CHILD(0)[i_px][0] : &CHILD(0)[i_px][i_mpx][0], NULL);
+					if(mvar && get_multiplier(CHILD(0), *mvar, m_c, i_px) && m_c.representsNonZero()) {
+						MathStructure mlogb(CALCULATOR->f_ln, &m_b, NULL);
 						if(mlogb.calculateFunctions(eo)) mlogb.calculatesub(eo2, eo, true);
 						MathStructure *marg = NULL;
 						if(mlogb.representsNonZero()) {
@@ -27377,7 +27420,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 						if(marg) {
 							if(!CHILD(1).isZero()) {
-								marg->multiply(CHILD(0)[i_px].isPower() ? CHILD(0)[i_px][0] : CHILD(0)[i_px][i_mpx][0]);
+								marg->multiply(m_b);
 								marg->last().raise(CHILD(1));
 								if(!m_c.isOne()) marg->last().last().calculateDivide(m_c, eo2);
 								marg->last().calculateRaiseExponent(eo2);
@@ -27385,7 +27428,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							}
 							if(!m_c.isOne()) marg->calculateDivide(m_c, eo2);
 						}
-						if(marg && mvar->representsNonComplex() && (CHILD(0)[i_px].isPower() ? CHILD(0)[i_px][0].representsPositive() : CHILD(0)[i_px][i_mpx][0].representsPositive())) {
+						if(marg && mvar->representsNonComplex() && m_b.representsPositive()) {
 							if(marg->representsComplex()) {
 								marg->unref();
 								if(ct_comp == COMPARISON_EQUALS) clear(true);
@@ -28036,7 +28079,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mtest[1].clear();
 					mtest.childrenUpdated();
 				}
-				b = eo2.do_polynomial_division && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && do_simplification(mtest[0], eo, true, true, false, true);
+				b = eo2.do_polynomial_division && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && do_simplification(mtest[0], eo, true, true, false, false, true);
 				if(b && mtest[0].isMultiplication() && mtest[0].size() == 2 && mtest[0][1].isPower() && mtest[0][1][1].representsNegative()) {
 					MathStructure mreq(mtest);
 					mtest[0].setToChild(1, true);
@@ -30552,7 +30595,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					(*malt)[1][0].negate();
 					if(f == CALCULATOR->f_sin) {
 						switch(eo.parse_options.angle_unit) {
-							case ANGLE_UNIT_DEGREES: {(*malt)[1].add(Number(200, 1), true); break;}
+							case ANGLE_UNIT_DEGREES: {(*malt)[1].add(Number(180, 1), true); break;}
 							case ANGLE_UNIT_GRADIANS: {(*malt)[1].add(Number(200, 1), true); break;}
 							case ANGLE_UNIT_RADIANS: {(*malt)[1].add(CALCULATOR->v_pi, true); break;}
 							default: {(*malt)[1].add(CALCULATOR->v_pi, true); (*malt)[1].last() *= CALCULATOR->getRadUnit();}

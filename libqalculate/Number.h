@@ -292,6 +292,8 @@ class Number {
 		bool realPartIsRational() const;
 		bool imaginaryPartIsNegative() const;
 		bool imaginaryPartIsPositive() const;
+		bool imaginaryPartIsNonNegative() const;
+		bool imaginaryPartIsNonPositive() const;
 		bool imaginaryPartIsNonZero() const;
 		bool hasNegativeSign() const;
 		bool hasPositiveSign() const;
