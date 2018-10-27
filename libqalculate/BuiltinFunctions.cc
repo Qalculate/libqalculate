@@ -3347,13 +3347,11 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(mstruct.number().isZero()) {
 		mstruct.clear();
 	} else if(eo.allow_infinite && mstruct.number().isI()) {
-		mstruct = mstruct;
 		Number nr; nr.setImaginaryPart(nr_plus_inf);
-		mstruct *= nr;
+		mstruct = nr;
 	} else if(eo.allow_infinite && mstruct.number().isMinusI()) {
-		mstruct = mstruct;
 		Number nr; nr.setImaginaryPart(nr_minus_inf);
-		mstruct *= nr;
+		mstruct = nr;
 	} else if(mstruct.number().isPlusInfinity()) {
 		switch(eo.parse_options.angle_unit) {
 			case ANGLE_UNIT_DEGREES: {

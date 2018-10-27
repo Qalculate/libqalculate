@@ -866,10 +866,10 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1) {
 		str = rnd_number();
 	} else {
 		if(!allow_unknown) {
-			r = rand() % 27 + 4;
+			r = rand() % 20 + 4;
 		} else {
 			int au2 = 3 - allow_unknown % 3;
-			r = (rand() % ((allow_function ? 29 : 5) - au2)) + 4 - allow_unknown;
+			r = (rand() % ((allow_function ? 22 : 5) - au2)) + 4 - allow_unknown;
 			if(r < 4 - allow_unknown % 3) {
 				if(r < 0) r = -r;
 				if(allow_unknown % 3 == 1) r = 3;
@@ -883,43 +883,43 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1) {
 			case 3: {str = "x"; break;}
 			case 4: {str = "pi"; break;}
 			case 5: {str = "e"; break;}
-			case 6: {str = "sin("; break;}
-			case 7: {str = "cos("; break;}
-			case 8: {str = "tan("; break;}
-			case 9: {str = "sinh("; break;}
-			case 10: {str = "cosh("; break;}
-			case 11: {str = "tanh("; break;}
-			case 12: {str = "asin("; break;}
-			case 13: {str = "acos("; break;}
-			case 14: {str = "atan("; break;}
-			case 15: {str = "asinh("; break;}
-			case 16: {str = "acosh("; break;}
-			case 17: {str = "atanh("; break;}
-			case 18: {str = "ln("; break;}
-			case 19: {str = "abs("; break;}
-			case 20: {str = "sqrt("; break;}
-			case 21: {str = "cbrt("; break;}
-			case 22: {str = "erf("; break;}
-			case 23: {str = "erfc("; break;}
-			case 24: {str = "airy("; break;}
-			case 25: {str = "root("; 
+			case 6: {str = "root("; 
 				str += rnd_expression(allow_unknown, allow_function, 6, 3);
 				str += ',';
 				str += rnd_number(true, true, true, false);
 				str += ')';
 				return str;
 			}
-			case 26: {str = "Si("; break;}
-			case 27: {str = "Shi("; break;}
-			case 28: {str = "im("; break;}
-			case 29: {str = "re("; break;}
-			case 30: {str = "log("; 
+			case 7: {str = "log("; 
 				str += rnd_expression(allow_unknown, allow_function, 6, 3);
 				str += ',';
 				str += rnd_number(true, true, true, false);
 				str += ')';
 				return str;
 			}
+			case 8: {str = "sin("; break;}
+			case 9: {str = "cos("; break;}
+			case 10: {str = "tan("; break;}
+			case 11: {str = "sinh("; break;}
+			case 12: {str = "cosh("; break;}
+			case 13: {str = "tanh("; break;}
+			case 14: {str = "asin("; break;}
+			case 15: {str = "acos("; break;}
+			case 16: {str = "atan("; break;}
+			case 17: {str = "asinh("; break;}
+			case 18: {str = "acosh("; break;}
+			case 19: {str = "atanh("; break;}
+			case 20: {str = "ln("; break;}
+			case 21: {str = "abs("; break;}
+			case 22: {str = "sqrt("; break;}
+			case 23: {str = "cbrt("; break;}
+			case 24: {str = "erf("; break;}
+			case 25: {str = "erfc("; break;}
+			case 26: {str = "airy("; break;}
+			case 27: {str = "Si("; break;}
+			case 28: {str = "Shi("; break;}
+			case 29: {str = "im("; break;}
+			case 30: {str = "re("; break;}
 		}
 		if(r > 5) {
 			if(allow_unknown && rand() % 2 == 1) {
@@ -985,6 +985,7 @@ int rt1 = 0, rt2 = 0, rt3 = 0, rt4 = 0, rt5 = 0, rt6 = 0, rt7 = 0, rt8 = 0, rt9 
 void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bool test_interval = true, bool test_equation = true) {
 	cerr << "A0" << endl;
 	string str = rnd_expression(allow_unknowns, allow_functions, 8, 4);
+	str = "(cbrt(x)^(2^sqrt(atanh(x))) - (-981484 / 25) - 199 / 20) / (e - 8 + 22 / 5 + Shi(asin(abs(x)^2 / x)) * acosh(x))";
 	cerr << "A2:" << str << endl;
 	PrintOptions po; po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	MathStructure mp, m1, m2;
@@ -1569,9 +1570,10 @@ int main(int argc, char *argv[]) {
 
 	evalops.parse_options.angle_unit = ANGLE_UNIT_GRADIANS;
 	
-	for(size_t i = 0; i < 1000; i++) {
+	for(size_t i = 0; i <= 10000; i++) {
 		rnd_test(evalops, true, true, false, true);
-		if(i % 100 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
+		cout << CALCULATOR->usesIntervalArithmetic() << endl;
+		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 
