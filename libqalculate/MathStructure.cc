@@ -4520,7 +4520,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							return 1;
 						}
 					}
-					if(mstruct.isNumber() && CHILD(1).isNumber() && CHILD(0).isNumber() && CHILD(0).number().isRational() && !CHILD(0).number().isZero() && mstruct.number().isRational()) {
+					if(mstruct.isNumber() && CHILD(1).isNumber() && !CHILD(1).number().includesInfinity() && CHILD(0).isNumber() && CHILD(0).number().isRational() && !CHILD(0).number().isZero() && mstruct.number().isRational()) {
 						if(CHILD(0).isInteger() && mstruct.number().denominator() == CHILD(0).number().numerator()) {
 							CHILD(1).number()--;
 							MERGE_APPROX_AND_PREC(mstruct)
@@ -4956,6 +4956,17 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					}
 				}
 			}
+		}
+		if(o_number.isRational() && !o_number.isInteger() && !o_number.numeratorIsOne() && mstruct.number().isRational()) {
+			Number num(o_number.numerator());
+			Number den(o_number.denominator());
+			set(num, true);
+			calculateRaise(mstruct, eo);
+			multiply(den);
+			LAST.calculateRaise(mstruct, eo);
+			LAST.calculateInverse(eo);
+			calculateMultiplyLast(eo);
+			return 1;
 		}
 		// If base numerator is larger than denominator, invert base and negate exponent
 		if(o_number.isRational() && !o_number.isInteger() && !o_number.isZero() && ((o_number.isNegative() && o_number.isGreaterThan(nr_minus_one) && mstruct.number().isInteger()) || (o_number.isPositive() && o_number.isLessThan(nr_one)))) {
@@ -5447,8 +5458,8 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		}
 		case STRUCT_VARIABLE: {
 			if(o_variable == CALCULATOR->v_e) {
-				if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
-					if(mstruct[0].isNumber()) {
+				if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber()) {
+					if(mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
 						if(mstruct[0].number().isI() || mstruct[0].number().isMinusI()) {
 							//e^(i*pi)=-1
 							set(m_minus_one, true);
@@ -5457,26 +5468,50 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							Number img(mstruct[0].number().imaginaryPart());
 							// e^(a*i*pi)=+-1; e^(a/2*i*pi)=+-1 (a is integer)
 							if(img.isInteger()) {
-								if(img.isEven()) {
-									set(m_one, true);
-								} else {
-									set(m_minus_one, true);
-								}
+								if(img.isEven()) set(m_one, true);
+								else set(m_minus_one, true);
 								MERGE_APPROX_AND_PREC(mstruct)
 								return 1;
-							} else if(img.isRational() && img.denominatorIsTwo()) {
+							} else if(img.isRational()) {
+								Number nr(img);
 								img.floor();
-								clear(true);
-								if(img.isEven()) {
-									img.set(1, 1, 0);
+								nr -= img;
+								if(nr.denominatorIsTwo()) {
+									clear(true);
+									if(img.isEven()) img.set(1, 1, 0);
+									else img.set(-1, 1, 0);
+									o_number.setImaginaryPart(img);
+								} else if(nr.denominator() == 4) {
+									img.floor();
+									set(1, 1, 0, true);
+									if(nr.numeratorIsOne()) calculateAdd(nr_one_i, eo);
+									else calculateAdd(nr_minus_i, eo);
+									multiply(nr_two);
+									LAST.calculateRaise(nr_minus_half, eo);
+									calculateMultiplyLast(eo);
+									if(nr.numeratorIsOne() == img.isOdd()) calculateMultiply(nr_minus_one, eo);
 								} else {
-									img.set(-1, 1, 0);
+									set(-1, 1, 0, true);
+									img.floor();
+									calculateRaise(nr, eo);
+									if(img.isOdd()) calculateMultiply(nr_minus_one, eo);
 								}
-								o_number.setImaginaryPart(img);
 								MERGE_APPROX_AND_PREC(mstruct)
 								return 1;
 							}
 						}
+					} else if(mstruct[0].number().isI() && mstruct[1].isFunction() && mstruct[1].function() == CALCULATOR->f_atan && mstruct[1].size() == 1 && !mstruct[1][0].containsUnknowns() && ((eo.expand != 0 && eo.expand > -2) || !mstruct[1][0].containsInterval(true, false, false, eo.expand == -2))) {
+						set(mstruct[1][0], true);
+						calculateRaise(nr_two, eo);
+						calculateAdd(m_one, eo);
+						calculateRaise(nr_half, eo);
+						calculateInverse(eo);
+						multiply(mstruct[1][0]);
+						LAST.calculateMultiply(nr_one_i, eo);
+						LAST.calculateAdd(m_one, eo);
+						calculateMultiplyLast(eo);
+						MERGE_APPROX_AND_PREC(mstruct)
+						return true;
 					}
 				} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_ln && mstruct.size() == 1) {
 					if(mstruct[0].representsNumber() && (eo.allow_infinite || mstruct[0].representsNonZero())) {
@@ -6895,7 +6930,9 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 			if(b && divs.size() > 1) {
 				if(!combine_only && divs[1].isAddition() && nums[1].isAddition()) {
 					MathStructure ca, cb, mgcd;
-					if(MathStructure::gcd(nums[1], divs[1], mgcd, eo2, &ca, &cb, false) && !mgcd.isOne() && (!cb.isAddition() || !ca.isAddition() || ca.size() + cb.size() <= nums[1].size() + divs[1].size())) {
+					EvaluationOptions eo3 = eo2;
+					eo3.transform_trigonometric_functions = false;
+					if(MathStructure::gcd(nums[1], divs[1], mgcd, eo3, &ca, &cb, false) && !mgcd.isOne() && (!cb.isAddition() || !ca.isAddition() || ca.size() + cb.size() <= nums[1].size() + divs[1].size())) {
 						if(mgcd.representsNonZero(true) || !eo.warn_about_denominators_assumed_nonzero || warn_about_denominators_assumed_nonzero(mgcd, eo)) {
 							if(cb.isOne()) {
 								numleft.addChild(ca);
@@ -12681,7 +12718,7 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 
 		if(CALCULATOR->aborted()) return false;
 
-		prem(c, d, xvar, r, eo, false);
+		if(!prem(c, d, xvar, r, eo, false)) return false;
 
 		if(r.isZero()) {
 			mgcd = gamma;
@@ -13995,13 +14032,28 @@ factored_2:
 	}
 
 	if(!heur_gcd(m1, m2, mresult, eo, ca, cb, sym_stats, var_i)) {
-		sr_gcd(m1, m2, mresult, sym_stats, var_i, eo);
+		if(!sr_gcd(m1, m2, mresult, sym_stats, var_i, eo)) {
+			if(ca) *ca = m1;
+			if(cb) *cb = m2;
+			mresult.set(1, 1, 0);
+			return false;
+		}
 		if(!mresult.isOne()) {
 			if(ca) {
-				MathStructure::polynomialDivide(m1, mresult, *ca, eo, false);
+				if(!MathStructure::polynomialDivide(m1, mresult, *ca, eo, false)) {
+					if(ca) *ca = m1;
+					if(cb) *cb = m2;
+					mresult.set(1, 1, 0);
+					return false;
+				}
 			}
 			if(cb) {
-				MathStructure::polynomialDivide(m2, mresult, *cb, eo, false);
+				if(!MathStructure::polynomialDivide(m2, mresult, *cb, eo, false)) {
+					if(ca) *ca = m1;
+					if(cb) *cb = m2;
+					mresult.set(1, 1, 0);
+					return false;
+				}
 			}
 		}
 		if(CALCULATOR->aborted()) {
@@ -14011,6 +14063,7 @@ factored_2:
 			return false;
 		}
 	}
+
 	return true;
 }
 
@@ -26790,6 +26843,7 @@ bool fix_n_multiple(MathStructure &mstruct, const EvaluationOptions &eo, const E
 bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions &eo2, const MathStructure &x_var, MathStructure *morig) {
 	if(!isComparison()) {
 		cout << "isolate_x_sub: " << *this << " is not a comparison." << endl;
+		sleep(900);
 		return false;
 	}
 	if(CHILD(0) == x_var) return false;

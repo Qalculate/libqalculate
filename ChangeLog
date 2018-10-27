@@ -1,3 +1,41 @@
+2018-10-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Solve a^(2x)+a^x=b, a^(-x)+a^x=b, and similar
+	* Solve a*sinh(x)+b*cosh(x)=c
+	* Fix atan(i) and atan(-i)
+	* Simplify e^(i*atan(a)) to (1+a*i)/sqrt(a^2+1)
+	* Generalize e^(a*pi*i) for all rational a
+	* Simplify (a/b)^c to a^c/b^c if a and b are integers
+	* Fix unrecognized gcd failure
+	* Fix segfault on n*1^infinity
+	* Fix atan(i) and atan(-i)
+
+2018-10-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fixes for default angle unit other than radians
+	* Solve a^(b*x)+x=c in exact mode
+	* ln(a*i+b) interval fix
+	* Fix for trigonometric functions with division by argument
+	* Improve polynomial exponentiation limit calculation
+
+2018-10-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Simplify arg(e^(a*i)), ln(e^(a*i)) and (e^(a*i))^b
+	* Calculate approximate value to determine sign in abs(), arg(), sgn(), heaviside and dirac(), in exact mode
+	* Use ln()=ln(abs(x))+arg(x)i in more cases in exact mode
+	* Fix infinite loop in trigonometric simplifications
+	* Only remove near zero part of complex number interval if interval includes zero
+
+2018-10-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Remove probably zero imaginary part from numbers in plot data
+	* ln() simplifications for complex arguments
+	* Fix approximate comparison between rational number and interval
+	* Fix never ending loop in polynomial division
+	* Fix (-x)^(-2/3) and similar when x is assumed negative
+	* abs(a^(b*i))=1 if a is positive and b is real
+	* Fix endless loop with abs(interval) base and polynomial power
+
 2018-10-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix endless loop with (x^8)^(52^(1/10)) and similar if x is assumed negative
