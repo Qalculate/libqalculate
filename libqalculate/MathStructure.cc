@@ -27524,6 +27524,125 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 					}
 				}
+				if(i_px == 0) {
+					// a^(2x)+a^x, a^(-x)+a^x
+					MathStructure *mvar1 = NULL, *mvar2 = NULL;
+					b = true;
+					for(size_t i = 0; i < CHILD(0).size() && b; i++) {
+						b = false;
+						if(CHILD(0)[i].isMultiplication()) {
+							for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+								if(!b && CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1].contains(x_var) && !CHILD(0)[i][i2][0].contains(x_var)) {
+									if(mvar2) {
+										if(mvar1->equals(CHILD(0)[i][i2]) || mvar2->equals(CHILD(0)[i][i2])) {
+											b = true;
+										}
+									} else if(mvar1) {
+										if(!mvar1->equals(CHILD(0)[i][i2])) {
+											mvar2 = &CHILD(0)[i][i2];
+										}
+										b = true;
+									} else {
+										mvar1 =  &CHILD(0)[i][i2];
+										b = true;
+									}
+									if(!b) break;
+								} else if(CHILD(0)[i][i2].contains(x_var)) {
+									b = false;
+									break;
+								}
+							}
+						} else if(CHILD(0)[i].isPower() && CHILD(0)[i][1].contains(x_var) && !CHILD(0)[i][0].contains(x_var)) {
+							if(mvar2) {
+								if(mvar1->equals(CHILD(0)[i]) || mvar2->equals(CHILD(0)[i])) {
+									b = true;
+								}
+							} else if(mvar1) {
+								if(!mvar1->equals(CHILD(0)[i])) {
+									mvar2 = &CHILD(0)[i];
+								}
+								b = true;
+							} else {
+								mvar1 =  &CHILD(0)[i];
+								b = true;
+							}
+						}
+					}
+					if(b && mvar2 && mvar1->base()->representsPositive()) {
+						bool b_two = false, b_m_one = false;
+						if(mvar1->base()->equals(*mvar2->base())) {
+							MathStructure m1m2((*mvar1)[1]);
+							m1m2.calculateMultiply(nr_two, eo2);
+							if(m1m2.equals((*mvar2)[1])) {
+								b_two = true;
+								MathStructure *mtmp = mvar2;
+								mvar2 = mvar1;
+								mvar1 = mtmp;
+							}
+							if(!b_two && !b_m_one) {
+								MathStructure m1mm1((*mvar1)[1]);
+								m1mm1.calculateMultiply(nr_minus_one, eo2);
+								if(m1mm1.equals((*mvar2)[1])) {
+									b_m_one = true;
+									MathStructure *mtmp = mvar2;
+									mvar2 = mvar1;
+									mvar1 = mtmp;
+								}
+							}
+							if(!b_two && !b_m_one) {
+								MathStructure m2m2((*mvar2)[1]);
+								m2m2.calculateMultiply(nr_two, eo2);
+								if(m2m2.equals((*mvar1)[1])) {
+									b_two = true;
+								}
+							}
+							if(!b_two && !b_m_one) {
+								MathStructure m2mm1((*mvar2)[1]);
+								m2mm1.calculateMultiply(nr_minus_one, eo2);
+								if(m2mm1.equals((*mvar1)[1])) {
+									b_m_one = true;
+								}
+							}
+						} else if(mvar1->base()->isNumber() && mvar2->base()->isNumber() && !mvar1->base()->number().isInterval() && !mvar2->base()->number().isInterval()) {
+							if(mvar1->base()->number() < mvar2->base()->number()) {
+								if(mvar2->base()->number() == (mvar1->base()->number() ^ 2)) {
+									b_two = true;
+								} else if(mvar1->base()->number() == (mvar2->base()->number() ^ -1)) {
+									b_m_one = true;
+									MathStructure *mtmp = mvar2;
+									mvar2 = mvar1;
+									mvar1 = mtmp;
+								}
+							} else {
+								if(mvar1->base()->number() == (mvar2->base()->number() ^ 2)) {
+									b_two = true;
+									MathStructure *mtmp = mvar2;
+									mvar2 = mvar1;
+									mvar1 = mtmp;
+								} else if(mvar2->base()->number() == (mvar1->base()->number() ^ -1)) {
+									b_m_one = true;
+								}
+							}
+						}
+						if(b_two || b_m_one) {
+							MathStructure mv(*mvar1);
+							MathStructure mv2(*mvar2);
+							UnknownVariable *var = new UnknownVariable("", format_and_print(mv));
+							var->setInterval(mv);
+							var->ref();
+							MathStructure u_var(var);
+							replace(mv, u_var);
+							MathStructure u_var2(var);
+							u_var2.raise(b_two ? nr_two : nr_minus_one);
+							replace(mv2, u_var2);
+							b = isolate_x_sub(eo, eo2, u_var);
+							calculateReplace(u_var, mv, eo2);
+							var->destroy();
+							if(b) isolate_x(eo, eo2, x_var);
+							return b;
+						}
+					}
+				}
 				if(CHILD(0).containsFunction(CALCULATOR->f_ln)) {
 					// x+ln(x)=lambertw(x)
 					MathStructure *mln = NULL;
@@ -27656,6 +27775,63 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								return true;
 							}
 							set(mbak);
+						}
+					}
+				}
+				if(CHILD(0).containsFunction(CALCULATOR->f_cosh) && CHILD(0).containsFunction(CALCULATOR->f_sinh)) {
+					// a*cosh(x) + b*cosh(x)
+					MathStructure *marg = NULL, *m_cosh = NULL, *m_sinh = NULL;
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(CHILD(0)[i].isMultiplication()) {
+							bool b_found = false;
+							for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+								if(CHILD(0)[i][i2].contains(x_var)) {
+									if(!b_found && CHILD(0)[i][i2].isFunction() && (CHILD(0)[i][i2].function() == CALCULATOR->f_cosh || CHILD(0)[i][i2].function() == CALCULATOR->f_sinh) && CHILD(0)[i][i2].size() == 1 && (!marg || marg->equals(CHILD(0)[i][i2][0]))) {
+										if(!marg) marg = &CHILD(0)[i][i2][0];
+										if(CHILD(0)[i][i2].function() == CALCULATOR->f_cosh) m_cosh = &CHILD(0)[i][i2];
+										else m_sinh = &CHILD(0)[i][i2];
+										b_found = true;
+									} else {
+										b_found = false;
+										break;
+									}
+								}
+							}
+							if(!b_found) {
+								marg = NULL;
+								break;
+							}
+						} else if(CHILD(0)[i].isFunction() && (CHILD(0)[i].function() == CALCULATOR->f_cosh || CHILD(0)[i].function() == CALCULATOR->f_sinh) && CHILD(0)[i].size() == 1 && (!marg || marg->equals(CHILD(0)[i][0]))) {
+							if(!marg) marg = &CHILD(0)[i][0];
+							if(CHILD(0)[i].function() == CALCULATOR->f_cosh) m_cosh = &CHILD(0)[i];
+							else m_sinh = &CHILD(0)[i];
+						} else {
+							marg = NULL;
+							break;
+						}
+					}
+					if(marg && m_cosh && m_sinh) {
+						MathStructure mtest(*this);
+						EvaluationOptions eo3 = eo;
+						eo3.approximation = APPROXIMATION_EXACT;
+						MathStructure m_ex(CALCULATOR->v_e);
+						m_ex.raise(*marg);
+						MathStructure m_emx(m_ex);
+						m_emx.last().calculateMultiply(nr_minus_one, eo2);
+						m_ex *= nr_half;
+						m_emx *= nr_half;
+						m_ex.swapChildren(1, 2);
+						m_emx.swapChildren(1, 2);
+						MathStructure mr_sinh(m_ex);
+						mr_sinh.calculateSubtract(m_emx, eo3);
+						MathStructure mr_cosh(m_ex);
+						mr_cosh.calculateAdd(m_emx, eo3);
+						mtest.calculateReplace(*m_sinh, mr_sinh, eo3);
+						mtest.calculateReplace(*m_cosh, mr_cosh, eo3);
+						if(mtest.isolate_x_sub(eo, eo3, x_var, morig)) {
+							if(eo2.approximation != APPROXIMATION_EXACT) mtest.calculatesub(eo2, eo, true);
+							set(mtest);
+							return true;
 						}
 					}
 				}
