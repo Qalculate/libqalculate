@@ -285,7 +285,7 @@
         <_title>Separator</_title>
       </argument>
     </builtin_function>
-    <builtin_function name="maginute">
+    <builtin_function name="magnitude">
       <_title>Magnitude</_title>
       <_names>r:magnitude</_names>
       <_description>Calculates the magnitude of a value. This function returns the same value as abs() for all values except vectors.</_description>
@@ -1063,7 +1063,7 @@
       </argument>
     </function>
     <function>
-      <_title>2 raised the to power X</_title>
+      <_title>2 raised to the power X</_title>
       <_names>rs:exp2</_names>
       <expression>2^\x</expression>
       <argument type="free" index="1">
@@ -1072,7 +1072,7 @@
       </argument>
     </function>
     <function>
-      <_title>10 raised the to power X</_title>
+      <_title>10 raised to the power X</_title>
       <_names>rs:exp10</_names>
       <expression>10^\x</expression>
       <argument type="free" index="1">

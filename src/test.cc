@@ -985,7 +985,6 @@ int rt1 = 0, rt2 = 0, rt3 = 0, rt4 = 0, rt5 = 0, rt6 = 0, rt7 = 0, rt8 = 0, rt9 
 void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bool test_interval = true, bool test_equation = true) {
 	cerr << "A0" << endl;
 	string str = rnd_expression(allow_unknowns, allow_functions, 8, 4);
-	str = "(cbrt(x)^(2^sqrt(atanh(x))) - (-981484 / 25) - 199 / 20) / (e - 8 + 22 / 5 + Shi(asin(abs(x)^2 / x)) * acosh(x))";
 	cerr << "A2:" << str << endl;
 	PrintOptions po; po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	MathStructure mp, m1, m2;
@@ -1118,9 +1117,8 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			m1 = mp;
 			cerr << "B" << endl;
 			m1.transform(COMPARISON_EQUALS, m_zero);
-			eo.approximation = APPROXIMATION_APPROXIMATE;
-			CALCULATOR->calculate(&m1, -1, eo);
-			while(CALCULATOR->busy()) {sleep_ms(50);}
+			eo.approximation = APPROXIMATION_EXACT;
+			CALCULATOR->calculate(&m1, 5000, eo);
 			if(m1.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED7"; return;}
 			m1.replace(CALCULATOR->v_n, 3);
 			if(m1.isComparison() && m1.comparisonType() == COMPARISON_EQUALS && m1[0] == CALCULATOR->v_x) {
@@ -1567,12 +1565,17 @@ int main(int argc, char *argv[]) {
 	
 	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 	CALCULATOR->useIntervalArithmetic();
+	
+	bool biv = CALCULATOR->usesIntervalArithmetic();
 
 	evalops.parse_options.angle_unit = ANGLE_UNIT_GRADIANS;
 	
 	for(size_t i = 0; i <= 10000; i++) {
 		rnd_test(evalops, true, true, false, true);
-		cout << CALCULATOR->usesIntervalArithmetic() << endl;
+		if(biv != CALCULATOR->usesIntervalArithmetic()) {
+			cout << "INTERVAL DEACTIVATED" << endl;
+			CALCULATOR->useIntervalArithmetic(biv);
+		}
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
