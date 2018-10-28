@@ -219,6 +219,7 @@ class Calculator {
 	int i_precision;
 	bool b_interval;
 	int i_stop_interval;
+	int i_start_interval;
 	char vbuffer[200];
 	vector<void*> ufvl;
 	vector<char> ufvl_t;
@@ -1130,6 +1131,8 @@ class Calculator {
 	bool usesIntervalArithmetic() const;
 	void beginTemporaryStopIntervalArithmetic();
 	void endTemporaryStopIntervalArithmetic();
+	void beginTemporaryEnableIntervalArithmetic();
+	void endTemporaryEnableIntervalArithmetic();
 	//@}
 
 	/** @name Functions for localization */

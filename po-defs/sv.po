@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-22 16:23+0200\n"
+"POT-Creation-Date: 2018-10-28 08:26+0100\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -4267,7 +4267,8 @@ msgid ""
 "principal branch and real valued results are currently supported."
 msgstr ""
 "Returnerar den inverterade funktionen för mx*e^x såsom ln() gör för e^x. "
-"Enbart principalgrenen och värden som ger reeala result stöds för närvarande. "
+"Enbart principalgrenen och värden som ger reeala result stöds för "
+"närvarande. "
 
 #: ../data/functions.xml.in.h:332
 msgid "Branch"
@@ -4302,7 +4303,7 @@ msgid "r:cis"
 msgstr ""
 
 #: ../data/functions.xml.in.h:340
-msgid "2 raised the to power X"
+msgid "2 raised to the power X"
 msgstr "2 upphöjt med X"
 
 #: ../data/functions.xml.in.h:341
@@ -4310,7 +4311,7 @@ msgid "rs:exp2"
 msgstr ""
 
 #: ../data/functions.xml.in.h:342
-msgid "10 raised the to power X"
+msgid "10 raised to the power X"
 msgstr "10 upphöjt med X"
 
 #: ../data/functions.xml.in.h:343

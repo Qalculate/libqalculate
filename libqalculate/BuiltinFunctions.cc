@@ -853,12 +853,11 @@ bool test_eval(MathStructure &mtest, const EvaluationOptions &eo) {
 	EvaluationOptions eo2 = eo;
 	eo2.assume_denominators_nonzero = false;
 	eo2.approximation = APPROXIMATION_APPROXIMATE;
-	bool b_intval = CALCULATOR->usesIntervalArithmetic();
-	CALCULATOR->useIntervalArithmetic();
+	CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 	CALCULATOR->beginTemporaryStopMessages();
 	mtest.calculateFunctions(eo2);
 	mtest.calculatesub(eo2, eo2, true);
-	CALCULATOR->useIntervalArithmetic(b_intval);
+	CALCULATOR->endTemporaryEnableIntervalArithmetic();
 	if(CALCULATOR->endTemporaryStopMessages()) return false;
 	return true;
 }
@@ -3740,15 +3739,14 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 		
 	if(!mstruct.isNumber()) {
 		if(mstruct.isPower() && mstruct[0] == CALCULATOR->v_e && mstruct[1].isNumber() && mstruct[1].number().hasImaginaryPart() && !mstruct[1].number().hasRealPart()) {
-			bool b_intval = CALCULATOR->usesIntervalArithmetic();
-			CALCULATOR->useIntervalArithmetic();
 			CALCULATOR->beginTemporaryStopMessages();
+			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 			Number nr(*mstruct[1].number().internalImaginary());
 			nr.add(CALCULATOR->v_pi->get().number());
 			nr.divide(CALCULATOR->v_pi->get().number() * 2);
 			Number nr_u(nr.upperEndPoint());
 			nr = nr.lowerEndPoint();
-			CALCULATOR->useIntervalArithmetic(b_intval);
+			CALCULATOR->endTemporaryEnableIntervalArithmetic();
 			nr_u.floor();
 			nr.floor();
 			if(!CALCULATOR->endTemporaryStopMessages() && nr == nr_u) {
@@ -3894,15 +3892,14 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			return 1;
 		}
 		if(mstruct.isPower() && mstruct[0] == CALCULATOR->v_e && mstruct[1].isNumber() && mstruct[1].number().hasImaginaryPart() && !mstruct[1].number().hasRealPart()) {
-			bool b_intval = CALCULATOR->usesIntervalArithmetic();
-			CALCULATOR->useIntervalArithmetic();
 			CALCULATOR->beginTemporaryStopMessages();
+			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 			Number nr(*mstruct[1].number().internalImaginary());
 			nr.add(CALCULATOR->v_pi->get().number());
 			nr.divide(CALCULATOR->v_pi->get().number() * 2);
 			Number nr_u(nr.upperEndPoint());
 			nr = nr.lowerEndPoint();
-			CALCULATOR->useIntervalArithmetic(b_intval);
+			CALCULATOR->endTemporaryEnableIntervalArithmetic();
 			nr_u.floor();
 			nr.floor();
 			if(!CALCULATOR->endTemporaryStopMessages() && nr == nr_u) {
@@ -6007,8 +6004,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				Number nr_interval;
 				nr_interval.setInterval(nr_begin, nr_end);
 				CALCULATOR->endTemporaryStopIntervalArithmetic();
-				bool b_interval = CALCULATOR->usesIntervalArithmetic();
-				if(!b_interval) CALCULATOR->useIntervalArithmetic(true);
+				CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 				MathStructure m_interval(nr_interval);
 				KnownVariable *v = new KnownVariable("", "v", m_interval);
 				v->ref();
@@ -6016,7 +6012,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				CALCULATOR->beginTemporaryStopMessages();
 				merr.eval(eo2);
 				if(CALCULATOR->endTemporaryStopMessages() > 0) b_unknown_precision = true;
-				if(!b_interval) CALCULATOR->useIntervalArithmetic(false);
+				CALCULATOR->endTemporaryEnableIntervalArithmetic();
 				CALCULATOR->beginTemporaryStopIntervalArithmetic();
 				if(!merr.isNumber() || !merr.number().isReal()) b_unknown_precision = true;
 				v->destroy();

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-22 16:23+0200\n"
+"POT-Creation-Date: 2018-10-28 08:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4129,7 +4129,7 @@ msgid "r:cis"
 msgstr ""
 
 #: ../data/functions.xml.in.h:340
-msgid "2 raised the to power X"
+msgid "2 raised to the power X"
 msgstr ""
 
 #: ../data/functions.xml.in.h:341
@@ -4137,7 +4137,7 @@ msgid "rs:exp2"
 msgstr ""
 
 #: ../data/functions.xml.in.h:342
-msgid "10 raised the to power X"
+msgid "10 raised to the power X"
 msgstr ""
 
 #: ../data/functions.xml.in.h:343
