@@ -5878,7 +5878,7 @@ bool Number::ln() {
 		if(new_r.hasImaginaryPart() || !new_r.ln()) return false;
 		set(new_r);
 		setImaginaryPart(new_i);
-		if(i_value) testComplex(this, i_value);
+		testComplex(this, i_value);
 		return true;
 	} else if(isNonPositive()) {
 		if(b_imag) return false;
@@ -5887,7 +5887,7 @@ bool Number::ln() {
 		set(new_r);
 		if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
 		i_value->pi();
-		if(i_value) testComplex(this, i_value);
+		testComplex(this, i_value);
 		return true;
 	}
 
@@ -6133,7 +6133,7 @@ bool Number::lcm(const Number &o) {
 
 bool Number::polylog(const Number &o) {
 	if(isZero()) return true;
-	//if(!o.isTwo() || !isLessThanOrEqualTo(1) || isNegative()) return false;
+	if(!o.isTwo() || !isLessThanOrEqualTo(1)) return false;
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
