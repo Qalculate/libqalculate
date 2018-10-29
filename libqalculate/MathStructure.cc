@@ -7371,7 +7371,7 @@ bool test_var_int(const MathStructure &mstruct, bool *v = NULL) {
 		else *v = true;
 		return true;
 	}
-	if(mstruct.isNumber()) {
+	if(mstruct.isNumber() && mstruct.number().isReal()) {
 		if(!v) {
 			if(mstruct.number().isInterval()) {
 				Number nr_int(mstruct.number());
@@ -7385,7 +7385,7 @@ bool test_var_int(const MathStructure &mstruct, bool *v = NULL) {
 				nr_c++;
 				return COMPARISON_IS_NOT_EQUAL(mstruct.number().compareApproximately(nr_f)) && COMPARISON_IS_NOT_EQUAL(mstruct.number().compareApproximately(nr_c));
 			}
-			return mstruct.number().isReal() && !mstruct.number().isInterval() && !mstruct.number().isInteger();
+			return !mstruct.number().isInterval() && !mstruct.number().isInteger();
 		}
 		if(mstruct.isApproximate()) return false;
 		return mstruct.number().isRational();
@@ -7479,7 +7479,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					int nonintervals = 0, had_interval = false;
 					for(size_t i = 0; i < SIZE; i++) {
 						if(CHILD(i).isNumber()) {
-							if(CHILD(i).number().isInterval()) {
+							if(CHILD(i).number().isInterval(false)) {
 								had_interval = true;
 								if(nonintervals >= 2) break;
 							} else if(nonintervals < 2) {
@@ -10888,14 +10888,14 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 			} else if(mstruct[0].isNumber() && !mstruct[0].number().isNonZero() && mstruct[1].representsNegative() && mbak[0].contains(x_var, true) > 0) {
 				bool b_test = true;
 				int i_sgn = 0;
-				if(mstruct[0].number().isInterval() && (mstruct[0].number().hasImaginaryPart() || !mstruct[1].isNumber())) {
+				if(mstruct[0].number().isInterval(false) && (mstruct[0].number().hasImaginaryPart() || !mstruct[1].isNumber())) {
 					b_test = false;
 				}
 				if(b_test && ((mbak[0].isFunction() && mbak[0].function() == CALCULATOR->f_abs) || mstruct[1].representsEven())) {
 					i_sgn = 1;
 					b_test = false;
 				} else if(b_test) {
-					if(mstruct[0].number().isInterval() && !mstruct[0].number().isNonNegative() && !mstruct[0].number().isNonPositive()) {
+					if(mstruct[0].number().isInterval(false) && !mstruct[0].number().isNonNegative() && !mstruct[0].number().isNonPositive()) {
 						b_test = false;
 					} else {
 						MathStructure mpow(mbak[0]);
@@ -11509,16 +11509,28 @@ bool contains_undefined(MathStructure &m, const EvaluationOptions &eo = default_
 	}
 	return false;
 }
-bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, const MathStructure &mvar, const Number &nr_intval, const EvaluationOptions &eo, int depth, const Number &nr_prec, int orig_prec = 0) {
+bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, const MathStructure &mvar, const Number &nr_intval, const EvaluationOptions &eo, int depth, const Number &nr_prec, int orig_prec = 0, int is_real = -1) {
 	if(CALCULATOR->aborted()) return false;
 	if(depth == 0) orig_prec = nr_intval.precision(1);
 	MathStructure mtest(mstruct);
 	mtest.replace(mvar, nr_intval);
 	mtest.eval(eo);
-	ComparisonResult cmp = mtest.compare(m_zero);
+	if(is_real < 0) is_real = mtest.representsNonComplex(true);
+	ComparisonResult cmp;
+	if(is_real == 0) {
+		MathStructure m_re(CALCULATOR->f_re, &mtest, NULL);
+		m_re.calculateFunctions(eo);
+		cmp = m_re.compare(m_zero);
+		MathStructure m_im(CALCULATOR->f_im, &mtest, NULL);
+		m_im.calculateFunctions(eo);
+		ComparisonResult cmp2 = m_im.compare(m_zero);
+		if(COMPARISON_IS_NOT_EQUAL(cmp) || cmp2 == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_UNKNOWN) cmp = cmp2;
+	} else {
+		cmp = mtest.compare(m_zero);
+	}
 	if(COMPARISON_IS_NOT_EQUAL(cmp)) {
 		return true;
-	} else if(cmp > COMPARISON_RESULT_UNKNOWN || cmp == COMPARISON_RESULT_EQUAL || contains_undefined(mtest)) {
+	} else if(cmp != COMPARISON_RESULT_UNKNOWN || cmp == COMPARISON_RESULT_EQUAL || contains_undefined(mtest)) {
 		if(cmp == COMPARISON_RESULT_EQUAL || (nr_intval.precision(1) > (orig_prec > PRECISION ? orig_prec + 5 : PRECISION + 5) || (!nr_intval.isNonZero() && nr_intval.uncertainty().isLessThan(nr_prec)))) {
 			if(cmp == COMPARISON_RESULT_EQUAL && depth <= 3) return false;
 			if(malts.size() > 0 && (cmp = malts.last().compare(nr_intval)) != COMPARISON_RESULT_UNKNOWN && COMPARISON_MIGHT_BE_EQUAL(cmp)) {
@@ -11534,7 +11546,7 @@ bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, co
 		vector<Number> splits;
 		nr_intval.splitInterval(2, splits);
 		for(size_t i = 0; i < splits.size(); i++) {
-			if(!find_interval_zeroes(mstruct, malts, mvar, splits[i], eo, depth + 1, nr_prec, orig_prec)) return false;
+			if(!find_interval_zeroes(mstruct, malts, mvar, splits[i], eo, depth + 1, nr_prec, orig_prec, is_real)) return false;
 		}
 		return true;
 	}
@@ -11689,9 +11701,11 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 		msolve.replace(v, mvar);
 		bool b = true;
 		CALCULATOR->beginTemporaryStopMessages();
+
 		if(!msolve.differentiate(u_var, eo) || msolve.countTotalChildren(false) > 10000 || msolve.containsFunction(CALCULATOR->f_diff, true) || CALCULATOR->aborted()) {
 			b = false;
 		}
+
 		MathStructure malts;
 		malts.clearVector();
 		if(b) {
@@ -11704,9 +11718,21 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 			if(contains_undefined(msolve) || msolve.countTotalChildren(false) > 1000 || msolve.containsInterval(true, true, false, true, true)) {
 				msolve.replace(u_var, nr_intval);
 				msolve.eval(eo);
-				ComparisonResult cmp = msolve.compare(m_zero);
-				if(COMPARISON_MIGHT_BE_EQUAL(cmp)) {
-					b = false;
+				if(msolve.representsNonComplex(true)) {
+					ComparisonResult cmp = msolve.compare(m_zero);
+					if(COMPARISON_MIGHT_BE_EQUAL(cmp)) b = false;
+				} else {
+					MathStructure m_re(CALCULATOR->f_re, &msolve, NULL);
+					m_re.calculateFunctions(eo);
+					ComparisonResult cmp = m_re.compare(m_zero);
+					if(COMPARISON_MIGHT_BE_EQUAL(cmp)) {
+						b = false;
+					} else {
+						MathStructure m_im(CALCULATOR->f_im, &msolve, NULL);
+						m_im.calculateFunctions(eo);
+						ComparisonResult cmp = m_im.compare(m_zero);
+						if(COMPARISON_MIGHT_BE_EQUAL(cmp)) b = false;
+					}
 				}
 			} else {
 				MathStructure mtest(mstruct);
@@ -12446,72 +12472,38 @@ bool MathStructure::polynomialDivide(const MathStructure &mnum, const MathStruct
 	return false;
 }
 
-bool polynomial_divide_integers(const vector<long int> &vnum, const vector<long int> &vden, vector<long int> &vquotient) {
+bool polynomial_divide_integers(const vector<Number> &vnum, const vector<Number> &vden, vector<Number> &vquotient) {
 
 	vquotient.clear();
 
 	long int numdeg = vnum.size() - 1;
 	long int dendeg = vden.size() - 1;
-	long int dencoeff = vden[dendeg];
+	Number dencoeff(vden[dendeg]);
 	
 	if(numdeg < dendeg) return false;
 	
-	vquotient.resize(numdeg - dendeg + 1, 0);
+	vquotient.resize(numdeg - dendeg + 1, nr_zero);
 
-	vector<long int> vrem = vnum;
+	vector<Number> vrem = vnum;
 
 	while(numdeg >= dendeg) {
-		long int numcoeff = vrem[numdeg];
+		Number numcoeff(vrem[numdeg]);
 		numdeg -= dendeg;
-		if(numcoeff % dencoeff != 0) break;
+		if(!numcoeff.isIntegerDivisible(dencoeff)) break;
 		numcoeff /= dencoeff;
 		vquotient[numdeg] += numcoeff;
 		for(size_t i = 0; i < vden.size(); i++) {
-			vrem[numdeg + i] -= vden[i] * numcoeff;
+			vrem[numdeg + i] -= (vden[i] * numcoeff);
 		}
 		while(true) {
-			if(vrem.back() == 0) vrem.pop_back();
+			if(vrem.back().isZero()) vrem.pop_back();
 			else break;
 			if(vrem.size() == 0) return true;
 		}
-		numdeg = vrem.size() - 1;
+		numdeg = (long int) vrem.size() - 1;
 	}
 	return false;
 }
-
-bool polynomial_divide_integers(const vector<long int> &vnum, const long int *vden, size_t dsize, vector<long int> &vquotient) {
-
-	vquotient.clear();
-
-	long int numdeg = vnum.size() - 1;
-	long int dendeg = dsize - 1;
-	long int dencoeff = vden[dendeg];
-	
-	if(numdeg < dendeg) return false;
-	
-	vquotient.resize(numdeg - dendeg + 1, 0);
-
-	vector<long int> vrem = vnum;
-
-	while(numdeg >= dendeg) {
-		long int numcoeff = vrem[numdeg];
-		numdeg -= dendeg;
-		if(numcoeff % dencoeff != 0) break;
-		numcoeff /= dencoeff;
-		vquotient[numdeg] += numcoeff;
-		for(size_t i = 0; i < dsize; i++) {
-			vrem[numdeg + i] -= vden[i] * numcoeff;
-		}
-		while(true) {
-			if(vrem.back() == 0) vrem.pop_back();
-			else break;
-			if(vrem.size() == 0) return true;
-		}
-		numdeg = vrem.size() - 1;
-	}
-	return false;
-}
-
 
 bool divide_in_z(const MathStructure &mnum, const MathStructure &mden, MathStructure &mquotient, const sym_desc_vec &sym_stats, size_t var_i, const EvaluationOptions &eo) {
 	
@@ -14671,6 +14663,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 
 	MathStructure mden, mnum;
 	evalSort(true);
+
 	if(term_combination_levels >= -1 && isAddition() && isRationalPolynomial()) {
 		MathStructure msqrfree(*this);
 		eo.protected_function = CALCULATOR->f_signum;
@@ -15380,11 +15373,11 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								return true;
 							}
 						}
-						
-						if(b && b2 && (max_factor_degree < 0 || max_factor_degree >= 2) && degree > 3) {
+
+						if(b && b2 && (max_factor_degree < 0 || max_factor_degree >= 2) && degree > 3 && degree < 50) {
 							// Kronecker method
-							vector<long int> vnum;
-							vnum.resize(degree + 1, 0);
+							vector<Number> vnum;
+							vnum.resize(degree + 1, nr_zero);
 							bool overflow = false;
 							for(size_t i = 0; b && i < SIZE; i++) {
 								switch(CHILD(i).type()) {
@@ -15429,7 +15422,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 									}
 								}
 							}
-							long int lcoeff = vnum[degree];
+
+							long int lcoeff = vnum[degree].lintValue();
 							vector<int> vs;
 							if(b && lcoeff != 0) {
 								degree /= 2;
@@ -15450,6 +15444,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 									vs.push_back(v);
 								}
 							}
+
 							if(b) {
 								vector<int> factors0, factorsl;
 								factors0.push_back(1);
@@ -15470,9 +15465,9 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								long long int cmax = 500000LL / (factors0.size() * factorsl.size());
 								if(term_combination_levels != 0) cmax *= 10;
 								if(degree >= 2 && cmax > 10) {
-									vector<long int> vden;
-									vector<long int> vquo;
-									vden.resize(3, 0);
+									vector<Number> vden;
+									vector<Number> vquo;
+									vden.resize(3, nr_zero);
 									long int c0;
 									for(size_t i = 0; i < factors0.size() * 2; i++) {
 										c0 = factors0[i / 2];
@@ -15549,10 +15544,10 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 									for(int i = 0; i < i_d - 3; i++) {
 										c2totalmax *= t1max;
 									}
-									vector<long int> vden;
-									vector<long int> vquo;
+									vector<Number> vden;
+									vector<Number> vquo;
 									long int *vc = (long int*) malloc(sizeof(long int) * (i_d + 1));
-									vden.resize(i_d + 1, 0);
+									vden.resize(i_d + 1, nr_zero);
 									int in = 0;
 									for(size_t i = 0; i < factors0.size() * 2; i++) {
 										vc[0] = factors0[i / 2] * (i % 2 == 1 ? -1 : 1);
@@ -15606,7 +15601,10 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 													in++;
 													if(b) {
 														if(CALCULATOR->aborted()) return false;
-														if(polynomial_divide_integers(vnum, vc, i_d + 1, vquo)) {
+														for(size_t iden = 0; iden < vden.size(); iden++) {
+															vden[iden] = vc[iden];
+														}
+														if(polynomial_divide_integers(vnum, vden, vquo)) {
 															MathStructure mtest;
 															mtest.setType(STRUCT_ADDITION);
 															for(int i2 = i_d; i2 >= 2; i2--) {
@@ -27506,7 +27504,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								marg2->transform(CALCULATOR->f_lambert_w);
 								marg2->addChild(m_minus_one);
 								if(marg2->calculateFunctions(eo)) marg2->calculatesub(eo2, eo, true);
-								marg->calculateNegate(eo2);
+								marg2->calculateNegate(eo2);
 								if(CHILD(1).isZero()) {
 									marg2->calculateDivide(mlogb, eo2);
 								} else {
@@ -28971,6 +28969,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 			}
+
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
@@ -31142,7 +31141,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						isolate_x_sub(eo, eo2, x_var, morig);
 						return true;
 					}
-					if(CHILD(1).isNumber() && !CHILD(1).number().isInterval()) {
+					if(CHILD(1).isNumber() && !CHILD(1).number().isInterval(false)) {
 						if(CHILD(1).number().isOne()) {
 							if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_EQUALS_GREATER) ct_comp = (CHILD(0)[1].isOne() ? COMPARISON_EQUALS_GREATER : COMPARISON_GREATER);
 							else if(ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_LESS) ct_comp = (CHILD(0)[1].isOne() ? COMPARISON_LESS : COMPARISON_EQUALS_LESS);

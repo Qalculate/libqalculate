@@ -1,3 +1,11 @@
+2018-10-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Group options in qalc
+	* Fix values for x when log(x) and Li(x) represents positive
+	* Fix a*b^x+cx=d
+	* Fixes for interval calculations with complex derivative
+	* Improve trigonometric interval calculations
+
 2018-10-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Simplify e^(a*pi*i) to (-1)^a and apply further simplifications to (-1)^a instead
