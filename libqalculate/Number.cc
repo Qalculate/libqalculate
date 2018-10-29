@@ -1445,18 +1445,38 @@ Number Number::imaginaryPart() const {
 	return *i_value;
 }
 Number Number::lowerEndPoint(bool include_imag) const {
-	if(!isInterval(false)) return *this;
+	if(i_value && !i_value->isZero()) {
+		if(include_imag) {
+			if(!isInterval(false)) return *this;
+			Number nr;
+			if(isInterval(true)) nr.setInternal(fl_value);
+			else nr.set(realPart());
+			nr.setImaginaryPart(i_value->lowerEndPoint());
+			nr.setPrecisionAndApproximateFrom(*this);
+			return nr;
+		}
+		if(!isInterval()) return realPart();
+	} else if(!isInterval()) return *this;
 	Number nr;
 	nr.setInternal(fl_value);
-	if(include_imag && i_value && !i_value->isZero()) nr.setImaginaryPart(i_value->lowerEndPoint());
 	nr.setPrecisionAndApproximateFrom(*this);
 	return nr;
 }
 Number Number::upperEndPoint(bool include_imag) const {
-	if(!isInterval(false)) return *this;
+	if(i_value && !i_value->isZero()) {
+		if(include_imag) {
+			if(!isInterval(false)) return *this;
+			Number nr;
+			if(isInterval(true)) nr.setInternal(fu_value);
+			else nr.set(realPart());
+			nr.setImaginaryPart(i_value->upperEndPoint());
+			nr.setPrecisionAndApproximateFrom(*this);
+			return nr;
+		}
+		if(!isInterval()) return realPart();
+	} else if(!isInterval()) return *this;
 	Number nr;
 	nr.setInternal(fu_value);
-	if(include_imag && i_value && !i_value->isZero()) nr.setImaginaryPart(i_value->upperEndPoint());
 	nr.setPrecisionAndApproximateFrom(*this);
 	return nr;
 }
@@ -1710,7 +1730,7 @@ bool testComplex(Number *this_nr, Number *i_nr) {
 				return true;
 			}
 		}
-		if(this_nr->isFloatingPoint() && (!this_nr->isInterval() || !this_nr->isNonZero())) {
+		if(this_nr->isFloatingPoint() && (!this_nr->isInterval() || !this_nr->realPartIsNonZero())) {
 			mpfr_t thisf, testf;
 			mpfr_inits2(BIT_PRECISION - 10, thisf, testf, NULL);
 			bool b = true, b2 = false;
@@ -4912,16 +4932,47 @@ bool Number::asin() {
 			set(nri, true);
 			return true;
 		}
-		if(isInterval() && ((hasRealPart() && !realPartIsNonZero()) || (hasImaginaryPart() && !imaginaryPartIsNonZero()))) {
-			Number nr1(lowerEndPoint());
-			Number nr2(upperEndPoint());
+		if(isInterval(false)) {
+			Number nr1(lowerEndPoint(true));
+			Number nr2(upperEndPoint(true));
 			if(!nr1.asin() || !nr2.asin()) return false;
-			if(!setInterval(nr1, nr2, true)) return false;
+			if(!hasImaginaryPart()) {
+				if(!setInterval(nr1, nr2, true)) return false;
+				return true;
+			}
+			Number nr;
+			if(!nr.setInterval(nr1, nr2, true)) return false;
+			if(isInterval(true) && imaginaryPartIsInterval()) {
+				Number nr3(lowerEndPoint(false));
+				Number nr4(upperEndPoint(false));
+				nr3.setImaginaryPart(i_value->upperEndPoint());
+				nr4.setImaginaryPart(i_value->lowerEndPoint());
+				if(!nr3.asin() || !nr4.asin()) return false;
+				if(!nr.setInterval(nr, nr3, true)) return false;
+				if(!nr.setInterval(nr, nr4, true)) return false;
+			}
+			if(hasRealPart() && !realPartIsNonZero()) {
+				nr1 = lowerEndPoint(true);
+				nr2 = upperEndPoint(true);
+				nr1.clearReal();
+				nr2.clearReal();
+				if(!nr1.asin() || !nr2.asin()) return false;
+				if(!nr.setInterval(nr, nr1, true)) return false;
+				if(!nr.setInterval(nr, nr2, true)) return false;
+			}
+			if(hasImaginaryPart() && !imaginaryPartIsNonZero()) {
+				nr1 = lowerEndPoint(false);
+				nr2 = upperEndPoint(false);
+				if(!nr1.asin() || !nr2.asin()) return false;
+				if(!nr.setInterval(nr, nr1, true)) return false;
+				if(!nr.setInterval(nr, nr2, true)) return false;
+			}
+			set(nr, true);
 			return true;
 		}
 		Number z_sqln(*this);
 		Number i_z(*this);
-		bool b_neg;
+		bool b_neg = false;
 		if(hasImaginaryPart()) {
 			b_neg = (realPartIsNegative() && !imaginaryPartIsNegative()) || (realPartIsPositive() && imaginaryPartIsPositive());
 		} else {
@@ -5003,6 +5054,40 @@ bool Number::asinh() {
 			set(inr, true);
 			return true;
 		}
+		if(isInterval(false)) {
+			Number nr1(lowerEndPoint(true));
+			Number nr2(upperEndPoint(true));
+			if(!nr1.asinh() || !nr2.asinh()) return false;
+			Number nr;
+			if(!nr.setInterval(nr1, nr2, true)) return false;
+			if(isInterval(true) && imaginaryPartIsInterval()) {
+				Number nr3(lowerEndPoint(false));
+				Number nr4(upperEndPoint(false));
+				nr3.setImaginaryPart(i_value->upperEndPoint());
+				nr4.setImaginaryPart(i_value->lowerEndPoint());
+				if(!nr3.asinh() || !nr4.asinh()) return false;
+				if(!nr.setInterval(nr, nr3, true)) return false;
+				if(!nr.setInterval(nr, nr4, true)) return false;
+			}
+			if(hasRealPart() && !realPartIsNonZero()) {
+				nr1 = lowerEndPoint(true);
+				nr2 = upperEndPoint(true);
+				nr1.clearReal();
+				nr2.clearReal();
+				if(!nr1.asinh() || !nr2.asinh()) return false;
+				if(!nr.setInterval(nr, nr1, true)) return false;
+				if(!nr.setInterval(nr, nr2, true)) return false;
+			}
+			if(hasImaginaryPart() && !imaginaryPartIsNonZero()) {
+				nr1 = lowerEndPoint(false);
+				nr2 = upperEndPoint(false);
+				if(!nr1.asinh() || !nr2.asinh()) return false;
+				if(!nr.setInterval(nr, nr1, true)) return false;
+				if(!nr.setInterval(nr, nr2, true)) return false;
+			}
+			set(nr, true);
+			return true;
+		}
 		Number z_sqln(*this);
 		if(!z_sqln.square() || !z_sqln.add(1) || !z_sqln.raise(nr_half) || !z_sqln.add(*this)) return false;
 		//If zero, it means that the precision is too low (since infinity is not the correct value). Happens with number less than -(10^1000)i
@@ -5052,6 +5137,7 @@ bool Number::cos() {
 			set(t1a, true, true);
 			i_value->set(t2a, true, true);
 			setPrecisionAndApproximateFrom(*i_value);
+			testComplex(this, i_value);
 			return true;
 		} else {
 			if(!i_value->cosh()) return false;
@@ -5223,6 +5309,7 @@ bool Number::cosh() {
 			set(t1a, true, true);
 			i_value->set(t2a, true, true);
 			setPrecisionAndApproximateFrom(*i_value);
+			testComplex(this, i_value);
 			return true;
 		} else {
 			if(!i_value->cos()) return false;
@@ -5278,6 +5365,45 @@ bool Number::acosh() {
 	}
 	if(hasImaginaryPart() || !isGreaterThanOrEqualTo(nr_one)) {
 		if(b_imag) return false;
+		if(isInterval(false)) {
+			Number nr1(lowerEndPoint(true));
+			Number nr2(upperEndPoint(true));
+			if(!nr1.acosh() || !nr2.acosh()) return false;
+			Number nr;
+			if(!nr.setInterval(nr1, nr2, true)) return false;
+			if(isInterval(true) && imaginaryPartIsInterval()) {
+				Number nr3(lowerEndPoint(false));
+				Number nr4(upperEndPoint(false));
+				nr3.setImaginaryPart(i_value->upperEndPoint());
+				nr4.setImaginaryPart(i_value->lowerEndPoint());
+				if(!nr3.acosh() || !nr4.acosh()) return false;
+				if(!nr.setInterval(nr, nr3, true)) return false;
+				if(!nr.setInterval(nr, nr4, true)) return false;
+			}
+			if(hasRealPart() && !realPartIsNonZero()) {
+				nr1 = lowerEndPoint(true);
+				nr2 = upperEndPoint(true);
+				nr1.clearReal();
+				nr2.clearReal();
+				if(!nr1.acosh() || !nr2.acosh()) return false;
+				if(!nr.setInterval(nr, nr1, true)) return false;
+				if(!nr.setInterval(nr, nr2, true)) return false;
+			}
+			if(hasImaginaryPart() && !imaginaryPartIsNonZero()) {
+				nr1 = lowerEndPoint(false);
+				nr2 = upperEndPoint(false);
+				if(!nr1.acosh() || !nr2.acosh()) return false;
+				Number nr_pi;
+				nr_pi.pi();
+				nr1.setImaginaryPart(nr_pi);
+				nr_pi.negate();
+				nr2.setImaginaryPart(nr_pi);
+				if(!nr.setInterval(nr, nr1, true)) return false;
+				if(!nr.setInterval(nr, nr2, true)) return false;
+			}
+			set(nr, true);
+			return true;
+		}
 		if((CALCULATOR->usesIntervalArithmetic() || isInterval()) && !hasImaginaryPart()) {
 			Number ipz(lowerEndPoint()), imz(ipz);
 			if(!ipz.add(1) || !imz.subtract(1)) return false;
@@ -5299,7 +5425,6 @@ bool Number::acosh() {
 				if(nriv.isInterval(false) && nriv.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("Interval calculated wide."), NULL);
 			}
 			set(nriv);
-			if(i_value) testComplex(this, i_value);
 			return true;
 		}
 		Number ipz(*this), imz(*this);
@@ -5342,6 +5467,7 @@ bool Number::tan() {
 			set(t1a, true, true);
 			i_value->set(t1b, true, true);
 			setPrecisionAndApproximateFrom(*i_value);
+			testComplex(this, i_value);
 			return true;
 		} else {
 			if(!i_value->tanh()) return false;
@@ -5752,6 +5878,7 @@ bool Number::ln() {
 		if(new_r.hasImaginaryPart() || !new_r.ln()) return false;
 		set(new_r);
 		setImaginaryPart(new_i);
+		if(i_value) testComplex(this, i_value);
 		return true;
 	} else if(isNonPositive()) {
 		if(b_imag) return false;
@@ -5760,6 +5887,7 @@ bool Number::ln() {
 		set(new_r);
 		if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
 		i_value->pi();
+		if(i_value) testComplex(this, i_value);
 		return true;
 	}
 
