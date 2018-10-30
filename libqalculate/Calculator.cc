@@ -2512,8 +2512,10 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			evalops.parse_options.units_enabled = true;
 			evalops.auto_post_conversion = POST_CONVERSION_NONE;
 			evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
+		} else {
+			evalops.parse_options.units_enabled = true;
 		}
-	}		
+	}
 
 	mstruct = calculate(str, evalops);
 	
@@ -2624,10 +2626,10 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const
 bool Calculator::separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers, bool allow_empty_from) const {
 	to_str = "";
 	size_t i = 0;
-	if(eo.parse_options.units_enabled && (i = str.find(_(" to "))) != string::npos) {
+	if((i = str.find(_(" to "))) != string::npos) {
 		size_t l = strlen(_(" to "));
 		to_str = str.substr(i + l, str.length() - i - l);
-	} else if(eo.parse_options.units_enabled && (i = str.find(" to ")) != string::npos) {
+	} else if((i = str.find(" to ")) != string::npos) {
 		size_t l = strlen(" to ");
 		to_str = str.substr(i + l, str.length() - i - l);
 	} else if(allow_empty_from && str.find("to ") == 0) {

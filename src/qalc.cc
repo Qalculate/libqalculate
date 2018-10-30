@@ -4172,6 +4172,11 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				expression_str = str;
 				evalops.parse_options.units_enabled = b_units_saved;
 				return;
+			} else if(!evalops.parse_options.units_enabled) {
+				evalops.parse_options.units_enabled = true;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				evalops.parse_options.units_enabled = false;
+				return;
 			}
 		}
 	}
