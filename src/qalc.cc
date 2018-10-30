@@ -85,6 +85,7 @@ void result_prefix_changed(Prefix *prefix = NULL);
 void expression_format_updated(bool reparse);
 void expression_calculation_updated();
 bool display_errors(bool goto_input = false);
+void replace_quotation_marks(string &result_text);
 
 FILE *cfile;
 
@@ -1986,7 +1987,9 @@ int main(int argc, char *argv[]) {
 				for(size_t i = 1; i <= CALCULATOR->RPNStackSize(); i++) {
 					m = *CALCULATOR->getRPNRegister(i);
 					m.format(printops);
-					printf("  %i:\t%s\n", (int) i, m.print(printops).c_str());
+					string regstr = m.print(printops);
+					replace_quotation_marks(regstr);
+					printf("  %i:\t%s\n", (int) i, regstr.c_str());
 				}
 				puts("");
 			}
@@ -3549,6 +3552,24 @@ void on_abort_display() {
 	CALCULATOR->abort();
 }
 
+void replace_quotation_marks(string &result_text) {
+	size_t i1 = 0, i2 = 0;
+	while(true) {
+		i1 = result_text.find('\"', i1);
+		if(i1 == string::npos) break;
+		i2 = result_text.find('\"', i1 + 1);
+		if(i2 == string::npos) break;
+		if(i1 > 1 && result_text[i1 - 1] == ' ' && is_not_in(OPERATORS, result_text[i1 - 2])) {
+			result_text.replace(i1 - 1, 2, "\e[3m");
+			i2 += 2;
+		} else {
+			result_text.replace(i1, 1, "\e[3m");
+			i2 += 3;
+		}
+		result_text.replace(i2, 1, "\e[23m");
+		i1 = i2 + 5;
+	}
+}
 
 void ViewThread::run() {
 	while(true) {
@@ -3583,12 +3604,13 @@ void ViewThread::run() {
 			read(&po.is_approximate);
 			mp.format(po);
 			parsed_text = mp.print(po);
+			replace_quotation_marks(parsed_text);
 		}
 		printops.allow_non_usable = false;
 		
 		m.format(printops);
 		result_text = m.print(printops);
-		
+		replace_quotation_marks(result_text);
 	
 		if(result_text == _("aborted")) {
 			*printops.is_approximate = false;
