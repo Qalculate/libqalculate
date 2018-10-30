@@ -1705,9 +1705,11 @@ int main(int argc, char *argv[]) {
 				str = buffer;
 			}
 #endif	
-		}	
-		slen = str.length();
+		}
+		bool explicit_command = (!str.empty() && str[0] == '/');
+		if(explicit_command) str.erase(0, 1);
 		remove_blank_ends(str);
+		slen = str.length();
 		ispace = str.find_first_of(SPACES);
 		if(ispace == string::npos) {
 			scom = "";
@@ -3488,6 +3490,9 @@ int main(int argc, char *argv[]) {
 			}
 #endif			
 			break;
+		} else if(explicit_command) {
+			PUTS_UNICODE(_("Unknown command."));
+			puts("");
 		} else {
 			size_t index = str.find_first_of(ID_WRAPS);
 			if(index != string::npos) {
