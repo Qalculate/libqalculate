@@ -4770,6 +4770,20 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					break;
 				}
 			}	
+		} else if(str[str_index] == '\\' && str_index + 1 < str.length() && is_not_in(NOT_IN_NAMES, str[str_index + 1])) {
+			stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+			size_t l = 1;
+			if(str[str_index + l] < 0) {
+				do {
+					l++; 
+				} while(str_index + l < str.length() && str[str_index + l]);
+				l--;
+			}
+			MathStructure *mstruct = new MathStructure(str.substr(str_index + 1, l));
+			stmp += i2s(addId(mstruct));
+			stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+			str.replace(str_index, l + 1, stmp);
+			str_index += stmp.length() - l;
 		} else if(((po.base >= 2 && po.base <= 10) || po.base == BASE_DUODECIMAL) && str[str_index] == '!' && po.functions_enabled) {
 			if(str_index > 0 && (str.length() - str_index == 1 || str[str_index + 1] != EQUALS_CH)) {
 				stmp = "";
