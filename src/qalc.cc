@@ -409,10 +409,12 @@ bool check_exchange_rates() {
 #ifdef HAVE_LIBREADLINE
 #	define CHECK_IF_SCREEN_FILLED if(!cfile) {rcount++; if(rcount + 3 >= rows) {FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); rl_read_key(); puts(""); rcount = 1;}}
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) if(!cfile) {rcount += countRows(x, cols); if(rcount + 2 >= rows) {FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); rl_read_key(); puts(""); rcount = 1;}} PUTS_UNICODE(x);
+#	define CHECK_IF_SCREEN_FILLED_HEADING(x) rcount += 2; CHECK_IF_SCREEN_FILLED; if(rcount > 1) {puts("");} PUTS_BOLD(x); puts(""); if(rcount == 1) {rcount = 3;}
 #	define INIT_SCREEN_CHECK int rows, cols, rcount = 0; if(!cfile) rl_get_screen_size(&rows, &cols);
 #else
 #	define CHECK_IF_SCREEN_FILLED
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) PUTS_UNICODE(x);
+#	define CHECK_IF_SCREEN_FILLED_HEADING(x) puts(""); PUTS_BOLD(x); puts("");
 #	define INIT_SCREEN_CHECK {}
 #endif
 
@@ -907,7 +909,7 @@ void set_option(string str) {
 #define STR_AND_TABS_T3(x) str = x; pctl = unicode_length(str); if(pctl >= 16) {str += "\t";} else if(pctl >= 8) {str += "\t\t";} else {str += "\t\t\t";}
 #define STR_AND_TABS_T4(x) str = x; pctl = unicode_length(str); if(pctl >= 24) {str += "\t";} else if(pctl >= 16) {str += "\t\t";} else if(pctl >= 8) {str += "\t\t\t";} else {str += "\t\t\t\t";}
 #define PRINT_AND_COLON_TABS(x) FPUTS_UNICODE(x, stdout); pctl = unicode_length_check(x); if(pctl >= 32) fputs("\t", stdout); else if(pctl >= 24) fputs("\t\t", stdout); else if(pctl >= 16) fputs("\t\t\t", stdout); else if(pctl >= 8) fputs("\t\t\t\t", stdout); else fputs("\t\t\t\t\t", stdout);
-#define PUTS_BOLD(x) str = "\033[1m"; str += x; str += "\033[0m"; puts(str.c_str());
+#define PUTS_BOLD(x) str = "\033[1m"; str += x; str += "\033[0m"; PUTS_UNICODE(str.c_str());
 
 bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t i2_end, size_t minlength) {
 	if(str1.empty() || str2.empty()) return false;
@@ -2318,12 +2320,11 @@ int main(int argc, char *argv[]) {
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "mode", _("mode"))) {
 			INIT_SCREEN_CHECK
-			puts(""); CHECK_IF_SCREEN_FILLED
+
 			int pctl;
 			
-			PUTS_UNICODE(_("Algebraic Mode"));
-			puts(""); 
-			rcount += 2;
+			CHECK_IF_SCREEN_FILLED_HEADING(_("Algebraic Mode"));
+
 			PRINT_AND_COLON_TABS(_("algebra mode"));
 			switch(evalops.structuring) {
 				case STRUCTURING_NONE: {PUTS_UNICODE(_("none")); break;}
@@ -2355,11 +2356,8 @@ int main(int argc, char *argv[]) {
 			if(value.empty()) value = _("unknown");
 			PRINT_AND_COLON_TABS(_("assumptions")); PUTS_UNICODE(value.c_str()); CHECK_IF_SCREEN_FILLED
 
-			rcount += 2; CHECK_IF_SCREEN_FILLED
-			if(rcount > 1) puts("");
-			PUTS_UNICODE(_("Calculation"));
-			puts(""); 
-			if(rcount == 1) rcount = 3;
+			CHECK_IF_SCREEN_FILLED_HEADING(_("Calculation"));
+
 			PRINT_AND_COLON_TABS(_("angle unit"));
 			switch(evalops.parse_options.angle_unit) {
 				case ANGLE_UNIT_RADIANS: {PUTS_UNICODE(_("rad")); break;}
@@ -2378,11 +2376,8 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("interval")); PUTS_UNICODE(b2oo(CALCULATOR->usesIntervalArithmetic(), false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("precision")) printf("%i\n", CALCULATOR->getPrecision()); CHECK_IF_SCREEN_FILLED
 
-			rcount += 2; CHECK_IF_SCREEN_FILLED
-			if(rcount > 1) puts("");
-			PUTS_UNICODE(_("Enabled Objects"));
-			puts(""); 
-			if(rcount == 1) rcount = 3;
+			CHECK_IF_SCREEN_FILLED_HEADING(_("Enabled Objects"));
+
 			PRINT_AND_COLON_TABS(_("calculate functions")); PUTS_UNICODE(b2oo(evalops.calculate_functions, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("calculate variables")); PUTS_UNICODE(b2oo(evalops.calculate_variables, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("complex numbers")); PUTS_UNICODE(b2oo(evalops.allow_complex, false)); CHECK_IF_SCREEN_FILLED
@@ -2393,11 +2388,8 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("variables")); PUTS_UNICODE(b2oo(evalops.parse_options.variables_enabled, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("variable units")); PUTS_UNICODE(b2oo(CALCULATOR->variableUnitsEnabled(), false)); CHECK_IF_SCREEN_FILLED
 
-			rcount += 2; CHECK_IF_SCREEN_FILLED
-			if(rcount > 1) puts("");
-			PUTS_UNICODE(_("Generic Display Options"));
-			puts(""); 
-			if(rcount == 1) rcount = 3;
+			CHECK_IF_SCREEN_FILLED_HEADING(_("Generic Display Options"));
+
 			PRINT_AND_COLON_TABS(_("abbreviations")); PUTS_UNICODE(b2oo(printops.abbreviate_names, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("division sign"));
 			switch(printops.division_sign) {
@@ -2420,11 +2412,8 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("spell out logical")); PUTS_UNICODE(b2oo(printops.spell_out_logical_operators, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("unicode")); PUTS_UNICODE(b2oo(printops.use_unicode_signs, false)); CHECK_IF_SCREEN_FILLED
 
-			rcount += 2; CHECK_IF_SCREEN_FILLED
-			if(rcount > 1) puts("");
-			PUTS_UNICODE(_("Numerical Display"));
-			puts(""); 
-			if(rcount == 1) rcount = 3;
+			CHECK_IF_SCREEN_FILLED_HEADING(_("Numerical Display"));
+
 			PRINT_AND_COLON_TABS(_("base")); 
 			switch(printops.base) {
 				case BASE_ROMAN_NUMERALS: {PUTS_UNICODE(_("roman")); break;}
@@ -2513,11 +2502,8 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("show ending zeroes")); PUTS_UNICODE(b2oo(printops.show_ending_zeroes, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("two's complement")); PUTS_UNICODE(b2oo(printops.twos_complement, false)); CHECK_IF_SCREEN_FILLED
 
-			rcount += 2; CHECK_IF_SCREEN_FILLED
-			if(rcount > 1) puts("");
-			PUTS_UNICODE(_("Parsing"));
-			puts(""); 
-			if(rcount == 1) rcount = 3;
+			CHECK_IF_SCREEN_FILLED_HEADING(_("Parsing"));
+
 			PRINT_AND_COLON_TABS(_("decimal comma"));
 			if(b_decimal_comma < 0) {PUTS_UNICODE(_("locale"));}
 			else if(b_decimal_comma == 0) {PUTS_UNICODE(_("off"));}
@@ -2552,11 +2538,8 @@ int main(int argc, char *argv[]) {
 			CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("rpn syntax")); PUTS_UNICODE(b2oo(evalops.parse_options.rpn, false)); CHECK_IF_SCREEN_FILLED
 
-			rcount += 2; CHECK_IF_SCREEN_FILLED
-			if(rcount > 1) puts("");
-			PUTS_UNICODE(_("Units"));
-			puts(""); 
-			if(rcount == 1) rcount = 3;
+			CHECK_IF_SCREEN_FILLED_HEADING(_("Units"));
+
 			PRINT_AND_COLON_TABS(_("all prefixes")); PUTS_UNICODE(b2oo(printops.use_all_prefixes, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("autoconversion"));
 			switch(evalops.auto_post_conversion) {
@@ -2583,11 +2566,8 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED
 
-			rcount += 2; CHECK_IF_SCREEN_FILLED
-			if(rcount > 1) puts("");
-			PUTS_UNICODE(_("Other"));
-			puts(""); 
-			if(rcount == 1) rcount = 3;
+			CHECK_IF_SCREEN_FILLED_HEADING(_("Other"));
+
 			PRINT_AND_COLON_TABS(_("rpn")); PUTS_UNICODE(b2oo(rpn_mode, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("save definitions")); PUTS_UNICODE(b2yn(save_defs_on_exit, false)); CHECK_IF_SCREEN_FILLED
 			PRINT_AND_COLON_TABS(_("save mode")); PUTS_UNICODE(b2yn(save_mode_on_exit, false)); CHECK_IF_SCREEN_FILLED			
@@ -3011,11 +2991,8 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("Available options and accepted values are (the current value is marked with '*'):"));
 				
-				rcount += 2; CHECK_IF_SCREEN_FILLED
-				if(rcount > 1) puts("");
-				PUTS_UNICODE(_("Algebraic Mode"));
-				puts(""); 
-				if(rcount == 1) rcount = 3;
+				CHECK_IF_SCREEN_FILLED_HEADING(_("Algebraic Mode"));
+
 				STR_AND_TABS_2(_("algebra mode"), evalops.structuring, _("none"), _("simplify"), _("factorize"));
 				STR_AND_TABS_BOOL(_("assume nonzero denominators"), evalops.assume_denominators_nonzero);
 				STR_AND_TABS_BOOL(_("warn nonzero denominators"), evalops.warn_about_denominators_assumed_nonzero);
@@ -3049,21 +3026,15 @@ int main(int argc, char *argv[]) {
 				if(ass->type() == ASSUMPTION_TYPE_INTEGER) str += "*";
 				str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				
-				rcount += 2; CHECK_IF_SCREEN_FILLED
-				if(rcount > 1) puts("");
-				PUTS_UNICODE(_("Calculation"));
-				puts(""); 
-				if(rcount == 1) rcount = 3;
+				CHECK_IF_SCREEN_FILLED_HEADING(_("Calculation"));
+
 				STR_AND_TABS_3(_("angle unit"), evalops.parse_options.angle_unit, _("none"), _("radians"), _("degrees"), _("gradians"));
 				STR_AND_TABS_2(_("approximation"), evalops.approximation, _("exact"), _("try exact"), _("approximate"));
 				STR_AND_TABS_BOOL(_("interval"), CALCULATOR->usesIntervalArithmetic());
 				STR_AND_TABS(_("precision"));  str += "(> 0) "; str += i2s(CALCULATOR->getPrecision()); str += "*"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				
-				rcount += 2; CHECK_IF_SCREEN_FILLED
-				if(rcount > 1) puts("");
-				PUTS_UNICODE(_("Enabled Objects"));
-				puts(""); 
-				if(rcount == 1) rcount = 3;
+				CHECK_IF_SCREEN_FILLED_HEADING(_("Enabled Objects"));
+				
 				STR_AND_TABS_BOOL(_("calculate functions"), evalops.calculate_functions);
 				STR_AND_TABS_BOOL(_("calculate variables"), evalops.calculate_variables);
 				STR_AND_TABS_BOOL(_("complex numbers"), evalops.allow_complex);
@@ -3074,11 +3045,8 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("variables"), evalops.parse_options.variables_enabled);
 				STR_AND_TABS_BOOL(_("variable units"), CALCULATOR->variableUnitsEnabled());
 				
-				rcount += 2; CHECK_IF_SCREEN_FILLED
-				if(rcount > 1) puts("");
-				PUTS_UNICODE(_("Generic Display Options"));
-				puts(""); 
-				if(rcount == 1) rcount = 3;
+				CHECK_IF_SCREEN_FILLED_HEADING(_("Generic Display Options"));
+
 				STR_AND_TABS_BOOL(_("abbreviations"), printops.abbreviate_names);
 				STR_AND_TABS_2(_("division sign"), printops.division_sign, "/", SIGN_DIVISION_SLASH, SIGN_DIVISION);
 				STR_AND_TABS_BOOL(_("excessive parentheses"), printops.excessive_parenthesis);
@@ -3088,12 +3056,9 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("spacious"), printops.spacious);
 				STR_AND_TABS_BOOL(_("spell out logical"), printops.spell_out_logical_operators);
 				STR_AND_TABS_BOOL(_("unicode"), printops.use_unicode_signs);
-				
-				rcount += 2; CHECK_IF_SCREEN_FILLED
-				if(rcount > 1) puts("");
-				PUTS_UNICODE(_("Numerical Display"));
-				puts(""); 
-				if(rcount == 1) rcount = 3;
+
+				CHECK_IF_SCREEN_FILLED_HEADING(_("Numerical Display"));
+
 				STR_AND_TABS(_("base")); str += "(2 - 36"; str += ", "; str += _("bin");
 				if(printops.base == BASE_BINARY) str += "*";
 				str += ", "; str += _("oct");
@@ -3154,11 +3119,8 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("show ending zeroes"), printops.show_ending_zeroes);
 				STR_AND_TABS_BOOL(_("two's complement"), printops.twos_complement);
 				
-				rcount += 2; CHECK_IF_SCREEN_FILLED
-				if(rcount > 1) puts("");
-				PUTS_UNICODE(_("Parsing"));
-				puts(""); 
-				if(rcount == 1) rcount = 3;
+				CHECK_IF_SCREEN_FILLED_HEADING(_("Parsing"));
+
 				STR_AND_TABS(_("decimal comma")); str += "("; str += _("locale"); 
 				if(b_decimal_comma < 0) str += "*";
 				str += ", "; str += _("off");
@@ -3191,11 +3153,8 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_2(_("read precision"), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
 				STR_AND_TABS_BOOL(_("rpn syntax"), evalops.parse_options.rpn);
 				
-				rcount += 2; CHECK_IF_SCREEN_FILLED
-				if(rcount > 1) puts("");
-				PUTS_UNICODE(_("Units"));
-				puts(""); 
-				if(rcount == 1) rcount = 3;
+				CHECK_IF_SCREEN_FILLED_HEADING(_("Units"));
+
 				STR_AND_TABS_BOOL(_("all prefixes"), printops.use_all_prefixes);
 				STR_AND_TABS(_("autoconversion"));
 				str += (_("none"));
@@ -3222,11 +3181,8 @@ int main(int argc, char *argv[]) {
 				if(auto_update_exchange_rates > 0) {str += " "; str += i2s(auto_update_exchange_rates); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				
-				rcount += 2; CHECK_IF_SCREEN_FILLED
-				if(rcount > 1) puts("");
-				PUTS_UNICODE(_("Other"));
-				puts(""); 
-				if(rcount == 1) rcount = 3;
+				CHECK_IF_SCREEN_FILLED_HEADING(_("Other"));
+
 				STR_AND_TABS_BOOL(_("rpn"), rpn_mode);
 				STR_AND_TABS_YESNO(_("save definitions"), save_defs_on_exit);
 				STR_AND_TABS_YESNO(_("save mode"), save_mode_on_exit);
