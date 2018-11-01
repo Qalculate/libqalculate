@@ -4769,7 +4769,7 @@ RomanFunction::RomanFunction() : MathFunction("roman", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].symbol().find_first_not_of("123456789.:" SIGNS) == string::npos) {
+	if(vargs[0].symbol().find_first_not_of("0123456789.:" SIGNS) == string::npos && vargs[0].symbol().find_first_not_of("0" SIGNS) != string::npos) {
 		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
 		PrintOptions po; po.base = BASE_ROMAN_NUMERALS;
 		mstruct.eval(eo);
