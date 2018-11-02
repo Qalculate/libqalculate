@@ -1532,10 +1532,31 @@
         <relation>100</relation>
         <exponent>2</exponent>
       </base>
+      <use_with_prefixes>true</use_with_prefixes>
+    </unit>
+    <unit type="alias">
+      <_title>Hectare</_title>
+      <_names>r:hectare</_names>
+      <hidden>true</hidden>
+      <base>
+        <unit>a</unit>
+        <relation>100</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Decare</_title>
+      <_names>r:decare</_names>
+      <hidden>true</hidden>
+      <base>
+        <unit>a</unit>
+        <relation>10</relation>
+        <exponent>1</exponent>
+      </base>
     </unit>
     <unit type="composite">
       <_title>Hectare</_title>
-      <names>r:ha</names>
+      <names>r:h_a</names>
       <part>
         <unit>a</unit>
         <prefix>2</prefix>
