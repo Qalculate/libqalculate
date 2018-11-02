@@ -16679,7 +16679,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po) {
 }
 
 bool use_prefix_with_unit(Unit *u, const PrintOptions &po) {
-	if(!po.prefix && !po.use_unit_prefixes) return u->referenceName() == "g";
+	if(!po.prefix && !po.use_unit_prefixes) {return u->referenceName() == "g" || u->referenceName() == "a";}
 	if(po.prefix) return true;
 	if(u->isCurrency()) return po.use_prefixes_for_currencies;
 	if(po.use_prefixes_for_all_units) return true;
@@ -16952,13 +16952,14 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 						}
 					} else if(!po.use_unit_prefixes) {
 						Prefix *p = NULL;
-						if(munit->isUnit() && munit->unit()->referenceName() == "g") {
+						if((munit->isUnit() && munit->unit()->referenceName() == "g") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "g")) {
 							p = CALCULATOR->getExactDecimalPrefix(3);
 							if(p) munit->setPrefix(p);
 							
-						} else if(munit->isPower() && (*munit)[0].unit()->referenceName() == "g") {
-							p = CALCULATOR->getExactDecimalPrefix(3);
-							if(p) (*munit)[0].setPrefix(p);
+						} else if((munit->isUnit() && munit->unit()->referenceName() == "a") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "a")) {
+							p = CALCULATOR->getExactDecimalPrefix(2);
+							if(p) munit->setPrefix(p);
+							
 						}
 						if(p) {
 							if(CHILD(0).isNumber()) {
