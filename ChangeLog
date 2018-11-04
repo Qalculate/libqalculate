@@ -1,3 +1,10 @@
+2018-11-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not transform rational numbers to integers in numerator and denominator
+	  if the resulting integers is not displayed in exact format
+	* Add set options shortcuts and add option descriptions to help set, in qalc
+	* Set restrict_fraction_length to true for 'set fractions fraction' in qalc
+
 2018-10-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Group options in qalc

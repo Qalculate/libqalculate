@@ -6791,7 +6791,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	bool approx = isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision);
 
 	if(isInteger()) {
-
 		long int length = mpz_sizeinbase(mpq_numref(r_value), base);
 		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < length && ((approx || (base == 10 && po.min_exp != 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT))) || length > (po.base == 10 ? 1000000L : 100000L))) {
 			Number nr(*this);
@@ -6878,7 +6877,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(length == 1 && mpz_str[0] == '0') {
 				expo = 0;
 			} else if(length > 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
-				expo = length - 1;
+				if(po.number_fraction_format == FRACTION_FRACTIONAL) {
+					long int precexp = i_precision_base;
+					if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
+					else if(precexp > precision + 3) precexp = precision + 3;
+					if(exact && ((expo >= 0 && length - 1 < precexp) || (expo < 0 && expo > -PRECISION))) expo = 0;
+					else expo = length - 1;
+				} else {
+					expo = length - 1;
+				}
 			} else if(length > 0) {
 				for(long int i = length - 1; i >= 0; i--) {
 					if(mpz_str[i] != '0') {
