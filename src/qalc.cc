@@ -203,12 +203,6 @@ void set_assumption(const string &str, bool last_of_two = false) {
 		} else {
 			CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 		}
-	/*} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "none", _("none"))) {
-		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NONE);
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "non-matrix", _("non-matrix"))) {
-		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NONMATRIX);
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "complex", _("complex"))) {
-		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_COMPLEX);*/
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "real", _("real"))) {
 		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_REAL);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "number", _("number")) || str == "num") {
@@ -361,19 +355,27 @@ int rlcom_tab(int, int) {
 #endif
 
 int countRows(const char *str, int cols) {
-	int l = unicode_length_check(str);
+	int l = strlen(str);
 	if(l == 0) return 1;
 	int r = 1, c = 0;
 	for(int i = 0; i < l; i++) {
-		if(str[i] == '\n') {
-			r++;
-			c = 0;
-		} else {
-			if(c == cols) {
+		if(str[i] == '\033') {
+			do {
+				i++;
+			} while(i < l && str[i] != 'm');
+			if(i >= l) break;
+		}
+		if(str[i] > 0 || (unsigned char) str[i] >= 0xC2) {
+			if(str[i] == '\n') {
 				r++;
 				c = 0;
+			} else {
+				if(c == cols) {
+					r++;
+					c = 0;
+				}
+				c++;
 			}
-			c++;
 		}
 	}
 	return r;
@@ -408,7 +410,7 @@ bool check_exchange_rates() {
 
 #ifdef HAVE_LIBREADLINE
 #	define CHECK_IF_SCREEN_FILLED if(check_sf) {rcount++; if(rcount + 2 >= rows) {FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n') {check_sf = false;} else {puts(""); rcount = 1;}}}
-#	define CHECK_IF_SCREEN_FILLED_PUTS(x) if(check_sf) {int cr = countRows(x, cols); if(rcount + cr + 2 >= rows) {rcount += 2; while(rcount < rows) {puts(""); rcount++;} FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n') {check_sf = false;} else {rcount = 0; if(strlen(x) == 0 || x[0] != '\n') {puts(""); rcount++;}}} if(check_sf) {rcount += cr;}} PUTS_UNICODE(x);
+#	define CHECK_IF_SCREEN_FILLED_PUTS(x) if(check_sf) {int cr = countRows(x, cols); if(rcount + cr + 1 >= rows) {rcount += 2; while(rcount < rows) {puts(""); rcount++;} FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n') {check_sf = false;} else {rcount = 0; if(strlen(x) == 0 || x[0] != '\n') {puts(""); rcount++;}}} if(check_sf) {rcount += cr;}} PUTS_UNICODE(x);
 #	define INIT_SCREEN_CHECK int rows, cols, rcount = 0; bool check_sf = (cfile == NULL); char sf_c; if(!cfile) rl_get_screen_size(&rows, &cols);
 #	define CHECK_IF_SCREEN_FILLED_HEADING_S(x) str = "\n"; if(!cfile) {str += "\033[4m";} str += x; if(!cfile) {str += "\033[0m";} str += "\n"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #	define CHECK_IF_SCREEN_FILLED_HEADING(x) rcount += 2; CHECK_IF_SCREEN_FILLED; if(rcount > 1) {puts("");} PUTS_BOLD(x); puts(""); if(rcount == 1) {rcount = 3;}
@@ -2590,12 +2592,12 @@ int main(int argc, char *argv[]) {
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "help", _("help")) || str == "?") {
 			INIT_SCREEN_CHECK
-			puts(""); CHECK_IF_SCREEN_FILLED
-			PUTS_UNICODE(_("Enter a mathematical expression or a command and press enter.")); CHECK_IF_SCREEN_FILLED
-			PUTS_UNICODE(_("Complete functions, units and variables with the tabulator key.")); CHECK_IF_SCREEN_FILLED
-			puts(""); CHECK_IF_SCREEN_FILLED
+			CHECK_IF_SCREEN_FILLED_PUTS("");
+			CHECK_IF_SCREEN_FILLED_PUTS(_("Enter a mathematical expression or a command and press enter.")); 
+			CHECK_IF_SCREEN_FILLED_PUTS(_("Complete functions, units and variables with the tabulator key."));
+			CHECK_IF_SCREEN_FILLED_PUTS("");
 			PUTS_UNICODE(_("Available commands are:")); CHECK_IF_SCREEN_FILLED
-			puts(""); CHECK_IF_SCREEN_FILLED
+			CHECK_IF_SCREEN_FILLED_PUTS("");
 			PUTS_UNICODE(_("approximate")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("assume"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("ASSUMPTIONS")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("base"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("BASE")); CHECK_IF_SCREEN_FILLED			
@@ -2629,8 +2631,10 @@ int main(int argc, char *argv[]) {
 			FPUTS_UNICODE(_("rotate"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("DIRECTION"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("swap"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("INDEX 1"), stdout); fputs("] [", stdout); FPUTS_UNICODE(_("INDEX 2"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED			
 			CHECK_IF_SCREEN_FILLED_PUTS("");
-			PUTS_UNICODE(_("Type help COMMAND for more information (example: help save).")); CHECK_IF_SCREEN_FILLED
-			PUTS_UNICODE(_("Type info NAME for information about a function, variable or unit (example: info sin).")); CHECK_IF_SCREEN_FILLED_PUTS("");
+			CHECK_IF_SCREEN_FILLED_PUTS(_("Type help COMMAND for more information (example: help save)."));
+			CHECK_IF_SCREEN_FILLED_PUTS(_("Type info NAME for information about a function, variable or unit (example: info sin)."));
+			CHECK_IF_SCREEN_FILLED_PUTS(_("When a line begins with '/', the following text is always interpreted as a command."));
+			CHECK_IF_SCREEN_FILLED_PUTS("");
 			PUTS_UNICODE(_("For more information about mathematical expression, different options, and a complete list of functions, variables and units, see the relevant sections in the manual of the graphical user interface (available at http://qalculate.github.io/manual/index.html)."));
 			puts("");
 		//qalc command
@@ -2997,7 +3001,7 @@ int main(int argc, char *argv[]) {
 				INIT_SCREEN_CHECK
 				int pctl;
 #define STR_AND_TABS_SET(x, s) str = "- "; if(!cfile) {str += "\033[1m";} str += x; if(!cfile) {str += "\033[0m";} if(strlen(s) > 0) {str += " ("; str += s; str += ")";} str += "\n";
-#define SET_DESCRIPTION(s) if(strlen(s) > 0) {if(!cfile) {str += "\e[3m";} str += s; if(!cfile) {str += "\e[23m";} str += "\n";}
+#define SET_DESCRIPTION(s) if(strlen(s) > 0) {if(!cfile) {str += "\033[3m";} str += s; if(!cfile) {str += "\033[23m";} str += "\n";}
 #define STR_AND_TABS_BOOL(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "("; str += _("on"); if(v) {str += "*";} str += ", "; str += _("off"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_YESNO(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "("; str += _("yes"); if(v) {str += "*";} str += ", "; str += _("no"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_2(s, sh, d, v, s0, s1, s2) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -3505,13 +3509,13 @@ void replace_quotation_marks(string &result_text) {
 		i2 = result_text.find('\"', i1 + 1);
 		if(i2 == string::npos) break;
 		if(i1 > 1 && result_text[i1 - 1] == ' ' && is_not_in(OPERATORS, result_text[i1 - 2])) {
-			result_text.replace(i1 - 1, 2, "\e[3m");
+			result_text.replace(i1 - 1, 2, "\033[3m");
 			i2 += 2;
 		} else {
-			result_text.replace(i1, 1, "\e[3m");
+			result_text.replace(i1, 1, "\033[3m");
 			i2 += 3;
 		}
-		result_text.replace(i2, 1, "\e[23m");
+		result_text.replace(i2, 1, "\033[23m");
 		i1 = i2 + 5;
 	}
 }
