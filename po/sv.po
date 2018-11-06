@@ -1437,7 +1437,7 @@ msgstr "Visa ett meddelande efter att ett har antagits vara icke-noll."
 
 #: ../src/qalc.cc:3021
 msgid "Default assumptions for unknown variables."
-msgstr "Förrvalda antaganden för okända variabler."
+msgstr "Förvalda antaganden för okända variabler."
 
 #: ../src/qalc.cc:3049
 msgid ""
@@ -1453,7 +1453,7 @@ msgid ""
 "calculations. Avoids wrong results after loss of significance. Especially "
 "recommended with physical constants and/or 'read precision'."
 msgstr ""
-"Om aktiverat avgörs beräkningars slutgiltig precision med hjälp av "
+"Om aktiverat avgörs beräkningars slutgiltiga precision med hjälp av "
 "intervallaritmetik. Undviker felaktiga resultat efter signifikansförlust. "
 "Rekommenderas särskilt med fysiska konstanter och/eller 'läs precision'."
 
@@ -1613,7 +1613,7 @@ msgstr "Aktiverar automatisk använding av prefix i täljare i enhetsuttryck."
 msgid ""
 "If activated, units are separated from variables at the end of the result."
 msgstr ""
-"Om aktiverat kommer enheter att separeras from variabler på slutet av "
+"Om aktiverat kommer enheter att separeras från variabler på slutet av "
 "resultat."
 
 #: ../src/qalc.cc:3209
