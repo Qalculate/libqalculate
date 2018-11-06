@@ -5334,7 +5334,9 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							} else {
 								Number num_terms;
 								if(num_terms.binomial(i_pow + (long int) SIZE - 1, (long int) SIZE - 1)) {
-									size_t tc = countTotalChildren() / SIZE - 4;
+									size_t tc = countTotalChildren() / SIZE;
+									if(tc <= 4) tc = 0;
+									else tc -= 4;
 									b = num_terms.isLessThanOrEqualTo(tc > 1 ? 300 / tc : 300);
 								}
 							}
