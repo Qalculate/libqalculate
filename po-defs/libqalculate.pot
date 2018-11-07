@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-06 11:48+0100\n"
+"POT-Creation-Date: 2018-11-07 07:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7962,7 +7962,7 @@ msgid "Hectare"
 msgstr ""
 
 #: ../data/units.xml.in.h:262
-msgid "r:hectare"
+msgid "ar:ha,hectare,p:hectares"
 msgstr ""
 
 #: ../data/units.xml.in.h:263
@@ -7970,7 +7970,7 @@ msgid "Decare"
 msgstr ""
 
 #: ../data/units.xml.in.h:264
-msgid "r:decare"
+msgid "a:da,r:decare,p:decares"
 msgstr ""
 
 #: ../data/units.xml.in.h:265

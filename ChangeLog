@@ -1,9 +1,38 @@
+2018-11-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Enable Unicode by default if local character encoding is UTF-8
+
+2018-11-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Proper line breaks in qalc
+	* Fix (x+y)^a (was not expanded!)
+
+2018-11-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Line count fixes
+
 2018-11-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not transform rational numbers to integers in numerator and denominator
 	  if the resulting integers is not displayed in exact format
 	* Add set options shortcuts and add option descriptions to help set, in qalc
 	* Set restrict_fraction_length to true for 'set fractions fraction' in qalc
+	* Hectare and decare units (in addition to ha/da and hectoare/decaare)
+
+2018-11-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix roman() when used for reversed conversion with number that includes zero (issue #93)
+
+2018-10-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix compilation without readline
+
+2018-10-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Always interpret expression that begins with '/' as a command in qalc
+	* Interpret a character preceded by '\' as an unknown variable (same as in quotation marks)
+	* Replace text in quotation marks with italic text in qalc
+	* Always enable units for expressions that ends with "to [unit expression]", "to optimal", or similar
 
 2018-10-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

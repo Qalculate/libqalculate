@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-06 11:48+0100\n"
+"POT-Creation-Date: 2018-11-07 07:18+0100\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -8232,23 +8232,23 @@ msgstr "Ar"
 
 #: ../data/units.xml.in.h:260
 msgid "ar:a,are,p:ares"
-msgstr "ar,are"
+msgstr "a:a,ar,are"
 
 #: ../data/units.xml.in.h:261
 msgid "Hectare"
 msgstr "Hektar"
 
 #: ../data/units.xml.in.h:262
-msgid "r:hectare"
-msgstr "hektar"
+msgid "ar:ha,hectare,p:hectares"
+msgstr "a:ha,hektar,hectare"
 
 #: ../data/units.xml.in.h:263
 msgid "Decare"
 msgstr "Dekar"
 
 #: ../data/units.xml.in.h:264
-msgid "r:decare"
-msgstr "dekar"
+msgid "a:da,r:decare,p:decares"
+msgstr "a:da,dekar,decare"
 
 #: ../data/units.xml.in.h:265
 msgid "Barn"
