@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <vector>
 #include <list>
+#include <langinfo.h>
 #ifdef HAVE_LIBREADLINE
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -330,7 +331,7 @@ int enable_unicode = -1;
 void handle_exit() {
 	CALCULATOR->abort();
 	if(enable_unicode >= 0) {
-		printops.use_unicode_signs = enable_unicode;
+		printops.use_unicode_signs = !enable_unicode;
 	} 
 	if(interactive_mode) {
 		if(save_mode_on_exit) {
@@ -382,6 +383,7 @@ int countRows(const char *str, int cols) {
 }
 
 int addLineBreaks(string &str, int cols, size_t indent = 0) {
+	if(cols <= 0) return 1;
 	int r = 1;
 	size_t c = 0;
 	size_t lb_point = string::npos;
@@ -749,8 +751,8 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "approximation", _("approximation")) || svar == "appr" || svar == "approx") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact", _("exact"))) v = APPROXIMATION_EXACT;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "try exact", _("try exact"))) v = APPROXIMATION_TRY_EXACT;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "approximate", _("approximate"))) v = APPROXIMATION_APPROXIMATE;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "try exact", _("try exact")) || svalue == "try") v = APPROXIMATION_TRY_EXACT;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "approximate", _("approximate")) || svalue == "approx") v = APPROXIMATION_APPROXIMATE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
@@ -765,7 +767,7 @@ void set_option(string str) {
 		MixedUnitsConversion muc = MIXED_UNITS_CONVERSION_DEFAULT;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) {v = POST_CONVERSION_NONE;  muc = MIXED_UNITS_CONVERSION_NONE;}
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "best", _("best"))) v = POST_CONVERSION_OPTIMAL_SI;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimalsi", _("optimalsi"))) v = POST_CONVERSION_OPTIMAL_SI;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimalsi", _("optimalsi")) || svalue == "si") v = POST_CONVERSION_OPTIMAL_SI;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimal", _("optimal"))) v = POST_CONVERSION_OPTIMAL;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "base", _("base"))) v = POST_CONVERSION_BASE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = POST_CONVERSION_NONE;
@@ -788,7 +790,7 @@ void set_option(string str) {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = STRUCTURING_NONE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "simplify", _("simplify"))) v = STRUCTURING_SIMPLIFY;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "factorize", _("factorize"))) v = STRUCTURING_FACTORIZE;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "factorize", _("factorize")) || svalue == "factor") v = STRUCTURING_FACTORIZE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
@@ -938,8 +940,8 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "complex form", _("complex form")) || svar == "cplxform") {
 		int v = -1;
-		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "cartesian", _("cartesian"))) v = COMPLEX_NUMBER_FORM_RECTANGULAR;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exponential", _("exponential"))) v = COMPLEX_NUMBER_FORM_EXPONENTIAL;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "cartesian", _("cartesian")) || svalue == "rect") v = COMPLEX_NUMBER_FORM_RECTANGULAR;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exponential", _("exponential")) || svalue == "exp") v = COMPLEX_NUMBER_FORM_EXPONENTIAL;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "polar", _("polar"))) v = COMPLEX_NUMBER_FORM_POLAR;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -1201,8 +1203,8 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 		puts("");
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-		puts(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));
-		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+		if(in_interactive) {CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
+		else {PUTS_UNICODE(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
 		puts("");
 	} else if(list_type == 0) {
 		puts("");
@@ -1319,8 +1321,8 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 		}
 		puts("");
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-		puts(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));
-		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+		if(in_interactive) {CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
+		else {PUTS_UNICODE(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
 		puts("");
 	} else {
 		int max_l = 0;
@@ -1387,8 +1389,8 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 		puts("");
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-		puts(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));
-		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+		if(in_interactive) {CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
+		else {PUTS_UNICODE(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
 		puts("");
 	}
 }
@@ -2248,7 +2250,7 @@ int main(int argc, char *argv[]) {
 				expression_calculation_updated();
 			}
 		//qalc command
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "approximate", _("approximate"))) {
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "approximate", _("approximate")) || str == "approx") {
 			if(evalops.approximation != APPROXIMATION_TRY_EXACT) {
 				evalops.approximation = APPROXIMATION_TRY_EXACT;
 				expression_calculation_updated();
@@ -2305,7 +2307,7 @@ int main(int argc, char *argv[]) {
 				printops.time_zone = TIME_ZONE_UTC;
 				setResult(NULL, false);
 				printops.time_zone = TIME_ZONE_LOCAL;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(str, "cartesian", _("cartesian"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(str, "cartesian", _("cartesian")) || str == "rect") {
 				avoid_recalculation = false;
 				ComplexNumberForm cnf_bak = evalops.complex_number_form;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
@@ -2314,7 +2316,7 @@ int main(int argc, char *argv[]) {
 				else execute_expression();
 				hide_parse_errors = false;
 				evalops.complex_number_form = cnf_bak;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exponential", _("exponential"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exponential", _("exponential")) || str == "exp") {
 				avoid_recalculation = false;
 				ComplexNumberForm cnf_bak = evalops.complex_number_form;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
@@ -2335,7 +2337,17 @@ int main(int argc, char *argv[]) {
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "bases", _("bases"))) {
 				int save_base = printops.base;
 				string save_result_text = result_text;
-				string base_str = "\n  ";
+				string base_str;
+				int cols = 0;
+				if(interactive_mode && !cfile) {
+					base_str = "\n  ";
+#ifdef HAVE_LIBREADLINE
+					int rows = 0;
+					rl_get_screen_size(&rows, &cols);
+#else
+					cols = 80;
+#endif
+				}
 				base_str += result_text;
 				if(save_base != BASE_BINARY) {
 					base_str += " = ";
@@ -2361,7 +2373,8 @@ int main(int argc, char *argv[]) {
 					setResult(NULL, false, true, 0, false, true);
 					base_str += result_text;
 				}
-				base_str += "\n";
+				if(interactive_mode && !cfile) base_str += "\n";
+				if(interactive_mode && !cfile) addLineBreaks(base_str, cols, 2);
 				PUTS_UNICODE(base_str.c_str());
 				printops.base = save_base;
 				result_text = save_result_text;
@@ -2375,7 +2388,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 				show_calendars(date);
 				puts("");
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "fraction", _("fraction"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "fraction", _("fraction")) || str == "frac") {
 				NumberFractionFormat save_format = printops.number_fraction_format;
 				bool save_rfl = printops.restrict_fraction_length;
 				printops.restrict_fraction_length = false;
@@ -2384,9 +2397,9 @@ int main(int argc, char *argv[]) {
 				setResult(NULL, false);
 				printops.restrict_fraction_length = save_rfl;
 				printops.number_fraction_format = save_format;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "factors", _("factors"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "factors", _("factors")) || str == "factor") {
 				execute_command(COMMAND_FACTORIZE);
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "partial fraction", _("partial fraction"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "partial fraction", _("partial fraction")) || str == "partial") {
 				execute_command(COMMAND_EXPAND_PARTIAL_FRACTIONS);
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "best", _("best")) || EQUALS_IGNORECASE_AND_LOCAL(str, "optimal", _("optimal"))) {
 				CALCULATOR->resetExchangeRatesUsed();
@@ -3840,7 +3853,9 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				if(printops.use_unicode_signs) {
 					strout += " " SIGN_ALMOST_EQUAL " ";
 				} else {
-					strout += " = %s ", _("approx.");
+					strout += " = ";
+					strout += _("approx.");
+					strout += " ";
 				}
 			}
 		}
@@ -4162,13 +4177,13 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				printops.time_zone = TIME_ZONE_LOCAL;
 				expression_str = str;
 				return;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction")) || to_str == "frac") {
 				str = from_str;
 				do_fraction = true;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "factors", _("factors"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "factors", _("factors")) || to_str == "factor") {
 				str = from_str;
 				do_factors = true;
-			}  else if(equalsIgnoreCase(to_str, "partial fraction") || equalsIgnoreCase(to_str, _("partial fraction"))) {
+			}  else if(equalsIgnoreCase(to_str, "partial fraction") || equalsIgnoreCase(to_str, _("partial fraction")) || to_str == "partial") {
 				str = from_str;
 				do_pfe = true;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "bases", _("bases"))) {
@@ -4177,7 +4192,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "calendars", _("calendars"))) {
 				do_calendars = true;
 				str = from_str;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "cartesian", _("cartesian"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "cartesian", _("cartesian")) || to_str == "rect") {
 				expression_str = from_str;
 				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
@@ -4185,7 +4200,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				evalops.complex_number_form = save_complex_number_form;
 				expression_str = str;
 				return;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "exponential", _("exponential"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "exponential", _("exponential")) || to_str == "exp") {
 				expression_str = from_str;
 				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
@@ -4519,18 +4534,34 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		setResult(NULL, false, false, do_stack ? stack_index : 0, false, true);
 		base_str += result_text;
 		if(has_printed) printf("\n");
-		if(goto_input) printf("\n  ");
+		if(goto_input) {
+			base_str.insert(0, "  ");
+			printf("\n");
+		}
 		if(!result_only) {
-			FPUTS_UNICODE(parsed_text.c_str(), stdout);
+			string prestr = parsed_text;
 			if(!(*printops.is_approximate) && !mstruct->isApproximate()) {
-				printf(" = ");
+				prestr += " = ";
 			} else {
 				if(printops.use_unicode_signs) {
-					printf(" " SIGN_ALMOST_EQUAL " ");
+					prestr += " " SIGN_ALMOST_EQUAL " ";
 				} else {
-					printf(" = %s ", _("approx."));
+					prestr += " = ";
+					prestr += _("approx.");
+					prestr += " ";
 				}
 			}
+			base_str = prestr + base_str;
+		}
+		if(goto_input) {
+			int cols = 0;
+#ifdef HAVE_LIBREADLINE
+			int rows = 0;
+			rl_get_screen_size(&rows, &cols);
+#else
+			cols = 80;
+#endif
+			addLineBreaks(base_str, cols, 2);
 		}
 		PUTS_UNICODE(base_str.c_str());
 		printops.base = save_base;
@@ -4594,7 +4625,7 @@ void load_preferences() {
 	printops.number_fraction_format = FRACTION_DECIMAL;
 	printops.restrict_fraction_length = false;
 	printops.abbreviate_names = true;
-	printops.use_unicode_signs = false;
+	printops.use_unicode_signs = (strcmp(nl_langinfo(CODESET), "UTF-8") == 0);
 	printops.use_unit_prefixes = true;
 	printops.spacious = true;
 	printops.short_multiplication = true;
@@ -4643,7 +4674,7 @@ void load_preferences() {
 	save_defs_on_exit = true;
 	auto_update_exchange_rates = -1;
 	first_time = false;
-
+	
 	FILE *file = NULL;
 #ifdef HAVE_LIBREADLINE
 	string historyfile = buildPath(getLocalDir(), "qalc.history");
@@ -4683,7 +4714,7 @@ void load_preferences() {
 #endif
 
 	
-	int version_numbers[] = {2, 8, 0};
+	int version_numbers[] = {2, 8, 1};
 	
 	if(file) {
 		char line[10000];
@@ -4841,7 +4872,9 @@ void load_preferences() {
 				} else if(svar == "local_currency_conversion") {
 					evalops.local_currency_conversion = v;
 				} else if(svar == "use_unicode_signs") {
-					printops.use_unicode_signs = v;	
+					if(version_numbers[0] > 2 || (version_numbers[0] == 2 && (version_numbers[1] > 8 || (version_numbers[1] == 8 && version_numbers[2] > 0)))) {
+						printops.use_unicode_signs = v;	
+					}
 				} else if(svar == "lower_case_numbers") {
 					printops.lower_case_numbers = v;
 				} else if(svar == "lower_case_e") {
