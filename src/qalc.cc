@@ -19,14 +19,13 @@
 #include <stdio.h>
 #include <vector>
 #include <list>
-#include <langinfo.h>
 #ifdef HAVE_LIBREADLINE
-#include <readline/readline.h>
-#include <readline/history.h>
+#	include <readline/readline.h>
+#	include <readline/history.h>
 #endif
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#	include <windows.h>
 #endif
 
 class ViewThread : public Thread {
@@ -3839,6 +3838,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	} else {
 		string strout;
 		if(goto_input) strout += "  ";
+		size_t i_result = 0;
 		if(!result_only) {
 			if(mstruct->isComparison()) strout += LEFT_PARENTHESIS;
 			if(update_parse) {
@@ -3849,11 +3849,14 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			if(mstruct->isComparison()) strout += RIGHT_PARENTHESIS;
 			if(!(*printops.is_approximate) && !mstruct->isApproximate()) {
 				strout += " = ";
+				i_result = unicode_length(strout);
 			} else {
 				if(printops.use_unicode_signs) {
 					strout += " " SIGN_ALMOST_EQUAL " ";
+					i_result = unicode_length(strout);
 				} else {
 					strout += " = ";
+					i_result = unicode_length(strout);
 					strout += _("approx.");
 					strout += " ";
 				}
@@ -3867,7 +3870,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			strout += result_text.c_str();
 		}
 		if(goto_input) strout += "\n";
-		if(goto_input) addLineBreaks(strout, cols, 2);
+		if(goto_input) addLineBreaks(strout, cols, (result_only || i_result > (size_t) cols / 2) ? 2 : i_result);
 		PUTS_UNICODE(strout.c_str());
 	}
 
@@ -4625,7 +4628,7 @@ void load_preferences() {
 	printops.number_fraction_format = FRACTION_DECIMAL;
 	printops.restrict_fraction_length = false;
 	printops.abbreviate_names = true;
-	printops.use_unicode_signs = (strcmp(nl_langinfo(CODESET), "UTF-8") == 0);
+	printops.use_unicode_signs = false;
 	printops.use_unit_prefixes = true;
 	printops.spacious = true;
 	printops.short_multiplication = true;
@@ -4872,9 +4875,7 @@ void load_preferences() {
 				} else if(svar == "local_currency_conversion") {
 					evalops.local_currency_conversion = v;
 				} else if(svar == "use_unicode_signs") {
-					if(version_numbers[0] > 2 || (version_numbers[0] == 2 && (version_numbers[1] > 8 || (version_numbers[1] == 8 && version_numbers[2] > 0)))) {
-						printops.use_unicode_signs = v;	
-					}
+					printops.use_unicode_signs = v;	
 				} else if(svar == "lower_case_numbers") {
 					printops.lower_case_numbers = v;
 				} else if(svar == "lower_case_e") {
