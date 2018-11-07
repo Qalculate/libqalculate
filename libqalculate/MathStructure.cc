@@ -18083,7 +18083,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 		case STRUCT_MULTIPLICATION: {
 			switch(m_type) {
 				case STRUCT_MULTIPLICATION: {return true;}
-				case STRUCT_DIVISION: {return flat_division;}
+				case STRUCT_DIVISION: {return flat_division && (index < parent.size() || po.excessive_parenthesis);}
 				case STRUCT_INVERSE: {return flat_division;}
 				case STRUCT_ADDITION: {return true;}
 				case STRUCT_POWER: {return po.excessive_parenthesis;}
@@ -18435,7 +18435,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 	switch(m_type) {
 		case STRUCT_MULTIPLICATION: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_INVERSE: {}
-		case STRUCT_DIVISION: {if(flat_division) return MULTIPLICATION_SIGN_OPERATOR; return MULTIPLICATION_SIGN_SPACE;}
+		case STRUCT_DIVISION: {return MULTIPLICATION_SIGN_SPACE;}
 		case STRUCT_ADDITION: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_POWER: {return CHILD(0).neededMultiplicationSign(po, ips, parent, index, par, par_prev, flat_division, flat_power);}
 		case STRUCT_NEGATE: {return MULTIPLICATION_SIGN_OPERATOR;}
