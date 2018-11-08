@@ -403,8 +403,10 @@ int addLineBreaks(string &str, int cols, size_t indent = 0) {
 				c = 0;
 				lb_point = string::npos;
 			} else {
-				if(c != 0 && is_in(" \t", str[i])) lb_point = i;
-				else if(c != 0 && c < (size_t) cols && is_in("+-*", str[i]) && i + 1 != str.length() && str[i - 1] != '^' && is_not_in(" \t.;,", str[i + 1])) lb_point = i + 1;
+				if(c > indent && (c - indent) > (cols - indent) / 2) {
+					if(is_in(" \t", str[i])) lb_point = i;
+					else if(c < (size_t) cols && is_in("+-*", str[i]) && i + 1 != str.length() && str[i - 1] != '^' && is_not_in(" \t.;,", str[i + 1])) lb_point = i + 1;
+				}
 				if(c == (size_t) cols) {
 					if(lb_point == string::npos) {
 						str.insert(i, "\n");
@@ -438,7 +440,7 @@ int addLineBreaks(string &str, int cols, size_t indent = 0) {
 				}
 			}
 		} else if(i + 1 < str.length() && (str[i + 1] > 0 || (unsigned char) str[i + 1] >= 0xC2)) {
-			if(c != 0 && is_not_in(" \t.;,", str[i + 1])) {
+			if(c > indent && (c - indent) > (cols - indent) / 2 && is_not_in(" \t.;,", str[i + 1])) {
 				size_t index = i;
 				while(index > 0 && str[index - 1] <= 0) index--;
 				if(index > 0 && str[index - 1] != '^') {
@@ -3792,6 +3794,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 #endif			
 					if(c == '\n') {
 						on_abort_display();
+						has_printed = false;
 					}
 				} else {
 					if(!result_only) {
@@ -4443,6 +4446,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					if(c == '\n') {
 						CALCULATOR->abort();
 						avoid_recalculation = true;
+						has_printed = false;
 					}
 				} else {
 					if(!result_only) {
