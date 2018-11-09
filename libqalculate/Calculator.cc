@@ -4776,7 +4776,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			if(str[str_index + l] < 0) {
 				do {
 					l++; 
-				} while(str_index + l < str.length() && str[str_index + l]);
+				} while(str_index + l < str.length() && str[str_index + l] < 0 && (unsigned char) str[str_index + l] < 0xC2);
 				l--;
 			}
 			MathStructure *mstruct = new MathStructure(str.substr(str_index + 1, l));
