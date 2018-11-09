@@ -381,11 +381,15 @@ int countRows(const char *str, int cols) {
 	return r;
 }
 
-int addLineBreaks(string &str, int cols, size_t indent = 0) {
+int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, bool only_space = true) {
 	if(cols <= 0) return 1;
 	int r = 1;
 	size_t c = 0;
 	size_t lb_point = string::npos;
+	size_t or_point = string::npos;
+	int b_or = 0;
+	if(expr && str.find(_("or")) != string::npos) b_or = 1;
+	else if(expr && str.find("||") != string::npos) b_or = 2;
 	for(size_t i = 0; i < str.length(); i++) {
 		if(r != 1 && c == indent && str[i] == ' ') {
 			str.erase(i, 1);
@@ -403,11 +407,17 @@ int addLineBreaks(string &str, int cols, size_t indent = 0) {
 				c = 0;
 				lb_point = string::npos;
 			} else {
-				if(c > indent && (c - indent) > (cols - indent) / 2) {
-					if(is_in(" \t", str[i])) lb_point = i;
-					else if(c < (size_t) cols && is_in("+-*", str[i]) && i + 1 != str.length() && str[i - 1] != '^' && is_not_in(" \t.;,", str[i + 1])) lb_point = i + 1;
+				if(c > indent) {
+					if(is_in(" \t", str[i])) {
+						if(expr || (c - indent) > (cols - indent) / 2) lb_point = i;
+						if(b_or == 1 && str.length() > i + strlen("or") + 2 && str.substr(i + 1, strlen(_("or"))) == _("or") && str[i + strlen(_("or")) + 1] == ' ') or_point = i + strlen(_("or")) + 1;
+						else if(b_or == 2 && str.length() > i + 2 + 2 && str.substr(i + 1, 2) == "||" && str[i + 2 + 1] == ' ') or_point = i + 2 + 1;
+					} else if(!only_space && (c - indent) > (cols - indent) / 2 && c < (size_t) cols && is_in("+-*", str[i]) && i + 1 != str.length() && str[i - 1] != '^' && str[i - 1] != ' ' && str[i - 1] != '=' && is_not_in(" \t.;,", str[i + 1])) {
+						lb_point = i + 1;
+					}
 				}
-				if(c == (size_t) cols) {
+				if(c == (size_t) cols || or_point != string::npos) {
+					if(or_point != string::npos) lb_point = or_point;
 					if(lb_point == string::npos) {
 						str.insert(i, "\n");
 						for(size_t i2 = 0; i2 < indent; i2++) {
@@ -433,17 +443,18 @@ int addLineBreaks(string &str, int cols, size_t indent = 0) {
 						c = indent;
 					}
 					lb_point = string::npos;
+					or_point = string::npos;
 					r++;
 				} else {
 					if(str[i] == '\t') c += 8;
 					else c++;
 				}
 			}
-		} else if(i + 1 < str.length() && (str[i + 1] > 0 || (unsigned char) str[i + 1] >= 0xC2)) {
+		} else if(!only_space && printops.use_unicode_signs && i + 1 < str.length() && (str[i + 1] > 0 || (unsigned char) str[i + 1] >= 0xC2)) {
 			if(c > indent && (c - indent) > (cols - indent) / 2 && is_not_in(" \t.;,", str[i + 1])) {
 				size_t index = i;
 				while(index > 0 && str[index - 1] <= 0) index--;
-				if(index > 0 && str[index - 1] != '^') {
+				if(index > 0 && str[index - 1] != '^' && str[index - 1] != ' ' && str[index - 1] != '=') {
 					string unichar = str.substr(index, i - index + 1);
 					if(unichar == SIGN_MULTIPLICATION || unichar == SIGN_MULTIDOT || unichar == SIGN_MIDDLEDOT || unichar == SIGN_MULTIBULLET || unichar == SIGN_SMALLCIRCLE || unichar == SIGN_DIVISION_SLASH || unichar == SIGN_DIVISION || unichar == SIGN_MINUS || unichar == SIGN_PLUS) lb_point = i + 1;
 				}
@@ -2375,7 +2386,7 @@ int main(int argc, char *argv[]) {
 					base_str += result_text;
 				}
 				if(interactive_mode && !cfile) base_str += "\n";
-				if(interactive_mode && !cfile) addLineBreaks(base_str, cols, 2);
+				if(interactive_mode && !cfile) addLineBreaks(base_str, cols, true, 2, printops.spacious);
 				PUTS_UNICODE(base_str.c_str());
 				printops.base = save_base;
 				result_text = save_result_text;
@@ -3589,7 +3600,7 @@ bool display_errors(bool goto_input, int cols) {
 				str = _("warning"); str += ": ";
 			}
 			str += CALCULATOR->message()->message();
-			if(cols) addLineBreaks(str, cols, goto_input ? 2 : 0);
+			if(cols) addLineBreaks(str, cols, true, goto_input ? 2 : 0, printops.spacious);
 			PUTS_UNICODE(str.c_str())
 		}
 		if(!CALCULATOR->nextMessage()) break;
@@ -3609,9 +3620,28 @@ void replace_quotation_marks(string &result_text) {
 		if(i1 == string::npos) break;
 		i2 = result_text.find('\"', i1 + 1);
 		if(i2 == string::npos) break;
+		if(i2 - i1 > 2) {
+			if(!text_length_is_one(result_text.substr(i1 + 1, i2 - i1 - 1))) {
+				i1 = i2 + 1;
+				continue;
+			}
+		}
 		if(i1 > 1 && result_text[i1 - 1] == ' ' && is_not_in(OPERATORS, result_text[i1 - 2])) {
-			result_text.replace(i1 - 1, 2, "\033[3m");
-			i2 += 2;
+			if(printops.use_unicode_signs && result_text[i1 - 2] < 0) {
+				size_t i3 = i1 - 2;
+				while(i3 > 0 && result_text[i3] < 0 && (unsigned char) result_text[i3] < 0xC2) i3--;
+				string str = result_text.substr(i3, i1 - i3 - 1);
+				if(str != SIGN_DIVISION && str != SIGN_DIVISION_SLASH && str != SIGN_MULTIPLICATION && str != SIGN_MULTIDOT && str != SIGN_SMALLCIRCLE && str != SIGN_MULTIBULLET && str != SIGN_MINUS && str != SIGN_PLUS && str != SIGN_NOT_EQUAL && str != SIGN_GREATER_OR_EQUAL && str != SIGN_LESS_OR_EQUAL) {
+					result_text.replace(i1 - 1, 2, "\033[3m");
+					i2 += 2;
+				} else {
+					result_text.replace(i1, 1, "\033[3m");
+					i2 += 3;
+				}
+			} else {
+				result_text.replace(i1 - 1, 2, "\033[3m");
+				i2 += 2;
+			}
 		} else {
 			result_text.replace(i1, 1, "\033[3m");
 			i2 += 3;
@@ -3873,7 +3903,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			strout += result_text.c_str();
 		}
 		if(goto_input) strout += "\n";
-		if(goto_input) addLineBreaks(strout, cols, (result_only || i_result > (size_t) cols / 2) ? 2 : i_result);
+		if(goto_input) addLineBreaks(strout, cols, true, (result_only || i_result > (size_t) cols / 2) ? 2 : i_result, printops.spacious);
 		PUTS_UNICODE(strout.c_str());
 	}
 
@@ -4568,7 +4598,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 #else
 			cols = 80;
 #endif
-			addLineBreaks(base_str, cols, 2);
+			addLineBreaks(base_str, cols, false, 2);
 		}
 		PUTS_UNICODE(base_str.c_str());
 		printops.base = save_base;
