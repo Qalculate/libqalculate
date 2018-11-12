@@ -561,7 +561,7 @@ bool Calculator::utf8_pos_is_valid_in_name(char *pos) {
 	if((unsigned char) pos[0] >= 0xC0) {
 		string str;
 		str += pos[0];
-		while((unsigned char) pos[1] >= 0x80 && (unsigned char) pos[1] <= 0xBF) {
+		while((unsigned char) pos[1] >= 0x80 && (unsigned char) pos[1] < 0xC0) {
 			str += pos[1];
 			pos++;
 		}
@@ -4776,7 +4776,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			if(str[str_index + l] < 0) {
 				do {
 					l++; 
-				} while(str_index + l < str.length() && str[str_index + l] < 0 && (unsigned char) str[str_index + l] < 0xC2);
+				} while(str_index + l < str.length() && str[str_index + l] < 0 && (unsigned char) str[str_index + l] < 0xC0);
 				l--;
 			}
 			MathStructure *mstruct = new MathStructure(str.substr(str_index + 1, l));
