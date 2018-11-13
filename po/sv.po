@@ -2675,7 +2675,7 @@ msgid ""
 "relationship (e.g. with multiple temperature units), might give unexpected "
 "results and is not recommended."
 msgstr ""
-"Beräkningar som involverar omvandling av  enheter utan proportionella "
+"Beräkningar som involverar omvandling av enheter utan proportionella "
 "linjära förhållanden (t.ex. med flera olika temperaturenheter), kan ge "
 "oförutsedda svar och rekommenderas ej."
 

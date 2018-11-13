@@ -432,7 +432,7 @@ int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, s
 				if(c == (size_t) cols || or_point != string::npos) {
 					if(or_point != string::npos) lb_point = or_point;
 					if(lb_point == string::npos) {
-						if(printops.digit_grouping != DIGIT_GROUPING_NONE) {
+						if(expr && printops.digit_grouping != DIGIT_GROUPING_NONE) {
 							if(i > 3 && str[i] <= '9' && str[i] >= '0' && str[i - 1] <= '9' && str[i - 1] >= '0') {
 								if(str[i - 2] == ' ' && str[i - 3] <= '9' && str[i - 3] >= '0') i -= 2;
 								else if(str[i - 3] == ' ' && str[i - 4] <= '9' && str[i - 4] >= '0') i -= 3;
@@ -2144,7 +2144,7 @@ int main(int argc, char *argv[]) {
 					m = *CALCULATOR->getRPNRegister(i);
 					m.format(printops);
 					string regstr = m.print(printops);
-					replace_quotation_marks(regstr);
+					if(!cfile) replace_quotation_marks(regstr);
 					printf("  %i:\t%s\n", (int) i, regstr.c_str());
 				}
 				puts("");
@@ -2422,9 +2422,11 @@ int main(int argc, char *argv[]) {
 					setResult(NULL, false, true, 0, false, true);
 					base_str += result_text;
 				}
-				if(interactive_mode && !cfile) base_str += "\n";
-				if(interactive_mode && !cfile) addLineBreaks(base_str, cols, true, 2, base_str.length());
-				replace_quotation_marks(base_str);
+				if(interactive_mode && !cfile) {
+					base_str += "\n";
+					addLineBreaks(base_str, cols, true, 2, base_str.length());
+					replace_quotation_marks(base_str);
+				}
 				PUTS_UNICODE(base_str.c_str());
 				printops.base = save_base;
 				result_text = save_result_text;
@@ -3633,9 +3635,9 @@ bool display_errors(bool goto_input, int cols) {
 			string str;
 			if(goto_input) str += "  ";
 			if(mtype == MESSAGE_ERROR) {
-				str = _("error"); str += ": ";
+				str += _("error"); str += ": ";
 			} else if(mtype == MESSAGE_WARNING) {
-				str = _("warning"); str += ": ";
+				str += _("warning"); str += ": ";
 			}
 			str += CALCULATOR->message()->message();
 			if(cols) addLineBreaks(str, cols, true, goto_input ? 2 : 0, str.length());
@@ -3654,9 +3656,9 @@ void replace_quotation_marks(string &str) {
 	if(cfile) return;
 	size_t i1 = 0, i2 = 0;
 	while(i1 + 2 < str.length()) {
-		i1 = str.find('\"', i1);
+		i1 = str.find_first_of("\"\'", i1);
 		if(i1 == string::npos) break;
-		i2 = str.find('\"', i1 + 1);
+		i2 = str.find(str[i1], i1 + 1);
 		if(i2 == string::npos) break;
 		if(i2 - i1 > 2) {
 			if(!text_length_is_one(str.substr(i1 + 1, i2 - i1 - 1))) {
@@ -3664,7 +3666,7 @@ void replace_quotation_marks(string &str) {
 				continue;
 			}
 		}
-		if(i1 > 1 && str[i1 - 1] == ' ' && is_not_in(OPERATORS, str[i1 - 2])) {
+		if(i1 > 1 && str[i1 - 1] == ' ' && is_not_in(OPERATORS SPACES, str[i1 - 2])) {
 			if(printops.use_unicode_signs && str[i1 - 2] < 0) {
 				size_t i3 = i1 - 2;
 				while(i3 > 0 && str[i3] < 0 && (unsigned char) str[i3] < 0xC0) i3--;
@@ -4637,6 +4639,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			}
 			base_str = prestr + base_str;
 		}
+		result_text = base_str;
 		if(goto_input) {
 			int cols = 0;
 #ifdef HAVE_LIBREADLINE
@@ -4646,9 +4649,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			cols = 80;
 #endif
 			addLineBreaks(base_str, cols, false, 2, base_str.length());
+			replace_quotation_marks(base_str);
 		}
-		result_text = base_str;
-		replace_quotation_marks(base_str);
 		PUTS_UNICODE(base_str.c_str());
 		printops.base = save_base;
 		if(goto_input) printf("\n");

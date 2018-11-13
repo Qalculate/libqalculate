@@ -179,7 +179,21 @@ bool Unit::isParentOf(Unit *u) const {
 	return u != this && u->baseUnit() == this;
 }
 bool Unit::hasComplexRelationTo(Unit *u) const {
-	if(u == this || u->baseUnit() != this) return false;
+	if(u == this) return false;
+	Unit *ub2 = u->baseUnit();
+	if(ub2 != this) {
+		if(subtype() == SUBTYPE_COMPOSITE_UNIT) {
+			const CompositeUnit *cu = (CompositeUnit*) this;
+			for(size_t i = 1; i <= cu->countUnits(); i++) {
+				if(cu->get(i)->hasComplexRelationTo(u)) return true;
+			}
+			return false;
+		}
+		if(ub2->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+			if(u->hasComplexRelationTo(ub2) && (((CompositeUnit*) ub2))->containsRelativeTo(u)) return true;
+		}
+		return false;
+	}
 	Unit *fbu = u;
 	if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
 	while(1) {
@@ -368,13 +382,21 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			gsub("\\x", stmp2, stmp);
 			stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
-			int y_id = CALCULATOR->addId(new MathStructure(mexp), true);
-			stmp2 += i2s(y_id);
-			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-			gsub("\\y", stmp2, stmp);
+			int y_id = -1;
+			if(svalue.find("\\y") != string::npos) {
+				stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+				y_id = CALCULATOR->addId(new MathStructure(mexp), true);
+				stmp2 += i2s(y_id);
+				stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+				gsub("\\y", stmp2, stmp);
+			}
 			CALCULATOR->parse(&mvalue, stmp, po);
 			CALCULATOR->delId(x_id);
-			CALCULATOR->delId(y_id);
+			if(y_id < 0) {
+				if(!mexp.isOne()) mvalue.raise(mexp);
+			} else {
+				CALCULATOR->delId(y_id);
+			}
 			if(precision() > 0 && (mvalue.precision() < 0 || precision() < mvalue.precision())) mvalue.setPrecision(precision(), true);
 			if(isApproximate()) mvalue.setApproximate(true, true);
 		} else {
@@ -421,14 +443,21 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 			stmp2 += i2s(x_id);
 			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 			gsub("\\x", stmp2, stmp);
-			stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
-			int y_id = CALCULATOR->addId(new MathStructure(mexp), true);
-			stmp2 += i2s(y_id);
-			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-			gsub("\\y", stmp2, stmp);
+			int y_id = -1;
+			if(svalue.find("\\y") != string::npos) {
+				stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+				y_id = CALCULATOR->addId(new MathStructure(mexp), true);
+				stmp2 += i2s(y_id);
+				stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+				gsub("\\y", stmp2, stmp);
+			}
 			CALCULATOR->parse(&mvalue, stmp, po);
 			CALCULATOR->delId(x_id);
-			CALCULATOR->delId(y_id);
+			if(y_id < 0) {
+				if(!mexp.isOne()) mvalue.raise(mexp);
+			} else {
+				CALCULATOR->delId(y_id);
+			}
 			if(precision() > 0 && (mvalue.precision() < 0|| precision() < mvalue.precision())) mvalue.setPrecision(precision(), true);
 			if(isApproximate()) mvalue.setApproximate(true, true);
 		} else {
@@ -482,7 +511,7 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 		CALCULATOR->parse(&mvalue, stmp, po);
 		CALCULATOR->delId(x_id);
 		if(y_id < 0) {
-			mvalue.raise(mexp);
+			if(!mexp.isOne()) mvalue.raise(mexp);
 		} else {
 			CALCULATOR->delId(y_id);
 		}
@@ -567,7 +596,22 @@ bool AliasUnit::hasComplexExpression() const {
 	return svalue.find("\\x") != string::npos;
 }
 bool AliasUnit::hasComplexRelationTo(Unit *u) const {
-	if(u == this || u->baseUnit() != baseUnit()) return false;
+	if(u == this) return false;
+	Unit *ub = baseUnit();
+	Unit *ub2 = u->baseUnit();
+	if(ub2 != ub) {
+		if(ub->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+			if(hasComplexRelationTo(ub)) return ((CompositeUnit*) ub)->containsRelativeTo(u);
+			for(size_t i = 1; i <= ((CompositeUnit*) ub)->countUnits(); i++) {
+				if(((CompositeUnit*) ub)->get(i)->hasComplexRelationTo(u)) return true;
+			}
+			return false;
+		}
+		if(ub2->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+			if(((CompositeUnit*) ub2)->containsRelativeTo(u) && (u->hasComplexRelationTo(ub2) || hasComplexRelationTo(ub))) return true;
+		}
+		return false;
+	}
 	if(isParentOf(u)) {
 		Unit *fbu = u;
 		while(true) {
