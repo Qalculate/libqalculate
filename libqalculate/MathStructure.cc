@@ -18490,9 +18490,15 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			if(po.allow_non_usable) {
 				print_str = s_sym;
 			} else {
-				print_str = "\"";
-				print_str += s_sym;
-				print_str += "\"";
+				if((text_length_is_one(s_sym) && s_sym.find("\'") == string::npos) || s_sym.find("\"") != string::npos) {
+					print_str = "\'";
+					print_str += s_sym;
+					print_str += "\'";
+				} else {
+					print_str = "\"";
+					print_str += s_sym;
+					print_str += "\"";
+				}
 			}
 			break;
 		}
@@ -19893,6 +19899,23 @@ bool MathStructure::testDissolveCompositeUnit(Unit *u) {
 	}
 	return false; 
 }
+bool test_dissolve_cu(MathStructure &mstruct, Unit *u, bool convert_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo, Prefix *new_prefix = NULL) {
+	if(mstruct.isUnit()) {
+		if(mstruct.unit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+			if(((CompositeUnit*) mstruct.unit())->containsRelativeTo(u)) {
+				mstruct.set(((CompositeUnit*) mstruct.unit())->generateMathStructure());
+				return true;
+			}
+		} else if(mstruct.unit()->subtype() == SUBTYPE_ALIAS_UNIT && mstruct.unit()->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+			if(((CompositeUnit*) (mstruct.unit()->baseUnit()))->containsRelativeTo(u)) {
+				mstruct.convert(mstruct.unit()->baseUnit(), convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
+				mstruct.convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
+				return true;
+			}		
+		}
+	}
+	return false; 
+}
 bool MathStructure::testCompositeUnit(Unit *u) {
 	if(m_type == STRUCT_UNIT) {
 		if(o_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) {
@@ -20072,7 +20095,7 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 			if(found_complex_relations) *found_complex_relations = true;
 			if(!convert_complex_relations) return false;
 		}
-		if(o_unit->baseUnit() != u->baseUnit() && testDissolveCompositeUnit(u)) {
+		if(o_unit->baseUnit() != u->baseUnit() && test_dissolve_cu(*this, u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix)) {
 			convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
 			return true;
 		}
@@ -20111,7 +20134,8 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 				long int b_c = -1;
 				for(size_t i = 0; i < SIZE; i++) {
 					if(CHILD(i).isUnit_exp()) {
-						if((CHILD(i).isUnit() && u->hasComplexRelationTo(CHILD(i).unit())) || (CHILD(i).isPower() && u->hasComplexRelationTo(CHILD(i)[0].unit()))) {
+						Unit *u2 = CHILD(i).isPower() ? CHILD(i)[0].unit() : CHILD(i).unit();
+						if(u->hasComplexRelationTo(u2)) {
 							if(found_complex_relations) *found_complex_relations = true;
 							
 							b_c = i;
@@ -20166,7 +20190,12 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 					Unit *u2;
 					bool b_p = false;
 					if(CHILD(b_c).isPower()) {
-						if(CHILD(b_c)[0].testDissolveCompositeUnit(u)) {
+						if(CHILD(b_c)[0].unit()->baseUnit() != u->baseUnit()) {
+							if(CHILD(b_c)[0].unit()->subtype() != SUBTYPE_BASE_UNIT && (CHILD(b_c)[0].unit()->subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) CHILD(b_c)[0].unit())->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT)) {
+								convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
+							} else {
+								return false;
+							}
 							convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
 							return true;
 						}	
@@ -20174,7 +20203,12 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 						u2 = CHILD(b_c)[0].unit();
 						if(CHILD(b_c)[0].prefix()) b_p = true;
 					} else {
-						if(CHILD(b_c).testDissolveCompositeUnit(u)) {
+						if(CHILD(b_c).unit()->baseUnit() != u->baseUnit()) {
+							if(CHILD(b_c).unit()->subtype() != SUBTYPE_BASE_UNIT && (CHILD(b_c).unit()->subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) CHILD(b_c).unit())->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT)) {
+								convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
+							} else {
+								return false;
+							}
 							convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
 							return true;
 						}
@@ -20211,7 +20245,12 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 				if(CHILD(0).isUnit() && u->hasComplexRelationTo(CHILD(0).unit())) {
 					if(found_complex_relations) *found_complex_relations = true;
 					if(convert_complex_relations) {
-						if(CHILD(0).testDissolveCompositeUnit(u)) {
+						if(CHILD(0).unit()->baseUnit() != u->baseUnit()) {
+							if(CHILD(0).unit()->subtype() != SUBTYPE_BASE_UNIT && (CHILD(0).unit()->subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) CHILD(0).unit())->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT)) {
+								convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
+							} else {
+								return false;
+							}
 							convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
 							return true;
 						}	
