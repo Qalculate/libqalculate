@@ -17034,14 +17034,12 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 						Prefix *p = NULL;
 						if((munit->isUnit() && munit->unit()->referenceName() == "g") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "g")) {
 							p = CALCULATOR->getExactDecimalPrefix(3);
-							if(p) munit->setPrefix(p);
-							
 						} else if((munit->isUnit() && munit->unit()->referenceName() == "a") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "a")) {
 							p = CALCULATOR->getExactDecimalPrefix(2);
-							if(p) munit->setPrefix(p);
-							
 						}
 						if(p) {
+							if(munit->isUnit()) munit->setPrefix(p);
+							else (*munit)[0].setPrefix(p);
 							if(CHILD(0).isNumber()) {
 								CHILD(0).number() /= p->value(exp);
 							} else {
