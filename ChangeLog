@@ -1,6 +1,26 @@
+2018-12-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix missing prefix for gram when exponent of gram is not one and automatic prefixes is off
+
+2018-11-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	 * Fixes for units with non-linear relation
+	 * Use single quotation marks for unknowns with one character
+
+2018-11-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+ 	* Improve line breaks
+ 	* UTF-8 algorithms tweaks
+
+2018-11-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix handling of unicode chars for \a (="a") syntax
+	* Only use italics for quoted single characters
+
 2018-11-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Enable Unicode by default if local character encoding is UTF-8
+	* Improve appearance of x*m/s and similar
+	* Hectare/decare improvements
 
 2018-11-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

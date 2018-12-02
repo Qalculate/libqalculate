@@ -8388,7 +8388,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:299
 msgid "r:cup,p:cups"
-msgstr "kopp,p:koppar"
+msgstr ""
 
 #: ../data/units.xml.in.h:300
 msgid "Imperial Capacity"
