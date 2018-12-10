@@ -3044,8 +3044,15 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 		if(b) {
 			eo2.sync_units = true;
 			eo2.keep_prefixes = false;
+			MathStructure mbak(mstruct_new);
 			mstruct_new.divide(MathStructure(to_unit, NULL));
 			mstruct_new.eval(eo2);
+			if(mstruct_new.containsType(STRUCT_UNIT)) {
+				mbak.inverse();
+				mbak.divide(MathStructure(to_unit, NULL));
+				mbak.eval(eo2);
+				if(!mbak.containsType(STRUCT_UNIT)) mstruct_new = mbak;
+			}
 
 			if(cu) {
 				MathStructure mstruct_cu(cu->generateMathStructure(false, eo.keep_prefixes));
