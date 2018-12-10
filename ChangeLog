@@ -1,3 +1,7 @@
+2018-12-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Reciprocal unit conversion (e.g. 5 m/s = 0.2 s/m, 60 mpg = 0.039 L/km)
+
 2018-12-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix missing prefix for gram when exponent of gram is not one and automatic prefixes is off
