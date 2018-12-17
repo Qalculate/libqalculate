@@ -1,3 +1,7 @@
+2018-12-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use prefixes with litre
+
 2018-12-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Reciprocal unit conversion (e.g. 5 m/s = 0.2 s/m, 60 mpg = 0.039 L/km)

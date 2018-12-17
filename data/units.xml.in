@@ -1648,6 +1648,7 @@
     <unit type="alias">
       <_title>Liter</_title>
       <_names>ar:L,a:l,liter,p:liters,litre,p:litres</_names>
+      <use_with_prefixes>true</use_with_prefixes>
       <base>
         <unit>m</unit>
         <relation>0.001</relation>
