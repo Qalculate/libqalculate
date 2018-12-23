@@ -3727,7 +3727,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 			}
 		}
 	}
-	if(v && (!v->isKnown() || ((KnownVariable*) v)->unit().empty())) v = NULL;
+	if(v && !v->isKnown()) v = NULL;
 	if(u) {
 		if(to_struct) to_struct->set(u);
 		mstruct.set(convert(mstruct_to_convert, u, eo2, false, false));
