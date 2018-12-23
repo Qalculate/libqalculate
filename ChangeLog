@@ -1,6 +1,10 @@
+2018-12-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow "to"-conversion for variable without units
+
 2018-12-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Use prefixes with litre
+	* Use prefixes with litre by defult
 
 2018-12-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
