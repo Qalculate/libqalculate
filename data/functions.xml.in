@@ -1306,6 +1306,28 @@
         <handle_vector>true</handle_vector>
       </argument>
     </function>
+    <function>
+      <_title>RAID Space</_title>
+      <_names>r:raid</_names>
+      <_description>Calculates RAID array disk capacity usable for data storage. If the combination of number of disks and RAID level is invalid, zero is returned. Specify RAID level 10 for RAID 1+0, 11 for RAID 0+1, 50 for RAID 5+0, 60 for RAID 6+0, and 16 for RAID 1+6. Stripes are optional and only used for nested RAID levels &gt; 10.</_description>
+      <example>$name(4, 12, 5) = 12</example>
+      <expression>if(\x=0,\z*\y,if(\x=1,if(\z&gt;=2,\y,0),if(\x=2,if(\z&gt;=3,(\z-log(\z+1,2))*\y,0),if(\x=3||\x=4||\x=5,if(\z&gt;=3,(\z-1)*\y,0),if(\x=6,if(\z&gt;=4,(\z-2)*\y,0),if(\x=10,if(\z&gt;=4&amp;&amp;even(\z),\z/2*\y,0),if(\x=11,if(\z&gt;=4,\z/\A{2}*\y,0),if(\x=16,if(\z&gt;=8,(\A-2)*\y,0),if(\x=50,if(\z&gt;=6,(\z-\A)*\y,0),if(\x=60,if(\z&gt;=8,(\z-\A*2)*\y,0),0))))))))))</expression>
+      <argument type="integer" index="1">
+        <_title>RAID level</_title>
+        <min>0</min>
+      </argument>
+      <argument type="free" index="2">
+        <_title>Capacity of each disk</_title>
+      </argument>
+      <argument type="integer" index="3">
+        <_title>Number of disks</_title>
+        <min>1</min>
+      </argument>
+      <argument type="integer" index="4">
+        <_title>Stripes</_title>
+        <min>2</min>
+      </argument>
+    </function>
     <builtin_function name="roman">
       <_title>Roman Number</_title>
       <_names>r:roman</_names>
@@ -3283,7 +3305,7 @@
       <argument type="integer" index="5">
         <_title>Day counting basis</_title>
         <min>0</min>
-	  <max>4</max>
+        <max>4</max>
       </argument>
     </function>
     <function>

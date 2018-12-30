@@ -1,3 +1,7 @@
+2018-12-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* raid() function for RAID capacity calculation
+
 2018-12-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Allow "to"-conversion for variable without units
