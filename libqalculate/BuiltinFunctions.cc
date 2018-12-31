@@ -5301,13 +5301,16 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	}
 	return 1;
 }
-IFFunction::IFFunction() : MathFunction("if", 3) {}
+IFFunction::IFFunction() : MathFunction("if", 3, 4) {
+	setArgumentDefinition(4, new BooleanArgument());
+	setDefaultValue(4, "0");
+}
 int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isNumber()) {
 		int result = vargs[0].number().getBoolean();
-		if(result) {
+		if(result > 0) {
 			mstruct = vargs[1];
-		} else if(result == 0) {
+		} else if(result == 0 || vargs[3].isOne()) {
 			mstruct = vargs[2];
 		} else {
 			return 0;
@@ -5316,15 +5319,39 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	}
 	mstruct = vargs[0];
 	mstruct.eval(eo);
+	if(mstruct.isVector()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(!mstruct[i].isNumber() && vargs[3].isZero()) {
+				return -1;
+			}
+			int result = mstruct[i].number().getBoolean();
+			if(result > 0) {
+				if(vargs[1].isVector() && vargs[1].size() == vargs[0].size()) {
+					mstruct = vargs[1][i];
+				} else {
+					mstruct = vargs[1];
+				}
+				return 1;
+			} else if(result < 0 && vargs[3].isZero()) {
+				return -1;
+			}
+		}
+		mstruct = vargs[2];
+		return 1;
+	}
 	if(mstruct.isNumber()) {
 		int result = mstruct.number().getBoolean();
-		if(result) {
+		if(result > 0) {
 			mstruct = vargs[1];
-		} else if(result == 0) {
+		} else if(result == 0 || vargs[3].isOne()) {
 			mstruct = vargs[2];
 		} else {
 			return -1;
 		}
+		return 1;
+	}
+	if(vargs[3].isOne()) {
+		mstruct = vargs[2];
 		return 1;
 	}
 	return -1;

@@ -1309,12 +1309,11 @@
     <function>
       <_title>RAID Space</_title>
       <_names>r:raid</_names>
-      <_description>Calculates RAID array disk capacity usable for data storage. If the combination of number of disks and RAID level is invalid, zero is returned. Specify RAID level 10 for RAID 1+0, 11 for RAID 0+1, 50 for RAID 5+0, 60 for RAID 6+0, and 16 for RAID 1+6. Stripes are optional and only used for nested RAID levels &gt; 10.</_description>
+      <_description>Calculates RAID array disk capacity usable for data storage. If the combination of number of disks and RAID level is invalid, zero is returned. Supported RAID levels are 0, 1, 2, 3, 4, 5, 6, 1+0/10, 0+1, 5+0/50, 6+0/60, and 1+6. Stripes are optional and only used for nested RAID levels (except 1+0).</_description>
       <example>$name(4, 12, 5) = 12</example>
-      <expression>if(\x=0,\z*\y,if(\x=1,if(\z&gt;=2,\y,0),if(\x=2,if(\z&gt;=3,(\z-log(\z+1,2))*\y,0),if(\x=3||\x=4||\x=5,if(\z&gt;=3,(\z-1)*\y,0),if(\x=6,if(\z&gt;=4,(\z-2)*\y,0),if(\x=10,if(\z&gt;=4&amp;&amp;even(\z),\z/2*\y,0),if(\x=11,if(\z&gt;=4,\z/\A{2}*\y,0),if(\x=16,if(\z&gt;=8,(\A-2)*\y,0),if(\x=50,if(\z&gt;=6,(\z-\A)*\y,0),if(\x=60,if(\z&gt;=8,(\z-\A*2)*\y,0),0))))))))))</expression>
-      <argument type="integer" index="1">
+      <expression>if([\x="0",\x="1"||\x="1E",\x="2",\x="3"||\x="4"||\x="5",\x="6",\x="10"||\x="1+0",\x="01"||\x="0+1",\x="1+6",\x="50"||\x="5+0",\x="60"||\x="6+0"],[\z*\y,if(\z&gt;=2,\y,0),if(\z&gt;=3,(\z-log(\z+1,2))*\y,0),if(\z&gt;=3,(\z-1)*\y,0),if(\z&gt;=4,(\z-2)*\y,0),if(\z&gt;=4&amp;&amp;even(\z),\z/2*\y,0),if(\z&gt;=4,\z/\A{2}*\y,0),if(\z&gt;=8,(\A-2)*\y,0),if(\z&gt;=6,(\z-\A)*\y,0),if(\z&gt;=8,(\z-\A*2)*\y,0)],error("Unknown RAID level"),1)</expression>
+      <argument type="text" index="1">
         <_title>RAID level</_title>
-        <min>0</min>
       </argument>
       <argument type="free" index="2">
         <_title>Capacity of each disk</_title>
@@ -2319,7 +2318,7 @@
     <builtin_function name="if">
       <_title>If...Then...Else</_title>
       <_names>r:if</_names>
-      <_description>Tests a condition and returns a value depending on the result.</_description>
+      <_description>Tests a condition and returns a value depending on the result. Vectors can be used for argument 1 and 2, instead of nested functions.</_description>
       <argument index="1">
         <_title>Condition</_title>
       </argument>
@@ -2328,6 +2327,9 @@
       </argument>
       <argument index="3">
         <_title>Expression if condition is NOT met</_title>
+      </argument>
+      <argument index="4">
+        <_title>Assume false if not true</_title>
       </argument>
     </builtin_function>
     <builtin_function name="xor">
