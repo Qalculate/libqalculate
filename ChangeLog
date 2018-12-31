@@ -1,3 +1,8 @@
+2018-12-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support vectors of conditions and expression in if()
+	* Assume false if not true argument in if()
+
 2018-12-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* raid() function for RAID capacity calculation
