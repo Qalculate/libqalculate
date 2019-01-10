@@ -2356,6 +2356,38 @@ int main(int argc, char *argv[]) {
 				printops.time_zone = TIME_ZONE_UTC;
 				setResult(NULL, false);
 				printops.time_zone = TIME_ZONE_LOCAL;
+			} else if(str.length() > 3 && (equalsIgnoreCase(str.substr(0, 3), "utc") || equalsIgnoreCase(str.substr(0, 3), "gmt"))) {
+				string to_str = str.substr(3);
+				remove_blanks(to_str);
+				bool b_minus = false;
+				if(to_str[0] == '+') {
+					to_str.erase(0, 1);
+				} else if(to_str[0] == '-') {
+					b_minus = true;
+					to_str.erase(0, 1);
+				} else if(to_str.find(SIGN_MINUS) == 0) {
+					b_minus = true;
+					to_str.erase(0, strlen(SIGN_MINUS));
+				}
+				unsigned int tzh = 0, tzm = 0;
+				int itz = 0;
+				if(!str.empty() && sscanf(to_str.c_str(), "%2u:%2u", &tzh, &tzm) > 0) {
+					itz = tzh * 60 + tzm;
+					if(b_minus) itz = -itz;
+				} else {
+					CALCULATOR->error(true, _("Time zone parsing failed."), NULL);
+				}
+				printops.time_zone = TIME_ZONE_CUSTOM;
+				printops.custom_time_zone = itz;
+				setResult(NULL, false);
+				printops.custom_time_zone = 0;
+				printops.time_zone = TIME_ZONE_LOCAL;
+			} else if(str == "CET") {
+				printops.time_zone = TIME_ZONE_CUSTOM;
+				printops.custom_time_zone = 60;
+				setResult(NULL, false);
+				printops.custom_time_zone = 0;
+				printops.time_zone = TIME_ZONE_LOCAL;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(str, "cartesian", _("cartesian")) || str == "rect") {
 				avoid_recalculation = false;
 				ComplexNumberForm cnf_bak = evalops.complex_number_form;
@@ -3548,7 +3580,8 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- fraction (show result in combined fractional format)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- factors (factorize result)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- utc (show UTC date)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- UTC (show date and time UTC time zone)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- UTC+/-hh[:mm] (show date and time in specified time zone)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- calendars"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("Example: to ?g"));
@@ -4259,6 +4292,44 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				expression_str = from_str;
 				printops.time_zone = TIME_ZONE_UTC;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.time_zone = TIME_ZONE_LOCAL;
+				expression_str = str;
+				return;
+			} else if(to_str.length() > 3 && (equalsIgnoreCase(to_str.substr(0, 3), "utc") || equalsIgnoreCase(to_str.substr(0, 3), "gmt"))) {
+				to_str = to_str.substr(3);
+				remove_blanks(to_str);
+				bool b_minus = false;
+				if(to_str[0] == '+') {
+					to_str.erase(0, 1);
+				} else if(to_str[0] == '-') {
+					b_minus = true;
+					to_str.erase(0, 1);
+				} else if(to_str.find(SIGN_MINUS) == 0) {
+					b_minus = true;
+					to_str.erase(0, strlen(SIGN_MINUS));
+				}
+				unsigned int tzh = 0, tzm = 0;
+				int itz = 0;
+				if(!to_str.empty() && sscanf(to_str.c_str(), "%2u:%2u", &tzh, &tzm) > 0) {
+					itz = tzh * 60 + tzm;
+					if(b_minus) itz = -itz;
+				} else {
+					CALCULATOR->error(true, _("Time zone parsing failed."), NULL);
+				}
+				expression_str = from_str;
+				printops.time_zone = TIME_ZONE_CUSTOM;
+				printops.custom_time_zone = itz;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.custom_time_zone = 0;
+				printops.time_zone = TIME_ZONE_LOCAL;
+				expression_str = str;
+				return;
+			} else if(to_str == "CET") {
+				expression_str = from_str;
+				printops.time_zone = TIME_ZONE_CUSTOM;
+				printops.custom_time_zone = 60;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.custom_time_zone = 0;
 				printops.time_zone = TIME_ZONE_LOCAL;
 				expression_str = str;
 				return;

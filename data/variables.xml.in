@@ -332,6 +332,194 @@
         <value uncertainty="8.3E-9" unit="m*K">1.43877736E-2</value>
       </variable>
     </category>
+      <category>
+      <_title>Unit Relations</_title>
+      <variable>
+        <_title>Electron Volt</_title>
+        <_names>r:eV_to_J</_names>
+        <value>nounit(elementary_charge)</value>
+      </variable>
+      <variable>
+        <_title>Hartree Energy</_title>
+        <_names>r:Ha_to_J</_names>
+        <value uncertainty="0.000000054e-18">4.359744650e-18</value>
+      </variable>
+      <variable>
+        <_title>Hertz - Atomic Mass Unit Relationship</_title>
+        <_names>r:Hz_to_u</_names>
+        <value unit="u*Hz^-1" uncertainty="0.0000000020e-24">4.4398216616e-24</value>
+      </variable>
+      <variable>
+        <_title>Hertz - Electron Volt Relationship</_title>
+        <_names>r:Hz_to_eV</_names>
+        <value unit="eV*Hz^-1" uncertainty="0.000000025e-15">4.135667662e-15</value>
+      </variable>
+      <variable>
+        <_title>Hertz - Hartree Relationship</_title>
+        <_names>r:Hz_to_Ha</_names>
+        <value unit="Ha*Hz^-1" uncertainty="0.0000000000090e-16">1.5198298460088e-16</value>
+      </variable>
+      <variable>
+        <_title>Hertz - Inverse Meter Relationship</_title>
+        <_names>r:Hz_to_m</_names>
+        <value unit="m^(-1)*Hz^-1">1/nounit(c)</value>
+      </variable>
+      <variable>
+        <_title>Hertz - Joule Relationship</_title>
+        <_names>r:Hz_to_J</_names>
+        <value unit="J*Hz^-1" uncertainty="0.000000081e-34">6.626070040e-34</value>
+      </variable>
+      <variable>
+        <_title>Hertz - Kelvin Relationship</_title>
+        <_names>r:Hz_to_K</_names>
+        <value unit="K*Hz^-1" uncertainty="0.0000028e-11">4.7992447e-11</value>
+      </variable>
+      <variable>
+        <_title>Hertz - Kilogram Relationship</_title>
+        <_names>r:Hz_to_kg</_names>
+        <value unit="kg*Hz^-1" uncertainty="0.000000091e-51">7.372497201e-51</value>
+      </variable>
+      <variable>
+        <_title>Inverse Meter - Atomic Mass Unit Relationship</_title>
+        <_names>r:m_to_u</_names>
+        <value unit="u*m^-1" uncertainty="0.00000000061e-15">1.33102504900e-15</value>
+      </variable>
+      <variable>
+        <_title>Inverse Meter - Electron Volt Relationship</_title>
+        <_names>r:m_to_eV</_names>
+        <value unit="eV*m^-1" uncertainty="0.0000000076e-6">1.2398419739e-6</value>
+      </variable>
+      <variable>
+        <_title>Inverse Meter - Hartree Relationship</_title>
+        <_names>r:m_to_Ha</_names>
+        <value unit="Ha*m^-1" uncertainty="0.000000000027e-8">4.556335252767e-8</value>
+      </variable>
+      <variable>
+        <_title>Inverse Meter - Hertz Relationship</_title>
+        <_names>r:m_to_Hz</_names>
+        <value unit="Hz*m^-1">nounit(c)</value>
+      </variable>
+      <variable>
+        <_title>Inverse Meter - Joule Relationship</_title>
+        <_names>r:m_to_J</_names>
+        <value unit="J*m^-1" uncertainty="0.000000024e-25">1.986445824e-25</value>
+      </variable>
+      <variable>
+        <_title>Inverse Meter - Kelvin Relationship</_title>
+        <_names>r:m_to_K</_names>
+        <value unit="K*m^-1" uncertainty="0.00000083e-2">1.43877736e-2</value>
+      </variable>
+      <variable>
+        <_title>Inverse Meter - Kilogram Relationship</_title>
+        <_names>r:m_to_kg</_names>
+        <value unit="kg*m^-1" uncertainty="0.000000027e-42">2.210219057e-42</value>
+      </variable>
+      <variable>
+        <_title>Joule - Atomic Mass Unit Relationship</_title>
+        <_names>r:J_to_u</_names>
+        <value unit="u*J^-1" uncertainty="0.000000082e9">6.700535363e9</value>
+      </variable>
+      <variable>
+        <_title>Joule - Electron Volt Relationship</_title>
+        <_names>r:J_to_eV</_names>
+        <value uncertainty="0.000000038e18">1/nounit(elementary_charge)</value>
+      </variable>
+      <variable>
+        <_title>Joule - Hartree Relationship</_title>
+        <_names>r:J_to_Ha</_names>
+        <value uncertainty="0.000000028e17">2.293712317e17</value>
+      </variable>
+      <variable>
+        <_title>Joule - Hertz Relationship</_title>
+        <_names>r:J_to_Hz</_names>
+        <value unit="Hz*J^-1" uncertainty="0.000000019e33">1.509190205e33</value>
+      </variable>
+      <variable>
+        <_title>Joule - Inverse Meter Relationship</_title>
+        <_names>r:J_to_m</_names>
+        <value unit="m^(-1)*J^-1" uncertainty="0.000000062e24">5.034116651e24</value>
+      </variable>
+      <variable>
+        <_title>Joule - Kelvin Relationship</_title>
+        <_names>r:J_to_K</_names>
+        <value unit="K*J^-1" uncertainty="0.0000042e22">7.2429731e22</value>
+      </variable>
+      <variable>
+        <_title>Joule - Kilogram Relationship</_title>
+        <_names>r:J_to_kg</_names>
+        <value unit="kg*J^-1">1/nounit(c)^2</value>
+      </variable>
+      <variable>
+        <_title>Kelvin - Atomic Mass Unit Relationship</_title>
+        <_names>r:K_to_u</_names>
+        <value unit="u*K^-1" uncertainty="0.0000053e-14">9.2510842e-14</value>
+      </variable>
+      <variable>
+        <_title>Kelvin - Electron Volt Relationship</_title>
+        <_names>r:K_to_eV</_names>
+        <value unit="eV*K^-1" uncertainty="0.0000050e-5">8.6173303e-5</value>
+      </variable>
+      <variable>
+        <_title>Kelvin - Hartree Relationship</_title>
+        <_names>r:K_to_Ha</_names>
+        <value unit="Ha*K^-1" uncertainty="0.0000018e-6">3.1668105e-6</value>
+      </variable>
+      <variable>
+        <_title>Kelvin - Hertz Relationship</_title>
+        <_names>r:K_to_Hz</_names>
+        <value unit="Hz*K^-1" uncertainty="0.0000012e10">2.0836612e10</value>
+      </variable>
+      <variable>
+        <_title>Kelvin - Inverse Meter Relationship</_title>
+        <_names>r:K_to_m</_names>
+        <value unit="m^(-1)*K^-1" uncertainty="0.000040">69.503457</value>
+      </variable>
+      <variable>
+        <_title>Kelvin - Joule Relationship</_title>
+        <_names>r:K_to_J</_names>
+        <value unit="J" uncertainty="0.00000079e-23">1.38064852e-23</value>
+      </variable>
+      <variable>
+        <_title>Kelvin - Kilogram Relationship</_title>
+        <_names>r:K_to_kg</_names>
+        <value unit="kg*K^-1" uncertainty="0.00000088e-40">1.53617865e-40</value>
+      </variable>
+      <variable>
+        <_title>Kilogram - Atomic Mass Unit Relationship</_title>
+        <_names>r:kg_to_u</_names>
+        <value unit="u*kg^-1" uncertainty="0.000000074e26">6.022140857e26</value>
+      </variable>
+      <variable>
+        <_title>Kilogram - Electron Volt Relationship</_title>
+        <_names>r:kg_to_eV</_names>
+        <value unit="eV*kg^-1" uncertainty="0.000000034e35">5.609588650e35</value>
+      </variable>
+      <variable>
+        <_title>Kilogram - Hartree Relationship</_title>
+        <_names>r:kg_to_Ha</_names>
+        <value unit="Ha*kg^-1" uncertainty="0.000000025e34">2.061485823e34</value>
+      </variable>
+      <variable>
+        <_title>Kilogram - Hertz Relationship</_title>
+        <_names>r:kg_to_Hz</_names>
+        <value unit="Hz*kg^-1" uncertainty="0.000000017e50">1.356392512e50</value>
+      </variable>
+      <variable>
+        <_title>Kilogram - Inverse Meter Relationship</_title>
+        <_names>r:kg_to_m</_names>
+        <value unit="m^(-1)*kg^-1" uncertainty="0.000000056e41">4.524438411e41</value>
+      </variable>
+      <variable>
+        <_title>Kilogram - Joule Relationship</_title>
+        <_names>r:kg_to_J</_names>
+        <value unit="J*kg^-1">nounit(c)^2</value>
+      </variable>
+      <variable>
+        <_title>Kilogram - Kelvin Relationship</_title>
+        <_names>r:kg_to_K</_names>
+        <value unit="K*kg^-1" uncertainty="0.0000037e39">6.5096595e39</value>
+      </variable>
+    </category>
   </category>
   <category>
     <_title>Basic Constants</_title>
