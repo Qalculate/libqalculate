@@ -2481,6 +2481,34 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
 			str = from_str;
 			printops.time_zone = TIME_ZONE_UTC;
+		} else if(to_str.length() > 3 && (equalsIgnoreCase(to_str.substr(0, 3), "utc") || equalsIgnoreCase(to_str.substr(0, 3), "gmt"))) {
+			to_str = to_str.substr(3);
+			remove_blanks(to_str);
+			bool b_minus = false;
+			if(to_str[0] == '+') {
+				to_str.erase(0, 1);
+			} else if(to_str[0] == '-') {
+				b_minus = true;
+				to_str.erase(0, 1);
+			} else if(to_str.find(SIGN_MINUS) == 0) {
+				b_minus = true;
+				to_str.erase(0, strlen(SIGN_MINUS));
+			}
+			unsigned int tzh = 0, tzm = 0;
+			int itz = 0;
+			if(!to_str.empty() && sscanf(to_str.c_str(), "%2u:%2u", &tzh, &tzm) > 0) {
+				itz = tzh * 60 + tzm;
+				if(b_minus) itz = -itz;
+			} else {
+				error(true, _("Time zone parsing failed."), NULL);
+			}
+			printops.time_zone = TIME_ZONE_CUSTOM;
+			printops.custom_time_zone = itz;
+			str = from_str;
+		} else if(to_str == "CET") {
+			printops.time_zone = TIME_ZONE_CUSTOM;
+			printops.custom_time_zone = 60;
+			str = from_str;
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction"))) {
 			str = from_str;
 			do_fraction = true;

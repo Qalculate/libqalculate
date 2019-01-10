@@ -10490,7 +10490,7 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 							}
 						}
 					} else if(!mstruct[i].representsNonZero(true) || !mstruct[i].representsNumber(true)) {
-						if(!mstruct[i].contains(x_var)) {
+						if(!mstruct[i].contains(x_var) && !mstruct.isZero() && mstruct[i].representsNumber(true)) {
 							mstruct[i].ref();
 							mleft.addChild_nocopy(&mstruct[i]);
 							b_possible_zero = true;
@@ -10526,96 +10526,97 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 							break;
 						}
 					}
-					if(!b_possible_zero) {
-						MathStructure mnum_b(mnum), mden_b(mden);
-						calculate_limit_sub(mnum, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
-						calculate_limit_sub(mden, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
-						if(mnum.isInfinite(false) && mden.isInfinite(false)) {
-							if(cmp > 0) {
-								if(keep_inf_x) {
-									mstruct.set(mnum_b, true);
-									mstruct.calculateDivide(mden_b, eo);
-									break;
-								}
-								mstruct.set(mnum, true);
-								if(mden.number().isNegative()) mstruct.calculateNegate(eo);
-								break;
-							} else if(cmp == -1) {
-								mstruct.clear(true);
+					MathStructure mnum_b(mnum), mden_b(mden);
+					calculate_limit_sub(mnum, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
+					calculate_limit_sub(mden, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
+					if(mnum.isInfinite(false) && mden.isInfinite(false)) {
+						if(cmp > 0) {
+							if(keep_inf_x) {
+								mstruct.set(mnum_b, true);
+								mstruct.calculateDivide(mden_b, eo);
 								break;
 							}
-							if(mnum_b.isPower() && mden_b.isPower() && mnum_b[1].contains(x_var, true) && mden_b[1].contains(x_var, true)) {
-								bool b = true;
-								if(mden_b[1] != mnum_b[1]) {
-									b = false;
-									Number npow1(1, 1, 0), npow2;
-									MathStructure *x_p = &mnum_b[1];
-									if(mnum_b[1].isMultiplication() && mnum_b[1].size() == 2 && mnum_b[1][0].isNumber()) {
-										npow1 = mnum_b[1][0].number();
-										x_p = &mnum_b[1][1];
+							mstruct.set(mnum, true);
+							if(mden.number().isNegative()) mstruct.calculateNegate(eo);
+							for(size_t i = 0; b_possible_zero && i < mleft.size(); i++) {
+								mstruct.calculateMultiply(mleft[i], eo);
+							}
+							break;
+						} else if(cmp == -1) {
+							mstruct.clear(true);
+							break;
+						}
+						if(mnum_b.isPower() && mden_b.isPower() && mnum_b[1].contains(x_var, true) && mden_b[1].contains(x_var, true)) {
+							bool b = true;
+							if(mden_b[1] != mnum_b[1]) {
+								b = false;
+								Number npow1(1, 1, 0), npow2;
+								MathStructure *x_p = &mnum_b[1];
+								if(mnum_b[1].isMultiplication() && mnum_b[1].size() == 2 && mnum_b[1][0].isNumber()) {
+									npow1 = mnum_b[1][0].number();
+									x_p = &mnum_b[1][1];
+								}
+								if(mden_b[1] == *x_p) npow2.set(1, 1, 0);
+								else if(mden_b[1].isMultiplication() && mden_b[1].size() == 2 && mden_b[1][0].isNumber() && mden_b[1][1] == *x_p) npow2 = mden_b[1][0].number();
+								if(!npow2.isZero() && npow1.isRational() && npow2.isRational()) {
+									if(npow1.isGreaterThan(npow2)) {
+										npow1 /= npow2;
+										npow2 = npow1.denominator();
+										npow1 = npow1.numerator();
 									}
-									if(mden_b[1] == *x_p) npow2.set(1, 1, 0);
-									else if(mden_b[1].isMultiplication() && mden_b[1].size() == 2 && mden_b[1][0].isNumber() && mden_b[1][1] == *x_p) npow2 = mden_b[1][0].number();
-									if(!npow2.isZero() && npow1.isRational() && npow2.isRational()) {
-										if(npow1.isGreaterThan(npow2)) {
-											npow1 /= npow2;
-											npow2 = npow1.denominator();
-											npow1 = npow1.numerator();
+									if(mnum.number().isMinusInfinity() && !npow1.isOne()) {
+										if(npow2.isOne() && mden.number().isPlusInfinity()) {
+											mden_b[0].factorize(eo, false, false, 0, false, false, NULL, m_undefined, false, true);
+											if(mden_b[0].isPower() && mden_b[0][1].isInteger()) {
+												mden_b[0][1].number() /= npow1;
+												if(mden_b[0][1].number().isInteger()) {
+													mden_b[0].calculateRaiseExponent(eo);
+													b = true;
+												}
+											}
 										}
-										if(mnum.number().isMinusInfinity() && !npow1.isOne()) {
-											if(npow2.isOne() && mden.number().isPlusInfinity()) {
-												mden_b[0].factorize(eo, false, false, 0, false, false, NULL, m_undefined, false, true);
-												if(mden_b[0].isPower() && mden_b[0][1].isInteger()) {
-													mden_b[0][1].number() /= npow1;
-													if(mden_b[0][1].number().isInteger()) {
-														mden_b[0].calculateRaiseExponent(eo);
-														b = true;
-													}
+									} else if(mden.number().isMinusInfinity() && !npow2.isOne()) {
+										if(npow1.isOne() && mnum.number().isPlusInfinity()) {
+											mnum_b[0].factorize(eo, false, false, 0, false, false, NULL, m_undefined, false, true);
+											if(mnum_b[0].isPower() && mnum_b[0][1].isInteger()) {
+												mnum_b[0][1].number() /= npow2;
+												if(mnum_b[0][1].number().isInteger()) {
+													mnum_b[0].calculateRaiseExponent(eo);
+													mnum_b[1] = mden_b[1];
+													b = true;
 												}
 											}
-										} else if(mden.number().isMinusInfinity() && !npow2.isOne()) {
-											if(npow1.isOne() && mnum.number().isPlusInfinity()) {
-												mnum_b[0].factorize(eo, false, false, 0, false, false, NULL, m_undefined, false, true);
-												if(mnum_b[0].isPower() && mnum_b[0][1].isInteger()) {
-													mnum_b[0][1].number() /= npow2;
-													if(mnum_b[0][1].number().isInteger()) {
-														mnum_b[0].calculateRaiseExponent(eo);
-														mnum_b[1] = mden_b[1];
-														b = true;
-													}
-												}
-											}
-										} else {
-											if(!npow1.isOne()) mnum_b[0].calculateRaise(npow1, eo);
-											if(!npow2.isOne()) mden_b[0].calculateRaise(npow2, eo);
-											mnum_b.childUpdated(1);
-											mden_b.childUpdated(1);
-											if(!npow1.isOne()) {
-												if(&mnum_b[1] == x_p) {
-													npow1.recip();
-													mnum_b[1] *= npow1;
-													mnum_b[1].swapChildren(1, 2);
-												} else {
-													mnum_b[1][0].number() /= npow1;
-												}
-											}
-											b = true;
 										}
+									} else {
+										if(!npow1.isOne()) mnum_b[0].calculateRaise(npow1, eo);
+										if(!npow2.isOne()) mden_b[0].calculateRaise(npow2, eo);
+										mnum_b.childUpdated(1);
+										mden_b.childUpdated(1);
+										if(!npow1.isOne()) {
+											if(&mnum_b[1] == x_p) {
+												npow1.recip();
+												mnum_b[1] *= npow1;
+												mnum_b[1].swapChildren(1, 2);
+											} else {
+												mnum_b[1][0].number() /= npow1;
+											}
+										}
+										b = true;
 									}
 								}
-								if(b) {
-									mstruct.set(mnum_b[0], true);
-									mstruct /= mden_b[0];
-									mstruct.transform(CALCULATOR->f_ln);
-									mstruct *= mnum_b[1];
-									mstruct.raise(CALCULATOR->v_e);
-									mstruct.swapChildren(1, 2);
-									calculate_limit_sub(mstruct, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, keep_inf_x);
-									for(size_t i = 0; i < mleft.size(); i++) {
-										mstruct.calculateMultiply(mleft[i], eo);
-									}
-									break;
+							}
+							if(b) {
+								mstruct.set(mnum_b[0], true);
+								mstruct /= mden_b[0];
+								mstruct.transform(CALCULATOR->f_ln);
+								mstruct *= mnum_b[1];
+								mstruct.raise(CALCULATOR->v_e);
+								mstruct.swapChildren(1, 2);
+								calculate_limit_sub(mstruct, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, keep_inf_x);
+								for(size_t i = 0; i < mleft.size(); i++) {
+									mstruct.calculateMultiply(mleft[i], eo);
 								}
+								break;
 							}
 						}
 					}

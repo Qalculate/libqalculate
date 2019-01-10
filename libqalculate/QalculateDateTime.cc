@@ -390,7 +390,34 @@ bool QalculateDateTime::set(string str) {
 		}
 		string stz = tzstr;
 		remove_blanks(stz);
-		if(stz == "Z" || stz == "GMT" || stz == "UTC") {
+		if(stz == "Z" || stz == "GMT" || stz == "UTC" || stz == "WET") {
+			b_tz = true;
+		} else if(stz == "CET" || stz == "WEST") {
+			itz = 1 * 60;
+			b_tz = true;
+		} else if(stz == "CEST" || stz == "EET") {
+			itz = 2 * 60;
+			b_tz = true;
+		} else if(stz == "EEST") {
+			itz = 3 * 60;
+			b_tz = true;
+		} else if(stz == "CT" || stz == "CST") {
+			itz = 8 * 60;
+			b_tz = true;
+		} else if(stz == "JST") {
+			itz = 9 * 60;
+			b_tz = true;
+		} else if(stz == "EDT") {
+			itz = -4 * 60;
+			b_tz = true;
+		} else if(stz == "EST") {
+			itz = -5 * 60;
+			b_tz = true;
+		} else if(stz == "PDT" || stz == "MST") {
+			itz = -7 * 60;
+			b_tz = true;
+		} else if(stz == "PST") {
+			itz = -8 * 60;
 			b_tz = true;
 		} else if(stz.length() > 1 && (stz[0] == '-' || stz[0] == '+')) {
 			unsigned int tzh = 0, tzm = 0;
@@ -564,12 +591,13 @@ string QalculateDateTime::print(const PrintOptions &po) const {
 		if(po.time_zone == TIME_ZONE_UTC) {
 			str += "Z";
 		} else {
-			if(po.custom_time_zone < 0) str += '+';
+			if(po.custom_time_zone < 0) str += '-';
+			else str += '+';
 			if(::abs(po.custom_time_zone) / 60 < 10) str += "0";
-			str += i2s(po.custom_time_zone / 60);
+			str += i2s(::abs(po.custom_time_zone) / 60);
 			str += ":";
-			if(po.custom_time_zone % 60 < 10) str += "0";
-			str += i2s(po.custom_time_zone % 60);
+			if(::abs(po.custom_time_zone) % 60 < 10) str += "0";
+			str += i2s(::abs(po.custom_time_zone) % 60);
 		}
 	}
 	if(po.use_unicode_signs && i_year < 0 && str.length() > 0 && str[0] == MINUS_CH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
@@ -613,6 +641,7 @@ bool QalculateDateTime::addHours(const Number &nhours) {
 bool QalculateDateTime::addMinutes(const Number &nminutes, bool remove_leap_second, bool convert_to_utc) {
 	parsed_string.clear();
 	if(!nminutes.isReal() || nminutes.isInterval()) return false;
+	b_time = true;
 	if(!nminutes.isInteger()) {
 		Number newmins(nminutes);
 		newmins.trunc();
