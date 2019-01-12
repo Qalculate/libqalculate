@@ -1,7 +1,7 @@
 /*
     Qalculate (library)
 
-    Copyright (C) 2003-2007, 2008, 2016  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2019  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -523,7 +523,9 @@ void Number::set(string number, const ParseOptions &po) {
 		set(nr);
 		return;
 	}
+	long int i_unc = 0;
 	mpz_t num, den;
+	mpq_t unc;
 	mpz_init(num);
 	mpz_init_set_ui(den, 1);
 	int base = po.base;
@@ -614,12 +616,14 @@ void Number::set(string number, const ParseOptions &po) {
 				mpz_init(e_den);
 				mpz_ui_pow_ui(e_den, 10, exp);
 				mpz_mul(den, den, e_den);
+				if(i_unc > 0) mpz_mul(mpq_denref(unc), mpq_denref(unc), e_den);
 				mpz_clear(e_den);
 			} else {
 				mpz_t e_num;
 				mpz_init(e_num);
 				mpz_ui_pow_ui(e_num, 10, exp);
 				mpz_mul(num, num, e_num);
+				if(i_unc > 0) mpz_mul(mpq_numref(unc), mpq_numref(unc), e_num);
 				mpz_clear(e_num);
 			}
 			break;
@@ -650,12 +654,27 @@ void Number::set(string number, const ParseOptions &po) {
 					num_temp.divide(divisor);
 					add(num_temp);
 				}
+				mpz_clears(num, den, NULL);
 				return;
 			}
 		} else if(!numbers_started && number[index] == '-') {
 			minus = !minus;
 		} else if(number[index] == 'i') {
 			b_cplx = true;
+		} else if(base == 10 && number[index] == '(' && index <= number.length() - 2) {
+			size_t par_i = number.find(')', index + 1);
+			if(par_i == string::npos) {
+				i_unc = s2i(number.substr(index + 1));
+				index = number.length() - 1;
+			} else if(par_i > index + 1) {
+				i_unc = s2i(number.substr(index + 1, par_i - index - 1));
+				index = par_i;
+			}
+			if(i_unc > 0) {
+				mpq_init(unc);
+				mpz_set(mpq_denref(unc), den);
+				mpz_set_ui(mpq_numref(unc), i_unc);
+			}
 		} else if(number[index] != ' ') {
 			CALCULATOR->error(true, _("Character \'%c\' was ignored in the number \"%s\" with base %s."), number[index], number.c_str(), i2s(base).c_str(), NULL);
 		}
@@ -665,7 +684,7 @@ void Number::set(string number, const ParseOptions &po) {
 		minus = !minus;
 	}
 	clear();
-	if((po.read_precision == ALWAYS_READ_PRECISION || (in_decimals && po.read_precision == READ_PRECISION_WHEN_DECIMALS)) && CALCULATOR->usesIntervalArithmetic()) {
+	if(i_unc <= 0 && (po.read_precision == ALWAYS_READ_PRECISION || (in_decimals && po.read_precision == READ_PRECISION_WHEN_DECIMALS)) && CALCULATOR->usesIntervalArithmetic()) {
 		mpz_mul_si(num, num, 2);
 		mpz_mul_si(den, den, 2);
 		
@@ -717,7 +736,13 @@ void Number::set(string number, const ParseOptions &po) {
 			mpz_set(mpq_denref(r_value), den);
 			mpq_canonicalize(r_value);
 		}
-		if(po.read_precision == ALWAYS_READ_PRECISION || (in_decimals && po.read_precision == READ_PRECISION_WHEN_DECIMALS)) {
+		if(i_unc > 0) {
+			Number nr_unc;
+			mpq_canonicalize(unc);
+			nr_unc.setInternal(unc);
+			setUncertainty(nr_unc);
+			mpq_clear(unc);
+		} else if(po.read_precision == ALWAYS_READ_PRECISION || (in_decimals && po.read_precision == READ_PRECISION_WHEN_DECIMALS)) {
 			if(base != 10) {
 				Number precmax(10);
 				precmax.raise(readprec);

@@ -1,7 +1,7 @@
 /*
     Qalculate (library)
 
-    Copyright (C) 2004-2006, 2016  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2004-2006, 2016, 2019  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -119,9 +119,8 @@ const MathStructure *DataObject::getPropertyStruct(DataProperty *property) {
 	if(!property) return NULL;
 	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
-			if(!m_properties[i]) {
-				m_properties[i] = property->generateStruct(s_properties[i], a_properties[i]);
-			}
+			if(m_properties[i]) m_properties[i]->unref();
+			m_properties[i] = property->generateStruct(s_properties[i], a_properties[i]);
 			return m_properties[i];
 		}
 	}
@@ -295,18 +294,28 @@ MathStructure *DataProperty::generateStruct(const string &valuestr, int is_appro
 		}
 		case PROPERTY_NUMBER: {
 			if(b_brackets && valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') {
-				if((b_approximate && is_approximate < 0) || is_approximate > 0) {
+				size_t i = valuestr.find(",");
+				if(i != string::npos) {
+					Number nr;
+					nr.setInterval(Number(valuestr.substr(1, i - 1)), Number(valuestr.substr(i + 1, valuestr.length() - i - 2)));
+					if(!CALCULATOR->usesIntervalArithmetic()) nr.intervalToPrecision(2);
+					mstruct = new MathStructure(nr);
+				} else if((b_approximate && is_approximate < 0) || is_approximate > 0) {
 					ParseOptions po; po.read_precision = ALWAYS_READ_PRECISION;
 					mstruct = new MathStructure(Number(valuestr.substr(1, valuestr.length() - 2), po));
 				} else {
 					mstruct = new MathStructure(Number(valuestr.substr(1, valuestr.length() - 2)));
 				}
 			} else {
-				if((b_approximate && is_approximate < 0) || is_approximate > 0) {
+				if(((b_approximate && is_approximate < 0) || is_approximate > 0) && valuestr.find("+/-") == string::npos) {
 					ParseOptions po; po.read_precision = ALWAYS_READ_PRECISION;
 					mstruct = new MathStructure(Number(valuestr, po));
 				} else {
 					mstruct = new MathStructure(Number(valuestr));
+					if(!CALCULATOR->usesIntervalArithmetic() && mstruct->number().isInterval()) {
+						mstruct->number().intervalToPrecision(2);
+						mstruct->numberUpdated();
+					}
 				}
 			}
 			break;
@@ -517,7 +526,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 		return false;
 	}
 	string version;
-	xmlChar *value, *lang;
+	xmlChar *value, *lang, *uncertainty;
 	while(cur != NULL) {
 		if(!xmlStrcmp(cur->name, (const xmlChar*) "QALCULATE")) {
 			XML_GET_STRING_FROM_PROP(cur, "version", version)
@@ -626,6 +635,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 							} else {
 								i_approx = -1;
 							}
+							uncertainty = xmlGetProp(child, (xmlChar*) "uncertainty"); 
 							if(properties[i]->propertyType() == PROPERTY_STRING) {
 								value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 
 								lang = xmlNodeGetLang(child); 
@@ -694,8 +704,10 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 							} else {
 								XML_GET_STRING_FROM_TEXT(child, str)
 								remove_blank_ends(str);
+								if(uncertainty) {str += "+/-"; str += (char*) uncertainty;}
 								o->setProperty(properties[i], str, i_approx);
 							}
+							if(uncertainty) xmlFree(uncertainty);
 							b = true;
 							break;
 						}
@@ -710,9 +722,9 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	}
 	xmlFreeDoc(doc);
 	b_loaded = true;
-	if(!scopyright.empty()) {
+	/*if(!scopyright.empty()) {
 		CALCULATOR->message(MESSAGE_INFORMATION, scopyright.c_str(), NULL);
-	}
+	}*/
 	return true;
 }
 int DataSet::saveObjects(const char *file_name, bool save_global) {

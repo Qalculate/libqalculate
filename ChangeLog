@@ -1,3 +1,11 @@
+2019-01-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Update elements data set (update values and add standard uncertainty to atomic weight)
+	* Update planets data set
+	* Support uncertainty in parentheses for variables and data objects (e.g. "4.002 602(2)")
+	* Add uncertainty and range (in brackets) support for data objects
+	* CODATA 2017 update
+
 2019-01-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Support UTC+/-hh[:mm] and CET time zone conversion (using "to")

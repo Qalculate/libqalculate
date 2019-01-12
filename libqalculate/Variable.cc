@@ -1,7 +1,7 @@
 /*
     Qalculate (library)
 
-    Copyright (C) 2003-2007, 2008, 2016  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2019  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -419,12 +419,26 @@ const MathStructure &KnownVariable::get() {
 		if(isApproximate() && precision() == -1 && suncertainty.empty()) {
 			po.read_precision = ALWAYS_READ_PRECISION;
 		}
-		if(suncertainty.empty()) {
-			mstruct->setAborted();
-			CALCULATOR->parse(mstruct, sexpression, po);
+		bool b_number = false;
+		if(!suncertainty.empty()) {
+			b_number = true;
 		} else {
+			size_t i = sexpression.rfind(')');
+			if(i != string::npos && i > 2 && (i == sexpression.length() - 1 || (i < sexpression.length() - 2 && (sexpression[i + 1] == 'E' || sexpression[i + 1] == 'e')))) {
+				size_t i2 = sexpression.rfind('(');
+				if(i2 != string::npos && i2 < i - 1) {
+					if(sexpression.find_first_not_of(NUMBER_ELEMENTS SPACES, sexpression[0] == '-' || sexpression[0] == '+' ? 1 : 0) == i2 && sexpression.find_first_not_of(NUMBERS SPACES, i2 + 1) == i && (i == sexpression.length() - 1 || sexpression.find_first_not_of(NUMBER_ELEMENTS SPACES, sexpression[i + 2] == '-' || sexpression[i + 2] == '+' ? i + 3 : i + 2) == string::npos)) {
+						b_number = true;
+					}
+				}
+			}
+		}
+		if(b_number) {
 			mstruct->number().set(sexpression, po);
 			mstruct->numberUpdated();
+		} else {
+			mstruct->setAborted();
+			CALCULATOR->parse(mstruct, sexpression, po);
 		}
 		if(!suncertainty.empty()) {
 			Number nr_u(suncertainty);
