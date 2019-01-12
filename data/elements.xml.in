@@ -1,38 +1,39 @@
 <?xml version="1.0"?>
-<QALCULATE version="0.9.7">
+<QALCULATE version="2.8.3">
   <object symbol="H" number="1">
     <_name>Hydrogen</_name>
     <class>9</class>
-    <weight>1.008</weight>
+    <weight>[1.00784, 1.00811]</weight>
     <boiling>20.271</boiling>
     <melting>13.99</melting>
-    <density>0.00008988</density>
+    <density>8.988E-5</density>
     <x_pos>1</x_pos>
     <y_pos>1</y_pos>
   </object>
   <object symbol="He" number="2">
     <_name>Helium</_name>
     <class>10</class>
-    <weight>4.002602</weight>
+    <weight>4.002602(2)</weight>
     <boiling>4.222</boiling>
-    <density>0.0001785</density>
+    <melting>0.95</melting>
+    <density>1.786E-4</density>
     <x_pos>18</x_pos>
     <y_pos>1</y_pos>
   </object>
   <object symbol="Li" number="3">
     <_name>Lithium</_name>
     <class>1</class>
-    <weight>6.94</weight>
+    <weight>[6.938, 6.997] </weight>
     <boiling>1603</boiling>
     <melting>453.65</melting>
-    <density>0.533</density>
+    <density>0.534</density>
     <x_pos>1</x_pos>
     <y_pos>2</y_pos>
   </object>
   <object symbol="Be" number="4">
     <_name>Beryllium</_name>
     <class>2</class>
-    <weight>9.0121831</weight>
+    <weight>9.0121831(5)</weight>
     <boiling>2742</boiling>
     <melting>1560</melting>
     <density>1.85</density>
@@ -42,35 +43,35 @@
   <object symbol="B" number="5">
     <_name>Boron</_name>
     <class>7</class>
-    <weight>10.81</weight>
+    <weight>[10.806, 10.821]</weight>
     <boiling>4200</boiling>
     <melting>2349</melting>
-    <density>2.34</density>
+    <density>2.35</density>
     <x_pos>13</x_pos>
     <y_pos>2</y_pos>
   </object>
   <object symbol="C" number="6">
     <_name>Carbon</_name>
     <class>8</class>
-    <weight>12.011</weight>
-    <density>2.267</density>
+    <weight>[12.0096, 12.0116]</weight>
+    <density>2.266</density>
     <x_pos>14</x_pos>
     <y_pos>2</y_pos>
   </object>
   <object symbol="N" number="7">
     <_name>Nitrogen</_name>
     <class>9</class>
-    <weight>14.007</weight>
+    <weight>[14.00643, 14.00728]</weight>
     <boiling>77.355</boiling>
     <melting>63.15</melting>
-    <density>0.0012506</density>
+    <density>1.2504E-3</density>
     <x_pos>15</x_pos>
     <y_pos>2</y_pos>
   </object>
   <object symbol="O" number="8">
     <_name>Oxygen</_name>
     <class>9</class>
-    <weight>15.999</weight>
+    <weight>[15.99903, 15.99977]</weight>
     <boiling>90.188</boiling>
     <melting>54.36</melting>
     <density>0.001429</density>
@@ -80,8 +81,8 @@
   <object symbol="F" number="9">
     <_name>Fluorine</_name>
     <class>9</class>
-    <weight>18.998403163</weight>
-    <boiling>85.04</boiling>
+    <weight>18.998403163(6)</weight>
+    <boiling>85.03</boiling>
     <melting>53.48</melting>
     <density>0.001696</density>
     <x_pos>17</x_pos>
@@ -90,27 +91,27 @@
   <object symbol="Ne" number="10">
     <_name>Neon</_name>
     <class>10</class>
-    <weight>20.1797</weight>
+    <weight>20.1797(6)</weight>
     <boiling>27.104</boiling>
     <melting>24.56</melting>
-    <density>0.0008999</density>
+    <density>0.0009002</density>
     <x_pos>18</x_pos>
     <y_pos>2</y_pos>
   </object>
   <object symbol="Na" number="11">
     <_name>Sodium</_name>
     <class>1</class>
-    <weight>22.98976928</weight>
+    <weight>22.98976928(2)</weight>
     <boiling>1156.090</boiling>
     <melting>370.944</melting>
-    <density>0.971</density>
+    <density>0.968</density>
     <x_pos>1</x_pos>
     <y_pos>3</y_pos>
   </object>
   <object symbol="Mg" number="12">
     <_name>Magnesium</_name>
     <class>2</class>
-    <weight>24.305</weight>
+    <weight>[24.304, 24.307]</weight>
     <boiling>1363</boiling>
     <melting>923</melting>
     <density>1.738</density>
@@ -120,67 +121,67 @@
   <object symbol="Al" number="13">
     <_name>Aluminum</_name>
     <class>6</class>
-    <weight>26.9815385</weight>
+    <weight>26.9815384(3)</weight>
     <boiling>2743</boiling>
     <melting>933.47</melting>
-    <density>2.698</density>
+    <density>2.70</density>
     <x_pos>13</x_pos>
     <y_pos>3</y_pos>
   </object>
   <object symbol="Si" number="14">
     <_name>Silicon</_name>
     <class>7</class>
-    <weight>28.085</weight>
+    <weight>[28.084, 28.086]</weight>
     <boiling>3538</boiling>
     <melting>1687</melting>
-    <density>2.3296</density>
+    <density>2.3290</density>
     <x_pos>14</x_pos>
     <y_pos>3</y_pos>
   </object>
   <object symbol="P" number="15">
     <_name>Phosphorus</_name>
     <class>8</class>
-    <weight>30.973761998</weight>
-    <boiling>550</boiling>
-    <melting>317.30</melting>
-    <density>1.82</density>
+    <weight>30.973761998(5)</weight>
+    <boiling>553.7</boiling>
+    <melting>317.3</melting>
+    <density>1.823</density>
     <x_pos>15</x_pos>
     <y_pos>3</y_pos>
   </object>
   <object symbol="S" number="16">
     <_name>Sulfur</_name>
     <class>8</class>
-    <weight>32.06</weight>
+    <weight>[32.059, 32.076]</weight>
     <boiling>717.8</boiling>
     <melting>388.36</melting>
-    <density>2.067</density>
+    <density>2.07</density>
     <x_pos>16</x_pos>
     <y_pos>3</y_pos>
   </object>
   <object symbol="Cl" number="17">
     <_name>Chlorine</_name>
     <class>9</class>
-    <weight>35.45</weight>
+    <weight>[35.446, 35.457]</weight>
     <boiling>239.11</boiling>
     <melting>171.6</melting>
-    <density>0.003214</density>
+    <density>0.0032</density>
     <x_pos>17</x_pos>
     <y_pos>3</y_pos>
   </object>
   <object symbol="Ar" number="18">
     <_name>Argon</_name>
     <class>10</class>
-    <weight>39.948</weight>
+    <weight>[39.792, 39.963]</weight>
     <boiling>87.302</boiling>
     <melting>83.81</melting>
-    <density>0.0017837</density>
+    <density>0.001784</density>
     <x_pos>18</x_pos>
     <y_pos>3</y_pos>
   </object>
   <object symbol="K" number="19">
     <_name>Potassium</_name>
     <class>1</class>
-    <weight>39.0983</weight>
+    <weight>39.0983(1)</weight>
     <boiling>1032</boiling>
     <melting>336.7</melting>
     <density>0.862</density>
@@ -190,68 +191,68 @@
   <object symbol="Ca" number="20">
     <_name>Calcium</_name>
     <class>2</class>
-    <weight>40.078</weight>
+    <weight>40.078(4)</weight>
     <boiling>1757</boiling>
     <melting>1115</melting>
-    <density>1.54</density>
+    <density>1.55</density>
     <x_pos>2</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="Sc" number="21">
     <_name>Scandium</_name>
     <class>5</class>
-    <weight>44.955908</weight>
+    <weight>44.955908(5)</weight>
     <boiling>3109</boiling>
     <melting>1814</melting>
-    <density>2.989</density>
+    <density>2.985</density>
     <x_pos>3</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="Ti" number="22">
     <_name>Titanium</_name>
     <class>5</class>
-    <weight>47.867</weight>
+    <weight>47.867(1)</weight>
     <boiling>3560</boiling>
     <melting>1941</melting>
-    <density>4.54</density>
+    <density>4.506</density>
     <x_pos>4</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="V" number="23">
     <_name>Vanadium</_name>
     <class>5</class>
-    <weight>50.9415</weight>
+    <weight>50.9415(1)</weight>
     <boiling>3680</boiling>
     <melting>2183</melting>
-    <density>6.11</density>
+    <density>6.0</density>
     <x_pos>5</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="Cr" number="24">
     <_name>Chromium</_name>
     <class>5</class>
-    <weight>51.9961</weight>
-    <boiling>2755</boiling>
+    <weight>51.9961(6)</weight>
+    <boiling>2944</boiling>
     <melting>2180</melting>
-    <density>7.15</density>
+    <density>7.19</density>
     <x_pos>6</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="Mn" number="25">
     <_name>Manganese</_name>
     <class>5</class>
-    <weight>54.938044</weight>
+    <weight>54.938043(2)</weight>
     <boiling>2334</boiling>
     <melting>1519</melting>
-    <density>7.44</density>
+    <density>7.21</density>
     <x_pos>7</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="Fe" number="26">
     <_name>Iron</_name>
     <class>5</class>
-    <weight>55.845</weight>
-    <boiling>3143</boiling>
+    <weight>55.845(2)</weight>
+    <boiling>3134</boiling>
     <melting>1811</melting>
     <density>7.874</density>
     <x_pos>8</x_pos>
@@ -260,27 +261,27 @@
   <object symbol="Co" number="27">
     <_name>Cobalt</_name>
     <class>5</class>
-    <weight>58.933194</weight>
+    <weight>58.933194(3)</weight>
     <boiling>3200</boiling>
     <melting>1768</melting>
-    <density>8.86</density>
+    <density>8.90</density>
     <x_pos>9</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="Ni" number="28">
     <_name>Nickel</_name>
     <class>5</class>
-    <weight>58.6934</weight>
-    <boiling>3002</boiling>
+    <weight>58.6934(4)</weight>
+    <boiling>3003</boiling>
     <melting>1728</melting>
-    <density>8.912</density>
+    <density>8.908</density>
     <x_pos>10</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="Cu" number="29">
     <_name>Copper</_name>
     <class>5</class>
-    <weight>63.546</weight>
+    <weight>63.546(3)</weight>
     <boiling>2835</boiling>
     <melting>1357.77</melting>
     <density>8.96</density>
@@ -290,27 +291,27 @@
   <object symbol="Zn" number="30">
     <_name>Zinc</_name>
     <class>5</class>
-    <weight>65.38</weight>
+    <weight>65.38(2)</weight>
     <boiling>1180</boiling>
     <melting>692.68</melting>
-    <density>7.134</density>
+    <density>7.14</density>
     <x_pos>12</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="Ga" number="31">
     <_name>Gallium</_name>
     <class>6</class>
-    <weight>69.723</weight>
+    <weight>69.723(1)</weight>
     <boiling>2673</boiling>
     <melting>302.9146</melting>
-    <density>5.907</density>
+    <density>5.91</density>
     <x_pos>13</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="Ge" number="32">
     <_name>Germanium</_name>
     <class>7</class>
-    <weight>72.630</weight>
+    <weight>72.630(8)</weight>
     <boiling>3106</boiling>
     <melting>1211.40</melting>
     <density>5.323</density>
@@ -320,47 +321,47 @@
   <object symbol="As" number="33">
     <_name>Arsenic</_name>
     <class>7</class>
-    <weight>74.921595</weight>
+    <weight>74.921595(6)</weight>
     <boiling>887</boiling>
     <melting>1090</melting>
-    <density>5.776</density>
+    <density>5.727</density>
     <x_pos>15</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="Se" number="34">
     <_name>Selenium</_name>
     <class>8</class>
-    <weight>78.971</weight>
+    <weight>78.971(8)</weight>
     <boiling>958</boiling>
     <melting>494</melting>
-    <density>4.809</density>
+    <density>4.81</density>
     <x_pos>16</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="Br" number="35">
     <_name>Bromine</_name>
     <class>9</class>
-    <weight>79.904</weight>
+    <weight>[79.901, 79.907]</weight>
     <boiling>332.0</boiling>
     <melting>265.8</melting>
-    <density>3.122</density>
+    <density>3.1028</density>
     <x_pos>17</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="Kr" number="36">
     <_name>Krypton</_name>
     <class>10</class>
-    <weight>83.798</weight>
-    <boiling>119.735</boiling>
+    <weight>83.798(2)</weight>
+    <boiling>119.93</boiling>
     <melting>115.78</melting>
-    <density>0.003733</density>
+    <density>0.003749</density>
     <x_pos>18</x_pos>
     <y_pos>4</y_pos>
   </object>
   <object symbol="Rb" number="37">
     <_name>Rubidium</_name>
     <class>1</class>
-    <weight>85.4678</weight>
+    <weight>85.4678(3)</weight>
     <boiling>961</boiling>
     <melting>312.45</melting>
     <density>1.532</density>
@@ -370,7 +371,7 @@
   <object symbol="Sr" number="38">
     <_name>Strontium</_name>
     <class>2</class>
-    <weight>87.62</weight>
+    <weight>87.62(1)</weight>
     <boiling>1650</boiling>
     <melting>1050</melting>
     <density>2.64</density>
@@ -380,27 +381,27 @@
   <object symbol="Y" number="39">
     <_name>Yttrium</_name>
     <class>5</class>
-    <weight>88.90584</weight>
+    <weight>88.90584(1)</weight>
     <boiling>3203</boiling>
     <melting>1799</melting>
-    <density>4.469</density>
+    <density>4.472</density>
     <x_pos>3</x_pos>
     <y_pos>5</y_pos>
   </object>
   <object symbol="Zr" number="40">
     <_name>Zirconium</_name>
     <class>5</class>
-    <weight>91.224</weight>
+    <weight>91.224(2)</weight>
     <boiling>4650</boiling>
     <melting>2128</melting>
-    <density>6.506</density>
+    <density>6.52</density>
     <x_pos>4</x_pos>
     <y_pos>5</y_pos>
   </object>
   <object symbol="Nb" number="41">
     <_name>Niobium</_name>
     <class>5</class>
-    <weight>92.90637</weight>
+    <weight>92.90637(1)</weight>
     <boiling>5017</boiling>
     <melting>2750</melting>
     <density>8.57</density>
@@ -410,37 +411,37 @@
   <object symbol="Mo" number="42">
     <_name>Molybdenum</_name>
     <class>5</class>
-    <weight>95.95</weight>
+    <weight>95.95(1)</weight>
     <boiling>4912</boiling>
     <melting>2896</melting>
-    <density>10.22</density>
+    <density>10.28</density>
     <x_pos>6</x_pos>
     <y_pos>5</y_pos>
   </object>
   <object symbol="Tc" number="43">
     <_name>Technetium</_name>
     <class>5</class>
-    <weight>[98]</weight>
+    <weight>98</weight>
     <boiling>4538</boiling>
     <melting>2430</melting>
-    <density>11.5</density>
+    <density>11</density>
     <x_pos>7</x_pos>
     <y_pos>5</y_pos>
   </object>
   <object symbol="Ru" number="44">
     <_name>Ruthenium</_name>
     <class>5</class>
-    <weight>101.07</weight>
+    <weight>101.07(2)</weight>
     <boiling>4423</boiling>
     <melting>2607</melting>
-    <density>12.37</density>
+    <density>12.45</density>
     <x_pos>8</x_pos>
     <y_pos>5</y_pos>
   </object>
   <object symbol="Rh" number="45">
     <_name>Rhodium</_name>
     <class>5</class>
-    <weight>102.90550</weight>
+    <weight>102.90549(2)</weight>
     <boiling>3968</boiling>
     <melting>2237</melting>
     <density>12.41</density>
@@ -450,39 +451,39 @@
   <object symbol="Pd" number="46">
     <_name>Palladium</_name>
     <class>5</class>
-    <weight>106.42</weight>
+    <weight>106.42(1)</weight>
     <boiling>3236</boiling>
     <melting>1828.05</melting>
-    <density>12.02</density>
+    <density>12.023</density>
     <x_pos>10</x_pos>
     <y_pos>5</y_pos>
   </object>
   <object symbol="Ag" number="47">
     <_name>Silver</_name>
     <class>5</class>
-    <weight>107.8682</weight>
-    <boiling>2483</boiling>
+    <weight>107.8682(2)</weight>
+    <boiling>2435</boiling>
     <melting>1234.93</melting>
-    <density>10.501</density>
+    <density>10.49</density>
     <x_pos>11</x_pos>
     <y_pos>5</y_pos>
   </object>
   <object symbol="Cd" number="48">
     <_name>Cadmium</_name>
     <class>5</class>
-    <weight>112.414</weight>
+    <weight>112.414(4)</weight>
     <boiling>1040</boiling>
     <melting>594.22</melting>
-    <density>8.69</density>
+    <density>8.65</density>
     <x_pos>12</x_pos>
     <y_pos>5</y_pos>
   </object>
   <object symbol="In" number="49">
     <_name>Indium</_name>
     <class>6</class>
-    <weight>114.818</weight>
+    <weight>114.818(1)</weight>
     <boiling>2345</boiling>
-    <melting>429.75</melting>
+    <melting>429.7485</melting>
     <density>7.31</density>
     <x_pos>13</x_pos>
     <y_pos>5</y_pos>
@@ -490,117 +491,117 @@
   <object symbol="Sn" number="50">
     <_name>Tin</_name>
     <class>6</class>
-    <weight>118.710</weight>
+    <weight>118.710(7)</weight>
     <boiling>2875</boiling>
     <melting>505.08</melting>
-    <density>7.287</density>
+    <density>7.265</density>
     <x_pos>14</x_pos>
     <y_pos>5</y_pos>
   </object>
   <object symbol="Sb" number="51">
     <_name>Antimony</_name>
     <class>7</class>
-    <weight>121.760</weight>
+    <weight>121.760(1)</weight>
     <boiling>1908</boiling>
     <melting>903.78</melting>
-    <density>6.685</density>
+    <density>6.697</density>
     <x_pos>15</x_pos>
     <y_pos>5</y_pos>
   </object>
   <object symbol="Te" number="52">
     <_name>Tellurium</_name>
     <class>7</class>
-    <weight>127.60</weight>
+    <weight>127.60(3)</weight>
     <boiling>1261</boiling>
     <melting>722.66</melting>
-    <density>6.232</density>
+    <density>6.24</density>
     <x_pos>16</x_pos>
     <y_pos>5</y_pos>
   </object>
   <object symbol="I" number="53">
     <_name>Iodine</_name>
     <class>9</class>
-    <weight>126.90447</weight>
+    <weight>126.90447(3)</weight>
     <boiling>457.4</boiling>
     <melting>386.85</melting>
-    <density>4.93</density>
+    <density>4.933</density>
     <x_pos>17</x_pos>
     <y_pos>5</y_pos>
   </object>
   <object symbol="Xe" number="54">
     <_name>Xenon</_name>
     <class>10</class>
-    <weight>131.293</weight>
+    <weight>131.293(6)</weight>
     <boiling>165.051</boiling>
     <melting>161.40</melting>
-    <density>0.005887</density>
+    <density>0.005894</density>
     <x_pos>18</x_pos>
     <y_pos>5</y_pos>
   </object>
   <object symbol="Cs" number="55">
     <_name>Cesium</_name>
     <class>1</class>
-    <weight>132.90545196</weight>
+    <weight>132.90545196(6)</weight>
     <boiling>944</boiling>
     <melting>301.7</melting>
-    <density>1.873</density>
+    <density>1.93</density>
     <x_pos>1</x_pos>
     <y_pos>6</y_pos>
   </object>
   <object symbol="Ba" number="56">
     <_name>Barium</_name>
     <class>2</class>
-    <weight>137.327</weight>
-    <boiling>1910</boiling>
+    <weight>137.327(7)</weight>
+    <boiling>2118</boiling>
     <melting>1000</melting>
-    <density>3.596</density>
+    <density>3.51</density>
     <x_pos>2</x_pos>
     <y_pos>6</y_pos>
   </object>
   <object symbol="La" number="57">
     <_name>Lanthanum</_name>
     <class>3</class>
-    <weight>138.9054</weight>
+    <weight>138.90547(7)</weight>
     <boiling>3737</boiling>
     <melting>1193</melting>
-    <density>6.145</density>
+    <density>6.162</density>
     <x_pos>3</x_pos>
     <y_pos>9</y_pos>
   </object>
   <object symbol="Ce" number="58">
     <_name>Cerium</_name>
     <class>3</class>
-    <weight>140.116</weight>
+    <weight>140.116(1)</weight>
     <boiling>3716</boiling>
     <melting>1068</melting>
-    <density>6.77</density>
+    <density>6.770</density>
     <x_pos>4</x_pos>
     <y_pos>9</y_pos>
   </object>
   <object symbol="Pr" number="59">
     <_name>Praseodymium</_name>
     <class>3</class>
-    <weight>140.90766</weight>
+    <weight>140.90766(1)</weight>
     <boiling>3403</boiling>
     <melting>1208</melting>
-    <density>6.773</density>
+    <density>6.77</density>
     <x_pos>5</x_pos>
     <y_pos>9</y_pos>
   </object>
   <object symbol="Nd" number="60">
     <_name>Neodymium</_name>
     <class>3</class>
-    <weight>144.242</weight>
+    <weight>144.242(3)</weight>
     <boiling>3347</boiling>
     <melting>1297</melting>
-    <density>7.007</density>
+    <density>7.01</density>
     <x_pos>6</x_pos>
     <y_pos>9</y_pos>
   </object>
   <object symbol="Pm" number="61">
     <_name>Promethium</_name>
     <class>3</class>
-    <weight>[145]</weight>
+    <weight>145</weight>
     <boiling>3273</boiling>
     <melting>1315</melting>
     <density>7.26</density>
@@ -610,7 +611,7 @@
   <object symbol="Sm" number="62">
     <_name>Samarium</_name>
     <class>3</class>
-    <weight>150.36</weight>
+    <weight>150.36(2)</weight>
     <boiling>2173</boiling>
     <melting>1345</melting>
     <density>7.52</density>
@@ -620,57 +621,57 @@
   <object symbol="Eu" number="63">
     <_name>Europium</_name>
     <class>3</class>
-    <weight>151.964</weight>
+    <weight>151.964(1)</weight>
     <boiling>1802</boiling>
     <melting>1099</melting>
-    <density>5.243</density>
+    <density>5.264</density>
     <x_pos>9</x_pos>
     <y_pos>9</y_pos>
   </object>
   <object symbol="Gd" number="64">
     <_name>Gadolinium</_name>
     <class>3</class>
-    <weight>157.25</weight>
+    <weight>157.25(3)</weight>
     <boiling>3273</boiling>
     <melting>1585</melting>
-    <density>7.895</density>
+    <density>7.90</density>
     <x_pos>10</x_pos>
     <y_pos>9</y_pos>
   </object>
   <object symbol="Tb" number="65">
     <_name>Terbium</_name>
     <class>3</class>
-    <weight>158.92535</weight>
+    <weight>158.925354(8)</weight>
     <boiling>3396</boiling>
     <melting>1629</melting>
-    <density>8.229</density>
+    <density>8.23</density>
     <x_pos>11</x_pos>
     <y_pos>9</y_pos>
   </object>
   <object symbol="Dy" number="66">
     <_name>Dysprosium</_name>
     <class>3</class>
-    <weight>162.500</weight>
+    <weight>162.500(1)</weight>
     <boiling>2840</boiling>
     <melting>1680</melting>
-    <density>8.55</density>
+    <density>8.540</density>
     <x_pos>12</x_pos>
     <y_pos>9</y_pos>
   </object>
   <object symbol="Ho" number="67">
     <_name>Holmium</_name>
     <class>3</class>
-    <weight>164.93033</weight>
+    <weight>164.930328(7)</weight>
     <boiling>2873</boiling>
     <melting>1734</melting>
-    <density>8.795</density>
+    <density>8.79</density>
     <x_pos>13</x_pos>
     <y_pos>9</y_pos>
   </object>
   <object symbol="Er" number="68">
     <_name>Erbium</_name>
     <class>3</class>
-    <weight>167.259</weight>
+    <weight>167.259(3)</weight>
     <boiling>3141</boiling>
     <melting>1802</melting>
     <density>9.066</density>
@@ -680,37 +681,37 @@
   <object symbol="Tm" number="69">
     <_name>Thulium</_name>
     <class>3</class>
-    <weight>168.93422</weight>
+    <weight>168.934218(6)</weight>
     <boiling>2223</boiling>
     <melting>1818</melting>
-    <density>9.321</density>
+    <density>9.32</density>
     <x_pos>15</x_pos>
     <y_pos>9</y_pos>
   </object>
   <object symbol="Yb" number="70">
     <_name>Ytterbium</_name>
     <class>3</class>
-    <weight>173.045</weight>
-    <boiling>1703</boiling>
+    <weight>173.045(10)</weight>
+    <boiling>1469</boiling>
     <melting>1097</melting>
-    <density>6.965</density>
+    <density>6.90</density>
     <x_pos>16</x_pos>
     <y_pos>9</y_pos>
   </object>
   <object symbol="Lu" number="71">
     <_name>Lutetium</_name>
     <class>3</class>
-    <weight>174.9668</weight>
+    <weight>174.9668(1)</weight>
     <boiling>3675</boiling>
     <melting>1925</melting>
-    <density>9.84</density>
+    <density>9.841</density>
     <x_pos>3</x_pos>
     <y_pos>6</y_pos>
   </object>
   <object symbol="Hf" number="72">
     <_name>Hafnium</_name>
     <class>5</class>
-    <weight>178.49</weight>
+    <weight>178.49(2)</weight>
     <boiling>4876</boiling>
     <melting>2506</melting>
     <density>13.31</density>
@@ -720,28 +721,28 @@
   <object symbol="Ta" number="73">
     <_name>Tantalum</_name>
     <class>5</class>
-    <weight>180.94788</weight>
+    <weight>180.94788(2)</weight>
     <boiling>5731</boiling>
     <melting>3290</melting>
-    <density>16.654</density>
+    <density>16.69</density>
     <x_pos>5</x_pos>
     <y_pos>6</y_pos>
   </object>
   <object symbol="W" number="74">
     <_name>Tungsten</_name>
     <class>5</class>
-    <weight>183.84</weight>
+    <weight>183.84(1)</weight>
     <boiling>6203</boiling>
     <melting>3695</melting>
-    <density>19.25</density>
+    <density>19.3</density>
     <x_pos>6</x_pos>
     <y_pos>6</y_pos>
   </object>
   <object symbol="Re" number="75">
     <_name>Rhenium</_name>
     <class>5</class>
-    <weight>186.207</weight>
-    <boiling>5869</boiling>
+    <weight>186.207(1)</weight>
+    <boiling>5903</boiling>
     <melting>3459</melting>
     <density>21.02</density>
     <x_pos>7</x_pos>
@@ -750,17 +751,17 @@
   <object symbol="Os" number="76">
     <_name>Osmium</_name>
     <class>5</class>
-    <weight>190.23</weight>
+    <weight>190.23(3)</weight>
     <boiling>5285</boiling>
     <melting>3306</melting>
-    <density>22.61</density>
+    <density>22.59</density>
     <x_pos>8</x_pos>
     <y_pos>6</y_pos>
   </object>
   <object symbol="Ir" number="77">
     <_name>Iridium</_name>
     <class>5</class>
-    <weight>192.217</weight>
+    <weight>192.217(2)</weight>
     <boiling>4403</boiling>
     <melting>2719</melting>
     <density>22.56</density>
@@ -770,20 +771,20 @@
   <object symbol="Pt" number="78">
     <_name>Platinum</_name>
     <class>5</class>
-    <weight>195.084</weight>
+    <weight>195.084(9)</weight>
     <boiling>4098</boiling>
     <melting>2041.4</melting>
-    <density>21.46</density>
+    <density>21.45</density>
     <x_pos>10</x_pos>
     <y_pos>6</y_pos>
   </object>
   <object symbol="Au" number="79">
     <_name>Gold</_name>
     <class>5</class>
-    <weight>196.966569</weight>
-    <boiling>3129</boiling>
+    <weight>196.966570(4)</weight>
+    <boiling>3243</boiling>
     <melting>1337.33</melting>
-    <density>19.282</density>
+    <density>19.30</density>
     <x_pos>11</x_pos>
     <y_pos>6</y_pos>
   </object>
@@ -791,17 +792,17 @@
     <!-- Chemical element -->
     <_name>!elements!Mercury</_name>
     <class>5</class>
-    <weight>200.592</weight>
+    <weight>200.592(3)</weight>
     <boiling>629.88</boiling>
-    <melting>234.32</melting>
-    <density>13.5336</density>
+    <melting>234.3210</melting>
+    <density>13.534</density>
     <x_pos>12</x_pos>
     <y_pos>6</y_pos>
   </object>
   <object symbol="Tl" number="81">
     <_name>Thallium</_name>
     <class>6</class>
-    <weight>204.38</weight>
+    <weight>[204.382, 204.385]</weight>
     <boiling>1746</boiling>
     <melting>577</melting>
     <density>11.85</density>
@@ -811,46 +812,47 @@
   <object symbol="Pb" number="82">
     <_name>Lead</_name>
     <class>6</class>
-    <weight>207.2</weight>
+    <weight>207.2(1)</weight>
     <boiling>2022</boiling>
     <melting>600.61</melting>
-    <density>11.342</density>
+    <density>11.34</density>
     <x_pos>14</x_pos>
     <y_pos>6</y_pos>
   </object>
   <object symbol="Bi" number="83">
     <_name>Bismuth</_name>
     <class>6</class>
-    <weight>208.98040</weight>
+    <weight>208.98040(1)</weight>
     <boiling>1837</boiling>
     <melting>544.7</melting>
-    <density>9.807</density>
+    <density>9.78</density>
     <x_pos>15</x_pos>
     <y_pos>6</y_pos>
   </object>
   <object symbol="Po" number="84">
     <_name>Polonium</_name>
     <class>6</class>
-    <weight>[209]</weight>
+    <weight>209</weight>
     <boiling>1235</boiling>
     <melting>527</melting>
-    <density>9.32</density>
+    <density>9.196</density>
     <x_pos>16</x_pos>
     <y_pos>6</y_pos>
   </object>
   <object symbol="At" number="85">
     <_name>Astatine</_name>
     <class>7</class>
-    <weight>[210]</weight>
+    <weight>210</weight>
+    <boiling>610</boiling>
     <melting>575</melting>
-    <density>7</density>
+    <density>6.35+/-0.15</density>
     <x_pos>17</x_pos>
     <y_pos>6</y_pos>
   </object>
   <object symbol="Rn" number="86">
     <_name>Radon</_name>
     <class>10</class>
-    <weight>[222]</weight>
+    <weight>222</weight>
     <boiling>211.5</boiling>
     <melting>202</melting>
     <density>0.00973</density>
@@ -860,16 +862,17 @@
   <object symbol="Fr" number="87">
     <_name>Francium</_name>
     <class>1</class>
-    <weight>[223]</weight>
+    <weight>223</weight>
+    <boiling>950</boiling>
     <melting>300</melting>
-    <density>1.87</density>
+    <density>2.9+/-0.1</density>
     <x_pos>1</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Ra" number="88">
     <_name>Radium</_name>
     <class>2</class>
-    <weight>[226]</weight>
+    <weight>226</weight>
     <boiling>2010</boiling>
     <melting>973</melting>
     <density>5.5</density>
@@ -879,27 +882,28 @@
   <object symbol="Ac" number="89">
     <_name>Actinium</_name>
     <class>4</class>
-    <weight>[227]</weight>
-    <boiling>3471</boiling>
-    <melting>1323</melting>
-    <density>10.07</density>
+    <weight>227</weight>
+    <boiling>3500+/-300</boiling>
+    <melting>1500</melting>
+    <density>10</density>
     <x_pos>3</x_pos>
     <y_pos>10</y_pos>
   </object>
   <object symbol="Th" number="90">
     <_name>Thorium</_name>
     <class>4</class>
-    <weight>232.0377</weight>
+    <weight>232.0377(4)</weight>
     <boiling>5061</boiling>
-    <melting>2115</melting>
-    <density>11.72</density>
+    <melting>2023</melting>
+    <density>11.7</density>
     <x_pos>4</x_pos>
     <y_pos>10</y_pos>
   </object>
   <object symbol="Pa" number="91">
     <_name>Protactinium</_name>
     <class>4</class>
-    <weight>231.03588</weight>
+    <weight>231.03588(1)</weight>
+    <boiling>4300</boiling>
     <melting>1841</melting>
     <density>15.37</density>
     <x_pos>5</x_pos>
@@ -908,19 +912,19 @@
   <object symbol="U" number="92">
     <_name>Uranium</_name>
     <class>4</class>
-    <weight>238.02891</weight>
+    <weight>238.02891(3)</weight>
     <boiling>4404</boiling>
     <melting>1405.3</melting>
-    <density>18.95</density>
+    <density>19.1</density>
     <x_pos>6</x_pos>
     <y_pos>10</y_pos>
   </object>
   <object symbol="Np" number="93">
     <_name>Neptunium</_name>
     <class>4</class>
-    <weight>[237]</weight>
-    <boiling>4273</boiling>
-    <melting>917</melting>
+    <weight>237</weight>
+    <boiling>4447</boiling>
+    <melting>912+/-3</melting>
     <density>20.45</density>
     <x_pos>7</x_pos>
     <y_pos>10</y_pos>
@@ -928,27 +932,27 @@
   <object symbol="Pu" number="94">
     <_name>Plutonium</_name>
     <class>4</class>
-    <weight>[244]</weight>
-    <boiling>3501</boiling>
+    <weight>244</weight>
+    <boiling>3505</boiling>
     <melting>912.5</melting>
-    <density>19.84</density>
+    <density>19.816</density>
     <x_pos>8</x_pos>
     <y_pos>10</y_pos>
   </object>
   <object symbol="Am" number="95">
     <_name>Americium</_name>
     <class>4</class>
-    <weight>[243]</weight>
+    <weight>243</weight>
     <boiling>2880</boiling>
     <melting>1449</melting>
-    <density>13.69</density>
+    <density>12</density>
     <x_pos>9</x_pos>
     <y_pos>10</y_pos>
   </object>
   <object symbol="Cm" number="96">
     <_name>Curium</_name>
     <class>4</class>
-    <weight>[247]</weight>
+    <weight>247</weight>
     <boiling>3383</boiling>
     <melting>1613</melting>
     <density>13.51</density>
@@ -958,16 +962,18 @@
   <object symbol="Bk" number="97">
     <_name>Berkelium</_name>
     <class>4</class>
-    <weight>[247]</weight>
-    <melting>1323</melting>
-    <density>14.79</density>
+    <weight>247</weight>
+    <boiling>2900</boiling>
+    <melting>1259</melting>
+    <density>14.78</density>
     <x_pos>11</x_pos>
     <y_pos>10</y_pos>
   </object>
   <object symbol="Cf" number="98">
     <_name>Californium</_name>
     <class>4</class>
-    <weight>[251]</weight>
+    <weight>251</weight>
+    <boiling>1743</boiling>
     <melting>1173</melting>
     <density>15.1</density>
     <x_pos>12</x_pos>
@@ -976,7 +982,8 @@
   <object symbol="Es" number="99">
     <_name>Einsteinium</_name>
     <class>4</class>
-    <weight>[252]</weight>
+    <weight>252</weight>
+    <boiling>1269</boiling>
     <melting>1133</melting>
     <density>8.84</density>
     <x_pos>13</x_pos>
@@ -985,137 +992,165 @@
   <object symbol="Fm" number="100">
     <_name>Fermium</_name>
     <class>4</class>
-    <weight>[257]</weight>
+    <weight>257</weight>
     <melting>1800</melting>
+    <density>9.7(1)</density>
     <x_pos>14</x_pos>
     <y_pos>10</y_pos>
   </object>
   <object symbol="Md" number="101">
     <_name>Mendelevium</_name>
     <class>4</class>
-    <weight>[258]</weight>
+    <weight>258</weight>
     <melting>1100</melting>
+    <density>10.3(7)</density>
     <x_pos>15</x_pos>
     <y_pos>10</y_pos>
   </object>
   <object symbol="No" number="102">
     <_name>Nobelium</_name>
     <class>4</class>
-    <weight>[259]</weight>
+    <weight>259</weight>
     <melting>1100</melting>
+    <density>9.9(4)</density>
     <x_pos>16</x_pos>
     <y_pos>10</y_pos>
   </object>
   <object symbol="Lr" number="103">
     <_name>Lawrencium</_name>
     <class>4</class>
-    <weight>[266]</weight>
+    <weight>266</weight>
     <melting>1900</melting>
+    <density>16.1+/-0.5</density>
     <x_pos>3</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Rf" number="104">
     <_name>Rutherfordium</_name>
     <class>5</class>
-    <weight>[267]</weight>
+    <weight>267</weight>
+    <boiling>5800</boiling>
+    <melting>2400</melting>
+    <density>23.2</density>
     <x_pos>4</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Db" number="105">
     <_name>Dubnium</_name>
     <class>5</class>
-    <weight>[268]</weight>
+    <weight>268</weight>
+    <density>29.3</density>
     <x_pos>5</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Sg" number="106">
     <_name>Seaborgium</_name>
     <class>5</class>
-    <weight>[269]</weight>
+    <weight>269</weight>
+    <density>35.0</density>
     <x_pos>6</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Bh" number="107">
     <_name>Bohrium</_name>
     <class>5</class>
-    <weight>[270]</weight>
+    <weight>270</weight>
+    <density>37.1</density>
     <x_pos>7</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Hs" number="108">
     <_name>Hassium</_name>
     <class>5</class>
-    <weight>[269]</weight>
+    <weight>270</weight>
+    <density>41</density>
     <x_pos>8</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Mt" number="109">
     <_name>Meitnerium</_name>
     <class>11</class>
-    <weight>[278]</weight>
+    <weight>278</weight>
+    <density>37.4</density>
     <x_pos>9</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Ds" number="110">
     <_name>Darmstadtium</_name>
     <class>11</class>
-    <weight>[281]</weight>
+    <weight>281</weight>
+    <density>34.8</density>
     <x_pos>10</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Rg" number="111">
     <_name>Roentgenium</_name>
     <class>11</class>
-    <weight>[282]</weight>
+    <weight>282</weight>
+    <density>28.7</density>
     <x_pos>11</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Cn" number="112">
     <_name>Copernicium</_name>
     <class>5</class>
-    <weight>[285]</weight>
+    <weight>285</weight>
     <x_pos>12</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Nh" number="113">
     <_name>Nihonium</_name>
     <class>11</class>
-    <weight>[286]</weight>
+    <weight>286</weight>
+    <boiling>1430</boiling>
+    <melting>700</melting>
+    <density>16</density>
     <x_pos>13</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Fl" number="114">
     <_name>Flerovium</_name>
     <class>6</class>
-    <weight>[289]</weight>
+    <boiling>210</boiling>
+    <weight>289</weight>
     <x_pos>14</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Mc" number="115">
     <_name>Moscovium</_name>
     <class>11</class>
-    <weight>[290]</weight>
+    <weight>290</weight>
+    <boiling>1400</boiling>
+    <melting>670</melting>
+    <density>13.5</density>
     <x_pos>15</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Lv" number="116">
     <_name>Livermorium</_name>
     <class>11</class>
-    <weight>[293]</weight>
+    <weight>293</weight>
+    <boiling>1085+/-50</boiling>
+    <melting>708.5+/-71.5</melting>
+    <density>12.9</density>
     <x_pos>16</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Ts" number="117">
     <_name>Tennessine</_name>
     <class>11</class>
-    <weight>[294]</weight>
+    <weight>294</weight>
+    <boiling>883</boiling>
+    <melting>723+/-100</melting>
+    <density>7.2+/-0.1</density>
     <x_pos>17</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Og" number="118">
     <_name>Oganesson</_name>
     <class>11</class>
-    <weight>[294]</weight>
+    <weight>294</weight>
+    <boiling>350+/-30</boiling>
     <x_pos>18</x_pos>
     <y_pos>7</y_pos>
   </object>

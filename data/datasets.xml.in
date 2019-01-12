@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
-<QALCULATE version="0.9.7">
+<QALCULATE version="2.8.3">
   <category>
     <_title>Data Sets</_title>
     <dataset>
       <!-- Data set for chemical elements -->
       <_title>!datasets!Elements</_title>
       <datafile>elements.xml</datafile>
+      <copyright>This data uses material from the Wikipedia, under the Creative Commons Attribution-ShareAlike License</copyright>
       <_names>r:atom</_names>
       <object_argument>
         <!-- Object argument for chemical elements data set-->
@@ -41,7 +42,7 @@
         <_title>Weight</_title>
 	<type>number</type>
 	<brackets>true</brackets>
-	<unit>AMU</unit>
+	<unit>u</unit>
 	<approximate>true</approximate>
         <_names>r:weight,mass</_names>
       </property>
@@ -61,7 +62,7 @@
       </property>
       <property>
         <_title>Density</_title>
-	<_description>Density at 295K</_description>
+	<_description>Density at STP (gases) or near room temperature</_description>
 	<type>number</type>
 	<unit>g/cm^3</unit>
 	<approximate>true</approximate>
@@ -83,7 +84,7 @@
     <dataset>
       <_title>Planets</_title>
       <datafile>planets.xml</datafile>
-      <copyright>This data uses material from the Wikipedia articles&#10;"Earth" (http://www.wikipedia.org/wiki/Earth),&#10;"Jupiter (planet)" (http://www.wikipedia.org/wiki/Jupiter_(planet)),&#10;"Mars (planet)" (http://www.wikipedia.org/wiki/Mars_(planet)),&#10;"Mercury (planet)" (http://www.wikipedia.org/wiki/Mercury_(planet)),&#10;"Neptune (planet)" (http://www.wikipedia.org/wiki/Neptune_(planet)),&#10;"Pluto (planet)" (http://www.wikipedia.org/wiki/Pluto_(planet)),&#10;"Saturn (planet)" (http://www.wikipedia.org/wiki/Saturn_(planet)),&#10;"Uranus (planet)" (http://www.wikipedia.org/wiki/Uranus_(planet)), and&#10;"Venus (planet)" (http://en.wikipedia.org/wiki/Venus_(planet)),&#10;licensed under the GNU Free Documentation License (http://www.gnu.org/copyleft/fdl.html)</copyright>
+      <copyright>This data uses material from the Wikipedia articles&#10;"Earth" (http://www.wikipedia.org/wiki/Earth),&#10;"Jupiter" (http://www.wikipedia.org/wiki/Jupiter),&#10;"Mars" (http://www.wikipedia.org/wiki/Mars),&#10;"Mercury (planet)" (http://www.wikipedia.org/wiki/Mercury_(planet)),&#10;"Neptune" (http://www.wikipedia.org/wiki/Neptune),&#10;"Pluto" (http://www.wikipedia.org/wiki/Pluto),&#10;"Saturn" (http://www.wikipedia.org/wiki/Saturn),&#10;"Uranus" (http://www.wikipedia.org/wiki/Uranus), and&#10;"Venus" (http://en.wikipedia.org/wiki/Venus), under Creative Commons Attribution-ShareAlike License</copyright>
       <_names>r:planet</_names>
       <object_argument>
         <_title>Planet</_title>
@@ -116,7 +117,7 @@
         <_names>r:eccentricity</_names>
       </property>
       <property>
-        <_title>Inclination</_title>
+        <_title>Inclination (to ecliptic)</_title>
 	<type>number</type>
 	<approximate>true</approximate>
         <_names>r:inclination</_names>
