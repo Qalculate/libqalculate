@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-10 12:37+0100\n"
+"POT-Creation-Date: 2019-01-15 14:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2132,7 +2132,7 @@ msgid "Density"
 msgstr ""
 
 #: ../data/datasets.xml.in.h:25
-msgid "Density at 295K"
+msgid "Density at STP (gases) or near room temperature"
 msgstr ""
 
 #: ../data/datasets.xml.in.h:26
@@ -2193,7 +2193,7 @@ msgid "r:eccentricity"
 msgstr ""
 
 #: ../data/datasets.xml.in.h:41
-msgid "Inclination"
+msgid "Inclination (to ecliptic)"
 msgstr ""
 
 #: ../data/datasets.xml.in.h:42
@@ -4912,7 +4912,7 @@ msgid ""
 "scale parameter. (from Gnumeric)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:533 ../data/variables.xml.in.h:248
+#: ../data/functions.xml.in.h:533 ../data/variables.xml.in.h:292
 msgid "Date &amp; Time"
 msgstr ""
 
@@ -8724,7 +8724,7 @@ msgstr ""
 msgid "ar:Btu"
 msgstr ""
 
-#: ../data/units.xml.in.h:443 ../data/variables.xml.in.h:136
+#: ../data/units.xml.in.h:443 ../data/variables.xml.in.h:180
 msgid "Electron Volt"
 msgstr ""
 
@@ -9482,11 +9482,11 @@ msgid "r:elementary_charge,ais:e_charge"
 msgstr ""
 
 #: ../data/variables.xml.in.h:91
-msgid "Josephson Constant"
+msgid "Fine-Structure Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:92
-msgid "r:josephson,ais:K_J"
+msgid "r:fine_structure,au:&#x03B1;"
 msgstr ""
 
 #: ../data/variables.xml.in.h:93
@@ -9498,641 +9498,817 @@ msgid "r:magnetic_flux_quantum,asu:&#x3A6;_0,aos:phi_0"
 msgstr ""
 
 #: ../data/variables.xml.in.h:95
-msgid "Nuclear Magneton"
+msgid "Josephson Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:96
-msgid "r:nuclear_magneton,asu:&#x3BC;_N,aos:mu_N"
+msgid "r:josephson,ais:K_J"
 msgstr ""
 
 #: ../data/variables.xml.in.h:97
-msgid "von Klitzing Constant"
+msgid "Nuclear Magneton"
 msgstr ""
 
 #: ../data/variables.xml.in.h:98
-msgid "r:klitzing,ais:R_K"
+msgid "r:nuclear_magneton,asu:&#x3BC;_N,aos:mu_N"
 msgstr ""
 
 #: ../data/variables.xml.in.h:99
-msgid "Atomic and Nuclear Constants"
+msgid "von Klitzing Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:100
-msgid "Alpha Particle Mass"
+msgid "r:klitzing,ais:R_K"
 msgstr ""
 
 #: ../data/variables.xml.in.h:101
-msgid "r:alpha_particle_mass,aisu:m_&#x3B1;"
+msgid "Atomic and Nuclear Constants"
 msgstr ""
 
 #: ../data/variables.xml.in.h:102
-msgid "Bohr Radius"
+msgid "Alpha Particle Mass"
 msgstr ""
 
 #: ../data/variables.xml.in.h:103
-msgid "r:bohr_radius,ais:a_0"
+msgid "r:alpha_particle_mass,aisu:m_&#x3B1;"
 msgstr ""
 
 #: ../data/variables.xml.in.h:104
-msgid "Classical Electron Radius"
+msgid "Alpha Particle Mass (in u)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:105
-msgid "r:classical_electron_radius,ais:r_e"
+msgid "r:alpha_particle_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:106
-msgid "Compton Wavelength"
+msgid "Bohr Radius"
 msgstr ""
 
 #: ../data/variables.xml.in.h:107
-msgid "r:compton_wavelength,asu:&#x3BB;_C,aos:lambda_C"
+msgid "r:bohr_radius,ais:a_0"
 msgstr ""
 
 #: ../data/variables.xml.in.h:108
-msgid "Electron Mass"
+msgid "Classical Electron Radius"
 msgstr ""
 
 #: ../data/variables.xml.in.h:109
-msgid "r:electron_mass,ais:m_e"
+msgid "r:classical_electron_radius,ais:r_e"
 msgstr ""
 
 #: ../data/variables.xml.in.h:110
-msgid "Helion Mass"
+msgid "Compton Wavelength"
 msgstr ""
 
 #: ../data/variables.xml.in.h:111
-msgid "r:helion_mass,ais:m_h"
+msgid "r:compton_wavelength,asu:&#x3BB;_C,aos:lambda_C"
 msgstr ""
 
 #: ../data/variables.xml.in.h:112
-msgid "Neutron Mass"
+msgid "Deuteron Mass"
 msgstr ""
 
 #: ../data/variables.xml.in.h:113
-msgid "r:neutron_mass,ais:m_n"
+msgid "r:deuteron_mass"
 msgstr ""
 
 #: ../data/variables.xml.in.h:114
-msgid "Proton Mass"
+msgid "Deuteron Mass (in u)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:115
-msgid "r:proton_mass,ais:m_p"
+msgid "r:deuteron_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:116
-msgid "Rydberg Constant"
+msgid "Electron Mass"
 msgstr ""
 
 #: ../data/variables.xml.in.h:117
-msgid "r:rydberg,aisu:R_&#x221E;"
+msgid "r:electron_mass,ais:m_e"
 msgstr ""
 
 #: ../data/variables.xml.in.h:118
-msgid "Tau Mass"
+msgid "Electron Mass (in u)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:119
-msgid "r:tau_mass,aisu:m_&#x3C4;"
+msgid "r:electron_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:120
-msgid "Physico-Chemical Constants"
+msgid "Helion Mass"
 msgstr ""
 
 #: ../data/variables.xml.in.h:121
-msgid "Atomic Mass Constant"
+msgid "r:helion_mass,ais:m_h"
 msgstr ""
 
 #: ../data/variables.xml.in.h:122
-msgid "r:atomic_mass,ais:m_u"
+msgid "Helion Mass (in u)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:123
-msgid "Avogadro Constant"
+msgid "r:helion_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:124
-msgid "r:avogadro,ais:N_A"
+msgid "Neutron Mass"
 msgstr ""
 
 #: ../data/variables.xml.in.h:125
-msgid "Boltzmann Constant"
+msgid "r:neutron_mass,ais:m_n"
 msgstr ""
 
 #: ../data/variables.xml.in.h:126
-msgid "r:boltzmann,ais:k_B"
+msgid "Neutron Mass (in u)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:127
-msgid "Faraday Constant"
+msgid "r:neutron_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:128
-msgid "r:faraday"
+msgid "Proton Mass"
 msgstr ""
 
 #: ../data/variables.xml.in.h:129
-msgid "First Radiation Constant"
+msgid "r:proton_mass,ais:m_p"
 msgstr ""
 
 #: ../data/variables.xml.in.h:130
-msgid "r:first_radiation,ais:c_1"
+msgid "Proton Mass (in u)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:131
-msgid "Ideal Gas Constant"
+msgid "r:proton_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:132
-msgid "r:ideal_gas"
+msgid "Rydberg Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:133
-msgid "Second Radiation Constant"
+msgid "r:rydberg,aisu:R_&#x221E;"
 msgstr ""
 
 #: ../data/variables.xml.in.h:134
-msgid "r:second_radiation,ais:c_2"
+msgid "Tau Mass"
 msgstr ""
 
 #: ../data/variables.xml.in.h:135
-msgid "Unit Relations"
+msgid "r:tau_mass,aisu:m_&#x3C4;"
+msgstr ""
+
+#: ../data/variables.xml.in.h:136
+msgid "Tau Mass (in u)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:137
-msgid "r:eV_to_J"
+msgid "r:tau_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:138
-msgid "Hartree Energy"
+msgid "Fermi Coupling Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:139
-msgid "r:Ha_to_J"
+msgid "r:fermi_coupling"
 msgstr ""
 
 #: ../data/variables.xml.in.h:140
-msgid "Hertz - Atomic Mass Unit Relationship"
+msgid "Muon Mass"
 msgstr ""
 
 #: ../data/variables.xml.in.h:141
-msgid "r:Hz_to_u"
+msgid "r:muon_mass,au:&#x03BC;"
 msgstr ""
 
 #: ../data/variables.xml.in.h:142
-msgid "Hertz - Electron Volt Relationship"
+msgid "Muon Mass (in u)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:143
-msgid "r:Hz_to_eV"
+msgid "r:muon_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:144
-msgid "Hertz - Hartree Relationship"
+msgid "Triton Mass"
 msgstr ""
 
 #: ../data/variables.xml.in.h:145
-msgid "r:Hz_to_Ha"
+msgid "r:triton_mass"
 msgstr ""
 
 #: ../data/variables.xml.in.h:146
-msgid "Hertz - Inverse Meter Relationship"
+msgid "Triton Mass (in u)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:147
-msgid "r:Hz_to_m"
+msgid "r:triton_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:148
-msgid "Hertz - Joule Relationship"
+msgid "Weak Mixing Angle (Weinberg Angle)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:149
-msgid "r:Hz_to_J"
+msgid "r:weinberg,weak_mixing_angle"
 msgstr ""
 
 #: ../data/variables.xml.in.h:150
-msgid "Hertz - Kelvin Relationship"
+msgid "Physico-Chemical Constants"
 msgstr ""
 
 #: ../data/variables.xml.in.h:151
-msgid "r:Hz_to_K"
+msgid "Atomic Mass Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:152
-msgid "Hertz - Kilogram Relationship"
+msgid "r:atomic_mass,ais:m_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:153
-msgid "r:Hz_to_kg"
+msgid "Avogadro Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:154
-msgid "Inverse Meter - Atomic Mass Unit Relationship"
+msgid "r:avogadro,ais:N_A"
 msgstr ""
 
 #: ../data/variables.xml.in.h:155
-msgid "r:m_to_u"
+msgid "Boltzmann Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:156
-msgid "Inverse Meter - Electron Volt Relationship"
+msgid "r:boltzmann,ais:k_B"
 msgstr ""
 
 #: ../data/variables.xml.in.h:157
-msgid "r:m_to_eV"
+msgid "Faraday Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:158
-msgid "Inverse Meter - Hartree Relationship"
+msgid "r:faraday"
 msgstr ""
 
 #: ../data/variables.xml.in.h:159
-msgid "r:m_to_Ha"
+msgid "First Radiation Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:160
-msgid "Inverse Meter - Hertz Relationship"
+msgid "r:first_radiation,ais:c_1"
 msgstr ""
 
 #: ../data/variables.xml.in.h:161
-msgid "r:m_to_Hz"
+msgid "Ideal Gas Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:162
-msgid "Inverse Meter - Joule Relationship"
+msgid "r:ideal_gas"
 msgstr ""
 
 #: ../data/variables.xml.in.h:163
-msgid "r:m_to_J"
+msgid "Second Radiation Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:164
-msgid "Inverse Meter - Kelvin Relationship"
+msgid "r:second_radiation,ais:c_2"
 msgstr ""
 
 #: ../data/variables.xml.in.h:165
-msgid "r:m_to_K"
+msgid "Unit Relations"
 msgstr ""
 
 #: ../data/variables.xml.in.h:166
-msgid "Inverse Meter - Kilogram Relationship"
+msgid "Atomic Mass Unit - Electron Volt Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:167
-msgid "r:m_to_kg"
+msgid "r:u_to_eV"
 msgstr ""
 
 #: ../data/variables.xml.in.h:168
-msgid "Joule - Atomic Mass Unit Relationship"
+msgid "Atomic Mass Unit - Hartree Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:169
-msgid "r:J_to_u"
+msgid "r:u_to_Ha"
 msgstr ""
 
 #: ../data/variables.xml.in.h:170
-msgid "Joule - Electron Volt Relationship"
+msgid "Atomic Mass Unit - Hertz Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:171
-msgid "r:J_to_eV"
+msgid "r:u_to_Hz"
 msgstr ""
 
 #: ../data/variables.xml.in.h:172
-msgid "Joule - Hartree Relationship"
+msgid "Atomic Mass Unit - Inverse Meter Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:173
-msgid "r:J_to_Ha"
+msgid "r:u_to_m"
 msgstr ""
 
 #: ../data/variables.xml.in.h:174
-msgid "Joule - Hertz Relationship"
+msgid "Atomic Mass Unit - Joule Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:175
-msgid "r:J_to_Hz"
+msgid "r:u_to_J"
 msgstr ""
 
 #: ../data/variables.xml.in.h:176
-msgid "Joule - Inverse Meter Relationship"
+msgid "Atomic Mass Unit - Kelvin Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:177
-msgid "r:J_to_m"
+msgid "r:u_to_K"
 msgstr ""
 
 #: ../data/variables.xml.in.h:178
-msgid "Joule - Kelvin Relationship"
+msgid "Atomic Mass Unit - Kilogram Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:179
-msgid "r:J_to_K"
-msgstr ""
-
-#: ../data/variables.xml.in.h:180
-msgid "Joule - Kilogram Relationship"
+msgid "r:u_to_kg"
 msgstr ""
 
 #: ../data/variables.xml.in.h:181
-msgid "r:J_to_kg"
+msgid "r:eV_to_J"
 msgstr ""
 
 #: ../data/variables.xml.in.h:182
-msgid "Kelvin - Atomic Mass Unit Relationship"
+msgid "Hartree Energy"
 msgstr ""
 
 #: ../data/variables.xml.in.h:183
-msgid "r:K_to_u"
+msgid "r:Ha_to_J"
 msgstr ""
 
 #: ../data/variables.xml.in.h:184
-msgid "Kelvin - Electron Volt Relationship"
+msgid "Hertz - Atomic Mass Unit Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:185
-msgid "r:K_to_eV"
+msgid "r:Hz_to_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:186
-msgid "Kelvin - Hartree Relationship"
+msgid "Hertz - Electron Volt Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:187
-msgid "r:K_to_Ha"
+msgid "r:Hz_to_eV"
 msgstr ""
 
 #: ../data/variables.xml.in.h:188
-msgid "Kelvin - Hertz Relationship"
+msgid "Hertz - Hartree Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:189
-msgid "r:K_to_Hz"
+msgid "r:Hz_to_Ha"
 msgstr ""
 
 #: ../data/variables.xml.in.h:190
-msgid "Kelvin - Inverse Meter Relationship"
+msgid "Hertz - Inverse Meter Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:191
-msgid "r:K_to_m"
+msgid "r:Hz_to_m"
 msgstr ""
 
 #: ../data/variables.xml.in.h:192
-msgid "Kelvin - Joule Relationship"
+msgid "Hertz - Joule Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:193
-msgid "r:K_to_J"
+msgid "r:Hz_to_J"
 msgstr ""
 
 #: ../data/variables.xml.in.h:194
-msgid "Kelvin - Kilogram Relationship"
+msgid "Hertz - Kelvin Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:195
-msgid "r:K_to_kg"
+msgid "r:Hz_to_K"
 msgstr ""
 
 #: ../data/variables.xml.in.h:196
-msgid "Kilogram - Atomic Mass Unit Relationship"
+msgid "Hertz - Kilogram Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:197
-msgid "r:kg_to_u"
+msgid "r:Hz_to_kg"
 msgstr ""
 
 #: ../data/variables.xml.in.h:198
-msgid "Kilogram - Electron Volt Relationship"
+msgid "Inverse Meter - Atomic Mass Unit Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:199
-msgid "r:kg_to_eV"
+msgid "r:m_to_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:200
-msgid "Kilogram - Hartree Relationship"
+msgid "Inverse Meter - Electron Volt Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:201
-msgid "r:kg_to_Ha"
+msgid "r:m_to_eV"
 msgstr ""
 
 #: ../data/variables.xml.in.h:202
-msgid "Kilogram - Hertz Relationship"
+msgid "Inverse Meter - Hartree Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:203
-msgid "r:kg_to_Hz"
+msgid "r:m_to_Ha"
 msgstr ""
 
 #: ../data/variables.xml.in.h:204
-msgid "Kilogram - Inverse Meter Relationship"
+msgid "Inverse Meter - Hertz Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:205
-msgid "r:kg_to_m"
+msgid "r:m_to_Hz"
 msgstr ""
 
 #: ../data/variables.xml.in.h:206
-msgid "Kilogram - Joule Relationship"
+msgid "Inverse Meter - Joule Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:207
-msgid "r:kg_to_J"
+msgid "r:m_to_J"
 msgstr ""
 
 #: ../data/variables.xml.in.h:208
-msgid "Kilogram - Kelvin Relationship"
+msgid "Inverse Meter - Kelvin Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:209
-msgid "r:kg_to_K"
+msgid "r:m_to_K"
 msgstr ""
 
 #: ../data/variables.xml.in.h:210
-msgid "Basic Constants"
+msgid "Inverse Meter - Kilogram Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:211
-msgid "Golden Ratio"
+msgid "r:m_to_kg"
 msgstr ""
 
 #: ../data/variables.xml.in.h:212
-msgid "r:golden,au:&#x3C6;"
+msgid "Joule - Atomic Mass Unit Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:213
-msgid "Omega Constant"
+msgid "r:J_to_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:214
-msgid "r:omega"
+msgid "Joule - Electron Volt Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:215
-msgid "Pythagoras' Constant (sqrt 2)"
+msgid "r:J_to_eV"
 msgstr ""
 
 #: ../data/variables.xml.in.h:216
-msgid "r:pythagoras"
+msgid "Joule - Hartree Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:217
-msgid "Apery's Constant"
+msgid "r:J_to_Ha"
 msgstr ""
 
 #: ../data/variables.xml.in.h:218
-msgid "r:apery"
+msgid "Joule - Hertz Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:219
-msgid "Base of Natural Logarithms (e)"
+msgid "r:J_to_Hz"
 msgstr ""
 
 #: ../data/variables.xml.in.h:220
-msgid "r:e"
+msgid "Joule - Inverse Meter Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:221
-msgid "Archimedes' Constant (pi)"
+msgid "r:J_to_m"
 msgstr ""
 
 #: ../data/variables.xml.in.h:222
-msgid "au:&#x3C0;,r:pi"
+msgid "Joule - Kelvin Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:223
-msgid "Euler's Constant"
+msgid "r:J_to_K"
 msgstr ""
 
 #: ../data/variables.xml.in.h:224
-msgid "au:&#x3B3;,r:euler"
+msgid "Joule - Kilogram Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:225
-msgid "Catalan's Constant"
+msgid "r:J_to_kg"
 msgstr ""
 
 #: ../data/variables.xml.in.h:226
-msgid "r:catalan"
+msgid "Kelvin - Atomic Mass Unit Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:227
-msgid "Special Numbers"
+msgid "r:K_to_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:228
-msgid "Imaginary i (sqrt -1)"
+msgid "Kelvin - Electron Volt Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:229
-msgid "r:i"
+msgid "r:K_to_eV"
 msgstr ""
 
 #: ../data/variables.xml.in.h:230
-msgid "Positive Infinity"
+msgid "Kelvin - Hartree Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:231
-msgid "a:&#x221E;,r:plus_infinity,r:infinity"
+msgid "r:K_to_Ha"
 msgstr ""
 
 #: ../data/variables.xml.in.h:232
-msgid "Negative Infinity"
+msgid "Kelvin - Hertz Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:233
-msgid "r:minus_infinity"
+msgid "r:K_to_Hz"
 msgstr ""
 
 #: ../data/variables.xml.in.h:234
-msgid "Undefined"
+msgid "Kelvin - Inverse Meter Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:235
-msgid "r:undefined"
+msgid "r:K_to_m"
 msgstr ""
 
 #: ../data/variables.xml.in.h:236
-msgid "Precision"
+msgid "Kelvin - Joule Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:237
-msgid "r:precision"
+msgid "r:K_to_J"
 msgstr ""
 
 #: ../data/variables.xml.in.h:238
-msgid "False"
+msgid "Kelvin - Kilogram Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:239
-msgid "r:false,r:no"
+msgid "r:K_to_kg"
 msgstr ""
 
 #: ../data/variables.xml.in.h:240
-msgid "True"
+msgid "Kilogram - Atomic Mass Unit Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:241
-msgid "r:true,r:yes"
+msgid "r:kg_to_u"
 msgstr ""
 
 #: ../data/variables.xml.in.h:242
-msgid "Unknowns"
+msgid "Kilogram - Electron Volt Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:243
-msgid "r:x"
+msgid "r:kg_to_eV"
 msgstr ""
 
 #: ../data/variables.xml.in.h:244
-msgid "r:y"
+msgid "Kilogram - Hartree Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:245
-msgid "r:z"
+msgid "r:kg_to_Ha"
 msgstr ""
 
 #: ../data/variables.xml.in.h:246
-msgid "n (integer)"
+msgid "Kilogram - Hertz Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:247
-msgid "r:n"
+msgid "r:kg_to_Hz"
+msgstr ""
+
+#: ../data/variables.xml.in.h:248
+msgid "Kilogram - Inverse Meter Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:249
-msgid "Today"
+msgid "r:kg_to_m"
 msgstr ""
 
 #: ../data/variables.xml.in.h:250
-msgid "r:today"
+msgid "Kilogram - Joule Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:251
-msgid "Tomorrow"
+msgid "r:kg_to_J"
 msgstr ""
 
 #: ../data/variables.xml.in.h:252
-msgid "r:tomorrow"
+msgid "Kilogram - Kelvin Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:253
-msgid "Yesterday"
+msgid "r:kg_to_K"
 msgstr ""
 
 #: ../data/variables.xml.in.h:254
-msgid "r:yesterday"
+msgid "Basic Constants"
 msgstr ""
 
 #: ../data/variables.xml.in.h:255
-msgid "Now (date and time)"
+msgid "Golden Ratio"
 msgstr ""
 
 #: ../data/variables.xml.in.h:256
+msgid "r:golden,au:&#x3C6;"
+msgstr ""
+
+#: ../data/variables.xml.in.h:257
+msgid "Omega Constant"
+msgstr ""
+
+#: ../data/variables.xml.in.h:258
+msgid "r:omega"
+msgstr ""
+
+#: ../data/variables.xml.in.h:259
+msgid "Pythagoras' Constant (sqrt 2)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:260
+msgid "r:pythagoras"
+msgstr ""
+
+#: ../data/variables.xml.in.h:261
+msgid "Apery's Constant"
+msgstr ""
+
+#: ../data/variables.xml.in.h:262
+msgid "r:apery"
+msgstr ""
+
+#: ../data/variables.xml.in.h:263
+msgid "Base of Natural Logarithms (e)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:264
+msgid "r:e"
+msgstr ""
+
+#: ../data/variables.xml.in.h:265
+msgid "Archimedes' Constant (pi)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:266
+msgid "au:&#x3C0;,r:pi"
+msgstr ""
+
+#: ../data/variables.xml.in.h:267
+msgid "Euler's Constant"
+msgstr ""
+
+#: ../data/variables.xml.in.h:268
+msgid "au:&#x3B3;,r:euler"
+msgstr ""
+
+#: ../data/variables.xml.in.h:269
+msgid "Catalan's Constant"
+msgstr ""
+
+#: ../data/variables.xml.in.h:270
+msgid "r:catalan"
+msgstr ""
+
+#: ../data/variables.xml.in.h:271
+msgid "Special Numbers"
+msgstr ""
+
+#: ../data/variables.xml.in.h:272
+msgid "Imaginary i (sqrt -1)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:273
+msgid "r:i"
+msgstr ""
+
+#: ../data/variables.xml.in.h:274
+msgid "Positive Infinity"
+msgstr ""
+
+#: ../data/variables.xml.in.h:275
+msgid "a:&#x221E;,r:plus_infinity,r:infinity"
+msgstr ""
+
+#: ../data/variables.xml.in.h:276
+msgid "Negative Infinity"
+msgstr ""
+
+#: ../data/variables.xml.in.h:277
+msgid "r:minus_infinity"
+msgstr ""
+
+#: ../data/variables.xml.in.h:278
+msgid "Undefined"
+msgstr ""
+
+#: ../data/variables.xml.in.h:279
+msgid "r:undefined"
+msgstr ""
+
+#: ../data/variables.xml.in.h:280
+msgid "Precision"
+msgstr ""
+
+#: ../data/variables.xml.in.h:281
+msgid "r:precision"
+msgstr ""
+
+#: ../data/variables.xml.in.h:282
+msgid "False"
+msgstr ""
+
+#: ../data/variables.xml.in.h:283
+msgid "r:false,r:no"
+msgstr ""
+
+#: ../data/variables.xml.in.h:284
+msgid "True"
+msgstr ""
+
+#: ../data/variables.xml.in.h:285
+msgid "r:true,r:yes"
+msgstr ""
+
+#: ../data/variables.xml.in.h:286
+msgid "Unknowns"
+msgstr ""
+
+#: ../data/variables.xml.in.h:287
+msgid "r:x"
+msgstr ""
+
+#: ../data/variables.xml.in.h:288
+msgid "r:y"
+msgstr ""
+
+#: ../data/variables.xml.in.h:289
+msgid "r:z"
+msgstr ""
+
+#: ../data/variables.xml.in.h:290
+msgid "n (integer)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:291
+msgid "r:n"
+msgstr ""
+
+#: ../data/variables.xml.in.h:293
+msgid "Today"
+msgstr ""
+
+#: ../data/variables.xml.in.h:294
+msgid "r:today"
+msgstr ""
+
+#: ../data/variables.xml.in.h:295
+msgid "Tomorrow"
+msgstr ""
+
+#: ../data/variables.xml.in.h:296
+msgid "r:tomorrow"
+msgstr ""
+
+#: ../data/variables.xml.in.h:297
+msgid "Yesterday"
+msgstr ""
+
+#: ../data/variables.xml.in.h:298
+msgid "r:yesterday"
+msgstr ""
+
+#: ../data/variables.xml.in.h:299
+msgid "Now (date and time)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:300
 msgid "r:now"
 msgstr ""
