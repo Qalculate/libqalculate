@@ -165,7 +165,7 @@
       <variable>
         <_title>Planck Mass</_title>
         <_names>r:planck_mass,ais:m_P</_names>
-        <value uncertainty="5.1E-10" unit="g">2.176470E-5</value>
+        <value uncertainty="5.1E-13" unit="kg">2.176470E-8</value>
       </variable>
       <variable>
         <_title>Planck Length</_title>
@@ -221,14 +221,19 @@
         <value uncertainty="8.3E-28" unit="C">1.6021766341E-19</value>
       </variable>
       <variable>
-        <_title>Josephson Constant</_title>
-        <_names>r:josephson,ais:K_J</_names>
-        <value uncertainty="3.0E6" unit="Hz*V^(-1)">483597.8525E9</value>
+        <_title>Fine-Structure Constant</_title>
+        <_names>r:fine_structure,au:&#x03B1;</_names>
+        <value uncertainty="1.7E-12">7.2973525664E-3</value>
       </variable>
       <variable>
         <_title>Magnetic Flux Quantum</_title>
         <_names>r:magnetic_flux_quantum,asu:&#x3A6;_0,aos:phi_0</_names>
         <value uncertainty="1.3E-23" unit="Wb">2.067833831E-15</value>
+      </variable>
+      <variable>
+        <_title>Josephson Constant</_title>
+        <_names>r:josephson,ais:K_J</_names>
+        <value unit="Hz*V^(-1)">1/nounit(magnetic_flux_quantum)</value>
       </variable>
       <variable>
         <_title>Nuclear Magneton</_title>
@@ -246,7 +251,12 @@
       <variable>
         <_title>Alpha Particle Mass</_title>
         <_names>r:alpha_particle_mass,aisu:m_&#x3B1;</_names>
-        <value uncertainty="8.2E-32" unit="g">6.644657230E-24</value>
+        <value uncertainty="8.2E-35" unit="kg">6.644657230E-27</value>
+      </variable>
+      <variable>
+        <_title>Alpha Particle Mass (in u)</_title>
+        <_names>r:alpha_particle_u</_names>
+        <value unit="u" uncertainty="6.3E-11">4.001506179127</value>
       </variable>
       <variable>
         <_title>Bohr Radius</_title>
@@ -264,24 +274,54 @@
         <value uncertainty="1.1E-21" unit="m">2.4263102367E-12</value>
       </variable>
       <variable>
+        <_title>Deuteron Mass</_title>
+        <_names>r:deuteron_mass</_names>
+        <value unit="kg" uncertainty="4.1E-35">3.343583719E-27</value>
+      </variable>
+      <variable>
+        <_title>Deuteron Mass (in u)</_title>
+        <_names>r:deuteron_u</_names>
+        <value unit="u" uncertainty="4.0E-11">2.013553212745</value>
+      </variable>
+      <variable>
         <_title>Electron Mass</_title>
         <_names>r:electron_mass,ais:m_e</_names>
-        <value uncertainty="1.1E-35" unit="g">9.10938356E-28</value>
+        <value uncertainty="1.1E-38" unit="kg">9.10938356E-31</value>
+      </variable>
+      <variable>
+        <_title>Electron Mass (in u)</_title>
+        <_names>r:electron_u</_names>
+        <value unit="u" uncertainty="1.6E-14">5.48579909070E-4</value>
       </variable>
       <variable>
         <_title>Helion Mass</_title>
         <_names>r:helion_mass,ais:m_h</_names>
-        <value uncertainty="6.2E-32" unit="g">5.006412700E-24</value>
+        <value uncertainty="6.2E-35" unit="kg">5.006412700E-27</value>
+      </variable>
+      <variable>
+        <_title>Helion Mass (in u)</_title>
+        <_names>r:helion_u</_names>
+        <value unit="u" uncertainty="1.2E-10">3.01493224673</value>
       </variable>
       <variable>
         <_title>Neutron Mass</_title>
         <_names>r:neutron_mass,ais:m_n</_names>
-        <value uncertainty="2.1E-32" unit="g">1.674927471E-24</value>
+        <value uncertainty="2.1E-35" unit="kg">1.674927471E-27</value>
+      </variable>
+      <variable>
+        <_title>Neutron Mass (in u)</_title>
+        <_names>r:neutron_u</_names>
+        <value unit="u" uncertainty="4.9E-10">1.00866491588</value>
       </variable>
       <variable>
         <_title>Proton Mass</_title>
         <_names>r:proton_mass,ais:m_p</_names>
-        <value uncertainty="2.1E-32" unit="g">1.672621898E-24</value>
+        <value uncertainty="2.1E-35" unit="kg">1.672621898E-27</value>
+      </variable>
+      <variable>
+        <_title>Proton Mass (in u)</_title>
+        <_names>r:proton_u</_names>
+        <value uncertainty="9.1E-11" unit="u">1.007276466879</value>
       </variable>
       <variable>
         <_title>Rydberg Constant</_title>
@@ -291,7 +331,42 @@
       <variable>
         <_title>Tau Mass</_title>
         <_names>r:tau_mass,aisu:m_&#x3C4;</_names>
-        <value uncertainty="2.9E-28" unit="g">3.16747E-24</value>
+        <value uncertainty="2.9E-31" unit="kg">3.16747E-27</value>
+      </variable>
+      <variable>
+        <_title>Tau Mass (in u)</_title>
+        <_names>r:tau_u</_names>
+        <value unit="u" uncertainty="1.7E-4">1.90749</value>
+      </variable>
+      <variable>
+        <_title>Fermi Coupling Constant</_title>
+        <_names>r:fermi_coupling</_names>
+        <value unit="GeV^-2" uncertainty="6E-12">1.1663787E-5</value>
+      </variable>
+      <variable>
+        <_title>Muon Mass</_title>
+        <_names>r:muon_mass,au:&#x03BC;</_names>
+        <value unit="kg" uncertainty="4.8E-36">1.883531594E-28</value>
+      </variable>
+      <variable>
+        <_title>Muon Mass (in u)</_title>
+        <_names>r:muon_u</_names>
+         <value unit="u" uncertainty="2.5E-9">0.1134289257</value>
+      </variable>
+      <variable>
+        <_title>Triton Mass</_title>
+        <_names>r:triton_mass</_names>
+        <value unit="kg" uncertainty="6.2E-35">5.007356665E-27</value>
+      </variable>
+      <variable>
+        <_title>Triton Mass (in u)</_title>
+        <_names>r:triton_u</_names>
+        <value unit="u" uncertainty="1.1E-10">3.01550071632</value>
+      </variable>
+      <variable>
+        <_title>Weak Mixing Angle (Weinberg Angle)</_title>
+        <_names>r:weinberg,weak_mixing_angle</_names>
+        <value uncertainty="0.0021">0.2223</value>
       </variable>
     </category>
     <category>
@@ -299,7 +374,7 @@
       <variable>
         <_title>Atomic Mass Constant</_title>
         <_names>r:atomic_mass,ais:m_u</_names>
-        <value uncertainty="2.0E-32" unit="g">1.660539040E-24</value>
+        <value uncertainty="2.0E-35" unit="kg">1.660539040E-27</value>
       </variable>
       <variable>
         <_title>Avogadro Constant</_title>
@@ -334,6 +409,41 @@
     </category>
       <category>
       <_title>Unit Relations</_title>
+      <variable>
+        <_title>Atomic Mass Unit - Electron Volt Relationship</_title>
+        <_names>r:u_to_eV</_names>
+        <value unit="eV*u^-1" uncertainty="0.0000057e6">931.4940954e6</value>
+      </variable>
+      <variable>
+        <_title>Atomic Mass Unit - Hartree Relationship</_title>
+        <_names>r:u_to_Ha</_names>
+        <value unit="Ha*u^-1" uncertainty="1.6E-2">3.4231776902E7</value>
+      </variable>
+      <variable>
+        <_title>Atomic Mass Unit - Hertz Relationship</_title>
+        <_names>r:u_to_Hz</_names>
+        <value unit="Hz*u^-1" uncertainty="1e14">2.2523427206E23</value>
+      </variable>
+      <variable>
+        <_title>Atomic Mass Unit - Inverse Meter Relationship</_title>
+        <_names>r:u_to_m</_names>
+        <value unit="m^-1*u^-1" uncertainty="3.4E5">7.5130066166E14</value>
+      </variable>
+      <variable>
+        <_title>Atomic Mass Unit - Joule Relationship</_title>
+        <_names>r:u_to_J</_names>
+        <value unit="J*u^-1" uncertainty="1.8E-18">1.492418062E-10</value>
+      </variable>
+      <variable>
+        <_title>Atomic Mass Unit - Kelvin Relationship</_title>
+        <_names>r:u_to_K</_names>
+        <value unit="K*u^-1" uncertainty="6.2E6">1.08095438E13</value>
+      </variable>
+      <variable>
+        <_title>Atomic Mass Unit - Kilogram Relationship</_title>
+        <_names>r:u_to_kg</_names>
+        <value unit="kg*u^-1">nounit(atomic_mass)</value>
+      </variable>
       <variable>
         <_title>Electron Volt</_title>
         <_names>r:eV_to_J</_names>
