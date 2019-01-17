@@ -2293,6 +2293,7 @@
     <builtin_function name="for">
       <_title>For...Do</_title>
       <_names>r:for</_names>
+      <example>$name(1, x, x &lt; 10, x + 1, 2, y * x, y) = 72 576</example>
       <argument index="1">
         <_title>Initial value of counter</_title>
       </argument>

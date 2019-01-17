@@ -4919,13 +4919,14 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(!mtest.number().getBoolean()) {
 			break;
 		}
-		
-		mupdate = vargs[5];
+		if(vargs[5].isComparison() && vargs[5].comparisonType() == COMPARISON_EQUALS && vargs[5][0] == vargs[6]) mupdate = vargs[5][1];
+		else mupdate = vargs[5];
 		mupdate.replace(vargs[1], mcounter, vargs[6], mstruct);
 		mstruct = mupdate;
 		mstruct.calculatesub(eo, eo, false);
 		
-		mcount = vargs[3];
+		if(vargs[3].isComparison() && vargs[3].comparisonType() == COMPARISON_EQUALS && vargs[3][0] == vargs[1]) mcount = vargs[3][1];
+		else mcount = vargs[3];
 		mcount.replace(vargs[1], mcounter);
 		mcounter = mcount;
 		mcounter.calculatesub(eo, eo, false);
