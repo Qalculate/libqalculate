@@ -278,6 +278,26 @@
         <exponent>1</exponent>
       </base>
     </unit>
+    <unit type="alias">
+      <_title>Planck Length</_title>
+      <_names>r:planck_length,ais:l_P</_names>
+      <system>Planck</system>
+      <base>
+        <unit>m</unit>
+        <relation uncertainty="3.8E-40">1.616229E-35</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Bohr (Atomic Unit of Length)</_title>
+      <_names>rs:bohr_unit,ais:a_0unit,ais:l_A</_names>
+      <system>Atomic</system>
+      <base>
+        <unit>m</unit>
+        <relation>nounit(bohr_radius)</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
   </category>
   <category>
     <!-- Unit category -->
@@ -611,6 +631,26 @@
         <exponent>1</exponent>
       </base>
     </unit>
+    <unit type="alias">
+      <_title>Planck Mass</_title>
+      <_names>r:planck_mass,ais:m_P</_names>
+      <system>Planck</system>
+      <base>
+        <unit>g</unit>
+        <relation uncertainty="5.1E-10">2.176470E-5</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Atomic Unit of Mass</_title>
+      <_names>r:atomic_mass,ais:m_A</_names>
+      <system>Atomic</system>
+      <base>
+        <unit>g</unit>
+        <relation>nounit(electron_mass)*1000</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
     <category>
       <_title>Density</_title>
       <unit type="composite">
@@ -796,6 +836,26 @@
         <exponent>1</exponent>
       </base>
     </unit>
+    <unit type="alias">
+      <_title>Planck Time</_title>
+      <_names>r:planck_time,ais:t_P</_names>
+      <system>Planck</system>
+      <base>
+        <unit>s</unit>
+        <relation uncertainty="1.3E-48">5.39116E-44</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Atomic Unit of Time</_title>
+      <_names>r:atomic_time,ais:t_A</_names>
+      <system>Atomic</system>
+      <base>
+        <unit>s</unit>
+        <relation uncertainty="1.4E-28">2.418884326509E-17</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
     <category>
       <!-- Unit category -->
       <_title>!units!Frequency</_title>
@@ -827,6 +887,16 @@
         <base>
           <unit>A</unit>
           <relation>10</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Atomic Unit of Current</_title>
+        <_names>r:atomic_current</_names>
+        <system>Atomic</system>
+        <base>
+          <unit>A</unit>
+          <relation uncertainty="4.1E-11">6.623618183E-3</relation>
           <exponent>1</exponent>
         </base>
       </unit>
@@ -887,11 +957,31 @@
       </unit>
       <unit type="alias">
         <system>CGS</system>
-        <_title>Statcoloumb (Franklin)</_title>
+        <_title>Statcoulomb (Franklin)</_title>
         <_names>r:statcoulomb,p:statcoulombs,a:statC,franklin,a:Fr,p:franklins</_names>
         <base>
           <unit>C</unit>
           <relation>1/2997924580</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Planck Charge</_title>
+        <_names>r:planck_charge,ais:q_P</_names>
+        <system>Planck</system>
+        <base>
+          <unit>C</unit>
+          <relation uncertainty="4.1E-26">1.875545956E-18</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Atomic Unit of Charge</_title>
+        <_names>r:atomic_charge,ais:q_A</_names>
+        <system>Atomic</system>
+        <base>
+          <unit>C</unit>
+          <relation>nounit(elementary_charge)</relation>
           <exponent>1</exponent>
         </base>
       </unit>
@@ -975,6 +1065,16 @@
         <base>
           <unit>V</unit>
           <relation>1E-8</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Atomic Unit of Electric Potential</_title>
+        <_names>r:atomic_potential</_names>
+        <system>Atomic</system>
+        <base>
+          <unit>V</unit>
+          <relation uncertainty="1.7E-7">27.21138602</relation>
           <exponent>1</exponent>
         </base>
       </unit>
@@ -1098,6 +1198,16 @@
           <exponent>-1</exponent>
         </part>
       </unit>
+      <unit type="alias">
+        <_title>Atomic Unit of Electric Field</_title>
+        <_names>r:atomic_field</_names>
+        <system>Atomic</system>
+        <base>
+          <unit>V_p_m</unit>
+          <relation uncertainty="3.2E3">5.142206707E11</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
     </category>
     <category>
       <_title>Permittivity</_title>
@@ -1200,6 +1310,16 @@
         <unit>K</unit>
         <relation>(\x+459.67)*5/9</relation>
         <inverse_relation>(\x*9/5)-459.67</inverse_relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Planck Temperature</_title>
+      <_names>r:planck_temperature,ais:T_P</_names>
+      <system>Planck</system>
+      <base>
+        <unit>K</unit>
+        <relation uncertainty="3.3E27">1.416808E32</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -2112,6 +2232,25 @@
         <exponent>1</exponent>
       </base>
     </unit>
+    <unit type="alias">
+      <_title>Speed of Light (unit)</_title>
+      <_names>ars:c_unit</_names>
+      <base>
+        <unit>m_p_s</unit>
+        <relation>299792458</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Atomic Unit of Velocity</_title>
+      <_names>r:atomic_velocity</_names>
+      <system>Atomic</system>
+      <base>
+        <unit>m_p_s</unit>
+        <relation uncertainty="5E-4">2.18769126277E6</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
     <category>
       <_title>Acceleration</_title>
       <unit type="composite">
@@ -2265,6 +2404,43 @@
           <exponent>1</exponent>
         </base>
       </unit>
+      <unit type="alias">
+        <_title>Atomic Unit of Magnetic Flux Density</_title>
+        <_names>r:atomic_mfd</_names>
+        <system>Atomic</system>
+        <base>
+          <unit>T</unit>
+          <relation uncertainty="1.4E-3">2.350517550E5</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+    </category>
+    <category>
+      <_title>Magnetic Dipole Moment</_title>
+      <unit type="composite">
+        <_title>Joule per Tesla</_title>
+        <names>r:J_T</names>
+        <part>
+          <unit>J</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>T</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="alias">
+      <_title>Atomic Unit of Magnetic Dipole Moment</_title>
+        <_names>r:atomic_mdm</_names>
+        <system>Atomic</system>
+        <base>
+          <unit>J_p_T</unit>
+          <relation>nounit(bohr_magneton)*2</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
     </category>
   </category>
   <category>
@@ -2366,6 +2542,16 @@
         <prefix>3</prefix>
         <exponent>1</exponent>
       </part>
+    </unit>
+    <unit type="alias">
+      <_title>Atomic Unit of Force</_title>
+      <_names>r:atomic_force,ais:f_A</_names>
+      <system>Atomic</system>
+      <base>
+        <unit>N</unit>
+        <relation uncertainty="1E-15">8.23872336E-8</relation>
+        <exponent>1</exponent>
+      </base>
     </unit>
     <category>
       <_title>Moment of Force</_title>
@@ -2673,9 +2859,10 @@
     <unit type="alias">
       <_title>Electron Volt</_title>
       <_names>ar:eV,electron_volt,p:electron_volts</_names>
+      <use_with_prefixes>true</use_with_prefixes>
       <base>
         <unit>J</unit>
-        <relation uncertainty="9.8E-28">1.6021766208E-19</relation>
+        <relation uncertainty="8.3E-28">1.6021766341E-19</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -2714,8 +2901,9 @@
       </part>
     </unit>
     <unit type="alias">
-      <_title>Hartree</_title>
-      <_names>ar:Ha,as:E_h,hartree</_names>
+      <_title>Hartree (Atomic Unit of Energy)</_title>
+      <_names>ar:Ha,as:E_h,as:m_A,hartree</_names>
+      <system>Atomic</system>
       <base>
         <unit>J</unit>
         <relation uncertainty="5.4E-26">4.359744650E-18</relation>
@@ -2915,6 +3103,34 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
+      </unit>
+    </category>
+    <category>
+      <_title>Action</_title>
+      <unit type="composite">
+        <system>SI</system>
+        <_title>Joule Second</_title>
+        <names>r:J_s</names>
+        <part>
+          <unit>J</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="alias">
+        <_title>Planck over 2 pi (unit)</_title>
+        <_names>rs:planck_unit</_names>
+        <system>Atomic</system>
+        <base>
+          <unit>J_s</unit>
+          <relation>nounit(planck2pi)</relation>
+          <exponent>1</exponent>
+        </base>
       </unit>
     </category>
   </category>
