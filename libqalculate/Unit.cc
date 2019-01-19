@@ -401,11 +401,25 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 			if(isApproximate()) mvalue.setApproximate(true, true);
 		} else {
 			MathStructure *mstruct = new MathStructure();
-			if(suncertainty.empty()) {
-				CALCULATOR->parse(mstruct, svalue, po);
+			bool b_number = false;
+			if(!suncertainty.empty()) {
+				b_number = true;
 			} else {
+				size_t i = svalue.rfind(')');
+				if(i != string::npos && i > 2 && (i == svalue.length() - 1 || (i < svalue.length() - 2 && (svalue[i + 1] == 'E' || svalue[i + 1] == 'e')))) {
+					size_t i2 = svalue.rfind('(');
+					if(i2 != string::npos && i2 < i - 1) {
+						if(svalue.find_first_not_of(NUMBER_ELEMENTS SPACES, svalue[0] == '-' || svalue[0] == '+' ? 1 : 0) == i2 && svalue.find_first_not_of(NUMBERS SPACES, i2 + 1) == i && (i == svalue.length() - 1 || svalue.find_first_not_of(NUMBER_ELEMENTS SPACES, svalue[i + 2] == '-' || svalue[i + 2] == '+' ? i + 3 : i + 2) == string::npos)) {
+							b_number = true;
+						}
+					}
+				}
+			}
+			if(b_number) {
 				mstruct->number().set(svalue, po);
 				mstruct->numberUpdated();
+			} else {
+				CALCULATOR->parse(mstruct, svalue, po);
 			}
 			if(!suncertainty.empty()) {
 				Number nr_u(suncertainty);
@@ -519,11 +533,25 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 		if(isApproximate()) mvalue.setApproximate(true, true);
 	} else {
 		MathStructure *mstruct = new MathStructure();
-		if(suncertainty.empty()) {
-			CALCULATOR->parse(mstruct, svalue, po);
+		bool b_number = false;
+		if(!suncertainty.empty()) {
+			b_number = true;
 		} else {
+			size_t i = svalue.rfind(')');
+			if(i != string::npos && i > 2 && (i == svalue.length() - 1 || (i < svalue.length() - 2 && (svalue[i + 1] == 'E' || svalue[i + 1] == 'e')))) {
+				size_t i2 = svalue.rfind('(');
+				if(i2 != string::npos && i2 < i - 1) {
+					if(svalue.find_first_not_of(NUMBER_ELEMENTS SPACES, svalue[0] == '-' || svalue[0] == '+' ? 1 : 0) == i2 && svalue.find_first_not_of(NUMBERS SPACES, i2 + 1) == i && (i == svalue.length() - 1 || svalue.find_first_not_of(NUMBER_ELEMENTS SPACES, svalue[i + 2] == '-' || svalue[i + 2] == '+' ? i + 3 : i + 2) == string::npos)) {
+						b_number = true;
+					}
+				}
+			}
+		}
+		if(b_number) {
 			mstruct->number().set(svalue, po);
 			mstruct->numberUpdated();
+		} else {
+			CALCULATOR->parse(mstruct, svalue, po);
 		}
 		if(!suncertainty.empty()) {
 			Number nr_u(suncertainty);

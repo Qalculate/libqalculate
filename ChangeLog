@@ -1,3 +1,13 @@
+2019-01-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Many new physical constants (included particle masses in u and MeV/c^2)
+	* Use kg instead g for physical constant to get the correct value when units in constants are disabled
+	* Define Planck units as units instead of variables
+	* Some atomic units
+	* Unit variants of c and reduced Planck constant
+	* Support uncertainty in parentheses for units
+	* Handle incorrect use of '=' for assignment in for(), and add example
+
 2019-01-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Update elements data set (update values and add standard uncertainty to atomic weight)
