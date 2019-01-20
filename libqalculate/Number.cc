@@ -684,7 +684,7 @@ void Number::set(string number, const ParseOptions &po) {
 		minus = !minus;
 	}
 	clear();
-	if(i_unc <= 0 && (po.read_precision == ALWAYS_READ_PRECISION || (in_decimals && po.read_precision == READ_PRECISION_WHEN_DECIMALS)) && CALCULATOR->usesIntervalArithmetic()) {
+	if(i_unc <= 0 && (po.read_precision == ALWAYS_READ_PRECISION || (in_decimals && po.read_precision == READ_PRECISION_WHEN_DECIMALS))) {
 		mpz_mul_si(num, num, 2);
 		mpz_mul_si(den, den, 2);
 		
@@ -740,7 +740,7 @@ void Number::set(string number, const ParseOptions &po) {
 			Number nr_unc;
 			mpq_canonicalize(unc);
 			nr_unc.setInternal(unc);
-			setUncertainty(nr_unc);
+			setUncertainty(nr_unc, true);
 			mpq_clear(unc);
 		} else if(po.read_precision == ALWAYS_READ_PRECISION || (in_decimals && po.read_precision == READ_PRECISION_WHEN_DECIMALS)) {
 			if(base != 10) {
