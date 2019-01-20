@@ -443,9 +443,9 @@ const MathStructure &KnownVariable::get() {
 		if(!suncertainty.empty()) {
 			Number nr_u(suncertainty);
 			if(mstruct->isNumber()) {
-				mstruct->number().setUncertainty(nr_u);
+				mstruct->number().setUncertainty(nr_u, true);
 			} else if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber()) {
-				(*mstruct)[0].number().setUncertainty(nr_u);
+				(*mstruct)[0].number().setUncertainty(nr_u, true);
 			}
 		} else if(precision() >= 0) {
 			if(mstruct->precision() < 0 || precision() < mstruct->precision()) {

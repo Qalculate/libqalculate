@@ -3235,7 +3235,7 @@ int main(int argc, char *argv[]) {
 
 				STR_AND_TABS_3(_("angle unit"), "angle", "Default angle unit for trigonometric functions.", evalops.parse_options.angle_unit, _("none"), _("radians"), _("degrees"), _("gradians"));
 				STR_AND_TABS_2(_("approximation"), "appr", _("How approximate variables and calculations are handled. In exact mode approximate values will not be calculated."), evalops.approximation, _("exact"), _("try exact"), _("approximate"));
-				STR_AND_TABS_BOOL(_("interval arithmetic"), "iv", _("If activated, interval arithmetic determines the final precision of calculations. Avoids wrong results after loss of significance. Especially recommended with physical constants and/or 'read precision'."), CALCULATOR->usesIntervalArithmetic());
+				STR_AND_TABS_BOOL(_("interval arithmetic"), "iv", _("If activated, interval arithmetic determines the final precision of calculations (avoids wrong results after loss of significance), and is used for calculation of uncertainty propagation."), CALCULATOR->usesIntervalArithmetic());
 				STR_AND_TABS_SET(_("precision"), "prec");  
 				SET_DESCRIPTION(_("Specifies the default number of significant digits displayed and determines the precision used for approximate calculations."));
 				str += "(> 0) "; str += i2s(CALCULATOR->getPrecision()); str += "*"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -3370,7 +3370,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("limit implicit multiplication"), "limimpl", "", evalops.parse_options.limit_implicit_multiplication);
 				STR_AND_TABS_2(_("parsing mode"), "parse", _("See 'help parsing mode'."), evalops.parse_options.parsing_mode, _("adaptive"), _("implicit first"), _("conventional"));
-				STR_AND_TABS_2(_("read precision"), "readprec", _("If activated, numbers be interpreted as approximate with precision equal to the number of significant digits. Most useful in combination with 'interval arithmetic' (3.20 = 3.20+/-0.0005)."), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
+				STR_AND_TABS_2(_("read precision"), "readprec", _("If activated, numbers be interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005)."), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
 				STR_AND_TABS_BOOL(_("rpn syntax"), "rpnsyn", "", evalops.parse_options.rpn);
 
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Units"));
@@ -3580,7 +3580,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- fraction (show result in combined fractional format)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- factors (factorize result)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- UTC (show date and time UTC time zone)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- UTC (show date and time in UTC time zone)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- UTC+/-hh[:mm] (show date and time in specified time zone)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- calendars"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
@@ -3736,7 +3736,7 @@ void ViewThread::run() {
 		if(x) {
 			PrintOptions po;
 			po.preserve_format = true;
-			po.show_ending_zeroes = evalops.parse_options.read_precision != DONT_READ_PRECISION && !CALCULATOR->usesIntervalArithmetic();
+			po.show_ending_zeroes = false;
 			po.lower_case_e = printops.lower_case_e;
 			po.lower_case_numbers = printops.lower_case_numbers;
 			po.base_display = printops.base_display;

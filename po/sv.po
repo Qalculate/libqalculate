@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-15 14:51+0100\n"
+"POT-Creation-Date: 2019-01-20 14:24+0100\n"
 "PO-Revision-Date: 2006-05-04 12:29+0200\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -122,7 +122,7 @@ msgstr "Okänt antagande."
 
 #: ../src/qalc.cc:392 ../src/qalc.cc:425 ../libqalculate/Calculator.cc:402
 #: ../libqalculate/DataSet.cc:1058 ../libqalculate/DataSet.cc:1121
-#: ../libqalculate/MathStructure.cc:18790 ../libqalculate/Function.cc:2161
+#: ../libqalculate/MathStructure.cc:19014 ../libqalculate/Function.cc:2161
 #: ../libqalculate/Function.cc:2177
 msgid "or"
 msgstr "eller"
@@ -1456,12 +1456,12 @@ msgstr ""
 #: ../src/qalc.cc:3238
 msgid ""
 "If activated, interval arithmetic determines the final precision of "
-"calculations. Avoids wrong results after loss of significance. Especially "
-"recommended with physical constants and/or 'read precision'."
+"calculations (avoids wrong results after loss of significance), and is used "
+"for calculation of uncertainty propagation."
 msgstr ""
 "Om aktiverat avgörs beräkningars slutgiltiga precision med hjälp av "
-"intervallaritmetik. Undviker felaktiga resultat efter signifikansförlust. "
-"Rekommenderas särskilt med fysiska konstanter och/eller 'läs precision'."
+"intervallaritmetik (Undviker felaktiga resultat efter signifikansförlust), "
+"och används för beräkning av felfortplantning."
 
 #: ../src/qalc.cc:3240
 msgid ""
@@ -1581,12 +1581,10 @@ msgstr "Se 'hjälp tolkningsläge'."
 #: ../src/qalc.cc:3373
 msgid ""
 "If activated, numbers be interpreted as approximate with precision equal to "
-"the number of significant digits. Most useful in combination with 'interval "
-"arithmetic' (3.20 = 3.20+/-0.0005)."
+"the number of significant digits (3.20 = 3.20+/-0.005)."
 msgstr ""
 "Om aktiverat kommer tal att tolkas som approximerade med en precision som är "
-"lika med antalet signifikanta siffror. Mest användbar i kombination med "
-"'intervallaritmetik' (3,20 = 3,20+/-0,0005)."
+"lika med antalet signifikanta siffror (3,20 = 3,20+/-0,005)."
 
 #: ../src/qalc.cc:3378
 msgid "Enables automatic use of hecto, deca, deci, and centi."
@@ -1916,12 +1914,12 @@ msgid "- factors (factorize result)"
 msgstr "- faktorer (faktoriserar resultatet)"
 
 #: ../src/qalc.cc:3583
-msgid "- UTC (show date and time UTC time zone)"
-msgstr ""
+msgid "- UTC (show date and time in UTC time zone)"
+msgstr "- UTC (visa datum och tid för UTC-tidszonen)"
 
 #: ../src/qalc.cc:3584
 msgid "- UTC+/-hh[:mm] (show date and time in specified time zone)"
-msgstr ""
+msgstr "- UTC+/-hh[:mm] (visa datum och tid för specificerad tidszon)"
 
 #: ../src/qalc.cc:3585
 msgid "- calendars"
@@ -2140,33 +2138,33 @@ msgstr ""
 "Antalet efterfrågade element i generera vektor-funktionen måste vara ett "
 "positivt heltal."
 
-#: ../libqalculate/BuiltinFunctions.cc:5211
-#: ../libqalculate/BuiltinFunctions.cc:5215
+#: ../libqalculate/BuiltinFunctions.cc:5212
+#: ../libqalculate/BuiltinFunctions.cc:5216
 #, c-format
 msgid "Too few elements (%s) in vector (%s required)"
 msgstr "För få element (%s) i vektor (%s krävs)"
 
-#: ../libqalculate/BuiltinFunctions.cc:5264
-#: ../libqalculate/BuiltinFunctions.cc:5281
+#: ../libqalculate/BuiltinFunctions.cc:5265
+#: ../libqalculate/BuiltinFunctions.cc:5282
 msgid "Comparison failed."
 msgstr "Jämförelse misslyckades."
 
-#: ../libqalculate/BuiltinFunctions.cc:5269
-#: ../libqalculate/BuiltinFunctions.cc:5299
+#: ../libqalculate/BuiltinFunctions.cc:5270
+#: ../libqalculate/BuiltinFunctions.cc:5300
 msgid "No matching item found."
 msgstr "Inga matchande poster funna."
 
-#: ../libqalculate/BuiltinFunctions.cc:5424
+#: ../libqalculate/BuiltinFunctions.cc:5425
 #, c-format
 msgid "Object %s does not exist."
 msgstr "Okjektet %s finns inte."
 
-#: ../libqalculate/BuiltinFunctions.cc:5442
+#: ../libqalculate/BuiltinFunctions.cc:5443
 #, c-format
 msgid "Invalid variable name (%s)."
 msgstr "Ogiltigt variabelnamn (%s)."
 
-#: ../libqalculate/BuiltinFunctions.cc:5459
+#: ../libqalculate/BuiltinFunctions.cc:5460
 msgid ""
 "A global unit or variable was deactivated. It will be restored after the new "
 "variable has been removed."
@@ -2174,42 +2172,42 @@ msgstr ""
 "En systemvid enhet eller variabel har avaktiverats. Den återaktiveras efter "
 "att den nya variabeln har tagits bort."
 
-#: ../libqalculate/BuiltinFunctions.cc:5474
+#: ../libqalculate/BuiltinFunctions.cc:5475
 #, c-format
 msgid "Register %s does not exist. Returning zero."
 msgstr "RPN-registret %s finns inte. Returnerar noll."
 
-#: ../libqalculate/BuiltinFunctions.cc:5823
+#: ../libqalculate/BuiltinFunctions.cc:5824
 #: ../libqalculate/MathStructure.cc:203 ../libqalculate/MathStructure.cc:235
 #: ../libqalculate/MathStructure.cc:276
 #, c-format
 msgid "To avoid division by zero, the following must be true: %s."
 msgstr "För att undvika division med noll, krävs att följande är sant: %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:5879
-#: ../libqalculate/BuiltinFunctions.cc:5906
-#: ../libqalculate/BuiltinFunctions.cc:5926
-#: ../libqalculate/BuiltinFunctions.cc:5967
-#: ../libqalculate/BuiltinFunctions.cc:6062
-#: ../libqalculate/BuiltinFunctions.cc:6152
+#: ../libqalculate/BuiltinFunctions.cc:5880
+#: ../libqalculate/BuiltinFunctions.cc:5907
+#: ../libqalculate/BuiltinFunctions.cc:5927
+#: ../libqalculate/BuiltinFunctions.cc:5968
+#: ../libqalculate/BuiltinFunctions.cc:6063
+#: ../libqalculate/BuiltinFunctions.cc:6153
 msgid "Unable to integrate the expression."
 msgstr "Kan inte integrera uttrycket."
 
-#: ../libqalculate/BuiltinFunctions.cc:5977
-#: ../libqalculate/BuiltinFunctions.cc:6014
+#: ../libqalculate/BuiltinFunctions.cc:5978
+#: ../libqalculate/BuiltinFunctions.cc:6015
 msgid "Unable to integrate the expression exact."
 msgstr "Kan inte integrera uttrycket exakt."
 
-#: ../libqalculate/BuiltinFunctions.cc:6100
-#: ../libqalculate/BuiltinFunctions.cc:6143
+#: ../libqalculate/BuiltinFunctions.cc:6101
+#: ../libqalculate/BuiltinFunctions.cc:6144
 msgid "Definite integral was approximated with unknown precision."
 msgstr "Definitiv integral approximerades med okänd precision."
 
-#: ../libqalculate/BuiltinFunctions.cc:6124
+#: ../libqalculate/BuiltinFunctions.cc:6125
 msgid "Definite integral was approximated."
 msgstr "Definitiv integral approximerades."
 
-#: ../libqalculate/BuiltinFunctions.cc:6366
+#: ../libqalculate/BuiltinFunctions.cc:6367
 msgid ""
 "No equality or inequality to solve. The entered expression to solve is not "
 "correct (ex. \"x + 5 = 3\" is correct)"
@@ -2217,35 +2215,35 @@ msgstr ""
 "Ingen ekvation eller olikhet att lösa. Angett uttryck att lösa var inte "
 "korrekt (t ex \"x + 5 = 3\" är korrekt)"
 
-#: ../libqalculate/BuiltinFunctions.cc:6413
+#: ../libqalculate/BuiltinFunctions.cc:6414
 #, c-format
 msgid "The comparison is true for all %s (with current assumptions)."
 msgstr "Jämförelsen är sann för alla %s (med nuvarande antaganden)."
 
-#: ../libqalculate/BuiltinFunctions.cc:6417
+#: ../libqalculate/BuiltinFunctions.cc:6418
 msgid "No possible solution was found (with current assumptions)."
 msgstr "Ingen möjlig lösning funnen (med nuvarande antaganden)."
 
-#: ../libqalculate/BuiltinFunctions.cc:6421
+#: ../libqalculate/BuiltinFunctions.cc:6422
 #, c-format
 msgid "Was unable to completely isolate %s."
 msgstr "Kunde inte isolera %s fullständigt."
 
-#: ../libqalculate/BuiltinFunctions.cc:6425
-#: ../libqalculate/BuiltinFunctions.cc:6593
-#: ../libqalculate/BuiltinFunctions.cc:6688
+#: ../libqalculate/BuiltinFunctions.cc:6426
+#: ../libqalculate/BuiltinFunctions.cc:6594
+#: ../libqalculate/BuiltinFunctions.cc:6689
 #, c-format
 msgid "The comparison is true for all %s if %s."
 msgstr "Jämförelsen är sann för alla %s om %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:6429
+#: ../libqalculate/BuiltinFunctions.cc:6430
 #, c-format
 msgid "Was unable to isolate %s."
 msgstr "Kunde inte isolera %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:6552
-#: ../libqalculate/BuiltinFunctions.cc:6579
-#: ../libqalculate/BuiltinFunctions.cc:6662
+#: ../libqalculate/BuiltinFunctions.cc:6553
+#: ../libqalculate/BuiltinFunctions.cc:6580
+#: ../libqalculate/BuiltinFunctions.cc:6663
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed sign was "
@@ -2254,9 +2252,9 @@ msgstr ""
 "Kunde inte isolera %s med nuvarande antaganden. Antaget tecken sattes därför "
 "temporärt till okänt."
 
-#: ../libqalculate/BuiltinFunctions.cc:6555
-#: ../libqalculate/BuiltinFunctions.cc:6582
-#: ../libqalculate/BuiltinFunctions.cc:6665
+#: ../libqalculate/BuiltinFunctions.cc:6556
+#: ../libqalculate/BuiltinFunctions.cc:6583
+#: ../libqalculate/BuiltinFunctions.cc:6666
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed type and "
@@ -2265,18 +2263,18 @@ msgstr ""
 "Kunde inte isolera %s med nuvarande antaganden. Antagen typ sattes därför "
 "temporärt till okänd."
 
-#: ../libqalculate/BuiltinFunctions.cc:6588
-#: ../libqalculate/BuiltinFunctions.cc:6673
+#: ../libqalculate/BuiltinFunctions.cc:6589
+#: ../libqalculate/BuiltinFunctions.cc:6674
 #, c-format
 msgid "The solution requires that %s."
 msgstr "Lösningen kräver att %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:6681
+#: ../libqalculate/BuiltinFunctions.cc:6682
 #, c-format
 msgid "Solution %s requires that %s."
 msgstr "Lösning %s kräver att %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:6753
+#: ../libqalculate/BuiltinFunctions.cc:6754
 #, c-format
 msgid ""
 "Unable to isolate %s.\n"
@@ -2291,55 +2289,55 @@ msgstr ""
 "att varje ekvation åtminstone innehåller motsvarande variabel (om automatisk "
 "omsortering misslyckades)."
 
-#: ../libqalculate/BuiltinFunctions.cc:6755
-#: ../libqalculate/BuiltinFunctions.cc:6769
-#: ../libqalculate/BuiltinFunctions.cc:6778
+#: ../libqalculate/BuiltinFunctions.cc:6756
+#: ../libqalculate/BuiltinFunctions.cc:6770
+#: ../libqalculate/BuiltinFunctions.cc:6779
 #, c-format
 msgid "Unable to isolate %s."
 msgstr "Kan inte isolera %s."
 
-#: ../libqalculate/BuiltinFunctions.cc:6762
+#: ../libqalculate/BuiltinFunctions.cc:6763
 #, c-format
 msgid "Inequalities is not allowed in %s()."
 msgstr "Olikheter är inte tillåtna i %s()."
 
-#: ../libqalculate/BuiltinFunctions.cc:7105
-#: ../libqalculate/BuiltinFunctions.cc:7110
+#: ../libqalculate/BuiltinFunctions.cc:7106
+#: ../libqalculate/BuiltinFunctions.cc:7111
 msgid "No differential equation found."
 msgstr "Ingen differentialekvation funnen."
 
-#: ../libqalculate/BuiltinFunctions.cc:7114
-#: ../libqalculate/BuiltinFunctions.cc:7143
-#: ../libqalculate/BuiltinFunctions.cc:7149
+#: ../libqalculate/BuiltinFunctions.cc:7115
+#: ../libqalculate/BuiltinFunctions.cc:7144
+#: ../libqalculate/BuiltinFunctions.cc:7150
 msgid "Unable to solve differential equation."
 msgstr "Kunde inte lösa differentialekvation."
 
-#: ../libqalculate/BuiltinFunctions.cc:7175
+#: ../libqalculate/BuiltinFunctions.cc:7176
 msgid "Unable to find limit."
 msgstr "Kan inte hitta gränsvärdet."
 
-#: ../libqalculate/BuiltinFunctions.cc:7222
-#: ../libqalculate/BuiltinFunctions.cc:7236
+#: ../libqalculate/BuiltinFunctions.cc:7223
+#: ../libqalculate/BuiltinFunctions.cc:7237
 msgid "Matrix"
 msgstr "Matris"
 
-#: ../libqalculate/BuiltinFunctions.cc:7247
-#: ../libqalculate/BuiltinFunctions.cc:7300
+#: ../libqalculate/BuiltinFunctions.cc:7248
+#: ../libqalculate/BuiltinFunctions.cc:7301
 msgid "Vector"
 msgstr "Vektor"
 
-#: ../libqalculate/BuiltinFunctions.cc:7262
-#: ../libqalculate/BuiltinFunctions.cc:7311 ../libqalculate/Calculator.cc:10613
+#: ../libqalculate/BuiltinFunctions.cc:7263
+#: ../libqalculate/BuiltinFunctions.cc:7312 ../libqalculate/Calculator.cc:10613
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr "Kunde inte generera diagramdata med angivet min, max och stegstorlek."
 
-#: ../libqalculate/BuiltinFunctions.cc:7264
-#: ../libqalculate/BuiltinFunctions.cc:7313
+#: ../libqalculate/BuiltinFunctions.cc:7265
+#: ../libqalculate/BuiltinFunctions.cc:7314
 msgid "Sampling rate must be a positive integer."
 msgstr "Frekvens måste vara ett positivt heltal."
 
-#: ../libqalculate/BuiltinFunctions.cc:7273
-#: ../libqalculate/BuiltinFunctions.cc:7322 ../libqalculate/Calculator.cc:10580
+#: ../libqalculate/BuiltinFunctions.cc:7274
+#: ../libqalculate/BuiltinFunctions.cc:7323 ../libqalculate/Calculator.cc:10580
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr "Kunde inte generera diagramdata med angivet min, max och frekvens."
 
@@ -2359,7 +2357,7 @@ msgstr "plus"
 msgid "minus"
 msgstr "minus"
 
-#: ../libqalculate/Calculator.cc:398 ../libqalculate/MathStructure.cc:18775
+#: ../libqalculate/Calculator.cc:398 ../libqalculate/MathStructure.cc:18999
 #: ../libqalculate/Function.cc:1223 ../libqalculate/Function.cc:1231
 #: ../libqalculate/Function.cc:1660 ../libqalculate/Function.cc:1822
 #: ../libqalculate/Function.cc:1830
@@ -2627,8 +2625,8 @@ msgstr ""
 #: ../libqalculate/MathStructure.cc:8339 ../libqalculate/MathStructure.cc:8406
 #: ../libqalculate/MathStructure.cc:8434 ../libqalculate/MathStructure.cc:8453
 #: ../libqalculate/MathStructure.cc:8472 ../libqalculate/MathStructure.cc:8491
-#: ../libqalculate/MathStructure.cc:8600 ../libqalculate/MathStructure.cc:14418
-#: ../libqalculate/MathStructure.cc:14694
+#: ../libqalculate/MathStructure.cc:8600 ../libqalculate/MathStructure.cc:14642
+#: ../libqalculate/MathStructure.cc:14918
 msgid "This is a bug. Please report it."
 msgstr "Detta är en bug. Var vänlig rapportera felet."
 
@@ -2638,11 +2636,20 @@ msgstr "Detta är en bug. Var vänlig rapportera felet."
 msgid "Limit for %s determined graphically."
 msgstr "Gränsvärde för %s bestämt grafiskt."
 
-#: ../libqalculate/MathStructure.cc:11802
+#: ../libqalculate/MathStructure.cc:11804
 msgid "Interval potentially calculated wide."
 msgstr "Intervall potentiellt beräknat brett."
 
-#: ../libqalculate/MathStructure.cc:16095
+#: ../libqalculate/MathStructure.cc:12178
+#: ../libqalculate/MathStructure.cc:12232
+msgid ""
+"Calculation of uncertainty propagation failed (using interval arithmetic "
+"instead if deemed necessary)"
+msgstr ""
+"Beräkning av felfortplantning misslyckades (intervallaritmetik används istället "
+"om det bedöms vara nödvändigt)"
+
+#: ../libqalculate/MathStructure.cc:16319
 msgid ""
 "Because of time constraints only a limited number of combinations of terms "
 "were tried during factorization. Repeat factorization to try other random "
@@ -2652,33 +2659,33 @@ msgstr ""
 "kombinationer av termer under faktorisering. Uprepa faktoriseringen för att "
 "pröva andra slumpmässiga kombinationer."
 
-#: ../libqalculate/MathStructure.cc:18874
+#: ../libqalculate/MathStructure.cc:19098
 msgid "undefined"
 msgstr "odefinierad"
 
-#: ../libqalculate/MathStructure.cc:18915
+#: ../libqalculate/MathStructure.cc:19139
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to rank vector."
 msgstr "Olöslig jämförelse vid element %s, vid rangordning av vektor."
 
-#: ../libqalculate/MathStructure.cc:18965
+#: ../libqalculate/MathStructure.cc:19189
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to sort vector."
 msgstr "Olöslig jämförelse vid element %s, vid sortering av vektor."
 
-#: ../libqalculate/MathStructure.cc:19390
+#: ../libqalculate/MathStructure.cc:19614
 msgid "The determinant can only be calculated for square matrices."
 msgstr "Determinanten kan enbart beräknas för kvadratiska matriser."
 
-#: ../libqalculate/MathStructure.cc:19453
+#: ../libqalculate/MathStructure.cc:19677
 msgid "The permanent can only be calculated for square matrices."
 msgstr "Permanenten kan enbart beräknas för kvadratiska matriser."
 
-#: ../libqalculate/MathStructure.cc:19542
+#: ../libqalculate/MathStructure.cc:19766
 msgid "Inverse of singular matrix."
 msgstr "Invers av singulär matrs."
 
-#: ../libqalculate/MathStructure.cc:19889
+#: ../libqalculate/MathStructure.cc:20113
 msgid ""
 "Calculations involving conversion of units without proportional linear "
 "relationship (e.g. with multiple temperature units), might give unexpected "
@@ -2688,19 +2695,19 @@ msgstr ""
 "förhållanden (t.ex. med flera olika temperaturenheter), kan ge oförutsedda "
 "svar och rekommenderas ej."
 
-#: ../libqalculate/MathStructure.cc:20792
-#: ../libqalculate/MathStructure.cc:20835
+#: ../libqalculate/MathStructure.cc:21016
+#: ../libqalculate/MathStructure.cc:21059
 msgid "Too many data points"
 msgstr "För många datapunkter"
 
-#: ../libqalculate/MathStructure.cc:20799
+#: ../libqalculate/MathStructure.cc:21023
 msgid ""
 "The selected min and max do not result in a positive, finite number of data "
 "points"
 msgstr ""
 "Valt min och max resulterar inte i ett positive, ändligt antal datapunkter"
 
-#: ../libqalculate/MathStructure.cc:20832
+#: ../libqalculate/MathStructure.cc:21056
 msgid ""
 "The selected min, max and step size do not result in a positive, finite "
 "number of data points"
@@ -2708,26 +2715,26 @@ msgstr ""
 "Valt min, max och stegstorlek resulterar inte i ett positive, ändligt antal "
 "datapunkter"
 
-#: ../libqalculate/MathStructure.cc:27359
-#: ../libqalculate/MathStructure.cc:27535
-#: ../libqalculate/MathStructure.cc:28164
-#: ../libqalculate/MathStructure.cc:28672
-#: ../libqalculate/MathStructure.cc:28729
-#: ../libqalculate/MathStructure.cc:28771
-#: ../libqalculate/MathStructure.cc:28784
-#: ../libqalculate/MathStructure.cc:28834
-#: ../libqalculate/MathStructure.cc:28953
-#: ../libqalculate/MathStructure.cc:29088
+#: ../libqalculate/MathStructure.cc:27585
+#: ../libqalculate/MathStructure.cc:27761
+#: ../libqalculate/MathStructure.cc:28390
+#: ../libqalculate/MathStructure.cc:28898
+#: ../libqalculate/MathStructure.cc:28955
+#: ../libqalculate/MathStructure.cc:28997
+#: ../libqalculate/MathStructure.cc:29010
+#: ../libqalculate/MathStructure.cc:29060
+#: ../libqalculate/MathStructure.cc:29179
+#: ../libqalculate/MathStructure.cc:29314
 #, c-format
 msgid "Interval arithmetic was disabled during calculation of %s."
 msgstr "Intervallarithmetik inaktiverades under beräkning av %s."
 
-#: ../libqalculate/MathStructure.cc:29087
+#: ../libqalculate/MathStructure.cc:29313
 #, c-format
 msgid "Not all complex roots were calculated for %s."
 msgstr "Alla komplexa rötter beräknades ej för %s."
 
-#: ../libqalculate/MathStructure.cc:30497
+#: ../libqalculate/MathStructure.cc:30723
 #, c-format
 msgid "Only one or two of the roots where calculated for %s."
 msgstr "Enbart en eller två av rötterna beräknades för %s."
@@ -3398,7 +3405,7 @@ msgstr "igår"
 msgid "leap month"
 msgstr "skottmånad"
 
-#: ../libqalculate/Unit.cc:952
+#: ../libqalculate/Unit.cc:980
 msgid "Error(s) in unitexpression."
 msgstr "Fel i enhetsuttryck."
 

@@ -1,3 +1,7 @@
+2019-01-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Calculate propagation of uncertainty using variance formula if interval arithmetic is deactivated
+
 2019-01-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Many new physical constants (included particle masses in u and MeV/c^2)
