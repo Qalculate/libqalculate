@@ -1,6 +1,7 @@
 2019-01-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Calculate propagation of uncertainty using variance formula if interval arithmetic is deactivated
+	* Fix randomly activated interval arithmetic (uninitialized variable)
 
 2019-01-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -18,7 +19,6 @@
 	* Update planets data set
 	* Support uncertainty in parentheses for variables and data objects (e.g. "4.002 602(2)")
 	* Add uncertainty and range (in brackets) support for data objects
-	* CODATA 2017 update
 
 2019-01-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

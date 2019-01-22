@@ -4851,7 +4851,10 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 StripUnitsFunction::StripUnitsFunction() : MathFunction("nounit", 1) {}
 int StripUnitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	mstruct.eval(eo);
+	EvaluationOptions eo2 = eo;
+	eo2.sync_units = false;
+	eo2.keep_prefixes = true;
+	mstruct.eval(eo2);
 	mstruct.removeType(STRUCT_UNIT);
 	return 1;
 }

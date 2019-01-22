@@ -7202,13 +7202,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
 			po2.min_decimals = 0;
 			po2.use_max_decimals = false;
+			po2.preserve_format = false;
 			str = print(po2, ips2);
 			if(ips.iexp) *ips.iexp = iexp;
 			po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-			if(po.preserve_precision) {
+			if(po2.preserve_precision) {
 				if(i_precision < 0) precision = FROM_BIT_PRECISION(BIT_PRECISION);
 				else precision = i_precision;
-			} else if(po.preserve_format) {
+			} else if(po2.preserve_format) {
 				if(i_precision < 0) precision = FROM_BIT_PRECISION(BIT_PRECISION) - 1;
 				else precision = i_precision;
 			}

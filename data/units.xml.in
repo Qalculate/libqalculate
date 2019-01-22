@@ -643,7 +643,7 @@
     </unit>
     <unit type="alias">
       <_title>Atomic Unit of Mass</_title>
-      <_names>r:atomic_mass,ais:m_A</_names>
+      <_names>r:atomic_uom,ais:m_A</_names>
       <system>Atomic</system>
       <base>
         <unit>g</unit>
@@ -848,7 +848,7 @@
     </unit>
     <unit type="alias">
       <_title>Atomic Unit of Time</_title>
-      <_names>r:atomic_time,ais:t_A</_names>
+      <_names>r:atomic_uot,ais:t_A</_names>
       <system>Atomic</system>
       <base>
         <unit>s</unit>
@@ -892,7 +892,7 @@
       </unit>
       <unit type="alias">
         <_title>Atomic Unit of Current</_title>
-        <_names>r:atomic_current</_names>
+        <_names>r:atomic_uoc</_names>
         <system>Atomic</system>
         <base>
           <unit>A</unit>
@@ -977,7 +977,7 @@
       </unit>
       <unit type="alias">
         <_title>Atomic Unit of Charge</_title>
-        <_names>r:atomic_charge,ais:q_A</_names>
+        <_names>r:atomic_uoc,ais:q_A</_names>
         <system>Atomic</system>
         <base>
           <unit>C</unit>
@@ -1070,7 +1070,7 @@
       </unit>
       <unit type="alias">
         <_title>Atomic Unit of Electric Potential</_title>
-        <_names>r:atomic_potential</_names>
+        <_names>r:atomic_uop</_names>
         <system>Atomic</system>
         <base>
           <unit>V</unit>
@@ -1200,7 +1200,7 @@
       </unit>
       <unit type="alias">
         <_title>Atomic Unit of Electric Field</_title>
-        <_names>r:atomic_field</_names>
+        <_names>r:atomic_uoef</_names>
         <system>Atomic</system>
         <base>
           <unit>V_p_m</unit>
@@ -2243,7 +2243,7 @@
     </unit>
     <unit type="alias">
       <_title>Atomic Unit of Velocity</_title>
-      <_names>r:atomic_velocity</_names>
+      <_names>r:atomic_uov</_names>
       <system>Atomic</system>
       <base>
         <unit>m_p_s</unit>
@@ -2406,7 +2406,7 @@
       </unit>
       <unit type="alias">
         <_title>Atomic Unit of Magnetic Flux Density</_title>
-        <_names>r:atomic_mfd</_names>
+        <_names>r:atomic_uomfd</_names>
         <system>Atomic</system>
         <base>
           <unit>T</unit>
@@ -2433,7 +2433,7 @@
       </unit>
       <unit type="alias">
       <_title>Atomic Unit of Magnetic Dipole Moment</_title>
-        <_names>r:atomic_mdm</_names>
+        <_names>r:atomic_uomdm</_names>
         <system>Atomic</system>
         <base>
           <unit>J_p_T</unit>
@@ -2545,7 +2545,7 @@
     </unit>
     <unit type="alias">
       <_title>Atomic Unit of Force</_title>
-      <_names>r:atomic_force,ais:f_A</_names>
+      <_names>r:atomic_uof,ais:f_A</_names>
       <system>Atomic</system>
       <base>
         <unit>N</unit>
@@ -2834,7 +2834,7 @@
       <_names>ars:cal_fifteen</_names>
       <base>
         <unit>J</unit>
-        <relation approximate="true">4.185880</relation>
+        <relation uncertainty="0.0005">4.1855</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -3128,7 +3128,7 @@
         <system>Atomic</system>
         <base>
           <unit>J_s</unit>
-          <relation>nounit(planck2pi)</relation>
+          <relation uncertainty="1.1E-42">1.054571818E-34</relation>
           <exponent>1</exponent>
         </base>
       </unit>
