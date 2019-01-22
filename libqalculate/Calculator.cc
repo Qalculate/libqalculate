@@ -352,6 +352,7 @@ Calculator::Calculator() {
 	setPrecision(DEFAULT_PRECISION);
 	b_interval = false;
 	i_stop_interval = 0;
+	i_start_interval = 0;
 	
 	b_var_units = true;
 
@@ -2904,7 +2905,13 @@ MathStructure Calculator::convert(double value, Unit *from_unit, Unit *to_unit, 
 	MathStructure mstruct(value);
 	mstruct *= from_unit;
 	mstruct.eval(eo);
-	mstruct.convert(to_unit, true);
+	if(eo.approximation == APPROXIMATION_EXACT) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_TRY_EXACT;
+		mstruct.convert(to_unit, true, NULL, false, eo2);
+	} else {
+		mstruct.convert(to_unit, true, NULL, false, eo);
+	}
 	mstruct.divide(to_unit, true);
 	mstruct.eval(eo);
 	return mstruct;
@@ -2935,7 +2942,13 @@ MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_u
 		mstruct.setAborted();
 		return mstruct;
 	}
-	mstruct.convert(to_unit, true);
+	if(eo.approximation == APPROXIMATION_EXACT) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_TRY_EXACT;
+		mstruct.convert(to_unit, true, NULL, false, eo2);
+	} else {
+		mstruct.convert(to_unit, true, NULL, false, eo);
+	}
 	mstruct.divide(to_unit, true);
 	b_busy = true;
 	if(!calculate_thread->write(b_parse)) {calculate_thread->cancel(); return mstruct;}
@@ -2956,7 +2969,13 @@ MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit, co
 	parse(&mstruct, str, eo.parse_options);
 	mstruct *= from_unit;
 	mstruct.eval(eo);
-	mstruct.convert(to_unit, true);
+	if(eo.approximation == APPROXIMATION_EXACT) {
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_TRY_EXACT;
+		mstruct.convert(to_unit, true, NULL, false, eo2);
+	} else {
+		mstruct.convert(to_unit, true, NULL, false, eo);
+	}
 	mstruct.divide(to_unit, true);
 	mstruct.eval(eo);
 	return mstruct;
@@ -3031,6 +3050,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 		EvaluationOptions eo2 = eo;
 		eo2.keep_prefixes = true;
 		bool b = false;
+		if(eo.approximation == APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_TRY_EXACT;
 		if(mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL) || always_convert) {
 			b = true;
 		} else {
@@ -3068,8 +3088,8 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				}
 			}
 		}
-
 		if(b) {
+			eo2.approximation = eo.approximation;
 			eo2.sync_units = true;
 			eo2.keep_prefixes = false;
 			MathStructure mbak(mstruct_new);
@@ -3116,9 +3136,11 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	if(!mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
 	MathStructure mstruct_new(mstruct);
-	mstruct_new.convertToBaseUnits(true, NULL, true, eo);
+	EvaluationOptions eo2 = eo;
+	if(eo.approximation == APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_TRY_EXACT;
+	mstruct_new.convertToBaseUnits(true, NULL, true, eo2);
 	if(!mstruct_new.equals(mstruct, true, true)) {
-		EvaluationOptions eo2 = eo;
+		eo2.approximation = eo.approximation;
 		eo2.keep_prefixes = false;
 		eo2.isolate_x = false;
 		eo2.test_comparisons = false;

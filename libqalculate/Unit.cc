@@ -196,7 +196,7 @@ bool Unit::hasComplexRelationTo(Unit *u) const {
 	}
 	Unit *fbu = u;
 	if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
-	while(1) {
+	while(true) {
 		if(fbu == this) return false;
 		if(((AliasUnit*) fbu)->hasComplexExpression()) return true;
 		if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
@@ -424,9 +424,12 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 			if(!suncertainty.empty()) {
 				Number nr_u(suncertainty);
 				if(mstruct->isNumber()) {
-					mstruct->number().setUncertainty(nr_u);
+					mstruct->number().setUncertainty(nr_u, true);
+					mstruct->numberUpdated();
 				} else if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber()) {
-					(*mstruct)[0].number().setUncertainty(nr_u);
+					(*mstruct)[0].number().setUncertainty(nr_u, true);
+					(*mstruct)[0].numberUpdated();
+					mstruct->childUpdated(1);
 				}
 			} else if(precision() > 0) {
 				if(mstruct->isNumber()) {
@@ -556,9 +559,12 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 		if(!suncertainty.empty()) {
 			Number nr_u(suncertainty);
 			if(mstruct->isNumber()) {
-				mstruct->number().setUncertainty(nr_u);
+				mstruct->number().setUncertainty(nr_u, true);
+				mstruct->numberUpdated();
 			} else if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber()) {
-				(*mstruct)[0].number().setUncertainty(nr_u);
+				(*mstruct)[0].number().setUncertainty(nr_u, true);
+				(*mstruct)[0].numberUpdated();
+				mstruct->childUpdated(1);
 			}
 		} else if(precision() >= 0) {
 			if(mstruct->isNumber()) {

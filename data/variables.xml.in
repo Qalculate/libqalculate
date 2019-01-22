@@ -165,7 +165,7 @@
       <variable>
         <_title>Planck Constant</_title>
         <_names>r:planck,au:&#x210e;</_names>
-        <value uncertainty="6.9E-42" unit="J*s">6.626070150E-34</value>
+        <value uncertainty="8.1E-42" unit="J*s">6.626070040E-34</value>
       </variable>
       <variable>
         <_title>Planck Constant over 2 pi (Dirac constant)</_title>
@@ -208,7 +208,7 @@
       <variable>
         <_title>Elementary Charge</_title>
         <_names>r:elementary_charge,ais:e_charge,ais:q_e</_names>
-        <value uncertainty="8.3E-28" unit="C">1.6021766341E-19</value>
+        <value uncertainty="9.8E-28" unit="C">1.6021766208E-19</value>
       </variable>
       <variable>
         <_title>Inverse of Conductance Quantum</_title>
@@ -483,12 +483,12 @@
       <variable>
         <_title>Avogadro Constant</_title>
         <_names>r:avogadro,ais:N_A</_names>
-        <value uncertainty="6.2E15" unit="mol^(-1)">6.022140758E23</value>
+        <value uncertainty="7.4E15" unit="mol^(-1)">6.022140857E23</value>
       </variable>
       <variable>
         <_title>Boltzmann Constant</_title>
         <_names>r:boltzmann,ais:k_B</_names>
-        <value uncertainty="5.1E-30" unit="J*K^(-1)">1.38064903E-23</value>
+        <value uncertainty="7.9E-30" unit="J*K^(-1)">1.38064852E-23</value>
       </variable>
       <variable>
         <_title>Compton Wavelength</_title>
@@ -498,7 +498,7 @@
       <variable>
         <_title>Compton Wavelength over 2 pi</_title>
         <_names>r:compton_wavelength_2pi</_names>
-        <value>compton_wavelength/2pi</value>
+        <value>compton_wavelength/(2*pi)</value>
       </variable>
       <variable>
         <_title>Faraday Constant</_title>

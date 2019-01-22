@@ -298,7 +298,6 @@ MathStructure *DataProperty::generateStruct(const string &valuestr, int is_appro
 				if(i != string::npos) {
 					Number nr;
 					nr.setInterval(Number(valuestr.substr(1, i - 1)), Number(valuestr.substr(i + 1, valuestr.length() - i - 2)));
-					//if(!CALCULATOR->usesIntervalArithmetic()) nr.intervalToPrecision(2);
 					mstruct = new MathStructure(nr);
 				} else if((b_approximate && is_approximate < 0) || is_approximate > 0) {
 					ParseOptions po; po.read_precision = ALWAYS_READ_PRECISION;
@@ -312,10 +311,6 @@ MathStructure *DataProperty::generateStruct(const string &valuestr, int is_appro
 					mstruct = new MathStructure(Number(valuestr, po));
 				} else {
 					mstruct = new MathStructure(Number(valuestr));
-					/*if(!CALCULATOR->usesIntervalArithmetic() && mstruct->number().isInterval()) {
-						mstruct->number().intervalToPrecision(2);
-						mstruct->numberUpdated();
-					}*/
 				}
 			}
 			break;
