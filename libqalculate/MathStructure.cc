@@ -3116,6 +3116,11 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 				MERGE_APPROX_AND_PREC(mstruct)
 				calculateRaiseExponent(eo, mparent, index_this);
 				return 1;
+			} else if(mstruct.isFunction() && o_function == CALCULATOR->f_stripunits && mstruct.function() == CALCULATOR->f_stripunits && mstruct.size() == 1 && SIZE == 1) {
+				mstruct[0].ref();
+				CHILD(0).add_nocopy(&mstruct[0]);
+				CHILD(0).calculateAddLast(eo, true, this, 0);
+				return 1;
 			}
 			goto default_addition_merge;
 		}
@@ -4502,6 +4507,12 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							}
 						}
 					}
+					if(mstruct.isFunction() && o_function == CALCULATOR->f_stripunits && mstruct.function() == CALCULATOR->f_stripunits && mstruct.size() == 1 && SIZE == 1) {
+						mstruct[0].ref();
+						CHILD(0).multiply_nocopy(&mstruct[0]);
+						CHILD(0).calculateMultiplyLast(eo, true, this, 0);
+						return 1;
+					}
 				}
 				default: {
 					if(!mstruct.isNumber() && CHILD(1).isNumber() && CHILD(0) == mstruct) {
@@ -5600,6 +5611,12 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						}
 					}
 				}
+			}
+			if(o_function == CALCULATOR->f_stripunits && SIZE == 1 && mstruct.containsType(STRUCT_UNIT, false, true, true) == 0) {
+				mstruct.ref();
+				CHILD(0).raise_nocopy(&mstruct);
+				CHILD(0).calculateRaiseExponent(eo, this, 0);
+				return 1;
 			}
 			goto default_power_merge;
 		}
@@ -7426,7 +7443,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					if(eo.calculate_functions) {
 						calculateFunctions(feo);
 					}
-					fix_intervals(*this, feo, NULL, PRECISION);
+					if(CALCULATOR->usesIntervalArithmetic()) fix_intervals(*this, feo, NULL, PRECISION);
 					b = true;
 					calculatesub(eo, feo, true, mparent, index_this);
 				}
@@ -8126,6 +8143,8 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					calculatesub(eo, feo, true, mparent, index_this);
 					break;
 				}
+			} else if(o_function == CALCULATOR->f_stripunits) {
+				return calculateFunctions(eo, false);
 			}
 		}
 		default: {
@@ -11975,10 +11994,10 @@ bool simplify_ln(MathStructure &mstruct) {
 	return b_ret;
 }
 
-KnownVariable *find_interval_replace_var(MathStructure &m, Number &unc, const EvaluationOptions &eo, MathStructure **mnew, Variable **prev_v, bool &b_failed) {
+KnownVariable *find_interval_replace_var(MathStructure &m, Number &unc, const EvaluationOptions &eo, MathStructure **mnew, Variable **prev_v, bool &b_failed, bool in_nounit = false) {
 	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && m.isVariable() && m.variable()->isKnown()) {
 		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
-		if(!mvar.containsInterval(true, true, false, true, true)) return NULL;
+		if(!mvar.containsInterval(true, true, false, false, true)) return NULL;
 		if(mvar.isNumber()) {
 			unc = mvar.number().uncertainty();
 			Number nmid(mvar.number());
@@ -11996,7 +12015,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, Number &unc, const Ev
 			if(mvar[0].number().isInterval()) {
 				bool b = true;
 				for(size_t i = 1; i < mvar.size(); i++) {
-					if(mvar[i].containsInterval(true, true, false, true, true)) {
+					if(mvar[i].containsInterval(true, true, false, false, true)) {
 						b = false;
 						break;
 					}
@@ -12013,7 +12032,10 @@ KnownVariable *find_interval_replace_var(MathStructure &m, Number &unc, const Ev
 					*prev_v = m.variable();
 					m.set(v);
 					for(size_t i = 1; i < mvar.size(); i++) {
-						m.multiply(mvar[i], true);
+						if(!in_nounit || !mvar[i].isUnit_exp()) {
+							m.multiply(mvar[i], true);
+							if(in_nounit) m.last().removeType(STRUCT_UNIT);
+						}
 					}
 					v->destroy();
 					return v;
@@ -12032,8 +12054,16 @@ KnownVariable *find_interval_replace_var(MathStructure &m, Number &unc, const Ev
 		v->destroy();
 		return v;
 	}
+	if(m.isFunction() && m.function() == CALCULATOR->f_stripunits && m.size() == 1) {
+		KnownVariable *v = find_interval_replace_var(m[0], unc, eo, mnew, prev_v, b_failed, true);
+		if(b_failed) return NULL;
+		if(v && m[0].containsType(STRUCT_UNIT, false, true, true) == 0) {
+			m.setToChild(1, true);
+		}
+		return v;
+	}
 	for(size_t i = 0; i < m.size(); i++) {
-		KnownVariable *v = find_interval_replace_var(m[i], unc, eo, mnew, prev_v, b_failed);
+		KnownVariable *v = find_interval_replace_var(m[i], unc, eo, mnew, prev_v, b_failed, in_nounit);
 		if(b_failed) return NULL;
 		if(v) return v;
 	}
@@ -12056,17 +12086,17 @@ bool find_interval_replace_var_nr(MathStructure &m) {
 }
 
 
-bool replace_variables_with_interval(MathStructure &m, const EvaluationOptions &eo) {
+bool replace_variables_with_interval(MathStructure &m, const EvaluationOptions &eo, bool in_nounit = false) {
 	if(m.isVariable() && m.variable()->isKnown()) {
 		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
-		if(!mvar.containsInterval(true, true, false, true, true)) return NULL;
+		if(!mvar.containsInterval(true, true, false, false, true)) return NULL;
 		if(mvar.isNumber()) {
 			return false;
 		} else if(mvar.isMultiplication() && mvar[0].isNumber()) {
 			if(mvar[0].number().isInterval()) {
 				bool b = true;
 				for(size_t i = 1; i < mvar.size(); i++) {
-					if(mvar[i].containsInterval(true, true, false, true, true)) {
+					if(mvar[i].containsInterval(true, true, false, false, true)) {
 						b = false;
 						break;
 					}
@@ -12075,11 +12105,19 @@ bool replace_variables_with_interval(MathStructure &m, const EvaluationOptions &
 			}
 		}
 		m.set(mvar, true);
+		if(in_nounit) m.removeType(STRUCT_UNIT);
 		return true;
 	}
 	bool b = false;
+	if(m.isFunction() && m.function() == CALCULATOR->f_stripunits && m.size() == 1) {
+		b = replace_variables_with_interval(m[0], eo, true);
+		if(b && m[0].containsType(STRUCT_UNIT, false, true, true) == 0) {
+			m.setToChild(1, true);
+		}
+		return b;
+	}
 	for(size_t i = 0; i < m.size(); i++) {
-		if(replace_variables_with_interval(m[i], eo)) b = true;
+		if(replace_variables_with_interval(m[i], eo, in_nounit)) b = true;
 	}
 	return b;
 }
@@ -12131,7 +12169,7 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 }
 
 UnknownVariable *find_interval_replace_var_comp(MathStructure &m, const EvaluationOptions &eo, Variable **v) {
-	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && m.isVariable() && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().containsInterval(true, true, false, true, true)) {
+	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && m.isVariable() && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().containsInterval(true, true, false, false, true)) {
 		UnknownVariable *uv = new UnknownVariable("", format_and_print(m));
 		uv->setInterval(m);
 		*v = m.variable();
@@ -12183,7 +12221,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 	eo2.isolate_x = false;
 	if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, CALCULATOR->usesIntervalArithmetic() ? 0 : ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) ? 2 : 1));
-	if((((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) || !CALCULATOR->usesIntervalArithmetic()) && containsInterval(true, (eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES), false, true, true)) || (eo.sync_units && !CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
+	if((((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) || !CALCULATOR->usesIntervalArithmetic()) && containsInterval(true, (eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES), false, CALCULATOR->usesIntervalArithmetic(), true)) || (eo.sync_units && !CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
 		if(CALCULATOR->usesIntervalArithmetic()) {
 			EvaluationOptions eo3 = eo2;
 			eo3.split_squares = false;
@@ -19981,6 +20019,7 @@ void gatherInformation(const MathStructure &mstruct, vector<Unit*> &base_units, 
 			break;
 		}
 		case STRUCT_FUNCTION: {
+			if(mstruct.function() == CALCULATOR->f_stripunits) break;
 			for(size_t i = 0; i < mstruct.size(); i++) {
 				if(!mstruct.function()->getArgumentDefinition(i + 1) || mstruct.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) {
 					gatherInformation(mstruct[i], base_units, alias_units);
@@ -20541,6 +20580,7 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
 		}
 	} else {
 		if(m.type() == STRUCT_FUNCTION) {
+			if(m.function() == CALCULATOR->f_stripunits) return b;
 			for(size_t i = 0; i < m.size(); i++) {
 				if(m.size() > 100 && CALCULATOR->aborted()) return b;
 				if((!m.function()->getArgumentDefinition(i + 1) || m.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) && convert_approximate(m[i], u, feo, vars, uncs, units)) {
@@ -20922,6 +20962,7 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 			}*/
 		}
 		if(m_type == STRUCT_FUNCTION) {
+			if(o_function == CALCULATOR->f_stripunits) return b;
 			for(size_t i = 0; i < SIZE; i++) {
 				if(SIZE > 100 && CALCULATOR->aborted()) return b;
 				if((!o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) && CHILD(i).convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix)) {
@@ -21232,6 +21273,16 @@ int MathStructure::containsType(StructureType mtype, bool structural_only, bool 
 			if(function_value) {
 				return function_value->containsType(mtype, false, check_variables, check_functions);
 			}
+			if(mtype == STRUCT_UNIT) {
+				if(o_function == CALCULATOR->f_stripunits) return 0;
+				if(o_function->subtype() == SUBTYPE_USER_FUNCTION || o_function == CALCULATOR->f_register || o_function == CALCULATOR->f_stack || o_function == CALCULATOR->f_load) return -1;
+				// (eo.parse_options.angle_unit == ANGLE_UNIT_NONE && (o_function == CALCULATOR->f_asin || o_function == CALCULATOR->f_acos || o_function == CALCULATOR->f_atan || o_function == CALCULATOR->f_radtodef))
+				if(o_function == CALCULATOR->f_ln || o_function == CALCULATOR->f_logn || o_function == CALCULATOR->f_arg || o_function == CALCULATOR->f_gamma || o_function == CALCULATOR->f_beta || o_function == CALCULATOR->f_factorial || o_function == CALCULATOR->f_besselj || o_function == CALCULATOR->f_bessely || o_function == CALCULATOR->f_erf || o_function == CALCULATOR->f_erfc || o_function == CALCULATOR->f_li || o_function == CALCULATOR->f_Li || o_function == CALCULATOR->f_Ei || o_function == CALCULATOR->f_Si || o_function == CALCULATOR->f_Ci || o_function == CALCULATOR->f_Shi || o_function == CALCULATOR->f_Chi || o_function == CALCULATOR->f_signum || o_function == CALCULATOR->f_heaviside || o_function == CALCULATOR->f_lambert_w || o_function == CALCULATOR->f_sinc || o_function == CALCULATOR->f_sin || o_function == CALCULATOR->f_cos || o_function == CALCULATOR->f_tan || o_function == CALCULATOR->f_sinh || o_function == CALCULATOR->f_cosh || o_function == CALCULATOR->f_tanh || o_function == CALCULATOR->f_asinh || o_function == CALCULATOR->f_acosh || o_function == CALCULATOR->f_atanh || o_function == CALCULATOR->f_asin || o_function == CALCULATOR->f_acos || o_function == CALCULATOR->f_atan) return 0;
+				for(size_t i = 0; i < SIZE; i++) {
+					if(CHILD(i).containsType(mtype, false, check_variables, check_functions) != 0) return -1;
+				}
+				return 0;
+			}
 			return -1;
 		} else if(isAborted()) {
 			return -1;
@@ -21393,6 +21444,9 @@ bool MathStructure::removeType(StructureType mtype) {
 			setToChild(1, true);
 		}
 	} else {
+		if(m_type == STRUCT_FUNCTION) {
+			if(mtype != STRUCT_UNIT || (o_function != CALCULATOR->f_sqrt && o_function != CALCULATOR->f_root && o_function != CALCULATOR->f_cbrt)) return b;
+		}
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CHILD(i).removeType(mtype)) {
 				b = true;
