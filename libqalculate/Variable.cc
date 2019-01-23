@@ -440,6 +440,10 @@ const MathStructure &KnownVariable::get() {
 			mstruct->setAborted();
 			CALCULATOR->parse(mstruct, sexpression, po);
 		}
+		if(!sunit.empty()) {
+			mstruct->removeType(STRUCT_UNIT);
+			if(mstruct->containsType(STRUCT_UNIT, false, true, true) != 0) mstruct->transform(CALCULATOR->f_stripunits);
+		}
 		if(!suncertainty.empty()) {
 			Number nr_u(suncertainty);
 			if(mstruct->isNumber()) {

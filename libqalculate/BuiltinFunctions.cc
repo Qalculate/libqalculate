@@ -4851,12 +4851,79 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 StripUnitsFunction::StripUnitsFunction() : MathFunction("nounit", 1) {}
 int StripUnitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
+	mstruct.removeType(STRUCT_UNIT);
+	if(mstruct.containsType(STRUCT_UNIT, false, true, true) == 0) return 1;
+	if(mstruct.isMultiplication() || mstruct.isAddition()) {
+		MathStructure *mleft = NULL;
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(mstruct[i].containsType(STRUCT_UNIT, false, true, true) == 0) {
+				mstruct[i].ref();
+				if(mleft) {
+					if(mstruct.isMultiplication()) mleft->multiply_nocopy(&mstruct[i], true);
+					else mleft->add_nocopy(&mstruct[i], true);
+				} else {
+					mleft = &mstruct[i];
+				}
+				mstruct.delChild(i + 1);
+			}
+		}
+		if(mleft) {
+			if(mstruct.size() == 0) {
+				mstruct.set_nocopy(*mleft);
+				mleft->unref();
+			} else {
+				bool b_multi = mstruct.isMultiplication();
+				if(mstruct.size() == 1) {
+					mstruct.setType(STRUCT_FUNCTION);
+					mstruct.setFunction(this);
+				} else {
+					mstruct.transform(this);
+				}
+				if(b_multi) mstruct.multiply_nocopy(mleft, true);
+				else mstruct.add_nocopy(mleft, true);
+			}
+			return 1;
+		}
+	}
 	EvaluationOptions eo2 = eo;
 	eo2.sync_units = false;
 	eo2.keep_prefixes = true;
 	mstruct.eval(eo2);
 	mstruct.removeType(STRUCT_UNIT);
-	return 1;
+	if(mstruct.containsType(STRUCT_UNIT, false, true, true) == 0) return 1;
+	if(mstruct.isMultiplication() || mstruct.isAddition()) {
+		MathStructure *mleft = NULL;
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(mstruct[i].containsType(STRUCT_UNIT, false, true, true) == 0) {
+				mstruct[i].ref();
+				if(mleft) {
+					if(mstruct.isMultiplication()) mleft->multiply_nocopy(&mstruct[i], true);
+					else mleft->add_nocopy(&mstruct[i], true);
+				} else {
+					mleft = &mstruct[i];
+				}
+				mstruct.delChild(i + 1);
+			}
+		}
+		if(mleft) {
+			if(mstruct.size() == 0) {
+				mstruct.set_nocopy(*mleft);
+				mleft->unref();
+			} else {
+				bool b_multi = mstruct.isMultiplication();
+				if(mstruct.size() == 1) {
+					mstruct.setType(STRUCT_FUNCTION);
+					mstruct.setFunction(this);
+				} else {
+					mstruct.transform(this);
+				}
+				if(b_multi) mstruct.multiply_nocopy(mleft, true);
+				else mstruct.add_nocopy(mleft, true);
+			}
+			return 1;
+		}
+	}
+	return -1;
 }
 
 ErrorFunction::ErrorFunction() : MathFunction("error", 1) {
