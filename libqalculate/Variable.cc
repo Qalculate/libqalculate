@@ -440,7 +440,7 @@ const MathStructure &KnownVariable::get() {
 			mstruct->setAborted();
 			CALCULATOR->parse(mstruct, sexpression, po);
 		}
-		if(!sunit.empty()) {
+		if(!sunit.empty() && (!CALCULATOR->variableUnitsEnabled() || sunit != "auto")) {
 			mstruct->removeType(STRUCT_UNIT);
 			if(mstruct->containsType(STRUCT_UNIT, false, true, true) != 0) mstruct->transform(CALCULATOR->f_stripunits);
 		}
@@ -463,7 +463,7 @@ const MathStructure &KnownVariable::get() {
 				if(!set_precision_of_numbers(*mstruct, precision())) mstruct->setApproximate(true, true);
 			}
 		}
-		if(!sunit.empty() && CALCULATOR->variableUnitsEnabled()) {
+		if(!sunit.empty() && CALCULATOR->variableUnitsEnabled() && sunit != "auto") {
 			MathStructure *mstruct_unit = new MathStructure;
 			mstruct_unit->setAborted();
 			CALCULATOR->parse(mstruct_unit, sunit, po);
