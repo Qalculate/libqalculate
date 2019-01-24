@@ -7204,6 +7204,20 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			po2.use_max_decimals = false;
 			po2.preserve_format = false;
 			str = print(po2, ips2);
+			if(!po.preserve_format && !po.preserve_precision && i_log_diff < 0 && precision + i_log_diff > 2) {
+				if(iexp != 0 || mpfr_cmp_ui(f_diff, 10) < 0) {
+					precision = -i_log_diff + 2;
+					po2.show_ending_zeroes = true;
+					Number nr(*this);
+					nr.setPrecision(precision);
+					str = nr.print(po2, ips2);
+				} else {
+					po2.use_max_decimals = true;
+					po2.max_decimals = 0;
+					str = print(po2, ips2);
+				}
+				
+			}
 			if(ips.iexp) *ips.iexp = iexp;
 			po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 			if(po2.preserve_precision) {

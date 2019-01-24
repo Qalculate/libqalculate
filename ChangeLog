@@ -1,3 +1,13 @@
+2019-01-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Only show 2 significant decimals (and equal amount of decimals for main value) 
+	  for uncertainty of number with +/- display
+	* Improve constants (including relations between physical constants)
+
+2019-01-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* nounit() improvements
+
 2019-01-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Calculate propagation of uncertainty using variance formula if interval arithmetic is deactivated

@@ -527,13 +527,13 @@
       </variable>
       <variable>
         <_title>Loschmidt Constant (273.15 K, 100 kPa)</_title>
-        <_names>loschmidt,ais:n_0</_names>
-        <value unit="m^(-3)">100000/(boltzmann*273.15)</value>
+        <_names>loschmidt_100</_names>
+        <value unit="auto">(100000*Pa)/(boltzmann*273.15*K)</value>
       </variable>
       <variable>
         <_title>Loschmidt Constant (273.15 K, 101.325 kPa)</_title>
-        <_names>rs:loschmidt_101</_names>
-        <value unit="m^(-3)">101.325/(boltzmann*273.15)</value>
+        <_names>rs:loschmidt,ais:n_0</_names>
+        <value unit="auto">(101325*Pa)/(boltzmann*273.15*K)</value>
       </variable>
        <variable>
         <_title>Molar Planck Constant</_title>
@@ -543,12 +543,12 @@
       <variable>
         <_title>Molar Volume of Ideal Gas (273.15 K, 100 kPa)</_title>
         <_names>r:ideal_gas_molar,ais:V_m</_names>
-        <value unit="m^3*mol^(-1)">gas_constant*273.15/100000</value>
+        <value unit="auto">(gas_constant*273.15*K)/(100000*Pa)</value>
       </variable>
       <variable>
         <_title>Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)</_title>
         <_names>rs:ideal_gas_molar_101,ais:V_m101</_names>
-        <value unit="m^3*mol^(-1)">gas_constant*273.15/101.325</value>
+        <value unit="auto">(gas_constant*273.15*K)/(101325*Pa)</value>
       </variable>
       <variable>
         <_title>Sackur-Tetrode constant (1 K, 100 kPa)</_title>

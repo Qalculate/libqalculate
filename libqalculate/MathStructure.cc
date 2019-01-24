@@ -7443,7 +7443,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					if(eo.calculate_functions) {
 						calculateFunctions(feo);
 					}
-					if(CALCULATOR->usesIntervalArithmetic()) fix_intervals(*this, feo, NULL, PRECISION);
+					fix_intervals(*this, feo, NULL, PRECISION);
 					b = true;
 					calculatesub(eo, feo, true, mparent, index_this);
 				}
@@ -11997,7 +11997,7 @@ bool simplify_ln(MathStructure &mstruct) {
 KnownVariable *find_interval_replace_var(MathStructure &m, Number &unc, const EvaluationOptions &eo, MathStructure **mnew, Variable **prev_v, bool &b_failed, bool in_nounit = false) {
 	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && m.isVariable() && m.variable()->isKnown()) {
 		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
-		if(!mvar.containsInterval(true, true, false, false, true)) return NULL;
+		if(!mvar.containsInterval(true, true, false, true, true)) return NULL;
 		if(mvar.isNumber()) {
 			unc = mvar.number().uncertainty();
 			Number nmid(mvar.number());
@@ -12015,7 +12015,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, Number &unc, const Ev
 			if(mvar[0].number().isInterval()) {
 				bool b = true;
 				for(size_t i = 1; i < mvar.size(); i++) {
-					if(mvar[i].containsInterval(true, true, false, false, true)) {
+					if(mvar[i].containsInterval(true, true, false, true, true)) {
 						b = false;
 						break;
 					}
@@ -12089,14 +12089,14 @@ bool find_interval_replace_var_nr(MathStructure &m) {
 bool replace_variables_with_interval(MathStructure &m, const EvaluationOptions &eo, bool in_nounit = false) {
 	if(m.isVariable() && m.variable()->isKnown()) {
 		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
-		if(!mvar.containsInterval(true, true, false, false, true)) return NULL;
+		if(!mvar.containsInterval(true, true, false, true, true)) return NULL;
 		if(mvar.isNumber()) {
 			return false;
 		} else if(mvar.isMultiplication() && mvar[0].isNumber()) {
 			if(mvar[0].number().isInterval()) {
 				bool b = true;
 				for(size_t i = 1; i < mvar.size(); i++) {
-					if(mvar[i].containsInterval(true, true, false, false, true)) {
+					if(mvar[i].containsInterval(true, true, false, true, true)) {
 						b = false;
 						break;
 					}
@@ -12169,7 +12169,7 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 }
 
 UnknownVariable *find_interval_replace_var_comp(MathStructure &m, const EvaluationOptions &eo, Variable **v) {
-	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && m.isVariable() && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().containsInterval(true, true, false, false, true)) {
+	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && m.isVariable() && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().containsInterval(true, true, false, true, true)) {
 		UnknownVariable *uv = new UnknownVariable("", format_and_print(m));
 		uv->setInterval(m);
 		*v = m.variable();
@@ -12221,14 +12221,15 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 	eo2.isolate_x = false;
 	if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, CALCULATOR->usesIntervalArithmetic() ? 0 : ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) ? 2 : 1));
-	if((((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) || !CALCULATOR->usesIntervalArithmetic()) && containsInterval(true, (eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES), false, CALCULATOR->usesIntervalArithmetic(), true)) || (eo.sync_units && !CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
+
+	if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) && containsInterval(true, true, false, true, true)) || (!CALCULATOR->usesIntervalArithmetic() && containsInterval(true, false, false, false, true)) || (eo.sync_units && !CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
 		if(CALCULATOR->usesIntervalArithmetic()) {
 			EvaluationOptions eo3 = eo2;
 			eo3.split_squares = false;
 			eo3.assume_denominators_nonzero = false;
 			if(eo.approximation == APPROXIMATION_APPROXIMATE && !containsUnknowns()) eo3.approximation = APPROXIMATION_EXACT_VARIABLES;
 			else eo3.approximation = APPROXIMATION_EXACT;
-			calculatesub(eo3, feo);
+			calculatesub(eo3, eo3);
 			eo3.approximation = APPROXIMATION_APPROXIMATE;
 			factorize_variables(*this, eo3);
 			if(eo.approximation == APPROXIMATION_APPROXIMATE && !containsUnknowns()) eo3.approximation = APPROXIMATION_EXACT_VARIABLES;
@@ -12242,10 +12243,10 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				EvaluationOptions eo3 = eo2;
 				eo3.split_squares = false;
 				eo3.assume_denominators_nonzero = false;
-				eo3.calculate_functions = false;
 				eo3.approximation = APPROXIMATION_EXACT;
-				calculatesub(eo3, feo);
+				calculatesub(eo3, eo3);
 			}
+
 			bool b_failed = false;
 			MathStructure munc, mbak(*this);
 			if(containsType(STRUCT_COMPARISON)) {
@@ -12268,11 +12269,9 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				CALCULATOR->beginTemporaryStopMessages();
 				munc = calculate_uncertainty(*this, eo, b_failed);
 				if(!b_failed) {
-					CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 					EvaluationOptions eo3 = eo;
 					eo3.keep_zero_units = false;
 					munc.eval(eo3);
-					CALCULATOR->endTemporaryEnableIntervalArithmetic();
 					eval(eo);
 					if(munc.isNumber()) {
 						if(munc.isZero()) {
@@ -21081,7 +21080,7 @@ int contains_interval_var(const MathStructure &m, bool structural_only, bool che
 	if(m.type() == STRUCT_NUMBER) {
 		if(m.number().isInterval(false)) {
 			if(ignore_high_precision_interval) {
-				if(m.number().precision(true) > (CALCULATOR->usesIntervalArithmetic() ? PRECISION + 10 : PRECISION)) return 0;
+				if(m.number().precision(true) > PRECISION + 10) return 0;
 			}
 			return 1;
 		} else if(CALCULATOR->usesIntervalArithmetic() && m.number().precision() >= 0) {
