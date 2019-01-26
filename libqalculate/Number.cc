@@ -7176,7 +7176,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpfr_sub(f_diff, fu_value, fl_value, MPFR_RNDU);
 			mpfr_div_ui(f_diff, f_diff, 2, MPFR_RNDU);
 			mpfr_add(f_mid, fl_value, f_diff, MPFR_RNDN);
-			if(mpfr_zero_p(f_mid)) {
+			bool b_zero = mpfr_zero_p(f_mid);
+			if(b_zero) {
 				mpfr_set_zero(f_log, 0);
 			} else {
 				mpfr_abs(f_log, f_mid, MPFR_RNDN);
@@ -7187,6 +7188,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpfr_floor(f_log_diff, f_log_diff);
 			mpfr_sub(f_log_diff, f_log_diff, f_log, MPFR_RNDN);
 			long int i_log_diff = mpfr_get_si(f_log_diff, MPFR_RNDN);
+			if(b_zero) i_log_diff = 0;
 			
 			if(i_log_diff > PRECISION) {
 				PrintOptions po2 = po;
@@ -7240,7 +7242,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(i_log + 1 > precision) precision = i_log + 1;
 			}
 
-			po2.min_exp = 0;
+			if(!b_zero) po2.min_exp = 0;
 			Number nr;
 			nr.setInternal(f_diff);
 			precision += i_log_diff;
@@ -7251,7 +7253,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				ips3.parent_approximate = ips.parent_approximate;
 				ips3.parent_precision = ips.parent_precision;
 				str += nr.print(po2, ips3);
-				if(iexp != 0 && !ips.exp) {
+				if(!b_zero && iexp != 0 && !ips.exp) {
 					if(po.lower_case_e) str += "e";
 					else str += "E";
 					str += i2s(iexp);

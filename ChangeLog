@@ -1,3 +1,8 @@
+2019-01-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* +/- syntax for non-numeric values
+	* g (and not g/mol) is base unit for u
+
 2019-01-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Only show 2 significant decimals (and equal amount of decimals for main value) 

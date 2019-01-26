@@ -420,6 +420,9 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 				mstruct->numberUpdated();
 			} else {
 				CALCULATOR->parse(mstruct, svalue, po);
+				if(mstruct->containsType(STRUCT_UNIT, false, true, true)) {
+					mstruct->transform(CALCULATOR->f_stripunits);
+				}
 			}
 			if(!suncertainty.empty()) {
 				Number nr_u(suncertainty);
@@ -555,6 +558,9 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 			mstruct->numberUpdated();
 		} else {
 			CALCULATOR->parse(mstruct, svalue, po);
+			if(mstruct->containsType(STRUCT_UNIT, false, true, true) > 0) {
+				mstruct->transform(CALCULATOR->f_stripunits);
+			}
 		}
 		if(!suncertainty.empty()) {
 			Number nr_u(suncertainty);

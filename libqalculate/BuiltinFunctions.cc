@@ -4848,9 +4848,20 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	}
 	return 1;
 }
+void remove_nounit(MathStructure &mstruct) {
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_stripunits && mstruct.size() == 1) {
+		mstruct.setToChild(1, true);
+	}
+	if(mstruct.isMultiplication() || mstruct.isAddition()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			remove_nounit(mstruct[i]);
+		}
+	}
+}
 StripUnitsFunction::StripUnitsFunction() : MathFunction("nounit", 1) {}
 int StripUnitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
+	remove_nounit(mstruct);
 	mstruct.removeType(STRUCT_UNIT);
 	if(mstruct.containsType(STRUCT_UNIT, false, true, true) == 0) return 1;
 	if(mstruct.isMultiplication() || mstruct.isAddition()) {
@@ -4889,6 +4900,7 @@ int StripUnitsFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	eo2.sync_units = false;
 	eo2.keep_prefixes = true;
 	mstruct.eval(eo2);
+	remove_nounit(mstruct);
 	mstruct.removeType(STRUCT_UNIT);
 	if(mstruct.containsType(STRUCT_UNIT, false, true, true) == 0) return 1;
 	if(mstruct.isMultiplication() || mstruct.isAddition()) {
