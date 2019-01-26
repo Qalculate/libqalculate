@@ -294,7 +294,7 @@
       <system>Atomic</system>
       <base>
         <unit>m</unit>
-        <relation>nounit(bohr_radius)</relation>
+        <relation>bohr_radius</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -647,9 +647,37 @@
       <system>Atomic</system>
       <base>
         <unit>g</unit>
-        <relation>nounit(electron_mass)*1000</relation>
+        <relation>electron_mass*1000</relation>
         <exponent>1</exponent>
       </base>
+    </unit>
+    <unit type="alias">
+      <_title>Atomic Mass Unit</_title>
+      <_names>ar:u,a:AMU,atomic_mass_unit,p:atomic_mass_units</_names>
+      <base>
+        <unit>g</unit>
+        <relation>mol/avogadro</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Dalton</_title>
+      <_names>ar:Da,dalton,p:daltons</_names>
+      <use_with_prefixes>true</use_with_prefixes>
+      <base>
+        <unit>g</unit>
+        <relation>mol/avogadro</relation>
+      <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="composite">
+      <_title>Kilodalton</_title>
+      <names>r:kDa_c</names>
+      <part>
+        <unit>Da</unit>
+        <prefix>3</prefix>
+        <exponent>1</exponent>
+      </part>
     </unit>
     <category>
       <_title>Density</_title>
@@ -711,34 +739,6 @@
           <unit>mol</unit>
           <prefix>0</prefix>
           <exponent>-1</exponent>
-        </part>
-      </unit>
-      <unit type="alias">
-        <_title>Atomic Mass Unit</_title>
-        <_names>ar:u,a:AMU,atomic_mass_unit,p:atomic_mass_units</_names>
-        <base>
-          <unit>g_p_mol</unit>
-          <relation>1</relation>
-          <exponent>1</exponent>
-        </base>
-      </unit>
-      <unit type="alias">
-        <_title>Dalton</_title>
-        <_names>ar:Da,dalton,p:daltons</_names>
-        <use_with_prefixes>true</use_with_prefixes>
-        <base>
-          <unit>g_p_mol</unit>
-          <relation>1</relation>
-        <exponent>1</exponent>
-        </base>
-      </unit>
-      <unit type="composite">
-        <_title>Kilodalton</_title>
-        <names>r:kDa_c</names>
-        <part>
-          <unit>Da</unit>
-          <prefix>3</prefix>
-          <exponent>1</exponent>
         </part>
       </unit>
     </category>
@@ -981,7 +981,7 @@
         <system>Atomic</system>
         <base>
           <unit>C</unit>
-          <relation>nounit(elementary_charge)</relation>
+          <relation>elementary_charge</relation>
           <exponent>1</exponent>
         </base>
       </unit>
@@ -2437,7 +2437,7 @@
         <system>Atomic</system>
         <base>
           <unit>J_p_T</unit>
-          <relation>nounit(bohr_magneton)*2</relation>
+          <relation>bohr_magneton*2</relation>
           <exponent>1</exponent>
         </base>
       </unit>
@@ -2862,7 +2862,7 @@
       <use_with_prefixes>true</use_with_prefixes>
       <base>
         <unit>J</unit>
-        <relation uncertainty="8.3E-28">1.6021766341E-19</relation>
+        <relation>elementary_charge</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -3119,7 +3119,7 @@
         <part>
           <unit>s</unit>
           <prefix>0</prefix>
-          <exponent>-1</exponent>
+          <exponent>1</exponent>
         </part>
       </unit>
       <unit type="alias">
@@ -3128,7 +3128,7 @@
         <system>Atomic</system>
         <base>
           <unit>J_s</unit>
-          <relation uncertainty="1.1E-42">1.054571818E-34</relation>
+          <relation>planck2pi</relation>
           <exponent>1</exponent>
         </base>
       </unit>

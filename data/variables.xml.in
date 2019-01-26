@@ -478,7 +478,7 @@
       <variable>
         <_title>Atomic Mass Constant</_title>
         <_names>r:atomic_mass,ais:m_u</_names>
-        <value unit="kg">0.001/avogadro</value>
+        <value units="auto">0.001/avogadro*kg/mol</value>
       </variable>
       <variable>
         <_title>Avogadro Constant</_title>
@@ -616,17 +616,17 @@
       <variable>
         <_title>Atomic Mass Unit - Kilogram Relationship</_title>
         <_names>r:u_to_kg</_names>
-        <value unit="kg*u^(-1)">atomic_mass</value>
+        <value unit="auto">0.001/avogadro*mol^-1</value>
       </variable>
       <variable>
         <_title>Electron Volt</_title>
         <_names>r:eV_to_J</_names>
-        <value unit="J*eV^(-1)">elementary_charge</value>
+        <value unit="auto">elementary_charge/C</value>
       </variable>
       <variable>
         <_title>Hartree Energy</_title>
         <_names>r:Ha_to_J</_names>
-        <value uncertainty="5.4E-26" unit="J*Ha^(-1)">4.359744650E-18</value>
+        <value uncertainty="5.4E-26">4.359744650E-18</value>
       </variable>
       <variable>
         <_title>Hertz - Atomic Mass Unit Relationship</_title>
@@ -706,7 +706,7 @@
       <variable>
         <_title>Joule - Electron Volt Relationship</_title>
         <_names>r:J_to_eV</_names>
-        <value>1/elementary_charge</value>
+        <value unit="auto">1/elementary_charge*C</value>
       </variable>
       <variable>
         <_title>Joule - Hartree Relationship</_title>
@@ -771,7 +771,7 @@
       <variable>
         <_title>Kilogram - Atomic Mass Unit Relationship</_title>
         <_names>r:kg_to_u</_names>
-        <value unit="u*kg^(-1)" uncertainty="7.4E18">6.022140857E26</value>
+        <value unit="auto">avogadro*mol*1000</value>
       </variable>
       <variable>
         <_title>Kilogram - Electron Volt Relationship</_title>
