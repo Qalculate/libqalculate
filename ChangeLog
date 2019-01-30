@@ -1,3 +1,12 @@
+2019-01-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Unformat variable value (fixes units with prefixes)
+	* Improve plus-minus interval display
+	* Fix conversion to constant when unit conversion fails
+	* Fix optimal conversion to C
+	* Fix find matching unit in some cases (when unit order differs)
+	* Electronvolt units
+
 2019-01-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* +/- syntax for non-numeric values

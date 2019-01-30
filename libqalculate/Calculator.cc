@@ -2982,7 +2982,7 @@ MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit, co
 }
 MathStructure Calculator::convert(const MathStructure &mstruct, KnownVariable *to_var, const EvaluationOptions &eo) {
 	if(mstruct.contains(to_var, true) > 0) return mstruct;
-	if(!to_var->unit().empty() && to_var->isExpression()) {
+	if(b_var_units && !to_var->unit().empty() && to_var->isExpression()) {
 		CompositeUnit cu("", "temporary_composite_convert", "", to_var->unit());
 		if(cu.countUnits() > 0) {
 			AliasUnit au("", "temporary_alias_convert", "", "", "", &cu, to_var->expression());
@@ -2990,8 +2990,10 @@ MathStructure Calculator::convert(const MathStructure &mstruct, KnownVariable *t
 			au.setApproximate(to_var->isApproximate());
 			au.setPrecision(to_var->precision());
 			MathStructure mstruct_new(convert(mstruct, &au, eo, false, false));
-			mstruct_new.replace(&au, to_var);
-			return mstruct_new;
+			if(mstruct_new.contains(&au)) {
+				mstruct_new.replace(&au, to_var);
+				return mstruct_new;
+			}
 		}
 	}
 	MathStructure mstruct_new(mstruct);
@@ -3203,11 +3205,15 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 							for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
 								int exp1 = 1, exp2 = 1;
 								Unit *ui1 = cu->get(i2, &exp1);
-								Unit *ui2 = ((CompositeUnit*) u)->get(i2, &exp2);
-								if(ui1 != ui2->baseUnit() || exp1 != exp2) {
-									b = false;
-									break;
+								b = false;
+								for(size_t i3 = 1; i3 <= cu->countUnits(); i3++) {
+									Unit *ui2 = ((CompositeUnit*) u)->get(i3, &exp2);
+									if(ui1 == ui2->baseUnit()) {
+										b = (exp1 == exp2);
+										break;
+									}
 								}
+								if(!b) break;
 							}
 							if(b) {
 								delete cu;
@@ -3348,7 +3354,18 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div, bool convert_to_loca
 							}
 						} else if(au->firstBaseExponent() != 1 || au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 							MathStructure cu_mstruct = ((CompositeUnit*) bu)->generateMathStructure();
-							cu_mstruct.raise(b_exp);
+							if(b_exp != 1) {
+								if(cu_mstruct.isMultiplication()) {
+									for(size_t i2 = 0; i2 < cu_mstruct.size(); i2++) {
+										if(cu_mstruct[i2].isPower()) cu_mstruct[i2][1].number() *= b_exp;
+										else cu_mstruct[i2].raise(b_exp);
+									}
+								} else if(cu_mstruct.isPower()) {
+									cu_mstruct[1].number() *= b_exp;
+								} else {
+									cu_mstruct.raise(b_exp);
+								}
+							}
 							cu_mstruct = convertToBaseUnits(cu_mstruct);
 							if(cu_mstruct.isMultiplication()) {
 								for(size_t i2 = 1; i2 <= cu_mstruct.countChildren(); i2++) {
@@ -7621,7 +7638,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {2, 8, 2};
+	int version_numbers[] = {2, 9, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

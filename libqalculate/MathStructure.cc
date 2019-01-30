@@ -8142,7 +8142,9 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					break;
 				}
 			} else if(o_function == CALCULATOR->f_stripunits) {
-				return calculateFunctions(eo, false);
+				b = calculateFunctions(eo, false);
+				if(b) calculatesub(eo, feo, true, mparent, index_this);
+				break;
 			}
 		}
 		default: {
@@ -11745,7 +11747,9 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 			eo.expand = eo_pre.expand;
 			msolve.factorize(eo, false, false, 0, false, true, NULL, m_undefined, false, false, 1);
 			remove_nonzero_mul(msolve, u_var, eo);
-			if(contains_undefined(msolve) || msolve.countTotalChildren(false) > 1000 || msolve.containsInterval(true, true, false, true, true)) {
+			if(msolve.isZero()) {
+				b = true;
+			} else if(contains_undefined(msolve) || msolve.countTotalChildren(false) > 1000 || msolve.containsInterval(true, true, false, true, true)) {
 				msolve.replace(u_var, nr_intval);
 				msolve.eval(eo);
 				if(msolve.representsNonComplex(true)) {
@@ -12236,8 +12240,6 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 			break;
 		}
 		mdiff->replace(muv, vars[i]);
-		MathStructure mtest(mdiff);
-		mtest.eval(eo);
 		mdiff->raise(nr_two);
 		mdiff->multiply(uncs[i]);
 		mdiff->last().raise(nr_two);
@@ -15360,6 +15362,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 		}
 		eo.protected_function = eo_pre.protected_function;
 	}
+
 	switch(type()) {
 		case STRUCT_ADDITION: {
 			if(CALCULATOR->aborted()) return false;
@@ -16142,7 +16145,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 
 				if(SIZE == 2 && max_factor_degree != 0) {
 					Number nr1(1, 1, 0), nr2(1, 1, 0);
-					bool b = true;
+					bool b = true, b_nonnum = false;
 					bool b1_neg = false, b2_neg = false;
 					for(size_t i = 0; i < SIZE && b; i++) {
 						b = false;
@@ -16151,6 +16154,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 							if(i == 0) nr1 = CHILD(i).number();
 							else nr2 = CHILD(i).number();
 						} else if(CHILD(i).isMultiplication() && CHILD(i).size() > 1) {
+							b_nonnum = true;
 							b = true;
 							size_t i2 = 0;
 							if(CHILD(i)[0].isInteger()) {
@@ -16165,9 +16169,11 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								}
 							}
 						} else if(CHILD(i).isPower() && CHILD(i)[1].isNumber() && CHILD(i)[1].number().isInteger() && CHILD(i)[1].number().isPositive() && CHILD(i)[1].number().isEven() && CHILD(i)[0].representsNonMatrix()) {
+							b_nonnum = true;
 							b = true;
 						}
 					}
+					if(!b_nonnum) b = false;
 					if(b) {
 						b1_neg = nr1.isNegative();
 						b2_neg = nr2.isNegative();
