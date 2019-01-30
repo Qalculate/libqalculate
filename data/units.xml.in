@@ -284,19 +284,38 @@
       <system>Planck</system>
       <base>
         <unit>m</unit>
-        <relation uncertainty="3.8E-40">1.616229E-35</relation>
+        <relation>sqrt(planck2pi*newtonian_constant/c^3)</relation>
         <exponent>1</exponent>
       </base>
     </unit>
     <unit type="alias">
       <_title>Bohr (Atomic Unit of Length)</_title>
-      <_names>rs:bohr_unit,ais:a_0unit,ais:l_A</_names>
+      <_names>rs:bohr_unit,ais:a_0unit</_names>
       <system>Atomic</system>
       <base>
         <unit>m</unit>
         <relation>bohr_radius</relation>
         <exponent>1</exponent>
       </base>
+    </unit>
+    <unit type="composite">
+      <_title>Electronvolt Distance</_title>
+      <names>planck_c_p_eV</names>
+      <part>
+        <unit>planck_unit</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>c_unit</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>eV</unit>
+        <prefix>0</prefix>
+        <exponent>-1</exponent>
+      </part>
     </unit>
   </category>
   <category>
@@ -637,13 +656,13 @@
       <system>Planck</system>
       <base>
         <unit>g</unit>
-        <relation uncertainty="5.1E-10">2.176470E-5</relation>
+        <relation>sqrt(planck2pi*c/newtonian_constant)*1000</relation>
         <exponent>1</exponent>
       </base>
     </unit>
     <unit type="alias">
       <_title>Atomic Unit of Mass</_title>
-      <_names>r:atomic_uom,ais:m_A</_names>
+      <_names>rs:electron_unit,ais:m_eunit</_names>
       <system>Atomic</system>
       <base>
         <unit>g</unit>
@@ -651,12 +670,26 @@
         <exponent>1</exponent>
       </base>
     </unit>
+    <unit type="composite">
+      <_title>Electronvolt Mass</_title>
+      <names>eV_p_sqc</names>
+      <part>
+        <unit>eV</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>c_unit</unit>
+        <prefix>0</prefix>
+        <exponent>-2</exponent>
+      </part>
+    </unit>
     <unit type="alias">
       <_title>Atomic Mass Unit</_title>
       <_names>ar:u,a:AMU,atomic_mass_unit,p:atomic_mass_units</_names>
       <base>
         <unit>g</unit>
-        <relation>mol/avogadro</relation>
+        <relation>atomic_mass*1000</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -666,7 +699,7 @@
       <use_with_prefixes>true</use_with_prefixes>
       <base>
         <unit>g</unit>
-        <relation>mol/avogadro</relation>
+        <relation>atomic_mass*1000</relation>
       <exponent>1</exponent>
       </base>
     </unit>
@@ -842,19 +875,38 @@
       <system>Planck</system>
       <base>
         <unit>s</unit>
-        <relation uncertainty="1.3E-48">5.39116E-44</relation>
+        <relation>sqrt(planck2pi*newtonian_constant/c^5)</relation>
         <exponent>1</exponent>
       </base>
     </unit>
-    <unit type="alias">
+    <unit type="composite">
       <_title>Atomic Unit of Time</_title>
-      <_names>r:atomic_uot,ais:t_A</_names>
+      <names>planck_p_Ha</names>
       <system>Atomic</system>
-      <base>
-        <unit>s</unit>
-        <relation uncertainty="1.4E-28">2.418884326509E-17</relation>
+      <part>
+          <unit>planck_unit</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>Ha</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+    </unit>
+    <unit type="composite">
+      <_title>Electronvolt Time</_title>
+      <names>planck_p_eV</names>
+      <part>
+        <unit>planck_unit</unit>
+        <prefix>0</prefix>
         <exponent>1</exponent>
-      </base>
+      </part>
+      <part>
+        <unit>eV</unit>
+        <prefix>0</prefix>
+        <exponent>-1</exponent>
+      </part>
     </unit>
     <category>
       <!-- Unit category -->
@@ -890,16 +942,6 @@
           <exponent>1</exponent>
         </base>
       </unit>
-      <unit type="alias">
-        <_title>Atomic Unit of Current</_title>
-        <_names>r:atomic_uoc</_names>
-        <system>Atomic</system>
-        <base>
-          <unit>A</unit>
-          <relation uncertainty="4.1E-11">6.623618183E-3</relation>
-          <exponent>1</exponent>
-        </base>
-      </unit>
     </category>
     <category>
       <_title>Current Density</_title>
@@ -922,15 +964,15 @@
     <category>
       <_title>Electric Charge</_title>
       <unit type="composite">
-        <_title>Second Ampere</_title>
-        <names>r:s_A</names>
+        <_title>Ampere Second</_title>
+        <names>r:A_s</names>
         <part>
-          <unit>s</unit>
+          <unit>A</unit>
           <prefix>0</prefix>
           <exponent>1</exponent>
         </part>
         <part>
-          <unit>A</unit>
+          <unit>s</unit>
           <prefix>0</prefix>
           <exponent>1</exponent>
         </part>
@@ -940,7 +982,7 @@
         <_title>Coulomb</_title>
         <_names>ar:C,coulomb,p:coulombs</_names>
         <base>
-          <unit>s_A</unit>
+          <unit>A_s</unit>
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
@@ -971,13 +1013,13 @@
         <system>Planck</system>
         <base>
           <unit>C</unit>
-          <relation uncertainty="4.1E-26">1.875545956E-18</relation>
+          <relation>sqrt(4pi*electric_constant*planck2pi*c)</relation>
           <exponent>1</exponent>
         </base>
       </unit>
       <unit type="alias">
         <_title>Atomic Unit of Charge</_title>
-        <_names>r:atomic_uoc,ais:q_A</_names>
+        <_names>rs:e_unit,ais:q_A</_names>
         <system>Atomic</system>
         <base>
           <unit>C</unit>
@@ -1068,15 +1110,20 @@
           <exponent>1</exponent>
         </base>
       </unit>
-      <unit type="alias">
+      <unit type="composite">
         <_title>Atomic Unit of Electric Potential</_title>
-        <_names>r:atomic_uop</_names>
+        <names>Ha_p_e</names>
         <system>Atomic</system>
-        <base>
-          <unit>V</unit>
-          <relation uncertainty="1.7E-7">27.21138602</relation>
+        <part>
+          <unit>Ha</unit>
+          <prefix>0</prefix>
           <exponent>1</exponent>
-        </base>
+        </part>
+        <part>
+          <unit>e_unit</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
       </unit>
     </category>
     <category>
@@ -1198,15 +1245,25 @@
           <exponent>-1</exponent>
         </part>
       </unit>
-      <unit type="alias">
+      <unit type="composite">
         <_title>Atomic Unit of Electric Field</_title>
-        <_names>r:atomic_uoef</_names>
+        <names>Ha_p_e_bohr</names>
         <system>Atomic</system>
-        <base>
-          <unit>V_p_m</unit>
-          <relation uncertainty="3.2E3">5.142206707E11</relation>
+        <part>
+          <unit>Ha</unit>
+          <prefix>0</prefix>
           <exponent>1</exponent>
-        </base>
+        </part>
+        <part>
+          <unit>e_unit</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <part>
+          <unit>bohr_unit</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
       </unit>
     </category>
     <category>
@@ -1319,9 +1376,23 @@
       <system>Planck</system>
       <base>
         <unit>K</unit>
-        <relation uncertainty="3.3E27">1.416808E32</relation>
+        <relation>sqrt((planck2pi*c^5)/newtonian_constant)/boltzmann</relation>
         <exponent>1</exponent>
       </base>
+    </unit>
+    <unit type="composite">
+      <_title>Electronvolt Temperature</_title>
+      <names>eV_p_kB</names>
+      <part>
+        <unit>eV</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>boltzmann_unit</unit>
+        <prefix>0</prefix>
+        <exponent>-1</exponent>
+      </part>
     </unit>
   </category>
   <category>
@@ -2241,15 +2312,25 @@
         <exponent>1</exponent>
       </base>
     </unit>
-    <unit type="alias">
+    <unit type="composite">
       <_title>Atomic Unit of Velocity</_title>
-      <_names>r:atomic_uov</_names>
+      <names>bohr_Ha_p_e</names>
       <system>Atomic</system>
-      <base>
-        <unit>m_p_s</unit>
-        <relation uncertainty="5E-4">2.18769126277E6</relation>
+      <part>
+        <unit>bohr_unit</unit>
+        <prefix>0</prefix>
         <exponent>1</exponent>
-      </base>
+      </part>
+      <part>
+        <unit>Ha</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>e_unit</unit>
+        <prefix>0</prefix>
+        <exponent>-1</exponent>
+      </part>
     </unit>
     <category>
       <_title>Acceleration</_title>
@@ -2404,15 +2485,25 @@
           <exponent>1</exponent>
         </base>
       </unit>
-      <unit type="alias">
+      <unit type="composite">
         <_title>Atomic Unit of Magnetic Flux Density</_title>
-        <_names>r:atomic_uomfd</_names>
+        <names>planck_p_e_sqbohr</names>
         <system>Atomic</system>
-        <base>
-          <unit>T</unit>
-          <relation uncertainty="1.4E-3">2.350517550E5</relation>
+        <part>
+          <unit>planck_unit</unit>
+          <prefix>0</prefix>
           <exponent>1</exponent>
-        </base>
+        </part>
+        <part>
+          <unit>e_unit</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+        <part>
+          <unit>bohr_unit</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
       </unit>
     </category>
     <category>
@@ -2431,15 +2522,25 @@
           <exponent>-1</exponent>
         </part>
       </unit>
-      <unit type="alias">
-      <_title>Atomic Unit of Magnetic Dipole Moment</_title>
-        <_names>r:atomic_uomdm</_names>
+      <unit type="composite">
+        <_title>Atomic Unit of Magnetic Dipole Moment</_title>
+        <names>e_planck_p_electron</names>
         <system>Atomic</system>
-        <base>
-          <unit>J_p_T</unit>
-          <relation>bohr_magneton*2</relation>
+        <part>
+          <unit>e_unit</unit>
+          <prefix>0</prefix>
           <exponent>1</exponent>
-        </base>
+        </part>
+        <part>
+          <unit>planck_unit</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>electron_unit</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
       </unit>
     </category>
   </category>
@@ -2543,15 +2644,20 @@
         <exponent>1</exponent>
       </part>
     </unit>
-    <unit type="alias">
+    <unit type="composite">
       <_title>Atomic Unit of Force</_title>
-      <_names>r:atomic_uof,ais:f_A</_names>
+      <names>Ha_p_bohr</names>
       <system>Atomic</system>
-      <base>
-        <unit>N</unit>
-        <relation uncertainty="1E-15">8.23872336E-8</relation>
+      <part>
+        <unit>Ha</unit>
+        <prefix>0</prefix>
         <exponent>1</exponent>
-      </base>
+      </part>
+      <part>
+        <unit>bohr_unit</unit>
+        <prefix>0</prefix>
+        <exponent>-1</exponent>
+      </part>
     </unit>
     <category>
       <_title>Moment of Force</_title>
@@ -2568,6 +2674,42 @@
           <unit>m</unit>
           <prefix>0</prefix>
           <exponent>1</exponent>
+        </part>
+      </unit>
+    </category>
+    <category>
+      <_title>Momentum</_title>
+        <unit type="composite">
+        <_title>Kilogram Meter per Second</_title>
+        <names>r:kg_m_p_s</names>
+        <part>
+          <unit>g</unit>
+          <prefix>3</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <_title>Electronvolt Momentum</_title>
+        <names>eV_p_c</names>
+        <part>
+          <unit>eV</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>c_unit</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
         </part>
       </unit>
     </category>
@@ -2857,8 +2999,8 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Electron Volt</_title>
-      <_names>ar:eV,electron_volt,p:electron_volts</_names>
+      <_title>Electronvolt</_title>
+      <_names>ar:eV,electronvolt,p:electronvolts</_names>
       <use_with_prefixes>true</use_with_prefixes>
       <base>
         <unit>J</unit>
@@ -2902,11 +3044,11 @@
     </unit>
     <unit type="alias">
       <_title>Hartree (Atomic Unit of Energy)</_title>
-      <_names>ar:Ha,as:E_h,as:m_A,hartree</_names>
+      <_names>ar:Ha,as:E_h,hartree</_names>
       <system>Atomic</system>
       <base>
         <unit>J</unit>
-        <relation uncertainty="5.4E-26">4.359744650E-18</relation>
+        <relation>2*rydberg*planck*c</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -2998,6 +3140,15 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
+      </unit>
+       <unit type="alias">
+        <_title>Boltzmann (unit)</_title>
+        <_names>rs:boltzmann_unit,ais:k_Bunit</_names>
+        <base>
+          <unit>J_p_K</unit>
+          <relation>boltzmann</relation>
+          <exponent>1</exponent>
+        </base>
       </unit>
     </category>
     <category>

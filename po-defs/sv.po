@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-19 08:19+0100\n"
+"POT-Creation-Date: 2019-01-30 21:36+0100\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -2238,7 +2238,7 @@ msgstr "Smältpunkt"
 msgid "r:melting"
 msgstr "smältpunkt"
 
-#: ../data/datasets.xml.in.h:24 ../data/units.xml.in.h:125
+#: ../data/datasets.xml.in.h:24 ../data/units.xml.in.h:132
 msgid "Density"
 msgstr "Densitet"
 
@@ -4218,7 +4218,7 @@ msgstr ""
 "Returnerar den reella roten. För negativa värden krävs en udda grad. "
 "Komplexa  värden är inte tillåtna."
 
-#: ../data/functions.xml.in.h:320 ../data/units.xml.in.h:65
+#: ../data/functions.xml.in.h:320 ../data/units.xml.in.h:66
 msgid "Degree"
 msgstr "Grad"
 
@@ -5100,7 +5100,7 @@ msgid ""
 "scale parameter. (from Gnumeric)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:533 ../data/variables.xml.in.h:361
+#: ../data/functions.xml.in.h:533 ../data/variables.xml.in.h:317
 msgid "Date &amp; Time"
 msgstr "Datum &amp; Tid"
 
@@ -5130,11 +5130,11 @@ msgstr ""
 msgid "Year"
 msgstr "År"
 
-#: ../data/functions.xml.in.h:538 ../data/units.xml.in.h:153
+#: ../data/functions.xml.in.h:538 ../data/units.xml.in.h:155
 msgid "Month"
 msgstr "Månad"
 
-#: ../data/functions.xml.in.h:539 ../data/units.xml.in.h:145
+#: ../data/functions.xml.in.h:539 ../data/units.xml.in.h:147
 msgid "Day"
 msgstr "Dag"
 
@@ -5151,15 +5151,15 @@ msgstr "Skapa datum och tid"
 msgid "r:datetime"
 msgstr "datum"
 
-#: ../data/functions.xml.in.h:543 ../data/units.xml.in.h:143
+#: ../data/functions.xml.in.h:543 ../data/units.xml.in.h:145
 msgid "Hour"
 msgstr "Timme"
 
-#: ../data/functions.xml.in.h:544 ../data/units.xml.in.h:141
+#: ../data/functions.xml.in.h:544 ../data/units.xml.in.h:143
 msgid "Minute"
 msgstr "Minut"
 
-#: ../data/functions.xml.in.h:545 ../data/units.xml.in.h:139
+#: ../data/functions.xml.in.h:545 ../data/units.xml.in.h:141
 msgid "Second"
 msgstr "Sekund"
 
@@ -5367,7 +5367,7 @@ msgstr ""
 "negativt, men måste använda en enhet baserad på sekunder (såsom dag och år). "
 "Delar av dagar avrundas mot noll."
 
-#: ../data/functions.xml.in.h:591 ../data/units.xml.in.h:138
+#: ../data/functions.xml.in.h:591 ../data/units.xml.in.h:140
 msgid "Time"
 msgstr "Tid"
 
@@ -7509,414 +7509,414 @@ msgid "Bohr (Atomic Unit of Length)"
 msgstr "Bohr (atomär enhet för längd)"
 
 #: ../data/units.xml.in.h:58
-msgid "rs:bohr_unit,ais:a_0unit,ais:l_A"
+msgid "rs:bohr_unit,ais:a_0unit"
 msgstr ""
 
+#: ../data/units.xml.in.h:59
+msgid "Electronvolt Distance"
+msgstr "Elektronvolt-distans"
+
 #. Unit category
-#: ../data/units.xml.in.h:60
+#: ../data/units.xml.in.h:61
 msgid "!units!Angle"
 msgstr "Vinkel"
 
-#: ../data/units.xml.in.h:61
+#: ../data/units.xml.in.h:62
 msgid "Plane Angle"
 msgstr "Planvinkel"
 
-#: ../data/units.xml.in.h:62
+#: ../data/units.xml.in.h:63
 msgid "Meter per Meter"
 msgstr "Meter per meter"
 
-#: ../data/units.xml.in.h:63
+#: ../data/units.xml.in.h:64
 msgid "Radian"
 msgstr "Radian"
 
-#: ../data/units.xml.in.h:64
+#: ../data/units.xml.in.h:65
 msgid "ar:rad,radian,p:radians"
 msgstr ""
 
-#: ../data/units.xml.in.h:66
+#: ../data/units.xml.in.h:67
 msgid "ar:deg,au:&#xB0;,degree,p:degrees"
 msgstr "a:deg,au:&#xB0;,grad,p:grader"
 
-#: ../data/units.xml.in.h:67
+#: ../data/units.xml.in.h:68
 msgid "Gradian (Gon)"
 msgstr "Gradient (Gon)"
 
-#: ../data/units.xml.in.h:68
+#: ../data/units.xml.in.h:69
 msgid "ar:gra,gradian,p:gradians,gon,p:gons"
 msgstr ""
 
-#: ../data/units.xml.in.h:69
+#: ../data/units.xml.in.h:70
 msgid "Arcminute"
 msgstr "Bågminut"
 
-#: ../data/units.xml.in.h:70
+#: ../data/units.xml.in.h:71
 msgid "ar:arcmin,arcminute,p:arcminutes"
 msgstr "bågminut,p:bågminuter"
 
-#: ../data/units.xml.in.h:71
+#: ../data/units.xml.in.h:72
 msgid "Arcsecond"
 msgstr "Bågsekund"
 
-#: ../data/units.xml.in.h:72
+#: ../data/units.xml.in.h:73
 msgid "ar:arcsec,arcsecond,p:arcseconds"
 msgstr "bågsekund,p:bågsekunder"
 
-#: ../data/units.xml.in.h:73
+#: ../data/units.xml.in.h:74
 msgid "Turn"
 msgstr ""
 
-#: ../data/units.xml.in.h:74
+#: ../data/units.xml.in.h:75
 msgid "r:turn,p:turns"
 msgstr ""
 
-#: ../data/units.xml.in.h:75
+#: ../data/units.xml.in.h:76
 msgid "Solid Angle"
 msgstr "Rymdvinkel"
 
-#: ../data/units.xml.in.h:76
+#: ../data/units.xml.in.h:77
 msgid "Square Meter per Square Meter"
 msgstr "Kvadratmeter per kvadratmeter"
 
-#: ../data/units.xml.in.h:77
+#: ../data/units.xml.in.h:78
 msgid "Steradian"
 msgstr "Steradian"
 
-#: ../data/units.xml.in.h:78
+#: ../data/units.xml.in.h:79
 msgid "ar:sr,steradian,p:steradians"
 msgstr ""
 
-#: ../data/units.xml.in.h:79
+#: ../data/units.xml.in.h:80
 msgid "Angular Acceleration"
 msgstr "Vinkelacceleration"
 
-#: ../data/units.xml.in.h:80
+#: ../data/units.xml.in.h:81
 msgid "Radians per Second Squared"
 msgstr "Radianter per kvadratsekund"
 
-#: ../data/units.xml.in.h:81
+#: ../data/units.xml.in.h:82
 msgid "Angular Velocity"
 msgstr "Vinkelhastighet"
 
-#: ../data/units.xml.in.h:82
+#: ../data/units.xml.in.h:83
 msgid "Radians per Second"
 msgstr "Radianter per sekund"
 
 #. Unit category
-#: ../data/units.xml.in.h:84
+#: ../data/units.xml.in.h:85
 msgid "!units!Mass"
 msgstr "Massa"
 
-#: ../data/units.xml.in.h:85
+#: ../data/units.xml.in.h:86
 msgid "Gram"
 msgstr ""
 
-#: ../data/units.xml.in.h:86
+#: ../data/units.xml.in.h:87
 msgid "ar:g,gram,p:grams"
 msgstr "a:g,gram"
 
-#: ../data/units.xml.in.h:87
+#: ../data/units.xml.in.h:88
 msgid "Kilogram"
 msgstr ""
 
-#: ../data/units.xml.in.h:88
+#: ../data/units.xml.in.h:89
 msgid "Hectogram"
 msgstr "Hektogram"
 
-#: ../data/units.xml.in.h:89
+#: ../data/units.xml.in.h:90
 msgid "Metric Ton (Tonne)"
 msgstr "Ton"
 
-#: ../data/units.xml.in.h:90
+#: ../data/units.xml.in.h:91
 msgid "ar:t,tonne,p:tonnes,ton,p:tons"
 msgstr "a:t,ton"
 
-#: ../data/units.xml.in.h:91
+#: ../data/units.xml.in.h:92
 msgid "Grain"
 msgstr ""
 
-#: ../data/units.xml.in.h:92
+#: ../data/units.xml.in.h:93
 msgid "ar:gr,grain,p:grains"
 msgstr ""
 
-#: ../data/units.xml.in.h:93
+#: ../data/units.xml.in.h:94
 msgid "Pennyweight"
 msgstr ""
 
-#: ../data/units.xml.in.h:94
+#: ../data/units.xml.in.h:95
 msgid "ar:pwt,pennyweight,p:pennyweights"
 msgstr ""
 
-#: ../data/units.xml.in.h:95
+#: ../data/units.xml.in.h:96
 msgid "Ounce (troy)"
 msgstr ""
 
-#: ../data/units.xml.in.h:96
+#: ../data/units.xml.in.h:97
 msgid "ar:oz_t,troy_ounce,p:troy_ounces"
 msgstr ""
 
-#: ../data/units.xml.in.h:97
+#: ../data/units.xml.in.h:98
 msgid "Pound (troy)"
 msgstr "Pund (troy)"
 
-#: ../data/units.xml.in.h:98
+#: ../data/units.xml.in.h:99
 msgid "ar:lb_t,troy_pound,p:troy_pounds"
 msgstr ""
 
-#: ../data/units.xml.in.h:99
+#: ../data/units.xml.in.h:100
 msgid "Dram"
 msgstr ""
 
-#: ../data/units.xml.in.h:100
+#: ../data/units.xml.in.h:101
 msgid "ar:dr,dram,p:drams"
 msgstr ""
 
-#: ../data/units.xml.in.h:101
+#: ../data/units.xml.in.h:102
 msgid "Ounce"
 msgstr ""
 
-#: ../data/units.xml.in.h:102
+#: ../data/units.xml.in.h:103
 msgid "ar:oz,ounce,p:ounces"
 msgstr ""
 
-#: ../data/units.xml.in.h:103
+#: ../data/units.xml.in.h:104
 msgid "Pound"
 msgstr "Pund"
 
-#: ../data/units.xml.in.h:104
+#: ../data/units.xml.in.h:105
 msgid "ar:lb,pound,p:pounds"
 msgstr ""
 
-#: ../data/units.xml.in.h:105
+#: ../data/units.xml.in.h:106
 msgid "Short Hundredweight (Cental)"
 msgstr ""
 
-#: ../data/units.xml.in.h:106
+#: ../data/units.xml.in.h:107
 msgid "ar:cwt,hundredweight,cental,p:hundredweights,centals"
 msgstr ""
 
-#: ../data/units.xml.in.h:107
+#: ../data/units.xml.in.h:108
 msgid "Long Hundredweight"
 msgstr ""
 
-#: ../data/units.xml.in.h:108
+#: ../data/units.xml.in.h:109
 msgid "ar:l_cwt,long_hundredweight,p:long_hundredweights"
 msgstr ""
 
-#: ../data/units.xml.in.h:109
+#: ../data/units.xml.in.h:110
 msgid "Short Ton"
 msgstr ""
 
-#: ../data/units.xml.in.h:110
+#: ../data/units.xml.in.h:111
 msgid "ar:s_ton,short_ton,p:short_tons"
 msgstr ""
 
-#: ../data/units.xml.in.h:111
+#: ../data/units.xml.in.h:112
 msgid "Long Ton"
 msgstr ""
 
-#: ../data/units.xml.in.h:112
+#: ../data/units.xml.in.h:113
 msgid "ar:l_ton,long_ton,p:long_tons"
 msgstr ""
 
-#: ../data/units.xml.in.h:113
+#: ../data/units.xml.in.h:114
 msgid "Stone"
 msgstr ""
 
-#: ../data/units.xml.in.h:114
+#: ../data/units.xml.in.h:115
 msgid "r:stone,p:stones"
 msgstr ""
 
-#: ../data/units.xml.in.h:115
+#: ../data/units.xml.in.h:116
 msgid "Carat"
 msgstr "Karat"
 
-#: ../data/units.xml.in.h:116
+#: ../data/units.xml.in.h:117
 msgid "r:carat,p:carats"
 msgstr "karat"
 
-#: ../data/units.xml.in.h:117
+#: ../data/units.xml.in.h:118
 msgid "Pfund"
 msgstr ""
 
-#: ../data/units.xml.in.h:118
+#: ../data/units.xml.in.h:119
 msgid "r:pfund"
 msgstr ""
 
-#: ../data/units.xml.in.h:119
+#: ../data/units.xml.in.h:120
 msgid "Zentner"
 msgstr ""
 
-#: ../data/units.xml.in.h:120
+#: ../data/units.xml.in.h:121
 msgid "r:zentner"
 msgstr ""
 
-#: ../data/units.xml.in.h:121
+#: ../data/units.xml.in.h:122
 msgid "Planck Mass"
 msgstr "Planck-massa"
 
-#: ../data/units.xml.in.h:122
+#: ../data/units.xml.in.h:123
 msgid "r:planck_mass,ais:m_P"
 msgstr ""
 
-#: ../data/units.xml.in.h:123
+#: ../data/units.xml.in.h:124
 msgid "Atomic Unit of Mass"
 msgstr "Atomär enhet för massa"
 
-#: ../data/units.xml.in.h:124
-msgid "r:atomic_mass,ais:m_A"
+#: ../data/units.xml.in.h:125
+msgid "rs:electron_unit,ais:m_eunit"
 msgstr ""
 
 #: ../data/units.xml.in.h:126
-msgid "Kilogram per Cubic Meter"
-msgstr "Kilogram per kubikmeter"
+msgid "Electronvolt Mass"
+msgstr "Elektronvolt-massa"
 
 #: ../data/units.xml.in.h:127
-msgid "Gram per Cubic Decimeter"
-msgstr "Gram per kubikdecimeter"
-
-#: ../data/units.xml.in.h:128
-msgid "Gram per Cubic Centimeter"
-msgstr "Gram per kubikcentimeter"
-
-#: ../data/units.xml.in.h:129
-msgid "Atomic Mass"
-msgstr "Atommassa"
-
-#: ../data/units.xml.in.h:130
-msgid "Gram per Mole"
-msgstr "Gram per mol"
-
-#: ../data/units.xml.in.h:131
 msgid "Atomic Mass Unit"
 msgstr "Atommassenhet"
 
-#: ../data/units.xml.in.h:132
+#: ../data/units.xml.in.h:128
 msgid "ar:u,a:AMU,atomic_mass_unit,p:atomic_mass_units"
 msgstr "a:u,a:AMU,atommassenhet,p:atommassenheter"
 
-#: ../data/units.xml.in.h:133
+#: ../data/units.xml.in.h:129
 msgid "Dalton"
 msgstr ""
 
-#: ../data/units.xml.in.h:134
+#: ../data/units.xml.in.h:130
 msgid "ar:Da,dalton,p:daltons"
 msgstr ""
 
-#: ../data/units.xml.in.h:135
+#: ../data/units.xml.in.h:131
 msgid "Kilodalton"
 msgstr "Kilodalton"
 
+#: ../data/units.xml.in.h:133
+msgid "Kilogram per Cubic Meter"
+msgstr "Kilogram per kubikmeter"
+
+#: ../data/units.xml.in.h:134
+msgid "Gram per Cubic Decimeter"
+msgstr "Gram per kubikdecimeter"
+
+#: ../data/units.xml.in.h:135
+msgid "Gram per Cubic Centimeter"
+msgstr "Gram per kubikcentimeter"
+
 #: ../data/units.xml.in.h:136
+msgid "Atomic Mass"
+msgstr "Atommassa"
+
+#: ../data/units.xml.in.h:137
+msgid "Gram per Mole"
+msgstr "Gram per mol"
+
+#: ../data/units.xml.in.h:138
 msgid "Mass Fraction"
 msgstr "Massbråk"
 
-#: ../data/units.xml.in.h:137
+#: ../data/units.xml.in.h:139
 msgid "Kilogram per Kilogram"
 msgstr "Kilogram per kilogram"
 
-#: ../data/units.xml.in.h:140
+#: ../data/units.xml.in.h:142
 msgid "ar:s,second,p:seconds"
 msgstr "a:s,sekund,p:sekunder"
 
-#: ../data/units.xml.in.h:142
+#: ../data/units.xml.in.h:144
 msgid "ar:min,minute,p:minutes"
 msgstr "a:min,minut,p:minuter"
 
-#: ../data/units.xml.in.h:144
+#: ../data/units.xml.in.h:146
 msgid "ar:h,hour,p:hours"
 msgstr "a:h,timme,p:timmar"
 
-#: ../data/units.xml.in.h:146
+#: ../data/units.xml.in.h:148
 msgid "ar:d,day,p:days"
 msgstr "a:d,dag,day,p:dagar,days"
 
-#: ../data/units.xml.in.h:147
+#: ../data/units.xml.in.h:149
 msgid "Week"
 msgstr "Vecka"
 
-#: ../data/units.xml.in.h:148
+#: ../data/units.xml.in.h:150
 msgid "r:week,p:weeks"
 msgstr "vecka,p:veckor"
 
-#: ../data/units.xml.in.h:149
+#: ../data/units.xml.in.h:151
 msgid "Fortnight"
 msgstr ""
 
-#: ../data/units.xml.in.h:150
+#: ../data/units.xml.in.h:152
 msgid "r:fortnight,p:fortnights"
 msgstr ""
 
-#: ../data/units.xml.in.h:151
+#: ../data/units.xml.in.h:153
 msgid "Julian Year"
 msgstr "Julianskt år"
 
-#: ../data/units.xml.in.h:152
+#: ../data/units.xml.in.h:154
 msgid "r:year,p:years"
 msgstr "år"
 
-#: ../data/units.xml.in.h:154
+#: ../data/units.xml.in.h:156
 msgid "r:month,p:months"
 msgstr "a:månad,p:månader"
 
-#: ../data/units.xml.in.h:155
+#: ../data/units.xml.in.h:157
 msgid "Planck Time"
 msgstr "Planck-tid"
 
-#: ../data/units.xml.in.h:156
+#: ../data/units.xml.in.h:158
 msgid "r:planck_time,ais:t_P"
 msgstr ""
 
-#: ../data/units.xml.in.h:157
+#: ../data/units.xml.in.h:159
 msgid "Atomic Unit of Time"
 msgstr "Atomär enhet för tid"
 
-#: ../data/units.xml.in.h:158
-msgid "r:atomic_time,ais:t_A"
-msgstr ""
+#: ../data/units.xml.in.h:160
+msgid "Electronvolt Time"
+msgstr "Elektronvolt-tid"
 
 #. Unit category
-#: ../data/units.xml.in.h:160
+#: ../data/units.xml.in.h:162
 msgid "!units!Frequency"
 msgstr "Frekvens"
 
-#: ../data/units.xml.in.h:161
+#: ../data/units.xml.in.h:163
 msgid "Hertz"
 msgstr ""
 
-#: ../data/units.xml.in.h:162
+#: ../data/units.xml.in.h:164
 msgid "ar:Hz,hertz"
 msgstr ""
 
-#: ../data/units.xml.in.h:163
+#: ../data/units.xml.in.h:165
 msgid "Electricity"
 msgstr "Elektricitet"
 
-#: ../data/units.xml.in.h:164
+#: ../data/units.xml.in.h:166
 msgid "Electric Current"
 msgstr "Elektrisk ström"
 
-#: ../data/units.xml.in.h:165
+#: ../data/units.xml.in.h:167
 msgid "Ampere"
 msgstr "Ampere"
 
-#: ../data/units.xml.in.h:166
+#: ../data/units.xml.in.h:168
 msgid "ar:A,ampere,p:amperes"
 msgstr "a:A,ampere"
 
-#: ../data/units.xml.in.h:167
+#: ../data/units.xml.in.h:169
 msgid "Abampere"
 msgstr "Abampere"
 
-#: ../data/units.xml.in.h:168
-msgid "r:abampere,a:abA,a:aA,p:abamperes"
-msgstr ""
-
-#: ../data/units.xml.in.h:169
-msgid "Atomic Unit of Current"
-msgstr "Atomär enhet för ström"
-
 #: ../data/units.xml.in.h:170
-msgid "r:atomic_current"
+msgid "r:abampere,a:abA,a:aA,p:abamperes"
 msgstr ""
 
 #: ../data/units.xml.in.h:171
@@ -7932,8 +7932,8 @@ msgid "Electric Charge"
 msgstr "Elektrisk laddning"
 
 #: ../data/units.xml.in.h:174
-msgid "Second Ampere"
-msgstr "Sekundampere"
+msgid "Ampere Second"
+msgstr "Amperesekund"
 
 #: ../data/units.xml.in.h:175
 msgid "Coulomb"
@@ -7972,8 +7972,9 @@ msgid "Atomic Unit of Charge"
 msgstr "Atomär enhet för laddning"
 
 #: ../data/units.xml.in.h:184
-msgid "r:atomic_charge,ais:q_A"
-msgstr ""
+#, fuzzy
+msgid "rs:e_unit,ais:q_A"
+msgstr "elasticitet"
 
 #: ../data/units.xml.in.h:185
 msgid "Electric Charge Density"
@@ -8028,1224 +8029,1221 @@ msgid "Atomic Unit of Electric Potential"
 msgstr "Atomär enhet för elektrisk potential"
 
 #: ../data/units.xml.in.h:198
-#, fuzzy
-msgid "r:atomic_potential"
-msgstr "Elektrisk potential"
-
-#: ../data/units.xml.in.h:199
 msgid "Capacitance"
 msgstr "Kapasitans"
 
-#: ../data/units.xml.in.h:200
+#: ../data/units.xml.in.h:199
 msgid "Coulomb per Volt"
 msgstr "Coloumb per volt"
 
-#: ../data/units.xml.in.h:201
+#: ../data/units.xml.in.h:200
 msgid "Farad"
 msgstr ""
 
-#: ../data/units.xml.in.h:202
+#: ../data/units.xml.in.h:201
 msgid "ar:F,farad,p:farads"
 msgstr "a:F,farad"
 
-#: ../data/units.xml.in.h:203
+#: ../data/units.xml.in.h:202
 msgid "Electric Resistance"
 msgstr "Resistans"
 
-#: ../data/units.xml.in.h:204
+#: ../data/units.xml.in.h:203
 msgid "Volt per Ampere"
 msgstr "Volt per ampere"
 
-#: ../data/units.xml.in.h:205
+#: ../data/units.xml.in.h:204
 msgid "Ohm"
 msgstr ""
 
-#: ../data/units.xml.in.h:206
+#: ../data/units.xml.in.h:205
 msgid "au:&#x3A9;,r:ohm,p:ohms"
 msgstr "au:&#x3A9;,ohm"
 
-#: ../data/units.xml.in.h:207
+#: ../data/units.xml.in.h:206
 msgid "Abohm"
 msgstr "Abohm"
 
-#: ../data/units.xml.in.h:208
+#: ../data/units.xml.in.h:207
 msgid "r:abohm,p:abohms,au:ab&#x3A9;"
 msgstr ""
 
-#: ../data/units.xml.in.h:209
+#: ../data/units.xml.in.h:208
 msgid "Statohm"
 msgstr ""
 
-#: ../data/units.xml.in.h:210
+#: ../data/units.xml.in.h:209
 msgid "r:statohm,p:statohms,au:stat&#x3A9;"
 msgstr ""
 
-#: ../data/units.xml.in.h:211
+#: ../data/units.xml.in.h:210
 msgid "Electric Conductance"
 msgstr "Induktion"
 
-#: ../data/units.xml.in.h:212
+#: ../data/units.xml.in.h:211
 msgid "Ampere per Volt"
 msgstr "Ampere per volt"
 
-#: ../data/units.xml.in.h:213
+#: ../data/units.xml.in.h:212
 msgid "Siemens"
 msgstr ""
 
-#: ../data/units.xml.in.h:214
+#: ../data/units.xml.in.h:213
 msgid "ar:S,siemens"
 msgstr ""
 
-#: ../data/units.xml.in.h:215
+#: ../data/units.xml.in.h:214
 msgid "Electric Field Strength"
 msgstr "Elektrisk fältstyrka"
 
-#: ../data/units.xml.in.h:216
+#: ../data/units.xml.in.h:215
 msgid "Volt per Meter"
 msgstr "Volt per meter"
 
-#: ../data/units.xml.in.h:217
+#: ../data/units.xml.in.h:216
 msgid "Atomic Unit of Electric Field"
 msgstr "Atomär enhet för eletriskt fält"
 
-#: ../data/units.xml.in.h:218
-msgid "r:atomic_field"
-msgstr ""
-
-#: ../data/units.xml.in.h:219
+#: ../data/units.xml.in.h:217
 msgid "Permittivity"
 msgstr "Permitivitet"
 
-#: ../data/units.xml.in.h:220
+#: ../data/units.xml.in.h:218
 msgid "Farad per Meter"
 msgstr "Farad per meter"
 
-#: ../data/units.xml.in.h:221
+#: ../data/units.xml.in.h:219
 msgid "Inductance"
 msgstr "Induktans"
 
-#: ../data/units.xml.in.h:222
+#: ../data/units.xml.in.h:220
 msgid "Weber per Ampere"
 msgstr "Weber per ampere"
 
-#: ../data/units.xml.in.h:223
+#: ../data/units.xml.in.h:221
 msgid "Henry"
 msgstr ""
 
-#: ../data/units.xml.in.h:224
+#: ../data/units.xml.in.h:222
 msgid "ar:H,henry,p:henrys"
 msgstr "a:H,henry"
 
-#: ../data/units.xml.in.h:225
+#: ../data/units.xml.in.h:223
 msgid "Permeability"
 msgstr "Permeabilitet"
 
-#: ../data/units.xml.in.h:226
+#: ../data/units.xml.in.h:224
 msgid "Henry per Meter"
 msgstr "Henry per meter"
 
-#: ../data/units.xml.in.h:227
+#: ../data/units.xml.in.h:225
 msgid "Temperature"
 msgstr "Temperatur"
 
-#: ../data/units.xml.in.h:228
+#: ../data/units.xml.in.h:226
 msgid "Kelvin"
 msgstr ""
 
-#: ../data/units.xml.in.h:229
+#: ../data/units.xml.in.h:227
 msgid "ar:K,kelvin,p:kelvins"
 msgstr "a:K,kelvin"
 
-#: ../data/units.xml.in.h:230
+#: ../data/units.xml.in.h:228
 msgid "Degree Celsius"
 msgstr "Grader Celsius"
 
-#: ../data/units.xml.in.h:231
+#: ../data/units.xml.in.h:229
 msgid ""
 "ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius,p:celsius,centigrade,p:centigrades"
 msgstr "ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius"
 
-#: ../data/units.xml.in.h:232
+#: ../data/units.xml.in.h:230
 msgid "Degree Rankine"
 msgstr "Grader Rankine"
 
-#: ../data/units.xml.in.h:233
+#: ../data/units.xml.in.h:231
 msgid "ar:oR,au:&#xB0;R,r:rankine"
 msgstr ""
 
-#: ../data/units.xml.in.h:234
+#: ../data/units.xml.in.h:232
 msgid "Degree Fahrenheit"
 msgstr "Grader Fahrenheit"
 
-#: ../data/units.xml.in.h:235
+#: ../data/units.xml.in.h:233
 msgid "ar:oF,au:&#xB0;F,au:&#x2109;,r:fahrenheit"
 msgstr ""
 
-#: ../data/units.xml.in.h:236
+#: ../data/units.xml.in.h:234
 msgid "Planck Temperature"
 msgstr "Planck-temperatur"
 
-#: ../data/units.xml.in.h:237
+#: ../data/units.xml.in.h:235
 msgid "r:planck_temperature,ais:T_P"
 msgstr ""
 
-#: ../data/units.xml.in.h:238
+#: ../data/units.xml.in.h:236
+msgid "Electronvolt Temperature"
+msgstr "Elektronvolt-temperatur"
+
+#: ../data/units.xml.in.h:237
 msgid "Substance"
 msgstr "Substans"
 
-#: ../data/units.xml.in.h:239
+#: ../data/units.xml.in.h:238
 msgid "Mole"
 msgstr "Mol"
 
-#: ../data/units.xml.in.h:240
+#: ../data/units.xml.in.h:239
 msgid "ar:mol,mole,p:moles"
 msgstr "mol"
 
-#: ../data/units.xml.in.h:241
+#: ../data/units.xml.in.h:240
 msgid "Einstein"
 msgstr ""
 
-#: ../data/units.xml.in.h:242
+#: ../data/units.xml.in.h:241
 msgid "r:einstein,p:einsteins"
 msgstr "einstein"
 
-#: ../data/units.xml.in.h:243
+#: ../data/units.xml.in.h:242
 msgid "Substance Concentration"
 msgstr "Substanskoncentration"
 
-#: ../data/units.xml.in.h:244
+#: ../data/units.xml.in.h:243
 msgid "Mole per Cubic Meter"
 msgstr "Mol per kubikmeter"
 
-#: ../data/units.xml.in.h:245
+#: ../data/units.xml.in.h:244
 msgid "Catalytic Activity"
 msgstr "Katalytisk aktivitet"
 
-#: ../data/units.xml.in.h:246
+#: ../data/units.xml.in.h:245
 msgid "Reciprocal Seconds Mole"
 msgstr "Reciproka sekundmol"
 
-#: ../data/units.xml.in.h:247
+#: ../data/units.xml.in.h:246
 msgid "Katal"
 msgstr ""
 
-#: ../data/units.xml.in.h:248
+#: ../data/units.xml.in.h:247
 msgid "ar:kat,katal,p:katals"
 msgstr "a:kat,katal"
 
-#: ../data/units.xml.in.h:249
+#: ../data/units.xml.in.h:248
 msgid "Catalytic Concentration"
 msgstr "Katalytisk koncentration"
 
-#: ../data/units.xml.in.h:250
+#: ../data/units.xml.in.h:249
 msgid "Katal per Cubic Meter"
 msgstr "Katal per kubikmeter"
 
-#: ../data/units.xml.in.h:251
+#: ../data/units.xml.in.h:250
 msgid "Light"
 msgstr "Ljus"
 
-#: ../data/units.xml.in.h:252
+#: ../data/units.xml.in.h:251
 msgid "Luminous Intensity"
 msgstr "Luminansintensitet"
 
-#: ../data/units.xml.in.h:253
+#: ../data/units.xml.in.h:252
 msgid "Candela"
 msgstr "Candela"
 
-#: ../data/units.xml.in.h:254
+#: ../data/units.xml.in.h:253
 msgid "ar:cd,candela,p:candelas"
 msgstr "a:cd,candela"
 
-#: ../data/units.xml.in.h:255
+#: ../data/units.xml.in.h:254
 msgid "Luminance"
 msgstr "Luminans"
 
-#: ../data/units.xml.in.h:256
+#: ../data/units.xml.in.h:255
 msgid "Candela per Meter Squared"
 msgstr "Candela per kvadratmeter"
 
-#: ../data/units.xml.in.h:257
+#: ../data/units.xml.in.h:256
 msgid "Stilb"
 msgstr ""
 
-#: ../data/units.xml.in.h:258
+#: ../data/units.xml.in.h:257
 msgid "ar:sb,stilb,p:stilbs"
 msgstr ""
 
-#: ../data/units.xml.in.h:259
+#: ../data/units.xml.in.h:258
 msgid "Luminous Flux"
 msgstr "Luminansflöde"
 
-#: ../data/units.xml.in.h:260
+#: ../data/units.xml.in.h:259
 msgid "Candela Steradian"
 msgstr "Candelasteradian"
 
-#: ../data/units.xml.in.h:261
+#: ../data/units.xml.in.h:260
 msgid "Lumen"
 msgstr ""
 
-#: ../data/units.xml.in.h:262
+#: ../data/units.xml.in.h:261
 msgid "ar:lm,lumen,p:lumens"
 msgstr "a:lm,lumen"
 
-#: ../data/units.xml.in.h:263
+#: ../data/units.xml.in.h:262
 msgid "Illuminance"
 msgstr "Illuminans"
 
-#: ../data/units.xml.in.h:264
+#: ../data/units.xml.in.h:263
 msgid "Lumen per Meter Squared"
 msgstr "Lumen per kvadratmeter"
 
-#: ../data/units.xml.in.h:265
+#: ../data/units.xml.in.h:264
 msgid "Lumen per Foot Squared"
 msgstr "Lumen per kvadratfor"
 
-#: ../data/units.xml.in.h:266
+#: ../data/units.xml.in.h:265
 msgid "Lux"
 msgstr ""
 
-#: ../data/units.xml.in.h:267
+#: ../data/units.xml.in.h:266
 msgid "ar:lx,lux"
 msgstr ""
 
-#: ../data/units.xml.in.h:268
+#: ../data/units.xml.in.h:267
 msgid "Foot-Candle"
 msgstr ""
 
-#: ../data/units.xml.in.h:269
+#: ../data/units.xml.in.h:268
 msgid "ar:fc,footcandle,p:footcandles"
 msgstr ""
 
-#: ../data/units.xml.in.h:270
+#: ../data/units.xml.in.h:269
 msgid "Phot"
 msgstr ""
 
-#: ../data/units.xml.in.h:271
+#: ../data/units.xml.in.h:270
 msgid "ar:ph,phot,p:phots"
 msgstr ""
 
-#: ../data/units.xml.in.h:272
+#: ../data/units.xml.in.h:271
 msgid "Radiant Intensity"
 msgstr "Strålningsstyrka"
 
-#: ../data/units.xml.in.h:273
+#: ../data/units.xml.in.h:272
 msgid "Watt per Steradian"
 msgstr "Watt per steradian"
 
-#: ../data/units.xml.in.h:274
+#: ../data/units.xml.in.h:273
 msgid "Irradiance"
 msgstr "Irradians"
 
-#: ../data/units.xml.in.h:275
+#: ../data/units.xml.in.h:274
 msgid "Watt per Meter Squared"
 msgstr "Watt per kvadratmeter"
 
-#: ../data/units.xml.in.h:276
+#: ../data/units.xml.in.h:275
 msgid "Einstein per Meter Squared per Second"
 msgstr "Einsteins per kvadratmeter per sekund"
 
-#: ../data/units.xml.in.h:277
+#: ../data/units.xml.in.h:276
 msgid "Microeinstein per Meter Squared per Second"
 msgstr "Kikroeinstein per kvadratmeter per sekund"
 
-#: ../data/units.xml.in.h:278
+#: ../data/units.xml.in.h:277
 msgid "Radiance"
 msgstr "Radians"
 
-#: ../data/units.xml.in.h:279
+#: ../data/units.xml.in.h:278
 msgid "Watt per Square Meter Steradian"
 msgstr "Watt per steradiankvadratmeter"
 
-#: ../data/units.xml.in.h:280
+#: ../data/units.xml.in.h:279
 msgid "Area"
 msgstr ""
 
-#: ../data/units.xml.in.h:281
+#: ../data/units.xml.in.h:280
 msgid "Square Meter"
 msgstr "Kvadratmeter"
 
-#: ../data/units.xml.in.h:282
+#: ../data/units.xml.in.h:281
 msgid "Square Kilometer"
 msgstr "Kvadratkilometer"
 
-#: ../data/units.xml.in.h:283
+#: ../data/units.xml.in.h:282
 msgid "Are"
 msgstr "Ar"
 
-#: ../data/units.xml.in.h:284
+#: ../data/units.xml.in.h:283
 msgid "ar:a,are,p:ares"
 msgstr "a:a,ar,are"
 
-#: ../data/units.xml.in.h:285
+#: ../data/units.xml.in.h:284
 msgid "Hectare"
 msgstr "Hektar"
 
-#: ../data/units.xml.in.h:286
+#: ../data/units.xml.in.h:285
 msgid "ar:ha,hectare,p:hectares"
 msgstr "a:ha,hektar,hectare"
 
-#: ../data/units.xml.in.h:287
+#: ../data/units.xml.in.h:286
 msgid "Decare"
 msgstr "Dekar"
 
-#: ../data/units.xml.in.h:288
+#: ../data/units.xml.in.h:287
 msgid "a:da,r:decare,p:decares"
 msgstr "a:da,dekar,decare"
 
-#: ../data/units.xml.in.h:289
+#: ../data/units.xml.in.h:288
 msgid "Barn"
 msgstr ""
 
-#: ../data/units.xml.in.h:290
+#: ../data/units.xml.in.h:289
 msgid "ar:b,barn,p:barns"
 msgstr ""
 
-#: ../data/units.xml.in.h:291
+#: ../data/units.xml.in.h:290
 msgid "Rood"
 msgstr ""
 
-#: ../data/units.xml.in.h:292
+#: ../data/units.xml.in.h:291
 msgid "r:rood,p:roods"
 msgstr ""
 
-#: ../data/units.xml.in.h:293
+#: ../data/units.xml.in.h:292
 msgid "Acre"
 msgstr ""
 
-#: ../data/units.xml.in.h:294
+#: ../data/units.xml.in.h:293
 msgid "r:acre,p:acres"
 msgstr ""
 
-#: ../data/units.xml.in.h:295
+#: ../data/units.xml.in.h:294
 msgid "Section"
 msgstr ""
 
-#: ../data/units.xml.in.h:296
+#: ../data/units.xml.in.h:295
 msgid "r:section,p:sections"
 msgstr ""
 
-#: ../data/units.xml.in.h:297
+#: ../data/units.xml.in.h:296
 msgid "Township"
 msgstr ""
 
-#: ../data/units.xml.in.h:298
+#: ../data/units.xml.in.h:297
 msgid "r:township,p:townships"
 msgstr ""
 
-#: ../data/units.xml.in.h:299
+#: ../data/units.xml.in.h:298
 msgid "Square Foot"
 msgstr "Kvadratfot"
 
-#: ../data/units.xml.in.h:300
+#: ../data/units.xml.in.h:299
 msgid "Square Inch"
 msgstr "Kvadrattum"
 
-#: ../data/units.xml.in.h:301
+#: ../data/units.xml.in.h:300
 msgid "Square Mile"
 msgstr "Kvadratmile"
 
-#: ../data/units.xml.in.h:302
+#: ../data/units.xml.in.h:301
 msgid "Volume"
 msgstr "Volym"
 
-#: ../data/units.xml.in.h:303
+#: ../data/units.xml.in.h:302
 msgid "Cubic Meter"
 msgstr "Kubikmeter"
 
-#: ../data/units.xml.in.h:304
+#: ../data/units.xml.in.h:303
 msgid "Liter"
 msgstr ""
 
-#: ../data/units.xml.in.h:305
+#: ../data/units.xml.in.h:304
 msgid "ar:L,a:l,liter,p:liters,litre,p:litres"
 msgstr "a:L,a:l,liter"
 
-#: ../data/units.xml.in.h:306
+#: ../data/units.xml.in.h:305
 msgid "Milliliter"
 msgstr ""
 
-#: ../data/units.xml.in.h:307
+#: ../data/units.xml.in.h:306
 msgid "Centiliter"
 msgstr "Centiliter"
 
-#: ../data/units.xml.in.h:308
+#: ../data/units.xml.in.h:307
 msgid "Deciliter"
 msgstr ""
 
-#: ../data/units.xml.in.h:309
+#: ../data/units.xml.in.h:308
 msgid "Cubic Inch"
 msgstr "Kubiktum"
 
-#: ../data/units.xml.in.h:310
+#: ../data/units.xml.in.h:309
 msgid "Fuel Economy"
 msgstr "Bränsleförbrukning"
 
-#: ../data/units.xml.in.h:311
+#: ../data/units.xml.in.h:310
 msgid "Liter per Kilometer"
 msgstr "Liter per kilometer"
 
-#: ../data/units.xml.in.h:312
+#: ../data/units.xml.in.h:311
 msgid "Kilometer per Liter"
 msgstr "Kilometer per liter"
 
-#: ../data/units.xml.in.h:313
+#: ../data/units.xml.in.h:312
 msgid "Miles per Gallon"
 msgstr ""
 
-#: ../data/units.xml.in.h:314
+#: ../data/units.xml.in.h:313
 msgid "a-cr:mpg"
 msgstr ""
 
-#: ../data/units.xml.in.h:315
+#: ../data/units.xml.in.h:314
 msgid "Cooking"
 msgstr "Matlagning"
 
-#: ../data/units.xml.in.h:316
+#: ../data/units.xml.in.h:315
 msgid "Teaspoon"
 msgstr "Tesked"
 
-#: ../data/units.xml.in.h:317
+#: ../data/units.xml.in.h:316
 msgid "r:teaspoon,p:teaspoons"
 msgstr "tesked,p:teskedar"
 
-#: ../data/units.xml.in.h:318
+#: ../data/units.xml.in.h:317
 msgid "Dessertspoon"
 msgstr "Dessertsked"
 
-#: ../data/units.xml.in.h:319
+#: ../data/units.xml.in.h:318
 msgid "r:dessertspoon,p:dessertspoons"
 msgstr "dessertsked,p:dessertskedar"
 
-#: ../data/units.xml.in.h:320
+#: ../data/units.xml.in.h:319
 msgid "Tablespoon"
 msgstr "Matsked"
 
-#: ../data/units.xml.in.h:321
+#: ../data/units.xml.in.h:320
 msgid "r:tablespoon,p:tablespoons"
 msgstr "matsked,p:matskedar"
 
-#: ../data/units.xml.in.h:322
+#: ../data/units.xml.in.h:321
 msgid "Cup (U.S.)"
 msgstr ""
 
-#: ../data/units.xml.in.h:323
+#: ../data/units.xml.in.h:322
 msgid "r:cup,p:cups"
 msgstr ""
 
-#: ../data/units.xml.in.h:324
+#: ../data/units.xml.in.h:323
 msgid "Imperial Capacity"
 msgstr ""
 
-#: ../data/units.xml.in.h:325
+#: ../data/units.xml.in.h:324
 msgid "Imperial Fluid Ounce"
 msgstr ""
 
-#: ../data/units.xml.in.h:326
+#: ../data/units.xml.in.h:325
 msgid "ar:UK_fl_oz,imperial_fluid_ounce,p:imperial_fluid_ounces"
 msgstr ""
 
-#: ../data/units.xml.in.h:327
+#: ../data/units.xml.in.h:326
 msgid "Imperial Gill"
 msgstr ""
 
-#: ../data/units.xml.in.h:328
+#: ../data/units.xml.in.h:327
 msgid "ar:UK_gi,imperial_gill,p:imperial_gills"
 msgstr ""
 
-#: ../data/units.xml.in.h:329
+#: ../data/units.xml.in.h:328
 msgid "Imperial Pint"
 msgstr ""
 
-#: ../data/units.xml.in.h:330
+#: ../data/units.xml.in.h:329
 msgid "ar:UK_pt,imperial_pint,p:imperial_pints"
 msgstr ""
 
-#: ../data/units.xml.in.h:331
+#: ../data/units.xml.in.h:330
 msgid "Imperial Quart"
 msgstr ""
 
-#: ../data/units.xml.in.h:332
+#: ../data/units.xml.in.h:331
 msgid "ar:UK_qt,imperial_quart,p:imperial_quarts"
 msgstr ""
 
-#: ../data/units.xml.in.h:333
+#: ../data/units.xml.in.h:332
 msgid "Imperial Gallon"
 msgstr ""
 
-#: ../data/units.xml.in.h:334
+#: ../data/units.xml.in.h:333
 msgid "ar:UK_gal,imperial_gallon,p:imperial_gallons"
 msgstr ""
 
-#: ../data/units.xml.in.h:335
+#: ../data/units.xml.in.h:334
 msgid "Imperial Minim"
 msgstr ""
 
-#: ../data/units.xml.in.h:336
+#: ../data/units.xml.in.h:335
 msgid "r:imperial_minim,p:imperial_minims"
 msgstr ""
 
-#: ../data/units.xml.in.h:337
+#: ../data/units.xml.in.h:336
 msgid "Imperial Fluid Scuple"
 msgstr ""
 
-#: ../data/units.xml.in.h:338
+#: ../data/units.xml.in.h:337
 msgid "r:imperial_fluid_scuple,p:imperial_fluid_scuples"
 msgstr ""
 
-#: ../data/units.xml.in.h:339
+#: ../data/units.xml.in.h:338
 msgid "Imperial Fluid Drachm"
 msgstr ""
 
-#: ../data/units.xml.in.h:340
+#: ../data/units.xml.in.h:339
 msgid "ar:UK_fl_dr,imperial_fluid_drachm,p:imperial_fluid_drachms"
 msgstr ""
 
-#: ../data/units.xml.in.h:341
+#: ../data/units.xml.in.h:340
 msgid "Imperial Bushel"
 msgstr ""
 
-#: ../data/units.xml.in.h:342
+#: ../data/units.xml.in.h:341
 msgid "ar:UK_bu,imperial_bushel,p:imperial_bushels"
 msgstr ""
 
-#: ../data/units.xml.in.h:343
+#: ../data/units.xml.in.h:342
 msgid "U.S. Capacity"
 msgstr ""
 
-#: ../data/units.xml.in.h:344
+#: ../data/units.xml.in.h:343
 msgid "U.S. Fluid Ounce"
 msgstr ""
 
-#: ../data/units.xml.in.h:345
+#: ../data/units.xml.in.h:344
 msgid "ar:fl_oz,fluid_ounce,p:fluid_ounces"
 msgstr ""
 
-#: ../data/units.xml.in.h:346
+#: ../data/units.xml.in.h:345
 msgid "U.S. Gill"
 msgstr ""
 
-#: ../data/units.xml.in.h:347
+#: ../data/units.xml.in.h:346
 msgid "ar:gi,gill,p:gills"
 msgstr ""
 
-#: ../data/units.xml.in.h:348
+#: ../data/units.xml.in.h:347
 msgid "U.S. Liquid Pints"
 msgstr ""
 
-#: ../data/units.xml.in.h:349
+#: ../data/units.xml.in.h:348
 msgid "ar:liq_pt,liquid_pint,p:liquid_pints"
 msgstr ""
 
-#: ../data/units.xml.in.h:350
+#: ../data/units.xml.in.h:349
 msgid "U.S. Liquid Quarts"
 msgstr ""
 
-#: ../data/units.xml.in.h:351
+#: ../data/units.xml.in.h:350
 msgid "ar:liq_qt,liquid_quart,p:liquid_quarts"
 msgstr ""
 
-#: ../data/units.xml.in.h:352
+#: ../data/units.xml.in.h:351
 msgid "U.S. Minim"
 msgstr ""
 
-#: ../data/units.xml.in.h:353
+#: ../data/units.xml.in.h:352
 msgid "r:minim,p:minims"
 msgstr ""
 
-#: ../data/units.xml.in.h:354
+#: ../data/units.xml.in.h:353
 msgid "U.S. Fluid Drachm"
 msgstr ""
 
-#: ../data/units.xml.in.h:355
+#: ../data/units.xml.in.h:354
 msgid "ar:fl_dr,fluid_drachm,p:fluid_drachms"
 msgstr ""
 
-#: ../data/units.xml.in.h:356
+#: ../data/units.xml.in.h:355
 msgid "U.S. Dry Pint"
 msgstr ""
 
-#: ../data/units.xml.in.h:357
+#: ../data/units.xml.in.h:356
 msgid "ar:dry_pt,dry_pint,p:dry_pints"
 msgstr ""
 
-#: ../data/units.xml.in.h:358
+#: ../data/units.xml.in.h:357
 msgid "U.S. Dry Quart"
 msgstr ""
 
-#: ../data/units.xml.in.h:359
+#: ../data/units.xml.in.h:358
 msgid "ar:dry_qt,dry_quart,p:dry_quarts"
 msgstr ""
 
-#: ../data/units.xml.in.h:360
+#: ../data/units.xml.in.h:359
 msgid "U.S. Peck"
 msgstr ""
 
-#: ../data/units.xml.in.h:361
+#: ../data/units.xml.in.h:360
 msgid "ar:pk,peck,p:pecks"
 msgstr ""
 
-#: ../data/units.xml.in.h:362
+#: ../data/units.xml.in.h:361
 msgid "U.S. Bushel"
 msgstr ""
 
-#: ../data/units.xml.in.h:363
+#: ../data/units.xml.in.h:362
 msgid "ar:bu,bushel,p:bushels"
 msgstr ""
 
-#: ../data/units.xml.in.h:364
+#: ../data/units.xml.in.h:363
 msgid "U.S. Gallon"
 msgstr ""
 
-#: ../data/units.xml.in.h:365
+#: ../data/units.xml.in.h:364
 msgid "ar:gal,gallon,p:gallons"
 msgstr ""
 
-#: ../data/units.xml.in.h:366
+#: ../data/units.xml.in.h:365
 msgid "U.S. Barrel (oil)"
 msgstr ""
 
-#: ../data/units.xml.in.h:367
+#: ../data/units.xml.in.h:366
 msgid "ar:bbl,barrel,p:barrels"
 msgstr ""
 
-#: ../data/units.xml.in.h:368
+#: ../data/units.xml.in.h:367
 msgid "Specific Volume"
 msgstr "Specifik volym"
 
-#: ../data/units.xml.in.h:369
+#: ../data/units.xml.in.h:368
 msgid "Cubic Meter per Kilogram"
 msgstr "Kubikmeter per kilogram"
 
-#: ../data/units.xml.in.h:370
+#: ../data/units.xml.in.h:369
 msgid "Speed"
 msgstr "Hastighet"
 
-#: ../data/units.xml.in.h:371
+#: ../data/units.xml.in.h:370
 msgid "Meter per Second"
 msgstr "Meter per sekund"
 
-#: ../data/units.xml.in.h:372
+#: ../data/units.xml.in.h:371
 msgid "Kilometer per Hour"
 msgstr "Kilometer per timme"
 
-#: ../data/units.xml.in.h:373
+#: ../data/units.xml.in.h:372
 msgid "Nautical Mile per Hour"
 msgstr "Sjömil per timme"
 
-#: ../data/units.xml.in.h:374
+#: ../data/units.xml.in.h:373
 msgid "Knot"
 msgstr "Knop"
 
-#: ../data/units.xml.in.h:375
+#: ../data/units.xml.in.h:374
 msgid "r:knot,p:knots"
 msgstr "knop"
 
-#: ../data/units.xml.in.h:376
+#: ../data/units.xml.in.h:375
 msgid "Miles per Hour"
 msgstr "Miles per Hour"
 
-#: ../data/units.xml.in.h:377
+#: ../data/units.xml.in.h:376
 msgid "a-cr:mph"
 msgstr ""
 
-#: ../data/units.xml.in.h:378
+#: ../data/units.xml.in.h:377
 msgid "Speed of Light (unit)"
 msgstr "Ljusets hastighet (enhet)"
 
-#: ../data/units.xml.in.h:379
-#, fuzzy
+#: ../data/units.xml.in.h:378
 msgid "ars:c_unit"
-msgstr "as:cal_femton"
+msgstr ""
 
-#: ../data/units.xml.in.h:380
+#: ../data/units.xml.in.h:379
 msgid "Atomic Unit of Velocity"
 msgstr "Atomär enhet för hastighe"
 
-#: ../data/units.xml.in.h:381
-#, fuzzy
-msgid "r:atomic_velocity"
-msgstr "elasticitet"
-
-#: ../data/units.xml.in.h:382
+#: ../data/units.xml.in.h:380
 msgid "Acceleration"
 msgstr "Acceleration"
 
-#: ../data/units.xml.in.h:383
+#: ../data/units.xml.in.h:381
 msgid "Meter per Second Squared"
 msgstr "Meter per kvadratsekund"
 
-#: ../data/units.xml.in.h:384
+#: ../data/units.xml.in.h:382
 msgid "Galileo"
 msgstr ""
 
-#: ../data/units.xml.in.h:385
+#: ../data/units.xml.in.h:383
 msgid "ar:Gal,galileo,p:galileos"
 msgstr "a:Gal,galileo"
 
-#: ../data/units.xml.in.h:386
+#: ../data/units.xml.in.h:384
 msgid "Gee"
 msgstr ""
 
-#: ../data/units.xml.in.h:387
+#: ../data/units.xml.in.h:385
 msgid "r:gee,p:gees"
 msgstr ""
 
-#: ../data/units.xml.in.h:388
+#: ../data/units.xml.in.h:386
 msgid "Magnetism"
 msgstr "Magnetism"
 
-#: ../data/units.xml.in.h:389
+#: ../data/units.xml.in.h:387
 msgid "Wave Number"
 msgstr "Vågtal"
 
-#: ../data/units.xml.in.h:390
+#: ../data/units.xml.in.h:388
 msgid "Reciprocal Meter"
 msgstr "Reciproka meter"
 
-#: ../data/units.xml.in.h:391
+#: ../data/units.xml.in.h:389
 msgid "Magnetic Field Strength"
 msgstr "Magnetisk fältstyrka"
 
-#: ../data/units.xml.in.h:392
+#: ../data/units.xml.in.h:390
 msgid "Ampere per Meter"
 msgstr "Ampere per meter"
 
-#: ../data/units.xml.in.h:393
+#: ../data/units.xml.in.h:391
 msgid "Oersted"
 msgstr ""
 
-#: ../data/units.xml.in.h:394
+#: ../data/units.xml.in.h:392
 msgid "ar:Oe,oersted,p:oersteds"
 msgstr "a:Oe,oersted"
 
-#: ../data/units.xml.in.h:395
+#: ../data/units.xml.in.h:393
 msgid "Magnetic Flux"
 msgstr "Magnetiskt flöde"
 
-#: ../data/units.xml.in.h:396
+#: ../data/units.xml.in.h:394
 msgid "Volt Seconds"
 msgstr "Voltsekund"
 
-#: ../data/units.xml.in.h:397
+#: ../data/units.xml.in.h:395
 msgid "Weber"
 msgstr ""
 
-#: ../data/units.xml.in.h:398
+#: ../data/units.xml.in.h:396
 msgid "ar:Wb,weber,p:webers"
 msgstr "a:Wb,weber"
 
-#: ../data/units.xml.in.h:399
+#: ../data/units.xml.in.h:397
 msgid "Maxwell"
 msgstr ""
 
-#: ../data/units.xml.in.h:400
+#: ../data/units.xml.in.h:398
 msgid "ar:Mx,maxwell,p:maxwells"
 msgstr "a:Mx,maxwell"
 
-#: ../data/units.xml.in.h:401
+#: ../data/units.xml.in.h:399
 msgid "Magnetic Flux Density"
 msgstr "Magnetisk flödestäthet"
 
-#: ../data/units.xml.in.h:402
+#: ../data/units.xml.in.h:400
 msgid "Weber per Meter Squared"
 msgstr "Weber per kvadratmeter"
 
-#: ../data/units.xml.in.h:403
+#: ../data/units.xml.in.h:401
 msgid "Tesla"
 msgstr ""
 
-#: ../data/units.xml.in.h:404
+#: ../data/units.xml.in.h:402
 msgid "ar:T,tesla,p:teslas"
 msgstr "a:T,tesla"
 
-#: ../data/units.xml.in.h:405
+#: ../data/units.xml.in.h:403
 msgid "Gauss"
 msgstr ""
 
-#: ../data/units.xml.in.h:406
+#: ../data/units.xml.in.h:404
 msgid "r:gauss"
 msgstr ""
 
-#: ../data/units.xml.in.h:407
+#: ../data/units.xml.in.h:405
 msgid "Atomic Unit of Magnetic Flux Density"
 msgstr "Atomär enhet för magnetisk flödestäthet"
 
-#: ../data/units.xml.in.h:408
-msgid "r:atomic_mfd"
-msgstr ""
-
-#: ../data/units.xml.in.h:409
+#: ../data/units.xml.in.h:406
 msgid "Magnetic Dipole Moment"
 msgstr "Magnetiskt dipolmoment"
 
-#: ../data/units.xml.in.h:410
+#: ../data/units.xml.in.h:407
 msgid "Joule per Tesla"
 msgstr ""
 
-#: ../data/units.xml.in.h:411
+#: ../data/units.xml.in.h:408
 msgid "Atomic Unit of Magnetic Dipole Moment"
 msgstr "Atomär enhet för magnetiskt dipolmoment"
 
-#: ../data/units.xml.in.h:412
-msgid "r:atomic_mdm"
-msgstr ""
-
-#: ../data/units.xml.in.h:413
+#: ../data/units.xml.in.h:409
 msgid "Force"
 msgstr "Kraft"
 
-#: ../data/units.xml.in.h:414
+#: ../data/units.xml.in.h:410
 msgid "Meter Kilogram per Second Squared"
 msgstr "Meterkilogram per kvadratsekund"
 
-#: ../data/units.xml.in.h:415
+#: ../data/units.xml.in.h:411
 msgid "Newton"
 msgstr ""
 
-#: ../data/units.xml.in.h:416
+#: ../data/units.xml.in.h:412
 msgid "ar:N,newton,p:newtons"
 msgstr "a:N,newton"
 
-#: ../data/units.xml.in.h:417
+#: ../data/units.xml.in.h:413
 msgid "Dyne"
 msgstr ""
 
-#: ../data/units.xml.in.h:418
+#: ../data/units.xml.in.h:414
 msgid "ar:dyn,dyne,p:dynes"
 msgstr ""
 
-#: ../data/units.xml.in.h:419
+#: ../data/units.xml.in.h:415
 msgid "Pound-force"
 msgstr ""
 
-#: ../data/units.xml.in.h:420
+#: ../data/units.xml.in.h:416
 msgid "ar:lbf,pound_force"
 msgstr ""
 
-#: ../data/units.xml.in.h:421
+#: ../data/units.xml.in.h:417
 msgid "Pound Foot per Second Squared"
 msgstr "Pundfot per kvadratsekund"
 
-#: ../data/units.xml.in.h:422
+#: ../data/units.xml.in.h:418
 msgid "Poundal"
 msgstr ""
 
-#: ../data/units.xml.in.h:423
+#: ../data/units.xml.in.h:419
 msgid "r:poundal,p:poundals,a:pdl"
 msgstr ""
 
-#: ../data/units.xml.in.h:424
+#: ../data/units.xml.in.h:420
 msgid "Pond (Gram-Force)"
 msgstr ""
 
-#: ../data/units.xml.in.h:425
+#: ../data/units.xml.in.h:421
 msgid "r:pond,p:ponds,a:gf"
 msgstr ""
 
-#: ../data/units.xml.in.h:426
+#: ../data/units.xml.in.h:422
 msgid "Kilopond (Kilogram-Force)"
 msgstr ""
 
-#: ../data/units.xml.in.h:427
+#: ../data/units.xml.in.h:423
 msgid "Atomic Unit of Force"
 msgstr "Atomär enhet för kraft"
 
-#: ../data/units.xml.in.h:428
-msgid "r:atomic_force,ais:f_A"
-msgstr ""
-
-#: ../data/units.xml.in.h:429
+#: ../data/units.xml.in.h:424
 msgid "Moment of Force"
 msgstr "Kraftmoment"
 
-#: ../data/units.xml.in.h:430
+#: ../data/units.xml.in.h:425
 msgid "Newton Meter"
 msgstr "Newtonmeter"
 
-#: ../data/units.xml.in.h:431
+#: ../data/units.xml.in.h:426
+msgid "Momentum"
+msgstr "Rörelsemängd"
+
+#: ../data/units.xml.in.h:427
+msgid "Kilogram Meter per Second"
+msgstr "Kilogrammeter per sekund"
+
+#: ../data/units.xml.in.h:428
+msgid "Electronvolt Momentum"
+msgstr "Elektronvolt-rörelsemängd"
+
+#: ../data/units.xml.in.h:429
 msgid "Pressure"
 msgstr "Tryck"
 
-#: ../data/units.xml.in.h:432
+#: ../data/units.xml.in.h:430
 msgid "Newton per Meter Squared"
 msgstr "Newton per kvadratmeter"
 
-#: ../data/units.xml.in.h:433
+#: ../data/units.xml.in.h:431
 msgid "Pound-force per Square Inch"
 msgstr "Pound-force per kvadrattum"
 
-#: ../data/units.xml.in.h:434
+#: ../data/units.xml.in.h:432
 msgid "Pascal"
 msgstr ""
 
-#: ../data/units.xml.in.h:435
+#: ../data/units.xml.in.h:433
 msgid "ar:Pa,pascal,p:pascals"
 msgstr "a:Pa,pascal"
 
-#: ../data/units.xml.in.h:436
+#: ../data/units.xml.in.h:434
 msgid "Pound-force per Square Inch (psi)"
 msgstr "Pound-force per kvadrattum (psi)"
 
-#: ../data/units.xml.in.h:437
+#: ../data/units.xml.in.h:435
 msgid "a-cr:psi"
 msgstr ""
 
-#: ../data/units.xml.in.h:438
+#: ../data/units.xml.in.h:436
 msgid "Bar"
 msgstr "Bar"
 
-#: ../data/units.xml.in.h:439
+#: ../data/units.xml.in.h:437
 msgid "r:bar,p:bars"
 msgstr ""
 
-#: ../data/units.xml.in.h:440
+#: ../data/units.xml.in.h:438
 msgid "Atmosphere"
 msgstr "Atmosfär"
 
-#: ../data/units.xml.in.h:441
+#: ../data/units.xml.in.h:439
 msgid "ar:atm,atmosphere,p:atmospheres"
 msgstr "a:atm,atmosfär,p:atmosfärer"
 
-#: ../data/units.xml.in.h:442
+#: ../data/units.xml.in.h:440
 msgid "Torr"
 msgstr ""
 
-#: ../data/units.xml.in.h:443
+#: ../data/units.xml.in.h:441
 msgid "r:torr,p:torrs"
 msgstr ""
 
-#: ../data/units.xml.in.h:444
+#: ../data/units.xml.in.h:442
 msgid "Millimeter of Mercury"
 msgstr "Millimeter kvicksilver"
 
-#: ../data/units.xml.in.h:445
+#: ../data/units.xml.in.h:443
 msgid "ar:mmHg"
 msgstr ""
 
-#: ../data/units.xml.in.h:446
+#: ../data/units.xml.in.h:444
 msgid "Inch of Mercury"
 msgstr "Fot kvicksilver"
 
-#: ../data/units.xml.in.h:447
+#: ../data/units.xml.in.h:445
 msgid "ar:inHg"
 msgstr ""
 
-#: ../data/units.xml.in.h:448
+#: ../data/units.xml.in.h:446
 msgid "Dynamic Viscosity"
 msgstr "Dynamisk viskositet"
 
-#: ../data/units.xml.in.h:449
+#: ../data/units.xml.in.h:447
 msgid "Pascal Second"
 msgstr "Pascalsekund"
 
-#: ../data/units.xml.in.h:450
+#: ../data/units.xml.in.h:448
 msgid "Poise"
 msgstr ""
 
-#: ../data/units.xml.in.h:451
+#: ../data/units.xml.in.h:449
 msgid "ar:P,poise,p:poises"
 msgstr "a:P,poise"
 
-#: ../data/units.xml.in.h:452
+#: ../data/units.xml.in.h:450
 msgid "Kinematic Viscosity"
 msgstr "Kinematisk viskositet"
 
-#: ../data/units.xml.in.h:453
+#: ../data/units.xml.in.h:451
 msgid "Square Meter per Second"
 msgstr "Kvadratmeter per sekund"
 
-#: ../data/units.xml.in.h:454
+#: ../data/units.xml.in.h:452
 msgid "Stokes"
 msgstr ""
 
-#: ../data/units.xml.in.h:455
+#: ../data/units.xml.in.h:453
 msgid "ar:St,stokes"
 msgstr ""
 
-#: ../data/units.xml.in.h:456
+#: ../data/units.xml.in.h:454
 msgid "Surface Tension"
 msgstr "Ytspänning"
 
-#: ../data/units.xml.in.h:457
+#: ../data/units.xml.in.h:455
 msgid "Newton per Meter"
 msgstr "Newton per meter"
 
-#: ../data/units.xml.in.h:458
+#: ../data/units.xml.in.h:456
 msgid "Energy"
 msgstr "Energi"
 
-#: ../data/units.xml.in.h:459
+#: ../data/units.xml.in.h:457
 msgid "Joule"
 msgstr ""
 
-#: ../data/units.xml.in.h:460
+#: ../data/units.xml.in.h:458
 msgid "ar:J,joule,p:joules"
 msgstr "a:J,joule"
 
-#: ../data/units.xml.in.h:461
+#: ../data/units.xml.in.h:459
 msgid "Watt Hour"
 msgstr "Watttimme"
 
-#: ../data/units.xml.in.h:462
+#: ../data/units.xml.in.h:460
 msgid "Kilowatt Hour"
 msgstr "Kilowatttimme"
 
-#: ../data/units.xml.in.h:463
+#: ../data/units.xml.in.h:461
 msgid "Calorie (international table)"
 msgstr "Kalorier (international table)"
 
-#: ../data/units.xml.in.h:464
+#: ../data/units.xml.in.h:462
 msgid "ais:cal_IT,ar:cal,c:calorie,cp:calories"
 msgstr "ais:cal_IT,a:cal,c:kalori,cp:kalorier"
 
-#: ../data/units.xml.in.h:465
+#: ../data/units.xml.in.h:463
 msgid "Calorie (capital C)"
 msgstr "Kalorier (med stort K)"
 
-#: ../data/units.xml.in.h:466
+#: ../data/units.xml.in.h:464
 msgid "cr:Calorie,cp:Calories"
 msgstr ""
 
-#: ../data/units.xml.in.h:467
+#: ../data/units.xml.in.h:465
 msgid "Calorie (thermochemical)"
 msgstr "Kalorier (termokemiska)"
 
-#: ../data/units.xml.in.h:468
+#: ../data/units.xml.in.h:466
 msgid "ars:cal_th"
 msgstr ""
 
-#: ../data/units.xml.in.h:469
+#: ../data/units.xml.in.h:467
 msgid "Gram of TNT"
 msgstr "Gram TNT"
 
-#: ../data/units.xml.in.h:470
+#: ../data/units.xml.in.h:468
 msgid "a-cr:gTNT,gramTNT"
 msgstr ""
 
-#: ../data/units.xml.in.h:471
+#: ../data/units.xml.in.h:469
 msgid "Ton of TNT"
 msgstr "Ton TNT"
 
-#: ../data/units.xml.in.h:472
+#: ../data/units.xml.in.h:470
 msgid "a-cr:tTNT,tonTNT"
 msgstr ""
 
-#: ../data/units.xml.in.h:473
+#: ../data/units.xml.in.h:471
 msgid "Calorie (15 degrees Celsius)"
 msgstr "Kalorier (15 grader Celsius)"
 
-#: ../data/units.xml.in.h:474
+#: ../data/units.xml.in.h:472
 msgid "ars:cal_fifteen"
 msgstr "as:cal_femton"
 
-#: ../data/units.xml.in.h:475
+#: ../data/units.xml.in.h:473
 msgid "Calorie (mean)"
 msgstr "Kalorier (medel)"
 
-#: ../data/units.xml.in.h:476
+#: ../data/units.xml.in.h:474
 msgid "ars:cal_mean"
 msgstr "as:cal_medel"
 
-#: ../data/units.xml.in.h:477
+#: ../data/units.xml.in.h:475
 msgid "British Thermal Unit (IT)"
 msgstr ""
 
-#: ../data/units.xml.in.h:478
+#: ../data/units.xml.in.h:476
 msgid "ar:Btu"
 msgstr ""
 
-#: ../data/units.xml.in.h:479 ../data/variables.xml.in.h:249
-msgid "Electron Volt"
+#: ../data/units.xml.in.h:477
+msgid "Electronvolt"
 msgstr "Elektronvolt"
 
-#: ../data/units.xml.in.h:480
-msgid "ar:eV,electron_volt,p:electron_volts"
-msgstr "a:eV,elektronvolt"
+#: ../data/units.xml.in.h:478
+msgid "ar:eV,electronvolt,p:electronvolts"
+msgstr "a:eV,elektronvolt,electronvolt"
 
-#: ../data/units.xml.in.h:481
+#: ../data/units.xml.in.h:479
 msgid "Erg"
 msgstr ""
 
-#: ../data/units.xml.in.h:482
+#: ../data/units.xml.in.h:480
 msgid "r:erg,p:ergs"
 msgstr ""
 
-#: ../data/units.xml.in.h:483
+#: ../data/units.xml.in.h:481
 msgid "Foe"
 msgstr ""
 
-#: ../data/units.xml.in.h:484
+#: ../data/units.xml.in.h:482
 msgid "r:foe,p:foes"
 msgstr ""
 
-#: ../data/units.xml.in.h:485
+#: ../data/units.xml.in.h:483
 msgid "Foot-Pound Force"
 msgstr ""
 
-#: ../data/units.xml.in.h:486
+#: ../data/units.xml.in.h:484
 msgid "Hartree (Atomic Unit of Energy)"
 msgstr "Hartree (atomär enhet för energi)"
 
-#: ../data/units.xml.in.h:487
-msgid "ar:Ha,as:E_h,as:m_A,hartree"
+#: ../data/units.xml.in.h:485
+msgid "ar:Ha,as:E_h,hartree"
 msgstr ""
 
-#: ../data/units.xml.in.h:488
+#: ../data/units.xml.in.h:486
 msgid "Rydberg"
 msgstr "Rydberg"
 
-#: ../data/units.xml.in.h:489
+#: ../data/units.xml.in.h:487
 msgid "ar:Ry,s:rydberg_unit"
 msgstr "ar:Ry,s:rydberg_enhet"
 
-#: ../data/units.xml.in.h:490
+#: ../data/units.xml.in.h:488
 msgid "Specific Energy"
 msgstr "Specifik energi"
 
-#: ../data/units.xml.in.h:491
+#: ../data/units.xml.in.h:489
 msgid "Joule per Kilogram"
 msgstr "Joule per kilogram"
 
-#: ../data/units.xml.in.h:492
+#: ../data/units.xml.in.h:490
 msgid "Power"
 msgstr "Effekt"
 
-#: ../data/units.xml.in.h:493
+#: ../data/units.xml.in.h:491
 msgid "Joule per Second"
 msgstr "Joule per sekund"
 
-#: ../data/units.xml.in.h:494
+#: ../data/units.xml.in.h:492
 msgid "Watt"
 msgstr ""
 
-#: ../data/units.xml.in.h:495
+#: ../data/units.xml.in.h:493
 msgid "ar:W,watt,p:watts"
 msgstr "a:W,watt"
 
-#: ../data/units.xml.in.h:496
+#: ../data/units.xml.in.h:494
 msgid "Horse Power"
 msgstr "Hästkraft"
 
-#: ../data/units.xml.in.h:497
+#: ../data/units.xml.in.h:495
 msgid "ar:hp,horsepower,p:horsepowers"
 msgstr "a:hp,hästkraft,p:hästkrafter"
 
-#: ../data/units.xml.in.h:498
+#: ../data/units.xml.in.h:496
 msgid "Pferdest&#xE4;rke"
 msgstr ""
 
-#: ../data/units.xml.in.h:499
+#: ../data/units.xml.in.h:497
 msgid "ar:PS,u:pferdest&#xE4;rke"
 msgstr ""
 
-#: ../data/units.xml.in.h:500
+#: ../data/units.xml.in.h:498
 msgid "Entropy"
 msgstr "Entropi"
 
-#: ../data/units.xml.in.h:501
+#: ../data/units.xml.in.h:499
 msgid "Joule per Kelvin"
 msgstr "Joule per Kelvin"
+
+#: ../data/units.xml.in.h:500
+msgid "Boltzmann (unit)"
+msgstr "Boltzmanns (enhet)"
+
+#: ../data/units.xml.in.h:501
+msgid "rs:boltzmann_unit,ais:k_Bunit"
+msgstr ""
 
 #: ../data/units.xml.in.h:502
 msgid "Specific Entropy"
@@ -9809,8 +9807,8 @@ msgid "Physical Constants"
 msgstr "Fysikaliska konstanter"
 
 #: ../data/variables.xml.in.h:61
-msgid "General Physics"
-msgstr "Generell fysik"
+msgid "Universal Constants"
+msgstr "Universala konstanter"
 
 #: ../data/variables.xml.in.h:62
 msgid "Characteristic Impedance of Vacuum"
@@ -10281,766 +10279,701 @@ msgid "r:fine_structure,au:&#x03B1;"
 msgstr ""
 
 #: ../data/variables.xml.in.h:179
-msgid "Quantum of Circulation"
-msgstr "Cirkulationskvantum"
+msgid "Hartree Energy (constant)"
+msgstr "Hartreeenergi (konstant)"
 
 #: ../data/variables.xml.in.h:180
-msgid "r:quantum_circulation"
+msgid "rs:hartree_constant,as:Ha_constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:181
-msgid "Quantum of Circulation times 2"
-msgstr ""
+msgid "Quantum of Circulation"
+msgstr "Cirkulationskvantum"
 
 #: ../data/variables.xml.in.h:182
-msgid "r:quantum_circulation_2"
+msgid "r:quantum_circulation"
 msgstr ""
 
 #: ../data/variables.xml.in.h:183
-msgid "Rydberg Constant"
-msgstr "Rydbergs konstant"
+msgid "Quantum of Circulation times 2"
+msgstr ""
 
 #: ../data/variables.xml.in.h:184
-msgid "r:rydberg,aisu:R_&#x221E;"
+msgid "r:quantum_circulation_2"
 msgstr ""
 
 #: ../data/variables.xml.in.h:185
-msgid "Thomson cross section"
-msgstr "Thomsons krossektion"
+msgid "Rydberg Constant"
+msgstr "Rydbergs konstant"
 
 #: ../data/variables.xml.in.h:186
-msgid "r:thomson_cross_section,aisu:&#x03C3;_t"
+msgid "r:rydberg,aisu:R_&#x221E;"
 msgstr ""
 
 #: ../data/variables.xml.in.h:187
-msgid "Weak Mixing Angle (Weinberg Angle)"
-msgstr "Svag blandningsvinken (Weinbergvinkeln)"
+msgid "Thomson cross section"
+msgstr "Thomsons krossektion"
 
 #: ../data/variables.xml.in.h:188
-msgid "r:weinberg,weak_mixing_angle,aisu:&#x03B8;_W"
+msgid "r:thomson_cross_section,aisu:&#x03C3;_t"
 msgstr ""
 
 #: ../data/variables.xml.in.h:189
-msgid "Physico-Chemical Constants"
-msgstr "Fysikalisk-kemiska konstanter"
+msgid "Weak Mixing Angle (Weinberg Angle)"
+msgstr "Svag blandningsvinken (Weinbergvinkeln)"
 
 #: ../data/variables.xml.in.h:190
-msgid "{220} Lattice Spacing of Silicon"
+msgid "r:weinberg,weak_mixing_angle,aisu:&#x03B8;_W"
 msgstr ""
 
 #: ../data/variables.xml.in.h:191
+msgid "Physico-Chemical Constants"
+msgstr "Fysikalisk-kemiska konstanter"
+
+#: ../data/variables.xml.in.h:192
+msgid "{220} Lattice Spacing of Silicon"
+msgstr ""
+
+#: ../data/variables.xml.in.h:193
 msgid "rs:lattice_spacing_Si220"
 msgstr ""
 
-#: ../data/variables.xml.in.h:192
+#: ../data/variables.xml.in.h:194
 msgid "Atomic Mass Constant"
 msgstr "Atommassakonstanten"
 
-#: ../data/variables.xml.in.h:193
+#: ../data/variables.xml.in.h:195
 msgid "r:atomic_mass,ais:m_u"
 msgstr ""
 
-#: ../data/variables.xml.in.h:194
+#: ../data/variables.xml.in.h:196
 msgid "Avogadro Constant"
 msgstr "Avogadros konstant"
 
-#: ../data/variables.xml.in.h:195
+#: ../data/variables.xml.in.h:197
 msgid "r:avogadro,ais:N_A"
 msgstr ""
 
-#: ../data/variables.xml.in.h:196
+#: ../data/variables.xml.in.h:198
 msgid "Boltzmann Constant"
 msgstr "Boltzmanns konstant"
 
-#: ../data/variables.xml.in.h:197
+#: ../data/variables.xml.in.h:199
 msgid "r:boltzmann,ais:k_B"
 msgstr ""
 
-#: ../data/variables.xml.in.h:198
+#: ../data/variables.xml.in.h:200
 msgid "Compton Wavelength"
 msgstr "Compton-våglängd"
 
-#: ../data/variables.xml.in.h:199
+#: ../data/variables.xml.in.h:201
 msgid "r:compton_wavelength,aisu:&#x3BB;_C,aos:lambda_C"
 msgstr ""
 
-#: ../data/variables.xml.in.h:200
+#: ../data/variables.xml.in.h:202
 msgid "Compton Wavelength over 2 pi"
 msgstr "Compton-våglängd över 2 pi"
 
-#: ../data/variables.xml.in.h:201
+#: ../data/variables.xml.in.h:203
 msgid "r:compton_wavelength_2pi"
 msgstr ""
 
-#: ../data/variables.xml.in.h:202
-msgid "Faraday Constant"
-msgstr "Faradays konstant"
-
-#: ../data/variables.xml.in.h:203
-msgid "r:faraday,au:&#x2131;"
-msgstr ""
-
 #: ../data/variables.xml.in.h:204
-msgid "First Radiation Constant"
-msgstr "Första strålningskonstanten"
+msgid "Electronvolt (constant)"
+msgstr "Elektronvolt (konstant)"
 
 #: ../data/variables.xml.in.h:205
-msgid "r:first_radiation,ais:c_1"
+msgid "rs:electronvolt_constant,as:eV_constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:206
-msgid "First Radiation Constant for Spectral Radiance"
-msgstr "Första strålningskonstanten för spektralradians"
+msgid "Faraday Constant"
+msgstr "Faradays konstant"
 
 #: ../data/variables.xml.in.h:207
-msgid "rs:first_radiation_sr,ais:c_1L"
+msgid "r:faraday,au:&#x2131;"
 msgstr ""
 
 #: ../data/variables.xml.in.h:208
-msgid "Gas Constant"
-msgstr "Gaskonstanten"
+msgid "First Radiation Constant"
+msgstr "Första strålningskonstanten"
 
 #: ../data/variables.xml.in.h:209
-msgid "r:gas_constant,ideal_gas"
+msgid "r:first_radiation,ais:c_1"
 msgstr ""
 
 #: ../data/variables.xml.in.h:210
-msgid "Lattice Parameter of Silicon"
-msgstr "Glitterparameter för silikon"
+msgid "First Radiation Constant for Spectral Radiance"
+msgstr "Första strålningskonstanten för spektralradians"
 
 #: ../data/variables.xml.in.h:211
-msgid "rs:lattice_parameter_Si"
+msgid "rs:first_radiation_sr,ais:c_1L"
 msgstr ""
 
 #: ../data/variables.xml.in.h:212
-msgid "Loschmidt Constant (273.15 K, 100 kPa)"
-msgstr "Loschmidts konstant (273.15 K, 100 kPa)"
+msgid "Gas Constant"
+msgstr "Gaskonstanten"
 
 #: ../data/variables.xml.in.h:213
-msgid "loschmidt,ais:n_0"
+msgid "r:gas_constant,ideal_gas"
 msgstr ""
 
 #: ../data/variables.xml.in.h:214
-msgid "Loschmidt Constant (273.15 K, 101.325 kPa)"
-msgstr "Loschmidts konstant (273.15 K, 101.325 kPa)"
+msgid "Lattice Parameter of Silicon"
+msgstr "Glitterparameter för silikon"
 
 #: ../data/variables.xml.in.h:215
-msgid "rs:loschmidt_101"
+msgid "rs:lattice_parameter_Si"
 msgstr ""
 
 #: ../data/variables.xml.in.h:216
-msgid "Molar Planck Constant"
-msgstr "Molar Planckkonstant"
+msgid "Loschmidt Constant (273.15 K, 100 kPa)"
+msgstr "Loschmidts konstant (273.15 K, 100 kPa)"
 
 #: ../data/variables.xml.in.h:217
-msgid "r:molar_planck"
+msgid "loschmidt_100"
 msgstr ""
 
 #: ../data/variables.xml.in.h:218
-msgid "Molar Volume of Ideal Gas (273.15 K, 100 kPa)"
-msgstr "Molarvolym för ideal gas (273.15 K, 100 kPa)"
+msgid "Loschmidt Constant (273.15 K, 101.325 kPa)"
+msgstr "Loschmidts konstant (273.15 K, 101.325 kPa)"
 
 #: ../data/variables.xml.in.h:219
-msgid "r:ideal_gas_molar,ais:V_m"
+msgid "rs:loschmidt,ais:n_0"
 msgstr ""
 
 #: ../data/variables.xml.in.h:220
-msgid "Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)"
-msgstr "Molarvolym för ideal gas (273.15 K, 101.325 kPa)"
+msgid "Molar Planck Constant"
+msgstr "Molar Planckkonstant"
 
 #: ../data/variables.xml.in.h:221
-msgid "rs:ideal_gas_molar_101,ais:V_m101"
+msgid "r:molar_planck"
 msgstr ""
 
 #: ../data/variables.xml.in.h:222
-msgid "Sackur-Tetrode constant (1 K, 100 kPa)"
-msgstr "Sackur-Tetrodes konstant (1 K, 100 kPa))"
+msgid "Molar Volume of Ideal Gas (273.15 K, 100 kPa)"
+msgstr "Molarvolym för ideal gas (273.15 K, 100 kPa)"
 
 #: ../data/variables.xml.in.h:223
-msgid "r:sackur_tetrode"
+msgid "r:ideal_gas_molar,ais:V_m"
 msgstr ""
 
 #: ../data/variables.xml.in.h:224
-msgid "Sackur-Tetrode constant (1 K, 101.325 kPa)"
-msgstr "Sackur-Tetrodes konstant (1 K, 101.325 kPa)"
+msgid "Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)"
+msgstr "Molarvolym för ideal gas (273.15 K, 101.325 kPa)"
 
 #: ../data/variables.xml.in.h:225
-msgid "rs:sackur_tetrode_101"
+msgid "rs:ideal_gas_molar_101,ais:V_m101"
 msgstr ""
 
 #: ../data/variables.xml.in.h:226
-msgid "Second Radiation Constant"
-msgstr "Andra strålningskonstanten"
+msgid "Sackur-Tetrode constant (1 K, 100 kPa)"
+msgstr "Sackur-Tetrodes konstant (1 K, 100 kPa))"
 
 #: ../data/variables.xml.in.h:227
-msgid "r:second_radiation,ais:c_2"
+msgid "r:sackur_tetrode"
 msgstr ""
 
 #: ../data/variables.xml.in.h:228
-msgid "Stefan-Boltzmann Constant"
-msgstr "Stefan-Boltzmanns konstant"
+msgid "Sackur-Tetrode constant (1 K, 101.325 kPa)"
+msgstr "Sackur-Tetrodes konstant (1 K, 101.325 kPa)"
 
 #: ../data/variables.xml.in.h:229
-msgid "r:stefan,au:&#x03C3;"
+msgid "rs:sackur_tetrode_101"
 msgstr ""
 
 #: ../data/variables.xml.in.h:230
-msgid "Wien frequency displacement law constant"
-msgstr "Wiens frekvensförskjutningskonstant"
+msgid "Second Radiation Constant"
+msgstr "Andra strålningskonstanten"
 
 #: ../data/variables.xml.in.h:231
-msgid "r:wien_frequency"
+msgid "r:second_radiation,ais:c_2"
 msgstr ""
 
 #: ../data/variables.xml.in.h:232
-msgid "Wien wavelength displacement law constant"
-msgstr "Wiens våglängdsförskjutningskonstant"
+msgid "Stefan-Boltzmann Constant"
+msgstr "Stefan-Boltzmanns konstant"
 
 #: ../data/variables.xml.in.h:233
-msgid "r:wien_displacement,ais:b_energy"
+msgid "r:stefan,au:&#x03C3;"
 msgstr ""
 
 #: ../data/variables.xml.in.h:234
-msgid "Unit Relations"
-msgstr "Enhetsförhållanden"
+msgid "Wien frequency displacement law constant"
+msgstr "Wiens frekvensförskjutningskonstant"
 
 #: ../data/variables.xml.in.h:235
-msgid "Atomic Mass Unit - Electron Volt Relationship"
-msgstr "Förhållande atommassenhet till elektronvolt"
+msgid "r:wien_frequency"
+msgstr ""
 
 #: ../data/variables.xml.in.h:236
-msgid "r:u_to_eV"
-msgstr ""
+msgid "Wien wavelength displacement law constant"
+msgstr "Wiens våglängdsförskjutningskonstant"
 
 #: ../data/variables.xml.in.h:237
-msgid "Atomic Mass Unit - Hartree Relationship"
-msgstr "Förhållande atommassenhet till Hartree"
+msgid "r:wien_displacement,ais:b_energy"
+msgstr ""
 
 #: ../data/variables.xml.in.h:238
-msgid "r:u_to_Ha"
-msgstr ""
+msgid "Conversion factors for energy equivalents"
+msgstr "Omvandlingsfaktorer för energiekvivalenter"
 
 #: ../data/variables.xml.in.h:239
-msgid "Atomic Mass Unit - Hertz Relationship"
-msgstr "Förhållande atommassenhet till Hertz"
-
-#: ../data/variables.xml.in.h:240
-msgid "r:u_to_Hz"
-msgstr ""
-
-#: ../data/variables.xml.in.h:241
-msgid "Atomic Mass Unit - Inverse Meter Relationship"
-msgstr "Förhållande atommassenhet till reciprok meter"
-
-#: ../data/variables.xml.in.h:242
-msgid "r:u_to_m"
-msgstr ""
-
-#: ../data/variables.xml.in.h:243
-msgid "Atomic Mass Unit - Joule Relationship"
-msgstr "Förhållande atommassenhet till Joule"
-
-#: ../data/variables.xml.in.h:244
-msgid "r:u_to_J"
-msgstr ""
-
-#: ../data/variables.xml.in.h:245
-msgid "Atomic Mass Unit - Kelvin Relationship"
-msgstr "Förhållande atommassenhet till Kelvin"
-
-#: ../data/variables.xml.in.h:246
-msgid "r:u_to_K"
-msgstr ""
-
-#: ../data/variables.xml.in.h:247
-msgid "Atomic Mass Unit - Kilogram Relationship"
-msgstr "Förhållande atommassenhet till kilogram"
-
-#: ../data/variables.xml.in.h:248
-msgid "r:u_to_kg"
-msgstr ""
-
-#: ../data/variables.xml.in.h:250
-msgid "r:eV_to_J"
-msgstr ""
-
-#: ../data/variables.xml.in.h:251
-msgid "Hartree Energy"
-msgstr "Hartreeenergi"
-
-#: ../data/variables.xml.in.h:252
-msgid "r:Ha_to_J"
-msgstr ""
-
-#: ../data/variables.xml.in.h:253
-msgid "Hertz - Atomic Mass Unit Relationship"
-msgstr "Förhållande Hertz till atommassenhet"
-
-#: ../data/variables.xml.in.h:254
-msgid "r:Hz_to_u"
-msgstr ""
-
-#: ../data/variables.xml.in.h:255
-msgid "Hertz - Electron Volt Relationship"
-msgstr "Förhållande Hertz till elektronvolt"
-
-#: ../data/variables.xml.in.h:256
-msgid "r:Hz_to_eV"
-msgstr ""
-
-#: ../data/variables.xml.in.h:257
-msgid "Hertz - Hartree Relationship"
-msgstr "Förhållande Hertz till Hartree"
-
-#: ../data/variables.xml.in.h:258
-msgid "r:Hz_to_Ha"
-msgstr ""
-
-#: ../data/variables.xml.in.h:259
 msgid "Hertz - Inverse Meter Relationship"
 msgstr "Förhållande Hertz till reciprok meter"
 
-#: ../data/variables.xml.in.h:260
+#: ../data/variables.xml.in.h:240
 msgid "r:Hz_to_m"
 msgstr ""
 
-#: ../data/variables.xml.in.h:261
+#: ../data/variables.xml.in.h:241
 msgid "Hertz - Joule Relationship"
 msgstr "Förhållande Hertz till Joule"
 
-#: ../data/variables.xml.in.h:262
+#: ../data/variables.xml.in.h:242
 msgid "r:Hz_to_J"
 msgstr ""
 
-#: ../data/variables.xml.in.h:263
+#: ../data/variables.xml.in.h:243
 msgid "Hertz - Kelvin Relationship"
 msgstr "Förhållande Hertz till Kelvin"
 
-#: ../data/variables.xml.in.h:264
+#: ../data/variables.xml.in.h:244
 msgid "r:Hz_to_K"
 msgstr ""
 
-#: ../data/variables.xml.in.h:265
+#: ../data/variables.xml.in.h:245
 msgid "Hertz - Kilogram Relationship"
 msgstr "Förhållande Hertz till kilogram"
 
-#: ../data/variables.xml.in.h:266
+#: ../data/variables.xml.in.h:246
 msgid "r:Hz_to_kg"
 msgstr ""
 
-#: ../data/variables.xml.in.h:267
-msgid "Inverse Meter - Atomic Mass Unit Relationship"
-msgstr "Förhållande reciprok meter till atommassenhet"
-
-#: ../data/variables.xml.in.h:268
-msgid "r:m_to_u"
-msgstr ""
-
-#: ../data/variables.xml.in.h:269
-msgid "Inverse Meter - Electron Volt Relationship"
-msgstr "Förhållande reciprok meter till elektronvolt"
-
-#: ../data/variables.xml.in.h:270
-msgid "r:m_to_eV"
-msgstr ""
-
-#: ../data/variables.xml.in.h:271
-msgid "Inverse Meter - Hartree Relationship"
-msgstr "Förhållande reciprok meter till Hartree"
-
-#: ../data/variables.xml.in.h:272
-msgid "r:m_to_Ha"
-msgstr ""
-
-#: ../data/variables.xml.in.h:273
+#: ../data/variables.xml.in.h:247
 msgid "Inverse Meter - Hertz Relationship"
 msgstr "Förhållande reciprok meter till Hertz"
 
-#: ../data/variables.xml.in.h:274
+#: ../data/variables.xml.in.h:248
 msgid "r:m_to_Hz"
 msgstr ""
 
-#: ../data/variables.xml.in.h:275
+#: ../data/variables.xml.in.h:249
 msgid "Inverse Meter - Joule Relationship"
 msgstr "Förhållande reciprok meter till Joule"
 
-#: ../data/variables.xml.in.h:276
+#: ../data/variables.xml.in.h:250
 msgid "r:m_to_J"
 msgstr ""
 
-#: ../data/variables.xml.in.h:277
+#: ../data/variables.xml.in.h:251
 msgid "Inverse Meter - Kelvin Relationship"
 msgstr "Förhållande reciprok meter till Kelvin"
 
-#: ../data/variables.xml.in.h:278
+#: ../data/variables.xml.in.h:252
 msgid "r:m_to_K"
 msgstr ""
 
-#: ../data/variables.xml.in.h:279
+#: ../data/variables.xml.in.h:253
 msgid "Inverse Meter - Kilogram Relationship"
 msgstr "Förhållande reciprok meter till kilogram"
 
-#: ../data/variables.xml.in.h:280
+#: ../data/variables.xml.in.h:254
 msgid "r:m_to_kg"
 msgstr ""
 
-#: ../data/variables.xml.in.h:281
-msgid "Joule - Atomic Mass Unit Relationship"
-msgstr "Förhållande Joule till atommassenhet"
-
-#: ../data/variables.xml.in.h:282
-msgid "r:J_to_u"
-msgstr ""
-
-#: ../data/variables.xml.in.h:283
-msgid "Joule - Electron Volt Relationship"
-msgstr "Förhållande Joule till eletronvolt"
-
-#: ../data/variables.xml.in.h:284
-msgid "r:J_to_eV"
-msgstr ""
-
-#: ../data/variables.xml.in.h:285
-msgid "Joule - Hartree Relationship"
-msgstr "Förhållande Joule till Hartree"
-
-#: ../data/variables.xml.in.h:286
-msgid "r:J_to_Ha"
-msgstr ""
-
-#: ../data/variables.xml.in.h:287
+#: ../data/variables.xml.in.h:255
 msgid "Joule - Hertz Relationship"
 msgstr "Förhållande Joule till Hertz"
 
-#: ../data/variables.xml.in.h:288
+#: ../data/variables.xml.in.h:256
 msgid "r:J_to_Hz"
 msgstr ""
 
-#: ../data/variables.xml.in.h:289
+#: ../data/variables.xml.in.h:257
 msgid "Joule - Inverse Meter Relationship"
 msgstr "Förhållande Joule till reciprok meter"
 
-#: ../data/variables.xml.in.h:290
+#: ../data/variables.xml.in.h:258
 msgid "r:J_to_m"
 msgstr ""
 
-#: ../data/variables.xml.in.h:291
+#: ../data/variables.xml.in.h:259
 msgid "Joule - Kelvin Relationship"
 msgstr "Förhållande Joule till Kelvin"
 
-#: ../data/variables.xml.in.h:292
+#: ../data/variables.xml.in.h:260
 msgid "r:J_to_K"
 msgstr ""
 
-#: ../data/variables.xml.in.h:293
+#: ../data/variables.xml.in.h:261
 msgid "Joule - Kilogram Relationship"
 msgstr "Förhållande Joule till kilogram"
 
-#: ../data/variables.xml.in.h:294
+#: ../data/variables.xml.in.h:262
 msgid "r:J_to_kg"
 msgstr ""
 
-#: ../data/variables.xml.in.h:295
-msgid "Kelvin - Atomic Mass Unit Relationship"
-msgstr "Förhållande Kelvin till atommassenhet"
-
-#: ../data/variables.xml.in.h:296
-msgid "r:K_to_u"
-msgstr ""
-
-#: ../data/variables.xml.in.h:297
-msgid "Kelvin - Electron Volt Relationship"
-msgstr "Förhållande Kelvin till elektronvolt"
-
-#: ../data/variables.xml.in.h:298
-msgid "r:K_to_eV"
-msgstr ""
-
-#: ../data/variables.xml.in.h:299
-msgid "Kelvin - Hartree Relationship"
-msgstr "Förhållande Kelvin till Hartree"
-
-#: ../data/variables.xml.in.h:300
-msgid "r:K_to_Ha"
-msgstr ""
-
-#: ../data/variables.xml.in.h:301
+#: ../data/variables.xml.in.h:263
 msgid "Kelvin - Hertz Relationship"
 msgstr "Förhållande Kelvin till Hertz"
 
-#: ../data/variables.xml.in.h:302
+#: ../data/variables.xml.in.h:264
 msgid "r:K_to_Hz"
 msgstr ""
 
-#: ../data/variables.xml.in.h:303
+#: ../data/variables.xml.in.h:265
 msgid "Kelvin - Inverse Meter Relationship"
 msgstr "Förhållande Kelvin till reciprok meter"
 
-#: ../data/variables.xml.in.h:304
+#: ../data/variables.xml.in.h:266
 msgid "r:K_to_m"
 msgstr ""
 
-#: ../data/variables.xml.in.h:305
+#: ../data/variables.xml.in.h:267
 msgid "Kelvin - Joule Relationship"
 msgstr "Förhållande Kelvin till Joule"
 
-#: ../data/variables.xml.in.h:306
+#: ../data/variables.xml.in.h:268
 msgid "r:K_to_J"
 msgstr ""
 
-#: ../data/variables.xml.in.h:307
+#: ../data/variables.xml.in.h:269
 msgid "Kelvin - Kilogram Relationship"
 msgstr "Förhållande Kelvin till kilogram"
 
-#: ../data/variables.xml.in.h:308
+#: ../data/variables.xml.in.h:270
 msgid "r:K_to_kg"
 msgstr ""
 
-#: ../data/variables.xml.in.h:309
-msgid "Kilogram - Atomic Mass Unit Relationship"
-msgstr "Förhållande kilogram till atommassenhet"
-
-#: ../data/variables.xml.in.h:310
-msgid "r:kg_to_u"
-msgstr ""
-
-#: ../data/variables.xml.in.h:311
-msgid "Kilogram - Electron Volt Relationship"
-msgstr "Förhållande kilogram till eletronvolt"
-
-#: ../data/variables.xml.in.h:312
-msgid "r:kg_to_eV"
-msgstr ""
-
-#: ../data/variables.xml.in.h:313
-msgid "Kilogram - Hartree Relationship"
-msgstr "Förhållande kilogram till Hartree"
-
-#: ../data/variables.xml.in.h:314
-msgid "r:kg_to_Ha"
-msgstr ""
-
-#: ../data/variables.xml.in.h:315
+#: ../data/variables.xml.in.h:271
 msgid "Kilogram - Hertz Relationship"
 msgstr "Förhållande kilogram till Hertz"
 
-#: ../data/variables.xml.in.h:316
+#: ../data/variables.xml.in.h:272
 msgid "r:kg_to_Hz"
 msgstr ""
 
-#: ../data/variables.xml.in.h:317
+#: ../data/variables.xml.in.h:273
 msgid "Kilogram - Inverse Meter Relationship"
 msgstr "Förhållande kilogram till recriprok meter"
 
-#: ../data/variables.xml.in.h:318
+#: ../data/variables.xml.in.h:274
 msgid "r:kg_to_m"
 msgstr ""
 
-#: ../data/variables.xml.in.h:319
+#: ../data/variables.xml.in.h:275
 msgid "Kilogram - Joule Relationship"
 msgstr "Förhållande kilogram till Joule"
 
-#: ../data/variables.xml.in.h:320
+#: ../data/variables.xml.in.h:276
 msgid "r:kg_to_J"
 msgstr ""
 
-#: ../data/variables.xml.in.h:321
+#: ../data/variables.xml.in.h:277
 msgid "Kilogram - Kelvin Relationship"
 msgstr "Förhållande kilogram till Kelvin"
 
-#: ../data/variables.xml.in.h:322
+#: ../data/variables.xml.in.h:278
 msgid "r:kg_to_K"
 msgstr ""
 
-#: ../data/variables.xml.in.h:323
+#: ../data/variables.xml.in.h:279
 msgid "Basic Constants"
 msgstr "Grundläggande konstanter"
 
-#: ../data/variables.xml.in.h:324
+#: ../data/variables.xml.in.h:280
 msgid "Golden Ratio"
 msgstr "Golden ratio"
 
-#: ../data/variables.xml.in.h:325
+#: ../data/variables.xml.in.h:281
 msgid "r:golden,au:&#x3C6;"
 msgstr ""
 
-#: ../data/variables.xml.in.h:326
+#: ../data/variables.xml.in.h:282
 msgid "Omega Constant"
 msgstr "Omegakonstanten"
 
-#: ../data/variables.xml.in.h:327
+#: ../data/variables.xml.in.h:283
 msgid "r:omega"
 msgstr ""
 
-#: ../data/variables.xml.in.h:328
+#: ../data/variables.xml.in.h:284
 msgid "Pythagoras' Constant (sqrt 2)"
 msgstr "Pythagoras konstant (sqrt 2)"
 
-#: ../data/variables.xml.in.h:329
+#: ../data/variables.xml.in.h:285
 msgid "r:pythagoras"
 msgstr ""
 
-#: ../data/variables.xml.in.h:330
+#: ../data/variables.xml.in.h:286
 msgid "Apery's Constant"
 msgstr "Aperys konstant"
 
-#: ../data/variables.xml.in.h:331
+#: ../data/variables.xml.in.h:287
 msgid "r:apery"
 msgstr ""
 
-#: ../data/variables.xml.in.h:332
+#: ../data/variables.xml.in.h:288
 msgid "Base of Natural Logarithms (e)"
 msgstr "Basen för naturliga logaritmer (e)"
 
-#: ../data/variables.xml.in.h:333
+#: ../data/variables.xml.in.h:289
 msgid "r:e"
 msgstr ""
 
-#: ../data/variables.xml.in.h:334
+#: ../data/variables.xml.in.h:290
 msgid "Archimedes' Constant (pi)"
 msgstr "Archimedes konstant (pi)"
 
-#: ../data/variables.xml.in.h:335
+#: ../data/variables.xml.in.h:291
 msgid "au:&#x3C0;,r:pi"
 msgstr ""
 
-#: ../data/variables.xml.in.h:336
+#: ../data/variables.xml.in.h:292
 msgid "Euler's Constant"
 msgstr "Eulers konstant"
 
-#: ../data/variables.xml.in.h:337
+#: ../data/variables.xml.in.h:293
 msgid "au:&#x3B3;,r:euler"
 msgstr ""
 
-#: ../data/variables.xml.in.h:338
+#: ../data/variables.xml.in.h:294
 msgid "Catalan's Constant"
 msgstr "Catalans konstant"
 
-#: ../data/variables.xml.in.h:339
+#: ../data/variables.xml.in.h:295
 msgid "r:catalan"
 msgstr ""
 
-#: ../data/variables.xml.in.h:340
+#: ../data/variables.xml.in.h:296
 msgid "Special Numbers"
 msgstr "Speciella nummer"
 
-#: ../data/variables.xml.in.h:341
+#: ../data/variables.xml.in.h:297
 msgid "Imaginary i (sqrt -1)"
 msgstr "Imaginärt i (sqrt -1)"
 
-#: ../data/variables.xml.in.h:342
+#: ../data/variables.xml.in.h:298
 msgid "r:i"
 msgstr ""
 
-#: ../data/variables.xml.in.h:343
+#: ../data/variables.xml.in.h:299
 msgid "Positive Infinity"
 msgstr "Positiv oändlighet"
 
-#: ../data/variables.xml.in.h:344
+#: ../data/variables.xml.in.h:300
 msgid "a:&#x221E;,r:plus_infinity,r:infinity"
 msgstr "a:&#x221E;,oändlighet"
 
-#: ../data/variables.xml.in.h:345
+#: ../data/variables.xml.in.h:301
 msgid "Negative Infinity"
 msgstr "Negativ oändlighet"
 
-#: ../data/variables.xml.in.h:346
+#: ../data/variables.xml.in.h:302
 msgid "r:minus_infinity"
 msgstr "minus_oändlighet"
 
-#: ../data/variables.xml.in.h:347
+#: ../data/variables.xml.in.h:303
 msgid "Undefined"
 msgstr "Odefinierad"
 
-#: ../data/variables.xml.in.h:348
+#: ../data/variables.xml.in.h:304
 msgid "r:undefined"
 msgstr "odefinierad"
 
-#: ../data/variables.xml.in.h:349
+#: ../data/variables.xml.in.h:305
 msgid "Precision"
 msgstr "Precision"
 
-#: ../data/variables.xml.in.h:350
+#: ../data/variables.xml.in.h:306
 msgid "r:precision"
 msgstr ""
 
-#: ../data/variables.xml.in.h:351
+#: ../data/variables.xml.in.h:307
 msgid "False"
 msgstr "Falskt"
 
-#: ../data/variables.xml.in.h:352
+#: ../data/variables.xml.in.h:308
 msgid "r:false,r:no"
 msgstr "falskt,nej"
 
-#: ../data/variables.xml.in.h:353
+#: ../data/variables.xml.in.h:309
 msgid "True"
 msgstr "Sant"
 
-#: ../data/variables.xml.in.h:354
+#: ../data/variables.xml.in.h:310
 msgid "r:true,r:yes"
 msgstr "sant,ja"
 
-#: ../data/variables.xml.in.h:355
+#: ../data/variables.xml.in.h:311
 msgid "Unknowns"
 msgstr "Okända"
 
-#: ../data/variables.xml.in.h:356
+#: ../data/variables.xml.in.h:312
 msgid "r:x"
 msgstr ""
 
-#: ../data/variables.xml.in.h:357
+#: ../data/variables.xml.in.h:313
 msgid "r:y"
 msgstr ""
 
-#: ../data/variables.xml.in.h:358
+#: ../data/variables.xml.in.h:314
 msgid "r:z"
 msgstr ""
 
-#: ../data/variables.xml.in.h:359
+#: ../data/variables.xml.in.h:315
 msgid "n (integer)"
 msgstr "n (heltal)"
 
-#: ../data/variables.xml.in.h:360
+#: ../data/variables.xml.in.h:316
 msgid "r:n"
 msgstr ""
 
-#: ../data/variables.xml.in.h:362
+#: ../data/variables.xml.in.h:318
 msgid "Today"
 msgstr "Idag"
 
-#: ../data/variables.xml.in.h:363
+#: ../data/variables.xml.in.h:319
 msgid "r:today"
 msgstr "idag"
 
-#: ../data/variables.xml.in.h:364
+#: ../data/variables.xml.in.h:320
 msgid "Tomorrow"
 msgstr "Imorgon"
 
-#: ../data/variables.xml.in.h:365
+#: ../data/variables.xml.in.h:321
 msgid "r:tomorrow"
 msgstr "imorgon"
 
-#: ../data/variables.xml.in.h:366
+#: ../data/variables.xml.in.h:322
 msgid "Yesterday"
 msgstr "Igår"
 
-#: ../data/variables.xml.in.h:367
+#: ../data/variables.xml.in.h:323
 msgid "r:yesterday"
 msgstr "igår"
 
-#: ../data/variables.xml.in.h:368
+#: ../data/variables.xml.in.h:324
 msgid "Now (date and time)"
 msgstr "Nu (datum och tid)"
 
-#: ../data/variables.xml.in.h:369
+#: ../data/variables.xml.in.h:325
 msgid "r:now"
 msgstr ""
 
+#, fuzzy
+#~ msgid "Universal"
+#~ msgstr "Universala konstanter"
+
+#~ msgid "General Physics"
+#~ msgstr "Generell fysik"
+
+#~ msgid "Unit Relations"
+#~ msgstr "Enhetsförhållanden"
+
+#, fuzzy
+#~ msgid "r:atomic_uot,ais:t_A"
+#~ msgstr "elasticitet"
+
+#~ msgid "Atomic Unit of Current"
+#~ msgstr "Atomär enhet för ström"
+
+#, fuzzy
+#~ msgid "r:atomic_uoc"
+#~ msgstr "elasticitet"
+
+#, fuzzy
+#~ msgid "r:atomic_uop"
+#~ msgstr "elasticitet"
+
+#, fuzzy
+#~ msgid "r:atomic_uoef"
+#~ msgstr "Elektrisk potential"
+
+#, fuzzy
+#~ msgid "r:atomic_uov"
+#~ msgstr "elasticitet"
+
+#, fuzzy
+#~ msgid "r:atomic_uomfd"
+#~ msgstr "elasticitet"
+
+#, fuzzy
+#~ msgid "r:atomic_uomdm"
+#~ msgstr "elasticitet"
+
+#~ msgid "Atomic Mass Unit - Electron Volt Relationship"
+#~ msgstr "Förhållande atommassenhet till elektronvolt"
+
+#~ msgid "Atomic Mass Unit - Hartree Relationship"
+#~ msgstr "Förhållande atommassenhet till Hartree"
+
+#~ msgid "Atomic Mass Unit - Hertz Relationship"
+#~ msgstr "Förhållande atommassenhet till Hertz"
+
+#~ msgid "Atomic Mass Unit - Inverse Meter Relationship"
+#~ msgstr "Förhållande atommassenhet till reciprok meter"
+
+#~ msgid "Atomic Mass Unit - Joule Relationship"
+#~ msgstr "Förhållande atommassenhet till Joule"
+
+#~ msgid "Atomic Mass Unit - Kelvin Relationship"
+#~ msgstr "Förhållande atommassenhet till Kelvin"
+
+#~ msgid "Atomic Mass Unit - Kilogram Relationship"
+#~ msgstr "Förhållande atommassenhet till kilogram"
+
+#~ msgid "Hertz - Atomic Mass Unit Relationship"
+#~ msgstr "Förhållande Hertz till atommassenhet"
+
+#~ msgid "Hertz - Electron Volt Relationship"
+#~ msgstr "Förhållande Hertz till elektronvolt"
+
+#~ msgid "Hertz - Hartree Relationship"
+#~ msgstr "Förhållande Hertz till Hartree"
+
+#~ msgid "Inverse Meter - Atomic Mass Unit Relationship"
+#~ msgstr "Förhållande reciprok meter till atommassenhet"
+
+#~ msgid "Inverse Meter - Electron Volt Relationship"
+#~ msgstr "Förhållande reciprok meter till elektronvolt"
+
+#~ msgid "Inverse Meter - Hartree Relationship"
+#~ msgstr "Förhållande reciprok meter till Hartree"
+
+#~ msgid "Joule - Atomic Mass Unit Relationship"
+#~ msgstr "Förhållande Joule till atommassenhet"
+
+#~ msgid "Joule - Electron Volt Relationship"
+#~ msgstr "Förhållande Joule till eletronvolt"
+
+#~ msgid "Joule - Hartree Relationship"
+#~ msgstr "Förhållande Joule till Hartree"
+
+#~ msgid "Kelvin - Atomic Mass Unit Relationship"
+#~ msgstr "Förhållande Kelvin till atommassenhet"
+
+#~ msgid "Kelvin - Electron Volt Relationship"
+#~ msgstr "Förhållande Kelvin till elektronvolt"
+
+#~ msgid "Kelvin - Hartree Relationship"
+#~ msgstr "Förhållande Kelvin till Hartree"
+
+#~ msgid "Kilogram - Atomic Mass Unit Relationship"
+#~ msgstr "Förhållande kilogram till atommassenhet"
+
+#~ msgid "Kilogram - Electron Volt Relationship"
+#~ msgstr "Förhållande kilogram till eletronvolt"
+
+#~ msgid "Kilogram - Hartree Relationship"
+#~ msgstr "Förhållande kilogram till Hartree"
+
+#~ msgid "Second Ampere"
+#~ msgstr "Sekundampere"
+
 #~ msgid "Ideal Gas Constant"
 #~ msgstr "Gaskonstant"
-
-#~ msgid "Universal Constants"
-#~ msgstr "Universala konstanter"
 
 #~ msgid "Density at 295K"
 #~ msgstr "Densitet vid 295K"

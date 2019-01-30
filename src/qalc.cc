@@ -65,6 +65,7 @@ bool canfetch = true;
 int b_decimal_comma = -1;
 long int i_maxtime = 0;
 struct timeval t_end;
+bool interval_disabled = false;
 
 bool result_only;
 
@@ -1282,7 +1283,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 							value += "±";
 							value += CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty());
 						}
-						if(!((KnownVariable*) v)->unit().empty()) {
+						if(!((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
 							value += " ";
 							value += CALCULATOR->localizeExpression(((KnownVariable*) v)->unit());
 						}
@@ -1761,6 +1762,8 @@ int main(int argc, char *argv[]) {
 		interactive_mode = true;
 		i_maxtime = 0;
 	}
+	if(interactive_mode && interval_disabled) CALCULATOR->error(false, _("Interval arithmetic has been deactivated because of possible unintentional activation. Type \"set interval on\" in interactive mode to enable interval arithmetic again."), NULL);
+
 	
 #ifdef HAVE_LIBREADLINE
 	rl_catch_signals = 1;
@@ -4872,7 +4875,7 @@ void load_preferences() {
 #endif
 
 	
-	int version_numbers[] = {2, 8, 2};
+	int version_numbers[] = {2, 9, 0};
 	
 	if(file) {
 		char line[10000];
@@ -4910,7 +4913,12 @@ void load_preferences() {
 				} else if(svar == "precision") {
 					CALCULATOR->setPrecision(v);
 				} else if(svar == "interval_arithmetic") {
-					CALCULATOR->useIntervalArithmetic(v);
+					if(v && version_numbers[0] == 2 && version_numbers[1] == 8) {
+						// Interval arithmetic possibly activated because of bug
+						interval_disabled = true;
+					} else {
+						CALCULATOR->useIntervalArithmetic(v);
+					}
 				} else if(svar == "interval_display") {
 					if(v == 0) {
 						adaptive_interval_display = true;
