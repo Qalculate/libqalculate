@@ -469,7 +469,7 @@ const MathStructure &KnownVariable::get() {
 			CALCULATOR->parse(mstruct_unit, sunit, po);
 			mstruct->multiply_nocopy(mstruct_unit);
 		}
-		mstruct->unformat();
+		//mstruct->unformat();
 		replace_f_interval(*mstruct);
 		calculated_with_interval = CALCULATOR->usesIntervalArithmetic();
 		calculated_with_units = CALCULATOR->variableUnitsEnabled();
