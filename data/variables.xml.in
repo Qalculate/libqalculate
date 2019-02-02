@@ -149,7 +149,7 @@
       <_title>Universal Constants</_title>
       <variable>
         <_title>Characteristic Impedance of Vacuum</_title>
-        <_names>r:characteristic_impedance,ais:Z_0</_names>
+        <_names>r:characteristic_impedance,as:Z_0</_names>
         <value>magnetic_constant*c</value>
       </variable>
       <variable>
@@ -184,7 +184,7 @@
       </variable>
       <variable>
         <_title>Standard Acceleration due to Gravity</_title>
-        <_names>r:standard_gravity,aisu:g_0,asu:&#x0261;_0,aisu:&#x0261;_n</_names>
+        <_names>r:standard_gravity,asu:g_0,asu:&#x0261;_0,asu:&#x0261;_n</_names>
         <value unit="m s^(-2)">9.80665</value>
       </variable>
     </category>
@@ -197,17 +197,17 @@
       </variable>
       <variable>
         <_title>Conductance Quantum</_title>
-        <_names>r:conductance_quantum,ais:G_0</_names>
+        <_names>r:conductance_quantum,as:G_0</_names>
         <value>2*elementary_charge^2/planck</value>
       </variable>
       <variable>
         <_title>Coulomb's Constant (Electric Force Constant)</_title>
-        <_names>r:coulombs_constant,ais:k_e</_names>
+        <_names>r:coulombs_constant,as:k_e</_names>
         <value unit="N*m^2*C^(−2)">8987551787.3681764</value>
       </variable>
       <variable>
         <_title>Elementary Charge</_title>
-        <_names>r:elementary_charge,ais:e_charge,ais:q_e</_names>
+        <_names>r:elementary_charge,as:q_e,as:e_charge</_names>
         <value>sqrt((2*planck*fine_structure)/(magnetic_constant*c))</value>
       </variable>
       <variable>
@@ -217,12 +217,12 @@
       </variable>
       <variable>
         <_title>Josephson Constant</_title>
-        <_names>r:josephson,ais:K_J</_names>
+        <_names>r:josephson,as:K_J</_names>
         <value>2*elementary_charge/planck</value>
       </variable>
       <variable>
         <_title>Josephson Constant (conventional value)</_title>
-        <_names>rs:josephson_conventional,ais:K_J90</_names>
+        <_names>rs:josephson_conventional,as:K_J90</_names>
         <value unit="Hz*V^(-1)">4.835979E14</value>
       </variable>
       <variable>
@@ -237,12 +237,12 @@
       </variable>
       <variable>
         <_title>von Klitzing Constant</_title>
-        <_names>r:klitzing,ais:R_K</_names>
+        <_names>r:klitzing,as:R_K</_names>
         <value>(magnetic_constant*c)/(2*fine_structure)</value>
       </variable>
       <variable>
         <_title>von Klitzing Constant (conventional value)</_title>
-        <_names>rs:klitzing_conventional,ais:R_K90</_names>
+        <_names>rs:klitzing_conventional,as:R_K90</_names>
         <value unit="ohm">25812.807</value>
       </variable>
     </category>
@@ -381,32 +381,32 @@
       </variable>
       <variable>
         <_title>Electron Mass</_title>
-        <_names>rs:electron_mass,ais:m_e</_names>
+        <_names>rs:electron_mass,as:m_e</_names>
         <value>(2*rydberg*planck)/(c*fine_structure^2)</value>
       </variable>
       <variable>
         <_title>Helion Mass</_title>
-        <_names>rs:helion_mass,ais:m_h</_names>
+        <_names>rs:helion_mass,as:m_h</_names>
         <value>nounit(helion_u)*atomic_mass</value>
       </variable>
       <variable>
         <_title>Neutron Mass</_title>
-        <_names>rs:neutron_mass,ais:m_n</_names>
+        <_names>rs:neutron_mass,as:m_n</_names>
         <value>nounit(neutron_u)*atomic_mass</value>
       </variable>
       <variable>
         <_title>Proton Mass</_title>
-        <_names>rs:proton_mass,ais:m_p</_names>
+        <_names>rs:proton_mass,as:m_p</_names>
         <value>nounit(proton_u)*atomic_mass</value>
       </variable>
       <variable>
         <_title>Tau Mass</_title>
-        <_names>rs:tau_mass,aisu:m_&#x3C4;</_names>
+        <_names>rs:tau_mass,asu:m_&#x3C4;</_names>
         <value>nounit(tau_u)*atomic_mass</value>
       </variable>
       <variable>
         <_title>Muon Mass</_title>
-        <_names>rs:muon_mass,aisu:m_&#x03BC;</_names>
+        <_names>rs:muon_mass,asu:m_&#x03BC;</_names>
         <value>nounit(muon_u)*atomic_mass</value>
       </variable>
       <variable>
@@ -416,7 +416,7 @@
       </variable>
       <variable>
         <_title>Alpha Particle Mass</_title>
-        <_names>rs:alpha_particle_mass,aisu:m_&#x3B1;</_names>
+        <_names>rs:alpha_particle_mass,asu:m_&#x3B1;</_names>
         <value>nounit(alpha_particle_u)*atomic_mass</value>
       </variable>
     </category>
@@ -424,12 +424,12 @@
       <_title>Atomic and Nuclear Constants</_title>
       <variable>
         <_title>Bohr Radius</_title>
-        <_names>r:bohr_radius,ais:a_0</_names>
+        <_names>r:bohr_radius,as:a_0</_names>
         <value>planck2pi/(fine_structure*electron_mass*c)</value>
       </variable>
       <variable>
         <_title>Classical Electron Radius</_title>
-        <_names>r:classical_electron_radius,ais:r_e</_names>
+        <_names>r:classical_electron_radius,as:r_e</_names>
         <value>elementary_charge^2/(4*pi*electric_constant*electron_mass*c^2)</value>
       </variable>
       <variable>
@@ -459,17 +459,17 @@
       </variable>
       <variable>
         <_title>Rydberg Constant</_title>
-        <_names>r:rydberg,aisu:R_&#x221E;</_names>
+        <_names>r:rydberg,asu:R_&#x221E;</_names>
         <value uncertainty="0.000065" unit="m^(-1)">10973731.568508</value>
       </variable>
       <variable>
         <_title>Thomson cross section</_title>
-        <_names>r:thomson_cross_section,aisu:&#x03C3;_t</_names>
+        <_names>r:thomson_cross_section,asu:&#x03C3;_t</_names>
         <value>(8*pi/3)*classical_electron_radius^2</value>
       </variable>
       <variable>
         <_title>Weak Mixing Angle (Weinberg Angle)</_title>
-        <_names>r:weinberg,weak_mixing_angle,aisu:&#x03B8;_W</_names>
+        <_names>r:weinberg,weak_mixing_angle,asu:&#x03B8;_W</_names>
         <value uncertainty="0.0021">0.2223</value>
       </variable>
     </category>
@@ -482,22 +482,22 @@
       </variable>
       <variable>
         <_title>Atomic Mass Constant</_title>
-        <_names>r:atomic_mass,ais:m_u</_names>
+        <_names>r:atomic_mass,as:m_u</_names>
         <value units="auto">(2*rydberg*planck)/(c*fine_structure^2*nounit(electron_u))</value>
       </variable>
       <variable>
         <_title>Avogadro Constant</_title>
-        <_names>r:avogadro,ais:N_A</_names>
-        <value unit="auto">(c*fine_structure^2*nounit(electron_u))/(2*rydberg*planck)*kg/mol</value>
+        <_names>r:avogadro,as:N_A</_names>
+        <value unit="auto">(c*fine_structure^2*nounit(electron_u))/(2*rydberg*planck*1000)*kg/mol</value>
       </variable>
       <variable>
         <_title>Boltzmann Constant</_title>
-        <_names>r:boltzmann,ais:k_B</_names>
+        <_names>r:boltzmann,as:k_B</_names>
         <value uncertainty="7.9E-30" unit="J*K^(-1)">1.38064852E-23</value>
       </variable>
       <variable>
         <_title>Compton Wavelength</_title>
-        <_names>r:compton_wavelength,aisu:&#x3BB;_C,aos:lambda_C</_names>
+        <_names>r:compton_wavelength,asu:&#x3BB;_C,aos:lambda_C</_names>
         <value>planck/(electron_mass*c)</value>
       </variable>
       <variable>
@@ -517,12 +517,12 @@
       </variable>
       <variable>
         <_title>First Radiation Constant</_title>
-        <_names>r:first_radiation,ais:c_1</_names>
+        <_names>r:first_radiation,as:c_1</_names>
         <value>2*pi*planck*c^2</value>
       </variable>
       <variable>
         <_title>First Radiation Constant for Spectral Radiance</_title>
-        <_names>rs:first_radiation_sr,ais:c_1L</_names>
+        <_names>rs:first_radiation_sr,as:c_1L</_names>
         <value>first_radiation/pi</value>
       </variable>
       <variable>
@@ -542,7 +542,7 @@
       </variable>
       <variable>
         <_title>Loschmidt Constant (273.15 K, 101.325 kPa)</_title>
-        <_names>rs:loschmidt,ais:n_0</_names>
+        <_names>rs:loschmidt,as:n_0</_names>
         <value unit="auto">(101325*Pa)/(boltzmann*273.15*K)</value>
       </variable>
        <variable>
@@ -552,12 +552,12 @@
       </variable>
       <variable>
         <_title>Molar Volume of Ideal Gas (273.15 K, 100 kPa)</_title>
-        <_names>r:ideal_gas_molar,ais:V_m</_names>
+        <_names>r:ideal_gas_molar,as:V_m</_names>
         <value unit="auto">(gas_constant*273.15*K)/(100000*Pa)</value>
       </variable>
       <variable>
         <_title>Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)</_title>
-        <_names>rs:ideal_gas_molar_101,ais:V_m101</_names>
+        <_names>rs:ideal_gas_molar_101,as:V_m101</_names>
         <value unit="auto">(gas_constant*273.15*K)/(101325*Pa)</value>
       </variable>
       <variable>
@@ -572,7 +572,7 @@
       </variable>
       <variable>
         <_title>Second Radiation Constant</_title>
-        <_names>r:second_radiation,ais:c_2</_names>
+        <_names>r:second_radiation,as:c_2</_names>
         <value>planck*c/boltzmann</value>
       </variable>
       <variable>

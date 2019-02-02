@@ -280,7 +280,7 @@
     </unit>
     <unit type="alias">
       <_title>Planck Length</_title>
-      <_names>r:planck_length,ais:l_P</_names>
+      <_names>r:planck_length,as:l_P</_names>
       <system>Planck</system>
       <base>
         <unit>m</unit>
@@ -290,7 +290,7 @@
     </unit>
     <unit type="alias">
       <_title>Bohr (Atomic Unit of Length)</_title>
-      <_names>rs:bohr_unit,ais:a_0unit</_names>
+      <_names>rs:bohr_unit,as:a_0unit</_names>
       <system>Atomic</system>
       <base>
         <unit>m</unit>
@@ -316,6 +316,37 @@
         <prefix>0</prefix>
         <exponent>-1</exponent>
       </part>
+    </unit>
+    <unit type="composite">
+      <title>Planck per Electron Mass per Light Speed</title>
+      <names>planck_p_electron_c</names>
+      <system>Natural</system>
+      <hidden>true</hidden>
+      <part>
+        <unit>planck_unit</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>electron_unit</unit>
+        <prefix>0</prefix>
+        <exponent>-1</exponent>
+      </part>
+      <part>
+        <unit>c_unit</unit>
+        <prefix>0</prefix>
+        <exponent>-2</exponent>
+      </part>
+    </unit>
+    <unit type="alias">
+      <_title>Natural Unit of Length</_title>
+      <_names>ar:l_N,aus:&#x019B;_C</_names>
+      <system>Natural</system>
+      <base>
+        <unit>planck_p_electron_c</unit>
+        <relation>1</relation>
+        <exponent>1</exponent>
+      </base>
     </unit>
   </category>
   <category>
@@ -652,7 +683,7 @@
     </unit>
     <unit type="alias">
       <_title>Planck Mass</_title>
-      <_names>r:planck_mass,ais:m_P</_names>
+      <_names>r:planck_mass,as:m_P</_names>
       <system>Planck</system>
       <base>
         <unit>g</unit>
@@ -661,9 +692,9 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Atomic Unit of Mass</_title>
-      <_names>rs:electron_unit,ais:m_eunit</_names>
-      <system>Atomic</system>
+      <_title>Atomic/Natural Unit of Mass</_title>
+      <_names>rs:electron_unit,as:m_eunit</_names>
+      <system>Atomic/Natural</system>
       <base>
         <unit>g</unit>
         <relation>electron_mass*1000</relation>
@@ -871,7 +902,7 @@
     </unit>
     <unit type="alias">
       <_title>Planck Time</_title>
-      <_names>r:planck_time,ais:t_P</_names>
+      <_names>r:planck_time,as:t_P</_names>
       <system>Planck</system>
       <base>
         <unit>s</unit>
@@ -893,6 +924,26 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
+    </unit>
+    <unit type="composite">
+      <_title>Natural Unit of Time</_title>
+      <names>planck_p_electron_sqc</names>
+      <system>Natural</system>
+      <part>
+        <unit>planck_unit</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>electron_unit</unit>
+        <prefix>0</prefix>
+        <exponent>-1</exponent>
+      </part>
+      <part>
+        <unit>c_unit</unit>
+        <prefix>0</prefix>
+        <exponent>-2</exponent>
+      </part>
     </unit>
     <unit type="composite">
       <_title>Electronvolt Time</_title>
@@ -1009,7 +1060,7 @@
       </unit>
       <unit type="alias">
         <_title>Planck Charge</_title>
-        <_names>r:planck_charge,ais:q_P</_names>
+        <_names>r:planck_charge,as:q_P</_names>
         <system>Planck</system>
         <base>
           <unit>C</unit>
@@ -1019,7 +1070,7 @@
       </unit>
       <unit type="alias">
         <_title>Atomic Unit of Charge</_title>
-        <_names>rs:e_unit,ais:q_A</_names>
+        <_names>ars:e_unit,as:q_A</_names>
         <system>Atomic</system>
         <base>
           <unit>C</unit>
@@ -1372,7 +1423,7 @@
     </unit>
     <unit type="alias">
       <_title>Planck Temperature</_title>
-      <_names>r:planck_temperature,ais:T_P</_names>
+      <_names>r:planck_temperature,as:T_P</_names>
       <system>Planck</system>
       <base>
         <unit>K</unit>
@@ -2304,7 +2355,7 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Speed of Light (unit)</_title>
+      <_title>Speed of Light (Natural Unit of Velocity)</_title>
       <_names>ars:c_unit</_names>
       <base>
         <unit>m_p_s</unit>
@@ -2712,6 +2763,36 @@
           <exponent>-1</exponent>
         </part>
       </unit>
+      <unit type="composite">
+        <_title>Natural Unit of Momentum</_title>
+        <names>electron_c</names>
+        <system>Natural</system>
+        <part>
+          <unit>planck_unit</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>c_unit</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <_title>Atomic Unit of Momentum</_title>
+        <names>planck_p_electron_sqc</names>
+        <system>Atomic</system>
+        <part>
+          <unit>planck_unit</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>bohr_unit</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
     </category>
     <category>
       <_title>Pressure</_title>
@@ -3061,6 +3142,21 @@
         <exponent>1</exponent>
       </base>
     </unit>
+    <unit type="composite">
+      <_title>Natural Unit of Energy</_title>
+      <names>electron_sqc</names>
+      <system>Natural</system>
+      <part>
+        <unit>electron_unit</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>c_unit</unit>
+        <prefix>0</prefix>
+        <exponent>2</exponent>
+      </part>
+    </unit>
     <category>
       <_title>Specific Energy</_title>
       <unit type="composite">
@@ -3143,7 +3239,7 @@
       </unit>
        <unit type="alias">
         <_title>Boltzmann (unit)</_title>
-        <_names>rs:boltzmann_unit,ais:k_Bunit</_names>
+        <_names>rs:boltzmann_unit,as:k_Bunit</_names>
         <base>
           <unit>J_p_K</unit>
           <relation>boltzmann</relation>
@@ -3274,9 +3370,9 @@
         </part>
       </unit>
       <unit type="alias">
-        <_title>Planck over 2 pi (unit)</_title>
+        <_title>Planck over 2 pi (Atomic/Natural Unit of Action)</_title>
         <_names>rs:planck_unit</_names>
-        <system>Atomic</system>
+        <system>Atomic/Natural</system>
         <base>
           <unit>J_s</unit>
           <relation>planck2pi</relation>
