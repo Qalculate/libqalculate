@@ -203,7 +203,7 @@
       <variable>
         <_title>Coulomb's Constant (Electric Force Constant)</_title>
         <_names>r:coulombs_constant,as:k_e</_names>
-        <value unit="N*m^2*C^(−2)">8987551787.3681764</value>
+        <value>(magnetic_constant*c^2)/(4pi)</value>
       </variable>
       <variable>
         <_title>Elementary Charge</_title>
@@ -299,77 +299,77 @@
       <variable>
         <_title>Electron Mass (in MeV/c^2)</_title>
         <_names>rs:electron_eV</_names>
-        <value unit="MeV*c^(-2)">electron_mass*c^2/electronvolt_constant*1E-6</value>
+        <value unit="MeV*c_unit^(-2)">electron_mass*c^2/electronvolt_constant*1E-6</value>
       </variable>
       <variable>
         <_title>Neutron Mass (in MeV/c^2)</_title>
         <_names>rs:neutron_eV</_names>
-        <value unit="MeV*c^(-2)">neutron_mass*c^2/electronvolt_constant*1E-6</value>
+        <value unit="MeV*c_unit^(-2)">neutron_mass*c^2/electronvolt_constant*1E-6</value>
       </variable>
       <variable>
         <_title>Proton Mass (in MeV/c^2)</_title>
         <_names>rs:proton_eV</_names>
-        <value unit="MeV*c^(-2)">proton_mass*c^2/electronvolt_constant*1E-6</value>
+        <value unit="MeV*c_unit^(-2)">proton_mass*c^2/electronvolt_constant*1E-6</value>
       </variable>
       <variable>
         <_title>Tau Mass (in MeV/c^2)</_title>
         <_names>rs:tau_eV</_names>
-        <value unit="MeV*c^(-2)">tau_mass*c^2/electronvolt_constant*1E-6</value>
+        <value unit="MeV*c_unit^(-2)">tau_mass*c^2/electronvolt_constant*1E-6</value>
       </variable>
       <variable>
         <_title>Muon Mass (in MeV/c^2)</_title>
         <_names>rs:muon_eV</_names>
-         <value unit="MeV*c^(-2)">muon_mass*c^2/electronvolt_constant*1E-6</value>
+         <value unit="MeV*c_unit^(-2)">muon_mass*c^2/electronvolt_constant*1E-6</value>
       </variable>
       <variable>
         <_title>Alpha Particle Mass (in MeV/c^2)</_title>
         <_names>rs:alpha_particle_eV</_names>
-        <value unit="MeV*c^(-2)">alpha_particle_mass*c^2/electronvolt_constant*1E-6</value>
+        <value unit="MeV*c_unit^(-2)">alpha_particle_mass*c^2/electronvolt_constant*1E-6</value>
       </variable>
       <variable>
         <_title>Up Quark Mass (in MeV/c^2)</_title>
         <_names>r:quark_u</_names>
-        <value unit="MeV*c^(-2)" uncertainty="0.7">2.3</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="0.7">2.3</value>
       </variable>
       <variable>
         <_title>Down Quark Mass (in MeV/c^2)</_title>
         <_names>r:quark_d</_names>
-        <value unit="MeV*c^(-2)" uncertainty="0.5">4.8</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="0.5">4.8</value>
       </variable>
       <variable>
         <_title>Charm Quark Mass (in MeV/c^2)</_title>
         <_names>r:quark_c</_names>
-        <value unit="MeV*c^(-2)" uncertainty="110">1290</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="110">1290</value>
       </variable>
       <variable>
         <_title>Strange Quark Mass (in MeV/c^2)</_title>
         <_names>r:quark_s</_names>
-        <value unit="MeV*c^(-2)" uncertainty="5">95</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="5">95</value>
       </variable>
       <variable>
         <_title>Top Quark Mass (in MeV/c^2)</_title>
         <_names>r:quark_t</_names>
-        <value unit="MeV*c^(-2)" uncertainty="470">172440</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="470">172440</value>
       </variable>
       <variable>
         <_title>Bottom Quark Mass (in MeV/c^2)</_title>
         <_names>r:quark_b</_names>
-        <value unit="MeV*c^(-2)" uncertainty="30">4180</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="30">4180</value>
       </variable>
       <variable>
         <_title>Higgs Boson Mass (in MeV/c^2)</_title>
         <_names>r:higgs_boson</_names>
-        <value unit="MeV*c^(-2)" uncertainty="210">125090</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="210">125090</value>
       </variable>
       <variable>
         <_title>W Boson Mass (in MeV/c^2)</_title>
         <_names>r:w_boson</_names>
-        <value unit="MeV*c^(-2)" uncertainty="15">80385</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="15">80385</value>
       </variable>
       <variable>
         <_title>Z Boson Mass (in MeV/c^2)</_title>
         <_names>r:z_boson</_names>
-        <value unit="MeV*c^(-2)" uncertainty="2.1">91187.6</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="2.1">91187.6</value>
       </variable>
     </category>
     <category>
@@ -377,7 +377,7 @@
       <variable>
         <_title>Deuteron Mass</_title>
         <_names>rs:deuteron_mass</_names>
-        <value>nounit(deuteron_u)*atomic_mass</value>
+        <value>nounit(deuteron_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <_title>Electron Mass</_title>
@@ -387,37 +387,37 @@
       <variable>
         <_title>Helion Mass</_title>
         <_names>rs:helion_mass,as:m_h</_names>
-        <value>nounit(helion_u)*atomic_mass</value>
+        <value>nounit(helion_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <_title>Neutron Mass</_title>
         <_names>rs:neutron_mass,as:m_n</_names>
-        <value>nounit(neutron_u)*atomic_mass</value>
+        <value>nounit(neutron_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <_title>Proton Mass</_title>
         <_names>rs:proton_mass,as:m_p</_names>
-        <value>nounit(proton_u)*atomic_mass</value>
+        <value>nounit(proton_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <_title>Tau Mass</_title>
-        <_names>rs:tau_mass,asu:m_&#x3C4;</_names>
-        <value>nounit(tau_u)*atomic_mass</value>
+        <_names>rs:tau_mass,asu:m_&#x3C4;,aos:m_tau</_names>
+        <value>nounit(tau_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <_title>Muon Mass</_title>
-        <_names>rs:muon_mass,asu:m_&#x03BC;</_names>
-        <value>nounit(muon_u)*atomic_mass</value>
+        <_names>rs:muon_mass,asu:m_&#x03BC;,aos:m_mu</_names>
+        <value>nounit(muon_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <_title>Triton Mass</_title>
         <_names>rs:triton_mass</_names>
-        <value>nounit(triton_u)*atomic_mass</value>
+        <value>nounit(triton_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <_title>Alpha Particle Mass</_title>
-        <_names>rs:alpha_particle_mass,asu:m_&#x3B1;</_names>
-        <value>nounit(alpha_particle_u)*atomic_mass</value>
+        <_names>rs:alpha_particle_mass,asu:m_&#x3B1;,aos:m_alpha</_names>
+        <value>nounit(alpha_particle_u)*atomic_mass_constant</value>
       </variable>
     </category>
     <category>
@@ -439,7 +439,7 @@
       </variable>
       <variable>
         <_title>Fine-Structure Constant</_title>
-        <_names>r:fine_structure,au:&#x03B1;</_names>
+        <_names>r:fine_structure,au:&#x03B1;,ao:alpha</_names>
         <value uncertainty="1.7E-12">7.2973525664E-3</value>
       </variable>
       <variable>
@@ -464,12 +464,12 @@
       </variable>
       <variable>
         <_title>Thomson cross section</_title>
-        <_names>r:thomson_cross_section,asu:&#x03C3;_t</_names>
+        <_names>r:thomson_cross_section,asu:&#x03C3;_t,aos:sigma_t</_names>
         <value>(8*pi/3)*classical_electron_radius^2</value>
       </variable>
       <variable>
         <_title>Weak Mixing Angle (Weinberg Angle)</_title>
-        <_names>r:weinberg,weak_mixing_angle,asu:&#x03B8;_W</_names>
+        <_names>r:weinberg,weak_mixing_angle,asu:&#x03B8;_W,aos:theta_W</_names>
         <value uncertainty="0.0021">0.2223</value>
       </variable>
     </category>
@@ -478,11 +478,11 @@
       <variable>
         <_title>{220} Lattice Spacing of Silicon</_title>
         <_names>rs:lattice_spacing_Si220</_names>
-        <value unit="m" uncertainty="3.2E-18">192.0155714e-12</value>
+        <value>lattice_parameter_Si/sqrt(8)</value>
       </variable>
       <variable>
         <_title>Atomic Mass Constant</_title>
-        <_names>r:atomic_mass,as:m_u</_names>
+        <_names>r:atomic_mass_constant,as:m_u</_names>
         <value units="auto">(2*rydberg*planck)/(c*fine_structure^2*nounit(electron_u))</value>
       </variable>
       <variable>
@@ -577,7 +577,7 @@
       </variable>
       <variable>
         <_title>Stefan-Boltzmann Constant</_title>
-        <_names>r:stefan,au:&#x03C3;</_names>
+        <_names>r:stefan,au:&#x03C3;,ao:sigma</_names>
         <value>(pi^2*boltzmann^4)/(60*planck2pi^3*c^2)</value>
       </variable>
       <variable>

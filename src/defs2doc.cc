@@ -466,7 +466,7 @@ void print_variable(Variable *v) {
 					value += "±";
 					value += fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()));
 				}
-				if(!((KnownVariable*) v)->unit().empty()) {
+				if(!((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
 					value += " ";
 					value += fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->unit()));
 				}

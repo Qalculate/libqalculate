@@ -7574,7 +7574,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpfr_sub(f_lunc, v, f_lunc, MPFR_RNDU);
 			mpfr_sub(f_unc, f_unc, v, MPFR_RNDU);
 			if(mpfr_cmp(f_lunc, f_unc) > 0) mpfr_swap(f_lunc, f_unc);
-			mpfr_round(f_unc, f_unc);
+			if(po.round_halfway_to_even) mpfr_rint(v, v, MPFR_RNDN);
+			else mpfr_round(f_unc, f_unc);
 			if(!mpfr_zero_p(f_unc)) {
 				mpfr_get_z(ivalue, f_unc, MPFR_RNDN);
 				str_unc = printMPZ(ivalue, base, false, po.lower_case_numbers);

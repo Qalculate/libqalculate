@@ -128,6 +128,7 @@ bool sqrfree(MathStructure &mpoly, const EvaluationOptions &eo);
 bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const EvaluationOptions &eo);
 bool simplify_functions(MathStructure &mstruct, const EvaluationOptions &eo, const EvaluationOptions &feo, const MathStructure &x_var = m_undefined);
 bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew, MathStructure &factor_mstruct, bool only_units = false);
+bool is_unit_multiexp(const MathStructure &mstruct);
 
 bool flattenMultiplication(MathStructure &mstruct) {
 	bool retval = false;
@@ -1100,7 +1101,10 @@ bool MathStructure::representsPositive(bool allow_units) const {
 		case STRUCT_NUMBER: {return o_number.isPositive();}
 		case STRUCT_VARIABLE: {return o_variable->representsPositive(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isPositive();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsPositive(allow_units)) || o_function->representsPositive(*this, allow_units);}
+		case STRUCT_FUNCTION: {
+			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsPositive(true);
+			return (function_value && function_value->representsPositive(allow_units)) || o_function->representsPositive(*this, allow_units);
+		}
 		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
@@ -1131,7 +1135,10 @@ bool MathStructure::representsNegative(bool allow_units) const {
 		case STRUCT_NUMBER: {return o_number.isNegative();}
 		case STRUCT_VARIABLE: {return o_variable->representsNegative(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNegative();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsNegative(allow_units)) || o_function->representsNegative(*this, allow_units);}
+		case STRUCT_FUNCTION: {
+			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsNegative(true);
+			return (function_value && function_value->representsNegative(allow_units)) || o_function->representsNegative(*this, allow_units);
+		}
 		case STRUCT_UNIT: {return false;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
@@ -1161,7 +1168,10 @@ bool MathStructure::representsNonNegative(bool allow_units) const {
 		case STRUCT_NUMBER: {return o_number.isNonNegative();}
 		case STRUCT_VARIABLE: {return o_variable->representsNonNegative(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonNegative();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonNegative(allow_units)) || o_function->representsNonNegative(*this, allow_units);}
+		case STRUCT_FUNCTION: {
+			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsNonNegative(true);
+			return (function_value && function_value->representsNonNegative(allow_units)) || o_function->representsNonNegative(*this, allow_units);
+		}
 		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
@@ -1193,7 +1203,10 @@ bool MathStructure::representsNonPositive(bool allow_units) const {
 		case STRUCT_NUMBER: {return o_number.isNonPositive();}
 		case STRUCT_VARIABLE: {return o_variable->representsNonPositive(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonPositive();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonPositive(allow_units)) || o_function->representsNonPositive(*this, allow_units);}
+		case STRUCT_FUNCTION: {
+			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsNonPositive(true);
+			return (function_value && function_value->representsNonPositive(allow_units)) || o_function->representsNonPositive(*this, allow_units);
+		}
 		case STRUCT_UNIT: {return false;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
@@ -1223,7 +1236,10 @@ bool MathStructure::representsRational(bool allow_units) const {
 		case STRUCT_NUMBER: {return o_number.isRational();}
 		case STRUCT_VARIABLE: {return o_variable->representsRational(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isRational();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsRational(allow_units)) || o_function->representsRational(*this, allow_units);}
+		case STRUCT_FUNCTION: {
+			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsRational(true);
+			return (function_value && function_value->representsRational(allow_units)) || o_function->representsRational(*this, allow_units);
+		}
 		case STRUCT_UNIT: {return false;}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
@@ -1250,7 +1266,10 @@ bool MathStructure::representsReal(bool allow_units) const {
 		case STRUCT_NUMBER: {return o_number.isReal();}
 		case STRUCT_VARIABLE: {return o_variable->representsReal(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isReal();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsReal(allow_units)) || o_function->representsReal(*this, allow_units);}
+		case STRUCT_FUNCTION: {
+			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsReal(true);
+			return (function_value && function_value->representsReal(allow_units)) || o_function->representsReal(*this, allow_units);
+		}
 		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_DATETIME: {return allow_units;}
 		case STRUCT_ADDITION: {
@@ -1282,7 +1301,10 @@ bool MathStructure::representsNonComplex(bool allow_units) const {
 			return o_variable->representsNonComplex(allow_units);
 		}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isReal();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonComplex(allow_units)) || o_function->representsNonComplex(*this, allow_units);}
+		case STRUCT_FUNCTION: {
+			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsNonComplex(true);
+			return (function_value && function_value->representsNonComplex(allow_units)) || o_function->representsNonComplex(*this, allow_units);
+		}
 		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_DATETIME: {return allow_units;}
 		case STRUCT_ADDITION: {
@@ -1456,7 +1478,10 @@ bool MathStructure::representsUndefined(bool include_childs, bool include_infini
 		}
 		case STRUCT_UNDEFINED: {return true;}
 		case STRUCT_VARIABLE: {return o_variable->representsUndefined(include_childs, include_infinite, be_strict);}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsUndefined(include_childs, include_infinite, be_strict)) || o_function->representsUndefined(*this);}
+		case STRUCT_FUNCTION: {
+			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsUndefined(include_childs, include_infinite, be_strict);
+			return (function_value && function_value->representsUndefined(include_childs, include_infinite, be_strict)) || o_function->representsUndefined(*this);
+		}
 		case STRUCT_POWER: {
 			if(be_strict) {
 				if((!CHILD(0).representsNonZero(true) && !CHILD(1).representsNonNegative(false)) || (CHILD(0).isInfinity() && !CHILD(1).representsNonZero(true))) {
@@ -1484,7 +1509,10 @@ bool MathStructure::representsNonMatrix() const {
 		case STRUCT_POWER: {return CHILD(0).representsNonMatrix();}
 		case STRUCT_VARIABLE: {return o_variable->representsNonMatrix();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonMatrix();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonMatrix()) || o_function->representsNonMatrix(*this);}
+		case STRUCT_FUNCTION: {
+			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsNonMatrix();
+			return (function_value && function_value->representsNonMatrix()) || o_function->representsNonMatrix(*this);
+		}
 		case STRUCT_INVERSE: {}
 		case STRUCT_NEGATE: {}
 		case STRUCT_DIVISION: {}
@@ -1510,7 +1538,10 @@ bool MathStructure::representsScalar() const {
 		case STRUCT_POWER: {return CHILD(0).representsScalar();}
 		case STRUCT_VARIABLE: {return o_variable->representsScalar();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonMatrix();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsScalar()) || o_function->representsScalar(*this);}
+		case STRUCT_FUNCTION: {
+			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsScalar();
+			return (function_value && function_value->representsScalar()) || o_function->representsScalar(*this);
+		}
 		case STRUCT_INVERSE: {}
 		case STRUCT_NEGATE: {}
 		case STRUCT_DIVISION: {}
@@ -4540,7 +4571,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							return 1;
 						}
 					}
-					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, true, true) == 0 || (CHILD(0).isUnit() && CHILD(0).unit() == CALCULATOR->u_rad) || (CHILD(0).isFunction() && CHILD(0).representsNumber(false))) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
+					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, false, true, true) == 0 || (CHILD(0).isUnit() && CHILD(0).unit() == CALCULATOR->u_rad) || (CHILD(0).isFunction() && CHILD(0).representsNumber(false))) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
 						clear(true);
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
@@ -4759,12 +4790,12 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					}
 				}
 				default: {
-					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, false, true) <= 0 || (isUnit() && unit() == CALCULATOR->u_rad) || (isFunction() && representsNumber(false))) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
+					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, false, true, true) <= 0 || (isUnit() && unit() == CALCULATOR->u_rad) || (isFunction() && representsNumber(false))) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
 						clear(true); 
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
 					}
-					if(isZero() && !mstruct.representsUndefined(true, true, !eo.assume_denominators_nonzero) && (!eo.keep_zero_units || mstruct.containsType(STRUCT_UNIT, false, true) <= 0 || (mstruct.isUnit() && mstruct.unit() == CALCULATOR->u_rad)) && mstruct.representsNonMatrix()) {
+					if(isZero() && !mstruct.representsUndefined(true, true, !eo.assume_denominators_nonzero) && (!eo.keep_zero_units || mstruct.containsType(STRUCT_UNIT, false, true, true) <= 0 || (mstruct.isUnit() && mstruct.unit() == CALCULATOR->u_rad)) && mstruct.representsNonMatrix()) {
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 2;
 					}
@@ -12002,8 +12033,8 @@ bool simplify_ln(MathStructure &mstruct) {
 	return b_ret;
 }
 
-KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, const EvaluationOptions &eo, MathStructure *mnew, Variable **prev_v, bool &b_failed, bool in_nounit = false) {
-	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && m.isVariable() && m.variable()->isKnown()) {
+KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, const EvaluationOptions &eo, MathStructure *mnew, Variable **prev_v, bool &b_failed) {
+	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables && m.isVariable() && m.variable()->isKnown()) {
 		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
 		if(!mvar.containsInterval(true, true, false, true, true)) return NULL;
 		if(mvar.isNumber()) {
@@ -12039,10 +12070,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 					*prev_v = m.variable();
 					m.set(v);
 					for(size_t i = 1; i < mvar.size(); i++) {
-						if(!in_nounit || !mvar[i].isUnit_exp()) {
-							m.multiply(mvar[i], true);
-							if(in_nounit) m.last().removeType(STRUCT_UNIT);
-						}
+						m.multiply(mvar[i], true);
 					}
 					m.unformat(eo);
 					*mnew = m;
@@ -12151,16 +12179,8 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 		v->destroy();
 		return v;
 	}
-	if(m.isFunction() && m.function() == CALCULATOR->f_stripunits && m.size() == 1) {
-		KnownVariable *v = find_interval_replace_var(m[0], unc, eo, mnew, prev_v, b_failed, true);
-		if(b_failed) return NULL;
-		if(v && m[0].containsType(STRUCT_UNIT, false, true, true) == 0) {
-			m.setToChild(1, true);
-		}
-		return v;
-	}
 	for(size_t i = 0; i < m.size(); i++) {
-		KnownVariable *v = find_interval_replace_var(m[i], unc, eo, mnew, prev_v, b_failed, in_nounit);
+		KnownVariable *v = find_interval_replace_var(m[i], unc, eo, mnew, prev_v, b_failed);
 		if(b_failed) return NULL;
 		if(v) return v;
 	}
@@ -12186,7 +12206,7 @@ bool find_interval_replace_var_nr(MathStructure &m) {
 bool replace_variables_with_interval(MathStructure &m, const EvaluationOptions &eo, bool in_nounit = false) {
 	if(m.isVariable() && m.variable()->isKnown()) {
 		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
-		if(!mvar.containsInterval(true, true, false, true, true)) return NULL;
+		if(!mvar.containsInterval(true, true, false, true, true)) return false;
 		if(mvar.isNumber()) {
 			return false;
 		} else if(mvar.isMultiplication() && mvar[0].isNumber()) {
@@ -12225,7 +12245,7 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 	vector<KnownVariable*> vars;
 	vector<MathStructure> uncs;
 	MathStructure unc;
-	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) replace_variables_with_interval(m, eo);
+	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) replace_variables_with_interval(m, eo);
 	while(true) {
 		Variable *prev_v = NULL;
 		MathStructure mnew;
@@ -12265,7 +12285,7 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 }
 
 UnknownVariable *find_interval_replace_var_comp(MathStructure &m, const EvaluationOptions &eo, Variable **v) {
-	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && m.isVariable() && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().containsInterval(true, true, false, true, true)) {
+	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables && m.isVariable() && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().containsInterval(true, true, false, true, true)) {
 		UnknownVariable *uv = new UnknownVariable("", format_and_print(m));
 		uv->setInterval(m);
 		*v = m.variable();
@@ -12296,6 +12316,60 @@ void eval_comparison_sides(MathStructure &m, const EvaluationOptions &eo) {
 	}
 }
 
+bool has_approximate_relation_to_base(Unit *u) {
+	if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
+		if(((AliasUnit*) u)->isApproximate()) return true;
+		if(((AliasUnit*) u)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) != string::npos) return true;
+		return has_approximate_relation_to_base(((AliasUnit*) u)->firstBaseUnit());
+	} else if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+		for(size_t i = 1; i <= ((CompositeUnit*) u)->countUnits(); i++) {
+			if(has_approximate_relation_to_base(((CompositeUnit*) u)->get(i))) return true;
+		}
+	}
+	return false;
+}
+
+bool find_approximate_relation_to_base(const MathStructure &m) {
+	if(m.isUnit()) {
+		return has_approximate_relation_to_base(m.unit());
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(find_approximate_relation_to_base(m[i])) return true;
+	}
+	return false;
+}
+
+bool separate_unit_vars(MathStructure &m) {
+	if(m.isVariable() && m.variable()->isKnown()) {
+		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
+		if(mvar.isMultiplication()) {
+			bool b = false;
+			for(size_t i = 0; i < mvar.size(); i++) {
+				if(is_unit_multiexp(mvar[i])) {
+					if(!b) b = find_approximate_relation_to_base(mvar[i]);
+				} else if(mvar[i].containsType(STRUCT_UNIT, false, true, true) != 0) {
+					b = false;
+					break;
+				}
+			}
+			if(!b) return false;
+			m.transform(CALCULATOR->f_stripunits);
+			for(size_t i = 0; i < mvar.size(); i++) {
+				if(is_unit_multiexp(mvar[i])) {
+					m.multiply(mvar[i], i);
+				}
+			}
+			return true;
+		}
+	}
+	if(m.isFunction() && m.function() == CALCULATOR->f_stripunits) return false;
+	bool b = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(separate_unit_vars(m[i])) b = true;
+	}
+	return b;
+}
+
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(m_type == STRUCT_NUMBER) {
@@ -12316,25 +12390,23 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	eo2.test_comparisons = false;
 	eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 	eo2.isolate_x = false;
-	if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, CALCULATOR->usesIntervalArithmetic() ? 0 : ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) ? 2 : 1));
+	if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, CALCULATOR->usesIntervalArithmetic() ? 0 : ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) ? 2 : 1));
 
-	if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) && containsInterval(true, true, false, true, true)) || (!CALCULATOR->usesIntervalArithmetic() && containsInterval(true, false, false, false, true)) || (eo.sync_units && (eo.approximation != APPROXIMATION_EXACT_VARIABLES || !CALCULATOR->usesIntervalArithmetic()) && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
+	if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, true, true)) || (!CALCULATOR->usesIntervalArithmetic() && containsInterval(true, false, false, false, true)) || (eo.sync_units && (eo.approximation != APPROXIMATION_EXACT_VARIABLES || !CALCULATOR->usesIntervalArithmetic()) && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
 		if(CALCULATOR->usesIntervalArithmetic()) {
 			EvaluationOptions eo3 = eo2;
 			eo3.split_squares = false;
 			eo3.assume_denominators_nonzero = false;
 			if(eo.approximation == APPROXIMATION_APPROXIMATE && !containsUnknowns()) eo3.approximation = APPROXIMATION_EXACT_VARIABLES;
 			else eo3.approximation = APPROXIMATION_EXACT;
-			if(eo.sync_units) {
-				vector<KnownVariable*> vars;
-				vector<MathStructure> uncs;
-				sync_approximate_units(*this, feo, &vars, &uncs, false);
-			}
+			vector<KnownVariable*> vars;
+			vector<MathStructure> uncs;
 			calculatesub(eo3, eo3);
+			while(eo.sync_units && (separate_unit_vars(*this) || sync_approximate_units(*this, feo, &vars, &uncs, false))) {
+				calculatesub(eo3, eo3);
+			}
 			eo3.approximation = APPROXIMATION_APPROXIMATE;
 			if(eo.sync_units) {
-				vector<KnownVariable*> vars;
-				vector<MathStructure> uncs;
 				sync_approximate_units(*this, feo, &vars, &uncs, true);
 			}
 			factorize_variables(*this, eo3);
@@ -12344,21 +12416,23 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			eo3.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 			solve_intervals(*this, eo3, feo);
 		} else {
-			if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) {
+			MathStructure munc, mbak(*this);
+			if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) {
 				find_interval_replace_var_nr(*this);
 				EvaluationOptions eo3 = eo2;
 				eo3.split_squares = false;
-				eo3.assume_denominators_nonzero = false;
+				if(eo.expand && eo.expand >= -1) eo3.expand = -1;
+				eo3.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 				eo3.approximation = APPROXIMATION_EXACT;
-				if(eo.sync_units) {
-					vector<KnownVariable*> vars;
-					vector<MathStructure> uncs;
-					sync_approximate_units(*this, feo, &vars, &uncs, false);
-				}
+				vector<KnownVariable*> vars;
+				vector<MathStructure> uncs;
+				if(eo.sync_units) sync_approximate_units(*this, feo, &vars, &uncs, false);
 				calculatesub(eo3, eo3);
+				while(eo.sync_units && (separate_unit_vars(*this) || sync_approximate_units(*this, feo, &vars, &uncs, false))) {
+					calculatesub(eo3, eo3);
+				}
 			}
 			bool b_failed = false;
-			MathStructure munc, mbak(*this);
 			if(containsType(STRUCT_COMPARISON)) {
 				vector<UnknownVariable*> vars;
 				while(true) {
@@ -12378,6 +12452,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			} else {
 				CALCULATOR->beginTemporaryStopMessages();
 				munc = calculate_uncertainty(*this, eo, b_failed);
+				if(!b_failed) b_failed = munc.containsInterval(true, eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables, false, false, true) > 0 || containsInterval(true, eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables, false, false, true) > 0;
 				if(!b_failed && !munc.isZero()) {
 					EvaluationOptions eo3 = eo;
 					eo3.keep_zero_units = false;
@@ -19381,10 +19456,10 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 					if(CHILD(1)[1].isNegate() && CHILD(1)[1][0].equals(CHILD(0)[0], true, true)) munc = &CHILD(0)[0];
 				}
 				if(mmid && munc) {
-					ips_n.wrap = true;
+					ips_n.wrap = !mmid->isNumber();;
 					print_str += mmid->print(po, ips_n);
 					print_str += SIGN_PLUSMINUS;
-					ips_n.wrap = true;
+					ips_n.wrap = !munc->isNumber();;
 					print_str += munc->print(po, ips_n);
 					break;
 				}
@@ -20789,18 +20864,20 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
 				if(feo.calculate_functions) {
 					calculate_nondifferentiable_functions(*exp, feo, true, true, CALCULATOR->usesIntervalArithmetic() ? 0 : ((feo.approximation != APPROXIMATION_EXACT && feo.approximation != APPROXIMATION_EXACT_VARIABLES) ? 2 : 1));
 				}
+				if(do_intervals) exp->calculatesub(feo, feo, true);
 				m.raise_nocopy(exp);
 			} else {
 				exp->unref();
-			}			
+			}
 			if(!mstruct->isOne()) {
 				if(feo.calculate_functions) {
 					calculate_nondifferentiable_functions(*mstruct, feo, true, true, CALCULATOR->usesIntervalArithmetic() ? 0 : ((feo.approximation != APPROXIMATION_EXACT && feo.approximation != APPROXIMATION_EXACT_VARIABLES) ? 2 : 1));
 				}
+				if(do_intervals) mstruct->calculatesub(feo, feo, true);
 				m.multiply_nocopy(mstruct);
 			} else {
 				mstruct->unref();
-			}			
+			}
 			return true;
 		} else {
 			exp->unref();

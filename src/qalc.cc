@@ -534,14 +534,14 @@ bool check_exchange_rates() {
 #	define CHECK_IF_SCREEN_FILLED_PUTS_RP(x, rplus) {str_lb = x; int cr = 0; if(!cfile) {cr = addLineBreaks(str_lb, cols);} if(check_sf) {if(rcount + cr + 1 + rplus >= rows) {rcount += 2; while(rcount < rows) {puts(""); rcount++;} FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n') {check_sf = false;} else {rcount = 0; if(str_lb.empty() || str_lb[0] != '\n') {puts(""); rcount++;}}} if(check_sf) {rcount += cr;}} PUTS_UNICODE(str_lb.c_str());}
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) CHECK_IF_SCREEN_FILLED_PUTS_RP(x, 0)
 #	define INIT_SCREEN_CHECK int rows, cols, rcount = 0; bool check_sf = (cfile == NULL); char sf_c; string str_lb; if(!cfile) rl_get_screen_size(&rows, &cols);
-#	define CHECK_IF_SCREEN_FILLED_HEADING_S(x) str = "\n"; if(!cfile) {str += "\033[4m";} str += x; if(!cfile) {str += "\033[0m";} CHECK_IF_SCREEN_FILLED_PUTS_RP(str.c_str(), 1);
-#	define CHECK_IF_SCREEN_FILLED_HEADING(x) str = "\n"; if(!cfile) {str += "\033[4m"; str += "\033[1m";} str += x; if(!cfile) {str += "\033[0m"; str += "\033[0m";} CHECK_IF_SCREEN_FILLED_PUTS_RP(str.c_str(), 1);
+#	define CHECK_IF_SCREEN_FILLED_HEADING_S(x) str = "\n"; BEGIN_UNDERLINED(str); str += x; END_UNDERLINED(str); CHECK_IF_SCREEN_FILLED_PUTS_RP(str.c_str(), 1);
+#	define CHECK_IF_SCREEN_FILLED_HEADING(x) str = "\n"; BEGIN_UNDERLINED(str); BEGIN_BOLD(str); str += x; END_UNDERLINED(str); END_BOLD(str); CHECK_IF_SCREEN_FILLED_PUTS_RP(str.c_str(), 1);
 #else
 #	define CHECK_IF_SCREEN_FILLED
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) str_lb = x; if(!cfile) {addLineBreaks(str_lb, cols);} PUTS_UNICODE(str_lb.c_str());
 #	define INIT_SCREEN_CHECK string str_lb; int cols = 80;
-#	define CHECK_IF_SCREEN_FILLED_HEADING_S(x) str = "\n"; if(!cfile) {str += "\033[4m";} str += x; if(!cfile) {str += "\033[0m";} PUTS_UNICODE(str.c_str());
-#	define CHECK_IF_SCREEN_FILLED_HEADING(x) puts(""); str = "\n"; if(!cfile) {str += "\033[4m"; str += "\033[1m";} str += x; if(!cfile) {str += "\033[0m"; str += "\033[0m";} PUTS_UNICODE(str.c_str());
+#	define CHECK_IF_SCREEN_FILLED_HEADING_S(x) str = "\n"; BEGIN_UNDERLINED(str); str += x; END_UNDERLINED(str); PUTS_UNICODE(str.c_str());
+#	define CHECK_IF_SCREEN_FILLED_HEADING(x) puts(""); str = "\n"; BEGIN_UNDERLINED(str); BEGIN_BOLD(str); str += x; END_UNDERLINED(str); END_BOLD(str); PUTS_UNICODE(str.c_str());
 #endif
 
 #define SET_BOOL(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v;}}
@@ -1037,8 +1037,25 @@ void set_option(string str) {
 #define STR_AND_TABS_T2(x) str = x; pctl = unicode_length(str); if(pctl >= 8) {str += "\t";} else {str += "\t\t";}
 #define STR_AND_TABS_T3(x) str = x; pctl = unicode_length(str); if(pctl >= 16) {str += "\t";} else if(pctl >= 8) {str += "\t\t";} else {str += "\t\t\t";}
 #define STR_AND_TABS_T4(x) str = x; pctl = unicode_length(str); if(pctl >= 24) {str += "\t";} else if(pctl >= 16) {str += "\t\t";} else if(pctl >= 8) {str += "\t\t\t";} else {str += "\t\t\t\t";}
-#define PUTS_BOLD(x) if(cfile) {str = x;} else {str = "\033[1m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
-#define PUTS_UNDERLINED(x) if(cfile) {str = x;} else {str = "\033[4m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
+#ifdef _WIN32
+#	define BEGIN_BOLD(x)
+#	define END_BOLD(x)
+#	define BEGIN_UNDERLINED(x)
+#	define END_UNDERLINED(x)
+#	define BEGIN_ITALIC(x)
+#	define END_ITALIC(x)
+#	define PUTS_BOLD(x) PUTS_UNICODE(x);
+#	define PUTS_UNDERLINED(x) PUTS_UNICODE(x);
+#else
+#	define BEGIN_BOLD(x) if(!cfile) {x += "\033[1m";}
+#	define END_BOLD(x) if(!cfile) {x += "\033[0m";}
+#	define BEGIN_UNDERLINED(x) if(!cfile) {x += "\033[4m";}
+#	define END_UNDERLINED(x) if(!cfile) {x += "\033[0m";}
+#	define BEGIN_ITALIC(x) if(!cfile) {x += "\033[3m";}
+#	define END_ITALIC(x) if(!cfile) {x += "\033[23m";}
+#	define PUTS_BOLD(x) if(cfile) {str = x;} else {str = "\033[1m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
+#	define PUTS_UNDERLINED(x) if(cfile) {str = x;} else {str = "\033[4m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
+#endif
 
 bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t i2_end, size_t minlength) {
 	if(str1.empty() || str2.empty()) return false;
@@ -1146,7 +1163,7 @@ void show_calendars(const QalculateDateTime &date, bool indentation = true) {
 	bool b_fail;
 	long int y, m, d;
 	STR_AND_TABS((indentation ? string("  ") + _("Calendar") : _("Calendar"))); str += _("Day"); str += ", "; str += _("Month"); str += ", "; str += _("Year"); PUTS_UNICODE(str.c_str());
-#define PUTS_CALENDAR(x, c) calstr = ""; if(!cfile) {calstr += "\033[1m";} STR_AND_TABS((indentation ? string("  ") + x : x)); calstr += str; if(!cfile) {calstr += "\033[0m";} b_fail = !dateToCalendar(date, y, m, d, c); if(b_fail) {calstr += _("failed");} else {calstr += i2s(d); calstr += " "; calstr += monthName(m, c, true); calstr += " "; calstr += i2s(y);} FPUTS_UNICODE(calstr.c_str(), stdout);
+#define PUTS_CALENDAR(x, c) calstr = ""; BEGIN_BOLD(calstr); STR_AND_TABS((indentation ? string("  ") + x : x)); calstr += str; END_BOLD(calstr); b_fail = !dateToCalendar(date, y, m, d, c); if(b_fail) {calstr += _("failed");} else {calstr += i2s(d); calstr += " "; calstr += monthName(m, c, true); calstr += " "; calstr += i2s(y);} FPUTS_UNICODE(calstr.c_str(), stdout);
 	PUTS_CALENDAR(string(_("Gregorian:")), CALENDAR_GREGORIAN); puts("");
 	PUTS_CALENDAR(string(_("Hebrew:")), CALENDAR_HEBREW); puts("");
 	PUTS_CALENDAR(string(_("Islamic:")), CALENDAR_ISLAMIC); puts("");
@@ -3188,8 +3205,8 @@ int main(int argc, char *argv[]) {
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "set", _("set"))) {
 				INIT_SCREEN_CHECK
-#define STR_AND_TABS_SET(x, s) str = "- "; if(!cfile) {str += "\033[1m";} str += x; if(!cfile) {str += "\033[0m";} if(strlen(s) > 0) {str += " ("; str += s; str += ")";} str += "\n";
-#define SET_DESCRIPTION(s) if(strlen(s) > 0) {if(!cfile) {str += "\033[3m";} str += s; if(!cfile) {str += "\033[23m";} str += "\n";}
+#define STR_AND_TABS_SET(x, s) str = "- "; BEGIN_BOLD(str); str += x; END_BOLD(str); if(strlen(s) > 0) {str += " ("; str += s; str += ")";} str += "\n";
+#define SET_DESCRIPTION(s) if(strlen(s) > 0) {BEGIN_ITALIC(str); str += s; END_ITALIC(str); str += "\n";}
 #define STR_AND_TABS_BOOL(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "("; str += _("on"); if(v) {str += "*";} str += ", "; str += _("off"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_YESNO(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "("; str += _("yes"); if(v) {str += "*";} str += ", "; str += _("no"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_2(s, sh, d, v, s0, s1, s2) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -3316,7 +3333,9 @@ int main(int argc, char *argv[]) {
 				str += ", >= 0)";
 				if(printops.min_exp != EXP_NONE && printops.min_exp != EXP_NONE && printops.min_exp != EXP_PRECISION && printops.min_exp != EXP_BASE_3 && printops.min_exp != EXP_PURE && printops.min_exp != EXP_SCIENTIFIC) {str += " "; str += i2s(printops.min_exp); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-				STR_AND_TABS_4(_("fractions"), "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denonimator."), printops.number_fraction_format, _("off"), _("exact"), _("on"), _("combined"), _("long"));
+				int nff = printops.number_fraction_format;
+				if(!printops.restrict_fraction_length && printops.number_fraction_format == FRACTION_FRACTIONAL) nff = 4;
+				STR_AND_TABS_4(_("fractions"), "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denonimator."), nff, _("off"), _("exact"), _("on"), _("combined"), _("long"));
 				STR_AND_TABS_7(_("interval display"), "ivdisp", "", (adaptive_interval_display ? 0 : printops.interval_display + 1), _("adaptive"), _("significant"), _("interval"), _("plusminus"), _("midpoint"), _("upper"), _("lower"))
 				STR_AND_TABS_BOOL(_("lowercase e"), "lowe", _("Use lowercase e for E-notation (5e2 = 5 * 10^2)."), printops.lower_case_e);
 				STR_AND_TABS_BOOL(_("lowercase numbers"), "lownum", _("Use lowercase letters for number bases > 10."), printops.lower_case_numbers);
@@ -3689,6 +3708,7 @@ void on_abort_display() {
 }
 
 void replace_quotation_marks(string &str) {
+#ifndef _WIN32
 	if(cfile) return;
 	size_t i1 = 0, i2 = 0;
 	while(i1 + 2 < str.length()) {
@@ -3725,6 +3745,7 @@ void replace_quotation_marks(string &str) {
 		str.replace(i2, 1, "\033[23m");
 		i1 = i2 + 5;
 	}
+#endif
 }
 
 void ViewThread::run() {
