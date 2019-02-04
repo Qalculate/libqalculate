@@ -335,7 +335,7 @@
       <part>
         <unit>c_unit</unit>
         <prefix>0</prefix>
-        <exponent>-2</exponent>
+        <exponent>-1</exponent>
       </part>
     </unit>
     <unit type="alias">
@@ -720,7 +720,7 @@
       <_names>ar:u,a:AMU,atomic_mass_unit,p:atomic_mass_units</_names>
       <base>
         <unit>g</unit>
-        <relation>atomic_mass*1000</relation>
+        <relation>atomic_mass_constant*1000</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -730,7 +730,7 @@
       <use_with_prefixes>true</use_with_prefixes>
       <base>
         <unit>g</unit>
-        <relation>atomic_mass*1000</relation>
+        <relation>atomic_mass_constant*1000</relation>
       <exponent>1</exponent>
       </base>
     </unit>
@@ -2768,7 +2768,7 @@
         <names>electron_c</names>
         <system>Natural</system>
         <part>
-          <unit>planck_unit</unit>
+          <unit>electron_unit</unit>
           <prefix>0</prefix>
           <exponent>1</exponent>
         </part>

@@ -119,8 +119,7 @@ const MathStructure *DataObject::getPropertyStruct(DataProperty *property) {
 	if(!property) return NULL;
 	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
-			if(m_properties[i]) m_properties[i]->unref();
-			m_properties[i] = property->generateStruct(s_properties[i], a_properties[i]);
+			if(!m_properties[i]) m_properties[i] = property->generateStruct(s_properties[i], a_properties[i]);
 			return m_properties[i];
 		}
 	}
@@ -321,7 +320,7 @@ MathStructure *DataProperty::generateStruct(const string &valuestr, int is_appro
 			break;
 		}
 	}
-	if(getUnitStruct()) {
+	if(mstruct && getUnitStruct()) {
 		mstruct->multiply(*getUnitStruct());
 	}
 	return mstruct;
