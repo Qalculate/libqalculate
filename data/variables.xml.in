@@ -193,7 +193,7 @@
       <variable>
         <_title>Bohr Magneton</_title>
         <_names>r:bohr_magneton,asu:&#x3BC;_B,aos:mu_B</_names>
-        <value>elementary_charge*planck2pi/(2*electron_mass)</value>
+        <value>(elementary_charge*planck)/(4*electron_mass*pi)</value>
       </variable>
       <variable>
         <_title>Conductance Quantum</_title>
@@ -548,7 +548,7 @@
        <variable>
         <_title>Molar Planck Constant</_title>
         <_names>r:molar_planck</_names>
-        <value unit="J*s*mol^(-1)" uncertainty="1.8E-19">3.9903127110e-10</value>
+        <value>avogadro*planck</value>
       </variable>
       <variable>
         <_title>Molar Volume of Ideal Gas (273.15 K, 100 kPa)</_title>
@@ -578,7 +578,7 @@
       <variable>
         <_title>Stefan-Boltzmann Constant</_title>
         <_names>r:stefan,au:&#x03C3;,ao:sigma</_names>
-        <value>(pi^2*boltzmann^4)/(60*planck2pi^3*c^2)</value>
+        <value>(2pi^5*boltzmann^4)/(15*planck^3*c^2)</value>
       </variable>
       <variable>
         <_title>Wien frequency displacement law constant</_title>
