@@ -7440,13 +7440,30 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		
 		precision = precision_base;
 		
+		bool b_pm_zero = false;
+		
 		if(mpfr_zero_p(f_mid)) {
-			Number nr_zero;
-			nr_zero.setApproximate(true);
-			PrintOptions po2 = po;
-			po2.max_decimals = i_precision_base - 1;
-			po2.use_max_decimals = true;
-			return nr_zero.print(po2, ips);
+			if(po.interval_display == INTERVAL_DISPLAY_PLUSMINUS && is_interval) {
+				mpfr_t f_lunc, f_unc;
+				mpfr_inits2(mpfr_get_prec(f_mid), f_lunc, f_unc, NULL);
+				mpfr_sub(f_lunc, f_mid, fl_value, MPFR_RNDU);
+				mpfr_sub(f_unc, fu_value, f_mid, MPFR_RNDU);
+				if(mpfr_cmp(f_lunc, f_unc) > 0) mpfr_swap(f_lunc, f_unc);
+				if(!mpfr_zero_p(f_unc)) {
+					b_pm_zero = true;
+					mpfr_swap(f_unc, f_mid);
+				}
+				mpfr_clears(f_lunc, f_unc, NULL);
+			}
+			if(!b_pm_zero) {
+				Number nr_zero;
+				nr_zero.setApproximate(true);
+				PrintOptions po2 = po;
+				po2.max_decimals = i_precision_base - 1;
+				po2.use_max_decimals = true;
+				mpfr_clear(f_mid);
+				return nr_zero.print(po2, ips);
+			}
 		}
 
 		float_rerun:
@@ -7565,7 +7582,20 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		bool show_ending_zeroes = po.show_ending_zeroes;
 		
 		string str_unc;
-		if(po.interval_display == INTERVAL_DISPLAY_PLUSMINUS && is_interval) {
+
+		if(b_pm_zero) {
+			if(!rerun && !po.preserve_precision && l10 > 0 && str.length() > 2) {
+				precision = str.length() - l10;
+				if(precision < 2) precision = 2;
+				mpfr_clears(v, f_log, f_base, f_log_base, NULL);
+				mpz_clear(ivalue);
+				rerun = true;
+				goto float_rerun;
+			}
+			if(!po.preserve_precision && l10 > 0) show_ending_zeroes = true;
+			str_unc = str;
+			str = "0";
+		} else if(po.interval_display == INTERVAL_DISPLAY_PLUSMINUS && is_interval) {
 			mpfr_t f_lunc, f_unc;
 			mpfr_inits2(mpfr_get_prec(f_mid), f_lunc, f_unc, NULL);
 			mpfr_div(f_lunc, fl_value, f_log, MPFR_RNDD);
@@ -7574,7 +7604,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpfr_sub(f_lunc, v, f_lunc, MPFR_RNDU);
 			mpfr_sub(f_unc, f_unc, v, MPFR_RNDU);
 			if(mpfr_cmp(f_lunc, f_unc) > 0) mpfr_swap(f_lunc, f_unc);
-			if(po.round_halfway_to_even) mpfr_rint(v, v, MPFR_RNDN);
+			if(po.round_halfway_to_even) mpfr_rint(f_unc, f_unc, MPFR_RNDN);
 			else mpfr_round(f_unc, f_unc);
 			if(!mpfr_zero_p(f_unc)) {
 				mpfr_get_z(ivalue, f_unc, MPFR_RNDN);
@@ -7587,7 +7617,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					if(precision <= 0) {
 						PrintOptions po2 = po;
 						po2.interval_display = INTERVAL_DISPLAY_INTERVAL;
-						mpfr_clears(f_mid, v, f_log, f_base, f_log_base, NULL);
+						mpfr_clears(f_mid, f_lunc, f_unc, v, f_log, f_base, f_log_base, NULL);
 						mpz_clear(ivalue);
 						return print(po2, ips);
 					}
@@ -7596,8 +7626,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				} else if(!po.preserve_precision && l10 > 0 && str_unc.length() > 2) {
 					precision = str.length() - l10;
 					if(precision < (long int) str.length() - (long int) str_unc.length() + 2) precision = str.length() - str_unc.length() + 2;
-					mpfr_clears(v, f_log, f_base, f_log_base, NULL);
-					mpfr_clears(f_lunc, f_unc, NULL);
+					mpfr_clears(f_lunc, f_unc, v, f_log, f_base, f_log_base, NULL);
 					mpz_clear(ivalue);
 					rerun = true;
 					goto float_rerun;
@@ -7682,9 +7711,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 				*ips.exp = i2s(expo);
 			} else {
-				if(po.lower_case_e) str += "e";
-				else str += "E";
-				str += i2s(expo);
+				if(!b_pm_zero) {
+					if(po.lower_case_e) str += "e";
+					else str += "E";
+					str += i2s(expo);
+				}
 				if(!str_unc.empty()) {
 					if(po.lower_case_e) str_unc += "e";
 					else str_unc += "E";

@@ -11776,46 +11776,55 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 		malts.clearVector();
 		if(b) {
 			eo.keep_zero_units = false;
-			msolve.calculatesub(eo, eo, true);
 			eo.approximation = APPROXIMATION_APPROXIMATE;
 			eo.expand = eo_pre.expand;
-			msolve.factorize(eo, false, false, 0, false, true, NULL, m_undefined, false, false, 1);
-			remove_nonzero_mul(msolve, u_var, eo);
-			if(msolve.isZero()) {
-				b = true;
-			} else if(contains_undefined(msolve) || msolve.countTotalChildren(false) > 1000 || msolve.containsInterval(true, true, false, true, true)) {
-				msolve.replace(u_var, nr_intval);
-				msolve.eval(eo);
-				if(msolve.representsNonComplex(true)) {
-					ComparisonResult cmp = msolve.compare(m_zero);
-					if(COMPARISON_MIGHT_BE_EQUAL(cmp)) b = false;
-				} else {
-					MathStructure m_re(CALCULATOR->f_re, &msolve, NULL);
-					m_re.calculateFunctions(eo);
-					ComparisonResult cmp = m_re.compare(m_zero);
-					if(COMPARISON_MIGHT_BE_EQUAL(cmp)) {
-						b = false;
-					} else {
-						MathStructure m_im(CALCULATOR->f_im, &msolve, NULL);
-						m_im.calculateFunctions(eo);
-						ComparisonResult cmp = m_im.compare(m_zero);
-						if(COMPARISON_MIGHT_BE_EQUAL(cmp)) b = false;
-					}
-				}
+			MathStructure mtest(msolve);
+			mtest.replace(u_var, nr_intval);
+			mtest.eval(eo);
+			if(mtest.representsNonComplex(true)) {
+				ComparisonResult cmp = mtest.compare(m_zero);
+				if(!COMPARISON_IS_EQUAL_OR_GREATER(cmp) && !COMPARISON_IS_EQUAL_OR_LESS(cmp)) b = false;
 			} else {
-				MathStructure mtest(mstruct);
-				mtest.replace(v, u_var);
-				mtest.calculatesub(eo, eo, true);
-				if(contains_undefined(mtest, eo, true, u_var, mv)) {
+				MathStructure m_re(CALCULATOR->f_re, &mtest, NULL);
+				m_re.calculateFunctions(eo);
+				ComparisonResult cmp = m_re.compare(m_zero);
+				if(!COMPARISON_IS_EQUAL_OR_GREATER(cmp) && !COMPARISON_IS_EQUAL_OR_LESS(cmp)) {
 					b = false;
 				} else {
-					Number nr_prec(1, 1, -(PRECISION + 10));
-					nr_prec *= nr_intval.uncertainty();
-					b = find_interval_zeroes(msolve, malts, u_var, nr_intval, eo, 0, nr_prec);
+					MathStructure m_im(CALCULATOR->f_im, &mtest, NULL);
+					m_im.calculateFunctions(eo);
+					ComparisonResult cmp = m_im.compare(m_zero);
+					if(!COMPARISON_IS_EQUAL_OR_GREATER(cmp) && !COMPARISON_IS_EQUAL_OR_LESS(cmp)) b = false;
 				}
 			}
 			eo.expand = false;
 			eo.approximation = APPROXIMATION_EXACT_VARIABLES;
+			if(!b) {
+				b = true;
+				msolve.calculatesub(eo, eo, true);
+				eo.approximation = APPROXIMATION_APPROXIMATE;
+				eo.expand = eo_pre.expand;
+				msolve.factorize(eo, false, false, 0, false, true, NULL, m_undefined, false, false, 1);
+				remove_nonzero_mul(msolve, u_var, eo);
+				cout << msolve << endl;
+				if(msolve.isZero()) {
+				} else if(contains_undefined(msolve) || msolve.countTotalChildren(false) > 1000 || msolve.containsInterval(true, true, false, true, true)) {
+					b = false;
+				} else {
+					MathStructure mtest(mstruct);
+					mtest.replace(v, u_var);
+					mtest.calculatesub(eo, eo, true);
+					if(contains_undefined(mtest, eo, true, u_var, mv)) {
+						b = false;
+					} else {
+						Number nr_prec(1, 1, -(PRECISION + 10));
+						nr_prec *= nr_intval.uncertainty();
+						b = find_interval_zeroes(msolve, malts, u_var, nr_intval, eo, 0, nr_prec);
+					}
+				}
+				eo.expand = false;
+				eo.approximation = APPROXIMATION_EXACT_VARIABLES;
+			}
 			eo.keep_zero_units = eo_pre.keep_zero_units;
 		}
 		CALCULATOR->endTemporaryStopMessages();
