@@ -4801,7 +4801,7 @@ void load_preferences() {
 	printops.negative_exponents = false;
 	printops.sort_options.minus_last = true;
 	printops.indicate_infinite_series = false;
-	printops.show_ending_zeroes = false;
+	printops.show_ending_zeroes = true;
 	printops.digit_grouping = DIGIT_GROUPING_NONE;
 	printops.round_halfway_to_even = false;
 	printops.number_fraction_format = FRACTION_DECIMAL;
@@ -5088,7 +5088,7 @@ void load_preferences() {
 				} else if(svar == "indicate_infinite_series") {
 					printops.indicate_infinite_series = v;
 				} else if(svar == "show_ending_zeroes") {
-					printops.show_ending_zeroes = v;
+					if(version_numbers[0] > 2 || (version_numbers[0] == 2 && version_numbers[1] >= 9)) printops.show_ending_zeroes = v;
 				} else if(svar == "digit_grouping") {
 					if(v >= DIGIT_GROUPING_NONE && v <= DIGIT_GROUPING_LOCALE) {
 						printops.digit_grouping = (DigitGrouping) v;

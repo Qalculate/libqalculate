@@ -1088,7 +1088,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			v->set(nr_iv);
 			m1.replace(CALCULATOR->v_x, v);
 			m2 = m1;
-			CALCULATOR->useIntervalArithmetic(true);
+			//CALCULATOR->useIntervalArithmetic(true);
 			CALCULATOR->calculate(&m1, 5000, eo);
 			if(m1.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED9"; CALCULATOR->useIntervalArithmetic(b_iv); return;}
 			CALCULATOR->useIntervalArithmetic(false);
@@ -1340,7 +1340,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			v->set(nr_iv);
 			m1.replace(CALCULATOR->v_x, v);
 			m2 = m1;
-			CALCULATOR->useIntervalArithmetic(true);
+			//CALCULATOR->useIntervalArithmetic(true);
 			CALCULATOR->calculate(&m1, 5000, eo);
 			if(m1.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED9"; CALCULATOR->useIntervalArithmetic(b_iv); return;}
 			CALCULATOR->useIntervalArithmetic(false);
@@ -1408,7 +1408,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 		}
 	}
 	cerr << "D" << endl;
-	//if(display_errors(true)) cout << str << ":" << str2 << endl;
+	if(display_errors(true)) cout << str << ":" << str2 << endl;
 }
 
 void speed_test() {
@@ -1620,11 +1620,11 @@ int main(int argc, char *argv[]) {
 	v = new KnownVariable("", "v", m_zero);
 
 	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
-	CALCULATOR->useIntervalArithmetic();
+	//CALCULATOR->useIntervalArithmetic();
 	
-	for(size_t i = 0; i <= 10000; i++) {
-		rnd_test(evalops, 4, true, true, true, false, false);
-		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
+	for(size_t i = 0; i <= 1000; i++) {
+		rnd_test(evalops, 4, true, true, false, false, true);
+		if(i % 100 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 
