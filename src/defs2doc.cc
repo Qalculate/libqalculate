@@ -466,13 +466,13 @@ void print_variable(Variable *v) {
 					value += "±";
 					value += fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()));
 				}
+				if(((KnownVariable*) v)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) == string::npos && value.length() > 40) {
+					value = value.substr(0, 30);
+					value += "...";
+				}
 				if(!((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
 					value += " ";
 					value += fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->unit()));
-				}
-				if(value.length() > 40) {
-					value = value.substr(0, 30);
-					value += "...";
 				}
 			} else {
 				if(((KnownVariable*) v)->get().isMatrix()) {
@@ -508,7 +508,7 @@ void print_variable(Variable *v) {
 				value = _("default assumptions");
 			}		
 		}
-		if(v->isApproximate()) {
+		if(v->isApproximate() && value.find(SIGN_PLUSMINUS) == string::npos) {
 			if(v == CALCULATOR->v_pi || v == CALCULATOR->v_e || v == CALCULATOR->v_euler || v == CALCULATOR->v_catalan) {
 				value += " (";
 				value += _("variable precision");
@@ -562,7 +562,7 @@ void print_unit(Unit *u) {
 						relation += fix(CALCULATOR->localizeExpression(au->uncertainty()));
 					}
 				}
-				if(u->isApproximate()) {
+				if(u->isApproximate() && relation.find(SIGN_PLUSMINUS) == string::npos) {
 					relation += " (";
 					relation += _("approximate");
 					relation += ")";

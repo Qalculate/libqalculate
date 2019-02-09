@@ -533,7 +533,7 @@ Calculator::~Calculator() {
 Unit *Calculator::getGraUnit() {
 	if(!u_gra) u_gra = getUnit("gra");
 	if(!u_gra) {
-		CALCULATOR->error(true, _("Gradians unit is missing. Creating one for this session."), NULL);
+		error(true, _("Gradians unit is missing. Creating one for this session."), NULL);
 		u_gra = addUnit(new AliasUnit(_("Angle/Plane Angle"), "gra", "gradians", "gradian", "Gradian", getRadUnit(), "pi/200", 1, "", false, true, true));	
 	}
 	return u_gra;
@@ -541,7 +541,7 @@ Unit *Calculator::getGraUnit() {
 Unit *Calculator::getRadUnit() {
 	if(!u_rad) u_rad = getUnit("rad");
 	if(!u_rad) {
-		CALCULATOR->error(true, _("Radians unit is missing. Creating one for this session."), NULL);
+		error(true, _("Radians unit is missing. Creating one for this session."), NULL);
 		u_rad = addUnit(new Unit(_("Angle/Plane Angle"), "rad", "radians", "radian", "Radian", false, true, true));
 	}
 	return u_rad;
@@ -549,7 +549,7 @@ Unit *Calculator::getRadUnit() {
 Unit *Calculator::getDegUnit() {
 	if(!u_deg) u_deg = getUnit("deg");
 	if(!u_deg) {
-		CALCULATOR->error(true, _("Degrees unit is missing. Creating one for this session."), NULL);
+		error(true, _("Degrees unit is missing. Creating one for this session."), NULL);
 		u_deg = addUnit(new AliasUnit(_("Angle/Plane Angle"), "deg", "degrees", "degree", "Degree", getRadUnit(), "pi/180", 1, "", false, true, true));
 	}
 	return u_deg;
@@ -2258,7 +2258,7 @@ MathStructure *Calculator::calculateRPN(MathFunction *f, const EvaluationOptions
 		for(size_t i = 0; i < iregs - 1 && rpn_stack.size() > 1; i++) {
 			rpn_stack.back()->unref();
 			rpn_stack.pop_back();
-			CALCULATOR->deleteRPNRegister(1);
+			deleteRPNRegister(1);
 		}
 		rpn_stack.back()->unref();
 		rpn_stack.back() = mstruct;
@@ -3241,7 +3241,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div, bool convert_to_loca
 	switch(u->subtype()) {
 		case SUBTYPE_BASE_UNIT: {
 			if(convert_to_local_currency && u->isCurrency()) {
-				Unit *u_local_currency = CALCULATOR->getLocalCurrency();
+				Unit *u_local_currency = getLocalCurrency();
 				if(u_local_currency) return u_local_currency;
 			}
 			return u;
@@ -3251,7 +3251,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div, bool convert_to_loca
 			if(au->baseExponent() == 1 && au->baseUnit()->subtype() == SUBTYPE_BASE_UNIT) {
 				if(au->isCurrency()) {
 					if(!convert_to_local_currency) return u;
-					Unit *u_local_currency = CALCULATOR->getLocalCurrency();
+					Unit *u_local_currency = getLocalCurrency();
 					if(u_local_currency) return u_local_currency;
 				}
 				return (Unit*) au->baseUnit();
@@ -3936,7 +3936,7 @@ Unit* Calculator::getLocalCurrency() {
 		string local_currency = lc->int_curr_symbol;
 		remove_blank_ends(local_currency);
 		if(!local_currency.empty()) {
-			return CALCULATOR->getActiveUnit(local_currency);
+			return getActiveUnit(local_currency);
 		}
 	}
 	return NULL;
@@ -5956,7 +5956,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		str2 = str.substr(i + 1, i2 - (i + 1));
 		MathStructure *mstruct2 = new MathStructure();
 		if(str2.empty()) {
-			CALCULATOR->error(false, "Empty expression in parentheses interpreted as zero.", NULL);
+			error(false, "Empty expression in parentheses interpreted as zero.", NULL);
 		} else {
 			parseOperators(mstruct2, str2, po);
 		}
@@ -6394,14 +6394,14 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							}
 							if(mstruct->last()[0].isNumber()) {
 								if(b_neg) mstruct->last()[0].number().negate();
-								if(v == CALCULATOR->v_percent) mstruct->last()[0].number().add(100);
-								else if(v == CALCULATOR->v_permille) mstruct->last()[0].number().add(1000);
+								if(v == v_percent) mstruct->last()[0].number().add(100);
+								else if(v == v_permille) mstruct->last()[0].number().add(1000);
 								else mstruct->last()[0].number().add(10000);
 							} else {
 								if(b_neg && po.preserve_format) mstruct->last()[0].transform(STRUCT_NEGATE);
 								else if(b_neg) mstruct->last()[0].negate();
-								if(v == CALCULATOR->v_percent) mstruct->last()[0] += Number(100, 1);
-								else if(v == CALCULATOR->v_permille) mstruct->last()[0] += Number(1000, 1);
+								if(v == v_percent) mstruct->last()[0] += Number(100, 1);
+								else if(v == v_permille) mstruct->last()[0] += Number(1000, 1);
 								else mstruct->last()[0] += Number(10000, 1);
 								mstruct->last()[0].swapChildren(1, 2);
 							}
@@ -6472,14 +6472,14 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						}
 						if(mstruct->last()[0].isNumber()) {
 							if(b_neg) mstruct->last()[0].number().negate();
-							if(v == CALCULATOR->v_percent) mstruct->last()[0].number().add(100);
-							else if(v == CALCULATOR->v_permille) mstruct->last()[0].number().add(1000);
+							if(v == v_percent) mstruct->last()[0].number().add(100);
+							else if(v == v_permille) mstruct->last()[0].number().add(1000);
 							else mstruct->last()[0].number().add(10000);
 						} else {
 							if(b_neg && po.preserve_format) mstruct->last()[0].transform(STRUCT_NEGATE);
 							else if(b_neg) mstruct->last()[0].negate();
-							if(v == CALCULATOR->v_percent) mstruct->last()[0] += Number(100, 1);
-							else if(v == CALCULATOR->v_permille) mstruct->last()[0] += Number(1000, 1);
+							if(v == v_percent) mstruct->last()[0] += Number(100, 1);
+							else if(v == v_permille) mstruct->last()[0] += Number(1000, 1);
 							else mstruct->last()[0] += Number(10000, 1);
 							mstruct->last()[0].swapChildren(1, 2);
 						}
@@ -6833,7 +6833,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		if(po.preserve_format) mstruct2.transform(STRUCT_NEGATE);
 		else mstruct2.negate();
 		mstruct->add(mstruct2);
-		mstruct->transform(CALCULATOR->f_interval);
+		mstruct->transform(f_interval);
 		mstruct->addChild_nocopy(marg2);
 	} else if(po.base >= 2 && po.base <= 10 && (i = str.find_first_of(EXPS, 1)) != string::npos && i + 1 != str.length() && str.find("\b") == string::npos) {
 		str2 = str.substr(0, i);
@@ -8642,7 +8642,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							au->destroy();
 							au = NULL;
 						} else {
-							if(!is_user_defs && au->baseUnit() == CALCULATOR->u_second) {
+							if(!is_user_defs && au->baseUnit() == u_second) {
 								if(au->referenceName() == "d" || au->referenceName() == "day") u_day = au;
 								else if(au->referenceName() == "year") u_year = au;
 								else if(au->referenceName() == "month") u_month = au;
@@ -9842,7 +9842,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
 						str1 = stmp.substr(is, is_n - is);
 						is = is_n + delimiter.length();
 					}
-					CALCULATOR->parse(&mstruct[rows - 1][column - 1], str1);
+					parse(&mstruct[rows - 1][column - 1], str1);
 					column++;
 					if(is_n == string::npos) {
 						break;
@@ -9938,9 +9938,9 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 						is = is_n + delimiter.length();
 					}
 					if(to_matrix) {
-						CALCULATOR->parse(&mstruct[rows - 1][column - 1], str1);
+						parse(&mstruct[rows - 1][column - 1], str1);
 					} else {
-						vectors[column - 1].addChild(CALCULATOR->parse(str1));
+						vectors[column - 1].addChild(parse(str1));
 					}
 					column++;
 					if(is_n == string::npos) {
@@ -10606,27 +10606,50 @@ bool Calculator::canPlot() {
 	return pclose(pipe) == 0;
 #endif
 }
+
+extern bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL, long int min_precision = 2, bool function_middle = false);
+void parse_and_precalculate_plot(string &expression, MathStructure &mstruct, const ParseOptions &po, EvaluationOptions &eo) {
+	eo.approximation = APPROXIMATION_APPROXIMATE;
+	ParseOptions po2 = po;
+	po2.read_precision = DONT_READ_PRECISION;
+	eo.parse_options = po2;
+	mstruct = CALCULATOR->parse(expression, po2);
+	MathStructure mbak(mstruct);
+	if(mstruct.containsInterval(true, true, false, true, true)) {
+		eo.expand = -1;
+	} else {
+		eo.calculate_functions = false;
+		eo.expand = false;
+	}
+	CALCULATOR->beginTemporaryStopMessages();
+	mstruct.eval(eo);
+	if(fix_intervals(mstruct, eo, NULL, 2, true)) mstruct.calculatesub(eo, eo, true);
+	int im = 0;
+	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) mstruct = mbak;
+	eo.calculate_functions = true;
+	eo.expand = true;
+}
+
 MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
 	Variable *v = getActiveVariable(x_var);
 	MathStructure x_mstruct;
 	if(v) x_mstruct = v;
 	else x_mstruct = x_var;
 	EvaluationOptions eo;
-	eo.approximation = APPROXIMATION_APPROXIMATE;
-	ParseOptions po2 = po;
-	po2.read_precision = DONT_READ_PRECISION;
-	eo.parse_options = po2;
+	MathStructure mparse;
 	if(msecs > 0) startControl(msecs);
-	MathStructure mparse(parse(expression, po2));
-	CALCULATOR->beginTemporaryStopMessages();
+	beginTemporaryStopIntervalArithmetic();
+	parse_and_precalculate_plot(expression, mparse, po, eo);
+	beginTemporaryStopMessages();
 	MathStructure y_vector(mparse.generateVector(x_mstruct, min, max, steps, x_vector, eo));
-	CALCULATOR->endTemporaryStopMessages();
+	endTemporaryStopMessages();
+	endTemporaryStopIntervalArithmetic();
 	if(msecs > 0) {
 		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
 		stopControl();
 	}
 	if(y_vector.size() == 0) {
-		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
+		error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
 	}
 	return y_vector;
 }
@@ -10643,23 +10666,20 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	if(v) x_mstruct = v;
 	else x_mstruct = x_var;
 	EvaluationOptions eo;
-	eo.approximation = APPROXIMATION_APPROXIMATE;
-	ParseOptions po2 = po;
-	po2.read_precision = DONT_READ_PRECISION;
-	eo.parse_options = po2;
+	MathStructure mparse;
 	if(msecs > 0) startControl(msecs);
-	MathStructure mparse(parse(expression, po2));
-	CALCULATOR->beginTemporaryStopMessages();
-	CALCULATOR->beginTemporaryStopIntervalArithmetic();
+	beginTemporaryStopIntervalArithmetic();
+	parse_and_precalculate_plot(expression, mparse, po, eo);
+	beginTemporaryStopMessages();
 	MathStructure y_vector(mparse.generateVector(x_mstruct, min, max, step, x_vector, eo));
-	CALCULATOR->endTemporaryStopIntervalArithmetic();
-	CALCULATOR->endTemporaryStopMessages();
+	endTemporaryStopMessages();
+	endTemporaryStopIntervalArithmetic();
 	if(msecs > 0) {
 		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
 		stopControl();
 	}
 	if(y_vector.size() == 0) {
-		CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
+		error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
 	}
 	return y_vector;
 }
@@ -10676,17 +10696,14 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	if(v) x_mstruct = v;
 	else x_mstruct = x_var;
 	EvaluationOptions eo;
-	eo.approximation = APPROXIMATION_APPROXIMATE;
-	ParseOptions po2 = po;
-	po2.read_precision = DONT_READ_PRECISION;
-	eo.parse_options = po2;
+	MathStructure mparse;
 	if(msecs > 0) startControl(msecs);
-	MathStructure mparse(parse(expression, po2));
-	CALCULATOR->beginTemporaryStopMessages();
-	CALCULATOR->beginTemporaryStopIntervalArithmetic();
+	beginTemporaryStopIntervalArithmetic();
+	parse_and_precalculate_plot(expression, mparse, po, eo);
+	beginTemporaryStopMessages();
 	MathStructure y_vector(mparse.generateVector(x_mstruct, x_vector, eo).eval(eo));
-	CALCULATOR->endTemporaryStopIntervalArithmetic();
-	CALCULATOR->endTemporaryStopMessages();
+	endTemporaryStopMessages();
+	endTemporaryStopIntervalArithmetic();
 	if(msecs > 0) {
 		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
 		stopControl();

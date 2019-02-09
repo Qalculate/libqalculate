@@ -7278,6 +7278,7 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, 6) {
 	setDefaultValue(6, "0");
 	setCondition("\\y < \\z");
 }
+extern bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL, long int min_precision = 2, bool function_middle = false);
 int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	EvaluationOptions eo2;
@@ -7286,14 +7287,25 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	eo2.parse_options.read_precision = DONT_READ_PRECISION;
 	bool use_step_size = vargs[5].number().getBoolean();
 	mstruct = vargs[0];
-	eo2.calculate_functions = false;
-	eo2.expand = false;
-	CALCULATOR->beginTemporaryStopMessages();
-	mstruct.eval(eo2);
-	int im = 0;
-	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) mstruct = vargs[0];
-	eo2.calculate_functions = eo.calculate_functions;
-	eo2.expand = eo.expand;
+	CALCULATOR->beginTemporaryStopIntervalArithmetic();
+	if(!mstruct.contains(vargs[4], true)) {
+		mstruct.eval(eo2);
+	} else {
+		if(mstruct.containsInterval(true, true, false, true, true)) {
+			eo2.expand = -1;
+		} else {
+			eo2.calculate_functions = false;
+			eo2.expand = false;
+		}
+		CALCULATOR->beginTemporaryStopMessages();
+		mstruct.eval(eo2);
+		if(fix_intervals(mstruct, eo2, NULL, 2, true)) mstruct.calculatesub(eo2, eo2, true);
+		int im = 0;
+		if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) mstruct = vargs[0];
+		eo2.calculate_functions = eo.calculate_functions;
+		eo2.expand = eo.expand;
+	}
+	CALCULATOR->endTemporaryStopIntervalArithmetic();
 	vector<MathStructure> x_vectors, y_vectors;
 	vector<PlotDataParameters*> dpds;
 	if(mstruct.isMatrix() && mstruct.columns() == 2) {

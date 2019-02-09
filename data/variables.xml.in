@@ -588,7 +588,7 @@
       <variable>
         <_title>Wien wavelength displacement law constant</_title>
         <_names>r:wien_displacement,ais:b_energy</_names>
-        <value unit="m*K" uncertainty="1.7e-9">2.8977729E-3</value>
+        <value unit="m*K" uncertainty="1.7E-9">2.8977729E-3</value>
       </variable>
     </category>
     <category>

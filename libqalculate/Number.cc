@@ -7136,7 +7136,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpfr_t f_diff, f_mid;
 		
 		bool is_interval = !mpfr_equal_p(fl_value, fu_value);
-
+		
 		if(!is_interval) {
 			if(mpfr_inf_p(fl_value)) {
 				Number nr;
@@ -7217,6 +7217,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				po2.interval_display = INTERVAL_DISPLAY_INTERVAL;
 				return print(po2, ips);
 			}
+			
 			mpfr_t vl, vu, f_logl, f_base, f_log_base;
 			mpfr_inits2(mpfr_get_prec(fl_value), f_mid, vl, vu, f_logl, f_base, f_log_base, NULL);
 		
@@ -7255,7 +7256,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpfr_clears(vu, vl, f_logl, f_mid, f_base, f_log_base, NULL);
 				mpq_clear(base_half);
 				if(ilogu < ilogl) ilogl = ilogu;
-				if(ilogl <= 0) {
+				if(ilogl <= 1) {
 					PrintOptions po2 = po;
 					po2.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 					return print(po2, ips);
@@ -7332,6 +7333,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			string str_l = printMPZ(ivalue, base, false, false);
 			mpfr_get_z(ivalue, vu, MPFR_RNDN);
 			string str_u = printMPZ(ivalue, base, false, false);
+
 			if(str_u.length() > str_l.length()) {
 				str_l.insert(0, str_u.length() - str_l.length(), '0');
 			}
@@ -7372,6 +7374,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 
 			if(i_precision_base < precision_base) precision_base = i_precision_base;
+			
+			if(precision_base <= 1) {
+				mpfr_clears(vu, vl, f_logl, f_mid, f_base, f_log_base, NULL);
+				mpq_clear(base_half);
+				PrintOptions po2 = po;
+				po2.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+				return print(po2, ips);
+			}
+			
 			if(i_precision_base <= 0) {
 				if(negl) {
 					mpfr_neg(vl, fl_value, MPFR_RNDN);
@@ -7421,8 +7432,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpfr_mul(f_mid, vu, f_logl, MPFR_RNDN);
 				if(negl) mpfr_neg(f_mid, f_mid, MPFR_RNDN);
 				if(mpfr_cmp_abs(f_mid, fu_value) > 0 || mpfr_cmp_abs(f_mid, fl_value) < 0) {
-					mpfr_clears(vl, vu, f_logl, f_base, f_log_base, NULL);
-					mpfr_clear(f_mid);
+					mpfr_clears(f_mid, vl, vu, f_logl, f_base, f_log_base, NULL);
 					PrintOptions po2 = po;
 					po2.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 					return print(po2, ips);
@@ -7582,6 +7592,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		bool show_ending_zeroes = po.show_ending_zeroes;
 		
 		string str_unc;
+		
+		cout << str << endl;
 
 		if(b_pm_zero) {
 			if(!rerun && !po.preserve_precision && l10 > 0 && str.length() > 2) {
@@ -7592,7 +7604,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				rerun = true;
 				goto float_rerun;
 			}
-			if(!po.preserve_precision && l10 > 0) show_ending_zeroes = true;
+			if(!po.preserve_precision) show_ending_zeroes = l10 > 0;
 			str_unc = str;
 			str = "0";
 		} else if(po.interval_display == INTERVAL_DISPLAY_PLUSMINUS && is_interval) {
@@ -7609,7 +7621,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(!mpfr_zero_p(f_unc)) {
 				mpfr_get_z(ivalue, f_unc, MPFR_RNDN);
 				str_unc = printMPZ(ivalue, base, false, po.lower_case_numbers);
-				if(!po.preserve_precision && str.length() > str_unc.length()) show_ending_zeroes = true;
+				if(!po.preserve_precision) show_ending_zeroes = str.length() > str_unc.length() || precision == 2;
 			}
 			if(!rerun) {
 				if(str_unc.length() > str.length()) {

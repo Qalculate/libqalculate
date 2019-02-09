@@ -1,3 +1,11 @@
+2019-02-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Enable show ending zeroes by default
+
+2019-02-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Disable CLI text formatting on Windows
+
 2019-01-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Unformat variable value (fixes units with prefixes)
