@@ -7592,8 +7592,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		bool show_ending_zeroes = po.show_ending_zeroes;
 		
 		string str_unc;
-		
-		cout << str << endl;
 
 		if(b_pm_zero) {
 			if(!rerun && !po.preserve_precision && l10 > 0 && str.length() > 2) {
