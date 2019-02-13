@@ -150,22 +150,22 @@
       <variable>
         <_title>Characteristic Impedance of Vacuum</_title>
         <_names>r:characteristic_impedance,as:Z_0</_names>
-        <value>magnetic_constant*c</value>
+        <value>(2*planck*fine_structure)/(elementary_charge^2)</value>
       </variable>
       <variable>
         <_title>Electric Constant (Permittivity of Free Space)</_title>
         <_names>r:electric_constant,asu:&#x3B5;_0,vacuum_permittivity,aos:epsilon_0</_names>
-        <value>1/(magnetic_constant*c^2)</value>
+        <value>elementary_charge^2/(2*planck*fine_structure*c)</value>
       </variable>
       <variable>
         <_title>Magnetic Constant (Permeability of Free Space)</_title>
         <_names>r:magnetic_constant,asu:&#x3BC;_0,vacuum_permeability,aos:mu_0</_names>
-        <value unit="N*A^(-2)">4E-7*pi</value>
+        <value>(2*planck*fine_structure)/(c*elementary_charge^2)</value>
       </variable>
       <variable>
         <_title>Planck Constant</_title>
         <_names>r:planck,au:&#x210e;</_names>
-        <value uncertainty="8.1E-42" unit="J*s">6.626070040E-34</value>
+        <value unit="J*s">6.62607015E-34</value>
       </variable>
       <variable>
         <_title>Planck Constant over 2 pi (Dirac constant)</_title>
@@ -208,7 +208,7 @@
       <variable>
         <_title>Elementary Charge</_title>
         <_names>r:elementary_charge,as:q_e,as:e_charge</_names>
-        <value>sqrt((2*planck*fine_structure)/(magnetic_constant*c))</value>
+        <value unit="C">1.602176634E-19</value>
       </variable>
       <variable>
         <_title>Inverse of Conductance Quantum</_title>
@@ -238,7 +238,7 @@
       <variable>
         <_title>von Klitzing Constant</_title>
         <_names>r:klitzing,as:R_K</_names>
-        <value>(magnetic_constant*c)/(2*fine_structure)</value>
+        <value>planck/elementary_charge^2</value>
       </variable>
       <variable>
         <_title>von Klitzing Constant (conventional value)</_title>
@@ -488,12 +488,17 @@
       <variable>
         <_title>Avogadro Constant</_title>
         <_names>r:avogadro,as:N_A</_names>
-        <value unit="auto">(c*fine_structure^2*nounit(electron_u))/(2*rydberg*planck*1000)*kg/mol</value>
+        <value unit="mol^(-1)">6.02214076E23</value>
       </variable>
       <variable>
         <_title>Boltzmann Constant</_title>
         <_names>r:boltzmann,as:k_B</_names>
-        <value uncertainty="7.9E-30" unit="J*K^(-1)">1.38064852E-23</value>
+        <value unit="J*K^(-1)">1.380649E-23</value>
+      </variable>
+      <variable>
+        <_title>Molar Mass Constant</_title>
+        <_names>r:molar_mass,as:M_u</_names>
+        <value>(2*planck*rydberg*avogadro)/(c*fine_structure^2*nounit(electron_u))</value>
       </variable>
       <variable>
         <_title>Compton Wavelength</_title>

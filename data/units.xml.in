@@ -1074,7 +1074,7 @@
         <system>Atomic</system>
         <base>
           <unit>C</unit>
-          <relation>elementary_charge</relation>
+          <relation>1.602176634E-19</relation>
           <exponent>1</exponent>
         </base>
       </unit>
@@ -3085,7 +3085,7 @@
       <use_with_prefixes>true</use_with_prefixes>
       <base>
         <unit>J</unit>
-        <relation>elementary_charge</relation>
+        <relation>1.602176634E-19</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -3242,7 +3242,7 @@
         <_names>rs:boltzmann_unit,as:k_Bunit</_names>
         <base>
           <unit>J_p_K</unit>
-          <relation>boltzmann</relation>
+          <relation>1.380649E-23</relation>
           <exponent>1</exponent>
         </base>
       </unit>
@@ -3375,7 +3375,7 @@
         <system>Atomic/Natural</system>
         <base>
           <unit>J_s</unit>
-          <relation>planck2pi</relation>
+          <relation>3.3130351E-34/pi</relation>
           <exponent>1</exponent>
         </base>
       </unit>
