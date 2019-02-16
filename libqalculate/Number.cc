@@ -29,6 +29,8 @@
 
 #define PRINT_MPFR(x, y) mpfr_out_str(stdout, y, 0, x, MPFR_RNDU); cout << endl;
 
+#define CREATE_INTERVAL (CALCULATOR ? CALCULATOR->usesIntervalArithmetic() : true)
+
 gmp_randstate_t randstate;
 
 Number nr_e;
@@ -779,7 +781,7 @@ void Number::set(long int numerator, long int denominator, long int exp_10, bool
 void Number::setFloat(long double d_value) {
 	b_approx = true;
 	if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(fu_value, BIT_PRECISION); mpfr_init2(fl_value, BIT_PRECISION);}
-	if(CALCULATOR->usesIntervalArithmetic()) {
+	if(CREATE_INTERVAL) {
 		mpfr_set_ld(fu_value, d_value, MPFR_RNDU);
 		mpfr_set_ld(fl_value, d_value, MPFR_RNDD);
 	} else {
@@ -879,7 +881,7 @@ void Number::setInternal(const mpz_t &mpz_num, const mpz_t &mpz_den, bool keep_p
 void Number::setInternal(const mpfr_t &mpfr_value, bool merge_precision, bool keep_imag) {
 	b_approx = true;
 	if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(fu_value, BIT_PRECISION); mpfr_init2(fl_value, BIT_PRECISION);}
-	if(CALCULATOR->usesIntervalArithmetic()) {
+	if(CREATE_INTERVAL) {
 		mpfr_set(fu_value, mpfr_value, MPFR_RNDU);
 		mpfr_set(fl_value, mpfr_value, MPFR_RNDD);
 	} else {
@@ -904,7 +906,7 @@ void Number::set(const Number &o, bool merge_precision, bool keep_imag) {
 	mpq_set(r_value, o.internalRational());
 	if(o.internalType() == NUMBER_TYPE_FLOAT) {
 		if(n_type != NUMBER_TYPE_FLOAT) {mpfr_init2(fu_value, BIT_PRECISION); mpfr_init2(fl_value, BIT_PRECISION);}
-		if(CALCULATOR->usesIntervalArithmetic() || o.isInterval()) {
+		if(CREATE_INTERVAL || o.isInterval()) {
 			mpfr_set(fu_value, o.internalUpperFloat(), MPFR_RNDU);
 			mpfr_set(fl_value, o.internalLowerFloat(), MPFR_RNDD);
 		} else {
@@ -998,7 +1000,7 @@ bool Number::setToFloatingPoint() {
 		mpfr_clear_flags();
 
 		if(n_type == NUMBER_TYPE_RATIONAL) {
-			if(!CALCULATOR->usesIntervalArithmetic()) {
+			if(!CREATE_INTERVAL) {
 				mpfr_set_q(fl_value, r_value, MPFR_RNDN);
 				mpfr_set(fu_value, fl_value, MPFR_RNDN);
 			} else {
@@ -1074,6 +1076,7 @@ void Number::intervalToMidValue() {
 		mpfr_add(fl_value, fl_value, fu_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	}
+	if(i_value) i_value->intervalToMidValue();
 }
 void Number::splitInterval(unsigned int nr_of_parts, vector<Number> &v) const {
 	if(n_type == NUMBER_TYPE_FLOAT && isReal()) {
@@ -1220,12 +1223,18 @@ bool Number::mergeInterval(const Number &o, bool set_to_overlap) {
 }
 
 void Number::setUncertainty(const Number &o, bool force_interval) {
-	if(!o.isReal() || !isReal()) return;
+	if(o.hasImaginaryPart()) {
+		if(!i_value) i_value = new Number();
+		i_value->setUncertainty(o.imaginaryPart(), force_interval);
+		setPrecisionAndApproximateFrom(*i_value);
+		if(o.hasRealPart()) setUncertainty(o.realPart(), force_interval);
+		return;
+	}
 	b_approx = true;
-	if(!force_interval && !CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!force_interval && !CREATE_INTERVAL && !isInterval()) {
 		Number nr(*this);
-		nr.abs();
 		nr.divide(o);
+		nr.abs();
 		nr.divide(2);
 		nr.log(10);
 		nr.floor();
@@ -1235,30 +1244,43 @@ void Number::setUncertainty(const Number &o, bool force_interval) {
 			return;
 		}
 	}
+	if(o.isNegative()) {
+		Number o_abs(o);
+		o_abs.negate();
+		setUncertainty(o_abs, force_interval);
+		return;
+	}
 	mpfr_clear_flags();
 	if(isRational()) {
 		mpfr_inits2(BIT_PRECISION, fl_value, fu_value, NULL);
 		if(o.isRational()) {
+			mpq_sub(r_value, r_value, o.internalRational());
 			mpfr_set_q(fl_value, r_value, MPFR_RNDD);
+			mpq_add(r_value, r_value, o.internalRational());
+			mpq_add(r_value, r_value, o.internalRational());
 			mpfr_set_q(fu_value, r_value, MPFR_RNDU);
 			mpq_set_ui(r_value, 0, 1);
 			n_type = NUMBER_TYPE_FLOAT;
+		} else {
+			mpfr_sub_q(fl_value, o.internalUpperFloat(), r_value, MPFR_RNDU);
+			mpfr_neg(fl_value, fl_value, MPFR_RNDD);
+			mpfr_add_q(fu_value, o.internalUpperFloat(), r_value, MPFR_RNDU);
+			mpq_set_ui(r_value, 0, 1);
+			n_type = NUMBER_TYPE_FLOAT;
 		}
-	}
-	if(o.isRational()) {
+	} else if(o.isRational()) {
 		mpfr_sub_q(fl_value, fl_value, o.internalRational(), MPFR_RNDD);
 		mpfr_add_q(fu_value, fu_value, o.internalRational(), MPFR_RNDU);
-	} else if(isRational()) {
-		mpfr_sub_q(fl_value, o.internalUpperFloat(), r_value, MPFR_RNDU);
-		mpfr_neg(fl_value, fl_value, MPFR_RNDD);
-		mpfr_add_q(fu_value, o.internalUpperFloat(), r_value, MPFR_RNDU);
-		mpq_set_ui(r_value, 0, 1);
-		n_type = NUMBER_TYPE_FLOAT;
 	} else {
 		mpfr_sub(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDD);
 		mpfr_add(fu_value, fu_value, o.internalUpperFloat(), MPFR_RNDU);
 	}
 	testErrors(2);
+}
+void Number::setRelativeUncertainty(const Number &o, bool force_interval) {
+	Number nr(*this);
+	nr.multiply(o);
+	setUncertainty(nr, force_interval);
 }
 Number Number::uncertainty() const {
 	if(!isInterval()) return Number();
@@ -1269,6 +1291,7 @@ Number Number::uncertainty() const {
 	Number nr;
 	nr.setInternal(f_mid);
 	mpfr_clear(f_mid);
+	if(i_value) nr.setImaginaryPart(i_value->uncertainty());
 	return nr;
 }
 Number Number::relativeUncertainty() const {
@@ -1532,7 +1555,7 @@ void Number::operator -- (int) {
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		mpz_sub(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
 	} else if(n_type == NUMBER_TYPE_FLOAT) {
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval()) {
 			mpfr_sub_ui(fl_value, fl_value, 1, MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else {
@@ -1545,7 +1568,7 @@ void Number::operator ++ (int) {
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		mpz_add(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
 	} else if(n_type == NUMBER_TYPE_FLOAT) {
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval()) {
 			mpfr_add_ui(fl_value, fl_value, 1, MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else {
@@ -1801,7 +1824,7 @@ bool Number::testFloatResult(bool allow_infinite_result, int error_level, bool t
 	if(mpfr_nanflag_p()) {if(error_level) CALCULATOR->error(error_level > 1, _("Floating point not a number exception"), NULL); return false;}
 	if(mpfr_inexflag_p()) {
 		b_approx = true;
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval() && (i_precision < 0 || i_precision > FROM_BIT_PRECISION(BIT_PRECISION))) i_precision = FROM_BIT_PRECISION(BIT_PRECISION);
+		if(!CREATE_INTERVAL && !isInterval() && (i_precision < 0 || i_precision > FROM_BIT_PRECISION(BIT_PRECISION))) i_precision = FROM_BIT_PRECISION(BIT_PRECISION);
 	}
 	mpfr_clear_flags();
 	if(mpfr_inf_p(fl_value) && mpfr_inf_p(fu_value) && mpfr_sgn(fl_value) == mpfr_sgn(fu_value)) {
@@ -2520,7 +2543,7 @@ bool Number::add(const Number &o) {
 			mpfr_init2(fu_value, BIT_PRECISION);
 			mpfr_init2(fl_value, BIT_PRECISION);
 			n_type = NUMBER_TYPE_FLOAT;
-			if(!CALCULATOR->usesIntervalArithmetic() && !o.isInterval()) {
+			if(!CREATE_INTERVAL && !o.isInterval()) {
 				mpfr_add_q(fl_value, o.internalLowerFloat(), r_value, MPFR_RNDN);
 				mpfr_set(fu_value, fl_value, MPFR_RNDN);
 			} else {
@@ -2530,7 +2553,7 @@ bool Number::add(const Number &o) {
 			mpq_set_ui(r_value, 0, 1);
 		} else if(n_type == NUMBER_TYPE_FLOAT) {
 			if(o.isFloatingPoint()) {
-				if(!CALCULATOR->usesIntervalArithmetic() && !isInterval() && !o.isInterval()) {
+				if(!CREATE_INTERVAL && !isInterval() && !o.isInterval()) {
 					mpfr_add(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDN);
 					mpfr_set(fu_value, fl_value, MPFR_RNDN);
 				} else {
@@ -2538,7 +2561,7 @@ bool Number::add(const Number &o) {
 					mpfr_add(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDD);
 				}
 			} else {
-				if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+				if(!CREATE_INTERVAL && !isInterval()) {
 					mpfr_add_q(fl_value, fl_value, o.internalRational(), MPFR_RNDN);
 					mpfr_set(fu_value, fl_value, MPFR_RNDN);
 				} else {
@@ -2561,7 +2584,7 @@ bool Number::add(long int i) {
 	if(n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
 		mpfr_clear_flags();
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval()) {
 			mpfr_add_si(fl_value, fl_value, i, MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else {
@@ -2618,7 +2641,7 @@ bool Number::subtract(const Number &o) {
 			mpfr_init2(fu_value, BIT_PRECISION);
 			mpfr_init2(fl_value, BIT_PRECISION);
 			n_type = NUMBER_TYPE_FLOAT;
-			if(!CALCULATOR->usesIntervalArithmetic() && !o.isInterval()) {
+			if(!CREATE_INTERVAL && !o.isInterval()) {
 				mpfr_sub_q(fl_value, o.internalLowerFloat(), r_value, MPFR_RNDN);
 				mpfr_neg(fl_value, fl_value, MPFR_RNDN);
 				mpfr_set(fu_value, fl_value, MPFR_RNDN);
@@ -2631,7 +2654,7 @@ bool Number::subtract(const Number &o) {
 			mpq_set_ui(r_value, 0, 1);
 		} else if(n_type == NUMBER_TYPE_FLOAT) {
 			if(o.isFloatingPoint()) {
-				if(!CALCULATOR->usesIntervalArithmetic() && !isInterval() && !o.isInterval()) {
+				if(!CREATE_INTERVAL && !isInterval() && !o.isInterval()) {
 					mpfr_sub(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDN);
 					mpfr_set(fu_value, fl_value, MPFR_RNDN);
 				} else {
@@ -2639,7 +2662,7 @@ bool Number::subtract(const Number &o) {
 					mpfr_sub(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDD);
 				}
 			} else {
-				if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+				if(!CREATE_INTERVAL && !isInterval()) {
 					mpfr_sub_q(fl_value, fl_value, o.internalRational(), MPFR_RNDN);
 					mpfr_set(fu_value, fl_value, MPFR_RNDN);
 				} else {
@@ -2662,7 +2685,7 @@ bool Number::subtract(long int i) {
 	if(n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
 		mpfr_clear_flags();
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval()) {
 			mpfr_sub_si(fl_value, fl_value, i, MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else {
@@ -2789,7 +2812,7 @@ bool Number::multiply(const Number &o) {
 				mpfr_init2(fu_value, BIT_PRECISION);
 				mpfr_init2(fl_value, BIT_PRECISION);
 				n_type = NUMBER_TYPE_FLOAT;
-				if(!CALCULATOR->usesIntervalArithmetic() && !o.isInterval()) {
+				if(!CREATE_INTERVAL && !o.isInterval()) {
 					mpfr_mul_q(fl_value, o.internalLowerFloat(), r_value, MPFR_RNDN);
 					mpfr_set(fu_value, fl_value, MPFR_RNDN);
 				} else {
@@ -2804,7 +2827,7 @@ bool Number::multiply(const Number &o) {
 				mpq_set_ui(r_value, 0, 1);
 			} else if(n_type == NUMBER_TYPE_FLOAT) {
 				if(o.isFloatingPoint()) {
-					if(!CALCULATOR->usesIntervalArithmetic() && !isInterval() && !o.isInterval()) {
+					if(!CREATE_INTERVAL && !isInterval() && !o.isInterval()) {
 						mpfr_mul(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDN);
 						mpfr_set(fu_value, fl_value, MPFR_RNDN);
 					} else {
@@ -2856,7 +2879,7 @@ bool Number::multiply(const Number &o) {
 						}
 					}
 				} else {
-					if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+					if(!CREATE_INTERVAL && !isInterval()) {
 						mpfr_mul_q(fl_value, fl_value, o.internalRational(), MPFR_RNDN);
 						mpfr_set(fu_value, fl_value, MPFR_RNDN);
 					} else if(mpq_sgn(o.internalRational()) < 0) {
@@ -2913,7 +2936,7 @@ bool Number::multiply(long int i) {
 		}
 		mpfr_clear_flags();
 
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval()) {
 			mpfr_mul_si(fl_value, fl_value, i, MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else {
@@ -3152,7 +3175,7 @@ bool Number::recip() {
 	}
 	if(n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval()) {
 			mpfr_ui_div(fl_value, 1, fl_value, MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else {
@@ -3481,7 +3504,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 			try_complex = true;
 		} else {
 			if(!isInterval() && !o.isInterval()) {
-				if(!CALCULATOR->usesIntervalArithmetic()) {
+				if(!CREATE_INTERVAL) {
 					mpfr_pow(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDN);
 					mpfr_set(fu_value, fl_value, MPFR_RNDN);
 				} else {
@@ -3550,7 +3573,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 			return false;
 		}
 		if(o.isInteger() && o.integerLength() < 1000000L) {
-			if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+			if(!CREATE_INTERVAL && !isInterval()) {
 				mpfr_pow_z(fl_value, fl_value, mpq_numref(o.internalRational()), MPFR_RNDN);
 				mpfr_set(fu_value, fl_value, MPFR_RNDN);
 			} else if(o.isEven() && sgn_l < 0 && sgn_u >= 0) {
@@ -3601,7 +3624,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 					try_complex = true;
 				}
 			} else {
-				if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+				if(!CREATE_INTERVAL && !isInterval()) {
 					mpfr_t f_pow;
 					mpfr_init2(f_pow, BIT_PRECISION);
 					mpfr_set_q(f_pow, o.internalRational(), MPFR_RNDN);
@@ -3680,7 +3703,7 @@ bool Number::sqrt() {
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
 
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_sqrt(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -3724,7 +3747,7 @@ bool Number::cbrt() {
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
 	
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_cbrt(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -3778,7 +3801,7 @@ bool Number::root(const Number &o) {
 		mpfr_init2(f_pow_u, BIT_PRECISION);
 		mpfr_init2(f_pow_l, BIT_PRECISION);
 		
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval()) {
 			mpfr_set_q(f_pow_l, o.internalRational(), MPFR_RNDN);
 			int sgn_l = mpfr_sgn(fl_value);
 			if(sgn_l < 0) mpfr_neg(fl_value, fl_value, MPFR_RNDN);
@@ -3813,7 +3836,7 @@ bool Number::root(const Number &o) {
 		}
 		mpfr_clear_flags();
 	
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval()) {
 #if MPFR_VERSION_MAJOR < 4
 			mpfr_root(fl_value, fl_value, i_root, MPFR_RNDN);
 #else
@@ -3930,7 +3953,7 @@ bool Number::square() {
 		return true;
 	}
 	if(hasImaginaryPart()) {
-		if(n_type == NUMBER_TYPE_FLOAT && (CALCULATOR->usesIntervalArithmetic() || isInterval())) {
+		if(n_type == NUMBER_TYPE_FLOAT && (CREATE_INTERVAL || isInterval())) {
 			Number nr_bak(*this);
 			if(!i_value->setToFloatingPoint()) return false;
 			mpfr_t f_ru, f_rl, f_iu, f_il, f_tmp;
@@ -4023,7 +4046,7 @@ bool Number::square() {
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		mpq_mul(r_value, r_value, r_value);
 	} else {
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval()) {
 			mpfr_sqr(fl_value, fl_value, MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else if(mpfr_sgn(fl_value) < 0) {
@@ -4062,7 +4085,7 @@ bool Number::negate() {
 		}
 		case NUMBER_TYPE_FLOAT: {
 			mpfr_clear_flags();
-			if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+			if(!CREATE_INTERVAL && !isInterval()) {
 				mpfr_neg(fl_value, fl_value, MPFR_RNDN);
 				mpfr_set(fu_value, fl_value, MPFR_RNDN);
 			} else {
@@ -4104,7 +4127,7 @@ void Number::setNegative(bool is_negative) {
 					mpfr_set_zero(fl_value, 0);
 				}
 			} else if(is_negative != (mpfr_sgn(fl_value) < 0)) {
-				if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+				if(!CREATE_INTERVAL && !isInterval()) {
 					mpfr_neg(fl_value, fl_value, MPFR_RNDN);
 					mpfr_set(fu_value, fl_value, MPFR_RNDN);
 				} else {
@@ -4153,7 +4176,7 @@ bool Number::abs() {
 			if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fu_value, fl_value);
 			mpfr_set_zero(fl_value, 0);
 		} else if(mpfr_sgn(fl_value) < 0) {
-			if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+			if(!CREATE_INTERVAL && !isInterval()) {
 				mpfr_neg(fl_value, fl_value, MPFR_RNDN);
 				mpfr_set(fu_value, fl_value, MPFR_RNDN);
 			} else {
@@ -4326,7 +4349,7 @@ bool Number::frac() {
 		}
 	} else {
 		mpfr_clear_flags();
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval()) {
 			mpfr_frac(fl_value, fl_value, MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else if(!isInterval()) {
@@ -4469,7 +4492,7 @@ void Number::setLogicalNot() {
 
 void Number::e(bool use_cached_number) {
 	if(use_cached_number) {
-		if(nr_e.isZero() || CALCULATOR->usesIntervalArithmetic() != nr_e.isInterval() || mpfr_get_prec(nr_e.internalLowerFloat()) < BIT_PRECISION) {
+		if(nr_e.isZero() || CREATE_INTERVAL != nr_e.isInterval() || mpfr_get_prec(nr_e.internalLowerFloat()) < BIT_PRECISION) {
 			nr_e.e(false);
 		}
 		set(nr_e);
@@ -4483,7 +4506,7 @@ void Number::e(bool use_cached_number) {
 			if(mpfr_get_prec(fl_value) < BIT_PRECISION) mpfr_set_prec(fl_value, BIT_PRECISION);
 		}
 		n_type = NUMBER_TYPE_FLOAT;
-		if(!CALCULATOR->usesIntervalArithmetic()) {
+		if(!CREATE_INTERVAL) {
 			mpfr_set_ui(fl_value, 1, MPFR_RNDN);
 			mpfr_exp(fl_value, fl_value, MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
@@ -4507,7 +4530,7 @@ void Number::pi() {
 		if(mpfr_get_prec(fl_value) < BIT_PRECISION) mpfr_set_prec(fl_value, BIT_PRECISION);
 	}
 	n_type = NUMBER_TYPE_FLOAT;
-	if(!CALCULATOR->usesIntervalArithmetic()) {
+	if(!CREATE_INTERVAL) {
 		mpfr_const_pi(fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		i_precision = FROM_BIT_PRECISION(BIT_PRECISION);
@@ -4527,7 +4550,7 @@ void Number::catalan() {
 		if(mpfr_get_prec(fl_value) < BIT_PRECISION) mpfr_set_prec(fl_value, BIT_PRECISION);
 	}
 	n_type = NUMBER_TYPE_FLOAT;
-	if(!CALCULATOR->usesIntervalArithmetic()) {
+	if(!CREATE_INTERVAL) {
 		mpfr_const_catalan(fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		i_precision = FROM_BIT_PRECISION(BIT_PRECISION);
@@ -4547,7 +4570,7 @@ void Number::euler() {
 		if(mpfr_get_prec(fl_value) < BIT_PRECISION) mpfr_set_prec(fl_value, BIT_PRECISION);
 	}
 	n_type = NUMBER_TYPE_FLOAT;
-	if(!CALCULATOR->usesIntervalArithmetic()) {
+	if(!CREATE_INTERVAL) {
 		mpfr_const_euler(fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		i_precision = FROM_BIT_PRECISION(BIT_PRECISION);
@@ -4572,7 +4595,7 @@ bool Number::zeta() {
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
 	
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_zeta_ui(fl_value, (unsigned long int) i, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -4597,7 +4620,7 @@ bool Number::gamma() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_gamma(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -4655,7 +4678,7 @@ bool Number::digamma() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_digamma(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -4690,7 +4713,7 @@ bool Number::erf() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_erf(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -4710,7 +4733,7 @@ bool Number::erfc() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_erfc(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -4730,7 +4753,7 @@ bool Number::airy() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_ai(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -4761,7 +4784,7 @@ bool Number::besselj(const Number &o) {
 		return false;
 	}
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_jn(fl_value, n, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -4792,7 +4815,7 @@ bool Number::bessely(const Number &o) {
 		return false;
 	}
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_yn(fl_value, n, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -4847,7 +4870,7 @@ bool Number::sin() {
 		return false;
 	}
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		if(do_pi) {
 			mpfr_t f_pi, f_quo;
 			mpz_t f_int;
@@ -5014,7 +5037,7 @@ bool Number::asin() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_asin(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -5056,7 +5079,7 @@ bool Number::sinh() {
 		return false;
 	}
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_sinh(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -5125,7 +5148,7 @@ bool Number::asinh() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_asinh(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -5182,7 +5205,7 @@ bool Number::cos() {
 		return false;
 	}
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		if(do_pi) {
 			mpfr_t f_pi, f_quo;
 			mpz_t f_int;
@@ -5299,7 +5322,7 @@ bool Number::acos() {
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
 
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_acos(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -5350,7 +5373,7 @@ bool Number::cosh() {
 		return false;
 	}
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_cosh(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -5429,7 +5452,7 @@ bool Number::acosh() {
 			set(nr, true);
 			return true;
 		}
-		if((CALCULATOR->usesIntervalArithmetic() || isInterval()) && !hasImaginaryPart()) {
+		if((CREATE_INTERVAL || isInterval()) && !hasImaginaryPart()) {
 			Number ipz(lowerEndPoint()), imz(ipz);
 			if(!ipz.add(1) || !imz.subtract(1)) return false;
 			if(!ipz.raise(nr_half) || !imz.raise(nr_half) || !ipz.multiply(imz) || !ipz.add(lowerEndPoint())) return false;
@@ -5462,7 +5485,7 @@ bool Number::acosh() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_acosh(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -5513,7 +5536,7 @@ bool Number::tan() {
 	
 	mpfr_clear_flags();
 	
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		if(do_pi) {
 			mpfr_t f_pi, f_quo;
 			mpfr_init2(f_pi, BIT_PRECISION);
@@ -5598,7 +5621,7 @@ bool Number::atan() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_atan(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -5630,7 +5653,7 @@ bool Number::atan2(const Number &o, bool allow_zero) {
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
 	if(o.isFloatingPoint()) {
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval() && !o.isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval() && !o.isInterval()) {
 			mpfr_atan2(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else {
@@ -5672,7 +5695,7 @@ bool Number::atan2(const Number &o, bool allow_zero) {
 			}
 		}
 	} else {
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval()) {
 			mpfr_t of_value;
 			mpfr_init2(of_value, BIT_PRECISION);
 			if(o.isPlusInfinity()) mpfr_set_inf(of_value, 1);
@@ -5746,7 +5769,7 @@ bool Number::tanh() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_tanh(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -5853,7 +5876,7 @@ bool Number::atanh() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		if(mpfr_cmp_si(fl_value, -1) == 0) mpfr_set_inf(fl_value, -1);
 		else if(mpfr_cmp_si(fl_value, 1) == 0) mpfr_set_inf(fl_value, 1);
 		else mpfr_atanh(fl_value, fl_value, MPFR_RNDN);
@@ -5920,7 +5943,7 @@ bool Number::ln() {
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
 		
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_log(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -5958,7 +5981,7 @@ bool Number::log(const Number &o) {
 		Number nr_bak(*this);
 		if(!setToFloatingPoint()) return false;
 		mpfr_clear_flags();
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval()) {
 			mpfr_log2(fl_value, fl_value, MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else {
@@ -5975,7 +5998,7 @@ bool Number::log(const Number &o) {
 		Number nr_bak(*this);
 		if(!setToFloatingPoint()) return false;
 		mpfr_clear_flags();
-		if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+		if(!CREATE_INTERVAL && !isInterval()) {
 			mpfr_log10(fl_value, fl_value, MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		} else {
@@ -6013,7 +6036,7 @@ bool Number::exp() {
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
 	
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_exp(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -6057,7 +6080,7 @@ bool Number::lambertW() {
 	int cmp = mpfr_cmp(x, m1_div_exp1);
 	if(cmp == 0) {
 		mpfr_clears(x, m1_div_exp1, NULL);
-		if(!CALCULATOR->usesIntervalArithmetic()) {
+		if(!CREATE_INTERVAL) {
 			set(-1, 1);
 			b_approx = true;
 			i_precision = PRECISION;
@@ -6124,7 +6147,7 @@ bool Number::lambertW() {
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		mpfr_clears(x, m1_div_exp1, w, wPrec, wTimesExpW, wPlusOneTimesExpW, testXW, tmp1, tmp2, NULL);
 		if(i_precision < 0 || i_precision > PRECISION) i_precision = FROM_BIT_PRECISION(BIT_PRECISION - 30);
-		if(CALCULATOR->usesIntervalArithmetic()) {
+		if(CREATE_INTERVAL) {
 			precisionToInterval();
 		}
 	}
@@ -6162,7 +6185,7 @@ bool Number::polylog(const Number &o) {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_li2(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -6185,7 +6208,7 @@ bool Number::igamma(const Number &o) {
 	Number o_float(o);
 	if(!o_float.setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval() && !o_float.isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval() && !o_float.isInterval()) {
 		mpfr_gamma_inc(fl_value, fl_value, o_float.internalLowerFloat(), MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -6205,7 +6228,7 @@ bool Number::expint() {
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();
-	if(!CALCULATOR->usesIntervalArithmetic() && !isInterval()) {
+	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_eint(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
@@ -6767,7 +6790,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			} else {
 				str += " + ";
 			}
-			str += str2;	
+			str += str2;
 		} else {
 			str = i_value->print(po, ips);
 			if(ips.im) *ips.im = str;

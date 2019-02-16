@@ -1,3 +1,18 @@
+2019-02-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Separate interval calculation / uncertainty propagation method choice
+	  (from interval arithmetic for approximate functions and irrational 
+	  numbers)
+	* Enable interval arithmetic by default (CLI)
+	* Relative uncertainty property for variables, units and data objects
+	* Fixes for complex uncertainty propagation
+	* Fix uncertainty propagation using variance formula with multiple
+	  non-variable intervals (was calculated using interval arithmetic,
+	  potentially after expansion)
+	* Uncertainty function (absolute or relative uncertainty)
+	* Line break in variable info value (CLI)
+	* Show expression in function info (CLI)
+
 2019-02-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Enable show ending zeroes by default

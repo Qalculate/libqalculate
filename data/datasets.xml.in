@@ -41,7 +41,6 @@
       <property>
         <_title>Weight</_title>
 	<type>number</type>
-	<brackets>true</brackets>
 	<unit>u</unit>
 	<approximate>true</approximate>
         <_names>r:weight,mass</_names>

@@ -2287,6 +2287,19 @@
         <_title>Upper endpoint</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="uncertainty">
+      <_title>Uncertainty</_title>
+      <_names>r:uncertainty</_names>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+      <argument index="2">
+        <_title>Uncertainty</_title>
+      </argument>
+      <argument index="2">
+        <_title>Uncertainty is relative</_title>
+      </argument>
+    </builtin_function>
   </category>
   <category>
     <_title>Logical</_title>
