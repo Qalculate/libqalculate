@@ -65,7 +65,6 @@ bool canfetch = true;
 int b_decimal_comma = -1;
 long int i_maxtime = 0;
 struct timeval t_end;
-bool interval_disabled = false;
 
 bool result_only;
 
@@ -534,12 +533,14 @@ bool check_exchange_rates() {
 #	define CHECK_IF_SCREEN_FILLED_PUTS_RP(x, rplus) {str_lb = x; int cr = 0; if(!cfile) {cr = addLineBreaks(str_lb, cols);} if(check_sf) {if(rcount + cr + 1 + rplus >= rows) {rcount += 2; while(rcount < rows) {puts(""); rcount++;} FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n') {check_sf = false;} else {rcount = 0; if(str_lb.empty() || str_lb[0] != '\n') {puts(""); rcount++;}}} if(check_sf) {rcount += cr;}} PUTS_UNICODE(str_lb.c_str());}
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) CHECK_IF_SCREEN_FILLED_PUTS_RP(x, 0)
 #	define INIT_SCREEN_CHECK int rows, cols, rcount = 0; bool check_sf = (cfile == NULL); char sf_c; string str_lb; if(!cfile) rl_get_screen_size(&rows, &cols);
+#	define INIT_COLS int rows, cols; if(!cfile) rl_get_screen_size(&rows, &cols);
 #	define CHECK_IF_SCREEN_FILLED_HEADING_S(x) str = "\n"; BEGIN_UNDERLINED(str); str += x; END_UNDERLINED(str); CHECK_IF_SCREEN_FILLED_PUTS_RP(str.c_str(), 1);
 #	define CHECK_IF_SCREEN_FILLED_HEADING(x) str = "\n"; BEGIN_UNDERLINED(str); BEGIN_BOLD(str); str += x; END_UNDERLINED(str); END_BOLD(str); CHECK_IF_SCREEN_FILLED_PUTS_RP(str.c_str(), 1);
 #else
 #	define CHECK_IF_SCREEN_FILLED
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) str_lb = x; if(!cfile) {addLineBreaks(str_lb, cols);} PUTS_UNICODE(str_lb.c_str());
 #	define INIT_SCREEN_CHECK string str_lb; int cols = 80;
+#	define INIT_COLS int cols = 80;
 #	define CHECK_IF_SCREEN_FILLED_HEADING_S(x) str = "\n"; BEGIN_UNDERLINED(str); str += x; END_UNDERLINED(str); PUTS_UNICODE(str.c_str());
 #	define CHECK_IF_SCREEN_FILLED_HEADING(x) puts(""); str = "\n"; BEGIN_UNDERLINED(str); BEGIN_BOLD(str); str += x; END_UNDERLINED(str); END_BOLD(str); PUTS_UNICODE(str.c_str());
 #endif
@@ -812,6 +813,19 @@ void set_option(string str) {
 			evalops.approximation = (ApproximationMode) v;
 			expression_calculation_updated();
 		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval calculation", _("interval calculation")) || svar == "ic" || EQUALS_IGNORECASE_AND_LOCAL(svar, "uncertainty propagation", _("uncertainty propagation")) || svar == "up") {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "variance formula", _("variance formula")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "variance", _("variance"))) v = INTERVAL_CALCULATION_VARIANCE_FORMULA;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "interval arithmetic", _("interval arithmetic")) || svalue == "iv") v = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < INTERVAL_CALCULATION_NONE || v > INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			evalops.interval_calculation = (IntervalCalculation) v;
+			expression_calculation_updated();
+		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "autoconversion", _("autoconversion")) || svar == "conv") {
 		int v = -1;
 		MixedUnitsConversion muc = MIXED_UNITS_CONVERSION_DEFAULT;
@@ -931,7 +945,7 @@ void set_option(string str) {
 				result_format_updated();
 			}
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval arithmetic", _("interval arithmetic")) || svar == "iv" || svar == "ia" || svar == "interval") {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval arithmetic", _("interval arithmetic")) || svar == "ia" || svar == "interval") {
 		bool b = CALCULATOR->usesIntervalArithmetic();
 		SET_BOOL(b)
 		if(b != CALCULATOR->usesIntervalArithmetic()) {
@@ -1294,11 +1308,14 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 				FPUTS_UNICODE(str.c_str(), stdout);
 				string value;
 				if(v->isKnown()) {
+					bool is_relative = false;
 					if(((KnownVariable*) v)->isExpression()) {
 						value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression());
-						if(!((KnownVariable*) v)->uncertainty().empty()) {
-							value += "±";
+						if(!((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
+							if(is_relative) {value += " ("; value += _("relative uncertainty"); value += ": ";}
+							else value += SIGN_PLUSMINUS;
 							value += CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty());
+							if(is_relative) {value += ")";}
 						}
 						if(!((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
 							value += " ";
@@ -1307,6 +1324,13 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 						if(value.length() > 40) {
 							value = value.substr(0, 30);
 							value += "...";
+						}
+						FPUTS_UNICODE(value.c_str(), stdout);
+						if(!is_relative && ((KnownVariable*) v)->uncertainty().empty() && v->isApproximate() && ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->f_interval->referenceName()) == string::npos) {
+							fputs(" (", stdout);
+							FPUTS_UNICODE(_("approximate"), stdout);
+							fputs(")", stdout);
+							
 						}
 					} else {
 						if(((KnownVariable*) v)->get().isMatrix()) {
@@ -1318,7 +1342,14 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 							po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 							value = CALCULATOR->print(((KnownVariable*) v)->get(), 30, po);
 						}
+						FPUTS_UNICODE(value.c_str(), stdout);
+						if(v->isApproximate() && ((KnownVariable*) v)->get().containsInterval(true, false, false, false, true) <= 0) {
+							fputs(" (", stdout);
+							FPUTS_UNICODE(_("approximate"), stdout);
+							fputs(")", stdout);
+						}
 					}
+					
 				} else {
 					if(((UnknownVariable*) v)->assumptions()) {
 						switch(((UnknownVariable*) v)->assumptions()->sign()) {
@@ -1342,13 +1373,8 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 						if(value.empty()) value = _("unknown");
 					} else {
 						value = _("default assumptions");
-					}		
-				}
-				FPUTS_UNICODE(value.c_str(), stdout);
-				if(v->isApproximate()) {
-					fputs(" (", stdout);
-					FPUTS_UNICODE(_("approximate"), stdout);
-					fputs(")", stdout);
+					}
+					FPUTS_UNICODE(value.c_str(), stdout);
 				}
 				puts("");
 				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
@@ -1779,9 +1805,7 @@ int main(int argc, char *argv[]) {
 		interactive_mode = true;
 		i_maxtime = 0;
 	}
-	if(interactive_mode && interval_disabled) CALCULATOR->error(false, _("Interval arithmetic has been deactivated because of possible unintentional activation. Type \"set interval on\" in interactive mode to enable interval arithmetic again."), NULL);
 
-	
 #ifdef HAVE_LIBREADLINE
 	rl_catch_signals = 1;
 	rl_catch_sigwinch = rl_readline_version >= 0x0500;
@@ -2596,7 +2620,15 @@ int main(int argc, char *argv[]) {
 				default: {str += _("approximate"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("interval arithmetic"), "iv"); str += b2oo(CALCULATOR->usesIntervalArithmetic(), false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("interval arithmetic"), "ia"); str += b2oo(CALCULATOR->usesIntervalArithmetic(), false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("interval calculation"), "ic"); 
+			switch(evalops.interval_calculation) {
+				case INTERVAL_CALCULATION_NONE: {str += _("none"); break;}
+				case INTERVAL_CALCULATION_VARIANCE_FORMULA: {str += _("variance formula"); break;}
+				case INTERVAL_CALCULATION_INTERVAL_ARITHMETIC: {str += _("interval arithmetic"); break;}
+				case INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC: {str += _("simplified"); break;}
+			}
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("precision"), "prec") str += i2s(CALCULATOR->getPrecision()); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Enabled Objects"));
@@ -2875,6 +2907,7 @@ int main(int argc, char *argv[]) {
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "info", _("info"))) {
 			int pctl;
 #define PRINT_AND_COLON_TABS_INFO(x) FPUTS_UNICODE(x, stdout); pctl = unicode_length_check(x); if(pctl >= 23) fputs(":\t", stdout); else if(pctl >= 15) fputs(":\t\t", stdout); else if(pctl >= 7) fputs(":\t\t\t", stdout); else fputs(":\t\t\t\t", stdout);
+#define STR_AND_COLON_TABS_INFO(x) pctl = unicode_length(x); if(pctl >= 23) x += ":\t"; else if(pctl >= 15) x += ":\t\t"; else if(pctl >= 7) x += ":\t\t\t"; else x += ":\t\t\t\t";
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
 			show_info:
@@ -2938,7 +2971,6 @@ int main(int argc, char *argv[]) {
 								CHECK_IF_SCREEN_FILLED_PUTS(f->getName(i2).name.c_str());
 							}
 						}
-						
 						if(f->subtype() == SUBTYPE_DATA_SET) {
 							CHECK_IF_SCREEN_FILLED_PUTS("");
 							snprintf(buffer, 1000, _("Retrieves data from the %s data set for a given object and property. If \"info\" is typed as property, all properties of the object will be listed."), f->title().c_str());
@@ -3026,6 +3058,11 @@ int main(int argc, char *argv[]) {
 								dp = ds->getNextProperty(&it);
 							}
 						}
+						if(f->subtype() == SUBTYPE_USER_FUNCTION) {
+							CHECK_IF_SCREEN_FILLED_PUTS("");
+							str = _("Expression:"); str += " "; str += CALCULATOR->unlocalizeExpression(((UserFunction*) f)->formula());
+							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+						}
 						CHECK_IF_SCREEN_FILLED_PUTS("");
 						break;
 					}
@@ -3065,7 +3102,13 @@ int main(int argc, char *argv[]) {
 								puts("");
 								PRINT_AND_COLON_TABS_INFO(_("Relation"));
 								FPUTS_UNICODE(CALCULATOR->localizeExpression(au->expression()).c_str(), stdout);
-								if(item->isApproximate()) {
+								bool is_relative = false;
+								if(!au->uncertainty(&is_relative).empty()) {
+									puts("");
+									if(is_relative) {PRINT_AND_COLON_TABS_INFO(_("Relative uncertainty"));}
+									else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
+									PUTS_UNICODE(CALCULATOR->localizeExpression(au->uncertainty()).c_str())
+								} else if(item->isApproximate()) {
 									fputs(" (", stdout);
 									FPUTS_UNICODE(_("approximate"), stdout);
 									fputs(")", stdout);
@@ -3075,11 +3118,11 @@ int main(int argc, char *argv[]) {
 									puts("");
 									PRINT_AND_COLON_TABS_INFO(_("Inverse Relation"));
 									FPUTS_UNICODE(CALCULATOR->localizeExpression(au->inverseExpression()).c_str(), stdout);
-									if(item->isApproximate()) {
+									if(au->uncertainty().empty() && item->isApproximate()) {
 										fputs(" (", stdout);
 										FPUTS_UNICODE(_("approximate"), stdout);
 										fputs(")", stdout);
-									}									
+									}
 								}
 								puts("");
 								break;
@@ -3159,19 +3202,41 @@ int main(int argc, char *argv[]) {
 							}		
 						}
 						puts("");
-						PRINT_AND_COLON_TABS_INFO(_("Value"));
-						FPUTS_UNICODE(value.c_str(), stdout);
-						if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->uncertainty().empty()) {
+						bool is_relative = false;
+						if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
+							PRINT_AND_COLON_TABS_INFO(_("Value"));
+							FPUTS_UNICODE(value.c_str(), stdout);
 							puts("");
-							PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));
+							if(is_relative) {PRINT_AND_COLON_TABS_INFO(_("Relative uncertainty"));}
+							else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
 							PUTS_UNICODE(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()).c_str())
-						} else if(item->isApproximate()) {
-							fputs(" (", stdout);
-							FPUTS_UNICODE(_("approximate"), stdout);
-							fputs(")", stdout);
-							puts("");
 						} else {
-							puts("");
+							string value_pre = _("Value");
+							STR_AND_COLON_TABS_INFO(value_pre);
+							value.insert(0, value_pre);
+							bool b_approx = item->isApproximate();
+							if(b_approx && v->isKnown()) {
+								if(((KnownVariable*) v)->isExpression()) {
+									b_approx = ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->f_interval->referenceName()) == string::npos;
+								} else {
+									b_approx = ((KnownVariable*) v)->get().containsInterval(true, false, false, false, true) <= 0;
+								}
+							}
+							if(b_approx) {
+								value += " (";
+								value += _("approximate");
+								value += ")";
+							}
+							int tabs = 0;
+							for(size_t i = 0; i < value_pre.length(); i++) {
+								if(value_pre[i] == '\t') {
+									if(tabs == 0) tabs += (7 - ((i - 1) % 8));
+									else tabs += 7;
+								}
+							}
+							INIT_COLS
+							addLineBreaks(value, cols, true, unicode_length(value_pre) + tabs, unicode_length(value_pre) + tabs);
+							PUTS_UNICODE(value.c_str());
 						}
 						if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->unit().empty()) {
 							PRINT_AND_COLON_TABS_INFO(_("Unit"));
@@ -3209,7 +3274,8 @@ int main(int argc, char *argv[]) {
 #define SET_DESCRIPTION(s) if(strlen(s) > 0) {BEGIN_ITALIC(str); str += s; END_ITALIC(str); str += "\n";}
 #define STR_AND_TABS_BOOL(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "("; str += _("on"); if(v) {str += "*";} str += ", "; str += _("off"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_YESNO(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "("; str += _("yes"); if(v) {str += "*";} str += ", "; str += _("no"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-#define STR_AND_TABS_2(s, sh, d, v, s0, s1, s2) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+#define STR_AND_TABS_2(s, sh, d, v, s0, s1, s2) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ")";
+#define STR_AND_TABS_2b(s, sh, d, v, s0, s1) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(1"; if(v == 1) {str += "*";} str += " = "; str += s0; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s1; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_3(s, sh, d, v, s0, s1, s2, s3) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_4(s, sh, d, v, s0, s1, s2, s3, s4) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_7(s, sh, d, v, s0, s1, s2, s3, s4, s5, s6) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ", 5"; if(v == 5) {str += "*";} str += " = "; str += s5; str += ", 6"; if(v == 6) {str += "*";} str += " = "; str += s6; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -3255,7 +3321,8 @@ int main(int argc, char *argv[]) {
 
 				STR_AND_TABS_3(_("angle unit"), "angle", "Default angle unit for trigonometric functions.", evalops.parse_options.angle_unit, _("none"), _("radians"), _("degrees"), _("gradians"));
 				STR_AND_TABS_2(_("approximation"), "appr", _("How approximate variables and calculations are handled. In exact mode approximate values will not be calculated."), evalops.approximation, _("exact"), _("try exact"), _("approximate"));
-				STR_AND_TABS_BOOL(_("interval arithmetic"), "iv", _("If activated, interval arithmetic determines the final precision of calculations (avoids wrong results after loss of significance), and is used for calculation of uncertainty propagation."), CALCULATOR->usesIntervalArithmetic());
+				STR_AND_TABS_BOOL(_("interval arithmetic"), "ia", _("If activated, interval arithmetic determines the final precision of calculations (avoids wrong results after loss of significance) with approximate functions and/or irrational numbers."), CALCULATOR->usesIntervalArithmetic());
+				STR_AND_TABS_2b(_("interval calculation"), "ic", _("Determines the method used for interval calculation / uncertainty propagation."), evalops.interval_calculation, _("variance formula"), _("interval arithmetic"));
 				STR_AND_TABS_SET(_("precision"), "prec");  
 				SET_DESCRIPTION(_("Specifies the default number of significant digits displayed and determines the precision used for approximate calculations."));
 				str += "(> 0) "; str += i2s(CALCULATOR->getPrecision()); str += "*"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -4844,11 +4911,12 @@ void load_preferences() {
 	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;
 	evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 	evalops.local_currency_conversion = true;
+	evalops.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 	b_decimal_comma = -1;
 	
 	adaptive_interval_display = true;
 	
-	CALCULATOR->useIntervalArithmetic(false);
+	CALCULATOR->useIntervalArithmetic(true);
 
 	rpn_mode = false;
 	
@@ -4934,12 +5002,7 @@ void load_preferences() {
 				} else if(svar == "precision") {
 					CALCULATOR->setPrecision(v);
 				} else if(svar == "interval_arithmetic") {
-					if(v && version_numbers[0] == 2 && version_numbers[1] == 8) {
-						// Interval arithmetic possibly activated because of bug
-						interval_disabled = true;
-					} else {
-						CALCULATOR->useIntervalArithmetic(v);
-					}
+					if(v && version_numbers[0] >= 3) CALCULATOR->useIntervalArithmetic(v);
 				} else if(svar == "interval_display") {
 					if(v == 0) {
 						adaptive_interval_display = true;
@@ -5099,6 +5162,10 @@ void load_preferences() {
 					if(v >= APPROXIMATION_EXACT && v <= APPROXIMATION_APPROXIMATE) {
 						evalops.approximation = (ApproximationMode) v;
 					}
+				} else if(svar == "interval_calculation") {
+					if(v >= INTERVAL_CALCULATION_NONE && v <= INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC) {
+						evalops.interval_calculation = (IntervalCalculation) v;
+					}
 				} else if(svar == "in_rpn_mode") {
 					rpn_mode = v;
 				} else if(svar == "rpn_syntax") {
@@ -5223,10 +5290,11 @@ bool save_preferences(bool mode)
 	fprintf(file, "show_ending_zeroes=%i\n", saved_printops.show_ending_zeroes);
 	fprintf(file, "round_halfway_to_even=%i\n", saved_printops.round_halfway_to_even);
 	fprintf(file, "approximation=%i\n", saved_evalops.approximation);
+	fprintf(file, "interval_calculation=%i\n", saved_evalops.interval_calculation);
 	fprintf(file, "in_rpn_mode=%i\n", rpn_mode);
 	fprintf(file, "rpn_syntax=%i\n", saved_evalops.parse_options.rpn);
-	fprintf(file, "limit_implicit_multiplication=%i\n", evalops.parse_options.limit_implicit_multiplication);
-	fprintf(file, "parsing_mode=%i\n", evalops.parse_options.parsing_mode);
+	fprintf(file, "limit_implicit_multiplication=%i\n", saved_evalops.parse_options.limit_implicit_multiplication);
+	fprintf(file, "parsing_mode=%i\n", saved_evalops.parse_options.parsing_mode);
 	fprintf(file, "default_assumption_type=%i\n", CALCULATOR->defaultAssumptions()->type());
 	fprintf(file, "default_assumption_sign=%i\n", CALCULATOR->defaultAssumptions()->sign());
 	

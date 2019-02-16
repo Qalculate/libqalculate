@@ -19,7 +19,7 @@
 
 #define DECLARE_BUILTIN_VARIABLE(x)	class x : public DynamicVariable { \
 					  private: \
-						void calculate() const;	\
+						void calculate(MathStructure &m) const;	\
  					  public: \
 						x(); \
 						x(const x *variable) {set(variable);} \
@@ -243,11 +243,11 @@ class KnownVariable : public Variable {
 
   protected:
 
-	MathStructure *mstruct;
+	MathStructure *mstruct, *mstruct_alt;
 	bool b_expression;
  	int calculated_precision;
- 	bool calculated_with_interval, calculated_with_units;
 	string sexpression, suncertainty, sunit;
+	bool b_relative_uncertainty;
 
   public:
   
@@ -296,7 +296,7 @@ class KnownVariable : public Variable {
 	* @returns The variable's expression.
 	*/
 	virtual string expression() const;
-	virtual string uncertainty() const;
+	virtual string uncertainty(bool *is_relative = NULL) const;
 	virtual string unit() const;
 	
 	int subtype() const {return SUBTYPE_KNOWN_VARIABLE;}
@@ -311,7 +311,7 @@ class KnownVariable : public Variable {
 	* @param expression_ Expression.
 	*/
 	virtual void set(string expression_);
-	virtual void setUncertainty(string standard_uncertainty);
+	virtual void setUncertainty(string standard_uncertainty, bool is_relative = false);
 	virtual void setUnit(string unit_expression);
 
 	/** Returns the value of the variable. If no value is set or parsed and an expression is set, the expression is parsed and resulting value returned.
@@ -349,7 +349,7 @@ class DynamicVariable : public KnownVariable {
 
   protected:
 
-	virtual void calculate() const = 0;
+	virtual void calculate(MathStructure &m) const = 0;
 	bool always_recalculate;
 	
   public:
@@ -372,7 +372,6 @@ class DynamicVariable : public KnownVariable {
 	* @returns Precision of the calculated value or zero if the value has not yet been calculated.
 	*/
 	int calculatedPrecision() const;
-	bool calculatedWithInterval() const;
 	
 	virtual bool representsPositive(bool = false) {return true;}
 	virtual bool representsNegative(bool = false) {return false;}
@@ -405,7 +404,7 @@ DECLARE_BUILTIN_VARIABLE(CatalanVariable)
 /// Dynamic variable for current precision
 class PrecisionVariable : public DynamicVariable {
   private:
-	void calculate() const;
+	void calculate(MathStructure &m) const;
   public:
 	PrecisionVariable();
 	PrecisionVariable(const PrecisionVariable *variable) {set(variable);}
@@ -416,7 +415,7 @@ class PrecisionVariable : public DynamicVariable {
 
 class TodayVariable : public DynamicVariable {
   private:
-	void calculate() const;
+	void calculate(MathStructure &m) const;
   public:
 	TodayVariable();
 	TodayVariable(const TodayVariable *variable) {set(variable);}
@@ -430,7 +429,7 @@ class TodayVariable : public DynamicVariable {
 };
 class TomorrowVariable : public DynamicVariable {
   private:
-	void calculate() const;
+	void calculate(MathStructure &m) const;
   public:
 	TomorrowVariable();
 	TomorrowVariable(const TomorrowVariable *variable) {set(variable);}
@@ -444,7 +443,7 @@ class TomorrowVariable : public DynamicVariable {
 };
 class YesterdayVariable : public DynamicVariable {
   private:
-	void calculate() const;
+	void calculate(MathStructure &m) const;
   public:
 	YesterdayVariable();
 	YesterdayVariable(const YesterdayVariable *variable) {set(variable);}
@@ -458,7 +457,7 @@ class YesterdayVariable : public DynamicVariable {
 };
 class NowVariable : public DynamicVariable {
   private:
-	void calculate() const;
+	void calculate(MathStructure &m) const;
   public:
 	NowVariable();
 	NowVariable(const NowVariable *variable) {set(variable);}

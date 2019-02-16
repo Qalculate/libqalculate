@@ -129,7 +129,8 @@ class Number {
 		void splitInterval(unsigned int nr_of_parts, vector<Number> &v) const;
 		bool getCentralInteger(Number &nr_int, bool *b_multiple = NULL, vector<Number> *v = NULL) const;
 		bool mergeInterval(const Number &o, bool set_to_overlap = false);
-		void setUncertainty(const Number &o, bool force_interval = false);
+		void setUncertainty(const Number &o, bool force_interval = true);
+		void setRelativeUncertainty(const Number &o, bool force_interval = true);
 		Number uncertainty() const;
 		Number relativeUncertainty() const;
 		

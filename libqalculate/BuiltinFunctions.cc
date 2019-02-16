@@ -4094,7 +4094,142 @@ int IntervalFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	if(create_interval(mstruct, marg1, marg2)) return 1;
 	return 0;
 }
+bool IntervalFunction::representsPositive(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[1].representsPositive(allow_units) && vargs[0].representsPositive(allow_units);}
+bool IntervalFunction::representsNegative(const MathStructure&vargs, bool allow_units) const {return vargs.size() == 2 && vargs[0].representsNegative(allow_units) && vargs[1].representsNegative(allow_units);}
+bool IntervalFunction::representsNonNegative(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[0].representsNonNegative(allow_units) && vargs[1].representsNonNegative(allow_units);}
+bool IntervalFunction::representsNonPositive(const MathStructure&vargs, bool allow_units) const {return vargs.size() == 2 && vargs[0].representsNonPositive(allow_units) && vargs[1].representsNonPositive(allow_units);}
+bool IntervalFunction::representsInteger(const MathStructure &, bool) const {return false;}
+bool IntervalFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[0].representsNumber(allow_units) && vargs[1].representsNumber(allow_units);}
+bool IntervalFunction::representsRational(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[0].representsRational(allow_units) && vargs[1].representsRational(allow_units);}
+bool IntervalFunction::representsReal(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[0].representsReal(allow_units) && vargs[1].representsReal(allow_units);}
+bool IntervalFunction::representsNonComplex(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[0].representsNonComplex(allow_units) && vargs[1].representsNonComplex(allow_units);}
+bool IntervalFunction::representsComplex(const MathStructure&, bool) const {return false;}
+bool IntervalFunction::representsNonZero(const MathStructure &vargs, bool allow_units) const {return representsPositive(vargs, allow_units) || representsNegative(vargs, allow_units);}
+bool IntervalFunction::representsEven(const MathStructure&, bool) const {return false;}
+bool IntervalFunction::representsOdd(const MathStructure&, bool) const {return false;}
+bool IntervalFunction::representsUndefined(const MathStructure &vargs) const {return vargs.size() == 2 && (vargs[0].representsUndefined() || vargs[1].representsUndefined());}
 
+
+UncertaintyFunction::UncertaintyFunction() : MathFunction("uncertainty", 2, 3) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	setArgumentDefinition(3, new BooleanArgument());
+	setDefaultValue(3, "1");
+}
+int UncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	if(eo.interval_calculation == INTERVAL_CALCULATION_NONE) {
+		return 1;
+	}
+	MathStructure munc(vargs[1]);
+	mstruct.eval(eo);
+	munc.eval(eo);
+	if(munc.isFunction() && munc.function() == CALCULATOR->f_abs && munc.size() == 1) {
+		munc.setToChild(1, true);
+	}
+	test_munc:
+	if(munc.isNumber()) {
+		if(munc.isZero()) {
+			return 1;
+		} else if(mstruct.isNumber()) {
+			mstruct.number().setUncertainty(munc.number(), true);
+			mstruct.numberUpdated();
+			return 1;
+		} else if(mstruct.isAddition()) {
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				if(mstruct[i].isNumber()) {
+					mstruct[i].number().setUncertainty(munc.number(), true);
+					mstruct[i].numberUpdated();
+					mstruct.childUpdated(i + 1);
+					return 1;
+				}
+			}
+		}
+		mstruct.add(m_zero, true);
+		mstruct.last().number().setUncertainty(munc.number(), true);
+		mstruct.last().numberUpdated();
+		mstruct.childUpdated(mstruct.size());
+		return 1;
+	} else {
+		if(munc.isMultiplication()) {
+			if(!munc[0].isNumber()) {
+				munc.insertChild(m_one, 1);
+			}
+		} else {
+			munc.transform(STRUCT_MULTIPLICATION);
+			munc.insertChild(m_one, 1);
+		}
+		if(munc.isMultiplication()) {
+			if(munc.size() == 2) {
+				if(mstruct.isMultiplication() && mstruct[0].isNumber() && (munc[1] == mstruct[1] || (munc[1].isFunction() && munc[1].function() == CALCULATOR->f_abs && munc[1].size() == 1 && mstruct[1] == munc[1][0]))) {
+					mstruct[0].number().setUncertainty(munc[0].number(), true);
+					mstruct[0].numberUpdated();
+					mstruct.childUpdated(1);
+					return 1;
+				} else if(mstruct.equals(munc[1]) || (munc[1].isFunction() && munc[1].function() == CALCULATOR->f_abs && munc[1].size() == 1 && mstruct.equals(munc[1][0]))) {
+					mstruct.transform(STRUCT_MULTIPLICATION);
+					mstruct.insertChild(m_one, 1);
+					mstruct[0].number().setUncertainty(munc[0].number(), true);
+					mstruct[0].numberUpdated();
+					mstruct.childUpdated(1);
+					return 1;
+				}
+			} else if(mstruct.isMultiplication()) {
+				size_t i2 = 0;
+				if(mstruct[0].isNumber()) i2++;
+				if(mstruct.size() + 1 - i2 == munc.size()) {
+					bool b = true;
+					for(size_t i = 1; i < munc.size(); i++, i2++) {
+						if(!munc[i].equals(mstruct[i2]) && !(munc[i].isFunction() && munc[i].function() == CALCULATOR->f_abs && munc[i].size() == 1 && mstruct[i2] == munc[i][0])) {
+							b = false;
+							break;
+						}
+					}
+					if(b) {
+						if(!mstruct[0].isNumber()) {
+							mstruct.insertChild(m_one, 1);
+						}
+						mstruct[0].number().setUncertainty(munc[0].number(), true);
+						mstruct[0].numberUpdated();
+						mstruct.childUpdated(1);
+						return 1;
+					}
+				}
+			}
+			bool b = false;
+			for(size_t i = 0; i < munc.size(); i++) {
+				if(munc[i].isFunction() && munc[i].function() == CALCULATOR->f_abs && munc[i].size() == 1) {
+					munc[i].setToChild(1);
+					b = true;
+				}
+			}
+			if(b) {
+				munc.eval(eo);
+				goto test_munc;
+			}
+		}
+	}
+	if(vargs[1].number().getBoolean()) {
+		mstruct = vargs[0];
+		mstruct *= m_one;
+		mstruct.last() -= vargs[1];
+		mstruct.transform(CALCULATOR->f_interval);
+		MathStructure *m2 = new MathStructure(vargs[0]);
+		m2->multiply(m_one);
+		m2->last() += vargs[1];
+		mstruct.addChild_nocopy(m2);
+		return 1;
+	} else {
+		mstruct = vargs[0];
+		mstruct -= vargs[1];
+		mstruct.transform(CALCULATOR->f_interval);
+		MathStructure *m2 = new MathStructure(vargs[0]);
+		m2->add(vargs[1]);
+		mstruct.addChild_nocopy(m2);
+		return 1;
+	}
+	return 0;
+}
 
 RadiansToDefaultAngleUnitFunction::RadiansToDefaultAngleUnitFunction() : MathFunction("radtodef", 1) {
 }
@@ -6202,7 +6337,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 							}
 							if((b_limited_samples && !b_first) || nr_rel_prec.intValue() >= CALCULATOR->getPrecision()) {
 								CALCULATOR->endTemporaryStopIntervalArithmetic();
-								mstruct.number().setUncertainty(nr_prec); 
+								mstruct.number().setUncertainty(nr_prec, false); 
 								mstruct.numberUpdated();
 								CALCULATOR->error(false, _("Definite integral was approximated."), NULL);
 								return 1;
@@ -7278,28 +7413,23 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, 6) {
 	setDefaultValue(6, "0");
 	setCondition("\\y < \\z");
 }
-extern bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL, long int min_precision = 2, bool function_middle = false);
 int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	EvaluationOptions eo2;
 	eo2.parse_options = eo.parse_options;
 	eo2.approximation = APPROXIMATION_APPROXIMATE;
 	eo2.parse_options.read_precision = DONT_READ_PRECISION;
+	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
 	bool use_step_size = vargs[5].number().getBoolean();
 	mstruct = vargs[0];
 	CALCULATOR->beginTemporaryStopIntervalArithmetic();
 	if(!mstruct.contains(vargs[4], true)) {
 		mstruct.eval(eo2);
 	} else {
-		if(mstruct.containsInterval(true, true, false, true, true)) {
-			eo2.expand = -1;
-		} else {
-			eo2.calculate_functions = false;
-			eo2.expand = false;
-		}
+		eo2.calculate_functions = false;
+		eo2.expand = false;
 		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
-		if(fix_intervals(mstruct, eo2, NULL, 2, true)) mstruct.calculatesub(eo2, eo2, true);
 		int im = 0;
 		if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) mstruct = vargs[0];
 		eo2.calculate_functions = eo.calculate_functions;

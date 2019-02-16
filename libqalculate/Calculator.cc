@@ -93,8 +93,16 @@
 #define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && strlen((char*) lang) >= 2 && fulfilled_translation == 0 && lang[0] == localebase[0] && lang[1] == localebase[1]) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
 #define XML_GET_LOCALE_STRING_FROM_TEXT_REQ(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && strlen((char*) lang) >= 2 && fulfilled_translation == 0 && lang[0] == localebase[0] && lang[1] == localebase[1]) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value && !require_translation) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
 
+PrintOptions::PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), lower_case_e(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(true), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_all_units(false), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), limit_implicit_multiplication(false), allow_non_usable(false), use_unicode_signs(false), multiplication_sign(MULTIPLICATION_SIGN_DOT), division_sign(DIVISION_SIGN_DIVISION_SLASH), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL), can_display_unicode_string_function(NULL), can_display_unicode_string_arg(NULL), hide_underscore_spaces(false), preserve_format(false), allow_factorization(false), spell_out_logical_operators(false), restrict_to_parent_precision(true), restrict_fraction_length(false), exp_to_root(false), preserve_precision(false), interval_display(INTERVAL_DISPLAY_INTERVAL), digit_grouping(DIGIT_GROUPING_NONE), date_time_format(DATE_TIME_FORMAT_ISO), time_zone(TIME_ZONE_LOCAL), custom_time_zone(0), twos_complement(true), binary_bits(0) {}
+
 const string &PrintOptions::comma() const {if(comma_sign.empty()) return CALCULATOR->getComma(); return comma_sign;}
 const string &PrintOptions::decimalpoint() const {if(decimalpoint_sign.empty()) return CALCULATOR->getDecimalPoint(); return decimalpoint_sign;}
+
+InternalPrintStruct::InternalPrintStruct() : depth(0), power_depth(0), division_depth(0), wrap(false), num(NULL), den(NULL), re(NULL), im(NULL), exp(NULL), minus(NULL), exp_minus(NULL), parent_approximate(false), parent_precision(-1), iexp(NULL) {}
+
+ParseOptions::ParseOptions() : variables_enabled(true), functions_enabled(true), unknowns_enabled(true), units_enabled(true), rpn(false), base(BASE_DECIMAL), limit_implicit_multiplication(false), read_precision(DONT_READ_PRECISION), dot_as_separator(false), brackets_as_parentheses(false), angle_unit(ANGLE_UNIT_NONE), unended_function(NULL), preserve_format(false), default_dataset(NULL), parsing_mode(PARSING_MODE_ADAPTIVE), twos_complement(false) {}
+
+EvaluationOptions::EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), expand(true), combine_divisions(false), reduce_divisions(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(true), warn_about_denominators_assumed_nonzero(false), split_squares(true), keep_zero_units(true), auto_post_conversion(POST_CONVERSION_OPTIMAL), mixed_units_conversion(MIXED_UNITS_CONVERSION_DEFAULT), structuring(STRUCTURING_SIMPLIFY), isolate_var(NULL), do_polynomial_division(true), protected_function(NULL), complex_number_form(COMPLEX_NUMBER_FORM_RECTANGULAR), local_currency_conversion(true), transform_trigonometric_functions(true), interval_calculation(INTERVAL_CALCULATION_VARIANCE_FORMULA) {}
 
 /*#include <time.h>
 #include <sys/time.h>
@@ -335,7 +343,7 @@ Calculator::Calculator() {
 #endif
 
 	srand(time(NULL));
-
+	
 	exchange_rates_time[0] = 0;
 	exchange_rates_time[1] = 0;
 	exchange_rates_time[2] = 0;
@@ -1484,6 +1492,7 @@ void Calculator::addBuiltinFunctions() {
 	f_denominator = addFunction(new DenominatorFunction());
 	
 	f_interval = addFunction(new IntervalFunction());
+	f_uncertainty = addFunction(new UncertaintyFunction());
 
 	f_sqrt = addFunction(new SqrtFunction());
 	f_cbrt = addFunction(new CbrtFunction());
@@ -2327,7 +2336,7 @@ bool Calculator::RPNStackEnter(string str, int msecs, const EvaluationOptions &e
 void Calculator::RPNStackEnter(MathStructure *mstruct, bool eval, const EvaluationOptions &eo) {
 	if(eval) {
 		current_stage = MESSAGE_STAGE_CALCULATION;
-		mstruct->eval();
+		mstruct->eval(eo);
 		current_stage = MESSAGE_STAGE_CONVERSION;
 		autoConvert(*mstruct, *mstruct, eo);
 		current_stage = MESSAGE_STAGE_UNSET;
@@ -2358,7 +2367,7 @@ void Calculator::setRPNRegister(size_t index, MathStructure *mstruct, bool eval,
 	}
 	if(eval) {
 		current_stage = MESSAGE_STAGE_CALCULATION;
-		mstruct->eval();
+		mstruct->eval(eo);
 		current_stage = MESSAGE_STAGE_CONVERSION;
 		autoConvert(*mstruct, *mstruct, eo);
 		current_stage = MESSAGE_STAGE_UNSET;
@@ -2986,7 +2995,8 @@ MathStructure Calculator::convert(const MathStructure &mstruct, KnownVariable *t
 		CompositeUnit cu("", "temporary_composite_convert", "", to_var->unit());
 		if(cu.countUnits() > 0) {
 			AliasUnit au("", "temporary_alias_convert", "", "", "", &cu, to_var->expression());
-			au.setUncertainty(to_var->uncertainty());
+			bool unc_rel = false;
+			if(!to_var->uncertainty(&unc_rel).empty()) au.setUncertainty(to_var->uncertainty(), unc_rel);
 			au.setApproximate(to_var->isApproximate());
 			au.setPrecision(to_var->precision());
 			MathStructure mstruct_new(convert(mstruct, &au, eo, false, false));
@@ -5378,7 +5388,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									}
 									if(f == f_vector) {
 										stmp += i2s(parseAddVectorId(stmp2, po));
-									} else if(f == f_interval && po.read_precision != DONT_READ_PRECISION) {
+									} else if((f == f_interval || f == f_uncertainty) && po.read_precision != DONT_READ_PRECISION) {
 										ParseOptions po2 = po;
 										po2.read_precision = DONT_READ_PRECISION;
 										stmp += i2s(parseAddId(f, stmp2, po2));
@@ -5424,7 +5434,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									}
 									if(f == f_vector) {
 										stmp += i2s(parseAddVectorId(stmp2, po));
-									} else if(f == f_interval && po.read_precision != DONT_READ_PRECISION) {
+									} else if((f == f_interval || f == f_uncertainty) && po.read_precision != DONT_READ_PRECISION) {
 										ParseOptions po2 = po;
 										po2.read_precision = DONT_READ_PRECISION;
 										stmp += i2s(parseAddId(f, stmp2, po2));
@@ -6822,19 +6832,22 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_RAISE);
-	} else if((i = str.find("\b", 1)) != string::npos && i + 1 != str.length() && (is_not_in(NUMBER_ELEMENTS, str[i - 1]) || is_not_in(NUMBER_ELEMENTS, str[i + 1]))) {
+	} else if((i = str.find("\b", 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
-		parseAdd(str2, mstruct, po);
-		MathStructure mstruct2;
-		parseAdd(str, &mstruct2, po);
-		MathStructure *marg2 = new MathStructure(*mstruct);
-		marg2->add(mstruct2);
-		if(po.preserve_format) mstruct2.transform(STRUCT_NEGATE);
-		else mstruct2.negate();
-		mstruct->add(mstruct2);
-		mstruct->transform(f_interval);
-		mstruct->addChild_nocopy(marg2);
+		MathStructure *mstruct2 = new MathStructure;
+		if(po.read_precision != DONT_READ_PRECISION) {
+			ParseOptions po2 = po;
+			po2.read_precision = DONT_READ_PRECISION;
+			parseAdd(str2, mstruct, po2);
+			parseAdd(str, mstruct2, po2);
+		} else {
+			parseAdd(str2, mstruct, po);
+			parseAdd(str, mstruct2, po);
+		}
+		mstruct->transform(f_uncertainty);
+		mstruct->addChild_nocopy(mstruct2);
+		mstruct->addChild(m_zero);
 	} else if(po.base >= 2 && po.base <= 10 && (i = str.find_first_of(EXPS, 1)) != string::npos && i + 1 != str.length() && str.find("\b") == string::npos) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
@@ -7546,6 +7559,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	xmlDocPtr doc;
 	xmlNodePtr cur, child, child2, child3;
 	string version, stmp, name, uname, type, svalue, sexp, plural, countries, singular, category_title, category, description, title, inverse, suncertainty, base, argname, usystem;
+	bool unc_rel;
 	bool best_title, next_best_title, best_category_title, next_best_category_title, best_description, next_best_description;
 	bool best_plural, next_best_plural, best_singular, next_best_singular, best_argname, next_best_argname, best_countries, next_best_countries;
 	bool best_proptitle, next_best_proptitle, best_propdescr, next_best_propdescr;
@@ -8387,7 +8401,11 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 				while(child != NULL) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "value")) {
 						XML_DO_FROM_TEXT(child, ((KnownVariable*) v)->set);
-						XML_DO_FROM_PROP(child, "uncertainty", ((KnownVariable*) v)->setUncertainty)
+						XML_GET_STRING_FROM_PROP(child, "relative_uncertainty", suncertainty)
+						unc_rel = false;
+						if(suncertainty.empty()) {XML_GET_STRING_FROM_PROP(child, "uncertainty", suncertainty)}
+						else unc_rel = true;
+						((KnownVariable*) v)->setUncertainty(suncertainty, unc_rel);
 						XML_DO_FROM_PROP(child, "unit", ((KnownVariable*) v)->setUnit)
 						XML_GET_PREC_FROM_PROP(child, prec)
 						v->setPrecision(prec);
@@ -8544,6 +8562,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							svalue = "";
 							inverse = "";
 							suncertainty = "";
+							unc_rel = false;
 							b = true;
 							while(child2 != NULL) {
 								if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
@@ -8557,7 +8576,9 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 									XML_GET_STRING_FROM_TEXT(child2, svalue);
 									XML_GET_APPROX_FROM_PROP(child2, b)
 									XML_GET_PREC_FROM_PROP(child2, prec)
-									XML_GET_STRING_FROM_PROP(child2, "uncertainty", suncertainty)
+									XML_GET_STRING_FROM_PROP(child2, "relative_uncertainty", suncertainty)
+									if(suncertainty.empty()) {XML_GET_STRING_FROM_PROP(child2, "uncertainty", suncertainty)}
+									else unc_rel = true;
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "reverse_relation")) {
 									XML_GET_STRING_FROM_TEXT(child2, inverse);
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "inverse_relation")) {
@@ -8620,7 +8641,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 						au->setDescription(description);
 						au->setPrecision(prec);
 						if(b) au->setApproximate(true);
-						au->setUncertainty(suncertainty);
+						au->setUncertainty(suncertainty, unc_rel);
 						au->setHidden(hidden);
 						au->setSystem(usystem);
 						if(use_with_prefixes_set) {
@@ -9131,8 +9152,9 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 						save_printoptions.is_approximate = &is_approx;
 						if(((KnownVariable*) variables[i])->isExpression()) {
 							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) ((KnownVariable*) variables[i])->expression().c_str());
-							if(!((KnownVariable*) variables[i])->uncertainty().empty()) xmlNewProp(newnode2, (xmlChar*) "uncertainty", (xmlChar*) ((KnownVariable*) variables[i])->uncertainty().c_str());
-							if(!((KnownVariable*) variables[i])->unit().empty()) xmlNewProp(newnode2, (xmlChar*) "unit", (xmlChar*) ((KnownVariable*) variables[i])->uncertainty().c_str());
+							bool unc_rel = false;
+							if(!((KnownVariable*) variables[i])->uncertainty(&unc_rel).empty()) xmlNewProp(newnode2, (xmlChar*) (unc_rel ? "relative_uncertainty" : "uncertainty"), (xmlChar*) ((KnownVariable*) variables[i])->uncertainty().c_str());
+							if(!((KnownVariable*) variables[i])->unit().empty()) xmlNewProp(newnode2, (xmlChar*) "unit", (xmlChar*) ((KnownVariable*) variables[i])->unit().c_str());
 						} else {
 							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) ((KnownVariable*) variables[i])->get().print(save_printoptions).c_str());
 						}
@@ -9358,7 +9380,8 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 						newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "relation", (xmlChar*) au->expression().c_str());
 						if(au->isApproximate()) xmlNewProp(newnode3, (xmlChar*) "approximate", (xmlChar*) "true");
 						if(au->precision() >= 0) xmlNewProp(newnode3, (xmlChar*) "precision", (xmlChar*) i2s(u->precision()).c_str());
-						if(!au->uncertainty().empty()) xmlNewProp(newnode3, (xmlChar*) "uncertainty", (xmlChar*) au->uncertainty().c_str());
+						bool unc_rel = false;
+						if(!au->uncertainty(&unc_rel).empty()) xmlNewProp(newnode3, (xmlChar*) (unc_rel ? "relative_uncertainty" : "uncertainty"), (xmlChar*) au->uncertainty().c_str());
 						if(!au->inverseExpression().empty()) {
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "inverse_relation", (xmlChar*) au->inverseExpression().c_str());
 						}
@@ -10613,17 +10636,13 @@ void parse_and_precalculate_plot(string &expression, MathStructure &mstruct, con
 	ParseOptions po2 = po;
 	po2.read_precision = DONT_READ_PRECISION;
 	eo.parse_options = po2;
+	eo.interval_calculation = INTERVAL_CALCULATION_NONE;
 	mstruct = CALCULATOR->parse(expression, po2);
 	MathStructure mbak(mstruct);
-	if(mstruct.containsInterval(true, true, false, true, true)) {
-		eo.expand = -1;
-	} else {
-		eo.calculate_functions = false;
-		eo.expand = false;
-	}
+	eo.calculate_functions = false;
+	eo.expand = false;
 	CALCULATOR->beginTemporaryStopMessages();
 	mstruct.eval(eo);
-	if(fix_intervals(mstruct, eo, NULL, 2, true)) mstruct.calculatesub(eo, eo, true);
 	int im = 0;
 	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) mstruct = mbak;
 	eo.calculate_functions = true;

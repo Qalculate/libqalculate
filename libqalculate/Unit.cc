@@ -245,6 +245,7 @@ AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_nam
 	svalue = relation;
 	sinverse = inverse;
 	suncertainty = "";
+	b_relative_uncertainty = false;
 	i_exp = exp;
 	i_mix = 0;
 	i_mix_min = 0;
@@ -254,6 +255,7 @@ AliasUnit::AliasUnit() {
 	svalue = "";
 	sinverse = "";
 	suncertainty = "";
+	b_relative_uncertainty = false;
 	i_exp = 1;
 	i_mix = 0;
 	i_mix_min = 0;
@@ -274,7 +276,7 @@ void AliasUnit::set(const ExpressionItem *item) {
 			i_exp = u->firstBaseExponent();
 			svalue = u->expression();
 			sinverse = u->inverseExpression();
-			suncertainty = u->uncertainty();
+			suncertainty = u->uncertainty(&b_relative_uncertainty);
 			i_mix = u->mixWithBase();
 			i_mix_min = u->mixWithBaseMinimum();
 		}
@@ -298,7 +300,8 @@ string AliasUnit::expression() const {
 string AliasUnit::inverseExpression() const {
 	return sinverse;
 }
-string AliasUnit::uncertainty() const {
+string AliasUnit::uncertainty(bool *is_relative) const {
+	if(is_relative) *is_relative = b_relative_uncertainty;
 	return suncertainty;
 }
 void AliasUnit::setExpression(string relation) {
@@ -315,9 +318,10 @@ void AliasUnit::setInverseExpression(string inverse) {
 	sinverse = inverse;
 	setChanged(true);
 }
-void AliasUnit::setUncertainty(string standard_uncertainty) {
+void AliasUnit::setUncertainty(string standard_uncertainty, bool is_relative) {
 	remove_blank_ends(standard_uncertainty);
 	suncertainty = standard_uncertainty;
+	b_relative_uncertainty = is_relative;
 	if(!suncertainty.empty()) setApproximate(true);
 	setChanged(true);
 }
@@ -427,10 +431,12 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 			if(!suncertainty.empty()) {
 				Number nr_u(suncertainty);
 				if(mstruct->isNumber()) {
-					mstruct->number().setUncertainty(nr_u, true);
+					if(b_relative_uncertainty) mstruct->number().setRelativeUncertainty(nr_u, true);
+					else mstruct->number().setUncertainty(nr_u, true);
 					mstruct->numberUpdated();
 				} else if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber()) {
-					(*mstruct)[0].number().setUncertainty(nr_u, true);
+					if(b_relative_uncertainty) (*mstruct)[0].number().setRelativeUncertainty(nr_u, true);
+					else (*mstruct)[0].number().setUncertainty(nr_u, true);
 					(*mstruct)[0].numberUpdated();
 					mstruct->childUpdated(1);
 				}
@@ -565,10 +571,12 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 		if(!suncertainty.empty()) {
 			Number nr_u(suncertainty);
 			if(mstruct->isNumber()) {
-				mstruct->number().setUncertainty(nr_u, true);
+				if(b_relative_uncertainty) mstruct->number().setRelativeUncertainty(nr_u, true);
+				else mstruct->number().setUncertainty(nr_u, true);
 				mstruct->numberUpdated();
 			} else if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber()) {
-				(*mstruct)[0].number().setUncertainty(nr_u, true);
+				if(b_relative_uncertainty) (*mstruct)[0].number().setRelativeUncertainty(nr_u, true);
+				else (*mstruct)[0].number().setUncertainty(nr_u, true);
 				(*mstruct)[0].numberUpdated();
 				mstruct->childUpdated(1);
 			}

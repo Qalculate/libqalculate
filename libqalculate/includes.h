@@ -493,7 +493,7 @@ static const struct PrintOptions {
 	bool twos_complement;
 	/// Number of bits used for binary numbers. Set to 0 for automatic. Default: 0
 	unsigned int binary_bits;
-	PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), lower_case_e(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(false), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_all_units(false), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), limit_implicit_multiplication(false), allow_non_usable(false), use_unicode_signs(false), multiplication_sign(MULTIPLICATION_SIGN_DOT), division_sign(DIVISION_SIGN_DIVISION_SLASH), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL), can_display_unicode_string_function(NULL), can_display_unicode_string_arg(NULL), hide_underscore_spaces(false), preserve_format(false), allow_factorization(false), spell_out_logical_operators(false), restrict_to_parent_precision(true), restrict_fraction_length(false), exp_to_root(false), preserve_precision(false), interval_display(INTERVAL_DISPLAY_INTERVAL), digit_grouping(DIGIT_GROUPING_NONE), date_time_format(DATE_TIME_FORMAT_ISO), time_zone(TIME_ZONE_LOCAL), custom_time_zone(0), twos_complement(true), binary_bits(0) {}
+	PrintOptions();
 	/// Returns the comma sign used (default sign or comma_sign)
 	const string &comma() const;
 	/// Returns the decimal sign used (default sign or decimalpoint_sign)
@@ -509,7 +509,7 @@ static const struct InternalPrintStruct {
 	bool parent_approximate;
 	int parent_precision;
 	long int *iexp;
-	InternalPrintStruct() : depth(0), power_depth(0), division_depth(0), wrap(false), num(NULL), den(NULL), re(NULL), im(NULL), exp(NULL), minus(NULL), exp_minus(NULL), parent_approximate(false), parent_precision(-1), iexp(NULL) {}
+	InternalPrintStruct();
 } top_ips;
 
 typedef enum {
@@ -584,6 +584,15 @@ typedef enum {
 	PARSING_MODE_CONVENTIONAL
 } ParsingMode;
 
+typedef enum {
+	/// Ignores uncertainties and uses the middle value of intervals
+	INTERVAL_CALCULATION_NONE,
+	INTERVAL_CALCULATION_VARIANCE_FORMULA,
+	INTERVAL_CALCULATION_INTERVAL_ARITHMETIC,
+	/// Treats all intervals as uncorrelated
+	INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC
+} IntervalCalculation;
+
 /// Options for parsing expressions.
 static const struct ParseOptions {
 	/// If variables will be parsed. Default: true
@@ -623,8 +632,9 @@ static const struct ParseOptions {
 	ParsingMode parsing_mode;
 	/// Negative binary numbers uses two's complement representation. All binary numbers starting with 1 are assumed to be negative. Default: false
 	bool twos_complement;
-	
-	ParseOptions() : variables_enabled(true), functions_enabled(true), unknowns_enabled(true), units_enabled(true), rpn(false), base(BASE_DECIMAL), limit_implicit_multiplication(false), read_precision(DONT_READ_PRECISION), dot_as_separator(false), brackets_as_parentheses(false), angle_unit(ANGLE_UNIT_NONE), unended_function(NULL), preserve_format(false), default_dataset(NULL), parsing_mode(PARSING_MODE_ADAPTIVE), twos_complement(false) {}
+
+	ParseOptions();
+
 } default_parse_options;
 
 /// Options for calculation.
@@ -657,13 +667,13 @@ static const struct EvaluationOptions {
 	bool allow_infinite;
 	/// If simplification will be made easier by assuming that denominators with unknown value not is zero. Default: false
 	int assume_denominators_nonzero;
-	/// Warn if a denominator with unknown value was assumed non-zero (with assume_denominators_nonzero set to true) to allow simplification. Default: false
+	/// Warn if a denominator with unknown value was assumed non-zero (with assume_denominators_nonzero set to true) to allow simplification. Default: true
 	bool warn_about_denominators_assumed_nonzero;
 	/// If powers with exponent 1/2 that only have an approximate result will be split to the least base (sqrt(8) = 2 * sqrt(2)). Default: true
 	bool split_squares;
 	/// If units with zero quantity will be preserved. Default: true
 	bool keep_zero_units;
-	/// If and how units will be automatically converted. Does not affect syncing of units. Default: POST_CONVERSION_NONE
+	/// If and how units will be automatically converted. Does not affect syncing of units. Default: POST_CONVERSION_OPTIMAL
 	AutoPostConversion auto_post_conversion;
 	/// Shows time as h + min + s, imperial length as ft + in, etc. Default: MIXED_UNITS_CONVERSION_DEFAULT
 	MixedUnitsConversion mixed_units_conversion;
@@ -683,7 +693,11 @@ static const struct EvaluationOptions {
 	bool local_currency_conversion;
 	/// Mainly for internal use. Default: true
 	bool transform_trigonometric_functions;
-	EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), expand(true), combine_divisions(false), reduce_divisions(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(false), warn_about_denominators_assumed_nonzero(false), split_squares(true), keep_zero_units(true), auto_post_conversion(POST_CONVERSION_NONE), mixed_units_conversion(MIXED_UNITS_CONVERSION_DEFAULT), structuring(STRUCTURING_SIMPLIFY), isolate_var(NULL), do_polynomial_division(true), protected_function(NULL), complex_number_form(COMPLEX_NUMBER_FORM_RECTANGULAR), local_currency_conversion(true), transform_trigonometric_functions(true) {}
+	/// Algorithm used for calculation of uncertainty propagation / intervals. This does not affect calculation of the high precision intervals produced by approximate functions or irrational numbers. Default: INTERVAL_CALCULATION_VARIANCE_FORMULA
+	IntervalCalculation interval_calculation;
+
+	EvaluationOptions();
+
 } default_evaluation_options;
 
 extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one, m_one_i;

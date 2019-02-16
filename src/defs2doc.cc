@@ -455,6 +455,7 @@ void print_variable(Variable *v) {
 		}
 		fprintf(vfile, "<entry><para>%s</para></entry>\n", str.c_str());
 		value = "";
+		bool is_relative = false;
 		if(is_answer_variable(v)) {
 			value = _("a previous result");
 		} else if(v->isKnown()) {
@@ -462,9 +463,11 @@ void print_variable(Variable *v) {
 				value = _("current precision");
 			} else if(((KnownVariable*) v)->isExpression()) {
 				value = fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->expression()));
-				if(!((KnownVariable*) v)->uncertainty().empty()) {
-					value += "±";
+				if(!((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
+					if(is_relative) {value += " ("; value += _("relative uncertainty"); value += ": ";}
+					else value += SIGN_PLUSMINUS;
 					value += fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()));
+					if(is_relative) {value += ")";}
 				}
 				if(((KnownVariable*) v)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) == string::npos && value.length() > 40) {
 					value = value.substr(0, 30);
@@ -508,7 +511,7 @@ void print_variable(Variable *v) {
 				value = _("default assumptions");
 			}		
 		}
-		if(v->isApproximate() && value.find(SIGN_PLUSMINUS) == string::npos) {
+		if(v->isApproximate() && !is_relative && value.find(SIGN_PLUSMINUS) == string::npos) {
 			if(v == CALCULATOR->v_pi || v == CALCULATOR->v_e || v == CALCULATOR->v_euler || v == CALCULATOR->v_catalan) {
 				value += " (";
 				value += _("variable precision");
@@ -553,16 +556,19 @@ void print_unit(Unit *u) {
 					base_unit += POWER;
 					base_unit += i2s(au->firstBaseExponent());
 				}
+				bool is_relative = false;
 				if(au->baseUnit() == CALCULATOR->u_euro && au->isBuiltin()) {
 					relation = "exchange rate";
 				} else {
 					relation = fix(CALCULATOR->localizeExpression(au->expression()).c_str());
-					if(!au->uncertainty().empty()) {
-						relation += "±";
+					if(!au->uncertainty(&is_relative).empty()) {
+						if(is_relative) {relation += " ("; relation += _("relative uncertainty"); relation += ": ";}
+						else relation += SIGN_PLUSMINUS;
 						relation += fix(CALCULATOR->localizeExpression(au->uncertainty()));
+						if(is_relative) {relation += ")";}
 					}
 				}
-				if(u->isApproximate() && relation.find(SIGN_PLUSMINUS) == string::npos) {
+				if(u->isApproximate() && !is_relative && relation.find(SIGN_PLUSMINUS) == string::npos) {
 					relation += " (";
 					relation += _("approximate");
 					relation += ")";

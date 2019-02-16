@@ -295,7 +295,8 @@ class Calculator {
 	MathFunction *f_xor, *f_bitxor, *f_even, *f_odd, *f_shift, *f_bitcmp;
 	MathFunction *f_abs, *f_gcd, *f_lcm, *f_signum, *f_heaviside, *f_dirac, *f_round, *f_floor, *f_ceil, *f_trunc, *f_int, *f_frac, *f_rem, *f_mod;	
 	MathFunction *f_polynomial_unit, *f_polynomial_primpart, *f_polynomial_content, *f_coeff, *f_lcoeff, *f_tcoeff, *f_degree, *f_ldegree;
-	MathFunction *f_re, *f_im, *f_arg, *f_numerator, *f_denominator, *f_interval;
+	MathFunction *f_re, *f_im, *f_arg, *f_numerator, *f_denominator;
+	MathFunction *f_interval, *f_uncertainty;
   	MathFunction *f_sqrt, *f_cbrt, *f_root, *f_sq;
 	MathFunction *f_exp;
 	MathFunction *f_ln, *f_logn;
@@ -1121,7 +1122,8 @@ class Calculator {
 	/** Returns default precision for approximate calculations.
 	*/
 	int getPrecision() const;
-	/** Set if interval arithmetic should be used for approximate calculations.
+	/** Set if interval should be produced for approximate functions and irrational numbers.
+	* This does not affect calculation of lower precision explicit intervals (uncertainty propagation).
 	*
 	* @param use_interval_arithmetic Set true to activate, or false to deactivate, interval arithmetic.
 	*/

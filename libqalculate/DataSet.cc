@@ -292,25 +292,28 @@ MathStructure *DataProperty::generateStruct(const string &valuestr, int is_appro
 			break;
 		}
 		case PROPERTY_NUMBER: {
-			if(b_brackets && valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') {
+			if(valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') {
 				size_t i = valuestr.find(",");
 				if(i != string::npos) {
 					Number nr;
 					nr.setInterval(Number(valuestr.substr(1, i - 1)), Number(valuestr.substr(i + 1, valuestr.length() - i - 2)));
 					mstruct = new MathStructure(nr);
-				} else if((b_approximate && is_approximate < 0) || is_approximate > 0) {
-					ParseOptions po; po.read_precision = ALWAYS_READ_PRECISION;
-					mstruct = new MathStructure(Number(valuestr.substr(1, valuestr.length() - 2), po));
-				} else {
-					mstruct = new MathStructure(Number(valuestr.substr(1, valuestr.length() - 2)));
+					break;
+				} else if(b_brackets) {
+					if(((b_approximate && is_approximate < 0) || is_approximate > 0) && valuestr.find(SIGN_PLUSMINUS) == string::npos && valuestr.find("+/-") == string::npos) {
+						ParseOptions po; po.read_precision = ALWAYS_READ_PRECISION;
+						mstruct = new MathStructure(Number(valuestr.substr(1, valuestr.length() - 2), po));
+					} else {
+						mstruct = new MathStructure(Number(valuestr.substr(1, valuestr.length() - 2)));
+					}
+					break;
 				}
+			}
+			if(((b_approximate && is_approximate < 0) || is_approximate > 0) && valuestr.find(SIGN_PLUSMINUS) == string::npos && valuestr.find("+/-") == string::npos) {
+				ParseOptions po; po.read_precision = ALWAYS_READ_PRECISION;
+				mstruct = new MathStructure(Number(valuestr, po));
 			} else {
-				if(((b_approximate && is_approximate < 0) || is_approximate > 0) && valuestr.find("+/-") == string::npos) {
-					ParseOptions po; po.read_precision = ALWAYS_READ_PRECISION;
-					mstruct = new MathStructure(Number(valuestr, po));
-				} else {
-					mstruct = new MathStructure(Number(valuestr));
-				}
+				mstruct = new MathStructure(Number(valuestr));
 			}
 			break;
 		}
@@ -521,6 +524,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	}
 	string version;
 	xmlChar *value, *lang, *uncertainty;
+	bool unc_rel;
 	while(cur != NULL) {
 		if(!xmlStrcmp(cur->name, (const xmlChar*) "QALCULATE")) {
 			XML_GET_STRING_FROM_PROP(cur, "version", version)
@@ -629,7 +633,6 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 							} else {
 								i_approx = -1;
 							}
-							uncertainty = xmlGetProp(child, (xmlChar*) "uncertainty"); 
 							if(properties[i]->propertyType() == PROPERTY_STRING) {
 								value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 
 								lang = xmlNodeGetLang(child); 
@@ -696,12 +699,26 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 								if(value) xmlFree(value); 
 								if(lang) xmlFree(lang);
 							} else {
+								unc_rel = false;
+								uncertainty = xmlGetProp(child, (xmlChar*) "relative_uncertainty");
+								if(!uncertainty) uncertainty = xmlGetProp(child, (xmlChar*) "uncertainty"); 
+								else unc_rel = true;
 								XML_GET_STRING_FROM_TEXT(child, str)
 								remove_blank_ends(str);
-								if(uncertainty) {str += "+/-"; str += (char*) uncertainty;}
+								if(uncertainty) {
+									if(unc_rel) {
+										str.insert(0, "(");
+										str.insert(0, CALCULATOR->f_uncertainty->referenceName());
+										str += ", ";
+										str += (char*) uncertainty;
+										str += ", 1)";
+									} else {
+										str += SIGN_PLUSMINUS; str += (char*) uncertainty;
+									}
+								}
 								o->setProperty(properties[i], str, i_approx);
+								if(uncertainty) xmlFree(uncertainty);
 							}
-							if(uncertainty) xmlFree(uncertainty);
 							b = true;
 							break;
 						}
