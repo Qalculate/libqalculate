@@ -66,6 +66,8 @@ int b_decimal_comma = -1;
 long int i_maxtime = 0;
 struct timeval t_end;
 
+bool automatic_fraction = false;
+
 bool result_only;
 
 static char buffer[1000];
@@ -810,6 +812,10 @@ void set_option(string str) {
 		if(v < 0 || v > 2) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
+			if(automatic_fraction && printops.number_fraction_format == FRACTION_DECIMAL_EXACT && v != APPROXIMATION_EXACT) {
+				printops.number_fraction_format = FRACTION_DECIMAL;
+				automatic_fraction = false;
+			}
 			evalops.approximation = (ApproximationMode) v;
 			expression_calculation_updated();
 		}
@@ -871,9 +877,17 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value")); 
 		} else if(v > 0) {
 			evalops.approximation = APPROXIMATION_EXACT; 
+			if(printops.number_fraction_format == FRACTION_DECIMAL) {
+				automatic_fraction = true;
+				printops.number_fraction_format = FRACTION_DECIMAL_EXACT;
+			}
 			expression_calculation_updated();
 		} else {
-			evalops.approximation = APPROXIMATION_TRY_EXACT; 
+			evalops.approximation = APPROXIMATION_TRY_EXACT;
+			if(automatic_fraction && printops.number_fraction_format == FRACTION_DECIMAL_EXACT) {
+				printops.number_fraction_format = FRACTION_DECIMAL;
+				automatic_fraction = false;
+			}
 			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save mode", _("save mode"))) {
@@ -1000,6 +1014,7 @@ void set_option(string str) {
 			printops.restrict_fraction_length = (v == FRACTION_FRACTIONAL);
 			if(v == 4) v = FRACTION_FRACTIONAL;
 			printops.number_fraction_format = (NumberFractionFormat) v;
+			automatic_fraction = false;
 			result_format_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "complex form", _("complex form")) || svar == "cplxform") {
@@ -2339,12 +2354,20 @@ int main(int argc, char *argv[]) {
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exact", _("exact"))) {
 			if(evalops.approximation != APPROXIMATION_EXACT) {
+				if(printops.number_fraction_format == FRACTION_DECIMAL) {
+					automatic_fraction = true;
+					printops.number_fraction_format = FRACTION_DECIMAL_EXACT;
+				}
 				evalops.approximation = APPROXIMATION_EXACT;
 				expression_calculation_updated();
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "approximate", _("approximate")) || str == "approx") {
 			if(evalops.approximation != APPROXIMATION_TRY_EXACT) {
+				if(automatic_fraction && printops.number_fraction_format == FRACTION_DECIMAL_EXACT) {
+					printops.number_fraction_format = FRACTION_DECIMAL;
+					automatic_fraction = false;
+				}
 				evalops.approximation = APPROXIMATION_TRY_EXACT;
 				expression_calculation_updated();
 			}
@@ -4914,6 +4937,8 @@ void load_preferences() {
 	evalops.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 	b_decimal_comma = -1;
 	
+	automatic_fraction = false;
+	
 	adaptive_interval_display = true;
 	
 	CALCULATOR->useIntervalArithmetic(true);
@@ -5051,6 +5076,8 @@ void load_preferences() {
 						printops.number_fraction_format = FRACTION_FRACTIONAL;
 						printops.restrict_fraction_length = false;
 					}
+				} else if(svar == "automatic_number_fraction_format") {
+					automatic_fraction = v;
 				} else if(svar == "complex_number_form") {
 					if(v >= COMPLEX_NUMBER_FORM_RECTANGULAR && v <= COMPLEX_NUMBER_FORM_POLAR) {
 						evalops.complex_number_form = (ComplexNumberForm) v;
@@ -5258,6 +5285,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "negative_exponents=%i\n", saved_printops.negative_exponents);
 	fprintf(file, "sort_minus_last=%i\n", saved_printops.sort_options.minus_last);
 	fprintf(file, "number_fraction_format=%i\n", !saved_printops.restrict_fraction_length && saved_printops.number_fraction_format == FRACTION_FRACTIONAL ? FRACTION_COMBINED + 1 : saved_printops.number_fraction_format);
+	if(automatic_fraction) fprintf(file, "automatic_number_fraction_format=%i\n", automatic_fraction);
 	fprintf(file, "complex_number_form=%i\n", saved_evalops.complex_number_form);
 	fprintf(file, "use_prefixes=%i\n", saved_printops.use_unit_prefixes);
 	fprintf(file, "use_prefixes_for_all_units=%i\n", saved_printops.use_prefixes_for_all_units);

@@ -1,3 +1,7 @@
+2019-02-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Replace decimal with exact decimal rational numbers when exact mode is toggled on (CLI)
+
 2019-02-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Separate interval calculation / uncertainty propagation method choice
