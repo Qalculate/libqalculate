@@ -1,7 +1,7 @@
 /*
     Qalculate    
 
-    Copyright (C) 2003-2007, 2008, 2016-2018  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2019  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ InternalPrintStruct::InternalPrintStruct() : depth(0), power_depth(0), division_
 
 ParseOptions::ParseOptions() : variables_enabled(true), functions_enabled(true), unknowns_enabled(true), units_enabled(true), rpn(false), base(BASE_DECIMAL), limit_implicit_multiplication(false), read_precision(DONT_READ_PRECISION), dot_as_separator(false), brackets_as_parentheses(false), angle_unit(ANGLE_UNIT_NONE), unended_function(NULL), preserve_format(false), default_dataset(NULL), parsing_mode(PARSING_MODE_ADAPTIVE), twos_complement(false) {}
 
-EvaluationOptions::EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_complex_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), expand(true), combine_divisions(false), reduce_divisions(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(true), warn_about_denominators_assumed_nonzero(false), split_squares(true), keep_zero_units(true), auto_post_conversion(POST_CONVERSION_OPTIMAL), mixed_units_conversion(MIXED_UNITS_CONVERSION_DEFAULT), structuring(STRUCTURING_SIMPLIFY), isolate_var(NULL), do_polynomial_division(true), protected_function(NULL), complex_number_form(COMPLEX_NUMBER_FORM_RECTANGULAR), local_currency_conversion(true), transform_trigonometric_functions(true), interval_calculation(INTERVAL_CALCULATION_VARIANCE_FORMULA) {}
+EvaluationOptions::EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_nonlinear_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), expand(true), combine_divisions(false), reduce_divisions(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(true), warn_about_denominators_assumed_nonzero(false), split_squares(true), keep_zero_units(true), auto_post_conversion(POST_CONVERSION_OPTIMAL), mixed_units_conversion(MIXED_UNITS_CONVERSION_DEFAULT), structuring(STRUCTURING_SIMPLIFY), isolate_var(NULL), do_polynomial_division(true), protected_function(NULL), complex_number_form(COMPLEX_NUMBER_FORM_RECTANGULAR), local_currency_conversion(true), transform_trigonometric_functions(true), interval_calculation(INTERVAL_CALCULATION_VARIANCE_FORMULA) {}
 
 /*#include <time.h>
 #include <sys/time.h>
@@ -494,6 +494,7 @@ Calculator::Calculator() {
 	save_printoptions.spacious = false;
 	save_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
 	save_printoptions.short_multiplication = false;
+	save_printoptions.show_ending_zeroes = false;
 	
 	message_printoptions.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 	message_printoptions.spell_out_logical_operators = true;
@@ -3018,7 +3019,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 	if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) cu = (CompositeUnit*) to_unit;
 	if(cu && cu->countUnits() == 0) return mstruct;
 	MathStructure mstruct_new(mstruct);
-	if(to_unit->hasComplexRelationTo(to_unit->baseUnit()) && to_unit->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+	if(to_unit->hasNonlinearRelationTo(to_unit->baseUnit()) && to_unit->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 		mstruct_new = convert(mstruct, to_unit->baseUnit(), eo, always_convert, convert_to_mixed_units);
 		mstruct_new.calculateDivide(((CompositeUnit*) to_unit->baseUnit())->generateMathStructure(false, eo.keep_prefixes), eo);
 		to_unit->convertFromBaseUnit(mstruct_new);
@@ -3148,10 +3149,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	if(!mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
 	MathStructure mstruct_new(mstruct);
-	EvaluationOptions eo2 = eo;
-	if(eo.approximation == APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_TRY_EXACT;
-	mstruct_new.convertToBaseUnits(true, NULL, true, eo2);
+	mstruct_new.convertToBaseUnits(true, NULL, true, eo);
 	if(!mstruct_new.equals(mstruct, true, true)) {
+		EvaluationOptions eo2 = eo;
 		eo2.approximation = eo.approximation;
 		eo2.keep_prefixes = false;
 		eo2.isolate_x = false;
@@ -3317,7 +3317,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div, bool convert_to_loca
 				u2 = units[i];
 				if(u2->subtype() == SUBTYPE_BASE_UNIT && (points == 0 || (points == 1 && minus))) {
 					for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
-						if(cu->get(i2, &exp)->baseUnit() == u2 && !cu->get(i2)->hasComplexRelationTo(u2)) {
+						if(cu->get(i2, &exp)->baseUnit() == u2 && !cu->get(i2)->hasNonlinearRelationTo(u2)) {
 							points = 1;
 							best_u = u2;
 							minus = !has_positive && (exp < 0);
@@ -3331,7 +3331,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div, bool convert_to_loca
 					b_exp = au->baseExponent();
 					new_points = 0;
 					new_points_m = 0;
-					if((b_exp != 1 || bu->subtype() == SUBTYPE_COMPOSITE_UNIT) && !au->hasComplexRelationTo(bu)) {
+					if((b_exp != 1 || bu->subtype() == SUBTYPE_COMPOSITE_UNIT) && !au->hasNonlinearRelationTo(bu)) {
 						if(bu->subtype() == SUBTYPE_BASE_UNIT) {
 							for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
 								if(cu->get(i2, &exp) == bu) {
@@ -3543,8 +3543,14 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				}
 				bool is_si_units = mstruct_new.base()->unit()->isSIUnit();
 				if(mstruct_new.base()->unit()->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-					mstruct_new = convertToBestUnit(convertToBaseUnits(mstruct_new, eo), eo, convert_to_si_units);
-					if(mstruct_new == mstruct) return mstruct_new;
+					mstruct_new.convertToBaseUnits(true, NULL, true, eo2, true);
+					if(mstruct_new.equals(mstruct, true, true)) {
+						return mstruct_new;
+					} else {
+						mstruct_new.eval(eo2);
+					}
+					mstruct_new = convertToBestUnit(mstruct_new, eo, convert_to_si_units);
+					if(mstruct_new.equals(mstruct, true, true)) return mstruct_new;
 				} else {
 					CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
 					cu->add(mstruct_new.base()->unit(), mstruct_new.exponent()->number().intValue());
@@ -3553,9 +3559,13 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 						delete cu;
 						return mstruct_new;
 					}
+					delete cu;
+					if(eo.approximation == APPROXIMATION_EXACT && cu->hasApproximateRelationTo(u, true)) {
+						if(!u->isRegistered()) delete u;
+						return mstruct_new;
+					}
 					mstruct_new = convert(mstruct_new, u, eo, true);
 					if(!u->isRegistered()) delete u;
-					delete cu;
 				}
 				int new_points = 0;
 				bool new_is_si_units = true;
@@ -3635,10 +3645,13 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 		case STRUCT_UNIT: {
 			if((!mstruct.unit()->isCurrency() || !eo.local_currency_conversion) && (!convert_to_si_units || mstruct.unit()->isSIUnit())) return mstruct;
 			Unit *u = getBestUnit(mstruct.unit(), false, eo.local_currency_conversion);
-			if(u != mstruct.unit() && (u->isSIUnit() || (u->isCurrency() && eo.local_currency_conversion))) {
-				MathStructure mstruct_new = convert(mstruct, u, eo, true);
+			if(u != mstruct.unit()) {
+				if((u->isSIUnit() || (u->isCurrency() && eo.local_currency_conversion)) && (eo.approximation != APPROXIMATION_EXACT || !mstruct.unit()->hasApproximateRelationTo(u, true))) {
+					MathStructure mstruct_new = convert(mstruct, u, eo, true);
+					if(!u->isRegistered()) delete u;
+					return mstruct_new;
+				}
 				if(!u->isRegistered()) delete u;
-				return mstruct_new;
 			}
 			break;
 		}
@@ -3679,7 +3692,11 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 			if((!is_currency || !eo.local_currency_conversion) && (!convert_to_si_units || is_si_units) && old_points <= 1 && !old_minus) {
 				return mstruct_old;
 			}
-			MathStructure mstruct_new(convertToBaseUnits(mstruct_old, eo));	
+			MathStructure mstruct_new(mstruct_old);
+			mstruct_new.convertToBaseUnits(true, NULL, true, eo2, true);
+			if(!mstruct_new.equals(mstruct, true, true)) {
+				mstruct_new.eval(eo2);
+			}
 			if(mstruct_new.type() != STRUCT_MULTIPLICATION) {
 				mstruct_new = convertToBestUnit(mstruct_new, eo, convert_to_si_units);
 			} else {
@@ -3705,9 +3722,11 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				if(b) {
 					Unit *u = getBestUnit(cu, false, eo.local_currency_conversion);
 					if(u != cu) {
-						mstruct_new = convert(mstruct_new, u, eo, true);
+						if(eo.approximation != APPROXIMATION_EXACT || !cu->hasApproximateRelationTo(u, true)) {
+							mstruct_new = convert(mstruct_new, u, eo, true);
+							is_converted = true;
+						}
 						if(!u->isRegistered()) delete u;
-						is_converted = true;
 					}
 				}
 				delete cu;
@@ -3716,7 +3735,8 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				}
 				if(child_updated) mstruct_new.eval(eo2);
 			}
-			if(mstruct_new == mstruct_old) return mstruct_old;
+			if((eo.approximation == APPROXIMATION_EXACT && !mstruct_old.isApproximate()) && (mstruct_new.isApproximate() || (mstruct_old.containsInterval(true, true, false, false, true) <= 0 && mstruct_new.containsInterval(true, true, false, false, true) > 0))) return mstruct_old;
+			if(mstruct_new.equals(mstruct_old, true, true)) return mstruct_old;
 			int new_points = 0;
 			bool new_minus = true;
 			bool new_is_si_units = true;

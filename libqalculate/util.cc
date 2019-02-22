@@ -149,24 +149,8 @@ string p2s(void *o) {
 	string stmp = buffer;
 	return stmp;
 }
-string i2s(int value) {
-	// char buffer[10];
-	sprintf(buffer, "%i", value);
-	string stmp = buffer;
-	return stmp;
-}
 string i2s(long int value) {
 	sprintf(buffer, "%li", value);
-	string stmp = buffer;
-	return stmp;
-}
-string i2s(unsigned int value) {
-	sprintf(buffer, "%u", value);
-	string stmp = buffer;
-	return stmp;
-}
-string i2s(unsigned long int value) {
-	sprintf(buffer, "%lu", value);
 	string stmp = buffer;
 	return stmp;
 }
@@ -194,10 +178,10 @@ const char *b2oo(bool b, bool capital) {
 	if(b) return _("on");
 	return _("off");
 }
-int s2i(const string& str) {
+long int s2i(const string& str) {
 	return strtol(str.c_str(), NULL, 10);
 }
-int s2i(const char *str) {
+long int s2i(const char *str) {
 	return strtol(str, NULL, 10);
 }
 void *s2p(const string& str) {

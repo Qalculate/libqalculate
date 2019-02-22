@@ -644,7 +644,7 @@ static const struct EvaluationOptions {
 	/// If units will be synced/converted to allow evaluation (ex. 1 min + 1 s=60 s+ 1 s = 61 s). Default: true
 	bool sync_units;
 	/// If units with complex/non-linear relations (ex. degress celsius and fahrenheit) will synced/converted. Default: true
-	bool sync_complex_unit_relations;
+	bool sync_nonlinear_unit_relations;
 	/// If unit prefixes in original expression will be kept. Default: false
 	bool keep_prefixes;
 	/// If known variables will be replaced by their value. Default: true

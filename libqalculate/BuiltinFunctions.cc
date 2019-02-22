@@ -6065,7 +6065,7 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 	return true;
 }
 int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	CALCULATOR->beginTemporaryStopIntervalArithmetic();
+
 	MathStructure m1(vargs[2]), m2(vargs[3]);
 	if(vargs[2].isUndefined() != vargs[3].isUndefined()) {
 		if(vargs[2].isUndefined()) m1.set(nr_minus_inf);
@@ -6074,7 +6074,6 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	m1.eval(eo);
 	m2.eval(eo);
 	bool definite_integral = !vargs[2].isUndefined() && !vargs[3].isUndefined() && (!m1.isNumber() || !m1.number().isMinusInfinity()) && (!m2.isNumber() || !m2.number().isPlusInfinity());
-	CALCULATOR->endTemporaryStopIntervalArithmetic();
 	
 	CALCULATOR->beginTemporaryStopMessages();
 	
@@ -6104,6 +6103,8 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		mstruct_pre.replace(vargs[1], x_var);
 		var->destroy();
 	}
+
+	if(definite_integral) eo2.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
 
 	mstruct = mstruct_pre;
 	mstruct.eval(eo2);
@@ -6189,13 +6190,14 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 
 	CALCULATOR->endTemporaryStopMessages();
 	
-	CALCULATOR->beginTemporaryStopIntervalArithmetic();
 	if(eo.approximation != APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_APPROXIMATE;
 	if(mstruct.containsInterval() && eo.approximation == APPROXIMATION_EXACT) {
 		CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
 		mstruct.replace(x_var, vargs[1]);
 		return -1;
 	}
+	CALCULATOR->beginTemporaryStopIntervalArithmetic();
+	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
 	mstruct = mstruct_pre;
 	mstruct.eval(eo2);
 	if(m1.isNumber() && m1.number().isReal() && m2.isNumber() && m2.number().isReal()) {
@@ -6253,6 +6255,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				nr_interval.setInterval(nr_begin, nr_end);
 				CALCULATOR->endTemporaryStopIntervalArithmetic();
 				CALCULATOR->beginTemporaryEnableIntervalArithmetic();
+				eo2.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
 				MathStructure m_interval(nr_interval);
 				KnownVariable *v = new KnownVariable("", "v", m_interval);
 				v->ref();
@@ -6262,6 +6265,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				if(CALCULATOR->endTemporaryStopMessages() > 0) b_unknown_precision = true;
 				CALCULATOR->endTemporaryEnableIntervalArithmetic();
 				CALCULATOR->beginTemporaryStopIntervalArithmetic();
+				eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
 				if(!merr.isNumber() || !merr.number().isReal()) b_unknown_precision = true;
 				v->destroy();
 				if(!b_unknown_precision) {

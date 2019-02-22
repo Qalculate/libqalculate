@@ -43,16 +43,13 @@ void sleep_ms(int milliseconds);
 string& gsub(const string &pattern, const string &sub, string &str);
 string& gsub(const char *pattern, const char *sub, string &str);
 string d2s(double value, int precision = 100);
-string i2s(int value);
 string i2s(long int value);
-string i2s(unsigned int value);
-string i2s(unsigned long int value);
 const char *b2yn(bool b, bool capital = true);
 const char *b2tf(bool b, bool capital = true);
 const char *b2oo(bool b, bool capital = true);
 string p2s(void *o);
-int s2i(const string& str);
-int s2i(const char *str);
+long int s2i(const string& str);
+long int s2i(const char *str);
 void *s2p(const string& str);
 void *s2p(const char *str);
 

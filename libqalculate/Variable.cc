@@ -414,7 +414,7 @@ const MathStructure &KnownVariable::get() {
 	if(b_expression && !CALCULATOR->variableUnitsEnabled() && !sunit.empty()) m = mstruct_alt;
 	if(b_expression && (!m || m->isAborted())) {
 		if(m) m->unref();
-		if(m == mstruct_alt) {
+		if(!CALCULATOR->variableUnitsEnabled() && !sunit.empty()) {
 			mstruct_alt = new MathStructure();
 			m = mstruct_alt;
 		} else {
