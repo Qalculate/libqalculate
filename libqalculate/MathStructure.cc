@@ -1,7 +1,7 @@
 /*
     Qalculate (library)
 
-    Copyright (C) 2003-2007, 2008, 2016-2018  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2019  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -132,6 +132,7 @@ bool is_unit_multiexp(const MathStructure &mstruct);
 bool has_approximate_relation_to_base(Unit *u, bool do_intervals = true);
 bool contains_approximate_relation_to_base(const MathStructure &m, bool do_intervals = true);
 bool contains_diff_for(const MathStructure &m, const MathStructure &x_var);
+bool separate_unit_vars(MathStructure &m, const EvaluationOptions &eo, bool only_approximate, bool dry_run = false);
 
 bool flattenMultiplication(MathStructure &mstruct) {
 	bool retval = false;
@@ -2307,6 +2308,7 @@ ComparisonResult MathStructure::compare(const MathStructure &o) const {
 	MathStructure mtest(*this);
 	EvaluationOptions eo = default_evaluation_options;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
+	eo.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 	mtest -= o;
 	mtest.calculateFunctions(eo);
 	mtest.calculatesub(eo, eo);
@@ -3189,7 +3191,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 				}
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
-			} else if(CALCULATOR->u_second && ((mstruct.isUnit() && mstruct.unit()->baseUnit() == CALCULATOR->u_second && mstruct.unit()->baseExponent() == 1 && !mstruct.unit()->hasComplexRelationTo(CALCULATOR->u_second)) || (mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[0].number().isReal() && !mstruct[0].number().isInterval() && mstruct[1].isUnit() && mstruct[1].unit()->baseUnit() == CALCULATOR->u_second && mstruct[1].unit()->baseExponent() == 1 && !mstruct[1].unit()->hasComplexRelationTo(CALCULATOR->u_second)))) {
+			} else if(CALCULATOR->u_second && ((mstruct.isUnit() && mstruct.unit()->baseUnit() == CALCULATOR->u_second && mstruct.unit()->baseExponent() == 1 && !mstruct.unit()->hasNonlinearRelationTo(CALCULATOR->u_second)) || (mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[0].number().isReal() && !mstruct[0].number().isInterval() && mstruct[1].isUnit() && mstruct[1].unit()->baseUnit() == CALCULATOR->u_second && mstruct[1].unit()->baseExponent() == 1 && !mstruct[1].unit()->hasNonlinearRelationTo(CALCULATOR->u_second)))) {
 				MathStructure mmul(1, 1, 0);
 				Unit *u;
 				if(mstruct.isMultiplication()) {
@@ -3459,6 +3461,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			MathStructure mtest(mstruct);
 			EvaluationOptions eo2 = eo;
 			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			if(eo2.interval_calculation == INTERVAL_CALCULATION_NONE) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 			mtest.calculateFunctions(eo2);
 			mtest.calculatesub(eo2, eo2);
 			CALCULATOR->endTemporaryStopMessages();
@@ -3515,6 +3518,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			MathStructure mtest(*this);
 			EvaluationOptions eo2 = eo;
 			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			if(eo2.interval_calculation == INTERVAL_CALCULATION_NONE) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 			mtest.calculateFunctions(eo2);
 			mtest.calculatesub(eo2, eo2);
 			CALCULATOR->endTemporaryStopMessages();
@@ -4554,10 +4558,16 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							}
 						}
 					}
-					if(mstruct.isFunction() && o_function == CALCULATOR->f_stripunits && mstruct.function() == CALCULATOR->f_stripunits && mstruct.size() == 1 && SIZE == 1) {
-						mstruct[0].ref();
-						CHILD(0).multiply_nocopy(&mstruct[0]);
-						return 1;
+					if(mstruct.function() == CALCULATOR->f_stripunits && mstruct.size() == 1) {
+						if(m_type == STRUCT_POWER && CHILD(0).isVariable() && CHILD(0).variable()->isKnown() && mstruct[0].contains(CHILD(0), false) > 0) {
+							if(separate_unit_vars(CHILD(0), eo, false)) {
+								calculateRaiseExponent(eo);
+								mstruct.ref();
+								multiply_nocopy(&mstruct);
+								calculateMultiplyLast(eo);
+								return 1;
+							}
+						}
 					}
 				}
 				default: {
@@ -4789,6 +4799,28 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					}
 				}
 			}
+			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) {
+				if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_stripunits && mstruct.size() == 1) {
+					mstruct[0].ref();
+					CHILD(0).multiply_nocopy(&mstruct[0]);
+					return 1;
+				} else if(mstruct.isVariable() && mstruct.variable()->isKnown() && CHILD(0).contains(mstruct, false) > 0) {
+					if(separate_unit_vars(mstruct, eo, false)) {
+						mstruct.ref();
+						multiply_nocopy(&mstruct);
+						calculateMultiplyLast(eo);
+						return 1;
+					}
+				} else if(mstruct.isPower() && mstruct[0].isVariable() && mstruct[0].variable()->isKnown() && CHILD(0).contains(mstruct[0], false) > 0) {
+					if(separate_unit_vars(mstruct[0], eo, false)) {
+						mstruct.calculateRaiseExponent(eo);
+						mstruct.ref();
+						multiply_nocopy(&mstruct);
+						calculateMultiplyLast(eo);
+						return 1;
+					}
+				}
+			}
 		}
 		default: {
 			switch(mstruct.type()) {
@@ -4806,6 +4838,16 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					}
 				}
 				default: {
+					if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_stripunits && mstruct.size() == 1) {
+						if(m_type == STRUCT_VARIABLE && o_variable->isKnown() && mstruct[0].contains(*this, false) > 0) {
+							if(separate_unit_vars(*this, eo, false)) {
+								mstruct.ref();
+								multiply_nocopy(&mstruct);
+								calculateMultiplyLast(eo);
+								return 1;
+							}
+						}
+					}
 					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, false, true, true) <= 0 || (isUnit() && unit() == CALCULATOR->u_rad) || (isFunction() && representsNumber(false))) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
 						clear(true); 
 						MERGE_APPROX_AND_PREC(mstruct)
@@ -5108,6 +5150,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		MathStructure mtest(mstruct);
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
+		if(eo2.interval_calculation == INTERVAL_CALCULATION_NONE) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 		mtest.calculateFunctions(eo2);
 		mtest.calculatesub(eo2, eo2);
 		CALCULATOR->endTemporaryStopMessages();
@@ -5137,6 +5180,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		MathStructure mtest(*this);
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
+		if(eo2.interval_calculation == INTERVAL_CALCULATION_NONE) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 		mtest.calculateFunctions(eo2);
 		mtest.calculatesub(eo2, eo2);
 		CALCULATOR->endTemporaryStopMessages();
@@ -7519,9 +7563,9 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		}
 		case STRUCT_ADDITION: {
 			MERGE_RECURSE
-			bool found_complex_relations = false;
-			if(eo.sync_units && (syncUnits(false, &found_complex_relations, true, feo) || (found_complex_relations && eo.sync_complex_unit_relations))) {
-				if(found_complex_relations && eo.sync_complex_unit_relations) {
+			bool found_nonlinear_relations = false;
+			if(eo.sync_units && (syncUnits(false, &found_nonlinear_relations, true, feo) || (found_nonlinear_relations && eo.sync_nonlinear_unit_relations))) {
+				if(found_nonlinear_relations && eo.sync_nonlinear_unit_relations) {
 					EvaluationOptions eo2 = eo;
 					eo2.expand = -3;
 					eo2.combine_divisions = false;
@@ -7542,7 +7586,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		case STRUCT_MULTIPLICATION: {
 
 			MERGE_RECURSE
-			if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, NULL, true, feo)) {
+			if(eo.sync_units && syncUnits(eo.sync_nonlinear_unit_relations, NULL, true, feo)) {
 				unformat(eo);
 				MERGE_RECURSE
 			}
@@ -7820,7 +7864,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				CHILD(1).calculatesub(eo2, feo, true, this, 1);
 				CHILDREN_UPDATED;
 			}
-			if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, NULL, true, feo)) {
+			if(eo.sync_units && syncUnits(eo.sync_nonlinear_unit_relations, NULL, true, feo)) {
 				unformat(eo);
 				if(recursive) {			
 					CHILD(0).calculatesub(eo2, feo, true, this, 0);
@@ -8211,7 +8255,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				}
 				CHILDREN_UPDATED;
 			}
-			if(eo.sync_units && syncUnits(eo.sync_complex_unit_relations, NULL, true, feo)) {
+			if(eo.sync_units && syncUnits(eo.sync_nonlinear_unit_relations, NULL, true, feo)) {
 				unformat(eo);
 				if(recursive) {
 					for(size_t i = 0; i < SIZE; i++) {
@@ -10095,7 +10139,7 @@ void clean_multiplications(MathStructure &mstruct) {
 }
 
 bool containsComplexUnits(const MathStructure &mstruct) {
-	if(mstruct.type() == STRUCT_UNIT && mstruct.unit()->hasComplexRelationTo(mstruct.unit()->baseUnit())) return true;
+	if(mstruct.type() == STRUCT_UNIT && mstruct.unit()->hasNonlinearRelationTo(mstruct.unit()->baseUnit())) return true;
 	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_stripunits) return false;
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(containsComplexUnits(mstruct[i])) {
@@ -12390,20 +12434,21 @@ void eval_comparison_sides(MathStructure &m, const EvaluationOptions &eo) {
 	}
 }
 
-bool separate_unit_vars(MathStructure &m, const EvaluationOptions &eo) {
+bool separate_unit_vars(MathStructure &m, const EvaluationOptions &eo, bool only_approximate, bool dry_run) {
 	if(m.isVariable() && m.variable()->isKnown()) {
 		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
 		if(mvar.isMultiplication()) {
 			bool b = false;
 			for(size_t i = 0; i < mvar.size(); i++) {
 				if(is_unit_multiexp(mvar[i])) {
-					if(!b) b = contains_approximate_relation_to_base(mvar[i], true);
+					if(!b) b = !only_approximate || contains_approximate_relation_to_base(mvar[i], true);
 				} else if(mvar[i].containsType(STRUCT_UNIT, false, true, true) != 0) {
 					b = false;
 					break;
 				}
 			}
 			if(!b) return false;
+			if(dry_run) return true;
 			m.transform(CALCULATOR->f_stripunits);
 			for(size_t i = 0; i < mvar.size(); i++) {
 				if(is_unit_multiexp(mvar[i])) {
@@ -12417,7 +12462,11 @@ bool separate_unit_vars(MathStructure &m, const EvaluationOptions &eo) {
 	if(m.isFunction() && m.function() == CALCULATOR->f_stripunits) return false;
 	bool b = false;
 	for(size_t i = 0; i < m.size(); i++) {
-		if(separate_unit_vars(m[i], eo)) b = true;
+		if(separate_unit_vars(m[i], eo, only_approximate, dry_run)) {
+			b = true;
+			if(dry_run) return true;
+		}
+		
 	}
 	return b;
 }
@@ -12455,7 +12504,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			vector<KnownVariable*> vars;
 			vector<MathStructure> uncs;
 			calculatesub(eo3, eo3);
-			while(eo.sync_units && (separate_unit_vars(*this, feo) || sync_approximate_units(*this, feo, &vars, &uncs, false))) {
+			while(eo.sync_units && (separate_unit_vars(*this, feo, true) || sync_approximate_units(*this, feo, &vars, &uncs, false))) {
 				calculatesub(eo3, eo3);
 			}
 			eo3.approximation = APPROXIMATION_APPROXIMATE;
@@ -12482,7 +12531,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				vector<KnownVariable*> vars;
 				vector<MathStructure> uncs;
 				calculatesub(eo3, eo3);
-				while(eo.sync_units && (separate_unit_vars(*this, feo) || sync_approximate_units(*this, feo, &vars, &uncs, false))) {
+				while(eo.sync_units && (separate_unit_vars(*this, feo, true) || sync_approximate_units(*this, feo, &vars, &uncs, false))) {
 					calculatesub(eo3, eo3);
 				}
 			}
@@ -18640,15 +18689,21 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				if(isApproximate() || (top_parent && top_parent->isApproximate())) ips_n.parent_approximate = true;
 				ips_n.parent_precision = precision();
 				if(top_parent && top_parent->precision() < 0 && top_parent->precision() < ips_n.parent_precision) ips_n.parent_precision = top_parent->precision();
+				bool approximately_displayed = false;
+				PrintOptions po2 = po;
+				po2.is_approximate = &approximately_displayed;
+				if(po.base != BASE_ROMAN_NUMERALS && po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
+					po2.number_fraction_format = FRACTION_DECIMAL;
+					o_number.print(po2, ips_n);
+					if(!approximately_displayed) break;
+					approximately_displayed = false;
+				}
 				Number num(o_number.numerator());
 				Number den(o_number.denominator());
 				if(isApproximate()) {
 					num.setApproximate();
 					den.setApproximate();
 				}
-				bool approximately_displayed = false;
-				PrintOptions po2 = po;
-				po2.is_approximate = &approximately_displayed;
 				num.print(po2, ips_n);
 				if(!approximately_displayed || po.base == BASE_ROMAN_NUMERALS) {
 					den.print(po2, ips_n);
@@ -20437,7 +20492,7 @@ int MathStructure::isUnitCompatible(const MathStructure &mstruct) const {
 	return -1;
 }
 
-bool MathStructure::syncUnits(bool sync_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo) {
+bool MathStructure::syncUnits(bool sync_nonlinear_relations, bool *found_nonlinear_relations, bool calculate_new_functions, const EvaluationOptions &feo) {
 	if(SIZE == 0) return false;
 	vector<Unit*> base_units;
 	vector<AliasUnit*> alias_units;
@@ -20564,102 +20619,24 @@ bool MathStructure::syncUnits(bool sync_complex_relations, bool *found_complex_r
 	b = false;
 	bool fcr = false;
 	for(size_t i = 0; i < composite_units.size(); i++) {
-		if(convert(composite_units[i], sync_complex_relations, &fcr, calculate_new_functions, feo)) b = true;
+		if(convert(composite_units[i], sync_nonlinear_relations, (found_nonlinear_relations || sync_nonlinear_relations) ? &fcr : NULL, calculate_new_functions, feo)) b = true;
 	}
 	if(dissolveAllCompositeUnits()) b = true;
 	for(size_t i = 0; i < base_units.size(); i++) {
-		if(convert(base_units[i], sync_complex_relations, &fcr, calculate_new_functions, feo)) b = true;
+		if(convert(base_units[i], sync_nonlinear_relations, (found_nonlinear_relations || sync_nonlinear_relations) ? &fcr : NULL, calculate_new_functions, feo)) b = true;
 	}
 	for(size_t i = 0; i < alias_units.size(); i++) {
-		if(convert(alias_units[i], sync_complex_relations, &fcr, calculate_new_functions, feo)) b = true;
+		if(convert(alias_units[i], sync_nonlinear_relations, (found_nonlinear_relations || sync_nonlinear_relations) ? &fcr : NULL, calculate_new_functions, feo)) b = true;
 	}
-	if(sync_complex_relations && fcr) CALCULATOR->error(false, _("Calculations involving conversion of units without proportional linear relationship (e.g. with multiple temperature units), might give unexpected results and is not recommended."), NULL);
-	if(fcr && found_complex_relations) *found_complex_relations = fcr;
+	if(b && sync_nonlinear_relations && fcr) CALCULATOR->error(false, _("Calculations involving conversion of units without proportional linear relationship (e.g. with multiple temperature units), might give unexpected results and is not recommended."), NULL);
+	if(fcr && found_nonlinear_relations) *found_nonlinear_relations = fcr;
 	return b;
 }
 
-bool has_approximate_relation_to(Unit *u, Unit *u2, const EvaluationOptions &eo) {
-	if(u == u2) return false;
-	if(u2->subtype() == SUBTYPE_ALIAS_UNIT && u == ((AliasUnit*) u2)->firstBaseUnit()) {
-		if(u2->isApproximate()) return true;
-		if(((AliasUnit*) u2)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) == string::npos) return false;
-		MathStructure m(1, 1, 0), mexp(1, 1, 0);
-		((AliasUnit*) u2)->convertToFirstBaseUnit(m, mexp);
-		return m.containsInterval(true, eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES, false, true, true);
-	}
-	if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
-		if(u2 == ((AliasUnit*) u)->firstBaseUnit()) {
-			if(((AliasUnit*) u)->isApproximate()) return true;
-			if(((AliasUnit*) u)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) == string::npos) return false;
-			MathStructure m(1, 1, 0), mexp(1, 1, 0);
-			((AliasUnit*) u)->convertToFirstBaseUnit(m, mexp);
-			return m.containsInterval(true, eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES, false, true, true);
-		}
-		Unit *ub = u->baseUnit();
-		Unit *ub2 = u2->baseUnit();
-		if(ub2 != ub) {
-			if(ub->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-				if(has_approximate_relation_to(u, ub, eo)) return ((CompositeUnit*) ub)->containsRelativeTo(u2);
-				for(size_t i = 1; i <= ((CompositeUnit*) ub)->countUnits(); i++) {
-					if(has_approximate_relation_to(((CompositeUnit*) ub)->get(i), u2, eo)) return true;
-				}
-				return false;
-			}
-			if(ub2->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-				if(((CompositeUnit*) ub2)->containsRelativeTo(u2) && (has_approximate_relation_to(u2, ub2, eo) || has_approximate_relation_to(u, ub, eo))) return true;
-			}
-			return false;
-		}
-		if(u->isParentOf(u2)) {
-			Unit *fbu = u2;
-			while(true) {
-				if((const Unit*) fbu == u) return false;
-				if(has_approximate_relation_to((AliasUnit*) fbu, ((AliasUnit*) fbu)->firstBaseUnit(), eo)) return true;
-				if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
-				fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();			
-			}	
-		} else if(u->isChildOf(u2)) {
-			Unit *fbu = u;
-			if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
-			while(true) {
-				if((const Unit*) fbu == u2) return false;
-				if(has_approximate_relation_to((AliasUnit*) fbu, ((AliasUnit*) fbu)->firstBaseUnit(), eo)) return true;
-				if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
-				fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();
-			}			
-		} else {
-			return has_approximate_relation_to(u, u->baseUnit(), eo) || has_approximate_relation_to(u2, u2->baseUnit(), eo);
-		}
-	} else {
-		Unit *ub2 = u2->baseUnit();
-		if(ub2 != u) {
-			if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-				const CompositeUnit *cu = (CompositeUnit*) u;
-				for(size_t i = 1; i <= cu->countUnits(); i++) {
-					if(has_approximate_relation_to(cu->get(i), u2, eo)) return true;
-				}
-				return false;
-			}
-			if(ub2->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-				if(has_approximate_relation_to(u2, ub2, eo) && (((CompositeUnit*) ub2))->containsRelativeTo(u2)) return true;
-			}
-			return false;
-		}
-		Unit *fbu = u2;
-		if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
-		while(true) {
-			if(fbu == u) return false;
-			if(has_approximate_relation_to((AliasUnit*) fbu, ((AliasUnit*) fbu)->firstBaseUnit(), eo)) return true;
-			if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
-			fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();
-		}
-	}
-	return false;
-}
 bool has_approximate_relation_to_base(Unit *u, bool do_intervals) {
 	if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
 		if(((AliasUnit*) u)->isApproximate()) return do_intervals;
-		if(((AliasUnit*) u)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) != string::npos) return true;
+		if(((AliasUnit*) u)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) != string::npos && !((AliasUnit*) u)->hasNonlinearExpression()) return true;
 		return has_approximate_relation_to_base(((AliasUnit*) u)->firstBaseUnit());
 	} else if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 		for(size_t i = 1; i <= ((CompositeUnit*) u)->countUnits(); i++) {
@@ -20687,7 +20664,7 @@ bool MathStructure::testDissolveCompositeUnit(Unit *u) {
 	}
 	return false; 
 }
-bool test_dissolve_cu(MathStructure &mstruct, Unit *u, bool convert_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo, Prefix *new_prefix = NULL) {
+bool test_dissolve_cu(MathStructure &mstruct, Unit *u, bool convert_nonlinear_relations, bool *found_nonlinear_relations, bool calculate_new_functions, const EvaluationOptions &feo, Prefix *new_prefix = NULL) {
 	if(mstruct.isUnit()) {
 		if(mstruct.unit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			if(((CompositeUnit*) mstruct.unit())->containsRelativeTo(u)) {
@@ -20696,8 +20673,8 @@ bool test_dissolve_cu(MathStructure &mstruct, Unit *u, bool convert_complex_rela
 			}
 		} else if(mstruct.unit()->subtype() == SUBTYPE_ALIAS_UNIT && mstruct.unit()->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			if(((CompositeUnit*) (mstruct.unit()->baseUnit()))->containsRelativeTo(u)) {
-				if(mstruct.convert(mstruct.unit()->baseUnit(), convert_complex_relations, found_complex_relations, calculate_new_functions, feo)) {
-					mstruct.convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
+				if(mstruct.convert(mstruct.unit()->baseUnit(), convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo)) {
+					mstruct.convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
 					return true;
 				}
 			}
@@ -20767,7 +20744,7 @@ bool searchSubMultiplicationsForComplexRelations(Unit *u, const MathStructure &m
 	int b_c = -1;
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(mstruct[i].isUnit_exp()) {
-			if((mstruct[i].isUnit() && u->hasComplexRelationTo(mstruct[i].unit())) || (mstruct[i].isPower() && u->hasComplexRelationTo(mstruct[i][0].unit()))) {
+			if((mstruct[i].isUnit() && u->hasNonlinearRelationTo(mstruct[i].unit())) || (mstruct[i].isPower() && u->hasNonlinearRelationTo(mstruct[i][0].unit()))) {
 				return true;
 			}
 		} else if(b_c == -1 && mstruct[i].isMultiplication()) {
@@ -20781,50 +20758,59 @@ bool searchSubMultiplicationsForComplexRelations(Unit *u, const MathStructure &m
 	}
 	return false;
 }
-bool MathStructure::convertToBaseUnits(bool convert_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo) {
+bool MathStructure::convertToBaseUnits(bool convert_nonlinear_relations, bool *found_nonlinear_relations, bool calculate_new_functions, const EvaluationOptions &feo, bool avoid_approximate_variables) {
 	if(m_type == STRUCT_UNIT) {
 		if(o_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			set(((CompositeUnit*) o_unit)->generateMathStructure());
-			convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
+			convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, avoid_approximate_variables);
 			return true;
 		} else if(o_unit->subtype() == SUBTYPE_ALIAS_UNIT) {
 			AliasUnit *au = (AliasUnit*) o_unit;
-			if(au->hasComplexRelationTo(au->baseUnit())) {
-				if(found_complex_relations) *found_complex_relations = true;
-				if(!convert_complex_relations) {
-					if(!au->hasComplexExpression()) {
+			if(au->hasNonlinearRelationTo(au->baseUnit())) {
+				if(found_nonlinear_relations) *found_nonlinear_relations = true;
+				if(!convert_nonlinear_relations) {
+					if(!au->hasNonlinearExpression() && ((feo.approximation != APPROXIMATION_EXACT && feo.approximation != APPROXIMATION_EXACT_VARIABLES) || !au->hasApproximateExpression(avoid_approximate_variables, false))) {
 						MathStructure mstruct_old(*this);
 						if(convert(au->firstBaseUnit(), false, NULL, calculate_new_functions, feo) && !equals(mstruct_old)) {
-							convertToBaseUnits(false, NULL, calculate_new_functions, feo);
+							convertToBaseUnits(false, NULL, calculate_new_functions, feo, avoid_approximate_variables);
 							return true;
 						}
 					}
 					return false;
 				}
 			}
-			if(convert(au->baseUnit(), convert_complex_relations, found_complex_relations, calculate_new_functions, feo)) {
-				convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
+			if((feo.approximation == APPROXIMATION_EXACT || feo.approximation == APPROXIMATION_EXACT_VARIABLES) && au->hasApproximateRelationTo(au->baseUnit(), avoid_approximate_variables, false)) {
+				MathStructure mstruct_old(*this);
+				if(convert(au->firstBaseUnit(), false, NULL, calculate_new_functions, feo) && !equals(mstruct_old)) {
+					convertToBaseUnits(false, NULL, calculate_new_functions, feo, avoid_approximate_variables);
+					return true;
+				}
+				return false;
+			}
+			if(convert(au->baseUnit(), convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo)) {
+				convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, avoid_approximate_variables);
 				return true;
 			}
 		}
 		return false;
-	} else if(m_type == STRUCT_MULTIPLICATION && (convert_complex_relations || found_complex_relations)) {
+	} else if(m_type == STRUCT_MULTIPLICATION && (convert_nonlinear_relations || found_nonlinear_relations)) {
 		AliasUnit *complex_au = NULL;
-		if(convert_complex_relations && convertToBaseUnits(false, NULL, calculate_new_functions, feo)) {
+		if(convert_nonlinear_relations && convertToBaseUnits(false, NULL, calculate_new_functions, feo, avoid_approximate_variables)) {
+			convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, avoid_approximate_variables);
 			return true;
 		}
 		for(size_t i = 0; i < SIZE; i++) {
 			if(SIZE > 100 && CALCULATOR->aborted()) return false;
 			if(CHILD(i).isUnit_exp() && CHILD(i).unit_exp_unit()->subtype() == SUBTYPE_ALIAS_UNIT) {
 				AliasUnit *au = (AliasUnit*) CHILD(i).unit_exp_unit();
-				if(au && au->hasComplexRelationTo(au->baseUnit())) {
-					if(found_complex_relations) {
-						*found_complex_relations = true;
+				if(au && au->hasNonlinearRelationTo(au->baseUnit())) {
+					if(found_nonlinear_relations) {
+						*found_nonlinear_relations = true;
 					}
-					if(convert_complex_relations) {
+					if(convert_nonlinear_relations) {
 						if(complex_au) {
 							complex_au = NULL;
-							convert_complex_relations = false;
+							convert_nonlinear_relations = false;
 							break;
 						} else {
 							complex_au = au;
@@ -20835,17 +20821,19 @@ bool MathStructure::convertToBaseUnits(bool convert_complex_relations, bool *fou
 				}
 			}
 		}
-		if(convert_complex_relations && complex_au) {
+		if(convert_nonlinear_relations && complex_au && ((feo.approximation != APPROXIMATION_EXACT && feo.approximation != APPROXIMATION_EXACT_VARIABLES) || !complex_au->hasApproximateExpression(avoid_approximate_variables, false))) {
 			MathStructure mstruct_old(*this);
-			if(convert(complex_au->firstBaseUnit(), true, NULL, calculate_new_functions, feo)) {
+			if(convert(complex_au->firstBaseUnit(), true, NULL, calculate_new_functions, feo) && !equals(mstruct_old)) {
+				convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, avoid_approximate_variables);
 				return true;
 			}
 		}
 	} else if(m_type == STRUCT_FUNCTION) {
+		if(o_function == CALCULATOR->f_stripunits) return false;
 		bool b = false;
 		for(size_t i = 0; i < SIZE; i++) {
 			if(SIZE > 100 && CALCULATOR->aborted()) return b;
-			if((!o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) && CHILD(i).convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo)) {
+			if((!o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) && CHILD(i).convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, avoid_approximate_variables)) {
 				CHILD_UPDATED(i);
 				b = true;
 			}
@@ -20855,7 +20843,7 @@ bool MathStructure::convertToBaseUnits(bool convert_complex_relations, bool *fou
 	bool b = false; 
 	for(size_t i = 0; i < SIZE; i++) {
 		if(SIZE > 100 && CALCULATOR->aborted()) return b;
-		if(CHILD(i).convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo)) {
+		if(CHILD(i).convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, avoid_approximate_variables)) {
 			CHILD_UPDATED(i);
 			b = true;
 		}
@@ -20901,7 +20889,7 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
 		return convert_approximate(m, ((CompositeUnit*) u)->generateMathStructure(false, true), feo, vars, uncs, units, do_intervals);
 	}
 	if(m.type() == STRUCT_UNIT) {
-		if(!has_approximate_relation_to(u, m.unit(), feo) || u->hasComplexRelationTo(m.unit())) {
+		if(u->hasApproximateRelationTo(m.unit(), feo.approximation != APPROXIMATION_EXACT && feo.approximation != APPROXIMATION_EXACT_VARIABLES, true) || u->hasNonlinearRelationTo(m.unit())) {
 			return false;
 		}
 		if(!vars) return true;
@@ -21143,7 +21131,7 @@ bool sync_approximate_units(MathStructure &m, const EvaluationOptions &feo, vect
 }
 
 
-bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo, Prefix *new_prefix) {
+bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *found_nonlinear_relations, bool calculate_new_functions, const EvaluationOptions &feo, Prefix *new_prefix) {
 	if(m_type == STRUCT_ADDITION && containsType(STRUCT_DATETIME, false, true, false) > 0) return false;
 	bool b = false;
 	if(m_type == STRUCT_UNIT && o_unit == u) {
@@ -21158,15 +21146,15 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 		return false;
 	}
 	if(u->subtype() == SUBTYPE_COMPOSITE_UNIT && !(m_type == STRUCT_UNIT && o_unit->baseUnit() == u)) {
-		return convert(((CompositeUnit*) u)->generateMathStructure(false, true), convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
+		return convert(((CompositeUnit*) u)->generateMathStructure(false, true), convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo);
 	}
 	if(m_type == STRUCT_UNIT) {
-		if(u->hasComplexRelationTo(o_unit)) {
-			if(found_complex_relations) *found_complex_relations = true;
-			if(!convert_complex_relations) return false;
+		if(u->hasNonlinearRelationTo(o_unit)) {
+			if(found_nonlinear_relations) *found_nonlinear_relations = true;
+			if(!convert_nonlinear_relations) return false;
 		}
-		if(o_unit->baseUnit() != u->baseUnit() && test_dissolve_cu(*this, u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix)) {
-			convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
+		if(o_unit->baseUnit() != u->baseUnit() && test_dissolve_cu(*this, u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix)) {
+			convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
 			return true;
 		}
 		MathStructure *exp = new MathStructure(1, 1, 0);
@@ -21199,14 +21187,14 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 			return false;
 		}
 	} else {
-		if(convert_complex_relations || found_complex_relations) {
+		if(convert_nonlinear_relations || found_nonlinear_relations) {
 			if(m_type == STRUCT_MULTIPLICATION) {
 				long int b_c = -1;
 				for(size_t i = 0; i < SIZE; i++) {
 					if(CHILD(i).isUnit_exp()) {
 						Unit *u2 = CHILD(i).isPower() ? CHILD(i)[0].unit() : CHILD(i).unit();
-						if(u->hasComplexRelationTo(u2)) {
-							if(found_complex_relations) *found_complex_relations = true;
+						if(u->hasNonlinearRelationTo(u2)) {
+							if(found_nonlinear_relations) *found_nonlinear_relations = true;
 							
 							b_c = i;
 							break;
@@ -21219,18 +21207,18 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 					for(size_t i = 0; i < SIZE; i++) {
 						if(CHILD(i).isMultiplication()) {
 							if(searchSubMultiplicationsForComplexRelations(u, CHILD(i))) {
-								if(!convert_complex_relations) {
-									*found_complex_relations = true;
+								if(!convert_nonlinear_relations) {
+									*found_nonlinear_relations = true;
 									break;
 								}
 								flattenMultiplication(*this);
-								return convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
+								return convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
 							}
 						}
 					}
 				}
-				if(convert_complex_relations && b_c >= 0) {
-					if(flattenMultiplication(*this)) return convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
+				if(convert_nonlinear_relations && b_c >= 0) {
+					if(flattenMultiplication(*this)) return convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
 					MathStructure mstruct(1, 1);
 					MathStructure mstruct2(1, 1);
 					if(SIZE == 2) {
@@ -21262,11 +21250,11 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 					if(CHILD(b_c).isPower()) {
 						if(CHILD(b_c)[0].unit()->baseUnit() != u->baseUnit()) {
 							if(CHILD(b_c)[0].unit()->subtype() != SUBTYPE_BASE_UNIT && (CHILD(b_c)[0].unit()->subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) CHILD(b_c)[0].unit())->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT)) {
-								convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
+								convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo);
 							} else {
 								return false;
 							}
-							convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
+							convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
 							return true;
 						}	
 						exp = CHILD(b_c)[1];
@@ -21275,11 +21263,11 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 					} else {
 						if(CHILD(b_c).unit()->baseUnit() != u->baseUnit()) {
 							if(CHILD(b_c).unit()->subtype() != SUBTYPE_BASE_UNIT && (CHILD(b_c).unit()->subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) CHILD(b_c).unit())->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT)) {
-								convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
+								convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo);
 							} else {
 								return false;
 							}
-							convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
+							convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
 							return true;
 						}
 						u2 = CHILD(b_c).unit();
@@ -21294,7 +21282,7 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 						if(feo.approximation == APPROXIMATION_EXACT && !isApproximate() && (mstruct.isApproximate() || exp.isApproximate())) return false;
 						if(b_p) {
 							unformat(feo);
-							return convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
+							return convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
 						}
 						set(u);
 						if(!exp.isOne()) {
@@ -21313,16 +21301,16 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 					return false;
 				}
 			} else if(m_type == STRUCT_POWER) {
-				if(CHILD(0).isUnit() && u->hasComplexRelationTo(CHILD(0).unit())) {
-					if(found_complex_relations) *found_complex_relations = true;
-					if(convert_complex_relations) {
+				if(CHILD(0).isUnit() && u->hasNonlinearRelationTo(CHILD(0).unit())) {
+					if(found_nonlinear_relations) *found_nonlinear_relations = true;
+					if(convert_nonlinear_relations) {
 						if(CHILD(0).unit()->baseUnit() != u->baseUnit()) {
 							if(CHILD(0).unit()->subtype() != SUBTYPE_BASE_UNIT && (CHILD(0).unit()->subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) CHILD(0).unit())->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT)) {
-								convertToBaseUnits(convert_complex_relations, found_complex_relations, calculate_new_functions, feo);
+								convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo);
 							} else {
 								return false;
 							}
-							convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix);
+							convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
 							return true;
 						}	
 						MathStructure exp(CHILD(1));
@@ -21354,7 +21342,7 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 			}
 			/*if(m_type == STRUCT_MULTIPLICATION || m_type == STRUCT_POWER) {
 				for(size_t i = 0; i < SIZE; i++) {
-					if(CHILD(i).convert(u, false, found_complex_relations, calculate_new_functions, feo, new_prefix)) {
+					if(CHILD(i).convert(u, false, found_nonlinear_relations, calculate_new_functions, feo, new_prefix)) {
 						CHILD_UPDATED(i);
 						b = true;
 					}
@@ -21366,7 +21354,7 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 			if(o_function == CALCULATOR->f_stripunits) return b;
 			for(size_t i = 0; i < SIZE; i++) {
 				if(SIZE > 100 && CALCULATOR->aborted()) return b;
-				if((!o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) && CHILD(i).convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix)) {
+				if((!o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) && CHILD(i).convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix)) {
 					CHILD_UPDATED(i);
 					b = true;
 				}
@@ -21375,7 +21363,7 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 		}
 		for(size_t i = 0; i < SIZE; i++) {
 			if(SIZE > 100 && CALCULATOR->aborted()) return b;
-			if(CHILD(i).convert(u, convert_complex_relations, found_complex_relations, calculate_new_functions, feo, new_prefix)) {
+			if(CHILD(i).convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix)) {
 				CHILD_UPDATED(i);
 				b = true;
 			}
@@ -21384,13 +21372,13 @@ bool MathStructure::convert(Unit *u, bool convert_complex_relations, bool *found
 	}
 	return b;
 }
-bool MathStructure::convert(const MathStructure unit_mstruct, bool convert_complex_relations, bool *found_complex_relations, bool calculate_new_functions, const EvaluationOptions &feo) {
+bool MathStructure::convert(const MathStructure unit_mstruct, bool convert_nonlinear_relations, bool *found_nonlinear_relations, bool calculate_new_functions, const EvaluationOptions &feo) {
 	bool b = false;
 	if(unit_mstruct.type() == STRUCT_UNIT) {
-		if(convert(unit_mstruct.unit(), convert_complex_relations, found_complex_relations, calculate_new_functions, feo, feo.keep_prefixes ? unit_mstruct.prefix() : NULL)) b = true;
+		if(convert(unit_mstruct.unit(), convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, feo.keep_prefixes ? unit_mstruct.prefix() : NULL)) b = true;
 	} else {
 		for(size_t i = 0; i < unit_mstruct.size(); i++) {
-			if(convert(unit_mstruct[i], convert_complex_relations, found_complex_relations, calculate_new_functions, feo)) b = true;
+			if(convert(unit_mstruct[i], convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo)) b = true;
 		}
 	}	
 	return b;

@@ -1,18 +1,25 @@
+2019-02-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix exact decimals mode
+	* Fixes for conversion to base units with nonlinear unit relations
+	* Do not show nonlinear unit conversion warning unnecessarily
+	* Fix compilation on 64-bit Windows
+	* Uncertainty propagation improvements
+	* Fixes for conversion to base units or optimal units involving approximate relations in exact mode
+	* Improved simplification with nounit() factors
+	* Fix variable reparsing when variable units are (de)activated
+
 2019-02-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Replace decimal with exact decimal rational numbers when exact mode is toggled on (CLI)
 
 2019-02-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Separate interval calculation / uncertainty propagation method choice
-	  (from interval arithmetic for approximate functions and irrational 
-	  numbers)
+	* Separate interval calculation / uncertainty propagation method choice (from interval arithmetic for approximate functions and irrational numbers)
 	* Enable interval arithmetic by default (CLI)
 	* Relative uncertainty property for variables, units and data objects
 	* Fixes for complex uncertainty propagation
-	* Fix uncertainty propagation using variance formula with multiple
-	  non-variable intervals (was calculated using interval arithmetic,
-	  potentially after expansion)
+	* Fix uncertainty propagation using variance formula with multiple non-variable intervals (was calculated using interval arithmetic, potentially after expansion)
 	* Uncertainty function (absolute or relative uncertainty)
 	* Line break in variable info value (CLI)
 	* Show expression in function info (CLI)
@@ -41,8 +48,7 @@
 
 2019-01-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Only show 2 significant decimals (and equal amount of decimals for main value) 
-	  for uncertainty of number with +/- display
+	* Only show 2 significant decimals (and equal amount of decimals for main value) for uncertainty of number with +/- display
 	* Improve constants (including relations between physical constants)
 
 2019-01-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
@@ -141,8 +147,7 @@
 
 2018-11-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Do not transform rational numbers to integers in numerator and denominator
-	  if the resulting integers is not displayed in exact format
+	* Do not transform rational numbers to integers in numerator and denominator if the resulting integers is not displayed in exact format
 	* Add set options shortcuts and add option descriptions to help set, in qalc
 	* Set restrict_fraction_length to true for 'set fractions fraction' in qalc
 	* Hectare and decare units (in addition to ha/da and hectoare/decaare)
@@ -423,8 +428,7 @@
 
 2018-06-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* When using two's complement representation on negative non-integers,
-	  use the same number of decimals as without two's complement representation
+	* When using two's complement representation on negative non-integers, use the same number of decimals as without two's complement representation
 	* Fix round() for negative rational numbers!
 
 2018-06-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
@@ -454,8 +458,7 @@
 
 2018-05-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Do not automatically convert to broken down composite unit c for x*a+x*b (and similar),
-	  if a and b are both aliases for c
+	* Do not automatically convert to broken down composite unit c for x*a+x*b (and similar), if a and b are both aliases for c
 	* Allow 1°2'3" format for degree, arminute and arcsecond
 	* Add arcsec and armin reference name to Arcminute and Arcsecond
 	* Use prime symbols for sexagesimal output format
@@ -523,8 +526,7 @@
 
 2018-04-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Calculate each vector element (and each extra argument) separately in many functions
-	  (e.g. sin(5, 2, 3) = [-0.95892427, 0.90929743, 0.14112001])
+	* Calculate each vector element (and each extra argument) separately in many functions (e.g. sin(5, 2, 3) = [-0.95892427, 0.90929743, 0.14112001])
 
 2018-04-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -556,8 +558,7 @@
 
 2018-03-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Allow ParseOptions::comma_as_separator to have effect on unlocalizeExpression() and localizeExpression() 
-	  even if Calculator::useDecimalPoint(true) has not been called.
+	* Allow ParseOptions::comma_as_separator to have effect on unlocalizeExpression() and localizeExpression() even if Calculator::useDecimalPoint(true) has not been called.
 
 2018-03-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -571,8 +572,7 @@
 
 2018-03-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Derivative of gamma(), besselj(), heaviside(), Ci(), Si(), Shi(), Chi(), Ei(), Li(), li(), erf(), erfc(), sinc(),
-	  factorial and comparisons, and use dirac() for derative of sgn().
+	* Derivative of gamma(), besselj(), heaviside(), Ci(), Si(), Shi(), Chi(), Ei(), Li(), li(), erf(), erfc(), sinc(), factorial and comparisons, and use dirac() for derative of sgn().
 	* Complete the square when factorizing
 
 2018-03-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
@@ -633,7 +633,7 @@
 
 2018-02-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	Show a more informative message and fail in autogen.sh when doxygen and API docs is missing
+	* Show a more informative message and fail in autogen.sh when doxygen and API docs is missing
 
 2018-02-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -641,7 +641,7 @@
 
 2018-01-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	Use mpfr_rootn_ui with mpfr version >= 4.0.0
+	* Use mpfr_rootn_ui with mpfr version >= 4.0.0
 
 2018-01-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -1177,8 +1177,7 @@
 
 2016-05-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Redesigned parsing of spaces in multiplication and division and new parse options to ignore whitespace 
-	  or not treat implicit multiplication differently from explicit
+	* Redesigned parsing of spaces in multiplication and division and new parse options to ignore whitespace  or not treat implicit multiplication differently from explicit
 
 2016-05-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -1265,8 +1264,7 @@
 
 2016-04-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Introduce use_with_prefix property for units, to not use prefixes by defaults
-	  for units outside SI and CGS systems (solves bug #66)
+	* Introduce use_with_prefix property for units, to not use prefixes by defaults for units outside SI and CGS systems (solves bug #66)
 	* Partially revert commit [83fe08]
 	* Warn about bad integrate function
 	* Fix abbreviation for Rydberg constant (bug #140)
@@ -1283,8 +1281,7 @@
 	
 2009-01-05 Jonathan Stickel <jjstickel@vcn.com>
 
-	* General build updates and bug fixes, including the ability to build against
-	  cln >= 1.2.
+	* General build updates and bug fixes, including the ability to build against cln >= 1.2.
 	* Bug fix for segfaults with some uses of integrate() (bug 2537772).
 
 2008-03-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
@@ -1320,8 +1317,7 @@
 
 2007-04-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* New functions: addTime(), isNumber(), isReal(), isRational(), isInteger(),
-	  representsNumber(), representsReal(), representsRational(), representsInteger()
+	* New functions: addTime(), isNumber(), isReal(), isRational(), isInteger(), representsNumber(), representsReal(), representsRational(), representsInteger()
 	* Show argument name instead of \x in argument condition
 
 2007-04-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
@@ -1341,8 +1337,7 @@
 
 2007-04-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Avoid floating point underflow by, in approximate mode, 
-	  checking against the value of pi in sin() and cos()
+	* Avoid floating point underflow by, in approximate mode, checking against the value of pi in sin() and cos()
 	* Add more exact values for sin() and cos()
 
 2007-04-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
@@ -1426,8 +1421,7 @@
 
 2006-06-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Unevaluated arguments were used when checking for numerical arguments in
-	   logn(), which caused log2(16/2) to first be evaluated to ln(16/2)/ln(2).
+	* Unevaluated arguments were used when checking for numerical arguments in logn(), which caused log2(16/2) to first be evaluated to ln(16/2)/ln(2).
 
 2006-06-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -1435,8 +1429,7 @@
 
 2006-05-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Fix libqalculate.so unresolved symbols with patch from 
-	  Thomas de Grenier de Latour, add GLIB_LIBS to LIBADD
+	* Fix libqalculate.so unresolved symbols with patch from Thomas de Grenier de Latour, add GLIB_LIBS to LIBADD
 
 2006-05-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -1451,8 +1444,7 @@
 	* Do not update the stack until the calculation is finished
 	* stack() and register() functions
 	* Add true RPN mode to qalc
-	* Add "rpn", "stack" and "clear stack" commands, and "lowercase e", "lowercase numbers", "spell out logical", "dot as separator"
-	   and "rpn" set command options in qalc
+	* Add "rpn", "stack" and "clear stack" commands, and "lowercase e", "lowercase numbers", "spell out logical", "dot as separator" and "rpn" set command options in qalc
 	* Update Swedish translation
 
 2006-04-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
@@ -1548,8 +1540,7 @@
 2006-02-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Approximate comparison
-	* Avoid floating point overflow and underflow by not lowering precision in comparison
-	  and always using long floats
+	* Avoid floating point overflow and underflow by not lowering precision in comparison and always using long floats
 	* Use floating point raise more often in approximate mode
 
 2006-02-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
@@ -1644,8 +1635,7 @@
 
 2005-11-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Updated function arguments parsing ignoring space after function name and not stopping parsing of
-	  single argument without parentheses until space or right parenthesis without corresponding left parenthesis
+	* Updated function arguments parsing ignoring space after function name and not stopping parsing of single argument without parentheses until space or right parenthesis without corresponding left parenthesis
 	* Be more strict with 0/x if x is not non-zero
 	* Fix 1E-1 = 1e-1
 	* Calculate as float when 1.0001 > base < 0.9999 and exponent is greater than 10000 or less than -10000
@@ -3281,10 +3271,7 @@
 	* Fix insert function dialog
 	* Add scrollbars to table in matrix edit dialog
 	* CSV file import
-	* Lots of statistical functions: range, harmonic mean, geometric mean, trimmed mean,
-	  winsorized mean, quadratic mean, quartile, decile, percentile, interquartile range,
-	  variance, standard error, mean deviation, pearson, spearman's rho,
-	  covariance, correlation, pooled variance, paired t-test, unpaired t-test...
+	* Lots of statistical functions: range, harmonic mean, geometric mean, trimmed mean, winsorized mean, quadratic mean, quartile, decile, percentile, interquartile range, variance, standard error, mean deviation, pearson, spearman's rho, covariance, correlation, pooled variance, paired t-test, unpaired t-test...
 	* Add limits to custom sum function and allow references to other than current element (x_i-1)
 	* Limits
 	* Clean up base conversion functions
@@ -3525,8 +3512,7 @@
 
 	* Set LC_NUMERIC to "C" to make strold() happy
 	* Minor restructuring in preparation for different decimal points
-	* Comment out debug output. Now (x+y)^50 takes 1 instead of 100 seconds.
-	  For those interested, the result of (x+y)^100 is 24287 pixels wide...
+	* Comment out debug output. Now (x+y)^50 takes 1 instead of 100 seconds. For those interested, the result of (x+y)^100 is 24287 pixels wide...
 
 2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
 
@@ -3562,8 +3548,7 @@
 
 	* data/qalculate.glade,
 	* src/callbacks.cc,
-	* src/interface.cc: moving the menus to a (hidden) menubar to
-	solve a warning regarding an accelerator group
+	* src/interface.cc: moving the menus to a (hidden) menubar to solve a warning regarding an accelerator group
 
 2003-08-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -3582,8 +3567,7 @@
 2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
 
 	* configure.in: added -Wall stuff again (was just a typo)
-	* src/interface.cc: removed some unneccessary variables from
-	create_window
+	* src/interface.cc: removed some unneccessary variables from create_window
 
 2003-08-08  Sven Herzberg  <herzi@gnome-de.org>
 
@@ -3602,9 +3586,7 @@
 
 	* src/interface.cc,
 	* src/interface.h,
-	* src/main.cc: as the return value of create_window was only used to
-	display the widget, made create_window a void method and display
-	widget from there
+	* src/main.cc: as the return value of create_window was only used to display the widget, made create_window a void method and display widget from there
 
 2003-08-07  Sven Herzberg  <herzi@gnome-de.org>
 
