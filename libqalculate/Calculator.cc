@@ -6988,12 +6988,14 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 
 bool Calculator::loadGlobalDefinitions() {
 	bool b = true;
+	QalculateDateTime date("2019-05-20T00:00:00Z");
+	bool use_new_si = !date.isFutureDate();
 	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "prefixes.xml").c_str(), false)) b = false;
 	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "currencies.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "units.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), use_new_si ? "units.xml" : "units-old_SI.xml").c_str(), false)) b = false;
 	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "functions.xml").c_str(), false)) b = false;
 	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "datasets.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "variables.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), use_new_si ? "variables.xml" : "variables-old_SI.xml").c_str(), false)) b = false;
 	return b;
 }
 bool Calculator::loadGlobalDefinitions(string filename) {
@@ -7007,10 +7009,14 @@ bool Calculator::loadGlobalCurrencies() {
 }
 bool Calculator::loadGlobalUnits() {
 	bool b = loadGlobalDefinitions("currencies.xml");
-	return loadGlobalDefinitions("units.xml") && b;
+	QalculateDateTime date("2019-05-20T00:00:00Z");
+	bool use_new_si = !date.isFutureDate();
+	return loadGlobalDefinitions(use_new_si ? "units.xml" : "units-old_SI.xml") && b;
 }
 bool Calculator::loadGlobalVariables() {
-	return loadGlobalDefinitions("variables.xml");
+	QalculateDateTime date("2019-05-20T00:00:00Z");
+	bool use_new_si = !date.isFutureDate();
+	return loadGlobalDefinitions(use_new_si ? "variables.xml" : "variables-old_SI.xml");
 }
 bool Calculator::loadGlobalFunctions() {
 	return loadGlobalDefinitions("functions.xml");
@@ -7672,7 +7678,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {2, 9, 0};
+	int version_numbers[] = {3, 0, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

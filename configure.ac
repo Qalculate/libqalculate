@@ -6,7 +6,7 @@ dnl  ----------------------
 dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
-AC_INIT([libqalculate], [2.9.0])
+AC_INIT([libqalculate], [3.0.0])
 AC_CONFIG_SRCDIR(libqalculate/Calculator.cc)
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
@@ -80,11 +80,11 @@ AC_DEFINE([HAVE_PTHREADS],1,
 dnl libtool versioning for libqalculate
 
 dnl increment if the interface has additions, changes, removals.
-QALCULATE_CURRENT=20
+QALCULATE_CURRENT=21
 
 dnl increment any time the source changes; set to 
 dnl  0 if you increment CURRENT
-QALCULATE_REVISION=3
+QALCULATE_REVISION=0
 
 dnl increment if any interfaces have been added; set to 0
 dnl  if any interfaces have been removed. removal has 
@@ -268,7 +268,7 @@ AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "$PACKAGE_LOCALE_DIR",
 	 AC_MSG_RESULT("$PACKAGE_LOCALE_DIR")
 
 INTLTOOL_QALCULATE_DEFINITIONS_RULE='%.xml:       %.xml.in       $(INTLTOOL_MERGE) $(wildcard $(top_srcdir)/po-defs/*.po) ; LC_ALL=C $(INTLTOOL_MERGE) -x -u -c $(top_builddir)/po-defs/.intltool-merge-cache $(top_srcdir)/po-defs $< [$]@' 
-AC_SUBST(INTLTOOL_QALCULATE_DEFINITIONS_RULE)	 
+AC_SUBST(INTLTOOL_QALCULATE_DEFINITIONS_RULE)
 
 dnl  --------
 dnl | output |-----------------------------------------------------------------

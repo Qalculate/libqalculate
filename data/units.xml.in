@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="2.2.0">
+<QALCULATE version="3.0.0">
   <category>
     <!-- Unit category -->
     <_title>!units!Length</_title>
@@ -280,7 +280,7 @@
     </unit>
     <unit type="alias">
       <_title>Planck Length</_title>
-      <_names>r:planck_length,as:l_P</_names>
+      <names>r:planck_length,as:l_P</names>
       <system>Planck</system>
       <base>
         <unit>m</unit>
@@ -290,7 +290,7 @@
     </unit>
     <unit type="alias">
       <_title>Bohr (Atomic Unit of Length)</_title>
-      <_names>rs:bohr_unit,as:a_0unit</_names>
+      <names>rs:bohr_unit,as:a_0unit</names>
       <system>Atomic</system>
       <base>
         <unit>m</unit>
@@ -340,7 +340,7 @@
     </unit>
     <unit type="alias">
       <_title>Natural Unit of Length</_title>
-      <_names>ar:l_N,aus:&#x019B;_C</_names>
+      <names>ar:l_N,aus:&#x019B;_C</names>
       <system>Natural</system>
       <base>
         <unit>planck_p_electron_c</unit>
@@ -683,7 +683,7 @@
     </unit>
     <unit type="alias">
       <_title>Planck Mass</_title>
-      <_names>r:planck_mass,as:m_P</_names>
+      <names>r:planck_mass,as:m_P</names>
       <system>Planck</system>
       <base>
         <unit>g</unit>
@@ -693,7 +693,7 @@
     </unit>
     <unit type="alias">
       <_title>Atomic/Natural Unit of Mass</_title>
-      <_names>rs:electron_unit,as:m_eunit</_names>
+      <names>rs:electron_unit,as:m_eunit</names>
       <system>Atomic/Natural</system>
       <base>
         <unit>g</unit>
@@ -902,7 +902,7 @@
     </unit>
     <unit type="alias">
       <_title>Planck Time</_title>
-      <_names>r:planck_time,as:t_P</_names>
+      <names>r:planck_time,as:t_P</names>
       <system>Planck</system>
       <base>
         <unit>s</unit>
@@ -1060,7 +1060,7 @@
       </unit>
       <unit type="alias">
         <_title>Planck Charge</_title>
-        <_names>r:planck_charge,as:q_P</_names>
+        <names>r:planck_charge,as:q_P</names>
         <system>Planck</system>
         <base>
           <unit>C</unit>
@@ -1070,7 +1070,7 @@
       </unit>
       <unit type="alias">
         <_title>Atomic Unit of Charge</_title>
-        <_names>ars:e_unit,as:q_A</_names>
+        <names>ars:e_unit,as:q_A</names>
         <system>Atomic</system>
         <base>
           <unit>C</unit>
@@ -1423,7 +1423,7 @@
     </unit>
     <unit type="alias">
       <_title>Planck Temperature</_title>
-      <_names>r:planck_temperature,as:T_P</_names>
+      <names>r:planck_temperature,as:T_P</names>
       <system>Planck</system>
       <base>
         <unit>K</unit>
@@ -2356,7 +2356,7 @@
     </unit>
     <unit type="alias">
       <_title>Speed of Light (Natural Unit of Velocity)</_title>
-      <_names>ars:c_unit</_names>
+      <names>ars:c_unit</names>
       <base>
         <unit>m_p_s</unit>
         <relation>299792458</relation>
@@ -3125,7 +3125,7 @@
     </unit>
     <unit type="alias">
       <_title>Hartree (Atomic Unit of Energy)</_title>
-      <_names>ar:Ha,as:E_h,hartree</_names>
+      <names>ar:Ha,as:E_h,hartree</names>
       <system>Atomic</system>
       <base>
         <unit>J</unit>
@@ -3134,8 +3134,8 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Rydberg</_title>
-      <_names>ar:Ry,s:rydberg_unit</_names>
+      <_title>Rydberg (unit)</_title>
+      <names>ar:Ry,s:rydberg_unit</names>
       <base>
         <unit>Ha</unit>
         <relation>0.5</relation>
@@ -3239,7 +3239,7 @@
       </unit>
        <unit type="alias">
         <_title>Boltzmann (unit)</_title>
-        <_names>rs:boltzmann_unit,as:k_Bunit</_names>
+        <names>rs:boltzmann_unit,as:k_Bunit</names>
         <base>
           <unit>J_p_K</unit>
           <relation>1.380649E-23</relation>
@@ -3371,7 +3371,7 @@
       </unit>
       <unit type="alias">
         <_title>Planck over 2 pi (Atomic/Natural Unit of Action)</_title>
-        <_names>rs:planck_unit</_names>
+        <names>rs:planck_unit</names>
         <system>Atomic/Natural</system>
         <base>
           <unit>J_s</unit>
