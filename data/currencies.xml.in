@@ -3,12 +3,12 @@
   <category>
     <_title>Currency</_title>
     <builtin_unit name="EUR">
-      <_title>European Euros</_title>
+      <_title>European Euro</_title>
       <_names>ar:EUR,au:&#x20AC;,euro,p:euros</_names>
       <_countries>Andorra, Austria, Belgium, Cyprus, Estonia, Finland, France, Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City</_countries>
     </builtin_unit>
     <builtin_unit name="USD">
-      <_title>U.S. Dollars</_title>
+      <_title>U.S. Dollar</_title>
       <_names>a:$,ar:USD,dollar,p:dollars</_names>
       <_countries>United States, East Timor, Ecuador, El Salvador, Micronesia, Marshall Islands, Palau, Zimbabwe</_countries>
     </builtin_unit>
@@ -18,12 +18,12 @@
       <_countries>Japan</_countries>
     </builtin_unit>
     <builtin_unit name="DKK">
-      <_title>Danish Kroner</_title>
+      <_title>Danish Krone</_title>
       <_names>ar:DKK</_names>
       <_countries>Denmark</_countries>
     </builtin_unit>
     <builtin_unit name="GBP">
-      <_title>British Pounds</_title>
+      <_title>British Pound</_title>
       <_names>ar:GBP,au:&#xA3;</_names>
       <_countries>United Kingdom</_countries>
     </builtin_unit>
@@ -38,12 +38,12 @@
       <_countries>Sweden</_countries>
     </builtin_unit>
     <builtin_unit name="CHF">
-      <_title>Swiss Francs</_title>
+      <_title>Swiss Franc</_title>
       <_names>ar:CHF</_names>
       <_countries>Switzerland</_countries>
     </builtin_unit>
     <builtin_unit name="NOK">
-      <_title>Norwegian Kroner</_title>
+      <_title>Norwegian Krone</_title>
       <_names>ar:NOK</_names>
       <_countries>Norway</_countries>
     </builtin_unit>
@@ -73,7 +73,7 @@
       <_countries>Croatia</_countries>
     </builtin_unit>
     <builtin_unit name="CNY">
-      <_title>Yuan Renminbi (PR China)</_title>
+      <_title>Chinese Yuan Renminbi</_title>
       <_names>ar:CNY</_names>
       <_countries>China</_countries>
     </builtin_unit>
@@ -108,26 +108,26 @@
       <_countries>Turkey</_countries>
     </builtin_unit>
     <builtin_unit name="AUD">
-      <_title>Australian Dollars</_title>
+      <_title>Australian Dollar</_title>
       <_names>ar:AUD</_names>
       <_countries>Australia</_countries>
     </builtin_unit>
     <builtin_unit name="CAD">
-      <_title>Canadian Dollars</_title>
+      <_title>Canadian Dollar</_title>
       <_names>ar:CAD</_names>
       <_countries>Canada</_countries>
     </builtin_unit>
     <builtin_unit name="HKD">
-      <_title>Hong Kong Dollars</_title>
+      <_title>Hong Kong Dollar</_title>
       <_names>ar:HKD</_names>
     </builtin_unit>
     <builtin_unit name="NZD">
-      <_title>New Zealand Dollars</_title>
+      <_title>New Zealand Dollar</_title>
       <_names>ar:NZD</_names>
       <_countries>New Zealand</_countries>
     </builtin_unit>
     <builtin_unit name="SGD">
-      <_title>Singapore Dollars</_title>
+      <_title>Singapore Dollar</_title>
       <_names>ar:SGD</_names>
       <_countries>Singapore</_countries>
     </builtin_unit>
@@ -167,7 +167,7 @@
       <_countries>Iceland</_countries>
     </builtin_unit>
     <builtin_unit name="BTC">
-      <_title>Bitcoins</_title>
+      <_title>Bitcoin</_title>
       <_names>ar:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins</_names>
     </builtin_unit>
     <builtin_unit name="KES">

@@ -1357,7 +1357,7 @@
           <_title>Percentile (%)</_title>
         </argument>
         <argument index="3">
-          <_title>Quantile Algorithm (as in R)</_title>
+          <_title>Quantile algorithm (as in R)</_title>
         </argument>
       </builtin_function>
       <builtin_function name="min">

@@ -19534,6 +19534,13 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			const ExpressionName *ename = &o_unit->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 			if(o_prefix) print_str += o_prefix->name(po.abbreviate_names && ename->abbreviation, po.use_unicode_signs, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 			print_str += ename->name;
+			if(ename->suffix && !po.preserve_format && !po.use_reference_names) {
+				size_t i = print_str.rfind('_');
+				if(i != string::npos && print_str.substr(i + 1, print_str.length() - (i + 1)) == "unit") {
+					print_str = print_str.substr(0, i);
+					if(po.hide_underscore_spaces) gsub("_", " ", print_str);
+				}
+			}
 			if(po.hide_underscore_spaces && !ename->suffix) {
 				gsub("_", " ", print_str);
 			}
@@ -19542,6 +19549,13 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		case STRUCT_VARIABLE: {
 			const ExpressionName *ename = &o_variable->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 			print_str += ename->name;
+			if(ename->suffix && !po.preserve_format && !po.use_reference_names) {
+				size_t i = print_str.rfind('_');
+				if(i != string::npos && print_str.substr(i + 1, print_str.length() - (i + 1)) == "constant") {
+					print_str = print_str.substr(0, i);
+					if(po.hide_underscore_spaces) gsub("_", " ", print_str);
+				}
+			}
 			if(po.hide_underscore_spaces && !ename->suffix) {
 				gsub("_", " ", print_str);
 			}
