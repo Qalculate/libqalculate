@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 13:11+0100\n"
+"POT-Creation-Date: 2019-02-26 11:26+0100\n"
 "PO-Revision-Date: 2007-05-18 15:47+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -3943,18 +3943,152 @@ msgid "r:odd"
 msgstr "oneven"
 
 #: ../data/functions.xml.in.h:254
-msgid "Step Functions"
-msgstr "Stapfuncties"
+msgid "Special Functions"
+msgstr "Speciale functie"
 
 #: ../data/functions.xml.in.h:255
-msgid "Heaviside Step Function"
-msgstr "Heaviside stapfunctie"
+msgid "Gamma Function"
+msgstr "Gamma-functie"
 
 #: ../data/functions.xml.in.h:256
-msgid "r:heaviside,au:&#x03B8;"
+msgid "r:gamma"
 msgstr ""
 
 #: ../data/functions.xml.in.h:257
+msgid "Digamma Function"
+msgstr "Digamma-functie"
+
+#: ../data/functions.xml.in.h:258
+msgid "r:digamma,psi"
+msgstr ""
+
+#: ../data/functions.xml.in.h:259
+msgid "Beta Function"
+msgstr "Beta-functie"
+
+#: ../data/functions.xml.in.h:260
+msgid "r:beta"
+msgstr ""
+
+#: ../data/functions.xml.in.h:261
+msgid "Error Function"
+msgstr "Errorfunctie"
+
+#: ../data/functions.xml.in.h:262
+msgid "r:erf"
+msgstr ""
+
+#: ../data/functions.xml.in.h:263
+msgid "Complementary Error Function"
+msgstr "Complementaire errorfunctie"
+
+#: ../data/functions.xml.in.h:264
+msgid "r:erfc"
+msgstr ""
+
+#: ../data/functions.xml.in.h:265
+msgid "Polylogarithm"
+msgstr "Polylogaritme"
+
+#: ../data/functions.xml.in.h:266
+msgid "rc:Li,polylog"
+msgstr ""
+
+#: ../data/functions.xml.in.h:267
+msgid "Order"
+msgstr "Orde"
+
+#: ../data/functions.xml.in.h:268
+#, fuzzy
+msgid "Argument"
+msgstr "Argumenten"
+
+#: ../data/functions.xml.in.h:269
+#, fuzzy
+msgid "Airy Function"
+msgstr "Airy-functie"
+
+#: ../data/functions.xml.in.h:270
+msgid "r:airy"
+msgstr ""
+
+#: ../data/functions.xml.in.h:271
+msgid "Bessel Function of the First Kind"
+msgstr ""
+
+#: ../data/functions.xml.in.h:272
+msgid "r:besselj"
+msgstr ""
+
+#: ../data/functions.xml.in.h:273
+msgid "Bessel Function of the Second Kind"
+msgstr ""
+
+#: ../data/functions.xml.in.h:274
+msgid "r:bessely"
+msgstr ""
+
+#: ../data/functions.xml.in.h:275
+msgid "Riemann Zeta"
+msgstr "Riemann Zeta"
+
+#: ../data/functions.xml.in.h:276
+msgid "r:zeta"
+msgstr ""
+
+#: ../data/functions.xml.in.h:277
+msgid "Integral point"
+msgstr "Gehele waarde"
+
+#: ../data/functions.xml.in.h:278
+msgid "Kronecker Delta"
+msgstr "Kronecker Delta"
+
+#: ../data/functions.xml.in.h:279
+msgid "r:kronecker"
+msgstr ""
+
+#: ../data/functions.xml.in.h:280
+msgid "Returns 0 if i != j and 1 if i = j."
+msgstr "Retourneert 0 indien i != j en 1 if i = j."
+
+#: ../data/functions.xml.in.h:281
+msgid "Value 1 (i)"
+msgstr "Waarde 1 (i)"
+
+#: ../data/functions.xml.in.h:282
+msgid "Value 2 (j)"
+msgstr "Waarde 2 (j)"
+
+#: ../data/functions.xml.in.h:283
+msgid "Logit Transformation"
+msgstr "Logit transformatie"
+
+#: ../data/functions.xml.in.h:284
+msgid "r:logit"
+msgstr ""
+
+#: ../data/functions.xml.in.h:285
+msgid "Sigmoid Function"
+msgstr "Sigmoïde functie"
+
+#: ../data/functions.xml.in.h:286
+msgid "r:sigmoid"
+msgstr "sigmoïde"
+
+#: ../data/functions.xml.in.h:287
+msgid "Step Functions"
+msgstr "Stapfuncties"
+
+#: ../data/functions.xml.in.h:288
+msgid "Heaviside Step Function"
+msgstr "Heaviside stapfunctie"
+
+#: ../data/functions.xml.in.h:289
+msgid "r:heaviside,au:&#x03B8;"
+msgstr ""
+
+#: ../data/functions.xml.in.h:290
 msgid ""
 "Discontinuous function also known as \"unit step function\". Returns 0 if x "
 "&lt; 0, 1 if x &gt; 0, and 1/2 if x = 0."
@@ -3962,176 +4096,42 @@ msgstr ""
 "Discontinue functie die ook bekend staat als de \"eenheids stapfunctie\". "
 "Retourneert 0 indien x &lt; 0, 1 indien x ;gt; 0, en 1/2 indien x=0."
 
-#: ../data/functions.xml.in.h:258
+#: ../data/functions.xml.in.h:291
 msgid "Dirac Delta Function"
 msgstr "Diracdelta"
 
-#: ../data/functions.xml.in.h:259
+#: ../data/functions.xml.in.h:292
 msgid "r:dirac,au:&#x3B4;"
 msgstr ""
 
-#: ../data/functions.xml.in.h:260
+#: ../data/functions.xml.in.h:293
 #, fuzzy
 msgid "Returns 0 if x is non-zero, and infinity if x is zero."
 msgstr "Retourneert 0 indien i != j en 1 if i = j."
 
-#: ../data/functions.xml.in.h:261
+#: ../data/functions.xml.in.h:294
 msgid "Ramp Function"
 msgstr "Rampfunctie"
 
-#: ../data/functions.xml.in.h:262
+#: ../data/functions.xml.in.h:295
 msgid "r:ramp"
 msgstr ""
 
-#: ../data/functions.xml.in.h:263
+#: ../data/functions.xml.in.h:296
 msgid "Rectangular Function"
 msgstr "Rechthoekige functie"
 
-#: ../data/functions.xml.in.h:264
+#: ../data/functions.xml.in.h:297
 msgid "r:rectangular"
 msgstr "rechthoekig"
 
-#: ../data/functions.xml.in.h:265
-msgid "Sigmoid Function"
-msgstr "Sigmoïde functie"
-
-#: ../data/functions.xml.in.h:266
-msgid "r:sigmoid"
-msgstr "sigmoïde"
-
-#: ../data/functions.xml.in.h:267
-msgid "Logit Transformation"
-msgstr "Logit transformatie"
-
-#: ../data/functions.xml.in.h:268
-msgid "r:logit"
-msgstr ""
-
-#: ../data/functions.xml.in.h:269
+#: ../data/functions.xml.in.h:298
 msgid "Triangular Function"
 msgstr "Driehoekige functie"
 
-#: ../data/functions.xml.in.h:270
+#: ../data/functions.xml.in.h:299
 msgid "r:triangular"
 msgstr "driehoekig"
-
-#: ../data/functions.xml.in.h:271
-msgid "Special Functions"
-msgstr "Speciale functie"
-
-#: ../data/functions.xml.in.h:272
-msgid "Gamma Function"
-msgstr "Gamma-functie"
-
-#: ../data/functions.xml.in.h:273
-msgid "r:gamma"
-msgstr ""
-
-#: ../data/functions.xml.in.h:274
-msgid "Digamma Function"
-msgstr "Digamma-functie"
-
-#: ../data/functions.xml.in.h:275
-msgid "r:digamma,psi"
-msgstr ""
-
-#: ../data/functions.xml.in.h:276
-msgid "Beta Function"
-msgstr "Beta-functie"
-
-#: ../data/functions.xml.in.h:277
-msgid "r:beta"
-msgstr ""
-
-#: ../data/functions.xml.in.h:278
-msgid "Error Function"
-msgstr "Errorfunctie"
-
-#: ../data/functions.xml.in.h:279
-msgid "r:erf"
-msgstr ""
-
-#: ../data/functions.xml.in.h:280
-msgid "Complementary Error Function"
-msgstr "Complementaire errorfunctie"
-
-#: ../data/functions.xml.in.h:281
-msgid "r:erfc"
-msgstr ""
-
-#: ../data/functions.xml.in.h:282
-msgid "Polylogarithm"
-msgstr "Polylogaritme"
-
-#: ../data/functions.xml.in.h:283
-msgid "rc:Li,polylog"
-msgstr ""
-
-#: ../data/functions.xml.in.h:284
-msgid "Order"
-msgstr "Orde"
-
-#: ../data/functions.xml.in.h:285
-#, fuzzy
-msgid "Argument"
-msgstr "Argumenten"
-
-#: ../data/functions.xml.in.h:286
-#, fuzzy
-msgid "Airy Function"
-msgstr "Airy-functie"
-
-#: ../data/functions.xml.in.h:287
-msgid "r:airy"
-msgstr ""
-
-#: ../data/functions.xml.in.h:288
-msgid "Bessel Function of the First Kind"
-msgstr ""
-
-#: ../data/functions.xml.in.h:289
-msgid "r:besselj"
-msgstr ""
-
-#: ../data/functions.xml.in.h:290
-msgid "Bessel Function of the Second Kind"
-msgstr ""
-
-#: ../data/functions.xml.in.h:291
-msgid "r:bessely"
-msgstr ""
-
-#: ../data/functions.xml.in.h:292
-msgid "Riemann Zeta"
-msgstr "Riemann Zeta"
-
-#: ../data/functions.xml.in.h:293
-msgid "r:zeta"
-msgstr ""
-
-#: ../data/functions.xml.in.h:294
-msgid "Integral point"
-msgstr "Gehele waarde"
-
-#: ../data/functions.xml.in.h:295
-msgid "Kronecker Delta"
-msgstr "Kronecker Delta"
-
-#: ../data/functions.xml.in.h:296
-msgid "r:kronecker"
-msgstr ""
-
-#: ../data/functions.xml.in.h:297
-msgid "Returns 0 if i != j and 1 if i = j."
-msgstr "Retourneert 0 indien i != j en 1 if i = j."
-
-#: ../data/functions.xml.in.h:298
-msgid "Value 1 (i)"
-msgstr "Waarde 1 (i)"
-
-#: ../data/functions.xml.in.h:299
-msgid "Value 2 (j)"
-msgstr "Waarde 2 (j)"
 
 #: ../data/functions.xml.in.h:300
 msgid "Complex Numbers"
@@ -7940,9 +7940,8 @@ msgid "r:year,p:years"
 msgstr "jaar,p:jaren"
 
 #: ../data/units.xml.in.h:153
-#, fuzzy
 msgid "r:month,p:months"
-msgstr "a:min,minuut,p:minuten"
+msgstr "maand,p:maanden"
 
 #: ../data/units.xml.in.h:154
 msgid "Planck Time"
@@ -9320,327 +9319,322 @@ msgid "Boltzmann (unit)"
 msgstr "Boltzmann (eenheid)"
 
 #: ../data/units.xml.in.h:495
-#, fuzzy
-msgid "rs:boltzmann_unit,as:k_Bunit"
-msgstr "proton_massa,ais:m_p"
-
-#: ../data/units.xml.in.h:496
 msgid "Specific Entropy"
 msgstr "Soortelijke entropie"
 
-#: ../data/units.xml.in.h:497
+#: ../data/units.xml.in.h:496
 msgid "Joule per Kilogram Kelvin"
 msgstr "Joule per kilogram Kelvin"
 
-#: ../data/units.xml.in.h:498
+#: ../data/units.xml.in.h:497
 msgid "Thermal Conductivity"
 msgstr "Thermisch geleidingsvermogen"
 
-#: ../data/units.xml.in.h:499
+#: ../data/units.xml.in.h:498
 msgid "Watt per Meter Kelvin"
 msgstr "Watt per meter Kelvin"
 
-#: ../data/units.xml.in.h:500
+#: ../data/units.xml.in.h:499
 msgid "Energy Density"
 msgstr "Energiedichtheid"
 
-#: ../data/units.xml.in.h:501
+#: ../data/units.xml.in.h:500
 msgid "Joule per Cubic Meter"
 msgstr "Joule per kubieke meter"
 
-#: ../data/units.xml.in.h:502
+#: ../data/units.xml.in.h:501
 msgid "Molar Energy"
 msgstr "Molaire energie"
 
-#: ../data/units.xml.in.h:503
+#: ../data/units.xml.in.h:502
 msgid "Joule per Mole"
 msgstr "Joule per mol"
 
-#: ../data/units.xml.in.h:504
+#: ../data/units.xml.in.h:503
 msgid "Molar Entropy"
 msgstr "Molaire entropy"
 
-#: ../data/units.xml.in.h:505
+#: ../data/units.xml.in.h:504
 msgid "Joule per Mole Kelvin"
 msgstr "Joule per mol Kelvin"
 
-#: ../data/units.xml.in.h:506
+#: ../data/units.xml.in.h:505
 msgid "Action"
 msgstr "Actie"
 
-#: ../data/units.xml.in.h:507
+#: ../data/units.xml.in.h:506
 msgid "Joule Second"
 msgstr "Joule seconde"
 
-#: ../data/units.xml.in.h:508
-msgid "Planck over 2 pi (Atomic/Natural Unit of Action)"
-msgstr "Planck gedeeld door 2 pi (eenheid)"
+#: ../data/units.xml.in.h:507
+msgid "Reduced Planck (Atomic/Natural Unit of Action)"
+msgstr "Gereduceerde Planck (eenheid)"
 
-#: ../data/units.xml.in.h:509
+#: ../data/units.xml.in.h:508
 msgid "Radioactivity"
 msgstr "Radioactiviteit"
 
-#: ../data/units.xml.in.h:510
+#: ../data/units.xml.in.h:509
 msgid "Becquerel"
 msgstr ""
 
-#: ../data/units.xml.in.h:511
+#: ../data/units.xml.in.h:510
 msgid "ar:Bq,becquerel,p:becquerels"
 msgstr ""
 
-#: ../data/units.xml.in.h:512
+#: ../data/units.xml.in.h:511
 msgid "Curie"
 msgstr ""
 
-#: ../data/units.xml.in.h:513
+#: ../data/units.xml.in.h:512
 msgid "ar:Ci,curie,p:curies"
 msgstr ""
 
-#: ../data/units.xml.in.h:514
+#: ../data/units.xml.in.h:513
 msgid "Absorbed Dose"
 msgstr "Absorptiedosis"
 
-#: ../data/units.xml.in.h:515
+#: ../data/units.xml.in.h:514
 msgid "Gray"
 msgstr ""
 
-#: ../data/units.xml.in.h:516
+#: ../data/units.xml.in.h:515
 msgid "ar:Gy,gray,p:grays"
 msgstr ""
 
-#: ../data/units.xml.in.h:517
+#: ../data/units.xml.in.h:516
 msgid "Rad"
 msgstr ""
 
-#: ../data/units.xml.in.h:518
+#: ../data/units.xml.in.h:517
 msgid "r:rad_radioactivity"
 msgstr ""
 
-#: ../data/units.xml.in.h:519
+#: ../data/units.xml.in.h:518
 msgid "Dose Equivalent"
 msgstr "Dosisequivalent"
 
-#: ../data/units.xml.in.h:520
+#: ../data/units.xml.in.h:519
 msgid "Sievert"
 msgstr ""
 
-#: ../data/units.xml.in.h:521
+#: ../data/units.xml.in.h:520
 msgid "ar:Sv,sievert,p:sieverts"
 msgstr ""
 
-#: ../data/units.xml.in.h:522
+#: ../data/units.xml.in.h:521
 msgid "Rem"
 msgstr ""
 
-#: ../data/units.xml.in.h:523
+#: ../data/units.xml.in.h:522
 msgid "r:rem_radioactivity"
 msgstr ""
 
-#: ../data/units.xml.in.h:524
+#: ../data/units.xml.in.h:523
 msgid "Exposure"
 msgstr "Blootstelling"
 
-#: ../data/units.xml.in.h:525
+#: ../data/units.xml.in.h:524
 msgid "Coulomb per Kilogram"
 msgstr "Coulomb per kilogram"
 
-#: ../data/units.xml.in.h:526
+#: ../data/units.xml.in.h:525
 msgid "Roentgen"
 msgstr ""
 
-#: ../data/units.xml.in.h:527
+#: ../data/units.xml.in.h:526
 msgid "ar:R,roentgen,p:roentgens"
 msgstr ""
 
-#: ../data/units.xml.in.h:528
+#: ../data/units.xml.in.h:527
 msgid "Absorbed Dose Rate"
 msgstr "Absorptiesnelheid"
 
-#: ../data/units.xml.in.h:529
+#: ../data/units.xml.in.h:528
 msgid "Gray per Second"
 msgstr "Gray per seconde"
 
-#: ../data/units.xml.in.h:530
+#: ../data/units.xml.in.h:529
 msgid "Ratio"
 msgstr "Verhouding"
 
-#: ../data/units.xml.in.h:531
+#: ../data/units.xml.in.h:530
 msgid "Neper"
 msgstr ""
 
-#: ../data/units.xml.in.h:532
+#: ../data/units.xml.in.h:531
 msgid "ar:Np,neper,p:nepers"
 msgstr ""
 
-#: ../data/units.xml.in.h:533
+#: ../data/units.xml.in.h:532
 msgid "Bel"
 msgstr ""
 
-#: ../data/units.xml.in.h:534
+#: ../data/units.xml.in.h:533
 msgid "ar:B,bel,p:bels"
 msgstr ""
 
-#: ../data/units.xml.in.h:535
+#: ../data/units.xml.in.h:534
 msgid "Decibel"
 msgstr ""
 
-#: ../data/units.xml.in.h:536
+#: ../data/units.xml.in.h:535
 msgid "Information"
 msgstr "Informatie"
 
-#: ../data/units.xml.in.h:537
+#: ../data/units.xml.in.h:536
 msgid "Bit"
 msgstr ""
 
-#: ../data/units.xml.in.h:538
+#: ../data/units.xml.in.h:537
 msgid "r:bit,p:bits"
 msgstr ""
 
-#: ../data/units.xml.in.h:539
+#: ../data/units.xml.in.h:538
 msgid "Byte (8-bit)"
 msgstr ""
 
-#: ../data/units.xml.in.h:540
+#: ../data/units.xml.in.h:539
 msgid "r:byte,p:bytes,octet,p:octets"
 msgstr ""
 
-#: ../data/units.xml.in.h:541
+#: ../data/units.xml.in.h:540
 msgid "Nibble"
 msgstr "Nibble"
 
-#: ../data/units.xml.in.h:542
+#: ../data/units.xml.in.h:541
 msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets"
 msgstr ""
 
-#: ../data/units.xml.in.h:543
+#: ../data/units.xml.in.h:542
 msgid "Tribble"
 msgstr ""
 
-#: ../data/units.xml.in.h:544
+#: ../data/units.xml.in.h:543
 msgid "r:tribble,p:tribbles"
 msgstr ""
 
-#: ../data/units.xml.in.h:545
+#: ../data/units.xml.in.h:544
 msgid "Word (16-bit)"
 msgstr ""
 
-#: ../data/units.xml.in.h:546
+#: ../data/units.xml.in.h:545
 msgid "r:word,p:words"
 msgstr "woord,p:woorden"
 
-#: ../data/units.xml.in.h:547
+#: ../data/units.xml.in.h:546
 msgid "Kilobyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:548
+#: ../data/units.xml.in.h:547
 msgid "Kibibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:549
+#: ../data/units.xml.in.h:548
 msgid "Mebibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:550
+#: ../data/units.xml.in.h:549
 msgid "Gibibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:551
+#: ../data/units.xml.in.h:550
 msgid "Megabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:552
+#: ../data/units.xml.in.h:551
 msgid "Gigabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:553
+#: ../data/units.xml.in.h:552
 msgid "Terabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:554
+#: ../data/units.xml.in.h:553
 msgid "Kilobit"
 msgstr ""
 
-#: ../data/units.xml.in.h:555
+#: ../data/units.xml.in.h:554
 msgid "Kibibit"
 msgstr ""
 
-#: ../data/units.xml.in.h:556
+#: ../data/units.xml.in.h:555
 msgid "Mebibit"
 msgstr ""
 
-#: ../data/units.xml.in.h:557
+#: ../data/units.xml.in.h:556
 msgid "Gibibit"
 msgstr ""
 
-#: ../data/units.xml.in.h:558
+#: ../data/units.xml.in.h:557
 msgid "Megabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:559
+#: ../data/units.xml.in.h:558
 msgid "Gigabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:560
+#: ../data/units.xml.in.h:559
 msgid "Terabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:561
+#: ../data/units.xml.in.h:560
 msgid "Typography"
 msgstr "Typografie"
 
-#: ../data/units.xml.in.h:562
+#: ../data/units.xml.in.h:561
 msgid "PostScript Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:563
+#: ../data/units.xml.in.h:562
 msgid "ar:pt,a:pts,point,p:points"
 msgstr ""
 
-#: ../data/units.xml.in.h:564
+#: ../data/units.xml.in.h:563
 msgid "PostScript Pica"
 msgstr ""
 
-#: ../data/units.xml.in.h:565
+#: ../data/units.xml.in.h:564
 msgid "r:pica,p:picas"
 msgstr ""
 
-#: ../data/units.xml.in.h:566
+#: ../data/units.xml.in.h:565
 msgid "ATA Pica"
 msgstr ""
 
-#: ../data/units.xml.in.h:567
+#: ../data/units.xml.in.h:566
 msgid "r:ata_pica,p:ata_picas"
 msgstr ""
 
-#: ../data/units.xml.in.h:568
+#: ../data/units.xml.in.h:567
 msgid "ATA Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:569
+#: ../data/units.xml.in.h:568
 msgid "r:ata_point,a:ata_pt,p:ata_points"
 msgstr ""
 
-#: ../data/units.xml.in.h:570
+#: ../data/units.xml.in.h:569
 msgid "New Didot Point"
 msgstr "Nieuwe Didot Point"
 
-#: ../data/units.xml.in.h:571
+#: ../data/units.xml.in.h:570
 msgid "r:new_didot"
 msgstr "nieuwe_didot"
 
-#: ../data/units.xml.in.h:572
+#: ../data/units.xml.in.h:571
 msgid "Didot Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:573
+#: ../data/units.xml.in.h:572
 msgid "r:didot,a:dd"
 msgstr ""
 
-#: ../data/units.xml.in.h:574
+#: ../data/units.xml.in.h:573
 msgid "Cicero"
 msgstr ""
 
-#: ../data/units.xml.in.h:575
+#: ../data/units.xml.in.h:574
 msgid "r:cicero"
 msgstr ""
 
@@ -9902,8 +9896,8 @@ msgid "Planck Constant"
 msgstr "Constante van Planck"
 
 #: ../data/variables.xml.in.h:66
-msgid "Planck Constant over 2 pi (Dirac constant)"
-msgstr "Constante van Planck gedeeld door 2 pi (constante van Dirac)"
+msgid "Reduced Planck Constant (Dirac constant)"
+msgstr "Gereduceerde constante van Planck (constante van Dirac)"
 
 #: ../data/variables.xml.in.h:67
 msgid "Newtonian Constant of Gravitation"
@@ -9973,7 +9967,7 @@ msgstr "Deeltjesmassa in u"
 msgid "Deuteron Mass (in u)"
 msgstr "Neutronmassa (u)"
 
-#: ../data/variables.xml.in.h:84y
+#: ../data/variables.xml.in.h:84
 msgid "Electron Mass (in u)"
 msgstr "Elektronmassa (u)"
 
@@ -10184,8 +10178,8 @@ msgid "Compton Wavelength"
 msgstr "Compton golflengte"
 
 #: ../data/variables.xml.in.h:136
-msgid "Compton Wavelength over 2 pi"
-msgstr "Compton golflengte gedeeld door 2 pi"
+msgid "Reduced Compton Wavelength"
+msgstr "Gereduceerde Compton golflengte"
 
 #: ../data/variables.xml.in.h:137
 msgid "Electronvolt (constant)"
@@ -10477,6 +10471,13 @@ msgstr ""
 #: ../data/variables.xml.in.h:208
 msgid "r:now"
 msgstr ""
+
+#~ msgid "Compton Wavelength over 2 pi"
+#~ msgstr "Compton golflengte gedeeld door 2 pi"
+
+#, fuzzy
+#~ msgid "rs:boltzmann_unit,as:k_Bunit"
+#~ msgstr "proton_massa,ais:m_p"
 
 #~ msgid "Density at 295K"
 #~ msgstr "Dichtheid bij 295K"

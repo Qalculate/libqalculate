@@ -321,9 +321,6 @@
       </variable>
       <variable>
         <title>Planck Constant over 2 pi (Dirac constant)</title>
-        <title xml:lang="fr">Constante de Planck sur 2 pi (constante de Dirac)</title>
-        <title xml:lang="nl">Constante van Planck gedeeld door 2 pi (constante van Dirac)</title>
-        <title xml:lang="sv">Plancks konstant över 2 pi (Diracs konstant)</title>
         <names>r:planck2pi,dirac,au:&#x210f;</names>
         <value>planck/(2*pi)</value>
       </variable>
@@ -349,6 +346,7 @@
         <title>Standard Acceleration due to Gravity</title>
         <title xml:lang="fr">Accélération normale de la pesanteur terrestre</title>
         <title xml:lang="sv">Standardacceleration av gravitet</title>
+        <title xml:lang="zh_CN">標準重力</title>
         <names>r:standard_gravity,asu:g_0,asu:&#x0261;_0,asu:&#x0261;_n</names>
         <value unit="m s^(-2)">9.80665</value>
       </variable>
@@ -459,6 +457,7 @@
       <title xml:lang="fr">Masse de Particules en u</title>
       <title xml:lang="nl">Deeltjesmassa in u</title>
       <title xml:lang="sv">Partikelmassa i u</title>
+      <title xml:lang="zh_CN">粒子质量(u)</title>
       <variable>
         <title>Deuteron Mass (in u)</title>
         <title xml:lang="fr">Masse du Deutéron (u)</title>
@@ -537,6 +536,7 @@
       <title xml:lang="fr">Masse de Particules en MeV*c^(-2)</title>
       <title xml:lang="nl">Deeltjesmassa in MeV*c^(-2)</title>
       <title xml:lang="sv">Partikelmassa i MeV*c^(-2)</title>
+      <title xml:lang="zh_CN">粒子质量(MeV*c^(-2))</title>
       <variable>
         <title>Electron Mass (in MeV/c^2)</title>
         <title xml:lang="fr">Masse de l'Électron (MeV/c^2)</title>
@@ -663,6 +663,7 @@
       <title xml:lang="fr">Masse de Particules en kg</title>
       <title xml:lang="nl">Deeltjesmassa in kg</title>
       <title xml:lang="sv">Partikelmassa i kg</title>
+      <title xml:lang="zh_CN">粒子质量(kg)</title>
       <variable>
         <title>Deuteron Mass</title>
         <title xml:lang="fr">Masse du Deutéron</title>
@@ -769,6 +770,7 @@
         <title>Fermi Coupling Constant</title>
         <title xml:lang="fr">Constante de Fermi</title>
         <title xml:lang="sv">Fermi Coupling-konstanten</title>
+        <title xml:lang="zh_CN">フェルミ結合定数</title>
         <names>r:fermi_coupling</names>
         <value unit="GeV^(-2)" uncertainty="6E-12">1.1663787E-5</value>
       </variable>
@@ -777,6 +779,7 @@
         <title xml:lang="fr">Constante de Structure Fine</title>
         <title xml:lang="nl">Fijnstructuurconstante</title>
         <title xml:lang="sv">Finstrukturkonstanten</title>
+        <title xml:lang="zh_CN">精细结构常数</title>
         <names>r:fine_structure,au:&#x03B1;,ao:alpha</names>
         <value uncertainty="1.7E-12">7.2973525664E-3</value>
       </variable>
@@ -785,6 +788,7 @@
         <title xml:lang="fr">Hartree (constante)</title>
         <title xml:lang="nl">Hartree-energie (constante)</title>
         <title xml:lang="sv">Hartreeenergi (konstant)</title>
+        <title xml:lang="zh_CN">哈特里能量（常數）</title>
         <names>rs:hartree_constant,as:Ha_constant</names>
         <value>2*rydberg*planck*c</value>
       </variable>
@@ -818,6 +822,7 @@
         <title>Weak Mixing Angle (Weinberg Angle)</title>
         <title xml:lang="fr">Angle de Weinberg</title>
         <title xml:lang="sv">Svag blandningsvinken (Weinbergvinkeln)</title>
+        <title xml:lang="zh_CN">溫伯格角</title>
         <names>r:weinberg,weak_mixing_angle,asu:&#x03B8;_W,aos:theta_W</names>
         <value uncertainty="0.0021">0.2223</value>
       </variable>
@@ -871,9 +876,6 @@
       </variable>
       <variable>
         <title>Compton Wavelength over 2 pi</title>
-        <title xml:lang="fr">Longueur d'onde de Compton sur 2 pi</title>
-        <title xml:lang="nl">Compton golflengte gedeeld door 2 pi</title>
-        <title xml:lang="sv">Compton-våglängd över 2 pi</title>
         <names>r:compton_wavelength_2pi</names>
         <value>compton_wavelength/(2*pi)</value>
       </variable>
@@ -882,6 +884,7 @@
         <title xml:lang="fr">Électronvolt (constante)</title>
         <title xml:lang="nl">Elektronvolt (constante)</title>
         <title xml:lang="sv">Elektronvolt (konstant)</title>
+        <title xml:lang="zh_CN">電子伏特（常數）</title>
         <names>rs:electronvolt_constant,as:eV_constant</names>
         <value unit="auto">elementary_charge/C*J</value>
       </variable>
@@ -913,6 +916,7 @@
         <title xml:lang="fr">Constante universelle des gaz parfaits</title>
         <title xml:lang="nl">Gasconstante</title>
         <title xml:lang="sv">Gaskonstanten</title>
+        <title xml:lang="zh_CN">氣體常數</title>
         <names>r:gas_constant,ideal_gas</names>
         <value>boltzmann*avogadro</value>
       </variable>
@@ -985,6 +989,7 @@
         <title xml:lang="fr">Constante de Stefan-Boltzmann</title>
         <title xml:lang="nl">Constante van Stefan-Boltzmann</title>
         <title xml:lang="sv">Stefan-Boltzmanns konstant</title>
+        <title xml:lang="zh_CN">斯特藩-玻爾茲曼常數</title>
         <names>r:stefan,au:&#x03C3;,ao:sigma</names>
         <value>(2pi^5*boltzmann^4)/(15*planck^3*c^2)</value>
       </variable>
@@ -1299,6 +1304,7 @@
       <title xml:lang="fr">n (entier)</title>
       <title xml:lang="nl">n (geheel getal)</title>
       <title xml:lang="sv">n (heltal)</title>
+      <title xml:lang="zh_CN">n（整数）</title>
       <names>r:n</names>
     </builtin_variable>
   </category>

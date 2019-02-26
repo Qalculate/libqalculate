@@ -788,66 +788,6 @@
     </category>
   </category>
   <category>
-    <_title>Step Functions</_title>
-    <builtin_function name="heaviside">
-      <_title>Heaviside Step Function</_title>
-      <_names>r:heaviside,au:&#x03B8;</_names>
-      <_description>Discontinuous function also known as "unit step function". Returns 0 if x &lt; 0, 1 if x &gt; 0, and 1/2 if x = 0.</_description>
-    </builtin_function>
-    <builtin_function name="dirac">
-      <_title>Dirac Delta Function</_title>
-      <_names>r:dirac,au:&#x3B4;</_names>
-      <_description>Returns 0 if x is non-zero, and infinity if x is zero.</_description>
-    </builtin_function>
-    <function>
-      <_title>Ramp Function</_title>
-      <_names>r:ramp</_names>
-      <expression>(\x+abs(\x))/2</expression>
-      <argument type="number" index="1">
-        <_title>Value</_title>
-        <complex_allowed>false</complex_allowed>
-        <test>false</test>
-      </argument>
-    </function>
-    <function>
-      <_title>Rectangular Function</_title>
-      <_names>r:rectangular</_names>
-      <expression>heaviside(\x+(1/2))-heaviside(\x-(1/2))</expression>
-      <argument type="number" index="1">
-        <_title>Value</_title>
-        <complex_allowed>false</complex_allowed>
-        <test>false</test>
-      </argument>
-    </function>
-    <function>
-      <_title>Sigmoid Function</_title>
-      <_names>r:sigmoid</_names>
-      <expression>1/(1+e^(-\x))</expression>
-      <argument type="number" index="1">
-        <_title>Value</_title>
-        <test>false</test>
-      </argument>
-    </function>
-    <function>
-      <_title>Logit Transformation</_title>
-      <_names>r:logit</_names>
-      <expression>ln(\x/(1-\x))</expression>
-      <argument type="number" index="1">
-        <_title>Value</_title>
-      </argument>
-    </function>
-    <function>
-      <_title>Triangular Function</_title>
-      <_names>r:triangular</_names>
-      <expression>if(abs(\x)&lt;1,1-abs(\x),0)</expression>
-      <argument type="number" index="1">
-        <_title>Value</_title>
-        <complex_allowed>false</complex_allowed>
-        <test>false</test>
-      </argument>
-    </function>
-  </category>
-  <category>
     <_title>Special Functions</_title>
     <builtin_function name="gamma">
       <_title>Gamma Function</_title>
@@ -926,6 +866,66 @@
         <test>false</test>
       </argument>
     </function>
+    <function>
+      <_title>Logit Transformation</_title>
+      <_names>r:logit</_names>
+      <expression>ln(\x/(1-\x))</expression>
+      <argument type="number" index="1">
+        <_title>Value</_title>
+      </argument>
+    </function>
+    <function>
+      <_title>Sigmoid Function</_title>
+      <_names>r:sigmoid</_names>
+      <expression>1/(1+e^(-\x))</expression>
+      <argument type="number" index="1">
+        <_title>Value</_title>
+        <test>false</test>
+      </argument>
+    </function>
+    <category>
+    <_title>Step Functions</_title>
+      <builtin_function name="heaviside">
+        <_title>Heaviside Step Function</_title>
+        <_names>r:heaviside,au:&#x03B8;</_names>
+        <_description>Discontinuous function also known as "unit step function". Returns 0 if x &lt; 0, 1 if x &gt; 0, and 1/2 if x = 0.</_description>
+      </builtin_function>
+      <builtin_function name="dirac">
+        <_title>Dirac Delta Function</_title>
+        <_names>r:dirac,au:&#x3B4;</_names>
+        <_description>Returns 0 if x is non-zero, and infinity if x is zero.</_description>
+      </builtin_function>
+      <function>
+        <_title>Ramp Function</_title>
+        <_names>r:ramp</_names>
+        <expression>(\x+abs(\x))/2</expression>
+        <argument type="number" index="1">
+          <_title>Value</_title>
+          <complex_allowed>false</complex_allowed>
+          <test>false</test>
+        </argument>
+      </function>
+      <function>
+        <_title>Rectangular Function</_title>
+        <_names>r:rectangular</_names>
+        <expression>heaviside(\x+(1/2))-heaviside(\x-(1/2))</expression>
+        <argument type="number" index="1">
+          <_title>Value</_title>
+          <complex_allowed>false</complex_allowed>
+          <test>false</test>
+        </argument>
+      </function>
+      <function>
+        <_title>Triangular Function</_title>
+        <_names>r:triangular</_names>
+        <expression>if(abs(\x)&lt;1,1-abs(\x),0)</expression>
+        <argument type="number" index="1">
+          <_title>Value</_title>
+          <complex_allowed>false</complex_allowed>
+          <test>false</test>
+        </argument>
+      </function>
+    </category>
   </category>
   <category>
     <_title>Complex Numbers</_title>

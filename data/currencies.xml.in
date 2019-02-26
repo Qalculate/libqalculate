@@ -501,6 +501,7 @@
     <builtin_unit name="MOP">
       <_title>Macanese Pataca</_title>
       <_names>ar:MOP</_names>
+      <_countries>Macau</_countries>
     </builtin_unit>
     <builtin_unit name="MKD">
       <_title>Macedonian Denar</_title>
@@ -652,7 +653,7 @@
       <_countries>Somalia</_countries>
     </builtin_unit>
     <builtin_unit name="LKR">
-      <_title>Sri Lankan Rupee;</_title>
+      <_title>Sri Lankan Rupee</_title>
       <_names>ar:LKR,au:&#x0BF9;</_names>
       <_countries>Sri Lanka</_countries>
     </builtin_unit>
