@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 17:32+0100\n"
+"POT-Creation-Date: 2019-02-26 10:17+0100\n"
 "PO-Revision-Date: 2007-08-04 23:40+0800\n"
 "Last-Translator: Roy Qu <royqh1979@gmail.com>\n"
 "Language-Team: Simplified Chinese\n"
@@ -37,7 +37,6 @@ msgid ""
 msgstr ""
 
 #: ../data/currencies.xml.in.h:5
-#, fuzzy
 msgid "U.S. Dollar"
 msgstr "美元"
 
@@ -64,7 +63,6 @@ msgid "Japan"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:11
-#, fuzzy
 msgid "Danish Krone"
 msgstr "丹麦Kroner"
 
@@ -77,7 +75,6 @@ msgid "Denmark"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:14
-#, fuzzy
 msgid "British Pound"
 msgstr "英镑"
 
@@ -114,7 +111,6 @@ msgid "Sweden"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:23
-#, fuzzy
 msgid "Swiss Franc"
 msgstr "瑞士法郎"
 
@@ -127,7 +123,6 @@ msgid "Switzerland"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:26
-#, fuzzy
 msgid "Norwegian Krone"
 msgstr "挪威Kroner"
 
@@ -266,7 +261,6 @@ msgid "Poland"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:59
-#, fuzzy
 msgid "Romanian Leu"
 msgstr "罗马尼亚新Leu"
 
@@ -292,7 +286,6 @@ msgid "Turkey"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:65
-#, fuzzy
 msgid "Australian Dollar"
 msgstr "澳大利亚元"
 
@@ -306,7 +299,6 @@ msgid "Australia"
 msgstr "澳大利亚元"
 
 #: ../data/currencies.xml.in.h:68
-#, fuzzy
 msgid "Canadian Dollar"
 msgstr "加拿大元"
 
@@ -319,7 +311,6 @@ msgid "Canada"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:71
-#, fuzzy
 msgid "Hong Kong Dollar"
 msgstr "港币"
 
@@ -328,7 +319,6 @@ msgid "ar:HKD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:73
-#, fuzzy
 msgid "New Zealand Dollar"
 msgstr "新西兰元"
 
@@ -342,7 +332,6 @@ msgid "New Zealand"
 msgstr "新西兰元"
 
 #: ../data/currencies.xml.in.h:76
-#, fuzzy
 msgid "Singapore Dollar"
 msgstr "新加坡元"
 
@@ -431,7 +420,6 @@ msgid "Brazil"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:97
-#, fuzzy
 msgid "Icelandic Krónur"
 msgstr "冰岛克朗"
 
@@ -2962,17 +2950,16 @@ msgstr "升序"
 
 #: ../data/functions.xml.in.h:21
 msgid "Rank"
-msgstr ""
+msgstr "秩"
 
 #: ../data/functions.xml.in.h:22
 msgid "r:rank"
 msgstr ""
 
 #: ../data/functions.xml.in.h:23
-#, fuzzy
 msgid ""
 "Returns a vector with values of elements replaced with their mutual ranks."
-msgstr "将两个向量合成一个并返回。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:24
 msgid "Vector Limits"
@@ -3311,9 +3298,8 @@ msgid "Exports a matrix to a CSV data file."
 msgstr "将矩阵导出到CSV数据文件"
 
 #: ../data/functions.xml.in.h:106
-#, fuzzy
 msgid "Magnitude"
-msgstr "镁"
+msgstr "量"
 
 #: ../data/functions.xml.in.h:107
 msgid "r:magnitude"
@@ -3802,7 +3788,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:215
 msgid "Fibonacci Number"
-msgstr ""
+msgstr "斐波纳契系数"
 
 #: ../data/functions.xml.in.h:216
 msgid "r:fibonacci"
@@ -3813,9 +3799,8 @@ msgid "Returns the n-th term of the Fibonacci sequence."
 msgstr ""
 
 #: ../data/functions.xml.in.h:218
-#, fuzzy
 msgid "Index (n)"
-msgstr "下标"
+msgstr "下标（n）"
 
 #: ../data/functions.xml.in.h:219
 msgid "Rounding"
@@ -3965,18 +3950,151 @@ msgid "r:odd"
 msgstr ""
 
 #: ../data/functions.xml.in.h:254
-msgid "Step Functions"
-msgstr "阶梯函数"
+msgid "Special Functions"
+msgstr "特殊函数"
 
 #: ../data/functions.xml.in.h:255
-msgid "Heaviside Step Function"
-msgstr "Heaviside阶梯函数"
+msgid "Gamma Function"
+msgstr "&#x3B3;函数"
 
 #: ../data/functions.xml.in.h:256
-msgid "r:heaviside,au:&#x03B8;"
+msgid "r:gamma"
 msgstr ""
 
 #: ../data/functions.xml.in.h:257
+msgid "Digamma Function"
+msgstr "双伽玛函数"
+
+#: ../data/functions.xml.in.h:258
+msgid "r:digamma,psi"
+msgstr ""
+
+#: ../data/functions.xml.in.h:259
+msgid "Beta Function"
+msgstr "&#x3B2;函数"
+
+#: ../data/functions.xml.in.h:260
+msgid "r:beta"
+msgstr ""
+
+#: ../data/functions.xml.in.h:261
+msgid "Error Function"
+msgstr "误差函数"
+
+#: ../data/functions.xml.in.h:262
+msgid "r:erf"
+msgstr ""
+
+#: ../data/functions.xml.in.h:263
+msgid "Complementary Error Function"
+msgstr "互补错误功能"
+
+#: ../data/functions.xml.in.h:264
+msgid "r:erfc"
+msgstr ""
+
+#: ../data/functions.xml.in.h:265
+msgid "Polylogarithm"
+msgstr "多重对数函数"
+
+#: ../data/functions.xml.in.h:266
+msgid "rc:Li,polylog"
+msgstr ""
+
+#: ../data/functions.xml.in.h:267
+msgid "Order"
+msgstr "次数"
+
+#: ../data/functions.xml.in.h:268
+#, fuzzy
+msgid "Argument"
+msgstr "自变量"
+
+#: ../data/functions.xml.in.h:269
+msgid "Airy Function"
+msgstr "艾里函数"
+
+#: ../data/functions.xml.in.h:270
+msgid "r:airy"
+msgstr ""
+
+#: ../data/functions.xml.in.h:271
+msgid "Bessel Function of the First Kind"
+msgstr "第一类贝塞尔函数"
+
+#: ../data/functions.xml.in.h:272
+msgid "r:besselj"
+msgstr ""
+
+#: ../data/functions.xml.in.h:273
+msgid "Bessel Function of the Second Kind"
+msgstr "第二类贝塞尔函数"
+
+#: ../data/functions.xml.in.h:274
+msgid "r:bessely"
+msgstr ""
+
+#: ../data/functions.xml.in.h:275
+msgid "Riemann Zeta"
+msgstr "Riemann Zeta"
+
+#: ../data/functions.xml.in.h:276
+msgid "r:zeta"
+msgstr ""
+
+#: ../data/functions.xml.in.h:277
+msgid "Integral point"
+msgstr "积分点"
+
+#: ../data/functions.xml.in.h:278
+msgid "Kronecker Delta"
+msgstr "Kronecker Delta"
+
+#: ../data/functions.xml.in.h:279
+msgid "r:kronecker"
+msgstr ""
+
+#: ../data/functions.xml.in.h:280
+msgid "Returns 0 if i != j and 1 if i = j."
+msgstr "如果i不等于j，返回0；如果i等于j，返回1。"
+
+#: ../data/functions.xml.in.h:281
+msgid "Value 1 (i)"
+msgstr "值1(i)"
+
+#: ../data/functions.xml.in.h:282
+msgid "Value 2 (j)"
+msgstr "值2(i)"
+
+#: ../data/functions.xml.in.h:283
+msgid "Logit Transformation"
+msgstr "Logit变换"
+
+#: ../data/functions.xml.in.h:284
+msgid "r:logit"
+msgstr ""
+
+#: ../data/functions.xml.in.h:285
+msgid "Sigmoid Function"
+msgstr "sigmoid函数"
+
+#: ../data/functions.xml.in.h:286
+msgid "r:sigmoid"
+msgstr ""
+
+#: ../data/functions.xml.in.h:287
+msgid "Step Functions"
+msgstr "阶梯函数"
+
+#: ../data/functions.xml.in.h:288
+msgid "Heaviside Step Function"
+msgstr "Heaviside阶梯函数"
+
+#: ../data/functions.xml.in.h:289
+msgid "r:heaviside,au:&#x03B8;"
+msgstr ""
+
+#: ../data/functions.xml.in.h:290
 msgid ""
 "Discontinuous function also known as \"unit step function\". Returns 0 if x "
 "&lt; 0, 1 if x &gt; 0, and 1/2 if x = 0."
@@ -3984,185 +4102,43 @@ msgstr ""
 "间断函数也被称作是\" 单位阶跃函数\"。当 x &lt; 0时值为0, x &gt; 0时值为1,  x "
 "= 0时则为1/2。"
 
-#: ../data/functions.xml.in.h:258
-#, fuzzy
-msgid "Dirac Delta Function"
-msgstr "&#x3B2;函数"
-
-#: ../data/functions.xml.in.h:259
-#, fuzzy
-msgid "r:dirac,au:&#x3B4;"
-msgstr "ar:GBP,au:&#xA3;"
-
-#: ../data/functions.xml.in.h:260
-#, fuzzy
-msgid "Returns 0 if x is non-zero, and infinity if x is zero."
-msgstr "如果i不等于j，返回0；如果i等于j，返回1。"
-
-#: ../data/functions.xml.in.h:261
-msgid "Ramp Function"
-msgstr " 斜坡函数"
-
-#: ../data/functions.xml.in.h:262
-msgid "r:ramp"
-msgstr ""
-
-#: ../data/functions.xml.in.h:263
-msgid "Rectangular Function"
-msgstr "矩阵函数"
-
-#: ../data/functions.xml.in.h:264
-msgid "r:rectangular"
-msgstr ""
-
-#: ../data/functions.xml.in.h:265
-msgid "Sigmoid Function"
-msgstr "sigmoid函数"
-
-#: ../data/functions.xml.in.h:266
-msgid "r:sigmoid"
-msgstr ""
-
-#: ../data/functions.xml.in.h:267
-msgid "Logit Transformation"
-msgstr "Logit变换"
-
-#: ../data/functions.xml.in.h:268
-msgid "r:logit"
-msgstr ""
-
-#: ../data/functions.xml.in.h:269
-msgid "Triangular Function"
-msgstr "三角函数"
-
-#: ../data/functions.xml.in.h:270
-msgid "r:triangular"
-msgstr ""
-
-#: ../data/functions.xml.in.h:271
-#, fuzzy
-msgid "Special Functions"
-msgstr "阶梯函数"
-
-#: ../data/functions.xml.in.h:272
-msgid "Gamma Function"
-msgstr "&#x3B3;函数"
-
-#: ../data/functions.xml.in.h:273
-msgid "r:gamma"
-msgstr ""
-
-#: ../data/functions.xml.in.h:274
-#, fuzzy
-msgid "Digamma Function"
-msgstr "&#x3B3;函数"
-
-#: ../data/functions.xml.in.h:275
-msgid "r:digamma,psi"
-msgstr ""
-
-#: ../data/functions.xml.in.h:276
-msgid "Beta Function"
-msgstr "&#x3B2;函数"
-
-#: ../data/functions.xml.in.h:277
-msgid "r:beta"
-msgstr ""
-
-#: ../data/functions.xml.in.h:278
-#, fuzzy
-msgid "Error Function"
-msgstr "函数"
-
-#: ../data/functions.xml.in.h:279
-msgid "r:erf"
-msgstr ""
-
-#: ../data/functions.xml.in.h:280
-msgid "Complementary Error Function"
-msgstr ""
-
-#: ../data/functions.xml.in.h:281
-msgid "r:erfc"
-msgstr ""
-
-#: ../data/functions.xml.in.h:282
-#, fuzzy
-msgid "Polylogarithm"
-msgstr "自然对数"
-
-#: ../data/functions.xml.in.h:283
-msgid "rc:Li,polylog"
-msgstr ""
-
-#: ../data/functions.xml.in.h:284
-msgid "Order"
-msgstr "次数"
-
-#: ../data/functions.xml.in.h:285
-#, fuzzy
-msgid "Argument"
-msgstr "自变量"
-
-#: ../data/functions.xml.in.h:286
-#, fuzzy
-msgid "Airy Function"
-msgstr "函数"
-
-#: ../data/functions.xml.in.h:287
-msgid "r:airy"
-msgstr ""
-
-#: ../data/functions.xml.in.h:288
-msgid "Bessel Function of the First Kind"
-msgstr ""
-
-#: ../data/functions.xml.in.h:289
-msgid "r:besselj"
-msgstr ""
-
-#: ../data/functions.xml.in.h:290
-msgid "Bessel Function of the Second Kind"
-msgstr ""
-
 #: ../data/functions.xml.in.h:291
-msgid "r:bessely"
-msgstr ""
+msgid "Dirac Delta Function"
+msgstr "狄拉克δ函数"
 
 #: ../data/functions.xml.in.h:292
-msgid "Riemann Zeta"
-msgstr "Riemann Zeta"
+msgid "r:dirac,au:&#x3B4;"
+msgstr ""
 
 #: ../data/functions.xml.in.h:293
-msgid "r:zeta"
+msgid "Returns 0 if x is non-zero, and infinity if x is zero."
 msgstr ""
 
 #: ../data/functions.xml.in.h:294
-msgid "Integral point"
-msgstr "积分点"
+msgid "Ramp Function"
+msgstr " 斜坡函数"
 
 #: ../data/functions.xml.in.h:295
-msgid "Kronecker Delta"
-msgstr "Kronecker Delta"
-
-#: ../data/functions.xml.in.h:296
-msgid "r:kronecker"
+msgid "r:ramp"
 msgstr ""
 
+#: ../data/functions.xml.in.h:296
+msgid "Rectangular Function"
+msgstr "矩阵函数"
+
 #: ../data/functions.xml.in.h:297
-msgid "Returns 0 if i != j and 1 if i = j."
-msgstr "如果i不等于j，返回0；如果i等于j，返回1。"
+msgid "r:rectangular"
+msgstr ""
 
 #: ../data/functions.xml.in.h:298
-msgid "Value 1 (i)"
-msgstr "值1(i)"
+msgid "Triangular Function"
+msgstr "三角函数"
 
 #: ../data/functions.xml.in.h:299
-msgid "Value 2 (j)"
-msgstr "值2(i)"
+msgid "r:triangular"
+msgstr ""
 
 #: ../data/functions.xml.in.h:300
-#, fuzzy
 msgid "Complex Numbers"
 msgstr "复数"
 
@@ -4187,23 +4163,20 @@ msgid "r:im"
 msgstr ""
 
 #: ../data/functions.xml.in.h:306
-#, fuzzy
 msgid "Principal Argument"
-msgstr "本金"
+msgstr "幅角"
 
 #: ../data/functions.xml.in.h:307
 msgid "r:arg"
 msgstr ""
 
 #: ../data/functions.xml.in.h:308
-#, fuzzy
 msgid "Complex Conjugate"
-msgstr "复数"
+msgstr "共轭复数"
 
 #: ../data/functions.xml.in.h:309
-#, fuzzy
 msgid "r:conj"
-msgstr "r:covalent"
+msgstr ""
 
 #: ../data/functions.xml.in.h:310
 msgid "Exponents &amp; Logarithms"
@@ -4478,9 +4451,8 @@ msgid "r:atanh"
 msgstr ""
 
 #: ../data/functions.xml.in.h:376
-#, fuzzy
 msgid "Four-quadrant Inverse Tangent"
-msgstr "反正切"
+msgstr "Atan2"
 
 #: ../data/functions.xml.in.h:377
 msgid "r:atan2"
@@ -4501,9 +4473,8 @@ msgid "X"
 msgstr "X"
 
 #: ../data/functions.xml.in.h:381
-#, fuzzy
 msgid "Cardinal Sine (Sinc Function)"
-msgstr "寻找线性函数"
+msgstr "Sinc函数"
 
 #: ../data/functions.xml.in.h:382
 msgid "r:sinc"
@@ -5935,9 +5906,8 @@ msgid "Algebra"
 msgstr "代数"
 
 #: ../data/functions.xml.in.h:721
-#, fuzzy
 msgid "Summation"
-msgstr "方程"
+msgstr "求和符号"
 
 #: ../data/functions.xml.in.h:722
 msgid "au:&#x3A3;,r:sum"
@@ -5964,7 +5934,7 @@ msgstr "上限(n)"
 
 #: ../data/functions.xml.in.h:727
 msgid "Product of a sequence"
-msgstr ""
+msgstr "积"
 
 #: ../data/functions.xml.in.h:728
 msgid "au:&#x3A0;,r:product"
@@ -7542,7 +7512,7 @@ msgstr "普朗克长度"
 
 #: ../data/units.xml.in.h:56
 msgid "Bohr (Atomic Unit of Length)"
-msgstr ""
+msgstr "玻尔（单位）"
 
 #: ../data/units.xml.in.h:57
 #, fuzzy
@@ -7661,9 +7631,8 @@ msgid "Kilogram"
 msgstr "千克"
 
 #: ../data/units.xml.in.h:88
-#, fuzzy
 msgid "Hectogram"
-msgstr "向量"
+msgstr ""
 
 #: ../data/units.xml.in.h:89
 msgid "Metric Ton (Tonne)"
@@ -7840,9 +7809,8 @@ msgid "Gram per Cubic Centimeter"
 msgstr "克每立方厘米"
 
 #: ../data/units.xml.in.h:133
-#, fuzzy
 msgid "Atomic Mass"
-msgstr "原子质量单位"
+msgstr "原子量"
 
 #: ../data/units.xml.in.h:134
 msgid "Gram per Mole"
@@ -7997,9 +7965,8 @@ msgid "r:statcoulomb,p:statcoulombs,a:statC,franklin,a:Fr,p:franklins"
 msgstr ""
 
 #: ../data/units.xml.in.h:178
-#, fuzzy
 msgid "Planck Charge"
-msgstr "普朗克时间"
+msgstr "普朗克電荷"
 
 #: ../data/units.xml.in.h:179
 msgid "Atomic Unit of Charge"
@@ -8413,9 +8380,8 @@ msgid "Decare"
 msgstr ""
 
 #: ../data/units.xml.in.h:281
-#, fuzzy
 msgid "a:da,r:decare,p:decares"
-msgstr "a:$,ar:USD,美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:282
 msgid "Barn"
@@ -8735,7 +8701,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:361
 msgid "Specific Volume"
-msgstr ""
+msgstr "比容"
 
 #: ../data/units.xml.in.h:362
 msgid "Cubic Meter per Kilogram"
@@ -8775,7 +8741,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:371
 msgid "Speed of Light (Natural Unit of Velocity)"
-msgstr ""
+msgstr "光速（单位）"
 
 #: ../data/units.xml.in.h:372
 msgid "Atomic Unit of Velocity"
@@ -8887,9 +8853,8 @@ msgid "Atomic Unit of Magnetic Flux Density"
 msgstr "磁通密度"
 
 #: ../data/units.xml.in.h:399
-#, fuzzy
 msgid "Magnetic Dipole Moment"
-msgstr "磁场强度"
+msgstr "磁矩"
 
 #: ../data/units.xml.in.h:400
 #, fuzzy
@@ -8970,9 +8935,8 @@ msgid "Newton Meter"
 msgstr "牛顿米"
 
 #: ../data/units.xml.in.h:419
-#, fuzzy
 msgid "Momentum"
-msgstr "统计矩"
+msgstr "动量"
 
 #: ../data/units.xml.in.h:420
 #, fuzzy
@@ -9185,9 +9149,8 @@ msgid "ar:Btu"
 msgstr ""
 
 #: ../data/units.xml.in.h:472
-#, fuzzy
 msgid "Electronvolt"
-msgstr "电子伏特"
+msgstr "電子伏特"
 
 #: ../data/units.xml.in.h:473
 msgid "ar:eV,electronvolt,p:electronvolts"
@@ -9215,12 +9178,11 @@ msgstr ""
 
 #: ../data/units.xml.in.h:479
 msgid "Hartree (Atomic Unit of Energy)"
-msgstr ""
+msgstr "哈特里能量（单位）"
 
 #: ../data/units.xml.in.h:480
-#, fuzzy
 msgid "Rydberg (unit)"
-msgstr "里德伯常数"
+msgstr "里德伯能量（单位）"
 
 #: ../data/units.xml.in.h:481
 msgid "Natural Unit of Energy"
@@ -9228,7 +9190,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:482
 msgid "Specific Energy"
-msgstr ""
+msgstr "比能"
 
 #: ../data/units.xml.in.h:483
 msgid "Joule per Kilogram"
@@ -9275,9 +9237,8 @@ msgid "Joule per Kelvin"
 msgstr "焦耳每开尔文"
 
 #: ../data/units.xml.in.h:494
-#, fuzzy
 msgid "Boltzmann (unit)"
-msgstr "玻耳兹曼常数"
+msgstr "玻耳兹曼（单位）"
 
 #: ../data/units.xml.in.h:495
 msgid "Specific Entropy"
@@ -9320,9 +9281,8 @@ msgid "Joule per Mole Kelvin"
 msgstr "焦耳每摩尔开尔文"
 
 #: ../data/units.xml.in.h:505
-#, fuzzy
 msgid "Action"
-msgstr "函数"
+msgstr "作用量"
 
 #: ../data/units.xml.in.h:506
 #, fuzzy
@@ -9330,8 +9290,8 @@ msgid "Joule Second"
 msgstr "焦耳每秒"
 
 #: ../data/units.xml.in.h:507
-msgid "Planck over 2 pi (Atomic/Natural Unit of Action)"
-msgstr ""
+msgid "Reduced Planck (Atomic/Natural Unit of Action)"
+msgstr "個常用的量為約化普朗克常數(单位）"
 
 #: ../data/units.xml.in.h:508
 msgid "Radioactivity"
@@ -9859,9 +9819,8 @@ msgid "Planck Constant"
 msgstr "普朗克常数"
 
 #: ../data/variables.xml.in.h:66
-#, fuzzy
-msgid "Planck Constant over 2 pi (Dirac constant)"
-msgstr "普朗克常数每2&#x3C0;"
+msgid "Reduced Planck Constant (Dirac constant)"
+msgstr "個常用的量為約化普朗克常數(有時稱為狄拉克常數）"
 
 #: ../data/variables.xml.in.h:67
 msgid "Newtonian Constant of Gravitation"
@@ -9872,9 +9831,8 @@ msgid "Speed of Light in Vacuum"
 msgstr "真空中光速"
 
 #: ../data/variables.xml.in.h:69
-#, fuzzy
 msgid "Standard Acceleration due to Gravity"
-msgstr "标准日期格式"
+msgstr "標準重力"
 
 #: ../data/variables.xml.in.h:70
 msgid "Electromagnetic Constants"
@@ -9928,9 +9886,8 @@ msgid "von Klitzing Constant (conventional value)"
 msgstr "冯·克里青常数"
 
 #: ../data/variables.xml.in.h:82
-#, fuzzy
 msgid "Particle Mass in u"
-msgstr "&#x3B1;粒子质量"
+msgstr "粒子质量(u)"
 
 #: ../data/variables.xml.in.h:83
 #, fuzzy
@@ -9978,7 +9935,7 @@ msgstr "&#x3B1;粒子质量"
 
 #: ../data/variables.xml.in.h:92
 msgid "Particle Mass in MeV*c^(-2)"
-msgstr ""
+msgstr "粒子质量(MeV*c^(-2))"
 
 #: ../data/variables.xml.in.h:93
 #, fuzzy
@@ -10045,9 +10002,8 @@ msgid "Z Boson Mass (in MeV/c^2)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:108
-#, fuzzy
 msgid "Particle Mass in kg"
-msgstr "&#x3B1;粒子质量"
+msgstr "粒子质量(kg)"
 
 #: ../data/variables.xml.in.h:109
 #, fuzzy
@@ -10101,17 +10057,16 @@ msgid "Classical Electron Radius"
 msgstr "经典电子半径"
 
 #: ../data/variables.xml.in.h:121
-#, fuzzy
 msgid "Fermi Coupling Constant"
-msgstr "冯·克里青常数"
+msgstr "フェルミ結合定数"
 
 #: ../data/variables.xml.in.h:122
 msgid "Fine-Structure Constant"
-msgstr ""
+msgstr "精细结构常数"
 
 #: ../data/variables.xml.in.h:123
 msgid "Hartree Energy (constant)"
-msgstr ""
+msgstr "哈特里能量（常數）"
 
 #: ../data/variables.xml.in.h:124
 msgid "Quantum of Circulation"
@@ -10131,7 +10086,7 @@ msgstr ""
 
 #: ../data/variables.xml.in.h:128
 msgid "Weak Mixing Angle (Weinberg Angle)"
-msgstr ""
+msgstr "溫伯格角"
 
 #: ../data/variables.xml.in.h:129
 msgid "Physico-Chemical Constants"
@@ -10163,14 +10118,12 @@ msgid "Compton Wavelength"
 msgstr "康普顿波长"
 
 #: ../data/variables.xml.in.h:136
-#, fuzzy
-msgid "Compton Wavelength over 2 pi"
-msgstr "康普顿波长"
+msgid "Reduced Compton Wavelength"
+msgstr "約化康普頓波長"
 
 #: ../data/variables.xml.in.h:137
-#, fuzzy
 msgid "Electronvolt (constant)"
-msgstr "电磁常数"
+msgstr "電子伏特（常數）"
 
 #: ../data/variables.xml.in.h:138
 msgid "Faraday Constant"
@@ -10186,9 +10139,8 @@ msgid "First Radiation Constant for Spectral Radiance"
 msgstr "第一辐射常数"
 
 #: ../data/variables.xml.in.h:141
-#, fuzzy
 msgid "Gas Constant"
-msgstr "基本常数"
+msgstr "氣體常數"
 
 #: ../data/variables.xml.in.h:142
 msgid "Lattice Parameter of Silicon"
@@ -10228,9 +10180,8 @@ msgid "Second Radiation Constant"
 msgstr "第二辐射常数"
 
 #: ../data/variables.xml.in.h:151
-#, fuzzy
 msgid "Stefan-Boltzmann Constant"
-msgstr "玻耳兹曼常数"
+msgstr "斯特藩-玻爾茲曼常數"
 
 #: ../data/variables.xml.in.h:152
 msgid "Wien frequency displacement law constant"
@@ -10426,9 +10377,8 @@ msgid "Unknowns"
 msgstr "未知数"
 
 #: ../data/variables.xml.in.h:199
-#, fuzzy
 msgid "n (integer)"
-msgstr "是整数"
+msgstr "n（整数）"
 
 #: ../data/variables.xml.in.h:201
 msgid "Today"

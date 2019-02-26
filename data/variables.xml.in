@@ -168,7 +168,7 @@
         <value unit="J*s">6.62607015E-34</value>
       </variable>
       <variable>
-        <_title>Planck Constant over 2 pi (Dirac constant)</_title>
+        <_title>Reduced Planck Constant (Dirac constant)</_title>
         <names>r:planck2pi,dirac,au:&#x210f;</names>
         <value>planck/(2*pi)</value>
       </variable>
@@ -506,7 +506,7 @@
         <value>planck/(electron_mass*c)</value>
       </variable>
       <variable>
-        <_title>Compton Wavelength over 2 pi</_title>
+        <_title>Reduced Compton Wavelength</_title>
         <names>r:compton_wavelength_2pi</names>
         <value>compton_wavelength/(2*pi)</value>
       </variable>

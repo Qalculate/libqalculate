@@ -360,6 +360,7 @@
       <title>Bohr (Atomic Unit of Length)</title>
       <title xml:lang="fr">Bohr (unité)</title>
       <title xml:lang="sv">Bohr (atomär enhet för längd)</title>
+      <title xml:lang="zh_CN">玻尔（单位）</title>
       <names>rs:bohr_unit,as:a_0unit</names>
       <system>Atomic</system>
       <base>
@@ -1000,6 +1001,7 @@
       <title xml:lang="fr">Masse Atomique</title>
       <title xml:lang="nl">Atommassa</title>
       <title xml:lang="sv">Atommassa</title>
+      <title xml:lang="zh_CN">原子量</title>
       <unit type="composite">
         <title>Gram per Mole</title>
         <title xml:lang="fr">Gramme par Mole</title>
@@ -1164,6 +1166,7 @@
       <title xml:lang="zh_CN">月份</title>
       <names>r:month,p:months</names>
       <names xml:lang="fr">mois,p:months</names>
+      <names xml:lang="nl">maand,p:maanden</names>
       <names xml:lang="sv">a:månad,p:månader</names>
       <base>
         <unit>d</unit>
@@ -1379,6 +1382,7 @@
         <title xml:lang="fr">Charge de Planck</title>
         <title xml:lang="nl">Plancklading</title>
         <title xml:lang="sv">Planck-laddning</title>
+        <title xml:lang="zh_CN">普朗克電荷</title>
         <names>r:planck_charge,as:q_P</names>
         <system>Planck</system>
         <base>
@@ -2895,6 +2899,7 @@
       <title xml:lang="fr">Volume spécifique</title>
       <title xml:lang="nl">Soortelijk volume</title>
       <title xml:lang="sv">Specifik volym</title>
+      <title xml:lang="zh_CN">比容</title>
       <unit type="composite">
         <system>SI</system>
         <title>Cubic Meter per Kilogram</title>
@@ -3027,6 +3032,7 @@
       <title>Speed of Light (Natural Unit of Velocity)</title>
       <title xml:lang="fr">Vitesse de la Lumière (unité)</title>
       <title xml:lang="sv">Ljusets hastighet (naturlig enhet för hastighet)</title>
+      <title xml:lang="zh_CN">光速（单位）</title>
       <names>ars:c_unit</names>
       <base>
         <unit>m_p_s</unit>
@@ -3286,6 +3292,7 @@
       <title xml:lang="fr">Moment Dipolaire Magnétique</title>
       <title xml:lang="nl">Magnetisch dipoolmoment</title>
       <title xml:lang="sv">Magnetiskt dipolmoment</title>
+      <title xml:lang="zh_CN">磁矩</title>
       <unit type="composite">
         <title>Joule per Tesla</title>
         <title xml:lang="nl">Joule per Tesla</title>
@@ -3492,6 +3499,7 @@
       <title xml:lang="fr">Quantité de Mouvement</title>
       <title xml:lang="nl">Impuls</title>
       <title xml:lang="sv">Rörelsemängd</title>
+      <title xml:lang="zh_CN">动量</title>
         <unit type="composite">
         <title>Kilogram Meter per Second</title>
         <title xml:lang="nl">Kilogram meter per seconde</title>
@@ -3953,6 +3961,7 @@
       <title xml:lang="fr">ÉlectronVolt</title>
       <title xml:lang="nl">Elektronvolt</title>
       <title xml:lang="sv">Elektronvolt</title>
+      <title xml:lang="zh_CN">電子伏特</title>
       <names>ar:eV,electronvolt,p:electronvolts</names>
       <names xml:lang="sv">a:eV,elektronvolt,electronvolt</names>
       <use_with_prefixes>true</use_with_prefixes>
@@ -4001,6 +4010,7 @@
       <title xml:lang="fr">Hartree (unité)</title>
       <title xml:lang="nl">Hartree (eenheid)</title>
       <title xml:lang="sv">Hartree (atomär enhet för energi)</title>
+      <title xml:lang="zh_CN">哈特里能量（单位）</title>
       <names>ar:Ha,as:E_h,hartree</names>
       <system>Atomic</system>
       <base>
@@ -4010,10 +4020,7 @@
       </base>
     </unit>
     <unit type="alias">
-      <title>Rydberg (unit)</title>
-      <title xml:lang="fr">Rydberg (unité)</title>
-      <title xml:lang="nl">Rydberg (eenheid)</title>
-      <title xml:lang="sv">Rydberg (enhet)</title>
+      <title>Rydberg</title>
       <names>ar:Ry,s:rydberg_unit</names>
       <base>
         <unit>Ha</unit>
@@ -4042,6 +4049,7 @@
       <title xml:lang="fr">Énergie spécifique</title>
       <title xml:lang="nl">Soortelijke energie</title>
       <title xml:lang="sv">Specifik energi</title>
+      <title xml:lang="zh_CN">比能</title>
       <unit type="composite">
         <system>SI</system>
         <title>Joule per Kilogram</title>
@@ -4154,6 +4162,7 @@
         <title xml:lang="fr">Boltzmann (unité)</title>
         <title xml:lang="nl">Boltzmann (eenheid)</title>
         <title xml:lang="sv">Boltzmanns (enhet)</title>
+        <title xml:lang="zh_CN">玻耳兹曼（单位）</title>
         <names>rs:boltzmann_unit,as:k_Bunit</names>
         <base>
           <unit>J_p_K</unit>
@@ -4309,6 +4318,7 @@
       <title>Action</title>
       <title xml:lang="nl">Actie</title>
       <title xml:lang="sv">Verkan</title>
+      <title xml:lang="zh_CN">作用量</title>
       <unit type="composite">
         <system>SI</system>
         <title>Joule Second</title>
@@ -4327,10 +4337,11 @@
         </part>
       </unit>
       <unit type="alias">
-        <title>Planck over 2 pi (Atomic/Natural Unit of Action)</title>
-        <title xml:lang="fr">Planck sur 2 pi (unité)</title>
-        <title xml:lang="nl">Planck gedeeld door 2 pi (eenheid)</title>
-        <title xml:lang="sv">Plancks konstant över 2 pi (atomär/naturlig enhet för verkan)</title>
+        <title>Reduced Planck (Atomic/Natural Unit of Action)</title>
+        <title xml:lang="fr">Planck Réduite (unité)</title>
+        <title xml:lang="nl">Gereduceerde Planck (eenheid)</title>
+        <title xml:lang="sv">Reducerad Planck (atomär/naturlig enhet för verkan)</title>
+        <title xml:lang="zh_CN">個常用的量為約化普朗克常數(单位）</title>
         <names>rs:planck_unit</names>
         <system>Atomic/Natural</system>
         <base>
