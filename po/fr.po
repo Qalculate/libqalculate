@@ -98,13 +98,13 @@ msgstr "non nul"
 #: ../src/qalc.cc:2609 ../src/qalc.cc:3205 ../src/qalc.cc:3324
 #: ../src/qalc.cc:3533
 msgid "positive"
-msgstr "strictement positif"
+msgstr "positif"
 
 #: ../src/qalc.cc:220 ../src/qalc.cc:630 ../src/qalc.cc:1374
 #: ../src/qalc.cc:2612 ../src/qalc.cc:3208 ../src/qalc.cc:3330
 #: ../src/qalc.cc:3539
 msgid "non-negative"
-msgstr "positif"
+msgstr "non négatif"
 
 #: ../src/qalc.cc:222 ../src/qalc.cc:629 ../src/qalc.cc:1373
 #: ../src/qalc.cc:2611 ../src/qalc.cc:3207 ../src/qalc.cc:3326
@@ -116,7 +116,7 @@ msgstr "négatif"
 #: ../src/qalc.cc:2610 ../src/qalc.cc:3206 ../src/qalc.cc:3328
 #: ../src/qalc.cc:3537
 msgid "non-positive"
-msgstr "négatif"
+msgstr "non positif"
 
 #: ../src/qalc.cc:227
 msgid "Unrecognized assumption."
@@ -166,11 +166,11 @@ msgstr ""
 #: ../src/qalc.cc:578 ../src/qalc.cc:580 ../src/qalc.cc:2796
 #: ../src/qalc.cc:3470
 msgid "input base"
-msgstr "base de la saisie"
+msgstr "base de saisie"
 
 #: ../src/qalc.cc:578
 msgid "output base"
-msgstr "base de la sortie"
+msgstr "base de sortie"
 
 #: ../src/qalc.cc:581 ../src/qalc.cc:2407 ../src/qalc.cc:2697
 #: ../src/qalc.cc:2798 ../src/qalc.cc:3391 ../src/qalc.cc:3478
@@ -190,9 +190,8 @@ msgstr "hexadécimal"
 
 #: ../src/qalc.cc:584 ../src/qalc.cc:2402 ../src/qalc.cc:4373
 #: ../libqalculate/Calculator.cc:2480
-#, fuzzy
 msgid "duodecimal"
-msgstr "décimal"
+msgstr "duodécimal"
 
 #: ../src/qalc.cc:585 ../src/qalc.cc:2392 ../src/qalc.cc:4357
 #: ../libqalculate/Calculator.cc:2474
@@ -216,7 +215,7 @@ msgstr "sexagésimal"
 #: ../src/qalc.cc:605 ../src/qalc.cc:668 ../src/qalc.cc:2703
 #: ../src/qalc.cc:3396
 msgid "base display"
-msgstr "affichage de la base"
+msgstr "affichage de base"
 
 #: ../src/qalc.cc:609
 msgid "Illegal base."
@@ -239,7 +238,7 @@ msgstr "non-matriciel"
 
 #: ../src/qalc.cc:648 ../src/qalc.cc:2821 ../src/qalc.cc:3490
 msgid "all prefixes"
-msgstr "tous les préfixes"
+msgstr "tous préfixes"
 
 #: ../src/qalc.cc:649 ../src/qalc.cc:2661 ../src/qalc.cc:3357
 msgid "complex numbers"
@@ -260,15 +259,15 @@ msgstr "nombres infinis"
 
 #: ../src/qalc.cc:653 ../src/qalc.cc:2687 ../src/qalc.cc:3371
 msgid "show negative exponents"
-msgstr "afficher les exposants négatifs"
+msgstr "afficher exposants négatifs"
 
 #: ../src/qalc.cc:654 ../src/qalc.cc:2605 ../src/qalc.cc:3314
 msgid "assume nonzero denominators"
-msgstr "supposer que les dénominateurs sont non nuls"
+msgstr "supposer dénominateurs non nuls"
 
 #: ../src/qalc.cc:655 ../src/qalc.cc:2606 ../src/qalc.cc:3315
 msgid "warn nonzero denominators"
-msgstr "avertir des dénominateurs non nuls"
+msgstr "avertir dénominateurs non nuls"
 
 #: ../src/qalc.cc:656 ../src/qalc.cc:2837 ../src/qalc.cc:3509
 msgid "prefixes"
@@ -280,7 +279,7 @@ msgstr "préfixes des dénominateurs"
 
 #: ../src/qalc.cc:658 ../src/qalc.cc:2836 ../src/qalc.cc:3508
 msgid "place units separately"
-msgstr "placer les unités séparément"
+msgstr "placer unités séparément"
 
 #: ../src/qalc.cc:659 ../src/qalc.cc:2660 ../src/qalc.cc:3356
 msgid "calculate variables"
@@ -296,7 +295,7 @@ msgstr "synchroniser les unités"
 
 #: ../src/qalc.cc:662 ../src/qalc.cc:2779 ../src/qalc.cc:3447
 msgid "round to even"
-msgstr "arrondir au nombre inférieur"
+msgstr "arrondir au inférieur"
 
 #: ../src/qalc.cc:663 ../src/qalc.cc:2817 ../src/qalc.cc:3486
 msgid "rpn syntax"
@@ -382,7 +381,7 @@ msgstr "décimal"
 
 #: ../src/qalc.cc:723 ../src/qalc.cc:2802 ../src/qalc.cc:3483
 msgid "limit implicit multiplication"
-msgstr "limiter les multiplications implicites"
+msgstr "limiter multiplications implicites"
 
 #: ../src/qalc.cc:725 ../src/qalc.cc:2689 ../src/qalc.cc:3373
 msgid "spacious"
@@ -412,7 +411,7 @@ msgstr "abréviations"
 
 #: ../src/qalc.cc:733 ../src/qalc.cc:2780 ../src/qalc.cc:3448
 msgid "show ending zeroes"
-msgstr "afficher les zéros de fin"
+msgstr "afficher zéros de fin"
 
 #: ../src/qalc.cc:734 ../src/qalc.cc:2778 ../src/qalc.cc:3446
 #, fuzzy
@@ -506,7 +505,7 @@ msgstr ""
 
 #: ../src/qalc.cc:807 ../src/qalc.cc:2642 ../src/qalc.cc:3346
 msgid "try exact"
-msgstr "essayer le calcul exact"
+msgstr "essayez exact"
 
 #. qalc command
 #: ../src/qalc.cc:808 ../src/qalc.cc:1346 ../src/qalc.cc:1363
@@ -815,14 +814,12 @@ msgid "default assumptions"
 msgstr "hypothèses par défaut"
 
 #: ../src/qalc.cc:1406
-#, fuzzy
 msgid "Functions:"
-msgstr "Fonction"
+msgstr "Fonctions:"
 
 #: ../src/qalc.cc:1420
-#, fuzzy
 msgid "Units:"
-msgstr "Unité"
+msgstr "Unités:"
 
 #: ../src/qalc.cc:1427
 msgid "No local variables, functions or units have been defined."
@@ -945,7 +942,6 @@ msgid "show application version and exit"
 msgstr ""
 
 #: ../src/qalc.cc:1579
-#, fuzzy
 msgid ""
 "The program will start in interactive mode if no expression and no file is "
 "specified (or interactive mode is explicitly selected)."
@@ -1261,9 +1257,8 @@ msgid "help"
 msgstr "aide"
 
 #: ../src/qalc.cc:2857
-#, fuzzy
 msgid "Enter a mathematical expression or a command and press enter."
-msgstr "Entrez une expression mathématique ou une commande."
+msgstr "Entrez une expression mathématique ou une commande et appuyez sur Entrée."
 
 #: ../src/qalc.cc:2858
 msgid "Complete functions, units and variables with the tabulator key."
@@ -1313,7 +1308,7 @@ msgstr "TITRE"
 
 #: ../src/qalc.cc:2882
 msgid "UNIT or \"TO\" COMMAND"
-msgstr ""
+msgstr "UNITÉ et \"TO\" COMMANDE"
 
 #. qalc command
 #: ../src/qalc.cc:2884 ../src/qalc.cc:3705 ../src/qalc.cc:3726
@@ -1375,9 +1370,8 @@ msgid ""
 msgstr ""
 
 #: ../src/qalc.cc:2917 ../src/qalc.cc:2922
-#, fuzzy
 msgid "currencies"
-msgstr "Devise"
+msgstr "monnaies"
 
 #: ../src/qalc.cc:2939
 msgid "No function, variable or unit with specified name exist."
@@ -1433,9 +1427,8 @@ msgid "key"
 msgstr "touche"
 
 #: ../src/qalc.cc:3086
-#, fuzzy
 msgid "Expression:"
-msgstr "précision"
+msgstr ""
 
 #: ../src/qalc.cc:3095 ../src/qalc.cc:3098 ../src/qalc.cc:3265
 msgid "Unit"
