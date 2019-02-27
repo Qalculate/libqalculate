@@ -494,6 +494,7 @@ msgid "division sign"
 msgstr "division sign"
 
 #: ../src/qalc.cc:804 ../src/qalc.cc:2639 ../src/qalc.cc:3346
+#, fuzzy
 msgid "approximation"
 msgstr "近似"
 
@@ -943,7 +944,6 @@ msgid "show application version and exit"
 msgstr ""
 
 #: ../src/qalc.cc:1579
-#, fuzzy
 msgid ""
 "The program will start in interactive mode if no expression and no file is "
 "specified (or interactive mode is explicitly selected)."
@@ -1347,12 +1347,10 @@ msgid "DIRECTION"
 msgstr ""
 
 #: ../src/qalc.cc:2895
-#, fuzzy
 msgid "Type help COMMAND for more information (example: help save)."
 msgstr "输入help 命令 以获取更多帮助(例如：help save)"
 
 #: ../src/qalc.cc:2896
-#, fuzzy
 msgid ""
 "Type info NAME for information about a function, variable or unit (example: "
 "info sin)."
