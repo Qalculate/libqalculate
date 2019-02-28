@@ -235,6 +235,7 @@ class Calculator {
 	vector<string> real_signs;
 	vector<string> default_signs;
 	vector<string> default_real_signs;
+	bool b_ignore_locale;
 	char *saved_locale;
 	int disable_errors_ref;
 	vector<int> stopped_errors_count;
@@ -1146,6 +1147,8 @@ class Calculator {
 	const string &getComma() const;
 	/** Sets argument separator and decimal sign from the current locale. Mainly for internal use. */
 	void setLocale();
+	/** If "C" locale shall be used. */
+	void setIgnoreLocale();
 	void useDecimalComma();
 	/** Use point as decimal separator. 
 	* To use comma as an ignored separator in numbers, must be invoked with comma_as_separator = true, to change the default function argument separator to semicolon, in addition to using ParseOptions::comma_as_separator.
