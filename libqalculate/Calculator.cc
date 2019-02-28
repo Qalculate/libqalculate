@@ -326,8 +326,8 @@ class Calculator_p {
 Calculator::Calculator() {	
 
 #ifdef ENABLE_NLS
-	bindtextdomain (GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
-	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
+	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 #endif
 
 	gmp_randinit_default(randstate);
@@ -363,6 +363,8 @@ Calculator::Calculator() {
 	i_start_interval = 0;
 	
 	b_var_units = true;
+	
+	b_ignore_locale = false;
 
 	addStringAlternative(SIGN_POWER_0, "^(0)");
 	addStringAlternative(SIGN_POWER_1, "^(1)");
@@ -415,7 +417,7 @@ Calculator::Calculator() {
 	XOR_str = "XOR";
 	XOR_str_len = OR_str.length();
 
-	char *current_lc_numeric = setlocale(LC_NUMERIC, "");
+	char *current_lc_numeric = setlocale(LC_NUMERIC, NULL);
 	if(current_lc_numeric) saved_locale = strdup(current_lc_numeric);
 	else saved_locale = NULL;
 	struct lconv *lc = localeconv();
@@ -1265,6 +1267,36 @@ void Calculator::setLocale() {
 		COMMA_S = ",;";
 	}
 	setlocale(LC_NUMERIC, "C");
+}
+void Calculator::setIgnoreLocale() {
+	if(saved_locale) {
+		free(saved_locale);
+		saved_locale = NULL;
+	}
+	char *current_lc_monetary = setlocale(LC_MONETARY, NULL);
+	if(current_lc_monetary) saved_locale = strdup(current_lc_monetary);
+	else saved_locale = NULL;
+	setlocale(LC_ALL, "C");
+	if(saved_locale) {
+		setlocale(LC_MONETARY, saved_locale);
+		free(saved_locale);
+		saved_locale = NULL;
+	}
+	b_ignore_locale = true;
+	per_str = "per";
+	per_str_len = per_str.length();
+	times_str = "times";
+	times_str_len = times_str.length();
+	plus_str = "plus";
+	plus_str_len = plus_str.length();
+	minus_str = "minus";
+	minus_str_len = minus_str.length();
+	and_str = "and";
+	and_str_len = and_str.length();
+	or_str = "or";
+	or_str_len = or_str.length();
+	local_to = false;
+	unsetLocale();
 }
 void Calculator::useDecimalComma() {
 	DOT_STR = ",";
@@ -7607,7 +7639,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	if(LCIDToLocaleName(LOCALE_USER_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
 	gsub("-", "_", locale);
 #else
-	char *clocale = setlocale(LC_MESSAGES, "");
+	char *clocale = setlocale(LC_MESSAGES, NULL);
 	if(clocale) locale = clocale;
 #endif
 

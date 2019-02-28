@@ -1110,7 +1110,7 @@
   </object>
   <object symbol="Fl" number="114">
     <_name>Flerovium</_name>
-    <class>6</class>
+    <class>11</class>
     <boiling>210</boiling>
     <weight>289</weight>
     <x_pos>14</x_pos>

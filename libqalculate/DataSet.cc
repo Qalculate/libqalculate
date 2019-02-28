@@ -489,7 +489,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	if(LCIDToLocaleName(LOCALE_USER_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
 	gsub("-", "_", locale);
 #else
-	char *clocale = setlocale(LC_MESSAGES, "");
+	char *clocale = setlocale(LC_MESSAGES, NULL);
 	if(clocale) locale = clocale;
 #endif
 	if(locale == "POSIX" || locale == "C") {
