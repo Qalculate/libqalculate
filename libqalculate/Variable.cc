@@ -383,6 +383,7 @@ bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
 	}
 	return b;
 }
+extern bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false);
 extern bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
 bool replace_f_interval(MathStructure &mstruct) {
 	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_interval && mstruct.size() == 2) {
@@ -396,6 +397,19 @@ bool replace_f_interval(MathStructure &mstruct) {
 			MathStructure m1(mstruct[0]);
 			MathStructure m2(mstruct[1]);
 			if(create_interval(mstruct, m1, m2)) return true;
+		}
+	} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_uncertainty && mstruct.size() == 3 && mstruct[2].isNumber()) {
+		bool b_rel = mstruct[2].number().getBoolean();
+		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
+			Number nr(mstruct[0].number());
+			if(b_rel) nr.setRelativeUncertainty(mstruct[1].number(), true);
+			else nr.setUncertainty(mstruct[1].number(), true);
+			mstruct.set(nr, true);
+			return true;
+		} else if(!b_rel) {
+			MathStructure m1(mstruct[0]);
+			MathStructure m2(mstruct[1]);
+			if(set_uncertainty(m1, m2)) {mstruct = m1; return true;}
 		}
 	} else {
 		bool b = false;

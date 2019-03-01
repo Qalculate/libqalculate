@@ -11255,7 +11255,7 @@ bool MathStructure::calculateLimit(const MathStructure &x_var, const MathStructu
 	var->ref();
 	Assumptions *ass = new Assumptions();
 	MathStructure nr_limit(limit);
-	if(eo.approximation != APPROXIMATION_EXACT && nr_limit.containsInterval(true, true, false, false)) {
+	if(eo.approximation != APPROXIMATION_EXACT && nr_limit.containsInterval(true, true, false, false, true)) {
 		eo.approximation = APPROXIMATION_EXACT_VARIABLES;
 	}
 	nr_limit.eval(eo);
@@ -11643,7 +11643,7 @@ bool contains_undefined(MathStructure &m, const EvaluationOptions &eo = default_
 	}
 	return false;
 }
-bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, const MathStructure &mvar, const Number &nr_intval, const EvaluationOptions &eo, int depth, const Number &nr_prec, int orig_prec = 0, int is_real = -1) {
+bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, const MathStructure &mvar, const Number &nr_intval, const EvaluationOptions &eo, int depth, const Number &nr_prec, int orig_prec = 0, int is_real = -1, int undef_depth = 0) {
 	if(CALCULATOR->aborted()) return false;
 	if(depth == 0) orig_prec = nr_intval.precision(1);
 	MathStructure mtest(mstruct);
@@ -11664,7 +11664,7 @@ bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, co
 	}
 	if(COMPARISON_IS_NOT_EQUAL(cmp)) {
 		return true;
-	} else if(cmp != COMPARISON_RESULT_UNKNOWN || cmp == COMPARISON_RESULT_EQUAL || contains_undefined(mtest)) {
+	} else if(cmp != COMPARISON_RESULT_UNKNOWN || (undef_depth <= 5 && contains_undefined(mtest))) {
 		if(cmp == COMPARISON_RESULT_EQUAL || (nr_intval.precision(1) > (orig_prec > PRECISION ? orig_prec + 5 : PRECISION + 5) || (!nr_intval.isNonZero() && nr_intval.uncertainty().isLessThan(nr_prec)))) {
 			if(cmp == COMPARISON_RESULT_EQUAL && depth <= 3) return false;
 			if(malts.size() > 0 && (cmp = malts.last().compare(nr_intval)) != COMPARISON_RESULT_UNKNOWN && COMPARISON_MIGHT_BE_EQUAL(cmp)) {
@@ -11680,16 +11680,16 @@ bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, co
 		vector<Number> splits;
 		nr_intval.splitInterval(2, splits);
 		for(size_t i = 0; i < splits.size(); i++) {
-			if(!find_interval_zeroes(mstruct, malts, mvar, splits[i], eo, depth + 1, nr_prec, orig_prec, is_real)) return false;
+			if(!find_interval_zeroes(mstruct, malts, mvar, splits[i], eo, depth + 1, nr_prec, orig_prec, is_real, cmp == COMPARISON_RESULT_UNKNOWN ? undef_depth + 1 : 0)) return false;
 		}
 		return true;
 	}
 	return false;
 }
 bool contains_interval_variable(const MathStructure &m, int i_type = 0) {
-	if(i_type == 0 && m.isVariable() && m.containsInterval(true, true, false, true)) return true;
-	else if(i_type == 1 && m.containsInterval(true, false, false, true)) return true;
-	else if(i_type == 2 && m.containsInterval(true, true, false, true)) return true;
+	if(i_type == 0 && m.isVariable() && m.containsInterval(true, true, false, true, false)) return true;
+	else if(i_type == 1 && m.containsInterval(true, false, false, true, true)) return true;
+	else if(i_type == 2 && m.containsInterval(true, true, false, true, true)) return true;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(contains_interval_variable(m[i])) return true;
 	}
@@ -18648,6 +18648,34 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 			if(o_function == CALCULATOR->f_root && SIZE == 2 && CHILD(1) == 3) {
 				ERASE(1)
 				setFunction(CALCULATOR->f_cbrt);
+			} else if(o_function == CALCULATOR->f_interval && SIZE == 2 && CHILD(0).isAddition() && CHILD(0).size() == 2 && CHILD(1).isAddition() && CHILD(1).size() == 2) {
+				MathStructure *mmid = NULL, *munc = NULL;
+				if(CHILD(0)[0].equals(CHILD(1)[0], true, true)) {
+					mmid = &CHILD(0)[0];
+					if(CHILD(0)[1].isNegate() && CHILD(0)[1][0].equals(CHILD(1)[1], true, true)) munc = &CHILD(1)[1];
+					if(CHILD(1)[1].isNegate() && CHILD(1)[1][0].equals(CHILD(0)[1], true, true)) munc = &CHILD(0)[1];
+				} else if(CHILD(0)[1].equals(CHILD(1)[1], true, true)) {
+					mmid = &CHILD(0)[1];
+					if(CHILD(0)[0].isNegate() && CHILD(0)[0][0].equals(CHILD(1)[0], true, true)) munc = &CHILD(1)[0];
+					if(CHILD(1)[0].isNegate() && CHILD(1)[0][0].equals(CHILD(0)[0], true, true)) munc = &CHILD(0)[0];
+				} else if(CHILD(0)[0].equals(CHILD(1)[1], true, true)) {
+					mmid = &CHILD(0)[0];
+					if(CHILD(0)[1].isNegate() && CHILD(0)[1][0].equals(CHILD(1)[0], true, true)) munc = &CHILD(1)[0];
+					if(CHILD(1)[0].isNegate() && CHILD(1)[0][0].equals(CHILD(0)[1], true, true)) munc = &CHILD(0)[1];
+				} else if(CHILD(0)[1].equals(CHILD(1)[0], true, true)) {
+					mmid = &CHILD(0)[0];
+					if(CHILD(0)[0].isNegate() && CHILD(0)[0][0].equals(CHILD(1)[1], true, true)) munc = &CHILD(1)[1];
+					if(CHILD(1)[1].isNegate() && CHILD(1)[1][0].equals(CHILD(0)[0], true, true)) munc = &CHILD(0)[0];
+				}
+				if(mmid && munc) {
+					setFunction(CALCULATOR->f_uncertainty);
+					mmid->ref();
+					munc->ref();
+					CLEAR
+					APPEND_POINTER(mmid)
+					APPEND_POINTER(munc)
+					APPEND(m_zero)
+				}
 			}
 			break;
 		}
@@ -18803,7 +18831,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_XOR: {return true;}
 				case STRUCT_LOGICAL_NOT: {return po.excessive_parenthesis;}
 				case STRUCT_COMPARISON: {return true;}				
-				case STRUCT_FUNCTION: {return false;}
+				case STRUCT_FUNCTION: {return o_function == CALCULATOR->f_uncertainty;}
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return o_number.isInfinite() || (o_number.hasImaginaryPart() && o_number.hasRealPart());}
 				case STRUCT_VARIABLE: {return false;}
@@ -18833,7 +18861,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_XOR: {return flat_division || po.excessive_parenthesis;}
 				case STRUCT_LOGICAL_NOT: {return flat_division && po.excessive_parenthesis;}
 				case STRUCT_COMPARISON: {return flat_division || po.excessive_parenthesis;}
-				case STRUCT_FUNCTION: {return false;}
+				case STRUCT_FUNCTION: {return o_function == CALCULATOR->f_uncertainty;}
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return (flat_division || po.excessive_parenthesis) && (o_number.isInfinite() || o_number.hasImaginaryPart());}
 				case STRUCT_VARIABLE: {return false;}
@@ -18891,7 +18919,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_XOR: {return true;}
 				case STRUCT_LOGICAL_NOT: {return index == 1 || po.excessive_parenthesis;}
 				case STRUCT_COMPARISON: {return true;}
-				case STRUCT_FUNCTION: {return false;}
+				case STRUCT_FUNCTION: {return o_function == CALCULATOR->f_uncertainty;}
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return o_number.isInfinite() || o_number.hasImaginaryPart();}
 				case STRUCT_VARIABLE: {return false;}
@@ -19563,7 +19591,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		}
 		case STRUCT_FUNCTION: {
 			ips_n.depth++;
-			if((o_function == CALCULATOR->f_interval && SIZE == 2 && CHILD(0).isAddition() && CHILD(0).size() == 2 && CHILD(1).isAddition() && CHILD(1).size() == 2) || (o_function == CALCULATOR->f_uncertainty && SIZE == 3 && CHILD(2).isZero())) {
+			if(o_function == CALCULATOR->f_uncertainty && SIZE == 3 && CHILD(2).isZero()) {
 				MathStructure *mmid = NULL, *munc = NULL;
 				if(o_function == CALCULATOR->f_uncertainty) {
 					mmid = &CHILD(0);
@@ -19588,11 +19616,11 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				if(mmid && munc) {
 					PrintOptions po2 = po;
 					po2.show_ending_zeroes = false;
-					ips_n.wrap = !mmid->isNumber();
-					print_str += mmid->print(po2, ips_n);
+					ips_n.wrap = !CHILD(0).isNumber();
+					print_str += CHILD(0).print(po2, ips_n);
 					print_str += SIGN_PLUSMINUS;
-					ips_n.wrap = !munc->isNumber();
-					print_str += munc->print(po2, ips_n);
+					ips_n.wrap = !CHILD(1).isNumber();
+					print_str += CHILD(1).print(po2, ips_n);
 					break;
 				}
 			}
