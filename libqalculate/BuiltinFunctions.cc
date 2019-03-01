@@ -4110,20 +4110,7 @@ bool IntervalFunction::representsOdd(const MathStructure&, bool) const {return f
 bool IntervalFunction::representsUndefined(const MathStructure &vargs) const {return vargs.size() == 2 && (vargs[0].representsUndefined() || vargs[1].representsUndefined());}
 
 
-UncertaintyFunction::UncertaintyFunction() : MathFunction("uncertainty", 2, 3) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
-	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
-	setArgumentDefinition(3, new BooleanArgument());
-	setDefaultValue(3, "1");
-}
-int UncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = vargs[0];
-	if(eo.interval_calculation == INTERVAL_CALCULATION_NONE) {
-		return 1;
-	}
-	MathStructure munc(vargs[1]);
-	mstruct.eval(eo);
-	munc.eval(eo);
+bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false) {
 	if(munc.isFunction() && munc.function() == CALCULATOR->f_abs && munc.size() == 1) {
 		munc.setToChild(1, true);
 	}
@@ -4196,20 +4183,44 @@ int UncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &
 					}
 				}
 			}
-			bool b = false;
-			for(size_t i = 0; i < munc.size(); i++) {
-				if(munc[i].isFunction() && munc[i].function() == CALCULATOR->f_abs && munc[i].size() == 1) {
-					munc[i].setToChild(1);
-					b = true;
+			if(do_eval) {
+				bool b = false;
+				for(size_t i = 0; i < munc.size(); i++) {
+					if(munc[i].isFunction() && munc[i].function() == CALCULATOR->f_abs && munc[i].size() == 1) {
+						munc[i].setToChild(1);
+						b = true;
+					}
 				}
-			}
-			if(b) {
-				munc.eval(eo);
-				goto test_munc;
+				if(b) {
+					munc.eval(eo);
+					goto test_munc;
+				}
 			}
 		}
 	}
-	if(vargs[1].number().getBoolean()) {
+	return false;
+}
+
+UncertaintyFunction::UncertaintyFunction() : MathFunction("uncertainty", 2, 3) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	setArgumentDefinition(3, new BooleanArgument());
+	setDefaultValue(3, "1");
+}
+int UncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	if(eo.interval_calculation == INTERVAL_CALCULATION_NONE) {
+		return 1;
+	}
+	MathStructure munc(vargs[1]);
+	mstruct.eval(eo);
+	munc.eval(eo);
+	if(vargs[2].number().getBoolean()) {
+		if(munc.isNumber() && mstruct.isNumber()) {
+			mstruct.number().setRelativeUncertainty(munc.number(), true);
+			mstruct.numberUpdated();
+			return 1;
+		}
 		mstruct = vargs[0];
 		mstruct *= m_one;
 		mstruct.last() -= vargs[1];
@@ -4220,6 +4231,7 @@ int UncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &
 		mstruct.addChild_nocopy(m2);
 		return 1;
 	} else {
+		if(set_uncertainty(mstruct, munc, eo, true)) return 1;
 		mstruct = vargs[0];
 		mstruct -= vargs[1];
 		mstruct.transform(CALCULATOR->f_interval);
