@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-26 12:32+0100\n"
+"POT-Creation-Date: 2019-03-02 10:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3753,7 +3753,10 @@ msgid "r:hex"
 msgstr ""
 
 #: ../data/functions.xml.in.h:247
-msgid "Returns a value from a hexadecimal expression."
+msgid ""
+"Returns a value from a hexadecimal expression. If two's complement is true, "
+"numbers beginning with 8 or higher is interpreted as negative hexadecimal "
+"numbers using two's complement."
 msgstr ""
 
 #: ../data/functions.xml.in.h:248

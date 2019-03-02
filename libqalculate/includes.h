@@ -491,6 +491,8 @@ static const struct PrintOptions {
 	int custom_time_zone;
 	/// Negative binary numbers uses two's complement representation. All binary numbers starting with 1 are negative. Default: true
 	bool twos_complement;
+	/// Negative hexadecimal numbers uses two's complement representation. All hexadecimal numbers starting with 8 or higher are negative. Default: false
+	bool hexadecimal_twos_complement;
 	/// Number of bits used for binary numbers. Set to 0 for automatic. Default: 0
 	unsigned int binary_bits;
 	PrintOptions();
@@ -632,6 +634,8 @@ static const struct ParseOptions {
 	ParsingMode parsing_mode;
 	/// Negative binary numbers uses two's complement representation. All binary numbers starting with 1 are assumed to be negative. Default: false
 	bool twos_complement;
+	/// Negative hexadecimal numbers uses two's complement representation. All hexadecimal numbers starting with 8 or higher are assumed to be negative. Default: false
+	bool hexadecimal_twos_complement;
 
 	ParseOptions();
 
