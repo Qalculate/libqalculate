@@ -4888,12 +4888,15 @@ int OctFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }
-HexFunction::HexFunction() : MathFunction("hex", 1) {
+HexFunction::HexFunction() : MathFunction("hex", 1, 2) {
 	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new BooleanArgument());
+	setDefaultValue(2, "0");
 }
 int HexFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_HEXADECIMAL;
+	po.hexadecimal_twos_complement = vargs[1].number().getBoolean();
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }

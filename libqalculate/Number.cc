@@ -89,7 +89,7 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 }
 
 string format_number_string(string cl_str, int base, BaseDisplay base_display, bool show_neg, bool format_base_two = true, const PrintOptions &po = default_print_options) {
-	if(format_base_two && base == 2 && base_display != BASE_DISPLAY_NONE) {
+	if(format_base_two && (base == 2 || (base == 16 && po.binary_bits >= 8)) && base_display != BASE_DISPLAY_NONE) {
 		unsigned int bits = po.binary_bits;
 		size_t l = cl_str.find(po.decimalpoint());
 		if(l == string::npos) l = cl_str.length();
@@ -97,13 +97,16 @@ string format_number_string(string cl_str, int base, BaseDisplay base_display, b
 			bits = l;
 			if(bits % 4 != 0) bits += 4 - bits % 4;
 		}
+		if(base == 16) {
+			bits /= 4;
+		}
 		if(l < bits) {
 			string str;
 			str.resize(bits - l, '0');
 			cl_str = str + cl_str;
 			l = bits;
 		}
-		if(base_display == BASE_DISPLAY_NORMAL) {
+		if(base == 2 && base_display == BASE_DISPLAY_NORMAL) {
 			for(int i = (int) l - 4; i > 0; i -= 4) {
 				cl_str.insert(i, 1, ' ');
 			}
@@ -541,7 +544,7 @@ void Number::set(string number, const ParseOptions &po) {
 	} else if(base == 2 && number.length() >= 2 && number[0] == '0' && (number[1] == 'b' || number[1] == 'B')) {
 		number = number.substr(2, number.length() - 2);
 	}
-	bool b_twos = po.twos_complement && base == 2 && number.length() > 0 && number[0] == '1';
+	bool b_twos = (po.twos_complement && base == 2 && number.length() > 0 && number[0] == '1') || (po.hexadecimal_twos_complement && base == 16 && number.length() > 0 && (number[0] == '8' || number[0] == '9' || (number[0] >= 'a' && number[0] <= 'f') || (number[0] >= 'A' && number[0] <= 'F')));
 	if(base > 36) base = 36;
 	if(base < 0) base = 10;
 	long int readprec = 0;
@@ -549,12 +552,8 @@ void Number::set(string number, const ParseOptions &po) {
 	for(size_t index = 0; index < number.size(); index++) {
 		if(number[index] >= '0' && ((base >= 10 && number[index] <= '9') || (base < 10 && number[index] < '0' + base))) {
 			mpz_mul_si(num, num, base);
-			if(b_twos) {
-				if(number[index] == '0') number[index] = '1';
-				else if(number[index] == '1') number[index] = '0';
-			}
-			if(number[index] != '0') {
-				mpz_add_ui(num, num, (unsigned long int) number[index] - '0');
+			if(number[index] != (b_twos ? '0' + (base - 1) : '0')) {
+				mpz_add_ui(num, num, b_twos ? (unsigned long int) (base - 1) - (number[index] - '0') : (unsigned long int) number[index] - '0');
 				if(!had_nonzero) readprec = 0;
 				had_nonzero = true;
 			}
@@ -575,22 +574,26 @@ void Number::set(string number, const ParseOptions &po) {
 			numbers_started = true;
 		} else if(base > 10 && number[index] >= 'a' && number[index] < 'a' + base - 10) {
 			mpz_mul_si(num, num, base);
-			mpz_add_ui(num, num, (unsigned long int) number[index] - 'a' + 10);
+			if(!b_twos || (number[index] != 'a' + (base - 11))) {
+				mpz_add_ui(num, num, b_twos ? (unsigned long int) (base - 1) - (number[index] - 'a' + 10) : (unsigned long int) number[index] - 'a' + 10);
+				if(!had_nonzero) readprec = 0;
+				had_nonzero = true;
+			}
 			if(in_decimals) {
 				mpz_mul_si(den, den, base);
 			}
-			if(!had_nonzero) readprec = 0;
-			had_nonzero = true;
 			readprec++;
 			numbers_started = true;
 		} else if(base > 10 && number[index] >= 'A' && number[index] < 'A' + base - 10) {
 			mpz_mul_si(num, num, base);
-			mpz_add_ui(num, num, (unsigned long int) number[index] - 'A' + 10);
+			if(!b_twos || (number[index] != 'A' + (base - 11))) {
+				mpz_add_ui(num, num, b_twos ? (unsigned long int) (base - 1) - (number[index] - 'A' + 10) : (unsigned long int) number[index] - 'A' + 10);
+				if(!had_nonzero) readprec = 0;
+				had_nonzero = true;
+			}
 			if(in_decimals) {
 				mpz_mul_si(den, den, base);
 			}
-			if(!had_nonzero) readprec = 0;
-			had_nonzero = true;
 			readprec++;
 			numbers_started = true;
 		} else if((number[index] == 'E' || number[index] == 'e') && base <= 10) {
@@ -6849,9 +6852,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		
-		if(po.base == 2) {
-			if(po.twos_complement && isNegative()) {
-
+		if(po.base == 2 || (po.base == 16 && po.hexadecimal_twos_complement)) {
+			if((po.base == 16 || po.twos_complement) && isNegative()) {
 				Number nr;
 				unsigned int bits = po.binary_bits;
 				if(bits == 0) {
@@ -7530,6 +7532,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			nr_bexp.setInternal(z_exp);
 			PrintOptions po2 = po;
 			po2.twos_complement = false;
+			po2.hexadecimal_twos_complement = false;
 			po2.binary_bits = 0;
 			str_bexp = nr_bexp.print(po2);
 			mpfr_ui_pow(f_log, base, f_log, MPFR_RNDN);

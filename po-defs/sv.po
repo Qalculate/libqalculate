@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-26 12:32+0100\n"
+"POT-Creation-Date: 2019-03-02 10:47+0100\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -3785,7 +3785,7 @@ msgid ""
 "two's complement."
 msgstr ""
 "Returnerar ett värde från ett binärt uttryck. Om tvåkomplementsform är sant, "
-"kommer tal som börjar med '1' att tolkas som negative binära tal som "
+"kommer tal som börjar med '1' att tolkas som negativt binärt tal som "
 "använder tvåkomplementsform."
 
 #: ../data/functions.xml.in.h:239
@@ -3821,8 +3821,14 @@ msgid "r:hex"
 msgstr ""
 
 #: ../data/functions.xml.in.h:247
-msgid "Returns a value from a hexadecimal expression."
-msgstr "Returnerar ett värde från ett hexadecimalt uttryck."
+msgid ""
+"Returns a value from a hexadecimal expression. If two's complement is true, "
+"numbers beginning with 8 or higher is interpreted as negative hexadecimal "
+"numbers using two's complement."
+msgstr ""
+"Returnerar ett värde från ett hexadecimalt uttryck. Om tvåkomplementsform är sant, "
+"kommer tal som börjar med 8 eller högre att tolkas som ett negativt hexadecimalt tal som "
+"använder tvåkomplementsform."
 
 #: ../data/functions.xml.in.h:248
 msgid "Hexadecimal number"
@@ -10281,6 +10287,9 @@ msgstr "Nu (datum och tid)"
 #: ../data/variables.xml.in.h:208
 msgid "r:now"
 msgstr ""
+
+#~ msgid "Returns a value from a hexadecimal expression."
+#~ msgstr "Returnerar ett värde från ett hexadecimalt uttryck."
 
 #~ msgid "Compton Wavelength over 2 pi"
 #~ msgstr "Compton-våglängd över 2 pi"

@@ -763,9 +763,12 @@
       <builtin_function name="hex">
         <_title>Hexadecimal</_title>
         <_names>r:hex</_names>
-        <_description>Returns a value from a hexadecimal expression.</_description>
+        <_description>Returns a value from a hexadecimal expression. If two's complement is true, numbers beginning with 8 or higher is interpreted as negative hexadecimal numbers using two's complement.</_description>
         <argument index="1">
           <_title>Hexadecimal number</_title>
+        </argument>
+        <argument index="2">
+          <_title>Two's complement</_title>
         </argument>
       </builtin_function>
     </category>

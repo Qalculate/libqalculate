@@ -680,6 +680,7 @@ void set_option(string str) {
 			result_display_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "two's complement", _("two's complement")) || svar == "twos") SET_BOOL_D(printops.twos_complement)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "hexadecimal two's", _("hexadecimal two's")) || svar == "hextwos") SET_BOOL_D(printops.hexadecimal_twos_complement)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "digit grouping", _("digit grouping")) || svar =="group") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = DIGIT_GROUPING_NONE;
@@ -2779,6 +2780,7 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("round to even"), "rndeven"); str += b2oo(printops.round_halfway_to_even, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("show ending zeroes"), "zeroes"); str += b2oo(printops.show_ending_zeroes, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("two's complement"), "twos"); str += b2oo(printops.twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("hexadecimal two's"), "hextwos"); str += b2oo(printops.hexadecimal_twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Parsing"));
 
@@ -3448,6 +3450,8 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("show ending zeroes"), "zeroes", _("If actived, zeroes are kept at the end of approximate numbers."), printops.show_ending_zeroes);
 				STR_AND_TABS_BOOL(_("two's complement"), "twos", _("Enables two's complement representation for display of negative binary numbers."), printops.twos_complement);
 				
+				STR_AND_TABS_BOOL(_("hexadecimal two's"), "hextwos", _("Enables two's complement representation for display of negative hexadecimal numbers."), printops.twos_complement);
+				
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Parsing"));
 
 				STR_AND_TABS_SET(_("decimal comma"), ""); 
@@ -3855,6 +3859,7 @@ void ViewThread::run() {
 			po.lower_case_numbers = printops.lower_case_numbers;
 			po.base_display = printops.base_display;
 			po.twos_complement = printops.twos_complement;
+			po.hexadecimal_twos_complement = printops.hexadecimal_twos_complement;
 			po.base = evalops.parse_options.base;
 			po.abbreviate_names = false;
 			po.digit_grouping = printops.digit_grouping;
@@ -4910,6 +4915,7 @@ void load_preferences() {
 	printops.lower_case_e = false;
 	printops.base_display = BASE_DISPLAY_NORMAL;
 	printops.twos_complement = true;
+	printops.hexadecimal_twos_complement = false;
 	printops.division_sign = DIVISION_SIGN_SLASH;
 	printops.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
 	printops.allow_factorization = false;
@@ -5158,6 +5164,8 @@ void load_preferences() {
 					if(v >= BASE_DISPLAY_NONE && v <= BASE_DISPLAY_ALTERNATIVE) printops.base_display = (BaseDisplay) v;
 				} else if(svar == "twos_complement") {
 					printops.twos_complement = v;
+				} else if(svar == "hexadecimal_twos_complement") {
+					printops.hexadecimal_twos_complement = v;
 				} else if(svar == "spell_out_logical_operators") {
 						printops.spell_out_logical_operators = v;
 				} else if(svar == "decimal_comma") {
@@ -5264,6 +5272,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);
 	fprintf(file, "base_display=%i\n", printops.base_display);
 	fprintf(file, "twos_complement=%i\n", printops.twos_complement);
+	fprintf(file, "hexadecimal_twos_complement=%i\n", printops.hexadecimal_twos_complement);
 	fprintf(file, "spell_out_logical_operators=%i\n", printops.spell_out_logical_operators);
 	fprintf(file, "digit_grouping=%i\n", printops.digit_grouping);
 	fprintf(file, "decimal_comma=%i\n", b_decimal_comma);
