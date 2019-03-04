@@ -1,3 +1,10 @@
+2019-03-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fixes for equations with uncertainty propagation
+	* Fix cubic equation in exact mode in some cases
+	* Fix a^x=b if it is now known if a and b is zero
+	* Layout fixes when formatting "= approx. 'a'"
+
 2019-03-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Two's complement for hexadecimal
