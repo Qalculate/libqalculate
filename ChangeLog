@@ -1,3 +1,8 @@
+2019-03-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Ignore locale option (CLI)
+	* Handle empty set option value (in most cases by assuming "on") (CLI)
+
 2019-03-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fixes for equations with uncertainty propagation

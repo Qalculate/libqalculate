@@ -68,6 +68,8 @@ struct timeval t_end;
 
 bool automatic_fraction = false;
 
+bool ignore_locale = false;
+
 bool result_only;
 
 static char buffer[1000];
@@ -557,6 +559,7 @@ bool check_exchange_rates() {
 void set_option(string str) {
 	remove_blank_ends(str);
 	string svalue, svar;
+	bool empty_value = false;
 	size_t i_underscore = str.find("_");
 	size_t index;
 	if(i_underscore != string::npos) {
@@ -573,6 +576,10 @@ void set_option(string str) {
 		svar = str;
 	}
 	if(i_underscore != string::npos) gsub("_", " ", svar);
+	if(svalue.empty()) {
+		empty_value = true;
+		svalue = "1";
+	}
 
 	set_option_place:
 	if(EQUALS_IGNORECASE_AND_LOCAL(svar, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(svar, "input base", _("input base")) || svar == "inbase" || EQUALS_IGNORECASE_AND_LOCAL(svar, "output base", _("output base")) || svar == "outbase") {
@@ -586,7 +593,7 @@ void set_option(string str) {
 		else if(equalsIgnoreCase(svalue, "oct") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "octal", _("octal"))) v = BASE_OCTAL;
 		else if(equalsIgnoreCase(svalue, "dec") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "decimal", _("decimal"))) v = BASE_DECIMAL;
 		else if(equalsIgnoreCase(svalue, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "sexagesimal", _("sexagesimal"))) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
-		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 			if((v < 2 || v > 36) && (b_in || v != 60)) {
 				v = 0;
@@ -668,7 +675,7 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "base display", _("base display")) || svar == "basedisp") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = BASE_DISPLAY_NONE;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "normal", _("normal"))) v = BASE_DISPLAY_NORMAL;
+		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "normal", _("normal"))) v = BASE_DISPLAY_NORMAL;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "alternative", _("alternative"))) v = BASE_DISPLAY_ALTERNATIVE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -685,7 +692,7 @@ void set_option(string str) {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = DIGIT_GROUPING_NONE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = DIGIT_GROUPING_NONE;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "standard", _("standard")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = DIGIT_GROUPING_STANDARD;
+		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "standard", _("standard")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = DIGIT_GROUPING_STANDARD;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "locale", _("locale"))) v = DIGIT_GROUPING_LOCALE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -705,7 +712,7 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "decimal comma", _("decimal comma"))) {
 		int v = -2;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = 0;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = 1;
+		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = 1;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "locale", _("locale"))) v = -1;
 		else if(svalue.find_first_not_of(SPACES MINUS NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -739,7 +746,7 @@ void set_option(string str) {
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "deg", _("deg")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "degrees", _("degrees"))) v = ANGLE_UNIT_DEGREES;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "gra", _("gra")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "gradians", _("gradians"))) v = ANGLE_UNIT_GRADIANS;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = ANGLE_UNIT_NONE;
-		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
 		if(v < 0 || v > 3) {
@@ -755,7 +762,7 @@ void set_option(string str) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "adaptive", _("adaptive"))) v = PARSING_MODE_ADAPTIVE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "implicit first", _("implicit first"))) v = PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "conventional", _("conventional"))) v = PARSING_MODE_CONVENTIONAL;
-		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
 		if(v < 0 || v > 2) {
@@ -771,6 +778,7 @@ void set_option(string str) {
 			auto_update_exchange_rates = -1;
 		} else {
 			int v = s2i(svalue);
+			if(empty_value) v = 7;
 			if(v < 0) auto_update_exchange_rates = -1;
 			else auto_update_exchange_rates = v;
 		}
@@ -779,7 +787,7 @@ void set_option(string str) {
 		if(svalue == SIGN_MULTIDOT || svalue == ".") v = MULTIPLICATION_SIGN_DOT;
 		else if(svalue == SIGN_MULTIPLICATION || svalue == "x") v = MULTIPLICATION_SIGN_X;
 		else if(svalue == "*") v = MULTIPLICATION_SIGN_ASTERISK;
-		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
 		if(v < 0 || v > 2) {
@@ -793,7 +801,7 @@ void set_option(string str) {
 		if(svalue == SIGN_DIVISION_SLASH) v = DIVISION_SIGN_DIVISION_SLASH;
 		else if(svalue == SIGN_DIVISION) v = DIVISION_SIGN_DIVISION;
 		else if(svalue == "/") v = DIVISION_SIGN_SLASH;
-		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
 		if(v < 0 || v > 2) {
@@ -805,7 +813,7 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "approximation", _("approximation")) || svar == "appr" || svar == "approx") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact", _("exact"))) v = APPROXIMATION_EXACT;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "try exact", _("try exact")) || svalue == "try") v = APPROXIMATION_TRY_EXACT;
+		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "try exact", _("try exact")) || svalue == "try") v = APPROXIMATION_TRY_EXACT;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "approximate", _("approximate")) || svalue == "approx") v = APPROXIMATION_APPROXIMATE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -824,7 +832,7 @@ void set_option(string str) {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "variance formula", _("variance formula")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "variance", _("variance"))) v = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "interval arithmetic", _("interval arithmetic")) || svalue == "iv") v = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
-		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
 		if(v < INTERVAL_CALCULATION_NONE || v > INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC) {
@@ -839,7 +847,7 @@ void set_option(string str) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) {v = POST_CONVERSION_NONE;  muc = MIXED_UNITS_CONVERSION_NONE;}
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "best", _("best"))) v = POST_CONVERSION_OPTIMAL_SI;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimalsi", _("optimalsi")) || svalue == "si") v = POST_CONVERSION_OPTIMAL_SI;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimal", _("optimal"))) v = POST_CONVERSION_OPTIMAL;
+		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimal", _("optimal"))) v = POST_CONVERSION_OPTIMAL;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "base", _("base"))) v = POST_CONVERSION_BASE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = POST_CONVERSION_NONE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
@@ -862,7 +870,7 @@ void set_option(string str) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = STRUCTURING_NONE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "simplify", _("simplify"))) v = STRUCTURING_SIMPLIFY;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "factorize", _("factorize")) || svalue == "factor") v = STRUCTURING_FACTORIZE;
-		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
 		if(v < 0 || v > STRUCTURING_FACTORIZE) {
@@ -891,6 +899,18 @@ void set_option(string str) {
 			}
 			expression_calculation_updated();
 		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore locale", _("ignore locale"))) {
+		int v = s2b(svalue); 
+		if(v < 0) {
+			PUTS_UNICODE(_("Illegal value")); 
+		} else if(v != ignore_locale) {
+			if(v > 0) {
+				ignore_locale = true;
+			} else {
+				ignore_locale = false;
+			}
+			PUTS_UNICODE(_("Please restart the program for the change to take effect.")); 
+		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save mode", _("save mode"))) {
 		int v = s2b(svalue); 
 		if(v < 0) {
@@ -915,7 +935,7 @@ void set_option(string str) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = EXP_NONE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "auto", _("auto"))) v = EXP_PRECISION;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "pure", _("pure"))) v = EXP_PURE;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "scientific", _("scientific"))) v = EXP_SCIENTIFIC;
+		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "scientific", _("scientific"))) v = EXP_SCIENTIFIC;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "engineering", _("engineering"))) v = EXP_BASE_3;
 		else if(svalue.find_first_not_of(SPACES NUMBERS MINUS) == string::npos) v = s2i(svalue);
 		else valid = false;
@@ -927,7 +947,7 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "precision", _("precision")) || svar == "prec") {
 		int v = 0;
-		if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
+		if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
 		if(v < 1) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
@@ -939,7 +959,7 @@ void set_option(string str) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "adaptive", _("adaptive"))) v = 0;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "significant", _("significant"))) v = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS + 1;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "interval", _("interval"))) v = INTERVAL_DISPLAY_INTERVAL + 1;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "plusminus", _("plusminus"))) v = INTERVAL_DISPLAY_PLUSMINUS + 1;
+		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "plusminus", _("plusminus"))) v = INTERVAL_DISPLAY_PLUSMINUS + 1;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "midpoint", _("midpoint"))) v = INTERVAL_DISPLAY_MIDPOINT + 1;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "upper", _("upper"))) v = INTERVAL_DISPLAY_UPPER + 1;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "lower", _("lower"))) v = INTERVAL_DISPLAY_LOWER + 1;
@@ -977,7 +997,7 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "max decimals", _("max decimals")) || svar == "maxdeci") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = -1;
-		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
+		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
 		if(v < 0) {
 			printops.use_max_decimals = false;
 			result_format_updated();
@@ -989,7 +1009,7 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "min decimals", _("min decimals")) || svar == "mindeci") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = -1;
-		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
+		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
 		if(v < 0) {
 			printops.min_decimals = 0;
 			printops.use_min_decimals = false;
@@ -1003,8 +1023,8 @@ void set_option(string str) {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = FRACTION_DECIMAL;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact", _("exact"))) v = FRACTION_DECIMAL_EXACT;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = FRACTION_FRACTIONAL;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "combined", _("combined"))) v = FRACTION_COMBINED;
+		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = FRACTION_FRACTIONAL;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "combined", _("combined")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = FRACTION_COMBINED;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "long", _("long"))) v = FRACTION_COMBINED + 1;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -1023,7 +1043,7 @@ void set_option(string str) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "cartesian", _("cartesian")) || svalue == "rect") v = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exponential", _("exponential")) || svalue == "exp") v = COMPLEX_NUMBER_FORM_EXPONENTIAL;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "polar", _("polar"))) v = COMPLEX_NUMBER_FORM_POLAR;
-		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
 		if(v < 0 || v > 2) {
@@ -1036,7 +1056,7 @@ void set_option(string str) {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = DONT_READ_PRECISION;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "always", _("always"))) v = ALWAYS_READ_PRECISION;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "when decimals", _("when decimals")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = READ_PRECISION_WHEN_DECIMALS;
+		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "when decimals", _("when decimals")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = READ_PRECISION_WHEN_DECIMALS;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
@@ -1047,14 +1067,23 @@ void set_option(string str) {
 			expression_format_updated(true);
 		}
 	} else {
-		if(i_underscore == string::npos && index != string::npos) {
-			if((index = svar.find_last_of(SPACES)) != string::npos) {
-				svar = svar.substr(0, index);
-				remove_blank_ends(svar);
-				str = str.substr(index + 1);
-				remove_blank_ends(str);
-				svalue = str;
-				gsub("_", " ", svar);
+		if(i_underscore == string::npos) {
+			if(index != string::npos) {
+				if((index = svar.find_last_of(SPACES)) != string::npos) {
+					svar = svar.substr(0, index);
+					remove_blank_ends(svar);
+					str = str.substr(index + 1);
+					remove_blank_ends(str);
+					svalue = str;
+					gsub("_", " ", svar);
+					goto set_option_place;
+				}
+			}
+			if(!empty_value && !svalue.empty()) {
+				svar += " ";
+				svar += svalue;
+				svalue = "1";
+				empty_value = true;
 				goto set_option_place;
 			}
 		}
@@ -1676,6 +1705,10 @@ int main(int argc, char *argv[]) {
 
 	//load application specific preferences
 	load_preferences();
+	
+	if(ignore_locale) {
+		CALCULATOR->setIgnoreLocale();
+	}
 
 	for(size_t i = 0; i < set_option_strings.size(); i++) {
 		set_option(set_option_strings[i]);
@@ -2742,7 +2775,7 @@ int main(int argc, char *argv[]) {
 				case FRACTION_DECIMAL: {str += _("off"); break;}
 				case FRACTION_DECIMAL_EXACT: {str += _("exact"); break;}
 				case FRACTION_FRACTIONAL: {if(printops.restrict_fraction_length) {str += _("on");} else {str += _("long");} break;}
-				case FRACTION_COMBINED: {str += _("combined"); break;}
+				case FRACTION_COMBINED: {str += _("mixed"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("interval display"), "ivdisp");
@@ -2848,9 +2881,10 @@ int main(int argc, char *argv[]) {
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Other"));
 
+			PRINT_AND_COLON_TABS(_("ignore locale"), ""); str += b2yn(ignore_locale, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("rpn"), ""); str += b2oo(rpn_mode, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("save definitions"), ""); str += b2yn(save_defs_on_exit, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("save mode"), ""); str += b2yn(save_mode_on_exit, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())			
+			PRINT_AND_COLON_TABS(_("save mode"), ""); str += b2yn(save_mode_on_exit, false);
 			puts("");
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "help", _("help")) || str == "?") {
@@ -2871,7 +2905,7 @@ int main(int argc, char *argv[]) {
 			}
 			puts(""); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("factor")); CHECK_IF_SCREEN_FILLED
-			FPUTS_UNICODE(_("find"), stdout); fputs("/", stdout); PUTS_UNICODE(_("list")); CHECK_IF_SCREEN_FILLED;
+			FPUTS_UNICODE(_("find"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("list"), stdout);  fputs(" [", stdout); FPUTS_UNICODE(_("NAME"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED;
 			FPUTS_UNICODE(_("function"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("EXPRESSION")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("info")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("mode")); CHECK_IF_SCREEN_FILLED
@@ -3427,7 +3461,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				int nff = printops.number_fraction_format;
 				if(!printops.restrict_fraction_length && printops.number_fraction_format == FRACTION_FRACTIONAL) nff = 4;
-				STR_AND_TABS_4(_("fractions"), "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denonimator."), nff, _("off"), _("exact"), _("on"), _("combined"), _("long"));
+				STR_AND_TABS_4(_("fractions"), "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denonimator."), nff, _("off"), _("exact"), _("on"), _("mixed"), _("long"));
 				STR_AND_TABS_7(_("interval display"), "ivdisp", "", (adaptive_interval_display ? 0 : printops.interval_display + 1), _("adaptive"), _("significant"), _("interval"), _("plusminus"), _("midpoint"), _("upper"), _("lower"))
 				STR_AND_TABS_BOOL(_("lowercase e"), "lowe", _("Use lowercase e for E-notation (5e2 = 5 * 10^2)."), printops.lower_case_e);
 				STR_AND_TABS_BOOL(_("lowercase numbers"), "lownum", _("Use lowercase letters for number bases > 10."), printops.lower_case_numbers);
@@ -3522,6 +3556,7 @@ int main(int argc, char *argv[]) {
 				
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Other"));
 
+				STR_AND_TABS_YESNO(_("ignore locale"), "", _("Ignore system language and use English (requires restart)."), ignore_locale);
 				STR_AND_TABS_BOOL(_("rpn"), "", _("Activates the Reverse Polish Notation stack."), rpn_mode);
 				STR_AND_TABS_YESNO(_("save definitions"), "", _("Save functions, units, and variables on exit."), save_defs_on_exit);
 				STR_AND_TABS_YESNO(_("save mode"), "", _("Save settings on exit."), save_mode_on_exit);
@@ -3693,7 +3728,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- exponential (show complex numbers in exponential form)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- polar (show complex numbers in polar form)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- fraction (show result in combined fractional format)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- fraction (show result as mixed fraction)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- factors (factorize result)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- UTC (show date and time in UTC time zone)"));
@@ -4950,6 +4985,8 @@ void load_preferences() {
 	evalops.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 	b_decimal_comma = -1;
 	
+	ignore_locale = false;
+	
 	automatic_fraction = false;
 	
 	adaptive_interval_display = true;
@@ -5025,6 +5062,8 @@ void load_preferences() {
 					save_mode_on_exit = v;
 				} else if(svar == "save_definitions_on_exit") {
 					save_defs_on_exit = v;
+				} else if(svar == "ignore_locale") {
+					ignore_locale = v;
 				} else if(svar == "fetch_exchange_rates_at_startup") {
 					if(auto_update_exchange_rates < 0 && v) auto_update_exchange_rates = 1;
 				} else if(svar == "auto_update_exchange_rates") {
@@ -5270,6 +5309,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "version=%s\n", VERSION);	
 	fprintf(file, "save_mode_on_exit=%i\n", save_mode_on_exit);
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
+	fprintf(file, "ignore_locale=%i\n", ignore_locale);
 	fprintf(file, "auto_update_exchange_rates=%i\n", auto_update_exchange_rates);
 	fprintf(file, "spacious=%i\n", printops.spacious);
 	fprintf(file, "excessive_parenthesis=%i\n", printops.excessive_parenthesis);
