@@ -2204,6 +2204,16 @@ bool has_predominately_negative_sign(const MathStructure &mstruct) {
 	return false;
 }
 
+void negate_struct(MathStructure &mstruct) {
+	if(mstruct.isAddition()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			mstruct[i].negate();
+		}
+	} else {
+		mstruct.negate();
+	}
+}
+
 bool trig_remove_i(MathStructure &mstruct) {
 	if(mstruct.isNumber() && mstruct.number().hasImaginaryPart() && !mstruct.number().hasRealPart()) {
 		mstruct.number() /= nr_one_i;
@@ -2437,7 +2447,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 
 	if(has_predominately_negative_sign(mstruct)) {
-		mstruct.negate();
+		negate_struct(mstruct);
 		if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 		mstruct.transform(this);
 		mstruct.negate();
@@ -2682,7 +2692,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		return 1;
 	}
 	if(has_predominately_negative_sign(mstruct)) {
-		mstruct.negate();
+		negate_struct(mstruct);
 	}
 	if(CALCULATOR->getRadUnit()) {
 		if(mstruct.isVector()) {
@@ -2913,7 +2923,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 
 	if(has_predominately_negative_sign(mstruct)) {
-		mstruct.negate();
+		negate_struct(mstruct);
 		if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 		mstruct.transform(this);
 		mstruct.negate();
@@ -3005,7 +3015,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			return 1;
 		}
-		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
+		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	if(mstruct.number().isZero()) {
@@ -3093,7 +3103,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				}
 				return 1;
 			}
-			if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
+			if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 			return -1;
 		}
 		mstruct = nr;
@@ -3170,7 +3180,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {
-			mstruct.negate(); mstruct.transform(CALCULATOR->f_asin); 
+			negate_struct(mstruct); mstruct.transform(CALCULATOR->f_asin); 
 			switch(eo.parse_options.angle_unit) {
 				case ANGLE_UNIT_DEGREES: {mstruct += Number(90, 1, 0); break;}
 				case ANGLE_UNIT_GRADIANS: {mstruct += Number(100, 1, 0); break;}
@@ -3254,7 +3264,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		Number nr = mstruct.number();
 		if(!nr.acos() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			if(has_predominately_negative_sign(mstruct)) {
-				mstruct.negate();
+				mstruct.number().negate();
 				mstruct.transform(CALCULATOR->f_asin);
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {mstruct += Number(90, 1, 0); break;}
@@ -3343,7 +3353,7 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			return 1;
 		}
-		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
+		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	if(mstruct.number().isZero()) {
@@ -3460,7 +3470,7 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				}
 				return 1;
 			}
-			if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
+			if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 			return -1;
 		}
 		mstruct = nr;
@@ -3511,12 +3521,12 @@ int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	if(!mstruct.isNumber()) {
-		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
+		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	Number nr = mstruct.number();
 	if(!nr.sinh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
-		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
+		if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	mstruct = nr;
@@ -3553,12 +3563,12 @@ int CoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	if(!mstruct.isNumber()) {
-		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); return -1;}
+		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); return -1;}
 		return -1;
 	}
 	Number nr = mstruct.number();
 	if(!nr.cosh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
-		if(has_predominately_negative_sign(mstruct)) mstruct.negate();
+		if(has_predominately_negative_sign(mstruct)) mstruct.number().negate();
 		return -1;
 	}
 	mstruct = nr;
@@ -3602,12 +3612,12 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	if(!mstruct.isNumber()) {
-		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
+		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	Number nr = mstruct.number();
 	if(!nr.tanh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
-		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
+		if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	mstruct = nr;
@@ -3625,12 +3635,12 @@ int AsinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(!mstruct.isNumber()) {
-		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
+		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	Number nr = mstruct.number();
 	if(!nr.asinh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
-		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
+		if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	mstruct = nr;
@@ -3652,7 +3662,7 @@ int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(!mstruct.isNumber()) {
-		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
+		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	if(mstruct.number().includesInfinity()) {
@@ -3670,7 +3680,7 @@ int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	}
 	Number nr = mstruct.number();
 	if(!nr.atanh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
-		if(has_predominately_negative_sign(mstruct)) {mstruct.negate(); mstruct.transform(this); mstruct.negate(); return 1;}
+		if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	mstruct = nr;
@@ -4021,6 +4031,14 @@ int SincFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 }
 
 bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2) {
+	if(m1.contains(CALCULATOR->v_pinf, true) || m2.contains(CALCULATOR->v_pinf, true) || m1.contains(CALCULATOR->v_minf, true) || m2.contains(CALCULATOR->v_minf, true)) {
+		MathStructure m1b(m1), m2b(m2);
+		m1b.replace(CALCULATOR->v_pinf, nr_plus_inf);
+		m2b.replace(CALCULATOR->v_pinf, nr_plus_inf);
+		m1b.replace(CALCULATOR->v_minf, nr_minus_inf);
+		m2b.replace(CALCULATOR->v_minf, nr_minus_inf);
+		return create_interval(mstruct, m1b, m2b);
+	}
 	if(m1 == m2) {
 		mstruct.set(m1, true);
 		return 1;

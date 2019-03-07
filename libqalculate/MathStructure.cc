@@ -12143,6 +12143,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 			unc = mvar.number().uncertainty();
 			Number nmid(mvar.number());
 			nmid.intervalToMidValue();
+			if(!unc.number().isValid() || !nmid.isValid()) {b_failed = true; return NULL;}
 			KnownVariable *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
 			v->setApproximate(false);
 			v->ref();
@@ -12165,6 +12166,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 					unc = mvar[0].number().uncertainty();
 					Number nmid(mvar[0].number());
 					nmid.intervalToMidValue();
+					if(!unc.number().isValid() || !nmid.isValid()) {b_failed = true; return NULL;}
 					KnownVariable *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
 					v->setApproximate(false);
 					v->ref();
@@ -12244,6 +12246,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 		unc = m.number().uncertainty();
 		Number nmid(m.number());
 		nmid.intervalToMidValue();
+		if(!unc.number().isValid() || !nmid.isValid()) {b_failed = true; return NULL;}
 		KnownVariable *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
 		v->setApproximate(false);
 		v->ref();
@@ -12512,7 +12515,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	eo2.isolate_x = false;
 
 	if(eo.calculate_functions && (eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC || eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA)) calculate_nondifferentiable_functions(*this, feo, true, true, eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC ? 0 : ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) ? 2 : 1));
-
+	
 	if(eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 		if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, true, true)) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
 			EvaluationOptions eo3 = eo2;
@@ -18711,7 +18714,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 			break;
 		}
 		case STRUCT_NUMBER: {
-			if(o_number.isNegative() || ((parent || po.interval_display != INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) && o_number.isInterval() && o_number.isNonPositive())) {
+			if(o_number.isNegative() || ((parent || po.interval_display != INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) && o_number.isInterval() && o_number.isNonPositive() && o_number.isValid())) {
 				if((((po.base != 2 || !po.twos_complement) && (po.base != 16 || !po.hexadecimal_twos_complement)) || !o_number.isInteger()) && (!o_number.isMinusInfinity() || (parent && parent->isAddition()))) {
 					o_number.negate();
 					transform(STRUCT_NEGATE);
@@ -19641,6 +19644,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				if(mmid && munc) {
 					PrintOptions po2 = po;
 					po2.show_ending_zeroes = false;
+					po2.number_fraction_format = FRACTION_DECIMAL;
 					ips_n.wrap = !CHILD(0).isNumber();
 					print_str += CHILD(0).print(po2, ips_n);
 					print_str += SIGN_PLUSMINUS;
