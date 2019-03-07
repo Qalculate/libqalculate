@@ -3839,7 +3839,6 @@ void on_abort_display() {
 void replace_quotation_marks(string &str) {
 #ifndef _WIN32
 	if(cfile) return;
-	cout << str << endl;
 	size_t i1 = 0, i2 = 0;
 	size_t i_equals = str.find(_("approx.")) + strlen(_("approx."));
 	while(i1 + 2 < str.length()) {
@@ -3988,8 +3987,8 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	}
 	if(update_parse) {
 		if(adaptive_interval_display) {
-			if(parsed_mstruct && parsed_mstruct->containsFunction(CALCULATOR->f_interval)) printops.interval_display = INTERVAL_DISPLAY_INTERVAL;
-			else if(expression_str.find("+/-") != string::npos || expression_str.find("+/" SIGN_MINUS) != string::npos || expression_str.find("±") != string::npos) printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+			if((parsed_mstruct && parsed_mstruct->containsFunction(CALCULATOR->f_uncertainty)) || expression_str.find("+/-") != string::npos || expression_str.find("+/" SIGN_MINUS) != string::npos || expression_str.find("±") != string::npos) printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+			else if(parsed_mstruct && parsed_mstruct->containsFunction(CALCULATOR->f_interval)) printops.interval_display = INTERVAL_DISPLAY_INTERVAL;
 			else printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 		}
 		if(!view_thread->write((void *) parsed_mstruct)) {b_busy = false; view_thread->cancel(); return;}
