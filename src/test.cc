@@ -1,4 +1,5 @@
 #include <libqalculate/qalculate.h>
+#include "support.h"
 
 bool display_errors(bool show_only_errors = false) {
 	if(!CALCULATOR->message()) return false;
@@ -9,6 +10,7 @@ bool display_errors(bool show_only_errors = false) {
 			if(mtype == MESSAGE_ERROR) cout << "error: ";
 			else if(mtype == MESSAGE_WARNING) cout << "warning: ";
 			cout << CALCULATOR->message()->message() << endl;
+			if(CALCULATOR->message()->message() == _("The calculation has been forcibly terminated. Please restart the application and report this as a bug.")) exit(0);
 			b_ret = true;
 		}
 		if(!CALCULATOR->nextMessage()) break;
@@ -1020,7 +1022,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 	IntervalCalculation ic = eo.interval_calculation;
 	cerr << "A0" << endl;
 	string str = rnd_expression(allow_unknowns, allow_functions, 8, 4, allow_unit, allow_variable, allow_interval);
-	str = "(atanh(x)^2)*e^3/5+/-4E-6/1+/-4E-0589/pi";
+	//str = "(atanh(x)^2)*e^3/5+/-4E-6/1+/-4E-0589/pi";
 	cerr << "A2:" << str << endl;
 	PrintOptions po; po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	MathStructure mp, m1, m2, m3;
@@ -1194,7 +1196,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			m1 = mp;
 			cerr << "B" << endl;
 			m1.transform(COMPARISON_EQUALS, m_zero);
-			eo.approximation = APPROXIMATION_EXACT;
+			//eo.approximation = APPROXIMATION_EXACT;
 			CALCULATOR->calculate(&m1, 5000, eo);
 			if(m1.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED7"; CALCULATOR->useIntervalArithmetic(b_iv); return;}
 			m1.replace(CALCULATOR->v_n, 3);
@@ -1686,7 +1688,7 @@ int main(int argc, char *argv[]) {
 	//CALCULATOR->useIntervalArithmetic();
 	
 	for(size_t i = 0; i <= 1000; i++) {
-		rnd_test(evalops, 4, true, false, false, false, false, true);
+		rnd_test(evalops, 4, true, false, true, false, false, true);
 		if(i % 100 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;

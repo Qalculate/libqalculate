@@ -1065,10 +1065,11 @@ bool Number::intervalToPrecision(long int min_precision) {
 		mpfr_mul_ui(f_diff, f_diff, 2, MPFR_RNDN);
 		mpfr_div(f_diff, f_mid, f_diff, MPFR_RNDN);
 		mpfr_abs(f_diff, f_diff, MPFR_RNDN);
+		if(mpfr_zero_p(f_diff)) {mpfr_clears(f_diff, f_mid, NULL); return false;}
 		mpfr_log10(f_diff, f_diff, MPFR_RNDN);
 		long int i_prec = mpfr_get_si(f_diff, MPFR_RNDD) + 1;
-		if(i_prec < min_precision || testErrors(0)) return false;
-		if(i_value && !i_value->intervalToPrecision()) return false;
+		if(i_prec < min_precision || testErrors(0)) {mpfr_clears(f_diff, f_mid, NULL); return false;}
+		if(i_value && !i_value->intervalToPrecision()) {mpfr_clears(f_diff, f_mid, NULL); return false;}
 		if(i_precision < 0 || i_prec < i_precision) i_precision = i_prec;
 		mpfr_set(fl_value, f_mid, MPFR_RNDN);
 		mpfr_set(fu_value, f_mid, MPFR_RNDN);
@@ -1084,12 +1085,11 @@ void Number::intervalToMidValue() {
 			else if(mpfr_inf_p(fl_value)) mpfr_set(fu_value, fl_value, MPFR_RNDN);
 			else mpfr_set(fl_value, fu_value, MPFR_RNDN);
 		} else {
+			mpfr_clear_flags();
 			mpfr_sub(fu_value, fu_value, fl_value, MPFR_RNDN);
 			mpfr_div_ui(fu_value, fu_value, 2, MPFR_RNDN);
 			mpfr_add(fl_value, fl_value, fu_value, MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
-			PRINT_MPFR(fl_value, 10);
-			PRINT_MPFR(fu_value, 10);
 			if(!testFloatResult()) clearReal();
 		}
 	}
@@ -1314,6 +1314,7 @@ Number Number::uncertainty() const {
 	if(mpfr_inf_p(fl_value) || mpfr_inf_p(fu_value)) {
 		nr.setPlusInfinity();
 	} else {
+		mpfr_clear_flags();
 		mpfr_t f_mid;
 		mpfr_init2(f_mid, BIT_PRECISION);
 		mpfr_sub(f_mid, fu_value, fl_value, MPFR_RNDU);
@@ -1332,6 +1333,7 @@ Number Number::relativeUncertainty() const {
 		nr.setPlusInfinity();
 		return nr;
 	}
+	mpfr_clear_flags();
 	mpfr_t f_mid, f_diff;
 	mpfr_inits2(BIT_PRECISION, f_mid, f_diff, NULL);
 	mpfr_sub(f_diff, fu_value, fl_value, MPFR_RNDU);
@@ -1472,13 +1474,11 @@ int Number::precision(int calculate_from_interval) const {
 			mpfr_mul_ui(f_diff, f_diff, 2, MPFR_RNDN);
 			mpfr_div(f_diff, f_mid, f_diff, MPFR_RNDN);
 			mpfr_abs(f_diff, f_diff, MPFR_RNDN);
-			mpfr_log10(f_diff, f_diff, MPFR_RNDN);
+			if(!mpfr_zero_p(f_diff)) mpfr_log10(f_diff, f_diff, MPFR_RNDN);
 			int i_prec = -1;
-			if(mpfr_sgn(f_diff) < 0) {
+			if(mpfr_sgn(f_diff) <= 0) {
 				i_prec = 0;
-			} else if(!mpfr_fits_sint_p(f_diff, MPFR_RNDU)) {
-				if(mpfr_sgn(f_diff) < 0) i_prec = 0;
-			} else {
+			} else if(mpfr_fits_sint_p(f_diff, MPFR_RNDU)) {
 				i_prec = mpfr_get_si(f_diff, MPFR_RNDD) + 1;
 			}
 			if(i_value) {
@@ -3604,7 +3604,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 					if(mpfr_cmp_ui(fl_value, 1) > 0) mpfr_set_ui(fl_value, 1, MPFR_RNDD);
 					else if(mpfr_cmp_ui(fu_value, 1) < 0) mpfr_set_ui(fu_value, 1, MPFR_RNDU);
 				}
-				
+
 				mpfr_clears(f_value1, f_value2, f_value3, f_value4, NULL);
 			}
 		}
@@ -3712,8 +3712,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		}
 		return true;
 	}
-	
-	if(!testFloatResult(true)) {
+	if(!testFloatResult(true) || (includesInfinity() && !nr_bak.includesInfinity() && !o.includesInfinity())) {
 		set(nr_bak);
 		return false;
 	}
@@ -6881,16 +6880,68 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	bool approx = isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision);
 
 	if(isInteger()) {
+
 		long int length = mpz_sizeinbase(mpq_numref(r_value), base);
 		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < length && ((approx || (base == 10 && po.min_exp != 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT))) || length > (po.base == 10 ? 1000000L : 100000L))) {
 			Number nr(*this);
+			CALCULATOR->beginTemporaryStopMessages();
+			PrintOptions po2 = po;
+			po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
 			if(nr.setToFloatingPoint()) {
-				PrintOptions po2 = po;
-				po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
+				CALCULATOR->endTemporaryStopMessages(true);
 				return nr.print(po2, ips);
+			} else {
+				length--;
+				mpz_t ivalue;
+				mpz_init(ivalue);
+				mpz_ui_pow_ui(ivalue, base, length);
+				Number nrexp;
+				nrexp.setInternal(ivalue);
+				if(nr.divide(nrexp)) {
+					CALCULATOR->endTemporaryStopMessages();
+					str = nr.print(po2, ips);
+					if(base == 10) {
+						if(ips.iexp) *ips.iexp = length;
+						if(ips.exp) {
+							if(ips.exp_minus) *ips.exp_minus = false;
+							*ips.exp = i2s(length);
+						} else {
+							if(po.lower_case_e) str += "e";
+							else str += "E";
+							str += i2s(length);
+						}
+					} else {
+						Number nrl(length);
+						po2.twos_complement = false;
+						po2.hexadecimal_twos_complement = false;
+						po2.binary_bits = 0;
+						string str_bexp = nrl.print(po2);
+						if(ips.exp) {
+							if(ips.exp_minus) *ips.exp_minus = false;
+							*ips.exp = str_bexp;
+						} else {
+							if(po.spacious) str += " ";
+							if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
+							else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
+							else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
+							else str += "*";
+							if(po.spacious) str += " ";
+							str += i2s(base);
+							str += "^";
+							str += str_bexp;
+							if(ips.depth > 0) {
+								str.insert(0, "(");
+								str += ")";
+							}
+						}
+					}
+					return str;
+				}
+				CALCULATOR->endTemporaryStopMessages(true);
+				return string("(") + string(_("floating point error")) + ")";
 			}
 		}
-		
+
 		if(po.base == 2 || (po.base == 16 && po.hexadecimal_twos_complement)) {
 			if((po.base == 16 || po.twos_complement) && isNegative()) {
 				Number nr;
@@ -6956,8 +7007,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		bool exact = true;
 
 		integer_rerun:
-		
+
 		string mpz_str = printMPZ(ivalue, base, false, po.lower_case_numbers);
+
 		if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 
 		length = mpz_str.length();
@@ -7200,7 +7252,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpfr_t f_diff, f_mid;
 		
 		bool is_interval = !mpfr_equal_p(fl_value, fu_value);
-		
+
 		if(!is_interval) {
 			if(mpfr_inf_p(fl_value)) {
 				Number nr;
@@ -7281,7 +7333,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				po2.interval_display = INTERVAL_DISPLAY_INTERVAL;
 				return print(po2, ips);
 			}
-			
 			mpfr_t vl, vu, f_logl, f_base, f_log_base;
 			mpfr_inits2(mpfr_get_prec(fl_value), f_mid, vl, vu, f_logl, f_base, f_log_base, NULL);
 		
@@ -7384,6 +7435,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 				if(i_log - expo + po.max_decimals < i_precision_base) i_precision_base = i_log - expo + po.max_decimals;
 			}
+
 			mpfr_sub_si(f_logl, f_logl, i_precision_base, MPFR_RNDN);
 			mpfr_pow(f_logl, f_base, f_logl, MPFR_RNDN);
 			mpfr_div(vl, vl, f_logl, MPFR_RNDU);
@@ -7511,7 +7563,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 			if(po.is_approximate) *po.is_approximate = true;
 		}
-		
+
 		precision = precision_base;
 		
 		bool b_pm_zero = false;
@@ -7805,7 +7857,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(!str_bexp.empty()) {
 			if(ips.exp) {
 				if(ips.exp_minus) *ips.exp_minus = neg_bexp;
-				else str_bexp.insert(0, "-");
+				else if(neg_bexp) str_bexp.insert(0, "-");
 				*ips.exp = str_bexp;
 			} else {
 				if(po.spacious) str += " ";
@@ -7835,15 +7887,66 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		testErrors(2);
 
 	} else if(base != BASE_ROMAN_NUMERALS && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+
 		long int numlength = mpz_sizeinbase(mpq_numref(r_value), base);
 		long int denlength = mpz_sizeinbase(mpq_denref(r_value), base);
 		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < labs(numlength - denlength) && (approx || (po.min_exp != 0 && base == 10) || labs(numlength - denlength) > (po.base == 10 ? 1000000L : 100000L))) {
+			long int length = labs(numlength - denlength);
 			Number nr(*this);
+			PrintOptions po2 = po;
+			po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
+			CALCULATOR->beginTemporaryStopMessages();
 			if(nr.setToFloatingPoint()) {
-				PrintOptions po2 = po;
-				po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
-				str = nr.print(po2, ips);
-				return str;
+				CALCULATOR->endTemporaryStopMessages(true);
+				return nr.print(po2, ips);
+			} else {
+				mpz_t ivalue;
+				mpz_init(ivalue);
+				mpz_ui_pow_ui(ivalue, base, length);
+				Number nrexp;
+				nrexp.setInternal(ivalue);
+				if(nr.divide(nrexp)) {
+					CALCULATOR->endTemporaryStopMessages();
+					str = nr.print(po2, ips);
+					if(base == 10) {
+						if(ips.iexp) *ips.iexp = length;
+						if(ips.exp) {
+							if(ips.exp_minus) *ips.exp_minus = false;
+							*ips.exp = i2s(length);
+						} else {
+							if(po.lower_case_e) str += "e";
+							else str += "E";
+							str += i2s(length);
+						}
+					} else {
+						Number nrl(length);
+						po2.twos_complement = false;
+						po2.hexadecimal_twos_complement = false;
+						po2.binary_bits = 0;
+						string str_bexp = nrl.print(po2);
+						if(ips.exp) {
+							if(ips.exp_minus) *ips.exp_minus = false;
+							*ips.exp = str_bexp;
+						} else {
+							if(po.spacious) str += " ";
+							if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
+							else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
+							else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
+							else str += "*";
+							if(po.spacious) str += " ";
+							str += i2s(base);
+							str += "^";
+							str += str_bexp;
+							if(ips.depth > 0) {
+								str.insert(0, "(");
+								str += ")";
+							}
+						}
+					}
+					return str;
+				}
+				CALCULATOR->endTemporaryStopMessages(true);
+				return string("(") + string(_("floating point error")) + ")";
 			}
 		}
 
