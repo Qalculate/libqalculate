@@ -12516,6 +12516,12 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(eo.calculate_functions && (eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC || eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA)) calculate_nondifferentiable_functions(*this, feo, true, true, eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC ? 0 : ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) ? 2 : 1));
 	
+	if(m_type == STRUCT_NUMBER) {
+		if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
+		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
+		return *this;
+	}
+	
 	if(eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 		if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, true, true)) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
 			EvaluationOptions eo3 = eo2;
