@@ -859,8 +859,11 @@ string rnd_unit() {
 }
 
 string rnd_var() {
-	int r = rand() % CALCULATOR->variables.size();
-	return CALCULATOR->variables[r]->name();
+	while(true) {
+		int r = rand() % CALCULATOR->variables.size();
+		if(CALCULATOR->variables[r]->isKnown()) return CALCULATOR->variables[r]->name();
+	}
+	return "";
 }
 
 
@@ -881,7 +884,7 @@ string rnd_number(bool use_par = true, bool only_integers = false, bool only_pos
 		started = true;
 	}
 	if(allow_complex && !only_integers && rand() % 10 == 0) {str += 'i'; par = true;}
-	else if(allow_interval && rand() % 2 == 0 && str.find(".") == string::npos) {str += "+/-4E-"; str += rnd_number(false, true, true, false, false);}
+	else if(allow_interval && rand() % 2 == 0 && str.find(".") == string::npos) {str += "+/-4E-8"; /*str += rnd_number(false, true, true, false, false);*/}
 	if(par && use_par) {str += ')'; str.insert(0, "(");}
 	return str;
 }
@@ -1022,14 +1025,14 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 	IntervalCalculation ic = eo.interval_calculation;
 	cerr << "A0" << endl;
 	string str = rnd_expression(allow_unknowns, allow_functions, 8, 4, allow_unit, allow_variable, allow_interval);
-	//str = "(atanh(x)^2)*e^3/5+/-4E-6/1+/-4E-0589/pi";
 	cerr << "A2:" << str << endl;
-	PrintOptions po; po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-	MathStructure mp, m1, m2, m3;
+	PrintOptions po; po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS; po.use_max_decimals = true; po.max_decimals = 2; po.min_exp = 1;
+	MathStructure mp, m1, m2, m3, m4;
 	CALCULATOR->parse(&mp, str, eo.parse_options);
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	m1 = mp;
 	m3 = mp;
+	m4 = mp;
 	cerr << "A3" << endl;
 	cerr << mp << endl;
 	eo.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
@@ -1040,15 +1043,19 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 	CALCULATOR->calculate(&m3, 5000, eo);
 	if(m3.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED1b" << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
 	cerr << "A3c" << endl;
+	eo.interval_calculation = INTERVAL_CALCULATION_NONE;
+	CALCULATOR->calculate(&m4, 5000, eo);
+	if(m4.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED1c" << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
+	cerr << "A3d" << endl;
 	eo.interval_calculation = ic;
-	eo.approximation = APPROXIMATION_EXACT;
+	/*eo.approximation = APPROXIMATION_EXACT;
 	m2 = mp;
 	CALCULATOR->calculate(&m2, 5000, eo);
 	if(m2.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED2" << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
-	cerr << "A3d: " << m2 << endl;
+	cerr << "A3e: " << m2 << endl;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	CALCULATOR->calculate(&m2, 5000, eo);
-	cerr << "A3e" << endl;
+	cerr << "A3f" << endl;
 	if(m2.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED3" << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
 	if(m1.isNumber() && m2.isNumber()) {
 		rt1++;
@@ -1057,7 +1064,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			cout << str << " => " << mp << endl;
 			cout << "UNEQUAL1: " << m1.print(po) << ":" << m2.print(po) << endl;
 		}
-	}
+	}*/
 	if(m1.isNumber() && m3.isNumber()) {
 		if(m1 != m3 && m1.print(po) != m3.print(po)) {
 			rt2++;
@@ -1065,6 +1072,13 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			cout << "UNEQUAL1b: " << m1.print(po) << ":" << m3.print(po) << endl;
 		}
 	}
+	/*if(m1.isNumber() && m4.isNumber()) {
+		if(m1 != m4 && m1.print(po) != m4.print(po)) {
+			rt2++;
+			cout << str << " => " << mp << endl;
+			cout << "UNEQUAL1c: " << m1.print(po) << ":" << m4.print(po) << endl;
+		}
+	}*/
 	cerr << "A" << endl;
 	if(b_iv != CALCULATOR->usesIntervalArithmetic()) {
 		cout << "INTERVAL ARITHMETIC CHANGED1: " << str << " => " << mp << endl;
@@ -1315,6 +1329,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	m1 = mp;
 	m3 = m1;
+	m4 = m1;
 	cerr << mp << endl;
 	
 	eo.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
@@ -1323,8 +1338,12 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 	eo.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
 	CALCULATOR->calculate(&m3, 5000, eo);
 	if(m3.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED1b" << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
+	eo.interval_calculation = INTERVAL_CALCULATION_NONE;
+	CALCULATOR->calculate(&m4, 5000, eo);
+	if(m4.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED1c" << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
+	cerr << "A3d" << endl;
 	eo.interval_calculation = ic;
-	eo.approximation = APPROXIMATION_EXACT;
+	/*eo.approximation = APPROXIMATION_EXACT;
 	m2 = mp;
 	CALCULATOR->calculate(&m2, 5000, eo);
 	if(m2.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED2" << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
@@ -1338,7 +1357,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			cout << str << " => " << mp << endl;
 			cout << "UNEQUAL1: " << m1.print(po) << ":" << m2.print(po) << endl;
 		}
-	}
+	}*/
 	if(m1.isNumber() && m3.isNumber()) {
 		if(m1 != m3 && m1.print(po) != m3.print(po)) {
 			rt2++;
@@ -1346,6 +1365,13 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			cout << "UNEQUAL1b: " << m1.print(po) << ":" << m3.print(po) << endl;
 		}
 	}
+	/*if(m1.isNumber() && m4.isNumber()) {
+		if(m1 != m4 && m1.print(po) != m4.print(po)) {
+			rt2++;
+			cout << str << " => " << mp << endl;
+			cout << "UNEQUAL1c: " << m1.print(po) << ":" << m4.print(po) << endl;
+		}
+	}*/
 	if(b_iv != CALCULATOR->usesIntervalArithmetic()) {
 		cout << "INTERVAL ARITHMETIC CHANGED12 " << str << " => " << mp << endl;
 		CALCULATOR->useIntervalArithmetic(b_iv);
@@ -1688,7 +1714,7 @@ int main(int argc, char *argv[]) {
 	//CALCULATOR->useIntervalArithmetic();
 	
 	for(size_t i = 0; i <= 1000; i++) {
-		rnd_test(evalops, 4, true, false, true, false, false, true);
+		rnd_test(evalops, false, true, false, false, false, true, true);
 		if(i % 100 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;

@@ -4137,13 +4137,13 @@ bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const Evaluati
 		if(munc.isZero()) {
 			return 1;
 		} else if(mstruct.isNumber()) {
-			mstruct.number().setUncertainty(munc.number(), true);
+			mstruct.number().setUncertainty(munc.number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 			mstruct.numberUpdated();
 			return 1;
 		} else if(mstruct.isAddition()) {
 			for(size_t i = 0; i < mstruct.size(); i++) {
 				if(mstruct[i].isNumber()) {
-					mstruct[i].number().setUncertainty(munc.number(), true);
+					mstruct[i].number().setUncertainty(munc.number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 					mstruct[i].numberUpdated();
 					mstruct.childUpdated(i + 1);
 					return 1;
@@ -4151,7 +4151,7 @@ bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const Evaluati
 			}
 		}
 		mstruct.add(m_zero, true);
-		mstruct.last().number().setUncertainty(munc.number(), true);
+		mstruct.last().number().setUncertainty(munc.number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 		mstruct.last().numberUpdated();
 		mstruct.childUpdated(mstruct.size());
 		return 1;
@@ -4167,14 +4167,14 @@ bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const Evaluati
 		if(munc.isMultiplication()) {
 			if(munc.size() == 2) {
 				if(mstruct.isMultiplication() && mstruct[0].isNumber() && (munc[1] == mstruct[1] || (munc[1].isFunction() && munc[1].function() == CALCULATOR->f_abs && munc[1].size() == 1 && mstruct[1] == munc[1][0]))) {
-					mstruct[0].number().setUncertainty(munc[0].number(), true);
+					mstruct[0].number().setUncertainty(munc[0].number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 					mstruct[0].numberUpdated();
 					mstruct.childUpdated(1);
 					return 1;
 				} else if(mstruct.equals(munc[1]) || (munc[1].isFunction() && munc[1].function() == CALCULATOR->f_abs && munc[1].size() == 1 && mstruct.equals(munc[1][0]))) {
 					mstruct.transform(STRUCT_MULTIPLICATION);
 					mstruct.insertChild(m_one, 1);
-					mstruct[0].number().setUncertainty(munc[0].number(), true);
+					mstruct[0].number().setUncertainty(munc[0].number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 					mstruct[0].numberUpdated();
 					mstruct.childUpdated(1);
 					return 1;
@@ -4194,7 +4194,7 @@ bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const Evaluati
 						if(!mstruct[0].isNumber()) {
 							mstruct.insertChild(m_one, 1);
 						}
-						mstruct[0].number().setUncertainty(munc[0].number(), true);
+						mstruct[0].number().setUncertainty(munc[0].number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 						mstruct[0].numberUpdated();
 						mstruct.childUpdated(1);
 						return 1;
@@ -4227,15 +4227,12 @@ UncertaintyFunction::UncertaintyFunction() : MathFunction("uncertainty", 2, 3) {
 }
 int UncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	if(eo.interval_calculation == INTERVAL_CALCULATION_NONE) {
-		return 1;
-	}
 	MathStructure munc(vargs[1]);
 	mstruct.eval(eo);
 	munc.eval(eo);
 	if(vargs[2].number().getBoolean()) {
 		if(munc.isNumber() && mstruct.isNumber()) {
-			mstruct.number().setRelativeUncertainty(munc.number(), true);
+			mstruct.number().setRelativeUncertainty(munc.number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 			mstruct.numberUpdated();
 			return 1;
 		}
@@ -6374,7 +6371,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 							}
 							if((b_limited_samples && !b_first) || nr_rel_prec.intValue() >= CALCULATOR->getPrecision()) {
 								CALCULATOR->endTemporaryStopIntervalArithmetic();
-								mstruct.number().setUncertainty(nr_prec, false); 
+								mstruct.number().setUncertainty(nr_prec, eo.interval_calculation == INTERVAL_CALCULATION_NONE); 
 								mstruct.numberUpdated();
 								CALCULATOR->error(false, _("Definite integral was approximated."), NULL);
 								return 1;
