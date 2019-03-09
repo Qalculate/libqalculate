@@ -402,8 +402,8 @@ bool replace_f_interval(MathStructure &mstruct) {
 		bool b_rel = mstruct[2].number().getBoolean();
 		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
 			Number nr(mstruct[0].number());
-			if(b_rel) nr.setRelativeUncertainty(mstruct[1].number(), true);
-			else nr.setUncertainty(mstruct[1].number(), true);
+			if(b_rel) nr.setRelativeUncertainty(mstruct[1].number());
+			else nr.setUncertainty(mstruct[1].number());
 			mstruct.set(nr, true);
 			return true;
 		} else if(!b_rel) {
@@ -467,12 +467,12 @@ const MathStructure &KnownVariable::get() {
 		if(!suncertainty.empty()) {
 			Number nr_u(suncertainty);
 			if(m->isNumber()) {
-				if(b_relative_uncertainty) m->number().setRelativeUncertainty(nr_u, true);
+				if(b_relative_uncertainty) m->number().setRelativeUncertainty(nr_u);
 				else m->number().setUncertainty(nr_u, true);
 				m->numberUpdated();
 			} else if(m->isMultiplication() && m->size() > 0 && (*m)[0].isNumber()) {
-				if(b_relative_uncertainty) (*m)[0].number().setRelativeUncertainty(nr_u, true);
-				else (*m)[0].number().setUncertainty(nr_u, true);
+				if(b_relative_uncertainty) (*m)[0].number().setRelativeUncertainty(nr_u);
+				else (*m)[0].number().setUncertainty(nr_u);
 				(*m)[0].numberUpdated();
 				m->childUpdated(1);
 			}

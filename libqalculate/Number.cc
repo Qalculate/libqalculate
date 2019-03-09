@@ -333,7 +333,7 @@ void Number::set(string number, const ParseOptions &po) {
 		number = number.substr(pm_index + (number[pm_index] == '+' ? strlen("+/-") : strlen(SIGN_PLUSMINUS)));
 		if(!number.empty()) {
 			Number pm_nr(number, po2);
-			setUncertainty(pm_nr, true);
+			setUncertainty(pm_nr);
 		}
 		return;
 	}
@@ -745,7 +745,7 @@ void Number::set(string number, const ParseOptions &po) {
 			Number nr_unc;
 			mpq_canonicalize(unc);
 			nr_unc.setInternal(unc);
-			setUncertainty(nr_unc, true);
+			setUncertainty(nr_unc);
 			mpq_clear(unc);
 		} else if(po.read_precision == ALWAYS_READ_PRECISION || (in_decimals && po.read_precision == READ_PRECISION_WHEN_DECIMALS)) {
 			if(base != 10) {
@@ -894,10 +894,6 @@ void Number::setInternal(const mpfr_t &mpfr_value, bool merge_precision, bool ke
 	n_type = NUMBER_TYPE_FLOAT;
 	mpq_set_ui(r_value, 0, 1);
 	if(!keep_imag && i_value) i_value->clear();
-}
-
-bool Number::isValid() const {
-	return n_type != NUMBER_TYPE_FLOAT || (!mpfr_nan_p(fl_value) && !mpfr_nan_p(fu_value));
 }
 
 void Number::setImaginaryPart(const Number &o) {
@@ -1239,12 +1235,12 @@ bool Number::mergeInterval(const Number &o, bool set_to_overlap) {
 	return true;
 }
 
-void Number::setUncertainty(const Number &o, bool force_interval) {
+void Number::setUncertainty(const Number &o, bool to_precision) {
 	if(o.hasImaginaryPart()) {
 		if(!i_value) i_value = new Number();
-		i_value->setUncertainty(o.imaginaryPart(), force_interval);
+		i_value->setUncertainty(o.imaginaryPart(), to_precision);
 		setPrecisionAndApproximateFrom(*i_value);
-		if(o.hasRealPart()) setUncertainty(o.realPart(), force_interval);
+		if(o.hasRealPart()) setUncertainty(o.realPart(), to_precision);
 		return;
 	}
 	if(o.isInfinite()) {
@@ -1259,7 +1255,7 @@ void Number::setUncertainty(const Number &o, bool force_interval) {
 	}
 	if(isInfinite()) return;
 	b_approx = true;
-	if(!force_interval && !CREATE_INTERVAL && !isInterval()) {
+	if(to_precision && !isInterval()) {
 		Number nr(*this);
 		nr.divide(o);
 		nr.abs();
@@ -1275,7 +1271,7 @@ void Number::setUncertainty(const Number &o, bool force_interval) {
 	if(o.isNegative()) {
 		Number o_abs(o);
 		o_abs.negate();
-		setUncertainty(o_abs, force_interval);
+		setUncertainty(o_abs, to_precision);
 		return;
 	}
 	mpfr_clear_flags();
@@ -1303,10 +1299,10 @@ void Number::setUncertainty(const Number &o, bool force_interval) {
 	}
 	testErrors(2);
 }
-void Number::setRelativeUncertainty(const Number &o, bool force_interval) {
+void Number::setRelativeUncertainty(const Number &o, bool to_precision) {
 	Number nr(*this);
 	nr.multiply(o);
-	setUncertainty(nr, force_interval);
+	setUncertainty(nr, to_precision);
 }
 Number Number::uncertainty() const {
 	if(!isInterval()) return Number();
@@ -1476,12 +1472,12 @@ int Number::precision(int calculate_from_interval) const {
 			mpfr_abs(f_diff, f_diff, MPFR_RNDN);
 			if(!mpfr_zero_p(f_diff)) mpfr_log10(f_diff, f_diff, MPFR_RNDN);
 			int i_prec = -1;
-			if(mpfr_sgn(f_diff) <= 0) {
+			if(mpfr_sgn(f_diff) <= 0 || testErrors(0)) {
 				i_prec = 0;
 			} else if(mpfr_fits_sint_p(f_diff, MPFR_RNDU)) {
 				i_prec = mpfr_get_si(f_diff, MPFR_RNDD) + 1;
 			}
-			if(i_value) {
+			if(i_value && i_prec != 0) {
 				int imag_prec = i_value->precision(1);
 				if(imag_prec >= 0 && (i_prec < 0 || imag_prec < i_prec)) i_prec = imag_prec;
 			}
@@ -6938,7 +6934,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					return str;
 				}
 				CALCULATOR->endTemporaryStopMessages(true);
-				return string("(") + string(_("floating point error")) + ")";
+				return "(floating point error)";
 			}
 		}
 
@@ -7195,6 +7191,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 
 		if(!exact && po.is_approximate) *po.is_approximate = true;
+
 		if(po.show_ending_zeroes && (!exact || approx) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
 			precision = precision_base;
 			precision -= mpz_str.length();
@@ -7381,8 +7378,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				Number nr_zero;
 				nr_zero.setApproximate(true);
 				PrintOptions po2 = po;
-				po2.max_decimals = i_precision_base - 1;
-				po2.use_max_decimals = true;
+				if(!po.use_max_decimals || po.max_decimals > i_precision_base - 1) {
+					po2.max_decimals = i_precision_base - 1;
+					po2.use_max_decimals = true;
+				}
 				return nr_zero.print(po2, ips);
 			}
 			
@@ -7537,8 +7536,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				Number nr_zero;
 				nr_zero.setApproximate(true);
 				PrintOptions po2 = po;
-				po2.max_decimals = i_precision_base - 1;
-				po2.use_max_decimals = true;
+				if(!po.use_max_decimals || po.max_decimals > i_precision_base - 1) {
+					po2.max_decimals = i_precision_base - 1;
+					po2.use_max_decimals = true;
+				}
 				return nr_zero.print(po2, ips);
 			}
 
@@ -7585,12 +7586,16 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				Number nr_zero;
 				nr_zero.setApproximate(true);
 				PrintOptions po2 = po;
-				po2.max_decimals = i_precision_base - 1;
-				po2.use_max_decimals = true;
+				if(!po.use_max_decimals || po.max_decimals < i_precision_base - 1) {
+					po2.max_decimals = i_precision_base - 1;
+					po2.use_max_decimals = true;
+				}
 				mpfr_clear(f_mid);
 				return nr_zero.print(po2, ips);
 			}
 		}
+		
+		bool use_max_idp = false;
 
 		float_rerun:
 		
@@ -7684,7 +7689,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(expo == 0 && i_log > precision) {
 			precision = (i_precision_base > i_log + 1) ? i_log + 1 : i_precision_base;
 		}
-		mpfr_sub_si(f_log, f_log, ((po.interval_display != INTERVAL_DISPLAY_PLUSMINUS || !is_interval) && po.use_max_decimals && po.max_decimals >= 0 && precision > po.max_decimals + i_log - expo) ? po.max_decimals + i_log - expo: precision - 1, MPFR_RNDN);
+		mpfr_sub_si(f_log, f_log, ((use_max_idp || po.interval_display != INTERVAL_DISPLAY_PLUSMINUS || !is_interval) && po.use_max_decimals && po.max_decimals >= 0 && precision > po.max_decimals + i_log - expo) ? po.max_decimals + i_log - expo: precision - 1, MPFR_RNDN);
 		l10 = expo - mpfr_get_si(f_log, MPFR_RNDN);
 		mpfr_pow(f_log, f_base, f_log, MPFR_RNDN);
 		if((!neg && po.interval_display == INTERVAL_DISPLAY_LOWER) || (neg && po.interval_display == INTERVAL_DISPLAY_UPPER)) {
@@ -7748,6 +7753,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						mpz_clear(ivalue);
 						return print(po2, ips);
 					}
+					use_max_idp = true;
 					rerun = true;
 					goto float_rerun;
 				} else if(!po.preserve_precision && l10 > 0 && str_unc.length() > 2) {
@@ -7946,7 +7952,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					return str;
 				}
 				CALCULATOR->endTemporaryStopMessages(true);
-				return string("(") + string(_("floating point error")) + ")";
+				return "(floating point error)";
 			}
 		}
 
@@ -8271,6 +8277,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				l2 = str.length() - precision - 1;
 				if(po.use_max_decimals && po.max_decimals >= 0 && decimals - l2 > po.max_decimals) {
 					l2 = decimals - po.max_decimals;
+				}
+				while(l2 < 0) {
+					l2++;
+					str += '0';
 				}
 			}
 			if(l2 > 0 && !infinite_series) {

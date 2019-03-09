@@ -458,12 +458,12 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 			if(!suncertainty.empty()) {
 				Number nr_u(suncertainty);
 				if(mstruct->isNumber()) {
-					if(b_relative_uncertainty) mstruct->number().setRelativeUncertainty(nr_u, true);
-					else mstruct->number().setUncertainty(nr_u, true);
+					if(b_relative_uncertainty) mstruct->number().setRelativeUncertainty(nr_u);
+					else mstruct->number().setUncertainty(nr_u);
 					mstruct->numberUpdated();
 				} else if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber()) {
-					if(b_relative_uncertainty) (*mstruct)[0].number().setRelativeUncertainty(nr_u, true);
-					else (*mstruct)[0].number().setUncertainty(nr_u, true);
+					if(b_relative_uncertainty) (*mstruct)[0].number().setRelativeUncertainty(nr_u);
+					else (*mstruct)[0].number().setUncertainty(nr_u);
 					(*mstruct)[0].numberUpdated();
 					mstruct->childUpdated(1);
 				}
@@ -598,12 +598,12 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 		if(!suncertainty.empty()) {
 			Number nr_u(suncertainty);
 			if(mstruct->isNumber()) {
-				if(b_relative_uncertainty) mstruct->number().setRelativeUncertainty(nr_u, true);
-				else mstruct->number().setUncertainty(nr_u, true);
+				if(b_relative_uncertainty) mstruct->number().setRelativeUncertainty(nr_u);
+				else mstruct->number().setUncertainty(nr_u);
 				mstruct->numberUpdated();
 			} else if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber()) {
-				if(b_relative_uncertainty) (*mstruct)[0].number().setRelativeUncertainty(nr_u, true);
-				else (*mstruct)[0].number().setUncertainty(nr_u, true);
+				if(b_relative_uncertainty) (*mstruct)[0].number().setRelativeUncertainty(nr_u);
+				else (*mstruct)[0].number().setUncertainty(nr_u);
 				(*mstruct)[0].numberUpdated();
 				mstruct->childUpdated(1);
 			}

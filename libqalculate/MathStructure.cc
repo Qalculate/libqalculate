@@ -3926,41 +3926,43 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			if(eo.expand != 0 && containsType(STRUCT_DATETIME, false, true, false) > 0) return -1;
 			switch(mstruct.type()) {
 				case STRUCT_ADDITION: {
-					if(eo.expand != 0 && SIZE < 1000 && mstruct.size() < 1000 && (SIZE * mstruct.size() < (eo.expand == -1 ? 50 : 500)) && (eo.expand > -2 || (!containsInterval(true, false, false, eo.expand == -2) && !mstruct.containsInterval(true, false, false, eo.expand == -2)) || (representsNonNegative(true) && mstruct.representsNonNegative(true)))) {
-						MathStructure msave(*this);
-						CLEAR;
-						for(size_t i = 0; i < mstruct.size(); i++) {
-							if(CALCULATOR->aborted()) {
-								set(msave);
-								return -1;
+					if(eo.expand != 0 && SIZE < 1000 && mstruct.size() < 1000 && (SIZE * mstruct.size() < (eo.expand == -1 ? 50 : 500))) {
+					
+						if(eo.expand > -2 || (!containsInterval(true, false, false, eo.expand == -2) && !mstruct.containsInterval(true, false, false, eo.expand == -2)) || (representsNonNegative(true) && mstruct.representsNonNegative(true))) {
+							MathStructure msave(*this);
+							CLEAR;
+							for(size_t i = 0; i < mstruct.size(); i++) {
+								if(CALCULATOR->aborted()) {
+									set(msave);
+									return -1;
+								}
+								APPEND(msave);
+								mstruct[i].ref();
+								LAST.multiply_nocopy(&mstruct[i], true);
+								if(reversed) {
+									LAST.swapChildren(1, LAST.size());
+									LAST.calculateMultiplyIndex(0, eo, true, this, SIZE - 1);
+								} else {
+									LAST.calculateMultiplyLast(eo, true, this, SIZE - 1);
+								}
 							}
-							APPEND(msave);
-							mstruct[i].ref();
-							LAST.multiply_nocopy(&mstruct[i], true);
-							if(reversed) {
-								LAST.swapChildren(1, LAST.size());
-								LAST.calculateMultiplyIndex(0, eo, true, this, SIZE - 1);
-							} else {
-								LAST.calculateMultiplyLast(eo, true, this, SIZE - 1);
-							}
-						}
-						MERGE_APPROX_AND_PREC(mstruct)
-						calculatesub(eo, eo, false, mparent, index_this);
-						return 1;
-					} else if(eo.expand <= -2 && (!mstruct.containsInterval(true, false, false, eo.expand == -2) || representsNonNegative(true))) {
-						for(size_t i = 0; i < SIZE; i++) {
-							CHILD(i).calculateMultiply(mstruct, eo, this, i);
-						}
-						calculatesub(eo, eo, false, mparent, index_this);
-						return 1;
-					} else if(eo.expand <= -2 && (!containsInterval(true, false, false, eo.expand == -2) || mstruct.representsNonNegative(true))) {
-						return 0;
-					} else {
-						if(equals(mstruct)) {
-							raise_nocopy(new MathStructure(2, 1, 0));
 							MERGE_APPROX_AND_PREC(mstruct)
+							calculatesub(eo, eo, false, mparent, index_this);
 							return 1;
+						} else if(eo.expand <= -2 && (!mstruct.containsInterval(true, false, false, eo.expand == -2) || representsNonNegative(true))) {
+							for(size_t i = 0; i < SIZE; i++) {
+								CHILD(i).calculateMultiply(mstruct, eo, this, i);
+							}
+							calculatesub(eo, eo, false, mparent, index_this);
+							return 1;
+						} else if(eo.expand <= -2 && (!containsInterval(true, false, false, eo.expand == -2) || mstruct.representsNonNegative(true))) {
+							return 0;
 						}
+					}
+					if(equals(mstruct)) {
+						raise_nocopy(new MathStructure(2, 1, 0));
+						MERGE_APPROX_AND_PREC(mstruct)
+						return 1;
 					}
 					break;
 				}
@@ -12143,7 +12145,6 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 			unc = mvar.number().uncertainty();
 			Number nmid(mvar.number());
 			nmid.intervalToMidValue();
-			if(!unc.number().isValid() || !nmid.isValid()) {b_failed = true; return NULL;}
 			KnownVariable *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
 			v->setApproximate(false);
 			v->ref();
@@ -12166,7 +12167,6 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 					unc = mvar[0].number().uncertainty();
 					Number nmid(mvar[0].number());
 					nmid.intervalToMidValue();
-					if(!unc.number().isValid() || !nmid.isValid()) {b_failed = true; return NULL;}
 					KnownVariable *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
 					v->setApproximate(false);
 					v->ref();
@@ -12246,7 +12246,6 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 		unc = m.number().uncertainty();
 		Number nmid(m.number());
 		nmid.intervalToMidValue();
-		if(!unc.number().isValid() || !nmid.isValid()) {b_failed = true; return NULL;}
 		KnownVariable *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
 		v->setApproximate(false);
 		v->ref();
@@ -12610,14 +12609,14 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 							return *this;
 						} else if(isNumber()) {
 							CALCULATOR->endTemporaryStopMessages(true);
-							o_number.setUncertainty(munc.number(), true);
+							o_number.setUncertainty(munc.number());
 							numberUpdated();
 							return *this;
 						} else if(isAddition()) {
 							for(size_t i = 0; i < SIZE; i++) {
 								if(CHILD(i).isNumber()) {
 									b_failed = false;
-									CHILD(i).number().setUncertainty(munc.number(), true);
+									CHILD(i).number().setUncertainty(munc.number());
 									CHILD(i).numberUpdated();
 									CHILD_UPDATED(i);
 									break;
@@ -12638,14 +12637,14 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 						if(munc.isMultiplication()) {
 							if(munc.size() == 2) {
 								if(isMultiplication() && CHILD(0).isNumber() && (munc[1] == CHILD(1) || (munc[1].isFunction() && munc[1].function() == CALCULATOR->f_abs && munc[1].size() == 1 && CHILD(1) == munc[1][0]))) {
-									CHILD(0).number().setUncertainty(munc[0].number(), true);
+									CHILD(0).number().setUncertainty(munc[0].number());
 									CHILD(0).numberUpdated();
 									CHILD_UPDATED(0)
 									b_failed = false;
 								} else if(equals(munc[1]) || (munc[1].isFunction() && munc[1].function() == CALCULATOR->f_abs && munc[1].size() == 1 && equals(munc[1][0]))) {
 									transform(STRUCT_MULTIPLICATION);
 									PREPEND(m_one);
-									CHILD(0).number().setUncertainty(munc[0].number(), true);
+									CHILD(0).number().setUncertainty(munc[0].number());
 									CHILD(0).numberUpdated();
 									CHILD_UPDATED(0)
 									b_failed = false;
@@ -12665,7 +12664,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 										if(!CHILD(0).isNumber()) {
 											PREPEND(m_one);
 										}
-										CHILD(0).number().setUncertainty(munc[0].number(), true);
+										CHILD(0).number().setUncertainty(munc[0].number());
 										CHILD(0).numberUpdated();
 										CHILD_UPDATED(0)
 										b_failed = false;
@@ -12832,7 +12831,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	structure(eo.structuring, eo2, false);
 	
 	if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
-	
+
 	clean_multiplications(*this);
 	
 	if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
@@ -13423,6 +13422,7 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 	d.polynomialContent(xvar, cont_d, eo);
 
 	MathStructure gamma;
+
 	if(!MathStructure::gcd(cont_c, cont_d, gamma, eo, NULL, NULL, false)) return false;
 	mgcd = gamma;
 	if(ddeg.isZero()) {
@@ -13462,6 +13462,7 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 		MathStructure psi_pow(psi);
 		psi_pow.calculateRaise(delta, eo);
 		ri.calculateMultiply(psi_pow, eo);
+
 		if(!divide_in_z(r, ri, d, sym_stats, var_i, eo)) {
 			return false;
 		}
@@ -13492,7 +13493,7 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 		delta -= ddeg;
 		
 	}
-	
+
 	return false;
 	
 }
@@ -14513,7 +14514,7 @@ factored_1:
 		acc_ca.setType(STRUCT_MULTIPLICATION);
 		MathStructure part_2(m2);
 		MathStructure part_ca, part_cb;
-		for (size_t i = 0; i < m1.size(); i++) {			
+		for(size_t i = 0; i < m1.size(); i++) {
 			mresult.addChild(m_zero);
 			MathStructure::gcd(m1[i], part_2, mresult[i], eo, &part_ca, &part_cb, false);
 			if(CALCULATOR->aborted()) return false;
@@ -18720,7 +18721,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 			break;
 		}
 		case STRUCT_NUMBER: {
-			if(o_number.isNegative() || ((parent || po.interval_display != INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) && o_number.isInterval() && o_number.isNonPositive() && o_number.isValid())) {
+			if(o_number.isNegative() || ((parent || po.interval_display != INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) && o_number.isInterval() && o_number.isNonPositive())) {
 				if((((po.base != 2 || !po.twos_complement) && (po.base != 16 || !po.hexadecimal_twos_complement)) || !o_number.isInteger()) && (!o_number.isMinusInfinity() || (parent && parent->isAddition()))) {
 					o_number.negate();
 					transform(STRUCT_NEGATE);
