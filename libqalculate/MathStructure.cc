@@ -12445,15 +12445,51 @@ Variable *find_interval_replace_var_comp(MathStructure &m, const EvaluationOptio
 	return NULL;
 }
 
-void eval_comparison_sides(MathStructure &m, const EvaluationOptions &eo) {
+bool eval_comparison_sides(MathStructure &m, const EvaluationOptions &eo) {
 	if(m.isComparison()) {
-		m[0].eval(eo);
-		m[1].eval(eo);
-		return;
+		MathStructure mbak(m);
+		if(!m[0].isUnknown()) {
+			bool ret = true;
+			CALCULATOR->beginTemporaryStopMessages();
+			m[0].eval(eo);
+			if(m[0].containsFunction(CALCULATOR->f_uncertainty) && !mbak[0].containsFunction(CALCULATOR->f_uncertainty)) {
+				CALCULATOR->endTemporaryStopMessages();
+				m[0] = mbak[0];
+				ret = false;
+			} else {
+				CALCULATOR->endTemporaryStopMessages(true);
+			}
+			CALCULATOR->beginTemporaryStopMessages();
+			m[1].eval(eo);
+			if(m[1].containsFunction(CALCULATOR->f_uncertainty) && !mbak[1].containsFunction(CALCULATOR->f_uncertainty)) {
+				CALCULATOR->endTemporaryStopMessages();
+				m[1] = mbak[1];
+				ret = false;
+			} else {
+				CALCULATOR->endTemporaryStopMessages(true);
+			}
+			if(ret && !m.containsUnknowns()) {
+				m.calculatesub(eo, eo, false);
+				return true;
+			}
+			return false;
+		} else {
+			m[1].eval(eo);
+			m.calculatesub(eo, eo, false);
+			return true;
+		}
+	} else if(m.containsType(STRUCT_COMPARISON)) {
+		bool ret = true;
+		for(size_t i = 0; i < m.size(); i++) {
+			if(!eval_comparison_sides(m[i], eo)) ret = false;
+		}
+		m.childrenUpdated();
+		m.calculatesub(eo, eo, false);
+		return ret;
+	} else {
+		m.eval(eo);
 	}
-	for(size_t i = 0; i < m.size(); i++) {
-		eval_comparison_sides(m[i], eo);
-	}
+	return true;
 }
 
 bool separate_unit_vars(MathStructure &m, const EvaluationOptions &eo, bool only_approximate, bool dry_run) {
@@ -12584,7 +12620,19 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					else replace(vars[i], ((UnknownVariable*) vars[i])->interval());
 					vars[i]->destroy();
 				}
-				eval_comparison_sides(*this, eo);
+				if(eval_comparison_sides(*this, feo)) {
+					CALCULATOR->endTemporaryStopMessages(true);
+					if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
+					structure(eo.structuring, eo2, false);
+					if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
+					clean_multiplications(*this);
+				} else {
+					CALCULATOR->error(false, _("Calculation of uncertainty propagation partially failed (using interval arithmetic instead when necessary)."), NULL);
+					EvaluationOptions eo4 = eo;
+					eo4.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
+					eval(eo4);
+				}
+				return *this;
 			} else {
 				CALCULATOR->beginTemporaryStopMessages();
 				munc = calculate_uncertainty(*this, eo, b_failed);
@@ -12711,7 +12759,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				}
 				CALCULATOR->endTemporaryStopMessages(!b_failed);
 				if(b_failed) {
-					CALCULATOR->error(false, _("Calculation of uncertainty propagation failed (using interval arithmetic instead)"), NULL);
+					CALCULATOR->error(false, _("Calculation of uncertainty propagation failed (using interval arithmetic instead)."), NULL);
 					set(mbak);
 					EvaluationOptions eo3 = eo;
 					eo3.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
@@ -21852,6 +21900,21 @@ bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto
 			b = true;
 			CHILD_UPDATED(i);
 			if(once_only) return true;
+		}
+	}
+	return b;
+}
+bool MathStructure::replace(Variable *v, const MathStructure &mto) {
+	if(b_protected) b_protected = false;
+	if(m_type == STRUCT_VARIABLE && o_variable == v) {
+		set(mto);
+		return true;
+	}
+	bool b = false;
+	for(size_t i = 0; i < SIZE; i++) {
+		if(CHILD(i).replace(v, mto)) {
+			b = true;
+			CHILD_UPDATED(i);
 		}
 	}
 	return b;
