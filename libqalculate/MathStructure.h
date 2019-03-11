@@ -824,6 +824,7 @@ class MathStructure {
 		size_t countFunctions(bool count_subfunctions = true) const;
 		void findAllUnknowns(MathStructure &unknowns_vector);
 		bool replace(const MathStructure &mfrom, const MathStructure &mto, bool once_only = false);
+		bool replace(Variable *v, const MathStructure &mto);
 		bool calculateReplace(const MathStructure &mfrom, const MathStructure &mto, const EvaluationOptions &eo);
 		bool replace(const MathStructure &mfrom1, const MathStructure &mto1, const MathStructure &mfrom2, const MathStructure &mto2);
 		bool removeType(StructureType mtype);

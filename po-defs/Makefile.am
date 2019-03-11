@@ -3,4 +3,4 @@
 #
 
 EXTRA_DIST = \
-	POTFILES.in sv.po
+	POTFILES.in *.po
