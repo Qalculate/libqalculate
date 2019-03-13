@@ -19647,9 +19647,13 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			print_str += ename->name;
 			if(ename->suffix && !po.preserve_format && !po.use_reference_names) {
 				size_t i = print_str.rfind('_');
-				if(i != string::npos && print_str.substr(i + 1, print_str.length() - (i + 1)) == "unit") {
-					print_str = print_str.substr(0, i);
-					if(po.hide_underscore_spaces) gsub("_", " ", print_str);
+				if(i <= print_str.length() - 5 && print_str.substr(print_str.length() - 4, 4) == "unit") {
+					if(i == print_str.length() - 5) {
+						print_str = print_str.substr(0, i);
+						if(po.hide_underscore_spaces) gsub("_", " ", print_str);
+					} else {
+						print_str = print_str.substr(0, print_str.length() - 4);
+					}
 				}
 			}
 			if(po.hide_underscore_spaces && !ename->suffix) {
@@ -19662,9 +19666,13 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			print_str += ename->name;
 			if(ename->suffix && !po.preserve_format && !po.use_reference_names) {
 				size_t i = print_str.rfind('_');
-				if(i != string::npos && print_str.substr(i + 1, print_str.length() - (i + 1)) == "constant") {
-					print_str = print_str.substr(0, i);
-					if(po.hide_underscore_spaces) gsub("_", " ", print_str);
+				if(i <= print_str.length() - 9 && print_str.substr(print_str.length() - 8, 8) == "constant") {
+					if(i == print_str.length() - 9) {
+						print_str = print_str.substr(0, i);
+						if(po.hide_underscore_spaces) gsub("_", " ", print_str);
+					} else {
+						print_str = print_str.substr(0, print_str.length() - 8);
+					}
 				}
 			}
 			if(po.hide_underscore_spaces && !ename->suffix) {

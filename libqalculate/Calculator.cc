@@ -3563,11 +3563,13 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 	eo2.test_comparisons = false;
 	switch(mstruct.type()) {
 		case STRUCT_POWER: {
-			if(mstruct.base()->isUnit() && mstruct.exponent()->isNumber() && mstruct.exponent()->number().isRational()) {
+			if(mstruct.base()->isUnit() && mstruct.exponent()->isNumber() && mstruct.exponent()->number().isRational() && !mstruct.exponent()->number().isZero()) {
 				MathStructure mstruct_new(mstruct);
 				int old_points = 0;
-				if(mstruct_new.exponent()->isInteger()) old_points = mstruct_new.exponent()->number().intValue();
-				else old_points = mstruct_new.exponent()->number().numerator().intValue() + mstruct_new.exponent()->number().denominator().intValue() * (mstruct_new.exponent()->number().isNegative() ? -1 : 1);
+				bool overflow = false;
+				if(mstruct_new.exponent()->isInteger()) old_points = mstruct_new.exponent()->number().intValue(&overflow);
+				else old_points = mstruct_new.exponent()->number().numerator().intValue(&overflow) + mstruct_new.exponent()->number().denominator().intValue() * (mstruct_new.exponent()->number().isNegative() ? -1 : 1);
+				if(overflow) return mstruct_new;
 				bool old_minus = false;
 				if(old_points < 0) {
 					old_points = -old_points;
@@ -3585,17 +3587,18 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 					if(mstruct_new.equals(mstruct, true, true)) return mstruct_new;
 				} else {
 					CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
-					cu->add(mstruct_new.base()->unit(), mstruct_new.exponent()->number().intValue());
+					cu->add(mstruct_new.base()->unit(), mstruct_new.exponent()->number().numerator().intValue());
 					Unit *u = getBestUnit(cu, false, eo.local_currency_conversion);
 					if(u == cu) {
 						delete cu;
 						return mstruct_new;
 					}
-					delete cu;
 					if(eo.approximation == APPROXIMATION_EXACT && cu->hasApproximateRelationTo(u, true)) {
 						if(!u->isRegistered()) delete u;
+						delete cu;
 						return mstruct_new;
 					}
+					delete cu;
 					mstruct_new = convert(mstruct_new, u, eo, true);
 					if(!u->isRegistered()) delete u;
 				}
