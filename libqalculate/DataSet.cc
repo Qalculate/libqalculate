@@ -1103,15 +1103,14 @@ int DataObjectArgument::type() const {return ARGUMENT_TYPE_DATA_OBJECT;}
 Argument *DataObjectArgument::copy() const {return new DataObjectArgument(this);}
 string DataObjectArgument::print() const {return _("data object");}
 string DataObjectArgument::subprintlong() const {
+	if(!o_data) return print();
 	string str = _("an object from");
 	str += " \"";
 	str += o_data->title();
 	str += "\"";
 	DataPropertyIter it;
 	DataProperty *o = NULL;
-	if(o_data) {
-		o = o_data->getFirstProperty(&it);
-	}
+	o = o_data->getFirstProperty(&it);
 	if(o) {
 		string stmp;
 		size_t l_last = 0;

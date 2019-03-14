@@ -695,18 +695,22 @@ char *utf8_strdown(const char *str, int l) {
 	size_t inlength = l <= 0 ? strlen(str) : (size_t) l;
 	size_t outlength = inlength + 4;
 	char *buffer = (char*) malloc(outlength * sizeof(char));
+	if(!buffer) return NULL;
 	int32_t length = ucasemap_utf8ToLower(ucm, buffer, outlength, str, inlength, &err);
 	if(U_SUCCESS(err)) {
 		return buffer;
 	} else if(err == U_BUFFER_OVERFLOW_ERROR) {
 		outlength = length + 4;
-		buffer = (char*) realloc(buffer, outlength * sizeof(char));
+		char *buffer_realloc = (char*) realloc(buffer, outlength * sizeof(char));
+		if(buffer_realloc) buffer = buffer_realloc;
+		else {free(buffer); return NULL;}
 		err = U_ZERO_ERROR;
 		ucasemap_utf8ToLower(ucm, buffer, outlength, str, inlength, &err);
 		if(U_SUCCESS(err)) {
 			return buffer;
 		}
 	}
+	free(buffer);
 	return NULL;
 #else
 	return NULL;

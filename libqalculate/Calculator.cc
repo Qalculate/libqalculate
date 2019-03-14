@@ -232,7 +232,7 @@ void autoConvert(const MathStructure &morig, MathStructure &mconv, const Evaluat
 	}
 	switch(eo.auto_post_conversion) {
 		case POST_CONVERSION_OPTIMAL: {
-			mconv.set(CALCULATOR->convertToBestUnit(morig, eo, false));
+			mconv.set(CALCULATOR->convertToOptimalUnit(morig, eo, false));
 			break;
 		}
 		case POST_CONVERSION_BASE: {
@@ -240,7 +240,7 @@ void autoConvert(const MathStructure &morig, MathStructure &mconv, const Evaluat
 			break;
 		}
 		case POST_CONVERSION_OPTIMAL_SI: {
-			mconv.set(CALCULATOR->convertToBestUnit(morig, eo, true));
+			mconv.set(CALCULATOR->convertToOptimalUnit(morig, eo, true));
 			break;
 		}
 		default: {
@@ -857,7 +857,7 @@ DecimalPrefix *Calculator::getNearestDecimalPrefix(int exp10, int exp) const {
 	}
 	return decimal_prefixes[decimal_prefixes.size() - 1];
 }
-DecimalPrefix *Calculator::getBestDecimalPrefix(int exp10, int exp, bool all_prefixes) const {
+DecimalPrefix *Calculator::getOptimalDecimalPrefix(int exp10, int exp, bool all_prefixes) const {
 	if(decimal_prefixes.size() <= 0 || exp10 == 0) return NULL;
 	int i = 0;
 	if(exp < 0) {
@@ -909,7 +909,7 @@ DecimalPrefix *Calculator::getBestDecimalPrefix(int exp10, int exp, bool all_pre
 	}
 	return p_prev;
 }
-DecimalPrefix *Calculator::getBestDecimalPrefix(const Number &exp10, const Number &exp, bool all_prefixes) const {
+DecimalPrefix *Calculator::getOptimalDecimalPrefix(const Number &exp10, const Number &exp, bool all_prefixes) const {
 	if(decimal_prefixes.size() <= 0 || exp10.isZero()) return NULL;
 	int i = 0;
 	ComparisonResult c;
@@ -989,7 +989,7 @@ BinaryPrefix *Calculator::getNearestBinaryPrefix(int exp2, int exp) const {
 	}
 	return binary_prefixes[binary_prefixes.size() - 1];
 }
-BinaryPrefix *Calculator::getBestBinaryPrefix(int exp2, int exp) const {
+BinaryPrefix *Calculator::getOptimalBinaryPrefix(int exp2, int exp) const {
 	if(binary_prefixes.size() <= 0 || exp2 == 0) return NULL;
 	int i = 0;
 	if(exp < 0) {
@@ -1039,7 +1039,7 @@ BinaryPrefix *Calculator::getBestBinaryPrefix(int exp2, int exp) const {
 	}
 	return p_prev;
 }
-BinaryPrefix *Calculator::getBestBinaryPrefix(const Number &exp2, const Number &exp) const {
+BinaryPrefix *Calculator::getOptimalBinaryPrefix(const Number &exp2, const Number &exp) const {
 	if(binary_prefixes.size() <= 0 || exp2.isZero()) return NULL;
 	int i = 0;
 	ComparisonResult c;
@@ -2770,7 +2770,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		current_stage = MESSAGE_STAGE_CONVERSION;
 		switch(eo.auto_post_conversion) {
 			case POST_CONVERSION_OPTIMAL: {
-				mstruct.set(convertToBestUnit(mstruct, eo, false));
+				mstruct.set(convertToOptimalUnit(mstruct, eo, false));
 				break;
 			}
 			case POST_CONVERSION_BASE: {
@@ -2778,7 +2778,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 				break;
 			}
 			case POST_CONVERSION_OPTIMAL_SI: {
-				mstruct.set(convertToBestUnit(mstruct, eo, true));
+				mstruct.set(convertToOptimalUnit(mstruct, eo, true));
 				break;
 			}
 			default: {}
@@ -2804,7 +2804,7 @@ MathStructure Calculator::calculate(const MathStructure &mstruct_to_calculate, c
 	} else {
 		switch(eo.auto_post_conversion) {
 			case POST_CONVERSION_OPTIMAL: {
-				mstruct.set(convertToBestUnit(mstruct, eo, false));
+				mstruct.set(convertToOptimalUnit(mstruct, eo, false));
 				break;
 			}
 			case POST_CONVERSION_BASE: {
@@ -2812,7 +2812,7 @@ MathStructure Calculator::calculate(const MathStructure &mstruct_to_calculate, c
 				break;
 			}
 			case POST_CONVERSION_OPTIMAL_SI: {
-				mstruct.set(convertToBestUnit(mstruct, eo, true));
+				mstruct.set(convertToOptimalUnit(mstruct, eo, true));
 				break;
 			}
 			default: {}
@@ -3279,7 +3279,8 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 	}
 	return NULL;
 }
-Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div, bool convert_to_local_currency) {
+Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div, bool convert_to_local_currency) {return getOptimalUnit(u, allow_only_div, convert_to_local_currency);}
+Unit *Calculator::getOptimalUnit(Unit *u, bool allow_only_div, bool convert_to_local_currency) {
 	switch(u->subtype()) {
 		case SUBTYPE_BASE_UNIT: {
 			if(convert_to_local_currency && u->isCurrency()) {
@@ -3300,7 +3301,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div, bool convert_to_loca
 			} else if(au->isSIUnit() && (au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT || au->firstBaseExponent() != 1)) {
 				return u;
 			} else {
-				return getBestUnit((Unit*) au->firstBaseUnit());
+				return getOptimalUnit((Unit*) au->firstBaseUnit());
 			}
 		}
 		case SUBTYPE_COMPOSITE_UNIT: {
@@ -3477,7 +3478,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div, bool convert_to_loca
 				if(points >= max_points && !minus) break;
 			}
 			if(!best_u) return u;
-			best_u = getBestUnit(best_u, false, convert_to_local_currency);
+			best_u = getOptimalUnit(best_u, false, convert_to_local_currency);
 			if(points > 1 && points < max_points - 1) {
 				CompositeUnit *cu_new = new CompositeUnit("", "temporary_composite_convert");
 				bool return_cu = minus;
@@ -3490,7 +3491,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div, bool convert_to_loca
 				if(minus) cu_mstruct *= best_u;
 				else cu_mstruct /= best_u;
 				cu_mstruct = convertToBaseUnits(cu_mstruct);
-				CompositeUnit *cu2 = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
+				CompositeUnit *cu2 = new CompositeUnit("", "temporary_composite_convert_to_optimal_unit");
 				bool b = false;
 				for(size_t i = 1; i <= cu_mstruct.countChildren(); i++) {
 					if(cu_mstruct.getChild(i)->isUnit()) {
@@ -3508,7 +3509,7 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div, bool convert_to_loca
 					}
 				}
 				if(b) {
-					Unit *u2 = getBestUnit(cu2, true, convert_to_local_currency);
+					Unit *u2 = getOptimalUnit(cu2, true, convert_to_local_currency);
 					b = false;
 					if(u2->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 						for(size_t i3 = 1; i3 <= ((CompositeUnit*) u2)->countUnits(); i3++) {
@@ -3555,7 +3556,8 @@ Unit *Calculator::getBestUnit(Unit *u, bool allow_only_div, bool convert_to_loca
 	}
 	return u;
 }
-MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const EvaluationOptions &eo, bool convert_to_si_units) {
+MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const EvaluationOptions &eo, bool convert_to_si_units) {return convertToOptimalUnit(mstruct, eo, convert_to_si_units);}
+MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, const EvaluationOptions &eo, bool convert_to_si_units) {
 	EvaluationOptions eo2 = eo;
 	//eo2.calculate_functions = false;
 	eo2.sync_units = false;
@@ -3583,12 +3585,12 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 					} else {
 						mstruct_new.eval(eo2);
 					}
-					mstruct_new = convertToBestUnit(mstruct_new, eo, convert_to_si_units);
+					mstruct_new = convertToOptimalUnit(mstruct_new, eo, convert_to_si_units);
 					if(mstruct_new.equals(mstruct, true, true)) return mstruct_new;
 				} else {
-					CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
+					CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_optimal_unit");
 					cu->add(mstruct_new.base()->unit(), mstruct_new.exponent()->number().numerator().intValue());
-					Unit *u = getBestUnit(cu, false, eo.local_currency_conversion);
+					Unit *u = getOptimalUnit(cu, false, eo.local_currency_conversion);
 					if(u == cu) {
 						delete cu;
 						return mstruct_new;
@@ -3668,7 +3670,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 			bool b = false;
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
 				if(mstruct_new.size() > 100 && aborted()) return mstruct;
-				mstruct_new[i] = convertToBestUnit(mstruct_new[i], eo, convert_to_si_units);
+				mstruct_new[i] = convertToOptimalUnit(mstruct_new[i], eo, convert_to_si_units);
 				if(!b && !mstruct_new[i].equals(mstruct[i], true, true)) b = true;
 			}
 			if(b) {
@@ -3679,7 +3681,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 		}
 		case STRUCT_UNIT: {
 			if((!mstruct.unit()->isCurrency() || !eo.local_currency_conversion) && (!convert_to_si_units || mstruct.unit()->isSIUnit())) return mstruct;
-			Unit *u = getBestUnit(mstruct.unit(), false, eo.local_currency_conversion);
+			Unit *u = getOptimalUnit(mstruct.unit(), false, eo.local_currency_conversion);
 			if(u != mstruct.unit()) {
 				if((u->isSIUnit() || (u->isCurrency() && eo.local_currency_conversion)) && (eo.approximation != APPROXIMATION_EXACT || !mstruct.unit()->hasApproximateRelationTo(u, true))) {
 					MathStructure mstruct_new = convert(mstruct, u, eo, true);
@@ -3718,7 +3720,7 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 						old_minus = false;
 					}
 				} else if(mstruct_old.getChild(i)->size() > 0) {
-					mstruct_old[i - 1] = convertToBestUnit(mstruct_old[i - 1], eo, convert_to_si_units);
+					mstruct_old[i - 1] = convertToOptimalUnit(mstruct_old[i - 1], eo, convert_to_si_units);
 					mstruct_old.childUpdated(i);
 					if(!mstruct_old[i - 1].equals(mstruct[i - 1], true, true)) child_updated = true;
 				}
@@ -3733,9 +3735,9 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 				mstruct_new.eval(eo2);
 			}
 			if(mstruct_new.type() != STRUCT_MULTIPLICATION) {
-				mstruct_new = convertToBestUnit(mstruct_new, eo, convert_to_si_units);
+				mstruct_new = convertToOptimalUnit(mstruct_new, eo, convert_to_si_units);
 			} else {
-				CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_best_unit");
+				CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_optimal_unit");
 				bool b = false;
 				child_updated = false;
 				for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
@@ -3748,14 +3750,14 @@ MathStructure Calculator::convertToBestUnit(const MathStructure &mstruct, const 
 						cu->add(mstruct_new.getChild(i)->base()->unit(), mstruct_new.getChild(i)->exponent()->number().intValue());
 					} else if(mstruct_new.getChild(i)->size() > 0) {
 						MathStructure m_i_old(mstruct_new[i - 1]);
-						mstruct_new[i - 1] = convertToBestUnit(mstruct_new[i - 1], eo, convert_to_si_units);
+						mstruct_new[i - 1] = convertToOptimalUnit(mstruct_new[i - 1], eo, convert_to_si_units);
 						mstruct_new.childUpdated(i);
 						if(!mstruct_new[i - 1].equals(m_i_old, true, true)) child_updated = true;
 					}
 				}
 				bool is_converted = false;
 				if(b) {
-					Unit *u = getBestUnit(cu, false, eo.local_currency_conversion);
+					Unit *u = getOptimalUnit(cu, false, eo.local_currency_conversion);
 					if(u != cu) {
 						if(eo.approximation != APPROXIMATION_EXACT || !cu->hasApproximateRelationTo(u, true)) {
 							mstruct_new = convert(mstruct_new, u, eo, true);

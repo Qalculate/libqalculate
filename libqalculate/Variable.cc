@@ -226,7 +226,7 @@ bool UnknownVariable::representsReal(bool b) {
 	return CALCULATOR->defaultAssumptions()->isReal();
 }
 bool UnknownVariable::representsNonComplex(bool b) {
-	if(mstruct && (!b || (!o_assumption->isReal() && !o_assumption->isComplex()))) return mstruct->representsNonComplex(b);
+	if(mstruct && (!b || (!o_assumption || (!o_assumption->isReal() && !o_assumption->isComplex())))) return mstruct->representsNonComplex(b);
 	if(o_assumption) return o_assumption->isReal();
 	return CALCULATOR->defaultAssumptions()->isReal();
 }

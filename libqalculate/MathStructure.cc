@@ -1777,7 +1777,7 @@ void MathStructure::add(const MathStructure &o, MathOperation op, bool append) {
 		case OPERATION_LESS: {}
 		case OPERATION_EQUALS_GREATER: {}
 		case OPERATION_EQUALS_LESS: {
-			if(append && m_type == STRUCT_COMPARISON && append) {
+			if(append && m_type == STRUCT_COMPARISON) {
 				MathStructure *o2 = new MathStructure(CHILD(1));
 				o2->add(o, op);
 				transform_nocopy(STRUCT_LOGICAL_AND, o2);
@@ -2040,7 +2040,7 @@ void MathStructure::add_nocopy(MathStructure *o, MathOperation op, bool append) 
 		case OPERATION_LESS: {}
 		case OPERATION_EQUALS_GREATER: {}
 		case OPERATION_EQUALS_LESS: {
-			if(append && m_type == STRUCT_COMPARISON && append) {
+			if(append && m_type == STRUCT_COMPARISON) {
 				MathStructure *o2 = new MathStructure(CHILD(1));
 				o2->add_nocopy(o, op);
 				transform_nocopy(STRUCT_LOGICAL_AND, o2);
@@ -5566,7 +5566,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		}
 		case STRUCT_POWER: {
 			if((eo.allow_complex && CHILD(1).representsFraction()) || (mstruct.representsInteger() && (eo.allow_complex || CHILD(0).representsInteger())) || representsNonNegative(true)) {
-				if((((!eo.assume_denominators_nonzero || eo.warn_about_denominators_assumed_nonzero) && !CHILD(0).representsNonZero(true)) || CHILD(0).isZero()) && CHILD(1).representsNegative(true) && CHILD(1).representsNegative(true)) {
+				if((((!eo.assume_denominators_nonzero || eo.warn_about_denominators_assumed_nonzero) && !CHILD(0).representsNonZero(true)) || CHILD(0).isZero()) && CHILD(1).representsNegative(true)) {
 					if(!eo.assume_denominators_nonzero || CHILD(0).isZero() || !warn_about_denominators_assumed_nonzero(CHILD(0), eo)) break;
 				}
 				if(!CHILD(1).representsNonInteger() && !mstruct.representsInteger()) {
@@ -17802,7 +17802,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 								e2 *= i4;
 								exp10 -= e2;
 							}
-							DecimalPrefix *p = CALCULATOR->getBestDecimalPrefix(exp10, exp, po.use_all_prefixes);
+							DecimalPrefix *p = CALCULATOR->getOptimalDecimalPrefix(exp10, exp, po.use_all_prefixes);
 							if(p) {
 								Number test_exp(exp10);
 								test_exp -= p->exponent(exp);
@@ -17841,7 +17841,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 							exp10.log(10);
 							exp10.intervalToMidValue();
 							exp10.floor();
-							DecimalPrefix *p = CALCULATOR->getBestDecimalPrefix(exp10, exp2, po.use_all_prefixes);
+							DecimalPrefix *p = CALCULATOR->getOptimalDecimalPrefix(exp10, exp2, po.use_all_prefixes);
 							if(p) {
 								Number test_exp(exp10);
 								test_exp -= p->exponent(exp2);
@@ -25694,7 +25694,7 @@ bool expand_partial_fractions(MathStructure &m, const EvaluationOptions &eo, boo
 						MathStructure mquo, mrem;
 						b_poly = polynomial_long_division(mfac, mtest[i][0], x_var, mquo, mrem, eo, true);
 						if(b_poly && !mquo.isZero()) {
-							MathStructure m = mquo;
+							m = mquo;
 							if(!mrem.isZero()) {
 								m += mrem;
 								m.last() *= mtest[i];
@@ -28808,8 +28808,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							for(size_t i = 0; i < mvar->size(); i++) {
 								if((*mvar)[i].contains(x_var)) {
 									mvar2 = &(*mvar)[i];
-									if(mvar->isMultiplication()) {
-										for(size_t i2 = 0; i < mvar2->size(); i2++) {
+									if(mvar2->isMultiplication()) {
+										for(size_t i2 = 0; i2 < mvar2->size(); i2++) {
 											if((*mvar2)[i2].contains(x_var)) {mvar2 = &(*mvar2)[i2]; break;}
 										}
 									}

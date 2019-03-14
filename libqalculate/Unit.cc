@@ -401,7 +401,7 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 	if(i_exp != 1) mexp /= i_exp;
 	ParseOptions po;
 	if(isApproximate() && suncertainty.empty() && precision() == -1) {
-		if(sinverse.find(DOT) || svalue.find(DOT)) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
+		if(sinverse.find(DOT) != string::npos || svalue.find(DOT) != string::npos) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
 		else po.read_precision = ALWAYS_READ_PRECISION;
 	}
 	if(sinverse.empty()) {
@@ -543,7 +543,7 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const {
 	ParseOptions po;
 	if(isApproximate() && suncertainty.empty() && precision() == -1) {
-		if(svalue.find(DOT)) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
+		if(svalue.find(DOT) != string::npos) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
 		else po.read_precision = ALWAYS_READ_PRECISION;
 	}
 	if(svalue.find("\\x") != string::npos) {

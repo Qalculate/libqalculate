@@ -4016,7 +4016,7 @@ bool Number::square() {
 					mpfr_sqr(f_tmp, i_value->internalLowerFloat(), MPFR_RNDU);
 					mpfr_sub(f_rl, f_rl, f_tmp, MPFR_RNDD);
 				} else {
-					mpfr_sqr(f_tmp, i_value->internalLowerFloat(), MPFR_RNDU);
+					mpfr_sqr(f_tmp, i_value->internalUpperFloat(), MPFR_RNDU);
 					mpfr_sub(f_rl, f_rl, f_tmp, MPFR_RNDD);
 				}
 			} else if(mpfr_cmpabs(i_value->internalLowerFloat(), i_value->internalUpperFloat()) > 0) {
@@ -6561,8 +6561,8 @@ bool Number::add(const Number &o, MathOperation op) {
 			ComparisonResult i2 = o.compare(nr);
 			if(i1 >= COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_NOT_EQUAL) i1 = COMPARISON_RESULT_UNKNOWN;
 			if(i2 >= COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_NOT_EQUAL) i2 = COMPARISON_RESULT_UNKNOWN;
-			if(i1 >= COMPARISON_RESULT_UNKNOWN && (i2 == COMPARISON_RESULT_UNKNOWN || i2 != COMPARISON_RESULT_LESS)) return false;
-			if(i2 >= COMPARISON_RESULT_UNKNOWN && (i1 != COMPARISON_RESULT_LESS)) return false;
+			if(i1 >= COMPARISON_RESULT_UNKNOWN && i2 != COMPARISON_RESULT_LESS) return false;
+			if(i2 >= COMPARISON_RESULT_UNKNOWN && i1 != COMPARISON_RESULT_LESS) return false;
 			setTrue(i1 == COMPARISON_RESULT_LESS || i2 == COMPARISON_RESULT_LESS);
 			return true;
 		}
@@ -8120,7 +8120,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				} else {
 					if(started) first_rem_check--;
 					mpz_clear(*remcopy);
-					free(remcopy);
+					delete[] remcopy;
 				}
 			}
 			if(CALCULATOR->aborted()) {
@@ -8158,7 +8158,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		for(size_t i = 0; i < remainders.size(); i++) {
 			mpz_clear(*remainders[i]);
-			free(remainders[i]);
+			delete[] remainders[i];
 		}
 		remainders.clear();
 		if(!exact && !infinite_series) {
@@ -8273,7 +8273,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				l2++;
 			}
 			int decimals = str.length() - l10 - 1;
-			if((!exact || approx) && po.show_ending_zeroes && (int) str.length() - precision - 1 < l2) {
+			if((!exact || approx) && !infinite_series && po.show_ending_zeroes && (int) str.length() - precision - 1 < l2) {
 				l2 = str.length() - precision - 1;
 				if(po.use_max_decimals && po.max_decimals >= 0 && decimals - l2 > po.max_decimals) {
 					l2 = decimals - po.max_decimals;
