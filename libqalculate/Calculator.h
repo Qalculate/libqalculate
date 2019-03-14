@@ -682,8 +682,12 @@ class Calculator {
 	MathStructure convertTimeOut(string str, Unit *from_unit, Unit *to_unit, int milliseconds, const EvaluationOptions &eo = default_evaluation_options);
 	MathStructure convert(string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_evaluation_options);	
 	MathStructure convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);
+	/** Deprecated: use getOptimalUnit() */
 	Unit *getBestUnit(Unit *u, bool allow_only_div = false, bool convert_to_local_currency = true);
+	Unit *getOptimalUnit(Unit *u, bool allow_only_div = false, bool convert_to_local_currency = true);
+	/** Deprecated: use convertToOptimalUnit() */
 	MathStructure convertToBestUnit(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options, bool convert_to_si_units = true);
+	MathStructure convertToOptimalUnit(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options, bool convert_to_si_units = true);
 	MathStructure convertToCompositeUnit(const MathStructure &mstruct, CompositeUnit *cu, const EvaluationOptions &eo = default_evaluation_options, bool always_convert = true);
 	MathStructure convertToMixedUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_evaluation_options);
 	//@}
@@ -751,7 +755,7 @@ class Calculator {
 	* @param all_prefixes If false, prefixes which is not a multiple of thousand (centi, deci, deka, hekto) will be skipped.
 	* @returns A prefix or NULL if the unit should be left without prefix.
 	*/
-	DecimalPrefix *getBestDecimalPrefix(int exp10, int exp = 1, bool all_prefixes = true) const;
+	DecimalPrefix *getOptimalDecimalPrefix(int exp10, int exp = 1, bool all_prefixes = true) const;
 	/** Returns the best suited decimal prefix for a value.
 	*
 	* @param exp10 Base-10 exponent of the value.
@@ -759,7 +763,7 @@ class Calculator {
 	* @param all_prefixes If false, prefixes which is not a multiple of thousand (centi, deci, deka, hekto) will be skipped.
 	* @returns A prefix or NULL if the unit should be left without prefix.
 	*/
-	DecimalPrefix *getBestDecimalPrefix(const Number &exp10, const Number &exp, bool all_prefixes = true) const;
+	DecimalPrefix *getOptimalDecimalPrefix(const Number &exp10, const Number &exp, bool all_prefixes = true) const;
 	/** Returns the nearest binary prefix for a value.
 	*
 	* @param exp10 Base-2 exponent of the value.
@@ -773,14 +777,14 @@ class Calculator {
 	* @param exp The exponent of the unit.
 	* @returns A prefix or NULL if the unit should be left without prefix.
 	*/
-	BinaryPrefix *getBestBinaryPrefix(int exp2, int exp = 1) const;		
+	BinaryPrefix *getOptimalBinaryPrefix(int exp2, int exp = 1) const;
 	/** Returns the best suited binary prefix for a value.
 	*
 	* @param exp10 Base-2 exponent of the value.
 	* @param exp The exponent of the unit.
 	* @returns A prefix or NULL if the unit should be left without prefix.
 	*/
-	BinaryPrefix *getBestBinaryPrefix(const Number &exp2, const Number &exp) const;
+	BinaryPrefix *getOptimalBinaryPrefix(const Number &exp2, const Number &exp) const;
 	/** Add a new prefix to the calculator. */
 	Prefix *addPrefix(Prefix *p);
 	/** Used internally. */
