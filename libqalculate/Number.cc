@@ -3990,9 +3990,21 @@ bool Number::square() {
 		return true;
 	}
 	if(hasImaginaryPart()) {
-		if(n_type == NUMBER_TYPE_FLOAT && (CREATE_INTERVAL || isInterval())) {
+		if(!hasRealPart()) {
+			if(i_value->isFloatingPoint() && (CREATE_INTERVAL || i_value->isInterval())) {
+				Number nr_bak(*this);
+				if(!i_value->setToFloatingPoint()) return false;
+				Number *i_copy = i_value;
+				i_value = NULL;
+				set(*i_copy, true);
+				delete i_copy;
+				if(!square() || !negate()) {set(nr_bak); return false;}
+				return true;
+			}
+		} else if((n_type == NUMBER_TYPE_FLOAT || i_value->isFloatingPoint()) && (CREATE_INTERVAL || isInterval(false))) {
 			Number nr_bak(*this);
-			if(!i_value->setToFloatingPoint()) return false;
+			if(!setToFloatingPoint()) return false;
+			if(!i_value->setToFloatingPoint()) {set(nr_bak); return false;}
 			mpfr_t f_ru, f_rl, f_iu, f_il, f_tmp;
 			mpfr_inits2(BIT_PRECISION, f_ru, f_rl, f_iu, f_il, f_tmp, NULL);
 			if(mpfr_sgn(fl_value) < 0 && mpfr_sgn(fu_value) > 0) {

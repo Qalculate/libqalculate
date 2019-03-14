@@ -1,3 +1,7 @@
+2019-03-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix square of complex interval
+
 2019-03-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix show ending zeroes for rational numbers
