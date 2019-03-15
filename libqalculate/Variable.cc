@@ -468,7 +468,7 @@ const MathStructure &KnownVariable::get() {
 			Number nr_u(suncertainty);
 			if(m->isNumber()) {
 				if(b_relative_uncertainty) m->number().setRelativeUncertainty(nr_u);
-				else m->number().setUncertainty(nr_u, true);
+				else m->number().setUncertainty(nr_u);
 				m->numberUpdated();
 			} else if(m->isMultiplication() && m->size() > 0 && (*m)[0].isNumber()) {
 				if(b_relative_uncertainty) (*m)[0].number().setRelativeUncertainty(nr_u);
