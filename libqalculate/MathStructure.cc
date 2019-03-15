@@ -12734,7 +12734,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 							}
 						}
 					}
-					if(b_failed && munc.countTotalChildren(false) < 100) {
+					if(b_failed && munc.countTotalChildren(false) < 20) {
 						if(one_prepended && munc.isMultiplication() && munc[0].isOne()) munc.delChild(1, true);
 						if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_ln(munc);}
 						structure(eo.structuring, eo2, false);
@@ -19647,8 +19647,8 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			print_str += ename->name;
 			if(ename->suffix && !po.preserve_format && !po.use_reference_names) {
 				size_t i = print_str.rfind('_');
-				if(i <= print_str.length() - 5 && print_str.substr(print_str.length() - 4, 4) == "unit") {
-					if(i == print_str.length() - 5) {
+				if(i != string::npos && i + 5 <= print_str.length() && print_str.substr(print_str.length() - 4, 4) == "unit") {
+					if(i + 5 == print_str.length()) {
 						print_str = print_str.substr(0, i);
 						if(po.hide_underscore_spaces) gsub("_", " ", print_str);
 					} else {
@@ -19666,8 +19666,8 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			print_str += ename->name;
 			if(ename->suffix && !po.preserve_format && !po.use_reference_names) {
 				size_t i = print_str.rfind('_');
-				if(i <= print_str.length() - 9 && print_str.substr(print_str.length() - 8, 8) == "constant") {
-					if(i == print_str.length() - 9) {
+				if(i != string::npos && i + 9 <= print_str.length() && print_str.substr(print_str.length() - 8, 8) == "constant") {
+					if(i + 9 == print_str.length()) {
 						print_str = print_str.substr(0, i);
 						if(po.hide_underscore_spaces) gsub("_", " ", print_str);
 					} else {

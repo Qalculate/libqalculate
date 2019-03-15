@@ -8113,7 +8113,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpz_t *remcopy;
 		while(!exact && precision2 > 0) {
 			if(try_infinite_series) {
-				remcopy = new mpz_t[1];
+				remcopy = (mpz_t*) malloc(sizeof(mpz_t));
 				mpz_init_set(*remcopy, remainder);
 			}
 			mpz_mul_si(remainder, remainder, base);
@@ -8132,7 +8132,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				} else {
 					if(started) first_rem_check--;
 					mpz_clear(*remcopy);
-					delete[] remcopy;
+					free(remcopy);
 				}
 			}
 			if(CALCULATOR->aborted()) {
@@ -8170,7 +8170,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		for(size_t i = 0; i < remainders.size(); i++) {
 			mpz_clear(*remainders[i]);
-			delete[] remainders[i];
+			free(remainders[i]);
 		}
 		remainders.clear();
 		if(!exact && !infinite_series) {

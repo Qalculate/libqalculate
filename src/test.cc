@@ -1065,20 +1065,21 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			cout << "UNEQUAL1: " << m1.print(po) << ":" << m2.print(po) << endl;
 		}
 	}*/
-	if(m1.isNumber() && m3.isNumber()) {
+	//if(m1.isNumber() && m3.isNumber()) {
 		if(m1 != m3 && m1.print(po) != m3.print(po)) {
 			rt2++;
 			cout << str << " => " << mp << endl;
 			cout << "UNEQUAL1b: " << m1.print(po) << ":" << m3.print(po) << endl;
 		}
-	}
-	/*if(m1.isNumber() && m4.isNumber()) {
+	//}
+	//if(m1.isNumber() && m4.isNumber()) {
 		if(m1 != m4 && m1.print(po) != m4.print(po)) {
 			rt2++;
 			cout << str << " => " << mp << endl;
 			cout << "UNEQUAL1c: " << m1.print(po) << ":" << m4.print(po) << endl;
 		}
-	}*/
+	//}
+	return;
 	cerr << "A" << endl;
 	if(b_iv != CALCULATOR->usesIntervalArithmetic()) {
 		cout << "INTERVAL ARITHMETIC CHANGED1: " << str << " => " << mp << endl;
@@ -1702,11 +1703,12 @@ int main(int argc, char *argv[]) {
 	//test_integration();
 	//test_intervals(true);
 	
-	CALCULATOR->setVariableUnitsEnabled(false);
 	
 	PrintOptions po = CALCULATOR->messagePrintOptions();
 	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	CALCULATOR->setMessagePrintOptions(po);
+	
+	CALCULATOR->setVariableUnitsEnabled(true);
 	
 	v = new KnownVariable("", "v", m_zero);
 
