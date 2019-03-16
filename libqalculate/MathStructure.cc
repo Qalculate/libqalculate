@@ -10489,6 +10489,7 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 		return true;
 	}
 	if(!mstruct.contains(x_var, true)) return true;
+
 	switch(mstruct.type()) {
 		case STRUCT_MULTIPLICATION: {
 			for(size_t i = 0; i < mstruct.size(); i++) {
@@ -10676,7 +10677,7 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 							}
 							mstruct.set(mnum, true);
 							if(mden.number().isNegative()) mstruct.calculateNegate(eo);
-							for(size_t i = 0; b_possible_zero && i < mleft.size(); i++) {
+							for(size_t i = 0; i < mleft.size(); i++) {
 								mstruct.calculateMultiply(mleft[i], eo);
 							}
 							break;
@@ -13280,8 +13281,6 @@ bool polynomial_divide_integers(const vector<Number> &vnum, const vector<Number>
 
 bool divide_in_z(const MathStructure &mnum, const MathStructure &mden, MathStructure &mquotient, const sym_desc_vec &sym_stats, size_t var_i, const EvaluationOptions &eo) {
 	
-	if(var_i >= sym_stats.size()) return false;
-	
 	mquotient.clear();
 	if(mden.isZero()) return false;
 	if(mnum.isZero()) return true;
@@ -13319,8 +13318,9 @@ bool divide_in_z(const MathStructure &mnum, const MathStructure &mden, MathStruc
 			qbar = mquotient;
 		}
 		return true;
-	}	
+	}
 	
+	if(var_i >= sym_stats.size()) return false;
 	const MathStructure &xvar = sym_stats[var_i].sym;
 
 	Number numdeg = mnum.degree(xvar);
@@ -13329,6 +13329,7 @@ bool divide_in_z(const MathStructure &mnum, const MathStructure &mden, MathStruc
 	MathStructure dencoeff;
 	MathStructure mrem(mnum);
 	mden.coefficient(xvar, dendeg, dencoeff);
+
 	while(numdeg.isGreaterThanOrEqualTo(dendeg)) {
 		MathStructure numcoeff;
 		mrem.coefficient(xvar, numdeg, numcoeff);
@@ -13360,6 +13361,7 @@ bool divide_in_z(const MathStructure &mnum, const MathStructure &mden, MathStruc
 			return true;
 		}
 		numdeg = mrem.degree(xvar);
+
 	}
 	return false;
 }
@@ -13632,7 +13634,7 @@ void interpolate(const MathStructure &gamma, const Number &xi, const MathStructu
 }
 
 bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgcd, const EvaluationOptions &eo, MathStructure *ca, MathStructure *cb, sym_desc_vec &sym_stats, size_t var_i) {
-	if(var_i >= sym_stats.size()) return false;
+
 	if(m1.isZero() || m2.isZero())	return false;
 
 	if(m1.isNumber() && m2.isNumber()) {
@@ -13649,7 +13651,9 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 		return true;
 	}
 
+	if(var_i >= sym_stats.size()) return false;
 	const MathStructure &xvar = sym_stats[var_i].sym;
+
 	Number nr_gc;
 	integer_content(m1, nr_gc);
 	Number nr_rgc;
@@ -13674,7 +13678,7 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 	}
 	xi *= 2;
 	xi += 2;
-	
+
 	for(int t = 0; t < 6; t++) {
 	
 		if(CALCULATOR->aborted()) return false;
@@ -13686,12 +13690,12 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 		MathStructure cp, cq;
 		MathStructure gamma;
 		MathStructure psub(p);
-		psub.calculateReplace(xvar, xi, eo);
+		psub.calculateReplace(xvar, xi, eo, true);
 		MathStructure qsub(q);
-		qsub.calculateReplace(xvar, xi, eo);
-
+		qsub.calculateReplace(xvar, xi, eo, true);
+		
 		if(heur_gcd(psub, qsub, gamma, eo, &cp, &cq, sym_stats, var_i + 1)) {
-
+		
 			interpolate(gamma, xi, xvar, mgcd, eo);
 
 			Number ig;
@@ -13700,6 +13704,7 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 			mgcd.calculateMultiply(ig, eo); 
 
 			MathStructure dummy;
+			
 			if(divide_in_z(p, mgcd, ca ? *ca : dummy, sym_stats, var_i, eo) && divide_in_z(q, mgcd, cb ? *cb : dummy, sym_stats, var_i, eo)) {
 				mgcd.calculateMultiply(nr_gc, eo);
 				return true;
@@ -14806,7 +14811,6 @@ factored_2:
 		}
 		return true;
 	}
-
 	if(!heur_gcd(m1, m2, mresult, eo, ca, cb, sym_stats, var_i)) {
 		if(!sr_gcd(m1, m2, mresult, sym_stats, var_i, eo)) {
 			if(ca) *ca = m1;
@@ -21896,15 +21900,16 @@ void MathStructure::findAllUnknowns(MathStructure &unknowns_vector) {
 		}
 	}
 }
-bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto, bool once_only) {
+bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto, bool once_only, bool exclude_function_arguments) {
 	if(b_protected) b_protected = false;
 	if(equals(mfrom, true, true)) {
 		set(mto);
 		return true;
 	}
+	if(exclude_function_arguments && m_type == STRUCT_FUNCTION) return false;
 	bool b = false;
 	for(size_t i = 0; i < SIZE; i++) {
-		if(CHILD(i).replace(mfrom, mto, once_only)) {
+		if(CHILD(i).replace(mfrom, mto, once_only, exclude_function_arguments)) {
 			b = true;
 			CHILD_UPDATED(i);
 			if(once_only) return true;
@@ -21927,14 +21932,15 @@ bool MathStructure::replace(Variable *v, const MathStructure &mto) {
 	}
 	return b;
 }
-bool MathStructure::calculateReplace(const MathStructure &mfrom, const MathStructure &mto, const EvaluationOptions &eo) {
+bool MathStructure::calculateReplace(const MathStructure &mfrom, const MathStructure &mto, const EvaluationOptions &eo, bool exclude_function_arguments) {
 	if(equals(mfrom, true, true)) {
 		set(mto);
 		return true;
 	}
+	if(exclude_function_arguments && m_type == STRUCT_FUNCTION) return false;
 	bool b = false;
 	for(size_t i = 0; i < SIZE; i++) {
-		if(CHILD(i).calculateReplace(mfrom, mto, eo)) {
+		if(CHILD(i).calculateReplace(mfrom, mto, eo, exclude_function_arguments)) {
 			b = true;
 			CHILD_UPDATED(i);
 		}
