@@ -2241,7 +2241,7 @@ SinFunction::SinFunction() : MathFunction("sin", 1) {
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
 }
-bool SinFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && ((allow_units && vargs[0].representsNumber(true)) || (!allow_units && is_number_angle_value(vargs[0], true)));}
+bool SinFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && ((allow_units && (vargs[0].representsNumber(true) || vargs[0].representsNonComplex(true))) || (!allow_units && is_number_angle_value(vargs[0], true)));}
 bool SinFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && (is_real_angle_value(vargs[0]) || is_infinite_angle_value(vargs[0]));}
 bool SinFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -2474,7 +2474,7 @@ CosFunction::CosFunction() : MathFunction("cos", 1) {
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
 }
-bool CosFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && ((allow_units && vargs[0].representsNumber(true)) || (!allow_units && is_number_angle_value(vargs[0], true)));}
+bool CosFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && ((allow_units && (vargs[0].representsNumber(true) || vargs[0].representsNonComplex(true))) || (!allow_units && is_number_angle_value(vargs[0], true)));}
 bool CosFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && (is_real_angle_value(vargs[0]) || is_infinite_angle_value(vargs[0]));}
 bool CosFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {

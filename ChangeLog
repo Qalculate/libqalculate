@@ -1,3 +1,8 @@
+2019-03-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix heuristic gcd
+	* Fix limit((6x^3) ∕ (7x − 2x^2 − 5),infinity) and similar
+
 2019-03-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix square of complex interval
