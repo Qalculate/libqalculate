@@ -11737,7 +11737,7 @@ bool calculate_differentiable_functions(MathStructure &m, const EvaluationOption
 }
 bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive = true, bool do_unformat = true, int i_type = 0) {
 	if(m.isFunction() && m.function() != eo.protected_function) {
-		if(!function_differentiable(m.function()) || !contains_interval_variable(m, i_type)) {
+		if((i_type <= 0 && !function_differentiable(m.function())) || (i_type >= 0 && !contains_interval_variable(m, i_type))) {
 			if(m.calculateFunctions(eo, false, do_unformat)) {
 				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
 				return true;
@@ -12587,6 +12587,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		}
 		calculate_differentiable_functions(*this, feo);
 	} else if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA) {
+		if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, -1);
 		if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, true, true)) || containsInterval(true, false, false, true, true) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
 			if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, (eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) ? 2 : 1);
 			MathStructure munc, mbak(*this);
@@ -12774,10 +12775,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					return *this;
 				}
 			}
-			calculate_differentiable_functions(*this, feo);
-		} else if(eo.calculate_functions) {
-			calculateFunctions(feo);
 		}
+		calculate_differentiable_functions(*this, feo);
 	} else if(eo.calculate_functions) {
 		calculateFunctions(feo);
 	}
