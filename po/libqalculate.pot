@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-15 09:53+0100\n"
+"POT-Creation-Date: 2019-03-18 10:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -124,7 +124,7 @@ msgstr ""
 
 #: ../src/qalc.cc:396 ../src/qalc.cc:429 ../libqalculate/Calculator.cc:413
 #: ../libqalculate/DataSet.cc:1069 ../libqalculate/DataSet.cc:1131
-#: ../libqalculate/MathStructure.cc:19599 ../libqalculate/Function.cc:2161
+#: ../libqalculate/MathStructure.cc:19638 ../libqalculate/Function.cc:2161
 #: ../libqalculate/Function.cc:2177
 msgid "or"
 msgstr ""
@@ -1983,7 +1983,7 @@ msgstr ""
 
 #: ../src/qalc.cc:3926 ../src/qalc.cc:3964 ../src/qalc.cc:4276
 #: ../src/qalc.cc:4718 ../libqalculate/Calculator.cc:10198
-#: ../libqalculate/MathStructure.cc:719
+#: ../libqalculate/MathStructure.cc:721
 #, c-format
 msgid "aborted"
 msgstr ""
@@ -2158,8 +2158,8 @@ msgid "Register %s does not exist. Returning zero."
 msgstr ""
 
 #: ../libqalculate/BuiltinFunctions.cc:6073
-#: ../libqalculate/MathStructure.cc:209 ../libqalculate/MathStructure.cc:241
-#: ../libqalculate/MathStructure.cc:282
+#: ../libqalculate/MathStructure.cc:211 ../libqalculate/MathStructure.cc:243
+#: ../libqalculate/MathStructure.cc:284
 #, c-format
 msgid "To avoid division by zero, the following must be true: %s."
 msgstr ""
@@ -2326,7 +2326,7 @@ msgstr ""
 msgid "minus"
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:409 ../libqalculate/MathStructure.cc:19584
+#: ../libqalculate/Calculator.cc:409 ../libqalculate/MathStructure.cc:19623
 #: ../libqalculate/Function.cc:1223 ../libqalculate/Function.cc:1231
 #: ../libqalculate/Function.cc:1660 ../libqalculate/Function.cc:1822
 #: ../libqalculate/Function.cc:1830
@@ -2561,126 +2561,126 @@ msgstr ""
 msgid "use"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:180
+#: ../libqalculate/MathStructure.cc:182
 #, c-format
 msgid "Required assumption: %s."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:3863 ../libqalculate/MathStructure.cc:3884
+#: ../libqalculate/MathStructure.cc:3865 ../libqalculate/MathStructure.cc:3886
 #, c-format
 msgid ""
 "The second matrix must have as many rows (was %s) as the first has columns "
 "(was %s) for matrix multiplication."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:8401 ../libqalculate/MathStructure.cc:8442
-#: ../libqalculate/MathStructure.cc:8475 ../libqalculate/MathStructure.cc:8542
-#: ../libqalculate/MathStructure.cc:8570 ../libqalculate/MathStructure.cc:8589
-#: ../libqalculate/MathStructure.cc:8608 ../libqalculate/MathStructure.cc:8627
-#: ../libqalculate/MathStructure.cc:8736 ../libqalculate/MathStructure.cc:15181
-#: ../libqalculate/MathStructure.cc:15457
+#: ../libqalculate/MathStructure.cc:8403 ../libqalculate/MathStructure.cc:8444
+#: ../libqalculate/MathStructure.cc:8477 ../libqalculate/MathStructure.cc:8544
+#: ../libqalculate/MathStructure.cc:8572 ../libqalculate/MathStructure.cc:8591
+#: ../libqalculate/MathStructure.cc:8610 ../libqalculate/MathStructure.cc:8629
+#: ../libqalculate/MathStructure.cc:8738 ../libqalculate/MathStructure.cc:15220
+#: ../libqalculate/MathStructure.cc:15496
 msgid "This is a bug. Please report it."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:11128
-#: ../libqalculate/MathStructure.cc:11133
+#: ../libqalculate/MathStructure.cc:11131
+#: ../libqalculate/MathStructure.cc:11136
 #, c-format
 msgid "Limit for %s determined graphically."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:11958
+#: ../libqalculate/MathStructure.cc:11961
 msgid "Interval potentially calculated wide."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:12630
+#: ../libqalculate/MathStructure.cc:12635
 msgid ""
 "Calculation of uncertainty propagation partially failed (using interval "
 "arithmetic instead when necessary)."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:12762
+#: ../libqalculate/MathStructure.cc:12768
 msgid ""
 "Calculation of uncertainty propagation failed (using interval arithmetic "
 "instead)."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:16862
+#: ../libqalculate/MathStructure.cc:16901
 msgid ""
 "Because of time constraints only a limited number of combinations of terms "
 "were tried during factorization. Repeat factorization to try other random "
 "combinations."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:19745
+#: ../libqalculate/MathStructure.cc:19784
 msgid "undefined"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:19786
+#: ../libqalculate/MathStructure.cc:19825
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to rank vector."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:19836
+#: ../libqalculate/MathStructure.cc:19875
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to sort vector."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:20261
+#: ../libqalculate/MathStructure.cc:20300
 msgid "The determinant can only be calculated for square matrices."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:20324
+#: ../libqalculate/MathStructure.cc:20363
 msgid "The permanent can only be calculated for square matrices."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:20413
+#: ../libqalculate/MathStructure.cc:20452
 msgid "Inverse of singular matrix."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:20765
+#: ../libqalculate/MathStructure.cc:20804
 msgid ""
 "Calculations involving conversion of units without proportional linear "
 "relationship (e.g. with multiple temperature units), might give unexpected "
 "results and is not recommended."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:22012
-#: ../libqalculate/MathStructure.cc:22055
+#: ../libqalculate/MathStructure.cc:22053
+#: ../libqalculate/MathStructure.cc:22096
 msgid "Too many data points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:22019
+#: ../libqalculate/MathStructure.cc:22060
 msgid ""
 "The selected min and max do not result in a positive, finite number of data "
 "points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:22052
+#: ../libqalculate/MathStructure.cc:22093
 msgid ""
 "The selected min, max and step size do not result in a positive, finite "
 "number of data points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:28587
-#: ../libqalculate/MathStructure.cc:28765
-#: ../libqalculate/MathStructure.cc:29396
-#: ../libqalculate/MathStructure.cc:29905
-#: ../libqalculate/MathStructure.cc:29963
-#: ../libqalculate/MathStructure.cc:30006
-#: ../libqalculate/MathStructure.cc:30019
-#: ../libqalculate/MathStructure.cc:30069
-#: ../libqalculate/MathStructure.cc:30188
-#: ../libqalculate/MathStructure.cc:30325
+#: ../libqalculate/MathStructure.cc:28628
+#: ../libqalculate/MathStructure.cc:28806
+#: ../libqalculate/MathStructure.cc:29437
+#: ../libqalculate/MathStructure.cc:29946
+#: ../libqalculate/MathStructure.cc:30004
+#: ../libqalculate/MathStructure.cc:30047
+#: ../libqalculate/MathStructure.cc:30060
+#: ../libqalculate/MathStructure.cc:30110
+#: ../libqalculate/MathStructure.cc:30229
+#: ../libqalculate/MathStructure.cc:30366
 #, c-format
 msgid "Interval arithmetic was disabled during calculation of %s."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:30324
+#: ../libqalculate/MathStructure.cc:30365
 #, c-format
 msgid "Not all complex roots were calculated for %s."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:31734
+#: ../libqalculate/MathStructure.cc:31775
 #, c-format
 msgid "Only one or two of the roots where calculated for %s."
 msgstr ""
@@ -2860,7 +2860,7 @@ msgstr ""
 msgid "an angle or a number (using the default angle unit)"
 msgstr ""
 
-#: ../libqalculate/Number.cc:240 ../libqalculate/Number.cc:6806
+#: ../libqalculate/Number.cc:240 ../libqalculate/Number.cc:6870
 msgid ""
 "Cannot display numbers greater than 9999 or less than -9999 as roman "
 "numerals."
@@ -2935,30 +2935,30 @@ msgstr ""
 msgid "The result of 0^i is possibly undefined"
 msgstr ""
 
-#: ../libqalculate/Number.cc:3370 ../libqalculate/Number.cc:5082
-#: ../libqalculate/Number.cc:5193 ../libqalculate/Number.cc:5522
-#: ../libqalculate/Number.cc:5530 ../libqalculate/Number.cc:5563
-#: ../libqalculate/Number.cc:5660 ../libqalculate/Number.cc:5809
-#: ../libqalculate/Number.cc:5921
+#: ../libqalculate/Number.cc:3370 ../libqalculate/Number.cc:5146
+#: ../libqalculate/Number.cc:5257 ../libqalculate/Number.cc:5586
+#: ../libqalculate/Number.cc:5594 ../libqalculate/Number.cc:5627
+#: ../libqalculate/Number.cc:5724 ../libqalculate/Number.cc:5873
+#: ../libqalculate/Number.cc:5985
 msgid "Interval calculated wide."
 msgstr ""
 
-#: ../libqalculate/Number.cc:4639
+#: ../libqalculate/Number.cc:4703
 msgid "Cannot handle an argument (s) that large for Riemann Zeta."
 msgstr ""
 
-#: ../libqalculate/Number.cc:4714 ../libqalculate/Number.cc:4812
-#: ../libqalculate/Number.cc:4843 ../libqalculate/Number.cc:4874
-#: ../libqalculate/Number.cc:6266
+#: ../libqalculate/Number.cc:4778 ../libqalculate/Number.cc:4876
+#: ../libqalculate/Number.cc:4907 ../libqalculate/Number.cc:4938
+#: ../libqalculate/Number.cc:6330
 #, c-format
 msgid "%s() lacks proper support interval arithmetic."
 msgstr ""
 
-#: ../libqalculate/Number.cc:6803
+#: ../libqalculate/Number.cc:6867
 msgid "Can only display rational numbers as roman numerals."
 msgstr ""
 
-#: ../libqalculate/Number.cc:7245 ../libqalculate/Number.cc:7253
+#: ../libqalculate/Number.cc:7309 ../libqalculate/Number.cc:7317
 msgid "infinity"
 msgstr ""
 

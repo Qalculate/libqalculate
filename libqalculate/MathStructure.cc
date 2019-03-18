@@ -112,7 +112,7 @@ typedef std::vector<sym_desc> sym_desc_vec;
 
 bool polynomial_long_division(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar_pre, MathStructure &mquotient, MathStructure &mrem, const EvaluationOptions &eo, bool check_args = false, bool for_newtonraphson = false);
 void integer_content(const MathStructure &mpoly, Number &icontent);
-void interpolate(const MathStructure &gamma, const Number &xi, const MathStructure &xvar, MathStructure &minterp, const EvaluationOptions &eo);
+bool interpolate(const MathStructure &gamma, const Number &xi, const MathStructure &xvar, MathStructure &minterp, const EvaluationOptions &eo);
 bool get_first_symbol(const MathStructure &mpoly, MathStructure &xvar);
 bool divide_in_z(const MathStructure &mnum, const MathStructure &mden, MathStructure &mquotient, const sym_desc_vec &sym_stats, size_t var_i, const EvaluationOptions &eo);
 bool prem(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar, MathStructure &mrem, const EvaluationOptions &eo, bool check_args = true);
@@ -133,6 +133,8 @@ bool has_approximate_relation_to_base(Unit *u, bool do_intervals = true);
 bool contains_approximate_relation_to_base(const MathStructure &m, bool do_intervals = true);
 bool contains_diff_for(const MathStructure &m, const MathStructure &x_var);
 bool separate_unit_vars(MathStructure &m, const EvaluationOptions &eo, bool only_approximate, bool dry_run = false);
+void lcm_of_coefficients_denominators(const MathStructure &e, Number &nlcm);
+void multiply_lcm(const MathStructure &e, const Number &lcm, MathStructure &mmul, const EvaluationOptions &eo);
 
 bool flattenMultiplication(MathStructure &mstruct) {
 	bool retval = false;
@@ -12536,8 +12538,10 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
 		return *this;
 	}
-
+	
 	unformat(eo);
+	
+	if(m_type == STRUCT_UNDEFINED || m_type == STRUCT_ABORTED || m_type == STRUCT_DATETIME || m_type == STRUCT_UNIT || m_type == STRUCT_SYMBOLIC || (m_type == STRUCT_VARIABLE && !o_variable->isKnown())) return *this;
 
 	EvaluationOptions feo = eo;
 	feo.structuring = STRUCTURING_NONE;
@@ -12549,8 +12553,6 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	eo2.test_comparisons = false;
 	eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 	eo2.isolate_x = false;
-
-	if(eo.calculate_functions && (eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC || eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA)) calculate_nondifferentiable_functions(*this, feo, true, true, eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC ? 0 : ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) ? 2 : 1));
 	
 	if(m_type == STRUCT_NUMBER) {
 		if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
@@ -12559,6 +12561,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	}
 	
 	if(eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
+		if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, 0);
 		if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, true, true)) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
 			EvaluationOptions eo3 = eo2;
 			eo3.split_squares = false;
@@ -12582,8 +12585,10 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			eo3.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 			solve_intervals(*this, eo3, feo);
 		}
+		calculate_differentiable_functions(*this, feo);
 	} else if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA) {
 		if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, true, true)) || containsInterval(true, false, false, true, true) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
+			if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, (eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) ? 2 : 1);
 			MathStructure munc, mbak(*this);
 			if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) {
 				find_interval_replace_var_nr(*this);
@@ -12643,6 +12648,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					eo3.structuring = STRUCTURING_NONE;
 					eo3.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 					eo3.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
+					if(eo3.approximation == APPROXIMATION_TRY_EXACT) eo3.approximation = APPROXIMATION_APPROXIMATE;
 					munc.eval(eo3);
 					eo3.keep_zero_units = true;
 					eval(eo3);
@@ -12768,12 +12774,12 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					return *this;
 				}
 			}
+			calculate_differentiable_functions(*this, feo);
+		} else if(eo.calculate_functions) {
+			calculateFunctions(feo);
 		}
-	}
-
-	if(eo.calculate_functions) {
-		if(eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC || eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA) calculate_differentiable_functions(*this, feo);
-		else calculateFunctions(feo);
+	} else if(eo.calculate_functions) {
+		calculateFunctions(feo);
 	}
 
 	if(m_type == STRUCT_NUMBER) {
@@ -12781,6 +12787,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
 		return *this;
 	}
+	
+	if(eo2.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC || eo2.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT || (eo2.approximation == APPROXIMATION_APPROXIMATE && (containsUnknowns() || containsInterval(false, true, false, false)))) {
 		EvaluationOptions eo3 = eo2;
@@ -12811,6 +12819,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
 		return *this;
 	}
+	if(m_type == STRUCT_UNDEFINED || m_type == STRUCT_ABORTED || m_type == STRUCT_DATETIME || m_type == STRUCT_UNIT || m_type == STRUCT_SYMBOLIC || (m_type == STRUCT_VARIABLE && !o_variable->isKnown())) return *this;
 	if(CALCULATOR->aborted()) return *this;
 
 	eo2.sync_units = false;
@@ -13331,6 +13340,7 @@ bool divide_in_z(const MathStructure &mnum, const MathStructure &mden, MathStruc
 	mden.coefficient(xvar, dendeg, dencoeff);
 
 	while(numdeg.isGreaterThanOrEqualTo(dendeg)) {
+		if(CALCULATOR->aborted()) return false;
 		MathStructure numcoeff;
 		mrem.coefficient(xvar, numdeg, numcoeff);
 		MathStructure term;
@@ -13516,6 +13526,7 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 		if(!divide_in_z(r, ri, d, sym_stats, var_i, eo)) {
 			return false;
 		}
+
 		ddeg = d.degree(xvar);
 		if(ddeg.isZero()) {
 			if(r.isNumber()) {
@@ -13594,12 +13605,13 @@ void polynomial_smod(const MathStructure &mpoly, const Number &xi, MathStructure
 	}
 }
 
-void interpolate(const MathStructure &gamma, const Number &xi, const MathStructure &xvar, MathStructure &minterp, const EvaluationOptions &eo) {
+bool interpolate(const MathStructure &gamma, const Number &xi, const MathStructure &xvar, MathStructure &minterp, const EvaluationOptions &eo) {
 	MathStructure e(gamma);
 	Number rxi(xi);
 	rxi.recip();
 	minterp.clear();
 	for(long int i = 0; !e.isZero(); i++) {
+		if(CALCULATOR->aborted()) return false;
 		MathStructure gi;
 		polynomial_smod(e, xi, gi, eo);
 		if(minterp.isZero() && !gi.isZero()) {
@@ -13631,6 +13643,7 @@ void interpolate(const MathStructure &gamma, const Number &xi, const MathStructu
 		e.calculateMultiply(rxi, eo);
 	}
 	minterp.calculatesub(eo, eo, false);
+	return true;
 }
 
 bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgcd, const EvaluationOptions &eo, MathStructure *ca, MathStructure *cb, sym_desc_vec &sym_stats, size_t var_i) {
@@ -13683,7 +13696,7 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 	
 		if(CALCULATOR->aborted()) return false;
 
-		if((maxdeg * xi.integerLength()).isGreaterThan(100000L)) {
+		if(!xi.isInteger() || (maxdeg * xi.integerLength()).isGreaterThan(100000L)) {
 			return false;
 		}
 
@@ -13695,8 +13708,8 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 		qsub.calculateReplace(xvar, xi, eo, true);
 		
 		if(heur_gcd(psub, qsub, gamma, eo, &cp, &cq, sym_stats, var_i + 1)) {
-		
-			interpolate(gamma, xi, xvar, mgcd, eo);
+
+			if(!interpolate(gamma, xi, xvar, mgcd, eo)) return false;
 
 			Number ig;
 			integer_content(mgcd, ig);
@@ -14499,6 +14512,15 @@ void get_symbol_stats(const MathStructure &m1, const MathStructure &m2, sym_desc
 
 }
 
+bool has_noninteger_coefficient(const MathStructure &mstruct) {
+	if(mstruct.isNumber() && mstruct.number().isRational() && !mstruct.number().isInteger()) return true;
+	if(mstruct.isFunction() || mstruct.isPower()) return false;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(has_noninteger_coefficient(mstruct[i])) return true;
+	}
+	return false;
+}
+
 bool MathStructure::gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mresult, const EvaluationOptions &eo2, MathStructure *ca, MathStructure *cb, bool check_args) {
 
 	EvaluationOptions eo = eo2;
@@ -14555,6 +14577,21 @@ bool MathStructure::gcd(const MathStructure &m1, const MathStructure &m2, MathSt
 
 	if(check_args && (!m1.isRationalPolynomial() || !m2.isRationalPolynomial())) {
 		return false;
+	}
+	
+	if(has_noninteger_coefficient(m1) || has_noninteger_coefficient(m2)) {
+		Number nlcm1;
+		lcm_of_coefficients_denominators(m1, nlcm1);
+		Number nlcm2;
+		lcm_of_coefficients_denominators(m2, nlcm2);
+		nlcm1.lcm(nlcm2);
+		if(!nlcm1.isOne()) {
+			MathStructure mtmp1, mtmp2;
+			multiply_lcm(m1, nlcm1, mtmp1, eo);
+			multiply_lcm(m2, nlcm1, mtmp2, eo);
+			if(mtmp1.equals(m1, true, true) || mtmp2.equals(m2, true, true)) return false;
+			return gcd(mtmp1, mtmp2, mresult, eo, ca, cb, false);
+		}
 	}
 
 	if(m1.isMultiplication()) {
@@ -14811,6 +14848,7 @@ factored_2:
 		}
 		return true;
 	}
+
 	if(!heur_gcd(m1, m2, mresult, eo, ca, cb, sym_stats, var_i)) {
 		if(!sr_gcd(m1, m2, mresult, sym_stats, var_i, eo)) {
 			if(ca) *ca = m1;
@@ -15031,7 +15069,6 @@ void lcm_of_coefficients_denominators(const MathStructure &e, Number &nlcm) {
 	return lcmcoeff(e, nr_one, nlcm);
 }
 
-void multiply_lcm(const MathStructure &e, const Number &lcm, MathStructure &mmul, const EvaluationOptions &eo);
 void multiply_lcm(const MathStructure &e, const Number &lcm, MathStructure &mmul, const EvaluationOptions &eo) {
 	if(e.isMultiplication()) {
 		Number lcm_accum(1, 1);

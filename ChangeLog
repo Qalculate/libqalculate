@@ -1,3 +1,9 @@
+2019-03-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix rational power interval in some cases
+	* Improve gcd() with non-integer coefficients
+	* Fix segfault when rounding some intervals
+
 2019-03-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix heuristic gcd
