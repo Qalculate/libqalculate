@@ -3662,7 +3662,25 @@ bool Number::raise(const Number &o, bool try_exact) {
 					try_complex = true;
 				}
 			} else {
-				if(!CREATE_INTERVAL && !isInterval()) {
+				if(o.numeratorIsOne() && mpz_fits_ulong_p(mpq_denref(o.internalRational()))) {
+					unsigned long int i_root = mpz_get_ui(mpq_denref(o.internalRational()));
+					if(!CREATE_INTERVAL && !isInterval()) {
+#if MPFR_VERSION_MAJOR < 4
+						mpfr_root(fl_value, fl_value, i_root, MPFR_RNDN);
+#else
+						mpfr_rootn_ui(fl_value, fl_value, i_root, MPFR_RNDN);
+#endif
+						mpfr_set(fu_value, fl_value, MPFR_RNDN);
+					} else {
+#if MPFR_VERSION_MAJOR < 4
+						mpfr_root(fu_value, fu_value, i_root, MPFR_RNDU);
+						mpfr_root(fl_value, fl_value, i_root, MPFR_RNDD);
+#else
+						mpfr_rootn_ui(fu_value, fu_value, i_root, MPFR_RNDU);
+						mpfr_rootn_ui(fl_value, fl_value, i_root, MPFR_RNDD);
+#endif
+					}
+				} else if(!CREATE_INTERVAL && !isInterval()) {
 					mpfr_t f_pow;
 					mpfr_init2(f_pow, BIT_PRECISION);
 					mpfr_set_q(f_pow, o.internalRational(), MPFR_RNDN);
@@ -3675,13 +3693,77 @@ bool Number::raise(const Number &o, bool try_exact) {
 					mpfr_init2(f_pow_l, BIT_PRECISION);
 					mpfr_set_q(f_pow_u, o.internalRational(), MPFR_RNDU);
 					mpfr_set_q(f_pow_l, o.internalRational(), MPFR_RNDD);
-					if(o.isNegative()) {
-						mpfr_pow(fu_value, fu_value, f_pow_u, MPFR_RNDD);
-						mpfr_pow(fl_value, fl_value, f_pow_l, MPFR_RNDU);
-						mpfr_swap(fu_value, fl_value);
+					if(mpfr_equal_p(fu_value, fl_value) || mpfr_equal_p(f_pow_u, f_pow_l)) {
+						if(mpfr_equal_p(fu_value, fl_value) && mpfr_equal_p(f_pow_u, f_pow_l)) {
+							mpfr_pow(fu_value, fu_value, f_pow_u, MPFR_RNDU);
+							mpfr_pow(fl_value, fl_value, f_pow_l, MPFR_RNDD);
+						} else if(mpfr_cmp_ui(fl_value, 1) < 0) {
+							if(o.isNegative()) {
+								mpfr_pow(fu_value, fu_value, f_pow_u, MPFR_RNDD);
+								mpfr_pow(fl_value, fl_value, f_pow_l, MPFR_RNDU);
+								mpfr_swap(fu_value, fl_value);
+							} else {
+								mpfr_pow(fu_value, fu_value, f_pow_l, MPFR_RNDU);
+								mpfr_pow(fl_value, fl_value, f_pow_u, MPFR_RNDD);
+							}
+						} else {
+							if(o.isNegative()) {
+								mpfr_pow(fu_value, fu_value, f_pow_l, MPFR_RNDD);
+								mpfr_pow(fl_value, fl_value, f_pow_u, MPFR_RNDU);
+								mpfr_swap(fu_value, fl_value);
+							} else {
+								mpfr_pow(fu_value, fu_value, f_pow_u, MPFR_RNDU);
+								mpfr_pow(fl_value, fl_value, f_pow_l, MPFR_RNDD);
+							}
+						}
 					} else {
-						mpfr_pow(fu_value, fu_value, f_pow_u, MPFR_RNDU);
-						mpfr_pow(fl_value, fl_value, f_pow_l, MPFR_RNDD);
+						mpfr_t f_value1, f_value2, f_value3, f_value4;
+						mpfr_inits2(BIT_PRECISION, f_value1, f_value2, f_value3, f_value4, NULL);
+
+						mpfr_pow(f_value1, fu_value, f_pow_u, MPFR_RNDN);
+						mpfr_pow(f_value2, fl_value, f_pow_l, MPFR_RNDN);
+						mpfr_pow(f_value3, fu_value, f_pow_l, MPFR_RNDN);
+						mpfr_pow(f_value4, fl_value, f_pow_u, MPFR_RNDN);
+			
+						int i_upper = 1, i_lower = 1;
+						
+						if(mpfr_cmp(f_value2, f_value1) > 0) {
+							if(mpfr_cmp(f_value3, f_value2) > 0) {
+								if(mpfr_cmp(f_value4, f_value3) > 0) i_upper = 4;
+								else i_upper = 3;
+							} else if(mpfr_cmp(f_value4, f_value2) > 0) i_upper = 4;
+							else i_upper = 2;
+						} else if(mpfr_cmp(f_value3, f_value1) > 0) {
+							if(mpfr_cmp(f_value4, f_value3) > 0) i_upper = 4;
+							else i_upper = 3;
+						} else if(mpfr_cmp(f_value4, f_value1) > 0) i_upper = 4;
+						
+						if(mpfr_cmp(f_value2, f_value1) < 0) {
+							if(mpfr_cmp(f_value3, f_value2) < 0) {
+								if(mpfr_cmp(f_value4, f_value3) < 0) i_lower = 4;
+								else i_lower = 3;
+							} else if(mpfr_cmp(f_value4, f_value2) < 0) i_lower = 4;
+							else i_lower = 2;
+						} else if(mpfr_cmp(f_value3, f_value1) < 0) {
+							if(mpfr_cmp(f_value4, f_value3) < 0) i_lower = 4;
+							else i_lower = 3;
+						} else if(mpfr_cmp(f_value4, f_value1) < 0) i_lower = 4;
+
+						switch(i_upper) {
+							case 1: {mpfr_pow(f_value1, fu_value, f_pow_u, MPFR_RNDU); break;}
+							case 2: {mpfr_pow(f_value1, fl_value, f_pow_l, MPFR_RNDU); break;}
+							case 3: {mpfr_pow(f_value1, fu_value, f_pow_l, MPFR_RNDU); break;}
+							case 4: {mpfr_pow(f_value1, fl_value, f_pow_u, MPFR_RNDU); break;}
+						}
+						switch(i_lower) {
+							case 1: {mpfr_pow(fl_value, fu_value, f_pow_u, MPFR_RNDD); break;}
+							case 2: {mpfr_pow(fl_value, fl_value, f_pow_l, MPFR_RNDD); break;}
+							case 3: {mpfr_pow(fl_value, fu_value, f_pow_l, MPFR_RNDD); break;}
+							case 4: {mpfr_pow(fl_value, fl_value, f_pow_u, MPFR_RNDD); break;}
+						}
+						mpfr_set(fu_value, f_value1, MPFR_RNDU);
+
+						mpfr_clears(f_value1, f_value2, f_value3, f_value4, NULL);
 					}
 					mpfr_clears(f_pow_u, f_pow_l, NULL);
 				}
@@ -4272,6 +4354,7 @@ bool Number::round(bool halfway_to_even) {
 	} else {
 		mpz_set_ui(mpq_denref(r_value), 1);
 		intervalToMidValue();
+		if(isRational()) return true;
 		if(!halfway_to_even) mpfr_rint_round(fl_value, fl_value, MPFR_RNDN);
 		mpfr_get_z(mpq_numref(r_value), fl_value, MPFR_RNDN);
 		n_type = NUMBER_TYPE_RATIONAL;

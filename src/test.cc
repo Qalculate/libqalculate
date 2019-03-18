@@ -26,7 +26,7 @@ void clear_errors() {
 
 void test_integration4(const MathStructure &mstruct) {
 	MathStructure x_var(CALCULATOR->v_x);
-	cout << "Integration test: " << mstruct.print() << endl;
+	cout << "Integration test: " << mstruct.print(CALCULATOR->messagePrintOptions()) << endl;
 	MathStructure mstruct2(mstruct);
 	EvaluationOptions eo;
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
@@ -35,31 +35,31 @@ void test_integration4(const MathStructure &mstruct) {
 	mstruct2.eval(eo);
 	if(mstruct2.containsFunction(CALCULATOR->f_integrate)) {clear_errors(); return;}
 	mstruct2.differentiate(x_var, eo);
+	mstruct2.eval(eo);
 	MathStructure mstruct3(mstruct2);
-	mstruct3.eval(eo);
 	mstruct3.replace(x_var, 3);
 	mstruct3.eval(eo);
 	display_errors();
-	string str1 = mstruct3.print();
+	string str1 = mstruct3.print(CALCULATOR->messagePrintOptions());
 	cout << str1 << endl;
 	mstruct3 = mstruct;
 	mstruct3.replace(x_var, 3);
 	mstruct3.eval(eo);
 	display_errors();
-	string str2 = mstruct3.print();
+	string str2 = mstruct3.print(CALCULATOR->messagePrintOptions());
 	cout << str2 << endl;
 	if(str1 != str2) cout << "!!!" << endl;
 	mstruct3 = mstruct2;
 	mstruct3.replace(x_var, -5);
 	mstruct3.eval(eo);
 	display_errors();
-	str1 = mstruct3.print();
+	str1 = mstruct3.print(CALCULATOR->messagePrintOptions());
 	cout << str1 << endl;
 	mstruct3 = mstruct;
 	mstruct3.replace(x_var, -5);
 	mstruct3.eval(eo);
 	display_errors();
-	str2 = mstruct3.print();
+	str2 = mstruct3.print(CALCULATOR->messagePrintOptions());
 	cout << str2 << endl;
 	if(str1 != str2) cout << "!!!" << endl;
 	cout << "________________________________________________" << endl;
@@ -1065,21 +1065,20 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			cout << "UNEQUAL1: " << m1.print(po) << ":" << m2.print(po) << endl;
 		}
 	}*/
-	//if(m1.isNumber() && m3.isNumber()) {
+	if(m1.isNumber() && m3.isNumber()) {
 		if(m1 != m3 && m1.print(po) != m3.print(po)) {
 			rt2++;
 			cout << str << " => " << mp << endl;
 			cout << "UNEQUAL1b: " << m1.print(po) << ":" << m3.print(po) << endl;
 		}
-	//}
-	//if(m1.isNumber() && m4.isNumber()) {
+	}
+	if(m1.isNumber() && m4.isNumber()) {
 		if(m1 != m4 && m1.print(po) != m4.print(po)) {
 			rt2++;
 			cout << str << " => " << mp << endl;
 			cout << "UNEQUAL1c: " << m1.print(po) << ":" << m4.print(po) << endl;
 		}
-	//}
-	return;
+	}
 	cerr << "A" << endl;
 	if(b_iv != CALCULATOR->usesIntervalArithmetic()) {
 		cout << "INTERVAL ARITHMETIC CHANGED1: " << str << " => " << mp << endl;
@@ -1366,13 +1365,13 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			cout << "UNEQUAL1b: " << m1.print(po) << ":" << m3.print(po) << endl;
 		}
 	}
-	/*if(m1.isNumber() && m4.isNumber()) {
+	if(m1.isNumber() && m4.isNumber()) {
 		if(m1 != m4 && m1.print(po) != m4.print(po)) {
 			rt2++;
 			cout << str << " => " << mp << endl;
 			cout << "UNEQUAL1c: " << m1.print(po) << ":" << m4.print(po) << endl;
 		}
-	}*/
+	}
 	if(b_iv != CALCULATOR->usesIntervalArithmetic()) {
 		cout << "INTERVAL ARITHMETIC CHANGED12 " << str << " => " << mp << endl;
 		CALCULATOR->useIntervalArithmetic(b_iv);
@@ -1669,7 +1668,14 @@ int main(int argc, char *argv[]) {
 	new Calculator();
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
-	CALCULATOR->setPrecision(40);
+	CALCULATOR->setPrecision(8);
+	
+	CALCULATOR->useIntervalArithmetic();
+	PrintOptions po = CALCULATOR->messagePrintOptions();
+	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+	/*po.show_ending_zeroes = false;
+	po.number_fraction_format = FRACTION_DECIMAL;*/
+	CALCULATOR->setMessagePrintOptions(po);
 	
 	EvaluationOptions evalops;
 	/*evalops.approximation = APPROXIMATION_TRY_EXACT;
@@ -1703,11 +1709,6 @@ int main(int argc, char *argv[]) {
 	//test_integration();
 	//test_intervals(true);
 	
-	
-	PrintOptions po = CALCULATOR->messagePrintOptions();
-	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-	CALCULATOR->setMessagePrintOptions(po);
-	
 	CALCULATOR->setVariableUnitsEnabled(true);
 	
 	v = new KnownVariable("", "v", m_zero);
@@ -1716,7 +1717,7 @@ int main(int argc, char *argv[]) {
 	//CALCULATOR->useIntervalArithmetic();
 	
 	for(size_t i = 0; i <= 1000; i++) {
-		rnd_test(evalops, false, true, false, false, false, true, true);
+		rnd_test(evalops, 4, true, false, true, false, false, true);
 		if(i % 100 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
