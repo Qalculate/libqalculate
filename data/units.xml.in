@@ -3371,7 +3371,7 @@
       </unit>
       <unit type="alias">
         <_title>Reduced Planck (Atomic/Natural Unit of Action)</_title>
-        <names>rs:planck_unit</names>
+        <names>rs:planck_unit,aus:&#x210f;_unit</names>
         <system>Atomic/Natural</system>
         <base>
           <unit>J_s</unit>
