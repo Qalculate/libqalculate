@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 10:57+0100\n"
+"POT-Creation-Date: 2019-03-20 09:32+0100\n"
 "PO-Revision-Date: 2007-05-18 16:19+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -25,6 +25,209 @@ msgstr ""
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+
+#: ../src/defs2doc.cc:330 ../src/qalc.cc:3012 ../libqalculate/Function.cc:201
+msgid "argument"
+msgstr "argument"
+
+#: ../src/defs2doc.cc:353 ../src/qalc.cc:3035
+#, c-format
+msgid ""
+"Retrieves data from the %s data set for a given object and property. If "
+"\"info\" is typed as property, all properties of the object will be listed."
+msgstr ""
+"Haalt gegevens op van een gegeven object en eigenschap uit de "
+"gegevensverzameling %s. Indien als eigenschap \"info\" wordt ingetypt krijgt "
+"u een lijst van alle eigenschappen van het object."
+
+#: ../src/defs2doc.cc:360 ../src/qalc.cc:3044
+msgid "Example:"
+msgstr "bv.:"
+
+#: ../src/defs2doc.cc:368 ../src/qalc.cc:3053
+msgid "Arguments"
+msgstr "Argumenten"
+
+#. optional argument, in description
+#: ../src/defs2doc.cc:385 ../src/qalc.cc:3070
+msgid "optional"
+msgstr "optioneel"
+
+#. argument default, in description
+#: ../src/defs2doc.cc:388 ../src/qalc.cc:3074
+msgid "default: "
+msgstr "standaard: "
+
+#: ../src/defs2doc.cc:401 ../src/qalc.cc:3085
+msgid "Requirement"
+msgstr "Vereiste"
+
+#: ../src/defs2doc.cc:410 ../src/qalc.cc:3093
+msgid "Properties"
+msgstr "Eigenschappen"
+
+#: ../src/defs2doc.cc:426 ../src/qalc.cc:3108
+msgid "key"
+msgstr "sleutelwaarde"
+
+#: ../src/defs2doc.cc:460 ../src/qalc.cc:3223
+msgid "a previous result"
+msgstr "een vorig antwoord"
+
+#: ../src/defs2doc.cc:463
+#, fuzzy
+msgid "current precision"
+msgstr "nauwkeurigheid lezen"
+
+#: ../src/defs2doc.cc:467 ../src/defs2doc.cc:565 ../src/qalc.cc:1360
+msgid "relative uncertainty"
+msgstr ""
+
+#: ../src/defs2doc.cc:482 ../src/qalc.cc:1382 ../src/qalc.cc:3229
+#: ../libqalculate/Function.cc:2002
+msgid "matrix"
+msgstr "matrix"
+
+#: ../src/defs2doc.cc:484 ../src/qalc.cc:1384 ../src/qalc.cc:3231
+#: ../libqalculate/Function.cc:1941
+msgid "vector"
+msgstr "vector"
+
+#: ../src/defs2doc.cc:492 ../src/qalc.cc:220 ../src/qalc.cc:634
+#: ../src/qalc.cc:1401 ../src/qalc.cc:2643 ../src/qalc.cc:3241
+#: ../src/qalc.cc:3360 ../src/qalc.cc:3572
+msgid "positive"
+msgstr "positief"
+
+#: ../src/defs2doc.cc:493 ../src/qalc.cc:226 ../src/qalc.cc:635
+#: ../src/qalc.cc:1402 ../src/qalc.cc:2644 ../src/qalc.cc:3242
+#: ../src/qalc.cc:3364 ../src/qalc.cc:3576
+msgid "non-positive"
+msgstr "niet-positief"
+
+#: ../src/defs2doc.cc:494 ../src/qalc.cc:224 ../src/qalc.cc:636
+#: ../src/qalc.cc:1403 ../src/qalc.cc:2645 ../src/qalc.cc:3243
+#: ../src/qalc.cc:3362 ../src/qalc.cc:3574
+msgid "negative"
+msgstr "negatief"
+
+#: ../src/defs2doc.cc:495 ../src/qalc.cc:222 ../src/qalc.cc:637
+#: ../src/qalc.cc:1404 ../src/qalc.cc:2646 ../src/qalc.cc:3244
+#: ../src/qalc.cc:3366 ../src/qalc.cc:3578
+msgid "non-negative"
+msgstr "niet-negatief"
+
+#: ../src/defs2doc.cc:496 ../src/qalc.cc:218 ../src/qalc.cc:638
+#: ../src/qalc.cc:1405 ../src/qalc.cc:2647 ../src/qalc.cc:3245
+#: ../src/qalc.cc:3358 ../src/qalc.cc:3570
+msgid "non-zero"
+msgstr "ongelijk nul"
+
+#: ../src/defs2doc.cc:501 ../src/qalc.cc:216 ../src/qalc.cc:643
+#: ../src/qalc.cc:1410 ../src/qalc.cc:2652 ../src/qalc.cc:3250
+#: ../src/qalc.cc:3374 ../src/qalc.cc:3586 ../libqalculate/Function.cc:1797
+msgid "integer"
+msgstr "geheel"
+
+#: ../src/defs2doc.cc:502 ../src/qalc.cc:214 ../src/qalc.cc:644
+#: ../src/qalc.cc:1411 ../src/qalc.cc:2653 ../src/qalc.cc:3251
+#: ../src/qalc.cc:3372 ../src/qalc.cc:3584
+msgid "rational"
+msgstr "rationaal"
+
+#: ../src/defs2doc.cc:503 ../src/qalc.cc:210 ../src/qalc.cc:645
+#: ../src/qalc.cc:1412 ../src/qalc.cc:2654 ../src/qalc.cc:3252
+#: ../src/qalc.cc:3370 ../src/qalc.cc:3582
+msgid "real"
+msgstr "reëel"
+
+#: ../src/defs2doc.cc:504 ../src/qalc.cc:646 ../src/qalc.cc:1413
+#: ../src/qalc.cc:2655 ../src/qalc.cc:3253
+msgid "complex"
+msgstr "complex"
+
+#: ../src/defs2doc.cc:505 ../src/qalc.cc:212 ../src/qalc.cc:647
+#: ../src/qalc.cc:1414 ../src/qalc.cc:2656 ../src/qalc.cc:3254
+#: ../src/qalc.cc:3368 ../src/qalc.cc:3580 ../libqalculate/Function.cc:1636
+msgid "number"
+msgstr "getal"
+
+#: ../src/defs2doc.cc:506 ../src/qalc.cc:648 ../src/qalc.cc:1415
+#: ../src/qalc.cc:2657 ../src/qalc.cc:3255
+msgid "non-matrix"
+msgstr "niet-matrix"
+
+#: ../src/defs2doc.cc:509 ../src/qalc.cc:204 ../src/qalc.cc:651
+#: ../src/qalc.cc:1418 ../src/qalc.cc:2660 ../src/qalc.cc:3258
+#: ../src/qalc.cc:3356 ../src/qalc.cc:3568
+msgid "unknown"
+msgstr "onbekend"
+
+#: ../src/defs2doc.cc:511 ../src/qalc.cc:1420 ../src/qalc.cc:3260
+msgid "default assumptions"
+msgstr "standaard aannames"
+
+#: ../src/defs2doc.cc:517
+#, fuzzy
+msgid "variable precision"
+msgstr "nauwkeurigheid lezen"
+
+#. qalc command
+#: ../src/defs2doc.cc:521 ../src/defs2doc.cc:573 ../src/qalc.cc:817
+#: ../src/qalc.cc:1376 ../src/qalc.cc:1393 ../src/qalc.cc:2399
+#: ../src/qalc.cc:2677 ../src/qalc.cc:2898 ../src/qalc.cc:3172
+#: ../src/qalc.cc:3182 ../src/qalc.cc:3286 ../src/qalc.cc:3382
+#: ../src/qalc.cc:3698
+msgid "approximate"
+msgstr "benaderd"
+
+#: ../src/defs2doc.cc:609 ../src/qalc.cc:1756
+msgid "ans"
+msgstr "antw"
+
+#: ../src/defs2doc.cc:610 ../src/defs2doc.cc:613 ../src/defs2doc.cc:614
+#: ../src/defs2doc.cc:615 ../src/defs2doc.cc:616 ../src/qalc.cc:1757
+#: ../src/qalc.cc:1760 ../src/qalc.cc:1761 ../src/qalc.cc:1762
+#: ../src/qalc.cc:1763 ../src/qalc.cc:1995 ../libqalculate/Calculator.cc:9118
+#: ../libqalculate/Calculator.cc:9134
+msgid "Temporary"
+msgstr "Tijdelijk"
+
+#: ../src/defs2doc.cc:610 ../src/qalc.cc:1757
+msgid "Last Answer"
+msgstr "Laatste antwoord"
+
+#: ../src/defs2doc.cc:611 ../src/qalc.cc:1758
+msgid "answer"
+msgstr "antwoord"
+
+#: ../src/defs2doc.cc:613 ../src/qalc.cc:1760
+msgid "Answer 2"
+msgstr "Antwoord 2"
+
+#: ../src/defs2doc.cc:614 ../src/qalc.cc:1761
+msgid "Answer 3"
+msgstr "Antwoord 3"
+
+#: ../src/defs2doc.cc:615 ../src/qalc.cc:1762
+msgid "Answer 4"
+msgstr "Antwoord 4"
+
+#: ../src/defs2doc.cc:616 ../src/qalc.cc:1763
+msgid "Answer 5"
+msgstr "Antwoord 5"
+
+#: ../src/defs2doc.cc:620
+#, fuzzy, c-format
+msgid "Failed to load global definitions!\n"
+msgstr "Inlezen van globale definities is mislukt!"
+
+#: ../src/defs2doc.cc:669 ../src/defs2doc.cc:736 ../src/defs2doc.cc:737
+#: ../src/defs2doc.cc:738 ../src/defs2doc.cc:820 ../src/defs2doc.cc:821
+#: ../src/defs2doc.cc:822
+#, fuzzy
+msgid "Uncategorized"
+msgstr "ontbinden in factoren"
 
 #: ../src/qalc.cc:123 ../src/qalc.cc:190 ../src/qalc.cc:3335
 #: ../libqalculate/util.cc:162
@@ -67,73 +270,13 @@ msgstr "uit"
 msgid "Please answer yes or no"
 msgstr "Antwoord alstublieft met ja of nee"
 
-#: ../src/qalc.cc:204 ../src/qalc.cc:651 ../src/qalc.cc:1418
-#: ../src/qalc.cc:2660 ../src/qalc.cc:3258 ../src/qalc.cc:3356
-#: ../src/qalc.cc:3568
-msgid "unknown"
-msgstr "onbekend"
-
-#: ../src/qalc.cc:210 ../src/qalc.cc:645 ../src/qalc.cc:1412
-#: ../src/qalc.cc:2654 ../src/qalc.cc:3252 ../src/qalc.cc:3370
-#: ../src/qalc.cc:3582
-msgid "real"
-msgstr "reëel"
-
-#: ../src/qalc.cc:212 ../src/qalc.cc:647 ../src/qalc.cc:1414
-#: ../src/qalc.cc:2656 ../src/qalc.cc:3254 ../src/qalc.cc:3368
-#: ../src/qalc.cc:3580 ../libqalculate/Function.cc:1636
-msgid "number"
-msgstr "getal"
-
-#: ../src/qalc.cc:214 ../src/qalc.cc:644 ../src/qalc.cc:1411
-#: ../src/qalc.cc:2653 ../src/qalc.cc:3251 ../src/qalc.cc:3372
-#: ../src/qalc.cc:3584
-msgid "rational"
-msgstr "rationaal"
-
-#: ../src/qalc.cc:216 ../src/qalc.cc:643 ../src/qalc.cc:1410
-#: ../src/qalc.cc:2652 ../src/qalc.cc:3250 ../src/qalc.cc:3374
-#: ../src/qalc.cc:3586 ../libqalculate/Function.cc:1797
-msgid "integer"
-msgstr "geheel"
-
-#: ../src/qalc.cc:218 ../src/qalc.cc:638 ../src/qalc.cc:1405
-#: ../src/qalc.cc:2647 ../src/qalc.cc:3245 ../src/qalc.cc:3358
-#: ../src/qalc.cc:3570
-msgid "non-zero"
-msgstr "ongelijk nul"
-
-#: ../src/qalc.cc:220 ../src/qalc.cc:634 ../src/qalc.cc:1401
-#: ../src/qalc.cc:2643 ../src/qalc.cc:3241 ../src/qalc.cc:3360
-#: ../src/qalc.cc:3572
-msgid "positive"
-msgstr "positief"
-
-#: ../src/qalc.cc:222 ../src/qalc.cc:637 ../src/qalc.cc:1404
-#: ../src/qalc.cc:2646 ../src/qalc.cc:3244 ../src/qalc.cc:3366
-#: ../src/qalc.cc:3578
-msgid "non-negative"
-msgstr "niet-negatief"
-
-#: ../src/qalc.cc:224 ../src/qalc.cc:636 ../src/qalc.cc:1403
-#: ../src/qalc.cc:2645 ../src/qalc.cc:3243 ../src/qalc.cc:3362
-#: ../src/qalc.cc:3574
-msgid "negative"
-msgstr "negatief"
-
-#: ../src/qalc.cc:226 ../src/qalc.cc:635 ../src/qalc.cc:1402
-#: ../src/qalc.cc:2644 ../src/qalc.cc:3242 ../src/qalc.cc:3364
-#: ../src/qalc.cc:3576
-msgid "non-positive"
-msgstr "niet-positief"
-
 #: ../src/qalc.cc:229
 msgid "Unrecognized assumption."
 msgstr "Onbekende aanname."
 
 #: ../src/qalc.cc:396 ../src/qalc.cc:429 ../libqalculate/Calculator.cc:413
 #: ../libqalculate/DataSet.cc:1069 ../libqalculate/DataSet.cc:1131
-#: ../libqalculate/MathStructure.cc:19638 ../libqalculate/Function.cc:2161
+#: ../libqalculate/MathStructure.cc:19639 ../libqalculate/Function.cc:2161
 #: ../libqalculate/Function.cc:2177
 msgid "or"
 msgstr "or"
@@ -235,16 +378,6 @@ msgstr "Grondtal niet toegestaan."
 #: ../src/qalc.cc:3353
 msgid "assumptions"
 msgstr "aannames"
-
-#: ../src/qalc.cc:646 ../src/qalc.cc:1413 ../src/qalc.cc:2655
-#: ../src/qalc.cc:3253
-msgid "complex"
-msgstr "complex"
-
-#: ../src/qalc.cc:648 ../src/qalc.cc:1415 ../src/qalc.cc:2657
-#: ../src/qalc.cc:3255
-msgid "non-matrix"
-msgstr "niet-matrix"
 
 #: ../src/qalc.cc:655 ../src/qalc.cc:2856 ../src/qalc.cc:3528
 msgid "all prefixes"
@@ -518,14 +651,6 @@ msgstr "exact"
 #: ../src/qalc.cc:816 ../src/qalc.cc:2676 ../src/qalc.cc:3382
 msgid "try exact"
 msgstr "exact proberen"
-
-#. qalc command
-#: ../src/qalc.cc:817 ../src/qalc.cc:1376 ../src/qalc.cc:1393
-#: ../src/qalc.cc:2399 ../src/qalc.cc:2677 ../src/qalc.cc:2898
-#: ../src/qalc.cc:3172 ../src/qalc.cc:3182 ../src/qalc.cc:3286
-#: ../src/qalc.cc:3382 ../src/qalc.cc:3698
-msgid "approximate"
-msgstr "benaderd"
 
 #: ../src/qalc.cc:831 ../src/qalc.cc:2681 ../src/qalc.cc:3384
 msgid "interval calculation"
@@ -811,22 +936,6 @@ msgstr "Naam"
 msgid "Value"
 msgstr "Waarde"
 
-#: ../src/qalc.cc:1360
-msgid "relative uncertainty"
-msgstr ""
-
-#: ../src/qalc.cc:1382 ../src/qalc.cc:3229 ../libqalculate/Function.cc:2002
-msgid "matrix"
-msgstr "matrix"
-
-#: ../src/qalc.cc:1384 ../src/qalc.cc:3231 ../libqalculate/Function.cc:1941
-msgid "vector"
-msgstr "vector"
-
-#: ../src/qalc.cc:1420 ../src/qalc.cc:3260
-msgid "default assumptions"
-msgstr "standaard aannames"
-
 #: ../src/qalc.cc:1436
 msgid "Functions:"
 msgstr "Functie:"
@@ -969,40 +1078,6 @@ msgstr "Voor set-opdracht zijn geen optie en waarde opgegeven."
 #: ../src/qalc.cc:1693
 msgid "No file specified."
 msgstr "Geen bestand opgegeven."
-
-#: ../src/qalc.cc:1756
-msgid "ans"
-msgstr "antw"
-
-#: ../src/qalc.cc:1757 ../src/qalc.cc:1760 ../src/qalc.cc:1761
-#: ../src/qalc.cc:1762 ../src/qalc.cc:1763 ../src/qalc.cc:1995
-#: ../libqalculate/Calculator.cc:9118 ../libqalculate/Calculator.cc:9134
-msgid "Temporary"
-msgstr "Tijdelijk"
-
-#: ../src/qalc.cc:1757
-msgid "Last Answer"
-msgstr "Laatste antwoord"
-
-#: ../src/qalc.cc:1758
-msgid "answer"
-msgstr "antwoord"
-
-#: ../src/qalc.cc:1760
-msgid "Answer 2"
-msgstr "Antwoord 2"
-
-#: ../src/qalc.cc:1761
-msgid "Answer 3"
-msgstr "Antwoord 3"
-
-#: ../src/qalc.cc:1762
-msgid "Answer 4"
-msgstr "Antwoord 4"
-
-#: ../src/qalc.cc:1763
-msgid "Answer 5"
-msgstr "Antwoord 5"
 
 #: ../src/qalc.cc:1774
 msgid "Failed to load global definitions!"
@@ -1385,50 +1460,6 @@ msgstr "Er bestaat geen functie, variabele of eenheid met de opgegeven naam."
 msgid "Function"
 msgstr "Functie"
 
-#: ../src/qalc.cc:3012 ../libqalculate/Function.cc:201
-msgid "argument"
-msgstr "argument"
-
-#: ../src/qalc.cc:3035
-#, c-format
-msgid ""
-"Retrieves data from the %s data set for a given object and property. If "
-"\"info\" is typed as property, all properties of the object will be listed."
-msgstr ""
-"Haalt gegevens op van een gegeven object en eigenschap uit de "
-"gegevensverzameling %s. Indien als eigenschap \"info\" wordt ingetypt krijgt "
-"u een lijst van alle eigenschappen van het object."
-
-#: ../src/qalc.cc:3044
-msgid "Example:"
-msgstr "bv.:"
-
-#: ../src/qalc.cc:3053
-msgid "Arguments"
-msgstr "Argumenten"
-
-#. optional argument, in description
-#: ../src/qalc.cc:3070
-msgid "optional"
-msgstr "optioneel"
-
-#. argument default, in description
-#: ../src/qalc.cc:3074
-msgid "default: "
-msgstr "standaard: "
-
-#: ../src/qalc.cc:3085
-msgid "Requirement"
-msgstr "Vereiste"
-
-#: ../src/qalc.cc:3093
-msgid "Properties"
-msgstr "Eigenschappen"
-
-#: ../src/qalc.cc:3108
-msgid "key"
-msgstr "sleutelwaarde"
-
 #: ../src/qalc.cc:3122
 #, fuzzy
 msgid "Expression:"
@@ -1469,10 +1500,6 @@ msgstr "Basiseenheden"
 #: ../src/qalc.cc:3205 ../src/qalc.cc:3208
 msgid "Variable"
 msgstr "Variabele"
-
-#: ../src/qalc.cc:3223
-msgid "a previous result"
-msgstr "een vorig antwoord"
 
 #: ../src/qalc.cc:3320
 msgid "Factorizes the current result."
@@ -2117,6 +2144,12 @@ msgstr ""
 msgid "Couldn't write definitions"
 msgstr "Kon definities niet schrijven"
 
+#: ../src/test.cc:13 ../libqalculate/Calculator.cc:1861
+msgid ""
+"The calculation has been forcibly terminated. Please restart the application "
+"and report this as a bug."
+msgstr ""
+
 #: ../libqalculate/BuiltinFunctions.cc:68
 #, c-format
 msgid "Too many elements (%s) for the dimensions (%sx%s) of the matrix."
@@ -2438,7 +2471,7 @@ msgstr "plus"
 msgid "minus"
 msgstr "minus"
 
-#: ../libqalculate/Calculator.cc:409 ../libqalculate/MathStructure.cc:19623
+#: ../libqalculate/Calculator.cc:409 ../libqalculate/MathStructure.cc:19624
 #: ../libqalculate/Function.cc:1223 ../libqalculate/Function.cc:1231
 #: ../libqalculate/Function.cc:1660 ../libqalculate/Function.cc:1822
 #: ../libqalculate/Function.cc:1830
@@ -2475,12 +2508,6 @@ msgstr "Eenheid graad ontbreekt. Voor deze sessie wordt er een aangemaakt."
 #: ../libqalculate/Calculator.cc:10457
 msgid "Currency"
 msgstr "Valuta"
-
-#: ../libqalculate/Calculator.cc:1861
-msgid ""
-"The calculation has been forcibly terminated. Please restart the application "
-"and report this as a bug."
-msgstr ""
 
 #: ../libqalculate/Calculator.cc:2137 ../libqalculate/Calculator.cc:2262
 msgid "Stack is empty. Filling remaining function arguments with zeroes."
@@ -2712,8 +2739,8 @@ msgstr ""
 #: ../libqalculate/MathStructure.cc:8477 ../libqalculate/MathStructure.cc:8544
 #: ../libqalculate/MathStructure.cc:8572 ../libqalculate/MathStructure.cc:8591
 #: ../libqalculate/MathStructure.cc:8610 ../libqalculate/MathStructure.cc:8629
-#: ../libqalculate/MathStructure.cc:8738 ../libqalculate/MathStructure.cc:15220
-#: ../libqalculate/MathStructure.cc:15496
+#: ../libqalculate/MathStructure.cc:8738 ../libqalculate/MathStructure.cc:15221
+#: ../libqalculate/MathStructure.cc:15497
 msgid "This is a bug. Please report it."
 msgstr "Dit is een bug (programmafout). Meld deze alstublieft."
 
@@ -2727,96 +2754,96 @@ msgstr ""
 msgid "Interval potentially calculated wide."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:12635
+#: ../libqalculate/MathStructure.cc:12637
 msgid ""
 "Calculation of uncertainty propagation partially failed (using interval "
 "arithmetic instead when necessary)."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:12768
+#: ../libqalculate/MathStructure.cc:12770
 msgid ""
 "Calculation of uncertainty propagation failed (using interval arithmetic "
 "instead)."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:16901
+#: ../libqalculate/MathStructure.cc:16902
 msgid ""
 "Because of time constraints only a limited number of combinations of terms "
 "were tried during factorization. Repeat factorization to try other random "
 "combinations."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:19784
+#: ../libqalculate/MathStructure.cc:19785
 msgid "undefined"
 msgstr "ongedefinieerd"
 
-#: ../libqalculate/MathStructure.cc:19825
+#: ../libqalculate/MathStructure.cc:19826
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to rank vector."
 msgstr ""
 "Vergelijken lukt niet bij element %s bij berekenen van rangvolgorde vector."
 
-#: ../libqalculate/MathStructure.cc:19875
+#: ../libqalculate/MathStructure.cc:19876
 #, c-format
 msgid "Unsolvable comparison at element %s when trying to sort vector."
 msgstr "Vergelijken lukt niet bij element %s bij sorteren vector."
 
-#: ../libqalculate/MathStructure.cc:20300
+#: ../libqalculate/MathStructure.cc:20301
 msgid "The determinant can only be calculated for square matrices."
 msgstr "De determinant kan alleen voor een vierkante matrix worden berekend."
 
-#: ../libqalculate/MathStructure.cc:20363
+#: ../libqalculate/MathStructure.cc:20364
 msgid "The permanent can only be calculated for square matrices."
 msgstr "De permanent kan alleen voor een vierkante matrix worden berekend."
 
-#: ../libqalculate/MathStructure.cc:20452
+#: ../libqalculate/MathStructure.cc:20453
 msgid "Inverse of singular matrix."
 msgstr "Inverse van singuliere matrix."
 
-#: ../libqalculate/MathStructure.cc:20804
+#: ../libqalculate/MathStructure.cc:20805
 msgid ""
 "Calculations involving conversion of units without proportional linear "
 "relationship (e.g. with multiple temperature units), might give unexpected "
 "results and is not recommended."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:22053
-#: ../libqalculate/MathStructure.cc:22096
+#: ../libqalculate/MathStructure.cc:22054
+#: ../libqalculate/MathStructure.cc:22097
 msgid "Too many data points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:22060
+#: ../libqalculate/MathStructure.cc:22061
 msgid ""
 "The selected min and max do not result in a positive, finite number of data "
 "points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:22093
+#: ../libqalculate/MathStructure.cc:22094
 msgid ""
 "The selected min, max and step size do not result in a positive, finite "
 "number of data points"
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:28628
-#: ../libqalculate/MathStructure.cc:28806
-#: ../libqalculate/MathStructure.cc:29437
-#: ../libqalculate/MathStructure.cc:29946
-#: ../libqalculate/MathStructure.cc:30004
-#: ../libqalculate/MathStructure.cc:30047
-#: ../libqalculate/MathStructure.cc:30060
-#: ../libqalculate/MathStructure.cc:30110
-#: ../libqalculate/MathStructure.cc:30229
-#: ../libqalculate/MathStructure.cc:30366
+#: ../libqalculate/MathStructure.cc:28629
+#: ../libqalculate/MathStructure.cc:28807
+#: ../libqalculate/MathStructure.cc:29438
+#: ../libqalculate/MathStructure.cc:29947
+#: ../libqalculate/MathStructure.cc:30005
+#: ../libqalculate/MathStructure.cc:30048
+#: ../libqalculate/MathStructure.cc:30061
+#: ../libqalculate/MathStructure.cc:30111
+#: ../libqalculate/MathStructure.cc:30230
+#: ../libqalculate/MathStructure.cc:30367
 #, c-format
 msgid "Interval arithmetic was disabled during calculation of %s."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:30365
+#: ../libqalculate/MathStructure.cc:30366
 #, c-format
 msgid "Not all complex roots were calculated for %s."
 msgstr ""
 
-#: ../libqalculate/MathStructure.cc:31775
+#: ../libqalculate/MathStructure.cc:31776
 #, c-format
 msgid "Only one or two of the roots where calculated for %s."
 msgstr ""
@@ -2998,7 +3025,7 @@ msgstr "hoek"
 msgid "an angle or a number (using the default angle unit)"
 msgstr "een hoek of een getal (in standaard hoekeenheid)"
 
-#: ../libqalculate/Number.cc:240 ../libqalculate/Number.cc:6870
+#: ../libqalculate/Number.cc:240 ../libqalculate/Number.cc:6889
 msgid ""
 "Cannot display numbers greater than 9999 or less than -9999 as roman "
 "numerals."
@@ -3080,33 +3107,33 @@ msgstr "0^0 kan als ongedefinieerd worden beschouwd"
 msgid "The result of 0^i is possibly undefined"
 msgstr ""
 
-#: ../libqalculate/Number.cc:3370 ../libqalculate/Number.cc:5146
-#: ../libqalculate/Number.cc:5257 ../libqalculate/Number.cc:5586
-#: ../libqalculate/Number.cc:5594 ../libqalculate/Number.cc:5627
-#: ../libqalculate/Number.cc:5724 ../libqalculate/Number.cc:5873
-#: ../libqalculate/Number.cc:5985
+#: ../libqalculate/Number.cc:3370 ../libqalculate/Number.cc:5165
+#: ../libqalculate/Number.cc:5276 ../libqalculate/Number.cc:5605
+#: ../libqalculate/Number.cc:5613 ../libqalculate/Number.cc:5646
+#: ../libqalculate/Number.cc:5743 ../libqalculate/Number.cc:5892
+#: ../libqalculate/Number.cc:6004
 msgid "Interval calculated wide."
 msgstr ""
 
-#: ../libqalculate/Number.cc:4703
+#: ../libqalculate/Number.cc:4722
 msgid "Cannot handle an argument (s) that large for Riemann Zeta."
 msgstr "Argument (s) is te groot voor de berekening van Riemann Zeta."
 
-#: ../libqalculate/Number.cc:4778 ../libqalculate/Number.cc:4876
-#: ../libqalculate/Number.cc:4907 ../libqalculate/Number.cc:4938
-#: ../libqalculate/Number.cc:6330
+#: ../libqalculate/Number.cc:4797 ../libqalculate/Number.cc:4895
+#: ../libqalculate/Number.cc:4926 ../libqalculate/Number.cc:4957
+#: ../libqalculate/Number.cc:6349
 #, c-format
 msgid "%s() lacks proper support interval arithmetic."
 msgstr ""
 
-#: ../libqalculate/Number.cc:6867
+#: ../libqalculate/Number.cc:6886
 #, fuzzy
 msgid "Can only display rational numbers as roman numerals."
 msgstr ""
 "Kan getallen groter dan 9999 of kleiner dan -9999 niet weergeven als "
 "Romeinse getallen."
 
-#: ../libqalculate/Number.cc:7309 ../libqalculate/Number.cc:7317
+#: ../libqalculate/Number.cc:7328 ../libqalculate/Number.cc:7336
 msgid "infinity"
 msgstr "oneindigheid"
 
