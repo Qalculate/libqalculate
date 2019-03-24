@@ -6141,17 +6141,15 @@ int MathStructure::merge_logical_and(MathStructure &mstruct, const EvaluationOpt
 				default: {
 					if(!eo.test_comparisons) return -1;
 					if(comparisonType() == COMPARISON_EQUALS && !CHILD(1).contains(mstruct[0])) {
-						mstruct.replace(CHILD(0), CHILD(1));
+						mstruct.calculateReplace(CHILD(0), CHILD(1), eo);
 						if(eo.isolate_x) mstruct.isolate_x(eo, eo);
-						mstruct.calculatesub(eo, eo, true);
 						mstruct.ref();
 						add_nocopy(&mstruct, OPERATION_LOGICAL_AND);
 						calculateLogicalAndLast(eo);
 						return 1;
 					} else if(mstruct.comparisonType() == COMPARISON_EQUALS && !mstruct[1].contains(CHILD(0))) {
-						replace(mstruct[0], mstruct[1]);
+						calculateReplace(mstruct[0], mstruct[1], eo);
 						if(eo.isolate_x) isolate_x(eo, eo);
-						calculatesub(eo, eo, true);
 						mstruct.ref();
 						add_nocopy(&mstruct, OPERATION_LOGICAL_AND);
 						calculateLogicalAndLast(eo);
@@ -6161,17 +6159,15 @@ int MathStructure::merge_logical_and(MathStructure &mstruct, const EvaluationOpt
 				}
 			}
 		} else if(comparisonType() == COMPARISON_EQUALS && !CHILD(0).isNumber() && !CHILD(0).containsInterval() && CHILD(1).isNumber() && mstruct.contains(CHILD(0))) {
-			mstruct.replace(CHILD(0), CHILD(1));
+			mstruct.calculateReplace(CHILD(0), CHILD(1), eo);
 			if(eo.isolate_x) mstruct.isolate_x(eo, eo);
-			mstruct.calculatesub(eo, eo, true);
 			mstruct.ref();
 			add_nocopy(&mstruct, OPERATION_LOGICAL_AND);
 			calculateLogicalAndLast(eo);
 			return 1;
 		} else if(mstruct.comparisonType() == COMPARISON_EQUALS && !mstruct[0].isNumber() && !mstruct[0].containsInterval() && mstruct[1].isNumber() && contains(mstruct[0])) {
-			replace(mstruct[0], mstruct[1]);
+			calculateReplace(mstruct[0], mstruct[1], eo);
 			if(eo.isolate_x) isolate_x(eo, eo);
-			calculatesub(eo, eo, true);
 			mstruct.ref();
 			add_nocopy(&mstruct, OPERATION_LOGICAL_AND);
 			calculateLogicalAndLast(eo);
