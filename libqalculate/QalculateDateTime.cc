@@ -18,7 +18,7 @@
 #include "support.h"
 #include "util.h"
 #include "Calculator.h"
-#include "limits"
+#include <limits.h>
 #include <stdlib.h>
 
 static const char *HEBREW_MONTHS[] = {"Nisan", "Iyar", "Sivan", "Tammuz", "Av", "Elul", "Tishrei", "Marcheshvan", "Kislev", "Tevet", "Shevat", "Adar", "Adar II"};
