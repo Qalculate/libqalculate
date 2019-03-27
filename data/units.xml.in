@@ -2365,7 +2365,7 @@
     </unit>
     <unit type="composite">
       <_title>Atomic Unit of Velocity</_title>
-      <names>bohr_Ha_p_e</names>
+      <names>bohr_Ha_p_planck</names>
       <system>Atomic</system>
       <part>
         <unit>bohr_unit</unit>
@@ -2378,7 +2378,7 @@
         <exponent>1</exponent>
       </part>
       <part>
-        <unit>e_unit</unit>
+        <unit>planck_unit</unit>
         <prefix>0</prefix>
         <exponent>-1</exponent>
       </part>
