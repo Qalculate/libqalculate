@@ -7936,7 +7936,7 @@ msgstr "Atomär enhet för elektrisk potential"
 
 #: ../data/units.xml.in.h:193
 msgid "Capacitance"
-msgstr "Kapasitans"
+msgstr "Kapacitans"
 
 #: ../data/units.xml.in.h:194
 msgid "Coulomb per Volt"
@@ -8653,7 +8653,7 @@ msgstr "Ljusets hastighet (naturlig enhet för hastighet)"
 
 #: ../data/units.xml.in.h:372
 msgid "Atomic Unit of Velocity"
-msgstr "Atomär enhet för hastighe"
+msgstr "Atomär enhet för hastighet"
 
 #: ../data/units.xml.in.h:373
 msgid "Acceleration"

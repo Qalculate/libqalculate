@@ -3196,19 +3196,34 @@ MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const
 Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 	switch(mstruct.type()) {
 		case STRUCT_POWER: {
-			if(mstruct.base()->isUnit() && mstruct.base()->unit()->subtype() != SUBTYPE_COMPOSITE_UNIT && mstruct.exponent()->isNumber() && mstruct.exponent()->number().isInteger()) {
+			if(mstruct.base()->isUnit() && mstruct.exponent()->isNumber() && mstruct.exponent()->number().isInteger() && mstruct.exponent()->number() < 10 && mstruct.exponent()->number() > -10) {
 				Unit *u_base = mstruct.base()->unit();
-				if(u_base->subtype() == SUBTYPE_ALIAS_UNIT) {
-					if(((AliasUnit*) u_base)->baseExponent() == 1) return u_base;
-					else u_base = u_base->baseUnit();
-				}
 				int exp = mstruct.exponent()->number().intValue();
+				if(u_base->subtype() == SUBTYPE_ALIAS_UNIT) {
+					u_base = u_base->baseUnit();
+					exp *= ((AliasUnit*) u_base)->baseExponent();
+				}
 				for(size_t i = 0; i < units.size(); i++) {
 					Unit *u = units[i];
 					if(u->subtype() == SUBTYPE_ALIAS_UNIT && u->baseUnit() == u_base && ((AliasUnit*) u)->baseExponent() == exp) {
 						return u;
 					}
 				}
+				CompositeUnit *cu = new CompositeUnit("", "temporary_find_matching_unit");
+				cu->add(u_base, exp);
+				Unit *u = getOptimalUnit(cu);
+				if(u != cu && !u->isRegistered()) {
+					delete u;
+				} else if(u != cu) {
+					MathStructure mtest(mstruct);
+					mtest.divide(u);
+					mtest.eval();
+					if(mtest.isNumber()) {
+						delete cu;
+						return u;
+					}
+				}
+				delete cu;
 			}
 			return findMatchingUnit(mstruct[0]);
 		}
@@ -3263,6 +3278,32 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 							}
 						}
 					}
+				}
+			}
+			Unit *u = getOptimalUnit(cu);
+			if(u != cu && !u->isRegistered()) {
+				if(cu->countUnits() > 1 && u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+					MathStructure m_u = ((CompositeUnit*) u)->generateMathStructure();
+					if(m_u != cu->generateMathStructure()) {
+						Unit *u2 = findMatchingUnit(m_u);
+						MathStructure mtest(mstruct);
+						mtest.divide(u2);
+						mtest.eval();
+						if(mtest.isNumber()) {
+							delete cu;
+							delete u;
+							return u2;
+						}
+					}
+				}
+				delete u;
+			} else if(u != cu) {
+				MathStructure mtest(mstruct);
+				mtest.divide(u);
+				mtest.eval();
+				if(mtest.isNumber()) {
+					delete cu;
+					return u;
 				}
 			}
 			delete cu;
@@ -3850,6 +3891,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 	MathStructure mstruct;
 	bool b = false;
 	Unit *u = getUnit(str2);
+	if(!u) u = getCompositeUnit(str2);
 	Variable *v = NULL;
 	if(!u) v = getVariable(str2);
 	if(!u && !v) {

@@ -1534,7 +1534,7 @@
     <category>
       <title>Capacitance</title>
       <title xml:lang="nl">Capaciteit</title>
-      <title xml:lang="sv">Kapasitans</title>
+      <title xml:lang="sv">Kapacitans</title>
       <title xml:lang="zh_CN">电容</title>
       <unit type="composite">
         <title>Coulomb per Volt</title>
@@ -3042,8 +3042,8 @@
     </unit>
     <unit type="composite">
       <title>Atomic Unit of Velocity</title>
-      <title xml:lang="sv">Atomär enhet för hastighe</title>
-      <names>bohr_Ha_p_e</names>
+      <title xml:lang="sv">Atomär enhet för hastighet</title>
+      <names>bohr_Ha_p_planck</names>
       <system>Atomic</system>
       <part>
         <unit>bohr_unit</unit>
@@ -3056,7 +3056,7 @@
         <exponent>1</exponent>
       </part>
       <part>
-        <unit>e_unit</unit>
+        <unit>planck_unit</unit>
         <prefix>0</prefix>
         <exponent>-1</exponent>
       </part>
@@ -4342,7 +4342,7 @@
         <title xml:lang="nl">Gereduceerde Planck (eenheid)</title>
         <title xml:lang="sv">Reducerad Planck (atomär/naturlig enhet för verkan)</title>
         <title xml:lang="zh_CN">個常用的量為約化普朗克常數(单位）</title>
-        <names>rs:planck_unit</names>
+        <names>rs:planck_unit,aus:&#x210f;_unit</names>
         <system>Atomic/Natural</system>
         <base>
           <unit>J_s</unit>

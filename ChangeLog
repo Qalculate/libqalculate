@@ -1,3 +1,20 @@
+2019-03-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix atomic unit of velocity
+	* Improve findMatchingUnit()
+
+2019-03-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix limits.h inclusion (fixes compilation errors)
+
+2019-03-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix "factorized result is wrong" because of non-simplified value in logical and calculation
+
+2019-03-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix make check (add test.cc and defs2doc.cc to POTFILES.in and add data files to POTFILES.skip)
+
 2019-03-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix rational power interval in some cases
