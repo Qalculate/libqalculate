@@ -5855,12 +5855,37 @@ int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		mstruct /= CALCULATOR->getRadUnit();
 	}
 	mstruct.eval(eo);
+	if(mstruct.isVector()) {
+		if(CALCULATOR->getRadUnit()) {
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				mstruct[i] *= CALCULATOR->getRadUnit();
+			}
+		}
+		return -1;
+	}
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number()); 
+		if(nr.isPlusInfinity()) {
+			mstruct.set(CALCULATOR->v_pi, true);
+			mstruct *= nr_half;
+			return 1;
+		}
+		if(nr.isMinusInfinity()) {
+			mstruct.set(CALCULATOR->v_pi, true);
+			mstruct *= nr_minus_half;
+			return 1;
+		}
 		if(nr.sinint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
 			mstruct.set(nr); 
 			return 1;
 		}
+	}
+	if(has_predominately_negative_sign(mstruct)) {
+		negate_struct(mstruct);
+		if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+		mstruct.transform(this);
+		mstruct.negate();
+		return 1;
 	}
 	if(CALCULATOR->getRadUnit()) {
 		if(mstruct.isVector()) {
@@ -5879,9 +5904,9 @@ CiFunction::CiFunction() : MathFunction("Ci", 1) {
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
 }
-bool CiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_real_angle_value(vargs[0]);}
+bool CiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_real_angle_value(vargs[0]) && vargs[0].representsPositive(true);}
 bool CiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_number_angle_value(vargs[0]);}
-bool CiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
+bool CiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonNegative(true);}
 int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0]; 
@@ -5890,7 +5915,23 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		mstruct /= CALCULATOR->getRadUnit();
 	}
 	mstruct.eval(eo);
+	if(mstruct.isVector()) {
+		if(CALCULATOR->getRadUnit()) {
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				mstruct[i] *= CALCULATOR->getRadUnit();
+			}
+		}
+		return -1;
+	}
 	if(mstruct.isNumber()) {
+		if(mstruct.number().isNegative()) {
+			if(!eo.allow_complex) return -1;
+			mstruct.negate();
+			mstruct.transform(this);
+			mstruct += CALCULATOR->v_pi;
+			mstruct.last() *= nr_one_i;
+			return 1;
+		}
 		Number nr(mstruct.number()); 
 		if(nr.cosint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
 			mstruct.set(nr); 
@@ -5910,23 +5951,60 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 }
 ShiFunction::ShiFunction() : MathFunction("Shi", 1) {
 	names[0].case_sensitive = true;
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
 bool ShiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
 bool ShiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
-bool ShiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex();}
+bool ShiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int ShiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	FR_FUNCTION(sinhint)
+	if(vargs[0].isVector()) return 0;
+	mstruct = vargs[0]; 
+	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
+	if(mstruct.isNumber()) {
+		Number nr(mstruct.number()); 
+		if(nr.sinhint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
+			mstruct.set(nr); 
+			return 1;
+		}
+	}
+	if(has_predominately_negative_sign(mstruct)) {
+		negate_struct(mstruct);
+		if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+		mstruct.transform(this);
+		mstruct.negate();
+		return 1;
+	}
+	return -1;
 }
 ChiFunction::ChiFunction() : MathFunction("Chi", 1) {
 	names[0].case_sensitive = true;
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
-bool ChiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
-bool ChiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex();}
+bool ChiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsPositive();}
+bool ChiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonNegative();}
 bool ChiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
 int ChiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	FR_FUNCTION(coshint)
+	if(vargs[0].isVector()) return 0;
+	mstruct = vargs[0]; 
+	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
+	if(mstruct.isNumber()) {
+		if(mstruct.number().isNegative()) {
+			if(!eo.allow_complex) return -1;
+			mstruct.negate();
+			mstruct.transform(this);
+			mstruct += CALCULATOR->v_pi;
+			mstruct.last() *= nr_one_i;
+			return 1;
+		}
+		Number nr(mstruct.number()); 
+		if(nr.coshint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
+			mstruct.set(nr); 
+			return 1;
+		}
+	}
+	return -1;
 }
 
 IGammaFunction::IGammaFunction() : MathFunction("igamma", 2) {
@@ -6148,7 +6226,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		use_abs = 1;
 	}
 	
-	int b = mstruct.integrate(x_var, eo2, true, use_abs, definite_integral);
+	int b = mstruct.integrate(x_var, eo2, true, use_abs, definite_integral, true, 4);
 	if(b < 0) {
 		mstruct = mbak;
 		mstruct.replace(x_var, vargs[1]);
@@ -6168,7 +6246,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		mstruct = mstruct_pre;
 		mstruct.eval(eo2);
 		eo2.do_polynomial_division = eo.do_polynomial_division;
-		int b2 = mstruct.integrate(x_var, eo2, true, use_abs, definite_integral);
+		int b2 = mstruct.integrate(x_var, eo2, true, use_abs, definite_integral, true, 4);
 		if(b2 < 0) {
 			mstruct = mbak;
 			mstruct.replace(x_var, vargs[1]);
@@ -6198,9 +6276,9 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			mstruct += CALCULATOR->v_C;
 			return 1;
 #if MPFR_VERSION_MAJOR < 4
-		} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Ci, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Shi, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Chi, true) <= 0 && (mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 || m1.representsNonNegative())) {
+		} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0) {
 #else
-		} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Ci, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Shi, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_Chi, true) <= 0 && (mstruct.containsFunction(CALCULATOR->f_Si, true) <= 0 || m1.representsNonNegative())) {
+		} else if(mstruct.containsFunction(this, true) <= 0) {
 #endif
 			CALCULATOR->endTemporaryStopMessages(true);
 			MathStructure mstruct_lower(mstruct);
@@ -6221,7 +6299,6 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	}
 
 	CALCULATOR->endTemporaryStopMessages();
-	
 	if(eo.approximation != APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_APPROXIMATE;
 	if(mstruct.containsInterval() && eo.approximation == APPROXIMATION_EXACT) {
 		CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
@@ -6251,10 +6328,14 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				break;
 			}
 			merr.calculatesub(eo2, eo2, true);
+			if(CALCULATOR->aborted() || (eo.approximation == APPROXIMATION_EXACT && merr.countTotalChildren() > 200)) {
+				mstruct.replace(x_var, vargs[1]);
+				CALCULATOR->endTemporaryStopIntervalArithmetic();
+				return -1;
+			}
 		}
 		if(!b_unknown_precision) b_unknown_precision = merr.containsFunction(CALCULATOR->f_diff, true) > 0;
 		bool b_exact = merr.isZero();
-		
 		Number nr_samples;
 		if(b_exact) {
 			if(numerical_integration(mstruct, x_var, eo2, nr_begin, nr_end, 10)) {

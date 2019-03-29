@@ -3823,6 +3823,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				calculateMultiplyLast(eo);
 				return 1;
 			}
+		} else if(eo.transform_trigonometric_functions && mstruct.function() == CALCULATOR->f_sinc && mstruct.size() == 1 && equals(mstruct[0])) {
+			// sinc(x)*x=sin(x)
+			calculateMultiply(CALCULATOR->getRadUnit(), eo);
+			transform(CALCULATOR->f_sin);
+			if(eo.calculate_functions) calculateFunctions(eo, false);
+			MERGE_APPROX_AND_PREC(mstruct)
+			return 1;
 		}
 	}
 	if(isZero()) {
@@ -4617,7 +4624,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							return 1;
 						}
 					}
-					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, false, true, true) <= 0 || (CHILD(0).isUnit() && CHILD(0).unit() == CALCULATOR->u_rad) || (CHILD(0).isFunction() && CHILD(0).representsNumber(false))) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
+					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, false, true, true) <= 0 || (CHILD(0).isUnit() && CHILD(0).unit() == CALCULATOR->getRadUnit()) || (CHILD(0).isFunction() && CHILD(0).representsNumber(false))) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
 						clear(true);
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
@@ -4751,6 +4758,14 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
 					}
+				} else if(eo.transform_trigonometric_functions && o_function == CALCULATOR->f_sinc && SIZE == 1 && CHILD(0) == mstruct) {
+					// sinc(x)*x=sin(x)
+					CHILD(0).calculateMultiply(MathStructure(CALCULATOR->getRadUnit()), eo);
+					CHILD_UPDATED(0)
+					setFunction(CALCULATOR->f_sin);
+					if(eo.calculate_functions) calculateFunctions(eo, false);
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 1;
 				} else if(eo.transform_trigonometric_functions && mstruct.isFunction() && mstruct.size() == 1 && eo.protected_function != mstruct.function()) {
 					if(o_function == CALCULATOR->f_tan && SIZE == 1) {
 						if(mstruct.function() == CALCULATOR->f_cos && mstruct[0] == CHILD(0)) {
@@ -4868,12 +4883,12 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							}
 						}
 					}
-					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, false, true, true) <= 0 || (isUnit() && unit() == CALCULATOR->u_rad) || (isFunction() && representsNumber(false))) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
+					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, false, true, true) <= 0 || (isUnit() && unit() == CALCULATOR->getRadUnit()) || (isFunction() && representsNumber(false))) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
 						clear(true); 
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
 					}
-					if(isZero() && !mstruct.representsUndefined(true, true, !eo.assume_denominators_nonzero) && (!eo.keep_zero_units || mstruct.containsType(STRUCT_UNIT, false, true, true) <= 0 || (mstruct.isUnit() && mstruct.unit() == CALCULATOR->u_rad)) && mstruct.representsNonMatrix()) {
+					if(isZero() && !mstruct.representsUndefined(true, true, !eo.assume_denominators_nonzero) && (!eo.keep_zero_units || mstruct.containsType(STRUCT_UNIT, false, true, true) <= 0 || (mstruct.isUnit() && mstruct.unit() == CALCULATOR->getRadUnit())) && mstruct.representsNonMatrix()) {
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 2;
 					}
@@ -22405,11 +22420,11 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				inverse();
 				multiply(mexp);
 			} else if(o_function == CALCULATOR->f_Si && SIZE == 1) {
-				setFunction(CALCULATOR->f_sin);
-				MathStructure marg(CHILD(0));
+				setFunction(CALCULATOR->f_sinc);
+				CHILD(0).divide(CALCULATOR->getRadUnit());
+				CHILD_UPDATED(0)
 				MathStructure mdiff(CHILD(0));
 				mdiff.differentiate(x_var, eo);
-				divide(marg);
 				multiply(mdiff);
 			} else if(o_function == CALCULATOR->f_Ci && SIZE == 1) {
 				setFunction(CALCULATOR->f_cos);
@@ -23656,6 +23671,16 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 			}
 		}
 		return false;
+	} else if(mstruct.function() == CALCULATOR->f_sinc && mstruct.size() == 1) {
+		MathStructure mexp, mmul, madd;
+		if(mfac.isOne() && mpow.isNumber() && mpow.number().isInteger() && mpow.number().isLessThanOrEqualTo(100) && mpow.number().isGreaterThanOrEqualTo(-2) && !mpow.isZero() && integrate_info(mstruct[0], x_var, madd, mmul, mexp) && mexp.isOne()) {
+			if(mpow.isOne()) {
+				mstruct[0] *= CALCULATOR->getRadUnit();
+				mstruct.setFunction(CALCULATOR->f_Si);
+				if(!mmul.isOne()) mstruct.divide(mmul);
+				return true;
+			}
+		}
 	} else if(mstruct.function() == CALCULATOR->f_sin && mstruct.size() == 1) {
 		MathStructure mexp, mmul, madd;
 		if(mpow.isNumber() && mpow.number().isInteger() && mpow.number().isLessThanOrEqualTo(100) && mpow.number().isGreaterThanOrEqualTo(-2) && !mpow.isZero() && integrate_info(mstruct[0], x_var, madd, mmul, mexp, true)) {

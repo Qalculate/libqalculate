@@ -1,3 +1,10 @@
+2019-03-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Calculation of Si(), Ci(), Shi(), and Chi()
+	* Integration of sinc()
+	* sinc(x)*x=sin(x)
+	* Use sinc() for derivative of Si()
+
 2019-03-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix atomic unit of velocity

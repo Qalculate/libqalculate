@@ -28,6 +28,7 @@
 #define FROM_BIT_PRECISION(p) ((::floor((p) / 3.3219281)))
 
 #define PRINT_MPFR(x, y) mpfr_out_str(stdout, y, 0, x, MPFR_RNDU); cout << endl;
+#define PRINT_MPZ(x, y) mpz_out_str(stdout, y, x); cout << endl;
 
 #define CREATE_INTERVAL (CALCULATOR ? CALCULATOR->usesIntervalArithmetic() : true)
 
@@ -6395,10 +6396,271 @@ bool Number::logint() {
 	}
 	return true;
 }
-bool Number::sinint() {return false;}
-bool Number::sinhint() {return false;}
-bool Number::cosint() {return false;}
-bool Number::coshint() {return false;}
+bool Number::sinint() {
+	if(isPlusInfinity()) {pi(); multiply(2); return true;}
+	if(isMinusInfinity()) {pi(); multiply(-2); return true;}
+	if(isZero()) return true;
+	if(isGreaterThan(200) || isLessThan(-200)) return false;
+	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
+	if(isInterval()) {
+		Number nr_lower(lowerEndPoint());
+		Number nr_upper(upperEndPoint());
+		if(!nr_lower.sinint() || !nr_upper.sinint()) {
+			set(nr_bak);
+			return false;
+		}
+		setInterval(nr_lower, nr_upper);
+		return true;
+	}
+	mpfr_clear_flags();
+	mpfr_t f_x, f_xi, f_y;
+	mpz_t z_i, z_fac;
+	mpz_inits(z_i, z_fac, NULL);
+	Number nr_round(*this);
+	nr_round.round();
+	nr_round.abs();
+	mpfr_inits2(mpfr_get_prec(fl_value) + nr_round.intValue(), f_x, f_xi, f_y, NULL);
+	mpfr_set(f_x, fl_value, MPFR_RNDN);
+	mpfr_set(f_y, fl_value, MPFR_RNDN);
+	mpz_set_ui(z_i, 1);
+	mpz_set_ui(z_fac, 1);
+	bool b = false;
+	for(size_t i = 0; i < 1000; i++) {
+		mpz_add_ui(z_i, z_i, 1);
+		mpz_mul(z_fac, z_fac, z_i);
+		mpz_add_ui(z_i, z_i, 1);
+		mpz_mul(z_fac, z_fac, z_i);
+		mpz_mul(z_fac, z_fac, z_i);
+		mpfr_set(f_xi, f_x, MPFR_RNDN);
+		mpfr_pow_z(f_xi, f_xi, z_i, MPFR_RNDN);
+		mpfr_div_z(f_xi, f_xi, z_fac, MPFR_RNDN);
+		mpz_divexact(z_fac, z_fac, z_i);
+		if(i % 2 == 0) mpfr_sub(f_y, f_y, f_xi, MPFR_RNDN);
+		else mpfr_add(f_y, f_y, f_xi, MPFR_RNDN);
+		mpfr_set(fl_value, f_y, CREATE_INTERVAL ? MPFR_RNDD : MPFR_RNDN);
+		if(mpfr_equal_p(fu_value, fl_value)) {b = true; break;}
+		mpfr_set(fu_value, f_y, CREATE_INTERVAL ? MPFR_RNDD : MPFR_RNDN);
+	}
+	if(!b) {
+		set(nr_bak);
+		return false;
+	}
+	if(CREATE_INTERVAL) mpfr_set(fu_value, f_y, MPFR_RNDU);
+	else mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	mpfr_clears(f_x, f_xi, f_y, NULL);
+	mpz_clears(z_i, z_fac, NULL);
+	if(!testFloatResult()) {
+		set(nr_bak);
+		return false;
+	}
+	b_approx = true;
+	return true;
+}
+bool Number::sinhint() {
+	if(isPlusInfinity()) {return true;}
+	if(isMinusInfinity()) {return true;}
+	if(isZero()) return true;
+	if(!isReal()) return false;
+	if(isGreaterThan(200) || isLessThan(-200)) return false;
+	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
+	if(isInterval()) {
+		Number nr_lower(lowerEndPoint());
+		Number nr_upper(upperEndPoint());
+		if(!nr_lower.sinhint() || !nr_upper.sinhint()) {
+			set(nr_bak);
+			return false;
+		}
+		setInterval(nr_lower, nr_upper);
+		return true;
+	}
+	mpfr_clear_flags();
+	mpfr_t f_x, f_xi, f_y;
+	mpz_t z_i, z_fac;
+	mpz_inits(z_i, z_fac, NULL);
+	Number nr_round(*this);
+	nr_round.round();
+	nr_round.abs();
+	mpfr_inits2(mpfr_get_prec(fl_value) + nr_round.intValue(), f_x, f_xi, f_y, NULL);
+	mpfr_set(f_x, fl_value, MPFR_RNDN);
+	mpfr_set(f_y, fl_value, MPFR_RNDN);
+	mpz_set_ui(z_i, 1);
+	mpz_set_ui(z_fac, 1);
+	bool b = false;
+	for(size_t i = 0; i < 1000; i++) {
+		mpz_add_ui(z_i, z_i, 1);
+		mpz_mul(z_fac, z_fac, z_i);
+		mpz_add_ui(z_i, z_i, 1);
+		mpz_mul(z_fac, z_fac, z_i);
+		mpz_mul(z_fac, z_fac, z_i);
+		mpfr_set(f_xi, f_x, MPFR_RNDN);
+		mpfr_pow_z(f_xi, f_xi, z_i, MPFR_RNDN);
+		mpfr_div_z(f_xi, f_xi, z_fac, MPFR_RNDN);
+		mpz_divexact(z_fac, z_fac, z_i);
+		mpfr_add(f_y, f_y, f_xi, MPFR_RNDN);
+		mpfr_set(fl_value, f_y, CREATE_INTERVAL ? MPFR_RNDD : MPFR_RNDN);
+		if(mpfr_equal_p(fu_value, fl_value)) {b = true; break;}
+		mpfr_set(fu_value, f_y, CREATE_INTERVAL ? MPFR_RNDD : MPFR_RNDN);
+	}
+	if(!b) {
+		set(nr_bak);
+		return false;
+	}
+	if(CREATE_INTERVAL) mpfr_set(fu_value, f_y, MPFR_RNDU);
+	else mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	mpfr_clears(f_x, f_xi, f_y, NULL);
+	mpz_clears(z_i, z_fac, NULL);
+	if(!testFloatResult()) {
+		set(nr_bak);
+		return false;
+	}
+	b_approx = true;
+	return true;
+}
+bool Number::cosint() {
+	if(isPlusInfinity()) {clear(true); return true;}
+	if(isZero()) {setMinusInfinity(true); return true;}
+	if(!isReal()) return false;
+	if(isGreaterThan(200) || isLessThan(-200)) return false;
+	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
+	if(isInterval()) {
+		Number nr_lower(lowerEndPoint());
+		Number nr_upper(upperEndPoint());
+		if(!nr_lower.cosint() || !nr_upper.cosint()) {
+			set(nr_bak);
+			return false;
+		}
+		setInterval(nr_lower, nr_upper);
+		return true;
+	}
+	bool b_neg = mpfr_sgn(fl_value) < 0;
+	if(b_neg) {
+		mpfr_neg(fl_value, fl_value, MPFR_RNDN);
+	}
+	mpfr_clear_flags();
+	mpfr_t f_x, f_xi, f_y, f_euler;
+	mpz_t z_i, z_fac;
+	mpz_inits(z_i, z_fac, NULL);
+	Number nr_round(*this);
+	nr_round.round();
+	nr_round.abs();
+	mpfr_inits2(mpfr_get_prec(fl_value) + nr_round.intValue(), f_x, f_xi, f_y, f_euler, NULL);
+	mpfr_set(f_x, fl_value, MPFR_RNDN);
+	mpfr_const_euler(f_euler, MPFR_RNDN);
+	mpfr_set(f_y, fl_value, MPFR_RNDN);
+	mpfr_log(f_y, f_y, MPFR_RNDN);
+	mpfr_add(f_y, f_y, f_euler, MPFR_RNDN);
+	mpz_set_ui(z_i, 0);
+	mpz_set_ui(z_fac, 1);
+	bool b = false;
+	for(size_t i = 0; i < 1000; i++) {
+		mpz_add_ui(z_i, z_i, 1);
+		mpz_mul(z_fac, z_fac, z_i);
+		mpz_add_ui(z_i, z_i, 1);
+		mpz_mul(z_fac, z_fac, z_i);
+		mpz_mul(z_fac, z_fac, z_i);
+		mpfr_set(f_xi, f_x, MPFR_RNDN);
+		mpfr_pow_z(f_xi, f_xi, z_i, MPFR_RNDN);
+		mpfr_div_z(f_xi, f_xi, z_fac, MPFR_RNDN);
+		mpz_divexact(z_fac, z_fac, z_i);
+		if(i % 2 == 0) mpfr_sub(f_y, f_y, f_xi, MPFR_RNDN);
+		else mpfr_add(f_y, f_y, f_xi, MPFR_RNDN);
+		mpfr_set(fl_value, f_y, CREATE_INTERVAL ? MPFR_RNDD : MPFR_RNDN);
+		if(mpfr_equal_p(fu_value, fl_value)) {b = true; break;}
+		mpfr_set(fu_value, f_y, CREATE_INTERVAL ? MPFR_RNDD : MPFR_RNDN);
+	}
+	if(!b) {
+		set(nr_bak);
+		return false;
+	}
+	if(CREATE_INTERVAL) mpfr_set(fu_value, f_y, MPFR_RNDU);
+	else mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	mpfr_clears(f_x, f_xi, f_y, f_euler, NULL);
+	mpz_clears(z_i, z_fac, NULL);
+	if(!testFloatResult()) {
+		set(nr_bak);
+		return false;
+	}
+	if(b_neg) {
+		if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
+		i_value->pi();
+	}
+	b_approx = true;
+	return true;
+}
+bool Number::coshint() {
+	if(isPlusInfinity()) {return true;}
+	if(isZero()) {setMinusInfinity(true); return true;}
+	if(!isReal()) return false;
+	if(isGreaterThan(200) || isLessThan(-200)) return false;
+	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
+	if(isInterval()) {
+		Number nr_lower(lowerEndPoint());
+		Number nr_upper(upperEndPoint());
+		if(!nr_lower.cosint() || !nr_upper.cosint()) {
+			set(nr_bak);
+			return false;
+		}
+		setInterval(nr_lower, nr_upper);
+		return true;
+	}
+	bool b_neg = mpfr_sgn(fl_value) < 0;
+	if(b_neg) {
+		mpfr_neg(fl_value, fl_value, MPFR_RNDN);
+	}
+	mpfr_clear_flags();
+	mpfr_t f_x, f_xi, f_y, f_euler;
+	mpz_t z_i, z_fac;
+	mpz_inits(z_i, z_fac, NULL);
+	Number nr_round(*this);
+	nr_round.round();
+	nr_round.abs();
+	mpfr_inits2(mpfr_get_prec(fl_value) + nr_round.intValue(), f_x, f_xi, f_y, f_euler, NULL);
+	mpfr_set(f_x, fl_value, MPFR_RNDN);
+	mpfr_const_euler(f_euler, MPFR_RNDN);
+	mpfr_set(f_y, fl_value, MPFR_RNDN);
+	mpfr_log(f_y, f_y, MPFR_RNDN);
+	mpfr_add(f_y, f_y, f_euler, MPFR_RNDN);
+	mpz_set_ui(z_i, 0);
+	mpz_set_ui(z_fac, 1);
+	bool b = false;
+	for(size_t i = 0; i < 1000; i++) {
+		mpz_add_ui(z_i, z_i, 1);
+		mpz_mul(z_fac, z_fac, z_i);
+		mpz_add_ui(z_i, z_i, 1);
+		mpz_mul(z_fac, z_fac, z_i);
+		mpz_mul(z_fac, z_fac, z_i);
+		mpfr_set(f_xi, f_x, MPFR_RNDN);
+		mpfr_pow_z(f_xi, f_xi, z_i, MPFR_RNDN);
+		mpfr_div_z(f_xi, f_xi, z_fac, MPFR_RNDN);
+		mpz_divexact(z_fac, z_fac, z_i);
+		mpfr_add(f_y, f_y, f_xi, MPFR_RNDN);
+		mpfr_set(fl_value, f_y, CREATE_INTERVAL ? MPFR_RNDD : MPFR_RNDN);
+		if(mpfr_equal_p(fu_value, fl_value)) {b = true; break;}
+		mpfr_set(fu_value, f_y, CREATE_INTERVAL ? MPFR_RNDD : MPFR_RNDN);
+	}
+	if(!b) {
+		set(nr_bak);
+		return false;
+	}
+	if(CREATE_INTERVAL) mpfr_set(fu_value, f_y, MPFR_RNDU);
+	else mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	mpfr_clears(f_x, f_xi, f_y, f_euler, NULL);
+	mpz_clears(z_i, z_fac, NULL);
+	if(!testFloatResult()) {
+		set(nr_bak);
+		return false;
+	}
+	if(b_neg) {
+		if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
+		i_value->pi();
+	}
+	b_approx = true;
+	return true;
+}
 
 bool recfact(mpz_ptr ret, long int start, long int n) {
 	long int i;
