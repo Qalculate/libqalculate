@@ -31,7 +31,7 @@ void test_integration4(const MathStructure &mstruct) {
 	EvaluationOptions eo;
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	eo.assume_denominators_nonzero = true;
-	mstruct2.integrate(x_var, eo, true, 1);
+	mstruct2.integrate(x_var, eo, true, 1, false, true, 4);
 	mstruct2.eval(eo);
 	if(mstruct2.containsFunction(CALCULATOR->f_integrate)) {clear_errors(); return;}
 	mstruct2.differentiate(x_var, eo);
@@ -1673,8 +1673,8 @@ int main(int argc, char *argv[]) {
 	CALCULATOR->useIntervalArithmetic();
 	PrintOptions po = CALCULATOR->messagePrintOptions();
 	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-	/*po.show_ending_zeroes = false;
-	po.number_fraction_format = FRACTION_DECIMAL;*/
+	po.show_ending_zeroes = false;
+	po.number_fraction_format = FRACTION_DECIMAL;
 	CALCULATOR->setMessagePrintOptions(po);
 	
 	EvaluationOptions evalops;
@@ -1706,7 +1706,8 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	//test_integration();
+	test_integration();
+	return true;
 	//test_intervals(true);
 	
 	CALCULATOR->setVariableUnitsEnabled(true);
