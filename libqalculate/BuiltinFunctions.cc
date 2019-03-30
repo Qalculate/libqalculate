@@ -39,6 +39,8 @@
 #define RATIONAL_POLYNOMIAL_ARGUMENT_HV(i)			Argument *arg_poly##i = new Argument(); arg_poly##i->setRationalPolynomial(true); arg_poly##i->setHandleVector(true); setArgumentDefinition(i, arg_poly##i);
 
 extern string format_and_print(const MathStructure &mstruct);
+extern bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo);
+extern bool replace_intervals_f(MathStructure &mstruct);
 
 bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo);
 
@@ -2284,8 +2286,6 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 	}
 
-
-
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
@@ -2331,7 +2331,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct += nr_one;
 			mstruct ^= nr_half;
 			b = true;
-		} else if(f == CALCULATOR->f_atan) {
+		} else if(f == CALCULATOR->f_atan && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true)))) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
@@ -2339,6 +2339,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct += nr_one;
 			mstruct ^= nr_minus_half;
 			mstruct.multiply_nocopy(mmul);
+			cout << mstruct << endl;
 			b = true;
 		}
 	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
@@ -2793,7 +2794,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1, true);
 			b = true;
-		} else if(f == CALCULATOR->f_asin) {
+		} else if(f == CALCULATOR->f_asin && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true)))) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
@@ -2803,7 +2804,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct ^= nr_minus_half;
 			mstruct.multiply_nocopy(mmul);
 			b = true;
-		} else if(f == CALCULATOR->f_acos) {
+		} else if(f == CALCULATOR->f_acos && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true)))) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
@@ -3502,7 +3503,7 @@ int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(mstruct.function() == CALCULATOR->f_asinh) {
 			mstruct.setToChild(1, true);
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_acosh) {
+		} else if(mstruct.function() == CALCULATOR->f_acosh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT, true)) {
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
 			mstruct += nr_minus_one;
@@ -3511,7 +3512,7 @@ int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			*mmul ^= nr_half;
 			mstruct.multiply_nocopy(mmul);
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_atanh) {
+		} else if(mstruct.function() == CALCULATOR->f_atanh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT, true)) {
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
 			mstruct ^= nr_two;
@@ -3591,7 +3592,7 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(mstruct.function() == CALCULATOR->f_atanh) {
 			mstruct.setToChild(1, true);
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_asinh) {
+		} else if(mstruct.function() == CALCULATOR->f_asinh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT, true)) {
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
 			mstruct ^= nr_two;
@@ -3599,7 +3600,7 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			mstruct ^= nr_minus_half;
 			mstruct.multiply_nocopy(mmul);
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_acosh) {
+		} else if(mstruct.function() == CALCULATOR->f_acosh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT, true)) {
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
 			MathStructure *mmul2 = new MathStructure(mstruct);
@@ -4023,10 +4024,13 @@ int SincFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct.set(1, 1, 0, true);
 		return 1;
 	} else if(mstruct.representsNonZero(true)) {
+		bool b = replace_f_interval(mstruct, eo);
+		b = replace_intervals_f(mstruct) || b;
 		MathStructure *m_sin = new MathStructure(CALCULATOR->f_sin, &mstruct, NULL);
 		if(CALCULATOR->getRadUnit()) (*m_sin)[0].multiply(CALCULATOR->getRadUnit());
 		mstruct.inverse();
 		mstruct.multiply_nocopy(m_sin);
+		if(b) mstruct.eval(eo);
 		return 1;
 	}
 	return -1;
@@ -5875,6 +5879,12 @@ int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			mstruct *= nr_minus_half;
 			return 1;
 		}
+		if(nr.hasImaginaryPart() && !nr.hasRealPart()) {
+			mstruct.set(nr.imaginaryPart());
+			mstruct.transform(CALCULATOR->f_Shi);
+			mstruct *= nr_one_i;
+			return 1;
+		}
 		if(nr.sinint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
 			mstruct.set(nr); 
 			return 1;
@@ -5927,12 +5937,23 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		if(mstruct.number().isNegative()) {
 			if(!eo.allow_complex) return -1;
 			mstruct.negate();
+			if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 			mstruct.transform(this);
 			mstruct += CALCULATOR->v_pi;
 			mstruct.last() *= nr_one_i;
 			return 1;
 		}
-		Number nr(mstruct.number()); 
+		Number nr(mstruct.number());
+		if(nr.isComplex() && nr.hasImaginaryPart() && !nr.hasRealPart()) {
+			mstruct.set(nr.imaginaryPart());
+			if(nr.imaginaryPartIsNegative()) mstruct.negate();
+			mstruct.transform(CALCULATOR->f_Chi);
+			mstruct += CALCULATOR->v_pi;
+			mstruct.last() *= nr_half;
+			if(nr.imaginaryPartIsPositive()) mstruct.last() *= nr_one_i;
+			else mstruct.last() *= nr_minus_i;
+			return 1;
+		} 
 		if(nr.cosint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
 			mstruct.set(nr); 
 			return 1;
@@ -5963,6 +5984,13 @@ int ShiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number()); 
+		if(nr.hasImaginaryPart() && !nr.hasRealPart()) {
+			mstruct.set(nr.imaginaryPart());
+			if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+			mstruct.transform(CALCULATOR->f_Si);
+			mstruct *= nr_one_i;
+			return 1;
+		}
 		if(nr.sinhint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
 			mstruct.set(nr); 
 			return 1;
@@ -5998,7 +6026,18 @@ int ChiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct.last() *= nr_one_i;
 			return 1;
 		}
-		Number nr(mstruct.number()); 
+		Number nr(mstruct.number());
+		if(nr.isComplex() && nr.hasImaginaryPart() && !nr.hasRealPart()) {
+			mstruct.set(nr.imaginaryPart());
+			if(nr.imaginaryPartIsNegative()) mstruct.negate();
+			if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+			mstruct.transform(CALCULATOR->f_Ci);
+			mstruct += CALCULATOR->v_pi;
+			mstruct.last() *= nr_half;
+			if(nr.imaginaryPartIsPositive()) mstruct.last() *= nr_one_i;
+			else mstruct.last() *= nr_minus_i;
+			return 1;
+		} 
 		if(nr.coshint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
 			mstruct.set(nr); 
 			return 1;
