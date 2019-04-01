@@ -1240,6 +1240,40 @@ void show_calendars(const QalculateDateTime &date, bool indentation = true) {
 	//PUTS_CALENDAR(string(_("Egyptian:")), CALENDAR_EGYPTIAN);
 }
 
+Unit *default_angle_unit() {
+	switch(evalops.parse_options.angle_unit) {
+		case ANGLE_UNIT_DEGREES: {return CALCULATOR->getDegUnit();}
+		case ANGLE_UNIT_GRADIANS: {return CALCULATOR->getGraUnit();}
+		case ANGLE_UNIT_RADIANS: {return CALCULATOR->getRadUnit();}
+		default: {}
+	}
+	return NULL;
+}
+
+void remove_default_angle_unit(MathStructure &m) {
+	for(size_t i = 0; i < m.size(); i++) {
+		remove_default_angle_unit(m[i]);
+		if(m.isFunction() && m.function()->getArgumentDefinition(i + 1) && m.function()->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_ANGLE) {
+			if(m[i].isMultiplication() && m[i].last().isUnit() && !m[i].last().prefix() && m[i].last().unit() == default_angle_unit()) {
+				m[i].delChild(m[i].size(), true);
+			} else if(m[i].isAddition()) {
+				bool b = true;
+				for(size_t i2 = 0; i2 < m[i].size(); i2++) {
+					if(!m[i][i2].isMultiplication() || !m[i][i2].last().isUnit() || m[i][i2].last().prefix() || m[i][i2].last().unit() != default_angle_unit()) {
+						b = false;
+						break;
+					}
+				}
+				if(b) {
+					for(size_t i2 = 0; i2 < m[i].size(); i2++) {
+						m[i][i2].delChild(m[i][i2].size(), true);
+					}
+				}
+			}
+		}
+	}
+}
+
 void list_defs(bool in_interactive, char list_type = 0, string search_str = "") {
 #ifdef HAVE_LIBREADLINE
 	int rows, cols, rcount = 0;
@@ -2236,6 +2270,7 @@ int main(int argc, char *argv[]) {
 				for(size_t i = 1; i <= CALCULATOR->RPNStackSize(); i++) {
 					m = *CALCULATOR->getRPNRegister(i);
 					m.format(printops);
+					remove_default_angle_unit(m);
 					string regstr = m.print(printops);
 					if(!cfile) replace_quotation_marks(regstr);
 					printf("  %i:\t%s\n", (int) i, regstr.c_str());
@@ -3921,6 +3956,7 @@ void ViewThread::run() {
 		printops.allow_non_usable = false;
 		
 		m.format(printops);
+		remove_default_angle_unit(m);
 		result_text = m.print(printops);
 	
 		if(result_text == _("aborted")) {
