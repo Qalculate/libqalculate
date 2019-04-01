@@ -3312,8 +3312,10 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 		default: {
 			for(size_t i = 0; i < mstruct.size(); i++) {
 				if(mstruct.size() > 100 && aborted()) return NULL;
-				Unit *u = findMatchingUnit(mstruct[i]);
-				if(u) return u;
+				if(!mstruct.isFunction() || !mstruct.function()->getArgumentDefinition(i + 1) || mstruct.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) { 
+					Unit *u = findMatchingUnit(mstruct[i]);
+					if(u) return u;
+				}
 			}
 			break;
 		}
@@ -3711,8 +3713,10 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 			bool b = false;
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
 				if(mstruct_new.size() > 100 && aborted()) return mstruct;
-				mstruct_new[i] = convertToOptimalUnit(mstruct_new[i], eo, convert_to_si_units);
-				if(!b && !mstruct_new[i].equals(mstruct[i], true, true)) b = true;
+				if(!mstruct_new.isFunction() || !mstruct_new.function()->getArgumentDefinition(i + 1) || mstruct_new.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) { 
+					mstruct_new[i] = convertToOptimalUnit(mstruct_new[i], eo, convert_to_si_units);
+					if(!b && !mstruct_new[i].equals(mstruct[i], true, true)) b = true;
+				}
 			}
 			if(b) {
 				mstruct_new.childrenUpdated();

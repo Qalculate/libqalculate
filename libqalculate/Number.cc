@@ -6549,8 +6549,12 @@ bool Number::sinhint() {
 		setPrecisionAndApproximateFrom(*i_value);
 		return true;
 	}
-	if(isGreaterThan(1000) || isLessThan(-1000)) return false;
 	Number nr_bak(*this);
+	if(isNegative()) {
+		if(!negate() || !sinhint() || !negate()) {set(nr_bak); return false;}
+		return true;
+	}
+	if(isGreaterThan(1000)) return false;
 	if(!setToFloatingPoint()) return false;
 	if(isInterval()) {
 		Number nr_lower(lowerEndPoint());
@@ -6568,7 +6572,6 @@ bool Number::sinhint() {
 	mpz_inits(z_i, z_fac, NULL);
 	Number nr_round(*this);
 	nr_round.round();
-	nr_round.abs();
 	mpfr_inits2(mpfr_get_prec(fl_value) + nr_round.intValue(), f_x, f_xi, f_y, NULL);
 	mpfr_set(f_x, fl_value, MPFR_RNDN);
 	mpfr_set(f_y, fl_value, MPFR_RNDN);
@@ -6611,17 +6614,31 @@ bool Number::cosint() {
 	if(isZero()) {setMinusInfinity(true); return true;}
 	if(hasImaginaryPart() && !hasRealPart()) {
 		if(i_value->isNegative()) {
-			Number nr_i(*i_value);
-			if(!nr_i.negate() || !nr_i.coshint()) return false;
-			pi();
-			divide(-2);
+			set(*i_value, true);
+			negate();
+			if(!coshint()) return false;
+			Number nr_i;
+			nr_i.pi();
+			nr_i.divide(-2);
 			setImaginaryPart(nr_i);
 			return true;
 		} else if(i_value->isPositive()) {
-			Number nr_i(*i_value);
-			if(!nr_i.coshint()) return false;
-			pi();
-			divide(2);
+			set(*i_value, true);
+			if(!coshint()) return false;
+			Number nr_i;
+			nr_i.pi();
+			nr_i.divide(2);
+			setImaginaryPart(nr_i);
+			return true;
+		} else {
+			set(*i_value, true);
+			if(!coshint()) return false;
+			Number nr_i;
+			nr_i.pi();
+			nr_i.divide(2);
+			Number nr_low(nr_i);
+			nr_low.negate();
+			nr_i.setInterval(nr_low, nr_i);
 			setImaginaryPart(nr_i);
 			return true;
 		}
@@ -6772,24 +6789,45 @@ bool Number::coshint() {
 	if(isZero()) {setMinusInfinity(true); return true;}
 	if(hasImaginaryPart() && !hasRealPart()) {
 		if(i_value->isNegative()) {
-			Number nr_i(*i_value);
-			if(!nr_i.negate() || !nr_i.cosint()) return false;
-			pi();
-			divide(-2);
+			set(*i_value, true);
+			negate();
+			if(!cosint()) return false;
+			Number nr_i;
+			nr_i.pi();
+			nr_i.divide(-2);
 			setImaginaryPart(nr_i);
 			return true;
 		} else if(i_value->isPositive()) {
-			Number nr_i(*i_value);
-			if(!nr_i.cosint()) return false;
-			pi();
-			divide(2);
+			set(*i_value, true);
+			if(!cosint()) return false;
+			Number nr_i;
+			nr_i.pi();
+			nr_i.divide(2);
+			setImaginaryPart(nr_i);
+			return true;
+		} else {
+			set(*i_value, true);
+			if(!cosint()) return false;
+			Number nr_i;
+			nr_i.pi();
+			nr_i.divide(2);
+			Number nr_low(nr_i);
+			nr_low.negate();
+			nr_i.setInterval(nr_low, nr_i);
 			setImaginaryPart(nr_i);
 			return true;
 		}
 	}
 	if(!isReal()) return false;
-	if(isGreaterThan(1000) || isLessThan(-1000)) return false;
 	Number nr_bak(*this);
+	if(isNegative()) {
+		if(!negate() || !coshint() || !negate()) {set(nr_bak); return false;}
+		if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
+		i_value->pi();
+		setPrecisionAndApproximateFrom(*i_value);
+		return true;
+	}
+	if(isGreaterThan(1000)) return false;
 	if(!setToFloatingPoint()) return false;
 	if(isInterval()) {
 		Number nr_lower(lowerEndPoint());
@@ -6806,17 +6844,12 @@ bool Number::coshint() {
 		}
 		return true;
 	}
-	bool b_neg = mpfr_sgn(fl_value) < 0;
-	if(b_neg) {
-		mpfr_neg(fl_value, fl_value, MPFR_RNDN);
-	}
 	mpfr_clear_flags();
 	mpfr_t f_x, f_xi, f_y, f_euler;
 	mpz_t z_i, z_fac;
 	mpz_inits(z_i, z_fac, NULL);
 	Number nr_round(*this);
 	nr_round.round();
-	nr_round.abs();
 	mpfr_inits2(mpfr_get_prec(fl_value) + nr_round.intValue(), f_x, f_xi, f_y, f_euler, NULL);
 	mpfr_set(f_x, fl_value, MPFR_RNDN);
 	mpfr_const_euler(f_euler, MPFR_RNDN);
@@ -6853,10 +6886,6 @@ bool Number::coshint() {
 	if(!testFloatResult()) {
 		set(nr_bak);
 		return false;
-	}
-	if(b_neg) {
-		if(!i_value) {i_value = new Number(); i_value->markAsImaginaryPart();}
-		i_value->pi();
 	}
 	b_approx = true;
 	return true;

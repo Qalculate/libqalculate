@@ -12542,6 +12542,29 @@ bool separate_unit_vars(MathStructure &m, const EvaluationOptions &eo, bool only
 	return b;
 }
 
+bool convert_to_default_angle_unit(MathStructure &m, const EvaluationOptions &eo) {
+	bool b = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(convert_to_default_angle_unit(m[i], eo)) b = true;
+		if(m.isFunction() && m.function()->getArgumentDefinition(i + 1) && m.function()->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_ANGLE) {
+			Unit *u = NULL;
+			if(eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES) u = CALCULATOR->getDegUnit();
+			else if(eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS) u = CALCULATOR->getGraUnit();
+			if(u && m[i].contains(CALCULATOR->getRadUnit(), false, false, false)) {
+				m[i].divide(u);
+				m[i].multiply(u);
+				EvaluationOptions eo2 = eo;
+				if(eo.approximation == APPROXIMATION_TRY_EXACT) eo2.approximation = APPROXIMATION_APPROXIMATE;
+				eo2.calculate_functions = false;
+				eo2.sync_units = true;
+				m[i].calculatesub(eo2, eo2, true);
+				b = true;
+			}
+		}
+	}
+	return b;
+}
+
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(m_type == STRUCT_NUMBER) {
@@ -12570,7 +12593,6 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
 		return *this;
 	}
-	
 	if(eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 		if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, 0);
 		if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, true, true)) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
@@ -12596,7 +12618,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			eo3.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 			solve_intervals(*this, eo3, feo);
 		}
-		calculate_differentiable_functions(*this, feo);
+		if(eo.calculate_functions) calculate_differentiable_functions(*this, feo);
 	} else if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA) {
 		if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, -1);
 		if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, true, true)) || containsInterval(true, false, false, true, true) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
@@ -12787,7 +12809,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				}
 			}
 		}
-		calculate_differentiable_functions(*this, feo);
+		if(eo.calculate_functions) calculate_differentiable_functions(*this, feo);
 	} else if(eo.calculate_functions) {
 		calculateFunctions(feo);
 	}
@@ -12797,7 +12819,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
 		return *this;
 	}
-	
+
 	if(eo2.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC || eo2.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT || (eo2.approximation == APPROXIMATION_APPROXIMATE && (containsUnknowns() || containsInterval(false, true, false, false)))) {
@@ -12893,6 +12915,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	simplify_functions(*this, eo2, feo);
 
 	if(CALCULATOR->aborted()) return *this;
+	
+	if(eo.structuring != STRUCTURING_NONE && (eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS || eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES)) convert_to_default_angle_unit(*this, eo);
 
 	if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
 	
@@ -18441,6 +18465,12 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		mabs.eval(eo2);
 		marg.eval(eo2);
+		switch(eo2.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg *= CALCULATOR->getDegUnit();} break;}
+			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg *= CALCULATOR->getGraUnit();} break;}
+			case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg *= CALCULATOR->getRadUnit();} break;}
+			default: {break;}
+		}
 		set(marg, true);
 		transform(CALCULATOR->f_sin);
 		multiply(nr_one_i);
@@ -22421,7 +22451,6 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				multiply(mexp);
 			} else if(o_function == CALCULATOR->f_Si && SIZE == 1) {
 				setFunction(CALCULATOR->f_sinc);
-				CHILD(0).divide(CALCULATOR->getRadUnit());
 				CHILD_UPDATED(0)
 				MathStructure mdiff(CHILD(0));
 				mdiff.differentiate(x_var, eo);
@@ -22430,6 +22459,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				setFunction(CALCULATOR->f_cos);
 				MathStructure marg(CHILD(0));
 				MathStructure mdiff(CHILD(0));
+				CHILD(0) *= CALCULATOR->getRadUnit();
 				mdiff.differentiate(x_var, eo);
 				divide(marg);
 				multiply(mdiff);
@@ -23675,7 +23705,6 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 		MathStructure mexp, mmul, madd;
 		if(mfac.isOne() && mpow.isNumber() && mpow.number().isInteger() && mpow.number().isLessThanOrEqualTo(100) && mpow.number().isGreaterThanOrEqualTo(-2) && !mpow.isZero() && integrate_info(mstruct[0], x_var, madd, mmul, mexp) && mexp.isOne()) {
 			if(mpow.isOne()) {
-				mstruct[0] *= CALCULATOR->getRadUnit();
 				mstruct.setFunction(CALCULATOR->f_Si);
 				if(!mmul.isOne()) mstruct.divide(mmul);
 				return true;
@@ -23749,11 +23778,13 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 				if(mfacexp.isMinusOne() && !mexp.isZero()) {
 					if(madd.isZero()) {
 						if(mpow.isOne()) {
+							mstruct[0] /= CALCULATOR->getRadUnit();
 							mstruct.setFunction(CALCULATOR->f_Si);
 							if(!mexp.isOne()) mstruct /= mexp;
 							return true;
 						} else if(mpow.number().isTwo()) {
 							mstruct[0] *= nr_two;
+							mstruct[0] /= CALCULATOR->getRadUnit();
 							mstruct.setFunction(CALCULATOR->f_Ci);
 							if(!mexp.isOne()) mstruct /= mexp;
 							mstruct.negate();
@@ -23762,6 +23793,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 							mstruct *= nr_half;
 							return true;
 						} else if(mpow.number() == 3) {
+							mstruct[0] /= CALCULATOR->getRadUnit();
 							mstruct.setFunction(CALCULATOR->f_Si);
 							MathStructure mterm2(mstruct);
 							mstruct[0] *= nr_three;
@@ -23776,14 +23808,12 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 						mstruct = x_var;
 						if(!mexp.isOne()) mstruct ^= mexp;
 						if(!mmul.isOne()) mstruct *= mmul;
-						if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 						mstruct.transform(CALCULATOR->f_Si);
 						if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit();
 						mstruct *= MathStructure(CALCULATOR->f_cos, &madd, NULL);
 						mterm2 = x_var;
 						if(!mexp.isOne()) mterm2 ^= mexp;
 						if(!mmul.isOne()) mterm2 *= mmul;
-						if(CALCULATOR->getRadUnit()) mterm2 *= CALCULATOR->getRadUnit();
 						mterm2.transform(CALCULATOR->f_Ci);
 						mterm2 *= MathStructure(CALCULATOR->f_sin, &madd, NULL);
 						mstruct += mterm2;
@@ -24035,11 +24065,13 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 				if(mfacexp.isMinusOne() && !mexp.isZero()) {
 					if(madd.isZero()) {
 						if(mpow.isOne()) {
+							mstruct[0] /= CALCULATOR->getRadUnit();
 							mstruct.setFunction(CALCULATOR->f_Ci);
 							if(!mexp.isOne()) mstruct /= mexp;
 							return true;
 						} else if(mpow.number().isTwo()) {
 							mstruct[0] *= nr_two;
+							mstruct[0] /= CALCULATOR->getRadUnit();
 							mstruct.setFunction(CALCULATOR->f_Ci);
 							if(!mexp.isOne()) mstruct /= mexp;
 							mstruct += x_var;
@@ -24047,6 +24079,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 							mstruct *= nr_half;
 							return true;
 						} else if(mpow.number() == 3) {
+							mstruct[0] /= CALCULATOR->getRadUnit();
 							mstruct.setFunction(CALCULATOR->f_Ci);
 							MathStructure mterm2(mstruct);
 							mstruct[0] *= nr_three;
@@ -24061,14 +24094,12 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 						mstruct = x_var;
 						if(!mexp.isOne()) mstruct ^= mexp;
 						if(!mmul.isOne()) mstruct *= mmul;
-						if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 						mstruct.transform(CALCULATOR->f_Ci);
 						if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit();
 						mstruct *= MathStructure(CALCULATOR->f_cos, &madd, NULL);
 						mterm2 = x_var;
 						if(!mexp.isOne()) mterm2 ^= mexp;
 						if(!mmul.isOne()) mterm2 *= mmul;
-						if(CALCULATOR->getRadUnit()) mterm2 *= CALCULATOR->getRadUnit();
 						mterm2.transform(CALCULATOR->f_Si);
 						mterm2 *= MathStructure(CALCULATOR->f_sin, &madd, NULL);
 						mstruct -= mterm2;

@@ -5843,30 +5843,16 @@ int EiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 }
 
 SiFunction::SiFunction() : MathFunction("Si", 1) {
-	names[0].case_sensitive = true;
-	Argument *arg = new AngleArgument();
-	arg->setHandleVector(true);
-	setArgumentDefinition(1, arg);
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
-bool SiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_number_angle_value(vargs[0]);}
-bool SiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_real_angle_value(vargs[0]);}
+bool SiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool SiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
 bool SiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0]; 
-	if(CALCULATOR->getRadUnit()) {
-		mstruct.convert(CALCULATOR->getRadUnit());
-		mstruct /= CALCULATOR->getRadUnit();
-	}
 	mstruct.eval(eo);
-	if(mstruct.isVector()) {
-		if(CALCULATOR->getRadUnit()) {
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				mstruct[i] *= CALCULATOR->getRadUnit();
-			}
-		}
-		return -1;
-	}
+	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number()); 
 		if(nr.isPlusInfinity()) {
@@ -5892,52 +5878,28 @@ int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	}
 	if(has_predominately_negative_sign(mstruct)) {
 		negate_struct(mstruct);
-		if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 		mstruct.transform(this);
 		mstruct.negate();
 		return 1;
-	}
-	if(CALCULATOR->getRadUnit()) {
-		if(mstruct.isVector()) {
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				mstruct[i] *= CALCULATOR->getRadUnit();
-			}
-		} else {
-			mstruct *= CALCULATOR->getRadUnit();
-		}
 	}
 	return -1;
 }
 CiFunction::CiFunction() : MathFunction("Ci", 1) {
 	names[0].case_sensitive = true;
-	Argument *arg = new AngleArgument();
-	arg->setHandleVector(true);
-	setArgumentDefinition(1, arg);
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
-bool CiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_real_angle_value(vargs[0]) && vargs[0].representsPositive(true);}
-bool CiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && is_number_angle_value(vargs[0]);}
+bool CiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsPositive();}
+bool CiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
 bool CiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonNegative(true);}
 int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0]; 
-	if(CALCULATOR->getRadUnit()) {
-		mstruct.convert(CALCULATOR->getRadUnit());
-		mstruct /= CALCULATOR->getRadUnit();
-	}
 	mstruct.eval(eo);
-	if(mstruct.isVector()) {
-		if(CALCULATOR->getRadUnit()) {
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				mstruct[i] *= CALCULATOR->getRadUnit();
-			}
-		}
-		return -1;
-	}
+	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
 		if(mstruct.number().isNegative()) {
 			if(!eo.allow_complex) return -1;
 			mstruct.negate();
-			if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 			mstruct.transform(this);
 			mstruct += CALCULATOR->v_pi;
 			mstruct.last() *= nr_one_i;
@@ -5959,15 +5921,6 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			return 1;
 		}
 	}
-	if(CALCULATOR->getRadUnit()) {
-		if(mstruct.isVector()) {
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				mstruct[i] *= CALCULATOR->getRadUnit();
-			}
-		} else {
-			mstruct *= CALCULATOR->getRadUnit();
-		}
-	}
 	return -1;
 }
 ShiFunction::ShiFunction() : MathFunction("Shi", 1) {
@@ -5986,7 +5939,6 @@ int ShiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		Number nr(mstruct.number()); 
 		if(nr.hasImaginaryPart() && !nr.hasRealPart()) {
 			mstruct.set(nr.imaginaryPart());
-			if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 			mstruct.transform(CALCULATOR->f_Si);
 			mstruct *= nr_one_i;
 			return 1;
@@ -5998,7 +5950,6 @@ int ShiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	if(has_predominately_negative_sign(mstruct)) {
 		negate_struct(mstruct);
-		if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 		mstruct.transform(this);
 		mstruct.negate();
 		return 1;
@@ -6030,7 +5981,6 @@ int ChiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(nr.isComplex() && nr.hasImaginaryPart() && !nr.hasRealPart()) {
 			mstruct.set(nr.imaginaryPart());
 			if(nr.imaginaryPartIsNegative()) mstruct.negate();
-			if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
 			mstruct.transform(CALCULATOR->f_Ci);
 			mstruct += CALCULATOR->v_pi;
 			mstruct.last() *= nr_half;
