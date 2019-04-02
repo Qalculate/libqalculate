@@ -7590,7 +7590,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		integer_rerun:
 
-		string mpz_str = printMPZ(ivalue, base, false, po.lower_case_numbers);
+		string mpz_str = printMPZ(ivalue, base, false, base != BASE_ROMAN_NUMERALS && po.lower_case_numbers);
 
 		if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 
@@ -7778,7 +7778,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		if(!exact && po.is_approximate) *po.is_approximate = true;
 
-		if(po.show_ending_zeroes && (!exact || approx) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
+		if(base != BASE_ROMAN_NUMERALS && po.show_ending_zeroes && (!exact || approx) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
 			precision = precision_base;
 			precision -= mpz_str.length();
 			if(dp_added) {
