@@ -1403,9 +1403,33 @@ int ImFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	if(mstruct.isNumber()) {
 		mstruct = mstruct.number().imaginaryPart();
 		return 1;
-	} else if(mstruct.representsReal()) {
+	} else if(mstruct.representsReal(!eo.keep_zero_units)) {
 		mstruct.clear();
 		return 1;
+	} else if(mstruct.isUnit_exp()) {
+		mstruct *= m_zero;
+		mstruct.swapChildren(1, 2);
+		return 1;
+	} else if(mstruct.isMultiplication() && mstruct.size() > 0) {
+		bool b = true;
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(!mstruct[i].isUnit_exp() && (i > 0 || (!mstruct[i].isNumber() && !mstruct[i].representsReal()))) {
+				b = false;
+			}
+		}
+		if(b) {
+			if(mstruct[0].isNumber()) {
+				mstruct[0] = mstruct[0].number().imaginaryPart();
+			} else if(!eo.keep_zero_units) {
+				mstruct.clear();
+			} else if(mstruct[0].isUnit_exp()) {
+				mstruct *= m_zero;
+				mstruct.swapChildren(1, 2);
+			} else {
+				mstruct[0].clear(true);
+			}
+			return 1;
+		}
 	}
 	return -1;
 }
@@ -1437,24 +1461,35 @@ int ReFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	if(mstruct.isNumber()) {
 		mstruct = mstruct.number().realPart();
 		return 1;
-	} else if(mstruct.representsReal()) {
+	} else if(mstruct.representsReal(true)) {
 		return 1;
+	} else if(mstruct.isMultiplication() && mstruct.size() > 0 && mstruct[0].isNumber()) {
+		bool b = true;
+		for(size_t i = 1; i < mstruct.size(); i++) {
+			if(!mstruct[i].isUnit_exp()) {
+				b = false;
+			}
+		}
+		if(b) {
+			mstruct[0] = mstruct[0].number().realPart();
+			return 1;
+		}
 	}
 	return -1;
 }
-bool ReFunction::representsPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsPositive();}
-bool ReFunction::representsNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNegative();}
-bool ReFunction::representsNonNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonNegative();}
-bool ReFunction::representsNonPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonPositive();}
-bool ReFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger();}
-bool ReFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
-bool ReFunction::representsRational(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsRational();}
-bool ReFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool ReFunction::representsPositive(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsPositive(allow_units);}
+bool ReFunction::representsNegative(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNegative(allow_units);}
+bool ReFunction::representsNonNegative(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNonNegative(allow_units);}
+bool ReFunction::representsNonPositive(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNonPositive(allow_units);}
+bool ReFunction::representsInteger(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsInteger(allow_units);}
+bool ReFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNumber(allow_units);}
+bool ReFunction::representsRational(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsRational(allow_units);}
+bool ReFunction::representsReal(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNumber(allow_units);}
 bool ReFunction::representsNonComplex(const MathStructure &vargs, bool) const {return true;}
 bool ReFunction::representsComplex(const MathStructure&, bool) const {return false;}
-bool ReFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonZero();}
-bool ReFunction::representsEven(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsEven();}
-bool ReFunction::representsOdd(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsOdd();}
+bool ReFunction::representsNonZero(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsReal(allow_units) && vargs[0].representsNonZero(true);}
+bool ReFunction::representsEven(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsEven(allow_units);}
+bool ReFunction::representsOdd(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsOdd(allow_units);}
 bool ReFunction::representsUndefined(const MathStructure&) const {return false;}
 
 SqrtFunction::SqrtFunction() : MathFunction("sqrt", 1) {

@@ -32402,12 +32402,17 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {CHILD(1) *= CALCULATOR->getDegUnit(); break;}
 					case ANGLE_UNIT_GRADIANS: {CHILD(1) *= CALCULATOR->getGraUnit(); break;}
-					default: {CHILD(1) *= CALCULATOR->getRadUnit();}
+					case ANGLE_UNIT_RADIANS: {CHILD(1) *= CALCULATOR->getRadUnit(); break;}
+					default: {}
 				}
 				CHILD(1).transform(CALCULATOR->f_sin);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
 				isolate_x_sub(eo, eo2, x_var, morig);
+				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) {
+					m1 /= CALCULATOR->getRadUnit();
+					m1.convert(CALCULATOR->getRadUnit());
+				}
 				m1.transform(CALCULATOR->f_re);
 				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
 				MathStructure *mreq1 = new MathStructure(m1);
@@ -32434,6 +32439,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				mreq2->isolate_x(eo2, eo);
 				add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 				add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) convert(CALCULATOR->getRadUnit());
 				calculatesub(eo2, eo, false);
 				return true;
 			} else if(CHILD(0).function() == CALCULATOR->f_acos && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
@@ -32442,12 +32448,19 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {CHILD(1) *= CALCULATOR->getDegUnit(); break;}
 					case ANGLE_UNIT_GRADIANS: {CHILD(1) *= CALCULATOR->getGraUnit(); break;}
-					default: {CHILD(1) *= CALCULATOR->getRadUnit();}
+					case ANGLE_UNIT_RADIANS: {CHILD(1) *= CALCULATOR->getRadUnit();}
+					default: {}
 				}
 				CHILD(1).transform(CALCULATOR->f_cos);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
 				isolate_x_sub(eo, eo2, x_var, morig);
+				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) {
+					m1 /= CALCULATOR->getRadUnit();
+					m1.convert(CALCULATOR->getRadUnit());
+					m2 /= CALCULATOR->getRadUnit();
+					m2.convert(CALCULATOR->getRadUnit());
+				}
 				m2.transform(CALCULATOR->f_im);
 				m1.transform(CALCULATOR->f_re);
 				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
@@ -32480,6 +32493,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				mreq3->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 				mreq3->calculatesub(eo2, eo, false);
 				add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) convert(CALCULATOR->getRadUnit());
 				calculatesub(eo2, eo, false);
 				return true;
 			} else if(CHILD(0).function() == CALCULATOR->f_atan && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
@@ -32488,12 +32502,17 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {CHILD(1) *= CALCULATOR->getDegUnit(); break;}
 					case ANGLE_UNIT_GRADIANS: {CHILD(1) *= CALCULATOR->getGraUnit(); break;}
-					default: {CHILD(1) *= CALCULATOR->getRadUnit();}
+					case ANGLE_UNIT_RADIANS: {CHILD(1) *= CALCULATOR->getRadUnit();}
+					default: {}
 				}
 				CHILD(1).transform(CALCULATOR->f_tan);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
 				isolate_x_sub(eo, eo2, x_var, morig);
+				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) {
+					m1 /= CALCULATOR->getRadUnit();
+					m1.convert(CALCULATOR->getRadUnit());
+				}
 				m1.transform(CALCULATOR->f_re);
 				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
 				MathStructure *mreq1 = new MathStructure(m1);
@@ -32520,6 +32539,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				mreq2->isolate_x(eo2, eo);
 				add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 				add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) convert(CALCULATOR->getRadUnit());
 				calculatesub(eo2, eo, false);
 				return true;
 			} else if(CHILD(0).function() == CALCULATOR->f_asinh && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {

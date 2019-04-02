@@ -3,6 +3,9 @@
 	* Do not use angle unit in Si() and Ci()
 	* Convert trigonometric arguments to selected angle unit
 	* Hide current angle unit from result in qalc
+	* Fix equations with inverse trigonometric functions when default angle unit is none
+	* Never show ending zeroes for roman numerals
+	* Allow units in im() and re()
 
 2019-03-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
