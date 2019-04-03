@@ -1389,7 +1389,6 @@ int LDegreeFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	return 1;
 }
 
-
 ImFunction::ImFunction() : MathFunction("im", 1) {
 	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setHandleVector(true);
@@ -1404,30 +1403,60 @@ int ImFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		mstruct = mstruct.number().imaginaryPart();
 		return 1;
 	} else if(mstruct.representsReal(!eo.keep_zero_units)) {
-		mstruct.clear();
+		mstruct.clear(true);
 		return 1;
 	} else if(mstruct.isUnit_exp()) {
 		mstruct *= m_zero;
 		mstruct.swapChildren(1, 2);
 		return 1;
+	} else if(mstruct.isPower() && mstruct[1].isNumber() && mstruct[1].number().denominatorIsTwo() && mstruct[0].representsNegative()) {
+		mstruct[0].negate();
+		Number num = mstruct[1].number().numerator();
+		num.rem(4);
+		if(num == 3 || num == -1) mstruct.negate();
+		return 1;
 	} else if(mstruct.isMultiplication() && mstruct.size() > 0) {
-		bool b = true;
-		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(!mstruct[i].isUnit_exp() && (i > 0 || (!mstruct[i].isNumber() && !mstruct[i].representsReal()))) {
-				b = false;
+		if(mstruct[0].isNumber()) {
+			Number nr = mstruct[0].number();
+			mstruct.delChild(1, true);
+			if(nr.hasImaginaryPart()) {
+				if(nr.hasRealPart()) {
+					MathStructure *madd = new MathStructure(mstruct);
+					mstruct.transform(CALCULATOR->f_re);
+					madd->transform(this);
+					madd->multiply(nr.realPart());
+					mstruct.multiply(nr.imaginaryPart());
+					mstruct.add_nocopy(madd);
+					return 1;
+				}
+				mstruct.transform(CALCULATOR->f_re);
+				mstruct.multiply(nr.imaginaryPart());
+				return 1;
+			}
+			mstruct.transform(this);
+			mstruct.multiply(nr.realPart());
+			return 1;
+		}
+		MathStructure *mreal = NULL;
+		for(size_t i = 0; i < mstruct.size();) {
+			if(mstruct[i].representsReal(true)) {
+				if(!mreal) {
+					mreal = new MathStructure(mstruct[i]);
+				} else {
+					mstruct[i].ref();
+					if(!mreal->isMultiplication()) mreal->transform(STRUCT_MULTIPLICATION);
+					mreal->addChild_nocopy(&mstruct[i]);
+				}
+				mstruct.delChild(i + 1);
+			} else {
+				i++;
 			}
 		}
-		if(b) {
-			if(mstruct[0].isNumber()) {
-				mstruct[0] = mstruct[0].number().imaginaryPart();
-			} else if(!eo.keep_zero_units) {
-				mstruct.clear();
-			} else if(mstruct[0].isUnit_exp()) {
-				mstruct *= m_zero;
-				mstruct.swapChildren(1, 2);
-			} else {
-				mstruct[0].clear(true);
-			}
+		if(mreal) {
+			if(mstruct.size() == 0) mstruct.clear(true);
+			else if(mstruct.size() == 1) mstruct.setToChild(1, true);
+			mstruct.transform(this);
+			mstruct.multiply_nocopy(mreal);
 			return 1;
 		}
 	}
@@ -1463,15 +1492,51 @@ int ReFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		return 1;
 	} else if(mstruct.representsReal(true)) {
 		return 1;
-	} else if(mstruct.isMultiplication() && mstruct.size() > 0 && mstruct[0].isNumber()) {
-		bool b = true;
-		for(size_t i = 1; i < mstruct.size(); i++) {
-			if(!mstruct[i].isUnit_exp()) {
-				b = false;
+	} else if(mstruct.isPower() && mstruct[1].isNumber() && mstruct[1].number().denominatorIsTwo() && mstruct[0].representsNegative()) {
+		mstruct.clear(true);
+		return 1;
+	} else if(mstruct.isMultiplication() && mstruct.size() > 0) {
+		if(mstruct[0].isNumber()) {
+			Number nr = mstruct[0].number();
+			mstruct.delChild(1, true);
+			if(nr.hasImaginaryPart()) {
+				if(nr.hasRealPart()) {
+					MathStructure *madd = new MathStructure(mstruct);
+					mstruct.transform(CALCULATOR->f_im);
+					madd->transform(this);
+					madd->multiply(nr.realPart());
+					mstruct.multiply(-nr.imaginaryPart());
+					mstruct.add_nocopy(madd);
+					return 1;
+				}
+				mstruct.transform(CALCULATOR->f_im);
+				mstruct.multiply(-nr.imaginaryPart());
+				return 1;
+			}
+			mstruct.transform(this);
+			mstruct.multiply(nr.realPart());
+			return 1;
+		}
+		MathStructure *mreal = NULL;
+		for(size_t i = 0; i < mstruct.size();) {
+			if(mstruct[i].representsReal(true)) {
+				if(!mreal) {
+					mreal = new MathStructure(mstruct[i]);
+				} else {
+					mstruct[i].ref();
+					if(!mreal->isMultiplication()) mreal->transform(STRUCT_MULTIPLICATION);
+					mreal->addChild_nocopy(&mstruct[i]);
+				}
+				mstruct.delChild(i + 1);
+			} else {
+				i++;
 			}
 		}
-		if(b) {
-			mstruct[0] = mstruct[0].number().realPart();
+		if(mreal) {
+			if(mstruct.size() == 0) mstruct.clear(true);
+			else if(mstruct.size() == 1) mstruct.setToChild(1, true);
+			mstruct.transform(this);
+			mstruct.multiply_nocopy(mreal);
 			return 1;
 		}
 	}
@@ -5790,13 +5855,18 @@ int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	mstruct = vargs[0];
 	bool b = false;
 	while(i) {
-		if(i > 0) mstruct.eval(eo);
 		if(CALCULATOR->aborted()) return 0;
 		if(!mstruct.differentiate(vargs[1], eo) && !b) {
 			return 0;
 		}
 		b = true;
 		i--;
+		if(i > 0) {
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_EXACT;
+			eo2.calculate_functions = false;
+			mstruct.eval(eo2);
+		}
 	}
 	return 1;
 }

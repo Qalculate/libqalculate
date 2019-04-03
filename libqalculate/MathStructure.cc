@@ -21820,13 +21820,6 @@ int MathStructure::containsRepresentativeOf(const MathStructure &mstruct, bool c
 			if(retval == 1) return 1;
 			else if(retval < 0) ret = retval;
 		}
-		if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
-			return ((KnownVariable*) o_variable)->get().containsRepresentativeOf(mstruct, check_variables, check_functions);
-		} else if(m_type == STRUCT_FUNCTION && check_functions) {
-			if(function_value) {
-				return function_value->containsRepresentativeOf(mstruct, check_variables, check_functions);
-			}
-		}
 	}
 	if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
 		return ((KnownVariable*) o_variable)->get().containsRepresentativeOf(mstruct, check_variables, check_functions);
@@ -22211,6 +22204,10 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 		set(m_one);
 		return true;
 	}
+	if(containsRepresentativeOf(x_var, true, true) == 0) {
+		clear(true);
+		return true;
+	}
 	switch(m_type) {
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
@@ -22234,43 +22231,27 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				}
 			}
 		}
-		case STRUCT_BITWISE_AND: {}
-		case STRUCT_BITWISE_OR: {}
-		case STRUCT_BITWISE_XOR: {}
-		case STRUCT_LOGICAL_OR: {}
-		case STRUCT_LOGICAL_XOR: {
-			if(containsRepresentativeOf(x_var, true, true) != 0) {
-				transform(CALCULATOR->f_diff);
-				addChild(x_var);
-				addChild(m_one);
-				return false;
-			}
-			clear(true);
-			break;
-		}
 		case STRUCT_COMPARISON: {
-			if(containsRepresentativeOf(x_var, true, true) != 0) {
-				if(ct_comp == COMPARISON_GREATER || ct_comp == COMPARISON_EQUALS_GREATER || ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS) {
-					if(!CHILD(1).isZero()) CHILD(0) -= CHILD(1);
-					SET_CHILD_MAP(0)
-					if(ct_comp == COMPARISON_GREATER || ct_comp == COMPARISON_EQUALS_LESS) negate();
-					MathStructure mstruct(*this);
-					MathStructure mstruct2(*this);
-					transform(CALCULATOR->f_heaviside);
-					transform(CALCULATOR->f_dirac);
-					mstruct2.transform(CALCULATOR->f_dirac);
-					multiply(mstruct2);
-					if(ct_comp == COMPARISON_EQUALS_GREATER || ct_comp == COMPARISON_EQUALS_LESS) multiply_nocopy(new MathStructure(2, 1, 0));
-					else multiply_nocopy(new MathStructure(-2, 1, 0));
-					mstruct.differentiate(x_var, eo);
-					multiply(mstruct);
-					return true;
-				}
-				transform(CALCULATOR->f_diff);
-				addChild(x_var);
-				addChild(m_one);
-				return false;
+			if(ct_comp == COMPARISON_GREATER || ct_comp == COMPARISON_EQUALS_GREATER || ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS) {
+				if(!CHILD(1).isZero()) CHILD(0) -= CHILD(1);
+				SET_CHILD_MAP(0)
+				if(ct_comp == COMPARISON_GREATER || ct_comp == COMPARISON_EQUALS_LESS) negate();
+				MathStructure mstruct(*this);
+				MathStructure mstruct2(*this);
+				transform(CALCULATOR->f_heaviside);
+				transform(CALCULATOR->f_dirac);
+				mstruct2.transform(CALCULATOR->f_dirac);
+				multiply(mstruct2);
+				if(ct_comp == COMPARISON_EQUALS_GREATER || ct_comp == COMPARISON_EQUALS_LESS) multiply_nocopy(new MathStructure(2, 1, 0));
+				else multiply_nocopy(new MathStructure(-2, 1, 0));
+				mstruct.differentiate(x_var, eo);
+				multiply(mstruct);
+				return true;
 			}
+			transform(CALCULATOR->f_diff);
+			addChild(x_var);
+			addChild(m_one);
+			return false;
 		}
 		case STRUCT_UNIT: {}
 		case STRUCT_NUMBER: {
@@ -22288,29 +22269,33 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 			bool x_in_base = CHILD(0).containsRepresentativeOf(x_var, true, true) != 0;
 			bool x_in_exp = CHILD(1).containsRepresentativeOf(x_var, true, true) != 0;
 			if(x_in_base && !x_in_exp) {
-				MathStructure exp_mstruct(CHILD(1));
-				MathStructure base_mstruct(CHILD(0));
+				MathStructure *exp_mstruct = new MathStructure(CHILD(1));
+				MathStructure *base_mstruct = new MathStructure(CHILD(0));
 				if(!CHILD(1).isNumber() || !CHILD(1).number().add(-1)) CHILD(1) += m_minus_one;
-				multiply(exp_mstruct);
-				base_mstruct.differentiate(x_var, eo);
-				multiply(base_mstruct);
+				multiply_nocopy(exp_mstruct);
+				base_mstruct->differentiate(x_var, eo);
+				multiply_nocopy(base_mstruct);
 			} else if(!x_in_base && x_in_exp) {
-				MathStructure exp_mstruct(CHILD(1));
-				MathStructure mstruct(CALCULATOR->f_ln, &CHILD(0), NULL);
-				multiply(mstruct);
-				exp_mstruct.differentiate(x_var, eo);
-				multiply(exp_mstruct);
+				MathStructure *exp_mstruct = new MathStructure(CHILD(1));
+				exp_mstruct->differentiate(x_var, eo);
+				if(CHILD(0).isVariable() && CHILD(0).variable() == CALCULATOR->v_e) {
+					multiply_nocopy(exp_mstruct);
+				} else {
+					MathStructure *mstruct = new MathStructure(CALCULATOR->f_ln, &CHILD(0), NULL);
+					multiply_nocopy(mstruct);
+					multiply_nocopy(exp_mstruct);
+				}
 			} else if(x_in_base && x_in_exp) {
-				MathStructure exp_mstruct(CHILD(1));
-				MathStructure base_mstruct(CHILD(0));
-				exp_mstruct.differentiate(x_var, eo);
-				base_mstruct.differentiate(x_var, eo);
-				base_mstruct /= CHILD(0);
-				base_mstruct *= CHILD(1);
-				MathStructure mstruct(CALCULATOR->f_ln, &CHILD(0), NULL);
-				mstruct *= exp_mstruct;
-				mstruct += base_mstruct;
-				multiply(mstruct);
+				MathStructure *exp_mstruct = new MathStructure(CHILD(1));
+				MathStructure *base_mstruct = new MathStructure(CHILD(0));
+				exp_mstruct->differentiate(x_var, eo);
+				base_mstruct->differentiate(x_var, eo);
+				base_mstruct->divide(CHILD(0));
+				base_mstruct->multiply(CHILD(1));
+				MathStructure *mstruct = new MathStructure(CALCULATOR->f_ln, &CHILD(0), NULL);
+				mstruct->multiply_nocopy(exp_mstruct);
+				mstruct->add_nocopy(base_mstruct);
+				multiply_nocopy(mstruct);
 			} else {
 				clear(true);
 			}
@@ -22318,45 +22303,37 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 		}
 		case STRUCT_FUNCTION: {
 			if(o_function == CALCULATOR->f_sqrt && SIZE == 1) {
-				if(CHILD(0).containsRepresentativeOf(x_var, true, true) != 0) {
-					MathStructure base_mstruct(CHILD(0));
-					raise(m_minus_one);
-					multiply(nr_half);
-					base_mstruct.differentiate(x_var, eo);
-					multiply(base_mstruct);
-				} else {
-					clear(true);
-				}
+				MathStructure *base_mstruct = new MathStructure(CHILD(0));
+				raise(m_minus_one);
+				multiply(nr_half);
+				base_mstruct->differentiate(x_var, eo);
+				multiply_nocopy(base_mstruct);
 			} else if(o_function == CALCULATOR->f_root && THIS_VALID_ROOT) {
-				if(CHILD(0).containsRepresentativeOf(x_var, true, true) != 0) {
-					MathStructure base_mstruct(CHILD(0));
-					MathStructure mexp(CHILD(1));
-					mexp.negate();
-					mexp += m_one;
-					raise(mexp);
-					divide(CHILD(0)[1]);
-					base_mstruct.differentiate(x_var, eo);
-					multiply(base_mstruct);
-				} else {
-					clear(true);
-				}
+				MathStructure *base_mstruct = new MathStructure(CHILD(0));
+				MathStructure *mexp = new MathStructure(CHILD(1));
+				mexp->negate();
+				mexp->add(m_one);
+				raise_nocopy(mexp);
+				divide(CHILD(0)[1]);
+				base_mstruct->differentiate(x_var, eo);
+				multiply_nocopy(base_mstruct);
 			} else if(o_function == CALCULATOR->f_cbrt && SIZE == 1) {
-				MathStructure base_mstruct(CHILD(0));
+				MathStructure *base_mstruct = new MathStructure(CHILD(0));
 				raise(Number(-2, 1, 0));
 				divide(nr_three);
-				base_mstruct.differentiate(x_var, eo);
-				multiply(base_mstruct);
-			} else if(o_function == CALCULATOR->f_ln && SIZE == 1) {
-				MathStructure mstruct(CHILD(0));
+				base_mstruct->differentiate(x_var, eo);
+				multiply_nocopy(base_mstruct);
+			} else if((o_function == CALCULATOR->f_ln && SIZE == 1) || (o_function == CALCULATOR->f_logn && SIZE == 2 && CHILD(1).isVariable() && CHILD(1).variable() == CALCULATOR->v_e)) {
+				MathStructure *mstruct = new MathStructure(CHILD(0));
 				setToChild(1, true);
 				inverse();
-				mstruct.differentiate(x_var, eo);
-				multiply(mstruct);
+				mstruct->differentiate(x_var, eo);
+				multiply_nocopy(mstruct);
 			} else if(o_function == CALCULATOR->f_logn && SIZE == 2) {
-				MathStructure mstruct(CALCULATOR->f_ln, &CHILD(1), NULL);
+				MathStructure *mstruct = new MathStructure(CALCULATOR->f_ln, &CHILD(1), NULL);
 				setFunction(CALCULATOR->f_ln);
 				ERASE(1)
-				divide(mstruct);
+				divide_nocopy(mstruct);
 				return differentiate(x_var, eo);
 			} else if(o_function == CALCULATOR->f_beta && SIZE == 2) {
 				MathStructure mstruct(CHILD(0));
@@ -22629,15 +22606,13 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				APPEND(x_var);
 				APPEND(MathStructure(2, 1, 0));
 			} else {
-				if(!eo.calculate_functions || !calculateFunctions(eo)) {
+				if(!eo.calculate_functions || !calculateFunctions(eo, false)) {
 					transform(CALCULATOR->f_diff);
 					addChild(x_var);
 					addChild(m_one);
 					return false;
 				} else {
-					EvaluationOptions eo2 = eo;
-					eo2.calculate_functions = false;
-					return differentiate(x_var, eo2);
+					return differentiate(x_var, eo);
 				}
 			}
 			break;
@@ -22740,7 +22715,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 					set(((KnownVariable*) o_variable)->get(), true);
 					unformat(eo);
 					return differentiate(x_var, eo);
-				} else if(containsRepresentativeOf(x_var, true, true) != 0) {
+				} else {
 					transform(CALCULATOR->f_diff);
 					addChild(x_var);
 					addChild(m_one);
