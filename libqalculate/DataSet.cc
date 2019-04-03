@@ -492,7 +492,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	char *clocale = setlocale(LC_MESSAGES, NULL);
 	if(clocale) locale = clocale;
 #endif
-	if(locale == "POSIX" || locale == "C") {
+	if(CALCULATOR->getIgnoreLocale() || locale == "POSIX" || locale == "C") {
 		locale = "";
 	} else {
 		size_t i = locale.find('.');

@@ -323,19 +323,36 @@ class Calculator_p {
 		size_t ids_i;
 };
 
-Calculator::Calculator() {	
+Calculator::Calculator() : Calculator(false) {}
+Calculator::Calculator(bool ignore_locale) {
+
+	b_ignore_locale = ignore_locale;
 
 #ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
-	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	if(!b_ignore_locale) {
+		bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
+		bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	}
 #endif
+
+	if(b_ignore_locale) {
+		char *current_lc_monetary = setlocale(LC_MONETARY, "");
+		if(current_lc_monetary) saved_locale = strdup(current_lc_monetary);
+		setlocale(LC_ALL, "C");
+		if(saved_locale) {
+			setlocale(LC_MONETARY, saved_locale);
+			free(saved_locale);
+			saved_locale = NULL;
+		}
+	} else {
+		setlocale(LC_ALL, "");
+	}
+
 
 	gmp_randinit_default(randstate);
 	gmp_randseed_ui(randstate, (unsigned long int) time(NULL));
 
 	priv = new Calculator_p;
-
-	setlocale(LC_ALL, "");
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -363,8 +380,6 @@ Calculator::Calculator() {
 	i_start_interval = 0;
 	
 	b_var_units = true;
-	
-	b_ignore_locale = false;
 
 	addStringAlternative(SIGN_POWER_0, "^(0)");
 	addStringAlternative(SIGN_POWER_1, "^(1)");
@@ -416,7 +431,7 @@ Calculator::Calculator() {
 	OR_str_len = OR_str.length();
 	XOR_str = "XOR";
 	XOR_str_len = OR_str.length();
-
+	
 	char *current_lc_numeric = setlocale(LC_NUMERIC, NULL);
 	if(current_lc_numeric) saved_locale = strdup(current_lc_numeric);
 	else saved_locale = NULL;
@@ -1253,6 +1268,7 @@ string Calculator::localToString(bool include_spaces) const {
 	else return _("to");
 }
 void Calculator::setLocale() {
+	if(b_ignore_locale) return;
 	if(saved_locale) setlocale(LC_NUMERIC, saved_locale);
 	lconv *locale = localeconv();
 	if(strcmp(locale->decimal_point, ",") == 0) {
@@ -1268,35 +1284,8 @@ void Calculator::setLocale() {
 	}
 	setlocale(LC_NUMERIC, "C");
 }
-void Calculator::setIgnoreLocale() {
-	if(saved_locale) {
-		free(saved_locale);
-		saved_locale = NULL;
-	}
-	char *current_lc_monetary = setlocale(LC_MONETARY, NULL);
-	if(current_lc_monetary) saved_locale = strdup(current_lc_monetary);
-	else saved_locale = NULL;
-	setlocale(LC_ALL, "C");
-	if(saved_locale) {
-		setlocale(LC_MONETARY, saved_locale);
-		free(saved_locale);
-		saved_locale = NULL;
-	}
-	b_ignore_locale = true;
-	per_str = "per";
-	per_str_len = per_str.length();
-	times_str = "times";
-	times_str_len = times_str.length();
-	plus_str = "plus";
-	plus_str_len = plus_str.length();
-	minus_str = "minus";
-	minus_str_len = minus_str.length();
-	and_str = "and";
-	and_str_len = and_str.length();
-	or_str = "or";
-	or_str_len = or_str.length();
-	local_to = false;
-	unsetLocale();
+bool Calculator::getIgnoreLocale() {
+	return b_ignore_locale;
 }
 void Calculator::useDecimalComma() {
 	DOT_STR = ",";
@@ -7694,7 +7683,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 	if(clocale) locale = clocale;
 #endif
 
-	if(locale == "POSIX" || locale == "C") {
+	if(b_ignore_locale || locale == "POSIX" || locale == "C") {
 		locale = "";
 	} else {
 		size_t i = locale.find('.');

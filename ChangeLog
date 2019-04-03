@@ -2,6 +2,7 @@
 
 	* Improve effeciency and precision, in approximate mode, of diff()
 	* Proper interval arithmetic for airy() with arguments >= -1
+	* Fix ignore locale on Windows
 
 2019-04-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

@@ -909,7 +909,7 @@ void set_option(string str) {
 			} else {
 				ignore_locale = false;
 			}
-			PUTS_UNICODE(_("Please restart the program for the change to take effect.")); 
+			PUTS_UNICODE("Please restart the program for the change to take effect."); 
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save mode", _("save mode"))) {
 		int v = s2b(svalue); 
@@ -1584,12 +1584,30 @@ int main(int argc, char *argv[]) {
 	string search_str;
 	
 #ifdef ENABLE_NLS
-	bindtextdomain (GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
-	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-	textdomain (GETTEXT_PACKAGE);
+	string filename = buildPath(getLocalDir(), "qalc.cfg");
+	FILE *file = fopen(filename.c_str(), "r");
+	char line[10000];
+	string stmp;
+	if(file) {
+		while(true) {
+			if(fgets(line, 10000, file) == NULL) break;
+			if(strcmp(line, "ignore_locale=1\n") == 0) {
+				ignore_locale = true;
+				break;
+			} else if(strcmp(line, "ignore_locale=0\n") == 0) {
+				break;
+			}
+		}
+		fclose(file);
+	}
+	if(!ignore_locale) {
+		bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
+		bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+		textdomain(GETTEXT_PACKAGE);
+	}
 #endif
 	
-	setlocale(LC_ALL, "");
+	if(!ignore_locale) setlocale(LC_ALL, "");
 	
 	for(int i = 1; i < argc; i++) {
 		if(calc_arg_begun) {
@@ -1735,15 +1753,11 @@ int main(int argc, char *argv[]) {
 	b_busy = false;
 
 	//create the almighty Calculator object
-	new Calculator();
+	new Calculator(ignore_locale);
 
 	//load application specific preferences
 	load_preferences();
 	
-	if(ignore_locale) {
-		CALCULATOR->setIgnoreLocale();
-	}
-
 	for(size_t i = 0; i < set_option_strings.size(); i++) {
 		set_option(set_option_strings[i]);
 	}
