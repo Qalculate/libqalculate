@@ -1850,7 +1850,7 @@ bool SymbolicArgument::subtest(MathStructure &value, const EvaluationOptions &eo
 	if(!value.isSymbolic() && (!value.isVariable() || value.variable()->isKnown())) {
 		value.eval(eo);
 	}
-	return value.isSymbolic() || value.isVariable();
+	return value.isSymbolic() || (value.isVariable() && !value.variable()->isKnown());
 }
 int SymbolicArgument::type() const {return ARGUMENT_TYPE_SYMBOLIC;}
 Argument *SymbolicArgument::copy() const {return new SymbolicArgument(this);}

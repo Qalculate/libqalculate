@@ -1904,9 +1904,7 @@ Number Number::integer() const {
 	return nr;
 }
 bool Number::isInteger(IntegerType integer_type) const {
-	if(isInfinite(true)) return false;
-	if(hasImaginaryPart()) return false;
-	if(isFloatingPoint()) return false;
+	if(n_type != NUMBER_TYPE_RATIONAL || hasImaginaryPart()) return false;
 	if(mpz_cmp_ui(mpq_denref(r_value), 1) != 0) return false;
 	switch(integer_type) {
 		case INTEGER_TYPE_NONE: {return true;}
@@ -2519,19 +2517,19 @@ bool Number::isEven() const {
 	return isInteger() && mpz_even_p(mpq_numref(r_value));
 }
 bool Number::denominatorIsEven() const {
-	return !isInfinite() && !hasImaginaryPart() && !isFloatingPoint() && mpz_even_p(mpq_denref(r_value));
+	return !hasImaginaryPart() && n_type == NUMBER_TYPE_RATIONAL && mpz_even_p(mpq_denref(r_value));
 }
 bool Number::denominatorIsTwo() const {
-	return !isInfinite() && !hasImaginaryPart() && !isFloatingPoint() && mpz_cmp_si(mpq_denref(r_value), 2) == 0;
+	return !hasImaginaryPart() && n_type == NUMBER_TYPE_RATIONAL && mpz_cmp_si(mpq_denref(r_value), 2) == 0;
 }
 bool Number::numeratorIsEven() const {
-	return !isInfinite() && !hasImaginaryPart() && !isFloatingPoint() && mpz_even_p(mpq_numref(r_value));
+	return !hasImaginaryPart() && n_type == NUMBER_TYPE_RATIONAL && mpz_even_p(mpq_numref(r_value));
 }
 bool Number::numeratorIsOne() const {
-	return !isInfinite() && !hasImaginaryPart() && !isFloatingPoint() && mpz_cmp_si(mpq_numref(r_value), 1) == 0;
+	return !hasImaginaryPart() && n_type == NUMBER_TYPE_RATIONAL && mpz_cmp_si(mpq_numref(r_value), 1) == 0;
 }
 bool Number::numeratorIsMinusOne() const {
-	return !isInfinite() && !hasImaginaryPart() && !isFloatingPoint() && mpz_cmp_si(mpq_numref(r_value), -1) == 0;
+	return !hasImaginaryPart() && n_type == NUMBER_TYPE_RATIONAL && mpz_cmp_si(mpq_numref(r_value), -1) == 0;
 }
 bool Number::isOdd() const {
 	return isInteger() && mpz_odd_p(mpq_numref(r_value));
@@ -4889,6 +4887,10 @@ bool Number::airy() {
 	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_ai(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
+	} else if(mpfr_cmp_si(fl_value, -1) >= 0) {
+		mpfr_ai(fl_value, fl_value, MPFR_RNDU);
+		mpfr_ai(fu_value, fu_value, MPFR_RNDD);
+		mpfr_swap(fl_value, fu_value);
 	} else {
 		mpfr_ai(fl_value, fl_value, MPFR_RNDN);
 		mpfr_ai(fu_value, fu_value, MPFR_RNDN);

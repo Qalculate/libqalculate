@@ -1,3 +1,8 @@
+2019-04-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve effeciency and precision, in approximate mode, of diff()
+	* Proper interval arithmetic for airy() with arguments >= -1
+
 2019-04-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not use angle unit in Si() and Ci()
@@ -5,7 +10,7 @@
 	* Hide current angle unit from result in qalc
 	* Fix equations with inverse trigonometric functions when default angle unit is none
 	* Never show ending zeroes for roman numerals
-	* Allow units in im() and re()
+	* More flexible im() and re()
 
 2019-03-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
