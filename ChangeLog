@@ -1,3 +1,9 @@
+2019-04-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add variable value argument to diff()
+	* Hide optional arguments with default value in output
+	* Fix integrate(sinc(x),x,0,infinity) and similar (should return pi/2 instead of Si(x))
+
 2019-04-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Improve effeciency and precision, in approximate mode, of diff()

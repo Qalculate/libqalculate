@@ -1152,6 +1152,8 @@ class Calculator {
 	const string &getComma() const;
 	/** Sets argument separator and decimal sign from the current locale. Mainly for internal use. */
 	void setLocale();
+	///Deprecated: use pass true to constructor instead
+	void setIgnoreLocale();
 	bool getIgnoreLocale();
 	void useDecimalComma();
 	/** Use point as decimal separator. 
