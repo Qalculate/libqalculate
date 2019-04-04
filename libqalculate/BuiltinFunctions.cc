@@ -5842,13 +5842,36 @@ int StackFunction::calculate(MathStructure &mstruct, const MathStructure&, const
 	return 1;
 }
 
-DeriveFunction::DeriveFunction() : MathFunction("diff", 1, 3) {
+bool replace_diff_x(MathStructure &m, const MathStructure &mfrom, const MathStructure &mto) {
+	if(m.equals(mfrom, true, true)) {
+		m = mto;
+		return true;
+	}
+	if(m.type() == STRUCT_FUNCTION && m.function() == CALCULATOR->f_diff) {
+		if(m.size() >= 4 && m[1] == mfrom && m[3].isUndefined()) {
+			m[3] = mto;
+			return true;
+		}
+		return false;
+	}
+	bool b = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(replace_diff_x(m[i], mfrom, mto)) {
+			b = true;
+			m.childUpdated(i + 1);
+		}
+	}
+	return b;
+}
+
+DeriveFunction::DeriveFunction() : MathFunction("diff", 1, 4) {
 	setArgumentDefinition(2, new SymbolicArgument());
 	setDefaultValue(2, "x");
 	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SINT);
 	arg->setHandleVector(false);
 	setArgumentDefinition(3, arg);
 	setDefaultValue(3, "1");
+	setDefaultValue(4, "undefined");
 }
 int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	int i = vargs[2].number().intValue();
@@ -5868,6 +5891,7 @@ int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 			mstruct.eval(eo2);
 		}
 	}
+	if(!vargs[3].isUndefined()) replace_diff_x(mstruct, vargs[1], vargs[3]);
 	return 1;
 }
 
@@ -6277,7 +6301,9 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	}
 	m1.eval(eo);
 	m2.eval(eo);
-	bool definite_integral = !vargs[2].isUndefined() && !vargs[3].isUndefined() && (!m1.isNumber() || !m1.number().isMinusInfinity()) && (!m2.isNumber() || !m2.number().isPlusInfinity());
+	int definite_integral = 0;
+	if(!vargs[2].isUndefined() && !vargs[3].isUndefined()) definite_integral = -1;
+	if(definite_integral < 0 && (!m1.isNumber() || !m1.number().isMinusInfinity()) && (!m2.isNumber() || !m2.number().isPlusInfinity())) definite_integral = 1;
 	
 	CALCULATOR->beginTemporaryStopMessages();
 	
@@ -6295,10 +6321,14 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		m_interval.calculateFunctions(eo3);
 		CALCULATOR->endTemporaryStopMessages();
 		if(definite_integral && !check_denominators(mstruct_pre, m_interval, x_var, eo)) {
-			CALCULATOR->endTemporaryStopMessages();
-			CALCULATOR->endTemporaryStopMessages(true);
-			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
-			return false;
+			if(definite_integral < 0) {
+				definite_integral = 0;
+			} else {
+				CALCULATOR->endTemporaryStopMessages();
+				CALCULATOR->endTemporaryStopMessages(true);
+				CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
+				return false;
+			}
 		}
 		UnknownVariable *var = new UnknownVariable("", "x");
 		var->ref();
@@ -6364,28 +6394,43 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	}
 	eo2.approximation = eo.approximation;
 	if(b) {
+#if MPFR_VERSION_MAJOR < 4
+		if(definite_integral && mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0) {
+#else
+		if(definite_integral && mstruct.containsFunction(this, true) <= 0) {
+#endif
+			CALCULATOR->endTemporaryStopMessages(true);
+			MathStructure mstruct_lower(mstruct);
+			mstruct_lower.replace(x_var, vargs[2]);
+			if(definite_integral < 0) {
+				MathStructure mtest(mstruct);
+				mtest.replace(x_var, vargs[3]);
+				mtest -= mstruct_lower;
+				CALCULATOR->beginTemporaryStopMessages();
+				mtest.eval(eo);
+				if(CALCULATOR->endTemporaryStopMessages() || mtest.containsInfinity()) {
+					definite_integral = 0;
+				}
+			}
+			if(definite_integral) {
+				mstruct.replace(x_var, vargs[3]);
+				mstruct -= mstruct_lower;
+				return 1;
+			}
+		} else if(definite_integral < 0) {
+			definite_integral = 0;
+		} else if(definite_integral > 0) {
+			mstruct = mbak;
+		}
 		if(!definite_integral) {
 			if(!m1.isUndefined()) mstruct.replace(x_var, vargs[1]);
 			CALCULATOR->endTemporaryStopMessages(true);
 			mstruct += CALCULATOR->v_C;
 			return 1;
-#if MPFR_VERSION_MAJOR < 4
-		} else if(mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0) {
-#else
-		} else if(mstruct.containsFunction(this, true) <= 0) {
-#endif
-			CALCULATOR->endTemporaryStopMessages(true);
-			MathStructure mstruct_lower(mstruct);
-			mstruct_lower.replace(x_var, vargs[2]);
-			mstruct.replace(x_var, vargs[3]);
-			mstruct -= mstruct_lower;
-			return 1;
-		} else {
-			mstruct = mbak;
 		}
 	} else {
 		mstruct = mbak;
-		if(!definite_integral) {
+		if(definite_integral <= 0) {
 			CALCULATOR->endTemporaryStopMessages(true);
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 			return -1;
@@ -7536,7 +7581,7 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		mstruct = m_eqn; return -1;
 	}
 	MathStructure m_diff(*m_diff_p);
-	if(m_diff.size() != 3 || (!m_diff[0].isSymbolic() && !m_diff[0].isVariable()) || (!m_diff[1].isSymbolic() && !m_diff[1].isVariable()) || !m_diff[2].isInteger() || !m_diff[2].number().isPositive() || !m_diff[2].number().isLessThanOrEqualTo(10)) {
+	if(m_diff.size() < 3 || (!m_diff[0].isSymbolic() && !m_diff[0].isVariable()) || (!m_diff[1].isSymbolic() && !m_diff[1].isVariable()) || !m_diff[2].isInteger() || !m_diff[2].number().isPositive() || !m_diff[2].number().isLessThanOrEqualTo(10)) {
 		CALCULATOR->error(true, _("No differential equation found."), NULL);
 		mstruct = m_eqn; return -1;
 	}

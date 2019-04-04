@@ -12565,6 +12565,44 @@ bool convert_to_default_angle_unit(MathStructure &m, const EvaluationOptions &eo
 	return b;
 }
 
+bool remove_add_zero_unit(MathStructure &m) {
+	if(m.isAddition() && m.size() > 1) {
+		bool b = false, b2 = false;
+		for(size_t i = 0; i < m.size(); i++) {
+			if(m[i].isMultiplication() && m[i].size() > 1 && m[i][0].isZero() && !m[i].isApproximate()) {
+				b = true;
+			} else {
+				b2 = true;
+			}
+		}
+		if(!b || !b2) return false;
+		b = false;
+		for(size_t i = 0; i < m.size();) {
+			b2 = false;
+			if(m[i].isMultiplication() && m[i].size() > 1 && m[i][0].isZero() && !m[i].isApproximate()) {
+				b2 = true;
+				for(size_t i2 = 1; i2 < m[i].size(); i2++) {
+					if(!m[i][i2].isUnit_exp() || (m[i][i2].isPower() && m[i][i2][0].unit()->hasNonlinearRelationToBase()) || (m[i][i2].isUnit() && m[i][i2].unit()->hasNonlinearRelationToBase())) {
+						b2 = false;
+						break;
+					}
+				}
+				if(b2) {
+					b = true;
+					m.delChild(i + 1);
+					if(m.size() == 1) {
+						m.setToChild(1, true);
+						break;
+					}
+				}
+			}
+			if(!b2) i++;
+		}
+		return b;
+	}
+	return false;
+}
+
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(m_type == STRUCT_NUMBER) {
@@ -12686,6 +12724,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					munc.eval(eo3);
 					eo3.keep_zero_units = true;
 					eval(eo3);
+					remove_add_zero_unit(*this);
 					b_failed = true;
 					if(munc.isFunction() && munc.function() == CALCULATOR->f_abs && munc.size() == 1) {
 						munc.setToChild(1);
@@ -12916,13 +12955,18 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(CALCULATOR->aborted()) return *this;
 	
-	if(eo.structuring != STRUCTURING_NONE && (eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS || eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES)) convert_to_default_angle_unit(*this, eo);
+	if(eo.structuring != STRUCTURING_NONE) {
 
-	if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
+		if(eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS || eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES) convert_to_default_angle_unit(*this, eo);
+		simplify_ln(*this);
+		
+		if(eo.keep_zero_units) remove_add_zero_unit(*this);
 	
-	structure(eo.structuring, eo2, false);
+		structure(eo.structuring, eo2, false);
 	
-	if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
+		simplify_ln(*this);
+
+	}
 
 	clean_multiplications(*this);
 	
@@ -19803,8 +19847,26 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				gsub("_", " ", print_str);
 			}
 			print_str += "(";
-			for(size_t i = 0; i < SIZE; i++) {
-				if(i == 1 && (o_function == CALCULATOR->f_signum || o_function == CALCULATOR->f_lambert_w) && CHILD(1).isZero()) break;
+			size_t argcount = SIZE;
+			if(o_function == CALCULATOR->f_signum && argcount > 1) argcount = 1;
+			if(o_function->maxargs() > 0 && o_function->minargs() < o_function->maxargs() && SIZE > (size_t) o_function->minargs()) {
+				while(true) {
+					string defstr = o_function->getDefaultValue(argcount);
+					remove_blank_ends(defstr);
+					if(defstr.empty()) break;
+					if(CHILD(argcount - 1).isUndefined() && defstr == "undefined") {
+						argcount--;
+					} else if(CHILD(argcount - 1).isVariable() && defstr == CHILD(argcount - 1).variable()->referenceName()) {
+						argcount--;
+					} else if(CHILD(argcount - 1).isInteger() && defstr.find_first_not_of(NUMBERS) == string::npos && CHILD(argcount - 1).number() == s2i(defstr)) {
+						argcount--;
+					} else {
+						break;
+					}
+					if(argcount == 0 || argcount == (size_t) o_function->minargs()) break;
+				}
+			}
+			for(size_t i = 0; i < argcount; i++) {
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					print_str += po.comma();
@@ -21821,8 +21883,9 @@ int MathStructure::containsRepresentativeOf(const MathStructure &mstruct, bool c
 			else if(retval < 0) ret = retval;
 		}
 	}
-	if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
-		return ((KnownVariable*) o_variable)->get().containsRepresentativeOf(mstruct, check_variables, check_functions);
+	if(m_type == STRUCT_VARIABLE && check_variables) {
+		if(o_variable->isKnown()) return ((KnownVariable*) o_variable)->get().containsRepresentativeOf(mstruct, check_variables, check_functions);
+		else return ((UnknownVariable*) o_variable)->interval().containsRepresentativeOf(mstruct, check_variables, check_functions);
 	} else if(m_type == STRUCT_FUNCTION && check_functions) {
 		if(function_value) {
 			return function_value->containsRepresentativeOf(mstruct, check_variables, check_functions);
@@ -22198,6 +22261,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 		transform(CALCULATOR->f_diff);
 		addChild(x_var);
 		addChild(m_one);
+		addChild(m_undefined);
 		return false;
 	}
 	if(equals(x_var)) {
@@ -22251,6 +22315,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 			transform(CALCULATOR->f_diff);
 			addChild(x_var);
 			addChild(m_one);
+			addChild(m_undefined);
 			return false;
 		}
 		case STRUCT_UNIT: {}
@@ -22598,7 +22663,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				CHILD(0).differentiate(x_var, eo);
 			} else if(o_function == CALCULATOR->f_integrate && CHILD(1) == x_var && (SIZE == 2 || (SIZE == 4 && CHILD(2).isUndefined() && CHILD(3).isUndefined()))) {
 				SET_CHILD_MAP(0);
-			} else if(o_function == CALCULATOR->f_diff && SIZE == 3 && CHILD(1) == x_var) {
+			} else if(o_function == CALCULATOR->f_diff && (SIZE == 3 || (SIZE == 4 && CHILD(3).isUndefined())) && CHILD(1) == x_var) {
 				CHILD(2) += m_one;
 			} else if(o_function == CALCULATOR->f_diff && SIZE == 2 && CHILD(1) == x_var) {
 				APPEND(MathStructure(2, 1, 0));
@@ -22610,6 +22675,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 					transform(CALCULATOR->f_diff);
 					addChild(x_var);
 					addChild(m_one);
+					addChild(m_undefined);
 					return false;
 				} else {
 					return differentiate(x_var, eo);
@@ -22705,6 +22771,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				transform(CALCULATOR->f_diff);
 				addChild(x_var);
 				addChild(m_one);
+				addChild(m_undefined);
 				return false;
 			}
 			break;
@@ -22719,18 +22786,16 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 					transform(CALCULATOR->f_diff);
 					addChild(x_var);
 					addChild(m_one);
+					addChild(m_undefined);
 					return false;
 				}
-			}
-			if(representsNumber(true)) {
-				clear(true);
-				break;
 			}
 		}		
 		default: {
 			transform(CALCULATOR->f_diff);
 			addChild(x_var);
 			addChild(m_one);
+			addChild(m_undefined);
 			return false;
 		}	
 	}
@@ -25104,7 +25169,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 				return true;
 			}
 		}
-	} else if(mstruct.function() == CALCULATOR->f_diff && mstruct.size() == 3 && mstruct[1] == x_var) {
+	} else if(mstruct.function() == CALCULATOR->f_diff && (mstruct.size() == 3 || (mstruct.size() == 4 && mstruct[3].isUndefined())) && mstruct[1] == x_var) {
 		if(!mpow.isOne() || !mfac.isOne()) return false;
 		if(mstruct[2].isOne()) {
 			mstruct.setToChild(1, true);

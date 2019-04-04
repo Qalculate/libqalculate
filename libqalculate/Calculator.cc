@@ -1284,6 +1284,42 @@ void Calculator::setLocale() {
 	}
 	setlocale(LC_NUMERIC, "C");
 }
+void Calculator::setIgnoreLocale() {
+	if(saved_locale) {
+		free(saved_locale);
+		saved_locale = NULL;
+	}
+	char *current_lc_monetary = setlocale(LC_MONETARY, NULL);
+	if(current_lc_monetary) saved_locale = strdup(current_lc_monetary);
+	else saved_locale = NULL;
+	setlocale(LC_ALL, "C");
+#ifdef ENABLE_NLS
+#	ifdef _WIN32
+	bindtextdomain(GETTEXT_PACKAGE, "NULL");
+	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+#	endif
+#endif
+	if(saved_locale) {
+		setlocale(LC_MONETARY, saved_locale);
+		free(saved_locale);
+		saved_locale = NULL;
+	}
+	b_ignore_locale = true;
+	per_str = "per";
+	per_str_len = per_str.length();
+	times_str = "times";
+	times_str_len = times_str.length();
+	plus_str = "plus";
+	plus_str_len = plus_str.length();
+	minus_str = "minus";
+	minus_str_len = minus_str.length();
+	and_str = "and";
+	and_str_len = and_str.length();
+	or_str = "or";
+	or_str_len = or_str.length();
+	local_to = false;
+	unsetLocale();
+}
 bool Calculator::getIgnoreLocale() {
 	return b_ignore_locale;
 }

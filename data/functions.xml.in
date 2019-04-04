@@ -2514,6 +2514,9 @@
       <argument index="3">
         <_title>Order</_title>
       </argument>
+      <argument index="4">
+        <_title>Variable value</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="integrate">
       <_title>Integrate</_title>
