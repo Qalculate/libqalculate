@@ -30,8 +30,8 @@
 #include <unistd.h>
 #include <stdint.h>
 
-#define QALCULATE_MAJOR_VERSION (2)
-#define QALCULATE_MINOR_VERSION (6)
+#define QALCULATE_MAJOR_VERSION (3)
+#define QALCULATE_MINOR_VERSION (1)
 #define QALCULATE_MICRO_VERSION (0)
 
 /// \cond
