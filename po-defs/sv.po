@@ -10186,7 +10186,7 @@ msgstr "Basen för naturliga logaritmer (e)"
 
 #: ../data/variables.xml.in.h:181
 msgid "Archimedes' Constant (pi)"
-msgstr "Archimedes konstant (pi)"
+msgstr "Arkimedes konstant (pi)"
 
 #: ../data/variables.xml.in.h:182
 msgid "Euler's Constant"

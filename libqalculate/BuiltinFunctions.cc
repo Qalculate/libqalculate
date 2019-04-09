@@ -3754,6 +3754,21 @@ AcoshFunction::AcoshFunction() : MathFunction("acosh", 1) {
 }
 bool AcoshFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNumber(allow_units);}
 int AcoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(eo.allow_complex && vargs[0].isZero()) {
+		mstruct.set(1, 2, 0);
+		mstruct.number() *= nr_one_i;
+		mstruct *= CALCULATOR->v_pi;
+		return 1;
+	} else if(vargs[0].isOne()) {
+		mstruct.clear();
+		return 1;
+	} else if(eo.approximation != APPROXIMATION_APPROXIMATE && eo.allow_complex && vargs[0].number() <= -1) {
+		mstruct = nr_one_i;
+		mstruct *= CALCULATOR->v_pi;
+		mstruct.add_nocopy(new MathStructure(this, &vargs[0], NULL));
+		mstruct.last()[0].negate();
+		return 1;
+	}
 	FR_FUNCTION(acosh)
 }
 AtanhFunction::AtanhFunction() : MathFunction("atanh", 1) {
@@ -3768,7 +3783,7 @@ int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
-	if(mstruct.number().includesInfinity()) {
+	if(eo.allow_complex && mstruct.number().includesInfinity()) {
 		if(mstruct.number().isPlusInfinity() || (!mstruct.number().hasRealPart() && mstruct.number().hasImaginaryPart() && mstruct.number().internalImaginary()->isMinusInfinity())) {
 			mstruct = nr_minus_half;
 			mstruct *= nr_one_i;
@@ -3780,6 +3795,22 @@ int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			mstruct *= CALCULATOR->v_pi;
 			return true;
 		}
+	} else if(eo.approximation != APPROXIMATION_APPROXIMATE && eo.allow_complex && mstruct.number() > 1) {
+		mstruct.set(-1, 2, 0);
+		mstruct.number() *= nr_one_i;
+		mstruct *= CALCULATOR->v_pi;
+		mstruct.add_nocopy(new MathStructure(this, &vargs[0], NULL));
+		mstruct.last()[0].inverse();
+		return 1;
+	} else if(eo.approximation != APPROXIMATION_APPROXIMATE && eo.allow_complex && mstruct.number() < -1) {
+		mstruct.set(1, 2, 0);
+		mstruct.number() *= nr_one_i;
+		mstruct *= CALCULATOR->v_pi;
+		mstruct.add_nocopy(new MathStructure(this, &vargs[0], NULL));
+		mstruct.last()[0].inverse();
+		mstruct.last()[0].negate();
+		mstruct.last().negate();
+		return 1;
 	}
 	Number nr = mstruct.number();
 	if(!nr.atanh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
@@ -6026,7 +6057,7 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
-		if(mstruct.number().isNegative()) {
+		if(eo.allow_complex && mstruct.number().isNegative()) {
 			if(!eo.allow_complex) return -1;
 			mstruct.negate();
 			mstruct.transform(this);
@@ -6098,7 +6129,7 @@ int ChiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
-		if(mstruct.number().isNegative()) {
+		if(eo.allow_complex && mstruct.number().isNegative()) {
 			if(!eo.allow_complex) return -1;
 			mstruct.negate();
 			mstruct.transform(this);

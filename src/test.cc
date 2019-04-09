@@ -1665,7 +1665,7 @@ void speed_test() {
 
 int main(int argc, char *argv[]) {
 
-	new Calculator();
+	new Calculator(true);
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
 	CALCULATOR->setPrecision(8);
@@ -1706,8 +1706,8 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	test_integration();
-	return true;
+	//test_integration();
+	//return true;
 	//test_intervals(true);
 	
 	CALCULATOR->setVariableUnitsEnabled(true);
@@ -1717,9 +1717,9 @@ int main(int argc, char *argv[]) {
 	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 	//CALCULATOR->useIntervalArithmetic();
 	
-	for(size_t i = 0; i <= 1000; i++) {
-		rnd_test(evalops, 4, true, false, true, false, false, true);
-		if(i % 100 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
+	for(size_t i = 0; i <= 10000; i++) {
+		rnd_test(evalops, false, true, false, false, false, false, true);
+		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 

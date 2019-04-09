@@ -1,6 +1,14 @@
+2019-04-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix potential segfault in acosh calculation
+	* Add general number interval order check
+	* acosh(0)=0.5i*pi, acosh(1)=0, and acosh(x)=acosh(-x)+i*pi when x<=-1
+	* atanh(x)=atanh(1/x)-0.5i*pi when x > 1
+	* Fix segfault in Number::square(), and possibly Number::recip() with (relatively) extremely small imaginary part
+
 2019-04-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Add variable value argument to diff()
+	* Add optional variable value argument to diff()
 	* Hide optional arguments with default value in output
 	* Fix integrate(sinc(x),x,0,infinity) and similar (should return pi/2 instead of Si(x))
 
