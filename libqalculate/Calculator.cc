@@ -338,6 +338,7 @@ Calculator::Calculator(bool ignore_locale) {
 	if(b_ignore_locale) {
 		char *current_lc_monetary = setlocale(LC_MONETARY, "");
 		if(current_lc_monetary) saved_locale = strdup(current_lc_monetary);
+		else saved_locale = NULL;
 		setlocale(LC_ALL, "C");
 		if(saved_locale) {
 			setlocale(LC_MONETARY, saved_locale);

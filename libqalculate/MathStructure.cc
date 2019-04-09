@@ -12574,6 +12574,7 @@ bool remove_add_zero_unit(MathStructure &m) {
 			} else {
 				b2 = true;
 			}
+			if(b && b2) break;
 		}
 		if(!b || !b2) return false;
 		b = false;
@@ -12722,9 +12723,9 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					eo3.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 					if(eo3.approximation == APPROXIMATION_TRY_EXACT) eo3.approximation = APPROXIMATION_APPROXIMATE;
 					munc.eval(eo3);
-					eo3.keep_zero_units = true;
+					eo3.keep_zero_units = eo.keep_zero_units;
 					eval(eo3);
-					remove_add_zero_unit(*this);
+					if(eo.keep_zero_units) remove_add_zero_unit(*this);
 					b_failed = true;
 					if(munc.isFunction() && munc.function() == CALCULATOR->f_abs && munc.size() == 1) {
 						munc.setToChild(1);
@@ -15570,7 +15571,16 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				CALCULATOR->beginTemporaryStopMessages();
 				mcopy.calculatesub(eo2, eo2);
 				CALCULATOR->endTemporaryStopMessages();
-				if(!equals(mcopy)) {
+				bool b_equal = equals(mcopy);
+				if(!b_equal && !CALCULATOR->aborted()) {
+					MathStructure mcopy2(*this);
+					CALCULATOR->beginTemporaryStopMessages();
+					mcopy.calculatesub(eo2, eo2, true);
+					mcopy2.calculatesub(eo2, eo2, true);
+					CALCULATOR->endTemporaryStopMessages();
+					b_equal = mcopy.equals(mcopy2);
+				}
+				if(!b_equal) {
 					eo.protected_function = eo_pre.protected_function;
 					if(CALCULATOR->aborted()) return false;
 					CALCULATOR->error(true, "factorized result is wrong: %s. %s", format_and_print(msqrfree).c_str(), _("This is a bug. Please report it."), NULL);
@@ -18510,9 +18520,9 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		mabs.eval(eo2);
 		marg.eval(eo2);
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg *= CALCULATOR->getDegUnit();} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg *= CALCULATOR->getGraUnit();} break;}
-			case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg *= CALCULATOR->getRadUnit();} break;}
+			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
+			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
+			case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg.multiply(CALCULATOR->getRadUnit(), true);} break;}
 			default: {break;}
 		}
 		set(marg, true);
@@ -22537,7 +22547,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				setFunction(CALCULATOR->f_dirac);
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
-			} else if(o_function == CALCULATOR->f_lambert_w && (SIZE == 1 || (SIZE == 2 && CHILD(1).isZero()))) {
+			} else if(o_function == CALCULATOR->f_lambert_w && SIZE >= 1) {
 				MathStructure *mstruct = new MathStructure(*this);
 				MathStructure *mstruct2 = new MathStructure(CHILD(0));
 				mstruct->add(m_one);

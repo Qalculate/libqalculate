@@ -1869,6 +1869,11 @@ bool Number::testFloatResult(bool allow_infinite_result, int error_level, bool t
 		mpfr_clears(fl_value, fu_value, NULL);
 	} else if(mpfr_inf_p(fl_value) || mpfr_inf_p(fu_value)) {
 		if(!allow_infinite_result) return false;
+	} else if(mpfr_cmp(fl_value, fu_value) > 0) {
+		cout << "fl_value > fu_value: " << endl;
+		PRINT_MPFR(fl_value, 10);
+		PRINT_MPFR(fu_value, 10);
+		mpfr_swap(fl_value, fu_value);
 	}
 	if(test_integer) testInteger();
 	if(!b_imag) testComplex(this, i_value);
@@ -3190,7 +3195,7 @@ bool Number::recip() {
 					}
 				}
 				mpfr_clears(abs_il, abs_iu, absm_iu, absm_il, abs_rl, abs_ru, absm_ru, absm_rl, ftmp1, ftmp2, fu_tmp, fl_tmp, NULL);
-				if(!testFloatResult(true) || !i_value->testFloatResult(true)) {
+				if(!i_value->testFloatResult(true) || !testFloatResult(true)) {
 					set(nr_bak);
 					return false;
 				}
@@ -4164,7 +4169,7 @@ bool Number::square() {
 			mpfr_swap(f_il, i_value->internalLowerFloat());
 			mpfr_swap(f_iu, i_value->internalUpperFloat());
 			mpfr_clears(f_ru, f_rl, f_iu, f_il, f_tmp, NULL);
-			if(!testFloatResult(true) || !i_value->testFloatResult(true)) {
+			if(!i_value->testFloatResult(true) || !testFloatResult(true)) {
 				set(nr_bak);
 				return false;
 			}
@@ -5587,7 +5592,7 @@ bool Number::acosh() {
 			set(nr, true);
 			return true;
 		}
-		if((CREATE_INTERVAL || isInterval()) && !hasImaginaryPart()) {
+		if(CREATE_INTERVAL && !hasImaginaryPart()) {
 			Number ipz(lowerEndPoint()), imz(ipz);
 			if(!ipz.add(1) || !imz.subtract(1)) return false;
 			if(!ipz.raise(nr_half) || !imz.raise(nr_half) || !ipz.multiply(imz) || !ipz.add(lowerEndPoint())) return false;
@@ -5596,11 +5601,6 @@ bool Number::acosh() {
 			if(!ipz2.raise(nr_half) || !imz2.raise(nr_half) || !ipz2.multiply(imz2) || !ipz2.add(upperEndPoint())) return false;
 			Number nriv;
 			nriv.setInterval(ipz, ipz2);
-			if(mpfr_sgn(fl_value) < 0 && mpfr_sgn(fu_value) > 0) {
-				Number nrivi;
-				nrivi.setInterval(nriv.imaginaryPart(), nr_one);
-				nriv.setImaginaryPart(nrivi);
-			}
 			if(!nriv.ln()) return false;
 			if(isGreaterThanOrEqualTo(nr_minus_one)) {
 				nriv.clearReal();
