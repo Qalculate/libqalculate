@@ -732,9 +732,9 @@ class MathStructure {
 		/** @name Functions for format and display */
 		//@{
 		void sort(const PrintOptions &po = default_print_options, bool recursive = true);
-		bool improve_division_multipliers(const PrintOptions &po = default_print_options);
+		bool improve_division_multipliers(const PrintOptions &po = default_print_options, MathStructure *parent = NULL);
 		void setPrefixes(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, size_t pindex = 0);
-		void prefixCurrencies();
+		void prefixCurrencies(const PrintOptions &po = default_print_options);
 		void format(const PrintOptions &po = default_print_options);
 		void formatsub(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, size_t pindex = 0, bool recursive = true, MathStructure *top_parent = NULL);
 		void postFormatUnits(const PrintOptions &po = default_print_options, MathStructure *parent = NULL, size_t pindex = 0);
@@ -815,7 +815,7 @@ class MathStructure {
 		int containsType(StructureType mtype, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
 		int containsRepresentativeOfType(StructureType mtype, bool check_variables = false, bool check_functions = false) const;
 		int containsFunction(MathFunction *f, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
-		int containsInterval(bool structural_only = true, bool check_variables = false, bool check_functions = false, bool ignore_high_precision_interval = false, bool include_interval_function = false) const;
+		int containsInterval(bool structural_only = true, bool check_variables = false, bool check_functions = false, int ignore_high_precision_interval = 0, bool include_interval_function = false) const;
 		int containsInfinity(bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
 		bool containsOpaqueContents() const;
 		bool containsAdditionPower() const;
