@@ -1,3 +1,15 @@
+2019-04-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve currency symbol placement
+	* Fix loading of interval arithmetic setting
+	* Do not display more than the significant digits with non-decimal bases for intervals
+	* Fix display of ending zeroes for approximate integers
+	* Do not show fractions for approximate values with show ending zeroes activated
+	* Fix display of roman numeral reciprocal
+	* Show no item found message when find/search command fails
+	* Improvements to polynomial division
+	* Never add minus sign to ± value (uncertainty)
+
 2019-04-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix potential segfault in acosh calculation

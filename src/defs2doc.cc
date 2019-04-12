@@ -527,6 +527,7 @@ void print_variable(Variable *v) {
 }
 
 void print_unit(Unit *u) {
+		if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) return;
 		string str, base_unit, relation;
 		fputs("<row valign=\"top\">\n", ufile);
 		fprintf(ufile, "<entry><para>%s</para></entry>\n", u->title().c_str());
@@ -551,8 +552,10 @@ void print_unit(Unit *u) {
 			}
 			case SUBTYPE_ALIAS_UNIT: {
 				AliasUnit *au = (AliasUnit*) u;
-				base_unit = au->firstBaseUnit()->preferredDisplayName(printops.abbreviate_names, printops.use_unicode_signs).name;
+				if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) base_unit = fix(((CompositeUnit*) au->firstBaseUnit())->print(false, true, printops.use_unicode_signs));
+				else base_unit = au->firstBaseUnit()->preferredDisplayName(printops.abbreviate_names, printops.use_unicode_signs).name;
 				if(au->firstBaseExponent() != 1) {
+					if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {base_unit.insert(0, 1, '('); base_unit += ")";}
 					base_unit += POWER;
 					base_unit += i2s(au->firstBaseExponent());
 				}

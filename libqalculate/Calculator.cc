@@ -441,18 +441,18 @@ Calculator::Calculator(bool ignore_locale) {
 		setlocale(LC_NUMERIC, "C");
 		lc = localeconv();
 	}
-#ifdef HAVE_STRUCT_LCONV_INT_N_CS_PRECEDES
- 	place_currency_code_before = lc->int_p_cs_precedes;
-#else
-	place_currency_code_before = 1;
-#endif
-#ifdef HAVE_STRUCT_LCONV_INT_P_CS_PRECEDES
-	place_currency_code_before_negative = lc->int_n_cs_precedes;
-#else
-	place_currency_code_before_negative = 1;
-#endif	
 	place_currency_sign_before = lc->p_cs_precedes;
 	place_currency_sign_before_negative = lc->n_cs_precedes;
+#ifdef HAVE_STRUCT_LCONV_INT_P_CS_PRECEDES
+ 	place_currency_code_before = lc->int_p_cs_precedes;
+#else
+	place_currency_code_before = place_currency_sign_before;
+#endif
+#ifdef HAVE_STRUCT_LCONV_INT_N_CS_PRECEDES
+	place_currency_code_before_negative = lc->int_n_cs_precedes;
+#else
+	place_currency_code_before_negative = place_currency_sign_before_negative;
+#endif	
 	local_digit_group_separator = lc->thousands_sep;
 	local_digit_group_format = lc->grouping;
 	remove_blank_ends(local_digit_group_format);

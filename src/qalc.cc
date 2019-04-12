@@ -1335,37 +1335,42 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 			}
 			if(list_type != 0) break;
 		}
-		name_list.sort();
-		list<string>::iterator it = name_list.begin();
-		list<string>::iterator it_e = name_list.end();
-		int c = 0;
-		int max_tabs = (max_l / 8) + 1;
-		int max_c = cols / (max_tabs * 8);
-		if(cfile) max_c = 0;
-		while(it != it_e) {
-			c++;
-			if(c >= max_c) {
-				c = 0;
-				if(max_c == 1 && in_interactive) {CHECK_IF_SCREEN_FILLED}
-				PUTS_UNICODE(it->c_str());
-			} else {
-				if(c == 1 && in_interactive) {CHECK_IF_SCREEN_FILLED}
-				int l = unicode_length_check(it->c_str());
-				int nr_of_tabs = max_tabs - (l / 8);
-				for(int tab_nr = 0; tab_nr < nr_of_tabs; tab_nr++) {
-					*it += "\t";
+		if(name_list.empty()) {
+			PUTS_UNICODE(_("No matching item found."));
+			puts("");
+		} else {
+			name_list.sort();
+			list<string>::iterator it = name_list.begin();
+			list<string>::iterator it_e = name_list.end();
+			int c = 0;
+			int max_tabs = (max_l / 8) + 1;
+			int max_c = cols / (max_tabs * 8);
+			if(cfile) max_c = 0;
+			while(it != it_e) {
+				c++;
+				if(c >= max_c) {
+					c = 0;
+					if(max_c == 1 && in_interactive) {CHECK_IF_SCREEN_FILLED}
+					PUTS_UNICODE(it->c_str());
+				} else {
+					if(c == 1 && in_interactive) {CHECK_IF_SCREEN_FILLED}
+					int l = unicode_length_check(it->c_str());
+					int nr_of_tabs = max_tabs - (l / 8);
+					for(int tab_nr = 0; tab_nr < nr_of_tabs; tab_nr++) {
+						*it += "\t";
+					}
+					FPUTS_UNICODE(it->c_str(), stdout);
 				}
-				FPUTS_UNICODE(it->c_str(), stdout);
+				++it;
 			}
-			++it;
+			if(c > 0) puts("");
+			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+			puts("");
+			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
+			if(in_interactive) {CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
+			else {PUTS_UNICODE(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
+			puts("");
 		}
-		if(c > 0) puts("");
-		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-		puts("");
-		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-		if(in_interactive) {CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
-		else {PUTS_UNICODE(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
-		puts("");
 	} else if(list_type == 0) {
 		puts("");
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED;}
@@ -4214,6 +4219,10 @@ void result_display_updated() {
 	if(expression_executed) setResult(NULL, false);
 }
 void result_format_updated() {
+	IntervalDisplay ivdisp = printops.interval_display;
+	printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+	CALCULATOR->setMessagePrintOptions(printops);
+	printops.interval_display = ivdisp;
 	if(expression_executed) setResult(NULL, false);
 }
 void result_action_executed() {
@@ -5128,7 +5137,7 @@ void load_preferences() {
 				} else if(svar == "precision") {
 					CALCULATOR->setPrecision(v);
 				} else if(svar == "interval_arithmetic") {
-					if(v && version_numbers[0] >= 3) CALCULATOR->useIntervalArithmetic(v);
+					if(version_numbers[0] >= 3) CALCULATOR->useIntervalArithmetic(v);
 				} else if(svar == "interval_display") {
 					if(v == 0) {
 						adaptive_interval_display = true;

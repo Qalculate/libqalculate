@@ -7624,7 +7624,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
 				if(exact && ((expo >= 0 && length - 1 < precexp) || (expo < 0 && expo > -PRECISION))) {
-					if(precision_base >= precision) precision_base = length;
+					if(precision_base < length) precision_base = length;
 					expo = 0;
 				}
 			} else if(po.min_exp < -1) {
@@ -7780,7 +7780,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		if(!exact && po.is_approximate) *po.is_approximate = true;
 
-		if(base != BASE_ROMAN_NUMERALS && po.show_ending_zeroes && (!exact || approx) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
+		if(base != BASE_ROMAN_NUMERALS && po.show_ending_zeroes && (mpz_str.length() > 1 || mpz_str == "0") && (!exact || approx) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
 			precision = precision_base;
 			precision -= mpz_str.length();
 			if(dp_added) {
@@ -7987,6 +7987,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpfr_log(f_logl, vu, MPFR_RNDN);
 			mpfr_div(f_logl, f_logl, f_log_base, MPFR_RNDN);
 			mpfr_floor(f_logl, f_logl);
+
 			if(po.use_max_decimals && po.max_decimals >= 0) {
 				long int i_log = mpfr_get_si(f_logl, MPFR_RNDN);
 				long int expo = 0;
@@ -8223,7 +8224,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpfr_div(f_mid, f_mid, f_log, MPFR_RNDN);
 			if(b_neg) mpfr_neg(f_mid, f_mid, MPFR_RNDN);
 		}
-		
 		mpfr_t v;
 		mpfr_init2(v, mpfr_get_prec(f_mid));
 		long int expo = 0;
@@ -8235,7 +8235,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpfr_div(f_log, f_log, f_log_base, MPFR_RNDN);
 		mpfr_floor(f_log, f_log);
 		long int i_log = mpfr_get_si(f_log, MPFR_RNDN);
-		if(base == 10 && (!po.preserve_format || (is_interval && po.interval_display == INTERVAL_DISPLAY_PLUSMINUS))) {
+		if((base == 10 || (isInterval() && po.interval_display == INTERVAL_DISPLAY_MIDPOINT && i_log > 0 && i_log > precision)) && (!po.preserve_format || (is_interval && po.interval_display == INTERVAL_DISPLAY_PLUSMINUS))) {
 			expo = i_log;
 			if(po.min_exp == EXP_PRECISION || (po.min_exp == 0 && expo > 1000000L)) {
 				long int precexp = i_precision_base;
@@ -8412,15 +8412,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(str[str.length() - 1] == po.decimalpoint()[0]) {
 			str.erase(str.end() - 1);
 		}
-		
+
 		if(!str_bexp.empty()) {
 			PrintOptions po2 = po;
 			po2.binary_bits = 0;
 			str = format_number_string(str, base, po.base_display, !ips.minus && neg, true, po2);
-			if(!str_unc.empty()) str_unc = format_number_string(str_unc, base, po.base_display, !ips.minus && neg, true, po2);
+			if(!str_unc.empty()) str_unc = format_number_string(str_unc, base, po.base_display, false, true, po2);
 		} else {
 			str = format_number_string(str, base, po.base_display, !ips.minus && neg, true, po);
-			if(!str_unc.empty()) str_unc = format_number_string(str_unc, base, po.base_display, !ips.minus && neg, true, po);
+			if(!str_unc.empty()) str_unc = format_number_string(str_unc, base, po.base_display, false, true, po);
 		}
 		
 		if(expo != 0) {
@@ -8432,18 +8432,52 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 				*ips.exp = i2s(expo);
 			} else {
+				
 				if(!b_pm_zero) {
-					if(po.lower_case_e) str += "e";
-					else str += "E";
-					str += i2s(expo);
+					if(base == 10) {
+						if(po.lower_case_e) str += "e";
+						else str += "E";
+						str += i2s(expo);
+					} else {
+						if(po.spacious) str += " ";
+						if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
+						else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
+						else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
+						else str += "*";
+						if(po.spacious) str += " ";
+						str += i2s(base);
+						str += "^";
+						str += i2s(expo);
+						if(ips.depth > 0) {
+							str.insert(0, "(");
+							str += ")";
+						}
+					}
 				}
 				if(!str_unc.empty()) {
-					if(po.lower_case_e) str_unc += "e";
-					else str_unc += "E";
-					str_unc += i2s(expo);
+					if(base == 10) {
+						if(po.lower_case_e) str_unc += "e";
+						else str_unc += "E";
+						str_unc += i2s(expo);
+					} else {
+						if(po.spacious) str += " ";
+						if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
+						else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
+						else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
+						else str += "*";
+						if(po.spacious) str += " ";
+						str += i2s(base);
+						str += "^";
+						str += i2s(expo);
+						if(ips.depth > 0) {
+							str.insert(0, "(");
+							str += ")";
+						}
+					}
 				}
 			}
 		}
+
 		if(!str_unc.empty()) {
 			str += SIGN_PLUSMINUS;
 			str += str_unc;
@@ -8940,6 +8974,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(ips.minus) *ips.minus = neg;
 		if(ips.num) *ips.num = str;
 	} else {
+		if(approx && po.show_ending_zeroes && base != BASE_ROMAN_NUMERALS) {
+			PrintOptions po2 = po;
+			po2.number_fraction_format = FRACTION_DECIMAL;
+			return print(po2, ips);
+		}
 		Number num, den;
 		num.setInternal(mpq_numref(r_value));
 		den.setInternal(mpq_denref(r_value));

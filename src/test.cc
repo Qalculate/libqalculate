@@ -1048,7 +1048,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 	if(m4.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED1c" << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
 	cerr << "A3d" << endl;
 	eo.interval_calculation = ic;
-	/*eo.approximation = APPROXIMATION_EXACT;
+	eo.approximation = APPROXIMATION_EXACT;
 	m2 = mp;
 	CALCULATOR->calculate(&m2, 5000, eo);
 	if(m2.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED2" << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
@@ -1064,7 +1064,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			cout << str << " => " << mp << endl;
 			cout << "UNEQUAL1: " << m1.print(po) << ":" << m2.print(po) << endl;
 		}
-	}*/
+	}
 	if(m1.isNumber() && m3.isNumber()) {
 		if(m1 != m3 && m1.print(po) != m3.print(po)) {
 			rt2++;
@@ -1343,7 +1343,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 	if(m4.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED1c" << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
 	cerr << "A3d" << endl;
 	eo.interval_calculation = ic;
-	/*eo.approximation = APPROXIMATION_EXACT;
+	eo.approximation = APPROXIMATION_EXACT;
 	m2 = mp;
 	CALCULATOR->calculate(&m2, 5000, eo);
 	if(m2.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED2" << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
@@ -1357,7 +1357,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			cout << str << " => " << mp << endl;
 			cout << "UNEQUAL1: " << m1.print(po) << ":" << m2.print(po) << endl;
 		}
-	}*/
+	}
 	if(m1.isNumber() && m3.isNumber()) {
 		if(m1 != m3 && m1.print(po) != m3.print(po)) {
 			rt2++;
@@ -1665,7 +1665,7 @@ void speed_test() {
 
 int main(int argc, char *argv[]) {
 
-	new Calculator(true);
+	new Calculator(false);
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
 	CALCULATOR->setPrecision(8);
@@ -1706,8 +1706,8 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	//test_integration();
-	//return true;
+	test_integration();
+	return true;
 	//test_intervals(true);
 	
 	CALCULATOR->setVariableUnitsEnabled(true);
@@ -1718,7 +1718,7 @@ int main(int argc, char *argv[]) {
 	//CALCULATOR->useIntervalArithmetic();
 	
 	for(size_t i = 0; i <= 10000; i++) {
-		rnd_test(evalops, false, true, false, false, false, false, true);
+		rnd_test(evalops, 4, true, false, false, false, false, false);
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
