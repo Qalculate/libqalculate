@@ -1,3 +1,11 @@
+2019-04-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Simplify y*f(x)+z*f(x) to (y+z)*f(x)
+
+2019-04-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support for "portable" Windows version
+
 2019-04-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Improve currency symbol placement

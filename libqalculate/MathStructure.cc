@@ -4760,7 +4760,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					}
 				} else if(eo.transform_trigonometric_functions && o_function == CALCULATOR->f_sinc && SIZE == 1 && CHILD(0) == mstruct) {
 					// sinc(x)*x=sin(x)
-					CHILD(0).calculateMultiply(MathStructure(CALCULATOR->getRadUnit()), eo);
+					CHILD(0).calculateMultiply(CALCULATOR->getRadUnit(), eo);
 					CHILD_UPDATED(0)
 					setFunction(CALCULATOR->f_sin);
 					if(eo.calculate_functions) calculateFunctions(eo, false);
@@ -10021,6 +10021,13 @@ bool factor1(const MathStructure &mstruct, MathStructure &mnum, MathStructure &m
 	return false;
 }
 
+bool combination_factorize_is_complicated(MathStructure &m) {
+	if(m.isPower()) {
+		return combination_factorize_is_complicated(m[0]) || combination_factorize_is_complicated(m[1]);
+	}
+	return m.size() > 0;
+}
+
 bool combination_factorize(MathStructure &mstruct) {
 	bool retval = false;
 	switch(mstruct.type()) {
@@ -10080,7 +10087,60 @@ bool combination_factorize(MathStructure &mstruct) {
 				b = false;
 				retval = true;
 			}
-			if(!b && mstruct.isAddition()) {
+			if(mstruct.isAddition()) {
+				// y*f(x)x + z*f(x) = (y+z)*f(x)
+				MathStructure mstruct_units(mstruct);
+				MathStructure mstruct_new(mstruct);
+				for(size_t i = 0; i < mstruct_units.size(); i++) {
+					if(mstruct_units[i].isMultiplication()) {
+						for(size_t i2 = 0; i2 < mstruct_units[i].size();) {
+							if(!combination_factorize_is_complicated(mstruct_units[i][i2])) {
+								mstruct_units[i].delChild(i2 + 1);
+							} else {
+								i2++;
+							}
+						}
+						if(mstruct_units[i].size() == 0) mstruct_units[i].setUndefined();
+						else if(mstruct_units[i].size() == 1) mstruct_units[i].setToChild(1);
+						for(size_t i2 = 0; i2 < mstruct_new[i].size();) {
+							if(combination_factorize_is_complicated(mstruct_new[i][i2])) {
+								mstruct_new[i].delChild(i2 + 1);
+							} else {
+								i2++;
+							}
+						}
+						if(mstruct_new[i].size() == 0) mstruct_new[i].set(1, 1, 0);
+						else if(mstruct_new[i].size() == 1) mstruct_new[i].setToChild(1);
+					} else if(combination_factorize_is_complicated(mstruct_units[i])) {
+						mstruct_new[i].set(1, 1, 0);
+					} else {
+						mstruct_units[i].setUndefined();
+					}
+				}
+				for(size_t i = 0; i < mstruct_units.size(); i++) {
+				cout << mstruct_units[i] << endl;
+					if(!mstruct_units[i].isUndefined()) {
+						for(size_t i2 = i + 1; i2 < mstruct_units.size();) {
+							if(mstruct_units[i2] == mstruct_units[i]) {
+								mstruct_new[i].add(mstruct_new[i2], true);
+								mstruct_new.delChild(i2 + 1);
+								mstruct_units.delChild(i2 + 1);
+								b = true;
+							} else {
+								i2++;
+							}
+						}
+						if(mstruct_new[i].isOne()) mstruct_new[i].set(mstruct_units[i]);
+						else mstruct_new[i].multiply(mstruct_units[i], true);
+					}
+				}
+				if(b) {
+					if(mstruct_new.size() == 1) mstruct.set(mstruct_new[0], true);
+					else mstruct = mstruct_new;
+					retval = true;
+				}
+			}
+			if(mstruct.isAddition()) {
 				// 5x + pi*x + 5y + xy = (5 + pi)x + 5y + xy
 				MathStructure mstruct_units(mstruct);
 				MathStructure mstruct_new(mstruct);
@@ -18585,6 +18645,67 @@ bool unnegate_multiplier(MathStructure &mstruct, const PrintOptions &po) {
 		return true;
 	}
 	return false;
+}
+Unit *default_angle_unit(const EvaluationOptions &eo) {
+	switch(eo.parse_options.angle_unit) {
+		case ANGLE_UNIT_DEGREES: {return CALCULATOR->getDegUnit();}
+		case ANGLE_UNIT_GRADIANS: {return CALCULATOR->getGraUnit();}
+		case ANGLE_UNIT_RADIANS: {return CALCULATOR->getRadUnit();}
+		default: {}
+	}
+	return NULL;
+}
+
+bool remove_angle_unit(MathStructure &m, Unit *u) {
+	bool b_ret = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(remove_angle_unit(m[i], u)) b_ret = true;
+		if(m.isFunction() && m.function()->getArgumentDefinition(i + 1) && m.function()->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_ANGLE) {
+			if(m[i].isMultiplication()) {
+				for(size_t i3 = 0; i3 < m[i].size(); i3++) {
+					if(m[i][i3].isUnit() && !m[i][i3].prefix() && m[i][i3].unit() == u) {
+						m[i].delChild(i3 + 1, true);
+						b_ret = true;
+						break;
+					}
+				}
+			} else if(m[i].isAddition()) {
+				bool b = true;
+				for(size_t i2 = 0; i2 < m[i].size(); i2++) {
+					bool b2 = false;
+					if(m[i][i2].isMultiplication()) {
+						for(size_t i3 = 0; i3 < m[i][i2].size(); i3++) {
+							if(m[i][i2][i3].isUnit() && !m[i][i2][i3].prefix() && m[i][i2][i3].unit() == u) {
+								b2 = true;
+								break;
+							}
+						}
+					}
+					if(!b2) {
+						b = false;
+						break;
+					}
+				}
+				if(b) {
+					b_ret = true;
+					for(size_t i2 = 0; i2 < m[i].size(); i2++) {
+						for(size_t i3 = 0; i3 < m[i][i2].size(); i3++) {
+							if(m[i][i2][i3].isUnit() && !m[i][i2][i3].prefix() && m[i][i2][i3].unit() == u) {
+								m[i][i2].delChild(i3 + 1, true);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return b_ret;
+}
+bool MathStructure::removeDefaultAngleUnit(const EvaluationOptions &eo) {
+	Unit *u = default_angle_unit(eo);
+	if(!u) return false;
+	return remove_angle_unit(*this, u);
 }
 void MathStructure::format(const PrintOptions &po) {
 	if(!po.preserve_format) {

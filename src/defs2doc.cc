@@ -81,18 +81,7 @@ void generate_units_tree_struct() {
 	ia_units.clear();
 	list<tree_struct>::iterator it;	
 	for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
-		if(!CALCULATOR->units[i]->isActive()) {
-			b = false;
-			for(size_t i3 = 0; i3 < ia_units.size(); i3++) {
-				u = (Unit*) ia_units[i3];
-				if(CALCULATOR->units[i]->title() < u->title()) {
-					b = true;
-					ia_units.insert(ia_units.begin() + i3, (void*) CALCULATOR->units[i]);
-					break;
-				}
-			}
-			if(!b) ia_units.push_back((void*) CALCULATOR->units[i]);
-		} else {
+		if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
 			tree_struct *item = &unit_cats;
 			if(!CALCULATOR->units[i]->category().empty()) {
 				cat = CALCULATOR->units[i]->category();
@@ -137,7 +126,7 @@ void generate_units_tree_struct() {
 					break;
 				}
 			}
-			if(!b) item->objects.push_back((void*) CALCULATOR->units[i]);		
+			if(!b) item->objects.push_back((void*) CALCULATOR->units[i]);
 		}
 	}
 	
@@ -156,19 +145,7 @@ void generate_variables_tree_struct() {
 	ia_variables.clear();
 	list<tree_struct>::iterator it;	
 	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
-		if(!CALCULATOR->variables[i]->isActive()) {
-			//deactivated variable
-			b = false;
-			for(size_t i3 = 0; i3 < ia_variables.size(); i3++) {
-				v = (Variable*) ia_variables[i3];
-				if(CALCULATOR->variables[i]->title() < v->title()) {
-					b = true;
-					ia_variables.insert(ia_variables.begin() + i3, (void*) CALCULATOR->variables[i]);
-					break;
-				}
-			}
-			if(!b) ia_variables.push_back((void*) CALCULATOR->variables[i]);
-		} else {
+		if(CALCULATOR->variables[i]->isActive()) {
 			tree_struct *item = &variable_cats;
 			if(!CALCULATOR->variables[i]->category().empty()) {
 				cat = CALCULATOR->variables[i]->category();
@@ -233,19 +210,7 @@ void generate_functions_tree_struct() {
 	list<tree_struct>::iterator it;
 
 	for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
-		if(!CALCULATOR->functions[i]->isActive()) {
-			//deactivated function
-			b = false;
-			for(size_t i3 = 0; i3 < ia_functions.size(); i3++) {
-				f = (MathFunction*) ia_functions[i3];
-				if(CALCULATOR->functions[i]->title() < f->title()) {
-					b = true;
-					ia_functions.insert(ia_functions.begin() + i3, (void*) CALCULATOR->functions[i]);
-					break;
-				}
-			}
-			if(!b) ia_functions.push_back((void*) CALCULATOR->functions[i]);
-		} else {
+		if(CALCULATOR->functions[i]->isActive()) {
 			tree_struct *item = &function_cats;
 			if(!CALCULATOR->functions[i]->category().empty()) {
 				cat = CALCULATOR->functions[i]->category();
@@ -570,11 +535,11 @@ void print_unit(Unit *u) {
 						relation += fix(CALCULATOR->localizeExpression(au->uncertainty()));
 						if(is_relative) {relation += ")";}
 					}
-				}
-				if(u->isApproximate() && !is_relative && relation.find(SIGN_PLUSMINUS) == string::npos) {
-					relation += " (";
-					relation += _("approximate");
-					relation += ")";
+					if(u->isApproximate() && !is_relative && relation.find(SIGN_PLUSMINUS) == string::npos) {
+						relation += " (";
+						relation += _("approximate");
+						relation += ")";
+					}
 				}
 				break;
 			}

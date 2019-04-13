@@ -906,7 +906,7 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 				else r = rand() % 2 + 4;
 			} else {
 				int au2 = 3 - allow_unknown % 3;
-				r = (rand() % ((allow_function ? 22 : 5) - au2)) + 4 - allow_unknown;
+				r = (rand() % ((allow_function ? 32 : 5) - au2)) + 4 - allow_unknown;
 				if(r < 4 - allow_unknown % 3) {
 					if(r < 0) r = -r;
 					if(allow_unknown % 3 == 1) r = 3;
@@ -952,11 +952,14 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 				case 23: {str = "cbrt("; break;}
 				case 24: {str = "erf("; break;}
 				case 25: {str = "erfc("; break;}
-				case 26: {str = "airy("; break;}
-				case 27: {str = "Si("; break;}
-				case 28: {str = "Shi("; break;}
-				case 29: {str = "im("; break;}
-				case 30: {str = "re("; break;}
+				case 26: {str = "Si("; break;}
+				case 27: {str = "Shi("; break;}
+				case 28: {str = "im("; break;}
+				case 29: {str = "re("; break;}
+				case 30: {str = "Ci("; break;}
+				case 31: {str = "Chi("; break;}
+				case 32: {str = "sinc("; break;}
+				case 33: {str = "airy("; break;}
 			}
 			if(r > 5) {
 				if(allow_unknown && rand() % 2 == 1) {
@@ -1673,8 +1676,8 @@ int main(int argc, char *argv[]) {
 	CALCULATOR->useIntervalArithmetic();
 	PrintOptions po = CALCULATOR->messagePrintOptions();
 	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-	po.show_ending_zeroes = false;
-	po.number_fraction_format = FRACTION_DECIMAL;
+	po.show_ending_zeroes = true;
+	po.number_fraction_format = FRACTION_FRACTIONAL;
 	CALCULATOR->setMessagePrintOptions(po);
 	
 	EvaluationOptions evalops;
@@ -1706,11 +1709,11 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	test_integration();
-	return true;
+	//test_integration();
+	//return true;
 	//test_intervals(true);
 	
-	CALCULATOR->setVariableUnitsEnabled(true);
+	CALCULATOR->setVariableUnitsEnabled(false);
 	
 	v = new KnownVariable("", "v", m_zero);
 
@@ -1718,7 +1721,7 @@ int main(int argc, char *argv[]) {
 	//CALCULATOR->useIntervalArithmetic();
 	
 	for(size_t i = 0; i <= 10000; i++) {
-		rnd_test(evalops, 4, true, false, false, false, false, false);
+		rnd_test(evalops, false, true, false, false, false, true, true);
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;

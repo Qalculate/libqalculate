@@ -443,10 +443,19 @@ string getOldLocalDir() {
 }
 string getLocalDir() {
 #ifdef _WIN32
+#	ifdef WIN_PORTABLE
+	char exepath[MAX_PATH];
+	GetModuleFileName(NULL, exepath, MAX_PATH);
+	string str(exepath);
+	str.resize(str.find_last_of('\\'));
+	_mkdir(str.c_str());
+	return str + "\\user";
+#	else
 	char path[MAX_PATH];
 	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
 	string str = path;
 	return str + "\\Qalculate";
+#	endif
 #else
 	const char *homedir;
 	if((homedir = getenv("XDG_CONFIG_HOME")) == NULL) {
@@ -457,10 +466,19 @@ string getLocalDir() {
 }
 string getLocalDataDir() {
 #ifdef _WIN32
+#	ifdef WIN_PORTABLE
+	char exepath[MAX_PATH];
+	GetModuleFileName(NULL, exepath, MAX_PATH);
+	string str(exepath);
+	str.resize(str.find_last_of('\\'));
+	_mkdir(str.c_str());
+	return str + "\\user";
+#	else
 	char path[MAX_PATH];
 	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
 	string str = path;
 	return str + "\\Qalculate";
+#	endif
 #else
 	const char *homedir;
 	if((homedir = getenv("XDG_DATA_HOME")) == NULL) {
@@ -471,12 +489,21 @@ string getLocalDataDir() {
 }
 string getLocalTmpDir() {
 #ifdef _WIN32
+#	ifdef WIN_PORTABLE
+	char exepath[MAX_PATH];
+	GetModuleFileName(NULL, exepath, MAX_PATH);
+	string str(exepath);
+	str.resize(str.find_last_of('\\'));
+	_mkdir(str.c_str());
+	return str + "\\tmp";
+#	else
 	char path[MAX_PATH];
 	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
 	string str = path;
 	str += "\\cache";
 	_mkdir(str.c_str());
 	return str + "\\Qalculate";
+#	endif
 #else
 	const char *homedir;
 	if((homedir = getenv("XDG_CACHE_HOME")) == NULL) {
@@ -579,7 +606,7 @@ string getPackageLocaleDir() {
 	GetModuleFileName(NULL, exepath, MAX_PATH);
 	string datadir(exepath);
 	datadir.resize(datadir.find_last_of('\\'));
-	if (datadir.substr(datadir.length() - 4) == "\\bin" || datadir.substr(datadir.length() - 6) == "\\.libs") {
+	if(datadir.substr(datadir.length() - 4) == "\\bin" || datadir.substr(datadir.length() - 6) == "\\.libs") {
 		datadir.resize(datadir.find_last_of('\\'));
 		return datadir + "\\share\\locale";
 	}
