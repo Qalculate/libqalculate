@@ -741,6 +741,7 @@ class MathStructure {
 		bool factorizeUnits();
 		void unformat(const EvaluationOptions &eo = default_evaluation_options);
 		bool needsParenthesis(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, size_t index, bool flat_division = true, bool flat_power = true) const;
+		bool removeDefaultAngleUnit(const EvaluationOptions &eo = default_evaluation_options);
 
 		int neededMultiplicationSign(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, size_t index, bool par, bool par_prev, bool flat_division = true, bool flat_power = true) const;
 		

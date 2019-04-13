@@ -2439,7 +2439,6 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct += nr_one;
 			mstruct ^= nr_minus_half;
 			mstruct.multiply_nocopy(mmul);
-			cout << mstruct << endl;
 			b = true;
 		}
 	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
