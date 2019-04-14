@@ -3937,7 +3937,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				case STRUCT_ADDITION: {
 					if(eo.expand != 0 && SIZE < 1000 && mstruct.size() < 1000 && (SIZE * mstruct.size() < (eo.expand == -1 ? 50 : 500))) {
 					
-						if(eo.expand > -2 || (!containsInterval(true, false, false, eo.expand == -2) && !mstruct.containsInterval(true, false, false, eo.expand == -2)) || (representsNonNegative(true) && mstruct.representsNonNegative(true))) {
+						if(eo.expand > -2 || (!containsInterval(true, false, false, eo.expand == -2 ? 1 : 0) && !mstruct.containsInterval(true, false, false, eo.expand == -2 ? 1 : 0)) || (representsNonNegative(true) && mstruct.representsNonNegative(true))) {
 							MathStructure msave(*this);
 							CLEAR;
 							for(size_t i = 0; i < mstruct.size(); i++) {
@@ -3958,13 +3958,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							MERGE_APPROX_AND_PREC(mstruct)
 							calculatesub(eo, eo, false, mparent, index_this);
 							return 1;
-						} else if(eo.expand <= -2 && (!mstruct.containsInterval(true, false, false, eo.expand == -2) || representsNonNegative(true))) {
+						} else if(eo.expand <= -2 && (!mstruct.containsInterval(true, false, false, eo.expand == -2 ? 1 : 0) || representsNonNegative(true))) {
 							for(size_t i = 0; i < SIZE; i++) {
 								CHILD(i).calculateMultiply(mstruct, eo, this, i);
 							}
 							calculatesub(eo, eo, false, mparent, index_this);
 							return 1;
-						} else if(eo.expand <= -2 && (!containsInterval(true, false, false, eo.expand == -2) || mstruct.representsNonNegative(true))) {
+						} else if(eo.expand <= -2 && (!containsInterval(true, false, false, eo.expand == -2 ? 1 : 0) || mstruct.representsNonNegative(true))) {
 							return 0;
 						}
 					}
@@ -4056,10 +4056,10 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						}
 						return 1;
 					}
-					if(eo.expand == 0 || (eo.expand < -1 && mstruct.containsInterval(true, false, false, eo.expand == -2) && !representsNonNegative(true))) return -1;
+					if(eo.expand == 0 || (eo.expand < -1 && mstruct.containsInterval(true, false, false, eo.expand == -2 ? 1 : 0) && !representsNonNegative(true))) return -1;
 				}
 				case STRUCT_MULTIPLICATION: {
-					if(do_append && (eo.expand == 0 || (eo.expand < -1 && mstruct.containsInterval(true, false, false, eo.expand == -2) && !representsNonNegative(true)))) {
+					if(do_append && (eo.expand == 0 || (eo.expand < -1 && mstruct.containsInterval(true, false, false, eo.expand == -2 ? 1 : 0) && !representsNonNegative(true)))) {
 						transform(STRUCT_MULTIPLICATION);
 						for(size_t i = 0; i < mstruct.size(); i++) {
 							APPEND_REF(&mstruct[i]);
@@ -4068,7 +4068,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					}
 				}
 				default: {
-					if(eo.expand == 0 || (eo.expand < -1 && mstruct.containsInterval(true, false, false, eo.expand == -2) && !representsNonNegative(true))) return -1;
+					if(eo.expand == 0 || (eo.expand < -1 && mstruct.containsInterval(true, false, false, eo.expand == -2 ? 1 : 0) && !representsNonNegative(true))) return -1;
 					for(size_t i = 0; i < SIZE; i++) {
 						CHILD(i).multiply(mstruct, true);
 						if(reversed) {
@@ -5649,7 +5649,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							MERGE_APPROX_AND_PREC(mstruct)
 							return 1;
 						}
-					} else if(mstruct[0].number().isI() && mstruct[1].isFunction() && mstruct[1].function() == CALCULATOR->f_atan && mstruct[1].size() == 1 && !mstruct[1][0].containsUnknowns() && ((eo.expand != 0 && eo.expand > -2) || !mstruct[1][0].containsInterval(true, false, false, eo.expand == -2))) {
+					} else if(mstruct[0].number().isI() && mstruct[1].isFunction() && mstruct[1].function() == CALCULATOR->f_atan && mstruct[1].size() == 1 && !mstruct[1][0].containsUnknowns() && ((eo.expand != 0 && eo.expand > -2) || !mstruct[1][0].containsInterval(true, false, false, eo.expand == -2 ? 1 : 0))) {
 						set(mstruct[1][0], true);
 						calculateRaise(nr_two, eo);
 						calculateAdd(m_one, eo);
@@ -7602,7 +7602,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 	switch(m_type) {
 		case STRUCT_VARIABLE: {
 			if(eo.calculate_variables && o_variable->isKnown()) {
-				if((eo.approximation == APPROXIMATION_APPROXIMATE || (!o_variable->isApproximate() && !((KnownVariable*) o_variable)->get().containsInterval(true, false, false, false, true))) && !((KnownVariable*) o_variable)->get().isAborted()) {
+				if((eo.approximation == APPROXIMATION_APPROXIMATE || (!o_variable->isApproximate() && !((KnownVariable*) o_variable)->get().containsInterval(true, false, false, 0, true))) && !((KnownVariable*) o_variable)->get().isAborted()) {
 					set(((KnownVariable*) o_variable)->get());
 					unformat(eo);
 					if(eo.calculate_functions) {
@@ -10118,7 +10118,6 @@ bool combination_factorize(MathStructure &mstruct) {
 					}
 				}
 				for(size_t i = 0; i < mstruct_units.size(); i++) {
-				cout << mstruct_units[i] << endl;
 					if(!mstruct_units[i].isUndefined()) {
 						for(size_t i2 = i + 1; i2 < mstruct_units.size();) {
 							if(mstruct_units[i2] == mstruct_units[i]) {
@@ -11381,7 +11380,7 @@ bool MathStructure::calculateLimit(const MathStructure &x_var, const MathStructu
 	var->ref();
 	Assumptions *ass = new Assumptions();
 	MathStructure nr_limit(limit);
-	if(eo.approximation != APPROXIMATION_EXACT && nr_limit.containsInterval(true, true, false, false, true)) {
+	if(eo.approximation != APPROXIMATION_EXACT && nr_limit.containsInterval(true, true, false, 0, true)) {
 		eo.approximation = APPROXIMATION_EXACT_VARIABLES;
 	}
 	nr_limit.eval(eo);
@@ -11813,9 +11812,9 @@ bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, co
 	return false;
 }
 bool contains_interval_variable(const MathStructure &m, int i_type = 0) {
-	if(i_type == 0 && m.isVariable() && m.containsInterval(true, true, false, true, false)) return true;
-	else if(i_type == 1 && m.containsInterval(true, false, false, true, true)) return true;
-	else if(i_type == 2 && m.containsInterval(true, true, false, true, true)) return true;
+	if(i_type == 0 && m.isVariable() && m.containsInterval(true, true, false, 1, false)) return true;
+	else if(i_type == 1 && m.containsInterval(true, false, false, 1, true)) return true;
+	else if(i_type == 2 && m.containsInterval(true, true, false, 1, true)) return true;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(contains_interval_variable(m[i])) return true;
 	}
@@ -12008,7 +12007,7 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 				msolve.factorize(eo, false, false, 0, false, true, NULL, m_undefined, false, false, 1);
 				remove_nonzero_mul(msolve, u_var, eo);
 				if(msolve.isZero()) {
-				} else if(contains_undefined(msolve) || msolve.countTotalChildren(false) > 1000 || msolve.containsInterval(true, true, false, true, true)) {
+				} else if(contains_undefined(msolve) || msolve.countTotalChildren(false) > 1000 || msolve.containsInterval(true, true, false, 1, true)) {
 					b = false;
 				} else {
 					MathStructure mtest(mstruct);
@@ -12064,7 +12063,7 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 		}
 		CALCULATOR->endTemporaryStopMessages(b);
 		if(!b) {
-			CALCULATOR->error(false, _("Interval potentially calculated wide."), NULL);
+			CALCULATOR->error(false, MESSAGE_CATEGORY_WIDE_INTERVAL, _("Interval potentially calculated wide."), NULL);
 			mstruct.replace(v, v->get());
 			mstruct.unformat(eo_pre);
 			solve_intervals2(mstruct, vars, eo_pre);
@@ -12090,12 +12089,12 @@ KnownVariable *fix_find_interval_variable2(MathStructure &mstruct) {
 		if(m.isMultiplication()) {
 			bool b_intfound = false;;
 			for(size_t i = 0; i < m.size(); i++) {
-				if(m[i].containsInterval(true, false, false, true)) {
+				if(m[i].containsInterval(true, false, false, 1)) {
 					if(b_intfound || !m[i].isNumber()) return (KnownVariable*) mstruct.variable();
 					b_intfound = true;
 				}
 			}
-		} else if(m.containsInterval(true, false, false, true)) {
+		} else if(m.containsInterval(true, false, false, 1)) {
 			return (KnownVariable*) mstruct.variable();
 		}
 	}
@@ -12249,7 +12248,7 @@ bool simplify_ln(MathStructure &mstruct) {
 KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, const EvaluationOptions &eo, MathStructure *mnew, Variable **prev_v, bool &b_failed) {
 	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables && m.isVariable() && m.variable()->isKnown()) {
 		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
-		if(!mvar.containsInterval(true, true, false, true, true)) return NULL;
+		if(!mvar.containsInterval(true, true, false, 1, true)) return NULL;
 		if(mvar.isNumber()) {
 			unc = mvar.number().uncertainty();
 			Number nmid(mvar.number());
@@ -12267,7 +12266,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 			if(mvar[0].number().isInterval(false)) {
 				bool b = true;
 				for(size_t i = 1; i < mvar.size(); i++) {
-					if(mvar[i].containsInterval(true, true, false, true, true)) {
+					if(mvar[i].containsInterval(true, true, false, 1, true)) {
 						b = false;
 						break;
 					}
@@ -12290,7 +12289,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 					return v;
 				}
 			}
-		} else if(mvar.isFunction() && mvar.function() == CALCULATOR->f_interval && mvar.size() == 2 && !mvar[0].containsInterval(true, true, false, true, true) && !mvar[1].containsInterval(true, true, false, true, true)) {
+		} else if(mvar.isFunction() && mvar.function() == CALCULATOR->f_interval && mvar.size() == 2 && !mvar[0].containsInterval(true, true, false, 1, true) && !mvar[1].containsInterval(true, true, false, 1, true)) {
 			if(mvar[0].isAddition() && mvar[0].size() == 2 && mvar[1].isAddition() && mvar[1].size() == 2) {
 				const MathStructure *mmid = NULL, *munc = NULL;
 				if(mvar[0][0].equals(mvar[1][0])) {
@@ -12334,7 +12333,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 			*mnew = m;
 			v->destroy();
 			return v;
-		} else if(mvar.isFunction() && mvar.function() == CALCULATOR->f_uncertainty && mvar.size() == 3 && mvar[2].isNumber() && !mvar[0].containsInterval(true, true, false, true, true) && !mvar[1].containsInterval(true, true, false, true, true)) {
+		} else if(mvar.isFunction() && mvar.function() == CALCULATOR->f_uncertainty && mvar.size() == 3 && mvar[2].isNumber() && !mvar[0].containsInterval(true, true, false, 1, true) && !mvar[1].containsInterval(true, true, false, 1, true)) {
 			if(mvar[2].number().getBoolean()) {
 				unc = mvar[1];
 				unc *= mvar[0];
@@ -12361,7 +12360,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 		m.set(v);
 		v->destroy();
 		return v;
-	} else if(m.isFunction() && m.function() == CALCULATOR->f_interval && m.size() == 2 && !m[0].containsInterval(true, true, false, true, true) && !m[1].containsInterval(true, true, false, true, true)) {
+	} else if(m.isFunction() && m.function() == CALCULATOR->f_interval && m.size() == 2 && !m[0].containsInterval(true, true, false, 1, true) && !m[1].containsInterval(true, true, false, 1, true)) {
 		if(m[0].isAddition() && m[0].size() == 2 && m[1].isAddition() && m[1].size() == 2) {
 			MathStructure *mmid = NULL, *munc = NULL;
 			if(m[0][0].equals(m[1][0])) {
@@ -12401,7 +12400,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 		m.set(v);
 		v->destroy();
 		return v;
-	} else if(m.isFunction() && m.function() == CALCULATOR->f_uncertainty && m.size() == 3 && m[2].isNumber() && !m[0].containsInterval(true, true, false, true, true) && !m[1].containsInterval(true, true, false, true, true)) {
+	} else if(m.isFunction() && m.function() == CALCULATOR->f_uncertainty && m.size() == 3 && m[2].isNumber() && !m[0].containsInterval(true, true, false, 1, true) && !m[1].containsInterval(true, true, false, 1, true)) {
 		if(m[2].number().getBoolean()) {
 			unc = m[1];
 			unc *= m[0];
@@ -12441,14 +12440,14 @@ bool find_interval_replace_var_nr(MathStructure &m) {
 bool replace_variables_with_interval(MathStructure &m, const EvaluationOptions &eo, bool in_nounit = false) {
 	if(m.isVariable() && m.variable()->isKnown()) {
 		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
-		if(!mvar.containsInterval(true, true, false, true, true)) return false;
+		if(!mvar.containsInterval(true, true, false, 1, true)) return false;
 		if(mvar.isNumber()) {
 			return false;
 		} else if(mvar.isMultiplication() && mvar[0].isNumber()) {
 			if(mvar[0].number().isInterval(false)) {
 				bool b = true;
 				for(size_t i = 1; i < mvar.size(); i++) {
-					if(mvar[i].containsInterval(true, true, false, true, true)) {
+					if(mvar[i].containsInterval(true, true, false, 1, true)) {
 						b = false;
 						break;
 					}
@@ -12529,7 +12528,7 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 }
 
 Variable *find_interval_replace_var_comp(MathStructure &m, const EvaluationOptions &eo, Variable **v) {
-	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables && m.isVariable() && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().containsInterval(true, true, false, true, true)) {
+	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables && m.isVariable() && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().containsInterval(true, true, false, 1, true)) {
 		UnknownVariable *uv = new UnknownVariable("", format_and_print(m));
 		uv->setInterval(m);
 		*v = m.variable();
@@ -12730,7 +12729,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 		if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, 0);
-		if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, true, true)) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
+		if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, 1, true)) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
 			EvaluationOptions eo3 = eo2;
 			eo3.split_squares = false;
 			eo3.assume_denominators_nonzero = false;
@@ -12756,7 +12755,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		if(eo.calculate_functions) calculate_differentiable_functions(*this, feo);
 	} else if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA) {
 		if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, -1);
-		if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, true, true)) || containsInterval(true, false, false, true, true) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
+		if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, 1, true)) || containsInterval(true, false, false, 1, true) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
 			if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, (eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) ? 2 : 1);
 			MathStructure munc, mbak(*this);
 			if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) {
@@ -12958,7 +12957,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(eo2.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC || eo2.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 
-	if(eo2.approximation == APPROXIMATION_TRY_EXACT || (eo2.approximation == APPROXIMATION_APPROXIMATE && (containsUnknowns() || containsInterval(false, true, false, false)))) {
+	if(eo2.approximation == APPROXIMATION_TRY_EXACT || (eo2.approximation == APPROXIMATION_APPROXIMATE && (containsUnknowns() || containsInterval(false, true, false, 0)))) {
 		EvaluationOptions eo3 = eo2;
 		if(eo.approximation == APPROXIMATION_APPROXIMATE && !containsUnknowns()) eo3.approximation = APPROXIMATION_EXACT_VARIABLES;
 		else eo3.approximation = APPROXIMATION_EXACT;
@@ -21457,7 +21456,7 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
 				}
 			}
 		}
-		if(u->convert(u_m, *mstruct, *exp) && (do_intervals || (!mstruct->containsInterval(true, false, false, true, true) && !exp->containsInterval(true, false, false, true, true)))) {
+		if(u->convert(u_m, *mstruct, *exp) && (do_intervals || (!mstruct->containsInterval(true, false, false, 1, true) && !exp->containsInterval(true, false, false, 1, true)))) {
 			m.setUnit(u);
 			if(!exp->isOne()) {
 				if(feo.calculate_functions) {
@@ -22000,12 +21999,12 @@ int contains_interval_var(const MathStructure &m, bool structural_only, bool che
 	if(m.type() == STRUCT_NUMBER) {
 		if(m.number().isInterval(false)) {
 			if(ignore_high_precision_interval != 0) {
-				if(m.number().precision(true) > (ignore_high_precision_interval < 0 ? PRECISION + 29 : PRECISION + (10 * ignore_high_precision_interval))) return 0;
+				if(m.number().precision(true) > (ignore_high_precision_interval < 0 ? (ignore_high_precision_interval == -1 ? PRECISION + 29 : PRECISION - ignore_high_precision_interval) : PRECISION + (10 * ignore_high_precision_interval))) return 0;
 			}
 			return 1;
 		} else if(CALCULATOR->usesIntervalArithmetic() && m.number().precision() >= 0) {
 			if(ignore_high_precision_interval != 0) {
-				if(m.number().precision() > (ignore_high_precision_interval < 0 ? PRECISION + 29 : PRECISION + (10 * ignore_high_precision_interval))) return 0;
+				if(m.number().precision() > (ignore_high_precision_interval < 0 ? (ignore_high_precision_interval == -1 ? PRECISION + 29 : PRECISION - ignore_high_precision_interval) : PRECISION + (10 * ignore_high_precision_interval))) return 0;
 			}
 			return 1;
 		}
@@ -22048,7 +22047,7 @@ int contains_interval_var(const MathStructure &m, bool structural_only, bool che
 int MathStructure::containsInterval(bool structural_only, bool check_variables, bool check_functions, int ignore_high_precision_interval, bool include_interval_function) const {
 	if(m_type == STRUCT_NUMBER && o_number.isInterval(false)) {
 		if(ignore_high_precision_interval != 0) {
-			if(o_number.precision(true) > (ignore_high_precision_interval < 0 ? PRECISION + 29 : PRECISION + (10 * ignore_high_precision_interval))) return 0;
+			if(o_number.precision(true) > (ignore_high_precision_interval < 0 ? (ignore_high_precision_interval == -1 ? PRECISION + 29 : PRECISION - ignore_high_precision_interval) : PRECISION + (10 * ignore_high_precision_interval))) return 0;
 		}
 		return 1;
 	}
@@ -22058,7 +22057,7 @@ int MathStructure::containsInterval(bool structural_only, bool check_variables, 
 			if(CHILD(i).containsInterval(structural_only, check_variables, check_functions, ignore_high_precision_interval, include_interval_function)) return 1;
 		}
 		if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
-			if(ignore_high_precision_interval < 0 && o_variable->isBuiltin()) {
+			if(ignore_high_precision_interval == -1 && o_variable->isBuiltin()) {
 				return 0;
 			}
 			return contains_interval_var(((KnownVariable*) o_variable)->get(), structural_only, check_variables, check_functions, ignore_high_precision_interval, include_interval_function);
@@ -22077,7 +22076,7 @@ int MathStructure::containsInterval(bool structural_only, bool check_variables, 
 			}
 		}
 		if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
-			if(ignore_high_precision_interval < 0 && o_variable->isBuiltin()) {
+			if(ignore_high_precision_interval == -1 && o_variable->isBuiltin()) {
 				return 0;
 			}
 			return contains_interval_var(((KnownVariable*) o_variable)->get(), structural_only, check_variables, check_functions, ignore_high_precision_interval, include_interval_function);

@@ -1321,6 +1321,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			}
 		}
 	}
+
 	string str2 = rnd_expression(allow_unknowns, allow_functions, 6, 5, allow_unit, allow_variable, allow_interval);
 	str.insert(0, "(");
 	str += ") / (";
@@ -1668,7 +1669,7 @@ void speed_test() {
 
 int main(int argc, char *argv[]) {
 
-	new Calculator(false);
+	new Calculator(true);
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
 	CALCULATOR->setPrecision(8);
@@ -1698,7 +1699,7 @@ int main(int argc, char *argv[]) {
 	/*evalops.parse_options.dot_as_separator = CALCULATOR->default_dot_as_separator;
 	evalops.parse_options.comma_as_separator = false;*/
 	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;
-	evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL;
+	evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
 	
 	/*MathStructure mstruct = CALCULATOR->calculate("atanh(2x^2+5)*x^2", evalops);
 	cout << mstruct.integrate(CALCULATOR->v_x, evalops) << endl;
@@ -1713,16 +1714,20 @@ int main(int argc, char *argv[]) {
 	//return true;
 	//test_intervals(true);
 	
-	CALCULATOR->setVariableUnitsEnabled(false);
+	CALCULATOR->setVariableUnitsEnabled(true);
 	
 	v = new KnownVariable("", "v", m_zero);
 
 	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 	//CALCULATOR->useIntervalArithmetic();
 	
+	
 	for(size_t i = 0; i <= 10000; i++) {
-		rnd_test(evalops, false, true, false, false, false, true, true);
-		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
+		string str = rnd_expression(false, false, 8, 4, true, true, false);
+		cout << str << endl;
+		cout << CALCULATOR->calculateAndPrint(str, 10000, evalops, po) << endl;
+		//rnd_test(evalops, 4, true, false, false, false, false, false);
+		//if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 

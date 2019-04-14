@@ -154,6 +154,7 @@ typedef enum {
 ///Message categories
 #define MESSAGE_CATEGORY_NONE		0
 #define MESSAGE_CATEGORY_PARSING	1
+#define MESSAGE_CATEGORY_WIDE_INTERVAL	10
 
 
 /// A message with information to the user. Primarily used for errors and warnings.
@@ -961,6 +962,7 @@ class Calculator {
 	void addMessages(vector<CalculatorMessage> *message_vector);
 	const PrintOptions &messagePrintOptions() const;
 	void setMessagePrintOptions(const PrintOptions &po);
+	void cleanMessages(const MathStructure &mstruct, size_t first_message = 1);
 	//@}
 
 	/** @name Functions for loading and saving definitions (variables, functions, units, etc.). */

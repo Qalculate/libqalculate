@@ -1,3 +1,8 @@
+2019-04-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Remove wide interval messages if final result is within precision
+	* Fix options not output for "help set" in qalc
+
 2019-04-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Simplify y*f(x)+z*f(x) to (y+z)*f(x)
