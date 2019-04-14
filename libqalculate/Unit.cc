@@ -712,7 +712,7 @@ bool AliasUnit::hasApproximateExpression(bool check_variables, bool ignore_high_
 	if(svalue.find_first_not_of(NUMBER_ELEMENTS EXPS) == string::npos) return false;
 	MathStructure m(1, 1, 0), mexp(1, 1, 0);
 	convertToFirstBaseUnit(m, mexp);
-	return m.containsInterval(true, check_variables, false, ignore_high_precision_intervals, true);
+	return m.containsInterval(true, check_variables, false, ignore_high_precision_intervals ? 1 : 0, true);
 }
 bool AliasUnit::hasApproximateRelationTo(Unit *u, bool check_variables, bool ignore_high_precision_intervals) const {
 	if(u == this) return false;

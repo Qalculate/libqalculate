@@ -1394,7 +1394,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 							value = CALCULATOR->print(((KnownVariable*) v)->get(), 30, po);
 						}
 						FPUTS_UNICODE(value.c_str(), stdout);
-						if(v->isApproximate() && ((KnownVariable*) v)->get().containsInterval(true, false, false, false, true) <= 0) {
+						if(v->isApproximate() && ((KnownVariable*) v)->get().containsInterval(true, false, false, 0, true) <= 0) {
 							fputs(" (", stdout);
 							FPUTS_UNICODE(_("approximate"), stdout);
 							fputs(")", stdout);
@@ -3299,7 +3299,7 @@ int main(int argc, char *argv[]) {
 								if(((KnownVariable*) v)->isExpression()) {
 									b_approx = ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->f_interval->referenceName()) == string::npos;
 								} else {
-									b_approx = ((KnownVariable*) v)->get().containsInterval(true, false, false, false, true) <= 0;
+									b_approx = ((KnownVariable*) v)->get().containsInterval(true, false, false, 0, true) <= 0;
 								}
 							}
 							if(b_approx) {
@@ -3354,7 +3354,7 @@ int main(int argc, char *argv[]) {
 #define SET_DESCRIPTION(s) if(strlen(s) > 0) {BEGIN_ITALIC(str); str += s; END_ITALIC(str); str += "\n";}
 #define STR_AND_TABS_BOOL(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "("; str += _("on"); if(v) {str += "*";} str += ", "; str += _("off"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_YESNO(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "("; str += _("yes"); if(v) {str += "*";} str += ", "; str += _("no"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-#define STR_AND_TABS_2(s, sh, d, v, s0, s1, s2) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ")";
+#define STR_AND_TABS_2(s, sh, d, v, s0, s1, s2) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_2b(s, sh, d, v, s0, s1) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(1"; if(v == 1) {str += "*";} str += " = "; str += s0; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s1; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_3(s, sh, d, v, s0, s1, s2, s3) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_4(s, sh, d, v, s0, s1, s2, s3, s4) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -3367,7 +3367,7 @@ int main(int argc, char *argv[]) {
 				
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Algebraic Mode"));
 
-				STR_AND_TABS_2(_("algebra mode"), "alg", _("Determines if the expression is simplified or factorized after calculation."), evalops.structuring, _("none"), _("simplify"), _("factorize"));
+				STR_AND_TABS_2b(_("algebra mode"), "alg", _("Determines if the expression is factorized or not after calculation."), evalops.structuring, _("simplify"), _("factorize"));
 				STR_AND_TABS_BOOL(_("assume nonzero denominators"), "nzd", _("Determines if unknown values will be assumed non-zero (x/x=1)."), evalops.assume_denominators_nonzero);
 				STR_AND_TABS_BOOL(_("warn nonzero denominators"), "warnnzd", _("Display a message after a value has been assumed non-zero."), evalops.warn_about_denominators_assumed_nonzero);
 				Assumptions *ass = CALCULATOR->defaultAssumptions();

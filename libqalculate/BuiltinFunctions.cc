@@ -2431,7 +2431,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct += nr_one;
 			mstruct ^= nr_half;
 			b = true;
-		} else if(f == CALCULATOR->f_atan && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true)))) {
+		} else if(f == CALCULATOR->f_atan && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)))) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
@@ -2893,7 +2893,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1, true);
 			b = true;
-		} else if(f == CALCULATOR->f_asin && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true)))) {
+		} else if(f == CALCULATOR->f_asin && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)))) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
@@ -2903,7 +2903,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct ^= nr_minus_half;
 			mstruct.multiply_nocopy(mmul);
 			b = true;
-		} else if(f == CALCULATOR->f_acos && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT, true)))) {
+		} else if(f == CALCULATOR->f_acos && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)))) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
@@ -3602,7 +3602,7 @@ int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(mstruct.function() == CALCULATOR->f_asinh) {
 			mstruct.setToChild(1, true);
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_acosh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT, true)) {
+		} else if(mstruct.function() == CALCULATOR->f_acosh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
 			mstruct += nr_minus_one;
@@ -3611,7 +3611,7 @@ int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			*mmul ^= nr_half;
 			mstruct.multiply_nocopy(mmul);
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_atanh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT, true)) {
+		} else if(mstruct.function() == CALCULATOR->f_atanh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
 			mstruct ^= nr_two;
@@ -3691,7 +3691,7 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(mstruct.function() == CALCULATOR->f_atanh) {
 			mstruct.setToChild(1, true);
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_asinh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT, true)) {
+		} else if(mstruct.function() == CALCULATOR->f_asinh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
 			mstruct ^= nr_two;
@@ -3699,7 +3699,7 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			mstruct ^= nr_minus_half;
 			mstruct.multiply_nocopy(mmul);
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_acosh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT, true)) {
+		} else if(mstruct.function() == CALCULATOR->f_acosh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
 			MathStructure *mmul2 = new MathStructure(mstruct);
@@ -6056,7 +6056,7 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
-		if(eo.allow_complex && mstruct.number().isNegative()) {
+		if(mstruct.number().isNegative()) {
 			if(!eo.allow_complex) return -1;
 			mstruct.negate();
 			mstruct.transform(this);
