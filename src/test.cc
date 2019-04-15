@@ -1723,9 +1723,9 @@ int main(int argc, char *argv[]) {
 	
 	
 	for(size_t i = 0; i <= 10000; i++) {
-		string str = rnd_expression(false, false, 8, 4, true, true, false);
+		string str = rnd_expression(4, true, 8, 4, true, true, true);
 		cout << str << endl;
-		cout << CALCULATOR->calculateAndPrint(str, 10000, evalops, po) << endl;
+		cout << CALCULATOR->calculateAndPrint(str, 10000) << endl;
 		//rnd_test(evalops, 4, true, false, false, false, false, false);
 		//if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}

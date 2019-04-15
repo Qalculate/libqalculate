@@ -1,7 +1,12 @@
+2019-04-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix crash when formatting 1 / ((0 × 0)(1 / 0)^2)
+
 2019-04-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Remove wide interval messages if final result is within precision
 	* Fix options not output for "help set" in qalc
+	* Rename "simplify" to "expand", to avoid confusion
 
 2019-04-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

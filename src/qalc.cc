@@ -95,7 +95,7 @@ FILE *cfile;
 
 enum {
 	COMMAND_FACTORIZE,
-	COMMAND_SIMPLIFY,
+	COMMAND_EXPAND,
 	COMMAND_EXPAND_PARTIAL_FRACTIONS,
 	COMMAND_EVAL
 };
@@ -868,7 +868,7 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "algebra mode", _("algebra mode")) || svar == "alg") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = STRUCTURING_NONE;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "simplify", _("simplify"))) v = STRUCTURING_SIMPLIFY;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "simplify", _("simplify")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "expand", _("expand"))) v = STRUCTURING_SIMPLIFY;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "factorize", _("factorize")) || svalue == "factor") v = STRUCTURING_FACTORIZE;
 		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -2638,8 +2638,8 @@ int main(int argc, char *argv[]) {
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "partial fraction", _("partial fraction"))) {
 			execute_command(COMMAND_EXPAND_PARTIAL_FRACTIONS);
 		//qalc command
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "simplify", _("simplify"))) {
-			execute_command(COMMAND_SIMPLIFY);
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "simplify", _("simplify")) || EQUALS_IGNORECASE_AND_LOCAL(str, "expand", _("expand"))) {
+			execute_command(COMMAND_EXPAND);
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "mode", _("mode"))) {
 			INIT_SCREEN_CHECK
@@ -2654,7 +2654,7 @@ int main(int argc, char *argv[]) {
 			switch(evalops.structuring) {
 				case STRUCTURING_NONE: {str += _("none"); break;}
 				case STRUCTURING_FACTORIZE: {str += _("factorize"); break;}
-				default: {str += _("simplify"); break;}
+				default: {str += _("expand"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("assume nonzero denominators"), "nzd"); str += b2oo(evalops.assume_denominators_nonzero, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -2935,7 +2935,7 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("save definitions")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("save mode")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("set"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("VALUE")); CHECK_IF_SCREEN_FILLED
-			PUTS_UNICODE(_("simplify")); CHECK_IF_SCREEN_FILLED			
+			PUTS_UNICODE(_("expand")); CHECK_IF_SCREEN_FILLED			
 			FPUTS_UNICODE(_("to"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("convert"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("UNIT or \"TO\" COMMAND")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("variable"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("EXPRESSION"), stdout); CHECK_IF_SCREEN_FILLED_PUTS("");
 			FPUTS_UNICODE(_("quit"), stdout); fputs("/", stdout); PUTS_UNICODE(_("exit")); CHECK_IF_SCREEN_FILLED_PUTS("");
@@ -3344,9 +3344,9 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Applies partial fraction decomposition to the current result."));
 				puts("");
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "simplify", _("simplify"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "simplify", _("simplify")) || EQUALS_IGNORECASE_AND_LOCAL(str, "expand", _("expand"))) {
 				puts("");
-				PUTS_UNICODE(_("Simplifies the current result."));
+				PUTS_UNICODE(_("Expands the current result."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "set", _("set"))) {
 				INIT_SCREEN_CHECK
@@ -3367,7 +3367,7 @@ int main(int argc, char *argv[]) {
 				
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Algebraic Mode"));
 
-				STR_AND_TABS_2b(_("algebra mode"), "alg", _("Determines if the expression is factorized or not after calculation."), evalops.structuring, _("simplify"), _("factorize"));
+				STR_AND_TABS_2b(_("algebra mode"), "alg", _("Determines if the expression is factorized or not after calculation."), evalops.structuring, _("expand"), _("factorize"));
 				STR_AND_TABS_BOOL(_("assume nonzero denominators"), "nzd", _("Determines if unknown values will be assumed non-zero (x/x=1)."), evalops.assume_denominators_nonzero);
 				STR_AND_TABS_BOOL(_("warn nonzero denominators"), "warnnzd", _("Display a message after a value has been assumed non-zero."), evalops.warn_about_denominators_assumed_nonzero);
 				Assumptions *ass = CALCULATOR->defaultAssumptions();
@@ -4254,8 +4254,8 @@ void CommandThread::run() {
 				((MathStructure*) x)->expandPartialFractions(evalops);
 				break;
 			}
-			case COMMAND_SIMPLIFY: {
-				((MathStructure*) x)->simplify(evalops);
+			case COMMAND_EXPAND: {
+				((MathStructure*) x)->expand(evalops);
 				break;
 			}
 			case COMMAND_EVAL: {
@@ -4323,8 +4323,8 @@ void execute_command(int command_type, bool show_result) {
 						FPUTS_UNICODE(_("Expanding partial fractions…"), stdout);
 						break;
 					}
-					case COMMAND_SIMPLIFY: {
-						FPUTS_UNICODE(_("Simplifying (press Enter to abort)"), stdout);
+					case COMMAND_EXPAND: {
+						FPUTS_UNICODE(_("Expanding (press Enter to abort)"), stdout);
 						break;
 					}
 					case COMMAND_EVAL: {
@@ -4382,7 +4382,7 @@ void execute_command(int command_type, bool show_result) {
 				printops.allow_factorization = true;
 				break;
 			}
-			case COMMAND_SIMPLIFY: {
+			case COMMAND_EXPAND: {
 				printops.allow_factorization = false;
 				break;
 			}

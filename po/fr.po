@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-14 19:17+0200\n"
+"POT-Creation-Date: 2019-04-14 19:47+0200\n"
 "PO-Revision-Date: 2006-11-08 21:13-0500\n"
 "Last-Translator: Nicolas Laug <Nicolas.Laug@users.sourceforge.net>\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -702,10 +702,14 @@ msgid "algebra mode"
 msgstr "mode algébrique"
 
 #. qalc command
-#: ../src/qalc.cc:871 ../src/qalc.cc:2641 ../src/qalc.cc:2657
-#: ../src/qalc.cc:2938 ../src/qalc.cc:3347 ../src/qalc.cc:3370
+#: ../src/qalc.cc:871 ../src/qalc.cc:2641 ../src/qalc.cc:3347
 msgid "simplify"
 msgstr "simplifier"
+
+#: ../src/qalc.cc:871 ../src/qalc.cc:2641 ../src/qalc.cc:2657
+#: ../src/qalc.cc:2938 ../src/qalc.cc:3347 ../src/qalc.cc:3370
+msgid "expand"
+msgstr ""
 
 #: ../src/qalc.cc:872 ../src/qalc.cc:2656 ../src/qalc.cc:3370
 msgid "factorize"
@@ -1518,8 +1522,9 @@ msgid "Applies partial fraction decomposition to the current result."
 msgstr ""
 
 #: ../src/qalc.cc:3349
-msgid "Simplifies the current result."
-msgstr "Simplifie le résultat courant."
+#, fuzzy
+msgid "Expands the current result."
+msgstr "Factorise le résultat courant."
 
 #: ../src/qalc.cc:3363
 msgid "Sets the value of an option."
@@ -2124,8 +2129,9 @@ msgid "Expanding partial fractions…"
 msgstr ""
 
 #: ../src/qalc.cc:4327
-msgid "Simplifying (press Enter to abort)"
-msgstr "Simplification en cours (appuyez sur Entrée pour interrompre)"
+#, fuzzy
+msgid "Expanding (press Enter to abort)"
+msgstr "Factorisation en cours (appuyez sur Entrée pour interrompre)"
 
 #: ../src/qalc.cc:4331 ../src/qalc.cc:4758
 msgid "Calculating (press Enter to abort)"
@@ -3556,6 +3562,12 @@ msgstr "Marche"
 #: ../libqalculate/util.cc:176
 msgid "Off"
 msgstr "Arrêt"
+
+#~ msgid "Simplifies the current result."
+#~ msgstr "Simplifie le résultat courant."
+
+#~ msgid "Simplifying (press Enter to abort)"
+#~ msgstr "Simplification en cours (appuyez sur Entrée pour interrompre)"
 
 #~ msgid "exp mode"
 #~ msgstr "mode exp"

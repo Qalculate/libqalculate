@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-14 19:17+0200\n"
+"POT-Creation-Date: 2019-04-14 19:47+0200\n"
 "PO-Revision-Date: 2007-07-31 15:34+0800\n"
 "Last-Translator: Roy Qu <royqh1979@gmail.com>\n"
 "Language-Team: Simplified Chinese\n"
@@ -705,10 +705,14 @@ msgid "algebra mode"
 msgstr "algebra mode"
 
 #. qalc command
-#: ../src/qalc.cc:871 ../src/qalc.cc:2641 ../src/qalc.cc:2657
-#: ../src/qalc.cc:2938 ../src/qalc.cc:3347 ../src/qalc.cc:3370
+#: ../src/qalc.cc:871 ../src/qalc.cc:2641 ../src/qalc.cc:3347
 msgid "simplify"
 msgstr "simplify"
+
+#: ../src/qalc.cc:871 ../src/qalc.cc:2641 ../src/qalc.cc:2657
+#: ../src/qalc.cc:2938 ../src/qalc.cc:3347 ../src/qalc.cc:3370
+msgid "expand"
+msgstr ""
 
 #: ../src/qalc.cc:872 ../src/qalc.cc:2656 ../src/qalc.cc:3370
 msgid "factorize"
@@ -1522,8 +1526,9 @@ msgid "Applies partial fraction decomposition to the current result."
 msgstr ""
 
 #: ../src/qalc.cc:3349
-msgid "Simplifies the current result."
-msgstr "化简当前结果。"
+#, fuzzy
+msgid "Expands the current result."
+msgstr "因式分解当前结果。"
 
 #: ../src/qalc.cc:3363
 msgid "Sets the value of an option."
@@ -2126,8 +2131,9 @@ msgid "Expanding partial fractions…"
 msgstr ""
 
 #: ../src/qalc.cc:4327
-msgid "Simplifying (press Enter to abort)"
-msgstr "正在化简(按回车键终止)"
+#, fuzzy
+msgid "Expanding (press Enter to abort)"
+msgstr "正在分解因式(按回车键终止)"
 
 #: ../src/qalc.cc:4331 ../src/qalc.cc:4758
 msgid "Calculating (press Enter to abort)"
@@ -3512,6 +3518,12 @@ msgstr "On"
 #: ../libqalculate/util.cc:176
 msgid "Off"
 msgstr "Off"
+
+#~ msgid "Simplifies the current result."
+#~ msgstr "化简当前结果。"
+
+#~ msgid "Simplifying (press Enter to abort)"
+#~ msgstr "正在化简(按回车键终止)"
 
 #~ msgid "exp mode"
 #~ msgstr "exp mode"

@@ -525,11 +525,13 @@ typedef enum {
 	APPROXIMATION_EXACT_VARIABLES
 } ApproximationMode;
 
+#define STRUCTURING_SIMPLIFY STRUCTURING_EXPAND
+
 typedef enum {
 	/// Do not do any factorization or additional simplifications
 	STRUCTURING_NONE,
-	/// Simplify the result as much as possible (no factorization, normally the same as STRUCTURING_NONE))
-	STRUCTURING_SIMPLIFY,
+	/// Simplify the result as much as possible and expand (minimal factorization, normally the same as STRUCTURING_NONE)
+	STRUCTURING_EXPAND,
 	/// Factorize the result
 	STRUCTURING_FACTORIZE,
 	/// Deprecated: use STRUCTURING_SIMPLIFY instead
@@ -681,7 +683,7 @@ static const struct EvaluationOptions {
 	AutoPostConversion auto_post_conversion;
 	/// Shows time as h + min + s, imperial length as ft + in, etc. Default: MIXED_UNITS_CONVERSION_DEFAULT
 	MixedUnitsConversion mixed_units_conversion;
-	/// If the evaluation result will be simplified or factorized Default: STRUCTURING_NONE
+	/// If the evaluation result will be expanded or factorized Default: STRUCTURING_NONE
 	StructuringMode structuring;
 	/// Options for parsing of expression. Default: default_parse_options
 	ParseOptions parse_options;
@@ -703,6 +705,8 @@ static const struct EvaluationOptions {
 	EvaluationOptions();
 
 } default_evaluation_options;
+
+static EvaluationOptions default_user_evaluation_options;
 
 extern MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one, m_one_i;
 extern Number nr_zero, nr_one, nr_two, nr_three, nr_minus_one, nr_one_i, nr_minus_i, nr_half, nr_minus_half, nr_plus_inf, nr_minus_inf;
