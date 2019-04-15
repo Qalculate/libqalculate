@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-14 19:17+0200\n"
+"POT-Creation-Date: 2019-04-14 19:47+0200\n"
 "PO-Revision-Date: 2007-05-18 16:19+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -705,14 +705,18 @@ msgid "algebra mode"
 msgstr "algebraïsche modus"
 
 #. qalc command
-#: ../src/qalc.cc:871 ../src/qalc.cc:2641 ../src/qalc.cc:2657
-#: ../src/qalc.cc:2938 ../src/qalc.cc:3347 ../src/qalc.cc:3370
+#: ../src/qalc.cc:871 ../src/qalc.cc:2641 ../src/qalc.cc:3347
 msgid "simplify"
 msgstr "vereenvoudigen"
 
+#: ../src/qalc.cc:871 ../src/qalc.cc:2641 ../src/qalc.cc:2657
+#: ../src/qalc.cc:2938 ../src/qalc.cc:3347 ../src/qalc.cc:3370
+msgid "expand"
+msgstr "uitwerken"
+
 #: ../src/qalc.cc:872 ../src/qalc.cc:2656 ../src/qalc.cc:3370
 msgid "factorize"
-msgstr "ontbinden in factoren"
+msgstr "factorisatie"
 
 #: ../src/qalc.cc:902 ../src/qalc.cc:2905 ../src/qalc.cc:3580
 #, fuzzy
@@ -1510,8 +1514,9 @@ msgid "Applies partial fraction decomposition to the current result."
 msgstr ""
 
 #: ../src/qalc.cc:3349
-msgid "Simplifies the current result."
-msgstr "Het huidige antwoord wordt vereenvoudigd."
+#, fuzzy
+msgid "Expands the current result."
+msgstr "Het huidige antwoord wordt in factoren ontbonden."
 
 #: ../src/qalc.cc:3363
 msgid "Sets the value of an option."
@@ -2119,8 +2124,8 @@ msgid "Expanding partial fractions…"
 msgstr ""
 
 #: ../src/qalc.cc:4327
-msgid "Simplifying (press Enter to abort)"
-msgstr "Aan het vereenvoudigen (afbreken met Enter)"
+msgid "Expanding (press Enter to abort)"
+msgstr "Uitwerken (afbreken met Enter)"
 
 #: ../src/qalc.cc:4331 ../src/qalc.cc:4758
 msgid "Calculating (press Enter to abort)"
@@ -3549,6 +3554,12 @@ msgstr "Aan"
 #: ../libqalculate/util.cc:176
 msgid "Off"
 msgstr "Uit"
+
+#~ msgid "Simplifies the current result."
+#~ msgstr "Het huidige antwoord wordt vereenvoudigd."
+
+#~ msgid "Simplifying (press Enter to abort)"
+#~ msgstr "Aan het vereenvoudigen (afbreken met Enter)"
 
 #~ msgid "exp mode"
 #~ msgstr "exp modus"

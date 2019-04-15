@@ -846,6 +846,7 @@ class MathStructure {
 
 		/** @name Functions for polynomials */
 		//@{
+		bool expand(const EvaluationOptions &eo = default_evaluation_options, bool unfactorize = true);
 		bool simplify(const EvaluationOptions &eo = default_evaluation_options, bool unfactorize = true);
 		bool factorize(const EvaluationOptions &eo = default_evaluation_options, bool unfactorize = true, int term_combination_levels = 0, int max_msecs = 1000, bool only_integers = true, int recursive = 1, struct timeval *endtime_p = NULL, const MathStructure &force_factorization = m_undefined, bool complete_square = false, bool only_sqrfree = false, int max_degree_factor = -1);
 		bool expandPartialFractions(const EvaluationOptions &eo);

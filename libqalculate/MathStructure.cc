@@ -10224,6 +10224,18 @@ bool MathStructure::simplify(const EvaluationOptions &eo, bool unfactorize) {
 
 }
 
+bool MathStructure::expand(const EvaluationOptions &eo, bool unfactorize) {
+	if(SIZE == 0) return false;
+	if(unfactorize) {
+		EvaluationOptions eo2 = eo;
+		eo2.sync_units = false;
+		eo2.expand = true;
+		calculatesub(eo2, eo2);
+		do_simplification(*this, eo2, true, false, false);
+	}
+	return false;
+}
+
 bool MathStructure::structure(StructuringMode structuring, const EvaluationOptions &eo, bool restore_first) {
 	switch(structuring) {
 		case STRUCTURING_NONE: {
@@ -17705,6 +17717,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po, MathStr
 					if(CHILD(i2).isPower() && CHILD(i2)[1].isMinusOne()) {
 						CHILD(index1)[0].multiply(CHILD(i2)[0], true);
 						ERASE(i2);
+						if(index2 > i2) index2--;
 					} else {
 						i2++;
 					}

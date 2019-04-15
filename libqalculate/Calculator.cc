@@ -517,7 +517,9 @@ Calculator::Calculator(bool ignore_locale) {
 	message_printoptions.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 	message_printoptions.spell_out_logical_operators = true;
 	message_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
-
+	
+	default_user_evaluation_options.structuring = STRUCTURING_SIMPLIFY;
+	
 	default_assumptions = new Assumptions;
 	default_assumptions->setType(ASSUMPTION_TYPE_REAL);
 	default_assumptions->setSign(ASSUMPTION_SIGN_UNKNOWN);
