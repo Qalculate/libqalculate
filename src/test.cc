@@ -838,7 +838,7 @@ void test_intervals(bool use_interval) {
 
 }
 
-string rnd_expression(bool allow_unknowns, bool allow_functions, int length_factor1 = 10, int length_factor2 = 5, bool allow_units = false, bool allow_variables = false, bool allow_interval = false);
+string rnd_expression(int allow_unknowns, bool allow_functions, int length_factor1 = 10, int length_factor2 = 5, bool allow_units = false, bool allow_variables = false, bool allow_interval = false, bool allow_complex = true, bool only_integers = false);
 
 
 string rnd_unit() {
@@ -889,20 +889,20 @@ string rnd_number(bool use_par = true, bool only_integers = false, bool only_pos
 	return str;
 }
 
-string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int allow_unit = false, int allow_variable = false, bool allow_interval = false) {
+string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int allow_unit = false, int allow_variable = false, bool allow_interval = false, bool allow_complex = true, bool only_integers = false) {
 	int r = rand() % (2 + (allow_unknown > 0)) + 1;
 	string str;
 	if(r != 1 || (!allow_unknown && !allow_function && !allow_unit && !allow_variable)) {
-		str = rnd_number(true, false, false, true, allow_interval);
+		str = rnd_number(true, only_integers, false, allow_complex, allow_interval);
 	} else {
 		if(allow_unit && (rand() % (2 + allow_function + allow_unknown + allow_variable)) == 0) {
 			str = rnd_unit();
 		} else if(allow_variable && (rand() % (2 + allow_function + allow_unknown)) == 0) {
-			if(!allow_function && !allow_unknown && !allow_variable && rand() % 2 == 0) str = rnd_number(true, false, false, true, allow_interval);
+			if(!allow_function && !allow_unknown && !allow_variable && rand() % 2 == 0) str = rnd_number(true, only_integers, false, allow_complex, allow_interval);
 			else str = rnd_var();
 		} else {
 			if(!allow_unknown) {
-				if(allow_function) r = rand() % 20 + 4;
+				if(allow_function) r = rand() % 27 + 4;
 				else r = rand() % 2 + 4;
 			} else {
 				int au2 = 3 - allow_unknown % 3;
@@ -921,14 +921,14 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 				case 4: {str = "pi"; break;}
 				case 5: {str = "e"; break;}
 				case 6: {str = "root("; 
-					str += rnd_expression(allow_unknown, allow_function, 6, 3, allow_unit, allow_variable, allow_interval);
+					str += rnd_expression(allow_unknown, allow_function, 6, 3, allow_unit, allow_variable, allow_interval, allow_complex, only_integers);
 					str += ',';
 					str += rnd_number(true, true, true, false, false);
 					str += ')';
 					return str;
 				}
 				case 7: {str = "log("; 
-					str += rnd_expression(allow_unknown, allow_function, 6, 3, allow_unit, allow_variable, allow_interval);
+					str += rnd_expression(allow_unknown, allow_function, 6, 3, allow_unit, allow_variable, allow_interval, allow_complex, only_integers);
 					str += ',';
 					str += rnd_number(true, true, true, false, false);
 					str += ')';
@@ -966,7 +966,7 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 					str += "x)";
 					if(rand() % 3 == 1) str += "^2";
 				} else {
-					str += rnd_item(par, true, allow_unknown, allow_unit, allow_variable, allow_interval);
+					str += rnd_item(par, true, allow_unknown, allow_unit, allow_variable, allow_interval, allow_complex, only_integers);
 					par++;
 				}
 			}
@@ -1005,7 +1005,7 @@ string rnd_operator(int &par, bool allow_pow = true) {
 	return "";
 }
 
-string rnd_expression(bool allow_unknowns, bool allow_functions, int length_factor1, int length_factor2, bool allow_unit, bool allow_variable, bool allow_interval) {
+string rnd_expression(int allow_unknowns, bool allow_functions, int length_factor1, int length_factor2, bool allow_unit, bool allow_variable, bool allow_interval, bool allow_complex, bool only_integers) {
 	int par = 0;
 	string str;
 	while(str.empty() || rand() % ((length_factor1 - (int) str.length() / length_factor2 < 2) ? 2 : (length_factor1 - (int) str.length() / length_factor2)) != 0) {
@@ -1679,12 +1679,11 @@ int main(int argc, char *argv[]) {
 	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	po.show_ending_zeroes = true;
 	po.number_fraction_format = FRACTION_FRACTIONAL;
+	po.restrict_fraction_length = true;
 	CALCULATOR->setMessagePrintOptions(po);
 	
 	EvaluationOptions evalops;
-	/*evalops.approximation = APPROXIMATION_TRY_EXACT;
-	evalops.sync_units = true;
-	evalops.structuring = STRUCTURING_SIMPLIFY;
+	/*evalops.sync_units = true;
 	evalops.parse_options.unknowns_enabled = false;
 	evalops.parse_options.read_precision = DONT_READ_PRECISION;*/
 	/*evalops.parse_options.base = BASE_DECIMAL;
@@ -1700,6 +1699,8 @@ int main(int argc, char *argv[]) {
 	evalops.parse_options.comma_as_separator = false;*/
 	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;
 	evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
+	evalops.structuring = STRUCTURING_FACTORIZE;
+	evalops.approximation = APPROXIMATION_EXACT;
 	
 	/*MathStructure mstruct = CALCULATOR->calculate("atanh(2x^2+5)*x^2", evalops);
 	cout << mstruct.integrate(CALCULATOR->v_x, evalops) << endl;
@@ -1722,10 +1723,14 @@ int main(int argc, char *argv[]) {
 	//CALCULATOR->useIntervalArithmetic();
 	
 	
-	for(size_t i = 0; i <= 10000; i++) {
-		string str = rnd_expression(4, true, 8, 4, true, true, true);
+	for(size_t i = 0; i <= 100000; i++) {
+		string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
 		cout << str << endl;
-		cout << CALCULATOR->calculateAndPrint(str, 10000) << endl;
+		MathStructure mstruct;
+		CALCULATOR->calculate(&mstruct, str, 10000, evalops);
+		cout << mstruct << endl;
+		//mstruct.format(po);
+		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
 		//rnd_test(evalops, 4, true, false, false, false, false, false);
 		//if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
