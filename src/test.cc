@@ -1009,10 +1009,10 @@ string rnd_expression(int allow_unknowns, bool allow_functions, int length_facto
 	int par = 0;
 	string str;
 	while(str.empty() || rand() % ((length_factor1 - (int) str.length() / length_factor2 < 2) ? 2 : (length_factor1 - (int) str.length() / length_factor2)) != 0) {
-		str += rnd_item(par, allow_functions, allow_unknowns, allow_unit, allow_variable, allow_interval);
+		str += rnd_item(par, allow_functions, allow_unknowns, allow_unit, allow_variable, allow_interval, allow_complex, only_integers);
 		str += rnd_operator(par);
 	}
-	if(str.back() != ')') str += rnd_item(par, false, allow_unknowns, allow_unit, allow_variable, allow_interval);
+	if(str.back() != ')') str += rnd_item(par, false, allow_unknowns, allow_unit, allow_variable, allow_interval, allow_complex, only_integers);
 	while(par > 0) {
 		str += ")";
 		par--;
@@ -1672,7 +1672,7 @@ int main(int argc, char *argv[]) {
 	new Calculator(true);
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
-	CALCULATOR->setPrecision(8);
+	CALCULATOR->setPrecision(40);
 	
 	CALCULATOR->useIntervalArithmetic();
 	PrintOptions po = CALCULATOR->messagePrintOptions();
@@ -1724,15 +1724,16 @@ int main(int argc, char *argv[]) {
 	
 	
 	for(size_t i = 0; i <= 100000; i++) {
-		string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
+		/*string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
 		cout << str << endl;
 		MathStructure mstruct;
 		CALCULATOR->calculate(&mstruct, str, 10000, evalops);
 		cout << mstruct << endl;
+		if(mstruct.isAborted()) break;*/
 		//mstruct.format(po);
 		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
-		//rnd_test(evalops, 4, true, false, false, false, false, false);
-		//if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
+		rnd_test(evalops, 4, false, false, true, false, false, false);
+		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 
