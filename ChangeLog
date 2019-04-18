@@ -1,3 +1,9 @@
+2019-04-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improved simplification (polynomial long division) and factorization
+	* Allow vector of values in replace()
+	* Fix represents number test (should be either non-zero base OR, not AND, positive exponent)
+
 2019-04-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix crash when formatting 1 / ((0 × 0)(1 / 0)^2)

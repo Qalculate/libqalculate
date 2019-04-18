@@ -5139,7 +5139,18 @@ ReplaceFunction::ReplaceFunction() : MathFunction("replace", 3, 4) {
 int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	if(vargs[3].number().getBoolean() || mstruct.contains(vargs[1], true) <= 0) mstruct.eval(eo);
-	if(vargs[2].containsInterval(true) || vargs[2].containsFunction(CALCULATOR->f_interval, true)) {
+	if(vargs[1].isVector() && vargs[2].isVector() && vargs[1].size() == vargs[2].size()) {
+		for(size_t i = 0; i < vargs[1].size(); i++) {
+			if(vargs[2][i].containsInterval(true) || vargs[2][i].containsFunction(CALCULATOR->f_interval, true)) {
+				MathStructure mv(vargs[2][i]);
+				replace_f_interval(mv, eo);
+				replace_intervals_f(mv);
+				mstruct.replace(vargs[1][i], mv);
+			} else {
+				mstruct.replace(vargs[1][i], vargs[2][i]);
+			}
+		}
+	} else if(vargs[2].containsInterval(true) || vargs[2].containsFunction(CALCULATOR->f_interval, true)) {
 		MathStructure mv(vargs[2]);
 		replace_f_interval(mv, eo);
 		replace_intervals_f(mv);
