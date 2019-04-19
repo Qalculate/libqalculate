@@ -7349,49 +7349,71 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 			
 			if(CALCULATOR->aborted()) {if(mstruct.size() == 1) mstruct.setToChild(1); return false;}
 			if(!combine_only && !only_gcd && divs.size() > 0 && divs[0].isAddition()) {
+				bool b_unknown = divs[0].containsUnknowns() || nums[0].containsUnknowns();
 				MathStructure mquo, mrem;
-				if(polynomial_long_division(nums[0], divs[0], m_zero, mquo, mrem, eo2, false) && !mquo.isZero() && mrem != nums[0]) {
-					if(CALCULATOR->aborted()) {if(mstruct.size() == 1) mstruct.setToChild(1); return false;}
-					if(!mrem.isZero() || divs[0].representsNonZero(true) || (eo.warn_about_denominators_assumed_nonzero && !warn_about_denominators_assumed_nonzero(divs[0], eo))) {
-						if(mrem.isZero()) {
-							mleft.addChild(mquo);
-							divs.clear();
-							b_ret = true;
-						} else {
-							bool b_unknown = divs[0].containsUnknowns() || nums[0].containsUnknowns();
-							if(mquo.isAddition()) {
-								for(size_t i = 0; i < mquo.size(); ) {
-									MathStructure mtest(mquo[i]);
-									mtest.calculateMultiply(divs[0], eo2);
-									mtest.calculateAdd(mrem, eo2);
-									Number point = dos_count_points(mtest, b_unknown);
-									point -= dos_count_points(mquo[i], b_unknown);
-									point -= dos_count_points(mrem, b_unknown);
-									if(point <= 0) {
-										mquo.delChild(i + 1);
-										mrem = mtest;
-									} else {
-										i++;
-									}
-								}
-								if(mquo.size() == 0) mquo.clear();
-								else if(mquo.size() == 1) mquo.setToChild(1);
+				vector<MathStructure> symsd, symsn;
+				collect_symbols(nums[0], symsn);
+				if(symsn.empty()) return false;
+				collect_symbols(divs[0], symsd);
+				if(symsd.empty()) return false;
+				for(size_t i = 0; i < symsd.size();) {
+					bool b_found = false;
+					if(!b_unknown || symsd[i].containsUnknowns()) {
+						for(size_t i2 = 0; i2 < symsn.size(); i2++) {
+							if(symsn[i2] == symsd[i]) {
+								b_found = (nums[0].degree(symsd[i]) >= divs[0].degree(symsd[i]));
+								break;
 							}
-							if(!mquo.isZero()) {
-								Number point = dos_count_points(nums[0], b_unknown);
-								point -= dos_count_points(mquo, b_unknown);
-								point -= dos_count_points(mrem, b_unknown);
-								if(point > 0) {
-									mleft.addChild(mquo);
-									MathStructure ca, cb, mgcd;
-									if(mrem.isAddition() && MathStructure::gcd(mrem, divs[0], mgcd, eo2, &ca, &cb, false) && !mgcd.isOne() && (!cb.isAddition() || !ca.isAddition() || ca.size() + cb.size() <= mrem.size() + divs[0].size())) {
-										mrem = ca;
-										divs[0] = cb;
+						}
+					}
+					if(b_found) i++;
+					else symsd.erase(symsd.begin() + i);
+				}
+				for(size_t i = 0; i < symsd.size(); i++) {
+					if(polynomial_long_division(nums[0], divs[0], symsd[i], mquo, mrem, eo2, false) && !mquo.isZero() && mrem != nums[0]) {
+						if(CALCULATOR->aborted()) {if(mstruct.size() == 1) mstruct.setToChild(1); return false;}
+						if(!mrem.isZero() || divs[0].representsNonZero(true) || (eo.warn_about_denominators_assumed_nonzero && !warn_about_denominators_assumed_nonzero(divs[0], eo))) {
+							if(mrem.isZero()) {
+								mleft.addChild(mquo);
+								divs.clear();
+								b_ret = true;
+								break;
+							} else {
+								if(mquo.isAddition()) {
+									for(size_t i = 0; i < mquo.size(); ) {
+										MathStructure mtest(mquo[i]);
+										mtest.calculateMultiply(divs[0], eo2);
+										mtest.calculateAdd(mrem, eo2);
+										Number point = dos_count_points(mtest, b_unknown);
+										point -= dos_count_points(mquo[i], b_unknown);
+										point -= dos_count_points(mrem, b_unknown);
+										if(point <= 0) {
+											mquo.delChild(i + 1);
+											mrem = mtest;
+										} else {
+											i++;
+										}
 									}
-									mrem.calculateDivide(divs[0], eo2);
-									mleft.addChild(mrem);
-									divs.clear();
-									b_ret = true;
+									if(mquo.size() == 0) mquo.clear();
+									else if(mquo.size() == 1) mquo.setToChild(1);
+								}
+								if(!mquo.isZero()) {
+									Number point = dos_count_points(nums[0], b_unknown);
+									point -= dos_count_points(mquo, b_unknown);
+									point -= dos_count_points(mrem, b_unknown);
+									if(point > 0) {
+										mleft.addChild(mquo);
+										MathStructure ca, cb, mgcd;
+										if(mrem.isAddition() && MathStructure::gcd(mrem, divs[0], mgcd, eo2, &ca, &cb, false) && !mgcd.isOne() && (!cb.isAddition() || !ca.isAddition() || ca.size() + cb.size() <= mrem.size() + divs[0].size())) {
+											mrem = ca;
+											divs[0] = cb;
+										}
+										mrem.calculateDivide(divs[0], eo2);
+										mleft.addChild(mrem);
+										divs.clear();
+										b_ret = true;
+										break;
+									}
 								}
 							}
 						}
@@ -16095,7 +16117,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						}
 					}
 					evalSort(true);
-					factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
+					factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 					return true;
 				}
 			}
@@ -16255,7 +16277,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				MathStructure mnew;
 				if(factorize_find_multiplier(*this, mnew, *factor_mstruct)) {
 					mnew.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
-					factor_mstruct->factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
+					factor_mstruct->factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 					clear(true);
 					m_type = STRUCT_MULTIPLICATION;
 					APPEND_REF(factor_mstruct);
@@ -17285,6 +17307,62 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 			//Try factorize combinations of terms
 			if(SIZE > 2 && term_combination_levels > 0) {
 				bool b = false, b_ret = false;
+				// 5/y + x/y + z = (5 + x)/y + z
+				MathStructure mstruct_units(*this);
+				MathStructure mstruct_new(*this);
+				for(size_t i = 0; i < mstruct_units.size(); i++) {
+					if(mstruct_units[i].isMultiplication()) {
+						for(size_t i2 = 0; i2 < mstruct_units[i].size();) {
+							if(!mstruct_units[i][i2].isPower() || !mstruct_units[i][i2][1].hasNegativeSign()) {
+								mstruct_units[i].delChild(i2 + 1);
+							} else {
+								i2++;
+							}
+						}
+						if(mstruct_units[i].size() == 0) mstruct_units[i].setUndefined();
+						else if(mstruct_units[i].size() == 1) mstruct_units[i].setToChild(1);
+						for(size_t i2 = 0; i2 < mstruct_new[i].size();) {
+							if(mstruct_new[i][i2].isPower() && mstruct_new[i][i2][1].hasNegativeSign()) {
+								mstruct_new[i].delChild(i2 + 1);
+							} else {
+								i2++;
+							}
+						}
+						if(mstruct_new[i].size() == 0) mstruct_new[i].set(1, 1, 0);
+						else if(mstruct_new[i].size() == 1) mstruct_new[i].setToChild(1);
+					} else if(mstruct_new[i].isPower() && mstruct_new[i][1].hasNegativeSign()) {
+						mstruct_new[i].set(1, 1, 0);
+					} else {
+						mstruct_units[i].setUndefined();
+					}
+				}
+				for(size_t i = 0; i < mstruct_units.size(); i++) {
+					if(!mstruct_units[i].isUndefined()) {
+						for(size_t i2 = i + 1; i2 < mstruct_units.size();) {
+							if(mstruct_units[i2] == mstruct_units[i]) {
+								mstruct_new[i].add(mstruct_new[i2], true);
+								mstruct_new.delChild(i2 + 1);
+								mstruct_units.delChild(i2 + 1);
+								b = true;
+							} else {
+								i2++;
+							}
+						}
+						if(mstruct_new[i].isOne()) mstruct_new[i].set(mstruct_units[i]);
+						else mstruct_new[i].multiply(mstruct_units[i], true);
+					}
+				}
+				if(b) {
+					if(mstruct_new.size() == 1) {
+						set(mstruct_new[0], true);
+						factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
+						return true;
+					} else {
+						set(mstruct_new);
+					}
+					b = false;
+					b_ret = true;
+				}
 				// a*y + a*z + x = a(y + z) + x
 				vector<MathStructure> syms;
 				vector<size_t> counts;
@@ -17402,7 +17480,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					delChild(SIZE, true);
 					b = factorize(eo, false, term_combination_levels - 1, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 					add_nocopy(mdel, true);
-					if(term_combination_levels == 1) return b;
+					if(term_combination_levels == 1) return b || b_ret;
 					if(b) b_ret = true;
 				}
 				for(size_t i = 0; !b && i < SIZE; i++) {
@@ -17424,9 +17502,9 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					}
 					if(b) {
 						b = factorize(eo, false, term_combination_levels - 1, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
-						if(recursive) mdel->factorize(eo, false, term_combination_levels - 1, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
+						if(recursive) mdel->factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 						add_nocopy(mdel, true);
-						if(term_combination_levels == 1) return b;
+						if(term_combination_levels == 1) return b || b_ret;
 						if(b) b_ret = true;
 						break;
 					} else {
@@ -17543,8 +17621,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				if(isAddition()) {
 					b = false;
 					// y*f(x) + z*f(x) = (y+z)*f(x)
-					MathStructure mstruct_units(*this);
-					MathStructure mstruct_new(*this);
+					mstruct_units.set(*this);
+					mstruct_new.set(*this);
 					for(size_t i = 0; i < mstruct_units.size(); i++) {
 						if(mstruct_units[i].isMultiplication()) {
 							for(size_t i2 = 0; i2 < mstruct_units[i].size();) {
@@ -17596,8 +17674,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				}
 				if(isAddition()) {
 					b = false;
-					MathStructure mstruct_units(*this);
-					MathStructure mstruct_new(*this);
+					mstruct_units.set(*this);
+					mstruct_new.set(*this);
 					// 5x + pi*x + 5y + xy = (5 + pi)x + 5y + xy
 					for(size_t i = 0; i < mstruct_units.size(); i++) {
 						if(mstruct_units[i].isMultiplication()) {
