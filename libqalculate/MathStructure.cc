@@ -18378,6 +18378,58 @@ bool displays_number_exact(Number nr, const PrintOptions &po, MathStructure *top
 	return !approximately_displayed;
 }
 
+bool fix_approximate_multiplier(MathStructure &m, const PrintOptions &po, MathStructure *top_parent = NULL) {
+	if(!top_parent) top_parent = &m;
+	if(po.number_fraction_format == FRACTION_DECIMAL) {
+		PrintOptions po2 = po;
+		po2.number_fraction_format = FRACTION_FRACTIONAL;
+		po2.restrict_fraction_length = true;
+		return fix_approximate_multiplier(m, po2, top_parent);
+	}
+	bool b_ret = false;
+	if(m.isMultiplication() && m.size() >= 2 && m[0].isNumber() && m[0].number().isRational()) {
+		for(size_t i = 1; i < m.size(); i++) {
+			if(m[i].isAddition()) {
+				bool mul_exact = displays_number_exact(m[0].number(), po, top_parent);
+				bool b = false;
+				for(size_t i2 = 0; i2 < m[i].size() && !b; i2++) {
+					if(m[i][i2].isNumber() && (!mul_exact || !displays_number_exact(m[i][i2].number(), po, top_parent))) {
+						b = true;
+					} else if(m[i][i2].isMultiplication() && m[i][i2].size() >= 2 && m[i][i2][0].isNumber() && (!mul_exact || !displays_number_exact(m[i][i2][0].number(), po, top_parent))) {
+						b = true;
+					}
+				}
+				if(b) {
+					for(size_t i2 = 0; i2 < m[i].size() && !b; i2++) {
+						if(m[i][i2].isNumber()) {
+							if(!m[i][i2].number().multiply(m[0].number())) {
+								m[i][i2].multiply(m[0]);
+							}
+						} else if(m[i][i2].isMultiplication()) {
+							if(m[i][i2].size() < 2 || !m[i][i2][0].isNumber() || !m[i][i2][0].number().multiply(m[0].number())) {
+								m[i][i2].insertChild(m[0], 1);
+							}
+						} else {
+							m[i][i2].multiply(m[0]);
+							m[i][i2].swapChildren(1, 2);
+						}
+					}
+					m.delChild(1, true);
+					b_ret = true;
+					break;
+				}
+			}
+		}
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(fix_approximate_multiplier(m[i], po, top_parent)) {
+			m.childUpdated(i + 1);
+			b_ret = true;
+		}
+	}
+	return b_ret;
+}
+
 int idm3_test(bool &b_fail, const MathStructure &mnum, const Number &nr, bool expand, const PrintOptions &po, MathStructure *top_parent) {
 	switch(mnum.type()) {
 		case STRUCT_NUMBER: {
@@ -19492,6 +19544,7 @@ void MathStructure::format(const PrintOptions &po) {
 		sort(po);
 		setPrefixes(po);
 		unnegate_multiplier(*this, po);
+		fix_approximate_multiplier(*this, po);
 		if(po.improve_division_multipliers) {
 			if(improve_division_multipliers(po)) sort(po);
 		}
