@@ -3,6 +3,9 @@
 	* Accept date and time separated by space instead of 'T'
 	* Remove old SI definitions
 	* uptime variable
+	* Increase precision of "now"
+	* Always truncate seconds in output date and time
+	* Improve output of factorized result with approximately displayed values
 
 2019-04-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

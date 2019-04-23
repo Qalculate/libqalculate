@@ -561,27 +561,6 @@ string QalculateDateTime::toLocalString() const {
 }
 string QalculateDateTime::print(const PrintOptions &po) const {
 	if(po.is_approximate && (!n_sec.isInteger() || n_sec.isApproximate())) *po.is_approximate = true;
-	if(!n_sec.isInteger()) {
-		Number nsec_fr(n_sec);
-		nsec_fr.frac();
-		if(po.round_halfway_to_even) {
-			Number nsec_t(n_sec);
-			nsec_t.trunc();
-			if((nsec_t.isOdd() && nsec_fr.isGreaterThanOrEqualTo(nr_half)) || (nsec_t.isEven() && nsec_fr.isGreaterThan(nr_half))) {
-				QalculateDateTime dt(*this);
-				dt.setTime(i_hour, i_min, nsec_t);
-				dt.addSeconds(1);
-				return dt.print(po);
-			}
-		} else if(nsec_fr.isGreaterThanOrEqualTo(nr_half)) {
-			QalculateDateTime dt(*this);
-			Number nsec_t(n_sec);
-			nsec_t.trunc();
-			dt.setTime(i_hour, i_min, nsec_t);
-			dt.addSeconds(1);
-			return dt.print(po);
-		}
-	}
 	string str;
 	if(po.time_zone == TIME_ZONE_LOCAL) {
 		if(po.date_time_format == DATE_TIME_FORMAT_LOCALE) str = toLocalString();
