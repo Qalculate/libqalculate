@@ -757,11 +757,6 @@
       <_title>Undefined</_title>
       <_names>r:undefined</_names>
     </builtin_variable>
-    <builtin_variable name="precision">
-      <hidden>true</hidden>
-      <_title>Precision</_title>
-      <_names>r:precision</_names>
-    </builtin_variable>
     <variable>
       <_title>False</_title>
       <_names>r:false,r:no</_names>
@@ -772,6 +767,17 @@
       <_names>r:true,r:yes</_names>
       <value>1</value>
     </variable>
+  </category>
+  <category>
+    <_title>Utilities</_title>
+    <builtin_variable name="precision">
+      <_title>Precision</_title>
+      <_names>r:precision</_names>
+    </builtin_variable>
+    <builtin_variable name="uptime">
+      <_title>System Uptime</_title>
+      <_names>r:uptime</_names>
+    </builtin_variable>
   </category>
   <category>
     <_title>Unknowns</_title>
