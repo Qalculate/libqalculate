@@ -1447,6 +1447,7 @@ void Calculator::reset() {
 	resetFunctions();
 	resetUnits();
 }
+
 void Calculator::addBuiltinVariables() {
 
 	v_e = (KnownVariable*) addVariable(new EVariable());
@@ -7135,14 +7136,12 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 
 bool Calculator::loadGlobalDefinitions() {
 	bool b = true;
-	QalculateDateTime date("2019-05-20T00:00:00Z");
-	bool use_new_si = !date.isFutureDate();
 	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "prefixes.xml").c_str(), false)) b = false;
 	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "currencies.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), use_new_si ? "units.xml" : "units-old_SI.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "units.xml").c_str(), false)) b = false;
 	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "functions.xml").c_str(), false)) b = false;
 	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "datasets.xml").c_str(), false)) b = false;
-	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), use_new_si ? "variables.xml" : "variables-old_SI.xml").c_str(), false)) b = false;
+	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "variables.xml").c_str(), false)) b = false;
 	return b;
 }
 bool Calculator::loadGlobalDefinitions(string filename) {
@@ -7156,14 +7155,10 @@ bool Calculator::loadGlobalCurrencies() {
 }
 bool Calculator::loadGlobalUnits() {
 	bool b = loadGlobalDefinitions("currencies.xml");
-	QalculateDateTime date("2019-05-20T00:00:00Z");
-	bool use_new_si = !date.isFutureDate();
-	return loadGlobalDefinitions(use_new_si ? "units.xml" : "units-old_SI.xml") && b;
+	return loadGlobalDefinitions("units.xml") && b;
 }
 bool Calculator::loadGlobalVariables() {
-	QalculateDateTime date("2019-05-20T00:00:00Z");
-	bool use_new_si = !date.isFutureDate();
-	return loadGlobalDefinitions(use_new_si ? "variables.xml" : "variables-old_SI.xml");
+	return loadGlobalDefinitions("variables.xml");
 }
 bool Calculator::loadGlobalFunctions() {
 	return loadGlobalDefinitions("functions.xml");
