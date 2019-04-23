@@ -1448,6 +1448,37 @@ void Calculator::reset() {
 	resetUnits();
 }
 
+#ifdef __linux__
+#	include <sys/sysinfo.h>
+#endif
+
+#if defined __linux__ || defined _WIN32
+class UptimeVariable : public DynamicVariable {
+  private:
+	void calculate(MathStructure &m) const {
+		Number nr;
+#	ifdef __linux__
+		struct sysinfo sf;
+		if(!sysinfo(&sf)) nr = (long int) sf.uptime;
+#	elif _WIN32
+		ULONGLONG i_uptime = GetTickCount64();
+		nr = (long int) (i_uptime / 1000);
+		nr += Number((long int) (i_uptime % 1000), 1000);
+#	endif
+		m = nr;
+		Unit *u = CALCULATOR->getUnit("s");
+		if(u) m *= u;
+	}
+  public:
+	UptimeVariable() : DynamicVariable("", "uptime") {
+		setApproximate(false);
+		always_recalculate = true;
+	}
+	UptimeVariable(const UptimeVariable *variable) {set(variable);}
+	ExpressionItem *copy() const {return new UptimeVariable(this);}
+};
+#endif
+
 void Calculator::addBuiltinVariables() {
 
 	v_e = (KnownVariable*) addVariable(new EVariable());
@@ -1480,6 +1511,9 @@ void Calculator::addBuiltinVariables() {
 	v_yesterday = (KnownVariable*) addVariable(new YesterdayVariable());
 	v_tomorrow = (KnownVariable*) addVariable(new TomorrowVariable());
 	v_now = (KnownVariable*) addVariable(new NowVariable());
+#if defined __linux__ || defined _WIN32
+	addVariable(new UptimeVariable());
+#endif
 	
 }
 void Calculator::addBuiltinFunctions() {
