@@ -20,6 +20,7 @@
 #include "Calculator.h"
 #include <limits.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
 static const char *HEBREW_MONTHS[] = {"Nisan", "Iyar", "Sivan", "Tammuz", "Av", "Elul", "Tishrei", "Marcheshvan", "Kislev", "Tevet", "Shevat", "Adar", "Adar II"};
 static const char *STANDARD_MONTHS[] = {N_("January"), N_("February"), N_("March"), N_("April"), N_("May"), N_("June"), N_("July"), N_("August"), N_("September"), N_("October"), N_("November"), N_("December")};
@@ -257,7 +258,11 @@ void QalculateDateTime::setToCurrentDate() {
 }
 void QalculateDateTime::setToCurrentTime() {
 	parsed_string.clear();
-	set(::time(NULL));
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	Number nr(tv.tv_usec, 0, -6);
+	nr += tv.tv_sec;
+	set(nr);
 }
 bool QalculateDateTime::operator > (const QalculateDateTime &date2) const {
 	if(i_year != date2.year()) return i_year > date2.year();
