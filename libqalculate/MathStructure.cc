@@ -13237,7 +13237,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		if(b) {
 			calculatesub(eo2, feo);
 			if(CALCULATOR->aborted()) return *this;
-			if(eo.do_polynomial_division) do_simplification(*this, eo2, true, eo.structuring == STRUCTURING_NONE, false, true, true);
+			if(eo.do_polynomial_division) do_simplification(*this, eo2, true, eo.structuring == STRUCTURING_NONE || eo.structuring == STRUCTURING_FACTORIZE, false, true, true);
 			if(CALCULATOR->aborted()) return *this;
 			if(eo2.isolate_x) {
 				eo2.assume_denominators_nonzero = false;
@@ -13245,7 +13245,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					if(CALCULATOR->aborted()) return *this;
 					if(eo.assume_denominators_nonzero) eo2.assume_denominators_nonzero = 2;
 					calculatesub(eo2, feo);
-					if(containsType(STRUCT_ADDITION, false) == 1 && eo.do_polynomial_division) do_simplification(*this, eo2, true, eo.structuring == STRUCTURING_NONE, false, true, true);
+					if(containsType(STRUCT_ADDITION, false) == 1 && eo.do_polynomial_division) do_simplification(*this, eo2, true, eo.structuring == STRUCTURING_NONE || eo.structuring == STRUCTURING_FACTORIZE, false, true, true);
 				} else {
 					if(eo.assume_denominators_nonzero) eo2.assume_denominators_nonzero = 2;
 				}
@@ -13258,7 +13258,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		if(try_isolate_x(*this, eo2, feo)) {
 			if(CALCULATOR->aborted()) return *this;
 			calculatesub(eo2, feo);
-			if(containsType(STRUCT_ADDITION, false) == 1 && eo.do_polynomial_division) do_simplification(*this, eo2, true, eo.structuring == STRUCTURING_NONE, false, true, true);
+			if(containsType(STRUCT_ADDITION, false) == 1 && eo.do_polynomial_division) do_simplification(*this, eo2, true, eo.structuring == STRUCTURING_NONE || eo.structuring == STRUCTURING_FACTORIZE, false, true, true);
 		}
 	}
 
@@ -15896,7 +15896,114 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 		eo2.combine_divisions = false;
 		eo2.sync_units = false;
 		calculatesub(eo2, eo2);
-		if(!term_combination_levels) do_simplification(*this, eo, true, false, true);
+		do_simplification(*this, eo, true, false, true);
+	} else if(term_combination_levels && isAddition()) {
+		MathStructure *mdiv = new MathStructure;
+		mdiv->setType(STRUCT_ADDITION);
+		for(size_t i = 0; i < SIZE; ) {
+			bool b = false;
+			if(CHILD(i).isMultiplication()) {
+				for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+					if(CHILD(i)[i2].isPower() && CHILD(i)[i2][1].hasNegativeSign()) {
+						b = true;
+						break;
+					}
+				}
+			} else if(CHILD(i).isPower() && CHILD(i)[1].hasNegativeSign()) {
+				b = true;
+			}
+			if(b) {
+				CHILD(i).ref();
+				mdiv->addChild_nocopy(&CHILD(i));
+				ERASE(i)
+			} else {
+				i++;
+			}
+		}
+		if(mdiv->size() > 0) {
+			bool b_ret = false;
+			if(SIZE == 1 && recursive) {
+				b_ret = CHILD(0).factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
+			} else if(SIZE > 1) {
+				b_ret = factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
+			}
+			if(mdiv->size() > 1) {
+				// 5/y + x/y + z = (5 + x)/y + z
+				MathStructure mstruct_units(*mdiv);
+				MathStructure mstruct_new(*mdiv);
+				for(size_t i = 0; i < mstruct_units.size(); i++) {
+					if(mstruct_units[i].isMultiplication()) {
+						for(size_t i2 = 0; i2 < mstruct_units[i].size();) {
+							if(!mstruct_units[i][i2].isPower() || !mstruct_units[i][i2][1].hasNegativeSign()) {
+								mstruct_units[i].delChild(i2 + 1);
+							} else {
+								i2++;
+							}
+						}
+						if(mstruct_units[i].size() == 0) mstruct_units[i].setUndefined();
+						else if(mstruct_units[i].size() == 1) mstruct_units[i].setToChild(1);
+						for(size_t i2 = 0; i2 < mstruct_new[i].size();) {
+							if(mstruct_new[i][i2].isPower() && mstruct_new[i][i2][1].hasNegativeSign()) {
+								mstruct_new[i].delChild(i2 + 1);
+							} else {
+								i2++;
+							}
+						}
+						if(mstruct_new[i].size() == 0) mstruct_new[i].set(1, 1, 0);
+						else if(mstruct_new[i].size() == 1) mstruct_new[i].setToChild(1);
+					} else if(mstruct_new[i].isPower() && mstruct_new[i][1].hasNegativeSign()) {
+						mstruct_new[i].set(1, 1, 0);
+					} else {
+						mstruct_units[i].setUndefined();
+					}
+				}
+				bool b = false;
+				for(size_t i = 0; i < mstruct_units.size(); i++) {
+					if(!mstruct_units[i].isUndefined()) {
+						for(size_t i2 = i + 1; i2 < mstruct_units.size();) {
+							if(mstruct_units[i2] == mstruct_units[i]) {
+								mstruct_new[i].add(mstruct_new[i2], true);
+								mstruct_new.delChild(i2 + 1);
+								mstruct_units.delChild(i2 + 1);
+								b = true;
+							} else {
+								i2++;
+							}
+						}
+						if(mstruct_new[i].isOne()) mstruct_new[i].set(mstruct_units[i]);
+						else mstruct_new[i].multiply(mstruct_units[i], true);
+					}
+				}
+				if(b) {
+					if(mstruct_new.size() == 1) {
+						mdiv->set_nocopy(mstruct_new[0], true);
+					} else {
+						mdiv->set_nocopy(mstruct_new);
+					}
+					b_ret = true;
+				}
+			}
+			size_t index = 1;
+			if(isAddition()) index = SIZE;
+			if(index == 0) {
+				set_nocopy(*mdiv);
+			} else if(mdiv->isAddition()) {
+				for(size_t i = 0; i < mdiv->size(); i++) {
+					(*mdiv)[i].ref();
+					add_nocopy(&(*mdiv)[i], true);
+				}
+				mdiv->unref();
+			} else {
+				add_nocopy(mdiv, true);
+			}
+			if(recursive) {
+				for(; index < SIZE; index++) {
+					b_ret = CHILD(index).factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree) || b_ret;
+				}
+			}
+			return b_ret;
+		}
+		mdiv->unref();
 	}
 
 	MathStructure mden, mnum;
@@ -19663,6 +19770,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					if(index == 0) {
 						if(!parent || (!parent->isPower() && !parent->isMultiplication() && !parent->isInverse() && (!parent->isDivision() || pindex != 2))) {
 							PREPEND(m_one);
+							break;
 						}
 					}
 					break;
@@ -19673,6 +19781,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 						if(SIZE == 1) {
 							setToChild(1, true);
 						}
+						break;
 					}
 				}
 			}
@@ -19813,6 +19922,15 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 			break;
 		}
 		case STRUCT_NUMBER: {
+			bool force_fraction = false;
+			if(parent && parent->isMultiplication() && o_number.isRational()) {
+				for(size_t i = 0; i < parent->size(); i++) {
+					if((*parent)[i].isAddition()) {
+						force_fraction = true;
+						break;
+					}
+				}
+			}
 			if(o_number.isNegative() || ((parent || po.interval_display != INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) && o_number.isInterval() && o_number.isNonPositive())) {
 				if((((po.base != 2 || !po.twos_complement) && (po.base != 16 || !po.hexadecimal_twos_complement)) || !o_number.isInteger()) && (!o_number.isMinusInfinity() || (parent && parent->isAddition()))) {
 					o_number.negate();
@@ -19839,9 +19957,9 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					o_number.trunc();
 					add_nocopy(num);
 				}
-			} else if((po.number_fraction_format == FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS || po.number_fraction_format == FRACTION_DECIMAL_EXACT) && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && !o_number.isApproximate()) {
+			} else if((force_fraction || po.number_fraction_format == FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS || po.number_fraction_format == FRACTION_DECIMAL_EXACT) && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (force_fraction || !o_number.isApproximate())) {
 				InternalPrintStruct ips_n;
-				if(isApproximate() || (top_parent && top_parent->isApproximate())) ips_n.parent_approximate = true;
+				if(!force_fraction && (isApproximate() || (top_parent && top_parent->isApproximate()))) ips_n.parent_approximate = true;
 				if(po.show_ending_zeroes && po.restrict_to_parent_precision && ips_n.parent_approximate && po.base != BASE_ROMAN_NUMERALS && (o_number.numeratorIsGreaterThan(9) || o_number.numeratorIsLessThan(-9) || o_number.denominatorIsGreaterThan(9))) {
 					break;
 				}
@@ -19850,7 +19968,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				bool approximately_displayed = false;
 				PrintOptions po2 = po;
 				po2.is_approximate = &approximately_displayed;
-				if(po.base != BASE_ROMAN_NUMERALS && po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
+				if(!force_fraction && po.base != BASE_ROMAN_NUMERALS && po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
 					po2.number_fraction_format = FRACTION_DECIMAL;
 					o_number.print(po2, ips_n);
 					if(!approximately_displayed) break;

@@ -106,9 +106,10 @@ string& remove_blanks(string &str) {
 string& remove_duplicate_blanks(string &str) {
 	size_t i = str.find_first_of(SPACES, 0);
 	while(i != string::npos) {
-		if(i == 0 || is_in(SPACES, str[i - 1])) {
+		if(i != 0 && is_in(SPACES, str[i - 1])) {
 			str.erase(i, 1);
 		} else {
+			str[i] = ' ';
 			i++;
 		}
 		i = str.find_first_of(SPACES, i);

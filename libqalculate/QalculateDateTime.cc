@@ -342,6 +342,7 @@ bool QalculateDateTime::set(string str) {
 	string str_bak(str);
 
 	remove_blank_ends(str);
+	remove_duplicate_blanks(str);
 	if(equalsIgnoreCase(str, _("now")) || equalsIgnoreCase(str, "now")) {
 		setToCurrentTime();
 		parsed_string = str_bak;
@@ -363,6 +364,7 @@ bool QalculateDateTime::set(string str) {
 	}
 	bool b_t = false, b_tz = false;
 	size_t i_t = str.find("T");
+	if(i_t == string::npos && str.find(":") != string::npos) i_t = str.rfind(' ');
 	int newhour = 0, newmin = 0, newsec = 0;
 	int itz = 0;
 	if(i_t != string::npos && i_t < str.length() - 1 && is_in(NUMBERS, str[i_t + 1])) {
