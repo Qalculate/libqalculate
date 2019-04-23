@@ -1458,12 +1458,17 @@ class UptimeVariable : public DynamicVariable {
 	void calculate(MathStructure &m) const {
 		Number nr;
 #	ifdef __linux__
-		struct sysinfo sf;
-		if(!sysinfo(&sf)) nr = (long int) sf.uptime;
+		string s_uptime;
+		if(std::ifstream("/proc/uptime", std::ios::in) >> s_uptime) {
+			nr.set(s_uptime);
+		} else {
+			struct sysinfo sf;
+			if(!sysinfo(&sf)) nr = (long int) sf.uptime;
+		}
 #	elif _WIN32
 		ULONGLONG i_uptime = GetTickCount64();
-		nr = (long int) (i_uptime / 1000);
-		nr += Number((long int) (i_uptime % 1000), 1000);
+		nr.set((long int) (i_uptime % 1000), 1000);
+		nr += (long int) (i_uptime / 1000);
 #	endif
 		m = nr;
 		Unit *u = CALCULATOR->getUnit("s");
