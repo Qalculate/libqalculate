@@ -856,6 +856,9 @@ void set_option(string str) {
 		if(v == POST_CONVERSION_OPTIMAL + 1) {
 			v = POST_CONVERSION_NONE;
 			muc = MIXED_UNITS_CONVERSION_DEFAULT;
+		} else if(v == 0) {
+			v = POST_CONVERSION_NONE;
+			muc = MIXED_UNITS_CONVERSION_NONE;
 		}
 		if(v < 0 || v > POST_CONVERSION_OPTIMAL) {
 			PUTS_UNICODE(_("Illegal value."));

@@ -4028,7 +4028,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 		}
 	}
 	if(!b) return mstruct_to_convert;
-	if(!v && eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo2));
+	if(!v && eo2.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo2));
 	current_stage = MESSAGE_STAGE_UNSET;
 	return mstruct;
 }

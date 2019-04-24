@@ -16404,12 +16404,12 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					int degree = 1;
 					bool overflow = false;
 					int qcof = 1;
-					if(CHILD(0).isPower() && CHILD(0)[0].size() == 0 && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isInteger() && CHILD(0)[1].number().isPositive()) {
+					if(CHILD(0).isPower() && !CHILD(0)[0].isNumber() && CHILD(0)[0].size() == 0 && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isInteger() && CHILD(0)[1].number().isPositive()) {
 						xvar = &CHILD(0)[0];
 						degree = CHILD(0)[1].number().intValue(&overflow);
 					} else if(CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isNumber() && CHILD(0)[0].number().isInteger()) {
 						if(CHILD(0)[1].isPower()) {
-							if(CHILD(0)[1][0].size() == 0 && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number().isInteger() && CHILD(0)[1][1].number().isPositive()) {
+							if(CHILD(0)[1][0].size() == 0 && !CHILD(0)[1][0].isNumber() && CHILD(0)[1][1].isNumber() && CHILD(0)[1][1].number().isInteger() && CHILD(0)[1][1].number().isPositive()) {
 								xvar = &CHILD(0)[1][0];
 								qcof = CHILD(0)[0].number().intValue(&overflow);
 								if(!overflow) {
@@ -16419,11 +16419,13 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 							}
 						}
 					}
+
 					int pcof = 1;
 					if(!overflow) {
 						pcof = CHILD(SIZE - 1).number().intValue(&overflow);
 						if(pcof < 0) pcof = -pcof;
 					}
+
 					if(xvar && !overflow && degree <= 1000 && degree > 2 && qcof != 0 && pcof != 0) {
 						bool b = true, b2 = true;
 						for(size_t i = 1; b && i < SIZE - 1; i++) {
@@ -16458,6 +16460,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								}
 							}
 						}
+
 						if(b) {
 							vector<Number> factors;
 							factors.resize(degree + 1, Number());
@@ -16497,6 +16500,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								}
 								prevdeg = curdeg;
 							}
+
 							while(b && degree > 2) {
 								for(int i = 1; i <= 1000; i++) {
 									if(i > pcof) break;
@@ -16509,6 +16513,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								Number itest;
 								int i2;
 								size_t pi = 0, qi = 0;
+								if(ps.empty() || qs.empty()) break;
 								Number nrtest(ps[0], qs[0], 0);
 								while(true) {
 									itest.clear(); i2 = degree;
@@ -16567,6 +16572,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								ps.clear();
 								qs.clear();
 							}
+
 							if(zeroes.size() > 0) {
 								MathStructure mleft;
 								MathStructure mtmp;
@@ -34230,7 +34236,7 @@ bool MathStructure::isRationalPolynomial(bool allow_non_rational_coefficient, bo
 			return true;
 		}
 		case STRUCT_POWER: {
-			return CHILD(1).isInteger() && CHILD(1).number().isNonNegative() && !CHILD(1).number().isOne() && CHILD(1).number() < 1000 && !CHILD(0).isMultiplication() && !CHILD(0).isAddition() && !CHILD(0).isPower() && CHILD(0).isRationalPolynomial(allow_non_rational_coefficient, allow_interval_coefficient);
+			return CHILD(1).isInteger() && CHILD(1).number().isNonNegative() && !CHILD(1).number().isOne() && CHILD(1).number() < 1000 && !CHILD(0).isNumber() && !CHILD(0).isMultiplication() && !CHILD(0).isAddition() && !CHILD(0).isPower() && CHILD(0).isRationalPolynomial(allow_non_rational_coefficient, allow_interval_coefficient);
 		}
 		case STRUCT_FUNCTION: {
 			if(o_function == CALCULATOR->f_uncertainty || o_function == CALCULATOR->f_interval || containsInterval() || containsInfinity()) return false;

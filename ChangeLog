@@ -1,3 +1,10 @@
+2019-04-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix factorization with uncalculated power of number (do not factorize)
+	* Fix explicit mixed units conversion when automatic mixed units conversion is disabled
+	* Fix "set autoconversion 0" in qalc (deactivate mixed units conversion)
+	* Fix segfault on factorization of "167772160y^4 − 41607495680y^2 − 11748245499y − 2147483648"
+
 2019-04-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Accept date and time separated by space instead of 'T'
