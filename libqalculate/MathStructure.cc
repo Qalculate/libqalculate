@@ -6604,7 +6604,7 @@ int MathStructure::merge_logical_or(MathStructure &mstruct, const EvaluationOpti
 
 }
 
-int MathStructure::merge_logical_xor(MathStructure &mstruct, const EvaluationOptions&, MathStructure*, size_t, size_t, bool) {
+int MathStructure::merge_logical_xor(MathStructure &mstruct, const EvaluationOptions &eo, MathStructure*, size_t, size_t, bool) {
 
 	if(equals(mstruct)) {
 		clear(true);
@@ -6630,8 +6630,66 @@ int MathStructure::merge_logical_xor(MathStructure &mstruct, const EvaluationOpt
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
 	}
-	
 	return -1;
+	
+	/*int b0, b1;
+	if(representsNonPositive(true)) {
+		b0 = 0;
+	} else if(representsPositive(true)) {
+		b0 = 1;
+	} else {
+		b0 = -1;
+	}
+	if(mstruct.representsNonPositive(true)) {
+		b1 = 0;
+	} else if(mstruct.representsPositive(true)) {
+		b1 = 1;
+	} else {
+		b1 = -1;
+	}
+	
+	if((b0 == 1 && b1 == 0) || (b0 == 0 && b1 == 1)) {
+		set(1, 1, 0, true);
+		MERGE_APPROX_AND_PREC(mstruct)
+		return 1;
+	} else if(b0 >= 0 && b1 >= 0) {
+		clear(true);
+		MERGE_APPROX_AND_PREC(mstruct)
+		return 1;
+	} else if(b0 == 0) {
+		set(mstruct, true);
+		add(m_zero, OPERATION_GREATER);
+		calculatesub(eo, eo, false);
+		return 1;
+	} else if(b0 == 1) {
+		set(mstruct, true);
+		add(m_zero, OPERATION_EQUALS_LESS);
+		calculatesub(eo, eo, false);
+		return 1;
+	} else if(b1 == 0) {
+		add(m_zero, OPERATION_GREATER);
+		calculatesub(eo, eo, false);
+		MERGE_APPROX_AND_PREC(mstruct)
+		return 1;
+	} else if(b1 == 1) {
+		add(m_zero, OPERATION_EQUALS_LESS);
+		calculatesub(eo, eo, false);
+		MERGE_APPROX_AND_PREC(mstruct)
+		return 1;
+	}
+	MathStructure *mstruct2 = new MathStructure(*this);
+	add(mstruct, OPERATION_LOGICAL_AND);
+	LAST.calculateLogicalNot(eo);
+	LAST.calculatesub(eo, eo, false);
+	calculatesub(eo, eo, false);
+	mstruct2->setLogicalNot();
+	mstruct2->calculatesub(eo, eo, false);
+	mstruct2->add(mstruct, OPERATION_LOGICAL_AND);
+	mstruct2->calculatesub(eo, eo, false);
+	add_nocopy(mstruct2, OPERATION_LOGICAL_OR);
+	calculatesub(eo, eo, false);
+
+	return 1;*/
 
 }
 
@@ -10429,13 +10487,11 @@ bool MathStructure::simplify(const EvaluationOptions &eo, bool unfactorize) {
 
 bool MathStructure::expand(const EvaluationOptions &eo, bool unfactorize) {
 	if(SIZE == 0) return false;
-	if(unfactorize) {
-		EvaluationOptions eo2 = eo;
-		eo2.sync_units = false;
-		eo2.expand = true;
-		calculatesub(eo2, eo2);
-		do_simplification(*this, eo2, true, false, false);
-	}
+	EvaluationOptions eo2 = eo;
+	eo2.sync_units = false;
+	eo2.expand = true;
+	if(unfactorize) calculatesub(eo2, eo2);
+	do_simplification(*this, eo2, true, false, false);
 	return false;
 }
 
@@ -20737,9 +20793,9 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			for(size_t i = 0; i < SIZE; i++) {
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
-					if(po.spacious) print_str += " ";
+					print_str += " ";
 					print_str += "XOR";
-					if(po.spacious) print_str += " ";
+					print_str += " ";
 				}
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
 				print_str += CHILD(i).print(po, ips_n);
@@ -20805,10 +20861,15 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			for(size_t i = 0; i < SIZE; i++) {
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
-					if(po.spacious) print_str += " ";
-					if(po.spell_out_logical_operators) print_str += _("and");
-					else print_str += "&&";
-					if(po.spacious) print_str += " ";
+					if(po.spell_out_logical_operators) {
+						print_str += " ";
+						print_str += _("and");
+						print_str += " ";
+					} else {
+						if(po.spacious) print_str += " ";
+						print_str += "&&";
+						if(po.spacious) print_str += " ";
+					}
 				}
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
 				print_str += CHILD(i).print(po, ips_n);
@@ -20820,10 +20881,15 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			for(size_t i = 0; i < SIZE; i++) {
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
-					if(po.spacious) print_str += " ";
-					if(po.spell_out_logical_operators) print_str += _("or");
-					else print_str += "||";
-					if(po.spacious) print_str += " ";
+					if(po.spell_out_logical_operators) {
+						print_str += " ";
+						print_str += _("or");
+						print_str += " ";
+					} else {
+						if(po.spacious) print_str += " ";
+						print_str += "||";
+						if(po.spacious) print_str += " ";
+					}
 				}
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
 				print_str += CHILD(i).print(po, ips_n);
@@ -20835,9 +20901,15 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			for(size_t i = 0; i < SIZE; i++) {
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
-					if(po.spacious) print_str += " ";
-					print_str += "XOR";
-					if(po.spacious) print_str += " ";
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("⊻", po.can_display_unicode_string_arg))) {
+						if(po.spacious) print_str += " ";
+						print_str += "⊻";
+						if(po.spacious) print_str += " ";
+					} else {
+						print_str += " ";
+						print_str += "XOR";
+						print_str += " ";
+					}
 				}
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
 				print_str += CHILD(i).print(po, ips_n);

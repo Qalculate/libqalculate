@@ -1,3 +1,12 @@
+2019-04-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Recognize "factor" and "expand" commands at the beginning of the expression
+	* Change order of operations for logical and bitwise operators to better match C operator precedence
+	* Always show spaces around spelled out logical operators
+	* Bitwise XOR operator
+	* Add alternative unicode symbols for bitwise and, or, exclusive or and not
+	* Caret as XOR option in qalc
+
 2019-04-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix factorization with uncalculated power of number (do not factorize)
