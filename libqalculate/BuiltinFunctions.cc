@@ -686,15 +686,12 @@ BitXorFunction::BitXorFunction() : MathFunction("bitxor", 2) {
 	setArgumentDefinition(2, arg);
 }
 int BitXorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = vargs[0];
-	mstruct.add(vargs[1], OPERATION_BITWISE_XOR);
 	if(vargs[0].isNumber() && vargs[1].isNumber()) {
 		Number nr(vargs[0].number());
 		if(nr.bitXor(vargs[1].number()) && (eo.approximation >= APPROXIMATION_APPROXIMATE || !nr.isApproximate() || vargs[0].number().isApproximate() || vargs[1].number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || vargs[0].number().isComplex() || vargs[1].number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || vargs[0].number().includesInfinity() || vargs[1].number().includesInfinity())) {
 			mstruct.set(nr, true);
 			return 1;
 		}
-		return 0;
 	} else if(vargs[0].isVector() && vargs[1].isVector()) {
 		int i1 = 0, i2 = 1;
 		if(vargs[0].size() < vargs[1].size()) {
@@ -713,6 +710,8 @@ int BitXorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		}
 		return 1;
 	}
+	mstruct = vargs[0];
+	mstruct.add(vargs[1], OPERATION_BITWISE_XOR);
 	return 0;
 }
 XorFunction::XorFunction() : MathFunction("xor", 2) {

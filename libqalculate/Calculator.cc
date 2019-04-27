@@ -323,6 +323,8 @@ class Calculator_p {
 		size_t ids_i;
 };
 
+#define BITWISE_XOR "⊻"
+
 Calculator::Calculator() : Calculator(false) {}
 Calculator::Calculator(bool ignore_locale) {
 
@@ -413,6 +415,10 @@ Calculator::Calculator(bool ignore_locale) {
 	addStringAlternative("**", POWER);
 	addStringAlternative("↊", "X");
 	addStringAlternative("↋", "E");
+	addStringAlternative("∧", BITWISE_AND);
+	addStringAlternative("∨", BITWISE_OR);
+	addStringAlternative("¬", BITWISE_NOT);
+	
 	
 	per_str = _("per");
 	per_str_len = per_str.length();
@@ -431,7 +437,7 @@ Calculator::Calculator(bool ignore_locale) {
 	OR_str = "OR";
 	OR_str_len = OR_str.length();
 	XOR_str = "XOR";
-	XOR_str_len = OR_str.length();
+	XOR_str_len = XOR_str.length();
 	
 	char *current_lc_numeric = setlocale(LC_NUMERIC, NULL);
 	if(current_lc_numeric) saved_locale = strdup(current_lc_numeric);
@@ -2568,7 +2574,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	PrintOptions printops = po;
 	EvaluationOptions evalops = eo;
 	MathStructure mstruct;
-	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false;
+	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false, do_expand = false;
 	string from_str = str, to_str;
 	if(separateToExpression(from_str, to_str, evalops, true)) {
 		remove_duplicate_blanks(to_str);
@@ -2635,8 +2641,9 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction"))) {
 			str = from_str;
 			do_fraction = true;
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "factors", _("factors"))) {
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "factors", _("factors")) || equalsIgnoreCase(to_str, "factor")) {
 			str = from_str;
+			evalops.structuring = STRUCTURING_FACTORIZE;
 			do_factors = true;
 		}  else if(equalsIgnoreCase(to_str, "partial fraction") || equalsIgnoreCase(to_str, _("partial fraction"))) {
 			str = from_str;
@@ -2666,12 +2673,28 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		} else {
 			evalops.parse_options.units_enabled = true;
 		}
+	} else {
+		size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
+		if(i != string::npos) {
+			to_str = str.substr(0, i);
+			if(to_str == "factor" || EQUALS_IGNORECASE_AND_LOCAL(to_str, "factorize", _("factorize"))) {
+				str = str.substr(i + 1);
+				do_factors = true;
+				evalops.structuring = STRUCTURING_FACTORIZE;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "expand", _("expand"))) {
+				str = str.substr(i + 1);
+				evalops.structuring = STRUCTURING_SIMPLIFY;
+				do_expand = true;
+			}
+		}
 	}
 
 	mstruct = calculate(str, evalops);
 	
 	if(do_factors) {
-		if(!mstruct.integerFactorize()) mstruct.factorize(evalops, true, -1, 0, true, 2);
+		mstruct.integerFactorize();
+	} else if(do_expand) {
+		mstruct.expand(evalops, false);
 	}
 	if(do_pfe) mstruct.expandPartialFractions(evalops);
 
@@ -5175,7 +5198,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				} else if(i == OR_str_len && (il = compare_name_no_case(OR_str, str, OR_str_len, str_index + 1))) {
 					str.replace(str_index + 1, il, LOGICAL_OR);
 					str_index++;
-//				} else if(compare_name_no_case(XOR_str, str, XOR_str_len, str_index + 1)) {
+				} else if(i == XOR_str_len && (il = compare_name_no_case(XOR_str, str, XOR_str_len, str_index + 1))) {
+					str.replace(str_index + 1, il, BITWISE_XOR);
+					str_index++;
 				}
 			}
 		} else if(str_index > 0 && po.base >= 2 && po.base <= 10 && is_in(EXPS, str[str_index]) && str_index + 1 < str.length() && (is_in(NUMBER_ELEMENTS, str[str_index + 1]) || (is_in(PLUS MINUS, str[str_index + 1]) && str_index + 2 < str.length() && is_in(NUMBER_ELEMENTS, str[str_index + 2]))) && is_in(NUMBER_ELEMENTS, str[str_index - 1])) {
@@ -6273,15 +6298,65 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			parseAdd(str, mstruct, po);
 		}
 		return true;
-	}	
-	if(str[0] == LOGICAL_NOT_CH) {
-		str.erase(str.begin());
-		parseAdd(str, mstruct, po);
-		mstruct->setLogicalNot();
+	}
+	/*if((i = str.find(LOGICAL_XOR, 1)) != string::npos && i + strlen(LOGICAL_XOR) != str.length()) {
+		str2 = str.substr(0, i);
+		str = str.substr(i + strlen(LOGICAL_XOR), str.length() - (i + strlen(LOGICAL_XOR)));
+		parseAdd(str2, mstruct, po);
+		parseAdd(str, mstruct, po, OPERATION_LOGICAL_XOR);
+		return true;
+	}*/
+	if((i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
+		bool b = false, append = false;
+		while(i != string::npos && i + 1 != str.length()) {
+			str2 = str.substr(0, i);
+			str = str.substr(i + 1, str.length() - (i + 1));
+			if(b) {
+				parseAdd(str2, mstruct, po, OPERATION_BITWISE_OR, append);
+				append = true;
+			} else {
+				parseAdd(str2, mstruct, po);
+				b = true;
+			}
+			i = str.find(BITWISE_OR, 1);
+		}
+		if(b) {
+			parseAdd(str, mstruct, po, OPERATION_BITWISE_OR, append);
+		} else {
+			parseAdd(str, mstruct, po);
+		}
+		return true;
+	}
+	if((i = str.find(BITWISE_XOR, 1)) != string::npos && i + strlen(BITWISE_XOR) != str.length()) {
+		str2 = str.substr(0, i);
+		str = str.substr(i + strlen(BITWISE_XOR), str.length() - (i + strlen(BITWISE_XOR)));
+		parseAdd(str2, mstruct, po);
+		parseAdd(str, mstruct, po, OPERATION_BITWISE_XOR);
+		return true;
+	}
+	if((i = str.find(BITWISE_AND, 1)) != string::npos && i + 1 != str.length()) {
+		bool b = false, append = false;
+		while(i != string::npos && i + 1 != str.length()) {
+			str2 = str.substr(0, i);
+			str = str.substr(i + 1, str.length() - (i + 1));
+			if(b) {
+				parseAdd(str2, mstruct, po, OPERATION_BITWISE_AND, append);
+				append = true;
+			} else {
+				parseAdd(str2, mstruct, po);
+				b = true;
+			}
+			i = str.find(BITWISE_AND, 1);
+		}
+		if(b) {
+			parseAdd(str, mstruct, po, OPERATION_BITWISE_AND, append);
+		} else {
+			parseAdd(str, mstruct, po);
+		}
 		return true;
 	}
 	if((i = str.find_first_of(LESS GREATER EQUALS NOT, 0)) != string::npos) {
-		while(i != string::npos && ((str[i] == LESS_CH && i + 1 < str.length() && str[i + 1] == LESS_CH) || (str[i] == GREATER_CH && i + 1 < str.length() && str[i + 1] == GREATER_CH))) {
+		while(i != string::npos && ((str[i] == LOGICAL_NOT_CH && (i + 1 >= str.length() || str[i + 1] != EQUALS_CH)) || (str[i] == LESS_CH && i + 1 < str.length() && str[i + 1] == LESS_CH) || (str[i] == GREATER_CH && i + 1 < str.length() && str[i + 1] == GREATER_CH))) {
 			i = str.find_first_of(LESS GREATER NOT EQUALS, i + 2);
 		}
 	}
@@ -6296,7 +6371,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		MathOperation s = OPERATION_ADD;
 		while(!c) {
-			while(i != string::npos && ((str[i] == LESS_CH && i + 1 < str.length() && str[i + 1] == LESS_CH) || (str[i] == GREATER_CH && i + 1 < str.length() && str[i + 1] == GREATER_CH))) {
+			while(i != string::npos && ((str[i] == LOGICAL_NOT_CH && (i + 1 >= str.length() || str[i + 1] != EQUALS_CH)) || (str[i] == LESS_CH && i + 1 < str.length() && str[i + 1] == LESS_CH) || (str[i] == GREATER_CH && i + 1 < str.length() && str[i + 1] == GREATER_CH))) {
 				i = str.find_first_of(LESS GREATER NOT EQUALS, i + 2);
 				while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
 					i++;
@@ -6355,49 +6430,6 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 		}
 	}
-	
-	if((i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
-		bool b = false, append = false;
-		while(i != string::npos && i + 1 != str.length()) {
-			str2 = str.substr(0, i);
-			str = str.substr(i + 1, str.length() - (i + 1));
-			if(b) {
-				parseAdd(str2, mstruct, po, OPERATION_BITWISE_OR, append);
-				append = true;
-			} else {
-				parseAdd(str2, mstruct, po);
-				b = true;
-			}
-			i = str.find(BITWISE_OR, 1);
-		}
-		if(b) {
-			parseAdd(str, mstruct, po, OPERATION_BITWISE_OR, append);
-		} else {
-			parseAdd(str, mstruct, po);
-		}
-		return true;
-	}
-	if((i = str.find(BITWISE_AND, 1)) != string::npos && i + 1 != str.length()) {
-		bool b = false, append = false;
-		while(i != string::npos && i + 1 != str.length()) {
-			str2 = str.substr(0, i);
-			str = str.substr(i + 1, str.length() - (i + 1));
-			if(b) {
-				parseAdd(str2, mstruct, po, OPERATION_BITWISE_AND, append);
-				append = true;
-			} else {
-				parseAdd(str2, mstruct, po);
-				b = true;
-			}
-			i = str.find(BITWISE_AND, 1);
-		}
-		if(b) {
-			parseAdd(str, mstruct, po, OPERATION_BITWISE_AND, append);
-		} else {
-			parseAdd(str, mstruct, po);
-		}
-		return true;
-	}
 	i = str.find(SHIFT_LEFT, 1);
 	i2 = str.find(SHIFT_RIGHT, 1);
 	if(i != string::npos && i + 2 != str.length() && (i2 == string::npos || i < i2)) {
@@ -6421,13 +6453,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		mstruct->set(f_shift, &mstruct1, &mstruct2, NULL);
 		return true;
 	}
-	if(str[0] == BITWISE_NOT_CH) {
-		str.erase(str.begin());
-		parseAdd(str, mstruct, po);
-		mstruct->setBitwiseNot();
-		return true;
-	}
-			
+
 	i = 0;
 	i3 = 0;	
 	if(po.rpn) {
@@ -6888,6 +6914,19 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 			return true;
 		}
+	}
+	
+	if(!str.empty() && str[0] == LOGICAL_NOT_CH) {
+		str.erase(str.begin());
+		parseAdd(str, mstruct, po);
+		mstruct->setLogicalNot();
+		return true;
+	}
+	if(!str.empty() && str[0] == BITWISE_NOT_CH) {
+		str.erase(str.begin());
+		parseAdd(str, mstruct, po);
+		mstruct->setBitwiseNot();
+		return true;
 	}
 
 	if(str.empty()) return false;

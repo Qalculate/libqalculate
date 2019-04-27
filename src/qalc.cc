@@ -57,7 +57,8 @@ string expression_str;
 bool expression_executed = false;
 bool avoid_recalculation = false;
 bool hide_parse_errors = false;
-bool rpn_mode;
+bool rpn_mode = false, saved_rpn_mode = false;
+bool caret_as_xor = false, saved_caret_as_xor = false;
 bool use_readline = true;
 bool interactive_mode;
 bool ask_questions;
@@ -757,7 +758,8 @@ void set_option(string str) {
 			expression_format_updated(true);
 			hide_parse_errors = false;
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "parsing mode", _("parsing mode")) || svar == "parse") {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "caret as xor", _("caret as xor")) || svar == "XOR^") SET_BOOL_PT(caret_as_xor)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "parsing mode", _("parsing mode")) || svar == "parse") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "adaptive", _("adaptive"))) v = PARSING_MODE_ADAPTIVE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "implicit first", _("implicit first"))) v = PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST;
@@ -4249,7 +4251,7 @@ void CommandThread::run() {
 		switch(command_type) {
 			case COMMAND_FACTORIZE: {
 				if(!((MathStructure*) x)->integerFactorize()) {
-					((MathStructure*) x)->factorize(evalops, true, 3, 0, true, 2, NULL, m_undefined, true, false, -1);
+					((MathStructure*) x)->structure(STRUCTURING_FACTORIZE, evalops, true);
 				}
 				break;
 			}
@@ -4404,7 +4406,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	if(i_maxtime < 0) return;
 
 	string str;
-	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false;
+	bool do_bases = false, do_factors = false, do_expand = false, do_fraction = false, do_pfe = false, do_calendars = false;
 	avoid_recalculation = false;
 	if(!interactive_mode) goto_input = false;
 	if(do_stack) {
@@ -4611,8 +4613,22 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				evalops.parse_options.units_enabled = false;
 				return;
 			}
+		} else {
+			size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
+			if(i != string::npos) {
+				to_str = str.substr(0, i);
+				if(to_str == "factor" || EQUALS_IGNORECASE_AND_LOCAL(to_str, "factorize", _("factorize"))) {
+					str = str.substr(i + 1);
+					do_factors = true;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "expand", _("expand"))) {
+					str = str.substr(i + 1);
+					do_expand = true;
+				}
+			}
 		}
 	}
+	
+	if(caret_as_xor) gsub("^", " XOR ", str);
 	
 	expression_executed = true;
 
@@ -4813,14 +4829,14 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		return;
 	}
 	
-	if(do_factors || do_pfe) {
+	if(do_factors || do_expand || do_pfe) {
 		if(do_stack && stack_index != 0) {
 			MathStructure *save_mstruct = mstruct;
 			mstruct = CALCULATOR->getRPNRegister(stack_index + 1);
-			execute_command(do_pfe ? COMMAND_EXPAND_PARTIAL_FRACTIONS : COMMAND_FACTORIZE, false);
+			execute_command(do_pfe ? COMMAND_EXPAND_PARTIAL_FRACTIONS : (do_expand ? COMMAND_EXPAND : COMMAND_FACTORIZE), false);
 			mstruct = save_mstruct;
 		} else {
-			execute_command(do_pfe ? COMMAND_EXPAND_PARTIAL_FRACTIONS : COMMAND_FACTORIZE, false);
+			execute_command(do_pfe ? COMMAND_EXPAND_PARTIAL_FRACTIONS : (do_expand ? COMMAND_EXPAND : COMMAND_FACTORIZE), false);
 		}
 	}
 	
@@ -4947,6 +4963,8 @@ void set_saved_mode() {
 	saved_printops = printops;
 	saved_printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
 	saved_evalops = evalops;
+	saved_rpn_mode = rpn_mode;
+	saved_caret_as_xor = caret_as_xor;
 	saved_assumption_type = CALCULATOR->defaultAssumptions()->type();
 	saved_assumption_sign = CALCULATOR->defaultAssumptions()->sign();
 }
@@ -5191,6 +5209,8 @@ void load_preferences() {
 					if(v >= ANGLE_UNIT_NONE && v <= ANGLE_UNIT_GRADIANS) {
 						evalops.parse_options.angle_unit = (AngleUnit) v;
 					}
+				} else if(svar == "caret_as_xor") {
+					caret_as_xor = v;
 				} else if(svar == "functions_enabled") {
 					evalops.parse_options.functions_enabled = v;
 				} else if(svar == "variables_enabled") {
@@ -5390,6 +5410,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "warn_about_denominators_assumed_nonzero=%i\n", saved_evalops.warn_about_denominators_assumed_nonzero);
 	fprintf(file, "structuring=%i\n", saved_evalops.structuring);
 	fprintf(file, "angle_unit=%i\n", saved_evalops.parse_options.angle_unit);
+	fprintf(file, "caret_as_xor=%i\n", saved_caret_as_xor);
 	fprintf(file, "functions_enabled=%i\n", saved_evalops.parse_options.functions_enabled);
 	fprintf(file, "variables_enabled=%i\n", saved_evalops.parse_options.variables_enabled);
 	fprintf(file, "calculate_variables=%i\n", saved_evalops.calculate_variables);
@@ -5405,7 +5426,7 @@ bool save_preferences(bool mode)
 	fprintf(file, "round_halfway_to_even=%i\n", saved_printops.round_halfway_to_even);
 	fprintf(file, "approximation=%i\n", saved_evalops.approximation);
 	fprintf(file, "interval_calculation=%i\n", saved_evalops.interval_calculation);
-	fprintf(file, "in_rpn_mode=%i\n", rpn_mode);
+	fprintf(file, "in_rpn_mode=%i\n", saved_rpn_mode);
 	fprintf(file, "rpn_syntax=%i\n", saved_evalops.parse_options.rpn);
 	fprintf(file, "limit_implicit_multiplication=%i\n", saved_evalops.parse_options.limit_implicit_multiplication);
 	fprintf(file, "parsing_mode=%i\n", saved_evalops.parse_options.parsing_mode);

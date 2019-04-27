@@ -2351,7 +2351,7 @@
     </builtin_function>
     <builtin_function name="xor">
       <_title>Logical Exclusive OR</_title>
-      <_names>r:xor</_names>
+      <_names>rc:xor</_names>
       <argument index="1">
         <_title>Value 1</_title>
       </argument>
