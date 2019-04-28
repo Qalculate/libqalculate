@@ -534,8 +534,8 @@ Calculator::Calculator(bool ignore_locale) {
 	
 	b_save_called = false;
 
-	ILLEGAL_IN_NAMES = DOT_S + RESERVED OPERATORS SPACES PARENTHESISS VECTOR_WRAPS COMMAS;
-	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = DOT_S + RESERVED OPERATORS PARENTHESISS VECTOR_WRAPS COMMAS;
+	ILLEGAL_IN_NAMES = "\a\b" + DOT_S + RESERVED OPERATORS SPACES PARENTHESISS VECTOR_WRAPS COMMAS;
+	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = "\a\b" + DOT_S + RESERVED OPERATORS PARENTHESISS VECTOR_WRAPS COMMAS;
 	ILLEGAL_IN_UNITNAMES = ILLEGAL_IN_NAMES + NUMBERS;
 	b_argument_errors = true;
 	current_stage = MESSAGE_STAGE_UNSET;
@@ -4720,9 +4720,9 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 	return is - str_index;
 }
 
-const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b"};
-#define INTERNAL_SIGNS_COUNT 4
-#define INTERNAL_NUMBER_CHARS "\b"
+const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a"};
+#define INTERNAL_SIGNS_COUNT 6
+#define INTERNAL_NUMBER_CHARS "\b\a"
 #define DUODECIMAL_CHARS "EX"
 
 void Calculator::parseSigns(string &str, bool convert_to_internal_representation) const {
@@ -5143,8 +5143,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					}
 				} else if(str[i5] == ID_WRAP_RIGHT_CH && (i3 = str.find_last_of(ID_WRAP_LEFT, i5 - 1)) != string::npos) {
 					stmp2 = str.substr(i3, i5 + 1 - i3);
-				} else if(is_not_in(RESERVED OPERATORS SPACES VECTOR_WRAPS PARENTHESISS COMMAS, str[i5])) {
-					i3 = str.find_last_of(RESERVED OPERATORS SPACES VECTOR_WRAPS PARENTHESISS COMMAS, i5);
+				} else if(is_not_in(RESERVED OPERATORS "\a" SPACES VECTOR_WRAPS PARENTHESISS COMMAS, str[i5])) {
+					i3 = str.find_last_of(RESERVED OPERATORS "\a" SPACES VECTOR_WRAPS PARENTHESISS COMMAS, i5);
 					if(i3 == string::npos) {
 						stmp2 = str.substr(0, i5 + 1);
 					} else {
@@ -5199,7 +5199,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.replace(str_index + 1, il, LOGICAL_OR);
 					str_index++;
 				} else if(i == XOR_str_len && (il = compare_name_no_case(XOR_str, str, XOR_str_len, str_index + 1))) {
-					str.replace(str_index + 1, il, BITWISE_XOR);
+					str.replace(str_index + 1, il, "\a");
 					str_index++;
 				}
 			}
@@ -5538,12 +5538,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										} else if(str[i7] == RIGHT_PARENTHESIS_CH) {
 											nr_of_p++;
 										}
-									} else if(nr_of_p == 0 && is_in(OPERATORS SPACE RIGHT_PARENTHESIS, str[i7])) {
+									} else if(nr_of_p == 0 && is_in(OPERATORS "\a" SPACE RIGHT_PARENTHESIS, str[i7])) {
 										if(nr_of_op == 0 && b_started) {
 											i7++;
 											break;
 										} else {
-											if(is_in(OPERATORS, str[i7])) {
+											if(is_in(OPERATORS "\a", str[i7])) {
 												nr_of_op++;
 												b_started = false;
 											} else if(str[i7] == RIGHT_PARENTHESIS_CH) {
@@ -5595,7 +5595,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										} else if(!b_comma_before && !b_power_before && c == ' ' && arg_i <= 1) {
 											//if(i5 < 2) b_space_first = true;
 											if(i5 == 2) b = true;
-										} else if(!b_comma_before && i5 == 2 && arg_i <= 1 && is_in(OPERATORS, c) && c != POWER_CH) {
+										} else if(!b_comma_before && i5 == 2 && arg_i <= 1 && is_in(OPERATORS "\a", c) && c != POWER_CH) {
 											b = true;
 										} else if(c == COMMA_CH) {
 											if(i5 == 2) arg_i--;
@@ -5883,7 +5883,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	if(po.rpn) {
 		size_t rpn_i = str.find(SPACE, 0);
 		while(rpn_i != string::npos) {
-			if(rpn_i == 0 || is_in(OPERATORS, str[rpn_i - 1]) || rpn_i + 1 == str.length() || is_in(SPACE OPERATORS, str[rpn_i + 1])) {
+			if(rpn_i == 0 || is_in(OPERATORS "\a", str[rpn_i - 1]) || rpn_i + 1 == str.length() || is_in(SPACE OPERATORS "\a", str[rpn_i + 1])) {
 				str.erase(rpn_i, 1);
 			} else {
 				rpn_i++;
@@ -5896,7 +5896,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		//remove spaces between next to operators (except '/') and before/after parentheses
 		space_i = str.find(SPACE_CH, 0);
 		while(space_i != string::npos) {
-			if((str[space_i + 1] != DIVISION_CH && is_in(OPERATORS RIGHT_PARENTHESIS, str[space_i + 1])) || (str[space_i - 1] != DIVISION_CH && is_in(OPERATORS LEFT_PARENTHESIS, str[space_i - 1]))) {
+			if((str[space_i + 1] != DIVISION_CH && is_in(OPERATORS "\a" RIGHT_PARENTHESIS, str[space_i + 1])) || (str[space_i - 1] != DIVISION_CH && is_in(OPERATORS "\a" LEFT_PARENTHESIS, str[space_i - 1]))) {
 				str.erase(space_i, 1);
 				space_i--;
 			}		
@@ -5910,7 +5910,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOptions &po) {
 	mstruct->clear();
 	if(str.empty()) return false;
-	if(str.find_first_not_of(OPERATORS SPACE) == string::npos) {
+	if(str.find_first_not_of(OPERATORS "\a" SPACE) == string::npos) {
+		gsub("\a", str.find_first_of(OPERATORS) != string::npos ? " XOR " : "XOR", str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
 	}
@@ -5953,6 +5954,9 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			had_non_sign = true;
 		} else if(is_in(OPERATORS, str[i])) {
 			error(false, _("Misplaced '%c' ignored"), str[i], NULL);
+			str.erase(i, 1);
+		} else if(str[i] == '\a') {
+			error(false, _("Misplaced operator(s) \"%s\" ignored"), "XOR", NULL);
 			str.erase(i, 1);
 		} else if(str[i] == '\b') {
 			b_exp = false;
@@ -6053,9 +6057,9 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 	if(str.length() > 0) {
 		size_t i;
 		if(po.base >= 2 && po.base <= 10) {
-			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS EXPS ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS "\a\b" PARENTHESISS EXPS ID_WRAP_LEFT, 1);
 		} else {
-			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS "\a\b" PARENTHESISS ID_WRAP_LEFT, 1);
 		}
 		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
 			return parseNumber(mstruct, str, po);
@@ -6069,9 +6073,9 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 	if(str.length() > 0) {
 		size_t i;
 		if(po.base >= 2 && po.base <= 10) {
-			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS EXPS ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS "\a" PARENTHESISS EXPS ID_WRAP_LEFT, 1);
 		} else {
-			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS "\a" PARENTHESISS ID_WRAP_LEFT, 1);
 		}
 		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
 			if(s == OPERATION_EXP10 && po.read_precision == ALWAYS_READ_PRECISION) {
@@ -6170,7 +6174,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				break;
 			}
 		}
-		if(i > 0 && is_not_in(MULTIPLICATION_2 OPERATORS PARENTHESISS SPACE, str[i - 1]) && (po.base > 10 || po.base < 2 || (str[i - 1] != EXP_CH && str[i - 1] != EXP2_CH))) {
+		if(i > 0 && is_not_in(MULTIPLICATION_2 OPERATORS "\a" PARENTHESISS SPACE, str[i - 1]) && (po.base > 10 || po.base < 2 || (str[i - 1] != EXP_CH && str[i - 1] != EXP2_CH))) {
 			if(po.rpn) {
 				str.insert(i2 + 1, MULTIPLICATION);	
 				str.insert(i, SPACE);
@@ -6178,7 +6182,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				i2++;		
 			}
 		}
-		if(i2 + 1 < str.length() && is_not_in(MULTIPLICATION_2 OPERATORS PARENTHESISS SPACE, str[i2 + 1]) && (po.base > 10 || po.base < 2 || (str[i2 + 1] != EXP_CH && str[i2 + 1] != EXP2_CH))) {
+		if(i2 + 1 < str.length() && is_not_in(MULTIPLICATION_2 OPERATORS "\a" PARENTHESISS SPACE, str[i2 + 1]) && (po.base > 10 || po.base < 2 || (str[i2 + 1] != EXP_CH && str[i2 + 1] != EXP2_CH))) {
 			if(po.rpn) {
 				i3 = str.find(SPACE, i2 + 1);
 				if(i3 == string::npos) {
@@ -6209,7 +6213,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	bool b_abs_or = false, b_bit_or = false;
 	i = 0;
 	while((i = str.find('|', i)) != string::npos) {
-		if(i == 0 || i == str.length() - 1 || is_in(po.rpn ? OPERATORS : OPERATORS SPACE, str[i - 1])) {b_abs_or = true; break;}
+		if(i == 0 || i == str.length() - 1 || is_in(po.rpn ? OPERATORS "\a" : OPERATORS "\a" SPACE, str[i - 1])) {b_abs_or = true; break;}
 		if(str[i + 1] == '|') {
 			if(i == str.length() - 2) {b_abs_or = true; break;}
 			if(b_bit_or) {
@@ -6228,7 +6232,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				size_t depth = 1;
 				i2 = i;
 				while((i2 = str.find("||", i2 + 2)) != string::npos) {
-					if(is_in(OPERATORS, str[i2 - 1])) depth++;
+					if(is_in(OPERATORS "\a", str[i2 - 1])) depth++;
 					else depth--;
 					if(depth == 0) break;
 				}
@@ -6243,7 +6247,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				size_t depth = 1;
 				i2 = i;
 				while((i2 = str.find('|', i2 + 1)) != string::npos) {
-					if(is_in(OPERATORS, str[i2 - 1])) depth++;
+					if(is_in(OPERATORS "\a", str[i2 - 1])) depth++;
 					else depth--;
 					if(depth == 0) break;
 				}
@@ -6327,9 +6331,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		return true;
 	}
-	if((i = str.find(BITWISE_XOR, 1)) != string::npos && i + strlen(BITWISE_XOR) != str.length()) {
+	if((i = str.find('\a', 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i);
-		str = str.substr(i + strlen(BITWISE_XOR), str.length() - (i + strlen(BITWISE_XOR)));
+		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_BITWISE_XOR);
 		return true;
@@ -6463,7 +6467,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		bool b = false;
 		char last_operator = 0;
 		while(true) {
-			i = str.find_first_of(OPERATORS SPACE, i3 + 1);
+			i = str.find_first_of(OPERATORS "\a" SPACE, i3 + 1);
 			if(i == string::npos) {
 				if(!b) {
 					parseAdd(str, mstruct, po2);
@@ -6602,7 +6606,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		bool b = false, c = false, append = false;
 		bool min = false;
 		while(i != string::npos && i + 1 != str.length()) {
-			if(is_not_in(MULTIPLICATION_2 OPERATORS EXPS, str[i - 1])) {
+			if(is_not_in(MULTIPLICATION_2 OPERATORS "\a" EXPS, str[i - 1])) {
 				str2 = str.substr(0, i);
 				if(!c && b) {
 					bool b_add;
@@ -6755,7 +6759,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						i4 -= 2;
 					}
 					if(!b) {
-						if((i2 > 1 && is_not_in(OPERATORS MULTIPLICATION_2, str[i2 - 1])) || (i2 > 2 && str[i2 - 1] == MULTIPLICATION_2_CH && is_not_in(OPERATORS, str[i2 - 2]))) had_nonunit = true;
+						if((i2 > 1 && is_not_in(OPERATORS "\a" MULTIPLICATION_2, str[i2 - 1])) || (i2 > 2 && str[i2 - 1] == MULTIPLICATION_2_CH && is_not_in(OPERATORS "\a", str[i2 - 2]))) had_nonunit = true;
 						break;
 					}
 					i2 = str.rfind(ID_WRAP_LEFT_CH, i4 - 2);
@@ -6859,7 +6863,6 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					i++;
 				}
 				i = str.find(ID_WRAP_LEFT_CH, i + 1);
-
 			}
 		}
 	}
@@ -6869,7 +6872,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		bool div = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			if(i < 1) {
-				if(i < 1 && str.find_first_not_of(MULTIPLICATION_2 OPERATORS EXPS) == string::npos) {
+				if(i < 1 && str.find_first_not_of(MULTIPLICATION_2 OPERATORS "\a" EXPS) == string::npos) {
+					gsub("\a", str.find_first_of(OPERATORS) != string::npos ? " XOR " : "XOR", str);
 					error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 					return b;
 				}
@@ -6877,7 +6881,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				while(i < str.length() && is_in(MULTIPLICATION DIVISION, str[i])) {
 					i++;
 				}
-				error(false, _("Misplaced operator(s) \"%s\" ignored"), str.substr(0, i).c_str(), NULL);
+				string errstr = str.substr(0, i);
+				gsub("\a", str.find_first_of(OPERATORS) != string::npos ? " XOR " : "XOR", errstr);
+				error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
 				str = str.substr(i, str.length() - i);
 				i = str.find_first_of(MULTIPLICATION DIVISION, 0);
 			} else {
@@ -6898,7 +6904,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					while(i2 + i + 1 != str.length() && is_in(MULTIPLICATION DIVISION, str[i2 + i + 1])) {
 						i2++;
 					}
-					error(false, _("Misplaced operator(s) \"%s\" ignored"), str.substr(i, i2).c_str(), NULL);
+					string errstr = str.substr(i, i2);
+					gsub("\a", str.find_first_of(OPERATORS) != string::npos ? " XOR " : "XOR", errstr);
+					error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
 					i += i2;
 				}
 				div = str[i] == DIVISION_CH;
@@ -6930,7 +6938,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 
 	if(str.empty()) return false;
-	if(str.find_first_not_of(OPERATORS SPACE) == string::npos) {
+	if(str.find_first_not_of(OPERATORS "\a" SPACE) == string::npos) {
+		gsub("\a", str.find_first_of(OPERATORS) != string::npos ? " XOR " : "XOR", str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
 	}
@@ -6949,8 +6958,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			str.erase(i, 1);
 		} else if(str[i] == SPACE_CH) {
 			str.erase(i, 1);
-		} else if(is_in(OPERATORS, str[i])) {
-			error(false, _("Misplaced '%c' ignored"), str[i], NULL);
+		} else if(is_in(OPERATORS "\a", str[i])) {
+			if(str[i] == '\a') error(false, _("Misplaced operator(s) \"%s\" ignored"), "XOR", NULL);
+			else error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
 		} else {
 			break;
