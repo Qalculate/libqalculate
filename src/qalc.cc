@@ -4628,7 +4628,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		}
 	}
 	
-	if(caret_as_xor) gsub("^", " XOR ", str);
+	if(caret_as_xor) gsub("^", "⊻", str);
 	
 	expression_executed = true;
 

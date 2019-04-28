@@ -20766,7 +20766,11 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					if(po.spacious) print_str += " ";
-					print_str += "&";
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("∧", po.can_display_unicode_string_arg))) {
+						print_str += "∧";
+					} else {
+						print_str += "&";
+					}
 					if(po.spacious) print_str += " ";
 				}
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
@@ -20780,7 +20784,11 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					if(po.spacious) print_str += " ";
-					print_str += "|";
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("∨", po.can_display_unicode_string_arg))) {
+						print_str += "∨";
+					} else {
+						print_str += "|";
+					}
 					if(po.spacious) print_str += " ";
 				}
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
@@ -20803,7 +20811,11 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			break;
 		}
 		case STRUCT_BITWISE_NOT: {
-			print_str = "~";
+			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("¬", po.can_display_unicode_string_arg))) {
+				print_str += "¬";
+			} else {
+				print_str = "~";
+			}
 			ips_n.depth++;
 			ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
 			print_str += CHILD(0).print(po, ips_n);
