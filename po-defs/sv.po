@@ -5779,7 +5779,7 @@ msgstr "Antag falskt om ej sant"
 
 #: ../data/functions.xml.in.h:709
 msgid "Logical Exclusive OR"
-msgstr ""
+msgstr "Logiskt exklusivt OR"
 
 #: ../data/functions.xml.in.h:710
 msgid "r:xor"
@@ -5795,7 +5795,7 @@ msgstr "Värde 2"
 
 #: ../data/functions.xml.in.h:713
 msgid "Bitwise Exclusive OR"
-msgstr ""
+msgstr "Bitvist exklusivt OR"
 
 #: ../data/functions.xml.in.h:714
 msgid "r:bitxor"
@@ -5803,7 +5803,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:715
 msgid "Bitwise Shift"
-msgstr ""
+msgstr "Bitvist skift"
 
 #: ../data/functions.xml.in.h:716
 msgid "r:shift"
@@ -5815,7 +5815,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:718
 msgid "Bitwise Complement (Not)"
-msgstr ""
+msgstr "Bitvivst komplement (Icke)"
 
 #: ../data/functions.xml.in.h:719
 msgid "r:bitcmp"

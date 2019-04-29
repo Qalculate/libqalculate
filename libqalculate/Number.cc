@@ -341,100 +341,80 @@ void Number::set(string number, const ParseOptions &po) {
 
 	if(po.base == BASE_ROMAN_NUMERALS) {
 		remove_blanks(number);
+		string number_bak = number;
+		bool rev_c = (number.find("Ɔ") != string::npos);
+		if(rev_c) gsub("Ɔ", ")", number);
 		Number nr;
 		Number cur;
 		bool large = false;
 		vector<Number> numbers;
-		bool capital = false;
 		for(size_t i = 0; i < number.length(); i++) {
 			switch(number[i]) {
 				case 'I': {
-					if(!capital && i > 0 && i == number.length() - 1) {
+					if(i > 0 && i == number.length() - 1 && number[i - 1] != 'i' && number[i - 1] != 'j' && number.find_first_of("jvxlcdm") != string::npos && number.find_first_of("IJVXLCDM") == i) {
 						cur.set(2);
 						CALCULATOR->error(false, _("Assuming the unusual practice of letting a last capital I mean 2 in a roman numeral."), NULL);
 						break;
 					}
 				}
-				case 'J': {capital = true;}
+				case 'J': {}
 				case 'i': {}
 				case 'j': {
 					cur.set(1);
 					break;
 				}
-				case 'V': {capital = true;}
+				case 'V': {}
 				case 'v': {
 					cur.set(5);
 					break;
 				}
-				case 'X': {capital = true;}
+				case 'X': {}
 				case 'x': {
 					cur.set(10);
 					break;
 				}
-				case 'L': {capital = true;}
+				case 'L': {}
 				case 'l': {
 					cur.set(50);
 					break;
 				}
-				case 'C': {capital = true;}
+				case 'C': {}
 				case 'c': {
+					if(rev_c) {
+						size_t i2 = number.find_first_not_of("Cc", i);
+						if(i2 != string::npos && number[i2] == '|' && i2 + (i2 - i) < number.length() && number[i2 + (i2 - i)] == ')') {
+							bool b = true;
+							for(size_t i3 = i2 + 1; i3 < i2 + (i2 - i); i3++) {
+								if(number[i3] != ')') {b = false; break;}
+							}
+							if(b) {
+								cur.set(1, 1, i2 - i + 2);
+								i = i2 + (i2 - i);
+								if(i + 1 < number.length() && number[i + 1] == ')') {
+									i2 = number.find_first_not_of(")", i + 2);
+									if(i2 == string::npos) {
+										cur += Number(5, 1, number.length() - i);
+										i = number.length() - 1;
+									} else {
+										cur += Number(5, 1, i2 - i);
+										i = i2 - 1;
+									}
+								}
+								break;
+							}
+						}
+					}
 					cur.set(100);
 					break;
 				}
-				case 'D': {capital = true;}
+				case 'D': {}
 				case 'd': {
 					cur.set(500);
 					break;
 				}
-				case 'M': {capital = true;}
+				case 'M': {}
 				case 'm': {
 					cur.set(1000);
-					break;
-				}
-				case '(': {
-					int multi = 1, multi2 = 0;
-					bool turn = false;
-					bool error = false;
-					i++;
-					for(; i < number.length(); i++) {
-						if(number[i] == '|') {
-							if(!turn) {
-								turn = true;
-								multi2 = multi;
-							} else {
-								error = true;
-								break;
-							}
-						} else if(number[i] == ')') {
-							if(turn) {
-								multi2--;
-								if(multi2 < 1) {
-									break;
-								}	
-							} else {
-								error = true;
-								break;
-							}
-						} else if(number[i] == '(') {
-							if(!turn) {
-								multi++;	
-							} else {
-								error = true;
-								break;
-							}
-						} else {
-							error = true;
-							i--;
-							break;
-						}
-					}
-					if(error | !turn) {
-						CALCULATOR->error(true, _("Error in roman numerals: %s."), number.c_str(), NULL);
-					} else {
-						cur.set(10);
-						cur.raise(multi);
-						cur.multiply(100);
-					}
 					break;
 				}
 				case '|': {
@@ -442,25 +422,55 @@ void Number::set(string number, const ParseOptions &po) {
 						cur.clear();
 						large = false;
 						break;
-					} else if(number.length() > i + 1 && number[i + 2] == ')') {
-						i++;
-						int multi = 1;
-						for(; i < number.length(); i++) {
-							if(number[i] != ')') {
-								i--;
-								break;
-							}
-							multi++;
+					} else if(i + 1 < number.length() && number[i + 1] == ')') {
+						size_t i2 = number.find_first_not_of(")", i + 2);
+						if(i2 == string::npos) {
+							cur.set(5, 1, number.length() - i - 1);
+							i = number.length() - 1;
+						} else {
+							cur.set(5, 1, i2 - i);
+							i = i2 - 1;
 						}
-						cur.set(10);
-						cur.raise(multi);
-						cur.multiply(50);
 						break;
-					} else if(number.length() > i + 2 && number[i + 2] == '|') {
+					} else if(i + 2 < number.length() && number.find("|", i + 2) != string::npos) {
 						cur.clear();
 						large = true;
 						break;
 					}
+					CALCULATOR->error(true, _("Error in roman numerals: %s."), number_bak.c_str(), NULL);
+					break;
+				}
+				case '(': {
+					if(!rev_c) {
+						size_t i2 = number.find_first_not_of("(", i);
+						if(i2 != string::npos && number[i2] == '|' && i2 + (i2 - i) < number.length() && number[i2 + (i2 - i)] == ')') {
+							bool b = true;
+							for(size_t i3 = i2 + 1; i3 < i2 + (i2 - i); i3++) {
+								if(number[i3] != ')') {b = false; break;}
+							}
+							if(b) {
+								cur.set(1, 1, i2 - i + 2);
+								i = i2 + (i2 - i);
+								if(i + 1 < number.length() && number[i + 1] == ')') {
+									i2 = number.find_first_not_of(")", i + 2);
+									if(i2 == string::npos) {
+										cur += Number(5, 1, number.length() - i);
+										i = number.length() - 1;
+									} else {
+										cur += Number(5, 1, i2 - i);
+										i = i2 - 1;
+									}
+								}
+								break;
+							}
+						}
+						CALCULATOR->error(true, _("Error in roman numerals: %s."), number_bak.c_str(), NULL);
+						break;
+					}
+				}
+				case ')': {
+					CALCULATOR->error(true, _("Error in roman numerals: %s."), number_bak.c_str(), NULL);
+					break;
 				}
 				default: {
 					cur.clear();
@@ -519,7 +529,7 @@ void Number::set(string number, const ParseOptions &po) {
 			}
 			values[i].set(nr);
 		}
-		if(error) {
+		if(error && number.find('|') == string::npos) {
 			PrintOptions pro;
 			pro.base = BASE_ROMAN_NUMERALS;
 			CALCULATOR->error(false, _("Errors in roman numerals: \"%s\". Interpreted as %s, which should be written as %s."), number.c_str(), nr.print().c_str(), nr.print(pro).c_str(), NULL);

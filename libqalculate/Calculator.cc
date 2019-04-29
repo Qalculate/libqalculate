@@ -5910,7 +5910,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOptions &po) {
 	mstruct->clear();
 	if(str.empty()) return false;
-	if(str.find_first_not_of(OPERATORS "\a" SPACE) == string::npos) {
+	if(str.find_first_not_of(OPERATORS "\a" SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == string::npos)) {
 		gsub("\a", str.find_first_of(OPERATORS) != string::npos ? " XOR " : "XOR", str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
@@ -5952,7 +5952,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			str.erase(i, 1);
 			after_sign_e = false;
 			had_non_sign = true;
-		} else if(is_in(OPERATORS, str[i])) {
+		} else if(is_in(OPERATORS, str[i]) && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
 			error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
 		} else if(str[i] == '\a') {
@@ -6138,7 +6138,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	mstruct->clear();
 	size_t i = 0, i2 = 0, i3 = 0;
 	string str2, str3;
-	while(true) {
+	bool extended_roman = (po.base == BASE_ROMAN_NUMERALS && (i = str.find("|")) != string::npos && i + 1 < str.length() && str[i + 1] == RIGHT_PARENTHESIS_CH);
+	while(!extended_roman) {
 		//find first right parenthesis and then the last left parenthesis before
 		i2 = str.find(RIGHT_PARENTHESIS_CH);
 		if(i2 == string::npos) {
@@ -6212,7 +6213,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 	bool b_abs_or = false, b_bit_or = false;
 	i = 0;
-	while((i = str.find('|', i)) != string::npos) {
+	while(po.base != BASE_ROMAN_NUMERALS && (i = str.find('|', i)) != string::npos) {
 		if(i == 0 || i == str.length() - 1 || is_in(po.rpn ? OPERATORS "\a" : OPERATORS "\a" SPACE, str[i - 1])) {b_abs_or = true; break;}
 		if(str[i + 1] == '|') {
 			if(i == str.length() - 2) {b_abs_or = true; break;}
@@ -6282,7 +6283,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		return true;
 	}
-	if((i = str.find(LOGICAL_OR, 1)) != string::npos && i + 2 != str.length()) {
+	if(po.base != BASE_ROMAN_NUMERALS && (i = str.find(LOGICAL_OR, 1)) != string::npos && i + 2 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 2 != str.length()) {
 			str2 = str.substr(0, i);
@@ -6310,7 +6311,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		parseAdd(str, mstruct, po, OPERATION_LOGICAL_XOR);
 		return true;
 	}*/
-	if((i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
+	if(po.base != BASE_ROMAN_NUMERALS && (i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			str2 = str.substr(0, i);
@@ -6938,7 +6939,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 
 	if(str.empty()) return false;
-	if(str.find_first_not_of(OPERATORS "\a" SPACE) == string::npos) {
+	if(str.find_first_not_of(OPERATORS "\a" SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find_first_of("(|)") == string::npos)) {
 		gsub("\a", str.find_first_of(OPERATORS) != string::npos ? " XOR " : "XOR", str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
@@ -6958,7 +6959,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			str.erase(i, 1);
 		} else if(str[i] == SPACE_CH) {
 			str.erase(i, 1);
-		} else if(is_in(OPERATORS "\a", str[i])) {
+		} else if(is_in(OPERATORS "\a", str[i]) && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
 			if(str[i] == '\a') error(false, _("Misplaced operator(s) \"%s\" ignored"), "XOR", NULL);
 			else error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
