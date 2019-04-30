@@ -1714,7 +1714,7 @@ int main(int argc, char *argv[]) {
 	//test_integration();
 	//return true;
 	//test_intervals(true);
-	
+
 	CALCULATOR->setVariableUnitsEnabled(true);
 	
 	v = new KnownVariable("", "v", m_zero);

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-12 16:22+0200\n"
+"POT-Creation-Date: 2019-04-30 09:22+0200\n"
 "PO-Revision-Date: 2007-05-18 15:47+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -3834,16 +3834,16 @@ msgid "r:trunc"
 msgstr "afkap"
 
 #: ../data/functions.xml.in.h:228
-msgid "Extract Integer Part"
-msgstr "Gehele deel uit (getal) halen"
+msgid "Integer Part"
+msgstr "Gehele deel uit (getal)"
 
 #: ../data/functions.xml.in.h:229
 msgid "r:int"
 msgstr ""
 
 #: ../data/functions.xml.in.h:230
-msgid "Extract Fractional Part"
-msgstr "Fractionele deel uit (getal) halen"
+msgid "Fractional Part"
+msgstr "Fractionele deel uit (getal)"
 
 #: ../data/functions.xml.in.h:231
 msgid "r:frac"
@@ -5118,7 +5118,7 @@ msgstr ""
 "Retourneert de kansdichtheid p(x) in x voor een  logistische verdeling met "
 "schaalparameter. (van Gnumeric)"
 
-#: ../data/functions.xml.in.h:534 ../data/variables.xml.in.h:200
+#: ../data/functions.xml.in.h:534 ../data/variables.xml.in.h:203
 msgid "Date &amp; Time"
 msgstr "Datum &amp; Tijd"
 
@@ -5424,7 +5424,7 @@ msgstr ""
 msgid "Start Date"
 msgstr "Matrix construeren"
 
-#: ../data/functions.xml.in.h:600
+#: ../data/functions.xml.in.h:600 ../data/variables.xml.in.h:196
 msgid "Utilities"
 msgstr "Hulpmiddelen"
 
@@ -5883,7 +5883,7 @@ msgid "Logical Exclusive OR"
 msgstr "Booleaanse XOR"
 
 #: ../data/functions.xml.in.h:710
-msgid "r:xor"
+msgid "rc:xor"
 msgstr ""
 
 #: ../data/functions.xml.in.h:711
@@ -10418,68 +10418,77 @@ msgid "r:undefined"
 msgstr "ongedefinieerd"
 
 #: ../data/variables.xml.in.h:192
+msgid "False"
+msgstr "Onwaar"
+
+#: ../data/variables.xml.in.h:193
+msgid "r:false,r:no"
+msgstr "onwaar,nee"
+
+#: ../data/variables.xml.in.h:194
+msgid "True"
+msgstr "Waar"
+
+#: ../data/variables.xml.in.h:195
+msgid "r:true,r:yes"
+msgstr "waar,ja"
+
+#: ../data/variables.xml.in.h:197
 #, fuzzy
 msgid "Precision"
 msgstr "Regressie"
 
-#: ../data/variables.xml.in.h:193
+#: ../data/variables.xml.in.h:198
 #, fuzzy
 msgid "r:precision"
 msgstr "Expressie"
 
-#: ../data/variables.xml.in.h:194
-msgid "False"
-msgstr "Onwaar"
+#: ../data/variables.xml.in.h:199
+msgid "System Uptime"
+msgstr ""
 
-#: ../data/variables.xml.in.h:195
-msgid "r:false,r:no"
-msgstr "onwaar,nee"
+#: ../data/variables.xml.in.h:200
+#, fuzzy
+msgid "r:uptime"
+msgstr "tijd"
 
-#: ../data/variables.xml.in.h:196
-msgid "True"
-msgstr "Waar"
-
-#: ../data/variables.xml.in.h:197
-msgid "r:true,r:yes"
-msgstr "waar,ja"
-
-#: ../data/variables.xml.in.h:198
+#: ../data/variables.xml.in.h:201
 msgid "Unknowns"
 msgstr "Onbekenden"
 
-#: ../data/variables.xml.in.h:199
+#: ../data/variables.xml.in.h:202
 msgid "n (integer)"
 msgstr "n (geheel getal)"
 
-#: ../data/variables.xml.in.h:201
+#: ../data/variables.xml.in.h:204
 msgid "Today"
 msgstr "Vandaag"
 
-#: ../data/variables.xml.in.h:202
+#: ../data/variables.xml.in.h:205
 msgid "r:today"
 msgstr "vandaag"
 
-#: ../data/variables.xml.in.h:203
+#: ../data/variables.xml.in.h:206
 msgid "Tomorrow"
 msgstr "Morgen"
 
-#: ../data/variables.xml.in.h:204
+#: ../data/variables.xml.in.h:207
 msgid "r:tomorrow"
 msgstr "morgen"
 
-#: ../data/variables.xml.in.h:205
+#: ../data/variables.xml.in.h:208
 msgid "Yesterday"
 msgstr "Gisteren"
 
-#: ../data/variables.xml.in.h:206
+#: ../data/variables.xml.in.h:209
 msgid "r:yesterday"
 msgstr "gisteren"
 
-#: ../data/variables.xml.in.h:207
+#: ../data/variables.xml.in.h:210
 msgid "Now (date and time)"
 msgstr ""
 
-#: ../data/variables.xml.in.h:208
+#: ../data/variables.xml.in.h:211
 msgid "r:now"
 msgstr ""
 

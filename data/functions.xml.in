@@ -501,6 +501,17 @@
         </argument>
       </builtin_function>
       <function>
+        <_title>Integer Division</_title>
+        <_names>r:idivide</_names>
+        <expression>trunc(\x/\y)</expression>
+        <argument type="free" index="1">
+          <_title>Numerator</_title>
+        </argument>
+        <argument type="free" index="2">
+          <_title>Denominator</_title>
+        </argument>
+      </function>
+      <function>
         <_title>Negate</_title>
         <_names>r:neg</_names>
         <expression>-\x</expression>
@@ -714,14 +725,14 @@
         </argument>
       </builtin_function>
       <builtin_function name="int">
-        <_title>Extract Integer Part</_title>
+        <_title>Integer Part</_title>
         <_names>r:int</_names>
         <argument index="1">
           <_title>Value</_title>
         </argument>
       </builtin_function>
       <builtin_function name="frac">
-        <_title>Extract Fractional Part</_title>
+        <_title>Fractional Part</_title>
         <_names>r:frac</_names>
         <argument index="1">
           <_title>Value</_title>

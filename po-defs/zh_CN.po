@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-12 16:22+0200\n"
+"POT-Creation-Date: 2019-04-30 09:22+0200\n"
 "PO-Revision-Date: 2007-08-04 23:40+0800\n"
 "Last-Translator: Roy Qu <royqh1979@gmail.com>\n"
 "Language-Team: Simplified Chinese\n"
@@ -3843,7 +3843,7 @@ msgid "r:trunc"
 msgstr ""
 
 #: ../data/functions.xml.in.h:228
-msgid "Extract Integer Part"
+msgid "Integer Part"
 msgstr "提取整数部分"
 
 #: ../data/functions.xml.in.h:229
@@ -3851,7 +3851,7 @@ msgid "r:int"
 msgstr ""
 
 #: ../data/functions.xml.in.h:230
-msgid "Extract Fractional Part"
+msgid "Fractional Part"
 msgstr "提取分数部分"
 
 #: ../data/functions.xml.in.h:231
@@ -5110,7 +5110,7 @@ msgid ""
 "scale parameter. (from Gnumeric)"
 msgstr "根据指定的规模返回logistic分布在x点的密度概率p(x)。(用Gnumeric)"
 
-#: ../data/functions.xml.in.h:534 ../data/variables.xml.in.h:200
+#: ../data/functions.xml.in.h:534 ../data/variables.xml.in.h:203
 msgid "Date &amp; Time"
 msgstr "日期与时间"
 
@@ -5411,7 +5411,7 @@ msgstr ""
 msgid "Start Date"
 msgstr "构造矩阵"
 
-#: ../data/functions.xml.in.h:600
+#: ../data/functions.xml.in.h:600 ../data/variables.xml.in.h:196
 msgid "Utilities"
 msgstr "工具"
 
@@ -5868,7 +5868,7 @@ msgid "Logical Exclusive OR"
 msgstr "逻辑排斥OR"
 
 #: ../data/functions.xml.in.h:710
-msgid "r:xor"
+msgid "rc:xor"
 msgstr ""
 
 #: ../data/functions.xml.in.h:711
@@ -10358,68 +10358,77 @@ msgid "r:undefined"
 msgstr ""
 
 #: ../data/variables.xml.in.h:192
+msgid "False"
+msgstr "假"
+
+#: ../data/variables.xml.in.h:193
+msgid "r:false,r:no"
+msgstr ""
+
+#: ../data/variables.xml.in.h:194
+msgid "True"
+msgstr "真"
+
+#: ../data/variables.xml.in.h:195
+msgid "r:true,r:yes"
+msgstr ""
+
+#: ../data/variables.xml.in.h:197
 #, fuzzy
 msgid "Precision"
 msgstr "回归分析"
 
-#: ../data/variables.xml.in.h:193
+#: ../data/variables.xml.in.h:198
 #, fuzzy
 msgid "r:precision"
 msgstr "表达式"
 
-#: ../data/variables.xml.in.h:194
-msgid "False"
-msgstr "假"
-
-#: ../data/variables.xml.in.h:195
-msgid "r:false,r:no"
+#: ../data/variables.xml.in.h:199
+msgid "System Uptime"
 msgstr ""
 
-#: ../data/variables.xml.in.h:196
-msgid "True"
-msgstr "真"
+#: ../data/variables.xml.in.h:200
+#, fuzzy
+msgid "r:uptime"
+msgstr "第一个日期"
 
-#: ../data/variables.xml.in.h:197
-msgid "r:true,r:yes"
-msgstr ""
-
-#: ../data/variables.xml.in.h:198
+#: ../data/variables.xml.in.h:201
 msgid "Unknowns"
 msgstr "未知数"
 
-#: ../data/variables.xml.in.h:199
+#: ../data/variables.xml.in.h:202
 msgid "n (integer)"
 msgstr "n（整数）"
 
-#: ../data/variables.xml.in.h:201
+#: ../data/variables.xml.in.h:204
 msgid "Today"
 msgstr ""
 
-#: ../data/variables.xml.in.h:202
+#: ../data/variables.xml.in.h:205
 msgid "r:today"
 msgstr ""
 
-#: ../data/variables.xml.in.h:203
+#: ../data/variables.xml.in.h:206
 msgid "Tomorrow"
 msgstr ""
 
-#: ../data/variables.xml.in.h:204
+#: ../data/variables.xml.in.h:207
 msgid "r:tomorrow"
 msgstr ""
 
-#: ../data/variables.xml.in.h:205
+#: ../data/variables.xml.in.h:208
 msgid "Yesterday"
 msgstr ""
 
-#: ../data/variables.xml.in.h:206
+#: ../data/variables.xml.in.h:209
 msgid "r:yesterday"
 msgstr ""
 
-#: ../data/variables.xml.in.h:207
+#: ../data/variables.xml.in.h:210
 msgid "Now (date and time)"
 msgstr ""
 
-#: ../data/variables.xml.in.h:208
+#: ../data/variables.xml.in.h:211
 msgid "r:now"
 msgstr ""
 
