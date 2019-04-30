@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-12 16:22+0200\n"
+"POT-Creation-Date: 2019-04-30 09:22+0200\n"
 "PO-Revision-Date: 2006-12-06 15:54-0500\n"
 "Last-Translator: Nicolas Laug <nicolog@users.sourceforge.net>\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -3823,16 +3823,16 @@ msgid "r:trunc"
 msgstr ""
 
 #: ../data/functions.xml.in.h:228
-msgid "Extract Integer Part"
-msgstr "Extraire la Partie Entière"
+msgid "Integer Part"
+msgstr "Partie Entière"
 
 #: ../data/functions.xml.in.h:229
 msgid "r:int"
 msgstr ""
 
 #: ../data/functions.xml.in.h:230
-msgid "Extract Fractional Part"
-msgstr "Extraire la Partie Fractionnaire"
+msgid "Fractional Part"
+msgstr "Partie Fractionnaire"
 
 #: ../data/functions.xml.in.h:231
 msgid "r:frac"
@@ -5090,7 +5090,7 @@ msgid ""
 "scale parameter. (from Gnumeric)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:534 ../data/variables.xml.in.h:200
+#: ../data/functions.xml.in.h:534 ../data/variables.xml.in.h:203
 msgid "Date &amp; Time"
 msgstr "Date &amp; Heure"
 
@@ -5385,7 +5385,7 @@ msgstr ""
 msgid "Start Date"
 msgstr "Construire une Matrice"
 
-#: ../data/functions.xml.in.h:600
+#: ../data/functions.xml.in.h:600 ../data/variables.xml.in.h:196
 msgid "Utilities"
 msgstr "Utilitaires"
 
@@ -5844,7 +5844,7 @@ msgid "Logical Exclusive OR"
 msgstr "OU Exclusif Logique"
 
 #: ../data/functions.xml.in.h:710
-msgid "r:xor"
+msgid "rc:xor"
 msgstr ""
 
 #: ../data/functions.xml.in.h:711
@@ -10366,66 +10366,74 @@ msgid "r:undefined"
 msgstr "indéfini"
 
 #: ../data/variables.xml.in.h:192
-msgid "Precision"
-msgstr ""
-
-#: ../data/variables.xml.in.h:193
-msgid "r:precision"
-msgstr ""
-
-#: ../data/variables.xml.in.h:194
 msgid "False"
 msgstr "Faux"
 
-#: ../data/variables.xml.in.h:195
+#: ../data/variables.xml.in.h:193
 msgid "r:false,r:no"
 msgstr "faux,non"
 
-#: ../data/variables.xml.in.h:196
+#: ../data/variables.xml.in.h:194
 msgid "True"
 msgstr "Vrai"
 
-#: ../data/variables.xml.in.h:197
+#: ../data/variables.xml.in.h:195
 msgid "r:true,r:yes"
 msgstr "vrai,oui"
 
+#: ../data/variables.xml.in.h:197
+msgid "Precision"
+msgstr ""
+
 #: ../data/variables.xml.in.h:198
+msgid "r:precision"
+msgstr ""
+
+#: ../data/variables.xml.in.h:199
+msgid "System Uptime"
+msgstr ""
+
+#: ../data/variables.xml.in.h:200
+msgid "r:uptime"
+msgstr ""
+
+#: ../data/variables.xml.in.h:201
 msgid "Unknowns"
 msgstr "Inconnues"
 
-#: ../data/variables.xml.in.h:199
+#: ../data/variables.xml.in.h:202
 msgid "n (integer)"
 msgstr "n (entier)"
 
-#: ../data/variables.xml.in.h:201
+#: ../data/variables.xml.in.h:204
 msgid "Today"
 msgstr "Aujourd'hui"
 
-#: ../data/variables.xml.in.h:202
+#: ../data/variables.xml.in.h:205
 msgid "r:today"
 msgstr "aujourdhui"
 
-#: ../data/variables.xml.in.h:203
+#: ../data/variables.xml.in.h:206
 msgid "Tomorrow"
 msgstr "Demain"
 
-#: ../data/variables.xml.in.h:204
+#: ../data/variables.xml.in.h:207
 msgid "r:tomorrow"
 msgstr "demain"
 
-#: ../data/variables.xml.in.h:205
+#: ../data/variables.xml.in.h:208
 msgid "Yesterday"
 msgstr "Hier"
 
-#: ../data/variables.xml.in.h:206
+#: ../data/variables.xml.in.h:209
 msgid "r:yesterday"
 msgstr "hier"
 
-#: ../data/variables.xml.in.h:207
+#: ../data/variables.xml.in.h:210
 msgid "Now (date and time)"
 msgstr "À Présent (date et l'heure)"
 
-#: ../data/variables.xml.in.h:208
+#: ../data/variables.xml.in.h:211
 msgid "r:now"
 msgstr ""
 

@@ -2,6 +2,7 @@
 
 	* Support Ɔ (open O) in roman numbers
 	* Fixes for '|' in roman numbers
+	* Support compl, bitor, and bitand as alternatives to ~, | and &
 
 2019-04-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
