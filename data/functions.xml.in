@@ -2025,14 +2025,14 @@
       <example>$name([x^2, 2x, [0,1,4,8,16]], 0, 4).</example>
     </builtin_function>
     <builtin_function name="code">
-      <_title>ASCII Value</_title>
+      <_title>Unicode Value</_title>
       <_names>r:code</_names>
       <argument index="1">
         <_title>Character</_title>
       </argument>
     </builtin_function>
     <builtin_function name="char">
-      <_title>ASCII Char</_title>
+      <_title>Unicode Char</_title>
       <_names>r:char</_names>
       <argument index="1">
         <_title>Value</_title>

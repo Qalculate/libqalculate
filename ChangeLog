@@ -1,3 +1,16 @@
+2019-05-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* " mod " and " rem " operators
+	* Unicode support in char() and code()
+
+2019-04-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* idivide() function
+	* '%' as rem
+	* "//" and "\ " (if followed by space) for integer division (truncated)
+	* RPN syntax support for bitwise operations
+	* Allow compatible functions, variable, and functions with input base > 10
+
 2019-04-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Support Ɔ (open O) in roman numbers

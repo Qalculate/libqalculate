@@ -4670,16 +4670,37 @@ bool Calculator::unitIsUsedByOtherUnits(const Unit *u) const {
 	return false;
 }
 
-bool compare_name(const string &name, const string &str, const size_t &name_length, const size_t &str_index) {
+bool is_not_number(char c, int base) {
+	if(c >= '0' && c <= '9') return false;
+	if(base >= 2 && base <= 10) return true;
+	if(base == BASE_DUODECIMAL) return c != 'E' && c != 'X';
+	if(base > 10) {
+		if(c >= 'a' && c <= 'a' + (base - 10)) return false;
+		if(c >= 'A' && c <= 'A' + (base - 10)) return false;
+		return true;
+	}
+	return false;
+}
+
+bool compare_name(const string &name, const string &str, const size_t &name_length, const size_t &str_index, int base) {
 	if(name_length == 0) return false;
 	if(name[0] != str[str_index]) return false;
-	if(name_length == 1) return true;
+	if(name_length == 1) {
+		if(base < 2 || base > 10) return is_not_number(str[str_index], base);
+		return true;
+	}
 	for(size_t i = 1; i < name_length; i++) {
 		if(name[i] != str[str_index + i]) return false;
 	}
+	if(base < 2 || base > 10) {
+		for(size_t i = 0; i < name_length; i++) {
+			if(is_not_number(str[str_index + i], base)) return true;
+		}
+		return false;
+	}
 	return true;
 }
-size_t compare_name_no_case(const string &name, const string &str, const size_t &name_length, const size_t &str_index) {
+size_t compare_name_no_case(const string &name, const string &str, const size_t &name_length, const size_t &str_index, int base) {
 	if(name_length == 0) return 0;
 	size_t is = str_index;
 	for(size_t i = 0; i < name_length; i++, is++) {
@@ -4717,6 +4738,12 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 		} else if(name[i] != str[is] && !((name[i] >= 'a' && name[i] <= 'z') && name[i] - 32 == str[is]) && !((name[i] <= 'Z' && name[i] >= 'A') && name[i] + 32 == str[is])) {
 			return 0;
 		}
+	}
+	if(base < 2 || base > 10) {
+		for(size_t i = 0; i < name_length; i++) {
+			if(is_not_number(str[str_index + i], base)) return is - str_index;
+		}
+		return 0;
 	}
 	return is - str_index;
 }
@@ -4805,18 +4832,6 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 	parse(&mstruct, str, po);
 	return mstruct;
 	
-}
-
-bool is_not_number(char c, int base) {
-	if(c >= '0' && c <= '9') return false;
-	if(base >= 2 && base <= 10) return true;
-	if(base == BASE_DUODECIMAL) return c != 'E' && c != 'X';
-	if(base > 10) {
-		if(c >= 'a' && c <= 'a' + (base - 10)) return false;
-		if(c >= 'A' && c <= 'A' + (base - 10)) return false;
-		return true;
-	}
-	return false;
 }
 
 void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &parseoptions) {
@@ -5078,7 +5093,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	size_t i_mod = str.find("%");
 	if(i_mod != string::npos && !v_percent->hasName("%")) i_mod = string::npos;
 	while(i_mod != string::npos) {
-		if(i_mod == 0 || i_mod == str.length() - 1 || (is_in(OPERATORS "\a", str[i_mod + 1]) && str[i_mod + 1] != BITWISE_NOT_CH && str[i_mod + 1] != NOT_CH) || is_in(OPERATORS "\a", str[i_mod - 1])) {
+		if(i_mod == 0 || i_mod == str.length() - 1 || (is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMA OPERATORS "%\a", str[i_mod + 1]) && str[i_mod + 1] != BITWISE_NOT_CH && str[i_mod + 1] != NOT_CH) || is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMA OPERATORS "\a", str[i_mod - 1])) {
 			str.replace(i_mod, 1, v_percent->referenceName());
 			i_mod += v_percent->referenceName().length() - 1;
 		}
@@ -5117,20 +5132,25 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					break;
 				}
 			}	
-		} else if(str[str_index] == '\\' && str_index + 1 < str.length() && is_not_in(NOT_IN_NAMES, str[str_index + 1])) {
-			stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
-			size_t l = 1;
-			if(str[str_index + l] < 0) {
-				do {
-					l++; 
-				} while(str_index + l < str.length() && str[str_index + l] < 0 && (unsigned char) str[str_index + l] < 0xC0);
-				l--;
+		} else if(str[str_index] == '\\' && str_index + 1 < str.length() && (is_not_in(NOT_IN_NAMES, str[str_index + 1]) || (str_index > 0 && str[str_index + 1] == SPACE_CH))) {
+			if(str[str_index + 1] == SPACE_CH) {
+				str.replace(str_index, 2, "//");
+				str_index++;
+			} else {
+				stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+				size_t l = 1;
+				if(str[str_index + l] < 0) {
+					do {
+						l++; 
+					} while(str_index + l < str.length() && str[str_index + l] < 0 && (unsigned char) str[str_index + l] < 0xC0);
+					l--;
+				}
+				MathStructure *mstruct = new MathStructure(str.substr(str_index + 1, l));
+				stmp += i2s(addId(mstruct));
+				stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+				str.replace(str_index, l + 1, stmp);
+				str_index += stmp.length() - l;
 			}
-			MathStructure *mstruct = new MathStructure(str.substr(str_index + 1, l));
-			stmp += i2s(addId(mstruct));
-			stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-			str.replace(str_index, l + 1, stmp);
-			str_index += stmp.length() - l;
 		} else if(str[str_index] == '!' && po.functions_enabled) {
 			if(str_index > 0 && (str.length() - str_index == 1 || str[str_index + 1] != EQUALS_CH)) {
 				stmp = "";
@@ -5193,45 +5213,51 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str_index = stmp.length() + i5 - stmp2.length();
 				}
 			}
-		} else if((str[str_index] == 'c' || str[str_index] == 'C') && str.length() > str_index + 6 && str[str_index + 5] == SPACE_CH && (str_index == 0 ||  is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("compl", str, 5, str_index)) {
+		} else if((str[str_index] == 'c' || str[str_index] == 'C') && str.length() > str_index + 6 && str[str_index + 5] == SPACE_CH && (str_index == 0 ||  is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("compl", str, 5, str_index, po.base)) {
 			str.replace(str_index, 6, BITWISE_NOT);
 		} else if(str[str_index] == SPACE_CH) {
 			size_t i = str.find(SPACE, str_index + 1);
 			if(i != string::npos) {
 				i -= str_index + 1;
 				size_t il = 0;
-				if((il = compare_name_no_case(per_str, str, per_str_len, str_index + 1))) {
+				if((il = compare_name_no_case(per_str, str, per_str_len, str_index + 1, po.base))) {
 					str.replace(str_index + 1, il, DIVISION);
 					str_index++;
-				} else if((il = compare_name_no_case(times_str, str, times_str_len, str_index + 1))) {
+				} else if((il = compare_name_no_case(times_str, str, times_str_len, str_index + 1, po.base))) {
 					str.replace(str_index + 1, il, MULTIPLICATION);
 					str_index++;
-				} else if((il = compare_name_no_case(plus_str, str, plus_str_len, str_index + 1))) {
+				} else if((il = compare_name_no_case(plus_str, str, plus_str_len, str_index + 1, po.base))) {
 					str.replace(str_index + 1, il, PLUS);
 					str_index++;
-				} else if((il = compare_name_no_case(minus_str, str, minus_str_len, str_index + 1))) {
+				} else if((il = compare_name_no_case(minus_str, str, minus_str_len, str_index + 1, po.base))) {
 					str.replace(str_index + 1, il, MINUS);
 					str_index++;
-				} else if((il = compare_name_no_case(and_str, str, and_str_len, str_index + 1))) {
+				} else if((il = compare_name_no_case(and_str, str, and_str_len, str_index + 1, po.base))) {
 					str.replace(str_index + 1, il, LOGICAL_AND);
 					str_index++;
-				} else if(i == AND_str_len && (il = compare_name_no_case(AND_str, str, AND_str_len, str_index + 1))) {
+				} else if(i == AND_str_len && (il = compare_name_no_case(AND_str, str, AND_str_len, str_index + 1, po.base))) {
 					str.replace(str_index + 1, il, LOGICAL_AND);
 					str_index++;
-				} else if((il = compare_name_no_case(or_str, str, or_str_len, str_index + 1))) {
+				} else if((il = compare_name_no_case(or_str, str, or_str_len, str_index + 1, po.base))) {
 					str.replace(str_index + 1, il, LOGICAL_OR);
 					str_index++;
-				} else if(i == OR_str_len && (il = compare_name_no_case(OR_str, str, OR_str_len, str_index + 1))) {
+				} else if(i == OR_str_len && (il = compare_name_no_case(OR_str, str, OR_str_len, str_index + 1, po.base))) {
 					str.replace(str_index + 1, il, LOGICAL_OR);
 					str_index++;
-				} else if(i == XOR_str_len && (il = compare_name_no_case(XOR_str, str, XOR_str_len, str_index + 1))) {
+				} else if(i == XOR_str_len && (il = compare_name_no_case(XOR_str, str, XOR_str_len, str_index + 1, po.base))) {
 					str.replace(str_index + 1, il, "\a");
 					str_index++;
-				} else if(i == 5 && (il = compare_name_no_case("bitor", str, 5, str_index + 1))) {
+				} else if(i == 5 && (il = compare_name_no_case("bitor", str, 5, str_index + 1, po.base))) {
 					str.replace(str_index + 1, il, BITWISE_OR);
 					str_index++;
-				} else if(i == 6 && (il = compare_name_no_case("bitand", str, 6, str_index + 1))) {
+				} else if(i == 6 && (il = compare_name_no_case("bitand", str, 6, str_index + 1, po.base))) {
 					str.replace(str_index + 1, il, BITWISE_AND);
+					str_index++;
+				} else if(i == 3 && (il = compare_name_no_case("mod", str, 3, str_index + 1, po.base))) {
+					str.replace(str_index + 1, il, "\%\%");
+					str_index += 2;
+				} else if(i == 3 && (il = compare_name_no_case("rem", str, 3, str_index + 1, po.base))) {
+					str.replace(str_index + 1, il, "%");
 					str_index++;
 				}
 			}
@@ -5287,7 +5313,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				str.replace(str_index, name_length, stmp);
 				str_index += stmp.length() - 1;
 			}
-		} else if(is_not_number(str[str_index], po.base) && is_not_in(INTERNAL_OPERATORS INTERNAL_NUMBER_CHARS NOT_IN_NAMES, str[str_index])) {
+		} else if(is_not_in(NUMBERS INTERNAL_OPERATORS INTERNAL_NUMBER_CHARS NOT_IN_NAMES, str[str_index])) {
 			bool p_mode = false;
 			void *best_p_object = NULL;
 			Prefix *best_p = NULL;
@@ -5500,7 +5526,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						}						
 					}
 				}
-				if(name && name_length >= found_function_name_length && ((case_sensitive && compare_name(*name, str, name_length, str_index)) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index))))) {
+				if(name && name_length >= found_function_name_length && ((case_sensitive && compare_name(*name, str, name_length, str_index, po.base)) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index, po.base))))) {
 					moved_forward = false;
 					switch(ufvt) {
 						case 'v': {
@@ -5741,7 +5767,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 											break;
 										}
 									}								
-									if(name && ((case_sensitive && compare_name(*name, str, name_length, str_index)) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index))))) {
+									if(name && ((case_sensitive && compare_name(*name, str, name_length, str_index, po.base)) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index, po.base))))) {
 										if((!p_mode && name_length_old > 1) || (p_mode && (name_length + name_length_old > best_pl || ((ufvt != 'P' || !((Unit*) ufvl[ufv_index2])->getName(ufvl_i[ufv_index2]).abbreviation) && name_length + name_length_old == best_pl)))) {
 											p_mode = true;
 											best_p = p;
@@ -5774,7 +5800,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									case_sensitive = ((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).case_sensitive;
 									name_length = name->length();
 									if(index + 1 == (int) unit_chars_left || !((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).plural) {
-										if(name_length <= unit_chars_left && ((case_sensitive && compare_name(*name, str, name_length, str_index)) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index))))) {
+										if(name_length <= unit_chars_left && ((case_sensitive && compare_name(*name, str, name_length, str_index, po.base)) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index, po.base))))) {
 											if((!p_mode && name_length_old > 1) || (p_mode && (name_length + name_length_old > best_pl || ((ufvt != 'P' || !((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).abbreviation) && name_length + name_length_old == best_pl)))) {
 												p_mode = true;
 												best_p = p;
@@ -6982,6 +7008,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							mstruct->transform(f_trunc);
 							break;
 						}
+						case 4: {
+							MathStructure *mstruct2 = new MathStructure();
+							parseAdd(str2, mstruct2, po);
+							mstruct->transform(f_mod);
+							mstruct->addChild_nocopy(mstruct2);
+							break;
+						}
 						default: {
 							parseAdd(str2, mstruct, po, OPERATION_MULTIPLY, append);
 						}
@@ -6995,7 +7028,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					if(str[i + 1] == DIVISION_CH) {type = 3; i++;}
 					else type = 1;
 				} else if(str[i] == '%') {
-					type = 2;
+					if(str[i + 1] == '%') {type = 4; i++;}
+					else type = 2;
 				} else {
 					type = 0;
 				}
@@ -7029,6 +7063,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				case 3: {
 					parseAdd(str, mstruct, po, OPERATION_DIVIDE, append);
 					mstruct->transform(f_trunc);
+					break;
+				}
+				case 4: {
+					MathStructure *mstruct2 = new MathStructure();
+					parseAdd(str, mstruct2, po);
+					mstruct->transform(f_mod);
+					mstruct->addChild_nocopy(mstruct2);
 					break;
 				}
 				default: {
