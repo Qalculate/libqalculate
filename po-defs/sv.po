@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-30 16:22+0200\n"
+"POT-Creation-Date: 2019-05-01 16:03+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -5378,8 +5378,8 @@ msgstr ""
 "matrix där varje rad utgör parvisa x och y värden."
 
 #: ../data/functions.xml.in.h:611
-msgid "ASCII Value"
-msgstr "ASCII värde"
+msgid "Unicode Value"
+msgstr "Unicode-värde"
 
 #: ../data/functions.xml.in.h:612
 msgid "r:code"
@@ -5390,8 +5390,8 @@ msgid "Character"
 msgstr "Tecken"
 
 #: ../data/functions.xml.in.h:614
-msgid "ASCII Char"
-msgstr "ASCII tecken"
+msgid "Unicode Char"
+msgstr "Unicode-tecken"
 
 #: ../data/functions.xml.in.h:615
 msgid "r:char"
@@ -10307,6 +10307,12 @@ msgstr "Nu (datum och tid)"
 #: ../data/variables.xml.in.h:211
 msgid "r:now"
 msgstr ""
+
+#~ msgid "ASCII Value"
+#~ msgstr "ASCII värde"
+
+#~ msgid "ASCII Char"
+#~ msgstr "ASCII tecken"
 
 #~ msgid "Extract Integer Part"
 #~ msgstr "Extrahera heltal"

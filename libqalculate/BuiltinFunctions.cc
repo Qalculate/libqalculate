@@ -5083,28 +5083,74 @@ int RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 }
 
 AsciiFunction::AsciiFunction() : MathFunction("code", 1) {
-	TextArgument *arg = new TextArgument();
-	arg->setCustomCondition("len(\\x) = 1");
-	setArgumentDefinition(1, arg);
+	setArgumentDefinition(1, new TextArgument());
 }
 int AsciiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	unsigned char c = (unsigned char) vargs[0].symbol()[0];
-	mstruct.set(c, 1, 0);
+	if(vargs[0].symbol().empty()) {
+		return false;
+	}
+	mstruct.clear();
+	for(size_t i = 0; i < vargs[0].symbol().length(); i++) {
+		long int c = (unsigned char) vargs[0].symbol()[i];
+		if((c & 0x80) != 0) {
+			if(c<0xe0) {
+				i++;
+				if(i >= vargs[0].symbol().length()) return false;
+				c =((c & 0x1f) << 6) | (((unsigned char) vargs[0].symbol()[i]) & 0x3f);
+			} else if(c<0xf0) {
+				i++;
+				if(i + 1 >= vargs[0].symbol().length()) return false;
+				c= (((c & 0xf) << 12) | ((((unsigned char) vargs[0].symbol()[i]) & 0x3f) << 6)|(((unsigned char) vargs[0].symbol()[i + 1]) & 0x3f));
+				i++;
+			} else {
+				i++;
+				if(i + 2 >= vargs[0].symbol().length()) return false;
+				c = ((c & 7) << 18) | ((((unsigned char) vargs[0].symbol()[i]) & 0x3f) << 12) | ((((unsigned char) vargs[0].symbol()[i + 1]) & 0x3f) << 6) | (((unsigned char) vargs[0].symbol()[i + 2]) & 0x3f);
+				i += 2;
+			}
+		}
+		if(mstruct.isZero()) {
+			mstruct.set(c, 1L, 0L);
+		} else if(mstruct.isVector()) {
+			mstruct.addChild(MathStructure(c, 1L, 0L));
+		} else {
+			mstruct.transform(STRUCT_VECTOR, MathStructure(c, 1L, 0L));
+		}
+	}
 	return 1;
 }
 CharFunction::CharFunction() : MathFunction("char", 1) {
 	IntegerArgument *arg = new IntegerArgument();
 	Number fr(32, 1, 0);
 	arg->setMin(&fr);
-	fr.set(0x7f, 1, 0);
+	fr.set(0x10ffff, 1, 0);
 	arg->setMax(&fr);
 	setArgumentDefinition(1, arg);
 }
 int CharFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+
+	long int v = vargs[0].number().lintValue();
 	string str;
-	str += vargs[0].number().intValue();
+	if(v <= 0x7f) {
+		str = (char) v;
+	} else if(v <= 0x7ff) {
+		str = (char) ((v >> 6) | 0xc0);
+		str += (char) ((v & 0x3f) | 0x80);
+	} else if((v <= 0xd7ff || (0xe000 <= v && v <= 0xffff))) {
+		str = (char) ((v >> 12) | 0xe0);
+		str += (char) (((v >> 6) & 0x3f) | 0x80);
+		str += (char) ((v & 0x3f) | 0x80);
+	} else if(0xffff < v && v <= 0x10ffff) {
+		str = (char) ((v >> 18) | 0xf0);
+		str += (char) (((v >> 12) & 0x3f) | 0x80);
+		str += (char) (((v >> 6) & 0x3f) | 0x80);
+		str += (char) ((v & 0x3f) | 0x80);
+	} else {
+		return 0;
+	}
 	mstruct = str;
 	return 1;
+
 }
 
 ConcatenateFunction::ConcatenateFunction() : MathFunction("concatenate", 1, -1) {

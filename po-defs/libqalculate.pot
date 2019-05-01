@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-30 16:22+0200\n"
+"POT-Creation-Date: 2019-05-01 16:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3457,7 +3457,7 @@ msgid "r:mod"
 msgstr ""
 
 #: ../data/functions.xml.in.h:174
-msgid "Integer Division)"
+msgid "Integer Division"
 msgstr ""
 
 #: ../data/functions.xml.in.h:175
@@ -5258,7 +5258,7 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:611
-msgid "ASCII Value"
+msgid "Unicode Value"
 msgstr ""
 
 #: ../data/functions.xml.in.h:612
@@ -5270,7 +5270,7 @@ msgid "Character"
 msgstr ""
 
 #: ../data/functions.xml.in.h:614
-msgid "ASCII Char"
+msgid "Unicode Char"
 msgstr ""
 
 #: ../data/functions.xml.in.h:615
