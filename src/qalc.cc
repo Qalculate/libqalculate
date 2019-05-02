@@ -586,6 +586,7 @@ void set_option(string str) {
 	if(EQUALS_IGNORECASE_AND_LOCAL(svar, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(svar, "input base", _("input base")) || svar == "inbase" || EQUALS_IGNORECASE_AND_LOCAL(svar, "output base", _("output base")) || svar == "outbase") {
 		int v = 0;
 		bool b_in = EQUALS_IGNORECASE_AND_LOCAL(svar, "input base", _("input base")) || svar == "inbase";
+		bool b_out = EQUALS_IGNORECASE_AND_LOCAL(svar, "output base", _("output base")) || svar == "outbase";
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "roman", _("roman"))) v = BASE_ROMAN_NUMERALS;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "time", _("time"))) {if(b_in) v = 0; else v = BASE_TIME;}
 		else if(equalsIgnoreCase(svalue, "hex") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "hexadecimal", _("hexadecimal"))) v = BASE_HEXADECIMAL;
@@ -594,26 +595,35 @@ void set_option(string str) {
 		else if(equalsIgnoreCase(svalue, "oct") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "octal", _("octal"))) v = BASE_OCTAL;
 		else if(equalsIgnoreCase(svalue, "dec") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "decimal", _("decimal"))) v = BASE_DECIMAL;
 		else if(equalsIgnoreCase(svalue, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "sexagesimal", _("sexagesimal"))) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
-		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+		
+		else if(!empty_value && svalue.find_first_not_of(NUMBERS) == string::npos) {
 			v = s2i(svalue);
 			if((v < 2 || v > 36) && (b_in || v != 60)) {
 				v = 0;
 			}
+		} else if(!b_in && !b_out && (index = svalue.find_first_of(SPACES)) != string::npos) {
+			str = svalue;
+			svalue = str.substr(index + 1, str.length() - (index + 1));
+			remove_blank_ends(svalue);
+			svar += " ";
+			str = str.substr(0, index);
+			remove_blank_ends(str);
+			svar += str;
+			gsub("_", " ", svar);
+			if(EQUALS_IGNORECASE_AND_LOCAL(svar, "base display", _("base display"))) {
+				goto set_option_place;
+			}
+			if(expression_executed) {
+				expression_executed = false;
+				set_option(string("outbase ") + str);
+				expression_executed = true;
+			} else {
+				set_option(string("outbase ") + str);
+			}
+			set_option(string("inbase ") + svalue);
+			return;
 		}
 		if(v == 0) {
-			if((index = svalue.find_first_of(SPACES)) != string::npos) {
-				str = svalue;
-				svalue = str.substr(index + 1, str.length() - (index + 1));
-				remove_blank_ends(svalue);
-				svar += " ";
-				str = str.substr(0, index);
-				remove_blank_ends(str);
-				svar += str;
-				gsub("_", " ", svar);
-				if(EQUALS_IGNORECASE_AND_LOCAL(svar, "base display", _("base display"))) {
-					goto set_option_place;
-				}
-			}
 			PUTS_UNICODE(_("Illegal base."));
 		} else if(b_in) {
 			evalops.parse_options.base = v;
@@ -1587,15 +1597,23 @@ int main(int argc, char *argv[]) {
 	if(!ignore_locale) setlocale(LC_ALL, "");
 	
 	for(int i = 1; i < argc; i++) {
+		string svalue, svar;
 		if(calc_arg_begun) {
 			calc_arg += " ";
+		} else {
+			svar = argv[i];
+			size_t i2 = svar.find_first_of(NUMBERS);
+			if(i2 != string::npos && i2 != 0) {
+				svalue = svar.substr(i2);
+				svar = svar.substr(0, i2);
+			}
 		}
 		if(!calc_arg_begun && (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "-help") == 0 || strcmp(argv[i], "--help") == 0)) {
 			PUTS_UNICODE(_("usage: qalc [options] [expression]"));
 			printf("\n");
 			PUTS_UNICODE(_("where options are:"));
 			fputs("\n\t-b, -base", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("set the result number base"));
+			fputs("\t", stdout); PUTS_UNICODE(_("set the result, and optionally input, number base"));
 #ifdef HAVE_LIBCURL
 			fputs("\n\t-e, -exrates\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("update exchange rates"));
@@ -1626,6 +1644,8 @@ int main(int argc, char *argv[]) {
 			fputs("\t", stdout); PUTS_UNICODE(_("do not load any global units from file"));
 			fputs("\n\t-novariables\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("do not load any global variables from file"));
+			fputs("\n\t-p", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("]\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("start in programming mode (same as -b \"BASE BASE\" -s \"xor^\")"));
 			fputs("\n\t-s, -set", stdout); fputs(" \"", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("VALUE"), stdout); fputs("\"\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("as set command in interactive program session (ex. -set \"base 16\")"));
 			fputs("\n\t-t, -terse\n", stdout);
@@ -1646,13 +1666,36 @@ int main(int argc, char *argv[]) {
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-exrates") == 0 || strcmp(argv[i], "--exrates") == 0 || strcmp(argv[i], "-e") == 0)) {
 			fetch_exchange_rates_at_startup = true;
 #endif
-		} else if(!calc_arg_begun && (strcmp(argv[i], "-base") == 0 || strcmp(argv[i], "--base") == 0 || strcmp(argv[i], "-b") == 0)) {
-			i++;
+		} else if(!calc_arg_begun && (svar == "-base" || svar == "--base" || svar == "-b")) {
 			string set_base_str = "base ";
-			if(i < argc) {
-				set_base_str += argv[i];
+			if(!svalue.empty()) {
+				set_base_str += svalue;
+			} else {
+				i++;
+				if(i < argc) {
+					set_base_str += argv[i];
+				}
 			}
 			set_option_strings.push_back(set_base_str);
+		} else if(!calc_arg_begun && svar == "-p") {
+			string set_base_str = "base ";
+			if(!svalue.empty()) {
+				set_base_str += svalue;
+				set_base_str += " ";
+				set_base_str += svalue;
+			} else {
+				i++;
+				if(i < argc) {
+					set_base_str += argv[i];
+					set_base_str += " ";
+					set_base_str += argv[i];
+				}
+			}
+			set_option_strings.push_back(set_base_str);
+			set_option_strings.push_back("xor^ 1");
+		} else if(!calc_arg_begun && (strcmp(argv[i], "+p") == 0)) {
+			set_option_strings.push_back("base 10 10");
+			set_option_strings.push_back("xor^ 0");
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-terse") == 0 || strcmp(argv[i], "--terse") == 0 || strcmp(argv[i], "-t") == 0)) {
 			result_only = true;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-version") == 0 || strcmp(argv[i], "--version") == 0 || strcmp(argv[i], "-v") == 0)) {
@@ -1734,7 +1777,7 @@ int main(int argc, char *argv[]) {
 
 	//load application specific preferences
 	load_preferences();
-	
+
 	for(size_t i = 0; i < set_option_strings.size(); i++) {
 		set_option(set_option_strings[i]);
 	}
@@ -4218,7 +4261,7 @@ void expression_format_updated(bool reparse) {
 	if(!reparse && !rpn_mode) {
 		avoid_recalculation = true;
 	}
-	if(reparse) {
+	if(expression_executed && reparse) {
 		execute_expression();
 	}
 }
