@@ -5390,7 +5390,7 @@ msgid "Character"
 msgstr "Tecken"
 
 #: ../data/functions.xml.in.h:614
-msgid "Unicode Char"
+msgid "Unicode Character"
 msgstr "Unicode-tecken"
 
 #: ../data/functions.xml.in.h:615

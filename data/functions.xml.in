@@ -2032,7 +2032,7 @@
       </argument>
     </builtin_function>
     <builtin_function name="char">
-      <_title>Unicode Char</_title>
+      <_title>Unicode Character</_title>
       <_names>r:char</_names>
       <argument index="1">
         <_title>Value</_title>

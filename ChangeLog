@@ -1,3 +1,10 @@
+2019-05-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* -p BASE command line option for programming mode (same as -b "BASE BASE" -s "xor^") in qalc
+	* Support setting both input and output base with "base" command/option in qalc
+	* Do not require space between command line option and number in qalc (e.g. -b16)
+	* Fix seqfault with -set command line option in qalc, for some options changing expression parsing
+
 2019-05-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* " mod " and " rem " operators
