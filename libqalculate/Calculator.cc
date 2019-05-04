@@ -384,37 +384,9 @@ Calculator::Calculator(bool ignore_locale) {
 	
 	b_var_units = true;
 
-	addStringAlternative(SIGN_POWER_0, "^(0)");
-	addStringAlternative(SIGN_POWER_1, "^(1)");
-	addStringAlternative(SIGN_POWER_2, "^(2)");
-	addStringAlternative(SIGN_POWER_3, "^(3)");
-	addStringAlternative(SIGN_POWER_4, "^(4)");
-	addStringAlternative(SIGN_POWER_5, "^(5)");
-	addStringAlternative(SIGN_POWER_6, "^(6)");
-	addStringAlternative(SIGN_POWER_7, "^(7)");
-	addStringAlternative(SIGN_POWER_8, "^(8)");
-	addStringAlternative(SIGN_POWER_9, "^(9)");
-	addStringAlternative("½", "(1/2)");
-	addStringAlternative("¼", "(1/4)");
-	addStringAlternative("¾", "(3/4)");
-	addStringAlternative("⅐", "(1/7)");
-	addStringAlternative("⅑", "(1/9)");
-	addStringAlternative("⅒", "(1/10)");
-	addStringAlternative("⅓", "(1/3)");
-	addStringAlternative("⅔", "(2/3)");
-	addStringAlternative("⅕", "(1/5)");
-	addStringAlternative("⅖", "(2/5)");
-	addStringAlternative("⅗", "(3/5)");
-	addStringAlternative("⅘", "(4/5)");
-	addStringAlternative("⅙", "(1/6)");
-	addStringAlternative("⅚", "(5/6)");
-	addStringAlternative("⅛", "(1/8)");
-	addStringAlternative("⅜", "(3/8)");
-	addStringAlternative("⅞", "(7/8)");
-	//addStringAlternative(SIGN_INFINITY, "infinity");
-	addStringAlternative(SIGN_DIVISION, DIVISION);	
-	addStringAlternative(SIGN_DIVISION_SLASH, DIVISION);	
-	addStringAlternative(SIGN_MULTIPLICATION, MULTIPLICATION);		
+	addStringAlternative(SIGN_DIVISION, DIVISION);
+	addStringAlternative(SIGN_DIVISION_SLASH, DIVISION);
+	addStringAlternative(SIGN_MULTIPLICATION, MULTIPLICATION);
 	addStringAlternative(SIGN_MULTIDOT, MULTIPLICATION);
 	addStringAlternative(SIGN_MIDDLEDOT, MULTIPLICATION);
 	addStringAlternative(SIGN_MULTIBULLET, MULTIPLICATION);
@@ -422,8 +394,8 @@ Calculator::Calculator(bool ignore_locale) {
 	addStringAlternative(SIGN_MINUS, MINUS);
 	addStringAlternative("–", MINUS);
 	addStringAlternative(SIGN_PLUS, PLUS);
-	addStringAlternative(SIGN_NOT_EQUAL, " " NOT EQUALS);		
-	addStringAlternative(SIGN_GREATER_OR_EQUAL, GREATER EQUALS);	
+	addStringAlternative(SIGN_NOT_EQUAL, " " NOT EQUALS);
+	addStringAlternative(SIGN_GREATER_OR_EQUAL, GREATER EQUALS);
 	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);
 	addStringAlternative(";", COMMA);
 	addStringAlternative("\t", SPACE);
@@ -4812,6 +4784,120 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 				ui = str.find(signs[i], ui + real_signs[i].length());
 			}
 		}
+	}
+	size_t prev_ui = string::npos;
+	while(true) {
+		size_t ui = str.find("\xe2\x81", prev_ui == string::npos ? 0 : prev_ui);
+		if(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -71)))) ui = string::npos;
+		size_t ui2 = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
+		if(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = string::npos;
+		if(ui2 != string::npos && (ui == string::npos || ui2 < ui)) ui = ui2;
+		if(ui != string::npos) {
+			for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
+				if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
+					ui = str.find("\xe2\x81", q_end[ui3] + 1);
+					if(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -71)))) ui = string::npos;
+					ui2 = str.find('\xc2', q_end[ui3] + 1);
+					if(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = string::npos;
+					if(ui2 != string::npos && (ui == string::npos || ui2 < ui)) ui = ui2;
+					if(ui == string::npos) break;
+				}
+			}
+		}
+		if(ui == string::npos) break;
+		int index_shift = (str[ui] == '\xc2' ? -2 : -3);
+		if(ui == prev_ui) index_shift += 1;
+		else index_shift += 4;
+		for(size_t ui3 = 0; ui3 < q_begin.size(); ui3++) {
+			if(q_begin[ui3] >= ui) {
+				q_begin[ui3] += index_shift;
+				q_end[ui3] += index_shift;
+			}
+		}
+		if(str[ui] == '\xc2') {
+			if(str[ui + 1] == -71) str.replace(ui == prev_ui ? ui - 1 : ui, ui == prev_ui ? 3 : 2, ui == prev_ui ? "1)" : "^(1)");
+			else if(str[ui + 1] == -78) str.replace(ui == prev_ui ? ui - 1 : ui, ui == prev_ui ? 3 : 2, ui == prev_ui ? "2)" : "^(2)");
+			else if(str[ui + 1] == -77) str.replace(ui == prev_ui ? ui - 1 : ui, ui == prev_ui ? 3 : 2, ui == prev_ui ? "3)" : "^(3)");
+		} else {
+			if(str[ui + 2] == -80) str.replace(ui == prev_ui ? ui - 1 : ui, ui == prev_ui ? 4 : 3, ui == prev_ui ? "0)" : "^(0)");
+			else if(str[ui + 2] == -76) str.replace(ui == prev_ui ? ui - 1 : ui, ui == prev_ui ? 4 : 3, ui == prev_ui ? "4)" : "^(4)");
+			else if(str[ui + 2] == -75) str.replace(ui == prev_ui ? ui - 1 : ui, ui == prev_ui ? 4 : 3, ui == prev_ui ? "5)" : "^(5)");
+			else if(str[ui + 2] == -74) str.replace(ui == prev_ui ? ui - 1 : ui, ui == prev_ui ? 4 : 3, ui == prev_ui ? "6)" : "^(6)");
+			else if(str[ui + 2] == -73) str.replace(ui == prev_ui ? ui - 1 : ui, ui == prev_ui ? 4 : 3, ui == prev_ui ? "7)" : "^(7)");
+			else if(str[ui + 2] == -72) str.replace(ui == prev_ui ? ui - 1 : ui, ui == prev_ui ? 4 : 3, ui == prev_ui ? "8)" : "^(8)");
+			else if(str[ui + 2] == -71) str.replace(ui == prev_ui ? ui - 1 : ui, ui == prev_ui ? 4 : 3, ui == prev_ui ? "9)" : "^(9)");
+		}
+		if(ui == prev_ui) prev_ui = ui + 1;
+		else prev_ui = ui + 4;
+	}
+	prev_ui = string::npos;
+	while(true) {
+		size_t ui = str.find("\xe2\x85", prev_ui == string::npos ? 0 : prev_ui);
+		if(ui != string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = string::npos;
+		if(ui != string::npos) {
+			for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
+				if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
+					ui = str.find("\xe2\x85", q_end[ui3] + 1);
+					if(ui != string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = string::npos;
+					if(ui == string::npos) break;
+				}
+			}
+		}
+		if(ui == string::npos) break;
+		bool b_add = (ui > 0 && is_in(NUMBER_ELEMENTS, str[ui - 1]));
+		int index_shift = (b_add ? 6 : 5) - 3;
+		if(str[ui + 2] == -110) index_shift++;
+		for(size_t ui2 = 0; ui2 < q_begin.size(); ui2++) {
+			if(q_begin[ui2] >= ui) {
+				q_begin[ui2] += index_shift;
+				q_end[ui2] += index_shift;
+			}
+		}
+		if(str[ui + 2] == -98) str.replace(ui, 3, b_add ? "+(7/8)" : "(7/8)");
+		else if(str[ui + 2] == -99) str.replace(ui, 3, b_add ? "+(5/8)" : "(5/8)");
+		else if(str[ui + 2] == -100) str.replace(ui, 3, b_add ? "+(3/8)" : "(3/8)");
+		else if(str[ui + 2] == -101) str.replace(ui, 3, b_add ? "+(1/8)" : "(1/8)");
+		else if(str[ui + 2] == -102) str.replace(ui, 3, b_add ? "+(5/6)" : "(5/6)");
+		else if(str[ui + 2] == -103) str.replace(ui, 3, b_add ? "+(1/6)" : "(1/6)");
+		else if(str[ui + 2] == -104) str.replace(ui, 3, b_add ? "+(4/5)" : "(4/5)");
+		else if(str[ui + 2] == -105) str.replace(ui, 3, b_add ? "+(3/5)" : "(3/5)");
+		else if(str[ui + 2] == -106) str.replace(ui, 3, b_add ? "+(2/5)" : "(2/5)");
+		else if(str[ui + 2] == -107) str.replace(ui, 3, b_add ? "+(1/5)" : "(1/5)");
+		else if(str[ui + 2] == -108) str.replace(ui, 3, b_add ? "+(2/3)" : "(2/3)");
+		else if(str[ui + 2] == -109) str.replace(ui, 3, b_add ? "+(1/3)" : "(1/3)");
+		else if(str[ui + 2] == -110) {str.replace(ui, 3, b_add ? "+(1/10)" : "(1/10)"); ui++;}
+		else if(str[ui + 2] == -111) str.replace(ui, 3, b_add ? "+(1/9)" : "(1/9)");
+		else if(str[ui + 2] == -112) str.replace(ui, 3, b_add ? "+(1/7)" : "(1/7)");
+		if(b_add) prev_ui = ui + 6;
+		else prev_ui = ui + 5;
+	}
+	prev_ui = string::npos;
+	while(true) {
+		size_t ui = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
+		if(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = string::npos;
+		if(ui != string::npos) {
+			for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
+				if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
+					ui = str.find('\xc2', q_end[ui3] + 1);
+					if(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = string::npos;
+					if(ui == string::npos) break;
+				}
+			}
+		}
+		if(ui == string::npos) break;
+		bool b_add = (ui > 0 && is_in(NUMBER_ELEMENTS, str[ui - 1]));
+		int index_shift = (b_add ? 6 : 5) - 2;
+		for(size_t ui2 = 0; ui2 < q_begin.size(); ui2++) {
+			if(q_begin[ui2] >= ui) {
+				q_begin[ui2] += index_shift;
+				q_end[ui2] += index_shift;
+			}
+		}
+		if(str[ui + 1] == -66) str.replace(ui, 2, b_add ? "+(3/4)" : "(3/4)");
+		else if(str[ui + 1] == -67) str.replace(ui, 2, b_add ? "+(1/2)" : "(1/2)");
+		else if(str[ui + 1] == -68) str.replace(ui, 2, b_add ? "+(1/4)" : "(1/4)");
+		if(b_add) prev_ui = ui + 6;
+		else prev_ui = ui + 5;
 	}
 	if(convert_to_internal_representation) {
 		remove_blank_ends(str);
