@@ -1,3 +1,8 @@
+2019-05-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support for Unicode fractions
+	* Support base prefixes with input bases other than decimal
+
 2019-05-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* -p BASE command line option for programming mode (same as -b "BASE BASE" -s "xor^") in qalc
@@ -14,7 +19,7 @@
 
 	* idivide() function
 	* '%' as rem
-	* "//" and "\ " (if followed by space) for integer division (truncated)
+	* "//" and "\" (if followed by space, number, +, -, ! or ~) for integer division (truncated)
 	* RPN syntax support for bitwise operations
 	* Allow compatible functions, variable, and functions with input base > 10
 
