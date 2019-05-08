@@ -1,3 +1,12 @@
+2019-05-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* For vector + scalar, add scalar to all components
+	* Round bitwise right shift downwards by default (arithmetic two's complement shift)
+	* Treat all non-zero values as boolean true (was positive true, non-positive false)
+	* bitrot() function for bit rotation
+	* Add signedness argument to bitcmp()
+	* Handle decimal shift operator steps with base < 10;
+
 2019-05-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Combine consecutive Unicode powers in one power

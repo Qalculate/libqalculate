@@ -38,6 +38,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <algorithm>
 #ifdef HAVE_LIBCURL
 #	include <curl/curl.h>
 #endif
@@ -1517,6 +1518,63 @@ void Calculator::addBuiltinVariables() {
 #endif
 	
 }
+
+DECLARE_BUILTIN_FUNCTION(CircularShiftFunction)
+
+CircularShiftFunction::CircularShiftFunction() : MathFunction("bitrot", 2, 3) {
+	setArgumentDefinition(1, new IntegerArgument());
+	setArgumentDefinition(2, new IntegerArgument());
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
+	setArgumentDefinition(4, new BooleanArgument());
+	setDefaultValue(3, "0");
+	setDefaultValue(4, "1");
+}
+int CircularShiftFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].number().isZero()) {
+		mstruct.clear();
+		return 1;
+	}
+	Number nr(vargs[0].number());
+	unsigned int bits = vargs[2].number().uintValue();
+	if(bits == 0) {
+		bits = nr.integerLength();
+		if(bits <= 8) bits = 8;
+		else if(bits <= 16) bits = 16;
+		else if(bits <= 32) bits = 32;
+		else if(bits <= 64) bits = 64;
+		else if(bits <= 128) bits = 128;
+		else {
+			bits = (unsigned int) ::ceil(::log2(bits));
+			bits = ::pow(2, bits);
+		}
+	}
+	Number nr_n(vargs[1].number());
+	nr_n.rem(bits);
+	if(nr_n.isZero()) {
+		mstruct = nr;
+		return 1;
+	}
+	PrintOptions po;
+	po.base = BASE_BINARY;
+	po.base_display = BASE_DISPLAY_NORMAL;
+	po.binary_bits = bits;
+	string str = nr.print(po);
+	remove_blanks(str);
+	if(str.length() < bits) return 0;
+	if(nr_n.isNegative()) {
+		nr_n.negate();
+		std::rotate(str.rbegin(), str.rbegin() + nr_n.uintValue(), str.rend());
+	} else {
+		std::rotate(str.begin(), str.begin() + nr_n.uintValue(), str.end());
+	}
+	ParseOptions pao;
+	pao.base = BASE_BINARY;
+	pao.twos_complement = vargs[3].number().getBoolean();
+	mstruct = Number(str, pao);
+	return 1;
+}
+
+
 void Calculator::addBuiltinFunctions() {
 
 	f_vector = addFunction(new VectorFunction());
@@ -1557,6 +1615,7 @@ void Calculator::addBuiltinFunctions() {
 	f_odd = addFunction(new OddFunction());
 	f_shift = addFunction(new ShiftFunction());
 	f_bitcmp = addFunction(new BitCmpFunction());
+	addFunction(new CircularShiftFunction());
 	
 	f_abs = addFunction(new AbsFunction());
 	f_signum = addFunction(new SignumFunction());
@@ -4929,6 +4988,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 	}
 }
 
+
 MathStructure Calculator::parse(string str, const ParseOptions &po) {
 	
 	MathStructure mstruct;
@@ -4988,7 +5048,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		gsub("\"", "″", str);
 	}
 
-	parseSigns(str, true);
+	parseSigns(str, true, po);
 
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		if(str[str_index] == '\"' || str[str_index] == '\'') {
@@ -6599,30 +6659,39 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 	i = str.find(SHIFT_LEFT, 1);
 	i2 = str.find(SHIFT_RIGHT, 1);
-	if(i != string::npos && i + 2 != str.length() && (i2 == string::npos || i < i2)) {
-		MathStructure mstruct1, mstruct2;
-		str2 = str.substr(0, i);
-		str = str.substr(i + 2, str.length() - (i + 2));
-		parseAdd(str2, &mstruct1, po);
-		parseAdd(str, &mstruct2, po);
-		mstruct->set(f_shift, &mstruct1, &mstruct2, NULL);
-		return true;
-	}
-	i = i2;
+	if(i2 != string::npos && (i == string::npos || i2 < i)) i = i2;
 	if(i != string::npos && i + 2 != str.length()) {
 		MathStructure mstruct1, mstruct2;
+		bool b_neg = (str[i] == '>');
 		str2 = str.substr(0, i);
 		str = str.substr(i + 2, str.length() - (i + 2));
 		parseAdd(str2, &mstruct1, po);
+		if(po.base < 10 && str.find_first_not_of(NUMBERS SPACE PLUS MINUS) == string::npos) {
+			for(i = 0; i < str.size(); i++) {
+				if(str[i] >= '0' && str[i] <= '9' && po.base <= str[i] - '0') {
+					ParseOptions po2 = po;
+					po2.base = BASE_DECIMAL;
+					parseAdd(str, &mstruct2, po2);
+					if(b_neg) {
+						if(po.preserve_format) mstruct2.transform(STRUCT_NEGATE);
+						else mstruct2.negate();
+					}
+					mstruct->set(f_shift, &mstruct1, &mstruct2, &m_one, NULL);
+					return true;
+				}
+			}
+		}
 		parseAdd(str, &mstruct2, po);
-		if(po.preserve_format) mstruct2.transform(STRUCT_NEGATE);
-		else mstruct2.negate();
-		mstruct->set(f_shift, &mstruct1, &mstruct2, NULL);
+		if(b_neg) {
+			if(po.preserve_format) mstruct2.transform(STRUCT_NEGATE);
+			else mstruct2.negate();
+		}
+		mstruct->set(f_shift, &mstruct1, &mstruct2, &m_one, NULL);
 		return true;
 	}
 
 	i = 0;
-	i3 = 0;	
+	i3 = 0;
 	if(po.rpn) {
 		ParseOptions po2 = po;
 		po2.rpn = false;

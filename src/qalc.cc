@@ -4776,7 +4776,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					do_mathoperation = true;
 					CALCULATOR->calculateRPN(f, 0, evalops, parsed_mstruct);
 				} else {
-					CALCULATOR->RPNStackEnter(str2, 0, evalops, parsed_mstruct, NULL);
+					CALCULATOR->RPNStackEnter(CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, NULL);
 				}
 			}
 		}

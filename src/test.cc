@@ -1712,8 +1712,16 @@ int main(int argc, char *argv[]) {
 	cout << mstruct << endl;*/
 	//speed_test();
 	//test_integration();
-	//return true;
+	//return 0;
 	//test_intervals(true);
+	
+	int8_t i = 120;
+	cout << (i << 1) << endl;
+	cout << (i >> 1) << endl;
+	uint8_t ui = 120;
+	cout << (ui << 1) << endl;
+	cout << (ui >> 1) << endl;
+	return 0;
 
 	CALCULATOR->setVariableUnitsEnabled(true);
 	

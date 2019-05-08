@@ -2382,22 +2382,47 @@
     </builtin_function>
     <builtin_function name="shift">
       <_title>Bitwise Shift</_title>
+      <_description>Applies logical or arithmetic bitwise shift to an integer. The second argument specifies the number of steps that each binary bit is shifted to the left (use negative values for right shift).</_description>
       <_names>r:shift</_names>
       <argument index="1">
         <_title>Number</_title>
       </argument>
       <argument index="2">
-        <_title>Bits</_title>
+        <_title>Steps</_title>
+      </argument>
+      <argument index="3">
+        <_title>Arithmetic shift using two's complement</_title>
       </argument>
     </builtin_function>
     <builtin_function name="bitcmp">
       <_title>Bitwise Complement (Not)</_title>
+      <_description>Applies bitwise NOT to an integer of specified bit width and signedness (use 1 for signed and 0 for unsigned). If bit width is zero, the smallest necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used.</_description>
       <_names>r:bitcmp</_names>
       <argument index="1">
         <_title>Number</_title>
       </argument>
       <argument index="2">
-        <_title>Bits</_title>
+        <_title>Bit Width</_title>
+      </argument>
+      <argument index="3">
+        <_title>Signed Integer</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="bitrot">
+      <_title>Bit Rotation</_title>
+      <_description>Applies circular bitwise shift to an integer of specified bit width and signedness (use 1 for signed and 0 for unsigned). The second argument specifies the number of steps that each binary bit is shifted to the left (use negative values for right shift). If bit width is zero, the smallest necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used.</_description>
+      <_names>r:bitrot</_names>
+      <argument index="1">
+        <_title>Number</_title>
+      </argument>
+      <argument index="2">
+        <_title>Steps</_title>
+      </argument>
+      <argument index="3">
+        <_title>Bit Width</_title>
+      </argument>
+      <argument index="4">
+        <_title>Signed Integer</_title>
       </argument>
     </builtin_function>
   </category>
