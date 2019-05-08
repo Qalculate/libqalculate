@@ -816,20 +816,38 @@ int EvenFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	return -1;
 }
-ShiftFunction::ShiftFunction() : MathFunction("shift", 2) {
+ShiftFunction::ShiftFunction() : MathFunction("shift", 2, 3) {
 	setArgumentDefinition(1, new IntegerArgument());
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
+	setArgumentDefinition(3, new BooleanArgument());
+	setDefaultValue(3, "1");
 }
 int ShiftFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(!vargs[2].number().getBoolean() && vargs[1].number().isNegative()) {
+		Number nr(vargs[0].number());
+		Number nr_div(vargs[1].number());
+		if(!nr_div.negate() || !nr_div.exp2() || !nr.divide(nr_div) || !nr.trunc()) return false;
+		mstruct.set(nr);
+		return 1;
+	}
 	FR_FUNCTION_2(shift)
 }
-BitCmpFunction::BitCmpFunction() : MathFunction("bitcmp", 1, 2) {
+BitCmpFunction::BitCmpFunction() : MathFunction("bitcmp", 1, 3) {
 	setArgumentDefinition(1, new IntegerArgument());
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
 	setDefaultValue(2, "0");
+	setArgumentDefinition(3, new BooleanArgument());
+	setDefaultValue(3, "0");
 }
 int BitCmpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	Number nr(vargs[0].number());
+	if(vargs[2].number().getBoolean()) {
+		if(nr.bitNot()) {
+			mstruct = nr;
+			return 1;
+		}
+		return 0;
+	}
 	unsigned int bits = vargs[1].number().uintValue();
 	if(bits == 0) {
 		bits = nr.integerLength();

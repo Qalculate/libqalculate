@@ -555,7 +555,7 @@ void Number::set(string number, const ParseOptions &po) {
 	} else if(base == 2 && number.length() >= 2 && number[0] == '0' && (number[1] == 'b' || number[1] == 'B')) {
 		number = number.substr(2, number.length() - 2);
 	}
-	bool b_twos = (po.twos_complement && base == 2 && number.length() > 0 && number[0] == '1') || (po.hexadecimal_twos_complement && base == 16 && number.length() > 0 && (number[0] == '8' || number[0] == '9' || (number[0] >= 'a' && number[0] <= 'f') || (number[0] >= 'A' && number[0] <= 'F')));
+	bool b_twos = (po.twos_complement && base == 2 && number.length() > 1 && number[0] == '1') || (po.hexadecimal_twos_complement && base == 16 && number.length() > 0 && (number[0] == '8' || number[0] == '9' || (number[0] >= 'a' && number[0] <= 'f') || (number[0] >= 'A' && number[0] <= 'F')));
 	if(base > 36) base = 36;
 	if(base < 0) base = 10;
 	long int readprec = 0;
@@ -1714,7 +1714,7 @@ bool Number::shiftRight(const Number &o) {
 	bool overflow = false;
 	long int y = o.lintValue(&overflow);
 	if(overflow) return false;
-	mpz_tdiv_q_2exp(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) y);
+	mpz_fdiv_q_2exp(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) y);
 	setPrecisionAndApproximateFrom(o);
 	return true;
 }
@@ -1723,7 +1723,7 @@ bool Number::shift(const Number &o) {
 	bool overflow = false;
 	long int y = o.lintValue(&overflow);
 	if(overflow) return false;
-	if(y < 0) mpz_tdiv_q_2exp(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) -y);
+	if(y < 0) mpz_fdiv_q_2exp(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) -y);
 	else mpz_mul_2exp(mpq_numref(r_value), mpq_numref(r_value), (unsigned long int) y);
 	setPrecisionAndApproximateFrom(o);
 	return true;
@@ -4612,15 +4612,15 @@ bool Number::isPerfectSquare() const {
 }
 
 int Number::getBoolean() const {
-	if(isPositive()) {
+	if(isNonZero()) {
 		return 1;
-	} else if(isNonPositive()) {
+	} else if(isZero()) {
 		return 0;
 	}
 	return -1;
 }
 void Number::toBoolean() {
-	setTrue(isPositive());
+	setTrue(isNonZero());
 }
 void Number::setTrue(bool is_true) {
 	if(is_true) {
@@ -4633,7 +4633,7 @@ void Number::setFalse() {
 	setTrue(false);
 }
 void Number::setLogicalNot() {
-	setTrue(!isPositive());
+	setTrue(!isNonZero());
 }
 
 void Number::e(bool use_cached_number) {
@@ -7365,32 +7365,32 @@ bool Number::add(const Number &o, MathOperation op) {
 			Number nr;
 			ComparisonResult i1 = compare(nr);
 			ComparisonResult i2 = o.compare(nr);
-			if(i1 >= COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_NOT_EQUAL) i1 = COMPARISON_RESULT_UNKNOWN;
-			if(i2 >= COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_NOT_EQUAL) i2 = COMPARISON_RESULT_UNKNOWN;
-			if(i1 >= COMPARISON_RESULT_UNKNOWN && i2 != COMPARISON_RESULT_LESS) return false;
-			if(i2 >= COMPARISON_RESULT_UNKNOWN && i1 != COMPARISON_RESULT_LESS) return false;
-			setTrue(i1 == COMPARISON_RESULT_LESS || i2 == COMPARISON_RESULT_LESS);
+			if(i1 >= COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_EQUAL_OR_GREATER) i1 = COMPARISON_RESULT_UNKNOWN;
+			if(i2 >= COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_EQUAL_OR_GREATER) i2 = COMPARISON_RESULT_UNKNOWN;
+			if(i1 >= COMPARISON_RESULT_UNKNOWN && !COMPARISON_IS_NOT_EQUAL(i2)) return false;
+			if(i2 >= COMPARISON_RESULT_UNKNOWN && !COMPARISON_IS_NOT_EQUAL(i1)) return false;
+			setTrue(COMPARISON_IS_NOT_EQUAL(i1) || COMPARISON_IS_NOT_EQUAL(i2));
 			return true;
 		}
 		case OPERATION_LOGICAL_XOR: {
 			Number nr;
 			ComparisonResult i1 = compare(nr);
 			ComparisonResult i2 = o.compare(nr);
-			if(i1 >= COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_NOT_EQUAL) return false;
-			if(i2 >= COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_NOT_EQUAL) return false;
-			if(i1 == COMPARISON_RESULT_LESS) setTrue(i2 != COMPARISON_RESULT_LESS);
-			else setTrue(i2 == COMPARISON_RESULT_LESS);
+			if(i1 >= COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_EQUAL_OR_GREATER) return false;
+			if(i2 >= COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_EQUAL_OR_GREATER) return false;
+			if(COMPARISON_IS_NOT_EQUAL(i1)) setTrue(i2 == COMPARISON_RESULT_EQUAL);
+			else setTrue(COMPARISON_IS_NOT_EQUAL(i2));
 			return true;
 		}
 		case OPERATION_LOGICAL_AND: {
 			Number nr;
 			ComparisonResult i1 = compare(nr);
 			ComparisonResult i2 = o.compare(nr);
-			if(i1 >= COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_NOT_EQUAL) i1 = COMPARISON_RESULT_UNKNOWN;
-			if(i2 >= COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_NOT_EQUAL) i2 = COMPARISON_RESULT_UNKNOWN;
-			if(i1 >= COMPARISON_RESULT_UNKNOWN && (i2 == COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_LESS)) return false;
-			if(i2 >= COMPARISON_RESULT_UNKNOWN && (i1 == COMPARISON_RESULT_LESS)) return false;
-			setTrue(i1 == COMPARISON_RESULT_LESS && i2 == COMPARISON_RESULT_LESS);
+			if(i1 >= COMPARISON_RESULT_UNKNOWN || i1 == COMPARISON_RESULT_EQUAL_OR_LESS || i1 == COMPARISON_RESULT_EQUAL_OR_GREATER) i1 = COMPARISON_RESULT_UNKNOWN;
+			if(i2 >= COMPARISON_RESULT_UNKNOWN || i2 == COMPARISON_RESULT_EQUAL_OR_LESS || i2 == COMPARISON_RESULT_EQUAL_OR_GREATER) i2 = COMPARISON_RESULT_UNKNOWN;
+			if(i1 >= COMPARISON_RESULT_UNKNOWN && (i2 == COMPARISON_RESULT_UNKNOWN || COMPARISON_IS_NOT_EQUAL(i2))) return false;
+			if(i2 >= COMPARISON_RESULT_UNKNOWN && COMPARISON_IS_NOT_EQUAL(i1)) return false;
+			setTrue(COMPARISON_IS_NOT_EQUAL(i1) && COMPARISON_IS_NOT_EQUAL(i2));
 			return true;
 		}
 		case OPERATION_EQUALS: {
