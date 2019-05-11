@@ -63,6 +63,7 @@ bool use_readline = true;
 bool interactive_mode;
 bool ask_questions;
 bool canfetch = true;
+bool programmers_mode = false;
 int b_decimal_comma = -1;
 long int i_maxtime = 0;
 struct timeval t_end;
@@ -1613,7 +1614,7 @@ int main(int argc, char *argv[]) {
 			printf("\n");
 			PUTS_UNICODE(_("where options are:"));
 			fputs("\n\t-b, -base", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("set the result, and optionally input, number base"));
+			fputs("\t", stdout); PUTS_UNICODE(_("set the number base for results and, optionally, expressions"));
 #ifdef HAVE_LIBCURL
 			fputs("\n\t-e, -exrates\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("update exchange rates"));
@@ -1645,7 +1646,7 @@ int main(int argc, char *argv[]) {
 			fputs("\n\t-novariables\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("do not load any global variables from file"));
 			fputs("\n\t-p", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("]\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("start in programming mode (same as -b \"BASE BASE\" -s \"xor^\")"));
+			fputs("\t", stdout); PUTS_UNICODE(_("start in programming mode (same as -b \"BASE BASE\" -s \"xor^\", with base conversion)"));
 			fputs("\n\t-s, -set", stdout); fputs(" \"", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("VALUE"), stdout); fputs("\"\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("as set command in interactive program session (ex. -set \"base 16\")"));
 			fputs("\n\t-t, -terse\n", stdout);
@@ -1678,6 +1679,7 @@ int main(int argc, char *argv[]) {
 			}
 			set_option_strings.push_back(set_base_str);
 		} else if(!calc_arg_begun && svar == "-p") {
+			programmers_mode = true;
 			string set_base_str = "base ";
 			if(!svalue.empty()) {
 				set_base_str += svalue;
@@ -2497,6 +2499,11 @@ int main(int argc, char *argv[]) {
 				printops.base = BASE_BINARY;
 				setResult(NULL, false);
 				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "dec") || EQUALS_IGNORECASE_AND_LOCAL(str, "decimal", _("decimal"))) {
+				int save_base = printops.base;
+				printops.base = BASE_DECIMAL;
+				setResult(NULL, false);
+				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "oct") || EQUALS_IGNORECASE_AND_LOCAL(str, "octal", _("octal"))) {
 				int save_base = printops.base;
 				printops.base = BASE_OCTAL;
@@ -2886,6 +2893,7 @@ int main(int argc, char *argv[]) {
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Parsing"));
 
+			PRINT_AND_COLON_TABS(_("caret as xor"), "xor^"); str += b2oo(caret_as_xor, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("decimal comma"), "");
 			if(b_decimal_comma < 0) {str += _("locale");}
 			else if(b_decimal_comma == 0) {str += _("off");}
@@ -3557,6 +3565,7 @@ int main(int argc, char *argv[]) {
 				
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Parsing"));
 
+				STR_AND_TABS_BOOL(_("caret as xor"), "xor^", _("Use ^ as bitwise exclusive OR operator."), caret_as_xor);
 				STR_AND_TABS_SET(_("decimal comma"), ""); 
 				SET_DESCRIPTION(_("Determines the default decimal separator."));
 				str += "(";
@@ -4449,7 +4458,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	if(i_maxtime < 0) return;
 
 	string str;
-	bool do_bases = false, do_factors = false, do_expand = false, do_fraction = false, do_pfe = false, do_calendars = false;
+	bool do_bases = programmers_mode, do_factors = false, do_expand = false, do_fraction = false, do_pfe = false, do_calendars = false;
 	avoid_recalculation = false;
 	if(!interactive_mode) goto_input = false;
 	if(do_stack) {
@@ -4478,6 +4487,14 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_BINARY;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.base = save_base;
+				expression_str = str;
+				return;
+			} else if(equalsIgnoreCase(to_str, "dec") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "decimal", _("decimal"))) {
+				int save_base = printops.base;
+				expression_str = from_str;
+				printops.base = BASE_DECIMAL;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
@@ -4776,7 +4793,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					do_mathoperation = true;
 					CALCULATOR->calculateRPN(f, 0, evalops, parsed_mstruct);
 				} else {
-					CALCULATOR->RPNStackEnter(CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, NULL);
+					CALCULATOR->RPNStackEnter(str2, 0, evalops, parsed_mstruct, NULL);
 				}
 			}
 		}
@@ -4939,12 +4956,10 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		setResult(NULL, false, false, do_stack ? stack_index : 0, false, true);
 		base_str += result_text;
 		if(has_printed) printf("\n");
-		if(goto_input) {
-			base_str.insert(0, "  ");
-			printf("\n");
-		}
+		if(goto_input) printf("\n");
 		if(!result_only) {
 			string prestr = parsed_text;
+			if(goto_input) prestr.insert(0, "  ");
 			if(!(*printops.is_approximate) && !mstruct->isApproximate()) {
 				prestr += " = ";
 			} else {
@@ -5130,7 +5145,7 @@ void load_preferences() {
 #endif
 
 	
-	int version_numbers[] = {3, 1, 0};
+	int version_numbers[] = {3, 2, 0};
 	
 	if(file) {
 		char line[10000];
@@ -5420,7 +5435,19 @@ bool save_preferences(bool mode)
 	fprintf(file, "comma_as_separator=%i\n", evalops.parse_options.comma_as_separator);
 	fprintf(file, "multiplication_sign=%i\n", printops.multiplication_sign);
 	fprintf(file, "division_sign=%i\n", printops.division_sign);
-	if(mode) set_saved_mode();
+	if(mode) {
+		if(programmers_mode) {
+			int saved_inbase = saved_evalops.parse_options.base;
+			int saved_outbase = saved_printops.base;
+			bool saved_caret = saved_caret_as_xor;
+			set_saved_mode();
+			saved_evalops.parse_options.base = saved_inbase;
+			saved_printops.base = saved_outbase;
+			saved_caret_as_xor = saved_caret;
+		} else {
+			set_saved_mode();
+		}
+	}
 	fprintf(file, "\n[Mode]\n");
 	fprintf(file, "min_deci=%i\n", saved_printops.min_decimals);
 	fprintf(file, "use_min_deci=%i\n", saved_printops.use_min_decimals);
