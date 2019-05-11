@@ -1,3 +1,8 @@
+2019-05-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Show binary, octal, decimal, and hexadecimal result when using qalc in programming mode
+	* Do not save bases and caret as xor when using qalc in programming mode
+
 2019-05-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* For vector + scalar, add scalar to all components

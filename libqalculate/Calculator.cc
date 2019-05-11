@@ -1521,7 +1521,7 @@ void Calculator::addBuiltinVariables() {
 
 DECLARE_BUILTIN_FUNCTION(CircularShiftFunction)
 
-CircularShiftFunction::CircularShiftFunction() : MathFunction("bitrot", 2, 3) {
+CircularShiftFunction::CircularShiftFunction() : MathFunction("bitrot", 2, 4) {
 	setArgumentDefinition(1, new IntegerArgument());
 	setArgumentDefinition(2, new IntegerArgument());
 	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
@@ -2641,6 +2641,9 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		} else if(equalsIgnoreCase(to_str, "bin") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "binary", _("binary"))) {
 			str = from_str;
 			printops.base = BASE_BINARY;
+		} else if(equalsIgnoreCase(to_str, "dec") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "decimal", _("decimal"))) {
+			str = from_str;
+			printops.base = BASE_DECIMAL;
 		} else if(equalsIgnoreCase(to_str, "oct") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "octal", _("octal"))) {
 			str = from_str;
 			printops.base = BASE_OCTAL;
@@ -5048,7 +5051,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		gsub("\"", "″", str);
 	}
 
-	parseSigns(str, true, po);
+	parseSigns(str, true);
 
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		if(str[str_index] == '\"' || str[str_index] == '\'') {
@@ -8258,7 +8261,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {3, 1, 0};
+	int version_numbers[] = {3, 2, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);
