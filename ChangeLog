@@ -1,3 +1,9 @@
+2019-05-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in findMatchingUnit()
+	* Fix crash with empty factorial
+	* Fix crashes with vectors containing empty vector ([[]]) and matrices with only one row and column
+
 2019-05-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Show binary, octal, decimal, and hexadecimal result when using qalc in programming mode

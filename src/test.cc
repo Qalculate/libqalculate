@@ -1714,14 +1714,6 @@ int main(int argc, char *argv[]) {
 	//test_integration();
 	//return 0;
 	//test_intervals(true);
-	
-	int8_t i = 120;
-	cout << (i << 1) << endl;
-	cout << (i >> 1) << endl;
-	uint8_t ui = 120;
-	cout << (ui << 1) << endl;
-	cout << (ui >> 1) << endl;
-	return 0;
 
 	CALCULATOR->setVariableUnitsEnabled(true);
 	
@@ -1729,7 +1721,21 @@ int main(int argc, char *argv[]) {
 
 	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 	//CALCULATOR->useIntervalArithmetic();
-	
+	for(size_t i2 = 0; i2 <= 100000; i2++) {
+		string str;
+		size_t n = rand() % 100;
+		for(size_t i = 0; i <= n; i++) {
+			str += (char) (rand() % (126 - 32) + 32);
+			//if(str[i] == '{' || str[i] == '}') str[i] = '+';
+		}
+		cout << str << endl;
+		MathStructure mstruct;
+		CALCULATOR->calculate(&mstruct, str, 10000, evalops);
+		mstruct.format(po);
+		cout << mstruct.print() << endl;
+		if(mstruct.isAborted()) break;
+	}
+	return 0;
 	
 	for(size_t i = 0; i <= 100000; i++) {
 		string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
