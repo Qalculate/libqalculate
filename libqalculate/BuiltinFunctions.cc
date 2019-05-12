@@ -326,7 +326,7 @@ AdjointFunction::AdjointFunction() : MathFunction("adj", 1) {
 }
 int AdjointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	mstruct.adjointMatrix(eo);
+	if(!mstruct.adjointMatrix(eo)) return 0;
 	return !mstruct.isUndefined();
 }
 InverseFunction::InverseFunction() : MathFunction("inverse", 1) {

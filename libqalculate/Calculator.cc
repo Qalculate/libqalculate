@@ -326,7 +326,221 @@ class Calculator_p {
 
 #define BITWISE_XOR "⊻"
 
-Calculator::Calculator() : Calculator(false) {}
+Calculator::Calculator() {
+	b_ignore_locale = false;
+
+#ifdef ENABLE_NLS
+	if(!b_ignore_locale) {
+		bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
+		bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	}
+#endif
+
+	if(b_ignore_locale) {
+		char *current_lc_monetary = setlocale(LC_MONETARY, "");
+		if(current_lc_monetary) saved_locale = strdup(current_lc_monetary);
+		else saved_locale = NULL;
+		setlocale(LC_ALL, "C");
+		if(saved_locale) {
+			setlocale(LC_MONETARY, saved_locale);
+			free(saved_locale);
+			saved_locale = NULL;
+		}
+	} else {
+		setlocale(LC_ALL, "");
+	}
+
+
+	gmp_randinit_default(randstate);
+	gmp_randseed_ui(randstate, (unsigned long int) time(NULL));
+
+	priv = new Calculator_p;
+
+#ifdef HAVE_ICU
+	UErrorCode err = U_ZERO_ERROR;
+	ucm = ucasemap_open(NULL, 0, &err);
+#endif
+
+	srand(time(NULL));
+	
+	exchange_rates_time[0] = 0;
+	exchange_rates_time[1] = 0;
+	exchange_rates_time[2] = 0;
+	exchange_rates_check_time[0] = 0;
+	exchange_rates_check_time[1] = 0;
+	exchange_rates_check_time[2] = 0;
+	b_exchange_rates_warning_enabled = true;
+	b_exchange_rates_used = 0;
+	
+	i_aborted = 0;
+	b_controlled = false;
+	i_timeout = 0;
+	
+	setPrecision(DEFAULT_PRECISION);
+	b_interval = true;
+	i_stop_interval = 0;
+	i_start_interval = 0;
+	
+	b_var_units = true;
+
+	addStringAlternative(SIGN_DIVISION, DIVISION);
+	addStringAlternative(SIGN_DIVISION_SLASH, DIVISION);
+	addStringAlternative(SIGN_MULTIPLICATION, MULTIPLICATION);
+	addStringAlternative(SIGN_MULTIDOT, MULTIPLICATION);
+	addStringAlternative(SIGN_MIDDLEDOT, MULTIPLICATION);
+	addStringAlternative(SIGN_MULTIBULLET, MULTIPLICATION);
+	addStringAlternative(SIGN_SMALLCIRCLE, MULTIPLICATION);
+	addStringAlternative(SIGN_MINUS, MINUS);
+	addStringAlternative("–", MINUS);
+	addStringAlternative(SIGN_PLUS, PLUS);
+	addStringAlternative(SIGN_NOT_EQUAL, " " NOT EQUALS);
+	addStringAlternative(SIGN_GREATER_OR_EQUAL, GREATER EQUALS);
+	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);
+	addStringAlternative(";", COMMA);
+	addStringAlternative("\t", SPACE);
+	addStringAlternative("\n", SPACE);
+	addStringAlternative(" ", SPACE);
+	addStringAlternative("**", POWER);
+	addStringAlternative("↊", "X");
+	addStringAlternative("↋", "E");
+	addStringAlternative("∧", BITWISE_AND);
+	addStringAlternative("∨", BITWISE_OR);
+	addStringAlternative("¬", BITWISE_NOT);
+	
+	
+	per_str = _("per");
+	per_str_len = per_str.length();
+	times_str = _("times");
+	times_str_len = times_str.length();
+	plus_str = _("plus");
+	plus_str_len = plus_str.length();
+	minus_str = _("minus");
+	minus_str_len = minus_str.length();
+	and_str = _("and");
+	and_str_len = and_str.length();
+	AND_str = "AND";
+	AND_str_len = AND_str.length();
+	or_str = _("or");
+	or_str_len = or_str.length();
+	OR_str = "OR";
+	OR_str_len = OR_str.length();
+	XOR_str = "XOR";
+	XOR_str_len = XOR_str.length();
+	
+	char *current_lc_numeric = setlocale(LC_NUMERIC, NULL);
+	if(current_lc_numeric) saved_locale = strdup(current_lc_numeric);
+	else saved_locale = NULL;
+	struct lconv *lc = localeconv();
+	if(!lc) {
+		setlocale(LC_NUMERIC, "C");
+		lc = localeconv();
+	}
+	place_currency_sign_before = lc->p_cs_precedes;
+	place_currency_sign_before_negative = lc->n_cs_precedes;
+#ifdef HAVE_STRUCT_LCONV_INT_P_CS_PRECEDES
+ 	place_currency_code_before = lc->int_p_cs_precedes;
+#else
+	place_currency_code_before = place_currency_sign_before;
+#endif
+#ifdef HAVE_STRUCT_LCONV_INT_N_CS_PRECEDES
+	place_currency_code_before_negative = lc->int_n_cs_precedes;
+#else
+	place_currency_code_before_negative = place_currency_sign_before_negative;
+#endif	
+	local_digit_group_separator = lc->thousands_sep;
+	local_digit_group_format = lc->grouping;
+	remove_blank_ends(local_digit_group_format);
+	default_dot_as_separator = (local_digit_group_separator == ".");
+	if(strcmp(lc->decimal_point, ",") == 0) {
+		DOT_STR = ",";
+		DOT_S = ".,";
+		COMMA_STR = ";";
+		COMMA_S = ";";
+	} else {
+		DOT_STR = ".";
+		DOT_S = ".";
+		COMMA_STR = ",";
+		COMMA_S = ",;";
+	}
+	setlocale(LC_NUMERIC, "C");
+
+	NAME_NUMBER_PRE_S = "_#";
+	NAME_NUMBER_PRE_STR = "_";
+	
+	string str = _(" to ");
+	local_to = (str != " to ");
+	
+	priv->ids_i = 0;
+	
+	decimal_null_prefix = new DecimalPrefix(0, "", "");
+	binary_null_prefix = new BinaryPrefix(0, "", "");
+	m_undefined.setUndefined();
+	m_empty_vector.clearVector();
+	m_empty_matrix.clearMatrix();
+	m_zero.clear();
+	m_one.set(1, 1, 0);
+	m_minus_one.set(-1, 1, 0);
+	nr_zero.clear();
+	nr_one.set(1, 1, 0);
+	nr_two.set(2, 1, 0);
+	nr_three.set(3, 1, 0);
+	nr_half.set(1, 2, 0);
+	nr_minus_half.set(-1, 2, 0);
+	nr_one_i.setImaginaryPart(1, 1, 0);
+	nr_minus_i.setImaginaryPart(-1, 1, 0);
+	m_one_i.set(nr_one_i);
+	nr_minus_one.set(-1, 1, 0);
+	nr_plus_inf.setPlusInfinity();
+	nr_minus_inf.setMinusInfinity();
+	no_evaluation.approximation = APPROXIMATION_EXACT;
+	no_evaluation.structuring = STRUCTURING_NONE;
+	no_evaluation.sync_units = false;
+	
+	save_printoptions.decimalpoint_sign = ".";
+	save_printoptions.comma_sign = ",";
+	save_printoptions.use_reference_names = true;
+	save_printoptions.preserve_precision = true;
+	save_printoptions.interval_display = INTERVAL_DISPLAY_INTERVAL;
+	save_printoptions.use_reference_names = true;
+	save_printoptions.limit_implicit_multiplication = true;
+	save_printoptions.spacious = false;
+	save_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
+	save_printoptions.short_multiplication = false;
+	save_printoptions.show_ending_zeroes = false;
+	
+	message_printoptions.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+	message_printoptions.spell_out_logical_operators = true;
+	message_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
+	
+	default_user_evaluation_options.structuring = STRUCTURING_SIMPLIFY;
+	
+	default_assumptions = new Assumptions;
+	default_assumptions->setType(ASSUMPTION_TYPE_REAL);
+	default_assumptions->setSign(ASSUMPTION_SIGN_UNKNOWN);
+	
+	u_rad = NULL; u_gra = NULL; u_deg = NULL;
+	
+	b_save_called = false;
+
+	ILLEGAL_IN_NAMES = "\a\b" + DOT_S + RESERVED OPERATORS SPACES PARENTHESISS VECTOR_WRAPS COMMAS;
+	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = "\a\b" + DOT_S + RESERVED OPERATORS PARENTHESISS VECTOR_WRAPS COMMAS;
+	ILLEGAL_IN_UNITNAMES = ILLEGAL_IN_NAMES + NUMBERS;
+	b_argument_errors = true;
+	current_stage = MESSAGE_STAGE_UNSET;
+	calculator = this;
+	srand48(time(0));
+	
+	addBuiltinVariables();
+	addBuiltinFunctions();
+	addBuiltinUnits();
+
+	disable_errors_ref = 0;
+	b_busy = false;
+	b_gnuplot_open = false;
+	gnuplot_pipe = NULL;
+
+	calculate_thread = new CalculateThread;
+}
 Calculator::Calculator(bool ignore_locale) {
 
 	b_ignore_locale = ignore_locale;
@@ -1454,8 +1668,10 @@ class UptimeVariable : public DynamicVariable {
 	void calculate(MathStructure &m) const {
 		Number nr;
 #	ifdef __linux__
-		string s_uptime;
-		if(std::ifstream("/proc/uptime", std::ios::in) >> s_uptime) {
+		std::ifstream proc_uptime("/proc/uptime", std::ios::in);
+		if(proc_uptime.is_open()) {
+			char s_uptime[100];
+			proc_uptime.getline(s_uptime, 100);
 			nr.set(s_uptime);
 		} else {
 			struct sysinfo sf;
@@ -3462,13 +3678,15 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 					MathStructure m_u = ((CompositeUnit*) u)->generateMathStructure();
 					if(m_u != cu->generateMathStructure()) {
 						Unit *u2 = findMatchingUnit(m_u);
-						MathStructure mtest(mstruct);
-						mtest.divide(u2);
-						mtest.eval();
-						if(mtest.isNumber()) {
-							delete cu;
-							delete u;
-							return u2;
+						if(u2) {
+							MathStructure mtest(mstruct);
+							mtest.divide(u2);
+							mtest.eval();
+							if(mtest.isNumber()) {
+								delete cu;
+								delete u;
+								return u2;
+							}
 						}
 					}
 				}
@@ -5319,7 +5537,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			}
 		} else if(str[str_index] == '!' && po.functions_enabled) {
 			if(str_index > 0 && (str.length() - str_index == 1 || str[str_index + 1] != EQUALS_CH)) {
-				stmp = "";
+				stmp2 = "";
 				size_t i5 = str.find_last_not_of(SPACE, str_index - 1);
 				size_t i3;
 				if(i5 == string::npos) {
@@ -6136,7 +6354,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 	mstruct->clear();
 	if(str.empty()) return false;
 	if(str.find_first_not_of(OPERATORS INTERNAL_OPERATORS SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == string::npos)) {
-		gsub("\a", str.find_first_of("%" OPERATORS) != string::npos ? " XOR " : "XOR", str);
+		gsub("\a", str.find_first_of("%" OPERATORS) != string::npos ? " xor " : "xor", str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
 	}
@@ -6181,7 +6399,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
 		} else if(str[i] == '\a') {
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), "XOR", NULL);
+			error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
 			str.erase(i, 1);
 		} else if(str[i] == '\b') {
 			b_exp = false;
@@ -7165,7 +7383,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		while(i != string::npos && i + 1 != str.length()) {
 			if(i < 1) {
 				if(i < 1 && str.find_first_not_of(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS EXPS) == string::npos) {
-					gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " XOR " : "XOR", str);
+					gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", str);
 					error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 					return b;
 				}
@@ -7174,7 +7392,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					i++;
 				}
 				string errstr = str.substr(0, i);
-				gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " XOR " : "XOR", errstr);
+				gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", errstr);
 				error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
 				str = str.substr(i, str.length() - i);
 				i = str.find_first_of(MULTIPLICATION DIVISION "%", 0);
@@ -7229,7 +7447,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						i2++;
 					}
 					string errstr = str.substr(i, i2);
-					gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " XOR " : "XOR", errstr);
+					gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", errstr);
 					error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
 					i += i2;
 				}
@@ -7272,7 +7490,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 
 	if(str.empty()) return false;
 	if(str.find_first_not_of(OPERATORS INTERNAL_OPERATORS SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find_first_of("(|)") == string::npos)) {
-		gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " XOR " : "XOR", str);
+		gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
 	}
@@ -7294,7 +7512,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		} else if(str[i] == BITWISE_NOT_CH || str[i] == LOGICAL_NOT_CH) {
 			break;
 		} else if(is_in(OPERATORS INTERNAL_OPERATORS, str[i]) && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
-			if(str[i] == '\a') error(false, _("Misplaced operator(s) \"%s\" ignored"), "XOR", NULL);
+			if(str[i] == '\a') error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
 			else error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
 		} else {

@@ -2798,7 +2798,7 @@ msgstr "Permanenten kan enbart beräknas för kvadratiska matriser."
 
 #: ../libqalculate/MathStructure.cc:21745
 msgid "Inverse of singular matrix."
-msgstr "Invers av singulär matrs."
+msgstr "Invers av singulär matris."
 
 #: ../libqalculate/MathStructure.cc:22097
 msgid ""

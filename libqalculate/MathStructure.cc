@@ -1014,7 +1014,7 @@ bool MathStructure::isAborted() const {return m_type == STRUCT_ABORTED;}
 bool MathStructure::isEmptySymbol() const {return m_type == STRUCT_SYMBOLIC && s_sym.empty();}
 bool MathStructure::isVector() const {return m_type == STRUCT_VECTOR;}
 bool MathStructure::isMatrix() const {
-	if(m_type != STRUCT_VECTOR || SIZE < 1) return false;
+	if(m_type != STRUCT_VECTOR || SIZE < 1 || CHILD(0).size() == 0) return false;
 	for(size_t i = 0; i < SIZE; i++) {
 		if(!CHILD(i).isVector() || (i > 0 && CHILD(i).size() != CHILD(i - 1).size())) return false;
 	}
@@ -5311,7 +5311,10 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							}
 						}
 						if(b_neg) {
-							invertMatrix(eo);
+							if(!invertMatrix(eo)) {
+								if(mstruct.number().isMinusOne()) return -1;
+								raise(nr_minus_one);
+							}
 						}
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
@@ -20771,11 +20774,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					if(po.spacious) print_str += " ";
-					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("∧", po.can_display_unicode_string_arg))) {
-						print_str += "∧";
-					} else {
-						print_str += "&";
-					}
+					print_str += "&";
 					if(po.spacious) print_str += " ";
 				}
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
@@ -20789,11 +20788,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					if(po.spacious) print_str += " ";
-					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("∨", po.can_display_unicode_string_arg))) {
-						print_str += "∨";
-					} else {
-						print_str += "|";
-					}
+					print_str += "|";
 					if(po.spacious) print_str += " ";
 				}
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
@@ -20807,7 +20802,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					print_str += " ";
-					print_str += "XOR";
+					print_str += "xor";
 					print_str += " ";
 				}
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
@@ -20816,11 +20811,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			break;
 		}
 		case STRUCT_BITWISE_NOT: {
-			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("¬", po.can_display_unicode_string_arg))) {
-				print_str += "¬";
-			} else {
-				print_str = "~";
-			}
+			print_str = "~";
 			ips_n.depth++;
 			ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
 			print_str += CHILD(0).print(po, ips_n);
@@ -20918,15 +20909,9 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			for(size_t i = 0; i < SIZE; i++) {
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
-					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("⊻", po.can_display_unicode_string_arg))) {
-						if(po.spacious) print_str += " ";
-						print_str += "⊻";
-						if(po.spacious) print_str += " ";
-					} else {
-						print_str += " ";
-						print_str += "XOR";
-						print_str += " ";
-					}
+					print_str += " ";
+					print_str += "xor";
+					print_str += " ";
 				}
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
 				print_str += CHILD(i).print(po, ips_n);
@@ -21723,7 +21708,7 @@ MathStructure &MathStructure::getIdentityMatrix(MathStructure &mstruct) const {
 bool MathStructure::invertMatrix(const EvaluationOptions &eo) {
 
 	if(!matrixIsSquare()) return false;
-	
+
 	if(isNumericMatrix()) {
 	
 		int d, i, j, n = SIZE;
@@ -21734,9 +21719,7 @@ bool MathStructure::invertMatrix(const EvaluationOptions &eo) {
 		MathStructure mtrx(*this);
 
 		for(d = 0; d < n; d++) {
-
 			if(mtrx[d][d].isZero()) {
-
 				for (i = d + 1; i < n; i++) {
 					if(!mtrx[i][d].isZero()) break;
 				}
@@ -21806,6 +21789,7 @@ bool MathStructure::invertMatrix(const EvaluationOptions &eo) {
 
 bool MathStructure::adjointMatrix(const EvaluationOptions &eo) {
 	if(!matrixIsSquare()) return false;
+	if(SIZE == 1) {CHILD(0)[0].set(1, 1, 0); return true;}
 	MathStructure msave(*this);
 	for(size_t index_r = 0; index_r < SIZE; index_r++) {
 		for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
@@ -21828,12 +21812,13 @@ bool MathStructure::transposeMatrix() {
 MathStructure &MathStructure::cofactor(size_t r, size_t c, MathStructure &mstruct, const EvaluationOptions &eo) const {
 	if(r < 1) r = 1;
 	if(c < 1) c = 1;
-	if(r > SIZE || c > CHILD(0).size()) {
+	if(SIZE == 1 || r > SIZE || c > CHILD(0).size()) {
 		mstruct = m_undefined;
 		return mstruct;
 	}
 	r--; c--;
-	mstruct.clearMatrix(); mstruct.resizeMatrix(SIZE - 1, CHILD(0).size() - 1, m_undefined);
+	mstruct.clearMatrix();
+	mstruct.resizeMatrix(SIZE - 1, CHILD(0).size() - 1, m_undefined);
 	for(size_t index_r = 0; index_r < SIZE; index_r++) {
 		if(index_r != r) {
 			for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
