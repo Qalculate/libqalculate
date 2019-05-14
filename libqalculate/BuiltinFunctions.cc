@@ -675,7 +675,7 @@ int BinomialFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	return 1;
 }
 
-BitXorFunction::BitXorFunction() : MathFunction("bitxor", 2) {
+BitXorFunction::BitXorFunction() : MathFunction("xor", 2) {
 	ArgumentSet *arg = new ArgumentSet();
 	arg->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
 	arg->addArgument(new VectorArgument);
@@ -714,7 +714,7 @@ int BitXorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	mstruct.add(vargs[1], OPERATION_BITWISE_XOR);
 	return 0;
 }
-XorFunction::XorFunction() : MathFunction("xor", 2) {
+XorFunction::XorFunction() : MathFunction("lxor", 2) {
 }
 int XorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	int b0, b1;
@@ -823,7 +823,7 @@ ShiftFunction::ShiftFunction() : MathFunction("shift", 2, 3) {
 	setDefaultValue(3, "1");
 }
 int ShiftFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(!vargs[2].number().getBoolean() && vargs[1].number().isNegative()) {
+	if(vargs.size() >= 3 && !vargs[2].number().getBoolean() && vargs[1].number().isNegative()) {
 		Number nr(vargs[0].number());
 		Number nr_div(vargs[1].number());
 		if(!nr_div.negate() || !nr_div.exp2() || !nr.divide(nr_div) || !nr.trunc()) return false;
