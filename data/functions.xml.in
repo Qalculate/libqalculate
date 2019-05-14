@@ -502,7 +502,7 @@
       </builtin_function>
       <function>
         <_title>Integer Division</_title>
-        <_names>r:idivide</_names>
+        <_names>r:div</_names>
         <expression>trunc(\x/\y)</expression>
         <argument type="free" index="1">
           <_title>Numerator</_title>
@@ -2361,8 +2361,8 @@
       </argument>
     </builtin_function>
     <builtin_function name="xor">
-      <_title>Logical Exclusive OR</_title>
-      <_names>rc:xor</_names>
+      <_title>Bitwise Exclusive OR</_title>
+      <_names>r:xor</_names>
       <argument index="1">
         <_title>Value 1</_title>
       </argument>
@@ -2370,9 +2370,9 @@
         <_title>Value 2</_title>
       </argument>
     </builtin_function>
-    <builtin_function name="bitxor">
-      <_title>Bitwise Exclusive OR</_title>
-      <_names>r:bitxor</_names>
+    <builtin_function name="lxor">
+      <_title>Logical Exclusive OR</_title>
+      <_names>r:lxor</_names>
       <argument index="1">
         <_title>Value 1</_title>
       </argument>

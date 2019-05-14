@@ -2016,6 +2016,7 @@ int main(int argc, char *argv[]) {
 		bool explicit_command = (!str.empty() && str[0] == '/');
 		if(explicit_command) str.erase(0, 1);
 		remove_blank_ends(str);
+		if(rpn_mode && explicit_command && str.empty()) {str = "/"; explicit_command = false;}
 		slen = str.length();
 		ispace = str.find_first_of(SPACES);
 		if(ispace == string::npos) {
@@ -4725,6 +4726,13 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					case '>': {CALCULATOR->calculateRPN(OPERATION_GREATER, 0, evalops, parsed_mstruct); break;}
 					case '<': {CALCULATOR->calculateRPN(OPERATION_LESS, 0, evalops, parsed_mstruct); break;}
 					case '=': {CALCULATOR->calculateRPN(OPERATION_EQUALS, 0, evalops, parsed_mstruct); break;}
+					case '\\': {
+						MathFunction *fdiv = CALCULATOR->getActiveFunction("div");
+						if(fdiv) {
+							CALCULATOR->calculateRPN(fdiv, 0, evalops, parsed_mstruct);
+							break;
+						}
+					}
 					default: {do_mathoperation = false;}
 				}
 			} else if(str2.length() == 2) {
@@ -4745,6 +4753,17 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					do_mathoperation = true;
 				} else if(str2 == "==") {
 					CALCULATOR->calculateRPN(OPERATION_EQUALS, 0, evalops, parsed_mstruct);
+					do_mathoperation = true;
+				} else if(str2 == "//") {
+					MathFunction *fdiv = CALCULATOR->getActiveFunction("div");
+					if(fdiv) {
+						CALCULATOR->calculateRPN(fdiv, 0, evalops, parsed_mstruct);
+						do_mathoperation = true;
+					}
+				}
+			} else if(str2.length() == 3) {
+				if(str2 == "⊻") {
+					CALCULATOR->calculateRPN(OPERATION_BITWISE_XOR, 0, evalops, parsed_mstruct);
 					do_mathoperation = true;
 				}
 			}
