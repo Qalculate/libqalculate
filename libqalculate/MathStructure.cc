@@ -2572,6 +2572,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 						for(size_t i = 0; i < SIZE; i++) {
 							CHILD(i).calculateAdd(mstruct[i], eo, this, i);
 						}
+						MERGE_APPROX_AND_PREC(mstruct)
 						CHILDREN_UPDATED
 						return 1;
 					}
@@ -6641,16 +6642,16 @@ int MathStructure::merge_logical_xor(MathStructure &mstruct, const EvaluationOpt
 	return -1;
 	
 	/*int b0, b1;
-	if(representsNonPositive(true)) {
+	if(isZero()) {
 		b0 = 0;
-	} else if(representsPositive(true)) {
+	} else if(representsNonZero(true)) {
 		b0 = 1;
 	} else {
 		b0 = -1;
 	}
-	if(mstruct.representsNonPositive(true)) {
+	if(mstruct.isZero()) {
 		b1 = 0;
-	} else if(mstruct.representsPositive(true)) {
+	} else if(mstruct.representsNonZero(true)) {
 		b1 = 1;
 	} else {
 		b1 = -1;
@@ -6666,21 +6667,21 @@ int MathStructure::merge_logical_xor(MathStructure &mstruct, const EvaluationOpt
 		return 1;
 	} else if(b0 == 0) {
 		set(mstruct, true);
-		add(m_zero, OPERATION_GREATER);
+		add(m_zero, OPERATION_NOT_EQUALS);
 		calculatesub(eo, eo, false);
 		return 1;
 	} else if(b0 == 1) {
 		set(mstruct, true);
-		add(m_zero, OPERATION_EQUALS_LESS);
+		add(m_zero, OPERATION_EQUALS);
 		calculatesub(eo, eo, false);
 		return 1;
 	} else if(b1 == 0) {
-		add(m_zero, OPERATION_GREATER);
+		add(m_zero, OPERATION_NOT_EQUALS);
 		calculatesub(eo, eo, false);
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
 	} else if(b1 == 1) {
-		add(m_zero, OPERATION_EQUALS_LESS);
+		add(m_zero, OPERATION_EQUALS);
 		calculatesub(eo, eo, false);
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
@@ -7048,7 +7049,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 		
 		if(!mstruct.isAddition()) mstruct.transform(STRUCT_ADDITION);
 
-		// find division by polynomial		
+		// find division by polynomial
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			if(CALCULATOR->aborted()) return false;
 			bool b = false;

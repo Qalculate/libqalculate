@@ -841,7 +841,7 @@ BitCmpFunction::BitCmpFunction() : MathFunction("bitcmp", 1, 3) {
 }
 int BitCmpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	Number nr(vargs[0].number());
-	if(vargs[2].number().getBoolean()) {
+	if(vargs.size() >= 3 && vargs[2].number().getBoolean()) {
 		if(nr.bitNot()) {
 			mstruct = nr;
 			return 1;
