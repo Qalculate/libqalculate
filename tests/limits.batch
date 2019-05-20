@@ -331,8 +331,8 @@ limit((sin(x)-cos(x))/cos(2x),pi/4)
 -sqrt(2)/2
 limit(sin(sqrt(x+1))-sin(sqrt(x)),infinity)
 undefined
-limit(tan(x)^tan(2x),pi/4)
-1/e
+#limit(tan(x)^tan(2x),pi/4)
+#1/e
 limit(asin(x)/(x),0)
 1
 limit(asin(5x)/(3x),0)

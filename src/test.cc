@@ -1730,6 +1730,15 @@ int main(int argc, char *argv[]) {
 		}
 		cout << str << endl;
 		MathStructure mstruct;
+		/*CALCULATOR->parse(&mstruct, str, evalops.parse_options);
+		cout << "A" << endl;
+		mstruct.eval(evalops);
+		cout << "B" << endl;
+		cout << "C" << endl;
+		cout << mstruct.print() << endl;
+		cout << "D" << endl;
+		CALCULATOR->convertToOptimalUnit(mstruct, evalops, true);
+		cout << "E" << endl;*/
 		CALCULATOR->calculate(&mstruct, str, 10000, evalops);
 		mstruct.format(po);
 		cout << mstruct.print() << endl;

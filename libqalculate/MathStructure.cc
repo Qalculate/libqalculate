@@ -7420,9 +7420,9 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 				MathStructure mquo, mrem;
 				vector<MathStructure> symsd, symsn;
 				collect_symbols(nums[0], symsn);
-				if(symsn.empty()) return false;
-				collect_symbols(divs[0], symsd);
-				if(symsd.empty()) return false;
+				if(!symsn.empty()) {
+					collect_symbols(divs[0], symsd);
+				}
 				for(size_t i = 0; i < symsd.size();) {
 					bool b_found = false;
 					if(!b_unknown || symsd[i].containsUnknowns()) {
@@ -13337,7 +13337,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		simplify_ln(*this);
 		
 		if(eo.keep_zero_units) remove_add_zero_unit(*this);
-	
+
 		structure(eo.structuring, eo2, false);
 	
 		simplify_ln(*this);

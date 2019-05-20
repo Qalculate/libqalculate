@@ -6386,7 +6386,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOptions &po) {
 	mstruct->clear();
 	if(str.empty()) return false;
-	if(str.find_first_not_of(OPERATORS "\a%%" SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == string::npos)) {
+	if(str.find_first_not_of(OPERATORS "\a%" SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == string::npos)) {
 		gsub("\a", str.find_first_of("%" OPERATORS) != string::npos ? " xor " : "xor", str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
@@ -6750,7 +6750,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		char last_operator = 0;
 		char last_operator2 = 0;
 		while(true) {
-			i = str.find_first_of(OPERATORS "\a%%" SPACE "\\", i3 + 1);
+			i = str.find_first_of(OPERATORS "\a%" SPACE "\\", i3 + 1);
 			if(i == string::npos) {
 				if(!b) {
 					parseAdd(str, mstruct, po2);
