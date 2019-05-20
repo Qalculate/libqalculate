@@ -175,7 +175,7 @@
       <variable>
         <_title>Newtonian Constant of Gravitation</_title>
         <names>r:newtonian_constant,a:G</names>
-        <value uncertainty="3.1E-15" unit="m^3*kg^(-1)*s^(-2)">6.67408E-11</value>
+        <value uncertainty="1.5E-15" unit="m^3*kg^(-1)*s^(-2)">6.67430E-11</value>
       </variable>
       <variable>
         <_title>Speed of Light in Vacuum</_title>
@@ -256,37 +256,37 @@
       <variable>
         <_title>Electron Mass (in u)</_title>
         <names>rs:electron_u</names>
-        <value unit="u" uncertainty="1.6E-14">5.48579909070E-4</value>
+        <value unit="u" uncertainty="1.6E-14">5.48579909065E-4</value>
       </variable>
       <variable>
         <_title>Helion Mass (in u)</_title>
         <names>rs:helion_u</names>
-        <value unit="u" uncertainty="1.2E-10">3.01493224673</value>
+        <value unit="u" uncertainty="9.7E-11">3.014932247175</value>
       </variable>
       <variable>
         <_title>Neutron Mass (in u)</_title>
         <names>rs:neutron_u</names>
-        <value unit="u" uncertainty="4.9E-10">1.00866491588</value>
+        <value unit="u" uncertainty="4.9E-10">1.00866491595</value>
       </variable>
       <variable>
         <_title>Proton Mass (in u)</_title>
         <names>rs:proton_u</names>
-        <value unit="u" uncertainty="9.1E-11">1.007276466879</value>
+        <value unit="u" uncertainty="5.3E-11">1.007276466621</value>
       </variable>
       <variable>
         <_title>Tau Mass (in u)</_title>
         <names>rs:tau_u</names>
-        <value unit="u" uncertainty="1.7E-4">1.90749</value>
+        <value unit="u" uncertainty="1.3E-4">1.90754</value>
       </variable>
       <variable>
         <_title>Muon Mass (in u)</_title>
         <names>rs:muon_u</names>
-        <value unit="u" uncertainty="2.5E-9">0.1134289257</value>
+        <value unit="u" uncertainty="2.5E-9">0.1134289259</value>
       </variable>
       <variable>
         <_title>Triton Mass (in u)</_title>
         <names>rs:triton_u</names>
-        <value unit="u" uncertainty="1.1E-10">3.01550071632</value>
+        <value unit="u" uncertainty="1.2E-10">3.01550071621</value>
       </variable>
       <variable>
         <_title>Alpha Particle Mass (in u)</_title>
@@ -329,42 +329,42 @@
       <variable>
         <_title>Up Quark Mass (in MeV/c^2)</_title>
         <names>r:quark_u</names>
-        <value unit="MeV*c_unit^(-2)" uncertainty="0.7">2.3</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="0.5">2.2</value>
       </variable>
       <variable>
         <_title>Down Quark Mass (in MeV/c^2)</_title>
         <names>r:quark_d</names>
-        <value unit="MeV*c_unit^(-2)" uncertainty="0.5">4.8</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="0.5">4.7</value>
       </variable>
       <variable>
         <_title>Charm Quark Mass (in MeV/c^2)</_title>
         <names>r:quark_c</names>
-        <value unit="MeV*c_unit^(-2)" uncertainty="110">1290</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="35">1275</value>
       </variable>
       <variable>
         <_title>Strange Quark Mass (in MeV/c^2)</_title>
         <names>r:quark_s</names>
-        <value unit="MeV*c_unit^(-2)" uncertainty="5">95</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="9">95</value>
       </variable>
       <variable>
         <_title>Top Quark Mass (in MeV/c^2)</_title>
         <names>r:quark_t</names>
-        <value unit="MeV*c_unit^(-2)" uncertainty="470">172440</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="510">173210</value>
       </variable>
       <variable>
         <_title>Bottom Quark Mass (in MeV/c^2)</_title>
         <names>r:quark_b</names>
-        <value unit="MeV*c_unit^(-2)" uncertainty="30">4180</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="40">4180</value>
       </variable>
       <variable>
         <_title>Higgs Boson Mass (in MeV/c^2)</_title>
         <names>r:higgs_boson</names>
-        <value unit="MeV*c_unit^(-2)" uncertainty="210">125090</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="160">125180</value>
       </variable>
       <variable>
         <_title>W Boson Mass (in MeV/c^2)</_title>
         <names>r:w_boson</names>
-        <value unit="MeV*c_unit^(-2)" uncertainty="15">80385</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="12">80379</value>
       </variable>
       <variable>
         <_title>Z Boson Mass (in MeV/c^2)</_title>
@@ -440,7 +440,7 @@
       <variable>
         <_title>Fine-Structure Constant</_title>
         <names>r:fine_structure,au:&#x03B1;,ao:alpha</names>
-        <value uncertainty="1.7E-12">7.2973525664E-3</value>
+        <value uncertainty="1.1E-12">7.2973525693E-3</value>
       </variable>
       <variable>
         <_title>Hartree Energy (constant)</_title>
@@ -460,7 +460,7 @@
       <variable>
         <_title>Rydberg Constant</_title>
         <names>r:rydberg,asu:R_&#x221E;</names>
-        <value uncertainty="0.000065" unit="m^(-1)">10973731.568508</value>
+        <value uncertainty="0.000021" unit="m^(-1)">10973731.568160</value>
       </variable>
       <variable>
         <_title>Thomson cross section</_title>
@@ -470,14 +470,19 @@
       <variable>
         <_title>Weak Mixing Angle (Weinberg Angle)</_title>
         <names>r:weinberg,weak_mixing_angle,asu:&#x03B8;_W,aos:theta_W</names>
-        <value uncertainty="0.0021">0.2223</value>
+        <value uncertainty="0.00030">0.22290</value>
+      </variable>
+      <variable>
+        <_title>W to Z Mass Ratio</_title>
+        <names>r:w_z_ratio</names>
+        <value uncertainty="0.00017">0.88153</value>
       </variable>
     </category>
     <category>
       <_title>Physico-Chemical Constants</_title>
       <variable>
-        <_title>{220} Lattice Spacing of Silicon</_title>
-        <names>rs:lattice_spacing_Si220</names>
+        <_title>Lattice Spacing of Ideal Silicon (220)</_title>
+        <names>rs:lattice_spacing_Si220,as:d_220</names>
         <value>lattice_parameter_Si/sqrt(8)</value>
       </variable>
       <variable>
@@ -538,7 +543,7 @@
       <variable>
         <_title>Lattice Parameter of Silicon</_title>
         <names>rs:lattice_parameter_Si</names>
-        <value unit="m" uncertainty="8.9E-18">543.1020504E-12</value>
+        <value unit="m" uncertainty="8.9E-18">543.1020511E-12</value>
       </variable>
       <variable>
         <_title>Loschmidt Constant (273.15 K, 100 kPa)</_title>
@@ -568,12 +573,12 @@
       <variable>
         <_title>Sackur-Tetrode constant (1 K, 100 kPa)</_title>
         <names>r:sackur_tetrode</names>
-        <value uncertainty="1.4E-6">-1.1517084</value>
+        <value uncertainty="4.5E-10">-1.15170753706</value>
       </variable>
       <variable>
         <_title>Sackur-Tetrode constant (1 K, 101.325 kPa)</_title>
         <names>rs:sackur_tetrode_101</names>
-        <value uncertainty="1.4E-6">-1.1648714</value>
+        <value uncertainty="4.5E-10">-1.164 870 523 58 </value>
       </variable>
       <variable>
         <_title>Second Radiation Constant</_title>
@@ -588,12 +593,12 @@
       <variable>
         <_title>Wien frequency displacement law constant</_title>
         <names>r:wien_frequency</names>
-        <value unit="Hz*K^(-1)" uncertainty="3.4E4">5.8789238E10</value>
+        <value>(k_B/planck)×(lambertw(−3/e^3)+3)</value>
       </variable>
       <variable>
         <_title>Wien wavelength displacement law constant</_title>
         <names>r:wien_displacement,ais:b_energy</names>
-        <value unit="m*K" uncertainty="1.7E-9">2.8977729E-3</value>
+        <value>(planck×c/k_B)/(lambertw(−5/e^5)+5)</value>
       </variable>
     </category>
     <category>
