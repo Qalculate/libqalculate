@@ -2202,6 +2202,11 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		if(vargs[0].isZero()) {
 			mstruct.set(nr_minus_inf, true);
 			return 1;
+		} else if(vargs[1].isMinusOne()) {
+			if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0].isNumber() && vargs[0][1].isPower() && vargs[0][1][0].isVariable() && vargs[0][1][0].variable() == CALCULATOR->v_e && vargs[0][0].number() <= nr_minus_one && vargs[0][1][1] == vargs[0][0]) {
+				mstruct = vargs[0][0];
+				return 1;
+			}
 		}
 		return 0;
 	}
