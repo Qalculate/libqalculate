@@ -12978,6 +12978,61 @@ bool remove_add_zero_unit(MathStructure &m) {
 	return false;
 }
 
+bool contains_duplicate_interval_variables_eq(const MathStructure &mstruct, const MathStructure &xvar, vector<KnownVariable*> &vars) {
+	if(mstruct.isVariable() && mstruct.variable()->isKnown() && ((KnownVariable*) mstruct.variable())->get().containsInterval(false, true, false, false)) {
+		KnownVariable *v = (KnownVariable*) mstruct.variable();
+		for(size_t i = 0; i < vars.size(); i++) {
+			if(vars[i] == v) {
+				return true;
+			}
+		}
+		vars.push_back(v);
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(contains_duplicate_interval_variables_eq(mstruct[i], xvar, vars)) return true;
+	}
+	return false;
+}
+
+bool fix_eqs(MathStructure &m, const EvaluationOptions &eo) {
+	for(size_t i = 0; i < m.size(); i++) {
+		if(fix_eqs(m[i], eo)) m.childUpdated(i + 1);
+	}
+	if(m.isComparison()) {
+		const MathStructure *x_var;
+		if(eo.isolate_var && m.contains(*eo.isolate_var)) x_var = eo.isolate_var;
+		else x_var = &m.find_x_var();
+		if(!x_var->isUndefined()) {
+			vector<KnownVariable*> vars;
+			if(contains_duplicate_interval_variables_eq(m, *x_var, vars)) {
+				for(size_t i = 0; i < m[0].size(); i++) {
+					if(!m[0][i].contains(*x_var)) {
+						m[0][i].calculateNegate(eo);
+						m[0][i].ref();
+						m[1].add_nocopy(&m[0][i], true);
+						m[1].calculateAddLast(eo);
+						m[0].delChild(i + 1);
+					}
+				}
+				for(size_t i = 0; i < m[1].size(); i++) {
+					if(m[1][i].contains(*x_var)) {
+						m[1][i].calculateNegate(eo);
+						m[1][i].ref();
+						m[0].add_nocopy(&m[1][i], true);
+						m[1].calculateAddLast(eo);
+						m[1].delChild(i + 1);
+					}
+				}
+				vars.clear();
+				if(contains_duplicate_interval_variables_eq(m[0], *x_var, vars)) m[0].factorize(eo, false, false, 0, false, false, NULL, m_undefined, false, false, 3);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(m_type == STRUCT_NUMBER) {
@@ -13256,6 +13311,10 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		}
 		eo3.approximation = APPROXIMATION_APPROXIMATE;
 		if(eo2.interval_calculation >= INTERVAL_CALCULATION_INTERVAL_ARITHMETIC && containsInterval(false, true, false, -1)) factorize_variables(*this, eo3);
+		if(containsType(STRUCT_COMPARISON, true) && containsInterval(false, true, false, false)) {
+			eo3.approximation = APPROXIMATION_EXACT;
+			fix_eqs(*this, eo3);
+		}
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 	}
 
@@ -30091,6 +30150,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			// a*b^x+cx=d => (d*log(b)-c*lambertw(a*b^(d/c)*log(b)/c))/(c*log(b))
 			if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(0).size() > 1) {
 				size_t i_px = 0, i_mpx = 0;
+				MathStructure mbak(*this);
 				MathStructure *mvar = NULL, *m_b_p;
 				for(size_t i = 0; i < CHILD(0).size(); i++) {
 					if(CHILD(0)[i].isMultiplication()) {
@@ -30143,7 +30203,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 					}
 					MathStructure m_c;
-					if(mvar && get_multiplier(CHILD(0), *mvar, m_c, i_px) && m_c.representsNonZero()) {
+					if(mvar && get_multiplier(CHILD(0), *mvar, m_c, i_px) && m_c.representsNonZero() && m_c.contains(x_var) == 0) {
 						MathStructure mlogb(CALCULATOR->f_ln, &m_b, NULL);
 						if(mlogb.calculateFunctions(eo)) mlogb.calculatesub(eo2, eo, true);
 						MathStructure *marg = NULL;
@@ -30171,7 +30231,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								marg->unref();
 								if(ct_comp == COMPARISON_EQUALS) clear(true);
 								else set(1, 1, 0, true);
-								return 1;
+								return true;
 							}
 							MathStructure *mreq1 = NULL;
 							MathStructure *marg2 = NULL;
@@ -32035,7 +32095,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 			}
 			if(!b && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(0).size() >= 2) {
-				// a*x*b^(c*x)=d => x=lambertw(c*d*ln(b)/a)/(c*ln(b))
+				// (x+a)*b^(c*x)=d => x=(lambertw(b^(a*c)*c*d*ln(b))-a*c*ln(b)))/(c*ln(b))
 				if(CALCULATOR->aborted()) {
 					set(mbak);
 					if(mcheckmulti) mcheckmulti->unref();
@@ -32071,12 +32131,41 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				if(mvar) {
 					size_t i_x = 0;
 					bool found_mvar = false;
+					MathStructure mmul(1, 1, 0), m_a;
 					for(size_t i = 0; i < CHILD(0).size(); i++) {
 						if(i != i_px) {
 							if(CHILD(0)[i].contains(x_var)) {
 								if(!found_mvar && CHILD(0)[i].equals(*mvar)) {
 									found_mvar = true;
 									i_x = i;
+								} else if(!found_mvar && CHILD(0)[i].isAddition()) {
+									i_x = i;
+									for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+										if(CHILD(0)[i][i2].contains(*mvar)) {
+											if(!found_mvar && CHILD(0)[i][i2].equals(*mvar)) {
+												found_mvar = true;
+											} else if(!found_mvar && CHILD(0)[i][i2].isMultiplication()) {
+												for(size_t i3 = 0; i3 < CHILD(0)[i][i2].size(); i3++) {
+													if(CHILD(0)[i][i2][i3].equals(*mvar)) {
+														mmul = CHILD(0)[i][i2];
+														mmul.delChild(i3 + 1, true);
+														break;
+													}
+												}
+												if(mmul.contains(*mvar)) {
+													found_mvar = false;
+													break;
+												}
+											} else {
+												found_mvar = false;
+												break;
+											}
+											m_a = CHILD(0)[i];
+											m_a.delChild(i2 + 1, true);
+											if(!mmul.isOne()) m_a.calculateDivide(mmul, eo2);
+										}
+									}
+									if(!found_mvar) break;
 								} else {
 									found_mvar = false;
 									break;
@@ -32111,6 +32200,15 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									marg->calculateMultiplyLast(eo2);
 								}
 							}
+							if(!mmul.isOne()) marg->calculateDivide(mmul, eo2);
+							
+						}
+						if(marg && !m_a.isZero()) {
+							marg->multiply(CHILD(0)[i_px][0]);
+							marg->last().raise(m_a);
+							if(!m_c.isOne()) marg->last().last().calculateMultiply(m_c, eo2);
+							marg->last().calculateRaiseExponent(eo2);
+							marg->calculateMultiplyLast(eo2);
 						}
 						if(marg && mvar->representsNonComplex() && CHILD(0)[i_px][0].representsPositive()) {
 							if(mcheckmulti) mcheckmulti->unref();
@@ -32126,13 +32224,24 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							MathStructure *mreq1 = NULL;
 							MathStructure *marg2 = NULL;
 							MathStructure *mreq2 = NULL;
-							if(!marg->representsNonNegative()) {
+							
+							if(m_a == CHILD(1)) {
+								marg2 = new MathStructure(*mvar);
+								marg2->transform(ct_comp, m_zero);
+								marg2->calculatesub(eo2, eo, false);
+							}
+							if(!m_a.isZero()) {
+								if(!m_c.isOne()) m_a.calculateMultiply(m_c, eo2);
+								m_a.calculateMultiply(mln, eo2);
+							}
+							if(!marg2 && !marg->representsNonNegative()) {
 								mreq1 = new MathStructure(*marg);
 								mreq2 = new MathStructure(*marg);
 								marg2 = new MathStructure(*marg);
 								marg2->transform(CALCULATOR->f_lambert_w);
 								marg2->addChild(m_minus_one);
 								if(marg2->calculateFunctions(eo)) marg2->calculatesub(eo2, eo, true);
+								if(!m_a.isZero()) marg2->calculateSubtract(m_a, eo2);
 								if(!m_c.isOne()) marg2->calculateDivide(m_c, eo2);
 								marg2->calculateDivide(mln, eo2);
 								mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->v_e);
@@ -32152,6 +32261,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							marg->transform(CALCULATOR->f_lambert_w);
 							marg->addChild(m_zero);
 							if(marg->calculateFunctions(eo)) marg->calculatesub(eo2, eo, true);
+							if(!m_a.isZero()) marg->calculateSubtract(m_a, eo2);
 							if(!m_c.isOne()) marg->calculateDivide(m_c, eo2);
 							marg->calculateDivide(mln, eo2);
 							setChild_nocopy(marg, 2, true);
@@ -32177,6 +32287,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							marg->transform(CALCULATOR->f_lambert_w);
 							marg->addChild(CALCULATOR->v_n);
 							if(marg->calculateFunctions(eo)) marg->calculatesub(eo2, eo, true);
+							if(!m_a.isZero()) {
+								m_a.calculateMultiply(mln, eo2);
+								marg->calculateSubtract(m_a, eo2);
+							}
 							if(!m_c.isOne()) marg->calculateDivide(m_c, eo2);
 							marg->calculateDivide(mln, eo2);
 							setChild_nocopy(marg, 2, true);
