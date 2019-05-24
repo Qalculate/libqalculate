@@ -859,6 +859,8 @@ string rnd_unit() {
 }
 
 string rnd_var() {
+	if(rand() % 2 == 1) return "e";
+	else return "pi";
 	while(true) {
 		int r = rand() % CALCULATOR->variables.size();
 		if(CALCULATOR->variables[r]->isKnown()) return CALCULATOR->variables[r]->name();
@@ -1389,6 +1391,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 		m1.replace(CALCULATOR->v_x, nr);
 		eo.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 		m3 = m1;
+		cerr << "A2:" << m1 << endl;
 		CALCULATOR->calculate(&m1, 5000, eo);
 		if(m1.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED4: " << nr << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
 		eo.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
@@ -1715,12 +1718,29 @@ int main(int argc, char *argv[]) {
 	//return 0;
 	//test_intervals(true);
 
-	CALCULATOR->setVariableUnitsEnabled(true);
+	CALCULATOR->setVariableUnitsEnabled(false);
 	
 	v = new KnownVariable("", "v", m_zero);
 
-	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
+	CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 	//CALCULATOR->useIntervalArithmetic();
+	
+	for(size_t i = 0; i <= 10000; i++) {
+		/*string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
+		cout << str << endl;
+		MathStructure mstruct;
+		CALCULATOR->calculate(&mstruct, str, 10000, evalops);
+		mstruct.format(po);
+		cout << mstruct.print() << endl;
+		if(mstruct.isAborted()) break;*/
+		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
+		rnd_test(evalops, 4, true, false, true, false, true, true);
+		if(i % 100 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
+	}
+	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
+
+	return 0;
+	
 	for(size_t i2 = 0; i2 <= 100000; i2++) {
 		string str;
 		size_t n = rand() % 100;
@@ -1744,22 +1764,6 @@ int main(int argc, char *argv[]) {
 		cout << mstruct.print() << endl;
 		if(mstruct.isAborted()) break;
 	}
-	return 0;
-	
-	for(size_t i = 0; i <= 100000; i++) {
-		string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
-		cout << str << endl;
-		MathStructure mstruct;
-		CALCULATOR->calculate(&mstruct, str, 10000, evalops);
-		mstruct.format(po);
-		cout << mstruct.print() << endl;
-		if(mstruct.isAborted()) break;
-		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
-		//rnd_test(evalops, 4, false, false, true, false, false, false);
-		//if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
-	}
-	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
-
 	return 0;
 
 }

@@ -3168,12 +3168,11 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 MathStructure Calculator::calculate(const MathStructure &mstruct_to_calculate, const EvaluationOptions &eo, string to_str) {
 
 	remove_blank_ends(to_str);
-	
 	MathStructure mstruct(mstruct_to_calculate);
 	current_stage = MESSAGE_STAGE_CALCULATION;
 	size_t n_messages = messages.size();
 	mstruct.eval(eo);
-	
+
 	current_stage = MESSAGE_STAGE_CONVERSION;
 	if(!to_str.empty()) {
 		mstruct.set(convert(mstruct, to_str, eo));
@@ -3195,7 +3194,7 @@ MathStructure Calculator::calculate(const MathStructure &mstruct_to_calculate, c
 		}
 		if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo));
 	}
-	
+
 	cleanMessages(mstruct, n_messages + 1);
 	
 	current_stage = MESSAGE_STAGE_UNSET;
@@ -4108,7 +4107,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 			MathStructure mstruct_new(mstruct);
 			bool b = false;
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
-				if(mstruct_new.size() > 100 && aborted()) return mstruct;
+				if(aborted()) return mstruct;
 				if(!mstruct_new.isFunction() || !mstruct_new.function()->getArgumentDefinition(i + 1) || mstruct_new.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) { 
 					mstruct_new[i] = convertToOptimalUnit(mstruct_new[i], eo, convert_to_si_units);
 					if(!b && !mstruct_new[i].equals(mstruct[i], true, true)) b = true;
@@ -4116,7 +4115,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 			}
 			if(b) {
 				mstruct_new.childrenUpdated();
-				mstruct_new.eval(eo2);
+				if(mstruct.isAddition()) mstruct_new.eval(eo2);
 			}
 			return mstruct_new;
 		}
@@ -4160,7 +4159,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 						old_points += points;
 						old_minus = false;
 					}
-				} else if(mstruct_old.getChild(i)->size() > 0) {
+				} else if(mstruct_old.getChild(i)->size() > 0 && !aborted()) {
 					mstruct_old[i - 1] = convertToOptimalUnit(mstruct_old[i - 1], eo, convert_to_si_units);
 					mstruct_old.childUpdated(i);
 					if(!mstruct_old[i - 1].equals(mstruct[i - 1], true, true)) child_updated = true;
@@ -4176,7 +4175,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 				mstruct_new.eval(eo2);
 			}
 			if(mstruct_new.type() != STRUCT_MULTIPLICATION) {
-				mstruct_new = convertToOptimalUnit(mstruct_new, eo, convert_to_si_units);
+				if(!mstruct_new.containsInterval(true, true, false, 1, true) && !aborted()) mstruct_new = convertToOptimalUnit(mstruct_new, eo, convert_to_si_units);
 			} else {
 				CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_optimal_unit");
 				bool b = false;
@@ -4189,7 +4188,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 					} else if(mstruct_new.getChild(i)->isPower() && mstruct_new.getChild(i)->base()->isUnit() && mstruct_new.getChild(i)->exponent()->isNumber() && mstruct_new.getChild(i)->exponent()->number().isInteger()) {
 						b = true;
 						cu->add(mstruct_new.getChild(i)->base()->unit(), mstruct_new.getChild(i)->exponent()->number().intValue());
-					} else if(mstruct_new.getChild(i)->size() > 0) {
+					} else if(mstruct_new.getChild(i)->size() > 0 && !mstruct_new.getChild(i)->containsInterval(true, true, false, 1, true) && !aborted()) {
 						MathStructure m_i_old(mstruct_new[i - 1]);
 						mstruct_new[i - 1] = convertToOptimalUnit(mstruct_new[i - 1], eo, convert_to_si_units);
 						mstruct_new.childUpdated(i);

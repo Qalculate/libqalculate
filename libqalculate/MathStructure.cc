@@ -183,6 +183,22 @@ bool flattenMultiplication(MathStructure &mstruct) {
 	}
 	return retval;
 }
+bool flattenAddition(MathStructure &mstruct) {
+	bool retval = false;
+	for(size_t i = 0; i < mstruct.size();) {
+		if(mstruct[i].isAddition()) {
+			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+				mstruct[i][i2].ref();
+				mstruct.insertChild_nocopy(&mstruct[i][i2], i + i2 + 2);
+			}
+			mstruct.delChild(i + 1);
+			retval = true;
+		} else {
+			i++;
+		}
+	}
+	return retval;
+}
 
 bool warn_about_assumed_not_value(const MathStructure &mstruct, const MathStructure &mvalue, const EvaluationOptions &eo) {
 	CALCULATOR->beginTemporaryStopMessages();
@@ -12999,32 +13015,52 @@ bool fix_eqs(MathStructure &m, const EvaluationOptions &eo) {
 		if(fix_eqs(m[i], eo)) m.childUpdated(i + 1);
 	}
 	if(m.isComparison()) {
+		if(CALCULATOR->aborted()) return false;
 		const MathStructure *x_var;
 		if(eo.isolate_var && m.contains(*eo.isolate_var)) x_var = eo.isolate_var;
 		else x_var = &m.find_x_var();
 		if(!x_var->isUndefined()) {
 			vector<KnownVariable*> vars;
 			if(contains_duplicate_interval_variables_eq(m, *x_var, vars)) {
-				for(size_t i = 0; i < m[0].size(); i++) {
-					if(!m[0][i].contains(*x_var)) {
-						m[0][i].calculateNegate(eo);
-						m[0][i].ref();
-						m[1].add_nocopy(&m[0][i], true);
-						m[1].calculateAddLast(eo);
-						m[0].delChild(i + 1);
+				if(!m[0].contains(*x_var)) {
+					m.swapChildren(1, 2);
+				} else if(m[0].isAddition()) {
+					for(size_t i = 0; i < m[0].size();) {
+						if(!m[0][i].contains(*x_var)) {
+							m[0][i].calculateNegate(eo);
+							m[0][i].ref();
+							m[1].add_nocopy(&m[0][i], true);
+							m[1].calculateAddLast(eo);
+							m[0].delChild(i + 1);
+						} else {
+							i++;
+						}
 					}
+					if(m[0].size() == 1) m[0].setToChild(1, true);
+					else if(m[0].size() == 0) m[0].clear(true);
+					m.childrenUpdated();
 				}
-				for(size_t i = 0; i < m[1].size(); i++) {
-					if(m[1][i].contains(*x_var)) {
-						m[1][i].calculateNegate(eo);
-						m[1][i].ref();
-						m[0].add_nocopy(&m[1][i], true);
-						m[1].calculateAddLast(eo);
-						m[1].delChild(i + 1);
+				if(m[1].isAddition()) {
+					for(size_t i = 0; i < m[1].size();) {
+						if(m[1][i].contains(*x_var)) {
+							m[1][i].calculateNegate(eo);
+							m[1][i].ref();
+							m[0].add_nocopy(&m[1][i], true);
+							m[0].calculateAddLast(eo);
+							m[1].delChild(i + 1);
+						} else {
+							i++;
+						}
 					}
+					if(m[1].size() == 1) m[1].setToChild(1, true);
+					else if(m[1].size() == 0) m[1].clear(true);
+					m.childrenUpdated();
+				} else if(m[1].contains(*x_var)) {
+					m[0].calculateSubtract(m[1], eo);
+					m[1].clear(true);
 				}
 				vars.clear();
-				if(contains_duplicate_interval_variables_eq(m[0], *x_var, vars)) m[0].factorize(eo, false, false, 0, false, false, NULL, m_undefined, false, false, 3);
+				if(m[0].containsType(STRUCT_ADDITION) && contains_duplicate_interval_variables_eq(m[0], *x_var, vars)) m[0].factorize(eo, false, false, 0, false, 1, NULL, m_undefined, false, false, 3);
 				return true;
 			}
 		}
@@ -13311,7 +13347,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		}
 		eo3.approximation = APPROXIMATION_APPROXIMATE;
 		if(eo2.interval_calculation >= INTERVAL_CALCULATION_INTERVAL_ARITHMETIC && containsInterval(false, true, false, -1)) factorize_variables(*this, eo3);
-		if(containsType(STRUCT_COMPARISON, true) && containsInterval(false, true, false, false)) {
+		if(containsType(STRUCT_COMPARISON) && containsInterval(false, true, false, false)) {
 			eo3.approximation = APPROXIMATION_EXACT;
 			fix_eqs(*this, eo3);
 		}
@@ -13488,6 +13524,7 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 							if(!b) break;
 						}
 						if(b) {
+							b = !factor_mstruct.isOne();
 							if(exp) {
 								MathStructure *mstruct = new MathStructure(*bas);
 								mstruct->raise(*exp);
@@ -13500,6 +13537,37 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 							} else {
 								if(factor_mstruct.isOne()) factor_mstruct.set(*bas);
 								else factor_mstruct.multiply(*bas, true);
+							}
+							if(b) {
+								size_t i3 = 0;
+								const MathStructure *cmp_mstruct;
+								b = false;
+								while(true) {
+									if(i3 >= factor_mstruct.size() - 1) {
+										break;
+									}
+									cmp_mstruct = &factor_mstruct[i3];
+									if(cmp_mstruct->equals(factor_mstruct.last())) {
+										if(exp) {
+											exp = NULL;
+										}
+										b = true;
+										break;
+									} else if(cmp_mstruct->isPower() && IS_REAL((*cmp_mstruct)[1]) && cmp_mstruct->base()->equals(factor_mstruct.last())) {
+										if(exp) {
+											if(cmp_mstruct->exponent()->number().isLessThan(exp->number())) {
+												exp = cmp_mstruct->exponent();
+											}
+											b = true;
+											break;
+										} else {
+											b = true;
+											break;
+										}
+									}
+									i3++;
+								}
+								if(b) factor_mstruct.delChild(factor_mstruct.size(), true);
 							}
 						}
 					}
@@ -13758,7 +13826,8 @@ bool MathStructure::polynomialDivide(const MathStructure &mnum, const MathStruct
 		}
 		if(mquotient.isZero()) mquotient = numcoeff;
 		else mquotient.add(numcoeff, true);
-		numcoeff.calculateMultiply(mden, eo2);
+		if(numcoeff.isAddition() && mden.isAddition() && !numcoeff.calculateMultiply(mden, eo2)) return false;
+		else numcoeff.calculateMultiply(mden, eo2);
 		mrem.calculateSubtract(numcoeff, eo2);
 		if(mrem.isZero()) {
 			return true;
@@ -13878,7 +13947,8 @@ bool divide_in_z(const MathStructure &mnum, const MathStructure &mden, MathStruc
 		} else {
 			mquotient.calculateAdd(term, eo);
 		}
-		term.calculateMultiply(mden, eo);
+		if(term.isAddition() && mden.isAddition() && !term.calculateMultiply(mden, eo)) return false;
+		else term.calculateMultiply(mden, eo);
 		mrem.calculateSubtract(term, eo);
 		if(mrem.isZero()) {
 			return true;
@@ -13955,7 +14025,8 @@ bool prem(const MathStructure &mnum, const MathStructure &mden, const MathStruct
 				rlcoeff.calculateMultiplyLast(eo);
 			}
 			mrem.calculateSubtract(rlcoeff, eo);
-			mrem.calculateMultiply(blcoeff, eo);
+			if(mrem.isAddition() && blcoeff.isAddition() && !mrem.calculateMultiply(blcoeff, eo)) {mrem.clear(); return false;}
+			else mrem.calculateMultiply(blcoeff, eo);
 			mrem.calculateSubtract(term, eo);
 		}
 		rdeg = mrem.degree(xvar);
@@ -14983,7 +15054,8 @@ bool polynomial_long_division(const MathStructure &mnum, const MathStructure &md
 		}
 		if(mquotient.isZero()) mquotient = numcoeff;
 		else mquotient.calculateAdd(numcoeff, eo2);
-		numcoeff.calculateMultiply(mden, eo2);
+		if(numcoeff.isAddition() && mden.isAddition() && !numcoeff.calculateMultiply(mden, eo2)) {mrem = mnum; mquotient.clear(); return false;}
+		else numcoeff.calculateMultiply(mden, eo2);
 		mrem.calculateSubtract(numcoeff, eo2);
 		if(contains_zerointerval_multiplier(mquotient)) {mrem = mnum; mquotient.clear(); return false;}
 		if(mrem.isZero() || (for_newtonraphson && mrem.isNumber())) break;
@@ -16358,6 +16430,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 
 	switch(type()) {
 		case STRUCT_ADDITION: {
+
 			if(CALCULATOR->aborted()) return false;
 			if(term_combination_levels >= -1 && !only_sqrfree && max_factor_degree != 0) {
 
@@ -16506,7 +16579,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 
 				MathStructure *factor_mstruct = new MathStructure(1, 1, 0);
 				MathStructure mnew;
-				if(factorize_find_multiplier(*this, mnew, *factor_mstruct)) {
+				if(factorize_find_multiplier(*this, mnew, *factor_mstruct) && !factor_mstruct->isZero() && !mnew.isZero()) {
 					mnew.factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 					factor_mstruct->factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 					clear(true);
@@ -29594,7 +29667,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 		case STRUCT_ADDITION: {
 			bool b = false;
 			// x+y=z => x=z-y
-			for(size_t i = 0; i < CHILD(0).size(); i++) {
+			for(size_t i = 0; i < CHILD(0).size();) {
 				if(!CHILD(0)[i].contains(x_var)) {
 					CHILD(0)[i].calculateNegate(eo2);
 					CHILD(0)[i].ref();
@@ -29602,6 +29675,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					CHILD(1).calculateAddLast(eo2);
 					CHILD(0).delChild(i + 1);
 					b = true;
+				} else {
+					i++;
 				}
 			}
 			if(b) {
@@ -33950,12 +34025,29 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				return true;
 			} else if(CHILD(0).function() == CALCULATOR->f_abs && CHILD(0).size() == 1) {
 				if(CHILD(0)[0].contains(x_var)) {
-					CHILD(0).setToChild(1);
-					CHILD_UPDATED(0)
-					CHILD(0) ^= nr_two;
-					CHILD(0) ^= nr_half;
-					isolate_x_sub(eo, eo2, x_var, morig);
-					return true;
+					if(CHILD(1).representsComplex() || CHILD(1).representsNegative()) {
+						clear(true);
+						return true;
+					} else if(CHILD(1).representsReal(true)) {
+						if(CHILD(0)[0].representsReal(true)) {
+							CHILD(0).setToChild(1);
+							CHILD_UPDATED(0)
+							CHILD(0) ^= nr_two;
+							CHILD(0) ^= nr_half;
+							isolate_x_sub(eo, eo2, x_var, morig);
+							return true;
+						} else if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(1).representsNonNegative(true)) {
+							CHILD(0).setToChild(1);
+							CHILD_UPDATED(0)
+							CHILD(1) *= CALCULATOR->v_e;
+							CHILD(1).last() ^= CALCULATOR->v_n;
+							CHILD(1).last().last() *= nr_one_i;
+							CHILD(1).calculatesub(eo2, eo);
+							isolate_x_sub(eo, eo2, x_var, morig);
+							fix_n_multiple(*this, eo2, eo, x_var);
+							return true;
+						}
+					}
 				}
 			} else if(CHILD(0).function() == CALCULATOR->f_signum && CHILD(0).size() == 2) {
 				if(CHILD(0)[0].contains(x_var) && CHILD(0)[0].representsNonComplex(true)) {
