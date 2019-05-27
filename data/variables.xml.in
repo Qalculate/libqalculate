@@ -578,7 +578,7 @@
       <variable>
         <_title>Sackur-Tetrode constant (1 K, 101.325 kPa)</_title>
         <names>rs:sackur_tetrode_101</names>
-        <value uncertainty="4.5E-10">-1.164 870 523 58 </value>
+        <value uncertainty="4.5E-10">-1.16487052358</value>
       </variable>
       <variable>
         <_title>Second Radiation Constant</_title>
