@@ -1,3 +1,7 @@
+2019-06-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* dBm and dBW units
+
 2019-05-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix abs(x)=a for complex x

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 19:01+0200\n"
+"POT-Creation-Date: 2019-06-11 11:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -8999,334 +8999,350 @@ msgid "ar:PS,u:pferdest&#xE4;rke"
 msgstr ""
 
 #: ../data/units.xml.in.h:492
-msgid "Entropy"
+msgid "Decibel Milliwatt"
 msgstr ""
 
 #: ../data/units.xml.in.h:493
-msgid "Joule per Kelvin"
+msgid "dBm"
 msgstr ""
 
 #: ../data/units.xml.in.h:494
-msgid "Boltzmann (unit)"
+msgid "Decibel Watt"
 msgstr ""
 
 #: ../data/units.xml.in.h:495
-msgid "Specific Entropy"
+msgid "dBW"
 msgstr ""
 
 #: ../data/units.xml.in.h:496
-msgid "Joule per Kilogram Kelvin"
+msgid "Entropy"
 msgstr ""
 
 #: ../data/units.xml.in.h:497
-msgid "Thermal Conductivity"
+msgid "Joule per Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:498
-msgid "Watt per Meter Kelvin"
+msgid "Boltzmann (unit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:499
-msgid "Energy Density"
+msgid "Specific Entropy"
 msgstr ""
 
 #: ../data/units.xml.in.h:500
-msgid "Joule per Cubic Meter"
+msgid "Joule per Kilogram Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:501
-msgid "Molar Energy"
+msgid "Thermal Conductivity"
 msgstr ""
 
 #: ../data/units.xml.in.h:502
-msgid "Joule per Mole"
+msgid "Watt per Meter Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:503
-msgid "Molar Entropy"
+msgid "Energy Density"
 msgstr ""
 
 #: ../data/units.xml.in.h:504
-msgid "Joule per Mole Kelvin"
+msgid "Joule per Cubic Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:505
-msgid "Action"
+msgid "Molar Energy"
 msgstr ""
 
 #: ../data/units.xml.in.h:506
-msgid "Joule Second"
+msgid "Joule per Mole"
 msgstr ""
 
 #: ../data/units.xml.in.h:507
-msgid "Reduced Planck (Atomic/Natural Unit of Action)"
+msgid "Molar Entropy"
 msgstr ""
 
 #: ../data/units.xml.in.h:508
-msgid "Radioactivity"
+msgid "Joule per Mole Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:509
-msgid "Becquerel"
+msgid "Action"
 msgstr ""
 
 #: ../data/units.xml.in.h:510
-msgid "ar:Bq,becquerel,p:becquerels"
+msgid "Joule Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:511
-msgid "Curie"
+msgid "Reduced Planck (Atomic/Natural Unit of Action)"
 msgstr ""
 
 #: ../data/units.xml.in.h:512
-msgid "ar:Ci,curie,p:curies"
+msgid "Radioactivity"
 msgstr ""
 
 #: ../data/units.xml.in.h:513
-msgid "Absorbed Dose"
+msgid "Becquerel"
 msgstr ""
 
 #: ../data/units.xml.in.h:514
-msgid "Gray"
+msgid "ar:Bq,becquerel,p:becquerels"
 msgstr ""
 
 #: ../data/units.xml.in.h:515
-msgid "ar:Gy,gray,p:grays"
+msgid "Curie"
 msgstr ""
 
 #: ../data/units.xml.in.h:516
-msgid "Rad"
+msgid "ar:Ci,curie,p:curies"
 msgstr ""
 
 #: ../data/units.xml.in.h:517
-msgid "r:rad_radioactivity"
+msgid "Absorbed Dose"
 msgstr ""
 
 #: ../data/units.xml.in.h:518
-msgid "Dose Equivalent"
+msgid "Gray"
 msgstr ""
 
 #: ../data/units.xml.in.h:519
-msgid "Sievert"
+msgid "ar:Gy,gray,p:grays"
 msgstr ""
 
 #: ../data/units.xml.in.h:520
-msgid "ar:Sv,sievert,p:sieverts"
+msgid "Rad"
 msgstr ""
 
 #: ../data/units.xml.in.h:521
-msgid "Rem"
+msgid "r:rad_radioactivity"
 msgstr ""
 
 #: ../data/units.xml.in.h:522
-msgid "r:rem_radioactivity"
+msgid "Dose Equivalent"
 msgstr ""
 
 #: ../data/units.xml.in.h:523
-msgid "Exposure"
+msgid "Sievert"
 msgstr ""
 
 #: ../data/units.xml.in.h:524
-msgid "Coulomb per Kilogram"
+msgid "ar:Sv,sievert,p:sieverts"
 msgstr ""
 
 #: ../data/units.xml.in.h:525
-msgid "Roentgen"
+msgid "Rem"
 msgstr ""
 
 #: ../data/units.xml.in.h:526
-msgid "ar:R,roentgen,p:roentgens"
+msgid "r:rem_radioactivity"
 msgstr ""
 
 #: ../data/units.xml.in.h:527
-msgid "Absorbed Dose Rate"
+msgid "Exposure"
 msgstr ""
 
 #: ../data/units.xml.in.h:528
-msgid "Gray per Second"
+msgid "Coulomb per Kilogram"
 msgstr ""
 
 #: ../data/units.xml.in.h:529
-msgid "Ratio"
+msgid "Roentgen"
 msgstr ""
 
 #: ../data/units.xml.in.h:530
-msgid "Neper"
+msgid "ar:R,roentgen,p:roentgens"
 msgstr ""
 
 #: ../data/units.xml.in.h:531
-msgid "ar:Np,neper,p:nepers"
+msgid "Absorbed Dose Rate"
 msgstr ""
 
 #: ../data/units.xml.in.h:532
-msgid "Bel"
+msgid "Gray per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:533
-msgid "ar:B,bel,p:bels"
+msgid "Ratio"
 msgstr ""
 
 #: ../data/units.xml.in.h:534
-msgid "Decibel"
+msgid "Neper"
 msgstr ""
 
 #: ../data/units.xml.in.h:535
-msgid "Information"
+msgid "ar:Np,neper,p:nepers"
 msgstr ""
 
 #: ../data/units.xml.in.h:536
-msgid "Bit"
+msgid "Bel"
 msgstr ""
 
 #: ../data/units.xml.in.h:537
-msgid "r:bit,p:bits"
+msgid "ar:B,bel,p:bels"
 msgstr ""
 
 #: ../data/units.xml.in.h:538
-msgid "Byte (8-bit)"
+msgid "Decibel"
 msgstr ""
 
 #: ../data/units.xml.in.h:539
-msgid "r:byte,p:bytes,octet,p:octets"
+msgid "Information"
 msgstr ""
 
 #: ../data/units.xml.in.h:540
-msgid "Nibble"
+msgid "Bit"
 msgstr ""
 
 #: ../data/units.xml.in.h:541
-msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets"
+msgid "r:bit,p:bits"
 msgstr ""
 
 #: ../data/units.xml.in.h:542
-msgid "Tribble"
+msgid "Byte (8-bit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:543
-msgid "r:tribble,p:tribbles"
+msgid "r:byte,p:bytes,octet,p:octets"
 msgstr ""
 
 #: ../data/units.xml.in.h:544
-msgid "Word (16-bit)"
+msgid "Nibble"
 msgstr ""
 
 #: ../data/units.xml.in.h:545
-msgid "r:word,p:words"
+msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets"
 msgstr ""
 
 #: ../data/units.xml.in.h:546
-msgid "Kilobyte"
+msgid "Tribble"
 msgstr ""
 
 #: ../data/units.xml.in.h:547
-msgid "Kibibyte"
+msgid "r:tribble,p:tribbles"
 msgstr ""
 
 #: ../data/units.xml.in.h:548
-msgid "Mebibyte"
+msgid "Word (16-bit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:549
-msgid "Gibibyte"
+msgid "r:word,p:words"
 msgstr ""
 
 #: ../data/units.xml.in.h:550
-msgid "Megabyte"
+msgid "Kilobyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:551
-msgid "Gigabyte"
+msgid "Kibibyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:552
-msgid "Terabyte"
+msgid "Mebibyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:553
-msgid "Kilobit"
+msgid "Gibibyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:554
-msgid "Kibibit"
+msgid "Megabyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:555
-msgid "Mebibit"
+msgid "Gigabyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:556
-msgid "Gibibit"
+msgid "Terabyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:557
-msgid "Megabit"
+msgid "Kilobit"
 msgstr ""
 
 #: ../data/units.xml.in.h:558
-msgid "Gigabit"
+msgid "Kibibit"
 msgstr ""
 
 #: ../data/units.xml.in.h:559
-msgid "Terabit"
+msgid "Mebibit"
 msgstr ""
 
 #: ../data/units.xml.in.h:560
-msgid "Typography"
+msgid "Gibibit"
 msgstr ""
 
 #: ../data/units.xml.in.h:561
-msgid "PostScript Point"
+msgid "Megabit"
 msgstr ""
 
 #: ../data/units.xml.in.h:562
-msgid "ar:pt,a:pts,point,p:points"
+msgid "Gigabit"
 msgstr ""
 
 #: ../data/units.xml.in.h:563
-msgid "PostScript Pica"
+msgid "Terabit"
 msgstr ""
 
 #: ../data/units.xml.in.h:564
-msgid "r:pica,p:picas"
+msgid "Typography"
 msgstr ""
 
 #: ../data/units.xml.in.h:565
-msgid "ATA Pica"
+msgid "PostScript Point"
 msgstr ""
 
 #: ../data/units.xml.in.h:566
-msgid "r:ata_pica,p:ata_picas"
+msgid "ar:pt,a:pts,point,p:points"
 msgstr ""
 
 #: ../data/units.xml.in.h:567
-msgid "ATA Point"
+msgid "PostScript Pica"
 msgstr ""
 
 #: ../data/units.xml.in.h:568
-msgid "r:ata_point,a:ata_pt,p:ata_points"
+msgid "r:pica,p:picas"
 msgstr ""
 
 #: ../data/units.xml.in.h:569
-msgid "New Didot Point"
+msgid "ATA Pica"
 msgstr ""
 
 #: ../data/units.xml.in.h:570
-msgid "r:new_didot"
+msgid "r:ata_pica,p:ata_picas"
 msgstr ""
 
 #: ../data/units.xml.in.h:571
-msgid "Didot Point"
+msgid "ATA Point"
 msgstr ""
 
 #: ../data/units.xml.in.h:572
-msgid "r:didot,a:dd"
+msgid "r:ata_point,a:ata_pt,p:ata_points"
 msgstr ""
 
 #: ../data/units.xml.in.h:573
-msgid "Cicero"
+msgid "New Didot Point"
 msgstr ""
 
 #: ../data/units.xml.in.h:574
+msgid "r:new_didot"
+msgstr ""
+
+#: ../data/units.xml.in.h:575
+msgid "Didot Point"
+msgstr ""
+
+#: ../data/units.xml.in.h:576
+msgid "r:didot,a:dd"
+msgstr ""
+
+#: ../data/units.xml.in.h:577
+msgid "Cicero"
+msgstr ""
+
+#: ../data/units.xml.in.h:578
 msgid "r:cicero"
 msgstr ""
 

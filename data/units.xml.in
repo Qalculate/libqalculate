@@ -3219,6 +3219,26 @@
           <exponent>1</exponent>
         </base>
       </unit>
+      <unit type="alias">
+        <_title>Decibel Milliwatt</_title>
+        <_names>ar:dBm</_names>
+        <base>
+          <unit>W</unit>
+          <relation>10^((\x-30)/10)</relation>
+          <inverse_relation>10*log(\x,10)+30</inverse_relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Decibel Watt</_title>
+        <_names>ar:dBW</_names>
+        <base>
+          <unit>W</unit>
+          <relation>10^(\x/10)</relation>
+          <inverse_relation>10*log(\x,10)</inverse_relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
     </category>
     <category>
       <_title>Entropy</_title>
