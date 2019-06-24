@@ -692,7 +692,12 @@ void Number::set(string number, const ParseOptions &po) {
 				mpz_set_ui(mpq_numref(unc), i_unc);
 			}
 		} else if(number[index] != ' ') {
-			CALCULATOR->error(true, _("Character \'%c\' was ignored in the number \"%s\" with base %s."), number[index], number.c_str(), i2s(base).c_str(), NULL);
+			string str_char = number.substr(index, 1);
+			while(index + 1 < number.length() && number[index + 1] < 0 && (unsigned char) number[index + 1] < 0xC0) {
+				index++;
+				str_char += number[index];
+			}
+			CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), i2s(base).c_str(), NULL);
 		}
 	}
 	if(b_twos) {
