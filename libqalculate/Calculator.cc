@@ -5693,6 +5693,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
 					size_t name_length;
 					if(i == string::npos) i = str.length();
+					while(str[i - 1] == SPACE_CH) i--;
 					name_length = i - str_index;
 					ParseOptions po_hex = po;
 					po_hex.base = BASE_HEXADECIMAL;
@@ -5703,6 +5704,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.replace(str_index, name_length, stmp);
 					str_index += stmp.length() - 1;
 				}
+
 			} else if(po.base <= 12 && str_index + 2 < str.length() && (str[str_index + 1] == 'b' || str[str_index + 1] == 'B') && is_in("01", str[str_index + 2])) {
 				//binary number 0b...
 				if(po.base == BASE_BINARY) {
@@ -5713,6 +5715,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS, str_index + 2);
 					size_t name_length;
 					if(i == string::npos) i = str.length();
+					while(str[i - 1] == SPACE_CH) i--;
 					name_length = i - str_index;
 					ParseOptions po_bin = po;
 					po_bin.base = BASE_BINARY;
@@ -5733,6 +5736,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS, str_index + 2);
 					size_t name_length;
 					if(i == string::npos) i = str.length();
+					while(str[i - 1] == SPACE_CH) i--;
 					name_length = i - str_index;
 					ParseOptions po_oct = po;
 					po_oct.base = BASE_OCTAL;

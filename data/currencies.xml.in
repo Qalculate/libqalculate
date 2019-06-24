@@ -743,9 +743,8 @@
       <_countries>Vanuatu</_countries>
     </builtin_unit>
     <builtin_unit name="VEF">
-      <_title>Venezuelan Bolívar</_title>
+      <_title>Venezuelan Bolívar (obsolete)</_title>
       <_names>ar:VEF</_names>
-      <_countries>Venezuela</_countries>
     </builtin_unit>
     <builtin_unit name="VND">
       <_title>Vietnamese Dồng</_title>
@@ -966,39 +965,6 @@
       <base>
         <unit>EUR</unit>
         <relation>1/3.45280</relation>
-        <exponent>1</exponent>
-      </base>
-    </unit>
-    <unit type="alias">
-      <hidden>true</hidden>
-      <_title>Belarusian Ruble</_title>
-      <_names>ar:BYN</_names>
-      <_countries>Belarus</_countries>
-      <base>
-        <unit>BYR</unit>
-        <relation>10000</relation>
-        <exponent>1</exponent>
-      </base>
-    </unit>
-    <unit type="alias">
-      <hidden>true</hidden>
-      <_title>Zambian Kwacha</_title>
-      <_names>ar:ZMW</_names>
-      <_countries>Zambia</_countries>
-      <base>
-        <unit>ZMK</unit>
-        <relation>1000</relation>
-        <exponent>1</exponent>
-      </base>
-    </unit>
-    <unit type="alias">
-      <hidden>true</hidden>
-      <_title>Mauritanian Ouguiya</_title>
-      <_names>ar:MRU</_names>
-      <_countries>Mauritania</_countries>
-      <base>
-        <unit>MRO</unit>
-        <relation>10</relation>
         <exponent>1</exponent>
       </base>
     </unit>

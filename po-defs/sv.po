@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-11 11:27+0200\n"
+"POT-Creation-Date: 2019-06-24 12:54+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -1810,252 +1810,212 @@ msgid "Vanuatu"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:444
-msgid "Venezuelan Bolívar"
-msgstr "Venezuelansk bolívar"
+msgid "Venezuelan Bolívar (obsolete)"
+msgstr "Venezuelansk bolívar (obsolet)"
 
 #: ../data/currencies.xml.in.h:445
 msgid "ar:VEF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:446
-msgid "Venezuela"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:447
 msgid "Vietnamese Dồng"
 msgstr "Vietnamesisk dồng"
 
-#: ../data/currencies.xml.in.h:448
+#: ../data/currencies.xml.in.h:447
 msgid "ar:VND,au:&#x20AB;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:449
+#: ../data/currencies.xml.in.h:448
 msgid "Vietnam"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:450
+#: ../data/currencies.xml.in.h:449
 msgid "Yemeni Rial"
 msgstr "Jemenitisk rial"
 
-#: ../data/currencies.xml.in.h:451
+#: ../data/currencies.xml.in.h:450
 msgid "ar:YER"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:452
+#: ../data/currencies.xml.in.h:451
 msgid "Yemen"
 msgstr "Jemen"
 
-#: ../data/currencies.xml.in.h:453
+#: ../data/currencies.xml.in.h:452
 msgid "Zambian Kwacha (obsolete)"
 msgstr "Zambisk kwacha (obsolet)"
 
-#: ../data/currencies.xml.in.h:454
+#: ../data/currencies.xml.in.h:453
 msgid "ar:ZMK"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:455
+#: ../data/currencies.xml.in.h:454
 msgid "Euro Cent"
 msgstr "Eurocent"
 
-#: ../data/currencies.xml.in.h:456
+#: ../data/currencies.xml.in.h:455
 msgid "r:eurocent,p:eurocents"
 msgstr "eurocent"
 
-#: ../data/currencies.xml.in.h:457
+#: ../data/currencies.xml.in.h:456
 msgid "Cent (USD)"
 msgstr "Cent (USD)"
 
-#: ../data/currencies.xml.in.h:458
+#: ../data/currencies.xml.in.h:457
 msgid "au:&#xA2;,r:cent,p:cents"
 msgstr "au:&#xA2;,cent"
 
-#: ../data/currencies.xml.in.h:459
+#: ../data/currencies.xml.in.h:458
 msgid "Belgian Franc (obsolete)"
 msgstr "Belgisk franc (obsolet)"
 
-#: ../data/currencies.xml.in.h:460
+#: ../data/currencies.xml.in.h:459
 msgid "ar:BEF"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:461
+#: ../data/currencies.xml.in.h:460
 msgid "Greek Drachma (obsolete)"
 msgstr "Grekisk drachma (obsolet)"
 
-#: ../data/currencies.xml.in.h:462
+#: ../data/currencies.xml.in.h:461
 msgid "ar:GRD,au:&#x20AF;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:463
+#: ../data/currencies.xml.in.h:462
 msgid "French Franc (obsolete)"
 msgstr "Fransk franc (obsolet="
 
-#: ../data/currencies.xml.in.h:464
+#: ../data/currencies.xml.in.h:463
 msgid "ar:FRF,au:&#x20A3;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:465
+#: ../data/currencies.xml.in.h:464
 msgid "Italian Lira (obsolete)"
 msgstr "Italiensk lira (obsolet)"
 
-#: ../data/currencies.xml.in.h:466
+#: ../data/currencies.xml.in.h:465
 msgid "ar:ITL"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:467
+#: ../data/currencies.xml.in.h:466
 msgid "Dutch Guilder (obsolete)"
 msgstr "Nederländsk gulden (obsolet)"
 
-#: ../data/currencies.xml.in.h:468
+#: ../data/currencies.xml.in.h:467
 msgid "ar:NLG"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:469
+#: ../data/currencies.xml.in.h:468
 msgid "Portuguese Escudo (obsolete)"
 msgstr "Portugisisk escudo (obsolet)"
 
-#: ../data/currencies.xml.in.h:470
+#: ../data/currencies.xml.in.h:469
 msgid "ar:PTE"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:471
+#: ../data/currencies.xml.in.h:470
 msgid "Deutsche Mark (obsolete)"
 msgstr "Tysk mark (obsolet)"
 
-#: ../data/currencies.xml.in.h:472
+#: ../data/currencies.xml.in.h:471
 msgid "ar:DEM"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:473
+#: ../data/currencies.xml.in.h:472
 msgid "Spanish Peseta (obsolete)"
 msgstr "Spansk peseta (obsolet)"
 
-#: ../data/currencies.xml.in.h:474
+#: ../data/currencies.xml.in.h:473
 msgid "ar:ESP,au:&#x20A7;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:475
+#: ../data/currencies.xml.in.h:474
 msgid "Irish Pound (obsolete)"
 msgstr "Irländskt pund (obsolet)"
 
-#: ../data/currencies.xml.in.h:476
+#: ../data/currencies.xml.in.h:475
 msgid "ar:IEP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:477
+#: ../data/currencies.xml.in.h:476
 msgid "Luxembourg Franc (obsolete)"
 msgstr "Luxemburgfranc (obsolet)"
 
-#: ../data/currencies.xml.in.h:478
+#: ../data/currencies.xml.in.h:477
 msgid "ar:LUF"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:479
+#: ../data/currencies.xml.in.h:478
 msgid "Austrian Schilling (obsolete)"
 msgstr "Österrikisk schilling (obsolet)"
 
-#: ../data/currencies.xml.in.h:480
+#: ../data/currencies.xml.in.h:479
 msgid "ar:ATS"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:481
+#: ../data/currencies.xml.in.h:480
 msgid "Finnish Markka (obsolete)"
 msgstr "Finsk mark (obsolet)"
 
-#: ../data/currencies.xml.in.h:482
+#: ../data/currencies.xml.in.h:481
 msgid "ar:FIM"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:483
+#: ../data/currencies.xml.in.h:482
 msgid "Slovenian Tolar (obsolete)"
 msgstr "Slovensk tolar (obsolet)"
 
-#: ../data/currencies.xml.in.h:484
+#: ../data/currencies.xml.in.h:483
 msgid "ar:SIT"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:485
+#: ../data/currencies.xml.in.h:484
 msgid "Cypriot Pound (obsolete)"
 msgstr "Cypriotiskt pund (obsolet)"
 
-#: ../data/currencies.xml.in.h:486
+#: ../data/currencies.xml.in.h:485
 msgid "ar:CYP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:487
+#: ../data/currencies.xml.in.h:486
 msgid "Estonian Kroon (obsolete)"
 msgstr "Estonisk kroon (obsolet)"
 
-#: ../data/currencies.xml.in.h:488
+#: ../data/currencies.xml.in.h:487
 msgid "ar:EEK"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:489
+#: ../data/currencies.xml.in.h:488
 msgid "Slovak Koruna (obsolete)"
 msgstr "Slovakisk koruna (obsolet)"
 
-#: ../data/currencies.xml.in.h:490
+#: ../data/currencies.xml.in.h:489
 msgid "ar:SKK"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:491
+#: ../data/currencies.xml.in.h:490
 msgid "Maltese Lira (obsolete)"
 msgstr "Maltesisk lira (obsolet)"
 
-#: ../data/currencies.xml.in.h:492
+#: ../data/currencies.xml.in.h:491
 msgid "ar:MTL"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:493
+#: ../data/currencies.xml.in.h:492
 msgid "Latvian Lats (obsolete)"
 msgstr "Lettiska lats (obsolet)"
 
-#: ../data/currencies.xml.in.h:494
+#: ../data/currencies.xml.in.h:493
 msgid "ar:LVL"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:495
+#: ../data/currencies.xml.in.h:494
 msgid "Lithuanian Litas (obsolete)"
 msgstr "Litauisk litas (obsolet)"
 
-#: ../data/currencies.xml.in.h:496
+#: ../data/currencies.xml.in.h:495
 msgid "ar:LTL"
 msgstr ""
-
-#: ../data/currencies.xml.in.h:497
-msgid "Belarusian Ruble"
-msgstr "Vitrysk rubel"
-
-#: ../data/currencies.xml.in.h:498
-msgid "ar:BYN"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:499
-msgid "Belarus"
-msgstr "Vitryssland"
-
-#: ../data/currencies.xml.in.h:500
-msgid "Zambian Kwacha"
-msgstr "Zambisk kwacha"
-
-#: ../data/currencies.xml.in.h:501
-msgid "ar:ZMW"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:502
-msgid "Zambia"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:503
-msgid "Mauritanian Ouguiya"
-msgstr "Mauretansk ouguiya"
-
-#: ../data/currencies.xml.in.h:504
-msgid "ar:MRU"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:505
-msgid "Mauritania"
-msgstr "Mauretanien"
 
 #: ../data/datasets.xml.in.h:1
 msgid "Data Sets"
@@ -3775,8 +3735,29 @@ msgstr "bas"
 
 #: ../data/functions.xml.in.h:237
 msgid ""
-"Returns an value from an expression using a specified base between 2 and 36"
-msgstr "Returnerar ett värde från ett uttryck med angiven bas mellan 2 och 36."
+"Returns an value from an expression using the specified number base (radix). "
+"For integer bases between 2 and 36 full mathematical expressions (including "
+"operators and functions) are supported, while for other bases the specified "
+"expression is converted to a single number.&#10;&#10;Bases ≤ 36 uses digits "
+"0-9 and A-Z (case insensitive).&#10;&#10;Bases between 37 and 62 uses case "
+"sensitive letters (0-9, a-z, A-Z) as digits ('Z' equals 61).&#10;&#10;Bases "
+"over 62 use Unicode characters as digits, with the character code as value "
+"(e.g. '0' equals 48). Escaped characters are in this case supported (e.g. "
+"'\\0' = 0, '\\523' = 523, '\\x7f' = 127).&#10;&#10;Non-integer bases are "
+"allowed. Negative bases uses the same digits as the corresponding positive "
+"bases."
+msgstr ""
+"Returnerar ett värde från ett uttryck med angiven talbas. Heltalsbaser "
+"mellan 2 och 36 har fullt stöd för matematiska uttryck (inklusive operatorer "
+"och funktioner). För övriga talbaser omvandlas angivet uttryck till ett enda "
+"nummer.&#10;&#10;Talbaser ≤ 36 används siffror 0-9 och A-Z (ej "
+"skiftlägeskänsligt).&#10;&#10;Talbaser mellan 37 och 62 använder "
+"skiftlägeskänsliga bokstäver (0-9, a-z, A-Z) som siffror ('Z' motsvarar 61)."
+"&#10;&#10;Talbaser över 62 använder Unicode-tecken som siffror, med "
+"teckenkoden som värde ('0' motsvarar 48). I detta kan '\\' följt av ett "
+"nummer användas istället (t.ex. '\\0' = 0, '\\523' = 523, '\\x7f' = 127)."
+"&#10;&#10;Nummer som inte är heltal är tillåtna som talbas. Negativa "
+"talbaser använder samma siffror som motsvarande positiv talbas."
 
 #: ../data/functions.xml.in.h:238
 msgid "Binary"
@@ -9202,7 +9183,7 @@ msgid "Decibel Milliwatt"
 msgstr "Decibel-milliwatt"
 
 #: ../data/units.xml.in.h:493
-msgid "dBm"
+msgid "ar:dBm"
 msgstr ""
 
 #: ../data/units.xml.in.h:494
@@ -9210,7 +9191,7 @@ msgid "Decibel Watt"
 msgstr "Decibelwatt"
 
 #: ../data/units.xml.in.h:495
-msgid "dBW"
+msgid "ar:dBW"
 msgstr ""
 
 #: ../data/units.xml.in.h:496
@@ -10381,6 +10362,27 @@ msgstr "Nu (datum och tid)"
 #: ../data/variables.xml.in.h:212
 msgid "r:now"
 msgstr ""
+
+#~ msgid "Belarusian Ruble"
+#~ msgstr "Vitrysk rubel"
+
+#~ msgid "Belarus"
+#~ msgstr "Vitryssland"
+
+#~ msgid "Zambian Kwacha"
+#~ msgstr "Zambisk kwacha"
+
+#~ msgid "Mauritanian Ouguiya"
+#~ msgstr "Mauretansk ouguiya"
+
+#~ msgid "Mauritania"
+#~ msgstr "Mauretanien"
+
+#~ msgid ""
+#~ "Returns an value from an expression using a specified base between 2 and "
+#~ "36"
+#~ msgstr ""
+#~ "Returnerar ett värde från ett uttryck med angiven bas mellan 2 och 36."
 
 #~ msgid "Left Shift"
 #~ msgstr "Sifte åt vänster"
