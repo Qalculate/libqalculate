@@ -5073,9 +5073,10 @@ int HexFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }
-bool unicode_to_vector(MathStructure &mstruct, const string &str, Number *nr = NULL, bool escaped = false) {
+bool unicode_to_vector(MathStructure &mstruct, const string &str, const EvaluationOptions &eo, Number *nr = NULL, bool escaped = false, size_t *i_dot = NULL) {
 	if(str.length() == 0) {mstruct.clear(); return true;}
 	mstruct.setUndefined();
+	if(i_dot) *i_dot = str.length();
 	for(size_t i = 0; i < str.length(); i++) {
 		size_t i_prev = i;
 		long int c = (unsigned char) str[i];
@@ -5108,8 +5109,10 @@ bool unicode_to_vector(MathStructure &mstruct, const string &str, Number *nr = N
 				i = i2 - 1;
 				b_esc = true;
 			}
-			string strm = SIGN_MINUS;
-			if(b_esc) {
+			if(i_dot && *i_dot == str.size() && !b_minus && (str[i] == CALCULATOR->getDecimalPoint()[0] || (!eo.parse_options.dot_as_separator && str[i] == '.'))) {
+				*i_dot = (mstruct.isUndefined() ? 0 : (mstruct.isVector() ? mstruct.size() : 1));
+				b_esc = true;
+			} else if(b_esc) {
 				if(nr && nr->isLessThanOrEqualTo(nrd)) {
 					CALCULATOR->error(false, "Digit \'%s\' too high for number base.", str.substr(i_prev, i - i_prev + 1).c_str(), NULL);
 				}
@@ -5121,6 +5124,10 @@ bool unicode_to_vector(MathStructure &mstruct, const string &str, Number *nr = N
 					mstruct.transform(STRUCT_VECTOR, nrd);
 				}
 
+			} else {
+				if(b_minus) i = str.rfind('\\', i);
+				else i--;
+				b_esc = true;
 			}
 		}
 		if(!b_esc) {
@@ -5210,7 +5217,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				}
 			}
 			if(mstruct.isUndefined()) mstruct.clear();
-		} else if(!unicode_to_vector(mstruct, str, &abs_base, true)) {
+		} else if(!unicode_to_vector(mstruct, str, eo, &abs_base, true, &i_dot)) {
 			return 0;
 		}
 		if(!mstruct.isVector()) {
@@ -5249,11 +5256,11 @@ int RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 AsciiFunction::AsciiFunction() : MathFunction("code", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
-int AsciiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+int AsciiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].symbol().empty()) {
 		return false;
 	}
-	if(!unicode_to_vector(mstruct, vargs[0].symbol())) return 0;
+	if(!unicode_to_vector(mstruct, vargs[0].symbol(), eo)) return 0;
 	return 1;
 }
 CharFunction::CharFunction() : MathFunction("char", 1) {
