@@ -1672,7 +1672,7 @@ int main(int argc, char *argv[]) {
 	new Calculator(true);
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
-	CALCULATOR->setPrecision(8);
+	CALCULATOR->setPrecision(10);
 	
 	CALCULATOR->useIntervalArithmetic();
 	PrintOptions po = CALCULATOR->messagePrintOptions();
@@ -1714,6 +1714,12 @@ int main(int argc, char *argv[]) {
 	//test_integration();
 	//return 0;
 	//test_intervals(true);
+	
+	Number nr("5");
+	bool failed = false;
+	cout << nr.printWithCustomBase(CALCULATOR->calculate("pi").number(), &failed) << ":" << failed << endl;
+	
+	return 0;
 
 	CALCULATOR->setVariableUnitsEnabled(false);
 	
