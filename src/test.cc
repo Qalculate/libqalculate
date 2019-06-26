@@ -1715,10 +1715,24 @@ int main(int argc, char *argv[]) {
 	//return 0;
 	//test_intervals(true);
 	
-	Number nr("5");
+	Number nr;
 	bool failed = false;
-	cout << nr.printWithCustomBase(CALCULATOR->calculate("pi").number(), &failed) << ":" << failed << endl;
-	
+	evalops.approximation = APPROXIMATION_TRY_EXACT;
+	po.number_fraction_format = FRACTION_DECIMAL;
+	po.show_ending_zeroes = false;
+	po.use_max_decimals = true;
+	po.max_decimals = 1;
+	//while(nr >= -1000) {
+	nr.set("-22.49");
+		string str = nr.printWithCustomBase(CALCULATOR->calculate("-10").number(), &failed, po);
+		string expr = "base(";
+		expr += str;
+		expr += ",-10)";
+		string str2 = CALCULATOR->calculateAndPrint(expr, 0, evalops, po);
+		cout << nr << ":" << str << ":" << str2 << ":" << failed << endl;
+		if(nr.print(po) != str2) sleep(1);
+		//nr--;
+	//}
 	return 0;
 
 	CALCULATOR->setVariableUnitsEnabled(false);
