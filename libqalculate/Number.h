@@ -516,7 +516,6 @@ class Number {
 		string printImaginaryDenominator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
 
 		string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
-		string printWithCustomBase(Number base, bool *failed = NULL, const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
 	
 };
 

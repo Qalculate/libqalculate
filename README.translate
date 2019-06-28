@@ -61,7 +61,7 @@ The English version can only use the three character code for the Swedish curren
 
 msgid "-r:billion"
 msgstr "miljard,p:miljarder"
-The constants for large numbers follows two different systems in different countries. With the "short scale" billion means 1e9, while it with the "long scale" means 1e12. Therefor, these constants do not have any reference name. The short scale is used in most English-speaking countries, while in Sweden the long scale is used.
+The constants for large numbers follows two different systems in different countries. With the "short scale" billion means 1e9, while it with the "long scale" means 1e12. Therefore, these constants do not have any reference name. The short scale is used in most English-speaking countries, while in Sweden the long scale is used.
 
 msgid "r:sqrt"
 msgstr "-"

@@ -2375,7 +2375,7 @@ msgstr "无法分离%s。"
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed sign was "
-"therefor temporarily set as unknown."
+"therefore temporarily set as unknown."
 msgstr "按照当前的假设条件无法分离%s。 因此，假设符号暂时已被设成了未知。"
 
 #: ../libqalculate/BuiltinFunctions.cc:7134
@@ -2384,7 +2384,7 @@ msgstr "按照当前的假设条件无法分离%s。 因此，假设符号暂时
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed type and "
-"sign was therefor temporarily set as unknown."
+"sign was therefore temporarily set as unknown."
 msgstr ""
 "按照当前的假设条件无法分离%s。 因此，假设类型和符号暂时都已被设成了未知。"
 
@@ -3054,8 +3054,8 @@ msgstr "十进制数中的\":\"被忽略。(已发现小数点)"
 
 #: ../libqalculate/Number.cc:695
 #, c-format
-msgid "Character '%c' was ignored in the number \"%s\" with base %s."
-msgstr "字符\"%c\"被忽略，在数字\"%s\"中，其base为\"%s\"。"
+msgid "Character '%s' was ignored in the number \"%s\" with base %s."
+msgstr "字符\"%s\"被忽略，在数字\"%s\"中，其base为\"%s\"。"
 
 #: ../libqalculate/Number.cc:1741 ../libqalculate/Number.cc:1863
 msgid "Floating point underflow"

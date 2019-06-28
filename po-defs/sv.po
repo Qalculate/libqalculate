@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-24 12:54+0200\n"
+"POT-Creation-Date: 2019-06-28 11:11+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -3735,8 +3735,8 @@ msgstr "bas"
 
 #: ../data/functions.xml.in.h:237
 msgid ""
-"Returns an value from an expression using the specified number base (radix). "
-"For integer bases between 2 and 36 full mathematical expressions (including "
+"Returns a value from an expression using the specified number base (radix). "
+"For bases between -62 and 62 full mathematical expressions (including "
 "operators and functions) are supported, while for other bases the specified "
 "expression is converted to a single number.&#10;&#10;Bases ≤ 36 uses digits "
 "0-9 and A-Z (case insensitive).&#10;&#10;Bases between 37 and 62 uses case "
@@ -3747,8 +3747,8 @@ msgid ""
 "allowed. Negative bases uses the same digits as the corresponding positive "
 "bases."
 msgstr ""
-"Returnerar ett värde från ett uttryck med angiven talbas. Heltalsbaser "
-"mellan 2 och 36 har fullt stöd för matematiska uttryck (inklusive operatorer "
+"Returnerar ett värde från ett uttryck med angiven talbas. Talbaser "
+"mellan -62 och 62 har fullt stöd för matematiska uttryck (inklusive operatorer "
 "och funktioner). För övriga talbaser omvandlas angivet uttryck till ett enda "
 "nummer.&#10;&#10;Talbaser ≤ 36 används siffror 0-9 och A-Z (ej "
 "skiftlägeskänsligt).&#10;&#10;Talbaser mellan 37 och 62 använder "
@@ -5005,7 +5005,7 @@ msgid ""
 "scale parameter. (from Gnumeric)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:536 ../data/variables.xml.in.h:204
+#: ../data/functions.xml.in.h:536 ../data/variables.xml.in.h:205
 msgid "Date &amp; Time"
 msgstr "Datum &amp; Tid"
 
@@ -5314,7 +5314,7 @@ msgstr ""
 msgid "Start Date"
 msgstr "Startdatum"
 
-#: ../data/functions.xml.in.h:602 ../data/variables.xml.in.h:197
+#: ../data/functions.xml.in.h:602 ../data/variables.xml.in.h:198
 msgid "Utilities"
 msgstr "Verktyg"
 
@@ -10229,137 +10229,141 @@ msgstr "Grundläggande konstanter"
 
 #: ../data/variables.xml.in.h:177
 msgid "Golden Ratio"
-msgstr "Golden ratio"
+msgstr "Gyllene snittet"
 
 #: ../data/variables.xml.in.h:178
+msgid "Supergolden Ratio"
+msgstr "Supergyllene snittet"
+
+#: ../data/variables.xml.in.h:179
 msgid "Omega Constant"
 msgstr "Omegakonstanten"
 
-#: ../data/variables.xml.in.h:179
+#: ../data/variables.xml.in.h:180
 msgid "Pythagoras' Constant (sqrt 2)"
 msgstr "Pythagoras konstant (sqrt 2)"
 
-#: ../data/variables.xml.in.h:180
+#: ../data/variables.xml.in.h:181
 msgid "Apery's Constant"
 msgstr "Aperys konstant"
 
-#: ../data/variables.xml.in.h:181
+#: ../data/variables.xml.in.h:182
 msgid "Base of Natural Logarithms (e)"
 msgstr "Basen för naturliga logaritmer (e)"
 
-#: ../data/variables.xml.in.h:182
+#: ../data/variables.xml.in.h:183
 msgid "Archimedes' Constant (pi)"
 msgstr "Arkimedes konstant (pi)"
 
-#: ../data/variables.xml.in.h:183
+#: ../data/variables.xml.in.h:184
 msgid "Euler's Constant"
 msgstr "Eulers konstant"
 
-#: ../data/variables.xml.in.h:184
+#: ../data/variables.xml.in.h:185
 msgid "Catalan's Constant"
 msgstr "Catalans konstant"
 
-#: ../data/variables.xml.in.h:185
+#: ../data/variables.xml.in.h:186
 msgid "Special Numbers"
 msgstr "Speciella nummer"
 
-#: ../data/variables.xml.in.h:186
+#: ../data/variables.xml.in.h:187
 msgid "Imaginary i (sqrt -1)"
 msgstr "Imaginärt i (sqrt -1)"
 
-#: ../data/variables.xml.in.h:187
+#: ../data/variables.xml.in.h:188
 msgid "Positive Infinity"
 msgstr "Positiv oändlighet"
 
-#: ../data/variables.xml.in.h:188
+#: ../data/variables.xml.in.h:189
 msgid "a:&#x221E;,r:plus_infinity,r:infinity"
 msgstr "a:&#x221E;,oändlighet"
 
-#: ../data/variables.xml.in.h:189
+#: ../data/variables.xml.in.h:190
 msgid "Negative Infinity"
 msgstr "Negativ oändlighet"
 
-#: ../data/variables.xml.in.h:190
+#: ../data/variables.xml.in.h:191
 msgid "r:minus_infinity"
 msgstr "minus_oändlighet"
 
-#: ../data/variables.xml.in.h:191
+#: ../data/variables.xml.in.h:192
 msgid "Undefined"
 msgstr "Odefinierad"
 
-#: ../data/variables.xml.in.h:192
+#: ../data/variables.xml.in.h:193
 msgid "r:undefined"
 msgstr "odefinierad"
 
-#: ../data/variables.xml.in.h:193
+#: ../data/variables.xml.in.h:194
 msgid "False"
 msgstr "Falskt"
 
-#: ../data/variables.xml.in.h:194
+#: ../data/variables.xml.in.h:195
 msgid "r:false,r:no"
 msgstr "falskt,nej"
 
-#: ../data/variables.xml.in.h:195
+#: ../data/variables.xml.in.h:196
 msgid "True"
 msgstr "Sant"
 
-#: ../data/variables.xml.in.h:196
+#: ../data/variables.xml.in.h:197
 msgid "r:true,r:yes"
 msgstr "sant,ja"
 
-#: ../data/variables.xml.in.h:198
+#: ../data/variables.xml.in.h:199
 msgid "Precision"
 msgstr "Precision"
 
-#: ../data/variables.xml.in.h:199
+#: ../data/variables.xml.in.h:200
 msgid "r:precision"
 msgstr ""
 
-#: ../data/variables.xml.in.h:200
+#: ../data/variables.xml.in.h:201
 msgid "System Uptime"
 msgstr "Uptime för operativsystemet"
 
-#: ../data/variables.xml.in.h:201
+#: ../data/variables.xml.in.h:202
 msgid "r:uptime"
 msgstr ""
 
-#: ../data/variables.xml.in.h:202
+#: ../data/variables.xml.in.h:203
 msgid "Unknowns"
 msgstr "Okända"
 
-#: ../data/variables.xml.in.h:203
+#: ../data/variables.xml.in.h:204
 msgid "n (integer)"
 msgstr "n (heltal)"
 
-#: ../data/variables.xml.in.h:205
+#: ../data/variables.xml.in.h:206
 msgid "Today"
 msgstr "Idag"
 
-#: ../data/variables.xml.in.h:206
+#: ../data/variables.xml.in.h:207
 msgid "r:today"
 msgstr "idag"
 
-#: ../data/variables.xml.in.h:207
+#: ../data/variables.xml.in.h:208
 msgid "Tomorrow"
 msgstr "Imorgon"
 
-#: ../data/variables.xml.in.h:208
+#: ../data/variables.xml.in.h:209
 msgid "r:tomorrow"
 msgstr "imorgon"
 
-#: ../data/variables.xml.in.h:209
+#: ../data/variables.xml.in.h:210
 msgid "Yesterday"
 msgstr "Igår"
 
-#: ../data/variables.xml.in.h:210
+#: ../data/variables.xml.in.h:211
 msgid "r:yesterday"
 msgstr "igår"
 
-#: ../data/variables.xml.in.h:211
+#: ../data/variables.xml.in.h:212
 msgid "Now (date and time)"
 msgstr "Nu (datum och tid)"
 
-#: ../data/variables.xml.in.h:212
+#: ../data/variables.xml.in.h:213
 msgid "r:now"
 msgstr ""
 

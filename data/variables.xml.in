@@ -713,6 +713,11 @@
       <value>(1+sqrt(5))/2</value>
     </variable>
     <variable>
+      <_title>Supergolden Ratio</_title>
+      <names>r:supergolden,au:&#x3C8;</names>
+      <value>(1+cbrt((29+3×sqrt(93))/2)+cbrt((29−3×sqrt(93))/2))/3</value>
+    </variable>
+    <variable>
       <_title>Omega Constant</_title>
       <names>r:omega</names>
       <value>lambertw(1)</value>

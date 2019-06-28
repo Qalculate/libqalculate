@@ -324,7 +324,143 @@ Number::~Number() {
 }
 
 void Number::set(string number, const ParseOptions &po) {
+	
+	if(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && (!CALCULATOR->customInputBase().isInteger() || CALCULATOR->customInputBase() < 2 || CALCULATOR->customInputBase() > 62)) || po.base == BASE_GOLDEN_RATIO) {
+		Number base;
+		if(po.base == BASE_GOLDEN_RATIO) {
+			base.set(5);
+			base.sqrt();
+			base.add(1);
+			base.divide(2);
+		} else if(po.base == BASE_UNICODE) {
+			base.set(1114112L);
+		} else {
+			base = CALCULATOR->customInputBase();
+		}
+		Number abs_base(base);
+		abs_base.abs();
+		size_t i_dot = number.length();
+		vector<Number> digits;
+		bool b_minus = false;
+		if(abs_base <= 62) {
+			remove_blanks(number);
+			bool b_case = abs_base > 36;
+			i_dot = number.length();
+			for(size_t i = 0; i < number.length(); i++) {
+				long int c = -1;
+				if(number[i] >= '0' && number[i] <= '9') {
+					c = number[i] - '0';
+				} else if(number[i] >= 'a' && number[i] <= 'z') {
+					c = number[i] - 'a' + 10;
+				} else if(number[i] >= 'A' && number[i] <= 'Z') {
+					if(b_case) c = number[i] - 'A' + 36;
+					else c = number[i] - 'A' + 10;
+				} else if(number[i] == '.') {
+					if(i_dot == number.length()) i_dot = digits.size();
+				} else if(number[i] == '-' && digits.empty()) {
+					b_minus = !b_minus;
+				} else {
+					string str_char = number.substr(i, 1);
+					while(i + 1 < number.length() && number[i + 1] < 0 && number[i + 1] && (unsigned char) number[i + 1] < 0xC0) {
+						i++;
+						str_char += number[i];
+					}
+					CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), base.print(), NULL);
+				}
+				if(c >= 0) {
+					if(abs_base <= c && !abs_base.isFraction()) {
+						CALCULATOR->error(false, "Digit \'%s\' too high for number base.", number.substr(i, 1).c_str(), NULL);
+					}
+					digits.push_back(c);
+				}
+			}
+		} else {
+			for(size_t i = 0; i < number.length(); i++) {
+				size_t i_prev = i;
+				long int c = (unsigned char) number[i];
+				bool b_esc = false;
+				if(number[i] == '\\' && i < number.length() - 1) {
+					i++;
+					Number nrd;
+					if(is_in(NUMBERS, number[i])) {
+						size_t i2 = number.find_first_not_of(NUMBERS, i);
+						if(i2 == string::npos) i2 = number.length();
+						nrd.set(number.substr(i, i2 - i));
+						i = i2 - 1;
+						b_esc = true;
+					} else if(number[i] == 'x' && i < number.length() - 1 && is_in(NUMBERS "ABCDEFabcdef", number[i + 1])) {
+						i++;
+						size_t i2 = number.find_first_not_of(NUMBERS "ABCDEFabcdef", i);
+						if(i2 == string::npos) i2 = number.length();
+						ParseOptions po;
+						po.base = BASE_HEXADECIMAL;
+						nrd.set(number.substr(i, i2 - i), po);
+						i = i2 - 1;
+						b_esc = true;
+					}
+					if(digits.empty() && number[i] == (char) -30 && i + 3 < number.length() && number[i + 1] == (char) -120 && number[i + 2] == (char) -110) {
+						i += 2;
+						b_minus = !b_minus;
+						b_esc = true;
+					} else if(digits.empty() && number[i] == '-') {
+						b_minus = !b_minus;
+						b_esc = true;
+					} else if(i_dot == number.size() && (number[i] == CALCULATOR->getDecimalPoint()[0] || (!po.dot_as_separator && number[i] == '.'))) {
+						i_dot = digits.size();
+						b_esc = true;
+					} else if(b_esc) {
+						if(abs_base.isLessThanOrEqualTo(nrd)) {
+							CALCULATOR->error(false, "Digit \'%s\' too high for number base.", number.substr(i_prev, i - i_prev + 1).c_str(), NULL);
+						}
+						digits.push_back(nrd);
 
+					} else {
+						if(b_minus) i = number.rfind('\\', i);
+						else i--;
+						b_esc = true;
+					}
+				}
+				if(!b_esc) {
+					if((c & 0x80) != 0) {
+						if(c<0xe0) {
+							i++;
+							if(i >= number.length()) return;
+							c = ((c & 0x1f) << 6) | (((unsigned char) number[i]) & 0x3f);
+						} else if(c<0xf0) {
+							i++;
+							if(i + 1 >= number.length()) return;
+							c = (((c & 0xf) << 12) | ((((unsigned char) number[i]) & 0x3f) << 6)|(((unsigned char) number[i + 1]) & 0x3f));
+							i++;
+						} else {
+							i++;
+							if(i + 2 >= number.length()) return;
+							c = ((c & 7) << 18) | ((((unsigned char) number[i]) & 0x3f) << 12) | ((((unsigned char) number[i + 1]) & 0x3f) << 6) | (((unsigned char) number[i + 2]) & 0x3f);
+							i += 2;
+						}
+					}
+					if(abs_base.isLessThanOrEqualTo(c)) {
+						CALCULATOR->error(false, "Digit \'%s\' too high for number base.", number.substr(i_prev, i - i_prev + 1).c_str(), NULL);
+					}
+					digits.push_back(c);
+				}
+			}
+		}
+		clear();
+		if(i_dot > digits.size()) i_dot = digits.size();
+		Number nr_mul;
+		for(size_t i = 0; i < digits.size(); i++) {
+			long int exp = i_dot - 1 - i;
+			if(exp != 0) {
+				nr_mul = base;
+				nr_mul.raise(exp);
+				digits[i].multiply(nr_mul);
+			}
+			add(digits[i]);
+		}
+		if(b_minus) negate();
+		return;
+	}
+	
 	size_t pm_index = number.find(SIGN_PLUSMINUS);
 	if(pm_index == string::npos) pm_index = number.find("+/-");
 	if(pm_index != string::npos) {
@@ -539,25 +675,42 @@ void Number::set(string number, const ParseOptions &po) {
 		set(nr);
 		return;
 	}
+	
+	int base = po.base;
+	if(base == BASE_CUSTOM) {
+		if(CALCULATOR->customInputBase().isInteger()) {
+			base = CALCULATOR->customInputBase().intValue();
+			if(base < 0) base = -base;
+		} else {
+			Number nr = CALCULATOR->customInputBase();
+			nr.abs(); nr.ceil();
+			base = nr.intValue();
+		}
+		if(base < 2) base = 2;
+	} else if(base == BASE_GOLDEN_RATIO) {
+		base = 2;
+	} else if(base < 2 || base > 36) {
+		base = 10;
+	}
+	
 	long int i_unc = 0;
 	mpz_t num, den;
 	mpq_t unc;
 	mpz_init(num);
 	mpz_init_set_ui(den, 1);
-	int base = po.base;
+
 	remove_blank_ends(number);
-	if(base == 16 && number.length() >= 2 && number[0] == '0' && (number[1] == 'x' || number[1] == 'X')) {
+	if(po.base == 16 && number.length() >= 2 && number[0] == '0' && (number[1] == 'x' || number[1] == 'X')) {
 		number = number.substr(2, number.length() - 2);
-	} else if(base == 8 && number.length() >= 2 && number[0] == '0' && (number[1] == 'o' || number[1] == 'O')) {
+	} else if(po.base == 8 && number.length() >= 2 && number[0] == '0' && (number[1] == 'o' || number[1] == 'O')) {
 		number = number.substr(2, number.length() - 2);
-	} else if(base == 8 && number.length() > 1 && number[0] == '0' && number[1] != '.') {
+	} else if(po.base == 8 && number.length() > 1 && number[0] == '0' && number[1] != '.') {
 		number.erase(number.begin());
-	} else if(base == 2 && number.length() >= 2 && number[0] == '0' && (number[1] == 'b' || number[1] == 'B')) {
+	} else if(po.base == 2 && number.length() >= 2 && number[0] == '0' && (number[1] == 'b' || number[1] == 'B')) {
 		number = number.substr(2, number.length() - 2);
 	}
-	bool b_twos = (po.twos_complement && base == 2 && number.length() > 1 && number[0] == '1') || (po.hexadecimal_twos_complement && base == 16 && number.length() > 0 && (number[0] == '8' || number[0] == '9' || (number[0] >= 'a' && number[0] <= 'f') || (number[0] >= 'A' && number[0] <= 'F')));
-	if(base > 36) base = 36;
-	if(base < 0) base = 10;
+	bool b_twos = (po.twos_complement && po.base == 2 && number.length() > 1 && number[0] == '1') || (po.hexadecimal_twos_complement && po.base == 16 && number.length() > 0 && (number[0] == '8' || number[0] == '9' || (number[0] >= 'a' && number[0] <= 'f') || (number[0] >= 'A' && number[0] <= 'F')));
+
 	long int readprec = 0;
 	bool numbers_started = false, minus = false, in_decimals = false, b_cplx = false, had_nonzero = false;
 	for(size_t index = 0; index < number.size(); index++) {
@@ -573,7 +726,7 @@ void Number::set(string number, const ParseOptions &po) {
 			}
 			readprec++;
 			numbers_started = true;
-		} else if(base == BASE_DUODECIMAL && (number[index] == 'X' || number[index] == 'E' || number[index] == 'x' || number[index] == 'e')) {
+		} else if(po.base == BASE_DUODECIMAL && (number[index] == 'X' || number[index] == 'E' || number[index] == 'x' || number[index] == 'e')) {
 			mpz_mul_si(num, num, base);
 			mpz_add_ui(num, num, (number[index] == 'E' || number[index] == 'e') ? 11L : 10L);
 			if(in_decimals) {
@@ -595,10 +748,10 @@ void Number::set(string number, const ParseOptions &po) {
 			}
 			readprec++;
 			numbers_started = true;
-		} else if(base > 10 && number[index] >= 'A' && number[index] < 'A' + base - 10) {
+		} else if(base > 10 && number[index] >= 'A' && number[index] < 'A' + base - (base > 36 ? 36 : 10)) {
 			mpz_mul_si(num, num, base);
 			if(!b_twos || (number[index] != 'A' + (base - 11))) {
-				mpz_add_ui(num, num, b_twos ? (unsigned long int) (base - 1) - (number[index] - 'A' + 10) : (unsigned long int) number[index] - 'A' + 10);
+				mpz_add_ui(num, num, b_twos ? (unsigned long int) (base - 1) - (number[index] - 'A' + (base > 36 ? 36 : 10)) : (unsigned long int) number[index] - 'A' + 10);
 				if(!had_nonzero) readprec = 0;
 				had_nonzero = true;
 			}
@@ -697,7 +850,7 @@ void Number::set(string number, const ParseOptions &po) {
 				index++;
 				str_char += number[index];
 			}
-			CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), i2s(base).c_str(), NULL);
+			CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), po.base == BASE_CUSTOM ? CALCULATOR->customInputBase().print().c_str() : (po.base == BASE_GOLDEN_RATIO ? "golden ratio" : i2s(base).c_str()), NULL);
 		}
 	}
 	if(b_twos) {
@@ -7504,322 +7657,6 @@ ostream& operator << (ostream &os, const Number &nr) {
 	return os;
 }
 
-string Number::printWithCustomBase(Number base, bool *failed, const PrintOptions &po, const InternalPrintStruct &ips) const {
-	if(*failed) *failed = false;
-	if(base.isInteger() && base >= 2 && base <= 36) {
-		PrintOptions po2 = po;
-		po2.base = base.intValue();
-		return print(po2, ips);
-	}
-	if((base.isNegative() && !base.isInteger()) || !(base >= 1 || base <= -1) || !(base >= -1114112L) || !(base <= 1114112L)) {
-		if(*failed) *failed = true;
-		CALCULATOR->error(true, "Unsupported base", NULL);
-		return print(po, ips);
-	}
-	if(CALCULATOR->aborted()) {
-		if(*failed) *failed = true;
-		return CALCULATOR->abortedMessage();
-	}
-	if(isInterval()) {
-		Number nr(*this);
-		nr.intervalToPrecision();
-		return nr.printWithCustomBase(base, failed, po, ips);
-	}
-	if(base.isInterval()) {
-		Number nr_base(base);
-		nr_base.intervalToPrecision();
-		return printWithCustomBase(nr_base, failed, po, ips);
-	}
-	CALCULATOR->beginTemporaryStopIntervalArithmetic();
-	
-	Number abs_base(base);
-	abs_base.abs();
-	bool b_uni = abs_base > 62;
-	bool b_case = !b_uni && abs_base > 36;
-	
-	if(ips.minus) *ips.minus = false;
-	if(ips.exp_minus) *ips.exp_minus = false;
-	if(ips.num) *ips.num = "";
-	if(ips.den) *ips.den = "";
-	if(ips.exp) *ips.exp = "";
-	if(ips.re) *ips.re = "";
-	if(ips.im) *ips.im = "";
-	if(ips.iexp) *ips.iexp = 0;
-	if(po.is_approximate && (isApproximate() || base.isApproximate())) *po.is_approximate = true;
-	long int precision = PRECISION;
-	if(b_approx && i_precision >= 0 && (po.preserve_precision || po.preserve_format || i_precision < PRECISION)) precision = i_precision;
-	else if(b_approx && i_precision < 0 && po.preserve_precision && FROM_BIT_PRECISION(BIT_PRECISION) > precision) precision = FROM_BIT_PRECISION(BIT_PRECISION);
-	else if(b_approx && i_precision < 0 && po.preserve_format && FROM_BIT_PRECISION(BIT_PRECISION) - 1 > precision) precision = FROM_BIT_PRECISION(BIT_PRECISION) - 1;
-	if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < precision) precision = ips.parent_precision;
-	long int precision_base = precision;
-	Number precmax(10);
-	precmax.raise(precision_base);
-	precmax--;
-	precmax.log(abs_base);
-	precmax.floor();
-	precision_base = precmax.lintValue();
-	long int i_precision_base = precision_base;
-	if((i_precision < 0 && FROM_BIT_PRECISION(BIT_PRECISION) > precision) || i_precision > precision) {
-		if(i_precision < 0) i_precision_base = FROM_BIT_PRECISION(BIT_PRECISION);
-		else i_precision_base = i_precision;
-		if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < i_precision_base) i_precision_base = ips.parent_precision;
-		Number precmax(10);
-		precmax.raise(i_precision_base);
-		precmax--;
-		precmax.log(abs_base);
-		precmax.floor();
-		i_precision_base = precmax.lintValue();
-	}
-	bool approx = isApproximate() || base.isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision);
-	
-	string str;
-	
-	if(isZero()) {
-		if(b_uni) str += '\\';
-		str += '0';
-		if(po.show_ending_zeroes && approx) {
-			str += po.decimalpoint();
-			while(precision_base > 1) {
-				precision_base--;
-				if(b_uni) str += '\\';
-				str += '0';
-			}
-		}
-		if(ips.num) *ips.num = str;
-		return str;
-	}
-	
-	bool exact = false;
-	bool b_dp = false;
-	bool neg = false;
-	long int i_dp = 0;
-	Number nr(*this);
-	Number nr_log(*this);
-	nr_log.abs();
-	nr_log.log(abs_base);
-	nr_log.floor();
-	if(nr_log < -1000 || nr_log > 1000) {
-		if(*failed) *failed = true;
-		CALCULATOR->endTemporaryStopIntervalArithmetic();
-		return print(po, ips);
-	}
-	vector<long int> digits;
-	Number nr_digit;
-	if(base.isNegative()) {
-		nr_log++;
-		if(nr_log < precision_base && (!po.use_max_decimals || po.max_decimals > 0)) {
-			nr_log.subtract(precision_base);
-			nr_log.negate();
-			b_dp = true;
-			if(po.use_max_decimals && nr_log > po.max_decimals) nr_log = po.max_decimals;
-			i_dp = nr_log.lintValue();
-			Number nr_mul(base);
-			nr_mul.raise(nr_log);
-			nr.multiply(nr_mul);
-		}
-		Number nr_frac;
-		while(true) {
-			nr_digit = nr;
-			nr.divide(base);
-			nr_digit.mod(base);
-			nr.floor();
-			if(nr_digit.isNegative()) {
-				nr_digit += abs_base;
-				nr++;
-			}
-			if(digits.empty()) {
-				nr_frac = nr_digit;
-				nr_frac.frac();
-			}
-			nr_digit.floor();
-			digits.insert(digits.begin(), nr_digit.lintValue());
-			if(nr.isZero()) {
-				if(nr_frac.isZero()) {
-					exact = true; 
-					break;
-				}
-				nr_frac *= 2;
-				if(nr_frac.isGreaterThan(1) || (nr_frac.isOne() && (!po.round_halfway_to_even || digits[digits.size() - 1] % 2 == 1))) {
-					size_t i = digits.size();
-					while(i > 0) {
-						i--;
-						digits[i]++;
-						if(abs_base <= digits[i]) {
-							digits[i] = 0;
-							if(i == 0) {
-								digits.insert(digits.begin(), 1L);
-								digits.erase(digits.end() - 1);
-							}
-						} else {
-							break;
-						}
-					}
-				}
-				break;
-			}
-		}
-		i_dp = digits.size() - i_dp;
-		if(b_dp && (!po.show_ending_zeroes || (exact && !approx))) {
-			while(digits[digits.size() - 1] == 0) {
-				digits.erase(digits.end() - 1);
-				if((long int) digits.size() == i_dp) {
-					b_dp = false;
-					break;
-				}
-			}
-		}
-	} else {
-		if(nr_log.isNegative()) {
-			i_dp = nr_log.lintValue() + 1;
-			b_dp = true;
-		}
-		if(nr.isNegative()) {
-			nr.negate();
-			neg = true;
-		}
-		Number base_pow(base);
-		base_pow.raise(nr_log);
-		while(true) {
-			if(CALCULATOR->aborted()) {
-				if(*failed) *failed = true;
-				CALCULATOR->endTemporaryStopIntervalArithmetic();
-				return CALCULATOR->abortedMessage();
-			}
-			bool do_break = (b_dp && ((long int) digits.size() == precision_base || (po.use_max_decimals && po.max_decimals == (long int) digits.size() - i_dp)));
-			if(!b_dp && nr_log.isNegative()) {
-				if((long int) digits.size() >= precision_base || (po.use_max_decimals && po.max_decimals == 0)) {
-					do_break = true;
-				} else {
-					i_dp = digits.size();
-					b_dp = true;
-				}
-			}
-			if(do_break) {
-				nr.divide(base);
-				nr.multiply(2);
-				if(nr.isGreaterThan(base_pow) || (nr == base_pow && (!po.round_halfway_to_even || digits[digits.size() - 1] % 2 == 1))) {
-					size_t i = digits.size();
-					while(i > 0) {
-						i--;
-						digits[i]++;
-						if(base <= digits[i]) {
-							digits[i] = 0;
-							if(i == 0) {
-								digits.insert(digits.begin(), 1L);
-								if(b_dp) i_dp++;
-								digits.erase(digits.end() - 1);
-							}
-						} else {
-							break;
-						}
-					}
-				}
-				break;
-			}
-			if(nr == base_pow) {
-				digits.push_back(1L);
-				exact = true;
-				nr.clear();
-			} else {
-				nr_digit = nr;
-				nr_digit.divide(base_pow);
-				nr_digit.floor();
-				digits.push_back(nr_digit.lintValue());
-				nr_digit.multiply(base_pow);
-				nr -= nr_digit;
-				base_pow.divide(base);
-			}
-			if(nr.isZero()) {
-				while(nr_log > 0) {digits.push_back(0L); nr_log--;}
-				exact = true; 
-				break;
-			}
-			nr_log--;
-		}
-		if(po.show_ending_zeroes && (approx || !exact) && digits.size() != 1 && (long int) digits.size() < precision_base) {
-			if(digits.empty()) digits.push_back(0L);
-			if(!b_dp) {b_dp = true; i_dp = digits.size();}
-			while((long int) digits.size() < precision_base) {
-				digits.push_back(0L);
-			}
-		}
-	}
-	if(po.is_approximate && !exact) *po.is_approximate = true;
-	if(b_dp && i_dp < 0) {
-		b_dp = false;
-		if(b_uni) str += '\\';
-		str += '0';
-		if(b_uni) str += '\\';
-		str += po.decimalpoint();
-		while(i_dp < 0) {
-			i_dp++; 
-			if(b_uni) str += '\\';
-			str += '0';
-		}
-	}
-	for(size_t index = 0; index < digits.size(); index++) {
-		long int c = digits[index];
-		if(b_dp && (size_t) i_dp == index) {
-			if(str.empty()) {
-				if(b_uni) str += '\\';
-				str += '0';
-			}
-			if(b_uni) str += '\\';
-			str += po.decimalpoint();
-			b_dp = false;
-		}
-		if(b_uni) {
-			if(c < 32) {
-				str += '\\';
-				str += i2s(c);
-			} else {
-				if(c <= 0x7f) {
-					str += (char) c;
-				} else if(c <= 0x7ff) {
-					str += (char) ((c >> 6) | 0xc0);
-					str += (char) ((c & 0x3f) | 0x80);
-				} else if((c <= 0xd7ff || (0xe000 <= c && c <= 0xffff))) {
-					str += (char) ((c >> 12) | 0xe0);
-					str += (char) (((c >> 6) & 0x3f) | 0x80);
-					str += (char) ((c & 0x3f) | 0x80);
-				} else if(0xffff < c && c <= 0x10ffff) {
-					str += (char) ((c >> 18) | 0xf0);
-					str += (char) (((c >> 12) & 0x3f) | 0x80);
-					str += (char) (((c >> 6) & 0x3f) | 0x80);
-					str += (char) ((c & 0x3f) | 0x80);
-				} else {
-					str += '\\';
-					str += i2s(c);
-				}
-			}
-		} else {
-			if(c <= 9) {
-				str += '0' + c;
-			} else if(b_case) {
-				if(c < 36) str += 'a' + (c - 10);
-				else str += 'A' + (c - 36);
-			} else if(po.lower_case_numbers) {
-				str += 'a' + (c - 10);
-			} else {
-				str += 'A' + (c - 10);
-			}
-		}
-	}
-	if(str.empty()) {
-		if(b_uni) str += '\\';
-		str += '0';
-	}
-	CALCULATOR->endTemporaryStopIntervalArithmetic();
-	if(ips.minus) {
-		*ips.minus = neg;
-	} else if(neg) {
-		if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str.insert(0, SIGN_MINUS);
-		else str.insert(0, "-");
-	}
-	if(ips.num) *ips.num = str;
-	return str;
-}
-
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
 	if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 	if(ips.minus) *ips.minus = false;
@@ -7831,6 +7668,319 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.im) *ips.im = "";
 	if(ips.iexp) *ips.iexp = 0;
 	if(po.is_approximate && isApproximate()) *po.is_approximate = true;
+	if(po.base <= BASE_CUSTOM) {
+		Number base;
+		if(po.base == BASE_GOLDEN_RATIO) {
+			base.set(5);
+			base.sqrt();
+			base.add(1);
+			base.divide(2);
+		} else if(po.base == BASE_UNICODE) {
+			base.set(1114112L);
+		} else {
+			base = CALCULATOR->customOutputBase();
+		}
+		if(base.isInteger() && base >= 2 && base <= 36) {
+			PrintOptions po2 = po;
+			po2.base = base.intValue();
+			return print(po2, ips);
+		}
+		if((base.isNegative() && !base.isInteger()) || !(base >= 1 || base <= -1) || !(base >= -1114112L) || !(base <= 1114112L)) {
+			CALCULATOR->error(true, _("Unsupported base"), NULL);
+			PrintOptions po2 = po;
+			po2.base = BASE_DECIMAL;
+			return print(po2, ips);
+		}
+		if(isInterval()) {
+			Number nr(*this);
+			nr.intervalToPrecision();
+			return nr.print(po, ips);
+		}
+		if(base.isInterval()) {
+			base.intervalToPrecision();
+		}
+		CALCULATOR->beginTemporaryStopIntervalArithmetic();
+		
+		Number abs_base(base);
+		abs_base.abs();
+		bool b_uni = abs_base > 62;
+		bool b_case = !b_uni && abs_base > 36;
+		
+		if(po.is_approximate && base.isApproximate()) *po.is_approximate = true;
+		long int precision = PRECISION;
+		if(b_approx && i_precision >= 0 && (po.preserve_precision || po.preserve_format || i_precision < PRECISION)) precision = i_precision;
+		else if(b_approx && i_precision < 0 && po.preserve_precision && FROM_BIT_PRECISION(BIT_PRECISION) > precision) precision = FROM_BIT_PRECISION(BIT_PRECISION);
+		else if(b_approx && i_precision < 0 && po.preserve_format && FROM_BIT_PRECISION(BIT_PRECISION) - 1 > precision) precision = FROM_BIT_PRECISION(BIT_PRECISION) - 1;
+		if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < precision) precision = ips.parent_precision;
+		long int precision_base = precision;
+		Number precmax(10);
+		precmax.raise(precision_base);
+		precmax--;
+		precmax.log(abs_base);
+		precmax.floor();
+		precision_base = precmax.lintValue();
+		long int i_precision_base = precision_base;
+		if((i_precision < 0 && FROM_BIT_PRECISION(BIT_PRECISION) > precision) || i_precision > precision) {
+			if(i_precision < 0) i_precision_base = FROM_BIT_PRECISION(BIT_PRECISION);
+			else i_precision_base = i_precision;
+			if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < i_precision_base) i_precision_base = ips.parent_precision;
+			Number precmax(10);
+			precmax.raise(i_precision_base);
+			precmax--;
+			precmax.log(abs_base);
+			precmax.floor();
+			i_precision_base = precmax.lintValue();
+		}
+		bool approx = isApproximate() || base.isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision);
+		
+		string str;
+		
+		if(isZero()) {
+			if(b_uni) str += '\\';
+			str += '0';
+			if(po.show_ending_zeroes && approx) {
+				str += po.decimalpoint();
+				while(precision_base > 1) {
+					precision_base--;
+					if(b_uni) str += '\\';
+					str += '0';
+				}
+			}
+			if(ips.num) *ips.num = str;
+			return str;
+		}
+		
+		bool exact = false;
+		bool b_dp = false;
+		bool neg = false;
+		long int i_dp = 0;
+		Number nr(*this);
+		Number nr_log(*this);
+		nr_log.abs();
+		nr_log.log(abs_base);
+		nr_log.floor();
+		if(nr_log < -1000 || nr_log > 1000) {
+			CALCULATOR->endTemporaryStopIntervalArithmetic();
+			PrintOptions po2 = po;
+			po2.base = BASE_DECIMAL;
+			return print(po2, ips);
+		}
+		vector<long int> digits;
+		Number nr_digit;
+		if(base.isNegative()) {
+			nr_log++;
+			if(nr_log < precision_base && (!po.use_max_decimals || po.max_decimals != 0)) {
+				nr_log.subtract(precision_base);
+				nr_log.negate();
+				b_dp = true;
+				if(po.use_max_decimals && po.max_decimals >= 0 && nr_log > po.max_decimals) nr_log = po.max_decimals;
+				i_dp = nr_log.lintValue();
+				Number nr_mul(base);
+				nr_mul.raise(nr_log);
+				nr.multiply(nr_mul);
+			}
+			Number nr_frac;
+			while(true) {
+				nr_digit = nr;
+				nr.divide(base);
+				nr_digit.mod(base);
+				nr.floor();
+				if(nr_digit.isNegative()) {
+					nr_digit += abs_base;
+					nr++;
+				}
+				if(digits.empty()) {
+					nr_frac = nr_digit;
+					nr_frac.frac();
+				}
+				nr_digit.floor();
+				digits.insert(digits.begin(), nr_digit.lintValue());
+				if(nr.isZero()) {
+					if(nr_frac.isZero()) {
+						exact = true; 
+						break;
+					}
+					nr_frac *= 2;
+					if(nr_frac.isGreaterThan(1) || (nr_frac.isOne() && (!po.round_halfway_to_even || digits[digits.size() - 1] % 2 == 1))) {
+						size_t i = digits.size();
+						while(i > 0) {
+							i--;
+							digits[i]++;
+							if(abs_base <= digits[i]) {
+								digits[i] = 0;
+								if(i == 0) {
+									digits.insert(digits.begin(), 1L);
+									digits.erase(digits.end() - 1);
+								}
+							} else {
+								break;
+							}
+						}
+					}
+					break;
+				}
+			}
+			i_dp = digits.size() - i_dp;
+			if(b_dp && (!po.show_ending_zeroes || (exact && !approx))) {
+				while(digits[digits.size() - 1] == 0) {
+					digits.erase(digits.end() - 1);
+					if((long int) digits.size() == i_dp) {
+						b_dp = false;
+						break;
+					}
+				}
+			}
+		} else {
+			if(nr_log.isNegative()) {
+				i_dp = nr_log.lintValue() + 1;
+				b_dp = true;
+			}
+			if(nr.isNegative()) {
+				nr.negate();
+				neg = true;
+			}
+			Number base_pow(base);
+			base_pow.raise(nr_log);
+			while(true) {
+				if(CALCULATOR->aborted()) {
+					CALCULATOR->endTemporaryStopIntervalArithmetic();
+					return CALCULATOR->abortedMessage();
+				}
+				bool do_break = (b_dp && ((long int) digits.size() == precision_base || (po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals == (long int) digits.size() - i_dp)));
+				if(!b_dp && nr_log.isNegative()) {
+					if((long int) digits.size() >= precision_base || (po.use_max_decimals && po.max_decimals == 0)) {
+						do_break = true;
+					} else {
+						i_dp = digits.size();
+						b_dp = true;
+					}
+				}
+				if(do_break) {
+					nr.divide(base);
+					nr.multiply(2);
+					if(nr.isGreaterThan(base_pow) || (nr == base_pow && (!po.round_halfway_to_even || digits[digits.size() - 1] % 2 == 1))) {
+						size_t i = digits.size();
+						while(i > 0) {
+							i--;
+							digits[i]++;
+							if(base <= digits[i]) {
+								digits[i] = 0;
+								if(i == 0) {
+									digits.insert(digits.begin(), 1L);
+									if(b_dp) i_dp++;
+									digits.erase(digits.end() - 1);
+								}
+							} else {
+								break;
+							}
+						}
+					}
+					break;
+				}
+				if(nr == base_pow) {
+					digits.push_back(1L);
+					exact = true;
+					nr.clear();
+				} else {
+					nr_digit = nr;
+					nr_digit.divide(base_pow);
+					nr_digit.floor();
+					digits.push_back(nr_digit.lintValue());
+					nr_digit.multiply(base_pow);
+					nr -= nr_digit;
+					base_pow.divide(base);
+				}
+				if(nr.isZero()) {
+					while(nr_log > 0) {digits.push_back(0L); nr_log--;}
+					exact = true; 
+					break;
+				}
+				nr_log--;
+			}
+			if(po.show_ending_zeroes && (approx || !exact) && digits.size() != 1 && (long int) digits.size() < precision_base) {
+				if(digits.empty()) digits.push_back(0L);
+				if(!b_dp) {b_dp = true; i_dp = digits.size();}
+				while((long int) digits.size() < precision_base) {
+					digits.push_back(0L);
+				}
+			}
+		}
+		if(po.is_approximate && !exact) *po.is_approximate = true;
+		if(b_dp && i_dp < 0) {
+			b_dp = false;
+			if(b_uni) str += '\\';
+			str += '0';
+			if(b_uni) str += '\\';
+			str += po.decimalpoint();
+			while(i_dp < 0) {
+				i_dp++; 
+				if(b_uni) str += '\\';
+				str += '0';
+			}
+		}
+		for(size_t index = 0; index < digits.size(); index++) {
+			long int c = digits[index];
+			if(b_dp && (size_t) i_dp == index) {
+				if(str.empty()) {
+					if(b_uni) str += '\\';
+					str += '0';
+				}
+				if(b_uni) str += '\\';
+				str += po.decimalpoint();
+				b_dp = false;
+			}
+			if(b_uni) {
+				if(c < 32) {
+					str += '\\';
+					str += i2s(c);
+				} else {
+					if(c <= 0x7f) {
+						str += (char) c;
+					} else if(c <= 0x7ff) {
+						str += (char) ((c >> 6) | 0xc0);
+						str += (char) ((c & 0x3f) | 0x80);
+					} else if((c <= 0xd7ff || (0xe000 <= c && c <= 0xffff))) {
+						str += (char) ((c >> 12) | 0xe0);
+						str += (char) (((c >> 6) & 0x3f) | 0x80);
+						str += (char) ((c & 0x3f) | 0x80);
+					} else if(0xffff < c && c <= 0x10ffff) {
+						str += (char) ((c >> 18) | 0xf0);
+						str += (char) (((c >> 12) & 0x3f) | 0x80);
+						str += (char) (((c >> 6) & 0x3f) | 0x80);
+						str += (char) ((c & 0x3f) | 0x80);
+					} else {
+						str += '\\';
+						str += i2s(c);
+					}
+				}
+			} else {
+				if(c <= 9) {
+					str += '0' + c;
+				} else if(b_case) {
+					if(c < 36) str += 'a' + (c - 10);
+					else str += 'A' + (c - 36);
+				} else if(po.lower_case_numbers) {
+					str += 'a' + (c - 10);
+				} else {
+					str += 'A' + (c - 10);
+				}
+			}
+		}
+		if(str.empty()) {
+			if(b_uni) str += '\\';
+			str += '0';
+		}
+		CALCULATOR->endTemporaryStopIntervalArithmetic();
+		if(ips.minus) {
+			*ips.minus = neg;
+		} else if(neg) {
+			if(b_uni) str.insert(0, "\\-");
+			else if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str.insert(0, SIGN_MINUS);
+			else str.insert(0, "-");
+		}
+		if(ips.num) *ips.num = str;
+		return str;
+	}
 	if((po.base == BASE_SEXAGESIMAL || po.base == BASE_TIME) && isReal()) {
 		Number nr(*this);
 		bool neg = nr.isNegative();

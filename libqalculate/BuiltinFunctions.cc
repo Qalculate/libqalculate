@@ -5073,95 +5073,7 @@ int HexFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }
-bool unicode_to_vector(MathStructure &mstruct, const string &str, const EvaluationOptions &eo, Number *nr = NULL, bool escaped = false, size_t *i_dot = NULL) {
-	if(str.length() == 0) {mstruct.clear(); return true;}
-	mstruct.setUndefined();
-	if(i_dot) *i_dot = str.length();
-	for(size_t i = 0; i < str.length(); i++) {
-		size_t i_prev = i;
-		long int c = (unsigned char) str[i];
-		bool b_esc = false;
-		if(escaped && str[i] == '\\' && i < str.length() - 1) {
-			i++;
-			Number nrd;
-			bool b_minus = false;
-			if(str[i] == (char) -30 && i + 3 < str.length() && str[i + 1] == (char) -120 && str[i + 2] == (char) -110) {
-				i += 3;
-				b_minus = true;
-			} else if(str[i] == '-' && i < str.length() - 1) {
-				i++;
-				b_minus = true;
-			}
-			if(is_in(NUMBERS, str[i])) {
-				size_t i2 = str.find_first_not_of(NUMBERS, i);
-				if(i2 == string::npos) i2 = str.length();
-				nrd.set(str.substr(i, i2 - i));
-				if(b_minus) nrd.negate();
-				i = i2 - 1;
-				b_esc = true;
-			} else if(!b_minus && str[i] == 'x' && i < str.length() - 1 && is_in(NUMBERS "ABCDEFabcdef", str[i + 1])) {
-				i++;
-				size_t i2 = str.find_first_not_of(NUMBERS "ABCDEFabcdef", i);
-				if(i2 == string::npos) i2 = str.length();
-				ParseOptions po;
-				po.base = BASE_HEXADECIMAL;
-				nrd.set(str.substr(i, i2 - i), po);
-				i = i2 - 1;
-				b_esc = true;
-			}
-			if(i_dot && *i_dot == str.size() && !b_minus && (str[i] == CALCULATOR->getDecimalPoint()[0] || (!eo.parse_options.dot_as_separator && str[i] == '.'))) {
-				*i_dot = (mstruct.isUndefined() ? 0 : (mstruct.isVector() ? mstruct.size() : 1));
-				b_esc = true;
-			} else if(b_esc) {
-				if(nr && nr->isLessThanOrEqualTo(nrd)) {
-					CALCULATOR->error(false, "Digit \'%s\' too high for number base.", str.substr(i_prev, i - i_prev + 1).c_str(), NULL);
-				}
-				if(mstruct.isUndefined()) {
-					mstruct.set(nrd);
-				} else if(mstruct.isVector()) {
-					mstruct.addChild(nrd);
-				} else {
-					mstruct.transform(STRUCT_VECTOR, nrd);
-				}
 
-			} else {
-				if(b_minus) i = str.rfind('\\', i);
-				else i--;
-				b_esc = true;
-			}
-		}
-		if(!b_esc) {
-			if((c & 0x80) != 0) {
-				if(c<0xe0) {
-					i++;
-					if(i >= str.length()) return false;
-					c =((c & 0x1f) << 6) | (((unsigned char) str[i]) & 0x3f);
-				} else if(c<0xf0) {
-					i++;
-					if(i + 1 >= str.length()) return false;
-					c= (((c & 0xf) << 12) | ((((unsigned char) str[i]) & 0x3f) << 6)|(((unsigned char) str[i + 1]) & 0x3f));
-					i++;
-				} else {
-					i++;
-					if(i + 2 >= str.length()) return false;
-					c = ((c & 7) << 18) | ((((unsigned char) str[i]) & 0x3f) << 12) | ((((unsigned char) str[i + 1]) & 0x3f) << 6) | (((unsigned char) str[i + 2]) & 0x3f);
-					i += 2;
-				}
-			}
-			if(nr && nr->isLessThanOrEqualTo(c)) {
-				CALCULATOR->error(false, "Digit \'%s\' too high for number base.", str.substr(i_prev, i - i_prev + 1).c_str(), NULL);
-			}
-			if(mstruct.isUndefined()) {
-				mstruct.set(c, 1L, 0L);
-			} else if(mstruct.isVector()) {
-				mstruct.addChild(MathStructure(c, 1L, 0L));
-			} else {
-				mstruct.transform(STRUCT_VECTOR, MathStructure(c, 1L, 0L));
-			}
-		}
-	}
-	return true;
-}
 BaseFunction::BaseFunction() : MathFunction("base", 2) {
 	setArgumentDefinition(1, new TextArgument());
 	NumberArgument *arg = new NumberArgument();
@@ -5169,70 +5081,16 @@ BaseFunction::BaseFunction() : MathFunction("base", 2) {
 	setArgumentDefinition(2, arg);
 }
 int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	ParseOptions po = eo.parse_options;
 	if(vargs[1].isInteger() && vargs[1].number() >= 2 && vargs[1].number() <= 36) {
-		ParseOptions po = eo.parse_options;
 		po.base = vargs[1].number().intValue();
 		CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	} else {
-		string str = vargs[0].symbol();
-		Number abs_base(vargs[1].number());
-		abs_base.abs();
-		size_t i_dot = str.size();
-		if(abs_base <= 62) {
-			remove_blanks(str);
-			str = CALCULATOR->unlocalizeExpression(str, eo.parse_options);
-			mstruct.setUndefined();
-			i_dot = str.length();
-			bool b_case = abs_base > 36;
-			for(size_t i = 0; i < str.length(); i++) {
-				long int c = -1;
-				if(str[i] >= '0' && str[i] <= '9') {
-					c = str[i] - '0';
-				} else if(str[i] >= 'a' && str[i] <= 'z') {
-					c = str[i] - 'a' + 10;
-				} else if(str[i] >= 'A' && str[i] <= 'Z') {
-					if(b_case) c = str[i] - 'A' + 36;
-					else c = str[i] - 'A' + 10;
-				} else if(str[i] == '.') {
-					if(i_dot == str.size()) i_dot = (mstruct.isUndefined() ? 0 : (mstruct.isVector() ? mstruct.size() : 1));
-				} else {
-					string str_char = str.substr(i, 1);
-					while(i + 1 < str.length() && str[i + 1] < 0 && str[i + 1] && (unsigned char) str[i + 1] < 0xC0) {
-						i++;
-						str_char += str[i];
-					}
-					CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), str.c_str(), format_and_print(vargs[1]).c_str(), NULL);
-				}
-				if(c >= 0) {
-					if(abs_base <= c && !abs_base.isFraction()) {
-						CALCULATOR->error(false, "Digit \'%s\' too high for number base.", str.substr(i, 1).c_str(), NULL);
-					}
-					if(mstruct.isUndefined()) {
-						mstruct.set(c, 1L, 0L);
-					} else if(mstruct.isVector()) {
-						mstruct.addChild(MathStructure(c, 1L, 0L));
-					} else {
-						mstruct.transform(STRUCT_VECTOR, MathStructure(c, 1L, 0L));
-					}
-				}
-			}
-			if(mstruct.isUndefined()) mstruct.clear();
-		} else if(!unicode_to_vector(mstruct, str, eo, &abs_base, true, &i_dot)) {
-			return 0;
-		}
-		if(!mstruct.isVector()) {
-			if(i_dot == 0) mstruct /= vargs[1];
-			return 1;
-		}
-		if(i_dot > mstruct.size()) i_dot = mstruct.size();
-		for(size_t i = 0; i < mstruct.size(); i++) {
-			long int exp = i_dot - 1 - i;
-			if(exp != 0) {
-				mstruct[i] *= vargs[1];
-				if(exp != 1) mstruct[i].last() ^= Number(exp);
-			}
-		}
-		mstruct.setType(STRUCT_ADDITION);
+		po.base = BASE_CUSTOM;
+		Number cb_save = CALCULATOR->customInputBase();
+		CALCULATOR->setCustomInputBase(vargs[1].number());
+		CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
+		CALCULATOR->setCustomInputBase(cb_save);
 	}
 	return 1;
 }
@@ -5256,11 +5114,39 @@ int RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 AsciiFunction::AsciiFunction() : MathFunction("code", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
-int AsciiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int AsciiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	if(vargs[0].symbol().empty()) {
 		return false;
 	}
-	if(!unicode_to_vector(mstruct, vargs[0].symbol(), eo)) return 0;
+	const string &str = vargs[0].symbol();
+	mstruct.clear();
+	for(size_t i = 0; i < str.length(); i++) {
+		long int c = (unsigned char) str[i];
+		if((c & 0x80) != 0) {
+			if(c<0xe0) {
+				i++;
+				if(i >= str.length()) return false;
+				c = ((c & 0x1f) << 6) | (((unsigned char) str[i]) & 0x3f);
+			} else if(c<0xf0) {
+				i++;
+				if(i + 1 >= str.length()) return false;
+				c = (((c & 0xf) << 12) | ((((unsigned char) str[i]) & 0x3f) << 6)|(((unsigned char) str[i + 1]) & 0x3f));
+				i++;
+			} else {
+				i++;
+				if(i + 2 >= str.length()) return false;
+				c = ((c & 7) << 18) | ((((unsigned char) str[i]) & 0x3f) << 12) | ((((unsigned char) str[i + 1]) & 0x3f) << 6) | (((unsigned char) str[i + 2]) & 0x3f);
+				i += 2;
+			}
+		}
+		if(mstruct.isZero()) {
+			mstruct.set(c, 1L, 0L);
+		} else if(mstruct.isVector()) {
+			mstruct.addChild(MathStructure(c, 1L, 0L));
+		} else {
+			mstruct.transform(STRUCT_VECTOR, MathStructure(c, 1L, 0L));
+		}
+	}
 	return 1;
 }
 CharFunction::CharFunction() : MathFunction("char", 1) {
@@ -7254,10 +7140,10 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			if(itry > 1) {
 				assumptions->setSign(as);
 				if(itry == 2) {
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
 				} else if(itry == 3) {
 					assumptions->setType(at);
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
 				}
 				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			}
@@ -7281,10 +7167,10 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			if(itry > 1) {
 				assumptions->setSign(as);
 				if(itry == 2) {
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
 				} else if(itry == 3) {
 					assumptions->setType(at);
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
 				}
 				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			}			
@@ -7364,10 +7250,10 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			if(itry > 1) {
 				assumptions->setSign(as);
 				if(itry == 2) {
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefor temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
 				} else if(itry == 3) {
 					assumptions->setType(at);
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefor temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
 				}
 				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			}

@@ -2371,7 +2371,7 @@ msgstr "Kon %s niet isoleren."
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed sign was "
-"therefor temporarily set as unknown."
+"therefore temporarily set as unknown."
 msgstr ""
 "Kon %s niet isoleren met de huidige aannames. Het aangenomen teken werd "
 "daarom tijdelijk als onbekend beschouwd."
@@ -2382,7 +2382,7 @@ msgstr ""
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed type and "
-"sign was therefor temporarily set as unknown."
+"sign was therefore temporarily set as unknown."
 msgstr ""
 "Kon %s niet isoleren met de huidige aannames. Het aangenomen type en teken "
 "werd daarom tijdelijk als onbekend beschouwd."
@@ -3088,8 +3088,8 @@ msgstr "':' in decimaal getal genegeerd (decimale komma gevonden)."
 
 #: ../libqalculate/Number.cc:695
 #, c-format
-msgid "Character '%c' was ignored in the number \"%s\" with base %s."
-msgstr "Karakter '%c' werd genegeerd in het getal \"%s\" met grondtal %s."
+msgid "Character '%s' was ignored in the number \"%s\" with base %s."
+msgstr "Karakter '%s' werd genegeerd in het getal \"%s\" met grondtal %s."
 
 #: ../libqalculate/Number.cc:1741 ../libqalculate/Number.cc:1863
 msgid "Floating point underflow"
