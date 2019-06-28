@@ -312,6 +312,9 @@ typedef enum {
 #define BASE_DUODECIMAL		12
 #define BASE_HEXADECIMAL	16
 #define BASE_SEXAGESIMAL	60
+#define BASE_CUSTOM		-3
+#define BASE_GOLDEN_RATIO	-4
+#define BASE_UNICODE		-5
 
 #define EXP_BASE_3		-3
 #define EXP_PRECISION		-1

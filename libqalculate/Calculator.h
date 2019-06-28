@@ -1144,6 +1144,11 @@ class Calculator {
 	void beginTemporaryEnableIntervalArithmetic();
 	void endTemporaryEnableIntervalArithmetic();
 	//@}
+	
+	void setCustomInputBase(Number nr);
+	void setCustomOutputBase(Number nr);
+	const Number &customInputBase() const;
+	const Number &customOutputBase() const;
 
 	/** @name Functions for localization */
 	//@{

@@ -2378,7 +2378,7 @@ msgstr "Impossible d'isoler %s."
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed sign was "
-"therefor temporarily set as unknown."
+"therefore temporarily set as unknown."
 msgstr ""
 "Impossible d'isoler %s avec les hypothèses courantes. Le signe supposé a été "
 "temporairement défini comme inconnu."
@@ -2389,7 +2389,7 @@ msgstr ""
 #, c-format
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed type and "
-"sign was therefor temporarily set as unknown."
+"sign was therefore temporarily set as unknown."
 msgstr ""
 "Impossible d'isoler %s avec les hypothèses courantes. Le type et le signe "
 "supposés ont été temporairement définis comme inconnus."
@@ -3095,8 +3095,8 @@ msgstr "':' dans les nombres décimaux ignoré (point décimal détecté)"
 
 #: ../libqalculate/Number.cc:695
 #, c-format
-msgid "Character '%c' was ignored in the number \"%s\" with base %s."
-msgstr "Le caractère '%c' a été ignoré dans le nombre \"%s\" avec la base %s."
+msgid "Character '%s' was ignored in the number \"%s\" with base %s."
+msgstr "Le caractère '%s' a été ignoré dans le nombre \"%s\" avec la base %s."
 
 #: ../libqalculate/Number.cc:1741 ../libqalculate/Number.cc:1863
 msgid "Floating point underflow"

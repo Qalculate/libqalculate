@@ -1716,21 +1716,22 @@ int main(int argc, char *argv[]) {
 	//test_intervals(true);
 	
 	Number nr;
-	bool failed = false;
 	evalops.approximation = APPROXIMATION_TRY_EXACT;
 	po.number_fraction_format = FRACTION_DECIMAL;
 	po.show_ending_zeroes = false;
-	po.use_max_decimals = true;
-	po.max_decimals = 1;
 	//while(nr >= -1000) {
 	nr.set("-22.49");
-		string str = nr.printWithCustomBase(CALCULATOR->calculate("-10").number(), &failed, po);
+	CALCULATOR->setCustomOutputBase(Number("-10"));
+	po.base = BASE_CUSTOM;
+		string str = nr.print(po);
+		po.base = BASE_DECIMAL;
 		string expr = "base(";
 		expr += str;
 		expr += ",-10)";
 		string str2 = CALCULATOR->calculateAndPrint(expr, 0, evalops, po);
-		cout << nr << ":" << str << ":" << str2 << ":" << failed << endl;
+		cout << nr << ":" << str << ":" << str2 << endl;
 		if(nr.print(po) != str2) sleep(1);
+		display_errors();
 		//nr--;
 	//}
 	return 0;
