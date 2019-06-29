@@ -2860,6 +2860,8 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	MathStructure mstruct;
 	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false, do_expand = false;
 	string from_str = str, to_str;
+	Number base_save;
+	if(printops.base == BASE_CUSTOM) base_save = customOutputBase();
 	if(separateToExpression(from_str, to_str, evalops, true)) {
 		remove_duplicate_blanks(to_str);
 		string to_str1, to_str2;
@@ -2949,9 +2951,18 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			str = from_str;
 			evalops.parse_options.units_enabled = true;
 			evalops.auto_post_conversion = POST_CONVERSION_BASE;
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base")) && s2i(to_str2) >= 2 && (s2i(to_str2) <= 36 || s2i(to_str2) == BASE_SEXAGESIMAL)) {
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base"))) {
 			str = from_str;
-			printops.base = s2i(to_str2);
+			EvaluationOptions eo = evalops;
+			eo.parse_options.base = 10;
+			MathStructure m = calculate(to_str2, eo);
+			if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
+				printops.base = m.number().intValue();
+			} else {
+				printops.base = BASE_CUSTOM;
+				base_save = customOutputBase();
+				setCustomOutputBase(m.number());
+			}
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _("mixed"))) {
 			str = from_str;
 			evalops.parse_options.units_enabled = true;
@@ -3029,6 +3040,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	mstruct.format(printops);
 	str = mstruct.print(printops);
 	stopControl();
+	if(printops.base == BASE_CUSTOM) setCustomOutputBase(base_save);
 	return str;
 }
 bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {

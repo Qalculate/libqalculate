@@ -339,6 +339,8 @@ void Number::set(string number, const ParseOptions &po) {
 		}
 		Number abs_base(base);
 		abs_base.abs();
+		abs_base.floor();
+		if(abs_base < 2) abs_base = 2;
 		size_t i_dot = number.length();
 		vector<Number> digits;
 		bool b_minus = false;
@@ -7685,7 +7687,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			po2.base = base.intValue();
 			return print(po2, ips);
 		}
-		if((base.isNegative() && !base.isInteger()) || !(base >= 1 || base <= -1) || !(base >= -1114112L) || !(base <= 1114112L)) {
+		if((base.isNegative() && !base.isInteger()) || !(base > 1 || base < -1) || !(base >= -1114112L) || !(base <= 1114112L)) {
 			CALCULATOR->error(true, _("Unsupported base"), NULL);
 			PrintOptions po2 = po;
 			po2.base = BASE_DECIMAL;
@@ -7716,7 +7718,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		Number precmax(10);
 		precmax.raise(precision_base);
 		precmax--;
-		precmax.log(abs_base);
+		precmax.log(abs_base < 2 ? 2 : abs_base);
 		precmax.floor();
 		precision_base = precmax.lintValue();
 		long int i_precision_base = precision_base;
@@ -7727,7 +7729,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			Number precmax(10);
 			precmax.raise(i_precision_base);
 			precmax--;
-			precmax.log(abs_base);
+			precmax.log(abs_base < 2 ? 2 : abs_base);
 			precmax.floor();
 			i_precision_base = precmax.lintValue();
 		}
@@ -9021,7 +9023,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(!po.preserve_precision) show_ending_zeroes = str.length() > str_unc.length() || precision == 2;
 			}
 			if(!rerun) {
-				if(str_unc.length() > str.length()) {
+				if(str_unc.empty() && po.use_max_decimals && po.max_decimals >= 0) {
+					use_max_idp = true;
+					rerun = true;
+					goto float_rerun;
+				} else if(str_unc.length() > str.length()) {
 					precision -= str_unc.length() - str.length();
 					if(precision <= 0) {
 						PrintOptions po2 = po;
