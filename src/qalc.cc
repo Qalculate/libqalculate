@@ -119,6 +119,7 @@ void update_message_print_options() {
 	PrintOptions message_printoptions = printops;
 	message_printoptions.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 	message_printoptions.show_ending_zeroes = false;
+	message_printoptions.base = 10;
 	if(printops.min_exp < -10 || printops.min_exp > 10 || ((printops.min_exp == EXP_PRECISION || printops.min_exp == EXP_NONE) && PRECISION > 10)) message_printoptions.min_exp = 10;
 	else if(printops.min_exp == EXP_NONE) message_printoptions.min_exp = EXP_PRECISION;
 	if(PRECISION > 10) {
@@ -638,8 +639,12 @@ void set_option(string str) {
 			MathStructure m;
 			EvaluationOptions eo = evalops;
 			eo.parse_options.base = 10;
+			eo.approximation = APPROXIMATION_TRY_EXACT;
+			CALCULATOR->beginTemporaryStopMessages();
 			CALCULATOR->calculate(&m, svalue, 500, eo);
-			if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
+			if(CALCULATOR->endTemporaryStopMessages()) {
+				v = 0;
+			} else if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
 				v = m.number().intValue();
 			} else if(m.isNumber() && (!m.number().isNegative() || m.number().isInteger()) && (m.number() > 1 || m.number() < -1) && m.number() >= -1114112L && m.number() <= 1114112L) {
 				v = BASE_CUSTOM;
@@ -2704,8 +2709,13 @@ int main(int argc, char *argv[]) {
 				EvaluationOptions eo = evalops;
 				eo.parse_options.base = 10;
 				MathStructure m;
+				eo.approximation = APPROXIMATION_TRY_EXACT;
+				CALCULATOR->beginTemporaryStopMessages();
 				CALCULATOR->calculate(&m, str2, 500, eo);
-				if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
+				if(CALCULATOR->endTemporaryStopMessages()) {
+					printops.base = BASE_CUSTOM;
+					CALCULATOR->setCustomOutputBase(nr_zero);
+				} else if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
 					printops.base = m.number().intValue();
 				} else {
 					printops.base = BASE_CUSTOM;
@@ -2844,7 +2854,7 @@ int main(int argc, char *argv[]) {
 				case BASE_TIME: {str += _("time"); break;}
 				case BASE_GOLDEN_RATIO: {str += "golden ratio"; break;}
 				case BASE_UNICODE: {str += "Unicode"; break;}
-				case BASE_CUSTOM: {str += CALCULATOR->customOutputBase().print(); break;}
+				case BASE_CUSTOM: {str += CALCULATOR->customOutputBase().print(CALCULATOR->messagePrintOptions()); break;}
 				default: {str += i2s(printops.base);}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -2948,7 +2958,7 @@ int main(int argc, char *argv[]) {
 				case BASE_ROMAN_NUMERALS: {str += _("roman"); break;}
 				case BASE_GOLDEN_RATIO: {str += "golden ratio"; break;}
 				case BASE_UNICODE: {str += "Unicode"; break;}
-				case BASE_CUSTOM: {str += CALCULATOR->customOutputBase().print(); break;}
+				case BASE_CUSTOM: {str += CALCULATOR->customOutputBase().print(CALCULATOR->messagePrintOptions()); break;}
 				default: {str += i2s(evalops.parse_options.base);}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -3545,7 +3555,7 @@ int main(int argc, char *argv[]) {
 				str += ", "; str += _("roman");
 				if(printops.base == BASE_ROMAN_NUMERALS) str += "*";
 				 str += ")";
-				if(printops.base == BASE_CUSTOM) {str += " "; str += CALCULATOR->customOutputBase().print(); str += "*";}
+				if(printops.base == BASE_CUSTOM) {str += " "; str += CALCULATOR->customOutputBase().print(CALCULATOR->messagePrintOptions()); str += "*";}
 				else if(printops.base == BASE_UNICODE) {str += " "; str += "Unicode"; str += "*";}
 				else if(printops.base == BASE_GOLDEN_RATIO) {str += " "; str += "golden ratio"; str += "*";}
 				else if(printops.base > 2 && printops.base <= 36 && printops.base != BASE_OCTAL && printops.base != BASE_DECIMAL && printops.base != BASE_HEXADECIMAL) {str += " "; str += i2s(printops.base); str += "*";}
@@ -3638,7 +3648,7 @@ int main(int argc, char *argv[]) {
 				str += ", "; str += _("roman");
 				if(evalops.parse_options.base == BASE_ROMAN_NUMERALS) str += "*";
 				str += ")";
-				if(evalops.parse_options.base == BASE_CUSTOM) {str += " "; str += CALCULATOR->customInputBase().print(); str += "*";}
+				if(evalops.parse_options.base == BASE_CUSTOM) {str += " "; str += CALCULATOR->customInputBase().print(CALCULATOR->messagePrintOptions()); str += "*";}
 				else if(evalops.parse_options.base == BASE_UNICODE) {str += " "; str += "Unicode"; str += "*";}
 				else if(evalops.parse_options.base == BASE_GOLDEN_RATIO) {str += " "; str += "golden ratio"; str += "*";}
 				else if(evalops.parse_options.base > 2 && evalops.parse_options.base != BASE_OCTAL && evalops.parse_options.base != BASE_DECIMAL && evalops.parse_options.base != BASE_HEXADECIMAL) {str += " "; str += i2s(evalops.parse_options.base); str += "*";}
@@ -4027,6 +4037,11 @@ void ViewThread::run() {
 			po.twos_complement = printops.twos_complement;
 			po.hexadecimal_twos_complement = printops.hexadecimal_twos_complement;
 			po.base = evalops.parse_options.base;
+			Number nr_base;
+			if(po.base == BASE_CUSTOM) {
+				nr_base = CALCULATOR->customOutputBase();
+				CALCULATOR->setCustomOutputBase(CALCULATOR->customInputBase());
+			}
 			po.abbreviate_names = false;
 			po.digit_grouping = printops.digit_grouping;
 			po.use_unicode_signs = printops.use_unicode_signs;
@@ -4042,6 +4057,9 @@ void ViewThread::run() {
 			read(&po.is_approximate);
 			mp.format(po);
 			parsed_text = mp.print(po);
+			if(po.base == BASE_CUSTOM) {
+				CALCULATOR->setCustomOutputBase(nr_base);
+			}
 		}
 		printops.allow_non_usable = false;
 		
@@ -4693,8 +4711,13 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				EvaluationOptions eo = evalops;
 				eo.parse_options.base = 10;
 				MathStructure m;
+				eo.approximation = APPROXIMATION_TRY_EXACT;
+				CALCULATOR->beginTemporaryStopMessages();
 				CALCULATOR->calculate(&m, to_str2, 500, eo);
-				if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
+				if(CALCULATOR->endTemporaryStopMessages()) {
+					printops.base = BASE_CUSTOM;
+					CALCULATOR->setCustomOutputBase(nr_zero);
+				} else if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
 					printops.base = m.number().intValue();
 				} else {
 					printops.base = BASE_CUSTOM;
@@ -5312,11 +5335,19 @@ void load_preferences() {
 				} else if(svar == "number_base") {
 					printops.base = v;
 				} else if(svar == "custom_number_base") {
-					CALCULATOR->setCustomOutputBase(Number(svalue));
+					CALCULATOR->beginTemporaryStopMessages();
+					MathStructure m;
+					CALCULATOR->calculate(&m, svalue, 500);
+					CALCULATOR->endTemporaryStopMessages();
+					CALCULATOR->setCustomOutputBase(m.number());
 				} else if(svar == "number_base_expression") {
-					evalops.parse_options.base = v;	
+					evalops.parse_options.base = v;
 				} else if(svar == "custom_number_base_expression") {
-					CALCULATOR->setCustomInputBase(Number(svalue));
+					CALCULATOR->beginTemporaryStopMessages();
+					MathStructure m;
+					CALCULATOR->calculate(&m, svalue, 500);
+					CALCULATOR->endTemporaryStopMessages();
+					CALCULATOR->setCustomInputBase(m.number());
 				} else if(svar == "read_precision") {
 					if(v >= DONT_READ_PRECISION && v <= READ_PRECISION_WHEN_DECIMALS) {
 						evalops.parse_options.read_precision = (ReadPrecisionMode) v;
@@ -5467,8 +5498,7 @@ void load_preferences() {
 	save preferences to ~/.config/qalculate/qalc.cfg
 	set mode to true to save current calculator mode
 */
-bool save_preferences(bool mode)
-{
+bool save_preferences(bool mode) {
 	FILE *file = NULL;
 	makeDir(getLocalDir());
 #ifdef HAVE_LIBREADLINE	

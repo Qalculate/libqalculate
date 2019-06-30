@@ -371,7 +371,7 @@ void Number::set(string number, const ParseOptions &po) {
 				}
 				if(c >= 0) {
 					if(abs_base <= c && !abs_base.isFraction()) {
-						CALCULATOR->error(false, "Digit \'%s\' too high for number base.", number.substr(i, 1).c_str(), NULL);
+						CALCULATOR->error(false, _("Digit \'%s\' is too high for number base."), number.substr(i, 1).c_str(), NULL);
 					}
 					digits.push_back(c);
 				}
@@ -412,13 +412,12 @@ void Number::set(string number, const ParseOptions &po) {
 						b_esc = true;
 					} else if(b_esc) {
 						if(abs_base.isLessThanOrEqualTo(nrd)) {
-							CALCULATOR->error(false, "Digit \'%s\' too high for number base.", number.substr(i_prev, i - i_prev + 1).c_str(), NULL);
+							CALCULATOR->error(false, _("Digit \'%s\' is too high for number base."), number.substr(i_prev, i - i_prev + 1).c_str(), NULL);
 						}
 						digits.push_back(nrd);
 
-					} else {
-						if(b_minus) i = number.rfind('\\', i);
-						else i--;
+					} else if(number[i] != '\\') {
+						i--;
 						b_esc = true;
 					}
 				}
@@ -441,7 +440,7 @@ void Number::set(string number, const ParseOptions &po) {
 						}
 					}
 					if(abs_base.isLessThanOrEqualTo(c)) {
-						CALCULATOR->error(false, "Digit \'%s\' too high for number base.", number.substr(i_prev, i - i_prev + 1).c_str(), NULL);
+						CALCULATOR->error(false, _("Digit \'%s\' is too high for number base."), number.substr(i_prev, i - i_prev + 1).c_str(), NULL);
 					}
 					digits.push_back(c);
 				}
@@ -7733,14 +7732,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			precmax.floor();
 			i_precision_base = precmax.lintValue();
 		}
-		bool approx = isApproximate() || base.isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision);
+		//bool approx = isApproximate() || base.isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision);
 		
 		string str;
 		
 		if(isZero()) {
 			if(b_uni) str += '\\';
 			str += '0';
-			if(po.show_ending_zeroes && approx) {
+			if(po.show_ending_zeroes && isApproximate()) {
 				str += po.decimalpoint();
 				while(precision_base > 1) {
 					precision_base--;
@@ -7823,7 +7822,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 			}
 			i_dp = digits.size() - i_dp;
-			if(b_dp && (!po.show_ending_zeroes || (exact && !approx))) {
+			if(b_dp && (!po.show_ending_zeroes || ((exact || base.isApproximate()) && !isApproximate()))) {
 				while(digits[digits.size() - 1] == 0) {
 					digits.erase(digits.end() - 1);
 					if((long int) digits.size() == i_dp) {
@@ -7899,11 +7898,19 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 				nr_log--;
 			}
-			if(po.show_ending_zeroes && (approx || !exact) && digits.size() != 1 && (long int) digits.size() < precision_base) {
+			if(po.show_ending_zeroes && (isApproximate() || (!exact && !base.isApproximate())) && digits.size() != 1 && (long int) digits.size() < precision_base) {
 				if(digits.empty()) digits.push_back(0L);
 				if(!b_dp) {b_dp = true; i_dp = digits.size();}
 				while((long int) digits.size() < precision_base) {
 					digits.push_back(0L);
+				}
+			} else if(b_dp && (!po.show_ending_zeroes || ((exact || base.isApproximate()) && !isApproximate()))) {
+				while(digits[digits.size() - 1] == 0) {
+					digits.erase(digits.end() - 1);
+					if((long int) digits.size() == i_dp) {
+						b_dp = false;
+						break;
+					}
 				}
 			}
 		}
@@ -7920,6 +7927,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				str += '0';
 			}
 		}
+		bool prev_esc = false;
 		for(size_t index = 0; index < digits.size(); index++) {
 			long int c = digits[index];
 			if(b_dp && (size_t) i_dp == index) {
@@ -7930,29 +7938,43 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(b_uni) str += '\\';
 				str += po.decimalpoint();
 				b_dp = false;
+				if(b_uni) prev_esc = true;
 			}
 			if(b_uni) {
-				if(c < 32) {
+				if(c <= 32 || (!po.use_unicode_signs && c > 0x7f)) {
 					str += '\\';
 					str += i2s(c);
+					prev_esc = true;
+				} else if(prev_esc && c >= '0' && c <= '9') {
+					str += '\\';
+					str += i2s(c);
+					prev_esc = true;
+				} else if(c <= 0x7f) {
+					if(c == '\\') str += '\\';
+					str += (char) c;
+					prev_esc = false;
 				} else {
-					if(c <= 0x7f) {
-						str += (char) c;
-					} else if(c <= 0x7ff) {
-						str += (char) ((c >> 6) | 0xc0);
-						str += (char) ((c & 0x3f) | 0x80);
+					string str_c;
+					if(c <= 0x7ff) {
+						str_c += (char) ((c >> 6) | 0xc0);
+						str_c += (char) ((c & 0x3f) | 0x80);
 					} else if((c <= 0xd7ff || (0xe000 <= c && c <= 0xffff))) {
-						str += (char) ((c >> 12) | 0xe0);
-						str += (char) (((c >> 6) & 0x3f) | 0x80);
-						str += (char) ((c & 0x3f) | 0x80);
+						str_c += (char) ((c >> 12) | 0xe0);
+						str_c += (char) (((c >> 6) & 0x3f) | 0x80);
+						str_c += (char) ((c & 0x3f) | 0x80);
 					} else if(0xffff < c && c <= 0x10ffff) {
-						str += (char) ((c >> 18) | 0xf0);
-						str += (char) (((c >> 12) & 0x3f) | 0x80);
-						str += (char) (((c >> 6) & 0x3f) | 0x80);
-						str += (char) ((c & 0x3f) | 0x80);
-					} else {
+						str_c += (char) ((c >> 18) | 0xf0);
+						str_c += (char) (((c >> 12) & 0x3f) | 0x80);
+						str_c += (char) (((c >> 6) & 0x3f) | 0x80);
+						str_c += (char) ((c & 0x3f) | 0x80);
+					}
+					if(str_c.empty() || (po.can_display_unicode_string_function && !(*po.can_display_unicode_string_function) (str_c.c_str(), po.can_display_unicode_string_arg))) {
 						str += '\\';
 						str += i2s(c);
+						prev_esc = true;
+					} else {
+						str += str_c;
+						prev_esc = false;
 					}
 				}
 			} else {
@@ -7966,6 +7988,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				} else {
 					str += 'A' + (c - 10);
 				}
+				prev_esc = false;
 			}
 		}
 		if(str.empty()) {
