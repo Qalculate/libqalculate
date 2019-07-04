@@ -606,7 +606,11 @@ void set_option(string str) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "roman", _("roman"))) v = BASE_ROMAN_NUMERALS;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "time", _("time"))) {if(b_in) v = 0; else v = BASE_TIME;}
 		else if(equalsIgnoreCase(svalue, "hex") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "hexadecimal", _("hexadecimal"))) v = BASE_HEXADECIMAL;
-		else if(equalsIgnoreCase(svalue, "golden")) v = BASE_GOLDEN_RATIO;
+		else if(equalsIgnoreCase(svalue, "golden") || svalue == "φ") v = BASE_GOLDEN_RATIO;
+		else if(equalsIgnoreCase(svalue, "supergolden") || svalue == "ψ") v = BASE_SUPER_GOLDEN_RATIO;
+		else if(equalsIgnoreCase(svalue, "pi") || svalue == "π") v = BASE_PI;
+		else if(svalue == "e") v = BASE_E;
+		else if(svalue == "sqrt(2)" || svalue == "sqrt 2" || svalue == "sqrt2" || svalue == "√2") v = BASE_SQRT2;
 		else if(equalsIgnoreCase(svalue, "unicode")) v = BASE_UNICODE;
 		else if(equalsIgnoreCase(svalue, "duo") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "duodecimal", _("duodecimal"))) v = 12;
 		else if(equalsIgnoreCase(svalue, "bin") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "binary", _("binary"))) v = BASE_BINARY;
@@ -641,7 +645,7 @@ void set_option(string str) {
 			eo.parse_options.base = 10;
 			eo.approximation = APPROXIMATION_TRY_EXACT;
 			CALCULATOR->beginTemporaryStopMessages();
-			CALCULATOR->calculate(&m, svalue, 500, eo);
+			CALCULATOR->calculate(&m, CALCULATOR->unlocalizeExpression(svalue, eo.parse_options), 500, eo);
 			if(CALCULATOR->endTemporaryStopMessages()) {
 				v = 0;
 			} else if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
@@ -2706,20 +2710,27 @@ int main(int argc, char *argv[]) {
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str1, "base", _("base"))) {
 				int save_base = printops.base;
 				Number save_nr = CALCULATOR->customOutputBase();
-				EvaluationOptions eo = evalops;
-				eo.parse_options.base = 10;
-				MathStructure m;
-				eo.approximation = APPROXIMATION_TRY_EXACT;
-				CALCULATOR->beginTemporaryStopMessages();
-				CALCULATOR->calculate(&m, str2, 500, eo);
-				if(CALCULATOR->endTemporaryStopMessages()) {
-					printops.base = BASE_CUSTOM;
-					CALCULATOR->setCustomOutputBase(nr_zero);
-				} else if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
-					printops.base = m.number().intValue();
-				} else {
-					printops.base = BASE_CUSTOM;
-					CALCULATOR->setCustomOutputBase(m.number());
+				if(equalsIgnoreCase(str2, "golden") || str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
+				else if(equalsIgnoreCase(str2, "supergolden") || str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
+				else if(equalsIgnoreCase(str2, "pi") || str2 == "π") printops.base = BASE_PI;
+				else if(str2 == "e") printops.base = BASE_E;
+				else if(str2 == "sqrt(2)" || str2 == "sqrt 2" || str2 == "sqrt2" || str2 == "√2") printops.base = BASE_SQRT2;
+				else {
+					EvaluationOptions eo = evalops;
+					eo.parse_options.base = 10;
+					MathStructure m;
+					eo.approximation = APPROXIMATION_TRY_EXACT;
+					CALCULATOR->beginTemporaryStopMessages();
+					CALCULATOR->calculate(&m, CALCULATOR->unlocalizeExpression(str2, eo.parse_options), 500, eo);
+					if(CALCULATOR->endTemporaryStopMessages()) {
+						printops.base = BASE_CUSTOM;
+						CALCULATOR->setCustomOutputBase(nr_zero);
+					} else if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
+						printops.base = m.number().intValue();
+					} else {
+						printops.base = BASE_CUSTOM;
+						CALCULATOR->setCustomOutputBase(m.number());
+					}
 				}
 				setResult(NULL, false);
 				CALCULATOR->setCustomOutputBase(save_nr);
@@ -2852,7 +2863,11 @@ int main(int argc, char *argv[]) {
 				case BASE_ROMAN_NUMERALS: {str += _("roman"); break;}
 				case BASE_SEXAGESIMAL: {str += _("sexagesimal"); break;}
 				case BASE_TIME: {str += _("time"); break;}
-				case BASE_GOLDEN_RATIO: {str += "golden ratio"; break;}
+				case BASE_GOLDEN_RATIO: {str += "golden"; break;}
+				case BASE_SUPER_GOLDEN_RATIO: {str += "supergolden"; break;}
+				case BASE_E: {str += "e"; break;}
+				case BASE_PI: {str += "pi"; break;}
+				case BASE_SQRT2: {str += "sqrt(2)"; break;}
 				case BASE_UNICODE: {str += "Unicode"; break;}
 				case BASE_CUSTOM: {str += CALCULATOR->customOutputBase().print(CALCULATOR->messagePrintOptions()); break;}
 				default: {str += i2s(printops.base);}
@@ -2956,7 +2971,11 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("input base"), "inbase"); 
 			switch(evalops.parse_options.base) {
 				case BASE_ROMAN_NUMERALS: {str += _("roman"); break;}
-				case BASE_GOLDEN_RATIO: {str += "golden ratio"; break;}
+				case BASE_GOLDEN_RATIO: {str += "golden"; break;}
+				case BASE_SUPER_GOLDEN_RATIO: {str += "supergolden"; break;}
+				case BASE_E: {str += "e"; break;}
+				case BASE_PI: {str += "pi"; break;}
+				case BASE_SQRT2: {str += "sqrt(2)"; break;}
 				case BASE_UNICODE: {str += "Unicode"; break;}
 				case BASE_CUSTOM: {str += CALCULATOR->customOutputBase().print(CALCULATOR->messagePrintOptions()); break;}
 				default: {str += i2s(evalops.parse_options.base);}
@@ -3557,7 +3576,11 @@ int main(int argc, char *argv[]) {
 				 str += ")";
 				if(printops.base == BASE_CUSTOM) {str += " "; str += CALCULATOR->customOutputBase().print(CALCULATOR->messagePrintOptions()); str += "*";}
 				else if(printops.base == BASE_UNICODE) {str += " "; str += "Unicode"; str += "*";}
-				else if(printops.base == BASE_GOLDEN_RATIO) {str += " "; str += "golden ratio"; str += "*";}
+				else if(printops.base == BASE_GOLDEN_RATIO) {str += " "; str += "golden"; str += "*";}
+				else if(printops.base == BASE_SUPER_GOLDEN_RATIO) {str += " "; str += "supergolden"; str += "*";}
+				else if(printops.base == BASE_E) {str += " "; str += "e"; str += "*";}
+				else if(printops.base == BASE_PI) {str += " "; str += "pi"; str += "*";}
+				else if(printops.base == BASE_SQRT2) {str += " "; str += "sqrt(2)"; str += "*";}
 				else if(printops.base > 2 && printops.base <= 36 && printops.base != BASE_OCTAL && printops.base != BASE_DECIMAL && printops.base != BASE_HEXADECIMAL) {str += " "; str += i2s(printops.base); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_2(_("base display"), "basedisp", "", printops.base_display, _("none"), _("normal"), _("alternative"));
@@ -3650,7 +3673,11 @@ int main(int argc, char *argv[]) {
 				str += ")";
 				if(evalops.parse_options.base == BASE_CUSTOM) {str += " "; str += CALCULATOR->customInputBase().print(CALCULATOR->messagePrintOptions()); str += "*";}
 				else if(evalops.parse_options.base == BASE_UNICODE) {str += " "; str += "Unicode"; str += "*";}
-				else if(evalops.parse_options.base == BASE_GOLDEN_RATIO) {str += " "; str += "golden ratio"; str += "*";}
+				else if(evalops.parse_options.base == BASE_GOLDEN_RATIO) {str += " "; str += "golden"; str += "*";}
+				else if(evalops.parse_options.base == BASE_SUPER_GOLDEN_RATIO) {str += " "; str += "supergolden"; str += "*";}
+				else if(evalops.parse_options.base == BASE_E) {str += " "; str += "e"; str += "*";}
+				else if(evalops.parse_options.base == BASE_PI) {str += " "; str += "pi"; str += "*";}
+				else if(evalops.parse_options.base == BASE_SQRT2) {str += " "; str += "sqrt(2)"; str += "*";}
 				else if(evalops.parse_options.base > 2 && evalops.parse_options.base != BASE_OCTAL && evalops.parse_options.base != BASE_DECIMAL && evalops.parse_options.base != BASE_HEXADECIMAL) {str += " "; str += i2s(evalops.parse_options.base); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("limit implicit multiplication"), "limimpl", "", evalops.parse_options.limit_implicit_multiplication);
@@ -3857,6 +3884,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- sex / sexagesimal (show as sexagesimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- roman (show as roman numerals)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- time (show in time format)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- base # (show in specified number base)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bases (show as binary, octal, decimal and hexadecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- rectangular / cartesian (show complex numbers in rectangular form)"));
@@ -4038,9 +4066,15 @@ void ViewThread::run() {
 			po.hexadecimal_twos_complement = printops.hexadecimal_twos_complement;
 			po.base = evalops.parse_options.base;
 			Number nr_base;
-			if(po.base == BASE_CUSTOM) {
+			if(po.base == BASE_CUSTOM && (CALCULATOR->usesIntervalArithmetic() || CALCULATOR->customInputBase().isRational()) && (CALCULATOR->customInputBase().isInteger() || !CALCULATOR->customInputBase().isNegative()) && (CALCULATOR->customInputBase() > 1 || CALCULATOR->customInputBase() < -1) && CALCULATOR->customInputBase() >= -1114112L && CALCULATOR->customInputBase() <= 1114112L) {
 				nr_base = CALCULATOR->customOutputBase();
 				CALCULATOR->setCustomOutputBase(CALCULATOR->customInputBase());
+			} else if(po.base == BASE_CUSTOM || (po.base < BASE_CUSTOM && !CALCULATOR->usesIntervalArithmetic() && po.base != BASE_UNICODE)) {
+				po.base = 10;
+				po.min_exp = 6;
+				po.use_max_decimals = true;
+				po.max_decimals = 5;
+				po.preserve_format = false;
 			}
 			po.abbreviate_names = false;
 			po.digit_grouping = printops.digit_grouping;
@@ -4708,20 +4742,27 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				Number save_nr = CALCULATOR->customOutputBase();
-				EvaluationOptions eo = evalops;
-				eo.parse_options.base = 10;
-				MathStructure m;
-				eo.approximation = APPROXIMATION_TRY_EXACT;
-				CALCULATOR->beginTemporaryStopMessages();
-				CALCULATOR->calculate(&m, to_str2, 500, eo);
-				if(CALCULATOR->endTemporaryStopMessages()) {
-					printops.base = BASE_CUSTOM;
-					CALCULATOR->setCustomOutputBase(nr_zero);
-				} else if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
-					printops.base = m.number().intValue();
-				} else {
-					printops.base = BASE_CUSTOM;
-					CALCULATOR->setCustomOutputBase(m.number());
+				if(equalsIgnoreCase(to_str2, "golden") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
+				else if(equalsIgnoreCase(to_str2, "supergolden") || to_str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
+				else if(equalsIgnoreCase(to_str2, "pi") || to_str2 == "π") printops.base = BASE_PI;
+				else if(to_str2 == "e") printops.base = BASE_E;
+				else if(to_str2 == "sqrt(2)" || to_str2 == "sqrt 2" || to_str2 == "sqrt2" || to_str2 == "√2") printops.base = BASE_SQRT2;
+				else {
+					EvaluationOptions eo = evalops;
+					eo.parse_options.base = 10;
+					MathStructure m;
+					eo.approximation = APPROXIMATION_TRY_EXACT;
+					CALCULATOR->beginTemporaryStopMessages();
+					CALCULATOR->calculate(&m, CALCULATOR->unlocalizeExpression(to_str2, eo.parse_options), 500, eo);
+					if(CALCULATOR->endTemporaryStopMessages()) {
+						printops.base = BASE_CUSTOM;
+						CALCULATOR->setCustomOutputBase(nr_zero);
+					} else if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
+						printops.base = m.number().intValue();
+					} else {
+						printops.base = BASE_CUSTOM;
+						CALCULATOR->setCustomOutputBase(m.number());
+					}
 				}
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				CALCULATOR->setCustomOutputBase(save_nr);
