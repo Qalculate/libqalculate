@@ -1954,6 +1954,7 @@ void Calculator::addBuiltinFunctions() {
 	f_base = addFunction(new BaseFunction());
 	f_bin = addFunction(new BinFunction());
 	f_oct = addFunction(new OctFunction());
+	addFunction(new DecFunction());
 	f_hex = addFunction(new HexFunction());
 	f_roman = addFunction(new RomanFunction());
 
@@ -2953,15 +2954,22 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			evalops.auto_post_conversion = POST_CONVERSION_BASE;
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base"))) {
 			str = from_str;
-			EvaluationOptions eo = evalops;
-			eo.parse_options.base = 10;
-			MathStructure m = calculate(to_str2, eo);
-			if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
-				printops.base = m.number().intValue();
-			} else {
-				printops.base = BASE_CUSTOM;
-				base_save = customOutputBase();
-				setCustomOutputBase(m.number());
+			if(equalsIgnoreCase(to_str2, "golden") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
+			else if(equalsIgnoreCase(to_str2, "supergolden") || to_str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
+			else if(equalsIgnoreCase(to_str2, "pi") || to_str2 == "π") printops.base = BASE_PI;
+			else if(to_str2 == "e") printops.base = BASE_E;
+			else if(to_str2 == "sqrt(2)" || to_str2 == "sqrt 2" || to_str2 == "sqrt2" || to_str2 == "√2") printops.base = BASE_SQRT2;
+			else {
+				EvaluationOptions eo = evalops;
+				eo.parse_options.base = 10;
+				MathStructure m = calculate(to_str2, eo);
+				if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
+					printops.base = m.number().intValue();
+				} else {
+					printops.base = BASE_CUSTOM;
+					base_save = customOutputBase();
+					setCustomOutputBase(m.number());
+				}
 			}
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _("mixed"))) {
 			str = from_str;
@@ -5281,8 +5289,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	int base = po.base;
 	if(base == BASE_CUSTOM) {
 		base = (int) priv->custom_input_base_i;
-	} else if(base == BASE_GOLDEN_RATIO) {
+	} else if(base == BASE_GOLDEN_RATIO || base == BASE_SUPER_GOLDEN_RATIO || base == BASE_SQRT2) {
 		base = 2;
+	} else if(base == BASE_PI) {
+		base = 4;
+	} else if(base == BASE_E) {
+		base = 3;
 	} else if(base == BASE_DUODECIMAL) {
 		base = -12;
 	} else if(base < 2 || base > 36) {
@@ -6436,7 +6448,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 }
 
-#define BASE_2_10 ((po.base >= 2 && po.base <= 10) || po.base == BASE_GOLDEN_RATIO || (po.base == BASE_CUSTOM && priv->custom_input_base_i <= 10))
+#define BASE_2_10 ((po.base >= 2 && po.base <= 10) || (po.base < BASE_CUSTOM && po.base != BASE_UNICODE) || (po.base == BASE_CUSTOM && priv->custom_input_base_i <= 10))
 
 bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOptions &po) {
 	mstruct->clear();

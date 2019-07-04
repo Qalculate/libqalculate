@@ -53,7 +53,7 @@ Other software using libqalculate include
    * Supports complex and infinite numbers
    * Propagation of uncertainty
    * Interval arithmetic (for determination of the number of significant digits or direct calculation with intervals of numbers)
-   * Supports all number bases from 2 to 36, time format and roman numerals
+   * Supports all common number bases, as well as negative and non-integer radices, sexagesimal numbers, time format, and roman numerals
    * Ability to disable functions, variables, units or unknown variables for less confusion: ex. when you do not want (a+b)^2 to mean (are+barn)^2 but ("a"+"b")^2
    * Controllable implicit multiplication
    * Matrices and vectors, and related operations (determinants etc.)
@@ -61,7 +61,7 @@ Other software using libqalculate include
    * Arbitrary precision
    * RPN mode
 * Result display:
-   * Supports all number bases from 2 to 36, plus sexagesimal numbers, time format and roman numerals
+   * Supports all common number bases, as well as negative and non-integer radices, sexagesimal numbers, time format, and roman numerals
    * Many customization options: precision, max/min decimals, multiplication sign, etc.
    * Exact or approximate
    * Fractions: 4 / 6 * 2 = 1.333... = 4/3 = 1 + 1/3

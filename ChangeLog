@@ -1,3 +1,9 @@
+2019-07-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* dec() function
+	* Fix show ending zereos for non-integer rational numbers with non-decimal radix
+	* Improved handling of interval arithmetics for cubic equations
+
 2019-06-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* General support for bases > 36, negative bases, and non-integer bases

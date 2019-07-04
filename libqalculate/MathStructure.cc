@@ -31351,14 +31351,23 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				
 					MathStructure mbak(*this);
 					
-					CALCULATOR->beginTemporaryStopIntervalArithmetic();
+					bool stop_iv = containsInterval(true, false, false, -2, false);
+					
+					cube_eq_stop_iv:
+					
+					CALCULATOR->beginTemporaryStopMessages();
+					
 					EvaluationOptions eo3 = eo2;
-					eo3.interval_calculation = INTERVAL_CALCULATION_NONE;
 					bool failed = false;
-					fix_intervals(*this, eo3, &failed);
+					if(stop_iv) {
+						CALCULATOR->beginTemporaryStopIntervalArithmetic();
+						eo3.interval_calculation = INTERVAL_CALCULATION_NONE;
+						fix_intervals(*this, eo3, &failed);
+					}
 					if(failed) {
 						set(mbak);
 						CALCULATOR->endTemporaryStopIntervalArithmetic();
+						CALCULATOR->endTemporaryStopMessages();
 					} else {
 						eo3.keep_zero_units = false;
 						
@@ -31396,7 +31405,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mdelta.add_nocopy(mdelta_e, true);
 						mdelta.calculatesub(eo3, eo);
 						
-						if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(mbak); return false;}
+						if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopMessages(); if(stop_iv) CALCULATOR->endTemporaryStopIntervalArithmetic(); set(mbak); return false;}
 						
 						int b_zero = -1;
 						int b_real = -1;
@@ -31427,7 +31436,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						MathStructure mdelta0;
 						int b0_zero = -1;
 						
-						if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(mbak); return false;}
+						if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopMessages(); if(stop_iv) CALCULATOR->endTemporaryStopIntervalArithmetic(); set(mbak); return false;}
 						
 						if(b_zero >= 0) {
 							// b^2 - 3ac
@@ -31450,7 +31459,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							}
 						}
 						
-						if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(mbak); return false;}
+						if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopMessages(); if(stop_iv) CALCULATOR->endTemporaryStopIntervalArithmetic(); set(mbak); return false;}
 
 						if(b_zero == 1) {
 							if(b0_zero == 1) {
@@ -31460,9 +31469,17 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								CHILD(1).calculateMultiply(mstruct_b, eo3);
 								CHILD(1).calculateDivide(mstruct_a, eo3);
 								CHILDREN_UPDATED;
-								CALCULATOR->endTemporaryStopIntervalArithmetic();
-								if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
-								fix_intervals(*this, eo2);
+								if(stop_iv) {
+									CALCULATOR->endTemporaryStopIntervalArithmetic();
+									if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
+									fix_intervals(*this, eo2);
+								} else if(containsInterval(true, false, false, -2, false)) {
+									set(mbak);
+									stop_iv = true;
+									CALCULATOR->endTemporaryStopMessages();
+									goto cube_eq_stop_iv;
+								}
+								CALCULATOR->endTemporaryStopMessages(true);
 								return true;
 							} else if(b0_zero == 0) {
 
@@ -31518,15 +31535,22 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								
 								calculatesub(eo3, eo, false);
 								
-								CALCULATOR->endTemporaryStopIntervalArithmetic();
-								if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
-								fix_intervals(*this, eo2);
-
+								if(stop_iv) {
+									CALCULATOR->endTemporaryStopIntervalArithmetic();
+									if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
+									fix_intervals(*this, eo2);
+								} else if(containsInterval(true, false, false, -2, false)) {
+									set(mbak);
+									stop_iv = true;
+									CALCULATOR->endTemporaryStopMessages();
+									goto cube_eq_stop_iv;
+								}
+								CALCULATOR->endTemporaryStopMessages(true);
 								return true;
 							}
 						}
 
-						if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetic(); return false;}
+						if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopMessages(); if(stop_iv) CALCULATOR->endTemporaryStopIntervalArithmetic(); return false;}
 						
 						MathStructure mdelta1;
 						bool b_neg = false;
@@ -31561,9 +31585,17 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 										CHILD(1).calculateMultiply(mstruct_b, eo3);
 										CHILD(1).calculateDivide(mstruct_a, eo3);
 										CHILDREN_UPDATED;
-										CALCULATOR->endTemporaryStopIntervalArithmetic();
-										if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
-										fix_intervals(*this, eo2);
+										if(stop_iv) {
+											CALCULATOR->endTemporaryStopIntervalArithmetic();
+											if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
+											fix_intervals(*this, eo2);
+										} else if(containsInterval(true, false, false, -2, false)) {
+											set(mbak);
+											stop_iv = true;
+											CALCULATOR->endTemporaryStopMessages();
+											goto cube_eq_stop_iv;
+										}
+										CALCULATOR->endTemporaryStopMessages(true);
 										return true;
 									}
 									ComparisonResult cr = mdelta1.compareApproximately(m_zero, eo);
@@ -31574,9 +31606,17 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 										CHILD(1).calculateMultiply(mstruct_b, eo3);
 										CHILD(1).calculateDivide(mstruct_a, eo3);
 										CHILDREN_UPDATED;
-										CALCULATOR->endTemporaryStopIntervalArithmetic();
-										if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
-										fix_intervals(*this, eo2);
+										if(stop_iv) {
+											CALCULATOR->endTemporaryStopIntervalArithmetic();
+											if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
+											fix_intervals(*this, eo2);
+										} else if(containsInterval(true, false, false, -2, false)) {
+											set(mbak);
+											stop_iv = true;
+											CALCULATOR->endTemporaryStopMessages();
+											goto cube_eq_stop_iv;
+										}
+										CALCULATOR->endTemporaryStopMessages(true);
 										return true;
 									} else if(cr == COMPARISON_RESULT_GREATER) {
 										b_neg = true;
@@ -31601,7 +31641,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							if(b_neg) md1_2->calculateNegate(eo3);
 							md1_2->calculatesub(eo3, eo, true); 
 							
-							if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(mbak); return false;}
+							if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopMessages(); if(stop_iv) CALCULATOR->endTemporaryStopIntervalArithmetic(); set(mbak); return false;}
 						
 							mC = mdelta1;
 							mC.add_nocopy(md1_2);
@@ -31624,9 +31664,17 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									CHILD(1).multiply_nocopy(malt1_2b);
 									CHILD(1).calculateMultiplyLast(eo3);
 									CHILDREN_UPDATED;
-									CALCULATOR->endTemporaryStopIntervalArithmetic();
-									if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
-									fix_intervals(*this, eo2);
+									if(stop_iv) {
+										CALCULATOR->endTemporaryStopIntervalArithmetic();
+										if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
+										fix_intervals(*this, eo2);
+									} else if(containsInterval(true, false, false, -2, false)) {
+										set(mbak);
+										stop_iv = true;
+										CALCULATOR->endTemporaryStopMessages();
+										goto cube_eq_stop_iv;
+									}
+									CALCULATOR->endTemporaryStopMessages(true);
 									return true;
 								}
 							} else if(eo3.allow_complex) {
@@ -31742,16 +31790,23 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									addChild_nocopy(malt3);
 								
 									calculatesub(eo3, eo, false);
-									
-									CALCULATOR->endTemporaryStopIntervalArithmetic();
-									if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
-									fix_intervals(*this, eo2);
-								
+									if(stop_iv) {
+										CALCULATOR->endTemporaryStopIntervalArithmetic();
+										if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
+										fix_intervals(*this, eo2);
+									} else if(containsInterval(true, false, false, -2, false)) {
+										set(mbak);
+										stop_iv = true;
+										goto cube_eq_stop_iv;
+										CALCULATOR->endTemporaryStopMessages();
+									}
+									CALCULATOR->endTemporaryStopMessages(true);
 									return true;
 								}
 							}
 						}
-						CALCULATOR->endTemporaryStopIntervalArithmetic();
+						CALCULATOR->endTemporaryStopMessages();
+						if(stop_iv) CALCULATOR->endTemporaryStopIntervalArithmetic();
 					}
 				}
 			}

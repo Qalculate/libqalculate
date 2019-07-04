@@ -5061,6 +5061,15 @@ int OctFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }
+DecFunction::DecFunction() : MathFunction("dec", 1) {
+	setArgumentDefinition(1, new TextArgument());
+}
+int DecFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	ParseOptions po = eo.parse_options;
+	po.base = BASE_DECIMAL;
+	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
+	return 1;
+}
 HexFunction::HexFunction() : MathFunction("hex", 1, 2) {
 	setArgumentDefinition(1, new TextArgument());
 	setArgumentDefinition(2, new BooleanArgument());
@@ -5074,21 +5083,165 @@ int HexFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	return 1;
 }
 
-BaseFunction::BaseFunction() : MathFunction("base", 2) {
+BaseFunction::BaseFunction() : MathFunction("base", 2, 3) {
 	setArgumentDefinition(1, new TextArgument());
-	NumberArgument *arg = new NumberArgument();
+	Argument *arg = new Argument();
 	arg->setHandleVector(true);
 	setArgumentDefinition(2, arg);
+	IntegerArgument *arg2 = new IntegerArgument();
+	arg2->setMin(&nr_zero);
+	arg2->setMax(&nr_three);
+	setArgumentDefinition(3, arg2);
 }
 int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[1].isVector()) return 0;
+	Number nbase;
+	if(vargs[1].isNumber() && vargs[2].isZero()) {
+		nbase = vargs[1].number();
+	} else {
+		mstruct = vargs[1];
+		mstruct.eval(eo);
+		if(mstruct.isVector()) return -2;
+		if(vargs[2].isZero() && !mstruct.isNumber() && eo.approximation == APPROXIMATION_EXACT) {
+			MathStructure mstruct2(mstruct);
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_TRY_EXACT;
+			CALCULATOR->beginTemporaryStopMessages();
+			mstruct2.eval(eo2);
+			if(mstruct2.isVector() || mstruct2.isNumber()) {
+				mstruct = mstruct2;
+				CALCULATOR->endTemporaryStopMessages(true);
+				if(mstruct.isVector()) return -2;
+			} else {
+				CALCULATOR->endTemporaryStopMessages();
+			}
+		}
+		if(mstruct.isNumber() && vargs[2].isZero()) {
+			nbase = mstruct.number();
+		} else {
+			string number = vargs[0].symbol();
+			size_t i_dot = number.length();
+			vector<Number> digits;
+			bool b_minus = false;
+			if(vargs[2].number() <= 2) {
+				remove_blanks(number);
+				bool b_case = (vargs[2].number() == 2);
+				i_dot = number.length();
+				for(size_t i = 0; i < number.length(); i++) {
+					long int c = -1;
+					if(number[i] >= '0' && number[i] <= '9') {
+						c = number[i] - '0';
+					} else if(number[i] >= 'a' && number[i] <= 'z') {
+						if(b_case) c = number[i] - 'a' + 36;
+						else c = number[i] - 'a' + 10;
+					} else if(number[i] >= 'A' && number[i] <= 'Z') {
+						c = number[i] - 'A' + 10;
+					} else if(number[i] == '.') {
+						if(i_dot == number.length()) i_dot = digits.size();
+					} else if(number[i] == '-' && digits.empty()) {
+						b_minus = !b_minus;
+					} else {
+						string str_char = number.substr(i, 1);
+						while(i + 1 < number.length() && number[i + 1] < 0 && number[i + 1] && (unsigned char) number[i + 1] < 0xC0) {
+							i++;
+							str_char += number[i];
+						}
+						CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), format_and_print(mstruct), NULL);
+					}
+					if(c >= 0) {
+						digits.push_back(c);
+					}
+				}
+			} else {
+				for(size_t i = 0; i < number.length(); i++) {
+					long int c = (unsigned char) number[i];
+					bool b_esc = false;
+					if(number[i] == '\\' && i < number.length() - 1) {
+						i++;
+						Number nrd;
+						if(is_in(NUMBERS, number[i])) {
+							size_t i2 = number.find_first_not_of(NUMBERS, i);
+							if(i2 == string::npos) i2 = number.length();
+							nrd.set(number.substr(i, i2 - i));
+							i = i2 - 1;
+							b_esc = true;
+						} else if(number[i] == 'x' && i < number.length() - 1 && is_in(NUMBERS "ABCDEFabcdef", number[i + 1])) {
+							i++;
+							size_t i2 = number.find_first_not_of(NUMBERS "ABCDEFabcdef", i);
+							if(i2 == string::npos) i2 = number.length();
+							ParseOptions po;
+							po.base = BASE_HEXADECIMAL;
+							nrd.set(number.substr(i, i2 - i), po);
+							i = i2 - 1;
+							b_esc = true;
+						}
+						if(digits.empty() && number[i] == (char) -30 && i + 3 < number.length() && number[i + 1] == (char) -120 && number[i + 2] == (char) -110) {
+							i += 2;
+							b_minus = !b_minus;
+							b_esc = true;
+						} else if(digits.empty() && number[i] == '-') {
+							b_minus = !b_minus;
+							b_esc = true;
+						} else if(i_dot == number.size() && (number[i] == CALCULATOR->getDecimalPoint()[0] || (!eo.parse_options.dot_as_separator && number[i] == '.'))) {
+							i_dot = digits.size();
+							b_esc = true;
+						} else if(b_esc) {
+							digits.push_back(nrd);
+
+						} else if(number[i] != '\\') {
+							i--;
+						}
+					}
+					if(!b_esc) {
+						if((c & 0x80) != 0) {
+							if(c<0xe0) {
+								i++;
+								if(i >= number.length()) return -2;
+								c = ((c & 0x1f) << 6) | (((unsigned char) number[i]) & 0x3f);
+							} else if(c<0xf0) {
+								i++;
+								if(i + 1 >= number.length()) return -2;
+								c = (((c & 0xf) << 12) | ((((unsigned char) number[i]) & 0x3f) << 6)|(((unsigned char) number[i + 1]) & 0x3f));
+								i++;
+							} else {
+								i++;
+								if(i + 2 >= number.length()) return -2;
+								c = ((c & 7) << 18) | ((((unsigned char) number[i]) & 0x3f) << 12) | ((((unsigned char) number[i + 1]) & 0x3f) << 6) | (((unsigned char) number[i + 2]) & 0x3f);
+								i += 2;
+							}
+						}
+						digits.push_back(c);
+					}
+				}
+			}
+			MathStructure mbase = mstruct;
+			mstruct.clear();
+			if(i_dot > digits.size()) i_dot = digits.size();
+			for(size_t i = 0; i < digits.size(); i++) {
+				long int exp = i_dot - 1 - i;
+				MathStructure m;
+				if(exp != 0) {
+					m = mbase;
+					m.raise(Number(exp, 1));
+					m.multiply(digits[i]);
+				} else {
+					m.set(digits[i]);
+				}
+				if(mstruct.isZero()) mstruct = m;
+				else mstruct.add(m, true);
+			}
+			if(b_minus) mstruct.negate();
+			return 1;
+		}
+	}
 	ParseOptions po = eo.parse_options;
-	if(vargs[1].isInteger() && vargs[1].number() >= 2 && vargs[1].number() <= 36) {
-		po.base = vargs[1].number().intValue();
+	if(nbase.isInteger() && nbase >= 2 && nbase <= 36) {
+		po.base = nbase.intValue();
 		CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	} else {
 		po.base = BASE_CUSTOM;
 		Number cb_save = CALCULATOR->customInputBase();
-		CALCULATOR->setCustomInputBase(vargs[1].number());
+		CALCULATOR->setCustomInputBase(nbase);
 		CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 		CALCULATOR->setCustomInputBase(cb_save);
 	}

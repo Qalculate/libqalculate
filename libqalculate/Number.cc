@@ -150,7 +150,7 @@ string format_number_string(string cl_str, int base, BaseDisplay base_display, b
 	return str;
 }
 
-string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, bool lower_case = false) {
+string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, bool lower_case = false, bool negative_base = false) {
 	int sign = mpz_sgn(integ_pre);
 	if(base == BASE_ROMAN_NUMERALS) {
 		if(sign != 0 && mpz_cmpabs_ui(integ_pre, 10000) == -1) {
@@ -247,18 +247,18 @@ string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, bool
 	
 	mpz_t integ;
 	mpz_init_set(integ, integ_pre);
-	if(sign == -1) {
+	if(sign == -1 && !negative_base) {
 		mpz_neg(integ, integ);
 		if(display_sign) cl_str += "-";
 	}
 	
-	char *tmp = mpz_get_str(NULL, base, integ); 
+	char *tmp = mpz_get_str(NULL, negative_base ? -base : base, integ); 
 	cl_str += tmp;
 	void (*freefunc)(void *, size_t);
 	mp_get_memory_functions (NULL, NULL, &freefunc);
 	freefunc(tmp, strlen(tmp) + 1);
 	
-	if(base > 10) {
+	if(base > 10 && base <= 36) {
 		if(lower_case) {
 			for(size_t i = 0; i < cl_str.length(); i++) {
 				if(cl_str[i] >= 'A' && cl_str[i] <= 'Z') {
@@ -281,10 +281,10 @@ string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, bool
 	
 	return cl_str;
 }
-string printMPZ(mpz_srcptr integ_pre, int base = 10, bool display_sign = true, bool lower_case = false) {
+string printMPZ(mpz_srcptr integ_pre, int base = 10, bool display_sign = true, bool lower_case = false, bool negative_base = false) {
 	mpz_t integ;
 	mpz_init_set(integ, integ_pre);
-	string str = printMPZ(integ, base, display_sign, lower_case);
+	string str = printMPZ(integ, base, display_sign, lower_case, negative_base);
 	mpz_clear(integ);
 	return str;
 }
@@ -325,17 +325,38 @@ Number::~Number() {
 
 void Number::set(string number, const ParseOptions &po) {
 	
-	if(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && (!CALCULATOR->customInputBase().isInteger() || CALCULATOR->customInputBase() < 2 || CALCULATOR->customInputBase() > 62)) || po.base == BASE_GOLDEN_RATIO) {
+	if(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && (!CALCULATOR->customInputBase().isInteger() || CALCULATOR->customInputBase() < 2 || CALCULATOR->customInputBase() > 62)) || po.base < BASE_CUSTOM) {
 		Number base;
-		if(po.base == BASE_GOLDEN_RATIO) {
-			base.set(5);
-			base.sqrt();
-			base.add(1);
-			base.divide(2);
-		} else if(po.base == BASE_UNICODE) {
-			base.set(1114112L);
-		} else {
-			base = CALCULATOR->customInputBase();
+		switch(po.base) {
+			case BASE_GOLDEN_RATIO: {
+				base.set(5);
+				base.sqrt();
+				base.add(1);
+				base.divide(2);
+				break;
+			}
+			case BASE_SUPER_GOLDEN_RATIO: {
+				base.set(93);
+				base.sqrt();
+				base.multiply(3);
+				Number b2(base);
+				b2.negate();
+				b2.add(29);
+				b2.divide(2);
+				b2.cbrt();
+				base.add(29);
+				base.divide(2);
+				base.cbrt();
+				base.add(b2);
+				base.add(1);
+				base.divide(3);
+				break;
+			}
+			case BASE_PI: {base.pi(); break;}
+			case BASE_E: {base.e(); break;}
+			case BASE_SQRT2: {base.set(2); base.sqrt(); break;}
+			case BASE_UNICODE: {base.set(1114112L); break;}
+			default: {base = CALCULATOR->customInputBase();}
 		}
 		Number abs_base(base);
 		abs_base.abs();
@@ -353,10 +374,10 @@ void Number::set(string number, const ParseOptions &po) {
 				if(number[i] >= '0' && number[i] <= '9') {
 					c = number[i] - '0';
 				} else if(number[i] >= 'a' && number[i] <= 'z') {
-					c = number[i] - 'a' + 10;
+					if(b_case) c = number[i] - 'a' + 36;
+					else c = number[i] - 'a' + 10;
 				} else if(number[i] >= 'A' && number[i] <= 'Z') {
-					if(b_case) c = number[i] - 'A' + 36;
-					else c = number[i] - 'A' + 10;
+					c = number[i] - 'A' + 10;
 				} else if(number[i] == '.') {
 					if(i_dot == number.length()) i_dot = digits.size();
 				} else if(number[i] == '-' && digits.empty()) {
@@ -418,7 +439,6 @@ void Number::set(string number, const ParseOptions &po) {
 
 					} else if(number[i] != '\\') {
 						i--;
-						b_esc = true;
 					}
 				}
 				if(!b_esc) {
@@ -678,21 +698,8 @@ void Number::set(string number, const ParseOptions &po) {
 	}
 	
 	int base = po.base;
-	if(base == BASE_CUSTOM) {
-		if(CALCULATOR->customInputBase().isInteger()) {
-			base = CALCULATOR->customInputBase().intValue();
-			if(base < 0) base = -base;
-		} else {
-			Number nr = CALCULATOR->customInputBase();
-			nr.abs(); nr.ceil();
-			base = nr.intValue();
-		}
-		if(base < 2) base = 2;
-	} else if(base == BASE_GOLDEN_RATIO) {
-		base = 2;
-	} else if(base < 2 || base > 36) {
-		base = 10;
-	}
+	if(base == BASE_CUSTOM) base = CALCULATOR->customInputBase().intValue();
+	else if(base < 2 || base > 36) base = 10;
 	
 	long int i_unc = 0;
 	mpz_t num, den;
@@ -737,10 +744,10 @@ void Number::set(string number, const ParseOptions &po) {
 			had_nonzero = true;
 			readprec++;
 			numbers_started = true;
-		} else if(base > 10 && number[index] >= 'a' && number[index] < 'a' + base - 10) {
+		} else if(base > 10 && number[index] >= 'a' && number[index] < 'a' + base - (base > 36 ? 36 : 10)) {
 			mpz_mul_si(num, num, base);
-			if(!b_twos || (number[index] != 'a' + (base - 11))) {
-				mpz_add_ui(num, num, b_twos ? (unsigned long int) (base - 1) - (number[index] - 'a' + 10) : (unsigned long int) number[index] - 'a' + 10);
+			if(!b_twos || (number[index] != 'a' + (base - (base > 36 ? 37 : 11)))) {
+				mpz_add_ui(num, num, b_twos ? (unsigned long int) (base - 1) - (number[index] - 'a' + (base > 36 ? 36 : 10)) : (unsigned long int) number[index] - 'a' + (base > 36 ? 36 : 10));
 				if(!had_nonzero) readprec = 0;
 				had_nonzero = true;
 			}
@@ -749,10 +756,10 @@ void Number::set(string number, const ParseOptions &po) {
 			}
 			readprec++;
 			numbers_started = true;
-		} else if(base > 10 && number[index] >= 'A' && number[index] < 'A' + base - (base > 36 ? 36 : 10)) {
+		} else if(base > 10 && number[index] >= 'A' && number[index] < 'A' + base - 10) {
 			mpz_mul_si(num, num, base);
 			if(!b_twos || (number[index] != 'A' + (base - 11))) {
-				mpz_add_ui(num, num, b_twos ? (unsigned long int) (base - 1) - (number[index] - 'A' + (base > 36 ? 36 : 10)) : (unsigned long int) number[index] - 'A' + 10);
+				mpz_add_ui(num, num, b_twos ? (unsigned long int) (base - 1) - (number[index] - 'A' + 10) : (unsigned long int) number[index] - 'A' + 10);
 				if(!had_nonzero) readprec = 0;
 				had_nonzero = true;
 			}
@@ -851,7 +858,7 @@ void Number::set(string number, const ParseOptions &po) {
 				index++;
 				str_char += number[index];
 			}
-			CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), po.base == BASE_CUSTOM ? CALCULATOR->customInputBase().print().c_str() : (po.base == BASE_GOLDEN_RATIO ? "golden ratio" : i2s(base).c_str()), NULL);
+			CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), i2s(base), NULL);
 		}
 	}
 	if(b_twos) {
@@ -7669,17 +7676,38 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.im) *ips.im = "";
 	if(ips.iexp) *ips.iexp = 0;
 	if(po.is_approximate && isApproximate()) *po.is_approximate = true;
-	if(po.base <= BASE_CUSTOM) {
+	if(po.base <= BASE_CUSTOM && (po.base < BASE_CUSTOM || !CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2)) {
 		Number base;
-		if(po.base == BASE_GOLDEN_RATIO) {
-			base.set(5);
-			base.sqrt();
-			base.add(1);
-			base.divide(2);
-		} else if(po.base == BASE_UNICODE) {
-			base.set(1114112L);
-		} else {
-			base = CALCULATOR->customOutputBase();
+		switch(po.base) {
+			case BASE_GOLDEN_RATIO: {
+				base.set(5);
+				base.sqrt();
+				base.add(1);
+				base.divide(2);
+				break;
+			}
+			case BASE_SUPER_GOLDEN_RATIO: {
+				base.set(93);
+				base.sqrt();
+				base.multiply(3);
+				Number b2(base);
+				b2.negate();
+				b2.add(29);
+				b2.divide(2);
+				b2.cbrt();
+				base.add(29);
+				base.divide(2);
+				base.cbrt();
+				base.add(b2);
+				base.add(1);
+				base.divide(3);
+				break;
+			}
+			case BASE_PI: {base.pi(); break;}
+			case BASE_E: {base.e(); break;}
+			case BASE_SQRT2: {base.set(2); base.sqrt(); break;}
+			case BASE_UNICODE: {base.set(1114112L); break;}
+			default: {base = CALCULATOR->customOutputBase();}
 		}
 		if(base.isInteger() && base >= 2 && base <= 36) {
 			PrintOptions po2 = po;
@@ -7692,16 +7720,20 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			po2.base = BASE_DECIMAL;
 			return print(po2, ips);
 		}
-		if(isInterval()) {
+		if((base.isNegative() && isInterval()) || (isInterval() && precision(true) < 1)) {
 			Number nr(*this);
-			nr.intervalToPrecision();
+			if(!nr.intervalToPrecision()) {
+				nr.intervalToMidValue();
+				nr.setPrecision(1);
+			}
 			return nr.print(po, ips);
 		}
-		if(base.isInterval()) {
-			base.intervalToPrecision();
+		if(base.isInterval() && base.precision(true) < 1) {
+			if(!base.intervalToPrecision()) {
+				base.intervalToMidValue();
+				base.setPrecision(1);
+			}
 		}
-		CALCULATOR->beginTemporaryStopIntervalArithmetic();
-		
 		Number abs_base(base);
 		abs_base.abs();
 		bool b_uni = abs_base > 62;
@@ -7709,9 +7741,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		
 		if(po.is_approximate && base.isApproximate()) *po.is_approximate = true;
 		long int precision = PRECISION;
-		if(b_approx && i_precision >= 0 && (po.preserve_precision || po.preserve_format || i_precision < PRECISION)) precision = i_precision;
-		else if(b_approx && i_precision < 0 && po.preserve_precision && FROM_BIT_PRECISION(BIT_PRECISION) > precision) precision = FROM_BIT_PRECISION(BIT_PRECISION);
-		else if(b_approx && i_precision < 0 && po.preserve_format && FROM_BIT_PRECISION(BIT_PRECISION) - 1 > precision) precision = FROM_BIT_PRECISION(BIT_PRECISION) - 1;
+		if(b_approx && i_precision >= 0 && i_precision < precision) precision = i_precision;
+		if(base.isApproximate() && base.precision() >= 0 && base.precision() < precision) precision = base.precision();
 		if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < precision) precision = ips.parent_precision;
 		long int precision_base = precision;
 		Number precmax(10);
@@ -7720,19 +7751,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		precmax.log(abs_base < 2 ? 2 : abs_base);
 		precmax.floor();
 		precision_base = precmax.lintValue();
-		long int i_precision_base = precision_base;
-		if((i_precision < 0 && FROM_BIT_PRECISION(BIT_PRECISION) > precision) || i_precision > precision) {
-			if(i_precision < 0) i_precision_base = FROM_BIT_PRECISION(BIT_PRECISION);
-			else i_precision_base = i_precision;
-			if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < i_precision_base) i_precision_base = ips.parent_precision;
-			Number precmax(10);
-			precmax.raise(i_precision_base);
-			precmax--;
-			precmax.log(abs_base < 2 ? 2 : abs_base);
-			precmax.floor();
-			i_precision_base = precmax.lintValue();
-		}
-		//bool approx = isApproximate() || base.isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision);
 		
 		string str;
 		
@@ -7759,9 +7777,19 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		Number nr_log(*this);
 		nr_log.abs();
 		nr_log.log(abs_base);
-		nr_log.floor();
+		if(nr_log.isInterval() && nr_log.precision(true) > PRECISION) {
+			Number nr_log_upper(nr_log.upperEndPoint());
+			nr_log.intervalToMidValue();
+			nr_log.floor();
+			nr_log++;
+			if(nr_log_upper < nr_log) {
+				nr_log--;
+			}
+		} else {
+			nr_log.intervalToMidValue();
+			nr_log.floor();
+		}
 		if(nr_log < -1000 || nr_log > 1000) {
-			CALCULATOR->endTemporaryStopIntervalArithmetic();
 			PrintOptions po2 = po;
 			po2.base = BASE_DECIMAL;
 			return print(po2, ips);
@@ -7769,6 +7797,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		vector<long int> digits;
 		Number nr_digit;
 		if(base.isNegative()) {
+			CALCULATOR->beginTemporaryStopIntervalArithmetic();
 			nr_log++;
 			if(nr_log < precision_base && (!po.use_max_decimals || po.max_decimals != 0)) {
 				nr_log.subtract(precision_base);
@@ -7831,6 +7860,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					}
 				}
 			}
+			CALCULATOR->endTemporaryStopIntervalArithmetic();
 		} else {
 			if(nr_log.isNegative()) {
 				i_dp = nr_log.lintValue() + 1;
@@ -7840,11 +7870,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				nr.negate();
 				neg = true;
 			}
-			Number base_pow(base);
-			base_pow.raise(nr_log);
+			Number base_pow;
 			while(true) {
+				base_pow = base;
+				base_pow.raise(nr_log);
 				if(CALCULATOR->aborted()) {
-					CALCULATOR->endTemporaryStopIntervalArithmetic();
 					return CALCULATOR->abortedMessage();
 				}
 				bool do_break = (b_dp && ((long int) digits.size() == precision_base || (po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals == (long int) digits.size() - i_dp)));
@@ -7856,9 +7886,16 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						b_dp = true;
 					}
 				}
+				if(b_dp && nr.isInterval() && nr.precision(true) < 1) {
+					do_break = true;
+					precision_base = 0;
+					if(i_dp == (long int) digits.size()) b_dp = false;
+				}
 				if(do_break) {
 					nr.divide(base);
 					nr.multiply(2);
+					nr.intervalToMidValue();
+					base_pow.intervalToMidValue();
 					if(nr.isGreaterThan(base_pow) || (nr == base_pow && (!po.round_halfway_to_even || digits[digits.size() - 1] % 2 == 1))) {
 						size_t i = digits.size();
 						while(i > 0) {
@@ -7868,8 +7905,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 								digits[i] = 0;
 								if(i == 0) {
 									digits.insert(digits.begin(), 1L);
-									if(b_dp) i_dp++;
-									digits.erase(digits.end() - 1);
+									if(b_dp) {
+										i_dp++;
+										if((long int) digits.size() == i_dp) {
+											b_dp = false;
+										} else {
+											digits.erase(digits.end() - 1);
+											if((long int) digits.size() == i_dp) b_dp = false;
+										}
+									}
 								}
 							} else {
 								break;
@@ -7885,11 +7929,21 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				} else {
 					nr_digit = nr;
 					nr_digit.divide(base_pow);
-					nr_digit.floor();
+					if(nr_digit.isInterval() && nr_digit.precision(true) > PRECISION) {
+						Number nr_digit_upper(nr_digit.upperEndPoint());
+						nr_digit.intervalToMidValue();
+						nr_digit.floor();
+						nr_digit++;
+						if(nr_digit_upper < nr_digit) {
+							nr_digit--;
+						}
+					} else {
+						nr_digit.intervalToMidValue();
+						nr_digit.trunc();
+					}
 					digits.push_back(nr_digit.lintValue());
 					nr_digit.multiply(base_pow);
 					nr -= nr_digit;
-					base_pow.divide(base);
 				}
 				if(nr.isZero()) {
 					while(nr_log > 0) {digits.push_back(0L); nr_log--;}
@@ -7950,14 +8004,16 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					str += i2s(c);
 					prev_esc = true;
 				} else if(c <= 0x7f) {
-					if(c == '\\') str += '\\';
+					if(c == '\\' && index < digits.size() - 1 && ((digits[index + 1] >= '0' && digits[index + 1] <= '9') || (digits[index + 1] == 'x' && index < digits.size() - 2 && ((digits[index + 2] >= '0' && digits[index + 2] <= '9') || (digits[index + 2] >= 'A' && digits[index + 2] <= 'F') || (digits[index + 2] >= 'a' && digits[index + 2] <= 'f'))))) str += '\\';
 					str += (char) c;
 					prev_esc = false;
 				} else {
 					string str_c;
 					if(c <= 0x7ff) {
-						str_c += (char) ((c >> 6) | 0xc0);
-						str_c += (char) ((c & 0x3f) | 0x80);
+						if(c > 0xa0) {
+							str_c += (char) ((c >> 6) | 0xc0);
+							str_c += (char) ((c & 0x3f) | 0x80);
+						}
 					} else if((c <= 0xd7ff || (0xe000 <= c && c <= 0xffff))) {
 						str_c += (char) ((c >> 12) | 0xe0);
 						str_c += (char) (((c >> 6) & 0x3f) | 0x80);
@@ -7981,8 +8037,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(c <= 9) {
 					str += '0' + c;
 				} else if(b_case) {
-					if(c < 36) str += 'a' + (c - 10);
-					else str += 'A' + (c - 36);
+					if(c < 36) str += 'A' + (c - 10);
+					else str += 'a' + (c - 36);
 				} else if(po.lower_case_numbers) {
 					str += 'a' + (c - 10);
 				} else {
@@ -7995,7 +8051,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(b_uni) str += '\\';
 			str += '0';
 		}
-		CALCULATOR->endTemporaryStopIntervalArithmetic();
 		if(ips.minus) {
 			*ips.minus = neg;
 		} else if(neg) {
@@ -8085,7 +8140,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if((int) min_decimals > po.max_decimals && po.use_max_decimals && po.max_decimals >= 0) {
 		min_decimals = po.max_decimals;
 	}
-	if(po.base <= 1 && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_TIME) base = 10;
+	if(po.base == BASE_CUSTOM) base = CALCULATOR->customOutputBase().intValue();
+	else if(po.base <= 1 && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_TIME) base = 10;
 	else if(po.base > 36 && po.base != BASE_SEXAGESIMAL) base = 36;
 	else base = po.base;
 	if(po.base == BASE_ROMAN_NUMERALS) {
@@ -8153,7 +8209,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	else if(b_approx && i_precision < 0 && po.preserve_format && FROM_BIT_PRECISION(BIT_PRECISION) - 1 > precision) precision = FROM_BIT_PRECISION(BIT_PRECISION) - 1;
 	if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < precision) precision = ips.parent_precision;
 	long int precision_base = precision;
-	if(base != 10 && base >= 2 && base <= 36) {
+	if(base != 10 && ((base >= 2 && base <= 36) || po.base == BASE_CUSTOM)) {
 		Number precmax(10);
 		precmax.raise(precision_base);
 		precmax--;
@@ -8166,7 +8222,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(i_precision < 0) i_precision_base = FROM_BIT_PRECISION(BIT_PRECISION);
 		else i_precision_base = i_precision;
 		if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < i_precision_base) i_precision_base = ips.parent_precision;
-		if(base != 10 && base >= 2 && base <= 36) {
+		if(base != 10 && ((base >= 2 && base <= 36) || po.base == BASE_CUSTOM)) {
 			Number precmax(10);
 			precmax.raise(i_precision_base);
 			precmax--;
@@ -8545,7 +8601,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	} else if(n_type == NUMBER_TYPE_FLOAT) {
 
 		bool rerun = false;
-		if(base < 2 || base > 36) base = 10;
+		if((base < 2 || base > 36) && po.base != BASE_CUSTOM) base = 10;
 		mpfr_clear_flags();
 		
 		mpfr_t f_diff, f_mid;
@@ -9330,6 +9386,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					else if(precexp > precision + 3) precexp = precision + 3;
 					if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
 						if(expo >= precision) precision = expo + 1;
+						if(expo >= precision_base) precision_base = expo + 1;
 						if(expo >= precision2) precision2 = expo + 1;
 						expo = 0;
 					}
@@ -9613,8 +9670,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				l2++;
 			}
 			int decimals = str.length() - l10 - 1;
-			if((!exact || approx) && !infinite_series && po.show_ending_zeroes && (int) str.length() - precision - 1 < l2) {
-				l2 = str.length() - precision - 1;
+			if((!exact || approx) && !infinite_series && po.show_ending_zeroes && (int) str.length() - precision_base - 1 < l2) {
+				l2 = str.length() - precision_base - 1;
 				if(po.use_max_decimals && po.max_decimals >= 0 && decimals - l2 > po.max_decimals) {
 					l2 = decimals - po.max_decimals;
 				}
@@ -9624,9 +9681,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 			}
 			if(l2 > 0 && !infinite_series) {
-				if(min_decimals > 0 && (!approx || (!po.show_ending_zeroes && (int) str.length() - precision - 1 < l2))) {
+				if(min_decimals > 0 && (!approx || (!po.show_ending_zeroes && (int) str.length() - precision_base - 1 < l2))) {
 					if(decimals - min_decimals < l2) l2 = decimals - min_decimals;
-					if(approx && (int) str.length() - precision - 1 > l2) l2 = str.length() - precision - 1;
+					if(approx && (int) str.length() - precision - 1 > l2) l2 = str.length() - precision_base - 1;
 				}
 				if(l2 > 0) str = str.substr(0, str.length() - l2);
 			}
@@ -9643,7 +9700,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(str.empty()) {
 			str = "0";
 		}
-		if(!exact && str == "0" && po.show_ending_zeroes && po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < precision) {
+		if(!exact && str == "0" && po.show_ending_zeroes && po.use_max_decimals && po.max_decimals >= 0 && po.max_decimals < precision_base) {
 			str += po.decimalpoint();
 			for(; decimals < po.max_decimals; decimals++) str += '0';
 		}
