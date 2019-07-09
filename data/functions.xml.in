@@ -751,7 +751,7 @@
         <argument index="2">
           <_title>Base</_title>
         </argument>
-        <argument index="2">
+        <argument index="3">
           <_title>Set of digits</_title>
         </argument>
       </builtin_function>

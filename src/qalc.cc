@@ -606,8 +606,8 @@ void set_option(string str) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "roman", _("roman"))) v = BASE_ROMAN_NUMERALS;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "time", _("time"))) {if(b_in) v = 0; else v = BASE_TIME;}
 		else if(equalsIgnoreCase(svalue, "hex") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "hexadecimal", _("hexadecimal"))) v = BASE_HEXADECIMAL;
-		else if(equalsIgnoreCase(svalue, "golden") || svalue == "φ") v = BASE_GOLDEN_RATIO;
-		else if(equalsIgnoreCase(svalue, "supergolden") || svalue == "ψ") v = BASE_SUPER_GOLDEN_RATIO;
+		else if(equalsIgnoreCase(svalue, "golden") || equalsIgnoreCase(svalue, "golden ratio") || svalue == "φ") v = BASE_GOLDEN_RATIO;
+		else if(equalsIgnoreCase(svalue, "supergolden") || equalsIgnoreCase(svalue, "supergolden ratio") || svalue == "ψ") v = BASE_SUPER_GOLDEN_RATIO;
 		else if(equalsIgnoreCase(svalue, "pi") || svalue == "π") v = BASE_PI;
 		else if(svalue == "e") v = BASE_E;
 		else if(svalue == "sqrt(2)" || svalue == "sqrt 2" || svalue == "sqrt2" || svalue == "√2") v = BASE_SQRT2;
@@ -650,7 +650,7 @@ void set_option(string str) {
 				v = 0;
 			} else if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
 				v = m.number().intValue();
-			} else if(m.isNumber() && (!m.number().isNegative() || m.number().isInteger()) && (m.number() > 1 || m.number() < -1) && m.number() >= -1114112L && m.number() <= 1114112L) {
+			} else if(m.isNumber() && (b_in || ((!m.number().isNegative() || m.number().isInteger()) && (m.number() > 1 || m.number() < -1)))) {
 				v = BASE_CUSTOM;
 				if(b_in) CALCULATOR->setCustomInputBase(m.number());
 				else CALCULATOR->setCustomOutputBase(m.number());
@@ -2710,8 +2710,9 @@ int main(int argc, char *argv[]) {
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str1, "base", _("base"))) {
 				int save_base = printops.base;
 				Number save_nr = CALCULATOR->customOutputBase();
-				if(equalsIgnoreCase(str2, "golden") || str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
-				else if(equalsIgnoreCase(str2, "supergolden") || str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
+				if(equalsIgnoreCase(str2, "golden") || equalsIgnoreCase(str2, "golden ratio") || str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
+				else if(equalsIgnoreCase(str2, "unicode")) printops.base = BASE_UNICODE;
+				else if(equalsIgnoreCase(str2, "supergolden") || equalsIgnoreCase(str2, "supergolden ratio") || str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
 				else if(equalsIgnoreCase(str2, "pi") || str2 == "π") printops.base = BASE_PI;
 				else if(str2 == "e") printops.base = BASE_E;
 				else if(str2 == "sqrt(2)" || str2 == "sqrt 2" || str2 == "sqrt2" || str2 == "√2") printops.base = BASE_SQRT2;
@@ -3674,7 +3675,7 @@ int main(int argc, char *argv[]) {
 				if(evalops.parse_options.base == BASE_CUSTOM) {str += " "; str += CALCULATOR->customInputBase().print(CALCULATOR->messagePrintOptions()); str += "*";}
 				else if(evalops.parse_options.base == BASE_UNICODE) {str += " "; str += "Unicode"; str += "*";}
 				else if(evalops.parse_options.base == BASE_GOLDEN_RATIO) {str += " "; str += "golden"; str += "*";}
-				else if(evalops.parse_options.base == BASE_SUPER_GOLDEN_RATIO) {str += " "; str += "supergolden"; str += "*";}
+				else if(evalops.parse_options.base == BASE_SUPER_GOLDEN_RATIO) {str += " "; str += "supergolden ratio"; str += "*";}
 				else if(evalops.parse_options.base == BASE_E) {str += " "; str += "e"; str += "*";}
 				else if(evalops.parse_options.base == BASE_PI) {str += " "; str += "pi"; str += "*";}
 				else if(evalops.parse_options.base == BASE_SQRT2) {str += " "; str += "sqrt(2)"; str += "*";}
@@ -4742,8 +4743,9 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				Number save_nr = CALCULATOR->customOutputBase();
-				if(equalsIgnoreCase(to_str2, "golden") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
-				else if(equalsIgnoreCase(to_str2, "supergolden") || to_str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
+				if(equalsIgnoreCase(to_str2, "golden") || equalsIgnoreCase(to_str2, "golden ratio") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
+				else if(equalsIgnoreCase(to_str2, "unicode")) printops.base = BASE_UNICODE;
+				else if(equalsIgnoreCase(to_str2, "supergolden") || equalsIgnoreCase(to_str2, "supergolden ratio") || to_str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
 				else if(equalsIgnoreCase(to_str2, "pi") || to_str2 == "π") printops.base = BASE_PI;
 				else if(to_str2 == "e") printops.base = BASE_E;
 				else if(to_str2 == "sqrt(2)" || to_str2 == "sqrt 2" || to_str2 == "sqrt2" || to_str2 == "√2") printops.base = BASE_SQRT2;
