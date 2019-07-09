@@ -360,7 +360,7 @@ void Number::set(string number, const ParseOptions &po) {
 		}
 		Number abs_base(base);
 		abs_base.abs();
-		abs_base.floor();
+		abs_base.ceil();
 		if(abs_base < 2) abs_base = 2;
 		size_t i_dot = number.length();
 		vector<Number> digits;
@@ -388,7 +388,7 @@ void Number::set(string number, const ParseOptions &po) {
 						i++;
 						str_char += number[i];
 					}
-					CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), base.print(), NULL);
+					CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), base.print().c_str(), NULL);
 				}
 				if(c >= 0) {
 					if(abs_base <= c && !abs_base.isFraction()) {
@@ -858,7 +858,7 @@ void Number::set(string number, const ParseOptions &po) {
 				index++;
 				str_char += number[index];
 			}
-			CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), i2s(base), NULL);
+			CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), i2s(base).c_str(), NULL);
 		}
 	}
 	if(b_twos) {
@@ -7714,7 +7714,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			po2.base = base.intValue();
 			return print(po2, ips);
 		}
-		if((base.isNegative() && !base.isInteger()) || !(base > 1 || base < -1) || !(base >= -1114112L) || !(base <= 1114112L)) {
+		if(!base.isReal() || (base.isNegative() && !base.isInteger()) || !(base > 1 || base < -1)) {
 			CALCULATOR->error(true, _("Unsupported base"), NULL);
 			PrintOptions po2 = po;
 			po2.base = BASE_DECIMAL;
@@ -7736,8 +7736,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		Number abs_base(base);
 		abs_base.abs();
-		bool b_uni = abs_base > 62;
-		bool b_case = !b_uni && abs_base > 36;
+		bool b_uni = (abs_base == 1114112L);
+		bool b_num = abs_base > 62;
+		bool b_case = !b_num && abs_base > 36;
 		
 		if(po.is_approximate && base.isApproximate()) *po.is_approximate = true;
 		long int precision = PRECISION;
@@ -7755,13 +7756,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		string str;
 		
 		if(isZero()) {
-			if(b_uni) str += '\\';
+			if(b_num) str += '\\';
 			str += '0';
 			if(po.show_ending_zeroes && isApproximate()) {
 				str += po.decimalpoint();
 				while(precision_base > 1) {
 					precision_base--;
-					if(b_uni) str += '\\';
+					if(b_num) str += '\\';
 					str += '0';
 				}
 			}
@@ -7971,13 +7972,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(po.is_approximate && !exact) *po.is_approximate = true;
 		if(b_dp && i_dp < 0) {
 			b_dp = false;
-			if(b_uni) str += '\\';
+			if(b_num) str += '\\';
 			str += '0';
-			if(b_uni) str += '\\';
+			if(b_num) str += '\\';
 			str += po.decimalpoint();
 			while(i_dp < 0) {
 				i_dp++; 
-				if(b_uni) str += '\\';
+				if(b_num) str += '\\';
 				str += '0';
 			}
 		}
@@ -7986,16 +7987,16 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			long int c = digits[index];
 			if(b_dp && (size_t) i_dp == index) {
 				if(str.empty()) {
-					if(b_uni) str += '\\';
+					if(b_num) str += '\\';
 					str += '0';
 				}
-				if(b_uni) str += '\\';
+				if(b_num) str += '\\';
 				str += po.decimalpoint();
 				b_dp = false;
-				if(b_uni) prev_esc = true;
+				if(b_num) prev_esc = true;
 			}
-			if(b_uni) {
-				if(c <= 32 || (!po.use_unicode_signs && c > 0x7f)) {
+			if(b_num) {
+				if(!b_uni || c <= 32 || (!po.use_unicode_signs && c > 0x7f) || c >= 1114112L) {
 					str += '\\';
 					str += i2s(c);
 					prev_esc = true;
@@ -8048,13 +8049,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		if(str.empty()) {
-			if(b_uni) str += '\\';
+			if(b_num) str += '\\';
 			str += '0';
 		}
 		if(ips.minus) {
 			*ips.minus = neg;
 		} else if(neg) {
-			if(b_uni) str.insert(0, "\\-");
+			if(b_num) str.insert(0, "\\-");
 			else if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str.insert(0, SIGN_MINUS);
 			else str.insert(0, "-");
 		}

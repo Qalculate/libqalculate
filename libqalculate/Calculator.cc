@@ -2954,8 +2954,9 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			evalops.auto_post_conversion = POST_CONVERSION_BASE;
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base"))) {
 			str = from_str;
-			if(equalsIgnoreCase(to_str2, "golden") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
-			else if(equalsIgnoreCase(to_str2, "supergolden") || to_str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
+			if(equalsIgnoreCase(to_str2, "golden") || equalsIgnoreCase(to_str2, "golden ratio") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
+			else if(equalsIgnoreCase(to_str2, "unicode")) printops.base = BASE_UNICODE;
+			else if(equalsIgnoreCase(to_str2, "supergolden") || equalsIgnoreCase(to_str2, "supergolden ratio") || to_str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
 			else if(equalsIgnoreCase(to_str2, "pi") || to_str2 == "π") printops.base = BASE_PI;
 			else if(to_str2 == "e") printops.base = BASE_E;
 			else if(to_str2 == "sqrt(2)" || to_str2 == "sqrt 2" || to_str2 == "sqrt2" || to_str2 == "√2") printops.base = BASE_SQRT2;
