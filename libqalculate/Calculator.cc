@@ -4989,8 +4989,8 @@ bool is_not_number(char c, int base) {
 		return true;
 	}
 	if(base <= 62) {
-		if(c >= 'a' && c < 'a' + (base - 10)) return false;
-		if(c >= 'A' && c < 'A' + (base - 36)) return false;
+		if(c >= 'a' && c < 'a' + (base - 36)) return false;
+		if(c >= 'A' && c < 'Z') return false;
 		return true;
 	}
 	return false;

@@ -23,6 +23,37 @@
 #include <time.h>
 #include <limits>
 
+#if HAVE_UNORDERED_MAP
+#	include <unordered_map>
+#elif 	defined(__GNUC__)
+
+#	ifndef __has_include
+#	define __has_include(x) 0
+#	endif
+
+#	if (defined(__clang__) && __has_include(<tr1/unordered_map>)) || (__GNUC__ >= 4 && __GNUC_MINOR__ >= 3)
+#		include <tr1/unordered_map>
+		namespace Sgi = std;
+#		define unordered_map std::tr1::unordered_map
+#	else
+#		if __GNUC__ < 3
+#			include <hash_map.h>
+			namespace Sgi { using ::hash_map; }; // inherit globals
+#		else
+#			include <ext/hash_map>
+#			if __GNUC__ == 3 && __GNUC_MINOR__ == 0
+				namespace Sgi = std;               // GCC 3.0
+#			else
+				namespace Sgi = ::__gnu_cxx;       // GCC 3.1 and later
+#			endif
+#		endif
+#		define unordered_map Sgi::hash_map
+#	endif
+#else      // ...  there are other compilers, right?
+	namespace Sgi = std;
+#	define unordered_map Sgi::hash_map
+#endif
+
 #define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
 #define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
 #define FR_FUNCTION_2R(FUNC)	Number nr(vargs[1].number()); if(!nr.FUNC(vargs[0].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
@@ -5092,17 +5123,27 @@ BaseFunction::BaseFunction() : MathFunction("base", 2, 3) {
 	arg2->setMin(&nr_zero);
 	arg2->setMax(&nr_three);
 	setArgumentDefinition(3, arg2);
+	setArgumentDefinition(3, new TextArgument());
+	setDefaultValue(3, "0");
 }
 int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[1].isVector()) return 0;
 	Number nbase;
-	if(vargs[1].isNumber() && vargs[2].isZero()) {
+	int idigits = 0;
+	string sdigits;
+	if(vargs.size() > 2) sdigits = vargs[2].symbol();
+	if(sdigits.empty() || sdigits == "0" || sdigits == "auto") idigits = 0;
+	else if(sdigits == "1") idigits = 1;
+	else if(sdigits == "2") idigits = 2;
+	else if(sdigits == "3" || sdigits == "Unicode" || sdigits == "unicode" || sdigits == "escaped") idigits = 3;
+	else idigits = -1;
+	if(vargs[1].isNumber() && idigits == 0) {
 		nbase = vargs[1].number();
 	} else {
 		mstruct = vargs[1];
 		mstruct.eval(eo);
 		if(mstruct.isVector()) return -2;
-		if(vargs[2].isZero() && !mstruct.isNumber() && eo.approximation == APPROXIMATION_EXACT) {
+		if(idigits == 0 && !mstruct.isNumber() && eo.approximation == APPROXIMATION_EXACT) {
 			MathStructure mstruct2(mstruct);
 			EvaluationOptions eo2 = eo;
 			eo2.approximation = APPROXIMATION_TRY_EXACT;
@@ -5116,16 +5157,43 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				CALCULATOR->endTemporaryStopMessages();
 			}
 		}
-		if(mstruct.isNumber() && vargs[2].isZero()) {
+		if(mstruct.isNumber() && idigits == 0) {
 			nbase = mstruct.number();
 		} else {
 			string number = vargs[0].symbol();
 			size_t i_dot = number.length();
 			vector<Number> digits;
 			bool b_minus = false;
-			if(vargs[2].number() <= 2) {
+			if(idigits < 0) {
+				unordered_map<string, long int> vdigits;
+				string schar;
+				long int v = 0;
+				for(size_t i = 0; i < sdigits.length(); v++) {
+					size_t l = 1;
+					while(i + l < sdigits.length() && sdigits[i + l] <= 0 && (unsigned char) sdigits[i + l] < 0xC0) l++;
+					vdigits[sdigits.substr(i, l)] = v;
+					i += l;
+				}
 				remove_blanks(number);
-				bool b_case = (vargs[2].number() == 2);
+				i_dot = number.length();
+				for(size_t i = 0; i < number.length();) {
+					size_t l = 1;
+					while(i + l < number.length() && number[i + l] <= 0 && (unsigned char) number[i + l] < 0xC0) l++;
+					unordered_map<string, long int>::iterator it = vdigits.find(number.substr(i, l));
+					if(it == vdigits.end()) {
+						if(l == 1 && (number[i] == CALCULATOR->getDecimalPoint()[0] || (!eo.parse_options.dot_as_separator && number[i] == '.'))) {
+							if(i_dot == number.length()) i_dot = digits.size();
+						} else {
+							CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), number.substr(i, l).c_str(), number.c_str(), format_and_print(mstruct).c_str(), NULL);
+						}
+					} else {
+						digits.push_back(it->second);
+					}
+					i += l;
+				}
+			} else if(idigits <= 2) {
+				remove_blanks(number);
+				bool b_case = (idigits == 2);
 				i_dot = number.length();
 				for(size_t i = 0; i < number.length(); i++) {
 					long int c = -1;
@@ -5136,7 +5204,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						else c = number[i] - 'a' + 10;
 					} else if(number[i] >= 'A' && number[i] <= 'Z') {
 						c = number[i] - 'A' + 10;
-					} else if(number[i] == '.') {
+					} else if(number[i] == CALCULATOR->getDecimalPoint()[0] || (!eo.parse_options.dot_as_separator && number[i] == '.')) {
 						if(i_dot == number.length()) i_dot = digits.size();
 					} else if(number[i] == '-' && digits.empty()) {
 						b_minus = !b_minus;
@@ -5146,7 +5214,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 							i++;
 							str_char += number[i];
 						}
-						CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), format_and_print(mstruct), NULL);
+						CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), format_and_print(mstruct).c_str(), NULL);
 					}
 					if(c >= 0) {
 						digits.push_back(c);

@@ -4016,12 +4016,12 @@ void replace_quotation_marks(string &str) {
 				continue;
 			}
 		}
-		if(i1 > 1 && str[i1 - 1] == ' ' && (i_equals == string::npos || i1 != i_equals + 1) && is_not_in(OPERATORS SPACES, str[i1 - 2])) {
+		if(i1 > 1 && str[i1 - 1] == ' ' && (i_equals == string::npos || i1 != i_equals + 1) && is_not_in(OPERATORS SPACES, str[i1 - 2]) && str[i1 - 2] != printops.comma()[0]) {
 			if(printops.use_unicode_signs && str[i1 - 2] < 0) {
 				size_t i3 = i1 - 2;
 				while(i3 > 0 && str[i3] < 0 && (unsigned char) str[i3] < 0xC0) i3--;
 				string str2 = str.substr(i3, i1 - i3 - 1);
-				if(str2 != SIGN_DIVISION && str2 != SIGN_DIVISION_SLASH && str2 != SIGN_MULTIPLICATION && str2 != SIGN_MULTIDOT && str2 != SIGN_SMALLCIRCLE && str2 != SIGN_MULTIBULLET && str2 != SIGN_MINUS && str2 != SIGN_PLUS && str2 != SIGN_NOT_EQUAL && str2 != SIGN_GREATER_OR_EQUAL && str2 != SIGN_LESS_OR_EQUAL && str2 != SIGN_ALMOST_EQUAL) {
+				if(str2 != SIGN_DIVISION && str2 != SIGN_DIVISION_SLASH && str2 != SIGN_MULTIPLICATION && str2 != SIGN_MULTIDOT && str2 != SIGN_SMALLCIRCLE && str2 != SIGN_MULTIBULLET && str2 != SIGN_MINUS && str2 != SIGN_PLUS && str2 != SIGN_NOT_EQUAL && str2 != SIGN_GREATER_OR_EQUAL && str2 != SIGN_LESS_OR_EQUAL && str2 != SIGN_ALMOST_EQUAL && str2 != printops.comma()) {
 					str.replace(i1 - 1, 2, "\033[3m");
 					i2 += 2;
 					if(i_equals != string::npos && i1 < i_equals) i_equals += 2;
