@@ -252,7 +252,7 @@ string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, bool
 		if(display_sign) cl_str += "-";
 	}
 	
-	char *tmp = mpz_get_str(NULL, negative_base ? -base : base, integ); 
+	char *tmp = mpz_get_str(NULL, base, integ); 
 	cl_str += tmp;
 	void (*freefunc)(void *, size_t);
 	mp_get_memory_functions (NULL, NULL, &freefunc);
@@ -325,7 +325,7 @@ Number::~Number() {
 
 void Number::set(string number, const ParseOptions &po) {
 	
-	if(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && (!CALCULATOR->customInputBase().isInteger() || CALCULATOR->customInputBase() < 2 || CALCULATOR->customInputBase() > 62)) || po.base < BASE_CUSTOM) {
+	if(po.base < BASE_CUSTOM || (po.base == BASE_CUSTOM && (!CALCULATOR->customInputBase().isInteger() || CALCULATOR->customInputBase() < 2 || CALCULATOR->customInputBase() > 62))) {
 		Number base;
 		switch(po.base) {
 			case BASE_GOLDEN_RATIO: {
@@ -7676,7 +7676,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.im) *ips.im = "";
 	if(ips.iexp) *ips.iexp = 0;
 	if(po.is_approximate && isApproximate()) *po.is_approximate = true;
-	if(po.base <= BASE_CUSTOM && (po.base < BASE_CUSTOM || !CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2)) {
+	if(po.base < BASE_CUSTOM || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2))) {
 		Number base;
 		switch(po.base) {
 			case BASE_GOLDEN_RATIO: {

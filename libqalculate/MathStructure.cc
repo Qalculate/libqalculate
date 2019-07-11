@@ -21259,13 +21259,16 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			if(o_function->maxargs() > 0 && o_function->minargs() < o_function->maxargs() && SIZE > (size_t) o_function->minargs()) {
 				while(true) {
 					string defstr = o_function->getDefaultValue(argcount);
+					Argument *arg = o_function->getArgumentDefinition(argcount);
 					remove_blank_ends(defstr);
 					if(defstr.empty()) break;
 					if(CHILD(argcount - 1).isUndefined() && defstr == "undefined") {
 						argcount--;
-					} else if(CHILD(argcount - 1).isVariable() && defstr == CHILD(argcount - 1).variable()->referenceName()) {
+					} else if(CHILD(argcount - 1).isVariable() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr == CHILD(argcount - 1).variable()->referenceName()) {
 						argcount--;
-					} else if(CHILD(argcount - 1).isInteger() && defstr.find_first_not_of(NUMBERS) == string::npos && CHILD(argcount - 1).number() == s2i(defstr)) {
+					} else if(CHILD(argcount - 1).isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS) == string::npos && CHILD(argcount - 1).number() == s2i(defstr)) {
+						argcount--;
+					} else if(CHILD(argcount - 1).isSymbolic() && arg && arg->type() == ARGUMENT_TYPE_TEXT && CHILD(argcount - 1).symbol() == defstr) {
 						argcount--;
 					} else {
 						break;
@@ -31471,7 +31474,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								CHILDREN_UPDATED;
 								if(stop_iv) {
 									CALCULATOR->endTemporaryStopIntervalArithmetic();
-									if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
+									CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 									fix_intervals(*this, eo2);
 								} else if(containsInterval(true, false, false, -2, false)) {
 									set(mbak);
@@ -31537,7 +31540,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								
 								if(stop_iv) {
 									CALCULATOR->endTemporaryStopIntervalArithmetic();
-									if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
+									CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 									fix_intervals(*this, eo2);
 								} else if(containsInterval(true, false, false, -2, false)) {
 									set(mbak);
@@ -31587,7 +31590,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 										CHILDREN_UPDATED;
 										if(stop_iv) {
 											CALCULATOR->endTemporaryStopIntervalArithmetic();
-											if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
+											CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 											fix_intervals(*this, eo2);
 										} else if(containsInterval(true, false, false, -2, false)) {
 											set(mbak);
@@ -31608,7 +31611,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 										CHILDREN_UPDATED;
 										if(stop_iv) {
 											CALCULATOR->endTemporaryStopIntervalArithmetic();
-											if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
+											CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 											fix_intervals(*this, eo2);
 										} else if(containsInterval(true, false, false, -2, false)) {
 											set(mbak);
@@ -31666,7 +31669,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									CHILDREN_UPDATED;
 									if(stop_iv) {
 										CALCULATOR->endTemporaryStopIntervalArithmetic();
-										if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
+										CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 										fix_intervals(*this, eo2);
 									} else if(containsInterval(true, false, false, -2, false)) {
 										set(mbak);
@@ -31792,7 +31795,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									calculatesub(eo3, eo, false);
 									if(stop_iv) {
 										CALCULATOR->endTemporaryStopIntervalArithmetic();
-										if((CALCULATOR->usesIntervalArithmetic() && eo.approximation != APPROXIMATION_EXACT) || mbak.containsInterval()) CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
+										CALCULATOR->error(false, _("Interval arithmetic was disabled during calculation of %s."), format_and_print(mbak).c_str(), NULL);
 										fix_intervals(*this, eo2);
 									} else if(containsInterval(true, false, false, -2, false)) {
 										set(mbak);
