@@ -24,6 +24,10 @@ ExpressionName::ExpressionName(string sname) : suffix(false), unicode(false), pl
 		abbreviation = false;
 		case_sensitive = false;
 	}
+	if(sname.length() > 2) {
+		size_t i = sname.find('_', 1);
+		if(i != string::npos && i < sname.length() - 1 && sname.find('_', i + 1) == string::npos) suffix = true;
+	}
 }
 ExpressionName::ExpressionName() : abbreviation(false), suffix(false), unicode(false), plural(false), reference(false), avoid_input(false), case_sensitive(false), completion_only(false) {
 }
@@ -58,8 +62,10 @@ ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string 
 		names[0].name = name_;
 		names[0].unicode = false;
 		names[0].abbreviation = false;
-		names[0].case_sensitive = text_length_is_one(names[0].name);
-		names[0].suffix = false;
+		names[0].case_sensitive = text_length_is_one(name_);
+		size_t i = name_.find('_');
+		if(i != string::npos && i > 0 && i < name_.length() - 1 && name_.find('_', i + 1) == string::npos) names[0].suffix = true;
+		else names[0].suffix = false;
 		names[0].avoid_input = false;
 		names[0].reference = true;
 		names[0].plural = false;
@@ -85,7 +91,7 @@ ExpressionItem::ExpressionItem() {
 	b_active = true;
 	b_local = true;
 	b_builtin = false;
-	b_registered = false;	
+	b_registered = false;
 	b_hidden = false;
 	b_destroyed = false;
 	i_ref = 0;

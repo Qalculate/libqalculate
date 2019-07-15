@@ -1020,7 +1020,7 @@ class Calculator {
 	* @param is_user_defs true if the definitions are local, false if they are global.
 	* @returns true if the definitions were successfully loaded.
 	*/
-	int loadDefinitions(const char *file_name, bool is_user_defs = true);
+	int loadDefinitions(const char *file_name, bool is_user_defs = true, bool check_duplicates_of_global = false);
 	/** Save local definitions to ~/.qalculate/definitions/
 	*
 	* @returns true if definitions was successfully saved.

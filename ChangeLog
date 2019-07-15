@@ -1,3 +1,18 @@
+2019-07-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Treat text after '_' as suffix by default when user creates a new function, unit, or variable
+	* Check for duplicate names when loading imported definitions
+
+2019-07-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add "to unicode" conversion
+	* Display messages generated during initial loading of definitions immediately (instead of after first calculation) in qalc
+
+2019-07-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for text arguments when hiding default function values in output
+	* Fix italicization of symbol when function argument
+
 2019-07-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* dec() function
