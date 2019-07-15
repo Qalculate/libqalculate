@@ -2897,6 +2897,9 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		} else if(equalsIgnoreCase(to_str, "time") || equalsIgnoreCase(to_str, _("time"))) {
 			str = from_str;
 			printops.base = BASE_TIME;
+		} else if(equalsIgnoreCase(to_str, "unicode")) {
+			str = from_str;
+			printops.base = BASE_UNICODE;
 		} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
 			str = from_str;
 			printops.time_zone = TIME_ZONE_UTC;
@@ -8126,7 +8129,7 @@ bool Calculator::loadLocalDefinitions() {
 	}
 	eps.sort();
 	for(list<string>::iterator it = eps.begin(); it != eps.end(); ++it) {
-		loadDefinitions(buildPath(homedir, *it).c_str(), (*it) == "functions.xml" || (*it) == "variables.xml" || (*it) == "units.xml" || (*it) == "datasets.xml");
+		loadDefinitions(buildPath(homedir, *it).c_str(), (*it) == "functions.xml" || (*it) == "variables.xml" || (*it) == "units.xml" || (*it) == "datasets.xml", true);
 	}
 	for(size_t i = 0; i < variables.size(); i++) {
 		if(!variables[i]->isLocal() && !variables[i]->isActive() && !getActiveExpressionItem(variables[i])) variables[i]->setActive(true);
@@ -8626,9 +8629,9 @@ bool Calculator::loadLocalDefinitions() {
 						if(!ref_names[i].name.empty()) {\
 							ref_names[i].name = "";\
 						}\
-					}					
+					}
 
-int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
+int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool check_duplicates) {
 
 	xmlDocPtr doc;
 	xmlNodePtr cur, child, child2, child3;
@@ -8937,6 +8940,12 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					ITEM_SET_NAME_3
 				}
 				ITEM_SET_DTH
+				if(check_duplicates && !is_user_defs) {
+					for(size_t i = 1; i <= f->countNames();) {
+						if(getActiveFunction(f->getName(i).name)) f->removeName(i);
+						else i++;
+					}
+				}
 				if(f->countNames() == 0) {
 					f->destroy();
 					f = NULL;
@@ -9305,6 +9314,12 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					}
 				}
 				ITEM_SET_DTH
+				if(check_duplicates && !is_user_defs) {
+					for(size_t i = 1; i <= dc->countNames();) {
+						if(getActiveFunction(dc->getName(i).name)) dc->removeName(i);
+						else i++;
+					}
+				}
 				if(!builtin && dc->countNames() == 0) {
 					dc->destroy();
 					dc = NULL;
@@ -9445,6 +9460,12 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					ITEM_SET_NAME_3
 				}
 				ITEM_SET_DTH
+				if(check_duplicates && !is_user_defs) {
+					for(size_t i = 1; i <= v->countNames();) {
+						if(getActiveVariable(v->getName(i).name) || getActiveUnit(v->getName(i).name) || getCompositeUnit(v->getName(i).name)) v->removeName(i);
+						else i++;
+					}
+				}
 				for(size_t i = 1; i <= v->countNames(); i++) {
 					if(v->getName(i).name == "x") {v_x->destroy(); v_x = (UnknownVariable*) v; break;}
 					if(v->getName(i).name == "y") {v_y->destroy(); v_y = (UnknownVariable*) v; break;}
@@ -9501,6 +9522,12 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					ITEM_SET_NAME_3
 				}
 				ITEM_SET_DTH
+				if(check_duplicates && !is_user_defs) {
+					for(size_t i = 1; i <= v->countNames();) {
+						if(getActiveVariable(v->getName(i).name) || getActiveUnit(v->getName(i).name) || getCompositeUnit(v->getName(i).name)) v->removeName(i);
+						else i++;
+					}
+				}
 				if(v->countNames() == 0) {
 					v->destroy();
 					v = NULL;
@@ -9599,6 +9626,12 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 					ITEM_SET_DTH
 					if(use_with_prefixes_set) {
 						u->setUseWithPrefixesByDefault(use_with_prefixes);
+					}
+					if(check_duplicates && !is_user_defs) {
+						for(size_t i = 1; i <= u->countNames();) {
+							if(getActiveVariable(u->getName(i).name) || getActiveUnit(u->getName(i).name) || getCompositeUnit(u->getName(i).name)) u->removeName(i);
+							else i++;
+						}
 					}
 					if(u->countNames() == 0) {
 						u->destroy();
@@ -9733,6 +9766,12 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							u = getUnit(au->referenceName());
 							if(u && u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->baseUnit() == u_euro) u->destroy();
 						}
+						if(check_duplicates && !is_user_defs) {
+							for(size_t i = 1; i <= au->countNames();) {
+								if(getActiveVariable(au->getName(i).name) || getActiveUnit(au->getName(i).name) || getCompositeUnit(au->getName(i).name)) au->removeName(i);
+								else i++;
+							}
+						}
 						if(au->countNames() == 0) {
 							au->destroy();
 							au = NULL;
@@ -9858,6 +9897,12 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs) {
 							ITEM_SET_NAME_3
 						}
 						ITEM_SET_DTH
+						if(check_duplicates && !is_user_defs) {
+							for(size_t i = 1; i <= cu->countNames();) {
+								if(getActiveVariable(cu->getName(i).name) || getActiveUnit(cu->getName(i).name) || getCompositeUnit(cu->getName(i).name)) cu->removeName(i);
+								else i++;
+							}
+						}
 						if(cu->countNames() == 0) {
 							cu->destroy();
 							cu = NULL;

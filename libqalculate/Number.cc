@@ -8025,7 +8025,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						str_c += (char) (((c >> 6) & 0x3f) | 0x80);
 						str_c += (char) ((c & 0x3f) | 0x80);
 					}
-					if(str_c.empty() || (po.can_display_unicode_string_function && !(*po.can_display_unicode_string_function) (str_c.c_str(), po.can_display_unicode_string_arg))) {
+					if(str_c.empty()) {
 						str += '\\';
 						str += i2s(c);
 						prev_esc = true;

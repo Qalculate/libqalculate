@@ -26,7 +26,9 @@ Unit::Unit(string cat_, string name_, string plural_, string singular_, string t
 		names[0].unicode = false;
 		names[0].abbreviation = true;
 		names[0].case_sensitive = true;
-		names[0].suffix = false;
+		size_t i = name_.find('_');
+		if(i != string::npos && i > 0 && i < name_.length() - 1 && name_.find('_', i + 1) == string::npos) names[0].suffix = true;
+		else names[0].suffix = false;
 		names[0].avoid_input = false;
 		names[0].reference = true;
 		names[0].plural = false;

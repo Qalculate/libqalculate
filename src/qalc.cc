@@ -1839,16 +1839,6 @@ int main(int argc, char *argv[]) {
 	//exchange rates
 	if(fetch_exchange_rates_at_startup && canfetch) {
 		CALCULATOR->fetchExchangeRates(15);
-		int cols = 0;
-		if(!command_file.empty()) {
-#ifdef HAVE_LIBREADLINE
-			int rows = 0;
-			rl_get_screen_size(&rows, &cols);
-#else
-			cols = 80;
-#endif
-		}
-		display_errors(false, cols);
 	}
 	if(load_global_defs && load_currencies && canfetch) {
 		CALCULATOR->setExchangeRatesWarningEnabled(!interactive_mode && (!command_file.empty() || (result_only && !calc_arg.empty())));
@@ -1878,6 +1868,19 @@ int main(int argc, char *argv[]) {
 
 	//load local definitions
 	CALCULATOR->loadLocalDefinitions();
+	
+	if(!result_only) {
+		int cols = 0;
+		if(!command_file.empty()) {
+#ifdef HAVE_LIBREADLINE
+			int rows = 0;
+			rl_get_screen_size(&rows, &cols);
+#else
+			cols = 80;
+#endif
+		}
+		display_errors(false, cols);
+	}
 	
 	if(list_type != 'n') {
 		CALCULATOR->terminateThreads();
@@ -2560,6 +2563,11 @@ int main(int argc, char *argv[]) {
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "time", _("time"))) {
 				int save_base = printops.base;
 				printops.base = BASE_TIME;
+				setResult(NULL, false);
+				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "unicode")) {
+				int save_base = printops.base;
+				printops.base = BASE_UNICODE;
 				setResult(NULL, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "utc") || equalsIgnoreCase(str, "gmt")) {
@@ -3885,6 +3893,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- sex / sexagesimal (show as sexagesimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- roman (show as roman numerals)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- time (show in time format)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- unicode"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- base # (show in specified number base)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bases (show as binary, octal, decimal and hexadecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
@@ -4629,6 +4638,14 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_TIME;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.base = save_base;
+				expression_str = str;
+				return;
+			} else if(equalsIgnoreCase(str, "unicode")) {
+				int save_base = printops.base;
+				expression_str = from_str;
+				printops.base = BASE_UNICODE;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
