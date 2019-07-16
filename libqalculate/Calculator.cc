@@ -9983,17 +9983,31 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "prefix")) {
 				child = cur->xmlChildrenNode;
 				XML_GET_STRING_FROM_PROP(cur, "type", type)
-				uname = ""; sexp = ""; svalue = "";
+				uname = ""; sexp = ""; svalue = ""; name = "";
+				bool b_best = false;
 				while(child != NULL) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "name")) {
-						XML_GET_STRING_FROM_TEXT(child, name);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "abbreviation")) {	
+						lang = xmlNodeGetLang(child);
+						if(!lang) {
+							if(name.empty()) XML_GET_STRING_FROM_TEXT(child, name);
+						} else {
+							if(!b_best && !locale.empty()) {
+								if(locale == (char*) lang) {
+									XML_GET_STRING_FROM_TEXT(child, name);
+									b_best = true;
+								} else if(strlen((char*) lang) >= 2 && lang[0] == localebase[0] && lang[1] == localebase[1]) {
+									XML_GET_STRING_FROM_TEXT(child, name);
+								}
+							}
+							xmlFree(lang);
+						}
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "abbreviation")) {
 						XML_GET_STRING_FROM_TEXT(child, stmp);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "unicode")) {	
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "unicode")) {
 						XML_GET_STRING_FROM_TEXT(child, uname);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "exponent")) {	
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "exponent")) {
 						XML_GET_STRING_FROM_TEXT(child, sexp);
-					} else if(!xmlStrcmp(child->name, (const xmlChar*) "value")) {	
+					} else if(!xmlStrcmp(child->name, (const xmlChar*) "value")) {
 						XML_GET_STRING_FROM_TEXT(child, svalue);
 					}
 					child = child->next;

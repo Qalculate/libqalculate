@@ -1,6 +1,8 @@
 2019-07-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Support both micro sign and small mu as symbol for micro prefix
+	* Allow translation of prefixes
+	* Fix English spelling of "deca"
 
 2019-07-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
