@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-10 17:25+0200\n"
+"POT-Creation-Date: 2019-07-16 19:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7071,6 +7071,110 @@ msgstr ""
 
 #: ../data/planets.xml.in.h:10
 msgid "Uranus"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:1
+msgid "yocto"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:2
+msgid "zepto"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:3
+msgid "atto"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:4
+msgid "femto"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:5
+msgid "pico"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:6
+msgid "nano"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:7
+msgid "micro"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:8
+msgid "milli"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:9
+msgid "centi"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:10
+msgid "deci"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:11
+msgid "deca"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:12
+msgid "hecto"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:13
+msgid "kilo"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:14
+msgid "mega"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:15
+msgid "giga"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:16
+msgid "tera"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:17
+msgid "peta"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:18
+msgid "exa"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:19
+msgid "zetta"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:20
+msgid "yotta"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:21
+msgid "kibi"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:22
+msgid "mebi"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:23
+msgid "gibi"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:24
+msgid "tebi"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:25
+msgid "pebi"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:26
+msgid "exbi"
 msgstr ""
 
 #. Unit category

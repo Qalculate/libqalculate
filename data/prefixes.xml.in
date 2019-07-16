@@ -1,133 +1,133 @@
 <?xml version="1.0"?>
 <QALCULATE version="0.9.4">
   <prefix type="decimal">
-    <name>yocto</name>
+    <_name>yocto</_name>
     <abbreviation>y</abbreviation>
     <exponent>-24</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>zepto</name>
+    <_name>zepto</_name>
     <abbreviation>z</abbreviation>
     <exponent>-21</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>atto</name>
+    <_name>atto</_name>
     <abbreviation>a</abbreviation>
     <exponent>-18</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>femto</name>
+    <_name>femto</_name>
     <abbreviation>f</abbreviation>
     <exponent>-15</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>pico</name>
+    <_name>pico</_name>
     <abbreviation>p</abbreviation>
     <exponent>-12</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>nano</name>
+    <_name>nano</_name>
     <abbreviation>n</abbreviation>
     <exponent>-9</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>micro</name>
+    <_name>micro</_name>
     <abbreviation>u</abbreviation>
     <unicode>&#x3BC;</unicode>
     <exponent>-6</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>milli</name>
+    <_name>milli</_name>
     <abbreviation>m</abbreviation>
     <exponent>-3</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>centi</name>
+    <_name>centi</_name>
     <abbreviation>c</abbreviation>
     <exponent>-2</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>deci</name>
+    <_name>deci</_name>
     <abbreviation>d</abbreviation>
     <exponent>-1</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>deka</name>
+    <_name>deca</_name>
     <abbreviation>da</abbreviation>
     <exponent>1</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>hecto</name>
+    <_name>hecto</_name>
     <abbreviation>h</abbreviation>
     <exponent>2</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>kilo</name>
+    <_name>kilo</_name>
     <abbreviation>k</abbreviation>
     <exponent>3</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>mega</name>
+    <_name>mega</_name>
     <abbreviation>M</abbreviation>
     <exponent>6</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>giga</name>
+    <_name>giga</_name>
     <abbreviation>G</abbreviation>
     <exponent>9</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>tera</name>
+    <_name>tera</_name>
     <abbreviation>T</abbreviation>
     <exponent>12</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>peta</name>
+    <_name>peta</_name>
     <abbreviation>P</abbreviation>
     <exponent>15</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>exa</name>
+    <_name>exa</_name>
     <abbreviation>E</abbreviation>
     <exponent>18</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>zetta</name>
+    <_name>zetta</_name>
     <abbreviation>Z</abbreviation>
     <exponent>21</exponent>
   </prefix>
   <prefix type="decimal">
-    <name>yotta</name>
+    <_name>yotta</_name>
     <abbreviation>Y</abbreviation>
     <exponent>24</exponent>
   </prefix>
   <prefix type="binary">
-    <name>kibi</name>
+    <_name>kibi</_name>
     <abbreviation>Ki</abbreviation>
     <exponent>10</exponent>
   </prefix>
   <prefix type="binary">
-    <name>mebi</name>
+    <_name>mebi</_name>
     <abbreviation>Mi</abbreviation>
     <exponent>20</exponent>
   </prefix>
   <prefix type="binary">
-    <name>gibi</name>
+    <_name>gibi</_name>
     <abbreviation>Gi</abbreviation>
     <exponent>30</exponent>
   </prefix>
   <prefix type="binary">
-    <name>tebi</name>
+    <_name>tebi</_name>
     <abbreviation>Ti</abbreviation>
     <exponent>40</exponent>
   </prefix>
   <prefix type="binary">
-    <name>pebi</name>
+    <_name>pebi</_name>
     <abbreviation>Pi</abbreviation>
     <exponent>50</exponent>
   </prefix>
   <prefix type="binary">
-    <name>exbi</name>
+    <_name>exbi</_name>
     <abbreviation>Ei</abbreviation>
     <exponent>60</exponent>
   </prefix>
