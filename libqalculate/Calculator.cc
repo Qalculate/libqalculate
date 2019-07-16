@@ -408,6 +408,7 @@ Calculator::Calculator() {
 	addStringAlternative("∧", BITWISE_AND);
 	addStringAlternative("∨", BITWISE_OR);
 	addStringAlternative("¬", BITWISE_NOT);
+	addStringAlternative(SIGN_MICRO, "μ");
 	
 	per_str = _("per");
 	per_str_len = per_str.length();
@@ -626,6 +627,7 @@ Calculator::Calculator(bool ignore_locale) {
 	addStringAlternative("∧", BITWISE_AND);
 	addStringAlternative("∨", BITWISE_OR);
 	addStringAlternative("¬", BITWISE_NOT);
+	addStringAlternative(SIGN_MICRO, "μ");
 	
 	per_str = _("per");
 	per_str_len = per_str.length();
