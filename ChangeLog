@@ -1,3 +1,7 @@
+2019-07-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support both micro sign and small mu as symbol for micro prefix
+
 2019-07-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Treat text after '_' as suffix by default when user creates a new function, unit, or variable

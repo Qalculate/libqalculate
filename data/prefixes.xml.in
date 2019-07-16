@@ -33,7 +33,7 @@
   <prefix type="decimal">
     <name>micro</name>
     <abbreviation>u</abbreviation>
-    <unicode>&#xB5;</unicode>
+    <unicode>&#x3BC;</unicode>
     <exponent>-6</exponent>
   </prefix>
   <prefix type="decimal">
