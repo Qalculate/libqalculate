@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-04 10:13+0200\n"
+"POT-Creation-Date: 2019-07-19 13:19+0200\n"
 "PO-Revision-Date: 2006-12-06 15:54-0500\n"
 "Last-Translator: Nicolas Laug <nicolog@users.sourceforge.net>\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -3835,8 +3835,9 @@ msgid ""
 "are not real numbers by default uses digits 0-9 and A-Z.&#10;&#10;The set of "
 "digits used can be selected using the third argument (defaults to 0 for "
 "automatic selection). Set it to 1 for digits 0-9 and A-Z, 2 for 0-9, A-Z and "
-"a-z, and 3 for Unicode digits. When the set of digits is manually selected, "
-"the specified expression is always converted to a single number."
+"a-z, and 3 for Unicode digits, or enter a text string with all digits placed "
+"in ascending order (e.g. \"0123456789\"). When the set of digits is manually "
+"selected, the specified expression is always converted to a single number."
 msgstr ""
 
 #: ../data/functions.xml.in.h:238
@@ -5094,7 +5095,7 @@ msgid ""
 "scale parameter. (from Gnumeric)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:541 ../data/variables.xml.in.h:205
+#: ../data/functions.xml.in.h:541 ../data/variables.xml.in.h:204
 msgid "Date &amp; Time"
 msgstr "Date &amp; Heure"
 
@@ -5389,7 +5390,7 @@ msgstr ""
 msgid "Start Date"
 msgstr "Construire une Matrice"
 
-#: ../data/functions.xml.in.h:607 ../data/variables.xml.in.h:198
+#: ../data/functions.xml.in.h:607 ../data/variables.xml.in.h:197
 msgid "Utilities"
 msgstr "Utilitaires"
 
@@ -7378,6 +7379,113 @@ msgstr "Pluton"
 
 #: ../data/planets.xml.in.h:10
 msgid "Uranus"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:1
+msgid "yocto"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:2
+msgid "zepto"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:3
+msgid "atto"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:4
+msgid "femto"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:5
+msgid "pico"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:6
+msgid "nano"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:7
+msgid "micro"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:8
+#, fuzzy
+msgid "milli"
+msgstr "Milliard"
+
+#: ../data/prefixes.xml.in.h:9
+#, fuzzy
+msgid "centi"
+msgstr "Pour Cent"
+
+#: ../data/prefixes.xml.in.h:10
+msgid "deci"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:11
+msgid "deca"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:12
+#, fuzzy
+msgid "hecto"
+msgstr "Vecteur"
+
+#: ../data/prefixes.xml.in.h:13
+msgid "kilo"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:14
+msgid "mega"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:15
+msgid "giga"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:16
+msgid "tera"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:17
+msgid "peta"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:18
+msgid "exa"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:19
+msgid "zetta"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:20
+msgid "yotta"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:21
+msgid "kibi"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:22
+msgid "mebi"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:23
+msgid "gibi"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:24
+msgid "tebi"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:25
+msgid "pebi"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:26
+msgid "exbi"
 msgstr ""
 
 #. Unit category
@@ -10379,141 +10487,140 @@ msgid "Golden Ratio"
 msgstr "Le Nombre d'Or"
 
 #: ../data/variables.xml.in.h:178
-#, fuzzy
-msgid "Supergolden Ratio"
-msgstr "Le Nombre d'Or"
-
-#: ../data/variables.xml.in.h:179
 msgid "Omega Constant"
 msgstr "Constante Oméga"
 
-#: ../data/variables.xml.in.h:180
+#: ../data/variables.xml.in.h:179
 msgid "Pythagoras' Constant (sqrt 2)"
 msgstr "Constante de Pythagore (sqrt 2)"
 
-#: ../data/variables.xml.in.h:181
+#: ../data/variables.xml.in.h:180
 msgid "Apery's Constant"
 msgstr "Constante d'Apéry"
 
-#: ../data/variables.xml.in.h:182
+#: ../data/variables.xml.in.h:181
 msgid "Base of Natural Logarithms (e)"
 msgstr "La Base des Logarithmes Naturels (e)"
 
-#: ../data/variables.xml.in.h:183
+#: ../data/variables.xml.in.h:182
 msgid "Archimedes' Constant (pi)"
 msgstr "Constante d’Archimède (pi)"
 
-#: ../data/variables.xml.in.h:184
+#: ../data/variables.xml.in.h:183
 msgid "Euler's Constant"
 msgstr "Constante d'Euler"
 
-#: ../data/variables.xml.in.h:185
+#: ../data/variables.xml.in.h:184
 msgid "Catalan's Constant"
 msgstr "Constante de Catalan"
 
-#: ../data/variables.xml.in.h:186
+#: ../data/variables.xml.in.h:185
 msgid "Special Numbers"
 msgstr "Numéros Spéciaux"
 
-#: ../data/variables.xml.in.h:187
+#: ../data/variables.xml.in.h:186
 msgid "Imaginary i (sqrt -1)"
 msgstr "Nombre Imaginaire i (tel que i^2 = -1)"
 
-#: ../data/variables.xml.in.h:188
+#: ../data/variables.xml.in.h:187
 msgid "Positive Infinity"
 msgstr "Infini Positif"
 
-#: ../data/variables.xml.in.h:189
+#: ../data/variables.xml.in.h:188
 msgid "a:&#x221E;,r:plus_infinity,r:infinity"
 msgstr "a:&#x221E;,infini"
 
-#: ../data/variables.xml.in.h:190
+#: ../data/variables.xml.in.h:189
 msgid "Negative Infinity"
 msgstr "Infini Négatif"
 
-#: ../data/variables.xml.in.h:191
+#: ../data/variables.xml.in.h:190
 msgid "r:minus_infinity"
 msgstr "infini_négatif"
 
-#: ../data/variables.xml.in.h:192
+#: ../data/variables.xml.in.h:191
 msgid "Undefined"
 msgstr "Indéfini"
 
-#: ../data/variables.xml.in.h:193
+#: ../data/variables.xml.in.h:192
 msgid "r:undefined"
 msgstr "indéfini"
 
-#: ../data/variables.xml.in.h:194
+#: ../data/variables.xml.in.h:193
 msgid "False"
 msgstr "Faux"
 
-#: ../data/variables.xml.in.h:195
+#: ../data/variables.xml.in.h:194
 msgid "r:false,r:no"
 msgstr "faux,non"
 
-#: ../data/variables.xml.in.h:196
+#: ../data/variables.xml.in.h:195
 msgid "True"
 msgstr "Vrai"
 
-#: ../data/variables.xml.in.h:197
+#: ../data/variables.xml.in.h:196
 msgid "r:true,r:yes"
 msgstr "vrai,oui"
 
-#: ../data/variables.xml.in.h:199
+#: ../data/variables.xml.in.h:198
 msgid "Precision"
 msgstr ""
 
-#: ../data/variables.xml.in.h:200
+#: ../data/variables.xml.in.h:199
 msgid "r:precision"
 msgstr ""
 
-#: ../data/variables.xml.in.h:201
+#: ../data/variables.xml.in.h:200
 msgid "System Uptime"
 msgstr ""
 
-#: ../data/variables.xml.in.h:202
+#: ../data/variables.xml.in.h:201
 msgid "r:uptime"
 msgstr ""
 
-#: ../data/variables.xml.in.h:203
+#: ../data/variables.xml.in.h:202
 msgid "Unknowns"
 msgstr "Inconnues"
 
-#: ../data/variables.xml.in.h:204
+#: ../data/variables.xml.in.h:203
 msgid "n (integer)"
 msgstr "n (entier)"
 
-#: ../data/variables.xml.in.h:206
+#: ../data/variables.xml.in.h:205
 msgid "Today"
 msgstr "Aujourd'hui"
 
-#: ../data/variables.xml.in.h:207
+#: ../data/variables.xml.in.h:206
 msgid "r:today"
 msgstr "aujourdhui"
 
-#: ../data/variables.xml.in.h:208
+#: ../data/variables.xml.in.h:207
 msgid "Tomorrow"
 msgstr "Demain"
 
-#: ../data/variables.xml.in.h:209
+#: ../data/variables.xml.in.h:208
 msgid "r:tomorrow"
 msgstr "demain"
 
-#: ../data/variables.xml.in.h:210
+#: ../data/variables.xml.in.h:209
 msgid "Yesterday"
 msgstr "Hier"
 
-#: ../data/variables.xml.in.h:211
+#: ../data/variables.xml.in.h:210
 msgid "r:yesterday"
 msgstr "hier"
 
-#: ../data/variables.xml.in.h:212
+#: ../data/variables.xml.in.h:211
 msgid "Now (date and time)"
 msgstr "À Présent (date et l'heure)"
 
-#: ../data/variables.xml.in.h:213
+#: ../data/variables.xml.in.h:212
 msgid "r:now"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Supergolden Ratio"
+#~ msgstr "Le Nombre d'Or"
 
 #, fuzzy
 #~ msgid "Belarusian Ruble"
