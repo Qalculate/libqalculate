@@ -516,7 +516,7 @@ string getLocalTmpDir() {
 
 bool move_file(const char *from_file, const char *to_file) {
 #ifdef _WIN32
-	return MoveFile(from_file, to_file) == 0;
+	return MoveFile(from_file, to_file) != 0;
 #else
 	ifstream source(from_file);
 	if(source.fail()) {
