@@ -1,3 +1,7 @@
+2019-07-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add Calculator::setLocalCurrency() (overrides currency specified by LC_MONETARY)
+
 2019-07-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Support both micro sign and small mu as symbol for micro prefix

@@ -324,6 +324,7 @@ class Calculator_p {
 		size_t ids_i;
 		Number custom_input_base, custom_output_base;
 		long int custom_input_base_i;
+		Unit *local_currency;
 };
 
 #define BITWISE_XOR "⊻"
@@ -357,6 +358,9 @@ Calculator::Calculator() {
 	gmp_randseed_ui(randstate, (unsigned long int) time(NULL));
 
 	priv = new Calculator_p;
+	priv->custom_input_base_i = 0;
+	priv->ids_i = 0;
+	priv->local_currency = NULL;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -473,8 +477,6 @@ Calculator::Calculator() {
 	
 	string str = _(" to ");
 	local_to = (str != " to ");
-	
-	priv->ids_i = 0;
 	
 	decimal_null_prefix = new DecimalPrefix(0, "", "");
 	binary_null_prefix = new BinaryPrefix(0, "", "");
@@ -576,6 +578,8 @@ Calculator::Calculator(bool ignore_locale) {
 
 	priv = new Calculator_p;
 	priv->custom_input_base_i = 0;
+	priv->ids_i = 0;
+	priv->local_currency = NULL;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -692,9 +696,7 @@ Calculator::Calculator(bool ignore_locale) {
 	
 	string str = _(" to ");
 	local_to = (str != " to ");
-	
-	priv->ids_i = 0;
-	
+
 	decimal_null_prefix = new DecimalPrefix(0, "", "");
 	binary_null_prefix = new BinaryPrefix(0, "", "");
 	m_undefined.setUndefined();
@@ -4482,15 +4484,20 @@ Unit* Calculator::getActiveUnit(string name_) {
 	return NULL;
 }
 Unit* Calculator::getLocalCurrency() {
+	if(priv->local_currency) return priv->local_currency;
 	struct lconv *lc = localeconv();
 	if(lc) {
 		string local_currency = lc->int_curr_symbol;
 		remove_blank_ends(local_currency);
 		if(!local_currency.empty()) {
+			if(local_currency.length() > 3) local_currency = local_currency.substr(0, 3);
 			return getActiveUnit(local_currency);
 		}
 	}
 	return NULL;
+}
+void Calculator::setLocalCurrency(Unit *u) {
+	priv->local_currency = u;
 }
 Unit* Calculator::getCompositeUnit(string internal_name_) {
 	if(internal_name_.empty()) return NULL;
