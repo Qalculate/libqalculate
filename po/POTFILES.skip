@@ -3,5 +3,6 @@ data/datasets.xml.in
 data/elements.xml.in
 data/functions.xml.in
 data/planets.xml.in
+data/prefixes.xml.in
 data/units.xml.in
 data/variables.xml.in
