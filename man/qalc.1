@@ -1,0 +1,110 @@
+.\" Manual Page for qalc, copyright (c) 2005 Thijs Kinkhorst
+.\" <thijs@kinkhorst.com> licenced under the GNU General
+.\" Public Licence.
+.TH QALC 1 "31 July 2019"
+.SH NAME
+qalc \- Powerful and easy to use command line calculator
+.SH SYNOPSIS
+.B qalc
+[options] [expression]
+.SH DESCRIPTION
+Qalculate! is a multi-purpose cross-platform desktop calculator. It is simple
+to use but provides power and versatility normally reserved for complicated
+math packages, as well as useful tools for everyday needs (such as currency
+conversion and percent calculation). Features include a large library of
+customizable functions, unit calculations and conversion, physical constants,
+symbolic calculations (including integrals and equations), arbitrary precision,
+uncertainty propagation, interval arithmetic, plotting, and a user-friendly
+interface.
+\fBqalc\fP is the command line interface of Qalculate!.
+.SH OPTIONS
+.PP
+.TP 8
+.B \-b, \-\-base \fIbase\fP
+set the number base for results and, optionally, expressions
+.PP
+.TP 8
+.B \-e, \-\-exrates
+update exchange rates
+.PP
+.TP 8
+.B \-f, \-\-file \fIfile\fP
+executes commands from a file first
+.PP
+.TP 8
+.B \-i, \-\-interactive
+start in interactive mode
+.PP
+.TP 8
+.B \-l, \-\-list \fI[search term]\fP
+displays a list of all user-defined or matching variables, functions and units.
+.PP
+.TP 8
+.B \-\-list\-functions \fI[search term]\fP
+displays a list of all or matching functions.
+.PP
+.TP 8
+.B \-\-list\-units \fI[search term]\fP
+displays a list of all or matching units.
+.PP
+.TP 8
+.B \-\-list\-variables \fI[search term]\fP
+displays a list of all or matching variables.
+.PP
+.TP 8
+.B \-m, \-\-time \fIMILLISECONDS\fP
+terminate calculation and display of result after specified amount of time
+.PP
+.TP 8
+.B \-n, \-\-nodefs
+do not load any functions, units, or variables from file
+.PP
+.TP 8
+.B \-\-nocurrencies
+do not load any global currencies from file
+.PP
+.TP 8
+.B \-\-nodatasets
+do not load any global data sets from file
+.PP
+.TP 8
+.B \-\-nofunctions
+do not load any global functions from file
+.PP
+.TP 8
+.B \-\-nounits
+do not load any global units from file
+.PP
+.TP 8
+.B \-\-novariables
+do not load any global variables from file
+.PP
+.TP 8
+.B \-p \fI[base]\fP
+start in programming mode (same as \-b "base base" \-s "xor^", with base conversion)
+.PP
+.TP 8
+.B \-s, \-\-set \(dq\fIoption\fP \fIvalue\fP\(dq
+as set command in interactive program session (ex. \-\-set "base 16")
+.PP
+.TP 8
+.B \-t, \-\-terse
+reduces output to just the result of the input expression
+.PP
+.TP 8
+.B \-/+u8
+turn on/off unicode support
+.PP
+.TP 8
+.B \-v, \-\-version
+show application version and exit
+.PP
+The program will start in interactive mode if no expression and no file is
+specified (or interactive mode is explicitly selected). Type \fIhelp\fP in
+interactive mode to get more information about available commands.
+.SH "SEE ALSO"
+.I https://qalculate.github.io/
+.SH BUGS
+Please report bugs at https://github.com/Qalculate/libqalculate/issues
+.SH AUTHORS
+Hanna Knutsson <hanna.knutsson@protonmail.com>.

@@ -2,7 +2,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = libqalculate src data po po-defs docs
+SUBDIRS = libqalculate src data man po po-defs docs
 
 EXTRA_DIST = config.rpath  \
 	autogen.sh \
