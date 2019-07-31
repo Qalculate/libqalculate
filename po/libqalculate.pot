@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-27 16:16+0200\n"
+"POT-Creation-Date: 2019-07-31 17:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -964,19 +964,19 @@ msgstr ""
 #: ../src/qalc.cc:1659
 msgid ""
 "displays a list of all user-defined or matching variables, functions and "
-"units."
+"units"
 msgstr ""
 
 #: ../src/qalc.cc:1661
-msgid "displays a list of all or matching functions."
+msgid "displays a list of all or matching functions"
 msgstr ""
 
 #: ../src/qalc.cc:1663
-msgid "displays a list of all or matching units."
+msgid "displays a list of all or matching units"
 msgstr ""
 
 #: ../src/qalc.cc:1665
-msgid "displays a list of all or matching variables."
+msgid "displays a list of all or matching variables"
 msgstr ""
 
 #: ../src/qalc.cc:1666
@@ -1027,7 +1027,7 @@ msgid "VALUE"
 msgstr ""
 
 #: ../src/qalc.cc:1683
-msgid "as set command in interactive program session (ex. -set \"base 16\")"
+msgid "as set command in interactive program session (e.g. -set \"base 16\")"
 msgstr ""
 
 #: ../src/qalc.cc:1685

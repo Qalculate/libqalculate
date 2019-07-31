@@ -283,6 +283,7 @@ AC_OUTPUT([
   po-defs/Makefile
   docs/Makefile
   docs/reference/Makefile
+  man/Makefile
   libqalculate.pc
 ])
 

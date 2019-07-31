@@ -1,3 +1,7 @@
+2019-07-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Man page
+
 2019-07-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add Calculator::setLocalCurrency() (overrides currency specified by LC_MONETARY)

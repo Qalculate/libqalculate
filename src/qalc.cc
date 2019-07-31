@@ -1656,13 +1656,13 @@ int main(int argc, char *argv[]) {
 			fputs("\n\t-i, -interactive\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("start in interactive mode"));
 			fputs("\n\t-l, -list", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all user-defined or matching variables, functions and units."));
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all user-defined or matching variables, functions and units"));
 			fputs("\n\t--list-functions", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all or matching functions."));
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all or matching functions"));
 			fputs("\n\t--list-units", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all or matching units."));
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all or matching units"));
 			fputs("\n\t--list-variables", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all or matching variables."));
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all or matching variables"));
 			fputs("\n\t-m, -time", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("MILLISECONDS"), stdout); fputs("\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("terminate calculation and display of result after specified amount of time"));
 			fputs("\n\t-n, -nodefs\n", stdout);
@@ -1680,7 +1680,7 @@ int main(int argc, char *argv[]) {
 			fputs("\n\t-p", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("]\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("start in programming mode (same as -b \"BASE BASE\" -s \"xor^\", with base conversion)"));
 			fputs("\n\t-s, -set", stdout); fputs(" \"", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("VALUE"), stdout); fputs("\"\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("as set command in interactive program session (ex. -set \"base 16\")"));
+			fputs("\t", stdout); PUTS_UNICODE(_("as set command in interactive program session (e.g. -set \"base 16\")"));
 			fputs("\n\t-t, -terse\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("reduces output to just the result of the input expression"));
 			fputs("\n\t-/+u8\n", stdout);
