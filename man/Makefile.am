@@ -1,1 +1,1 @@
-man_MANS = qalc.1
+dist_man_MANS = qalc.1

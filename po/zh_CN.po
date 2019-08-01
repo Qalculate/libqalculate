@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-31 17:55+0200\n"
+"POT-Creation-Date: 2019-08-01 09:00+0200\n"
 "PO-Revision-Date: 2007-07-31 15:34+0800\n"
 "Last-Translator: Roy Qu <royqh1979@gmail.com>\n"
 "Language-Team: Simplified Chinese\n"
@@ -986,7 +986,7 @@ msgid "FILE"
 msgstr "文件"
 
 #: ../src/qalc.cc:1655
-msgid "executes commands from a file first"
+msgid "execute commands from a file first"
 msgstr "首先执行指定文件中的命令"
 
 #: ../src/qalc.cc:1657
@@ -1072,11 +1072,11 @@ msgid "as set command in interactive program session (e.g. -set \"base 16\")"
 msgstr "与在交互编程环境下使用set命令的作用一致 (例如， -set \"base 16\")"
 
 #: ../src/qalc.cc:1685
-msgid "reduces output to just the result of the input expression"
+msgid "reduce output to just the result of the input expression"
 msgstr "限制输出，仅输出输入表达式的结果"
 
 #: ../src/qalc.cc:1687
-msgid "turn on/off unicode support"
+msgid "switch unicode support on/off"
 msgstr "打开/关闭unicode支持"
 
 #: ../src/qalc.cc:1689
