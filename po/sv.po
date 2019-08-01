@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-31 17:55+0200\n"
+"POT-Creation-Date: 2019-08-01 09:00+0200\n"
 "PO-Revision-Date: 2006-05-04 12:29+0200\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -935,7 +935,7 @@ msgstr "Inga lokala variabler, funktioner eller enheter har definierats."
 
 #: ../src/qalc.cc:1645
 msgid "usage: qalc [options] [expression]"
-msgstr "användning: qalc [alternative] [uttryck]"
+msgstr "användning: qalc [alternativ] [uttryck]"
 
 #: ../src/qalc.cc:1647
 msgid "where options are:"
@@ -954,7 +954,7 @@ msgid "FILE"
 msgstr "FIL"
 
 #: ../src/qalc.cc:1655
-msgid "executes commands from a file first"
+msgid "execute commands from a file first"
 msgstr "utför kommandon från en fil först"
 
 #: ../src/qalc.cc:1657
@@ -1042,11 +1042,11 @@ msgstr ""
 "\"bas 16\")"
 
 #: ../src/qalc.cc:1685
-msgid "reduces output to just the result of the input expression"
-msgstr "begränsar utdata till enbart resultatet av angett uttryck"
+msgid "reduce output to just the result of the input expression"
+msgstr "begränsa utdata till enbart resultatet av angett uttryck"
 
 #: ../src/qalc.cc:1687
-msgid "turn on/off unicode support"
+msgid "switch unicode support on/off"
 msgstr "aktivera/avaktivera unicode-stöd"
 
 #: ../src/qalc.cc:1689

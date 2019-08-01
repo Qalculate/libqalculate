@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-31 17:55+0200\n"
+"POT-Creation-Date: 2019-08-01 09:00+0200\n"
 "PO-Revision-Date: 2006-11-08 21:13-0500\n"
 "Last-Translator: Nicolas Laug <Nicolas.Laug@users.sourceforge.net>\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -981,7 +981,7 @@ msgid "FILE"
 msgstr "FICHIER"
 
 #: ../src/qalc.cc:1655
-msgid "executes commands from a file first"
+msgid "execute commands from a file first"
 msgstr "commencer par exécuter les commandes dans un fichier"
 
 #: ../src/qalc.cc:1657
@@ -1071,11 +1071,11 @@ msgstr ""
 "(ex. -set \"base 16\")"
 
 #: ../src/qalc.cc:1685
-msgid "reduces output to just the result of the input expression"
+msgid "reduce output to just the result of the input expression"
 msgstr ""
 
 #: ../src/qalc.cc:1687
-msgid "turn on/off unicode support"
+msgid "switch unicode support on/off"
 msgstr "activer/désactiver le support de l'unicode"
 
 #: ../src/qalc.cc:1689

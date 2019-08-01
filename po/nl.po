@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-31 17:55+0200\n"
+"POT-Creation-Date: 2019-08-01 09:00+0200\n"
 "PO-Revision-Date: 2007-05-18 16:19+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -980,7 +980,7 @@ msgid "FILE"
 msgstr "BESTAND"
 
 #: ../src/qalc.cc:1655
-msgid "executes commands from a file first"
+msgid "execute commands from a file first"
 msgstr "voert eerst opdrachten uit vanuit een bestand"
 
 #: ../src/qalc.cc:1657
@@ -1066,12 +1066,12 @@ msgid "as set command in interactive program session (e.g. -set \"base 16\")"
 msgstr "als set-opdracht bij interactief programmeren (vb. -set \"base 16\")"
 
 #: ../src/qalc.cc:1685
-msgid "reduces output to just the result of the input expression"
+msgid "reduce output to just the result of the input expression"
 msgstr ""
 "reduceert de uitvoer tot alleen het antwoord op de ingevoerde expressie"
 
 #: ../src/qalc.cc:1687
-msgid "turn on/off unicode support"
+msgid "switch unicode support on/off"
 msgstr "ondersteuning unicode aan/uit"
 
 #: ../src/qalc.cc:1689

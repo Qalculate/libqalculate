@@ -1652,7 +1652,7 @@ int main(int argc, char *argv[]) {
 			fputs("\t", stdout); PUTS_UNICODE(_("update exchange rates"));
 #endif
 			fputs("\n\t-f, -file", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("FILE"), stdout); fputs("\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("executes commands from a file first"));
+			fputs("\t", stdout); PUTS_UNICODE(_("execute commands from a file first"));
 			fputs("\n\t-i, -interactive\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("start in interactive mode"));
 			fputs("\n\t-l, -list", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
@@ -1682,9 +1682,9 @@ int main(int argc, char *argv[]) {
 			fputs("\n\t-s, -set", stdout); fputs(" \"", stdout); FPUTS_UNICODE(_("OPTION"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("VALUE"), stdout); fputs("\"\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("as set command in interactive program session (e.g. -set \"base 16\")"));
 			fputs("\n\t-t, -terse\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("reduces output to just the result of the input expression"));
+			fputs("\t", stdout); PUTS_UNICODE(_("reduce output to just the result of the input expression"));
 			fputs("\n\t-/+u8\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("turn on/off unicode support"));
+			fputs("\t", stdout); PUTS_UNICODE(_("switch unicode support on/off"));
 			fputs("\n\t-v, -version\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("show application version and exit"));
 			puts("");
