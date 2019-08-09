@@ -456,6 +456,7 @@ Calculator::Calculator() {
 	place_currency_code_before_negative = place_currency_sign_before_negative;
 #endif	
 	local_digit_group_separator = lc->thousands_sep;
+	if((local_digit_group_separator.length() == 1 && local_digit_group_separator[0] < 0) || local_digit_group_separator == " ") local_digit_group_separator = " ";
 	local_digit_group_format = lc->grouping;
 	remove_blank_ends(local_digit_group_format);
 	default_dot_as_separator = (local_digit_group_separator == ".");
@@ -675,6 +676,7 @@ Calculator::Calculator(bool ignore_locale) {
 	place_currency_code_before_negative = place_currency_sign_before_negative;
 #endif	
 	local_digit_group_separator = lc->thousands_sep;
+	if((local_digit_group_separator.length() == 1 && local_digit_group_separator[0] < 0) || local_digit_group_separator == " ") local_digit_group_separator = " ";
 	local_digit_group_format = lc->grouping;
 	remove_blank_ends(local_digit_group_format);
 	default_dot_as_separator = (local_digit_group_separator == ".");
