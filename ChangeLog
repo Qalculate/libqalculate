@@ -1,3 +1,7 @@
+2019-08-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix local thousands separator on Windows when localeconv()->thousands_sep is a non-Unicode character > 127 (e.g. non-breaking space, 0xA0)
+
 2019-07-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Man page
