@@ -805,7 +805,8 @@ void Number::set(string number, const ParseOptions &po) {
 			}
 			break;
 		} else if(number[index] == '.') {
-			in_decimals = true;
+			if(in_decimals) CALCULATOR->error(false, "Misplaced decimal separator ignored", NULL);
+			else in_decimals = true;
 		} else if(number[index] == ':') {
 			if(in_decimals) {
 				CALCULATOR->error(true, _("\':\' in decimal number ignored (decimal point detected)."), NULL);

@@ -327,6 +327,24 @@ class Calculator_p {
 		Unit *local_currency;
 };
 
+bool is_not_number(char c, int base) {
+	if(c >= '0' && c <= '9') return false;
+	if(base == -1) return false;
+	if(base == -12) return c != 'E' && c != 'X';
+	if(base <= 10) return true;
+	if(base <= 36) {
+		if(c >= 'a' && c < 'a' + (base - 10)) return false;
+		if(c >= 'A' && c < 'A' + (base - 10)) return false;
+		return true;
+	}
+	if(base <= 62) {
+		if(c >= 'a' && c < 'a' + (base - 36)) return false;
+		if(c >= 'A' && c < 'Z') return false;
+		return true;
+	}
+	return false;
+}
+
 #define BITWISE_XOR "⊻"
 
 Calculator::Calculator() {
@@ -2314,6 +2332,20 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
 }
 string Calculator::unlocalizeExpression(string str, const ParseOptions &po) const {
 	if((DOT_STR == DOT && COMMA_STR == COMMA && !po.comma_as_separator) || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return str;
+	int base = po.base;
+	if(base == BASE_CUSTOM) {
+		base = (int) priv->custom_input_base_i;
+	} else if(base == BASE_GOLDEN_RATIO || base == BASE_SUPER_GOLDEN_RATIO || base == BASE_SQRT2) {
+		base = 2;
+	} else if(base == BASE_PI) {
+		base = 4;
+	} else if(base == BASE_E) {
+		base = 3;
+	} else if(base == BASE_DUODECIMAL) {
+		base = -12;
+	} else if(base < 2 || base > 36) {
+		base = -1;
+	}
 	vector<size_t> q_begin;
 	vector<size_t> q_end;
 	size_t i3 = 0;
@@ -2332,6 +2364,32 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 		i3++;
 	}
 	if(DOT_STR != DOT) {
+		if(DOT_STR == COMMA) {
+			size_t ui = str.find(DOT_STR);
+			while(ui != string::npos) {
+				bool b = false;
+				for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
+					if(ui <= q_end[ui2] && ui >= q_begin[ui2]) {
+						ui = str.find(DOT_STR, q_end[ui2] + 1);
+						b = true;
+						break;
+					}
+				}
+				if(!b && ui > 0) {
+					size_t ui2 = str.find_last_not_of(SPACES, ui - 1);
+					if(ui2 != string::npos && is_not_number(str[ui2], base)) return str;
+				}
+				if(!b && ui != str.length() - 1) {
+					size_t ui2 = str.find_last_not_of(SPACES, ui + 1);
+					if(ui2 != string::npos && is_not_number(str[ui2], base)) return str;
+					ui2 = str.find_first_not_of(SPACES NUMBERS, ui2 + 1);
+					if(ui2 != string::npos && str[ui2] == COMMA_CH) return str;
+				}
+				if(!b) {
+					ui = str.find(DOT_STR, ui + 1);
+				}
+			}
+		}
 		if(po.dot_as_separator) {
 			size_t ui = str.find(DOT);
 			while(ui != string::npos) {
@@ -4988,24 +5046,6 @@ bool Calculator::unitIsUsedByOtherUnits(const Unit *u) const {
 				}
 			}
 		}
-	}
-	return false;
-}
-
-bool is_not_number(char c, int base) {
-	if(c >= '0' && c <= '9') return false;
-	if(base == -1) return false;
-	if(base == -12) return c != 'E' && c != 'X';
-	if(base <= 10) return true;
-	if(base <= 36) {
-		if(c >= 'a' && c < 'a' + (base - 10)) return false;
-		if(c >= 'A' && c < 'A' + (base - 10)) return false;
-		return true;
-	}
-	if(base <= 62) {
-		if(c >= 'a' && c < 'a' + (base - 36)) return false;
-		if(c >= 'A' && c < 'Z') return false;
-		return true;
 	}
 	return false;
 }
@@ -9671,6 +9711,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					prec = -1;
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
+					unc_rel = false;
 					while(child != NULL) {
 						if(!xmlStrcmp(child->name, (const xmlChar*) "base")) {
 							child2 = child->xmlChildrenNode;
@@ -9680,7 +9721,6 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							svalue = "";
 							inverse = "";
 							suncertainty = "";
-							unc_rel = false;
 							b = true;
 							while(child2 != NULL) {
 								if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
