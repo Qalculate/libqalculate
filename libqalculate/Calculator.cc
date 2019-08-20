@@ -2364,7 +2364,7 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 		i3++;
 	}
 	if(DOT_STR != DOT) {
-		if(DOT_STR == COMMA) {
+		if(DOT_STR == COMMA && str.find(COMMA_STR) == string::npos) {
 			size_t ui = str.find(DOT_STR);
 			while(ui != string::npos) {
 				bool b = false;
@@ -2377,7 +2377,7 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 				}
 				if(!b && ui > 0) {
 					size_t ui2 = str.find_last_not_of(SPACES, ui - 1);
-					if(ui2 != string::npos && is_not_number(str[ui2], base)) return str;
+					if(ui2 != string::npos && ((str[ui2] > 'a' && str[ui2] < 'z') || (str[ui2] > 'A' && str[ui2] < 'Z')) && is_not_number(str[ui2], base)) return str;
 				}
 				if(!b && ui != str.length() - 1) {
 					size_t ui2 = str.find_last_not_of(SPACES, ui + 1);
@@ -3205,9 +3205,102 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 	}
 	return false;
 }
+typedef enum {
+	TO_TERM_NONE,
+	TO_TERM_TO,
+	TO_TERM_WHERE
+} ToTerm;
+bool separate_to_expression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers, bool allow_empty_from, bool only_to, int *type_found) {
+	to_str = "";
+	size_t i = 0;
+	if((i = str.find(_(" to "))) != string::npos) {
+		size_t l = strlen(_(" to "));
+		to_str = str.substr(i + l, str.length() - i - l);
+		if(type_found) *type_found = TO_TERM_TO;
+	} else if((i = str.find(" to ")) != string::npos) {
+		size_t l = strlen(" to ");
+		to_str = str.substr(i + l, str.length() - i - l);
+		if(type_found) *type_found = TO_TERM_TO;
+	} else if(allow_empty_from && str.find("to ") == 0) {
+		to_str = str.substr(3);
+		i = 0;
+		if(type_found) *type_found = TO_TERM_TO;
+	} else if(allow_empty_from && (str.find(_("to")) == 0 && str.length() > strlen(_("to")) && str[strlen(_("to"))] == ' ')) {
+		to_str = str.substr(strlen(_("to")));
+		i = 0;
+		if(type_found) *type_found = TO_TERM_TO;
+	} else if((i = str.find(_(" where "))) != string::npos) {
+		size_t l = strlen(_(" where "));
+		to_str = str.substr(i + l, str.length() - i - l);
+		if(type_found) *type_found = TO_TERM_WHERE;
+	} else if((i = str.find(" where ")) != string::npos) {
+		size_t l = strlen(" where ");
+		to_str = str.substr(i + l, str.length() - i - l);
+		if(type_found) *type_found = TO_TERM_WHERE;
+	} else {
+		if(type_found) *type_found = TO_TERM_NONE;
+		return false;
+	}
+	if(!to_str.empty()) {
+		remove_blank_ends(to_str);
+		if(to_str.rfind(SIGN_MINUS, 0) == 0) {
+			to_str.replace(0, strlen(SIGN_MINUS), MINUS);
+		}
+		if(!keep_modifiers && (to_str[0] == '0' || to_str[0] == '?' || to_str[0] == '+' || to_str[0] == '-')) {
+			to_str = to_str.substr(1, str.length() - 1);
+			remove_blank_ends(to_str);
+		}
+		str = str.substr(0, i);
+		return true;
+	}
+	return false;
+}
 MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
 	string str2;
-	if(make_to_division) separateToExpression(str, str2, eo, true);
+	int type_found = TO_TERM_NONE;
+	if(make_to_division) separate_to_expression(str, str2, eo, true, false, false, &type_found);
+	MathStructure mstruct;
+	current_stage = MESSAGE_STAGE_PARSING;
+	size_t n_messages = messages.size();
+	parse(&mstruct, str, eo.parse_options);
+	if(parsed_struct) {
+		beginTemporaryStopMessages();
+		ParseOptions po = eo.parse_options;
+		po.preserve_format = true;
+		parse(parsed_struct, str, po);
+		endTemporaryStopMessages();
+	}
+	
+	if(type_found != TO_TERM_NONE) {
+		parseSigns(str2);
+		if(str2.find_first_of(">=<") != string::npos) {
+			type_found = TO_TERM_WHERE;
+			MathStructure where_struct;
+			parse(&where_struct, str2, eo.parse_options);
+			if(where_struct.isComparison()) {
+				if(where_struct.comparisonType() == COMPARISON_EQUALS) {
+					mstruct.replace(where_struct[0], where_struct[1]);
+				}
+			} else if(where_struct.isLogicalAnd()) {
+				for(size_t i = 0; i < where_struct.size(); i++) {
+					if(where_struct[i].isComparison()) {
+						if(where_struct.comparisonType() == COMPARISON_EQUALS) {
+							mstruct.replace(where_struct[i][0], where_struct[i][1]);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	current_stage = MESSAGE_STAGE_CALCULATION;
+
+	mstruct.eval(eo);
+	
+	current_stage = MESSAGE_STAGE_UNSET;
+	
+	if(type_found == TO_TERM_WHERE) str2 = "";
+	
 	Unit *u = NULL;
 	if(to_struct) {
 		if(str2.empty()) {
@@ -3220,22 +3313,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		}
 		to_struct->setUndefined();
 	}
-	MathStructure mstruct;
-	current_stage = MESSAGE_STAGE_PARSING;
-	size_t n_messages = messages.size();
-	parse(&mstruct, str, eo.parse_options);
-	if(parsed_struct) {
-		beginTemporaryStopMessages();
-		ParseOptions po = eo.parse_options;
-		po.preserve_format = true;
-		parse(parsed_struct, str, po);
-		endTemporaryStopMessages();
-	}
-	current_stage = MESSAGE_STAGE_CALCULATION;
 
-	mstruct.eval(eo);
-	
-	current_stage = MESSAGE_STAGE_UNSET;
 	if(aborted()) return mstruct;
 	bool b_units = mstruct.containsType(STRUCT_UNIT, true);
 	if(b_units && u) {
