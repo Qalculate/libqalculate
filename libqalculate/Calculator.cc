@@ -2364,7 +2364,7 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 		i3++;
 	}
 	if(DOT_STR != DOT) {
-		if(DOT_STR == COMMA && str.find(COMMA_STR) == string::npos) {
+		if(DOT_STR == COMMA && str.find(COMMA_STR) == string::npos && base > 0 && base <= 10) {
 			size_t ui = str.find(DOT_STR);
 			while(ui != string::npos) {
 				bool b = false;
@@ -3174,6 +3174,7 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const
 	return false;
 }
 bool Calculator::separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers, bool allow_empty_from) const {
+	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
 	to_str = "";
 	size_t i = 0;
 	if((i = str.find(_(" to "))) != string::npos) {
@@ -3211,6 +3212,10 @@ typedef enum {
 	TO_TERM_WHERE
 } ToTerm;
 bool separate_to_expression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers, bool allow_empty_from, bool only_to, int *type_found) {
+	/*if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) {
+		if(type_found) *type_found = TO_TERM_NONE;
+		return false;
+	}*/
 	to_str = "";
 	size_t i = 0;
 	if((i = str.find(_(" to "))) != string::npos) {
@@ -3218,8 +3223,7 @@ bool separate_to_expression(string &str, string &to_str, const EvaluationOptions
 		to_str = str.substr(i + l, str.length() - i - l);
 		if(type_found) *type_found = TO_TERM_TO;
 	} else if((i = str.find(" to ")) != string::npos) {
-		size_t l = strlen(" to ");
-		to_str = str.substr(i + l, str.length() - i - l);
+		to_str = str.substr(i + 4, str.length() - i - 4);
 		if(type_found) *type_found = TO_TERM_TO;
 	} else if(allow_empty_from && str.find("to ") == 0) {
 		to_str = str.substr(3);
@@ -3234,8 +3238,10 @@ bool separate_to_expression(string &str, string &to_str, const EvaluationOptions
 		to_str = str.substr(i + l, str.length() - i - l);
 		if(type_found) *type_found = TO_TERM_WHERE;
 	} else if((i = str.find(" where ")) != string::npos) {
-		size_t l = strlen(" where ");
-		to_str = str.substr(i + l, str.length() - i - l);
+		to_str = str.substr(i + 7, str.length() - i - 7);
+		if(type_found) *type_found = TO_TERM_WHERE;
+	} else if((i = str.find(_("/."))) != string::npos && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) {
+		to_str = str.substr(i + 2, str.length() - i - 2);
 		if(type_found) *type_found = TO_TERM_WHERE;
 	} else {
 		if(type_found) *type_found = TO_TERM_NONE;
@@ -3275,6 +3281,26 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		parseSigns(str2);
 		if(str2.find_first_of(">=<") != string::npos) {
 			type_found = TO_TERM_WHERE;
+			if(str2.find("&&") == string::npos) {
+				int par = 0;
+				int bra = 0;
+				for(size_t i = 0; i < str2.length(); i++) {
+					switch(str2[i]) {
+						case '(': {par++; break;}
+						case ')': {if(par > 0) par--; break;}
+						case '[': {bra++; break;}
+						case ']': {if(bra > 0) bra--; break;}
+						case COMMA_CH: {
+							if(par == 0 && bra == 0) {
+								str2.replace(i, 1, LOGICAL_AND);
+								i++;
+							}
+							break;
+						}
+						default: {}
+					}
+				}
+			}
 			MathStructure where_struct;
 			parse(&where_struct, str2, eo.parse_options);
 			if(where_struct.isComparison()) {
