@@ -638,8 +638,13 @@ class Calculator {
 	* @param eo Options for the evaluation and parsing of the expression (nothing will be done if units are not enabled).
 	* @returns true if " to " was found and the expression split.
 	*/
-	bool separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers = false, bool allow_empty_from = false) const;	
+	bool separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers = false, bool allow_empty_from = false) const;
 	bool hasToExpression(const string &str, bool allow_empty_from = false) const;
+	bool hasToExpression(const string &str, bool allow_empty_from, const EvaluationOptions &eo) const;
+	
+	/// Split an expression string after and before " where ".
+	bool separateWhereExpression(string &str, string &where_str, const EvaluationOptions &eo) const;
+	bool hasWhereExpression(const string &str, const EvaluationOptions &eo) const;
 
 	void parseSigns(string &str, bool convert_to_internal_representation = false) const;
 	/** Parse an expression and place in a MathStructure object.

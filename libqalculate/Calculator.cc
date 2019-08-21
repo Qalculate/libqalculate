@@ -3173,6 +3173,12 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const
 	if(allow_empty_from && (str.find("to ") == 0 || (str.find(_("to")) == 0 && str.length() > strlen(_("to")) && str[strlen(_("to"))] == ' '))) return true;
 	return false;
 }
+bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const EvaluationOptions &eo) const {
+	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
+	if(str.rfind(_(" to ")) != string::npos || str.rfind(" to ") != string::npos) return true;
+	if(allow_empty_from && (str.find("to ") == 0 || (str.find(_("to")) == 0 && str.length() > strlen(_("to")) && str[strlen(_("to"))] == ' '))) return true;
+	return false;
+}
 bool Calculator::separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers, bool allow_empty_from) const {
 	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
 	to_str = "";
@@ -3206,127 +3212,123 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 	}
 	return false;
 }
-typedef enum {
-	TO_TERM_NONE,
-	TO_TERM_TO,
-	TO_TERM_WHERE
-} ToTerm;
-bool separate_to_expression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers, bool allow_empty_from, bool only_to, int *type_found) {
-	/*if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) {
-		if(type_found) *type_found = TO_TERM_NONE;
-		return false;
-	}*/
+bool Calculator::hasWhereExpression(const string &str, const EvaluationOptions &eo) const {
+	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
+	if(str.rfind(_(" where ")) != string::npos || str.rfind(" where ") != string::npos) return true;
+	size_t i = 0;
+	if((i = str.find(_("/."))) != string::npos && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) return true;
+	return false;
+}
+bool Calculator::separateWhereExpression(string &str, string &to_str, const EvaluationOptions &eo) const {
+	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
 	to_str = "";
 	size_t i = 0;
-	if((i = str.find(_(" to "))) != string::npos) {
-		size_t l = strlen(_(" to "));
-		to_str = str.substr(i + l, str.length() - i - l);
-		if(type_found) *type_found = TO_TERM_TO;
-	} else if((i = str.find(" to ")) != string::npos) {
-		to_str = str.substr(i + 4, str.length() - i - 4);
-		if(type_found) *type_found = TO_TERM_TO;
-	} else if(allow_empty_from && str.find("to ") == 0) {
-		to_str = str.substr(3);
-		i = 0;
-		if(type_found) *type_found = TO_TERM_TO;
-	} else if(allow_empty_from && (str.find(_("to")) == 0 && str.length() > strlen(_("to")) && str[strlen(_("to"))] == ' ')) {
-		to_str = str.substr(strlen(_("to")));
-		i = 0;
-		if(type_found) *type_found = TO_TERM_TO;
-	} else if((i = str.find(_(" where "))) != string::npos) {
+	if((i = str.find(_(" where "))) != string::npos) {
 		size_t l = strlen(_(" where "));
 		to_str = str.substr(i + l, str.length() - i - l);
-		if(type_found) *type_found = TO_TERM_WHERE;
 	} else if((i = str.find(" where ")) != string::npos) {
 		to_str = str.substr(i + 7, str.length() - i - 7);
-		if(type_found) *type_found = TO_TERM_WHERE;
 	} else if((i = str.find(_("/."))) != string::npos && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) {
 		to_str = str.substr(i + 2, str.length() - i - 2);
-		if(type_found) *type_found = TO_TERM_WHERE;
 	} else {
-		if(type_found) *type_found = TO_TERM_NONE;
 		return false;
 	}
 	if(!to_str.empty()) {
 		remove_blank_ends(to_str);
-		if(to_str.rfind(SIGN_MINUS, 0) == 0) {
-			to_str.replace(0, strlen(SIGN_MINUS), MINUS);
-		}
-		if(!keep_modifiers && (to_str[0] == '0' || to_str[0] == '?' || to_str[0] == '+' || to_str[0] == '-')) {
-			to_str = to_str.substr(1, str.length() - 1);
-			remove_blank_ends(to_str);
-		}
 		str = str.substr(0, i);
 		return true;
 	}
 	return false;
 }
-MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
-	string str2;
-	int type_found = TO_TERM_NONE;
-	if(make_to_division) separate_to_expression(str, str2, eo, true, false, false, &type_found);
-	MathStructure mstruct;
-	current_stage = MESSAGE_STAGE_PARSING;
-	size_t n_messages = messages.size();
-	parse(&mstruct, str, eo.parse_options);
-	if(parsed_struct) {
-		beginTemporaryStopMessages();
-		ParseOptions po = eo.parse_options;
-		po.preserve_format = true;
-		parse(parsed_struct, str, po);
-		endTemporaryStopMessages();
-	}
-	
-	if(type_found != TO_TERM_NONE) {
-		parseSigns(str2);
-		if(str2.find_first_of(">=<") != string::npos) {
-			type_found = TO_TERM_WHERE;
-			if(str2.find("&&") == string::npos) {
-				int par = 0;
-				int bra = 0;
-				for(size_t i = 0; i < str2.length(); i++) {
-					switch(str2[i]) {
-						case '(': {par++; break;}
-						case ')': {if(par > 0) par--; break;}
-						case '[': {bra++; break;}
-						case ']': {if(bra > 0) bra--; break;}
-						case COMMA_CH: {
-							if(par == 0 && bra == 0) {
-								str2.replace(i, 1, LOGICAL_AND);
-								i++;
-							}
-							break;
-						}
-						default: {}
+extern string format_and_print(const MathStructure &mstruct);
+bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const EvaluationOptions &eo, vector<UnknownVariable*>& vars, vector<MathStructure>& varms) {
+	if(m.isComparison()) {
+		if(m.comparisonType() == COMPARISON_EQUALS) {
+			mstruct.replace(m[0], m[1]);
+			return true;
+		} else if(m[0].isSymbolic() || (m[0].isVariable() && !m[0].variable()->isKnown())) {
+			if(!m[1].isNumber()) m[1].eval(eo);
+			if(m[1].isNumber() || m[1].number().hasImaginaryPart()) {
+				Assumptions *ass = NULL;
+				for(size_t i = 0; i < varms.size(); i++) {
+					if(varms[i] == m[0]) {
+						ass = vars[0]->assumptions();
+						break;
 					}
 				}
-			}
-			MathStructure where_struct;
-			parse(&where_struct, str2, eo.parse_options);
-			if(where_struct.isComparison()) {
-				if(where_struct.comparisonType() == COMPARISON_EQUALS) {
-					mstruct.replace(where_struct[0], where_struct[1]);
-				}
-			} else if(where_struct.isLogicalAnd()) {
-				for(size_t i = 0; i < where_struct.size(); i++) {
-					if(where_struct[i].isComparison()) {
-						if(where_struct.comparisonType() == COMPARISON_EQUALS) {
-							mstruct.replace(where_struct[i][0], where_struct[i][1]);
+				if((m.comparisonType() != COMPARISON_NOT_EQUALS || (!ass && m[1].isZero()))) {
+					if(ass) {
+						if(m.comparisonType() == COMPARISON_EQUALS_GREATER) {
+							if(!ass->min() || (*ass->min() < m[1].number())) {
+								ass->setMin(&m[1].number()); ass->setIncludeEqualsMin(true);
+								return true;
+							} else if(*ass->min() >= m[1].number()) {
+								return true;
+							}
+						} else if(m.comparisonType() == COMPARISON_EQUALS_LESS) {
+							if(!ass->max() || (*ass->max() > m[1].number())) {
+								ass->setMax(&m[1].number()); ass->setIncludeEqualsMax(true);
+								return true;
+							} else if(*ass->max() <= m[1].number()) {
+								return true;
+							}
+						} else if(m.comparisonType() == COMPARISON_GREATER) {
+							if(!ass->min() || (ass->includeEqualsMin() && *ass->min() <= m[1].number()) || (!ass->includeEqualsMin() && *ass->min() < m[1].number())) {
+								ass->setMin(&m[1].number()); ass->setIncludeEqualsMin(false);
+								return true;
+							} else if((ass->includeEqualsMin() && *ass->min() > m[1].number()) || (!ass->includeEqualsMin() && *ass->min() >= m[1].number())) {
+								return true;
+							}
+						} else if(m.comparisonType() == COMPARISON_LESS) {
+							if(!ass->max() || (ass->includeEqualsMax() && *ass->max() >= m[1].number()) || (!ass->includeEqualsMax() && *ass->max() > m[1].number())) {
+								ass->setMax(&m[1].number()); ass->setIncludeEqualsMax(false);
+								return true;
+							} else if((ass->includeEqualsMax() && *ass->max() < m[1].number()) || (!ass->includeEqualsMax() && *ass->max() <= m[1].number())) {
+								return true;
+							}
 						}
+					} else {
+						UnknownVariable *var = new UnknownVariable("", format_and_print(m[0]));
+						ass = new Assumptions();
+						if(m[1].isZero()) {
+							if(m.comparisonType() == COMPARISON_EQUALS_GREATER) ass->setSign(ASSUMPTION_SIGN_NONNEGATIVE);
+							else if(m.comparisonType() == COMPARISON_EQUALS_LESS) ass->setSign(ASSUMPTION_SIGN_NONPOSITIVE);
+							else if(m.comparisonType() == COMPARISON_GREATER) ass->setSign(ASSUMPTION_SIGN_POSITIVE);
+							else if(m.comparisonType() == COMPARISON_LESS) ass->setSign(ASSUMPTION_SIGN_NEGATIVE);
+							else if(m.comparisonType() == COMPARISON_NOT_EQUALS) ass->setSign(ASSUMPTION_SIGN_NONZERO);
+						} else {
+							if(m.comparisonType() == COMPARISON_EQUALS_GREATER) {ass->setMin(&m[1].number()); ass->setIncludeEqualsMin(true);}
+							else if(m.comparisonType() == COMPARISON_EQUALS_LESS) {ass->setMax(&m[1].number()); ass->setIncludeEqualsMax(true);}
+							else if(m.comparisonType() == COMPARISON_GREATER) {ass->setMin(&m[1].number()); ass->setIncludeEqualsMin(false);}
+							else if(m.comparisonType() == COMPARISON_LESS) {ass->setMax(&m[1].number()); ass->setIncludeEqualsMax(false);}
+						}
+						var->setAssumptions(ass);
+						var->ref();
+						vars.push_back(var);
+						varms.push_back(m[0]);
+						MathStructure u_var(var);
+						mstruct.replace(m[0], u_var);
+						return true;
 					}
 				}
 			}
 		}
+	} else if(m.isLogicalAnd()) {
+		bool ret = true;
+		for(size_t i = 0; i < m.size(); i++) {
+			if(!handle_where_expression(m[i], mstruct, eo, vars, varms)) ret = false;
+		}
+		return ret;
 	}
+	CALCULATOR->error(true, _("Unhandled \"where\" expression: %s"), format_and_print(m).c_str(), NULL);
+	return false;
+}
+MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
 	
-	current_stage = MESSAGE_STAGE_CALCULATION;
-
-	mstruct.eval(eo);
+	string str2, str_where;
 	
-	current_stage = MESSAGE_STAGE_UNSET;
-	
-	if(type_found == TO_TERM_WHERE) str2 = "";
-	
+	separateWhereExpression(str, str_where, eo);
+	if(make_to_division) separateToExpression(str, str2, eo, true);
 	Unit *u = NULL;
 	if(to_struct) {
 		if(str2.empty()) {
@@ -3339,40 +3341,114 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		}
 		to_struct->setUndefined();
 	}
-
-	if(aborted()) return mstruct;
-	bool b_units = mstruct.containsType(STRUCT_UNIT, true);
-	if(b_units && u) {
-		current_stage = MESSAGE_STAGE_CONVERSION;
-		if(to_struct) to_struct->set(u);
-		mstruct.set(convert(mstruct, u, eo, false, false));
-		if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo));
-	} else if(!str2.empty()) {
-		mstruct.set(convert(mstruct, str2, eo));
-	} else if(b_units) {
-		current_stage = MESSAGE_STAGE_CONVERSION;
-		switch(eo.auto_post_conversion) {
-			case POST_CONVERSION_OPTIMAL: {
-				mstruct.set(convertToOptimalUnit(mstruct, eo, false));
-				break;
+	
+	MathStructure mstruct;
+	current_stage = MESSAGE_STAGE_PARSING;
+	size_t n_messages = messages.size();
+	parse(&mstruct, str, eo.parse_options);
+	if(parsed_struct) {
+		beginTemporaryStopMessages();
+		ParseOptions po = eo.parse_options;
+		po.preserve_format = true;
+		parse(parsed_struct, str, po);
+		endTemporaryStopMessages();
+	}
+	
+	vector<UnknownVariable*> vars;
+	vector<MathStructure> varms;
+	if(!str_where.empty()) {
+		parseSigns(str_where);
+		if(str_where.find("&&") == string::npos) {
+			int par = 0;
+			int bra = 0;
+			for(size_t i = 0; i < str_where.length(); i++) {
+				switch(str_where[i]) {
+					case '(': {par++; break;}
+					case ')': {if(par > 0) par--; break;}
+					case '[': {bra++; break;}
+					case ']': {if(bra > 0) bra--; break;}
+					case COMMA_CH: {
+						if(par == 0 && bra == 0) {
+							str_where.replace(i, 1, LOGICAL_AND);
+							i++;
+						}
+						break;
+					}
+					default: {}
+				}
 			}
-			case POST_CONVERSION_BASE: {
-				mstruct.set(convertToBaseUnits(mstruct, eo));
-				break;
-			}
-			case POST_CONVERSION_OPTIMAL_SI: {
-				mstruct.set(convertToOptimalUnit(mstruct, eo, true));
-				break;
-			}
-			default: {}
 		}
-		if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo));
+		MathStructure where_struct;
+		parse(&where_struct, str_where, eo.parse_options);
+		if(mstruct.isComparison() || (mstruct.isFunction() && mstruct.function() == CALCULATOR->f_solve && mstruct.size() >= 1 && mstruct[0].isComparison())) {
+			beginTemporaryStopMessages();
+			MathStructure mbak(mstruct);
+			if(handle_where_expression(where_struct, mstruct, eo, vars, varms)) {
+				endTemporaryStopMessages(true);
+			} else {
+				endTemporaryStopMessages();
+				mstruct = mbak;
+				if(mstruct.isComparison()) mstruct.transform(STRUCT_LOGICAL_AND, where_struct);
+				else {mstruct[0].transform(STRUCT_LOGICAL_AND, where_struct); mstruct.childUpdated(1);}
+			}
+		} else {
+			if(eo.approximation == APPROXIMATION_EXACT) {
+				EvaluationOptions eo2 = eo;
+				eo2.approximation = APPROXIMATION_TRY_EXACT;
+				handle_where_expression(where_struct, mstruct, eo2, vars, varms);
+			} else {
+				handle_where_expression(where_struct, mstruct, eo, vars, varms);
+			}
+		}
+	}
+	
+	current_stage = MESSAGE_STAGE_CALCULATION;
+
+	mstruct.eval(eo);
+	
+	current_stage = MESSAGE_STAGE_UNSET;
+
+	if(!aborted()) {
+		bool b_units = mstruct.containsType(STRUCT_UNIT, true);
+		if(b_units && u) {
+			current_stage = MESSAGE_STAGE_CONVERSION;
+			if(to_struct) to_struct->set(u);
+			mstruct.set(convert(mstruct, u, eo, false, false));
+			if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo));
+		} else if(!str2.empty()) {
+			mstruct.set(convert(mstruct, str2, eo));
+		} else if(b_units) {
+			current_stage = MESSAGE_STAGE_CONVERSION;
+			switch(eo.auto_post_conversion) {
+				case POST_CONVERSION_OPTIMAL: {
+					mstruct.set(convertToOptimalUnit(mstruct, eo, false));
+					break;
+				}
+				case POST_CONVERSION_BASE: {
+					mstruct.set(convertToBaseUnits(mstruct, eo));
+					break;
+				}
+				case POST_CONVERSION_OPTIMAL_SI: {
+					mstruct.set(convertToOptimalUnit(mstruct, eo, true));
+					break;
+				}
+				default: {}
+			}
+			if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo));
+		}
 	}
 	
 	cleanMessages(mstruct, n_messages + 1);
 
 	current_stage = MESSAGE_STAGE_UNSET;
+	
+	for(size_t i = 0; i < vars.size(); i++) {
+		mstruct.replace(vars[i], varms[i]);
+		vars[i]->destroy();
+	}
+
 	return mstruct;
+
 }
 MathStructure Calculator::calculate(const MathStructure &mstruct_to_calculate, const EvaluationOptions &eo, string to_str) {
 
