@@ -8449,6 +8449,75 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				}
 			}
 			if(b) break;
+			if(CHILD(1).isNumber() && CHILD(0).isVariable() && !CHILD(0).variable()->isKnown()) {
+				Assumptions *ass = ((UnknownVariable*) CHILD(0).variable())->assumptions();
+				if(ass && ass->min()) {
+					bool b_inc = ass->includeEqualsMin();
+					switch(ct_comp) {
+						case COMPARISON_EQUALS: {
+							if((b_inc && CHILD(1).number() < *ass->min()) || (!b_inc && CHILD(1).number() <= *ass->min())) {clear(true); b = true;}
+							break;
+						}
+						case COMPARISON_NOT_EQUALS: {
+							if((b_inc && CHILD(1).number() < *ass->min()) || (!b_inc && CHILD(1).number() <= *ass->min())) {set(1, 1, 0, true); b = true;}
+							break;
+						}
+						case COMPARISON_LESS: {
+							if(CHILD(1).number() <= *ass->min()) {clear(true); b = true;}
+							
+							break;
+						}
+						case COMPARISON_GREATER: {
+							if((b_inc && CHILD(1).number() < *ass->min()) || (!b_inc && CHILD(1).number() <= *ass->min())) {set(1, 1, 0, true); b = true;}
+							else if((b_inc && CHILD(1).number() > *ass->min()) || (!b_inc && CHILD(1).number() >= *ass->min())) {CHILD(1).set(*ass->min()); CHILD_UPDATED(1); if(b_inc) ct_comp = COMPARISON_EQUALS_GREATER; b = true;}
+							break;
+						}
+						case COMPARISON_EQUALS_LESS: {
+							if(b_inc && CHILD(1).number() == *ass->min()) {ct_comp = COMPARISON_EQUALS; b = true;}
+							else if((b_inc && CHILD(1).number() < *ass->min()) || (!b_inc && CHILD(1).number() <= *ass->min())) {clear(true); b = true;}
+							break;
+						}
+						case COMPARISON_EQUALS_GREATER: {
+							if(CHILD(1).number() <= *ass->min()) {set(1, 1, 0, true); b = true;}
+							else if(CHILD(1).number() >= *ass->min()) {CHILD(1).set(*ass->min()); CHILD_UPDATED(1); if(!b_inc) ct_comp = COMPARISON_GREATER; b = true;}
+							break;
+						}
+					}
+				}
+				if(ass && ass->max() && isComparison()) {
+					bool b_inc = ass->includeEqualsMax();
+					switch(ct_comp) {
+						case COMPARISON_EQUALS: {
+							if((b_inc && CHILD(1).number() > *ass->max()) || (!b_inc && CHILD(1).number() >= *ass->max())) {clear(true); b = true;}
+							break;
+						}
+						case COMPARISON_NOT_EQUALS: {
+							if((b_inc && CHILD(1).number() > *ass->max()) || (!b_inc && CHILD(1).number() >= *ass->max())) {set(1, 1, 0, true); b = true;}
+							break;
+						}
+						case COMPARISON_LESS: {
+							if((b_inc && CHILD(1).number() > *ass->max()) || (!b_inc && CHILD(1).number() >= *ass->max())) {set(1, 1, 0, true); b = true;}
+							else if((b_inc && CHILD(1).number() < *ass->max()) || (!b_inc && CHILD(1).number() <= *ass->max())) {CHILD(1).set(*ass->max()); CHILD_UPDATED(1); if(b_inc) ct_comp = COMPARISON_EQUALS_LESS; b = true;}
+							break;
+						}
+						case COMPARISON_GREATER: {
+							if(CHILD(1).number() >= *ass->max()) {clear(true); b = true;}
+							break;
+						}
+						case COMPARISON_EQUALS_LESS: {
+							if(CHILD(1).number() >= *ass->max()) {set(1, 1, 0, true); b = true;}
+							else if(CHILD(1).number() <= *ass->max()) {CHILD(1).set(*ass->max()); CHILD_UPDATED(1); if(!b_inc) ct_comp = COMPARISON_LESS; b = true;}
+							break;
+						}
+						case COMPARISON_EQUALS_GREATER: {
+							if(b_inc && CHILD(1).number() == *ass->max()) {ct_comp = COMPARISON_EQUALS; b = true;}
+							else if((b_inc && CHILD(1).number() > *ass->max()) || (!b_inc && CHILD(1).number() >= *ass->max())) {clear(true); b = true;}
+							break;
+						}
+					}
+				}
+			}
+			if(b) break;
 			if(eo.approximation == APPROXIMATION_EXACT && eo.test_comparisons > 0) {
 				bool b_intval = CALCULATOR->usesIntervalArithmetic();
 				bool b_failed = false;
@@ -8524,7 +8593,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					}
 				}
 			}
-			if(incomp < 0) {
+			if(incomp <= 0) {
 				if(mtest_new && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
 					bool a_pos = CHILD(0).representsPositive(true);
 					bool a_nneg = a_pos || CHILD(0).representsNonNegative(true);
