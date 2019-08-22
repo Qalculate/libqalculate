@@ -23524,6 +23524,32 @@ bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto
 		set(mto);
 		return true;
 	}
+	if(mfrom.size() > 0 && mfrom.type() == m_type && (mfrom.isAddition() || mfrom.isMultiplication() || mfrom.isLogicalAnd() || mfrom.isLogicalOr())) {
+		bool b = true;
+		size_t i2 = 0;
+		for(size_t i = 0; i < mfrom.size(); i++) {
+			b = false;
+			for(; i2 < SIZE; i2++) {
+				if(CHILD(i2).equals(mfrom[i], true, true)) {b = true; break;}
+			}
+			if(!b) break;
+		}
+		if(b) {
+			i2 = 0;
+			for(size_t i = 0; i < mfrom.size(); i++) {
+				for(; i2 < SIZE; i2++) {
+					if(CHILD(i2).equals(mfrom[i], true, true)) {ERASE(i2); break;}
+				}
+			}
+			if(SIZE == 1) setToChild(1);
+			else if(SIZE == 0) clear();
+			if(mfrom.isAddition()) add(mto);
+			else if(mfrom.isMultiplication()) multiply(mto);
+			else if(mfrom.isLogicalAnd()) transform(STRUCT_LOGICAL_AND, mto);
+			else if(mfrom.isLogicalOr()) transform(STRUCT_LOGICAL_OR, mto);
+			return true;
+		}
+	}
 	if(exclude_function_arguments && m_type == STRUCT_FUNCTION) return false;
 	bool b = false;
 	for(size_t i = 0; i < SIZE; i++) {
@@ -23554,6 +23580,33 @@ bool MathStructure::calculateReplace(const MathStructure &mfrom, const MathStruc
 	if(equals(mfrom, true, true)) {
 		set(mto);
 		return true;
+	}
+	if(mfrom.size() > 0 && mfrom.type() == m_type && (mfrom.isAddition() || mfrom.isMultiplication() || mfrom.isLogicalAnd() || mfrom.isLogicalOr())) {
+		bool b = true;
+		size_t i2 = 0;
+		for(size_t i = 0; i < mfrom.size(); i++) {
+			b = false;
+			for(; i2 < SIZE; i2++) {
+				if(CHILD(i2).equals(mfrom[i], true, true)) {b = true; break;}
+			}
+			if(!b) break;
+		}
+		if(b) {
+			i2 = 0;
+			for(size_t i = 0; i < mfrom.size(); i++) {
+				for(; i2 < SIZE; i2++) {
+					if(CHILD(i2).equals(mfrom[i], true, true)) {ERASE(i2); break;}
+				}
+			}
+			if(SIZE == 1) setToChild(1);
+			else if(SIZE == 0) clear();
+			if(mfrom.isAddition()) add(mto);
+			else if(mfrom.isMultiplication()) multiply(mto);
+			else if(mfrom.isLogicalAnd()) transform(STRUCT_LOGICAL_AND, mto);
+			else if(mfrom.isLogicalOr()) transform(STRUCT_LOGICAL_OR, mto);
+			calculatesub(eo, eo, false);
+			return true;
+		}
 	}
 	if(exclude_function_arguments && m_type == STRUCT_FUNCTION) return false;
 	bool b = false;
