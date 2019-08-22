@@ -5428,6 +5428,12 @@ extern bool replace_intervals_f(MathStructure &mstruct);
 extern bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
 extern bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo);
 
+void replace_function(MathStructure &m, MathFunction *f1, MathFunction *f2) {
+	if(m.isFunction() && m.function() == f1) m.setFunction(f2);
+	for(size_t i = 0; i < m.size(); i++) {
+		replace_function(m[i], f1, f2);
+	}
+}
 ReplaceFunction::ReplaceFunction() : MathFunction("replace", 3, 4) {
 	setArgumentDefinition(4, new BooleanArgument());
 	setDefaultValue(4, "0");
@@ -5437,7 +5443,9 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	if(vargs[3].number().getBoolean() || mstruct.contains(vargs[1], true) <= 0) mstruct.eval(eo);
 	if(vargs[1].isVector() && vargs[2].isVector() && vargs[1].size() == vargs[2].size()) {
 		for(size_t i = 0; i < vargs[1].size(); i++) {
-			if(vargs[2][i].containsInterval(true) || vargs[2][i].containsFunction(CALCULATOR->f_interval, true)) {
+			if(vargs[1][i].isFunction() && vargs[2][i].isFunction() && vargs[1][i].size() == 0 && vargs[2][i].size() == 0) {
+				replace_function(mstruct, vargs[1][i].function(), vargs[2][i].function());
+			} else if(vargs[2][i].containsInterval(true) || vargs[2][i].containsFunction(CALCULATOR->f_interval, true)) {
 				MathStructure mv(vargs[2][i]);
 				replace_f_interval(mv, eo);
 				replace_intervals_f(mv);
@@ -5446,6 +5454,8 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 				mstruct.replace(vargs[1][i], vargs[2][i]);
 			}
 		}
+	} else if(vargs[1].isFunction() && vargs[2].isFunction() && vargs[1].size() == 0 && vargs[2].size() == 0) {
+		replace_function(mstruct, vargs[1].function(), vargs[2].function());
 	} else if(vargs[2].containsInterval(true) || vargs[2].containsFunction(CALCULATOR->f_interval, true)) {
 		MathStructure mv(vargs[2]);
 		replace_f_interval(mv, eo);
