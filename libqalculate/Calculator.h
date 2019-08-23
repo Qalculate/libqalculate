@@ -1178,6 +1178,7 @@ class Calculator {
 	void unsetLocale();
 	/** Returns the translated text string used in expressions for converting to a specific unit expression (ex "5 meters to feet.*/
 	string localToString(bool include_spaces = true) const;
+	string localWhereString() const;
 	//@}
 
 	/** @name Functions adding alternative symbols for operators and such */

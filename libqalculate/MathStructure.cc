@@ -23543,6 +23543,7 @@ bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto
 			}
 			if(SIZE == 1) setToChild(1);
 			else if(SIZE == 0) clear();
+			else if(!once_only) replace(mfrom, mto, once_only, exclude_function_arguments);
 			if(mfrom.isAddition()) add(mto);
 			else if(mfrom.isMultiplication()) multiply(mto);
 			else if(mfrom.isLogicalAnd()) transform(STRUCT_LOGICAL_AND, mto);
@@ -23600,6 +23601,7 @@ bool MathStructure::calculateReplace(const MathStructure &mfrom, const MathStruc
 			}
 			if(SIZE == 1) setToChild(1);
 			else if(SIZE == 0) clear();
+			else calculateReplace(mfrom, mto, eo, exclude_function_arguments);
 			if(mfrom.isAddition()) add(mto);
 			else if(mfrom.isMultiplication()) multiply(mto);
 			else if(mfrom.isLogicalAnd()) transform(STRUCT_LOGICAL_AND, mto);
