@@ -1,3 +1,16 @@
+2019-08-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow replacement of >1 and <n terms or factors in replace(), e.g. replace(x+y+1, x+y, x*y)
+	* Allow function replacement in replace(), e.g. replace(sin(x), sin, cos)
+
+2019-08-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* "where"-syntax (e.g. "x+y where x=1 and y=2", or alternatively "x+y/.x=1,y=2", and "x^2=4 where x>0")
+
+2019-08-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Interpet comma as vector/argument separator if decimal separator is comma but numbers contains multiple commas or comma at end, e.g. [5,2,3,x]=[5;2;3;x], and add misplaced decimal separator warning for unhandled cases
+
 2019-08-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix local thousands separator on Windows when localeconv()->thousands_sep is a non-Unicode character > 127 (e.g. non-breaking space, 0xA0)
