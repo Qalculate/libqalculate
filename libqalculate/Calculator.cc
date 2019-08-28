@@ -4706,6 +4706,20 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 	} else {
 		current_stage = MESSAGE_STAGE_CONVERSION_PARSING;
 		CompositeUnit cu("", "temporary_composite_convert", "", str2);
+		if(cu.countUnits() == 2 && cu.get(1)->referenceName() == "g" && cu.get(2)->referenceName() == "m" && str2.substr(0, 2) == "kg") {
+			int exp; Prefix *p;
+			if(cu.get(1, &exp, &p) && exp == 1 && p && p->value() == 1000 && cu.get(2, &exp, &p) && exp == -2) {
+				Unit *u = getUnit("pond");
+				if(u) {
+					MathStructure mtest(convertToBaseUnits(mstruct_to_convert, eo));
+					mtest.sort();
+					if(mtest.isMultiplication() && mtest.size() >= 3 && mtest[mtest.size() - 3].isUnit() && mtest[mtest.size() - 3].unit()->referenceName() == "g" && mtest[mtest.size() - 2].isPower() && mtest[mtest.size() - 2][1].isMinusOne() && mtest[mtest.size() - 2][0].isUnit() && mtest[mtest.size() - 2][0].unit()->referenceName() == "m" && mtest[mtest.size() - 1].isPower() && mtest[mtest.size() - 1][1] == Number(-2, 1) && mtest[mtest.size() - 1][0].isUnit() && mtest[mtest.size() - 1][0].unit()->referenceName() == "s") {
+						str2.replace(1, 2, "pond");
+						cu.setBaseExpression(str2);
+					}
+				}
+			}
+		}
 		current_stage = MESSAGE_STAGE_CONVERSION;
 		if(to_struct) to_struct->set(cu.generateMathStructure());
 		if(cu.countUnits() > 0) {
