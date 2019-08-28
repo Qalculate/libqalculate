@@ -2836,6 +2836,20 @@
           <exponent>1</exponent>
         </base>
       </unit>
+      <unit type="composite">
+        <_title>Kilogram-force per Square Centimetre</_title>
+        <names>r:kpond_p_sqcm</names>
+        <part>
+          <unit>pond</unit>
+          <prefix>3</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>-2</prefix>
+          <exponent>-2</exponent>
+        </part>
+      </unit>
       <unit type="alias">
         <_title>Pound-force per Square Inch (psi)</_title>
         <system>Imperial/US</system>

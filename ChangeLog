@@ -1,3 +1,7 @@
+2019-08-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add kgf/cm^2 composite unit and interpret kg/cm^2 as kgf/cm^2 when converting pressure
+
 2019-08-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Allow replacement of >1 and <n terms or factors in replace(), e.g. replace(x+y+1, x+y, x*y)
