@@ -424,6 +424,7 @@ Calculator::Calculator() {
 	addStringAlternative("\t", SPACE);
 	addStringAlternative("\n", SPACE);
 	addStringAlternative(" ", SPACE);
+	addStringAlternative(" ", SPACE);
 	addStringAlternative("**", POWER);
 	addStringAlternative("↊", "X");
 	addStringAlternative("↋", "E");
@@ -494,8 +495,9 @@ Calculator::Calculator() {
 	NAME_NUMBER_PRE_S = "_#";
 	NAME_NUMBER_PRE_STR = "_";
 	
-	string str = _(" to ");
-	local_to = (str != " to ");
+	//"to"-operator
+	string str = _("to");
+	local_to = (str != "to");
 	
 	decimal_null_prefix = new DecimalPrefix(0, "", "");
 	binary_null_prefix = new BinaryPrefix(0, "", "");
@@ -644,6 +646,7 @@ Calculator::Calculator(bool ignore_locale) {
 	addStringAlternative("\t", SPACE);
 	addStringAlternative("\n", SPACE);
 	addStringAlternative(" ", SPACE);
+	addStringAlternative(" ", SPACE);
 	addStringAlternative("**", POWER);
 	addStringAlternative("↊", "X");
 	addStringAlternative("↋", "E");
@@ -714,8 +717,9 @@ Calculator::Calculator(bool ignore_locale) {
 	NAME_NUMBER_PRE_S = "_#";
 	NAME_NUMBER_PRE_STR = "_";
 	
-	string str = _(" to ");
-	local_to = (str != " to ");
+	//"to"-operator
+	string str = _("to");
+	local_to = (str != "to");
 
 	decimal_null_prefix = new DecimalPrefix(0, "", "");
 	binary_null_prefix = new BinaryPrefix(0, "", "");
@@ -1520,11 +1524,11 @@ const Number &Calculator::customOutputBase() const {return priv->custom_output_b
 const string &Calculator::getDecimalPoint() const {return DOT_STR;}
 const string &Calculator::getComma() const {return COMMA_STR;}
 string Calculator::localToString(bool include_spaces) const {
-	if(include_spaces) return _(" to ");
+	if(include_spaces) return string(SPACE) + string(_("to")) + SPACE;
 	else return _("to");
 }
 string Calculator::localWhereString() const {
-	return _(" where ");
+	return string(SPACE) + string(_("where")) + SPACE;
 }
 void Calculator::setLocale() {
 	if(b_ignore_locale) return;
@@ -2373,126 +2377,106 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 			size_t ui = str.find_first_of(b_vector ? DOT COMMA : COMMA);
 			size_t ui2 = 0;
 			while(ui != string::npos) {
-				bool b = false;
 				for(; ui2 < q_end.size(); ui2++) {
 					if(ui >= q_begin[ui2]) {
 						if(ui <= q_end[ui2]) {
 							ui = str.find_first_of(b_vector ? DOT COMMA : COMMA, q_end[ui2] + 1);
-							ui2++;
-							b = true;
-							break;
+							if(ui == string::npos) break;
 						}
 					} else {
 						break;
 					}
 				}
-				if(!b && ui > 0) {
+				if(ui == string::npos) break;
+				if(ui > 0) {
 					size_t ui3 = str.find_last_not_of(SPACES, ui - 1);
 					if(ui3 != string::npos && ((str[ui3] > 'a' && str[ui3] < 'z') || (str[ui3] > 'A' && str[ui3] < 'Z')) && is_not_number(str[ui3], base)) return str;
 				}
-				if(!b && ui != str.length() - 1) {
-					size_t ui3 = str.find_last_not_of(SPACES, ui + 1);
+				if(ui != str.length() - 1) {
+					size_t ui3 = str.find_first_not_of(SPACES, ui + 1);
 					if(ui3 != string::npos && is_not_number(str[ui3], base)) return str;
 					if(b_vector || !b_dot) {
 						ui3 = str.find_first_not_of(SPACES NUMBERS, ui3 + 1);
 						if(ui3 != string::npos && (str[ui3] == COMMA_CH || (b_vector && str[ui3] == DOT_CH))) return str;
 					}
 				}
-				if(!b) {
-					ui = str.find(b_vector ? DOT COMMA : COMMA, ui + 1);
-				}
+				ui = str.find(b_vector ? DOT COMMA : COMMA, ui + 1);
 			}
 		}
 		if(po.dot_as_separator) {
 			size_t ui = str.find(DOT);
 			size_t ui2 = 0;
 			while(ui != string::npos) {
-				bool b = false;
 				for(; ui2 < q_end.size(); ui2++) {
 					if(ui >= q_begin[ui2]) {
 						if(ui <= q_end[ui2]) {
 							ui = str.find(DOT, q_end[ui2] + 1);
-							ui2++;
-							b = true;
-							break;
+							if(ui == string::npos) break;
 						}
 					} else {
 						break;
 					}
 				}
-				if(!b) {
-					str.replace(ui, strlen(DOT), SPACE);
-					ui = str.find(DOT, ui + strlen(SPACE));
-				}
+				if(ui == string::npos) break;
+				str.replace(ui, strlen(DOT), SPACE);
+				ui = str.find(DOT, ui + strlen(SPACE));
 			}
 		}
 		size_t ui2 = 0;
 		size_t ui = str.find(DOT_STR);
 		while(ui != string::npos) {
-			bool b = false;
 			for(; ui2 < q_end.size(); ui2++) {
 				if(ui >= q_begin[ui2]) {
 					if(ui <= q_end[ui2]) {
 						ui = str.find(DOT_STR, q_end[ui2] + 1);
-						ui2++;
-						b = true;
-						break;
+						if(ui == string::npos) break;
 					}
 				} else {
 					break;
 				}
 			}
-			if(!b) {
-				str.replace(ui, DOT_STR.length(), DOT);
-				ui = str.find(DOT_STR, ui + strlen(DOT));
-			}
+			if(ui == string::npos) break;
+			str.replace(ui, DOT_STR.length(), DOT);
+			ui = str.find(DOT_STR, ui + strlen(DOT));
 		}
 	}
 	if(COMMA_STR != COMMA || po.comma_as_separator) {
 		bool b_alt_comma = po.comma_as_separator && COMMA_STR == COMMA;
 		if(po.comma_as_separator) {
 			size_t ui = str.find(COMMA);
+			size_t ui2 = 0;
 			while(ui != string::npos) {
-				size_t ui2 = 0;
-				bool b = false;
 				for(; ui2 < q_end.size(); ui2++) {
 					if(ui >= q_begin[ui2]) {
 						if(ui <= q_end[ui2]) {
 							ui = str.find(COMMA, q_end[ui2] + 1);
-							ui2++;
-							b = true;
-							break;
+							if(ui == string::npos) break;
 						}
 					} else {
 						break;
 					}
 				}
-				if(!b) {
-					str.erase(ui, strlen(COMMA));
-					ui = str.find(COMMA, ui);
-				}
+				if(ui == string::npos) break;
+				str.erase(ui, strlen(COMMA));
+				ui = str.find(COMMA, ui);
 			}	
 		}
 		size_t ui2 = 0;
 		size_t ui = str.find(b_alt_comma ? ";" : COMMA_STR);
 		while(ui != string::npos) {
-			bool b = false;
 			for(; ui2 < q_end.size(); ui2++) {
 				if(ui >= q_begin[ui2]) {
 					if(ui <= q_end[ui2]) {
 						ui = str.find(b_alt_comma ? ";" : COMMA_STR, q_end[ui2] + 1);
-						ui2++;
-						b = true;
-						break;
+						if(ui == string::npos) break;
 					}
 				} else {
 					break;
 				}
 			}
-			if(!b) {
-				str.replace(ui, b_alt_comma ? 1 : COMMA_STR.length(), COMMA);
-				ui = str.find(b_alt_comma ? ";" : COMMA_STR, ui + strlen(COMMA));
-			}
+			if(ui == string::npos) break;
+			str.replace(ui, b_alt_comma ? 1 : COMMA_STR.length(), COMMA);
+			ui = str.find(b_alt_comma ? ";" : COMMA_STR, ui + strlen(COMMA));
 		}
 	}
 	return str;
@@ -3206,69 +3190,103 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
 	return true;
 }
 bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const {
-	if(str.rfind(_(" to ")) != string::npos || str.rfind(" to ") != string::npos) return true;
-	if(allow_empty_from && (str.find("to ") == 0 || (str.find(_("to")) == 0 && str.length() > strlen(_("to")) && str[strlen(_("to"))] == ' '))) return true;
+	if(str.empty()) return false;
+	size_t i = str.length() - 1, i2 = i;
+	int l = 2;
+	while(i != 0) {
+		i2 = str.rfind(_("to"), i - 1);
+		i = str.rfind("to", i - 1);
+		if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("to")); i = i2;}
+		else l = 2;
+		if(i == string::npos) break;
+		if(((i > 0 && is_in(SPACES, str[i - 1])) || (allow_empty_from && i == 0)) && i + l < str.length() && is_in(SPACES, str[i + l])) return true;
+	}
 	return false;
 }
 bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const EvaluationOptions &eo) const {
 	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
-	if(str.rfind(_(" to ")) != string::npos || str.rfind(" to ") != string::npos) return true;
-	if(allow_empty_from && (str.find("to ") == 0 || (str.find(_("to")) == 0 && str.length() > strlen(_("to")) && str[strlen(_("to"))] == ' '))) return true;
+	if(str.empty()) return false;
+	size_t i = str.length() - 1, i2 = i;
+	int l = 2;
+	while(i != 0) {
+		i2 = str.rfind(_("to"), i - 1);
+		i = str.rfind("to", i - 1);
+		if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("to")); i = i2;}
+		else l = 2;
+		if(i == string::npos) break;
+		if(((i > 0 && is_in(SPACES, str[i - 1])) || (allow_empty_from && i == 0)) && i + l < str.length() && is_in(SPACES, str[i + l])) return true;
+	}
 	return false;
 }
 bool Calculator::separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers, bool allow_empty_from) const {
 	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
 	to_str = "";
-	size_t i = 0;
-	if((i = str.find(_(" to "))) != string::npos) {
-		size_t l = strlen(_(" to "));
-		to_str = str.substr(i + l, str.length() - i - l);
-	} else if((i = str.find(" to ")) != string::npos) {
-		size_t l = strlen(" to ");
-		to_str = str.substr(i + l, str.length() - i - l);
-	} else if(allow_empty_from && str.find("to ") == 0) {
-		to_str = str.substr(3);
-		i = 0;
-	} else if(allow_empty_from && (str.find(_("to")) == 0 && str.length() > strlen(_("to")) && str[strlen(_("to"))] == ' ')) {
-		to_str = str.substr(strlen(_("to")));
-		i = 0;
-	} else {
-		return false;
-	}
-	if(!to_str.empty()) {
-		remove_blank_ends(to_str);
-		if(to_str.rfind(SIGN_MINUS, 0) == 0) {
-			to_str.replace(0, strlen(SIGN_MINUS), MINUS);
-		}
-		if(!keep_modifiers && (to_str[0] == '0' || to_str[0] == '?' || to_str[0] == '+' || to_str[0] == '-')) {
-			to_str = to_str.substr(1, str.length() - 1);
+	if(str.empty()) return false;
+	size_t i = str.length() - 1, i2 = i;
+	int l = 2;
+	while(i != 0) {
+		i2 = str.rfind(_("to"), i - 1);
+		i = str.rfind("to", i - 1);
+		if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("to")); i = i2;}
+		else l = 2;
+		if(i == string::npos) break;
+		if(((i > 0 && is_in(SPACES, str[i - 1])) || (allow_empty_from && i == 0)) && i + l < str.length() && is_in(SPACES, str[i + l])) {
+			to_str = str.substr(i + l , str.length() - i - l);
+			if(to_str.empty()) return false;
 			remove_blank_ends(to_str);
+			if(!to_str.empty()) {
+				if(to_str.rfind(SIGN_MINUS, 0) == 0) {
+					to_str.replace(0, strlen(SIGN_MINUS), MINUS);
+				}
+				if(!keep_modifiers && (to_str[0] == '0' || to_str[0] == '?' || to_str[0] == '+' || to_str[0] == '-')) {
+					to_str = to_str.substr(1, str.length() - 1);
+					remove_blank_ends(to_str);
+				}
+			}
+			str = str.substr(0, i);
+			return true;
 		}
-		str = str.substr(0, i);
-		return true;
 	}
 	return false;
 }
 bool Calculator::hasWhereExpression(const string &str, const EvaluationOptions &eo) const {
 	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
-	if(str.rfind(_(" where ")) != string::npos || str.rfind(" where ") != string::npos) return true;
-	size_t i = 0;
-	if((i = str.find("/.")) != string::npos && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) return true;
+	if(str.empty()) return false;
+	size_t i = str.length() - 1, i2 = i;
+	int l = 2;
+	while(i != 0) {
+		//"where"-operator
+		i2 = str.rfind(_("where"), i - 1);
+		i = str.rfind("where", i - 1);
+		if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("where")); i = i2;}
+		else l = 2;
+		if(i == string::npos) break;
+		if(i > 0 && is_in(SPACES, str[i - 1]) && i + l < str.length() && is_in(SPACES, str[i + l])) return true;
+	}
+	if((i = str.rfind("/.", str.length() - 2)) != string::npos && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) return true;
 	return false;
 }
 bool Calculator::separateWhereExpression(string &str, string &to_str, const EvaluationOptions &eo) const {
 	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
 	to_str = "";
-	size_t i = 0;
-	if((i = str.find(_(" where "))) != string::npos) {
-		size_t l = strlen(_(" where "));
-		to_str = str.substr(i + l, str.length() - i - l);
-	} else if((i = str.find(" where ")) != string::npos) {
-		to_str = str.substr(i + 7, str.length() - i - 7);
-	} else if((i = str.find("/.")) != string::npos && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) {
-		to_str = str.substr(i + 2, str.length() - i - 2);
+	size_t i = 0; 
+	if((i = str.rfind("/.", str.length() - 2)) != string::npos && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) {
+		to_str = str.substr(i + 2 , str.length() - i - 2);
 	} else {
-		return false;
+		i = str.length() - 1;
+		size_t i2 = i;
+		int l = 5;
+		while(i != 0) {
+			i2 = str.rfind(_("where"), i - 1);
+			i = str.rfind("where", i - 1);
+			if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("where")); i = i2;}
+			else l = 5;
+			if(i == string::npos) break;
+			if(i > 0 && is_in(SPACES, str[i - 1]) && i + l < str.length() && is_in(SPACES, str[i + l])) {
+				to_str = str.substr(i + l , str.length() - i - l);
+				break;
+			}
+		}
 	}
 	if(!to_str.empty()) {
 		remove_blank_ends(to_str);
@@ -3299,7 +3317,7 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 	return false;
 }
 extern string format_and_print(const MathStructure &mstruct);
-extern bool replace_function(MathStructure &m, MathFunction *f1, MathFunction *f2);
+extern bool replace_function(MathStructure &m, MathFunction *f1, MathFunction *f2, const EvaluationOptions &eo);
 extern bool replace_intervals_f(MathStructure &mstruct);
 extern bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo);
 
@@ -3349,7 +3367,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 				if(m2.isComparison()) return handle_where_expression(m2, mstruct, eo, vars, varms, false, false);
 			}
 			if(m[0].isFunction() && m[1].isFunction() && (m[0].size() == 0 || (empty_func && m[0].function()->minargs() == 0)) && (m[1].size() == 0 || (empty_func && m[1].function()->minargs() == 0))) {
-				if(!replace_function(mstruct, m[0].function(), m[1].function())) CALCULATOR->error(false, _("Original value (%s) was not found."), (m[0].function()->name() + "()").c_str(), NULL);
+				if(!replace_function(mstruct, m[0].function(), m[1].function(), eo)) CALCULATOR->error(false, _("Original value (%s) was not found."), (m[0].function()->name() + "()").c_str(), NULL);
 			} else {
 				calculate_rand(m[1], eo);
 				if(m[1].containsInterval(true) || m[1].containsFunction(CALCULATOR->f_interval, true)) {
@@ -3450,8 +3468,9 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	
 	string str2, str_where;
 	
-	separateWhereExpression(str, str_where, eo);
 	if(make_to_division) separateToExpression(str, str2, eo, true);
+	separateWhereExpression(str, str_where, eo);
+	
 	Unit *u = NULL;
 	if(to_struct) {
 		if(str2.empty()) {
@@ -5445,28 +5464,24 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		size_t ui = str.find(signs[i]);
 		size_t ui2 = 0;
 		while(ui != string::npos) {
-			bool b = false;
 			for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
 				if(ui >= q_begin[ui2]) {
 					if(ui <= q_end[ui2]) {
 						ui = str.find(signs[i], q_end[ui2] + 1);
-						ui2++;
-						b = true;
-						break;
+						if(ui == string::npos) break;
 					}
 				} else {
 					break;
 				}
 			}
-			if(!b) {
-				int index_shift = real_signs[i].length() - signs[i].length();
-				for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
-					q_begin[ui3] += index_shift;
-					q_end[ui3] += index_shift;
-				}
-				str.replace(ui, signs[i].length(), real_signs[i]);
-				ui = str.find(signs[i], ui + real_signs[i].length());
+			if(ui == string::npos) break;
+			int index_shift = real_signs[i].length() - signs[i].length();
+			for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
+				q_begin[ui3] += index_shift;
+				q_end[ui3] += index_shift;
 			}
+			str.replace(ui, signs[i].length(), real_signs[i]);
+			ui = str.find(signs[i], ui + real_signs[i].length());
 		}
 	}
 
@@ -5604,27 +5619,24 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 			size_t ui = str.find(internal_signs[i]);
 			size_t ui2 = 0;
 			while(ui != string::npos) {
-				bool b = false;
 				for(; ui2 < q_end.size(); ui2++) {
 					if(ui >= q_begin[ui2]) {
 						if(ui <= q_end[ui2]) {
 							ui = str.find(internal_signs[i], q_end[ui2] + 1);
-							b = true;
-							break;
+							if(ui == string::npos) break;
 						}
 					} else {
 						break;
 					}
 				}
-				if(!b) {
-					int index_shift = strlen(internal_signs[i + 1]) - strlen(internal_signs[i]);
-					for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
-						q_begin[ui3] += index_shift;
-						q_end[ui3] += index_shift;
-					}
-					str.replace(ui, strlen(internal_signs[i]), internal_signs[i + 1]);
-					ui = str.find(internal_signs[i], ui + strlen(internal_signs[i + 1]));
+				if(ui == string::npos) break;
+				int index_shift = strlen(internal_signs[i + 1]) - strlen(internal_signs[i]);
+				for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
+					q_begin[ui3] += index_shift;
+					q_end[ui3] += index_shift;
 				}
+				str.replace(ui, strlen(internal_signs[i]), internal_signs[i + 1]);
+				ui = str.find(internal_signs[i], ui + strlen(internal_signs[i + 1]));
 			}
 		}
 	}
