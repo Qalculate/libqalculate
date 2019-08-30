@@ -13175,6 +13175,23 @@ bool fix_eqs(MathStructure &m, const EvaluationOptions &eo) {
 	return false;
 }
 
+Unit *find_log_unit(const MathStructure &m) {
+	if(m.isUnit() && m.unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) m.unit())->hasNonlinearExpression() && (((AliasUnit*) m.unit())->expression().find("log") != string::npos || ((AliasUnit*) m.unit())->inverseExpression().find("log") != string::npos)) {
+		return ((AliasUnit*) m.unit())->firstBaseUnit();
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		Unit *u = find_log_unit(m[i]);
+		if(u) return u;
+	}
+	return NULL;
+}
+void convert_log_units(MathStructure &m, const EvaluationOptions &eo) {
+	while(true) {
+		Unit *u = find_log_unit(m);
+		if(!u) break;
+		m.convert(u, true, NULL, false, eo);
+	}
+}
 
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
@@ -13185,6 +13202,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	}
 
 	unformat(eo);
+	
+	if(eo.sync_units) convert_log_units(*this, eo);
 	
 	if(m_type == STRUCT_UNDEFINED || m_type == STRUCT_ABORTED || m_type == STRUCT_DATETIME || m_type == STRUCT_UNIT || m_type == STRUCT_SYMBOLIC || (m_type == STRUCT_VARIABLE && !o_variable->isKnown())) return *this;
 
