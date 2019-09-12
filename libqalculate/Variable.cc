@@ -25,13 +25,13 @@ bool Assumptions::isNegative() {return i_sign == ASSUMPTION_SIGN_NEGATIVE || (fm
 bool Assumptions::isNonNegative() {return i_sign == ASSUMPTION_SIGN_NONNEGATIVE || i_sign == ASSUMPTION_SIGN_POSITIVE || (fmin && fmin->isNonNegative());}
 bool Assumptions::isNonPositive() {return i_sign == ASSUMPTION_SIGN_NONPOSITIVE || i_sign == ASSUMPTION_SIGN_NEGATIVE || (fmax && fmax->isNonPositive());}
 bool Assumptions::isInteger() {return i_type >= ASSUMPTION_TYPE_INTEGER;}
-bool Assumptions::isNumber() {return i_type >= ASSUMPTION_TYPE_NUMBER;}
+bool Assumptions::isNumber() {return i_type >= ASSUMPTION_TYPE_NUMBER || fmin || fmax;}
 bool Assumptions::isRational() {return i_type >= ASSUMPTION_TYPE_RATIONAL;}
-bool Assumptions::isReal() {return i_type >= ASSUMPTION_TYPE_REAL;}
+bool Assumptions::isReal() {return i_type >= ASSUMPTION_TYPE_REAL || (fmin && !fmin->hasImaginaryPart()) || (fmax && !fmax->hasImaginaryPart());}
 bool Assumptions::isComplex() {return i_type == ASSUMPTION_TYPE_COMPLEX;}
 bool Assumptions::isNonZero() {return i_sign == ASSUMPTION_SIGN_NONZERO || isPositive() || isNegative();}
-bool Assumptions::isNonMatrix() {return i_type >= ASSUMPTION_TYPE_NONMATRIX;}
-bool Assumptions::isScalar() {return i_type >= ASSUMPTION_TYPE_NONMATRIX;}
+bool Assumptions::isNonMatrix() {return i_type >= ASSUMPTION_TYPE_NONMATRIX || fmin || fmax;}
+bool Assumptions::isScalar() {return i_type >= ASSUMPTION_TYPE_NONMATRIX || fmin || fmax;}
 
 AssumptionType Assumptions::type() {return i_type;}
 AssumptionSign Assumptions::sign() {return i_sign;}

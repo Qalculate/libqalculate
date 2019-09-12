@@ -13,6 +13,7 @@ In a terminal window in the top source code directory run
 ./configure
 make
 make install (as root)
+ldconfig (if necessary, as root)
 If libqalculate is installed in /usr/local (default) you may need to add /usr/local/lib to
 the library path of the system (add /usr/local/lib to a file under /etc/ld.so.conf.d/ and run ldconfig).
 
