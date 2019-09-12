@@ -13175,12 +13175,21 @@ bool fix_eqs(MathStructure &m, const EvaluationOptions &eo) {
 	return false;
 }
 
-Unit *find_log_unit(const MathStructure &m) {
-	if(m.isUnit() && m.unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) m.unit())->hasNonlinearExpression() && (((AliasUnit*) m.unit())->expression().find("log") != string::npos || ((AliasUnit*) m.unit())->inverseExpression().find("log") != string::npos)) {
+Unit *find_log_unit(const MathStructure &m, bool toplevel = true) {
+	if(!toplevel && m.isUnit() && m.unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) m.unit())->hasNonlinearExpression() && (((AliasUnit*) m.unit())->expression().find("log") != string::npos || ((AliasUnit*) m.unit())->inverseExpression().find("log") != string::npos || ((AliasUnit*) m.unit())->expression().find("ln") != string::npos || ((AliasUnit*) m.unit())->inverseExpression().find("ln") != string::npos)) {
 		return ((AliasUnit*) m.unit())->firstBaseUnit();
 	}
+	if(m.isMultiplication() && toplevel && m.last().isUnit()) {
+		Unit *u = find_log_unit(m.last(), false);
+		if(u) {
+			for(size_t i = 0; i < m.size(); i++) {
+				if(m[i].containsType(STRUCT_UNIT, true)) return u;
+			}
+			return NULL;
+		}
+	}
 	for(size_t i = 0; i < m.size(); i++) {
-		Unit *u = find_log_unit(m[i]);
+		Unit *u = find_log_unit(m[i], false);
 		if(u) return u;
 	}
 	return NULL;
@@ -13189,8 +13198,26 @@ void convert_log_units(MathStructure &m, const EvaluationOptions &eo) {
 	while(true) {
 		Unit *u = find_log_unit(m);
 		if(!u) break;
+		CALCULATOR->error(false, "Log-based units were converted before calculation.", NULL);
 		m.convert(u, true, NULL, false, eo);
 	}
+}
+bool warn_ratio_units(MathStructure &m, bool top_level = true) {
+	if(!top_level && m.isUnit() && ((m.unit()->subtype() == SUBTYPE_BASE_UNIT && m.unit()->referenceName() == "Np") || (m.unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) m.unit())->baseUnit()->referenceName() == "Np"))) {
+		CALCULATOR->error(true, "Logarithmic ratio units is treated as other units and the result might not be as expected.", NULL);
+		return true;
+	}
+	if(m.isMultiplication() && top_level && m.last().isUnit()) {
+		if(m.size() < 2) return false;
+		for(size_t i = 0; i < m.size() - 1; i++) {
+			if(warn_ratio_units(m[i], false)) return true;
+		}
+	} else {
+		for(size_t i = 0; i < m.size(); i++) {
+			if(warn_ratio_units(m[i], false)) return true;
+		}
+	}
+	return false;
 }
 
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
@@ -13201,11 +13228,13 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		return *this;
 	}
 
+	if(eo.structuring != STRUCTURING_NONE) warn_ratio_units(*this);
+
 	unformat(eo);
 	
-	if(eo.sync_units) convert_log_units(*this, eo);
-	
 	if(m_type == STRUCT_UNDEFINED || m_type == STRUCT_ABORTED || m_type == STRUCT_DATETIME || m_type == STRUCT_UNIT || m_type == STRUCT_SYMBOLIC || (m_type == STRUCT_VARIABLE && !o_variable->isKnown())) return *this;
+
+	if(eo.structuring != STRUCTURING_NONE && eo.sync_units) convert_log_units(*this, eo);
 
 	EvaluationOptions feo = eo;
 	feo.structuring = STRUCTURING_NONE;
@@ -23543,7 +23572,7 @@ bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto
 		set(mto);
 		return true;
 	}
-	if(mfrom.size() > 0 && mfrom.type() == m_type && (mfrom.isAddition() || mfrom.isMultiplication() || mfrom.isLogicalAnd() || mfrom.isLogicalOr())) {
+	if(mfrom.size() > 0 && mfrom.type() == m_type && SIZE > mfrom.size() && (mfrom.isAddition() || mfrom.isMultiplication() || mfrom.isLogicalAnd() || mfrom.isLogicalOr())) {
 		bool b = true;
 		size_t i2 = 0;
 		for(size_t i = 0; i < mfrom.size(); i++) {
@@ -23601,7 +23630,7 @@ bool MathStructure::calculateReplace(const MathStructure &mfrom, const MathStruc
 		set(mto);
 		return true;
 	}
-	if(mfrom.size() > 0 && mfrom.type() == m_type && (mfrom.isAddition() || mfrom.isMultiplication() || mfrom.isLogicalAnd() || mfrom.isLogicalOr())) {
+	if(mfrom.size() > 0 && mfrom.type() == m_type && SIZE > mfrom.size() && (mfrom.isAddition() || mfrom.isMultiplication() || mfrom.isLogicalAnd() || mfrom.isLogicalOr())) {
 		bool b = true;
 		size_t i2 = 0;
 		for(size_t i = 0; i < mfrom.size(); i++) {
