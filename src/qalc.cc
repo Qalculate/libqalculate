@@ -4016,10 +4016,10 @@ void on_abort_display() {
 void replace_quotation_marks(string &str) {
 #ifndef _WIN32
 	if(cfile) return;
-	size_t i1 = 0, i2 = 0;
+	size_t i1 = 0, i2 = 0, i_prev = 0;
 	size_t i_equals = str.find(_("approx.")) + strlen(_("approx."));
 	while(i1 + 2 < str.length()) {
-		i1 = str.find_first_of("\"\'", i1);
+		i1 = str.find_first_of("\"\'", i_prev);
 		if(i1 == string::npos) break;
 		i2 = str.find(str[i1], i1 + 1);
 		if(i2 == string::npos) break;
@@ -4029,25 +4029,10 @@ void replace_quotation_marks(string &str) {
 				continue;
 			}
 		}
-		if(i1 > 1 && str[i1 - 1] == ' ' && (i_equals == string::npos || i1 != i_equals + 1) && is_not_in(OPERATORS SPACES, str[i1 - 2]) && str[i1 - 2] != printops.comma()[0]) {
-			if(printops.use_unicode_signs && str[i1 - 2] < 0) {
-				size_t i3 = i1 - 2;
-				while(i3 > 0 && str[i3] < 0 && (unsigned char) str[i3] < 0xC0) i3--;
-				string str2 = str.substr(i3, i1 - i3 - 1);
-				if(str2 != SIGN_DIVISION && str2 != SIGN_DIVISION_SLASH && str2 != SIGN_MULTIPLICATION && str2 != SIGN_MULTIDOT && str2 != SIGN_SMALLCIRCLE && str2 != SIGN_MULTIBULLET && str2 != SIGN_MINUS && str2 != SIGN_PLUS && str2 != SIGN_NOT_EQUAL && str2 != SIGN_GREATER_OR_EQUAL && str2 != SIGN_LESS_OR_EQUAL && str2 != SIGN_ALMOST_EQUAL && str2 != printops.comma()) {
-					str.replace(i1 - 1, 2, "\033[3m");
-					i2 += 2;
-					if(i_equals != string::npos && i1 < i_equals) i_equals += 2;
-				} else {
-					str.replace(i1, 1, "\033[3m");
-					i2 += 3;
-					if(i_equals != string::npos && i1 < i_equals) i_equals += 3;
-				}
-			} else {
-				str.replace(i1 - 1, 2, "\033[3m");
-				i2 += 2;
-				if(i_equals != string::npos && i1 < i_equals) i_equals += 2;
-			}
+		if(i1 > 1 && str[i1 - 1] == ' ' && (i_equals == string::npos || i1 != i_equals + 1) && (is_in(NUMBERS, str[i1 - 2]) || i1 == i_prev + 1)) {
+			str.replace(i1 - 1, 2, "\033[3m");
+			i2 += 2;
+			if(i_equals != string::npos && i1 < i_equals) i_equals += 2;
 		} else {
 			str.replace(i1, 1, "\033[3m");
 			i2 += 3;
@@ -4055,7 +4040,7 @@ void replace_quotation_marks(string &str) {
 		}
 		str.replace(i2, 1, "\033[23m");
 		if(i_equals != string::npos && i1 < i_equals) i_equals += 4;
-		i1 = i2 + 5;
+		i_prev = i2 + 5;
 	}
 #endif
 }
