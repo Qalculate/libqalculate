@@ -13321,7 +13321,6 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					vars[i]->destroy();
 				}
 				if(eval_comparison_sides(*this, feo)) {
-					CALCULATOR->endTemporaryStopMessages(true);
 					if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
 					structure(eo.structuring, eo2, false);
 					if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
