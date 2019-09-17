@@ -1722,6 +1722,12 @@ class UptimeVariable : public DynamicVariable {
 		if(proc_uptime.is_open()) {
 			char s_uptime[100];
 			proc_uptime.getline(s_uptime, 100);
+			for(size_t i = 0; i < 100; i++) {
+				if(s_uptime[i] == ' ') {
+					s_uptime[i] = (char) 0;
+					break;
+				}
+			}
 			nr.set(s_uptime);
 		} else {
 			struct sysinfo sf;
