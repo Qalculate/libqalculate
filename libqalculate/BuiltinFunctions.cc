@@ -5461,7 +5461,8 @@ ReplaceFunction::ReplaceFunction() : MathFunction("replace", 3, 4) {
 }
 int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	if(vargs[3].number().getBoolean()) mstruct.eval(eo);
+	bool b_evaled = false;
+	if(vargs[3].number().getBoolean()) {mstruct.eval(eo); b_evaled = true;}
 	if(vargs[1].isVector() && vargs[2].isVector() && vargs[1].size() == vargs[2].size()) {
 		for(size_t i = 0; i < vargs[1].size(); i++) {
 			if(vargs[1][i].isFunction() && vargs[2][i].isFunction() && vargs[1][i].size() == 0 && vargs[2][i].size() == 0) {
@@ -5475,17 +5476,25 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 				if(!mstruct.replace(vargs[1][i], vargs[2][i])) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), NULL);
 			}
 		}
-	} else if(vargs[1].isFunction() && vargs[2].isFunction() && vargs[1].size() == 0 && vargs[2].size() == 0) {
-		if(!replace_function(mstruct, vargs[1].function(), vargs[2].function(), eo)) CALCULATOR->error(false, _("Original value (%s) was not found."), (vargs[1].function()->name() + "()").c_str(), NULL);
 	} else {
-		if(!vargs[3].number().getBoolean() && mstruct.contains(vargs[1], true) <= 0) mstruct.eval(eo);
-		if(vargs[2].containsInterval(true) || vargs[2].containsFunction(CALCULATOR->f_interval, true)) {
-			MathStructure mv(vargs[2]);
-			replace_f_interval(mv, eo);
-			replace_intervals_f(mv);
-			if(!mstruct.replace(vargs[1], mv)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1]).c_str(), NULL);
-		} else {
-			if(!mstruct.replace(vargs[1], vargs[2])) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1]).c_str(), NULL);
+		while(true) {
+			if(vargs[1].isFunction() && vargs[2].isFunction() && vargs[1].size() == 0 && vargs[2].size() == 0) {
+				if(replace_function(mstruct, vargs[1].function(), vargs[2].function(), eo)) break;
+			} else if(vargs[2].containsInterval(true) || vargs[2].containsFunction(CALCULATOR->f_interval, true)) {
+				MathStructure mv(vargs[2]);
+				replace_f_interval(mv, eo);
+				replace_intervals_f(mv);
+				if(mstruct.replace(vargs[1], mv)) break;
+			} else {
+				if(mstruct.replace(vargs[1], vargs[2])) break;
+			}
+			if(b_evaled) {
+				CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1]).c_str(), NULL);
+				break;
+			} else {
+				mstruct.eval(); 
+				b_evaled = true;
+			}
 		}
 	}
 	return 1;
