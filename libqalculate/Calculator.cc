@@ -425,6 +425,7 @@ Calculator::Calculator() {
 	addStringAlternative("\n", SPACE);
 	addStringAlternative(" ", SPACE);
 	addStringAlternative(" ", SPACE);
+	addStringAlternative(" ", SPACE);
 	addStringAlternative("**", POWER);
 	addStringAlternative("↊", "X");
 	addStringAlternative("↋", "E");
@@ -476,6 +477,7 @@ Calculator::Calculator() {
 #endif	
 	local_digit_group_separator = lc->thousands_sep;
 	if((local_digit_group_separator.length() == 1 && local_digit_group_separator[0] < 0) || local_digit_group_separator == " ") local_digit_group_separator = " ";
+	else if(local_digit_group_separator == " ") local_digit_group_separator = " ";
 	local_digit_group_format = lc->grouping;
 	remove_blank_ends(local_digit_group_format);
 	default_dot_as_separator = (local_digit_group_separator == ".");
@@ -647,6 +649,7 @@ Calculator::Calculator(bool ignore_locale) {
 	addStringAlternative("\n", SPACE);
 	addStringAlternative(" ", SPACE);
 	addStringAlternative(" ", SPACE);
+	addStringAlternative(" ", SPACE);
 	addStringAlternative("**", POWER);
 	addStringAlternative("↊", "X");
 	addStringAlternative("↋", "E");
@@ -698,6 +701,7 @@ Calculator::Calculator(bool ignore_locale) {
 #endif	
 	local_digit_group_separator = lc->thousands_sep;
 	if((local_digit_group_separator.length() == 1 && local_digit_group_separator[0] < 0) || local_digit_group_separator == " ") local_digit_group_separator = " ";
+	else if(local_digit_group_separator == " ") local_digit_group_separator = " ";
 	local_digit_group_format = lc->grouping;
 	remove_blank_ends(local_digit_group_format);
 	default_dot_as_separator = (local_digit_group_separator == ".");
@@ -2547,13 +2551,15 @@ bool Calculator::calculateRPN(MathOperation op, int msecs, const EvaluationOptio
 			if(op == OPERATION_SUBTRACT) {
 				parsed_struct->transform(STRUCT_NEGATE);
 			} else if(op == OPERATION_DIVIDE) {
-				parsed_struct->transform(STRUCT_DIVISION, *rpn_stack.back());
+				parsed_struct->transform(STRUCT_INVERSE);
 			} else {
 				parsed_struct->add(*rpn_stack.back(), op);
 			}
 		}
 		if(op == OPERATION_SUBTRACT) {
 			mstruct = new MathStructure();
+		} else if(op == OPERATION_DIVIDE) {
+			mstruct = new MathStructure(1, 1, 0);
 		} else {
 			mstruct = new MathStructure(*rpn_stack.back());
 		}
