@@ -30,7 +30,7 @@ The API documentation is included in the package and is installed in
 $docdir/libqalculate/html (usually /usr/share/doc/libqalculate/html).
 It is generated when running autogen.sh.
 
-It is also available online at http://qalculate.github.io/reference/index.html.
+It is also available online at https://qalculate.github.io/reference/index.html.
 
 4. Using the CLI program 'qalc'
 To calculate a single expression from the command line (non-interactive mode) enter
