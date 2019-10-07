@@ -445,14 +445,24 @@
           <exponent>-2</exponent>
         </part>
       </unit>
+      <unit type="composite">
+        <hidden>true</hidden>
+        <_title>Square Degree</_title>
+        <names>r:sqdeg</names>
+        <part>
+          <unit>deg</unit>
+          <prefix>0</prefix>
+          <exponent>2</exponent>
+        </part>
+      </unit>
       <unit type="alias">
         <system>SI</system>
         <_title>Steradian</_title>
         <_names>ar:sr,steradian,p:steradians</_names>
         <base>
-          <unit>m_p_m</unit>
+          <unit>rad</unit>
           <relation>1</relation>
-          <exponent>1</exponent>
+          <exponent>2</exponent>
         </base>
       </unit>
     </category>
