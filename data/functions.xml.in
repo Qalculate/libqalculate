@@ -1794,6 +1794,21 @@
           <min include_equals="true">0</min>
         </argument>
       </function>
+      <function>
+      <_title>Poisson Distribution</_title>
+        <_names>r:poisson</_names>
+        <_description>Returns the probability mass or cumulative distribution of the Poisson distribution.</_description>
+        <expression>if(\Z{0},sum((\y^"k"*e^(-\y))/("k"!),0,\x,"k"),(\y^\x*e^(-\y))/(\x!))</expression>
+        <argument type="free" index="1">
+          <_title>Number of events (x)</_title>
+        </argument>
+        <argument type="free" index="2">
+          <_title>Mean</_title>
+        </argument>
+        <argument type="boolean" index="3">
+          <_title>Cumulative</_title>
+        </argument>
+      </function>
     </category>
   </category>
   <category>
