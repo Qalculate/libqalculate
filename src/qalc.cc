@@ -49,6 +49,7 @@ Number saved_custom_output_base, saved_custom_input_base;
 AssumptionType saved_assumption_type;
 AssumptionSign saved_assumption_sign;
 int saved_precision;
+int saved_binary_prefixes;
 bool saved_interval, saved_adaptive_interval_display, saved_variable_units_enabled;
 bool adaptive_interval_display;
 Thread *view_thread, *command_thread;
@@ -93,6 +94,7 @@ void expression_format_updated(bool reparse);
 void expression_calculation_updated();
 bool display_errors(bool goto_input = false, int cols = 0);
 void replace_quotation_marks(string &result_text);
+extern int has_information_unit(const MathStructure &m, bool top = true);
 
 FILE *cfile;
 
@@ -707,7 +709,14 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assume nonzero denominators", _("assume nonzero denominators")) || svar == "nzd") SET_BOOL_E(evalops.assume_denominators_nonzero)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "warn nonzero denominators", _("warn nonzero denominators")) || svar == "warnnzd") SET_BOOL_E(evalops.warn_about_denominators_assumed_nonzero)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "prefixes", _("prefixes")) || svar == "pref") SET_BOOL_D(printops.use_unit_prefixes)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "denominator prefixes", _("denominator prefixes")) || svar == "denpref") SET_BOOL_D(printops.use_denominator_prefix)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "binary prefixes", _("binary prefixes")) || svar == "binpref") {
+		bool b = CALCULATOR->usesBinaryPrefixes() > 0;
+		SET_BOOL(b)
+		if(b != (CALCULATOR->usesBinaryPrefixes() > 0)) {
+			CALCULATOR->useBinaryPrefixes(b ? 1 : 0);
+			result_display_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "denominator prefixes", _("denominator prefixes")) || svar == "denpref") SET_BOOL_D(printops.use_denominator_prefix)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "place units separately", _("place units separately")) || svar == "unitsep") SET_BOOL_D(printops.place_units_separately)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate variables", _("calculate variables")) || svar == "calcvar") SET_BOOL_E(evalops.calculate_variables)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate functions", _("calculate functions")) || svar == "calcfunc") SET_BOOL_E(evalops.calculate_functions)
@@ -2747,11 +2756,43 @@ int main(int argc, char *argv[]) {
 				CALCULATOR->setCustomOutputBase(save_nr);
 				printops.base = save_base;
 			} else {
+				bool save_pre = printops.use_unit_prefixes;
+				bool save_all = printops.use_all_prefixes;
+				bool save_cur = printops.use_prefixes_for_currencies;
+				bool save_allu = printops.use_prefixes_for_all_units;
+				int save_bin = CALCULATOR->usesBinaryPrefixes();
+				bool save_den = printops.use_denominator_prefix;
+				if(str[0] == '?' || (str.length() > 1 && str[1] == '?' && (str[0] == 'a' || str[0] == 'd'))) {
+					
+					printops.use_unit_prefixes = true;
+					printops.use_prefixes_for_currencies = true;
+					printops.use_prefixes_for_all_units = true;
+					if(str[0] == 'a') printops.use_all_prefixes = true;
+					else if(str[0] == 'd') CALCULATOR->useBinaryPrefixes(0);
+				} else if(str.length() > 1 && str[1] == '?' && str[0] == 'b') {
+					printops.use_unit_prefixes = true;
+					int i = has_information_unit(*mstruct);
+					CALCULATOR->useBinaryPrefixes(i > 0 ? 1 : 2);
+					if(i == 1) {
+						printops.use_denominator_prefix = false;
+					} else if(i > 1) {
+						printops.use_denominator_prefix = true;
+					} else {
+						printops.use_prefixes_for_currencies = true;
+						printops.use_prefixes_for_all_units = true;
+					}
+				}
 				CALCULATOR->resetExchangeRatesUsed();
 				MathStructure mstruct_new(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), evalops));
 				if(check_exchange_rates()) mstruct->set(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), evalops));
 				else mstruct->set(mstruct_new);
 				result_action_executed();
+				printops.use_unit_prefixes = save_pre;
+				printops.use_all_prefixes = save_all;
+				printops.use_prefixes_for_currencies = save_cur;
+				printops.use_prefixes_for_all_units = save_allu;
+				printops.use_denominator_prefix = save_den;
+				CALCULATOR->useBinaryPrefixes(save_bin);
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "factor", _("factor"))) {
@@ -3025,6 +3066,7 @@ int main(int argc, char *argv[]) {
 				case POST_CONVERSION_OPTIMAL_SI: {str += _("optimalsi"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("binary prefixes"), "binpref"); str += b2oo(CALCULATOR->usesBinaryPrefixes() > 0, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("currency conversion"), "curconv"); str += b2oo(evalops.local_currency_conversion, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("denominator prefixes"), "denpref"); str += b2oo(printops.use_denominator_prefix, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("place units separately"), "unitsep"); str += b2oo(printops.place_units_separately, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -3716,6 +3758,7 @@ int main(int argc, char *argv[]) {
 				if(evalops.auto_post_conversion == POST_CONVERSION_NONE && evalops.mixed_units_conversion > MIXED_UNITS_CONVERSION_NONE) str += "*";
 				str += ")";
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+				STR_AND_TABS_BOOL(_("binary prefixes"), "binpref", _("If activated, binary prefixes are used by default for information units."), (CALCULATOR->usesBinaryPrefixes() > 0));
 				STR_AND_TABS_BOOL(_("currency conversion"), "curconv", _("Enables automatic conversion to the local currency when optimal unit conversion is enabled."), evalops.local_currency_conversion);
 				STR_AND_TABS_BOOL(_("denominator prefixes"), "denpref", _("Enables automatic use of prefixes in the denominator of unit expressions."), printops.use_denominator_prefix);
 				STR_AND_TABS_BOOL(_("place units separately"), "unitsep", _("If activated, units are separated from variables at the end of the result."), printops.place_units_separately);
@@ -3882,7 +3925,8 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("Possible values:"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- a unit (e.g. meter)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with ? to request the optimal prefix"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with ? to request the optimal decimal prefix"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with b? to request the optimal binary prefix"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with + or - to force/disable use of mixed units"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- a unit expression (e.g. km/h)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- a physical constant (e.g. c)"));
@@ -4544,13 +4588,12 @@ void execute_command(int command_type, bool show_result) {
 
 }
 
-
 void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates) {
 
 	if(i_maxtime < 0) return;
 
 	string str;
-	bool do_bases = programmers_mode, do_factors = false, do_expand = false, do_fraction = false, do_pfe = false, do_calendars = false;
+	bool do_bases = programmers_mode, do_factors = false, do_expand = false, do_fraction = false, do_pfe = false, do_calendars = false, do_binary_prefixes = false;
 	avoid_recalculation = false;
 	if(!interactive_mode) goto_input = false;
 	if(do_stack) {
@@ -4796,6 +4839,28 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				evalops.parse_options.units_enabled = false;
 				return;
+			} else {
+				if((to_str[0] == '?' && (!printops.use_unit_prefixes || !printops.use_prefixes_for_currencies || !printops.use_prefixes_for_all_units)) || (to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'a' && (!printops.use_unit_prefixes || !printops.use_prefixes_for_currencies || !printops.use_all_prefixes || !printops.use_prefixes_for_all_units)) || (to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'd' && (!printops.use_unit_prefixes || !printops.use_prefixes_for_currencies || !printops.use_prefixes_for_all_units || CALCULATOR->usesBinaryPrefixes() > 0))) {
+					bool save_pre = printops.use_unit_prefixes;
+					bool save_all = printops.use_all_prefixes;
+					bool save_cur = printops.use_prefixes_for_currencies;
+					bool save_allu = printops.use_prefixes_for_all_units;
+					int save_bin = CALCULATOR->usesBinaryPrefixes();
+					printops.use_unit_prefixes = true;
+					printops.use_prefixes_for_currencies = true;
+					printops.use_prefixes_for_all_units = true;
+					if(to_str[0] == 'a') printops.use_all_prefixes = true;
+					else if(to_str[0] == 'd') CALCULATOR->useBinaryPrefixes(0);
+					execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+					printops.use_unit_prefixes = save_pre;
+					printops.use_all_prefixes = save_all;
+					printops.use_prefixes_for_currencies = save_cur;
+					printops.use_prefixes_for_all_units = save_allu;
+					CALCULATOR->useBinaryPrefixes(save_bin);
+					return;
+				} else if(to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'b') {
+					do_binary_prefixes = true;
+				}
 			}
 		} else {
 			size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
@@ -5139,6 +5204,29 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		setResult(NULL, (!do_stack || stack_index == 0), goto_input, do_stack ? stack_index : 0);
 		printops.restrict_fraction_length = save_rfl;
 		printops.number_fraction_format = save_format;
+	} else if(do_binary_prefixes) {
+		bool save_pre = printops.use_unit_prefixes;
+		bool save_cur = printops.use_prefixes_for_currencies;
+		bool save_allu = printops.use_prefixes_for_all_units;
+		bool save_den = printops.use_denominator_prefix;
+		int save_bin = CALCULATOR->usesBinaryPrefixes();
+		int i = 0;
+		if(!do_stack || stack_index == 0) i = has_information_unit(*mstruct);
+		CALCULATOR->useBinaryPrefixes(i > 0 ? 1 : 2);
+		if(i == 1) {
+			printops.use_denominator_prefix = false;
+		} else if(i > 1) {
+			printops.use_denominator_prefix = true;
+		} else {
+			printops.use_prefixes_for_currencies = true;
+			printops.use_prefixes_for_all_units = true;
+		}
+		setResult(NULL, (!do_stack || stack_index == 0), goto_input, do_stack ? stack_index : 0);
+		printops.use_unit_prefixes = save_pre;
+		printops.use_prefixes_for_currencies = save_cur;
+		printops.use_prefixes_for_all_units = save_allu;
+		printops.use_denominator_prefix = save_den;
+		CALCULATOR->useBinaryPrefixes(save_bin);
 	} else {
 		setResult(NULL, (!do_stack || stack_index == 0), goto_input, do_stack ? stack_index : 0);
 	}
@@ -5157,6 +5245,7 @@ bool save_mode() {
 */
 void set_saved_mode() {
 	saved_precision = CALCULATOR->getPrecision();
+	saved_binary_prefixes = CALCULATOR->usesBinaryPrefixes();
 	saved_interval = CALCULATOR->usesIntervalArithmetic();
 	saved_adaptive_interval_display = adaptive_interval_display;
 	saved_variable_units_enabled = CALCULATOR->variableUnitsEnabled();
@@ -5240,6 +5329,8 @@ void load_preferences() {
 	adaptive_interval_display = true;
 	
 	CALCULATOR->useIntervalArithmetic(true);
+	
+	CALCULATOR->useBinaryPrefixes(0);
 
 	rpn_mode = false;
 	
@@ -5448,6 +5539,8 @@ void load_preferences() {
 				 	printops.use_all_prefixes = v;
 				} else if(svar == "denominator_prefix_enabled") {
 					printops.use_denominator_prefix = v;
+				} else if(svar == "use_binary_prefixes") {
+					CALCULATOR->useBinaryPrefixes(v);
 				} else if(svar == "auto_post_conversion") {
 					if(v >= POST_CONVERSION_NONE && v <= POST_CONVERSION_OPTIMAL) {
 						evalops.auto_post_conversion = (AutoPostConversion) v;
@@ -5612,6 +5705,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "use_prefixes=%i\n", saved_printops.use_unit_prefixes);
 	fprintf(file, "use_prefixes_for_all_units=%i\n", saved_printops.use_prefixes_for_all_units);
 	fprintf(file, "use_prefixes_for_currencies=%i\n", saved_printops.use_prefixes_for_currencies);
+	fprintf(file, "use_binary_prefixes=%i\n", saved_binary_prefixes);
 	fprintf(file, "abbreviate_names=%i\n", saved_printops.abbreviate_names);
 	fprintf(file, "all_prefixes_enabled=%i\n", saved_printops.use_all_prefixes);
 	fprintf(file, "denominator_prefix_enabled=%i\n", saved_printops.use_denominator_prefix);
