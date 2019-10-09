@@ -325,6 +325,7 @@ class Calculator_p {
 		Number custom_input_base, custom_output_base;
 		long int custom_input_base_i;
 		Unit *local_currency;
+		int use_binary_prefixes;
 };
 
 bool is_not_number(char c, int base) {
@@ -379,6 +380,7 @@ Calculator::Calculator() {
 	priv->custom_input_base_i = 0;
 	priv->ids_i = 0;
 	priv->local_currency = NULL;
+	priv->use_binary_prefixes = 0;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -603,6 +605,7 @@ Calculator::Calculator(bool ignore_locale) {
 	priv->custom_input_base_i = 0;
 	priv->ids_i = 0;
 	priv->local_currency = NULL;
+	priv->use_binary_prefixes = 0;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -1228,6 +1231,12 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(const Number &exp10, const Nu
 	}
 	return p_prev;
 }
+int Calculator::usesBinaryPrefixes() const {
+	return priv->use_binary_prefixes;
+}
+void Calculator::useBinaryPrefixes(int use_binary_prefixes) {
+	priv->use_binary_prefixes = use_binary_prefixes;
+}
 BinaryPrefix *Calculator::getNearestBinaryPrefix(int exp2, int exp) const {
 	if(binary_prefixes.size() <= 0) return NULL;
 	int i = 0;
@@ -1256,14 +1265,15 @@ BinaryPrefix *Calculator::getNearestBinaryPrefix(int exp2, int exp) const {
 }
 BinaryPrefix *Calculator::getOptimalBinaryPrefix(int exp2, int exp) const {
 	if(binary_prefixes.size() <= 0 || exp2 == 0) return NULL;
-	int i = 0;
+	int i = -1;
 	if(exp < 0) {
 		i = binary_prefixes.size() - 1;
 	}
 	BinaryPrefix *p = NULL, *p_prev = NULL;
 	int exp2_1, exp2_2;
-	while((exp < 0 && i >= 0) || (exp >= 0 && i < (int) binary_prefixes.size())) {
-		p = binary_prefixes[i];
+	while((exp < 0 && i >= -1) || (exp >= 0 && i < (int) binary_prefixes.size())) {
+		if(i >= 0) p = binary_prefixes[i];
+		else p = binary_null_prefix;
 		if(p_prev && (p_prev->exponent() >= 0) != (p->exponent() >= 0) && p_prev->exponent() != 0) {
 			if(exp < 0) {
 				i++;
@@ -1276,18 +1286,13 @@ BinaryPrefix *Calculator::getOptimalBinaryPrefix(int exp2, int exp) const {
 			if(p == binary_null_prefix) return NULL;
 			return p;
 		} else if(p->exponent(exp) > exp2) {
-			if(i == 0) {
-				if(p == binary_null_prefix) return NULL;
-				return p;
-			}
 			exp2_1 = exp2;
 			if(p_prev) {
 				exp2_1 -= p_prev->exponent(exp);
 			}
 			exp2_2 = p->exponent(exp);
 			exp2_2 -= exp2;
-			exp2_2 *= 2;
-			exp2_2 += 2;
+			exp2_2 += 9;
 			if(exp2_1 < exp2_2) {
 				if(p_prev == binary_null_prefix) return NULL;
 				return p_prev;
@@ -1306,40 +1311,28 @@ BinaryPrefix *Calculator::getOptimalBinaryPrefix(int exp2, int exp) const {
 }
 BinaryPrefix *Calculator::getOptimalBinaryPrefix(const Number &exp2, const Number &exp) const {
 	if(binary_prefixes.size() <= 0 || exp2.isZero()) return NULL;
-	int i = 0;
+	int i = -1;
 	ComparisonResult c;
 	if(exp.isNegative()) {
 		i = binary_prefixes.size() - 1;
 	}
 	BinaryPrefix *p = NULL, *p_prev = NULL;
 	Number exp2_1, exp2_2;
-	while((exp.isNegative() && i >= 0) || (!exp.isNegative() && i < (int) binary_prefixes.size())) {
-		p = binary_prefixes[i];
-		if(p_prev && (p_prev->exponent() >= 0) != (p->exponent() >= 0) && p_prev->exponent() != 0) {
-			if(exp.isNegative()) {
-				i++;
-			} else {
-				i--;
-			}
-			p = binary_null_prefix;
-		}
+	while((exp.isNegative() && i >= -1) || (!exp.isNegative() && i < (int) binary_prefixes.size())) {
+		if(i >= 0) p = binary_prefixes[i];
+		else p = binary_null_prefix;
 		c = exp2.compare(p->exponent(exp));
 		if(c == COMPARISON_RESULT_EQUAL) {
 			if(p == binary_null_prefix) return NULL;
 			return p;
 		} else if(c == COMPARISON_RESULT_GREATER) {
-			if(i == 0) {
-				if(p == binary_null_prefix) return NULL;
-				return p;
-			}
 			exp2_1 = exp2;
 			if(p_prev) {
 				exp2_1 -= p_prev->exponent(exp);
 			}
 			exp2_2 = p->exponent(exp);
 			exp2_2 -= exp2;
-			exp2_2 *= 2;
-			exp2_2 += 2;
+			exp2_2 += 9;
 			if(exp2_1.isLessThan(exp2_2)) {
 				if(p_prev == binary_null_prefix) return NULL;
 				return p_prev;
@@ -2944,16 +2937,39 @@ void Calculator::moveRPNRegisterDown(size_t index) {
 	}
 }
 
+int has_information_unit(const MathStructure &m, bool top = true) {
+	if(m.isUnit_exp()) {
+		if(m.isUnit()) {
+			if(m.unit()->baseUnit()->referenceName() == "bit") return 1;
+		} else {
+			if(m[0].unit()->baseUnit()->referenceName() == "bit") {
+				if(m[1].representsNegative()) return 2;
+				return 1;
+			}
+		}
+		return 0;
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		int ret = has_information_unit(m[i], false);
+		if(ret > 0) {
+			if(ret == 1 && top && m.isMultiplication() && m[0].isNumber() && m[0].number().isFraction()) return 2;
+			return ret;
+		}
+	}
+	return 0;
+}
+
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
 string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po) {
 	if(msecs > 0) startControl(msecs);
 	PrintOptions printops = po;
 	EvaluationOptions evalops = eo;
 	MathStructure mstruct;
-	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false, do_expand = false;
+	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false, do_expand = false, do_binary_prefixes = false;
 	string from_str = str, to_str;
 	Number base_save;
 	if(printops.base == BASE_CUSTOM) base_save = customOutputBase();
+	int save_bin = priv->use_binary_prefixes;
 	if(separateToExpression(from_str, to_str, evalops, true)) {
 		remove_duplicate_blanks(to_str);
 		string to_str1, to_str2;
@@ -3073,6 +3089,15 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
 		} else {
 			evalops.parse_options.units_enabled = true;
+			if(to_str[0] == '?' || (to_str.length() > 1 && to_str[1] == '?' && (to_str[0] == 'a' || to_str[0] == 'd'))) {
+				printops.use_unit_prefixes = true;
+				printops.use_prefixes_for_currencies = true;
+				printops.use_prefixes_for_all_units = true;
+				if(to_str[0] == 'a') printops.use_all_prefixes = true;
+				else if(to_str[0] == 'd') priv->use_binary_prefixes = 0;
+			} else if(to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'b') {
+				do_binary_prefixes = true;
+			}
 		}
 	} else {
 		size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
@@ -3138,12 +3163,24 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	} else if(do_fraction) {
 		if(mstruct.isNumber()) printops.number_fraction_format = FRACTION_COMBINED;
 		else printops.number_fraction_format = FRACTION_FRACTIONAL;
+	} else if(do_binary_prefixes) {
+		int i = has_information_unit(mstruct);
+		priv->use_binary_prefixes = (i > 0 ? 1 : 2);
+		if(i == 1) {
+			printops.use_denominator_prefix = false;
+		} else if(i > 1) {
+			printops.use_denominator_prefix = true;
+		} else {
+			printops.use_prefixes_for_currencies = true;
+			printops.use_prefixes_for_all_units = true;
+		}
 	}
 	mstruct.removeDefaultAngleUnit(evalops);
 	mstruct.format(printops);
 	str = mstruct.print(printops);
 	stopControl();
 	if(printops.base == BASE_CUSTOM) setCustomOutputBase(base_save);
+	priv->use_binary_prefixes = save_bin;
 	return str;
 }
 bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
@@ -3246,6 +3283,9 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 				}
 				if(!keep_modifiers && (to_str[0] == '0' || to_str[0] == '?' || to_str[0] == '+' || to_str[0] == '-')) {
 					to_str = to_str.substr(1, str.length() - 1);
+					remove_blank_ends(to_str);
+				} else if(!keep_modifiers && to_str.length() > 1 && to_str[1] == '?' && (to_str[0] == 'b' || to_str[0] == 'a' || to_str[0] == 'd')) {
+					to_str = to_str.substr(2, str.length() - 2);
 					remove_blank_ends(to_str);
 				}
 			}
@@ -4691,13 +4731,19 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 	remove_blank_ends(str2);
 	if(str2.empty()) return mstruct_to_convert;
 	current_stage = MESSAGE_STAGE_CONVERSION;
+	int do_prefix = 0;
+	if(str2.length() > 1 && str2[1] == '?' && (str2[0] == 'b' || str2[0] == 'a' || str2[0] == 'd')) {
+		do_prefix = 2;
+	} else if(str2[0] == '?') {
+		do_prefix = 1;
+	}
 	EvaluationOptions eo2 = eo;
-	eo2.keep_prefixes = (str2[0] != '?');
+	eo2.keep_prefixes = !do_prefix;
 	if(str2[0] == '-') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
 	else if(str2[0] == '+') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
 	else if(eo2.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP;
-	if(str2[0] == '?' || str2[0] == '0' || str2[0] == '+' || str2[0] == '-') {
-		str2 = str2.substr(1, str2.length() - 1);
+	if(do_prefix || str2[0] == '0' || str2[0] == '+' || str2[0] == '-') {
+		str2 = str2.substr(do_prefix > 1 ? 2 : 1, str2.length() - (do_prefix > 1 ? 2 : 1));
 		remove_blank_ends(str2);
 		if(str2.empty()) {
 			current_stage = MESSAGE_STAGE_UNSET;

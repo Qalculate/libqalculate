@@ -793,6 +793,11 @@ class Calculator {
 	* @returns A prefix or NULL if the unit should be left without prefix.
 	*/
 	BinaryPrefix *getOptimalBinaryPrefix(const Number &exp2, const Number &exp) const;
+	/** Controls if binary, instead of decimal, prefixes will be used by default.
+	* 1 = use binary prefixes for information units, 2 = use binary prefixes for all units.
+	*/
+	int usesBinaryPrefixes() const;
+	void useBinaryPrefixes(int use_binary_prefixes);
 	/** Add a new prefix to the calculator. */
 	Prefix *addPrefix(Prefix *p);
 	/** Used internally. */

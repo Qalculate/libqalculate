@@ -19325,15 +19325,19 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 						exp10.abs();
 						exp10.intervalToMidValue();
 						if(exp10.isLessThanOrEqualTo(Number(1, 1, 1000)) && exp10.isGreaterThanOrEqualTo(Number(1, 1, -1000))) {
-							exp10.log(10);
+							bool use_binary_prefix = (CALCULATOR->usesBinaryPrefixes() > 1 || (CALCULATOR->usesBinaryPrefixes() == 1 && ((munit->isUnit() && munit->unit()->baseUnit()->referenceName() == "bit") || (munit->isPower() && (*munit)[0].unit()->baseUnit()->referenceName() == "bit"))));
+							exp10.log(use_binary_prefix ? 2 : 10);
 							exp10.intervalToMidValue();
 							exp10.floor();
-							if(b2) {
+							if(b2 && exp10.isPositive() && (CALCULATOR->usesBinaryPrefixes() > 1 || (CALCULATOR->usesBinaryPrefixes() == 1 && ((munit2->isUnit() && munit2->unit()->baseUnit()->referenceName() == "bit") || (munit2->isPower() && (*munit2)[0].unit()->baseUnit()->referenceName() == "bit"))))) b2 = false;
+							if(b2 && use_binary_prefix && CALCULATOR->usesBinaryPrefixes() == 1 && exp10.isNegative()) {
+								exp10.clear();
+							} else if(b2) {
 								Number tmp_exp(exp10);
 								tmp_exp.setNegative(false);
-								Number e1(3, 1, 0);
+								Number e1(use_binary_prefix ? 10 : 3, 1, 0);
 								e1 *= exp;
-								Number e2(3, 1, 0);
+								Number e2(use_binary_prefix ? 10 : 3, 1, 0);
 								e2 *= exp2;
 								e2.setNegative(false);
 								int i4 = 0;
@@ -19353,10 +19357,11 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 								e2 *= i4;
 								exp10 -= e2;
 							}
-							DecimalPrefix *p = CALCULATOR->getOptimalDecimalPrefix(exp10, exp, po.use_all_prefixes);
+							Prefix *p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp, po.use_all_prefixes));
 							if(p) {
 								Number test_exp(exp10);
-								test_exp -= p->exponent(exp);
+								if(use_binary_prefix) test_exp -= ((BinaryPrefix*) p)->exponent(exp);
+								else test_exp -= ((DecimalPrefix*) p)->exponent(exp);
 								if(test_exp.isInteger()) {
 									if((exp10.isPositive() && exp10.compare(test_exp) == COMPARISON_RESULT_LESS) || (exp10.isNegative() && exp10.compare(test_exp) == COMPARISON_RESULT_GREATER)) {
 										CHILD(0).number() /= p->value(exp);
@@ -19389,13 +19394,15 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 						exp10.abs();
 						exp10.intervalToMidValue();
 						if(exp10.isLessThanOrEqualTo(Number(1, 1, 1000)) && exp10.isGreaterThanOrEqualTo(Number(1, 1, -1000))) {
-							exp10.log(10);
+							bool use_binary_prefix = (CALCULATOR->usesBinaryPrefixes() > 1 || (CALCULATOR->usesBinaryPrefixes() == 1 && ((munit2->isUnit() && munit2->unit()->baseUnit()->referenceName() == "bit") || (munit2->isPower() && (*munit2)[0].unit()->baseUnit()->referenceName() == "bit"))));
+							exp10.log(use_binary_prefix ? 2 : 10);
 							exp10.intervalToMidValue();
 							exp10.floor();
-							DecimalPrefix *p = CALCULATOR->getOptimalDecimalPrefix(exp10, exp2, po.use_all_prefixes);
+							Prefix *p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp2) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp2, po.use_all_prefixes));
 							if(p) {
 								Number test_exp(exp10);
-								test_exp -= p->exponent(exp2);
+								if(use_binary_prefix) test_exp -= ((BinaryPrefix*) p)->exponent(exp2);
+								else test_exp -= ((DecimalPrefix*) p)->exponent(exp2);
 								if(test_exp.isInteger()) {
 									if((exp10.isPositive() && exp10.compare(test_exp) == COMPARISON_RESULT_LESS) || (exp10.isNegative() && exp10.compare(test_exp) == COMPARISON_RESULT_GREATER)) {
 										CHILD(0).number() /= p->value(exp2);

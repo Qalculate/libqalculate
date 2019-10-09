@@ -1,3 +1,15 @@
+2019-10-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Option to use binary prefixes by default for information units
+	* "b?"-syntax (unit expression prefix) for optimal binary prefix (e.g. "b?byte")
+	* Improvements for '?' (optimal prefix) in conversion expression
+
+2019-10-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* poisson() function
+	* Define steradian as rad^2 (was wrongly defined as m/m instead of m^2/m^2) for improved solid angle conversion
+	* Add square degree as a solid angle (composite) unit
+
 2019-10-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fixes for when narrow no-break space is local digit grouping separator
