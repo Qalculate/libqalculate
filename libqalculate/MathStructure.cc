@@ -18785,7 +18785,7 @@ void idm3b(MathStructure &mnum, Number &nr) {
 }
 
 bool displays_number_exact(Number nr, const PrintOptions &po, MathStructure *top_parent) {
-	if(po.base == BASE_ROMAN_NUMERALS) return true;
+	if(po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26) return true;
 	InternalPrintStruct ips_n;
 	if(top_parent && top_parent->isApproximate()) ips_n.parent_approximate = true;
 	if(po.show_ending_zeroes && po.restrict_to_parent_precision && ips_n.parent_approximate && (nr > 9 || nr < -9)) return false;
@@ -19002,7 +19002,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po, MathStr
 					}
 				}
 			}
-			if(!b && po.show_ending_zeroes && po.restrict_to_parent_precision && top_parent->isApproximate() && po.base != BASE_ROMAN_NUMERALS && inum > 0 && iden > 0) {
+			if(!b && po.show_ending_zeroes && po.restrict_to_parent_precision && top_parent->isApproximate() && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_BIJECTIVE_26 && inum > 0 && iden > 0) {
 				bint = false;
 				bool bint2 = false;
 				idm1b(CHILD(index2), bint, bint2);
@@ -20416,7 +20416,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					transform(STRUCT_NEGATE);
 					formatsub(po, parent, pindex, true, top_parent);
 				}
-			} else if(po.number_fraction_format == FRACTION_COMBINED && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (!po.show_ending_zeroes || !po.restrict_to_parent_precision || po.base == BASE_ROMAN_NUMERALS || ((!top_parent || !top_parent->isApproximate()) && !isApproximate()) || (o_number.denominatorIsLessThan(10) && o_number < 10 && o_number > -10))) {
+			} else if(po.number_fraction_format == FRACTION_COMBINED && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (!po.show_ending_zeroes || !po.restrict_to_parent_precision || po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26 || ((!top_parent || !top_parent->isApproximate()) && !isApproximate()) || (o_number.denominatorIsLessThan(10) && o_number < 10 && o_number > -10))) {
 				if(o_number.isFraction()) {
 					Number num(o_number.numerator());
 					Number den(o_number.denominator());
@@ -20439,7 +20439,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 			} else if((force_fraction || po.number_fraction_format == FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS || po.number_fraction_format == FRACTION_DECIMAL_EXACT) && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (force_fraction || !o_number.isApproximate())) {
 				InternalPrintStruct ips_n;
 				if(!force_fraction && (isApproximate() || (top_parent && top_parent->isApproximate()))) ips_n.parent_approximate = true;
-				if(po.show_ending_zeroes && po.restrict_to_parent_precision && ips_n.parent_approximate && po.base != BASE_ROMAN_NUMERALS && (o_number.numeratorIsGreaterThan(9) || o_number.numeratorIsLessThan(-9) || o_number.denominatorIsGreaterThan(9))) {
+				if(po.show_ending_zeroes && po.restrict_to_parent_precision && ips_n.parent_approximate && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_BIJECTIVE_26 && (o_number.numeratorIsGreaterThan(9) || o_number.numeratorIsLessThan(-9) || o_number.denominatorIsGreaterThan(9))) {
 					break;
 				}
 				ips_n.parent_precision = precision();
@@ -20447,7 +20447,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				bool approximately_displayed = false;
 				PrintOptions po2 = po;
 				po2.is_approximate = &approximately_displayed;
-				if(!force_fraction && po.base != BASE_ROMAN_NUMERALS && po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
+				if(!force_fraction && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_BIJECTIVE_26 && po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
 					po2.number_fraction_format = FRACTION_DECIMAL;
 					o_number.print(po2, ips_n);
 					if(!approximately_displayed) break;
@@ -20460,9 +20460,9 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					den.setApproximate();
 				}
 				num.print(po2, ips_n);
-				if(!approximately_displayed || po.base == BASE_ROMAN_NUMERALS) {
+				if(!approximately_displayed || po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26) {
 					den.print(po2, ips_n);
-					if(!approximately_displayed || po.base == BASE_ROMAN_NUMERALS) {
+					if(!approximately_displayed || po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26) {
 						clear(true);
 						if(num.isOne()) {
 							m_type = STRUCT_INVERSE;

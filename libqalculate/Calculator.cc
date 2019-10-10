@@ -38,7 +38,6 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include <algorithm>
 #ifdef HAVE_LIBCURL
 #	include <curl/curl.h>
 #endif
@@ -1782,104 +1781,6 @@ void Calculator::addBuiltinVariables() {
 	
 }
 
-DECLARE_BUILTIN_FUNCTION(BijectiveFunction)
-
-BijectiveFunction::BijectiveFunction() : MathFunction("bijective", 1) {
-	ArgumentSet *arg = new ArgumentSet();
-	arg->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
-	arg->addArgument(new TextArgument());
-	setArgumentDefinition(1, arg);
-}
-int BijectiveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].isSymbolic()) {
-		string str = vargs[0].symbol();
-		remove_blanks(str);
-		Number nr;
-		for(size_t i = 0; i < str.length(); i++) {
-			Number nri(26);
-			nri ^= (str.length() - i - 1);
-			if(str[i] >= 'a' && str[i] <= 'z') nri *= (str[i] - 'a' + 1);
-			else if(str[i] >= 'A' && str[i] <= 'Z') nri *= (str[i] - 'A' + 1);
-			else return 0;
-			nr += nri;
-		}
-		mstruct = nr;
-		return 1;
-	}
-	Number nr(vargs[0].number());
-	Number nri, nra;
-	string str;
-	do {
-		nri = nr;
-		nri /= 26;
-		nri.ceil();
-		nri--;
-		nra = nri;
-		nra *= 26;
-		nra = nr - nra;
-		nr = nri;
-		str.insert(0, 1, ('A' + nra.intValue() - 1));
-	} while(!nr.isZero());
-	mstruct.set(str, false, true);
-	return 1;
-}
-
-DECLARE_BUILTIN_FUNCTION(CircularShiftFunction)
-
-CircularShiftFunction::CircularShiftFunction() : MathFunction("bitrot", 2, 4) {
-	setArgumentDefinition(1, new IntegerArgument());
-	setArgumentDefinition(2, new IntegerArgument());
-	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
-	setArgumentDefinition(4, new BooleanArgument());
-	setDefaultValue(3, "0");
-	setDefaultValue(4, "1");
-}
-int CircularShiftFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].number().isZero()) {
-		mstruct.clear();
-		return 1;
-	}
-	Number nr(vargs[0].number());
-	unsigned int bits = vargs[2].number().uintValue();
-	if(bits == 0) {
-		bits = nr.integerLength();
-		if(bits <= 8) bits = 8;
-		else if(bits <= 16) bits = 16;
-		else if(bits <= 32) bits = 32;
-		else if(bits <= 64) bits = 64;
-		else if(bits <= 128) bits = 128;
-		else {
-			bits = (unsigned int) ::ceil(::log2(bits));
-			bits = ::pow(2, bits);
-		}
-	}
-	Number nr_n(vargs[1].number());
-	nr_n.rem(bits);
-	if(nr_n.isZero()) {
-		mstruct = nr;
-		return 1;
-	}
-	PrintOptions po;
-	po.base = BASE_BINARY;
-	po.base_display = BASE_DISPLAY_NORMAL;
-	po.binary_bits = bits;
-	string str = nr.print(po);
-	remove_blanks(str);
-	if(str.length() < bits) return 0;
-	if(nr_n.isNegative()) {
-		nr_n.negate();
-		std::rotate(str.rbegin(), str.rbegin() + nr_n.uintValue(), str.rend());
-	} else {
-		std::rotate(str.begin(), str.begin() + nr_n.uintValue(), str.end());
-	}
-	ParseOptions pao;
-	pao.base = BASE_BINARY;
-	pao.twos_complement = vargs[3].number().getBoolean();
-	mstruct = Number(str, pao);
-	return 1;
-}
-
-
 void Calculator::addBuiltinFunctions() {
 
 	f_vector = addFunction(new VectorFunction());
@@ -2382,6 +2283,8 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 	int base = po.base;
 	if(base == BASE_CUSTOM) {
 		base = (int) priv->custom_input_base_i;
+	} else if(base == BASE_BIJECTIVE_26) {
+		base = 36;
 	} else if(base == BASE_GOLDEN_RATIO || base == BASE_SUPER_GOLDEN_RATIO || base == BASE_SQRT2) {
 		base = 2;
 	} else if(base == BASE_PI) {
@@ -3041,6 +2944,9 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		} else if(equalsIgnoreCase(to_str, "roman") || equalsIgnoreCase(to_str, _("roman"))) {
 			str = from_str;
 			printops.base = BASE_ROMAN_NUMERALS;
+		} else if(equalsIgnoreCase(to_str, "bijective") || equalsIgnoreCase(to_str, _("bijective"))) {
+			str = from_str;
+			printops.base = BASE_BIJECTIVE_26;
 		} else if(equalsIgnoreCase(to_str, "sexa") || equalsIgnoreCase(to_str, "sexagesimal") || equalsIgnoreCase(to_str, _("sexagesimal"))) {
 			str = from_str;
 			printops.base = BASE_SEXAGESIMAL;
@@ -3107,7 +3013,8 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			evalops.auto_post_conversion = POST_CONVERSION_BASE;
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base"))) {
 			str = from_str;
-			if(equalsIgnoreCase(to_str2, "golden") || equalsIgnoreCase(to_str2, "golden ratio") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
+			if(to_str2 == "b26" || to_str2 == "B26") printops.base = BASE_BIJECTIVE_26;
+			else if(equalsIgnoreCase(to_str2, "golden") || equalsIgnoreCase(to_str2, "golden ratio") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
 			else if(equalsIgnoreCase(to_str2, "unicode")) printops.base = BASE_UNICODE;
 			else if(equalsIgnoreCase(to_str2, "supergolden") || equalsIgnoreCase(to_str2, "supergolden ratio") || to_str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
 			else if(equalsIgnoreCase(to_str2, "pi") || to_str2 == "π") printops.base = BASE_PI;
@@ -6918,7 +6825,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 }
 
-#define BASE_2_10 ((po.base >= 2 && po.base <= 10) || (po.base < BASE_CUSTOM && po.base != BASE_UNICODE) || (po.base == BASE_CUSTOM && priv->custom_input_base_i <= 10))
+#define BASE_2_10 ((po.base >= 2 && po.base <= 10) || (po.base < BASE_CUSTOM && po.base != BASE_UNICODE && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && priv->custom_input_base_i <= 10))
 
 bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOptions &po) {
 	mstruct->clear();

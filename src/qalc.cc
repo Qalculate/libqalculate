@@ -606,6 +606,7 @@ void set_option(string str) {
 		bool b_in = EQUALS_IGNORECASE_AND_LOCAL(svar, "input base", _("input base")) || svar == "inbase";
 		bool b_out = EQUALS_IGNORECASE_AND_LOCAL(svar, "output base", _("output base")) || svar == "outbase";
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "roman", _("roman"))) v = BASE_ROMAN_NUMERALS;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "bijective", _("bijective")) || str == "b26" || str == "B26") v = BASE_BIJECTIVE_26;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "time", _("time"))) {if(b_in) v = 0; else v = BASE_TIME;}
 		else if(equalsIgnoreCase(svalue, "hex") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "hexadecimal", _("hexadecimal"))) v = BASE_HEXADECIMAL;
 		else if(equalsIgnoreCase(svalue, "golden") || equalsIgnoreCase(svalue, "golden ratio") || svalue == "φ") v = BASE_GOLDEN_RATIO;
@@ -2566,6 +2567,11 @@ int main(int argc, char *argv[]) {
 				printops.base = BASE_ROMAN_NUMERALS;
 				setResult(NULL, false);
 				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "bijective") || equalsIgnoreCase(str, _("bijective"))) {
+				int save_base = printops.base;
+				printops.base = BASE_BIJECTIVE_26;
+				setResult(NULL, false);
+				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(str, "sexagesimal", _("sexagesimal"))) {
 				int save_base = printops.base;
 				printops.base = BASE_SEXAGESIMAL;
@@ -2914,6 +2920,7 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("base"), ""); 
 			switch(printops.base) {
 				case BASE_ROMAN_NUMERALS: {str += _("roman"); break;}
+				case BASE_BIJECTIVE_26: {str += _("bijective"); break;}
 				case BASE_SEXAGESIMAL: {str += _("sexagesimal"); break;}
 				case BASE_TIME: {str += _("time"); break;}
 				case BASE_GOLDEN_RATIO: {str += "golden"; break;}
@@ -3024,6 +3031,7 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("input base"), "inbase"); 
 			switch(evalops.parse_options.base) {
 				case BASE_ROMAN_NUMERALS: {str += _("roman"); break;}
+				case BASE_BIJECTIVE_26: {str += _("bijective"); break;}
 				case BASE_GOLDEN_RATIO: {str += "golden"; break;}
 				case BASE_SUPER_GOLDEN_RATIO: {str += "supergolden"; break;}
 				case BASE_E: {str += "e"; break;}
@@ -3939,6 +3947,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- duo / duodecimal (show as duodecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex / hexadecimal (show as hexadecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- sex / sexagesimal (show as sexagesimal number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- bijective (shown in bijective 26-base)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- roman (show as roman numerals)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- time (show in time format)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- unicode"));
@@ -4062,14 +4071,14 @@ void replace_quotation_marks(string &str) {
 	if(cfile) return;
 	size_t i1 = 0, i2 = 0, i_prev = 0;
 	size_t i_equals = str.find(_("approx.")) + strlen(_("approx."));
-	while(i1 + 2 < str.length()) {
+	while(i_prev + 2 < str.length()) {
 		i1 = str.find_first_of("\"\'", i_prev);
 		if(i1 == string::npos) break;
 		i2 = str.find(str[i1], i1 + 1);
 		if(i2 == string::npos) break;
 		if(i2 - i1 > 2) {
 			if(!text_length_is_one(str.substr(i1 + 1, i2 - i1 - 1))) {
-				i1 = i2 + 1;
+				i_prev = i2 + 1;
 				continue;
 			}
 		}
@@ -4658,6 +4667,14 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				printops.base = save_base;
 				expression_str = str;
 				return;
+			} else if(equalsIgnoreCase(to_str, "bijective") || equalsIgnoreCase(to_str, _("bijective"))) {
+				int save_base = printops.base;
+				expression_str = from_str;
+				printops.base = BASE_BIJECTIVE_26;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.base = save_base;
+				expression_str = str;
+				return;
 			} else if(equalsIgnoreCase(to_str, "sexa") || equalsIgnoreCase(to_str, "sexagesimal") || equalsIgnoreCase(to_str, _("sexagesimal"))) {
 				int save_base = printops.base;
 				expression_str = from_str;
@@ -4792,7 +4809,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				Number save_nr = CALCULATOR->customOutputBase();
-				if(equalsIgnoreCase(to_str2, "golden") || equalsIgnoreCase(to_str2, "golden ratio") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
+				if(to_str2 == "b26" || to_str2 == "B26") printops.base = BASE_BIJECTIVE_26;
+				else if(equalsIgnoreCase(to_str2, "golden") || equalsIgnoreCase(to_str2, "golden ratio") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
 				else if(equalsIgnoreCase(to_str2, "unicode")) printops.base = BASE_UNICODE;
 				else if(equalsIgnoreCase(to_str2, "supergolden") || equalsIgnoreCase(to_str2, "supergolden ratio") || to_str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
 				else if(equalsIgnoreCase(to_str2, "pi") || to_str2 == "π") printops.base = BASE_PI;

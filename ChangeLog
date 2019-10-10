@@ -1,3 +1,8 @@
+2019-10-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Bijective base-26 support (including bijective() function)
+	* Fix never ending loop when formatting unknowns with more than one character, in qalc
+
 2019-10-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Option to use binary prefixes by default for information units
