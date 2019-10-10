@@ -22,6 +22,7 @@
 #include <sstream>
 #include <time.h>
 #include <limits>
+#include <algorithm>
 
 #if HAVE_UNORDERED_MAP
 #	include <unordered_map>
@@ -862,6 +863,58 @@ int ShiftFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		return 1;
 	}
 	FR_FUNCTION_2(shift)
+}
+CircularShiftFunction::CircularShiftFunction() : MathFunction("bitrot", 2, 4) {
+	setArgumentDefinition(1, new IntegerArgument());
+	setArgumentDefinition(2, new IntegerArgument());
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
+	setArgumentDefinition(4, new BooleanArgument());
+	setDefaultValue(3, "0");
+	setDefaultValue(4, "1");
+}
+int CircularShiftFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].number().isZero()) {
+		mstruct.clear();
+		return 1;
+	}
+	Number nr(vargs[0].number());
+	unsigned int bits = vargs[2].number().uintValue();
+	if(bits == 0) {
+		bits = nr.integerLength();
+		if(bits <= 8) bits = 8;
+		else if(bits <= 16) bits = 16;
+		else if(bits <= 32) bits = 32;
+		else if(bits <= 64) bits = 64;
+		else if(bits <= 128) bits = 128;
+		else {
+			bits = (unsigned int) ::ceil(::log2(bits));
+			bits = ::pow(2, bits);
+		}
+	}
+	Number nr_n(vargs[1].number());
+	nr_n.rem(bits);
+	if(nr_n.isZero()) {
+		mstruct = nr;
+		return 1;
+	}
+	PrintOptions po;
+	po.base = BASE_BINARY;
+	po.base_display = BASE_DISPLAY_NORMAL;
+	po.binary_bits = bits;
+	string str = nr.print(po);
+	remove_blanks(str);
+	if(str.length() < bits) return 0;
+	if(nr_n.isNegative()) {
+		nr_n.negate();
+		std::rotate(str.rbegin(), str.rbegin() + nr_n.uintValue(), str.rend());
+	} else {
+		std::rotate(str.begin(), str.begin() + nr_n.uintValue(), str.end());
+	}
+	ParseOptions pao;
+	pao.base = BASE_BINARY;
+	pao.twos_complement = vargs[3].number().getBoolean();
+	mstruct = Number(str, pao);
+	return 1;
 }
 BitCmpFunction::BitCmpFunction() : MathFunction("bitcmp", 1, 3) {
 	setArgumentDefinition(1, new IntegerArgument());
@@ -5328,6 +5381,22 @@ int RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	}
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_ROMAN_NUMERALS;
+	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
+	return 1;
+}
+BijectiveFunction::BijectiveFunction() : MathFunction("bijective", 1) {
+	setArgumentDefinition(1, new TextArgument());
+}
+int BijectiveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].symbol().find_first_not_of("0123456789.:" SIGNS) == string::npos && vargs[0].symbol().find_first_not_of("0" SIGNS) != string::npos) {
+		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
+		PrintOptions po; po.base = BASE_BIJECTIVE_26;
+		mstruct.eval(eo);
+		mstruct.set(mstruct.print(po), true, true);
+		return 1;
+	}
+	ParseOptions po = eo.parse_options;
+	po.base = BASE_BIJECTIVE_26;
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }

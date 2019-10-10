@@ -793,6 +793,14 @@
           <_title>Two's complement</_title>
         </argument>
       </builtin_function>
+      <builtin_function name="bijective">
+        <_title>Bijective base-26</_title>
+        <_names>r:bijective</_names>
+        <_description>Returns a value from a bijective base-26 number. Conversion in the opposite direction is also supported.</_description>
+        <argument index="1">
+          <_title>Number</_title>
+        </argument>
+      </builtin_function>
     </category>
     <category>
       <_title>Integers</_title>

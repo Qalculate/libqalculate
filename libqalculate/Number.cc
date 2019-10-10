@@ -325,6 +325,31 @@ Number::~Number() {
 
 void Number::set(string number, const ParseOptions &po) {
 	
+	if(po.base == BASE_BIJECTIVE_26) {
+		remove_blanks(number);
+		clear();
+		string str = number;
+		for(size_t i = 0; i < str.length();) {
+			if(!(str[i] >= 'a' && str[i] <= 'z') && !(str[i] >= 'A' && str[i] <= 'Z')) {
+				size_t n = 1;
+				while(i + n < str.length() && str[i + n] < 0 && (unsigned char) str[i + n] < 0xC0) {
+					n++;
+				}
+				CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with bijective base-26."), str.substr(i, n).c_str(), number.c_str(), NULL);
+				str.erase(i, n);
+			} else {
+				i++;
+			}
+		}
+		for(size_t i = 0; i < str.length(); i++) {
+			Number nri(26);
+			nri ^= (str.length() - i - 1);
+			if(str[i] >= 'a' && str[i] <= 'z') nri *= (str[i] - 'a' + 1);
+			else if(str[i] >= 'A' && str[i] <= 'Z') nri *= (str[i] - 'A' + 1);
+			add(nri);
+		}
+		return;
+	}
 	if(po.base < BASE_CUSTOM || (po.base == BASE_CUSTOM && (!CALCULATOR->customInputBase().isInteger() || CALCULATOR->customInputBase() < 2 || CALCULATOR->customInputBase() > 62))) {
 		Number base;
 		switch(po.base) {
@@ -384,7 +409,7 @@ void Number::set(string number, const ParseOptions &po) {
 					b_minus = !b_minus;
 				} else {
 					string str_char = number.substr(i, 1);
-					while(i + 1 < number.length() && number[i + 1] < 0 && number[i + 1] && (unsigned char) number[i + 1] < 0xC0) {
+					while(i + 1 < number.length() && number[i + 1] < 0 && (unsigned char) number[i + 1] < 0xC0) {
 						i++;
 						str_char += number[i];
 					}
@@ -7677,7 +7702,37 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.im) *ips.im = "";
 	if(ips.iexp) *ips.iexp = 0;
 	if(po.is_approximate && isApproximate()) *po.is_approximate = true;
-	if(po.base < BASE_CUSTOM || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2))) {
+	if(po.base == BASE_BIJECTIVE_26 && isReal()) {
+		Number nr(*this);
+		if(!nr.isInteger()) {
+			if(po.is_approximate) *po.is_approximate = true;
+			nr.round(po.round_halfway_to_even);
+		}
+		if(nr.isZero()) return "";
+		bool neg = nr.isNegative();
+		if(neg) nr.negate();
+		Number nri, nra;
+		string str;
+		do {
+			nri = nr;
+			nri /= 26;
+			nri.ceil();
+			nri--;
+			nra = nri;
+			nra *= 26;
+			nra = nr - nra;
+			nr = nri;
+			str.insert(0, 1, ('A' + nra.intValue() - 1));
+		} while(!nr.isZero());
+		if(ips.minus) {
+			*ips.minus = neg;
+		} else if(neg) {
+			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str.insert(0, SIGN_MINUS);
+			else str.insert(0, "-");
+		}
+		return str;
+	}
+	if(((po.base < BASE_CUSTOM && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2))) && isReal()) {
 		Number base;
 		switch(po.base) {
 			case BASE_GOLDEN_RATIO: {
