@@ -1782,6 +1782,48 @@ void Calculator::addBuiltinVariables() {
 	
 }
 
+DECLARE_BUILTIN_FUNCTION(BijectiveFunction)
+
+BijectiveFunction::BijectiveFunction() : MathFunction("bijective", 1) {
+	ArgumentSet *arg = new ArgumentSet();
+	arg->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	arg->addArgument(new TextArgument());
+	setArgumentDefinition(1, arg);
+}
+int BijectiveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isSymbolic()) {
+		string str = vargs[0].symbol();
+		remove_blanks(str);
+		Number nr;
+		for(size_t i = 0; i < str.length(); i++) {
+			Number nri(26);
+			nri ^= (str.length() - i - 1);
+			if(str[i] >= 'a' && str[i] <= 'z') nri *= (str[i] - 'a' + 1);
+			else if(str[i] >= 'A' && str[i] <= 'Z') nri *= (str[i] - 'A' + 1);
+			else return 0;
+			nr += nri;
+		}
+		mstruct = nr;
+		return 1;
+	}
+	Number nr(vargs[0].number());
+	Number nri, nra;
+	string str;
+	do {
+		nri = nr;
+		nri /= 26;
+		nri.ceil();
+		nri--;
+		nra = nri;
+		nra *= 26;
+		nra = nr - nra;
+		nr = nri;
+		str.insert(0, 1, ('A' + nra.intValue() - 1));
+	} while(!nr.isZero());
+	mstruct.set(str, false, true);
+	return 1;
+}
+
 DECLARE_BUILTIN_FUNCTION(CircularShiftFunction)
 
 CircularShiftFunction::CircularShiftFunction() : MathFunction("bitrot", 2, 4) {
@@ -1985,6 +2027,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new DecFunction());
 	f_hex = addFunction(new HexFunction());
 	f_roman = addFunction(new RomanFunction());
+	addFunction(new BijectiveFunction());
 
 	f_ascii = addFunction(new AsciiFunction());
 	f_char = addFunction(new CharFunction());
