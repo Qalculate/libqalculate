@@ -6844,9 +6844,9 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	eo2.approximation = eo.approximation;
 	if(b) {
 #if MPFR_VERSION_MAJOR < 4
-		if(definite_integral && mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0) {
+		if(definite_integral && mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0 && mstruct.containsType(STRUCT_COMPIRISON, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_signum) <= 0) {
 #else
-		if(definite_integral && mstruct.containsFunction(this, true) <= 0) {
+		if(definite_integral && mstruct.containsFunction(this, true) <= 0 && mstruct.containsType(STRUCT_COMPARISON, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_signum) <= 0) {
 #endif
 			CALCULATOR->endTemporaryStopMessages(true);
 			MathStructure mstruct_lower(mstruct);
