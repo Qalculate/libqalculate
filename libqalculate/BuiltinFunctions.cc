@@ -6844,9 +6844,9 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	eo2.approximation = eo.approximation;
 	if(b) {
 #if MPFR_VERSION_MAJOR < 4
-		if(definite_integral && mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0 && mstruct.containsType(STRUCT_COMPIRISON, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_signum) <= 0) {
+		if(definite_integral && mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0) {
 #else
-		if(definite_integral && mstruct.containsFunction(this, true) <= 0 && mstruct.containsType(STRUCT_COMPARISON, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_signum) <= 0) {
+		if(definite_integral && mstruct.containsFunction(this, true) <= 0) {
 #endif
 			CALCULATOR->endTemporaryStopMessages(true);
 			MathStructure mstruct_lower(mstruct);
@@ -6910,6 +6910,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		nr_range -= nr_begin;
 		MathStructure merr(mstruct);
 		bool b_unknown_precision = false;
+		CALCULATOR->beginTemporaryStopMessages();
 		for(size_t i = 0; i < 4; i++) {
 			if(merr.containsFunction(CALCULATOR->f_diff, true) > 0 || !merr.differentiate(x_var, eo2)) {
 				b_unknown_precision = true;
@@ -6917,11 +6918,13 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			}
 			merr.calculatesub(eo2, eo2, true);
 			if(CALCULATOR->aborted() || (eo.approximation == APPROXIMATION_EXACT && merr.countTotalChildren() > 200)) {
+				CALCULATOR->endTemporaryStopMessages();
 				mstruct.replace(x_var, vargs[1]);
 				CALCULATOR->endTemporaryStopIntervalArithmetic();
 				return -1;
 			}
 		}
+		CALCULATOR->endTemporaryStopMessages();
 		if(!b_unknown_precision) b_unknown_precision = merr.containsFunction(CALCULATOR->f_diff, true) > 0;
 		bool b_exact = merr.isZero();
 		Number nr_samples;
@@ -7057,14 +7060,10 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				}
 			}
 			if(b_unknown_precision) {
-				nr_samples = CALCULATOR->getPrecision();
-				nr_samples.raise(Number(3, 4));
-				nr_samples.ceil();
-				nr_samples *= 100; 
-				if(numerical_integration(mstruct, x_var, eo2, nr_begin, nr_end, nr_samples.intValue())) {
+				if(numerical_integration(mstruct, x_var, eo2, nr_begin, nr_end, 1000)) {
 					CALCULATOR->endTemporaryStopIntervalArithmetic();
 					CALCULATOR->error(true, _("Definite integral was approximated with unknown precision."), NULL);
-					mstruct.setApproximate(true, true);
+					mstruct.setPrecision(4, true);
 					return 1;
 				}
 			}

@@ -25184,40 +25184,6 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 			return true;
 		}
 		return false;
-	} else if(mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1) {
-		if(mstruct[0].representsNonComplex(true) && mpow.representsNonComplex(true)) {
-			if(mpow.isOne()) {
-				MathStructure minteg(x_var);
-				if(!mfac.isOne()) minteg *= mfac;
-				if(minteg.integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts) < 0) return -1;
-				mstruct.setFunction(CALCULATOR->f_signum);
-				mstruct.addChild(m_one);
-				mstruct *= minteg;
-				return true;
-			}
-			if(mfac.isOne()) {
-				MathStructure mexp, mmul, madd;
-				if(integrate_info(mstruct[0], x_var, madd, mmul, mexp) && mexp.isOne()) {
-					MathStructure marg(mstruct[0]);
-					mstruct.setFunction(CALCULATOR->f_signum);
-					mstruct.addChild(m_zero);
-					MathStructure mterm2(mstruct);
-					MathStructure mpowp1(mpow);
-					mpowp1 += m_one;
-					marg ^= mpowp1;
-					mstruct += m_one;
-					mstruct *= marg;
-					marg[0].negate();
-					mterm2 += nr_minus_one;
-					mterm2 *= marg;
-					mstruct += mterm2;
-					if(!mmul.isOne()) mstruct /= mmul;
-					mstruct /= mpowp1;
-					mstruct *= nr_half;
-					return true;
-				}
-			}
-		}
 	} else if(mstruct.function() == CALCULATOR->f_signum && mstruct.size() == 2) {
 		if(mstruct[0].representsNonComplex(true) && mpow.isNumber() && mpow.number().isRational() && mpow.number().isPositive()) {
 			MathStructure minteg(x_var);
@@ -27772,115 +27738,132 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 		multiply(x_var);
 		return true;
 	}
-	mfound = find_abs_x(*this, x_var);
-	if(try_abs && mfound) {
-		MathStructure mtest(*this);
-		MathStructure mtest_m(mtest);
-		if(!replace_abs_x(mtest, *mfound, false) || !replace_abs_x(mtest_m, *mfound, true)) CANNOT_INTEGRATE
-		eo_t.isolate_x = true;
-		eo_t.isolate_var = &x_var;
-		CALCULATOR->beginTemporaryStopMessages();
-		MathStructure mpos(*mfound);
-		mpos.transform(COMPARISON_EQUALS_GREATER, m_zero);
-		mpos.eval(eo_t);
-		UnknownVariable *var_p = NULL, *var_m = NULL;
-		if(!CALCULATOR->endTemporaryStopMessages() && mpos.isComparison() && (mpos.comparisonType() == COMPARISON_EQUALS_GREATER || mpos.comparisonType() == COMPARISON_EQUALS_LESS) && mpos[0] == x_var && mpos[1].isNumber()) {
-			var_p = new UnknownVariable("", format_and_print(x_var));
-			var_m = new UnknownVariable("", format_and_print(x_var));
-			var_p->ref();
-			var_m->ref();
-			Number nr_interval_p, nr_interval_m;
-			if(x_var.isVariable() && !x_var.variable()->isKnown() && ((UnknownVariable*) x_var.variable())->interval().isNumber() && ((UnknownVariable*) x_var.variable())->interval().number().isInterval() && ((UnknownVariable*) x_var.variable())->interval().number().isReal() && ((UnknownVariable*) x_var.variable())->interval().number().upperEndPoint().isGreaterThanOrEqualTo(mpos[1].number()) && ((UnknownVariable*) x_var.variable())->interval().number().lowerEndPoint().isLessThanOrEqualTo(mpos[1].number())) {
-				if(mpos.comparisonType() == COMPARISON_EQUALS_GREATER) {
-					nr_interval_p.setInterval(mpos[1].number(), ((UnknownVariable*) x_var.variable())->interval().number().upperEndPoint());
-					nr_interval_m.setInterval(((UnknownVariable*) x_var.variable())->interval().number().lowerEndPoint(), mpos[1].number());
-				} else {
-					nr_interval_m.setInterval(mpos[1].number(), ((UnknownVariable*) x_var.variable())->interval().number().upperEndPoint());
-					nr_interval_p.setInterval(((UnknownVariable*) x_var.variable())->interval().number().lowerEndPoint(), mpos[1].number());
-				}
-			} else {
-				
-				if(mpos.comparisonType() == COMPARISON_EQUALS_GREATER) {
-					nr_interval_p.setInterval(mpos[1].number(), nr_plus_inf);
-					nr_interval_m.setInterval(nr_minus_inf, mpos[1].number());
-				} else {
-					nr_interval_m.setInterval(mpos[1].number(), nr_plus_inf);
-					nr_interval_p.setInterval(nr_minus_inf, mpos[1].number());
-				}
+	if(m_type == STRUCT_ADDITION) {
+		bool b = false;
+		MathStructure mbak(*this);
+		for(size_t i = 0; i < SIZE; i++) {
+			int bint = CHILD(i).integrate(x_var, eo, false, use_abs, definite_integral, true, max_part_depth, parent_parts);
+			if(bint < 0) {
+				set(mbak);
+				CANNOT_INTEGRATE_INTERVAL
 			}
-			var_p->setInterval(nr_interval_p);
-			var_m->setInterval(nr_interval_m);
-			mtest.replace(x_var, var_p);
-			mtest_m.replace(x_var, var_m);
+			if(bint > 0) b = true;
+			CHILD_UPDATED(i);
 		}
-		int bint1 = mtest.integrate(var_p ? var_p : x_var, eo, true, use_abs, true, definite_integral, max_part_depth, parent_parts);
-		if(var_p) {
-			mtest.replace(var_p, x_var);
-			var_p->destroy();
+		if(!b) return false;
+		return true;
+	} else if(m_type == STRUCT_MULTIPLICATION) {
+		MathStructure mstruct;
+		bool b = false;
+		for(size_t i = 0; i < SIZE;) {
+			if(CHILD(i).containsRepresentativeOf(x_var, true, true) == 0) {
+				if(b) {
+					mstruct *= CHILD(i);
+				} else {
+					mstruct = CHILD(i);
+					b = true;
+				}
+				ERASE(i);
+			} else {
+				i++;
+			}
 		}
-		if(bint1 <= 0 || mtest.containsFunction(CALCULATOR->f_integrate, true) > 0) {
-			if(var_m) var_m->destroy();
-			if(bint1 < 0) CANNOT_INTEGRATE_INTERVAL
-			CANNOT_INTEGRATE;
-		}
-		int bint2 = mtest_m.integrate(var_m ? var_m : x_var, eo, true, use_abs, false, definite_integral, max_part_depth, parent_parts);
-		if(var_m) {
-			mtest_m.replace(var_m, x_var);
-			var_m->destroy();
-		}
-		if(bint2 < 0) CANNOT_INTEGRATE_INTERVAL
-		if(bint2 == 0 || mtest_m.containsFunction(CALCULATOR->f_integrate, true) > 0) CANNOT_INTEGRATE;
-		MathStructure m1(mtest), m2(mtest_m);
-		CALCULATOR->beginTemporaryStopMessages();
-		MathStructure mzero(*mfound);
-		mzero.transform(COMPARISON_EQUALS, m_zero);
-		mzero.eval(eo_t);
-		if(!CALCULATOR->endTemporaryStopMessages() && mzero.isComparison() && mzero.comparisonType() == COMPARISON_EQUALS && mzero[0] == x_var) {
-			mzero.setToChild(2);
-			CALCULATOR->beginTemporaryStopMessages();
-			m1.calculatesub(eo2, eo2, true);
-			m2.calculatesub(eo2, eo2, true);
-			m1.evalSort(true, true);
-			m2.evalSort(true, true);
-			eo_t.test_comparisons = true;
-			eo_t.isolate_x = false;
-			eo_t.isolate_var = NULL;
-			if(try_sign(m1, m2, *mfound, x_var, mzero, eo_t)) {
-				set(m1, true);
-				CALCULATOR->endTemporaryStopMessages(true);
+		if(b) {
+			if(SIZE == 1) {
+				setToChild(1, true);
+			} else if(SIZE == 0) {
+				set(mstruct, true);
 				return true;
 			}
-			CALCULATOR->endTemporaryStopMessages();
+			if(integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts) < 0) {
+				multiply(mstruct);
+				CANNOT_INTEGRATE_INTERVAL
+			}
+			multiply(mstruct);
+			return true;
 		}
-		MathStructure mcmp(*mfound);
-		mcmp.transform(COMPARISON_EQUALS_GREATER, m_zero);
-		set(mtest);
-		multiply(mcmp);
-		mcmp.setComparisonType(COMPARISON_LESS);
-		mtest_m *= mcmp;
-		add(mtest_m);
-		/*eo2.test_comparisons = true;
-		calculatesub(eo2, eo2, true);*/
-		
-		return true;
-	}
-
-	switch(m_type) {
-		case STRUCT_ADDITION: {
-			bool b = false;
-			MathStructure mbak(*this);
-			for(size_t i = 0; i < SIZE; i++) {
-				int bint = CHILD(i).integrate(x_var, eo, false, use_abs, definite_integral, true, max_part_depth, parent_parts);
-				if(bint < 0) {
-					set(mbak);
+		for(size_t i = 0; i < SIZE; i++) {
+			if((CHILD(i).isFunction() && CHILD(i).function() == CALCULATOR->f_abs && CHILD(i).size() == 1) || (CHILD(i).isPower() && CHILD(i)[0].isFunction() && CHILD(i)[0].function() == CALCULATOR->f_abs && CHILD(i)[0].size() == 1 && CHILD(i)[1].containsRepresentativeOf(x_var, true, true) == 0)) {
+				if(definite_integral) return false;
+				MathStructure mmul(CHILD(i).isPower() ? CHILD(i)[0] : CHILD(i));
+				if(CHILD(i).isPower()) CHILD(i)[0].setToChild(1, true);
+				else CHILD(i).setToChild(1, true);
+				mmul.inverse();
+				mmul *= CHILD(i).isPower() ? CHILD(i)[0] : CHILD(i);
+				if(integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts) < 0) {
+					multiply(mmul);
 					CANNOT_INTEGRATE_INTERVAL
 				}
-				if(bint > 0) b = true;
-				CHILD_UPDATED(i);
+				multiply(mmul);
+				return true;
 			}
-			if(!b) return false;
-			break;
 		}
+	} else if((m_type == STRUCT_FUNCTION && o_function == CALCULATOR->f_abs && SIZE == 1) || (m_type == STRUCT_POWER && CHILD(0).isFunction() && CHILD(0).function() == CALCULATOR->f_abs && CHILD(0).size() == 1 && CHILD(1).containsRepresentativeOf(x_var, true, true) == 0)) {
+		if(m_type == STRUCT_FUNCTION && CHILD(0).isFunction() && (CHILD(0).function() == CALCULATOR->f_sin || CHILD(0).function() == CALCULATOR->f_cos) && CHILD(0).size() == 1) {
+			MathStructure madd, mmul, mexp;
+			if(integrate_info(CHILD(0)[0], x_var, madd, mmul, mexp, true) && mexp.isOne() && madd.isZero()) {
+				setToChild(1, true);
+				MathStructure mdivpi(x_var);
+				if(!mmul.isOne()) mdivpi *= mmul;
+				mdivpi /= CALCULATOR->v_pi;
+				if(o_function == CALCULATOR->f_cos) mdivpi += nr_half;
+				mdivpi.transform(CALCULATOR->f_floor);
+				if(o_function == CALCULATOR->f_sin) setFunction(CALCULATOR->f_cos);
+				else setFunction(CALCULATOR->f_sin);
+				CHILD(0) += mdivpi;
+				CHILD(0).last() *= CALCULATOR->v_pi;
+				CHILD(0).last() *= CALCULATOR->getRadUnit();
+				CHILD(0).last().negate();
+				CHILD(0).childUpdated(CHILD(0).size());
+				CHILD_UPDATED(0)
+				if(!mmul.isOne()) divide(mmul);
+				add(mdivpi);
+				LAST *= nr_two;
+				if(!mmul.isOne()) LAST /= mmul;
+				CHILD_UPDATED(SIZE - 1)
+				return true;
+			}
+		}
+		MathStructure mstruct(m_type == STRUCT_POWER ? CHILD(0) : *this);
+		if(m_type != STRUCT_POWER || (CHILD(1).isInteger() && !CHILD(1).number().isMinusOne() && CHILD(1).number().isOdd())) { 
+			MathStructure mexp, mmul, madd;
+			if(integrate_info(m_type == STRUCT_POWER ? CHILD(0)[0] : CHILD(0), x_var, madd, mmul, mexp) && mexp.isOne()) {
+				MathStructure mpowp1(m_type == STRUCT_POWER ? CHILD(1) : nr_two);
+				if(m_type == STRUCT_POWER) {
+					mpowp1 += m_one;
+					setToChild(1, true);
+				}
+				MathStructure msgn(*this);
+				msgn.setFunction(CALCULATOR->f_signum);
+				setToChild(1, true);
+				raise(mpowp1);
+				divide(mmul);
+				divide(mpowp1);
+				multiply(msgn);
+				return true;
+			}
+		}
+		if(definite_integral) return false;
+		MathStructure mmul;
+		if(isPower()) {
+			mmul = CHILD(0);
+			CHILD(0).setToChild(1, true);
+			mmul.inverse();
+			mmul *= CHILD(0);
+		} else {
+			mmul = *this;
+			setToChild(1, true);
+			mmul.inverse();
+			mmul *= *this;
+		}
+		if(integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts) < 0) {
+			multiply(mmul);
+			CANNOT_INTEGRATE_INTERVAL
+		}
+		multiply(mmul);
+		return true;
+	}
+	switch(m_type) {
 		case STRUCT_UNIT: {}
 		case STRUCT_NUMBER: {
 			multiply(x_var);
@@ -28369,35 +28352,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
-			MathStructure mstruct;
-			bool b = false;
-			for(size_t i = 0; i < SIZE;) {
-				if(CHILD(i).containsRepresentativeOf(x_var, true, true) == 0) {
-					if(b) {
-						mstruct *= CHILD(i);
-					} else {
-						mstruct = CHILD(i);
-						b = true;
-					}
-					ERASE(i);
-				} else {
-					i++;
-				}
-			}
-			if(b) {
-				if(SIZE == 1) {
-					setToChild(1, true);
-				} else if(SIZE == 0) {
-					set(mstruct, true);
-					break;	
-				}
-				if(integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts) < 0) {
-					multiply(mstruct);
-					CANNOT_INTEGRATE_INTERVAL
-				}
-				multiply(mstruct);
-				break;
-			} else if(SIZE == 2) {
+			if(SIZE == 2) {
 				if(CHILD(0) != x_var && (CHILD(1) == x_var || (CHILD(1).isPower() && CHILD(1)[0] == x_var))) SWAP_CHILDREN(0, 1);
 				if(CHILD(1).isPower() && CHILD(1)[1].containsRepresentativeOf(x_var, true, true) == 0) {
 					MathStructure madd, mmul, mmul2;
@@ -28892,7 +28847,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 										MathStructure m_replace(x_var);
 										MathStructure mtest(CHILD(1));
 										Number new_pow(nexp);
-										b = false;
+										bool b = false;
 										if(i == 1) {
 											m_replace ^= mpow;
 											var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
