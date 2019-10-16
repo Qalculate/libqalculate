@@ -1,3 +1,11 @@
+2019-10-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix definite integral of abs(cos(x)) and similar
+	* Improve integration of abs(f(x))
+	* Fix sgn(x) = 0
+	* abs(x^a) = abs(x)^a if a is real
+	* ln(x^2) = 2*ln(x) if x > 0;
+
 2019-10-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Bijective base-26 support (including bijective() function)

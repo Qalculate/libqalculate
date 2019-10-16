@@ -335,7 +335,7 @@ void Number::set(string number, const ParseOptions &po) {
 				while(i + n < str.length() && str[i + n] < 0 && (unsigned char) str[i + n] < 0xC0) {
 					n++;
 				}
-				CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with bijective base-26."), str.substr(i, n).c_str(), number.c_str(), NULL);
+				CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" in bijective base-26."), str.substr(i, n).c_str(), number.c_str(), NULL);
 				str.erase(i, n);
 			} else {
 				i++;
@@ -8228,14 +8228,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			ips_n.minus = &neg;
 			string str2 = i_value->print(po, ips_n);
 			if(ips.im) *ips.im = str2;
-			if(!po.short_multiplication && str2 != "1") {
+			if(!po.short_multiplication && (str2 != "1" || po.base == BASE_UNICODE)) {
 				if(po.spacious) {
 					str2 += " * ";
 				} else {
 					str2 += "*";
 				}
 			}
-			if(str2 == "1") str2 = "i";
+			if(str2 == "1" && po.base != BASE_UNICODE) str2 = "i";
 			else str2 += "i";
 			if(*ips_n.minus) {
 				str += " - ";
@@ -8246,14 +8246,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		} else {
 			str = i_value->print(po, ips);
 			if(ips.im) *ips.im = str;
-			if(!po.short_multiplication && str != "1") {
+			if(!po.short_multiplication && (str != "1" || po.base == BASE_UNICODE)) {
 				if(po.spacious) {
 					str += " * ";
 				} else {
 					str += "*";
 				}
 			}
-			if(str == "1") str = "i";
+			if(str == "1" && po.base != BASE_UNICODE) str = "i";
 			else str += "i";
 		}
 		if(ips.num) *ips.num = str;

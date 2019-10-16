@@ -1042,6 +1042,10 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct.childUpdated(1);
 		return 1;
 	}
+	if(mstruct.isPower() && mstruct[1].representsReal()) {
+		mstruct[0].transform(this);
+		return 1;
+	}
 	if(eo.approximation == APPROXIMATION_EXACT) {
 		MathStructure mtest(mstruct);
 		if(test_eval(mtest, eo)) {
@@ -2155,6 +2159,12 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
 			mstruct2 *= mstruct[1];
 			mstruct = mstruct2;
+			return 1;
+		}
+		if(mstruct[1].isNumber() && mstruct[1].number().isTwo() && mstruct[0].representsPositive()) {
+			mstruct.setToChild(1, true);
+			mstruct.transform(this);
+			mstruct *= nr_two;
 			return 1;
 		}
 		if(eo.approximation == APPROXIMATION_EXACT && !mstruct[1].isNumber()) {
@@ -5388,7 +5398,7 @@ BijectiveFunction::BijectiveFunction() : MathFunction("bijective", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int BijectiveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].symbol().find_first_not_of("0123456789.:" SIGNS) == string::npos && vargs[0].symbol().find_first_not_of("0" SIGNS) != string::npos) {
+	if(vargs[0].symbol().find_first_not_of("0123456789.:" SIGNS) == string::npos && vargs[0].symbol().find_first_not_of(SIGNS) != string::npos) {
 		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
 		PrintOptions po; po.base = BASE_BIJECTIVE_26;
 		mstruct.eval(eo);

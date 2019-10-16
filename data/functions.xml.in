@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="3.3.0">
+<QALCULATE version="3.5.0">
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="vector">
@@ -796,9 +796,9 @@
       <builtin_function name="bijective">
         <_title>Bijective base-26</_title>
         <_names>r:bijective</_names>
-        <_description>Returns a value from a bijective base-26 number. Conversion in the opposite direction is also supported.</_description>
+        <_description>Returns a value from an expression in bijective base-26. Conversion in the opposite direction is also supported.</_description>
         <argument index="1">
-          <_title>Number</_title>
+          <_title>Bijective base-26 number</_title>
         </argument>
       </builtin_function>
     </category>
