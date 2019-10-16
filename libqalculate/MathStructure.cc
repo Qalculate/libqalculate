@@ -20482,6 +20482,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 						mstruct->set(CALCULATOR->v_i);
 					} else {
 						mstruct->multiply_nocopy(new MathStructure(CALCULATOR->v_i));
+						if(CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name == "j") mstruct->swapChildren(1, 2);
 					}
 					o_number = re;
 					add_nocopy(mstruct);
@@ -20496,6 +20497,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					} else {
 						o_number = im;
 						multiply_nocopy(new MathStructure(CALCULATOR->v_i));
+						if(CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name == "j") SWAP_CHILDREN(0, 1);
 					}
 					formatsub(po, parent, pindex, true, top_parent);
 				}
@@ -20911,7 +20913,10 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_COMPARISON: {return MULTIPLICATION_SIGN_OPERATOR;}		
 		case STRUCT_FUNCTION: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_VECTOR: {return MULTIPLICATION_SIGN_OPERATOR;}
-		case STRUCT_NUMBER: {return MULTIPLICATION_SIGN_OPERATOR;}
+		case STRUCT_NUMBER: {
+			if(t == STRUCT_VARIABLE && parent[index - 2].variable() == CALCULATOR->v_i) return MULTIPLICATION_SIGN_NONE;
+			return MULTIPLICATION_SIGN_OPERATOR;
+		}
 		case STRUCT_ABORTED: {}
 		case STRUCT_VARIABLE: {}
 		case STRUCT_SYMBOLIC: {

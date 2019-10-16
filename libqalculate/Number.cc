@@ -8218,6 +8218,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			nr.set(*this, false, true);
 			return nr.print(po, ips);
 		}
+		string str_i = (CALCULATOR ? CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
 		bool bre = hasRealPart();
 		if(bre) {
 			Number r_nr(*this);
@@ -8236,8 +8237,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					str2 += "*";
 				}
 			}
-			if(str2 == "1" && po.base != BASE_UNICODE) str2 = (CALCULATOR ? CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
-			else str2 += (CALCULATOR ? CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
+			if(str2 == "1" && po.base != BASE_UNICODE) str2 = str_i;
+			else if(str_i == "j") str2.insert(0, str_i);
+			else str2 += str_i;
 			if(*ips_n.minus) {
 				str += " - ";
 			} else {
@@ -8254,8 +8256,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					str += "*";
 				}
 			}
-			if(str == "1" && po.base != BASE_UNICODE) (str = CALCULATOR ? CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
-			else str += (CALCULATOR ? CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
+			if(str == "1" && po.base != BASE_UNICODE) str = str_i;
+			else if(str_i == "j") str.insert(0, str_i);
+			else str += str_i;
 		}
 		if(ips.num) *ips.num = str;
 		return str;
