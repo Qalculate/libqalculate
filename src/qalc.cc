@@ -728,7 +728,23 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "short multiplication", _("short multiplication")) || svar == "shortmul") SET_BOOL_D(printops.short_multiplication)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase e", _("lowercase e")) || svar == "lowe") SET_BOOL_D(printops.lower_case_e)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase numbers", _("lowercase numbers")) || svar == "lownum") SET_BOOL_D(printops.lower_case_numbers)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "base display", _("base display")) || svar == "basedisp") {
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "imaginary j", _("imaginary j")) || svar == "imgj") {
+		bool b = CALCULATOR->v_i->getName(1).name == "j";
+		SET_BOOL(b)
+		if(b != (CALCULATOR->v_i->getName(1).name == "j")) {
+			if(b) {
+				ExpressionName ename = CALCULATOR->v_i->getName(1);
+				ename.name = "j";
+				ename.reference = false;
+				CALCULATOR->v_i->addName(ename, 1, true);
+				CALCULATOR->v_i->setChanged(false);
+			} else {
+				CALCULATOR->v_i->clearNonReferenceNames();
+				CALCULATOR->v_i->setChanged(false);
+			}
+			result_display_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "base display", _("base display")) || svar == "basedisp") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = BASE_DISPLAY_NONE;
 		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "normal", _("normal"))) v = BASE_DISPLAY_NORMAL;
@@ -1599,6 +1615,8 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 	}
 }
 
+bool do_imaginary_j = false;
+
 int main(int argc, char *argv[]) {
 
 	string calc_arg;
@@ -1880,6 +1898,14 @@ int main(int argc, char *argv[]) {
 
 	//load local definitions
 	CALCULATOR->loadLocalDefinitions();
+	
+	if(do_imaginary_j && CALCULATOR->v_i->getName(1).name != "j") {
+		ExpressionName ename = CALCULATOR->v_i->getName(1);
+		ename.name = "j";
+		ename.reference = false;
+		CALCULATOR->v_i->addName(ename, 1, true);
+		CALCULATOR->v_i->setChanged(false);
+	}
 	
 	if(!result_only) {
 		int cols = 0;
@@ -2959,16 +2985,6 @@ int main(int argc, char *argv[]) {
 				case DIGIT_GROUPING_LOCALE: {str += _("locale"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("scientific notation"), "exp");
-			switch(printops.min_exp) {
-				case EXP_NONE: {str += _("off"); break;}
-				case EXP_PRECISION: {str += _("auto"); break;}
-				case EXP_PURE: {str += _("pure"); break;}
-				case EXP_SCIENTIFIC: {str += _("scientific"); break;}
-				case EXP_BASE_3: {str += _("engineering"); break;}
-				default: {str += i2s(printops.min_exp); break;}
-			}
-			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("fractions"), "fr"); 
 			switch(printops.number_fraction_format) {
 				case FRACTION_DECIMAL: {str += _("off"); break;}
@@ -2977,6 +2993,8 @@ int main(int argc, char *argv[]) {
 				case FRACTION_COMBINED: {str += _("mixed"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("hexadecimal two's"), "hextwos"); str += b2oo(printops.hexadecimal_twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("imaginary j"), "imgj"); str += b2oo(CALCULATOR->v_i->getName(1).name == "j", false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("interval display"), "ivdisp");
 			if(adaptive_interval_display) {
 				str += _("adaptive");
@@ -3010,9 +3028,18 @@ int main(int argc, char *argv[]) {
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("repeating decimals"), "repdeci"); str += b2oo(printops.indicate_infinite_series, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("round to even"), "rndeven"); str += b2oo(printops.round_halfway_to_even, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("scientific notation"), "exp");
+			switch(printops.min_exp) {
+				case EXP_NONE: {str += _("off"); break;}
+				case EXP_PRECISION: {str += _("auto"); break;}
+				case EXP_PURE: {str += _("pure"); break;}
+				case EXP_SCIENTIFIC: {str += _("scientific"); break;}
+				case EXP_BASE_3: {str += _("engineering"); break;}
+				default: {str += i2s(printops.min_exp); break;}
+			}
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("show ending zeroes"), "zeroes"); str += b2oo(printops.show_ending_zeroes, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("two's complement"), "twos"); str += b2oo(printops.twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("hexadecimal two's"), "hextwos"); str += b2oo(printops.hexadecimal_twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Parsing"));
 
@@ -3028,6 +3055,7 @@ int main(int argc, char *argv[]) {
 			if(CALCULATOR->getDecimalPoint() != DOT) {
 				PRINT_AND_COLON_TABS(_("ignore dot"), ""); str += b2oo(evalops.parse_options.dot_as_separator, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			}
+			PRINT_AND_COLON_TABS(_("imaginary j"), "imgj"); str += b2oo(CALCULATOR->v_i->getName(1).name == "j", false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("input base"), "inbase"); 
 			switch(evalops.parse_options.base) {
 				case BASE_ROMAN_NUMERALS: {str += _("roman"); break;}
@@ -3660,25 +3688,11 @@ int main(int argc, char *argv[]) {
 				str += ")";
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_2(_("digit grouping"), "group", "", printops.digit_grouping, _("off"), _("standard"), _("locale"));
-				STR_AND_TABS_SET(_("scientific notation"), "exp");
-				SET_DESCRIPTION(_("Determines how scientific notation are used (e.g. 5 543 000 = 5.543E6)."));
-				str += "(";
-				str += _("off"); 
-				if(printops.min_exp == EXP_NONE) str += "*";
-				str += ", "; str += _("auto");
-				if(printops.min_exp == EXP_PRECISION) str += "*";
-				str += ", "; str += _("engineering");
-				if(printops.min_exp == EXP_BASE_3) str += "*";
-				str += ", "; str += _("pure");
-				if(printops.min_exp == EXP_PURE) str += "*";
-				str += ", "; str += _("scientific");
-				if(printops.min_exp == EXP_SCIENTIFIC) str += "*";
-				str += ", >= 0)";
-				if(printops.min_exp != EXP_NONE && printops.min_exp != EXP_NONE && printops.min_exp != EXP_PRECISION && printops.min_exp != EXP_BASE_3 && printops.min_exp != EXP_PURE && printops.min_exp != EXP_SCIENTIFIC) {str += " "; str += i2s(printops.min_exp); str += "*";}
-				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				int nff = printops.number_fraction_format;
 				if(!printops.restrict_fraction_length && printops.number_fraction_format == FRACTION_FRACTIONAL) nff = 4;
 				STR_AND_TABS_4(_("fractions"), "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denonimator."), nff, _("off"), _("exact"), _("on"), _("mixed"), _("long"));
+				STR_AND_TABS_BOOL(_("hexadecimal two's"), "hextwos", _("Enables two's complement representation for display of negative hexadecimal numbers."), printops.twos_complement);
+				STR_AND_TABS_BOOL(_("imaginary j"), "imgj", _("Use 'j' (instead of 'i') as default symbol for the imaginary unit."), (CALCULATOR->v_i->getName(1).name == "j"));
 				STR_AND_TABS_7(_("interval display"), "ivdisp", "", (adaptive_interval_display ? 0 : printops.interval_display + 1), _("adaptive"), _("significant"), _("interval"), _("plusminus"), _("midpoint"), _("upper"), _("lower"))
 				STR_AND_TABS_BOOL(_("lowercase e"), "lowe", _("Use lowercase e for E-notation (5e2 = 5 * 10^2)."), printops.lower_case_e);
 				STR_AND_TABS_BOOL(_("lowercase numbers"), "lownum", _("Use lowercase letters for number bases > 10."), printops.lower_case_numbers);
@@ -3698,10 +3712,24 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("repeating decimals"), "repdec", _("If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'."), printops.indicate_infinite_series);
 				STR_AND_TABS_BOOL(_("round to even"), "rndeven", _("Determines whether halfway numbers are rounded upwards or towards the nearest even integer."), printops.round_halfway_to_even);
+				STR_AND_TABS_SET(_("scientific notation"), "exp");
+				SET_DESCRIPTION(_("Determines how scientific notation are used (e.g. 5 543 000 = 5.543E6)."));
+				str += "(";
+				str += _("off"); 
+				if(printops.min_exp == EXP_NONE) str += "*";
+				str += ", "; str += _("auto");
+				if(printops.min_exp == EXP_PRECISION) str += "*";
+				str += ", "; str += _("engineering");
+				if(printops.min_exp == EXP_BASE_3) str += "*";
+				str += ", "; str += _("pure");
+				if(printops.min_exp == EXP_PURE) str += "*";
+				str += ", "; str += _("scientific");
+				if(printops.min_exp == EXP_SCIENTIFIC) str += "*";
+				str += ", >= 0)";
+				if(printops.min_exp != EXP_NONE && printops.min_exp != EXP_NONE && printops.min_exp != EXP_PRECISION && printops.min_exp != EXP_BASE_3 && printops.min_exp != EXP_PURE && printops.min_exp != EXP_SCIENTIFIC) {str += " "; str += i2s(printops.min_exp); str += "*";}
+				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("show ending zeroes"), "zeroes", _("If actived, zeroes are kept at the end of approximate numbers."), printops.show_ending_zeroes);
 				STR_AND_TABS_BOOL(_("two's complement"), "twos", _("Enables two's complement representation for display of negative binary numbers."), printops.twos_complement);
-				
-				STR_AND_TABS_BOOL(_("hexadecimal two's"), "hextwos", _("Enables two's complement representation for display of negative hexadecimal numbers."), printops.twos_complement);
 				
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Parsing"));
 
@@ -3723,6 +3751,7 @@ int main(int argc, char *argv[]) {
 				if(CALCULATOR->getDecimalPoint() != DOT) {
 					STR_AND_TABS_BOOL(_("ignore dot"), "", _("Allows use of '.' as thousands separator."), evalops.parse_options.dot_as_separator);
 				}
+				STR_AND_TABS_BOOL(_("imaginary j"), "imgj", _("Use 'j' (instead of 'i') as default symbol for the imaginary unit."), (CALCULATOR->v_i->getName(1).name == "j"));
 				STR_AND_TABS_SET(_("input base"), "inbase"); str += "(-1114112 - 1114112"; str += ", "; str += _("bin");
 				if(evalops.parse_options.base == BASE_BINARY) str += "*";
 				str += ", "; str += _("oct");
@@ -5578,6 +5607,8 @@ void load_preferences() {
 					printops.lower_case_numbers = v;
 				} else if(svar == "lower_case_e") {
 					printops.lower_case_e = v;
+				} else if(svar == "imaginary_j") {
+					do_imaginary_j = v;
 				} else if(svar == "base_display") {
 					if(v >= BASE_DISPLAY_NONE && v <= BASE_DISPLAY_ALTERNATIVE) printops.base_display = (BaseDisplay) v;
 				} else if(svar == "twos_complement") {
@@ -5682,6 +5713,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "use_unicode_signs=%i\n", printops.use_unicode_signs);
 	fprintf(file, "lower_case_numbers=%i\n", printops.lower_case_numbers);
 	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);
+	fprintf(file, "imaginary_j=%i\n", (CALCULATOR->v_i->getName(1).name == "j"));
 	fprintf(file, "base_display=%i\n", printops.base_display);
 	fprintf(file, "twos_complement=%i\n", printops.twos_complement);
 	fprintf(file, "hexadecimal_twos_complement=%i\n", printops.hexadecimal_twos_complement);
