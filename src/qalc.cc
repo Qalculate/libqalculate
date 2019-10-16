@@ -2766,8 +2766,8 @@ int main(int argc, char *argv[]) {
 				bool save_all = printops.use_all_prefixes;
 				bool save_cur = printops.use_prefixes_for_currencies;
 				bool save_allu = printops.use_prefixes_for_all_units;
-				int save_bin = CALCULATOR->usesBinaryPrefixes();
 				bool save_den = printops.use_denominator_prefix;
+				int save_bin = CALCULATOR->usesBinaryPrefixes();
 				if(str[0] == '?' || (str.length() > 1 && str[1] == '?' && (str[0] == 'a' || str[0] == 'd'))) {
 					
 					printops.use_unit_prefixes = true;
@@ -3932,12 +3932,11 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("Possible values:"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- a unit (e.g. meter)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with ? to request the optimal decimal prefix"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- a unit or unit expression (e.g. meter or km/h)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with ? to request the optimal prefix"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with b? to request the optimal binary prefix"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with + or - to force/disable use of mixed units"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- a unit expression (e.g. km/h)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- a physical constant (e.g. c)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- a variable or physical constant (e.g. c)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- base (convert to base units)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- optimal (convert to optimal unit)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- mixed (convert to mixed units, e.g. hours + minutes)"));
@@ -3947,7 +3946,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- duo / duodecimal (show as duodecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex / hexadecimal (show as hexadecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- sex / sexagesimal (show as sexagesimal number)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- bijective (shown in bijective 26-base)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- bijective (shown in bijective base-26)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- roman (show as roman numerals)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- time (show in time format)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- unicode"));
@@ -3968,7 +3967,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("Example: to ?g"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				if(EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to"))) {
-					CHECK_IF_SCREEN_FILLED_PUTS(_("This command can also be typed directly at the end of the mathematical expression."));
+					CHECK_IF_SCREEN_FILLED_PUTS(_("This command can also be typed directly at the end of the mathematical expression (e.g. 5 ft + 2 in to meter)."));
 					CHECK_IF_SCREEN_FILLED_PUTS("");
 				}
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "quit", _("quit")) || EQUALS_IGNORECASE_AND_LOCAL(str, "exit", _("exit"))) {
@@ -5231,6 +5230,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		int i = 0;
 		if(!do_stack || stack_index == 0) i = has_information_unit(*mstruct);
 		CALCULATOR->useBinaryPrefixes(i > 0 ? 1 : 2);
+		printops.use_unit_prefixes = true;
 		if(i == 1) {
 			printops.use_denominator_prefix = false;
 		} else if(i > 1) {
@@ -5395,7 +5395,7 @@ void load_preferences() {
 #endif
 
 	
-	int version_numbers[] = {3, 4, 0};
+	int version_numbers[] = {3, 5, 0};
 	
 	if(file) {
 		char line[10000];

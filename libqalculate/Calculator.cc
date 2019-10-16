@@ -2889,8 +2889,8 @@ int has_information_unit(const MathStructure &m, bool top = true) {
 			if(m.unit()->baseUnit()->referenceName() == "bit") return 1;
 		} else {
 			if(m[0].unit()->baseUnit()->referenceName() == "bit") {
-				if(m[1].representsNegative()) return 2;
-				return 1;
+				if(m[1].isInteger() && m[1].number().isPositive()) return 1;
+				return 2;
 			}
 		}
 		return 0;
@@ -3115,6 +3115,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		else printops.number_fraction_format = FRACTION_FRACTIONAL;
 	} else if(do_binary_prefixes) {
 		int i = has_information_unit(mstruct);
+		printops.use_unit_prefixes = true;
 		priv->use_binary_prefixes = (i > 0 ? 1 : 2);
 		if(i == 1) {
 			printops.use_denominator_prefix = false;
@@ -9102,7 +9103,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {3, 4, 0};
+	int version_numbers[] = {3, 5, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

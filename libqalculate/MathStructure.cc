@@ -27798,7 +27798,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 				return true;
 			}
 		}
-	} else if((m_type == STRUCT_FUNCTION && o_function == CALCULATOR->f_abs && SIZE == 1) || (m_type == STRUCT_POWER && CHILD(0).isFunction() && CHILD(0).function() == CALCULATOR->f_abs && CHILD(0).size() == 1 && CHILD(1).containsRepresentativeOf(x_var, true, true) == 0)) {
+	} else if((m_type == STRUCT_FUNCTION && o_function == CALCULATOR->f_abs && SIZE == 1) || (m_type == STRUCT_POWER && CHILD(0).isFunction() && CHILD(0).function() == CALCULATOR->f_abs && CHILD(0).size() == 1)) {
 		if(m_type == STRUCT_FUNCTION && CHILD(0).isFunction() && (CHILD(0).function() == CALCULATOR->f_sin || CHILD(0).function() == CALCULATOR->f_cos) && CHILD(0).size() == 1) {
 			MathStructure madd, mmul, mexp;
 			if(integrate_info(CHILD(0)[0], x_var, madd, mmul, mexp, true) && mexp.isOne() && madd.isZero()) {
@@ -27845,6 +27845,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 		}
 		if(definite_integral) return false;
 		MathStructure mmul;
+		MathStructure mbak(*this);
 		if(isPower()) {
 			mmul = CHILD(0);
 			CHILD(0).setToChild(1, true);
@@ -27856,9 +27857,11 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 			mmul.inverse();
 			mmul *= *this;
 		}
-		if(integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts) < 0) {
-			multiply(mmul);
-			CANNOT_INTEGRATE_INTERVAL
+		int b_int = integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts);
+		if(b_int <= 0) {
+			set(mbak);
+			if(b_int < 0) CANNOT_INTEGRATE_INTERVAL
+			return false;
 		}
 		multiply(mmul);
 		return true;
@@ -34349,8 +34352,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 			} else if(CHILD(0).function() == CALCULATOR->f_signum && CHILD(0).size() == 2) {
 				if(CHILD(0)[0].contains(x_var) && CHILD(0)[0].representsNonComplex(true)) {
-					if(CHILD(1).isZero() && !CHILD(0)[1].isOne() && !CHILD(0)[1].isMinusOne()) {
-						CHILD(0).setToChild(2, true, this, 1);
+					if(CHILD(1).isZero() && CHILD(0)[1].isZero()) {
+						CHILD(0).setToChild(1, true, this, 1);
 						isolate_x_sub(eo, eo2, x_var, morig);
 						return true;
 					}
