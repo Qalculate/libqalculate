@@ -14,6 +14,7 @@
 #include "Number.h"
 #include "Calculator.h"
 #include "Function.h"
+#include "Variable.h"
 
 #include <limits.h>
 #include <sstream>
@@ -862,7 +863,7 @@ void Number::set(string number, const ParseOptions &po) {
 			}
 		} else if(!numbers_started && number[index] == '-') {
 			minus = !minus;
-		} else if(number[index] == 'i') {
+		} else if(number[index] == 'i' || (CALCULATOR && number[index] == 'j' && CALCULATOR->v_i->hasName("j"))) {
 			b_cplx = true;
 		} else if(base == 10 && number[index] == '(' && index <= number.length() - 2) {
 			size_t par_i = number.find(')', index + 1);
@@ -8235,8 +8236,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					str2 += "*";
 				}
 			}
-			if(str2 == "1" && po.base != BASE_UNICODE) str2 = "i";
-			else str2 += "i";
+			if(str2 == "1" && po.base != BASE_UNICODE) str2 = (CALCULATOR ? CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
+			else str2 += (CALCULATOR ? CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
 			if(*ips_n.minus) {
 				str += " - ";
 			} else {
@@ -8253,8 +8254,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					str += "*";
 				}
 			}
-			if(str == "1" && po.base != BASE_UNICODE) str = "i";
-			else str += "i";
+			if(str == "1" && po.base != BASE_UNICODE) (str = CALCULATOR ? CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
+			else str += (CALCULATOR ? CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
 		}
 		if(ips.num) *ips.num = str;
 		return str;

@@ -1,3 +1,7 @@
+2019-10-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+	
+	* Option to use "j" as default symbol for the imaginary unit in qalc
+
 2019-10-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix definite integral of abs(cos(x)) and similar
