@@ -1,3 +1,10 @@
+2019-10-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow angle argument in cis()
+	* Fix complex exponential form when default angle unit is not radians
+	* Complex cis form
+	* Complex angle/phasor notation (input and output)
+
 2019-10-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 	
 	* Option to use "j" as default symbol for the imaginary unit in qalc

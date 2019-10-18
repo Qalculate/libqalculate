@@ -964,14 +964,14 @@
     <_title>Complex Numbers</_title>
     <builtin_function name="re">
       <_title>Real Part</_title>
-      <_names>r:re</_names>
+      <_names>r:re,au:&#x211C;</_names>
       <argument index="1">
         <_title>Complex number</_title>
       </argument>
     </builtin_function>
     <builtin_function name="im">
       <_title>Imaginary Part</_title>
-      <_names>r:im</_names>
+      <_names>r:im,au:&#x2111;</_names>
       <argument index="1">
         <_title>Complex number</_title>
       </argument>
@@ -1064,6 +1064,13 @@
         <_title>Branch</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="cis">
+      <_title>Complex Exponential (Cis)</_title>
+      <_names>r:cis</_names>
+      <argument index="1">
+        <_title>Exponent</_title>
+      </argument>
+    </builtin_function>
     <function>
       <_title>Base-2 Logarithm</_title>
       <_names>rs:log2</_names>
@@ -1084,15 +1091,6 @@
         <_title>Value</_title>
         <test>false</test>
         <min include_equals="true">0</min>
-      </argument>
-    </function>
-    <function>
-      <_title>Complex Exponential (Cis)</_title>
-      <_names>r:cis</_names>
-      <expression>e^(\x*i)</expression>
-      <argument type="free" index="1">
-        <_title>Exponent</_title>
-        <handle_vector>true</handle_vector>
       </argument>
     </function>
     <function>

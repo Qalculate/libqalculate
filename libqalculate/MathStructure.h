@@ -880,6 +880,7 @@ class MathStructure {
 		//@{
 		bool complexToExponentialForm(const EvaluationOptions &eo);
 		bool complexToPolarForm(const EvaluationOptions &eo);
+		bool complexToCisForm(const EvaluationOptions &eo);
 		//@}
 		
 		bool calculateLimit(const MathStructure &x_var, const MathStructure &limit, const EvaluationOptions &eo_pre, int approach_direction = 0);

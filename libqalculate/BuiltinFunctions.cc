@@ -4281,6 +4281,65 @@ int SincFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	return -1;
 }
+CisFunction::CisFunction() : MathFunction("cis", 1) {
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+}
+int CisFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+
+	if(vargs[0].isVector()) return 0;
+	if(vargs[0].contains(CALCULATOR->getRadUnit(), false, true, true) > 0 || vargs[0].contains(CALCULATOR->getDegUnit(), false, true, true) > 0 || vargs[0].contains(CALCULATOR->getGraUnit(), false, true, true) > 0) {
+		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
+			mstruct = vargs[0][0];
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getRadUnit()) {
+			mstruct = vargs[0][1];
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
+			mstruct = vargs[0][0];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct.multiply(Number(1, 180), true);
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
+			mstruct = vargs[0][1];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct.multiply(Number(1, 180), true);
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
+			mstruct = vargs[0][0];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct.multiply(Number(1, 200), true);
+		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
+			mstruct = vargs[0][1];
+			mstruct *= CALCULATOR->v_pi;
+			mstruct.multiply(Number(1, 200), true);
+		} else {
+			mstruct = vargs[0]; 
+			mstruct.convert(CALCULATOR->getRadUnit());
+			mstruct /= CALCULATOR->getRadUnit();
+		}
+	} else {
+		mstruct = vargs[0];
+	}
+	
+	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
+		mstruct.set(-1, 1, 0, true);
+		return 1;
+	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isInteger() && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
+		if(mstruct[0].number().isEven()) {
+			mstruct.set(1, 1, 0, true);
+			return 1;
+		} else if(mstruct[0].number().isOdd()) {
+			mstruct.set(-1, 1, 0, true);
+			return 1;
+		}
+	}
+	
+	mstruct *= CALCULATOR->v_i;
+	mstruct ^= CALCULATOR->v_e;
+	mstruct.swapChildren(1, 2);
+	
+	return 1;
+	
+}
+
 
 bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2) {
 	if(m1.contains(CALCULATOR->v_pinf, true) || m2.contains(CALCULATOR->v_pinf, true) || m1.contains(CALCULATOR->v_minf, true) || m2.contains(CALCULATOR->v_minf, true)) {
