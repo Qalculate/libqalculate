@@ -13225,6 +13225,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	if(m_type == STRUCT_NUMBER) {
 		if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
 		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
+		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_CIS) complexToCisForm(eo);
 		return *this;
 	}
 
@@ -13250,6 +13251,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	if(m_type == STRUCT_NUMBER) {
 		if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
 		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
+		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_CIS) complexToCisForm(eo);
 		return *this;
 	}
 
@@ -13480,6 +13482,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	if(m_type == STRUCT_NUMBER) {
 		if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
 		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
+		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_CIS) complexToCisForm(eo);
 		return *this;
 	}
 
@@ -13495,6 +13498,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		if(m_type == STRUCT_NUMBER) {
 			if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
 			else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
+			else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_CIS) complexToCisForm(eo);
 			return *this;
 		}
 		if(eo.interval_calculation < INTERVAL_CALCULATION_INTERVAL_ARITHMETIC && eo.expand && eo.expand >= -1 && !containsType(STRUCT_COMPARISON, true, true, true)) {
@@ -13516,6 +13520,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	if(m_type == STRUCT_NUMBER) {
 		if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
 		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
+		else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_CIS) complexToCisForm(eo);
 		return *this;
 	}
 	if(m_type == STRUCT_UNDEFINED || m_type == STRUCT_ABORTED || m_type == STRUCT_DATETIME || m_type == STRUCT_UNIT || m_type == STRUCT_SYMBOLIC || (m_type == STRUCT_VARIABLE && !o_variable->isKnown())) return *this;
@@ -13600,6 +13605,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	
 	if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo);
 	else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo);
+	else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_CIS) complexToCisForm(eo);
 
 	return *this;
 }
@@ -19832,7 +19838,7 @@ void MathStructure::prefixCurrencies(const PrintOptions &po) {
 }
 void remove_multi_one(MathStructure &mstruct) {
 	if(mstruct.isMultiplication() && mstruct.size() > 1) {
-		if(mstruct[0].isOne() && !mstruct[1].isUnit_exp()) {
+		if(mstruct[0].isOne() && !mstruct[1].isUnit_exp() && (mstruct.size() != 2 || !mstruct[1].isFunction() || mstruct[1].function()->referenceName() != "cis" || mstruct[1].size() != 1)) {
 			if(mstruct.size() == 2) mstruct.setToChild(2, true);
 			else mstruct.delChild(1);
 		}
@@ -19989,6 +19995,7 @@ bool MathStructure::complexToExponentialForm(const EvaluationOptions &eo) {
 	if(m_type == STRUCT_NUMBER && o_number.hasImaginaryPart()) {
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+		eo2.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 		MathStructure mabs(CALCULATOR->f_abs, this, NULL);
 		MathStructure marg(CALCULATOR->f_arg, this, NULL);
 		marg *= nr_one_i;
@@ -19996,7 +20003,7 @@ bool MathStructure::complexToExponentialForm(const EvaluationOptions &eo) {
 		set(CALCULATOR->v_e, true);
 		raise(marg);
 		mabs.eval(eo2);
-		multiply(mabs);
+		if(!mabs.isOne()) multiply(mabs);
 		evalSort(false);
 		return true;
 	}
@@ -20024,13 +20031,40 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		transform(CALCULATOR->f_sin);
 		multiply(nr_one_i);
 		add_nocopy(new MathStructure(CALCULATOR->f_cos, &marg, NULL));
-		multiply(mabs);
+		if(!mabs.isOne()) multiply(mabs);
 		evalSort(true);
 		return true;
 	}
 	bool b = false;
 	for(size_t i = 0; i < SIZE; i++) {
 		if(CHILD(i).complexToPolarForm(eo)) {b = true; CHILD_UPDATED(i);}
+	}
+	return b;
+}
+bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
+	if(m_type == STRUCT_NUMBER && o_number.hasImaginaryPart()) {
+		MathFunction *f = CALCULATOR->getActiveFunction("cis");
+		if(!f) return false;
+		MathStructure mabs(CALCULATOR->f_abs, this, NULL);
+		MathStructure marg(CALCULATOR->f_arg, this, NULL);
+		EvaluationOptions eo2 = eo;
+		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+		mabs.eval(eo2);
+		marg.eval(eo2);
+		switch(eo2.parse_options.angle_unit) {
+			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
+			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
+			default: {break;}
+		}
+		set(marg, true);
+		transform(f);
+		multiply(mabs);
+		evalSort(true);
+		return true;
+	}
+	bool b = false;
+	for(size_t i = 0; i < SIZE; i++) {
+		if(CHILD(i).complexToCisForm(eo)) {b = true; CHILD_UPDATED(i);}
 	}
 	return b;
 }
@@ -20253,6 +20287,9 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 						}
 					}
 					break;
+				}
+				case STRUCT_FUNCTION: {
+					if(index == 1 && SIZE == 2 && CHILD(index).function()->referenceName() == "cis" && CHILD(index).size() == 1) break;
 				}
 				default: {
 					if(index == 1) {
@@ -20866,7 +20903,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_LOGICAL_OR: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_LOGICAL_XOR: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_LOGICAL_NOT: {return MULTIPLICATION_SIGN_OPERATOR;}
-		case STRUCT_COMPARISON: {return MULTIPLICATION_SIGN_OPERATOR;}		
+		case STRUCT_COMPARISON: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_FUNCTION: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_VECTOR: {break;}
 		case STRUCT_NUMBER: {break;}
@@ -20926,9 +20963,9 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 			return MULTIPLICATION_SIGN_NONE;
 		}
 		case STRUCT_UNIT: {
-			if(t == STRUCT_POWER && parent[index - 2][0].isUnit_exp()) {
+			if((t == STRUCT_POWER && parent[index - 2][0].isUnit_exp()) || (o_unit == CALCULATOR->getDegUnit() && print(po) == SIGN_DEGREE)) {
 				return MULTIPLICATION_SIGN_NONE;
-			}			
+			}
 			return MULTIPLICATION_SIGN_SPACE;
 		}
 		case STRUCT_UNDEFINED: {return MULTIPLICATION_SIGN_OPERATOR;}
@@ -21010,6 +21047,15 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		}
 		case STRUCT_MULTIPLICATION: {
 			ips_n.depth++;
+			if(!po.preserve_format && SIZE == 2 && CHILD(0).isNumber() && CHILD(1).isFunction() && CHILD(1).size() == 1 && CHILD(1).function()->referenceName() == "cis" && (CHILD(1)[0].isNumber() || (CHILD(1)[0].isMultiplication() && CHILD(1)[0].size() == 2 && CHILD(1)[0][0].isNumber() && CHILD(1)[0][1].isUnit()))) {
+				ips_n.wrap = false;
+				print_str += CHILD(0).print(po, ips_n);
+				print_str += " ";
+				print_str += "cis";
+				print_str += " ";
+				print_str += CHILD(1)[0].print(po, ips_n);
+				break;
+			}
 			bool par_prev = false;
 			for(size_t i = 0; i < SIZE; i++) {
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
@@ -27689,6 +27735,14 @@ bool try_sign(MathStructure &m1, MathStructure &m2, const MathStructure &marg, c
 	}
 	return true;
 }
+bool contains_imaginary(const MathStructure &m) {
+	if(m.isNumber()) return m.number().hasImaginaryPart();
+	if(m.isVariable() && m.variable()->isKnown()) return contains_imaginary(((KnownVariable*) m.variable())->get());
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_imaginary(m[i])) return true;
+	}
+	return false;
+}
 
 int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions &eo_pre, bool simplify_first, int use_abs, bool definite_integral, bool try_abs, int max_part_depth, vector<MathStructure*> *parent_parts) {
 	if(CALCULATOR->aborted()) CANNOT_INTEGRATE
@@ -27788,88 +27842,164 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 			return true;
 		}
 		for(size_t i = 0; i < SIZE; i++) {
-			if((CHILD(i).isFunction() && CHILD(i).function() == CALCULATOR->f_abs && CHILD(i).size() == 1) || (CHILD(i).isPower() && CHILD(i)[0].isFunction() && CHILD(i)[0].function() == CALCULATOR->f_abs && CHILD(i)[0].size() == 1 && CHILD(i)[1].containsRepresentativeOf(x_var, true, true) == 0)) {
+			if((CHILD(i).isFunction() && CHILD(i).function() == CALCULATOR->f_abs && CHILD(i).size() == 1) || (CHILD(i).isPower() && CHILD(i)[0].isFunction() && CHILD(i)[0].function() == CALCULATOR->f_abs && CHILD(i)[0].size() == 1 && CHILD(i)[1].representsOdd())) {
 				if(definite_integral) return false;
-				MathStructure mmul(CHILD(i).isPower() ? CHILD(i)[0] : CHILD(i));
-				if(CHILD(i).isPower()) CHILD(i)[0].setToChild(1, true);
-				else CHILD(i).setToChild(1, true);
-				mmul.inverse();
-				mmul *= CHILD(i).isPower() ? CHILD(i)[0] : CHILD(i);
-				if(integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts) < 0) {
+				bool b = (m_type == STRUCT_POWER ? CHILD(0)[0].representsNonComplex() : CHILD(0).representsNonComplex());
+				if(!b && !(m_type == STRUCT_POWER ? CHILD(0)[0].representsComplex() : CHILD(0).representsComplex())) {
+					MathStructure mtest(m_type == STRUCT_POWER ? CHILD(0)[0] : CHILD(0));
+					CALCULATOR->beginTemporaryStopMessages();
+					mtest.eval(eo_t);
+					CALCULATOR->endTemporaryStopMessages();
+					b = mtest.representsNonComplex();
+					if(!b && !mtest.representsComplex()) {
+						if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
+							CALCULATOR->beginTemporaryStopMessages();
+							mtest.replace(x_var, ((UnknownVariable*) x_var.variable())->interval());
+							mtest.eval(eo_t);
+							CALCULATOR->endTemporaryStopMessages();
+							b = mtest.representsNonComplex();
+							if(!b && !mtest.representsComplex() && !contains_imaginary(mtest) && !contains_imaginary(((UnknownVariable*) x_var.variable())->interval())) {
+								CALCULATOR->error(false, "Integral assumed real", NULL);
+								b = true;
+							}
+						} else if(!contains_imaginary(mtest)) {
+							CALCULATOR->error(false, "Integral assumed real", NULL);
+							b = true;
+						}
+					}
+				}
+				if(b) {
+					MathStructure mmul(CHILD(i).isPower() ? CHILD(i)[0] : CHILD(i));
+					if(CHILD(i).isPower()) CHILD(i)[0].setToChild(1, true);
+					else CHILD(i).setToChild(1, true);
+					mmul.inverse();
+					mmul *= CHILD(i).isPower() ? CHILD(i)[0] : CHILD(i);
+					if(integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts) < 0) {
+						multiply(mmul);
+						CANNOT_INTEGRATE_INTERVAL
+					}
 					multiply(mmul);
-					CANNOT_INTEGRATE_INTERVAL
+					return true;
 				}
-				multiply(mmul);
-				return true;
 			}
 		}
-	} else if((m_type == STRUCT_FUNCTION && o_function == CALCULATOR->f_abs && SIZE == 1) || (m_type == STRUCT_POWER && CHILD(0).isFunction() && CHILD(0).function() == CALCULATOR->f_abs && CHILD(0).size() == 1)) {
-		if(m_type == STRUCT_FUNCTION && CHILD(0).isFunction() && (CHILD(0).function() == CALCULATOR->f_sin || CHILD(0).function() == CALCULATOR->f_cos) && CHILD(0).size() == 1) {
-			MathStructure madd, mmul, mexp;
-			if(integrate_info(CHILD(0)[0], x_var, madd, mmul, mexp, true) && mexp.isOne() && madd.isZero()) {
-				setToChild(1, true);
-				MathStructure mdivpi(x_var);
-				if(!mmul.isOne()) mdivpi *= mmul;
-				mdivpi /= CALCULATOR->v_pi;
-				if(o_function == CALCULATOR->f_cos) mdivpi += nr_half;
-				mdivpi.transform(CALCULATOR->f_floor);
-				if(o_function == CALCULATOR->f_sin) setFunction(CALCULATOR->f_cos);
-				else setFunction(CALCULATOR->f_sin);
-				CHILD(0) += mdivpi;
-				CHILD(0).last() *= CALCULATOR->v_pi;
-				CHILD(0).last() *= CALCULATOR->getRadUnit();
-				CHILD(0).last().negate();
-				CHILD(0).childUpdated(CHILD(0).size());
-				CHILD_UPDATED(0)
-				if(!mmul.isOne()) divide(mmul);
-				add(mdivpi);
-				LAST *= nr_two;
-				if(!mmul.isOne()) LAST /= mmul;
-				CHILD_UPDATED(SIZE - 1)
-				return true;
+	} else if((m_type == STRUCT_FUNCTION && o_function == CALCULATOR->f_abs && SIZE == 1) || (m_type == STRUCT_POWER && CHILD(0).isFunction() && CHILD(0).function() == CALCULATOR->f_abs && CHILD(0).size() == 1 && CHILD(1).representsOdd())) {
+		bool b = (m_type == STRUCT_POWER ? CHILD(0)[0].representsNonComplex() : CHILD(0).representsNonComplex());
+		if(!b && !(m_type == STRUCT_POWER ? CHILD(0)[0].representsComplex() : CHILD(0).representsComplex())) {
+			MathStructure mtest(m_type == STRUCT_POWER ? CHILD(0)[0] : CHILD(0));
+			CALCULATOR->beginTemporaryStopMessages();
+			mtest.eval(eo_t);
+			CALCULATOR->endTemporaryStopMessages();
+			b = mtest.representsNonComplex();
+			if(!b && !mtest.representsComplex()) {
+				if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
+					CALCULATOR->beginTemporaryStopMessages();
+					mtest.replace(x_var, ((UnknownVariable*) x_var.variable())->interval());
+					mtest.eval(eo_t);
+					CALCULATOR->endTemporaryStopMessages();
+					b = mtest.representsNonComplex();
+					if(!b && !mtest.representsComplex() && !contains_imaginary(mtest) && !contains_imaginary(((UnknownVariable*) x_var.variable())->interval())) {
+						CALCULATOR->error(false, "Integral assumed real", NULL);
+						b = true;
+					}
+				} else if(!contains_imaginary(mtest)) {
+					CALCULATOR->error(false, "Integral assumed real", NULL);
+					b = true;
+				}
 			}
 		}
-		MathStructure mstruct(m_type == STRUCT_POWER ? CHILD(0) : *this);
-		if(m_type != STRUCT_POWER || (CHILD(1).isInteger() && !CHILD(1).number().isMinusOne() && CHILD(1).number().isOdd())) { 
-			MathStructure mexp, mmul, madd;
-			if(integrate_info(m_type == STRUCT_POWER ? CHILD(0)[0] : CHILD(0), x_var, madd, mmul, mexp) && mexp.isOne()) {
-				MathStructure mpowp1(m_type == STRUCT_POWER ? CHILD(1) : nr_two);
-				if(m_type == STRUCT_POWER) {
-					mpowp1 += m_one;
+		if(b) {
+			if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
+				if(fix_sgn_x(*this, x_var, eo_t)) recalc = true;
+				while(true) {
+					mfound = find_abs_x(*this, x_var);
+					if(mfound) {
+						MathStructure m_interval(*mfound);
+						m_interval.replace(x_var, ((UnknownVariable*) x_var.variable())->interval());
+						CALCULATOR->beginTemporaryStopMessages();
+						m_interval.eval(eo_t);
+						if(!CALCULATOR->endTemporaryStopMessages()) break;
+						if(m_interval.representsNonNegative(true)) {
+							replace_abs_x(*this, MathStructure(*mfound), false);
+							recalc = true;
+						} else if(m_interval.representsNegative(true)) {
+							replace_abs_x(*this, MathStructure(*mfound), true);
+							recalc = true;
+						} else {
+							break;
+						}
+					} else {
+						break;
+					}
+				}
+			}
+			if(m_type == STRUCT_FUNCTION && CHILD(0).isFunction() && (CHILD(0).function() == CALCULATOR->f_sin || CHILD(0).function() == CALCULATOR->f_cos) && CHILD(0).size() == 1) {
+				MathStructure madd, mmul, mexp;
+				if(integrate_info(CHILD(0)[0], x_var, madd, mmul, mexp, true) && mexp.isOne() && madd.isZero()) {
 					setToChild(1, true);
+					MathStructure mdivpi(x_var);
+					if(!mmul.isOne()) mdivpi *= mmul;
+					mdivpi /= CALCULATOR->v_pi;
+					if(o_function == CALCULATOR->f_cos) mdivpi += nr_half;
+					mdivpi.transform(CALCULATOR->f_floor);
+					if(o_function == CALCULATOR->f_sin) setFunction(CALCULATOR->f_cos);
+					else setFunction(CALCULATOR->f_sin);
+					CHILD(0) += mdivpi;
+					CHILD(0).last() *= CALCULATOR->v_pi;
+					CHILD(0).last() *= CALCULATOR->getRadUnit();
+					CHILD(0).last().negate();
+					CHILD(0).childUpdated(CHILD(0).size());
+					CHILD_UPDATED(0)
+					if(!mmul.isOne()) divide(mmul);
+					add(mdivpi);
+					LAST *= nr_two;
+					if(!mmul.isOne()) LAST /= mmul;
+					CHILD_UPDATED(SIZE - 1)
+					return true;
 				}
-				MathStructure msgn(*this);
-				msgn.setFunction(CALCULATOR->f_signum);
-				setToChild(1, true);
-				raise(mpowp1);
-				divide(mmul);
-				divide(mpowp1);
-				multiply(msgn);
-				return true;
 			}
+			MathStructure mstruct(m_type == STRUCT_POWER ? CHILD(0) : *this);
+			if(m_type != STRUCT_POWER || (CHILD(1).isInteger() && !CHILD(1).number().isMinusOne() && CHILD(1).number().isOdd())) { 
+				MathStructure mexp, mmul, madd;
+				if(integrate_info(m_type == STRUCT_POWER ? CHILD(0)[0] : CHILD(0), x_var, madd, mmul, mexp) && mexp.isOne()) {
+					MathStructure mpowp1(m_type == STRUCT_POWER ? CHILD(1) : nr_two);
+					if(m_type == STRUCT_POWER) {
+						mpowp1 += m_one;
+						setToChild(1, true);
+					}
+					MathStructure msgn(*this);
+					msgn.setFunction(CALCULATOR->f_signum);
+					setToChild(1, true);
+					raise(mpowp1);
+					divide(mmul);
+					divide(mpowp1);
+					multiply(msgn);
+					return true;
+				}
+			}
+			if(definite_integral) return false;
+			MathStructure mmul;
+			MathStructure mbak(*this);
+			if(isPower()) {
+				mmul = CHILD(0);
+				CHILD(0).setToChild(1, true);
+				mmul.inverse();
+				mmul *= CHILD(0);
+			} else {
+				mmul = *this;
+				setToChild(1, true);
+				mmul.inverse();
+				mmul *= *this;
+			}
+			int b_int = integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts);
+			if(b_int <= 0) {
+				set(mbak);
+				if(b_int < 0) CANNOT_INTEGRATE_INTERVAL
+				return false;
+			}
+			multiply(mmul);
+			return true;
 		}
-		if(definite_integral) return false;
-		MathStructure mmul;
-		MathStructure mbak(*this);
-		if(isPower()) {
-			mmul = CHILD(0);
-			CHILD(0).setToChild(1, true);
-			mmul.inverse();
-			mmul *= CHILD(0);
-		} else {
-			mmul = *this;
-			setToChild(1, true);
-			mmul.inverse();
-			mmul *= *this;
-		}
-		int b_int = integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts);
-		if(b_int <= 0) {
-			set(mbak);
-			if(b_int < 0) CANNOT_INTEGRATE_INTERVAL
-			return false;
-		}
-		multiply(mmul);
-		return true;
 	}
 	switch(m_type) {
 		case STRUCT_UNIT: {}

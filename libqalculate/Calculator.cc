@@ -325,6 +325,7 @@ class Calculator_p {
 		long int custom_input_base_i;
 		Unit *local_currency;
 		int use_binary_prefixes;
+		MathFunction *f_cis;
 };
 
 bool is_not_number(char c, int base) {
@@ -531,12 +532,12 @@ Calculator::Calculator() {
 	save_printoptions.use_reference_names = true;
 	save_printoptions.preserve_precision = true;
 	save_printoptions.interval_display = INTERVAL_DISPLAY_INTERVAL;
-	save_printoptions.use_reference_names = true;
 	save_printoptions.limit_implicit_multiplication = true;
 	save_printoptions.spacious = false;
 	save_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
 	save_printoptions.short_multiplication = false;
 	save_printoptions.show_ending_zeroes = false;
+	save_printoptions.use_unit_prefixes = false;
 	
 	message_printoptions.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 	message_printoptions.spell_out_logical_operators = true;
@@ -756,12 +757,12 @@ Calculator::Calculator(bool ignore_locale) {
 	save_printoptions.use_reference_names = true;
 	save_printoptions.preserve_precision = true;
 	save_printoptions.interval_display = INTERVAL_DISPLAY_INTERVAL;
-	save_printoptions.use_reference_names = true;
 	save_printoptions.limit_implicit_multiplication = true;
 	save_printoptions.spacious = false;
 	save_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
 	save_printoptions.short_multiplication = false;
 	save_printoptions.show_ending_zeroes = false;
+	save_printoptions.use_unit_prefixes = false;
 	
 	message_printoptions.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 	message_printoptions.spell_out_logical_operators = true;
@@ -1882,6 +1883,7 @@ void Calculator::addBuiltinFunctions() {
 	f_atanh = addFunction(new AtanhFunction());
 	f_atan2 = addFunction(new Atan2Function());
 	f_sinc = addFunction(new SincFunction());
+	priv->f_cis = addFunction(new CisFunction());
 	f_radians_to_default_angle_unit = addFunction(new RadiansToDefaultAngleUnitFunction());
 
 	f_zeta = addFunction(new ZetaFunction());
@@ -2911,7 +2913,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	PrintOptions printops = po;
 	EvaluationOptions evalops = eo;
 	MathStructure mstruct;
-	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false, do_expand = false, do_binary_prefixes = false;
+	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false, do_expand = false, do_binary_prefixes = false, complex_angle_form = false;
 	string from_str = str, to_str;
 	Number base_save;
 	if(printops.base == BASE_CUSTOM) base_save = customOutputBase();
@@ -2987,6 +2989,22 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			printops.time_zone = TIME_ZONE_CUSTOM;
 			printops.custom_time_zone = 60;
 			str = from_str;
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "cartesian", _("cartesian")) || str == "rect") {
+			str = from_str;
+			evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "exponential", _("exponential")) || to_str == "exp") {
+			str = from_str;
+			evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "polar", _("polar"))) {
+			str = from_str;
+			evalops.complex_number_form = COMPLEX_NUMBER_FORM_POLAR;
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "angle", _("angle")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "phasor", _("phasor"))) {
+			str = from_str;
+			evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
+			complex_angle_form = true;
+		} else if(to_str == "cis") {
+			str = from_str;
+			evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction"))) {
 			str = from_str;
 			do_fraction = true;
@@ -3129,6 +3147,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	mstruct.removeDefaultAngleUnit(evalops);
 	mstruct.format(printops);
 	str = mstruct.print(printops);
+	if(complex_angle_form) gsub(" cis ", "∠", str);
 	stopControl();
 	if(printops.base == BASE_CUSTOM) setCustomOutputBase(base_save);
 	priv->use_binary_prefixes = save_bin;
@@ -5439,10 +5458,10 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 	return is - str_index;
 }
 
-const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a"};
-#define INTERNAL_SIGNS_COUNT 6
+const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c"};
+#define INTERNAL_SIGNS_COUNT 8
 #define INTERNAL_NUMBER_CHARS "\b"
-#define INTERNAL_OPERATORS "\a\b%"
+#define INTERNAL_OPERATORS "\a\b%\x1c"
 #define DUODECIMAL_CHARS "EX"
 
 void Calculator::parseSigns(string &str, bool convert_to_internal_representation) const {
@@ -5725,7 +5744,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	}
 
 	parseSigns(str, true);
-
+	
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		if(str[str_index] == '\"' || str[str_index] == '\'') {
 			if(str_index == str.length() - 1) {
@@ -6802,7 +6821,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	if(po.rpn) {
 		size_t rpn_i = str.find(SPACE, 0);
 		while(rpn_i != string::npos) {
-			if(rpn_i == 0 || rpn_i + 1 == str.length() || is_in("~+-*/^\a\b\\", str[rpn_i - 1]) || (is_in("%&|", str[rpn_i - 1]) && str[rpn_i + 1] != str[rpn_i - 1]) || (is_in("!><=", str[rpn_i - 1]) && is_not_in("=<>", str[rpn_i + 1])) || (is_in(SPACE OPERATORS INTERNAL_OPERATORS, str[rpn_i + 1]) && (str[rpn_i - 1] == SPACE_CH || (str[rpn_i - 1] != str[rpn_i + 1] && is_not_in("!><=", str[rpn_i - 1]))))) {
+			if(rpn_i == 0 || rpn_i + 1 == str.length() || is_in("~+-*/^\a\b\\\x1c", str[rpn_i - 1]) || (is_in("%&|", str[rpn_i - 1]) && str[rpn_i + 1] != str[rpn_i - 1]) || (is_in("!><=", str[rpn_i - 1]) && is_not_in("=<>", str[rpn_i + 1])) || (is_in(SPACE OPERATORS INTERNAL_OPERATORS, str[rpn_i + 1]) && (str[rpn_i - 1] == SPACE_CH || (str[rpn_i - 1] != str[rpn_i + 1] && is_not_in("!><=", str[rpn_i - 1]))))) {
 				str.erase(rpn_i, 1);
 			} else {
 				rpn_i++;
@@ -6831,8 +6850,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOptions &po) {
 	mstruct->clear();
 	if(str.empty()) return false;
-	if(str.find_first_not_of(OPERATORS "\a%" SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == string::npos)) {
+	if(str.find_first_not_of(OPERATORS "\a%\x1c" SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == string::npos)) {
 		gsub("\a", str.find_first_of("%" OPERATORS) != string::npos ? " xor " : "xor", str);
+		gsub("\x1c", "∠", str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
 	}
@@ -6878,6 +6898,9 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			str.erase(i, 1);
 		} else if(str[i] == '\a') {
 			error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
+			str.erase(i, 1);
+		} else if(str[i] == '\x1c') {
+			error(false, _("Misplaced operator(s) \"%s\" ignored"), "∠", NULL);
 			str.erase(i, 1);
 		} else if(str[i] == '\b') {
 			b_exp = false;
@@ -7195,7 +7218,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		char last_operator = 0;
 		char last_operator2 = 0;
 		while(true) {
-			i = str.find_first_of(OPERATORS "\a%" SPACE "\\", i3 + 1);
+			i = str.find_first_of(OPERATORS "\a%\x1c" SPACE "\\", i3 + 1);
 			if(i == string::npos) {
 				if(!b) {
 					parseAdd(str, mstruct, po2);
@@ -7303,6 +7326,19 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 								case BITWISE_NOT_CH: {
 									mstack.back()->transform(STRUCT_BITWISE_NOT); 
 									error(false, _("Unused stack values."), NULL);
+									break;
+								}
+								case '\x1c': {
+									if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstack.back()->contains(getRadUnit(), false, true, true) <= 0 && mstack.back()->contains(getGraUnit(), false, true, true) <= 0 && mstack.back()->contains(getDegUnit(), false, true, true) <= 0) {
+										switch(po.angle_unit) {
+											case ANGLE_UNIT_DEGREES: {mstack.back()->multiply(getDegUnit()); break;}
+											case ANGLE_UNIT_GRADIANS: {mstack.back()->multiply(getGraUnit()); break;}
+											default: {}
+										}
+									}
+									mstack.back()->transform(priv->f_cis); 
+									mstack[mstack.size() - 2]->transform_nocopy(STRUCT_MULTIPLICATION, mstack.back()); 
+									mstack.pop_back(); 
 									break;
 								}
 								case '\a': {
@@ -7484,6 +7520,19 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						}
 						case BITWISE_NOT_CH: {
 							mstack.back()->transform(STRUCT_BITWISE_NOT); 
+							break;
+						}
+						case '\x1c': {
+							if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstack.back()->contains(getRadUnit(), false, true, true) <= 0 && mstack.back()->contains(getGraUnit(), false, true, true) <= 0 && mstack.back()->contains(getDegUnit(), false, true, true) <= 0) {
+								switch(po.angle_unit) {
+									case ANGLE_UNIT_DEGREES: {mstack.back()->multiply(getDegUnit()); break;}
+									case ANGLE_UNIT_GRADIANS: {mstack.back()->multiply(getGraUnit()); break;}
+									default: {}
+								}
+							}
+							mstack.back()->transform(priv->f_cis); 
+							mstack[mstack.size() - 2]->transform_nocopy(STRUCT_MULTIPLICATION, mstack.back()); 
+							mstack.pop_back(); 
 							break;
 						}
 						case '\a': {
@@ -8111,10 +8160,27 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			return true;
 		}
 	}
+	
+	if((i = str.find('\x1c', 1)) != string::npos && i + 1 != str.length()) {
+		str2 = str.substr(0, i);
+		str = str.substr(i + 1, str.length() - (i + 1));
+		parseAdd(str2, mstruct, po);
+		parseAdd(str, mstruct, po, OPERATION_MULTIPLY);
+		if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstruct->last().contains(getRadUnit(), false, true, true) <= 0 && mstruct->last().contains(getGraUnit(), false, true, true) <= 0 && mstruct->last().contains(getDegUnit(), false, true, true) <= 0) {
+			switch(po.angle_unit) {
+				case ANGLE_UNIT_DEGREES: {mstruct->last().multiply(getDegUnit()); break;}
+				case ANGLE_UNIT_GRADIANS: {mstruct->last().multiply(getGraUnit()); break;}
+				default: {}
+			}
+		}
+		mstruct->last().transform(priv->f_cis); 
+		return true;
+	}
 
 	if(str.empty()) return false;
 	if(str.find_first_not_of(OPERATORS INTERNAL_OPERATORS SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find_first_of("(|)") == string::npos)) {
 		gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", str);
+		gsub("\x1c", "∠", str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
 	}
@@ -8137,6 +8203,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			break;
 		} else if(is_in(OPERATORS INTERNAL_OPERATORS, str[i]) && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
 			if(str[i] == '\a') error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
+			else if(str[i] == '\x1c') error(false, _("Misplaced operator(s) \"%s\" ignored"), "∠", NULL);
 			else error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
 		} else {

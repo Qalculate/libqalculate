@@ -44,6 +44,7 @@ string result_text, parsed_text;
 bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit;
 int auto_update_exchange_rates;
 PrintOptions printops, saved_printops;
+bool complex_angle_form = false, saved_caf = false;
 EvaluationOptions evalops, saved_evalops;
 Number saved_custom_output_base, saved_custom_input_base;
 AssumptionType saved_assumption_type;
@@ -94,6 +95,7 @@ void expression_format_updated(bool reparse);
 void expression_calculation_updated();
 bool display_errors(bool goto_input = false, int cols = 0);
 void replace_quotation_marks(string &result_text);
+void replace_result_cis(string &resstr);
 extern int has_information_unit(const MathStructure &m, bool top = true);
 
 FILE *cfile;
@@ -1119,12 +1121,16 @@ void set_option(string str) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "cartesian", _("cartesian")) || svalue == "rect") v = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exponential", _("exponential")) || svalue == "exp") v = COMPLEX_NUMBER_FORM_EXPONENTIAL;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "polar", _("polar"))) v = COMPLEX_NUMBER_FORM_POLAR;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "angle", _("angle")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "phasor", _("phasor"))) v = COMPLEX_NUMBER_FORM_CIS + 1;
+		else if(svar == "cis") v = COMPLEX_NUMBER_FORM_CIS;
 		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
-		if(v < 0 || v > 2) {
+		if(v < 0 || v > 4) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
+			complex_angle_form = (v > 3);
+			if(v == 4) v--;
 			evalops.complex_number_form = (ComplexNumberForm) v;
 			expression_calculation_updated();
 		}
@@ -2383,6 +2389,7 @@ int main(int argc, char *argv[]) {
 					m.format(printops);
 					string regstr = m.print(printops);
 					if(!cfile) replace_quotation_marks(regstr);
+					replace_result_cis(regstr);
 					printf("  %i:\t%s\n", (int) i, regstr.c_str());
 				}
 				puts("");
@@ -2652,30 +2659,63 @@ int main(int argc, char *argv[]) {
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(str, "cartesian", _("cartesian")) || str == "rect") {
 				avoid_recalculation = false;
 				ComplexNumberForm cnf_bak = evalops.complex_number_form;
+				bool caf_bak = complex_angle_form;
+				complex_angle_form = false;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
 				hide_parse_errors = true;
 				if(rpn_mode) execute_command(COMMAND_EVAL);
 				else execute_expression();
 				hide_parse_errors = false;
 				evalops.complex_number_form = cnf_bak;
+				complex_angle_form = caf_bak;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exponential", _("exponential")) || str == "exp") {
 				avoid_recalculation = false;
 				ComplexNumberForm cnf_bak = evalops.complex_number_form;
+				bool caf_bak = complex_angle_form;
+				complex_angle_form = false;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
 				hide_parse_errors = true;
 				if(rpn_mode) execute_command(COMMAND_EVAL);
 				else execute_expression();
 				hide_parse_errors = false;
 				evalops.complex_number_form = cnf_bak;
+				complex_angle_form = caf_bak;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "polar", _("polar"))) {
 				avoid_recalculation = false;
 				ComplexNumberForm cnf_bak = evalops.complex_number_form;
+				bool caf_bak = complex_angle_form;
+				complex_angle_form = false;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_POLAR;
 				hide_parse_errors = true;
 				if(rpn_mode) execute_command(COMMAND_EVAL);
 				else execute_expression();
 				hide_parse_errors = false;
 				evalops.complex_number_form = cnf_bak;
+				complex_angle_form = caf_bak;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "angle", _("angle")) || EQUALS_IGNORECASE_AND_LOCAL(str, "phasor", _("phasor"))) {
+				avoid_recalculation = false;
+				ComplexNumberForm cnf_bak = evalops.complex_number_form;
+				bool caf_bak = complex_angle_form;
+				complex_angle_form = true;
+				evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
+				hide_parse_errors = true;
+				if(rpn_mode) execute_command(COMMAND_EVAL);
+				else execute_expression();
+				hide_parse_errors = false;
+				evalops.complex_number_form = cnf_bak;
+				complex_angle_form = caf_bak;
+			} else if(str == "cis") {
+				avoid_recalculation = false;
+				ComplexNumberForm cnf_bak = evalops.complex_number_form;
+				bool caf_bak = complex_angle_form;
+				complex_angle_form = false;
+				evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
+				hide_parse_errors = true;
+				if(rpn_mode) execute_command(COMMAND_EVAL);
+				else execute_expression();
+				hide_parse_errors = false;
+				evalops.complex_number_form = cnf_bak;
+				complex_angle_form = caf_bak;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "bases", _("bases"))) {
 				int save_base = printops.base;
 				string save_result_text = result_text;
@@ -2971,6 +3011,7 @@ int main(int argc, char *argv[]) {
 				case COMPLEX_NUMBER_FORM_RECTANGULAR: {str += _("rectangular"); break;}
 				case COMPLEX_NUMBER_FORM_EXPONENTIAL: {str += _("exponential"); break;}
 				case COMPLEX_NUMBER_FORM_POLAR: {str += _("polar"); break;}
+				case COMPLEX_NUMBER_FORM_CIS: {if(complex_angle_form) {str += _("angle");} else {str += "cis";} break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("decimal comma"), "");
@@ -3675,7 +3716,7 @@ int main(int argc, char *argv[]) {
 				else if(printops.base > 2 && printops.base <= 36 && printops.base != BASE_OCTAL && printops.base != BASE_DECIMAL && printops.base != BASE_HEXADECIMAL) {str += " "; str += i2s(printops.base); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_2(_("base display"), "basedisp", "", printops.base_display, _("none"), _("normal"), _("alternative"));
-				STR_AND_TABS_2(_("complex form"), "cplxform", "", evalops.complex_number_form, _("rectangular"), _("exponential"), _("polar"));
+				STR_AND_TABS_4(_("complex form"), "cplxform", "", evalops.complex_number_form + (complex_angle_form ? 1 : 0), _("rectangular"), _("exponential"), _("polar"), "cis", _("angle"));
 				STR_AND_TABS_SET(_("decimal comma"), "");
 				SET_DESCRIPTION(_("Determines the default decimal separator."));
 				str += "(";
@@ -3985,6 +4026,8 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- rectangular / cartesian (show complex numbers in rectangular form)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- exponential (show complex numbers in exponential form)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- polar (show complex numbers in polar form)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- cis (show complex numbers in cis form)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- angle / phasor (show complex numbers in angle/phasor notation)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- fraction (show result as mixed fraction)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- factors (factorize result)"));
@@ -4094,6 +4137,10 @@ void on_abort_display() {
 	CALCULATOR->abort();
 }
 
+void replace_result_cis(string &resstr) {
+	gsub(" cis ", "∠", resstr);
+}
+
 void replace_quotation_marks(string &str) {
 #ifndef _WIN32
 	if(cfile) return;
@@ -4180,6 +4227,7 @@ void ViewThread::run() {
 		m.removeDefaultAngleUnit(evalops);
 		m.format(printops);
 		result_text = m.print(printops);
+		replace_result_cis(result_text);
 	
 		if(result_text == _("aborted")) {
 			*printops.is_approximate = false;
@@ -4790,25 +4838,56 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "cartesian", _("cartesian")) || to_str == "rect") {
 				expression_str = from_str;
 				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
+				bool caf_bak = complex_angle_form;
+				complex_angle_form = false;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				evalops.complex_number_form = save_complex_number_form;
+				complex_angle_form = caf_bak;
 				expression_str = str;
 				return;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "exponential", _("exponential")) || to_str == "exp") {
 				expression_str = from_str;
 				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
+				bool caf_bak = complex_angle_form;
+				complex_angle_form = false;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				evalops.complex_number_form = save_complex_number_form;
+				complex_angle_form = caf_bak;
 				expression_str = str;
 				return;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "polar", _("polar"))) {
 				expression_str = from_str;
 				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
+				bool caf_bak = complex_angle_form;
+				complex_angle_form = false;
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_POLAR;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				evalops.complex_number_form = save_complex_number_form;
+				complex_angle_form = caf_bak;
+				expression_str = str;
+				return;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "angle", _("angle")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "phasor", _("phasor"))) {
+				expression_str = from_str;
+				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
+				bool caf_bak = complex_angle_form;
+				complex_angle_form = true;
+				evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				evalops.complex_number_form = save_complex_number_form;
+				complex_angle_form = caf_bak;
+				expression_str = str;
+				return;
+			} else if(to_str == "cis") {
+				expression_str = from_str;
+				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
+				bool caf_bak = complex_angle_form;
+				complex_angle_form = false;
+				evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				evalops.complex_number_form = save_complex_number_form;
+				complex_angle_form = caf_bak;
 				expression_str = str;
 				return;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "optimal", _("optimal"))) {
@@ -5298,6 +5377,7 @@ void set_saved_mode() {
 	saved_variable_units_enabled = CALCULATOR->variableUnitsEnabled();
 	saved_printops = printops;
 	saved_printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
+	saved_caf = complex_angle_form;
 	saved_evalops = evalops;
 	saved_rpn_mode = rpn_mode;
 	saved_caret_as_xor = caret_as_xor;
@@ -5368,6 +5448,8 @@ void load_preferences() {
 	evalops.local_currency_conversion = true;
 	evalops.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 	b_decimal_comma = -1;
+	
+	complex_angle_form = false;
 	
 	ignore_locale = false;
 	
@@ -5516,8 +5598,12 @@ void load_preferences() {
 				} else if(svar == "automatic_number_fraction_format") {
 					automatic_fraction = v;
 				} else if(svar == "complex_number_form") {
-					if(v >= COMPLEX_NUMBER_FORM_RECTANGULAR && v <= COMPLEX_NUMBER_FORM_POLAR) {
+					if(v == COMPLEX_NUMBER_FORM_CIS + 1) {
+						evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
+						complex_angle_form = true;
+					} else if(v >= COMPLEX_NUMBER_FORM_RECTANGULAR && v <= COMPLEX_NUMBER_FORM_CIS) {
 						evalops.complex_number_form = (ComplexNumberForm) v;
+						complex_angle_form = false;
 					}
 				} else if(svar == "number_base") {
 					printops.base = v;
@@ -5751,7 +5837,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "sort_minus_last=%i\n", saved_printops.sort_options.minus_last);
 	fprintf(file, "number_fraction_format=%i\n", !saved_printops.restrict_fraction_length && saved_printops.number_fraction_format == FRACTION_FRACTIONAL ? FRACTION_COMBINED + 1 : saved_printops.number_fraction_format);
 	if(automatic_fraction) fprintf(file, "automatic_number_fraction_format=%i\n", automatic_fraction);
-	fprintf(file, "complex_number_form=%i\n", saved_evalops.complex_number_form);
+	fprintf(file, "complex_number_form=%i\n", (saved_caf && saved_evalops.complex_number_form == COMPLEX_NUMBER_FORM_CIS) ? saved_evalops.complex_number_form + 1 : saved_evalops.complex_number_form);
 	fprintf(file, "use_prefixes=%i\n", saved_printops.use_unit_prefixes);
 	fprintf(file, "use_prefixes_for_all_units=%i\n", saved_printops.use_prefixes_for_all_units);
 	fprintf(file, "use_prefixes_for_currencies=%i\n", saved_printops.use_prefixes_for_currencies);

@@ -2105,9 +2105,9 @@ string AngleArgument::subprintlong() const {return _("an angle or a number (usin
 void AngleArgument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
 	CALCULATOR->parse(mstruct, str, po);
 	if(po.angle_unit != ANGLE_UNIT_NONE) {
+		if(mstruct->contains(CALCULATOR->getRadUnit(), false, true, true) > 0) return;
 		if(mstruct->contains(CALCULATOR->getDegUnit(), false, true, true) > 0) return;
 		if(mstruct->contains(CALCULATOR->getGraUnit(), false, true, true) > 0) return;
-		if(mstruct->contains(CALCULATOR->getRadUnit(), false, true, true) > 0) return;
 	}
 	switch(po.angle_unit) {
 		case ANGLE_UNIT_DEGREES: {
