@@ -2389,7 +2389,7 @@ int main(int argc, char *argv[]) {
 					m.format(printops);
 					string regstr = m.print(printops);
 					if(!cfile) replace_quotation_marks(regstr);
-					replace_result_cis(regstr);
+					if(complex_angle_form) replace_result_cis(regstr);
 					printf("  %i:\t%s\n", (int) i, regstr.c_str());
 				}
 				puts("");
@@ -4227,7 +4227,7 @@ void ViewThread::run() {
 		m.removeDefaultAngleUnit(evalops);
 		m.format(printops);
 		result_text = m.print(printops);
-		replace_result_cis(result_text);
+		if(complex_angle_form) replace_result_cis(result_text);
 	
 		if(result_text == _("aborted")) {
 			*printops.is_approximate = false;
