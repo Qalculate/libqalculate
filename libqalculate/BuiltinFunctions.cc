@@ -964,6 +964,16 @@ bool test_eval(MathStructure &mtest, const EvaluationOptions &eo) {
 	if(CALCULATOR->endTemporaryStopMessages()) return false;
 	return true;
 }
+bool has_interval_unknowns(MathStructure &m) {
+	if(m.isVariable() && !m.variable()->isKnown()) {
+		Assumptions *ass = ((UnknownVariable*) m.variable())->assumptions();
+		return !((UnknownVariable*) m.variable())->interval().isUndefined() || (ass && ((ass->sign() != ASSUMPTION_SIGN_UNKNOWN && ass->sign() != ASSUMPTION_SIGN_NONZERO) || ass->min() || ass->max()));
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(has_interval_unknowns(m[i])) return true;
+	}
+	return false;
+}
 
 AbsFunction::AbsFunction() : MathFunction("abs", 1) {
 	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
@@ -1046,16 +1056,13 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct[0].transform(this);
 		return 1;
 	}
-	if(eo.approximation == APPROXIMATION_EXACT) {
-		MathStructure mtest(mstruct);
-		if(test_eval(mtest, eo)) {
-			if(mtest.representsNegative(true)) {
-				mstruct.negate();
-				return 1;
-			}
-			if(mtest.representsNonNegative(true)) {
-				return 1;
-			}
+	if(eo.approximation == APPROXIMATION_EXACT || has_interval_unknowns(mstruct)) {
+		ComparisonResult cr = mstruct.compare(m_zero);
+		if(COMPARISON_IS_EQUAL_OR_LESS(cr)) {
+			return 1;
+		} else if(COMPARISON_IS_EQUAL_OR_GREATER(cr)) {
+			mstruct.negate();
+			return 1;
 		}
 	}
 	return -1;
@@ -1129,17 +1136,14 @@ int HeavisideFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		}
 		return 1;
 	}
-	if(eo.approximation == APPROXIMATION_EXACT) {
-		MathStructure mtest(mstruct);
-		if(test_eval(mtest, eo)) {
-			if(mtest.representsPositive(true)) {
-				mstruct.set(1, 1, 0);
-				return 1;
-			}
-			if(mtest.representsNegative(true)) {
-				mstruct.clear();
-				return 1;
-			}
+	if(eo.approximation == APPROXIMATION_EXACT || has_interval_unknowns(mstruct)) {
+		ComparisonResult cr = mstruct.compare(m_zero);
+		if(cr == COMPARISON_RESULT_LESS) {
+			mstruct.set(1, 1, 0);
+			return 1;
+		} else if(cr == COMPARISON_RESULT_GREATER) {
+			mstruct.clear();
+			return 1;
 		}
 	}
 	return -1;
@@ -1179,13 +1183,11 @@ int DiracFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		mstruct.number().setInterval(nr_zero, nr_plus_inf);
 		return 1;
 	}
-	if(eo.approximation == APPROXIMATION_EXACT) {
-		MathStructure mtest(mstruct);
-		if(test_eval(mtest, eo)) {
-			if(mtest.representsNonZero(true)) {
-				mstruct.clear();
-				return 1;
-			}
+	if(eo.approximation == APPROXIMATION_EXACT || has_interval_unknowns(mstruct)) {
+		ComparisonResult cr = mstruct.compare(m_zero);
+		if(COMPARISON_IS_NOT_EQUAL(cr)) {
+			mstruct.clear();
+			return 1;
 		}
 	}
 	return -1;
@@ -1253,17 +1255,14 @@ int SignumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		mstruct.set(vargs[1], true);
 		return 1;
 	}
-	if(eo.approximation == APPROXIMATION_EXACT) {
-		MathStructure mtest(mstruct);
-		if(test_eval(mtest, eo)) {
-			if((vargs.size() > 1 && vargs[1].isOne() && mtest.representsNonNegative(true)) || mtest.representsPositive(true)) {
-				mstruct.set(1, 1, 0);
-				return 1;
-			}
-			if((vargs.size() > 1 && vargs[1].isMinusOne() && mtest.representsNonPositive(true)) || mtest.representsNegative(true)) {
-				mstruct.set(-1, 1, 0);
-				return 1;
-			}
+	if(eo.approximation == APPROXIMATION_EXACT || has_interval_unknowns(mstruct)) {
+		ComparisonResult cr = mstruct.compare(m_zero);
+		if(cr == COMPARISON_RESULT_LESS || (vargs.size() > 1 && vargs[1].isOne() && COMPARISON_IS_EQUAL_OR_LESS(cr))) {
+			mstruct.set(1, 1, 0);
+			return 1;
+		} else if(cr == COMPARISON_RESULT_GREATER || (vargs.size() > 1 && vargs[1].isMinusOne() && COMPARISON_IS_EQUAL_OR_GREATER(cr))) {
+			mstruct.set(-1, 1, 0);
+			return 1;
 		}
 	}
 	return -1;
@@ -6810,6 +6809,29 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 	}
 	return true;
 }
+MathStructure *find_abs_x(MathStructure &mstruct, const MathStructure &x_var) {
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1) {
+		return &mstruct;
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		MathStructure *m = find_abs_x(mstruct[i], x_var);
+		if(m) return m;
+	}
+	return NULL;
+}
+bool replace_abs(MathStructure &mstruct, const MathStructure &mabs, bool neg) {
+	if(mstruct.equals(mabs, true, true)) {
+		mstruct.setToChild(1, true);
+		if(neg) mstruct.negate();
+		return true;
+	}
+	bool b_ret = false;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(replace_abs(mstruct[i], mabs, neg)) b_ret = true;
+	}
+	return b_ret;
+}
+
 int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	MathStructure m1(vargs[2]), m2(vargs[3]);
@@ -6949,9 +6971,101 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	} else {
 		mstruct = mbak;
 		if(definite_integral <= 0) {
+			if(!m1.isUndefined()) mstruct.replace(x_var, vargs[1]);
 			CALCULATOR->endTemporaryStopMessages(true);
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 			return -1;
+		}
+	}
+	MathStructure *mabs = find_abs_x(mbak, x_var);
+	if(mabs) {
+		MathStructure m0((*mabs)[0]);
+		m0.replace(vargs[1], x_var);
+		m0.transform(COMPARISON_EQUALS, m_zero);
+		EvaluationOptions eo3 = eo;
+		eo3.approximation = APPROXIMATION_EXACT;
+		eo3.isolate_x = true;
+		eo3.isolate_var = &x_var;
+		m0.eval(eo3);
+		bool b_exit = true;
+		if(m0.isComparison() && m0.comparisonType() == COMPARISON_EQUALS && m0[0] == x_var && m0[1].contains(x_var, true) == 0) {
+			CALCULATOR->endTemporaryStopMessages();
+			CALCULATOR->beginTemporaryStopMessages();
+			m0.setToChild(2, true);
+			ComparisonResult cr1 = m0.compare(m1);
+			ComparisonResult cr2 = m0.compare(m2);
+			if(COMPARISON_IS_EQUAL_OR_GREATER(cr1) || COMPARISON_IS_EQUAL_OR_LESS(cr2)) {
+				MathStructure mtest(*mabs);
+				mtest.replace(x_var, COMPARISON_IS_EQUAL_OR_GREATER(cr1) ? vargs[3] : vargs[2]);
+				ComparisonResult cr = mtest.compare(m_zero);
+				if(COMPARISON_IS_EQUAL_OR_LESS(cr)) {
+					if(replace_abs(mbak, *mabs, false)) {
+						mbak.replace(x_var, vargs[1]);
+						mstruct.set(this, &mbak, &vargs[1], &vargs[2], &vargs[3], NULL);
+						CALCULATOR->endTemporaryStopMessages(true);
+						return 1;
+					}
+				} else if(COMPARISON_IS_EQUAL_OR_GREATER(cr)) {
+					if(replace_abs(mbak, *mabs, true)) {
+						mbak.replace(x_var, vargs[1]);
+						mstruct.set(this, &mbak, &vargs[1], &vargs[2], &vargs[3], NULL);
+						CALCULATOR->endTemporaryStopMessages(true);
+						return 1;
+					}
+				}
+			} if(cr1 == COMPARISON_RESULT_LESS && cr2 == COMPARISON_RESULT_GREATER) {
+				MathStructure mtest((*mabs)[0]);
+				mtest.replace(x_var, vargs[2]);
+				ComparisonResult cr = mtest.compare(m_zero);
+				MathStructure m1(mbak), m2, minteg1, minteg2;
+				b = false;
+				if(COMPARISON_IS_EQUAL_OR_LESS(cr)) {
+					if(replace_abs(m1, *mabs, false)) b = true;
+				} else if(COMPARISON_IS_EQUAL_OR_GREATER(cr)) {
+					if(replace_abs(m1, *mabs, true)) b = true;
+				}
+				if(b) {
+					m1.replace(x_var, vargs[1]);
+					minteg1.set(this, &m1, &vargs[1], &vargs[2], &m0, NULL);
+					CALCULATOR->beginTemporaryStopMessages();
+					minteg1.eval(eo);
+					b_exit = CALCULATOR->endTemporaryStopMessages(NULL, NULL, MESSAGE_ERROR) == 0;
+					b = b_exit && minteg1.containsFunction(this, true) <= 0;
+				}
+				if(b) {
+					mtest = (*mabs)[0];
+					mtest.replace(x_var, vargs[3]);
+					cr = mtest.compare(m_zero);
+					m2 = mbak;
+					b = false;
+					if(COMPARISON_IS_EQUAL_OR_LESS(cr)) {
+						if(replace_abs(m2, *mabs, false)) b = true;
+					} else if(COMPARISON_IS_EQUAL_OR_GREATER(cr)) {
+						if(replace_abs(m2, *mabs, true)) b = true;
+					}
+				}
+				if(b) {
+					m2.replace(x_var, vargs[1]);
+					minteg2.set(this, &m2, &vargs[1], &m0, &vargs[3], NULL);
+					CALCULATOR->beginTemporaryStopMessages();
+					minteg2.eval(eo);
+					b_exit = CALCULATOR->endTemporaryStopMessages(NULL, NULL, MESSAGE_ERROR) == 0;
+					b = b_exit && minteg2.containsFunction(this, true) <= 0;
+				}
+				if(b) {
+					CALCULATOR->endTemporaryStopMessages(true);
+					mstruct = minteg1;
+					mstruct += minteg2;
+					return 1;
+				}
+			}
+			if(b_exit) {
+				CALCULATOR->endTemporaryStopMessages();
+				mstruct = mbak;
+				mstruct.replace(x_var, vargs[1]);
+				CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
+				return -1;
+			}
 		}
 	}
 

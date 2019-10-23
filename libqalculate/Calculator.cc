@@ -2005,7 +2005,7 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "9191.66", 1, "", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "7377.47", 1, "", false, true, true));
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
@@ -7417,8 +7417,22 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				} else if(mstack.size() < 2) {
 					if(str[i] == NOT_CH) {
 						mstack.back()->transform(STRUCT_LOGICAL_NOT); 
+					} else if(str[i] == MINUS_CH) {
+						if(po.preserve_format) mstack.back()->transform(STRUCT_NEGATE);
+						else mstack.back()->negate(); 
 					} else if(str[i] == BITWISE_NOT_CH) {
 						mstack.back()->transform(STRUCT_BITWISE_NOT); 
+					} else if(str[i] == '\x1c') {
+						if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstack.back()->contains(getRadUnit(), false, true, true) <= 0 && mstack.back()->contains(getGraUnit(), false, true, true) <= 0 && mstack.back()->contains(getDegUnit(), false, true, true) <= 0) {
+							switch(po.angle_unit) {
+								case ANGLE_UNIT_DEGREES: {mstack.back()->multiply(getDegUnit()); break;}
+								case ANGLE_UNIT_GRADIANS: {mstack.back()->multiply(getGraUnit()); break;}
+								default: {}
+							}
+						}
+						mstack.back()->transform(priv->f_cis); 
+						mstack.back()->multiply(m_one);
+						if(po.preserve_format) mstack.back()->swapChildren(1, 2);
 					} else {
 						error(false, _("RPN syntax error. Operator ignored as there where only one stack value."), NULL);
 					}
@@ -8161,10 +8175,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 	}
 	
-	if((i = str.find('\x1c', 1)) != string::npos && i + 1 != str.length()) {
-		str2 = str.substr(0, i);
+	if((i = str.find('\x1c', 0)) != string::npos && i + 1 != str.length()) {
+		if(i != 0) str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
-		parseAdd(str2, mstruct, po);
+		if(i != 0) parseAdd(str2, mstruct, po);
+		else mstruct->set(1, 1, 0);
 		parseAdd(str, mstruct, po, OPERATION_MULTIPLY);
 		if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstruct->last().contains(getRadUnit(), false, true, true) <= 0 && mstruct->last().contains(getGraUnit(), false, true, true) <= 0 && mstruct->last().contains(getDegUnit(), false, true, true) <= 0) {
 			switch(po.angle_unit) {

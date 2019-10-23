@@ -1669,16 +1669,20 @@ void speed_test() {
 
 int main(int argc, char *argv[]) {
 
-	new Calculator(true);
+	new Calculator(false);
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
-	CALCULATOR->setPrecision(10);
+	CALCULATOR->setPrecision(8);
 	
 	CALCULATOR->useIntervalArithmetic();
 	PrintOptions po = CALCULATOR->messagePrintOptions();
-	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+	/*po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	po.show_ending_zeroes = true;
 	po.number_fraction_format = FRACTION_FRACTIONAL;
+	po.restrict_fraction_length = true;*/
+	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+	po.show_ending_zeroes = false;
+	po.number_fraction_format = FRACTION_DECIMAL;
 	po.restrict_fraction_length = true;
 	CALCULATOR->setMessagePrintOptions(po);
 	
@@ -1711,15 +1715,15 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	//test_integration();
-	//return 0;
+	test_integration();
+	return 0;
 	//test_intervals(true);
 	
-	Number nr;
+	/*Number nr;
 	evalops.approximation = APPROXIMATION_TRY_EXACT;
 	po.number_fraction_format = FRACTION_DECIMAL;
 	po.show_ending_zeroes = false;
-	//while(nr >= -1000) {
+	while(nr >= -1000) {
 	nr.set("-22.49");
 	CALCULATOR->setCustomOutputBase(Number("-10"));
 	po.base = BASE_CUSTOM;
@@ -1733,8 +1737,8 @@ int main(int argc, char *argv[]) {
 		if(nr.print(po) != str2) sleep(1);
 		display_errors();
 		//nr--;
-	//}
-	return 0;
+	}*/
+	//return 0;
 
 	CALCULATOR->setVariableUnitsEnabled(false);
 	
