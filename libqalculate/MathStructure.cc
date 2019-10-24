@@ -29906,6 +29906,7 @@ bool isUnit_multi(const MathStructure &mstruct) {
 
 int test_comparisons(const MathStructure &msave, MathStructure &mthis, const MathStructure &x_var, const EvaluationOptions &eo, bool sub) {
 	if(mthis.isComparison() && mthis[0] == x_var) {
+		if(mthis.comparisonType() != COMPARISON_EQUALS || mthis.comparisonType() != COMPARISON_NOT_EQUALS) return 1;
 		MathStructure mtest;
 		EvaluationOptions eo2 = eo;
 		eo2.calculate_functions = false;
