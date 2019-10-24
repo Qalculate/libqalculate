@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-14 09:08+0200\n"
+"POT-Creation-Date: 2019-10-24 12:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4000,7 +4000,7 @@ msgid "Real Part"
 msgstr ""
 
 #: ../data/functions.xml.in.h:313
-msgid "r:re"
+msgid "r:re,au:&#x211C;"
 msgstr ""
 
 #: ../data/functions.xml.in.h:314
@@ -4012,7 +4012,7 @@ msgid "Imaginary Part"
 msgstr ""
 
 #: ../data/functions.xml.in.h:316
-msgid "r:im"
+msgid "r:im,au:&#x2111;"
 msgstr ""
 
 #: ../data/functions.xml.in.h:317
@@ -4130,31 +4130,31 @@ msgid "Branch"
 msgstr ""
 
 #: ../data/functions.xml.in.h:344
-msgid "Base-2 Logarithm"
-msgstr ""
-
-#: ../data/functions.xml.in.h:345
-msgid "rs:log2"
-msgstr ""
-
-#: ../data/functions.xml.in.h:346
-msgid "Returns the base n logarithm."
-msgstr ""
-
-#: ../data/functions.xml.in.h:347
-msgid "Base-10 Logarithm"
-msgstr ""
-
-#: ../data/functions.xml.in.h:348
-msgid "rs:log10"
-msgstr ""
-
-#: ../data/functions.xml.in.h:349
 msgid "Complex Exponential (Cis)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:350
+#: ../data/functions.xml.in.h:345
 msgid "r:cis"
+msgstr ""
+
+#: ../data/functions.xml.in.h:346
+msgid "Base-2 Logarithm"
+msgstr ""
+
+#: ../data/functions.xml.in.h:347
+msgid "rs:log2"
+msgstr ""
+
+#: ../data/functions.xml.in.h:348
+msgid "Returns the base n logarithm."
+msgstr ""
+
+#: ../data/functions.xml.in.h:349
+msgid "Base-10 Logarithm"
+msgstr ""
+
+#: ../data/functions.xml.in.h:350
+msgid "rs:log10"
 msgstr ""
 
 #: ../data/functions.xml.in.h:351
@@ -5953,7 +5953,7 @@ msgid "Differentiate"
 msgstr ""
 
 #: ../data/functions.xml.in.h:784
-msgid "r:diff"
+msgid "r:diff,derivative"
 msgstr ""
 
 #: ../data/functions.xml.in.h:785
@@ -5965,7 +5965,7 @@ msgid "Integrate"
 msgstr ""
 
 #: ../data/functions.xml.in.h:787
-msgid "r:integrate"
+msgid "r:integrate,integral,au:&#x222B;"
 msgstr ""
 
 #: ../data/functions.xml.in.h:788
