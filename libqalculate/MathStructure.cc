@@ -28076,6 +28076,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 					CHILD(0).last().negate();
 					CHILD(0).childUpdated(CHILD(0).size());
 					CHILD_UPDATED(0)
+					if(o_function == CALCULATOR->f_cos) negate();
 					if(!mmul.isOne()) divide(mmul);
 					add(mdivpi);
 					LAST *= nr_two;
