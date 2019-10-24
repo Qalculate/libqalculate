@@ -1,3 +1,7 @@
+2019-10-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix integral of a^(b*x^c)
+
 2019-10-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Allow angle argument in cis()

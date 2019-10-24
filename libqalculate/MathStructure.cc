@@ -28636,7 +28636,37 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							return true;
 						}
 					} else if(madd.isZero()) {
-						if(mexp.number().isRational() && !mexp.isInteger()) {
+						if(mexp == nr_two && mmul.representsNegative()) {
+							if(CHILD(0) == CALCULATOR->v_e) {
+								mmul.negate();
+								set(mmul);
+								raise(nr_half);
+								multiply(x_var);
+								transform(CALCULATOR->f_erf);
+								mmul.inverse();
+								mmul *= MathStructure(1, 4);
+								mmul *= CALCULATOR->v_pi;
+								mmul ^= nr_half;
+								multiply(mmul);
+							} else {
+								MathStructure mlog(CHILD(0));
+								mlog.transform(CALCULATOR->f_ln);
+								mlog ^= nr_half;
+								mmul.negate();
+								set(mmul);
+								raise(nr_half);
+								multiply(x_var);
+								multiply(mlog);
+								transform(CALCULATOR->f_erf);
+								mmul.inverse();
+								mmul *= CALCULATOR->v_pi;
+								mmul ^= nr_half;
+								multiply(mmul);
+								multiply(nr_half);
+								divide(mlog);
+							}
+							return true;
+						} else if(mexp.number().isRational() && !mexp.isInteger()) {
 							Number num(mexp.number().numerator());
 							Number den(mexp.number().denominator());
 							MathStructure morig(x_var);
@@ -28675,6 +28705,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							var->destroy();
 						}
 						//integrate(a^(bx^c)) = -igamma(1/c, -b*ln(a)*x^c)/(c(-1)^(1/c)*b^(1/c)*ln(a)^(1/c))
+						if(definite_integral && mexp != nr_two && !x_var.representsNonNegative()) CANNOT_INTEGRATE
 						MathStructure mbase(CHILD(0));
 						MathStructure mexpinv(mexp);
 						mexpinv.inverse();
@@ -28685,14 +28716,10 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						marg2 *= mmul;
 						marg2.negate();
 						set(CALCULATOR->f_igamma, &mexpinv, &marg2, NULL);
+						multiply(x_var);
 						divide(mexp);
 						mexpinv.negate();
-						multiply(m_minus_one);
-						LAST ^= mexpinv;
-						multiply(mmul);
-						LAST ^= mexpinv;
-						multiply(mbase);
-						LAST.transform(CALCULATOR->f_ln);
+						multiply(marg2);
 						LAST ^= mexpinv;
 						negate();
 						return true;

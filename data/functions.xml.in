@@ -2572,7 +2572,7 @@
     <_title>Calculus</_title>
     <builtin_function name="diff">
       <_title>Differentiate</_title>
-      <_names>r:diff</_names>
+      <_names>r:diff,derivative</_names>
       <argument index="1">
         <_title>Function</_title>
       </argument>
@@ -2588,7 +2588,7 @@
     </builtin_function>
     <builtin_function name="integrate">
       <_title>Integrate</_title>
-      <_names>r:integrate</_names>
+      <_names>r:integrate,integral,au:&#x222B;</_names>
       <argument index="1">
         <_title>Function</_title>
       </argument>

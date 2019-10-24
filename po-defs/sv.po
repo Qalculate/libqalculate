@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-14 09:08+0200\n"
+"POT-Creation-Date: 2019-10-24 12:03+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -3870,8 +3870,8 @@ msgid ""
 "Returns a value from an expression in bijective base-26. Conversion in the "
 "opposite direction is also supported."
 msgstr ""
-"Returnerar ett värde från ett uttryck i bijektiv talbas 26. Omvandling i motsatt "
-"riktning stöds också."
+"Returnerar ett värde från ett uttryck i bijektiv talbas 26. Omvandling i "
+"motsatt riktning stöds också."
 
 #: ../data/functions.xml.in.h:259
 msgid "Bijective base-26 number"
@@ -4094,8 +4094,9 @@ msgid "Real Part"
 msgstr "Reell del"
 
 #: ../data/functions.xml.in.h:313
-msgid "r:re"
-msgstr ""
+#, fuzzy
+msgid "r:re,au:&#x211C;"
+msgstr "promille,au:&#x2030;"
 
 #: ../data/functions.xml.in.h:314
 msgid "Complex number"
@@ -4106,8 +4107,9 @@ msgid "Imaginary Part"
 msgstr "Imaginär del"
 
 #: ../data/functions.xml.in.h:316
-msgid "r:im"
-msgstr ""
+#, fuzzy
+msgid "r:im,au:&#x2111;"
+msgstr "promille,au:&#x2030;"
 
 #: ../data/functions.xml.in.h:317
 msgid "Principal Argument"
@@ -4231,31 +4233,31 @@ msgid "Branch"
 msgstr "Gren"
 
 #: ../data/functions.xml.in.h:344
-msgid "Base-2 Logarithm"
-msgstr "Bas-2-logaritm"
-
-#: ../data/functions.xml.in.h:345
-msgid "rs:log2"
-msgstr ""
-
-#: ../data/functions.xml.in.h:346
-msgid "Returns the base n logarithm."
-msgstr "Returnerar logaritmen för bas n."
-
-#: ../data/functions.xml.in.h:347
-msgid "Base-10 Logarithm"
-msgstr "Bas-10-logaritm"
-
-#: ../data/functions.xml.in.h:348
-msgid "rs:log10"
-msgstr ""
-
-#: ../data/functions.xml.in.h:349
 msgid "Complex Exponential (Cis)"
 msgstr "Komplex exponentialfunction (Cis)"
 
-#: ../data/functions.xml.in.h:350
+#: ../data/functions.xml.in.h:345
 msgid "r:cis"
+msgstr ""
+
+#: ../data/functions.xml.in.h:346
+msgid "Base-2 Logarithm"
+msgstr "Bas-2-logaritm"
+
+#: ../data/functions.xml.in.h:347
+msgid "rs:log2"
+msgstr ""
+
+#: ../data/functions.xml.in.h:348
+msgid "Returns the base n logarithm."
+msgstr "Returnerar logaritmen för bas n."
+
+#: ../data/functions.xml.in.h:349
+msgid "Base-10 Logarithm"
+msgstr "Bas-10-logaritm"
+
+#: ../data/functions.xml.in.h:350
+msgid "rs:log10"
 msgstr ""
 
 #: ../data/functions.xml.in.h:351
@@ -6122,8 +6124,8 @@ msgid "Differentiate"
 msgstr "Derivera"
 
 #: ../data/functions.xml.in.h:784
-msgid "r:diff"
-msgstr ""
+msgid "r:diff,derivative"
+msgstr "diff,derivata,derivera"
 
 #: ../data/functions.xml.in.h:785
 msgid "Variable value"
@@ -6134,8 +6136,8 @@ msgid "Integrate"
 msgstr "Integrera"
 
 #: ../data/functions.xml.in.h:787
-msgid "r:integrate"
-msgstr "integrera"
+msgid "r:integrate,integral,au:&#x222B;"
+msgstr "integrera,integral,au:&#x222B;"
 
 #: ../data/functions.xml.in.h:788
 msgid "Variable of integration"
@@ -7689,7 +7691,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:66
 msgid "ar:deg,au:&#xB0;,degree,p:degrees"
-msgstr "a:deg,au:&#xB0;,grad,p:grader"
+msgstr "a:deg,au:&#xB0;,grad,degree,p:grader,p:degrees"
 
 #: ../data/units.xml.in.h:67
 msgid "Gradian (Gon)"
@@ -10550,6 +10552,9 @@ msgstr "Nu (datum och tid)"
 #: ../data/variables.xml.in.h:212
 msgid "r:now"
 msgstr ""
+
+#~ msgid "r:integrate"
+#~ msgstr "integrera"
 
 #~ msgid ""
 #~ "Returns a value from a number in bijective base-26 representation, or a "
