@@ -1902,6 +1902,7 @@ void Calculator::addBuiltinFunctions() {
 	f_max = addFunction(new MaxFunction());
 	f_mode = addFunction(new ModeFunction());
 	f_rand = addFunction(new RandFunction());
+	addFunction(new RandnFunction());
 
 	f_date = addFunction(new DateFunction());
 	f_datetime = addFunction(new DateTimeFunction());

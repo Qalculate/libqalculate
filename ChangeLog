@@ -1,3 +1,8 @@
+2019-10-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add argument specifying number of values in random number functions
+	* randnorm() and randuniform() functions
+
 2019-10-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix integral of a^(b*x^c)
