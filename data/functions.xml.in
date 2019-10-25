@@ -1500,18 +1500,56 @@
       <argument index="1">
         <_title>Ceil</_title>
       </argument>
+      <argument index="2">
+        <_title>Number of values</_title>
+      </argument>
     </builtin_function>
+    <builtin_function name="randnorm">
+      <_title>Normally Distributed Random Number</_title>
+      <_names>r:randnorm,randn</_names>
+      <argument index="1">
+        <_title>Mean</_title>
+      </argument>
+      <argument index="2">
+        <_title>Standard deviation</_title>
+      </argument>
+      <argument index="3">
+        <_title>Number of values</_title>
+      </argument>
+    </builtin_function>
+    <function>
+      <_title>Uniformly Distributed Random Number</_title>
+      <_names>r:randuniform</_names>
+      <expression>\x*rand(0,\Z{1})+(\y-\x)</expression>
+      <condition>\x&lt;=\y</condition>
+      <argument type="number" index="1">
+        <_title>Lower limit</_title>
+        <complex_allowed>false</complex_allowed>
+      </argument>
+      <argument type="number" index="2">
+        <_title>Upper limit</_title>
+        <complex_allowed>false</complex_allowed>
+      </argument>
+      <argument type="integer" index="3">
+        <_title>Number of values</_title>
+        <min>1</min>
+      </argument>
+    </function>
     <function>
       <_title>Random Number Between Limits</_title>
       <_names>r:randbetween</_names>
       <_description>Returns an integer between (including) bottom and top.</_description>
-      <expression>rand(\y-\x+1)+\x-1</expression>
+      <expression>rand(\y-\x+1,\Z{1})+\x-1</expression>
       <condition>\x&lt;=\y</condition>
       <argument type="integer" index="1">
         <_title>Bottom</_title>
       </argument>
       <argument type="integer" index="2">
         <_title>Top</_title>
+      </argument>
+      <argument type="integer" index="3">
+        <_title>Number of values</_title>
+        <min>1</min>
       </argument>
     </function>
     <category>

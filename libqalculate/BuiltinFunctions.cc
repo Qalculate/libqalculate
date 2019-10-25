@@ -4849,24 +4849,77 @@ int ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	return 0;
 }
-RandFunction::RandFunction() : MathFunction("rand", 0, 1) {
+
+RandFunction::RandFunction() : MathFunction("rand", 0, 2) {
 	setArgumentDefinition(1, new IntegerArgument());
 	setDefaultValue(1, "0");
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
+	setDefaultValue(2, "1");
 }
 int RandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	Number nr;
-	if(vargs[0].number().isZero() || vargs[0].number().isNegative()) {
-		nr.rand();
-	} else {
-		nr.intRand(vargs[0].number());
-		nr++;
+	size_t n = (size_t) vargs[1].number().uintValue();
+	if(n > 1) {mstruct.clearVector(); mstruct.resizeVector(n, m_zero);}
+	for(size_t i = 0; i < n; i++) {
+		Number nr;
+		if(vargs[0].number().isZero() || vargs[0].number().isNegative()) {
+			nr.rand();
+		} else {
+			nr.intRand(vargs[0].number());
+			nr++;
+		}
+		if(n > 1) mstruct[i] = nr;
+		else mstruct = nr;
 	}
-	mstruct = nr;
 	return 1;
 }
 bool RandFunction::representsReal(const MathStructure&, bool) const {return true;}
 bool RandFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() > 0 && vargs[0].isNumber() && vargs[0].number().isPositive();}
 bool RandFunction::representsNonNegative(const MathStructure&, bool) const {return true;}
+
+RandnFunction::RandnFunction() : MathFunction("randnorm", 0, 3) {
+	NON_COMPLEX_NUMBER_ARGUMENT(1)
+	setDefaultValue(1, "0");
+	NON_COMPLEX_NUMBER_ARGUMENT(2)
+	setDefaultValue(2, "1");
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
+	setDefaultValue(3, "1");
+}
+int RandnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	size_t n = (size_t) vargs[2].number().uintValue();
+	if(n > 1) {mstruct.clearVector(); mstruct.resizeVector(n, m_zero);}
+	for(size_t i = 0; i < n; i++) {
+		Number nr_u, nr_v, nr_r2;
+		do {
+			nr_u.rand(); nr_u *= 2; nr_u -= 1;
+			nr_v.rand(); nr_v *= 2; nr_v -= 1;
+			nr_r2 = (nr_u ^ 2) + (nr_v ^ 2);
+		} while(nr_r2 > 1 || nr_r2.isZero());
+		Number nr_rsq(nr_r2);
+		nr_rsq.ln();
+		nr_rsq /= nr_r2;
+		nr_rsq *= -2;
+		nr_rsq.sqrt();
+		nr_u *= nr_rsq;
+		nr_u *= vargs[1].number();
+		nr_u += vargs[0].number();
+		if(n > 1) {
+			mstruct[i] = nr_u;
+			i++;
+			if(i < n) {
+				nr_v *= nr_rsq;
+				nr_v *= vargs[1].number();
+				nr_v += vargs[0].number();
+				mstruct[i] = nr_v;
+			}
+		} else {
+			mstruct = nr_u;
+		}
+	}
+	return 1;
+}
+bool RandnFunction::representsReal(const MathStructure&, bool) const {return true;}
+bool RandnFunction::representsNonComplex(const MathStructure&, bool) const {return true;}
+bool RandnFunction::representsNumber(const MathStructure&, bool) const {return true;}
 
 int calender_to_id(const string &str) {
 	if(str == "1" || equalsIgnoreCase(str, "gregorian") || equalsIgnoreCase(str, _("gregorian"))) return CALENDAR_GREGORIAN;
