@@ -4859,8 +4859,8 @@ RandFunction::RandFunction() : MathFunction("rand", 0, 2) {
 int RandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	size_t n = (size_t) vargs[1].number().uintValue();
 	if(n > 1) {mstruct.clearVector(); mstruct.resizeVector(n, m_zero);}
+	Number nr;
 	for(size_t i = 0; i < n; i++) {
-		Number nr;
 		if(vargs[0].number().isZero() || vargs[0].number().isNegative()) {
 			nr.rand();
 		} else {
@@ -4887,8 +4887,8 @@ RandnFunction::RandnFunction() : MathFunction("randnorm", 0, 3) {
 int RandnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	size_t n = (size_t) vargs[2].number().uintValue();
 	if(n > 1) {mstruct.clearVector(); mstruct.resizeVector(n, m_zero);}
+	Number nr_u, nr_v, nr_r2;
 	for(size_t i = 0; i < n; i++) {
-		Number nr_u, nr_v, nr_r2;
 		do {
 			nr_u.rand(); nr_u *= 2; nr_u -= 1;
 			nr_v.rand(); nr_v *= 2; nr_v -= 1;
@@ -4920,6 +4920,35 @@ int RandnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 bool RandnFunction::representsReal(const MathStructure&, bool) const {return true;}
 bool RandnFunction::representsNonComplex(const MathStructure&, bool) const {return true;}
 bool RandnFunction::representsNumber(const MathStructure&, bool) const {return true;}
+
+RandPoissonFunction::RandPoissonFunction() : MathFunction("randpoisson", 1, 2) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+	setDefaultValue(1, "0");
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
+	setDefaultValue(2, "1");
+}
+int RandPoissonFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	size_t n = (size_t) vargs[2].number().uintValue();
+	if(n > 1) {mstruct.clearVector(); mstruct.resizeVector(n, m_zero);}
+	Number nr_L(vargs[1].number());
+	nr_L.exp();
+	Number nr_k, nr_p, nr_u;
+	for(size_t i = 0; i < n; i++) {
+		nr_k.clear(); nr_p = 1;
+		do {
+			nr_k++;
+			nr_u.rand();
+			nr_p *= nr_u;
+		} while(nr_p > nr_L);
+		nr_k--;
+		if(n > 1) mstruct[i] = nr_k;
+		else mstruct = nr_k;
+	}
+	return 1;
+}
+bool RandPoissonFunction::representsReal(const MathStructure&, bool) const {return true;}
+bool RandPoissonFunction::representsInteger(const MathStructure &vargs, bool) const {return true;}
+bool RandPoissonFunction::representsNonNegative(const MathStructure&, bool) const {return true;}
 
 int calender_to_id(const string &str) {
 	if(str == "1" || equalsIgnoreCase(str, "gregorian") || equalsIgnoreCase(str, _("gregorian"))) return CALENDAR_GREGORIAN;

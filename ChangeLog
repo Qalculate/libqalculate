@@ -1,7 +1,11 @@
+2019-10-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* expondist(), binomdist(), randpoisson(), randrayleigh(), and randexp() functions
+
 2019-10-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add argument specifying number of values in random number functions
-	* randnorm() and randuniform() functions
+	* randnorm(), randuniform(), and normdist() functions
 
 2019-10-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

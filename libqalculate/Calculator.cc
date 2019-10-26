@@ -1903,6 +1903,7 @@ void Calculator::addBuiltinFunctions() {
 	f_mode = addFunction(new ModeFunction());
 	f_rand = addFunction(new RandFunction());
 	addFunction(new RandnFunction());
+	addFunction(new RandPoissonFunction());
 
 	f_date = addFunction(new DateFunction());
 	f_datetime = addFunction(new DateTimeFunction());
