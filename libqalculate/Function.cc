@@ -1833,9 +1833,9 @@ string IntegerArgument::subprintlong() const {
 		str += " ";
 		switch(i_inttype) {
 			case INTEGER_TYPE_SIZE: {}
-			case INTEGER_TYPE_UINT: {str += i2s(UINT_MAX); break;}
+			case INTEGER_TYPE_UINT: {str += u2s(UINT_MAX); break;}
 			case INTEGER_TYPE_SINT: {str += i2s(INT_MAX); break;}
-			case INTEGER_TYPE_ULONG: {str += i2s(ULONG_MAX); break;}
+			case INTEGER_TYPE_ULONG: {str += u2s(ULONG_MAX); break;}
 			case INTEGER_TYPE_SLONG: {str += i2s(LONG_MAX); break;}
 			default: {}
 		}
