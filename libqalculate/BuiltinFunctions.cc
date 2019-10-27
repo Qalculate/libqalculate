@@ -4876,10 +4876,10 @@ bool RandFunction::representsReal(const MathStructure&, bool) const {return true
 bool RandFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() > 0 && vargs[0].isNumber() && vargs[0].number().isPositive();}
 bool RandFunction::representsNonNegative(const MathStructure&, bool) const {return true;}
 
+extern gmp_randstate_t randstate;
+
 RandnFunction::RandnFunction() : MathFunction("randnorm", 0, 3) {
-	NON_COMPLEX_NUMBER_ARGUMENT(1)
 	setDefaultValue(1, "0");
-	NON_COMPLEX_NUMBER_ARGUMENT(2)
 	setDefaultValue(2, "1");
 	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
 	setDefaultValue(3, "1");
@@ -4887,6 +4887,7 @@ RandnFunction::RandnFunction() : MathFunction("randnorm", 0, 3) {
 int RandnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	size_t n = (size_t) vargs[2].number().uintValue();
 	if(n > 1) {mstruct.clearVector(); mstruct.resizeVector(n, m_zero);}
+#if MPFR_VERSION_MAJOR < 4
 	Number nr_u, nr_v, nr_r2;
 	for(size_t i = 0; i < n; i++) {
 		do {
@@ -4900,21 +4901,30 @@ int RandnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		nr_rsq *= -2;
 		nr_rsq.sqrt();
 		nr_u *= nr_rsq;
-		nr_u *= vargs[1].number();
-		nr_u += vargs[0].number();
 		if(n > 1) {
 			mstruct[i] = nr_u;
 			i++;
 			if(i < n) {
 				nr_v *= nr_rsq;
-				nr_v *= vargs[1].number();
-				nr_v += vargs[0].number();
 				mstruct[i] = nr_v;
 			}
 		} else {
 			mstruct = nr_u;
 		}
 	}
+#else
+	Number nr;
+	nr.setToFloatingPoint();
+	nr.setApproximate(false);
+	for(size_t i = 0; i < n; i++) {
+		mpfr_nrandom(nr.internalLowerFloat(), randstate, MPFR_RNDN);
+		mpfr_set(nr.internalUpperFloat(), nr.internalLowerFloat(), MPFR_RNDN);
+		if(n > 1) mstruct[i] = nr;
+		else mstruct = nr;
+	}
+#endif
+	mstruct *= vargs[1];
+	mstruct += vargs[0];
 	return 1;
 }
 bool RandnFunction::representsReal(const MathStructure&, bool) const {return true;}
@@ -6913,6 +6923,21 @@ bool replace_abs(MathStructure &mstruct, const MathStructure &mabs, bool neg) {
 	}
 	return b_ret;
 }
+bool contains_negative_igamma(const MathStructure &mstruct) {
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_erf && mstruct.size() == 1 && !mstruct[0].representsReal()) {
+		if(mstruct[0].representsComplex()) return true;
+		MathStructure mtest(mstruct[0]);
+		mtest.eval();
+		return !mstruct[0].representsNonComplex();
+	}
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_igamma && mstruct.size() == 2 && !COMPARISON_IS_EQUAL_OR_LESS(mstruct[1].compare(m_zero))) {
+		return true;
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(contains_negative_igamma(mstruct[i])) return true;
+	}
+	return false;
+}
 
 int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
@@ -7017,27 +7042,36 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	eo2.approximation = eo.approximation;
 	if(b) {
 #if MPFR_VERSION_MAJOR < 4
-		if(definite_integral && mstruct.containsFunction(this, true) <= 0 && mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0) {
+		if(definite_integral && mstruct.containsFunction(this, true) <= 0 && (eo.approximation == APPROXIMATION_EXACT || mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0)) {
 #else
 		if(definite_integral && mstruct.containsFunction(this, true) <= 0) {
 #endif
 			CALCULATOR->endTemporaryStopMessages(true);
 			MathStructure mstruct_lower(mstruct);
 			mstruct_lower.replace(x_var, vargs[2]);
+			bool incalc = eo.approximation != APPROXIMATION_EXACT && contains_negative_igamma(mstruct_lower);
 			if(definite_integral < 0) {
-				MathStructure mtest(mstruct);
-				mtest.replace(x_var, vargs[3]);
-				mtest -= mstruct_lower;
-				CALCULATOR->beginTemporaryStopMessages();
-				mtest.eval(eo);
-				if(CALCULATOR->endTemporaryStopMessages() || mtest.containsInfinity()) {
+				if(incalc) {
 					definite_integral = 0;
+				} else {
+					MathStructure mtest(mstruct);
+					mtest.replace(x_var, vargs[3]);
+					mtest -= mstruct_lower;
+					CALCULATOR->beginTemporaryStopMessages();
+					mtest.eval(eo);
+					if(CALCULATOR->endTemporaryStopMessages() || mtest.containsInfinity()) {
+						definite_integral = 0;
+					}
 				}
 			}
 			if(definite_integral) {
 				mstruct.replace(x_var, vargs[3]);
-				mstruct -= mstruct_lower;
-				return 1;
+				if(incalc || (eo.approximation != APPROXIMATION_EXACT && contains_negative_igamma(mstruct))) {
+					mstruct = mbak;
+				} else {
+					mstruct -= mstruct_lower;
+					return 1;
+				}
 			}
 		} else if(definite_integral < 0) {
 			definite_integral = 0;
@@ -7245,7 +7279,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 					nr2.abs();
 					if(nr1.isGreaterThan(nr2)) nr_interval = nr1;
 					else nr_interval = nr2;
-					bool b_first = true;
+					int i_run = 0;
 					while(true) {
 						if(CALCULATOR->aborted()) {
 							mstruct.replace(x_var, vargs[1]);
@@ -7253,38 +7287,45 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 							CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 							return -1;
 						}
-						Number prec_exp(1, 1, CALCULATOR->getPrecision() + 2);
-						prec_exp /= ntr;
-						nr_samples = nr_range;
-						nr_samples ^= 5;
-						nr_samples *= nr_interval;
-						nr_samples /= 180;
-						nr_samples *= prec_exp;
-						nr_samples.root(4);
-						nr_samples.ceil();
-						if(nr_samples.isOdd()) nr_samples++;
-						bool b_limited_samples = nr_samples.isGreaterThan(b_first ? 1000 : 100000);
+						if(i_run > 1) {
+							nr_samples *= 10;
+						} else {
+							Number prec_exp(1, 1, CALCULATOR->getPrecision() + 2);
+							prec_exp /= ntr;
+							nr_samples = nr_range;
+							nr_samples ^= 5;
+							nr_samples *= nr_interval;
+							nr_samples /= 180;
+							nr_samples *= prec_exp;
+							nr_samples.root(4);
+							nr_samples.ceil();
+							if(nr_samples.isOdd()) nr_samples++;
+						}
+						bool b_limited_samples = nr_samples.isGreaterThan(i_run == 0 ? 1000 : 100000);
 						if(b_limited_samples) {
-							nr_samples = b_first ? 1000 : 100000;
-							if(!b_first) {
+							nr_samples = (i_run == 0) ? 1000 : 100000;
+							if(i_run != 0) {
 								Number nr_prec(nr_range);
 								nr_prec ^= 5;
 								nr_prec /= 180;
-								Number nr_samples_exp(nr_samples);
-								nr_samples_exp ^= Number(4, 1);
-								nr_prec /= nr_samples_exp;
+								nr_prec /= (nr_samples ^ 4);
 								nr_prec *= nr_interval;
-								Number nr_rel_prec(mstruct.number());
-								nr_rel_prec.abs();
-								nr_rel_prec /= nr_prec;
-								nr_rel_prec.log(10);
-								nr_rel_prec.floor();
+								Number nr_rel_prec(ntr);
+								if(nr_prec.isZero()) {
+									nr_rel_prec.clear();
+								} else {
+									nr_rel_prec.abs();
+									nr_rel_prec /= nr_prec;
+									nr_rel_prec.log(10);
+									nr_rel_prec.floor();
+								}
 								if(!nr_rel_prec.isPositive()) {
 									mstruct = mbak;
 									break;
 								}
 							}
 						}
+						
 						if(numerical_integration(mstruct, x_var, eo2, nr_begin, nr_end, nr_samples.intValue())) {
 							if(!mstruct.isNumber() || !mstruct.number().isReal()) {
 								CALCULATOR->endTemporaryStopIntervalArithmetic();
@@ -7295,20 +7336,22 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 							Number nr_prec(nr_range);
 							nr_prec ^= 5;
 							nr_prec /= 180;
-							Number nr_samples_exp(nr_samples);
-							nr_samples_exp ^= Number(4, 1);
-							nr_prec /= nr_samples_exp;
+							nr_prec /= (nr_samples ^ 4);
 							nr_prec *= nr_interval;
 							Number nr_rel_prec(mstruct.number());
-							nr_rel_prec.abs();
-							nr_rel_prec /= nr_prec;
-							nr_rel_prec.log(10);
-							nr_rel_prec.floor();
-							if(!b_first && b_limited_samples && !nr_rel_prec.isPositive()) {
+							if(nr_prec.isZero()) {
+								nr_rel_prec.clear();
+							} else {
+								nr_rel_prec.abs();
+								nr_rel_prec /= nr_prec;
+								nr_rel_prec.log(10);
+								nr_rel_prec.floor();
+							}
+							if(i_run != 0 && b_limited_samples && !nr_rel_prec.isPositive()) {
 								mstruct = mbak;
 								break;
 							}
-							if((b_limited_samples && !b_first) || nr_rel_prec.intValue() >= CALCULATOR->getPrecision()) {
+							if((b_limited_samples && i_run != 0) || nr_rel_prec.intValue() >= CALCULATOR->getPrecision()) {
 								CALCULATOR->endTemporaryStopIntervalArithmetic();
 								mstruct.number().setUncertainty(nr_prec, eo.interval_calculation == INTERVAL_CALCULATION_NONE); 
 								mstruct.numberUpdated();
@@ -7316,11 +7359,12 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 								return 1;
 							}
 							ntr = mstruct.number();
+							mstruct = mbak;
 						} else {
 							mstruct = mbak;
 							break;
 						}
-						b_first = false;
+						i_run++;
 					}
 				}
 			}

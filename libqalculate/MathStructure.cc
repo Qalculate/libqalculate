@@ -2391,11 +2391,15 @@ ComparisonResult MathStructure::compare(const MathStructure &o) const {
 		return COMPARISON_RESULT_GREATER;
 	}
 	if(equals(o)) return COMPARISON_RESULT_EQUAL;
+	if(o.isZero()) {
+		if(representsPositive(true)) return COMPARISON_RESULT_LESS;
+		if(representsNegative(true)) return COMPARISON_RESULT_GREATER;
+	}
 	if(isMultiplication() && SIZE > 1 && CHILD(0).isNumber()) {
-		if(o.isZero()) {
+		if(o.isNumber()) {
 			bool b = true;
 			for(size_t i = 1; i < SIZE; i++) {
-				if(!CHILD(i).representsNonZero(true)) {
+				if(!CHILD(i).representsPositive(true)) {
 					b = false;
 					break;
 				}
@@ -2405,7 +2409,7 @@ ComparisonResult MathStructure::compare(const MathStructure &o) const {
 			if(SIZE == o.size() + (o[0].isNumber() ? 0 : 1)) {
 				bool b = true;
 				for(size_t i = 1; i < SIZE; i++) {
-					if(!CHILD(i).equals(o[0].isNumber() ? o[i] : o[i - 1]) || !CHILD(i).representsNonNegative(true)) {
+					if(!CHILD(i).equals(o[0].isNumber() ? o[i] : o[i - 1]) || !CHILD(i).representsPositive(true)) {
 						b = false;
 						break;
 					}
@@ -2413,10 +2417,10 @@ ComparisonResult MathStructure::compare(const MathStructure &o) const {
 				if(b && o[0].isNumber()) return CHILD(0).number().compare(o[0].number());
 				else if(b) return CHILD(0).number().compare(nr_one);
 			}
-		} else if(SIZE == 2 && o.equals(CHILD(1)) && o.representsNonNegative(true)) {
+		} else if(SIZE == 2 && o.equals(CHILD(1)) && o.representsPositive(true)) {
 			return CHILD(0).number().compare(nr_one);
 		}
-	} else if(o.isMultiplication() && o.size() == 2 && o[0].isNumber() && equals(o[1]) && representsNonNegative(true)) {
+	} else if(o.isMultiplication() && o.size() == 2 && o[0].isNumber() && equals(o[1]) && representsPositive(true)) {
 		return nr_one.compare(o[0].number());
 	}
 	if(o.representsReal(true) && representsComplex(true)) return COMPARISON_RESULT_NOT_EQUAL;
@@ -2480,10 +2484,10 @@ ComparisonResult MathStructure::compareApproximately(const MathStructure &o, con
 	}
 	if(equals(o)) return COMPARISON_RESULT_EQUAL;
 	if(isMultiplication() && SIZE > 1 && CHILD(0).isNumber()) {
-		if(o.isZero()) {
+		if(o.isNumber()) {
 			bool b = true;
 			for(size_t i = 1; i < SIZE; i++) {
-				if(!CHILD(i).representsNonZero(true)) {
+				if(!CHILD(i).representsPositive(true)) {
 					b = false;
 					break;
 				}
@@ -2493,7 +2497,7 @@ ComparisonResult MathStructure::compareApproximately(const MathStructure &o, con
 			if(SIZE == o.size() + (o[0].isNumber() ? 0 : 1)) {
 				bool b = true;
 				for(size_t i = 1; i < SIZE; i++) {
-					if(!CHILD(i).equals(o[0].isNumber() ? o[i] : o[i - 1]) || !CHILD(i).representsNonNegative(true)) {
+					if(!CHILD(i).equals(o[0].isNumber() ? o[i] : o[i - 1]) || !CHILD(i).representsPositive(true)) {
 						b = false;
 						break;
 					}
@@ -2501,10 +2505,10 @@ ComparisonResult MathStructure::compareApproximately(const MathStructure &o, con
 				if(b && o[0].isNumber()) return CHILD(0).number().compareApproximately(o[0].number());
 				else if(b) return CHILD(0).number().compareApproximately(nr_one);
 			}
-		} else if(SIZE == 2 && o.equals(CHILD(1)) && o.representsNonNegative(true)) {
+		} else if(SIZE == 2 && o.equals(CHILD(1)) && o.representsPositive(true)) {
 			return CHILD(0).number().compareApproximately(nr_one);
 		}
-	} else if(o.isMultiplication() && o.size() == 2 && o[0].isNumber() && equals(o[1]) && representsNonNegative(true)) {
+	} else if(o.isMultiplication() && o.size() == 2 && o[0].isNumber() && equals(o[1]) && representsPositive(true)) {
 		return nr_one.compareApproximately(o[0].number());
 	}
 	if(o.representsZero(true) && representsZero(true)) return COMPARISON_RESULT_EQUAL;
@@ -28635,8 +28639,13 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							divide(mmulfac);
 							return true;
 						}
-					} else if(madd.isZero()) {
-						if(mexp == nr_two && mmul.representsNegative()) {
+					} else if(madd.isZero() || COMPARISON_IS_NOT_EQUAL(madd.compare(m_zero))) {
+						if(mmul.representsPositive() && COMPARISON_IS_EQUAL_OR_GREATER(CHILD(0).compare(m_one)) && CHILD(0).compare(m_zero) == COMPARISON_RESULT_LESS) {
+							mmul.negate();
+							CHILD(0).inverse();
+						}
+						if(mexp == nr_two) {
+							if(!madd.isZero()) madd ^= CHILD(0);
 							if(CHILD(0) == CALCULATOR->v_e) {
 								mmul.negate();
 								set(mmul);
@@ -28665,6 +28674,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 								multiply(nr_half);
 								divide(mlog);
 							}
+							if(!madd.isZero()) multiply(madd);
 							return true;
 						} else if(mexp.number().isRational() && !mexp.isInteger()) {
 							Number num(mexp.number().numerator());
@@ -28704,8 +28714,9 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							CALCULATOR->endTemporaryStopMessages();
 							var->destroy();
 						}
-						//integrate(a^(bx^c)) = -igamma(1/c, -b*ln(a)*x^c)/(c(-1)^(1/c)*b^(1/c)*ln(a)^(1/c))
-						if(definite_integral && mexp != nr_two && !x_var.representsNonNegative()) CANNOT_INTEGRATE
+						//integrate(a^(b+cx^d)) = -x*a^b*(-c*x^d*ln(a))^(-1/d)*igamma(1/d, -c*x^d*ln(a))/d
+						if(definite_integral) CANNOT_INTEGRATE
+						if(!madd.isZero()) madd ^= CHILD(0);
 						MathStructure mbase(CHILD(0));
 						MathStructure mexpinv(mexp);
 						mexpinv.inverse();
@@ -28716,6 +28727,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						marg2 *= mmul;
 						marg2.negate();
 						set(CALCULATOR->f_igamma, &mexpinv, &marg2, NULL);
+						if(!madd.isZero()) multiply(madd);
 						multiply(x_var);
 						divide(mexp);
 						mexpinv.negate();
