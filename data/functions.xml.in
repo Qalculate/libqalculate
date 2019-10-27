@@ -1567,7 +1567,7 @@
       <function>
         <_title>Exponential Random Number</_title>
         <_names>r:randexp</_names>
-        <expression>-ln(1-rand(0,\Y{1}))/\x</expression>
+        <expression>-ln(rand(0,\Y{1}))/\x</expression>
         <argument type="number" index="1">
           <_title>Rate parameter</_title>
           <min>0</min>

@@ -1,3 +1,7 @@
+2019-10-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix numerical integration error calculation
+
 2019-10-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* expondist(), binomdist(), randpoisson(), randrayleigh(), and randexp() functions
