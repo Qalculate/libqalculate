@@ -1366,6 +1366,26 @@
         <_title>Roman number</_title>
       </argument>
     </builtin_function>
+    <function>
+      <_title>Depth of Field</_title>
+      <_names>r:dof</_names>
+      <_description>Returns the estimated distance between the nearest and the farthest objects that are in acceptably sharp focus in a photo. Enter focal length (e.g. 50 mm) and distance (e.g. 5 m) with units, and f-stop without unit (2.8, 4.0, 5.6, etc.). Specify either a cicle of confusion diameter limit (e.g. 0.05 mm) or the sensor size of the camera - 0="35mm", 1="APS-H", 2="APS-CN" (Nikon, Pentax, Sony), 3="APS-C" (Canon), 4="4/3" (Fourt Thirds System), or 5='1"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based on d/1500.</_description>
+      <example>$name(50 mm, 2.8, 2 m, "APS-C") ≈ 161 mm</example>
+      <expression approximate="true">2*\z^2*\y*if([\A{0}=0||\a="35mm"||\a="35 mm"||\a=35mm,\a=1||\a="APS-H",\a=2||\a="APC-CN",\a=3||\a="APS-C",\a=4||\a="3/4"||\a=3/4,\a=5||\a='1"'||\a="1"||\a=1in||\a=1],[0.029mm,0.023mm,0.019mm,0.018mm,0.015mm,0.011mm],\a,1))/\x^2</expression>
+      <argument type="free" index="1">
+        <_title>Focal Length</_title>
+      </argument>
+      <argument type="number" index="2">
+        <_title>F-stop (aperture)</_title>
+        <min>0</min>
+      </argument>
+      <argument type="free" index="3">
+        <_title>Distance</_title>
+      </argument>
+      <argument type="free" index="4">
+        <_title>Circle of confusion or sensor size</_title>
+      </argument>
+    </function>
   </category>
   <category>
     <_title>Statistics</_title>

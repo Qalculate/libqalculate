@@ -506,6 +506,7 @@ class Number {
 		bool factorize(vector<Number> &factors);
 		
 		void rand();
+		void randn();
 		void intRand(const Number &ceil);
 	
 		bool add(const Number &o, MathOperation op); 

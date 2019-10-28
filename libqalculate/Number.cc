@@ -7518,6 +7518,32 @@ void Number::rand() {
 	b_approx = false;
 	i_precision = -1;
 }
+void Number::randn() {
+#if MPFR_VERSION_MAJOR < 4
+	Number nr_u, nr_v, nr_r2;
+	do {
+		nr_u.rand(); nr_u *= 2; nr_u -= 1;
+		nr_v.rand(); nr_v *= 2; nr_v -= 1;
+		nr_r2 = (nr_u ^ 2) + (nr_v ^ 2);
+	} while(nr_r2 > 1 || nr_r2.isZero());
+	set(nr_r2);
+	ln();
+	divide(nr_r2);
+	multiply(-2);
+	sqrt();
+	multiply(nr_u);
+#else
+	if(n_type != NUMBER_TYPE_FLOAT) {
+		mpfr_inits2(BIT_PRECISION, fl_value, fu_value, NULL);
+		mpq_set_ui(r_value, 0, 1);
+		n_type = NUMBER_TYPE_FLOAT;
+	}
+	mpfr_nrandom(fu_value, randstate, MPFR_RNDN);
+	mpfr_set(fl_value, fu_value, MPFR_RNDN);
+#endif
+	b_approx = false;
+	i_precision = -1;
+}
 void Number::intRand(const Number &ceil) {
 	clear();
 	if(!ceil.isInteger() || !ceil.isPositive()) return;

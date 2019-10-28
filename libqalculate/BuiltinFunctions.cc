@@ -4876,8 +4876,6 @@ bool RandFunction::representsReal(const MathStructure&, bool) const {return true
 bool RandFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() > 0 && vargs[0].isNumber() && vargs[0].number().isPositive();}
 bool RandFunction::representsNonNegative(const MathStructure&, bool) const {return true;}
 
-extern gmp_randstate_t randstate;
-
 RandnFunction::RandnFunction() : MathFunction("randnorm", 0, 3) {
 	setDefaultValue(1, "0");
 	setDefaultValue(2, "1");
@@ -4914,17 +4912,14 @@ int RandnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	}
 #else
 	Number nr;
-	nr.setToFloatingPoint();
-	nr.setApproximate(false);
 	for(size_t i = 0; i < n; i++) {
-		mpfr_nrandom(nr.internalLowerFloat(), randstate, MPFR_RNDN);
-		mpfr_set(nr.internalUpperFloat(), nr.internalLowerFloat(), MPFR_RNDN);
+		nr.randn();
 		if(n > 1) mstruct[i] = nr;
 		else mstruct = nr;
 	}
 #endif
-	mstruct *= vargs[1];
-	mstruct += vargs[0];
+	if(!vargs[1].isOne()) mstruct *= vargs[1];
+	if(!vargs[0].isZero()) mstruct += vargs[0];
 	return 1;
 }
 bool RandnFunction::representsReal(const MathStructure&, bool) const {return true;}
