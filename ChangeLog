@@ -1,3 +1,7 @@
+2019-10-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Depth of field (dof) function
+
 2019-10-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix numerical integration error calculation

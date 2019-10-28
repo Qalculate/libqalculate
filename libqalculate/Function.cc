@@ -914,7 +914,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						if(i2 != 0 && stmp[i2 - 1] == '\\') {
 							i2 += svar.size();
 						} else {
-							stmp.replace(i2, svar.size(), v_subs[i]);
+							stmp.replace(i2, svar.size(), string("(") + v_subs[i] + ")");
 						}
 					} else {
 						break;
