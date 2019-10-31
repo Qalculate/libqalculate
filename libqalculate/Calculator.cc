@@ -2126,6 +2126,9 @@ CalculatorMessage* Calculator::nextMessage() {
 	}
 	return NULL;
 }
+void Calculator::clearMessages() {
+	messages.clear();
+}
 void Calculator::cleanMessages(const MathStructure &mstruct, size_t first_message) {
 	if(first_message > 0) first_message--;
 	if(messages.size() <= first_message) return;

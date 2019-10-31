@@ -13343,7 +13343,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		if(eo.calculate_functions) calculate_differentiable_functions(*this, feo);
 	} else if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA) {
 		if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, -1);
-		if(((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, 1, true)) || containsInterval(true, false, false, 1, true) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo))) {
+		if(!isNumber() && (((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, 1, true)) || containsInterval(true, false, false, 1, true) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo)))) {
 			if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, (eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) ? 2 : 1);
 			MathStructure munc, mbak(*this);
 			if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) {
@@ -24429,7 +24429,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				multiply(mdiff);
 			} else if(o_function == CALCULATOR->f_stripunits && SIZE == 1) {
 				CHILD(0).differentiate(x_var, eo);
-			} else if(o_function == CALCULATOR->f_integrate && CHILD(1) == x_var && (SIZE == 2 || (SIZE == 4 && CHILD(2).isUndefined() && CHILD(3).isUndefined()))) {
+			} else if(o_function == CALCULATOR->f_integrate && CHILD(1) == x_var && (SIZE == 2 || (SIZE >= 4 && CHILD(2).isUndefined() && CHILD(3).isUndefined()))) {
 				SET_CHILD_MAP(0);
 			} else if(o_function == CALCULATOR->f_diff && (SIZE == 3 || (SIZE == 4 && CHILD(3).isUndefined())) && CHILD(1) == x_var) {
 				CHILD(2) += m_one;
@@ -27200,8 +27200,8 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 	return false;
 }
 
-#define CANNOT_INTEGRATE {MathStructure minteg(CALCULATOR->f_integrate, this, &x_var, &m_undefined, &m_undefined, NULL); set(minteg); return false;}
-#define CANNOT_INTEGRATE_INTERVAL {MathStructure minteg(CALCULATOR->f_integrate, this, &x_var, &m_undefined, &m_undefined, NULL); set(minteg); return -1;}
+#define CANNOT_INTEGRATE {MathStructure minteg(CALCULATOR->f_integrate, this, &x_var, &m_undefined, &m_undefined, &m_zero, NULL); set(minteg); return false;}
+#define CANNOT_INTEGRATE_INTERVAL {MathStructure minteg(CALCULATOR->f_integrate, this, &x_var, &m_undefined, &m_undefined, &m_zero, NULL); set(minteg); return -1;}
 
 bool MathStructure::decomposeFractions(const MathStructure &x_var, const EvaluationOptions &eo) {
 	MathStructure mtest2;
@@ -29835,7 +29835,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							if(minteg_2.countTotalChildren() < 100 && minteg_2.integrate(x_var, eo, false, use_abs, definite_integral, true, max_part_depth - 1, parent_parts) > 0) {
 								int cui = contains_unsolved_integrate(minteg_2, this, parent_parts);
 								if(cui == 3) {
-									MathStructure mfunc(CALCULATOR->f_integrate, this, &x_var, &m_undefined, &m_undefined, NULL);
+									MathStructure mfunc(CALCULATOR->f_integrate, this, &x_var, &m_undefined, &m_undefined, &m_zero, NULL);
 									UnknownVariable *var = new UnknownVariable("", format_and_print(mfunc));
 									var->setAssumptions(mfunc);
 									MathStructure mvar(var);

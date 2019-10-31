@@ -23,16 +23,59 @@ void clear_errors() {
 		if(!CALCULATOR->nextMessage()) break;
 	}
 }
-
+int successes = 0, imaginary = 0;
 void test_integration4(const MathStructure &mstruct) {
-	MathStructure x_var(CALCULATOR->v_x);
+	EvaluationOptions eo;
+	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
+	eo.assume_denominators_nonzero = true;
+	cout << "Integration test: " << mstruct.print(CALCULATOR->messagePrintOptions()) << endl;
+	MathStructure mstruct2(mstruct);
+	mstruct2.transform(CALCULATOR->f_integrate);
+	mstruct2.addChild(CALCULATOR->v_x);
+	mstruct2.addChild(MathStructure(-7, 3));
+	mstruct2.addChild(MathStructure(5, 2));
+	mstruct2.addChild(m_zero);
+	CALCULATOR->calculate(&mstruct2, 20000, eo);
+	//mstruct2.eval(eo);
+	if(!mstruct2.isNumber()) {CALCULATOR->clearMessages(); return;}
+	//display_errors();
+	MathStructure mstruct3(mstruct);
+	mstruct3.transform(CALCULATOR->f_integrate);
+	mstruct3.addChild(CALCULATOR->v_x);
+	mstruct3.addChild(MathStructure(-7, 3));
+	mstruct3.addChild(MathStructure(5, 2));
+	mstruct3.addChild(m_one);
+	CALCULATOR->calculate(&mstruct3, 20000, eo);
+	if(!mstruct3.isNumber()) {CALCULATOR->clearMessages(); return;}
+	display_errors();
+	if(!mstruct2.equals(mstruct3, true, true)) {
+		string str1 = mstruct2.print(CALCULATOR->messagePrintOptions());
+		string str2 = mstruct3.print(CALCULATOR->messagePrintOptions());
+		if(str1 != str2) {
+			//cout << "Integration test: " << mstruct.print(CALCULATOR->messagePrintOptions()) << endl;
+			//display_errors();
+			cout << str1 << endl;
+			cout << str2 << endl;
+			cout << "________________________________________________" << endl;
+		} else {
+			cout << "S:" << mstruct3.print() << endl;
+			successes++;
+			if(!mstruct2.isNumber() || !mstruct2.number().isReal()) imaginary++;
+		}
+	} else {
+		cout << "S:" << mstruct3.print() << endl;
+		successes++;
+		if(!mstruct2.isNumber() || !mstruct2.number().isReal()) imaginary++;
+	}
+	CALCULATOR->clearMessages();
+	
+	/*MathStructure x_var(CALCULATOR->v_x);
 	cout << "Integration test: " << mstruct.print(CALCULATOR->messagePrintOptions()) << endl;
 	MathStructure mstruct2(mstruct);
 	EvaluationOptions eo;
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	eo.assume_denominators_nonzero = true;
 	mstruct2.integrate(x_var, eo, true, 1, false, true, 4);
-	mstruct2.eval(eo);
 	if(mstruct2.containsFunction(CALCULATOR->f_integrate)) {clear_errors(); return;}
 	mstruct2.differentiate(x_var, eo);
 	mstruct2.eval(eo);
@@ -62,7 +105,7 @@ void test_integration4(const MathStructure &mstruct) {
 	str2 = mstruct3.print(CALCULATOR->messagePrintOptions());
 	cout << str2 << endl;
 	if(str1 != str2) cout << "!!!" << endl;
-	cout << "________________________________________________" << endl;
+	cout << "________________________________________________" << endl;*/
 }
 void test_integration3(const MathStructure &mstruct, const MathStructure &mstruct_arg) {
 	MathStructure mstruct2(mstruct);
@@ -167,18 +210,18 @@ void test_integration() {
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "2x^2+5");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "-2x^2-5");
-	test_integration2(mstruct);
+	//CALCULATOR->parse(&mstruct, "-2x^2-5");
+	//test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "sqrt(x)");
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "sqrt(3x+3)");
 	test_integration2(mstruct);
-	CALCULATOR->parse(&mstruct, "5*sqrt(3x)-2");
+	/*CALCULATOR->parse(&mstruct, "5*sqrt(3x)-2");
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "cbrt(3x+3)");
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "(3x+3)^(1/3)");
-	test_integration2(mstruct);
+	test_integration2(mstruct);*/
 	CALCULATOR->parse(&mstruct, "cbrt(x)");
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "x^(1/3)");
@@ -1684,6 +1727,9 @@ int main(int argc, char *argv[]) {
 	po.show_ending_zeroes = false;
 	po.number_fraction_format = FRACTION_DECIMAL;
 	po.restrict_fraction_length = true;
+	po.min_exp = 1;
+	//po.max_decimals = 1;
+	//po.use_max_decimals = true;
 	CALCULATOR->setMessagePrintOptions(po);
 	
 	EvaluationOptions evalops;
@@ -1716,6 +1762,7 @@ int main(int argc, char *argv[]) {
 	cout << mstruct << endl;*/
 	//speed_test();
 	test_integration();
+	cout << successes << ":" << imaginary << endl;
 	return 0;
 	//test_intervals(true);
 	

@@ -967,6 +967,9 @@ class Calculator {
 	/** Removes the first message in queue and returns the next.
 	*/
 	CalculatorMessage *nextMessage();
+	/** Clear the message queue.
+	*/
+	void clearMessages();
 	bool showArgumentErrors() const;
 	void beginTemporaryStopMessages();
 	int endTemporaryStopMessages(int *message_count = NULL, int *warning_count = NULL, int release_messages_if_no_equal_or_greater_than_message_type = -1);
