@@ -4207,7 +4207,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:339
 msgid "Lambert W Function (Omega Function, Product Log)"
-msgstr "Lambers W-funktion (Omegafunktionen)"
+msgstr "Lamberts W-funktion (Omegafunktionen)"
 
 #: ../data/functions.xml.in.h:340
 msgid "r:lambertw,productlog"
@@ -4639,7 +4639,7 @@ msgid ""
 "System), or 5='1\"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based "
 "on d/1500."
 msgstr ""
-"Returnerar det uppskattade avståndet mellan de närmaste och mest avlägsna "
+"Returnerar det ungefärliga avståndet mellan de närmaste och mest avlägsna "
 "objekts som har acceptabelt skarpt fokus i ett fotografi. Ange brännvidd (t."
 "ex. 50 mm) och avstånd (t.ex. 5 m) med enheter, och f-stop (bländarvärde) "
 "utan enhet (2.8, 4.0, 5.6, etc.). Ange antingen oskärpecirkelns "
