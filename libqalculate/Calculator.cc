@@ -1975,6 +1975,8 @@ void Calculator::addBuiltinFunctions() {
 
 	f_diff = addFunction(new DeriveFunction());
 	f_integrate = addFunction(new IntegrateFunction());
+	addFunction(new RombergFunction());
+	addFunction(new MonteCarloFunction());
 	f_solve = addFunction(new SolveFunction());
 	f_multisolve = addFunction(new SolveMultipleFunction());
 	f_dsolve = addFunction(new DSolveFunction());
@@ -3362,7 +3364,7 @@ bool calculate_ans(MathStructure &mstruct, const EvaluationOptions &eo) {
 		mstruct.unformat(eo);
 		mstruct.calculateFunctions(eo, false);
 		return true;
-	} else if(mstruct.isVariable() && mstruct.variable()->isKnown() && (mstruct.variable()->referenceName() == "ans" || (mstruct.variable()->referenceName().length() == 4 && mstruct.variable()->referenceName().substr(0, 3) == "ans" && is_in(NUMBERS, mstruct.variable()->referenceName()[4])))) {
+	} else if(mstruct.isVariable() && mstruct.variable()->isKnown() && (mstruct.variable()->referenceName() == "ans" || (mstruct.variable()->referenceName().length() == 4 && mstruct.variable()->referenceName().substr(0, 3) == "ans" && is_in(NUMBERS, mstruct.variable()->referenceName()[3])))) {
 		mstruct.set(((KnownVariable*) mstruct.variable())->get(), true);
 		return true;
 	}
@@ -3458,7 +3460,6 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 							else if(m.comparisonType() == COMPARISON_LESS) {ass->setMax(&m[1].number()); ass->setIncludeEqualsMax(false);}
 						}
 						var->setAssumptions(ass);
-						var->ref();
 						vars.push_back(var);
 						varms.push_back(m[0]);
 						MathStructure u_var(var);

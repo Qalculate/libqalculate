@@ -505,8 +505,19 @@ bool MathFunction::testArguments(MathStructure &vargs) {
 		if(it->first > last) {
 			last = it->first;
 		}
-		if(it->second && it->first > 0 && it->first <= vargs.size() && !it->second->test(vargs[it->first - 1], it->first, this)) {
-			return false;
+		if(it->second && it->first > 0 && it->first <= vargs.size()) {
+			if(it->second->type() == ARGUMENT_TYPE_SYMBOLIC && (vargs[it->first - 1].isZero() || vargs[it->first - 1].isUndefined())) {
+				vargs[it->first - 1] = vargs[0].find_x_var();
+				if(vargs[it->first - 1].isUndefined() && vargs[0].isVariable() && vargs[0].variable()->isKnown()) vargs[it->first - 1] = ((KnownVariable*) vargs[0].variable())->get().find_x_var();
+				if(vargs[it->first - 1].isUndefined()) {
+					CALCULATOR->beginTemporaryStopMessages();
+					MathStructure mtest(vargs[0]);
+					mtest.eval();
+					vargs[it->first - 1] = mtest.find_x_var();
+					CALCULATOR->endTemporaryStopMessages();
+				}
+			}
+			if(!it->second->test(vargs[it->first - 1], it->first, this)) return false;
 		}
 	}
 	if(max_argc < 0 && (int) last > argc && priv->argdefs.find(last) != priv->argdefs.end()) {

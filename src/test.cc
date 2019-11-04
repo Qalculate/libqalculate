@@ -28,7 +28,6 @@ void test_integration4(const MathStructure &mstruct) {
 	EvaluationOptions eo;
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	eo.assume_denominators_nonzero = true;
-	cout << "Integration test: " << mstruct.print(CALCULATOR->messagePrintOptions()) << endl;
 	MathStructure mstruct2(mstruct);
 	mstruct2.transform(CALCULATOR->f_integrate);
 	mstruct2.addChild(CALCULATOR->v_x);
@@ -36,9 +35,7 @@ void test_integration4(const MathStructure &mstruct) {
 	mstruct2.addChild(MathStructure(5, 2));
 	mstruct2.addChild(m_zero);
 	CALCULATOR->calculate(&mstruct2, 20000, eo);
-	//mstruct2.eval(eo);
 	if(!mstruct2.isNumber()) {CALCULATOR->clearMessages(); return;}
-	//display_errors();
 	MathStructure mstruct3(mstruct);
 	mstruct3.transform(CALCULATOR->f_integrate);
 	mstruct3.addChild(CALCULATOR->v_x);
@@ -47,23 +44,23 @@ void test_integration4(const MathStructure &mstruct) {
 	mstruct3.addChild(m_one);
 	CALCULATOR->calculate(&mstruct3, 20000, eo);
 	if(!mstruct3.isNumber()) {CALCULATOR->clearMessages(); return;}
-	display_errors();
 	if(!mstruct2.equals(mstruct3, true, true)) {
-		string str1 = mstruct2.print(CALCULATOR->messagePrintOptions());
-		string str2 = mstruct3.print(CALCULATOR->messagePrintOptions());
+		PrintOptions po = CALCULATOR->messagePrintOptions();
+		po.max_decimals = mstruct3.number().precision(true) - 2;
+		po.use_max_decimals = true;
+		string str1 = mstruct2.print(po);
+		string str2 = mstruct3.print(po);
 		if(str1 != str2) {
-			//cout << "Integration test: " << mstruct.print(CALCULATOR->messagePrintOptions()) << endl;
-			//display_errors();
+			cout << "Integration test: " << mstruct.print(CALCULATOR->messagePrintOptions()) << endl;
+			display_errors();
 			cout << str1 << endl;
 			cout << str2 << endl;
 			cout << "________________________________________________" << endl;
 		} else {
-			cout << "S:" << mstruct3.print() << endl;
 			successes++;
 			if(!mstruct2.isNumber() || !mstruct2.number().isReal()) imaginary++;
 		}
 	} else {
-		cout << "S:" << mstruct3.print() << endl;
 		successes++;
 		if(!mstruct2.isNumber() || !mstruct2.number().isReal()) imaginary++;
 	}
@@ -75,7 +72,7 @@ void test_integration4(const MathStructure &mstruct) {
 	EvaluationOptions eo;
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	eo.assume_denominators_nonzero = true;
-	mstruct2.integrate(x_var, eo, true, 1, false, true, 4);
+	mstruct2.integrate(x_var, eo, true, -1, false, true, 4);
 	if(mstruct2.containsFunction(CALCULATOR->f_integrate)) {clear_errors(); return;}
 	mstruct2.differentiate(x_var, eo);
 	mstruct2.eval(eo);
@@ -146,9 +143,9 @@ void test_integration2(const MathStructure &mstruct) {
 	mstruct2 = mstruct;
 	mstruct2.transform(CALCULATOR->f_acos);
 	test_integration3(mstruct2, mstruct);
-	mstruct2 = mstruct;
+	/*mstruct2 = mstruct;
 	mstruct2.transform(CALCULATOR->f_atan);
-	test_integration3(mstruct2, mstruct);
+	test_integration3(mstruct2, mstruct);*/
 	mstruct2 = mstruct;
 	mstruct2.transform(CALCULATOR->f_sinh);
 	test_integration3(mstruct2, mstruct);
@@ -164,9 +161,9 @@ void test_integration2(const MathStructure &mstruct) {
 	mstruct2 = mstruct;
 	mstruct2.transform(CALCULATOR->f_acosh);
 	test_integration3(mstruct2, mstruct);
-	mstruct2 = mstruct;
+	/*mstruct2 = mstruct;
 	mstruct2.transform(CALCULATOR->f_atanh);
-	test_integration3(mstruct2, mstruct);
+	test_integration3(mstruct2, mstruct);*/
 	mstruct2 = mstruct;
 	mstruct2 ^= nr_two;
 	test_integration3(mstruct2, mstruct);
@@ -210,18 +207,18 @@ void test_integration() {
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "2x^2+5");
 	test_integration2(mstruct);
-	//CALCULATOR->parse(&mstruct, "-2x^2-5");
-	//test_integration2(mstruct);
+	CALCULATOR->parse(&mstruct, "-2x^2-5");
+	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "sqrt(x)");
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "sqrt(3x+3)");
 	test_integration2(mstruct);
-	/*CALCULATOR->parse(&mstruct, "5*sqrt(3x)-2");
+	CALCULATOR->parse(&mstruct, "5*sqrt(3x)-2");
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "cbrt(3x+3)");
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "(3x+3)^(1/3)");
-	test_integration2(mstruct);*/
+	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "cbrt(x)");
 	test_integration2(mstruct);
 	CALCULATOR->parse(&mstruct, "x^(1/3)");
@@ -1712,7 +1709,7 @@ void speed_test() {
 
 int main(int argc, char *argv[]) {
 
-	new Calculator(false);
+	new Calculator(true);
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
 	CALCULATOR->setPrecision(8);
@@ -1724,7 +1721,7 @@ int main(int argc, char *argv[]) {
 	po.number_fraction_format = FRACTION_FRACTIONAL;
 	po.restrict_fraction_length = true;*/
 	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-	po.show_ending_zeroes = false;
+	po.show_ending_zeroes = true;
 	po.number_fraction_format = FRACTION_DECIMAL;
 	po.restrict_fraction_length = true;
 	po.min_exp = 1;
