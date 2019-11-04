@@ -2756,8 +2756,46 @@
       <argument index="4">
         <_title>Upper limit</_title>
       </argument>
-      <argument index="4">
+      <argument index="5">
         <_title>Force numerical integration</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="romberg">
+      <_title>Romberg Integration</_title>
+      <_names>r:romberg</_names>
+      <argument index="1">
+        <_title>Function</_title>
+      </argument>
+      <argument index="2">
+        <_title>Lower limit</_title>
+      </argument>
+      <argument index="3">
+        <_title>Upper limit</_title>
+      </argument>
+      <argument index="4">
+        <_title>Max iterations</_title>
+      </argument>
+      <argument index="5">
+        <_title>Variable of integration</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="montecarlo">
+      <_title>Monte Carlo Integration</_title>
+      <_names>r:montecarlo</_names>
+      <argument index="1">
+        <_title>Function</_title>
+      </argument>
+      <argument index="2">
+        <_title>Lower limit</_title>
+      </argument>
+      <argument index="3">
+        <_title>Upper limit</_title>
+      </argument>
+      <argument index="4">
+        <_title>Number of samples</_title>
+      </argument>
+      <argument index="5">
+        <_title>Variable of integration</_title>
       </argument>
     </builtin_function>
     <builtin_function name="limit">
