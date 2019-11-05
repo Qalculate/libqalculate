@@ -411,6 +411,7 @@ Calculator::Calculator() {
 
 	addStringAlternative(SIGN_DIVISION, DIVISION);
 	addStringAlternative(SIGN_DIVISION_SLASH, DIVISION);
+	addStringAlternative("⁄", DIVISION);
 	addStringAlternative(SIGN_MULTIPLICATION, MULTIPLICATION);
 	addStringAlternative(SIGN_MULTIDOT, MULTIPLICATION);
 	addStringAlternative(SIGN_MIDDLEDOT, MULTIPLICATION);
@@ -636,6 +637,7 @@ Calculator::Calculator(bool ignore_locale) {
 
 	addStringAlternative(SIGN_DIVISION, DIVISION);
 	addStringAlternative(SIGN_DIVISION_SLASH, DIVISION);
+	addStringAlternative("⁄", DIVISION);
 	addStringAlternative(SIGN_MULTIPLICATION, MULTIPLICATION);
 	addStringAlternative(SIGN_MULTIDOT, MULTIPLICATION);
 	addStringAlternative(SIGN_MIDDLEDOT, MULTIPLICATION);
@@ -5750,7 +5752,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	}
 
 	parseSigns(str, true);
-	
+
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		if(str[str_index] == '\"' || str[str_index] == '\'') {
 			if(str_index == str.length() - 1) {
@@ -6847,6 +6849,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			space_i = str.find(SPACE_CH, space_i + 1);
 		}
 	}
+
 	parseOperators(mstruct, str, po);
 
 }
@@ -8180,21 +8183,22 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			return true;
 		}
 	}
-	
+
 	if((i = str.find('\x1c', 0)) != string::npos && i + 1 != str.length()) {
 		if(i != 0) str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		if(i != 0) parseAdd(str2, mstruct, po);
 		else mstruct->set(1, 1, 0);
-		parseAdd(str, mstruct, po, OPERATION_MULTIPLY);
-		if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstruct->last().contains(getRadUnit(), false, true, true) <= 0 && mstruct->last().contains(getGraUnit(), false, true, true) <= 0 && mstruct->last().contains(getDegUnit(), false, true, true) <= 0) {
-			switch(po.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct->last().multiply(getDegUnit()); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct->last().multiply(getGraUnit()); break;}
-				default: {}
+		if(parseAdd(str, mstruct, po, OPERATION_MULTIPLY)) {
+			if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstruct->last().contains(getRadUnit(), false, true, true) <= 0 && mstruct->last().contains(getGraUnit(), false, true, true) <= 0 && mstruct->last().contains(getDegUnit(), false, true, true) <= 0) {
+				switch(po.angle_unit) {
+					case ANGLE_UNIT_DEGREES: {mstruct->last().multiply(getDegUnit()); break;}
+					case ANGLE_UNIT_GRADIANS: {mstruct->last().multiply(getGraUnit()); break;}
+					default: {}
+				}
 			}
+			mstruct->last().transform(priv->f_cis); 
 		}
-		mstruct->last().transform(priv->f_cis); 
 		return true;
 	}
 
@@ -8205,7 +8209,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
 	}
-	
+
 	i = 0;
 	bool ret = true;
 	bool has_sign = false;

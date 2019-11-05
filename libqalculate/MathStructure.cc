@@ -24443,7 +24443,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				multiply(mdiff);
 			} else if(o_function == CALCULATOR->f_stripunits && SIZE == 1) {
 				CHILD(0).differentiate(x_var, eo);
-			} else if(o_function == CALCULATOR->f_integrate && CHILD(1) == x_var && (SIZE == 2 || (SIZE >= 4 && CHILD(2).isUndefined() && CHILD(3).isUndefined()))) {
+			} else if(o_function == CALCULATOR->f_integrate && SIZE >= 4 && CHILD(3) == x_var && CHILD(1).isUndefined() && CHILD(2).isUndefined()) {
 				SET_CHILD_MAP(0);
 			} else if(o_function == CALCULATOR->f_diff && (SIZE == 3 || (SIZE == 4 && CHILD(3).isUndefined())) && CHILD(1) == x_var) {
 				CHILD(2) += m_one;
@@ -27267,8 +27267,8 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 	return false;
 }
 
-#define CANNOT_INTEGRATE {MathStructure minteg(CALCULATOR->f_integrate, this, &x_var, &m_undefined, &m_undefined, &m_zero, NULL); set(minteg); return false;}
-#define CANNOT_INTEGRATE_INTERVAL {MathStructure minteg(CALCULATOR->f_integrate, this, &x_var, &m_undefined, &m_undefined, &m_zero, NULL); set(minteg); return -1;}
+#define CANNOT_INTEGRATE {MathStructure minteg(CALCULATOR->f_integrate, this, &m_undefined, &m_undefined, &x_var, &m_zero, NULL); set(minteg); return false;}
+#define CANNOT_INTEGRATE_INTERVAL {MathStructure minteg(CALCULATOR->f_integrate, this, &m_undefined, &m_undefined, &x_var, &m_zero, NULL); set(minteg); return -1;}
 
 bool MathStructure::decomposeFractions(const MathStructure &x_var, const EvaluationOptions &eo) {
 	MathStructure mtest2;
@@ -29838,8 +29838,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 									if(!new_pow.isOne()) mtest[0] ^= new_pow;
 								}
 								CALCULATOR->beginTemporaryStopMessages();
-								//var->setName(string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
-								var->setName(string("Y"));
+								var->setName(string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
 								if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
 									MathStructure m_interval(m_replace);
 									m_interval.replace(x_var, ((UnknownVariable*) x_var.variable())->interval());
@@ -29902,7 +29901,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							if(minteg_2.countTotalChildren() < 100 && minteg_2.integrate(x_var, eo, false, use_abs, definite_integral, true, max_part_depth - 1, parent_parts) > 0) {
 								int cui = contains_unsolved_integrate(minteg_2, this, parent_parts);
 								if(cui == 3) {
-									MathStructure mfunc(CALCULATOR->f_integrate, this, &x_var, &m_undefined, &m_undefined, &m_zero, NULL);
+									MathStructure mfunc(CALCULATOR->f_integrate, this, &m_undefined, &m_undefined, &x_var, &m_zero, NULL);
 									UnknownVariable *var = new UnknownVariable("", format_and_print(mfunc));
 									var->setAssumptions(mfunc);
 									MathStructure mvar(var);

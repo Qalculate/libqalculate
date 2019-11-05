@@ -2748,13 +2748,13 @@
         <_title>Function</_title>
       </argument>
       <argument index="2">
-        <_title>Variable of integration</_title>
-      </argument>
-      <argument index="3">
         <_title>Lower limit</_title>
       </argument>
-      <argument index="4">
+      <argument index="3">
         <_title>Upper limit</_title>
+      </argument>
+      <argument index="4">
+        <_title>Variable of integration</_title>
       </argument>
       <argument index="5">
         <_title>Force numerical integration</_title>

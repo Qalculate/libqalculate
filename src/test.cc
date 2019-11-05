@@ -30,17 +30,17 @@ void test_integration4(const MathStructure &mstruct) {
 	eo.assume_denominators_nonzero = true;
 	MathStructure mstruct2(mstruct);
 	mstruct2.transform(CALCULATOR->f_integrate);
-	mstruct2.addChild(CALCULATOR->v_x);
 	mstruct2.addChild(MathStructure(-7, 3));
 	mstruct2.addChild(MathStructure(5, 2));
+	mstruct2.addChild(CALCULATOR->v_x);
 	mstruct2.addChild(m_zero);
 	CALCULATOR->calculate(&mstruct2, 20000, eo);
 	if(!mstruct2.isNumber()) {CALCULATOR->clearMessages(); return;}
 	MathStructure mstruct3(mstruct);
 	mstruct3.transform(CALCULATOR->f_integrate);
-	mstruct3.addChild(CALCULATOR->v_x);
 	mstruct3.addChild(MathStructure(-7, 3));
 	mstruct3.addChild(MathStructure(5, 2));
+	mstruct3.addChild(CALCULATOR->v_x);
 	mstruct3.addChild(m_one);
 	CALCULATOR->calculate(&mstruct3, 20000, eo);
 	if(!mstruct3.isNumber()) {CALCULATOR->clearMessages(); return;}
