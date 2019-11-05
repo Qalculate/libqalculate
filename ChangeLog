@@ -3,6 +3,7 @@
 	* Fix segfault when parsing "∠∠"
 	* Restrict the max number of displayed digits to 100000 when scientific notation is completely disabled
 	* Recognize the unicode fraction slash (interpreted as division sign)
+	* Only parse ' and " as foot and inch with number bases <= 16
 
 2019-11-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

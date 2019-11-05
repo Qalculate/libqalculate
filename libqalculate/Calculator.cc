@@ -5716,39 +5716,41 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	size_t i_degree = str.find(SIGN_DEGREE);
 	if(i_degree != string::npos && i_degree < str.length() - strlen(SIGN_DEGREE) && is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBER_ELEMENTS, str[i_degree + strlen(SIGN_DEGREE)])) i_degree = string::npos;
 	
-	if(i_degree == string::npos) {
-		size_t i_quote = str.find('\'', 0);
-		size_t i_dquote = str.find('\"', 0);
-		if(i_quote == 0 || i_dquote == 0) {
-			b_prime_quote = false;
-		} else if((i_quote != string::npos && i_quote < str.length() - 1 && str.find('\'', i_quote + 1) != string::npos) || (i_quote != string::npos && i_dquote == i_quote + 1) || (i_dquote != string::npos && i_dquote < str.length() - 1 && str.find('\"', i_dquote + 1) != string::npos)) {
-			b_prime_quote = false;
-			while(i_dquote != string::npos) {
-				i_quote = str.rfind('\'', i_dquote - 1);
-				if(i_quote != string::npos) {
-					size_t i_prev = str.find_last_not_of(SPACES, i_quote - 1);
-					if(i_prev != string::npos && is_in(NUMBER_ELEMENTS, str[i_prev])) {
-						if(is_in(NUMBER_ELEMENTS, str[str.find_first_not_of(SPACES, i_quote + 1)]) && str.find_first_not_of(SPACES NUMBER_ELEMENTS, i_quote + 1) == i_dquote) {
-							if(i_prev == 0) {
-								b_prime_quote = true;
-								break;
-							} else {
-								i_prev = str.find_last_not_of(NUMBER_ELEMENTS, i_prev - 1);
-								if(i_prev == string::npos || (str[i_prev] != '\"' && str[i_prev] != '\'')) {
+	if(base != -1 && base <= BASE_HEXADECIMAL) {		
+		if(i_degree == string::npos) {
+			size_t i_quote = str.find('\'', 0);
+			size_t i_dquote = str.find('\"', 0);
+			if(i_quote == 0 || i_dquote == 0) {
+				b_prime_quote = false;
+			} else if((i_quote != string::npos && i_quote < str.length() - 1 && str.find('\'', i_quote + 1) != string::npos) || (i_quote != string::npos && i_dquote == i_quote + 1) || (i_dquote != string::npos && i_dquote < str.length() - 1 && str.find('\"', i_dquote + 1) != string::npos)) {
+				b_prime_quote = false;
+				while(i_dquote != string::npos) {
+					i_quote = str.rfind('\'', i_dquote - 1);
+					if(i_quote != string::npos) {
+						size_t i_prev = str.find_last_not_of(SPACES, i_quote - 1);
+						if(i_prev != string::npos && is_in(NUMBER_ELEMENTS, str[i_prev])) {
+							if(is_in(NUMBER_ELEMENTS, str[str.find_first_not_of(SPACES, i_quote + 1)]) && str.find_first_not_of(SPACES NUMBER_ELEMENTS, i_quote + 1) == i_dquote) {
+								if(i_prev == 0) {
 									b_prime_quote = true;
 									break;
+								} else {
+									i_prev = str.find_last_not_of(NUMBER_ELEMENTS, i_prev - 1);
+									if(i_prev == string::npos || (str[i_prev] != '\"' && str[i_prev] != '\'')) {
+										b_prime_quote = true;
+										break;
+									}
 								}
 							}
 						}
 					}
+					i_dquote = str.find('\"', i_dquote + 2);
 				}
-				i_dquote = str.find('\"', i_dquote + 2);
 			}
 		}
-	}
-	if(b_prime_quote) {
-		gsub("\'", "′", str);
-		gsub("\"", "″", str);
+		if(b_prime_quote) {
+			gsub("\'", "′", str);
+			gsub("\"", "″", str);
+		}
 	}
 
 	parseSigns(str, true);
@@ -5830,65 +5832,104 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			space_i = str.find(SPACE_CH, space_i + 1);
 		}
 	}
-
-	bool b_degree = (i_degree != string::npos);
-	size_t i_quote = str.find("′");
-	size_t i_dquote = str.find("″");
-	while(i_quote != string::npos || i_dquote != string::npos) {
-		size_t i_op = 0;
-		if(i_quote == string::npos || i_dquote < i_quote) {
-			bool b = false;
-			if(b_degree) {
-				i_degree = str.rfind(SIGN_DEGREE, i_dquote - 1);
-				if(i_degree != string::npos && i_degree > 0 && i_degree < i_dquote) {
-					size_t i_op = str.find_first_not_of(SPACE, i_degree + strlen(SIGN_DEGREE));
-					if(i_op != string::npos) {
-						i_op = str.find_first_not_of(SPACE, i_degree + strlen(SIGN_DEGREE));
-						if(is_in(NUMBER_ELEMENTS, str[i_op])) i_op = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op);
-						else i_op = 0;
-					}
-					size_t i_prev = string::npos;
-					if(i_op == i_dquote) {
-						i_prev = str.find_last_not_of(SPACE, i_degree - 1);
-						if(i_prev != string::npos) {
-							if(is_in(NUMBER_ELEMENTS, str[i_prev])) {
-								i_prev = str.find_last_not_of(NUMBER_ELEMENTS SPACE, i_prev);
-								if(i_prev == string::npos) i_prev = 0;
-								else i_prev++;
-							} else {
-								i_prev = string::npos;
+	
+	if(base != -1 && base <= BASE_HEXADECIMAL) {
+		bool b_degree = (i_degree != string::npos);
+		size_t i_quote = str.find("′");
+		size_t i_dquote = str.find("″");
+		while(i_quote != string::npos || i_dquote != string::npos) {
+			size_t i_op = 0;
+			if(i_quote == string::npos || i_dquote < i_quote) {
+				bool b = false;
+				if(b_degree) {
+					i_degree = str.rfind(SIGN_DEGREE, i_dquote - 1);
+					if(i_degree != string::npos && i_degree > 0 && i_degree < i_dquote) {
+						size_t i_op = str.find_first_not_of(SPACE, i_degree + strlen(SIGN_DEGREE));
+						if(i_op != string::npos) {
+							i_op = str.find_first_not_of(SPACE, i_degree + strlen(SIGN_DEGREE));
+							if(is_in(NUMBER_ELEMENTS, str[i_op])) i_op = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op);
+							else i_op = 0;
+						}
+						size_t i_prev = string::npos;
+						if(i_op == i_dquote) {
+							i_prev = str.find_last_not_of(SPACE, i_degree - 1);
+							if(i_prev != string::npos) {
+								if(is_in(NUMBER_ELEMENTS, str[i_prev])) {
+									i_prev = str.find_last_not_of(NUMBER_ELEMENTS SPACE, i_prev);
+									if(i_prev == string::npos) i_prev = 0;
+									else i_prev++;
+								} else {
+									i_prev = string::npos;
+								}
 							}
 						}
-					}
-					if(i_prev != string::npos) {
-						str.insert(i_prev, LEFT_PARENTHESIS);
-						i_degree++;
-						i_op++;
-						str.replace(i_op, strlen("″"), "arcsec" RIGHT_PARENTHESIS);
-						str.replace(i_degree, strlen(SIGN_DEGREE), "deg" PLUS);
-						b = true;
+						if(i_prev != string::npos) {
+							str.insert(i_prev, LEFT_PARENTHESIS);
+							i_degree++;
+							i_op++;
+							str.replace(i_op, strlen("″"), "arcsec" RIGHT_PARENTHESIS);
+							str.replace(i_degree, strlen(SIGN_DEGREE), "deg" PLUS);
+							b = true;
+						}
 					}
 				}
-			}
-			if(!b) {
-				if(str.length() >= i_dquote + strlen("″") && is_in(NUMBERS, str[i_dquote + strlen("″")])) str.insert(i_dquote + strlen("″"), " ");
-				str.replace(i_dquote, strlen("″"), b_degree ? "arcsec" : "in");
-				i_op = i_dquote;
-			}
-		} else {
-			bool b = false;
-			if(b_degree) {
-				i_degree = str.rfind(SIGN_DEGREE, i_quote - 1);
-				if(i_degree != string::npos && i_degree > 0 && i_degree < i_quote) {
-					size_t i_op = str.find_first_not_of(SPACE, i_degree + strlen(SIGN_DEGREE));
-					if(i_op != string::npos) {
-						i_op = str.find_first_not_of(SPACE, i_degree + strlen(SIGN_DEGREE));
-						if(is_in(NUMBER_ELEMENTS, str[i_op])) i_op = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op);
-						else i_op = 0;
+				if(!b) {
+					if(str.length() >= i_dquote + strlen("″") && is_in(NUMBERS, str[i_dquote + strlen("″")])) str.insert(i_dquote + strlen("″"), " ");
+					str.replace(i_dquote, strlen("″"), b_degree ? "arcsec" : "in");
+					i_op = i_dquote;
+				}
+			} else {
+				bool b = false;
+				if(b_degree) {
+					i_degree = str.rfind(SIGN_DEGREE, i_quote - 1);
+					if(i_degree != string::npos && i_degree > 0 && i_degree < i_quote) {
+						size_t i_op = str.find_first_not_of(SPACE, i_degree + strlen(SIGN_DEGREE));
+						if(i_op != string::npos) {
+							i_op = str.find_first_not_of(SPACE, i_degree + strlen(SIGN_DEGREE));
+							if(is_in(NUMBER_ELEMENTS, str[i_op])) i_op = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op);
+							else i_op = 0;
+						}
+						size_t i_prev = string::npos;
+						if(i_op == i_quote) {
+							i_prev = str.find_last_not_of(SPACE, i_degree - 1);
+							if(i_prev != string::npos) {
+								if(is_in(NUMBER_ELEMENTS, str[i_prev])) {
+									i_prev = str.find_last_not_of(NUMBER_ELEMENTS SPACE, i_prev);
+									if(i_prev == string::npos) i_prev = 0;
+									else i_prev++;
+								} else {
+									i_prev = string::npos;
+								}
+							}
+						}
+						if(i_prev != string::npos) {
+							str.insert(i_prev, LEFT_PARENTHESIS);
+							i_degree++;
+							i_quote++;
+							i_op++;
+							if(i_dquote != string::npos) {
+								i_dquote++;
+								size_t i_op2 = str.find_first_not_of(SPACE, i_quote + strlen("′"));
+								if(i_op2 != string::npos && is_in(NUMBER_ELEMENTS, str[i_op2])) i_op2 = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op2);
+								else i_op2 = 0;
+								if(i_op2 == i_dquote) {
+									str.replace(i_dquote, strlen("″"), "arcsec" RIGHT_PARENTHESIS);
+									i_op = i_op2;
+								}
+							}
+							str.replace(i_quote, strlen("′"), i_op == i_quote ? "arcmin" RIGHT_PARENTHESIS : "arcmin" PLUS);
+							str.replace(i_degree, strlen(SIGN_DEGREE), "deg" PLUS);
+							b = true;
+						}
 					}
+				}
+				if(!b) {
+					i_op = str.find_first_not_of(SPACE, i_quote + strlen("′"));
+					if(i_op != string::npos && is_in(NUMBER_ELEMENTS, str[i_op])) i_op = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op);
+					else i_op = 0;
 					size_t i_prev = string::npos;
-					if(i_op == i_quote) {
-						i_prev = str.find_last_not_of(SPACE, i_degree - 1);
+					if(((!b_degree && i_op == string::npos) || i_op == i_dquote) && i_quote != 0) {
+						i_prev = str.find_last_not_of(SPACE, i_quote - 1);
 						if(i_prev != string::npos) {
 							if(is_in(NUMBER_ELEMENTS, str[i_prev])) {
 								i_prev = str.find_last_not_of(NUMBER_ELEMENTS SPACE, i_prev);
@@ -5901,59 +5942,22 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					}
 					if(i_prev != string::npos) {
 						str.insert(i_prev, LEFT_PARENTHESIS);
-						i_degree++;
 						i_quote++;
+						if(i_op == string::npos) str += b_degree ? "arcsec" RIGHT_PARENTHESIS : "in" RIGHT_PARENTHESIS;
+						else str.replace(i_op + 1, strlen("″"), b_degree ? "arcsec" RIGHT_PARENTHESIS : "in" RIGHT_PARENTHESIS);
+						str.replace(i_quote, strlen("′"), b_degree ? "arcmin" PLUS : "ft" PLUS);
+						if(i_op == string::npos) break;
 						i_op++;
-						if(i_dquote != string::npos) {
-							i_dquote++;
-							size_t i_op2 = str.find_first_not_of(SPACE, i_quote + strlen("′"));
-							if(i_op2 != string::npos && is_in(NUMBER_ELEMENTS, str[i_op2])) i_op2 = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op2);
-							else i_op2 = 0;
-							if(i_op2 == i_dquote) {
-								str.replace(i_dquote, strlen("″"), "arcsec" RIGHT_PARENTHESIS);
-								i_op = i_op2;
-							}
-						}
-						str.replace(i_quote, strlen("′"), i_op == i_quote ? "arcmin" RIGHT_PARENTHESIS : "arcmin" PLUS);
-						str.replace(i_degree, strlen(SIGN_DEGREE), "deg" PLUS);
-						b = true;
+					} else {
+						if(str.length() >= i_quote + strlen("′") && is_in(NUMBERS, str[i_quote + strlen("′")])) str.insert(i_quote + strlen("′"), " ");
+						str.replace(i_quote, strlen("′"), b_degree ? "arcmin" : "ft");
+						i_op = i_quote;
 					}
 				}
 			}
-			if(!b) {
-				i_op = str.find_first_not_of(SPACE, i_quote + strlen("′"));
-				if(i_op != string::npos && is_in(NUMBER_ELEMENTS, str[i_op])) i_op = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op);
-				else i_op = 0;
-				size_t i_prev = string::npos;
-				if(((!b_degree && i_op == string::npos) || i_op == i_dquote) && i_quote != 0) {
-					i_prev = str.find_last_not_of(SPACE, i_quote - 1);
-					if(i_prev != string::npos) {
-						if(is_in(NUMBER_ELEMENTS, str[i_prev])) {
-							i_prev = str.find_last_not_of(NUMBER_ELEMENTS SPACE, i_prev);
-							if(i_prev == string::npos) i_prev = 0;
-							else i_prev++;
-						} else {
-							i_prev = string::npos;
-						}
-					}
-				}
-				if(i_prev != string::npos) {
-					str.insert(i_prev, LEFT_PARENTHESIS);
-					i_quote++;
-					if(i_op == string::npos) str += b_degree ? "arcsec" RIGHT_PARENTHESIS : "in" RIGHT_PARENTHESIS;
-					else str.replace(i_op + 1, strlen("″"), b_degree ? "arcsec" RIGHT_PARENTHESIS : "in" RIGHT_PARENTHESIS);
-					str.replace(i_quote, strlen("′"), b_degree ? "arcmin" PLUS : "ft" PLUS);
-					if(i_op == string::npos) break;
-					i_op++;
-				} else {
-					if(str.length() >= i_quote + strlen("′") && is_in(NUMBERS, str[i_quote + strlen("′")])) str.insert(i_quote + strlen("′"), " ");
-					str.replace(i_quote, strlen("′"), b_degree ? "arcmin" : "ft");
-					i_op = i_quote;
-				}
-			}
+			if(i_dquote != string::npos) i_dquote = str.find("″", i_op);
+			if(i_quote != string::npos) i_quote = str.find("′", i_op);
 		}
-		if(i_dquote != string::npos) i_dquote = str.find("″", i_op);
-		if(i_quote != string::npos) i_quote = str.find("′", i_op);
 	}
 
 	size_t i_mod = str.find("%");
