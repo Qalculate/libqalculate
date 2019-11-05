@@ -1,9 +1,16 @@
+2019-11-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault when parsing "∠∠"
+	* Restrict the max number of displayed digits to 100000 when scientific notation is completely disabled
+	* Recognize the unicode fraction slash (interpreted as division sign)
+
 2019-11-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Automatic detection of unknown variable (if corresponding argument is set to undefined or zero) in functions
 	* romberg() and montecarlo() functions for numerical integration
 	* root(x, a)*abs(x)^((a-1)/a)=x
 	* Use ln(abs(x)) instead of ln(x^2)/2 (in integral)
+	* Move integrate() variable argument from 2nd to 4th position
 
 2019-10-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

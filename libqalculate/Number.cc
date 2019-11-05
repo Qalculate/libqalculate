@@ -8476,7 +8476,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					expo++;
 				}
 			}
-			if(po.min_exp == EXP_PRECISION) {
+			if(po.min_exp == EXP_PRECISION || (po.min_exp == EXP_NONE && (expo > 100000L || expo < -100000L))) {
 				long int precexp = i_precision_base;
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
@@ -9094,7 +9094,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		long int i_log = mpfr_get_si(f_log, MPFR_RNDN);
 		if((base == 10 || (isInterval() && po.interval_display == INTERVAL_DISPLAY_MIDPOINT && i_log > 0 && i_log > precision)) && (!po.preserve_format || (is_interval && po.interval_display == INTERVAL_DISPLAY_PLUSMINUS))) {
 			expo = i_log;
-			if(po.min_exp == EXP_PRECISION || (po.min_exp == 0 && expo > 1000000L)) {
+			if(po.min_exp == EXP_PRECISION || (po.min_exp == EXP_NONE && (expo > 100000L || expo < -100000L))) {
 				long int precexp = i_precision_base;
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
@@ -9673,7 +9673,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		str = printMPZ(num, base, false, po.lower_case_numbers);
 		if(base == 10 && !rerun && !po.preserve_format && !applied_expo) {
 			expo = str.length() - l10 - 1;
-			if(po.min_exp == EXP_PRECISION) {
+			if(po.min_exp == EXP_PRECISION || (po.min_exp == EXP_NONE && (expo > 100000L || expo < -100000L))) {
 				long int precexp = i_precision_base;
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
