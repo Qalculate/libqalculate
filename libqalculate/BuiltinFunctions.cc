@@ -3738,11 +3738,13 @@ int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	if(!mstruct.isNumber()) {
+		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transform(CALCULATOR->f_sin); mstruct *= nr_one_i; return 1;}
 		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	Number nr = mstruct.number();
 	if(!nr.sinh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
+		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transform(CALCULATOR->f_sin); mstruct *= nr_one_i; return 1;}
 		if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
@@ -3780,11 +3782,13 @@ int CoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	if(!mstruct.isNumber()) {
+		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transform(CALCULATOR->f_cos); return 1;}
 		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); return -1;}
 		return -1;
 	}
 	Number nr = mstruct.number();
 	if(!nr.cosh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
+		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transform(CALCULATOR->f_cos); return 1;}
 		if(has_predominately_negative_sign(mstruct)) mstruct.number().negate();
 		return -1;
 	}
@@ -3829,12 +3833,14 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	if(!mstruct.isNumber()) {
+		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transform(CALCULATOR->f_tan); mstruct *= nr_one_i; return 1;}
 		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	Number nr = mstruct.number();
 	if(!nr.tanh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
+		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transform(CALCULATOR->f_tan); mstruct *= nr_one_i; return 1;}
 		return -1;
 	}
 	mstruct = nr;
@@ -6741,10 +6747,19 @@ int IGammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 }
 
 IntegrateFunction::IntegrateFunction() : MathFunction("integrate", 1, 5) {
+	Argument *arg = new Argument("", false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+	setDefaultValue(2, "undefined");
+	arg = new Argument("", false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(2, arg);
+	setDefaultValue(3, "undefined");
+	arg = new Argument("", false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(3, arg);
 	setArgumentDefinition(4, new SymbolicArgument());
 	setDefaultValue(4, "undefined");
-	setDefaultValue(2, "undefined");
-	setDefaultValue(3, "undefined");
 	setArgumentDefinition(5, new BooleanArgument());
 	setDefaultValue(5, "0");
 }
@@ -7311,7 +7326,7 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 		bool b = mfunc.calculateFunctions(eo2);
 		CALCULATOR->endTemporaryStopMessages();
 		if(b && !check_denominators(mfunc, mi, mx, eo)) return false;
-		else if(!b && mfunc.function() == CALCULATOR->f_tan) return false;
+		else if(!b && (mfunc.function() == CALCULATOR->f_tan || mfunc.function() == CALCULATOR->f_tanh)) return false;
 	}
 	return true;
 }
@@ -7747,6 +7762,9 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 }
 
 RombergFunction::RombergFunction() : MathFunction("romberg", 3, 5) {
+	Argument *arg = new Argument("", false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 	NON_COMPLEX_NUMBER_ARGUMENT(2)
 	NON_COMPLEX_NUMBER_ARGUMENT(3)
 	setCondition("\\z > \\y");
@@ -7779,6 +7797,9 @@ int RombergFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	return 0;
 }
 MonteCarloFunction::MonteCarloFunction() : MathFunction("montecarlo", 4, 5) {
+	Argument *arg = new Argument("", false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 	NON_COMPLEX_NUMBER_ARGUMENT(2)
 	NON_COMPLEX_NUMBER_ARGUMENT(3)
 	setCondition("\\z > \\y");

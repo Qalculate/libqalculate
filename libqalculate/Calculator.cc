@@ -5716,7 +5716,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	size_t i_degree = str.find(SIGN_DEGREE);
 	if(i_degree != string::npos && i_degree < str.length() - strlen(SIGN_DEGREE) && is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBER_ELEMENTS, str[i_degree + strlen(SIGN_DEGREE)])) i_degree = string::npos;
 	
-	if(base != -1 && base <= BASE_HEXADECIMAL) {		
+	if(base != -1 && base <= BASE_HEXADECIMAL) {
 		if(i_degree == string::npos) {
 			size_t i_quote = str.find('\'', 0);
 			size_t i_dquote = str.find('\"', 0);
@@ -9199,7 +9199,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {3, 5, 0};
+	int version_numbers[] = {3, 6, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

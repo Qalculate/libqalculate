@@ -1135,7 +1135,6 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 		rt3++;
 		Number nr(rnd_number(false, false, false, true, allow_interval));
 		if(nr.hasImaginaryPart() && rand() % 2 == 0) nr += Number(rnd_number(false, false, false, false, false));
-		nr.clear();
 		m1 = mp;
 		m1.replace(CALCULATOR->v_x, nr);
 		m3 = m1;
@@ -1716,15 +1715,15 @@ int main(int argc, char *argv[]) {
 	
 	CALCULATOR->useIntervalArithmetic();
 	PrintOptions po = CALCULATOR->messagePrintOptions();
-	/*po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	po.show_ending_zeroes = true;
 	po.number_fraction_format = FRACTION_FRACTIONAL;
-	po.restrict_fraction_length = true;*/
-	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+	po.restrict_fraction_length = true;
+	/*po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	po.show_ending_zeroes = true;
 	po.number_fraction_format = FRACTION_DECIMAL;
 	po.restrict_fraction_length = true;
-	po.min_exp = 1;
+	po.min_exp = 1;*/
 	//po.max_decimals = 1;
 	//po.use_max_decimals = true;
 	CALCULATOR->setMessagePrintOptions(po);
@@ -1758,9 +1757,9 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	test_integration();
+	/*test_integration();
 	cout << successes << ":" << imaginary << endl;
-	return 0;
+	return 0;*/
 	//test_intervals(true);
 	
 	/*Number nr;
@@ -1800,7 +1799,7 @@ int main(int argc, char *argv[]) {
 		cout << mstruct.print() << endl;
 		if(mstruct.isAborted()) break;*/
 		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
-		rnd_test(evalops, 4, false, false, false, false, true, true);
+		rnd_test(evalops, 4, true, false, false, false, false, false);
 		if(i % 100 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
