@@ -2448,8 +2448,8 @@ ComparisonResult MathStructure::compare(const MathStructure &o) const {
 			if(mtest.representsPositive(true)) return COMPARISON_RESULT_LESS;
 			if(mtest.representsNegative(true)) return COMPARISON_RESULT_GREATER;
 			if(mtest.representsNonZero(true)) return COMPARISON_RESULT_NOT_EQUAL;
-			if(mtest.representsNonPositive(true)) return COMPARISON_RESULT_EQUAL_OR_LESS;
-			if(mtest.representsNonNegative(true)) return COMPARISON_RESULT_EQUAL_OR_GREATER;
+			if(mtest.representsNonPositive(true)) return COMPARISON_RESULT_EQUAL_OR_GREATER;
+			if(mtest.representsNonNegative(true)) return COMPARISON_RESULT_EQUAL_OR_LESS;
 		} else if(i == 0) {
 			bool a_pos = representsPositive(true);
 			bool a_nneg = a_pos || representsNonNegative(true);
@@ -2594,8 +2594,8 @@ ComparisonResult MathStructure::compareApproximately(const MathStructure &o, con
 			if(mtest.representsPositive(true)) return COMPARISON_RESULT_LESS;
 			if(mtest.representsNegative(true)) return COMPARISON_RESULT_GREATER;
 			if(mtest.representsNonZero(true)) return COMPARISON_RESULT_NOT_EQUAL;
-			if(mtest.representsNonPositive(true)) return COMPARISON_RESULT_EQUAL_OR_LESS;
-			if(mtest.representsNonNegative(true)) return COMPARISON_RESULT_EQUAL_OR_GREATER;
+			if(mtest.representsNonPositive(true)) return COMPARISON_RESULT_EQUAL_OR_GREATER;
+			if(mtest.representsNonNegative(true)) return COMPARISON_RESULT_EQUAL_OR_LESS;
 		} else if(i == 0) {
 			bool a_pos = representsPositive(true);
 			bool a_nneg = a_pos || representsNonNegative(true);
@@ -9334,6 +9334,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 						CHILD(i).set(mtest.find_x_var(), true);
 						CALCULATOR->endTemporaryStopMessages();
 					}
+					if(CHILD(i).isUndefined()) CALCULATOR->error(true, _("No unknown variable/symbol was found."), NULL);
 				}
 				if(!arg->test(CHILD(i), i + 1, o_function, eo)) {
 					if(arg->handlesVector() && CHILD(i).isVector()) {
@@ -17760,7 +17761,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 												CHILD(i).calculateAddLast(eo);
 												CHILD(i).multiply_nocopy(mfac);
 												CHILD_UPDATED(i)
-												delChild(i3, true);
+												delChild(i3 + 1, true);
 												evalSort(true);
 												factorize(eo, false, term_combination_levels, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
 												return true;

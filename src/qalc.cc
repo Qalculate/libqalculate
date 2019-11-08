@@ -4481,6 +4481,11 @@ void result_prefix_changed(Prefix *prefix) {
 }
 void expression_calculation_updated() {
 	if(expression_executed && !avoid_recalculation && !rpn_mode) {
+		if(parsed_mstruct) {
+			for(size_t i = 0; i < 5; i++) {
+				if(parsed_mstruct->contains(vans[i])) return;
+			}
+		}
 		hide_parse_errors = true;
 		execute_expression();
 		hide_parse_errors = false;
@@ -4492,6 +4497,11 @@ void expression_format_updated(bool reparse) {
 		avoid_recalculation = true;
 	}
 	if(expression_executed && reparse) {
+		if(parsed_mstruct) {
+			for(size_t i = 0; i < 5; i++) {
+				if(parsed_mstruct->contains(vans[i])) return;
+			}
+		}
 		execute_expression();
 	}
 }
@@ -5506,7 +5516,7 @@ void load_preferences() {
 #endif
 
 	
-	int version_numbers[] = {3, 5, 0};
+	int version_numbers[] = {3, 6, 0};
 	
 	if(file) {
 		char line[10000];

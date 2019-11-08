@@ -516,6 +516,7 @@ bool MathFunction::testArguments(MathStructure &vargs) {
 					vargs[it->first - 1] = mtest.find_x_var();
 					CALCULATOR->endTemporaryStopMessages();
 				}
+				if(vargs[it->first - 1].isUndefined()) CALCULATOR->error(true, _("No was unknown variable/symbol found."), NULL);
 			}
 			if(!it->second->test(vargs[it->first - 1], it->first, this)) return false;
 		}
@@ -1307,7 +1308,7 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 		if(value.isVector()) return false;
 	}
 	if(!b) {
-		if(b_error) {
+		if(b_error && (type() != ARGUMENT_TYPE_SYMBOLIC || !value.isUndefined())) {
 			if(sname.empty()) {
 				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
 			} else {

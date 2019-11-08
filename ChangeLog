@@ -1,9 +1,18 @@
+2019-11-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not automatically recalculate expressions with answer variables when calculation/parsing mode has changed (CLI)
+
+2019-11-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* sinh(i*x)=i*sin(x), cosh(i*x)=cos(x), tanh(i*x)=i*tan(x)
+
 2019-11-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault when parsing "∠∠"
 	* Restrict the max number of displayed digits to 100000 when scientific notation is completely disabled
 	* Recognize the unicode fraction slash (interpreted as division sign)
 	* Only parse ' and " as foot and inch with number bases <= 16
+	* Check if complex tanh is continuous for definite integral
 
 2019-11-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
