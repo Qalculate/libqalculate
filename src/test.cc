@@ -24,34 +24,39 @@ void clear_errors() {
 	}
 }
 int successes = 0, imaginary = 0;
-void test_integration4(const MathStructure &mstruct) {
+void test_integration5(const MathStructure &mstruct, const Number &a, const Number &b) {
 	EvaluationOptions eo;
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	eo.assume_denominators_nonzero = true;
+	eo.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
 	MathStructure mstruct2(mstruct);
 	mstruct2.transform(CALCULATOR->f_integrate);
-	mstruct2.addChild(MathStructure(-7, 3));
-	mstruct2.addChild(MathStructure(5, 2));
+	mstruct2.addChild(a);
+	mstruct2.addChild(b);
 	mstruct2.addChild(CALCULATOR->v_x);
 	mstruct2.addChild(m_zero);
 	CALCULATOR->calculate(&mstruct2, 20000, eo);
 	if(!mstruct2.isNumber()) {CALCULATOR->clearMessages(); return;}
 	MathStructure mstruct3(mstruct);
 	mstruct3.transform(CALCULATOR->f_integrate);
-	mstruct3.addChild(MathStructure(-7, 3));
-	mstruct3.addChild(MathStructure(5, 2));
+	mstruct3.addChild(a);
+	mstruct3.addChild(b);
 	mstruct3.addChild(CALCULATOR->v_x);
 	mstruct3.addChild(m_one);
 	CALCULATOR->calculate(&mstruct3, 20000, eo);
 	if(!mstruct3.isNumber()) {CALCULATOR->clearMessages(); return;}
 	if(!mstruct2.equals(mstruct3, true, true)) {
 		PrintOptions po = CALCULATOR->messagePrintOptions();
-		po.max_decimals = mstruct3.number().precision(true) - 2;
+		int prec = mstruct3.number().precision(true);
+		if(prec < 0 || prec > PRECISION) prec = PRECISION;
+		else if(prec > 4) prec -= 3;
+		po.max_decimals = prec;
+		po.min_decimals = po.max_decimals;
 		po.use_max_decimals = true;
 		string str1 = mstruct2.print(po);
 		string str2 = mstruct3.print(po);
 		if(str1 != str2) {
-			cout << "Integration test: " << mstruct.print(CALCULATOR->messagePrintOptions()) << endl;
+			cout << "Integration test: " << mstruct.print(CALCULATOR->messagePrintOptions()) << "; " << a << "->" << b << endl;
 			display_errors();
 			cout << str1 << endl;
 			cout << str2 << endl;
@@ -65,8 +70,9 @@ void test_integration4(const MathStructure &mstruct) {
 		if(!mstruct2.isNumber() || !mstruct2.number().isReal()) imaginary++;
 	}
 	CALCULATOR->clearMessages();
-	
-	/*MathStructure x_var(CALCULATOR->v_x);
+}
+void test_integration6(const MathStructure &mstruct, const Number &a, const Number &b) {
+	MathStructure x_var(CALCULATOR->v_x);
 	cout << "Integration test: " << mstruct.print(CALCULATOR->messagePrintOptions()) << endl;
 	MathStructure mstruct2(mstruct);
 	EvaluationOptions eo;
@@ -77,32 +83,36 @@ void test_integration4(const MathStructure &mstruct) {
 	mstruct2.differentiate(x_var, eo);
 	mstruct2.eval(eo);
 	MathStructure mstruct3(mstruct2);
-	mstruct3.replace(x_var, 3);
+	mstruct3.replace(x_var, a);
 	mstruct3.eval(eo);
 	display_errors();
 	string str1 = mstruct3.print(CALCULATOR->messagePrintOptions());
 	cout << str1 << endl;
 	mstruct3 = mstruct;
-	mstruct3.replace(x_var, 3);
+	mstruct3.replace(x_var, a);
 	mstruct3.eval(eo);
 	display_errors();
 	string str2 = mstruct3.print(CALCULATOR->messagePrintOptions());
 	cout << str2 << endl;
 	if(str1 != str2) cout << "!!!" << endl;
 	mstruct3 = mstruct2;
-	mstruct3.replace(x_var, -5);
+	mstruct3.replace(x_var, b);
 	mstruct3.eval(eo);
 	display_errors();
 	str1 = mstruct3.print(CALCULATOR->messagePrintOptions());
 	cout << str1 << endl;
 	mstruct3 = mstruct;
-	mstruct3.replace(x_var, -5);
+	mstruct3.replace(x_var, b);
 	mstruct3.eval(eo);
 	display_errors();
 	str2 = mstruct3.print(CALCULATOR->messagePrintOptions());
 	cout << str2 << endl;
 	if(str1 != str2) cout << "!!!" << endl;
-	cout << "________________________________________________" << endl;*/
+	cout << "________________________________________________" << endl;
+}
+void test_integration4(const MathStructure &mstruct) {
+	test_integration5(mstruct, Number(-7, 3), Number(5, 2));
+	//test_integration6(mstruct, 3, -5);
 }
 void test_integration3(const MathStructure &mstruct, const MathStructure &mstruct_arg) {
 	MathStructure mstruct2(mstruct);
@@ -123,7 +133,7 @@ void test_integration3(const MathStructure &mstruct, const MathStructure &mstruc
 }
 void test_integration2(const MathStructure &mstruct) {
 	MathStructure mstruct2(mstruct);
-	mstruct2.transform(CALCULATOR->f_ln);
+	/*mstruct2.transform(CALCULATOR->f_ln);
 	test_integration3(mstruct2, mstruct);
 	mstruct2 = mstruct;
 	mstruct2 *= CALCULATOR->getRadUnit();
@@ -143,10 +153,10 @@ void test_integration2(const MathStructure &mstruct) {
 	mstruct2 = mstruct;
 	mstruct2.transform(CALCULATOR->f_acos);
 	test_integration3(mstruct2, mstruct);
-	/*mstruct2 = mstruct;
+	mstruct2 = mstruct;*/
 	mstruct2.transform(CALCULATOR->f_atan);
-	test_integration3(mstruct2, mstruct);*/
-	mstruct2 = mstruct;
+	test_integration3(mstruct2, mstruct);
+	/*mstruct2 = mstruct;
 	mstruct2.transform(CALCULATOR->f_sinh);
 	test_integration3(mstruct2, mstruct);
 	mstruct2 = mstruct;
@@ -160,11 +170,11 @@ void test_integration2(const MathStructure &mstruct) {
 	test_integration3(mstruct2, mstruct);
 	mstruct2 = mstruct;
 	mstruct2.transform(CALCULATOR->f_acosh);
-	test_integration3(mstruct2, mstruct);
-	/*mstruct2 = mstruct;
-	mstruct2.transform(CALCULATOR->f_atanh);
 	test_integration3(mstruct2, mstruct);*/
 	mstruct2 = mstruct;
+	mstruct2.transform(CALCULATOR->f_atanh);
+	test_integration3(mstruct2, mstruct);
+	/*mstruct2 = mstruct;
 	mstruct2 ^= nr_two;
 	test_integration3(mstruct2, mstruct);
 	mstruct2 = mstruct;
@@ -181,7 +191,7 @@ void test_integration2(const MathStructure &mstruct) {
 	test_integration3(mstruct2, mstruct);
 	mstruct2 = mstruct;
 	mstruct2 ^= Number(1, 3);
-	test_integration3(mstruct2, mstruct);
+	test_integration3(mstruct2, mstruct);*/
 }
 void test_integration() {
 	MathStructure mstruct;
@@ -1715,15 +1725,15 @@ int main(int argc, char *argv[]) {
 	
 	CALCULATOR->useIntervalArithmetic();
 	PrintOptions po = CALCULATOR->messagePrintOptions();
-	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-	po.show_ending_zeroes = true;
-	po.number_fraction_format = FRACTION_FRACTIONAL;
-	po.restrict_fraction_length = true;
 	/*po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	po.show_ending_zeroes = true;
+	po.number_fraction_format = FRACTION_FRACTIONAL;
+	po.restrict_fraction_length = true;*/
+	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+	po.show_ending_zeroes = false;
 	po.number_fraction_format = FRACTION_DECIMAL;
 	po.restrict_fraction_length = true;
-	po.min_exp = 1;*/
+	po.min_exp = 1;
 	//po.max_decimals = 1;
 	//po.use_max_decimals = true;
 	CALCULATOR->setMessagePrintOptions(po);
@@ -1745,7 +1755,7 @@ int main(int argc, char *argv[]) {
 	evalops.parse_options.comma_as_separator = false;*/
 	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;
 	evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
-	evalops.structuring = STRUCTURING_FACTORIZE;
+	evalops.structuring = STRUCTURING_EXPAND;
 	evalops.approximation = APPROXIMATION_EXACT;
 	
 	/*MathStructure mstruct = CALCULATOR->calculate("atanh(2x^2+5)*x^2", evalops);
@@ -1757,9 +1767,9 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	/*test_integration();
+	test_integration();
 	cout << successes << ":" << imaginary << endl;
-	return 0;*/
+	return 0;
 	//test_intervals(true);
 	
 	/*Number nr;
@@ -1782,6 +1792,22 @@ int main(int argc, char *argv[]) {
 		//nr--;
 	}*/
 	//return 0;
+	
+	MathStructure mp;
+	string str;
+	Number a, b;
+	for(size_t i = 0; i < 1000; i++) {
+		str = rnd_expression(4, true, 6, 4, false, false, false);
+		CALCULATOR->parse(&mp, str, evalops.parse_options);
+		if(mp.contains(CALCULATOR->v_x)) {
+			a.set(rnd_number(false, false, false, false, false));
+			b.set(rnd_number(false, false, false, false, false));
+			if(a < b) test_integration5(mp, a, b);
+			else test_integration5(mp, b, a);
+		}
+	}
+	cout << successes << ":" << imaginary << endl;
+	return 0;
 
 	CALCULATOR->setVariableUnitsEnabled(false);
 	
@@ -1790,7 +1816,7 @@ int main(int argc, char *argv[]) {
 	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 	//CALCULATOR->useIntervalArithmetic();
 	
-	for(size_t i = 0; i <= 10000; i++) {
+	for(size_t i = 0; i <= 50000; i++) {
 		/*string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
 		cout << str << endl;
 		MathStructure mstruct;
@@ -1800,7 +1826,7 @@ int main(int argc, char *argv[]) {
 		if(mstruct.isAborted()) break;*/
 		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
 		rnd_test(evalops, 4, true, false, false, false, false, false);
-		if(i % 100 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
+		//if(i % 100 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 

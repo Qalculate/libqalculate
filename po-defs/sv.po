@@ -6335,7 +6335,7 @@ msgid ""
 msgstr ""
 "Returnerar det två-sidiga gränsvärdet för funktionen om riktning är noll, "
 "gränsvärdet från vänster (underifrån) om riktning är -1 eller gränsvärdet "
-"frpn höger (ovanifrån) om riktning är +1."
+"från höger (ovanifrån) om riktning är +1."
 
 #: ../data/functions.xml.in.h:831
 msgid "r:limit"

@@ -1509,19 +1509,21 @@ void Number::setRelativeUncertainty(const Number &o, bool to_precision) {
 	setUncertainty(nr, to_precision);
 }
 Number Number::uncertainty() const {
-	if(!isInterval()) return Number();
+	if(!isInterval(false)) return Number();
 	Number nr;
-	if(mpfr_inf_p(fl_value) || mpfr_inf_p(fu_value)) {
-		nr.setPlusInfinity();
-	} else {
-		mpfr_clear_flags();
-		mpfr_t f_mid;
-		mpfr_init2(f_mid, BIT_PRECISION);
-		mpfr_sub(f_mid, fu_value, fl_value, MPFR_RNDU);
-		mpfr_div_ui(f_mid, f_mid, 2, MPFR_RNDU);
-		nr.setInternal(f_mid);
-		mpfr_clear(f_mid);
-		nr.testFloatResult();
+	if(n_type == NUMBER_TYPE_FLOAT && !mpfr_equal_p(fl_value, fu_value)) {
+		if(mpfr_inf_p(fl_value) || mpfr_inf_p(fu_value)) {
+			nr.setPlusInfinity();
+		} else {
+			mpfr_clear_flags();
+			mpfr_t f_mid;
+			mpfr_init2(f_mid, BIT_PRECISION);
+			mpfr_sub(f_mid, fu_value, fl_value, MPFR_RNDU);
+			mpfr_div_ui(f_mid, f_mid, 2, MPFR_RNDU);
+			nr.setInternal(f_mid);
+			mpfr_clear(f_mid);
+			nr.testFloatResult();
+		}
 	}
 	if(i_value) nr.setImaginaryPart(i_value->uncertainty());
 	return nr;

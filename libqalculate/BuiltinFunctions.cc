@@ -6777,7 +6777,6 @@ bool numerical_integration(const MathStructure &mstruct, Number &nvalue, const M
 	Number nr_step(nr_end);
 	nr_step -= nr_begin;
 	nr_step /= i_samples;
-	if(i_samples > 10) nr_step.setToFloatingPoint();
 	MathStructure m_a = mstruct;
 	m_a.replace(x_var, nr_begin);
 	m_a.eval(eo2);
@@ -6870,13 +6869,34 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 
 	MathStructure mf(minteg);
 	mf.replace(x_var, a);
-	mf += minteg;
+	mf.eval(eo);
+	if(!mf.isNumber()) return false;
+	if(mf.number().includesInfinity()) {
+		if(!a.setToFloatingPoint()) return false;
+		mpfr_nextabove(a.internalLowerFloat());
+		mpfr_nextabove(a.internalUpperFloat());
+		mf = minteg;
+		mf.replace(x_var, a);
+		mf.eval(eo);
+		if(!mf.isNumber()) return false;
+	}
+	Rp[0] = mf.number();
+	
+	mf = minteg;
 	mf.replace(x_var, b);
 	mf.eval(eo);
-
 	if(!mf.isNumber()) return false;
-	Rp[0] = mf.number();
-	if(!Rp[0].multiply(nr_half) || !Rp[0].multiply(h)) return false;
+	if(mf.number().includesInfinity()) {
+		if(!b.setToFloatingPoint()) return false;
+		mpfr_nextbelow(b.internalLowerFloat());
+		mpfr_nextbelow(b.internalUpperFloat());
+		mf = minteg;
+		mf.replace(x_var, a);
+		mf.eval(eo);
+		if(!mf.isNumber()) return false;
+	}
+
+	if(!Rp[0].add(mf.number()) || !Rp[0].multiply(nr_half) || !Rp[0].multiply(h)) return false;
 	
 	for(long int i = 1; i < max_steps; i++) {
 
@@ -6893,6 +6913,15 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 			mf = minteg;
 			mf.replace(x_var, ntmp);
 			mf.eval(eo);
+			if(mf.number().includesInfinity()) {
+				Number ntmp2(ntmp);
+				if(ntmp2.setToFloatingPoint()) return false;
+				if(j % 2 == 0) {mpfr_nextabove(ntmp2.internalLowerFloat()); mpfr_nextabove(ntmp2.internalUpperFloat());}
+				else {mpfr_nextbelow(ntmp2.internalLowerFloat()); mpfr_nextbelow(ntmp2.internalUpperFloat());}
+				mf = minteg;
+				mf.replace(x_var, ntmp2);
+				mf.eval(eo);
+			}
 			if(!mf.isNumber() || !c.add(mf.number())) return false;
 			ntmp += h; ntmp += h;
 		}
@@ -6932,16 +6961,16 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 			}
 			acc.set(1, 1, -prec);
 			if(Rc[i - 1].hasImaginaryPart()) {
-				if(Rc[i - 1].realPartIsNonZero()) acc *= Rc[i - 1].realPart();
+				if(Rc[i - 1].hasRealPart()) acc *= Rc[i - 1].realPart();
 			} else {
-				if(Rc[i - 1].isNonZero()) acc *= Rc[i - 1];
+				if(!Rc[i - 1].isZero()) acc *= Rc[i - 1];
 			}
 			acc.abs();
 			nvalue = Rc[i - 1];
 			if(nunc <= acc) {
 				if(!nunc_i.isZero()) {
 					acc_i.set(1, 1, -prec);
-					if(Rc[i - 1].imaginaryPartIsNonZero()) acc *= Rc[i - 1].imaginaryPart();
+					if(Rc[i - 1].hasImaginaryPart()) acc_i *= Rc[i - 1].imaginaryPart();
 					acc_i.abs();
 					if(nunc_i <= acc_i) {
 						if(!safety_measures) {
@@ -6949,7 +6978,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 							nvalue.setUncertainty(nunc);
 							return true;
 						}
-						if(!prevunc.isZero() || !prevunc.isZero() || (nunc.isZero() && nunc_i.isZero())) {
+						if(!prevunc.isZero() || !prevunc_i.isZero() || (nunc.isZero() && nunc_i.isZero())) {
 							if(nunc <= prevunc && nunc_i <= prevunc_i) {
 								prevunc.setImaginaryPart(prevunc_i);
 								nvalue.setUncertainty(prevunc);
@@ -6999,7 +7028,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 		if(nunc > acc) return false;
 		if(!nunc_i.isZero()) {
 			acc.set(1, 1, -3);
-			if(nvalue.imaginaryPartIsNonZero()) acc *= nvalue.imaginaryPart();
+			if(nvalue.hasImaginaryPart()) acc *= nvalue.imaginaryPart();
 			acc.abs();
 			if(nunc_i > acc) return false;
 			nunc.setImaginaryPart(nunc_i);
@@ -7367,6 +7396,7 @@ bool contains_negative_igamma(const MathStructure &mstruct) {
 	}
 	return false;
 }
+
 extern bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool combine_divisions = true, bool only_gcd = false, bool combine_only = false, bool recursive = true, bool limit_size = false, int i_run = 1);
 
 int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -7389,7 +7419,6 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	EvaluationOptions eo2 = eo;
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) eo2.approximation = APPROXIMATION_EXACT;
 	CALCULATOR->beginTemporaryStopMessages();
-	eo2.do_polynomial_division = false;
 	MathStructure mstruct_pre = vargs[0];
 	MathStructure x_var = vargs[3];
 	if(!m1.isUndefined()) {
@@ -7417,19 +7446,29 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	}
 	if(definite_integral) eo2.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
 	mstruct = mstruct_pre;
+	eo2.do_polynomial_division = false;
 	mstruct.eval(eo2);
-	do_simplification(mstruct, eo2, false, false, false, true, true);
 	if(definite_integral > 0 && mstruct.isAddition()) {
 		mstruct.replace(x_var, vargs[3]);
+		bool b_eval = false;;
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			mstruct[i].transform(this);
 			for(size_t i2 = 1; i2 < vargs.size(); i2++) mstruct[i].addChild(vargs[i2]);
+			mstruct[i].calculateFunctions(eo, false);
+			if(!b_eval && mstruct[i].isNumber() && mstruct[i].number().isInterval(false)) b_eval = true;
 		}
 		mstruct.childrenUpdated();
+		if(b_eval) {
+			EvaluationOptions eo3 = eo;
+			if(eo3.interval_calculation && vargs[0].containsInterval(true, true, false, 1, true) <= 0) eo3.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
+			mstruct.eval(eo3);
+		}
 		CALCULATOR->endTemporaryStopMessages(true);
 		CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
 	}
+	do_simplification(mstruct, eo2, true, false, false, true, true);
+	eo2.do_polynomial_division = eo.do_polynomial_division;
 	MathStructure mbak(mstruct);
 
 	if(vargs.size() < 5 || !vargs[4].number().getBoolean() || definite_integral == 0) {
@@ -7489,14 +7528,14 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 #endif
 				CALCULATOR->endTemporaryStopMessages(true);
 				MathStructure mstruct_lower(mstruct);
-				mstruct_lower.replace(x_var, vargs[1]);
+				mstruct_lower.replace(x_var, vargs[1].isUndefined() ? nr_minus_inf : vargs[1]);
 				bool incalc = eo.approximation != APPROXIMATION_EXACT && contains_negative_igamma(mstruct_lower);
 				if(definite_integral < 0) {
 					if(incalc) {
 						definite_integral = 0;
 					} else {
 						MathStructure mtest(mstruct);
-						mtest.replace(x_var, vargs[2]);
+						mtest.replace(x_var, vargs[2].isUndefined() ? nr_plus_inf : vargs[2]);
 						mtest -= mstruct_lower;
 						CALCULATOR->beginTemporaryStopMessages();
 						mtest.eval(eo);
@@ -7506,7 +7545,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 					}
 				}
 				if(definite_integral) {
-					mstruct.replace(x_var, vargs[2]);
+					mstruct.replace(x_var, vargs[2].isUndefined() ? nr_plus_inf : vargs[2]);
 					if(incalc || (eo.approximation != APPROXIMATION_EXACT && contains_negative_igamma(mstruct))) {
 						mstruct = mbak;
 					} else {
@@ -7637,10 +7676,11 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		CALCULATOR->endTemporaryStopMessages();
 	}
 	if(eo.approximation != APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_APPROXIMATE;
-	CALCULATOR->beginTemporaryStopIntervalArithmetic();
-	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
+
 	mstruct = mstruct_pre;
 	mstruct.eval(eo2);
+	
+	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
 
 	if(m1.isNumber() && m1.number().isReal() && m2.isNumber() && m2.number().isReal()) {
 		Number nr_begin, nr_end;
@@ -7656,107 +7696,47 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		if(eo.approximation != APPROXIMATION_EXACT) {
 			Number nr;
 			if(romberg(mstruct, nr, x_var, eo2, nr_begin, nr_end)) {
+				if(b_reversed) nr.negate();
 				mstruct = nr;
 				if(vargs.size() < 5 || !vargs[4].number().getBoolean()) CALCULATOR->error(false, _("Definite integral was approximated."), NULL);
-				CALCULATOR->endTemporaryStopIntervalArithmetic();
-				if(b_reversed) mstruct.negate();
 				return 1;
 			}
 			mstruct = mbak;
 			mstruct.replace(x_var, vargs[3]);
-			CALCULATOR->endTemporaryStopIntervalArithmetic();
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 			return -1;
 		}
 		Number nr_range(nr_end);
 		nr_range -= nr_begin;
-		int type = 0;
 		MathStructure merr(mstruct);
-		size_t xn = merr.countOccurrences(x_var);
-		bool b_unknown_precision = false;
 		CALCULATOR->beginTemporaryStopMessages();
 		eo2.expand = false;
-		for(size_t i = 0; i < (eo.approximation == APPROXIMATION_EXACT ? 4 : 6); i++) {
+		for(size_t i = 0; i < 4; i++) {
 			if(merr.containsFunction(CALCULATOR->f_diff, true) > 0 || !merr.differentiate(x_var, eo2)) {
-				b_unknown_precision = true;
 				break;
 			}
 			merr.calculatesub(eo2, eo2, true);
-			if(i == 1 && eo.approximation != APPROXIMATION_EXACT) {
-				size_t i_xn = merr.countOccurrences(x_var);
-				if(i_xn >= xn * 6 || true) {type = 1; break;}
-			} /*else if(i == 3 && eo.approximation != APPROXIMATION_EXACT) {
-				size_t i_xn = merr.countOccurrences(x_var);
-				if(i_xn >= xn * 6) {type = 2; break;}
-			}*/
-			if(CALCULATOR->aborted() || (eo.approximation == APPROXIMATION_EXACT && merr.countTotalChildren() > 200)) {
-				CALCULATOR->endTemporaryStopMessages();
-				mstruct = mbak;
-				mstruct.replace(x_var, vargs[3]);
-				CALCULATOR->endTemporaryStopIntervalArithmetic();
-				return -1;
+			if(CALCULATOR->aborted() || merr.countTotalChildren() > 200) {
+				break;
 			}
 		}
-		
 		eo2.expand = eo.expand;
 		CALCULATOR->endTemporaryStopMessages();
-		if(!b_unknown_precision) b_unknown_precision = merr.containsFunction(CALCULATOR->f_diff, true) > 0;
 		if(merr.isZero()) {
 			Number nr;
-			if(numerical_integration(mstruct, nr, x_var, eo2, nr_begin, nr_end, 12, type)) {
+			if(numerical_integration(mstruct, nr, x_var, eo2, nr_begin, nr_end, 12, 0)) {
+				if(b_reversed) nr.negate();
 				mstruct = nr;
-				CALCULATOR->endTemporaryStopIntervalArithmetic();
-				if(b_reversed) mstruct.negate();
-				return 1;
-			}
-		} else if(eo.approximation == APPROXIMATION_EXACT) {
-			CALCULATOR->endTemporaryStopIntervalArithmetic();
-			CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
-			mstruct = mbak;
-			mstruct.replace(x_var, vargs[3]);
-			return -1;
-		} else if(b_unknown_precision) {
-			Number nr;
-			if(numerical_integration(mstruct, nr, x_var, eo2, nr_begin, nr_end, 5004, type)) {
-				nr.setApproximate();
-				mstruct = nr;
-				CALCULATOR->endTemporaryStopIntervalArithmetic();
-				CALCULATOR->error(true, _("Definite integral was approximated with unknown precision."), NULL);
-				mstruct.setPrecision(5, true);
-				if(b_reversed) mstruct.negate();
-				return 1;
-			}
-			CALCULATOR->endTemporaryStopIntervalArithmetic();
-		} else {
-			CALCULATOR->endTemporaryStopIntervalArithmetic();
-			Number nr_intval;
-			nr_intval.setInterval(nr_begin, nr_end);
-			KnownVariable *v = new KnownVariable("", "v", nr_intval);
-			MathStructure merr_diff(merr);
-			merr.replace(x_var, v);
-			if(!merr_diff.differentiate(x_var, eo2) || merr_diff.containsFunction(CALCULATOR->f_diff, true) > 0) {
-				merr_diff.setUndefined();
-			} else {
-				eo2.expand = false;
-				merr_diff.calculatesub(eo2, eo2, true);
-				eo2.expand = eo.expand;
-				merr_diff.replace(x_var, v);
-			}
-			Number nr;
-			int i = numerical_integration_part(mstruct, x_var, merr, merr_diff, v, nr, eo2, nr_intval, type);
-			v->destroy();
-			if(i != 0) {
-				mstruct = nr;
-				if(i < 0) CALCULATOR->error(true, _("Definite integral was approximated with unknown precision."), NULL);
-				else if(vargs.size() < 5 || !vargs[4].number().getBoolean()) CALCULATOR->error(false, _("Definite integral was approximated."), NULL);
-				if(b_reversed) mstruct.negate();
 				return 1;
 			}
 		}
+		CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
+		mstruct = mbak;
+		mstruct.replace(x_var, vargs[3]);
+		return -1;
 	}
 	mstruct = mbak;
 	mstruct.replace(x_var, vargs[3]);
-	CALCULATOR->endTemporaryStopIntervalArithmetic();
 	CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 	return -1;
 }
@@ -7777,7 +7757,6 @@ int RombergFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	MathStructure minteg(vargs[0]);
 	EvaluationOptions eo2 = eo;
 	eo2.approximation = APPROXIMATION_APPROXIMATE;
-	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
 	Number nr_interval;
 	nr_interval.setInterval(vargs[1].number(), vargs[2].number());
 	UnknownVariable *var = new UnknownVariable("", format_and_print(vargs[4]));
@@ -7787,12 +7766,11 @@ int RombergFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	var->destroy();
 	minteg.eval(eo2);
 	Number nr;
+	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
 	if(romberg(minteg, nr, x_var, eo2, vargs[1].number(), vargs[2].number(), vargs[3].number().lintValue(), false)) {
 		mstruct = nr;
-		CALCULATOR->endTemporaryStopIntervalArithmetic();
 		return 1;
 	}
-	CALCULATOR->endTemporaryStopIntervalArithmetic();
 	CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 	return 0;
 }
@@ -7811,7 +7789,6 @@ int MonteCarloFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	MathStructure minteg(vargs[0]);
 	EvaluationOptions eo2 = eo;
 	eo2.approximation = APPROXIMATION_APPROXIMATE;
-	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
 	Number nr_interval;
 	nr_interval.setInterval(vargs[1].number(), vargs[2].number());
 	UnknownVariable *var = new UnknownVariable("", format_and_print(vargs[4]));
@@ -7821,12 +7798,11 @@ int MonteCarloFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	var->destroy();
 	minteg.eval(eo2);
 	Number nr;
+	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
 	if(montecarlo(minteg, nr, x_var, eo2, vargs[1].number(), vargs[2].number(), vargs[3].number())) {
 		mstruct = nr;
-		CALCULATOR->endTemporaryStopIntervalArithmetic();
 		return 1;
 	}
-	CALCULATOR->endTemporaryStopIntervalArithmetic();
 	CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 	return 0;
 }
