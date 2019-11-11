@@ -111,7 +111,7 @@ void test_integration6(const MathStructure &mstruct, const Number &a, const Numb
 	cout << "________________________________________________" << endl;
 }
 void test_integration4(const MathStructure &mstruct) {
-	test_integration5(mstruct, Number(-7, 3), Number(5, 2));
+	test_integration5(mstruct, Number(2, 1), Number(7, 3));
 	//test_integration6(mstruct, 3, -5);
 }
 void test_integration3(const MathStructure &mstruct, const MathStructure &mstruct_arg) {
@@ -133,7 +133,7 @@ void test_integration3(const MathStructure &mstruct, const MathStructure &mstruc
 }
 void test_integration2(const MathStructure &mstruct) {
 	MathStructure mstruct2(mstruct);
-	/*mstruct2.transform(CALCULATOR->f_ln);
+	mstruct2.transform(CALCULATOR->f_ln);
 	test_integration3(mstruct2, mstruct);
 	mstruct2 = mstruct;
 	mstruct2 *= CALCULATOR->getRadUnit();
@@ -153,10 +153,10 @@ void test_integration2(const MathStructure &mstruct) {
 	mstruct2 = mstruct;
 	mstruct2.transform(CALCULATOR->f_acos);
 	test_integration3(mstruct2, mstruct);
-	mstruct2 = mstruct;*/
+	mstruct2 = mstruct;
 	mstruct2.transform(CALCULATOR->f_atan);
 	test_integration3(mstruct2, mstruct);
-	/*mstruct2 = mstruct;
+	mstruct2 = mstruct;
 	mstruct2.transform(CALCULATOR->f_sinh);
 	test_integration3(mstruct2, mstruct);
 	mstruct2 = mstruct;
@@ -170,11 +170,11 @@ void test_integration2(const MathStructure &mstruct) {
 	test_integration3(mstruct2, mstruct);
 	mstruct2 = mstruct;
 	mstruct2.transform(CALCULATOR->f_acosh);
-	test_integration3(mstruct2, mstruct);*/
+	test_integration3(mstruct2, mstruct);
 	mstruct2 = mstruct;
 	mstruct2.transform(CALCULATOR->f_atanh);
 	test_integration3(mstruct2, mstruct);
-	/*mstruct2 = mstruct;
+	mstruct2 = mstruct;
 	mstruct2 ^= nr_two;
 	test_integration3(mstruct2, mstruct);
 	mstruct2 = mstruct;
@@ -191,7 +191,7 @@ void test_integration2(const MathStructure &mstruct) {
 	test_integration3(mstruct2, mstruct);
 	mstruct2 = mstruct;
 	mstruct2 ^= Number(1, 3);
-	test_integration3(mstruct2, mstruct);*/
+	test_integration3(mstruct2, mstruct);
 }
 void test_integration() {
 	MathStructure mstruct;
@@ -888,7 +888,7 @@ void test_intervals(bool use_interval) {
 
 }
 
-string rnd_expression(int allow_unknowns, bool allow_functions, int length_factor1 = 10, int length_factor2 = 5, bool allow_units = false, bool allow_variables = false, bool allow_interval = false, bool allow_complex = true, bool only_integers = false);
+string rnd_expression(int allow_unknowns, bool allow_functions, int length_factor1 = 10, int length_factor2 = 5, bool allow_units = false, bool allow_variables = false, bool allow_interval = false, bool allow_complex = true, bool only_integers = false, int num_ratio = 2, bool num_ratio_den = false);
 
 
 string rnd_unit() {
@@ -941,10 +941,10 @@ string rnd_number(bool use_par = true, bool only_integers = false, bool only_pos
 	return str;
 }
 
-string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int allow_unit = false, int allow_variable = false, bool allow_interval = false, bool allow_complex = true, bool only_integers = false) {
-	int r = rand() % (2 + (allow_unknown > 0)) + 1;
+string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int allow_unit = false, int allow_variable = false, bool allow_interval = false, bool allow_complex = true, bool only_integers = false, int num_ratio = 2, bool num_ratio_den = false) {
+	int r = rand() % num_ratio + 1;
 	string str;
-	if(r != 1 || (!allow_unknown && !allow_function && !allow_unit && !allow_variable)) {
+	if((num_ratio_den ? (r != 1) : (r == 1)) || (!allow_unknown && !allow_function && !allow_unit && !allow_variable)) {
 		str = rnd_number(true, only_integers, false, allow_complex, allow_interval);
 	} else {
 		if(allow_unit && (rand() % (2 + allow_function + allow_unknown + allow_variable)) == 0) {
@@ -973,14 +973,14 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 				case 4: {str = "pi"; break;}
 				case 5: {str = "e"; break;}
 				case 6: {str = "root("; 
-					str += rnd_expression(allow_unknown, allow_function, 6, 3, allow_unit, allow_variable, allow_interval, allow_complex, only_integers);
+					str += rnd_expression(allow_unknown, allow_function, 6, 3, allow_unit, allow_variable, allow_interval, allow_complex, only_integers, num_ratio, num_ratio_den);
 					str += ',';
 					str += rnd_number(true, true, true, false, false);
 					str += ')';
 					return str;
 				}
 				case 7: {str = "log("; 
-					str += rnd_expression(allow_unknown, allow_function, 6, 3, allow_unit, allow_variable, allow_interval, allow_complex, only_integers);
+					str += rnd_expression(allow_unknown, allow_function, 6, 3, allow_unit, allow_variable, allow_interval, allow_complex, only_integers, num_ratio, num_ratio_den);
 					str += ',';
 					str += rnd_number(true, true, true, false, false);
 					str += ')';
@@ -1018,7 +1018,7 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 					str += "x)";
 					if(rand() % 3 == 1) str += "^2";
 				} else {
-					str += rnd_item(par, true, allow_unknown, allow_unit, allow_variable, allow_interval, allow_complex, only_integers);
+					str += rnd_item(par, true, allow_unknown, allow_unit, allow_variable, allow_interval, allow_complex, only_integers, num_ratio, num_ratio_den);
 					par++;
 				}
 			}
@@ -1057,7 +1057,7 @@ string rnd_operator(int &par, bool allow_pow = true) {
 	return "";
 }
 
-string rnd_expression(int allow_unknowns, bool allow_functions, int length_factor1, int length_factor2, bool allow_unit, bool allow_variable, bool allow_interval, bool allow_complex, bool only_integers) {
+string rnd_expression(int allow_unknowns, bool allow_functions, int length_factor1, int length_factor2, bool allow_unit, bool allow_variable, bool allow_interval, bool allow_complex, bool only_integers, int num_ratio, bool num_ratio_den) {
 	int par = 0;
 	string str;
 	while(str.empty() || rand() % ((length_factor1 - (int) str.length() / length_factor2 < 2) ? 2 : (length_factor1 - (int) str.length() / length_factor2)) != 0) {
@@ -1767,9 +1767,9 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	test_integration();
+	/*test_integration();
 	cout << successes << ":" << imaginary << endl;
-	return 0;
+	return 0;*/
 	//test_intervals(true);
 	
 	/*Number nr;
@@ -1796,14 +1796,16 @@ int main(int argc, char *argv[]) {
 	MathStructure mp;
 	string str;
 	Number a, b;
-	for(size_t i = 0; i < 1000; i++) {
-		str = rnd_expression(4, true, 6, 4, false, false, false);
+	for(size_t i = 0; i < 10000;) {
+		str = rnd_expression(10, true, 6, 4, false, false, false, 5, false);
 		CALCULATOR->parse(&mp, str, evalops.parse_options);
 		if(mp.contains(CALCULATOR->v_x)) {
 			a.set(rnd_number(false, false, false, false, false));
 			b.set(rnd_number(false, false, false, false, false));
 			if(a < b) test_integration5(mp, a, b);
 			else test_integration5(mp, b, a);
+			i++;
+			if(i % 100 == 0) cout << successes << ":" << imaginary << endl;
 		}
 	}
 	cout << successes << ":" << imaginary << endl;
