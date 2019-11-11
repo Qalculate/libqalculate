@@ -7381,8 +7381,14 @@ bool replace_abs(MathStructure &mstruct, const MathStructure &mabs, bool neg) {
 	}
 	return b_ret;
 }
-bool contains_negative_igamma(const MathStructure &mstruct) {
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_erf && mstruct.size() == 1 && !mstruct[0].representsReal()) {
+bool contains_incalc_function(const MathStructure &mstruct) {
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_erf && mstruct.size() == 1 && !mstruct[0].representsNonComplex()) {
+		if(mstruct[0].representsComplex()) return true;
+		MathStructure mtest(mstruct[0]);
+		mtest.eval();
+		return !mstruct[0].representsNonComplex();
+	}
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_Ei && mstruct.size() == 1 && !mstruct[0].representsNonComplex()) {
 		if(mstruct[0].representsComplex()) return true;
 		MathStructure mtest(mstruct[0]);
 		mtest.eval();
@@ -7392,7 +7398,7 @@ bool contains_negative_igamma(const MathStructure &mstruct) {
 		return true;
 	}
 	for(size_t i = 0; i < mstruct.size(); i++) {
-		if(contains_negative_igamma(mstruct[i])) return true;
+		if(contains_incalc_function(mstruct[i])) return true;
 	}
 	return false;
 }
@@ -7450,19 +7456,19 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	mstruct.eval(eo2);
 	if(definite_integral > 0 && mstruct.isAddition()) {
 		mstruct.replace(x_var, vargs[3]);
-		bool b_eval = false;;
-		for(size_t i = 0; i < mstruct.size(); i++) {
+		Number nr;
+		for(size_t i = 0; i < mstruct.size();) {
 			mstruct[i].transform(this);
 			for(size_t i2 = 1; i2 < vargs.size(); i2++) mstruct[i].addChild(vargs[i2]);
 			mstruct[i].calculateFunctions(eo, false);
-			if(!b_eval && mstruct[i].isNumber() && mstruct[i].number().isInterval(false)) b_eval = true;
+			if(mstruct[i].isNumber()) {
+				if(nr.add(mstruct[i].number())) mstruct.delChild(i + 1);
+				else i++;
+			} else i++;
 		}
 		mstruct.childrenUpdated();
-		if(b_eval) {
-			EvaluationOptions eo3 = eo;
-			if(eo3.interval_calculation && vargs[0].containsInterval(true, true, false, 1, true) <= 0) eo3.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
-			mstruct.eval(eo3);
-		}
+		if(mstruct.size() == 0) mstruct.set(nr, true);
+		else mstruct.addChild(nr);
 		CALCULATOR->endTemporaryStopMessages(true);
 		CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
@@ -7529,7 +7535,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				CALCULATOR->endTemporaryStopMessages(true);
 				MathStructure mstruct_lower(mstruct);
 				mstruct_lower.replace(x_var, vargs[1].isUndefined() ? nr_minus_inf : vargs[1]);
-				bool incalc = eo.approximation != APPROXIMATION_EXACT && contains_negative_igamma(mstruct_lower);
+				bool incalc = eo.approximation != APPROXIMATION_EXACT && contains_incalc_function(mstruct_lower);
 				if(definite_integral < 0) {
 					if(incalc) {
 						definite_integral = 0;
@@ -7546,7 +7552,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				}
 				if(definite_integral) {
 					mstruct.replace(x_var, vargs[2].isUndefined() ? nr_plus_inf : vargs[2]);
-					if(incalc || (eo.approximation != APPROXIMATION_EXACT && contains_negative_igamma(mstruct))) {
+					if(incalc || (eo.approximation != APPROXIMATION_EXACT && contains_incalc_function(mstruct))) {
 						mstruct = mbak;
 					} else {
 						mstruct -= mstruct_lower;

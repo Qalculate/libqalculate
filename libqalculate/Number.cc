@@ -6563,7 +6563,8 @@ bool Number::igamma(const Number &o) {
 #endif
 }
 bool Number::expint() {
-	if(!isReal()) return false;
+	if(hasImaginaryPart()) return false;
+	if(isInfinite()) {clear(); return true;}
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	mpfr_clear_flags();

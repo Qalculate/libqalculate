@@ -12735,21 +12735,55 @@ bool simplify_ln(MathStructure &mstruct) {
 	return b_ret;
 }
 
-KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, const EvaluationOptions &eo, MathStructure *mnew, Variable **prev_v, bool &b_failed) {
+void find_interval_create_var(const Number &nr, MathStructure &m, MathStructure &unc, MathStructure &unc2, KnownVariable **v, KnownVariable **v2) {
+	if(nr.hasImaginaryPart() && nr.internalImaginary()->isInterval()) {
+		if(nr.hasRealPart() && nr.isInterval(false)) {
+			unc = nr.internalImaginary()->uncertainty();
+			unc2 = nr.realPart().uncertainty();
+			Number nmid(*nr.internalImaginary());
+			nmid.intervalToMidValue();
+			Number nmid2(nr.realPart());
+			nmid2.intervalToMidValue();
+			*v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
+			(*v)->setApproximate(false);
+			*v2 = new KnownVariable("", string("(") + format_and_print(nmid2) + ")", nmid2);
+			(*v2)->setApproximate(false);
+			m.set(*v);
+			m.multiply(nr_one_i);
+			m.add(*v2);
+			(*v)->destroy();
+			(*v2)->destroy();
+		} else {
+			unc = nr.internalImaginary()->uncertainty();
+			Number nmid(*nr.internalImaginary());
+			nmid.intervalToMidValue();
+			*v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
+			(*v)->setApproximate(false);
+			m.set(*v);
+			m.multiply(nr_one_i);
+			(*v)->destroy();
+		}
+	} else {
+		unc = nr.uncertainty();
+		Number nmid(nr);
+		nmid.intervalToMidValue();
+		*v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
+		(*v)->setApproximate(false);
+		m.set(*v);
+		(*v)->destroy();
+	}
+}
+
+KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, MathStructure &unc2, KnownVariable **v2, const EvaluationOptions &eo, MathStructure *mnew, Variable **prev_v, bool &b_failed) {
 	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables && m.isVariable() && m.variable()->isKnown()) {
 		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
 		if(!mvar.containsInterval(true, true, false, 1, true)) return NULL;
 		if(mvar.isNumber()) {
-			unc = mvar.number().uncertainty();
-			Number nmid(mvar.number());
-			nmid.intervalToMidValue();
-			KnownVariable *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
-			v->setApproximate(false);
 			m.variable()->ref();
 			*prev_v = m.variable();
-			m.set(v);
+			KnownVariable *v = NULL;
+			find_interval_create_var(mvar.number(), m, unc, unc2, &v, v2);
 			*mnew = m;
-			v->destroy();
 			return v;
 		} else if(mvar.isMultiplication() && mvar[0].isNumber()) {
 			if(mvar[0].number().isInterval(false)) {
@@ -12761,19 +12795,14 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 					}
 				}
 				if(b) {
-					unc = mvar[0].number().uncertainty();
-					Number nmid(mvar[0].number());
-					nmid.intervalToMidValue();
-					KnownVariable *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
-					v->setApproximate(false);
 					m.variable()->ref();
 					*prev_v = m.variable();
-					m.set(v);
+					KnownVariable *v = NULL;
+					find_interval_create_var(mvar[0].number(), m, unc, unc2, &v, v2);
 					for(size_t i = 1; i < mvar.size(); i++) {
 						m.multiply(mvar[i], true);
 					}
 					*mnew = m;
-					v->destroy();
 					return v;
 				}
 			}
@@ -12836,13 +12865,8 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 		}
 		b_failed = true;
 	} else if(m.isNumber() && m.number().isInterval(false) && m.number().precision(true) <= PRECISION + 10) {
-		unc = m.number().uncertainty();
-		Number nmid(m.number());
-		nmid.intervalToMidValue();
-		KnownVariable *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
-		v->setApproximate(false);
-		m.set(v);
-		v->destroy();
+		KnownVariable *v = NULL;
+		find_interval_create_var(m.number(), m, unc, unc2, &v, v2);
 		return v;
 	} else if(m.isFunction() && m.function() == CALCULATOR->f_interval && m.size() == 2 && !m[0].containsInterval(true, true, false, 1, true) && !m[1].containsInterval(true, true, false, 1, true)) {
 		if(m[0].isAddition() && m[0].size() == 2 && m[1].isAddition() && m[1].size() == 2) {
@@ -12895,7 +12919,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, c
 		return v;
 	}
 	for(size_t i = 0; i < m.size(); i++) {
-		KnownVariable *v = find_interval_replace_var(m[i], unc, eo, mnew, prev_v, b_failed);
+		KnownVariable *v = find_interval_replace_var(m[i], unc, unc2, v2, eo, mnew, prev_v, b_failed);
 		if(b_failed) return NULL;
 		if(v) return v;
 	}
@@ -12967,12 +12991,13 @@ bool sync_approximate_units(MathStructure &m, const EvaluationOptions &feo, vect
 MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &eo, bool &b_failed) {
 	vector<KnownVariable*> vars;
 	vector<MathStructure> uncs;
-	MathStructure unc;
+	MathStructure unc, unc2;
 	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) replace_variables_with_interval(m, eo);
 	while(true) {
 		Variable *prev_v = NULL;
 		MathStructure mnew;
-		KnownVariable *v = find_interval_replace_var(m, unc, eo, &mnew, &prev_v, b_failed);
+		KnownVariable *v2 = NULL;
+		KnownVariable *v = find_interval_replace_var(m, unc, unc2, &v2, eo, &mnew, &prev_v, b_failed);
 		if(!v) break;
 		if(!mnew.isZero()) {
 			m.replace(prev_v, mnew);
@@ -12980,6 +13005,10 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 		}
 		vars.push_back(v);
 		uncs.push_back(unc);
+		if(v2) {
+			vars.push_back(v2);
+			uncs.push_back(unc2);
+		}
 	}
 	m.unformat(eo);
 	if(eo.sync_units && eo.approximation != APPROXIMATION_EXACT) sync_approximate_units(m, eo, &vars, &uncs, true);
@@ -12987,14 +13016,11 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 	MathStructure munc;
 	UnknownVariable *uv = new UnknownVariable("", "x");
 	MathStructure muv(uv);
-	EvaluationOptions eo3 = eo;
-	eo3.keep_zero_units = false;
-	eo3.structuring = STRUCTURING_NONE;
-	eo3.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
-	eo3.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
-	if(eo3.approximation == APPROXIMATION_TRY_EXACT) eo3.approximation = APPROXIMATION_APPROXIMATE;
+	MathStructure *munc_i = NULL;
 	for(size_t i = 0; i < vars.size(); i++) {
-		if(!vars[i]->get().representsNonComplex(true)) {b_failed = true; return m_zero;}
+		if(!vars[i]->get().representsNonComplex(true)) {
+			b_failed = true; return m_zero;
+		}
 		MathStructure *mdiff = new MathStructure(m);
 		uv->setInterval(vars[i]->get());
 		mdiff->replace(vars[i], muv);
@@ -13004,17 +13030,28 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 		}
 		mdiff->replace(muv, vars[i]);
 		if(!mdiff->representsNonComplex(true)) {
-			mdiff->eval(eo3);
-			if(!mdiff->representsNonComplex(true)) {b_failed = true; return m_zero;}
+			MathStructure *mdiff_i = new MathStructure(*mdiff);
+			mdiff->transform(CALCULATOR->f_re);
+			mdiff_i->transform(CALCULATOR->f_im);
+			mdiff_i->raise(nr_two);
+			mdiff_i->multiply(uncs[i]);
+			mdiff_i->last().raise(nr_two);
+			if(!munc_i) {munc_i = mdiff_i;}
+			else munc_i->add_nocopy(mdiff_i, true);
 		}
 		mdiff->raise(nr_two);
 		mdiff->multiply(uncs[i]);
 		mdiff->last().raise(nr_two);
 		if(munc.isZero()) {munc.set_nocopy(*mdiff); mdiff->unref();}
-		else munc.add_nocopy(mdiff);
+		else munc.add_nocopy(mdiff, true);
 	}
 	uv->destroy();
 	munc.raise(nr_half);
+	if(munc_i) {
+		munc_i->raise(nr_half);
+		munc_i->multiply(nr_one_i);
+		munc.add_nocopy(munc_i);
+	}
 	return munc;
 }
 
@@ -21580,8 +21617,11 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			}
 			print_str += "(";
 			size_t argcount = SIZE;
-			if(o_function == CALCULATOR->f_signum && argcount > 1) argcount = 1;
-			if(o_function->maxargs() > 0 && o_function->minargs() < o_function->maxargs() && SIZE > (size_t) o_function->minargs()) {
+			if(o_function == CALCULATOR->f_signum && argcount > 1) {
+				argcount = 1;
+			} else if(o_function == CALCULATOR->f_integrate && argcount == 5 && CHILD(4).isZero() && CHILD(1).isUndefined() && CHILD(2).isUndefined()) {
+				argcount = 1;
+			} else if(o_function->maxargs() > 0 && o_function->minargs() < o_function->maxargs() && SIZE > (size_t) o_function->minargs()) {
 				while(true) {
 					string defstr = o_function->getDefaultValue(argcount);
 					Argument *arg = o_function->getArgumentDefinition(argcount);
@@ -24952,67 +24992,101 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 			MathStructure mexp, mmul, madd;
 			if(integrate_info(mstruct[0], x_var, madd, mmul, mexp, (mstruct.function() == CALCULATOR->f_sin || mstruct.function() == CALCULATOR->f_cos))) {
 				if(mexp.isOne()) {
+					bool neg_equals = false;
+					if((mstruct.function() == CALCULATOR->f_sin || mstruct.function() == CALCULATOR->f_cos || mstruct.function() == CALCULATOR->f_cosh) && mpowadd != mpowmul) {
+						MathStructure mpowaddneg(mpowadd);
+						mpowaddneg.calculateNegate(eo);
+						neg_equals = (mpowaddneg == mpowmul);
+					}
 					if(mstruct.function() == CALCULATOR->f_sin) {
-						//1/(d*sin(ax+b)+c)=(2 atan((c*tan((a x + b)/2)+d)/sqrt(c^2-d^2)))/(a*sqrt(c^2-d^2))
-						mstruct.setFunction(CALCULATOR->f_tan);
-						mstruct[0] *= nr_half;
-						mstruct *= mpowadd;
-						if(!mpowmul.isOne()) mstruct += mpowmul;
-						MathStructure msqrtc2md2(mpowadd);
-						msqrtc2md2 ^= nr_two;
-						if(!mpowmul.isOne()) {
+						if(mpowadd == mpowmul || neg_equals) {
+							//1/(c*sin(ax+b)+c)=2*sin((a x + b)/2)*(sin((a x + b)/2)+cos((a x + b)/2))/(a*(c*sin((a x + b))+c))
+							MathStructure mdiv(mstruct);
+							mstruct[0] *= nr_half;
+							MathStructure msin(mstruct);
+							MathStructure mcos(mstruct);
+							mcos.setFunction(CALCULATOR->f_cos);
+							mstruct *= nr_two;
+							if(mpowadd != mpowmul) msin.negate();
+							msin += mcos;
+							mstruct *= msin;
+							mdiv *= mpowmul;
+							mdiv -= mpowadd;
+							if(!mmul.isOne()) mdiv *= mmul;
+							mstruct /= mdiv;
+							return true;
+						} else {
+							//1/(d*sin(ax+b)+c)=(2 atan((c*tan((a x + b)/2)+d)/sqrt(c^2-d^2)))/(a*sqrt(c^2-d^2))
+							mstruct.setFunction(CALCULATOR->f_tan);
+							mstruct[0] *= nr_half;
+							mstruct *= mpowadd;
+							mstruct += mpowmul;
+							MathStructure msqrtc2md2(mpowadd);
+							if(!mpowadd.isOne()) msqrtc2md2 ^= nr_two;
 							MathStructure mmpowmul2(mpowmul);
-							mmpowmul2 ^= nr_two;
+							if(!mpowmul.isOne()) mmpowmul2 ^= nr_two;
 							mmpowmul2.negate();
 							msqrtc2md2 += mmpowmul2;
+							msqrtc2md2 ^= Number(-1, 2, 0);
+							mstruct *= msqrtc2md2;
+							mstruct.transform(CALCULATOR->f_atan);
+							mstruct *= msqrtc2md2;
+							if(!mmul.isOne()) mstruct /= mmul;
+							mstruct *= nr_two;
+							return true;
 						}
-						msqrtc2md2 ^= Number(-1, 2, 0);
-						mstruct *= msqrtc2md2;
-						mstruct.transform(CALCULATOR->f_atan);
-						mstruct *= msqrtc2md2;
-						if(!mmul.isOne()) mstruct /= mmul;
-						mstruct *= nr_two;
-						return true;
 					} else if(mstruct.function() == CALCULATOR->f_cos) {
-						//1/(d*cos(ax+b)+c)=-(2*atanh(((c-d)*tan((a x + b)/2))/sqrt(d^2-c^2)))/(a*sqrt(d^2-c^2))
-						mstruct.setFunction(CALCULATOR->f_tan);
-						mstruct[0] *= nr_half;
-						mstruct *= mpowadd;
-						if(!mpowmul.isOne()) {
+						if(mpowadd == mpowmul) {
+							//1/(c*cos(ax+b)+c)=tan((a x + b)/2)/(ac)
+							mstruct[0] *= nr_half;
+							mstruct.setFunction(CALCULATOR->f_tan);
+							if(!mpowadd.isOne()) mstruct /= mpowadd;
+							if(!mmul.isOne()) mstruct /= mmul;
+							return true;
+						} else if(neg_equals) {
+							//1/(c*cos(ax+b)-c)=cos((a x + b)/2)/(ac*sin((a x + b)/2))
+							mstruct[0] *= nr_half;
+							MathStructure msin(mstruct);
+							msin.setFunction(CALCULATOR->f_sin);
+							mstruct /= msin;
+							if(!mpowmul.isOne()) mstruct /= mpowmul;
+							if(!mmul.isOne()) mstruct /= mmul;
+							return true;
+						} else {
+							//1/(d*cos(ax+b)+c)=-(2*atanh(((c-d)*tan((a x + b)/2))/sqrt(d^2-c^2)))/(a*sqrt(d^2-c^2))
+							mstruct.setFunction(CALCULATOR->f_tan);
+							mstruct[0] *= nr_half;
+							mstruct *= mpowadd;
 							mstruct.last() -= mpowmul;
 							mstruct.childUpdated(mstruct.size());
-						}
-						MathStructure msqrtc2md2(mpowadd);
-						msqrtc2md2 ^= nr_two;
-						msqrtc2md2.negate();
-						if(!mpowmul.isOne()) {
+							MathStructure msqrtc2md2(mpowadd);
+							if(!mpowadd.isOne()) msqrtc2md2 ^= nr_two;
+							msqrtc2md2.negate();
 							MathStructure mmpowmul2(mpowmul);
-							mmpowmul2 ^= nr_two;
+							if(!mpowmul.isOne()) mmpowmul2 ^= nr_two;
 							msqrtc2md2 += mmpowmul2;
+							msqrtc2md2 ^= Number(-1, 2, 0);
+							mstruct *= msqrtc2md2;
+							mstruct.transform(CALCULATOR->f_atanh);
+							mstruct *= msqrtc2md2;
+							if(!mmul.isOne()) mstruct /= mmul;
+							mstruct *= Number(-2, 1);
+							return true;
 						}
-						msqrtc2md2 ^= Number(-1, 2, 0);
-						mstruct *= msqrtc2md2;
-						mstruct.transform(CALCULATOR->f_atanh);
-						mstruct *= msqrtc2md2;
-						if(!mmul.isOne()) mstruct /= mmul;
-						mstruct *= Number(-2, 1);
-						return true;
 					} else if(mstruct.function() == CALCULATOR->f_sinh) {
 						//1/(d*sinh(ax+b)+c)=(2 atan((-c*tan((a x + b)/2)+d)/sqrt(-c^2-d^2)))/(a*sqrt(-c^2-d^2))
 						mstruct.setFunction(CALCULATOR->f_tanh);
 						mstruct[0] *= nr_half;
 						mstruct *= mpowadd;
 						mstruct.negate();
-						if(!mpowmul.isOne()) mstruct += mpowmul;
+						mstruct += mpowmul;
 						MathStructure msqrtc2md2(mpowadd);
-						msqrtc2md2 ^= nr_two;
+						if(!mpowadd.isOne()) msqrtc2md2 ^= nr_two;
 						msqrtc2md2.negate();
-						if(!mpowmul.isOne()) {
-							MathStructure mmpowmul2(mpowmul);
-							mmpowmul2 ^= nr_two;
-							mmpowmul2.negate();
-							msqrtc2md2 += mmpowmul2;
-						}
+						MathStructure mmpowmul2(mpowmul);
+						if(!mpowmul.isOne()) mmpowmul2 ^= nr_two;
+						mmpowmul2.negate();
+						msqrtc2md2 += mmpowmul2;
 						msqrtc2md2 ^= Number(-1, 2, 0);
 						mstruct *= msqrtc2md2;
 						mstruct.transform(CALCULATOR->f_atan);
@@ -25021,29 +25095,44 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 						mstruct *= nr_two;
 						return true;
 					} else if(mstruct.function() == CALCULATOR->f_cosh) {
-						//1/(d*cos(ax+b)+c)=-(2*atan(((c-d)*tanh((a x + b)/2))/sqrt(d^2-c^2)))/(a*sqrt(d^2-c^2))
-						mstruct.setFunction(CALCULATOR->f_tanh);
-						mstruct[0] *= nr_half;
-						mstruct *= mpowadd;
-						if(!mpowmul.isOne()) {
+						if(mpowadd == mpowmul) {
+							//1/(c*cosh(ax+b)+c)=tanh((a x + b)/2)/(ac)
+							mstruct[0] *= nr_half;
+							mstruct.setFunction(CALCULATOR->f_tanh);
+							if(!mpowadd.isOne()) mstruct /= mpowadd;
+							if(!mmul.isOne()) mstruct /= mmul;
+							return true;
+						} else if(neg_equals) {
+							//1/(c*cosh(ax+b)-c)=-cosh((a x + b)/2)/(ac*sinh((a x + b)/2))
+							mstruct[0] *= nr_half;
+							MathStructure msin(mstruct);
+							msin.setFunction(CALCULATOR->f_sinh);
+							mstruct.negate();
+							mstruct /= msin;
+							if(!mpowmul.isOne()) mstruct /= mpowmul;
+							if(!mmul.isOne()) mstruct /= mmul;
+							return true;
+						} else {
+							//1/(d*cos(ax+b)+c)=-(2*atan(((c-d)*tanh((a x + b)/2))/sqrt(d^2-c^2)))/(a*sqrt(d^2-c^2))
+							mstruct.setFunction(CALCULATOR->f_tanh);
+							mstruct[0] *= nr_half;
+							mstruct *= mpowadd;
 							mstruct.last() -= mpowmul;
 							mstruct.childUpdated(mstruct.size());
-						}
-						MathStructure msqrtc2md2(mpowadd);
-						msqrtc2md2 ^= nr_two;
-						msqrtc2md2.negate();
-						if(!mpowmul.isOne()) {
+							MathStructure msqrtc2md2(mpowadd);
+							if(!mpowadd.isOne()) msqrtc2md2 ^= nr_two;
+							msqrtc2md2.negate();
 							MathStructure mmpowmul2(mpowmul);
-							mmpowmul2 ^= nr_two;
+							if(!mpowmul.isOne()) mmpowmul2 ^= nr_two;
 							msqrtc2md2 += mmpowmul2;
+							msqrtc2md2 ^= Number(-1, 2, 0);
+							mstruct *= msqrtc2md2;
+							mstruct.transform(CALCULATOR->f_atan);
+							mstruct *= msqrtc2md2;
+							if(!mmul.isOne()) mstruct /= mmul;
+							mstruct *= Number(-2, 1);
+							return true;
 						}
-						msqrtc2md2 ^= Number(-1, 2, 0);
-						mstruct *= msqrtc2md2;
-						mstruct.transform(CALCULATOR->f_atan);
-						mstruct *= msqrtc2md2;
-						if(!mmul.isOne()) mstruct /= mmul;
-						mstruct *= Number(-2, 1);
-						return true;
 					} else if(mstruct.function() == CALCULATOR->f_ln) {
 						//1/(d*ln(ax+b)+c)=(e^(-c/d)*Ei(c/d+ln(ax+b)))/(a*d)
 						MathStructure mpadm(mpowadd);
@@ -25642,7 +25731,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 							if(!mexp.isOne()) mstruct /= mexp;
 							mstruct.negate();
 							mstruct += x_var;
-							if(transform_absln(mstruct.last(), use_abs, definite_integral, x_var, eo)) return -1;
+							if(!transform_absln(mstruct.last(), use_abs, definite_integral, x_var, eo)) return -1;
 							mstruct *= nr_half;
 							return true;
 						} else if(mpow.number() == 3) {
@@ -28779,9 +28868,16 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 					if(mtest[0].factorize(eo, false, 0, 0, false, false, NULL, x_var)) {
 						mmul = m_one;
 						while(mtest[0].isMultiplication() && mtest[0].size() >= 2 && mtest[0][0].containsRepresentativeOf(x_var, true, true) == 0) {
-							if(mmul.isOne()) mmul = mtest[0][0];
-							else mmul *= mtest[0][0];
+							MathStructure *mchild = &mtest[0][0];
+							mchild->ref();
 							mtest[0].delChild(1, true);
+							if(mtest[1].representsInteger() || mchild->representsPositive(true) || mtest[0].representsPositive(true)) {
+								if(mmul.isOne()) mmul = *mchild;
+								else mmul *= *mchild;
+								mchild->unref();
+							} else {
+								mtest[0].multiply_nocopy(mchild, true);
+							}
 						}
 						if(!mmul.isOne()) {
 							mmul ^= mtest[1];
@@ -28805,14 +28901,22 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						}
 						MathStructure mmul2(1, 1, 0);
 						if(mtest[0].isMultiplication() && mtest[0].size() >= 2 && !mtest[0][0].isAddition()) {
-							mmul2 = mtest[0][0];
-							mmul2.calculateInverse(eo2);
+							MathStructure *mchild = &mtest[0][0];
+							mchild->ref();
 							mtest[0].delChild(1, true);
+							if(mtest[1].representsInteger() || mchild->representsPositive(true) || mtest[0].representsPositive(true)) {
+								mmul2 = *mchild;
+								mmul2.calculateRaise(mtest[1], eo2);
+								mchild->unref();
+							} else {
+								mtest[0].multiply_nocopy(mchild, true);
+							}
 						}
 						if(mtest[0].isPower()) {
 							mtest[1].calculateMultiply(mtest[0][1], eo2);
 							mtest[0].setToChild(1);
 						}
+						mtest[0].evalSort(false);
 						if(!mmul2.isOne()) {
 							mtest *= mmul2;
 							mtest.evalSort(false);
@@ -29652,9 +29756,16 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						if(mtest[1][0].factorize(eo, false, 0, 0, false, false, NULL, x_var)) {
 							mmul = m_one;
 							while(mtest[1][0].isMultiplication() && mtest[1][0].size() >= 2 && mtest[1][0][0].containsRepresentativeOf(x_var, true, true) == 0) {
-								if(mmul.isOne()) mmul = mtest[1][0][0];
-								else mmul *= mtest[1][0][0];
+								MathStructure *mchild = &mtest[1][0][0];
+								mchild->ref();
 								mtest[1][0].delChild(1, true);
+								if(CHILD(1)[1].representsInteger() || mchild->representsPositive(true) || mtest[1][0].representsPositive(true)) {
+									if(mmul.isOne()) mmul = *mchild;
+									else mmul *= *mchild;
+									mchild->unref();
+								} else {
+									mtest[1][0].multiply_nocopy(mchild, true);
+								}
 							}
 							if(!mmul.isOne()) {
 								mmul ^= CHILD(1)[1];
@@ -29701,16 +29812,23 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 									}
 								}
 							}
-							mmul2 = m_one;
 							if(mtest[1][0].isMultiplication() && mtest[1][0].size() >= 2 && !mtest[1][0][0].isAddition()) {
-								mmul2 = mtest[1][0][0];
-								mmul2.calculateInverse(eo2);
+								MathStructure *mchild = &mtest[1][0][0];
+								mchild->ref();
 								mtest[1][0].delChild(1, true);
+								if(mtest[1].representsInteger() || mchild->representsPositive(true) || mtest[1][0].representsPositive(true)) {
+									mmul2 = *mchild;
+									mmul2.calculateRaise(CHILD(1)[1], eo2);
+									mchild->unref();
+								} else {
+									mtest[1][0].multiply_nocopy(mchild, true);
+								}
 							}
 							if(mtest[1][0].isPower()) {
 								mtest[1][1].calculateMultiply(mtest[1][0][1], eo2);
 								mtest[1][0].setToChild(1);
 							}
+							mtest[1][0].evalSort(false);
 							if(!mmul2.isOne()) {
 								mtest *= mmul2;
 								mtest.evalSort(false);
@@ -29886,6 +30004,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						}
 					}
 				}
+				MathStructure mbak(*this);
 				if(CHILD(0) == x_var || (CHILD(0).isPower() && CHILD(0)[0] == x_var && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isRational())) {
 					Number nexp(1, 1, 0);
 					if(CHILD(0).isPower()) nexp = CHILD(0)[1].number();
@@ -30042,7 +30161,6 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 				}
 				size_t pp_size = parent_parts->size();
 				bool b = false;
-
 				for(size_t i = 0; !b && max_part_depth > 0 && (i < SIZE || (SIZE == 3 && i < SIZE * 2)) && SIZE < 10; i++) {
 					if(CALCULATOR->aborted()) CANNOT_INTEGRATE
 					CALCULATOR->beginTemporaryStopMessages();
