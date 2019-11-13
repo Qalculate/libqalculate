@@ -28,7 +28,7 @@ void test_integration5(const MathStructure &mstruct, const Number &a, const Numb
 	EvaluationOptions eo;
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	eo.assume_denominators_nonzero = true;
-	eo.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
+	eo.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 	MathStructure mstruct2(mstruct);
 	mstruct2.transform(CALCULATOR->f_integrate);
 	mstruct2.addChild(a);
@@ -1755,7 +1755,7 @@ int main(int argc, char *argv[]) {
 	evalops.parse_options.comma_as_separator = false;*/
 	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;
 	evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
-	evalops.structuring = STRUCTURING_EXPAND;
+	evalops.structuring = STRUCTURING_FACTORIZE;
 	evalops.approximation = APPROXIMATION_EXACT;
 	
 	/*MathStructure mstruct = CALCULATOR->calculate("atanh(2x^2+5)*x^2", evalops);

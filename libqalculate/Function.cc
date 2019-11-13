@@ -516,7 +516,10 @@ bool MathFunction::testArguments(MathStructure &vargs) {
 					vargs[it->first - 1] = mtest.find_x_var();
 					CALCULATOR->endTemporaryStopMessages();
 				}
-				if(vargs[it->first - 1].isUndefined()) CALCULATOR->error(true, _("No was unknown variable/symbol found."), NULL);
+				if(vargs[it->first - 1].isUndefined()) {
+					vargs[it->first - 1].set(CALCULATOR->v_x, true);
+					CALCULATOR->error(true, _("No was unknown variable/symbol found."), NULL);
+				}
 			}
 			if(!it->second->test(vargs[it->first - 1], it->first, this)) return false;
 		}
