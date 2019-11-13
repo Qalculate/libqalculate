@@ -6940,8 +6940,8 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 			if(!Rc[j].multiply(Rc[j - 1]) || !Rc[j].subtract(Rp[j - 1]) || !Rc[j].multiply(ntmp)) return false;
 		}
 		if(CALCULATOR->aborted()) break;
-
-		if(i > 3 && !Rp[i - 1].includesInfinity() && !Rc[i].includesInfinity()) {
+		
+		if((i > 5 || i >= max_steps - 2) && !Rp[i - 1].includesInfinity() && !Rc[i].includesInfinity()) {
 			if(Rp[i - 1].hasImaginaryPart()) nunc = Rp[i - 1].realPart();
 			else nunc = Rp[i - 1];
 			if(Rc[i].hasImaginaryPart()) nunc -= Rc[i].realPart();
@@ -7381,24 +7381,33 @@ bool replace_abs(MathStructure &mstruct, const MathStructure &mabs, bool neg) {
 	}
 	return b_ret;
 }
-bool contains_incalc_function(const MathStructure &mstruct) {
+bool contains_incalc_function(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_erf && mstruct.size() == 1 && !mstruct[0].representsNonComplex()) {
 		if(mstruct[0].representsComplex()) return true;
 		MathStructure mtest(mstruct[0]);
-		mtest.eval();
-		return !mstruct[0].representsNonComplex();
+		mtest.eval(eo);
+		return !mtest.representsNonComplex();
 	}
 	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_Ei && mstruct.size() == 1 && !mstruct[0].representsNonComplex()) {
 		if(mstruct[0].representsComplex()) return true;
 		MathStructure mtest(mstruct[0]);
-		mtest.eval();
-		return !mstruct[0].representsNonComplex();
+		mtest.eval(eo);
+		return !mtest.representsNonComplex();
+	}
+	if(mstruct.isFunction() && (mstruct.function() == CALCULATOR->f_Ci || mstruct.function() == CALCULATOR->f_Si) && mstruct.size() == 1 && !mstruct[0].representsNonComplex()) {
+		MathStructure mtest(mstruct[0]);
+		mtest.eval(eo);
+		return mtest.isNumber() && mtest.number().hasImaginaryPart() && mtest.number().hasRealPart();
+	}
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_Li) {
+		MathStructure mtest(mstruct);
+		return !mtest.calculateFunctions(eo);
 	}
 	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_igamma && mstruct.size() == 2 && !COMPARISON_IS_EQUAL_OR_LESS(mstruct[1].compare(m_zero))) {
 		return true;
 	}
 	for(size_t i = 0; i < mstruct.size(); i++) {
-		if(contains_incalc_function(mstruct[i])) return true;
+		if(contains_incalc_function(mstruct[i], eo)) return true;
 	}
 	return false;
 }
@@ -7535,7 +7544,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				CALCULATOR->endTemporaryStopMessages(true);
 				MathStructure mstruct_lower(mstruct);
 				mstruct_lower.replace(x_var, vargs[1].isUndefined() ? nr_minus_inf : vargs[1]);
-				bool incalc = eo.approximation != APPROXIMATION_EXACT && contains_incalc_function(mstruct_lower);
+				bool incalc = eo.approximation != APPROXIMATION_EXACT && contains_incalc_function(mstruct_lower, eo);
 				if(definite_integral < 0) {
 					if(incalc) {
 						definite_integral = 0;
@@ -7552,7 +7561,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				}
 				if(definite_integral) {
 					mstruct.replace(x_var, vargs[2].isUndefined() ? nr_plus_inf : vargs[2]);
-					if(incalc || (eo.approximation != APPROXIMATION_EXACT && contains_incalc_function(mstruct))) {
+					if(incalc || (eo.approximation != APPROXIMATION_EXACT && contains_incalc_function(mstruct, eo))) {
 						mstruct = mbak;
 					} else {
 						mstruct -= mstruct_lower;
@@ -7754,7 +7763,10 @@ RombergFunction::RombergFunction() : MathFunction("romberg", 3, 5) {
 	NON_COMPLEX_NUMBER_ARGUMENT(2)
 	NON_COMPLEX_NUMBER_ARGUMENT(3)
 	setCondition("\\z > \\y");
-	setArgumentDefinition(4, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SLONG));
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG);
+	Number nr(4, 1);
+	iarg->setMin(&nr);
+	setArgumentDefinition(4, iarg);
 	setDefaultValue(4, "20");
 	setArgumentDefinition(5, new SymbolicArgument());
 	setDefaultValue(5, "undefined");
