@@ -6855,7 +6855,7 @@ bool montecarlo(const MathStructure &minteg, Number &nvalue, const MathStructure
 	nvalue.setUncertainty(var);
 	return true;
 }
-bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, long int max_steps = -1, bool safety_measures = true) {
+bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, long int max_steps = -1, long int min_steps = 6, bool safety_measures = true) {
 
 	bool auto_max = max_steps <= 0;
 	if(auto_max) max_steps = 22;
@@ -6870,31 +6870,29 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 	MathStructure mf(minteg);
 	mf.replace(x_var, a);
 	mf.eval(eo);
-	if(!mf.isNumber()) return false;
-	if(mf.number().includesInfinity()) {
+	if(!mf.isNumber() || mf.number().includesInfinity()) {
 		if(!a.setToFloatingPoint()) return false;
 		mpfr_nextabove(a.internalLowerFloat());
 		mpfr_nextabove(a.internalUpperFloat());
 		mf = minteg;
 		mf.replace(x_var, a);
 		mf.eval(eo);
-		if(!mf.isNumber()) return false;
 	}
+	if(!mf.isNumber()) return false;
 	Rp[0] = mf.number();
 	
 	mf = minteg;
 	mf.replace(x_var, b);
 	mf.eval(eo);
-	if(!mf.isNumber()) return false;
-	if(mf.number().includesInfinity()) {
+	if(!mf.isNumber() || mf.number().includesInfinity()) {
 		if(!b.setToFloatingPoint()) return false;
 		mpfr_nextbelow(b.internalLowerFloat());
 		mpfr_nextbelow(b.internalUpperFloat());
 		mf = minteg;
 		mf.replace(x_var, a);
 		mf.eval(eo);
-		if(!mf.isNumber()) return false;
 	}
+	if(!mf.isNumber()) return false;
 
 	if(!Rp[0].add(mf.number()) || !Rp[0].multiply(nr_half) || !Rp[0].multiply(h)) return false;
 	
@@ -6913,7 +6911,8 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 			mf = minteg;
 			mf.replace(x_var, ntmp);
 			mf.eval(eo);
-			if(mf.number().includesInfinity()) {
+			if(CALCULATOR->aborted()) break;
+			if(!mf.isNumber() || mf.number().includesInfinity()) {
 				Number ntmp2(ntmp);
 				if(ntmp2.setToFloatingPoint()) return false;
 				if(j % 2 == 0) {mpfr_nextabove(ntmp2.internalLowerFloat()); mpfr_nextabove(ntmp2.internalUpperFloat());}
@@ -6921,6 +6920,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 				mf = minteg;
 				mf.replace(x_var, ntmp2);
 				mf.eval(eo);
+				if(CALCULATOR->aborted()) break;
 			}
 			if(!mf.isNumber() || !c.add(mf.number())) return false;
 			ntmp += h; ntmp += h;
@@ -6941,12 +6941,14 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 		}
 		if(CALCULATOR->aborted()) break;
 		
-		if((i > 5 || i >= max_steps - 2) && !Rp[i - 1].includesInfinity() && !Rc[i].includesInfinity()) {
+		if(i >= min_steps - 1 && !Rp[i - 1].includesInfinity() && !Rc[i].includesInfinity()) {
 			if(Rp[i - 1].hasImaginaryPart()) nunc = Rp[i - 1].realPart();
 			else nunc = Rp[i - 1];
 			if(Rc[i].hasImaginaryPart()) nunc -= Rc[i].realPart();
 			else nunc -= Rc[i];
 			nunc.abs();
+			nunc *= 2;
+			nunc.intervalToMidValue();
 			if(Rp[i - 1].hasImaginaryPart() || Rc[i].hasImaginaryPart()) {
 				nunc_i = Rp[i - 1].imaginaryPart();
 				nunc_i -= Rc[i].imaginaryPart();
@@ -6954,6 +6956,8 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 			} else {
 				nunc_i.clear();
 			}
+			nunc_i *= 2;
+			nunc_i.intervalToMidValue();
 			long int prec = PRECISION + (auto_max ? 3 : 1);
 			if(auto_max) {
 				if(i > 10) prec += 10 - ((!prevunc.isZero() || !prevunc_i.isZero()) ? i - 1 : i);
@@ -6966,12 +6970,14 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 				if(!Rc[i - 1].isZero()) acc *= Rc[i - 1];
 			}
 			acc.abs();
+			acc.intervalToMidValue();
 			nvalue = Rc[i - 1];
 			if(nunc <= acc) {
 				if(!nunc_i.isZero()) {
 					acc_i.set(1, 1, -prec);
 					if(Rc[i - 1].hasImaginaryPart()) acc_i *= Rc[i - 1].imaginaryPart();
 					acc_i.abs();
+					acc_i.intervalToMidValue();
 					if(nunc_i <= acc_i) {
 						if(!safety_measures) {
 							nunc.setImaginaryPart(nunc_i);
@@ -7033,6 +7039,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 			if(nunc_i > acc) return false;
 			nunc.setImaginaryPart(nunc_i);
 		}
+		acc.intervalToMidValue();
 		nunc *= 10;
 		nvalue.setUncertainty(nunc);
 		return true;
@@ -7403,13 +7410,34 @@ bool contains_incalc_function(const MathStructure &mstruct, const EvaluationOpti
 		MathStructure mtest(mstruct);
 		return !mtest.calculateFunctions(eo);
 	}
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_igamma && mstruct.size() == 2 && !COMPARISON_IS_EQUAL_OR_LESS(mstruct[1].compare(m_zero))) {
+	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_igamma && mstruct.size() == 2) {
+#if MPFR_VERSION_MAJOR < 4
 		return true;
+#else
+		return !COMPARISON_IS_EQUAL_OR_LESS(mstruct[1].compare(m_zero));
+#endif
 	}
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(contains_incalc_function(mstruct[i], eo)) return true;
 	}
 	return false;
+}
+
+bool test_definite_ln(const MathStructure &m, const MathStructure &mi, const MathStructure &mx, const EvaluationOptions &eo) {
+	for(size_t i = 0; i < m.size(); i++) {
+		if(!test_definite_ln(m[i], mi, mx, eo)) return false;
+	}
+	if(m.function() == CALCULATOR->f_ln && m.size() == 1 && m[0].contains(mx, true) > 0 && !m[0].representsNonComplex(true)) {
+		MathStructure mtest(m[0]);
+		mtest.replace(mx, mi);
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_APPROXIMATE;
+		CALCULATOR->beginTemporaryStopMessages();
+		mtest.eval(eo2);
+		CALCULATOR->endTemporaryStopMessages();
+		if(mtest.isNumber() && mtest.number().hasImaginaryPart() && !mtest.number().imaginaryPartIsNonZero() && !mtest.number().realPart().isNonNegative()) return false;
+	}
+	return true;
 }
 
 extern bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool combine_divisions = true, bool only_gcd = false, bool combine_only = false, bool recursive = true, bool limit_size = false, int i_run = 1);
@@ -7436,8 +7464,9 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	CALCULATOR->beginTemporaryStopMessages();
 	MathStructure mstruct_pre = vargs[0];
 	MathStructure x_var = vargs[3];
+	MathStructure m_interval;
 	if(!m1.isUndefined()) {
-		MathStructure m_interval(CALCULATOR->f_interval, &m1, &m2, NULL);
+		m_interval.set(CALCULATOR->f_interval, &m1, &m2, NULL);
 		CALCULATOR->beginTemporaryStopMessages();
 		EvaluationOptions eo3 = eo;
 		eo3.approximation = APPROXIMATION_APPROXIMATE;
@@ -7536,11 +7565,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		}
 		eo2.approximation = eo.approximation;
 		if(b) {
-#if MPFR_VERSION_MAJOR < 4
-			if(definite_integral && mstruct.containsFunction(this, true) <= 0 && (eo.approximation == APPROXIMATION_EXACT || mstruct.containsFunction(CALCULATOR->f_igamma, true) <= 0)) {
-#else
-			if(definite_integral && mstruct.containsFunction(this, true) <= 0) {
-#endif
+			if(definite_integral && mstruct.containsFunction(this, true) <= 0 && test_definite_ln(mstruct, m_interval, x_var, eo)) {
 				CALCULATOR->endTemporaryStopMessages(true);
 				MathStructure mstruct_lower(mstruct);
 				mstruct_lower.replace(x_var, vargs[1].isUndefined() ? nr_minus_inf : vargs[1]);
@@ -7756,7 +7781,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	return -1;
 }
 
-RombergFunction::RombergFunction() : MathFunction("romberg", 3, 5) {
+RombergFunction::RombergFunction() : MathFunction("romberg", 3, 6) {
 	Argument *arg = new Argument("", false, false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
@@ -7764,12 +7789,15 @@ RombergFunction::RombergFunction() : MathFunction("romberg", 3, 5) {
 	NON_COMPLEX_NUMBER_ARGUMENT(3)
 	setCondition("\\z > \\y");
 	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG);
-	Number nr(4, 1);
+	Number nr(2, 1);
 	iarg->setMin(&nr);
 	setArgumentDefinition(4, iarg);
-	setDefaultValue(4, "20");
-	setArgumentDefinition(5, new SymbolicArgument());
-	setDefaultValue(5, "undefined");
+	setDefaultValue(4, "6");
+	setArgumentDefinition(5, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
+	setDefaultValue(5, "20");
+	setCondition("\\b >= \\a");
+	setArgumentDefinition(6, new SymbolicArgument());
+	setDefaultValue(6, "undefined");
 }
 int RombergFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure minteg(vargs[0]);
@@ -7777,15 +7805,15 @@ int RombergFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	eo2.approximation = APPROXIMATION_APPROXIMATE;
 	Number nr_interval;
 	nr_interval.setInterval(vargs[1].number(), vargs[2].number());
-	UnknownVariable *var = new UnknownVariable("", format_and_print(vargs[4]));
+	UnknownVariable *var = new UnknownVariable("", format_and_print(vargs[5]));
 	var->setInterval(nr_interval);
 	MathStructure x_var(var);
-	minteg.replace(vargs[4], x_var);
+	minteg.replace(vargs[5], x_var);
 	var->destroy();
 	minteg.eval(eo2);
 	Number nr;
 	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
-	if(romberg(minteg, nr, x_var, eo2, vargs[1].number(), vargs[2].number(), vargs[3].number().lintValue(), false)) {
+	if(romberg(minteg, nr, x_var, eo2, vargs[1].number(), vargs[2].number(), vargs[4].number().lintValue(), vargs[3].number().lintValue(), false)) {
 		mstruct = nr;
 		return 1;
 	}

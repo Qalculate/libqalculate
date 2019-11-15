@@ -3890,7 +3890,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 
 	bool b_changed = false;
 	if(mstruct_new.isAddition()) {
-		if(mstruct_new.size() > 100 && aborted()) return mstruct;
+		if(aborted()) return mstruct;
 		mstruct_new.factorizeUnits();
 		if(!b_changed && !mstruct_new.equals(mstruct, true, true)) b_changed = true;
 	}
@@ -3898,7 +3898,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 	if(!mstruct_new.isPower() && !mstruct_new.isUnit() && !mstruct_new.isMultiplication()) {
 		if(mstruct_new.size() > 0) {
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
-				if(mstruct_new.size() > 100 && aborted()) return mstruct;
+				if(aborted()) return mstruct;
 				if(!mstruct_new.isFunction() || !mstruct_new.function()->getArgumentDefinition(i + 1) || mstruct_new.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) { 
 					mstruct_new[i] = convert(mstruct_new[i], to_unit, eo, false, convert_to_mixed_units);
 					if(!b_changed && !mstruct_new.equals(mstruct[i], true, true)) b_changed = true;
@@ -3937,7 +3937,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 					} 
 					case STRUCT_MULTIPLICATION: {
 						for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
-							if(mstruct_new.countChildren() > 100 && aborted()) return mstruct;
+							if(aborted()) return mstruct;
 							if(mstruct_new.getChild(i)->isUnit() && cu2->containsRelativeTo(mstruct_new.getChild(i)->unit())) {
 								b = true;
 							}
@@ -4141,7 +4141,7 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 		}
 		default: {
 			for(size_t i = 0; i < mstruct.size(); i++) {
-				if(mstruct.size() > 100 && aborted()) return NULL;
+				if(aborted()) return NULL;
 				if(!mstruct.isFunction() || !mstruct.function()->getArgumentDefinition(i + 1) || mstruct.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) { 
 					Unit *u = findMatchingUnit(mstruct[i]);
 					if(u) return u;
@@ -4576,7 +4576,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 			bool child_updated = false;
 			MathStructure mstruct_old(mstruct);
 			for(size_t i = 1; i <= mstruct_old.countChildren(); i++) {
-				if(mstruct_old.countChildren() > 100 && aborted()) return mstruct_old;
+				if(aborted()) return mstruct_old;
 				if(mstruct_old.getChild(i)->isUnit()) {
 					if(is_si_units && !mstruct_old.getChild(i)->unit()->isSIUnit()) is_si_units = false;
 					is_currency = mstruct_old.getChild(i)->unit()->isCurrency();
@@ -4616,7 +4616,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 				bool b = false;
 				child_updated = false;
 				for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
-					if(mstruct_new.countChildren() > 100 && aborted()) return mstruct_old;
+					if(aborted()) return mstruct_old;
 					if(mstruct_new.getChild(i)->isUnit()) {
 						b = true;
 						cu->add(mstruct_new.getChild(i)->unit());
@@ -4655,7 +4655,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 			bool new_is_currency = false;
 			if(mstruct_new.isMultiplication()) {
 				for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
-					if(mstruct_new.countChildren() > 100 && aborted()) return mstruct_old;
+					if(aborted()) return mstruct_old;
 					if(mstruct_new.getChild(i)->isUnit()) {
 						if(new_is_si_units && !mstruct_new.getChild(i)->unit()->isSIUnit()) new_is_si_units = false;
 						new_is_currency = mstruct_new.getChild(i)->unit()->isCurrency();
