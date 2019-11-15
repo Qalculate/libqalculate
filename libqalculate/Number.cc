@@ -3599,7 +3599,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 				int i = o.intValue();
 				Number nr_init(*this);
 				while(i > 1) {
-					if(CALCULATOR->aborted()) return false;
+					if(i > 5 && CALCULATOR->aborted()) return false;
 					if(!multiply(nr_init)) {
 						set(nr_init);
 						return false;
@@ -8832,7 +8832,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				Number nr_zero;
 				nr_zero.setApproximate(true);
 				PrintOptions po2 = po;
-				if(!po.use_max_decimals || po.max_decimals > i_precision_base - 1) {
+				if(!po.use_max_decimals || po2.max_decimals < 0 || po.max_decimals > i_precision_base - 1) {
+					
 					po2.max_decimals = i_precision_base - 1;
 					po2.use_max_decimals = true;
 				}
@@ -8845,6 +8846,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			long int i_log_mod = 0;
 			
 			float_interval_prec_rerun:
+
+			if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 			
 			mpfr_set(vl, fl_value, MPFR_RNDN);
 			mpfr_set(vu, fu_value, MPFR_RNDN);
@@ -8927,13 +8930,17 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					expo = 0;
 				}
 			}
-			if(po.use_max_decimals && po.max_decimals >= 0 && po.use_max_decimals && i_log - expo + po.max_decimals + 1 < i_precision_base) precision_base = i_log - expo + po.max_decimals + 1;
-			if(po.use_min_decimals && po.min_decimals > 0 && i_log - expo + po.min_decimals + 1 > precision_base) {
-				precision_base = i_log - expo + po.min_decimals + 1;
-				if(precision_base > i_precision_base) precision_base = i_precision_base;
-			} else if(i_log - expo + 1 > precision_base) {
-				precision_base = i_log - expo + 1;
-				if(precision_base > i_precision_base) precision_base = i_precision_base;
+			if(po.use_max_decimals && po.max_decimals >= 0 && po.use_max_decimals && i_log - expo + po.max_decimals + 1 < i_precision_base) {
+				precision_base = i_log - expo + po.max_decimals + 1;
+			} else {
+				if(po.use_min_decimals && po.min_decimals > 0 && i_log - expo + po.min_decimals + 1 > precision_base) {
+					precision_base = i_log - expo + po.min_decimals + 1;
+					if(precision_base > i_precision_base) precision_base = i_precision_base;
+				}
+				if(i_log - expo + 1 > precision_base) {
+					precision_base = i_log - expo + 1;
+					if(precision_base > i_precision_base) precision_base = i_precision_base;
+				}
 			}
 
 			mpfr_sub_si(f_logu, f_logl, precision_base - 1, MPFR_RNDU);
@@ -8955,9 +8962,21 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpfr_get_z(ivalue, vu, MPFR_RNDN);
 			string str_u = printMPZ(ivalue, base, false, po.lower_case_numbers);
 			if(str_u.length() != (size_t) precision_base) {
-				i_log_mod += str_u.length() - precision_base;
-				mpz_clear(ivalue);
-				goto float_interval_prec_rerun;
+				if(i_log_mod != 0) {
+					precision_base--;
+					if(precision_base <= 1) {
+						mpz_clear(ivalue);
+						mpfr_clears(vu, vl, f_logl, f_logu, f_base, f_log_base, NULL);
+						mpq_clear(base_half);
+						PrintOptions po2 = po;
+						po2.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+						return print(po2, ips);
+					}
+				} else {
+					i_log_mod += str_u.length() - precision_base;
+					mpz_clear(ivalue);
+					goto float_interval_prec_rerun;
+				}
 			}
 			mpfr_get_z(ivalue, vl, MPFR_RNDN);
 			string str_l = printMPZ(ivalue, base, false, po.lower_case_numbers);
@@ -9052,7 +9071,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				Number nr_zero;
 				nr_zero.setApproximate(true);
 				PrintOptions po2 = po;
-				if(!po.use_max_decimals || po.max_decimals > i_precision_base - 1) {
+				if(!po.use_max_decimals || po2.max_decimals < 0 || po.max_decimals > i_precision_base - 1) {
 					po2.max_decimals = i_precision_base - 1;
 					po2.use_max_decimals = true;
 				}
@@ -9196,7 +9215,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				Number nr_zero;
 				nr_zero.setApproximate(true);
 				PrintOptions po2 = po;
-				if(!po.use_max_decimals || po.max_decimals < i_precision_base - 1) {
+				if(!po.use_max_decimals || po2.max_decimals < 0 || po.max_decimals < i_precision_base - 1) {
 					po2.max_decimals = i_precision_base - 1;
 					po2.use_max_decimals = true;
 				}
@@ -9619,6 +9638,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		long int min_l10 = 0, max_l10 = 0;
 		bool applied_expo = false;
 		bool try_infinite_series = po.indicate_infinite_series && po.number_fraction_format != FRACTION_DECIMAL_EXACT && !approx && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals >= 3);
+		long int min_decimals_bak = min_decimals;
 
 		if(num_sign != 0) {
 
@@ -9892,7 +9912,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			started = false;
 			goto rational_rerun;
 		}
-		if(!rerun && !exact && num_sign == 0 && expo <= 0 && min_decimals > 0 && l10 + expo < min_decimals && (!approx || (long int) str.length() < i_precision_base)) {
+		if(!rerun && !exact && num_sign == 0 && expo <= 0 && min_decimals_bak > 0 && l10 + expo < min_decimals_bak && (!approx || (long int) str.length() < i_precision_base)) {
+			min_decimals = min_decimals_bak;
 			precision2 = min_decimals + (str.length() - l10 - expo);
 			if(approx && precision2 > i_precision_base) precision2 = i_precision_base;
 			rerun = true;

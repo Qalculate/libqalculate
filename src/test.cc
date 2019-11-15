@@ -1,6 +1,15 @@
 #include <libqalculate/qalculate.h>
 #include "support.h"
 
+int has_not_a_comparison() {
+	if(!CALCULATOR->message()) return 0;
+	while(true) {
+		if(CALCULATOR->message()->message() == _("The calculation has been forcibly terminated. Please restart the application and report this as a bug.")) return -1;
+		if(CALCULATOR->message()->message() == "A") return 1;
+		if(!CALCULATOR->nextMessage()) break;
+	}
+	return 0;
+}
 bool display_errors(bool show_only_errors = false) {
 	if(!CALCULATOR->message()) return false;
 	bool b_ret = false;
@@ -25,6 +34,7 @@ void clear_errors() {
 }
 int successes = 0, imaginary = 0;
 void test_integration5(const MathStructure &mstruct, const Number &a, const Number &b) {
+	cerr << "integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;
 	EvaluationOptions eo;
 	eo.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	eo.assume_denominators_nonzero = true;
@@ -35,7 +45,10 @@ void test_integration5(const MathStructure &mstruct, const Number &a, const Numb
 	mstruct2.addChild(b);
 	mstruct2.addChild(CALCULATOR->v_x);
 	mstruct2.addChild(m_zero);
-	CALCULATOR->calculate(&mstruct2, 20000, eo);
+	CALCULATOR->calculate(&mstruct2, 40000, eo);
+	cerr << "C" << endl;
+	int i = has_not_a_comparison();
+	if(i != 0) cout << i << "A: integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;
 	if(!mstruct2.isNumber()) {CALCULATOR->clearMessages(); return;}
 	MathStructure mstruct3(mstruct);
 	mstruct3.transform(CALCULATOR->f_integrate);
@@ -43,20 +56,88 @@ void test_integration5(const MathStructure &mstruct, const Number &a, const Numb
 	mstruct3.addChild(b);
 	mstruct3.addChild(CALCULATOR->v_x);
 	mstruct3.addChild(m_one);
-	CALCULATOR->calculate(&mstruct3, 20000, eo);
+	CALCULATOR->calculate(&mstruct3, 40000, eo);
+	cerr << "D" << endl;
+	i = has_not_a_comparison();
+	if(i != 0) cout << i << "B: integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;
 	if(!mstruct3.isNumber()) {CALCULATOR->clearMessages(); return;}
 	if(!mstruct2.equals(mstruct3, true, true)) {
 		PrintOptions po = CALCULATOR->messagePrintOptions();
-		int prec = mstruct3.number().precision(true);
-		if(prec < 0 || prec > PRECISION) prec = PRECISION;
-		else if(prec > 4) prec -= 3;
-		po.max_decimals = prec;
-		po.min_decimals = po.max_decimals;
-		po.use_max_decimals = true;
-		string str1 = mstruct2.print(po);
-		string str2 = mstruct3.print(po);
-		if(str1 != str2) {
-			cout << "Integration test: " << mstruct.print(CALCULATOR->messagePrintOptions()) << "; " << a << "->" << b << endl;
+		Number nr_i1, nr_i2, nr1, nr2;
+		nr1 = mstruct2.number().realPart();
+		nr2 = mstruct3.number().realPart();
+		nr_i1 = mstruct2.number().imaginaryPart();
+		nr_i2 = mstruct3.number().imaginaryPart();
+		bool b_equal = true;
+		string str1, str2;
+		if(nr1.isNonZero() || nr2.isNonZero()) {
+			if(nr2.precision() >= 0) po.min_decimals = nr2.precision(true);
+			else po.min_decimals = 0;
+			str1 = nr1.print(po);
+			str2 = nr2.print(po);
+			if(str1.length() != str2.length()) {
+				PrintOptions po2 = po;
+				po2.use_max_decimals = true;
+				size_t p1 = str2.find(".");
+				size_t p2 = str2.find("E");
+				if(p2 == string::npos) p2 = str2.length();
+				if(p1 == string::npos) {
+					po2.max_decimals = 0;
+				} else {
+					po2.max_decimals = p2 - p1 - 1;
+				}
+				p1 = str1.find(".");
+				p2 = str1.find("E");
+				if(p2 == string::npos) p2 = str1.length();
+				if(p1 == string::npos) {
+					po2.max_decimals = 0;
+				} else if(po2.max_decimals > (int) (p2 - p1 - 1)) {
+					po2.max_decimals = p2 - p1 - 1;
+				}
+				po2.min_decimals = po2.max_decimals;
+				str1 = nr1.print(po2);
+				str2 = nr2.print(po2);
+			}
+			if(str1 != str2) b_equal = false;
+		}
+		if(nr_i1.isNonZero() || nr_i2.isNonZero()) {
+			if(nr_i2.precision() >= 0) po.min_decimals = nr_i2.precision(true);
+			else po.min_decimals = 0;
+			string str_i1 = nr_i1.print(po);
+			string str_i2 = nr_i2.print(po);
+			if(str_i1.length() != str_i2.length()) {
+				PrintOptions po2 = po;
+				po2.use_max_decimals = true;
+				size_t p1 = str_i2.find(".");
+				size_t p2 = str_i2.find("E");
+				if(p2 == string::npos) p2 = str_i2.length();
+				if(p1 == string::npos) {
+					po2.max_decimals = 0;
+				} else {
+					po2.max_decimals = p2 - p1 - 1;
+				}
+				p1 = str_i1.find(".");
+				p2 = str_i1.find("E");
+				if(p2 == string::npos) p2 = str_i1.length();
+				if(p1 == string::npos) {
+					po2.max_decimals = 0;
+				} else if(po2.max_decimals > (int) (p2 - p1 - 1)) {
+					po2.max_decimals = p2 - p1 - 1;
+				}
+				po2.min_decimals = po2.max_decimals;
+				str_i1 = nr_i1.print(po2);
+				str_i2 = nr_i2.print(po2);
+			}
+			if(str_i1 != str_i2) b_equal = false;
+			if(str1.empty()) str1 = str_i1;
+			else {str1 += " + "; str1 += str_i1; str1 += "i";}
+			if(str2.empty()) str2 = str_i2;
+			else {str2 += " + "; str2 += str_i2; str2 += "i";}
+		}
+		
+		if(!b_equal) {
+			po.min_decimals = 0;
+			cout << "Integration test: integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;
 			display_errors();
 			cout << str1 << endl;
 			cout << str2 << endl;
@@ -69,6 +150,7 @@ void test_integration5(const MathStructure &mstruct, const Number &a, const Numb
 		successes++;
 		if(!mstruct2.isNumber() || !mstruct2.number().isReal()) imaginary++;
 	}
+	cerr << "E" << endl;
 	CALCULATOR->clearMessages();
 }
 void test_integration6(const MathStructure &mstruct, const Number &a, const Number &b) {
@@ -1794,14 +1876,63 @@ int main(int argc, char *argv[]) {
 	//return 0;
 	
 	MathStructure mp;
-	string str;
+	/*CALCULATOR->parse(&mp, "x + asin(x) + -1 * 2", evalops.parse_options);
+	test_integration5(mp, 9, 52);
+	return 0;*/
+	string str, str2;
 	Number a, b;
-	for(size_t i = 0; i < 10000;) {
+	/*po.use_min_decimals = true;
+	po.use_max_decimals = true;
+	po.show_ending_zeroes = true;
+	for(size_t i = 0; i < 100000000L; i++) {
+		do {
+			a.set(rnd_number(false, false, false, false, false));
+		} while(a.isZero());
+		//a.setApproximate();
+		b = a;
+		b.exp10();
+		b.round();
+		//po.min_decimals = i % 16 + b.intValue() + 2;
+		//po.max_decimals = i % 16 + 3;
+		//if(po.min_decimals > 1 && po.max_decimals > po.min_decimals) po.max_decimals = po.min_decimals;
+		po.min_exp = -(i % 3);
+		if(po.min_exp == 0) po.min_exp = 1;
+		b = a;
+		b.setToFloatingPoint();
+		po.use_max_decimals = false;
+		po.min_decimals = 100;
+		b.setRelativeUncertainty(Number(i % 10, 1, -(i % 20) - 3));
+		str2 = b.print(po);
+		po.use_max_decimals = true;
+		size_t p1 = str2.find(".");
+		size_t p2 = str2.find("E");
+		if(p2 == string::npos) p2 = str2.length();
+		else if(po.min_exp == -1) po.min_exp = 1;
+		if(p1 == string::npos) {
+			po.max_decimals = 0;
+		} else {
+			po.max_decimals = p2 - p1 - 1;
+		}
+		po.min_decimals = po.max_decimals;
+		str = a.print(po);
+		if(str != str2) {
+			cout << str << ":" << str2 << ":" << po.min_decimals << ":" << po.max_decimals << endl;
+			po.interval_display = INTERVAL_DISPLAY_INTERVAL;
+			//po.min_decimals = 20;
+			//po.max_decimals = -1;
+			cout << a.print(po) << ":" << b.print(po) << endl;
+			po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+		}
+	}
+	return 0;*/
+	for(size_t i = 0; i < 50000;) {
 		str = rnd_expression(10, true, 6, 4, false, false, false, 5, false);
 		CALCULATOR->parse(&mp, str, evalops.parse_options);
+		cerr << str << endl;
 		if(mp.contains(CALCULATOR->v_x)) {
 			a.set(rnd_number(false, false, false, false, false));
 			b.set(rnd_number(false, false, false, false, false));
+			cerr << "A" << endl;
 			if(a < b) test_integration5(mp, a, b);
 			else test_integration5(mp, b, a);
 			i++;

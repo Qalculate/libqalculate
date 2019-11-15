@@ -2773,6 +2773,9 @@
         <_title>Upper limit</_title>
       </argument>
       <argument index="4">
+        <_title>Min iterations</_title>
+      </argument>
+      <argument index="4">
         <_title>Max iterations</_title>
       </argument>
       <argument index="5">
