@@ -15,6 +15,8 @@
 #include "Calculator.h"
 #include "Number.h"
 
+using namespace std;
+
 Prefix::Prefix(string long_name, string short_name, string unicode_name) {
 	l_name = long_name;
 	s_name = short_name;
@@ -30,7 +32,7 @@ const string &Prefix::shortName(bool return_long_if_no_short, bool use_unicode) 
 	return s_name;
 }
 const string &Prefix::longName(bool return_short_if_no_long, bool use_unicode) const {
-	if(return_short_if_no_long && l_name.empty()) {		
+	if(return_short_if_no_long && l_name.empty()) {
 		if(use_unicode && !u_name.empty()) return u_name;
 		return s_name;
 	}
@@ -44,7 +46,7 @@ const string &Prefix::unicodeName(bool return_short_if_no_unicode) const {
 }
 void Prefix::setShortName(string short_name) {
 	s_name = short_name;
-	CALCULATOR->prefixNameChanged(this);	
+	CALCULATOR->prefixNameChanged(this);
 }
 void Prefix::setLongName(string long_name) {
 	l_name = long_name;

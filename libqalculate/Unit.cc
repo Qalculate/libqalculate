@@ -17,6 +17,8 @@
 #include "MathStructure.h"
 #include "Prefix.h"
 
+using namespace std;
+
 Unit::Unit(string cat_, string name_, string plural_, string singular_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, "", title_, "", is_local, is_builtin, is_active) {
 	remove_blank_ends(plural_);
 	remove_blank_ends(singular_);
@@ -373,7 +375,7 @@ MathStructure &AliasUnit::convertFromBaseUnit(MathStructure &mvalue, MathStructu
 		u = u2;
 		u2->convertFromFirstBaseUnit(mvalue, mexp);
 		if(u == this) break;
-	}	
+	}
 	return mvalue;
 }
 MathStructure &AliasUnit::convertToBaseUnit(MathStructure &mvalue) const {
@@ -539,7 +541,7 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 			if(!mexp.isOne()) mstruct->raise(mexp);
 			mvalue.multiply_nocopy(mstruct, true);
 		}
-	}	
+	}
 	return mvalue;
 }
 MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const {
@@ -626,7 +628,7 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 			}
 		} else if(isApproximate() && !mstruct->isApproximate()) {
 			mstruct->setApproximate(true, true);
-		}		
+		}
 		if(!mexp.isOne()) mstruct->raise(mexp);
 		mvalue.multiply_nocopy(mstruct, true);
 	}
@@ -696,7 +698,7 @@ bool AliasUnit::hasNonlinearRelationTo(Unit *u) const {
 			if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
 			if(((AliasUnit*) fbu)->hasNonlinearExpression()) return true;
 			fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();
-		}	
+		}
 	} else if(isChildOf(u)) {
 		Unit *fbu = (Unit*) this;
 		while(true) {
@@ -704,7 +706,7 @@ bool AliasUnit::hasNonlinearRelationTo(Unit *u) const {
 			if(fbu->subtype() != SUBTYPE_ALIAS_UNIT) return false;
 			if(((AliasUnit*) fbu)->hasNonlinearExpression()) return true;
 			fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();
-		}			
+		}
 	} else {
 		return hasNonlinearRelationTo(baseUnit()) || u->hasNonlinearRelationTo(u->baseUnit());
 	}
@@ -931,7 +933,7 @@ string CompositeUnit::print(bool plural_, bool short_, bool use_unicode, bool (*
 				if(i < units.size() - 1) {
 					b2 = true;
 					str += "(";
-				}				
+				}
 			} else {
 //				if(i > 0) str += "*";
 				if(i > 0) str += " ";
@@ -976,7 +978,7 @@ bool CompositeUnit::containsRelativeTo(Unit *u) const {
 			if(containsRelativeTo(cu->get(i)->baseUnit())) return true;
 		}
 		return false;
-	}	
+	}
 	return false;
 }
 bool CompositeUnit::hasNonlinearRelationToBase() const {
@@ -1007,7 +1009,7 @@ MathStructure CompositeUnit::generateMathStructure(bool make_division, bool set_
 		MathStructure mstruct2;
 		if(!has_p || units[i]->prefix()) {
 			mstruct2.set(units[i]->firstBaseUnit(), units[i]->prefix());
-		} else {				
+		} else {
 			mstruct2.set(units[i]->firstBaseUnit(), CALCULATOR->decimal_null_prefix);
 		}
 		if(make_division && units[i]->firstBaseExponent() < 0) {

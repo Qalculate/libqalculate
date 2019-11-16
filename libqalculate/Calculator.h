@@ -1,5 +1,5 @@
 /*
-    Qalculate    
+    Qalculate
 
     Copyright (C) 2003-2007, 2008, 2016-2018  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
@@ -28,7 +28,7 @@
 * mostly of the class Numbers and sub classes of ExpressionItem.
 *
 * A simple application using libqalculate need only create a calculator object, perhaps load definitions (functions, variables, units, etc.), and calculate (and output) an expression as follows:
-* \code 
+* \code
 * new Calculator();
 * CALCULATOR->loadExchangeRates();
 * CALCULATOR->loadGlobalDefinitions();
@@ -68,22 +68,22 @@
 * AC_SUBST(QALCULATE_LIBS) \endcode
 */
 
-typedef vector<Prefix*> p_type;
+typedef std::vector<Prefix*> p_type;
 
 /// Parameters passed to plotting functions.
 struct PlotParameters {
 	/// Title label.
-	string title;
+	std::string title;
 	/// Y-axis label.
-	string y_label;
+	std::string y_label;
 	/// X-axis label.
-	string x_label;
+	std::string x_label;
 	/// Image to save plot to. If empty shows plot in a window on the screen.
-	string filename;
+	std::string filename;
 	/// The image type to save as. Set to PLOT_FILETYPE_AUTO to guess from file extension.
 	PlotFileType filetype;
 	/// Font used for text
-	string font;
+	std::string font;
 	/// Set to true for colored plot, false for monochrome. Default: true
 	bool color;
 	/// If the minimum y-axis value shall be set automatically (otherwise uses y_min). Default: true
@@ -124,7 +124,7 @@ struct PlotParameters {
 /// Parameters for plot data series.
 struct PlotDataParameters {
 	/// Title label.
-	string title;
+	std::string title;
 	/// Plot smoothing.
 	PlotSmoothing smoothing;
 	/// Plot style
@@ -161,13 +161,13 @@ typedef enum {
 /// A message with information to the user. Primarily used for errors and warnings.
 class CalculatorMessage {
   protected:
-	string smessage;
+	std::string smessage;
 	MessageType mtype;
 	int i_stage, i_cat;
   public:
-	CalculatorMessage(string message_, MessageType type_ = MESSAGE_WARNING, int cat_ = MESSAGE_CATEGORY_NONE, int stage_ = MESSAGE_STAGE_UNSET);
+	CalculatorMessage(std::string message_, MessageType type_ = MESSAGE_WARNING, int cat_ = MESSAGE_CATEGORY_NONE, int stage_ = MESSAGE_STAGE_UNSET);
 	CalculatorMessage(const CalculatorMessage &e);
-	string message() const;
+	std::string message() const;
 	const char* c_message() const;
 	MessageType type() const;
 	int stage() const;
@@ -192,9 +192,9 @@ enum {
 };
 
 struct Element {
-	string symbol, name;
+	std::string symbol, name;
 	int number, group;
-	string weight;
+	std::string weight;
 	int x_pos, y_pos;
 };
 
@@ -203,7 +203,7 @@ struct Element {
 class Calculate_p;
 
 /// The almighty calculator class.
-/** The calculator class is responsible for loading functions, variables and units, and keeping track of them, as well as parsing expressions and much more. A calculator object must be created before any other Qalculate! class is used. There should never be more than one calculator object, accessed with CALCULATOR. 
+/** The calculator class is responsible for loading functions, variables and units, and keeping track of them, as well as parsing expressions and much more. A calculator object must be created before any other Qalculate! class is used. There should never be more than one calculator object, accessed with CALCULATOR.
 *
 * A simple application using libqalculate need only create a calculator object, perhaps load definitions (functions, variables, units, etc.) and use the calculate function as follows:
 * \code new Calculator();
@@ -215,7 +215,7 @@ class Calculator {
 
   protected:
 
-	vector<CalculatorMessage> messages;
+	std::vector<CalculatorMessage> messages;
 
 	int ianglemode;
 	int i_precision;
@@ -223,31 +223,31 @@ class Calculator {
 	int i_stop_interval;
 	int i_start_interval;
 	char vbuffer[200];
-	vector<void*> ufvl;
-	vector<char> ufvl_t;
-	vector<size_t> ufvl_i;
-	vector<void*> ufv[4][UFV_LENGTHS];
-	vector<size_t> ufv_i[4][UFV_LENGTHS];
-	
-	vector<DataSet*> data_sets;
-	
+	std::vector<void*> ufvl;
+	std::vector<char> ufvl_t;
+	std::vector<size_t> ufvl_i;
+	std::vector<void*> ufv[4][UFV_LENGTHS];
+	std::vector<size_t> ufv_i[4][UFV_LENGTHS];
+
+	std::vector<DataSet*> data_sets;
+
 	class Calculator_p *priv;
-	
-	vector<string> signs;
-	vector<string> real_signs;
-	vector<string> default_signs;
-	vector<string> default_real_signs;
+
+	std::vector<std::string> signs;
+	std::vector<std::string> real_signs;
+	std::vector<std::string> default_signs;
+	std::vector<std::string> default_real_signs;
 	bool b_ignore_locale;
 	char *saved_locale;
 	int disable_errors_ref;
-	vector<int> stopped_errors_count;
-	vector<int> stopped_warnings_count;
-	vector<int> stopped_messages_count;
-	vector<vector<CalculatorMessage> > stopped_messages;
+	std::vector<int> stopped_errors_count;
+	std::vector<int> stopped_warnings_count;
+	std::vector<int> stopped_messages_count;
+	std::vector<std::vector<CalculatorMessage> > stopped_messages;
 
 	Thread *calculate_thread;
 
-	string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
+	std::string NAME_NUMBER_PRE_S, NAME_NUMBER_PRE_STR, DOT_STR, DOT_S, COMMA_S, COMMA_STR, ILLEGAL_IN_NAMES, ILLEGAL_IN_UNITNAMES, ILLEGAL_IN_NAMES_MINUS_SPACE_STR;
 
 	bool b_argument_errors;
 	int current_stage;
@@ -257,34 +257,34 @@ class Calculator {
 	bool b_exchange_rates_warning_enabled;
 
 	bool b_gnuplot_open;
-	string gnuplot_cmdline;
+	std::string gnuplot_cmdline;
 	FILE *gnuplot_pipe;
-	
+
 	bool local_to;
-	
+
 	Assumptions *default_assumptions;
-	
-	vector<Variable*> deleted_variables;
-	vector<MathFunction*> deleted_functions;
-	vector<Unit*> deleted_units;
-	
+
+	std::vector<Variable*> deleted_variables;
+	std::vector<MathFunction*> deleted_functions;
+	std::vector<Unit*> deleted_units;
+
 	bool b_var_units;
-	
+
 	bool b_save_called;
-	
+
 	int i_timeout;
 	struct timeval t_end;
 	int i_aborted;
 	bool b_controlled;
-	
-	string per_str, times_str, plus_str, minus_str, and_str, AND_str, or_str, OR_str, XOR_str;
+
+	std::string per_str, times_str, plus_str, minus_str, and_str, AND_str, or_str, OR_str, XOR_str;
 	size_t per_str_len, times_str_len, plus_str_len, minus_str_len, and_str_len, AND_str_len, or_str_len, OR_str_len, XOR_str_len;
 
-	vector<MathStructure*> rpn_stack;
+	std::vector<MathStructure*> rpn_stack;
 
 	bool calculateRPN(MathStructure *mstruct, int command, size_t index, int msecs, const EvaluationOptions &eo, int function_arguments = 0);
-	bool calculateRPN(string str, int command, size_t index, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division, int function_arguments = 0);
-	
+	bool calculateRPN(std::string str, int command, size_t index, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division, int function_arguments = 0);
+
   public:
 
 	KnownVariable *v_pi, *v_e, *v_euler, *v_catalan, *v_i, *v_pinf, *v_minf, *v_undef, *v_precision;
@@ -293,10 +293,10 @@ class Calculator {
 	UnknownVariable *v_x, *v_y, *v_z;
 	UnknownVariable *v_C, *v_n;
 	MathFunction *f_vector, *f_sort, *f_rank, *f_limits, *f_component, *f_dimension, *f_merge_vectors;
-	MathFunction *f_matrix, *f_matrix_to_vector, *f_area, *f_rows, *f_columns, *f_row, *f_column, *f_elements, *f_element, *f_transpose, *f_identity, *f_determinant, *f_permanent, *f_adjoint, *f_cofactor, *f_inverse, *f_magnitude, *f_hadamard, *f_entrywise; 
+	MathFunction *f_matrix, *f_matrix_to_vector, *f_area, *f_rows, *f_columns, *f_row, *f_column, *f_elements, *f_element, *f_transpose, *f_identity, *f_determinant, *f_permanent, *f_adjoint, *f_cofactor, *f_inverse, *f_magnitude, *f_hadamard, *f_entrywise;
 	MathFunction *f_factorial, *f_factorial2, *f_multifactorial, *f_binomial;
 	MathFunction *f_xor, *f_bitxor, *f_even, *f_odd, *f_shift, *f_bitcmp;
-	MathFunction *f_abs, *f_gcd, *f_lcm, *f_signum, *f_heaviside, *f_dirac, *f_round, *f_floor, *f_ceil, *f_trunc, *f_int, *f_frac, *f_rem, *f_mod;	
+	MathFunction *f_abs, *f_gcd, *f_lcm, *f_signum, *f_heaviside, *f_dirac, *f_round, *f_floor, *f_ceil, *f_trunc, *f_int, *f_frac, *f_rem, *f_mod;
 	MathFunction *f_polynomial_unit, *f_polynomial_primpart, *f_polynomial_content, *f_coeff, *f_lcoeff, *f_tcoeff, *f_degree, *f_ldegree;
 	MathFunction *f_re, *f_im, *f_arg, *f_numerator, *f_denominator;
 	MathFunction *f_interval, *f_uncertainty;
@@ -319,7 +319,7 @@ class Calculator {
 	MathFunction *f_error, *f_warning, *f_message, *f_save, *f_load, *f_export, *f_title;
 	MathFunction *f_register, *f_stack;
 	MathFunction *f_plot;
-	
+
 	Unit *u_rad, *u_gra, *u_deg, *u_euro, *u_btc, *u_second, *u_minute, *u_hour, *u_year, *u_month, *u_day;
 	DecimalPrefix *decimal_null_prefix;
 	BinaryPrefix *binary_null_prefix;
@@ -327,10 +327,10 @@ class Calculator {
   	bool place_currency_code_before, place_currency_sign_before;
 	bool place_currency_code_before_negative, place_currency_sign_before_negative;
 	bool default_dot_as_separator;
-	string local_digit_group_separator, local_digit_group_format;
-  
+	std::string local_digit_group_separator, local_digit_group_format;
+
   	bool b_busy;
-	string expression_to_calculate;
+	std::string expression_to_calculate;
 	EvaluationOptions tmp_evaluationoptions;
 	MathStructure *tmp_parsedstruct;
 	MathStructure *tmp_tostruct;
@@ -339,15 +339,15 @@ class Calculator {
 	int tmp_proc_command;
 	int tmp_proc_registers;
 	size_t tmp_rpnindex;
-	
+
 	PrintOptions save_printoptions, message_printoptions;
-  
-	vector<Variable*> variables;
-	vector<MathFunction*> functions;
-	vector<Unit*> units;
-	vector<Prefix*> prefixes;
-	vector<DecimalPrefix*> decimal_prefixes;
-	vector<BinaryPrefix*> binary_prefixes;
+
+	std::vector<Variable*> variables;
+	std::vector<MathFunction*> functions;
+	std::vector<Unit*> units;
+	std::vector<Prefix*> prefixes;
+	std::vector<DecimalPrefix*> decimal_prefixes;
+	std::vector<BinaryPrefix*> binary_prefixes;
 
 	/** @name Constructor */
 	//@{
@@ -371,7 +371,7 @@ class Calculator {
 	* @param make_to_division If true, the expression after "to" will be interpreted as a unit epxression to convert the result to.
 	* @returns true if the calculation was successfully started (and finished if msecs > 0).
 	*/
-	bool calculate(MathStructure *mstruct, string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
+	bool calculate(MathStructure *mstruct, std::string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
 	/** Calculates an expression. The expression should be unlocalized first with unlocalizeExpression().
 	*
 	* @param str Expression.
@@ -381,7 +381,7 @@ class Calculator {
 	* @param make_to_division If true, the expression after "to" will be interpreted as a unit epxression to convert the result to.
 	* @returns The result of the calculation.
 	*/
-	MathStructure calculate(string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
+	MathStructure calculate(std::string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
 	/** Calculates a parsed value.
 	* This function starts the calculation in a separate thread and will return when the calculation has started unless a maximum time has been specified.
 	* The calculation can then be stopped with abort().
@@ -392,7 +392,7 @@ class Calculator {
 	* @param to_str "to" expression for conversion.
 	* @returns The result of the calculation.
 	*/
-	bool calculate(MathStructure *mstruct, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, string to_str = "");
+	bool calculate(MathStructure *mstruct, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, std::string to_str = "");
 	/** Calculates a parsed value.
 	*
 	* @param mstruct Parsed value to evaluate.
@@ -400,11 +400,11 @@ class Calculator {
 	* @param to_str "to" expression for conversion.
 	* @returns The result of the calculation.
 	*/
-	MathStructure calculate(const MathStructure &mstruct, const EvaluationOptions &eo = default_user_evaluation_options, string to_str = "");
+	MathStructure calculate(const MathStructure &mstruct, const EvaluationOptions &eo = default_user_evaluation_options, std::string to_str = "");
 	/** Calculates an expression.and outputs the result to a text string. The expression should be unlocalized first with unlocalizeExpression().
-	* 
+	*
 	* Unlike other functions for expression evaluation this function handles ending "to"-commmands, in addition to unit conversion, such "to hexadecimal" or to "fractions", similar to the qalc application.
-	* 
+	*
 	*
 	* @param str Expression.
 	* @param msecs The maximum time for the calculation in milliseconds. If msecs <= 0 the time will be unlimited.
@@ -413,18 +413,18 @@ class Calculator {
 	* @returns The result of the calculation.
 	* \since 2.6.0
 	*/
-	string calculateAndPrint(string str, int msecs = 10000, const EvaluationOptions &eo = default_user_evaluation_options, const PrintOptions &po = default_print_options);
-	int testCondition(string expression);
+	std::string calculateAndPrint(std::string str, int msecs = 10000, const EvaluationOptions &eo = default_user_evaluation_options, const PrintOptions &po = default_print_options);
+	int testCondition(std::string expression);
 	//@}
 
 	/** @name Functions for printing expressions with the option to set maximum time or abort. */
 	//@{
 	/** Calls MathStructure::format(po) and MathStructure::print(po). The process is aborted after msecs milliseconds.
 	*/
-	string print(const MathStructure &mstruct, int milliseconds = 100000, const PrintOptions &op = default_print_options);
+	std::string print(const MathStructure &mstruct, int milliseconds = 100000, const PrintOptions &op = default_print_options);
 	///Deprecated: use print() instead
-	string printMathStructureTimeOut(const MathStructure &mstruct, int milliseconds = 100000, const PrintOptions &op = default_print_options);
-	
+	std::string printMathStructureTimeOut(const MathStructure &mstruct, int milliseconds = 100000, const PrintOptions &op = default_print_options);
+
 	/** Called before calculation, formatting or printing of a MathStructure (Calculator::calculate(), without maximum time, MathStructure::eval(), MathStructure::format() and MathStructure::print(), etc.) or printing of a Number (using Number::print) to be able to abort the process. Always use Calculator::stopControl() after finishing.
 	*
 	* @param milliseconds The maximum time for the process in milliseconds. If msecs <= 0 the time will be unlimited (stop with abort()).
@@ -441,9 +441,9 @@ class Calculator {
 	bool abort();
 	bool aborted(void);
 	bool isControlled(void) const;
-	string abortedMessage(void) const;
-	string timedOutString(void) const;
-	
+	std::string abortedMessage(void) const;
+	std::string timedOutString(void) const;
+
 	///Deprecated: use startControl()
 	void startPrintControl(int milliseconds = 0);
 	///Deprecated: use abort()
@@ -455,7 +455,7 @@ class Calculator {
 	/// Deprecated: use isControlled()
 	bool printingControlled(void) const;
 	/// Deprecated: use abortedMessage()
-	string printingAbortedMessage(void) const;
+	std::string printingAbortedMessage(void) const;
 	//@}
 
 	/** @name Functions for handling of threaded calculations */
@@ -588,7 +588,7 @@ class Calculator {
 	* @param make_to_division If true, the expression after "to" will be interpreted as a unit epxression to convert the result to.
 	* @returns true if the calculation was successfully started (and finished if msecs > 0).
 	*/
-	bool RPNStackEnter(string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
+	bool RPNStackEnter(std::string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
 	/** Adds a value first on the RPN stack.
 	*
 	* @param mstruct Value.
@@ -603,11 +603,11 @@ class Calculator {
 	* @param[out] to_struct NULL or a math structure to fill with unit expression parsed after "to".
 	* @param make_to_division If true, the expression after "to" will be interpreted as a unit epxression to convert the result to.
 	*/
-	void RPNStackEnter(string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
+	void RPNStackEnter(std::string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
 	bool setRPNRegister(size_t index, MathStructure *mstruct, int msecs, const EvaluationOptions &eo = default_user_evaluation_options);
-	bool setRPNRegister(size_t index, string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
+	bool setRPNRegister(size_t index, std::string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
 	void setRPNRegister(size_t index, MathStructure *mstruct, bool eval = false, const EvaluationOptions &eo = default_user_evaluation_options);
-	void setRPNRegister(size_t index, string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
+	void setRPNRegister(size_t index, std::string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
 	void deleteRPNRegister(size_t index);
 	MathStructure *getRPNRegister(size_t index = 1) const;
 	size_t RPNStackSize() const;
@@ -624,13 +624,13 @@ class Calculator {
 	* @param str The expression to localize.
 	* @returns A localized expression.
 	*/
-	string localizeExpression(string str, const ParseOptions &po = default_parse_options) const;
+	std::string localizeExpression(std::string str, const ParseOptions &po = default_parse_options) const;
 	/** Returns an unlocalized expressions. Affects decimal signs and argument separators.
 	*
 	* @param str The expression to unlocalize.
 	* @returns An unlocalized expression.
 	*/
-	string unlocalizeExpression(string str, const ParseOptions &po = default_parse_options) const;
+	std::string unlocalizeExpression(std::string str, const ParseOptions &po = default_parse_options) const;
 	/** Split an expression string after and before " to ".
 	*
 	* @param[out] str The expression. Will be set to the string before " to ".
@@ -638,27 +638,27 @@ class Calculator {
 	* @param eo Options for the evaluation and parsing of the expression (nothing will be done if units are not enabled).
 	* @returns true if " to " was found and the expression split.
 	*/
-	bool separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers = false, bool allow_empty_from = false) const;
-	bool hasToExpression(const string &str, bool allow_empty_from = false) const;
-	bool hasToExpression(const string &str, bool allow_empty_from, const EvaluationOptions &eo) const;
-	
-	/// Split an expression string after and before " where ".
-	bool separateWhereExpression(string &str, string &where_str, const EvaluationOptions &eo) const;
-	bool hasWhereExpression(const string &str, const EvaluationOptions &eo) const;
+	bool separateToExpression(std::string &str, std::string &to_str, const EvaluationOptions &eo, bool keep_modifiers = false, bool allow_empty_from = false) const;
+	bool hasToExpression(const std::string &str, bool allow_empty_from = false) const;
+	bool hasToExpression(const std::string &str, bool allow_empty_from, const EvaluationOptions &eo) const;
 
-	void parseSigns(string &str, bool convert_to_internal_representation = false) const;
+	/// Split an expression string after and before " where ".
+	bool separateWhereExpression(std::string &str, std::string &where_str, const EvaluationOptions &eo) const;
+	bool hasWhereExpression(const std::string &str, const EvaluationOptions &eo) const;
+
+	void parseSigns(std::string &str, bool convert_to_internal_representation = false) const;
 	/** Parse an expression and place in a MathStructure object.
 	*
 	* @param str Expression
 	* @param po Parse options.
 	* @returns MathStructure with result of parse.
 	*/
-	MathStructure parse(string str, const ParseOptions &po = default_parse_options);
-	void parse(MathStructure *mstruct, string str, const ParseOptions &po = default_parse_options);
-	bool parseNumber(MathStructure *mstruct, string str, const ParseOptions &po = default_parse_options);
-	bool parseOperators(MathStructure *mstruct, string str, const ParseOptions &po = default_parse_options);
-	bool parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po, MathOperation s, bool append = true);
-	bool parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po);
+	MathStructure parse(std::string str, const ParseOptions &po = default_parse_options);
+	void parse(MathStructure *mstruct, std::string str, const ParseOptions &po = default_parse_options);
+	bool parseNumber(MathStructure *mstruct, std::string str, const ParseOptions &po = default_parse_options);
+	bool parseOperators(MathStructure *mstruct, std::string str, const ParseOptions &po = default_parse_options);
+	bool parseAdd(std::string &str, MathStructure *mstruct, const ParseOptions &po, MathOperation s, bool append = true);
+	bool parseAdd(std::string &str, MathStructure *mstruct, const ParseOptions &po);
 	//@}
 
 	/** @name Functions converting epxressions between units. */
@@ -672,7 +672,7 @@ class Calculator {
 	* @param[out] units NULL or a math structure to fill with the parsed unit expression(or set to undefined if no units were found).
 	* @returns Converted value.
 	*/
-	MathStructure convert(const MathStructure &mstruct, string composite_, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *units = NULL);
+	MathStructure convert(const MathStructure &mstruct, std::string composite_, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *units = NULL);
 	/** Converts to a unit.
 	* The converted value is evaluated.
 	*
@@ -685,10 +685,10 @@ class Calculator {
 	MathStructure convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options, bool always_convert = true, bool convert_to_mixed_units = true);
 	MathStructure convert(const MathStructure &mstruct, KnownVariable *to_var, const EvaluationOptions &eo = default_user_evaluation_options);
 	MathStructure convert(double value, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options);
-	MathStructure convert(string str, Unit *from_unit, Unit *to_unit, int milliseconds, const EvaluationOptions &eo = default_user_evaluation_options);
+	MathStructure convert(std::string str, Unit *from_unit, Unit *to_unit, int milliseconds, const EvaluationOptions &eo = default_user_evaluation_options);
 	/** Depecated: use convert() */
-	MathStructure convertTimeOut(string str, Unit *from_unit, Unit *to_unit, int milliseconds, const EvaluationOptions &eo = default_user_evaluation_options);
-	MathStructure convert(string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options);	
+	MathStructure convertTimeOut(std::string str, Unit *from_unit, Unit *to_unit, int milliseconds, const EvaluationOptions &eo = default_user_evaluation_options);
+	MathStructure convert(std::string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options);
 	MathStructure convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_user_evaluation_options);
 	/** Deprecated: use getOptimalUnit() */
 	Unit *getBestUnit(Unit *u, bool allow_only_div = false, bool convert_to_local_currency = true);
@@ -714,7 +714,7 @@ class Calculator {
 	//@}
 
 	/** @name Functions for retrieval of angle units */
-	//@{	
+	//@{
 	/** Returns the gradians unit.
 	*/
 	Unit *getGraUnit();
@@ -801,7 +801,7 @@ class Calculator {
 	/** Add a new prefix to the calculator. */
 	Prefix *addPrefix(Prefix *p);
 	/** Used internally. */
-	void prefixNameChanged(Prefix *p, bool new_item = false);	
+	void prefixNameChanged(Prefix *p, bool new_item = false);
 	//@}
 
 	/** @name Functions for managing functions, variables, units, prefixes and data sets. */
@@ -810,38 +810,38 @@ class Calculator {
 	void expressionItemDeactivated(ExpressionItem *item);
 	void expressionItemDeleted(ExpressionItem *item);
 	void nameChanged(ExpressionItem *item, bool new_item = false);
-	void deleteName(string name_, ExpressionItem *object = NULL);
-	void deleteUnitName(string name_, Unit *object = NULL);	
+	void deleteName(std::string name_, ExpressionItem *object = NULL);
+	void deleteUnitName(std::string name_, Unit *object = NULL);
 	Unit* addUnit(Unit *u, bool force = true, bool check_names = true);
 	void delPrefixUFV(Prefix *object);
-	void delUFV(ExpressionItem *object);		
+	void delUFV(ExpressionItem *object);
 	/** Checks if a variable exists/is registered in the calculator. */
 	bool hasVariable(Variable *v);
 	/** Checks if a unit exists/is registered in the calculator. */
 	bool hasUnit(Unit *u);
 	/** Checks if a function exists/is registered in the calculator. */
 	bool hasFunction(MathFunction *f);
-	/** Checks if a pointer points to a variable that still exists in the calculator. 
+	/** Checks if a pointer points to a variable that still exists in the calculator.
 	* As opposed to hasFunction(), this function only checks if the mathematical function has been deleted.
 	*/
 	bool stillHasVariable(Variable *v);
-	/** Checks if a pointer points to a unit that still exists in the calculator. 
+	/** Checks if a pointer points to a unit that still exists in the calculator.
 	* As opposed to hasUnit(), this function only checks if the unit has been deleted.
 	*/
 	bool stillHasUnit(Unit *u);
-	/** Checks if a pointer points to a mathematical function that still exists in the calculator. 
+	/** Checks if a pointer points to a mathematical function that still exists in the calculator.
 	* As opposed to hasFunction(), this function only checks if the mathematical function has been deleted.
 	*/
 	bool stillHasFunction(MathFunction *f);
 	void saveFunctionCalled();
 	bool checkSaveFunctionCalled();
-	ExpressionItem *getActiveExpressionItem(string name, ExpressionItem *item = NULL);
-	ExpressionItem *getInactiveExpressionItem(string name, ExpressionItem *item = NULL);	
+	ExpressionItem *getActiveExpressionItem(std::string name, ExpressionItem *item = NULL);
+	ExpressionItem *getInactiveExpressionItem(std::string name, ExpressionItem *item = NULL);
 	ExpressionItem *getActiveExpressionItem(ExpressionItem *item);
-	ExpressionItem *getExpressionItem(string name, ExpressionItem *item = NULL);
-	Unit* getUnit(string name_);
-	Unit* getActiveUnit(string name_);
-	Unit* getCompositeUnit(string internal_name_);
+	ExpressionItem *getExpressionItem(std::string name, ExpressionItem *item = NULL);
+	Unit* getUnit(std::string name_);
+	Unit* getActiveUnit(std::string name_);
+	Unit* getCompositeUnit(std::string internal_name_);
 	Unit* getLocalCurrency();
 	void setLocalCurrency(Unit *u);
 	/** Returns prefix for an index (starting at zero). All prefixes can be traversed by starting at index zero and increasing the index until NULL is returned.
@@ -849,26 +849,26 @@ class Calculator {
 	* @param index Index of prefix.
 	* @returns Prefix for index or NULL if not found.
 	*/
-	Prefix *getPrefix(size_t index) const;	
+	Prefix *getPrefix(size_t index) const;
 	/** Returns prefix with provided name.
 	*
 	* @param name_ Name of prefix to retrieve.
 	* @returns Prefix with provided name or NULL if not found.
 	*/
-	Prefix *getPrefix(string name_) const;
+	Prefix *getPrefix(std::string name_) const;
 	Variable* addVariable(Variable *v, bool force = true, bool check_names = true);
 	void variableNameChanged(Variable *v, bool new_item = false);
 	void functionNameChanged(MathFunction *f, bool new_item = false);
-	void unitNameChanged(Unit *u, bool new_item = false);	
-	Variable* getVariable(string name_);
-	Variable* getActiveVariable(string name_);
+	void unitNameChanged(Unit *u, bool new_item = false);
+	Variable* getVariable(std::string name_);
+	Variable* getActiveVariable(std::string name_);
 	ExpressionItem *addExpressionItem(ExpressionItem *item, bool force = true);
 	MathFunction* addFunction(MathFunction *f, bool force = true, bool check_names = true);
 	DataSet* addDataSet(DataSet *dc, bool force = true, bool check_names = true);
 	DataSet* getDataSet(size_t index);
-	DataSet* getDataSet(string name);
-	MathFunction* getFunction(string name_);	
-	MathFunction* getActiveFunction(string name_);
+	DataSet* getDataSet(std::string name);
+	MathFunction* getFunction(std::string name_);
+	MathFunction* getActiveFunction(std::string name_);
 	/** Returns variable for an index (starting at zero). All variables can be traversed by starting at index zero and increasing the index until NULL is returned.
 	*
 	* @param index Index of variable.
@@ -880,7 +880,7 @@ class Calculator {
 	* @param index Index of unit.
 	* @returns Unit for index or NULL if not found.
 	*/
-	Unit *getUnit(size_t index) const;	
+	Unit *getUnit(size_t index) const;
 	/** Returns function for an index (starting at zero). All functions can be traversed by starting at index zero and increasing the index until NULL is returned.
 	*
 	* @param index Index of function.
@@ -895,10 +895,10 @@ class Calculator {
 	/** Unloads all non-builtin variables. */
 	void resetVariables();
 	/** Unloads all non-builtin functions. */
-	void resetFunctions();	
+	void resetFunctions();
 	/** Unloads all non-builtin units. */
 	void resetUnits();
-	/** Unloads all non-builtin variables, functions and units. */	
+	/** Unloads all non-builtin variables, functions and units. */
 	void reset();
 	/** Adds builtin variables. Called automatically when the calculator is created. */
 	void addBuiltinVariables();
@@ -907,7 +907,7 @@ class Calculator {
 	/** Adds builtin units. Called automatically when the calculator is created. */
 	void addBuiltinUnits();
 	//@}
-	
+
 	void setVariableUnitsEnabled(bool enable_variable_units = true);
 	bool variableUnitsEnabled() const;
 
@@ -918,7 +918,7 @@ class Calculator {
 	* @param name_ Variable name.
 	* @returns true if the name is valid for a variable.
 	*/
-	bool variableNameIsValid(const string &name_);
+	bool variableNameIsValid(const std::string &name_);
 	/** Tests if a name is valid for a variable.
 	*
 	* @param name_ Variable name.
@@ -926,37 +926,37 @@ class Calculator {
 	*/
 	bool variableNameIsValid(const char *name_);
 	bool variableNameIsValid(const char *name_, int version_numbers[3], bool is_user_defs);
-	bool variableNameIsValid(const string &name_, int version_numbers[3], bool is_user_defs);
-	string convertToValidVariableName(string name_);
-	bool functionNameIsValid(const string &name_);
+	bool variableNameIsValid(const std::string &name_, int version_numbers[3], bool is_user_defs);
+	std::string convertToValidVariableName(std::string name_);
+	bool functionNameIsValid(const std::string &name_);
 	bool functionNameIsValid(const char *name_);
 	bool functionNameIsValid(const char *name_, int version_numbers[3], bool is_user_defs);
-	bool functionNameIsValid(const string &name_, int version_numbers[3], bool is_user_defs);
-	string convertToValidFunctionName(string name_);		
-	bool unitNameIsValid(const string &name_);
+	bool functionNameIsValid(const std::string &name_, int version_numbers[3], bool is_user_defs);
+	std::string convertToValidFunctionName(std::string name_);
+	bool unitNameIsValid(const std::string &name_);
 	bool unitNameIsValid(const char *name_);
 	bool unitNameIsValid(const char *name_, int version_numbers[3], bool is_user_defs);
-	bool unitNameIsValid(const string &name_, int version_numbers[3], bool is_user_defs);
+	bool unitNameIsValid(const std::string &name_, int version_numbers[3], bool is_user_defs);
 	bool utf8_pos_is_valid_in_name(char *pos);
-	string convertToValidUnitName(string name_);
+	std::string convertToValidUnitName(std::string name_);
 	/** Checks if a name is used by another object which is not allowed to have the same name.
 	*
 	* @param name Name.
 	* @param object Object to exclude from check.
 	* @returns true if the name is used.
 	*/
-	bool nameTaken(string name, ExpressionItem *object = NULL);
-	bool variableNameTaken(string name, Variable *object = NULL);
-	bool unitNameTaken(string name, Unit *object = NULL);
-	bool functionNameTaken(string name, MathFunction *object = NULL);
-	string getName(string name = "", ExpressionItem *object = NULL, bool force = false, bool always_append = false);
+	bool nameTaken(std::string name, ExpressionItem *object = NULL);
+	bool variableNameTaken(std::string name, Variable *object = NULL);
+	bool unitNameTaken(std::string name, Unit *object = NULL);
+	bool functionNameTaken(std::string name, MathFunction *object = NULL);
+	std::string getName(std::string name = "", ExpressionItem *object = NULL, bool force = false, bool always_append = false);
 	//@}
 
 	/** @name Functions for message handling. */
 	//@{
 	void error(bool critical, int message_category, const char *TEMPLATE,...);
 	void error(bool critical, const char *TEMPLATE,...);
-	/** Put a message in the message queue. 
+	/** Put a message in the message queue.
 	*/
 	void message(MessageType mtype, int message_category, const char *TEMPLATE,...);
 	void message(MessageType mtype, const char *TEMPLATE,...);
@@ -973,8 +973,8 @@ class Calculator {
 	bool showArgumentErrors() const;
 	void beginTemporaryStopMessages();
 	int endTemporaryStopMessages(int *message_count = NULL, int *warning_count = NULL, int release_messages_if_no_equal_or_greater_than_message_type = -1);
-	void endTemporaryStopMessages(bool release_messages, vector<CalculatorMessage> *blocked_messages = NULL);
-	void addMessages(vector<CalculatorMessage> *message_vector);
+	void endTemporaryStopMessages(bool release_messages, std::vector<CalculatorMessage> *blocked_messages = NULL);
+	void addMessages(std::vector<CalculatorMessage> *message_vector);
 	const PrintOptions &messagePrintOptions() const;
 	void setMessagePrintOptions(const PrintOptions &po);
 	void cleanMessages(const MathStructure &mstruct, size_t first_message = 1);
@@ -992,7 +992,7 @@ class Calculator {
 	* @param filename Name of the file in the global data directory.
 	* @returns true if the definitions were successfully loaded.
 	*/
-	bool loadGlobalDefinitions(string filename);
+	bool loadGlobalDefinitions(std::string filename);
 	/** Load prefixes.
 	*
 	* @returns true if the definitions were successfully loaded.
@@ -1040,23 +1040,23 @@ class Calculator {
 	*
 	* @returns true if definitions was successfully saved.
 	*/
-	bool saveDefinitions();	
+	bool saveDefinitions();
 	int saveDataObjects();
 	int savePrefixes(const char *file_name, bool save_global = false);
-	string temporaryCategory(void) const;
+	std::string temporaryCategory(void) const;
 	int saveVariables(const char *file_name, bool save_global = false);
-	int saveUnits(const char *file_name, bool save_global = false);	
+	int saveUnits(const char *file_name, bool save_global = false);
 	int saveFunctions(const char *file_name, bool save_global = false);
 	int saveDataSets(const char *file_name, bool save_global = false);
 	//@}
 
 	/** @name Functions for CSV file import/export. */
 	//@{
-	bool importCSV(MathStructure &mstruct, const char *file_name, int first_row = 1, string delimiter = ",", vector<string> *headers = NULL);
-	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, string delimiter = ",", bool to_matrix = false, string name = "", string title = "", string category = "");
-	bool exportCSV(const MathStructure &mstruct, const char *file_name, string delimiter = ",");
+	bool importCSV(MathStructure &mstruct, const char *file_name, int first_row = 1, std::string delimiter = ",", std::vector<std::string> *headers = NULL);
+	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, std::string delimiter = ",", bool to_matrix = false, std::string name = "", std::string title = "", std::string category = "");
+	bool exportCSV(const MathStructure &mstruct, const char *file_name, std::string delimiter = ",");
 	//@}
-	
+
 	/** @name Functions for exchange rates. */
 	/** Checks if able to downloading exchange rates from the Internet (using libcurl).
 	*
@@ -1078,28 +1078,28 @@ class Calculator {
 	* @param index The index (starting at one) of the exchange rate source
 	* @returns name of local exchange rates file.
 	*/
-	string getExchangeRatesFileName(int index = 1);
+	std::string getExchangeRatesFileName(int index = 1);
 	/** Url of the exchange rates file on the Internet.
 	* Multiple exchange rates sources might be used. Iterate over these, using the index parameter, until an empty string is returned.
 	*
 	* @param index The index (starting at one) of the exchange rate source
 	* @returns Url of exchange rates file.
 	*/
-	string getExchangeRatesUrl(int index = 1);
+	std::string getExchangeRatesUrl(int index = 1);
 	/** Modification time of the exchange rates file.
 	*
 	* @returns Returns exchange rates modification time.
 	*/
 	time_t getExchangeRatesTime(int index = -1);
 	///Deprecated: wget arguments are not used
-	bool fetchExchangeRates(int seconds, string wget_args);
+	bool fetchExchangeRates(int seconds, std::string wget_args);
 	/** Download current exchange rates from the Internet to local disc with default wget arguments.
 	*
 	* @param seconds Maximum time for donwload try
 	* @returns true if operation was successful.
 	*/
 	bool fetchExchangeRates(int seconds = 15, int n = -1);
-	/** Check age of exchange rates on local disc. 
+	/** Check age of exchange rates on local disc.
 	*
 	* @param n_days How old in days exchange rates may be before exchange rates need updating
 	* @param force_check If exchange rates date should be checked again even if found outdated within n_days before
@@ -1124,13 +1124,13 @@ class Calculator {
 	* @returns true if gnuplot was found.
 	*/
 	bool canPlot();
-	MathStructure expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
-	MathStructure expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector = NULL, string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
-	MathStructure expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector = NULL, string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
-	MathStructure expressionToPlotVector(string expression, float min, float max, float step, MathStructure *x_vector = NULL, string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
-	MathStructure expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
-	bool plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent = false, int msecs = 5000);
-	bool invokeGnuplot(string commands, string commandline_extra = "", bool persistent = false);
+	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(std::string expression, float min, float max, int steps, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(std::string expression, float min, float max, float step, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(std::string expression, const MathStructure &x_vector, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	bool plotVectors(PlotParameters *param, const std::vector<MathStructure> &y_vectors, const std::vector<MathStructure> &x_vectors, std::vector<PlotDataParameters*> &pdps, bool persistent = false, int msecs = 5000);
+	bool invokeGnuplot(std::string commands, std::string commandline_extra = "", bool persistent = false);
 	bool closeGnuplot();
 	bool gnuplotOpen();
 	//@}
@@ -1159,7 +1159,7 @@ class Calculator {
 	void beginTemporaryEnableIntervalArithmetic();
 	void endTemporaryEnableIntervalArithmetic();
 	//@}
-	
+
 	void setCustomInputBase(Number nr);
 	void setCustomOutputBase(Number nr);
 	const Number &customInputBase() const;
@@ -1169,32 +1169,32 @@ class Calculator {
 	//@{
 	/** Returns the preferred decimal point character.
 	*/
-	const string &getDecimalPoint() const;
+	const std::string &getDecimalPoint() const;
 	/** Returns the preferred comma character for separating arguments.*/
-	const string &getComma() const;
+	const std::string &getComma() const;
 	/** Sets argument separator and decimal sign from the current locale. Mainly for internal use. */
 	void setLocale();
 	///Deprecated: use pass true to constructor instead
 	void setIgnoreLocale();
 	bool getIgnoreLocale();
 	void useDecimalComma();
-	/** Use point as decimal separator. 
+	/** Use point as decimal separator.
 	* To use comma as an ignored separator in numbers, must be invoked with comma_as_separator = true, to change the default function argument separator to semicolon, in addition to using ParseOptions::comma_as_separator.
-	*/	
+	*/
 	void useDecimalPoint(bool comma_as_separator = false);
 	/** Resets argument separator and decimal sign. Mainly for internal use. */
 	void unsetLocale();
 	/** Returns the translated text string used in expressions for converting to a specific unit expression (ex "5 meters to feet.*/
-	string localToString(bool include_spaces = true) const;
-	string localWhereString() const;
+	std::string localToString(bool include_spaces = true) const;
+	std::string localWhereString() const;
 	//@}
 
 	/** @name Functions adding alternative symbols for operators and such */
 	//@{
-	void addStringAlternative(string replacement, string standard);
-	bool delStringAlternative(string replacement, string standard);
-	void addDefaultStringAlternative(string replacement, string standard);
-	bool delDefaultStringAlternative(string replacement, string standard);
+	void addStringAlternative(std::string replacement, std::string standard);
+	bool delStringAlternative(std::string replacement, std::string standard);
+	void addDefaultStringAlternative(std::string replacement, std::string standard);
+	bool delDefaultStringAlternative(std::string replacement, std::string standard);
 	//@}
 
 	/** @name Functions for storing values with associated identifiers */
@@ -1214,22 +1214,22 @@ class Calculator {
 	* @param persistent If false the values will be removed from storage when retrieved with getId().
 	* @returns Storage id.
 	*/
-	size_t parseAddId(MathFunction *f, const string &str, const ParseOptions &po, bool persistent = false);
-	size_t parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent = false);
-	size_t parseAddVectorId(const string &str, const ParseOptions &po, bool persistent = false);
+	size_t parseAddId(MathFunction *f, const std::string &str, const ParseOptions &po, bool persistent = false);
+	size_t parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const std::string &str, const ParseOptions &po, bool persistent = false);
+	size_t parseAddVectorId(const std::string &str, const ParseOptions &po, bool persistent = false);
 	/** Returns a stored value. Mainly for internal use.
-	* 
+	*
 	* @param id Storage id.
 	* @returns A stored value.
 	*/
-	MathStructure *getId(size_t id);	
+	MathStructure *getId(size_t id);
 	/** Removes and unreferences (value->unref() will be called) a value from storage. Mainly for internal use.
-	* 
+	*
 	* @param id Storage id.
 	*/
 	void delId(size_t id);
 	//@}
-		
+
 };
 
 #endif

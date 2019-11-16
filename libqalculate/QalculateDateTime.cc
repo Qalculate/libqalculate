@@ -1,5 +1,5 @@
 /*
-    Qalculate    
+    Qalculate
 
     Copyright (C) 2018  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
@@ -7,11 +7,11 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-    
+
     Many of the calendar conversion algorithms used here are adapted from
     CALENDRICA 4.0 -- Common Lisp
     Copyright (C) E. M. Reingold and N. Dershowitz
-    
+
 */
 
 #include "QalculateDateTime.h"
@@ -21,6 +21,8 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <sys/time.h>
+
+using namespace std;
 
 static const char *HEBREW_MONTHS[] = {"Nisan", "Iyar", "Sivan", "Tammuz", "Av", "Elul", "Tishrei", "Marcheshvan", "Kislev", "Tevet", "Shevat", "Adar", "Adar II"};
 static const char *STANDARD_MONTHS[] = {N_("January"), N_("February"), N_("March"), N_("April"), N_("May"), N_("June"), N_("July"), N_("August"), N_("September"), N_("October"), N_("November"), N_("December")};
@@ -104,10 +106,10 @@ int daysPerYear(long int year, int basis = 1) {
 		}
 		case 2: {
 			return 360;
-		}		
+		}
 		case 3: {
 			return 365;
-		} 
+		}
 		case 4: {
 			return 360;
 		}
@@ -343,7 +345,7 @@ bool QalculateDateTime::set(const Number &newtimestamp) {
 bool QalculateDateTime::set(string str) {
 
 	long int newyear = 0, newmonth = 0, newday = 0;
-	
+
 	string str_bak(str);
 
 	remove_blank_ends(str);
@@ -786,7 +788,7 @@ bool QalculateDateTime::addMonths(const Number &nmonths) {
 				secfrac += n_sec;
 				secfrac /= 86400;
 				idayfrac += secfrac;
-				idayfrac /= daysPerMonth(i_month, i_year); 
+				idayfrac /= daysPerMonth(i_month, i_year);
 				nday -= idayfrac;
 				nday *= daysPerMonth(i_month == 1 ? 12 : i_month - 1, i_year);
 				idayfrac *= daysPerMonth(i_month, i_year);
@@ -802,7 +804,7 @@ bool QalculateDateTime::addMonths(const Number &nmonths) {
 				secfrac += n_sec;
 				secfrac /= 86400;
 				idayfrac -= secfrac;
-				idayfrac /= daysPerMonth(i_month, i_year); 
+				idayfrac /= daysPerMonth(i_month, i_year);
 				nday -= idayfrac;
 				nday *= daysPerMonth(i_month == 12 ? 1 : i_month + 1, i_year);
 				idayfrac *= daysPerMonth(i_month, i_year);
@@ -861,7 +863,7 @@ bool QalculateDateTime::addYears(const Number &nyears) {
 				secfrac += n_sec;
 				secfrac /= 86400;
 				idayfrac += secfrac;
-				idayfrac /= daysPerYear(i_year); 
+				idayfrac /= daysPerYear(i_year);
 				nday -= idayfrac;
 				nday *= daysPerYear(i_year - 1);
 				idayfrac *= daysPerYear(i_year);
@@ -877,7 +879,7 @@ bool QalculateDateTime::addYears(const Number &nyears) {
 				secfrac += n_sec;
 				secfrac /= 86400;
 				idayfrac -= secfrac;
-				idayfrac /= daysPerYear(i_year); 
+				idayfrac /= daysPerYear(i_year);
 				nday -= idayfrac;
 				nday *= daysPerYear(i_year + 1);
 				idayfrac *= daysPerYear(i_year);
@@ -1148,15 +1150,15 @@ Number QalculateDateTime::secondsTo(const QalculateDateTime &date, bool count_le
 	return nr;
 }
 Number QalculateDateTime::daysTo(const QalculateDateTime &date, int basis, bool date_func, bool remove_leap_seconds) const {
-	
+
 	Number nr;
-	
+
 	if(basis < 0 || basis > 4) basis = 1;
-	
+
 	bool neg = false;
 	bool isleap = false;
 	long int days, years;
-	
+
 	long int day1 = i_day, month1 = i_month, year1 = i_year;
 	long int day2 = date.day(), month2 = date.month(), year2 = date.year();
 	Number t1(n_sec), t2(date.second());
@@ -1244,7 +1246,7 @@ Number QalculateDateTime::daysTo(const QalculateDateTime &date, int basis, bool 
 				else nr += 365;
 			}
 			break;
-		} 
+		}
 		case 4: {
 			nr.set(years, 1, 0);
 			nr *= 12;
@@ -1524,7 +1526,7 @@ Number julian_centuries(Number tee) {
 
 Number nutation(Number tee) {
 	Number c = julian_centuries(tee);
-	Number cap_a; 
+	Number cap_a;
 	Number t, x(c);
 	t.setFloat(124.90L); cap_a += t;
 	t.setFloat(-1934.134L); t *= x; cap_a += t;
@@ -1667,7 +1669,7 @@ Number obliquity(Number tee) {
 
 Number cal_poly(Number c, size_t n, ...) {
 	va_list ap;
-	va_start(ap, n); 
+	va_start(ap, n);
 	Number x(1, 1, 0), t, poly;
 	for(size_t i = 0; i < n; i++) {
 		t.setFloat(va_arg(ap, long double));
@@ -1850,7 +1852,7 @@ Number lunar_longitude(Number tee) {
 	int args_moon_node[] = {
 	0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, -2, 2, -2, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, -2, 2, 0, 2, 0, 0, 0, 0,
-	0, 0, -2, 0, 0, 0, 0, -2, -2, 0, 0, 0, 0, 0, 0, 0 
+	0, 0, -2, 0, 0, 0, 0, -2, -2, 0, 0, 0, 0, 0, 0, 0
 	};
 	long int sine_coeff[] = {
 	6288774L, 1274027L, 658314L, 213618L, -185116L, -114332L,
@@ -2107,7 +2109,7 @@ bool hebrew_sabbatical_year(Number year) {
 }
 Number hebrew_calendar_elapsed_days(Number year) {
 	Number months_elapsed(year); months_elapsed *= 235; months_elapsed -= 234; cal_div(months_elapsed, 19);
-	Number parts_elapsed(months_elapsed); parts_elapsed *= 13753; parts_elapsed += 12084; 
+	Number parts_elapsed(months_elapsed); parts_elapsed *= 13753; parts_elapsed += 12084;
 	months_elapsed *= 29;
 	cal_div(parts_elapsed, 25920);
 	Number days(months_elapsed); days += parts_elapsed;
@@ -2162,7 +2164,7 @@ Number date_to_fixed(long int y, long int m, long int d, CalendarSystem ct) {
 	if(ct == CALENDAR_GREGORIAN) {
 		Number year(y); year--;
 		fixed = year; fixed *= 365; fixed += quotient(year, 4); fixed -= quotient(year, 100); fixed += quotient(year, 400);
-		fixed += quotient((367 * m) - 362, 12); 
+		fixed += quotient((367 * m) - 362, 12);
 		if(m > 2) fixed -= (gregorian_leap_year(y) ? 1 : 2);
 		fixed += d;
 	} else if(ct == CALENDAR_HEBREW) {
@@ -2180,7 +2182,7 @@ Number date_to_fixed(long int y, long int m, long int d, CalendarSystem ct) {
 		fixed = JULIAN_EPOCH; fixed--;
 		fixed += y2 * 365;
 		fixed += quotient(y2, 4);
-		fixed += quotient((367 * m) - 362, 12); 
+		fixed += quotient((367 * m) - 362, 12);
 		if(m > 2) fixed -= (julian_leap_year(y) ? 1 : 2);
 		fixed += d;
 	} else if(ct == CALENDAR_ISLAMIC) {
@@ -2188,7 +2190,7 @@ Number date_to_fixed(long int y, long int m, long int d, CalendarSystem ct) {
 		fixed = ISLAMIC_EPOCH; fixed--;
 		fixed += (year - 1) * 354;
 		year *= 11; year += 3; cal_div(year, 30); fixed += year;
-		fixed += (m - 1) * 29; 
+		fixed += (m - 1) * 29;
 		fixed += quotient(m, 2);
 		fixed += d;
 	} else if(ct == CALENDAR_PERSIAN) {
@@ -2219,14 +2221,14 @@ Number date_to_fixed(long int y, long int m, long int d, CalendarSystem ct) {
 		fixed = EGYPTIAN_EPOCH;
 		fixed += (year - 1) * 365;
 		fixed += 30 * (m - 1);
-		fixed += d - 1; 
+		fixed += d - 1;
 	} else if(ct == CALENDAR_COPTIC) {
 		Number year(y);
 		fixed = COPTIC_EPOCH; fixed--;
 		fixed += (year - 1) * 365;
 		fixed += quotient(year, 4);
 		fixed += 30 * (m - 1);
-		fixed += d; 
+		fixed += d;
 	} else if(ct == CALENDAR_ETHIOPIAN) {
 		Number year(y);
 		fixed = ETHIOPIAN_EPOCH;
@@ -2506,7 +2508,7 @@ bool cjdn_to_date(Number J, long int &y, long int &m, long int &d, CalendarSyste
 		j = x3; j *= 100; j += x2; j += c0;
 		bool overflow = false; y = j.lintValue(&overflow); if(overflow) return false;
 		c0 *= 12; x1 -= c0; x1 += 3; m = x1.lintValue();
-		r1.mod(153); r1 /= 5; r1.floor(); r1++; d = r1.lintValue(); 
+		r1.mod(153); r1 /= 5; r1.floor(); r1++; d = r1.lintValue();
 		return true;
 	} else if(ct == CALENDAR_JULIAN) {
 		Number y2, k2, k1, x2, x1, c0, j;
@@ -2610,7 +2612,7 @@ string monthName(long int month, CalendarSystem ct, bool append_number, bool app
 		if(month > 24) return i2s(month);
 		bool leap = month > 12;
 		if(leap) month -= 12;
-		string str = i2s(month); 
+		string str = i2s(month);
 		if(leap && append_leap) {str += " ("; str += _("leap month"); str += ")";}
 		return str;
 	}

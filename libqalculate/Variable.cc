@@ -17,6 +17,8 @@
 #include "MathStructure.h"
 #include "Number.h"
 
+using namespace std;
+
 Assumptions::Assumptions() : i_type(ASSUMPTION_TYPE_NUMBER), i_sign(ASSUMPTION_SIGN_UNKNOWN), fmin(NULL), fmax(NULL), b_incl_min(true), b_incl_max(true) {}
 Assumptions::~Assumptions() {}
 
@@ -51,7 +53,7 @@ void Assumptions::setSign(AssumptionSign as) {
 		i_type = ASSUMPTION_TYPE_REAL;
 	}
 }
-	
+
 void Assumptions::setMin(const Number *nmin) {
 	if(!nmin) {
 		if(fmin) {

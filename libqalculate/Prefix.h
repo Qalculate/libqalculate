@@ -32,7 +32,7 @@ Prefixes can have up to free different three names -- a long name, a short name 
  */
 class Prefix {
   protected:
-	string l_name, s_name, u_name;
+	std::string l_name, s_name, u_name;
   public:
 	/** Create a prefix.
 	*
@@ -40,7 +40,7 @@ class Prefix {
 	* @param short_name Short name.
 	* @param unicode_name Unicode name.
  	*/
-  	Prefix(string long_name, string short_name = "", string unicode_name = "");
+  	Prefix(std::string long_name, std::string short_name = "", std::string unicode_name = "");
 	virtual ~Prefix();
 	/** Returns the short name of the prefix.
 	*
@@ -48,35 +48,35 @@ class Prefix {
 	* @param use_unicode If a unicode version of the name is allowed and preferred.
 	* @returns The short name of the prefix.
  	*/
-	const string &shortName(bool return_long_if_no_short = true, bool use_unicode = false) const;
+	const std::string &shortName(bool return_long_if_no_short = true, bool use_unicode = false) const;
 	/** Returns the long name of the prefix.
 	*
 	* @param return_short_if_no_long If the short name shall be returned if the prefix has not got a long name (if it is empty).
 	* @param use_unicode If a unicode version of the name is allowed and preferred.
 	* @returns The long name of the prefix.
  	*/
-	const string &longName(bool return_short_if_no_long = true, bool use_unicode = false) const;
+	const std::string &longName(bool return_short_if_no_long = true, bool use_unicode = false) const;
 	/** Returns the unicode name of the prefix.
 	*
 	* @param return_short_if_no_uni If the short name shall be returned if the prefix has not got a unicode name (if it is empty).
 	* @returns The unicode name of the prefix.
  	*/
-	const string &unicodeName(bool return_short_if_no_uni = true) const;
+	const std::string &unicodeName(bool return_short_if_no_uni = true) const;
 	/** Sets the short name of the prefix.
 	*
 	* @param short_name The new short name for the prefix.
  	*/
-	void setShortName(string short_name);
+	void setShortName(std::string short_name);
 	/** Sets the long name of the prefix.
 	*
 	* @param long_name The new long name for the prefix.
  	*/
-	void setLongName(string long_name);
+	void setLongName(std::string long_name);
 	/** Sets the unicode name of the prefix. The unicode name is an alternative to the short name that is preferred if unicode characters can be displayed.
 	*
 	* @param unicode_name The new unicode name for the prefix.
  	*/
-	void setUnicodeName(string unicode_name);
+	void setUnicodeName(std::string unicode_name);
 	/** Returns a preferred name of the prefix.
 	*
 	* @param short_default If a short name is preferred.
@@ -85,7 +85,7 @@ class Prefix {
 	* @param can_display_unicode_string_arg Argument to pass to the above test function.
 	* @returns A preferred name.
  	*/
-	const string &name(bool short_default = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	const std::string &name(bool short_default = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	/** Returns the value of the prefix.
 	*
 	* @param nexp The power of the prefixed unit.
@@ -108,7 +108,7 @@ class Prefix {
 	* @returns The type of the prefix.
  	*/
 	virtual int type() const = 0;
-	
+
 };
 
 ///A decimal (metric) prefix.
@@ -125,7 +125,7 @@ class DecimalPrefix : public Prefix {
 	* @param short_name Short name.
 	* @param unicode_name Unicode name.
  	*/
-  	DecimalPrefix(int exp10, string long_name, string short_name = "", string unicode_name = "");
+  	DecimalPrefix(int exp10, std::string long_name, std::string short_name = "", std::string unicode_name = "");
 	~DecimalPrefix();
 	/** Returns the exponent.
 	*
@@ -143,7 +143,7 @@ class DecimalPrefix : public Prefix {
 	*
 	* @param iexp New exponent for the prefix.
  	*/
-	void setExponent(int iexp);	
+	void setExponent(int iexp);
 	Number value(const Number &nexp) const;
 	Number value(int iexp) const;
 	Number value() const;
@@ -164,7 +164,7 @@ class BinaryPrefix : public Prefix {
 	* @param short_name Short name.
 	* @param unicode_name Unicode name.
  	*/
-  	BinaryPrefix(int exp2, string long_name, string short_name = "", string unicode_name = "");
+  	BinaryPrefix(int exp2, std::string long_name, std::string short_name = "", std::string unicode_name = "");
 	~BinaryPrefix();
 	/** Returns the exponent.
 	*
@@ -182,7 +182,7 @@ class BinaryPrefix : public Prefix {
 	*
 	* @param iexp New exponent for the prefix.
  	*/
-	void setExponent(int iexp);	
+	void setExponent(int iexp);
 	Number value(const Number &nexp) const;
 	Number value(int iexp) const;
 	Number value() const;
@@ -203,7 +203,7 @@ class NumberPrefix : public Prefix {
 	* @param short_name Short name.
 	* @param unicode_name Unicode name.
  	*/
-  	NumberPrefix(const Number &nr, string long_name, string short_name = "", string unicode_name = "");
+  	NumberPrefix(const Number &nr, std::string long_name, std::string short_name = "", std::string unicode_name = "");
 	~NumberPrefix();
 	/** Sets the value of the prefix.
 	*

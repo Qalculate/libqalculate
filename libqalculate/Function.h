@@ -25,12 +25,12 @@ typedef enum {
 	ARGUMENT_TYPE_TEXT,
 	ARGUMENT_TYPE_DATE,
 	ARGUMENT_TYPE_FILE,
-	ARGUMENT_TYPE_INTEGER,	
+	ARGUMENT_TYPE_INTEGER,
 	ARGUMENT_TYPE_NUMBER,
-	ARGUMENT_TYPE_VECTOR,	
+	ARGUMENT_TYPE_VECTOR,
 	ARGUMENT_TYPE_MATRIX,
 	ARGUMENT_TYPE_EXPRESSION_ITEM,
-	ARGUMENT_TYPE_FUNCTION,	
+	ARGUMENT_TYPE_FUNCTION,
 	ARGUMENT_TYPE_UNIT,
 	ARGUMENT_TYPE_BOOLEAN,
 	ARGUMENT_TYPE_VARIABLE,
@@ -46,7 +46,7 @@ typedef enum {
 	ARGUMENT_MIN_MAX_POSITIVE,
 	ARGUMENT_MIN_MAX_NONZERO,
 	ARGUMENT_MIN_MAX_NONNEGATIVE,
-	ARGUMENT_MIN_MAX_NEGATIVE	
+	ARGUMENT_MIN_MAX_NEGATIVE
 } ArgumentMinMaxPreDefinition;
 
 /// Type of mathematical function
@@ -74,20 +74,20 @@ class MathFunction : public ExpressionItem {
 	MathFunction_p *priv;
 	int argc;
 	int max_argc;
-	vector<string> default_values;
-	size_t last_argdef_index;		
+	std::vector<std::string> default_values;
+	size_t last_argdef_index;
 	bool testArguments(MathStructure &vargs);
 	virtual MathStructure createFunctionMathStructureFromVArgs(const MathStructure &vargs);
-	virtual MathStructure createFunctionMathStructureFromSVArgs(vector<string> &svargs);	
-	string scondition;
-	string sexample;
-	
+	virtual MathStructure createFunctionMathStructureFromSVArgs(std::vector<std::string> &svargs);
+	std::string scondition;
+	std::string sexample;
+
   public:
-  
-	MathFunction(string name_, int argc_, int max_argc_ = 0, string cat_ = "", string title_ = "", string descr_ = "", bool is_active = true);
+
+	MathFunction(std::string name_, int argc_, int max_argc_ = 0, std::string cat_ = "", std::string title_ = "", std::string descr_ = "", bool is_active = true);
 	MathFunction(const MathFunction *function);
 	MathFunction();
-	virtual ~MathFunction();	
+	virtual ~MathFunction();
 
 	virtual ExpressionItem *copy() const = 0;
 	virtual void set(const ExpressionItem *item);
@@ -97,14 +97,14 @@ class MathFunction : public ExpressionItem {
 	* @returns ::FunctionSubtype.
 	*/
 	virtual int subtype() const;
-	
-	string example(bool raw_format = false, string name_string = "") const;
-	void setExample(string new_example);
-	
+
+	std::string example(bool raw_format = false, std::string name_string = "") const;
+	void setExample(std::string new_example);
+
 	bool testArgumentCount(int itmp);
-	virtual MathStructure calculate(const string &eq, const EvaluationOptions &eo = default_evaluation_options);
-	virtual MathStructure parse(const string &eq, const ParseOptions &po = default_parse_options);
-	virtual int parse(MathStructure &mstruct, const string &eq, const ParseOptions &po = default_parse_options);
+	virtual MathStructure calculate(const std::string &eq, const EvaluationOptions &eo = default_evaluation_options);
+	virtual MathStructure parse(const std::string &eq, const ParseOptions &po = default_parse_options);
+	virtual int parse(MathStructure &mstruct, const std::string &eq, const ParseOptions &po = default_parse_options);
 	virtual MathStructure calculate(MathStructure &vargs, const EvaluationOptions &eo = default_evaluation_options);
 	/**
 	* The main function for subclasses to reimplement.
@@ -113,7 +113,7 @@ class MathFunction : public ExpressionItem {
 	* This function expects the number of arguments to be equal to the maximum number of arguments, and checked by the argument definitions.
 	*
 	* If the return value is negative, then argument -(return value) has been evaluated in mstruct.
-	* If -(return value) is greater than max arguments, then mstruct is a vector of evaluated argument values.
+	* If -(return value) is greater than max arguments, then mstruct is a std::vector of evaluated argument values.
 	*
 	* @param[out] mstruct Structure that is set with the result of the calculation.
 	* @param vargs Arguments passed to the mathematical function.
@@ -123,23 +123,23 @@ class MathFunction : public ExpressionItem {
 	virtual int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);
 	/** Returns the functions condition expression.
 	*
-	* @returns The function's condition expression 
+	* @returns The function's condition expression
 	*/
-	string condition() const;
+	std::string condition() const;
 	/** Print the function's condition expression with argument names.
 	*
-	* @returns The printed condition 
+	* @returns The printed condition
 	*/
-	string printCondition();
+	std::string printCondition();
 	/** Sets the functions condition expression.
 	*
-	* @param expression The function's new condition expression 
+	* @param expression The function's new condition expression
 	*/
-	void setCondition(string expression);
+	void setCondition(std::string expression);
 	/** Test if arguments fulfil the function's condition expression.
 	*
-	* @param vargs Vector with arguments.
-	* @returns true if the arguments fulfil the function's condition expression 
+	* @param vargs std::vector with arguments.
+	* @returns true if the arguments fulfil the function's condition expression
 	*/
 	bool testCondition(const MathStructure &vargs);
 	/** Returns the maximum number of arguments that the function accepts or -1 if the number of arguments is unlimited.
@@ -151,23 +151,23 @@ class MathFunction : public ExpressionItem {
 	/** Returns the maximum number of arguments that the function accepts or -1 if the number of arguments is unlimited.
 	*/
 	int maxargs() const;
-	/** Parses arguments from a text string and places them in a vector. The text string should be a comma separated list of arguments.
-	*	
+	/** Parses arguments from a text string and places them in a std::vector. The text string should be a comma separated list of arguments.
+	*
 	* @param str The argument string to parse.
-	* @param vargs Vector to store parsed arguments in.
+	* @param vargs std::vector to store parsed arguments in.
 	* @param po Parse options.
 	* @returns The number of parsed arguments.
 	*/
-	int args(const string &str, MathStructure &vargs, const ParseOptions &po = default_parse_options);
+	int args(const std::string &str, MathStructure &vargs, const ParseOptions &po = default_parse_options);
 	/** Returns the index of the last argument definition.
 	*
-	* @returns The index of the last argument definition 
+	* @returns The index of the last argument definition
 	*/
 	size_t lastArgumentDefinitionIndex() const;
 	/** Returns the argument definition for an argument index.
 	*
 	* @param index Argument index.
-	* @returns The argument definition for the index or NULL if no the argument was not defined for the index 
+	* @returns The argument definition for the index or NULL if no the argument was not defined for the index
 	*/
 	Argument *getArgumentDefinition(size_t index);
 	/** Removes all argument definitions for the function.
@@ -176,16 +176,16 @@ class MathFunction : public ExpressionItem {
 	/** Set the argument definition for an argument index.
 	*
 	* @param index Argument index.
-	* @param argdef A newly allocated argument definition 
+	* @param argdef A newly allocated argument definition
 	*/
 	void setArgumentDefinition(size_t index, Argument *argdef);
-	int stringArgs(const string &str, vector<string> &svargs);
-	void setDefaultValue(size_t arg_, string value_);
-	const string &getDefaultValue(size_t arg_) const;
+	int stringArgs(const std::string &str, std::vector<std::string> &svargs);
+	void setDefaultValue(size_t arg_, std::string value_);
+	const std::string &getDefaultValue(size_t arg_) const;
 	void appendDefaultValues(MathStructure &vargs);
 	MathStructure produceVector(const MathStructure &vargs, int begin = -1, int end = -1);
 	MathStructure produceArgumentsVector(const MathStructure &vargs, int begin = -1, int end = -1);
-	
+
 	virtual bool representsPositive(const MathStructure&, bool = false) const;
 	virtual bool representsNegative(const MathStructure&, bool = false) const;
 	virtual bool representsNonNegative(const MathStructure&, bool = false) const;
@@ -203,7 +203,7 @@ class MathFunction : public ExpressionItem {
 	virtual bool representsBoolean(const MathStructure&) const;
 	virtual bool representsNonMatrix(const MathStructure&) const;
 	virtual bool representsScalar(const MathStructure&) const;
-	
+
 };
 
 /// A user defined mathematical function.
@@ -230,21 +230,21 @@ class MathFunction : public ExpressionItem {
 */
 class UserFunction : public MathFunction {
   protected:
-  
-	string sformula, sformula_calc;
-	vector<string> v_subs;
-	vector<bool> v_precalculate;
-	
+
+	std::string sformula, sformula_calc;
+	std::vector<std::string> v_subs;
+	std::vector<bool> v_precalculate;
+
   public:
-  
-	UserFunction(string cat_, string name_, string formula_, bool is_local = true, int argc_ = -1, string title_ = "", string descr_ = "", int max_argc_ = 0, bool is_active = true);
+
+	UserFunction(std::string cat_, std::string name_, std::string formula_, bool is_local = true, int argc_ = -1, std::string title_ = "", std::string descr_ = "", int max_argc_ = 0, bool is_active = true);
 	UserFunction(const UserFunction *function);
 	void set(const ExpressionItem *item);
 	ExpressionItem *copy() const;
 	/** Returns the external representation of the formula. */
-	string formula() const;
+	std::string formula() const;
 	/** Returns the internal representation of the formula. */
-	string internalFormula() const;
+	std::string internalFormula() const;
 	int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);
 	/** Sets the formula of the mathematical function.
 	*
@@ -252,19 +252,19 @@ class UserFunction : public MathFunction {
 	* @param arc_ Minimum number of arguments or -1 to read from formula.
 	* @param max_argc_ Maximum number of arguments (ignored if argc_ < 0)
 	*/
-	void setFormula(string new_formula, int argc_ = -1, int max_argc_ = 0);
-	void addSubfunction(string subfunction, bool precalculate = true);
+	void setFormula(std::string new_formula, int argc_ = -1, int max_argc_ = 0);
+	void addSubfunction(std::string subfunction, bool precalculate = true);
 	/** Sets the formula for a subfunction.
 	*
 	* @param index Index (starting at 1).
 	* @param subfunction Formula/expression.
 	*/
-	void setSubfunction(size_t index, string subfunction);
+	void setSubfunction(size_t index, std::string subfunction);
 	void delSubfunction(size_t index);
 	void clearSubfunctions();
 	size_t countSubfunctions() const;
 	void setSubfunctionPrecalculated(size_t index, bool precalculate);
-	const string &getSubfunction(size_t index) const;
+	const std::string &getSubfunction(size_t index) const;
 	bool subfunctionPrecalculated(size_t index) const;
 	int subtype() const;
 };
@@ -275,8 +275,8 @@ class UserFunction : public MathFunction {
 class Argument {
 
   protected:
-  
-  	string sname, scondition;
+
+  	std::string sname, scondition;
 	bool b_zero, b_test, b_matrix, b_text, b_error, b_rational, b_last, b_handle_vector;
 	/** This function is called from Argument::test() and performs validation specific to the argument definition type.
 	* Should be reimplemented by all subclasses.
@@ -292,8 +292,8 @@ class Argument {
 	*
 	* @returns Long description.
 	*/
-	virtual string subprintlong() const;
-	
+	virtual std::string subprintlong() const;
+
   public:
 
 	/** Creates a new argument definition.
@@ -302,7 +302,7 @@ class Argument {
 	* @param does_test If argument values will be tested.
 	* @param does_error If an error will issued if the value tests false.
 	*/
-	Argument(string name_ = "", bool does_test = true, bool does_error = true);
+	Argument(std::string name_ = "", bool does_test = true, bool does_error = true);
 	/** Creates a copy of an argument definition.
 	*
 	* @param arg Argument to copy.
@@ -327,13 +327,13 @@ class Argument {
 	*
 	* @returns Short description.
 	*/
-	virtual string print() const;
+	virtual std::string print() const;
 	/** Resturns a long description of the argument definition.
 	* Ex. "A real number > 2".
 	*
 	* @returns Long description.
 	*/
-	string printlong() const;
+	std::string printlong() const;
 
 	/** Tests if a value fulfils the requirements of the argument definition.
 	* The value might change if it has not been fully evaluated.
@@ -351,7 +351,7 @@ class Argument {
 	* @param po Parse options.
 	* @returns A new mathematical structure with the parsed expression.
 	*/
-	virtual MathStructure parse(const string &str, const ParseOptions &po = default_parse_options) const;
+	virtual MathStructure parse(const std::string &str, const ParseOptions &po = default_parse_options) const;
 	/** Parses an expression for an argument value.
 	* The default behavior is to use Calculator::parse() directly.
 	*
@@ -359,30 +359,30 @@ class Argument {
 	* @param str Expression.
 	* @param po Parse options.
 	*/
-	virtual void parse(MathStructure *mstruct, const string &str, const ParseOptions &po = default_parse_options) const;
+	virtual void parse(MathStructure *mstruct, const std::string &str, const ParseOptions &po = default_parse_options) const;
 
 	/** Returns the name/title of the argument definition.
 	*
 	* @returns Name/title.
 	*/
-	string name() const;
+	std::string name() const;
 	/** Sets the name/title of the argument definition.
 	*
 	* @param name_ New name/title.
 	*/
-	void setName(string name_);
+	void setName(std::string name_);
 
 	/** Sets a custom condition for argument values.
 	* '\x' is replaced by the argument value in the expression.
 	*
 	* @param condition Condition expression.
 	*/
-	void setCustomCondition(string condition);
+	void setCustomCondition(std::string condition);
 	/** Returns the custom condition expression set for argument values.
 	*
 	* @returns Custom condition for argument values.
 	*/
-	string getCustomCondition() const;
+	std::string getCustomCondition() const;
 
 	/** If the value for the argument will be tested. If not, the argument only works as an suggestion and any value is allowed.
 	*
@@ -406,15 +406,15 @@ class Argument {
 	/** Sets if a value of zero is forbidden for the argument value.
 	*
 	* @param forbid_zero If zero shall be forbidden.
-	*/	
+	*/
 	void setZeroForbidden(bool forbid_zero);
-	
+
 	bool matrixAllowed() const;
 	void setMatrixAllowed(bool allow_matrix);
-	
+
 	bool handlesVector() const;
 	void setHandleVector(bool handle_vector);
-	
+
 	bool isLastArgument() const;
 	void setIsLastArgument(bool is_last);
 
@@ -425,7 +425,7 @@ class Argument {
 	*/
 	bool rationalPolynomial() const;
 	void setRationalPolynomial(bool rational_polynomial);
-	
+
 	virtual bool suggestsQuotes() const;
 
 	/** Returns the type of the argument, corresponding to which subclass the object belongs to.
@@ -442,36 +442,36 @@ class Argument {
 class NumberArgument : public Argument {
 
   protected:
-  
+
 	Number *fmin, *fmax;
 	bool b_incl_min, b_incl_max;
 	bool b_complex, b_rational_number;
 
   protected:
-  
-	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
+
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
 
   public:
-  
-  	NumberArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true, bool does_error = true);
+
+  	NumberArgument(std::string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true, bool does_error = true);
 	NumberArgument(const NumberArgument *arg);
 	virtual ~NumberArgument();
-	
+
 	virtual void set(const Argument *arg);
 	virtual Argument *copy() const;
 
-	virtual string print() const;	
-	
-	void setMin(const Number *nmin);	
+	virtual std::string print() const;
+
+	void setMin(const Number *nmin);
 	void setIncludeEqualsMin(bool include_equals);
-	bool includeEqualsMin() const;	
+	bool includeEqualsMin() const;
 	const Number *min() const;
-	void setMax(const Number *nmax);	
+	void setMax(const Number *nmax);
 	void setIncludeEqualsMax(bool include_equals);
-	bool includeEqualsMax() const;	
-	const Number *max() const;	
-	
+	bool includeEqualsMax() const;
+	const Number *max() const;
+
 	bool complexAllowed() const;
 	void setComplexAllowed(bool allow_complex);
 	bool rationalNumber() const;
@@ -487,18 +487,18 @@ class NumberArgument : public Argument {
 class IntegerArgument : public Argument {
 
   protected:
-  
+
 	Number *imin, *imax;
 	IntegerType i_inttype;
 
   protected:
-  
+
 	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
-	virtual string subprintlong() const;
+	virtual std::string subprintlong() const;
 
   public:
 
-	IntegerArgument(string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true, bool does_error = true, IntegerType integer_type = INTEGER_TYPE_NONE);
+	IntegerArgument(std::string name_ = "", ArgumentMinMaxPreDefinition minmax = ARGUMENT_MIN_MAX_NONE, bool does_test = true, bool does_error = true, IntegerType integer_type = INTEGER_TYPE_NONE);
 	IntegerArgument(const IntegerArgument *arg);
 	virtual ~IntegerArgument();
 
@@ -508,13 +508,13 @@ class IntegerArgument : public Argument {
 	virtual void set(const Argument *arg);
 	virtual Argument *copy() const;
 
-	virtual string print() const;
+	virtual std::string print() const;
 
 	void setMin(const Number *nmin);
 	const Number *min() const;
 	void setMax(const Number *nmax);
 	const Number *max() const;
-	
+
 	virtual int type() const;
 
 };
@@ -525,18 +525,18 @@ class IntegerArgument : public Argument {
 class SymbolicArgument : public Argument {
 
   protected:
-  
-  	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
+
+  	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
 
   public:
 
-  	SymbolicArgument(string name_ = "", bool does_test = true, bool does_error = true);
+  	SymbolicArgument(std::string name_ = "", bool does_test = true, bool does_error = true);
 	SymbolicArgument(const SymbolicArgument *arg);
 	virtual ~SymbolicArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual string print() const;
+	virtual std::string print() const;
 };
 
 /// A text argument.
@@ -545,18 +545,18 @@ class SymbolicArgument : public Argument {
 class TextArgument : public Argument {
 
   protected:
-  
-	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
+
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
 
   public:
-  
-  	TextArgument(string name_ = "", bool does_test = true, bool does_error = true);
+
+  	TextArgument(std::string name_ = "", bool does_test = true, bool does_error = true);
 	TextArgument(const TextArgument *arg);
 	virtual ~TextArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual string print() const;
+	virtual std::string print() const;
 	virtual bool suggestsQuotes() const;
 };
 
@@ -566,48 +566,48 @@ class TextArgument : public Argument {
 class DateArgument : public Argument {
 
   protected:
-  
-	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
+
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
 
   public:
-  
-  	DateArgument(string name_ = "", bool does_test = true, bool does_error = true);
+
+  	DateArgument(std::string name_ = "", bool does_test = true, bool does_error = true);
 	DateArgument(const DateArgument *arg);
 	virtual ~DateArgument();
-	virtual void parse(MathStructure *mstruct, const string &str, const ParseOptions &po = default_parse_options) const;
+	virtual void parse(MathStructure *mstruct, const std::string &str, const ParseOptions &po = default_parse_options) const;
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual string print() const;
+	virtual std::string print() const;
 };
 
-/// A vector argument.
+/// A std::vector argument.
 /**
 */
 class VectorArgument : public Argument {
 
   protected:
-  
-	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
-	vector<Argument*> subargs;
+
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
+	std::vector<Argument*> subargs;
 	bool b_argloop;
 
   public:
-  
-  	VectorArgument(string name_ = "", bool does_test = true, bool allow_matrix = false, bool does_error = true);
+
+  	VectorArgument(std::string name_ = "", bool does_test = true, bool allow_matrix = false, bool does_error = true);
 	VectorArgument(const VectorArgument *arg);
 	virtual ~VectorArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual string print() const;
+	virtual std::string print() const;
 	bool reoccuringArguments() const;
 	void setReoccuringArguments(bool reocc);
 	void addArgument(Argument *arg);
 	void delArgument(size_t index);
 	size_t countArguments() const;
 	Argument *getArgument(size_t index) const;
-	
+
 };
 
 /// A matrix argument.
@@ -616,21 +616,21 @@ class VectorArgument : public Argument {
 class MatrixArgument : public Argument {
 
   protected:
-  
-	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
+
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
 	bool b_square;
 
   public:
-  
-  	MatrixArgument(string name_ = "", bool does_test = true, bool does_error = true);
+
+  	MatrixArgument(std::string name_ = "", bool does_test = true, bool does_error = true);
 	MatrixArgument(const MatrixArgument *arg);
 	virtual bool squareDemanded() const;
 	virtual void setSquareDemanded(bool square);
 	virtual ~MatrixArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual string print() const;
+	virtual std::string print() const;
 };
 
 /// Argument for functions, variables and units.
@@ -639,18 +639,18 @@ class MatrixArgument : public Argument {
 class ExpressionItemArgument : public Argument {
 
   protected:
-  
-	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
+
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
 
   public:
-  
-  	ExpressionItemArgument(string name_ = "", bool does_test = true, bool does_error = true);
+
+  	ExpressionItemArgument(std::string name_ = "", bool does_test = true, bool does_error = true);
 	ExpressionItemArgument(const ExpressionItemArgument *arg);
 	virtual ~ExpressionItemArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual string print() const;
+	virtual std::string print() const;
 };
 /// A function argument.
 /**
@@ -658,18 +658,18 @@ class ExpressionItemArgument : public Argument {
 class FunctionArgument : public Argument {
 
   protected:
-  
-	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
+
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
 
   public:
-  
-  	FunctionArgument(string name_ = "", bool does_test = true, bool does_error = true);
+
+  	FunctionArgument(std::string name_ = "", bool does_test = true, bool does_error = true);
 	FunctionArgument(const FunctionArgument *arg);
 	virtual ~FunctionArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual string print() const;
+	virtual std::string print() const;
 };
 
 /// A boolean argument.
@@ -678,84 +678,84 @@ class FunctionArgument : public Argument {
 class BooleanArgument : public Argument {
 
   protected:
-  
-	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
+
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
 
   public:
-  
-  	BooleanArgument(string name_ = "", bool does_test = true, bool does_error = true);
+
+  	BooleanArgument(std::string name_ = "", bool does_test = true, bool does_error = true);
 	BooleanArgument(const BooleanArgument *arg);
 	virtual ~BooleanArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual string print() const;
+	virtual std::string print() const;
 };
 
 class UnitArgument : public Argument {
 
   protected:
-  
-	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
+
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
 
   public:
-  
-  	UnitArgument(string name_ = "", bool does_test = true, bool does_error = true);
+
+  	UnitArgument(std::string name_ = "", bool does_test = true, bool does_error = true);
 	UnitArgument(const UnitArgument *arg);
 	virtual ~UnitArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual string print() const;
+	virtual std::string print() const;
 };
 class AngleArgument : public Argument {
 
   protected:
-  
-	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
+
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
 
   public:
-  
-  	AngleArgument(string name_ = "", bool does_test = true, bool does_error = true);
+
+  	AngleArgument(std::string name_ = "", bool does_test = true, bool does_error = true);
 	AngleArgument(const AngleArgument *arg);
 	virtual ~AngleArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual string print() const;
-	virtual void parse(MathStructure *mstruct, const string &str, const ParseOptions &po = default_parse_options) const;
+	virtual std::string print() const;
+	virtual void parse(MathStructure *mstruct, const std::string &str, const ParseOptions &po = default_parse_options) const;
 };
 class VariableArgument : public Argument {
 
   protected:
-  
-	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
+
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
 
   public:
-  
-  	VariableArgument(string name_ = "", bool does_test = true, bool does_error = true);
+
+  	VariableArgument(std::string name_ = "", bool does_test = true, bool does_error = true);
 	VariableArgument(const VariableArgument *arg);
 	virtual ~VariableArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual string print() const;
+	virtual std::string print() const;
 };
 class FileArgument : public Argument {
 
   protected:
-  
-	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
+
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
 
   public:
-  
-  	FileArgument(string name_ = "", bool does_test = true, bool does_error = true);
+
+  	FileArgument(std::string name_ = "", bool does_test = true, bool does_error = true);
 	FileArgument(const FileArgument *arg);
 	virtual ~FileArgument();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual string print() const;
+	virtual std::string print() const;
 };
 
 /// A set of accepted arguments.
@@ -764,24 +764,24 @@ class FileArgument : public Argument {
 class ArgumentSet : public Argument {
 
   protected:
-  
-	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;  
-	virtual string subprintlong() const;
-	vector<Argument*> subargs;
+
+	virtual bool subtest(MathStructure &value, const EvaluationOptions &eo) const;
+	virtual std::string subprintlong() const;
+	std::vector<Argument*> subargs;
 
   public:
-  
-  	ArgumentSet(string name_ = "", bool does_test = true, bool does_error = true);
+
+  	ArgumentSet(std::string name_ = "", bool does_test = true, bool does_error = true);
 	ArgumentSet(const ArgumentSet *arg);
 	virtual ~ArgumentSet();
 	virtual int type() const;
 	virtual Argument *copy() const;
-	virtual string print() const;
+	virtual std::string print() const;
 	void addArgument(Argument *arg);
 	void delArgument(size_t index);
 	size_t countArguments() const;
 	Argument *getArgument(size_t index) const;
-	
+
 };
 
 #endif

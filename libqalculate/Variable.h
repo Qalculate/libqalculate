@@ -76,7 +76,7 @@ typedef enum {
 class Assumptions {
 
   protected:
-  
+
 	AssumptionType i_type;
 	AssumptionSign i_sign;
 	Number *fmin, *fmax;
@@ -99,21 +99,21 @@ class Assumptions {
 	bool isNonZero();
 	bool isNonMatrix();
 	bool isScalar();
-	
+
 	AssumptionType type();
 	AssumptionSign sign();
 	void setType(AssumptionType ant);
 	void setSign(AssumptionSign as);
-	
-	void setMin(const Number *nmin);	
+
+	void setMin(const Number *nmin);
 	void setIncludeEqualsMin(bool include_equals);
-	bool includeEqualsMin() const;	
+	bool includeEqualsMin() const;
 	const Number *min() const;
-	void setMax(const Number *nmax);	
+	void setMax(const Number *nmax);
 	void setIncludeEqualsMax(bool include_equals);
-	bool includeEqualsMax() const;	
+	bool includeEqualsMax() const;
 	const Number *max() const;
-	
+
 };
 
 /// Abstract base class for variables.
@@ -123,7 +123,7 @@ class Variable : public ExpressionItem {
 
   public:
 
-	Variable(string cat_, string name_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	Variable(std::string cat_, std::string name_, std::string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
 	Variable();
 	Variable(const Variable *variable);
 	virtual ~Variable();
@@ -162,7 +162,7 @@ class Variable : public ExpressionItem {
 	virtual bool representsBoolean() {return false;}
 	virtual bool representsNonMatrix() {return false;}
 	virtual bool representsScalar() {return false;}
-	
+
 };
 
 /// A variable with unknown value.
@@ -171,10 +171,10 @@ class Variable : public ExpressionItem {
 class UnknownVariable : public Variable {
 
   protected:
-  
+
   	Assumptions *o_assumption;
   	MathStructure *mstruct;
-  
+
   public:
 
 	/** Create an unknown.
@@ -186,7 +186,7 @@ class UnknownVariable : public Variable {
 	* @param is_builtin If the variable is builtin and not modifiable.
 	* @param is_active If the variable is active and can be used in expressions.
 	*/
-	UnknownVariable(string cat_, string name_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	UnknownVariable(std::string cat_, std::string name_, std::string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
 	/** Create an empty unknown variable.
 	*/
 	UnknownVariable();
@@ -199,7 +199,7 @@ class UnknownVariable : public Variable {
 	virtual ExpressionItem *copy() const;
 	virtual void set(const ExpressionItem *item);
 	bool isKnown() const {return false;}
-	
+
 	/** Sets the assumptions of the unknown variable.
 	*
 	* @param ass Assumptions.
@@ -211,10 +211,10 @@ class UnknownVariable : public Variable {
 	* @returns Assumptions of the unknown variable.
 	*/
 	Assumptions *assumptions();
-	
+
 	const MathStructure &interval() const;
 	void setInterval(const MathStructure &o);
-	
+
 	virtual int subtype() const {return SUBTYPE_UNKNOWN_VARIABLE;}
 
 	virtual bool representsPositive(bool = false);
@@ -230,7 +230,7 @@ class UnknownVariable : public Variable {
 	virtual bool representsNonZero(bool = false);
 	virtual bool representsNonMatrix();
 	virtual bool representsScalar();
-	
+
 };
 
 /// A variable with a known value.
@@ -246,12 +246,12 @@ class KnownVariable : public Variable {
 	MathStructure *mstruct, *mstruct_alt;
 	bool b_expression;
  	int calculated_precision;
-	string sexpression, suncertainty, sunit;
+	std::string sexpression, suncertainty, sunit;
 	bool b_relative_uncertainty;
 
   public:
-  
-	/** Create a known variable with a value. 
+
+	/** Create a known variable with a value.
 	*
 	* @param cat_ Category that the variable belongs to.
 	* @param name_ Initial name of the variable.
@@ -261,7 +261,7 @@ class KnownVariable : public Variable {
 	* @param is_builtin If the variable is builtin and not modifiable.
 	* @param is_active If the variable is active and can be used in expressions.
 	*/
-	KnownVariable(string cat_, string name_, const MathStructure &o, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	KnownVariable(std::string cat_, std::string name_, const MathStructure &o, std::string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
 	/** Create a known variable with an text string expression.
 	*
 	* @param cat_ Category that the variable belongs to.
@@ -272,7 +272,7 @@ class KnownVariable : public Variable {
 	* @param is_builtin If the variable is builtin and not modifiable.
 	* @param is_active If the variable is active and can be used in expressions.
 	*/
-	KnownVariable(string cat_, string name_, string expression_, string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);	
+	KnownVariable(std::string cat_, std::string name_, std::string expression_, std::string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
 	/** Create an empty known variable. Primarily for internal use.
 	*/
 	KnownVariable();
@@ -295,10 +295,10 @@ class KnownVariable : public Variable {
 	*
 	* @returns The variable's expression.
 	*/
-	virtual string expression() const;
-	virtual string uncertainty(bool *is_relative = NULL) const;
-	virtual string unit() const;
-	
+	virtual std::string expression() const;
+	virtual std::string uncertainty(bool *is_relative = NULL) const;
+	virtual std::string unit() const;
+
 	int subtype() const {return SUBTYPE_KNOWN_VARIABLE;}
 
 	/** Sets the value of the variable. If expression is set, it is cleared.
@@ -310,16 +310,16 @@ class KnownVariable : public Variable {
 	*
 	* @param expression_ Expression.
 	*/
-	virtual void set(string expression_);
-	virtual void setUncertainty(string standard_uncertainty, bool is_relative = false);
-	virtual void setUnit(string unit_expression);
+	virtual void set(std::string expression_);
+	virtual void setUncertainty(std::string standard_uncertainty, bool is_relative = false);
+	virtual void setUnit(std::string unit_expression);
 
 	/** Returns the value of the variable. If no value is set or parsed and an expression is set, the expression is parsed and resulting value returned.
 	*
 	* @returns The value of the variable..
 	*/
 	virtual const MathStructure &get();
-	
+
 	virtual bool representsPositive(bool = false);
 	virtual bool representsNegative(bool = false);
 	virtual bool representsNonNegative(bool = false);
@@ -351,10 +351,10 @@ class DynamicVariable : public KnownVariable {
 
 	virtual void calculate(MathStructure &m) const = 0;
 	bool always_recalculate;
-	
+
   public:
 
-	DynamicVariable(string cat_, string name_, string title_ = "", bool is_local = false, bool is_builtin = true, bool is_active = true);
+	DynamicVariable(std::string cat_, std::string name_, std::string title_ = "", bool is_local = false, bool is_builtin = true, bool is_active = true);
 	DynamicVariable(const DynamicVariable *variable);
 	DynamicVariable();
 	virtual ~DynamicVariable();
@@ -363,16 +363,16 @@ class DynamicVariable : public KnownVariable {
 	void set(const ExpressionItem *item);
 
 	const MathStructure &get();
-	
+
 	void set(const MathStructure &o);
-	void set(string expression_);
-	
+	void set(std::string expression_);
+
 	/** Returns the precision of the calculated value.
 	*
 	* @returns Precision of the calculated value or zero if the value has not yet been calculated.
 	*/
 	int calculatedPrecision() const;
-	
+
 	virtual bool representsPositive(bool = false) {return true;}
 	virtual bool representsNegative(bool = false) {return false;}
 	virtual bool representsNonNegative(bool = false) {return true;}

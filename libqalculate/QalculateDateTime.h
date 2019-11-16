@@ -1,5 +1,5 @@
 /*
-    Qalculate    
+    Qalculate
 
     Copyright (C) 2018  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
@@ -28,7 +28,7 @@ class QalculateDateTime {
 		QalculateDateTime();
 		QalculateDateTime(long int initialyear, int initialmonth, int initialday);
 		QalculateDateTime(const Number &initialtimestamp);
-		QalculateDateTime(string date_string);
+		QalculateDateTime(std::string date_string);
 		QalculateDateTime(const QalculateDateTime &date);
 		bool operator > (const QalculateDateTime &date2) const;
 		bool operator < (const QalculateDateTime &date2) const;
@@ -42,11 +42,11 @@ class QalculateDateTime {
 		void setToCurrentTime();
 		bool set(long int newyear, int newmonth, int newday);
 		bool set(const Number &newtimestamp);
-		bool set(string date_string);
+		bool set(std::string date_string);
 		void set(const QalculateDateTime &date);
-		string toISOString() const;
-		string toLocalString() const;
-		string print(const PrintOptions &po = default_print_options) const;
+		std::string toISOString() const;
+		std::string toLocalString() const;
+		std::string print(const PrintOptions &po = default_print_options) const;
 		long int year() const;
 		long int month() const;
 		long int day() const;
@@ -70,8 +70,8 @@ class QalculateDateTime {
 		Number secondsTo(const QalculateDateTime &date, bool count_leap_seconds = true, bool convert_to_utc = true) const;
 		Number daysTo(const QalculateDateTime &date, int basis = 1, bool date_func = true, bool remove_leap_seconds = true) const;
 		Number yearsTo(const QalculateDateTime &date, int basis = 1, bool date_func = true, bool remove_leap_seconds = true) const;
-		
-		string parsed_string;
+
+		std::string parsed_string;
 };
 
 typedef enum {
@@ -103,12 +103,12 @@ QalculateDateTime findNextLunarPhase(const QalculateDateTime &date, Number phase
 bool calendarToDate(QalculateDateTime &date, long int y, long int m, long int d, CalendarSystem ct);
 bool dateToCalendar(const QalculateDateTime &date, long int &y, long int &m, long int &d, CalendarSystem ct);
 int numberOfMonths(CalendarSystem ct);
-string monthName(long int month, CalendarSystem ct, bool append_number = false, bool append_leap = true);
+std::string monthName(long int month, CalendarSystem ct, bool append_number = false, bool append_leap = true);
 void chineseYearInfo(long int year, long int &cycle, long int &year_in_cycle, long int &stem, long int &branch); //epoch of 2697 BC
 long int chineseCycleYearToYear(long int cycle, long int year_in_cycle);
 int chineseStemBranchToCycleYear(long int stem, long int branch);
-string chineseStemName(long int stem);
-string chineseBranchName(long int branch);
+std::string chineseStemName(long int stem);
+std::string chineseBranchName(long int branch);
 
 #endif
 

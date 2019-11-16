@@ -26,6 +26,7 @@
 
 #if HAVE_UNORDERED_MAP
 #	include <unordered_map>
+	using std::unordered_map;
 #elif 	defined(__GNUC__)
 
 #	ifndef __has_include
@@ -54,6 +55,12 @@
 	namespace Sgi = std;
 #	define unordered_map Sgi::hash_map
 #endif
+
+using std::string;
+using std::cout;
+using std::vector;
+using std::ostream;
+using std::endl;
 
 #define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
 #define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
@@ -102,7 +109,7 @@ int MatrixFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 			CALCULATOR->error(false, _("Too many elements (%s) for the dimensions (%sx%s) of the matrix."), i2s(vargs[2].size()).c_str(), i2s(rows).c_str(), i2s(columns).c_str(), NULL);
 			break;
 		}
-		mstruct[r - 1][c - 1] = vargs[2][i];	
+		mstruct[r - 1][c - 1] = vargs[2][i];
 		if(c == columns) {
 			c = 1;
 			r++;
@@ -580,7 +587,7 @@ BetaFunction::BetaFunction() : MathFunction("beta", 2, 2, SIGN_CAPITAL_BETA) {
 	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
 }
 int BetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	mstruct = vargs[0]; 
+	mstruct = vargs[0];
 	mstruct.set(CALCULATOR->f_gamma, &vargs[0], NULL);
 	MathStructure mstruct2(CALCULATOR->f_gamma, &vargs[1], NULL);
 	mstruct *= mstruct2;
@@ -996,7 +1003,7 @@ bool AbsFunction::representsOdd(const MathStructure &vargs, bool allow_units) co
 bool AbsFunction::representsUndefined(const MathStructure &vargs) const {return vargs.size() == 1 && vargs[0].representsUndefined();}
 int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
-	mstruct = vargs[0]; 
+	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
@@ -1014,7 +1021,7 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(!nr.abs() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate())) {
 			return -1;
 		}
-		mstruct = nr; 
+		mstruct = nr;
 		return 1;
 	}
 	if(mstruct.isPower() && mstruct[0].representsPositive()) {
@@ -1072,7 +1079,7 @@ GcdFunction::GcdFunction() : MathFunction("gcd", 2) {
 	RATIONAL_POLYNOMIAL_ARGUMENT_HV(2)
 }
 int GcdFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(MathStructure::gcd(vargs[0], vargs[1], mstruct, eo)) {	
+	if(MathStructure::gcd(vargs[0], vargs[1], mstruct, eo)) {
 		return 1;
 	}
 	return 0;
@@ -1196,7 +1203,7 @@ SignumFunction::SignumFunction() : MathFunction("sgn", 1, 2) {
 	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
-	setDefaultValue(2, "0"); 
+	setDefaultValue(2, "0");
 }
 bool SignumFunction::representsPositive(const MathStructure&, bool allow_units) const {return false;}
 bool SignumFunction::representsNegative(const MathStructure&, bool) const {return false;}
@@ -1218,7 +1225,7 @@ int SignumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber() && (vargs.size() == 1 || vargs[1].isZero())) {
-		Number nr(mstruct.number()); 
+		Number nr(mstruct.number());
 		if(!nr.signum() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate())) {
 			if(mstruct.number().isNonZero()) {
 				MathStructure *mabs = new MathStructure(mstruct);
@@ -1229,7 +1236,7 @@ int SignumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 			}
 			return -1;
 		} else {
-			mstruct = nr; 
+			mstruct = nr;
 			return 1;
 		}
 	}
@@ -1246,7 +1253,7 @@ int SignumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 			if(vargs.size() > 1) mstruct[i].transform(STRUCT_FUNCTION, vargs[1]);
 			else mstruct[i].transform(STRUCT_FUNCTION);
 			mstruct[i].setFunction(this);
-			
+
 		}
 		mstruct.childrenUpdated();
 		return 1;
@@ -1365,7 +1372,7 @@ int IntFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	FR_FUNCTION(trunc)
 }
 NumeratorFunction::NumeratorFunction() : MathFunction("numerator", 1) {
-	NumberArgument *arg_rational_1 = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false); 
+	NumberArgument *arg_rational_1 = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg_rational_1->setRationalNumber(true);
 	arg_rational_1->setHandleVector(true);
 	setArgumentDefinition(1, arg_rational_1);
@@ -1917,7 +1924,7 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		nr = mstruct.number();
 	} else {
-		nr = vargs[0].number(); 
+		nr = vargs[0].number();
 	}
 	if(!nr.root(vargs[1].number()) || (eo.approximation < APPROXIMATION_APPROXIMATE && nr.isApproximate() && !vargs[0].isApproximate() && !mstruct.isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {
 		if(!eval_mstruct) {
@@ -1936,7 +1943,7 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			return 1;
 		}
 	} else {
-		mstruct.set(nr); 
+		mstruct.set(nr);
 		return 1;
 	}
 	return -1;
@@ -1993,14 +2000,14 @@ bool LogFunction::representsRational(const MathStructure&, bool) const {return f
 bool LogFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsPositive();}
 bool LogFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonNegative();}
 bool LogFunction::representsComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNegative();}
-bool LogFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 1 && (vargs[0].representsNonPositive() || (vargs[0].isNumber() && !vargs[0].number().isOne()) || (vargs[0].isVariable() && vargs[0].variable()->isKnown() && ((KnownVariable*) vargs[0].variable())->get().isNumber() && !((KnownVariable*) vargs[0].variable())->get().number().isOne()));}
+bool LogFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 1 && (vargs[0].representsNonPositive() || (vargs[0].isNumber() && COMPARISON_IS_NOT_EQUAL(vargs[0].number().compare(nr_one))) || (vargs[0].isVariable() && vargs[0].variable()->isKnown() && ((KnownVariable*) vargs[0].variable())->get().isNumber() && COMPARISON_IS_NOT_EQUAL(((KnownVariable*) vargs[0].variable())->get().number().compare(nr_one))));}
 bool LogFunction::representsEven(const MathStructure&, bool) const {return false;}
 bool LogFunction::representsOdd(const MathStructure&, bool) const {return false;}
 bool LogFunction::representsUndefined(const MathStructure&) const {return false;}
 int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
 
-	mstruct = vargs[0]; 
+	mstruct = vargs[0];
 
 	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_e) {
 		mstruct.set(m_one);
@@ -2201,7 +2208,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 
 	return -1;
-	
+
 }
 LognFunction::LognFunction() : MathFunction("log", 1, 2) {
 	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false);
@@ -2278,7 +2285,7 @@ LambertWFunction::LambertWFunction() : MathFunction("lambertw", 1, 2) {
 int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	if(vargs[0].isVector()) return 0;
-	mstruct = vargs[0]; 
+	mstruct = vargs[0];
 
 	if(eo.approximation == APPROXIMATION_TRY_EXACT && vargs[1].isZero()) {
 		EvaluationOptions eo2 = eo;
@@ -2290,7 +2297,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		mstruct.eval(eo);
 		if(mstruct.isVector()) return -1;
 	}
-	
+
 	if(!vargs[1].isZero()) {
 		if(vargs[0].isZero()) {
 			mstruct.set(nr_minus_inf, true);
@@ -2303,7 +2310,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		}
 		return 0;
 	}
-	
+
 	bool b = false;
 	if(mstruct.isZero()) {
 		b = true;
@@ -2312,7 +2319,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		b = true;
 	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne() && mstruct[1].isPower() && mstruct[1][0].isVariable() && mstruct[1][0].variable() == CALCULATOR->v_e && mstruct[1][1].isMinusOne()) {
 		mstruct.set(-1, 1, 0, true);
-		b = true;		
+		b = true;
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(b);
 	if(b) return 1;
@@ -2486,7 +2493,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct *= CALCULATOR->v_pi;
 			mstruct.multiply(Number(1, 200), true);
 		} else {
-			mstruct = vargs[0]; 
+			mstruct = vargs[0];
 			mstruct.convert(CALCULATOR->getRadUnit());
 			mstruct /= CALCULATOR->getRadUnit();
 		}
@@ -2656,7 +2663,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			return 1;
 		}
 	}
-	
+
 	if(trig_remove_i(mstruct)) {
 		mstruct.transform(CALCULATOR->f_sinh);
 		mstruct *= nr_one_i;
@@ -2670,7 +2677,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct.negate();
 		return 1;
 	}
-	
+
 
 	if(CALCULATOR->getRadUnit()) {
 		if(mstruct.isVector()) {
@@ -2717,14 +2724,14 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct *= CALCULATOR->v_pi;
 			mstruct.multiply(Number(1, 200), true);
 		} else {
-			mstruct = vargs[0]; 
+			mstruct = vargs[0];
 			mstruct.convert(CALCULATOR->getRadUnit());
 			mstruct /= CALCULATOR->getRadUnit();
 		}
 	} else {
 		mstruct = vargs[0];
 	}
-	
+
 	MathFunction *f = NULL;
 	if(eo.approximation == APPROXIMATION_APPROXIMATE && (eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS)) {
 		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi && mstruct[2].isNumber() && mstruct[2].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
@@ -2956,7 +2963,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct *= CALCULATOR->v_pi;
 			mstruct.multiply(Number(1, 200), true);
 		} else {
-			mstruct = vargs[0]; 
+			mstruct = vargs[0];
 			mstruct.convert(CALCULATOR->getRadUnit());
 			mstruct /= CALCULATOR->getRadUnit();
 		}
@@ -3132,7 +3139,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			return 1;
 		}
 	}
-	
+
 	if(trig_remove_i(mstruct)) {
 		mstruct.transform(CALCULATOR->f_tanh);
 		mstruct *= nr_one_i;
@@ -3332,7 +3339,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	return 1;
-	
+
 }
 
 AcosFunction::AcosFunction() : MathFunction("acos", 1) {
@@ -3397,7 +3404,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {
-			negate_struct(mstruct); mstruct.transform(CALCULATOR->f_asin); 
+			negate_struct(mstruct); mstruct.transform(CALCULATOR->f_asin);
 			switch(eo.parse_options.angle_unit) {
 				case ANGLE_UNIT_DEGREES: {mstruct += Number(90, 1, 0); break;}
 				case ANGLE_UNIT_GRADIANS: {mstruct += Number(100, 1, 0); break;}
@@ -3502,7 +3509,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	return 1;
-	
+
 }
 
 AtanFunction::AtanFunction() : MathFunction("atan", 1) {
@@ -3699,7 +3706,7 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	return 1;
-	
+
 }
 
 SinhFunction::SinhFunction() : MathFunction("sinh", 1) {
@@ -4003,7 +4010,7 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 
 	MathStructure msave;
-		
+
 	if(!mstruct.isNumber()) {
 		if(mstruct.isPower() && mstruct[0] == CALCULATOR->v_e && mstruct[1].isNumber() && mstruct[1].number().hasImaginaryPart() && !mstruct[1].number().hasRealPart()) {
 			CALCULATOR->beginTemporaryStopMessages();
@@ -4089,7 +4096,7 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 		mstruct = msave;
 	}
 	return false;
-	
+
 }
 
 ArgFunction::ArgFunction() : MathFunction("arg", 1) {
@@ -4107,7 +4114,7 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(mstruct.isVector()) return -1;
 
 	MathStructure msave;
-		
+
 	arg_test_non_number:
 	if(!mstruct.isNumber()) {
 		if(mstruct.representsPositive(true)) {
@@ -4316,14 +4323,14 @@ int CisFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct *= CALCULATOR->v_pi;
 			mstruct.multiply(Number(1, 200), true);
 		} else {
-			mstruct = vargs[0]; 
+			mstruct = vargs[0];
 			mstruct.convert(CALCULATOR->getRadUnit());
 			mstruct /= CALCULATOR->getRadUnit();
 		}
 	} else {
 		mstruct = vargs[0];
 	}
-	
+
 	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
 		mstruct.set(-1, 1, 0, true);
 		return 1;
@@ -4336,13 +4343,13 @@ int CisFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			return 1;
 		}
 	}
-	
+
 	mstruct *= CALCULATOR->v_i;
 	mstruct ^= CALCULATOR->v_e;
 	mstruct.swapChildren(1, 2);
-	
+
 	return 1;
-	
+
 }
 
 
@@ -4997,7 +5004,7 @@ DateFunction::DateFunction() : MathFunction("date", 1, 4) {
 	TextArgument *targ = new TextArgument();
 	setArgumentDefinition(4, targ);
 	setDefaultValue(4, _("gregorian"));
-}	
+}
 int DateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	int ct = calender_to_id(vargs[3].symbol());
 	if(ct < 0) {
@@ -5049,7 +5056,7 @@ DateTimeFunction::DateTimeFunction() : MathFunction("datetime", 1, 6) {
 	narg->setIncludeEqualsMax(false);
 	setArgumentDefinition(6, narg);
 	setDefaultValue(6, "0");
-}	
+}
 int DateTimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDateTime dt;
 	if(!dt.set(vargs[0].number().lintValue(), vargs[1].number().lintValue(), vargs[2].number().lintValue())) return 0;
@@ -5113,7 +5120,7 @@ int TimestampToDateFunction::calculate(MathStructure &mstruct, const MathStructu
 AddDaysFunction::AddDaysFunction() : MathFunction("addDays", 2) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new NumberArgument());
-}	
+}
 int AddDaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct = vargs[0];
 	if(!mstruct.datetime()->addDays(vargs[1].number())) return 0;
@@ -5122,7 +5129,7 @@ int AddDaysFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 AddMonthsFunction::AddMonthsFunction() : MathFunction("addMonths", 2) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new NumberArgument());
-}	
+}
 int AddMonthsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct = vargs[0];
 	if(!mstruct.datetime()->addMonths(vargs[1].number())) return 0;
@@ -5131,8 +5138,8 @@ int AddMonthsFunction::calculate(MathStructure &mstruct, const MathStructure &va
 AddYearsFunction::AddYearsFunction() : MathFunction("addYears", 2) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new NumberArgument());
-}	
-int AddYearsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {	
+}
+int AddYearsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct = vargs[0];
 	if(!mstruct.datetime()->addYears(vargs[1].number())) return 0;
 	return 1;
@@ -5146,9 +5153,9 @@ DaysFunction::DaysFunction() : MathFunction("days", 2, 4) {
 	arg->setMin(&integ);
 	integ.set(4, 1, 0);
 	arg->setMax(&integ);
-	setArgumentDefinition(3, arg);	
+	setArgumentDefinition(3, arg);
 	setArgumentDefinition(4, new BooleanArgument());
-	setDefaultValue(3, "1"); 
+	setDefaultValue(3, "1");
 }
 int DaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDateTime date1(*vargs[0].datetime()), date2(*vargs[1].datetime());
@@ -5166,8 +5173,8 @@ YearFracFunction::YearFracFunction() : MathFunction("yearfrac", 2, 4) {
 	arg->setMin(&integ);
 	integ.set(4, 1, 0);
 	arg->setMax(&integ);
-	setArgumentDefinition(3, arg);	
-	setArgumentDefinition(4, new BooleanArgument());		
+	setArgumentDefinition(3, arg);
+	setArgumentDefinition(4, new BooleanArgument());
 	setDefaultValue(3, "1");
 }
 int YearFracFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
@@ -5180,7 +5187,7 @@ int YearFracFunction::calculate(MathStructure &mstruct, const MathStructure &var
 }
 WeekFunction::WeekFunction() : MathFunction("week", 0, 2) {
 	setArgumentDefinition(1, new DateArgument());
-	setArgumentDefinition(2, new BooleanArgument());	
+	setArgumentDefinition(2, new BooleanArgument());
 	setDefaultValue(1, "today");
 }
 int WeekFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
@@ -5722,7 +5729,7 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 				CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1]).c_str(), NULL);
 				break;
 			} else {
-				mstruct.eval(); 
+				mstruct.eval();
 				b_evaled = true;
 			}
 		}
@@ -5864,7 +5871,7 @@ int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructur
 	return 1;
 }
 ForFunction::ForFunction() : MathFunction("for", 7) {
-	setArgumentDefinition(2, new SymbolicArgument());	
+	setArgumentDefinition(2, new SymbolicArgument());
 	setArgumentDefinition(7, new SymbolicArgument());
 }
 int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -5887,7 +5894,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mupdate.replace(vargs[1], mcounter, vargs[6], mstruct);
 		mstruct = mupdate;
 		mstruct.calculatesub(eo, eo, false);
-		
+
 		if(vargs[3].isComparison() && vargs[3].comparisonType() == COMPARISON_EQUALS && vargs[3][0] == vargs[1]) mcount = vargs[3][1];
 		else mcount = vargs[3];
 		mcount.replace(vargs[1], mcounter);
@@ -5952,7 +5959,7 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		i_nr += 1;
 	}
 	return 1;
-	
+
 }
 ProductFunction::ProductFunction() : MathFunction("product", 3, 4) {
 	Argument *arg = new IntegerArgument();
@@ -6009,7 +6016,7 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		i_nr += 1;
 	}
 	return 1;
-	
+
 }
 
 bool process_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, size_t index);
@@ -6054,7 +6061,7 @@ int ProcessFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		mstruct[index] = mprocess;
 	}
 	return 1;
-	
+
 }
 
 
@@ -6109,7 +6116,7 @@ int ProcessMatrixFunction::calculate(MathStructure &mstruct, const MathStructure
 		}
 	}
 	return 1;
-	
+
 }
 
 bool csum_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, size_t index, const EvaluationOptions &eo2);
@@ -6181,7 +6188,7 @@ int CustomSumFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	} else if(end < start) {
 		end = start;
 	}
-	
+
 	mstruct = vargs[2];
 	MathStructure mexpr(vargs[3]);
 	MathStructure mprocess;
@@ -6349,7 +6356,7 @@ LoadFunction::LoadFunction() : MathFunction("load", 1, 3) {
 	setArgumentDefinition(2, arg);
 	setDefaultValue(2, "1");
 	setArgumentDefinition(3, new TextArgument());
-	setDefaultValue(3, ",");	
+	setDefaultValue(3, ",");
 }
 int LoadFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	string delim = vargs[2].symbol();
@@ -6366,7 +6373,7 @@ ExportFunction::ExportFunction() : MathFunction("export", 2, 3) {
 	setArgumentDefinition(1, new VectorArgument());
 	setArgumentDefinition(2, new FileArgument());
 	setArgumentDefinition(3, new TextArgument());
-	setDefaultValue(3, ",");	
+	setDefaultValue(3, ",");
 }
 int ExportFunction::calculate(MathStructure&, const MathStructure &vargs, const EvaluationOptions&) {
 	string delim = vargs[2].symbol();
@@ -6397,7 +6404,7 @@ SaveFunction::SaveFunction() : MathFunction("save", 2, 4) {
 	setArgumentDefinition(3, new TextArgument());
 	setArgumentDefinition(4, new TextArgument());
 	setDefaultValue(3, CALCULATOR->temporaryCategory());
-	setDefaultValue(4, "");	
+	setDefaultValue(4, "");
 }
 int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
@@ -6510,12 +6517,12 @@ liFunction::liFunction() : MathFunction("li", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 bool liFunction::representsReal(const MathStructure &vargs, bool) const {
-	return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonNegative() && ((vargs[0].isNumber() && !vargs[0].number().isOne()) || (vargs[0].isVariable() && vargs[0].variable()->isKnown() && ((KnownVariable*) vargs[0].variable())->get().isNumber() && !((KnownVariable*) vargs[0].variable())->get().number().isOne()));
+	return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonNegative() && ((vargs[0].isNumber() && !COMPARISON_IS_NOT_EQUAL(vargs[0].number().compare(nr_one))) || (vargs[0].isVariable() && vargs[0].variable()->isKnown() && ((KnownVariable*) vargs[0].variable())->get().isNumber() && COMPARISON_IS_NOT_EQUAL(((KnownVariable*) vargs[0].variable())->get().number().compare(nr_one))));
 }
 bool liFunction::representsNonComplex(const MathStructure &vargs, bool) const {
 	return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonNegative();
 }
-bool liFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber() && ((vargs[0].isNumber() && !vargs[0].number().isOne()) || (vargs[0].isVariable() && vargs[0].variable()->isKnown() && ((KnownVariable*) vargs[0].variable())->get().isNumber() && !((KnownVariable*) vargs[0].variable())->get().number().isOne()));}
+bool liFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber() && ((vargs[0].isNumber() && COMPARISON_IS_NOT_EQUAL(vargs[0].number().compare(nr_one))) || (vargs[0].isVariable() && vargs[0].variable()->isKnown() && ((KnownVariable*) vargs[0].variable())->get().isNumber() && COMPARISON_IS_NOT_EQUAL(((KnownVariable*) vargs[0].variable())->get().number().compare(nr_one))));}
 int liFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(logint)
 }
@@ -6527,12 +6534,12 @@ LiFunction::LiFunction() : MathFunction("Li", 2) {
 	setArgumentDefinition(2, arg);
 }
 bool LiFunction::representsReal(const MathStructure &vargs, bool) const {
-	return vargs.size() == 2 && vargs[0].representsInteger() && vargs[1].representsReal() && (vargs[1].representsNonPositive() || ((vargs[1].isNumber() && vargs[1].number().isLessThanOrEqualTo(1)) || (vargs[1].isVariable() && vargs[1].variable()->isKnown() && ((KnownVariable*) vargs[1].variable())->get().isNumber() && ((KnownVariable*) vargs[1].variable())->get().number().isLessThanOrEqualTo(1)))) && ((vargs[0].representsPositive() || ((vargs[1].isNumber() && !vargs[1].number().isOne()) || (vargs[1].isVariable() && vargs[1].variable()->isKnown() && ((KnownVariable*) vargs[1].variable())->get().isNumber() && !((KnownVariable*) vargs[1].variable())->get().number().isOne()))));
+	return vargs.size() == 2 && vargs[0].representsInteger() && vargs[1].representsReal() && (vargs[1].representsNonPositive() || ((vargs[1].isNumber() && vargs[1].number().isLessThanOrEqualTo(1)) || (vargs[1].isVariable() && vargs[1].variable()->isKnown() && ((KnownVariable*) vargs[1].variable())->get().isNumber() && ((KnownVariable*) vargs[1].variable())->get().number().isLessThanOrEqualTo(1)))) && ((vargs[0].representsPositive() || ((vargs[1].isNumber() && COMPARISON_IS_NOT_EQUAL(vargs[1].number().compare(nr_one))) || (vargs[1].isVariable() && vargs[1].variable()->isKnown() && ((KnownVariable*) vargs[1].variable())->get().isNumber() && COMPARISON_IS_NOT_EQUAL(((KnownVariable*) vargs[1].variable())->get().number().compare(nr_one))))));
 }
 bool LiFunction::representsNonComplex(const MathStructure &vargs, bool) const {
 	return vargs.size() == 2 && vargs[0].representsInteger() && vargs[1].representsNonComplex() && (vargs[1].representsNonPositive() || ((vargs[1].isNumber() && vargs[1].number().isLessThanOrEqualTo(1)) || (vargs[1].isVariable() && vargs[1].variable()->isKnown() && ((KnownVariable*) vargs[1].variable())->get().isNumber() && ((KnownVariable*) vargs[1].variable())->get().number().isLessThanOrEqualTo(1))));
 }
-bool LiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[0].representsInteger() && (vargs[0].representsPositive() || (vargs[1].representsNumber() && ((vargs[1].isNumber() && !vargs[1].number().isOne()) || (vargs[1].isVariable() && vargs[1].variable()->isKnown() && ((KnownVariable*) vargs[1].variable())->get().isNumber() && !((KnownVariable*) vargs[1].variable())->get().number().isOne()))));}
+bool LiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[0].representsInteger() && (vargs[0].representsPositive() || (vargs[1].representsNumber() && ((vargs[1].isNumber() && COMPARISON_IS_NOT_EQUAL(vargs[1].number().compare(nr_one))) || (vargs[1].isVariable() && vargs[1].variable()->isKnown() && ((KnownVariable*) vargs[1].variable())->get().isNumber() && COMPARISON_IS_NOT_EQUAL(((KnownVariable*) vargs[1].variable())->get().number().compare(nr_one))))));}
 int LiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[1].isVector()) return 0;
 	if(vargs[0].isOne()) {
@@ -6589,11 +6596,11 @@ bool SiFunction::representsReal(const MathStructure &vargs, bool) const {return 
 bool SiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
-	mstruct = vargs[0]; 
+	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
-		Number nr(mstruct.number()); 
+		Number nr(mstruct.number());
 		if(nr.isPlusInfinity()) {
 			mstruct.set(CALCULATOR->v_pi, true);
 			mstruct *= nr_half;
@@ -6611,7 +6618,7 @@ int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			return 1;
 		}
 		if(nr.sinint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
-			mstruct.set(nr); 
+			mstruct.set(nr);
 			return 1;
 		}
 	}
@@ -6632,7 +6639,7 @@ bool CiFunction::representsNumber(const MathStructure &vargs, bool) const {retur
 bool CiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonNegative(true);}
 int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
-	mstruct = vargs[0]; 
+	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
@@ -6654,9 +6661,9 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			if(nr.imaginaryPartIsPositive()) mstruct.last() *= nr_one_i;
 			else mstruct.last() *= nr_minus_i;
 			return 1;
-		} 
+		}
 		if(nr.cosint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
-			mstruct.set(nr); 
+			mstruct.set(nr);
 			return 1;
 		}
 	}
@@ -6671,11 +6678,11 @@ bool ShiFunction::representsNumber(const MathStructure &vargs, bool) const {retu
 bool ShiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int ShiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
-	mstruct = vargs[0]; 
+	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
-		Number nr(mstruct.number()); 
+		Number nr(mstruct.number());
 		if(nr.hasImaginaryPart() && !nr.hasRealPart()) {
 			mstruct.set(nr.imaginaryPart());
 			mstruct.transform(CALCULATOR->f_Si);
@@ -6683,7 +6690,7 @@ int ShiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			return 1;
 		}
 		if(nr.sinhint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
-			mstruct.set(nr); 
+			mstruct.set(nr);
 			return 1;
 		}
 	}
@@ -6704,7 +6711,7 @@ bool ChiFunction::representsNonComplex(const MathStructure &vargs, bool) const {
 bool ChiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
 int ChiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
-	mstruct = vargs[0]; 
+	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
@@ -6726,9 +6733,9 @@ int ChiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			if(nr.imaginaryPartIsPositive()) mstruct.last() *= nr_one_i;
 			else mstruct.last() *= nr_minus_i;
 			return 1;
-		} 
+		}
 		if(nr.coshint() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || mstruct.isApproximate()) && (eo.allow_complex || !nr.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || mstruct.number().includesInfinity())) {
-			mstruct.set(nr); 
+			mstruct.set(nr);
 			return 1;
 		}
 	}
@@ -6864,7 +6871,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 	Number *Rp = &R1[0], *Rc = &R2[0];
 	Number h(b); h -= a;
 	Number acc, acc_i, c, ntmp, prevunc, prevunc_i, nunc, nunc_i;
-	
+
 	nvalue.clear();
 
 	MathStructure mf(minteg);
@@ -6880,7 +6887,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 	}
 	if(!mf.isNumber()) return false;
 	Rp[0] = mf.number();
-	
+
 	mf = minteg;
 	mf.replace(x_var, b);
 	mf.eval(eo);
@@ -6895,7 +6902,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 	if(!mf.isNumber()) return false;
 
 	if(!Rp[0].add(mf.number()) || !Rp[0].multiply(nr_half) || !Rp[0].multiply(h)) return false;
-	
+
 	for(long int i = 1; i < max_steps; i++) {
 
 		if(CALCULATOR->aborted()) break;
@@ -6928,7 +6935,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 		if(CALCULATOR->aborted()) break;
 
 		Rc[0] = h;
-		ntmp = Rp[0]; 
+		ntmp = Rp[0];
 		if(!ntmp.multiply(nr_half) || !Rc[0].multiply(c) || !Rc[0].add(ntmp)) return false;
 
 		for(long int j = 1; j <= i; ++j){
@@ -6940,14 +6947,14 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 			if(!Rc[j].multiply(Rc[j - 1]) || !Rc[j].subtract(Rp[j - 1]) || !Rc[j].multiply(ntmp)) return false;
 		}
 		if(CALCULATOR->aborted()) break;
-		
+
 		if(i >= min_steps - 1 && !Rp[i - 1].includesInfinity() && !Rc[i].includesInfinity()) {
 			if(Rp[i - 1].hasImaginaryPart()) nunc = Rp[i - 1].realPart();
 			else nunc = Rp[i - 1];
 			if(Rc[i].hasImaginaryPart()) nunc -= Rc[i].realPart();
 			else nunc -= Rc[i];
 			nunc.abs();
-			nunc *= 2;
+			if(safety_measures) nunc *= 10;
 			nunc.intervalToMidValue();
 			if(Rp[i - 1].hasImaginaryPart() || Rc[i].hasImaginaryPart()) {
 				nunc_i = Rp[i - 1].imaginaryPart();
@@ -6956,7 +6963,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 			} else {
 				nunc_i.clear();
 			}
-			nunc_i *= 2;
+			if(safety_measures) nunc_i *= 10;
 			nunc_i.intervalToMidValue();
 			long int prec = PRECISION + (auto_max ? 3 : 1);
 			if(auto_max) {
@@ -7031,16 +7038,17 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 			if(nvalue.isNonZero()) acc *= nvalue;
 		}
 		acc.abs();
+		acc.intervalToMidValue();
 		if(nunc > acc) return false;
 		if(!nunc_i.isZero()) {
 			acc.set(1, 1, -3);
 			if(nvalue.hasImaginaryPart()) acc *= nvalue.imaginaryPart();
 			acc.abs();
+			acc.intervalToMidValue();
 			if(nunc_i > acc) return false;
 			nunc.setImaginaryPart(nunc_i);
 		}
-		acc.intervalToMidValue();
-		nunc *= 10;
+		if(safety_measures) nunc *= 10;
 		nvalue.setUncertainty(nunc);
 		return true;
 	}
@@ -7222,7 +7230,7 @@ int numerical_integration_part(const MathStructure &minteg, const MathStructure 
 					}
 				} else {
 					CALCULATOR->endTemporaryStopIntervalArithmetic();
-					nvalue.setUncertainty(nr_prec); 
+					nvalue.setUncertainty(nr_prec);
 					return 1;
 				}
 			} else {
@@ -7304,7 +7312,11 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 				if(!mbase.isOne()) {
 					if(mbase.isZero()) {v->destroy(); return false;}
 					bool b = false;
-					if(mbase.isComparison()) {mbase[0].eval(eo2); mbase[1].eval(eo2);}
+					if(mbase.isComparison()) {
+						CALCULATOR->beginTemporaryStopMessages();
+						mbase[0].eval(eo2); mbase[1].eval(eo2);
+						CALCULATOR->endTemporaryStopMessages();
+					}
 					if(mbase.isComparison() && mbase.comparisonType() == COMPARISON_NOT_EQUALS && (mbase[0] == mx || mbase[0].isFunction()) && mbase[1].isNumber() && mi.isNumber()) {
 						ComparisonResult cr = COMPARISON_RESULT_UNKNOWN;
 						if(mbase[0].isFunction()) {
@@ -7516,7 +7528,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	MathStructure mbak(mstruct);
 
 	if(vargs.size() < 5 || !vargs[4].number().getBoolean() || definite_integral == 0) {
-		
+
 		int use_abs = -1;
 		/*if(m1.isUndefined() && x_var.representsReal() && !contains_complex(mstruct)) {
 			use_abs = 1;
@@ -7706,7 +7718,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			}
 		}
 		CALCULATOR->endTemporaryStopMessages();
-		if(mstruct.containsInterval() && eo.approximation == APPROXIMATION_EXACT) {
+		if(true || (mstruct.containsInterval() && eo.approximation == APPROXIMATION_EXACT)) {
 			CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
 			mstruct.replace(x_var, vargs[3]);
 			return -1;
@@ -7719,7 +7731,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 
 	mstruct = mstruct_pre;
 	mstruct.eval(eo2);
-	
+
 	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
 
 	if(m1.isNumber() && m1.number().isReal() && m2.isNumber() && m2.number().isReal()) {
@@ -8049,19 +8061,19 @@ int test_equation(MathStructure &mstruct, const EvaluationOptions &eo, const Mat
 
 int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const MathStructure &y_var, const EvaluationOptions &eo, bool dsolve = false, const MathStructure &x_var = m_undefined, const MathStructure &c_var = m_undefined, const MathStructure &x_value = m_undefined, const MathStructure &y_value = m_undefined) {
 
-	int itry = 0;	
+	int itry = 0;
 	int ierror = 0;
 	int first_error = 0;
-	
+
 	Assumptions *assumptions = NULL;
-	bool assumptions_added = false;	
+	bool assumptions_added = false;
 	AssumptionSign as = ASSUMPTION_SIGN_UNKNOWN;
 	AssumptionType at = ASSUMPTION_TYPE_NUMBER;
 	MathStructure msave;
 	string strueforall;
 
 	while(true) {
-	
+
 		if(itry == 1) {
 			if(ierror == 1) {
 				if(!dsolve) CALCULATOR->error(true, _("No equality or inequality to solve. The entered expression to solve is not correct (ex. \"x + 5 = 3\" is correct)"), NULL);
@@ -8071,9 +8083,9 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 				msave = mstruct;
 			}
 		}
-		
+
 		itry++;
-		
+
 		if(itry == 2) {
 			if(y_var.isVariable() && y_var.variable()->subtype() == SUBTYPE_UNKNOWN_VARIABLE) {
 				assumptions = ((UnknownVariable*) y_var.variable())->assumptions();
@@ -8087,7 +8099,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			} else {
 				assumptions = CALCULATOR->defaultAssumptions();
 			}
-			if(assumptions->sign() != ASSUMPTION_SIGN_UNKNOWN) {			
+			if(assumptions->sign() != ASSUMPTION_SIGN_UNKNOWN) {
 				as = assumptions->sign();
 				assumptions->setSign(ASSUMPTION_SIGN_UNKNOWN);
 			} else {
@@ -8104,7 +8116,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 				itry++;
 			}
 		}
-		
+
 		if(itry > 3) {
 			if(as != ASSUMPTION_SIGN_UNKNOWN) assumptions->setSign(as);
 			if(at > ASSUMPTION_TYPE_NUMBER) assumptions->setType(at);
@@ -8122,7 +8134,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 					CALCULATOR->error(true, _("Was unable to completely isolate %s."), format_and_print(y_var).c_str(), NULL);
 					break;
 				}
-				case 7: {					
+				case 7: {
 					CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), strueforall.c_str(), NULL);
 					break;
 				}
@@ -8136,7 +8148,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 		}
 
 		ComparisonType ct = COMPARISON_EQUALS;
-	
+
 		bool b = false;
 		bool b_partial = false;
 
@@ -8193,13 +8205,13 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 				ct = mstruct[0][0].comparisonType();
 				b = true;
 			}
-		}	
+		}
 
 		if(!b) {
 			ierror = 1;
 			continue;
 		}
-	
+
 		EvaluationOptions eo2 = eo;
 		eo2.isolate_var = &y_var;
 		eo2.isolate_x = true;
@@ -8227,10 +8239,10 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			ierror = 3;
 			continue;
 		}
-	
+
 		PrintOptions po;
 		po.spell_out_logical_operators = true;
-	
+
 		if(mstruct.isComparison()) {
 			if((ct == COMPARISON_EQUALS && mstruct.comparisonType() != COMPARISON_EQUALS) || !mstruct.contains(y_var)) {
 				if(itry == 1) {
@@ -8284,7 +8296,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
 				}
 				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
-			}			
+			}
 			if(mcondition) {
 				mcondition->format(po);
 				CALCULATOR->error(false, _("The solution requires that %s."), mcondition->print(po).c_str(), NULL);
@@ -8368,7 +8380,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 				}
 				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			}
-			
+
 			if(mconditions.size() == 1) {
 				if(mconditions[0]) {
 					mconditions[0]->format(po);
@@ -8382,7 +8394,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 						mconditions[i]->format(po);
 						CALCULATOR->error(false, _("Solution %s requires that %s."), i2s(i + 1).c_str(), mconditions[i]->print(po).c_str(), NULL);
 						delete mconditions[i];
-					}				
+					}
 				}
 			}
 			if(mtruefor) {
@@ -8396,7 +8408,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 		}
 	}
 	return -1;
-	
+
 }
 
 int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -8414,9 +8426,9 @@ SolveMultipleFunction::SolveMultipleFunction() : MathFunction("multisolve", 2) {
 int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	mstruct.clearVector();
-	
+
 	if(vargs[1].size() < 1) return 1;
-	
+
 	vector<bool> eleft;
 	eleft.resize(vargs[0].size(), true);
 	vector<size_t> eorder;
@@ -8439,7 +8451,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 			break;
 		}
 	}
-	
+
 	for(size_t i = 0; i < eorder.size(); i++) {
 		MathStructure msolve(vargs[0][eorder[i]]);
 		EvaluationOptions eo2 = eo;
@@ -8488,9 +8500,9 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 			}
 		}
 	}
-	
+
 	return 1;
-	
+
 }
 
 MathStructure *find_deqn(MathStructure &mstruct);

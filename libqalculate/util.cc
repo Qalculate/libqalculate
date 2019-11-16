@@ -46,6 +46,8 @@
 #	include <pwd.h>
 #endif
 
+using namespace std;
+
 bool eqstr::operator()(const char *s1, const char *s2) const {
 	return strcmp(s1, s2) == 0;
 }
@@ -225,12 +227,12 @@ size_t find_ending_bracket(const string &str, size_t start, int *missing) {
 char op2ch(MathOperation op) {
 	switch(op) {
 		case OPERATION_ADD: return PLUS_CH;
-		case OPERATION_SUBTRACT: return MINUS_CH;		
-		case OPERATION_MULTIPLY: return MULTIPLICATION_CH;		
-		case OPERATION_DIVIDE: return DIVISION_CH;		
-		case OPERATION_RAISE: return POWER_CH;		
+		case OPERATION_SUBTRACT: return MINUS_CH;
+		case OPERATION_MULTIPLY: return MULTIPLICATION_CH;
+		case OPERATION_DIVIDE: return DIVISION_CH;
+		case OPERATION_RAISE: return POWER_CH;
 		case OPERATION_EXP10: return EXP_CH;
-		default: return ' ';		
+		default: return ' ';
 	}
 }
 
@@ -540,7 +542,7 @@ bool move_file(const char *from_file, const char *to_file) {
 
 	source.close();
 	dest.close();
-	
+
 	struct stat stats_from;
 	if(stat(from_file, &stats_from) == 0) {
 		struct utimbuf to_times;
@@ -548,9 +550,9 @@ bool move_file(const char *from_file, const char *to_file) {
 		to_times.modtime = stats_from.st_mtime;
 		utime(to_file, &to_times);
 	}
-	
+
 	remove(from_file);
-	
+
 	return true;
 #endif
 }
@@ -780,7 +782,7 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 #endif
 	res = curl_easy_perform(curl);
 	curl_easy_cleanup(curl);
-	curl_global_cleanup(); 
+	curl_global_cleanup();
 	if(res != CURLE_OK || sbuffer.empty()) {return -1;}
 	size_t i = sbuffer.find(version_id);
 	if(i == string::npos) return -1;
@@ -792,8 +794,8 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 	if(s_version.empty()) return -1;
 	if(available_version) *available_version = s_version;
 	if(s_version != current_version) {
-		vector<int> version_parts_old, version_parts_new;
-		
+		std::vector<int> version_parts_old, version_parts_new;
+
 		string s_old_version = current_version;
 		while((i = s_old_version.find('.', 0)) != string::npos) {
 			version_parts_old.push_back(s2i(s_old_version.substr(0, i)));
@@ -805,7 +807,7 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 			s_old_version = s_old_version.substr(i + 1);
 		}
 		version_parts_old.push_back(s2i(s_old_version));
-		
+
 		while((i = s_version.find('.', 0)) != string::npos) {
 			version_parts_new.push_back(s2i(s_version.substr(0, i)));
 			s_version = s_version.substr(i + 1);
@@ -816,14 +818,14 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 			s_version = s_version.substr(i + 1);
 		}
 		version_parts_new.push_back(s2i(s_version));
-		
+
 		for(i = 0; i < version_parts_new.size(); i++) {
 			if(i == version_parts_old.size() || version_parts_new[i] > version_parts_old[i]) return true;
 			else if(version_parts_new[i] < version_parts_old[i]) return false;
 		}
-		
+
 	}
-	
+
 	return 0;
 #else
 	return -1;

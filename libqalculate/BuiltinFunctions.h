@@ -23,7 +23,7 @@
 						x(const x *function) {set(function);} \
 						ExpressionItem *copy() const {return new x(this);} \
 					};
-					
+
 #define DECLARE_BUILTIN_FUNCTION_B(x)	class x : public MathFunction { \
 					  public: \
 						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
@@ -32,7 +32,7 @@
 						ExpressionItem *copy() const {return new x(this);} \
 						bool representsBoolean(const MathStructure&) const {return true;}\
 					};
-					
+
 #define DECLARE_BUILTIN_FUNCTION_PI(x)	class x : public MathFunction { \
 					  public: \
 						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
@@ -52,7 +52,7 @@
 						bool representsReal(const MathStructure&, bool) const;\
 						bool representsInteger(const MathStructure&, bool) const;\
 						bool representsNonNegative(const MathStructure&, bool) const;\
-					};															
+					};
 
 #define DECLARE_BUILTIN_FUNCTION_R(x)	class x : public MathFunction { \
 					  public: \
@@ -75,7 +75,7 @@
 						bool representsOdd(const MathStructure &vargs, bool allow_units = false) const;\
 						bool representsUndefined(const MathStructure &vargs) const;\
 					};
-					
+
 #define DECLARE_BUILTIN_FUNCTION_R2(x)	class x : public MathFunction { \
 					  public: \
 						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
@@ -86,7 +86,7 @@
 						bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
 						bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
 					};
-					
+
 
 #define DECLARE_BUILTIN_FUNCTION_R3(x)	class x : public MathFunction { \
 					  public: \
@@ -100,7 +100,7 @@
 						bool representsComplex(const MathStructure &vargs, bool allow_units = false) const;\
 						bool representsNonZero(const MathStructure &vargs, bool allow_units = false) const;\
 					};
-										
+
 #define DECLARE_BUILTIN_FUNCTION_R1(x)	class x : public MathFunction { \
 					  public: \
 						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
@@ -108,7 +108,7 @@
 						x(const x *function) {set(function);} \
 						ExpressionItem *copy() const {return new x(this);} \
 						bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
-					};															
+					};
 
 
 DECLARE_BUILTIN_FUNCTION(VectorFunction)
