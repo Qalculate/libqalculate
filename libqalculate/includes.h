@@ -34,11 +34,7 @@
 #define QALCULATE_MINOR_VERSION (6)
 #define QALCULATE_MICRO_VERSION (0)
 
-/// \cond
-using namespace std;
-/// \endcond
-
-static string empty_string;
+static std::string empty_string;
 
 struct ExpressionName;
 class Calculator;
@@ -163,22 +159,22 @@ static const long int PRIMES[] = {
 #define NR_OF_SQUARE_PRIMES 170
 
 static const long int SQUARE_PRIMES[] = {
-4L, 9L, 25L, 49L, 121L, 169L, 289L, 361L, 529L, 841L, 
-961L, 1369L, 1681L, 1849L, 2209L, 2809L, 3481L, 3721L, 4489L, 5041L, 
-5329L, 6241L, 6889L, 7921L, 9409L, 10201L, 10609L, 11449L, 11881L, 12769L, 
-16129L, 17161L, 18769L, 19321L, 22201L, 22801L, 24649L, 26569L, 27889L, 29929L, 
-32041L, 32761L, 36481L, 37249L, 38809L, 39601L, 44521L, 49729L, 51529L, 52441L, 
-54289L, 57121L, 58081L, 63001L, 66049L, 69169L, 72361L, 73441L, 76729L, 78961L, 
-80089L, 85849L, 94249L, 96721L, 97969L, 100489L, 109561L, 113569L, 120409L, 121801L, 
-124609L, 128881L, 134689L, 139129L, 143641L, 146689L, 151321L, 157609L, 160801L, 167281L, 
-175561L, 177241L, 185761L, 187489L, 192721L, 196249L, 201601L, 208849L, 212521L, 214369L, 
-218089L, 229441L, 237169L, 241081L, 249001L, 253009L, 259081L, 271441L, 273529L, 292681L, 
-299209L, 310249L, 316969L, 323761L, 326041L, 332929L, 344569L, 351649L, 358801L, 361201L, 
-368449L, 375769L, 380689L, 383161L, 398161L, 410881L, 413449L, 418609L, 426409L, 434281L, 
-436921L, 452929L, 458329L, 466489L, 477481L, 491401L, 502681L, 516961L, 528529L, 537289L, 
-546121L, 552049L, 564001L, 573049L, 579121L, 591361L, 597529L, 619369L, 635209L, 654481L, 
-657721L, 674041L, 677329L, 683929L, 687241L, 703921L, 727609L, 734449L, 737881L, 744769L, 
-769129L, 776161L, 779689L, 786769L, 822649L, 829921L, 844561L, 863041L, 877969L, 885481L, 
+4L, 9L, 25L, 49L, 121L, 169L, 289L, 361L, 529L, 841L,
+961L, 1369L, 1681L, 1849L, 2209L, 2809L, 3481L, 3721L, 4489L, 5041L,
+5329L, 6241L, 6889L, 7921L, 9409L, 10201L, 10609L, 11449L, 11881L, 12769L,
+16129L, 17161L, 18769L, 19321L, 22201L, 22801L, 24649L, 26569L, 27889L, 29929L,
+32041L, 32761L, 36481L, 37249L, 38809L, 39601L, 44521L, 49729L, 51529L, 52441L,
+54289L, 57121L, 58081L, 63001L, 66049L, 69169L, 72361L, 73441L, 76729L, 78961L,
+80089L, 85849L, 94249L, 96721L, 97969L, 100489L, 109561L, 113569L, 120409L, 121801L,
+124609L, 128881L, 134689L, 139129L, 143641L, 146689L, 151321L, 157609L, 160801L, 167281L,
+175561L, 177241L, 185761L, 187489L, 192721L, 196249L, 201601L, 208849L, 212521L, 214369L,
+218089L, 229441L, 237169L, 241081L, 249001L, 253009L, 259081L, 271441L, 273529L, 292681L,
+299209L, 310249L, 316969L, 323761L, 326041L, 332929L, 344569L, 351649L, 358801L, 361201L,
+368449L, 375769L, 380689L, 383161L, 398161L, 410881L, 413449L, 418609L, 426409L, 434281L,
+436921L, 452929L, 458329L, 466489L, 477481L, 491401L, 502681L, 516961L, 528529L, 537289L,
+546121L, 552049L, 564001L, 573049L, 579121L, 591361L, 597529L, 619369L, 635209L, 654481L,
+657721L, 674041L, 677329L, 683929L, 687241L, 703921L, 727609L, 734449L, 737881L, 744769L,
+769129L, 776161L, 779689L, 786769L, 822649L, 829921L, 844561L, 863041L, 877969L, 885481L,
 896809L, 908209L, 935089L, 942841L, 954529L, 966289L, 982081L, 994009L, 1018081L, 1026169L
 };
 
@@ -190,7 +186,7 @@ static const long int RAISED_PRIMES[][49] = {
 389017L, 493039L, 571787L, 704969L, 912673L, 1030301L, 1092727L, 1225043L, 1295029, 1442897,
 2048383L, 2248091L, 2571353L, 2685619L, 3307949L, 3442951L, 3869893L, 4330747L, 4657463L, 5177717L,
 5735339L, 5929741L, 6967871L, 7189057L, 7645373L, 7880599L, 9393931L, 11089567L, 0},
-{16L, 81L, 625L, 2401L, 14641L, 28561L, 83521L, 130321L, 279841L, 707281L, 
+{16L, 81L, 625L, 2401L, 14641L, 28561L, 83521L, 130321L, 279841L, 707281L,
 923521L, 1874161L, 2825761L, 3418801L, 4879681L, 7890481L, 12117361L,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 {32L, 243L, 3125L, 16807L, 161051L, 371293L, 1419857L, 2476099L, 6436343L, 20511149L,
@@ -206,7 +202,7 @@ static const long int RAISED_PRIMES[][49] = {
 {1024L, 59049L, 9765625L, 282475249L,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
- 
+
 /// The result of a comparison of two values
 typedef enum {
 	COMPARISON_RESULT_EQUAL,
@@ -464,9 +460,9 @@ static const struct PrintOptions {
 	/// Options for the order of values in the displayed expression. Default: default_sort_options
 	SortOptions sort_options;
 	/// Comma sign or empty string to use default comma sign. Default: empty string
-	string comma_sign;
+	std::string comma_sign;
 	/// Decimal sign or empty string to use default decimal sign. Default: empty string
-	string decimalpoint_sign;
+	std::string decimalpoint_sign;
 	/// Function that returns true if a text string with unicode signs can be properly displayed. Default: NULL
 	bool (*can_display_unicode_string_function) (const char*, void*);
 	/// Argument passed to can_display_unicode_string_function. Default: NULL
@@ -505,16 +501,16 @@ static const struct PrintOptions {
 	unsigned int binary_bits;
 	PrintOptions();
 	/// Returns the comma sign used (default sign or comma_sign)
-	const string &comma() const;
+	const std::string &comma() const;
 	/// Returns the decimal sign used (default sign or decimalpoint_sign)
-	const string &decimalpoint() const;
+	const std::string &decimalpoint() const;
 	/// Returns the digit grouping separator used
 } default_print_options;
 
 static const struct InternalPrintStruct {
 	int depth, power_depth, division_depth;
 	bool wrap;
-	string *num, *den, *re, *im, *exp;
+	std::string *num, *den, *re, *im, *exp;
 	bool *minus, *exp_minus;
 	bool parent_approximate;
 	int parent_precision;
@@ -812,9 +808,9 @@ extern Calculator *calculator;
 #define	NOT_CH			'!'
 #define EQUALS_CH		'='
 
-#define ID_WRAP_LEFT		"{"	
-#define ID_WRAP_RIGHT		"}"	
-#define ID_WRAPS		"{}"	
+#define ID_WRAP_LEFT		"{"
+#define ID_WRAP_RIGHT		"}"
+#define ID_WRAPS		"{}"
 #define DOT			"."
 #define SEXADOT			":"
 #define COMMA			","

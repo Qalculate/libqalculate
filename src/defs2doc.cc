@@ -20,6 +20,12 @@
 #include <stdio.h>
 #include <vector>
 
+using std::string;
+using std::cout;
+using std::vector;
+using std::endl;
+using std::list;
+
 KnownVariable *vans[5];
 PrintOptions printops;
 EvaluationOptions evalops;
@@ -54,7 +60,7 @@ struct tree_struct {
 	list<tree_struct> items;
 	list<tree_struct>::iterator it;
 	list<tree_struct>::reverse_iterator rit;
-	vector<void*> objects;	
+	vector<void*> objects;
 	tree_struct *parent;
 	void sort() {
 		items.sort();
@@ -63,23 +69,23 @@ struct tree_struct {
 		}
 	}
 	bool operator < (tree_struct &s1) const {
-		return item < s1.item;	
-	}	
+		return item < s1.item;
+	}
 };
 
 tree_struct function_cats, unit_cats, variable_cats;
 vector<void*> ia_units, ia_variables, ia_functions;
 
 void generate_units_tree_struct() {
-	size_t cat_i, cat_i_prev; 
-	bool b;	
+	size_t cat_i, cat_i_prev;
+	bool b;
 	string str, cat, cat_sub;
 	Unit *u = NULL;
 	unit_cats.items.clear();
 	unit_cats.objects.clear();
-	unit_cats.parent = NULL;	
+	unit_cats.parent = NULL;
 	ia_units.clear();
-	list<tree_struct>::iterator it;	
+	list<tree_struct>::iterator it;
 	for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
 		if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
 			tree_struct *item = &unit_cats;
@@ -102,7 +108,7 @@ void generate_units_tree_struct() {
 						}
 					}
 					if(!b) {
-						tree_struct cat;		
+						tree_struct cat;
 						item->items.push_back(cat);
 						it = item->items.end();
 						--it;
@@ -129,21 +135,21 @@ void generate_units_tree_struct() {
 			if(!b) item->objects.push_back((void*) CALCULATOR->units[i]);
 		}
 	}
-	
+
 	unit_cats.sort();
 
 }
 void generate_variables_tree_struct() {
 
-	size_t cat_i, cat_i_prev; 
-	bool b;	
+	size_t cat_i, cat_i_prev;
+	bool b;
 	string str, cat, cat_sub;
 	Variable *v = NULL;
 	variable_cats.items.clear();
 	variable_cats.objects.clear();
 	variable_cats.parent = NULL;
 	ia_variables.clear();
-	list<tree_struct>::iterator it;	
+	list<tree_struct>::iterator it;
 	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 		if(CALCULATOR->variables[i]->isActive()) {
 			tree_struct *item = &variable_cats;
@@ -166,7 +172,7 @@ void generate_variables_tree_struct() {
 						}
 					}
 					if(!b) {
-						tree_struct cat;		
+						tree_struct cat;
 						item->items.push_back(cat);
 						it = item->items.end();
 						--it;
@@ -190,17 +196,17 @@ void generate_variables_tree_struct() {
 					break;
 				}
 			}
-			if(!b) item->objects.push_back((void*) CALCULATOR->variables[i]);		
+			if(!b) item->objects.push_back((void*) CALCULATOR->variables[i]);
 		}
 	}
-	
+
 	variable_cats.sort();
 
 }
 void generate_functions_tree_struct() {
 
-	size_t cat_i, cat_i_prev; 
-	bool b;	
+	size_t cat_i, cat_i_prev;
+	bool b;
 	string str, cat, cat_sub;
 	MathFunction *f = NULL;
 	function_cats.items.clear();
@@ -231,7 +237,7 @@ void generate_functions_tree_struct() {
 						}
 					}
 					if(!b) {
-						tree_struct cat;		
+						tree_struct cat;
 						item->items.push_back(cat);
 						it = item->items.end();
 						--it;
@@ -258,13 +264,13 @@ void generate_functions_tree_struct() {
 			if(!b) item->objects.push_back((void*) CALCULATOR->functions[i]);
 		}
 	}
-	
+
 	function_cats.sort();
-	
+
 }
 
 void print_function(MathFunction *f) {
-	
+
 		string str;
 		fputs("<varlistentry>\n", ffile);
 		fprintf(ffile, "<term><emphasis>%s</emphasis></term>\n", f->title(false).c_str());
@@ -278,9 +284,9 @@ void print_function(MathFunction *f) {
 		if(iargs < 0) {
 			iargs = f->minargs() + 1;
 		}
-		str += "(";				
+		str += "(";
 		if(iargs != 0) {
-			for(int i2 = 1; i2 <= iargs; i2++) {	
+			for(int i2 = 1; i2 <= iargs; i2++) {
 				if(i2 > f->minargs()) {
 					str += "[";
 				}
@@ -312,11 +318,11 @@ void print_function(MathFunction *f) {
 			if(&f->getName(i2) != ename && !f->getName(i2).completion_only) {
 				fprintf(ffile, "<para><command>%s</command></para>", f->getName(i2).name.c_str());
 			}
-		}		
+		}
 		if(f->subtype() == SUBTYPE_DATA_SET) {
 			fputs("<para>", ffile);
 			fprintf(ffile, _("Retrieves data from the %s data set for a given object and property. If \"info\" is typed as property, all properties of the object will be listed."), f->title().c_str());
-			fputs("</para>", ffile);	
+			fputs("</para>", ffile);
 		}
 		if(!f->description().empty()) {
 			fprintf(ffile, "<para>%s</para>\n", fix(f->description()).c_str());
@@ -332,12 +338,12 @@ void print_function(MathFunction *f) {
 			fputs("<formalpara>\n", ffile);
 			fprintf(ffile, "<title>%s</title>", _("Arguments"));
 			fputs("<para><itemizedlist spacing=\"compact\">\n", ffile);
-			for(int i2 = 1; i2 <= iargs; i2++) {	
+			for(int i2 = 1; i2 <= iargs; i2++) {
 				arg = f->getArgumentDefinition(i2);
 				if(arg && !arg->name().empty()) {
 					str = arg->name();
 				} else {
-					str = i2s(i2);	
+					str = i2s(i2);
 				}
 				str += ": ";
 				if(arg) {
@@ -376,10 +382,10 @@ void print_function(MathFunction *f) {
 			fputs("<para><itemizedlist spacing=\"compact\">\n", ffile);
 			DataPropertyIter it;
 			DataProperty *dp = ds->getFirstProperty(&it);
-			while(dp) {	
+			while(dp) {
 				if(!dp->isHidden()) {
 					if(!dp->title(false).empty()) {
-						str = dp->title();	
+						str = dp->title();
 						str += ": ";
 					}
 					for(size_t i = 1; i <= dp->countNames(); i++) {
@@ -474,7 +480,7 @@ void print_variable(Variable *v) {
 				if(value.empty()) value = _("unknown");
 			} else {
 				value = _("default assumptions");
-			}		
+			}
 		}
 		if(v->isApproximate() && !is_relative && value.find(SIGN_PLUSMINUS) == string::npos) {
 			if(v == CALCULATOR->v_pi || v == CALCULATOR->v_e || v == CALCULATOR->v_euler || v == CALCULATOR->v_catalan) {
@@ -556,7 +562,7 @@ void print_unit(Unit *u) {
 
 int main(int, char *[]) {
 
-	
+
 #ifdef ENABLE_NLS
 	bindtextdomain (GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -565,7 +571,7 @@ int main(int, char *[]) {
 
 	//create the almighty Calculator object
 	new Calculator();
-	
+
 	ffile = fopen("appendixa.xml", "w+");
 	vfile = fopen("appendixb.xml", "w+");
 	ufile = fopen("appendixc.xml", "w+");
@@ -588,7 +594,7 @@ int main(int, char *[]) {
 		printf(_("Failed to load global definitions!\n"));
 	}
 	printops.use_unicode_signs = true;
-	
+
 	generate_functions_tree_struct();
 	generate_variables_tree_struct();
 	generate_units_tree_struct();
@@ -622,13 +628,13 @@ int main(int, char *[]) {
 				fprintf(ffile, "</sect%i>\n", level);
 				level--;
 			}
-			
+
 		}
 		if(item) {
 			item2 = &*item->it;
 			++item->it;
 			item = item2;
-			item->it = item->items.begin();	
+			item->it = item->items.begin();
 			level++;
 		}
 	}
@@ -643,9 +649,9 @@ int main(int, char *[]) {
 		fputs("</sect1>\n", ffile);
 	}
 	fputs("</appendix>\n", ffile);
-	
+
 	fclose(ffile);
-	
+
 	fputs("<appendix id=\"qalculate-definitions-variables\">\n", vfile);
 	fputs("<title>Variable List</title>\n", vfile);
 	variable_cats.it = variable_cats.items.begin();
@@ -689,13 +695,13 @@ int main(int, char *[]) {
 				fprintf(vfile, "</sect%i>\n", level);
 				level--;
 			}
-			
+
 		}
 		if(item) {
 			item2 = &*item->it;
 			++item->it;
 			item = item2;
-			item->it = item->items.begin();	
+			item->it = item->items.begin();
 			level++;
 		}
 	}
@@ -725,9 +731,9 @@ int main(int, char *[]) {
 		fputs("</sect1>\n", vfile);
 	}
 	fputs("</appendix>\n", vfile);
-	
+
 	fclose(vfile);
-	
+
 	fputs("<appendix id=\"qalculate-definitions-units\">\n", ufile);
 	fputs("<title>Unit List</title>\n", ufile);
 	unit_cats.it = unit_cats.items.begin();
@@ -773,13 +779,13 @@ int main(int, char *[]) {
 				fprintf(ufile, "</sect%i>\n", level);
 				level--;
 			}
-			
+
 		}
 		if(item) {
 			item2 = &*item->it;
 			++item->it;
 			item = item2;
-			item->it = item->items.begin();	
+			item->it = item->items.begin();
 			level++;
 		}
 	}
@@ -811,11 +817,11 @@ int main(int, char *[]) {
 		fputs("</sect1>\n", ufile);
 	}
 	fputs("</appendix>\n", ufile);
-	
+
 	fclose(ufile);
-	
+
 	return 0;
-	
+
 }
 
 

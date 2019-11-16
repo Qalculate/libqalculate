@@ -24,7 +24,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define XML_GET_STRING_FROM_PROP(node, name, str)	value = xmlGetProp(node, (xmlChar*) name); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = ""; 
+using namespace std;
+
+#define XML_GET_STRING_FROM_PROP(node, name, str)	value = xmlGetProp(node, (xmlChar*) name); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = "";
 #define XML_GET_STRING_FROM_TEXT(node, str)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = "";
 
 DataObject::DataObject(DataSet *parent_set) {
@@ -77,7 +79,7 @@ void DataObject::setNonlocalizedKeyProperty(DataProperty *property, string s_val
 	a_properties.push_back(-1);
 	s_nonlocalized_properties.push_back(s_value);
 }
-	
+
 const string &DataObject::getProperty(DataProperty *property, int *is_approximate) {
 	if(!property) return empty_string;
 	for(size_t i = 0; i < properties.size(); i++) {
@@ -132,7 +134,7 @@ bool DataObject::isUserModified() const {
 void DataObject::setUserModified(bool user_modified) {
 	b_uchanged = user_modified;
 }
-	
+
 DataSet *DataObject::parentSet() const {
 	return parent;
 }
@@ -163,10 +165,10 @@ void DataProperty::set(const DataProperty &dp) {
 	if(m_unit) m_unit->unref();
 	m_unit = NULL;
 	ptype = dp.propertyType();
-	b_key = dp.isKey(); 
-	b_case = dp.isCaseSensitive(); 
-	b_hide = dp.isHidden(); 
-	b_brackets = dp.usesBrackets(); 
+	b_key = dp.isKey();
+	b_case = dp.isCaseSensitive();
+	b_hide = dp.isHidden();
+	b_brackets = dp.usesBrackets();
 	b_approximate = dp.isApproximate();
 	b_uchanged = dp.isUserModified();
 	clearNames();
@@ -175,7 +177,7 @@ void DataProperty::set(const DataProperty &dp) {
 		name_is_ref.push_back(dp.nameIsReference(i));
 	}
 }
-	
+
 void DataProperty::setName(string s_name, bool is_ref) {
 	if(s_name.empty()) return;
 	names.clear();
@@ -365,7 +367,7 @@ DataSet::DataSet(const DataSet *o) {
 	b_loaded = false;
 	set(o);
 }
-	
+
 ExpressionItem *DataSet::copy() const {return new DataSet(this);}
 void DataSet::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_FUNCTION && item->subtype() == SUBTYPE_DATA_SET) {
@@ -378,7 +380,7 @@ void DataSet::set(const ExpressionItem *item) {
 int DataSet::subtype() const {
 	return SUBTYPE_DATA_SET;
 }
-	
+
 int DataSet::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	DataObject *o = getObject(vargs[0]);
 	if(!o) {
@@ -590,7 +592,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 							}
 						}
 					}
-				}	
+				}
 			}
 			old_object = false;
 			if(is_user_defs && objects_before > 0) {
@@ -607,7 +609,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 				if(!old_object) o = new DataObject(this);
 				for(size_t i = 0; i < p_refs.size(); i++) {
 					o->setProperty(p_refs[i], s_refs[i]);
-				}	
+				}
 			}
 			child = cur->xmlChildrenNode;
 			while(child) {
@@ -622,7 +624,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 							cmp = !xmlStrcmp(child->name, (const xmlChar*) properties[i]->getName(i2).c_str());
 						}
 						if(cmp) {
-							value = xmlGetProp(child, (xmlChar*) "approximate"); 
+							value = xmlGetProp(child, (xmlChar*) "approximate");
 							if(value) {
 								if(!xmlStrcmp(value, (const xmlChar*) "false")) {
 									i_approx = 0;
@@ -634,8 +636,8 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 								i_approx = -1;
 							}
 							if(properties[i]->propertyType() == PROPERTY_STRING) {
-								value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1); 
-								lang = xmlNodeGetLang(child); 
+								value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);
+								lang = xmlNodeGetLang(child);
 								ils = -1;
 								for(int i3 = lang_status_p.size() - 1; i3 > 0; i3--) {
 									if(lang_status_p[i3] == properties[i3]) {
@@ -658,12 +660,12 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 											}
 										}
 									} else {
-										str = ""; 
+										str = "";
 									}
 									if(ils < 0 || lang_status[ils] < 1) {
-										o->setProperty(properties[i], str, i_approx); 
+										o->setProperty(properties[i], str, i_approx);
 									} else {
-										o->setNonlocalizedKeyProperty(properties[i], str); 
+										o->setNonlocalizedKeyProperty(properties[i], str);
 									}
 								} else if(!locale.empty() && (ils < 0 || lang_status[ils] < 2)) {
 									if(locale == (char*) lang) {
@@ -674,7 +676,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 											lang_status[ils] = 2;
 										}
 										if(value) {
-											str = (char*) value; 
+											str = (char*) value;
 											remove_blank_ends(str);
 										} else {
 											str = "";
@@ -688,20 +690,20 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 											lang_status[ils] = 1;
 										}
 										if(value) {
-											str = (char*) value; 
+											str = (char*) value;
 											remove_blank_ends(str);
 										} else {
 											str = "";
 										}
 										o->setProperty(properties[i], str, i_approx);
-									}	
-								} 
-								if(value) xmlFree(value); 
+									}
+								}
+								if(value) xmlFree(value);
 								if(lang) xmlFree(lang);
 							} else {
 								unc_rel = false;
 								uncertainty = xmlGetProp(child, (xmlChar*) "relative_uncertainty");
-								if(!uncertainty) uncertainty = xmlGetProp(child, (xmlChar*) "uncertainty"); 
+								if(!uncertainty) uncertainty = xmlGetProp(child, (xmlChar*) "uncertainty");
 								else unc_rel = true;
 								XML_GET_STRING_FROM_TEXT(child, str)
 								remove_blank_ends(str);
@@ -751,9 +753,9 @@ int DataSet::saveObjects(const char *file_name, bool save_global) {
 		filename = file_name;
 	}
 	const string *vstr;
-	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");	
-	xmlNodePtr cur, newnode, newnode2;	
-	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);	
+	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
+	xmlNodePtr cur, newnode, newnode2;
+	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
 	cur = doc->children;
 	DataObject *o;
@@ -785,7 +787,7 @@ int DataSet::saveObjects(const char *file_name, bool save_global) {
 				} else {
 					vstr = &o->getProperty(properties[i2], &approx);
 				}
-				if(save_global || approx >= 0 || !properties[i2]->isKey()) {	
+				if(save_global || approx >= 0 || !properties[i2]->isKey()) {
 					if(!vstr->empty()) {
 						if(properties[i2]->getReferenceName().find(' ') != string::npos) {
 							if(save_global && properties[i2]->propertyType() == PROPERTY_STRING) {
@@ -826,7 +828,7 @@ bool DataSet::objectsLoaded() const {
 void DataSet::setObjectsLoaded(bool objects_loaded) {
 	b_loaded = objects_loaded;
 }
-	
+
 void DataSet::addProperty(DataProperty *dp) {
 	properties.push_back(dp);
 	setChanged(true);
@@ -950,7 +952,7 @@ DataObject *DataSet::getNextObject(DataObjectIter *it) {
 	if(*it != objects.end()) return **it;
 	return NULL;
 }
-	
+
 const MathStructure *DataSet::getObjectProperyStruct(string property, string object) {
 	DataObject *o = getObject(object);
 	DataProperty *dp = getProperty(property);
@@ -983,7 +985,7 @@ string DataSet::getObjectPropertyDisplayString(string property, string object) {
 	}
 	return empty_string;
 }
-	
+
 string DataSet::printProperties(string object) {
 	return printProperties(getObject(object));
 }

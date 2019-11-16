@@ -34,77 +34,77 @@
 
 /// \cond
 struct eqstr {
-    bool operator()(const char *s1, const char *s2) const;	
+    bool operator()(const char *s1, const char *s2) const;
 };
 /// \endcond
 
 void sleep_ms(int milliseconds);
 
-string& gsub(const string &pattern, const string &sub, string &str);
-string& gsub(const char *pattern, const char *sub, string &str);
-string d2s(double value, int precision = 100);
-string i2s(long int value);
-string u2s(unsigned long int value);
+std::string& gsub(const std::string &pattern, const std::string &sub, std::string &str);
+std::string& gsub(const char *pattern, const char *sub, std::string &str);
+std::string d2s(double value, int precision = 100);
+std::string i2s(long int value);
+std::string u2s(unsigned long int value);
 const char *b2yn(bool b, bool capital = true);
 const char *b2tf(bool b, bool capital = true);
 const char *b2oo(bool b, bool capital = true);
-string p2s(void *o);
-long int s2i(const string& str);
+std::string p2s(void *o);
+long int s2i(const std::string& str);
 long int s2i(const char *str);
-void *s2p(const string& str);
+void *s2p(const std::string& str);
 void *s2p(const char *str);
 
 void now(int &hour, int &min, int &sec);
 
-size_t find_ending_bracket(const string &str, size_t start, int *missing = NULL);
+size_t find_ending_bracket(const std::string &str, size_t start, int *missing = NULL);
 
 char op2ch(MathOperation op);
 
-string& wrap_p(string &str);
-string& remove_blanks(string &str);
-string& remove_duplicate_blanks(string &str);
-string& remove_blank_ends(string &str);
-string& remove_parenthesis(string &str);
+std::string& wrap_p(std::string &str);
+std::string& remove_blanks(std::string &str);
+std::string& remove_duplicate_blanks(std::string &str);
+std::string& remove_blank_ends(std::string &str);
+std::string& remove_parenthesis(std::string &str);
 
 bool is_in(const char *str, char c);
 bool is_not_in(const char *str, char c);
-bool is_in(const string &str, char c);
-bool is_not_in(const string &str, char c);
-int sign_place(string *str, size_t start = 0);
+bool is_in(const std::string &str, char c);
+bool is_not_in(const std::string &str, char c);
+int sign_place(std::string *str, size_t start = 0);
 int gcd(int i1, int i2);
 
 #ifdef _WIN32
-string utf8_encode(const wstring &wstr);
+std::string utf8_encode(const wstring &wstr);
 #endif
 char *locale_to_utf8(const char *str);
 char *locale_from_utf8(const char *str);
 char *utf8_strdown(const char *str, int l = -1);
-size_t unicode_length(const string &str);
+size_t unicode_length(const std::string &str);
 size_t unicode_length(const char *str);
-bool text_length_is_one(const string &str);
-bool equalsIgnoreCase(const string &str1, const string &str2);
-bool equalsIgnoreCase(const string &str1, const char *str2);
+bool text_length_is_one(const std::string &str);
+bool equalsIgnoreCase(const std::string &str1, const std::string &str2);
+bool equalsIgnoreCase(const std::string &str1, const char *str2);
 
-void parse_qalculate_version(string qalculate_version, int *qalculate_version_numbers);
+void parse_qalculate_version(std::string qalculate_version, int *qalculate_version_numbers);
 
-string getOldLocalDir();
-string getLocalDir();
-string getPackageDataDir();
-string getGlobalDefinitionsDir();
-string getPackageLocaleDir();
-string getLocalDataDir();
-string getLocalTmpDir();
-string buildPath(string dir, string filename);
-string buildPath(string dir1, string dir2, string filename);
-string buildPath(string dir1, string dir2, string dir3, string filename);
-bool dirExists(string dirpath);
-bool fileExists(string dirpath);
-bool makeDir(string dirpath);
-bool recursiveMakeDir(string dirpath);
-bool removeDir(string dirpath);
+std::string getOldLocalDir();
+std::string getLocalDir();
+std::string getPackageDataDir();
+std::string getGlobalDefinitionsDir();
+std::string getPackageLocaleDir();
+std::string getLocalDataDir();
+std::string getLocalTmpDir();
+std::string buildPath(std::string dir, std::string filename);
+std::string buildPath(std::string dir1, std::string dir2, std::string filename);
+std::string buildPath(std::string dir1, std::string dir2, std::string dir3, std::string filename);
+bool dirExists(std::string dirpath);
+bool fileExists(std::string dirpath);
+bool makeDir(std::string dirpath);
+bool recursiveMakeDir(std::string dirpath);
+bool removeDir(std::string dirpath);
 bool move_file(const char *from_file, const char *to_file);
 
-int checkAvailableVersion(const char *version_id, const char *current_version, string *avaible_version = NULL, int timeout = 5);
+int checkAvailableVersion(const char *version_id, const char *current_version, std::string *avaible_version = NULL, int timeout = 5);
 
 class Thread {
 public:

@@ -1,5 +1,5 @@
 /*
-    Qalculate    
+    Qalculate
 
     Copyright (C) 2008  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
@@ -20,6 +20,8 @@
 #include "Unit.h"
 
 #include <limits.h>
+
+using namespace std;
 
 #if HAVE_UNORDERED_MAP
 #	include <unordered_map>
@@ -181,7 +183,7 @@ string MathFunction::printCondition() {
 		svar = '\\';
 		if(maxargs() < 0 && i >= minargs()) {
 			svar += (char) ('v' + i - minargs());
-		} else { 
+		} else {
 			if('x' + i > 'z') {
 				svar += (char) ('a' + i - 3);
 			} else {
@@ -345,7 +347,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 					CALCULATOR->parse(mstruct, getDefaultValue(itmp));
 					vargs.addChild_nocopy(mstruct);
 				}
-			} else {				
+			} else {
 				if(arg) {
 					MathStructure *mstruct = new MathStructure();
 					arg->parse(mstruct, stmp, po);
@@ -471,7 +473,7 @@ MathStructure MathFunction::createFunctionMathStructureFromVArgs(const MathStruc
 	return mstruct;
 }
 MathStructure MathFunction::createFunctionMathStructureFromSVArgs(vector<string> &svargs) {
-	MathStructure mstruct(this, NULL); 
+	MathStructure mstruct(this, NULL);
 	for(size_t i = 0; i < svargs.size(); i++) {
 		mstruct.addChild(svargs[i]);
 	}
@@ -487,7 +489,7 @@ MathStructure MathFunction::calculate(const string &argv, const EvaluationOption
 }
 MathStructure MathFunction::parse(const string &argv, const ParseOptions &po) {
 	MathStructure vargs;
-	args(argv, vargs, po);	
+	args(argv, vargs, po);
 	vargs.setType(STRUCT_FUNCTION);
 	vargs.setFunction(this);
 	return vargs;
@@ -518,7 +520,7 @@ bool MathFunction::testArguments(MathStructure &vargs) {
 				}
 				if(vargs[it->first - 1].isUndefined()) {
 					vargs[it->first - 1].set(CALCULATOR->v_x, true);
-					CALCULATOR->error(true, _("No was unknown variable/symbol found."), NULL);
+					CALCULATOR->error(false, _("No was unknown variable/symbol found."), NULL);
 				}
 			}
 			if(!it->second->test(vargs[it->first - 1], it->first, this)) return false;
@@ -634,8 +636,8 @@ int MathFunction::stringArgs(const string &argstr, vector<string> &svargs) {
 					itmp++;
 					if(itmp <= maxargs() || args() < 0) {
 						stmp = str.substr(start_pos, str_index - start_pos);
-						remove_blank_ends(stmp);																				
-						remove_parenthesis(stmp);						
+						remove_blank_ends(stmp);
+						remove_parenthesis(stmp);
 						remove_blank_ends(stmp);
 						if(stmp.empty()) {
 							stmp = getDefaultValue(itmp);
@@ -652,26 +654,26 @@ int MathFunction::stringArgs(const string &argstr, vector<string> &svargs) {
 		itmp++;
 		if(itmp <= maxargs() || args() < 0) {
 			stmp = str.substr(start_pos, str.length() - start_pos);
-			remove_blank_ends(stmp);																				
-			remove_parenthesis(stmp);						
+			remove_blank_ends(stmp);
+			remove_parenthesis(stmp);
 			remove_blank_ends(stmp);
 			if(stmp.empty()) {
 				stmp = getDefaultValue(itmp);
 			}
 			svargs.push_back(stmp);
-		}	
+		}
 	}
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
 		while(itmp2 < maxargs()) {
-			svargs.push_back(default_values[itmp2 - minargs()]);	
+			svargs.push_back(default_values[itmp2 - minargs()]);
 			itmp2++;
 		}
 	}
 	return itmp;
 }
 
-MathStructure MathFunction::produceVector(const MathStructure &vargs, int begin, int end) {	
+MathStructure MathFunction::produceVector(const MathStructure &vargs, int begin, int end) {
 	if(begin < 1) {
 		begin = minargs() + 1;
 		if(begin < 1) begin = 1;
@@ -691,7 +693,7 @@ MathStructure MathFunction::produceVector(const MathStructure &vargs, int begin,
 	MathStructure mstruct2;
 	return mstruct.flattenVector(mstruct2);
 }
-MathStructure MathFunction::produceArgumentsVector(const MathStructure &vargs, int begin, int end) {	
+MathStructure MathFunction::produceArgumentsVector(const MathStructure &vargs, int begin, int end) {
 	if(begin < 1) {
 		begin = minargs() + 1;
 		if(begin < 1) begin = 1;
@@ -821,7 +823,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(i_args < 0) {
 			i_args = minargs();
 		}
-		
+
 		for(int i = 0; i < i_args; i++) {
 			if(vargs[i].containsInterval(true) || vargs[i].containsFunction(CALCULATOR->f_interval, true)) {
 				MathStructure *mv = new MathStructure(vargs[i]);
@@ -860,7 +862,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					} else {
 						svar += 'x' + i3;
 					}
-					i2 = 0;	
+					i2 = 0;
 					while(true) {
 						if((i2 = str.find(svar, i2)) != string::npos) {
 							if(i2 != 0 && str[i2 - 1] == '\\') {
@@ -876,7 +878,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				if(maxargs() < 0) {
 					i2 = 0;
 					while(true) {
-						if((i2 = str.find("\\v")) != string::npos) {					
+						if((i2 = str.find("\\v")) != string::npos) {
 							if(i2 != 0 && str[i2 - 1] == '\\') {
 								i2 += 2;
 							} else {
@@ -888,7 +890,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					}
 					i2 = 0;
 					while(true) {
-						if((i2 = str.find("\\w")) != string::npos) {					
+						if((i2 = str.find("\\w")) != string::npos) {
 							if(i2 != 0 && str[i2 - 1] == '\\') {
 								i2 += 2;
 							} else {
@@ -897,7 +899,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						} else {
 							break;
 						}
-					}			
+					}
 				}
 				MathStructure *v_mstruct = new MathStructure();
 				CALCULATOR->parse(v_mstruct, str, po);
@@ -944,7 +946,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			} else {
 				svar += 'x' + i;
 			}
-			i2 = 0;	
+			i2 = 0;
 			while(true) {
 				if((i2 = stmp.find(svar, i2)) != string::npos) {
 					if(i2 != 0 && stmp[i2 - 1] == '\\') {
@@ -960,7 +962,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(maxargs() < 0) {
 			i2 = 0;
 			while(true) {
-				if((i2 = stmp.find("\\v")) != string::npos) {					
+				if((i2 = stmp.find("\\v")) != string::npos) {
 					if(i2 != 0 && stmp[i2 - 1] == '\\') {
 						i2 += 2;
 					} else {
@@ -972,7 +974,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			i2 = 0;
 			while(true) {
-				if((i2 = stmp.find("\\w")) != string::npos) {					
+				if((i2 = stmp.find("\\w")) != string::npos) {
 					if(i2 != 0 && stmp[i2 - 1] == '\\') {
 						i2 += 2;
 					} else {
@@ -981,7 +983,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				} else {
 					break;
 				}
-			}			
+			}
 		}
 		while(true) {
 			if((i2 = stmp.find("\\\\")) != string::npos) {
@@ -1032,13 +1034,13 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 				svar_o += (char) ('A' + i - 3);
 			else
 				svar_o += 'X' + i;
-				
+
 			before_find_in_set_formula:
 			if(i < 24 && (i2 = new_formula.find(svar_o, i4)) != string::npos) {
 				if(i2 > 0 && new_formula[i2 - 1] == '\\') {
 					i4 = i2 + 2;
 					goto before_find_in_set_formula;
-				}				
+				}
 				i3 = 0;
 				if(new_formula.length() > i2 + 2 && new_formula[i2 + 2] == ID_WRAP_LEFT_CH) {
 					if((i3 = new_formula.find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
@@ -1083,11 +1085,11 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 						if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
 							i4 = i2 + 2;
 							goto before_find_in_vsubs_set_formula;
-						}				
+						}
 						i3 = 0;
 						if(v_subs[sub_i].length() > i2 + 2 && v_subs[sub_i][i2 + 2] == ID_WRAP_LEFT_CH) {
 							if((i3 = v_subs[sub_i].find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
-								svar_v = v_subs[sub_i].substr(i2 + 3, i3 - (i2 + 3));	
+								svar_v = v_subs[sub_i].substr(i2 + 3, i3 - (i2 + 3));
 								i3 -= i2 + 1;
 							} else i3 = 0;
 						}
@@ -1130,7 +1132,7 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 				} else {
 					max_argc_++;
 					argc_++;
-				}			
+				}
 			}
 		}
 	}
@@ -1144,16 +1146,16 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 		max_argc_ = -1;
 		if(argc_ < 0) argc_ = 0;
 	} else if(max_argc_ < argc_) {
-		max_argc_ = argc_;	
+		max_argc_ = argc_;
 	}
-	
+
 	while((int) default_values.size() < max_argc_ - argc_) {
 		default_values.push_back("0");
 	}
 	if(max_argc_ > 0) default_values.resize(max_argc_ - argc_);
 	sformula_calc = new_formula;
 	argc = argc_;
-	max_argc = max_argc_;	
+	max_argc = max_argc_;
 }
 void UserFunction::addSubfunction(string subfunction, bool precalculate) {
 	setChanged(true);
@@ -1239,7 +1241,7 @@ string Argument::printlong() const {
 		}
 		str += " ";
 		str += _("that is rational (polynomial)");
-	} 
+	}
 	if(!scondition.empty()) {
 		if(!b_zero || b_rational) {
 			str += " ";
@@ -1274,14 +1276,14 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 	bool b = subtest(value, eo);
 	if(b && !b_zero) {
 		if(!value.isNumber() && !value.representsNonZero()) {
-			value.eval(eo);	
+			value.eval(eo);
 			evaled = true;
 		}
 		b = value.representsNonZero();
 	}
 	if(b && b_rational) {
 		if(!evaled) {
-			value.eval(eo);	
+			value.eval(eo);
 			evaled = true;
 		}
 		b = value.isRationalPolynomial();
@@ -1365,7 +1367,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				CALCULATOR->parse(mstruct, str.substr(1 + pars, str.length() - 2 - pars * 2), po);
 				if(mstruct->isDateTime() && !mstruct->datetime()->parsed_string.empty()) mstruct->set(mstruct->datetime()->parsed_string, false, true);
 				return;
-			}	
+			}
 			if((str[pars] == '\"' && str[str.length() - 1 - pars] == '\"') || (str[pars] == '\'' && str[str.length() - 1 - pars] == '\'')) {
 				size_t i = pars + 1, cits = 0;
 				while(i < str.length() - 1 - pars) {
@@ -1535,7 +1537,7 @@ NumberArgument::~NumberArgument() {
 		delete fmax;
 	}
 }
-	
+
 void NumberArgument::setMin(const Number *nmin) {
 	if(!nmin) {
 		if(fmin) {
@@ -1643,7 +1645,7 @@ void NumberArgument::set(const Argument *arg) {
 		}
 		if(farg->max()) {
 			fmax = new Number(*farg->max());
-		}		
+		}
 	}
 	Argument::set(arg);
 }
@@ -1706,8 +1708,8 @@ IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minma
 		case ARGUMENT_MIN_MAX_NONZERO: {
 			setZeroForbidden(true);
 			break;
-		}	
-		default: {}	
+		}
+		default: {}
 	}
 	b_handle_vector = does_test;
 }
@@ -1778,7 +1780,7 @@ bool IntegerArgument::subtest(MathStructure &value, const EvaluationOptions &eo)
 		if(!(COMPARISON_IS_EQUAL_OR_LESS(cmpr))) {
 			return false;
 		}
-	}	
+	}
 	return true;
 }
 int IntegerArgument::type() const {
@@ -1916,12 +1918,12 @@ VectorArgument::VectorArgument(string name_, bool does_test, bool allow_matrix, 
 VectorArgument::VectorArgument(const VectorArgument *arg) {
 	set(arg);
 	b_argloop = arg->reoccuringArguments();
-	size_t i = 1; 
+	size_t i = 1;
 	while(true) {
 		if(!arg->getArgument(i)) break;
 		subargs.push_back(arg->getArgument(i)->copy());
 		i++;
-	}	
+	}
 }
 VectorArgument::~VectorArgument() {
 	for(size_t i = 0; i < subargs.size(); i++) {
@@ -2144,7 +2146,7 @@ void AngleArgument::parse(MathStructure *mstruct, const string &str, const Parse
 ArgumentSet::ArgumentSet(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
 }
 ArgumentSet::ArgumentSet(const ArgumentSet *arg) {
-	set(arg); 
+	set(arg);
 	size_t i = 1;
 	while(true) {
 		if(!arg->getArgument(i)) break;

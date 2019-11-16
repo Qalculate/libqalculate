@@ -39,15 +39,15 @@ class Unit : public ExpressionItem {
 
   protected:
 
-	string ssystem, scountries;
+	std::string ssystem, scountries;
 	bool b_si;
 	bool b_use_with_prefixes;
 
   public:
 
-	Unit(string cat_, string name_, string plural_ = "", string singular_ = "", string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
-	Unit();	
-	Unit(const Unit *unit);	
+	Unit(std::string cat_, std::string name_, std::string plural_ = "", std::string singular_ = "", std::string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	Unit();
+	Unit(const Unit *unit);
 	virtual ~Unit();
 
 	virtual ExpressionItem *copy() const;
@@ -65,12 +65,12 @@ class Unit : public ExpressionItem {
 	/** Sets which system/standard ("SI", "CGS", etc.) the unit is part of.
 	* Setting system to "SI" (case-insensitive), is equivalent to setAsSIUnit().
 	*/
-	void setSystem(string s_system);
+	void setSystem(std::string s_system);
 	/** Returns the system/standard that the unit is part of.
 	*
 	* @returns System string.
 	*/
-	const string &system() const;	
+	const std::string &system() const;
 	/** Returns wether prefixes should be used with this unit or not.
 	*
 	* @returns true if the prefixes is appropriate for this unit.
@@ -84,16 +84,16 @@ class Unit : public ExpressionItem {
 	* @returns true if the unit is a currency.
 	*/
 	bool isCurrency() const;
-	const string &countries() const;
-	void setCountries(string country_names);
+	const std::string &countries() const;
+	void setCountries(std::string country_names);
 	/** Returns a display string representing the unit in an expression.
 	*
 	* Equivalent to preferredName() for Unit and AliasUnit, but closer to MathStructure::print() for CompositeUnit (prints out base expression).
 	*/
-	virtual string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
-	virtual const string &plural(bool return_singular_if_no_plural = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
-	virtual const string &singular(bool return_abbreviation_if_no_singular = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
-	virtual const string &abbreviation(bool return_singular_if_no_abbreviation = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual std::string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const std::string &plural(bool return_singular_if_no_plural = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const std::string &singular(bool return_abbreviation_if_no_singular = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const std::string &abbreviation(bool return_singular_if_no_abbreviation = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	virtual bool isUsedByOtherUnits() const;
 	virtual Unit* baseUnit() const;
 	virtual MathStructure &convertToBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
@@ -173,36 +173,36 @@ class AliasUnit : public Unit {
 
   protected:
 
-	string svalue, sinverse, suncertainty;
+	std::string svalue, sinverse, suncertainty;
 	bool b_relative_uncertainty;
 	int i_exp, i_mix, i_mix_min;
 	Unit *o_unit;
 
   public:
 
-	AliasUnit(string cat_, string name_, string plural_, string singular_, string title_, Unit *alias, string relation = "1", int exp = 1, string inverse = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
-	AliasUnit(const AliasUnit *unit);		
-	AliasUnit();			
+	AliasUnit(std::string cat_, std::string name_, std::string plural_, std::string singular_, std::string title_, Unit *alias, std::string relation = "1", int exp = 1, std::string inverse = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+	AliasUnit(const AliasUnit *unit);
+	AliasUnit();
 	virtual ~AliasUnit();
 
 	virtual ExpressionItem *copy() const;
 	virtual void set(const ExpressionItem *item);
-	
+
 	virtual Unit* baseUnit() const;
 	virtual Unit* firstBaseUnit() const;
 	virtual void setBaseUnit(Unit *alias);
-	virtual string expression() const;
-	virtual string inverseExpression() const;
-	virtual string uncertainty(bool *is_relative = NULL) const;
+	virtual std::string expression() const;
+	virtual std::string inverseExpression() const;
+	virtual std::string uncertainty(bool *is_relative = NULL) const;
 	/**
 	* Sets the relation expression.
 	*/
-	virtual void setExpression(string relation);
+	virtual void setExpression(std::string relation);
 	/**
 	* Sets the inverse relation expression.
 	*/
-	virtual void setInverseExpression(string inverse);
-	virtual void setUncertainty(string standard_uncertainty, bool is_relative = false);
+	virtual void setInverseExpression(std::string inverse);
+	virtual void setUncertainty(std::string standard_uncertainty, bool is_relative = false);
 	virtual MathStructure &convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
 	virtual MathStructure &convertFromFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
 	virtual MathStructure &convertToBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
@@ -244,15 +244,15 @@ class AliasUnit_Composite : public AliasUnit {
   public:
 
 	AliasUnit_Composite(Unit *alias, int exp = 1, Prefix *prefix_ = NULL);
-	AliasUnit_Composite(const AliasUnit_Composite *unit);			
+	AliasUnit_Composite(const AliasUnit_Composite *unit);
 	virtual ~AliasUnit_Composite();
 
 	virtual ExpressionItem *copy() const;
 	virtual void set(const ExpressionItem *item);
-	
-	virtual string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+
+	virtual std::string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	virtual Prefix *prefix() const;
-	virtual int prefixExponent() const;	
+	virtual int prefixExponent() const;
 	virtual void set(Unit *u, int exp = 1, Prefix *prefix_ = NULL);
 	virtual MathStructure &convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
 	virtual MathStructure &convertFromFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
@@ -273,15 +273,15 @@ class AliasUnit_Composite : public AliasUnit {
 * parsed from an expression (ex. "cm^3/g) with setBaseExpression().
 */
 class CompositeUnit : public Unit {
-	
+
 	protected:
-	
-		string sshort;
-		vector<AliasUnit_Composite*> units;
+
+		std::string sshort;
+		std::vector<AliasUnit_Composite*> units;
 
 	public:
 
-		CompositeUnit(string cat_, string name_, string title_ = "", string base_expression_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+		CompositeUnit(std::string cat_, std::string name_, std::string title_ = "", std::string base_expression_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
 		CompositeUnit(const CompositeUnit *unit);
 		virtual ~CompositeUnit();
 		virtual ExpressionItem *copy() const;
@@ -293,7 +293,7 @@ class CompositeUnit : public Unit {
 		* @param prefix Prefix.
 		*/
 		virtual void add(Unit *u, int exp = 1, Prefix *prefix = NULL);
-		/** Retrieves information about a sub/base unit 
+		/** Retrieves information about a sub/base unit
 		*
 		* @param index Index starting at 1.
 		* @param[out] exp Exponent.
@@ -310,7 +310,7 @@ class CompositeUnit : public Unit {
 		/** Prints out the sub/base units with prefixes and exponents.
 		* This is the representation of the unit in expressions.
 		*/
-		virtual string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+		virtual std::string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 		virtual int subtype() const;
 		/** If this unit contains a sub/base unit with a relation to the specified unit.
 		 */
@@ -320,7 +320,7 @@ class CompositeUnit : public Unit {
 		/** Creates a MathStructure with the sub/base units of the unit.
 		*/
 		virtual MathStructure generateMathStructure(bool make_division = false, bool set_null_prefixes = false) const;
-		virtual void setBaseExpression(string base_expression_);
+		virtual void setBaseExpression(std::string base_expression_);
 		/** Removes all sub/base units. */
 		virtual void clear();
 };

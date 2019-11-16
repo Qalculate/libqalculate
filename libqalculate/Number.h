@@ -46,11 +46,11 @@ typedef enum {
 * Implimented using GNU MP and MPFR.
  */
 class Number {
-	
+
 	private:
 
 	protected:
-	
+
 		void testInteger();
 		bool testErrors(int error_level = 1) const;
 		bool testFloatResult(bool allow_infinite_result = true, int error_level = 1, bool test_integer = true);
@@ -58,16 +58,16 @@ class Number {
 		mpq_t r_value;
 		mpfr_t fu_value;
 		mpfr_t fl_value;
-		
+
 		Number *i_value;
-		
+
 		NumberType n_type;
-		
+
 		bool b_approx, b_imag;
 		int i_precision;
 
 	public:
-	
+
 		/**
 		* Constructs a number initialized as zero.
  		*/
@@ -78,7 +78,7 @@ class Number {
 		* @param number Text string to read number from.
 		* @param po Options for parsing the text string.
  		*/
-		Number(string number, const ParseOptions &po = default_parse_options);
+		Number(std::string number, const ParseOptions &po = default_parse_options);
 		/**
 		* Constructs a rational number.
 		*
@@ -92,8 +92,8 @@ class Number {
  		*/
 		Number(const Number &o);
 		virtual ~Number();
-		
-		void set(string number, const ParseOptions &po = default_parse_options);
+
+		void set(std::string number, const ParseOptions &po = default_parse_options);
 		void set(long int numerator, long int denominator = 1, long int exp_10 = 0, bool keep_precision = false, bool keep_imag = false);
 		void setPlusInfinity(bool keep_precision = false, bool keep_imag = false);
 		void setMinusInfinity(bool keep_precision = false, bool keep_imag = false);
@@ -105,14 +105,14 @@ class Number {
 		void setInternal(const mpq_t &mpq_value, bool keep_precision = false, bool keep_imag = false);
 		void setInternal(const mpz_t &mpz_num, const mpz_t &mpz_den, bool keep_precision = false, bool keep_imag = false);
 		void setInternal(const mpfr_t &mpfr_value, bool merge_precision = false, bool keep_imag = false);
-		
+
 		void setImaginaryPart(const Number &o);
 		void setImaginaryPart(long int numerator, long int denominator = 1, long int exp_10 = 0);
 		void set(const Number &o, bool merge_precision = false, bool keep_imag = false);
 		void clear(bool keep_precision = false);
 		void clearReal();
 		void clearImaginary();
-		
+
 		const mpq_t &internalRational() const;
 		const mpfr_t &internalUpperFloat() const;
 		const mpfr_t &internalLowerFloat() const;
@@ -126,14 +126,14 @@ class Number {
 		void precisionToInterval();
 		bool intervalToPrecision(long int min_precision = 2);
 		void intervalToMidValue();
-		void splitInterval(unsigned int nr_of_parts, vector<Number> &v) const;
-		bool getCentralInteger(Number &nr_int, bool *b_multiple = NULL, vector<Number> *v = NULL) const;
+		void splitInterval(unsigned int nr_of_parts, std::vector<Number> &v) const;
+		bool getCentralInteger(Number &nr_int, bool *b_multiple = NULL, std::vector<Number> *v = NULL) const;
 		bool mergeInterval(const Number &o, bool set_to_overlap = false);
 		void setUncertainty(const Number &o, bool to_precision = false);
 		void setRelativeUncertainty(const Number &o, bool to_precision = false);
 		Number uncertainty() const;
 		Number relativeUncertainty() const;
-		
+
 		double floatValue() const;
 		/**
 		* Converts a number to an integer. If the number does not represent an integer it will rounded using round().
@@ -146,7 +146,7 @@ class Number {
 		long int lintValue(bool *overflow = NULL) const;
 		long long int llintValue() const;
 		unsigned long int ulintValue(bool *overflow = NULL) const;
-		
+
 		/** Returns true if the number is approximate.
 		*
  		* @return true if the number is approximate.
@@ -157,25 +157,25 @@ class Number {
  		* @return true if the number has an approximate representation.
  		*/
 		bool isFloatingPoint() const;
-		
+
 		void setPrecisionAndApproximateFrom(const Number &o);
-		
+
 		bool isInterval(bool ignore_imag = true) const;
 		bool imaginaryPartIsInterval() const;
-		
+
 		/** Defines the number as approximate or exact.
 		*
  		* @param is_approximate If the number shall be regarded as approximate.
  		*/
 		void setApproximate(bool is_approximate = true);
-		
+
 		/** Returns the.precision of the number.
 		*
  		* @return Precision of the number or -1 if the number is exact or the precision has not been set.
  		*/
 		int precision(int calculate_from_interval = 0) const;
 		void setPrecision(int prec);
-		
+
 		bool isUndefined() const;
 		/** Returns true if the number is infinity, plus infinity or minus infinity.
 		*
@@ -196,7 +196,7 @@ class Number {
 		bool includesInfinity(bool ignore_imag = false) const;
 		bool includesPlusInfinity() const;
 		bool includesMinusInfinity() const;
-		
+
 		/** Returns the real part of the number if it is complex, or a copy if it is real.
 		*
  		* @return true if the real part of a complex number.
@@ -232,7 +232,7 @@ class Number {
 		Number operator && (const Number &o) const;
 		Number operator || (const Number &o) const;
 		Number operator ! () const;
-		
+
 		void operator *= (const Number &o);
 		void operator /= (const Number &o);
 		void operator += (const Number &o);
@@ -243,7 +243,7 @@ class Number {
 		void operator += (long int i);
 		void operator -= (long int i);
 		void operator ^= (long int i);
-		
+
 		bool operator == (const Number &o) const;
 		bool operator != (const Number &o) const;
 		bool operator < (const Number &o) const;
@@ -256,7 +256,7 @@ class Number {
 		bool operator >= (long int i) const;
 		bool operator == (long int i) const;
 		bool operator != (long int i) const;
-		
+
 		bool bitAnd(const Number &o);
 		bool bitOr(const Number &o);
 		bool bitXor(const Number &o);
@@ -266,7 +266,7 @@ class Number {
 		bool shiftLeft(const Number &o);
 		bool shiftRight(const Number &o);
 		bool shift(const Number &o);
-		
+
 		bool hasRealPart() const;
 		bool hasImaginaryPart() const;
 		bool isComplex() const;
@@ -332,7 +332,7 @@ class Number {
 		bool numeratorIsOne() const;
 		bool numeratorIsMinusOne() const;
 		bool isOdd() const;
-		
+
 		int integerLength() const;
 
 		/** Add to the number (x+o).
@@ -378,7 +378,7 @@ class Number {
 		bool sqrt();
 		bool cbrt();
 		bool root(const Number &o);
-		bool allroots(const Number &o, vector<Number> &roots);
+		bool allroots(const Number &o, std::vector<Number> &roots);
 		/** Multiply the number with a power of ten (x*10^o).
 		*
 		* @param o Number to raise 10 by.
@@ -406,7 +406,7 @@ class Number {
  		* @return true if the operation was successful.
  		*/
 		bool square();
-		
+
 		/** Negate the number (-x).
 		*
  		* @return true if the operation was successful.
@@ -426,10 +426,10 @@ class Number {
 		bool round(bool halfway_to_even = true);
 		bool floor();
 		bool ceil();
-		bool trunc();	
-		bool frac();		
+		bool trunc();
+		bool frac();
 		bool rem(const Number &o);
-		
+
 		bool smod(const Number &o);
 		bool irem(const Number &o);
 		bool irem(const Number &o, Number &q);
@@ -442,7 +442,7 @@ class Number {
 		void setTrue(bool is_true = true);
 		void setFalse();
 		void setLogicalNot();
-		
+
 		/** Set the number to e, the base of natural logarithm, calculated with the current default precision.
  		*/
 		void e(bool use_cached_number = true);
@@ -460,7 +460,7 @@ class Number {
  		* @return true if the calculation was successful.
  		*/
 		bool zeta();
-		
+
 		bool gamma();
 		bool digamma();
 		bool airy();
@@ -468,7 +468,7 @@ class Number {
 		bool erfc();
 		bool besselj(const Number &o);
 		bool bessely(const Number &o);
-		
+
 		bool sin();
 		bool asin();
 		bool sinh();
@@ -489,7 +489,7 @@ class Number {
 		bool lambertW();
 		bool gcd(const Number &o);
 		bool lcm(const Number &o);
-		
+
 		bool polylog(const Number &o);
 		bool igamma(const Number &o);
 		bool expint();
@@ -498,28 +498,28 @@ class Number {
 		bool sinhint();
 		bool cosint();
 		bool coshint();
-		
+
 		bool factorial();
 		bool multiFactorial(const Number &o);
 		bool doubleFactorial();
 		bool binomial(const Number &m, const Number &k);
-		bool factorize(vector<Number> &factors);
-		
+		bool factorize(std::vector<Number> &factors);
+
 		void rand();
 		void randn();
 		void intRand(const Number &ceil);
-	
-		bool add(const Number &o, MathOperation op); 
 
-		string printNumerator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
-		string printDenominator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
-		string printImaginaryNumerator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
-		string printImaginaryDenominator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
+		bool add(const Number &o, MathOperation op);
 
-		string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
-	
+		std::string printNumerator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
+		std::string printDenominator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
+		std::string printImaginaryNumerator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
+		std::string printImaginaryDenominator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
+
+		std::string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
+
 };
 
-ostream& operator << (ostream &os, const Number&);
+std::ostream& operator << (std::ostream &os, const Number&);
 
 #endif
