@@ -11,7 +11,7 @@ int has_not_a_comparison() {
 	if(!CALCULATOR->message()) return 0;
 	while(true) {
 		if(CALCULATOR->message()->message() == _("The calculation has been forcibly terminated. Please restart the application and report this as a bug.")) return -1;
-		if(CALCULATOR->message()->message() == "A") return 1;
+		//if(CALCULATOR->message()->message() == "A") return 1;
 		if(!CALCULATOR->nextMessage()) break;
 	}
 	return 0;
@@ -38,7 +38,7 @@ void clear_errors() {
 		if(!CALCULATOR->nextMessage()) break;
 	}
 }
-int successes = 0, imaginary = 0;
+int successes = 0, imaginary = 0, s1 = 0, s2 = 0, f1 = 0;
 void test_integration5(const MathStructure &mstruct, const Number &a, const Number &b) {
 	cerr << "integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;
 	EvaluationOptions eo;
@@ -55,7 +55,9 @@ void test_integration5(const MathStructure &mstruct, const Number &a, const Numb
 	cerr << "C" << endl;
 	int i = has_not_a_comparison();
 	if(i != 0) cout << i << "A: integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;
-	if(!mstruct2.isNumber()) {CALCULATOR->clearMessages(); return;}
+	if(!mstruct2.isNumber()) {f1++; CALCULATOR->clearMessages(); return;}
+	if(mstruct2.isNumber()) s1++;
+	if(!mstruct2.number().isReal()) return;
 	MathStructure mstruct3(mstruct);
 	mstruct3.transform(CALCULATOR->f_integrate);
 	mstruct3.addChild(a);
@@ -66,95 +68,98 @@ void test_integration5(const MathStructure &mstruct, const Number &a, const Numb
 	cerr << "D" << endl;
 	i = has_not_a_comparison();
 	if(i != 0) cout << i << "B: integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;
-	if(!mstruct3.isNumber()) {CALCULATOR->clearMessages(); return;}
-	if(!mstruct2.equals(mstruct3, true, true)) {
-		PrintOptions po = CALCULATOR->messagePrintOptions();
-		Number nr_i1, nr_i2, nr1, nr2;
-		nr1 = mstruct2.number().realPart();
-		nr2 = mstruct3.number().realPart();
-		nr_i1 = mstruct2.number().imaginaryPart();
-		nr_i2 = mstruct3.number().imaginaryPart();
-		bool b_equal = true;
-		string str1, str2;
-		if(nr1.isNonZero() || nr2.isNonZero()) {
-			if(nr2.precision() >= 0) po.min_decimals = nr2.precision(true);
-			else po.min_decimals = 0;
-			str1 = nr1.print(po);
-			str2 = nr2.print(po);
-			if(str1.length() != str2.length()) {
-				PrintOptions po2 = po;
-				po2.use_max_decimals = true;
-				size_t p1 = str2.find(".");
-				size_t p2 = str2.find("E");
-				if(p2 == string::npos) p2 = str2.length();
-				if(p1 == string::npos) {
-					po2.max_decimals = 0;
-				} else {
-					po2.max_decimals = p2 - p1 - 1;
+	//if(!mstruct3.isNumber()) {CALCULATOR->clearMessages(); return;}
+	if(mstruct3.isNumber()) s2++;
+	if(mstruct2.isNumber() && mstruct3.isNumber()) {
+		if(!mstruct2.equals(mstruct3, true, true)) {
+			PrintOptions po = CALCULATOR->messagePrintOptions();
+			Number nr_i1, nr_i2, nr1, nr2;
+			nr1 = mstruct2.number().realPart();
+			nr2 = mstruct3.number().realPart();
+			nr_i1 = mstruct2.number().imaginaryPart();
+			nr_i2 = mstruct3.number().imaginaryPart();
+			bool b_equal = true;
+			string str1, str2;
+			if(nr1.isNonZero() || nr2.isNonZero()) {
+				if(nr2.precision() >= 0) po.min_decimals = nr2.precision(true);
+				else po.min_decimals = 0;
+				str1 = nr1.print(po);
+				str2 = nr2.print(po);
+				if(str1.length() != str2.length()) {
+					PrintOptions po2 = po;
+					po2.use_max_decimals = true;
+					size_t p1 = str2.find(".");
+					size_t p2 = str2.find("E");
+					if(p2 == string::npos) p2 = str2.length();
+					if(p1 == string::npos) {
+						po2.max_decimals = 0;
+					} else {
+						po2.max_decimals = p2 - p1 - 1;
+					}
+					p1 = str1.find(".");
+					p2 = str1.find("E");
+					if(p2 == string::npos) p2 = str1.length();
+					if(p1 == string::npos) {
+						po2.max_decimals = 0;
+					} else if(po2.max_decimals > (int) (p2 - p1 - 1)) {
+						po2.max_decimals = p2 - p1 - 1;
+					}
+					po2.min_decimals = po2.max_decimals;
+					str1 = nr1.print(po2);
+					str2 = nr2.print(po2);
 				}
-				p1 = str1.find(".");
-				p2 = str1.find("E");
-				if(p2 == string::npos) p2 = str1.length();
-				if(p1 == string::npos) {
-					po2.max_decimals = 0;
-				} else if(po2.max_decimals > (int) (p2 - p1 - 1)) {
-					po2.max_decimals = p2 - p1 - 1;
-				}
-				po2.min_decimals = po2.max_decimals;
-				str1 = nr1.print(po2);
-				str2 = nr2.print(po2);
+				if(str1 != str2) b_equal = false;
 			}
-			if(str1 != str2) b_equal = false;
-		}
-		if(nr_i1.isNonZero() || nr_i2.isNonZero()) {
-			if(nr_i2.precision() >= 0) po.min_decimals = nr_i2.precision(true);
-			else po.min_decimals = 0;
-			string str_i1 = nr_i1.print(po);
-			string str_i2 = nr_i2.print(po);
-			if(str_i1.length() != str_i2.length()) {
-				PrintOptions po2 = po;
-				po2.use_max_decimals = true;
-				size_t p1 = str_i2.find(".");
-				size_t p2 = str_i2.find("E");
-				if(p2 == string::npos) p2 = str_i2.length();
-				if(p1 == string::npos) {
-					po2.max_decimals = 0;
-				} else {
-					po2.max_decimals = p2 - p1 - 1;
+			if(nr_i1.isNonZero() || nr_i2.isNonZero()) {
+				if(nr_i2.precision() >= 0) po.min_decimals = nr_i2.precision(true);
+				else po.min_decimals = 0;
+				string str_i1 = nr_i1.print(po);
+				string str_i2 = nr_i2.print(po);
+				if(str_i1.length() != str_i2.length()) {
+					PrintOptions po2 = po;
+					po2.use_max_decimals = true;
+					size_t p1 = str_i2.find(".");
+					size_t p2 = str_i2.find("E");
+					if(p2 == string::npos) p2 = str_i2.length();
+					if(p1 == string::npos) {
+						po2.max_decimals = 0;
+					} else {
+						po2.max_decimals = p2 - p1 - 1;
+					}
+					p1 = str_i1.find(".");
+					p2 = str_i1.find("E");
+					if(p2 == string::npos) p2 = str_i1.length();
+					if(p1 == string::npos) {
+						po2.max_decimals = 0;
+					} else if(po2.max_decimals > (int) (p2 - p1 - 1)) {
+						po2.max_decimals = p2 - p1 - 1;
+					}
+					po2.min_decimals = po2.max_decimals;
+					str_i1 = nr_i1.print(po2);
+					str_i2 = nr_i2.print(po2);
 				}
-				p1 = str_i1.find(".");
-				p2 = str_i1.find("E");
-				if(p2 == string::npos) p2 = str_i1.length();
-				if(p1 == string::npos) {
-					po2.max_decimals = 0;
-				} else if(po2.max_decimals > (int) (p2 - p1 - 1)) {
-					po2.max_decimals = p2 - p1 - 1;
-				}
-				po2.min_decimals = po2.max_decimals;
-				str_i1 = nr_i1.print(po2);
-				str_i2 = nr_i2.print(po2);
+				if(str_i1 != str_i2) b_equal = false;
+				if(str1.empty()) str1 = str_i1;
+				else {str1 += " + "; str1 += str_i1; str1 += "i";}
+				if(str2.empty()) str2 = str_i2;
+				else {str2 += " + "; str2 += str_i2; str2 += "i";}
 			}
-			if(str_i1 != str_i2) b_equal = false;
-			if(str1.empty()) str1 = str_i1;
-			else {str1 += " + "; str1 += str_i1; str1 += "i";}
-			if(str2.empty()) str2 = str_i2;
-			else {str2 += " + "; str2 += str_i2; str2 += "i";}
-		}
 
-		if(!b_equal) {
-			po.min_decimals = 0;
-			cout << "Integration test: integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;
-			display_errors();
-			cout << str1 << endl;
-			cout << str2 << endl;
-			cout << "________________________________________________" << endl;
+			if(!b_equal) {
+				po.min_decimals = 0;
+				cout << "Integration test: integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;
+				display_errors();
+				cout << str1 << endl;
+				cout << str2 << endl;
+				cout << "________________________________________________" << endl;
+			} else {
+				successes++;
+				if(!mstruct2.isNumber() || !mstruct2.number().isReal()) imaginary++;
+			}
 		} else {
 			successes++;
 			if(!mstruct2.isNumber() || !mstruct2.number().isReal()) imaginary++;
 		}
-	} else {
-		successes++;
-		if(!mstruct2.isNumber() || !mstruct2.number().isReal()) imaginary++;
 	}
 	cerr << "E" << endl;
 	CALCULATOR->clearMessages();
@@ -1042,11 +1047,11 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 			else str = rnd_var();
 		} else {
 			if(!allow_unknown) {
-				if(allow_function) r = rand() % 27 + 4;
+				if(allow_function) r = rand() % 29 + 4;
 				else r = rand() % 2 + 4;
 			} else {
 				int au2 = 3 - allow_unknown % 3;
-				r = (rand() % ((allow_function ? 32 : 5) - au2)) + 4 - allow_unknown;
+				r = (rand() % ((allow_function ? 33 + allow_unknown : 5) - au2)) + 4 - allow_unknown;
 				if(r < 4 - allow_unknown % 3) {
 					if(r < 0) r = -r;
 					if(allow_unknown % 3 == 1) r = 3;
@@ -1094,12 +1099,15 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 				case 25: {str = "erfc("; break;}
 				case 26: {str = "Si("; break;}
 				case 27: {str = "Shi("; break;}
-				case 28: {str = "im("; break;}
-				case 29: {str = "re("; break;}
-				case 30: {str = "Ci("; break;}
-				case 31: {str = "Chi("; break;}
-				case 32: {str = "sinc("; break;}
-				case 33: {str = "airy("; break;}
+				case 28: {str = "Ci("; break;}
+				case 29: {str = "Chi("; break;}
+				case 30: {str = "sinc("; break;}
+				case 31: {str = "lambertw("; break;}
+				case 32: {str = "li("; break;}
+				case 33: {str = "digamma("; break;}
+				case 34: {str = "im("; break;}
+				case 35: {str = "re("; break;}
+				case 36: {str = "airy("; break;}
 			}
 			if(r > 5) {
 				if(allow_unknown && rand() % 2 == 1) {
@@ -1942,7 +1950,7 @@ int main(int argc, char *argv[]) {
 			if(a < b) test_integration5(mp, a, b);
 			else test_integration5(mp, b, a);
 			i++;
-			if(i % 1000 == 0) cout << successes << ":" << imaginary << endl;
+			if(i % 1000 == 0) cout << f1 << ":" << s1 << ":" << s2 << ":" << successes << ":" << imaginary << endl;
 		}
 	}
 	cout << successes << ":" << imaginary << endl;
