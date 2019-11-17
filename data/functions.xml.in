@@ -1386,6 +1386,24 @@
         <_title>Circle of confusion or sensor size</_title>
       </argument>
     </function>
+    <function>
+      <_title>American Wire Gauge Cross-Section Area</_title>
+      <_names>r:awg</_names>
+      <_description>For gauges larger than 0000 (4/0), please use negative values (00=-1, 000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e.g. awg(x) = 20 mm^2).</_description>
+      <expression>25*8464^((36-if([\x="0000"||\x="4/0",\x="000"||\x="3/0",\x="00"||\x="2/0",\x="1/0"],[-3,-2,-1,0],dec(\x),1))/39)*cmil</expression>
+      <argument type="text" index="1">
+        <title>AWG</title>
+      </argument>
+    </function>
+    <function>
+      <_title>American Wire Gauge Diameter</_title>
+      <_names>r:awgd</_names>
+      <_description>For gauges larger than 0000 (4/0), please use negative values (00=-1, 000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e.g. awgd(x) = 5 mm).</_description>
+      <expression>1.27E-4*92^((36-if([\x="0000"||\x="4/0",\x="000"||\x="3/0",\x="00"||\x="2/0",\x="1/0"],[-3,-2,-1,0],dec(\x),1))/39)*m</expression>
+      <argument type="text" index="1">
+        <title>AWG</title>
+      </argument>
+    </function>
   </category>
   <category>
     <_title>Statistics</_title>

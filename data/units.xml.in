@@ -1787,6 +1787,26 @@
       <use_with_prefixes>true</use_with_prefixes>
     </unit>
     <unit type="alias">
+      <_title>Circular Mil</_title>
+      <system>US</system>
+      <_names>r:cmil,p:cmils</_names>
+      <base>
+        <unit>mil</unit>
+        <relation>pi/4</relation>
+        <exponent>2</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Thousand of Circular Mil</_title>
+      <system>US</system>
+      <names>r:kcmil,MCM</names>
+      <base>
+        <unit>cmil</unit>
+        <relation>1000</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
       <_title>Hectare</_title>
       <_names>ar:ha,hectare,p:hectares</_names>
       <base>

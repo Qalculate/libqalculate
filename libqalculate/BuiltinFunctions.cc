@@ -6862,10 +6862,27 @@ bool montecarlo(const MathStructure &minteg, Number &nvalue, const MathStructure
 	nvalue.setUncertainty(var);
 	return true;
 }
+bool has_wide_trig_interval(const MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b) {
+	for(size_t i = 0; i < m.size(); i++) {
+		if(has_wide_trig_interval(m[i], x_var, eo, a, b)) return true;
+	}
+	if(m.isFunction() && m.size() == 1 && (m.function() == CALCULATOR->f_sin || m.function() == CALCULATOR->f_cos)) {
+		Number nr_interval;
+		nr_interval.setInterval(a, b);
+		MathStructure mtest(m[0]);
+		mtest.replace(x_var, nr_interval);
+		CALCULATOR->beginTemporaryStopMessages();
+		mtest.eval(eo);
+		CALCULATOR->endTemporaryStopMessages();
+		return mtest.isNumber() && (mtest.number().uncertainty().realPart() > 100 || mtest.number().uncertainty().imaginaryPart() > 100);
+	}
+	return false;
+}
 bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, long int max_steps = -1, long int min_steps = 6, bool safety_measures = true) {
 
 	bool auto_max = max_steps <= 0;
 	if(auto_max) max_steps = 22;
+	if(min_steps > max_steps) max_steps = min_steps;
 
 	Number R1[max_steps], R2[max_steps];
 	Number *Rp = &R1[0], *Rc = &R2[0];
@@ -6902,6 +6919,8 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 	if(!mf.isNumber()) return false;
 
 	if(!Rp[0].add(mf.number()) || !Rp[0].multiply(nr_half) || !Rp[0].multiply(h)) return false;
+	
+	if(safety_measures && min_steps < 15 && has_wide_trig_interval(minteg, x_var, eo, a, b)) min_steps = (max_steps < 15 ? max_steps : 15);
 
 	for(long int i = 1; i < max_steps; i++) {
 
@@ -7718,7 +7737,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			}
 		}
 		CALCULATOR->endTemporaryStopMessages();
-		if(true || (mstruct.containsInterval() && eo.approximation == APPROXIMATION_EXACT)) {
+		if(mstruct.containsInterval() && eo.approximation == APPROXIMATION_EXACT) {
 			CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
 			mstruct.replace(x_var, vargs[3]);
 			return -1;
@@ -7807,7 +7826,6 @@ RombergFunction::RombergFunction() : MathFunction("romberg", 3, 6) {
 	setDefaultValue(4, "6");
 	setArgumentDefinition(5, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
 	setDefaultValue(5, "20");
-	setCondition("\\b >= \\a");
 	setArgumentDefinition(6, new SymbolicArgument());
 	setDefaultValue(6, "undefined");
 }
