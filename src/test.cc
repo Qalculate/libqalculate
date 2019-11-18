@@ -56,8 +56,8 @@ void test_integration5(const MathStructure &mstruct, const Number &a, const Numb
 	int i = has_not_a_comparison();
 	if(i != 0) cout << i << "A: integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;
 	if(!mstruct2.isNumber()) {f1++; CALCULATOR->clearMessages(); return;}
-	if(mstruct2.isNumber()) s1++;
-	if(!mstruct2.number().isReal()) return;
+	if(!mstruct2.number().isReal()) {CALCULATOR->clearMessages(); imaginary++; return;}
+	s1++;
 	MathStructure mstruct3(mstruct);
 	mstruct3.transform(CALCULATOR->f_integrate);
 	mstruct3.addChild(a);

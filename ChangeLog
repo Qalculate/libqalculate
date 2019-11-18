@@ -3,6 +3,10 @@
 	* Circular mil units (cmil and kcmil/MCM)
 	* American wire gauge (awg) functions (area and diameter)
 
+2019-11-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Remove "using namespace std" from header files
+
 2019-11-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix ending zeroes and min decimals for approximate rational numbers

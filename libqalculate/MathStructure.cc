@@ -26741,6 +26741,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 							mtest.replace(var, mstruct);
 							var->destroy();
 							mstruct = mtest;
+							if(!mmul.isOne()) mstruct /= mmul;
 							return true;
 						}
 						CALCULATOR->endTemporaryStopMessages();
@@ -26940,6 +26941,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 							mtest.replace(var, mstruct);
 							var->destroy();
 							mstruct = mtest;
+							if(!mmul.isOne()) mstruct /= mmul;
 							return true;
 						}
 						CALCULATOR->endTemporaryStopMessages();
@@ -29125,32 +29127,40 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						}
 						if(mexp == nr_two) {
 							if(!madd.isZero()) {madd ^= CHILD(0); madd.swapChildren(1, 2);}
+							bool mmul_neg = mmul.representsNegative();
+							if(mmul_neg) mmul.negate();
 							if(CHILD(0) == CALCULATOR->v_e) {
-								mmul.negate();
 								set(mmul);
-								raise(nr_half);
+								if(!mmul.isOne()) raise(nr_half);
 								multiply(x_var);
+								if(!mmul_neg) multiply(nr_one_i);
 								transform(CALCULATOR->f_erf);
-								mmul.inverse();
-								mmul *= MathStructure(1, 4);
-								mmul *= CALCULATOR->v_pi;
-								mmul ^= nr_half;
-								multiply(mmul);
+								if(!mmul.isOne()) {
+									mmul ^= Number(-1, 2);
+									multiply(mmul);
+								}
+								multiply(CALCULATOR->v_pi);
+								LAST ^= nr_half;
+								multiply(nr_half);
+								if(!mmul_neg) multiply(nr_minus_i);
 							} else {
 								MathStructure mlog(CHILD(0));
 								mlog.transform(CALCULATOR->f_ln);
 								mlog ^= nr_half;
-								mmul.negate();
 								set(mmul);
-								raise(nr_half);
+								if(!mmul.isOne()) raise(nr_half);
 								multiply(x_var);
 								multiply(mlog);
+								if(!mmul_neg) multiply(nr_one_i);
 								transform(CALCULATOR->f_erf);
-								mmul.inverse();
-								mmul *= CALCULATOR->v_pi;
-								mmul ^= nr_half;
-								multiply(mmul);
+								if(!mmul.isOne()) {
+									mmul ^= Number(-1, 2);
+									multiply(mmul);
+								}
+								multiply(CALCULATOR->v_pi);
+								LAST ^= nr_half;
 								multiply(nr_half);
+								if(!mmul_neg) multiply(nr_minus_i);
 								divide(mlog);
 							}
 							if(!madd.isZero()) multiply(madd);
