@@ -6874,7 +6874,7 @@ bool has_wide_trig_interval(const MathStructure &m, const MathStructure &x_var, 
 		CALCULATOR->beginTemporaryStopMessages();
 		mtest.eval(eo);
 		CALCULATOR->endTemporaryStopMessages();
-		return mtest.isNumber() && (mtest.number().uncertainty().realPart() > 100 || mtest.number().uncertainty().imaginaryPart() > 100);
+		return mtest.isMultiplication() && mtest.size() >= 1 && mtest[0].isNumber() && (mtest[0].number().uncertainty().realPart() > 100 || mtest[0].number().uncertainty().imaginaryPart() > 100);
 	}
 	return false;
 }
@@ -6990,10 +6990,12 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 				if(prec < 4) prec = 4;
 			}
 			acc.set(1, 1, -prec);
-			if(Rc[i - 1].hasImaginaryPart()) {
-				if(Rc[i - 1].hasRealPart()) acc *= Rc[i - 1].realPart();
+			ntmp = Rc[i - 1];
+			ntmp.intervalToMidValue();
+			if(ntmp.hasImaginaryPart()) {
+				if(ntmp.hasRealPart()) acc *= ntmp.realPart();
 			} else {
-				if(!Rc[i - 1].isZero()) acc *= Rc[i - 1];
+				if(!ntmp.isZero()) acc *= ntmp;
 			}
 			acc.abs();
 			acc.intervalToMidValue();
@@ -7001,7 +7003,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 			if(nunc <= acc) {
 				if(!nunc_i.isZero()) {
 					acc_i.set(1, 1, -prec);
-					if(Rc[i - 1].hasImaginaryPart()) acc_i *= Rc[i - 1].imaginaryPart();
+					if(ntmp.hasImaginaryPart()) acc_i *= ntmp.imaginaryPart();
 					acc_i.abs();
 					acc_i.intervalToMidValue();
 					if(nunc_i <= acc_i) {
@@ -7012,7 +7014,9 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 						}
 						if(!prevunc.isZero() || !prevunc_i.isZero() || (nunc.isZero() && nunc_i.isZero())) {
 							if(nunc <= prevunc && nunc_i <= prevunc_i) {
-								prevunc.setImaginaryPart(prevunc_i);
+								if(!ntmp.hasRealPart()) prevunc = acc;
+								if(!ntmp.hasImaginaryPart()) prevunc.setImaginaryPart(acc_i);
+								else prevunc.setImaginaryPart(prevunc_i);
 								nvalue.setUncertainty(prevunc);
 							} else {
 								acc.setImaginaryPart(acc_i);
@@ -7032,7 +7036,8 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 						return true;
 					}
 					if(!prevunc.isZero() || nunc.isZero()) {
-						if(nunc <= prevunc) nvalue.setUncertainty(prevunc);
+						if(!prevunc_i.isZero()) nunc.setImaginaryPart(prevunc_i);
+						if(!ntmp.isZero() && nunc <= prevunc) nvalue.setUncertainty(prevunc);
 						else nvalue.setUncertainty(acc);
 						return true;
 					}
@@ -7051,21 +7056,25 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 	}
 	if(!nunc.isZero() || !nunc_i.isZero()) {
 		acc.set(1, 1, auto_max ? -3 : -2);
-		if(nvalue.hasImaginaryPart()) {
-			if(nvalue.realPartIsNonZero()) acc *= nvalue.realPart();
+		ntmp = nvalue;
+		ntmp.intervalToMidValue();
+		if(ntmp.hasImaginaryPart()) {
+			if(ntmp.hasRealPart()) acc *= ntmp.realPart();
 		} else {
-			if(nvalue.isNonZero()) acc *= nvalue;
+			if(!ntmp.isZero()) acc *= ntmp;
 		}
 		acc.abs();
 		acc.intervalToMidValue();
 		if(nunc > acc) return false;
+		if(!ntmp.hasRealPart()) nunc = acc;
 		if(!nunc_i.isZero()) {
 			acc.set(1, 1, -3);
-			if(nvalue.hasImaginaryPart()) acc *= nvalue.imaginaryPart();
+			if(ntmp.hasImaginaryPart()) acc *= ntmp.imaginaryPart();
 			acc.abs();
 			acc.intervalToMidValue();
 			if(nunc_i > acc) return false;
-			nunc.setImaginaryPart(nunc_i);
+			if(ntmp.hasImaginaryPart()) nunc.setImaginaryPart(nunc_i);
+			else nunc.setImaginaryPart(acc);
 		}
 		if(safety_measures) nunc *= 10;
 		nvalue.setUncertainty(nunc);
@@ -7382,18 +7391,21 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 		}
 	} else if(m.isVariable()) {
 		if(m.variable()->isKnown() && !check_denominators(((KnownVariable*) m.variable())->get(), mi, mx, eo)) return false;
-	} else if(m.isFunction()) {
+	} else if(m.isFunction() && (m.function() == CALCULATOR->f_tan || m.function() == CALCULATOR->f_tanh || !m.representsNumber(true))) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
-		eo2.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
 		eo2.assume_denominators_nonzero = false;
-		CALCULATOR->beginTemporaryStopMessages();
 		MathStructure mfunc(m);
-		mfunc.replace(mx, mi);
 		bool b = mfunc.calculateFunctions(eo2);
-		CALCULATOR->endTemporaryStopMessages();
 		if(b && !check_denominators(mfunc, mi, mx, eo)) return false;
-		else if(!b && (mfunc.function() == CALCULATOR->f_tan || mfunc.function() == CALCULATOR->f_tanh)) return false;
+		if(mfunc.function() == CALCULATOR->f_tan || mfunc.function() == CALCULATOR->f_tanh) {
+			mfunc.replace(mx, mi);
+			eo2.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
+			CALCULATOR->beginTemporaryStopMessages();
+			b = mfunc.calculateFunctions(eo2);
+			CALCULATOR->endTemporaryStopMessages();
+			if(!b) return false;
+		}
 	}
 	return true;
 }
@@ -7420,36 +7432,29 @@ bool replace_abs(MathStructure &mstruct, const MathStructure &mabs, bool neg) {
 	return b_ret;
 }
 bool contains_incalc_function(const MathStructure &mstruct, const EvaluationOptions &eo) {
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_erf && mstruct.size() == 1 && !mstruct[0].representsNonComplex()) {
-		if(mstruct[0].representsComplex()) return true;
-		MathStructure mtest(mstruct[0]);
-		mtest.eval(eo);
-		return !mtest.representsNonComplex();
-	}
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_Ei && mstruct.size() == 1 && !mstruct[0].representsNonComplex()) {
-		if(mstruct[0].representsComplex()) return true;
-		MathStructure mtest(mstruct[0]);
-		mtest.eval(eo);
-		return !mtest.representsNonComplex();
-	}
-	if(mstruct.isFunction() && (mstruct.function() == CALCULATOR->f_Ci || mstruct.function() == CALCULATOR->f_Si) && mstruct.size() == 1 && !mstruct[0].representsNonComplex()) {
-		MathStructure mtest(mstruct[0]);
-		mtest.eval(eo);
-		return mtest.isNumber() && mtest.number().hasImaginaryPart() && mtest.number().hasRealPart();
-	}
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_Li) {
-		MathStructure mtest(mstruct);
-		return !mtest.calculateFunctions(eo);
-	}
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_igamma && mstruct.size() == 2) {
-#if MPFR_VERSION_MAJOR < 4
-		return true;
-#else
-		return !COMPARISON_IS_EQUAL_OR_LESS(mstruct[1].compare(m_zero));
-#endif
-	}
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(contains_incalc_function(mstruct[i], eo)) return true;
+	}
+	if(mstruct.isFunction()) {
+		if((mstruct.function() == CALCULATOR->f_erf || mstruct.function() == CALCULATOR->f_Ei) && mstruct.size() == 1 && !mstruct[0].representsNonComplex()) {
+			if(mstruct[0].representsComplex()) return true;
+			MathStructure mtest(mstruct[0]);
+			mtest.eval(eo);
+			return !mtest.representsNonComplex();
+		} else if((mstruct.function() == CALCULATOR->f_Ci || mstruct.function() == CALCULATOR->f_Si) && mstruct.size() == 1 && !mstruct[0].representsNonComplex()) {
+			MathStructure mtest(mstruct[0]);
+			mtest.eval(eo);
+			return mtest.isNumber() && mtest.number().hasImaginaryPart() && mtest.number().hasRealPart();
+		} else if(mstruct.function() == CALCULATOR->f_Li) {
+			MathStructure mtest(mstruct);
+			return !mtest.calculateFunctions(eo);
+		} else if(mstruct.function() == CALCULATOR->f_igamma && mstruct.size() == 2) {
+#if MPFR_VERSION_MAJOR < 4
+			return true;
+#else
+			return !COMPARISON_IS_EQUAL_OR_LESS(mstruct[1].compare(m_zero));
+#endif
+		}
 	}
 	return false;
 }
@@ -7648,7 +7653,6 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		MathStructure *mabs = find_abs_x(mbak, x_var);
 		if(mabs) {
 			MathStructure m0((*mabs)[0]);
-			m0.replace(vargs[3], x_var);
 			m0.transform(COMPARISON_EQUALS, m_zero);
 			EvaluationOptions eo3 = eo;
 			eo3.approximation = APPROXIMATION_EXACT;
@@ -7656,14 +7660,33 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			eo3.isolate_var = &x_var;
 			m0.eval(eo3);
 			bool b_exit = true;
-			if(m0.isComparison() && m0.comparisonType() == COMPARISON_EQUALS && m0[0] == x_var && m0[1].contains(x_var, true) == 0) {
+			if(m0.isZero()) {
+				m0 = (*mabs)[0];
+				m0.replace(x_var, vargs[1]);
+				ComparisonResult cr1 = m0.compare(m_zero);
+				if(COMPARISON_IS_EQUAL_OR_LESS(cr1)) {
+					if(replace_abs(mbak, *mabs, false)) {
+						mbak.replace(x_var, vargs[3]);
+						mstruct.set(this, &mbak, &vargs[1], &vargs[2], &vargs[3], &m_zero, NULL);
+						CALCULATOR->endTemporaryStopMessages(true);
+						return 1;
+					}
+				} else if(COMPARISON_IS_EQUAL_OR_GREATER(cr1)) {
+					if(replace_abs(mbak, *mabs, true)) {
+						mbak.replace(x_var, vargs[3]);
+						mstruct.set(this, &mbak, &vargs[1], &vargs[2], &vargs[3], &m_zero, NULL);
+						CALCULATOR->endTemporaryStopMessages(true);
+						return 1;
+					}
+				}
+			} else if(m0.isComparison() && m0.comparisonType() == COMPARISON_EQUALS && m0[0] == x_var && m0[1].contains(x_var, true) == 0) {
 				CALCULATOR->endTemporaryStopMessages();
 				CALCULATOR->beginTemporaryStopMessages();
 				m0.setToChild(2, true);
 				ComparisonResult cr1 = m0.compare(m1);
 				ComparisonResult cr2 = m0.compare(m2);
 				if(COMPARISON_IS_EQUAL_OR_GREATER(cr1) || COMPARISON_IS_EQUAL_OR_LESS(cr2)) {
-					MathStructure mtest(*mabs);
+					MathStructure mtest((*mabs)[0]);
 					mtest.replace(x_var, COMPARISON_IS_EQUAL_OR_GREATER(cr1) ? vargs[2] : vargs[1]);
 					ComparisonResult cr = mtest.compare(m_zero);
 					if(COMPARISON_IS_EQUAL_OR_LESS(cr)) {
@@ -7681,7 +7704,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 							return 1;
 						}
 					}
-				} if(cr1 == COMPARISON_RESULT_LESS && cr2 == COMPARISON_RESULT_GREATER) {
+				} else if(cr1 == COMPARISON_RESULT_LESS && cr2 == COMPARISON_RESULT_GREATER) {
 					MathStructure mtest((*mabs)[0]);
 					mtest.replace(x_var, vargs[1]);
 					ComparisonResult cr = mtest.compare(m_zero);
