@@ -1,5 +1,8 @@
+set unicode off
 set decimal comma off
 set approximation exact
+set fr 1
+set precision 8
 limit(x^2-4,2)
 0
 limit((x^3-4x)/(2x^2+3x),0)

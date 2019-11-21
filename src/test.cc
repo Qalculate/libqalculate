@@ -56,7 +56,8 @@ void test_integration5(const MathStructure &mstruct, const Number &a, const Numb
 	int i = has_not_a_comparison();
 	if(i != 0) cout << i << "A: integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;
 	if(!mstruct2.isNumber()) {f1++; CALCULATOR->clearMessages(); return;}
-	if(!mstruct2.number().isReal()) {CALCULATOR->clearMessages(); imaginary++; return;}
+	//if(!mstruct2.number().isReal()) {CALCULATOR->clearMessages(); imaginary++; return;}
+	if(!mstruct2.number().isReal()) imaginary++;
 	s1++;
 	MathStructure mstruct3(mstruct);
 	mstruct3.transform(CALCULATOR->f_integrate);
@@ -154,11 +155,11 @@ void test_integration5(const MathStructure &mstruct, const Number &a, const Numb
 				cout << "________________________________________________" << endl;
 			} else {
 				successes++;
-				if(!mstruct2.isNumber() || !mstruct2.number().isReal()) imaginary++;
+				//if(!mstruct2.isNumber() || !mstruct2.number().isReal()) imaginary++;
 			}
 		} else {
 			successes++;
-			if(!mstruct2.isNumber() || !mstruct2.number().isReal()) imaginary++;
+			//if(!mstruct2.isNumber() || !mstruct2.number().isReal()) imaginary++;
 		}
 	}
 	cerr << "E" << endl;
@@ -204,8 +205,8 @@ void test_integration6(const MathStructure &mstruct, const Number &a, const Numb
 	cout << "________________________________________________" << endl;
 }
 void test_integration4(const MathStructure &mstruct) {
-	test_integration5(mstruct, Number(2, 1), Number(7, 3));
-	//test_integration6(mstruct, 3, -5);
+	//test_integration5(mstruct, Number(2, 1), Number(7, 3));
+	test_integration6(mstruct, 3, -5);
 }
 void test_integration3(const MathStructure &mstruct, const MathStructure &mstruct_arg) {
 	MathStructure mstruct2(mstruct);
@@ -1017,8 +1018,14 @@ string rnd_number(bool use_par = true, bool only_integers = false, bool only_pos
 	bool par = false;
 	bool dot = only_integers;
 	bool started = false;
-	if(!only_positive && rand() % 3 == 0) {str += '-'; par = true;}
-	while(true && str.length() < 20) {
+	if(!only_positive && rand() % 4 == 0) {str += '-'; par = true;}
+	str += '0' + rand() % 10;
+	if(!only_integers && str[str.length() - 1] != '0' && rand() % 4 == 0) {
+		str += '/';
+		str += '1' + rand() % 9;
+		par = true;
+	}
+	/*while(true && str.length() < 20) {
 		int r = rand();
 		if(!started) r = r % (only_positive ? 9 + 1 : 10 + 1);
 		else if(str.back() == '.') r = r % 10;
@@ -1028,8 +1035,8 @@ string rnd_number(bool use_par = true, bool only_integers = false, bool only_pos
 		else str += char('0' + r);
 		started = true;
 	}
-	if(allow_complex && !only_integers && rand() % 10 == 0) {str += 'i'; par = true;}
-	else if(allow_interval && rand() % 2 == 0 && str.find(".") == string::npos) {str += "+/-4E-8"; /*str += rnd_number(false, true, true, false, false);*/}
+	if(allow_complex && !only_integers && rand() % 10 == 0) {str += 'i'; par = true;}*/
+	//else if(allow_interval && rand() % 2 == 0 && str.find(".") == string::npos) {str += "+/-4E-8"; /*str += rnd_number(false, true, true, false, false);*/}
 	if(par && use_par) {str += ')'; str.insert(0, "(");}
 	return str;
 }
@@ -1047,11 +1054,11 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 			else str = rnd_var();
 		} else {
 			if(!allow_unknown) {
-				if(allow_function) r = rand() % 29 + 4;
+				if(allow_function) r = rand() % 19 + 4;
 				else r = rand() % 2 + 4;
 			} else {
 				int au2 = 3 - allow_unknown % 3;
-				r = (rand() % ((allow_function ? 33 + allow_unknown : 5) - au2)) + 4 - allow_unknown;
+				r = (rand() % ((allow_function ? 22 + allow_unknown : 5) - au2)) + 4 - allow_unknown;
 				if(r < 4 - allow_unknown % 3) {
 					if(r < 0) r = -r;
 					if(allow_unknown % 3 == 1) r = 3;
@@ -1135,18 +1142,21 @@ string rnd_operator(int &par, bool allow_pow = true) {
 		str = ")";
 		r -= 5;
 	}
-	if(r == 5 && !allow_pow) r = rand() % 4 + 1;
+	if(r == 5 && !allow_pow) r = rand() % 6 + 1;
+	if(r > 5) r = 3;
 	switch(r) {
 		case 1: return str + "+";
 		case 2: return str + "-";
 		case 3: return str + "*";
 		case 4: return str + "/";
 		case 5: {
-			switch(rand() % 4 + 1) {
-				case 1: return str + "^";
-				case 2: return str + "^2" + rnd_operator(par, false);
-				case 3: return str + "^3" + rnd_operator(par, false);
-				case 4: return str + "^-1" + rnd_operator(par, false);
+			switch(rand() % 6 + 1) {
+				case 1: {}
+				case 2: {}
+				case 3: return str + "^";
+				case 4: return str + "^2" + rnd_operator(par, false);
+				case 5: return str + "^3" + rnd_operator(par, false);
+				case 6: return str + "^-1" + rnd_operator(par, false);
 			}
 		}
 	}
@@ -1944,8 +1954,8 @@ int main(int argc, char *argv[]) {
 		CALCULATOR->parse(&mp, str, evalops.parse_options);
 		cerr << str << endl;
 		if(mp.contains(CALCULATOR->v_x)) {
-			a.set(rnd_number(false, false, false, false, false));
-			b.set(rnd_number(false, false, false, false, false));
+			a.set(rnd_number(false, true, false, false, false));
+			b.set(rnd_number(false, true, false, false, false));
 			cerr << "A" << endl;
 			if(a < b) test_integration5(mp, a, b);
 			else test_integration5(mp, b, a);
