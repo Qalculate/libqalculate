@@ -2801,6 +2801,7 @@
       </argument>
     </builtin_function>
     <builtin_function name="montecarlo">
+      <hidden>true</hidden>
       <_title>Monte Carlo Integration</_title>
       <_names>r:montecarlo</_names>
       <argument index="1">

@@ -51,10 +51,15 @@ void test_integration5(const MathStructure &mstruct, const Number &a, const Numb
 	mstruct2.addChild(b);
 	mstruct2.addChild(CALCULATOR->v_x);
 	mstruct2.addChild(m_zero);
-	CALCULATOR->calculate(&mstruct2, 40000, eo);
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	CALCULATOR->calculate(&mstruct2, 10000, eo);
 	cerr << "C" << endl;
 	int i = has_not_a_comparison();
 	if(i != 0) cout << i << "A: integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;
+	struct timespec ts2;
+	clock_gettime(CLOCK_MONOTONIC, &ts2);
+	if(ts2.tv_sec > ts.tv_sec + 3) cout << "SLOW: integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;
 	if(!mstruct2.isNumber()) {f1++; CALCULATOR->clearMessages(); return;}
 	//if(!mstruct2.number().isReal()) {CALCULATOR->clearMessages(); imaginary++; return;}
 	if(!mstruct2.number().isReal()) imaginary++;
@@ -65,7 +70,7 @@ void test_integration5(const MathStructure &mstruct, const Number &a, const Numb
 	mstruct3.addChild(b);
 	mstruct3.addChild(CALCULATOR->v_x);
 	mstruct3.addChild(m_one);
-	CALCULATOR->calculate(&mstruct3, 40000, eo);
+	CALCULATOR->calculate(&mstruct3, 10000, eo);
 	cerr << "D" << endl;
 	i = has_not_a_comparison();
 	if(i != 0) cout << i << "B: integrate(" << mstruct.print(CALCULATOR->messagePrintOptions()) << ", " << a << "," << b << ")" << endl;

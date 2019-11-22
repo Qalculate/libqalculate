@@ -7305,7 +7305,7 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 			if(m[0].isZero()) return false;
 			EvaluationOptions eo2 = eo;
 			eo2.approximation = APPROXIMATION_APPROXIMATE;
-			eo2.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
+			eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 			CALCULATOR->beginTemporaryStopMessages();
 			MathStructure mbase(m[0]);
 			KnownVariable *v = new KnownVariable("", "v", mi);
@@ -7314,6 +7314,18 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 			if(b_multiple) mbase.replace(mx, v);
 			mbase.eval(eo2);
 			CALCULATOR->endTemporaryStopMessages();
+			/*if(mbase.isZero()) {
+				v->destroy(); return false;
+			} else if(!b_multiple && mbase.isNumber()) {
+				if(!mbase.number().isNonZero()) {v->destroy(); return false;}
+			} else if(!mbase.isNumber() || !mbase.number().isNonZero()) {
+				CALCULATOR->beginTemporaryStopMessages();
+				eo2.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
+				mbase = m[0];
+				mbase.replace(mx, v);
+				mbase.eval(eo2);
+				CALCULATOR->endTemporaryStopMessages();
+			}*/
 			if(mbase.isZero()) {
 				v->destroy(); return false;
 			} else if(!b_multiple && mbase.isNumber()) {
@@ -7376,12 +7388,9 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 						}
 					}
 					if(!b) {
-						PrintOptions po;
-						po.spell_out_logical_operators = true;
-						mbase.format(po);
 						CALCULATOR->endTemporaryStopMessages();
 						CALCULATOR->endTemporaryStopMessages();
-						CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), mbase.print(po).c_str(), NULL);
+						CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), format_and_print(mbase).c_str(), NULL);
 						CALCULATOR->beginTemporaryStopMessages();
 						CALCULATOR->beginTemporaryStopMessages();
 					}
@@ -7520,6 +7529,8 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	else m1.setUndefined();
 	if(vargs.size() >= 3) m2 = vargs[2];
 	else m2.setUndefined();
+	MathStructure x_var = vargs[3];
+	if(m2.isUndefined() && (m1.isSymbolic() || (m1.isVariable() && !m1.variable()->isKnown()))) {x_var = m1; m1.setUndefined();}
 	if(m1.isUndefined() != m2.isUndefined()) {
 		if(m1.isUndefined()) m1.set(nr_minus_inf);
 		else m2.set(nr_plus_inf);
@@ -7538,7 +7549,6 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) eo2.approximation = APPROXIMATION_EXACT;
 	CALCULATOR->beginTemporaryStopMessages();
 	MathStructure mstruct_pre = vargs[0];
-	MathStructure x_var = vargs[3];
 	MathStructure m_interval;
 	if(!m1.isUndefined()) {
 		m_interval.set(CALCULATOR->f_interval, &m1, &m2, NULL);
@@ -7605,7 +7615,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		int b = mstruct.integrate(x_var, eo2, true, use_abs, definite_integral, true, (definite_integral && eo.approximation != APPROXIMATION_EXACT && PRECISION < 20) ? 2 : 4);
 		if(b < 0) {
 			mstruct = mbak;
-			mstruct.replace(x_var, vargs[3]);
+			if(definite_integral) mstruct.replace(x_var, vargs[3]);
 			CALCULATOR->endTemporaryStopMessages(true);
 			CALCULATOR->endTemporaryStopMessages(true);
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
@@ -7627,7 +7637,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			int b2 = mstruct.integrate(x_var, eo2, true, use_abs, definite_integral, true, (definite_integral && eo.approximation != APPROXIMATION_EXACT && PRECISION < 20) ? 2 : 4);
 			if(b2 < 0) {
 				mstruct = mbak;
-				mstruct.replace(x_var, vargs[3]);
+				if(definite_integral) mstruct.replace(x_var, vargs[3]);
 				CALCULATOR->endTemporaryStopMessages(true);
 				CALCULATOR->endTemporaryStopMessages(true);
 				CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
@@ -8363,14 +8373,10 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			continue;
 		}
 
-		PrintOptions po;
-		po.spell_out_logical_operators = true;
-
 		if(mstruct.isComparison()) {
 			if((ct == COMPARISON_EQUALS && mstruct.comparisonType() != COMPARISON_EQUALS) || !mstruct.contains(y_var)) {
 				if(itry == 1) {
-					mstruct.format(po);
-					strueforall = mstruct.print(po);
+					strueforall = format_and_print(mstruct);
 				}
 				ierror = 7;
 				continue;
@@ -8421,13 +8427,11 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			}
 			if(mcondition) {
-				mcondition->format(po);
-				CALCULATOR->error(false, _("The solution requires that %s."), mcondition->print(po).c_str(), NULL);
+				CALCULATOR->error(false, _("The solution requires that %s."), format_and_print(mcondition).c_str(), NULL);
 				delete mcondition;
 			}
 			if(mtruefor) {
-				mtruefor->format(po);
-				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), mtruefor->print(po).c_str(), NULL);
+				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), format_and_print(mtruefor).c_str(), NULL);
 				delete mtruefor;
 			}
 			if(ct == COMPARISON_EQUALS) mstruct.setToChild(2, true);
@@ -8506,23 +8510,20 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 
 			if(mconditions.size() == 1) {
 				if(mconditions[0]) {
-					mconditions[0]->format(po);
-					CALCULATOR->error(false, _("The solution requires that %s."), mconditions[0]->print(po).c_str(), NULL);
+					CALCULATOR->error(false, _("The solution requires that %s."), format_and_print(mconditions[0]).c_str(), NULL);
 					delete mconditions[0];
 				}
 			} else {
 				string sconditions;
 				for(size_t i = 0; i < mconditions.size(); i++) {
 					if(mconditions[i]) {
-						mconditions[i]->format(po);
-						CALCULATOR->error(false, _("Solution %s requires that %s."), i2s(i + 1).c_str(), mconditions[i]->print(po).c_str(), NULL);
+						CALCULATOR->error(false, _("Solution %s requires that %s."), i2s(i + 1).c_str(), format_and_print(mconditions[i]).c_str(), NULL);
 						delete mconditions[i];
 					}
 				}
 			}
 			if(mtruefor) {
-				mtruefor->format(po);
-				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), mtruefor->print(po).c_str(), NULL);
+				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), format_and_print(mtruefor).c_str(), NULL);
 				delete mtruefor;
 			}
 			return 1;
@@ -9126,10 +9127,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						MathStructure mprint;
 						if(vargs[0].isVector() && vargs[0].size() == mstruct.size()) mprint = vargs[0][i];
 						else mprint = mstruct[i];
-						PrintOptions po;
-						po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-						mprint.format(po);
-						dpd->title = mprint.print(po);
+						dpd->title = format_and_print(mprint);
 						dpd->test_continuous = true;
 						dpds.push_back(dpd);
 					}
@@ -9173,10 +9171,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			y_vectors.push_back(y_vector);
 			PlotDataParameters *dpd = new PlotDataParameters;
 			MathStructure mprint(vargs[0]);
-			PrintOptions po;
-			po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-			mprint.format(po);
-			dpd->title = mprint.print(po);
+			dpd->title = format_and_print(mprint);
 			dpd->test_continuous = true;
 			dpds.push_back(dpd);
 		}
