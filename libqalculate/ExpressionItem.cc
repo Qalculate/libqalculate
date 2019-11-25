@@ -15,7 +15,8 @@
 #include "Calculator.h"
 #include "util.h"
 
-using namespace std;
+using std::string;
+using std::vector;
 
 ExpressionName::ExpressionName(string sname) : suffix(false), unicode(false), plural(false), reference(false), avoid_input(false), completion_only(false) {
 	name = sname;

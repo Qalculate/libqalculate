@@ -15,7 +15,8 @@
 #include "Calculator.h"
 #include "Number.h"
 
-using namespace std;
+using std::string;
+using std::vector;
 
 Prefix::Prefix(string long_name, string short_name, string unicode_name) {
 	l_name = long_name;

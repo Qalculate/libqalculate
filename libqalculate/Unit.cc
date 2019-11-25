@@ -17,7 +17,8 @@
 #include "MathStructure.h"
 #include "Prefix.h"
 
-using namespace std;
+using std::string;
+using std::vector;
 
 Unit::Unit(string cat_, string name_, string plural_, string singular_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, "", title_, "", is_local, is_builtin, is_active) {
 	remove_blank_ends(plural_);

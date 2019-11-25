@@ -46,7 +46,10 @@
 #	include <pwd.h>
 #endif
 
-using namespace std;
+using std::string;
+using std::vector;
+using std::ifstream;
+using std::ofstream;
 
 bool eqstr::operator()(const char *s1, const char *s2) const {
 	return strcmp(s1, s2) == 0;
@@ -55,8 +58,6 @@ bool eqstr::operator()(const char *s1, const char *s2) const {
 #ifdef HAVE_ICU
 	UCaseMap *ucm = NULL;
 #endif
-
-char buffer[20000];
 
 void sleep_ms(int milliseconds) {
 #ifdef _WIN32
@@ -141,24 +142,28 @@ string& remove_parenthesis(string &str) {
 
 string d2s(double value, int precision) {
 	// qgcvt(value, precision, buffer);
-	sprintf(buffer, "%.*G", precision, value);
+	char buffer[precision + 21];
+	snprintf(buffer, precision + 21, "%.*G", precision, value);
 	string stmp = buffer;
 	// gsub("e", "E", stmp);
 	return stmp;
 }
 
 string p2s(void *o) {
-	sprintf(buffer, "%p", o);
+	char buffer[21];
+	snprintf(buffer, 21, "%p", o);
 	string stmp = buffer;
 	return stmp;
 }
 string i2s(long int value) {
-	sprintf(buffer, "%li", value);
+	char buffer[21];
+	snprintf(buffer, 21, "%li", value);
 	string stmp = buffer;
 	return stmp;
 }
 string u2s(unsigned long int value) {
-	sprintf(buffer, "%lu", value);
+	char buffer[21];
+	snprintf(buffer, 21, "%lu", value);
 	string stmp = buffer;
 	return stmp;
 }
@@ -426,7 +431,7 @@ void parse_qalculate_version(string qalculate_version, int *qalculate_version_nu
 }
 
 #ifdef _WIN32
-string utf8_encode(const wstring &wstr) {
+string utf8_encode(const std::wstring &wstr) {
 	if(wstr.empty()) return string();
 	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int) wstr.size(), NULL, 0, NULL, NULL);
 	std::string strTo(size_needed, 0);

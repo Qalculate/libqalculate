@@ -21,12 +21,10 @@
 
 #include <limits.h>
 
-using namespace std;
-
 #if HAVE_UNORDERED_MAP
 #	include <unordered_map>
+	using std::unordered_map;
 #elif 	defined(__GNUC__)
-
 #	ifndef __has_include
 #	define __has_include(x) 0
 #	endif
@@ -53,6 +51,12 @@ using namespace std;
 	namespace Sgi = std;
 #	define unordered_map Sgi::hash_map
 #endif
+
+using std::string;
+using std::vector;
+using std::iterator;
+using std::cout;
+using std::endl;
 
 class MathFunction_p {
 	public:
@@ -520,7 +524,7 @@ bool MathFunction::testArguments(MathStructure &vargs) {
 				}
 				if(vargs[it->first - 1].isUndefined()) {
 					vargs[it->first - 1].set(CALCULATOR->v_x, true);
-					CALCULATOR->error(false, _("No was unknown variable/symbol found."), NULL);
+					CALCULATOR->error(false, _("No unknown variable/symbol was found."), NULL);
 				}
 			}
 			if(!it->second->test(vargs[it->first - 1], it->first, this)) return false;
@@ -767,7 +771,7 @@ extern string format_and_print(const MathStructure &mstruct);
 bool replace_intervals_f(MathStructure &mstruct) {
 	if(mstruct.isNumber() && (mstruct.number().isInterval(false) || (CALCULATOR->usesIntervalArithmetic() && mstruct.number().precision() >= 0))) {
 		Variable *v = new KnownVariable("", format_and_print(mstruct), mstruct);
-		v->ref();
+		v->setTitle("\b");
 		mstruct.set(v, true);
 		v->destroy();
 		return true;
@@ -781,6 +785,7 @@ bool replace_intervals_f(MathStructure &mstruct) {
 	}
 	return b;
 }
+extern bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false);
 extern bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
 bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
 	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_interval && mstruct.size() == 2) {
@@ -797,6 +802,56 @@ bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
 			m1.eval(eo);
 			m2.eval(eo);
 			if(create_interval(mstruct, m1, m2)) return true;
+		}
+		return false;
+	} else if(eo.interval_calculation != INTERVAL_CALCULATION_NONE && mstruct.isFunction() && mstruct.function() == CALCULATOR->f_uncertainty && mstruct.size() == 3) {
+		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
+			Number nr(mstruct[0].number());
+			if(mstruct[2].number().getBoolean()) {
+				nr.setRelativeUncertainty(mstruct[1].number(), false);
+			} else {
+				nr.setUncertainty(mstruct[1].number(), false);
+			}
+			mstruct.set(nr, true);
+			return true;
+		} else {
+			MathStructure m1(mstruct[0]);
+			MathStructure m2(mstruct[1]);
+			if(mstruct[2].number().getBoolean()) {
+				m1.eval(eo);
+				m2.eval(eo);
+				if(m1.isNumber() && m2.isNumber()) {
+					Number nr(m1.number());
+					nr.setRelativeUncertainty(m2.number(), false);
+					mstruct.set(nr, true);
+					return true;
+				}
+				m1 = mstruct[0];
+				m2 = mstruct[1];
+				mstruct.setToChild(1, true);
+				mstruct *= m_one;
+				mstruct.last() -= m2;
+				mstruct.transform(CALCULATOR->f_interval);
+				m1 *= m_one;
+				m1.last() += m2;
+				mstruct.addChild(m1);
+				return 1;
+			} else {
+				if(set_uncertainty(m1, m2, eo, false)) return true;
+				m1.eval(eo);
+				m2.eval(eo);
+				if(set_uncertainty(m1, m2, eo, true)) return true;
+				m1 = mstruct[0];
+				m2 = mstruct[1];
+				mstruct.setToChild(1);
+				mstruct -= m2;
+				mstruct.transform(CALCULATOR->f_interval);
+				m1 += m2;
+				mstruct.addChild(m1);
+			}
+			replace_f_interval(mstruct, eo);
+			return true;
+			
 		}
 		return false;
 	}
@@ -825,14 +880,50 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 
 		for(int i = 0; i < i_args; i++) {
-			if(vargs[i].containsInterval(true) || vargs[i].containsFunction(CALCULATOR->f_interval, true)) {
-				MathStructure *mv = new MathStructure(vargs[i]);
-				replace_f_interval(*mv, eo);
-				replace_intervals_f(*mv);
-				v_id.push_back(CALCULATOR->addId(mv, true));
-			} else {
-				v_id.push_back(CALCULATOR->addId(new MathStructure(vargs[i]), true));
+			MathStructure *mv = new MathStructure(vargs[i]);
+			Argument *arg = getArgumentDefinition(i + 1);
+			if((!arg || !arg->tests() || arg->type() == ARGUMENT_TYPE_FREE) && mv->containsInterval(true, false, false, 0, true)) {
+				size_t count = 0;
+				for(size_t i3 = 0; i3 < 1 || (maxargs() < 0 && i3 < 3); i3++) {
+					svar = '\\';
+					if(i3 == 1) {
+						svar += 'v';
+					} else if(i3 == 2) {
+						svar += 'w';
+					} else if('x' + i > 'z') {
+						svar += (char) ('a' + i - 3);
+					} else {
+						svar += 'x' + i;
+					}
+					size_t pos = 0;
+					while((pos = sformula_calc.find(svar, pos)) != string::npos) {
+						pos += svar.length();
+						count++;
+					}
+					for(size_t i2 = 0; i2 < v_subs.size(); i2++) {
+						pos = 0;
+						size_t c2 = 0;
+						while((pos = v_subs[i2].find(svar, pos)) != string::npos) {
+							pos += svar.length();
+							c2++;
+						}
+						string svar2 = "\\";
+						svar2 += i2s(i2 + 1);
+						pos = 0;
+						size_t c_sub = 0;
+						while((pos = sformula_calc.find(svar2, pos)) != string::npos) {
+							pos += svar2.length();
+							c_sub++;
+						}
+						count += c2 * c_sub;
+					}
+				}
+				if(count > 1) {
+					replace_f_interval(*mv, eo);
+					replace_intervals_f(*mv);
+				}
 			}
+			v_id.push_back(CALCULATOR->addId(mv, true));
 			v_strs.push_back(LEFT_PARENTHESIS ID_WRAP_LEFT);
 			v_strs[i] += i2s(v_id[i]);
 			v_strs[i] += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
