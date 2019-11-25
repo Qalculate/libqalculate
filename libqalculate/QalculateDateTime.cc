@@ -22,7 +22,8 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-using namespace std;
+using std::string;
+using std::vector;
 
 static const char *HEBREW_MONTHS[] = {"Nisan", "Iyar", "Sivan", "Tammuz", "Av", "Elul", "Tishrei", "Marcheshvan", "Kislev", "Tevet", "Shevat", "Adar", "Adar II"};
 static const char *STANDARD_MONTHS[] = {N_("January"), N_("February"), N_("March"), N_("April"), N_("May"), N_("June"), N_("July"), N_("August"), N_("September"), N_("October"), N_("November"), N_("December")};

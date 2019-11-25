@@ -74,7 +74,7 @@ int sign_place(std::string *str, size_t start = 0);
 int gcd(int i1, int i2);
 
 #ifdef _WIN32
-std::string utf8_encode(const wstring &wstr);
+std::string utf8_encode(const std::wstring &wstr);
 #endif
 char *locale_to_utf8(const char *str);
 char *locale_from_utf8(const char *str);

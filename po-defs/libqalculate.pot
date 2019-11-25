@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-17 21:02+0100\n"
+"POT-Creation-Date: 2019-11-25 10:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -8503,7 +8503,7 @@ msgid "r:cmil,p:cmils"
 msgstr ""
 
 #: ../data/units.xml.in.h:281
-msgid "Thousand Of Circular Mil"
+msgid "Thousand of Circular Mil"
 msgstr ""
 
 #: ../data/units.xml.in.h:282

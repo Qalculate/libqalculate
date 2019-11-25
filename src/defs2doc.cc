@@ -151,7 +151,7 @@ void generate_variables_tree_struct() {
 	ia_variables.clear();
 	list<tree_struct>::iterator it;
 	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
-		if(CALCULATOR->variables[i]->isActive()) {
+		if(CALCULATOR->variables[i]->isActive() && !CALCULATOR->variables[i]->isHidden()) {
 			tree_struct *item = &variable_cats;
 			if(!CALCULATOR->variables[i]->category().empty()) {
 				cat = CALCULATOR->variables[i]->category();
@@ -216,7 +216,7 @@ void generate_functions_tree_struct() {
 	list<tree_struct>::iterator it;
 
 	for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
-		if(CALCULATOR->functions[i]->isActive()) {
+		if(CALCULATOR->functions[i]->isActive() && !CALCULATOR->functions[i]->isHidden()) {
 			tree_struct *item = &function_cats;
 			if(!CALCULATOR->functions[i]->category().empty()) {
 				cat = CALCULATOR->functions[i]->category();

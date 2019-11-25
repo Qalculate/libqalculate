@@ -5661,9 +5661,6 @@ int LengthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 1;
 }
 
-extern bool replace_intervals_f(MathStructure &mstruct);
-extern bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo);
-
 bool replace_function(MathStructure &m, MathFunction *f1, MathFunction *f2, const EvaluationOptions &eo) {
 	bool ret = false;
 	if(m.isFunction() && m.function() == f1) {
@@ -7454,7 +7451,7 @@ bool replace_atanh(MathStructure &m, const MathStructure &x_var, const MathStruc
 	return b;
 }
 MathStructure *find_abs_x(MathStructure &mstruct, const MathStructure &x_var) {
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1) {
+	if(mstruct.isFunction() && ((mstruct.function() == CALCULATOR->f_abs && mstruct.size() == 1) || (mstruct.function() == CALCULATOR->f_root && mstruct.size() == 2 && mstruct[1].isInteger() && mstruct[1].number().isOdd()))) {
 		return &mstruct;
 	}
 	for(size_t i = 0; i < mstruct.size(); i++) {
@@ -7465,8 +7462,17 @@ MathStructure *find_abs_x(MathStructure &mstruct, const MathStructure &x_var) {
 }
 bool replace_abs(MathStructure &mstruct, const MathStructure &mabs, bool neg) {
 	if(mstruct.equals(mabs, true, true)) {
-		mstruct.setToChild(1, true);
-		if(neg) mstruct.negate();
+		if(mabs.function() == CALCULATOR->f_root) {
+			mstruct[1].inverse();
+			mstruct.setType(STRUCT_POWER);
+			if(neg) {
+				mstruct[0].negate();
+				mstruct.negate();
+			}
+		} else {
+			mstruct.setToChild(1, true);
+			if(neg) mstruct.negate();
+		}
 		return true;
 	}
 	bool b_ret = false;
@@ -7522,6 +7528,27 @@ bool test_definite_ln(const MathStructure &m, const MathStructure &mi, const Mat
 
 extern bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool combine_divisions = true, bool only_gcd = false, bool combine_only = false, bool recursive = true, bool limit_size = false, int i_run = 1);
 
+void replace_intervals(MathStructure &m, vector<KnownVariable*> vars) {
+	if(m.isNumber() && m.number().isInterval()) {
+		KnownVariable *v = new KnownVariable("", format_and_print(m), m);
+		m.set(v, true);
+		vars.push_back(v);
+		return;
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		replace_intervals(m[i], vars);
+	}
+}
+void restore_intervals(MathStructure &m, MathStructure &m2, vector<KnownVariable*> vars, const EvaluationOptions &eo) {
+	for(size_t i = 0; i < vars.size(); i++) {
+		if(eo.approximation == APPROXIMATION_EXACT) {
+			m.replace(vars[i], vars[i]->get());
+			m2.replace(vars[i], vars[i]->get());
+		}
+		vars[i]->destroy();
+	}
+}
+
 int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	MathStructure m1, m2;
@@ -7546,7 +7573,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	}
 	CALCULATOR->beginTemporaryStopMessages();
 	EvaluationOptions eo2 = eo;
-	if(eo.approximation == APPROXIMATION_TRY_EXACT) eo2.approximation = APPROXIMATION_EXACT;
+	eo2.approximation = APPROXIMATION_EXACT;
 	CALCULATOR->beginTemporaryStopMessages();
 	MathStructure mstruct_pre = vargs[0];
 	MathStructure m_interval;
@@ -7573,8 +7600,9 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			}
 		}
 	}
-	if(definite_integral) eo2.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
 	mstruct = mstruct_pre;
+	vector<KnownVariable*> vars;
+	replace_intervals(mstruct, vars);
 	eo2.do_polynomial_division = false;
 	mstruct.eval(eo2);
 	if(definite_integral > 0 && mstruct.isAddition() && m1.isNumber() && m1.number().isReal() && m2.isNumber() && m2.number().isReal()) {
@@ -7614,6 +7642,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		if(definite_integral) replace_atanh(mstruct, x_var, vargs[1], vargs[2], eo2);
 		int b = mstruct.integrate(x_var, eo2, true, use_abs, definite_integral, true, (definite_integral && eo.approximation != APPROXIMATION_EXACT && PRECISION < 20) ? 2 : 4);
 		if(b < 0) {
+			restore_intervals(mstruct, mbak, vars, eo);
 			mstruct = mbak;
 			if(definite_integral) mstruct.replace(x_var, vargs[3]);
 			CALCULATOR->endTemporaryStopMessages(true);
@@ -7621,13 +7650,12 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
 			return -1;
 		}
-		if((eo.approximation == APPROXIMATION_TRY_EXACT || (eo.approximation == APPROXIMATION_APPROXIMATE && mstruct.isApproximate())) && (!b || mstruct.containsFunction(this, true) > 0)) {
+		if(eo.approximation != APPROXIMATION_EXACT && (!b || mstruct.containsFunction(this, true) > 0)) {
 			vector<CalculatorMessage> blocked_messages;
 			CALCULATOR->endTemporaryStopMessages(false, &blocked_messages);
 			CALCULATOR->beginTemporaryStopMessages();
 			MathStructure mbak_integ(mstruct);
-			if(eo.approximation == APPROXIMATION_APPROXIMATE) eo2.approximation = APPROXIMATION_EXACT;
-			else eo2.approximation = eo.approximation;
+			eo2.approximation = eo.approximation;
 			eo2.do_polynomial_division = false;
 			mstruct = mstruct_pre;
 			if(definite_integral) replace_atanh(mstruct, x_var, vargs[1], vargs[2], eo2);
@@ -7636,6 +7664,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			eo2.do_polynomial_division = eo.do_polynomial_division;
 			int b2 = mstruct.integrate(x_var, eo2, true, use_abs, definite_integral, true, (definite_integral && eo.approximation != APPROXIMATION_EXACT && PRECISION < 20) ? 2 : 4);
 			if(b2 < 0) {
+				restore_intervals(mstruct, mbak, vars, eo);
 				mstruct = mbak;
 				if(definite_integral) mstruct.replace(x_var, vargs[3]);
 				CALCULATOR->endTemporaryStopMessages(true);
@@ -7654,8 +7683,10 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				}
 			}
 		} else {
+			restore_intervals(mstruct, mbak, vars, eo);
 			CALCULATOR->endTemporaryStopMessages(true);
 		}
+		
 		eo2.approximation = eo.approximation;
 		if(b) {
 			if(definite_integral && mstruct.containsFunction(this, true) <= 0 && test_definite_ln(mstruct, m_interval, x_var, eo)) {
@@ -7851,7 +7882,9 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	} else {
 		CALCULATOR->endTemporaryStopMessages();
 		CALCULATOR->endTemporaryStopMessages();
+		restore_intervals(mstruct, mbak, vars, eo);
 	}
+
 	if(m1.isNumber() && m1.number().isReal() && m2.isNumber() && m2.number().isReal()) {
 
 		if(eo.approximation != APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_APPROXIMATE;
@@ -8166,7 +8199,7 @@ void simplify_constant(MathStructure &mstruct, const MathStructure &x_var, const
 	}
 }
 
-extern int test_comparisons(const MathStructure &msave, MathStructure &mthis, const MathStructure &x_var, const EvaluationOptions &eo, bool sub = false);
+extern int test_comparisons(const MathStructure &msave, MathStructure &mthis, const MathStructure &x_var, const EvaluationOptions &eo, bool sub = false, int alt = 0);
 int test_equation(MathStructure &mstruct, const EvaluationOptions &eo, const MathStructure &x_var, const MathStructure &y_var, const MathStructure &x_value, const MathStructure &y_value) {
 	if(mstruct.isComparison() && mstruct.comparisonType() == COMPARISON_EQUALS && mstruct[0] == y_var) {
 		MathStructure mtest(mstruct);
@@ -8427,11 +8460,11 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
 			}
 			if(mcondition) {
-				CALCULATOR->error(false, _("The solution requires that %s."), format_and_print(mcondition).c_str(), NULL);
+				CALCULATOR->error(false, _("The solution requires that %s."), format_and_print(*mcondition).c_str(), NULL);
 				delete mcondition;
 			}
 			if(mtruefor) {
-				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), format_and_print(mtruefor).c_str(), NULL);
+				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), format_and_print(*mtruefor).c_str(), NULL);
 				delete mtruefor;
 			}
 			if(ct == COMPARISON_EQUALS) mstruct.setToChild(2, true);
@@ -8523,7 +8556,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 				}
 			}
 			if(mtruefor) {
-				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), format_and_print(mtruefor).c_str(), NULL);
+				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), format_and_print(*mtruefor).c_str(), NULL);
 				delete mtruefor;
 			}
 			return 1;

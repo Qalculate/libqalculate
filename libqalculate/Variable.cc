@@ -17,7 +17,8 @@
 #include "MathStructure.h"
 #include "Number.h"
 
-using namespace std;
+using std::string;
+using std::vector;
 
 Assumptions::Assumptions() : i_type(ASSUMPTION_TYPE_NUMBER), i_sign(ASSUMPTION_SIGN_UNKNOWN), fmin(NULL), fmax(NULL), b_incl_min(true), b_incl_max(true) {}
 Assumptions::~Assumptions() {}

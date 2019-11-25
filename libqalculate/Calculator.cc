@@ -2025,7 +2025,7 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "7377.47", 1, "", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "6512.84", 1, "", false, true, true));
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
@@ -3409,7 +3409,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 				if(!replace_function(mstruct, m[0].function(), m[1].function(), eo)) CALCULATOR->error(false, _("Original value (%s) was not found."), (m[0].function()->name() + "()").c_str(), NULL);
 			} else {
 				calculate_rand(m[1], eo);
-				if(m[1].containsInterval(true) || m[1].containsFunction(CALCULATOR->f_interval, true)) {
+				if(mstruct.countOccurrences(m[0]) > 1 && m[1].containsInterval(true, false, false, 0, true)) {
 					MathStructure mv(m[1]);
 					replace_f_interval(mv, eo);
 					replace_intervals_f(mv);
@@ -3421,7 +3421,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 			return true;
 		} else if(m[0].isSymbolic() || (m[0].isVariable() && !m[0].variable()->isKnown())) {
 			if(!m[1].isNumber()) m[1].eval(eo);
-			if(m[1].isNumber() || m[1].number().hasImaginaryPart()) {
+			if(m[1].isNumber() && !m[1].number().hasImaginaryPart()) {
 				Assumptions *ass = NULL;
 				for(size_t i = 0; i < varms.size(); i++) {
 					if(varms[i] == m[0]) {

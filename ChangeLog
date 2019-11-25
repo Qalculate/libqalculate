@@ -1,3 +1,20 @@
+2019-11-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Innumerous integration enhancements and fixes
+	* Fix begin temporary enable interval arithmetic without end (fixes some equations after exact mode has been disabled)
+	* Improve solution tests
+	* Use local instead of global buffer for i2s() and similar
+	* Include uncertainty() function when replacing function arguments and where replacements with variables
+
+2019-11-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix infinity^x=a (x != log(a, infinity))
+	* Fix interval replacement with variable in exact mode
+
+2019-11-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix incorrect solutions to equations not removed
+
 2019-11-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Circular mil units (cmil and kcmil/MCM)
