@@ -1,3 +1,9 @@
+2019-11-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Integral of a^(b*x)*c^(-d*x^2)
+	* Improve handling of definite integrals with abs()
+	* Fix definite integral for ln(abs(ax^b+c)) where and ax^b+b=0 and a*x^b is not an integer for lower or upper limit of x (0*infinity in result)
+
 2019-11-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Innumerous integration enhancements and fixes
