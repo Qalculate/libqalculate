@@ -18,6 +18,7 @@
 #include "Variable.h"
 #include "Number.h"
 #include "Unit.h"
+#include "mathstructure-support.h"
 
 #include <limits.h>
 
@@ -785,8 +786,6 @@ bool replace_intervals_f(MathStructure &mstruct) {
 	}
 	return b;
 }
-extern bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false);
-extern bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
 bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
 	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_interval && mstruct.size() == 2) {
 		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {

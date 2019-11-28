@@ -9,7 +9,7 @@ libqalculate_la_SOURCES = \
 	Function.cc Calculator.cc DataSet.cc \
 	Variable.cc ExpressionItem.cc Number.cc	MathStructure.cc \
 	Prefix.cc support.h util.cc Unit.cc BuiltinFunctions.cc \
-	QalculateDateTime.cc integrals.cc
+	QalculateDateTime.cc integrals.cc solver.cc
 
 libqalculateincludedir = $(includedir)/libqalculate
 

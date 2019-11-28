@@ -23,6 +23,7 @@
 #include "Prefix.h"
 #include "Number.h"
 #include "QalculateDateTime.h"
+#include "mathstructure-support.h"
 
 #include <locale.h>
 #include <libxml/xmlmemory.h>
@@ -221,6 +222,7 @@ extern gmp_randstate_t randstate;
 #ifdef HAVE_ICU
 	extern UCaseMap *ucm;
 #endif
+extern bool testComplexZero(const Number *this_nr, const Number *i_nr);
 
 
 enum {
@@ -3355,11 +3357,6 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 	}
 	return false;
 }
-extern string format_and_print(const MathStructure &mstruct);
-extern bool replace_function(MathStructure &m, MathFunction *f1, MathFunction *f2, const EvaluationOptions &eo);
-extern bool replace_intervals_f(MathStructure &mstruct);
-extern bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo);
-
 bool calculate_rand(MathStructure &mstruct, const EvaluationOptions &eo) {
 	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_rand) {
 		mstruct.unformat(eo);
@@ -12249,7 +12246,6 @@ bool Calculator::canPlot() {
 #endif
 }
 
-extern bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL, long int min_precision = 2, bool function_middle = false);
 void parse_and_precalculate_plot(string &expression, MathStructure &mstruct, const ParseOptions &po, EvaluationOptions &eo) {
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	ParseOptions po2 = po;
@@ -12348,8 +12344,6 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	}
 	return y_vector;
 }
-
-extern bool testComplexZero(const Number *this_nr, const Number *i_nr);
 
 bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent, int msecs) {
 

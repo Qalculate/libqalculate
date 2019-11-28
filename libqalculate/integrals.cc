@@ -4761,7 +4761,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 					}
 				}
 			} else if((CHILD(0).isNumber() && !CHILD(0).number().isOne()) || (!CHILD(0).isNumber() && CHILD(0).containsRepresentativeOf(x_var, true, true) == 0)) {
-				MathStructure madd, mmul, mexp;
+				MathStructure madd, mmul, mmul2, mexp;
 				if(integrate_info(CHILD(1), x_var, madd, mmul, mexp)) {
 					if(mexp.isOne()) {
 						if(CHILD(0) == CALCULATOR->v_e) {
@@ -4882,6 +4882,41 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						negate();
 						return true;
 					}
+				} else if(integrate_info(CHILD(1), x_var, madd, mmul, mmul2, false, true)) {
+					// a^(bx-cx^2+d): sqrt(pi)*a^(b^2/(4c)+d)*erf(sqrt(ln(a))*(2cx-b)/(2*sqrt(c)))/(2*sqrt(c)*sqrt(ln(a))
+					MathStructure sqrt2(1, 1, 0);
+					if(mmul2.isMinusOne()) {
+						mmul2 = m_one;
+					} else {
+						mmul2.negate();
+						sqrt2 = mmul2;
+						sqrt2 ^= Number(-1, 2);
+					}
+					MathStructure loga(1, 1, 0);
+					if(CHILD(0) != CALCULATOR->v_e) {loga = CHILD(0); loga.transform(CALCULATOR->f_ln);}
+					loga ^= nr_half;;
+					MathStructure merf(x_var);
+					if(!mmul2.isOne()) merf *= mmul2;
+					merf *= nr_two;
+					merf -= mmul;
+					if(!loga.isOne()) merf *= loga;
+					merf *= nr_half;
+					if(!sqrt2.isOne()) merf *= sqrt2;
+					merf.transform(CALCULATOR->f_erf);
+					MathStructure mepow(mmul);
+					if(!mepow.isOne()) mepow ^= nr_two;
+					mepow *= Number(1, 4);
+					if(!mmul2.isOne()) mepow /= mmul2;
+					if(!madd.isZero()) mepow += madd;
+					set(CALCULATOR->v_e);
+					raise(mepow);
+					multiply(merf);
+					multiply(CALCULATOR->v_pi);
+					LAST ^= nr_half;
+					if(!sqrt2.isOne()) multiply(sqrt2);
+					if(!loga.isOne()) divide(loga);
+					multiply(nr_half);
+					return true;
 				}
 			}
 			CANNOT_INTEGRATE
@@ -4895,6 +4930,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
+			if(combine_powers(*this, x_var, eo2) && m_type != STRUCT_MULTIPLICATION) return integrate(x_var, eo, false, use_abs, definite_integral, try_abs, max_part_depth, parent_parts);
 			if(SIZE == 2) {
 				if(CHILD(0) != x_var && (CHILD(1) == x_var || (CHILD(1).isPower() && CHILD(1)[0] == x_var))) SWAP_CHILDREN(0, 1);
 				if(CHILD(1).isPower() && CHILD(1)[1].containsRepresentativeOf(x_var, true, true) == 0) {
@@ -5799,66 +5835,6 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						}
 					}
 				} else if(CHILD(1).isPower() && ((CHILD(1)[0].isNumber() && !CHILD(1)[0].number().isOne()) || (!CHILD(1)[0].isNumber() && CHILD(1)[0].containsRepresentativeOf(x_var, true, true) == 0))) {
-					if(CHILD(0).isPower() && ((CHILD(0)[0].isNumber() && !CHILD(0)[0].number().isOne()) || (!CHILD(0)[0].isNumber() && CHILD(0)[0].containsRepresentativeOf(x_var, true, true) == 0))) {
-						MathStructure madd, mmul, mexp;
-						if(integrate_info(CHILD(0)[1], x_var, madd, mmul, mexp) && (mexp.isOne() || (mexp.isNumber() || mexp.number() == -2))) {
-							MathStructure madd2, mmul2, mexp2;
-							if(integrate_info(CHILD(1)[1], x_var, madd2, mmul2, mexp2) && (mexp2.isOne() || (mexp2.isNumber() || mexp2.number() == -2)) && mexp != mexp2) {
-								// a^(cx)*b^(-dx^2): (sqrt(pi) * e^((c^2*ln(a)^2)/(4*d*ln(b))) * erf((2*d*x*ln(b)-c*ln(a))/(2*sqrt(d)*sqrt(ln(b))))) / (2*sqrt(d)*sqrt(ln(b)))
-								if(mexp2.isOne()) {
-									MathStructure mtmp(madd); madd = madd2; madd2 = mtmp;
-									mtmp = mmul; mmul = mmul2; mmul2 = mtmp;
-									SWAP_CHILDREN(0, 1)
-								}
-								MathStructure sqrt2(1, 1, 0);
-								if(mmul2.representsPositive(true)) {
-									CHILD(1)[0].inverse();
-								} else if(mmul2.isMinusOne()) {
-									mmul2 = m_one;
-								} else {
-									mmul2.negate();
-								}
-								if(!mmul2.isOne()) {
-									sqrt2 = mmul2;
-									sqrt2 ^= Number(-1, 2);
-								}
-								MathStructure loga(1, 1, 0), logb(1, 1, 0);
-								if(CHILD(0)[0] != CALCULATOR->v_e) {loga = CHILD(0)[0]; loga.transform(CALCULATOR->f_ln);}
-								if(CHILD(1)[0] != CALCULATOR->v_e) {logb = CHILD(1)[0]; logb.transform(CALCULATOR->f_ln);}
-								MathStructure sqrtlb(logb);
-								if(!sqrtlb.isOne()) sqrtlb ^= Number(-1, 2);
-								MathStructure merf(x_var);
-								if(!logb.isOne()) merf *= logb;
-								if(!mmul2.isOne()) merf *= mmul2;
-								merf *= nr_two;
-								merf -= mmul;
-								if(!loga.isOne()) merf.last() *= loga;
-								merf *= nr_half;
-								if(!sqrt2.isOne()) merf *= sqrt2;
-								if(!sqrtlb.isOne()) merf *= sqrtlb;
-								merf.transform(CALCULATOR->f_erf);
-								MathStructure mepow(mmul);
-								if(!mepow.isOne()) mepow ^= nr_two;
-								if(!loga.isOne()) {mepow *= loga; mepow.last() ^= nr_two;}
-								mepow *= Number(1, 4);
-								if(!mmul2.isOne()) mepow /= mmul2;
-								if(!logb.isOne()) mepow /= logb;
-								if(!madd.isZero()) {madd.raise(CHILD(0)[0]); madd.swapChildren(1, 2);}
-								if(!madd2.isZero()) {madd2.raise(CHILD(1)[0]); madd2.swapChildren(1, 2);}
-								set(CALCULATOR->v_e);
-								raise(mepow);
-								multiply(merf);
-								if(!madd.isZero()) multiply(madd);
-								if(!madd2.isZero()) multiply(madd2);
-								multiply(CALCULATOR->v_pi);
-								LAST ^= nr_half;
-								if(!sqrt2.isOne()) multiply(sqrt2);
-								if(!sqrtlb.isOne()) multiply(sqrtlb);
-								multiply(nr_half);
-								return true;
-							}
-						}
-					}
 					MathStructure mexp(1, 1, 0);
 					if(CHILD(0).isPower() && CHILD(0)[0] == x_var && CHILD(0)[1].isInteger()) mexp = CHILD(0)[1];
 					else if(CHILD(0) != x_var) CANNOT_INTEGRATE;
@@ -6197,7 +6173,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 								minteg_2.evalSort(true);
 								minteg_2.calculateFunctions(eo2);
 								minteg_2.calculatesub(eo2, eo2, true);
-								do_simplification(minteg_2, eo, true, false, false, true, true);
+								do_simplification(minteg_2, eo2, true, false, false, true, true);
 							}
 							if(minteg_2.countTotalChildren() < 100 && minteg_2.integrate(x_var, eo, false, use_abs, definite_integral, true, max_part_depth - 1, parent_parts) > 0) {
 								int cui = contains_unsolved_integrate(minteg_2, this, parent_parts);

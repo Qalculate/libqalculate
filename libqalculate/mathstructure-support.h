@@ -98,6 +98,14 @@ bool warn_about_denominators_assumed_nonzero(const MathStructure &mstruct, const
 bool warn_about_denominators_assumed_nonzero_or_positive(const MathStructure &mstruct, const MathStructure &mstruct2, const EvaluationOptions &eo);
 bool warn_about_denominators_assumed_nonzero_llgg(const MathStructure &mstruct, const MathStructure &mstruct2, const MathStructure &mstruct3, const EvaluationOptions &eo);
 bool is_differentiable(const MathStructure &m);
+int test_comparisons(const MathStructure &msave, MathStructure &mthis, const MathStructure &x_var, const EvaluationOptions &eo, bool sub = false, int alt = 0);
+bool replace_function(MathStructure &m, MathFunction *f1, MathFunction *f2, const EvaluationOptions &eo);
+bool replace_intervals_f(MathStructure &mstruct);
+bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo);
+bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL, long int min_precision = 2, bool function_middle = false);
+bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false);
+bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
+bool combine_powers(MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo);
 
 #endif
 
