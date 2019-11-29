@@ -3139,7 +3139,6 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 			}
 			if(combine_powers(*this, x_var, eo2) && m_type != STRUCT_MULTIPLICATION) return isolate_x_sub(eo, eo2, x_var, morig);
-			cout << *this << endl;
 			if(!b && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(0).size() >= 2) {
 				// (x+a)*b^(c*x)=d => x=(lambertw(b^(a*c)*c*d*ln(b))-a*c*ln(b)))/(c*ln(b))
 				if(CALCULATOR->aborted()) {
@@ -3330,7 +3329,6 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 					}
 				}
-cout << "B:" << *this << endl;
 				if(CHILD(0).size() == 2) {
 					// x*ln(x)=a => e^lambertw(a)
 					bool b_swap = false;

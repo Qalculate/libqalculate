@@ -2284,7 +2284,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
 
-	if(eo.approximation == APPROXIMATION_TRY_EXACT && vargs[1].isZero()) {
+	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
 		CALCULATOR->beginTemporaryStopMessages();
@@ -2295,28 +2295,28 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		if(mstruct.isVector()) return -1;
 	}
 
+	bool b = false;
 	if(!vargs[1].isZero()) {
-		if(vargs[0].isZero()) {
+		if(mstruct.isZero()) {
 			mstruct.set(nr_minus_inf, true);
-			return 1;
+			b = true;
 		} else if(vargs[1].isMinusOne()) {
-			if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0].isNumber() && vargs[0][1].isPower() && vargs[0][1][0].isVariable() && vargs[0][1][0].variable() == CALCULATOR->v_e && vargs[0][0].number() <= nr_minus_one && vargs[0][1][1] == vargs[0][0]) {
-				mstruct = vargs[0][0];
-				return 1;
+			if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isPower() && mstruct[1][0].isVariable() && mstruct[1][0].variable() == CALCULATOR->v_e && mstruct[0].number() <= nr_minus_one && mstruct[1][1] == mstruct[0]) {
+				mstruct.setToChild(1, true);
+				b = true;
 			}
 		}
-		return 0;
-	}
 
-	bool b = false;
-	if(mstruct.isZero()) {
-		b = true;
-	} else if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_e) {
-		mstruct.set(1, 1, 0, true);
-		b = true;
-	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne() && mstruct[1].isPower() && mstruct[1][0].isVariable() && mstruct[1][0].variable() == CALCULATOR->v_e && mstruct[1][1].isMinusOne()) {
-		mstruct.set(-1, 1, 0, true);
-		b = true;
+	} else {
+		if(mstruct.isZero()) {
+			b = true;
+		} else if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_e) {
+			mstruct.set(1, 1, 0, true);
+			b = true;
+		} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne() && mstruct[1].isPower() && mstruct[1][0].isVariable() && mstruct[1][0].variable() == CALCULATOR->v_e && mstruct[1][1].isMinusOne()) {
+			mstruct.set(-1, 1, 0, true);
+			b = true;
+		}
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(b);
 	if(b) return 1;
@@ -2329,7 +2329,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	}
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
-		if(!nr.lambertW()) {
+		if(!nr.lambertW(vargs[1].number())) {
 			//if(!CALCULATOR->aborted()) CALCULATOR->error(false, _("Argument for %s() must be a real number greater than or equal to -1/e."), preferredDisplayName().name.c_str(), NULL);
 		} else if(!(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			mstruct.set(nr, true);

@@ -487,6 +487,7 @@ class Number {
 		bool log(const Number &o);
 		bool exp();
 		bool lambertW();
+		bool lambertW(const Number &k);
 		bool gcd(const Number &o);
 		bool lcm(const Number &o);
 

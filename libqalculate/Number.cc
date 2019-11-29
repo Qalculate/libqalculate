@@ -6400,6 +6400,162 @@ bool Number::exp() {
 	}
 	return true;
 }
+// Modified version of https://github.com/IstvanMezo/LambertW-function
+bool Number::lambertW(const Number &k) {
+
+	if(!k.isInteger()) return false;
+	if(isZero()) {
+		if(k.isZero()) return true;
+		setMinusInfinity(true);
+		return true;
+	}
+	
+	if(isInterval(false)) {
+		if(hasImaginaryPart() && i_value->isInterval()) {
+			Number nr_il, nr_iu;
+			nr_il.setInternal(i_value->internalLowerFloat());
+			nr_iu.setInternal(i_value->internalUpperFloat());
+			nr_il *= nr_one_i;
+			nr_iu *= nr_one_i;
+			Number nr_l, nr_u;
+			if(isInterval(true)) {
+				nr_l.setInternal(fl_value);
+				nr_u.setInternal(fu_value);
+				nr_l.setImaginaryPart(nr_il);
+				nr_u.setImaginaryPart(nr_iu);
+				nr_l.intervalToMidValue();
+				nr_u.intervalToMidValue();
+				if(!nr_l.lambertW(k) || !nr_u.lambertW(k)) return false;
+				setPrecisionAndApproximateFrom(nr_l);
+				setPrecisionAndApproximateFrom(nr_u);
+				CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_lambert_w->name().c_str(), NULL);
+				return setInterval(nr_l, nr_u, true);
+			} else {
+				nr_l = realPart();
+				nr_u = realPart();
+				nr_l.setImaginaryPart(nr_il);
+				nr_u.setImaginaryPart(nr_iu);
+				nr_l.intervalToMidValue();
+				nr_u.intervalToMidValue();
+				if(!nr_l.lambertW(k) || !nr_u.lambertW(k)) return false;
+				setPrecisionAndApproximateFrom(nr_l);
+				setPrecisionAndApproximateFrom(nr_u);
+				if(!i_value->isNonZero()) {
+					if(k.isZero()) nr_l.setInterval(nr_zero, nr_l);
+					else nr_l.setInterval(nr_minus_inf, nr_l);
+				}
+				if(hasRealPart()) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_lambert_w->name().c_str(), NULL);
+				return setInterval(nr_l, nr_u, true);
+			}
+		} else {
+			Number nr_l, nr_u;
+			nr_l.setInternal(fl_value);
+			nr_u.setInternal(fu_value);
+			nr_l.intervalToMidValue();
+			nr_u.intervalToMidValue();
+			if(!nr_l.lambertW(k) || !nr_u.lambertW(k)) return false;
+			setPrecisionAndApproximateFrom(nr_l);
+			setPrecisionAndApproximateFrom(nr_u);
+			if(k.isZero()) {
+				Number mexpm1(-1, 1); mexpm1.exp(); mexpm1.negate();
+				if(COMPARISON_MIGHT_BE_EQUAL(compare(mexpm1))) nr_l.setInterval(nr_minus_one, nr_l);
+			} else {
+				if(!isNonZero()) nr_l.setInterval(nr_minus_inf, nr_l);
+			}
+			return setInterval(nr_l, nr_u, true);
+		}
+	}
+	if(k.isZero() && !hasImaginaryPart()) {
+		Number mexpm1(-1, 1); mexpm1.exp(); mexpm1.negate();
+		if(isGreaterThanOrEqualTo(mexpm1)) return lambertW();
+	}
+	
+	CALCULATOR->beginTemporaryStopIntervalArithmetic();
+	
+	Number nr_bak(*this);
+	mpfr_clear_flags();
+	if(!setToFloatingPoint()) {CALCULATOR->endTemporaryStopIntervalArithmetic(); return false;}
+	Number z(*this);
+	Number wprec(1, 1, -(PRECISION + 20));
+	bool ip1 = true;
+	if(k.isZero() || k.isMinusOne()) {
+		if(ip1 && !k.isOne()) {
+			Number nr(-1, 2); nr.add(z); nr.abs();
+			if(nr <= nr_half || (k.isZero() && nr <= Number(5, 8))) {
+				if(k.isZero()) {
+					Number ndiv(z); if(!ndiv.multiply(2) || !ndiv.add(1) || !ndiv.multiply(Number("0.827184")) || !ndiv.add(2) || !multiply(Number("7.061302897")) || !add(Number("0.1237166")) || !multiply(Number("0.35173371")) || !divide(ndiv)) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(nr_bak); return false;}
+				} else {
+					Number i1("2.2591588985"); i1.setImaginaryPart(Number("4.22096"));
+					Number i2("-14.073271"); i2.setImaginaryPart(Number("-33.767687754"));
+					Number i3("-12.7127"); i3.setImaginaryPart(Number("19.071643"));
+					Number i4("-17.23103"); i4.setImaginaryPart(Number("10.629721"));
+					Number n1p2z(z); if(!n1p2z.multiply(2) || !n1p2z.add(1) || !i4.multiply(n1p2z) || !i4.add(2) || !i3.multiply(n1p2z)) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(nr_bak); return false;}
+					set(i2); if(!multiply(z) || !add(i3) || !multiply(i1) || !divide(i4) || !negate()) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(nr_bak); return false;}
+				}
+				ip1 = false;
+			}
+		}
+		if(ip1 && (!k.isMinusOne() || z.imaginaryPartIsPositive())) {
+			Number nr(-1, 1); nr.exp(); nr.add(z); nr.abs();
+			if(nr <= 1) {
+				Number p; p.e(); if(!p.multiply(z) || !p.add(1) || !p.multiply(2) || !p.sqrt()) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(nr_bak); return false;}
+				Number p2(p); if(!p2.square() || !p2.multiply(Number(-1, 3))) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(nr_bak); return false;}
+				Number p3(p); if(!p3.raise(nr_three) || !p3.multiply(Number(k.isZero() ? 11 : -11, 72))) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(nr_bak); return false;}
+				set(p); if((!k.isZero() && !negate()) || !add(-1) || !add(p2) || !add(p3)) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(nr_bak); return false;}
+				ip1 = false;
+			}
+		}
+	}
+	if(ip1) {
+		Number twopiKI;
+		if(!k.isZero()) {
+			twopiKI.pi(); if(!twopiKI.multiply(k) || !twopiKI.multiply(2) || !twopiKI.multiply(nr_one_i)) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(nr_bak); return false;}
+		}
+		Number logz(z); if(!logz.ln() || !logz.add(twopiKI)) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(nr_bak); return false;}
+		set(logz); if(!ln() || !negate() || !add(logz)) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(nr_bak); return false;}
+	}
+	Number w, wprev, wexp, wexpw, wexpw_d, wexpw_dd, wdiff;
+	while(true) {
+		wprev.set(*this);
+		wexp.set(*this); wexp.exp(); // exp(w)
+		wexpw = wexp; wexpw.multiply(*this);  // w*exp(w)
+		wexpw_d = wexpw;  wexpw_d.add(wexp); // wexp(w)+w*exp(w)
+		wexpw_dd = wexp; wexpw_dd.multiply(2); wexpw_dd.add(wexpw); // 2*wexp(w)+w*exp(w)
+		// w -= 2*(wexpw-z)*wexpw_d/(2*wexpw_d^2-(wexpw-z)*wexpw_dd)
+		if(!wexpw.subtract(z) || !wexpw_dd.multiply(wexpw) || !wexpw.multiply(wexpw_d) || !wexpw.multiply(-2) || !wexpw_d.square() || !wexpw_d.multiply(2) || !wexpw_d.subtract(wexpw_dd) || !wexpw.divide(wexpw_d) || !add(wexpw)) {
+			CALCULATOR->endTemporaryStopIntervalArithmetic();
+			set(nr_bak);
+			return false;
+		}
+		if(CALCULATOR->aborted() || !wprev.subtract(*this) || !wprev.divide(*this)) {CALCULATOR->endTemporaryStopIntervalArithmetic(); set(nr_bak); return false;}
+		if(wprev.hasImaginaryPart()) {
+			wdiff.set(*wprev.internalImaginary());
+			wdiff.abs();
+			if(wdiff < wprec) {
+				wdiff = wprev.realPart();
+				wdiff.abs();
+				if(wdiff < wprec) {
+					CALCULATOR->endTemporaryStopIntervalArithmetic(); 
+					setRelativeUncertainty(wprev, CALCULATOR->usesIntervalArithmetic());
+					break;
+				}
+			}
+		} else {
+			wprev.abs();
+			if(wprev < wprec) {
+				CALCULATOR->endTemporaryStopIntervalArithmetic(); 
+				setRelativeUncertainty(wprev, CALCULATOR->usesIntervalArithmetic());
+				break;
+			}
+		}
+	}
+	if(!testFloatResult(true)) {
+		set(nr_bak);
+		return false;
+	}
+	b_approx = true;
+	return true;
+}
 bool Number::lambertW() {
 
 	if(!isReal()) return false;
@@ -6412,6 +6568,7 @@ bool Number::lambertW() {
 		nr_l.intervalToPrecision();
 		nr_u.intervalToPrecision();
 		if(!nr_l.lambertW() || !nr_u.lambertW()) return false;
+		Number mexpm1(-1, 1); mexpm1.exp(); mexpm1.negate();
 		setPrecisionAndApproximateFrom(nr_l);
 		setPrecisionAndApproximateFrom(nr_u);
 		return setInterval(nr_l, nr_u, true);
