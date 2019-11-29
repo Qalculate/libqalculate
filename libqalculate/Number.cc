@@ -7921,7 +7921,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			nra *= 26;
 			nra = nr - nra;
 			nr = nri;
-			str.insert(0, 1, ('A' + nra.intValue() - 1));
+			str.insert(0, 1, (char) ('A' + nra.intValue() - 1));
 		} while(!nr.isZero());
 		if(ips.minus) {
 			*ips.minus = neg;
