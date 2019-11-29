@@ -3219,20 +3219,6 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 			mstruct += mterm2;
 			return true;
 		}
-	} else if(mstruct.function() == CALCULATOR->f_gamma && mstruct.size() == 1) {
-		MathStructure madd, mmul, mexp;
-		if(mpow.isOne() && mfac.isOne() && integrate_info(mstruct[0], x_var, madd, mmul, mexp) && mexp.isOne()) {
-			mstruct = x_var;
-			mstruct ^= nr_two;
-			if(!mmul.isOne()) mstruct *= mmul;
-			mstruct *= nr_half;
-			if(!madd.isZero()) {
-				mstruct += madd;
-				mstruct.last() *= x_var;
-			}
-			mstruct.transform(CALCULATOR->f_gamma);
-			return true;
-		}
 	} else if(mstruct.function() == CALCULATOR->f_digamma && mstruct.size() == 1) {
 		MathStructure madd, mmul, mexp;
 		if(mpow.isOne() && mfac.isOne() && integrate_info(mstruct[0], x_var, madd, mmul, mexp) && mexp.isOne()) {

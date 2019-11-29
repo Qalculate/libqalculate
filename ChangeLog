@@ -1,3 +1,7 @@
+2019-11-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support for calculation of Lambert W for all branches and complex numbers
+
 2019-11-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Integral of a^(b*x)*c^(-d*x^2)
