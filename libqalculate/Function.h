@@ -97,6 +97,8 @@ class MathFunction : public ExpressionItem {
 	* @returns ::FunctionSubtype.
 	*/
 	virtual int subtype() const;
+	
+	virtual int id() const;
 
 	std::string example(bool raw_format = false, std::string name_string = "") const;
 	void setExample(std::string new_example);

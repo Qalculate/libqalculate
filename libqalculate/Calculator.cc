@@ -342,6 +342,8 @@ class Calculator_p {
 		Unit *local_currency;
 		int use_binary_prefixes;
 		MathFunction *f_cis;
+		unordered_map<int, MathFunction*> id_functions;
+		unordered_map<int, Variable*> id_variables;
 };
 
 bool is_not_number(char c, int base) {
@@ -1912,6 +1914,7 @@ void Calculator::addBuiltinFunctions() {
 	f_besselj = addFunction(new BesseljFunction());
 	f_bessely = addFunction(new BesselyFunction());
 	f_erf = addFunction(new ErfFunction());
+	addFunction(new ErfiFunction());
 	f_erfc = addFunction(new ErfcFunction());
 
 	f_total = addFunction(new TotalFunction());
@@ -2007,6 +2010,8 @@ void Calculator::addBuiltinFunctions() {
 	f_Ci = addFunction(new CiFunction());
 	f_Shi = addFunction(new ShiFunction());
 	f_Chi = addFunction(new ChiFunction());
+	addFunction(new FresnelSFunction());
+	addFunction(new FresnelCFunction());
 	f_igamma = addFunction(new IGammaFunction());
 
 	if(canPlot()) f_plot = addFunction(new PlotFunction());
@@ -4950,6 +4955,7 @@ Variable* Calculator::addVariable(Variable *v, bool force, bool check_names) {
 	}
 	v->setRegistered(true);
 	v->setChanged(false);
+	if(v->id() != 0) priv->id_variables[v->id()] = v;
 	return v;
 }
 void Calculator::expressionItemDeactivated(ExpressionItem *item) {
@@ -5113,6 +5119,11 @@ Variable* Calculator::getVariable(string name_) {
 	}
 	return NULL;
 }
+Variable* Calculator::getVariableById(int id) const {
+	unordered_map<int, Variable*>::iterator it = priv->id_variables.find(id);
+	if(it == priv->id_variables.end()) return NULL;
+	return it->second;
+}
 Variable* Calculator::getActiveVariable(string name_) {
 	if(name_.empty()) return NULL;
 	for(size_t i = 0; i < variables.size(); i++) {
@@ -5157,6 +5168,7 @@ MathFunction* Calculator::addFunction(MathFunction *f, bool force, bool check_na
 	}
 	f->setRegistered(true);
 	f->setChanged(false);
+	if(f->id() != 0) priv->id_functions[f->id()] = f;
 	return f;
 }
 DataSet* Calculator::addDataSet(DataSet *dc, bool force, bool check_names) {
@@ -5187,6 +5199,11 @@ MathFunction* Calculator::getFunction(string name_) {
 		}
 	}
 	return NULL;
+}
+MathFunction* Calculator::getFunctionById(int id) const {
+	unordered_map<int, MathFunction*>::iterator it = priv->id_functions.find(id);
+	if(it == priv->id_functions.end()) return NULL;
+	return it->second;
 }
 MathFunction* Calculator::getActiveFunction(string name_) {
 	if(name_.empty()) return NULL;

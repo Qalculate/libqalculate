@@ -285,6 +285,8 @@ class ExpressionItem {
 	* @returns Subtype/subsubclass.
 	*/
 	virtual int subtype() const = 0;
+	
+	virtual int id() const;
 
 };
 

@@ -1,3 +1,9 @@
+2019-11-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Imaginary error function
+	* Fresnel integrals S and C
+	* Add id property to ExpressionItem to remove the need to add a variable for each new math function to Calculator class
+
 2019-11-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Support for calculation of Lambert W for all branches and complex numbers

@@ -486,3 +486,6 @@ ExpressionItem *ExpressionItem::getReferencer(size_t index) const {
 bool ExpressionItem::changeReference(ExpressionItem*, ExpressionItem*) {
 	return false;
 }
+int ExpressionItem::id() const {
+	return 0;
+}

@@ -24,6 +24,16 @@
 						ExpressionItem *copy() const {return new x(this);} \
 					};
 
+#define DECLARE_BUILTIN_FUNCTION_ID(x, i) \
+					class x : public MathFunction { \
+					  public: \
+						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+						x(); \
+						x(const x *function) {set(function);} \
+						ExpressionItem *copy() const {return new x(this);} \
+						int id() const {return i;}\
+					};
+
 #define DECLARE_BUILTIN_FUNCTION_B(x)	class x : public MathFunction { \
 					  public: \
 						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
@@ -76,6 +86,30 @@
 						bool representsUndefined(const MathStructure &vargs) const;\
 					};
 
+#define DECLARE_BUILTIN_FUNCTION_R_ID(x, i) \
+					class x : public MathFunction { \
+					  public: \
+						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+						x(); \
+						x(const x *function) {set(function);} \
+						ExpressionItem *copy() const {return new x(this);} \
+						bool representsPositive(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsNegative(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsNonNegative(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsNonPositive(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsInteger(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsRational(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsComplex(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsNonZero(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsEven(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsOdd(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsUndefined(const MathStructure &vargs) const;\
+						int id() const {return i;}\
+					};
+
 #define DECLARE_BUILTIN_FUNCTION_R2(x)	class x : public MathFunction { \
 					  public: \
 						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
@@ -85,6 +119,19 @@
 						bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
 						bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
 						bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
+					};
+					
+#define DECLARE_BUILTIN_FUNCTION_R2_ID(x, i) \
+					class x : public MathFunction { \
+					  public: \
+						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+						x(); \
+						x(const x *function) {set(function);} \
+						ExpressionItem *copy() const {return new x(this);} \
+						bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
+						bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
+						int id() const {return i;}\
 					};
 
 
@@ -110,6 +157,14 @@
 						bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
 					};
 
+
+enum {
+	FUNCTION_ID_ERF = 1101,
+	FUNCTION_ID_ERFC = 1102,
+	FUNCTION_ID_ERFI = 1103,
+	FUNCTION_ID_FRESNEL_S = 1201,
+	FUNCTION_ID_FRESNEL_C = 1202
+};
 
 DECLARE_BUILTIN_FUNCTION(VectorFunction)
 DECLARE_BUILTIN_FUNCTION(LimitsFunction)
@@ -221,8 +276,9 @@ DECLARE_BUILTIN_FUNCTION(BetaFunction)
 DECLARE_BUILTIN_FUNCTION(AiryFunction)
 DECLARE_BUILTIN_FUNCTION(BesseljFunction)
 DECLARE_BUILTIN_FUNCTION(BesselyFunction)
-DECLARE_BUILTIN_FUNCTION(ErfFunction)
-DECLARE_BUILTIN_FUNCTION(ErfcFunction)
+DECLARE_BUILTIN_FUNCTION_R_ID(ErfFunction, FUNCTION_ID_ERF)
+DECLARE_BUILTIN_FUNCTION_R_ID(ErfiFunction, FUNCTION_ID_ERFI)
+DECLARE_BUILTIN_FUNCTION_R_ID(ErfcFunction, FUNCTION_ID_ERFC)
 
 DECLARE_BUILTIN_FUNCTION(TotalFunction)
 DECLARE_BUILTIN_FUNCTION(PercentileFunction)
@@ -311,6 +367,8 @@ DECLARE_BUILTIN_FUNCTION(LimitFunction)
 
 DECLARE_BUILTIN_FUNCTION_R2(liFunction)
 DECLARE_BUILTIN_FUNCTION_R2(LiFunction)
+DECLARE_BUILTIN_FUNCTION_R_ID(FresnelSFunction, FUNCTION_ID_FRESNEL_S)
+DECLARE_BUILTIN_FUNCTION_R_ID(FresnelCFunction, FUNCTION_ID_FRESNEL_C)
 DECLARE_BUILTIN_FUNCTION_R2(EiFunction)
 DECLARE_BUILTIN_FUNCTION_R2(SiFunction)
 DECLARE_BUILTIN_FUNCTION_R2(CiFunction)

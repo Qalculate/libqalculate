@@ -621,14 +621,85 @@ int BesselyFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	FR_FUNCTION_2R(bessely)
 }
 ErfFunction::ErfFunction() : MathFunction("erf", 1) {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1);
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
+bool ErfFunction::representsPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsPositive();}
+bool ErfFunction::representsNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNegative();}
+bool ErfFunction::representsNonNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonNegative();}
+bool ErfFunction::representsNonPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonPositive();}
+bool ErfFunction::representsInteger(const MathStructure&, bool) const {return false;}
+bool ErfFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool ErfFunction::representsRational(const MathStructure&, bool) const {return false;}
+bool ErfFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex();}
+bool ErfFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex();}
+bool ErfFunction::representsComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsComplex();}
+bool ErfFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonZero();}
+bool ErfFunction::representsEven(const MathStructure&, bool) const {return false;}
+bool ErfFunction::representsOdd(const MathStructure&, bool) const {return false;}
+bool ErfFunction::representsUndefined(const MathStructure&) const {return false;}
 int ErfFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	FR_FUNCTION(erf)
+	Number nr(vargs[0].number());
+	if(!nr.erf() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {
+		if(vargs[0].number().hasImaginaryPart() && !vargs[0].number().hasRealPart()) {
+			mstruct = vargs[0].number().imaginaryPart();
+			MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_ERFI);
+			mstruct.transform(f);
+			mstruct *= nr_one_i;
+			return 1;
+		}
+		return 0;
+	}
+	mstruct.set(nr);
+	return 1;
+}
+ErfiFunction::ErfiFunction() : MathFunction("erfi", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+bool ErfiFunction::representsPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsPositive();}
+bool ErfiFunction::representsNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNegative();}
+bool ErfiFunction::representsNonNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonNegative();}
+bool ErfiFunction::representsNonPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonPositive();}
+bool ErfiFunction::representsInteger(const MathStructure&, bool) const {return false;}
+bool ErfiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool ErfiFunction::representsRational(const MathStructure&, bool) const {return false;}
+bool ErfiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
+bool ErfiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex();}
+bool ErfiFunction::representsComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsComplex();}
+bool ErfiFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonZero();}
+bool ErfiFunction::representsEven(const MathStructure&, bool) const {return false;}
+bool ErfiFunction::representsOdd(const MathStructure&, bool) const {return false;}
+bool ErfiFunction::representsUndefined(const MathStructure&) const {return false;}
+int ErfiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	Number nr(vargs[0].number());
+	if(!nr.erfi() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {
+		if(vargs[0].number().hasImaginaryPart() && !vargs[0].number().hasRealPart()) {
+			mstruct = vargs[0].number().imaginaryPart();
+			mstruct.transform(CALCULATOR->f_erf);
+			mstruct *= nr_one_i;
+			return 1;
+		}
+		return 0;
+	}
+	mstruct.set(nr);
+	return 1;
 }
 ErfcFunction::ErfcFunction() : MathFunction("erfc", 1) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1);
 }
+bool ErfcFunction::representsPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
+bool ErfcFunction::representsNegative(const MathStructure&, bool) const {return false;}
+bool ErfcFunction::representsNonNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
+bool ErfcFunction::representsNonPositive(const MathStructure&, bool) const {return false;}
+bool ErfcFunction::representsInteger(const MathStructure&, bool) const {return false;}
+bool ErfcFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool ErfcFunction::representsRational(const MathStructure&, bool) const {return false;}
+bool ErfcFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex();}
+bool ErfcFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex();}
+bool ErfcFunction::representsComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsComplex();}
+bool ErfcFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
+bool ErfcFunction::representsEven(const MathStructure&, bool) const {return false;}
+bool ErfcFunction::representsOdd(const MathStructure&, bool) const {return false;}
+bool ErfcFunction::representsUndefined(const MathStructure&) const {return false;}
 int ErfcFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(erfc)
 }
@@ -2329,9 +2400,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	}
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
-		if(!nr.lambertW(vargs[1].number())) {
-			//if(!CALCULATOR->aborted()) CALCULATOR->error(false, _("Argument for %s() must be a real number greater than or equal to -1/e."), preferredDisplayName().name.c_str(), NULL);
-		} else if(!(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
+		if(nr.lambertW(vargs[1].number()) && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			mstruct.set(nr, true);
 			return 1;
 		}
@@ -6581,7 +6650,46 @@ bool EiFunction::representsNumber(const MathStructure &vargs, bool) const {retur
 int EiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(expint)
 }
-
+FresnelSFunction::FresnelSFunction() : MathFunction("fresnels", 1) {
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+}
+bool FresnelSFunction::representsPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsPositive();}
+bool FresnelSFunction::representsNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNegative();}
+bool FresnelSFunction::representsNonNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonNegative();}
+bool FresnelSFunction::representsNonPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonPositive();}
+bool FresnelSFunction::representsInteger(const MathStructure&, bool) const {return false;}
+bool FresnelSFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool FresnelSFunction::representsRational(const MathStructure&, bool) const {return false;}
+bool FresnelSFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex();}
+bool FresnelSFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex();}
+bool FresnelSFunction::representsComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsComplex();}
+bool FresnelSFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonZero();}
+bool FresnelSFunction::representsEven(const MathStructure&, bool) const {return false;}
+bool FresnelSFunction::representsOdd(const MathStructure&, bool) const {return false;}
+bool FresnelSFunction::representsUndefined(const MathStructure&) const {return false;}
+int FresnelSFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(fresnels)
+}
+FresnelCFunction::FresnelCFunction() : MathFunction("fresnelc", 1) {
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+}
+bool FresnelCFunction::representsPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsPositive();}
+bool FresnelCFunction::representsNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNegative();}
+bool FresnelCFunction::representsNonNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonNegative();}
+bool FresnelCFunction::representsNonPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonPositive();}
+bool FresnelCFunction::representsInteger(const MathStructure&, bool) const {return false;}
+bool FresnelCFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
+bool FresnelCFunction::representsRational(const MathStructure&, bool) const {return false;}
+bool FresnelCFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex();}
+bool FresnelCFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex();}
+bool FresnelCFunction::representsComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsComplex();}
+bool FresnelCFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonZero();}
+bool FresnelCFunction::representsEven(const MathStructure&, bool) const {return false;}
+bool FresnelCFunction::representsOdd(const MathStructure&, bool) const {return false;}
+bool FresnelCFunction::representsUndefined(const MathStructure&) const {return false;}
+int FresnelCFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(fresnelc)
+}
 SiFunction::SiFunction() : MathFunction("Si", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
