@@ -465,6 +465,7 @@ class Number {
 		bool digamma();
 		bool airy();
 		bool erf();
+		bool erfi();
 		bool erfc();
 		bool besselj(const Number &o);
 		bool bessely(const Number &o);
@@ -493,6 +494,8 @@ class Number {
 
 		bool polylog(const Number &o);
 		bool igamma(const Number &o);
+		bool fresnels();
+		bool fresnelc();
 		bool expint();
 		bool logint();
 		bool sinint();

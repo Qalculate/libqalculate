@@ -14,6 +14,7 @@
 #include "MathStructure.h"
 #include "mathstructure-support.h"
 #include "Calculator.h"
+#include "BuiltinFunctions.h"
 #include "Number.h"
 #include "Function.h"
 #include "Variable.h"
@@ -24277,6 +24278,17 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				LAST ^= Number(-1, 2);
 				mdiff.differentiate(x_var, eo);
 				multiply(mdiff);
+			} else if(o_function->id() == FUNCTION_ID_ERFI && SIZE == 1) {
+				MathStructure mdiff(CHILD(0));
+				MathStructure mexp(CHILD(0));
+				mexp ^= nr_two;
+				set(CALCULATOR->v_e, true);
+				raise(mexp);
+				multiply(nr_two);
+				multiply(CALCULATOR->v_pi);
+				LAST ^= Number(-1, 2);
+				mdiff.differentiate(x_var, eo);
+				multiply(mdiff);
 			} else if(o_function == CALCULATOR->f_erfc && SIZE == 1) {
 				MathStructure mdiff(CHILD(0));
 				MathStructure mexp(CHILD(0));
@@ -24289,6 +24301,24 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				LAST ^= Number(-1, 2);
 				mdiff.differentiate(x_var, eo);
 				multiply(mdiff);
+			} else if(o_function->id() == FUNCTION_ID_FRESNEL_S && SIZE == 1) {
+				setFunction(CALCULATOR->f_sin);
+				MathStructure mstruct(CHILD(0));
+				CHILD(0) ^= nr_two;
+				CHILD(0) *= CALCULATOR->v_pi;
+				CHILD(0) *= nr_half;
+				CHILD(0) *= CALCULATOR->getRadUnit();
+				mstruct.differentiate(x_var, eo);
+				multiply(mstruct);
+			} else if(o_function->id() == FUNCTION_ID_FRESNEL_C && SIZE == 1) {
+				setFunction(CALCULATOR->f_cos);
+				MathStructure mstruct(CHILD(0));
+				CHILD(0) ^= nr_two;
+				CHILD(0) *= CALCULATOR->v_pi;
+				CHILD(0) *= nr_half;
+				CHILD(0) *= CALCULATOR->getRadUnit();
+				mstruct.differentiate(x_var, eo);
+				multiply(mstruct);
 			} else if(o_function == CALCULATOR->f_li && SIZE == 1) {
 				setFunction(CALCULATOR->f_ln);
 				MathStructure mstruct(CHILD(0));

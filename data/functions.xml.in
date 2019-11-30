@@ -842,6 +842,10 @@
       <_title>Complementary Error Function</_title>
       <_names>r:erfc</_names>
     </builtin_function>
+    <builtin_function name="erfi">
+      <_title>Imaginary Error Function</_title>
+      <_names>r:erfi</_names>
+    </builtin_function>
     <builtin_function name="Li">
       <_title>Polylogarithm</_title>
       <_names>rc:Li,polylog</_names>
@@ -2879,6 +2883,16 @@
         <_title>Hyperbolic Cosine Integral</_title>
         <_names>rc:Chi,coshint</_names>
         <_description>The integral of cosh(x)/x.</_description>
+      </builtin_function>
+      <builtin_function name="fresnels">
+        <_title>Fresnel Integral S</_title>
+        <_names>r:fresnels</_names>
+        <_description>The integral of sin(pi*x^2/2).</_description>
+      </builtin_function>
+      <builtin_function name="fresnelc">
+        <_title>Fresnel Integral C</_title>
+        <_names>r:fresnelc</_names>
+        <_description>The integral of cos(pi*x^2/2).</_description>
       </builtin_function>
       <builtin_function name="igamma">
         <_title>Upper Incomplete Gamma Function</_title>

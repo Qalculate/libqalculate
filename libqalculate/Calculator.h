@@ -861,6 +861,7 @@ class Calculator {
 	void functionNameChanged(MathFunction *f, bool new_item = false);
 	void unitNameChanged(Unit *u, bool new_item = false);
 	Variable* getVariable(std::string name_);
+	Variable* getVariableById(int id) const;
 	Variable* getActiveVariable(std::string name_);
 	ExpressionItem *addExpressionItem(ExpressionItem *item, bool force = true);
 	MathFunction* addFunction(MathFunction *f, bool force = true, bool check_names = true);
@@ -868,6 +869,7 @@ class Calculator {
 	DataSet* getDataSet(size_t index);
 	DataSet* getDataSet(std::string name);
 	MathFunction* getFunction(std::string name_);
+	MathFunction* getFunctionById(int id) const;
 	MathFunction* getActiveFunction(std::string name_);
 	/** Returns variable for an index (starting at zero). All variables can be traversed by starting at index zero and increasing the index until NULL is returned.
 	*

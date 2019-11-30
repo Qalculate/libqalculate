@@ -121,6 +121,9 @@ int MathFunction::type() const {
 int MathFunction::subtype() const {
 	return SUBTYPE_FUNCTION;
 }
+int MathFunction::id() const {
+	return 0;
+}
 
 string MathFunction::example(bool raw_format, string name_string) const {
 	if(raw_format) return sexample;
