@@ -106,6 +106,7 @@ bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *fa
 bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false);
 bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
 bool combine_powers(MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo);
+bool contains_angle_unit(const MathStructure &m, const ParseOptions &po);
 
 #endif
 

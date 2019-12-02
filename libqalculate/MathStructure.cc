@@ -2376,14 +2376,16 @@ ComparisonResult MathStructure::compare(const MathStructure &o) const {
 		int b_ass = (i == 0 ? 2 : contains_ass_intval(mtest));
 		if(b_ass == 0) break;
 		CALCULATOR->beginTemporaryEnableIntervalArithmetic();
-		CALCULATOR->beginTemporaryStopMessages();
-		replace_interval_unknowns(mtest, i > 0);
-		if(b_ass == 2) mtest.calculateFunctions(eo);
-		mtest.calculatesub(eo, eo);
-		int incomp = 0;
-		remove_rad_unit(mtest, eo);
-		CALCULATOR->endTemporaryStopMessages();
+		if(CALCULATOR->usesIntervalArithmetic()) {
+			CALCULATOR->beginTemporaryStopMessages();
+			replace_interval_unknowns(mtest, i > 0);
+			if(b_ass == 2) mtest.calculateFunctions(eo);
+			mtest.calculatesub(eo, eo);
+			remove_rad_unit(mtest, eo);
+			CALCULATOR->endTemporaryStopMessages();
+		}
 		CALCULATOR->endTemporaryEnableIntervalArithmetic();
+		int incomp = 0;
 		if(mtest.isAddition()) {
 			incomp = compare_check_incompability(&mtest);
 		}
@@ -3557,15 +3559,17 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			}
 		}
 		if(eo.approximation == APPROXIMATION_EXACT) {
-			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
-			CALCULATOR->beginTemporaryStopMessages();
 			MathStructure mtest(mstruct);
-			EvaluationOptions eo2 = eo;
-			eo2.approximation = APPROXIMATION_APPROXIMATE;
-			if(eo2.interval_calculation == INTERVAL_CALCULATION_NONE) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
-			mtest.calculateFunctions(eo2);
-			mtest.calculatesub(eo2, eo2);
-			CALCULATOR->endTemporaryStopMessages();
+			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
+			if(CALCULATOR->usesIntervalArithmetic()) {
+				CALCULATOR->beginTemporaryStopMessages();
+				EvaluationOptions eo2 = eo;
+				eo2.approximation = APPROXIMATION_APPROXIMATE;
+				if(eo2.interval_calculation == INTERVAL_CALCULATION_NONE) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
+				mtest.calculateFunctions(eo2);
+				mtest.calculatesub(eo2, eo2);
+				CALCULATOR->endTemporaryStopMessages();
+			}
 			CALCULATOR->endTemporaryEnableIntervalArithmetic();
 			if(o_number.isMinusInfinity(false)) {
 				if(mtest.representsPositive(false)) {
@@ -3614,15 +3618,17 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			}
 		}
 		if(eo.approximation == APPROXIMATION_EXACT) {
-			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
-			CALCULATOR->beginTemporaryStopMessages();
 			MathStructure mtest(*this);
-			EvaluationOptions eo2 = eo;
-			eo2.approximation = APPROXIMATION_APPROXIMATE;
-			if(eo2.interval_calculation == INTERVAL_CALCULATION_NONE) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
-			mtest.calculateFunctions(eo2);
-			mtest.calculatesub(eo2, eo2);
-			CALCULATOR->endTemporaryStopMessages();
+			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
+			if(CALCULATOR->usesIntervalArithmetic()) {
+				CALCULATOR->beginTemporaryStopMessages();
+				EvaluationOptions eo2 = eo;
+				eo2.approximation = APPROXIMATION_APPROXIMATE;
+				if(eo2.interval_calculation == INTERVAL_CALCULATION_NONE) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
+				mtest.calculateFunctions(eo2);
+				mtest.calculatesub(eo2, eo2);
+				CALCULATOR->endTemporaryStopMessages();
+			}
 			CALCULATOR->endTemporaryEnableIntervalArithmetic();
 			if(mstruct.number().isMinusInfinity(false)) {
 				if(mtest.representsPositive(false)) {
@@ -5288,15 +5294,17 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				return 1;
 			}
 		}
-		CALCULATOR->beginTemporaryEnableIntervalArithmetic();
-		CALCULATOR->beginTemporaryStopMessages();
 		MathStructure mtest(mstruct);
-		EvaluationOptions eo2 = eo;
-		eo2.approximation = APPROXIMATION_APPROXIMATE;
-		if(eo2.interval_calculation == INTERVAL_CALCULATION_NONE) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
-		mtest.calculateFunctions(eo2);
-		mtest.calculatesub(eo2, eo2);
-		CALCULATOR->endTemporaryStopMessages();
+		CALCULATOR->beginTemporaryEnableIntervalArithmetic();
+		if(CALCULATOR->usesIntervalArithmetic()) {
+			CALCULATOR->beginTemporaryStopMessages();
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			if(eo2.interval_calculation == INTERVAL_CALCULATION_NONE) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
+			mtest.calculateFunctions(eo2);
+			mtest.calculatesub(eo2, eo2);
+			CALCULATOR->endTemporaryStopMessages();
+		}
 		CALCULATOR->endTemporaryEnableIntervalArithmetic();
 		if(mtest.representsNegative(false)) {
 			o_number.clear();
@@ -5318,15 +5326,17 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			}
 		}
 	} else if(mstruct.isNumber() && mstruct.number().isInfinite(false)) {
-		CALCULATOR->beginTemporaryEnableIntervalArithmetic();
-		CALCULATOR->beginTemporaryStopMessages();
 		MathStructure mtest(*this);
-		EvaluationOptions eo2 = eo;
-		eo2.approximation = APPROXIMATION_APPROXIMATE;
-		if(eo2.interval_calculation == INTERVAL_CALCULATION_NONE) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
-		mtest.calculateFunctions(eo2);
-		mtest.calculatesub(eo2, eo2);
-		CALCULATOR->endTemporaryStopMessages();
+		CALCULATOR->beginTemporaryEnableIntervalArithmetic();
+		if(CALCULATOR->usesIntervalArithmetic()) {
+			CALCULATOR->beginTemporaryStopMessages();
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			if(eo2.interval_calculation == INTERVAL_CALCULATION_NONE) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
+			mtest.calculateFunctions(eo2);
+			mtest.calculatesub(eo2, eo2);
+			CALCULATOR->endTemporaryStopMessages();
+		}
 		CALCULATOR->endTemporaryEnableIntervalArithmetic();
 		if(mtest.isNumber()) {
 			if(mtest.merge_power(mstruct, eo) > 0 && mtest.isNumber()) {
@@ -5718,30 +5728,33 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			}
 			if(mstruct.isNumber() && CHILD(0).isVariable() && CHILD(0).variable() == CALCULATOR->v_e && CHILD(1).isNumber() && CHILD(1).number().hasImaginaryPart() && !CHILD(1).number().hasRealPart() && mstruct.number().isReal()) {
 				CALCULATOR->beginTemporaryEnableIntervalArithmetic();
-				CALCULATOR->beginTemporaryStopMessages();
-				Number nr(*CHILD(1).number().internalImaginary());
-				nr.add(CALCULATOR->v_pi->get().number());
-				nr.divide(CALCULATOR->v_pi->get().number() * 2);
-				Number nr_u(nr.upperEndPoint());
-				nr = nr.lowerEndPoint();
-				CALCULATOR->endTemporaryEnableIntervalArithmetic();
-				nr_u.floor();
-				nr.floor();
-				if(!CALCULATOR->endTemporaryStopMessages() && nr == nr_u) {
-					nr.setApproximate(false);
-					nr *= 2;
-					nr.negate();
-					nr *= nr_one_i;
-					if(!nr.isZero()) {
-						CHILD(1) += nr;
-						CHILD(1).last() *= CALCULATOR->v_pi;
+				if(CALCULATOR->usesIntervalArithmetic()) {
+					CALCULATOR->beginTemporaryStopMessages();
+					Number nr(*CHILD(1).number().internalImaginary());
+					nr.add(CALCULATOR->v_pi->get().number());
+					nr.divide(CALCULATOR->v_pi->get().number() * 2);
+					Number nr_u(nr.upperEndPoint());
+					nr = nr.lowerEndPoint();
+					nr_u.floor();
+					nr.floor();
+					if(!CALCULATOR->endTemporaryStopMessages() && nr == nr_u) {
+						CALCULATOR->endTemporaryEnableIntervalArithmetic();
+						nr.setApproximate(false);
+						nr *= 2;
+						nr.negate();
+						nr *= nr_one_i;
+						if(!nr.isZero()) {
+							CHILD(1) += nr;
+							CHILD(1).last() *= CALCULATOR->v_pi;
+						}
+						mstruct.ref();
+						CHILD(1).multiply_nocopy(&mstruct, true);
+						CHILD(1).calculateMultiplyLast(eo, true, this, 1);
+						calculateRaiseExponent(eo, mparent, index_this);
+						return true;
 					}
-					mstruct.ref();
-					CHILD(1).multiply_nocopy(&mstruct, true);
-					CHILD(1).calculateMultiplyLast(eo, true, this, 1);
-					calculateRaiseExponent(eo, mparent, index_this);
-					return true;
 				}
+				CALCULATOR->endTemporaryEnableIntervalArithmetic();
 			}
 			goto default_power_merge;
 		}
@@ -8548,7 +8561,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				for(int i = 0; i < 2; i++) {
 					CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 					int b_ass = (i == 0 ? 2 : contains_ass_intval(mtest));
-					if(b_ass == 0) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); break;}
+					if(b_ass == 0 || !CALCULATOR->usesIntervalArithmetic()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); break;}
 					replace_interval_unknowns(mtest, i > 0);
 					if(i == 0 && !b_intval) fix_intervals(mtest, eo2, &b_failed);
 					if(!b_failed) {
@@ -10801,35 +10814,37 @@ int limit_inf_cmp(const MathStructure &mstruct, const MathStructure &mcmp, const
 	if(itype2 > itype1) return -1;
 	ComparisonResult cr = COMPARISON_RESULT_UNKNOWN;
 	CALCULATOR->beginTemporaryEnableIntervalArithmetic();
-	if(itype1 == 4) {
-		cr = m1->getChild(1)->compare(*m2->getChild(1));
-	} else if(itype1 == 1) {
-		int cmp = limit_inf_cmp(*m1->getChild(1), *m2->getChild(1), x_var);
-		if(cmp > 0) cr = COMPARISON_RESULT_LESS;
-		else if(cmp == -1) cr = COMPARISON_RESULT_GREATER;
-	} else if(itype1 == 3) {
-		if(m1->exponent()->equals(*m2->exponent())) {
-			if(m1->base()->contains(x_var, true) || m2->base()->contains(x_var, true)) {
-				int cmp = limit_inf_cmp(*m1->base(), *m2->base(), x_var);
-				if(cmp > 0) cr = COMPARISON_RESULT_LESS;
-				else if(cmp == -1) cr = COMPARISON_RESULT_GREATER;
-			} else {
-				cr = m1->base()->compareApproximately(*m2->base());
-			}
-		} else if(m1->base()->equals(*m2->base())) {
-			int cmp = limit_inf_cmp(*m1->exponent(), *m2->exponent(), x_var);
+	if(CALCULATOR->usesIntervalArithmetic()) {
+		if(itype1 == 4) {
+			cr = m1->getChild(1)->compare(*m2->getChild(1));
+		} else if(itype1 == 1) {
+			int cmp = limit_inf_cmp(*m1->getChild(1), *m2->getChild(1), x_var);
 			if(cmp > 0) cr = COMPARISON_RESULT_LESS;
 			else if(cmp == -1) cr = COMPARISON_RESULT_GREATER;
-			else if(cmp == 0) cr = m1->exponent()->compareApproximately(*m2->exponent());
-		}
-	} else if(itype1 == 2) {
-		if(m1->equals(x_var)) {
-			if(m2->equals(x_var)) cr = COMPARISON_RESULT_EQUAL;
-			else cr = m_one.compareApproximately(*m2->getChild(2));
-		} else if(m2->equals(x_var)) {
-			cr = m1->getChild(2)->compareApproximately(m_one);
-		} else {
-			cr = m1->getChild(2)->compareApproximately(*m2->getChild(2));
+		} else if(itype1 == 3) {
+			if(m1->exponent()->equals(*m2->exponent())) {
+				if(m1->base()->contains(x_var, true) || m2->base()->contains(x_var, true)) {
+					int cmp = limit_inf_cmp(*m1->base(), *m2->base(), x_var);
+					if(cmp > 0) cr = COMPARISON_RESULT_LESS;
+					else if(cmp == -1) cr = COMPARISON_RESULT_GREATER;
+				} else {
+					cr = m1->base()->compareApproximately(*m2->base());
+				}
+			} else if(m1->base()->equals(*m2->base())) {
+				int cmp = limit_inf_cmp(*m1->exponent(), *m2->exponent(), x_var);
+				if(cmp > 0) cr = COMPARISON_RESULT_LESS;
+				else if(cmp == -1) cr = COMPARISON_RESULT_GREATER;
+				else if(cmp == 0) cr = m1->exponent()->compareApproximately(*m2->exponent());
+			}
+		} else if(itype1 == 2) {
+			if(m1->equals(x_var)) {
+				if(m2->equals(x_var)) cr = COMPARISON_RESULT_EQUAL;
+				else cr = m_one.compareApproximately(*m2->getChild(2));
+			} else if(m2->equals(x_var)) {
+				cr = m1->getChild(2)->compareApproximately(m_one);
+			} else {
+				cr = m1->getChild(2)->compareApproximately(*m2->getChild(2));
+			}
 		}
 	}
 	CALCULATOR->endTemporaryEnableIntervalArithmetic();
@@ -23406,6 +23421,16 @@ bool MathStructure::convert(const MathStructure unit_mstruct, bool convert_nonli
 		}
 	}
 	return b;
+}
+
+bool contains_angle_unit(const MathStructure &m, const ParseOptions &po) {
+	if(m.isUnit() && m.unit()->baseUnit() == CALCULATOR->getRadUnit()->baseUnit()) return true;
+	if(m.isVariable() && m.variable()->isKnown()) return contains_angle_unit(((KnownVariable*) m.variable())->get(), po);
+	if(m.isFunction()) return po.angle_unit == ANGLE_UNIT_NONE && (m.function() == CALCULATOR->f_asin || m.function() == CALCULATOR->f_acos || m.function() == CALCULATOR->f_atan);
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_angle_unit(m[i], po)) return true;
+	}
+	return false;
 }
 
 int MathStructure::contains(const MathStructure &mstruct, bool structural_only, bool check_variables, bool check_functions, bool loose_equals) const {

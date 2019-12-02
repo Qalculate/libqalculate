@@ -1510,7 +1510,7 @@ int Calculator::getPrecision() const {
 	return i_precision;
 }
 void Calculator::useIntervalArithmetic(bool use_interval_arithmetic) {b_interval = use_interval_arithmetic;}
-bool Calculator::usesIntervalArithmetic() const {return i_start_interval > 0 || (b_interval && i_stop_interval <= 0);}
+bool Calculator::usesIntervalArithmetic() const {return i_stop_interval <= 0 && (b_interval || i_start_interval > 0);}
 void Calculator::beginTemporaryStopIntervalArithmetic() {
 	i_stop_interval++;
 }
@@ -5522,7 +5522,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		size_t ui = str.find(signs[i]);
 		size_t ui2 = 0;
 		while(ui != string::npos) {
-			for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
+			for(; ui2 < q_end.size(); ui2++) {
 				if(ui >= q_begin[ui2]) {
 					if(ui <= q_end[ui2]) {
 						ui = str.find(signs[i], q_end[ui2] + 1);

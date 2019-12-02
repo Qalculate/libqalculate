@@ -1,3 +1,10 @@
+2019-12-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support complex numbers in erf(), erfi(), and erfc()
+	* Integrals of fresnelc() and fresnels()
+	* Integrals of 1/sin(ax)^n and 1/cos(ax)^n where n>2
+	* Improved handling of angle arguments
+
 2019-11-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Imaginary error function

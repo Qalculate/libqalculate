@@ -1691,6 +1691,10 @@ bool NumberArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 	if(!value.isNumber()) {
 		value.eval(eo);
 	}
+	/*if(value.isMultiplication() && value.size() == 2 && value[0].isNumber() && value[1].isUnit() && value[1].unit()->baseUnit() == CALCULATOR->getRadUnit()->baseUnit()) {
+		value /= CALCULATOR->getRadUnit();
+		value.eval(eo);
+	}*/
 	if(!value.isNumber() || (b_rational_number && !value.number().isRational())) {
 		return false;
 	}
@@ -2218,6 +2222,7 @@ void AngleArgument::parse(MathStructure *mstruct, const string &str, const Parse
 		if(mstruct->contains(CALCULATOR->getRadUnit(), false, true, true) > 0) return;
 		if(mstruct->contains(CALCULATOR->getDegUnit(), false, true, true) > 0) return;
 		if(mstruct->contains(CALCULATOR->getGraUnit(), false, true, true) > 0) return;
+		if(contains_angle_unit(*mstruct, po)) return;
 	}
 	switch(po.angle_unit) {
 		case ANGLE_UNIT_DEGREES: {
