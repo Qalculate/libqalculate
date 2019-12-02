@@ -684,7 +684,7 @@ int ErfiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return 1;
 }
 ErfcFunction::ErfcFunction() : MathFunction("erfc", 1) {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1);
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 bool ErfcFunction::representsPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
 bool ErfcFunction::representsNegative(const MathStructure&, bool) const {return false;}
@@ -1032,6 +1032,7 @@ bool test_eval(MathStructure &mtest, const EvaluationOptions &eo) {
 	eo2.assume_denominators_nonzero = false;
 	eo2.approximation = APPROXIMATION_APPROXIMATE;
 	CALCULATOR->beginTemporaryEnableIntervalArithmetic();
+	if(!CALCULATOR->usesIntervalArithmetic()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
 	CALCULATOR->beginTemporaryStopMessages();
 	mtest.calculateFunctions(eo2);
 	mtest.calculatesub(eo2, eo2, true);
@@ -2410,12 +2411,12 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 
 bool is_real_angle_value(const MathStructure &mstruct) {
 	if(mstruct.isUnit()) {
-		return mstruct.unit() == CALCULATOR->getRadUnit() || mstruct.unit() == CALCULATOR->getDegUnit() || mstruct.unit() == CALCULATOR->getGraUnit();
+		return mstruct.unit()->baseUnit() == CALCULATOR->getRadUnit()->baseUnit();
 	} else if(mstruct.isMultiplication()) {
 		bool b = false;
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			if(!b && mstruct[i].isUnit()) {
-				if(mstruct[i].unit() == CALCULATOR->getRadUnit() || mstruct[i].unit() == CALCULATOR->getDegUnit() || mstruct[i].unit() == CALCULATOR->getGraUnit()) {
+				if(mstruct[i].unit()->baseUnit() == CALCULATOR->getRadUnit()->baseUnit()) {
 					b = true;
 				} else {
 					return false;
@@ -2438,7 +2439,7 @@ bool is_infinite_angle_value(const MathStructure &mstruct) {
 		bool b = false;
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			if(!b && mstruct[i].isUnit()) {
-				if(mstruct[i].unit() == CALCULATOR->getRadUnit() || mstruct[i].unit() == CALCULATOR->getDegUnit() || mstruct[i].unit() == CALCULATOR->getGraUnit()) {
+				if(mstruct[i].unit()->baseUnit() == CALCULATOR->getRadUnit()->baseUnit()) {
 					b = true;
 				} else {
 					return false;
@@ -2453,12 +2454,12 @@ bool is_infinite_angle_value(const MathStructure &mstruct) {
 }
 bool is_number_angle_value(const MathStructure &mstruct, bool allow_infinity = false) {
 	if(mstruct.isUnit()) {
-		return mstruct.unit() == CALCULATOR->getRadUnit() || mstruct.unit() == CALCULATOR->getDegUnit() || mstruct.unit() == CALCULATOR->getGraUnit();
+		return mstruct.unit()->baseUnit() == CALCULATOR->getRadUnit()->baseUnit();
 	} else if(mstruct.isMultiplication()) {
 		bool b = false;
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			if(!b && mstruct[i].isUnit()) {
-				if(mstruct[i].unit() == CALCULATOR->getRadUnit() || mstruct[i].unit() == CALCULATOR->getDegUnit() || mstruct[i].unit() == CALCULATOR->getGraUnit()) {
+				if(mstruct[i].unit()->baseUnit() == CALCULATOR->getRadUnit()->baseUnit()) {
 					b = true;
 				} else {
 					return false;
@@ -4079,27 +4080,30 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 
 	if(!mstruct.isNumber()) {
 		if(mstruct.isPower() && mstruct[0] == CALCULATOR->v_e && mstruct[1].isNumber() && mstruct[1].number().hasImaginaryPart() && !mstruct[1].number().hasRealPart()) {
-			CALCULATOR->beginTemporaryStopMessages();
 			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
-			Number nr(*mstruct[1].number().internalImaginary());
-			nr.add(CALCULATOR->v_pi->get().number());
-			nr.divide(CALCULATOR->v_pi->get().number() * 2);
-			Number nr_u(nr.upperEndPoint());
-			nr = nr.lowerEndPoint();
-			CALCULATOR->endTemporaryEnableIntervalArithmetic();
-			nr_u.floor();
-			nr.floor();
-			if(!CALCULATOR->endTemporaryStopMessages() && nr == nr_u) {
-				nr.setApproximate(false);
-				nr *= 2;
-				nr.negate();
-				mstruct = mstruct[1].number().imaginaryPart();
-				if(!nr.isZero()) {
-					mstruct += nr;
-					mstruct.last() *= CALCULATOR->v_pi;
+			if(CALCULATOR->usesIntervalArithmetic()) {
+				CALCULATOR->beginTemporaryStopMessages();
+				Number nr(*mstruct[1].number().internalImaginary());
+				nr.add(CALCULATOR->v_pi->get().number());
+				nr.divide(CALCULATOR->v_pi->get().number() * 2);
+				Number nr_u(nr.upperEndPoint());
+				nr = nr.lowerEndPoint();
+				nr_u.floor();
+				nr.floor();
+				if(!CALCULATOR->endTemporaryStopMessages() && nr == nr_u) {
+					CALCULATOR->endTemporaryEnableIntervalArithmetic();
+					nr.setApproximate(false);
+					nr *= 2;
+					nr.negate();
+					mstruct = mstruct[1].number().imaginaryPart();
+					if(!nr.isZero()) {
+						mstruct += nr;
+						mstruct.last() *= CALCULATOR->v_pi;
+					}
+					return true;
 				}
-				return true;
 			}
+			CALCULATOR->endTemporaryEnableIntervalArithmetic();
 		}
 		if(eo.approximation == APPROXIMATION_EXACT) {
 			msave = mstruct;
@@ -4232,27 +4236,30 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			return 1;
 		}
 		if(mstruct.isPower() && mstruct[0] == CALCULATOR->v_e && mstruct[1].isNumber() && mstruct[1].number().hasImaginaryPart() && !mstruct[1].number().hasRealPart()) {
-			CALCULATOR->beginTemporaryStopMessages();
 			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
-			Number nr(*mstruct[1].number().internalImaginary());
-			nr.add(CALCULATOR->v_pi->get().number());
-			nr.divide(CALCULATOR->v_pi->get().number() * 2);
-			Number nr_u(nr.upperEndPoint());
-			nr = nr.lowerEndPoint();
-			CALCULATOR->endTemporaryEnableIntervalArithmetic();
-			nr_u.floor();
-			nr.floor();
-			if(!CALCULATOR->endTemporaryStopMessages() && nr == nr_u) {
-				nr.setApproximate(false);
-				nr *= 2;
-				nr.negate();
-				mstruct = mstruct[1].number().imaginaryPart();
-				if(!nr.isZero()) {
-					mstruct += nr;
-					mstruct.last() *= CALCULATOR->v_pi;
+			if(CALCULATOR->usesIntervalArithmetic()) {
+				CALCULATOR->beginTemporaryStopMessages();
+				Number nr(*mstruct[1].number().internalImaginary());
+				nr.add(CALCULATOR->v_pi->get().number());
+				nr.divide(CALCULATOR->v_pi->get().number() * 2);
+				Number nr_u(nr.upperEndPoint());
+				nr = nr.lowerEndPoint();
+				nr_u.floor();
+				nr.floor();
+				if(!CALCULATOR->endTemporaryStopMessages() && nr == nr_u) {
+					CALCULATOR->endTemporaryEnableIntervalArithmetic();
+					nr.setApproximate(false);
+					nr *= 2;
+					nr.negate();
+					mstruct = mstruct[1].number().imaginaryPart();
+					if(!nr.isZero()) {
+						mstruct += nr;
+						mstruct.last() *= CALCULATOR->v_pi;
+					}
+					return true;
 				}
-				return true;
 			}
+			CALCULATOR->endTemporaryEnableIntervalArithmetic();
 		}
 		if(eo.approximation == APPROXIMATION_EXACT) {
 			msave = mstruct;
@@ -4328,7 +4335,7 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 }
 
 SincFunction::SincFunction() : MathFunction("sinc", 1) {
-	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
 }
@@ -4336,18 +4343,11 @@ bool SincFunction::representsNumber(const MathStructure &vargs, bool) const {ret
 bool SincFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && (vargs[0].representsReal() || is_real_angle_value(vargs[0]));}
 bool SincFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex();}
 int SincFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].isVector()) return 0;
-	mstruct = vargs[0];
-	mstruct.eval(eo);
-	if(mstruct.isVector()) return -1;
-	if(mstruct.containsType(STRUCT_UNIT) && CALCULATOR->getRadUnit()) {
-		mstruct.convert(CALCULATOR->getRadUnit());
-		mstruct /= CALCULATOR->getRadUnit();
-	}
-	if(mstruct.isZero()) {
+	if(vargs[0].isZero()) {
 		mstruct.set(1, 1, 0, true);
 		return 1;
-	} else if(mstruct.representsNonZero(true)) {
+	} else if(vargs[0].representsNonZero(true)) {
+		mstruct = vargs[0];
 		bool b = replace_f_interval(mstruct, eo);
 		b = replace_intervals_f(mstruct) || b;
 		MathStructure *m_sin = new MathStructure(CALCULATOR->f_sin, &mstruct, NULL);
@@ -4367,7 +4367,7 @@ CisFunction::CisFunction() : MathFunction("cis", 1) {
 int CisFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	if(vargs[0].isVector()) return 0;
-	if(vargs[0].contains(CALCULATOR->getRadUnit(), false, true, true) > 0 || vargs[0].contains(CALCULATOR->getDegUnit(), false, true, true) > 0 || vargs[0].contains(CALCULATOR->getGraUnit(), false, true, true) > 0) {
+	if(contains_angle_unit(vargs[0], eo.parse_options)) {
 		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
 			mstruct = vargs[0][0];
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getRadUnit()) {
@@ -6651,7 +6651,12 @@ int EiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	FR_FUNCTION(expint)
 }
 FresnelSFunction::FresnelSFunction() : MathFunction("fresnels", 1) {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	Number fr(-6, 1);
+	arg->setMin(&fr);
+	fr = 6;
+	arg->setMax(&fr);
+	setArgumentDefinition(1, arg);
 }
 bool FresnelSFunction::representsPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsPositive();}
 bool FresnelSFunction::representsNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNegative();}
@@ -6668,10 +6673,23 @@ bool FresnelSFunction::representsEven(const MathStructure&, bool) const {return 
 bool FresnelSFunction::representsOdd(const MathStructure&, bool) const {return false;}
 bool FresnelSFunction::representsUndefined(const MathStructure&) const {return false;}
 int FresnelSFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	FR_FUNCTION(fresnels)
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(contains_angle_unit(mstruct, eo.parse_options)) {mstruct /= CALCULATOR->getRadUnit(); mstruct.eval(eo);}
+	if(!mstruct.isNumber()) return -1;
+	Number nr(mstruct.number()); if(!nr.fresnels() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {
+		return -1;
+	}
+	mstruct.set(nr);
+	return 1;
 }
 FresnelCFunction::FresnelCFunction() : MathFunction("fresnelc", 1) {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	Number fr(-6, 1);
+	arg->setMin(&fr);
+	fr = 6;
+	arg->setMax(&fr);
+	setArgumentDefinition(1, arg);
 }
 bool FresnelCFunction::representsPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsPositive();}
 bool FresnelCFunction::representsNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNegative();}
@@ -6688,7 +6706,15 @@ bool FresnelCFunction::representsEven(const MathStructure&, bool) const {return 
 bool FresnelCFunction::representsOdd(const MathStructure&, bool) const {return false;}
 bool FresnelCFunction::representsUndefined(const MathStructure&) const {return false;}
 int FresnelCFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	FR_FUNCTION(fresnelc)
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(contains_angle_unit(mstruct, eo.parse_options)) {mstruct /= CALCULATOR->getRadUnit(); mstruct.eval(eo);}
+	if(!mstruct.isNumber()) return -1;
+	Number nr(mstruct.number()); if(!nr.fresnelc() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {
+		return -1;
+	}
+	mstruct.set(nr);
+	return 1;
 }
 SiFunction::SiFunction() : MathFunction("Si", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
@@ -6701,6 +6727,7 @@ int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
+	if(contains_angle_unit(mstruct, eo.parse_options)) {mstruct /= CALCULATOR->getRadUnit(); mstruct.eval(eo);}
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(nr.isPlusInfinity()) {
@@ -6744,6 +6771,7 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
+	if(contains_angle_unit(mstruct, eo.parse_options)) {mstruct /= CALCULATOR->getRadUnit(); mstruct.eval(eo);}
 	if(mstruct.isNumber()) {
 		if(mstruct.number().isNegative()) {
 			if(!eo.allow_complex) return -1;

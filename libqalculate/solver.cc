@@ -518,34 +518,36 @@ bool fix_n_multiple(MathStructure &mstruct, const EvaluationOptions &eo, const E
 				feo2.approximation = APPROXIMATION_TRY_EXACT;
 			}
 			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
-			CALCULATOR->beginTemporaryStopMessages();
-			mtest.calculateFunctions(feo2);
-			if(mtest.isolate_x(eo2, feo2, CALCULATOR->v_n)) {
-				if(CALCULATOR->endTemporaryStopMessages() == 0) {
-					if(mtest.isZero()) {
-						mstruct.clear(true);
-						b_ret = true;
-					} else if(mtest.isComparison() && mtest.comparisonType() == COMPARISON_EQUALS && mtest[0] == CALCULATOR->v_n && mtest[1].isNumber()) {
-						if(mtest[1].number().isInteger()) {
-							mstruct.calculateReplace(CALCULATOR->v_n, mtest[1], eo);
+			if(CALCULATOR->usesIntervalArithmetic()) {
+				CALCULATOR->beginTemporaryStopMessages();
+				mtest.calculateFunctions(feo2);
+				if(mtest.isolate_x(eo2, feo2, CALCULATOR->v_n)) {
+					if(CALCULATOR->endTemporaryStopMessages() == 0) {
+						if(mtest.isZero()) {
+							mstruct.clear(true);
 							b_ret = true;
-						} else if(mtest[1].number().isInterval()) {
-							Number nr_int; bool b_multiple = false;
-							if(mtest[1].number().getCentralInteger(nr_int, &b_multiple)) {
-								mstruct.calculateReplace(CALCULATOR->v_n, nr_int, eo);
+						} else if(mtest.isComparison() && mtest.comparisonType() == COMPARISON_EQUALS && mtest[0] == CALCULATOR->v_n && mtest[1].isNumber()) {
+							if(mtest[1].number().isInteger()) {
+								mstruct.calculateReplace(CALCULATOR->v_n, mtest[1], eo);
 								b_ret = true;
-							} else if(!b_multiple) {
+							} else if(mtest[1].number().isInterval()) {
+								Number nr_int; bool b_multiple = false;
+								if(mtest[1].number().getCentralInteger(nr_int, &b_multiple)) {
+									mstruct.calculateReplace(CALCULATOR->v_n, nr_int, eo);
+									b_ret = true;
+								} else if(!b_multiple) {
+									mstruct.clear(true);
+									b_ret = true;
+								}
+							} else {
 								mstruct.clear(true);
 								b_ret = true;
 							}
-						} else {
-							mstruct.clear(true);
-							b_ret = true;
 						}
 					}
+				} else {
+					CALCULATOR->endTemporaryStopMessages();
 				}
-			} else {
-				CALCULATOR->endTemporaryStopMessages();
 			}
 			CALCULATOR->endTemporaryEnableIntervalArithmetic();
 		}

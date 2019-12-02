@@ -17,7 +17,7 @@ libqalculateinclude_HEADERS = \
 	Function.h Calculator.h DataSet.h Variable.h \
 	ExpressionItem.h Number.h MathStructure.h Prefix.h \
 	util.h includes.h Unit.h BuiltinFunctions.h \
-	QalculateDateTime.h qalculate.h
+	QalculateDateTime.h qalculate.h mathstructure-support.h
 
 libqalculate_la_LDFLAGS = -version-info $(QALCULATE_CURRENT):$(QALCULATE_REVISION):$(QALCULATE_AGE) -no-undefined
 
