@@ -107,6 +107,10 @@ bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const Evaluati
 bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
 bool combine_powers(MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo);
 bool contains_angle_unit(const MathStructure &m, const ParseOptions &po);
+bool has_predominately_negative_sign(const MathStructure &mstruct);
+void negate_struct(MathStructure &mstruct);
+bool test_eval(MathStructure &mtest, const EvaluationOptions &eo);
+bool has_interval_unknowns(MathStructure &m);
 
 #endif
 

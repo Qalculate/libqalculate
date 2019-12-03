@@ -469,5 +469,13 @@ class NowVariable : public DynamicVariable {
 	virtual bool representsReal(bool b = false) {return b;}
 	virtual bool representsNonZero(bool b = false) {return b;}
 };
+class UptimeVariable : public DynamicVariable {
+  private:
+	void calculate(MathStructure &m) const;
+  public:
+	UptimeVariable();
+	UptimeVariable(const UptimeVariable *variable);
+	ExpressionItem *copy() const;
+};
 
 #endif

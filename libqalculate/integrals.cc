@@ -7102,19 +7102,11 @@ bool contains_incalc_function(const MathStructure &mstruct, const EvaluationOpti
 		if(contains_incalc_function(mstruct[i], eo)) return true;
 	}
 	if(mstruct.isFunction()) {
-		if(mstruct.function() == CALCULATOR->f_Ei && mstruct.size() == 1 && !mstruct[0].representsNonComplex()) {
-			if(mstruct[0].representsComplex()) return true;
-			MathStructure mtest(mstruct[0]);
-			mtest.eval(eo);
-			return !mtest.representsNonComplex();
-		} else if((mstruct.function()->id() == FUNCTION_ID_FRESNEL_S || mstruct.function()->id() == FUNCTION_ID_FRESNEL_C) && mstruct.size() == 1) {
+		if((mstruct.function()->id() == FUNCTION_ID_FRESNEL_S || mstruct.function()->id() == FUNCTION_ID_FRESNEL_C) && mstruct.size() == 1) {
 			if(mstruct[0].representsComplex()) return true;
 			MathStructure mtest(mstruct[0]);
 			mtest.eval(eo);
 			return !mtest.isNumber() || !(mtest.number() >= -6) || !(mtest.number() <= 6);
-		} else if(mstruct.function() == CALCULATOR->f_Li) {
-			MathStructure mtest(mstruct);
-			return !mtest.calculateFunctions(eo);
 		} else if(mstruct.function() == CALCULATOR->f_igamma && mstruct.size() == 2) {
 #if MPFR_VERSION_MAJOR < 4
 			return true;
