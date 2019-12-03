@@ -641,3 +641,40 @@ void NowVariable::calculate(MathStructure &m) const {
 	m.set(dt);
 }
 
+#ifdef __linux__
+#	include <sys/sysinfo.h>
+#endif
+
+#if defined __linux__ || defined _WIN32
+
+#include <fstream>
+
+void UptimeVariable:: calculate(MathStructure &m) const {
+	Number nr;
+#	ifdef __linux__
+	std::ifstream proc_uptime("/proc/uptime", std::ios::in);
+	if(proc_uptime.is_open()) {
+		string s_uptime;
+		getline(proc_uptime, s_uptime, ' ');
+		nr.set(s_uptime);
+	} else {
+		struct sysinfo sf;
+		if(!sysinfo(&sf)) nr = (long int) sf.uptime;
+	}
+#	elif _WIN32
+	ULONGLONG i_uptime = GetTickCount64();
+	nr.set((long int) (i_uptime % 1000), 1000);
+	nr += (long int) (i_uptime / 1000);
+#	endif
+	m = nr;
+	Unit *u = CALCULATOR->getUnit("s");
+	if(u) m *= u;
+}
+UptimeVariable::UptimeVariable() : DynamicVariable("", "uptime") {
+	setApproximate(false);
+	always_recalculate = true;
+}
+UptimeVariable::UptimeVariable(const UptimeVariable *variable) {set(variable);}
+ExpressionItem *UptimeVariable::copy() const {return new UptimeVariable(this);}
+#endif
+

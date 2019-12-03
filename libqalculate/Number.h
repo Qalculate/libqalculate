@@ -526,4 +526,6 @@ class Number {
 
 std::ostream& operator << (std::ostream &os, const Number&);
 
+bool testComplexZero(const Number *this_nr, const Number *i_nr);
+
 #endif

@@ -6,10 +6,16 @@
 lib_LTLIBRARIES = libqalculate.la
 
 libqalculate_la_SOURCES = \
-	Function.cc Calculator.cc DataSet.cc \
-	Variable.cc ExpressionItem.cc Number.cc	MathStructure.cc \
-	Prefix.cc support.h util.cc Unit.cc BuiltinFunctions.cc \
-	QalculateDateTime.cc integrals.cc solver.cc
+	Function.cc Calculator.cc Calculator-plot.cc Calculator-parse.cc \
+	Calculator-definitions.cc Calculator-calculate.cc Calculator-convert.cc \
+	DataSet.cc Variable.cc ExpressionItem.cc Number.cc MathStructure.cc \
+	Prefix.cc support.h util.cc Unit.cc QalculateDateTime.cc \
+	BuiltinFunctions-util.cc BuiltinFunctions-trigonometry.cc BuiltinFunctions-matrixvector.cc \
+	BuiltinFunctions-datetime.cc BuiltinFunctions-statistics.cc \
+	BuiltinFunctions-explog.cc BuiltinFunctions-special.cc BuiltinFunctions-algebra.cc \
+	BuiltinFunctions-calculus.cc BuiltinFunctions-number.cc \
+	BuiltinFunctions-combinatorics.cc BuiltinFunctions-logical.cc \
+	integrals.cc isolatex.cc
 
 libqalculateincludedir = $(includedir)/libqalculate
 
@@ -17,7 +23,9 @@ libqalculateinclude_HEADERS = \
 	Function.h Calculator.h DataSet.h Variable.h \
 	ExpressionItem.h Number.h MathStructure.h Prefix.h \
 	util.h includes.h Unit.h BuiltinFunctions.h \
-	QalculateDateTime.h qalculate.h mathstructure-support.h
+	QalculateDateTime.h qalculate.h
+
+noinst_HEADERS = mathstructure-support.h Calculator_p.h
 
 libqalculate_la_LDFLAGS = -version-info $(QALCULATE_CURRENT):$(QALCULATE_REVISION):$(QALCULATE_AGE) -no-undefined
 
