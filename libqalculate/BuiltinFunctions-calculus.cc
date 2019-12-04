@@ -18,7 +18,7 @@
 #include "Calculator.h"
 #include "Variable.h"
 #include "Unit.h"
-#include "mathstructure-support.h"
+#include "MathStructure-support.h"
 
 #include <sstream>
 #include <time.h>
@@ -32,6 +32,7 @@ using std::endl;
 
 #define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
 #define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
+#define NON_COMPLEX_NUMBER_ARGUMENT(i)				NumberArgument *arg_non_complex##i = new NumberArgument(); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 
 liFunction::liFunction() : MathFunction("li", 1) {
 	names[0].case_sensitive = true;
@@ -363,5 +364,107 @@ int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	}
 	if(!vargs[3].isUndefined()) replace_diff_x(mstruct, vargs[1], vargs[3]);
 	return 1;
+}
+
+RombergFunction::RombergFunction() : MathFunction("romberg", 3, 6) {
+	Argument *arg = new Argument("", false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+	NON_COMPLEX_NUMBER_ARGUMENT(2)
+	NON_COMPLEX_NUMBER_ARGUMENT(3)
+	setCondition("\\z > \\y");
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG);
+	Number nr(2, 1);
+	iarg->setMin(&nr);
+	setArgumentDefinition(4, iarg);
+	setDefaultValue(4, "6");
+	setArgumentDefinition(5, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
+	setDefaultValue(5, "20");
+	setArgumentDefinition(6, new SymbolicArgument());
+	setDefaultValue(6, "undefined");
+}
+int RombergFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	MathStructure minteg(vargs[0]);
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_APPROXIMATE;
+	Number nr_interval;
+	nr_interval.setInterval(vargs[1].number(), vargs[2].number());
+	UnknownVariable *var = new UnknownVariable("", format_and_print(vargs[5]));
+	var->setInterval(nr_interval);
+	MathStructure x_var(var);
+	minteg.replace(vargs[5], x_var);
+	var->destroy();
+	minteg.eval(eo2);
+	Number nr;
+	eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
+	eo2.warn_about_denominators_assumed_nonzero = false;
+	CALCULATOR->beginTemporaryStopMessages();
+	if(romberg(minteg, nr, x_var, eo2, vargs[1].number(), vargs[2].number(), vargs[4].number().lintValue(), vargs[3].number().lintValue(), false)) {
+		CALCULATOR->endTemporaryStopMessages();
+		mstruct = nr;
+		return 1;
+	}
+	CALCULATOR->endTemporaryStopMessages();
+	CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
+	return 0;
+}
+MonteCarloFunction::MonteCarloFunction() : MathFunction("montecarlo", 4, 5) {
+	Argument *arg = new Argument("", false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+	NON_COMPLEX_NUMBER_ARGUMENT(2)
+	NON_COMPLEX_NUMBER_ARGUMENT(3)
+	setCondition("\\z > \\y");
+	setArgumentDefinition(4, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+	setArgumentDefinition(5, new SymbolicArgument());
+	setDefaultValue(5, "undefined");
+}
+int MonteCarloFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	MathStructure minteg(vargs[0]);
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_APPROXIMATE;
+	Number nr_interval;
+	nr_interval.setInterval(vargs[1].number(), vargs[2].number());
+	UnknownVariable *var = new UnknownVariable("", format_and_print(vargs[4]));
+	var->setInterval(nr_interval);
+	MathStructure x_var(var);
+	minteg.replace(vargs[4], x_var);
+	var->destroy();
+	minteg.eval(eo2);
+	Number nr;
+	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
+	if(montecarlo(minteg, nr, x_var, eo2, vargs[1].number(), vargs[2].number(), vargs[3].number())) {
+		mstruct = nr;
+		return 1;
+	}
+	CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
+	return 0;
+}
+
+IntegrateFunction::IntegrateFunction() : MathFunction("integrate", 1, 5) {
+	Argument *arg = new Argument("", false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+	setDefaultValue(2, "undefined");
+	arg = new Argument("", false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(2, arg);
+	setDefaultValue(3, "undefined");
+	arg = new Argument("", false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(3, arg);
+	setArgumentDefinition(4, new SymbolicArgument());
+	setDefaultValue(4, "undefined");
+	setArgumentDefinition(5, new BooleanArgument());
+	setDefaultValue(5, "0");
+}
+int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	if(vargs.size() >= 2 && (vargs.size() == 2 || vargs[2].isUndefined()) && (vargs[1].isSymbolic() || (vargs[1].isVariable() && !vargs[1].variable()->isKnown()))) {
+		if(mstruct.integrate(vargs.size() < 3 ? m_undefined : vargs[2], vargs.size() < 4 ? m_undefined : vargs[3], vargs[1], eo, vargs.size() >= 4 && vargs[4].number().getBoolean(), true)) return 1;
+	} else {
+		if(mstruct.integrate(vargs.size() < 2 ? m_undefined : vargs[1], vargs.size() < 3 ? m_undefined : vargs[2], vargs.size() < 3 ? CALCULATOR->v_x : vargs[3], eo, vargs.size() >= 4 && vargs[4].number().getBoolean(), true)) return 1;
+	}
+	return -1;
 }
 

@@ -841,6 +841,7 @@ class MathStructure {
 		/** @name Differentiation and integration */
 		//@{
 		bool differentiate(const MathStructure &x_var, const EvaluationOptions &eo);
+		bool integrate(const MathStructure &lower_limit, const MathStructure &upper_limit, const MathStructure &x_var_pre, const EvaluationOptions &eo = default_evaluation_options, bool force_numerical = false, bool simplify_first = true);
 		int integrate(const MathStructure &x_var, const EvaluationOptions &eo, bool simplify_first = true, int use_abs = 1, bool definite_integral = false, bool try_abs = true, int max_part_depth = 5, std::vector<MathStructure*> *parent_parts = NULL);
 		//@}
 

@@ -15,7 +15,11 @@ libqalculate_la_SOURCES = \
 	BuiltinFunctions-explog.cc BuiltinFunctions-special.cc BuiltinFunctions-algebra.cc \
 	BuiltinFunctions-calculus.cc BuiltinFunctions-number.cc \
 	BuiltinFunctions-combinatorics.cc BuiltinFunctions-logical.cc \
-	integrals.cc isolatex.cc
+	MathStructure-factor.cc MathStructure-gcd.cc MathStructure-integrate.cc \
+	MathStructure-isolatex.cc MathStructure-polynomial.cc \
+	MathStructure-matrixvector.cc MathStructure-print.cc \
+	MathStructure-differentiate.cc MathStructure-calculate.cc MathStructure-eval.cc \
+	MathStructure-convert.cc MathStructure-decompose.cc MathStructure-limit.cc
 
 libqalculateincludedir = $(includedir)/libqalculate
 
@@ -25,7 +29,7 @@ libqalculateinclude_HEADERS = \
 	util.h includes.h Unit.h BuiltinFunctions.h \
 	QalculateDateTime.h qalculate.h
 
-noinst_HEADERS = mathstructure-support.h Calculator_p.h
+noinst_HEADERS = MathStructure-support.h Calculator_p.h
 
 libqalculate_la_LDFLAGS = -version-info $(QALCULATE_CURRENT):$(QALCULATE_REVISION):$(QALCULATE_AGE) -no-undefined
 

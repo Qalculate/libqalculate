@@ -23,7 +23,7 @@
 #include "Prefix.h"
 #include "Number.h"
 #include "QalculateDateTime.h"
-#include "mathstructure-support.h"
+#include "MathStructure-support.h"
 
 #include <locale.h>
 #include <libxml/xmlmemory.h>
