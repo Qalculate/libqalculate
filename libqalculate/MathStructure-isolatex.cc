@@ -13,7 +13,7 @@
 
 #include "BuiltinFunctions.h"
 #include "MathStructure.h"
-#include "mathstructure-support.h"
+#include "MathStructure-support.h"
 #include "Calculator.h"
 #include "Number.h"
 #include "Function.h"
@@ -23,6 +23,56 @@ using std::string;
 using std::cout;
 using std::vector;
 using std::endl;
+
+bool combine_powers(MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo) {
+	bool b_ret = false;
+	if(!m.isMultiplication()) {
+		for(size_t i = 0; i < m.size(); i++) {
+			if(combine_powers(m[i], x_var, eo)) {
+				m.childUpdated(i + 1);
+				b_ret = true;
+			}
+		}
+		return b_ret;
+	}
+	for(size_t i = 0; i < m.size() - 1; i++) {
+		if(m[i].isPower() && !m[i][0].contains(x_var, true) && m[i][1].contains(x_var, true)) {
+			for(size_t i2 = i + 1; i2 < m.size(); i2++) {
+				// a^(f(x))*b^(g(x))=e^(f(x)/ln(a)+g(x)/ln(b))
+				if(m[i2].isPower() && !m[i][0].contains(x_var, true) && m[i][1].contains(x_var, true)) {
+					if(m[i2][0] != m[i][0]) {
+						if(m[i2][0] != CALCULATOR->v_e) {
+							MathStructure mln(m[i2][0]);
+							mln.transform(CALCULATOR->f_ln);
+							m[i2][1].calculateMultiply(mln, eo);
+						}
+						if(m[i][0] != CALCULATOR->v_e) {
+							MathStructure mln(m[i][0]);
+							mln.transform(CALCULATOR->f_ln);
+							m[i][1].calculateMultiply(mln, eo);
+							m[i][0] = CALCULATOR->v_e;
+							m[i].childrenUpdated();
+						}
+					}
+					m[i2][1].ref();
+					m[i][1].add_nocopy(&m[i2][1], true);
+					m[i][1].calculateAddLast(eo);
+					m[i].childUpdated(2);
+					m.childUpdated(i + 1);
+					m.delChild(i2 + 1);
+					b_ret = true;
+				} else {
+					i2++;
+				}
+			}
+			if(b_ret && m.size() == 1) {
+				m.setToChild(1, true);
+			}
+			return b_ret;
+		}
+	}
+	return false;
+}
 
 bool isUnit_multi(const MathStructure &mstruct) {
 	if(!mstruct.isMultiplication() || mstruct.size() == 0) return false;
@@ -5221,175 +5271,6 @@ bool sync_trigonometric_functions(MathStructure &mstruct, const EvaluationOption
 	if(sync_sine(mstruct, eo, x_var, use_cos)) b_ret = true;
 	if(sync_sine(mstruct, eo, x_var, use_cos, true)) b_ret = true;
 	return b_ret;
-}
-
-bool simplify_functions(MathStructure &mstruct, const EvaluationOptions &eo, const EvaluationOptions &feo, const MathStructure &x_var) {
-	if(!mstruct.isAddition()) {
-		bool b = false;
-		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(CALCULATOR->aborted()) break;
-			if(simplify_functions(mstruct[i], eo, feo, x_var)) {b = true; mstruct.childUpdated(i + 1);}
-		}
-		return b;
-	}
-	if(mstruct.containsFunction(CALCULATOR->f_sin, false, false, false) > 0 && mstruct.containsFunction(CALCULATOR->f_cos, false, false, false)) {
-		if(x_var.isUndefined()) {
-			// a*(sin(x)+cos(x))=a*sqrt(2)*sin(x+pi/4)
-			bool b_ret = false;
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				if(mstruct[i].isFunction() && mstruct[i].size() == 1 && mstruct[i].function() == CALCULATOR->f_sin) {
-					for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
-						if(i != i2 && mstruct[i2].isFunction() && mstruct[i2].size() == 1 && mstruct[i2].function() == CALCULATOR->f_cos && mstruct[i][0] == mstruct[i2][0]) {
-							MathStructure madd(CALCULATOR->v_pi);
-							madd /= Number(4, 1);
-							madd *= CALCULATOR->getRadUnit();
-							madd.calculatesub(eo, feo, true);
-							mstruct[i][0].calculateAdd(madd, eo);
-							mstruct[i].childUpdated(1);
-							mstruct.childUpdated(i + 1);
-							MathStructure mmul(nr_two);
-							mmul.calculateRaise(nr_half, eo);
-							mstruct[i].calculateMultiply(mmul, eo);
-							mstruct.delChild(i2 + 1);
-							b_ret = true;
-							break;
-						}
-					}
-				} else if(mstruct[i].isMultiplication()) {
-					for(size_t i3 = 0; i3 < mstruct[i].size(); i3++) {
-						if(mstruct[i][i3].isFunction() && mstruct[i][i3].size() == 1 && mstruct[i][i3].function() == CALCULATOR->f_sin) {
-							mstruct[i][i3].setFunction(CALCULATOR->f_cos);
-							bool b = false;
-							for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
-								if(i != i2 && mstruct[i2] == mstruct[i]) {
-									MathStructure madd(CALCULATOR->v_pi);
-									madd /= Number(4, 1);
-									madd *= CALCULATOR->getRadUnit();
-									madd.calculatesub(eo, feo, true);
-									mstruct[i][i3].setFunction(CALCULATOR->f_sin);
-									mstruct[i][i3][0].calculateAdd(madd, eo);
-									mstruct[i][i3].childUpdated(1);
-									mstruct[i].childUpdated(i3 + 1);
-									mstruct.childUpdated(i + 1);
-									MathStructure mmul(nr_two);
-									mmul.calculateRaise(nr_half, eo);
-									mstruct[i].calculateMultiply(mmul, eo);
-									mstruct.delChild(i2 + 1);
-									b = true;
-									break;
-								}
-							}
-							if(b) {
-								b_ret = true;
-								break;
-							} else {
-								mstruct[i][i3].setFunction(CALCULATOR->f_sin);
-							}
-						}
-					}
-				}
-			}
-			if(mstruct.size() == 1) mstruct.setToChild(1, true);
-			return b_ret;
-		} else {
-			// a*sin(x)+b*cos(x)=a*sqrt((b/a)^2+1)*sin(x+atan(b/a))
-			MathStructure *marg = NULL;
-			bool b_cos = false;
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				if(mstruct[i].isFunction() && mstruct[i].size() == 1 && (mstruct[i].function() == CALCULATOR->f_sin || mstruct[i].function() == CALCULATOR->f_cos) && mstruct[i][0].contains(x_var)) {
-					marg = &mstruct[i][0];
-					b_cos = mstruct[i].function() == CALCULATOR->f_cos;
-				} else if(mstruct[i].isMultiplication()) {
-					for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
-						if(!marg && mstruct[i][i2].isFunction() && mstruct[i][i2].size() == 1 && (mstruct[i][i2].function() == CALCULATOR->f_sin || mstruct[i][i2].function() == CALCULATOR->f_cos) && mstruct[i][i2][0].contains(x_var)) {
-							marg = &mstruct[i][i2][0];
-							b_cos = mstruct[i][i2].function() == CALCULATOR->f_cos;
-						} else if(mstruct[i][i2].contains(x_var)) {
-							marg = NULL;
-							break;
-						}
-					}
-				}
-				if(marg) {
-					bool b = false;
-					for(size_t i3 = i + 1; i3 < mstruct.size(); i3++) {
-						if(mstruct[i3].isFunction() && mstruct[i3].size() == 1 && mstruct[i3].function() == (b_cos ? CALCULATOR->f_sin : CALCULATOR->f_cos) && mstruct[i3][0] == *marg) {
-							b = true;
-						} else if(mstruct[i3].isMultiplication()) {
-							bool b2 = false;
-							for(size_t i2 = 0; i2 < mstruct[i3].size(); i2++) {
-								if(!b2 && mstruct[i3][i2].isFunction() && mstruct[i3][i2].size() == 1 && (mstruct[i3][i2].function() == CALCULATOR->f_sin || mstruct[i3][i2].function() == CALCULATOR->f_cos) && mstruct[i3][i2][0] == *marg) {
-									if((mstruct[i3][i2].function() == CALCULATOR->f_sin) == b_cos) b = true;
-									b2 = true;
-								} else if(mstruct[i3][i2].contains(x_var)) {
-									marg = NULL;
-									break;
-								}
-							}
-							if(!marg) break;
-						}
-					}
-					if(!b) marg = NULL;
-				}
-				if(marg) {
-					marg->ref();
-					MathStructure m_a, m_b;
-					for(size_t i3 = i; i3 < mstruct.size();) {
-						bool b = false;
-						if(mstruct[i3].isFunction() && mstruct[i3].size() == 1 && mstruct[i3].function() == CALCULATOR->f_sin && mstruct[i3][0] == *marg) {
-							if(m_a.isZero()) m_a = m_one;
-							else m_a.add(m_one, true);
-							b = true;
-						} else if(mstruct[i3].isFunction() && mstruct[i3].size() == 1 && mstruct[i3].function() == CALCULATOR->f_cos && mstruct[i3][0] == *marg) {
-							if(m_b.isZero()) m_a = m_one;
-							else m_b.add(m_one, true);
-							b = true;
-						} else if(mstruct[i3].isMultiplication()) {
-							for(size_t i2 = 0; i2 < mstruct[i3].size(); i2++) {
-								if(mstruct[i3][i2].isFunction() && mstruct[i3][i2].size() == 1 && mstruct[i3][i2].function() == CALCULATOR->f_sin && mstruct[i3][i2][0] == *marg) {
-									mstruct[i3].delChild(i2 + 1, true);
-									if(m_a.isZero()) m_a.set_nocopy(mstruct[i3]);
-									else {mstruct[i3].ref(); m_a.add_nocopy(&mstruct[i3], true);}
-									b = true;
-									break;
-								} else if(mstruct[i3][i2].isFunction() && mstruct[i3][i2].size() == 1 && mstruct[i3][i2].function() == CALCULATOR->f_cos && mstruct[i3][i2][0] == *marg) {
-									mstruct[i3].delChild(i2 + 1, true);
-									if(m_b.isZero()) m_b.set_nocopy(mstruct[i3]);
-									else {mstruct[i3].ref(); m_b.add_nocopy(&mstruct[i3], true);}
-									b = true;
-									break;
-								}
-							}
-						}
-						if(b) {
-							mstruct.delChild(i3 + 1);
-						} else {
-							i3++;
-						}
-					}
-					MathStructure *m_sin = new MathStructure(CALCULATOR->f_sin, NULL);
-					m_sin->addChild_nocopy(marg);
-					m_b.calculateDivide(m_a, eo);
-					MathStructure *m_atan = new MathStructure(CALCULATOR->f_atan, &m_b, NULL);
-					if(m_atan->calculateFunctions(feo)) m_atan->calculatesub(eo, feo, true);
-					if(eo.parse_options.angle_unit != ANGLE_UNIT_NONE) m_atan->calculateMultiply(CALCULATOR->getRadUnit(), eo);
-					(*m_sin)[0].add_nocopy(m_atan);
-					(*m_sin)[0].calculateAddLast(eo);
-					m_sin->childUpdated(1);
-					m_b.calculateRaise(nr_two, eo);
-					m_b.calculateAdd(m_one, eo);
-					m_b.calculateRaise(nr_half, eo);
-					m_sin->calculateMultiply(m_b, eo);
-					m_sin->calculateMultiply(m_a, eo);
-					if(mstruct.size() == 0) {mstruct.set_nocopy(*m_sin); m_sin->unref();}
-					else mstruct.insertChild_nocopy(m_sin, i + 1);
-					simplify_functions(mstruct, eo, feo, x_var);
-					return true;
-				}
-			}
-		}
-	}
-	return false;
 }
 
 bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &x_varp, bool check_result) {

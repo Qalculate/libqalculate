@@ -18,7 +18,7 @@
 #include "Calculator.h"
 #include "Variable.h"
 #include "Unit.h"
-#include "mathstructure-support.h"
+#include "MathStructure-support.h"
 
 #include <sstream>
 #include <time.h>

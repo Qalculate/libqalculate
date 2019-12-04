@@ -18,7 +18,7 @@
 #include "Variable.h"
 #include "Number.h"
 #include "Unit.h"
-#include "mathstructure-support.h"
+#include "MathStructure-support.h"
 
 #include <limits.h>
 
