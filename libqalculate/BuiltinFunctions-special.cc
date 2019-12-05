@@ -61,31 +61,31 @@ int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct.clear();
 		return 1;
 	} else if(vargs[0].number() == 2) {
-		mstruct.set(CALCULATOR->v_pi);
+		mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 		mstruct.raise(2);
 		mstruct.divide(6);
 		mstruct.mergePrecision(vargs[0]);
 		return 1;
 	} else if(vargs[0].number() == 4) {
-		mstruct.set(CALCULATOR->v_pi);
+		mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 		mstruct.raise(4);
 		mstruct.divide(90);
 		mstruct.mergePrecision(vargs[0]);
 		return 1;
 	} else if(vargs[0].number() == 6) {
-		mstruct.set(CALCULATOR->v_pi);
+		mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 		mstruct.raise(6);
 		mstruct.divide(945);
 		mstruct.mergePrecision(vargs[0]);
 		return 1;
 	} else if(vargs[0].number() == 8) {
-		mstruct.set(CALCULATOR->v_pi);
+		mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 		mstruct.raise(8);
 		mstruct.divide(9450);
 		mstruct.mergePrecision(vargs[0]);
 		return 1;
 	} else if(vargs[0].number() == 10) {
-		mstruct.set(CALCULATOR->v_pi);
+		mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 		mstruct.raise(10);
 		mstruct.divide(93555);
 		mstruct.mergePrecision(vargs[0]);
@@ -99,15 +99,15 @@ GammaFunction::GammaFunction() : MathFunction("gamma", 1, 1, SIGN_CAPITAL_GAMMA)
 int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].number().isRational() && (eo.approximation == APPROXIMATION_EXACT || (eo.approximation == APPROXIMATION_TRY_EXACT && vargs[0].number().isLessThan(1000)))) {
 		if(vargs[0].number().isInteger() && vargs[0].number().isPositive()) {
-			mstruct.set(CALCULATOR->f_factorial, &vargs[0], NULL);
+			mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_FACTORIAL), &vargs[0], NULL);
 			mstruct[0] -= 1;
 			return 1;
 		} else if(vargs[0].number().denominatorIsTwo()) {
 			Number nr(vargs[0].number());
 			nr.floor();
 			if(nr.isZero()) {
-				MathStructure mtmp(CALCULATOR->v_pi);
-				mstruct.set(CALCULATOR->f_sqrt, &mtmp, NULL);
+				MathStructure mtmp(CALCULATOR->getVariableById(VARIABLE_ID_PI));
+				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &mtmp, NULL);
 				return 1;
 			} else if(nr.isPositive()) {
 				Number nr2(nr);
@@ -118,8 +118,8 @@ int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				nr3 ^= nr;
 				nr2 /= nr3;
 				mstruct = nr2;
-				MathStructure mtmp1(CALCULATOR->v_pi);
-				MathStructure mtmp2(CALCULATOR->f_sqrt, &mtmp1, NULL);
+				MathStructure mtmp1(CALCULATOR->getVariableById(VARIABLE_ID_PI));
+				MathStructure mtmp2(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &mtmp1, NULL);
 				mstruct *= mtmp2;
 				return 1;
 			} else {
@@ -133,8 +133,8 @@ int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				if(nr.isOdd()) nr3.negate();
 				nr3 /= nr2;
 				mstruct = nr3;
-				MathStructure mtmp1(CALCULATOR->v_pi);
-				MathStructure mtmp2(CALCULATOR->f_sqrt, &mtmp1, NULL);
+				MathStructure mtmp1(CALCULATOR->getVariableById(VARIABLE_ID_PI));
+				MathStructure mtmp2(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &mtmp1, NULL);
 				mstruct *= mtmp2;
 				return 1;
 			}
@@ -147,7 +147,7 @@ DigammaFunction::DigammaFunction() : MathFunction("digamma", 1) {
 }
 int DigammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].number().isOne()) {
-		mstruct.set(CALCULATOR->v_euler);
+		mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_EULER));
 		mstruct.negate();
 		return 1;
 	}
@@ -159,8 +159,8 @@ BetaFunction::BetaFunction() : MathFunction("beta", 2, 2, SIGN_CAPITAL_BETA) {
 }
 int BetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct = vargs[0];
-	mstruct.set(CALCULATOR->f_gamma, &vargs[0], NULL);
-	MathStructure mstruct2(CALCULATOR->f_gamma, &vargs[1], NULL);
+	mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_GAMMA), &vargs[0], NULL);
+	MathStructure mstruct2(CALCULATOR->getFunctionById(FUNCTION_ID_GAMMA), &vargs[1], NULL);
 	mstruct *= mstruct2;
 	mstruct2[0] += vargs[0];
 	mstruct /= mstruct2;
@@ -248,7 +248,7 @@ int ErfiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(!nr.erfi() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {
 		if(vargs[0].number().hasImaginaryPart() && !vargs[0].number().hasRealPart()) {
 			mstruct = vargs[0].number().imaginaryPart();
-			mstruct.transform(CALCULATOR->f_erf);
+			mstruct.transformById(FUNCTION_ID_ERF);
 			mstruct *= nr_one_i;
 			return 1;
 		}
@@ -300,7 +300,7 @@ int LiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		if(vargs[0].number().isOne()) {
 			mstruct.set(1, 1, 0);
 			mstruct -= vargs[1];
-			mstruct.transform(CALCULATOR->f_ln);
+			mstruct.transformById(FUNCTION_ID_LOG);
 			mstruct.negate();
 			return true;
 		} else if(vargs[0].number().isZero()) {
@@ -356,7 +356,7 @@ int LiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	if(mstruct.isVector()) return -2;
 	if(vargs[0].number() >= 1 && mstruct.isOne()) {
 		mstruct = vargs[0];
-		mstruct.transform(CALCULATOR->f_zeta);
+		mstruct.transformById(FUNCTION_ID_ZETA);
 		return true;
 	}
 	if(mstruct.isNumber()) {

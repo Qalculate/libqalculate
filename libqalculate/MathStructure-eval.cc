@@ -140,7 +140,7 @@ void factorize_variable(MathStructure &mstruct, const MathStructure &mvar, bool 
 }
 bool var_contains_interval(const MathStructure &mstruct) {
 	if(mstruct.isNumber()) return mstruct.number().isInterval();
-	if(mstruct.isFunction() && (mstruct.function() == CALCULATOR->f_interval || mstruct.function() == CALCULATOR->f_uncertainty)) return true;
+	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_INTERVAL || mstruct.function()->id() == FUNCTION_ID_UNCERTAINTY)) return true;
 	if(mstruct.isVariable() && mstruct.variable()->isKnown()) return var_contains_interval(((KnownVariable*) mstruct.variable())->get());
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(var_contains_interval(mstruct[i])) return true;
@@ -469,10 +469,10 @@ bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, co
 	if(is_real < 0) is_real = mtest.representsNonComplex(true);
 	ComparisonResult cmp;
 	if(is_real == 0) {
-		MathStructure m_re(CALCULATOR->f_re, &mtest, NULL);
+		MathStructure m_re(CALCULATOR->getFunctionById(FUNCTION_ID_RE), &mtest, NULL);
 		m_re.calculateFunctions(eo);
 		cmp = m_re.compare(m_zero);
-		MathStructure m_im(CALCULATOR->f_im, &mtest, NULL);
+		MathStructure m_im(CALCULATOR->getFunctionById(FUNCTION_ID_IM), &mtest, NULL);
 		m_im.calculateFunctions(eo);
 		ComparisonResult cmp2 = m_im.compare(m_zero);
 		if(COMPARISON_IS_NOT_EQUAL(cmp) || cmp2 == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_UNKNOWN) cmp = cmp2;
@@ -535,7 +535,7 @@ bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOpt
 				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
 				return true;
 			}
-		} else if(m.function() == CALCULATOR->f_abs && m.size() == 1) {
+		} else if(m.function()->id() == FUNCTION_ID_ABS && m.size() == 1) {
 			EvaluationOptions eo3 = eo;
 			eo3.split_squares = false;
 			eo3.assume_denominators_nonzero = false;
@@ -557,7 +557,7 @@ bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOpt
 			if(m[0].isMultiplication()) {
 				m.setToChild(1);
 				for(size_t i = 0; i < m.size(); i++) {
-					m[i].transform(CALCULATOR->f_abs);
+					m[i].transformById(FUNCTION_ID_ABS);
 				}
 				m.childrenUpdated();
 				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
@@ -669,13 +669,13 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 					ComparisonResult cmp = mtest.compare(m_zero);
 					if(!COMPARISON_IS_EQUAL_OR_GREATER(cmp) && !COMPARISON_IS_EQUAL_OR_LESS(cmp)) b = false;
 				} else {
-					MathStructure m_re(CALCULATOR->f_re, &mtest, NULL);
+					MathStructure m_re(CALCULATOR->getFunctionById(FUNCTION_ID_RE), &mtest, NULL);
 					m_re.calculateFunctions(eo);
 					ComparisonResult cmp = m_re.compare(m_zero);
 					if(!COMPARISON_IS_EQUAL_OR_GREATER(cmp) && !COMPARISON_IS_EQUAL_OR_LESS(cmp)) {
 						b = false;
 					} else {
-						MathStructure m_im(CALCULATOR->f_im, &mtest, NULL);
+						MathStructure m_im(CALCULATOR->getFunctionById(FUNCTION_ID_IM), &mtest, NULL);
 						m_im.calculateFunctions(eo);
 						ComparisonResult cmp = m_im.compare(m_zero);
 						if(!COMPARISON_IS_EQUAL_OR_GREATER(cmp) && !COMPARISON_IS_EQUAL_OR_LESS(cmp)) b = false;
@@ -945,7 +945,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
 					return v;
 				}
 			}
-		} else if(mvar.isFunction() && mvar.function() == CALCULATOR->f_interval && mvar.size() == 2 && !mvar[0].containsInterval(true, true, false, 1, true) && !mvar[1].containsInterval(true, true, false, 1, true)) {
+		} else if(mvar.isFunction() && mvar.function()->id() == FUNCTION_ID_INTERVAL && mvar.size() == 2 && !mvar[0].containsInterval(true, true, false, 1, true) && !mvar[1].containsInterval(true, true, false, 1, true)) {
 			if(mvar[0].isAddition() && mvar[0].size() == 2 && mvar[1].isAddition() && mvar[1].size() == 2) {
 				const MathStructure *mmid = NULL, *munc = NULL;
 				if(mvar[0][0].equals(mvar[1][0])) {
@@ -987,7 +987,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
 			*mnew = m;
 			v->destroy();
 			return v;
-		} else if(mvar.isFunction() && mvar.function() == CALCULATOR->f_uncertainty && mvar.size() == 3 && mvar[2].isNumber() && !mvar[0].containsInterval(true, true, false, 1, true) && !mvar[1].containsInterval(true, true, false, 1, true)) {
+		} else if(mvar.isFunction() && mvar.function()->id() == FUNCTION_ID_UNCERTAINTY && mvar.size() == 3 && mvar[2].isNumber() && !mvar[0].containsInterval(true, true, false, 1, true) && !mvar[1].containsInterval(true, true, false, 1, true)) {
 			if(mvar[2].number().getBoolean()) {
 				unc = mvar[1];
 				unc *= mvar[0];
@@ -1007,7 +1007,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
 		KnownVariable *v = NULL;
 		find_interval_create_var(m.number(), m, unc, unc2, &v, v2);
 		return v;
-	} else if(m.isFunction() && m.function() == CALCULATOR->f_interval && m.size() == 2 && !m[0].containsInterval(true, true, false, 1, true) && !m[1].containsInterval(true, true, false, 1, true)) {
+	} else if(m.isFunction() && m.function()->id() == FUNCTION_ID_INTERVAL && m.size() == 2 && !m[0].containsInterval(true, true, false, 1, true) && !m[1].containsInterval(true, true, false, 1, true)) {
 		if(m[0].isAddition() && m[0].size() == 2 && m[1].isAddition() && m[1].size() == 2) {
 			MathStructure *mmid = NULL, *munc = NULL;
 			if(m[0][0].equals(m[1][0])) {
@@ -1045,7 +1045,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
 		m.set(v);
 		v->destroy();
 		return v;
-	} else if(m.isFunction() && m.function() == CALCULATOR->f_uncertainty && m.size() == 3 && m[2].isNumber() && !m[0].containsInterval(true, true, false, 1, true) && !m[1].containsInterval(true, true, false, 1, true)) {
+	} else if(m.isFunction() && m.function()->id() == FUNCTION_ID_UNCERTAINTY && m.size() == 3 && m[2].isNumber() && !m[0].containsInterval(true, true, false, 1, true) && !m[1].containsInterval(true, true, false, 1, true)) {
 		if(m[2].number().getBoolean()) {
 			unc = m[1];
 			unc *= m[0];
@@ -1066,7 +1066,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
 }
 
 bool find_interval_replace_var_nr(MathStructure &m) {
-	if((m.isNumber() && m.number().isInterval(false) && m.number().precision(true) <= PRECISION + 10) || (m.isFunction() && m.function() == CALCULATOR->f_interval && m.size() == 2) || (m.isFunction() && m.function() == CALCULATOR->f_uncertainty && m.size() == 3)) {
+	if((m.isNumber() && m.number().isInterval(false) && m.number().precision(true) <= PRECISION + 10) || (m.isFunction() && m.function()->id() == FUNCTION_ID_INTERVAL && m.size() == 2) || (m.isFunction() && m.function()->id() == FUNCTION_ID_UNCERTAINTY && m.size() == 3)) {
 		KnownVariable *v = new KnownVariable("", string("(") + format_and_print(m) + ")", m);
 		m.set(v);
 		v->destroy();
@@ -1104,7 +1104,7 @@ bool replace_variables_with_interval(MathStructure &m, const EvaluationOptions &
 		return true;
 	}
 	bool b = false;
-	if(m.isFunction() && m.function() == CALCULATOR->f_stripunits && m.size() == 1) {
+	if(m.isFunction() && m.function()->id() == FUNCTION_ID_STRIP_UNITS && m.size() == 1) {
 		b = replace_variables_with_interval(m[0], eo, true, only_argument_vars);
 		if(b && m[0].containsType(STRUCT_UNIT, false, true, true) == 0) {
 			m.setToChild(1, true);
@@ -1118,7 +1118,7 @@ bool replace_variables_with_interval(MathStructure &m, const EvaluationOptions &
 }
 
 bool contains_diff_for(const MathStructure &m, const MathStructure &x_var) {
-	if(m.isFunction() && m.function() && m.function() == CALCULATOR->f_diff && m.size() >= 2 && m[1] == x_var) return true;
+	if(m.isFunction() && m.function() && m.function()->id() == FUNCTION_ID_DIFFERENTIATE && m.size() >= 2 && m[1] == x_var) return true;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(contains_diff_for(m[i], x_var)) return true;
 	}
@@ -1168,8 +1168,8 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 		mdiff->replace(muv, vars[i]);
 		if(!mdiff->representsNonComplex(true)) {
 			MathStructure *mdiff_i = new MathStructure(*mdiff);
-			mdiff->transform(CALCULATOR->f_re);
-			mdiff_i->transform(CALCULATOR->f_im);
+			mdiff->transformById(FUNCTION_ID_RE);
+			mdiff_i->transformById(FUNCTION_ID_IM);
 			mdiff_i->raise(nr_two);
 			mdiff_i->multiply(uncs[i]);
 			mdiff_i->last().raise(nr_two);
@@ -1199,7 +1199,7 @@ Variable *find_interval_replace_var_comp(MathStructure &m, const EvaluationOptio
 		*v = m.variable();
 		m.set(uv, true);
 		return uv;
-	} else if((m.isNumber() && m.number().isInterval(false) && m.number().precision(true) <= PRECISION + 10) || (m.isFunction() && m.function() == CALCULATOR->f_interval && m.size() == 2) || (m.isFunction() && m.function() == CALCULATOR->f_uncertainty && m.size() == 3)) {
+	} else if((m.isNumber() && m.number().isInterval(false) && m.number().precision(true) <= PRECISION + 10) || (m.isFunction() && m.function()->id() == FUNCTION_ID_INTERVAL && m.size() == 2) || (m.isFunction() && m.function()->id() == FUNCTION_ID_UNCERTAINTY && m.size() == 3)) {
 		Variable *uv = NULL;
 		if(eo.approximation == APPROXIMATION_EXACT || eo.approximation == APPROXIMATION_EXACT_VARIABLES) {
 			uv = new KnownVariable("", string("(") + format_and_print(m) + ")", m);
@@ -1225,7 +1225,7 @@ bool eval_comparison_sides(MathStructure &m, const EvaluationOptions &eo) {
 			bool ret = true;
 			CALCULATOR->beginTemporaryStopMessages();
 			m[0].eval(eo);
-			if(m[0].containsFunction(CALCULATOR->f_uncertainty) && !mbak[0].containsFunction(CALCULATOR->f_uncertainty)) {
+			if(m[0].containsFunctionId(FUNCTION_ID_UNCERTAINTY) && !mbak[0].containsFunctionId(FUNCTION_ID_UNCERTAINTY)) {
 				CALCULATOR->endTemporaryStopMessages();
 				m[0] = mbak[0];
 				ret = false;
@@ -1234,7 +1234,7 @@ bool eval_comparison_sides(MathStructure &m, const EvaluationOptions &eo) {
 			}
 			CALCULATOR->beginTemporaryStopMessages();
 			m[1].eval(eo);
-			if(m[1].containsFunction(CALCULATOR->f_uncertainty) && !mbak[1].containsFunction(CALCULATOR->f_uncertainty)) {
+			if(m[1].containsFunctionId(FUNCTION_ID_UNCERTAINTY) && !mbak[1].containsFunctionId(FUNCTION_ID_UNCERTAINTY)) {
 				CALCULATOR->endTemporaryStopMessages();
 				m[1] = mbak[1];
 				ret = false;
@@ -1280,7 +1280,7 @@ bool separate_unit_vars(MathStructure &m, const EvaluationOptions &eo, bool only
 			}
 			if(!b) return false;
 			if(dry_run) return true;
-			m.transform(CALCULATOR->f_stripunits);
+			m.transformById(FUNCTION_ID_STRIP_UNITS);
 			for(size_t i = 0; i < mvar.size(); i++) {
 				if(is_unit_multiexp(mvar[i])) {
 					m.multiply(mvar[i], i);
@@ -1290,7 +1290,7 @@ bool separate_unit_vars(MathStructure &m, const EvaluationOptions &eo, bool only
 			return true;
 		}
 	}
-	if(m.isFunction() && m.function() == CALCULATOR->f_stripunits) return false;
+	if(m.isFunction() && m.function()->id() == FUNCTION_ID_STRIP_UNITS) return false;
 	bool b = false;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(separate_unit_vars(m[i], eo, only_approximate, dry_run)) {
@@ -1334,15 +1334,15 @@ bool simplify_functions(MathStructure &mstruct, const EvaluationOptions &eo, con
 		}
 		return b;
 	}
-	if(mstruct.containsFunction(CALCULATOR->f_sin, false, false, false) > 0 && mstruct.containsFunction(CALCULATOR->f_cos, false, false, false)) {
+	if(mstruct.containsFunctionId(FUNCTION_ID_SIN, false, false, false) > 0 && mstruct.containsFunctionId(FUNCTION_ID_COS, false, false, false)) {
 		if(x_var.isUndefined()) {
 			// a*(sin(x)+cos(x))=a*sqrt(2)*sin(x+pi/4)
 			bool b_ret = false;
 			for(size_t i = 0; i < mstruct.size(); i++) {
-				if(mstruct[i].isFunction() && mstruct[i].size() == 1 && mstruct[i].function() == CALCULATOR->f_sin) {
+				if(mstruct[i].isFunction() && mstruct[i].size() == 1 && mstruct[i].function()->id() == FUNCTION_ID_SIN) {
 					for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
-						if(i != i2 && mstruct[i2].isFunction() && mstruct[i2].size() == 1 && mstruct[i2].function() == CALCULATOR->f_cos && mstruct[i][0] == mstruct[i2][0]) {
-							MathStructure madd(CALCULATOR->v_pi);
+						if(i != i2 && mstruct[i2].isFunction() && mstruct[i2].size() == 1 && mstruct[i2].function()->id() == FUNCTION_ID_COS && mstruct[i][0] == mstruct[i2][0]) {
+							MathStructure madd(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 							madd /= Number(4, 1);
 							madd *= CALCULATOR->getRadUnit();
 							madd.calculatesub(eo, feo, true);
@@ -1359,16 +1359,16 @@ bool simplify_functions(MathStructure &mstruct, const EvaluationOptions &eo, con
 					}
 				} else if(mstruct[i].isMultiplication()) {
 					for(size_t i3 = 0; i3 < mstruct[i].size(); i3++) {
-						if(mstruct[i][i3].isFunction() && mstruct[i][i3].size() == 1 && mstruct[i][i3].function() == CALCULATOR->f_sin) {
-							mstruct[i][i3].setFunction(CALCULATOR->f_cos);
+						if(mstruct[i][i3].isFunction() && mstruct[i][i3].size() == 1 && mstruct[i][i3].function()->id() == FUNCTION_ID_SIN) {
+							mstruct[i][i3].setFunctionId(FUNCTION_ID_COS);
 							bool b = false;
 							for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
 								if(i != i2 && mstruct[i2] == mstruct[i]) {
-									MathStructure madd(CALCULATOR->v_pi);
+									MathStructure madd(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 									madd /= Number(4, 1);
 									madd *= CALCULATOR->getRadUnit();
 									madd.calculatesub(eo, feo, true);
-									mstruct[i][i3].setFunction(CALCULATOR->f_sin);
+									mstruct[i][i3].setFunctionId(FUNCTION_ID_SIN);
 									mstruct[i][i3][0].calculateAdd(madd, eo);
 									mstruct[i][i3].childUpdated(1);
 									mstruct[i].childUpdated(i3 + 1);
@@ -1385,7 +1385,7 @@ bool simplify_functions(MathStructure &mstruct, const EvaluationOptions &eo, con
 								b_ret = true;
 								break;
 							} else {
-								mstruct[i][i3].setFunction(CALCULATOR->f_sin);
+								mstruct[i][i3].setFunctionId(FUNCTION_ID_SIN);
 							}
 						}
 					}
@@ -1398,14 +1398,14 @@ bool simplify_functions(MathStructure &mstruct, const EvaluationOptions &eo, con
 			MathStructure *marg = NULL;
 			bool b_cos = false;
 			for(size_t i = 0; i < mstruct.size(); i++) {
-				if(mstruct[i].isFunction() && mstruct[i].size() == 1 && (mstruct[i].function() == CALCULATOR->f_sin || mstruct[i].function() == CALCULATOR->f_cos) && mstruct[i][0].contains(x_var)) {
+				if(mstruct[i].isFunction() && mstruct[i].size() == 1 && (mstruct[i].function()->id() == FUNCTION_ID_SIN || mstruct[i].function()->id() == FUNCTION_ID_COS) && mstruct[i][0].contains(x_var)) {
 					marg = &mstruct[i][0];
-					b_cos = mstruct[i].function() == CALCULATOR->f_cos;
+					b_cos = mstruct[i].function()->id() == FUNCTION_ID_COS;
 				} else if(mstruct[i].isMultiplication()) {
 					for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
-						if(!marg && mstruct[i][i2].isFunction() && mstruct[i][i2].size() == 1 && (mstruct[i][i2].function() == CALCULATOR->f_sin || mstruct[i][i2].function() == CALCULATOR->f_cos) && mstruct[i][i2][0].contains(x_var)) {
+						if(!marg && mstruct[i][i2].isFunction() && mstruct[i][i2].size() == 1 && (mstruct[i][i2].function()->id() == FUNCTION_ID_SIN || mstruct[i][i2].function()->id() == FUNCTION_ID_COS) && mstruct[i][i2][0].contains(x_var)) {
 							marg = &mstruct[i][i2][0];
-							b_cos = mstruct[i][i2].function() == CALCULATOR->f_cos;
+							b_cos = mstruct[i][i2].function()->id() == FUNCTION_ID_COS;
 						} else if(mstruct[i][i2].contains(x_var)) {
 							marg = NULL;
 							break;
@@ -1415,13 +1415,13 @@ bool simplify_functions(MathStructure &mstruct, const EvaluationOptions &eo, con
 				if(marg) {
 					bool b = false;
 					for(size_t i3 = i + 1; i3 < mstruct.size(); i3++) {
-						if(mstruct[i3].isFunction() && mstruct[i3].size() == 1 && mstruct[i3].function() == (b_cos ? CALCULATOR->f_sin : CALCULATOR->f_cos) && mstruct[i3][0] == *marg) {
+						if(mstruct[i3].isFunction() && mstruct[i3].size() == 1 && mstruct[i3].function()->id() == (b_cos ? FUNCTION_ID_SIN : FUNCTION_ID_COS) && mstruct[i3][0] == *marg) {
 							b = true;
 						} else if(mstruct[i3].isMultiplication()) {
 							bool b2 = false;
 							for(size_t i2 = 0; i2 < mstruct[i3].size(); i2++) {
-								if(!b2 && mstruct[i3][i2].isFunction() && mstruct[i3][i2].size() == 1 && (mstruct[i3][i2].function() == CALCULATOR->f_sin || mstruct[i3][i2].function() == CALCULATOR->f_cos) && mstruct[i3][i2][0] == *marg) {
-									if((mstruct[i3][i2].function() == CALCULATOR->f_sin) == b_cos) b = true;
+								if(!b2 && mstruct[i3][i2].isFunction() && mstruct[i3][i2].size() == 1 && (mstruct[i3][i2].function()->id() == FUNCTION_ID_SIN || mstruct[i3][i2].function()->id() == FUNCTION_ID_COS) && mstruct[i3][i2][0] == *marg) {
+									if((mstruct[i3][i2].function()->id() == FUNCTION_ID_SIN) == b_cos) b = true;
 									b2 = true;
 								} else if(mstruct[i3][i2].contains(x_var)) {
 									marg = NULL;
@@ -1438,23 +1438,23 @@ bool simplify_functions(MathStructure &mstruct, const EvaluationOptions &eo, con
 					MathStructure m_a, m_b;
 					for(size_t i3 = i; i3 < mstruct.size();) {
 						bool b = false;
-						if(mstruct[i3].isFunction() && mstruct[i3].size() == 1 && mstruct[i3].function() == CALCULATOR->f_sin && mstruct[i3][0] == *marg) {
+						if(mstruct[i3].isFunction() && mstruct[i3].size() == 1 && mstruct[i3].function()->id() == FUNCTION_ID_SIN && mstruct[i3][0] == *marg) {
 							if(m_a.isZero()) m_a = m_one;
 							else m_a.add(m_one, true);
 							b = true;
-						} else if(mstruct[i3].isFunction() && mstruct[i3].size() == 1 && mstruct[i3].function() == CALCULATOR->f_cos && mstruct[i3][0] == *marg) {
+						} else if(mstruct[i3].isFunction() && mstruct[i3].size() == 1 && mstruct[i3].function()->id() == FUNCTION_ID_COS && mstruct[i3][0] == *marg) {
 							if(m_b.isZero()) m_a = m_one;
 							else m_b.add(m_one, true);
 							b = true;
 						} else if(mstruct[i3].isMultiplication()) {
 							for(size_t i2 = 0; i2 < mstruct[i3].size(); i2++) {
-								if(mstruct[i3][i2].isFunction() && mstruct[i3][i2].size() == 1 && mstruct[i3][i2].function() == CALCULATOR->f_sin && mstruct[i3][i2][0] == *marg) {
+								if(mstruct[i3][i2].isFunction() && mstruct[i3][i2].size() == 1 && mstruct[i3][i2].function()->id() == FUNCTION_ID_SIN && mstruct[i3][i2][0] == *marg) {
 									mstruct[i3].delChild(i2 + 1, true);
 									if(m_a.isZero()) m_a.set_nocopy(mstruct[i3]);
 									else {mstruct[i3].ref(); m_a.add_nocopy(&mstruct[i3], true);}
 									b = true;
 									break;
-								} else if(mstruct[i3][i2].isFunction() && mstruct[i3][i2].size() == 1 && mstruct[i3][i2].function() == CALCULATOR->f_cos && mstruct[i3][i2][0] == *marg) {
+								} else if(mstruct[i3][i2].isFunction() && mstruct[i3][i2].size() == 1 && mstruct[i3][i2].function()->id() == FUNCTION_ID_COS && mstruct[i3][i2][0] == *marg) {
 									mstruct[i3].delChild(i2 + 1, true);
 									if(m_b.isZero()) m_b.set_nocopy(mstruct[i3]);
 									else {mstruct[i3].ref(); m_b.add_nocopy(&mstruct[i3], true);}
@@ -1469,10 +1469,10 @@ bool simplify_functions(MathStructure &mstruct, const EvaluationOptions &eo, con
 							i3++;
 						}
 					}
-					MathStructure *m_sin = new MathStructure(CALCULATOR->f_sin, NULL);
+					MathStructure *m_sin = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SIN), NULL);
 					m_sin->addChild_nocopy(marg);
 					m_b.calculateDivide(m_a, eo);
-					MathStructure *m_atan = new MathStructure(CALCULATOR->f_atan, &m_b, NULL);
+					MathStructure *m_atan = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &m_b, NULL);
 					if(m_atan->calculateFunctions(feo)) m_atan->calculatesub(eo, feo, true);
 					if(eo.parse_options.angle_unit != ANGLE_UNIT_NONE) m_atan->calculateMultiply(CALCULATOR->getRadUnit(), eo);
 					(*m_sin)[0].add_nocopy(m_atan);
@@ -1503,7 +1503,7 @@ bool simplify_ln(MathStructure &mstruct) {
 	if(mstruct.isAddition()) {
 		size_t i_ln = (size_t) -1, i_ln_m = (size_t) -1;
 		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(mstruct[i].isFunction() && mstruct[i].function() == CALCULATOR->f_ln && mstruct[i].size() == 1 && mstruct[i][0].isNumber() && mstruct[i][0].number().isReal()) {
+			if(mstruct[i].isFunction() && mstruct[i].function()->id() == FUNCTION_ID_LOG && mstruct[i].size() == 1 && mstruct[i][0].isNumber() && mstruct[i][0].number().isReal()) {
 				if(i_ln == (size_t) -1) {
 					i_ln = i;
 				} else {
@@ -1518,7 +1518,7 @@ bool simplify_ln(MathStructure &mstruct) {
 						b_ret = true;
 					}
 				}
-			} else if(mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1].isFunction() && mstruct[i][1].function() == CALCULATOR->f_ln && mstruct[i][1].size() == 1 && mstruct[i][1][0].isNumber() && mstruct[i][1][0].number().isReal() && mstruct[i][0].isInteger() && mstruct[i][0].number().isLessThan(1000) && mstruct[i][0].number().isGreaterThan(-1000)) {
+			} else if(mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1].isFunction() && mstruct[i][1].function()->id() == FUNCTION_ID_LOG && mstruct[i][1].size() == 1 && mstruct[i][1][0].isNumber() && mstruct[i][1][0].number().isReal() && mstruct[i][0].isInteger() && mstruct[i][0].number().isLessThan(1000) && mstruct[i][0].number().isGreaterThan(-1000)) {
 				if(mstruct[i][0].number().isPositive()) {
 					if(i_ln == (size_t) -1) {
 						i_ln = i;
@@ -1567,11 +1567,11 @@ bool MathStructure::complexToExponentialForm(const EvaluationOptions &eo) {
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		eo2.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
-		MathStructure mabs(CALCULATOR->f_abs, this, NULL);
-		MathStructure marg(CALCULATOR->f_arg, this, NULL);
+		MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
+		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		marg *= nr_one_i;
 		marg.eval(eo2);
-		set(CALCULATOR->v_e, true);
+		set(CALCULATOR->getVariableById(VARIABLE_ID_E), true);
 		raise(marg);
 		mabs.eval(eo2);
 		if(!mabs.isOne()) multiply(mabs);
@@ -1586,8 +1586,8 @@ bool MathStructure::complexToExponentialForm(const EvaluationOptions &eo) {
 }
 bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 	if(m_type == STRUCT_NUMBER && o_number.hasImaginaryPart()) {
-		MathStructure mabs(CALCULATOR->f_abs, this, NULL);
-		MathStructure marg(CALCULATOR->f_arg, this, NULL);
+		MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
+		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		mabs.eval(eo2);
@@ -1599,42 +1599,42 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 			default: {break;}
 		}
 		set(marg, true);
-		transform(CALCULATOR->f_sin);
+		transformById(FUNCTION_ID_SIN);
 		multiply(nr_one_i);
-		add_nocopy(new MathStructure(CALCULATOR->f_cos, &marg, NULL));
+		add_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_COS), &marg, NULL));
 		if(!mabs.isOne()) multiply(mabs);
 		evalSort(true);
 		return true;
-	} else if(m_type == STRUCT_POWER && CHILD(0).isVariable() && CHILD(0).variable() == CALCULATOR->v_e && CHILD(1).isNumber() && CHILD(1).number().hasImaginaryPart() && !CHILD(1).number().hasRealPart()) {
+	} else if(m_type == STRUCT_POWER && CHILD(0).isVariable() && CHILD(0).variable()->id() == VARIABLE_ID_E && CHILD(1).isNumber() && CHILD(1).number().hasImaginaryPart() && !CHILD(1).number().hasRealPart()) {
 		MathStructure marg(CHILD(1).number().imaginaryPart());
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.calculateMultiply(Number(180, 1), eo2); marg.calculateDivide(CALCULATOR->v_pi, eo2); marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.calculateMultiply(Number(200, 1), eo2); marg.calculateDivide(CALCULATOR->v_pi, eo2); marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.calculateMultiply(Number(180, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
+			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.calculateMultiply(Number(200, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
 			case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg.multiply(CALCULATOR->getRadUnit(), true);} break;}
 			default: {break;}
 		}
 		set(marg, true);
-		transform(CALCULATOR->f_sin);
+		transformById(FUNCTION_ID_SIN);
 		multiply(nr_one_i);
-		add_nocopy(new MathStructure(CALCULATOR->f_cos, &marg, NULL));
+		add_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_COS), &marg, NULL));
 		evalSort(true);
 		return true;
-	} else if(m_type == STRUCT_MULTIPLICATION && SIZE == 2 && CHILD(1).isPower() && CHILD(1)[0].isVariable() && CHILD(1)[0].variable() == CALCULATOR->v_e && CHILD(1)[1].isNumber() && CHILD(1)[1].number().hasImaginaryPart() && !CHILD(1)[1].number().hasRealPart() && CHILD(0).isNumber() && !CHILD(0).number().hasImaginaryPart()) {
+	} else if(m_type == STRUCT_MULTIPLICATION && SIZE == 2 && CHILD(1).isPower() && CHILD(1)[0].isVariable() && CHILD(1)[0].variable()->id() == VARIABLE_ID_E && CHILD(1)[1].isNumber() && CHILD(1)[1].number().hasImaginaryPart() && !CHILD(1)[1].number().hasRealPart() && CHILD(0).isNumber() && !CHILD(0).number().hasImaginaryPart()) {
 		MathStructure marg(CHILD(1)[1].number().imaginaryPart());
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.calculateMultiply(Number(180, 1), eo2); marg.calculateDivide(CALCULATOR->v_pi, eo2); marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.calculateMultiply(Number(200, 1), eo2); marg.calculateDivide(CALCULATOR->v_pi, eo2); marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.calculateMultiply(Number(180, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
+			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.calculateMultiply(Number(200, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
 			case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg.multiply(CALCULATOR->getRadUnit(), true);} break;}
 			default: {break;}
 		}
 		CHILD(1).set(marg, true);
-		CHILD(1).transform(CALCULATOR->f_sin);
+		CHILD(1).transformById(FUNCTION_ID_SIN);
 		CHILD(1).multiply(nr_one_i);
-		CHILD(1).add_nocopy(new MathStructure(CALCULATOR->f_cos, &marg, NULL));
+		CHILD(1).add_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_COS), &marg, NULL));
 		CHILD_UPDATED(1)
 		evalSort(true);
 		return true;
@@ -1647,10 +1647,8 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 }
 bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 	if(m_type == STRUCT_NUMBER && o_number.hasImaginaryPart()) {
-		MathFunction *f = CALCULATOR->getActiveFunction("cis");
-		if(!f) return false;
-		MathStructure mabs(CALCULATOR->f_abs, this, NULL);
-		MathStructure marg(CALCULATOR->f_arg, this, NULL);
+		MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
+		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		mabs.eval(eo2);
@@ -1661,37 +1659,33 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 			default: {break;}
 		}
 		set(marg, true);
-		transform(f);
+		transformById(FUNCTION_ID_CIS);
 		multiply(mabs);
 		evalSort(true);
 		return true;
-	} else if(m_type == STRUCT_POWER && CHILD(0).isVariable() && CHILD(0).variable() == CALCULATOR->v_e && CHILD(1).isNumber() && CHILD(1).number().hasImaginaryPart() && !CHILD(1).number().hasRealPart()) {
-		MathFunction *f = CALCULATOR->getActiveFunction("cis");
-		if(!f) return false;
+	} else if(m_type == STRUCT_POWER && CHILD(0).isVariable() && CHILD(0).variable()->id() == VARIABLE_ID_E && CHILD(1).isNumber() && CHILD(1).number().hasImaginaryPart() && !CHILD(1).number().hasRealPart()) {
 		set(CHILD(1).number().imaginaryPart(), true);
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {calculateMultiply(Number(180, 1), eo2); calculateDivide(CALCULATOR->v_pi, eo2); multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {calculateMultiply(Number(200, 1), eo2); calculateDivide(CALCULATOR->v_pi, eo2); multiply(CALCULATOR->getGraUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {calculateMultiply(Number(180, 1), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->getDegUnit(), true);} break;}
+			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {calculateMultiply(Number(200, 1), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->getGraUnit(), true);} break;}
 			default: {break;}
 		}
-		transform(f);
+		transformById(FUNCTION_ID_CIS);
 		multiply(m_one);
 		evalSort(true);
 		return true;
-	} else if(m_type == STRUCT_MULTIPLICATION && SIZE == 2 && CHILD(1).isPower() && CHILD(1)[0].isVariable() && CHILD(1)[0].variable() == CALCULATOR->v_e && CHILD(1)[1].isNumber() && CHILD(1)[1].number().hasImaginaryPart() && !CHILD(1)[1].number().hasRealPart() && CHILD(0).isNumber() && !CHILD(0).number().hasImaginaryPart()) {
-		MathFunction *f = CALCULATOR->getActiveFunction("cis");
-		if(!f) return false;
+	} else if(m_type == STRUCT_MULTIPLICATION && SIZE == 2 && CHILD(1).isPower() && CHILD(1)[0].isVariable() && CHILD(1)[0].variable()->id() == VARIABLE_ID_E && CHILD(1)[1].isNumber() && CHILD(1)[1].number().hasImaginaryPart() && !CHILD(1)[1].number().hasRealPart() && CHILD(0).isNumber() && !CHILD(0).number().hasImaginaryPart()) {
 		CHILD(1).set(CHILD(1)[1].number().imaginaryPart(), true);
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {CHILD(1).calculateMultiply(Number(180, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->v_pi, eo2); CHILD(1).multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {CHILD(1).calculateMultiply(Number(200, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->v_pi, eo2); CHILD(1).multiply(CALCULATOR->getGraUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {CHILD(1).calculateMultiply(Number(180, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->getDegUnit(), true);} break;}
+			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {CHILD(1).calculateMultiply(Number(200, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->getGraUnit(), true);} break;}
 			default: {break;}
 		}
-		CHILD(1).transform(f);
+		CHILD(1).transformById(FUNCTION_ID_CIS);
 		CHILD_UPDATED(1)
 		return true;
 	}
@@ -2056,7 +2050,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					// Add uncertainty to calculated value
 					if(eo.keep_zero_units) remove_add_zero_unit(*this);
 					b_failed = true;
-					if(munc.isFunction() && munc.function() == CALCULATOR->f_abs && munc.size() == 1) {
+					if(munc.isFunction() && munc.function()->id() == FUNCTION_ID_ABS && munc.size() == 1) {
 						munc.setToChild(1);
 					}
 					bool one_prepended = false;
@@ -2094,12 +2088,12 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 						}
 						if(munc.isMultiplication()) {
 							if(munc.size() == 2) {
-								if(isMultiplication() && CHILD(0).isNumber() && (munc[1] == CHILD(1) || (munc[1].isFunction() && munc[1].function() == CALCULATOR->f_abs && munc[1].size() == 1 && CHILD(1) == munc[1][0]))) {
+								if(isMultiplication() && CHILD(0).isNumber() && (munc[1] == CHILD(1) || (munc[1].isFunction() && munc[1].function()->id() == FUNCTION_ID_ABS && munc[1].size() == 1 && CHILD(1) == munc[1][0]))) {
 									CHILD(0).number().setUncertainty(munc[0].number());
 									CHILD(0).numberUpdated();
 									CHILD_UPDATED(0)
 									b_failed = false;
-								} else if(equals(munc[1]) || (munc[1].isFunction() && munc[1].function() == CALCULATOR->f_abs && munc[1].size() == 1 && equals(munc[1][0]))) {
+								} else if(equals(munc[1]) || (munc[1].isFunction() && munc[1].function()->id() == FUNCTION_ID_ABS && munc[1].size() == 1 && equals(munc[1][0]))) {
 									transform(STRUCT_MULTIPLICATION);
 									PREPEND(m_one);
 									CHILD(0).number().setUncertainty(munc[0].number());
@@ -2113,7 +2107,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 								if(SIZE + 1 - i2 == munc.size()) {
 									bool b = true;
 									for(size_t i = 1; i < munc.size(); i++, i2++) {
-										if(!munc[i].equals(CHILD(i2)) && !(munc[i].isFunction() && munc[i].function() == CALCULATOR->f_abs && munc[i].size() == 1 && CHILD(i2) == munc[i][0])) {
+										if(!munc[i].equals(CHILD(i2)) && !(munc[i].isFunction() && munc[i].function()->id() == FUNCTION_ID_ABS && munc[i].size() == 1 && CHILD(i2) == munc[i][0])) {
 											b = false;
 											break;
 										}
@@ -2132,7 +2126,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 							if(b_failed) {
 								bool b = false;
 								for(size_t i = 0; i < munc.size(); i++) {
-									if(munc[i].isFunction() && munc[i].function() == CALCULATOR->f_abs && munc[i].size() == 1) {
+									if(munc[i].isFunction() && munc[i].function()->id() == FUNCTION_ID_ABS && munc[i].size() == 1) {
 										munc[i].setToChild(1);
 										b = true;
 									}
@@ -2152,7 +2146,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 						if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_ln(munc);}
 						clean_multiplications(*this);
 						clean_multiplications(munc);
-						transform(CALCULATOR->f_uncertainty);
+						transformById(FUNCTION_ID_UNCERTAINTY);
 						addChild(munc);
 						addChild(m_zero);
 						CALCULATOR->endTemporaryStopMessages(true);

@@ -60,7 +60,7 @@ void gatherInformation(const MathStructure &mstruct, vector<Unit*> &base_units, 
 			break;
 		}
 		case STRUCT_FUNCTION: {
-			if(mstruct.function() == CALCULATOR->f_stripunits) break;
+			if(mstruct.function()->id() == FUNCTION_ID_STRIP_UNITS) break;
 			for(size_t i = 0; i < mstruct.size(); i++) {
 				if(!mstruct.function()->getArgumentDefinition(i + 1) || mstruct.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) {
 					gatherInformation(mstruct[i], base_units, alias_units, check_variables);
@@ -460,7 +460,7 @@ bool MathStructure::convertToBaseUnits(bool convert_nonlinear_relations, bool *f
 			}
 		}
 	} else if(m_type == STRUCT_FUNCTION) {
-		if(o_function == CALCULATOR->f_stripunits) return false;
+		if(o_function->id() == FUNCTION_ID_STRIP_UNITS) return false;
 		bool b = false;
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CALCULATOR->aborted()) return b;
@@ -585,7 +585,7 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
 		}
 	} else {
 		if(m.type() == STRUCT_FUNCTION) {
-			if(m.function() == CALCULATOR->f_stripunits) return b;
+			if(m.function()->id() == FUNCTION_ID_STRIP_UNITS) return b;
 			for(size_t i = 0; i < m.size(); i++) {
 				if(m.size() > 100 && CALCULATOR->aborted()) return b;
 				if((!m.function()->getArgumentDefinition(i + 1) || m.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) && convert_approximate(m[i], u, feo, vars, uncs, units, do_intervals)) {
@@ -610,7 +610,7 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
 bool contains_approximate_relation_to_base(const MathStructure &m, bool do_intervals) {
 	if(m.isUnit()) {
 		return has_approximate_relation_to_base(m.unit(), do_intervals);
-	} else if(m.isFunction() && m.function() == CALCULATOR->f_stripunits) {
+	} else if(m.isFunction() && m.function()->id() == FUNCTION_ID_STRIP_UNITS) {
 		return false;
 	}
 	for(size_t i = 0; i < m.size(); i++) {
@@ -981,7 +981,7 @@ bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *fou
 			}*/
 		}
 		if(m_type == STRUCT_FUNCTION) {
-			if(o_function == CALCULATOR->f_stripunits) return b;
+			if(o_function->id() == FUNCTION_ID_STRIP_UNITS) return b;
 			for(size_t i = 0; i < SIZE; i++) {
 				if(CALCULATOR->aborted()) return b;
 				if((!o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) && CHILD(i).convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix)) {

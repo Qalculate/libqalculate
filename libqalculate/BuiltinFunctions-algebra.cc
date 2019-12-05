@@ -777,7 +777,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 
 MathStructure *find_deqn(MathStructure &mstruct);
 MathStructure *find_deqn(MathStructure &mstruct) {
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_diff) return &mstruct;
+	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_DIFFERENTIATE) return &mstruct;
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		MathStructure *m = find_deqn(mstruct[i]);
 		if(m) return m;
@@ -812,7 +812,7 @@ void add_C(MathStructure &m_eqn, const MathStructure &m_x, const MathStructure &
 		m_c.childUpdated(2);
 		m_eqn[1] += m_c;
 	} else {
-		m_eqn[1] += CALCULATOR->v_C;
+		m_eqn[1] += CALCULATOR->getVariableById(VARIABLE_ID_C);
 	}
 	m_eqn.childrenUpdated();
 }
@@ -950,7 +950,7 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 							m_exp += m_one;
 							MathStructure m_y1_exp(m_exp);
 							m_y1_exp *= m_y1_integ;
-							m_y1_exp.transform(STRUCT_POWER, CALCULATOR->v_e);
+							m_y1_exp.transform(STRUCT_POWER, CALCULATOR->getVariableById(VARIABLE_ID_E));
 							m_y1_exp.swapChildren(1, 2);
 							MathStructure m_y1_exp_integ(m_y1_exp);
 							m_y1_exp_integ *= m_mul_exp;
@@ -1071,7 +1071,7 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	MathStructure m_eqn(vargs[0]);
 	EvaluationOptions eo2 = eo;
 	eo2.isolate_x = false;
-	eo2.protected_function = CALCULATOR->f_diff;
+	eo2.protected_function = CALCULATOR->getFunctionById(FUNCTION_ID_DIFFERENTIATE);
 	m_eqn.eval(eo2);
 	MathStructure *m_diff_p = NULL;
 	if(m_eqn.isLogicalAnd()) {
@@ -1128,7 +1128,7 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	}
 	m_eqn.calculatesub(eo2, eo2, true);
 	MathStructure msolve(m_eqn);
-	if(solve_equation(msolve, m_eqn, m_diff[0], eo, true, m_diff[1], MathStructure(CALCULATOR->v_C), vargs[2], vargs[1]) <= 0) {
+	if(solve_equation(msolve, m_eqn, m_diff[0], eo, true, m_diff[1], MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_C)), vargs[2], vargs[1]) <= 0) {
 		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
 		return -1;
 	}

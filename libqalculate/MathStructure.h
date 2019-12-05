@@ -392,6 +392,7 @@ class MathStructure {
 		/** @name Functions for mathematical functions */
 		//@{
 		void setFunction(MathFunction *f);
+		void setFunctionId(int id);
 		MathFunction *function() const;
 		const MathStructure *functionValue() const;
 		//@}
@@ -644,6 +645,7 @@ class MathStructure {
 		void transform_nocopy(StructureType mtype, MathStructure *o);
 		void transform(StructureType mtype);
 		void transform(MathFunction *o);
+		void transformById(int id);
 		void transform(ComparisonType ctype, const MathStructure &o);
 		//@}
 
@@ -816,6 +818,7 @@ class MathStructure {
 		int containsType(StructureType mtype, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
 		int containsRepresentativeOfType(StructureType mtype, bool check_variables = false, bool check_functions = false) const;
 		int containsFunction(MathFunction *f, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
+		int containsFunctionId(int id, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
 		int containsInterval(bool structural_only = true, bool check_variables = false, bool check_functions = false, int ignore_high_precision_interval = 0, bool include_interval_function = false) const;
 		int containsInfinity(bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
 		bool containsOpaqueContents() const;

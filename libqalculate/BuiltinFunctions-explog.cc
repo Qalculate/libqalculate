@@ -49,13 +49,15 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 	MathStructure msave;
 
 	if(!mstruct.isNumber()) {
-		if(mstruct.isPower() && mstruct[0] == CALCULATOR->v_e && mstruct[1].isNumber() && mstruct[1].number().hasImaginaryPart() && !mstruct[1].number().hasRealPart()) {
+		if(mstruct.isPower() && mstruct[0] == CALCULATOR->getVariableById(VARIABLE_ID_E) && mstruct[1].isNumber() && mstruct[1].number().hasImaginaryPart() && !mstruct[1].number().hasRealPart()) {
 			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 			if(CALCULATOR->usesIntervalArithmetic()) {
 				CALCULATOR->beginTemporaryStopMessages();
 				Number nr(*mstruct[1].number().internalImaginary());
-				nr.add(CALCULATOR->v_pi->get().number());
-				nr.divide(CALCULATOR->v_pi->get().number() * 2);
+				Number nrpi; nrpi.pi();
+				nr.add(nrpi);
+				nr.divide(nrpi);
+				nr.divide(2);
 				Number nr_u(nr.upperEndPoint());
 				nr = nr.lowerEndPoint();
 				nr_u.floor();
@@ -68,7 +70,7 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 					mstruct = mstruct[1].number().imaginaryPart();
 					if(!nr.isZero()) {
 						mstruct += nr;
-						mstruct.last() *= CALCULATOR->v_pi;
+						mstruct.last() *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 					}
 					return true;
 				}
@@ -88,7 +90,7 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 			return false;
 		} else if(!mstruct.number().hasRealPart() && mstruct.number().imaginaryPartIsNonZero()) {
 			bool b_neg = mstruct.number().imaginaryPartIsNegative();
-			mstruct.set(CALCULATOR->v_pi); mstruct.multiply(nr_half);
+			mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half);
 			if(b_neg) mstruct.negate();
 		} else if(!msave.isZero()) {
 			mstruct = msave;
@@ -100,31 +102,31 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 			if(!new_nr.number().divide(mstruct.number().realPart())) return false;
 			if(mstruct.number().realPartIsNegative()) {
 				if(mstruct.number().imaginaryPartIsNegative()) {
-					mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
 					switch(eo.parse_options.angle_unit) {
-						case ANGLE_UNIT_DEGREES: {mstruct.divide_nocopy(new MathStructure(180, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-						case ANGLE_UNIT_GRADIANS: {mstruct.divide_nocopy(new MathStructure(200, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+						case ANGLE_UNIT_DEGREES: {mstruct.divide_nocopy(new MathStructure(180, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+						case ANGLE_UNIT_GRADIANS: {mstruct.divide_nocopy(new MathStructure(200, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
 						case ANGLE_UNIT_RADIANS: {break;}
 						default: {if(CALCULATOR->getRadUnit()) {mstruct /= CALCULATOR->getRadUnit();} break;}
 					}
-					mstruct.subtract(CALCULATOR->v_pi);
+					mstruct.subtract(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 				} else if(mstruct.number().imaginaryPartIsNonNegative()) {
-					mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
 					switch(eo.parse_options.angle_unit) {
-						case ANGLE_UNIT_DEGREES: {mstruct.divide_nocopy(new MathStructure(180, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-						case ANGLE_UNIT_GRADIANS: {mstruct.divide_nocopy(new MathStructure(200, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+						case ANGLE_UNIT_DEGREES: {mstruct.divide_nocopy(new MathStructure(180, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+						case ANGLE_UNIT_GRADIANS: {mstruct.divide_nocopy(new MathStructure(200, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
 						case ANGLE_UNIT_RADIANS: {break;}
 						default: {if(CALCULATOR->getRadUnit()) {mstruct /= CALCULATOR->getRadUnit();} break;}
 					}
-					mstruct.add(CALCULATOR->v_pi);
+					mstruct.add(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 				} else {
 					return false;
 				}
 			} else {
-				mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
 				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {mstruct.divide_nocopy(new MathStructure(180, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-					case ANGLE_UNIT_GRADIANS: {mstruct.divide_nocopy(new MathStructure(200, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+					case ANGLE_UNIT_DEGREES: {mstruct.divide_nocopy(new MathStructure(180, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+					case ANGLE_UNIT_GRADIANS: {mstruct.divide_nocopy(new MathStructure(200, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
 					case ANGLE_UNIT_RADIANS: {break;}
 					default: {if(CALCULATOR->getRadUnit()) {mstruct /= CALCULATOR->getRadUnit();} break;}
 				}
@@ -185,7 +187,7 @@ int CbrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct.raise(Number(1, 3, 0));
 	} else {
 		MathStructure mroot(3, 1, 0);
-		mstruct.set(CALCULATOR->f_root, &vargs[0], &mroot, NULL);
+		mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ROOT), &vargs[0], &mroot, NULL);
 	}
 	return 1;
 }
@@ -281,7 +283,7 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						if(!mstruct[0].representsReal(true)) return -1;
 						mstruct.delChild(2);
 						mstruct.setType(STRUCT_FUNCTION);
-						mstruct.setFunction(CALCULATOR->f_abs);
+						mstruct.setFunctionId(FUNCTION_ID_ABS);
 					} else {
 						mstruct.setToChild(1);
 					}
@@ -290,7 +292,7 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					if(mstruct[1].number().isEven()) {
 						if(!mstruct[0].representsReal(true)) return -1;
 						mstruct[0].transform(STRUCT_FUNCTION);
-						mstruct[0].setFunction(CALCULATOR->f_abs);
+						mstruct[0].setFunctionId(FUNCTION_ID_ABS);
 					}
 					mstruct[1].divide(vargs[1].number());
 					return 1;
@@ -298,7 +300,7 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					if(mstruct[1].number().isEven()) {
 						if(!mstruct[0].representsReal(true)) return -1;
 						mstruct[0].transform(STRUCT_FUNCTION);
-						mstruct[0].setFunction(CALCULATOR->f_abs);
+						mstruct[0].setFunctionId(FUNCTION_ID_ABS);
 					}
 					Number new_root(vargs[1].number());
 					new_root.divide(mstruct[1].number());
@@ -334,13 +336,13 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					mstruct.setFunction(this);
 				}
 				return 1;
-			} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_sqrt && mstruct.size() == 1) {
+			} else if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_SQRT && mstruct.size() == 1) {
 				Number new_root(vargs[1].number());
 				new_root.multiply(Number(2, 1, 0));
 				mstruct.addChild(new_root);
 				mstruct.setFunction(this);
 				return 1;
-			} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_root && mstruct.size() == 2 && mstruct[1].isNumber() && mstruct[1].number().isInteger() && mstruct[1].number().isPositive()) {
+			} else if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_ROOT && mstruct.size() == 2 && mstruct[1].isNumber() && mstruct[1].number().isInteger() && mstruct[1].number().isPositive()) {
 				Number new_root(vargs[1].number());
 				new_root.multiply(mstruct[1].number());
 				mstruct[1] = new_root;
@@ -451,7 +453,7 @@ ExpFunction::ExpFunction() : MathFunction("exp", 1) {
 	setArgumentDefinition(1, arg);
 }
 int ExpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	mstruct = CALCULATOR->v_e;
+	mstruct = CALCULATOR->getVariableById(VARIABLE_ID_E);
 	mstruct ^= vargs[0];
 	return 1;
 }
@@ -480,18 +482,18 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 
 	mstruct = vargs[0];
 
-	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_e) {
+	if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_E) {
 		mstruct.set(m_one);
 		return true;
 	} else if(mstruct.isPower()) {
-		if(mstruct[0].isVariable() && mstruct[0].variable() == CALCULATOR->v_e) {
+		if(mstruct[0].isVariable() && mstruct[0].variable()->id() == VARIABLE_ID_E) {
 			if(mstruct[1].representsReal()) {
 				mstruct.setToChild(2, true);
 				return true;
 			}
 		} else if(eo.approximation != APPROXIMATION_APPROXIMATE && ((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction()))) {
 			MathStructure mstruct2;
-			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
+			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], NULL);
 			mstruct2 *= mstruct[1];
 			mstruct = mstruct2;
 			return true;
@@ -510,18 +512,18 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 
 	bool b = false;
-	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_e) {
+	if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_E) {
 		mstruct.set(m_one);
 		b = true;
 	} else if(mstruct.isPower()) {
-		if(mstruct[0].isVariable() && mstruct[0].variable() == CALCULATOR->v_e) {
+		if(mstruct[0].isVariable() && mstruct[0].variable()->id() == VARIABLE_ID_E) {
 			if(mstruct[1].representsReal()) {
 				mstruct.setToChild(2, true);
 				b = true;
 			}
 		} else if((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
 			MathStructure mstruct2;
-			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
+			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], NULL);
 			mstruct2 *= mstruct[1];
 			mstruct = mstruct2;
 			b = true;
@@ -536,9 +538,9 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		if(b) {
 			MathStructure mstruct2;
-			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
+			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], NULL);
 			for(size_t i = 1; i < mstruct.size(); i++) {
-				mstruct2.add(MathStructure(CALCULATOR->f_ln, &mstruct[i], NULL), i > 1);
+				mstruct2.add(MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[i], NULL), i > 1);
 			}
 			mstruct = mstruct2;
 		}
@@ -554,22 +556,22 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 
 	if(mstruct.isNumber()) {
 		if(eo.allow_complex && mstruct.number().isMinusOne()) {
-			mstruct = CALCULATOR->v_i->get();
-			mstruct *= CALCULATOR->v_pi;
+			mstruct = nr_one_i;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			return 1;
 		} else if(mstruct.number().isI()) {
 			mstruct.set(1, 2, 0);
-			mstruct *= CALCULATOR->v_pi;
-			mstruct *= CALCULATOR->v_i->get();
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			mstruct *= nr_one_i;
 			return 1;
 		} else if(mstruct.number().isMinusI()) {
 			mstruct.set(-1, 2, 0);
-			mstruct *= CALCULATOR->v_pi;
-			mstruct *= CALCULATOR->v_i->get();
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			mstruct *= nr_one_i;
 			return 1;
 		} else if(eo.allow_complex && eo.allow_infinite && mstruct.number().isMinusInfinity()) {
-			mstruct = CALCULATOR->v_pi;
-			mstruct *= CALCULATOR->v_i->get();
+			mstruct = CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			mstruct *= nr_one_i;
 			Number nr; nr.setPlusInfinity();
 			mstruct += nr;
 			return 1;
@@ -592,7 +594,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 								if(mstruct.last().isMultiplication()) mstruct.last().last().number()++;
 								else mstruct.last() *= nr_two;
 							} else {
-								mstruct.addChild(MathStructure(CALCULATOR->f_ln, NULL));
+								mstruct.addChild(MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), NULL));
 								mstruct.last().addChild(factors[i]);
 							}
 						}
@@ -601,10 +603,10 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					}
 				}
 			} else {
-				MathStructure mstruct2(CALCULATOR->f_ln, NULL);
+				MathStructure mstruct2(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), NULL);
 				mstruct2.addChild(mstruct.number().denominator());
 				mstruct.number().set(mstruct.number().numerator());
-				mstruct.transform(CALCULATOR->f_ln);
+				mstruct.transformById(FUNCTION_ID_LOG);
 				mstruct -= mstruct2;
 				return 1;
 			}
@@ -612,9 +614,9 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			if(mstruct.number().hasRealPart()) {
 				MathStructure *marg = new MathStructure(mstruct);
 				if(calculate_arg(*marg, eo)) {
-					mstruct.transform(CALCULATOR->f_abs);
-					mstruct.transform(CALCULATOR->f_ln);
-					marg->multiply(CALCULATOR->v_i->get());
+					mstruct.transformById(FUNCTION_ID_ABS);
+					mstruct.transformById(FUNCTION_ID_LOG);
+					marg->multiply(nr_one_i);
 					mstruct.add_nocopy(marg);
 					return 1;
 				}
@@ -624,8 +626,8 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				if(mstruct.number().abs()) {
 					mstruct.transform(this);
 					mstruct += b_neg ? nr_minus_half : nr_half;
-					mstruct.last() *= CALCULATOR->v_pi;
-					mstruct.last().multiply(CALCULATOR->v_i->get(), true);
+					mstruct.last() *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+					mstruct.last().multiply(nr_one_i, true);
 				}
 				return 1;
 			}
@@ -633,7 +635,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	} else if(mstruct.isPower()) {
 		if((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
 			MathStructure mstruct2;
-			mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
+			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], NULL);
 			mstruct2 *= mstruct[1];
 			mstruct = mstruct2;
 			return 1;
@@ -652,7 +654,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mtest.eval(eo2);
 			if(!CALCULATOR->endTemporaryStopMessages() && mtest.isNumber() && mtest.number().isFraction()) {
 				MathStructure mstruct2;
-				mstruct2.set(CALCULATOR->f_ln, &mstruct[0], NULL);
+				mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], NULL);
 				mstruct2 *= mstruct[1];
 				mstruct = mstruct2;
 				return 1;
@@ -661,17 +663,17 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	if(eo.allow_complex && mstruct.representsNegative()) {
 		mstruct.negate();
-		mstruct.transform(CALCULATOR->f_ln);
-		mstruct += CALCULATOR->v_pi;
+		mstruct.transformById(FUNCTION_ID_LOG);
+		mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI);
 		mstruct.last() *= nr_one_i;
 		return 1;
 	}
 	if(!mstruct.representsReal()) {
 		MathStructure *marg = new MathStructure(mstruct);
 		if(calculate_arg(*marg, eo)) {
-			mstruct.transform(CALCULATOR->f_abs);
-			mstruct.transform(CALCULATOR->f_ln);
-			marg->multiply(CALCULATOR->v_i->get());
+			mstruct.transformById(FUNCTION_ID_ABS);
+			mstruct.transformById(FUNCTION_ID_LOG);
+			marg->multiply(nr_one_i);
 			mstruct.add_nocopy(marg);
 			return 1;
 		}
@@ -692,8 +694,8 @@ LognFunction::LognFunction() : MathFunction("log", 1, 2) {
 }
 int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector() || vargs[1].isVector()) return 0;
-	if(vargs[1].isVariable() && vargs[1].variable() == CALCULATOR->v_e) {
-		mstruct.set(CALCULATOR->f_ln, &vargs[0], NULL);
+	if(vargs[1].isVariable() && vargs[1].variable()->id() == VARIABLE_ID_E) {
+		mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &vargs[0], NULL);
 		return 1;
 	}
 	mstruct = vargs[0];
@@ -705,7 +707,7 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(mstruct.isPower()) {
 		if((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
 			MathStructure mstruct2;
-			mstruct2.set(CALCULATOR->f_logn, &mstruct[0], &mstructv2, NULL);
+			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOGN), &mstruct[0], &mstructv2, NULL);
 			mstruct2 *= mstruct[1];
 			mstruct = mstruct2;
 			return 1;
@@ -720,9 +722,9 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		if(b) {
 			MathStructure mstruct2;
-			mstruct2.set(CALCULATOR->f_logn, &mstruct[0], &mstructv2, NULL);
+			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOGN), &mstruct[0], &mstructv2, NULL);
 			for(size_t i = 1; i < mstruct.size(); i++) {
-				mstruct2.add(MathStructure(CALCULATOR->f_logn, &mstruct[i], &mstructv2, NULL), i > 1);
+				mstruct2.add(MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOGN), &mstruct[i], &mstructv2, NULL), i > 1);
 			}
 			mstruct = mstruct2;
 			return 1;
@@ -734,8 +736,8 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			return 1;
 		}
 	}
-	mstruct.set(CALCULATOR->f_ln, &vargs[0], NULL);
-	mstruct.divide_nocopy(new MathStructure(CALCULATOR->f_ln, &vargs[1], NULL));
+	mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &vargs[0], NULL);
+	mstruct.divide_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &vargs[1], NULL));
 	return 1;
 }
 CisFunction::CisFunction() : MathFunction("cis", 1) {
@@ -753,19 +755,19 @@ int CisFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct = vargs[0][1];
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 200), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 200), true);
 		} else {
 			mstruct = vargs[0];
@@ -776,10 +778,10 @@ int CisFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct = vargs[0];
 	}
 
-	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
+	if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_PI) {
 		mstruct.set(-1, 1, 0, true);
 		return 1;
-	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isInteger() && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
+	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isInteger() && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI) {
 		if(mstruct[0].number().isEven()) {
 			mstruct.set(1, 1, 0, true);
 			return 1;
@@ -789,8 +791,8 @@ int CisFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 	}
 
-	mstruct *= CALCULATOR->v_i;
-	mstruct ^= CALCULATOR->v_e;
+	mstruct *= nr_one_i;
+	mstruct ^= CALCULATOR->getVariableById(VARIABLE_ID_E);
 	mstruct.swapChildren(1, 2);
 
 	return 1;
@@ -831,7 +833,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 			mstruct.set(nr_minus_inf, true);
 			b = true;
 		} else if(vargs[1].isMinusOne()) {
-			if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isPower() && mstruct[1][0].isVariable() && mstruct[1][0].variable() == CALCULATOR->v_e && mstruct[0].number() <= nr_minus_one && mstruct[1][1] == mstruct[0]) {
+			if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isPower() && mstruct[1][0].isVariable() && mstruct[1][0].variable()->id() == VARIABLE_ID_E && mstruct[0].number() <= nr_minus_one && mstruct[1][1] == mstruct[0]) {
 				mstruct.setToChild(1, true);
 				b = true;
 			}
@@ -840,10 +842,10 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	} else {
 		if(mstruct.isZero()) {
 			b = true;
-		} else if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_e) {
+		} else if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_E) {
 			mstruct.set(1, 1, 0, true);
 			b = true;
-		} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne() && mstruct[1].isPower() && mstruct[1][0].isVariable() && mstruct[1][0].variable() == CALCULATOR->v_e && mstruct[1][1].isMinusOne()) {
+		} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne() && mstruct[1].isPower() && mstruct[1][0].isVariable() && mstruct[1][0].variable()->id() == VARIABLE_ID_E && mstruct[1][1].isMinusOne()) {
 			mstruct.set(-1, 1, 0, true);
 			b = true;
 		}

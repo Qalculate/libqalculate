@@ -858,6 +858,8 @@ Prefix *Calculator::getPrefix(string name_) const {
 	}
 	return NULL;
 }
+Prefix *Calculator::getDecimalNullPrefix() const {return decimal_null_prefix;}
+Prefix *Calculator::getBinaryNullPrefix() const {return binary_null_prefix;}
 DecimalPrefix *Calculator::getExactDecimalPrefix(int exp10, int exp) const {
 	for(size_t i = 0; i < decimal_prefixes.size(); i++) {
 		if(decimal_prefixes[i]->exponent(exp) == exp10) {
@@ -1567,7 +1569,7 @@ void Calculator::addBuiltinFunctions() {
 	f_besselj = addFunction(new BesseljFunction());
 	f_bessely = addFunction(new BesselyFunction());
 	f_erf = addFunction(new ErfFunction());
-	addFunction(new ErfiFunction());
+	priv->f_erfi = addFunction(new ErfiFunction());
 	f_erfc = addFunction(new ErfcFunction());
 
 	f_total = addFunction(new TotalFunction());
@@ -1663,8 +1665,8 @@ void Calculator::addBuiltinFunctions() {
 	f_Ci = addFunction(new CiFunction());
 	f_Shi = addFunction(new ShiFunction());
 	f_Chi = addFunction(new ChiFunction());
-	addFunction(new FresnelSFunction());
-	addFunction(new FresnelCFunction());
+	priv->f_fresnels = addFunction(new FresnelSFunction());
+	priv->f_fresnelc = addFunction(new FresnelCFunction());
 	f_igamma = addFunction(new IGammaFunction());
 
 	if(canPlot()) f_plot = addFunction(new PlotFunction());
@@ -2076,6 +2078,7 @@ Unit* Calculator::addUnit(Unit *u, bool force, bool check_names) {
 	}
 	u->setRegistered(true);
 	u->setChanged(false);
+	if(u->id() != 0) priv->id_units[u->id()] = u;
 	return u;
 }
 void Calculator::delPrefixUFV(Prefix *object) {
@@ -2158,6 +2161,21 @@ Unit* Calculator::getUnit(string name_) {
 		}
 	}
 	return NULL;
+}
+Unit* Calculator::getUnitById(int id) const {
+	switch(id) {
+		case UNIT_ID_EURO: {return u_euro;}
+		case UNIT_ID_BTC: {return u_btc;}
+		case UNIT_ID_SECOND: {return u_second;}
+		case UNIT_ID_MINUTE: {return u_minute;}
+		case UNIT_ID_HOUR: {return u_hour;}
+		case UNIT_ID_DAY: {return u_day;}
+		case UNIT_ID_MONTH: {return u_month;}
+		case UNIT_ID_YEAR: {return u_year;}
+	}
+	unordered_map<int, Unit*>::iterator it = priv->id_units.find(id);
+	if(it == priv->id_units.end()) return NULL;
+	return it->second;
 }
 Unit* Calculator::getActiveUnit(string name_) {
 	if(name_.empty()) return NULL;
@@ -2379,6 +2397,21 @@ Variable* Calculator::getVariable(string name_) {
 	return NULL;
 }
 Variable* Calculator::getVariableById(int id) const {
+	switch(id) {
+		case VARIABLE_ID_E: {return v_e;}
+		case VARIABLE_ID_PI: {return v_pi;}
+		case VARIABLE_ID_EULER: {return v_euler;}
+		case VARIABLE_ID_CATALAN: {return v_catalan;}
+		case VARIABLE_ID_I: {return v_i;}
+		case VARIABLE_ID_PLUS_INFINITY: {return v_pinf;}
+		case VARIABLE_ID_MINUS_INFINITY: {return v_minf;}
+		case VARIABLE_ID_X: {return v_x;}
+		case VARIABLE_ID_Y: {return v_y;}
+		case VARIABLE_ID_Z: {return v_z;}
+		case VARIABLE_ID_N: {return v_n;}
+		case VARIABLE_ID_C: {return v_C;}
+		case VARIABLE_ID_UNDEFINED: {return v_undef;}
+	}
 	unordered_map<int, Variable*>::iterator it = priv->id_variables.find(id);
 	if(it == priv->id_variables.end()) return NULL;
 	return it->second;
@@ -2460,6 +2493,65 @@ MathFunction* Calculator::getFunction(string name_) {
 	return NULL;
 }
 MathFunction* Calculator::getFunctionById(int id) const {
+	switch(id) {
+		case FUNCTION_ID_SIN: {return f_sin;}
+		case FUNCTION_ID_COS: {return f_cos;}
+		case FUNCTION_ID_TAN: {return f_tan;}
+		case FUNCTION_ID_ASIN: {return f_asin;}
+		case FUNCTION_ID_ACOS: {return f_acos;}
+		case FUNCTION_ID_ATAN: {return f_atan;}
+		case FUNCTION_ID_SINH: {return f_sinh;}
+		case FUNCTION_ID_COSH: {return f_cosh;}
+		case FUNCTION_ID_TANH: {return f_tanh;}
+		case FUNCTION_ID_ASINH: {return f_asinh;}
+		case FUNCTION_ID_ACOSH: {return f_acosh;}
+		case FUNCTION_ID_ATANH: {return f_atanh;}
+		case FUNCTION_ID_SINC: {return f_sinc;}
+		case FUNCTION_ID_LOG: {return f_ln;}
+		case FUNCTION_ID_LOGN: {return f_logn;}
+		case FUNCTION_ID_SQRT: {return f_sqrt;}
+		case FUNCTION_ID_CBRT: {return f_cbrt;}
+		case FUNCTION_ID_ROOT: {return f_root;}
+		case FUNCTION_ID_CIS: {return priv->f_cis;}
+		case FUNCTION_ID_ABS: {return f_abs;}
+		case FUNCTION_ID_SIGNUM: {return f_signum;}
+		case FUNCTION_ID_POLYLOG: {return f_Li;}
+		case FUNCTION_ID_GAMMA: {return f_gamma;}
+		case FUNCTION_ID_ERF: {return f_erf;}
+		case FUNCTION_ID_ERFC: {return f_erfc;}
+		case FUNCTION_ID_ERFI: {return priv->f_erfi;}
+		case FUNCTION_ID_STRIP_UNITS: {return f_stripunits;}
+		case FUNCTION_ID_UNCERTAINTY: {return f_uncertainty;}
+		case FUNCTION_ID_INTERVAL: {return f_interval;}
+		case FUNCTION_ID_FACTORIAL: {return f_factorial;}
+		case FUNCTION_ID_DOUBLE_FACTORIAL: {return f_factorial2;}
+		case FUNCTION_ID_I_GAMMA: {return f_igamma;}
+		case FUNCTION_ID_SI: {return f_Si;}
+		case FUNCTION_ID_CI: {return f_Ci;}
+		case FUNCTION_ID_SHI: {return f_Shi;}
+		case FUNCTION_ID_CHI: {return f_Chi;}
+		case FUNCTION_ID_LI: {return f_li;}
+		case FUNCTION_ID_EI: {return f_Ei;}
+		case FUNCTION_ID_FRESNEL_S: {return priv->f_fresnels;}
+		case FUNCTION_ID_FRESNEL_C: {return priv->f_fresnelc;}
+		case FUNCTION_ID_RE: {return f_re;}
+		case FUNCTION_ID_IM: {return f_im;}
+		case FUNCTION_ID_ARG: {return f_arg;}
+		case FUNCTION_ID_INTEGRATE: {return f_integrate;}
+		case FUNCTION_ID_DIFFERENTIATE: {return f_diff;}
+		case FUNCTION_ID_BETA: {return f_beta;}
+		case FUNCTION_ID_BESSELY: {return f_bessely;}
+		case FUNCTION_ID_BESSELJ: {return f_besselj;}
+		case FUNCTION_ID_HEAVISIDE: {return f_heaviside;}
+		case FUNCTION_ID_DIRAC: {return f_dirac;}
+		case FUNCTION_ID_DIGAMMA: {return f_digamma;}
+		case FUNCTION_ID_AIRY: {return f_airy;}
+		case FUNCTION_ID_ZETA: {return f_zeta;}
+		case FUNCTION_ID_LAMBERT_W: {return f_lambert_w;}
+		case FUNCTION_ID_IF: {return f_if;}
+		case FUNCTION_ID_SHIFT: {return f_shift;}
+		case FUNCTION_ID_XOR: {return f_xor;}
+	}
 	unordered_map<int, MathFunction*>::iterator it = priv->id_functions.find(id);
 	if(it == priv->id_functions.end()) return NULL;
 	return it->second;

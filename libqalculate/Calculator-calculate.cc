@@ -1087,7 +1087,7 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 	return false;
 }
 bool calculate_rand(MathStructure &mstruct, const EvaluationOptions &eo) {
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_rand) {
+	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_RAND) {
 		mstruct.unformat(eo);
 		mstruct.calculateFunctions(eo, false);
 		return true;
@@ -1270,7 +1270,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		string str_test = str_where;
 		remove_blanks(str_test);
 		bool empty_func = str_test.find("()=") != string::npos;
-		if(mstruct.isComparison() || (mstruct.isFunction() && mstruct.function() == CALCULATOR->f_solve && mstruct.size() >= 1 && mstruct[0].isComparison())) {
+		if(mstruct.isComparison() || (mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_SOLVE && mstruct.size() >= 1 && mstruct[0].isComparison())) {
 			beginTemporaryStopMessages();
 			MathStructure mbak(mstruct);
 			if(handle_where_expression(where_struct, mstruct, eo, vars, varms, empty_func)) {

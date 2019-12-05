@@ -157,7 +157,7 @@ TimestampToDateFunction::TimestampToDateFunction() : MathFunction("stamptodate",
 int TimestampToDateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	mstruct.eval(eo);
-	if((mstruct.isUnit() && mstruct.unit()->baseUnit() == CALCULATOR->u_second) || (mstruct.isMultiplication() && mstruct.size() >= 2 && mstruct.last().isUnit() && mstruct.last().unit()->baseUnit() == CALCULATOR->u_second)) {
+	if((mstruct.isUnit() && mstruct.unit()->baseUnit() == CALCULATOR->getUnitById(UNIT_ID_SECOND)) || (mstruct.isMultiplication() && mstruct.size() >= 2 && mstruct.last().isUnit() && mstruct.last().unit()->baseUnit() == CALCULATOR->getUnitById(UNIT_ID_SECOND))) {
 		Unit *u = NULL;
 		if(mstruct.isUnit()) {
 			u = mstruct.unit();
@@ -166,7 +166,7 @@ int TimestampToDateFunction::calculate(MathStructure &mstruct, const MathStructu
 			u = mstruct.last().unit();
 			mstruct.delChild(mstruct.size(), true);
 		}
-		if(u != CALCULATOR->u_second) {
+		if(u != CALCULATOR->getUnitById(UNIT_ID_SECOND)) {
 			u->convertToBaseUnit(mstruct);
 			mstruct.eval(eo);
 		}

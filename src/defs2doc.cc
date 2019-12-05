@@ -430,7 +430,7 @@ void print_variable(Variable *v) {
 		if(is_answer_variable(v)) {
 			value = _("a previous result");
 		} else if(v->isKnown()) {
-			if(v == CALCULATOR->v_precision) {
+			if(v->id() == VARIABLE_ID_PRECISION) {
 				value = _("current precision");
 			} else if(((KnownVariable*) v)->isExpression()) {
 				value = fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->expression()));
@@ -483,7 +483,7 @@ void print_variable(Variable *v) {
 			}
 		}
 		if(v->isApproximate() && !is_relative && value.find(SIGN_PLUSMINUS) == string::npos) {
-			if(v == CALCULATOR->v_pi || v == CALCULATOR->v_e || v == CALCULATOR->v_euler || v == CALCULATOR->v_catalan) {
+			if(v->id() == VARIABLE_ID_PI || v->id() == VARIABLE_ID_E || v->id() == VARIABLE_ID_EULER || v->id() == VARIABLE_ID_CATALAN) {
 				value += " (";
 				value += _("variable precision");
 				value += ")";

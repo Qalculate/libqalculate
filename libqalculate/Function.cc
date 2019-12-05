@@ -19,6 +19,7 @@
 #include "Number.h"
 #include "Unit.h"
 #include "MathStructure-support.h"
+#include "BuiltinFunctions.h"
 
 #include <limits.h>
 
@@ -527,7 +528,7 @@ bool MathFunction::testArguments(MathStructure &vargs) {
 					CALCULATOR->endTemporaryStopMessages();
 				}
 				if(vargs[it->first - 1].isUndefined()) {
-					vargs[it->first - 1].set(CALCULATOR->v_x, true);
+					vargs[it->first - 1].set(CALCULATOR->getVariableById(VARIABLE_ID_X), true);
 					CALCULATOR->error(false, _("No unknown variable/symbol was found."), NULL);
 				}
 			}
@@ -790,7 +791,7 @@ bool replace_intervals_f(MathStructure &mstruct) {
 	return b;
 }
 bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_interval && mstruct.size() == 2) {
+	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_INTERVAL && mstruct.size() == 2) {
 		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
 			Number nr;
 			if(nr.setInterval(mstruct[0].number(), mstruct[1].number())) {
@@ -806,7 +807,7 @@ bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
 			if(create_interval(mstruct, m1, m2)) return true;
 		}
 		return false;
-	} else if(eo.interval_calculation != INTERVAL_CALCULATION_NONE && mstruct.isFunction() && mstruct.function() == CALCULATOR->f_uncertainty && mstruct.size() == 3) {
+	} else if(eo.interval_calculation != INTERVAL_CALCULATION_NONE && mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_UNCERTAINTY && mstruct.size() == 3) {
 		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
 			Number nr(mstruct[0].number());
 			if(mstruct[2].number().getBoolean()) {
@@ -833,7 +834,7 @@ bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
 				mstruct.setToChild(1, true);
 				mstruct *= m_one;
 				mstruct.last() -= m2;
-				mstruct.transform(CALCULATOR->f_interval);
+				mstruct.transformById(FUNCTION_ID_INTERVAL);
 				m1 *= m_one;
 				m1.last() += m2;
 				mstruct.addChild(m1);
@@ -847,7 +848,7 @@ bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
 				m2 = mstruct[1];
 				mstruct.setToChild(1);
 				mstruct -= m2;
-				mstruct.transform(CALCULATOR->f_interval);
+				mstruct.transformById(FUNCTION_ID_INTERVAL);
 				m1 += m2;
 				mstruct.addChild(m1);
 			}
@@ -1489,7 +1490,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 						str3 = "(";
 						if(!m_temp) {
 							CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
-							str3 += CALCULATOR->v_undef->preferredInputName(true, false, false, true).name;
+							str3 += CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED)->preferredInputName(true, false, false, true).name;
 						} else {
 							str3 += m_temp->print(CALCULATOR->save_printoptions).c_str();
 							m_temp->unref();
@@ -1520,7 +1521,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 			str3 = "(";
 			if(!m_temp) {
 				CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
-				str3 += CALCULATOR->v_undef->preferredInputName(true, false, false, true).name;
+				str3 += CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED)->preferredInputName(true, false, false, true).name;
 			} else {
 				str3 += m_temp->print(CALCULATOR->save_printoptions).c_str();
 				m_temp->unref();

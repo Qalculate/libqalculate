@@ -1046,7 +1046,7 @@ bool MathStructure::isRationalPolynomial(bool allow_non_rational_coefficient, bo
 			return CHILD(1).isInteger() && CHILD(1).number().isNonNegative() && !CHILD(1).number().isOne() && CHILD(1).number() < 1000 && !CHILD(0).isNumber() && !CHILD(0).isMultiplication() && !CHILD(0).isAddition() && !CHILD(0).isPower() && CHILD(0).isRationalPolynomial(allow_non_rational_coefficient, allow_interval_coefficient);
 		}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_uncertainty || o_function == CALCULATOR->f_interval || containsInterval() || containsInfinity()) return false;
+			if(o_function->id() == FUNCTION_ID_UNCERTAINTY || o_function->id() == FUNCTION_ID_INTERVAL || containsInterval() || containsInfinity()) return false;
 		}
 		case STRUCT_UNIT: {}
 		case STRUCT_VARIABLE: {}

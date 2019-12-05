@@ -33,13 +33,18 @@ using std::endl;
 
 #define REPRESENTS_FUNCTION(x, y) x::x() : MathFunction(#y, 1) {} int x::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {mstruct = vargs[0]; mstruct.eval(eo); if(mstruct.y()) {mstruct.clear(); mstruct.number().setTrue();} else {mstruct.clear(); mstruct.number().setFalse();} return 1;}
 
+void replace_infinity_v(MathStructure &m) {
+	if(m.isVariable() && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().isNumber() && ((KnownVariable*) m.variable())->get().number().isInfinite(false)) {
+		m = ((KnownVariable*) m.variable())->get();
+	}
+	for(size_t i = 0; i < m.size(); i++) replace_infinity_v(m[i]);
+}
+
 bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2) {
-	if(m1.contains(CALCULATOR->v_pinf, true) || m2.contains(CALCULATOR->v_pinf, true) || m1.contains(CALCULATOR->v_minf, true) || m2.contains(CALCULATOR->v_minf, true)) {
+	if(m1.containsInfinity(true, true, false) || m2.containsInfinity(true, true, false)) {
 		MathStructure m1b(m1), m2b(m2);
-		m1b.replace(CALCULATOR->v_pinf, nr_plus_inf);
-		m2b.replace(CALCULATOR->v_pinf, nr_plus_inf);
-		m1b.replace(CALCULATOR->v_minf, nr_minus_inf);
-		m2b.replace(CALCULATOR->v_minf, nr_minus_inf);
+		replace_infinity_v(m1b);
+		replace_infinity_v(m2b);
 		return create_interval(mstruct, m1b, m2b);
 	}
 	if(m1 == m2) {
@@ -132,7 +137,7 @@ bool IntervalFunction::representsUndefined(const MathStructure &vargs) const {re
 
 
 bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo, bool do_eval) {
-	if(munc.isFunction() && munc.function() == CALCULATOR->f_abs && munc.size() == 1) {
+	if(munc.isFunction() && munc.function()->id() == FUNCTION_ID_ABS && munc.size() == 1) {
 		munc.setToChild(1, true);
 	}
 	test_munc:
@@ -169,12 +174,12 @@ bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const Evaluati
 		}
 		if(munc.isMultiplication()) {
 			if(munc.size() == 2) {
-				if(mstruct.isMultiplication() && mstruct[0].isNumber() && (munc[1] == mstruct[1] || (munc[1].isFunction() && munc[1].function() == CALCULATOR->f_abs && munc[1].size() == 1 && mstruct[1] == munc[1][0]))) {
+				if(mstruct.isMultiplication() && mstruct[0].isNumber() && (munc[1] == mstruct[1] || (munc[1].isFunction() && munc[1].function()->id() == FUNCTION_ID_ABS && munc[1].size() == 1 && mstruct[1] == munc[1][0]))) {
 					mstruct[0].number().setUncertainty(munc[0].number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 					mstruct[0].numberUpdated();
 					mstruct.childUpdated(1);
 					return 1;
-				} else if(mstruct.equals(munc[1]) || (munc[1].isFunction() && munc[1].function() == CALCULATOR->f_abs && munc[1].size() == 1 && mstruct.equals(munc[1][0]))) {
+				} else if(mstruct.equals(munc[1]) || (munc[1].isFunction() && munc[1].function()->id() == FUNCTION_ID_ABS && munc[1].size() == 1 && mstruct.equals(munc[1][0]))) {
 					mstruct.transform(STRUCT_MULTIPLICATION);
 					mstruct.insertChild(m_one, 1);
 					mstruct[0].number().setUncertainty(munc[0].number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
@@ -188,7 +193,7 @@ bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const Evaluati
 				if(mstruct.size() + 1 - i2 == munc.size()) {
 					bool b = true;
 					for(size_t i = 1; i < munc.size(); i++, i2++) {
-						if(!munc[i].equals(mstruct[i2]) && !(munc[i].isFunction() && munc[i].function() == CALCULATOR->f_abs && munc[i].size() == 1 && mstruct[i2] == munc[i][0])) {
+						if(!munc[i].equals(mstruct[i2]) && !(munc[i].isFunction() && munc[i].function()->id() == FUNCTION_ID_ABS && munc[i].size() == 1 && mstruct[i2] == munc[i][0])) {
 							b = false;
 							break;
 						}
@@ -207,7 +212,7 @@ bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const Evaluati
 			if(do_eval) {
 				bool b = false;
 				for(size_t i = 0; i < munc.size(); i++) {
-					if(munc[i].isFunction() && munc[i].function() == CALCULATOR->f_abs && munc[i].size() == 1) {
+					if(munc[i].isFunction() && munc[i].function()->id() == FUNCTION_ID_ABS && munc[i].size() == 1) {
 						munc[i].setToChild(1);
 						b = true;
 					}
@@ -242,7 +247,7 @@ int UncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &
 		mstruct = vargs[0];
 		mstruct *= m_one;
 		mstruct.last() -= vargs[1];
-		mstruct.transform(CALCULATOR->f_interval);
+		mstruct.transformById(FUNCTION_ID_INTERVAL);
 		MathStructure *m2 = new MathStructure(vargs[0]);
 		m2->multiply(m_one);
 		m2->last() += vargs[1];
@@ -252,7 +257,7 @@ int UncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &
 		if(set_uncertainty(mstruct, munc, eo, true)) return 1;
 		mstruct = vargs[0];
 		mstruct -= vargs[1];
-		mstruct.transform(CALCULATOR->f_interval);
+		mstruct.transformById(FUNCTION_ID_INTERVAL);
 		MathStructure *m2 = new MathStructure(vargs[0]);
 		m2->add(vargs[1]);
 		mstruct.addChild_nocopy(m2);
@@ -393,7 +398,7 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		for(size_t i = 0; i < vargs[1].size(); i++) {
 			if(vargs[1][i].isFunction() && vargs[2][i].isFunction() && vargs[1][i].size() == 0 && vargs[2][i].size() == 0) {
 				if(!replace_function(mstruct, vargs[1][i].function(), vargs[2][i].function(), eo)) CALCULATOR->error(false, _("Original value (%s) was not found."), (vargs[1][i].function()->name() + "()").c_str(), NULL);
-			} else if(vargs[2][i].containsInterval(true) || vargs[2][i].containsFunction(CALCULATOR->f_interval, true)) {
+			} else if(vargs[2][i].containsInterval(true, false, false, 0, true)) {
 				MathStructure mv(vargs[2][i]);
 				replace_f_interval(mv, eo);
 				replace_intervals_f(mv);
@@ -406,7 +411,7 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		while(true) {
 			if(vargs[1].isFunction() && vargs[2].isFunction() && vargs[1].size() == 0 && vargs[2].size() == 0) {
 				if(replace_function(mstruct, vargs[1].function(), vargs[2].function(), eo)) break;
-			} else if(vargs[2].containsInterval(true) || vargs[2].containsFunction(CALCULATOR->f_interval, true)) {
+			} else if(vargs[2].containsInterval(true, false, false, 0, true)) {
 				MathStructure mv(vargs[2]);
 				replace_f_interval(mv, eo);
 				replace_intervals_f(mv);
@@ -426,7 +431,7 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	return 1;
 }
 void remove_nounit(MathStructure &mstruct) {
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_stripunits && mstruct.size() == 1) {
+	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_STRIP_UNITS && mstruct.size() == 1) {
 		mstruct.setToChild(1, true);
 	}
 	if(mstruct.isMultiplication() || mstruct.isAddition()) {
@@ -552,7 +557,15 @@ bool csum_replace(MathStructure &mprocess, const MathStructure &mstruct, const M
 		return true;
 	}
 	if(!vargs[8].isEmptySymbol()) {
-		if(mprocess.isFunction() && mprocess.function() == CALCULATOR->f_component && mprocess.size() == 2 && mprocess[1] == vargs[8]) {
+		if(mprocess.isFunction() && mprocess.function()->id() == FUNCTION_ID_ELEMENT && mprocess.size() >= 2 && mprocess[0] == vargs[8]) {
+			bool b = csum_replace(mprocess[1], mstruct, vargs, index, eo2);
+			mprocess[1].eval(eo2);
+			if(mprocess[1].isNumber() && mprocess[1].number().isInteger() && mprocess[1].number().isPositive() && mprocess[1].number().isLessThanOrEqualTo(vargs[6].size())) {
+				mprocess = vargs[6][mprocess[1].number().intValue() - 1];
+				return true;
+			}
+			return csum_replace(mprocess[0], mstruct, vargs, index, eo2) || b;
+		} else if(mprocess.isFunction() && mprocess.function()->id() == FUNCTION_ID_COMPONENT && mprocess.size() == 2 && mprocess[1] == vargs[8]) {
 			bool b = csum_replace(mprocess[0], mstruct, vargs, index, eo2);
 			mprocess[0].eval(eo2);
 			if(mprocess[0].isNumber() && mprocess[0].number().isInteger() && mprocess[0].number().isPositive() && mprocess[0].number().isLessThanOrEqualTo(vargs[6].size())) {
@@ -633,20 +646,6 @@ int FunctionFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	MathStructure args = vargs[1];
 	mstruct = f.MathFunction::calculate(args, eo);
 	if(mstruct.isFunction() && mstruct.function() == &f) mstruct.setUndefined();
-	return 1;
-}
-
-IsNumberFunction::IsNumberFunction() : MathFunction("isNumber", 1) {
-}
-int IsNumberFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = vargs[0];
-	if(!mstruct.isNumber()) mstruct.eval(eo);
-	if(mstruct.isNumber()) {
-		mstruct.number().setTrue();
-	} else {
-		mstruct.clear();
-		mstruct.number().setFalse();
-	}
 	return 1;
 }
 

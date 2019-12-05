@@ -17,6 +17,7 @@
 #include "Calculator.h"
 #include "MathStructure.h"
 #include "Number.h"
+#include "BuiltinFunctions.h"
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include <errno.h>
@@ -711,7 +712,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 								if(uncertainty) {
 									if(unc_rel) {
 										str.insert(0, "(");
-										str.insert(0, CALCULATOR->f_uncertainty->referenceName());
+										str.insert(0, CALCULATOR->getFunctionById(FUNCTION_ID_UNCERTAINTY)->referenceName());
 										str += ", ";
 										str += (char*) uncertainty;
 										str += ", 1)";

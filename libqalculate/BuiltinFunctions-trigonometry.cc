@@ -168,19 +168,19 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct = vargs[0][1];
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 200), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 200), true);
 		} else {
 			mstruct = vargs[0];
@@ -193,7 +193,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 
 	MathFunction *f = NULL;
 	if(eo.approximation == APPROXIMATION_APPROXIMATE && (eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS)) {
-		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi && mstruct[2].isNumber() && mstruct[2].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
+		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[2].isNumber() && mstruct[2].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
 			f = mstruct[0].function();
 		}
 	}
@@ -220,22 +220,22 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	bool b = false, b_recalc = true;
 
 	if(eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS) {
-		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi && mstruct[0].isNumber() && mstruct[0].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
+		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[0].isNumber() && mstruct[0].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
 			f = mstruct[2].function();
 		}
 	} else if(mstruct.isFunction() && mstruct.size() == 1) {
 		f = mstruct.function();
 	}
 
-	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
+	if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_PI) {
 		mstruct.clear();
 		b = true;
 	} else if(f) {
-		if(f == CALCULATOR->f_asin) {
+		if(f->id() == FUNCTION_ID_ASIN) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1, true);
 			b = true;
-		} else if(f == CALCULATOR->f_acos) {
+		} else if(f->id() == FUNCTION_ID_ACOS) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1);
 			mstruct ^= nr_two;
@@ -243,7 +243,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct += nr_one;
 			mstruct ^= nr_half;
 			b = true;
-		} else if(f == CALCULATOR->f_atan && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)))) {
+		} else if(f->id() == FUNCTION_ID_ATAN && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)))) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
@@ -253,7 +253,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct.multiply_nocopy(mmul);
 			b = true;
 		}
-	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
+	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI) {
 		if(mstruct[0].number().isInteger()) {
 			mstruct.clear();
 			b = true;
@@ -308,7 +308,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		size_t i = 0;
 		bool b_negate = false;
 		for(; i < mstruct.size(); i++) {
-			if((mstruct[i].isVariable() && mstruct[i].variable() == CALCULATOR->v_pi) || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1] == CALCULATOR->v_pi && mstruct[i][0].isNumber())) {
+			if((mstruct[i].isVariable() && mstruct[i].variable()->id() == VARIABLE_ID_PI) || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1].isVariable() && mstruct[i][1].variable()->id() == VARIABLE_ID_PI && mstruct[i][0].isNumber())) {
 				if(mstruct[i].isVariable() || mstruct[i][0].number().isInteger()) {
 					b_negate = mstruct[i].isVariable() || mstruct[i][0].number().isOdd();
 					mstruct.delChild(i + 1);
@@ -355,7 +355,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 
 	if(trig_remove_i(mstruct)) {
-		mstruct.transform(CALCULATOR->f_sinh);
+		mstruct.transformById(FUNCTION_ID_SINH);
 		mstruct *= nr_one_i;
 		return 1;
 	}
@@ -399,19 +399,19 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct = vargs[0][1];
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 200), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 200), true);
 		} else {
 			mstruct = vargs[0];
@@ -424,7 +424,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 
 	MathFunction *f = NULL;
 	if(eo.approximation == APPROXIMATION_APPROXIMATE && (eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS)) {
-		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi && mstruct[2].isNumber() && mstruct[2].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
+		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[2].isNumber() && mstruct[2].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
 			f = mstruct[0].function();
 		}
 	}
@@ -451,22 +451,22 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	bool b = false, b_recalc = true;
 
 	if(eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS) {
-		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi && mstruct[0].isNumber() && mstruct[0].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
+		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[0].isNumber() && mstruct[0].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
 			f = mstruct[2].function();
 		}
 	} else if(mstruct.isFunction() && mstruct.size() == 1) {
 		f = mstruct.function();
 	}
 
-	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
+	if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_PI) {
 		mstruct = -1;
 		b = true;
 	} else if(f) {
-		if(f == CALCULATOR->f_acos) {
+		if(f->id() == FUNCTION_ID_ACOS) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1, true);
 			b = true;
-		} else if(f == CALCULATOR->f_asin) {
+		} else if(f->id() == FUNCTION_ID_ASIN) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1);
 			mstruct ^= nr_two;
@@ -474,7 +474,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct += nr_one;
 			mstruct ^= nr_half;
 			b = true;
-		} else if(f == CALCULATOR->f_atan) {
+		} else if(f->id() == FUNCTION_ID_ATAN) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1);
 			mstruct ^= nr_two;
@@ -482,7 +482,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct ^= nr_minus_half;
 			b = true;
 		}
-	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
+	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI) {
 		if(mstruct[0].number().isInteger()) {
 			if(mstruct[0].number().isEven()) {
 				mstruct = 1;
@@ -557,7 +557,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		size_t i = 0;
 		bool b_negate = false;
 		for(; i < mstruct.size(); i++) {
-			if((mstruct[i].isVariable() && mstruct[i].variable() == CALCULATOR->v_pi) || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1] == CALCULATOR->v_pi && mstruct[i][0].isNumber())) {
+			if((mstruct[i].isVariable() && mstruct[i].variable()->id() == VARIABLE_ID_PI) || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1].isVariable() && mstruct[i][1].variable()->id() == VARIABLE_ID_PI && mstruct[i][0].isNumber())) {
 				if(mstruct[i].isVariable() || mstruct[i][0].number().isInteger()) {
 					b_negate = mstruct[i].isVariable() || mstruct[i][0].number().isOdd();
 					mstruct.delChild(i + 1);
@@ -602,7 +602,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 	}
 	if(trig_remove_i(mstruct)) {
-		mstruct.transform(CALCULATOR->f_cosh);
+		mstruct.transformById(FUNCTION_ID_COSH);
 		return 1;
 	}
 	if(has_predominately_negative_sign(mstruct)) {
@@ -638,19 +638,19 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct = vargs[0][1];
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
 			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 180), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 200), true);
 		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
 			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.multiply(Number(1, 200), true);
 		} else {
 			mstruct = vargs[0];
@@ -663,7 +663,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 
 	MathFunction *f = NULL;
 	if(eo.approximation == APPROXIMATION_APPROXIMATE && (eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS)) {
-		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi && mstruct[2].isNumber() && mstruct[2].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
+		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[2].isNumber() && mstruct[2].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
 			f = mstruct[0].function();
 		}
 	}
@@ -690,22 +690,22 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	bool b = false, b_recalc = true;
 
 	if(eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS) {
-		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi && mstruct[0].isNumber() && mstruct[0].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
+		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[0].isNumber() && mstruct[0].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
 			f = mstruct[2].function();
 		}
 	} else if(mstruct.isFunction() && mstruct.size() == 1) {
 		f = mstruct.function();
 	}
 
-	if(mstruct.isVariable() && mstruct.variable() == CALCULATOR->v_pi) {
+	if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_PI) {
 		mstruct.clear();
 		b = true;
 	} else if(f) {
-		if(f == CALCULATOR->f_atan) {
+		if(f->id() == FUNCTION_ID_ATAN) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1, true);
 			b = true;
-		} else if(f == CALCULATOR->f_asin && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)))) {
+		} else if(f->id() == FUNCTION_ID_ASIN && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)))) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
@@ -715,7 +715,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct ^= nr_minus_half;
 			mstruct.multiply_nocopy(mmul);
 			b = true;
-		} else if(f == CALCULATOR->f_acos && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)))) {
+		} else if(f->id() == FUNCTION_ID_ACOS && (mstruct.isFunction() ? !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : (mstruct[0][0].isFunction() ? mstruct[2][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true) : mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)))) {
 			if(!mstruct.isFunction()) mstruct.setToChild(mstruct[0].isFunction() ? 1 : 3, true);
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
@@ -726,7 +726,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct.divide_nocopy(mmul);
 			b = true;
 		}
-	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable() == CALCULATOR->v_pi) {
+	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI) {
 		if(mstruct[0].number().isInteger()) {
 			mstruct.clear();
 			b = true;
@@ -792,7 +792,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	} else if(mstruct.isAddition()) {
 		size_t i = 0;
 		for(; i < mstruct.size(); i++) {
-			if((mstruct[i].isVariable() && mstruct[i].variable() == CALCULATOR->v_pi) || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1] == CALCULATOR->v_pi && mstruct[i][0].isNumber())) {
+			if((mstruct[i].isVariable() && mstruct[i].variable()->id() == VARIABLE_ID_PI) || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1].isVariable() && mstruct[i][1].variable()->id() == VARIABLE_ID_PI && mstruct[i][0].isNumber())) {
 				if(mstruct[i].isVariable() || mstruct[i][0].number().isInteger()) {
 					mstruct.delChild(i + 1);
 					b_recalc = false;
@@ -831,7 +831,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 
 	if(trig_remove_i(mstruct)) {
-		mstruct.transform(CALCULATOR->f_tanh);
+		mstruct.transformById(FUNCTION_ID_TANH);
 		mstruct *= nr_one_i;
 		return 1;
 	}
@@ -881,8 +881,8 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			switch(eo.parse_options.angle_unit) {
 				case ANGLE_UNIT_DEGREES: {mstruct.set(45, 1, 0); break;}
 				case ANGLE_UNIT_GRADIANS: {mstruct.set(50, 1, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-				default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+				default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
 			}
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
@@ -890,8 +890,8 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			switch(eo.parse_options.angle_unit) {
 				case ANGLE_UNIT_DEGREES: {mstruct.set(60, 1, 0); break;}
 				case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 3, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 3, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-				default: {mstruct.set(1, 3, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 3, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+				default: {mstruct.set(1, 3, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
 			}
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
@@ -900,8 +900,8 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		switch(eo.parse_options.angle_unit) {
 			case ANGLE_UNIT_DEGREES: {mstruct.set(45, 1, 0); break;}
 			case ANGLE_UNIT_GRADIANS: {mstruct.set(50, 1, 0); break;}
-			case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-			default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+			case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+			default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
 		}
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
@@ -919,11 +919,11 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(!mstruct.isNumber()) {
 		if(trig_remove_i(mstruct)) {
-			mstruct.transform(CALCULATOR->f_asinh);
+			mstruct.transformById(FUNCTION_ID_ASINH);
 			mstruct *= nr_one_i;
 			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+				case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+				case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
 				case ANGLE_UNIT_RADIANS: {break;}
 				default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
 			}
@@ -946,12 +946,12 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			case ANGLE_UNIT_RADIANS: {
 				mstruct.set(1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				break;
 			}
 			default: {
 				mstruct.set(1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				if(CALCULATOR->getRadUnit()) {
 					mstruct *= CALCULATOR->getRadUnit();
 				}
@@ -969,12 +969,12 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			case ANGLE_UNIT_RADIANS: {
 				mstruct.set(-1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				break;
 			}
 			default: {
 				mstruct.set(-1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				if(CALCULATOR->getRadUnit()) {
 					mstruct *= CALCULATOR->getRadUnit();
 				}
@@ -992,12 +992,12 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			case ANGLE_UNIT_RADIANS: {
 				mstruct.set(1, 6, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				break;
 			}
 			default: {
 				mstruct.set(1, 6, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				if(CALCULATOR->getRadUnit()) {
 					mstruct *= CALCULATOR->getRadUnit();
 				}
@@ -1007,11 +1007,11 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		Number nr = mstruct.number();
 		if(!nr.asin() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			if(trig_remove_i(mstruct)) {
-				mstruct.transform(CALCULATOR->f_asinh);
+				mstruct.transformById(FUNCTION_ID_ASINH);
 				mstruct *= nr_one_i;
 				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-					case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+					case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+					case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
 					case ANGLE_UNIT_RADIANS: {break;}
 					default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
 				}
@@ -1022,8 +1022,8 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		mstruct = nr;
 		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-			case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+			case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+			case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
 			case ANGLE_UNIT_RADIANS: {break;}
 			default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
 		}
@@ -1056,8 +1056,8 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			switch(eo.parse_options.angle_unit) {
 				case ANGLE_UNIT_DEGREES: {mstruct.set(45, 1, 0); break;}
 				case ANGLE_UNIT_GRADIANS: {mstruct.set(50, 1, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-				default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+				default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
 			}
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
@@ -1065,8 +1065,8 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			switch(eo.parse_options.angle_unit) {
 				case ANGLE_UNIT_DEGREES: {mstruct.set(30, 1, 0); break;}
 				case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 3, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 6, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-				default: {mstruct.set(1, 6, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 6, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+				default: {mstruct.set(1, 6, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
 			}
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
@@ -1075,8 +1075,8 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		switch(eo.parse_options.angle_unit) {
 			case ANGLE_UNIT_DEGREES: {mstruct.set(45, 1, 0); break;}
 			case ANGLE_UNIT_GRADIANS: {mstruct.set(50, 1, 0); break;}
-			case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-			default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+			case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+			default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
 		}
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
@@ -1094,12 +1094,12 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {
-			negate_struct(mstruct); mstruct.transform(CALCULATOR->f_asin);
+			negate_struct(mstruct); mstruct.transformById(FUNCTION_ID_ASIN);
 			switch(eo.parse_options.angle_unit) {
 				case ANGLE_UNIT_DEGREES: {mstruct += Number(90, 1, 0); break;}
 				case ANGLE_UNIT_GRADIANS: {mstruct += Number(100, 1, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct += CALCULATOR->v_pi; mstruct.last() *= nr_half; break;}
-				default: {mstruct += CALCULATOR->v_pi; mstruct.last() *= nr_half; if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
+				case ANGLE_UNIT_RADIANS: {mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI); mstruct.last() *= nr_half; break;}
+				default: {mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI); mstruct.last() *= nr_half; if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
 			}
 			return 1;
 		}
@@ -1117,12 +1117,12 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			case ANGLE_UNIT_RADIANS: {
 				mstruct.set(1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				break;
 			}
 			default: {
 				mstruct.set(1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				if(CALCULATOR->getRadUnit()) {
 					mstruct *= CALCULATOR->getRadUnit();
 				}
@@ -1141,11 +1141,11 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				break;
 			}
 			case ANGLE_UNIT_RADIANS: {
-				mstruct.set(CALCULATOR->v_pi);
+				mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 				break;
 			}
 			default: {
-				mstruct.set(CALCULATOR->v_pi);
+				mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 				if(CALCULATOR->getRadUnit()) {
 					mstruct *= CALCULATOR->getRadUnit();
 				}
@@ -1163,12 +1163,12 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			case ANGLE_UNIT_RADIANS: {
 				mstruct.set(1, 3, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				break;
 			}
 			default: {
 				mstruct.set(1, 3, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				if(CALCULATOR->getRadUnit()) {
 					mstruct *= CALCULATOR->getRadUnit();
 				}
@@ -1179,12 +1179,12 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(!nr.acos() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			if(has_predominately_negative_sign(mstruct)) {
 				mstruct.number().negate();
-				mstruct.transform(CALCULATOR->f_asin);
+				mstruct.transformById(FUNCTION_ID_ASIN);
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {mstruct += Number(90, 1, 0); break;}
 					case ANGLE_UNIT_GRADIANS: {mstruct += Number(100, 1, 0); break;}
-					case ANGLE_UNIT_RADIANS: {mstruct += CALCULATOR->v_pi; mstruct.last() *= nr_half; break;}
-					default: {mstruct += CALCULATOR->v_pi; mstruct.last() *= nr_half; if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
+					case ANGLE_UNIT_RADIANS: {mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI); mstruct.last() *= nr_half; break;}
+					default: {mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI); mstruct.last() *= nr_half; if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
 				}
 				return 1;
 			}
@@ -1192,8 +1192,8 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		mstruct = nr;
 		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-			case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+			case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+			case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
 			case ANGLE_UNIT_RADIANS: {break;}
 			default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
 		}
@@ -1228,8 +1228,8 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			switch(eo.parse_options.angle_unit) {
 				case ANGLE_UNIT_DEGREES: {mstruct.set(30, 1, 0); break;}
 				case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 3, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 6, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-				default: {mstruct.set(1, 6, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 6, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+				default: {mstruct.set(1, 6, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
 			}
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
@@ -1238,8 +1238,8 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		switch(eo.parse_options.angle_unit) {
 			case ANGLE_UNIT_DEGREES: {mstruct.set(60, 1, 0); break;}
 			case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 3, 0); break;}
-			case ANGLE_UNIT_RADIANS: {mstruct.set(1, 3, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-			default: {mstruct.set(1, 3, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi)); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
+			case ANGLE_UNIT_RADIANS: {mstruct.set(1, 3, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+			default: {mstruct.set(1, 3, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
 		}
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
@@ -1257,11 +1257,11 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(!mstruct.isNumber()) {
 		if(trig_remove_i(mstruct)) {
-			mstruct.transform(CALCULATOR->f_atanh);
+			mstruct.transformById(FUNCTION_ID_ATANH);
 			mstruct *= nr_one_i;
 			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+				case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+				case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
 				case ANGLE_UNIT_RADIANS: {break;}
 				default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
 			}
@@ -1290,12 +1290,12 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			case ANGLE_UNIT_RADIANS: {
 				mstruct.set(1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				break;
 			}
 			default: {
 				mstruct.set(1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				if(CALCULATOR->getRadUnit()) {
 					mstruct *= CALCULATOR->getRadUnit();
 				}
@@ -1313,12 +1313,12 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			case ANGLE_UNIT_RADIANS: {
 				mstruct.set(-1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				break;
 			}
 			default: {
 				mstruct.set(-1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				if(CALCULATOR->getRadUnit()) {
 					mstruct *= CALCULATOR->getRadUnit();
 				}
@@ -1336,12 +1336,12 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			case ANGLE_UNIT_RADIANS: {
 				mstruct.set(1, 4, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				break;
 			}
 			default: {
 				mstruct.set(1, 4, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				if(CALCULATOR->getRadUnit()) {
 					mstruct *= CALCULATOR->getRadUnit();
 				}
@@ -1359,12 +1359,12 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			case ANGLE_UNIT_RADIANS: {
 				mstruct.set(-1, 4, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				break;
 			}
 			default: {
 				mstruct.set(-1, 4, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->v_pi));
+				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				if(CALCULATOR->getRadUnit()) {
 					mstruct *= CALCULATOR->getRadUnit();
 				}
@@ -1374,11 +1374,11 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		Number nr = mstruct.number();
 		if(!nr.atan() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			if(trig_remove_i(mstruct)) {
-				mstruct.transform(CALCULATOR->f_atanh);
+				mstruct.transformById(FUNCTION_ID_ATANH);
 				mstruct *= nr_one_i;
 				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-					case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+					case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+					case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
 					case ANGLE_UNIT_RADIANS: {break;}
 					default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
 				}
@@ -1389,8 +1389,8 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		mstruct = nr;
 		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
-			case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->v_pi)); break;}
+			case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
+			case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
 			case ANGLE_UNIT_RADIANS: {break;}
 			default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
 		}
@@ -1411,10 +1411,10 @@ int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isFunction() && mstruct.size() == 1) {
-		if(mstruct.function() == CALCULATOR->f_asinh) {
+		if(mstruct.function()->id() == FUNCTION_ID_ASINH) {
 			mstruct.setToChild(1, true);
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_acosh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
+		} else if(mstruct.function()->id() == FUNCTION_ID_ACOSH && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
 			mstruct += nr_minus_one;
@@ -1423,7 +1423,7 @@ int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			*mmul ^= nr_half;
 			mstruct.multiply_nocopy(mmul);
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_atanh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
+		} else if(mstruct.function()->id() == FUNCTION_ID_ATANH && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
 			mstruct ^= nr_two;
@@ -1435,13 +1435,13 @@ int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	if(!mstruct.isNumber()) {
-		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transform(CALCULATOR->f_sin); mstruct *= nr_one_i; return 1;}
+		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transformById(FUNCTION_ID_SIN); mstruct *= nr_one_i; return 1;}
 		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	Number nr = mstruct.number();
 	if(!nr.sinh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
-		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transform(CALCULATOR->f_sin); mstruct *= nr_one_i; return 1;}
+		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transformById(FUNCTION_ID_SIN); mstruct *= nr_one_i; return 1;}
 		if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
@@ -1460,16 +1460,16 @@ int CoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isFunction() && mstruct.size() == 1) {
-		if(mstruct.function() == CALCULATOR->f_acosh) {
+		if(mstruct.function()->id() == FUNCTION_ID_ACOSH) {
 			mstruct.setToChild(1, true);
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_asinh) {
+		} else if(mstruct.function()->id() == FUNCTION_ID_ASINH) {
 			mstruct.setToChild(1);
 			mstruct ^= nr_two;
 			mstruct += nr_one;
 			mstruct ^= nr_half;
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_atanh) {
+		} else if(mstruct.function()->id() == FUNCTION_ID_ATANH) {
 			mstruct.setToChild(1);
 			mstruct ^= nr_two;
 			mstruct.negate();
@@ -1479,13 +1479,13 @@ int CoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	if(!mstruct.isNumber()) {
-		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transform(CALCULATOR->f_cos); return 1;}
+		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transformById(FUNCTION_ID_COS); return 1;}
 		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); return -1;}
 		return -1;
 	}
 	Number nr = mstruct.number();
 	if(!nr.cosh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
-		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transform(CALCULATOR->f_cos); return 1;}
+		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transformById(FUNCTION_ID_COS); return 1;}
 		if(has_predominately_negative_sign(mstruct)) mstruct.number().negate();
 		return -1;
 	}
@@ -1504,10 +1504,10 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isFunction() && mstruct.size() == 1) {
-		if(mstruct.function() == CALCULATOR->f_atanh) {
+		if(mstruct.function()->id() == FUNCTION_ID_ATANH) {
 			mstruct.setToChild(1, true);
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_asinh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
+		} else if(mstruct.function()->id() == FUNCTION_ID_ASINH && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
 			mstruct ^= nr_two;
@@ -1515,7 +1515,7 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			mstruct ^= nr_minus_half;
 			mstruct.multiply_nocopy(mmul);
 			return 1;
-		} else if(mstruct.function() == CALCULATOR->f_acosh && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
+		} else if(mstruct.function()->id() == FUNCTION_ID_ACOSH && !mstruct[0].containsInterval(eo.approximation == APPROXIMATION_EXACT, false, false, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
 			mstruct.setToChild(1);
 			MathStructure *mmul = new MathStructure(mstruct);
 			MathStructure *mmul2 = new MathStructure(mstruct);
@@ -1530,14 +1530,14 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	if(!mstruct.isNumber()) {
-		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transform(CALCULATOR->f_tan); mstruct *= nr_one_i; return 1;}
+		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transformById(FUNCTION_ID_TAN); mstruct *= nr_one_i; return 1;}
 		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	Number nr = mstruct.number();
 	if(!nr.tanh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 		if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
-		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transform(CALCULATOR->f_tan); mstruct *= nr_one_i; return 1;}
+		if(trig_remove_i(mstruct)) {mstruct *= CALCULATOR->getRadUnit(); mstruct.transformById(FUNCTION_ID_TAN); mstruct *= nr_one_i; return 1;}
 		return -1;
 	}
 	mstruct = nr;
@@ -1574,14 +1574,14 @@ int AcoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	if(eo.allow_complex && vargs[0].isZero()) {
 		mstruct.set(1, 2, 0);
 		mstruct.number() *= nr_one_i;
-		mstruct *= CALCULATOR->v_pi;
+		mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 		return 1;
 	} else if(vargs[0].isOne()) {
 		mstruct.clear();
 		return 1;
 	} else if(eo.approximation != APPROXIMATION_APPROXIMATE && eo.allow_complex && vargs[0].number() <= -1) {
 		mstruct = nr_one_i;
-		mstruct *= CALCULATOR->v_pi;
+		mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 		mstruct.add_nocopy(new MathStructure(this, &vargs[0], NULL));
 		mstruct.last()[0].negate();
 		return 1;
@@ -1609,25 +1609,25 @@ int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		if(mstruct.number().isPlusInfinity() || (!mstruct.number().hasRealPart() && mstruct.number().hasImaginaryPart() && mstruct.number().internalImaginary()->isMinusInfinity())) {
 			mstruct = nr_minus_half;
 			mstruct *= nr_one_i;
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			return true;
 		} else if(mstruct.number().isMinusInfinity() || (!mstruct.number().hasRealPart() && mstruct.number().hasImaginaryPart() && mstruct.number().internalImaginary()->isPlusInfinity())) {
 			mstruct = nr_half;
 			mstruct *= nr_one_i;
-			mstruct *= CALCULATOR->v_pi;
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			return true;
 		}
 	} else if(eo.approximation != APPROXIMATION_APPROXIMATE && eo.allow_complex && mstruct.number() > 1) {
 		mstruct.set(-1, 2, 0);
 		mstruct.number() *= nr_one_i;
-		mstruct *= CALCULATOR->v_pi;
+		mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 		mstruct.add_nocopy(new MathStructure(this, &vargs[0], NULL));
 		mstruct.last()[0].inverse();
 		return 1;
 	} else if(eo.approximation != APPROXIMATION_APPROXIMATE && eo.allow_complex && mstruct.number() < -1) {
 		mstruct.set(1, 2, 0);
 		mstruct.number() *= nr_one_i;
-		mstruct *= CALCULATOR->v_pi;
+		mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 		mstruct.add_nocopy(new MathStructure(this, &vargs[0], NULL));
 		mstruct.last()[0].inverse();
 		mstruct.last()[0].negate();
@@ -1658,7 +1658,7 @@ int SincFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct = vargs[0];
 		bool b = replace_f_interval(mstruct, eo);
 		b = replace_intervals_f(mstruct) || b;
-		MathStructure *m_sin = new MathStructure(CALCULATOR->f_sin, &mstruct, NULL);
+		MathStructure *m_sin = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SIN), &mstruct, NULL);
 		if(CALCULATOR->getRadUnit()) (*m_sin)[0].multiply(CALCULATOR->getRadUnit());
 		mstruct.inverse();
 		mstruct.multiply_nocopy(m_sin);
@@ -1684,8 +1684,8 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			switch(eo.parse_options.angle_unit) {
 				case ANGLE_UNIT_DEGREES: {mstruct.set(180, 1, 0); break;}
 				case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 1, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->v_pi); break;}
-				default: {mstruct.set(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+				default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
 			}
 		} else {
 			mstruct.clear();
@@ -1694,8 +1694,8 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		switch(eo.parse_options.angle_unit) {
 			case ANGLE_UNIT_DEGREES: {mstruct.set(90, 1, 0); break;}
 			case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 1, 0); break;}
-			case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->v_pi); mstruct.multiply(nr_half); break;}
-			default: {mstruct.set(CALCULATOR->v_pi); mstruct.multiply(nr_half); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
+			case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); break;}
+			default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
 		}
 		if(vargs[0].number().hasNegativeSign()) mstruct.negate();
 	} else if(!vargs[1].number().isNonZero()) {
@@ -1705,24 +1705,24 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		if(!new_nr.number().divide(vargs[1].number())) return -1;
 		if(vargs[1].number().isNegative() && vargs[0].number().isNonZero()) {
 			if(vargs[0].number().isNegative()) {
-				mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {mstruct.add(-180); break;}
 					case ANGLE_UNIT_GRADIANS: {mstruct.add(-200); break;}
-					case ANGLE_UNIT_RADIANS: {mstruct.subtract(CALCULATOR->v_pi); break;}
-					default: {MathStructure msub(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) msub *= CALCULATOR->getRadUnit(); mstruct.subtract(msub);}
+					case ANGLE_UNIT_RADIANS: {mstruct.subtract(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+					default: {MathStructure msub(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) msub *= CALCULATOR->getRadUnit(); mstruct.subtract(msub);}
 				}
 			} else {
-				mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {mstruct.add(180); break;}
 					case ANGLE_UNIT_GRADIANS: {mstruct.add(200); break;}
-					case ANGLE_UNIT_RADIANS: {mstruct.add(CALCULATOR->v_pi); break;}
-					default: {MathStructure madd(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit(); mstruct.add(madd);}
+					case ANGLE_UNIT_RADIANS: {mstruct.add(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+					default: {MathStructure madd(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit(); mstruct.add(madd);}
 				}
 			}
 		} else {
-			mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+			mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
 		}
 	}
 	return 1;
@@ -1734,12 +1734,12 @@ int RadiansToDefaultAngleUnitFunction::calculate(MathStructure &mstruct, const M
 	switch(eo.parse_options.angle_unit) {
 		case ANGLE_UNIT_DEGREES: {
 			mstruct *= 180;
-	    		mstruct /= CALCULATOR->v_pi;
+	    		mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			break;
 		}
 		case ANGLE_UNIT_GRADIANS: {
 			mstruct *= 200;
-	    		mstruct /= CALCULATOR->v_pi;
+	    		mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			break;
 		}
 		case ANGLE_UNIT_RADIANS: {

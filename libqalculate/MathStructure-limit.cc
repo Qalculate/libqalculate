@@ -73,15 +73,15 @@ int limit_inf_cmp(const MathStructure &mstruct, const MathStructure &mcmp, const
 	if(!m2) return 1;
 	int itype1 = 0;
 	int itype2 = 0;
-	if(m1->isFunction() && m1->function() == CALCULATOR->f_gamma) itype1 = 4;
+	if(m1->isFunction() && m1->function()->id() == FUNCTION_ID_GAMMA) itype1 = 4;
 	else if(m1->isPower() && m1->exponent()->contains(x_var, true)) itype1 = 3;
 	else if(m1->equals(x_var) || (m1->isPower() && m1->base()->equals(x_var) && m1->exponent()->representsPositive())) itype1 = 2;
-	else if(m1->isFunction() && m1->function() == CALCULATOR->f_ln) itype1 = 1;
+	else if(m1->isFunction() && m1->function()->id() == FUNCTION_ID_LOG) itype1 = 1;
 	else return -2;
-	if(m2->isFunction() && m2->function() == CALCULATOR->f_gamma) itype2 = 4;
+	if(m2->isFunction() && m2->function()->id() == FUNCTION_ID_GAMMA) itype2 = 4;
 	else if(m2->isPower() && m2->exponent()->contains(x_var, true)) itype2 = 3;
 	else if(m2->equals(x_var) || (m2->isPower() && m2->base()->equals(x_var) && m2->exponent()->representsPositive())) itype2 = 2;
-	else if(m2->isFunction() && m2->function() == CALCULATOR->f_ln) itype2 = 1;
+	else if(m2->isFunction() && m2->function()->id() == FUNCTION_ID_LOG) itype2 = 1;
 	else return -2;
 	if(itype1 > itype2) return 1;
 	if(itype2 > itype1) return -1;
@@ -581,9 +581,9 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 							if(b) {
 								mstruct.set(mnum_b[0], true);
 								mstruct /= mden_b[0];
-								mstruct.transform(CALCULATOR->f_ln);
+								mstruct.transformById(FUNCTION_ID_LOG);
 								mstruct *= mnum_b[1];
-								mstruct.raise(CALCULATOR->v_e);
+								mstruct.raise(CALCULATOR->getVariableById(VARIABLE_ID_E));
 								mstruct.swapChildren(1, 2);
 								calculate_limit_sub(mstruct, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, keep_inf_x);
 								for(size_t i = 0; i < mleft.size(); i++) {
@@ -746,7 +746,7 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 										if(!mfac.isAddition()) {
 											calculate_limit_sub(mfac, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth + 1, true);
 											mstruct_new[i].set(mfac, true);
-										} else if(mstruct_units[i].isFunction() && mstruct_units[i].function() == CALCULATOR->f_ln) {
+										} else if(mstruct_units[i].isFunction() && mstruct_units[i].function()->id() == FUNCTION_ID_LOG) {
 											mstruct_new[i].clear(true);
 										} else {
 											bfac2 = false;
@@ -845,14 +845,14 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 			calculate_limit_sub(mstruct[1], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
 			if(is_plus_minus_infinity(mstruct[1]) && (mstruct[0].isOne() || mstruct[0].isZero()) && mbak[1].contains(x_var, true) && mbak[0].contains(x_var, true)) {
 				mstruct.set(mbak[0], true);
-				mstruct.transform(CALCULATOR->f_ln);
+				mstruct.transformById(FUNCTION_ID_LOG);
 				mstruct *= mbak[1];
-				mstruct.raise(CALCULATOR->v_e);
+				mstruct.raise(CALCULATOR->getVariableById(VARIABLE_ID_E));
 				mstruct.swapChildren(1, 2);
 				calculate_limit_sub(mstruct, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, keep_inf_x);
 				break;
 			}
-			if(mstruct[0].isFunction() && (mstruct[0].function() == CALCULATOR->f_asin || mstruct[0].function() == CALCULATOR->f_acos) && mstruct[0].size() == 1 && mstruct[0][0].isInfinite(false) && mstruct[1].representsNegative()) {
+			if(mstruct[0].isFunction() && (mstruct[0].function()->id() == FUNCTION_ID_ASIN || mstruct[0].function()->id() == FUNCTION_ID_ACOS) && mstruct[0].size() == 1 && mstruct[0][0].isInfinite(false) && mstruct[1].representsNegative()) {
 				mstruct.clear(true);
 				break;
 			}
@@ -880,7 +880,7 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 				if(mstruct[0].number().isInterval(false) && (mstruct[0].number().hasImaginaryPart() || !mstruct[1].isNumber())) {
 					b_test = false;
 				}
-				if(b_test && ((mbak[0].isFunction() && mbak[0].function() == CALCULATOR->f_abs) || mstruct[1].representsEven())) {
+				if(b_test && ((mbak[0].isFunction() && mbak[0].function()->id() == FUNCTION_ID_ABS) || mstruct[1].representsEven())) {
 					i_sgn = 1;
 					b_test = false;
 				} else if(b_test) {
@@ -981,12 +981,12 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 			break;
 		}
 		case STRUCT_FUNCTION: {
-			if(keep_inf_x && nr_limit.isInfinite(false) && mstruct.size() == 1 && (mstruct.function() == CALCULATOR->f_ln || mstruct.function() == CALCULATOR->f_gamma)) {
+			if(keep_inf_x && nr_limit.isInfinite(false) && mstruct.size() == 1 && (mstruct.function()->id() == FUNCTION_ID_LOG || mstruct.function()->id() == FUNCTION_ID_GAMMA)) {
 				MathStructure mbak(mstruct);
 				calculate_limit_sub(mstruct[0], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
-				if(mstruct[0].isInfinite(false) && (mstruct[0].number().isPlusInfinity() || mstruct.function() == CALCULATOR->f_ln)) {
+				if(mstruct[0].isInfinite(false) && (mstruct[0].number().isPlusInfinity() || mstruct.function()->id() == FUNCTION_ID_LOG)) {
 					mstruct[0] = mbak[0];
-					calculate_limit_sub(mstruct[0], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, true, mstruct.function() == CALCULATOR->f_ln && reduce_addition);
+					calculate_limit_sub(mstruct[0], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, true, mstruct.function()->id() == FUNCTION_ID_LOG && reduce_addition);
 					break;
 				}
 			} else {
@@ -995,7 +995,7 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 				}
 				mstruct.childrenUpdated();
 			}
-			if(approach_direction != 0 && mstruct.function() == CALCULATOR->f_gamma && mstruct.size() == 1 && mstruct[0].isInteger() && mstruct[0].number().isNonPositive()) {
+			if(approach_direction != 0 && mstruct.function()->id() == FUNCTION_ID_GAMMA && mstruct.size() == 1 && mstruct[0].isInteger() && mstruct[0].number().isNonPositive()) {
 				if((mstruct[0].number().isEven() && approach_direction < 0) || (mstruct[0].number().isOdd() && approach_direction > 0)) {
 					mstruct.set(nr_minus_inf, true);
 				} else {
@@ -1028,15 +1028,15 @@ bool replace_equal_limits(MathStructure &mstruct, const MathStructure &x_var, co
 		}
 	}
 	if(at_top) return b_ret;
-	if(mstruct.isFunction() && (mstruct.function() == CALCULATOR->f_sinh || mstruct.function() == CALCULATOR->f_cosh) && mstruct.size() == 1 && mstruct.contains(x_var, true)) {
-		MathStructure mterm1(CALCULATOR->v_e);
+	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_SINH || mstruct.function()->id() == FUNCTION_ID_COSH) && mstruct.size() == 1 && mstruct.contains(x_var, true)) {
+		MathStructure mterm1(CALCULATOR->getVariableById(VARIABLE_ID_E));
 		mterm1.raise(mstruct[0]);
 		MathStructure mterm2(mterm1);
 		mterm2[1].negate();
 		mterm1 *= nr_half;
 		mterm2 *= nr_half;
 		mstruct = mterm1;
-		if(mstruct.function() == CALCULATOR->f_sinh) mstruct -= mterm2;
+		if(mstruct.function()->id() == FUNCTION_ID_SINH) mstruct -= mterm2;
 		else mstruct += mterm2;
 		return true;
 	}
@@ -1083,16 +1083,16 @@ bool replace_equal_limits3(MathStructure &mstruct, const MathStructure &x_var, c
 		}
 	}
 	if(at_top) return b_ret;
-	if(mstruct.isFunction() && (mstruct.function() == CALCULATOR->f_asinh || mstruct.function() == CALCULATOR->f_acosh) && mstruct.size() == 1 && mstruct.contains(x_var, true)) {
+	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_ASINH || mstruct.function()->id() == FUNCTION_ID_ACOSH) && mstruct.size() == 1 && mstruct.contains(x_var, true)) {
 		MathStructure mtest(mstruct[0]);
 		calculate_limit_sub(mtest, x_var, nr_limit, eo, approach_direction);
 		if(mtest.isInfinite(false)) {
 			if(mtest.number().isPlusInfinity()) {
-				mstruct.setFunction(CALCULATOR->f_ln);
+				mstruct.setFunctionId(FUNCTION_ID_LOG);
 				mstruct[0] *= nr_two;
 				return true;
-			} else if(mstruct.function() == CALCULATOR->f_asinh) {
-				mstruct.setFunction(CALCULATOR->f_ln);
+			} else if(mstruct.function()->id() == FUNCTION_ID_ASINH) {
+				mstruct.setFunctionId(FUNCTION_ID_LOG);
 				mstruct[0] *= nr_two;
 				mstruct.negate();
 				return true;

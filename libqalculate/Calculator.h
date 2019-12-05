@@ -177,6 +177,29 @@ class CalculatorMessage {
 #include <libqalculate/MathStructure.h>
 
 enum {
+	VARIABLE_ID_I = 200,
+	VARIABLE_ID_PLUS_INFINITY = 201,
+	VARIABLE_ID_MINUS_INFINITY = 202,
+	VARIABLE_ID_UNDEFINED = 203,
+	VARIABLE_ID_X = 300,
+	VARIABLE_ID_Y = 301,
+	VARIABLE_ID_Z = 302,
+	VARIABLE_ID_N = 303,
+	VARIABLE_ID_C = 304
+};
+
+enum {
+	UNIT_ID_EURO = 510,
+	UNIT_ID_BTC = 520,
+	UNIT_ID_SECOND = 550,
+	UNIT_ID_MINUTE = 551,
+	UNIT_ID_HOUR = 552,
+	UNIT_ID_DAY = 553,
+	UNIT_ID_MONTH = 554,
+	UNIT_ID_YEAR = 555
+};
+
+enum {
 	ELEMENT_CLASS_NOT_DEFINED,
 	ALKALI_METALS,
 	ALKALI_EARTH_METALS,
@@ -840,6 +863,7 @@ class Calculator {
 	ExpressionItem *getActiveExpressionItem(ExpressionItem *item);
 	ExpressionItem *getExpressionItem(std::string name, ExpressionItem *item = NULL);
 	Unit* getUnit(std::string name_);
+	Unit* getUnitById(int id) const;
 	Unit* getActiveUnit(std::string name_);
 	Unit* getCompositeUnit(std::string internal_name_);
 	Unit* getLocalCurrency();
@@ -856,6 +880,8 @@ class Calculator {
 	* @returns Prefix with provided name or NULL if not found.
 	*/
 	Prefix *getPrefix(std::string name_) const;
+	Prefix *getDecimalNullPrefix() const;
+	Prefix *getBinaryNullPrefix() const;
 	Variable* addVariable(Variable *v, bool force = true, bool check_names = true);
 	void variableNameChanged(Variable *v, bool new_item = false);
 	void functionNameChanged(MathFunction *f, bool new_item = false);
