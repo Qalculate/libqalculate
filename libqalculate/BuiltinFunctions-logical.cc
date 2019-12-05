@@ -59,7 +59,7 @@ int BitXorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		mstruct.resizeVector(vargs[i1].size(), m_undefined);
 		size_t i = 0;
 		for(; i < vargs[i2].size(); i++) {
-			mstruct[i].set(CALCULATOR->f_xor, &vargs[i1][i], &vargs[i2][0], NULL);
+			mstruct[i].set(CALCULATOR->getFunctionById(FUNCTION_ID_XOR), &vargs[i1][i], &vargs[i2][0], NULL);
 		}
 		for(; i < vargs[i1].size(); i++) {
 			mstruct[i] = vargs[i1][i];

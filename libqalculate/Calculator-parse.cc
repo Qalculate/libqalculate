@@ -1242,7 +1242,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								}
 								stmp2 = str.substr(i7, i6 - i7 + 1);
 								stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
-								if(f == f_vector) stmp += i2s(parseAddVectorId(stmp2, po));
+								if(f->id() == FUNCTION_ID_VECTOR) stmp += i2s(parseAddVectorId(stmp2, po));
 								else stmp += i2s(parseAddId(f, stmp2, po));
 								stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 								str.replace(i7, str_index + name_length - i7, stmp);
@@ -1296,9 +1296,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									if(b_unended_function && unended_function) {
 										po.unended_function = unended_function;
 									}
-									if(f == f_vector) {
+									if(f->id() == FUNCTION_ID_VECTOR) {
 										stmp += i2s(parseAddVectorId(stmp2, po));
-									} else if((f == f_interval || f == f_uncertainty) && po.read_precision != DONT_READ_PRECISION) {
+									} else if((f->id() == FUNCTION_ID_INTERVAL || f->id() == FUNCTION_ID_UNCERTAINTY) && po.read_precision != DONT_READ_PRECISION) {
 										ParseOptions po2 = po;
 										po2.read_precision = DONT_READ_PRECISION;
 										stmp += i2s(parseAddId(f, stmp2, po2));
@@ -1342,9 +1342,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									if(b_unended_function && unended_function) {
 										po.unended_function = unended_function;
 									}
-									if(f == f_vector) {
+									if(f->id() == FUNCTION_ID_VECTOR) {
 										stmp += i2s(parseAddVectorId(stmp2, po));
-									} else if((f == f_interval || f == f_uncertainty) && po.read_precision != DONT_READ_PRECISION) {
+									} else if((f->id() == FUNCTION_ID_INTERVAL || f->id() == FUNCTION_ID_UNCERTAINTY) && po.read_precision != DONT_READ_PRECISION) {
 										ParseOptions po2 = po;
 										po2.read_precision = DONT_READ_PRECISION;
 										stmp += i2s(parseAddId(f, stmp2, po2));
@@ -2030,7 +2030,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 									if(last_operator2 == GREATER_CH) {
 										if(po.preserve_format) mstack.back()->transform(STRUCT_NEGATE);
 										else mstack.back()->negate();
-										mstack[mstack.size() - 2]->transform(CALCULATOR->f_shift);
+										mstack[mstack.size() - 2]->transform(f_shift);
 										mstack[mstack.size() - 2]->addChild_nocopy(mstack.back());
 										mstack[mstack.size() - 2]->addChild(m_one);
 									} else if(last_operator2 == EQUALS_CH) {
@@ -2043,7 +2043,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 								}
 								case LESS_CH: {
 									if(last_operator2 == LESS_CH) {
-										mstack[mstack.size() - 2]->transform(CALCULATOR->f_shift);
+										mstack[mstack.size() - 2]->transform(f_shift);
 										mstack[mstack.size() - 2]->addChild_nocopy(mstack.back());
 										mstack[mstack.size() - 2]->addChild(m_one);
 									} else if(last_operator2 == EQUALS_CH) {
@@ -2238,7 +2238,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							if(i + 1 < str.length() && str[i + 1] == GREATER_CH) {
 								if(po.preserve_format) mstack.back()->transform(STRUCT_NEGATE);
 								else mstack.back()->negate();
-								mstack[mstack.size() - 2]->transform(CALCULATOR->f_shift);
+								mstack[mstack.size() - 2]->transform(f_shift);
 								mstack[mstack.size() - 2]->addChild_nocopy(mstack.back());
 								mstack[mstack.size() - 2]->addChild(m_one);
 							} else if(i + 1 < str.length() && str[i + 1] == EQUALS_CH) {
@@ -2251,7 +2251,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						}
 						case LESS_CH: {
 							if(i + 1 < str.length() && str[i + 1] == LESS_CH) {
-								mstack[mstack.size() - 2]->transform(CALCULATOR->f_shift);
+								mstack[mstack.size() - 2]->transform(f_shift);
 								mstack[mstack.size() - 2]->addChild_nocopy(mstack.back());
 								mstack[mstack.size() - 2]->addChild(m_one);
 							} else if(i + 1 < str.length() && str[i + 1] == EQUALS_CH) {

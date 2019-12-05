@@ -739,18 +739,18 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase e", _("lowercase e")) || svar == "lowe") SET_BOOL_D(printops.lower_case_e)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase numbers", _("lowercase numbers")) || svar == "lownum") SET_BOOL_D(printops.lower_case_numbers)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "imaginary j", _("imaginary j")) || svar == "imgj") {
-		bool b = CALCULATOR->v_i->hasName("j") > 0;
+		bool b = CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0;
 		SET_BOOL(b)
-		if(b != (CALCULATOR->v_i->hasName("j") > 0)) {
+		if(b != (CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0)) {
 			if(b) {
-				ExpressionName ename = CALCULATOR->v_i->getName(1);
+				ExpressionName ename = CALCULATOR->getVariableById(VARIABLE_ID_I)->getName(1);
 				ename.name = "j";
 				ename.reference = false;
-				CALCULATOR->v_i->addName(ename, 1, true);
-				CALCULATOR->v_i->setChanged(false);
+				CALCULATOR->getVariableById(VARIABLE_ID_I)->addName(ename, 1, true);
+				CALCULATOR->getVariableById(VARIABLE_ID_I)->setChanged(false);
 			} else {
-				CALCULATOR->v_i->clearNonReferenceNames();
-				CALCULATOR->v_i->setChanged(false);
+				CALCULATOR->getVariableById(VARIABLE_ID_I)->clearNonReferenceNames();
+				CALCULATOR->getVariableById(VARIABLE_ID_I)->setChanged(false);
 			}
 			result_display_updated();
 		}
@@ -1467,7 +1467,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 							value += "...";
 						}
 						FPUTS_UNICODE(value.c_str(), stdout);
-						if(!is_relative && ((KnownVariable*) v)->uncertainty().empty() && v->isApproximate() && ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->f_interval->referenceName()) == string::npos) {
+						if(!is_relative && ((KnownVariable*) v)->uncertainty().empty() && v->isApproximate() && ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->getFunctionById(FUNCTION_ID_INTERVAL)->referenceName()) == string::npos) {
 							fputs(" (", stdout);
 							FPUTS_UNICODE(_("approximate"), stdout);
 							fputs(")", stdout);
@@ -1573,7 +1573,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 			if(list_type == 'v') item = CALCULATOR->variables[i];
 			if(list_type == 'u') item = CALCULATOR->units[i];
 			if(list_type == 'c') item = CALCULATOR->units[i];
-			if((!item->isHidden() || list_type == 'c') && item->isActive() && (list_type != 'u' || (item->subtype() != SUBTYPE_COMPOSITE_UNIT && ((Unit*) item)->baseUnit() != CALCULATOR->u_euro)) && (list_type != 'c' || ((Unit*) item)->isCurrency())) {
+			if((!item->isHidden() || list_type == 'c') && item->isActive() && (list_type != 'u' || (item->subtype() != SUBTYPE_COMPOSITE_UNIT && ((Unit*) item)->baseUnit() != CALCULATOR->getUnitById(UNIT_ID_EURO))) && (list_type != 'c' || ((Unit*) item)->isCurrency())) {
 				const ExpressionName &ename1 = item->preferredInputName(false, false);
 				name_str = ename1.name;
 				size_t name_i = 1;
@@ -1913,12 +1913,12 @@ int main(int argc, char *argv[]) {
 	//load local definitions
 	CALCULATOR->loadLocalDefinitions();
 
-	if(do_imaginary_j && CALCULATOR->v_i->hasName("j") == 0) {
-		ExpressionName ename = CALCULATOR->v_i->getName(1);
+	if(do_imaginary_j && CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") == 0) {
+		ExpressionName ename = CALCULATOR->getVariableById(VARIABLE_ID_I)->getName(1);
 		ename.name = "j";
 		ename.reference = false;
-		CALCULATOR->v_i->addName(ename, 1, true);
-		CALCULATOR->v_i->setChanged(false);
+		CALCULATOR->getVariableById(VARIABLE_ID_I)->addName(ename, 1, true);
+		CALCULATOR->getVariableById(VARIABLE_ID_I)->setChanged(false);
 	}
 
 	if(!result_only) {
@@ -3043,7 +3043,7 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("hexadecimal two's"), "hextwos"); str += b2oo(printops.hexadecimal_twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("imaginary j"), "imgj"); str += b2oo(CALCULATOR->v_i->hasName("j") > 0, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("imaginary j"), "imgj"); str += b2oo(CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("interval display"), "ivdisp");
 			if(adaptive_interval_display) {
 				str += _("adaptive");
@@ -3104,7 +3104,7 @@ int main(int argc, char *argv[]) {
 			if(CALCULATOR->getDecimalPoint() != DOT) {
 				PRINT_AND_COLON_TABS(_("ignore dot"), ""); str += b2oo(evalops.parse_options.dot_as_separator, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			}
-			PRINT_AND_COLON_TABS(_("imaginary j"), "imgj"); str += b2oo(CALCULATOR->v_i->hasName("j") > 0, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("imaginary j"), "imgj"); str += b2oo(CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("input base"), "inbase");
 			switch(evalops.parse_options.base) {
 				case BASE_ROMAN_NUMERALS: {str += _("roman"); break;}
@@ -3562,7 +3562,7 @@ int main(int argc, char *argv[]) {
 							bool b_approx = item->isApproximate();
 							if(b_approx && v->isKnown()) {
 								if(((KnownVariable*) v)->isExpression()) {
-									b_approx = ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->f_interval->referenceName()) == string::npos;
+									b_approx = ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->getFunctionById(FUNCTION_ID_INTERVAL)->referenceName()) == string::npos;
 								} else {
 									b_approx = ((KnownVariable*) v)->get().containsInterval(true, false, false, 0, true) <= 0;
 								}
@@ -3741,7 +3741,7 @@ int main(int argc, char *argv[]) {
 				if(!printops.restrict_fraction_length && printops.number_fraction_format == FRACTION_FRACTIONAL) nff = 4;
 				STR_AND_TABS_4(_("fractions"), "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denonimator."), nff, _("off"), _("exact"), _("on"), _("mixed"), _("long"));
 				STR_AND_TABS_BOOL(_("hexadecimal two's"), "hextwos", _("Enables two's complement representation for display of negative hexadecimal numbers."), printops.twos_complement);
-				STR_AND_TABS_BOOL(_("imaginary j"), "imgj", _("Use 'j' (instead of 'i') as default symbol for the imaginary unit."), (CALCULATOR->v_i->hasName("j") > 0));
+				STR_AND_TABS_BOOL(_("imaginary j"), "imgj", _("Use 'j' (instead of 'i') as default symbol for the imaginary unit."), (CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0));
 				STR_AND_TABS_7(_("interval display"), "ivdisp", "", (adaptive_interval_display ? 0 : printops.interval_display + 1), _("adaptive"), _("significant"), _("interval"), _("plusminus"), _("midpoint"), _("upper"), _("lower"))
 				STR_AND_TABS_BOOL(_("lowercase e"), "lowe", _("Use lowercase e for E-notation (5e2 = 5 * 10^2)."), printops.lower_case_e);
 				STR_AND_TABS_BOOL(_("lowercase numbers"), "lownum", _("Use lowercase letters for number bases > 10."), printops.lower_case_numbers);
@@ -3800,7 +3800,7 @@ int main(int argc, char *argv[]) {
 				if(CALCULATOR->getDecimalPoint() != DOT) {
 					STR_AND_TABS_BOOL(_("ignore dot"), "", _("Allows use of '.' as thousands separator."), evalops.parse_options.dot_as_separator);
 				}
-				STR_AND_TABS_BOOL(_("imaginary j"), "imgj", _("Use 'j' (instead of 'i') as default symbol for the imaginary unit."), (CALCULATOR->v_i->hasName("j") > 0));
+				STR_AND_TABS_BOOL(_("imaginary j"), "imgj", _("Use 'j' (instead of 'i') as default symbol for the imaginary unit."), (CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0));
 				STR_AND_TABS_SET(_("input base"), "inbase"); str += "(-1114112 - 1114112"; str += ", "; str += _("bin");
 				if(evalops.parse_options.base == BASE_BINARY) str += "*";
 				str += ", "; str += _("oct");
@@ -4301,8 +4301,8 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	}
 	if(update_parse) {
 		if(adaptive_interval_display) {
-			if((parsed_mstruct && parsed_mstruct->containsFunction(CALCULATOR->f_uncertainty)) || expression_str.find("+/-") != string::npos || expression_str.find("+/" SIGN_MINUS) != string::npos || expression_str.find("±") != string::npos) printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
-			else if(parsed_mstruct && parsed_mstruct->containsFunction(CALCULATOR->f_interval)) printops.interval_display = INTERVAL_DISPLAY_INTERVAL;
+			if((parsed_mstruct && parsed_mstruct->containsFunctionId(FUNCTION_ID_UNCERTAINTY)) || expression_str.find("+/-") != string::npos || expression_str.find("+/" SIGN_MINUS) != string::npos || expression_str.find("±") != string::npos) printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+			else if(parsed_mstruct && parsed_mstruct->containsFunctionId(FUNCTION_ID_INTERVAL)) printops.interval_display = INTERVAL_DISPLAY_INTERVAL;
 			else printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 		}
 		if(!view_thread->write((void *) parsed_mstruct)) {b_busy = false; view_thread->cancel(); return;}
@@ -5053,7 +5053,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					case '&': {CALCULATOR->calculateRPN(OPERATION_BITWISE_AND, 0, evalops, parsed_mstruct); break;}
 					case '|': {CALCULATOR->calculateRPN(OPERATION_BITWISE_OR, 0, evalops, parsed_mstruct); break;}
 					case '~': {CALCULATOR->calculateRPNBitwiseNot(0, evalops, parsed_mstruct); break;}
-					case '!': {CALCULATOR->calculateRPN(CALCULATOR->f_factorial, 0, evalops, parsed_mstruct); break;}
+					case '!': {CALCULATOR->calculateRPN(CALCULATOR->getFunctionById(FUNCTION_ID_FACTORIAL), 0, evalops, parsed_mstruct); break;}
 					case '>': {CALCULATOR->calculateRPN(OPERATION_GREATER, 0, evalops, parsed_mstruct); break;}
 					case '<': {CALCULATOR->calculateRPN(OPERATION_LESS, 0, evalops, parsed_mstruct); break;}
 					case '=': {CALCULATOR->calculateRPN(OPERATION_EQUALS, 0, evalops, parsed_mstruct); break;}
@@ -5071,7 +5071,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					CALCULATOR->calculateRPN(OPERATION_RAISE, 0, evalops, parsed_mstruct);
 					do_mathoperation = true;
 				} else if(str2 == "!!") {
-					CALCULATOR->calculateRPN(CALCULATOR->f_factorial2, 0, evalops, parsed_mstruct);
+					CALCULATOR->calculateRPN(CALCULATOR->getFunctionById(FUNCTION_ID_DOUBLE_FACTORIAL), 0, evalops, parsed_mstruct);
 					do_mathoperation = true;
 				} else if(str2 == "!=" || str == "=!" || str == "<>") {
 					CALCULATOR->calculateRPN(OPERATION_NOT_EQUALS, 0, evalops, parsed_mstruct);
@@ -5817,7 +5817,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "use_unicode_signs=%i\n", printops.use_unicode_signs);
 	fprintf(file, "lower_case_numbers=%i\n", printops.lower_case_numbers);
 	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);
-	fprintf(file, "imaginary_j=%i\n", CALCULATOR->v_i->hasName("j") > 0);
+	fprintf(file, "imaginary_j=%i\n", CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0);
 	fprintf(file, "base_display=%i\n", printops.base_display);
 	fprintf(file, "twos_complement=%i\n", printops.twos_complement);
 	fprintf(file, "hexadecimal_twos_complement=%i\n", printops.hexadecimal_twos_complement);

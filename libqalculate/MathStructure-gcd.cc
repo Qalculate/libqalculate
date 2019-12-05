@@ -752,7 +752,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 			mstruct = msqrfree;
 			return true;
 		}
-	} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_root && VALID_ROOT(mstruct) && mstruct[0].isAddition() && mstruct[0].isRationalPolynomial()) {
+	} else if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_ROOT && VALID_ROOT(mstruct) && mstruct[0].isAddition() && mstruct[0].isRationalPolynomial()) {
 		MathStructure msqrfree(mstruct[0]);
 		if(sqrfree(msqrfree, eo) && msqrfree.isPower() && msqrfree[1].isInteger() && msqrfree[1].number().isPositive()) {
 			if(msqrfree[1] == mstruct[1]) {
@@ -760,7 +760,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 					if(!msqrfree[0].representsReal(true)) return false;
 					msqrfree.delChild(2);
 					msqrfree.setType(STRUCT_FUNCTION);
-					msqrfree.setFunction(CALCULATOR->f_abs);
+					msqrfree.setFunctionId(FUNCTION_ID_ABS);
 					mstruct = msqrfree;
 				} else {
 					mstruct = msqrfree[0];
@@ -770,7 +770,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 				if(msqrfree[1].number().isEven()) {
 					if(!msqrfree[0].representsReal(true)) return false;
 					msqrfree[0].transform(STRUCT_FUNCTION);
-					msqrfree[0].setFunction(CALCULATOR->f_abs);
+					msqrfree[0].setFunctionId(FUNCTION_ID_ABS);
 				}
 				msqrfree[1].number().divide(mstruct[1].number());
 				mstruct = msqrfree;
@@ -780,7 +780,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 				if(msqrfree[1].number().isEven()) {
 					if(!msqrfree[0].representsReal(true)) return false;
 					msqrfree[0].transform(STRUCT_FUNCTION);
-					msqrfree[0].setFunction(CALCULATOR->f_abs);
+					msqrfree[0].setFunctionId(FUNCTION_ID_ABS);
 				}
 				Number new_root(mstruct[1].number());
 				new_root.divide(msqrfree[1].number());

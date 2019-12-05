@@ -28,7 +28,7 @@ using std::ostream;
 using std::endl;
 
 bool factorize_fix_root_power(MathStructure &m) {
-	if(!m[0].isFunction() || m[0].function() != CALCULATOR->f_root || !VALID_ROOT(m[0])) return false;
+	if(!m[0].isFunction() || m[0].function()->id() != FUNCTION_ID_ROOT || !VALID_ROOT(m[0])) return false;
 	if(m[1].isNumber() && m[1].number().isInteger() && !m[1].number().isMinusOne()) {
 		if(m[1] == m[0][1]) {
 			// root(x, a)^a=x
@@ -341,7 +341,7 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 	eo2.sync_units = false;
 	eo2.expand = true;
 	eo2.calculate_functions = false;
-	eo2.protected_function = CALCULATOR->f_signum;
+	eo2.protected_function = CALCULATOR->getFunctionById(FUNCTION_ID_SIGNUM);
 
 	if(mpoly.size() == 0) {
 		return true;
@@ -1279,7 +1279,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 
 	if(term_combination_levels >= -1 && isAddition() && isRationalPolynomial()) {
 		MathStructure msqrfree(*this);
-		eo.protected_function = CALCULATOR->f_signum;
+		eo.protected_function = CALCULATOR->getFunctionById(FUNCTION_ID_SIGNUM);
 		if(sqrfree(msqrfree, eo)) {
 			if((!only_sqrfree || msqrfree.isPower()) && !equals(msqrfree) && (!msqrfree.isMultiplication() || msqrfree.size() != 2 || (!(msqrfree[0].isNumber() && msqrfree[1].isAddition()) && !(msqrfree[1].isNumber() && msqrfree[0].isAddition())))) {
 				MathStructure mcopy(msqrfree);

@@ -63,9 +63,10 @@ class Calculator_p {
 		long int custom_input_base_i;
 		Unit *local_currency;
 		int use_binary_prefixes;
-		MathFunction *f_cis;
+		MathFunction *f_cis, *f_erfi, *f_fresnels, *f_fresnelc;
 		unordered_map<int, MathFunction*> id_functions;
 		unordered_map<int, Variable*> id_variables;
+		unordered_map<int, Unit*> id_units;
 };
 
 class CalculateThread : public Thread {

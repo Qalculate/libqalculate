@@ -139,18 +139,18 @@ int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(nr.isPlusInfinity()) {
-			mstruct.set(CALCULATOR->v_pi, true);
+			mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI), true);
 			mstruct *= nr_half;
 			return 1;
 		}
 		if(nr.isMinusInfinity()) {
-			mstruct.set(CALCULATOR->v_pi, true);
+			mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI), true);
 			mstruct *= nr_minus_half;
 			return 1;
 		}
 		if(nr.hasImaginaryPart() && !nr.hasRealPart()) {
 			mstruct.set(nr.imaginaryPart());
-			mstruct.transform(CALCULATOR->f_Shi);
+			mstruct.transformById(FUNCTION_ID_SHI);
 			mstruct *= nr_one_i;
 			return 1;
 		}
@@ -185,7 +185,7 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			if(!eo.allow_complex) return -1;
 			mstruct.negate();
 			mstruct.transform(this);
-			mstruct += CALCULATOR->v_pi;
+			mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.last() *= nr_one_i;
 			return 1;
 		}
@@ -193,8 +193,8 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		if(nr.isComplex() && nr.hasImaginaryPart() && !nr.hasRealPart()) {
 			mstruct.set(nr.imaginaryPart());
 			if(nr.imaginaryPartIsNegative()) mstruct.negate();
-			mstruct.transform(CALCULATOR->f_Chi);
-			mstruct += CALCULATOR->v_pi;
+			mstruct.transformById(FUNCTION_ID_CHI);
+			mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.last() *= nr_half;
 			if(nr.imaginaryPartIsPositive()) mstruct.last() *= nr_one_i;
 			else mstruct.last() *= nr_minus_i;
@@ -223,7 +223,7 @@ int ShiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		Number nr(mstruct.number());
 		if(nr.hasImaginaryPart() && !nr.hasRealPart()) {
 			mstruct.set(nr.imaginaryPart());
-			mstruct.transform(CALCULATOR->f_Si);
+			mstruct.transformById(FUNCTION_ID_SI);
 			mstruct *= nr_one_i;
 			return 1;
 		}
@@ -257,7 +257,7 @@ int ChiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			if(!eo.allow_complex) return -1;
 			mstruct.negate();
 			mstruct.transform(this);
-			mstruct += CALCULATOR->v_pi;
+			mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.last() *= nr_one_i;
 			return 1;
 		}
@@ -265,8 +265,8 @@ int ChiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(nr.isComplex() && nr.hasImaginaryPart() && !nr.hasRealPart()) {
 			mstruct.set(nr.imaginaryPart());
 			if(nr.imaginaryPartIsNegative()) mstruct.negate();
-			mstruct.transform(CALCULATOR->f_Ci);
-			mstruct += CALCULATOR->v_pi;
+			mstruct.transformById(FUNCTION_ID_CI);
+			mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.last() *= nr_half;
 			if(nr.imaginaryPartIsPositive()) mstruct.last() *= nr_one_i;
 			else mstruct.last() *= nr_minus_i;
@@ -318,7 +318,7 @@ bool replace_diff_x(MathStructure &m, const MathStructure &mfrom, const MathStru
 		m = mto;
 		return true;
 	}
-	if(m.type() == STRUCT_FUNCTION && m.function() == CALCULATOR->f_diff) {
+	if(m.type() == STRUCT_FUNCTION && m.function()->id() == FUNCTION_ID_DIFFERENTIATE) {
 		if(m.size() >= 4 && m[1] == mfrom && m[3].isUndefined()) {
 			m[3] = mto;
 			return true;
@@ -463,7 +463,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	if(vargs.size() >= 2 && (vargs.size() == 2 || vargs[2].isUndefined()) && (vargs[1].isSymbolic() || (vargs[1].isVariable() && !vargs[1].variable()->isKnown()))) {
 		if(mstruct.integrate(vargs.size() < 3 ? m_undefined : vargs[2], vargs.size() < 4 ? m_undefined : vargs[3], vargs[1], eo, vargs.size() >= 4 && vargs[4].number().getBoolean(), true)) return 1;
 	} else {
-		if(mstruct.integrate(vargs.size() < 2 ? m_undefined : vargs[1], vargs.size() < 3 ? m_undefined : vargs[2], vargs.size() < 3 ? CALCULATOR->v_x : vargs[3], eo, vargs.size() >= 4 && vargs[4].number().getBoolean(), true)) return 1;
+		if(mstruct.integrate(vargs.size() < 2 ? m_undefined : vargs[1], vargs.size() < 3 ? m_undefined : vargs[2], vargs.size() < 3 ? CALCULATOR->getVariableById(VARIABLE_ID_X) : vargs[3], eo, vargs.size() >= 4 && vargs[4].number().getBoolean(), true)) return 1;
 	}
 	return -1;
 }

@@ -876,7 +876,7 @@ void Number::set(string number, const ParseOptions &po) {
 			}
 		} else if(!numbers_started && number[index] == '-') {
 			minus = !minus;
-		} else if(number[index] == 'i' || (CALCULATOR && number[index] == 'j' && CALCULATOR->v_i->hasName("j"))) {
+		} else if(number[index] == 'i' || (CALCULATOR && number[index] == 'j' && CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j"))) {
 			b_cplx = true;
 		} else if(base == 10 && number[index] == '(' && index <= number.length() - 2) {
 			size_t par_i = number.find(')', index + 1);
@@ -4955,7 +4955,7 @@ bool Number::zeta() {
 		mpfr_zeta(fl_value, fl_value, MPFR_RNDU);
 		mpfr_swap(fl_value, fu_value);
 	} else {
-		if(isInterval()) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_zeta->name().c_str(), NULL);
+		if(isInterval()) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_ZETA)->name().c_str(), NULL);
 		mpfr_zeta(fu_value, fu_value, MPFR_RNDU);
 		mpfr_zeta(fl_value, fl_value, MPFR_RNDD);
 		if(mpfr_cmp(fu_value, fl_value) < 0) mpfr_swap(fu_value, fl_value);
@@ -5020,7 +5020,7 @@ bool Number::gamma() {
 			mpfr_gamma(fu_value, fu_value, MPFR_RNDN);
 			mpfr_gamma(fl_value, fl_value, MPFR_RNDN);
 			if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-			if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_gamma->name().c_str(), NULL);
+			if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_GAMMA)->name().c_str(), NULL);
 			mpfr_clears(fu_test, fl_test, NULL);
 		}
 	}
@@ -5405,7 +5405,7 @@ bool Number::airy() {
 		mpfr_ai(fl_value, fl_value, MPFR_RNDN);
 		mpfr_ai(fu_value, fu_value, MPFR_RNDN);
 		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_airy->name().c_str(), NULL);
+		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_AIRY)->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -5436,7 +5436,7 @@ bool Number::besselj(const Number &o) {
 		mpfr_jn(fl_value, n, fl_value, MPFR_RNDN);
 		mpfr_jn(fu_value, n, fu_value, MPFR_RNDN);
 		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_besselj->name().c_str(), NULL);
+		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_BESSELJ)->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -5467,7 +5467,7 @@ bool Number::bessely(const Number &o) {
 		mpfr_yn(fl_value, n, fl_value, MPFR_RNDN);
 		mpfr_yn(fu_value, n, fu_value, MPFR_RNDN);
 		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_bessely->name().c_str(), NULL);
+		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_BESSELY)->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -6716,7 +6716,7 @@ bool Number::lambertW(const Number &k) {
 				if(!nr_l.lambertW(k) || !nr_u.lambertW(k)) return false;
 				setPrecisionAndApproximateFrom(nr_l);
 				setPrecisionAndApproximateFrom(nr_u);
-				CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_lambert_w->name().c_str(), NULL);
+				CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_LAMBERT_W)->name().c_str(), NULL);
 				return setInterval(nr_l, nr_u, true);
 			} else {
 				nr_l = realPart();
@@ -6732,7 +6732,7 @@ bool Number::lambertW(const Number &k) {
 					if(k.isZero()) nr_l.setInterval(nr_zero, nr_l);
 					else nr_l.setInterval(nr_minus_inf, nr_l);
 				}
-				if(hasRealPart()) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_lambert_w->name().c_str(), NULL);
+				if(hasRealPart()) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_LAMBERT_W)->name().c_str(), NULL);
 				return setInterval(nr_l, nr_u, true);
 			}
 		} else {
@@ -6751,7 +6751,7 @@ bool Number::lambertW(const Number &k) {
 			} else {
 				if(!isNonZero()) nr_l.setInterval(nr_minus_inf, nr_l);
 			}
-			if(hasImaginaryPart()) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_lambert_w->name().c_str(), NULL);
+			if(hasImaginaryPart()) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_LAMBERT_W)->name().c_str(), NULL);
 			return setInterval(nr_l, nr_u, true);
 		}
 	}
@@ -7067,7 +7067,7 @@ bool Number::polylog(const Number &o) {
 			}
 			setPrecisionAndApproximateFrom(nr_l);
 			setPrecisionAndApproximateFrom(nr_u);
-			if(o.isNegative() || hasImaginaryPart() || o.hasImaginaryPart() || (isInterval(false) && o.isInterval(false))) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_Li->name().c_str(), NULL);
+			if(o.isNegative() || hasImaginaryPart() || o.hasImaginaryPart() || (isInterval(false) && o.isInterval(false))) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_POLYLOG)->name().c_str(), NULL);
 			return setInterval(nr_l, nr_u, true);
 		}
 		if(o.isInterval(false)) {
@@ -7112,7 +7112,7 @@ bool Number::polylog(const Number &o) {
 			}
 			setPrecisionAndApproximateFrom(nr_l);
 			setPrecisionAndApproximateFrom(nr_u);
-			if(o.isNegative() || hasImaginaryPart() || o.hasImaginaryPart() || (isInterval(false) && o.isInterval(false))) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_Li->name().c_str(), NULL);
+			if(o.isNegative() || hasImaginaryPart() || o.hasImaginaryPart() || (isInterval(false) && o.isInterval(false))) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_POLYLOG)->name().c_str(), NULL);
 			return setInterval(nr_l, nr_u, true);
 		}
 		if(includesInfinity()) return false;
@@ -7244,7 +7244,7 @@ bool Number::igamma(const Number &o) {
 	} else {
 		mpfr_gamma_inc(fl_value, fl_value, o_float.internalUpperFloat(), MPFR_RNDD);
 		mpfr_gamma_inc(fu_value, fu_value, o_float.internalLowerFloat(), MPFR_RNDU);
-		if(!o.isGreaterThanOrEqualTo(1) && !nr_bak.isGreaterThan(2) && nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_igamma->name().c_str(), NULL);
+		if(!o.isGreaterThanOrEqualTo(1) && !nr_bak.isGreaterThan(2) && nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_I_GAMMA)->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -7567,7 +7567,7 @@ bool Number::expint() {
 			}
 			setPrecisionAndApproximateFrom(nr_l);
 			setPrecisionAndApproximateFrom(nr_u);
-			CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->f_Ei->name().c_str(), NULL);
+			CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_EI)->name().c_str(), NULL);
 			return setInterval(nr_l, nr_u, true);
 		}
 		Number nr_euler; nr_euler.euler();
@@ -9309,7 +9309,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			nr.set(*this, false, true);
 			return nr.print(po, ips);
 		}
-		string str_i = (CALCULATOR ? CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
+		string str_i = (CALCULATOR ? CALCULATOR->getVariableById(VARIABLE_ID_I)->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
 		bool bre = hasRealPart();
 		if(bre) {
 			Number r_nr(*this);
@@ -9780,7 +9780,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			po2.interval_display = INTERVAL_DISPLAY_UPPER;
 			string str2 = print(po2, ips2);
 			if(str1 == str2) return print(po2, ips);
-			str = CALCULATOR->f_interval->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
+			str = CALCULATOR->getFunctionById(FUNCTION_ID_INTERVAL)->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
 			str += LEFT_PARENTHESIS;
 			str += str1;
 			str += po.comma();

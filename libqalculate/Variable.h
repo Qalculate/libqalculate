@@ -17,13 +17,14 @@
 
 /** @file */
 
-#define DECLARE_BUILTIN_VARIABLE(x)	class x : public DynamicVariable { \
+#define DECLARE_BUILTIN_VARIABLE(x, i)	class x : public DynamicVariable { \
 					  private: \
 						void calculate(MathStructure &m) const;	\
  					  public: \
 						x(); \
 						x(const x *variable) {set(variable);} \
 						ExpressionItem *copy() const {return new x(this);} \
+						int id() const {return i;} \
 					};
 
 /// Type assumption.
@@ -162,6 +163,8 @@ class Variable : public ExpressionItem {
 	virtual bool representsBoolean() {return false;}
 	virtual bool representsNonMatrix() {return false;}
 	virtual bool representsScalar() {return false;}
+	
+	virtual int id() const {return 0;}
 
 };
 
@@ -339,6 +342,8 @@ class KnownVariable : public Variable {
 	virtual bool representsBoolean();
 	virtual bool representsNonMatrix();
 	virtual bool representsScalar();
+	
+	virtual int id() const {return 0;}
 
 };
 
@@ -393,14 +398,27 @@ class DynamicVariable : public KnownVariable {
 
 };
 
+enum {
+	VARIABLE_ID_E = 100,
+	VARIABLE_ID_PI = 101,
+	VARIABLE_ID_EULER = 102,
+	VARIABLE_ID_CATALAN = 103,
+	VARIABLE_ID_PRECISION = 140,
+	VARIABLE_ID_TODAY = 161,
+	VARIABLE_ID_TOMORROW = 162,
+	VARIABLE_ID_YESTERDAY = 163,
+	VARIABLE_ID_NOW = 164
+};
+
 /// Dynamic variable for Pi
-DECLARE_BUILTIN_VARIABLE(PiVariable)
+DECLARE_BUILTIN_VARIABLE(PiVariable, VARIABLE_ID_PI)
 /// Dynamic variable for e, the base of natural logarithms
-DECLARE_BUILTIN_VARIABLE(EVariable)
+DECLARE_BUILTIN_VARIABLE(EVariable, VARIABLE_ID_E)
 /// Dynamic variable for Euler's constant
-DECLARE_BUILTIN_VARIABLE(EulerVariable)
+DECLARE_BUILTIN_VARIABLE(EulerVariable, VARIABLE_ID_EULER)
 /// Dynamic variable for Catalan's constant
-DECLARE_BUILTIN_VARIABLE(CatalanVariable)
+DECLARE_BUILTIN_VARIABLE(CatalanVariable, VARIABLE_ID_CATALAN)
+
 /// Dynamic variable for current precision
 class PrecisionVariable : public DynamicVariable {
   private:
@@ -411,6 +429,7 @@ class PrecisionVariable : public DynamicVariable {
 	ExpressionItem *copy() const {return new PrecisionVariable(this);}
 	bool representsInteger(bool = false) {return true;}
 	bool representsNonInteger(bool = false) {return false;}
+	int id() const {return VARIABLE_ID_PRECISION;}
 };
 
 class TodayVariable : public DynamicVariable {
@@ -426,6 +445,7 @@ class TodayVariable : public DynamicVariable {
 	virtual bool representsNumber(bool b = false) {return b;}
 	virtual bool representsReal(bool b = false) {return b;}
 	virtual bool representsNonZero(bool b = false) {return b;}
+	int id() const {return VARIABLE_ID_TODAY;}
 };
 class TomorrowVariable : public DynamicVariable {
   private:
@@ -440,6 +460,7 @@ class TomorrowVariable : public DynamicVariable {
 	virtual bool representsNumber(bool b = false) {return b;}
 	virtual bool representsReal(bool b = false) {return b;}
 	virtual bool representsNonZero(bool b = false) {return b;}
+	int id() const {return VARIABLE_ID_TOMORROW;}
 };
 class YesterdayVariable : public DynamicVariable {
   private:
@@ -454,6 +475,7 @@ class YesterdayVariable : public DynamicVariable {
 	virtual bool representsNumber(bool b = false) {return b;}
 	virtual bool representsReal(bool b = false) {return b;}
 	virtual bool representsNonZero(bool b = false) {return b;}
+	int id() const {return VARIABLE_ID_YESTERDAY;}
 };
 class NowVariable : public DynamicVariable {
   private:
@@ -468,6 +490,7 @@ class NowVariable : public DynamicVariable {
 	virtual bool representsNumber(bool b = false) {return b;}
 	virtual bool representsReal(bool b = false) {return b;}
 	virtual bool representsNonZero(bool b = false) {return b;}
+	int id() const {return VARIABLE_ID_NOW;}
 };
 class UptimeVariable : public DynamicVariable {
   private:

@@ -164,8 +164,8 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			}
 		}
 	}
-	if(mstruct1.isVariable() && mstruct1.variable() == CALCULATOR->v_C) return 1;
-	if(mstruct2.isVariable() && mstruct2.variable() == CALCULATOR->v_C) return -1;
+	if(mstruct1.isVariable() && mstruct1.variable() == CALCULATOR->getVariableById(VARIABLE_ID_C)) return 1;
+	if(mstruct2.isVariable() && mstruct2.variable() == CALCULATOR->getVariableById(VARIABLE_ID_C)) return -1;
 	if(mstruct1.type() != mstruct2.type()) {
 		if(mstruct1.isVariable() && mstruct2.isSymbolic()) {
 			if(parent.isMultiplication()) {
@@ -422,7 +422,7 @@ void MathStructure::sort(const PrintOptions &po, bool recursive) {
 }
 
 void MathStructure::unformat(const EvaluationOptions &eo) {
-	if(m_type == STRUCT_FUNCTION && o_function == CALCULATOR->f_stripunits) {
+	if(m_type == STRUCT_FUNCTION && o_function->id() == FUNCTION_ID_STRIP_UNITS) {
 		EvaluationOptions eo2 = eo;
 		eo2.keep_prefixes = true;
 		for(size_t i = 0; i < SIZE; i++) {
@@ -451,7 +451,7 @@ void MathStructure::unformat(const EvaluationOptions &eo) {
 		}
 		case STRUCT_UNIT: {
 			if(o_prefix && !eo.keep_prefixes) {
-				if(o_prefix == CALCULATOR->decimal_null_prefix || o_prefix == CALCULATOR->binary_null_prefix) {
+				if(o_prefix == CALCULATOR->getDecimalNullPrefix() || o_prefix == CALCULATOR->getBinaryNullPrefix()) {
 					o_prefix = NULL;
 				} else {
 					Unit *u = o_unit;
@@ -1220,7 +1220,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 				Number exp10;
 				if(b) {
 					if(po.prefix) {
-						if(po.prefix != CALCULATOR->decimal_null_prefix && po.prefix != CALCULATOR->binary_null_prefix) {
+						if(po.prefix != CALCULATOR->getDecimalNullPrefix() && po.prefix != CALCULATOR->getBinaryNullPrefix()) {
 							if(munit->isUnit()) munit->setPrefix(po.prefix);
 							else (*munit)[0].setPrefix(po.prefix);
 							if(CHILD(0).isNumber()) {
@@ -1299,7 +1299,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 							}
 						}
 					}
-					if(b2 && CHILD(0).isNumber() && (po.prefix || po.use_unit_prefixes) && (po.prefix != CALCULATOR->decimal_null_prefix && po.prefix != CALCULATOR->binary_null_prefix)) {
+					if(b2 && CHILD(0).isNumber() && (po.prefix || po.use_unit_prefixes) && (po.prefix != CALCULATOR->getDecimalNullPrefix() && po.prefix != CALCULATOR->getBinaryNullPrefix())) {
 						exp10 = CHILD(0).number();
 						exp10.abs();
 						exp10.intervalToMidValue();
@@ -1329,7 +1329,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 			break;
 		}
 		case STRUCT_UNIT: {
-			if(!o_prefix && (po.prefix && po.prefix != CALCULATOR->decimal_null_prefix && po.prefix != CALCULATOR->binary_null_prefix)) {
+			if(!o_prefix && (po.prefix && po.prefix != CALCULATOR->getDecimalNullPrefix() && po.prefix != CALCULATOR->getBinaryNullPrefix())) {
 				transform(STRUCT_MULTIPLICATION, m_one);
 				SWAP_CHILDREN(0, 1);
 				setPrefixes(po, parent, pindex);
@@ -1338,7 +1338,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 		}
 		case STRUCT_POWER: {
 			if(CHILD(0).isUnit()) {
-				if(CHILD(1).isNumber() && CHILD(1).number().isReal() && !CHILD(0).prefix() && !o_prefix && (po.prefix && po.prefix != CALCULATOR->decimal_null_prefix && po.prefix != CALCULATOR->binary_null_prefix)) {
+				if(CHILD(1).isNumber() && CHILD(1).number().isReal() && !CHILD(0).prefix() && !o_prefix && (po.prefix && po.prefix != CALCULATOR->getDecimalNullPrefix() && po.prefix != CALCULATOR->getBinaryNullPrefix())) {
 					transform(STRUCT_MULTIPLICATION, m_one);
 					SWAP_CHILDREN(0, 1);
 					setPrefixes(po, parent, pindex);
@@ -2081,7 +2081,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				if(CHILD(1).isInverse() || (CHILD(1).isDivision() && CHILD(1)[0].number().isOne()) || (CHILD(1).isNumber() && CHILD(1).number().numeratorIsOne())) {
 					m_type = STRUCT_FUNCTION;
 					ERASE(1)
-					setFunction(CALCULATOR->f_sqrt);
+					setFunctionId(FUNCTION_ID_SQRT);
 				} else {
 					if(CHILD(1).isNumber()) {
 						CHILD(1).number() -= nr_half;
@@ -2094,15 +2094,15 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					if(CHILD(1).number().isOne()) {
 						setToChild(1, true);
 						if(parent && parent->isMultiplication()) {
-							parent->insertChild(MathStructure(CALCULATOR->f_sqrt, this, NULL), pindex + 1);
+							parent->insertChild(MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), this, NULL), pindex + 1);
 						} else {
-							multiply(MathStructure(CALCULATOR->f_sqrt, this, NULL));
+							multiply(MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), this, NULL));
 						}
 					} else {
 						if(parent && parent->isMultiplication()) {
-							parent->insertChild(MathStructure(CALCULATOR->f_sqrt, &CHILD(0), NULL), pindex + 1);
+							parent->insertChild(MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &CHILD(0), NULL), pindex + 1);
 						} else {
-							multiply(MathStructure(CALCULATOR->f_sqrt, &CHILD(0), NULL));
+							multiply(MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &CHILD(0), NULL));
 						}
 					}
 				}
@@ -2129,7 +2129,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				MathStructure mbase(CHILD(0));
 				CHILD(1) = nr_den;
 				m_type = STRUCT_FUNCTION;
-				setFunction(CALCULATOR->f_root);
+				setFunctionId(FUNCTION_ID_ROOT);
 				formatsub(po, parent, pindex, false, top_parent);
 				if(!nr_num.isOne()) {
 					raise(nr_num);
@@ -2151,10 +2151,10 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 		}
 		case STRUCT_FUNCTION: {
 			if(po.preserve_format) break;
-			if(o_function == CALCULATOR->f_root && SIZE == 2 && CHILD(1) == 3) {
+			if(o_function->id() == FUNCTION_ID_ROOT && SIZE == 2 && CHILD(1) == 3) {
 				ERASE(1)
-				setFunction(CALCULATOR->f_cbrt);
-			} else if(o_function == CALCULATOR->f_interval && SIZE == 2 && CHILD(0).isAddition() && CHILD(0).size() == 2 && CHILD(1).isAddition() && CHILD(1).size() == 2) {
+				setFunctionId(FUNCTION_ID_CBRT);
+			} else if(o_function->id() == FUNCTION_ID_INTERVAL && SIZE == 2 && CHILD(0).isAddition() && CHILD(0).size() == 2 && CHILD(1).isAddition() && CHILD(1).size() == 2) {
 				MathStructure *mmid = NULL, *munc = NULL;
 				if(CHILD(0)[0].equals(CHILD(1)[0], true, true)) {
 					mmid = &CHILD(0)[0];
@@ -2174,7 +2174,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					if(CHILD(1)[1].isNegate() && CHILD(1)[1][0].equals(CHILD(0)[0], true, true)) munc = &CHILD(0)[0];
 				}
 				if(mmid && munc) {
-					setFunction(CALCULATOR->f_uncertainty);
+					setFunctionId(FUNCTION_ID_UNCERTAINTY);
 					mmid->ref();
 					munc->ref();
 					CLEAR
@@ -2186,7 +2186,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 			break;
 		}
 		case STRUCT_VARIABLE: {
-			if(o_variable == CALCULATOR->v_pinf || o_variable == CALCULATOR->v_minf) {
+			if(o_variable == CALCULATOR->getVariableById(VARIABLE_ID_PLUS_INFINITY) || o_variable == CALCULATOR->getVariableById(VARIABLE_ID_MINUS_INFINITY)) {
 				set(((KnownVariable*) o_variable)->get());
 			}
 			break;
@@ -2270,10 +2270,10 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					Number im(o_number.imaginaryPart());
 					MathStructure *mstruct = new MathStructure(im);
 					if(im.isOne()) {
-						mstruct->set(CALCULATOR->v_i);
+						mstruct->set(CALCULATOR->getVariableById(VARIABLE_ID_I));
 					} else {
-						mstruct->multiply_nocopy(new MathStructure(CALCULATOR->v_i));
-						if(CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name == "j") mstruct->swapChildren(1, 2);
+						mstruct->multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_I)));
+						if(CALCULATOR->getVariableById(VARIABLE_ID_I)->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name == "j") mstruct->swapChildren(1, 2);
 					}
 					o_number = re;
 					add_nocopy(mstruct);
@@ -2281,14 +2281,14 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				} else {
 					Number im(o_number.imaginaryPart());
 					if(im.isOne()) {
-						set(CALCULATOR->v_i, true);
+						set(CALCULATOR->getVariableById(VARIABLE_ID_I), true);
 					} else if(im.isMinusOne()) {
-						set(CALCULATOR->v_i, true);
+						set(CALCULATOR->getVariableById(VARIABLE_ID_I), true);
 						transform(STRUCT_NEGATE);
 					} else {
 						o_number = im;
-						multiply_nocopy(new MathStructure(CALCULATOR->v_i));
-						if(CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name == "j") SWAP_CHILDREN(0, 1);
+						multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_I)));
+						if(CALCULATOR->getVariableById(VARIABLE_ID_I)->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name == "j") SWAP_CHILDREN(0, 1);
 					}
 					formatsub(po, parent, pindex, true, top_parent);
 				}
@@ -2351,7 +2351,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_XOR: {return true;}
 				case STRUCT_LOGICAL_NOT: {return po.excessive_parenthesis;}
 				case STRUCT_COMPARISON: {return true;}
-				case STRUCT_FUNCTION: {return o_function == CALCULATOR->f_uncertainty;}
+				case STRUCT_FUNCTION: {return o_function->id() == FUNCTION_ID_UNCERTAINTY;}
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return o_number.isInfinite() || (o_number.hasImaginaryPart() && o_number.hasRealPart());}
 				case STRUCT_VARIABLE: {return false;}
@@ -2381,7 +2381,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_XOR: {return flat_division || po.excessive_parenthesis;}
 				case STRUCT_LOGICAL_NOT: {return flat_division && po.excessive_parenthesis;}
 				case STRUCT_COMPARISON: {return flat_division || po.excessive_parenthesis;}
-				case STRUCT_FUNCTION: {return o_function == CALCULATOR->f_uncertainty;}
+				case STRUCT_FUNCTION: {return o_function->id() == FUNCTION_ID_UNCERTAINTY;}
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return (flat_division || po.excessive_parenthesis) && (o_number.isInfinite() || o_number.hasImaginaryPart());}
 				case STRUCT_VARIABLE: {return false;}
@@ -2439,7 +2439,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_XOR: {return true;}
 				case STRUCT_LOGICAL_NOT: {return index == 1 || po.excessive_parenthesis;}
 				case STRUCT_COMPARISON: {return true;}
-				case STRUCT_FUNCTION: {return o_function == CALCULATOR->f_uncertainty;}
+				case STRUCT_FUNCTION: {return o_function->id() == FUNCTION_ID_UNCERTAINTY;}
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return o_number.isInfinite() || o_number.hasImaginaryPart();}
 				case STRUCT_VARIABLE: {return false;}
@@ -2705,7 +2705,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_FUNCTION: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_VECTOR: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_NUMBER: {
-			if(t == STRUCT_VARIABLE && parent[index - 2].variable() == CALCULATOR->v_i) return MULTIPLICATION_SIGN_NONE;
+			if(t == STRUCT_VARIABLE && parent[index - 2].variable() == CALCULATOR->getVariableById(VARIABLE_ID_I)) return MULTIPLICATION_SIGN_NONE;
 			return MULTIPLICATION_SIGN_OPERATOR;
 		}
 		case STRUCT_VARIABLE: {
@@ -3145,9 +3145,9 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		}
 		case STRUCT_FUNCTION: {
 			ips_n.depth++;
-			if(o_function == CALCULATOR->f_uncertainty && SIZE == 3 && CHILD(2).isZero()) {
+			if(o_function->id() == FUNCTION_ID_UNCERTAINTY && SIZE == 3 && CHILD(2).isZero()) {
 				MathStructure *mmid = NULL, *munc = NULL;
-				if(o_function == CALCULATOR->f_uncertainty) {
+				if(o_function->id() == FUNCTION_ID_UNCERTAINTY) {
 					mmid = &CHILD(0);
 					munc = &CHILD(1);
 				} else if(CHILD(0)[0].equals(CHILD(1)[0], true, true)) {
@@ -3186,7 +3186,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 			}
 			print_str += "(";
 			size_t argcount = SIZE;
-			if(o_function == CALCULATOR->f_signum && argcount > 1) {
+			if(o_function->id() == FUNCTION_ID_SIGNUM && argcount > 1) {
 				argcount = 1;
 			} else if(o_function->maxargs() > 0 && o_function->minargs() < o_function->maxargs() && SIZE > (size_t) o_function->minargs()) {
 				while(true) {
@@ -3217,7 +3217,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 					if(po.spacious) print_str += " ";
 				}
 				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, true);
-				if(o_function == CALCULATOR->f_interval) {
+				if(o_function->id() == FUNCTION_ID_INTERVAL) {
 					PrintOptions po2 = po;
 					po2.show_ending_zeroes = false;
 					print_str += CHILD(i).print(po2, ips_n);

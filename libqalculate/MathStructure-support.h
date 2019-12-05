@@ -51,6 +51,8 @@
 #define VALID_ROOT(o)		(o.size() == 2 && o[1].isNumber() && o[1].number().isInteger() && o[1].number().isPositive())
 #define THIS_VALID_ROOT		(SIZE == 2 && CHILD(1).isNumber() && CHILD(1).number().isInteger() && CHILD(1).number().isPositive())
 
+#define FUNCTION_PROTECTED(evalops, id) (evalops.protected_function != NULL && evalops.protected_function == CALCULATOR->getFunctionById(id))
+
 void printRecursive(const MathStructure &mstruct);
 
 std::string format_and_print(const MathStructure &mstruct);
@@ -124,7 +126,7 @@ bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOpt
 bool function_differentiable(MathFunction *o_function);
 bool montecarlo(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, Number n);
 bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, long int max_steps = -1, long int min_steps = 6, bool safety_measures = true);
-bool sync_approximate_units(MathStructure &m, const EvaluationOptions &feo, vector<KnownVariable*> *vars = NULL, vector<MathStructure> *uncs = NULL, bool do_intervals = true);
+bool sync_approximate_units(MathStructure &m, const EvaluationOptions &feo, std::vector<KnownVariable*> *vars = NULL, std::vector<MathStructure> *uncs = NULL, bool do_intervals = true);
 
 #endif
 

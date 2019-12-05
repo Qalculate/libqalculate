@@ -675,6 +675,9 @@ void MathStructure::setFunction(MathFunction *f) {
 	if(o_function) o_function->unref();
 	o_function = f;
 }
+void MathStructure::setFunctionId(int id) {
+	setFunction(CALCULATOR->getFunctionById(id));
+}
 void MathStructure::setUnit(Unit *u) {
 	if(u) u->ref();
 	if(o_unit) o_unit->unref();
@@ -727,7 +730,7 @@ bool MathStructure::isInverse() const {return m_type == STRUCT_INVERSE;}
 bool MathStructure::isDivision() const {return m_type == STRUCT_DIVISION;}
 bool MathStructure::isNegate() const {return m_type == STRUCT_NEGATE;}
 bool MathStructure::isInfinity() const {return m_type == STRUCT_NUMBER && o_number.isInfinite(true);}
-bool MathStructure::isUndefined() const {return m_type == STRUCT_UNDEFINED || (m_type == STRUCT_NUMBER && o_number.isUndefined()) || (m_type == STRUCT_VARIABLE && o_variable == CALCULATOR->v_undef);}
+bool MathStructure::isUndefined() const {return m_type == STRUCT_UNDEFINED || (m_type == STRUCT_NUMBER && o_number.isUndefined()) || (m_type == STRUCT_VARIABLE && o_variable == CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED));}
 bool MathStructure::isInteger() const {return m_type == STRUCT_NUMBER && o_number.isInteger();}
 bool MathStructure::isInfinite(bool ignore_imag) const {return m_type == STRUCT_NUMBER && o_number.isInfinite(ignore_imag);}
 bool MathStructure::isNumber() const {return m_type == STRUCT_NUMBER;}
@@ -839,7 +842,7 @@ bool MathStructure::representsPositive(bool allow_units) const {
 		case STRUCT_VARIABLE: {return o_variable->representsPositive(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isPositive();}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsPositive(true);
+			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsPositive(true);
 			return (function_value && function_value->representsPositive(allow_units)) || o_function->representsPositive(*this, allow_units);
 		}
 		case STRUCT_UNIT: {return allow_units;}
@@ -873,7 +876,7 @@ bool MathStructure::representsNegative(bool allow_units) const {
 		case STRUCT_VARIABLE: {return o_variable->representsNegative(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNegative();}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsNegative(true);
+			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsNegative(true);
 			return (function_value && function_value->representsNegative(allow_units)) || o_function->representsNegative(*this, allow_units);
 		}
 		case STRUCT_UNIT: {return false;}
@@ -906,7 +909,7 @@ bool MathStructure::representsNonNegative(bool allow_units) const {
 		case STRUCT_VARIABLE: {return o_variable->representsNonNegative(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonNegative();}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsNonNegative(true);
+			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsNonNegative(true);
 			return (function_value && function_value->representsNonNegative(allow_units)) || o_function->representsNonNegative(*this, allow_units);
 		}
 		case STRUCT_UNIT: {return allow_units;}
@@ -941,7 +944,7 @@ bool MathStructure::representsNonPositive(bool allow_units) const {
 		case STRUCT_VARIABLE: {return o_variable->representsNonPositive(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonPositive();}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsNonPositive(true);
+			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsNonPositive(true);
 			return (function_value && function_value->representsNonPositive(allow_units)) || o_function->representsNonPositive(*this, allow_units);
 		}
 		case STRUCT_UNIT: {return false;}
@@ -974,7 +977,7 @@ bool MathStructure::representsRational(bool allow_units) const {
 		case STRUCT_VARIABLE: {return o_variable->representsRational(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isRational();}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsRational(true);
+			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsRational(true);
 			return (function_value && function_value->representsRational(allow_units)) || o_function->representsRational(*this, allow_units);
 		}
 		case STRUCT_UNIT: {return false;}
@@ -1004,7 +1007,7 @@ bool MathStructure::representsReal(bool allow_units) const {
 		case STRUCT_VARIABLE: {return o_variable->representsReal(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isReal();}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsReal(true);
+			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsReal(true);
 			return (function_value && function_value->representsReal(allow_units)) || o_function->representsReal(*this, allow_units);
 		}
 		case STRUCT_UNIT: {return allow_units;}
@@ -1039,7 +1042,7 @@ bool MathStructure::representsNonComplex(bool allow_units) const {
 		}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isReal();}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsNonComplex(true);
+			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsNonComplex(true);
 			return (function_value && function_value->representsNonComplex(allow_units)) || o_function->representsNonComplex(*this, allow_units);
 		}
 		case STRUCT_UNIT: {return allow_units;}
@@ -1216,7 +1219,7 @@ bool MathStructure::representsUndefined(bool include_childs, bool include_infini
 		case STRUCT_UNDEFINED: {return true;}
 		case STRUCT_VARIABLE: {return o_variable->representsUndefined(include_childs, include_infinite, be_strict);}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsUndefined(include_childs, include_infinite, be_strict);
+			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsUndefined(include_childs, include_infinite, be_strict);
 			return (function_value && function_value->representsUndefined(include_childs, include_infinite, be_strict)) || o_function->representsUndefined(*this);
 		}
 		case STRUCT_POWER: {
@@ -1247,7 +1250,7 @@ bool MathStructure::representsNonMatrix() const {
 		case STRUCT_VARIABLE: {return o_variable->representsNonMatrix();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonMatrix();}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsNonMatrix();
+			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsNonMatrix();
 			return (function_value && function_value->representsNonMatrix()) || o_function->representsNonMatrix(*this);
 		}
 		case STRUCT_INVERSE: {}
@@ -1276,7 +1279,7 @@ bool MathStructure::representsScalar() const {
 		case STRUCT_VARIABLE: {return o_variable->representsScalar();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonMatrix();}
 		case STRUCT_FUNCTION: {
-			if(o_function == CALCULATOR->f_stripunits && SIZE == 1) return CHILD(0).representsScalar();
+			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsScalar();
 			return (function_value && function_value->representsScalar()) || o_function->representsScalar(*this);
 		}
 		case STRUCT_INVERSE: {}
@@ -1409,6 +1412,11 @@ void MathStructure::transform(StructureType mtype) {
 void MathStructure::transform(MathFunction *o) {
 	transform(STRUCT_FUNCTION);
 	setFunction(o);
+	b_parentheses = false;
+}
+void MathStructure::transformById(int id) {
+	transform(STRUCT_FUNCTION);
+	setFunctionId(id);
 	b_parentheses = false;
 }
 void MathStructure::transform(ComparisonType ctype, const MathStructure &o) {
@@ -1841,8 +1849,8 @@ bool MathStructure::equals(const MathStructure &o, bool allow_interval, bool all
 		case STRUCT_NUMBER: {return o_number.equals(o.number(), allow_interval, allow_infinite);}
 		case STRUCT_VARIABLE: {return o_variable == o.variable();}
 		case STRUCT_UNIT: {
-			Prefix *p1 = (o_prefix == NULL || o_prefix == CALCULATOR->decimal_null_prefix || o_prefix == CALCULATOR->binary_null_prefix) ? NULL : o_prefix;
-			Prefix *p2 = (o.prefix() == NULL || o.prefix() == CALCULATOR->decimal_null_prefix || o.prefix() == CALCULATOR->binary_null_prefix) ? NULL : o.prefix();
+			Prefix *p1 = (o_prefix == NULL || o_prefix == CALCULATOR->getDecimalNullPrefix() || o_prefix == CALCULATOR->getBinaryNullPrefix()) ? NULL : o_prefix;
+			Prefix *p2 = (o.prefix() == NULL || o.prefix() == CALCULATOR->getDecimalNullPrefix() || o.prefix() == CALCULATOR->getBinaryNullPrefix()) ? NULL : o.prefix();
 			return o_unit == o.unit() && p1 == p2;
 		}
 		case STRUCT_COMPARISON: {if(ct_comp != o.comparisonType()) return false; break;}
@@ -2420,7 +2428,7 @@ StructureType MathStructure::type() const {
 bool contains_angle_unit(const MathStructure &m, const ParseOptions &po) {
 	if(m.isUnit() && m.unit()->baseUnit() == CALCULATOR->getRadUnit()->baseUnit()) return true;
 	if(m.isVariable() && m.variable()->isKnown()) return contains_angle_unit(((KnownVariable*) m.variable())->get(), po);
-	if(m.isFunction()) return po.angle_unit == ANGLE_UNIT_NONE && (m.function() == CALCULATOR->f_asin || m.function() == CALCULATOR->f_acos || m.function() == CALCULATOR->f_atan);
+	if(m.isFunction()) return po.angle_unit == ANGLE_UNIT_NONE && (m.function()->id() == FUNCTION_ID_ASIN || m.function()->id() == FUNCTION_ID_ACOS || m.function()->id() == FUNCTION_ID_ATAN);
 	for(size_t i = 0; i < m.size(); i++) {
 		if(contains_angle_unit(m[i], po)) return true;
 	}
@@ -2509,6 +2517,42 @@ int MathStructure::containsFunction(MathFunction *f, bool structural_only, bool 
 	}
 	return 0;
 }
+int MathStructure::containsFunctionId(int id, bool structural_only, bool check_variables, bool check_functions) const {
+	if(m_type == STRUCT_FUNCTION && o_function->id() == id) return 1;
+	if(structural_only) {
+		for(size_t i = 0; i < SIZE; i++) {
+			if(CHILD(i).containsFunctionId(id, structural_only, check_variables, check_functions)) return 1;
+		}
+		if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
+			return ((KnownVariable*) o_variable)->get().containsFunctionId(id, structural_only, check_variables, check_functions);
+		} else if(m_type == STRUCT_FUNCTION && check_functions) {
+			if(function_value) {
+				return function_value->containsFunctionId(id, structural_only, check_variables, check_functions);
+			}
+		}
+	} else {
+		int ret = 0;
+		if(m_type != STRUCT_FUNCTION) {
+			for(size_t i = 0; i < SIZE; i++) {
+				int retval = CHILD(i).containsFunctionId(id, structural_only, check_variables, check_functions);
+				if(retval == 1) return 1;
+				else if(retval < 0) ret = retval;
+			}
+		}
+		if(m_type == STRUCT_VARIABLE && check_variables && o_variable->isKnown()) {
+			return ((KnownVariable*) o_variable)->get().containsFunctionId(id, structural_only, check_variables, check_functions);
+		} else if(m_type == STRUCT_FUNCTION && check_functions) {
+			if(function_value) {
+				return function_value->containsFunctionId(id, structural_only, check_variables, check_functions);
+			}
+			return -1;
+		} else if(isAborted()) {
+			return -1;
+		}
+		return ret;
+	}
+	return 0;
+}
 int contains_interval_var(const MathStructure &m, bool structural_only, bool check_variables, bool check_functions, int ignore_high_precision_interval, bool include_interval_function) {
 	if(m.type() == STRUCT_NUMBER) {
 		if(m.number().isInterval(false)) {
@@ -2523,7 +2567,7 @@ int contains_interval_var(const MathStructure &m, bool structural_only, bool che
 			return 1;
 		}
 	}
-	if(include_interval_function && m.type() == STRUCT_FUNCTION && (m.function() == CALCULATOR->f_interval || m.function() == CALCULATOR->f_uncertainty)) return 1;
+	if(include_interval_function && m.type() == STRUCT_FUNCTION && (m.function()->id() == FUNCTION_ID_INTERVAL || m.function()->id() == FUNCTION_ID_UNCERTAINTY)) return 1;
 	if(structural_only) {
 		for(size_t i = 0; i < m.size(); i++) {
 			if(contains_interval_var(m[i], structural_only, check_variables, check_functions, ignore_high_precision_interval, include_interval_function)) return 1;
@@ -2565,7 +2609,7 @@ int MathStructure::containsInterval(bool structural_only, bool check_variables, 
 		}
 		return 1;
 	}
-	if(include_interval_function && m_type == STRUCT_FUNCTION && (o_function == CALCULATOR->f_interval || o_function == CALCULATOR->f_uncertainty)) return 1;
+	if(include_interval_function && m_type == STRUCT_FUNCTION && (o_function->id() == FUNCTION_ID_INTERVAL || o_function->id() == FUNCTION_ID_UNCERTAINTY)) return 1;
 	if(structural_only) {
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CHILD(i).containsInterval(structural_only, check_variables, check_functions, ignore_high_precision_interval, include_interval_function)) return 1;
@@ -2708,10 +2752,10 @@ int MathStructure::containsType(StructureType mtype, bool structural_only, bool 
 				return function_value->containsType(mtype, false, check_variables, check_functions);
 			}
 			if(mtype == STRUCT_UNIT) {
-				if(o_function == CALCULATOR->f_stripunits) return 0;
-				if(o_function->subtype() == SUBTYPE_USER_FUNCTION || o_function == CALCULATOR->f_register || o_function == CALCULATOR->f_stack || o_function == CALCULATOR->f_load) return -1;
-				// (eo.parse_options.angle_unit == ANGLE_UNIT_NONE && (o_function == CALCULATOR->f_asin || o_function == CALCULATOR->f_acos || o_function == CALCULATOR->f_atan || o_function == CALCULATOR->f_radtodef))
-				if(o_function == CALCULATOR->f_ln || o_function == CALCULATOR->f_logn || o_function == CALCULATOR->f_arg || o_function == CALCULATOR->f_gamma || o_function == CALCULATOR->f_beta || o_function == CALCULATOR->f_factorial || o_function == CALCULATOR->f_besselj || o_function == CALCULATOR->f_bessely || o_function == CALCULATOR->f_erf || o_function == CALCULATOR->f_erfc || o_function == CALCULATOR->f_li || o_function == CALCULATOR->f_Li || o_function == CALCULATOR->f_Ei || o_function == CALCULATOR->f_Si || o_function == CALCULATOR->f_Ci || o_function == CALCULATOR->f_Shi || o_function == CALCULATOR->f_Chi || o_function == CALCULATOR->f_signum || o_function == CALCULATOR->f_heaviside || o_function == CALCULATOR->f_lambert_w || o_function == CALCULATOR->f_sinc || o_function == CALCULATOR->f_sin || o_function == CALCULATOR->f_cos || o_function == CALCULATOR->f_tan || o_function == CALCULATOR->f_sinh || o_function == CALCULATOR->f_cosh || o_function == CALCULATOR->f_tanh || o_function == CALCULATOR->f_asinh || o_function == CALCULATOR->f_acosh || o_function == CALCULATOR->f_atanh || o_function == CALCULATOR->f_asin || o_function == CALCULATOR->f_acos || o_function == CALCULATOR->f_atan) return 0;
+				if(o_function->id() == FUNCTION_ID_STRIP_UNITS) return 0;
+				if(o_function->subtype() == SUBTYPE_USER_FUNCTION || o_function->id() == FUNCTION_ID_REGISTER || o_function->id() == FUNCTION_ID_STACK || o_function->id() == FUNCTION_ID_LOAD) return -1;
+				// (eo.parse_options.angle_unit == ANGLE_UNIT_NONE && (o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN || o_function->id() == FUNCTION_ID_RADIANS_TO_DEFAULT_ANGLE_UNIT))
+				if(o_function->id() == FUNCTION_ID_LOG || o_function->id() == FUNCTION_ID_LOGN || o_function->id() == FUNCTION_ID_ARG || o_function->id() == FUNCTION_ID_GAMMA || o_function->id() == FUNCTION_ID_BETA || o_function->id() == FUNCTION_ID_FACTORIAL || o_function->id() == FUNCTION_ID_BESSELJ || o_function->id() == FUNCTION_ID_BESSELY || o_function->id() == FUNCTION_ID_ERF || o_function->id() == FUNCTION_ID_ERFI || o_function->id() == FUNCTION_ID_ERFC || o_function->id() == FUNCTION_ID_LI || o_function->id() == FUNCTION_ID_POLYLOG || o_function->id() == FUNCTION_ID_EI || o_function->id() == FUNCTION_ID_SI || o_function->id() == FUNCTION_ID_CI || o_function->id() == FUNCTION_ID_SHI || o_function->id() == FUNCTION_ID_CHI || o_function->id() == FUNCTION_ID_FRESNEL_C || o_function->id() == FUNCTION_ID_FRESNEL_S || o_function->id() == FUNCTION_ID_SIGNUM || o_function->id() == FUNCTION_ID_HEAVISIDE || o_function->id() == FUNCTION_ID_LAMBERT_W || o_function->id() == FUNCTION_ID_SINC || o_function->id() == FUNCTION_ID_SIN || o_function->id() == FUNCTION_ID_COS || o_function->id() == FUNCTION_ID_TAN || o_function->id() == FUNCTION_ID_SINH || o_function->id() == FUNCTION_ID_COSH || o_function->id() == FUNCTION_ID_TANH || o_function->id() == FUNCTION_ID_ASINH || o_function->id() == FUNCTION_ID_COSH || o_function->id() == FUNCTION_ID_ATANH || o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN) return 0;
 				int ret = 0;
 				for(size_t i = 0; i < SIZE; i++) {
 					int ret_i = CHILD(i).containsType(mtype, false, check_variables, check_functions);
@@ -2954,7 +2998,7 @@ bool MathStructure::removeType(StructureType mtype) {
 		}
 	} else {
 		if(m_type == STRUCT_FUNCTION) {
-			if(mtype != STRUCT_UNIT || (o_function != CALCULATOR->f_sqrt && o_function != CALCULATOR->f_root && o_function != CALCULATOR->f_cbrt)) return b;
+			if(mtype != STRUCT_UNIT || (o_function->id() != FUNCTION_ID_SQRT && o_function->id() != FUNCTION_ID_ROOT && o_function->id() != FUNCTION_ID_CBRT)) return b;
 		}
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CHILD(i).removeType(mtype)) {
@@ -2980,13 +3024,13 @@ const MathStructure &MathStructure::find_x_var() const {
 		if(mstruct->isVariable()) {
 			if(!((UnknownVariable*) mstruct->variable())->interval().isUndefined()) {
 				if(x_mstruct->isUndefined()) x_mstruct = mstruct;
-			} else if(mstruct->variable() == CALCULATOR->v_x) {
+			} else if(mstruct->variable() == CALCULATOR->getVariableById(VARIABLE_ID_X)) {
 				return *mstruct;
 			} else if(!x_mstruct->isVariable()) {
 				x_mstruct = mstruct;
-			} else if(mstruct->variable() == CALCULATOR->v_y) {
+			} else if(mstruct->variable() == CALCULATOR->getVariableById(VARIABLE_ID_Y)) {
 				x_mstruct = mstruct;
-			} else if(mstruct->variable() == CALCULATOR->v_z && x_mstruct->variable() != CALCULATOR->v_y) {
+			} else if(mstruct->variable() == CALCULATOR->getVariableById(VARIABLE_ID_Z) && x_mstruct->variable() != CALCULATOR->getVariableById(VARIABLE_ID_Y)) {
 				x_mstruct = mstruct;
 			}
 		} else if(mstruct->isSymbolic()) {

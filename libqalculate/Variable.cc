@@ -16,6 +16,7 @@
 #include "Calculator.h"
 #include "MathStructure.h"
 #include "Number.h"
+#include "BuiltinFunctions.h"
 
 using std::string;
 using std::vector;
@@ -389,7 +390,7 @@ bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
 extern bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false);
 extern bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
 bool replace_f_interval(MathStructure &mstruct) {
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_interval && mstruct.size() == 2) {
+	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_INTERVAL && mstruct.size() == 2) {
 		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
 			Number nr;
 			if(nr.setInterval(mstruct[0].number(), mstruct[1].number())) {
@@ -401,7 +402,7 @@ bool replace_f_interval(MathStructure &mstruct) {
 			MathStructure m2(mstruct[1]);
 			if(create_interval(mstruct, m1, m2)) return true;
 		}
-	} else if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_uncertainty && mstruct.size() == 3 && mstruct[2].isNumber()) {
+	} else if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_UNCERTAINTY && mstruct.size() == 3 && mstruct[2].isNumber()) {
 		bool b_rel = mstruct[2].number().getBoolean();
 		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
 			Number nr(mstruct[0].number());
@@ -465,7 +466,7 @@ const MathStructure &KnownVariable::get() {
 		}
 		if(!sunit.empty() && (!CALCULATOR->variableUnitsEnabled() || sunit != "auto")) {
 			m->removeType(STRUCT_UNIT);
-			if(m->containsType(STRUCT_UNIT, false, true, true) != 0) m->transform(CALCULATOR->f_stripunits);
+			if(m->containsType(STRUCT_UNIT, false, true, true) != 0) m->transformById(FUNCTION_ID_STRIP_UNITS);
 		}
 		if(!suncertainty.empty()) {
 			Number nr_u(suncertainty);

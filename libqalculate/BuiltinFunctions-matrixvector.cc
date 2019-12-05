@@ -333,7 +333,7 @@ int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		mstruct.raise(nr_half);
 		return 1;
 	} else if(mstruct.representsScalar()) {
-		mstruct.transform(CALCULATOR->f_abs);
+		mstruct.transformById(FUNCTION_ID_ABS);
 		return 1;
 	}
 	mstruct.eval(eo);
@@ -343,7 +343,7 @@ int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		return 1;
 	}
 	mstruct = vargs[0];
-	mstruct.transform(CALCULATOR->f_abs);
+	mstruct.transformById(FUNCTION_ID_ABS);
 	return 1;
 }
 HadamardFunction::HadamardFunction() : MathFunction("hadamard", 1, -1) {

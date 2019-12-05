@@ -195,7 +195,7 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct.childrenUpdated();
 		return 1;
 	}
-	if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_signum && mstruct.size() == 2) {
+	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_SIGNUM && mstruct.size() == 2) {
 		mstruct[0].transform(this);
 		mstruct.childUpdated(1);
 		return 1;
@@ -266,8 +266,7 @@ int SignumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		if(!nr.signum() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate())) {
 			if(mstruct.number().isNonZero()) {
 				MathStructure *mabs = new MathStructure(mstruct);
-				mabs->transform(STRUCT_FUNCTION);
-				mabs->setFunction(CALCULATOR->f_abs);
+				mabs->transformById(FUNCTION_ID_ABS);
 				mstruct.divide_nocopy(mabs);
 				return 1;
 			}
@@ -847,14 +846,14 @@ int ImFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			if(nr.hasImaginaryPart()) {
 				if(nr.hasRealPart()) {
 					MathStructure *madd = new MathStructure(mstruct);
-					mstruct.transform(CALCULATOR->f_re);
+					mstruct.transformById(FUNCTION_ID_RE);
 					madd->transform(this);
 					madd->multiply(nr.realPart());
 					mstruct.multiply(nr.imaginaryPart());
 					mstruct.add_nocopy(madd);
 					return 1;
 				}
-				mstruct.transform(CALCULATOR->f_re);
+				mstruct.transformById(FUNCTION_ID_RE);
 				mstruct.multiply(nr.imaginaryPart());
 				return 1;
 			}
@@ -927,14 +926,14 @@ int ReFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			if(nr.hasImaginaryPart()) {
 				if(nr.hasRealPart()) {
 					MathStructure *madd = new MathStructure(mstruct);
-					mstruct.transform(CALCULATOR->f_im);
+					mstruct.transformById(FUNCTION_ID_IM);
 					madd->transform(this);
 					madd->multiply(nr.realPart());
 					mstruct.multiply(-nr.imaginaryPart());
 					mstruct.add_nocopy(madd);
 					return 1;
 				}
-				mstruct.transform(CALCULATOR->f_im);
+				mstruct.transformById(FUNCTION_ID_IM);
 				mstruct.multiply(-nr.imaginaryPart());
 				return 1;
 			}
@@ -1008,8 +1007,8 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			switch(eo.parse_options.angle_unit) {
 				case ANGLE_UNIT_DEGREES: {mstruct.set(180, 1, 0); break;}
 				case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 1, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->v_pi); break;}
-				default: {mstruct.set(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+				default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
 			}
 			return 1;
 		}
@@ -1048,13 +1047,15 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct[0].setFunction(this);
 			return 1;
 		}
-		if(mstruct.isPower() && mstruct[0] == CALCULATOR->v_e && mstruct[1].isNumber() && mstruct[1].number().hasImaginaryPart() && !mstruct[1].number().hasRealPart()) {
+		if(mstruct.isPower() && mstruct[0].isVariable() && mstruct[0].variable()->id() == VARIABLE_ID_E && mstruct[1].isNumber() && mstruct[1].number().hasImaginaryPart() && !mstruct[1].number().hasRealPart()) {
 			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 			if(CALCULATOR->usesIntervalArithmetic()) {
 				CALCULATOR->beginTemporaryStopMessages();
 				Number nr(*mstruct[1].number().internalImaginary());
-				nr.add(CALCULATOR->v_pi->get().number());
-				nr.divide(CALCULATOR->v_pi->get().number() * 2);
+				Number nrpi; nrpi.pi();
+				nr.add(nrpi);
+				nr.divide(nrpi);
+				nr.divide(2);
 				Number nr_u(nr.upperEndPoint());
 				nr = nr.lowerEndPoint();
 				nr_u.floor();
@@ -1067,7 +1068,7 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					mstruct = mstruct[1].number().imaginaryPart();
 					if(!nr.isZero()) {
 						mstruct += nr;
-						mstruct.last() *= CALCULATOR->v_pi;
+						mstruct.last() *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 					}
 					return true;
 				}
@@ -1092,8 +1093,8 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {mstruct.set(180, 1, 0); break;}
 					case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 1, 0); break;}
-					case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->v_pi); break;}
-					default: {mstruct.set(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
+					case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+					default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
 				}
 			} else {
 				mstruct.clear();
@@ -1103,8 +1104,8 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			switch(eo.parse_options.angle_unit) {
 				case ANGLE_UNIT_DEGREES: {mstruct.set(90, 1, 0); break;}
 				case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 1, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->v_pi); mstruct.multiply(nr_half); break;}
-				default: {mstruct.set(CALCULATOR->v_pi); mstruct.multiply(nr_half); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); break;}
+				default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
 			}
 			if(b_neg) mstruct.negate();
 		} else if(!msave.isZero()) {
@@ -1117,26 +1118,26 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			if(!new_nr.number().divide(mstruct.number().realPart())) return -1;
 			if(mstruct.number().realPartIsNegative()) {
 				if(mstruct.number().imaginaryPartIsNegative()) {
-					mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
 					switch(eo.parse_options.angle_unit) {
 						case ANGLE_UNIT_DEGREES: {mstruct.add(-180); break;}
 						case ANGLE_UNIT_GRADIANS: {mstruct.add(-200); break;}
-						case ANGLE_UNIT_RADIANS: {mstruct.subtract(CALCULATOR->v_pi); break;}
-						default: {MathStructure msub(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) msub *= CALCULATOR->getRadUnit(); mstruct.subtract(msub);}
+						case ANGLE_UNIT_RADIANS: {mstruct.subtract(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+						default: {MathStructure msub(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) msub *= CALCULATOR->getRadUnit(); mstruct.subtract(msub);}
 					}
 				} else if(mstruct.number().imaginaryPartIsNonNegative()) {
-					mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
 					switch(eo.parse_options.angle_unit) {
 						case ANGLE_UNIT_DEGREES: {mstruct.add(180); break;}
 						case ANGLE_UNIT_GRADIANS: {mstruct.add(200); break;}
-						case ANGLE_UNIT_RADIANS: {mstruct.add(CALCULATOR->v_pi); break;}
-						default: {MathStructure madd(CALCULATOR->v_pi); if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit(); mstruct.add(madd);}
+						case ANGLE_UNIT_RADIANS: {mstruct.add(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+						default: {MathStructure madd(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit(); mstruct.add(madd);}
 					}
 				} else {
 					FR_FUNCTION(arg)
 				}
 			} else {
-				mstruct.set(CALCULATOR->f_atan, &new_nr, NULL);
+				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
 			}
 		}
 		return 1;
@@ -1145,6 +1146,20 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		goto arg_test_non_number;
 	}
 	return -1;
+}
+
+IsNumberFunction::IsNumberFunction() : MathFunction("isNumber", 1) {
+}
+int IsNumberFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	if(!mstruct.isNumber()) mstruct.eval(eo);
+	if(mstruct.isNumber()) {
+		mstruct.number().setTrue();
+	} else {
+		mstruct.clear();
+		mstruct.number().setFalse();
+	}
+	return 1;
 }
 
 #define IS_NUMBER_FUNCTION(x, y) x::x() : MathFunction(#y, 1) {} int x::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {mstruct = vargs[0]; if(!mstruct.isNumber()) mstruct.eval(eo); if(mstruct.isNumber() && mstruct.number().y()) {mstruct.number().setTrue();} else {mstruct.clear(); mstruct.number().setFalse();} return 1;}
