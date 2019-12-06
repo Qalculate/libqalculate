@@ -1586,9 +1586,9 @@ int AcoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		mstruct.last()[0].negate();
 		return 1;
 	}
-	Number nr = mstruct.number();
+	Number nr(vargs[0].number());
 	if(!nr.acosh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
-		return -1;
+		return 0;
 	}
 	mstruct = nr;
 	return 1;

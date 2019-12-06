@@ -39,7 +39,7 @@ bool combine_powers(MathStructure &m, const MathStructure &x_var, const Evaluati
 		if(m[i].isPower() && !m[i][0].contains(x_var, true) && m[i][1].contains(x_var, true)) {
 			for(size_t i2 = i + 1; i2 < m.size(); i2++) {
 				// a^(f(x))*b^(g(x))=e^(f(x)/ln(a)+g(x)/ln(b))
-				if(m[i2].isPower() && !m[i][0].contains(x_var, true) && m[i][1].contains(x_var, true)) {
+				if(m[i2].isPower() && !m[i2][0].contains(x_var, true) && m[i2][1].contains(x_var, true)) {
 					if(m[i2][0] != m[i][0]) {
 						if(!m[i2][0].isVariable() || m[i2][0].variable()->id() != VARIABLE_ID_E) {
 							MathStructure mln(m[i2][0]);
