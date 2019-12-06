@@ -33,19 +33,32 @@ using std::endl;
 
 #define REPRESENTS_FUNCTION(x, y) x::x() : MathFunction(#y, 1) {} int x::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {mstruct = vargs[0]; mstruct.eval(eo); if(mstruct.y()) {mstruct.clear(); mstruct.number().setTrue();} else {mstruct.clear(); mstruct.number().setFalse();} return 1;}
 
-void replace_infinity_v(MathStructure &m) {
+bool replace_infinity_v(MathStructure &m) {
 	if(m.isVariable() && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().isNumber() && ((KnownVariable*) m.variable())->get().number().isInfinite(false)) {
 		m = ((KnownVariable*) m.variable())->get();
+		return true;
 	}
-	for(size_t i = 0; i < m.size(); i++) replace_infinity_v(m[i]);
+	bool b_ret = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(replace_infinity_v(m[i])) b_ret = true;
+	}
+	return b_ret;
+}
+bool contains_infinity_v(const MathStructure &m) {
+	if(m.isVariable() && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().isNumber() && ((KnownVariable*) m.variable())->get().number().isInfinite(false)) {
+		return true;
+	}
+	bool b_ret = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_infinity_v(m[i])) b_ret = true;
+	}
+	return b_ret;
 }
 
 bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2) {
-	if(m1.containsInfinity(true, true, false) || m2.containsInfinity(true, true, false)) {
+	if(contains_infinity_v(m1) || contains_infinity_v(m2)) {
 		MathStructure m1b(m1), m2b(m2);
-		replace_infinity_v(m1b);
-		replace_infinity_v(m2b);
-		return create_interval(mstruct, m1b, m2b);
+		if(replace_infinity_v(m1b) || replace_infinity_v(m2b)) return create_interval(mstruct, m1b, m2b);
 	}
 	if(m1 == m2) {
 		mstruct.set(m1, true);
