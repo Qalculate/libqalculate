@@ -350,31 +350,63 @@ bool check_zero_div(const MathStructure &m, const MathStructure &x_var, const Ev
 
 // 1/(ln(x)+5)=1/(ln(x*e^5)) if x>0
 bool combine_ln(MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo, int depth = 0) {
-	if(m.isAddition() && depth > 0) {
-		size_t i_log = 0;
+	if(m.isAddition() && depth > 0 && m.containsFunctionId(FUNCTION_ID_LOG)) {
+		size_t i_log = 0, i_mul_log = 0;
 		bool b = false;
-		for(; i_log < m.size(); i_log++) {
-			if(m[i_log].isFunction() && m[i_log].function()->id() == FUNCTION_ID_LOG && m[i_log].size() == 1 && m[i_log][0].contains(x_var) && m[i_log][0].compare(m_zero) == COMPARISON_RESULT_LESS) {
+		MathStructure *mi = NULL;
+		for(size_t i = 0; i < m.size(); i++) {
+			if(!b && m[i].isMultiplication() && m[i].containsFunctionId(FUNCTION_ID_LOG) && m[i].contains(x_var, true)) {
+				for(size_t i2 = 0; i2 < m[i].size(); i2++) {
+					if(!b && m[i][i2].isFunction() && m[i][i2].function()->id() == FUNCTION_ID_LOG && m[i][i2].size() == 1 && m[i][i2][0].contains(x_var)) {
+						b = true;
+						i_log = i;
+						i_mul_log = i2;
+					} else if(m[i][i2].containsRepresentativeOf(x_var, true, true) != 0 || !m[i][i2].representsReal(true)) {
+						b = false;
+						break;
+					}
+				}
+				if(!b) break;
+			} else if(!b && m[i].isFunction() && m[i].function()->id() == FUNCTION_ID_LOG && m[i].size() == 1 && m[i][0].contains(x_var)) { 
 				b = true;
+				i_log = i;
+				break;
+			} else if(!mi && m[i].isMultiplication() && m[i].size() == 2 && m[i][1].isVariable() && m[i][1].variable()->id() == VARIABLE_ID_PI && m[i][0].isNumber() && m[i][0].number().hasImaginaryPart() && !m[i][0].number().hasRealPart() && m[i][0].number().internalImaginary()->isReal()) {
+				mi = &m[i][0];
+			} else if(m[i].containsRepresentativeOf(x_var, true, true) != 0 || !m[i].representsReal(true)) {
+				b = false;
 				break;
 			}
 		}
-		if(b) {
-			for(size_t i = 0; i < m.size(); i++) {
-				if(i != i_log && m[i].containsRepresentativeOf(x_var, true, true) != 0) {
-					b = false;
-					break;
-				}
-			}
-		}
-		if(b) {
-			MathStructure m_e(CALCULATOR->getVariableById(VARIABLE_ID_E));
-			MathStructure mpow(m);
-			mpow.delChild(i_log + 1, true);
-			m_e.calculateRaise(mpow, eo);
+		if(b && ((m[i_log].isMultiplication() && m[i_log][i_mul_log][0].compare(m_zero) == COMPARISON_RESULT_LESS) || (m[i_log].isFunction() && m[i_log][0].compare(m_zero) == COMPARISON_RESULT_LESS))) {
+			MathStructure mmul(1, 1, 0);
+			if(mi) mmul = *mi->number().internalImaginary();
+			MathStructure *m_e = new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_E));
+			MathStructure *mpow = new MathStructure;
+			mpow->set_nocopy(m);
+			mpow->delChild(i_log + 1, true);
+			if(!mmul.isOne()) mpow->calculateDivide(mmul, eo);
+			m_e->raise_nocopy(mpow);
+			m_e->calculateRaiseExponent(eo);
 			m.setToChild(i_log + 1, true);
-			m[0] *= m_e;
+			if(m.isMultiplication()) {
+				MathStructure *mexp = new MathStructure;
+				mexp->set_nocopy(m);
+				mexp->delChild(i_mul_log + 1, true);
+				if(!mmul.isOne()) mexp->calculateDivide(mmul, eo);
+				m.setToChild(i_mul_log + 1, true);
+				m[0].raise_nocopy(mexp);
+				m[0].calculateRaiseExponent(eo);
+			} else if(!mmul.isOne()) {
+				MathStructure *mexp = new MathStructure(mmul);
+				mexp->calculateInverse(eo);
+				m[0].raise_nocopy(mexp);
+				m[0].calculateRaiseExponent(eo);
+			}
+			m[0].multiply_nocopy(m_e);
+			m[0].calculateMultiplyLast(eo);
 			m.childUpdated(1);
+			if(!mmul.isOne()) {m.multiply(mmul); m.swapChildren(1, 2);}
 			return true;
 		}
 	}
@@ -384,6 +416,9 @@ bool combine_ln(MathStructure &m, const MathStructure &x_var, const EvaluationOp
 			m.childUpdated(i + 1);
 			b_ret = true;
 		}
+	}
+	if(b_ret) {
+		m.calculatesub(eo, eo, false);
 	}
 	return b_ret;
 }
@@ -4119,7 +4154,9 @@ bool contains_imaginary(const MathStructure &m) {
 }
 
 int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions &eo_pre, bool simplify_first, int use_abs, bool definite_integral, bool try_abs, int max_part_depth, vector<MathStructure*> *parent_parts) {
+
 	if(CALCULATOR->aborted()) CANNOT_INTEGRATE
+
 	EvaluationOptions eo = eo_pre;
 	eo.protected_function = CALCULATOR->getFunctionById(FUNCTION_ID_INTEGRATE);
 	EvaluationOptions eo2 = eo;
@@ -4129,6 +4166,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 	EvaluationOptions eo_t = eo;
 	eo_t.approximation = APPROXIMATION_TRY_EXACT;
 	eo_t.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
+
 	if(simplify_first) {
 		unformat(eo_pre);
 		calculateFunctions(eo2);
@@ -4171,7 +4209,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 		calculatesub(eo2, eo2);
 		combine_ln(*this, x_var, eo2);
 	}
-	
+
 	// x: x^2/2
 	if(equals(x_var)) {
 		raise(2);
@@ -4201,7 +4239,6 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 		if(!b) return false;
 		return true;
 	} else if(m_type == STRUCT_MULTIPLICATION) {
-	
 		// a*f(x): a * integral of f(x)
 		MathStructure mstruct;
 		bool b = false;
@@ -5063,7 +5100,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 					}
 					MathStructure loga(1, 1, 0);
 					if(CHILD(0) != CALCULATOR->getVariableById(VARIABLE_ID_E)) {loga = CHILD(0); loga.transformById(FUNCTION_ID_LOG);}
-					loga ^= nr_half;;
+					loga ^= nr_half;
 					MathStructure merf(x_var);
 					if(!mmul2.isOne()) merf *= mmul2;
 					merf *= nr_two;
@@ -5072,13 +5109,13 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 					merf *= nr_half;
 					if(!sqrt2.isOne()) merf *= sqrt2;
 					merf.transformById(FUNCTION_ID_ERF);
-					MathStructure mepow(mmul);
-					if(!mepow.isOne()) mepow ^= nr_two;
-					mepow *= Number(1, 4);
-					if(!mmul2.isOne()) mepow /= mmul2;
-					if(!madd.isZero()) mepow += madd;
-					set(CALCULATOR->getVariableById(VARIABLE_ID_E));
-					raise(mepow);
+					MathStructure mapow(mmul);
+					if(!mapow.isOne()) mapow ^= nr_two;
+					mapow *= Number(1, 4);
+					if(!mmul2.isOne()) mapow /= mmul2;
+					if(!madd.isZero()) mapow += madd;
+					SET_CHILD_MAP(0)
+					raise(mapow);
 					multiply(merf);
 					multiply(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					LAST ^= nr_half;
@@ -7132,6 +7169,8 @@ bool replace_abs(MathStructure &mstruct, const MathStructure &mabs, bool neg) {
 	}
 	return b_ret;
 }
+
+// Check definite integral for functions that cannot be calculated
 bool contains_incalc_function(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(contains_incalc_function(mstruct[i], eo)) return true;
@@ -7142,7 +7181,7 @@ bool contains_incalc_function(const MathStructure &mstruct, const EvaluationOpti
 			MathStructure mtest(mstruct[0]);
 			mtest.eval(eo);
 			return !mtest.isNumber() || !(mtest.number() >= -6) || !(mtest.number() <= 6);
-		} else if((mstruct.function()->id() == FUNCTION_ID_EI || mstruct.function()->id() == FUNCTION_ID_ERF || mstruct.function()->id() == FUNCTION_ID_ERFI) && mstruct.size() == 1 && !mstruct[0].representsReal()) {
+		} else if(mstruct.function()->id() == FUNCTION_ID_POLYLOG || ((mstruct.function()->id() == FUNCTION_ID_EI || mstruct.function()->id() == FUNCTION_ID_ERF || mstruct.function()->id() == FUNCTION_ID_ERFI) && mstruct.size() == 1 && !mstruct[0].representsReal())) {
 			MathStructure mtest(mstruct);
 			mtest.eval(eo);
 			return !mtest.isNumber();
@@ -7292,6 +7331,7 @@ bool MathStructure::integrate(const MathStructure &lower_limit, const MathStruct
 		if(definite_integral && !simplify_first) combine_ln(mstruct, x_var, eo2);
 
 		int b = mstruct.integrate(x_var, eo2, simplify_first, use_abs, definite_integral, true, (definite_integral && eo.approximation != APPROXIMATION_EXACT && PRECISION < 20) ? 2 : 4);
+
 		if(b < 0) {
 			restore_intervals(mstruct, mbak, vars, eo);
 			CALCULATOR->endTemporaryStopMessages(true);
@@ -7419,6 +7459,8 @@ bool MathStructure::integrate(const MathStructure &lower_limit, const MathStruct
 				mstruct = mbak;
 			}
 		}
+
+		// Calculate definite integral with abs() or root() with appropriate intervals
 		MathStructure *mabs = find_abs_x(mbak, x_var);
 		if(mabs && !is_differentiable((*mabs)[0])) mabs = NULL;
 		if(mabs && !(*mabs)[0].representsNonComplex(true)) {
@@ -7612,14 +7654,14 @@ bool MathStructure::integrate(const MathStructure &lower_limit, const MathStruct
 			}
 		}
 		CALCULATOR->endTemporaryStopMessages();
-		//if(mstruct.containsInterval() && eo.approximation == APPROXIMATION_EXACT) {
-		//	CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
+		if(mstruct.containsInterval() && eo.approximation == APPROXIMATION_EXACT) {
+			CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
 			if(simplify_first) {
 				set(mstruct);
 				replace(x_var, x_var_pre);
 			}
 			return false;
-		//}
+		}
 	} else {
 		CALCULATOR->endTemporaryStopMessages();
 		CALCULATOR->endTemporaryStopMessages();

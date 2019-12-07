@@ -1058,12 +1058,13 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 			if(!allow_function && !allow_unknown && !allow_variable && rand() % 2 == 0) str = rnd_number(true, only_integers, false, allow_complex, allow_interval);
 			else str = rnd_var();
 		} else {
+#define LAST_FUNC 35
 			if(!allow_unknown) {
-				if(allow_function) r = rand() % 19 + 4;
+				if(allow_function) r = rand() % (LAST_FUNC - 4)  + 4;
 				else r = rand() % 2 + 4;
 			} else {
 				int au2 = 3 - allow_unknown % 3;
-				r = (rand() % ((allow_function ? 22 + allow_unknown : 5) - au2)) + 4 - allow_unknown;
+				r = (rand() % ((allow_function ? LAST_FUNC - 1 + allow_unknown : 5) - au2)) + 4 - allow_unknown;
 				if(r < 4 - allow_unknown % 3) {
 					if(r < 0) r = -r;
 					if(allow_unknown % 3 == 1) r = 3;
@@ -1091,20 +1092,20 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 					str += ')';
 					return str;
 				}
-				case 8: {str = "sin("; break;}
-				case 9: {str = "cos("; break;}
-				case 10: {str = "tan("; break;}
-				case 11: {str = "sinh("; break;}
-				case 12: {str = "cosh("; break;}
-				case 13: {str = "tanh("; break;}
-				case 14: {str = "asin("; break;}
-				case 15: {str = "acos("; break;}
-				case 16: {str = "atan("; break;}
-				case 17: {str = "asinh("; break;}
-				case 18: {str = "acosh("; break;}
-				case 19: {str = "atanh("; break;}
-				case 20: {str = "ln("; break;}
-				case 21: {str = "abs("; break;}
+				case 8: {str = "ln("; break;}
+				case 9: {str = "abs("; break;}
+				case 10: {str = "sin("; break;}
+				case 11: {str = "cos("; break;}
+				case 12: {str = "tan("; break;}
+				case 13: {str = "sinh("; break;}
+				case 14: {str = "cosh("; break;}
+				case 15: {str = "tanh("; break;}
+				case 16: {str = "asin("; break;}
+				case 17: {str = "acos("; break;}
+				case 18: {str = "atan("; break;}
+				case 19: {str = "asinh("; break;}
+				case 20: {str = "acosh("; break;}
+				case 21: {str = "atanh("; break;}
 				case 22: {str = "sqrt("; break;}
 				case 23: {str = "cbrt("; break;}
 				case 24: {str = "erf("; break;}
@@ -1959,8 +1960,8 @@ int main(int argc, char *argv[]) {
 		CALCULATOR->parse(&mp, str, evalops.parse_options);
 		cerr << str << endl;
 		if(mp.contains(CALCULATOR->v_x)) {
-			a.set(rnd_number(false, true, false, false, false));
-			b.set(rnd_number(false, true, false, false, false));
+			a.set(rnd_number(false, false, false, false, false));
+			b.set(rnd_number(false, false, false, false, false));
 			cerr << "A" << endl;
 			if(a < b) test_integration5(mp, a, b);
 			else test_integration5(mp, b, a);

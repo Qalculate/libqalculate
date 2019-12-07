@@ -2710,7 +2710,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				}
 				if(o_number.isPositive()) {
 					Number nr_root(mstruct.number().denominator());
-					if(eo.split_squares && o_number.isInteger() && nr_root.isLessThanOrEqualTo(LARGEST_RAISED_PRIME_EXPONENT)) {
+					if(eo.split_squares && o_number.isInteger() && o_number.integerLength() < 100000L && nr_root.isLessThanOrEqualTo(LARGEST_RAISED_PRIME_EXPONENT)) {
 						int root = nr_root.intValue();
 						nr.set(1, 1, 0);
 						bool b = true, overflow;
@@ -2837,13 +2837,15 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		if(o_number.isRational() && !o_number.isInteger() && !o_number.numeratorIsOne() && mstruct.number().isRational()) {
 			Number num(o_number.numerator());
 			Number den(o_number.denominator());
-			set(num, true);
-			calculateRaise(mstruct, eo);
-			multiply(den);
-			LAST.calculateRaise(mstruct, eo);
-			LAST.calculateInverse(eo);
-			calculateMultiplyLast(eo);
-			return 1;
+			if(den.integerLength() < 100000L && num.integerLength() < 100000L) {
+				set(num, true);
+				calculateRaise(mstruct, eo);
+				multiply(den);
+				LAST.calculateRaise(mstruct, eo);
+				LAST.calculateInverse(eo);
+				calculateMultiplyLast(eo);
+				return 1;
+			}
 		}
 		// If base numerator is larger than denominator, invert base and negate exponent
 		if(o_number.isRational() && !o_number.isInteger() && !o_number.isZero() && ((o_number.isNegative() && o_number.isGreaterThan(nr_minus_one) && mstruct.number().isInteger()) || (o_number.isPositive() && o_number.isLessThan(nr_one)))) {
@@ -2853,6 +2855,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		}
 		return -1;
 	}
+
 	if(mstruct.isOne()) {
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 2;
