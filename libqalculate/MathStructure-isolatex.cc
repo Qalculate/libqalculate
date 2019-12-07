@@ -842,6 +842,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						b = mtest.isOne();
 					}
 				}
+
 				if(b) {
 					int a_iv = find_interval_precision(mstruct_a);
 					int b_iv = find_interval_precision(mstruct_b);
@@ -1139,7 +1140,6 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							ac.calculateMultiply(mstruct_a, eo3);
 							ac.calculateMultiply(CHILD(1), eo3);
 							b2.calculateAdd(ac, eo3);
-
 							b2.calculateRaise(nr_half, eo3);
 							mstruct_b.calculateNegate(eo3);
 							MathStructure mstruct_1(mstruct_b);
@@ -1180,6 +1180,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 			}
+
 			if(CALCULATOR->aborted()) return false;
 
 			// a*b^(dx)+cx=0 => -lambertw(a*d*log(b)/c)/(d*log(b))

@@ -4955,7 +4955,7 @@ bool Number::zeta() {
 		mpfr_zeta(fl_value, fl_value, MPFR_RNDU);
 		mpfr_swap(fl_value, fu_value);
 	} else {
-		if(isInterval()) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_ZETA)->name().c_str(), NULL);
+		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_ZETA)->name().c_str(), NULL);
 		mpfr_zeta(fu_value, fu_value, MPFR_RNDU);
 		mpfr_zeta(fl_value, fl_value, MPFR_RNDD);
 		if(mpfr_cmp(fu_value, fl_value) < 0) mpfr_swap(fu_value, fl_value);
@@ -5108,71 +5108,76 @@ bool Number::erf() {
 					nr_u.intervalToMidValue();
 					if(!nr_l.erf() || !nr_u.erf()) return false;
 				}
+				if(precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_ERF)->name().c_str(), NULL);
 				setPrecisionAndApproximateFrom(nr_l);
 				setPrecisionAndApproximateFrom(nr_u);
-				CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_ERF)->name().c_str(), NULL);
 				return setInterval(nr_l, nr_u, true);
 			}
 			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 			if(!CALCULATOR->usesIntervalArithmetic()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
-			Number nr_bak(*this);
 			mpfr_clear_flags();
-			if(!setToFloatingPoint()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
+			int prec_bak = PRECISION;
+			CALCULATOR->setPrecision(PRECISION * 2 + 20);
+			Number v(*this);
+			if(!v.setToFloatingPoint()) {CALCULATOR->setPrecision(prec_bak); CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
 			Number xpow, num, den, yprev, yprevi, ytest, ytesti;
-			Number x(*this);
+			Number x(v);
 			Number k(1, 1);
 			Number kfac(1, 1);
-			Number wprec(1, 1, -(PRECISION + 10));
-			yprev = *this;
+			Number wprec(1, 1, -(prec_bak + 20));
+			Number wprec2(1, 1, -prec_bak);
+			yprev = v;
 			yprev.clearImaginary();
-			if(i_value) yprevi.set(*i_value);
-			while(true) {
+			if(v.internalImaginary()) yprevi.set(*v.internalImaginary());
+			for(int i = 0; ; i++) {
 				den = k; den *= 2;
 				xpow = k; xpow *= 2; xpow++;
 				num = x;
-				if(CALCULATOR->aborted() || !kfac.multiply(k) || !den.multiply(kfac) || !den.add(kfac) || !num.raise(xpow) || !num.divide(den) || (k.isOdd() && !num.negate()) || !add(num) || includesInfinity()) {
+				if(i > PRECISION * 100 || CALCULATOR->aborted() || !kfac.multiply(k) || !den.multiply(kfac) || !den.add(kfac) || !num.raise(xpow) || !num.divide(den) || (k.isOdd() && !num.negate()) || !v.add(num) || v.includesInfinity()) {
+					CALCULATOR->setPrecision(prec_bak);
 					CALCULATOR->endTemporaryEnableIntervalArithmetic();
-					set(nr_bak);
 					return false;
 				}
-				if(isInterval() && precision(true) < PRECISION + 10) {
-					if(precision(true) < PRECISION) {
+				if(v.isInterval() && v.precision(true) < prec_bak + 10) {
+					if(v.precision(true) < prec_bak) {
+						CALCULATOR->setPrecision(prec_bak);
 						CALCULATOR->endTemporaryEnableIntervalArithmetic();
-						set(nr_bak);
 						return false;
 					}
-					wprec.set(1, 1, -PRECISION);
+					wprec.set(1, 1, -prec_bak);
+					wprec2.set(1, 1, -prec_bak + 2);
 				}
 				ytest = yprev;
 				ytesti = yprevi;
-				yprev = *this;
+				yprev = v;
 				yprev.clearImaginary();
-				if(i_value) yprevi.set(*i_value);
+				if(v.internalImaginary()) yprevi.set(*v.internalImaginary());
 				else yprevi.clear();
 				if(!ytest.subtract(yprev) || (yprev.isNonZero() && !ytest.divide(yprev)) || !ytest.abs() || !ytesti.subtract(yprevi) || (yprevi.isNonZero() && !ytesti.divide(yprevi)) || !ytesti.abs()) {
+					CALCULATOR->setPrecision(prec_bak);
 					CALCULATOR->endTemporaryEnableIntervalArithmetic();
-					set(nr_bak);
 					return false;
 				}
-				if(ytest < wprec && ytesti < wprec) {
+				if((ytest < wprec || (!ytest.isNonZero() && ytest < wprec2)) && (ytesti < wprec || (!ytesti.isNonZero() && ytesti < wprec2))) {
 					CALCULATOR->endTemporaryEnableIntervalArithmetic();
 					if(ytest.isZero()) {ytest++; ytest.setToFloatingPoint(); mpfr_nextabove(ytest.internalUpperFloat()); ytest--;}
 					if(ytesti.isZero()) {ytesti++; ytesti.setToFloatingPoint(); mpfr_nextabove(ytesti.internalUpperFloat()); ytesti--;}
 					ytest.setImaginaryPart(ytesti);
-					setRelativeUncertainty(ytest, !CREATE_INTERVAL);
+					ytest *= 10;
+					CALCULATOR->setPrecision(prec_bak);
+					v.setRelativeUncertainty(ytest, !CREATE_INTERVAL);
 					break;
 				}
 				k++;
 			}
-			if(!testFloatResult(true)) {
-				set(nr_bak);
+			if(!v.testFloatResult(true)) {
 				return false;
 			}
 			Number nr_pi; nr_pi.pi();
-			if(!multiply(2) || !nr_pi.sqrt() || !divide(nr_pi)) {
-				set(nr_bak);
+			if(!v.multiply(2) || !nr_pi.sqrt() || !v.divide(nr_pi)) {
 				return false;
 			}
+			set(v);
 			b_approx = true;
 			return true;
 		}
@@ -5202,113 +5207,11 @@ bool Number::erf() {
 bool Number::erfi() {
 	if(hasImaginaryPart()) {
 		if(hasRealPart()) {
-			if(includesInfinity()) return false;
-			if(isInterval(false)) {
-				Number nr_l, nr_u;
-				if(i_value->isInterval()) {
-					Number nr_il, nr_iu;
-					nr_il.setInternal(i_value->internalLowerFloat());
-					nr_iu.setInternal(i_value->internalUpperFloat());
-					if(isInterval(true)) {
-						Number nr_l2, nr_u2;
-						nr_l.setInternal(fl_value);
-						nr_u.setInternal(fu_value);
-						nr_l.setImaginaryPart(nr_il);
-						nr_u.setImaginaryPart(nr_iu);
-						nr_l.intervalToMidValue();
-						nr_u.intervalToMidValue();
-						nr_l2.setInternal(fl_value);
-						nr_u2.setInternal(fu_value);
-						nr_l2.setImaginaryPart(nr_iu);
-						nr_u2.setImaginaryPart(nr_il);
-						nr_l2.intervalToMidValue();
-						nr_u2.intervalToMidValue();
-						if(!nr_l.erfi() || !nr_u.erfi() || !nr_l2.erfi() || !nr_u2.erfi()) return false;
-						nr_u.setInterval(nr_u, nr_u2);
-						nr_l.setInterval(nr_l, nr_l2);
-					} else {
-						nr_l.set(*this); nr_u.set(*this);
-						nr_l.setImaginaryPart(nr_il);
-						nr_u.setImaginaryPart(nr_iu);
-						nr_l.intervalToMidValue();
-						nr_u.intervalToMidValue();
-						if(!nr_l.erfi() || !nr_u.erfi()) return false;
-					}
-				} else {
-					nr_l.setInternal(fl_value);
-					nr_u.setInternal(fu_value);
-					nr_l.setImaginaryPart(*i_value);
-					nr_u.setImaginaryPart(*i_value);
-					nr_l.intervalToMidValue();
-					nr_u.intervalToMidValue();
-					if(!nr_l.erfi() || !nr_u.erfi()) return false;
-				}
-				setPrecisionAndApproximateFrom(nr_l);
-				setPrecisionAndApproximateFrom(nr_u);
-				CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_ERFI)->name().c_str(), NULL);
-				return setInterval(nr_l, nr_u, true);
-			}
-			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
-			if(!CALCULATOR->usesIntervalArithmetic()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
 			Number nr_bak(*this);
-			mpfr_clear_flags();
-			if(!setToFloatingPoint()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
-			Number xpow, num, den, yprev, yprevi, ytest, ytesti;
-			Number x(*this);
-			Number k(1, 1);
-			Number kfac(1, 1);
-			Number wprec(1, 1, -(PRECISION + 10));
-			yprev = *this;
-			yprev.clearImaginary();
-			if(i_value) yprevi.set(*i_value);
-			while(true) {
-				den = k; den *= 2;
-				xpow = k; xpow *= 2; xpow++;
-				num = x;
-				if(CALCULATOR->aborted() || !kfac.multiply(k) || !den.multiply(kfac) || !den.add(kfac) || !num.raise(xpow) || !num.divide(den) || !add(num) || includesInfinity()) {
-					CALCULATOR->endTemporaryEnableIntervalArithmetic();
-					set(nr_bak);
-					return false;
-				}
-				if(isInterval() && precision(true) < PRECISION + 10) {
-					if(precision(true) < PRECISION) {
-						CALCULATOR->endTemporaryEnableIntervalArithmetic();
-						set(nr_bak);
-						return false;
-					}
-					wprec.set(1, 1, -PRECISION);
-				}
-				ytest = yprev;
-				ytesti = yprevi;
-				yprev = *this;
-				yprev.clearImaginary();
-				if(i_value) yprevi.set(*i_value);
-				else yprevi.clear();
-				if(!ytest.subtract(yprev) || (yprev.isNonZero() && !ytest.divide(yprev)) || !ytest.abs() || !ytesti.subtract(yprevi) || (yprevi.isNonZero() && !ytesti.divide(yprevi)) || !ytesti.abs()) {
-					CALCULATOR->endTemporaryEnableIntervalArithmetic();
-					set(nr_bak);
-					return false;
-				}
-				if(ytest < wprec && ytesti < wprec) {
-					CALCULATOR->endTemporaryEnableIntervalArithmetic();
-					if(ytest.isZero()) {ytest++; ytest.setToFloatingPoint(); mpfr_nextabove(ytest.internalUpperFloat()); ytest--;}
-					if(ytesti.isZero()) {ytesti++; ytesti.setToFloatingPoint(); mpfr_nextabove(ytesti.internalUpperFloat()); ytesti--;}
-					ytest.setImaginaryPart(ytesti);
-					setRelativeUncertainty(ytest, !CREATE_INTERVAL);
-					break;
-				}
-				k++;
-			}
-			if(!testFloatResult(true)) {
+			if(!multiply(nr_one_i) || !erf() || !multiply(nr_minus_i)) {
 				set(nr_bak);
 				return false;
 			}
-			Number nr_pi; nr_pi.pi();
-			if(!multiply(2) || !nr_pi.sqrt() || !divide(nr_pi)) {
-				set(nr_bak);
-				return false;
-			}
-			b_approx = true;
 			return true;
 		}
 		if(!i_value->erf()) return false;
@@ -6740,9 +6643,9 @@ bool Number::lambertW(const Number &k) {
 				nr_l.intervalToMidValue();
 				nr_u.intervalToMidValue();
 				if(!nr_l.lambertW(k) || !nr_u.lambertW(k)) return false;
+				if(precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_LAMBERT_W)->name().c_str(), NULL);
 				setPrecisionAndApproximateFrom(nr_l);
 				setPrecisionAndApproximateFrom(nr_u);
-				CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_LAMBERT_W)->name().c_str(), NULL);
 				return setInterval(nr_l, nr_u, true);
 			} else {
 				nr_l = realPart();
@@ -6758,7 +6661,7 @@ bool Number::lambertW(const Number &k) {
 					if(k.isZero()) nr_l.setInterval(nr_zero, nr_l);
 					else nr_l.setInterval(nr_minus_inf, nr_l);
 				}
-				if(hasRealPart()) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_LAMBERT_W)->name().c_str(), NULL);
+				if(hasRealPart() && precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_LAMBERT_W)->name().c_str(), NULL);
 				return setInterval(nr_l, nr_u, true);
 			}
 		} else {
@@ -6777,7 +6680,7 @@ bool Number::lambertW(const Number &k) {
 			} else {
 				if(!isNonZero()) nr_l.setInterval(nr_minus_inf, nr_l);
 			}
-			if(hasImaginaryPart()) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_LAMBERT_W)->name().c_str(), NULL);
+			if(hasImaginaryPart() && precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_LAMBERT_W)->name().c_str(), NULL);
 			return setInterval(nr_l, nr_u, true);
 		}
 	}
@@ -6793,26 +6696,28 @@ bool Number::lambertW(const Number &k) {
 	
 	CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 	if(!CALCULATOR->usesIntervalArithmetic()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
-	
-	Number nr_bak(*this);
 	mpfr_clear_flags();
-	if(!setToFloatingPoint()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
-	Number z(*this);
-	Number wprec(1, 1, -(PRECISION + 10));
+	int prec_bak = PRECISION;
+	CALCULATOR->setPrecision(PRECISION * 2 + 20);
+	Number v(*this);
+	if(!v.setToFloatingPoint()) {CALCULATOR->setPrecision(prec_bak); CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
+	Number z(v);
+	Number wprec(1, 1, -(prec_bak + 20));
+	Number wprec2(1, 1, -prec_bak);
 	bool ip1 = true;
 	if(k.isZero() || k.isMinusOne()) {
 		if(ip1 && !k.isOne()) {
 			Number nr(-1, 2); nr.add(z); nr.abs();
 			if(nr <= nr_half || (k.isZero() && nr <= Number(5, 8))) {
 				if(k.isZero()) {
-					Number ndiv(z); if(!ndiv.multiply(2) || !ndiv.add(1) || !ndiv.multiply(Number("0.827184")) || !ndiv.add(2) || !multiply(Number("7.061302897")) || !add(Number("0.1237166")) || !multiply(Number("0.35173371")) || !divide(ndiv)) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); set(nr_bak); return false;}
+					Number ndiv(z); if(!ndiv.multiply(2) || !ndiv.add(1) || !ndiv.multiply(Number("0.827184")) || !ndiv.add(2) || !v.multiply(Number("7.061302897")) || !v.add(Number("0.1237166")) || !v.multiply(Number("0.35173371")) || !v.divide(ndiv)) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;}
 				} else {
 					Number i1("2.2591588985"); i1.setImaginaryPart(Number("4.22096"));
 					Number i2("-14.073271"); i2.setImaginaryPart(Number("-33.767687754"));
 					Number i3("-12.7127"); i3.setImaginaryPart(Number("19.071643"));
 					Number i4("-17.23103"); i4.setImaginaryPart(Number("10.629721"));
-					Number n1p2z(z); if(!n1p2z.multiply(2) || !n1p2z.add(1) || !i4.multiply(n1p2z) || !i4.add(2) || !i3.multiply(n1p2z)) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); set(nr_bak); return false;}
-					set(i2); if(!multiply(z) || !add(i3) || !multiply(i1) || !divide(i4) || !negate()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); set(nr_bak); return false;}
+					Number n1p2z(z); if(!n1p2z.multiply(2) || !n1p2z.add(1) || !i4.multiply(n1p2z) || !i4.add(2) || !i3.multiply(n1p2z)) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;}
+					v.set(i2); if(!v.multiply(z) || !v.add(i3) || !v.multiply(i1) || !v.divide(i4) || !v.negate()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;}
 				}
 				ip1 = false;
 			}
@@ -6820,10 +6725,10 @@ bool Number::lambertW(const Number &k) {
 		if(ip1 && (!k.isMinusOne() || z.imaginaryPartIsPositive())) {
 			Number nr(-1, 1); nr.exp(); nr.add(z); nr.abs();
 			if(nr <= 1) {
-				Number p; p.e(); if(!p.multiply(z) || !p.add(1) || !p.multiply(2) || !p.sqrt()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); set(nr_bak); return false;}
-				Number p2(p); if(!p2.square() || !p2.multiply(Number(-1, 3))) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); set(nr_bak); return false;}
-				Number p3(p); if(!p3.raise(nr_three) || !p3.multiply(Number(k.isZero() ? 11 : -11, 72))) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); set(nr_bak); return false;}
-				set(p); if((!k.isZero() && !negate()) || !add(-1) || !add(p2) || !add(p3)) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); set(nr_bak); return false;}
+				Number p; p.e(); if(!p.multiply(z) || !p.add(1) || !p.multiply(2) || !p.sqrt()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;}
+				Number p2(p); if(!p2.square() || !p2.multiply(Number(-1, 3))) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;}
+				Number p3(p); if(!p3.raise(nr_three) || !p3.multiply(Number(k.isZero() ? 11 : -11, 72))) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;}
+				v.set(p); if((!k.isZero() && !v.negate()) || !v.add(-1) || !v.add(p2) || !v.add(p3)) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;}
 				ip1 = false;
 			}
 		}
@@ -6831,58 +6736,60 @@ bool Number::lambertW(const Number &k) {
 	if(ip1) {
 		Number twopiKI;
 		if(!k.isZero()) {
-			twopiKI.pi(); if(!twopiKI.multiply(k) || !twopiKI.multiply(2) || !twopiKI.multiply(nr_one_i)) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); set(nr_bak); return false;}
+			twopiKI.pi(); if(!twopiKI.multiply(k) || !twopiKI.multiply(2) || !twopiKI.multiply(nr_one_i)) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;}
 		}
-		Number logz(z); if(!logz.ln() || !logz.add(twopiKI)) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); set(nr_bak); return false;}
-		set(logz); if(!ln() || !negate() || !add(logz)) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); set(nr_bak); return false;}
+		Number logz(z); if(!logz.ln() || !logz.add(twopiKI)) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;}
+		v.set(logz); if(!v.ln() || !v.negate() || !v.add(logz)) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;}
 	}
 	Number w, wprev, wprevi, wtest, wtesti, wexp, wexpw, wexpw_d, wexpw_dd, wdiff;
-	wprev = *this;
+	wprev = v;
 	wprev.clearImaginary();
-	if(i_value) wprevi.set(*i_value);
-	while(true) {
-		wexp.set(*this); wexp.exp(); // exp(w)
-		wexpw = wexp; wexpw.multiply(*this);  // w*exp(w)
+	if(v.internalImaginary()) wprevi.set(*v.internalImaginary());
+	for(int i = 0; ; i++) {
+		wexp.set(v); wexp.exp(); // exp(w)
+		wexpw = wexp; wexpw.multiply(v);  // w*exp(w)
 		wexpw_d = wexpw;  wexpw_d.add(wexp); // wexp(w)+w*exp(w)
 		wexpw_dd = wexp; wexpw_dd.multiply(2); wexpw_dd.add(wexpw); // 2*wexp(w)+w*exp(w)
 		// w -= 2*(wexpw-z)*wexpw_d/(2*wexpw_d^2-(wexpw-z)*wexpw_dd)
-		if(!wexpw.subtract(z) || !wexpw_dd.multiply(wexpw) || !wexpw.multiply(wexpw_d) || !wexpw.multiply(-2) || !wexpw_d.square() || !wexpw_d.multiply(2) || !wexpw_d.subtract(wexpw_dd) || !wexpw.divide(wexpw_d) || !add(wexpw) || includesInfinity()) {
+		if(i > PRECISION * 100 || !wexpw.subtract(z) || !wexpw_dd.multiply(wexpw) || !wexpw.multiply(wexpw_d) || !wexpw.multiply(-2) || !wexpw_d.square() || !wexpw_d.multiply(2) || !wexpw_d.subtract(wexpw_dd) || !wexpw.divide(wexpw_d) || !v.add(wexpw) || v.includesInfinity()) {
 			CALCULATOR->endTemporaryEnableIntervalArithmetic();
-			set(nr_bak);
+			CALCULATOR->setPrecision(prec_bak);
 			return false;
 		}
-		if(isInterval() && precision(true) < PRECISION + 10) {
-			if(precision(true) < PRECISION) {
+		if(v.isInterval() && v.precision(true) < prec_bak + 10) {
+			if(v.precision(true) < prec_bak) {
+				CALCULATOR->setPrecision(prec_bak);
 				CALCULATOR->endTemporaryEnableIntervalArithmetic();
-				set(nr_bak);
 				return false;
 			}
-			wprec.set(1, 1, -PRECISION);
+			wprec.set(1, 1, -prec_bak);
+			wprec2.set(1, 1, -prec_bak + 2);
 		}
 		wtest = wprev;
 		wtesti = wprevi;
-		wprev = *this;
+		wprev = v;
 		wprev.clearImaginary();
-		if(i_value) wprevi.set(*i_value);
+		if(v.internalImaginary()) wprevi.set(*v.internalImaginary());
 		else wprevi.clear();
 		if(CALCULATOR->aborted() || !wtest.subtract(wprev) || (wprev.isNonZero() && !wtest.divide(wprev)) || !wtest.abs() || !wtesti.subtract(wprevi) || (wprevi.isNonZero() && !wtesti.divide(wprevi)) || !wtesti.abs()) {
 			CALCULATOR->endTemporaryEnableIntervalArithmetic();
-			set(nr_bak);
+			CALCULATOR->setPrecision(prec_bak);
 			return false;
 		}
-		if(wtest < wprec && wtesti < wprec) {
+		if((wtest < wprec || (!wtest.isNonZero() && wtest < wprec2)) && (wtesti < wprec || (!wtesti.isNonZero() && wtesti < wprec2))) {
 			CALCULATOR->endTemporaryEnableIntervalArithmetic();
 			if(wtest.isZero()) {wtest++; wtest.setToFloatingPoint(); mpfr_nextabove(wtest.internalUpperFloat()); wtest--;}
-			if(wtesti.isZero() && hasImaginaryPart() && !b_real) {wtesti++; wtesti.setToFloatingPoint(); mpfr_nextabove(wtesti.internalUpperFloat()); wtesti--;}
+			if(wtesti.isZero() && v.hasImaginaryPart() && !b_real) {wtesti++; wtesti.setToFloatingPoint(); mpfr_nextabove(wtesti.internalUpperFloat()); wtesti--;}
 			wtest.setImaginaryPart(wtesti);
-			setRelativeUncertainty(wtest, !CREATE_INTERVAL);
+			v.setRelativeUncertainty(wtest, !CREATE_INTERVAL);
+			CALCULATOR->setPrecision(prec_bak);
 			break;
 		}
 	}
-	if(!testFloatResult(true)) {
-		set(nr_bak);
+	if(!v.testFloatResult(true)) {
 		return false;
 	}
+	set(v);
 	if(b_real) clearImaginary();
 	b_approx = true;
 	return true;
@@ -7100,9 +7007,11 @@ bool Number::polylog(const Number &o) {
 				nr_u.intervalToMidValue();
 				if(!nr_l.polylog(o) || !nr_u.polylog(o)) return false;
 			}
+			if(o.isNegative() || hasImaginaryPart() || o.hasImaginaryPart() || (isInterval(false) && o.isInterval(false))) {
+				if(precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_POLYLOG)->name().c_str(), NULL);
+			}
 			setPrecisionAndApproximateFrom(nr_l);
 			setPrecisionAndApproximateFrom(nr_u);
-			if(o.isNegative() || hasImaginaryPart() || o.hasImaginaryPart() || (isInterval(false) && o.isInterval(false))) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_POLYLOG)->name().c_str(), NULL);
 			return setInterval(nr_l, nr_u, true);
 		}
 		if(o.isInterval(false)) {
@@ -7145,10 +7054,13 @@ bool Number::polylog(const Number &o) {
 				nr_uo.intervalToMidValue();
 				if(!nr_l.polylog(nr_lo) || !nr_u.polylog(nr_uo)) return false;
 			}
+			if(o.isNegative() || hasImaginaryPart() || o.hasImaginaryPart() || (isInterval(false) && o.isInterval(false))) {
+				if(o.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_POLYLOG)->name().c_str(), NULL);
+			}
 			setPrecisionAndApproximateFrom(nr_l);
 			setPrecisionAndApproximateFrom(nr_u);
-			if(o.isNegative() || hasImaginaryPart() || o.hasImaginaryPart() || (isInterval(false) && o.isInterval(false))) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_POLYLOG)->name().c_str(), NULL);
 			return setInterval(nr_l, nr_u, true);
+			
 		}
 		if(includesInfinity()) return false;
 		Number absx(*this);
@@ -7180,79 +7092,79 @@ bool Number::polylog(const Number &o) {
 		}
 		CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 		if(!CALCULATOR->usesIntervalArithmetic()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
-		Number nr_bak(*this);
 		mpfr_clear_flags();
-		if(!setToFloatingPoint()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
+		int prec_bak = PRECISION;
+		CALCULATOR->setPrecision(PRECISION * 2 + 20);
+		Number v(*this);
+		if(!v.setToFloatingPoint()) {CALCULATOR->setPrecision(prec_bak); CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
 		Number xpow, kpow, yprev, yprevi, ytest, ytesti;
-		Number x(*this);
-		if(i == 2 && !recip()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); set(nr_bak); return false;} 
+		Number x(v);
+		if(i == 2 && !v.recip()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;} 
 		Number oneg(o);
 		oneg.negate();
 		Number k(i == 0 ? 1 : 2, 1);
 		Number kfac(1, 1);
-		Number wprec(1, 1, -(PRECISION + 10));
+		Number wprec(1, 1, -(prec_bak + 20));
+		Number wprec2(1, 1, -prec_bak);
 		if(i == 0) {
-			set(o);
-			if(!zeta()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); set(nr_bak); return false;} 
+			v = o;
+			if(!v.zeta()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;} 
 		}
-		yprev = *this;
+		yprev = v;
 		yprev.clearImaginary();
-		if(i_value) yprevi.set(*i_value);
-		while(true) {
+		if(v.internalImaginary()) yprevi.set(*v.internalImaginary());
+		for(int c = 0; ; c++) {
 			xpow = x;
 			kpow = k;
 			if(i == 0) {
-				if(CALCULATOR->aborted() || !kfac.multiply(k) || !kpow.negate() || !kpow.add(o) || !kpow.zeta() || !xpow.ln() || !xpow.raise(k) || !xpow.multiply(kpow) || !xpow.divide(kfac) || !add(xpow) || includesInfinity()) {
+				if(c > PRECISION * 1000 || CALCULATOR->aborted() || !kfac.multiply(k) || !kpow.negate() || !kpow.add(o) || !kpow.zeta() || !xpow.ln() || !xpow.raise(k) || !xpow.multiply(kpow) || !xpow.divide(kfac) || !v.add(xpow) || v.includesInfinity()) {
 					CALCULATOR->endTemporaryEnableIntervalArithmetic();
-					set(nr_bak);
+					CALCULATOR->setPrecision(prec_bak);
 					return false;
 				}
 			} else {
 				kpow = k;
-				if(CALCULATOR->aborted() || !kpow.raise(oneg) || !xpow.raise(k) || (i == 2 && !xpow.recip()) || !xpow.multiply(kpow) || !add(xpow) || includesInfinity()) {
+				if(c > PRECISION * 1000 || CALCULATOR->aborted() || !kpow.raise(oneg) || !xpow.raise(k) || (i == 2 && !xpow.recip()) || !xpow.multiply(kpow) || !v.add(xpow) || v.includesInfinity()) {
 					CALCULATOR->endTemporaryEnableIntervalArithmetic();
-					set(nr_bak);
+					CALCULATOR->setPrecision(prec_bak);
 					return false;
 				}
 			}
-			if(isInterval() && precision(true) < PRECISION + 10) {
-				if(precision(true) < PRECISION) {
+			if(v.isInterval() && v.precision(true) < prec_bak + 10) {
+				if(v.precision(true) < prec_bak) {
+					CALCULATOR->setPrecision(prec_bak);
 					CALCULATOR->endTemporaryEnableIntervalArithmetic();
-					set(nr_bak);
 					return false;
 				}
-				wprec.set(1, 1, -PRECISION);
+				wprec.set(1, 1, -prec_bak);
+				wprec2.set(1, 1, -prec_bak + 2);
 			}
 			ytest = yprev;
 			ytesti = yprevi;
-			yprev = *this;
+			yprev = v;
 			yprev.clearImaginary();
-			if(i_value) yprevi.set(*i_value);
+			if(v.internalImaginary()) yprevi.set(*v.internalImaginary());
 			else yprevi.clear();
 			if(!ytest.subtract(yprev) || (yprev.isNonZero() && !ytest.divide(yprev)) || !ytest.abs() || !ytesti.subtract(yprevi) || (yprevi.isNonZero() && !ytesti.divide(yprevi)) || !ytesti.abs()) {
 				CALCULATOR->endTemporaryEnableIntervalArithmetic();
-				set(nr_bak);
+				CALCULATOR->setPrecision(prec_bak);
 				return false;
 			}
-			if(ytest < wprec && ytesti < wprec) {
+			if((ytest < wprec || (!ytest.isNonZero() && ytest < wprec2)) && (ytesti < wprec || (!ytesti.isNonZero() && ytesti < wprec2))) {
 				CALCULATOR->endTemporaryEnableIntervalArithmetic();
 				if(ytest.isZero()) {ytest++; ytest.setToFloatingPoint(); mpfr_nextabove(ytest.internalUpperFloat()); ytest--;}
-				if(ytesti.isZero() && hasImaginaryPart()) {ytesti++; ytesti.setToFloatingPoint(); mpfr_nextabove(ytesti.internalUpperFloat()); ytesti--;}
+				if(ytesti.isZero() && v.hasImaginaryPart()) {ytesti++; ytesti.setToFloatingPoint(); mpfr_nextabove(ytesti.internalUpperFloat()); ytesti--;}
 				ytest.setImaginaryPart(ytesti);
-				setRelativeUncertainty(ytest, !CREATE_INTERVAL);
+				v.setRelativeUncertainty(ytest, !CREATE_INTERVAL);
+				CALCULATOR->setPrecision(prec_bak);
 				break;
 			}
 			k++;
 		}
-		if(!testFloatResult(true)) {
-			set(nr_bak);
-			return false;
-		}
-		if(i == 2 && o.isEven()) negate();
-		if(!nradd.isZero() && !add(nradd)) {
-			set(nr_bak);
-			return false;
-		}
+		if(!v.testFloatResult(true)) return false;
+		if(i == 2 && o.isEven()) v.negate();
+		if(!nradd.isZero() && !v.add(nradd)) return false;
+		set(v);
 		b_approx = true;
 		return true;
 	}
@@ -7538,7 +7450,7 @@ bool Number::fresnelc() {
 		mpfr_div(yprev, yprev, v, MPFR_RNDU);
 		mpfr_abs(yprev, yprev, MPFR_RNDU);
 		if(mpfr_cmp(yprev, wprec) < 0) {
-			mpfr_mul(v, fl_value, x, MPFR_RNDN);
+			mpfr_mul(v, v, x, MPFR_RNDN);
 			mpfr_set(fl_value, v, MPFR_RNDD);
 			mpfr_set(fu_value, v, MPFR_RNDU);
 			if(CREATE_INTERVAL) {
@@ -7609,9 +7521,9 @@ bool Number::expint() {
 				nr_u.intervalToMidValue();
 				if(!nr_l.expint() || !nr_u.expint()) return false;
 			}
+			if(precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_EI)->name().c_str(), NULL);
 			setPrecisionAndApproximateFrom(nr_l);
 			setPrecisionAndApproximateFrom(nr_u);
-			CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_EI)->name().c_str(), NULL);
 			return setInterval(nr_l, nr_u, true);
 		}
 		Number nr_euler; nr_euler.euler();
@@ -7619,61 +7531,61 @@ bool Number::expint() {
 		if(!nr_lnr.recip() || !nr_lnr.ln() || !nr_ln.ln() || !nr_ln.divide(2) || !nr_lnr.divide(-2)) return false;
 		CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 		if(!CALCULATOR->usesIntervalArithmetic()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
-		Number nr_bak(*this);
 		mpfr_clear_flags();
-		if(!setToFloatingPoint()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
+		int prec_bak = PRECISION;
+		CALCULATOR->setPrecision(PRECISION * 2 + 20);
+		Number v(*this);
+		if(!v.setToFloatingPoint()) {CALCULATOR->setPrecision(prec_bak); CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
 		Number xpow, yprev, yprevi, ytest, ytesti;
-		Number x(*this);
+		Number x(v);
 		Number k(2, 1);
 		Number kfac(1, 1);
-		Number wprec(1, 1, -(PRECISION + 10));
-		yprev = *this;
+		Number wprec(1, 1, -(prec_bak + 20));
+		Number wprec2(1, 1, -prec_bak);
+		yprev = v;
 		yprev.clearImaginary();
-		if(i_value) yprevi.set(*i_value);
-		while(true) {
+		if(v.internalImaginary()) yprevi.set(*v.internalImaginary());
+		for(int i = 0; ; i++) {
 			xpow = x;
-			if(CALCULATOR->aborted() || !kfac.multiply(k) || !xpow.raise(k) || !xpow.divide(kfac) || !xpow.divide(k) || !add(xpow) || includesInfinity()) {
+			if(i > PRECISION * 100 || CALCULATOR->aborted() || !kfac.multiply(k) || !xpow.raise(k) || !xpow.divide(kfac) || !xpow.divide(k) || !v.add(xpow) || v.includesInfinity()) {
 				CALCULATOR->endTemporaryEnableIntervalArithmetic();
-				set(nr_bak);
+				CALCULATOR->setPrecision(prec_bak);
 				return false;
 			}
-			if(isInterval() && precision(true) < PRECISION + 10) {
-				if(precision(true) < PRECISION) {
+			if(v.isInterval() && v.precision(true) < prec_bak + 10) {
+				if(v.precision(true) < prec_bak) {
+					CALCULATOR->setPrecision(prec_bak);
 					CALCULATOR->endTemporaryEnableIntervalArithmetic();
-					set(nr_bak);
 					return false;
 				}
-				wprec.set(1, 1, -PRECISION);
+				wprec.set(1, 1, -prec_bak);
+				wprec2.set(1, 1, -prec_bak + 2);
 			}
 			ytest = yprev;
 			ytesti = yprevi;
-			yprev = *this;
+			yprev = v;
 			yprev.clearImaginary();
-			if(i_value) yprevi.set(*i_value);
+			if(v.internalImaginary()) yprevi.set(*v.internalImaginary());
 			else yprevi.clear();
 			if(!ytest.subtract(yprev) || (yprev.isNonZero() && !ytest.divide(yprev)) || !ytest.abs() || !ytesti.subtract(yprevi) || (yprevi.isNonZero() && !ytesti.divide(yprevi)) || !ytesti.abs()) {
 				CALCULATOR->endTemporaryEnableIntervalArithmetic();
-				set(nr_bak);
+				CALCULATOR->setPrecision(prec_bak);
 				return false;
 			}
-			if(ytest < wprec && ytesti < wprec) {
+			if((ytest < wprec || (!ytest.isNonZero() && ytest < wprec2)) && (ytesti < wprec || (!ytesti.isNonZero() && ytesti < wprec2))) {
 				CALCULATOR->endTemporaryEnableIntervalArithmetic();
 				if(ytest.isZero()) {ytest++; ytest.setToFloatingPoint(); mpfr_nextabove(ytest.internalUpperFloat()); ytest--;}
 				if(ytesti.isZero()) {ytesti++; ytesti.setToFloatingPoint(); mpfr_nextabove(ytesti.internalUpperFloat()); ytesti--;}
 				ytest.setImaginaryPart(ytesti);
-				setRelativeUncertainty(ytest, !CREATE_INTERVAL);
+				v.setRelativeUncertainty(ytest, !CREATE_INTERVAL);
+				CALCULATOR->setPrecision(prec_bak);
 				break;
 			}
 			k++;
 		}
-		if(!testFloatResult(true)) {
-			set(nr_bak);
-			return false;
-		}
-		if(!add(nr_euler) || !add(nr_ln) || !add(nr_lnr)) {
-			set(nr_bak);
-			return false;
-		}
+		if(!testFloatResult(true)) return false;
+		if(!v.add(nr_euler) || !v.add(nr_ln) || !v.add(nr_lnr)) return false;
+		set(v);
 		b_approx = true;
 		return true;
 	}
