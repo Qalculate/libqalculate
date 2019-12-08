@@ -150,7 +150,7 @@ int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		}
 		if(nr.hasImaginaryPart() && !nr.hasRealPart()) {
 			mstruct.set(nr.imaginaryPart());
-			mstruct.transformById(FUNCTION_ID_SHI);
+			mstruct.transformById(FUNCTION_ID_SINHINT);
 			mstruct *= nr_one_i;
 			return 1;
 		}
@@ -193,7 +193,7 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		if(nr.isComplex() && nr.hasImaginaryPart() && !nr.hasRealPart()) {
 			mstruct.set(nr.imaginaryPart());
 			if(nr.imaginaryPartIsNegative()) mstruct.negate();
-			mstruct.transformById(FUNCTION_ID_CHI);
+			mstruct.transformById(FUNCTION_ID_COSHINT);
 			mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.last() *= nr_half;
 			if(nr.imaginaryPartIsPositive()) mstruct.last() *= nr_one_i;
@@ -223,7 +223,7 @@ int ShiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		Number nr(mstruct.number());
 		if(nr.hasImaginaryPart() && !nr.hasRealPart()) {
 			mstruct.set(nr.imaginaryPart());
-			mstruct.transformById(FUNCTION_ID_SI);
+			mstruct.transformById(FUNCTION_ID_SININT);
 			mstruct *= nr_one_i;
 			return 1;
 		}
@@ -265,7 +265,7 @@ int ChiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(nr.isComplex() && nr.hasImaginaryPart() && !nr.hasRealPart()) {
 			mstruct.set(nr.imaginaryPart());
 			if(nr.imaginaryPartIsNegative()) mstruct.negate();
-			mstruct.transformById(FUNCTION_ID_CI);
+			mstruct.transformById(FUNCTION_ID_COSINT);
 			mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			mstruct.last() *= nr_half;
 			if(nr.imaginaryPartIsPositive()) mstruct.last() *= nr_one_i;

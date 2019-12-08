@@ -1523,24 +1523,24 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 	}
 	if(isZero()) {
 		if(mstruct.isFunction()) {
-			if((mstruct.function()->id() == FUNCTION_ID_LOG || mstruct.function()->id() == FUNCTION_ID_EI) && mstruct.size() == 1) {
+			if((mstruct.function()->id() == FUNCTION_ID_LOG || mstruct.function()->id() == FUNCTION_ID_EXPINT) && mstruct.size() == 1) {
 				if(mstruct[0].representsNonZero() || warn_about_assumed_not_value(mstruct[0], m_zero, eo)) {
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 2;
 				}
-			} else if(mstruct.function()->id() == FUNCTION_ID_LI && mstruct.size() == 1) {
+			} else if(mstruct.function()->id() == FUNCTION_ID_LOGINT && mstruct.size() == 1) {
 				if(mstruct.representsNumber(true) || warn_about_assumed_not_value(mstruct[0], m_one, eo)) {
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 2;
 				}
 			}
 		} else if(mstruct.isPower() && mstruct[0].isFunction() && mstruct[1].representsNumber()) {
-			if((mstruct[0].function()->id() == FUNCTION_ID_LOG || mstruct[0].function()->id() == FUNCTION_ID_EI) && mstruct[0].size() == 1) {
+			if((mstruct[0].function()->id() == FUNCTION_ID_LOG || mstruct[0].function()->id() == FUNCTION_ID_EXPINT) && mstruct[0].size() == 1) {
 				if(mstruct[0][0].representsNonZero() || warn_about_assumed_not_value(mstruct[0][0], m_zero, eo)) {
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 2;
 				}
-			} else if(mstruct[0].function()->id() == FUNCTION_ID_LI && mstruct[0].size() == 1) {
+			} else if(mstruct[0].function()->id() == FUNCTION_ID_LOGINT && mstruct[0].size() == 1) {
 				if(mstruct[0].representsNumber(true) || warn_about_assumed_not_value(mstruct[0][0], m_one, eo)) {
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 2;
@@ -2333,13 +2333,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						return 1;
 					}
 					if(CHILD(0).isFunction() && mstruct.isZero() && CHILD(1).representsNumber()) {
-						if((CHILD(0).function()->id() == FUNCTION_ID_LOG || CHILD(0).function()->id() == FUNCTION_ID_EI) && SIZE == 1) {
+						if((CHILD(0).function()->id() == FUNCTION_ID_LOG || CHILD(0).function()->id() == FUNCTION_ID_EXPINT) && SIZE == 1) {
 							if(CHILD(0)[0].representsNonZero() || warn_about_assumed_not_value(CHILD(0)[0], m_zero, eo)) {
 								clear(true);
 								MERGE_APPROX_AND_PREC(mstruct)
 								return 3;
 							}
-						} else if(CHILD(0).function()->id() == FUNCTION_ID_LI && SIZE == 1) {
+						} else if(CHILD(0).function()->id() == FUNCTION_ID_LOGINT && SIZE == 1) {
 							if(CHILD(0).representsNumber(true) || warn_about_assumed_not_value(CHILD(0)[0], m_one, eo)) {
 								clear(true);
 								MERGE_APPROX_AND_PREC(mstruct)
@@ -2446,13 +2446,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						SET_CHILD_MAP(0)
 						return 1;
 					}
-				} else if((o_function->id() == FUNCTION_ID_LOG || o_function->id() == FUNCTION_ID_EI) && SIZE == 1 && mstruct.isZero()) {
+				} else if((o_function->id() == FUNCTION_ID_LOG || o_function->id() == FUNCTION_ID_EXPINT) && SIZE == 1 && mstruct.isZero()) {
 					if(CHILD(0).representsNonZero() || warn_about_assumed_not_value(CHILD(0), m_zero, eo)) {
 						clear(true);
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
 					}
-				} else if(o_function->id() == FUNCTION_ID_LI && SIZE == 1 && mstruct.isZero()) {
+				} else if(o_function->id() == FUNCTION_ID_LOGINT && SIZE == 1 && mstruct.isZero()) {
 					if(representsNumber(true) || warn_about_assumed_not_value(CHILD(0), m_one, eo)) {
 						clear(true);
 						MERGE_APPROX_AND_PREC(mstruct)
@@ -5281,6 +5281,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			if(!eo.test_comparisons) {
 				break;
 			}
+
 			if(eo2.keep_zero_units && contains_zero_unit(*this)) {
 				eo2.keep_zero_units = false;
 				MathStructure mtest(*this);
