@@ -1283,7 +1283,7 @@ int Calculator::getPrecision() const {
 	return i_precision;
 }
 void Calculator::useIntervalArithmetic(bool use_interval_arithmetic) {b_interval = use_interval_arithmetic;}
-bool Calculator::usesIntervalArithmetic() const {return i_stop_interval <= 0 && (b_interval || i_start_interval > 0);}
+bool Calculator::usesIntervalArithmetic() const {return i_start_interval > 0 || (b_interval && i_stop_interval <= 0);}
 void Calculator::beginTemporaryStopIntervalArithmetic() {
 	i_stop_interval++;
 }
@@ -2526,12 +2526,12 @@ MathFunction* Calculator::getFunctionById(int id) const {
 		case FUNCTION_ID_FACTORIAL: {return f_factorial;}
 		case FUNCTION_ID_DOUBLE_FACTORIAL: {return f_factorial2;}
 		case FUNCTION_ID_I_GAMMA: {return f_igamma;}
-		case FUNCTION_ID_SI: {return f_Si;}
-		case FUNCTION_ID_CI: {return f_Ci;}
-		case FUNCTION_ID_SHI: {return f_Shi;}
-		case FUNCTION_ID_CHI: {return f_Chi;}
-		case FUNCTION_ID_LI: {return f_li;}
-		case FUNCTION_ID_EI: {return f_Ei;}
+		case FUNCTION_ID_SININT: {return f_Si;}
+		case FUNCTION_ID_COSINT: {return f_Ci;}
+		case FUNCTION_ID_SINHINT: {return f_Shi;}
+		case FUNCTION_ID_COSHINT: {return f_Chi;}
+		case FUNCTION_ID_LOGINT: {return f_li;}
+		case FUNCTION_ID_EXPINT: {return f_Ei;}
 		case FUNCTION_ID_FRESNEL_S: {return priv->f_fresnels;}
 		case FUNCTION_ID_FRESNEL_C: {return priv->f_fresnelc;}
 		case FUNCTION_ID_RE: {return f_re;}

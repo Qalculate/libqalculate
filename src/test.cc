@@ -1835,15 +1835,15 @@ int main(int argc, char *argv[]) {
 
 	CALCULATOR->useIntervalArithmetic();
 	PrintOptions po = CALCULATOR->messagePrintOptions();
-	/*po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	po.show_ending_zeroes = true;
 	po.number_fraction_format = FRACTION_FRACTIONAL;
-	po.restrict_fraction_length = true;*/
-	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+	po.restrict_fraction_length = true;
+	/*po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	po.show_ending_zeroes = false;
 	po.number_fraction_format = FRACTION_DECIMAL;
 	po.restrict_fraction_length = true;
-	po.min_exp = 1;
+	po.min_exp = 1;*/
 	//po.max_decimals = 1;
 	//po.use_max_decimals = true;
 	CALCULATOR->setMessagePrintOptions(po);
@@ -1955,7 +1955,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	return 0;*/
-	for(size_t i = 0; i < 50000;) {
+	/*for(size_t i = 0; i < 50000;) {
 		str = rnd_expression(10, true, 6, 4, false, false, false, false, false, 5, false);
 		CALCULATOR->parse(&mp, str, evalops.parse_options);
 		cerr << str << endl;
@@ -1970,7 +1970,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	cout << successes << ":" << imaginary << endl;
-	return 0;
+	return 0;*/
 
 	v = new KnownVariable("", "v", m_zero);
 

@@ -1,3 +1,18 @@
+2019-12-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fixes and improvements for lambertw(x)=a
+	* Support complex arguments with non-zero imaginary and real parts in Si(), Ci(), Shi(), and Chi()
+
+2019-12-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Split up big source files
+
+2019-12-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support complex numbers in Ei() (and li())
+	* Extend supported arguments for Li()
+	* zeta() for all reals
+
 2019-12-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Support complex numbers in erf(), erfi(), and erfc()

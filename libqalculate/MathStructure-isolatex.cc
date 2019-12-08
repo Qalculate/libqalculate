@@ -243,6 +243,7 @@ int test_comparisons(const MathStructure &msave, MathStructure &mthis, const Mat
 		mtest = mthis;
 		mtest.eval(eo2);
 		if(mtest.isComparison()) {
+			eo2.calculate_functions = true;
 			mtest = msave;
 			mtest.replace(x_var, mthis[1]);
 			if(CALCULATOR->usesIntervalArithmetic()) {
@@ -4674,26 +4675,98 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 					return true;
 				}
-			} else if(CHILD(0).function()->id() == FUNCTION_ID_LAMBERT_W && (CHILD(0).size() == 1 || (CHILD(0).size() == 2 && CHILD(0)[1].isZero())) && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
+			} else if(CHILD(0).function()->id() == FUNCTION_ID_LAMBERT_W && (CHILD(0).size() == 1 || (CHILD(0).size() == 2 && CHILD(0)[1].isInteger())) && ((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) || (CHILD(0).size() == 1 || CHILD(0)[1].isZero() || CHILD(0)[1].isMinusOne()))) {
 				if(CHILD(0)[0].contains(x_var)) {
-					MathStructure msave(CHILD(1));
-					CHILD(1).set(CALCULATOR->getVariableById(VARIABLE_ID_E));
-					CHILD(1).calculateRaise(msave, eo2);
-					CHILD(1).calculateMultiply(msave, eo2);
-					CHILD(0).setToChild(1, true);
 					CHILDREN_UPDATED;
-					if(ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS) {
-						MathStructure *mand = new MathStructure(CHILD(0));
-						mand->add(m_zero, OPERATION_GREATER);
-						mand->isolate_x_sub(eo, eo2, x_var);
-						isolate_x_sub(eo, eo2, x_var, morig);
-						add_nocopy(mand, OPERATION_LOGICAL_AND);
-						SWAP_CHILDREN(0, 1);
-						calculatesub(eo2, eo, false);
-					} else {
-						isolate_x_sub(eo, eo2, x_var, morig);
+					bool b_test = true;
+					if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) {
+						if(CHILD(0).size() == 2 && CHILD(0)[1].isMinusOne()) {
+							ComparisonResult cr = CHILD(1).compare(nr_minus_one);
+							if(cr == COMPARISON_RESULT_LESS) {
+								if(ct_comp == COMPARISON_GREATER || ct_comp == COMPARISON_EQUALS_GREATER) {clear(true); return true;}
+								if(ct_comp == COMPARISON_LESS) ct_comp = COMPARISON_EQUALS_LESS;
+								CHILD(1) = nr_minus_one;
+							} else if(cr == COMPARISON_RESULT_EQUAL_OR_LESS) {
+								if(ct_comp == COMPARISON_GREATER) {clear(true); return true;}
+								return false;
+							} else if(cr == COMPARISON_RESULT_EQUAL) {
+								if(ct_comp == COMPARISON_GREATER) {clear(true); return true;}
+								if(ct_comp == COMPARISON_EQUALS_GREATER) ct_comp = COMPARISON_EQUALS;
+							} else if(cr != COMPARISON_RESULT_GREATER && cr != COMPARISON_RESULT_EQUAL_OR_GREATER) {
+								return false;
+							}
+						} else {
+							ComparisonResult cr = CHILD(1).compare(nr_minus_one);
+							if(cr == COMPARISON_RESULT_GREATER) {
+								if(ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS) {clear(true); return true;}
+								if(ct_comp == COMPARISON_GREATER) ct_comp = COMPARISON_EQUALS_GREATER;
+								CHILD(1) = nr_minus_one;
+							} else if(cr == COMPARISON_RESULT_EQUAL_OR_GREATER) {
+								if(ct_comp == COMPARISON_LESS) {clear(true); return true;}
+								return false;
+							} else if(cr == COMPARISON_RESULT_EQUAL) {
+								if(ct_comp == COMPARISON_LESS) {clear(true); return true;}
+								if(ct_comp == COMPARISON_EQUALS_LESS) ct_comp = COMPARISON_EQUALS;
+							} else if(cr != COMPARISON_RESULT_LESS && cr != COMPARISON_RESULT_EQUAL_OR_LESS) {
+								return false;
+							}
+						}
+					} else if(CHILD(0).size() == 1 || CHILD(0)[1].isZero()) {
+						ComparisonResult cr = CHILD(1).compare(nr_minus_one);
+						if(COMPARISON_IS_EQUAL_OR_LESS(cr)) {
+							b_test = false;
+						} else if(cr == COMPARISON_RESULT_GREATER) {
+							if(ct_comp == COMPARISON_EQUALS) clear(true);
+							else set(1, 1, 0, true);
+							return true;
+						}
+					} else if(CHILD(0)[1].isMinusOne()) {
+						ComparisonResult cr = CHILD(1).compare(nr_minus_one);
+						if(COMPARISON_IS_EQUAL_OR_GREATER(cr)) {
+							b_test = false;
+						} else if(cr == COMPARISON_RESULT_LESS) {
+							if(ct_comp == COMPARISON_EQUALS) clear(true);
+							else set(1, 1, 0, true);
+							return true;
+						}
+					} else if(CHILD(1).representsReal()) {
+						if(ct_comp == COMPARISON_EQUALS) clear(true);
+						else set(1, 1, 0, true);
+						return true;
 					}
-					return true;
+					MathStructure mtest(*this);
+					mtest[1].set(CALCULATOR->getVariableById(VARIABLE_ID_E));
+					mtest[1].calculateRaise(CHILD(1), eo2);
+					mtest[1].calculateMultiply(CHILD(1), eo2);
+					mtest[0].setToChild(1, true);
+					if((ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS) && (CHILD(0).size() == 1 || CHILD(0)[1].isZero())) {
+						MathStructure *mand = new MathStructure(mtest[0]);
+						mand->add(MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_E)), CHILD(0).size() == 2 && CHILD(0)[1].isMinusOne() ? OPERATION_EQUALS_LESS : OPERATION_EQUALS_GREATER);
+						(*mand)[1].inverse();
+						(*mand)[1].negate();
+						(*mand)[1].calculatesub(eo2, eo, true);
+						mand->childUpdated(2);
+						mand->isolate_x_sub(eo, eo2, x_var);
+						mtest.isolate_x_sub(eo, eo2, x_var, morig);
+						mtest.add_nocopy(mand, OPERATION_LOGICAL_AND);
+						SWAP_CHILDREN(0, 1);
+						mtest.calculatesub(eo2, eo, false);
+					} else if((ct_comp == COMPARISON_GREATER || ct_comp == COMPARISON_EQUALS_GREATER) && CHILD(0).size() == 2 && CHILD(0)[1].isMinusOne()) {
+						MathStructure *mand = new MathStructure(mtest[0]);
+						mand->add(m_zero, OPERATION_EQUALS_LESS);
+						mand->childUpdated(2);
+						mand->isolate_x_sub(eo, eo2, x_var);
+						mtest.isolate_x_sub(eo, eo2, x_var, morig);
+						mtest.add_nocopy(mand, OPERATION_LOGICAL_AND);
+						SWAP_CHILDREN(0, 1);
+						mtest.calculatesub(eo2, eo, false);
+					} else {
+						mtest.isolate_x_sub(eo, eo2, x_var, morig);
+					}
+					if(!b_test || (!mtest.isLogicalAnd() && !mtest.isLogicalOr() && !mtest.isComparison()) || test_comparisons(*this, mtest, x_var, eo, false, eo2.expand ? 1 : 2) >= 0) {
+						set(mtest);
+						return true;
+					}
 				}
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_LOGN && CHILD(0).size() == 2) {
 				if(CHILD(0)[0].contains(x_var)) {
