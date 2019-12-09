@@ -706,7 +706,7 @@ char *locale_from_utf8(const char *str) {
 	char *dest, *buffer;
 	buffer = dest = (char*) malloc((outlength + 4) * sizeof(char));
 	if(!buffer) return NULL;
-	size_t err = iconv(conv, (char **) &str, &inlength, &buffer, &outlength);
+	size_t err = iconv(conv, (ICONV_CONST char **) &str, &inlength, &buffer, &outlength);
 	if(err != (size_t) -1) err = iconv(conv, NULL, &inlength, &buffer, &outlength);
 	iconv_close(conv);
 	memset(buffer, 0, 4);
@@ -721,7 +721,7 @@ char *locale_to_utf8(const char *str) {
 	char *dest, *buffer;
 	buffer = dest = (char*) malloc((outlength + 4) * sizeof(char));
 	if(!buffer) return NULL;
-	size_t err = iconv(conv, (char**) &str, &inlength, &buffer, &outlength);
+	size_t err = iconv(conv, (ICONV_CONST char**) &str, &inlength, &buffer, &outlength);
 	if(err != (size_t) -1) err = iconv(conv, NULL, &inlength, &buffer, &outlength);
 	iconv_close(conv);
 	memset(buffer, 0, 4 * sizeof(char));
