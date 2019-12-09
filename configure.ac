@@ -129,7 +129,7 @@ PKG_CHECK_MODULES(LIBXML, [libxml-2.0 >= 2.3.8])
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
 
-AM_ICONV_LINK()
+AM_ICONV()
 
 dnl  --------------------------------
 dnl | check for readline            |-----------------------------------------
