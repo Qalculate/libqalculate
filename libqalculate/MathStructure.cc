@@ -2567,7 +2567,7 @@ int contains_interval_var(const MathStructure &m, bool structural_only, bool che
 			return 1;
 		}
 	}
-	if(include_interval_function && m.type() == STRUCT_FUNCTION && (m.function()->id() == FUNCTION_ID_INTERVAL || m.function()->id() == FUNCTION_ID_UNCERTAINTY)) return 1;
+	if(m.type() == STRUCT_FUNCTION && (m.function()->id() == FUNCTION_ID_INTERVAL || m.function()->id() == FUNCTION_ID_UNCERTAINTY)) return include_interval_function;
 	if(structural_only) {
 		for(size_t i = 0; i < m.size(); i++) {
 			if(contains_interval_var(m[i], structural_only, check_variables, check_functions, ignore_high_precision_interval, include_interval_function)) return 1;
@@ -2609,7 +2609,7 @@ int MathStructure::containsInterval(bool structural_only, bool check_variables, 
 		}
 		return 1;
 	}
-	if(include_interval_function && m_type == STRUCT_FUNCTION && (o_function->id() == FUNCTION_ID_INTERVAL || o_function->id() == FUNCTION_ID_UNCERTAINTY)) return 1;
+	if(m_type == STRUCT_FUNCTION && (o_function->id() == FUNCTION_ID_INTERVAL || o_function->id() == FUNCTION_ID_UNCERTAINTY)) return include_interval_function;
 	if(structural_only) {
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CHILD(i).containsInterval(structural_only, check_variables, check_functions, ignore_high_precision_interval, include_interval_function)) return 1;

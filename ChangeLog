@@ -1,3 +1,13 @@
+2019-12-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improved interval handling in besselj() and bessely(), and in gamma(), zeta(), and airy() when argument is negative
+
+2019-12-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix never ending loop in isolate x with interval() containing interval
+	* Improvements for x^(ax)=b
+	* Simplify output of sin(x)=a and cos(x)=a, when a=0 or a=1
+
 2019-12-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fixes and improvements for lambertw(x)=a
