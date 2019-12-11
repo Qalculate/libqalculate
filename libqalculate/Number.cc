@@ -1297,7 +1297,7 @@ bool Number::intervalToPrecision(long int min_precision) {
 	} else if(i_value && !i_value->intervalToPrecision()) return false;
 	return true;
 }
-void Number::intervalToMidValue() {
+void Number::intervalToMidValue(bool increase_precision_if_close) {
 	if(i_value) i_value->intervalToMidValue();
 	if(n_type == NUMBER_TYPE_FLOAT && !mpfr_equal_p(fl_value, fu_value)) {
 		if(mpfr_inf_p(fl_value) || mpfr_inf_p(fu_value)) {
@@ -1306,14 +1306,25 @@ void Number::intervalToMidValue() {
 			else mpfr_set(fl_value, fu_value, MPFR_RNDN);
 		} else {
 			mpfr_clear_flags();
-			mpfr_sub(fu_value, fu_value, fl_value, MPFR_RNDN);
-			mpfr_div_ui(fu_value, fu_value, 2, MPFR_RNDN);
-			mpfr_add(fl_value, fl_value, fu_value, MPFR_RNDN);
-			mpfr_set(fu_value, fl_value, MPFR_RNDN);
+			mpfr_nextbelow(fu_value);
+			if(!mpfr_equal_p(fl_value, fu_value)) {
+				mpfr_nextabove(fu_value);
+				mpfr_sub(fu_value, fu_value, fl_value, MPFR_RNDN);
+				mpfr_div_ui(fu_value, fu_value, 2, MPFR_RNDN);
+				mpfr_add(fl_value, fl_value, fu_value, MPFR_RNDN);
+				mpfr_set(fu_value, fl_value, MPFR_RNDN);
+			} else if(increase_precision_if_close) {
+				mpfr_set_prec(fl_value, mpfr_get_prec(fu_value) + 1);
+				mpfr_set(fl_value, fu_value, MPFR_RNDN);
+				mpfr_nextbelow(fl_value);
+				mpfr_set_prec(fu_value, mpfr_get_prec(fl_value));
+				mpfr_set(fu_value, fl_value, MPFR_RNDN);
+			}
 			if(!testFloatResult()) clearReal();
 		}
 	}
 }
+void Number::intervalToMidValue() {return intervalToMidValue(false);}
 void Number::splitInterval(unsigned int nr_of_parts, vector<Number> &v) const {
 	if(n_type == NUMBER_TYPE_FLOAT && isReal()) {
 		if(nr_of_parts == 2) {
@@ -4950,15 +4961,69 @@ bool Number::zeta() {
 	if(!CREATE_INTERVAL && !isInterval()) {
 		mpfr_zeta(fl_value, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
-	} else if(isGreaterThan(1)) {
+	} else if(mpfr_cmp_si(fl_value, -2) >= 0) {
 		mpfr_zeta(fu_value, fu_value, MPFR_RNDD);
 		mpfr_zeta(fl_value, fl_value, MPFR_RNDU);
 		mpfr_swap(fl_value, fu_value);
 	} else {
-		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_ZETA)->name().c_str(), NULL);
+		mpfr_t fu_test, fl_test;
+		mpfr_init2(fu_test, mpfr_get_prec(fu_value));
+		mpfr_init2(fl_test, mpfr_get_prec(fl_value));
+		mpfr_sub(fl_test, fu_value, fl_value, MPFR_RNDU);
+		bool b_iverror = mpfr_cmp_ui(fl_test, 2) > 0;
+		mpfr_set(fu_test, fu_value, MPFR_RNDN);
+		mpfr_set(fl_test, fl_value, MPFR_RNDN);
 		mpfr_zeta(fu_value, fu_value, MPFR_RNDU);
 		mpfr_zeta(fl_value, fl_value, MPFR_RNDD);
-		if(mpfr_cmp(fu_value, fl_value) < 0) mpfr_swap(fu_value, fl_value);
+		int c1 = mpfr_cmp(fl_value, fu_value);
+		if(c1 > 0) {
+			mpfr_zeta(fu_value, fl_test, MPFR_RNDU);
+			mpfr_zeta(fl_value, fu_test, MPFR_RNDD);
+		}
+		if(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
+			mpfr_nextabove(fl_test);
+			if(mpfr_equal_p(fu_test, fl_test)) {
+				mpfr_set_prec(fl_test, mpfr_get_prec(fu_test) + 1);
+				mpfr_set(fl_test, fu_test, MPFR_RNDN);
+				mpfr_nextbelow(fl_test);
+				mpfr_set_prec(fu_test, mpfr_get_prec(fl_test));
+				mpfr_zeta(fu_test, fl_test, MPFR_RNDU);
+				if(mpfr_cmp(fu_test, fl_value) < 0) {
+					mpfr_zeta(fl_value, fl_test, MPFR_RNDD);
+					b_iverror = true;
+				} else if(mpfr_cmp(fu_test, fu_value) > 0) {
+					mpfr_set(fu_value, fu_test, MPFR_RNDU);
+					b_iverror = true;
+				}
+			} else {
+				mpfr_t f_test;
+				mpfr_init2(f_test, mpfr_get_prec(fl_test));
+				mpfr_nextbelow(fl_test);
+				while(true) {
+					mpfr_nextabove(fl_test);
+					if(mpfr_equal_p(fu_test, fl_test)) break;
+					mpfr_zeta(f_test, fl_test, c1 > 0 ? MPFR_RNDU : MPFR_RNDD);
+					int c2 = mpfr_cmp(f_test, c1 > 0 ? fu_value : fl_value);
+					if(c2 != 0) {
+						if(c1 > 0 ? c2 > 0 : c2 < 0) b_iverror = true;
+						break;
+					}
+				}
+				while(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
+					mpfr_nextbelow(fu_test);
+					if(mpfr_equal_p(fu_test, fl_test)) break;
+					mpfr_zeta(f_test, fu_test, c1 > 0 ? MPFR_RNDD : MPFR_RNDU);
+					int c2 = mpfr_cmp(f_test, c1 > 0 ? fl_value : fu_value);
+					if(c2 != 0) {
+						if(c1 > 0 ? c2 < 0 : c2 > 0) b_iverror = true;
+						break;
+					}
+				}
+				mpfr_clear(f_test);
+			}
+		}
+		mpfr_clears(fu_test, fl_test, NULL);
+		if(b_iverror) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_ZETA)->name().c_str(), NULL);
 	}
 
 	mpq_set_ui(r_value, 0, 1);
@@ -5012,16 +5077,65 @@ bool Number::gamma() {
 			return false;
 		} else {
 			mpfr_t fu_test, fl_test;
-			mpfr_init2(fu_test, BIT_PRECISION);
-			mpfr_init2(fl_test, BIT_PRECISION);
+			mpfr_init2(fu_test, mpfr_get_prec(fu_value));
+			mpfr_init2(fl_test, mpfr_get_prec(fl_value));
 			mpfr_floor(fu_test, fu_value);
 			mpfr_floor(fl_test, fl_value);
 			if(!mpfr_equal_p(fu_test, fl_test) || mpfr_equal_p(fl_test, fl_value)) {set(nr_bak); return false;}
-			mpfr_gamma(fu_value, fu_value, MPFR_RNDN);
-			mpfr_gamma(fl_value, fl_value, MPFR_RNDN);
-			if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-			if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_GAMMA)->name().c_str(), NULL);
+			mpfr_set(fu_test, fu_value, MPFR_RNDN);
+			mpfr_set(fl_test, fl_value, MPFR_RNDN);
+			mpfr_gamma(fu_value, fu_value, MPFR_RNDU);
+			mpfr_gamma(fl_value, fl_value, MPFR_RNDD);
+			int c1 = mpfr_cmp(fl_value, fu_value);
+			if(c1 > 0) {
+				mpfr_gamma(fu_value, fl_test, MPFR_RNDU);
+				mpfr_gamma(fl_value, fu_test, MPFR_RNDD);
+			}
+			bool b_iverror = false;
+			if(!mpfr_equal_p(fu_test, fl_test)) {
+				mpfr_nextabove(fl_test);
+				if(mpfr_equal_p(fu_test, fl_test)) {
+					mpfr_set_prec(fl_test, mpfr_get_prec(fu_test) + 1);
+					mpfr_set(fl_test, fu_test, MPFR_RNDN);
+					mpfr_nextbelow(fl_test);
+					mpfr_set_prec(fu_test, mpfr_get_prec(fl_test));
+					mpfr_gamma(fu_test, fl_test, MPFR_RNDU);
+					if(mpfr_cmp(fu_test, fl_value) < 0) {
+						mpfr_gamma(fl_value, fl_test, MPFR_RNDD);
+						b_iverror = true;
+					} else if(mpfr_cmp(fu_test, fu_value) > 0) {
+						mpfr_set(fu_value, fu_test, MPFR_RNDU);
+						b_iverror = true;
+					}
+				} else {
+					mpfr_t f_test;
+					mpfr_init2(f_test, mpfr_get_prec(fl_test));
+					mpfr_nextbelow(fl_test);
+					while(true) {
+						mpfr_nextabove(fl_test);
+						if(mpfr_equal_p(fu_test, fl_test)) break;
+						mpfr_gamma(f_test, fl_test, c1 > 0 ? MPFR_RNDU : MPFR_RNDD);
+						int c2 = mpfr_cmp(f_test, c1 > 0 ? fu_value : fl_value);
+						if(c2 != 0) {
+							if(c1 > 0 ? c2 > 0 : c2 < 0) b_iverror = true;
+							break;
+						}
+					}
+					while(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
+						mpfr_nextbelow(fu_test);
+						if(mpfr_equal_p(fu_test, fl_test)) break;
+						mpfr_gamma(f_test, fu_test, c1 > 0 ? MPFR_RNDD : MPFR_RNDU);
+						int c2 = mpfr_cmp(f_test, c1 > 0 ? fl_value : fu_value);
+						if(c2 != 0) {
+							if(c1 > 0 ? c2 < 0 : c2 > 0) b_iverror = true;
+							break;
+						}
+					}
+					mpfr_clear(f_test);
+				}
+			}
 			mpfr_clears(fu_test, fl_test, NULL);
+			if(b_iverror) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_GAMMA)->name().c_str(), NULL);
 		}
 	}
 	if(!testFloatResult()) {
@@ -5331,10 +5445,64 @@ bool Number::airy() {
 		mpfr_ai(fu_value, fu_value, MPFR_RNDD);
 		mpfr_swap(fl_value, fu_value);
 	} else {
-		mpfr_ai(fl_value, fl_value, MPFR_RNDN);
-		mpfr_ai(fu_value, fu_value, MPFR_RNDN);
-		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_AIRY)->name().c_str(), NULL);
+		mpfr_t fu_test, fl_test;
+		mpfr_init2(fu_test, mpfr_get_prec(fu_value));
+		mpfr_init2(fl_test, mpfr_get_prec(fl_value));
+		mpfr_sub(fl_test, fu_value, fl_value, MPFR_RNDU);
+		bool b_iverror = (mpfr_cmp_si(fl_value, -40) < 0 && mpfr_cmp_d(fl_test, 0.1) > 0) || mpfr_cmp_d(fl_test, 0.5) > 0;
+		mpfr_set(fu_test, fu_value, MPFR_RNDN);
+		mpfr_set(fl_test, fl_value, MPFR_RNDN);
+		mpfr_ai(fu_value, fu_value, MPFR_RNDU);
+		mpfr_ai(fl_value, fl_value, MPFR_RNDD);
+		int c1 = mpfr_cmp(fl_value, fu_value);
+		if(c1 > 0) {
+			mpfr_ai(fu_value, fl_test, MPFR_RNDU);
+			mpfr_ai(fl_value, fu_test, MPFR_RNDD);
+		}
+		if(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
+			mpfr_nextabove(fl_test);
+			if(mpfr_equal_p(fu_test, fl_test)) {
+				mpfr_set_prec(fl_test, mpfr_get_prec(fu_test) + 1);
+				mpfr_set(fl_test, fu_test, MPFR_RNDN);
+				mpfr_nextbelow(fl_test);
+				mpfr_set_prec(fu_test, mpfr_get_prec(fl_test));
+				mpfr_ai(fu_test, fl_test, MPFR_RNDU);
+				if(mpfr_cmp(fu_test, fl_value) < 0) {
+					mpfr_ai(fl_value, fl_test, MPFR_RNDD);
+					b_iverror = true;
+				} else if(mpfr_cmp(fu_test, fu_value) > 0) {
+					mpfr_set(fu_value, fu_test, MPFR_RNDU);
+					b_iverror = true;
+				}
+			} else {
+				mpfr_t f_test;
+				mpfr_init2(f_test, mpfr_get_prec(fl_test));
+				mpfr_nextbelow(fl_test);
+				while(true) {
+					mpfr_nextabove(fl_test);
+					if(mpfr_equal_p(fu_test, fl_test)) break;
+					mpfr_ai(f_test, fl_test, c1 > 0 ? MPFR_RNDU : MPFR_RNDD);
+					int c2 = mpfr_cmp(f_test, c1 > 0 ? fu_value : fl_value);
+					if(c2 != 0) {
+						if(c1 > 0 ? c2 > 0 : c2 < 0) b_iverror = true;
+						break;
+					}
+				}
+				while(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
+					mpfr_nextbelow(fu_test);
+					if(mpfr_equal_p(fu_test, fl_test)) break;
+					mpfr_ai(f_test, fu_test, c1 > 0 ? MPFR_RNDD : MPFR_RNDU);
+					int c2 = mpfr_cmp(f_test, c1 > 0 ? fl_value : fu_value);
+					if(c2 != 0) {
+						if(c1 > 0 ? c2 < 0 : c2 > 0) b_iverror = true;
+						break;
+					}
+				}
+				mpfr_clear(f_test);
+			}
+		}
+		mpfr_clears(fu_test, fl_test, NULL);
+		if(b_iverror) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_AIRY)->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -5362,10 +5530,64 @@ bool Number::besselj(const Number &o) {
 		mpfr_jn(fl_value, n, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
-		mpfr_jn(fl_value, n, fl_value, MPFR_RNDN);
-		mpfr_jn(fu_value, n, fu_value, MPFR_RNDN);
-		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_BESSELJ)->name().c_str(), NULL);
+		mpfr_t fu_test, fl_test;
+		mpfr_init2(fu_test, mpfr_get_prec(fu_value));
+		mpfr_init2(fl_test, mpfr_get_prec(fl_value));
+		mpfr_sub(fl_test, fu_value, fl_value, MPFR_RNDU);
+		bool b_iverror = mpfr_cmp_d(fl_test, 3) > 0;
+		mpfr_set(fu_test, fu_value, MPFR_RNDN);
+		mpfr_set(fl_test, fl_value, MPFR_RNDN);
+		mpfr_jn(fu_value, n, fu_value, MPFR_RNDU);
+		mpfr_jn(fl_value, n, fl_value, MPFR_RNDD);
+		int c1 = mpfr_cmp(fl_value, fu_value);
+		if(c1 > 0) {
+			mpfr_jn(fu_value, n, fl_test, MPFR_RNDU);
+			mpfr_jn(fl_value, n, fu_test, MPFR_RNDD);
+		}
+		if(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
+			mpfr_nextabove(fl_test);
+			if(mpfr_equal_p(fu_test, fl_test)) {
+				mpfr_set_prec(fl_test, mpfr_get_prec(fu_test) + 1);
+				mpfr_set(fl_test, fu_test, MPFR_RNDN);
+				mpfr_nextbelow(fl_test);
+				mpfr_set_prec(fu_test, mpfr_get_prec(fl_test));
+				mpfr_jn(fu_test, n, fl_test, MPFR_RNDU);
+				if(mpfr_cmp(fu_test, fl_value) < 0) {
+					mpfr_jn(fl_value, n, fl_test, MPFR_RNDD);
+					b_iverror = true;
+				} else if(mpfr_cmp(fu_test, fu_value) > 0) {
+					mpfr_set(fu_value, fu_test, MPFR_RNDU);
+					b_iverror = true;
+				}
+			} else {
+				mpfr_t f_test;
+				mpfr_init2(f_test, mpfr_get_prec(fl_test));
+				mpfr_nextbelow(fl_test);
+				while(true) {
+					mpfr_nextabove(fl_test);
+					if(mpfr_equal_p(fu_test, fl_test)) break;
+					mpfr_jn(f_test, n, fl_test, c1 > 0 ? MPFR_RNDU : MPFR_RNDD);
+					int c2 = mpfr_cmp(f_test, c1 > 0 ? fu_value : fl_value);
+					if(c2 != 0) {
+						if(c1 > 0 ? c2 > 0 : c2 < 0) b_iverror = true;
+						break;
+					}
+				}
+				while(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
+					mpfr_nextbelow(fu_test);
+					if(mpfr_equal_p(fu_test, fl_test)) break;
+					mpfr_jn(f_test, n, fu_test, c1 > 0 ? MPFR_RNDD : MPFR_RNDU);
+					int c2 = mpfr_cmp(f_test, c1 > 0 ? fl_value : fu_value);
+					if(c2 != 0) {
+						if(c1 > 0 ? c2 < 0 : c2 > 0) b_iverror = true;
+						break;
+					}
+				}
+				mpfr_clear(f_test);
+			}
+		}
+		mpfr_clears(fu_test, fl_test, NULL);
+		if(b_iverror) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_BESSELJ)->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);
@@ -5393,10 +5615,64 @@ bool Number::bessely(const Number &o) {
 		mpfr_yn(fl_value, n, fl_value, MPFR_RNDN);
 		mpfr_set(fu_value, fl_value, MPFR_RNDN);
 	} else {
-		mpfr_yn(fl_value, n, fl_value, MPFR_RNDN);
-		mpfr_yn(fu_value, n, fu_value, MPFR_RNDN);
-		if(mpfr_cmp(fl_value, fu_value) > 0) mpfr_swap(fl_value, fu_value);
-		if(nr_bak.isInterval() && nr_bak.precision(1) <= PRECISION + 20) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_BESSELY)->name().c_str(), NULL);
+		mpfr_t fu_test, fl_test;
+		mpfr_init2(fu_test, mpfr_get_prec(fu_value));
+		mpfr_init2(fl_test, mpfr_get_prec(fl_value));
+		mpfr_sub(fl_test, fu_value, fl_value, MPFR_RNDU);
+		bool b_iverror = mpfr_cmp_d(fl_test, 3) > 0;
+		mpfr_set(fu_test, fu_value, MPFR_RNDN);
+		mpfr_set(fl_test, fl_value, MPFR_RNDN);
+		mpfr_yn(fu_value, n, fu_value, MPFR_RNDU);
+		mpfr_yn(fl_value, n, fl_value, MPFR_RNDD);
+		int c1 = mpfr_cmp(fl_value, fu_value);
+		if(c1 > 0) {
+			mpfr_yn(fu_value, n, fl_test, MPFR_RNDU);
+			mpfr_yn(fl_value, n, fu_test, MPFR_RNDD);
+		}
+		if(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
+			mpfr_nextabove(fl_test);
+			if(mpfr_equal_p(fu_test, fl_test)) {
+				mpfr_set_prec(fl_test, mpfr_get_prec(fu_test) + 1);
+				mpfr_set(fl_test, fu_test, MPFR_RNDN);
+				mpfr_nextbelow(fl_test);
+				mpfr_set_prec(fu_test, mpfr_get_prec(fl_test));
+				mpfr_yn(fu_test, n, fl_test, MPFR_RNDU);
+				if(mpfr_cmp(fu_test, fl_value) < 0) {
+					mpfr_yn(fl_value, n, fl_test, MPFR_RNDD);
+					b_iverror = true;
+				} else if(mpfr_cmp(fu_test, fu_value) > 0) {
+					mpfr_set(fu_value, fu_test, MPFR_RNDU);
+					b_iverror = true;
+				}
+			} else {
+				mpfr_t f_test;
+				mpfr_init2(f_test, mpfr_get_prec(fl_test));
+				mpfr_nextbelow(fl_test);
+				while(true) {
+					mpfr_nextabove(fl_test);
+					if(mpfr_equal_p(fu_test, fl_test)) break;
+					mpfr_yn(f_test, n, fl_test, c1 > 0 ? MPFR_RNDU : MPFR_RNDD);
+					int c2 = mpfr_cmp(f_test, c1 > 0 ? fu_value : fl_value);
+					if(c2 != 0) {
+						if(c1 > 0 ? c2 > 0 : c2 < 0) b_iverror = true;
+						break;
+					}
+				}
+				while(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
+					mpfr_nextbelow(fu_test);
+					if(mpfr_equal_p(fu_test, fl_test)) break;
+					mpfr_yn(f_test, n, fu_test, c1 > 0 ? MPFR_RNDD : MPFR_RNDU);
+					int c2 = mpfr_cmp(f_test, c1 > 0 ? fl_value : fu_value);
+					if(c2 != 0) {
+						if(c1 > 0 ? c2 < 0 : c2 > 0) b_iverror = true;
+						break;
+					}
+				}
+				mpfr_clear(f_test);
+			}
+		}
+		mpfr_clears(fu_test, fl_test, NULL);
+		if(b_iverror) CALCULATOR->error(false, _("%s() lacks proper support interval arithmetic."), CALCULATOR->getFunctionById(FUNCTION_ID_BESSELY)->name().c_str(), NULL);
 	}
 	if(!testFloatResult()) {
 		set(nr_bak);

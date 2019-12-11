@@ -52,10 +52,10 @@ ZetaFunction::ZetaFunction() : MathFunction("zeta", 1, 1, SIGN_ZETA) {
 }
 int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].number().isZero()) {
-		mstruct.set(1, 2, 0);
+		mstruct.set(-1, 2, 0);
 		return 1;
 	} else if(vargs[0].number().isMinusOne()) {
-		mstruct.set(1, 12, 0);
+		mstruct.set(-1, 12, 0);
 		return 1;
 	} else if(vargs[0].number().isNegative() && vargs[0].number().isEven()) {
 		mstruct.clear();

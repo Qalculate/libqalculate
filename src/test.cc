@@ -1058,7 +1058,7 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 			if(!allow_function && !allow_unknown && !allow_variable && rand() % 2 == 0) str = rnd_number(true, only_integers, false, allow_complex, allow_interval);
 			else str = rnd_var();
 		} else {
-#define LAST_FUNC 35
+#define LAST_FUNC 31
 			if(!allow_unknown) {
 				if(allow_function) r = rand() % (LAST_FUNC - 4)  + 4;
 				else r = rand() % 2 + 4;
@@ -1115,8 +1115,8 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 				case 28: {str = "Ci("; break;}
 				case 29: {str = "Chi("; break;}
 				case 30: {str = "sinc("; break;}
-				case 31: {str = "lambertw("; break;}
-				case 32: {str = "li("; break;}
+				case 31: {str = "li("; break;}
+				case 32: {str = "lambertw("; break;}
 				case 33: {str = "digamma("; break;}
 				case 34: {str = "im("; break;}
 				case 35: {str = "re("; break;}

@@ -125,6 +125,7 @@ class Number {
 		bool setToFloatingPoint();
 		void precisionToInterval();
 		bool intervalToPrecision(long int min_precision = 2);
+		void intervalToMidValue(bool increase_precision_if_close);
 		void intervalToMidValue();
 		void splitInterval(unsigned int nr_of_parts, std::vector<Number> &v) const;
 		bool getCentralInteger(Number &nr_int, bool *b_multiple = NULL, std::vector<Number> *v = NULL) const;
