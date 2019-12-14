@@ -1513,6 +1513,7 @@ void Calculator::addBuiltinFunctions() {
 	f_frac = addFunction(new FracFunction());
 	f_rem = addFunction(new RemFunction());
 	f_mod = addFunction(new ModFunction());
+	addFunction(new BernoulliFunction());
 
 	f_polynomial_unit = addFunction(new PolynomialUnitFunction());
 	f_polynomial_primpart = addFunction(new PolynomialPrimpartFunction());

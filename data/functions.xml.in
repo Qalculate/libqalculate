@@ -683,6 +683,17 @@
         <_title>2nd value</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="bernoulli">
+      <_title>Bernoulli Number/Polynomial</_title>
+      <_description>Returns the nth Bernoulli number or polynomial (if the second argument is non-zero).</_description>
+      <_names>r:bernoulli</_names>
+      <argument index="1">
+        <_title>Index (n)</_title>
+      </argument>
+      <argument index="2">
+        <_title>Variable</_title>
+      </argument>
+    </builtin_function>
     <function>
       <_title>Fibonacci Number</_title>
       <_names>r:fibonacci</_names>
@@ -882,9 +893,13 @@
     </builtin_function>
     <builtin_function name="zeta">
       <_title>Riemann Zeta</_title>
+      <_description>Calculates Hurwitz zeta function if the second argument is not 1.</_description>
       <_names>r:zeta</_names>
       <argument index="1">
         <_title>Integral point</_title>
+      </argument>
+      <argument index="2">
+        <_title>Argument</_title>
       </argument>
     </builtin_function>
     <function>

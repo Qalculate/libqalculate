@@ -67,6 +67,7 @@ class MathFunction_p {
 
 MathFunction::MathFunction(string name_, int argc_, int max_argc_, string cat_, string title_, string descr_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
 	priv = new MathFunction_p;
+	// arc = min number of arguments, max_argc = max arguments (if max_argc=-1, place additional arguments in vector)
 	argc = argc_;
 	if(max_argc_ < 0 || argc < 0) {
 		if(argc < 0) argc = 0;
@@ -75,6 +76,7 @@ MathFunction::MathFunction(string name_, int argc_, int max_argc_, string cat_, 
 		max_argc = argc;
 	} else {
 		max_argc = max_argc_;
+		// arguments not required, must have a default value (by default 0)
 		for(int i = 0; i < max_argc - argc; i++) {
 			default_values.push_back("0");
 		}
@@ -127,9 +129,12 @@ int MathFunction::id() const {
 }
 
 string MathFunction::example(bool raw_format, string name_string) const {
+	// example text
 	if(raw_format) return sexample;
 	string str = sexample;
+	// $name is replaced function name (or provided string)
 	gsub("$name", name_string.empty() ? name() : name_string, str);
+	// adjust decimal and group separators
 	return CALCULATOR->localizeExpression(str);
 }
 void MathFunction::setExample(string new_example) {
@@ -162,16 +167,19 @@ void MathFunction::setCondition(string expression) {
 	remove_blank_ends(scondition);
 }
 bool MathFunction::testCondition(const MathStructure &vargs) {
+	// test condition for arguments
 	if(scondition.empty()) {
 		return true;
 	}
+	// create a temporary function from the condition expression (for handling av arguments)
 	UserFunction test_function("", "CONDITION_TEST_FUNCTION", scondition, false, argc, "", "", max_argc);
 	MathStructure vargs2(vargs);
 	MathStructure mstruct(test_function.MathFunction::calculate(vargs2));
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	mstruct.eval(eo);
-	if(!mstruct.isNumber() || !mstruct.number().isPositive()) {
+	// check if result is true
+	if(!mstruct.isNumber() || !mstruct.number().getBoolean()) {
 		if(CALCULATOR->showArgumentErrors() && !CALCULATOR->aborted()) {
 			CALCULATOR->error(true, _("%s() requires that %s"), name().c_str(), printCondition().c_str(), NULL);
 		}
@@ -180,7 +188,8 @@ bool MathFunction::testCondition(const MathStructure &vargs) {
 	return true;
 }
 string MathFunction::printCondition() {
-	if(scondition.empty() || last_argdef_index == 0) return scondition;
+	if(scondition.empty()) return scondition;
+	// replace arguments (represented by \x, \y, \z, \a, etc.) with argument definition names
 	string str = scondition;
 	string svar, argstr;
 	Argument *arg;
@@ -229,6 +238,7 @@ string MathFunction::printCondition() {
 	return str;
 }
 int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOptions &parseoptions) {
+	// read arguments from expression (e.g. "52, 2" from expression "sin(52, 2)"); used in Calculator::parse()
 	ParseOptions po = parseoptions;
 	MathStructure *unended_function = po.unended_function;
 	po.unended_function = NULL;
@@ -243,10 +253,12 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 	bool last_is_vctr = false, vctr_started = false;
 	if(maxargs() > 0) {
 		arg = getArgumentDefinition(maxargs());
+		// if last argument is vector or maximum number of arguments is 1 and the only argument allows vector
 		last_is_vctr = arg && ((arg->type() == ARGUMENT_TYPE_VECTOR) || (maxargs() == 1 && arg->handlesVector()));
 	}
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		switch(str[str_index]) {
+			// argument does not end within parentheses, brackets or quotes
 			case LEFT_VECTOR_WRAP_CH: {}
 			case LEFT_PARENTHESIS_CH: {
 				if(!in_cit1 && !in_cit2) {
@@ -277,18 +289,24 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 				}
 				break;
 			}
+			// argument separator
 			case COMMA_CH: {
 				if(pars == 0 && !in_cit1 && !in_cit2) {
 					itmp++;
+					// read one argument
 					if(itmp <= maxargs() || args() < 0) {
+						// index is <= max number of arguments
 						stmp = str.substr(start_pos, str_index - start_pos);
 						remove_blank_ends(stmp);
 						arg = getArgumentDefinition(itmp);
-						if(!arg && itmp > argc && args() < 0 && itmp > (int) last_argdef_index && last_argdef_index > 0) {
+						// index is greater than minimum number of arguments,
+						// and maximimum number of arguments is unlimited, use the last argument definition
+						if(!arg && itmp > argc && args() < 0 && itmp > (int) last_argdef_index && (int) last_argdef_index > argc) {
 							 arg = priv->argdefs[last_argdef_index];
 						}
 						if(stmp.empty()) {
 							if(arg) {
+								// if index has argument definition, use for parsing
 								MathStructure *mstruct = new MathStructure();
 								arg->parse(mstruct, getDefaultValue(itmp), po);
 								vargs.addChild_nocopy(mstruct);
@@ -309,6 +327,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 							}
 						}
 					} else if(last_is_vctr) {
+						// if last argument is a vector, use additional arguments to fill the vector
 						if(!vctr_started) {
 							if(!vargs[vargs.size() - 1].isVector() || vargs[vargs.size() - 1].size() != 1) {
 								vargs[vargs.size() - 1].transform(STRUCT_VECTOR);
@@ -336,6 +355,9 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			}
 		}
 	}
+	// generate unended function information
+	// used from Calculator::parse() for display of continuous parsing info
+	// handling is incomplete if used separately
 	if(!str.empty()) {
 		itmp++;
 		po.unended_function = unended_function;
@@ -343,7 +365,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			stmp = str.substr(start_pos, str.length() - start_pos);
 			remove_blank_ends(stmp);
 			arg = getArgumentDefinition(itmp);
-			if(!arg && itmp > argc && args() < 0 && itmp > (int) last_argdef_index && last_argdef_index > 0) {
+			if(!arg && itmp > argc && args() < 0 && itmp > (int) last_argdef_index && (int) last_argdef_index > argc) {
 				 arg = priv->argdefs[last_argdef_index];
 			}
 			if(stmp.empty()) {
@@ -398,6 +420,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			unended_function->addChild(m_undefined);
 		}
 	}
+	// append default values
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
 		while(itmp2 < maxargs()) {
@@ -517,6 +540,7 @@ bool MathFunction::testArguments(MathStructure &vargs) {
 			last = it->first;
 		}
 		if(it->second && it->first > 0 && it->first <= vargs.size()) {
+			// for symbols arguments with zero or undefined value, search the first argument for a symbol
 			if(it->second->type() == ARGUMENT_TYPE_SYMBOLIC && (vargs[it->first - 1].isZero() || vargs[it->first - 1].isUndefined())) {
 				vargs[it->first - 1] = vargs[0].find_x_var();
 				if(vargs[it->first - 1].isUndefined() && vargs[0].isVariable() && vargs[0].variable()->isKnown()) vargs[it->first - 1] = ((KnownVariable*) vargs[0].variable())->get().find_x_var();
@@ -774,6 +798,7 @@ int UserFunction::subtype() const {
 }
 extern string format_and_print(const MathStructure &mstruct);
 bool replace_intervals_f(MathStructure &mstruct) {
+	// replace intervals with temporary variables
 	if(mstruct.isNumber() && (mstruct.number().isInterval(false) || (CALCULATOR->usesIntervalArithmetic() && mstruct.number().precision() >= 0))) {
 		Variable *v = new KnownVariable("", format_and_print(mstruct), mstruct);
 		v->setTitle("\b");
@@ -791,6 +816,7 @@ bool replace_intervals_f(MathStructure &mstruct) {
 	return b;
 }
 bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
+	// replace interval() and uncertainty() with numbers with intervals, if possible
 	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_INTERVAL && mstruct.size() == 2) {
 		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
 			Number nr;

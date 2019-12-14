@@ -2280,7 +2280,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								b_real = 0;
 							}
 						} else if(b_zero < 0) {
-							ComparisonResult cr = mdelta.compareApproximately(m_zero, eo);
+							ComparisonResult cr = mdelta.compare(m_zero);
 							if(cr == COMPARISON_RESULT_EQUAL) {
 								b_zero = 1;
 							} else if(COMPARISON_IS_NOT_EQUAL(cr)) {
@@ -2311,7 +2311,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							if(mdelta0.representsNonZero(true)) b0_zero = 0;
 							else if(mdelta0.representsZero(true)) b0_zero = 1;
 							else {
-								ComparisonResult cr = mdelta0.compareApproximately(m_zero, eo);
+								ComparisonResult cr = mdelta0.compare(m_zero);
 								if(cr == COMPARISON_RESULT_EQUAL) {
 									b0_zero = 1;
 								} else if(COMPARISON_IS_NOT_EQUAL(cr)) {
@@ -2459,7 +2459,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 										CALCULATOR->endTemporaryStopMessages(true);
 										return true;
 									}
-									ComparisonResult cr = mdelta1.compareApproximately(m_zero, eo);
+									ComparisonResult cr = mdelta1.compare(m_zero);
 									if(cr == COMPARISON_RESULT_EQUAL) {
 										// -b/(3a)
 										CHILD(0) = x_var;
@@ -3880,8 +3880,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						if(marg->calculateFunctions(eo)) marg->calculatesub(eo2, eo, true);
 						if(CHILD(0)[0].representsNonComplex() && CHILD(1).compare(m_zero) == COMPARISON_RESULT_LESS) {
 							// x is real, b > 0: 
-							// x=e^lamberw(ln(b)/a) if ln(b)/a >= -1/e
-							// x=e^lamberw(ln(b)/a, -1) if -1/e <= ln(b)/a < 0
+							// x=e^lambertw(ln(b)/a) if ln(b)/a >= -1/e
+							// x=e^lambertw(ln(b)/a, -1) if -1/e <= ln(b)/a < 0
 							if(!mexp.isOne()) marg->calculateMultiply(mexp, eo2);
 							if(!mmul.isOne()) marg->calculateDivide(mmul, eo2);
 							MathStructure *mreq1 = NULL;
@@ -3933,7 +3933,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							}
 						} else {
 							// x is not real or b < 0:
-							// x=e^lamberw(ln(b)+2i*pi*n/a) || x=e^lamberw(ln(b)+2i*pi*n/a, -1) || x=e^lamberw(ln(b)+2i*pi*n/a, 1)
+							// x=e^lambertw(ln(b)+2i*pi*n/a) || x=e^lambertw(ln(b)+2i*pi*n/a, -1) || x=e^lambertw(ln(b)+2i*pi*n/a, 1)
 							marg->add(nr_one_i);
 							marg->last().multiply(nr_two);
 							marg->last().multiply(CALCULATOR->getVariableById(VARIABLE_ID_PI), true);
@@ -4771,8 +4771,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						MathStructure mtest(CALCULATOR->getVariableById(VARIABLE_ID_E));
 						mtest.raise(CHILD(1));
 						mtest.transformById(FUNCTION_ID_LOG);
-						ComparisonResult cr = mtest.compareApproximately(CHILD(1), eo);
-						if(cr != COMPARISON_RESULT_EQUAL) {
+						ComparisonResult cr = mtest.compare(CHILD(1));
+						if(!COMPARISON_MIGHT_BE_EQUAL(cr) || cr == COMPARISON_RESULT_UNKNOWN) {
 							if(COMPARISON_IS_NOT_EQUAL(cr)) {
 								if(ct_comp == COMPARISON_EQUALS) clear(true);
 								else set(1, 1, 0, true);

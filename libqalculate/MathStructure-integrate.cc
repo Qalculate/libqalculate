@@ -6397,7 +6397,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 									msolve.evalSort(false);
 									msolve.calculatesub(eo2, eo2, true);
 									MathStructure msolve_d(msolve);
-									if(msolve_d.differentiate(mvar, eo2) && COMPARISON_IS_NOT_EQUAL(msolve_d.compareApproximately(m_one, eo2))) {
+									if(msolve_d.differentiate(mvar, eo2) && COMPARISON_IS_NOT_EQUAL(msolve_d.compare(m_one))) {
 										msolve.transform(COMPARISON_EQUALS, mvar);
 										msolve.isolate_x(eo2, mvar);
 										if(msolve.isComparison() && msolve.comparisonType() == COMPARISON_EQUALS && msolve[0] == mvar && msolve[1].contains(mvar, true) <= 0) {

@@ -33,16 +33,22 @@ using std::endl;
 
 #include "Calculator_p.h"
 
+// determine if character is not a numerical digit in a specific number base (-1=base using digits other than 0-9, a-z, A-Z; -12=duodecimal)
 bool is_not_number(char c, int base) {
+	// 0-9 is always treated as a digit
 	if(c >= '0' && c <= '9') return false;
+	// in non standard bases every character might be a digit
 	if(base == -1) return false;
+	// duodecimal bases uses 0-9, E, X
 	if(base == -12) return c != 'E' && c != 'X';
 	if(base <= 10) return true;
+	// bases 11-36 is case insensitive
 	if(base <= 36) {
 		if(c >= 'a' && c < 'a' + (base - 10)) return false;
 		if(c >= 'A' && c < 'A' + (base - 10)) return false;
 		return true;
 	}
+	// bases 37-62 is case sensitive
 	if(base <= 62) {
 		if(c >= 'a' && c < 'a' + (base - 36)) return false;
 		if(c >= 'A' && c < 'Z') return false;
@@ -131,6 +137,7 @@ void Calculator::delId(size_t id) {
 	}
 }
 
+// case sensitive string comparison; compares whole name with str from str_index to str_index + name_length
 bool compare_name(const string &name, const string &str, const size_t &name_length, const size_t &str_index, int base) {
 	if(name_length == 0) return false;
 	if(name[0] != str[str_index]) return false;
@@ -141,6 +148,7 @@ bool compare_name(const string &name, const string &str, const size_t &name_leng
 	for(size_t i = 1; i < name_length; i++) {
 		if(name[i] != str[str_index + i]) return false;
 	}
+	// number base uses digits other than 0-9, check that at least one non-digit is used
 	if(base < 2 || base > 10) {
 		for(size_t i = 0; i < name_length; i++) {
 			if(is_not_number(str[str_index + i], base)) return true;
@@ -149,13 +157,17 @@ bool compare_name(const string &name, const string &str, const size_t &name_leng
 	}
 	return true;
 }
+
+// case insensitive string comparison; compares whole name with str from str_index to str_index + name_length
 size_t compare_name_no_case(const string &name, const string &str, const size_t &name_length, const size_t &str_index, int base) {
 	if(name_length == 0) return 0;
 	size_t is = str_index;
 	for(size_t i = 0; i < name_length; i++, is++) {
 		if(is >= str.length()) return 0;
 		if((name[i] < 0 && i + 1 < name_length) || (str[is] < 0 && is + 1 < str.length())) {
+			// assumed Unicode character found
 			size_t i2 = 1, is2 = 1;
+			// determine length of Unicode character(s)
 			if(name[i] < 0) {
 				while(i2 + i < name_length && name[i2 + i] < 0) {
 					i2++;
@@ -166,6 +178,7 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 					is2++;
 				}
 			}
+			// compare characters
 			bool isequal = (i2 == is2);
 			if(isequal) {
 				for(size_t i3 = 0; i3 < i2; i3++) {
@@ -175,6 +188,7 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 					}
 				}
 			}
+			// get lower case character and compare again
 			if(!isequal) {
 				char *gstr1 = utf8_strdown(name.c_str() + (sizeof(char) * i), i2);
 				char *gstr2 = utf8_strdown(str.c_str() + (sizeof(char) * (is)), is2);
@@ -188,6 +202,7 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 			return 0;
 		}
 	}
+	// number base uses digits other than 0-9, check that at least one non-digit is used
 	if(base < 2 || base > 10) {
 		for(size_t i = str_index; i < is; i++) {
 			if(is_not_number(str[i], base)) return is - str_index;
@@ -206,6 +221,7 @@ const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", 
 void Calculator::parseSigns(string &str, bool convert_to_internal_representation) const {
 	vector<size_t> q_begin;
 	vector<size_t> q_end;
+	// collect quoted ranges
 	size_t quote_index = 0;
 	while(true) {
 		quote_index = str.find_first_of("\"\'", quote_index);
@@ -221,10 +237,13 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		q_end.push_back(quote_index);
 		quote_index++;
 	}
+	
+	// search and replace string alternatives
 	for(size_t i = 0; i < signs.size(); i++) {
 		size_t ui = str.find(signs[i]);
 		size_t ui2 = 0;
 		while(ui != string::npos) {
+			// check that found index is outside quotes
 			for(; ui2 < q_end.size(); ui2++) {
 				if(ui >= q_begin[ui2]) {
 					if(ui <= q_end[ui2]) {
@@ -236,6 +255,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 				}
 			}
 			if(ui == string::npos) break;
+			// adjust quotion mark indeces
 			int index_shift = real_signs[i].length() - signs[i].length();
 			for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
 				q_begin[ui3] += index_shift;
@@ -246,14 +266,18 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		}
 	}
 
+	// replace Unicode exponents
 	size_t prev_ui = string::npos, space_n = 0;
 	while(true) {
+		// Unicode powers 0 and 4-9 use three chars and begin with \xe2\x81
 		size_t ui = str.find("\xe2\x81", prev_ui == string::npos ? 0 : prev_ui);
 		if(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -71)))) ui = string::npos;
+		// Unicode powers 1-3 use two chars and begin with \xc2
 		size_t ui2 = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
 		if(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = string::npos;
 		if(ui2 != string::npos && (ui == string::npos || ui2 < ui)) ui = ui2;
 		if(ui != string::npos) {
+			// check that found index is outside quotes
 			for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
 				if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
 					ui = str.find("\xe2\x81", q_end[ui3] + 1);
@@ -269,12 +293,14 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		int index_shift = (str[ui] == '\xc2' ? -2 : -3);
 		if(ui == prev_ui) index_shift += 1;
 		else index_shift += 4;
+		// adjust quotion mark indeces
 		for(size_t ui3 = 0; ui3 < q_begin.size(); ui3++) {
 			if(q_begin[ui3] >= ui) {
 				q_begin[ui3] += index_shift;
 				q_end[ui3] += index_shift;
 			}
 		}
+		// perform replacement; if next to previous Unicode power combine the powers
 		if(str[ui] == '\xc2') {
 			if(str[ui + 1] == -71) str.replace(ui, 2, ui == prev_ui ? "1)" : "^(1)");
 			else if(str[ui + 1] == -78) str.replace(ui, 2, ui == prev_ui ? "2)" : "^(2)");
@@ -300,11 +326,15 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 			prev_ui++;
 		}
 	}
+
+	// replace Unicode fractions with three chars
 	prev_ui = string::npos;
 	while(true) {
+		// three char Unicode fractions begin with \xe2\x85
 		size_t ui = str.find("\xe2\x85", prev_ui == string::npos ? 0 : prev_ui);
 		if(ui != string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = string::npos;
 		if(ui != string::npos) {
+			// check that found index is outside quotes
 			for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
 				if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
 					ui = str.find("\xe2\x85", q_end[ui3] + 1);
@@ -314,17 +344,20 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 			}
 		}
 		if(ui == string::npos) break;
+		// check if previous non-whitespace character is a numeral digit
 		space_n = 0;
 		while(ui > 0 && ui - 1 - space_n != 0 && str[ui - 1 - space_n] == SPACE_CH) space_n++;
 		bool b_add = (ui > 0 && is_in(NUMBER_ELEMENTS, str[ui - 1 - space_n]));
 		int index_shift = (b_add ? 6 : 5) - 3;
 		if(str[ui + 2] == -110) index_shift++;
+		// adjust quotion mark indeces
 		for(size_t ui2 = 0; ui2 < q_begin.size(); ui2++) {
 			if(q_begin[ui2] >= ui) {
 				q_begin[ui2] += index_shift;
 				q_end[ui2] += index_shift;
 			}
 		}
+		// perform replacement; interpret as addition if previous character is a numeral digit
 		if(str[ui + 2] == -98) str.replace(ui, 3, b_add ? "+(7/8)" : "(7/8)");
 		else if(str[ui + 2] == -99) str.replace(ui, 3, b_add ? "+(5/8)" : "(5/8)");
 		else if(str[ui + 2] == -100) str.replace(ui, 3, b_add ? "+(3/8)" : "(3/8)");
@@ -343,11 +376,15 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		if(b_add) prev_ui = ui + 6;
 		else prev_ui = ui + 5;
 	}
+	
+	// replace Unicode fractions with two chars
 	prev_ui = string::npos;
 	while(true) {
+		// two char Unicode fractions begin with \xc2
 		size_t ui = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
 		if(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = string::npos;
 		if(ui != string::npos) {
+			// check that found index is outside quotes
 			for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
 				if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
 					ui = str.find('\xc2', q_end[ui3] + 1);
@@ -357,29 +394,36 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 			}
 		}
 		if(ui == string::npos) break;
+		// check if previous non-whitespace character is a numeral digit
 		space_n = 0;
 		while(ui > 0 && ui - 1 - space_n != 0 && str[ui - 1 - space_n] == SPACE_CH) space_n++;
 		bool b_add = (ui > 0 && is_in(NUMBER_ELEMENTS, str[ui - 1 - space_n]));
 		int index_shift = (b_add ? 6 : 5) - 2;
+		// adjust quotion mark indeces
 		for(size_t ui2 = 0; ui2 < q_begin.size(); ui2++) {
 			if(q_begin[ui2] >= ui) {
 				q_begin[ui2] += index_shift;
 				q_end[ui2] += index_shift;
 			}
 		}
+		// perform replacement; interpret as addition if previous character is a numeral digit
 		if(str[ui + 1] == -66) str.replace(ui, 2, b_add ? "+(3/4)" : "(3/4)");
 		else if(str[ui + 1] == -67) str.replace(ui, 2, b_add ? "+(1/2)" : "(1/2)");
 		else if(str[ui + 1] == -68) str.replace(ui, 2, b_add ? "+(1/4)" : "(1/4)");
 		if(b_add) prev_ui = ui + 6;
 		else prev_ui = ui + 5;
 	}
+	
 	if(convert_to_internal_representation) {
+		// remove superfluous whitespace
 		remove_blank_ends(str);
 		remove_duplicate_blanks(str);
+		// replace operators with multiple chars with internal single character version
 		for(size_t i = 0; i < INTERNAL_SIGNS_COUNT; i += 2) {
 			size_t ui = str.find(internal_signs[i]);
 			size_t ui2 = 0;
 			while(ui != string::npos) {
+				// check that found index is outside quotes
 				for(; ui2 < q_end.size(); ui2++) {
 					if(ui >= q_begin[ui2]) {
 						if(ui <= q_end[ui2]) {
@@ -391,11 +435,13 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 					}
 				}
 				if(ui == string::npos) break;
+				// adjust quotion mark indeces
 				int index_shift = strlen(internal_signs[i + 1]) - strlen(internal_signs[i]);
 				for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
 					q_begin[ui3] += index_shift;
 					q_end[ui3] += index_shift;
 				}
+				// perform replacement and search for next occurrence
 				str.replace(ui, strlen(internal_signs[i]), internal_signs[i + 1]);
 				ui = str.find(internal_signs[i], ui + strlen(internal_signs[i + 1]));
 			}
@@ -424,6 +470,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		return;
 	}
 	
+	// use parse option number base to determine which characters are used as numerical digits and set base accordingly.
+	// (-1=base using digits other than 0-9, a-z, A-Z; -12=duodecimal)
 	int base = po.base;
 	if(base == BASE_CUSTOM) {
 		base = (int) priv->custom_input_base_i;
@@ -1609,14 +1657,18 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 #define BASE_2_10 ((po.base >= 2 && po.base <= 10) || (po.base < BASE_CUSTOM && po.base != BASE_UNICODE && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && priv->custom_input_base_i <= 10))
 
 bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOptions &po) {
+
 	mstruct->clear();
 	if(str.empty()) return false;
+
+	// check that string contains characters other than operators and whitespace
 	if(str.find_first_not_of(OPERATORS "\a%\x1c" SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == string::npos)) {
 		gsub("\a", str.find_first_of("%" OPERATORS) != string::npos ? " xor " : "xor", str);
 		gsub("\x1c", "∠", str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
 	}
+
 	int minus_count = 0;
 	bool has_sign = false, had_non_sign = false, b_dot = false, b_exp = false, after_sign_e = false;
 	int i_colon = 0;
@@ -1624,15 +1676,19 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 
 	while(i < str.length()) {
 		if(!had_non_sign && str[i] == MINUS_CH) {
+			// count minuses in front of the number
 			has_sign = true;
 			minus_count++;
 			str.erase(i, 1);
 		} else if(!had_non_sign && str[i] == PLUS_CH) {
+			// + in front of the number is ignored
 			has_sign = true;
 			str.erase(i, 1);
 		} else if(str[i] == SPACE_CH) {
+			// ignore whitespace
 			str.erase(i, 1);
 		} else if(!b_exp && BASE_2_10 && (str[i] == EXP_CH || str[i] == EXP2_CH)) {
+			// scientific e-notation
 			b_exp = true;
 			had_non_sign = true;
 			after_sign_e = true;
@@ -1646,24 +1702,30 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			after_sign_e = false;
 			i++;
 		} else if(po.preserve_format && (!b_dot || i_colon > 0) && str[i] == ':') {
+			// sexagesimal colon; dots are not allowed in first part of a sexagesimal number
 			i_colon++;
 			had_non_sign = true;
 			after_sign_e = false;
 			i++;
 		} else if(str[i] == COMMA_CH && DOT_S == ".") {
+			// comma is ignored of decimal separator is dot
 			str.erase(i, 1);
 			after_sign_e = false;
 			had_non_sign = true;
 		} else if(is_in(OPERATORS, str[i]) && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
+			// ignore operators
 			error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
 		} else if(str[i] == '\a') {
+			// ignore operators
 			error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
 			str.erase(i, 1);
 		} else if(str[i] == '\x1c') {
+			// ignore operators
 			error(false, _("Misplaced operator(s) \"%s\" ignored"), "∠", NULL);
 			str.erase(i, 1);
 		} else if(str[i] == '\b') {
+			// +/-
 			b_exp = false;
 			had_non_sign = false;
 			after_sign_e = false;
@@ -1688,6 +1750,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		}
 		return false;
 	}
+	// numbers in brackets is an internal reference to a stored MathStructure object
 	if(str[0] == ID_WRAP_LEFT_CH && str.length() > 2 && str[str.length() - 1] == ID_WRAP_RIGHT_CH) {
 		int id = s2i(str.substr(1, str.length() - 2));
 		MathStructure *m_temp = getId((size_t) id);
@@ -1708,6 +1771,8 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		}
 		return true;
 	}
+	
+	// handle non-digits if number base is 2-10 or duodecimal
 	size_t itmp;
 	if((BASE_2_10 || po.base == BASE_DUODECIMAL) && (itmp = str.find_first_not_of(po.base == BASE_DUODECIMAL ? NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS MINUS DUODECIMAL_CHARS : NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS EXPS MINUS, 0)) != string::npos) {
 		if(itmp == 0) {
@@ -1730,12 +1795,20 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			str.erase(itmp, str.length() - itmp);
 		}
 	}
+	
+	// replace internal +/- operator
 	gsub("\b", "±", str);
+	
+	// parse number
 	Number nr(str, po);
+	
+	// handle - in front of the number (even number of minuses equals plus, odd number equals a single minus)
 	if(!po.preserve_format && minus_count % 2 == 1) {
 		nr.negate();
 	}
+	
 	if(i_colon && nr.isRational() && !nr.isInteger()) {
+		// if po.preserve_format is true, parse sexagesimal number as division
 		Number nr_num(nr.numerator()), nr_den(1, 1, 0);
 		while(i_colon) {
 			nr_den *= 60;
@@ -1749,6 +1822,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		mstruct->set(nr);
 	}
 	if(po.preserve_format) {
+		// handle multiple - in front of the number (treated as a single sign if po.preserve_format is false)
 		while(minus_count > 0) {
 			mstruct->transform(STRUCT_NEGATE);
 			minus_count--;

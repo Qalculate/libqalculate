@@ -1867,6 +1867,12 @@ int main(int argc, char *argv[]) {
 	evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
 	evalops.structuring = STRUCTURING_SIMPLIFY;
 	evalops.approximation = APPROXIMATION_EXACT;
+	
+	MathStructure m;
+	for(size_t i = 0; i < 100000L; i++) {
+		CALCULATOR->parse(&m, "mm", evalops.parse_options);
+	}
+	return 0;
 
 	/*MathStructure mstruct = CALCULATOR->calculate("atanh(2x^2+5)*x^2", evalops);
 	cout << mstruct.integrate(CALCULATOR->v_x, evalops) << endl;
