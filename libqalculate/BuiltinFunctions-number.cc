@@ -462,6 +462,33 @@ int ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	FR_FUNCTION_2(mod)
 }
 
+BernoulliFunction::BernoulliFunction() : MathFunction("bernoulli", 1, 2) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+	setDefaultValue(2, "0");
+}
+int BernoulliFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs.size() > 1 && !vargs[1].isZero()) {
+		mstruct.clear();
+		Number bin, k, nmk(vargs[0].number()), nrB;
+		while(k <= vargs[0].number()) {
+			if(nmk.isEven() || nmk.isOne()) {
+				nrB.set(nmk);
+				if(!bin.binomial(vargs[0].number(), k) || !nrB.bernoulli() || !nrB.multiply(bin)) return 0;
+				if(eo.approximation == APPROXIMATION_EXACT && nrB.isApproximate()) return 0;
+				mstruct.add(nrB, true);
+				mstruct.last().multiply(vargs[1]);
+				mstruct.last().last().raise(k);
+				mstruct.childUpdated(mstruct.size());
+			}
+			nmk--;
+			k++;
+		}
+		if(mstruct.isAddition()) mstruct.delChild(1, true);
+		return 1;
+	}
+	FR_FUNCTION(bernoulli)
+}
+
 PolynomialUnitFunction::PolynomialUnitFunction() : MathFunction("punit", 1, 2) {
 	RATIONAL_POLYNOMIAL_ARGUMENT(1)
 	setArgumentDefinition(2, new SymbolicArgument());

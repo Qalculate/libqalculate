@@ -101,22 +101,22 @@ int limit_inf_cmp(const MathStructure &mstruct, const MathStructure &mcmp, const
 					if(cmp > 0) cr = COMPARISON_RESULT_LESS;
 					else if(cmp == -1) cr = COMPARISON_RESULT_GREATER;
 				} else {
-					cr = m1->base()->compareApproximately(*m2->base());
+					cr = m1->base()->compare(*m2->base());
 				}
 			} else if(m1->base()->equals(*m2->base())) {
 				int cmp = limit_inf_cmp(*m1->exponent(), *m2->exponent(), x_var);
 				if(cmp > 0) cr = COMPARISON_RESULT_LESS;
 				else if(cmp == -1) cr = COMPARISON_RESULT_GREATER;
-				else if(cmp == 0) cr = m1->exponent()->compareApproximately(*m2->exponent());
+				else if(cmp == 0) cr = m1->exponent()->compare(*m2->exponent());
 			}
 		} else if(itype1 == 2) {
 			if(m1->equals(x_var)) {
 				if(m2->equals(x_var)) cr = COMPARISON_RESULT_EQUAL;
-				else cr = m_one.compareApproximately(*m2->getChild(2));
+				else cr = m_one.compare(*m2->getChild(2));
 			} else if(m2->equals(x_var)) {
-				cr = m1->getChild(2)->compareApproximately(m_one);
+				cr = m1->getChild(2)->compare(m_one);
 			} else {
-				cr = m1->getChild(2)->compareApproximately(*m2->getChild(2));
+				cr = m1->getChild(2)->compare(*m2->getChild(2));
 			}
 		}
 	}

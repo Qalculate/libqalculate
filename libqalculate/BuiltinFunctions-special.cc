@@ -31,6 +31,7 @@ using std::vector;
 using std::endl;
 
 #define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
+#define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
 #define FR_FUNCTION_2R(FUNC)	Number nr(vargs[1].number()); if(!nr.FUNC(vargs[0].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
 #define NON_COMPLEX_NUMBER_ARGUMENT(i)				NumberArgument *arg_non_complex##i = new NumberArgument(); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
@@ -46,52 +47,99 @@ bool has_interval_unknowns(MathStructure &m) {
 	return false;
 }
 
-ZetaFunction::ZetaFunction() : MathFunction("zeta", 1, 1, SIGN_ZETA) {
+bool bernoulli_poly(MathStructure &m, Number n, const MathStructure &mx, const EvaluationOptions &eo) {
+	m.clear();
+	Number bin, k, nmk(n), nrB;
+	while(k <= n) {
+		if(nmk.isEven() || nmk.isOne()) {
+			nrB.set(nmk);
+			if(!bin.binomial(n, k) || !nrB.bernoulli() || !nrB.multiply(bin)) return false;
+			if(eo.approximation == APPROXIMATION_EXACT && nrB.isApproximate()) return false;
+			m.add(nrB, true);
+			m.last().multiply(mx);
+			m.last().last().raise(k);
+			m.childUpdated(m.size());
+		}
+		nmk--;
+		k++;
+	}
+	if(m.isAddition()) m.delChild(1, true);
+	return true;
+}
+
+ZetaFunction::ZetaFunction() : MathFunction("zeta", 1, 2, SIGN_ZETA) {
 	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE);
 	setArgumentDefinition(1, arg);
+	arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE);
+	setArgumentDefinition(2, arg);
+	setDefaultValue(2, "1");
 }
 int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].number().isZero()) {
-		mstruct.set(-1, 2, 0);
-		return 1;
-	} else if(vargs[0].number().isMinusOne()) {
-		mstruct.set(-1, 12, 0);
-		return 1;
-	} else if(vargs[0].number().isNegative() && vargs[0].number().isEven()) {
-		mstruct.clear();
-		return 1;
-	} else if(vargs[0].number() == 2) {
-		mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
-		mstruct.raise(2);
-		mstruct.divide(6);
-		mstruct.mergePrecision(vargs[0]);
-		return 1;
-	} else if(vargs[0].number() == 4) {
-		mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
-		mstruct.raise(4);
-		mstruct.divide(90);
-		mstruct.mergePrecision(vargs[0]);
-		return 1;
-	} else if(vargs[0].number() == 6) {
-		mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
-		mstruct.raise(6);
-		mstruct.divide(945);
-		mstruct.mergePrecision(vargs[0]);
-		return 1;
-	} else if(vargs[0].number() == 8) {
-		mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
-		mstruct.raise(8);
-		mstruct.divide(9450);
-		mstruct.mergePrecision(vargs[0]);
-		return 1;
-	} else if(vargs[0].number() == 10) {
-		mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
-		mstruct.raise(10);
-		mstruct.divide(93555);
-		mstruct.mergePrecision(vargs[0]);
-		return 1;
+	if(vargs.size() == 1 || vargs[1].isOne()) {
+		if(vargs[0].number().isInteger()) {
+			if(vargs[0].number().isZero()) {
+				mstruct.set(-1, 2, 0);
+				return 1;
+			} else if(vargs[0].number().isMinusOne()) {
+				mstruct.set(-1, 12, 0);
+				return 1;
+			} else if(vargs[0].number().isNegative() && vargs[0].number().isEven()) {
+				mstruct.clear();
+				return 1;
+			} else if(vargs[0].number().isNegative() && vargs[0].number() >= -73) {
+				Number nr(vargs[0].number());
+				nr.negate();
+				nr++;
+				nr.bernoulli();
+				nr.divide(vargs[0].number() - 1);
+				if(vargs[0].number().isEven()) nr.negate();
+				mstruct.set(nr);
+				mstruct.mergePrecision(vargs[0]);
+				return 1;
+			} else if(vargs[0].number().isEven() && vargs[0].number() <= 74) {
+				Number nr(vargs[0].number());
+				nr.bernoulli();
+				mstruct.set(nr);
+				mstruct.multiply(CALCULATOR->getVariableById(VARIABLE_ID_PI));
+				mstruct.last().multiply(nr_two);
+				mstruct.last().raise(vargs[0]);
+				mstruct.multiply(vargs[0]);
+				mstruct.last().transformById(FUNCTION_ID_FACTORIAL);
+				mstruct.last().inverse();
+				if(vargs[0].number().isIntegerDivisible(4)) mstruct.multiply(Number(-1, 2));
+				else mstruct.multiply(nr_half);
+				mstruct.childrenUpdated(true);
+				return 1;
+			}
+		}
+		FR_FUNCTION(zeta)
 	}
-	FR_FUNCTION(zeta)
+	if(vargs[0].number().isZero()) {
+		mstruct.set(1, 2, 0);
+		if(!vargs[1].isZero()) mstruct.subtract(vargs[0]);
+		return 1;
+	} else if(vargs[0].number().isInteger() && vargs[0].number().isNegative() && vargs[0].number() >= -100) {
+		Number nr(vargs[0].number());
+		nr.negate();
+		nr++;
+		if(bernoulli_poly(mstruct, nr, vargs[1], eo)) {
+			mstruct.divide(nr);
+			mstruct.negate();
+			return 1;
+		}
+	} else if(vargs[1].number() >= 2 && ((eo.approximation == APPROXIMATION_EXACT && vargs[1].number() <= 1000) || (vargs[1].number() <= 50 && vargs[0].number() >= -10 && vargs[0].number() <= 10))) {
+		mstruct = vargs[0];
+		mstruct.transform(this);
+		mstruct.addChild(m_one);
+		mstruct.add(m_minus_one);
+		for(long int i = 2; vargs[1].number() > i; i++) {
+			mstruct.add(Number(i, 1), true);
+			mstruct.last().raise(-vargs[0].number());
+			mstruct.last().negate();
+		}
+		return true;
+	}
+	FR_FUNCTION_2(zeta)
 }
 GammaFunction::GammaFunction() : MathFunction("gamma", 1, 1, SIGN_CAPITAL_GAMMA) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1);

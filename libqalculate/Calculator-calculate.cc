@@ -146,14 +146,19 @@ bool Calculator::abort() {
 	if(!calculate_thread->running) {
 		b_busy = false;
 	} else {
+		// wait 5 seconds for clean abortation
 		int msecs = 5000;
 		while(b_busy && msecs > 0) {
 			sleep_ms(10);
 			msecs -= 10;
 		}
 		if(b_busy) {
+
+			// force thread cancellation
 			calculate_thread->cancel();
 			stopControl();
+			
+			// clean up
 			stopped_messages_count.clear();
 			stopped_warnings_count.clear();
 			stopped_errors_count.clear();
@@ -161,7 +166,10 @@ bool Calculator::abort() {
 			disable_errors_ref = 0;
 			if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
 			tmp_rpn_mstruct = NULL;
+			
+			// thread cancellation is not safe
 			error(true, _("The calculation has been forcibly terminated. Please restart the application and report this as a bug."), NULL);
+			
 			b_busy = false;
 			calculate_thread->start();
 			return false;
@@ -663,11 +671,15 @@ int has_information_unit(const MathStructure &m, bool top = true) {
 
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
 string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po) {
+
 	if(msecs > 0) startControl(msecs);
+
 	PrintOptions printops = po;
 	EvaluationOptions evalops = eo;
 	MathStructure mstruct;
 	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false, do_expand = false, do_binary_prefixes = false, complex_angle_form = false;
+	
+	// separate and handle string after "to"
 	string from_str = str, to_str;
 	Number base_save;
 	if(printops.base == BASE_CUSTOM) base_save = customOutputBase();
@@ -810,6 +822,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			evalops.auto_post_conversion = POST_CONVERSION_NONE;
 			evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
 		} else {
+			// ? in front of unit epxression is interpreted as a request for the optimal prefix.
 			evalops.parse_options.units_enabled = true;
 			if(to_str[0] == '?' || (to_str.length() > 1 && to_str[1] == '?' && (to_str[0] == 'a' || to_str[0] == 'd'))) {
 				printops.use_unit_prefixes = true;
@@ -818,10 +831,13 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				if(to_str[0] == 'a') printops.use_all_prefixes = true;
 				else if(to_str[0] == 'd') priv->use_binary_prefixes = 0;
 			} else if(to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'b') {
+				// b? in front of unit epxression: use binary prefixes
 				do_binary_prefixes = true;
 			}
 		}
+		// expression after "to" is by default interpreted as unit epxression
 	} else {
+		// check for factor or expand instruction at front a expression
 		size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
 		if(i != string::npos) {
 			to_str = str.substr(0, i);
@@ -837,18 +853,23 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		}
 	}
 
+	// perform calculation
 	mstruct = calculate(str, evalops);
 
+	// handle "to factors", and "factor" or "expand" in front of the expression
 	if(do_factors) {
 		mstruct.integerFactorize();
 	} else if(do_expand) {
 		mstruct.expand(evalops, false);
 	}
+	
+	// handle "to partial fraction"
 	if(do_pfe) mstruct.expandPartialFractions(evalops);
 
 	printops.allow_factorization = printops.allow_factorization || evalops.structuring == STRUCTURING_FACTORIZE || do_factors;
 
 	if(do_calendars && mstruct.isDateTime()) {
+		// handle "to calendars"
 		str = "";
 		bool b_fail;
 		long int y, m, d;
@@ -869,6 +890,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		stopControl();
 		return str;
 	} else if(do_bases) {
+		// handle "to bases"
 		printops.base = BASE_BINARY;
 		str = print(mstruct, 0, printops);
 		str += " = ";
@@ -883,11 +905,14 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		stopControl();
 		return str;
 	} else if(do_fraction) {
+		// handle "to fraction"
 		if(mstruct.isNumber()) printops.number_fraction_format = FRACTION_COMBINED;
 		else printops.number_fraction_format = FRACTION_FRACTIONAL;
 	} else if(do_binary_prefixes) {
-		int i = has_information_unit(mstruct);
+		// b? in front of unit expression: use binary prefixes
 		printops.use_unit_prefixes = true;
+		// check for information units in unit expression: if found use only binary prefixes for information units
+		int i = has_information_unit(mstruct);
 		priv->use_binary_prefixes = (i > 0 ? 1 : 2);
 		if(i == 1) {
 			printops.use_denominator_prefix = false;
@@ -898,20 +923,32 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			printops.use_prefixes_for_all_units = true;
 		}
 	}
+	// do not display the default angle unit in trigonometric functions
 	mstruct.removeDefaultAngleUnit(evalops);
+	
+	// format and print
 	mstruct.format(printops);
 	str = mstruct.print(printops);
+	
+	// "to angle": replace "cis" with angle symbol
 	if(complex_angle_form) gsub(" cis ", "∠", str);
-	stopControl();
+	
+	if(msecs > 0) stopControl();
+	
+	// restore options
 	if(printops.base == BASE_CUSTOM) setCustomOutputBase(base_save);
 	priv->use_binary_prefixes = save_bin;
+	
 	return str;
 }
 bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
+
 	mstruct->set(string(_("calculating...")), false, true);
 	b_busy = true;
 	if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
 	bool had_msecs = msecs > 0;
+	
+	// send calculation command to calculation thread
 	expression_to_calculate = str;
 	tmp_evaluationoptions = eo;
 	tmp_proc_command = PROC_NO_COMMAND;
@@ -921,6 +958,8 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 	tmp_maketodivision = make_to_division;
 	if(!calculate_thread->write(true)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
+	
+	// check time while calculation proceeds
 	while(msecs > 0 && b_busy) {
 		sleep_ms(10);
 		msecs -= 10;
@@ -932,9 +971,12 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 	return true;
 }
 bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOptions &eo, string to_str) {
+
 	b_busy = true;
 	if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
 	bool had_msecs = msecs > 0;
+	
+	// send calculation command to calculation thread
 	expression_to_calculate = "";
 	tmp_evaluationoptions = eo;
 	tmp_proc_command = PROC_NO_COMMAND;
@@ -946,6 +988,8 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
 	tmp_maketodivision = false;
 	if(!calculate_thread->write(false)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
+	
+	// check time while calculation proceeds
 	while(msecs > 0 && b_busy) {
 		sleep_ms(10);
 		msecs -= 10;
@@ -1087,7 +1131,7 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 	return false;
 }
 bool calculate_rand(MathStructure &mstruct, const EvaluationOptions &eo) {
-	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_RAND) {
+	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_RAND || mstruct.function()->id() == FUNCTION_ID_RANDN || mstruct.function()->id() == FUNCTION_ID_RAND_POISSON)) {
 		mstruct.unformat(eo);
 		mstruct.calculateFunctions(eo, false);
 		return true;
@@ -1122,7 +1166,9 @@ bool calculate_ans(MathStructure &mstruct, const EvaluationOptions &eo) {
 bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const EvaluationOptions &eo, vector<UnknownVariable*>& vars, vector<MathStructure>& varms, bool empty_func, bool do_eval = true) {
 	if(m.isComparison()) {
 		if(m.comparisonType() == COMPARISON_EQUALS) {
+			// x=y
 			if(m[0].size() > 0 && do_eval) {
+				// not a single variable (or empty function) on the left side of the comparison: perform calculation
 				MathStructure m2(m);
 				MathStructure xvar = m[0].find_x_var();
 				EvaluationOptions eo2 = eo;
@@ -1132,31 +1178,46 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 				if(m2.isComparison()) return handle_where_expression(m2, mstruct, eo, vars, varms, false, false);
 			}
 			if(m[0].isFunction() && m[1].isFunction() && (m[0].size() == 0 || (empty_func && m[0].function()->minargs() == 0)) && (m[1].size() == 0 || (empty_func && m[1].function()->minargs() == 0))) {
+				// if left value is a function without any arguments, do function replacement
 				if(!replace_function(mstruct, m[0].function(), m[1].function(), eo)) CALCULATOR->error(false, _("Original value (%s) was not found."), (m[0].function()->name() + "()").c_str(), NULL);
 			} else {
-				calculate_rand(m[1], eo);
-				if(mstruct.countOccurrences(m[0]) > 1 && m[1].containsInterval(true, false, false, 0, true)) {
-					MathStructure mv(m[1]);
-					replace_f_interval(mv, eo);
-					replace_intervals_f(mv);
-					if(!mstruct.replace(m[0], mv)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
+				if(mstruct.countOccurrences(m[0]) > 1) {
+
+					// make sure that only a single random value is used
+					calculate_rand(m[1], eo);
+
+					if(m[1].containsInterval(true, false, false, 0, true)) {
+						// replace interval with variable if multiple occurrences if original value
+						MathStructure mv(m[1]);
+						replace_f_interval(mv, eo);
+						replace_intervals_f(mv);
+						if(!mstruct.replace(m[0], mv)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
+					} else {
+						if(!mstruct.replace(m[0], m[1])) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
+					}
 				} else {
 					if(!mstruct.replace(m[0], m[1])) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
 				}
 			}
 			return true;
 		} else if(m[0].isSymbolic() || (m[0].isVariable() && !m[0].variable()->isKnown())) {
+			// inequality found
+			// unknown variable range specification (e.g. x>0)
+			// right hand side value must be a non-complex number
 			if(!m[1].isNumber()) m[1].eval(eo);
 			if(m[1].isNumber() && !m[1].number().hasImaginaryPart()) {
 				Assumptions *ass = NULL;
+				// search for assumptions from previous "where" replacements
 				for(size_t i = 0; i < varms.size(); i++) {
 					if(varms[i] == m[0]) {
 						ass = vars[0]->assumptions();
 						break;
 					}
 				}
+				// can only handle not equals if value is zero
 				if((m.comparisonType() != COMPARISON_NOT_EQUALS || (!ass && m[1].isZero()))) {
 					if(ass) {
+						// change existing assumptions
 						if(m.comparisonType() == COMPARISON_EQUALS_GREATER) {
 							if(!ass->min() || (*ass->min() < m[1].number())) {
 								ass->setMin(&m[1].number()); ass->setIncludeEqualsMin(true);
@@ -1187,6 +1248,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 							}
 						}
 					} else {
+						// create a new unknown variable and modify the assumptions
 						UnknownVariable *var = new UnknownVariable("", format_and_print(m[0]));
 						ass = new Assumptions();
 						if(m[1].isZero()) {
@@ -1211,6 +1273,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 				}
 			}
 		} else if(do_eval) {
+			// inequality without a single variable on the left side: calculate expression and try again
 			MathStructure xvar = m[0].find_x_var();
 			EvaluationOptions eo2 = eo;
 			eo2.isolate_x = true;
@@ -1219,6 +1282,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 			return handle_where_expression(m, mstruct, eo, vars, varms, false, false);
 		}
 	} else if(m.isLogicalAnd()) {
+		// logical and (e.g. x=2&&y=3): perform multiple "where" replacments
 		bool ret = true;
 		for(size_t i = 0; i < m.size(); i++) {
 			if(!handle_where_expression(m[i], mstruct, eo, vars, varms, empty_func, do_eval)) ret = false;
@@ -1232,16 +1296,23 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 
 	string str2, str_where;
 
+	// retrieve expression after " to " and remove "to ..." from expression
 	if(make_to_division) separateToExpression(str, str2, eo, true);
+	
+	// retrieve expression after " where " (or "/.") and remove "to ..." from expression
 	separateWhereExpression(str, str_where, eo);
 
+	// handle to expression provided as argument
 	Unit *u = NULL;
 	if(to_struct) {
+		// ignore if expression contains "to" expression
 		if(str2.empty()) {
 			if(to_struct->isSymbolic() && !to_struct->symbol().empty()) {
+				// if to_struct is symbol, treat as "to" string
 				str2 = to_struct->symbol();
 				remove_blank_ends(str2);
 			} else if(to_struct->isUnit()) {
+				// if to_struct is unit, convert to this unit (later)
 				u = to_struct->unit();
 			}
 		}
@@ -1251,8 +1322,11 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	MathStructure mstruct;
 	current_stage = MESSAGE_STAGE_PARSING;
 	size_t n_messages = messages.size();
+	
+	// perform expression parsing
 	parse(&mstruct, str, eo.parse_options);
 	if(parsed_struct) {
+		// set parsed_struct to parsed expression with preserved formatting
 		beginTemporaryStopMessages();
 		ParseOptions po = eo.parse_options;
 		po.preserve_format = true;
@@ -1260,16 +1334,26 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		endTemporaryStopMessages();
 	}
 
+	// handle "where" expression
 	vector<UnknownVariable*> vars;
 	vector<MathStructure> varms;
 	if(!str_where.empty()) {
+
+		// parse "where" expression
 		MathStructure where_struct;
 		parse(&where_struct, str_where, eo.parse_options);
+
 		current_stage = MESSAGE_STAGE_CALCULATION;
+
+		// replace answer variables and functions in expression before performing any replacements from "where" epxression
 		calculate_ans(mstruct, eo);
+		
 		string str_test = str_where;
 		remove_blanks(str_test);
+
+		// check if "where" expression includes function replacements
 		bool empty_func = str_test.find("()=") != string::npos;
+
 		if(mstruct.isComparison() || (mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_SOLVE && mstruct.size() >= 1 && mstruct[0].isComparison())) {
 			beginTemporaryStopMessages();
 			MathStructure mbak(mstruct);
@@ -1278,6 +1362,8 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 			} else {
 				endTemporaryStopMessages();
 				mstruct = mbak;
+				// if where expression handling fails we can add the parsed "where" expression using logical and,
+				// if the original expression is an equation
 				if(mstruct.isComparison()) mstruct.transform(STRUCT_LOGICAL_AND, where_struct);
 				else {mstruct[0].transform(STRUCT_LOGICAL_AND, where_struct); mstruct.childUpdated(1);}
 			}
@@ -1294,20 +1380,25 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 
 	current_stage = MESSAGE_STAGE_CALCULATION;
 
+	// perform calculation
 	mstruct.eval(eo);
 
 	current_stage = MESSAGE_STAGE_UNSET;
 
 	if(!aborted()) {
+		// do unit conversion
 		bool b_units = mstruct.containsType(STRUCT_UNIT, true);
 		if(b_units && u) {
+			// convert to unit provided in to_struct
 			current_stage = MESSAGE_STAGE_CONVERSION;
 			if(to_struct) to_struct->set(u);
 			mstruct.set(convert(mstruct, u, eo, false, false));
 			if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo));
 		} else if(!str2.empty()) {
+			// conversion using "to" expression
 			mstruct.set(convert(mstruct, str2, eo));
 		} else if(b_units) {
+			// do automatic conversion
 			current_stage = MESSAGE_STAGE_CONVERSION;
 			switch(eo.auto_post_conversion) {
 				case POST_CONVERSION_OPTIMAL: {
@@ -1328,10 +1419,12 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		}
 	}
 
+	// clean up all new messages (removes "wide interval" warning if final value does not contains any wide interval)
 	cleanMessages(mstruct, n_messages + 1);
 
 	current_stage = MESSAGE_STAGE_UNSET;
 
+	// replace variables generated from "where" expression
 	for(size_t i = 0; i < vars.size(); i++) {
 		mstruct.replace(vars[i], varms[i]);
 		vars[i]->destroy();
