@@ -356,7 +356,7 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 	}
 
 	MathStructure xvar(symbols[symbol_index]);
-	
+
 	UnknownVariable *var = NULL;
 	if(xvar.size() > 0) {
 		var = new UnknownVariable("", format_and_print(xvar));

@@ -880,7 +880,7 @@ bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
 			}
 			replace_f_interval(mstruct, eo);
 			return true;
-			
+
 		}
 		return false;
 	}

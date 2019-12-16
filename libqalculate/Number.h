@@ -461,7 +461,7 @@ class Number {
  		* @return true if the calculation was successful.
  		*/
 		bool zeta();
-		
+
 		/// Hurwitz zeta function
 		bool zeta(const Number &o);
 
@@ -512,7 +512,7 @@ class Number {
 		bool doubleFactorial();
 		bool binomial(const Number &m, const Number &k);
 		bool factorize(std::vector<Number> &factors);
-		
+
 		bool bernoulli();
 
 		void rand();

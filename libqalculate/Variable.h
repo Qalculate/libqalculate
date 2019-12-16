@@ -163,7 +163,7 @@ class Variable : public ExpressionItem {
 	virtual bool representsBoolean() {return false;}
 	virtual bool representsNonMatrix() {return false;}
 	virtual bool representsScalar() {return false;}
-	
+
 	virtual int id() const {return 0;}
 
 };
@@ -342,7 +342,7 @@ class KnownVariable : public Variable {
 	virtual bool representsBoolean();
 	virtual bool representsNonMatrix();
 	virtual bool representsScalar();
-	
+
 	virtual int id() const {return 0;}
 
 };

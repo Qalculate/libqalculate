@@ -60,15 +60,18 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 		return false;
 	}
 	if(equals(x_var)) {
+		// x'=1
 		set(m_one);
 		return true;
 	}
 	if(containsRepresentativeOf(x_var, true, true) == 0) {
+		// f(a)'=0
 		clear(true);
 		return true;
 	}
 	switch(m_type) {
 		case STRUCT_ADDITION: {
+			// sum rule: (f(x)+g(x))'=f'+g'
 			for(size_t i = 0; i < SIZE;) {
 				if(CHILD(i).differentiate(x_var, eo)) {
 					CHILD_UPDATED(i);
@@ -85,6 +88,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				if(!CHILD(i).isComparison()) {b = false; break;}
 			}
 			if(b) {
+				// a&&b=a*b
 				MathStructure mtest(*this);
 				mtest.setType(STRUCT_MULTIPLICATION);
 				if(mtest.differentiate(x_var, eo) && mtest.containsFunctionId(FUNCTION_ID_DIFFERENTIATE, true) <= 0) {
@@ -95,20 +99,25 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 		}
 		case STRUCT_COMPARISON: {
 			if(ct_comp == COMPARISON_GREATER || ct_comp == COMPARISON_EQUALS_GREATER || ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS) {
+				// f(x)>=0 = sgn(heaviside(f)) : sgn(heaviside(f))'=f'*2*dirac(f)*dirac(heaviside(f))
+				// f(x)<0 = sgn(-heaviside(f)) : sgn(heaviside(-f))'=f'*-2*dirac(f)*dirac(heaviside(-f))
+				// f(x)<=0 = sgn(heaviside(-f)) : sgn(-heaviside(f))'=f'*-2*dirac(f)*dirac(heaviside(f))
+				// f(x)>0 = sgn(-heaviside(-f)) : sgn(-heaviside(-f))'=f'*2*dirac(f)*dirac(heaviside(-f))
+				ComparisonType ct = ct_comp;
 				if(!CHILD(1).isZero()) CHILD(0) -= CHILD(1);
 				SET_CHILD_MAP(0)
-				if(ct_comp == COMPARISON_GREATER || ct_comp == COMPARISON_EQUALS_LESS) negate();
-				MathStructure mstruct(*this);
 				MathStructure mstruct2(*this);
+				MathStructure mstruct(*this);
+				if(ct == COMPARISON_EQUALS_LESS || ct == COMPARISON_GREATER) negate();
 				transformById(FUNCTION_ID_HEAVISIDE);
 				transformById(FUNCTION_ID_DIRAC);
 				mstruct2.transformById(FUNCTION_ID_DIRAC);
 				multiply(mstruct2);
-				if(ct_comp == COMPARISON_EQUALS_GREATER || ct_comp == COMPARISON_EQUALS_LESS) multiply_nocopy(new MathStructure(2, 1, 0));
+				if(ct == COMPARISON_EQUALS_GREATER || ct == COMPARISON_LESS) multiply_nocopy(new MathStructure(2, 1, 0));
 				else multiply_nocopy(new MathStructure(-2, 1, 0));
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
-				return true;
+				break;
 			}
 			transformById(FUNCTION_ID_DIFFERENTIATE);
 			addChild(x_var);
@@ -118,6 +127,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 		}
 		case STRUCT_UNIT: {}
 		case STRUCT_NUMBER: {
+			// a'=0
 			clear(true);
 			break;
 		}
@@ -132,27 +142,27 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 			bool x_in_base = CHILD(0).containsRepresentativeOf(x_var, true, true) != 0;
 			bool x_in_exp = CHILD(1).containsRepresentativeOf(x_var, true, true) != 0;
 			if(x_in_base && !x_in_exp) {
+				// (f(x)^a)'=f'*a*f^(a-1)
 				MathStructure *exp_mstruct = new MathStructure(CHILD(1));
 				if(!CHILD(1).isNumber() || !CHILD(1).number().add(-1)) CHILD(1) += m_minus_one;
-				if(CHILD(0) == x_var) {
-					multiply_nocopy(exp_mstruct);
-				} else {
+				if(!CHILD(0).equals(x_var)) {
 					MathStructure *base_mstruct = new MathStructure(CHILD(0));
-					multiply_nocopy(exp_mstruct);
 					base_mstruct->differentiate(x_var, eo);
 					multiply_nocopy(base_mstruct);
 				}
+				multiply_nocopy(exp_mstruct);
 			} else if(!x_in_base && x_in_exp) {
+				// (a^f(x))'=f'*ln(a)*a^f
 				MathStructure *exp_mstruct = new MathStructure(CHILD(1));
 				exp_mstruct->differentiate(x_var, eo);
-				if(CHILD(0).isVariable() && CHILD(0).variable()->id() == VARIABLE_ID_E) {
-					multiply_nocopy(exp_mstruct);
-				} else {
+				if(!CHILD(0).isVariable() || CHILD(0).variable()->id() != VARIABLE_ID_E) {
 					MathStructure *mstruct = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(0), NULL);
 					multiply_nocopy(mstruct);
 					multiply_nocopy(exp_mstruct);
 				}
+				multiply_nocopy(exp_mstruct);
 			} else if(x_in_base && x_in_exp) {
+				// (f(x)^g(x))'=f^g*(ln(f)*g'+f'/f*g)
 				MathStructure *exp_mstruct = new MathStructure(CHILD(1));
 				MathStructure *base_mstruct = new MathStructure(CHILD(0));
 				exp_mstruct->differentiate(x_var, eo);
@@ -170,12 +180,17 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 		}
 		case STRUCT_FUNCTION: {
 			if(o_function->id() == FUNCTION_ID_SQRT && SIZE == 1) {
-				MathStructure *base_mstruct = new MathStructure(CHILD(0));
-				raise(m_minus_one);
-				multiply(nr_half);
-				base_mstruct->differentiate(x_var, eo);
-				multiply_nocopy(base_mstruct);
+				// sqrt(f)'=f'/(2*sqrt(f))
+				SET_CHILD_MAP(0)
+				raise_nocopy(new MathStructure(-1, 2, 0));
+				if(!CHILD(0).equals(x_var)) {
+					MathStructure *base_mstruct = new MathStructure(CHILD(0));
+					base_mstruct->differentiate(x_var, eo);
+					multiply_nocopy(base_mstruct);
+				}
+				multiply_nocopy(new MathStructure(1, 2, 0));
 			} else if(o_function->id() == FUNCTION_ID_ROOT && THIS_VALID_ROOT) {
+				// root(f,a)'=f'/(a*root(f,a)^(a-1))
 				MathStructure *base_mstruct = new MathStructure(CHILD(0));
 				MathStructure *mexp = new MathStructure(CHILD(1));
 				mexp->negate();
@@ -185,16 +200,21 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				base_mstruct->differentiate(x_var, eo);
 				multiply_nocopy(base_mstruct);
 			} else if(o_function->id() == FUNCTION_ID_CBRT && SIZE == 1) {
-				MathStructure *base_mstruct = new MathStructure(CHILD(0));
-				raise(Number(-2, 1, 0));
-				divide(nr_three);
-				base_mstruct->differentiate(x_var, eo);
-				multiply_nocopy(base_mstruct);
+				// cbrt(f)'=f'/(3*cbrt(x)^2)
+				raise_nocopy(new MathStructure(-2, 1, 0));
+				if(!CHILD(0).equals(x_var)) {
+					MathStructure *base_mstruct = new MathStructure(CHILD(0)[0]);
+					base_mstruct->differentiate(x_var, eo);
+					multiply_nocopy(base_mstruct);
+				}
+				multiply_nocopy(new MathStructure(1, 3, 0));
 			} else if((o_function->id() == FUNCTION_ID_LOG && SIZE == 1) || (o_function->id() == FUNCTION_ID_LOGN && SIZE == 2 && CHILD(1).isVariable() && CHILD(1).variable()->id() == VARIABLE_ID_E)) {
 				if(CHILD(0) == x_var) {
+					// ln(x)'=1/x
 					setToChild(1, true);
 					inverse();
 				} else {
+					// ln(f)'=f'/f
 					MathStructure *mstruct = new MathStructure(CHILD(0));
 					setToChild(1, true);
 					inverse();
@@ -202,18 +222,42 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 					multiply_nocopy(mstruct);
 				}
 			} else if(o_function->id() == FUNCTION_ID_LOGN && SIZE == 2) {
+				// log(f,g)'=(log(f)/log(g))'
 				MathStructure *mstruct = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(1), NULL);
 				setFunctionId(FUNCTION_ID_LOG);
 				ERASE(1)
 				divide_nocopy(mstruct);
 				return differentiate(x_var, eo);
 			} else if(o_function->id() == FUNCTION_ID_BETA && SIZE == 2) {
-				MathStructure mstruct(CHILD(0));
-				setToChild(1, true);
-				inverse();
-				mstruct.differentiate(x_var, eo);
-				multiply(mstruct);
+				// beta(f,g)')=beta(f,g)*((f'*digamma(f)-digamma(f+g))+g'*(digamma(g)-digamma(f+g)))
+				MathStructure mdigamma(CHILD(0));
+				mdigamma += CHILD(1);
+				mdigamma.transformById(FUNCTION_ID_DIGAMMA);
+				MathStructure *m1 = NULL, *m2 = NULL;
+				if(CHILD(0).containsRepresentativeOf(x_var, true, true) != 0) {
+					m1 = new MathStructure(CHILD(0));
+					m1->transformById(FUNCTION_ID_DIGAMMA);
+					m1->subtract(mdigamma);
+					MathStructure *mstruct = new MathStructure(CHILD(0));
+					mstruct->differentiate(x_var, eo);
+					m1->multiply_nocopy(mstruct);
+				}
+				if(CHILD(1).containsRepresentativeOf(x_var, true, true) != 0) {
+					m2 = new MathStructure(CHILD(1));
+					m2->transformById(FUNCTION_ID_DIGAMMA);
+					m2->subtract(mdigamma);
+					MathStructure *mstruct = new MathStructure(CHILD(1));
+					mstruct->differentiate(x_var, eo);
+					m2->multiply_nocopy(mstruct);
+				}
+				if(m1) {
+					if(m2) m1->add_nocopy(m2);
+					multiply_nocopy(m1);
+				} else {
+					multiply_nocopy(m2);
+				}
 			} else if(o_function->id() == FUNCTION_ID_ARG && SIZE == 1) {
+				// arg(x)'=f'*-pi*dirac(f)
 				MathStructure mstruct(CHILD(0));
 				setFunctionId(FUNCTION_ID_DIRAC);
 				mstruct.differentiate(x_var, eo);
@@ -221,6 +265,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				multiply(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 				negate();
 			} else if(o_function->id() == FUNCTION_ID_GAMMA && SIZE == 1) {
+				// gamma(f)'=f'*digamma(f)
 				MathStructure mstruct(CHILD(0));
 				MathStructure mstruct2(*this);
 				mstruct2.setFunctionId(FUNCTION_ID_DIGAMMA);
@@ -228,6 +273,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_FACTORIAL && SIZE == 1) {
+				// (f!)'=gamma(f+1)'=(f+1)'*digamma(f+1)
 				MathStructure mstruct(CHILD(0));
 				CHILD(0) += m_one;
 				MathStructure mstruct2(*this);
@@ -236,6 +282,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_BESSELJ && SIZE == 2 && CHILD(0).isInteger()) {
+				// besselj(n,f)'=f'*(besselj(n-1,f)-besselj(n+1,f))/2
 				MathStructure mstruct(CHILD(1));
 				MathStructure mstruct2(*this);
 				CHILD(0) += m_minus_one;
@@ -245,6 +292,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				multiply(mstruct);
 				multiply(nr_half);
 			} else if(o_function->id() == FUNCTION_ID_BESSELY && SIZE == 2 && CHILD(0).isInteger()) {
+				// bessely(n,f)'=f'*(bessely(n-1,f)-bessely(n+1,f))/2
 				MathStructure mstruct(CHILD(1));
 				MathStructure mstruct2(*this);
 				CHILD(0) += m_minus_one;
@@ -254,6 +302,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				multiply(mstruct);
 				multiply(nr_half);
 			} else if(o_function->id() == FUNCTION_ID_ERF && SIZE == 1) {
+				// erfi(f)'=f'*2/(e^(f^2)*sqrt(pi))
 				MathStructure mdiff(CHILD(0));
 				MathStructure mexp(CHILD(0));
 				mexp ^= nr_two;
@@ -266,6 +315,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				mdiff.differentiate(x_var, eo);
 				multiply(mdiff);
 			} else if(o_function->id() == FUNCTION_ID_ERFI && SIZE == 1) {
+				// erfi(f)'=f'*2*e^(f^2)/sqrt(pi)
 				MathStructure mdiff(CHILD(0));
 				MathStructure mexp(CHILD(0));
 				mexp ^= nr_two;
@@ -277,6 +327,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				mdiff.differentiate(x_var, eo);
 				multiply(mdiff);
 			} else if(o_function->id() == FUNCTION_ID_ERFC && SIZE == 1) {
+				// erfc(f)'=f'*-2/(e^(f^2)*sqrt(pi))
 				MathStructure mdiff(CHILD(0));
 				MathStructure mexp(CHILD(0));
 				mexp ^= nr_two;
@@ -289,6 +340,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				mdiff.differentiate(x_var, eo);
 				multiply(mdiff);
 			} else if(o_function->id() == FUNCTION_ID_FRESNEL_S && SIZE == 1) {
+				// fresnels(f)'=f'*fresnels(f^2*pi/2)
 				setFunctionId(FUNCTION_ID_SIN);
 				MathStructure mstruct(CHILD(0));
 				CHILD(0) ^= nr_two;
@@ -298,6 +350,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_FRESNEL_C && SIZE == 1) {
+				// fresnelc(f)'=f'*cos(f^2*pi/2)
 				setFunctionId(FUNCTION_ID_COS);
 				MathStructure mstruct(CHILD(0));
 				CHILD(0) ^= nr_two;
@@ -307,18 +360,21 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_LOGINT && SIZE == 1) {
+				// li(f)'=f'/ln(f)
 				setFunctionId(FUNCTION_ID_LOG);
 				MathStructure mstruct(CHILD(0));
 				inverse();
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
-			} else if(o_function->id() == FUNCTION_ID_POLYLOG && SIZE == 2) {
+			} else if(o_function->id() == FUNCTION_ID_POLYLOG && SIZE == 2 && CHILD(0).containsRepresentativeOf(x_var, true, true) == 0) {
+				// Li(a,f)'=f'*Li(a-1,f)/f
 				CHILD(0) += m_minus_one;
 				MathStructure mstruct(CHILD(1));
 				divide(mstruct);
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_EXPINT && SIZE == 1) {
+				// Ei(f)'=f'*e^f/f
 				MathStructure mexp(CALCULATOR->getVariableById(VARIABLE_ID_E));
 				mexp ^= CHILD(0);
 				MathStructure mdiff(CHILD(0));
@@ -328,12 +384,14 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				inverse();
 				multiply(mexp);
 			} else if(o_function->id() == FUNCTION_ID_SININT && SIZE == 1) {
+				// Si(f)'=f'*sinc(f)
 				setFunctionId(FUNCTION_ID_SINC);
 				CHILD_UPDATED(0)
 				MathStructure mdiff(CHILD(0));
 				mdiff.differentiate(x_var, eo);
 				multiply(mdiff);
 			} else if(o_function->id() == FUNCTION_ID_COSINT && SIZE == 1) {
+				// Ci(f)'=f'*cos(f)/f
 				setFunctionId(FUNCTION_ID_COS);
 				MathStructure marg(CHILD(0));
 				MathStructure mdiff(CHILD(0));
@@ -342,6 +400,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				divide(marg);
 				multiply(mdiff);
 			} else if(o_function->id() == FUNCTION_ID_SINHINT && SIZE == 1) {
+				// Shi(f)'=f'*sinh(f)/f
 				setFunctionId(FUNCTION_ID_SINH);
 				MathStructure marg(CHILD(0));
 				MathStructure mdiff(CHILD(0));
@@ -349,6 +408,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				divide(marg);
 				multiply(mdiff);
 			} else if(o_function->id() == FUNCTION_ID_COSHINT && SIZE == 1) {
+				// Chi(f)'=f'*cosh(f)/f
 				setFunctionId(FUNCTION_ID_COSH);
 				MathStructure marg(CHILD(0));
 				MathStructure mdiff(CHILD(0));
@@ -356,12 +416,14 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				divide(marg);
 				multiply(mdiff);
 			} else if(o_function->id() == FUNCTION_ID_ABS && SIZE == 1) {
+				// abs(f)'=f'*f/abs(f)
 				MathStructure mstruct(CHILD(0));
 				inverse();
 				multiply(mstruct);
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_SIGNUM && SIZE == 2) {
+				// sgn(f)'=f'*2*dirac(f)
 				MathStructure mstruct(CHILD(0));
 				ERASE(1)
 				setFunctionId(FUNCTION_ID_DIRAC);
@@ -369,11 +431,13 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_HEAVISIDE && SIZE == 1) {
+				// heaviside(f)'=f'*dirac(f)
 				MathStructure mstruct(CHILD(0));
 				setFunctionId(FUNCTION_ID_DIRAC);
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_LAMBERT_W && SIZE >= 1) {
+				// lambertw(f)'=f'*lambertw(f)/(f*(1+lambertw(f)))
 				MathStructure *mstruct = new MathStructure(*this);
 				MathStructure *mstruct2 = new MathStructure(CHILD(0));
 				mstruct->add(m_one);
@@ -382,6 +446,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				multiply_nocopy(mstruct2);
 				divide_nocopy(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_SIN && SIZE == 1) {
+				// sin(f)'=f'*cos(f)
 				setFunctionId(FUNCTION_ID_COS);
 				MathStructure mstruct(CHILD(0));
 				mstruct.calculateDivide(CALCULATOR->getRadUnit(), eo);
@@ -390,6 +455,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 					multiply(mstruct);
 				}
 			} else if(o_function->id() == FUNCTION_ID_COS && SIZE == 1) {
+				// cos(f)'=f'*sin(f)
 				setFunctionId(FUNCTION_ID_SIN);
 				MathStructure mstruct(CHILD(0));
 				negate();
@@ -399,6 +465,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 					multiply(mstruct);
 				}
 			} else if(o_function->id() == FUNCTION_ID_TAN && SIZE == 1) {
+				// tan(f)'=f'*(1+tan(f)^2)
 				setFunctionId(FUNCTION_ID_TAN);
 				MathStructure mstruct(CHILD(0));
 				raise(2);
@@ -407,16 +474,19 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				multiply(mstruct, true);
 				if(CALCULATOR->getRadUnit()) divide(CALCULATOR->getRadUnit());
 			} else if(o_function->id() == FUNCTION_ID_SINH && SIZE == 1) {
+				// sinh(f)'=f'*cosh(f)
 				setFunctionId(FUNCTION_ID_COSH);
 				MathStructure mstruct(CHILD(0));
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_COSH && SIZE == 1) {
+				// cosh(f)'=f'*sinh(f)
 				setFunctionId(FUNCTION_ID_SINH);
 				MathStructure mstruct(CHILD(0));
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct, true);
 			} else if(o_function->id() == FUNCTION_ID_TANH && SIZE == 1) {
+				// tanh(f)'=f'*(1-tanh(f)^2)
 				setFunctionId(FUNCTION_ID_TANH);
 				MathStructure mstruct(CHILD(0));
 				raise(2);
@@ -425,6 +495,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct, true);
 			} else if(o_function->id() == FUNCTION_ID_ASIN && SIZE == 1) {
+				// asin(f)'=f'/sqrt(1-f^2)
 				MathStructure mstruct(CHILD(0));
 				mstruct.differentiate(x_var, eo);
 				SET_CHILD_MAP(0);
@@ -434,6 +505,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				raise(Number(-1, 2));
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_ACOS && SIZE == 1) {
+				// acos(f)'=-f'/sqrt(1-f^2)
 				MathStructure mstruct(CHILD(0));
 				mstruct.differentiate(x_var, eo);
 				SET_CHILD_MAP(0);
@@ -444,6 +516,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				negate();
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_ATAN && SIZE == 1) {
+				// asin(f)'=f'/(1+f^2)
 				MathStructure mstruct(CHILD(0));
 				mstruct.differentiate(x_var, eo);
 				SET_CHILD_MAP(0);
@@ -452,6 +525,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				raise(m_minus_one);
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_ASINH && SIZE == 1) {
+				// asinh(f)'=f'/sqrt(1+f^2)
 				MathStructure mstruct(CHILD(0));
 				mstruct.differentiate(x_var, eo);
 				SET_CHILD_MAP(0);
@@ -460,6 +534,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				raise(Number(-1, 2));
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_ACOSH && SIZE == 1) {
+				// acosh(f)'=f'/(sqrt(f-1)*sqrt(f+1))
 				MathStructure mstruct(CHILD(0));
 				mstruct.differentiate(x_var, eo);
 				SET_CHILD_MAP(0);
@@ -471,6 +546,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				multiply(mfac);
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_ATANH && SIZE == 1) {
+				// atanh(f)'=f'/(1-x^2)
 				MathStructure mstruct(CHILD(0));
 				mstruct.differentiate(x_var, eo);
 				SET_CHILD_MAP(0);
@@ -480,7 +556,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				raise(m_minus_one);
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_SINC && SIZE == 1) {
-				// diff(x)*(cos(x)/x-sin(x)/x^2)
+				// sinc(f)'=f'*(cos(f)/f-sin(f)/f^2)
 				MathStructure m_cos(CALCULATOR->getFunctionById(FUNCTION_ID_COS), &CHILD(0), NULL);
 				if(CALCULATOR->getRadUnit()) m_cos[0].multiply(CALCULATOR->getRadUnit());
 				m_cos.divide(CHILD(0));
@@ -496,17 +572,23 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				add(m_cos);
 				multiply(mdiff);
 			} else if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) {
+				// nounit(f)'=nounit(f')
 				CHILD(0).differentiate(x_var, eo);
 			} else if(o_function->id() == FUNCTION_ID_INTEGRATE && SIZE >= 4 && CHILD(3) == x_var && CHILD(1).isUndefined() && CHILD(2).isUndefined()) {
+				// integrate(f,undefined,undefined,x)'=f
 				SET_CHILD_MAP(0);
 			} else if(o_function->id() == FUNCTION_ID_DIFFERENTIATE && (SIZE == 3 || (SIZE == 4 && CHILD(3).isUndefined())) && CHILD(1) == x_var) {
+				// diff(f,x,a)'=diff(f,x,a+1)
 				CHILD(2) += m_one;
 			} else if(o_function->id() == FUNCTION_ID_DIFFERENTIATE && SIZE == 2 && CHILD(1) == x_var) {
+				// diff(f,x)'=diff(f,x,2)
 				APPEND(MathStructure(2, 1, 0));
 			} else if(o_function->id() == FUNCTION_ID_DIFFERENTIATE && SIZE == 1 && x_var == CALCULATOR->getVariableById(VARIABLE_ID_X)) {
+				// diff(f)'=diff(f,x,2)
 				APPEND(x_var);
 				APPEND(MathStructure(2, 1, 0));
 			} else {
+				// calculate non-differentiable function and try again
 				if(!eo.calculate_functions || !calculateFunctions(eo, false)) {
 					transformById(FUNCTION_ID_DIFFERENTIATE);
 					addChild(x_var);
@@ -520,6 +602,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
+			// product rule: (f(x)g(x))'=f'g+fg'
 			MathStructure mstruct, vstruct;
 			size_t idiv = 0;
 			for(size_t i = 0; i < SIZE; i++) {
@@ -601,6 +684,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 			break;
 		}
 		case STRUCT_SYMBOLIC: {
+			// y'=0
 			if(representsNumber(true)) {
 				clear(true);
 			} else {
@@ -613,6 +697,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 			break;
 		}
 		case STRUCT_VARIABLE: {
+			// differentiate value of variable
 			if(eo.calculate_variables && o_variable->isKnown()) {
 				if(eo.approximation != APPROXIMATION_EXACT || !o_variable->isApproximate()) {
 					set(((KnownVariable*) o_variable)->get(), true);
@@ -628,6 +713,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 			}
 		}
 		default: {
+			// ?'=diff(?,x,1)
 			transformById(FUNCTION_ID_DIFFERENTIATE);
 			addChild(x_var);
 			addChild(m_one);
