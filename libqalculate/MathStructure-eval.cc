@@ -26,7 +26,7 @@ using std::cout;
 using std::vector;
 using std::endl;
 
-/* 
+/*
 	Functions for simple handling of interval variables
 */
 
@@ -1990,7 +1990,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				eo3.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 				eo3.structuring = STRUCTURING_NONE;
 				eo3.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
-				
+
 				// replace uncertain values with variables
 				vector<Variable*> vars;
 				while(true) {
@@ -2002,7 +2002,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				}
 
 				eval(eo3);
-				
+
 				// restore uncertain values
 				for(size_t i = 0; i < vars.size(); i++) {
 					if(vars[i]->isKnown()) replace(vars[i], ((KnownVariable*) vars[i])->get());
@@ -2011,7 +2011,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				}
 
 				if(CALCULATOR->aborted()) return *this;
-				
+
 				// calculate each side of comparisons separately
 				if(eval_comparison_sides(*this, feo)) {
 					if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);

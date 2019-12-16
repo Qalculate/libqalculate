@@ -157,7 +157,7 @@ bool Calculator::abort() {
 			// force thread cancellation
 			calculate_thread->cancel();
 			stopControl();
-			
+
 			// clean up
 			stopped_messages_count.clear();
 			stopped_warnings_count.clear();
@@ -166,10 +166,10 @@ bool Calculator::abort() {
 			disable_errors_ref = 0;
 			if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
 			tmp_rpn_mstruct = NULL;
-			
+
 			// thread cancellation is not safe
 			error(true, _("The calculation has been forcibly terminated. Please restart the application and report this as a bug."), NULL);
-			
+
 			b_busy = false;
 			calculate_thread->start();
 			return false;
@@ -678,7 +678,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	EvaluationOptions evalops = eo;
 	MathStructure mstruct;
 	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false, do_expand = false, do_binary_prefixes = false, complex_angle_form = false;
-	
+
 	// separate and handle string after "to"
 	string from_str = str, to_str;
 	Number base_save;
@@ -862,7 +862,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	} else if(do_expand) {
 		mstruct.expand(evalops, false);
 	}
-	
+
 	// handle "to partial fraction"
 	if(do_pfe) mstruct.expandPartialFractions(evalops);
 
@@ -925,20 +925,20 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	}
 	// do not display the default angle unit in trigonometric functions
 	mstruct.removeDefaultAngleUnit(evalops);
-	
+
 	// format and print
 	mstruct.format(printops);
 	str = mstruct.print(printops);
-	
+
 	// "to angle": replace "cis" with angle symbol
 	if(complex_angle_form) gsub(" cis ", "∠", str);
-	
+
 	if(msecs > 0) stopControl();
-	
+
 	// restore options
 	if(printops.base == BASE_CUSTOM) setCustomOutputBase(base_save);
 	priv->use_binary_prefixes = save_bin;
-	
+
 	return str;
 }
 bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
@@ -947,7 +947,7 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 	b_busy = true;
 	if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
 	bool had_msecs = msecs > 0;
-	
+
 	// send calculation command to calculation thread
 	expression_to_calculate = str;
 	tmp_evaluationoptions = eo;
@@ -958,7 +958,7 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 	tmp_maketodivision = make_to_division;
 	if(!calculate_thread->write(true)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
-	
+
 	// check time while calculation proceeds
 	while(msecs > 0 && b_busy) {
 		sleep_ms(10);
@@ -975,7 +975,7 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
 	b_busy = true;
 	if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
 	bool had_msecs = msecs > 0;
-	
+
 	// send calculation command to calculation thread
 	expression_to_calculate = "";
 	tmp_evaluationoptions = eo;
@@ -988,7 +988,7 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
 	tmp_maketodivision = false;
 	if(!calculate_thread->write(false)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
-	
+
 	// check time while calculation proceeds
 	while(msecs > 0 && b_busy) {
 		sleep_ms(10);
@@ -1298,7 +1298,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 
 	// retrieve expression after " to " and remove "to ..." from expression
 	if(make_to_division) separateToExpression(str, str2, eo, true);
-	
+
 	// retrieve expression after " where " (or "/.") and remove "to ..." from expression
 	separateWhereExpression(str, str_where, eo);
 
@@ -1322,7 +1322,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	MathStructure mstruct;
 	current_stage = MESSAGE_STAGE_PARSING;
 	size_t n_messages = messages.size();
-	
+
 	// perform expression parsing
 	parse(&mstruct, str, eo.parse_options);
 	if(parsed_struct) {
@@ -1347,7 +1347,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 
 		// replace answer variables and functions in expression before performing any replacements from "where" epxression
 		calculate_ans(mstruct, eo);
-		
+
 		string str_test = str_where;
 		remove_blanks(str_test);
 

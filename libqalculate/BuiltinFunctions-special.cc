@@ -33,7 +33,6 @@ using std::endl;
 #define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
 #define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
 #define FR_FUNCTION_2R(FUNC)	Number nr(vargs[1].number()); if(!nr.FUNC(vargs[0].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
-#define NON_COMPLEX_NUMBER_ARGUMENT(i)				NumberArgument *arg_non_complex##i = new NumberArgument(); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 
 bool has_interval_unknowns(MathStructure &m) {
@@ -68,9 +67,9 @@ bool bernoulli_poly(MathStructure &m, Number n, const MathStructure &mx, const E
 }
 
 ZetaFunction::ZetaFunction() : MathFunction("zeta", 1, 2, SIGN_ZETA) {
-	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE);
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false);
 	setArgumentDefinition(1, arg);
-	arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE);
+	arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false);
 	setArgumentDefinition(2, arg);
 	setDefaultValue(2, "1");
 }
@@ -86,7 +85,7 @@ int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			} else if(vargs[0].number().isNegative() && vargs[0].number().isEven()) {
 				mstruct.clear();
 				return 1;
-			} else if(vargs[0].number().isNegative() && vargs[0].number() >= -73) {
+			} else if(vargs[0].number().isNegative() && vargs[0].number() >= -129) {
 				Number nr(vargs[0].number());
 				nr.negate();
 				nr++;
@@ -96,7 +95,7 @@ int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				mstruct.set(nr);
 				mstruct.mergePrecision(vargs[0]);
 				return 1;
-			} else if(vargs[0].number().isEven() && vargs[0].number() <= 74) {
+			} else if(vargs[0].number().isEven() && vargs[0].number() <= 130) {
 				Number nr(vargs[0].number());
 				nr.bernoulli();
 				mstruct.set(nr);
@@ -116,25 +115,32 @@ int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(vargs[0].number().isZero()) {
 		mstruct.set(1, 2, 0);
-		if(!vargs[1].isZero()) mstruct.subtract(vargs[0]);
+		if(!vargs[1].isZero()) mstruct.subtract(vargs[1]);
 		return 1;
-	} else if(vargs[0].number().isInteger() && vargs[0].number().isNegative() && vargs[0].number() >= -100) {
+	} else if(vargs[0].number().isInteger() && vargs[0].number().isNegative()) {
 		Number nr(vargs[0].number());
 		nr.negate();
 		nr++;
-		if(bernoulli_poly(mstruct, nr, vargs[1], eo)) {
+		MathStructure m2(vargs[1]);
+		replace_f_interval(m2, eo);
+		replace_intervals_f(m2);
+		if(bernoulli_poly(mstruct, nr, m2, eo)) {
 			mstruct.divide(nr);
 			mstruct.negate();
 			return 1;
 		}
-	} else if(vargs[1].number() >= 2 && ((eo.approximation == APPROXIMATION_EXACT && vargs[1].number() <= 1000) || (vargs[1].number() <= 50 && vargs[0].number() >= -10 && vargs[0].number() <= 10))) {
-		mstruct = vargs[0];
+	} else if(vargs[1].number().isInteger() && vargs[1].number() >= 2 && ((eo.approximation == APPROXIMATION_EXACT && vargs[1].number() <= 1000) || (vargs[1].number() <= 50 && vargs[0].number() >= -10 && vargs[0].number() <= 10))) {
+		MathStructure m1(vargs[0]);
+		replace_f_interval(m1, eo);
+		replace_intervals_f(m1);
+		mstruct = m1;
+		m1.negate();
 		mstruct.transform(this);
 		mstruct.addChild(m_one);
 		mstruct.add(m_minus_one);
 		for(long int i = 2; vargs[1].number() > i; i++) {
 			mstruct.add(Number(i, 1), true);
-			mstruct.last().raise(-vargs[0].number());
+			mstruct.last().raise(m1);
 			mstruct.last().negate();
 		}
 		return true;
@@ -237,7 +243,7 @@ BesselyFunction::BesselyFunction() : MathFunction("bessely", 2) {
 	Number nmax(1000);
 	iarg->setMax(&nmax);
 	setArgumentDefinition(1, iarg);
-	NON_COMPLEX_NUMBER_ARGUMENT(2);
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(2);
 }
 int BesselyFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION_2R(bessely)

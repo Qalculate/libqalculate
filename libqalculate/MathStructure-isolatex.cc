@@ -3879,7 +3879,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						MathStructure *marg = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(1), NULL);
 						if(marg->calculateFunctions(eo)) marg->calculatesub(eo2, eo, true);
 						if(CHILD(0)[0].representsNonComplex() && CHILD(1).compare(m_zero) == COMPARISON_RESULT_LESS) {
-							// x is real, b > 0: 
+							// x is real, b > 0:
 							// x=e^lambertw(ln(b)/a) if ln(b)/a >= -1/e
 							// x=e^lambertw(ln(b)/a, -1) if -1/e <= ln(b)/a < 0
 							if(!mexp.isOne()) marg->calculateMultiply(mexp, eo2);

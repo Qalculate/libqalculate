@@ -24,7 +24,7 @@ using std::cout;
 using std::vector;
 using std::endl;
 
-/* Collects x degree, coefficient, degree zero term. By default only one x term (a single exponent) is allowed. 
+/* Collects x degree, coefficient, degree zero term. By default only one x term (a single exponent) is allowed.
 If radunit is true all coefficient must be a multiple of the radian unit. The unit is then removed. Used for trigonometric functions.
 If mexp_as_x2 is true, reuire a second degree polynomial and return second degree coefficient in mexp.
 If mexp_as_fx is true allow x multipliers of any form (e.g. e^x or sin(x)) and return the the whole x multiplier in mexp.
@@ -367,7 +367,7 @@ bool combine_ln(MathStructure &m, const MathStructure &x_var, const EvaluationOp
 					}
 				}
 				if(!b) break;
-			} else if(!b && m[i].isFunction() && m[i].function()->id() == FUNCTION_ID_LOG && m[i].size() == 1 && m[i][0].contains(x_var)) { 
+			} else if(!b && m[i].isFunction() && m[i].function()->id() == FUNCTION_ID_LOG && m[i].size() == 1 && m[i][0].contains(x_var)) {
 				b = true;
 				i_log = i;
 				break;
@@ -639,7 +639,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 		return false;
 	}
 	// mpowadd=0 and mpowmul=1: mfac*mstruct^mpow
-	
+
 	if(mstruct.function()->id() == FUNCTION_ID_LOG && mstruct.size() == 1) {
 		if(mstruct[0].isFunction() && mstruct[0].function()->id() == FUNCTION_ID_ROOT && VALID_ROOT(mstruct[0]) && mpow.isOne() && mfac.isOne() && (!definite_integral || COMPARISON_IS_NOT_EQUAL(mstruct[0][0].compare(m_zero)))) {
 			MathStructure mexp, mmul, madd;
@@ -4216,7 +4216,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 		multiply(MathStructure(1, 2, 0));
 		return true;
 	}
-	
+
 	// a: a*x
 	if(containsRepresentativeOf(x_var, true, true) == 0) {
 		multiply(x_var);
@@ -4366,7 +4366,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 				MathStructure madd, mmul, mexp;
 				if(integrate_info(CHILD(0)[0], x_var, madd, mmul, mexp, true) && mexp.isOne() && madd.isZero()) {
 					// abs(sin(ax)): 2/a*floor(ax/pi)-1/a*cos(ax-floor(ax/pi)*pi)
-					// abs(cos(ax)): 2/a*floor(ax/pi+1/2)+1/a*sin(ax-floor(ax/pi+1/2)*pi)  
+					// abs(cos(ax)): 2/a*floor(ax/pi+1/2)+1/a*sin(ax-floor(ax/pi+1/2)*pi)
 					setToChild(1, true);
 					MathStructure mdivpi(x_var);
 					if(!mmul.isOne()) mdivpi *= mmul;
@@ -4593,7 +4593,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							childrenUpdated(true);
 							return true;
 						} else if(num == 3) {
-							// (ax^2+b)^(3/2): 
+							// (ax^2+b)^(3/2):
 							// (ln(sqrt(ax^2+b)+x*sqrt(a))*b^2*3/8+(ax^2+b)^(3/2)*x*sqrt(a)/4+sqrt(ax^2+b)*x*sqrt(a)*b*3/8)/sqrt(a)
 							MathStructure mterm3(*this);
 							CHILD(1).number().set(1, 2, 0, true);
@@ -4616,7 +4616,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							if(!mmul2.isOne()) divide(mmulsqrt2);
 							return true;
 						} else if(num == 5) {
-							// (ax^2+b)^(5/2): 
+							// (ax^2+b)^(5/2):
 							// sqrt(ax^2+b)*x^5*a^2/6+ln(sqrt(ax^2+b)*sqrt(a)+ax)*b^3/sqrt(a)*5/16+sqrt(ax^2+b)*x*b^2*11/16+sqrt(ax^2+b)*x^3*b*a*13/24
 							CHILD(1).number().set(1, 2, 0, true);
 							MathStructure mterm2(*this);
@@ -4805,7 +4805,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							CALCULATOR->endTemporaryStopMessages();
 						}
 					} else if(mexp.isNumber() && mexp.number().isRational() && !mexp.number().isInteger()) {
-						// (ax^(n/d)+b)^c: 
+						// (ax^(n/d)+b)^c:
 						// integral of (ay^(n=-1?1:n)+b)^c*(y^(sgn(n)/d))^(sgn(n)*d-1) where y=x^(sgn(n)/d) and divide with sgn(n)*d
 						Number num(mexp.number().numerator());
 						Number den(mexp.number().denominator());
@@ -6354,7 +6354,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 					MathStructure mstruct_u;
 					MathStructure mstruct_v;
 					MathStructure minteg_v;
-	
+
 					// select two parts
 					if(SIZE == 3 && i >= 3) {
 						mstruct_v = CHILD(i - 3);
@@ -6366,7 +6366,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						else if(SIZE == 2 && i == 1) mstruct_v = CHILD(0);
 						else {mstruct_v = *this; mstruct_v.delChild(i + 1);}
 					}
-					
+
 					MathStructure mdiff_u(mstruct_u);
 					if(mdiff_u.differentiate(x_var, eo2) && mdiff_u.containsFunctionId(FUNCTION_ID_DIFFERENTIATE, true) <= 0 && (!definite_integral || check_zero_div(mdiff_u, x_var, eo))) {
 						minteg_v = mstruct_v;
@@ -6604,7 +6604,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 	if(!mf.isNumber()) return false;
 
 	if(!Rp[0].add(mf.number()) || !Rp[0].multiply(nr_half) || !Rp[0].multiply(h)) return false;
-	
+
 	if(safety_measures && min_steps < 15 && has_wide_trig_interval(minteg, x_var, eo, a, b)) min_steps = (max_steps < 15 ? max_steps : 15);
 
 	for(long int i = 1; i < max_steps; i++) {

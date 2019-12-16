@@ -468,6 +468,9 @@ BernoulliFunction::BernoulliFunction() : MathFunction("bernoulli", 1, 2) {
 }
 int BernoulliFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs.size() > 1 && !vargs[1].isZero()) {
+		MathStructure m2(vargs[1]);
+		replace_f_interval(m2, eo);
+		replace_intervals_f(m2);
 		mstruct.clear();
 		Number bin, k, nmk(vargs[0].number()), nrB;
 		while(k <= vargs[0].number()) {
@@ -476,7 +479,7 @@ int BernoulliFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				if(!bin.binomial(vargs[0].number(), k) || !nrB.bernoulli() || !nrB.multiply(bin)) return 0;
 				if(eo.approximation == APPROXIMATION_EXACT && nrB.isApproximate()) return 0;
 				mstruct.add(nrB, true);
-				mstruct.last().multiply(vargs[1]);
+				mstruct.last().multiply(m2);
 				mstruct.last().last().raise(k);
 				mstruct.childUpdated(mstruct.size());
 			}

@@ -795,7 +795,7 @@ void Number::set(string number, const ParseOptions &po) {
 	mpz_init_set_ui(den, 1);
 
 	remove_blank_ends(number);
-	
+
 	// remove base prefixes
 	if(po.base == 16 && number.length() >= 2 && number[0] == '0' && (number[1] == 'x' || number[1] == 'X')) {
 		number = number.substr(2, number.length() - 2);
@@ -806,7 +806,7 @@ void Number::set(string number, const ParseOptions &po) {
 	} else if(po.base == 2 && number.length() >= 2 && number[0] == '0' && (number[1] == 'b' || number[1] == 'B')) {
 		number = number.substr(2, number.length() - 2);
 	}
-	
+
 	// determine if value is negative for numbers using binary or hexadecimal complement representation (number that begins with 1 or 8 is negative)
 	bool b_twos = (po.twos_complement && po.base == 2 && number.length() > 1 && number[0] == '1') || (po.hexadecimal_twos_complement && po.base == 16 && number.length() > 0 && (number[0] == '8' || number[0] == '9' || (number[0] >= 'a' && number[0] <= 'f') || (number[0] >= 'A' && number[0] <= 'F')));
 
@@ -974,7 +974,7 @@ void Number::set(string number, const ParseOptions &po) {
 	}
 	clear();
 	if(i_unc <= 0 && (po.read_precision == ALWAYS_READ_PRECISION || (in_decimals && po.read_precision == READ_PRECISION_WHEN_DECIMALS))) {
-	
+
 		// read precision: uncertainty = value of last digit / 2 (e.g. 22.0=22.0+/-0.05)
 		// upper end point = ((num * 2) + 1)/(den * 2)
 		// lower end point = ((num * 2) - 1)/(den * 2)
@@ -1004,7 +1004,7 @@ void Number::set(string number, const ParseOptions &po) {
 		// numbers with uncertainty/interval are always floating point
 		mpfr_set_q(fu_value, minus ? rv2 : rv1, MPFR_RNDD);
 		mpfr_set_q(fl_value, minus ? rv1 : rv2, MPFR_RNDU);
-		
+
 		// avoid rounding issues when displaying the significant digits of the number
 		for(int i = 0; i < 3; i++) {mpfr_nextbelow(fu_value); mpfr_nextabove(fl_value);}
 
@@ -5065,7 +5065,7 @@ bool Number::zeta() {
 		mpfr_sub(fl_test, fu_value, fl_value, MPFR_RNDU);
 		// unable to detect zeta(x) interval errors reliably for intervals larger than 1 (for x < -2)
 		bool b_iverror = mpfr_cmp_ui(fl_test, 1) > 0;
-		
+
 		mpfr_set(fu_test, fu_value, MPFR_RNDN);
 		mpfr_set(fl_test, fl_value, MPFR_RNDN);
 		mpfr_zeta(fu_value, fu_value, MPFR_RNDU);
@@ -5135,7 +5135,7 @@ bool Number::zeta() {
 	return true;
 }
 bool Number::zeta(const Number &o) {
-	if(o.isOne() && !hasImaginaryPart()) return zeta();
+	if(o.isOne()) return zeta();
 	if(o.includesInfinity() || !isGreaterThan(1) || !o.isPositive()) return false;
 	if(isPlusInfinity()) {set(1, 1, 0, true); return true;}
 	if(isMinusInfinity()) return false;
@@ -5143,11 +5143,18 @@ bool Number::zeta(const Number &o) {
 		Number nr_l, nr_u;
 		nr_l.setInternal(fl_value);
 		nr_u.setInternal(fu_value);
-		if(!nr_l.erfi() || !nr_u.erfi()) return false;
+		if(!nr_l.zeta(o) || !nr_u.zeta(o)) return false;
 		setInterval(nr_l, nr_u);
 		return true;
 	}
-	//if(isGreaterThan(1000) || isLessThan(-1000)) return false;
+	if(o.isInterval()) {
+		Number nr_l(*this), nr_u(*this), nr_lo, nr_uo;
+		nr_lo.setInternal(o.internalLowerFloat());
+		nr_uo.setInternal(o.internalUpperFloat());
+		if(!nr_l.zeta(nr_lo) || !nr_u.zeta(nr_uo)) return false;
+		setInterval(nr_l, nr_u);
+		return true;
+	}
 	Number nr_bak(*this);
 	// zeta(x, q)=sum(1/(q+n)^x,0,infinity,n)
 	mpfr_clear_flags();
@@ -7617,7 +7624,7 @@ bool Number::polylog(const Number &o) {
 			setPrecisionAndApproximateFrom(nr_l);
 			setPrecisionAndApproximateFrom(nr_u);
 			return setInterval(nr_l, nr_u, true);
-			
+
 		}
 		if(includesInfinity()) return false;
 		Number absx(*this);
@@ -7656,7 +7663,7 @@ bool Number::polylog(const Number &o) {
 		if(!v.setToFloatingPoint()) {CALCULATOR->setPrecision(prec_bak); CALCULATOR->endTemporaryEnableIntervalArithmetic(); return false;}
 		Number xpow, kpow, yprev, yprevi, ytest, ytesti;
 		Number x(v);
-		if(i == 2 && !v.recip()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;} 
+		if(i == 2 && !v.recip()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;}
 		Number oneg(o);
 		oneg.negate();
 		Number k(i == 0 ? 1 : 2, 1);
@@ -7665,7 +7672,7 @@ bool Number::polylog(const Number &o) {
 		Number wprec2(1, 1, -prec_bak);
 		if(i == 0) {
 			v = o;
-			if(!v.zeta()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;} 
+			if(!v.zeta()) {CALCULATOR->endTemporaryEnableIntervalArithmetic(); CALCULATOR->setPrecision(prec_bak); return false;}
 		}
 		yprev = v;
 		yprev.clearImaginary();
@@ -7781,7 +7788,7 @@ bool Number::fresnels() {
 		mpfr_t nsqrt;
 		mpfr_init2(nsqrt, BIT_PRECISION);
 		unsigned long int i = 2;
-		mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+		mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 		while(mpfr_cmp(fu_value, nsqrt) > 0) {
 			if(mpfr_cmp(fl_value, nsqrt) < 0) {
 				Number nrt;
@@ -7791,12 +7798,12 @@ bool Number::fresnels() {
 				break;
 			}
 			i += 4;
-			mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+			mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 		}
 		if(mpfr_sgn(fl_value) > 0) {
 			if(i > 2) i -= 2;
 			else i += 2;
-			mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+			mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 			while(mpfr_cmp(fu_value, nsqrt) > 0) {
 				if(mpfr_cmp(fl_value, nsqrt) < 0) {
 					Number nrt;
@@ -7806,11 +7813,11 @@ bool Number::fresnels() {
 					break;
 				}
 				i += 4;
-				mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+				mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 			}
 		} else {
 			i = 2;
-			mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+			mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 			mpfr_neg(nsqrt, nsqrt, MPFR_RNDN);
 			while(mpfr_cmp(fl_value, nsqrt) < 0) {
 				if(mpfr_cmp(fu_value, nsqrt) > 0) {
@@ -7821,13 +7828,13 @@ bool Number::fresnels() {
 					break;
 				}
 				i += 4;
-				mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+				mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 				mpfr_neg(nsqrt, nsqrt, MPFR_RNDN);
 			}
 			if(mpfr_sgn(fu_value) < 0) {
 				if(i > 2) i -= 2;
 				else i += 2;
-				mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+				mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 				mpfr_neg(nsqrt, nsqrt, MPFR_RNDN);
 				while(mpfr_cmp(fl_value, nsqrt) < 0) {
 					if(mpfr_cmp(fu_value, nsqrt) > 0) {
@@ -7838,7 +7845,7 @@ bool Number::fresnels() {
 						break;
 					}
 					i += 4;
-					mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+					mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 					mpfr_neg(nsqrt, nsqrt, MPFR_RNDN);
 				}
 			}
@@ -7919,7 +7926,7 @@ bool Number::fresnelc() {
 		mpfr_t nsqrt;
 		mpfr_init2(nsqrt, BIT_PRECISION);
 		unsigned long int i = 1;
-		mpfr_set_ui(nsqrt, 1, MPFR_RNDN); 
+		mpfr_set_ui(nsqrt, 1, MPFR_RNDN);
 		while(mpfr_cmp(fu_value, nsqrt) > 0) {
 			if(mpfr_cmp(fl_value, nsqrt) < 0) {
 				Number nrt;
@@ -7929,12 +7936,12 @@ bool Number::fresnelc() {
 				break;
 			}
 			i += 4;
-			mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+			mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 		}
 		if(mpfr_sgn(fl_value) > 0) {
 			if(i > 2) i -= 2;
 			else i += 2;
-			mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+			mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 			while(mpfr_cmp(fu_value, nsqrt) > 0) {
 				if(mpfr_cmp(fl_value, nsqrt) < 0) {
 					Number nrt;
@@ -7944,11 +7951,11 @@ bool Number::fresnelc() {
 					break;
 				}
 				i += 4;
-				mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+				mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 			}
 		} else {
 			i = 1;
-			mpfr_set_si(nsqrt, -1, MPFR_RNDN); 
+			mpfr_set_si(nsqrt, -1, MPFR_RNDN);
 			while(mpfr_cmp(fl_value, nsqrt) < 0) {
 				if(mpfr_cmp(fu_value, nsqrt) > 0) {
 					Number nrt;
@@ -7958,13 +7965,13 @@ bool Number::fresnelc() {
 					break;
 				}
 				i += 4;
-				mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+				mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 				mpfr_neg(nsqrt, nsqrt, MPFR_RNDN);
 			}
 			if(mpfr_sgn(fu_value) < 0) {
 				if(i > 2) i -= 2;
 				else i += 2;
-				mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+				mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 				mpfr_neg(nsqrt, nsqrt, MPFR_RNDN);
 				while(mpfr_cmp(fl_value, nsqrt) < 0) {
 					if(mpfr_cmp(fu_value, nsqrt) > 0) {
@@ -7975,7 +7982,7 @@ bool Number::fresnelc() {
 						break;
 					}
 					i += 4;
-					mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN); 
+					mpfr_sqrt_ui(nsqrt, i, MPFR_RNDN);
 					mpfr_neg(nsqrt, nsqrt, MPFR_RNDN);
 				}
 			}

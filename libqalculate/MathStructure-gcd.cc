@@ -580,7 +580,7 @@ factored_2:
 
 	size_t var_i = 0;
 	const MathStructure &xvar = sym_stats[var_i].sym;
-	
+
 	/*for(size_t i = 0; i< sym_stats.size(); i++) {
 		if(sym_stats[i].sym.size() > 0) {
 			MathStructure m1b(m1), m2b(m2);

@@ -237,7 +237,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		q_end.push_back(quote_index);
 		quote_index++;
 	}
-	
+
 	// search and replace string alternatives
 	for(size_t i = 0; i < signs.size(); i++) {
 		size_t ui = str.find(signs[i]);
@@ -376,7 +376,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		if(b_add) prev_ui = ui + 6;
 		else prev_ui = ui + 5;
 	}
-	
+
 	// replace Unicode fractions with two chars
 	prev_ui = string::npos;
 	while(true) {
@@ -413,7 +413,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		if(b_add) prev_ui = ui + 6;
 		else prev_ui = ui + 5;
 	}
-	
+
 	if(convert_to_internal_representation) {
 		// remove superfluous whitespace
 		remove_blank_ends(str);
@@ -469,7 +469,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		mstruct->set(Number(str, po));
 		return;
 	}
-	
+
 	// use parse option number base to determine which characters are used as numerical digits and set base accordingly.
 	// (-1=base using digits other than 0-9, a-z, A-Z; -12=duodecimal)
 	int base = po.base;
@@ -1771,7 +1771,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		}
 		return true;
 	}
-	
+
 	// handle non-digits if number base is 2-10 or duodecimal
 	size_t itmp;
 	if((BASE_2_10 || po.base == BASE_DUODECIMAL) && (itmp = str.find_first_not_of(po.base == BASE_DUODECIMAL ? NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS MINUS DUODECIMAL_CHARS : NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS EXPS MINUS, 0)) != string::npos) {
@@ -1795,18 +1795,18 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			str.erase(itmp, str.length() - itmp);
 		}
 	}
-	
+
 	// replace internal +/- operator
 	gsub("\b", "±", str);
-	
+
 	// parse number
 	Number nr(str, po);
-	
+
 	// handle - in front of the number (even number of minuses equals plus, odd number equals a single minus)
 	if(!po.preserve_format && minus_count % 2 == 1) {
 		nr.negate();
 	}
-	
+
 	if(i_colon && nr.isRational() && !nr.isInteger()) {
 		// if po.preserve_format is true, parse sexagesimal number as division
 		Number nr_num(nr.numerator()), nr_den(1, 1, 0);
@@ -2785,7 +2785,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			return true;
 		}
 	}
-	
+
 	// In adaptive parsing mode division might be handled differentiately depending on usage of whitespace characters, e.g. 5/2 m = (5/2)*m, 5/2m=5/(2m)
 	if(!po.rpn && po.parsing_mode == PARSING_MODE_ADAPTIVE && (i = str.find(DIVISION_CH, 1)) != string::npos && i + 1 != str.length()) {
 		while(i != string::npos && i + 1 != str.length()) {
@@ -2892,7 +2892,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 	}
 	if(po.parsing_mode == PARSING_MODE_ADAPTIVE && !po.rpn) remove_blanks(str);
-	
+
 	// In conventional parsing mode there is not difference between implicit and explicit multiplication
 	if(po.parsing_mode == PARSING_MODE_CONVENTIONAL) {
 		if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
@@ -2914,7 +2914,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 		}
 	}
-	
+
 	// Parse explicit multiplication, division, and mod
 	if((i = str.find_first_of(MULTIPLICATION DIVISION "%", 0)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
@@ -3047,7 +3047,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 
 	if(str.empty()) return false;
-	
+
 	// Check if only operators are left
 	if(str.find_first_not_of(OPERATORS INTERNAL_OPERATORS SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find_first_of("(|)") == string::npos)) {
 		gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", str);
@@ -3229,7 +3229,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_RAISE);
 	} else if((i = str.find("\b", 1)) != string::npos && i + 1 != str.length()) {
-		// Parse uncertainty (using \b as internal single substitution character for +/-) 
+		// Parse uncertainty (using \b as internal single substitution character for +/-)
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		MathStructure *mstruct2 = new MathStructure;
