@@ -1578,6 +1578,7 @@ bool MathStructure::complexToExponentialForm(const EvaluationOptions &eo) {
 		evalSort(false);
 		return true;
 	}
+	if(m_type == STRUCT_POWER) return false;
 	bool b = false;
 	for(size_t i = 0; i < SIZE; i++) {
 		if(CHILD(i).complexToExponentialForm(eo)) {b = true; CHILD_UPDATED(i);}
@@ -1639,6 +1640,7 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		evalSort(true);
 		return true;
 	}
+	if(m_type == STRUCT_POWER || m_type == STRUCT_FUNCTION) return false;
 	bool b = false;
 	for(size_t i = 0; i < SIZE; i++) {
 		if(CHILD(i).complexToPolarForm(eo)) {b = true; CHILD_UPDATED(i);}
