@@ -1,3 +1,8 @@
+2019-12-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix display of factorized 5/7234234234*x+5/9234234*y and similar (a(bx+y) where a and/or b are rational number displayed approximately)
+	* Fix cosh(x)^2+sinh(x)^2
+
 2019-12-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* bernoulli() function (number or polynomial)

@@ -29,6 +29,7 @@ using std::ostream;
 using std::endl;
 
 #define BIT_PRECISION ((long int) ((PRECISION) * 3.3219281) + 100)
+#define NUMBER_BIT_PRECISION (n_type == NUMBER_TYPE_FLOAT ? mpfr_get_prec(fl_value) : BIT_PRECISION)
 #define PRECISION_TO_BITS(p) (((p) * 3.3219281) + 100)
 #define BITS_TO_PRECISION(p) (::ceil(((p) - 100) / 3.3219281))
 
@@ -9693,11 +9694,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		// return empty string if number is zero
 		if(nr.isZero()) return "";
+		// handle negative sign separately
 		bool neg = nr.isNegative();
 		if(neg) nr.negate();
 		Number nri, nra;
 		string str;
 		do {
+			// value at position nra = nr - (ceil(nr / 26) - 1) * 26
 			nri = nr;
 			nri /= 26;
 			nri.ceil();
@@ -9705,9 +9708,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			nra = nri;
 			nra *= 26;
 			nra = nr - nra;
+			// nr left = (ceil(nr / 26) - 1);
 			nr = nri;
 			str.insert(0, 1, (char) ('A' + nra.intValue() - 1));
 		} while(!nr.isZero());
+		// add sign
 		if(ips.minus) {
 			*ips.minus = neg;
 		} else if(neg) {
@@ -9717,9 +9722,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		return str;
 	}
 	if(((po.base < BASE_CUSTOM && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2))) && isReal()) {
+		// non-integer bases, negative bases, and bases > 62
 		Number base;
 		switch(po.base) {
 			case BASE_GOLDEN_RATIO: {
+				// golden ratio = (sqrt(5)+1)/2
 				base.set(5);
 				base.sqrt();
 				base.add(1);
@@ -9727,17 +9734,22 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				break;
 			}
 			case BASE_SUPER_GOLDEN_RATIO: {
+				// supergolden ratio = (1+cbrt((29+3*sqrt(93))/2)+cbrt((29-3*sqrt(93))/2))/3
+				// a=3*sqrt(93)
 				base.set(93);
 				base.sqrt();
 				base.multiply(3);
+				// b=cbrt((29-a)/2)
 				Number b2(base);
 				b2.negate();
 				b2.add(29);
 				b2.divide(2);
 				b2.cbrt();
+				// c=cbrt((29+a)/2)
 				base.add(29);
 				base.divide(2);
 				base.cbrt();
+				// (1+a+b)/3
 				base.add(b2);
 				base.add(1);
 				base.divide(3);
@@ -9746,20 +9758,18 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			case BASE_PI: {base.pi(); break;}
 			case BASE_E: {base.e(); break;}
 			case BASE_SQRT2: {base.set(2); base.sqrt(); break;}
+			// Unicode base uses all 1114111 Unicode characters as digits
 			case BASE_UNICODE: {base.set(1114112L); break;}
 			default: {base = CALCULATOR->customOutputBase();}
 		}
-		if(base.isInteger() && base >= 2 && base <= 36) {
-			PrintOptions po2 = po;
-			po2.base = base.intValue();
-			return print(po2, ips);
-		}
+		// negative non-integer bases, complex bases, and bases where absolute value is <= 1
 		if(!base.isReal() || (base.isNegative() && !base.isInteger()) || !(base > 1 || base < -1)) {
 			CALCULATOR->error(true, _("Unsupported base"), NULL);
 			PrintOptions po2 = po;
 			po2.base = BASE_DECIMAL;
 			return print(po2, ips);
 		}
+		// use mid value for low precision intervals and any interval with negative bases
 		if((base.isNegative() && isInterval()) || (isInterval() && precision(true) < 1)) {
 			Number nr(*this);
 			if(!nr.intervalToPrecision()) {
@@ -9768,6 +9778,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			return nr.print(po, ips);
 		}
+		// use mid value for bases with low precision interval
 		if(base.isInterval() && base.precision(true) < 1) {
 			if(!base.intervalToPrecision()) {
 				base.intervalToMidValue();
@@ -9776,15 +9787,23 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		Number abs_base(base);
 		abs_base.abs();
+		// use unicode ditis for base 1114112
 		bool b_uni = (abs_base == 1114112L);
+		// use escaped digit value for absolute base > 62
 		bool b_num = abs_base > 62;
+		// digits are case sensitive for absolute base > 36
 		bool b_case = !b_num && abs_base > 36;
 
+		// if base is approximate, output is approximate
 		if(po.is_approximate && base.isApproximate()) *po.is_approximate = true;
 		long int precision = PRECISION;
+		// adjust output precision if precision of number or base is lower than global precision
 		if(b_approx && i_precision >= 0 && i_precision < precision) precision = i_precision;
 		if(base.isApproximate() && base.precision() >= 0 && base.precision() < precision) precision = base.precision();
+		// adjust output precision to precision of parent MathStructure
 		if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < precision) precision = ips.parent_precision;
+		
+		// calculate number of digits allowed for the number base with the current precision: floor(log(10^precision-1, abs(base)))
 		long int precision_base = precision;
 		Number precmax(10);
 		precmax.raise(precision_base);
@@ -9795,10 +9814,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		string str;
 
+		// number is zero
 		if(isZero()) {
+			// escaped digit
 			if(b_num) str += '\\';
 			str += '0';
 			if(po.show_ending_zeroes && isApproximate()) {
+				// show the number of decimals allowed by the current precision
 				str += po.decimalpoint();
 				while(precision_base > 1) {
 					precision_base--;
@@ -10103,9 +10125,16 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		return str;
 	}
 	if((po.base == BASE_SEXAGESIMAL || po.base == BASE_TIME) && isReal()) {
+		// sexagesimal base or time format
+		
 		Number nr(*this);
+
+		// handle sign separately
 		bool neg = nr.isNegative();
 		nr.setNegative(false);
+		
+		// from left to right
+		// first section: integer part
 		nr.trunc();
 		PrintOptions po2 = po;
 		po2.base = 10;
@@ -10119,13 +10148,16 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		nr = *this;
+		// second section: trunc(fractional part * 60)
 		nr.frac();
 		nr *= 60;
 		Number nr2(nr);
 		nr.trunc();
 		if(po.base == BASE_TIME) {
+			// hour, minus, seconds is separated by colons
 			str += ":";
 			if(nr.isLessThan(10)) {
+				// always use two digits for second and third sections of time output
 				str += "0";
 			}
 		}
@@ -10138,10 +10170,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		nr2.frac();
+		// do not show zero seconds in time format
 		if(!nr2.isZero() || po.base == BASE_SEXAGESIMAL) {
+			// third section: trunc((fractional part of (fractional part * 60)) * 60)
 			nr2.multiply(60);
 			nr = nr2;
 			nr.trunc();
+			
+			// if left over fractional part != 0, output is approximate, round upwards if >= 0.5
 			nr2.frac();
 			if(!nr2.isZero()) {
 				if(po.is_approximate) *po.is_approximate = true;
@@ -10164,6 +10200,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 			}
 		}
+		// add sign
 		if(ips.minus) {
 			*ips.minus = neg;
 		} else if(neg) {
@@ -10174,18 +10211,24 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		return str;
 	}
+
 	string str;
 	int base;
+
 	long int min_decimals = 0;
 	if(po.use_min_decimals && po.min_decimals > 0) min_decimals = po.min_decimals;
+	// min decimals is greater than max decimals
 	if((int) min_decimals > po.max_decimals && po.use_max_decimals && po.max_decimals >= 0) {
 		min_decimals = po.max_decimals;
 	}
+
 	if(po.base == BASE_CUSTOM) base = CALCULATOR->customOutputBase().intValue();
 	else if(po.base <= 1 && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_TIME) base = 10;
 	else if(po.base > 36 && po.base != BASE_SEXAGESIMAL) base = 36;
 	else base = po.base;
+
 	if(po.base == BASE_ROMAN_NUMERALS) {
+		// do not display roman numerals for non-rational numbers and numbers with absolute value > 9999; use decimal base instead
 		if(!isRational()) {
 			CALCULATOR->error(false, _("Can only display rational numbers as roman numerals."), NULL);
 			base = 10;
@@ -10196,14 +10239,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	}
 
 	if(hasImaginaryPart()) {
-		if(i_value->isZero()) {
-			Number nr;
-			nr.set(*this, false, true);
-			return nr.print(po, ips);
-		}
+		// imaginary unit
 		string str_i = (CALCULATOR ? CALCULATOR->getVariableById(VARIABLE_ID_I)->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
 		bool bre = hasRealPart();
 		if(bre) {
+			// output real and imaginary part separately (they are normally already separeted in the parent MathStructure)
 			Number r_nr(*this);
 			r_nr.clearImaginary();
 			str = r_nr.print(po, ips);
@@ -10214,17 +10254,21 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			string str2 = i_value->print(po, ips_n);
 			if(ips.im) *ips.im = str2;
 			if(!po.short_multiplication && (str2 != "1" || po.base == BASE_UNICODE)) {
-				if(po.spacious) {
-					str2 += " * ";
-				} else {
-					str2 += "*";
-				}
+				// show multiplication symbol between 1 and i
+				if(po.spacious) str2 += " ";
+				if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str2 += SIGN_MULTIDOT;
+				else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str2 += SIGN_MIDDLEDOT;
+				else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str2 += SIGN_MULTIPLICATION;
+				else str2 += "*";
+				if(po.spacious) str2 += " ";
 			}
+			// do not show 1 (i instead of 1i); 'i' is placed after the number, while 'j' is placed before
 			if(str2 == "1" && po.base != BASE_UNICODE) str2 = str_i;
 			else if(str_i == "j") str2.insert(0, str_i);
 			else str2 += str_i;
 			if(*ips_n.minus) {
-				str += " - ";
+				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str += SIGN_MINUS;
+				else str += "-";
 			} else {
 				str += " + ";
 			}
@@ -10233,12 +10277,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			str = i_value->print(po, ips);
 			if(ips.im) *ips.im = str;
 			if(!po.short_multiplication && (str != "1" || po.base == BASE_UNICODE)) {
-				if(po.spacious) {
-					str += " * ";
-				} else {
-					str += "*";
-				}
+				// show multiplication symbol between 1 and i
+				if(po.spacious) str += " ";
+				if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
+				else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
+				else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
+				else str += "*";
+				if(po.spacious) str += " ";
 			}
+			// do not show 1 (i instead of 1i); 'i' is placed after the number, while 'j' is placed before
 			if(str == "1" && po.base != BASE_UNICODE) str = str_i;
 			else if(str_i == "j") str.insert(0, str_i);
 			else str += str_i;
@@ -10248,10 +10295,18 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	}
 
 	long int precision = PRECISION;
+	
+	// adjust output precision if precision of the number is lower than global precision
 	if(b_approx && i_precision >= 0 && (po.preserve_precision || po.preserve_format || i_precision < PRECISION)) precision = i_precision;
-	else if(b_approx && i_precision < 0 && po.preserve_precision && FROM_BIT_PRECISION(BIT_PRECISION) > precision) precision = FROM_BIT_PRECISION(BIT_PRECISION);
-	else if(b_approx && i_precision < 0 && po.preserve_format && FROM_BIT_PRECISION(BIT_PRECISION) - 1 > precision) precision = FROM_BIT_PRECISION(BIT_PRECISION) - 1;
+	// if preserve_precision is true, use full precision
+	else if(b_approx && i_precision < 0 && po.preserve_precision && FROM_BIT_PRECISION(NUMBER_BIT_PRECISION) > precision) precision = FROM_BIT_PRECISION(NUMBER_BIT_PRECISION);
+	// if preserve_format is true, use full precision - 1 (avoids confusing output)
+	else if(b_approx && i_precision < 0 && po.preserve_format && FROM_BIT_PRECISION(NUMBER_BIT_PRECISION) - 1 > precision) precision = FROM_BIT_PRECISION(NUMBER_BIT_PRECISION) - 1;
+
+	// adjust output precision to precision of parent MathStructure
 	if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < precision) precision = ips.parent_precision;
+
+	// calculate number of digits allowed for the number base with the current precision: floor(log(10^precision-1, abs(base)))
 	long int precision_base = precision;
 	if(base != 10 && ((base >= 2 && base <= 36) || po.base == BASE_CUSTOM)) {
 		Number precmax(10);
@@ -10261,9 +10316,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		precmax.floor();
 		precision_base = precmax.lintValue();
 	}
+	
+	// calculate number of digits allowed for the number base with the full precision of the number
 	long int i_precision_base = precision_base;
-	if((i_precision < 0 && FROM_BIT_PRECISION(BIT_PRECISION) > precision) || i_precision > precision) {
-		if(i_precision < 0) i_precision_base = FROM_BIT_PRECISION(BIT_PRECISION);
+	if((i_precision < 0 && FROM_BIT_PRECISION(NUMBER_BIT_PRECISION) > precision) || i_precision > precision) {
+		if(i_precision < 0) i_precision_base = FROM_BIT_PRECISION(NUMBER_BIT_PRECISION);
 		else i_precision_base = i_precision;
 		if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < i_precision_base) i_precision_base = ips.parent_precision;
 		if(base != 10 && ((base >= 2 && base <= 36) || po.base == BASE_CUSTOM)) {
@@ -10275,10 +10332,18 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			i_precision_base = precmax.lintValue();
 		}
 	}
+
+	// number or parent is approximate
 	bool approx = isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision);
 
 	if(isInteger()) {
 
+		// Output integer
+
+		// output extremely large integers as floating point
+		// condition: 	number of digits > 1000 and number is approximate, or base = 10 and scientific notation and not unrestricted fraction format
+		//		or number of digits > 10000 and base != 10
+		//		or number of digits > 1000000
 		long int length = mpz_sizeinbase(mpq_numref(r_value), base);
 		if(precision_base + min_decimals + 1000 + ::abs(po.min_exp) < length && ((approx || (base == 10 && po.min_exp != 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT))) || length > (po.base == 10 ? 1000000L : 100000L))) {
 			Number nr(*this);
@@ -10289,12 +10354,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				CALCULATOR->endTemporaryStopMessages(true);
 				return nr.print(po2, ips);
 			} else {
+				// floating point conversion failed (might happen with extremely large numbers): use scientific notation and divide original number
 				length--;
 				mpz_t ivalue;
 				mpz_init(ivalue);
 				mpz_ui_pow_ui(ivalue, base, length);
 				Number nrexp;
 				nrexp.setInternal(ivalue);
+				// divide by base^(output length - 1)
 				if(nr.divide(nrexp)) {
 					CALCULATOR->endTemporaryStopMessages();
 					str = nr.print(po2, ips);
@@ -10335,6 +10402,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					}
 					return str;
 				}
+				// division failed: unable to display number
 				CALCULATOR->endTemporaryStopMessages(true);
 				return "(floating point error)";
 			}
@@ -10342,9 +10410,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		if(po.base == 2 || (po.base == 16 && po.hexadecimal_twos_complement)) {
 			if((po.base == 16 || po.twos_complement) && isNegative()) {
+				// show negative number using two's complement
 				Number nr;
 				unsigned int bits = po.binary_bits;
 				if(bits == 0) {
+					// determine appropriate number of bits
 					nr = *this;
 					nr.floor();
 					nr++;
@@ -10361,6 +10431,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 				nr = bits;
 				nr.exp2();
+				// two's complement number = negative number + 2^(number of bits)
 				nr += *this;
 				PrintOptions po2 = po;
 				po2.twos_complement = false;
@@ -10380,6 +10451,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				po2.binary_bits = bits;
 				return nr.print(po2, ips);
 			} else if(po.binary_bits == 0) {
+				// determine appropriate number of bits for binary (and hexadecimal, when using hexadecimal two's complement) numbers
 				Number nr(*this);
 				nr.ceil();
 				unsigned int bits = nr.integerLength() + 1;
@@ -10406,26 +10478,32 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		integer_rerun:
 
+		// full integer string (without sign; roman numerals never use lower case)
 		string mpz_str = printMPZ(ivalue, base, false, base != BASE_ROMAN_NUMERALS && po.lower_case_numbers);
 
 		if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 
+		// determine exponent for scientific notation
 		length = mpz_str.length();
 		long int expo = 0;
 		if(base == 10 && !po.preserve_format) {
 			if(length == 1 && mpz_str[0] == '0') {
+				// number is zero
 				expo = 0;
 			} else if(length > 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 				if(po.number_fraction_format == FRACTION_FRACTIONAL) {
+					// restricted fraction format: exponent = length - 1 if exponent >= precision; increase precision if possible to avoid lengthening of the output
 					long int precexp = i_precision_base;
 					if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 					else if(precexp > precision + 3) precexp = precision + 3;
 					if(exact && ((expo >= 0 && length - 1 < precexp) || (expo < 0 && expo > -PRECISION))) expo = 0;
 					else expo = length - 1;
 				} else {
+					// by default exponent = output string length - 1
 					expo = length - 1;
 				}
 			} else if(length > 0) {
+				// unrestricted fractional format: only use scientific notation in order to remove trailing zeroes
 				for(long int i = length - 1; i >= 0; i--) {
 					if(mpz_str[i] != '0') {
 						break;
@@ -10434,6 +10512,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 			}
 			if(po.min_exp == EXP_PRECISION || (po.min_exp == EXP_NONE && (expo > 100000L || expo < -100000L))) {
+				// use scientific notation if exponent >= precision; increase precision if possible to avoid lengthening of the output
 				long int precexp = i_precision_base;
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
@@ -10441,14 +10520,17 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					if(precision_base < length) precision_base = length;
 					expo = 0;
 				}
-			} else if(po.min_exp < -1) {
+			} else if(po.min_exp < 0) {
+				// exponent should be multiple of -po.min_exp
 				expo -= expo % (-po.min_exp);
 				if(expo < 0) expo = 0;
-			} else if(po.min_exp != 0) {
+			} else if(po.min_exp > 0) {
+				// use scientific notation if exponent >= po.min_exp
 				if((long int) expo > -po.min_exp && (long int) expo < po.min_exp) {
 					expo = 0;
 				}
 			} else {
+				// po.min_exp = 0: do not use scientific notation
 				expo = 0;
 			}
 		}
@@ -10459,6 +10541,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		if(!rerun && mpz_sgn(ivalue) != 0) {
 			long int precision2 = precision_base;
+			// increase output precision to include minimum number of decimals
 			if(min_decimals > 0 && min_decimals + nondecimals > precision_base) {
 				precision2 = min_decimals + nondecimals;
 				if(approx && precision2 > i_precision_base) precision2 = i_precision_base;
