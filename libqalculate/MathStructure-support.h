@@ -127,6 +127,8 @@ bool function_differentiable(MathFunction *o_function);
 bool montecarlo(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, Number n);
 bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, long int max_steps = -1, long int min_steps = 6, bool safety_measures = true);
 bool sync_approximate_units(MathStructure &m, const EvaluationOptions &feo, std::vector<KnownVariable*> *vars = NULL, std::vector<MathStructure> *uncs = NULL, bool do_intervals = true);
+void fix_to_struct(MathStructure &m);
+int has_information_unit(const MathStructure &m, bool top = true);
 
 #endif
 

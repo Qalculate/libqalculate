@@ -1,3 +1,7 @@
+2019-12-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add base units (or local currency) to expression when "to"-expression specifies unit conversion and original expression does not include any units
+
 2019-12-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix display of factorized 5/7234234234*x+5/9234234*y and similar (a(bx+y) where a and/or b are rational number displayed approximately)
