@@ -11,6 +11,7 @@
 
 #include "support.h"
 #include <libqalculate/qalculate.h>
+#include <libqalculate/MathStructure-support.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <time.h>
@@ -104,7 +105,6 @@ void expression_calculation_updated();
 bool display_errors(bool goto_input = false, int cols = 0);
 void replace_quotation_marks(string &result_text);
 void replace_result_cis(string &resstr);
-extern int has_information_unit(const MathStructure &m, bool top = true);
 
 FILE *cfile;
 
@@ -5029,6 +5029,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	size_t stack_size = 0;
 
 	CALCULATOR->resetExchangeRatesUsed();
+	
+	MathStructure to_struct;
 
 	if(do_stack) {
 		stack_size = CALCULATOR->RPNStackSize();
@@ -5148,8 +5150,10 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			}
 		}
 	} else {
-		CALCULATOR->calculate(mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, NULL);
+		CALCULATOR->calculate(mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, &to_struct);
 	}
+	
+	calculation_wait:
 
 	bool has_printed = false;
 
@@ -5224,6 +5228,28 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		}
 		if(has_printed) printf("\n");
 	}
+	
+	if(!avoid_recalculation && !do_mathoperation && to_struct.containsType(STRUCT_UNIT, true) && !mstruct->containsType(STRUCT_UNIT, false, true, true) && !parsed_mstruct->containsType(STRUCT_UNIT, false, true, true)) {
+		to_struct = CALCULATOR->convertToBaseUnits(to_struct);
+		fix_to_struct(to_struct);
+		if(!to_struct.isZero()) {
+			string from_str = str, to_str;
+			if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
+				mstruct->multiply(to_struct);
+				to_struct.format(printops);
+				if(to_struct.isMultiplication() && to_struct.size() >= 2) {
+					if(to_struct[0].isOne()) to_struct.delChild(1, true);
+					else if(to_struct[1].isOne()) to_struct.delChild(2, true);
+				}
+				parsed_mstruct->multiply(to_struct);
+				to_struct.clear();
+				CALCULATOR->calculate(mstruct, 0, evalops, CALCULATOR->unlocalizeExpression(to_str, evalops.parse_options));
+				bool had_printed = has_printed;
+				goto calculation_wait;
+				if(had_printed) has_printed = true;
+			}
+		}
+	}
 
 	b_busy = false;
 
@@ -5234,7 +5260,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		else mstruct->ref();
 	}
 
-	if(!do_mathoperation && check_exrates && check_exchange_rates()) {
+	if(!avoid_recalculation && !do_mathoperation && check_exrates && check_exchange_rates()) {
 		execute_expression(goto_input, do_mathoperation, op, f, rpn_mode, do_stack ? stack_index : 0, false);
 		return;
 	}

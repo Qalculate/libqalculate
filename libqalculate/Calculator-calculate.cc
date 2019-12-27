@@ -80,7 +80,7 @@ void CalculateThread::run() {
 		} else {
 			MathStructure meval(*mstruct);
 			mstruct->setAborted();
-			mstruct->set(CALCULATOR->calculate(meval, CALCULATOR->tmp_evaluationoptions));
+			mstruct->set(CALCULATOR->calculate(meval, CALCULATOR->tmp_evaluationoptions, CALCULATOR->tmp_tostruct ? CALCULATOR->tmp_tostruct->symbol() : ""));
 		}
 		switch(CALCULATOR->tmp_proc_command) {
 			case PROC_RPN_ADD: {
@@ -647,7 +647,7 @@ void Calculator::moveRPNRegisterDown(size_t index) {
 	}
 }
 
-int has_information_unit(const MathStructure &m, bool top = true) {
+int has_information_unit(const MathStructure &m, bool top) {
 	if(m.isUnit_exp()) {
 		if(m.isUnit()) {
 			if(m.unit()->baseUnit()->referenceName() == "bit") return 1;
@@ -667,6 +667,48 @@ int has_information_unit(const MathStructure &m, bool top = true) {
 		}
 	}
 	return 0;
+}
+
+void fix_to_struct(MathStructure &m) {
+	if(m.isPower() && m[0].isUnit()) {
+		if(m[0].prefix() == NULL && m[0].unit()->referenceName() == "g") {
+			m[0].setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
+		} else if(m[0].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
+			Unit *u = CALCULATOR->getLocalCurrency();
+			if(u) m[0].setUnit(u);
+		}
+	} else if(m.isUnit()) {
+		if(m.prefix() == NULL && m.unit()->referenceName() == "g") {
+			m.setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
+		} else if(m.unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
+			Unit *u = CALCULATOR->getLocalCurrency();
+			if(u) m.setUnit(u);
+		}
+	} else {
+		for(size_t i = 0; i < m.size();) {
+			if(m[i].isUnit()) {
+				if(m[i].prefix() == NULL && m[i].unit()->referenceName() == "g") {
+					m[i].setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
+				} else if(m[i].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
+					Unit *u = CALCULATOR->getLocalCurrency();
+					if(u) m[i].setUnit(u);
+				}
+				i++;
+			} else if(m[i].isPower() && m[i][0].isUnit()) {
+				if(m[i][0].prefix() == NULL && m[i][0].unit()->referenceName() == "g") {
+					m[i][0].setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
+				} else if(m[i][0].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
+					Unit *u = CALCULATOR->getLocalCurrency();
+					if(u) m[i][0].setUnit(u);
+				}
+				i++;
+			} else {
+				m.delChild(i + 1);
+			}
+		}
+		if(m.size() == 0) m.clear();
+		if(m.size() == 1) m.setToChild(1);
+	}
 }
 
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
@@ -853,8 +895,23 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		}
 	}
 
+
 	// perform calculation
-	mstruct = calculate(str, evalops);
+	if(to_str.empty() || str == from_str) {
+		mstruct = calculate(str, evalops);
+	} else {
+		// handle case where conversion to units requested, but original expression and result does not contains any unit
+		MathStructure parsed_struct, to_struct;
+		mstruct = calculate(str, evalops, &parsed_struct, &to_struct);
+		if(to_struct.containsType(STRUCT_UNIT, true) && !mstruct.contains(STRUCT_UNIT, false, true, true) && !parsed_struct.containsType(STRUCT_UNIT, false, true, true)) {
+			// convert "to"-expression to base units
+			to_struct = CALCULATOR->convertToBaseUnits(to_struct);
+			// remove non-units, set local currency and use kg instead of g
+			fix_to_struct(to_struct);
+			// recalculate
+			if(!to_struct.isZero()) mstruct = calculate(mstruct, evalops, to_str);
+		}
+	}
 
 	// handle "to factors", and "factor" or "expand" in front of the expression
 	if(do_factors) {
@@ -984,7 +1041,6 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
 	tmp_parsedstruct = NULL;
 	if(!to_str.empty()) tmp_tostruct = new MathStructure(to_str);
 	else tmp_tostruct = NULL;
-	tmp_tostruct = NULL;
 	tmp_maketodivision = false;
 	if(!calculate_thread->write(false)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
@@ -1388,15 +1444,17 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	if(!aborted()) {
 		// do unit conversion
 		bool b_units = mstruct.containsType(STRUCT_UNIT, true);
-		if(b_units && u) {
+		if(u) {
 			// convert to unit provided in to_struct
-			current_stage = MESSAGE_STAGE_CONVERSION;
 			if(to_struct) to_struct->set(u);
-			mstruct.set(convert(mstruct, u, eo, false, false));
-			if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo));
+			if(b_units) {
+				current_stage = MESSAGE_STAGE_CONVERSION;
+				mstruct.set(convert(mstruct, u, eo, false, false));
+				if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo));
+			}
 		} else if(!str2.empty()) {
 			// conversion using "to" expression
-			mstruct.set(convert(mstruct, str2, eo));
+			mstruct.set(convert(mstruct, str2, eo, to_struct));
 		} else if(b_units) {
 			// do automatic conversion
 			current_stage = MESSAGE_STAGE_CONVERSION;
