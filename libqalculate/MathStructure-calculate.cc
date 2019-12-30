@@ -1159,7 +1159,9 @@ bool addablePower(const MathStructure &mstruct, const EvaluationOptions &eo) {
 }
 
 int MathStructure::merge_multiplication(MathStructure &mstruct, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this, size_t index_mstruct, bool reversed, bool do_append) {
+	// test if two factors can be merged
 	if(mstruct.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
+		// both factors are numbers try Number::multiply() (might never fail for infinite values)
 		Number nr(o_number);
 		if(nr.multiply(mstruct.number()) && (eo.approximation >= APPROXIMATION_APPROXIMATE || !nr.isApproximate() || o_number.isApproximate() || mstruct.number().isApproximate()) && (eo.allow_complex || !nr.isComplex() || o_number.isComplex() || mstruct.number().isComplex()) && (eo.allow_infinite || !nr.includesInfinity() || o_number.includesInfinity() || mstruct.number().includesInfinity())) {
 			if(o_number == nr) {
@@ -1174,9 +1176,11 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 		return -1;
 	}
 	if(mstruct.isOne()) {
+		// x*1=x
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 2;
 	} else if(isOne()) {
+		// 1*x=x
 		if(mparent) {
 			mparent->swapChildren(index_this + 1, index_mstruct + 1);
 		} else {
@@ -1187,24 +1191,29 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 	if(m_type == STRUCT_NUMBER && o_number.isInfinite()) {
 		if(o_number.isMinusInfinity(false)) {
 			if(mstruct.representsPositive(false)) {
+				// (-infinity)*x=-infinity if x is positive
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 2;
 			} else if(mstruct.representsNegative(false)) {
+				// (-infinity)*x=infinity if x is negative
 				o_number.setPlusInfinity();
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			}
 		} else if(o_number.isPlusInfinity(false)) {
 			if(mstruct.representsPositive(false)) {
+				// infinity*x=infinity if x is negative
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 2;
 			} else if(mstruct.representsNegative(false)) {
+				// infinity*x=-infinity if x is negative
 				o_number.setMinusInfinity();
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			}
 		}
 		if(eo.approximation == APPROXIMATION_EXACT) {
+			// test approximate value
 			MathStructure mtest(mstruct);
 			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 			if(CALCULATOR->usesIntervalArithmetic()) {
@@ -1240,11 +1249,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 	} else if(mstruct.isNumber() && mstruct.number().isInfinite()) {
 		if(mstruct.number().isMinusInfinity(false)) {
 			if(representsPositive(false)) {
+				// x*(-infinity)=-infinity if x is positive
 				clear(true);
 				o_number.setMinusInfinity();
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			} else if(representsNegative(false)) {
+				// x*(-infinity)=infinity if x is negative
 				clear(true);
 				o_number.setPlusInfinity();
 				MERGE_APPROX_AND_PREC(mstruct)
@@ -1252,11 +1263,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			}
 		} else if(mstruct.number().isPlusInfinity(false)) {
 			if(representsPositive(false)) {
+				// x*infinity=infinity if x is positive
 				clear(true);
 				o_number.setPlusInfinity();
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			} else if(representsNegative(false)) {
+				// x*infinity=-infinity if x is negative
 				clear(true);
 				o_number.setMinusInfinity();
 				MERGE_APPROX_AND_PREC(mstruct)
@@ -1264,6 +1277,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			}
 		}
 		if(eo.approximation == APPROXIMATION_EXACT) {
+			// test approximate value
 			MathStructure mtest(*this);
 			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 			if(CALCULATOR->usesIntervalArithmetic()) {
@@ -1306,13 +1320,15 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 
 	if(representsUndefined() || mstruct.representsUndefined()) return -1;
 
-	// x/(x^2+x)=1/(x+1)
+	// check if factors are numerator and denominator, and denominator is polynomial
 	const MathStructure *mnum = NULL, *mden = NULL;
 	bool b_nonzero = false;
 	if(eo.reduce_divisions) {
 		if(!isNumber() && mstruct.isPower() && mstruct[0].isAddition() && mstruct[0].size() > 1 && mstruct[1].isNumber() && mstruct[1].number().isMinusOne()) {
+			// second factor is denominator (exponent = -1)
 			if((!isPower() || !CHILD(1).hasNegativeSign()) && representsNumber() && mstruct[0].representsNumber()) {
 				if((!eo.warn_about_denominators_assumed_nonzero && eo.assume_denominators_nonzero && !mstruct[0].representsZero(true)) || mstruct[0].representsNonZero(true)) {
+					// denominator is not zero
 					b_nonzero = true;
 				}
 				if(b_nonzero || (eo.warn_about_denominators_assumed_nonzero && eo.assume_denominators_nonzero && !mstruct[0].representsZero(true))) {
@@ -1321,8 +1337,10 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				}
 			}
 		} else if(!mstruct.isNumber() && isPower() && CHILD(0).isAddition() && CHILD(0).size() > 1 && CHILD(1).isNumber() && CHILD(1).number().isMinusOne()) {
+			// first factor is denominator (exponent = -1)
 			if((!mstruct.isPower() || !mstruct[1].hasNegativeSign()) && mstruct.representsNumber() && CHILD(0).representsNumber()) {
 				if((!eo.warn_about_denominators_assumed_nonzero && eo.assume_denominators_nonzero && !CHILD(0).representsZero(true)) || CHILD(0).representsNonZero(true)) {
+					// denominator is not zero
 					b_nonzero = true;
 				}
 				if(b_nonzero || (eo.warn_about_denominators_assumed_nonzero && eo.assume_denominators_nonzero && !CHILD(0).representsZero(true))) {
@@ -1333,9 +1351,11 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 		}
 	}
 
+	// look for common factors in numerator and denominator
 	if(mnum && mden && eo.reduce_divisions) {
 		switch(mnum->type()) {
 			case STRUCT_ADDITION: {
+				// polynomial division is not handled here
 				break;
 			}
 			case STRUCT_MULTIPLICATION: {
@@ -1575,26 +1595,46 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 		if(mstruct.isFunction()) {
 			if((mstruct.function()->id() == FUNCTION_ID_LOG || mstruct.function()->id() == FUNCTION_ID_EXPINT) && mstruct.size() == 1) {
 				if(mstruct[0].representsNonZero() || warn_about_assumed_not_value(mstruct[0], m_zero, eo)) {
+					// 0*ln(x)=0 and 0*Ei(x)=0 if x is assumed non-zero
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 2;
 				}
 			} else if(mstruct.function()->id() == FUNCTION_ID_LOGINT && mstruct.size() == 1) {
 				if(mstruct.representsNumber(true) || warn_about_assumed_not_value(mstruct[0], m_one, eo)) {
+					// 0*li(x)=0 if x is assumed not one
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 2;
 				}
+			} else if(mstruct.function()->id() == FUNCTION_ID_TAN && mstruct.size() == 1) {
+				mstruct.setFunctionId(FUNCTION_ID_COS);
+				if(warn_about_assumed_not_value(mstruct, m_zero, eo)) {
+					// 0*tan(x)=0 if cos(x) != 0
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 2;
+				}
+				mstruct.setFunctionId(FUNCTION_ID_TAN);
 			}
 		} else if(mstruct.isPower() && mstruct[0].isFunction() && mstruct[1].representsNumber()) {
 			if((mstruct[0].function()->id() == FUNCTION_ID_LOG || mstruct[0].function()->id() == FUNCTION_ID_EXPINT) && mstruct[0].size() == 1) {
 				if(mstruct[0][0].representsNonZero() || warn_about_assumed_not_value(mstruct[0][0], m_zero, eo)) {
+					// ln(x)^a*0=0 and Ei(x)*0=0 if x is assumed non-zero
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 2;
 				}
 			} else if(mstruct[0].function()->id() == FUNCTION_ID_LOGINT && mstruct[0].size() == 1) {
 				if(mstruct[0].representsNumber(true) || warn_about_assumed_not_value(mstruct[0][0], m_one, eo)) {
+					// li(x)^a*0=0 if x is assumed not one
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 2;
 				}
+			} else if(mstruct[0].function()->id() == FUNCTION_ID_TAN && mstruct[0].size() == 1) {
+				mstruct[0].setFunctionId(FUNCTION_ID_COS);
+				if(warn_about_assumed_not_value(mstruct[0], m_zero, eo)) {
+					// 0*tan(x)^a=0 if cos(x) != 0
+					MERGE_APPROX_AND_PREC(mstruct)
+					return 2;
+				}
+				mstruct[0].setFunctionId(FUNCTION_ID_TAN);
 			}
 		}
 	}
@@ -1607,6 +1647,8 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				}
 				case STRUCT_VECTOR: {
 					if(isMatrix() && mstruct.isMatrix()) {
+						// matrix multiplication
+						// the number of columns in the first matrix must be equal to the number of rows in the second matrix
 						if(CHILD(0).size() != mstruct.size()) {
 							CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(mstruct.size()).c_str(), i2s(CHILD(0).size()).c_str(), NULL);
 							return -1;
@@ -1628,6 +1670,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
 					} else if(isMatrix() && mstruct.isVector()) {
+						// matrix multiplication (vector is treated as matrix with 1 row)
 						if(SIZE != mstruct.size() || CHILD(0).size() != 1) {
 							CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(1).c_str(), i2s(CHILD(0).size()).c_str(), NULL);
 							return -1;
@@ -1646,6 +1689,8 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
 					} else {
+						// dot product of two vectors: [a1, a2, a3, ..]*[b1, b2, b3, ...]=a1*b1+a2*b2+a3*b3+...
+						// dimension of the vectors must be equal
 						if(SIZE == mstruct.size()) {
 							for(size_t i = 0; i < SIZE; i++) {
 								mstruct[i].ref();
@@ -1661,6 +1706,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					return -1;
 				}
 				default: {
+					// matrix/vector multiplied by scalar: multiply each element
 					for(size_t i = 0; i < SIZE; i++) {
 						CHILD(i).calculateMultiply(mstruct, eo);
 					}
@@ -1674,8 +1720,10 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			if(eo.expand != 0 && containsType(STRUCT_DATETIME, false, true, false) > 0) return -1;
 			switch(mstruct.type()) {
 				case STRUCT_ADDITION: {
+					// multiplication of polynomials
+					// avoid multiplication of very long polynomials
 					if(eo.expand != 0 && SIZE < 1000 && mstruct.size() < 1000 && (SIZE * mstruct.size() < (eo.expand == -1 ? 50 : 500))) {
-
+						// avoid multiplication of polynomials with intervals (if factors might be negitive)
 						if(eo.expand > -2 || (!containsInterval(true, false, false, eo.expand == -2 ? 1 : 0) && !mstruct.containsInterval(true, false, false, eo.expand == -2 ? 1 : 0)) || (representsNonNegative(true) && mstruct.representsNonNegative(true))) {
 							MathStructure msave(*this);
 							CLEAR;
@@ -1708,6 +1756,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						}
 					}
 					if(equals(mstruct)) {
+						// x*x=x^2
 						raise_nocopy(new MathStructure(2, 1, 0));
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
@@ -1716,6 +1765,8 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				}
 				case STRUCT_POWER: {
 					if(mstruct[1].isNumber() && *this == mstruct[0]) {
+						// (x+y)(x+y)^a=(x+y)^(a+1)
+						// check if a might be -1 and (x+y) might be zero
 						if((!eo.warn_about_denominators_assumed_nonzero && eo.assume_denominators_nonzero && !representsZero(true))
 						|| (mstruct[1].isNumber() && mstruct[1].number().isReal() && !mstruct[1].number().isMinusOne())
 						|| representsNonZero(true)
@@ -1734,6 +1785,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						}
 					}
 					if(eo.expand == 0 && mstruct[0].isAddition()) return -1;
+					// eo.combine_divisions is not used anymore
 					if(eo.combine_divisions && mstruct[1].hasNegativeSign()) {
 						int ret;
 						vector<bool> merged;
@@ -1808,6 +1860,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				}
 				default: {
 					if(eo.expand == 0 || (eo.expand < -1 && mstruct.containsInterval(true, false, false, eo.expand == -2 ? 1 : 0) && !representsNonNegative(true))) return -1;
+					// (a1+a2+...)*b=(ba1+ba2+...)
 					for(size_t i = 0; i < SIZE; i++) {
 						CHILD(i).multiply(mstruct, true);
 						if(reversed) {
@@ -1833,9 +1886,11 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						APPEND_REF(&mstruct);
 						return 1;
 					}
+					// try again with reversed order
 					return 0;
 				}
 				case STRUCT_MULTIPLICATION: {
+					// (a1*a2*...)(b1*b2*...)=a1*a2*...*b1*b2*...
 					for(size_t i = 0; i < mstruct.size(); i++) {
 						if(reversed) {
 							PREPEND_REF(&mstruct[i]);
@@ -1856,41 +1911,24 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					return 1;
 				}
 				case STRUCT_POWER: {
-					if(mstruct[1].isNumber()) {
-						if(*this == mstruct[0]) {
-							if((!eo.warn_about_denominators_assumed_nonzero && eo.assume_denominators_nonzero && !representsZero(true))
-							|| (mstruct[1].isNumber() && mstruct[1].number().isReal() && !mstruct[1].number().isMinusOne())
-							|| representsNonZero(true)
-							|| mstruct[1].representsPositive()
-							|| (eo.warn_about_denominators_assumed_nonzero && eo.assume_denominators_nonzero && !representsZero(true) && warn_about_denominators_assumed_nonzero_or_positive(*this, mstruct[1], eo))) {
-								if(mparent) {
-									mparent->swapChildren(index_this + 1, index_mstruct + 1);
-									(*mparent)[index_this][1].number()++;
-									(*mparent)[index_this].calculateRaiseExponent(eo, mparent, index_this);
-								} else {
-									set_nocopy(mstruct, true);
-									CHILD(1).number()++;
-									calculateRaiseExponent(eo, mparent, index_this);
-								}
-								return 1;
+					if(mstruct[1].isNumber() && equals(mstruct[0])) {
+						// xy(xy)^a=(xy)^(a+1)
+						// check if a might be -1 and xy might be zero
+						if((!eo.warn_about_denominators_assumed_nonzero && eo.assume_denominators_nonzero && !representsZero(true))
+						|| (mstruct[1].isNumber() && mstruct[1].number().isReal() && !mstruct[1].number().isMinusOne())
+						|| representsNonZero(true)
+						|| mstruct[1].representsPositive()
+						|| (eo.warn_about_denominators_assumed_nonzero && eo.assume_denominators_nonzero && !representsZero(true) && warn_about_denominators_assumed_nonzero_or_positive(*this, mstruct[1], eo))) {
+							if(mparent) {
+								mparent->swapChildren(index_this + 1, index_mstruct + 1);
+								(*mparent)[index_this][1].number()++;
+								(*mparent)[index_this].calculateRaiseExponent(eo, mparent, index_this);
+							} else {
+								set_nocopy(mstruct, true);
+								CHILD(1).number()++;
+								calculateRaiseExponent(eo, mparent, index_this);
 							}
-						} else {
-							for(size_t i = 0; i < SIZE; i++) {
-								int ret = CHILD(i).merge_multiplication(mstruct, eo, NULL, 0, 0, false, false);
-								if(ret == 0) {
-									ret = mstruct.merge_multiplication(CHILD(i), eo, NULL, 0, 0, true, false);
-									if(ret >= 1) {
-										if(ret == 2) ret = 3;
-										else if(ret == 3) ret = 2;
-										mstruct.ref();
-										setChild_nocopy(&mstruct, i + 1);
-									}
-								}
-								if(ret >= 1) {
-									if(ret != 2) calculateMultiplyIndex(i, eo, true, mparent, index_this);
-									return 1;
-								}
-							}
+							return 1;
 						}
 					}
 				}
@@ -1905,6 +1943,23 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							calculateMultiplyLast(eo, true, mparent, index_this);
 						}
 						return 1;
+					} else {
+						for(size_t i = 0; i < SIZE; i++) {
+							int ret = CHILD(i).merge_multiplication(mstruct, eo, NULL, 0, 0, false, false);
+							if(ret == 0) {
+								ret = mstruct.merge_multiplication(CHILD(i), eo, NULL, 0, 0, true, false);
+								if(ret >= 1) {
+									if(ret == 2) ret = 3;
+									else if(ret == 3) ret = 2;
+									mstruct.ref();
+									setChild_nocopy(&mstruct, i + 1);
+								}
+							}
+							if(ret >= 1) {
+								if(ret != 2) calculateMultiplyIndex(i, eo, true, mparent, index_this);
+								return 1;
+							}
+						}
 					}
 				}
 			}
@@ -1915,6 +1970,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				case STRUCT_VECTOR: {}
 				case STRUCT_ADDITION: {}
 				case STRUCT_MULTIPLICATION: {
+					// try again with reversed order
 					return 0;
 				}
 				case STRUCT_POWER: {
@@ -1932,12 +1988,20 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						raise(m_minus_one);
 						return 1;
 					}
-					if(mstruct[0] == CHILD(0) || (CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isMinusOne() && CHILD(0)[1] == mstruct[0] && mstruct[1].representsEven())) {
-						if(mstruct[0].isUnit() && mstruct[0].prefix()) CHILD(0).setPrefix(mstruct[0].prefix());
+					if(mstruct[0] == CHILD(0) || (CHILD(0).isMultiplication() && CHILD(0).size() == 2 && CHILD(0)[0].isMinusOne() && CHILD(0)[1] == mstruct[0] && (mstruct[1].representsEven() || mstruct[1].representsOdd()))) {
+						// x^a*x^b=x^(a+b)
+						// (-x)^a*x^b=(-x)^(a+b) if b is even
+						// (-x)^a*x^b=-(-x)^(a+b) if b is odd
+						if(mstruct[0].isUnit() && mstruct[0].prefix()) {
+							if(CHILD(0).isMultiplication()) CHILD(0)[0].setPrefix(mstruct[0].prefix());
+							else CHILD(0).setPrefix(mstruct[0].prefix());
+						}
 						bool b = eo.allow_complex || CHILD(0).representsNonNegative(true), b2 = true, b_warn = false;
 						if(!b) {
+							// if complex not allowed and base might be negative, exponents must be integers
 							b = CHILD(1).representsInteger() && mstruct[1].representsInteger();
 						}
+						bool b_neg = mstruct[1].representsOdd() && !(mstruct[0] == CHILD(0));
 						if(b) {
 							b = false;
 							bool b2test = false;
@@ -1948,7 +2012,10 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								} else if(!mstruct[1].number().isMinusOne() && !CHILD(1).number().isMinusOne()) {
 									b2 = (mstruct[1].number() + CHILD(1).number()).isNegative();
 									b = true;
-									if(!b2) b2test = true;
+									if(!b2) {
+										// sign of exponent changes: test if base is non-zero
+										b2test = true;
+									}
 								}
 							}
 							if(!b || b2test) {
@@ -1962,18 +2029,29 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								}
 								if(b2test) {
 									b2 = b;
-									b = true;
+									if(!b_neg) b = true;
+								} else if(b_neg) {
+									b = false;
 								}
 							}
 						}
 						if(b) {
 							if(IS_REAL(CHILD(1)) && IS_REAL(mstruct[1])) {
+								// exponents are real numbers
 								if(!b2 && !do_append) return -1;
+								// test if base is non-zero (if exponent is negative)
 								if(b_warn && !warn_about_denominators_assumed_nonzero(CHILD(0), eo)) return -1;
 								if(b2) {
+									// exponents can safely be combined
 									CHILD(1).number() += mstruct[1].number();
-									calculateRaiseExponent(eo, mparent, index_this);
+									if(b_neg) {
+										calculateRaiseExponent(eo);
+										calculateNegate(eo, mparent, index_this);
+									} else {
+										calculateRaiseExponent(eo, mparent, index_this);
+									}
 								} else {
+									// a and b have different signs and a+b is not negative: x^a/x^b=x^(a-b+1)/x
 									if(CHILD(1).number().isNegative()) {
 										CHILD(1).number()++;
 										mstruct[1].number() += CHILD(1).number();
@@ -2000,6 +2078,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							} else {
 								MathStructure mstruct2(CHILD(1));
 								if(mstruct2.calculateAdd(mstruct[1], eo)) {
+									// test and warn for possible division by zero (test both base and exponents)
 									if(b_warn && !warn_about_denominators_assumed_nonzero_llgg(CHILD(0), CHILD(1), mstruct[1], eo)) return -1;
 									CHILD(1) = mstruct2;
 									calculateRaiseExponent(eo, mparent, index_this);
@@ -2009,6 +2088,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						}
 					} else if(mstruct[1] == CHILD(1)) {
 						if(!CHILD(0).isMultiplication() && !mstruct[0].isMultiplication() && (mstruct[1].representsInteger() || CHILD(0).representsPositive(true) || mstruct[0].representsPositive(true))) {
+							// x^a*y^a=(xy)^a if x and y is positive, or a is integer
 							MathStructure mstruct2(CHILD(0));
 							if(mstruct2.calculateMultiply(mstruct[0], eo)) {
 								CHILD(0) = mstruct2;
@@ -2047,12 +2127,17 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						if(CHILD(1).number().isNonNegative() != mstruct[1].number().isNonNegative()) {
 							if(CHILD(0).function()->id() == FUNCTION_ID_SIN) {
 								if(mstruct[0].function()->id() == FUNCTION_ID_COS) {
+									// sin(x)^n/cos(x)^m=tan(x)^n if n=m
+									// sin(x)^n/cos(x)^m=tan(x)^m*sin(x)^(n-m) if n>m
+									// sin(x)^n/cos(x)^m=tan(x)^m/cos(x)^(m-n) if n<m
 									CHILD(0).setFunctionId(FUNCTION_ID_TAN);
 									mstruct[1].number() += CHILD(1).number();
 									if(mstruct[1].number().isZero()) {
+										// n=m
 										MERGE_APPROX_AND_PREC(mstruct)
 										return 1;
 									} else if(mstruct[1].number().isPositive() == CHILD(1).number().isPositive()) {
+										// n>m
 										mstruct[0].setFunctionId(FUNCTION_ID_SIN);
 										CHILD(1).number() -= mstruct[1].number();
 									}
@@ -2061,12 +2146,17 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 									calculateMultiplyLast(eo);
 									return 1;
 								} else if(mstruct[0].function()->id() == FUNCTION_ID_TAN) {
+									// sin(x)^n/tan(x)^m=cos(x)^n if n=m
+									// sin(x)^n/tan(x)^m=cos(x)^m*sin(x)^(n-m) if n>m
+									// sin(x)^n/tan(x)^m=cos(x)^m/tan(x)^(m-n) if n<m
 									CHILD(0).setFunctionId(FUNCTION_ID_COS);
 									mstruct[1].number() += CHILD(1).number();
 									if(mstruct[1].number().isZero()) {
+										// n=m
 										MERGE_APPROX_AND_PREC(mstruct)
 										return 1;
 									} else if(mstruct[1].number().isPositive() == CHILD(1).number().isPositive()) {
+										// n>m
 										mstruct[0].setFunctionId(FUNCTION_ID_SIN);
 										CHILD(1).number() -= mstruct[1].number();
 									}
@@ -2077,12 +2167,17 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								}
 							} else if(CHILD(0).function()->id() == FUNCTION_ID_COS) {
 								if(mstruct[0].function()->id() == FUNCTION_ID_SIN) {
+									// sin(x)^n/cos(x)^m=tan(x)^n if n=m
+									// sin(x)^n/cos(x)^m=tan(x)^m*sin(x)^(n-m) if n>m
+									// sin(x)^n/cos(x)^m=tan(x)^m/cos(x)^(m-n) if n<m
 									mstruct[0].setFunctionId(FUNCTION_ID_TAN);
 									CHILD(1).number() += mstruct[1].number();
 									if(CHILD(1).number().isZero()) {
+										// n=m
 										set(mstruct, true);
 										return 1;
 									} else if(mstruct[1].number().isPositive() == CHILD(1).number().isPositive()) {
+										// n>m
 										CHILD(0).setFunctionId(FUNCTION_ID_SIN);
 										mstruct[1].number() -= CHILD(1).number();
 									}
@@ -2093,12 +2188,17 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								}
 							} else if(CHILD(0).function()->id() == FUNCTION_ID_TAN) {
 								if(mstruct[0].function()->id() == FUNCTION_ID_SIN) {
+									// sin(x)^n/tan(x)^m=cos(x)^n if n=m
+									// sin(x)^n/tan(x)^m=cos(x)^m*sin(x)^(n-m) if n>m
+									// sin(x)^n/tan(x)^m=cos(x)^m/tan(x)^(m-n) if n<m
 									mstruct[0].setFunctionId(FUNCTION_ID_COS);
 									CHILD(1).number() += mstruct[1].number();
 									if(CHILD(1).number().isZero()) {
+										// n=m
 										set(mstruct, true);
 										return 1;
 									} else if(mstruct[1].number().isPositive() == CHILD(1).number().isPositive()) {
+										// n>m
 										CHILD(0).setFunctionId(FUNCTION_ID_SIN);
 										mstruct[1].number() -= CHILD(1).number();
 									}
@@ -2109,12 +2209,17 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								}
 							} else if(CHILD(0).function()->id() == FUNCTION_ID_SINH) {
 								if(mstruct[0].function()->id() == FUNCTION_ID_COSH) {
+									// sinh(x)^n/cosh(x)^m=tanh(x)^n if n=m
+									// sinh(x)^n/cosh(x)^m=tanh(x)^m*sinh(x)^(n-m) if n>m
+									// sinh(x)^n/cosh(x)^m=tanh(x)^m/cosh(x)^(m-n) if n<m
 									CHILD(0).setFunctionId(FUNCTION_ID_TANH);
 									mstruct[1].number() += CHILD(1).number();
 									if(mstruct[1].number().isZero()) {
+										// n=m
 										MERGE_APPROX_AND_PREC(mstruct)
 										return 1;
 									} else if(mstruct[1].number().isPositive() == CHILD(1).number().isPositive()) {
+										// n>m
 										mstruct[0].setFunctionId(FUNCTION_ID_SINH);
 										CHILD(1).number() -= mstruct[1].number();
 									}
@@ -2123,12 +2228,17 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 									calculateMultiplyLast(eo);
 									return 1;
 								} else if(mstruct[0].function()->id() == FUNCTION_ID_TANH) {
+									// sinh(x)^n/tanh(x)^m=cosh(x)^n if n=m
+									// sinh(x)^n/tanh(x)^m=cosh(x)^m*sinh(x)^(n-m) if n>m
+									// sinh(x)^n/tanh(x)^m=cosh(x)^m/tanh(x)^(m-n) if n<m
 									CHILD(0).setFunctionId(FUNCTION_ID_COSH);
 									mstruct[1].number() += CHILD(1).number();
 									if(mstruct[1].number().isZero()) {
+										// n=m
 										MERGE_APPROX_AND_PREC(mstruct)
 										return 1;
 									} else if(mstruct[1].number().isPositive() == CHILD(1).number().isPositive()) {
+										// n>m
 										mstruct[0].setFunctionId(FUNCTION_ID_SINH);
 										CHILD(1).number() -= mstruct[1].number();
 									}
@@ -2139,12 +2249,17 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								}
 							} else if(CHILD(0).function()->id() == FUNCTION_ID_COSH) {
 								if(mstruct[0].function()->id() == FUNCTION_ID_SINH) {
+									// sinh(x)^n/cosh(x)^m=tanh(x)^n if n=m
+									// sinh(x)^n/cosh(x)^m=tanh(x)^m*sinh(x)^(n-m) if n>m
+									// sinh(x)^n/cosh(x)^m=tanh(x)^m/cosh(x)^(m-n) if n<m
 									mstruct[0].setFunctionId(FUNCTION_ID_TANH);
 									CHILD(1).number() += mstruct[1].number();
 									if(CHILD(1).number().isZero()) {
+										// n=m
 										set(mstruct, true);
 										return 1;
 									} else if(mstruct[1].number().isPositive() == CHILD(1).number().isPositive()) {
+										// n>m
 										CHILD(0).setFunctionId(FUNCTION_ID_SINH);
 										mstruct[1].number() -= CHILD(1).number();
 									}
@@ -2155,12 +2270,17 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								}
 							} else if(CHILD(0).function()->id() == FUNCTION_ID_TANH) {
 								if(mstruct[0].function()->id() == FUNCTION_ID_SINH) {
+									// sinh(x)^n/tanh(x)^m=cosh(x)^n if n=m
+									// sinh(x)^n/tanh(x)^m=cosh(x)^m*sinh(x)^(n-m) if n>m
+									// sinh(x)^n/tanh(x)^m=cosh(x)^m/tanh(x)^(m-n) if n<m
 									mstruct[0].setFunctionId(FUNCTION_ID_COSH);
 									CHILD(1).number() += mstruct[1].number();
 									if(CHILD(1).number().isZero()) {
+										// n=m
 										set(mstruct, true);
 										return 1;
 									} else if(mstruct[1].number().isPositive() == CHILD(1).number().isPositive()) {
+										// n>m
 										CHILD(0).setFunctionId(FUNCTION_ID_SINH);
 										mstruct[1].number() -= CHILD(1).number();
 									}
@@ -2212,6 +2332,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				}
 				case STRUCT_FUNCTION: {
 					if(!FUNCTION_PROTECTED(eo, FUNCTION_ID_SIGNUM) && mstruct.function()->id() == FUNCTION_ID_SIGNUM && mstruct.size() == 2 && CHILD(0).isFunction() && CHILD(0).function()->id() == FUNCTION_ID_ABS && CHILD(0).size() == 1 && mstruct[0] == CHILD(0)[0] && CHILD(1).isNumber() && CHILD(1).number().isRational() && CHILD(1).number().numeratorIsOne() && !CHILD(1).number().denominatorIsEven() && CHILD(0)[0].representsReal(true)) {
+						// sgn(x)*abs(x)^(1/n)=root(x,n) if x is real
 						setType(STRUCT_FUNCTION);
 						setFunctionId(FUNCTION_ID_ROOT);
 						CHILD(0).setToChild(1, true);
@@ -2219,14 +2340,16 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
 					}
-					if(eo.transform_trigonometric_functions && CHILD(0).isFunction() && CHILD(0).size() == 1 && mstruct.size() == 1 && CHILD(1).isNumber() && CHILD(1).number().isNegative() && eo.protected_function != mstruct.function() && eo.protected_function != CHILD(0).function()) {
+					if(eo.transform_trigonometric_functions && CHILD(0).isFunction() && CHILD(0).size() == 1 && mstruct.size() == 1 && CHILD(1).isInteger() && CHILD(1).number().isNegative() && eo.protected_function != mstruct.function() && eo.protected_function != CHILD(0).function()) {
 						if(CHILD(0).function()->id() == FUNCTION_ID_SIN) {
 							if(mstruct.function()->id() == FUNCTION_ID_COS && CHILD(0)[0] == mstruct[0]) {
 								if(CHILD(1).number().isMinusOne()) {
+									// cos(x)/sin(x)=1/tan(x)
 									CHILD(0).setFunctionId(FUNCTION_ID_TAN);
 									MERGE_APPROX_AND_PREC(mstruct)
 									return 1;
 								}
+								// cos(x)/sin(x)^n=1/(sin(x)^(n-1)*tan(x))
 								mstruct.setFunctionId(FUNCTION_ID_TAN);
 								mstruct.raise(nr_minus_one);
 								CHILD(1).number()++;
@@ -2236,10 +2359,12 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								return 1;
 							} else if(mstruct.function()->id() == FUNCTION_ID_TAN && CHILD(0)[0] == mstruct[0]) {
 								if(CHILD(1).number().isMinusOne()) {
+									// tan(x)/sin(x)=1/cos(x)
 									CHILD(0).setFunctionId(FUNCTION_ID_COS);
 									MERGE_APPROX_AND_PREC(mstruct)
 									return 1;
 								}
+								// tan(x)/sin(x)^n=1/(cos(x)*sin(x)^(n-1))
 								mstruct.setFunctionId(FUNCTION_ID_COS);
 								mstruct.raise(nr_minus_one);
 								CHILD(1).number()++;
@@ -2251,11 +2376,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						} else if(CHILD(0).function()->id() == FUNCTION_ID_COS) {
 							if(mstruct.function()->id() == FUNCTION_ID_SIN && CHILD(0)[0] == mstruct[0]) {
 								if(CHILD(1).number().isMinusOne()) {
+									// sin(x)/cos(x)=tan(x)
 									CHILD(0).setFunctionId(FUNCTION_ID_TAN);
 									SET_CHILD_MAP(0)
 									MERGE_APPROX_AND_PREC(mstruct)
 									return 1;
 								}
+								// sin(x)/cos(x)^n=tan(x)/(cos(x)^(n-1))
 								mstruct.setFunctionId(FUNCTION_ID_TAN);
 								CHILD(1).number()++;
 								mstruct.ref();
@@ -2266,11 +2393,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						} else if(CHILD(0).function()->id() == FUNCTION_ID_TAN) {
 							if(mstruct.function()->id() == FUNCTION_ID_SIN && CHILD(0)[0] == mstruct[0]) {
 								if(CHILD(1).number().isMinusOne()) {
+									// sin(x)/tan(x)=cos(x)
 									CHILD(0).setFunctionId(FUNCTION_ID_COS);
 									SET_CHILD_MAP(0)
 									MERGE_APPROX_AND_PREC(mstruct)
 									return 1;
 								}
+								// sin(x)/tan(x)^n=cos(x)/(tan(x)^(n-1))
 								mstruct.setFunctionId(FUNCTION_ID_COS);
 								CHILD(1).number()++;
 								mstruct.ref();
@@ -2281,10 +2410,12 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						} else if(CHILD(0).function()->id() == FUNCTION_ID_SINH) {
 							if(mstruct.function()->id() == FUNCTION_ID_COSH && CHILD(0)[0] == mstruct[0]) {
 								if(CHILD(1).number().isMinusOne()) {
+									// cosh(x)/sinh(x)=1/tanh(x)
 									CHILD(0).setFunctionId(FUNCTION_ID_TANH);
 									MERGE_APPROX_AND_PREC(mstruct)
 									return 1;
 								}
+								// cosh(x)/sinh(x)^n=1/(sinh(x)^(n-1)*tanh(x))
 								mstruct.setFunctionId(FUNCTION_ID_TANH);
 								mstruct.raise(nr_minus_one);
 								CHILD(1).number()++;
@@ -2294,10 +2425,12 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								return 1;
 							} else if(mstruct.function()->id() == FUNCTION_ID_TANH && CHILD(0)[0] == mstruct[0]) {
 								if(CHILD(1).number().isMinusOne()) {
+									// tanh(x)/sinh(x)=1/cosh(x)
 									CHILD(0).setFunctionId(FUNCTION_ID_COSH);
 									MERGE_APPROX_AND_PREC(mstruct)
 									return 1;
 								}
+								// tanh(x)/sinh(x)^n=1/(cosh(x)*sinh(x)^(n-1))
 								mstruct.setFunctionId(FUNCTION_ID_COSH);
 								mstruct.raise(nr_minus_one);
 								CHILD(1).number()++;
@@ -2309,11 +2442,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						} else if(CHILD(0).function()->id() == FUNCTION_ID_COSH) {
 							if(mstruct.function()->id() == FUNCTION_ID_SINH && CHILD(0)[0] == mstruct[0]) {
 								if(CHILD(1).number().isMinusOne()) {
+									// sinh(x)/cosh(x)=tanh(x)
 									CHILD(0).setFunctionId(FUNCTION_ID_TANH);
 									SET_CHILD_MAP(0)
 									MERGE_APPROX_AND_PREC(mstruct)
 									return 1;
 								}
+								// sinh(x)/cosh(x)^n=tanh(x)/(cosh(x)^(n-1))
 								mstruct.setFunctionId(FUNCTION_ID_TANH);
 								CHILD(1).number()++;
 								mstruct.ref();
@@ -2324,11 +2459,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						} else if(CHILD(0).function()->id() == FUNCTION_ID_TANH) {
 							if(mstruct.function()->id() == FUNCTION_ID_SINH && CHILD(0)[0] == mstruct[0]) {
 								if(CHILD(1).number().isMinusOne()) {
+									// sinh(x)/tanh(x)=cosh(x)
 									CHILD(0).setFunctionId(FUNCTION_ID_COSH);
 									SET_CHILD_MAP(0)
 									MERGE_APPROX_AND_PREC(mstruct)
 									return 1;
 								}
+								// sinh(x)/tanh(x)^n=cosh(x)/(tanh(x)^(n-1))
 								mstruct.setFunctionId(FUNCTION_ID_COSH);
 								CHILD(1).number()++;
 								mstruct.ref();
@@ -2340,6 +2477,8 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					}
 					if(mstruct.function()->id() == FUNCTION_ID_STRIP_UNITS && mstruct.size() == 1) {
 						if(m_type == STRUCT_POWER && CHILD(0).isVariable() && CHILD(0).variable()->isKnown() && mstruct[0].contains(CHILD(0), false) > 0) {
+							// v^a*nounit(v)=nounit(v)*(nounit(v)*(units in v))^a
+							// try extracting units from variable
 							if(separate_unit_vars(CHILD(0), eo, false)) {
 								calculateRaiseExponent(eo);
 								mstruct.ref();
@@ -2352,6 +2491,8 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				}
 				default: {
 					if(!mstruct.isNumber() && CHILD(1).isNumber() && CHILD(0) == mstruct) {
+						// x*x^a=x^(a+1)
+						// test if x is non-zero or a is non-negative
 						if((!eo.warn_about_denominators_assumed_nonzero && eo.assume_denominators_nonzero && !CHILD(0).representsZero(true))
 						|| (CHILD(1).isNumber() && CHILD(1).number().isReal() && !CHILD(1).number().isMinusOne())
 						|| CHILD(0).representsNonZero(true)
@@ -2365,18 +2506,21 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					}
 					if(mstruct.isNumber() && CHILD(1).isNumber() && !CHILD(1).number().includesInfinity() && CHILD(0).isNumber() && CHILD(0).number().isRational() && !CHILD(0).number().isZero() && mstruct.number().isRational()) {
 						if(CHILD(0).isInteger() && mstruct.number().denominator() == CHILD(0).number().numerator()) {
+							// n^a*m/n=n^(a-1)*m
 							CHILD(1).number()--;
 							MERGE_APPROX_AND_PREC(mstruct)
 							calculateRaiseExponent(eo);
 							if(!mstruct.number().numeratorIsOne()) calculateMultiply(mstruct.number().numerator(), eo, mparent, index_this);
 							return 1;
 						} else if(mstruct.number().denominator() == CHILD(0).number().numerator() && mstruct.number().numerator() == CHILD(0).number().denominator()) {
+							// (n/m)^a*m/n=(n/m)^(a-1)
 							CHILD(1).number()--;
 							MERGE_APPROX_AND_PREC(mstruct)
 							calculateRaiseExponent(eo);
 							return 1;
 						}
 					}
+					// x^a*0=0 (keep units and check if not matrix and not undefined)
 					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, false, true, true) <= 0 || (CHILD(0).isUnit() && CHILD(0).unit() == CALCULATOR->getRadUnit()) || (CHILD(0).isFunction() && CHILD(0).representsNumber(false))) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
 						clear(true);
 						MERGE_APPROX_AND_PREC(mstruct)
@@ -2385,16 +2529,26 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					if(CHILD(0).isFunction() && mstruct.isZero() && CHILD(1).representsNumber()) {
 						if((CHILD(0).function()->id() == FUNCTION_ID_LOG || CHILD(0).function()->id() == FUNCTION_ID_EXPINT) && SIZE == 1) {
 							if(CHILD(0)[0].representsNonZero() || warn_about_assumed_not_value(CHILD(0)[0], m_zero, eo)) {
+								// ln(x)^a*0=0 and Ei(x)*0=0 if x is assumed non-zero
 								clear(true);
 								MERGE_APPROX_AND_PREC(mstruct)
 								return 3;
 							}
 						} else if(CHILD(0).function()->id() == FUNCTION_ID_LOGINT && SIZE == 1) {
 							if(CHILD(0).representsNumber(true) || warn_about_assumed_not_value(CHILD(0)[0], m_one, eo)) {
+								// li(x)^a*0=0 if x is assumed not one
 								clear(true);
 								MERGE_APPROX_AND_PREC(mstruct)
 								return 3;
 							}
+						} else if(CHILD(0).function()->id() == FUNCTION_ID_TAN && CHILD(0).size() == 1) {
+							CHILD(0).setFunctionId(FUNCTION_ID_COS);
+							if(warn_about_assumed_not_value(CHILD(0), m_zero, eo)) {
+								// tan(x)^a*0=0 if cos(x) is assumed non-zero
+								MERGE_APPROX_AND_PREC(mstruct)
+								return 3;
+							}
+							CHILD(0).setFunctionId(FUNCTION_ID_TAN);
 						}
 					}
 					break;
@@ -2497,17 +2651,27 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						return 1;
 					}
 				} else if((o_function->id() == FUNCTION_ID_LOG || o_function->id() == FUNCTION_ID_EXPINT) && SIZE == 1 && mstruct.isZero()) {
+					// Ei(x)*0=0 if x is assumed non-zero
 					if(CHILD(0).representsNonZero() || warn_about_assumed_not_value(CHILD(0), m_zero, eo)) {
 						clear(true);
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
 					}
 				} else if(o_function->id() == FUNCTION_ID_LOGINT && SIZE == 1 && mstruct.isZero()) {
+					// li(x)*0=0 if x is assumed not one
 					if(representsNumber(true) || warn_about_assumed_not_value(CHILD(0), m_one, eo)) {
 						clear(true);
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
 					}
+				} else if(o_function->id() == FUNCTION_ID_TAN && SIZE == 1) {
+					setFunctionId(FUNCTION_ID_COS);
+					if(warn_about_assumed_not_value(*this, m_zero, eo)) {
+						// 0*tan(x)=0 if cos(x) is assume non-zero
+						MERGE_APPROX_AND_PREC(mstruct)
+						return 3;
+					}
+					setFunctionId(FUNCTION_ID_TAN);
 				} else if(eo.transform_trigonometric_functions && o_function->id() == FUNCTION_ID_SINC && SIZE == 1 && CHILD(0) == mstruct) {
 					// sinc(x)*x=sin(x)
 					CHILD(0).calculateMultiply(CALCULATOR->getRadUnit(), eo);
@@ -2586,10 +2750,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			}
 			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) {
 				if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_STRIP_UNITS && mstruct.size() == 1) {
+					// nounit(x)*nounit(y)=nounit(x*y)
 					mstruct[0].ref();
 					CHILD(0).multiply_nocopy(&mstruct[0]);
 					return 1;
 				} else if(mstruct.isVariable() && mstruct.variable()->isKnown() && CHILD(0).contains(mstruct, false) > 0) {
+					// nounit(v)*v=nounit(v)*nounit(v)*(units in v)
+					// try extracting units from variable
 					if(separate_unit_vars(mstruct, eo, false)) {
 						mstruct.ref();
 						multiply_nocopy(&mstruct);
@@ -2597,6 +2764,8 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						return 1;
 					}
 				} else if(mstruct.isPower() && mstruct[0].isVariable() && mstruct[0].variable()->isKnown() && CHILD(0).contains(mstruct[0], false) > 0) {
+					// nounit(v)*v^a=nounit(v)*(nounit(v)*(units in v))^a
+					// try extracting units from variable
 					if(separate_unit_vars(mstruct[0], eo, false)) {
 						mstruct.calculateRaiseExponent(eo);
 						mstruct.ref();
@@ -2613,10 +2782,12 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				case STRUCT_ADDITION: {}
 				case STRUCT_MULTIPLICATION: {}
 				case STRUCT_POWER: {
+					// try again with reversed order
 					return 0;
 				}
 				case STRUCT_COMPARISON: {
 					if(isComparison()) {
+						// use logical and for multiplication of comparisons (logical and equals multiplication)
 						mstruct.ref();
 						transform_nocopy(STRUCT_LOGICAL_AND, &mstruct);
 						return 1;
@@ -2625,6 +2796,8 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				default: {
 					if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_STRIP_UNITS && mstruct.size() == 1) {
 						if(m_type == STRUCT_VARIABLE && o_variable->isKnown() && mstruct[0].contains(*this, false) > 0) {
+							// v*nounit(v)=nounit(v)*nounit(v)*(units in v)
+							// try extracting units from variable
 							if(separate_unit_vars(*this, eo, false)) {
 								mstruct.ref();
 								multiply_nocopy(&mstruct);
@@ -2633,16 +2806,19 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							}
 						}
 					}
+					// x*0=0 (keep units and check if not matrix and not undefined)
 					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, false, true, true) <= 0 || (isUnit() && unit() == CALCULATOR->getRadUnit()) || (isFunction() && representsNumber(false))) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
 						clear(true);
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
 					}
+					// 0*x=0 (keep units and check if not matrix and not undefined)
 					if(isZero() && !mstruct.representsUndefined(true, true, !eo.assume_denominators_nonzero) && (!eo.keep_zero_units || mstruct.containsType(STRUCT_UNIT, false, true, true) <= 0 || (mstruct.isUnit() && mstruct.unit() == CALCULATOR->getRadUnit())) && mstruct.representsNonMatrix()) {
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 2;
 					}
 					if(equals(mstruct)) {
+						// x*x=x^2
 						if(mstruct.isUnit() && mstruct.prefix()) o_prefix = mstruct.prefix();
 						raise_nocopy(new MathStructure(2, 1, 0));
 						MERGE_APPROX_AND_PREC(mstruct)
@@ -2844,6 +3020,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		}
 		if(o_number.isMinusOne() && mstruct.number().isRational()) {
 			if(mstruct.number().isInteger()) {
+				// (-1)^n equals 1 if n is even, -1 if n is odd (is normally handled above)
 				if(mstruct.number().isEven()) set(m_one, true);
 				else set(m_minus_one, true);
 				MERGE_APPROX_AND_PREC(mstruct)
@@ -2852,6 +3029,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				Number nr_floor(mstruct.number());
 				nr_floor.floor();
 				if(mstruct.number().denominatorIsTwo()) {
+					// (-1)^(n/2) equals i if floor(n/2) is even and -i if floor(n/2) is odd
 					if(nr_floor.isEven()) set(nr_one_i, true);
 					else set(nr_minus_i, true);
 					MERGE_APPROX_AND_PREC(mstruct)
@@ -2860,6 +3038,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					mstruct.number() -= nr_floor;
 					mstruct.numberUpdated();
 					if(mstruct.number().denominator() == 3) {
+						// (-1)^(n/3) equals (1+sqrt(3)*i)/2; negate if floor(n/3) is odd
 						set(3, 1, 0, true);
 						calculateRaise(nr_half, eo);
 						if(nr_floor.isEven()) calculateMultiply(nr_one_i, eo);
@@ -2870,6 +3049,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
 					} else if(mstruct.number().denominator() == 4) {
+						// (-1)^(n/4) equals (1+i)*1/sqrt(2) if floor(n/4) is even and (-1-i)*1/sqrt(2) if floor(n/4) is odd
 						if(nr_floor.isEven() == mstruct.number().numeratorIsOne()) set(1, 1, 0, true);
 						else set(-1, 1, 0, true);
 						if(nr_floor.isEven()) calculateAdd(nr_one_i, eo);
@@ -2880,6 +3060,8 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
 					} else if(!nr_floor.isZero()) {
+						// (-1)^(n/d)=(-1)^(n/d-floor(n/d)); negate if floor(n/d) is odd
+						// e.g. (-1)^(7/5)=-(-1)^(2/5)
 						mstruct.ref();
 						raise_nocopy(&mstruct);
 						calculateRaiseExponent(eo);
@@ -3029,8 +3211,11 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		case STRUCT_VECTOR: {
 			if(mstruct.isNumber() && mstruct.number().isInteger()) {
 				if(isMatrix()) {
+					// matrix multiplication: m^n=m*m*m...
+					// requires equal number of columns and rows (columns of 1st matrix must be equal to rows in 2nd matrix)
 					if(matrixIsSquare()) {
 						Number nr(mstruct.number());
+						// handle matrix inversion after multiplication
 						bool b_neg = false;
 						if(nr.isNegative()) {
 							nr.setNegative(false);
@@ -3049,6 +3234,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							}
 						}
 						if(b_neg) {
+							// exponent is negative: invert matrix
 							if(!invertMatrix(eo)) {
 								if(mstruct.number().isMinusOne()) return -1;
 								raise(nr_minus_one);
@@ -3059,6 +3245,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					}
 					return -1;
 				} else {
+					// vector multiplication: do v^n=v^(n-1)*v
 					if(mstruct.number().isMinusOne()) {
 						return -1;
 					}
@@ -3081,7 +3268,9 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		case STRUCT_ADDITION: {
 			if(mstruct.isNumber() && mstruct.number().isInteger() && containsType(STRUCT_DATETIME, false, true, false) <= 0) {
 				if(eo.reduce_divisions && mstruct.number().isMinusOne()) {
+					// 1/(a1+a2+...)
 					int bnum = -1, bden = -1;
+					// count difference between number of negative and positive terms
 					int inegs = 0;
 					bool b_break = false;
 					for(size_t i = 0; i < SIZE && !b_break; i++) {
@@ -3096,9 +3285,15 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 									else bnum = 1;
 								}
 								if(CHILD(i).number().isNegative()) {
+									//negative term
 									inegs++;
+									// negative first term counts double
+									// (for predictable result when number of negative and positive terms are equal)
 									if(i == 0) inegs++;
-								} else if(!CHILD(i).number().isZero()) inegs--;
+								} else if(!CHILD(i).number().isZero()) {
+									// positive term
+									inegs--;
+								}
 								break;
 							}
 							case STRUCT_MULTIPLICATION: {
@@ -3112,9 +3307,14 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 										else bnum = 1;
 									}
 									if(CHILD(i)[0].number().isNegative()) {
+										//negative term
 										inegs++;
+										// negative first term counts double
 										if(i == 0) inegs++;
-									} else if(!CHILD(i)[0].number().isZero()) inegs--;
+									} else if(!CHILD(i)[0].number().isZero()) {
+										// positive term
+										inegs--;
+									}
 									break;
 								}
 							}
@@ -3128,6 +3328,11 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					if(bden < 0) bden = 0;
 					if(bnum < 0) bnum = 0;
 					if(bnum || bden) {
+						// denominator only contains rational multipliers (non-numerical values excluded)
+						// if bnum is true, denonimator contains multiplier with numerator > 1:
+						// determine the greater common divisor of multiplier numerators
+						// if bden is true, denominator contains non-integer multipliers:
+						// determine least common multiplier of multiplier denominators
 						Number nr_num, nr_den(1, 1, 0);
 						for(size_t i = 0; i < SIZE && !nr_den.isZero(); i++) {
 							switch(CHILD(i).type()) {
@@ -3178,6 +3383,8 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							Number nr(nr_den);
 							nr.divide(nr_num);
 							nr.setNegative(inegs > 0);
+							// multiply each term by lcm/gcd
+							// if the number of negative terms is greater than the number of positive terms, negate all terms
 							for(size_t i = 0; i < SIZE; i++) {
 								switch(CHILD(i).type()) {
 									case STRUCT_NUMBER: {
@@ -3205,6 +3412,8 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						}
 					}
 					if(inegs > 0) {
+						// if the number of negative terms is greater than the number of positive terms: 1/(a1+a2+...)=-1/(-a1-a2-...)
+						// this makes it easier the handle expressions such as 1/(a1-a2-a3+a4)+1/(-a1+a2+a3-a4) (=0)
 						for(size_t i = 0; i < SIZE; i++) {
 							switch(CHILD(i).type()) {
 								case STRUCT_NUMBER: {CHILD(i).number().negate(); break;}
@@ -3226,12 +3435,16 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						return 1;
 					}
 				} else if(eo.expand != 0 && !mstruct.number().isZero() && (eo.expand > -2 || !containsInterval())) {
+					// (a1+a2+a3...)^b
 					bool b = true;
 					bool neg = mstruct.number().isNegative();
 					Number m(mstruct.number());
 					m.setNegative(false);
 					if(SIZE > 1) {
+						// determine if addition exponentiation should be expanded
+						// if number of terms and exponent is small enough to allow reasonably fast calculation
 						if(eo.expand == -1) {
+							// use more conservative values
 							switch(SIZE) {
 								case 4: {if(m.isGreaterThan(3)) {b = false;} break;}
 								case 3: {if(m.isGreaterThan(4)) {b = false;} break;}
@@ -3258,6 +3471,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					}
 					if(b) {
 						if(!representsNonMatrix()) {
+							// use simple expansion for base which might be/inlcude matrix(es): (a+b)^n=(a+b)(a+b)...
 							MathStructure mthis(*this);
 							while(!m.isOne()) {
 								if(CALCULATOR->aborted()) {
@@ -3268,6 +3482,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 								m--;
 							}
 						} else {
+							// use binomial theorem
 							MathStructure mstruct1(CHILD(0));
 							MathStructure mstruct2(CHILD(1));
 							for(size_t i = 2; i < SIZE; i++) {
@@ -3308,6 +3523,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							LAST.calculateRaise(m, eo);
 							calculatesub(eo, eo, false);
 						}
+						// negative exponent: inverse after expansion (using absolute exponent)
 						if(neg) calculateInverse(eo);
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
@@ -3361,12 +3577,16 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			goto default_power_merge;
 		}
 		case STRUCT_POWER: {
+			// (x^y)^z
 			if((eo.allow_complex && CHILD(1).representsFraction()) || (mstruct.representsInteger() && (eo.allow_complex || CHILD(0).representsInteger())) || representsNonNegative(true)) {
+				// (x^a)^b=x^(a*b) if x>=0 or -1<a<1 or b is integer
 				if((((!eo.assume_denominators_nonzero || eo.warn_about_denominators_assumed_nonzero) && !CHILD(0).representsNonZero(true)) || CHILD(0).isZero()) && CHILD(1).representsNegative(true)) {
+					// check that a is positive or x is non-zero
 					if(!eo.assume_denominators_nonzero || CHILD(0).isZero() || !warn_about_denominators_assumed_nonzero(CHILD(0), eo)) break;
 				}
 				if(!CHILD(1).representsNonInteger() && !mstruct.representsInteger()) {
 					if(CHILD(1).representsEven() && CHILD(0).representsReal(true)) {
+						// a is even: (x^a)^b=abs(x)^(a*b)
 						if(CHILD(0).representsNegative(true)) {
 							CHILD(0).calculateNegate(eo);
 						} else if(!CHILD(0).representsNonNegative(true)) {
@@ -3374,6 +3594,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							CHILD(0).set(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), &mstruct_base, NULL);
 						}
 					} else if(!CHILD(1).representsOdd() && !CHILD(0).representsNonNegative(true)) {
+						// it is not known if a is even or odd (and x might be negative)
 						goto default_power_merge;
 					}
 				}
@@ -3385,8 +3606,10 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				return 1;
 			}
 			if(mstruct.isNumber() && CHILD(0).isVariable() && CHILD(0).variable()->id() == VARIABLE_ID_E && CHILD(1).isNumber() && CHILD(1).number().hasImaginaryPart() && !CHILD(1).number().hasRealPart() && mstruct.number().isReal()) {
+				// (e^(a*i))^b
 				CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 				if(CALCULATOR->usesIntervalArithmetic()) {
+					// calculate floor((a+pi)/pi/2) and make sure that upper and lower value is equal
 					CALCULATOR->beginTemporaryStopMessages();
 					Number nr(*CHILD(1).number().internalImaginary());
 					Number nrpi; nrpi.pi();
@@ -3398,6 +3621,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					nr_u.floor();
 					nr.floor();
 					if(!CALCULATOR->endTemporaryStopMessages() && nr == nr_u) {
+						// (e^(a*i))^b = e^((a-2i*floor((a+pi)/pi/2))*b)
 						CALCULATOR->endTemporaryEnableIntervalArithmetic();
 						nr.setApproximate(false);
 						nr *= 2;
@@ -3533,8 +3757,11 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			default_power_merge:
 
 			if(mstruct.isAddition()) {
+				// x^(a+b+...)
 				bool b = representsNonNegative(true);
 				if(!b) {
+					// if x is not >= 0 each term of the exponent must be either an integer
+					// or, if x<0, a rational number with an even denominator
 					b = true;
 					bool bneg = representsNegative(true);
 					for(size_t i = 0; i < mstruct.size(); i++) {
@@ -3545,6 +3772,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					}
 				}
 				if(b) {
+					// x^(a+b+...)=x^a*x^b*...
 					MathStructure msave(*this);
 					clear(true);
 					m_type = STRUCT_MULTIPLICATION;
@@ -3566,8 +3794,10 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					return 1;
 				}
 			} else if(mstruct.isMultiplication() && mstruct.size() > 1) {
+				// x^(a*b*...)
 				bool b = representsNonNegative(true);
 				if(!b) {
+					// all factors of the exponent must be integers
 					b = true;
 					for(size_t i = 0; i < mstruct.size(); i++) {
 						if(!mstruct[i].representsInteger()) {
@@ -3577,14 +3807,16 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					}
 				}
 				if(b) {
+					// try raising the base by each factor separately: x^(a*b*c*...)=(x^a)^(b*c*...))
 					MathStructure mthis(*this);
 					for(size_t i = 0; i < mstruct.size(); i++) {
 						if(i == 0) mthis.raise(mstruct[i]);
+						// exponent factor must be real and, if base is zero, positive
 						if(!mstruct[i].representsReal(true) || (isZero() && !mstruct[i].representsPositive(true))) continue;
 						if(i > 0) mthis[1] = mstruct[i];
 						EvaluationOptions eo2 = eo;
 						eo2.split_squares = false;
-						// avoid abs(x)^(2y) loop
+						// avoid abs(x)^(2a) loop
 						if(mthis.calculateRaiseExponent(eo2) && (!mthis.isPower() || ((!isFunction() || o_function->id() != FUNCTION_ID_ABS || SIZE != 1 || !CHILD(0).equals(mthis[0], true, true)) && (!is_negation(mthis[0], *this))))) {
 							set(mthis);
 							if(mstruct.size() == 2) {
@@ -3607,22 +3839,29 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					}
 				}
 			} else if(mstruct.isNumber() && mstruct.number().isRational() && !mstruct.number().isInteger() && !mstruct.number().numeratorIsOne() && !mstruct.number().numeratorIsMinusOne()) {
+				// x^(n/d)
 				if(representsNonNegative(true) && (m_type != STRUCT_FUNCTION || o_function->id() != FUNCTION_ID_ABS)) {
+					// x>0
 					if(isMultiplication() && SIZE == 2 && CHILD(0).isMinusOne() && mstruct.number().numeratorIsEven()) {
+						// (-x)^(n/d), n is even
 						bool b;
 						if(mstruct.number().isNegative()) {
+							// n<0: test x^(-n)
 							MathStructure mtest(CHILD(1));
 							b = mtest.calculateRaise(-mstruct.number().numerator(), eo);
 							if(b && mtest.isPower() && mtest[1] == -mstruct.number().numerator()) b = false;
 							if(!b) break;
+							// (-x)^(-n/d)=(x^n)^(-1/d)
 							set(mtest, true);
 							raise(m_minus_one);
 							CHILD(1).number() /= mstruct.number().denominator();
 						} else {
+							// n>0: test x^n
 							MathStructure mtest(CHILD(1));
 							b = mtest.calculateRaise(mstruct.number().numerator(), eo);
 							if(b && mtest.isPower() && mtest[1] == mstruct.number().numerator()) b = false;
 							if(!b) break;
+							// (-x)^(n/d)=(x^n)^(1/d)
 							set(mtest, true);
 							raise(m_one);
 							CHILD(1).number() /= mstruct.number().denominator();
@@ -3632,6 +3871,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					}
 					bool b;
 					if(mstruct.number().isNegative()) {
+						// try x^(-n/d)=(x^n)^(-1/d)
 						b = calculateRaise(-mstruct.number().numerator(), eo);
 						if(!b) {
 							setToChild(1);
@@ -3640,6 +3880,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						raise(m_minus_one);
 						CHILD(1).number() /= mstruct.number().denominator();
 					} else {
+						// try x^(n/d)=(x^n)^(1/d)
 						b = calculateRaise(mstruct.number().numerator(), eo);
 						if(!b) {
 							setToChild(1);
