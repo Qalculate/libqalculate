@@ -1,3 +1,8 @@
+2019-12-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* (-x)^a*x^b=-(-x)^(a+b) if b is odd
+	* tan((2n+1)*pi/2) might be either plus or minus infinity for each n (let function fail)
+
 2019-12-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add base units (or local currency) to expression when "to"-expression specifies unit conversion and original expression does not include any units

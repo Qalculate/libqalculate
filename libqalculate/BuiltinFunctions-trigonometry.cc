@@ -736,13 +736,17 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			bool b_neg = nr.isNegative();
 			nr.setNegative(false);
 			if(nr.equals(nr_half)) {
-				Number nr_int(mstruct[0].number());
-				nr_int.floor();
-				bool b_even = nr_int.isEven();
-				if(b_even) nr.setPlusInfinity();
-				else nr.setMinusInfinity();
-				mstruct.set(nr);
-				b = true;
+				if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
+				if(!mstruct[0].number().numeratorIsOne() && !mstruct[0].number().numeratorEquals(3)) {
+					Number nr_int(mstruct[0].number());
+					nr_int.floor();
+					bool b_even = nr_int.isEven();
+					if(b_even) mstruct[0].set(nr_half, true);
+					else mstruct[0].set(Number(3, 2), true);
+					mstruct.childUpdated(1);
+				}
+				if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+				return -1;
 			} else if(nr.equals(Number(1, 4, 0))) {
 				if(b_neg) mstruct.set(-1, 1, 0);
 				else mstruct.set(1, 1, 0);
