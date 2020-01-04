@@ -264,7 +264,7 @@ int test_comparisons(const MathStructure &msave, MathStructure &mthis, const Mat
 						if(!mtest2.number().hasImaginaryPart() && mtest2.number().upperEndPoint().isNonNegative()) return 1;
 					} else if(mtest.comparisonType() == COMPARISON_NOT_EQUALS) {
 						if(!mtest2.number().isNonZero()) return 1;
-						else if(mtest2.number().isInterval() || mtest2[0].number().isRational()) {mthis = m_one; return 0;}
+						else if(mtest2.number().isInterval() || mtest2.number().isRational()) {mthis = m_one; return 0;}
 					} else {
 						if(!mtest2.number().isNonZero()) return 1;
 						else if(mtest2.number().isInterval() || mtest2.number().isRational()) {mthis.clear(); return 0;}

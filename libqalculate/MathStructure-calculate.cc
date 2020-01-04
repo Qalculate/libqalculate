@@ -2545,6 +2545,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							CHILD(0).setFunctionId(FUNCTION_ID_COS);
 							if(warn_about_assumed_not_value(CHILD(0), m_zero, eo)) {
 								// tan(x)^a*0=0 if cos(x) is assumed non-zero
+								clear(true);
 								MERGE_APPROX_AND_PREC(mstruct)
 								return 3;
 							}
@@ -2664,10 +2665,11 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
 					}
-				} else if(o_function->id() == FUNCTION_ID_TAN && SIZE == 1) {
+				} else if(o_function->id() == FUNCTION_ID_TAN && SIZE == 1 && mstruct.isZero()) {
 					setFunctionId(FUNCTION_ID_COS);
 					if(warn_about_assumed_not_value(*this, m_zero, eo)) {
 						// 0*tan(x)=0 if cos(x) is assume non-zero
+						clear(true);
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
 					}

@@ -1828,22 +1828,22 @@ void speed_test() {
 
 int main(int argc, char *argv[]) {
 
-	new Calculator(true);
+	new Calculator(false);
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
 	CALCULATOR->setPrecision(8);
 
 	CALCULATOR->useIntervalArithmetic();
 	PrintOptions po = CALCULATOR->messagePrintOptions();
-	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+	/*po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	po.show_ending_zeroes = true;
 	po.number_fraction_format = FRACTION_FRACTIONAL;
-	po.restrict_fraction_length = true;
-	/*po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+	po.restrict_fraction_length = true;*/
+	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	po.show_ending_zeroes = false;
 	po.number_fraction_format = FRACTION_DECIMAL;
 	po.restrict_fraction_length = true;
-	po.min_exp = 1;*/
+	//po.min_exp = 1;
 	//po.max_decimals = 1;
 	//po.use_max_decimals = true;
 	CALCULATOR->setMessagePrintOptions(po);
@@ -1868,11 +1868,11 @@ int main(int argc, char *argv[]) {
 	evalops.structuring = STRUCTURING_SIMPLIFY;
 	evalops.approximation = APPROXIMATION_EXACT;
 	
-	MathStructure m;
+	/*MathStructure m;
 	for(size_t i = 0; i < 100000L; i++) {
 		CALCULATOR->parse(&m, "mm", evalops.parse_options);
 	}
-	return 0;
+	return 0;*/
 
 	/*MathStructure mstruct = CALCULATOR->calculate("atanh(2x^2+5)*x^2", evalops);
 	cout << mstruct.integrate(CALCULATOR->v_x, evalops) << endl;
@@ -1883,9 +1883,9 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	/*test_integration();
+	test_integration();
 	cout << successes << ":" << imaginary << endl;
-	return 0;*/
+	return 0;
 	//test_intervals(true);
 
 	/*Number nr;

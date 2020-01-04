@@ -158,7 +158,6 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				if(!CHILD(0).isVariable() || CHILD(0).variable()->id() != VARIABLE_ID_E) {
 					MathStructure *mstruct = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(0), NULL);
 					multiply_nocopy(mstruct);
-					multiply_nocopy(exp_mstruct);
 				}
 				multiply_nocopy(exp_mstruct);
 			} else if(x_in_base && x_in_exp) {
