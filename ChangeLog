@@ -1,3 +1,7 @@
+2019-01-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault when solving sqrt(x)!=-1 and similar
+
 2019-12-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* (-x)^a*x^b=-(-x)^(a+b) if b is odd

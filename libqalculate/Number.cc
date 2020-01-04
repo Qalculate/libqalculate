@@ -10266,12 +10266,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(str2 == "1" && po.base != BASE_UNICODE) str2 = str_i;
 			else if(str_i == "j") str2.insert(0, str_i);
 			else str2 += str_i;
+			if(po.spacious) str += " ";
 			if(*ips_n.minus) {
 				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str += SIGN_MINUS;
 				else str += "-";
 			} else {
-				str += " + ";
+				str += "+";
 			}
+			if(po.spacious) str += " ";
 			str += str2;
 		} else {
 			str = i_value->print(po, ips);
