@@ -85,7 +85,7 @@ int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			} else if(vargs[0].number().isNegative() && vargs[0].number().isEven()) {
 				mstruct.clear();
 				return 1;
-			} else if(vargs[0].number().isNegative() && vargs[0].number() >= -129) {
+			} else if(vargs[0].number().isNegative() && vargs[0].number() >= -497) {
 				Number nr(vargs[0].number());
 				nr.negate();
 				nr++;
@@ -95,7 +95,7 @@ int ZetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				mstruct.set(nr);
 				mstruct.mergePrecision(vargs[0]);
 				return 1;
-			} else if(vargs[0].number().isEven() && vargs[0].number() <= 130) {
+			} else if(vargs[0].number().isEven() && vargs[0].number() <= 498) {
 				Number nr(vargs[0].number());
 				nr.bernoulli();
 				mstruct.set(nr);
