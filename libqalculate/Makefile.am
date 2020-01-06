@@ -29,7 +29,7 @@ libqalculateinclude_HEADERS = \
 	util.h includes.h Unit.h BuiltinFunctions.h \
 	QalculateDateTime.h qalculate.h
 
-noinst_HEADERS = MathStructure-support.h Calculator_p.h
+noinst_HEADERS = MathStructure-support.h Calculator_p.h bernoulli_numbers.h
 
 libqalculate_la_LDFLAGS = -version-info $(QALCULATE_CURRENT):$(QALCULATE_REVISION):$(QALCULATE_AGE) -no-undefined
 

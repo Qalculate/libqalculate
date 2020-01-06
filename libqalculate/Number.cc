@@ -12,6 +12,7 @@
 #include "support.h"
 
 #include "Number.h"
+#include "bernoulli_numbers.h"
 #include "Calculator.h"
 #include "BuiltinFunctions.h"
 #include "Function.h"
@@ -5214,16 +5215,15 @@ bool Number::zeta(const Number &o) {
 }
 bool Number::bernoulli() {
 	if(!isInteger() || isNegative()) return false;
-	if(isGreaterThan(130)) {
+	if(isGreaterThan(498)) {
 		if(isOdd()) {clear(true); return true;}
 		Number nr_zeta(*this);
 		if(!nr_zeta.negate() || !nr_zeta.add(1) || !nr_zeta.zeta() || !nr_zeta.multiply(*this) || !nr_zeta.negate()) return false;
 		set(nr_zeta);
 		return true;
 	}
-	long int m = mpz_get_si(mpq_numref(r_value)), k = 0;
-	if(m < 0) return false;
-	if(m != 1 && m % 2 == 1) {clear(true); return true;}
+	long int m = mpz_get_si(mpq_numref(r_value));
+	if(m < 0 || m > 498) return false;
 	switch(m) {
 		case 0: {set(1, 1, 0, true); return true;}
 		case 1: {set(-1, 2, 0, true); return true;}
@@ -5237,71 +5237,10 @@ bool Number::bernoulli() {
 		case 16: {set(-3617, 510, 0, true); return true;}
 		case 18: {set(43867L, 798, 0, true); return true;}
 		case 22: {set(854513L, 138, 0, true); return true;}
-		case 24: {set(Number("-236364091"), true); divide(2730); return true;}
-		case 26: {set(Number("8553103"), true); divide(6); return true;}
-		case 28: {set(Number("-23749461029"), true); divide(870); return true;}
-		case 30: {set(Number("8615841276005"), true); divide(14322); return true;}
-		case 32: {set(Number("-7709321041217"), true); divide(510); return true;}
-		case 34: {set(Number("2577687858367"), true); divide(6); return true;}
-		case 36: {set(Number("-26315271553053477373"), true); divide(Number("1919190")); return true;}
-		case 38: {set(Number("2929993913841559"), true); divide(6); return true;}
-		case 40: {set(Number("-261082718496449122051"), true); divide(13530); return true;}
-		case 42: {set(Number("1520097643918070802691"), true); divide(1806); return true;}
-		case 44: {set(Number("-27833269579301024235023"), true); divide(690); return true;}
-		case 46: {set(Number("596451111593912163277961"), true); divide(282); return true;}
-		case 48: {set(Number("-5609403368997817686249127547"), true); divide(46410L); return true;}
-		case 50: {set(Number("495057205241079648212477525"), true); divide(66); return true;}
-		case 52: {set(Number("-801165718135489957347924991853"), true); divide(1590); return true;}
-		case 54: {set(Number("29149963634884862421418123812691"), true); divide(798); return true;}
-		case 56: {set(Number("-2479392929313226753685415739663229"), true); divide(870); return true;}
-		case 58: {set(Number("84483613348880041862046775994036021"), true); divide(354); return true;}
-		case 60: {set(Number("-1215233140483755572040304994079820246041491"), true); divide(Number("56786730")); return true;}
-		case 62: {set(Number("12300585434086858541953039857403386151"), true); divide(6); return true;}
-		case 64: {set(Number("-106783830147866529886385444979142647942017"), true); divide(510); return true;}
-		case 66: {set(Number("1472600022126335654051619428551932342241899101"), true); divide(64722L); return true;}
-		case 68: {set(Number("-78773130858718728141909149208474606244347001"), true); divide(30); return true;}
-		case 70: {set(Number("1505381347333367003803076567377857208511438160235"), true); divide(4686); return true;}
-		case 72: {set(Number("-5827954961669944110438277244641067365282488301844260429"), true); divide(Number("140100870")); return true;}
-		case 74: {set(Number("34152417289221168014330073731472635186688307783087"), true); divide(6); return true;}
-		case 76: {set(Number("-24655088825935372707687196040585199904365267828865801"), true); divide(30); return true;}
-		case 78: {set(Number("414846365575400828295179035549542073492199375372400483487"), true); divide(3318); return true;}
-		case 80: {set(Number("-4603784299479457646935574969019046849794257872751288919656867"), true); divide(230010L); return true;}
-		case 82: {set(Number("1677014149185145836823154509786269900207736027570253414881613"), true); divide(498); return true;}
-		case 84: {set(Number("-2024576195935290360231131160111731009989917391198090877281083932477"), true); divide(Number("3404310")); return true;}
-		case 86: {set(Number("660714619417678653573847847426261496277830686653388931761996983"), true); divide(6); return true;}
-		case 88: {set(Number("-1311426488674017507995511424019311843345750275572028644296919890574047"), true); divide(61410); return true;}
-		case 90: {set(Number("1179057279021082799884123351249215083775254949669647116231545215727922535"), true); divide(272118L); return true;}
-		case 92: {set(Number("-1295585948207537527989427828538576749659341483719435143023316326829946247"), true); divide(1410); return true;}
-		case 94: {set(Number("1220813806579744469607301679413201203958508415202696621436215105284649447"), true); divide(6); return true;}
-		case 96: {set(Number("-211600449597266513097597728109824233673043954389060234150638733420050668349987259"), true); divide(Number("4501770")); return true;}
-		case 98: {set(Number("67908260672905495624051117546403605607342195728504487509073961249992947058239"), true); divide(6); return true;}
-		case 100: {set(Number("-94598037819122125295227433069493721872702841533066936133385696204311395415197247711"), true); divide(33330); return true;}
-		case 102: {set(Number("3204019410860907078243020782116241775491817197152717450679002501086861530836678158791"), true); divide(4326); return true;}
-		case 104: {set(Number("-319533631363830011287103352796174274671189606078272738327103470162849568365549721224053"), true); divide(1590); return true;}
-		case 106: {set(Number("36373903172617414408151820151593427169231298640581690038930816378281879873386202346572901"), true); divide(642); return true;}
-		case 108: {set(Number("-3469342247847828789552088659323852541399766785760491146870005891371501266319724897592306597338057"), true); divide(Number("209191710")); return true;}
-		case 110: {set(Number("7645992940484742892248134246724347500528752413412307906683593870759797606269585779977930217515"), true); divide(1518); return true;}
-		case 112: {set(Number("-2650879602155099713352597214685162014443151499192509896451788427680966756514875515366781203552600109"), true); divide(Number("1671270")); return true;}
-		case 114: {set(Number("2173783231936916333331076108665299147572115667909083136080611011493360548423459 3650904188618562649"), true); divide(42); return true;}
-		case 116: {set(Number("-309553916571842976912513458033841416869004128064329844245504045721008957524571 968271388199595754752259"), true); divide(1770); return true;}
-		case 118: {set(Number("3669631199697131115349471515855850066846063610806992043010594406764144850458064 61889371776354517095799"), true); divide(6); return true;}
-		case 120: {set(Number("-515074865350791090618439968578499832740951703532626752130928691671992974749229 85358811329367077682677803282070131"), true); divide(Number("2328255930")); return true;}
-		case 122: {set(Number("4963366607926258191253263747599075743872279031106013977030931179315068321410043 1329033113678098037968564431"), true); divide(6); return true;}
-		case 124: {set(Number("-958767753342471287507749031075424446205788300132973368195535127293585933544359 44413631943610268472689094609001"), true); divide(30); return true;}
-		case 126: {set(Number("5556330281949274850616324408918951380525567307126747246796782304333594286400508 981287241419934529638692081513802696639"), true); divide(Number("4357878")); return true;}
-		case 128: {set(Number("-267754707742548082886954405585282394779291459592551740629978686063357792734863 530145362663093519862048495908453718017"), true); divide(510); return true;}
-		case 130: {set(Number("1928215175136130915645299522271596435307611010164728458783733020528548622403504 078595174411693893882739334735142562418015"), true); divide(8646); return true;}
 	}
-	Number nr_m(*this), nr_k;
-	Number B_k, bin, v;
-	while(k < m) {
-		B_k = nr_k;
-		if(CALCULATOR->aborted() || !bin.binomial(nr_m, nr_k) || !B_k.bernoulli() || !B_k.divide(m - k + 1) || !B_k.multiply(bin) || !v.add(B_k)) return false;
-		k++;
-		nr_k++;
-	}
-	v.negate();
-	set(v);
+	if(m % 2 == 1) {clear(true); return true;}
+	set(Number(bernoulli_numbers[m - 2]), true);
+	divide(Number(bernoulli_numbers[m - 1]));
 	return true;
 }
 bool Number::gamma() {
