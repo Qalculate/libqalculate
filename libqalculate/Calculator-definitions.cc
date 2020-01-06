@@ -3344,7 +3344,7 @@ bool Calculator::loadExchangeRates() {
 		}
 	}
 
-	filename = buildPath(getLocalDataDir(), "btc.json");
+	filename = getExchangeRatesFileName(2);
 	ifstream file2(filename.c_str());
 	if(file2.is_open()) {
 		std::stringstream ssbuffer2;
@@ -3368,12 +3368,45 @@ bool Calculator::loadExchangeRates() {
 		exchange_rates_time[1] = ((time_t) 1531087L) * 1000;
 		if(exchange_rates_time[1] > exchange_rates_check_time[1]) exchange_rates_check_time[1] = exchange_rates_time[1];
 	}
+	
+	filename = getExchangeRatesFileName(4);
+	ifstream file3(filename.c_str());
+	if(file3.is_open()) {
+		std::stringstream ssbuffer3;
+		ssbuffer3 << file3.rdbuf();
+		string sbuffer = ssbuffer3.str();
+		size_t i = sbuffer.find("\"Cur_OfficialRate\":");
+		if(i != string::npos) {
+			i = sbuffer.find_first_of(NUMBER_ELEMENTS, i + 19);
+			if(i != string::npos) {
+				size_t i2 = sbuffer.find_first_not_of(NUMBER_ELEMENTS, i);
+				if(i2 == string::npos) i2 = sbuffer.length();
+				((AliasUnit*) priv->u_byn)->setExpression(sbuffer.substr(i, i2 - i));
+			}
+		}
+		i = sbuffer.find("\"Date\":");
+		if(i != string::npos) {
+			i = sbuffer.find("\"", i + 7);
+			if(i != string::npos) {
+				size_t i2 = sbuffer.find("\"", i + 1);
+				QalculateDateTime qdate;
+				if(qdate.set(sbuffer.substr(i + 1, i2 - (i + 1)))) {
+					priv->exchange_rates_time2[0] = (time_t) qdate.timestamp().ulintValue();
+					if(priv->exchange_rates_time2[0] > priv->exchange_rates_check_time2[0]) priv->exchange_rates_check_time2[0] = priv->exchange_rates_time2[0];
+				}
+			}
+		}
+		file3.close();
+	} else {
+		priv->exchange_rates_time2[0] = ((time_t) 1531087L) * 1000;
+		if(priv->exchange_rates_time2[0] > priv->exchange_rates_check_time2[0]) priv->exchange_rates_check_time2[0] = priv->exchange_rates_time2[0];
+	}
 
 	Unit *u_usd = getUnit("USD");
 	if(!u_usd) return true;
 
 	string sbuffer;
-	filename = buildPath(getLocalDataDir(), "rates.html");
+	filename = getExchangeRatesFileName(3);
 	ifstream file(filename.c_str());
 	if(file.is_open()) {
 		std::stringstream ssbuffer;
@@ -3521,29 +3554,37 @@ string Calculator::getExchangeRatesFileName(int index) {
 		case 2: {return buildPath(getLocalDataDir(), "btc.json");}
 		//case 3: {return buildPath(getLocalDataDir(), "rates.json");}
 		case 3: {return buildPath(getLocalDataDir(), "rates.html");}
+		case 4: {return buildPath(getLocalDataDir(), "nrby.json");}
 		default: {}
 	}
 	return "";
 }
 time_t Calculator::getExchangeRatesTime(int index) {
-	if(index > 3) return 0;
+	if(index > 5) index = 5;
 	if(index < 1) {
-		if(exchange_rates_time[1] < exchange_rates_time[0]) {
-			if(exchange_rates_time[2] < exchange_rates_time[1]) return exchange_rates_time[2];
-			return exchange_rates_time[1];
+		time_t extime = exchange_rates_time[0];
+		for(int i = 1; i < index; i++) {
+			if(i > 2 && priv->exchange_rates_time2[i - 2] < extime) extime = priv->exchange_rates_time2[i - 2];
+			else if(i <= 2 && exchange_rates_time[i] < extime) extime = exchange_rates_time[i];
 		}
-		if(exchange_rates_time[2] < exchange_rates_time[0]) return exchange_rates_time[2];
-		return exchange_rates_time[0];
+		return extime;
 	}
 	index--;
+	if(index == 5) {
+		if(exchange_rates_time[2] < priv->exchange_rates_time2[0]) return exchange_rates_time[2];
+		return priv->exchange_rates_time2[0];
+	}
+	if(index > 2) return priv->exchange_rates_time2[index - 2];
 	return exchange_rates_time[index];
 }
+
 string Calculator::getExchangeRatesUrl(int index) {
 	switch(index) {
 		case 1: {return "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";}
 		case 2: {return "https://api.coinbase.com/v2/prices/spot?currency=EUR";}
-		//case 2: {return "http://www.mycurrency.net/service/rates";}
+		//case 2: {return "http://www.mycurrency.net/US.json";}
 		case 3: {return "https://www.mycurrency.net/=US";}
+		case 4: {return "http://www.nbrb.by/api/exrates/rates/eur?parammode=2";}
 		default: {}
 	}
 	return "";
@@ -3553,10 +3594,9 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer) {
 	sbuffer->append((char*) ptr, size * nmemb);
 	return size * nmemb;
 }
-#define FETCH_FAIL_CLEANUP curl_easy_cleanup(curl); curl_global_cleanup(); time(&exchange_rates_check_time[0]); time(&exchange_rates_check_time[1]); time(&exchange_rates_check_time[2]);
+#define FETCH_FAIL_CLEANUP curl_easy_cleanup(curl); curl_global_cleanup(); time(&exchange_rates_check_time[0]); time(&exchange_rates_check_time[1]); time(&exchange_rates_check_time[2]); time(&priv->exchange_rates_check_time2[0]);
 bool Calculator::fetchExchangeRates(int timeout, int n) {
 #ifdef HAVE_LIBCURL
-	if(n <= 0) n = 3;
 
 	recursiveMakeDir(getLocalDataDir());
 	string sbuffer;
@@ -3617,7 +3657,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 #endif
 	}
 
-	if(n >= 2) {
+	if(n <= 0 || n >= 2) {
 
 		sbuffer = "";
 		curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl(2).c_str());
@@ -3641,7 +3681,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 
 	}
 
-	if(n >= 3) {
+	if(n <= 0 || (n >= 3 && n != 4)) {
 
 		sbuffer = "";
 		curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl(3).c_str());
@@ -3663,6 +3703,30 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		file2.close();
 
 	}
+	
+	if(n <= 0 || n >= 4) {
+
+		sbuffer = "";
+		curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl(4).c_str());
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, (timeout > 4 && n <= 0) ? 4 : timeout);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
+		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+
+		res = curl_easy_perform(curl);
+
+		if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "nbrb.by", error_buffer, NULL); FETCH_FAIL_CLEANUP; return false;}
+		if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "nbrb.by", "Document empty", NULL); FETCH_FAIL_CLEANUP; return false;}
+		ofstream file4(getExchangeRatesFileName(4).c_str(), ios::out | ios::trunc | ios::binary);
+		if(!file4.is_open()) {
+			error(true, _("Failed to download exchange rates from %s: %s."), "nbrb.by", strerror(errno), NULL);
+			FETCH_FAIL_CLEANUP
+			return false;
+		}
+		file4 << sbuffer;
+		file4.close();
+
+	}
 
 	curl_easy_cleanup(curl); curl_global_cleanup();
 
@@ -3672,17 +3736,22 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 #endif
 }
 bool Calculator::checkExchangeRatesDate(unsigned int n_days, bool force_check, bool send_warning, int n) {
-	if(n <= 0) n = 3;
+	if(n <= 0) n = 5;
 	time_t extime = exchange_rates_time[0];
-	if(n > 1 && exchange_rates_time[1] < extime) extime = exchange_rates_time[1];
-	if(n > 2 && exchange_rates_time[2] < extime) extime = exchange_rates_time[2];
+	for(int i = 1; i < n; i++) {
+		if(i > 2 && priv->exchange_rates_time2[i - 2] < extime) extime = priv->exchange_rates_time2[i - 2];
+		else if(i <= 2 && (i != 2 || n != 4) && exchange_rates_time[i] < extime) extime = exchange_rates_time[i];
+	}
 	time_t cextime = exchange_rates_check_time[0];
-	if(n > 1 && exchange_rates_check_time[1] < cextime) cextime = exchange_rates_check_time[1];
-	if(n > 2 && exchange_rates_check_time[2] < cextime) cextime = exchange_rates_check_time[2];
+	for(int i = 1; i < n; i++) {
+		if(i > 2 && priv->exchange_rates_check_time2[i - 2] < cextime) cextime = priv->exchange_rates_check_time2[i - 2];
+		else if(i <= 2 && (i != 2 || n != 4) && exchange_rates_check_time[i] < cextime) cextime = exchange_rates_check_time[i];
+	}
 	if(extime > 0 && ((!force_check && cextime > 0 && difftime(time(NULL), cextime) < 86400 * n_days) || difftime(time(NULL), extime) < (86400 * n_days) + 3600)) return true;
-	time(&exchange_rates_check_time[0]);
-	if(n > 1) time(&exchange_rates_check_time[1]);
-	if(n > 2) time(&exchange_rates_check_time[2]);
+	for(int i = 0; i < n; i++) {
+		if(i <= 2 && (i != 2 || n != 4)) time(&exchange_rates_check_time[i]);
+		else if(i > 2) time(&priv->exchange_rates_check_time2[i - 2]);
+	}
 	if(send_warning) error(false, _("It has been %s day(s) since the exchange rates last were updated."), i2s((int) floor(difftime(time(NULL), extime) / 86400)).c_str(), NULL);
 	return false;
 }

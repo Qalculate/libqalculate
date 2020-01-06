@@ -64,9 +64,11 @@ class Calculator_p {
 		Unit *local_currency;
 		int use_binary_prefixes;
 		MathFunction *f_cis, *f_erfi, *f_fresnels, *f_fresnelc;
+		Unit *u_byn;
 		unordered_map<int, MathFunction*> id_functions;
 		unordered_map<int, Variable*> id_variables;
 		unordered_map<int, Unit*> id_units;
+		time_t exchange_rates_time2[1], exchange_rates_check_time2[1];
 };
 
 class CalculateThread : public Thread {
