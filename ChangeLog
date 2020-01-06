@@ -1,3 +1,7 @@
+2019-01-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Retrieve exchange rate for BYN (Belarusian ruble) from nbrb.by
+
 2019-01-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault when solving sqrt(x)!=-1 and similar

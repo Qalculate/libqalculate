@@ -245,6 +245,11 @@
       <_names>ar:BBD</_names>
       <_countries>Barbados</_countries>
     </builtin_unit>
+    <builtin_unit name="BYN">
+      <_title>Belarusian Ruble</_title>
+      <_names>ar:BYN</_names>
+      <_countries>Belarus</_countries>
+    </builtin_unit>
     <builtin_unit name="BYR">
       <_title>Belarusian Ruble p. (obsolete)</_title>
       <_names>ar:BYR</_names>

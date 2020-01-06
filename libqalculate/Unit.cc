@@ -255,14 +255,17 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 		convertFromBaseUnit(mvalue, mexp);
 		if(isCurrency() && u->isCurrency() && ((isBuiltin() && this != CALCULATOR->getUnitById(UNIT_ID_EURO)) || (u->isBuiltin() && u != CALCULATOR->getUnitById(UNIT_ID_EURO)))) {
 			int i = 1;
-			if(u == CALCULATOR->getUnitById(UNIT_ID_BTC) || this == CALCULATOR->getUnitById(UNIT_ID_BTC)) i = 2;
-			if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
+			if(i < 4 && (u == CALCULATOR->getUnitById(UNIT_ID_BYN) || this == CALCULATOR->getUnitById(UNIT_ID_BYN))) i = (i == 3 ? 5 : 4);
+			if(i < 2 && (u == CALCULATOR->getUnitById(UNIT_ID_BTC) || this == CALCULATOR->getUnitById(UNIT_ID_BTC))) i = 2;
+			if(i < 5 && u->subtype() == SUBTYPE_ALIAS_UNIT) {
 				if(i < 2 && ((AliasUnit*) u)->firstBaseUnit() == CALCULATOR->getUnitById(UNIT_ID_BTC)) i = 2;
-				else if(((AliasUnit*) u)->firstBaseUnit() != CALCULATOR->getUnitById(UNIT_ID_EURO)) i = 3;
+				else if(i < 5 && ((AliasUnit*) u)->firstBaseUnit() != CALCULATOR->getUnitById(UNIT_ID_EURO)) i = (i == 4 ? 5 : 3);
+				else if(i < 4 && ((AliasUnit*) u)->firstBaseUnit() == CALCULATOR->getUnitById(UNIT_ID_BYN)) i = (i == 3 ? 5 : 4);
 			}
-			if(i < 3 && subtype() == SUBTYPE_ALIAS_UNIT) {
+			if(i < 5 && subtype() == SUBTYPE_ALIAS_UNIT) {
 				if(i < 2 && ((AliasUnit*) this)->firstBaseUnit() == CALCULATOR->getUnitById(UNIT_ID_BTC)) i = 2;
-				else if(((AliasUnit*) this)->firstBaseUnit() != CALCULATOR->getUnitById(UNIT_ID_EURO)) i = 3;
+				else if(i < 5 && ((AliasUnit*) this)->firstBaseUnit() != CALCULATOR->getUnitById(UNIT_ID_EURO)) i = (i == 4 ? 5 : 3);
+				else if(i < 4 && ((AliasUnit*) this)->firstBaseUnit() == CALCULATOR->getUnitById(UNIT_ID_BYN)) i = (i == 3 ? 5 : 4);
 			}
 			CALCULATOR->setExchangeRatesUsed(i);
 		}
