@@ -3286,7 +3286,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 									if(CHILD(i).number().numeratorIsOne() || CHILD(i).number().numeratorIsMinusOne()) bnum = 0;
 									else bnum = 1;
 								}
-								if(CHILD(i).number().isNegative()) {
+								if(CHILD(i).number().hasNegativeSign()) {
 									//negative term
 									inegs++;
 									// negative first term counts double
@@ -3308,7 +3308,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 										if(CHILD(i)[0].number().numeratorIsOne() || CHILD(i)[0].number().numeratorIsMinusOne()) bnum = 0;
 										else bnum = 1;
 									}
-									if(CHILD(i)[0].number().isNegative()) {
+									if(CHILD(i)[0].number().hasNegativeSign()) {
 										//negative term
 										inegs++;
 										// negative first term counts double

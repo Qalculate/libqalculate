@@ -1,3 +1,9 @@
+2019-01-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix integral of asin(x)^-2
+	* Fix integral of a^(b+cx)/x (where a<0)
+	* Fix integrate(1/(a+b*i*x^(1/3)),c,0)
+
 2019-01-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Retrieve exchange rate for BYN (Belarusian ruble) from nbrb.by

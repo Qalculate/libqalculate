@@ -1868,6 +1868,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					mstruct.transformById(FUNCTION_ID_SININT);
 					mstruct += mterm;
 					if(!mmul.isOne()) mstruct /= mmul;
+					mstruct.negate();
 					return true;
 				} else if(mpow.number().isPositive() && madd.isZero()) {
 					MathStructure mpowm1(mpow);
@@ -5552,6 +5553,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							return true;
 						}
 					}
+
 					if(CHILD(0) == x_var || (CHILD(0).isPower() && CHILD(0)[0] == x_var && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isRational())) {
 						Number nexp(1, 1, 0);
 						if(CHILD(0).isPower()) nexp = CHILD(0)[1].number();
@@ -6085,9 +6087,14 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 									mmulfac.childrenUpdated(true);
 									multiply(mmulfac);
 								} else if(mexp.isMinusOne()) {
+									if(!madd.isZero()) {
+										madd.raise(CHILD(0));
+										madd.swapChildren(1, 2);
+									}
 									set(x_var, true);
 									if(!mmul.isOne()) multiply(mmul);
 									transformById(FUNCTION_ID_EXPINT);
+									if(!madd.isZero()) multiply(madd);
 								} else if(mexp.number().isNegative()) {
 									MathStructure mterm2(*this);
 									mexp += m_one;
@@ -6336,6 +6343,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						}
 					}
 				}
+
 				vector<MathStructure*> parent_parts_pre;
 				if(parent_parts) {
 					for(size_t i = 0; i < parent_parts->size(); i++) {
@@ -6551,7 +6559,7 @@ bool has_wide_trig_interval(const MathStructure &m, const MathStructure &x_var, 
 	for(size_t i = 0; i < m.size(); i++) {
 		if(has_wide_trig_interval(m[i], x_var, eo, a, b)) return true;
 	}
-	if(m.isFunction() && m.size() == 1 && (m.function()->id() == FUNCTION_ID_SIN || m.function()->id() == FUNCTION_ID_COS)) {
+	if(m.isFunction() && m.size() == 1 && (m.function()->id() == FUNCTION_ID_SINC || m.function()->id() == FUNCTION_ID_SIN || m.function()->id() == FUNCTION_ID_COS)) {
 		Number nr_interval;
 		nr_interval.setInterval(a, b);
 		MathStructure mtest(m[0]);
@@ -7129,6 +7137,7 @@ bool replace_atanh(MathStructure &m, const MathStructure &x_var, const MathStruc
 			return true;
 		}
 	}
+	if(m.isPower() && m[1].isInteger() && m[1].number() > 10) return false;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(replace_atanh(m[i], x_var, m1, m2, eo)) b = true;
 	}
@@ -7205,6 +7214,7 @@ bool test_definite_ln(const MathStructure &m, const MathStructure &mi, const Mat
 		mtest.replace(mx, mi);
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
+		eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 		CALCULATOR->beginTemporaryStopMessages();
 		mtest.eval(eo2);
 		CALCULATOR->endTemporaryStopMessages();
