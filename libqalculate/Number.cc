@@ -7692,7 +7692,7 @@ bool Number::igamma(const Number &o) {
 #if MPFR_VERSION_MAJOR < 4
 	return false;
 #else
-	if(!isReal() || (!o.isNonZero() && !isNonZero())) return false;
+	if(!o.isReal() || !isReal() || (!o.isNonZero() && !isNonZero())) return false;
 	Number nr_bak(*this);
 	if(!setToFloatingPoint()) return false;
 	Number o_float(o);
