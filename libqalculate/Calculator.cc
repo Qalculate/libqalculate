@@ -1480,7 +1480,7 @@ void Calculator::addBuiltinFunctions() {
 	f_elements = addFunction(new ElementsFunction());
 	f_element = addFunction(new ElementFunction());
 	f_transpose = addFunction(new TransposeFunction());
-	f_identity = addFunction(new IdentityFunction());
+	f_identity = addFunction(new IdentityMatrixFunction());
 	f_determinant = addFunction(new DeterminantFunction());
 	f_permanent = addFunction(new PermanentFunction());
 	f_adjoint = addFunction(new AdjointFunction());
