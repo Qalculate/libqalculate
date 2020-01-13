@@ -23,7 +23,6 @@
 #include "Prefix.h"
 #include "Number.h"
 #include "QalculateDateTime.h"
-#include "MathStructure-support.h"
 
 #include <locale.h>
 #include <libxml/xmlmemory.h>
@@ -39,6 +38,8 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+
+#include "MathStructure-support.h"
 
 #ifdef HAVE_LIBCURL
 #	include <curl/curl.h>
@@ -763,7 +764,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {3, 6, 0};
+	int version_numbers[] = {3, 7, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);
@@ -3563,8 +3564,8 @@ time_t Calculator::getExchangeRatesTime(int index) {
 	if(index > 5) index = 5;
 	if(index < 1) {
 		time_t extime = exchange_rates_time[0];
-		for(int i = 1; i < index; i++) {
-			if(i > 2 && priv->exchange_rates_time2[i - 2] < extime) extime = priv->exchange_rates_time2[i - 2];
+		for(int i = 1; i < 4; i++) {
+			if(i > 2 && priv->exchange_rates_time2[i - 3] < extime) extime = priv->exchange_rates_time2[i - 3];
 			else if(i <= 2 && exchange_rates_time[i] < extime) extime = exchange_rates_time[i];
 		}
 		return extime;
@@ -3574,7 +3575,7 @@ time_t Calculator::getExchangeRatesTime(int index) {
 		if(exchange_rates_time[2] < priv->exchange_rates_time2[0]) return exchange_rates_time[2];
 		return priv->exchange_rates_time2[0];
 	}
-	if(index > 2) return priv->exchange_rates_time2[index - 2];
+	if(index > 2) return priv->exchange_rates_time2[index - 3];
 	return exchange_rates_time[index];
 }
 
@@ -3738,19 +3739,19 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 bool Calculator::checkExchangeRatesDate(unsigned int n_days, bool force_check, bool send_warning, int n) {
 	if(n <= 0) n = 5;
 	time_t extime = exchange_rates_time[0];
-	for(int i = 1; i < n; i++) {
-		if(i > 2 && priv->exchange_rates_time2[i - 2] < extime) extime = priv->exchange_rates_time2[i - 2];
+	for(int i = 1; i < (n > 5 ? 4 : n); i++) {
+		if(i > 2 && priv->exchange_rates_time2[i - 3] < extime) extime = priv->exchange_rates_time2[i - 3];
 		else if(i <= 2 && (i != 2 || n != 4) && exchange_rates_time[i] < extime) extime = exchange_rates_time[i];
 	}
 	time_t cextime = exchange_rates_check_time[0];
-	for(int i = 1; i < n; i++) {
-		if(i > 2 && priv->exchange_rates_check_time2[i - 2] < cextime) cextime = priv->exchange_rates_check_time2[i - 2];
+	for(int i = 1; i < (n > 5 ? 4 : n); i++) {
+		if(i > 2 && priv->exchange_rates_check_time2[i - 3] < cextime) cextime = priv->exchange_rates_check_time2[i - 3];
 		else if(i <= 2 && (i != 2 || n != 4) && exchange_rates_check_time[i] < cextime) cextime = exchange_rates_check_time[i];
 	}
 	if(extime > 0 && ((!force_check && cextime > 0 && difftime(time(NULL), cextime) < 86400 * n_days) || difftime(time(NULL), extime) < (86400 * n_days) + 3600)) return true;
-	for(int i = 0; i < n; i++) {
+	for(int i = 0; i < (n > 5 ? 4 : n); i++) {
 		if(i <= 2 && (i != 2 || n != 4)) time(&exchange_rates_check_time[i]);
-		else if(i > 2) time(&priv->exchange_rates_check_time2[i - 2]);
+		else if(i > 2) time(&priv->exchange_rates_check_time2[i - 3]);
 	}
 	if(send_warning) error(false, _("It has been %s day(s) since the exchange rates last were updated."), i2s((int) floor(difftime(time(NULL), extime) / 86400)).c_str(), NULL);
 	return false;

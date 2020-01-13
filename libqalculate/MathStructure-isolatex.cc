@@ -13,11 +13,11 @@
 
 #include "BuiltinFunctions.h"
 #include "MathStructure.h"
-#include "MathStructure-support.h"
 #include "Calculator.h"
 #include "Number.h"
 #include "Function.h"
 #include "Variable.h"
+#include "MathStructure-support.h"
 
 using std::string;
 using std::cout;

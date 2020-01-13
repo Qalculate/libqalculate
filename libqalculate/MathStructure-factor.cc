@@ -12,7 +12,6 @@
 #include "support.h"
 
 #include "MathStructure.h"
-#include "MathStructure-support.h"
 #include "Calculator.h"
 #include "BuiltinFunctions.h"
 #include "Number.h"
@@ -20,6 +19,7 @@
 #include "Variable.h"
 #include "Unit.h"
 #include "Prefix.h"
+#include "MathStructure-support.h"
 
 using std::string;
 using std::cout;

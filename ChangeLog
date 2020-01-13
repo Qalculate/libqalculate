@@ -1,3 +1,7 @@
+2019-01-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Rename IdentityFunction class to avoid crash in Cantor because of conflict with Poppler library class with same name
+
 2019-01-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix integral of asin(x)^-2

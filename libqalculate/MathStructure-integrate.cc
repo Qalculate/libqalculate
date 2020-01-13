@@ -13,11 +13,11 @@
 
 #include "BuiltinFunctions.h"
 #include "MathStructure.h"
-#include "MathStructure-support.h"
 #include "Calculator.h"
 #include "Number.h"
 #include "Function.h"
 #include "Variable.h"
+#include "MathStructure-support.h"
 
 using std::string;
 using std::cout;
@@ -7137,7 +7137,7 @@ bool replace_atanh(MathStructure &m, const MathStructure &x_var, const MathStruc
 			return true;
 		}
 	}
-	if(m.isPower() && m[1].isInteger() && m[1].number() > 10) return false;
+	if(m.isPower() && m[1].isInteger() && (m[1].number() > 10 || m[1].number() < -10)) return false;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(replace_atanh(m[i], x_var, m1, m2, eo)) b = true;
 	}

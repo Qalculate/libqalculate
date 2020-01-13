@@ -12,7 +12,6 @@
 #include "support.h"
 
 #include "MathStructure.h"
-#include "MathStructure-support.h"
 #include "Calculator.h"
 #include "BuiltinFunctions.h"
 #include "Number.h"
@@ -52,6 +51,8 @@
 	namespace Sgi = std;
 #	define unordered_map Sgi::hash_map
 #endif
+
+#include "MathStructure-support.h"
 
 using std::string;
 using std::cout;

@@ -11,7 +11,6 @@
 
 #include "support.h"
 #include <libqalculate/qalculate.h>
-#include <libqalculate/MathStructure-support.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <time.h>
@@ -28,6 +27,8 @@
 #define WIN32_LEAN_AND_MEAN
 #	include <windows.h>
 #endif
+
+#include <libqalculate/MathStructure-support.h>
 
 using std::string;
 using std::cout;
@@ -5550,7 +5551,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {3, 6, 0};
+	int version_numbers[] = {3, 7, 0};
 
 	if(file) {
 		char line[10000];
