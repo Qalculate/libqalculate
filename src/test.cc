@@ -1961,7 +1961,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	return 0;*/
-	for(size_t i = 0; i < 50000;) {
+	/*for(size_t i = 0; i < 50000;) {
 		str = rnd_expression(10, true, 6, 4, false, false, false, false, false, 5, false);
 		CALCULATOR->parse(&mp, str, evalops.parse_options);
 		cerr << str << endl;
@@ -1976,14 +1976,14 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	cout << successes << ":" << imaginary << endl;
-	return 0;
+	return 0;*/
 
 	v = new KnownVariable("", "v", m_zero);
 
 	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 	//CALCULATOR->useIntervalArithmetic();
 
-	for(size_t i = 0; i <= 5000; i++) {
+	for(size_t i = 0; i <= 15000; i++) {
 		/*string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
 		cout << str << endl;
 		MathStructure mstruct;
@@ -1992,7 +1992,7 @@ int main(int argc, char *argv[]) {
 		cout << mstruct.print() << endl;
 		if(mstruct.isAborted()) break;*/
 		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
-		rnd_test(evalops, 4, true, false, true, false, false, true);
+		rnd_test(evalops, 4, true, false, true, false, false, false);
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;

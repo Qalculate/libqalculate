@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="3.6.0">
+<QALCULATE version="3.7.0">
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="vector">

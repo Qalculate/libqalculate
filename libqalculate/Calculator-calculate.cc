@@ -23,13 +23,14 @@
 #include "Prefix.h"
 #include "Number.h"
 #include "QalculateDateTime.h"
-#include "MathStructure-support.h"
 
 #include <locale.h>
 #include <unistd.h>
 #include <time.h>
 #include <utime.h>
 #include <sys/types.h>
+
+#include "MathStructure-support.h"
 
 using std::string;
 using std::cout;

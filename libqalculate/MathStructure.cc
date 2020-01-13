@@ -11,9 +11,8 @@
 
 #include "support.h"
 
-#include "MathStructure.h"
-#include "MathStructure-support.h"
 #include "Calculator.h"
+#include "MathStructure.h"
 #include "BuiltinFunctions.h"
 #include "Number.h"
 #include "Function.h"
@@ -22,6 +21,7 @@
 #include "Prefix.h"
 #include <map>
 #include <algorithm>
+#include "MathStructure-support.h"
 
 using std::string;
 using std::cout;

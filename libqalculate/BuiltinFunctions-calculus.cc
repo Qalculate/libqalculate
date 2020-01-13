@@ -18,12 +18,13 @@
 #include "Calculator.h"
 #include "Variable.h"
 #include "Unit.h"
-#include "MathStructure-support.h"
 
 #include <sstream>
 #include <time.h>
 #include <limits>
 #include <algorithm>
+
+#include "MathStructure-support.h"
 
 using std::string;
 using std::cout;
