@@ -1,3 +1,7 @@
+2019-01-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix sign of real part when multiplying complex number by infinity
+
 2019-01-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault when simplifying sin((infinity-i)+(-infinity+i)) and similar
