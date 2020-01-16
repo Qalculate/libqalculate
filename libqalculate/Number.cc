@@ -3142,7 +3142,7 @@ bool Number::multiply(const Number &o) {
 			setPrecisionAndApproximateFrom(*i_value);
 		}
 		if(hasRealPart()) {
-			if(isNegative()) setMinusInfinity(true, true);
+			if(realPartIsNegative()) setMinusInfinity(true, true);
 			else setPlusInfinity(true, true);
 			setPrecisionAndApproximateFrom(o);
 		}
@@ -3155,7 +3155,7 @@ bool Number::multiply(const Number &o) {
 			setPrecisionAndApproximateFrom(*i_value);
 		}
 		if(hasRealPart()) {
-			if(isNegative()) setPlusInfinity(true, true);
+			if(realPartIsNegative()) setPlusInfinity(true, true);
 			else setMinusInfinity(true, true);
 		}
 		setPrecisionAndApproximateFrom(o);
