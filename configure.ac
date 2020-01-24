@@ -95,7 +95,6 @@ AC_SUBST(QALCULATE_CURRENT)
 AC_SUBST(QALCULATE_REVISION)
 AC_SUBST(QALCULATE_AGE)
 
-
 dnl  --------------------------------
 dnl | check for neccessary libraries |-----------------------------------------
 dnl  --------------------------------
@@ -130,6 +129,16 @@ AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
 
 AM_ICONV()
+
+dnl  --------------------------------
+dnl | check for doxygen             |-----------------------------------------
+dnl  --------------------------------
+
+AC_CHECK_PROGS([DOXYGEN], [doxygen])
+if test -z "$DOXYGEN"; then
+   AC_MSG_WARN([Doxygen not found - API documentation will not be generated])
+fi
+AM_CONDITIONAL([HAVE_DOXYGEN], [test -n "$DOXYGEN"])
 
 dnl  --------------------------------
 dnl | check for readline            |-----------------------------------------
