@@ -11,3 +11,11 @@ EXTRA_DIST = config.rpath  \
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libqalculate.pc
+
+if HAVE_DOXYGEN
+
+.PHONY: docs
+docs:
+	$(MAKE) -C $(top_srcdir)/docs/reference docs
+
+endif
