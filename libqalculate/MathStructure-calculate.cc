@@ -5368,7 +5368,6 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		case STRUCT_LOGICAL_OR: {
 			bool isResistance = false;
 			// calculate resistance || resistance as parallel resistor (?)
-			cout << print() << endl;
 			if(recursive) {
 				for(size_t i = 0; i < SIZE; i++) {
 					CHILD(i).calculatesub(eo, feo, true, this, i);
@@ -5389,7 +5388,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					break;
 				}
 				case STRUCT_UNIT: {
-					if (CHILD(0).unit() && CHILD(0).unit()->name().find("ohm") != string::npos) {
+					if(CHILD(0).unit() && CHILD(0).unit()->name().find("ohm") != string::npos) {
 						isResistance = true;
 					}
 					break;
