@@ -5368,6 +5368,19 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		case STRUCT_LOGICAL_OR: {
 			bool isResistance = false;
 			// calculate resistance || resistance as parallel resistor (?)
+			cout << print() << endl;
+			if(recursive) {
+				for(size_t i = 0; i < SIZE; i++) {
+					CHILD(i).calculatesub(eo, feo, true, this, i);
+					CHILD_UPDATED(i)
+					if(CHILD(i).representsNonZero()) {
+						set(1, 1, 0, true);
+						b = true;
+						break;
+					}
+				}
+				if(b) break;
+			}
 			switch(CHILD(0).type()) {
 				case STRUCT_MULTIPLICATION: {
 					if(CHILD(0)[1] != 0 && CHILD(0)[1].unit() && CHILD(0)[1].unit()->name().find("ohm") != string::npos) {
@@ -5394,18 +5407,6 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				clear();
 				set(mstruct);
 				break;
-			}
-			if(recursive) {
-				for(size_t i = 0; i < SIZE; i++) {
-					CHILD(i).calculatesub(eo, feo, true, this, i);
-					CHILD_UPDATED(i)
-					if(CHILD(i).representsNonZero()) {
-						set(1, 1, 0, true);
-						b = true;
-						break;
-					}
-				}
-				if(b) break;
 			}
 			MERGE_ALL(merge_logical_or, try_logor)
 			if(SIZE == 1) {
