@@ -3204,6 +3204,7 @@ bool Calculator::exportCSV(const MathStructure &mstruct, const char *file_name, 
 	MathStructure mcsv(mstruct);
 	PrintOptions po;
 	po.number_fraction_format = FRACTION_DECIMAL;
+	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	po.decimalpoint_sign = ".";
 	po.comma_sign = ",";
 	if(mcsv.isMatrix()) {
