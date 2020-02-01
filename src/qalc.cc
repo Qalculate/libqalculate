@@ -87,7 +87,7 @@ bool ignore_locale = false;
 
 bool result_only;
 
-static char buffer[1000];
+static char buffer[100000];
 
 void setResult(Prefix *prefix = NULL, bool update_parse = false, bool goto_input = true, size_t stack_index = 0, bool register_moved = false, bool noprint = false);
 void execute_expression(bool goto_input = true, bool do_mathoperation = false, MathOperation op = OPERATION_ADD, MathFunction *f = NULL, bool do_stack = false, size_t stack_index = 0, bool check_exrates = true);
@@ -542,7 +542,6 @@ bool check_exchange_rates() {
 	if(auto_update_exchange_rates == 0 || (auto_update_exchange_rates < 0 && !ask_questions)) return false;
 	bool b = false;
 	if(auto_update_exchange_rates < 0) {
-		char buffer[1000];
 		string ask_str;
 		int cx = snprintf(buffer, 1000, _("It has been %s day(s) since the exchange rates last were updated."), i2s((int) floor(difftime(time(NULL), CALCULATOR->getExchangeRatesTime(i)) / 86400)).c_str());
 		if(cx >= 0 && cx < 1000) {
@@ -2027,7 +2026,7 @@ int main(int argc, char *argv[]) {
 
 	while(true) {
 		if(cfile) {
-			if(i_maxtime < 0 || !fgets(buffer, 1000, cfile)) {
+			if(i_maxtime < 0 || !fgets(buffer, 100000, cfile)) {
 				if(cfile != stdin) {
 					fclose(cfile);
 				}
@@ -2086,7 +2085,7 @@ int main(int argc, char *argv[]) {
 			}
 #else
 			fputs("> ", stdout);
-			if(!fgets(buffer, 1000, stdin)) {
+			if(!fgets(buffer, 100000, stdin)) {
 				str = "";
 			} else if(!printops.use_unicode_signs && contains_unicode_char(buffer)) {
 				char *gstr = locale_to_utf8(buffer);

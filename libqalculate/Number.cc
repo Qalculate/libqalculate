@@ -42,6 +42,9 @@ using std::endl;
 
 #define CREATE_INTERVAL (CALCULATOR ? CALCULATOR->usesIntervalArithmetic() : true)
 
+#define INTERVAL_FLOOR(x) x.floor(); if(x.isInterval()) {x = x.lowerEndPoint(); x.floor();}
+#define INTERVAL_CEIL(x) x.ceil(); if(x.isInterval()) {x = x.lowerEndPoint(); x.ceil();}
+
 gmp_randstate_t randstate;
 
 Number nr_e;
@@ -1564,7 +1567,7 @@ void Number::setUncertainty(const Number &o, bool to_precision) {
 		nr.abs();
 		nr.divide(2);
 		nr.log(10);
-		nr.floor();
+		INTERVAL_FLOOR(nr);
 		long int i_prec = nr.lintValue();
 		if(i_prec > 0) {
 			if(i_precision < 0 || i_prec < i_precision) i_precision = i_prec;
@@ -1669,6 +1672,7 @@ int Number::intValue(bool *overflow) const {
 	} else {
 		Number nr;
 		nr.set(*this, false, true);
+		nr.intervalToMidValue();
 		nr.round();
 		return nr.intValue(overflow);
 	}
@@ -1685,6 +1689,7 @@ unsigned int Number::uintValue(bool *overflow) const {
 	} else {
 		Number nr;
 		nr.set(*this, false, true);
+		nr.intervalToMidValue();
 		nr.round();
 		return nr.uintValue(overflow);
 	}
@@ -1701,6 +1706,7 @@ long int Number::lintValue(bool *overflow) const {
 	} else {
 		Number nr;
 		nr.set(*this, false, true);
+		nr.intervalToMidValue();
 		nr.round();
 		return nr.lintValue(overflow);
 	}
@@ -1715,6 +1721,7 @@ long long int Number::llintValue() const {
 	} else {
 		Number nr;
 		nr.set(*this, false, true);
+		nr.intervalToMidValue();
 		nr.round();
 		return nr.llintValue();
 	}
@@ -1731,6 +1738,7 @@ unsigned long int Number::ulintValue(bool *overflow) const {
 	} else {
 		Number nr;
 		nr.set(*this, false, true);
+		nr.intervalToMidValue();
 		nr.round();
 		return nr.ulintValue(overflow);
 	}
@@ -2216,6 +2224,7 @@ bool Number::isComplex() const {
 Number Number::integer() const {
 	if(isInteger()) return *this;
 	Number nr(*this);
+	nr.intervalToMidValue();
 	nr.round();
 	return nr;
 }
@@ -4682,13 +4691,21 @@ bool Number::round(bool halfway_to_even) {
 		}
 	} else {
 		mpz_set_ui(mpq_denref(r_value), 1);
-		intervalToMidValue();
-		if(isRational()) return true;
-		if(!halfway_to_even) mpfr_rint_round(fl_value, fl_value, MPFR_RNDN);
+		if(halfway_to_even) {
+			mpfr_rint_round(fl_value, fl_value, MPFR_RNDN);
+			mpfr_rint_round(fu_value, fu_value, MPFR_RNDN);
+		} else {
+			mpfr_round(fl_value, fl_value);
+			mpfr_round(fu_value, fu_value);
+		}
+		if(!mpfr_equal_p(fl_value, fu_value)) {
+			return true;
+		}
 		mpfr_get_z(mpq_numref(r_value), fl_value, MPFR_RNDN);
 		n_type = NUMBER_TYPE_RATIONAL;
 		mpfr_clears(fl_value, fu_value, NULL);
 	}
+	if(i_precision < 0) b_approx = false;
 	return true;
 }
 bool Number::floor() {
@@ -4701,11 +4718,17 @@ bool Number::floor() {
 		}
 	} else {
 		if(mpfr_inf_p(fl_value)) return false;
+		mpfr_floor(fl_value, fl_value);
+		mpfr_floor(fu_value, fu_value);
+		if(!mpfr_equal_p(fl_value, fu_value)) {
+			return true;
+		}
 		mpz_set_ui(mpq_denref(r_value), 1);
-		mpfr_get_z(mpq_numref(r_value), fl_value, MPFR_RNDD);
+		mpfr_get_z(mpq_numref(r_value), fl_value, MPFR_RNDN);
 		n_type = NUMBER_TYPE_RATIONAL;
 		mpfr_clears(fl_value, fu_value, NULL);
 	}
+	if(i_precision < 0) b_approx = false;
 	return true;
 }
 bool Number::ceil() {
@@ -4718,11 +4741,17 @@ bool Number::ceil() {
 		}
 	} else {
 		if(mpfr_inf_p(fu_value)) return false;
+		mpfr_ceil(fl_value, fl_value);
+		mpfr_ceil(fu_value, fu_value);
+		if(!mpfr_equal_p(fl_value, fu_value)) {
+			return true;
+		}
 		mpz_set_ui(mpq_denref(r_value), 1);
-		mpfr_get_z(mpq_numref(r_value), fu_value, MPFR_RNDU);
+		mpfr_get_z(mpq_numref(r_value), fu_value, MPFR_RNDN);
 		n_type = NUMBER_TYPE_RATIONAL;
 		mpfr_clears(fl_value, fu_value, NULL);
 	}
+	if(i_precision < 0) b_approx = false;
 	return true;
 }
 bool Number::trunc() {
@@ -4736,12 +4765,17 @@ bool Number::trunc() {
 	} else {
 		if(mpfr_inf_p(fl_value) && mpfr_inf_p(fu_value)) return false;
 		mpz_set_ui(mpq_denref(r_value), 1);
-		if(mpfr_sgn(fu_value) <= 0) mpfr_get_z(mpq_numref(r_value), fu_value, MPFR_RNDU);
-		else if(mpfr_sgn(fl_value) >= 0) mpfr_get_z(mpq_numref(r_value), fl_value, MPFR_RNDD);
-		else mpz_set_ui(mpq_numref(r_value), 0);
+		mpfr_trunc(fl_value, fl_value);
+		mpfr_trunc(fu_value, fu_value);
+		if(!mpfr_equal_p(fl_value, fu_value)) {
+			return true;
+		}
+		mpz_set_ui(mpq_denref(r_value), 1);
+		mpfr_get_z(mpq_numref(r_value), fu_value, MPFR_RNDN);
 		n_type = NUMBER_TYPE_RATIONAL;
 		mpfr_clears(fl_value, fu_value, NULL);
 	}
+	if(i_precision < 0) b_approx = false;
 	return true;
 }
 bool Number::round(const Number &o, bool halfway_to_even) {
@@ -9629,6 +9663,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		// number can only be displayed as integers using bijective bases
 		if(!nr.isInteger()) {
 			if(po.is_approximate) *po.is_approximate = true;
+			nr.intervalToMidValue();
 			nr.round(po.round_halfway_to_even);
 		}
 		// return empty string if number is zero
@@ -9748,7 +9783,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		precmax.raise(precision_base);
 		precmax--;
 		precmax.log(abs_base < 2 ? 2 : abs_base);
-		precmax.floor();
+		INTERVAL_FLOOR(precmax);
+		
 		precision_base = precmax.lintValue();
 
 		string str;
@@ -9816,7 +9852,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				nr_digit = nr;
 				nr.divide(base);
 				nr_digit.mod(base);
-				nr.floor();
+				INTERVAL_FLOOR(nr);
 				if(nr_digit.isNegative()) {
 					nr_digit += abs_base;
 					nr++;
@@ -9825,7 +9861,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					nr_frac = nr_digit;
 					nr_frac.frac();
 				}
-				nr_digit.floor();
+				INTERVAL_FLOOR(nr_digit);
 				digits.insert(digits.begin(), nr_digit.lintValue());
 				if(nr.isZero()) {
 					if(nr_frac.isZero()) {
@@ -10067,6 +10103,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		// sexagesimal base or time format
 		
 		Number nr(*this);
+		nr.intervalToMidValue();
 
 		// handle sign separately
 		bool neg = nr.isNegative();
@@ -10254,7 +10291,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		precmax.raise(precision_base);
 		precmax--;
 		precmax.log(base);
-		precmax.floor();
+		INTERVAL_FLOOR(precmax);
 		precision_base = precmax.lintValue();
 	}
 	
@@ -10269,7 +10306,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			precmax.raise(i_precision_base);
 			precmax--;
 			precmax.log(base);
-			precmax.floor();
+			INTERVAL_FLOOR(precmax);
 			i_precision_base = precmax.lintValue();
 		}
 	}
@@ -10357,7 +10394,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(bits == 0) {
 					// determine appropriate number of bits
 					nr = *this;
-					nr.floor();
+					INTERVAL_FLOOR(nr);
 					nr++;
 					bits = nr.integerLength() + 1;
 					if(bits <= 8) bits = 8;
@@ -10394,7 +10431,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			} else if(po.binary_bits == 0) {
 				// determine appropriate number of bits for binary (and hexadecimal, when using hexadecimal two's complement) numbers
 				Number nr(*this);
-				nr.ceil();
+				INTERVAL_CEIL(nr);
 				unsigned int bits = nr.integerLength() + 1;
 				if(bits <= 8) bits = 8;
 				else if(bits <= 16) bits = 16;
