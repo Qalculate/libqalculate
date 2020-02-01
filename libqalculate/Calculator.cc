@@ -1307,7 +1307,7 @@ void Calculator::setCustomInputBase(Number nr) {
 	if(!nr.isReal()) {
 		priv->custom_input_base_i = LONG_MAX;
 	} else {
-		nr.abs(); nr.ceil();
+		nr.abs(); nr.intervalToMidValue(); nr.ceil();
 		priv->custom_input_base_i = nr.lintValue();
 		if(priv->custom_input_base_i < 2) priv->custom_input_base_i = 2;
 	}

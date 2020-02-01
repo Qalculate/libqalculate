@@ -1,3 +1,20 @@
+2019-02-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Modify behavior of floor(), ceil(), trunc and round() - mark result as exact, allow approximate calculation of argument in exact mode, return interval when appropriate (e.g. floor(interval(1.5,2.5))=interval(1, 2))
+	* Increase input buffer length (maximum length of line) in qalc
+
+2019-01-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Write interval using significant digits in CSV file
+
+2019-01-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix 1kOhm||1kOhm (and similar)
+
+2019-01-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not include pregenerated reference documentation in source package and move documentation generation from autogen.sh to Makefile
+
 2019-01-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix sign of real part when multiplying complex number by infinity

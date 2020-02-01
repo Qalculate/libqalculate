@@ -1058,7 +1058,7 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
 			if(!allow_function && !allow_unknown && !allow_variable && rand() % 2 == 0) str = rnd_number(true, only_integers, false, allow_complex, allow_interval);
 			else str = rnd_var();
 		} else {
-#define LAST_FUNC 31
+#define LAST_FUNC 23
 			if(!allow_unknown) {
 				if(allow_function) r = rand() % (LAST_FUNC - 4)  + 4;
 				else r = rand() % 2 + 4;
@@ -1992,7 +1992,7 @@ int main(int argc, char *argv[]) {
 		cout << mstruct.print() << endl;
 		if(mstruct.isAborted()) break;*/
 		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
-		rnd_test(evalops, 4, true, false, true, false, false, false);
+		rnd_test(evalops, 4, true, false, false, false, false, false);
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;

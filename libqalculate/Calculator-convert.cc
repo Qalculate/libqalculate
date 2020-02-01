@@ -99,6 +99,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 		}
 		while(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT && ((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() != 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos)) && !nr.isInteger() && !nr.isZero()) {
 			Number int_nr(nr);
+			int_nr.intervalToMidValue();
 			int_nr.trunc();
 			if(eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP && int_nr.isZero()) break;
 			nr -= int_nr;
