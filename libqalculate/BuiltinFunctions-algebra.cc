@@ -657,14 +657,14 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 
 			if(mconditions.size() == 1) {
 				if(mconditions[0]) {
-					CALCULATOR->error(false, _("The solution requires that %s."), format_and_print(mconditions[0]).c_str(), NULL);
+					CALCULATOR->error(false, _("The solution requires that %s."), format_and_print(*mconditions[0]).c_str(), NULL);
 					delete mconditions[0];
 				}
 			} else {
 				string sconditions;
 				for(size_t i = 0; i < mconditions.size(); i++) {
 					if(mconditions[i]) {
-						CALCULATOR->error(false, _("Solution %s requires that %s."), i2s(i + 1).c_str(), format_and_print(mconditions[i]).c_str(), NULL);
+						CALCULATOR->error(false, _("Solution %s requires that %s."), i2s(i + 1).c_str(), format_and_print(*mconditions[i]).c_str(), NULL);
 						delete mconditions[i];
 					}
 				}
