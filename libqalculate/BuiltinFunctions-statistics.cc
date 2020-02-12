@@ -104,6 +104,7 @@ int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &v
 			}
 			case 1: {
 				pfr *= (long int) v.countChildren();
+				pfr.intervalToMidValue();
 				pfr.ceil();
 				size_t index = pfr.uintValue();
 				if(index > v.size()) index = v.size();
@@ -113,6 +114,7 @@ int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &v
 			}
 			case 3: {
 				pfr *= (long int) v.countChildren();
+				pfr.intervalToMidValue();
 				pfr.round();
 				size_t index = pfr.uintValue();
 				if(index > v.size()) index = v.size();
@@ -128,6 +130,7 @@ int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &v
 			case 8: {}
 			default: {pfr *= Number(v.countChildren() * 3 + 1, 3); pfr += Number(1, 3); break;}
 		}
+		pfr.intervalToMidValue();
 		Number ufr(pfr);
 		ufr.ceil();
 		Number lfr(pfr);

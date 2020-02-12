@@ -6921,6 +6921,7 @@ int numerical_integration_part(const MathStructure &minteg, const MathStructure 
 							nr_samples /= max_error;
 							nr_samples.sqrt();
 						}
+						nr_samples.intervalToMidValue();
 						nr_samples.ceil();
 						if(type == 0 && nr_samples.isOdd()) {
 							nr_samples++;

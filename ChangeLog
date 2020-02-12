@@ -1,3 +1,11 @@
+2019-02-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* IEEE 754 floating point (binary) conversion - functions float(), toFloat(), and floatError(), and "to" conversion using float32/float and float64/double
+
+2019-02-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in solve() with AND and OR in solution
+
 2019-02-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Modify behavior of floor(), ceil(), trunc and round() - mark result as exact, allow approximate calculation of argument in exact mode, return interval when appropriate (e.g. floor(interval(1.5,2.5))=interval(1, 2))
