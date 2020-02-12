@@ -1341,6 +1341,56 @@
   </category>
   <category>
     <_title>Miscellaneous</_title>
+    <builtin_function name="float">
+      <_title>From IEEE 754 Floating-Point</_title>
+      <_names>r:float</_names>
+      <_description>Reads a number in IEEE 754 floating-point format. The number will be read as a binary number, unless it contains digits other than 1 or 0. If the third argument (exponent bits) is set to zero, the standard number of exponent bits will be used (e.g. 8 for float32).</_description>
+      <argument index="1">
+        <_title>Floating-point number (binary)</_title>
+      </argument>
+      <argument index="2">
+        <_title>Number of bits</_title>
+      </argument>
+      <argument index="3">
+        <_title>Number of exponent bits</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="floatError">
+      <_title>IEEE 754 Floating-Point Error</_title>
+      <_names>r:float</_names>
+      <_description>Calculates the error (the difference between the original and the converted value) when converting a value to IEEE 754 floating-point format. If the third argument (exponent bits) is set to zero, the standard number of exponent bits will be used (e.g. 8 for float32).</_description>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+      <argument index="2">
+        <_title>Number of bits</_title>
+      </argument>
+      <argument index="3">
+        <_title>Number of exponent bits</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="toFloat">
+      <_title>To IEEE 754 Floating-Point</_title>
+      <_names>r:toFloat</_names>
+      <_description>Converts a value to a number in IEEE 754 floating-point format. If the third argument (exponent bits) is set to zero, the standard number of exponent bits will be used (e.g. 8 for float32).</_description>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+      <argument index="2">
+        <_title>Number of bits</_title>
+      </argument>
+      <argument index="3">
+        <_title>Number of exponent bits</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="roman">
+      <_title>Roman Number</_title>
+      <_names>r:roman</_names>
+      <_description>Returns the value of a roman number.</_description>
+      <argument index="1">
+        <_title>Roman number</_title>
+      </argument>
+    </builtin_function>
     <function>
       <_title>Body Mass Index (BMI)</_title>
       <_names>-r:bmi</_names>
@@ -1377,14 +1427,6 @@
         <min>2</min>
       </argument>
     </function>
-    <builtin_function name="roman">
-      <_title>Roman Number</_title>
-      <_names>r:roman</_names>
-      <_description>Returns the value of a roman number.</_description>
-      <argument index="1">
-        <_title>Roman number</_title>
-      </argument>
-    </builtin_function>
     <function>
       <_title>Depth of Field</_title>
       <_names>r:dof</_names>

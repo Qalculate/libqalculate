@@ -1403,3 +1403,262 @@ IS_NUMBER_FUNCTION(IsIntegerFunction, isInteger)
 IS_NUMBER_FUNCTION(IsRealFunction, isReal)
 IS_NUMBER_FUNCTION(IsRationalFunction, isRational)
 
+unsigned int standard_expbits(unsigned int bits) {
+	if(bits == 16) return 5;
+	else if(bits == 32) return 8;
+	else if(bits == 64) return 11;
+	else if(bits == 128) return 15;
+	Number nr(bits, 1, 0);
+	nr.log(2);
+	nr *= 4;
+	nr.round();
+	nr -= 13;
+	return nr.uintValue();
+}
+int from_float(Number &nr, string sbin, unsigned int bits, unsigned int expbits) {
+	if(expbits == 0) expbits = standard_expbits(bits);
+	else if(expbits > bits - 2) return 0;
+	if(sbin.length() < bits) sbin.insert(0, bits - sbin.length(), '0');
+	if(sbin.length() > bits) return 0;
+	bool b_neg = (sbin[0] == '1');
+	Number exp;
+	long int ipow = 1;
+	bool b_spec = true;
+	for(size_t i = expbits; i >= 1; i--) {
+		if(sbin[i] == '1') exp += ipow;
+		else b_spec = false;
+		ipow *= 2;
+	}
+	if(b_spec) {
+		if(sbin.rfind("1") < expbits + 1) {
+			if(b_neg) nr.setMinusInfinity();
+			else nr.setPlusInfinity();
+			return 1;
+		} else {
+			return -1;
+		}
+	}
+	bool subnormal = exp.isZero();
+	Number expbias(2);
+	expbias ^= (expbits - 1);
+	expbias--;
+	exp -= expbias;
+	if(subnormal) exp++;
+	Number npow(1, 2);
+	Number frac(subnormal ? 0 : 1, 1);
+	for(size_t i = expbits + 1; i < bits; i++) {
+		if(sbin[i] == '1') frac += npow;
+		npow /= 2;
+	}
+	nr = 2;
+	nr ^= exp;
+	nr *= frac;
+	if(b_neg) nr.negate();
+	return 1;
+}
+string to_float(Number nr, unsigned int bits, unsigned int expbits) {
+	if(expbits == 0) expbits = standard_expbits(bits);
+	else if(expbits > bits - 2) return "";
+	Number expbias(2);
+	expbias ^= (expbits - 1);
+	expbias--;
+	expbias.intervalToMidValue();
+	nr.intervalToMidValue();
+	string sbin = "0";
+	if(nr.isNegative()) {
+		nr.negate();
+		sbin = "1";
+	}
+	if(nr.isPlusInfinity() || nr.isZero()) {
+		for(size_t i = 0; i < expbits; i++) {
+			if(nr.isZero()) sbin += "0";
+			else sbin += "1";
+		}
+		for(size_t i = expbits + 1; i < bits; i++) sbin += "0";
+	} else {
+		Number nrexp(nr);
+		nrexp.log(2);
+		nrexp.intervalToMidValue();
+		nrexp.floor();
+		bool rerun = false;
+		tofloat_afterexp:
+		if(nrexp > expbias) {
+			for(size_t i = 0; i < expbits; i++) sbin += "1";
+			for(size_t i = expbits + 1; i < bits; i++) sbin += "1";
+			return sbin;
+		}
+		Number nrpow(nrexp);
+		nrexp += expbias;
+		bool subnormal = false;
+		if(!nrexp.isPositive()) {
+			nrpow -= nrexp;
+			nrpow++;
+			nrexp.clear();
+			subnormal = true;
+		}
+		nrpow.exp2();
+		Number nrfrac(nr);
+		if(rerun) {
+			nrfrac = 1;
+		} else {
+			nrfrac /= nrpow;
+			nrfrac.intervalToMidValue();
+		}
+		PrintOptions po;
+		po.base = BASE_BINARY;
+		po.min_decimals = bits - expbits - 1;
+		po.max_decimals = bits - expbits - 1;
+		po.use_max_decimals = true;
+		po.show_ending_zeroes = true;
+		po.round_halfway_to_even = true;
+		po.binary_bits = 1;
+		string sfrac = nrfrac.print(po);
+		if(subnormal && sfrac[0] == '1') {
+			sfrac = "";
+			nrexp = 1;
+			for(size_t i = expbits + 1; i < bits; i++) sfrac += "1";
+		} else if(!subnormal && sfrac[0] == '0') {
+			if(rerun) return "";
+			nrexp--;
+			nrexp -= expbias;
+			rerun = true;
+			goto tofloat_afterexp;
+		} else if(sfrac[1] == '0') {
+			if(rerun) return "";
+			nrexp++;
+			nrexp -= expbias;
+			rerun = true;
+			goto tofloat_afterexp;
+		}
+		PrintOptions po2;
+		po2.base = BASE_BINARY;
+		po2.twos_complement = false;
+		po2.min_exp = 0;
+		po2.base_display = BASE_DISPLAY_NONE;
+		po2.binary_bits = expbits;
+		sbin += nrexp.print(po2);
+		if(sbin.length() < expbits + 1) sbin.insert(1, expbits + 1 - sbin.length(), '0');
+		sbin += sfrac.substr(2);
+	}
+	return sbin;
+}
+
+FromIEEE754FloatFunction::FromIEEE754FloatFunction() : MathFunction("float", 1, 3) {
+	Argument *arg = new TextArgument();
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG);
+	Number nmin(8, 1);
+	iarg->setMin(&nmin);
+	setArgumentDefinition(2, iarg);
+	setDefaultValue(2, "32");
+	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setDefaultValue(3, "0");
+}
+int FromIEEE754FloatFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	string sbin = vargs[0].symbol();
+	unsigned int bits = vargs[1].number().uintValue();
+	unsigned int expbits = vargs[2].number().uintValue();
+	remove_blanks(sbin);
+	if(sbin.find_first_not_of("01") != string::npos) {
+		MathStructure m;
+		CALCULATOR->parse(&m, vargs[0].symbol(), eo.parse_options);
+		m.eval(eo);
+		if(!m.isInteger() || !m.number().isNonNegative()) return 0;
+		PrintOptions po;
+		po.base = BASE_BINARY;
+		po.twos_complement = false;
+		po.binary_bits = bits;
+		po.min_exp = 0;
+		po.base_display = BASE_DISPLAY_NONE;
+		sbin = m.print(po);
+		remove_blanks(sbin);
+	}
+	Number nr;
+	int ret = from_float(nr, sbin, bits, expbits);
+	if(ret == 0) return 0;
+	if(ret < 0) mstruct.setUndefined();
+	else mstruct = nr;
+	return 1;
+}
+ToIEEE754FloatFunction::ToIEEE754FloatFunction() : MathFunction("toFloat", 1, 3) {
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
+	arg->setComplexAllowed(false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG);
+	Number nmin(8, 1);
+	iarg->setMin(&nmin);
+	setArgumentDefinition(2, iarg);
+	setDefaultValue(2, "32");
+	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setDefaultValue(3, "0");
+}
+int ToIEEE754FloatFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	unsigned int bits = vargs[1].number().uintValue();
+	unsigned int expbits = vargs[2].number().uintValue();
+	string sbin = to_float(vargs[0].number(), bits, expbits);
+	if(sbin.empty()) return 0;
+	ParseOptions pa;
+	pa.base = BASE_BINARY;
+	Number nr(sbin, pa);
+	if(nr.isInfinite() && !vargs[0].number().isInfinite()) CALCULATOR->error(false, _("Floating point overflow"), NULL);
+	else if(nr.isZero() && !vargs[0].isZero()) CALCULATOR->error(false, _("Floating point underflow"), NULL);
+	mstruct = nr;
+	return 1;
+}
+
+
+IEEE754FloatErrorFunction::IEEE754FloatErrorFunction() : MathFunction("floatError", 1, 3) {
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
+	arg->setComplexAllowed(false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG);
+	Number nmin(8, 1);
+	iarg->setMin(&nmin);
+	setArgumentDefinition(2, iarg);
+	setDefaultValue(2, "32");
+	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setDefaultValue(3, "0");
+}
+int IEEE754FloatErrorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	unsigned int bits = vargs[1].number().uintValue();
+	unsigned int expbits = vargs[2].number().uintValue();
+	string sbin = to_float(vargs[0].number(), bits, expbits);
+	if(sbin.empty()) return 0;
+	ParseOptions pa;
+	pa.base = BASE_BINARY;
+	Number nr;
+	int ret = from_float(nr, sbin, bits, expbits);
+	if(ret == 0) return 0;
+	if(ret < 0 || (vargs[0].number().isInfinite() && nr.isInfinite())) {
+		mstruct.clear();
+	} else {
+		nr -= vargs[0].number();
+		nr.abs();
+		mstruct = nr;
+	}
+	return 1;
+}
+
+/*Number ntext;
+	int ret = from_float(ntest, sbin, bits, expbits);
+	if(ret <= 0) return 0;
+	if(ret < 0) mstruct.setUndefined();
+	else mstruct = nr;
+	MathStructure mtest;
+	mtest.set(sbin, false, true);
+	mtest.transformById(FUNCTION_ID_FROM_IEEE754_FLOAT);
+	mtest.addChild(vargs[1]);
+	mtest.addChild(vargs[2]);
+	mtest.eval(eo);
+	if(mtest.isNumber() && !mtest.equals(vargs[0], true, true)) {
+		Number nrunc(mtest.number());
+		nrunc /= vargs[0].number();
+		nrunc -= 1;
+		nrunc.abs();
+		nrunc *= nr;
+		nr.setUncertainty(nrunc);
+	}*/
+

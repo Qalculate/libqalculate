@@ -9645,6 +9645,15 @@ ostream& operator << (ostream &os, const Number &nr) {
 	return os;
 }
 
+union u_double {
+	double d;
+	unsigned char data[sizeof(double)];
+};
+union u_float {
+	float d;
+	unsigned char data[sizeof(float)];
+};
+
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
 	if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 	// reset InternalPrintStruct (used for separate handling sign, scientific notation, numerator/denominator, imaginary/real parts, etc)
@@ -9657,6 +9666,92 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.im) *ips.im = "";
 	if(ips.iexp) *ips.iexp = 0;
 	if(po.is_approximate && isApproximate()) *po.is_approximate = true;
+	if(po.base == BASE_FLOAT64) {
+		if(isInterval()) {
+			Number nr(*this);
+			nr.intervalToMidValue();
+			return nr.print(po, ips);
+		}
+		union u_double d;
+		if(isReal()) {
+			if(n_type == NUMBER_TYPE_RATIONAL) {
+				d.d = mpq_get_d(r_value);
+			} else if(n_type == NUMBER_TYPE_FLOAT) {
+				d.d = mpfr_get_d(fl_value, MPFR_RNDN);
+			}
+		} else if(isPlusInfinity()) {
+			d.d = INFINITY;
+		} else if(isMinusInfinity()) {
+			d.d = -INFINITY;
+		} else {
+			d.d = NAN;
+		}
+		if(po.is_approximate) {
+			Number nr_test;
+			nr_test.setFloat(d.d);
+			if(!equals(nr_test)) *po.is_approximate = true;
+		}
+		Number nr;
+		Number ival(1);
+		for(int i = 0; i < (int) sizeof(double); i++) {
+			unsigned char b = d.data[i];
+			for(int i2 = 0; i2 < 8 * (int) sizeof(b); i2++) {
+				if(b & (1 << i2)) nr += ival;
+				ival *= 2;
+			}
+		}
+		PrintOptions po2 = po;
+		po2.base = BASE_BINARY;
+		po2.binary_bits = 64;
+		po2.min_exp = 0;
+		po2.max_decimals = 0;
+		po2.use_max_decimals = true;
+		po2.is_approximate = po.is_approximate;
+		return nr.print(po2, ips);
+	}
+	if(po.base == BASE_FLOAT32) {
+		if(isInterval()) {
+			Number nr(*this);
+			nr.intervalToMidValue();
+			return nr.print(po, ips);
+		}
+		union u_float d;
+		if(isReal()) {
+			if(n_type == NUMBER_TYPE_RATIONAL) {
+				d.d = (float) mpq_get_d(r_value);
+			} else if(n_type == NUMBER_TYPE_FLOAT) {
+				d.d = mpfr_get_flt(fl_value, MPFR_RNDN);
+			}
+		} else if(isPlusInfinity()) {
+			d.d = INFINITY;
+		} else if(isMinusInfinity()) {
+			d.d = -INFINITY;
+		} else {
+			d.d = NAN;
+		}
+		if(po.is_approximate) {
+			Number nr_test;
+			nr_test.setFloat(d.d);
+			if(!equals(nr_test)) *po.is_approximate = true;
+		}
+		Number nr;
+		Number ival(1);
+		for(int i = 0; i < (int) sizeof(float); i++) {
+			unsigned char b = d.data[i];
+			for(int i2 = 0; i2 < 8 * (int) sizeof(b); i2++) {
+				if(b & (1 << i2)) nr += ival;
+				ival *= 2;
+			}
+		}
+		PrintOptions po2 = po;
+		po2.base = BASE_BINARY;
+		po2.binary_bits = 32;
+		po2.min_exp = 0;
+		po2.max_decimals = 0;
+		po2.use_max_decimals = true;
+		po2.is_approximate = po.is_approximate;
+		return nr.print(po2, ips);
+	}
 	if(po.base == BASE_BIJECTIVE_26 && isReal()) {
 		// bijective base 26 (uses digits A-Z, A=1)
 		Number nr(*this);

@@ -761,6 +761,12 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		} else if(equalsIgnoreCase(to_str, "sexa") || equalsIgnoreCase(to_str, "sexagesimal") || equalsIgnoreCase(to_str, _("sexagesimal"))) {
 			str = from_str;
 			printops.base = BASE_SEXAGESIMAL;
+		} else if(equalsIgnoreCase(to_str, "float32") || equalsIgnoreCase(to_str, "float")) {
+			str = from_str;
+			printops.base = BASE_FLOAT32;
+		} else if(equalsIgnoreCase(to_str, "float64") || equalsIgnoreCase(to_str, "double")) {
+			str = from_str;
+			printops.base = BASE_FLOAT64;
 		} else if(equalsIgnoreCase(to_str, "time") || equalsIgnoreCase(to_str, _("time"))) {
 			str = from_str;
 			printops.base = BASE_TIME;

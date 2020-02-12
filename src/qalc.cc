@@ -617,6 +617,8 @@ void set_option(string str) {
 		bool b_out = EQUALS_IGNORECASE_AND_LOCAL(svar, "output base", _("output base")) || svar == "outbase";
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "roman", _("roman"))) v = BASE_ROMAN_NUMERALS;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "bijective", _("bijective")) || str == "b26" || str == "B26") v = BASE_BIJECTIVE_26;
+		else if(equalsIgnoreCase(svalue, "float32") || equalsIgnoreCase(svalue, "float")) {if(b_in) v = 0; else v = BASE_FLOAT32;}
+		else if(equalsIgnoreCase(svalue, "float64") || equalsIgnoreCase(svalue, "double")) {if(b_in) v = 0; else v = BASE_FLOAT64;}
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "time", _("time"))) {if(b_in) v = 0; else v = BASE_TIME;}
 		else if(equalsIgnoreCase(svalue, "hex") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "hexadecimal", _("hexadecimal"))) v = BASE_HEXADECIMAL;
 		else if(equalsIgnoreCase(svalue, "golden") || equalsIgnoreCase(svalue, "golden ratio") || svalue == "φ") v = BASE_GOLDEN_RATIO;
@@ -630,7 +632,6 @@ void set_option(string str) {
 		else if(equalsIgnoreCase(svalue, "oct") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "octal", _("octal"))) v = BASE_OCTAL;
 		else if(equalsIgnoreCase(svalue, "dec") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "decimal", _("decimal"))) v = BASE_DECIMAL;
 		else if(equalsIgnoreCase(svalue, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "sexagesimal", _("sexagesimal"))) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
-
 		else if(!b_in && !b_out && (index = svalue.find_first_of(SPACES)) != string::npos) {
 			str = svalue;
 			svalue = str.substr(index + 1, str.length() - (index + 1));
@@ -2618,6 +2619,16 @@ int main(int argc, char *argv[]) {
 				printops.base = BASE_SEXAGESIMAL;
 				setResult(NULL, false);
 				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "float32") || equalsIgnoreCase(str, "float")) {
+				int save_base = printops.base;
+				printops.base = BASE_FLOAT32;
+				setResult(NULL, false);
+				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "float64") || equalsIgnoreCase(str, "double")) {
+				int save_base = printops.base;
+				printops.base = BASE_FLOAT64;
+				setResult(NULL, false);
+				printops.base = save_base;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "time", _("time"))) {
 				int save_base = printops.base;
 				printops.base = BASE_TIME;
@@ -2996,6 +3007,8 @@ int main(int argc, char *argv[]) {
 				case BASE_ROMAN_NUMERALS: {str += _("roman"); break;}
 				case BASE_BIJECTIVE_26: {str += _("bijective"); break;}
 				case BASE_SEXAGESIMAL: {str += _("sexagesimal"); break;}
+				case BASE_FLOAT32: {str += _("float32"); break;}
+				case BASE_FLOAT64: {str += _("float64"); break;}
 				case BASE_TIME: {str += _("time"); break;}
 				case BASE_GOLDEN_RATIO: {str += "golden"; break;}
 				case BASE_SUPER_GOLDEN_RATIO: {str += "supergolden"; break;}
@@ -4773,6 +4786,22 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				int save_base = printops.base;
 				expression_str = from_str;
 				printops.base = BASE_SEXAGESIMAL;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.base = save_base;
+				expression_str = str;
+				return;
+			} else if(equalsIgnoreCase(to_str, "float32") || equalsIgnoreCase(to_str, "float")) {
+				int save_base = printops.base;
+				expression_str = from_str;
+				printops.base = BASE_FLOAT32;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.base = save_base;
+				expression_str = str;
+				return;
+			} else if(equalsIgnoreCase(to_str, "float64") || equalsIgnoreCase(to_str, "double")) {
+				int save_base = printops.base;
+				expression_str = from_str;
+				printops.base = BASE_FLOAT64;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
