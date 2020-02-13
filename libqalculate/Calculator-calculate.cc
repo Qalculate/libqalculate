@@ -767,6 +767,12 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		} else if(equalsIgnoreCase(to_str, "float64") || equalsIgnoreCase(to_str, "double")) {
 			str = from_str;
 			printops.base = BASE_FLOAT64;
+		} else if(equalsIgnoreCase(to_str, "float16")) {
+			str = from_str;
+			printops.base = BASE_FLOAT16;
+		} else if(equalsIgnoreCase(to_str, "float128")) {
+			str = from_str;
+			printops.base = BASE_FLOAT128;
 		} else if(equalsIgnoreCase(to_str, "time") || equalsIgnoreCase(to_str, _("time"))) {
 			str = from_str;
 			printops.base = BASE_TIME;
@@ -776,6 +782,10 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
 			str = from_str;
 			printops.time_zone = TIME_ZONE_UTC;
+		} else if(to_str.length() > 3 && equalsIgnoreCase(to_str.substr(0, 3), "bin") && is_in(NUMBERS, to_str[3])) {
+			str = from_str;
+			printops.base = BASE_BINARY;
+			printops.binary_bits = s2i(to_str.substr(3));
 		} else if(to_str.length() > 3 && (equalsIgnoreCase(to_str.substr(0, 3), "utc") || equalsIgnoreCase(to_str.substr(0, 3), "gmt"))) {
 			to_str = to_str.substr(3);
 			remove_blanks(to_str);
