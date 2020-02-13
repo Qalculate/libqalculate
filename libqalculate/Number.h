@@ -534,4 +534,8 @@ std::ostream& operator << (std::ostream &os, const Number&);
 
 bool testComplexZero(const Number *this_nr, const Number *i_nr);
 
+unsigned int standard_expbits(unsigned int bits);
+int from_float(Number &nr, std::string sbin, unsigned int bits, unsigned int expbits = 0);
+std::string to_float(Number nr, unsigned int bits, unsigned int expbits = 0);
+
 #endif

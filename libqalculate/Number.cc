@@ -39,6 +39,7 @@ using std::endl;
 
 #define PRINT_MPFR(x, y) mpfr_out_str(stdout, y, 0, x, MPFR_RNDU); cout << endl;
 #define PRINT_MPZ(x, y) mpz_out_str(stdout, y, x); cout << endl;
+#define PRINT_MPQ(x, y) mpq_out_str(stdout, y, x); cout << endl;
 
 #define CREATE_INTERVAL (CALCULATOR ? CALCULATOR->usesIntervalArithmetic() : true)
 
@@ -9654,6 +9655,147 @@ union u_float {
 	unsigned char data[sizeof(float)];
 };
 
+unsigned int standard_expbits(unsigned int bits) {
+	if(bits == 16) return 5;
+	else if(bits == 32) return 8;
+	else if(bits == 64) return 11;
+	else if(bits == 128) return 15;
+	Number nr(bits, 1, 0);
+	nr.log(2);
+	nr *= 4;
+	nr.round();
+	nr -= 13;
+	return nr.uintValue();
+}
+int from_float(Number &nr, string sbin, unsigned int bits, unsigned int expbits) {
+	if(expbits == 0) expbits = standard_expbits(bits);
+	else if(expbits > bits - 2) return 0;
+	if(sbin.length() < bits) sbin.insert(0, bits - sbin.length(), '0');
+	if(sbin.length() > bits) return 0;
+	bool b_neg = (sbin[0] == '1');
+	Number exp;
+	long int ipow = 1;
+	bool b_spec = true;
+	for(size_t i = expbits; i >= 1; i--) {
+		if(sbin[i] == '1') exp += ipow;
+		else b_spec = false;
+		ipow *= 2;
+	}
+	if(b_spec) {
+		if(sbin.rfind("1") < expbits + 1) {
+			if(b_neg) nr.setMinusInfinity();
+			else nr.setPlusInfinity();
+			return 1;
+		} else {
+			return -1;
+		}
+	}
+	bool subnormal = exp.isZero();
+	Number expbias(2);
+	expbias ^= (expbits - 1);
+	expbias--;
+	exp -= expbias;
+	if(subnormal) exp++;
+	Number npow(1, 2);
+	Number frac(subnormal ? 0 : 1, 1);
+	for(size_t i = expbits + 1; i < bits; i++) {
+		if(sbin[i] == '1') frac += npow;
+		npow /= 2;
+	}
+	nr = 2;
+	nr ^= exp;
+	nr *= frac;
+	if(b_neg) nr.negate();
+	return 1;
+}
+string to_float(Number nr, unsigned int bits, unsigned int expbits) {
+	if(expbits == 0) expbits = standard_expbits(bits);
+	else if(expbits > bits - 2) return "";
+	Number expbias(2);
+	expbias ^= (expbits - 1);
+	expbias--;
+	expbias.intervalToMidValue();
+	nr.intervalToMidValue();
+	string sbin = "0";
+	if(nr.isNegative()) {
+		nr.negate();
+		sbin = "1";
+	}
+	if(nr.isPlusInfinity() || nr.isZero()) {
+		for(size_t i = 0; i < expbits; i++) {
+			if(nr.isZero()) sbin += "0";
+			else sbin += "1";
+		}
+		for(size_t i = expbits + 1; i < bits; i++) sbin += "0";
+	} else {
+		Number nrexp(nr);
+		nrexp.log(2);
+		nrexp.intervalToMidValue();
+		nrexp.floor();
+		bool rerun = false;
+		tofloat_afterexp:
+		if(nrexp > expbias) {
+			for(size_t i = 0; i < expbits; i++) sbin += "1";
+			for(size_t i = expbits + 1; i < bits; i++) sbin += "0";
+			return sbin;
+		}
+		Number nrpow(nrexp);
+		nrexp += expbias;
+		bool subnormal = false;
+		if(!nrexp.isPositive()) {
+			nrpow -= nrexp;
+			nrpow++;
+			nrexp.clear();
+			subnormal = true;
+		}
+		nrpow.exp2();
+		Number nrfrac(nr);
+		if(rerun) {
+			nrfrac = 1;
+		} else {
+			nrfrac /= nrpow;
+			nrfrac.intervalToMidValue();
+		}
+		PrintOptions po;
+		po.base = BASE_BINARY;
+		po.min_decimals = bits - expbits - 1;
+		po.max_decimals = bits - expbits - 1;
+		po.use_max_decimals = true;
+		po.show_ending_zeroes = true;
+		po.round_halfway_to_even = true;
+		po.binary_bits = 1;
+		string sfrac = nrfrac.print(po);
+		if(subnormal && sfrac[0] == '1') {
+			sfrac = "";
+			nrexp = 1;
+			for(size_t i = expbits + 1; i < bits; i++) sfrac += "1";
+		} else if(!subnormal && sfrac[0] == '0') {
+			if(rerun) return "";
+			nrexp--;
+			nrexp -= expbias;
+			rerun = true;
+			goto tofloat_afterexp;
+		} else if(sfrac[1] == '0') {
+			if(rerun) return "";
+			nrexp++;
+			nrexp -= expbias;
+			rerun = true;
+			goto tofloat_afterexp;
+		}
+		PrintOptions po2;
+		po2.base = BASE_BINARY;
+		po2.twos_complement = false;
+		po2.min_exp = 0;
+		po2.base_display = BASE_DISPLAY_NONE;
+		po2.binary_bits = expbits;
+		sbin += nrexp.print(po2);
+		if(sbin.length() < expbits + 1) sbin.insert(1, expbits + 1 - sbin.length(), '0');
+		sbin += sfrac.substr(2);
+		if(sbin.length() < bits) sbin.append(bits - sbin.length(), '0');
+	}
+	return sbin;
+}
+
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
 	if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 	// reset InternalPrintStruct (used for separate handling sign, scientific notation, numerator/denominator, imaginary/real parts, etc)
@@ -9666,91 +9808,91 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.im) *ips.im = "";
 	if(ips.iexp) *ips.iexp = 0;
 	if(po.is_approximate && isApproximate()) *po.is_approximate = true;
-	if(po.base == BASE_FLOAT64) {
+	if(po.base == BASE_FLOAT16 || po.base == BASE_FLOAT128 || po.base == BASE_FLOAT32 || po.base == BASE_FLOAT64) {
 		if(isInterval()) {
 			Number nr(*this);
 			nr.intervalToMidValue();
 			return nr.print(po, ips);
 		}
-		union u_double d;
-		if(isReal()) {
-			if(n_type == NUMBER_TYPE_RATIONAL) {
-				d.d = mpq_get_d(r_value);
-			} else if(n_type == NUMBER_TYPE_FLOAT) {
-				d.d = mpfr_get_d(fl_value, MPFR_RNDN);
-			}
-		} else if(isPlusInfinity()) {
-			d.d = INFINITY;
-		} else if(isMinusInfinity()) {
-			d.d = -INFINITY;
-		} else {
-			d.d = NAN;
-		}
-		if(po.is_approximate) {
-			Number nr_test;
-			nr_test.setFloat(d.d);
-			if(!equals(nr_test)) *po.is_approximate = true;
-		}
+		unsigned int bits = 0;
 		Number nr;
-		Number ival(1);
-		for(int i = 0; i < (int) sizeof(double); i++) {
-			unsigned char b = d.data[i];
-			for(int i2 = 0; i2 < 8 * (int) sizeof(b); i2++) {
-				if(b & (1 << i2)) nr += ival;
-				ival *= 2;
+		if(po.base == BASE_FLOAT16) {
+			bits = 16;
+		} else if(po.base == BASE_FLOAT32) {
+			bits = 32;
+			/*union u_float d;
+			if(isReal()) {
+				if(n_type == NUMBER_TYPE_RATIONAL) {
+					d.d = (float) mpq_get_d(r_value);
+				} else if(n_type == NUMBER_TYPE_FLOAT) {
+					d.d = mpfr_get_flt(fl_value, MPFR_RNDN);
+				}
+			} else if(isPlusInfinity()) {
+				d.d = INFINITY;
+			} else if(isMinusInfinity()) {
+				d.d = -INFINITY;
+			} else {
+				d.d = NAN;
 			}
+			if(po.is_approximate) {
+				Number nr_test;
+				nr_test.setFloat(d.d);
+				if(!equals(nr_test)) *po.is_approximate = true;
+			}
+			Number ival(1);
+			for(int i = 0; i < (int) sizeof(float); i++) {
+				unsigned char b = d.data[i];
+				for(int i2 = 0; i2 < 8 * (int) sizeof(b); i2++) {
+					if(b & (1 << i2)) nr += ival;
+					ival *= 2;
+				}
+			}*/
+		} else if(po.base == BASE_FLOAT64) {
+			bits = 64;
+			/*union u_double d;
+			if(isReal()) {
+				if(n_type == NUMBER_TYPE_RATIONAL) {
+					d.d = mpq_get_d(r_value);
+				} else if(n_type == NUMBER_TYPE_FLOAT) {
+					d.d = mpfr_get_d(fl_value, MPFR_RNDN);
+				}
+			} else if(isPlusInfinity()) {
+				d.d = INFINITY;
+			} else if(isMinusInfinity()) {
+				d.d = -INFINITY;
+			} else {
+				d.d = NAN;
+			}
+			if(po.is_approximate) {
+				Number nr_test;
+				nr_test.setFloat(d.d);
+				if(!equals(nr_test)) *po.is_approximate = true;
+			}
+			Number ival(1);
+			for(int i = 0; i < (int) sizeof(double); i++) {
+				unsigned char b = d.data[i];
+				for(int i2 = 0; i2 < 8 * (int) sizeof(b); i2++) {
+					if(b & (1 << i2)) nr += ival;
+					ival *= 2;
+				}
+			}*/
+		} else if(po.base == BASE_FLOAT128) {
+			bits = 128;
 		}
+		string sbin = to_float(*this, bits);
+		ParseOptions pa;
+		pa.base = BASE_BINARY;
+		nr.set(sbin, pa);
 		PrintOptions po2 = po;
 		po2.base = BASE_BINARY;
-		po2.binary_bits = 64;
+		po2.binary_bits = bits;
 		po2.min_exp = 0;
 		po2.max_decimals = 0;
 		po2.use_max_decimals = true;
 		po2.is_approximate = po.is_approximate;
-		return nr.print(po2, ips);
-	}
-	if(po.base == BASE_FLOAT32) {
-		if(isInterval()) {
-			Number nr(*this);
-			nr.intervalToMidValue();
-			return nr.print(po, ips);
-		}
-		union u_float d;
-		if(isReal()) {
-			if(n_type == NUMBER_TYPE_RATIONAL) {
-				d.d = (float) mpq_get_d(r_value);
-			} else if(n_type == NUMBER_TYPE_FLOAT) {
-				d.d = mpfr_get_flt(fl_value, MPFR_RNDN);
-			}
-		} else if(isPlusInfinity()) {
-			d.d = INFINITY;
-		} else if(isMinusInfinity()) {
-			d.d = -INFINITY;
-		} else {
-			d.d = NAN;
-		}
-		if(po.is_approximate) {
-			Number nr_test;
-			nr_test.setFloat(d.d);
-			if(!equals(nr_test)) *po.is_approximate = true;
-		}
-		Number nr;
-		Number ival(1);
-		for(int i = 0; i < (int) sizeof(float); i++) {
-			unsigned char b = d.data[i];
-			for(int i2 = 0; i2 < 8 * (int) sizeof(b); i2++) {
-				if(b & (1 << i2)) nr += ival;
-				ival *= 2;
-			}
-		}
-		PrintOptions po2 = po;
-		po2.base = BASE_BINARY;
-		po2.binary_bits = 32;
-		po2.min_exp = 0;
-		po2.max_decimals = 0;
-		po2.use_max_decimals = true;
-		po2.is_approximate = po.is_approximate;
-		return nr.print(po2, ips);
+		string str = nr.print(po2, ips);
+		if(str.length() < bits) str.insert(0, bits - str.length(), '0');
+		return str;
 	}
 	if(po.base == BASE_BIJECTIVE_26 && isReal()) {
 		// bijective base 26 (uses digits A-Z, A=1)
@@ -11730,6 +11872,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpz_inits(num, d, remainder, remainder2, exp, NULL);
 		mpz_set(d, mpq_denref(r_value));
 		mpz_set(num, mpq_numref(r_value));
+
 		bool neg = (mpz_sgn(num) < 0);
 		if(neg) mpz_neg(num, num);
 		mpz_tdiv_qr(num, remainder, num, d);
@@ -11874,6 +12017,19 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(po.preserve_format) precision2 += 100;
 		long int prec2_begin = precision2;
 		mpz_t *remcopy;
+		if(rerun && !exact && !started && precision2 == 0) {
+			while(true) {
+				mpz_set(remainder_bak, remainder);
+				mpz_mul_si(remainder, remainder, base);
+				mpz_tdiv_qr(remainder, remainder2, remainder, d);
+				if(mpz_sgn(remainder) != 0) {
+					mpz_set(remainder, remainder_bak);
+					break;
+				}
+				l10++;
+				mpz_set(remainder, remainder2);
+			}
+		}
 		while(!exact && precision2 > 0) {
 			if(try_infinite_series) {
 				remcopy = (mpz_t*) malloc(sizeof(mpz_t));
@@ -11942,8 +12098,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpq_t q_rem, q_base_half;
 			mpq_inits(q_rem, q_base_half, NULL);
 			mpz_set(mpq_numref(q_rem), remainder);
+			mpz_set_ui(mpq_denref(q_rem), 1);
 			mpz_set_si(mpq_numref(q_base_half), base);
 			mpz_set_ui(mpq_denref(q_base_half), 2);
+			mpq_canonicalize(q_base_half);
 			int i_sign = mpq_cmp(q_rem, q_base_half);
 			if(po.round_halfway_to_even && mpz_sgn(remainder2) == 0 && mpz_even_p(num)) {
 				if(i_sign > 0) mpz_add_ui(num, num, 1);
@@ -12007,7 +12165,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				goto rational_rerun;
 			}
 		}
-
 		if(!rerun && num_sign == 0 && expo <= 0 && po.use_max_decimals && po.max_decimals >= 0 && l10 + expo > po.max_decimals) {
 			precision2 = po.max_decimals + (str.length() - l10 - expo);
 			try_infinite_series = false;

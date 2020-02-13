@@ -1826,12 +1826,33 @@ void speed_test() {
 	//cout << v4.size() << ":" << v4[0] << ":" << v4[v4.size() - 1] << endl;
 }
 
+Number nr2;
+string sbin;
+
+bool test_float(const Number &nr) {
+	PrintOptions po;
+	po.base = BASE_FLOAT64;
+	po.base_display = BASE_DISPLAY_NONE;
+	sbin = nr.print(po);
+	if(sbin != to_float(nr, 64)) {
+		cout << nr << ":" << sbin << ":" << to_float(nr, 64) << endl;
+		return false;
+	}
+	from_float(nr2, sbin, 64);
+	if(nr2.print(po) != sbin) {
+		if(nr2.isZero() && sbin[0] == '1' && sbin.find("1", 1) == string::npos) return true;
+		cout << "B:" << nr << ":" << nr2 << ":" << sbin << endl;
+		return false;
+	}
+	return true;
+}
+
 int main(int argc, char *argv[]) {
 
 	new Calculator(true);
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
-	CALCULATOR->setPrecision(8);
+	CALCULATOR->setPrecision(100);
 
 	CALCULATOR->useIntervalArithmetic();
 	PrintOptions po = CALCULATOR->messagePrintOptions();
@@ -1977,6 +1998,24 @@ int main(int argc, char *argv[]) {
 	}
 	cout << successes << ":" << imaginary << endl;
 	return 0;*/
+	
+	Number nr;
+	for(long int i = 0; i < 1000000L; i++) {
+		nr.set(rnd_number(false, false, false, false, false));
+		if(i % 2 == 1) nr.exp2(rand() % 2200 - 1100);
+		if(!test_float(nr)) return 0;
+	}
+	Number nr2;
+	for(long int i = 0; i < 1000000L; i++) {
+		nr.rand();
+		nr2.rand();
+		nr /= nr2;
+		if(i % 2 == 1) nr.exp2(rand() % 2200 - 1100);
+		nr.intervalToMidValue();
+		if(!test_float(nr)) return 0;
+	}
+	
+	return 0;
 
 	v = new KnownVariable("", "v", m_zero);
 

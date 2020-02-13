@@ -619,6 +619,8 @@ void set_option(string str) {
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "bijective", _("bijective")) || str == "b26" || str == "B26") v = BASE_BIJECTIVE_26;
 		else if(equalsIgnoreCase(svalue, "float32") || equalsIgnoreCase(svalue, "float")) {if(b_in) v = 0; else v = BASE_FLOAT32;}
 		else if(equalsIgnoreCase(svalue, "float64") || equalsIgnoreCase(svalue, "double")) {if(b_in) v = 0; else v = BASE_FLOAT64;}
+		else if(equalsIgnoreCase(svalue, "float16")) {if(b_in) v = 0; else v = BASE_FLOAT16;}
+		else if(equalsIgnoreCase(svalue, "float128")) {if(b_in) v = 0; else v = BASE_FLOAT128;}
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "time", _("time"))) {if(b_in) v = 0; else v = BASE_TIME;}
 		else if(equalsIgnoreCase(svalue, "hex") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "hexadecimal", _("hexadecimal"))) v = BASE_HEXADECIMAL;
 		else if(equalsIgnoreCase(svalue, "golden") || equalsIgnoreCase(svalue, "golden ratio") || svalue == "φ") v = BASE_GOLDEN_RATIO;
@@ -2629,6 +2631,16 @@ int main(int argc, char *argv[]) {
 				printops.base = BASE_FLOAT64;
 				setResult(NULL, false);
 				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "float16")) {
+				int save_base = printops.base;
+				printops.base = BASE_FLOAT16;
+				setResult(NULL, false);
+				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "float128")) {
+				int save_base = printops.base;
+				printops.base = BASE_FLOAT128;
+				setResult(NULL, false);
+				printops.base = save_base;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "time", _("time"))) {
 				int save_base = printops.base;
 				printops.base = BASE_TIME;
@@ -2643,6 +2655,13 @@ int main(int argc, char *argv[]) {
 				printops.time_zone = TIME_ZONE_UTC;
 				setResult(NULL, false);
 				printops.time_zone = TIME_ZONE_LOCAL;
+			} else if(str.length() > 3 && equalsIgnoreCase(str.substr(0, 3), "bin") && is_in(NUMBERS, str[3])) {
+				int save_base = printops.base;
+				printops.base = BASE_BINARY;
+				printops.binary_bits = s2i(str.substr(3));
+				setResult(NULL, false);
+				printops.base = save_base;
+				printops.binary_bits = 0;
 			} else if(str.length() > 3 && (equalsIgnoreCase(str.substr(0, 3), "utc") || equalsIgnoreCase(str.substr(0, 3), "gmt"))) {
 				string to_str = str.substr(3);
 				remove_blanks(to_str);
@@ -3007,8 +3026,10 @@ int main(int argc, char *argv[]) {
 				case BASE_ROMAN_NUMERALS: {str += _("roman"); break;}
 				case BASE_BIJECTIVE_26: {str += _("bijective"); break;}
 				case BASE_SEXAGESIMAL: {str += _("sexagesimal"); break;}
-				case BASE_FLOAT32: {str += _("float32"); break;}
-				case BASE_FLOAT64: {str += _("float64"); break;}
+				case BASE_FLOAT16: {str += "float16"; break;}
+				case BASE_FLOAT32: {str += "float32"; break;}
+				case BASE_FLOAT64: {str += "float64"; break;}
+				case BASE_FLOAT128: {str += "float128"; break;}
 				case BASE_TIME: {str += _("time"); break;}
 				case BASE_GOLDEN_RATIO: {str += "golden"; break;}
 				case BASE_SUPER_GOLDEN_RATIO: {str += "supergolden"; break;}
@@ -4038,6 +4059,10 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex / hexadecimal (show as hexadecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- sex / sexagesimal (show as sexagesimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bijective (shown in bijective base-26)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- float16 (show binary representation of 16-bit floating-point)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- float32 / float (show binary representation of 32-bit floating-point)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- float64 / double (show binary representation of 64-bit floating-point)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- float128 (show binary representation of 128-bit floating-point)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- roman (show as roman numerals)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- time (show in time format)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- unicode"));
@@ -4806,6 +4831,22 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				printops.base = save_base;
 				expression_str = str;
 				return;
+			} else if(equalsIgnoreCase(to_str, "float16")) {
+				int save_base = printops.base;
+				expression_str = from_str;
+				printops.base = BASE_FLOAT16;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.base = save_base;
+				expression_str = str;
+				return;
+			} else if(equalsIgnoreCase(to_str, "float128")) {
+				int save_base = printops.base;
+				expression_str = from_str;
+				printops.base = BASE_FLOAT128;
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.base = save_base;
+				expression_str = str;
+				return;
 			} else if(equalsIgnoreCase(to_str, "time") || equalsIgnoreCase(to_str, _("time"))) {
 				int save_base = printops.base;
 				expression_str = from_str;
@@ -4827,6 +4868,16 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				printops.time_zone = TIME_ZONE_UTC;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.time_zone = TIME_ZONE_LOCAL;
+				expression_str = str;
+				return;
+			} else if(to_str.length() > 3 && equalsIgnoreCase(to_str.substr(0, 3), "bin") && is_in(NUMBERS, to_str[3])) {
+				expression_str = from_str;
+				int save_base = printops.base;
+				printops.base = BASE_BINARY;
+				printops.binary_bits = s2i(to_str.substr(3));
+				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
+				printops.base = save_base;
+				printops.binary_bits = 0;
 				expression_str = str;
 				return;
 			} else if(to_str.length() > 3 && (equalsIgnoreCase(to_str.substr(0, 3), "utc") || equalsIgnoreCase(to_str.substr(0, 3), "gmt"))) {
