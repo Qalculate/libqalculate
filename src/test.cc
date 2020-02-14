@@ -1831,7 +1831,7 @@ string sbin;
 
 bool test_float(const Number &nr) {
 	PrintOptions po;
-	po.base = BASE_FLOAT64;
+	po.base = BASE_FP64;
 	po.base_display = BASE_DISPLAY_NONE;
 	sbin = nr.print(po);
 	if(sbin != to_float(nr, 64)) {

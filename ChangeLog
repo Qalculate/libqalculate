@@ -1,6 +1,6 @@
 2019-02-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* IEEE 754 floating point (binary) conversion - functions float(), floatBits(), floatError(), floatParts(), and floatValue(), and "to" conversion using float16, float32/float, float64/double, float128
+	* IEEE 754 floating point (binary) conversion - functions float(), floatBits(), floatError(), floatParts(), and floatValue(), and "to" conversion using  binary16/fp16, binary32/fp32/float, binary64/fp64/double, and binary128/fp128
 	* Support specification of number of bits for binary "to" conversion (4 to bin16 = 0000 0000 0000 0100)
 	* Fix rounding with max decimals in some cases
 

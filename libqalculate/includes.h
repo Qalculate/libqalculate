@@ -316,10 +316,10 @@ typedef enum {
 #define BASE_E			-8
 #define BASE_SQRT2		-9
 #define BASE_BIJECTIVE_26	-26
-#define BASE_FLOAT16		-30
-#define BASE_FLOAT32		-31
-#define BASE_FLOAT64		-32
-#define BASE_FLOAT128		-33
+#define BASE_FP16		-30
+#define BASE_FP32		-31
+#define BASE_FP64		-32
+#define BASE_FP128		-33
 
 #define EXP_BASE_3		-3
 #define EXP_PRECISION		-1

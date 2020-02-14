@@ -9798,7 +9798,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.im) *ips.im = "";
 	if(ips.iexp) *ips.iexp = 0;
 	if(po.is_approximate && isApproximate()) *po.is_approximate = true;
-	if(po.base == BASE_FLOAT16 || po.base == BASE_FLOAT128 || po.base == BASE_FLOAT32 || po.base == BASE_FLOAT64) {
+	if(po.base == BASE_FP16 || po.base == BASE_FP128 || po.base == BASE_FP32 || po.base == BASE_FP64) {
 		if(isInterval()) {
 			Number nr(*this);
 			nr.intervalToMidValue();
@@ -9807,10 +9807,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		unsigned int bits = 0;
 		Number nr;
 		switch(po.base) {
-			case BASE_FLOAT16: {bits = 16; break;}
-			case BASE_FLOAT32: {bits = 32; break;}
-			case BASE_FLOAT64: {bits = 64; break;}
-			case BASE_FLOAT128: {bits = 128; break;}
+			case BASE_FP16: {bits = 16; break;}
+			case BASE_FP32: {bits = 32; break;}
+			case BASE_FP64: {bits = 64; break;}
+			case BASE_FP128: {bits = 128; break;}
 		}
 		string sbin = to_float(*this, bits);
 		ParseOptions pa;
