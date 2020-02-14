@@ -4054,15 +4054,13 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- mixed (convert to mixed units, e.g. hours + minutes)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bin / binary (show as binary number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- bin# (show as binary number with specified number of bits)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- oct / octal (show as octal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- duo / duodecimal (show as duodecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex / hexadecimal (show as hexadecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- sex / sexagesimal (show as sexagesimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bijective (shown in bijective base-26)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- float16 (show binary representation of 16-bit floating-point)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- float32 / float (show binary representation of 32-bit floating-point)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- float64 / double (show binary representation of 64-bit floating-point)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- float128 (show binary representation of 128-bit floating-point)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- float16, float32, float64, float128 (show in binary floating-point format)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- roman (show as roman numerals)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- time (show in time format)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- unicode"));

@@ -1616,8 +1616,10 @@ void Calculator::addBuiltinFunctions() {
 	f_roman = addFunction(new RomanFunction());
 	addFunction(new BijectiveFunction());
 
-	addFunction(new FromIEEE754FloatFunction());
-	addFunction(new ToIEEE754FloatFunction());
+	addFunction(new IEEE754FloatFunction());
+	addFunction(new IEEE754FloatBitsFunction());
+	addFunction(new IEEE754FloatComponentsFunction());
+	addFunction(new IEEE754FloatValueFunction());
 	addFunction(new IEEE754FloatErrorFunction());
 
 	f_ascii = addFunction(new AsciiFunction());
