@@ -761,18 +761,18 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		} else if(equalsIgnoreCase(to_str, "sexa") || equalsIgnoreCase(to_str, "sexagesimal") || equalsIgnoreCase(to_str, _("sexagesimal"))) {
 			str = from_str;
 			printops.base = BASE_SEXAGESIMAL;
-		} else if(equalsIgnoreCase(to_str, "float32") || equalsIgnoreCase(to_str, "float")) {
+		} else if(equalsIgnoreCase(to_str, "binary32") || equalsIgnoreCase(to_str, "float") || equalsIgnoreCase(to_str, "fp32")) {
 			str = from_str;
-			printops.base = BASE_FLOAT32;
-		} else if(equalsIgnoreCase(to_str, "float64") || equalsIgnoreCase(to_str, "double")) {
+			printops.base = BASE_FP32;
+		} else if(equalsIgnoreCase(to_str, "binary64") || equalsIgnoreCase(to_str, "double") || equalsIgnoreCase(to_str, "fp64")) {
 			str = from_str;
-			printops.base = BASE_FLOAT64;
-		} else if(equalsIgnoreCase(to_str, "float16")) {
+			printops.base = BASE_FP64;
+		} else if(equalsIgnoreCase(to_str, "binary16") || equalsIgnoreCase(to_str, "fp16")) {
 			str = from_str;
-			printops.base = BASE_FLOAT16;
-		} else if(equalsIgnoreCase(to_str, "float128")) {
+			printops.base = BASE_FP16;
+		} else if(equalsIgnoreCase(to_str, "binary128") || equalsIgnoreCase(to_str, "fp128")) {
 			str = from_str;
-			printops.base = BASE_FLOAT128;
+			printops.base = BASE_FP128;
 		} else if(equalsIgnoreCase(to_str, "time") || equalsIgnoreCase(to_str, _("time"))) {
 			str = from_str;
 			printops.base = BASE_TIME;

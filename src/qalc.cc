@@ -617,10 +617,10 @@ void set_option(string str) {
 		bool b_out = EQUALS_IGNORECASE_AND_LOCAL(svar, "output base", _("output base")) || svar == "outbase";
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "roman", _("roman"))) v = BASE_ROMAN_NUMERALS;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "bijective", _("bijective")) || str == "b26" || str == "B26") v = BASE_BIJECTIVE_26;
-		else if(equalsIgnoreCase(svalue, "float32") || equalsIgnoreCase(svalue, "float")) {if(b_in) v = 0; else v = BASE_FLOAT32;}
-		else if(equalsIgnoreCase(svalue, "float64") || equalsIgnoreCase(svalue, "double")) {if(b_in) v = 0; else v = BASE_FLOAT64;}
-		else if(equalsIgnoreCase(svalue, "float16")) {if(b_in) v = 0; else v = BASE_FLOAT16;}
-		else if(equalsIgnoreCase(svalue, "float128")) {if(b_in) v = 0; else v = BASE_FLOAT128;}
+		else if(equalsIgnoreCase(svalue, "fp32") || equalsIgnoreCase(svalue, "binary32") || equalsIgnoreCase(svalue, "float")) {if(b_in) v = 0; else v = BASE_FP32;}
+		else if(equalsIgnoreCase(svalue, "fp64") || equalsIgnoreCase(svalue, "binary64") || equalsIgnoreCase(svalue, "double")) {if(b_in) v = 0; else v = BASE_FP64;}
+		else if(equalsIgnoreCase(svalue, "fp16") || equalsIgnoreCase(svalue, "binary16")) {if(b_in) v = 0; else v = BASE_FP16;}
+		else if(equalsIgnoreCase(svalue, "fp128") || equalsIgnoreCase(svalue, "binary128")) {if(b_in) v = 0; else v = BASE_FP128;}
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "time", _("time"))) {if(b_in) v = 0; else v = BASE_TIME;}
 		else if(equalsIgnoreCase(svalue, "hex") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "hexadecimal", _("hexadecimal"))) v = BASE_HEXADECIMAL;
 		else if(equalsIgnoreCase(svalue, "golden") || equalsIgnoreCase(svalue, "golden ratio") || svalue == "φ") v = BASE_GOLDEN_RATIO;
@@ -2621,24 +2621,24 @@ int main(int argc, char *argv[]) {
 				printops.base = BASE_SEXAGESIMAL;
 				setResult(NULL, false);
 				printops.base = save_base;
-			} else if(equalsIgnoreCase(str, "float32") || equalsIgnoreCase(str, "float")) {
+			} else if(equalsIgnoreCase(str, "fp32") || equalsIgnoreCase(str, "binary32") || equalsIgnoreCase(str, "float")) {
 				int save_base = printops.base;
-				printops.base = BASE_FLOAT32;
+				printops.base = BASE_FP32;
 				setResult(NULL, false);
 				printops.base = save_base;
-			} else if(equalsIgnoreCase(str, "float64") || equalsIgnoreCase(str, "double")) {
+			} else if(equalsIgnoreCase(str, "fp64") || equalsIgnoreCase(str, "binary64") || equalsIgnoreCase(str, "double")) {
 				int save_base = printops.base;
-				printops.base = BASE_FLOAT64;
+				printops.base = BASE_FP64;
 				setResult(NULL, false);
 				printops.base = save_base;
-			} else if(equalsIgnoreCase(str, "float16")) {
+			} else if(equalsIgnoreCase(str, "fp16") || equalsIgnoreCase(str, "binary16")) {
 				int save_base = printops.base;
-				printops.base = BASE_FLOAT16;
+				printops.base = BASE_FP16;
 				setResult(NULL, false);
 				printops.base = save_base;
-			} else if(equalsIgnoreCase(str, "float128")) {
+			} else if(equalsIgnoreCase(str, "fp128") || equalsIgnoreCase(str, "binary128")) {
 				int save_base = printops.base;
-				printops.base = BASE_FLOAT128;
+				printops.base = BASE_FP128;
 				setResult(NULL, false);
 				printops.base = save_base;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "time", _("time"))) {
@@ -3026,10 +3026,10 @@ int main(int argc, char *argv[]) {
 				case BASE_ROMAN_NUMERALS: {str += _("roman"); break;}
 				case BASE_BIJECTIVE_26: {str += _("bijective"); break;}
 				case BASE_SEXAGESIMAL: {str += _("sexagesimal"); break;}
-				case BASE_FLOAT16: {str += "float16"; break;}
-				case BASE_FLOAT32: {str += "float32"; break;}
-				case BASE_FLOAT64: {str += "float64"; break;}
-				case BASE_FLOAT128: {str += "float128"; break;}
+				case BASE_FP16: {str += "fp16"; break;}
+				case BASE_FP32: {str += "fp32"; break;}
+				case BASE_FP64: {str += "fp64"; break;}
+				case BASE_FP128: {str += "fp128"; break;}
 				case BASE_TIME: {str += _("time"); break;}
 				case BASE_GOLDEN_RATIO: {str += "golden"; break;}
 				case BASE_SUPER_GOLDEN_RATIO: {str += "supergolden"; break;}
@@ -4060,7 +4060,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex / hexadecimal (show as hexadecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- sex / sexagesimal (show as sexagesimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bijective (shown in bijective base-26)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- float16, float32, float64, float128 (show in binary floating-point format)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- fp16, fp32, fp64, fp128 (show in binary floating-point format)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- roman (show as roman numerals)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- time (show in time format)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- unicode"));
@@ -4813,34 +4813,34 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				printops.base = save_base;
 				expression_str = str;
 				return;
-			} else if(equalsIgnoreCase(to_str, "float32") || equalsIgnoreCase(to_str, "float")) {
+			} else if(equalsIgnoreCase(to_str, "fp32") || equalsIgnoreCase(to_str, "binary32") || equalsIgnoreCase(to_str, "float")) {
 				int save_base = printops.base;
 				expression_str = from_str;
-				printops.base = BASE_FLOAT32;
+				printops.base = BASE_FP32;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
 				return;
-			} else if(equalsIgnoreCase(to_str, "float64") || equalsIgnoreCase(to_str, "double")) {
+			} else if(equalsIgnoreCase(to_str, "fp64") || equalsIgnoreCase(to_str, "binary64") || equalsIgnoreCase(to_str, "double")) {
 				int save_base = printops.base;
 				expression_str = from_str;
-				printops.base = BASE_FLOAT64;
+				printops.base = BASE_FP64;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
 				return;
-			} else if(equalsIgnoreCase(to_str, "float16")) {
+			} else if(equalsIgnoreCase(to_str, "fp16") || equalsIgnoreCase(to_str, "binary16")) {
 				int save_base = printops.base;
 				expression_str = from_str;
-				printops.base = BASE_FLOAT16;
+				printops.base = BASE_FP16;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
 				return;
-			} else if(equalsIgnoreCase(to_str, "float128")) {
+			} else if(equalsIgnoreCase(to_str, "fp128") || equalsIgnoreCase(to_str, "binary128")) {
 				int save_base = printops.base;
 				expression_str = from_str;
-				printops.base = BASE_FLOAT128;
+				printops.base = BASE_FP128;
 				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
 				printops.base = save_base;
 				expression_str = str;
