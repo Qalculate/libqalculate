@@ -9646,15 +9646,6 @@ ostream& operator << (ostream &os, const Number &nr) {
 	return os;
 }
 
-union u_double {
-	double d;
-	unsigned char data[sizeof(double)];
-};
-union u_float {
-	float d;
-	unsigned char data[sizeof(float)];
-};
-
 unsigned int standard_expbits(unsigned int bits) {
 	if(bits == 16) return 5;
 	else if(bits == 32) return 8;
@@ -9714,7 +9705,6 @@ string to_float(Number nr, unsigned int bits, unsigned int expbits) {
 	Number expbias(2);
 	expbias ^= (expbits - 1);
 	expbias--;
-	expbias.intervalToMidValue();
 	nr.intervalToMidValue();
 	string sbin = "0";
 	if(nr.isNegative()) {
@@ -9816,68 +9806,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		unsigned int bits = 0;
 		Number nr;
-		if(po.base == BASE_FLOAT16) {
-			bits = 16;
-		} else if(po.base == BASE_FLOAT32) {
-			bits = 32;
-			/*union u_float d;
-			if(isReal()) {
-				if(n_type == NUMBER_TYPE_RATIONAL) {
-					d.d = (float) mpq_get_d(r_value);
-				} else if(n_type == NUMBER_TYPE_FLOAT) {
-					d.d = mpfr_get_flt(fl_value, MPFR_RNDN);
-				}
-			} else if(isPlusInfinity()) {
-				d.d = INFINITY;
-			} else if(isMinusInfinity()) {
-				d.d = -INFINITY;
-			} else {
-				d.d = NAN;
-			}
-			if(po.is_approximate) {
-				Number nr_test;
-				nr_test.setFloat(d.d);
-				if(!equals(nr_test)) *po.is_approximate = true;
-			}
-			Number ival(1);
-			for(int i = 0; i < (int) sizeof(float); i++) {
-				unsigned char b = d.data[i];
-				for(int i2 = 0; i2 < 8 * (int) sizeof(b); i2++) {
-					if(b & (1 << i2)) nr += ival;
-					ival *= 2;
-				}
-			}*/
-		} else if(po.base == BASE_FLOAT64) {
-			bits = 64;
-			/*union u_double d;
-			if(isReal()) {
-				if(n_type == NUMBER_TYPE_RATIONAL) {
-					d.d = mpq_get_d(r_value);
-				} else if(n_type == NUMBER_TYPE_FLOAT) {
-					d.d = mpfr_get_d(fl_value, MPFR_RNDN);
-				}
-			} else if(isPlusInfinity()) {
-				d.d = INFINITY;
-			} else if(isMinusInfinity()) {
-				d.d = -INFINITY;
-			} else {
-				d.d = NAN;
-			}
-			if(po.is_approximate) {
-				Number nr_test;
-				nr_test.setFloat(d.d);
-				if(!equals(nr_test)) *po.is_approximate = true;
-			}
-			Number ival(1);
-			for(int i = 0; i < (int) sizeof(double); i++) {
-				unsigned char b = d.data[i];
-				for(int i2 = 0; i2 < 8 * (int) sizeof(b); i2++) {
-					if(b & (1 << i2)) nr += ival;
-					ival *= 2;
-				}
-			}*/
-		} else if(po.base == BASE_FLOAT128) {
-			bits = 128;
+		switch(po.base) {
+			case BASE_FLOAT16: {bits = 16; break;}
+			case BASE_FLOAT32: {bits = 32; break;}
+			case BASE_FLOAT64: {bits = 64; break;}
+			case BASE_FLOAT128: {bits = 128; break;}
 		}
 		string sbin = to_float(*this, bits);
 		ParseOptions pa;
