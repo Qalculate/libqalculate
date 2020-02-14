@@ -1467,7 +1467,7 @@ int IEEE754FloatBitsFunction::calculate(MathStructure &mstruct, const MathStruct
 	mstruct = nr;
 	return 1;
 }
-IEEE754FloatComponentsFunction::IEEE754FloatComponentsFunction() : MathFunction("FloatComponents", 1, 3) {
+IEEE754FloatComponentsFunction::IEEE754FloatComponentsFunction() : MathFunction("floatParts", 1, 3) {
 	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
