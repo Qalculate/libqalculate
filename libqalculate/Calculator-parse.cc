@@ -40,7 +40,7 @@ bool is_not_number(char c, int base) {
 	// in non standard bases every character might be a digit
 	if(base == -1) return false;
 	// duodecimal bases uses 0-9, E, X
-	if(base == -12) return c != 'E' && c != 'X';
+	if(base == -12) return c != 'E' && c != 'X' && c != 'A' && c != 'B' && c != 'a' && c != 'b';
 	if(base <= 10) return true;
 	// bases 11-36 is case insensitive
 	if(base <= 36) {
@@ -216,7 +216,7 @@ const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", 
 #define INTERNAL_SIGNS_COUNT 8
 #define INTERNAL_NUMBER_CHARS "\b"
 #define INTERNAL_OPERATORS "\a\b%\x1c"
-#define DUODECIMAL_CHARS "EX"
+#define DUODECIMAL_CHARS "EXABab"
 
 void Calculator::parseSigns(string &str, bool convert_to_internal_representation) const {
 	vector<size_t> q_begin;
@@ -461,14 +461,21 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &parseoptions) {
 
 	ParseOptions po = parseoptions;
-	MathStructure *unended_function = po.unended_function;
-	po.unended_function = NULL;
 
 	if(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) {
 		// Read whole expression as a number if the number base digits other than alphanumerical characters
 		mstruct->set(Number(str, po));
 		return;
 	}
+
+	if(po.base != BASE_DUODECIMAL && (str.find("↊") != string::npos || str.find("↋") != string::npos)) {
+		po.base = BASE_DUODECIMAL;
+		parse(mstruct, str, po);
+		return;
+	}
+	
+	MathStructure *unended_function = po.unended_function;
+	po.unended_function = NULL;
 
 	// use parse option number base to determine which characters are used as numerical digits and set base accordingly.
 	// (-1=base using digits other than 0-9, a-z, A-Z; -12=duodecimal)
@@ -987,6 +994,27 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					po_bin.base = BASE_BINARY;
 					stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 					MathStructure *mstruct = new MathStructure(Number(str.substr(str_index, i - str_index), po_bin));
+					stmp += i2s(addId(mstruct));
+					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+					str.replace(str_index, name_length, stmp);
+					str_index += stmp.length() - 1;
+				}
+			} else if(base <= 14 && str_index + 2 < str.length() && (str[str_index + 1] == 'd' || str[str_index + 1] == 'D') && is_in(NUMBERS DUODECIMAL_CHARS, str[str_index + 2])) {
+				//duodecimal number 0d...
+				if(po.base == BASE_DUODECIMAL) {
+					str.erase(str_index, 2);
+				} else {
+					size_t i;
+					if(po.rpn) i = str.find_first_not_of(NUMBER_ELEMENTS DUODECIMAL_CHARS, str_index + 2);
+					else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS DUODECIMAL_CHARS, str_index + 2);
+					size_t name_length;
+					if(i == string::npos) i = str.length();
+					while(str[i - 1] == SPACE_CH) i--;
+					name_length = i - str_index;
+					ParseOptions po_duo = po;
+					po_duo.base = BASE_DUODECIMAL;
+					stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+					MathStructure *mstruct = new MathStructure(Number(str.substr(str_index, i - str_index), po_duo));
 					stmp += i2s(addId(mstruct));
 					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 					str.replace(str_index, name_length, stmp);
