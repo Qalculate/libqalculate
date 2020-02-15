@@ -811,6 +811,8 @@ void Number::set(string number, const ParseOptions &po) {
 		number.erase(number.begin());
 	} else if(po.base == 2 && number.length() >= 2 && number[0] == '0' && (number[1] == 'b' || number[1] == 'B')) {
 		number = number.substr(2, number.length() - 2);
+	} else if(po.base == 12 && number.length() >= 2 && number[0] == '0' && (number[1] == 'd' || number[1] == 'D')) {
+		number = number.substr(2, number.length() - 2);
 	}
 
 	// determine if value is negative for numbers using binary or hexadecimal complement representation (number that begins with 1 or 8 is negative)
