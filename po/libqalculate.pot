@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-14 09:21+0100\n"
+"POT-Creation-Date: 2020-02-16 10:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1996,8 +1996,7 @@ msgid "- bijective (shown in bijective base-26)"
 msgstr ""
 
 #: ../src/qalc.cc:4063
-msgid ""
-"- float16, float32, float64, float128 (show in binary floating-point format)"
+msgid "- fp16, fp32, fp64, fp128 (show in binary floating-point format)"
 msgstr ""
 
 #: ../src/qalc.cc:4064
@@ -2383,19 +2382,19 @@ msgstr ""
 
 #: ../libqalculate/BuiltinFunctions-number.cc:888
 #: ../libqalculate/BuiltinFunctions-number.cc:918 ../libqalculate/Number.cc:463
-#: ../libqalculate/Number.cc:974
+#: ../libqalculate/Number.cc:976
 #, c-format
 msgid "Character '%s' was ignored in the number \"%s\" with base %s."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-number.cc:1465
-#: ../libqalculate/Number.cc:2045 ../libqalculate/Number.cc:2170
+#: ../libqalculate/BuiltinFunctions-number.cc:1467
+#: ../libqalculate/Number.cc:2047 ../libqalculate/Number.cc:2172
 msgid "Floating point overflow"
 msgstr ""
 
 #. test calculated floating point value and show mpfr errors (show as errors if error_level > 1, show as warnings if error_level = 1, do not generate message if error_level is zero)
-#: ../libqalculate/BuiltinFunctions-number.cc:1466
-#: ../libqalculate/Number.cc:2044 ../libqalculate/Number.cc:2169
+#: ../libqalculate/BuiltinFunctions-number.cc:1468
+#: ../libqalculate/Number.cc:2046 ../libqalculate/Number.cc:2171
 msgid "Floating point underflow"
 msgstr ""
 
@@ -2535,36 +2534,36 @@ msgstr ""
 msgid "Degrees unit is missing. Creating one for this session."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:1700 ../libqalculate/Calculator.cc:1701
-#: ../libqalculate/Calculator.cc:1705
+#: ../libqalculate/Calculator.cc:1701 ../libqalculate/Calculator.cc:1702
+#: ../libqalculate/Calculator.cc:1706
 #: ../libqalculate/Calculator-definitions.cc:3286
 #: ../libqalculate/Calculator-definitions.cc:3456
 #: ../libqalculate/Calculator-definitions.cc:3514
 msgid "Currency"
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:2640
+#: ../libqalculate/Calculator.cc:2641
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
 "the variable will be lost."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:2658
+#: ../libqalculate/Calculator.cc:2659
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the function will be lost."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:2675
+#: ../libqalculate/Calculator.cc:2676
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the unit will be lost."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:2882
+#: ../libqalculate/Calculator.cc:2883
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr ""
@@ -2610,64 +2609,64 @@ msgid "Failed to download exchange rates from %s: %s."
 msgstr ""
 
 #. ignore operators
-#: ../libqalculate/Calculator-parse.cc:1668
-#: ../libqalculate/Calculator-parse.cc:1721
-#: ../libqalculate/Calculator-parse.cc:1725
-#: ../libqalculate/Calculator-parse.cc:2926
-#: ../libqalculate/Calculator-parse.cc:2935
-#: ../libqalculate/Calculator-parse.cc:2990
-#: ../libqalculate/Calculator-parse.cc:3055
-#: ../libqalculate/Calculator-parse.cc:3077
-#: ../libqalculate/Calculator-parse.cc:3078
+#: ../libqalculate/Calculator-parse.cc:1696
+#: ../libqalculate/Calculator-parse.cc:1749
+#: ../libqalculate/Calculator-parse.cc:1753
+#: ../libqalculate/Calculator-parse.cc:2954
+#: ../libqalculate/Calculator-parse.cc:2963
+#: ../libqalculate/Calculator-parse.cc:3018
+#: ../libqalculate/Calculator-parse.cc:3083
+#: ../libqalculate/Calculator-parse.cc:3105
+#: ../libqalculate/Calculator-parse.cc:3106
 #, c-format
 msgid "Misplaced operator(s) \"%s\" ignored"
 msgstr ""
 
 #. ignore operators
-#: ../libqalculate/Calculator-parse.cc:1717
-#: ../libqalculate/Calculator-parse.cc:3079
+#: ../libqalculate/Calculator-parse.cc:1745
+#: ../libqalculate/Calculator-parse.cc:3107
 #, c-format
 msgid "Misplaced '%c' ignored"
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:1759 ../libqalculate/Function.cc:1519
+#: ../libqalculate/Calculator-parse.cc:1787 ../libqalculate/Function.cc:1519
 #: ../libqalculate/Function.cc:1550
 #, c-format
 msgid "Internal id %s does not exist."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:1779
+#: ../libqalculate/Calculator-parse.cc:1807
 #, c-format
 msgid "\"%s\" is not a valid variable/function/unit."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:1794
+#: ../libqalculate/Calculator-parse.cc:1822
 #, c-format
 msgid ""
 "Trailing characters \"%s\" (not a valid variable/function/unit) in number "
 "\"%s\" was ignored."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:2072
+#: ../libqalculate/Calculator-parse.cc:2100
 msgid "RPN syntax error. Values left at the end of the RPN expression."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:2075
-#: ../libqalculate/Calculator-parse.cc:2166
+#: ../libqalculate/Calculator-parse.cc:2103
+#: ../libqalculate/Calculator-parse.cc:2194
 msgid "Unused stack values."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:2208
-#: ../libqalculate/Calculator-parse.cc:2416
+#: ../libqalculate/Calculator-parse.cc:2236
+#: ../libqalculate/Calculator-parse.cc:2444
 #, c-format
 msgid "RPN syntax error. Operator '%c' not supported."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:2254
+#: ../libqalculate/Calculator-parse.cc:2282
 msgid "RPN syntax error. Stack is empty."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:2275
+#: ../libqalculate/Calculator-parse.cc:2303
 msgid "RPN syntax error. Operator ignored as there where only one stack value."
 msgstr ""
 
@@ -3113,58 +3112,63 @@ msgid ""
 "as %s."
 msgstr ""
 
-#: ../libqalculate/Number.cc:885
+#: ../libqalculate/Number.cc:887
 msgid "Too large exponent."
 msgstr ""
 
 #. only allow decimals after last ":"
-#: ../libqalculate/Number.cc:921
+#: ../libqalculate/Number.cc:923
 msgid "':' in decimal number ignored (decimal point detected)."
 msgstr ""
 
-#: ../libqalculate/Number.cc:2046 ../libqalculate/Number.cc:2171
+#: ../libqalculate/Number.cc:2048 ../libqalculate/Number.cc:2173
 msgid "Floating point division by zero exception"
 msgstr ""
 
-#: ../libqalculate/Number.cc:2047 ../libqalculate/Number.cc:2174
+#: ../libqalculate/Number.cc:2049 ../libqalculate/Number.cc:2176
 msgid "Floating point not a number exception"
 msgstr ""
 
-#: ../libqalculate/Number.cc:2048 ../libqalculate/Number.cc:2172
+#: ../libqalculate/Number.cc:2050 ../libqalculate/Number.cc:2174
 msgid "Floating point range exception"
 msgstr ""
 
-#: ../libqalculate/Number.cc:3647
+#: ../libqalculate/Number.cc:3649
 msgid "Division by zero."
 msgstr ""
 
 #. 0^0
-#: ../libqalculate/Number.cc:3653
+#: ../libqalculate/Number.cc:3655
 msgid "0^0 might be considered undefined"
 msgstr ""
 
-#: ../libqalculate/Number.cc:3660
+#: ../libqalculate/Number.cc:3662
 msgid "The result of 0^i is possibly undefined"
 msgstr ""
 
-#: ../libqalculate/Number.cc:3709 ../libqalculate/Number.cc:6138
-#: ../libqalculate/Number.cc:6249 ../libqalculate/Number.cc:6573
-#: ../libqalculate/Number.cc:6581 ../libqalculate/Number.cc:6614
-#: ../libqalculate/Number.cc:6711 ../libqalculate/Number.cc:6860
-#: ../libqalculate/Number.cc:6972
+#: ../libqalculate/Number.cc:3711 ../libqalculate/Number.cc:6140
+#: ../libqalculate/Number.cc:6251 ../libqalculate/Number.cc:6575
+#: ../libqalculate/Number.cc:6583 ../libqalculate/Number.cc:6616
+#: ../libqalculate/Number.cc:6713 ../libqalculate/Number.cc:6862
+#: ../libqalculate/Number.cc:6974
 msgid "Interval calculated wide."
 msgstr ""
 
-#: ../libqalculate/Number.cc:5161 ../libqalculate/Number.cc:5387
-#: ../libqalculate/Number.cc:5474 ../libqalculate/Number.cc:5758
-#: ../libqalculate/Number.cc:5844 ../libqalculate/Number.cc:5930
-#: ../libqalculate/Number.cc:7177 ../libqalculate/Number.cc:7195
-#: ../libqalculate/Number.cc:7214 ../libqalculate/Number.cc:7550
-#: ../libqalculate/Number.cc:7597 ../libqalculate/Number.cc:7742
-#: ../libqalculate/Number.cc:8075 ../libqalculate/Number.cc:8231
-#: ../libqalculate/Number.cc:8663 ../libqalculate/Number.cc:9058
+#: ../libqalculate/Number.cc:5163 ../libqalculate/Number.cc:5389
+#: ../libqalculate/Number.cc:5476 ../libqalculate/Number.cc:5760
+#: ../libqalculate/Number.cc:5846 ../libqalculate/Number.cc:5932
+#: ../libqalculate/Number.cc:7179 ../libqalculate/Number.cc:7197
+#: ../libqalculate/Number.cc:7216 ../libqalculate/Number.cc:7552
+#: ../libqalculate/Number.cc:7599 ../libqalculate/Number.cc:7744
+#: ../libqalculate/Number.cc:8077 ../libqalculate/Number.cc:8233
+#: ../libqalculate/Number.cc:8665 ../libqalculate/Number.cc:9060
 #, c-format
 msgid "%s() lacks proper support interval arithmetic."
+msgstr ""
+
+#: ../libqalculate/Number.cc:9669
+#, c-format
+msgid "The value is too high for the number of floating point bits (%s)."
 msgstr ""
 
 #: ../libqalculate/Number.cc:9912
