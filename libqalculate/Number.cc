@@ -9658,13 +9658,17 @@ unsigned int standard_expbits(unsigned int bits) {
 	nr *= 4;
 	nr.round();
 	nr -= 13;
+	if(nr < 2) return 2;
 	return nr.uintValue();
 }
 int from_float(Number &nr, string sbin, unsigned int bits, unsigned int expbits) {
 	if(expbits == 0) expbits = standard_expbits(bits);
 	else if(expbits > bits - 2) return 0;
 	if(sbin.length() < bits) sbin.insert(0, bits - sbin.length(), '0');
-	if(sbin.length() > bits) return 0;
+	if(sbin.length() > bits) {
+		CALCULATOR->error(true, _("The value is too high for the number of floating point bits (%s)."), i2s(bits).c_str(), NULL);
+		return 0;
+	}
 	bool b_neg = (sbin[0] == '1');
 	Number exp;
 	long int ipow = 1;
@@ -9701,7 +9705,7 @@ int from_float(Number &nr, string sbin, unsigned int bits, unsigned int expbits)
 	if(b_neg) nr.negate();
 	return 1;
 }
-string to_float(Number nr, unsigned int bits, unsigned int expbits) {
+string to_float(Number nr, unsigned int bits, unsigned int expbits, bool *approx) {
 	if(expbits == 0) expbits = standard_expbits(bits);
 	else if(expbits > bits - 2) return "";
 	Number expbias(2);
@@ -9727,6 +9731,7 @@ string to_float(Number nr, unsigned int bits, unsigned int expbits) {
 		bool rerun = false;
 		tofloat_afterexp:
 		if(nrexp > expbias) {
+			if(approx) *approx = true;
 			for(size_t i = 0; i < expbits; i++) sbin += "1";
 			for(size_t i = expbits + 1; i < bits; i++) sbin += "0";
 			return sbin;
@@ -9756,6 +9761,8 @@ string to_float(Number nr, unsigned int bits, unsigned int expbits) {
 		po.show_ending_zeroes = true;
 		po.round_halfway_to_even = true;
 		po.binary_bits = 1;
+		bool b_approx = false;
+		po.is_approximate = &b_approx;
 		string sfrac = nrfrac.print(po);
 		if(subnormal && sfrac[0] == '1') {
 			sfrac = "";
@@ -9774,6 +9781,7 @@ string to_float(Number nr, unsigned int bits, unsigned int expbits) {
 			rerun = true;
 			goto tofloat_afterexp;
 		}
+		if(approx && b_approx) *approx = true;
 		PrintOptions po2;
 		po2.base = BASE_BINARY;
 		po2.twos_complement = false;
@@ -9814,19 +9822,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			case BASE_FP64: {bits = 64; break;}
 			case BASE_FP128: {bits = 128; break;}
 		}
-		string sbin = to_float(*this, bits);
-		ParseOptions pa;
-		pa.base = BASE_BINARY;
-		nr.set(sbin, pa);
-		PrintOptions po2 = po;
-		po2.base = BASE_BINARY;
-		po2.binary_bits = bits;
-		po2.min_exp = 0;
-		po2.max_decimals = 0;
-		po2.use_max_decimals = true;
-		po2.is_approximate = po.is_approximate;
-		string str = nr.print(po2, ips);
-		if(str.length() < bits) str.insert(0, bits - str.length(), '0');
+		string str = to_float(*this, bits, 0, po.is_approximate);
+		if(ips.minus) *ips.minus = false;
+		str = format_number_string(str, BASE_BINARY, po.base_display, false, true, po);
+		if(ips.num) *ips.num = str;
 		return str;
 	}
 	if(po.base == BASE_BIJECTIVE_26 && isReal()) {
