@@ -2279,7 +2279,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					transform(STRUCT_NEGATE);
 					formatsub(po, parent, pindex, true, top_parent);
 				}
-			} else if(po.number_fraction_format == FRACTION_COMBINED && po.base != BASE_FP16 && po.base != BASE_FP32 && po.base != BASE_FP64 && po.base != BASE_FP128 && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (!po.show_ending_zeroes || !po.restrict_to_parent_precision || po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26 || ((!top_parent || !top_parent->isApproximate()) && !isApproximate()) || (o_number.denominatorIsLessThan(10) && o_number < 10 && o_number > -10))) {
+			} else if(po.number_fraction_format == FRACTION_COMBINED && po.base > BASE_FP16 && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (!po.show_ending_zeroes || !po.restrict_to_parent_precision || po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26 || ((!top_parent || !top_parent->isApproximate()) && !isApproximate()) || (o_number.denominatorIsLessThan(10) && o_number < 10 && o_number > -10))) {
 				// mixed fraction format (e.g. 5/3=1+2/3); only used is number is non-integer rational, and current mode does not dictate showing ending zeroes of approximate number, and number base is not sexagesimal
 				if(o_number.isFraction()) {
 					// split number in numerator and denominator, if numerator < denominator
@@ -2302,7 +2302,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					o_number.trunc();
 					add_nocopy(num);
 				}
-			} else if((force_fraction || po.number_fraction_format == FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS || po.number_fraction_format == FRACTION_DECIMAL_EXACT) && po.base != BASE_FP16 && po.base != BASE_FP32 && po.base != BASE_FP64 && po.base != BASE_FP128 && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (force_fraction || !o_number.isApproximate())) {
+			} else if((force_fraction || po.number_fraction_format == FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS || po.number_fraction_format == FRACTION_DECIMAL_EXACT) && po.base > BASE_FP16 && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (force_fraction || !o_number.isApproximate())) {
 				// split rational number in numerator and denominator, if display of fractions is requested for rational numbers and number base is not sexagesimal and number is not approximate
 
 				InternalPrintStruct ips_n;

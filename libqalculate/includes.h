@@ -320,6 +320,7 @@ typedef enum {
 #define BASE_FP32		-31
 #define BASE_FP64		-32
 #define BASE_FP128		-33
+#define BASE_FP80		-34
 
 #define EXP_BASE_3		-3
 #define EXP_PRECISION		-1

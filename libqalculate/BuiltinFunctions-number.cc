@@ -1504,6 +1504,7 @@ int IEEE754FloatComponentsFunction::calculate(MathStructure &mstruct, const Math
 	if(subnormal) exponent++;
 	if(subnormal) significand.set(string("0.") + sbin.substr(1 + expbits), pa);
 	else significand.set(string("1.") + sbin.substr(1 + expbits), pa);
+	if(subnormal && significand.isZero()) exponent.clear();
 	mstruct.clearVector();
 	mstruct.addChild(sign);
 	mstruct.addChild(exponent);
@@ -1529,8 +1530,6 @@ int IEEE754FloatValueFunction::calculate(MathStructure &mstruct, const MathStruc
 	unsigned int expbits = vargs[2].number().uintValue();
 	string sbin = to_float(vargs[0].number(), bits, expbits);
 	if(sbin.empty()) return 0;
-	ParseOptions pa;
-	pa.base = BASE_BINARY;
 	Number nr;
 	int ret = from_float(nr, sbin, bits, expbits);
 	if(ret == 0) mstruct.setUndefined();
@@ -1556,8 +1555,6 @@ int IEEE754FloatErrorFunction::calculate(MathStructure &mstruct, const MathStruc
 	unsigned int expbits = vargs[2].number().uintValue();
 	string sbin = to_float(vargs[0].number(), bits, expbits);
 	if(sbin.empty()) return 0;
-	ParseOptions pa;
-	pa.base = BASE_BINARY;
 	Number nr;
 	int ret = from_float(nr, sbin, bits, expbits);
 	if(ret == 0) return 0;
