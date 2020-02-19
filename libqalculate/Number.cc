@@ -9649,10 +9649,11 @@ ostream& operator << (ostream &os, const Number &nr) {
 }
 
 unsigned int standard_expbits(unsigned int bits) {
-	if(bits == 16) return 5;
-	else if(bits == 32) return 8;
-	else if(bits == 64) return 11;
-	else if(bits == 128) return 15;
+	if(bits <= 16) return 5;
+	else if(bits <= 32) return 8;
+	else if(bits <= 64) return 11;
+	else if(bits <= 128) return 15;
+	if(bits % 32 != 0) {bits /= 32; bits += 1; bits *= 32;}
 	Number nr(bits, 1, 0);
 	nr.log(2);
 	nr *= 4;
@@ -9679,7 +9680,7 @@ int from_float(Number &nr, string sbin, unsigned int bits, unsigned int expbits)
 		ipow *= 2;
 	}
 	if(b_spec) {
-		if(sbin.rfind("1") < expbits + 1) {
+		if((bits == 80 && sbin.rfind("1") == expbits + 1) || (bits != 80 && sbin.rfind("1") < expbits + 1)) {
 			if(b_neg) nr.setMinusInfinity();
 			else nr.setPlusInfinity();
 			return 1;
@@ -9693,8 +9694,8 @@ int from_float(Number &nr, string sbin, unsigned int bits, unsigned int expbits)
 	expbias--;
 	exp -= expbias;
 	if(subnormal) exp++;
-	Number npow(1, 2);
-	Number frac(subnormal ? 0 : 1, 1);
+	Number npow(1, bits == 80 ? 1 : 2);
+	Number frac((subnormal || bits == 80) ? 0 : 1, 1);
 	for(size_t i = expbits + 1; i < bits; i++) {
 		if(sbin[i] == '1') frac += npow;
 		npow /= 2;
@@ -9717,12 +9718,15 @@ string to_float(Number nr, unsigned int bits, unsigned int expbits, bool *approx
 		nr.negate();
 		sbin = "1";
 	}
-	if(nr.isPlusInfinity() || nr.isZero()) {
+	if(nr.isPlusInfinity() || nr.isZero() || nr.hasImaginaryPart()) {
 		for(size_t i = 0; i < expbits; i++) {
 			if(nr.isZero()) sbin += "0";
-			else sbin += "1";
+			else sbin += '1';
 		}
-		for(size_t i = expbits + 1; i < bits; i++) sbin += "0";
+		if(bits == 80 && nr.isPlusInfinity()) sbin += '1';
+		else sbin += '0';
+		for(size_t i = expbits + 2; i < bits; i++) sbin += '0';
+		if(nr.hasImaginaryPart()) sbin[sbin.length() - 1] = '1';
 	} else {
 		Number nrexp(nr);
 		nrexp.log(2);
@@ -9732,8 +9736,10 @@ string to_float(Number nr, unsigned int bits, unsigned int expbits, bool *approx
 		tofloat_afterexp:
 		if(nrexp > expbias) {
 			if(approx) *approx = true;
-			for(size_t i = 0; i < expbits; i++) sbin += "1";
-			for(size_t i = expbits + 1; i < bits; i++) sbin += "0";
+			for(size_t i = 0; i < expbits; i++) sbin += '1';
+			if(bits == 80) sbin += '1';
+			else sbin += '0';
+			for(size_t i = expbits + 2; i < bits; i++) sbin += '0';
 			return sbin;
 		}
 		Number nrpow(nrexp);
@@ -9755,8 +9761,8 @@ string to_float(Number nr, unsigned int bits, unsigned int expbits, bool *approx
 		}
 		PrintOptions po;
 		po.base = BASE_BINARY;
-		po.min_decimals = bits - expbits - 1;
-		po.max_decimals = bits - expbits - 1;
+		po.min_decimals = bits - expbits - (bits == 80 ? 2 : 1);
+		po.max_decimals = bits - expbits - (bits == 80 ? 2 : 1);
 		po.use_max_decimals = true;
 		po.show_ending_zeroes = true;
 		po.round_halfway_to_even = true;
@@ -9790,6 +9796,7 @@ string to_float(Number nr, unsigned int bits, unsigned int expbits, bool *approx
 		po2.binary_bits = expbits;
 		sbin += nrexp.print(po2);
 		if(sbin.length() < expbits + 1) sbin.insert(1, expbits + 1 - sbin.length(), '0');
+		if(bits == 80) sbin += sfrac[0];
 		sbin += sfrac.substr(2);
 		if(sbin.length() < bits) sbin.append(bits - sbin.length(), '0');
 	}
@@ -9808,7 +9815,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.im) *ips.im = "";
 	if(ips.iexp) *ips.iexp = 0;
 	if(po.is_approximate && isApproximate()) *po.is_approximate = true;
-	if(po.base == BASE_FP16 || po.base == BASE_FP128 || po.base == BASE_FP32 || po.base == BASE_FP64) {
+	if(po.base == BASE_FP16 || po.base == BASE_FP128 || po.base == BASE_FP32 || po.base == BASE_FP64 || po.base == BASE_FP80) {
 		if(isInterval()) {
 			Number nr(*this);
 			nr.intervalToMidValue();
@@ -9820,6 +9827,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			case BASE_FP16: {bits = 16; break;}
 			case BASE_FP32: {bits = 32; break;}
 			case BASE_FP64: {bits = 64; break;}
+			case BASE_FP80: {bits = 80; break;}
 			case BASE_FP128: {bits = 128; break;}
 		}
 		string str = to_float(*this, bits, 0, po.is_approximate);

@@ -770,6 +770,9 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		} else if(equalsIgnoreCase(to_str, "binary16") || equalsIgnoreCase(to_str, "fp16")) {
 			str = from_str;
 			printops.base = BASE_FP16;
+		} else if(equalsIgnoreCase(to_str, "fp80")) {
+			str = from_str;
+			printops.base = BASE_FP80;
 		} else if(equalsIgnoreCase(to_str, "binary128") || equalsIgnoreCase(to_str, "fp128")) {
 			str = from_str;
 			printops.base = BASE_FP128;

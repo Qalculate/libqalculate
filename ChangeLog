@@ -1,6 +1,12 @@
+2019-02-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Restore A and B (case insensitive) digits in input of duodecimal number
+	* Use 0d as prefix for input of duodecimal numbers
+	* Always interpret expression as duodecimal if it contains duodecimal Unicode characters
+
 2019-02-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* IEEE 754 floating point (binary) conversion - functions float(), floatBits(), floatError(), floatParts(), and floatValue(), and "to" conversion using  binary16/fp16, binary32/fp32/float, binary64/fp64/double, and binary128/fp128
+	* IEEE 754 floating point (binary) conversion - functions float(), floatBits(), floatError(), floatParts(), and floatValue(), and "to" conversion using  binary16/fp16, binary32/fp32/float, binary64/fp64/double, fp80, and binary128/fp128
 	* Support specification of number of bits for binary "to" conversion (4 to bin16 = 0000 0000 0000 0100)
 	* Fix rounding with max decimals in some cases
 
