@@ -332,39 +332,17 @@ int CeilFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			mstruct.set(nr);
 			return 1;
 		}
-	} else if(!mstruct.isNumber() && eo.approximation == APPROXIMATION_EXACT) {
+	} else if(!mstruct.isNumber() && eo.approximation == APPROXIMATION_EXACT && !vargs[0].isApproximate()) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		MathStructure mstruct2(mstruct);
 		mstruct2.eval(eo2);
 		if(mstruct2.isNumber()) {
 			Number nr(mstruct2.number()); 
-			if(nr.ceil() && (!nr.isApproximate() || vargs[0].isApproximate())) {
+			if(nr.ceil() && !nr.isApproximate()) {
 				mstruct.set(nr);
 				return 1;
 			}
-		}
-	}
-	if(mstruct.isMultiplication() && mstruct.size() >= 2) {
-		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(!mstruct[i].isUnit() && !mstruct[i].representsNumber(false) > 0) return -1;
-		}
-		MathStructure munit;
-		for(size_t i = 0; i < mstruct.size();) {
-			if(mstruct[i].isUnit()) {
-				if(munit.isZero()) munit = mstruct[i];
-				else munit.multiply(mstruct[i], true);
-				mstruct.delChild(i + 1);
-			} else {
-				i++;
-			}
-		}
-		if(!munit.isZero()) {
-			if(mstruct.size() == 0) mstruct.set(1, 1, 0, true);
-			else if(mstruct.size() == 1) mstruct.setToChild(1, true);
-			mstruct.transform(this);
-			mstruct.multiply(munit);
-			return 1;
 		}
 	}
 	return -1;
@@ -380,8 +358,8 @@ bool CeilFunction::representsRational(const MathStructure &vargs, bool) const {r
 bool CeilFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
 bool CeilFunction::representsComplex(const MathStructure&, bool) const {return false;}
 bool CeilFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsPositive();}
-bool CeilFunction::representsEven(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsEven();}
-bool CeilFunction::representsOdd(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsOdd();}
+bool CeilFunction::representsEven(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsEven();}
+bool CeilFunction::representsOdd(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsOdd();}
 bool CeilFunction::representsUndefined(const MathStructure&) const {return false;}
 
 FloorFunction::FloorFunction() : MathFunction("floor", 1) {
@@ -404,39 +382,17 @@ int FloorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			mstruct.set(nr);
 			return 1;
 		}
-	} else if(!mstruct.isNumber() && eo.approximation == APPROXIMATION_EXACT) {
+	} else if(!mstruct.isNumber() && eo.approximation == APPROXIMATION_EXACT && !vargs[0].isApproximate()) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		MathStructure mstruct2(mstruct);
 		mstruct2.eval(eo2);
 		if(mstruct2.isNumber()) {
 			Number nr(mstruct2.number()); 
-			if(nr.floor() && (!nr.isApproximate() || vargs[0].isApproximate())) {
+			if(nr.floor() && !nr.isApproximate()) {
 				mstruct.set(nr);
 				return 1;
 			}
-		}
-	}
-	if(mstruct.isMultiplication() && mstruct.size() >= 2) {
-		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(!mstruct[i].isUnit() && !mstruct[i].representsNumber(false) > 0) return -1;
-		}
-		MathStructure munit;
-		for(size_t i = 0; i < mstruct.size();) {
-			if(mstruct[i].isUnit()) {
-				if(munit.isZero()) munit = mstruct[i];
-				else munit.multiply(mstruct[i], true);
-				mstruct.delChild(i + 1);
-			} else {
-				i++;
-			}
-		}
-		if(!munit.isZero()) {
-			if(mstruct.size() == 0) mstruct.set(1, 1, 0, true);
-			else if(mstruct.size() == 1) mstruct.setToChild(1, true);
-			mstruct.transform(this);
-			mstruct.multiply(munit);
-			return 1;
 		}
 	}
 	return -1;
@@ -452,8 +408,8 @@ bool FloorFunction::representsNonComplex(const MathStructure &vargs, bool) const
 bool FloorFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
 bool FloorFunction::representsComplex(const MathStructure&, bool) const {return false;}
 bool FloorFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNegative();}
-bool FloorFunction::representsEven(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsEven();}
-bool FloorFunction::representsOdd(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsOdd();}
+bool FloorFunction::representsEven(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsEven();}
+bool FloorFunction::representsOdd(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsOdd();}
 bool FloorFunction::representsUndefined(const MathStructure&) const {return false;}
 
 TruncFunction::TruncFunction() : MathFunction("trunc", 1) {
@@ -476,39 +432,17 @@ int TruncFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			mstruct.set(nr);
 			return 1;
 		}
-	} else if(!mstruct.isNumber() && eo.approximation == APPROXIMATION_EXACT) {
+	} else if(!mstruct.isNumber() && eo.approximation == APPROXIMATION_EXACT && !vargs[0].isApproximate()) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		MathStructure mstruct2(mstruct);
 		mstruct2.eval(eo2);
 		if(mstruct2.isNumber()) {
 			Number nr(mstruct2.number()); 
-			if(nr.trunc() && (!nr.isApproximate() || vargs[0].isApproximate())) {
+			if(nr.trunc() && !nr.isApproximate()) {
 				mstruct.set(nr);
 				return 1;
 			}
-		}
-	}
-	if(mstruct.isMultiplication() && mstruct.size() >= 2) {
-		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(!mstruct[i].isUnit() && !mstruct[i].representsNumber(false) > 0) return -1;
-		}
-		MathStructure munit;
-		for(size_t i = 0; i < mstruct.size();) {
-			if(mstruct[i].isUnit()) {
-				if(munit.isZero()) munit = mstruct[i];
-				else munit.multiply(mstruct[i], true);
-				mstruct.delChild(i + 1);
-			} else {
-				i++;
-			}
-		}
-		if(!munit.isZero()) {
-			if(mstruct.size() == 0) mstruct.set(1, 1, 0, true);
-			else if(mstruct.size() == 1) mstruct.setToChild(1, true);
-			mstruct.transform(this);
-			mstruct.multiply(munit);
-			return 1;
 		}
 	}
 	return -1;
@@ -524,63 +458,56 @@ bool TruncFunction::representsReal(const MathStructure &vargs, bool) const {retu
 bool TruncFunction::representsNonComplex(const MathStructure &vargs, bool) const {return true;}
 bool TruncFunction::representsComplex(const MathStructure&, bool) const {return false;}
 bool TruncFunction::representsNonZero(const MathStructure&, bool) const {return false;}
-bool TruncFunction::representsEven(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsEven();}
-bool TruncFunction::representsOdd(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsOdd();}
+bool TruncFunction::representsEven(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsEven();}
+bool TruncFunction::representsOdd(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsOdd();}
 bool TruncFunction::representsUndefined(const MathStructure&) const {return false;}
 
-RoundFunction::RoundFunction() : MathFunction("round", 1) {
+RoundFunction::RoundFunction() : MathFunction("round", 1, 3) {
 	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
+	setArgumentDefinition(2, new IntegerArgument());
+	setDefaultValue(2, "0");
+	setArgumentDefinition(3, new BooleanArgument());
+	setDefaultValue(3, "0");
 }
 int RoundFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
 	if(vargs[0].isNumber()) {
-		FR_FUNCTION(round)
+		Number nr(vargs[0].number());
+		if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(vargs[1].number());
+		if(nr.round(vargs.size() >= 3 ? vargs[2].number().getBoolean() : true) && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || vargs[0].isApproximate())) {
+			if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(-vargs[1].number());
+			mstruct.set(nr); 
+			return 1;
+		}
+		return 0;
 	}
 	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
-		Number nr(mstruct.number()); 
-		if(nr.round() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || vargs[0].isApproximate())) {
+		Number nr(mstruct.number());
+		if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(vargs[1].number());
+		if(nr.round(vargs.size() >= 3 ? vargs[2].number().getBoolean() : true) && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || vargs[0].isApproximate())) {
+			if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(-vargs[1].number());
 			mstruct.set(nr);
 			return 1;
 		}
-	} else if(!mstruct.isNumber() && eo.approximation == APPROXIMATION_EXACT) {
+	} else if(!mstruct.isNumber() && eo.approximation == APPROXIMATION_EXACT && !vargs[0].isApproximate()) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		MathStructure mstruct2(mstruct);
 		mstruct2.eval(eo2);
 		if(mstruct2.isNumber()) {
-			Number nr(mstruct2.number()); 
-			if(nr.round() && (!nr.isApproximate() || vargs[0].isApproximate())) {
+			Number nr(mstruct2.number());
+			if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(vargs[1].number());
+			if(nr.round(vargs.size() >= 3 ? vargs[2].number().getBoolean() : true) && !nr.isApproximate()) {
+				if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(-vargs[1].number());
 				mstruct.set(nr);
 				return 1;
 			}
-		}
-	}
-	if(mstruct.isMultiplication() && mstruct.size() >= 2) {
-		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(!mstruct[i].isUnit() && !mstruct[i].representsNumber(false) > 0) return -1;
-		}
-		MathStructure munit;
-		for(size_t i = 0; i < mstruct.size();) {
-			if(mstruct[i].isUnit()) {
-				if(munit.isZero()) munit = mstruct[i];
-				else munit.multiply(mstruct[i], true);
-				mstruct.delChild(i + 1);
-			} else {
-				i++;
-			}
-		}
-		if(!munit.isZero()) {
-			if(mstruct.size() == 0) mstruct.set(1, 1, 0, true);
-			else if(mstruct.size() == 1) mstruct.setToChild(1, true);
-			mstruct.transform(this);
-			mstruct.multiply(munit);
-			return 1;
 		}
 	}
 	return -1;
@@ -589,15 +516,15 @@ bool RoundFunction::representsPositive(const MathStructure&, bool) const {return
 bool RoundFunction::representsNegative(const MathStructure&, bool) const {return false;}
 bool RoundFunction::representsNonNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonNegative();}
 bool RoundFunction::representsNonPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonPositive();}
-bool RoundFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
+bool RoundFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal() && (vargs.size() < 2 || vargs[1].representsNonPositive());}
 bool RoundFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
 bool RoundFunction::representsRational(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
 bool RoundFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
 bool RoundFunction::representsNonComplex(const MathStructure &vargs, bool) const {return true;}
 bool RoundFunction::representsComplex(const MathStructure&, bool) const {return false;}
 bool RoundFunction::representsNonZero(const MathStructure&, bool) const {return false;}
-bool RoundFunction::representsEven(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsEven();}
-bool RoundFunction::representsOdd(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsOdd();}
+bool RoundFunction::representsEven(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsEven() && (vargs.size() < 2 || vargs[1].representsNonPositive());}
+bool RoundFunction::representsOdd(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsOdd() && (vargs.size() < 2 || vargs[1].representsNonPositive());}
 bool RoundFunction::representsUndefined(const MathStructure&) const {return false;}
 
 FracFunction::FracFunction() : MathFunction("frac", 1) {

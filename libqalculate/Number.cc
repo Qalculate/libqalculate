@@ -44,7 +44,7 @@ using std::endl;
 #define CREATE_INTERVAL (CALCULATOR ? CALCULATOR->usesIntervalArithmetic() : true)
 
 #define INTERVAL_FLOOR(x) x.floor(); if(x.isInterval()) {x = x.lowerEndPoint(); x.floor();}
-#define INTERVAL_CEIL(x) x.ceil(); if(x.isInterval()) {x = x.lowerEndPoint(); x.ceil();}
+#define INTERVAL_CEIL(x) x.ceil(); if(x.isInterval()) {x = x.upperEndPoint(); x.ceil();}
 
 gmp_randstate_t randstate;
 
