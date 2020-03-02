@@ -11118,11 +11118,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					expo = 0;
 				}
 			}
-			if(po.use_max_decimals && po.max_decimals >= 0 && po.use_max_decimals && i_log - expo + po.max_decimals + 1 < i_precision_base) {
+			if(po.use_max_decimals && po.max_decimals >= 0 && po.use_max_decimals && i_log - expo + po.max_decimals + 1 < precision_base) {
 				precision_base = i_log - expo + po.max_decimals + 1;
 			} else {
-				if(po.use_min_decimals && po.min_decimals > 0 && i_log - expo + po.min_decimals + 1 > precision_base) {
-					precision_base = i_log - expo + po.min_decimals + 1;
+				if(min_decimals > 0 && i_log - expo + min_decimals + 1 > precision_base) {
+					precision_base = i_log - expo + min_decimals + 1;
 					if(precision_base > i_precision_base) precision_base = i_precision_base;
 				}
 				if(i_log - expo + 1 > precision_base) {
