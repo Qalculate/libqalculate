@@ -741,7 +741,7 @@ int StackFunction::calculate(MathStructure &mstruct, const MathStructure&, const
 	return 1;
 }
 
-PlotFunction::PlotFunction() : MathFunction("plot", 1, 6) {
+PlotFunction::PlotFunction() : MathFunction("plot", 1, 7) {
 	NumberArgument *arg = new NumberArgument();
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(false);
@@ -757,6 +757,8 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, 6) {
 	setDefaultValue(5, "x");
 	setArgumentDefinition(6, new BooleanArgument());
 	setDefaultValue(6, "0");
+	setArgumentDefinition(7, new BooleanArgument());
+	setDefaultValue(7, "0");
 	setCondition("\\y < \\z");
 }
 int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -906,7 +908,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(x_vectors.size() > 0 && !CALCULATOR->aborted()) {
 		PlotParameters param;
-		CALCULATOR->plotVectors(&param, y_vectors, x_vectors, dpds, false, 0);
+		CALCULATOR->plotVectors(&param, y_vectors, x_vectors, dpds, vargs.size() >= 7 && vargs[6].number().getBoolean(), 0);
 		for(size_t i = 0; i < dpds.size(); i++) {
 			if(dpds[i]) delete dpds[i];
 		}
