@@ -1,3 +1,7 @@
+2019-03-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add persistent parameter, with default true value if qalc is started in non-interactive mode (avoids immediate closing of plot window), to plot() function
+
 2019-02-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix max decimals option for intervals displayed with significant digits (was used as both max and min)

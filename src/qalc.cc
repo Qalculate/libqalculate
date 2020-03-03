@@ -1980,6 +1980,9 @@ int main(int argc, char *argv[]) {
 		t_end.tv_usec = usecs % 1000000;
 		t_end.tv_sec += usecs / 1000000;
 	}
+	
+	if(!interactive_mode && (cfile || !calc_arg.empty())) CALCULATOR->getFunctionById(FUNCTION_ID_PLOT)->setDefaultValue(7, "1");
+	
 	if(!cfile && !calc_arg.empty()) {
 		if(calc_arg.length() > 2 && ((calc_arg[0] == '\"' && calc_arg.find('\"', 1) == calc_arg.length() - 1) || (calc_arg[0] == '\'' && calc_arg.find('\'', 1) == calc_arg.length() - 1))) {
 			calc_arg = calc_arg.substr(1, calc_arg.length() - 2);
