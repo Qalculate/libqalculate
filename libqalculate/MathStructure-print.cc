@@ -87,6 +87,15 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			// the order of matrices should be preserved
 			return 0;
 		}
+		if(mstruct1.isNumber() && mstruct2.isPower() && mstruct2[0].isInteger() && mstruct2[1].isInteger() && mstruct2[1].representsPositive()) {
+			return sortCompare(mstruct1, mstruct2[0], parent, po);
+		}
+		if(mstruct2.isNumber() && mstruct1.isPower() && mstruct1[0].isInteger() && mstruct1[1].isInteger() && mstruct1[1].representsPositive()) {
+			return sortCompare(mstruct1[0], mstruct2, parent, po);
+		}
+		if(mstruct1.isPower() && mstruct2.isPower() && mstruct1[0].isInteger() && mstruct1[1].isInteger() && mstruct1[1].representsPositive() && mstruct2[0].isInteger() && mstruct2[1].isInteger() && mstruct2[1].representsPositive()) {
+			return sortCompare(mstruct1[0], mstruct2[0], parent, po);
+		}
 	}
 	if(parent.isAddition() && po.sort_options.minus_last) {
 		// -a+b=b-a
@@ -278,6 +287,7 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 	}
 	switch(mstruct1.type()) {
 		case STRUCT_NUMBER: {
+			bool inc_order = parent.isMultiplication();
 			if(!mstruct1.number().hasImaginaryPart() && !mstruct2.number().hasImaginaryPart()) {
 				// real numbers
 				ComparisonResult cmp;
@@ -285,8 +295,8 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 				if(parent.isMultiplication() && mstruct2.number().isNegative() != mstruct1.number().isNegative()) cmp = mstruct2.number().compare(mstruct1.number());
 				// otherwise, place largest number first
 				else cmp = mstruct1.number().compare(mstruct2.number());
-				if(cmp == COMPARISON_RESULT_LESS) return -1;
-				else if(cmp == COMPARISON_RESULT_GREATER) return 1;
+				if(cmp == COMPARISON_RESULT_LESS) return inc_order ? 1 : -1;
+				else if(cmp == COMPARISON_RESULT_GREATER) return inc_order ? -1 : 1;
 				return 0;
 			} else {
 				if(!mstruct1.number().hasRealPart()) {
@@ -296,8 +306,8 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 					} else {
 						// compare imaginary parts
 						ComparisonResult cmp = mstruct1.number().compareImaginaryParts(mstruct2.number());
-						if(cmp == COMPARISON_RESULT_LESS) return -1;
-						else if(cmp == COMPARISON_RESULT_GREATER) return 1;
+						if(cmp == COMPARISON_RESULT_LESS) return inc_order ? 1 : -1;
+						else if(cmp == COMPARISON_RESULT_GREATER) return inc_order ? -1 : 1;
 						return 0;
 					}
 				} else if(mstruct2.number().hasRealPart()) {
@@ -307,8 +317,8 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 						// if real parts are equal, compare imaginary parts
 						cmp = mstruct1.number().compareImaginaryParts(mstruct2.number());
 					}
-					if(cmp == COMPARISON_RESULT_LESS) return -1;
-					else if(cmp == COMPARISON_RESULT_GREATER) return 1;
+					if(cmp == COMPARISON_RESULT_LESS) return inc_order ? 1 : -1;
+					else if(cmp == COMPARISON_RESULT_GREATER) return inc_order ? -1 : 1;
 					return 0;
 				} else {
 					return -1;
