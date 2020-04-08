@@ -752,7 +752,7 @@
       <_names>ar:VEF</_names>
     </builtin_unit>
     <builtin_unit name="VND">
-      <_title>Vietnamese Dồng</_title>
+      <_title>Vietnamese Đồng</_title>
       <_names>ar:VND,au:&#x20AB;</_names>
       <_countries>Vietnam</_countries>
     </builtin_unit>
