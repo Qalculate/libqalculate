@@ -1,3 +1,11 @@
+2019-03-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault during calculation of atan(acos(x)), atan(asin(x)), and asin(atan(x)) when angle unit is deg or gra
+
+2019-03-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix order of prime factors
+
 2019-03-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add persistent parameter, with default true value if qalc is started in non-interactive mode (avoids immediate closing of plot window), to plot() function
