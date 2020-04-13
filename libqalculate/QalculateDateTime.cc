@@ -1961,8 +1961,6 @@ Number lunar_phase_at_or_after(Number phase, Number tee) {
 	Number tau(phase); tau -= lunar_phase(tee); tau.mod(360); tau *= rate; tau += tee;
 	Number a(tau); a -= 5; if(tee > a) a = tee;
 	Number b(tau); b += 5;
-	Number aphase = lunar_phase(a);
-	Number bphase = lunar_phase(b);
 	Number precexp(1, 1, -5);
 	Number phase_low(phase); phase_low -= precexp;
 	Number phase_high(phase); phase_high += precexp;
@@ -1979,13 +1977,9 @@ Number lunar_phase_at_or_after(Number phase, Number tee) {
 		} else {
 			if(newphase >= phase_low && newphase <= phase_high) return test;
 		}
-		if(aphase > bphase) {
-			if((newphase > phase && newphase < aphase) || (newphase < phase && newphase < aphase)) b = test;
-			else a = test;
-		} else {
-			if(newphase > phase) b = test;
-			else a = test;
-		}
+		newphase -= phase; newphase.mod(360);
+		if(newphase < 180) b = test;
+		else a = test;
 	}
 }
 
