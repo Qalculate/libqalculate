@@ -1682,6 +1682,7 @@ void Calculator::addBuiltinFunctions() {
 	f_igamma = addFunction(new IGammaFunction());
 
 	if(canPlot()) f_plot = addFunction(new PlotFunction());
+	else f_plot = NULL;
 
 	/*void *plugin = dlopen("", RTLD_NOW);
 	if(plugin) {
