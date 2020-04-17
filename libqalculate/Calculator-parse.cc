@@ -965,7 +965,14 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					if(po.rpn) i = str.find_first_not_of(NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
 					else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
 					size_t name_length;
-					if(i == string::npos) i = str.length();
+					if(i == string::npos) {
+						i = str.length();
+					} else if(is_not_in(ILLEGAL_IN_UNITNAMES, str[i]) && is_in("abcdefABCDEF", str[i - 1])) {
+						size_t i2 = str.find_last_not_of("abcdefABCDEF", i - 1);
+						if(i2 != string::npos && i2 > str_index + 2 && is_in(SPACE, str[i2])) {
+							i = i2;
+						}
+					}
 					while(str[i - 1] == SPACE_CH) i--;
 					name_length = i - str_index;
 					ParseOptions po_hex = po;
