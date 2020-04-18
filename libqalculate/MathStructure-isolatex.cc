@@ -5405,7 +5405,7 @@ bool contains_unsolved_equals(const MathStructure &mstruct, const MathStructure 
 }
 
 bool sync_sine(MathStructure &mstruct, const EvaluationOptions &eo, const MathStructure &x_var, bool use_cos, bool b_hyp = false, const MathStructure &mstruct_parent = m_undefined) {
-	if(!mstruct_parent.isUndefined() && mstruct.isFunction() && mstruct.function()->id() == (b_hyp ? FUNCTION_ID_SINH : FUNCTION_ID_SIN) && mstruct[0].contains(x_var)) {
+	if(!mstruct_parent.isUndefined() && mstruct.isFunction() && mstruct.function()->id() == (b_hyp ? FUNCTION_ID_SINH : FUNCTION_ID_SIN) && mstruct.size() == 1 && mstruct[0].contains(x_var)) {
 		MathStructure m_half(mstruct);
 		m_half[0].calculateDivide(nr_two, eo);
 		bool b = mstruct_parent.contains(m_half);
