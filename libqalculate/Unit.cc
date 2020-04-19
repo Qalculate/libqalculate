@@ -1035,10 +1035,10 @@ MathStructure CompositeUnit::generateMathStructure(bool make_division, bool set_
 			if(mden.isZero()) {
 				mden = mstruct2;
 			} else {
-				mden *= mstruct2;
+				mden.multiply(mstruct2, true);
 			}
 		} else {
-			mstruct *= mstruct2;
+			mstruct.multiply(mstruct2, true);
 		}
 	}
 	if(make_division && !mden.isZero()) {
