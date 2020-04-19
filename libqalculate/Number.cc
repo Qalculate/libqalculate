@@ -65,7 +65,7 @@ int char2val(const char &c, const int &base) {
 
 void insert_thousands_separator(string &str, const PrintOptions &po) {
 	if(po.digit_grouping != DIGIT_GROUPING_NONE && (po.digit_grouping != DIGIT_GROUPING_LOCALE || !CALCULATOR->local_digit_group_separator.empty())) {
-		size_t i_deci = str.rfind(po.decimalpoint());
+		size_t i_deci = str.find(po.decimalpoint());
 		size_t i;
 		if(i_deci != string::npos) {
 			i = i_deci;
@@ -12245,6 +12245,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		bool approximately_displayed = false;
 		PrintOptions po2 = po;
 		po2.is_approximate = &approximately_displayed;
+		po2.indicate_infinite_series = false;
 		str = num.print(po2, ips);
 		if(approximately_displayed && base != BASE_ROMAN_NUMERALS) {
 			po2 = po;

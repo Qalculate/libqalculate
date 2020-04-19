@@ -3806,7 +3806,7 @@ int main(int argc, char *argv[]) {
 				str += ", >= 0)";
 				if(printops.min_decimals >= 0) {str += " "; str += i2s(printops.min_decimals); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-				STR_AND_TABS_BOOL(_("repeating decimals"), "repdec", _("If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'."), printops.indicate_infinite_series);
+				STR_AND_TABS_BOOL(_("repeating decimals"), "repdeci", _("If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'."), printops.indicate_infinite_series);
 				STR_AND_TABS_BOOL(_("round to even"), "rndeven", _("Determines whether halfway numbers are rounded upwards or towards the nearest even integer."), printops.round_halfway_to_even);
 				STR_AND_TABS_SET(_("scientific notation"), "exp");
 				SET_DESCRIPTION(_("Determines how scientific notation are used (e.g. 5 543 000 = 5.543E6)."));
