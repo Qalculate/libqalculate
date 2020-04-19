@@ -2016,7 +2016,7 @@ bool replace_interval_unknowns(MathStructure &m, bool do_assumptions) {
 int contains_ass_intval(const MathStructure &m) {
 	if(m.isVariable() && !m.variable()->isKnown()) {
 		Assumptions *ass = ((UnknownVariable*) m.variable())->assumptions();
-		if(ass && ((ass->sign() != ASSUMPTION_SIGN_UNKNOWN && ass->sign() != ASSUMPTION_SIGN_NONZERO) || ass->min() || ass->max())) return 1;
+		if(ass && (ass->min() || ass->max())) return 1;
 		return 0;
 	}
 	int b = 0;

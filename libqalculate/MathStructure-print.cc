@@ -753,6 +753,7 @@ bool displays_number_exact(Number nr, const PrintOptions &po, MathStructure *top
 	if(top_parent && top_parent->precision() < 0) ips_n.parent_precision = top_parent->precision();
 	bool approximately_displayed = false;
 	PrintOptions po2 = po;
+	po2.indicate_infinite_series = false;
 	po2.is_approximate = &approximately_displayed;
 	nr.print(po2, ips_n);
 	return !approximately_displayed;
@@ -2330,6 +2331,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				bool approximately_displayed = false;
 				PrintOptions po2 = po;
 				po2.is_approximate = &approximately_displayed;
+				po2.indicate_infinite_series = false;
 				if(force_fraction && (po2.number_fraction_format == FRACTION_DECIMAL || po2.number_fraction_format == FRACTION_DECIMAL_EXACT)) po2.number_fraction_format = FRACTION_FRACTIONAL;
 				if(!force_fraction && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_BIJECTIVE_26 && po.number_fraction_format == FRACTION_DECIMAL_EXACT) {
 					// if FRACTION_DECIMAL_EXACT is active, numbers is not displayed as fraction if they can be shown exact using decimals

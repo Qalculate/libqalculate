@@ -1,3 +1,14 @@
+2019-04-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix automatic conversion to Newton
+	* Fix display of fraction in exact decimal fraction mode when indicate repeating decimals is active (in GUI)
+	* Fix display of repeating decimals (do not add additional whitespace when Unicode is off)
+	* Fix x^2=25m^2 where x>0 (was evaluated as false), and similar in exact mode
+
+2019-04-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault with empty sin() or sinh() in equation
+
 2019-04-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault when running qalc in non-interactive mode and gnuplot is missing (issue #184)
