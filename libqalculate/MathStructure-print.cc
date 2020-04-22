@@ -1807,7 +1807,9 @@ bool remove_angle_unit(MathStructure &m, Unit *u) {
 	for(size_t i = 0; i < m.size(); i++) {
 		if(remove_angle_unit(m[i], u)) b_ret = true;
 		if(m.isFunction() && m.function()->getArgumentDefinition(i + 1) && m.function()->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_ANGLE) {
-			if(m[i].isMultiplication()) {
+			if(m[i].isUnit() && !m[i].prefix() && m[i].unit() == u) {
+				m[i].set(1, 1, 0, true);
+			} else if(m[i].isMultiplication()) {
 				// f(a)*u: f(a)
 				for(size_t i3 = 0; i3 < m[i].size(); i3++) {
 					// ignore units with prefix
@@ -1823,7 +1825,9 @@ bool remove_angle_unit(MathStructure &m, Unit *u) {
 				// check if unit is present in all terms first
 				for(size_t i2 = 0; i2 < m[i].size(); i2++) {
 					bool b2 = false;
-					if(m[i][i2].isMultiplication()) {
+					if(m[i][i2].isUnit() && !m[i][i2].prefix() && m[i][i2].unit() == u) {
+						b2 = true;
+					} else if(m[i][i2].isMultiplication()) {
 						for(size_t i3 = 0; i3 < m[i][i2].size(); i3++) {
 							if(m[i][i2][i3].isUnit() && !m[i][i2][i3].prefix() && m[i][i2][i3].unit() == u) {
 								b2 = true;
@@ -1839,10 +1843,14 @@ bool remove_angle_unit(MathStructure &m, Unit *u) {
 				if(b) {
 					b_ret = true;
 					for(size_t i2 = 0; i2 < m[i].size(); i2++) {
-						for(size_t i3 = 0; i3 < m[i][i2].size(); i3++) {
-							if(m[i][i2][i3].isUnit() && !m[i][i2][i3].prefix() && m[i][i2][i3].unit() == u) {
-								m[i][i2].delChild(i3 + 1, true);
-								break;
+						if(m[i][i2].isUnit()) {
+							m[i][i2].set(1, 1, 0, true);
+						} else {
+							for(size_t i3 = 0; i3 < m[i][i2].size(); i3++) {
+								if(m[i][i2][i3].isUnit() && !m[i][i2][i3].prefix() && m[i][i2][i3].unit() == u) {
+									m[i][i2].delChild(i3 + 1, true);
+									break;
+								}
 							}
 						}
 					}

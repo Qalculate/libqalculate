@@ -1,3 +1,7 @@
+2019-04-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix removal of default angle unit from trigonometric functions in output when factor is one
+
 2019-04-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix automatic conversion to Newton
