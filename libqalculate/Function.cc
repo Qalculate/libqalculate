@@ -1372,7 +1372,7 @@ string Argument::printlong() const {
 		str += _("that fulfills the condition:");
 		str += " \"";
 		string str2 = scondition;
-		if(name().empty()) gsub("\\x", _("Argument"), str2);
+		if(name().empty()) gsub("\\x", _("argument"), str2);
 		else gsub("\\x", name(), str2);
 		str += str2;
 		str += "\"";

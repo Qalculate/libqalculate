@@ -923,7 +923,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		// handle case where conversion to units requested, but original expression and result does not contains any unit
 		MathStructure parsed_struct, to_struct;
 		mstruct = calculate(str, evalops, &parsed_struct, &to_struct);
-		if(to_struct.containsType(STRUCT_UNIT, true) && !mstruct.contains(STRUCT_UNIT, false, true, true) && !parsed_struct.containsType(STRUCT_UNIT, false, true, true)) {
+		if(to_struct.containsType(STRUCT_UNIT, true) && !mstruct.contains(STRUCT_UNIT) && !parsed_struct.containsType(STRUCT_UNIT, false, true, true)) {
 			// convert "to"-expression to base units
 			to_struct = CALCULATOR->convertToBaseUnits(to_struct);
 			// remove non-units, set local currency and use kg instead of g

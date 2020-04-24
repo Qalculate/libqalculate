@@ -18,6 +18,7 @@
 #include "Calculator.h"
 #include "Unit.h"
 #include "QalculateDateTime.h"
+#include "Variable.h"
 
 #include <sstream>
 #include <time.h>
@@ -335,7 +336,7 @@ int LunarPhaseFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	return 1;
 }
 NextLunarPhaseFunction::NextLunarPhaseFunction() : MathFunction("nextlunarphase", 1, 2) {
-	NumberArgument *arg = new NumberArgument();
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, true);
 	Number fr;
 	arg->setMin(&fr);
 	fr.set(1, 1, 0);
@@ -347,8 +348,27 @@ NextLunarPhaseFunction::NextLunarPhaseFunction() : MathFunction("nextlunarphase"
 	setArgumentDefinition(2, new DateArgument());
 	setDefaultValue(2, "now");
 }
-int NextLunarPhaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	mstruct = findNextLunarPhase(*vargs[1].datetime(), vargs[0].number());
+int NextLunarPhaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&eo) {
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(!mstruct.isNumber()) {
+		mstruct /= CALCULATOR->getRadUnit();
+		mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+		mstruct /= nr_two;
+		mstruct.eval(eo);
+	} else if(!mstruct.number().isFraction()) {
+		mstruct.calculateDivide(MathStructure(360, 1, 0), eo);
+	}
+	if(!mstruct.isNumber() || mstruct.number().isNegative() || !mstruct.number().isFraction()) {
+		Argument *arg = getArgumentDefinition(1);
+		if(arg) {
+			arg->setTests(true);
+			arg->test(mstruct, 1, this, eo);
+			arg->setTests(false);
+		}
+		return 0;
+	}
+	mstruct = findNextLunarPhase(*vargs[1].datetime(), mstruct.number());
 	if(CALCULATOR->aborted()) return 0;
 	return 1;
 }
