@@ -4751,7 +4751,9 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	if(do_stack) {
 	} else {
 		str = expression_str;
-		string from_str = str, to_str;
+		string to_str = CALCULATOR->parseComments(str, evalops.parse_options);
+		if(!to_str.empty() && str.empty()) return;
+		string from_str = str;
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
 			remove_duplicate_blanks(to_str);
 			string to_str1, to_str2;

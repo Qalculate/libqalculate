@@ -1,3 +1,7 @@
+2019-04-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Interpret text after hashtag (#) in expression as comments
+
 2019-04-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Accept angle (value with angle unit or value > 1 and < 360) in nextlunarphase()

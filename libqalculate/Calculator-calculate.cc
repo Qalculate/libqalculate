@@ -722,8 +722,11 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	MathStructure mstruct;
 	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false, do_expand = false, do_binary_prefixes = false, complex_angle_form = false;
 
+	string to_str = parseComments(str, evalops.parse_options);
+	if(!to_str.empty() && str.empty()) {stopControl(); return "";}
+	
 	// separate and handle string after "to"
-	string from_str = str, to_str;
+	string from_str = str;
 	Number base_save;
 	if(printops.base == BASE_CUSTOM) base_save = customOutputBase();
 	int save_bin = priv->use_binary_prefixes;

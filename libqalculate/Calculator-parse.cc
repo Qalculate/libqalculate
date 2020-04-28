@@ -218,6 +218,90 @@ const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", 
 #define INTERNAL_OPERATORS "\a\b%\x1c"
 #define DUODECIMAL_CHARS "EXABab"
 
+string Calculator::parseComments(string &str, const ParseOptions &po, bool *double_tag) {
+
+	if(str.length() <= 1 || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return "";
+	
+	if(double_tag) *double_tag = false;
+	
+	if(str[0] == '#') {
+		string from_str = unlocalizeExpression(str, po);
+		parseSigns(from_str);
+		size_t i = from_str.find_first_of(NOT_IN_NAMES NUMBERS);
+		if(from_str.length() == 1 || i == 0 || !getActiveExpressionItem(i == string::npos ? from_str : from_str.substr(0, i))) {
+			i = from_str.find_first_of(NOT_IN_NAMES);
+			if(from_str.length() == 1 || i == 0 || !getActiveExpressionItem(i == string::npos ? from_str : from_str.substr(0, i))) {
+				string to_str = str.substr(1);
+				str = "";
+				if(to_str[0] == '#') {
+					to_str.erase(0, 1);
+					if(double_tag) *double_tag = true;
+				}
+				remove_blank_ends(to_str);
+				return to_str;
+			}
+		}
+	}
+
+	size_t i = str.rfind("#");
+	if(i == string::npos) return "";
+
+	vector<size_t> q_begin;
+	vector<size_t> q_end;
+	// collect quoted ranges
+	size_t quote_index = 0;
+	while(true) {
+		quote_index = str.find_first_of("\"\'", quote_index);
+		if(quote_index == string::npos) {
+			break;
+		}
+		q_begin.push_back(quote_index);
+		quote_index = str.find(str[quote_index], quote_index + 1);
+		if(quote_index == string::npos) {
+			q_end.push_back(str.length() - 1);
+			break;
+		}
+		q_end.push_back(quote_index);
+		quote_index++;
+	}
+
+	for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
+		if(i >= q_begin[ui2]) {
+			if(i <= q_end[ui2]) {
+				return "";
+			}
+		} else {
+			break;
+		}
+	}
+	if(i == string::npos) return "";
+	string from_str = CALCULATOR->unlocalizeExpression(str, po);
+	parseSigns(from_str);
+	size_t i4 = from_str.rfind("#");
+	if(i4 != string::npos) {
+		size_t i2 = from_str.find_first_of(NOT_IN_NAMES NUMBERS, i4);
+		size_t i3 = from_str.find_last_of(NOT_IN_NAMES NUMBERS, i4);
+		if(i3 == string::npos) i3 = 0;
+		else i3++;
+		i3 = from_str.find_first_not_of(NUMBERS, i3);
+		if((i2 == i4 && i3 == i4)  || !getActiveExpressionItem(i2 == string::npos ? from_str.substr(i3) : from_str.substr(i3, i2 - i3 + 1))) {
+			i2 = from_str.find_first_of(NOT_IN_NAMES, i4);
+			i3 = from_str.find_last_of(NOT_IN_NAMES, i4);
+			if(i3 == string::npos) i3 = 0;
+			else i3++;
+			i3 = from_str.find_first_not_of(NUMBERS, i3);
+			if((i2 == i && i3 == i) || !getActiveExpressionItem(i2 == string::npos ? from_str.substr(i3) : from_str.substr(i3, i2 - i3 + 1))) {
+				string to_str = str.substr(i + 1);
+				str = str.substr(0, i);
+				if(to_str.length() > 1 && to_str[1] == '#') to_str = to_str.substr(1);
+				remove_blank_ends(to_str);
+				return to_str;
+			}
+		}
+	}
+	return "";
+}
+
 void Calculator::parseSigns(string &str, bool convert_to_internal_representation) const {
 	vector<size_t> q_begin;
 	vector<size_t> q_end;
