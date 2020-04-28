@@ -2282,7 +2282,7 @@
     <builtin_function name="lunarphase">
       <_title>Lunar Phase</_title>
       <_names>r:lunarphase</_names>
-      <_description>Returns the lunar phase, as a number between 0 and 1, for the specified date. 0 represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons.</_description>
+      <_description>Returns the lunar phase, as a number between 0 and 1, for the specified date. This value corrresponds to an angle between 0 and 360 degrees. 0 represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons.</_description>
       <argument type="date" index="1">
         <_title>Date</_title>
       </argument>
@@ -2290,7 +2290,7 @@
     <builtin_function name="nextlunarphase">
       <_title>Find Lunar Phase</_title>
       <_names>r:nextlunarphase</_names>
-      <_description>Returns the date when the specified lunar phase occurs. The function searches forward beginning at the specified date. The lunar phase are specified as a number between 0 and 1, where 0 represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons.</_description>
+      <_description>Returns the date when the specified lunar phase occurs. The function searches forward beginning at the specified date. The lunar phase are specified as a number between 0 and 1, where 0 represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons. Angle values are also allowed (e.g. π rad = 180° which corresponds to a value of 0.5). Values above 1, without unit, are interpreted as degrees.</_description>
       <argument type="date" index="1">
         <_title>Lunar Phase</_title>
       </argument>
