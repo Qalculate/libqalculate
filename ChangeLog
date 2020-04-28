@@ -1,6 +1,7 @@
 2019-04-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Accept angle (value with angle unit or value >= 1 and < 360) in nextlunarphase()
+	* Accept angle (value with angle unit or value > 1 and < 360) in nextlunarphase()
+	* Improved keyboard shortcuts dialog
 
 2019-04-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

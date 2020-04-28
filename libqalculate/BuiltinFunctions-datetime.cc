@@ -356,7 +356,7 @@ int NextLunarPhaseFunction::calculate(MathStructure &mstruct, const MathStructur
 		mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 		mstruct /= nr_two;
 		mstruct.eval(eo);
-	} else if(!mstruct.number().isFraction()) {
+	} else if(mstruct.number() > 1) {
 		mstruct.calculateDivide(MathStructure(360, 1, 0), eo);
 	}
 	if(!mstruct.isNumber() || mstruct.number().isNegative() || !mstruct.number().isFraction()) {
@@ -369,7 +369,7 @@ int NextLunarPhaseFunction::calculate(MathStructure &mstruct, const MathStructur
 		return 0;
 	}
 	mstruct = findNextLunarPhase(*vargs[1].datetime(), mstruct.number());
-	if(CALCULATOR->aborted()) return 0;
+	if(CALCULATOR->aborted()) return -1;
 	return 1;
 }
 
