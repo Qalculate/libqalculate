@@ -670,6 +670,7 @@ class Calculator {
 	bool separateWhereExpression(std::string &str, std::string &where_str, const EvaluationOptions &eo) const;
 	bool hasWhereExpression(const std::string &str, const EvaluationOptions &eo) const;
 
+	std::string parseComments(std::string &str, const ParseOptions &po = default_parse_options, bool *double_tag = NULL);
 	void parseSigns(std::string &str, bool convert_to_internal_representation = false) const;
 	/** Parse an expression and place in a MathStructure object.
 	*
