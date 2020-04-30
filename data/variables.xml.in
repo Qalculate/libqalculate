@@ -727,6 +727,11 @@
       <names>r:apery</names>
       <value>zeta(3)</value>
     </variable>
+    <variable>
+      <_title>Tau (2pi)</_title>
+      <names>au:&#x3C4;,r:tau</names>
+      <value>2*pi</value>
+    </variable>
     <builtin_variable name="e">
       <_title>Base of Natural Logarithms (e)</_title>
       <names>r:e</names>
