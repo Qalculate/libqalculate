@@ -438,6 +438,7 @@ class Calculator {
 	* \since 2.6.0
 	*/
 	std::string calculateAndPrint(std::string str, int msecs = 10000, const EvaluationOptions &eo = default_user_evaluation_options, const PrintOptions &po = default_print_options);
+	std::string calculateAndPrint(std::string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, bool with_parsed_expression);
 	int testCondition(std::string expression);
 	//@}
 

@@ -251,7 +251,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, KnownVariable *t
 	MathStructure mstruct_new(mstruct);
 	mstruct_new /= to_var->get();
 	mstruct_new.eval(eo);
-	mstruct_new *= to_var;
+	mstruct_new.multiply(to_var, true);
 	cleanMessages(mstruct, n_messages + 1);
 	return mstruct_new;
 }

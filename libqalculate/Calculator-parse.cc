@@ -246,35 +246,20 @@ string Calculator::parseComments(string &str, const ParseOptions &po, bool *doub
 	size_t i = str.rfind("#");
 	if(i == string::npos) return "";
 
-	vector<size_t> q_begin;
-	vector<size_t> q_end;
-	// collect quoted ranges
+	// check if within quoted ranges
 	size_t quote_index = 0;
 	while(true) {
 		quote_index = str.find_first_of("\"\'", quote_index);
-		if(quote_index == string::npos) {
+		if(quote_index == string::npos || quote_index > i) {
 			break;
 		}
-		q_begin.push_back(quote_index);
 		quote_index = str.find(str[quote_index], quote_index + 1);
-		if(quote_index == string::npos) {
-			q_end.push_back(str.length() - 1);
-			break;
+		if(quote_index == string::npos || quote_index > i) {
+			return "";
 		}
-		q_end.push_back(quote_index);
 		quote_index++;
 	}
 
-	for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
-		if(i >= q_begin[ui2]) {
-			if(i <= q_end[ui2]) {
-				return "";
-			}
-		} else {
-			break;
-		}
-	}
-	if(i == string::npos) return "";
 	string from_str = CALCULATOR->unlocalizeExpression(str, po);
 	parseSigns(from_str);
 	size_t i4 = from_str.rfind("#");

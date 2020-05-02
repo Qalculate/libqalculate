@@ -2734,7 +2734,6 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		if(isUnit_exp()) return MULTIPLICATION_SIGN_SPACE;
 		if(isUnknown_exp()) {
 			// (a)*"xy"=(a) "xy", (a)*"xy"^b=(a) "xy"^b, (a)*x=(a)x, (a)*x^b=ax^b
-			if(isSymbolic() || (isPower() && CHILD(0).isSymbolic())) return MULTIPLICATION_SIGN_SPACE;
 			return (namelen(isPower() ? CHILD(0) : *this, po, ips, NULL) > 1 ? MULTIPLICATION_SIGN_SPACE : MULTIPLICATION_SIGN_NONE);
 		}
 		if(isMultiplication() && SIZE > 0) {
@@ -2742,7 +2741,6 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 			if(CHILD(0).isUnit_exp()) return MULTIPLICATION_SIGN_SPACE;
 			if(CHILD(0).isUnknown_exp()) {
 				// (a)*"xy"z=(a) "xy"z, (a)*xy=(a)xy
-				if(CHILD(0).isSymbolic() || (CHILD(0).isPower() && CHILD(0)[0].isSymbolic())) return MULTIPLICATION_SIGN_SPACE;
 				return (namelen(CHILD(0).isPower() ? CHILD(0)[0] : CHILD(0), po, ips, NULL) > 1 ? MULTIPLICATION_SIGN_SPACE : MULTIPLICATION_SIGN_NONE);
 			}
 		} else if(isDivision()) {
@@ -2761,7 +2759,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 	int t = parent[index - 2].type();
 	// a^b*c (if b is not shown using superscript or similar)
 	if(flat_power && t == STRUCT_POWER) return MULTIPLICATION_SIGN_OPERATOR;
-	// a^b*(c)=a^b c
+	// a^b*(c)=a^b (c)
 	if(par && t == STRUCT_POWER) return MULTIPLICATION_SIGN_SPACE;
 	// a*(b)=a(b)
 	if(par) return MULTIPLICATION_SIGN_NONE;

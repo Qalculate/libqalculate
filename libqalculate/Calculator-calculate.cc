@@ -714,6 +714,9 @@ void fix_to_struct(MathStructure &m) {
 
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
 string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po) {
+	return calculateAndPrint(str, msecs, eo, po, false);
+}
+string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, bool with_parsed_expression) {
 
 	if(msecs > 0) startControl(msecs);
 
@@ -724,6 +727,9 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 
 	string to_str = parseComments(str, evalops.parse_options);
 	if(!to_str.empty() && str.empty()) {stopControl(); return "";}
+	
+	bool b_approx = false;
+	printops.is_approximate = &b_approx;
 	
 	// separate and handle string after "to"
 	string from_str = str;
@@ -918,13 +924,14 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		}
 	}
 
+	MathStructure parsed_struct;
 
 	// perform calculation
-	if(to_str.empty() || str == from_str) {
-		mstruct = calculate(str, evalops);
+	if(!to_str.empty() && str != from_str) {
+		mstruct = calculate(str, evalops, with_parsed_expression ? &parsed_struct : NULL);
 	} else {
 		// handle case where conversion to units requested, but original expression and result does not contains any unit
-		MathStructure parsed_struct, to_struct;
+		MathStructure to_struct;
 		mstruct = calculate(str, evalops, &parsed_struct, &to_struct);
 		if(to_struct.containsType(STRUCT_UNIT, true) && !mstruct.contains(STRUCT_UNIT) && !parsed_struct.containsType(STRUCT_UNIT, false, true, true)) {
 			// convert "to"-expression to base units
@@ -968,6 +975,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		PRINT_CALENDAR(string(_("Coptic:")), CALENDAR_COPTIC);
 		PRINT_CALENDAR(string(_("Ethiopian:")), CALENDAR_ETHIOPIAN);
 		stopControl();
+		if(po.is_approximate) *po.is_approximate = b_approx;
 		return str;
 	} else if(do_bases) {
 		// handle "to bases"
@@ -983,6 +991,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		printops.base = BASE_HEXADECIMAL;
 		str += print(mstruct, 0, printops);
 		stopControl();
+		if(po.is_approximate) *po.is_approximate = b_approx;
 		return str;
 	} else if(do_fraction) {
 		// handle "to fraction"
@@ -1005,10 +1014,27 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	}
 	// do not display the default angle unit in trigonometric functions
 	mstruct.removeDefaultAngleUnit(evalops);
-
+	
 	// format and print
 	mstruct.format(printops);
-	str = mstruct.print(printops);
+	if(with_parsed_expression) {
+		parsed_struct.format(printops);
+		str = parsed_struct.print(printops);
+		if(b_approx || mstruct.isApproximate()) {
+			if(printops.use_unicode_signs && (!printops.can_display_unicode_string_function || (*printops.can_display_unicode_string_function) (SIGN_ALMOST_EQUAL, printops.can_display_unicode_string_arg))) {
+				str += " " SIGN_ALMOST_EQUAL " ";
+			} else {
+				str += "= ";
+				str += _("approx.");
+				str += " ";
+			}
+		} else {
+			str += " = ";
+		}
+		str += mstruct.print(printops);
+	} else {
+		str = mstruct.print(printops);
+	}
 
 	// "to angle": replace "cis" with angle symbol
 	if(complex_angle_form) gsub(" cis ", "∠", str);
@@ -1018,6 +1044,8 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	// restore options
 	if(printops.base == BASE_CUSTOM) setCustomOutputBase(base_save);
 	priv->use_binary_prefixes = save_bin;
+	
+	if(po.is_approximate) *po.is_approximate = b_approx;
 
 	return str;
 }
