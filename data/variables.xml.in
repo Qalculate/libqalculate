@@ -709,7 +709,7 @@
     <_title>Basic Constants</_title>
     <variable>
       <_title>Golden Ratio</_title>
-      <names>r:golden,au:&#x3C6;</names>
+      <names>r:golden,au:&#x3C6;,aos:phi</names>
       <value>(1+sqrt(5))/2</value>
     </variable>
     <variable>
