@@ -714,9 +714,9 @@ void fix_to_struct(MathStructure &m) {
 
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
 string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po) {
-	return calculateAndPrint(str, msecs, eo, po, false);
+	return calculateAndPrint(str, msecs, eo, po, NULL);
 }
-string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, bool with_parsed_expression) {
+string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, std::string *parsed_expression) {
 
 	if(msecs > 0) startControl(msecs);
 
@@ -727,9 +727,6 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 
 	string to_str = parseComments(str, evalops.parse_options);
 	if(!to_str.empty() && str.empty()) {stopControl(); return "";}
-	
-	bool b_approx = false;
-	printops.is_approximate = &b_approx;
 	
 	// separate and handle string after "to"
 	string from_str = str;
@@ -928,7 +925,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 
 	// perform calculation
 	if(!to_str.empty() && str != from_str) {
-		mstruct = calculate(str, evalops, with_parsed_expression ? &parsed_struct : NULL);
+		mstruct = calculate(str, evalops, parsed_expression ? &parsed_struct : NULL);
 	} else {
 		// handle case where conversion to units requested, but original expression and result does not contains any unit
 		MathStructure to_struct;
@@ -975,7 +972,6 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		PRINT_CALENDAR(string(_("Coptic:")), CALENDAR_COPTIC);
 		PRINT_CALENDAR(string(_("Ethiopian:")), CALENDAR_ETHIOPIAN);
 		stopControl();
-		if(po.is_approximate) *po.is_approximate = b_approx;
 		return str;
 	} else if(do_bases) {
 		// handle "to bases"
@@ -991,7 +987,6 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		printops.base = BASE_HEXADECIMAL;
 		str += print(mstruct, 0, printops);
 		stopControl();
-		if(po.is_approximate) *po.is_approximate = b_approx;
 		return str;
 	} else if(do_fraction) {
 		// handle "to fraction"
@@ -1016,25 +1011,46 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	mstruct.removeDefaultAngleUnit(evalops);
 	
 	// format and print
-	mstruct.format(printops);
-	if(with_parsed_expression) {
-		parsed_struct.format(printops);
-		str = parsed_struct.print(printops);
-		if(b_approx || mstruct.isApproximate()) {
-			if(printops.use_unicode_signs && (!printops.can_display_unicode_string_function || (*printops.can_display_unicode_string_function) (SIGN_ALMOST_EQUAL, printops.can_display_unicode_string_arg))) {
-				str += " " SIGN_ALMOST_EQUAL " ";
-			} else {
-				str += "= ";
-				str += _("approx.");
-				str += " ";
-			}
-		} else {
-			str += " = ";
+	if(parsed_expression) {
+		PrintOptions po_parsed;
+		po_parsed.preserve_format = true;
+		po_parsed.show_ending_zeroes = false;
+		po_parsed.lower_case_e = printops.lower_case_e;
+		po_parsed.lower_case_numbers = printops.lower_case_numbers;
+		po_parsed.base_display = printops.base_display;
+		po_parsed.twos_complement = printops.twos_complement;
+		po_parsed.hexadecimal_twos_complement = printops.hexadecimal_twos_complement;
+		po_parsed.base = evalops.parse_options.base;
+		Number nr_base;
+		if(po_parsed.base == BASE_CUSTOM && (usesIntervalArithmetic() || customInputBase().isRational()) && (customInputBase().isInteger() || !customInputBase().isNegative()) && (customInputBase() > 1 || customInputBase() < -1) && customInputBase() >= -1114112L && customInputBase() <= 1114112L) {
+			nr_base = customOutputBase();
+			setCustomOutputBase(customInputBase());
+		} else if(po_parsed.base == BASE_CUSTOM || (po_parsed.base < BASE_CUSTOM && !usesIntervalArithmetic() && po_parsed.base != BASE_UNICODE)) {
+			po_parsed.base = 10;
+			po_parsed.min_exp = 6;
+			po_parsed.use_max_decimals = true;
+			po_parsed.max_decimals = 5;
+			po_parsed.preserve_format = false;
 		}
-		str += mstruct.print(printops);
-	} else {
-		str = mstruct.print(printops);
+		po_parsed.abbreviate_names = false;
+		po_parsed.digit_grouping = printops.digit_grouping;
+		po_parsed.use_unicode_signs = printops.use_unicode_signs;
+		po_parsed.multiplication_sign = printops.multiplication_sign;
+		po_parsed.division_sign = printops.division_sign;
+		po_parsed.short_multiplication = false;
+		po_parsed.excessive_parenthesis = true;
+		po_parsed.improve_division_multipliers = false;
+		po_parsed.restrict_to_parent_precision = false;
+		po_parsed.spell_out_logical_operators = printops.spell_out_logical_operators;
+		po_parsed.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+		if(po_parsed.base == BASE_CUSTOM) {
+			setCustomOutputBase(nr_base);
+		}
+		parsed_struct.format(po_parsed);
+		*parsed_expression = parsed_struct.print(po_parsed);
 	}
+	mstruct.format(printops);
+	str = mstruct.print(printops);
 
 	// "to angle": replace "cis" with angle symbol
 	if(complex_angle_form) gsub(" cis ", "∠", str);
@@ -1045,7 +1061,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	if(printops.base == BASE_CUSTOM) setCustomOutputBase(base_save);
 	priv->use_binary_prefixes = save_bin;
 	
-	if(po.is_approximate) *po.is_approximate = b_approx;
+	if(po.is_approximate && mstruct.isApproximate()) *po.is_approximate = true;
 
 	return str;
 }
