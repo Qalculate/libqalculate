@@ -726,7 +726,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false, do_expand = false, do_binary_prefixes = false, complex_angle_form = false;
 
 	string to_str = parseComments(str, evalops.parse_options);
-	if(!to_str.empty() && str.empty()) {stopControl(); return "";}
+	if(!to_str.empty() && str.empty()) {stopControl(); if(parsed_expression) {*parsed_expression = "";} return "";}
 	
 	// separate and handle string after "to"
 	string from_str = str;
@@ -971,8 +971,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		PRINT_CALENDAR(string(_("Revised julian:")), CALENDAR_MILANKOVIC);
 		PRINT_CALENDAR(string(_("Coptic:")), CALENDAR_COPTIC);
 		PRINT_CALENDAR(string(_("Ethiopian:")), CALENDAR_ETHIOPIAN);
-		stopControl();
-		return str;
+		goto after_print;
 	} else if(do_bases) {
 		// handle "to bases"
 		printops.base = BASE_BINARY;
@@ -986,8 +985,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		str += " = ";
 		printops.base = BASE_HEXADECIMAL;
 		str += print(mstruct, 0, printops);
-		stopControl();
-		return str;
+		goto after_print;
 	} else if(do_fraction) {
 		// handle "to fraction"
 		if(mstruct.isNumber()) printops.number_fraction_format = FRACTION_COMBINED;
@@ -1011,6 +1009,21 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	mstruct.removeDefaultAngleUnit(evalops);
 	
 	// format and print
+	mstruct.format(printops);
+	str = mstruct.print(printops);
+
+	after_print:
+
+	// "to angle": replace "cis" with angle symbol
+	if(complex_angle_form) gsub(" cis ", "∠", str);
+
+	if(msecs > 0) stopControl();
+
+	// restore options
+	if(printops.base == BASE_CUSTOM) setCustomOutputBase(base_save);
+	priv->use_binary_prefixes = save_bin;
+	
+	// output parsed value
 	if(parsed_expression) {
 		PrintOptions po_parsed;
 		po_parsed.preserve_format = true;
@@ -1049,17 +1062,6 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		parsed_struct.format(po_parsed);
 		*parsed_expression = parsed_struct.print(po_parsed);
 	}
-	mstruct.format(printops);
-	str = mstruct.print(printops);
-
-	// "to angle": replace "cis" with angle symbol
-	if(complex_angle_form) gsub(" cis ", "∠", str);
-
-	if(msecs > 0) stopControl();
-
-	// restore options
-	if(printops.base == BASE_CUSTOM) setCustomOutputBase(base_save);
-	priv->use_binary_prefixes = save_bin;
 	
 	if(po.is_approximate && mstruct.isApproximate()) *po.is_approximate = true;
 

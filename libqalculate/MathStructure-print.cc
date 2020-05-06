@@ -1843,7 +1843,7 @@ bool remove_angle_unit(MathStructure &m, Unit *u) {
 				if(b) {
 					b_ret = true;
 					for(size_t i2 = 0; i2 < m[i].size(); i2++) {
-						if(m[i][i2].isUnit()) {
+						if(m[i][i2].isUnit() && !m[i][i2].prefix() && m[i][i2].unit() == u) {
 							m[i][i2].set(1, 1, 0, true);
 						} else {
 							for(size_t i3 = 0; i3 < m[i][i2].size(); i3++) {

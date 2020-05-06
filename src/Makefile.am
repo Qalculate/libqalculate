@@ -6,7 +6,7 @@ AM_CPPFLAGS = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libqalculate \
-	@LIBCURL_CFLAGS@ @LIBXML_CFLAGS@ @ICU_CFLAGS@
+	@LIBCURL_CFLAGS@ @LIBXML_CFLAGS@ @ICU_CFLAGS@ @GIO_CFLAGS@
 
 bin_PROGRAMS = @QALCULATE_TEXT@
 noinst_PROGRAMS = @QALCULATE_DEFS2DOC@ @QALCULATE_TEST@
@@ -18,6 +18,7 @@ qalc_LDADD = \
 	@LIBXML_LIBS@ \
 	@LIBCURL_LIBS@ \
 	@ICU_LIBS@ \
+	@GIO_LIBS@ \
 	@READLINE_LIBS@ \
 	@LTLIBINTL@ \
 	@LTLIBICONV@ \
@@ -29,6 +30,7 @@ defs2doc_LDADD = \
 	@LIBXML_LIBS@ \
 	@LIBCURL_LIBS@ \
 	@ICU_LIBS@ \
+	@GIO_LIBS@ \
 	@LTLIBINTL@ \
 	@LTLIBICONV@ \
 	../libqalculate/libqalculate.la
@@ -39,6 +41,7 @@ test_LDADD = \
 	@LIBXML_LIBS@ \
 	@LIBCURL_LIBS@ \
 	@ICU_LIBS@ \
+	@GIO_LIBS@ \
 	@LTLIBINTL@ \
 	@LTLIBICONV@ \
 	../libqalculate/libqalculate.la
