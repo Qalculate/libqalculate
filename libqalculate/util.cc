@@ -582,9 +582,12 @@ string getPackageDataDir() {
 }
 
 string getGlobalDefinitionsDir() {
-#ifndef WIN32
-	return string(PACKAGE_DATA_DIR) + "/qalculate";
+#ifdef COMPILED_DEFINITIONS
+	return "resource:///qalculate";
 #else
+#	ifndef WIN32
+	return string(PACKAGE_DATA_DIR) + "/qalculate";
+#	else
 	char exepath[MAX_PATH];
 	GetModuleFileName(NULL, exepath, MAX_PATH);
 	string datadir(exepath);
@@ -608,6 +611,7 @@ string getGlobalDefinitionsDir() {
 		return datadir + "\\data";
 	}
 	return datadir + "\\definitions";
+#	endif
 #endif
 }
 

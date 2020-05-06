@@ -1036,7 +1036,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					size_t name_length;
 					if(i == string::npos) {
 						i = str.length();
-					} else if(is_not_in(ILLEGAL_IN_UNITNAMES, str[i]) && is_in("abcdefABCDEF", str[i - 1])) {
+					} else if(!po.rpn && is_not_in(ILLEGAL_IN_UNITNAMES, str[i]) && is_in("abcdefABCDEF", str[i - 1])) {
 						size_t i2 = str.find_last_not_of("abcdefABCDEF", i - 1);
 						if(i2 != string::npos && i2 > str_index + 2 && is_in(SPACE, str[i2])) {
 							i = i2;
