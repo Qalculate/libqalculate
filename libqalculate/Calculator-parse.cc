@@ -244,7 +244,7 @@ string Calculator::parseComments(string &str, const ParseOptions &po, bool *doub
 	}
 
 	size_t i = str.rfind("#");
-	if(i == string::npos) return "";
+	if(i == string::npos || i == 0) return "";
 
 	// check if within quoted ranges
 	size_t quote_index = 0;
@@ -268,7 +268,6 @@ string Calculator::parseComments(string &str, const ParseOptions &po, bool *doub
 		size_t i3 = from_str.find_last_of(NOT_IN_NAMES NUMBERS, i4);
 		if(i3 == string::npos) i3 = 0;
 		else i3++;
-		i3 = from_str.find_first_not_of(NUMBERS, i3);
 		if((i2 == i4 && i3 == i4)  || !getActiveExpressionItem(i2 == string::npos ? from_str.substr(i3) : from_str.substr(i3, i2 - i3 + 1))) {
 			i2 = from_str.find_first_of(NOT_IN_NAMES, i4);
 			i3 = from_str.find_last_of(NOT_IN_NAMES, i4);

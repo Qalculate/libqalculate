@@ -924,7 +924,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	MathStructure parsed_struct;
 
 	// perform calculation
-	if(!to_str.empty() && str != from_str) {
+	if(to_str.empty() || str == from_str) {
 		mstruct = calculate(str, evalops, parsed_expression ? &parsed_struct : NULL);
 	} else {
 		// handle case where conversion to units requested, but original expression and result does not contains any unit
@@ -932,9 +932,18 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		mstruct = calculate(str, evalops, &parsed_struct, &to_struct);
 		if(to_struct.containsType(STRUCT_UNIT, true) && !mstruct.contains(STRUCT_UNIT) && !parsed_struct.containsType(STRUCT_UNIT, false, true, true)) {
 			// convert "to"-expression to base units
-			to_struct = CALCULATOR->convertToBaseUnits(to_struct);
+			to_struct.unformat();
+			to_struct = CALCULATOR->convertToOptimalUnit(to_struct, evalops, true);
 			// remove non-units, set local currency and use kg instead of g
 			fix_to_struct(to_struct);
+			// add base unit to from value
+			mstruct.multiply(to_struct);
+			to_struct.format(printops);
+			if(to_struct.isMultiplication() && to_struct.size() >= 2) {
+				if(to_struct[0].isOne()) to_struct.delChild(1, true);
+				else if(to_struct[1].isOne()) to_struct.delChild(2, true);
+			}
+			parsed_struct.multiply(to_struct, true);
 			// recalculate
 			if(!to_struct.isZero()) mstruct = calculate(mstruct, evalops, to_str);
 		}

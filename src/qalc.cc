@@ -5331,7 +5331,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	}
 	
 	if(!avoid_recalculation && !do_mathoperation && to_struct.containsType(STRUCT_UNIT, true) && !mstruct->containsType(STRUCT_UNIT) && !parsed_mstruct->containsType(STRUCT_UNIT, false, true, true)) {
-		to_struct = CALCULATOR->convertToBaseUnits(to_struct);
+		to_struct.unformat();
+		to_struct = CALCULATOR->convertToOptimalUnit(to_struct, evalops, true);
 		fix_to_struct(to_struct);
 		if(!to_struct.isZero()) {
 			string from_str = str, to_str;
