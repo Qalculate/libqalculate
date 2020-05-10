@@ -1,0 +1,81 @@
+diff --git a/libqalculate/Calculator-definitions.cc b/libqalculate/Calculator-definitions.cc
+index 7982703..f7bc3c1 100644
+--- a/libqalculate/Calculator-definitions.cc
++++ b/libqalculate/Calculator-definitions.cc
+@@ -700,12 +700,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
+ 	if(clocale) locale = clocale;
+ #endif
+ 
+-	if(b_ignore_locale || locale == "POSIX" || locale == "C") {
+-		locale = "";
+-	} else {
+-		size_t i = locale.find('.');
+-		if(i != string::npos) locale = locale.substr(0, i);
+-	}
++	locale = "";
+ 
+ 	int fulfilled_translation = 0;
+ 	string localebase;
+diff --git a/libqalculate/Makefile.am b/libqalculate/Makefile.am
+index b4f213c..254c0f0 100644
+--- a/libqalculate/Makefile.am
++++ b/libqalculate/Makefile.am
+@@ -5,27 +5,6 @@
+ 
+ lib_LTLIBRARIES = libqalculate.la
+ 
+-if COMPILED_DEFINITIONS
+-definitions.c : $(top_srcdir)/data/definitions.gresource.xml $(top_srcdir)/data/*.xml
+-	glib-compile-resources --generate-source --target=$@ --sourcedir=$(top_srcdir)/data $(top_srcdir)/data/definitions.gresource.xml
+-
+-libqalculate_la_SOURCES = \
+-	Function.cc Calculator.cc Calculator-plot.cc Calculator-parse.cc \
+-	Calculator-definitions.cc Calculator-calculate.cc Calculator-convert.cc \
+-	DataSet.cc Variable.cc ExpressionItem.cc Number.cc MathStructure.cc \
+-	Prefix.cc support.h util.cc Unit.cc QalculateDateTime.cc \
+-	BuiltinFunctions-util.cc BuiltinFunctions-trigonometry.cc BuiltinFunctions-matrixvector.cc \
+-	BuiltinFunctions-datetime.cc BuiltinFunctions-statistics.cc \
+-	BuiltinFunctions-explog.cc BuiltinFunctions-special.cc BuiltinFunctions-algebra.cc \
+-	BuiltinFunctions-calculus.cc BuiltinFunctions-number.cc \
+-	BuiltinFunctions-combinatorics.cc BuiltinFunctions-logical.cc \
+-	MathStructure-factor.cc MathStructure-gcd.cc MathStructure-integrate.cc \
+-	MathStructure-isolatex.cc MathStructure-polynomial.cc \
+-	MathStructure-matrixvector.cc MathStructure-print.cc \
+-	MathStructure-differentiate.cc MathStructure-calculate.cc MathStructure-eval.cc \
+-	MathStructure-convert.cc MathStructure-decompose.cc MathStructure-limit.cc \
+-	definitions.c
+-else
+ libqalculate_la_SOURCES = \
+ 	Function.cc Calculator.cc Calculator-plot.cc Calculator-parse.cc \
+ 	Calculator-definitions.cc Calculator-calculate.cc Calculator-convert.cc \
+@@ -41,7 +20,6 @@ libqalculate_la_SOURCES = \
+ 	MathStructure-matrixvector.cc MathStructure-print.cc \
+ 	MathStructure-differentiate.cc MathStructure-calculate.cc MathStructure-eval.cc \
+ 	MathStructure-convert.cc MathStructure-decompose.cc MathStructure-limit.cc
+-endif
+ 
+ libqalculateincludedir = $(includedir)/libqalculate
+ 
+diff --git a/src/Makefile.am b/src/Makefile.am
+index f65d2b2..0a3bc7c 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -6,13 +6,17 @@ AM_CPPFLAGS = \
+ 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
+ 	-I$(top_srcdir) \
+ 	-I$(top_srcdir)/libqalculate \
++	-std=c++11 \
+ 	@LIBCURL_CFLAGS@ @LIBXML_CFLAGS@ @ICU_CFLAGS@ @GIO_CFLAGS@
+ 
+ bin_PROGRAMS = @QALCULATE_TEXT@
+ noinst_PROGRAMS = @QALCULATE_DEFS2DOC@ @QALCULATE_TEST@
+ EXTRA_PROGRAMS = qalc defs2doc test
+ 
+-qalc_SOURCES = qalc.cc
++definitions.c : $(top_srcdir)/data/definitions.gresource.xml $(top_srcdir)/data/*.xml
++	glib-compile-resources --generate-source --target=$@ --sourcedir=$(top_srcdir)/data $(top_srcdir)/data/definitions.gresource.xml
++
++qalc_SOURCES = qalc.cc definitions.c
+ 
+ qalc_LDADD = \
+ 	@LIBXML_LIBS@ \

@@ -1900,7 +1900,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 	if(recursive) {
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CALCULATOR->aborted()) break;
-			if(i == 1 && m_type == STRUCT_POWER && po.number_fraction_format < FRACTION_FRACTIONAL && CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().isInteger() && CHILD(1).number().numeratorIsLessThan(10) && CHILD(1).number().numeratorIsGreaterThan(-10) && CHILD(1).number().denominatorIsLessThan(10)) {
+			if(!po.preserve_format && i == 1 && m_type == STRUCT_POWER && po.number_fraction_format < FRACTION_FRACTIONAL && CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().isInteger() && CHILD(1).number().numeratorIsLessThan(10) && CHILD(1).number().numeratorIsGreaterThan(-10) && CHILD(1).number().denominatorIsLessThan(10)) {
 				// always display rational number exponents with small numerator and denominator as fraction (e.g. 5^(2/3) instead of 5^0.666...)
 				PrintOptions po2 = po;
 				po2.number_fraction_format = FRACTION_FRACTIONAL;
@@ -2282,7 +2282,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 		}
 		case STRUCT_NUMBER: {
 			bool force_fraction = false;
-			if(parent && parent->isMultiplication() && o_number.isRational()) {
+			if(!po.preserve_format && parent && parent->isMultiplication() && o_number.isRational()) {
 				// always show fraction format for rational number a in a(f(b)+f(c))
 				for(size_t i = 0; i < parent->size(); i++) {
 					if((*parent)[i].isAddition()) {
@@ -2989,7 +2989,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 				print_str += "/";
 			}
 			if(po.spacious) print_str += " ";
-			if(CHILD(0).isNumber() && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+			if(!po.preserve_format && CHILD(0).isNumber() && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 				PrintOptions po2 = po;
 				po2.number_fraction_format = FRACTION_FRACTIONAL;
 				ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
@@ -3003,7 +3003,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
 		case STRUCT_DIVISION: {
 			ips_n.depth++;
 			ips_n.division_depth++;
-			if(CHILD(0).isNumber() && CHILD(1).isNumber() && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+			if(!po.preserve_format && CHILD(0).isNumber() && CHILD(1).isNumber() && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 				PrintOptions po2 = po;
 				po2.number_fraction_format = FRACTION_FRACTIONAL;
 				ips_n.wrap = CHILD(0).needsParenthesis(po2, ips_n, *this, 1, true, true);

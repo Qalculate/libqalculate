@@ -1240,18 +1240,18 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 		remove_blank_ends(to_str);
 		str = str.substr(0, i);
 		parseSigns(str);
-		if(str.find("&&") == string::npos) {
+		if(to_str.find("&&") == string::npos) {
 			int par = 0;
 			int bra = 0;
-			for(size_t i = 0; i < str.length(); i++) {
-				switch(str[i]) {
+			for(size_t i = 0; i < to_str.length(); i++) {
+				switch(to_str[i]) {
 					case '(': {par++; break;}
 					case ')': {if(par > 0) par--; break;}
 					case '[': {bra++; break;}
 					case ']': {if(bra > 0) bra--; break;}
 					case COMMA_CH: {
 						if(par == 0 && bra == 0) {
-							str.replace(i, 1, LOGICAL_AND);
+							to_str.replace(i, 1, LOGICAL_AND);
 							i++;
 						}
 						break;

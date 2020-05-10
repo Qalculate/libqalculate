@@ -3044,6 +3044,25 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					switch(type) {
 						case 1: {
 							parseAdd(str2, mstruct, po, OPERATION_DIVIDE, append);
+							if(po.parsing_mode == PARSING_MODE_ADAPTIVE && !str2.empty() && str2[0] != LEFT_PARENTHESIS_CH) {
+								MathStructure *mden = NULL, *mnum = NULL;
+								if(po.preserve_format && mstruct->isDivision()) {
+									mden = &(*mstruct)[1];
+									mnum = &(*mstruct)[0];
+								} else if(!po.preserve_format && mstruct->isMultiplication() && mstruct->size() >= 2 && mstruct->last().isPower()) {
+									mden = &mstruct->last()[0];
+									mnum = &(*mstruct)[mstruct->size() - 2];
+								}
+								while(mnum && mnum->isMultiplication() && mnum->size() > 0) mnum = &mnum->last();
+								if(mden && mden->isMultiplication() && (mden->size() != 2 || !(*mden)[0].isNumber() || !(*mden)[1].isUnit_exp() || !mnum->isUnit_exp())) {
+									bool b_warn = str2[0] != ID_WRAP_LEFT_CH;
+									if(!b_warn && str2.length() > 2) {
+										size_t i3 = str2.find_first_not_of(NUMBERS, 1);
+										b_warn = (i3 != string::npos && i3 != str2.length() - 1);
+									}
+									if(b_warn) error(false, _("The expression is ambiguous (be careful when combining implicit multiplication with division)."), NULL);
+								}
+							}
 							break;
 						}
 						case 2: {
@@ -3101,6 +3120,25 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			switch(type) {
 				case 1: {
 					parseAdd(str, mstruct, po, OPERATION_DIVIDE, append);
+					if(po.parsing_mode == PARSING_MODE_ADAPTIVE && !str.empty() && str[0] != LEFT_PARENTHESIS_CH) {
+						MathStructure *mden = NULL, *mnum = NULL;
+						if(po.preserve_format && mstruct->isDivision()) {
+							mden = &(*mstruct)[1];
+							mnum = &(*mstruct)[0];
+						} else if(!po.preserve_format && mstruct->isMultiplication() && mstruct->size() >= 2 && mstruct->last().isPower()) {
+							mden = &mstruct->last()[0];
+							mnum = &(*mstruct)[mstruct->size() - 2];
+						}
+						while(mnum && mnum->isMultiplication() && mnum->size() > 0) mnum = &mnum->last();
+						if(mden && mden->isMultiplication() && (mden->size() != 2 || !(*mden)[0].isNumber() || !(*mden)[1].isUnit_exp() || !mnum->isUnit_exp())) {
+							bool b_warn = str[0] != ID_WRAP_LEFT_CH;
+							if(!b_warn && str.length() > 2) {
+								size_t i3 = str.find_first_not_of(NUMBERS, 1);
+								b_warn = (i3 != string::npos && i3 != str.length() - 1);
+							}
+							if(b_warn) error(false, _("The expression is ambiguous (be careful when combining implicit multiplication with division)."), NULL);
+						}
+					}
 					break;
 				}
 				case 2: {
