@@ -1014,6 +1014,31 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			printops.use_prefixes_for_all_units = true;
 		}
 	}
+
+	// convert time units to hours when using time format
+	if(printops.base == BASE_TIME) {
+		bool b = false;
+		if(mstruct.isUnit() && mstruct.unit()->baseUnit()->referenceName() == "s") {
+			b = true;
+		} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isUnit() && mstruct[1].unit()->baseUnit()->referenceName() == "s") {
+			b = true;
+		} else if(mstruct.isAddition() && mstruct.size() > 0) {
+			b = true;
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				if(mstruct[i].isUnit() && mstruct[i].unit()->baseUnit()->referenceName() == "s") {}
+				else if(mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][0].isNumber() && mstruct[i][1].isUnit() && mstruct[i][1].unit()->baseUnit()->referenceName() == "s") {}
+				else {b = false; break;}
+			}
+		}
+		if(b) {
+			Unit *u = getActiveUnit("h");
+			if(u) {
+				mstruct.divide(u);
+				mstruct.eval(evalops);
+			}
+		}
+	}
+	
 	// do not display the default angle unit in trigonometric functions
 	mstruct.removeDefaultAngleUnit(evalops);
 	

@@ -4280,6 +4280,30 @@ void ViewThread::run() {
 			}
 		}
 		printops.allow_non_usable = false;
+		
+		// convert time units to hours when using time format
+		if(printops.base == BASE_TIME) {
+			bool b = false;
+			if(m.isUnit() && m.unit()->baseUnit()->referenceName() == "s") {
+				b = true;
+			} else if(m.isMultiplication() && m.size() == 2 && m[0].isNumber() && m[1].isUnit() && m[1].unit()->baseUnit()->referenceName() == "s") {
+				b = true;
+			} else if(m.isAddition() && m.size() > 0) {
+				b = true;
+				for(size_t i = 0; i < m.size(); i++) {
+					if(m[i].isUnit() && m[i].unit()->baseUnit()->referenceName() == "s") {}
+					else if(m[i].isMultiplication() && m[i].size() == 2 && m[i][0].isNumber() && m[i][1].isUnit() && m[i][1].unit()->baseUnit()->referenceName() == "s") {}
+					else {b = false; break;}
+				}
+			}
+			if(b) {
+				Unit *u = CALCULATOR->getActiveUnit("h");
+				if(u) {
+					m.divide(u);
+					m.eval(evalops);
+				}
+			}
+		}
 
 		m.removeDefaultAngleUnit(evalops);
 		m.format(printops);
