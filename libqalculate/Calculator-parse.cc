@@ -3060,7 +3060,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 										size_t i3 = str2.find_first_not_of(NUMBERS, 1);
 										b_warn = (i3 != string::npos && i3 != str2.length() - 1);
 									}
-									if(b_warn) error(false, _("The expression is ambiguous (be careful when combining implicit multiplication with division)."), NULL);
+									if(b_warn) error(false, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
 								}
 							}
 							break;
@@ -3136,7 +3136,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 								size_t i3 = str.find_first_not_of(NUMBERS, 1);
 								b_warn = (i3 != string::npos && i3 != str.length() - 1);
 							}
-							if(b_warn) error(false, _("The expression is ambiguous (be careful when combining implicit multiplication with division)."), NULL);
+							if(b_warn) error(false, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
 						}
 					}
 					break;
