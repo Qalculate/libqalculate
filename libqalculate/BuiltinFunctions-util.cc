@@ -408,7 +408,7 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	mstruct = vargs[0];
 	bool b_evaled = false;
 	if(vargs[3].number().getBoolean()) {mstruct.eval(eo); b_evaled = true;}
-	if(vargs[1].isVector() && !vargs[2].isVector()) {
+	if(vargs[1].isVector() && !vargs[2].isVector() && !vargs[2].representsScalar()) {
 		MathStructure meval(vargs[2]);
 		CALCULATOR->beginTemporaryStopMessages();
 		meval.eval(eo);

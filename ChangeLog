@@ -1,3 +1,14 @@
+2019-05-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Divide value with time units by hours if time format is used
+	* Fix sexagesimal, and time format, output when 3rd section is rounded to 60
+	* Show decimals, in 3rd section, with sexagesimal base and time format
+	* Improved handling of intervals for sexagesimal base and time format
+
+2019-05-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* If argument 2 in replace() is vector and argument 3 is not, evaluate argument 3 and test if vector, e.g. replace(x+y+z,[x,y,z],multisolve([x+y=2,x+z=3,y+z=4],[x,y,z]))
+
 2019-05-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Show warning for ambiguous implicit expression (e.g. 6/2(1+2)) in adaptive parsing mode

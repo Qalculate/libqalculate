@@ -10282,19 +10282,73 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		// sexagesimal base or time format
 		
 		Number nr(*this);
-		nr.intervalToMidValue();
+		if(po.interval_display == INTERVAL_DISPLAY_LOWER) nr = nr.lowerEndPoint();
+		else if(po.interval_display == INTERVAL_DISPLAY_UPPER) nr = nr.upperEndPoint();
+		else if(po.interval_display == INTERVAL_DISPLAY_MIDPOINT) nr.intervalToMidValue();
 
 		// handle sign separately
 		bool neg = nr.isNegative();
 		nr.setNegative(false);
 		
 		// from left to right
+
 		// first section: integer part
-		nr.trunc();
+		Number nr1(nr);
+		nr1.intervalToMidValue();
+		nr1.trunc();
+		
 		PrintOptions po2 = po;
 		po2.base = 10;
-		po2.number_fraction_format = FRACTION_FRACTIONAL;
-		string str = nr.print(po2);
+		po2.number_fraction_format = FRACTION_DECIMAL;
+		po2.show_ending_zeroes = false;
+
+		// second section: trunc(fractional part * 60)
+		Number nr2(nr);
+		nr2.frac();
+		nr2.intervalToPrecision();
+		if(nr2.isInterval()) {
+			if(po2.interval_display < INTERVAL_DISPLAY_INTERVAL || po2.interval_display < INTERVAL_DISPLAY_PLUSMINUS) po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+			po2.max_decimals = 0;
+			po2.use_max_decimals = true;
+			return print(po2, ips);
+		}
+		nr2.setApproximate(false);
+		nr2 *= 60;
+		nr2.trunc();
+
+		// third section: trunc((fractional part of (fractional part * 60)) * 60)
+		Number nr3(nr);
+		nr3.frac();
+		nr3 *= 60;
+		nr3.frac();
+		nr3.intervalToPrecision();
+		if(!nr3.isInterval()) {
+			nr3 *= 60;
+		} else if(!nr2.isInterval()) {
+			nr2 = nr;
+			nr2.frac();
+			nr2.intervalToPrecision();
+			nr2.setApproximate(false);
+			nr2 *= 60;
+			nr2.round(po.round_halfway_to_even);
+		}
+		
+		po2.min_exp = 0;
+		string str3;
+		// do not show zero seconds in time format
+		if(!nr3.isInterval() && (!nr3.isZero() || po.base == BASE_SEXAGESIMAL)) {
+			str3 = nr3.print(po2);
+			// if 3rd section is rounded to 60, set to zero and increment 2nd section
+			if(str3.length() >= 2 && str3.substr(0, 2) == "60") {
+				str3[1] = '0';
+				str3.erase(0, 1);
+				nr2++;
+				if(nr2 == 60) {nr2.clear(); nr1++;}
+			}
+		}
+		po2.min_exp = po.min_exp;
+		string str = nr1.print(po2);
+		po2.min_exp = 0;
 		if(po.base == BASE_SEXAGESIMAL) {
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DEGREE, po.can_display_unicode_string_arg))) {
 				str += SIGN_DEGREE;
@@ -10302,21 +10356,15 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				str += "o";
 			}
 		}
-		nr = *this;
-		// second section: trunc(fractional part * 60)
-		nr.frac();
-		nr *= 60;
-		Number nr2(nr);
-		nr.trunc();
 		if(po.base == BASE_TIME) {
 			// hour, minus, seconds is separated by colons
 			str += ":";
-			if(nr.isLessThan(10)) {
+			if(nr2.isLessThan(10)) {
 				// always use two digits for second and third sections of time output
 				str += "0";
 			}
 		}
-		str += nr.printNumerator(10, false);
+		str += nr2.printNumerator(10, false);
 		if(po.base == BASE_SEXAGESIMAL) {
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("′", po.can_display_unicode_string_arg))) {
 				str += "′";
@@ -10324,29 +10372,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				str += "'";
 			}
 		}
-		nr2.frac();
-		// do not show zero seconds in time format
-		if(!nr2.isZero() || po.base == BASE_SEXAGESIMAL) {
-			// third section: trunc((fractional part of (fractional part * 60)) * 60)
-			nr2.multiply(60);
-			nr = nr2;
-			nr.trunc();
-			
-			// if left over fractional part != 0, output is approximate, round upwards if >= 0.5
-			nr2.frac();
-			if(!nr2.isZero()) {
-				if(po.is_approximate) *po.is_approximate = true;
-				if(nr2.isGreaterThanOrEqualTo(nr_half)) {
-					nr.add(1);
-				}
-			}
+		if(!str3.empty()) {
 			if(po.base == BASE_TIME) {
 				str += ":";
-				if(nr.isLessThan(10)) {
+				if(str3.length() == 1 || str3.find(po.decimalpoint()) == 1) {
 					str += "0";
 				}
 			}
-			str += nr.printNumerator(10, false);
+			str += str3;
 			if(po.base == BASE_SEXAGESIMAL) {
 				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("″", po.can_display_unicode_string_arg))) {
 					str += "″";
