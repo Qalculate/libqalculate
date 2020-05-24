@@ -2348,7 +2348,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					if(!approximately_displayed) break;
 					approximately_displayed = false;
 				}
-				
+
 				// test if numerator and denominator is displayed exact using current mode
 				Number num(o_number.numerator());
 				Number den(o_number.denominator());
@@ -2722,7 +2722,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 
 int MathStructure::neededMultiplicationSign(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, size_t index, bool par, bool par_prev, bool flat_division, bool flat_power) const {
 	// returns the suggested multiplication sign in front of this MathStrcture
-	
+
 	// do not display anything on front of the first factor (this function is normally not called in this case)
 	if(index <= 1) return MULTIPLICATION_SIGN_NONE;
 	// short multiplication is disabled or number base might use digits other than 0-9, alawys show multiplication symbol

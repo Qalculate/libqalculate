@@ -221,9 +221,9 @@ const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", 
 string Calculator::parseComments(string &str, const ParseOptions &po, bool *double_tag) {
 
 	if(str.length() <= 1 || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return "";
-	
+
 	if(double_tag) *double_tag = false;
-	
+
 	if(str[0] == '#') {
 		string from_str = unlocalizeExpression(str, po);
 		parseSigns(from_str);
@@ -541,7 +541,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		parse(mstruct, str, po);
 		return;
 	}
-	
+
 	MathStructure *unended_function = po.unended_function;
 	po.unended_function = NULL;
 

@@ -5129,7 +5129,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 	if(b_protected) return false;
 
 	bool b = false;
-	
+
 	// the normal process here is the first calculate all children (if recursive) and try merging every child with every other child
 
 	switch(m_type) {
@@ -6513,7 +6513,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 						SET_CHILD_MAP(i);
 						return b;
 					}
-					// argument/child did not fulfil criteria 
+					// argument/child did not fulfil criteria
 					m_type = STRUCT_FUNCTION;
 					CHILD_UPDATED(i);
 					return false;
