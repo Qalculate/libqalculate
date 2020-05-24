@@ -4772,6 +4772,22 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	bool do_bases = programmers_mode, do_factors = false, do_expand = false, do_fraction = false, do_pfe = false, do_calendars = false, do_binary_prefixes = false;
 	avoid_recalculation = false;
 	if(!interactive_mode) goto_input = false;
+
+	int save_base = printops.base;
+	bool save_pre = printops.use_unit_prefixes;
+	bool save_cur = printops.use_prefixes_for_currencies;
+	bool save_den = printops.use_denominator_prefix;
+	bool save_allu = printops.use_prefixes_for_all_units;
+	bool save_all = printops.use_all_prefixes;
+	int save_bin = CALCULATOR->usesBinaryPrefixes();
+	ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
+	bool caf_bak = complex_angle_form;
+	bool b_units_saved = evalops.parse_options.units_enabled;
+	AutoPostConversion save_auto_post_conversion = evalops.auto_post_conversion;
+	MixedUnitsConversion save_mixed_units_conversion = evalops.mixed_units_conversion;
+	Number save_cbase;
+	bool custom_base_set = false;
+
 	if(do_stack) {
 	} else {
 		str = expression_str;
@@ -4780,367 +4796,173 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		string from_str = str;
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
 			remove_duplicate_blanks(to_str);
+			string str_left, str_conv;
 			string to_str1, to_str2;
-			size_t ispace = to_str.find_first_of(SPACES);
-			if(ispace != string::npos) {
-				to_str1 = to_str.substr(0, ispace);
-				remove_blank_ends(to_str1);
-				to_str2 = to_str.substr(ispace + 1);
-				remove_blank_ends(to_str2);
-			}
-			if(equalsIgnoreCase(to_str, "hex") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "hexadecimal", _("hexadecimal"))) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_HEXADECIMAL;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "bin") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "binary", _("binary"))) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_BINARY;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "dec") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "decimal", _("decimal"))) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_DECIMAL;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "oct") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "octal", _("octal"))) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_OCTAL;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "duodecimal", _("duodecimal"))) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_DUODECIMAL;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "roman") || equalsIgnoreCase(to_str, _("roman"))) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_ROMAN_NUMERALS;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "bijective") || equalsIgnoreCase(to_str, _("bijective"))) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_BIJECTIVE_26;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "sexa") || equalsIgnoreCase(to_str, "sexagesimal") || equalsIgnoreCase(to_str, _("sexagesimal"))) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_SEXAGESIMAL;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "fp32") || equalsIgnoreCase(to_str, "binary32") || equalsIgnoreCase(to_str, "float")) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_FP32;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "fp64") || equalsIgnoreCase(to_str, "binary64") || equalsIgnoreCase(to_str, "double")) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_FP64;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "fp16") || equalsIgnoreCase(to_str, "binary16")) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_FP16;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "fp80")) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_FP80;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "fp128") || equalsIgnoreCase(to_str, "binary128")) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_FP128;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "time") || equalsIgnoreCase(to_str, _("time"))) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_TIME;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(str, "unicode")) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				printops.base = BASE_UNICODE;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
-				expression_str = from_str;
-				printops.time_zone = TIME_ZONE_UTC;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.time_zone = TIME_ZONE_LOCAL;
-				expression_str = str;
-				return;
-			} else if(to_str.length() > 3 && equalsIgnoreCase(to_str.substr(0, 3), "bin") && is_in(NUMBERS, to_str[3])) {
-				expression_str = from_str;
-				int save_base = printops.base;
-				printops.base = BASE_BINARY;
-				printops.binary_bits = s2i(to_str.substr(3));
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.base = save_base;
-				printops.binary_bits = 0;
-				expression_str = str;
-				return;
-			} else if(to_str.length() > 3 && (equalsIgnoreCase(to_str.substr(0, 3), "utc") || equalsIgnoreCase(to_str.substr(0, 3), "gmt"))) {
-				to_str = to_str.substr(3);
-				remove_blanks(to_str);
-				bool b_minus = false;
-				if(to_str[0] == '+') {
-					to_str.erase(0, 1);
-				} else if(to_str[0] == '-') {
-					b_minus = true;
-					to_str.erase(0, 1);
-				} else if(to_str.find(SIGN_MINUS) == 0) {
-					b_minus = true;
-					to_str.erase(0, strlen(SIGN_MINUS));
+			while(true) {
+				CALCULATOR->separateToExpression(to_str, str_left, evalops, true);
+				remove_blank_ends(to_str);
+				size_t ispace = to_str.find_first_of(SPACES);
+				if(ispace != string::npos) {
+					to_str1 = to_str.substr(0, ispace);
+					remove_blank_ends(to_str1);
+					to_str2 = to_str.substr(ispace + 1);
+					remove_blank_ends(to_str2);
 				}
-				unsigned int tzh = 0, tzm = 0;
-				int itz = 0;
-				if(!to_str.empty() && sscanf(to_str.c_str(), "%2u:%2u", &tzh, &tzm) > 0) {
-					itz = tzh * 60 + tzm;
-					if(b_minus) itz = -itz;
-				} else {
-					CALCULATOR->error(true, _("Time zone parsing failed."), NULL);
-				}
-				expression_str = from_str;
-				printops.time_zone = TIME_ZONE_CUSTOM;
-				printops.custom_time_zone = itz;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.custom_time_zone = 0;
-				printops.time_zone = TIME_ZONE_LOCAL;
-				expression_str = str;
-				return;
-			} else if(to_str == "CET") {
-				expression_str = from_str;
-				printops.time_zone = TIME_ZONE_CUSTOM;
-				printops.custom_time_zone = 60;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				printops.custom_time_zone = 0;
-				printops.time_zone = TIME_ZONE_LOCAL;
-				expression_str = str;
-				return;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction")) || to_str == "frac") {
-				str = from_str;
-				do_fraction = true;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "factors", _("factors")) || to_str == "factor") {
-				str = from_str;
-				do_factors = true;
-			}  else if(equalsIgnoreCase(to_str, "partial fraction") || equalsIgnoreCase(to_str, _("partial fraction")) || to_str == "partial") {
-				str = from_str;
-				do_pfe = true;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "bases", _("bases"))) {
-				do_bases = true;
-				str = from_str;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "calendars", _("calendars"))) {
-				do_calendars = true;
-				str = from_str;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "cartesian", _("cartesian")) || to_str == "rect") {
-				expression_str = from_str;
-				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
-				bool caf_bak = complex_angle_form;
-				complex_angle_form = false;
-				evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				evalops.complex_number_form = save_complex_number_form;
-				complex_angle_form = caf_bak;
-				expression_str = str;
-				return;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "exponential", _("exponential")) || to_str == "exp") {
-				expression_str = from_str;
-				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
-				bool caf_bak = complex_angle_form;
-				complex_angle_form = false;
-				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				evalops.complex_number_form = save_complex_number_form;
-				complex_angle_form = caf_bak;
-				expression_str = str;
-				return;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "polar", _("polar"))) {
-				expression_str = from_str;
-				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
-				bool caf_bak = complex_angle_form;
-				complex_angle_form = false;
-				evalops.complex_number_form = COMPLEX_NUMBER_FORM_POLAR;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				evalops.complex_number_form = save_complex_number_form;
-				complex_angle_form = caf_bak;
-				expression_str = str;
-				return;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "angle", _("angle")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "phasor", _("phasor"))) {
-				expression_str = from_str;
-				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
-				bool caf_bak = complex_angle_form;
-				complex_angle_form = true;
-				evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				evalops.complex_number_form = save_complex_number_form;
-				complex_angle_form = caf_bak;
-				expression_str = str;
-				return;
-			} else if(to_str == "cis") {
-				expression_str = from_str;
-				ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
-				bool caf_bak = complex_angle_form;
-				complex_angle_form = false;
-				evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				evalops.complex_number_form = save_complex_number_form;
-				complex_angle_form = caf_bak;
-				expression_str = str;
-				return;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "optimal", _("optimal"))) {
-				expression_str = from_str;
-				bool b_units_saved = evalops.parse_options.units_enabled;
-				evalops.parse_options.units_enabled = true;
-				AutoPostConversion save_auto_post_conversion = evalops.auto_post_conversion;
-				evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				evalops.auto_post_conversion = save_auto_post_conversion;
-				expression_str = str;
-				evalops.parse_options.units_enabled = b_units_saved;
-				return;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "base", _("base"))) {
-				expression_str = from_str;
-				bool b_units_saved = evalops.parse_options.units_enabled;
-				evalops.parse_options.units_enabled = true;
-				AutoPostConversion save_auto_post_conversion = evalops.auto_post_conversion;
-				evalops.auto_post_conversion = POST_CONVERSION_BASE;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				evalops.auto_post_conversion = save_auto_post_conversion;
-				expression_str = str;
-				evalops.parse_options.units_enabled = b_units_saved;
-				return;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base"))) {
-				int save_base = printops.base;
-				expression_str = from_str;
-				Number save_nr = CALCULATOR->customOutputBase();
-				if(to_str2 == "b26" || to_str2 == "B26") printops.base = BASE_BIJECTIVE_26;
-				else if(equalsIgnoreCase(to_str2, "golden") || equalsIgnoreCase(to_str2, "golden ratio") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
-				else if(equalsIgnoreCase(to_str2, "unicode")) printops.base = BASE_UNICODE;
-				else if(equalsIgnoreCase(to_str2, "supergolden") || equalsIgnoreCase(to_str2, "supergolden ratio") || to_str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
-				else if(equalsIgnoreCase(to_str2, "pi") || to_str2 == "π") printops.base = BASE_PI;
-				else if(to_str2 == "e") printops.base = BASE_E;
-				else if(to_str2 == "sqrt(2)" || to_str2 == "sqrt 2" || to_str2 == "sqrt2" || to_str2 == "√2") printops.base = BASE_SQRT2;
-				else {
-					EvaluationOptions eo = evalops;
-					eo.parse_options.base = 10;
-					MathStructure m;
-					eo.approximation = APPROXIMATION_TRY_EXACT;
-					CALCULATOR->beginTemporaryStopMessages();
-					CALCULATOR->calculate(&m, CALCULATOR->unlocalizeExpression(to_str2, eo.parse_options), 500, eo);
-					if(CALCULATOR->endTemporaryStopMessages()) {
-						printops.base = BASE_CUSTOM;
-						CALCULATOR->setCustomOutputBase(nr_zero);
-					} else if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
-						printops.base = m.number().intValue();
-					} else {
-						printops.base = BASE_CUSTOM;
-						CALCULATOR->setCustomOutputBase(m.number());
+				if(equalsIgnoreCase(to_str, "hex") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "hexadecimal", _("hexadecimal"))) {
+					printops.base = BASE_HEXADECIMAL;
+				} else if(equalsIgnoreCase(to_str, "bin") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "binary", _("binary"))) {
+					printops.base = BASE_BINARY;
+				} else if(equalsIgnoreCase(to_str, "dec") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "decimal", _("decimal"))) {
+					printops.base = BASE_DECIMAL;
+				} else if(equalsIgnoreCase(to_str, "oct") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "octal", _("octal"))) {
+					printops.base = BASE_OCTAL;
+				} else if(equalsIgnoreCase(to_str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "duodecimal", _("duodecimal"))) {
+					printops.base = BASE_DUODECIMAL;
+				} else if(equalsIgnoreCase(to_str, "roman") || equalsIgnoreCase(to_str, _("roman"))) {
+					printops.base = BASE_ROMAN_NUMERALS;
+				} else if(equalsIgnoreCase(to_str, "bijective") || equalsIgnoreCase(to_str, _("bijective"))) {
+					printops.base = BASE_BIJECTIVE_26;
+				} else if(equalsIgnoreCase(to_str, "sexa") || equalsIgnoreCase(to_str, "sexagesimal") || equalsIgnoreCase(to_str, _("sexagesimal"))) {
+					printops.base = BASE_SEXAGESIMAL;
+				} else if(equalsIgnoreCase(to_str, "fp32") || equalsIgnoreCase(to_str, "binary32") || equalsIgnoreCase(to_str, "float")) {
+					printops.base = BASE_FP32;
+				} else if(equalsIgnoreCase(to_str, "fp64") || equalsIgnoreCase(to_str, "binary64") || equalsIgnoreCase(to_str, "double")) {
+					printops.base = BASE_FP64;
+				} else if(equalsIgnoreCase(to_str, "fp16") || equalsIgnoreCase(to_str, "binary16")) {
+					printops.base = BASE_FP16;
+				} else if(equalsIgnoreCase(to_str, "fp80")) {
+					printops.base = BASE_FP80;
+				} else if(equalsIgnoreCase(to_str, "fp128") || equalsIgnoreCase(to_str, "binary128")) {
+					printops.base = BASE_FP128;
+				} else if(equalsIgnoreCase(to_str, "time") || equalsIgnoreCase(to_str, _("time"))) {
+					printops.base = BASE_TIME;
+				} else if(equalsIgnoreCase(str, "unicode")) {
+					printops.base = BASE_UNICODE;
+				} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
+					printops.time_zone = TIME_ZONE_UTC;
+				} else if(to_str.length() > 3 && equalsIgnoreCase(to_str.substr(0, 3), "bin") && is_in(NUMBERS, to_str[3])) {
+					printops.base = BASE_BINARY;
+					printops.binary_bits = s2i(to_str.substr(3));
+				} else if(to_str.length() > 3 && (equalsIgnoreCase(to_str.substr(0, 3), "utc") || equalsIgnoreCase(to_str.substr(0, 3), "gmt"))) {
+					to_str = to_str.substr(3);
+					remove_blanks(to_str);
+					bool b_minus = false;
+					if(to_str[0] == '+') {
+						to_str.erase(0, 1);
+					} else if(to_str[0] == '-') {
+						b_minus = true;
+						to_str.erase(0, 1);
+					} else if(to_str.find(SIGN_MINUS) == 0) {
+						b_minus = true;
+						to_str.erase(0, strlen(SIGN_MINUS));
 					}
-				}
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				CALCULATOR->setCustomOutputBase(save_nr);
-				printops.base = save_base;
-				expression_str = str;
-				return;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _("mixed"))) {
-				expression_str = from_str;
-				bool b_units_saved = evalops.parse_options.units_enabled;
-				evalops.parse_options.units_enabled = true;
-				AutoPostConversion save_auto_post_conversion = evalops.auto_post_conversion;
-				MixedUnitsConversion save_mixed_units_conversion = evalops.mixed_units_conversion;
-				evalops.auto_post_conversion = POST_CONVERSION_NONE;
-				evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				evalops.auto_post_conversion = save_auto_post_conversion;
-				evalops.mixed_units_conversion = save_mixed_units_conversion;
-				expression_str = str;
-				evalops.parse_options.units_enabled = b_units_saved;
-				return;
-			} else if(!evalops.parse_options.units_enabled) {
-				evalops.parse_options.units_enabled = true;
-				execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-				evalops.parse_options.units_enabled = false;
-				return;
-			} else {
-				if((to_str[0] == '?' && (!printops.use_unit_prefixes || !printops.use_prefixes_for_currencies || !printops.use_prefixes_for_all_units)) || (to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'a' && (!printops.use_unit_prefixes || !printops.use_prefixes_for_currencies || !printops.use_all_prefixes || !printops.use_prefixes_for_all_units)) || (to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'd' && (!printops.use_unit_prefixes || !printops.use_prefixes_for_currencies || !printops.use_prefixes_for_all_units || CALCULATOR->usesBinaryPrefixes() > 0))) {
-					bool save_pre = printops.use_unit_prefixes;
-					bool save_all = printops.use_all_prefixes;
-					bool save_cur = printops.use_prefixes_for_currencies;
-					bool save_allu = printops.use_prefixes_for_all_units;
-					int save_bin = CALCULATOR->usesBinaryPrefixes();
-					printops.use_unit_prefixes = true;
-					printops.use_prefixes_for_currencies = true;
-					printops.use_prefixes_for_all_units = true;
-					if(to_str[0] == 'a') printops.use_all_prefixes = true;
-					else if(to_str[0] == 'd') CALCULATOR->useBinaryPrefixes(0);
-					execute_expression(goto_input, do_mathoperation, op, f, do_stack, stack_index);
-					printops.use_unit_prefixes = save_pre;
-					printops.use_all_prefixes = save_all;
-					printops.use_prefixes_for_currencies = save_cur;
-					printops.use_prefixes_for_all_units = save_allu;
-					CALCULATOR->useBinaryPrefixes(save_bin);
-					return;
-				} else if(to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'b') {
-					do_binary_prefixes = true;
-				}
-			}
-		} else {
-			size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
-			if(i != string::npos) {
-				to_str = str.substr(0, i);
-				if(to_str == "factor" || EQUALS_IGNORECASE_AND_LOCAL(to_str, "factorize", _("factorize"))) {
-					str = str.substr(i + 1);
+					unsigned int tzh = 0, tzm = 0;
+					int itz = 0;
+					if(!to_str.empty() && sscanf(to_str.c_str(), "%2u:%2u", &tzh, &tzm) > 0) {
+						itz = tzh * 60 + tzm;
+						if(b_minus) itz = -itz;
+					} else {
+						CALCULATOR->error(true, _("Time zone parsing failed."), NULL);
+					}
+					printops.time_zone = TIME_ZONE_CUSTOM;
+					printops.custom_time_zone = itz;
+				} else if(to_str == "CET") {
+					printops.time_zone = TIME_ZONE_CUSTOM;
+					printops.custom_time_zone = 60;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction")) || to_str == "frac") {
+					do_fraction = true;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "factors", _("factors")) || to_str == "factor") {
 					do_factors = true;
-				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "expand", _("expand"))) {
-					str = str.substr(i + 1);
-					do_expand = true;
+				}  else if(equalsIgnoreCase(to_str, "partial fraction") || equalsIgnoreCase(to_str, _("partial fraction")) || to_str == "partial") {
+					do_pfe = true;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "bases", _("bases"))) {
+					do_bases = true;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "calendars", _("calendars"))) {
+					do_calendars = true;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "cartesian", _("cartesian")) || to_str == "rect") {
+					complex_angle_form = false;
+					evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "exponential", _("exponential")) || to_str == "exp") {
+					complex_angle_form = false;
+					evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "polar", _("polar"))) {
+					complex_angle_form = false;
+					evalops.complex_number_form = COMPLEX_NUMBER_FORM_POLAR;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "angle", _("angle")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "phasor", _("phasor"))) {
+					complex_angle_form = true;
+					evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
+				} else if(to_str == "cis") {
+					complex_angle_form = false;
+					evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "optimal", _("optimal"))) {
+					evalops.parse_options.units_enabled = true;
+					evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
+					str_conv = "";
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "base", _("base"))) {
+					evalops.parse_options.units_enabled = true;
+					evalops.auto_post_conversion = POST_CONVERSION_BASE;
+					str_conv = "";
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base"))) {
+					if(to_str2 == "b26" || to_str2 == "B26") printops.base = BASE_BIJECTIVE_26;
+					else if(equalsIgnoreCase(to_str2, "golden") || equalsIgnoreCase(to_str2, "golden ratio") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
+					else if(equalsIgnoreCase(to_str2, "unicode")) printops.base = BASE_UNICODE;
+					else if(equalsIgnoreCase(to_str2, "supergolden") || equalsIgnoreCase(to_str2, "supergolden ratio") || to_str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
+					else if(equalsIgnoreCase(to_str2, "pi") || to_str2 == "π") printops.base = BASE_PI;
+					else if(to_str2 == "e") printops.base = BASE_E;
+					else if(to_str2 == "sqrt(2)" || to_str2 == "sqrt 2" || to_str2 == "sqrt2" || to_str2 == "√2") printops.base = BASE_SQRT2;
+					else {
+						EvaluationOptions eo = evalops;
+						eo.parse_options.base = 10;
+						MathStructure m;
+						eo.approximation = APPROXIMATION_TRY_EXACT;
+						CALCULATOR->beginTemporaryStopMessages();
+						CALCULATOR->calculate(&m, CALCULATOR->unlocalizeExpression(to_str2, eo.parse_options), 500, eo);
+						if(CALCULATOR->endTemporaryStopMessages()) {
+							printops.base = BASE_CUSTOM;
+							custom_base_set = true;
+							save_cbase = CALCULATOR->customOutputBase();
+							CALCULATOR->setCustomOutputBase(nr_zero);
+						} else if(m.isInteger() && m.number() >= 2 && m.number() <= 36) {
+							printops.base = m.number().intValue();
+						} else {
+							printops.base = BASE_CUSTOM;
+							custom_base_set = true;
+							save_cbase = CALCULATOR->customOutputBase();
+							CALCULATOR->setCustomOutputBase(m.number());
+						}
+					}
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _("mixed"))) {
+					evalops.auto_post_conversion = POST_CONVERSION_NONE;
+					evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
+				} else {
+					evalops.parse_options.units_enabled = true;
+					if((to_str[0] == '?' && (!printops.use_unit_prefixes || !printops.use_prefixes_for_currencies || !printops.use_prefixes_for_all_units)) || (to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'a' && (!printops.use_unit_prefixes || !printops.use_prefixes_for_currencies || !printops.use_all_prefixes || !printops.use_prefixes_for_all_units)) || (to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'd' && (!printops.use_unit_prefixes || !printops.use_prefixes_for_currencies || !printops.use_prefixes_for_all_units || CALCULATOR->usesBinaryPrefixes() > 0))) {
+						printops.use_unit_prefixes = true;
+						printops.use_prefixes_for_currencies = true;
+						printops.use_prefixes_for_all_units = true;
+						if(to_str[0] == 'a') printops.use_all_prefixes = true;
+						else if(to_str[0] == 'd') CALCULATOR->useBinaryPrefixes(0);
+					} else if(to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'b') {
+						do_binary_prefixes = true;
+					}
+					str_conv += " to ";
+					str_conv += to_str;
 				}
+				if(str_left.empty()) break;
+				to_str = str_left;
+			}
+			str = from_str;
+			str += str_conv;
+		}
+		size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
+		if(i != string::npos) {
+			to_str = str.substr(0, i);
+			if(to_str == "factor" || EQUALS_IGNORECASE_AND_LOCAL(to_str, "factorize", _("factorize"))) {
+				str = str.substr(i + 1);
+				do_factors = true;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "expand", _("expand"))) {
+				str = str.substr(i + 1);
+				do_expand = true;
 			}
 		}
 	}
@@ -5388,6 +5210,22 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
 	if(!avoid_recalculation && !do_mathoperation && check_exrates && check_exchange_rates()) {
 		execute_expression(goto_input, do_mathoperation, op, f, rpn_mode, do_stack ? stack_index : 0, false);
+		evalops.auto_post_conversion = save_auto_post_conversion;
+		evalops.mixed_units_conversion = save_mixed_units_conversion;
+		evalops.parse_options.units_enabled = b_units_saved;
+		if(custom_base_set) CALCULATOR->setCustomOutputBase(save_cbase);
+		evalops.complex_number_form = save_complex_number_form;
+		complex_angle_form = caf_bak;
+		printops.custom_time_zone = 0;
+		printops.time_zone = TIME_ZONE_LOCAL;
+		printops.binary_bits = 0;
+		printops.base = save_base;
+		printops.use_unit_prefixes = save_pre;
+		printops.use_prefixes_for_currencies = save_cur;
+		printops.use_prefixes_for_all_units = save_allu;
+		printops.use_all_prefixes = save_all;
+		printops.use_denominator_prefix = save_den;
+		CALCULATOR->useBinaryPrefixes(save_bin);
 		return;
 	}
 
@@ -5441,7 +5279,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		show_calendars(*mstruct->datetime(), goto_input);
 		if(goto_input) printf("\n");
 	} else if(do_bases) {
-		int save_base = printops.base;
 		printops.base = BASE_BINARY;
 		setResult(NULL, (!do_stack || stack_index == 0), false, do_stack ? stack_index : 0, false, true);
 		string base_str = result_text;
@@ -5488,7 +5325,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			replace_quotation_marks(base_str);
 		}
 		PUTS_UNICODE(base_str.c_str());
-		printops.base = save_base;
 		if(goto_input) printf("\n");
 	} else if(do_fraction) {
 		NumberFractionFormat save_format = printops.number_fraction_format;
@@ -5499,33 +5335,40 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		setResult(NULL, (!do_stack || stack_index == 0), goto_input, do_stack ? stack_index : 0);
 		printops.restrict_fraction_length = save_rfl;
 		printops.number_fraction_format = save_format;
-	} else if(do_binary_prefixes) {
-		bool save_pre = printops.use_unit_prefixes;
-		bool save_cur = printops.use_prefixes_for_currencies;
-		bool save_allu = printops.use_prefixes_for_all_units;
-		bool save_den = printops.use_denominator_prefix;
-		int save_bin = CALCULATOR->usesBinaryPrefixes();
-		int i = 0;
-		if(!do_stack || stack_index == 0) i = has_information_unit(*mstruct);
-		CALCULATOR->useBinaryPrefixes(i > 0 ? 1 : 2);
-		printops.use_unit_prefixes = true;
-		if(i == 1) {
-			printops.use_denominator_prefix = false;
-		} else if(i > 1) {
-			printops.use_denominator_prefix = true;
-		} else {
-			printops.use_prefixes_for_currencies = true;
-			printops.use_prefixes_for_all_units = true;
+	} else {
+		if(do_binary_prefixes) {
+			int i = 0;
+			if(!do_stack || stack_index == 0) i = has_information_unit(*mstruct);
+			CALCULATOR->useBinaryPrefixes(i > 0 ? 1 : 2);
+			printops.use_unit_prefixes = true;
+			if(i == 1) {
+				printops.use_denominator_prefix = false;
+			} else if(i > 1) {
+				printops.use_denominator_prefix = true;
+			} else {
+				printops.use_prefixes_for_currencies = true;
+				printops.use_prefixes_for_all_units = true;
+			}
 		}
 		setResult(NULL, (!do_stack || stack_index == 0), goto_input, do_stack ? stack_index : 0);
-		printops.use_unit_prefixes = save_pre;
-		printops.use_prefixes_for_currencies = save_cur;
-		printops.use_prefixes_for_all_units = save_allu;
-		printops.use_denominator_prefix = save_den;
-		CALCULATOR->useBinaryPrefixes(save_bin);
-	} else {
-		setResult(NULL, (!do_stack || stack_index == 0), goto_input, do_stack ? stack_index : 0);
 	}
+	
+	evalops.auto_post_conversion = save_auto_post_conversion;
+	evalops.mixed_units_conversion = save_mixed_units_conversion;
+	evalops.parse_options.units_enabled = b_units_saved;
+	if(custom_base_set) CALCULATOR->setCustomOutputBase(save_cbase);
+	evalops.complex_number_form = save_complex_number_form;
+	complex_angle_form = caf_bak;
+	printops.custom_time_zone = 0;
+	printops.time_zone = TIME_ZONE_LOCAL;
+	printops.binary_bits = 0;
+	printops.base = save_base;
+	printops.use_unit_prefixes = save_pre;
+	printops.use_prefixes_for_currencies = save_cur;
+	printops.use_prefixes_for_all_units = save_allu;
+	printops.use_all_prefixes = save_all;
+	printops.use_denominator_prefix = save_den;
+	CALCULATOR->useBinaryPrefixes(save_bin);
 
 }
 
