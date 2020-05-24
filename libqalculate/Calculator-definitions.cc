@@ -3423,7 +3423,7 @@ bool Calculator::loadExchangeRates() {
 		exchange_rates_time[1] = ((time_t) 1531087L) * 1000;
 		if(exchange_rates_time[1] > exchange_rates_check_time[1]) exchange_rates_check_time[1] = exchange_rates_time[1];
 	}
-	
+
 	filename = getExchangeRatesFileName(4);
 	ifstream file3(filename.c_str());
 	if(file3.is_open()) {
@@ -3776,7 +3776,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		file2.close();
 
 	}
-	
+
 	if(n <= 0 || n >= 4) {
 
 		sbuffer = "";

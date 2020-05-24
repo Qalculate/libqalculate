@@ -1980,12 +1980,12 @@ int main(int argc, char *argv[]) {
 		t_end.tv_usec = usecs % 1000000;
 		t_end.tv_sec += usecs / 1000000;
 	}
-	
+
 	if(!interactive_mode && (cfile || !calc_arg.empty())) {
 		MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_PLOT);
 		if(f) f->setDefaultValue(7, "1");
 	}
-	
+
 	if(!cfile && !calc_arg.empty()) {
 		if(calc_arg.length() > 2 && ((calc_arg[0] == '\"' && calc_arg.find('\"', 1) == calc_arg.length() - 1) || (calc_arg[0] == '\'' && calc_arg.find('\'', 1) == calc_arg.length() - 1))) {
 			calc_arg = calc_arg.substr(1, calc_arg.length() - 2);
@@ -4280,7 +4280,7 @@ void ViewThread::run() {
 			}
 		}
 		printops.allow_non_usable = false;
-		
+
 		// convert time units to hours when using time format
 		if(printops.base == BASE_TIME) {
 			bool b = false;
@@ -5154,7 +5154,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	size_t stack_size = 0;
 
 	CALCULATOR->resetExchangeRatesUsed();
-	
+
 	MathStructure to_struct;
 
 	if(do_stack) {
@@ -5277,7 +5277,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	} else {
 		CALCULATOR->calculate(mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, &to_struct);
 	}
-	
+
 	calculation_wait:
 
 	bool has_printed = false;
@@ -5353,7 +5353,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		}
 		if(has_printed) printf("\n");
 	}
-	
+
 	if(!avoid_recalculation && !do_mathoperation && to_struct.containsType(STRUCT_UNIT, true) && !mstruct->containsType(STRUCT_UNIT) && !parsed_mstruct->containsType(STRUCT_UNIT, false, true, true)) {
 		to_struct.unformat();
 		to_struct = CALCULATOR->convertToOptimalUnit(to_struct, evalops, true);

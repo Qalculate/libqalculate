@@ -1888,7 +1888,7 @@ int main(int argc, char *argv[]) {
 	evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
 	evalops.structuring = STRUCTURING_SIMPLIFY;
 	evalops.approximation = APPROXIMATION_EXACT;
-	
+
 	/*MathStructure m;
 	for(size_t i = 0; i < 100000L; i++) {
 		CALCULATOR->parse(&m, "mm", evalops.parse_options);
@@ -1929,7 +1929,7 @@ int main(int argc, char *argv[]) {
 		//nr--;
 	}*/
 	//return 0;
-	
+
 	CALCULATOR->setVariableUnitsEnabled(false);
 
 	MathStructure mp;
@@ -1998,7 +1998,7 @@ int main(int argc, char *argv[]) {
 	}
 	cout << successes << ":" << imaginary << endl;
 	return 0;*/
-	
+
 	Number nr;
 	for(long int i = 0; i < 1000000L; i++) {
 		nr.set(rnd_number(false, false, false, false, false));
@@ -2014,7 +2014,7 @@ int main(int argc, char *argv[]) {
 		nr.intervalToMidValue();
 		if(!test_float(nr)) return 0;
 	}
-	
+
 	return 0;
 
 	v = new KnownVariable("", "v", m_zero);

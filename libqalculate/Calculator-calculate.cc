@@ -727,7 +727,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 
 	string to_str = parseComments(str, evalops.parse_options);
 	if(!to_str.empty() && str.empty()) {stopControl(); if(parsed_expression) {*parsed_expression = "";} return "";}
-	
+
 	// separate and handle string after "to"
 	string from_str = str;
 	Number base_save;
@@ -1038,10 +1038,10 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			}
 		}
 	}
-	
+
 	// do not display the default angle unit in trigonometric functions
 	mstruct.removeDefaultAngleUnit(evalops);
-	
+
 	// format and print
 	mstruct.format(printops);
 	str = mstruct.print(printops);
@@ -1056,7 +1056,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	// restore options
 	if(printops.base == BASE_CUSTOM) setCustomOutputBase(base_save);
 	priv->use_binary_prefixes = save_bin;
-	
+
 	// output parsed value
 	if(parsed_expression) {
 		PrintOptions po_parsed;
@@ -1096,7 +1096,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		parsed_struct.format(po_parsed);
 		*parsed_expression = parsed_struct.print(po_parsed);
 	}
-	
+
 	if(po.is_approximate && mstruct.isApproximate()) *po.is_approximate = true;
 
 	return str;

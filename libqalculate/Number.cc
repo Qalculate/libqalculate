@@ -9955,7 +9955,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(base.isApproximate() && base.precision() >= 0 && base.precision() < precision) precision = base.precision();
 		// adjust output precision to precision of parent MathStructure
 		if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < precision) precision = ips.parent_precision;
-		
+
 		// calculate number of digits allowed for the number base with the current precision: floor(log(10^precision-1, abs(base)))
 		long int precision_base = precision;
 		Number precmax(10);
@@ -9963,7 +9963,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		precmax--;
 		precmax.log(abs_base < 2 ? 2 : abs_base);
 		INTERVAL_FLOOR(precmax);
-		
+
 		precision_base = precmax.lintValue();
 
 		string str;
@@ -10280,7 +10280,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	}
 	if((po.base == BASE_SEXAGESIMAL || po.base == BASE_TIME) && isReal()) {
 		// sexagesimal base or time format
-		
+
 		Number nr(*this);
 		if(po.interval_display == INTERVAL_DISPLAY_LOWER) nr = nr.lowerEndPoint();
 		else if(po.interval_display == INTERVAL_DISPLAY_UPPER) nr = nr.upperEndPoint();
@@ -10289,14 +10289,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		// handle sign separately
 		bool neg = nr.isNegative();
 		nr.setNegative(false);
-		
+
 		// from left to right
 
 		// first section: integer part
 		Number nr1(nr);
 		nr1.intervalToMidValue();
 		nr1.trunc();
-		
+
 		PrintOptions po2 = po;
 		po2.base = 10;
 		po2.number_fraction_format = FRACTION_DECIMAL;
@@ -10332,7 +10332,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			nr2 *= 60;
 			nr2.round(po.round_halfway_to_even);
 		}
-		
+
 		po2.min_exp = 0;
 		string str3;
 		// do not show zero seconds in time format
@@ -10485,7 +10485,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	}
 
 	long int precision = PRECISION;
-	
+
 	// adjust output precision if precision of the number is lower than global precision
 	if(b_approx && i_precision >= 0 && (po.preserve_precision || po.preserve_format || i_precision < PRECISION)) precision = i_precision;
 	// if preserve_precision is true, use full precision
@@ -10506,7 +10506,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		INTERVAL_FLOOR(precmax);
 		precision_base = precmax.lintValue();
 	}
-	
+
 	// calculate number of digits allowed for the number base with the full precision of the number
 	long int i_precision_base = precision_base;
 	if((i_precision < 0 && FROM_BIT_PRECISION(NUMBER_BIT_PRECISION) > precision) || i_precision > precision) {

@@ -327,7 +327,7 @@ int CeilFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
-		Number nr(mstruct.number()); 
+		Number nr(mstruct.number());
 		if(nr.ceil() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || vargs[0].isApproximate())) {
 			mstruct.set(nr);
 			return 1;
@@ -338,7 +338,7 @@ int CeilFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		MathStructure mstruct2(mstruct);
 		mstruct2.eval(eo2);
 		if(mstruct2.isNumber()) {
-			Number nr(mstruct2.number()); 
+			Number nr(mstruct2.number());
 			if(nr.ceil() && !nr.isApproximate()) {
 				mstruct.set(nr);
 				return 1;
@@ -377,7 +377,7 @@ int FloorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
-		Number nr(mstruct.number()); 
+		Number nr(mstruct.number());
 		if(nr.floor() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || vargs[0].isApproximate())) {
 			mstruct.set(nr);
 			return 1;
@@ -388,7 +388,7 @@ int FloorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		MathStructure mstruct2(mstruct);
 		mstruct2.eval(eo2);
 		if(mstruct2.isNumber()) {
-			Number nr(mstruct2.number()); 
+			Number nr(mstruct2.number());
 			if(nr.floor() && !nr.isApproximate()) {
 				mstruct.set(nr);
 				return 1;
@@ -427,7 +427,7 @@ int TruncFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(mstruct.isNumber()) {
-		Number nr(mstruct.number()); 
+		Number nr(mstruct.number());
 		if(nr.trunc() && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || vargs[0].isApproximate())) {
 			mstruct.set(nr);
 			return 1;
@@ -438,7 +438,7 @@ int TruncFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		MathStructure mstruct2(mstruct);
 		mstruct2.eval(eo2);
 		if(mstruct2.isNumber()) {
-			Number nr(mstruct2.number()); 
+			Number nr(mstruct2.number());
 			if(nr.trunc() && !nr.isApproximate()) {
 				mstruct.set(nr);
 				return 1;
@@ -479,7 +479,7 @@ int RoundFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(vargs[1].number());
 		if(nr.round(vargs.size() >= 3 ? vargs[2].number().getBoolean() : true) && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || vargs[0].isApproximate())) {
 			if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(-vargs[1].number());
-			mstruct.set(nr); 
+			mstruct.set(nr);
 			return 1;
 		}
 		return 0;
