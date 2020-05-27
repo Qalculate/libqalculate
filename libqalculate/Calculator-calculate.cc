@@ -729,13 +729,13 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	if(!to_str.empty() && str.empty()) {stopControl(); if(parsed_expression) {*parsed_expression = "";} return "";}
 
 	// separate and handle string after "to"
-	string from_str = str;
+	string from_str = str, str_conv;
 	Number base_save;
 	bool custom_base_set = false;
 	int save_bin = priv->use_binary_prefixes;
 	if(separateToExpression(from_str, to_str, evalops, true)) {
 		remove_duplicate_blanks(to_str);
-		string str_left, str_conv;
+		string str_left;
 		string to_str1, to_str2;
 		while(true) {
 			CALCULATOR->separateToExpression(to_str, str_left, evalops, true);
@@ -781,6 +781,9 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				printops.time_zone = TIME_ZONE_UTC;
 			} else if(to_str.length() > 3 && equalsIgnoreCase(to_str.substr(0, 3), "bin") && is_in(NUMBERS, to_str[3])) {
 				printops.base = BASE_BINARY;
+				printops.binary_bits = s2i(to_str.substr(3));
+			} else if(to_str.length() > 3 && equalsIgnoreCase(to_str.substr(0, 3), "hex") && is_in(NUMBERS, to_str[3])) {
+				printops.base = BASE_HEXADECIMAL;
 				printops.binary_bits = s2i(to_str.substr(3));
 			} else if(to_str.length() > 3 && (equalsIgnoreCase(to_str.substr(0, 3), "utc") || equalsIgnoreCase(to_str.substr(0, 3), "gmt"))) {
 				to_str = to_str.substr(3);
@@ -877,15 +880,19 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 					do_binary_prefixes = true;
 				}
 				// expression after "to" is by default interpreted as unit epxression
-				str_conv += " to ";
+				if(!str_conv.empty()) str_conv += " to ";
 				str_conv += to_str;
 			}
 			if(str_left.empty()) break;
 			to_str = str_left;
 		}
 		str = from_str;
-		str += str_conv;
+		if(!str_conv.empty()) {
+			str += " to ";
+			str += str_conv;
+		}
 	}
+
 	// check for factor or expand instruction at front a expression
 	size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
 	if(i != string::npos) {
@@ -904,7 +911,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	MathStructure parsed_struct;
 
 	// perform calculation
-	if(to_str.empty() || str == from_str) {
+	if(str_conv.empty() || hasToExpression(str_conv, false, evalops)) {
 		mstruct = calculate(str, evalops, parsed_expression ? &parsed_struct : NULL);
 	} else {
 		// handle case where conversion to units requested, but original expression and result does not contains any unit
@@ -925,7 +932,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			}
 			parsed_struct.multiply(to_struct, true);
 			// recalculate
-			if(!to_struct.isZero()) mstruct = calculate(mstruct, evalops, to_str);
+			if(!to_struct.isZero()) mstruct = calculate(mstruct, evalops, str_conv);
 		}
 	}
 
@@ -1548,7 +1555,14 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 				string str2b;
 				while(true) {
 					separateToExpression(str2, str2b, eo, true);
-					mstruct.set(convert(mstruct, str2, eo, to_struct));
+					if(to_struct && !to_struct->isUndefined()) {
+						MathStructure mto;
+						mto.setUndefined();
+						mstruct.set(convert(mstruct, str2, eo, &mto));
+						if(!mto.isUndefined()) to_struct->multiply(mto, true);
+					} else {
+						mstruct.set(convert(mstruct, str2, eo, to_struct));
+					}
 					if(str2b.empty()) break;
 					str2 = str2b;
 				}

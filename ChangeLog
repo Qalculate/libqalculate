@@ -1,6 +1,7 @@
 2019-05-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Allow multiple "to"-conversions in one expression (e.g. "5 m/s to hex to ft to h = 0xE6AF.1E*ft∕h)
+	* Support specification of number of bits for hexadecimal "to" conversion (4 to hex16 = 0004)
 
 2019-05-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
