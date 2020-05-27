@@ -2674,6 +2674,13 @@ int main(int argc, char *argv[]) {
 				setResult(NULL, false);
 				printops.base = save_base;
 				printops.binary_bits = 0;
+			} else if(str.length() > 3 && equalsIgnoreCase(str.substr(0, 3), "hex") && is_in(NUMBERS, str[3])) {
+				int save_base = printops.base;
+				printops.base = BASE_HEXADECIMAL;
+				printops.binary_bits = s2i(str.substr(3));
+				setResult(NULL, false);
+				printops.base = save_base;
+				printops.binary_bits = 0;
 			} else if(str.length() > 3 && (equalsIgnoreCase(str.substr(0, 3), "utc") || equalsIgnoreCase(str.substr(0, 3), "gmt"))) {
 				string to_str = str.substr(3);
 				remove_blanks(to_str);
@@ -4071,6 +4078,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- oct / octal (show as octal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- duo / duodecimal (show as duodecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex / hexadecimal (show as hexadecimal number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex# (show as hexadecimal number with specified number of bits)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- sex / sexagesimal (show as sexagesimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bijective (shown in bijective base-26)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- fp16, fp32, fp64, fp80, fp128 (show in binary floating-point format)"));
@@ -4768,7 +4776,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
 	if(i_maxtime < 0) return;
 
-	string str;
+	string str, str_conv;
 	bool do_bases = programmers_mode, do_factors = false, do_expand = false, do_fraction = false, do_pfe = false, do_calendars = false, do_binary_prefixes = false;
 	avoid_recalculation = false;
 	if(!interactive_mode) goto_input = false;
@@ -4796,7 +4804,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		string from_str = str;
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
 			remove_duplicate_blanks(to_str);
-			string str_left, str_conv;
+			string str_left;
 			string to_str1, to_str2;
 			while(true) {
 				CALCULATOR->separateToExpression(to_str, str_left, evalops, true);
@@ -4842,6 +4850,9 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					printops.time_zone = TIME_ZONE_UTC;
 				} else if(to_str.length() > 3 && equalsIgnoreCase(to_str.substr(0, 3), "bin") && is_in(NUMBERS, to_str[3])) {
 					printops.base = BASE_BINARY;
+					printops.binary_bits = s2i(to_str.substr(3));
+				} else if(to_str.length() > 3 && equalsIgnoreCase(to_str.substr(0, 3), "hex") && is_in(NUMBERS, to_str[3])) {
+					printops.base = BASE_HEXADECIMAL;
 					printops.binary_bits = s2i(to_str.substr(3));
 				} else if(to_str.length() > 3 && (equalsIgnoreCase(to_str.substr(0, 3), "utc") || equalsIgnoreCase(to_str.substr(0, 3), "gmt"))) {
 					to_str = to_str.substr(3);
@@ -4945,14 +4956,17 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					} else if(to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'b') {
 						do_binary_prefixes = true;
 					}
-					str_conv += " to ";
+					if(!str_conv.empty()) str_conv += " to ";
 					str_conv += to_str;
 				}
 				if(str_left.empty()) break;
 				to_str = str_left;
 			}
 			str = from_str;
-			str += str_conv;
+			if(!str_conv.empty()) {
+				str += " to ";
+				str += str_conv;
+			}
 		}
 		size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
 		if(i != string::npos) {
@@ -5176,26 +5190,23 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		if(has_printed) printf("\n");
 	}
 
-	if(!avoid_recalculation && !do_mathoperation && to_struct.containsType(STRUCT_UNIT, true) && !mstruct->containsType(STRUCT_UNIT) && !parsed_mstruct->containsType(STRUCT_UNIT, false, true, true)) {
+	if(!avoid_recalculation && !do_mathoperation && !str_conv.empty() && to_struct.containsType(STRUCT_UNIT, true) && !mstruct->containsType(STRUCT_UNIT) && !parsed_mstruct->containsType(STRUCT_UNIT, false, true, true) && !CALCULATOR->hasToExpression(str_conv, false, evalops)) {
 		to_struct.unformat();
 		to_struct = CALCULATOR->convertToOptimalUnit(to_struct, evalops, true);
 		fix_to_struct(to_struct);
 		if(!to_struct.isZero()) {
-			string from_str = str, to_str;
-			if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
-				mstruct->multiply(to_struct);
-				to_struct.format(printops);
-				if(to_struct.isMultiplication() && to_struct.size() >= 2) {
-					if(to_struct[0].isOne()) to_struct.delChild(1, true);
-					else if(to_struct[1].isOne()) to_struct.delChild(2, true);
-				}
-				parsed_mstruct->multiply(to_struct);
-				to_struct.clear();
-				CALCULATOR->calculate(mstruct, 0, evalops, CALCULATOR->unlocalizeExpression(to_str, evalops.parse_options));
-				bool had_printed = has_printed;
-				goto calculation_wait;
-				if(had_printed) has_printed = true;
+			mstruct->multiply(to_struct);
+			to_struct.format(printops);
+			if(to_struct.isMultiplication() && to_struct.size() >= 2) {
+				if(to_struct[0].isOne()) to_struct.delChild(1, true);
+				else if(to_struct[1].isOne()) to_struct.delChild(2, true);
 			}
+			parsed_mstruct->multiply(to_struct);
+			to_struct.clear();
+			CALCULATOR->calculate(mstruct, 0, evalops, CALCULATOR->unlocalizeExpression(str_conv, evalops.parse_options));
+			bool had_printed = has_printed;
+			goto calculation_wait;
+			if(had_printed) has_printed = true;
 		}
 	}
 
