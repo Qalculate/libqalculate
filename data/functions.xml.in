@@ -2734,7 +2734,7 @@
     <_title>Algebra</_title>
     <builtin_function name="sum">
       <_title>Summation</_title>
-      <_names>au:&#x3A3;,r:sum</_names>
+      <_names>au:&#x3A3;,au:&#x2211;,r:sum</_names>
       <_description>Corresponds to the summation symbol. Adds terms for each x ranging from the lower to the upper limit.</_description>
       <example>$name(x^2, 1, 5) = 1^2 + 2^2 + 3^2 + 4^2 + 5^2 = 55</example>
       <argument index="1">
