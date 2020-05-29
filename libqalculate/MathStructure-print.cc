@@ -3133,14 +3133,15 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			ips_n.depth++;
 			ips_n.power_depth++;
 			ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
-			if(po.place_units_separately && !po.preserve_format && colorize && tagtype == TAG_TYPE_TERMINAL && CHILD(0).isUnit()) print_str = colorize == 2 ? "\033[0;92m" : "\033[0;32m";
-			print_str += CHILD(0).print(po, format, (!colorize || (po.place_units_separately && po.preserve_format && CHILD(0).isUnit())) ? 0 : colorize, tagtype, ips_n);
+			bool b_units = po.place_units_separately && !po.preserve_format && colorize && tagtype == TAG_TYPE_TERMINAL && CHILD(0).isUnit();
+			if(b_units) print_str = colorize == 2 ? "\033[0;92m" : "\033[0;32m";
+			print_str += CHILD(0).print(po, format, b_units ? 0 : colorize, tagtype, ips_n);
 			print_str += "^";
 			ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, true);
 			PrintOptions po2 = po;
 			po2.show_ending_zeroes = false;
-			print_str += CHILD(1).print(po2, format, (!colorize || (po.place_units_separately && po.preserve_format && CHILD(0).isUnit())) ? 0 : colorize, tagtype, ips_n);
-			if(po.place_units_separately && !po.preserve_format && colorize && tagtype == TAG_TYPE_TERMINAL && CHILD(0).isUnit()) print_str += "\033[0m";
+			print_str += CHILD(1).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
+			if(b_units) print_str += "\033[0m";
 			break;
 		}
 		case STRUCT_COMPARISON: {
