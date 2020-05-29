@@ -1,3 +1,13 @@
+2019-05-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Syntax highlighting using colors in qalc
+	* Remove space around division in unit expression
+	* Enable Unicode by default
+
+2019-05-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support N-Ary Summation symbol, in addition to sigma, for sum() function
+
 2019-05-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Allow multiple "to"-conversions in one expression (e.g. "5 m/s to hex to ft to h = 0xE6AF.1E*ft∕h)
