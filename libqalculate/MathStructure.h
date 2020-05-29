@@ -56,6 +56,11 @@ enum {
 	MULTIPLICATION_SIGN_OPERATOR_SHORT
 };
 
+enum {
+	TAG_TYPE_HTML,
+	TAG_TYPE_TERMINAL
+};
+
 /// A structure representing a mathematical value/expression/result
 /**
 * A MathStructure can both be container representing an operation with an ordered list of children or simple value representing
@@ -748,6 +753,7 @@ class MathStructure {
 		int neededMultiplicationSign(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, size_t index, bool par, bool par_prev, bool flat_division = true, bool flat_power = true) const;
 
 		std::string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
+		std::string print(const PrintOptions &po, bool format, int colorize = 0, int tagtype = TAG_TYPE_HTML, const InternalPrintStruct &ips = top_ips) const;
 		//@}
 
 

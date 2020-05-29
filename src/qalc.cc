@@ -74,6 +74,8 @@ bool rpn_mode = false, saved_rpn_mode = false;
 bool caret_as_xor = false, saved_caret_as_xor = false;
 bool use_readline = true;
 bool interactive_mode;
+int colorize = 0;
+int force_color = -1;
 bool ask_questions;
 bool canfetch = true;
 bool programmers_mode = false;
@@ -104,7 +106,6 @@ void result_prefix_changed(Prefix *prefix = NULL);
 void expression_format_updated(bool reparse);
 void expression_calculation_updated();
 bool display_errors(bool goto_input = false, int cols = 0);
-void replace_quotation_marks(string &result_text);
 void replace_result_cis(string &resstr);
 
 FILE *cfile;
@@ -117,6 +118,14 @@ enum {
 };
 
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
+
+#ifdef _WIN32
+#	define DO_FORMAT (force_color > 0 || (force_color != 0 && !cfile && colorize && interactive_mode))
+#	define DO_COLOR (force_color > 0 || (force_color != 0 && !cfile && colorize && interactive_mode) ? (colorize == 2 ? 2 : 1) : 0)
+#else
+#	define DO_FORMAT (force_color > 0 || (force_color != 0 && !cfile && interactive_mode))
+#	define DO_COLOR (force_color > 0 || (force_color != 0 && !cfile && colorize && interactive_mode) ? (colorize == 2 ? 2 : 1) : 0)
+#endif
 
 bool contains_unicode_char(const char *str) {
 	for(int i = strlen(str) - 1; i >= 0; i--) {
@@ -143,9 +152,17 @@ void update_message_print_options() {
 }
 
 size_t unicode_length_check(const char *str) {
-	/*if(printops.use_unicode_signs) return unicode_length(str);
-	return strlen(str);*/
-	return unicode_length(str);
+	size_t l = strlen(str), l2 = 0;
+	for(size_t i = 0; i < l; i++) {
+		if(str[i] == '\033') {
+			do {
+				i++;
+			} while(i < l && str[i] != 'm');
+		} else if(str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+			l2++;
+		}
+	}
+	return l2;
 }
 
 int s2b(const string &str) {
@@ -397,9 +414,7 @@ int countRows(const char *str, int cols) {
 			do {
 				i++;
 			} while(i < l && str[i] != 'm');
-			if(i >= l) break;
-		}
-		if(str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+		} else if(str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
 			if(str[i] == '\n') {
 				r++;
 				c = 0;
@@ -440,10 +455,11 @@ int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, s
 				}
 			}
 		}
-		if(str[i] == '\033') {
+		while(str[i] == '\033') {
 			do {
 				i++;
 			} while(i < str.length() && str[i] != 'm');
+			i++;
 			if(i >= str.length()) break;
 		}
 		if(str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
@@ -714,7 +730,19 @@ void set_option(string str) {
 		expression_calculation_updated();
 	}
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "all prefixes", _("all prefixes")) || svar == "allpref") SET_BOOL_D(printops.use_all_prefixes)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "complex numbers", _("complex numbers")) || svar == "cplx") SET_BOOL_E(evalops.allow_complex)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "color", _("color"))) {
+		int v = -1;
+		// light color
+		if(svalue == "2" || EQUALS_IGNORECASE_AND_LOCAL(svar, "light", _("light"))) v = 2;
+		else if(svalue == "1" || EQUALS_IGNORECASE_AND_LOCAL(svar, "default", _("default"))) v = 1;
+		else v = s2b(svalue);
+		if(v < 0 || v > 2) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			colorize = v;
+			result_display_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "complex numbers", _("complex numbers")) || svar == "cplx") SET_BOOL_E(evalops.allow_complex)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "excessive parentheses", _("excessive parentheses")) || svar == "expar") SET_BOOL_D(printops.excessive_parenthesis)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "functions", _("functions")) || svar == "func") SET_BOOL_PV(evalops.parse_options.functions_enabled)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "infinite numbers", _("infinite numbers")) || svar == "inf") SET_BOOL_E(evalops.allow_infinite)
@@ -1190,25 +1218,15 @@ void set_option(string str) {
 #define STR_AND_TABS_T2(x) str = x; pctl = unicode_length(str); if(pctl >= 8) {str += "\t";} else {str += "\t\t";}
 #define STR_AND_TABS_T3(x) str = x; pctl = unicode_length(str); if(pctl >= 16) {str += "\t";} else if(pctl >= 8) {str += "\t\t";} else {str += "\t\t\t";}
 #define STR_AND_TABS_T4(x) str = x; pctl = unicode_length(str); if(pctl >= 24) {str += "\t";} else if(pctl >= 16) {str += "\t\t";} else if(pctl >= 8) {str += "\t\t\t";} else {str += "\t\t\t\t";}
-#ifdef _WIN32
-#	define BEGIN_BOLD(x)
-#	define END_BOLD(x)
-#	define BEGIN_UNDERLINED(x)
-#	define END_UNDERLINED(x)
-#	define BEGIN_ITALIC(x)
-#	define END_ITALIC(x)
-#	define PUTS_BOLD(x) PUTS_UNICODE(x);
-#	define PUTS_UNDERLINED(x) PUTS_UNICODE(x);
-#else
-#	define BEGIN_BOLD(x) if(!cfile) {x += "\033[1m";}
-#	define END_BOLD(x) if(!cfile) {x += "\033[0m";}
-#	define BEGIN_UNDERLINED(x) if(!cfile) {x += "\033[4m";}
-#	define END_UNDERLINED(x) if(!cfile) {x += "\033[0m";}
-#	define BEGIN_ITALIC(x) if(!cfile) {x += "\033[3m";}
-#	define END_ITALIC(x) if(!cfile) {x += "\033[23m";}
-#	define PUTS_BOLD(x) if(cfile) {str = x;} else {str = "\033[1m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
-#	define PUTS_UNDERLINED(x) if(cfile) {str = x;} else {str = "\033[4m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
-#endif
+
+#define BEGIN_BOLD(x) if(DO_FORMAT) {x += "\033[1m";}
+#define END_BOLD(x) if(DO_FORMAT) {x += "\033[0m";}
+#define BEGIN_UNDERLINED(x) if(DO_FORMAT) {x += "\033[4m";}
+#define END_UNDERLINED(x) if(DO_FORMAT) {x += "\033[0m";}
+#define BEGIN_ITALIC(x) if(DO_FORMAT) {x += "\033[3m";}
+#define END_ITALIC(x) if(DO_FORMAT) {x += "\033[23m";}
+#define PUTS_BOLD(x) if(!DO_FORMAT) {str = x;} else {str = "\033[1m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
+#define PUTS_UNDERLINED(x) if(!DO_FORMAT) {str = x;} else {str = "\033[4m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
 
 bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t i2_end, size_t minlength) {
 	if(str1.empty() || str2.empty()) return false;
@@ -1646,7 +1664,11 @@ int main(int argc, char *argv[]) {
 	result_only = false;
 	bool load_units = true, load_functions = true, load_variables = true, load_currencies = true, load_datasets = true;
 	load_global_defs = true;
+#ifdef _WIN32
 	printops.use_unicode_signs = false;
+#else
+	printops.use_unicode_signs = true;
+#endif
 	fetch_exchange_rates_at_startup = false;
 	char list_type = 'n';
 	string search_str;
@@ -1695,6 +1717,8 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("where options are:"));
 			fputs("\n\t-b, -base", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("set the number base for results and, optionally, expressions"));
+			fputs("\n\t-c, -color\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("use colors to hightlight different elements of expressions and results"));
 #ifdef HAVE_LIBCURL
 			fputs("\n\t-e, -exrates\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("update exchange rates"));
@@ -1758,6 +1782,10 @@ int main(int argc, char *argv[]) {
 				}
 			}
 			set_option_strings.push_back(set_base_str);
+		} else if(!calc_arg_begun && (svar == "-c" || svar == "-color" || svar == "--color")) {
+			force_color = 1;
+		} else if(!calc_arg_begun && svar == "+c") {
+			force_color = 0;
 		} else if(!calc_arg_begun && svar == "-p") {
 			programmers_mode = true;
 			string set_base_str = "base ";
@@ -2405,8 +2433,7 @@ int main(int argc, char *argv[]) {
 					m = *CALCULATOR->getRPNRegister(i);
 					m.removeDefaultAngleUnit(evalops);
 					m.format(printops);
-					string regstr = m.print(printops);
-					if(!cfile) replace_quotation_marks(regstr);
+					string regstr = m.print(printops, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
 					if(complex_angle_form) replace_result_cis(regstr);
 					printf("  %i:\t%s\n", (int) i, regstr.c_str());
 				}
@@ -2815,7 +2842,6 @@ int main(int argc, char *argv[]) {
 				if(interactive_mode && !cfile) {
 					base_str += "\n";
 					addLineBreaks(base_str, cols, true, 2, base_str.length());
-					replace_quotation_marks(base_str);
 				}
 				PUTS_UNICODE(base_str.c_str());
 				printops.base = save_base;
@@ -3016,6 +3042,13 @@ int main(int argc, char *argv[]) {
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Generic Display Options"));
 
 			PRINT_AND_COLON_TABS(_("abbreviations"), "abbr"); str += b2oo(printops.abbreviate_names, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("color"), "");
+			switch(colorize) {
+				case 0: {str += _("off"); break;}
+				case 2: {str += _("light"); break;}
+				default: {str += _("default"); break;}
+			}
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("division sign"), "divsign");
 			switch(printops.division_sign) {
 				case DIVISION_SIGN_DIVISION_SLASH: {str += SIGN_DIVISION_SLASH; break;}
@@ -3741,6 +3774,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Generic Display Options"));
 
 				STR_AND_TABS_BOOL(_("abbreviations"), "abbr", _("Use abbreviated names for units and variables."), printops.abbreviate_names);
+				STR_AND_TABS_2(_("color"), "", _("Use colors to highlight different elements of expressions and results."), colorize, _("off"), _("default"), _("light"));
 				STR_AND_TABS_2(_("division sign"), "divsign", "", printops.division_sign, "/", SIGN_DIVISION_SLASH, SIGN_DIVISION);
 				STR_AND_TABS_BOOL(_("excessive parentheses"), "expar", "", printops.excessive_parenthesis);
 				STR_AND_TABS_BOOL(_("minus last"), "minlast", _("Always place negative values last."), printops.sort_options.minus_last);
@@ -4184,13 +4218,21 @@ bool display_errors(bool goto_input, int cols) {
 			MessageType mtype = CALCULATOR->message()->type();
 			string str;
 			if(goto_input) str += "  ";
+			if(DO_COLOR && mtype == MESSAGE_ERROR) str += (DO_COLOR == 2 ? "\033[0;91m" : "\033[0;31m");
+			if(DO_COLOR && mtype == MESSAGE_WARNING) str += (DO_COLOR == 2 ? "\033[0;94m" : "\033[0;34m");
 			if(mtype == MESSAGE_ERROR) {
 				str += _("error"); str += ": ";
 			} else if(mtype == MESSAGE_WARNING) {
 				str += _("warning"); str += ": ";
 			}
+			size_t indent = 0;
+			if(!str.empty()) indent = unicode_length_check(str.c_str());
+			else if(goto_input) indent = 2;
+			if(DO_COLOR && (mtype == MESSAGE_ERROR || mtype == MESSAGE_WARNING)) str += "\033[0m";
+			BEGIN_ITALIC(str)
 			str += CALCULATOR->message()->message();
-			if(cols) addLineBreaks(str, cols, true, goto_input ? 2 : 0, str.length());
+			END_ITALIC(str)
+			if(cols) addLineBreaks(str, cols, true, indent, str.length());
 			PUTS_UNICODE(str.c_str())
 		}
 		if(!CALCULATOR->nextMessage()) break;
@@ -4204,38 +4246,6 @@ void on_abort_display() {
 
 void replace_result_cis(string &resstr) {
 	gsub(" cis ", "∠", resstr);
-}
-
-void replace_quotation_marks(string &str) {
-#ifndef _WIN32
-	if(cfile) return;
-	size_t i1 = 0, i2 = 0, i_prev = 0;
-	size_t i_equals = str.find(_("approx.")) + strlen(_("approx."));
-	while(i_prev + 2 < str.length()) {
-		i1 = str.find_first_of("\"\'", i_prev);
-		if(i1 == string::npos) break;
-		i2 = str.find(str[i1], i1 + 1);
-		if(i2 == string::npos) break;
-		if(i2 - i1 > 2) {
-			if(!text_length_is_one(str.substr(i1 + 1, i2 - i1 - 1))) {
-				i_prev = i2 + 1;
-				continue;
-			}
-		}
-		if(i1 > 1 && str[i1 - 1] == ' ' && (i_equals == string::npos || i1 != i_equals + 1) && (is_in(NUMBERS, str[i1 - 2]) || i1 == i_prev + 1)) {
-			str.replace(i1 - 1, 2, "\033[3m");
-			i2 += 2;
-			if(i_equals != string::npos && i1 < i_equals) i_equals += 2;
-		} else {
-			str.replace(i1, 1, "\033[3m");
-			i2 += 3;
-			if(i_equals != string::npos && i1 < i_equals) i_equals += 3;
-		}
-		str.replace(i2, 1, "\033[23m");
-		if(i_equals != string::npos && i1 < i_equals) i_equals += 4;
-		i_prev = i2 + 5;
-	}
-#endif
 }
 
 void ViewThread::run() {
@@ -4257,6 +4267,7 @@ void ViewThread::run() {
 			po.twos_complement = printops.twos_complement;
 			po.hexadecimal_twos_complement = printops.hexadecimal_twos_complement;
 			po.base = evalops.parse_options.base;
+			po.allow_non_usable = DO_FORMAT;
 			Number nr_base;
 			if(po.base == BASE_CUSTOM && (CALCULATOR->usesIntervalArithmetic() || CALCULATOR->customInputBase().isRational()) && (CALCULATOR->customInputBase().isInteger() || !CALCULATOR->customInputBase().isNegative()) && (CALCULATOR->customInputBase() > 1 || CALCULATOR->customInputBase() < -1) && CALCULATOR->customInputBase() >= -1114112L && CALCULATOR->customInputBase() <= 1114112L) {
 				nr_base = CALCULATOR->customOutputBase();
@@ -4282,12 +4293,13 @@ void ViewThread::run() {
 			MathStructure mp(*((MathStructure*) x));
 			read(&po.is_approximate);
 			mp.format(po);
-			parsed_text = mp.print(po);
+			parsed_text = mp.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
 			if(po.base == BASE_CUSTOM) {
 				CALCULATOR->setCustomOutputBase(nr_base);
 			}
 		}
-		printops.allow_non_usable = false;
+		
+		printops.allow_non_usable = DO_FORMAT;
 
 		// convert time units to hours when using time format
 		if(printops.base == BASE_TIME) {
@@ -4315,7 +4327,7 @@ void ViewThread::run() {
 
 		m.removeDefaultAngleUnit(evalops);
 		m.format(printops);
-		result_text = m.print(printops);
+		result_text = m.print(printops, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
 		if(complex_angle_form) replace_result_cis(result_text);
 
 		if(result_text == _("aborted")) {
@@ -4508,16 +4520,16 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			if(mstruct->isComparison()) strout += RIGHT_PARENTHESIS;
 			if(!(*printops.is_approximate) && !mstruct->isApproximate()) {
 				strout += " = ";
-				i_result_u = unicode_length(strout);
+				i_result_u = unicode_length_check(strout.c_str());
 				i_result = strout.length();
 			} else {
 				if(printops.use_unicode_signs) {
 					strout += " " SIGN_ALMOST_EQUAL " ";
-					i_result_u = unicode_length(strout);
+					i_result_u = unicode_length_check(strout.c_str());
 					i_result = strout.length();
 				} else {
 					strout += " = ";
-					i_result_u = unicode_length(strout);
+					i_result_u = unicode_length_check(strout.c_str());
 					i_result = strout.length();
 					strout += _("approx.");
 					strout += " ";
@@ -4532,13 +4544,12 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			strout += result_text.c_str();
 		}
 		if(goto_input) {
-			if(!result_only && i_result_u > (size_t) cols / 2 && unicode_length(strout) > (size_t) cols) {
+			if(!result_only && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols) {
 				strout[i_result - 1] = '\n';
 				strout.insert(i_result, "  ");
 				i_result_u = 2;
 			}
 			addLineBreaks(strout, cols, true, result_only ? 2 : i_result_u, i_result);
-			replace_quotation_marks(strout);
 			strout += "\n";
 		}
 		PUTS_UNICODE(strout.c_str());
@@ -5333,7 +5344,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			cols = 80;
 #endif
 			addLineBreaks(base_str, cols, false, 2, base_str.length());
-			replace_quotation_marks(base_str);
 		}
 		PUTS_UNICODE(base_str.c_str());
 		if(goto_input) printf("\n");
@@ -5432,7 +5442,11 @@ void load_preferences() {
 	printops.number_fraction_format = FRACTION_DECIMAL;
 	printops.restrict_fraction_length = false;
 	printops.abbreviate_names = true;
+#ifdef _WIN32
 	printops.use_unicode_signs = false;
+#else
+	printops.use_unicode_signs = true;
+#endif
 	printops.use_unit_prefixes = true;
 	printops.spacious = true;
 	printops.short_multiplication = true;
@@ -5440,7 +5454,7 @@ void load_preferences() {
 	printops.place_units_separately = true;
 	printops.use_all_prefixes = false;
 	printops.excessive_parenthesis = false;
-	printops.allow_non_usable = false;
+	printops.allow_non_usable = DO_FORMAT;
 	printops.lower_case_numbers = false;
 	printops.lower_case_e = false;
 	printops.base_display = BASE_DISPLAY_NORMAL;
@@ -5491,6 +5505,12 @@ void load_preferences() {
 	save_defs_on_exit = true;
 	auto_update_exchange_rates = -1;
 	first_time = false;
+	
+#ifdef _WIN32
+	colorize = 0;
+#else
+	colorize = 1;
+#endif
 
 	FILE *file = NULL;
 #ifdef HAVE_LIBREADLINE
@@ -5555,6 +5575,8 @@ void load_preferences() {
 					save_defs_on_exit = v;
 				} else if(svar == "ignore_locale") {
 					ignore_locale = v;
+				} else if(svar == "colorize") {
+					colorize = v;
 				} else if(svar == "fetch_exchange_rates_at_startup") {
 					if(auto_update_exchange_rates < 0 && v) auto_update_exchange_rates = 1;
 				} else if(svar == "auto_update_exchange_rates") {
@@ -5712,7 +5734,13 @@ void load_preferences() {
 				} else if(svar == "local_currency_conversion") {
 					evalops.local_currency_conversion = v;
 				} else if(svar == "use_unicode_signs") {
+#ifdef _WIN32
 					printops.use_unicode_signs = v;
+#else
+					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && version_numbers[1] > 10)) {
+						printops.use_unicode_signs = v;
+					}
+#endif
 				} else if(svar == "lower_case_numbers") {
 					printops.lower_case_numbers = v;
 				} else if(svar == "lower_case_e") {
@@ -5816,6 +5844,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "save_mode_on_exit=%i\n", save_mode_on_exit);
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
 	fprintf(file, "ignore_locale=%i\n", ignore_locale);
+	fprintf(file, "colorize=%i\n", colorize);
 	fprintf(file, "auto_update_exchange_rates=%i\n", auto_update_exchange_rates);
 	fprintf(file, "spacious=%i\n", printops.spacious);
 	fprintf(file, "excessive_parenthesis=%i\n", printops.excessive_parenthesis);
