@@ -2758,7 +2758,10 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 	// type of factor in front in this factor
 	int t = parent[index - 2].type();
 	// a^b*c (if b is not shown using superscript or similar)
-	if(flat_power && t == STRUCT_POWER) return MULTIPLICATION_SIGN_OPERATOR;
+	if(flat_power && t == STRUCT_POWER) {
+		if(po.place_units_separately && parent[index - 2].isUnit_exp() && isUnit_exp()) return MULTIPLICATION_SIGN_OPERATOR_SHORT;
+		return MULTIPLICATION_SIGN_OPERATOR;
+	}
 	// a^b*(c)=a^b (c)
 	if(par && t == STRUCT_POWER) return MULTIPLICATION_SIGN_SPACE;
 	// a*(b)=a(b)
@@ -3112,20 +3115,21 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			break;
 		}
 		case STRUCT_POWER: {
-			if(tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs && po.place_units_separately && !po.preserve_format && CHILD(0).isUnit() && CHILD(1).isInteger()) {
-				if(CHILD(1).number() == 2 && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_POWER_2, po.can_display_unicode_string_arg))) {
+			if(!po.negative_exponents && tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs && po.place_units_separately && !po.preserve_format && CHILD(0).isUnit() && CHILD(1).isInteger() && CHILD(1).number() >= 2 && CHILD(1).number() <= 9) {
+				string s_super;
+				if(CHILD(1).number() == 2) s_super = SIGN_POWER_2;
+				else if(CHILD(1).number() == 3) s_super = SIGN_POWER_3;
+				else if(CHILD(1).number() == 4) s_super = SIGN_POWER_4;
+				else if(CHILD(1).number() == 5) s_super = SIGN_POWER_5;
+				else if(CHILD(1).number() == 6) s_super = SIGN_POWER_6;
+				else if(CHILD(1).number() == 7) s_super = SIGN_POWER_7;
+				else if(CHILD(1).number() == 8) s_super = SIGN_POWER_8;
+				else if(CHILD(1).number() == 9) s_super = SIGN_POWER_9;
+				if(!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (s_super.c_str(), po.can_display_unicode_string_arg)) {
 					if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str = (colorize == 2 ? "\033[0;92m" : "\033[0;32m");
 					ips_n.wrap = false;
 					print_str += CHILD(0).print(po, false, false, tagtype, ips_n);
-					print_str += SIGN_POWER_2;
-					if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
-					break;
-				}
-				if(CHILD(1).number() == 3 && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_POWER_3, po.can_display_unicode_string_arg))) {
-					ips_n.wrap = false;
-					if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str = (colorize == 2 ? "\033[0;92m" : "\033[0;32m");
-					print_str += CHILD(0).print(po, false, false, tagtype, ips_n);
-					print_str += SIGN_POWER_3;
+					print_str += s_super;
 					if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
 					break;
 				}

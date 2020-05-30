@@ -900,12 +900,13 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "multiplication sign", _("multiplication sign")) || svar == "mulsign") {
 		int v = -1;
 		if(svalue == SIGN_MULTIDOT || svalue == ".") v = MULTIPLICATION_SIGN_DOT;
+		else if(svalue == SIGN_MIDDLEDOT) v = MULTIPLICATION_SIGN_ALTDOT;
 		else if(svalue == SIGN_MULTIPLICATION || svalue == "x") v = MULTIPLICATION_SIGN_X;
 		else if(svalue == "*") v = MULTIPLICATION_SIGN_ASTERISK;
 		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
-		if(v < 0 || v > 2) {
+		if(v < MULTIPLICATION_SIGN_ASTERISK || v > MULTIPLICATION_SIGN_ALTDOT) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			printops.multiplication_sign = (MultiplicationSign) v;
@@ -1884,7 +1885,7 @@ int main(int argc, char *argv[]) {
 
 	//create the almighty Calculator object
 	new Calculator(ignore_locale);
-
+	
 	//load application specific preferences
 	load_preferences();
 
@@ -2435,6 +2436,7 @@ int main(int argc, char *argv[]) {
 					m.format(printops);
 					string regstr = m.print(printops, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
 					if(complex_angle_form) replace_result_cis(regstr);
+					if(printops.use_unicode_signs) gsub(" ", " ", str);
 					printf("  %i:\t%s\n", (int) i, regstr.c_str());
 				}
 				puts("");
@@ -3062,6 +3064,7 @@ int main(int argc, char *argv[]) {
 			switch(printops.multiplication_sign) {
 				case MULTIPLICATION_SIGN_X: {str += SIGN_MULTIPLICATION; break;}
 				case MULTIPLICATION_SIGN_DOT: {str += SIGN_MULTIDOT; break;}
+				case MULTIPLICATION_SIGN_ALTDOT: {str += SIGN_MIDDLEDOT; break;}
 				default: {str += "*"; break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -3778,7 +3781,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_2(_("division sign"), "divsign", "", printops.division_sign, "/", SIGN_DIVISION_SLASH, SIGN_DIVISION);
 				STR_AND_TABS_BOOL(_("excessive parentheses"), "expar", "", printops.excessive_parenthesis);
 				STR_AND_TABS_BOOL(_("minus last"), "minlast", _("Always place negative values last."), printops.sort_options.minus_last);
-				STR_AND_TABS_2(_("multiplication sign"), "mulsign", "", printops.multiplication_sign, "*", SIGN_MULTIDOT, SIGN_MULTIPLICATION);
+				STR_AND_TABS_3(_("multiplication sign"), "mulsign", "", printops.multiplication_sign, "*", SIGN_MULTIDOT, SIGN_MULTIPLICATION, SIGN_MIDDLEDOT);
 				STR_AND_TABS_BOOL(_("show negative exponents"), "negexp", _("Use negative exponents instead of division in result (x/y = xy^-1)."), printops.negative_exponents);
 				STR_AND_TABS_BOOL(_("short multiplication"), "shortmul", "", printops.short_multiplication);
 				STR_AND_TABS_BOOL(_("spacious"), "space", _("Add extra space around operators."), printops.spacious);
@@ -4294,6 +4297,7 @@ void ViewThread::run() {
 			read(&po.is_approximate);
 			mp.format(po);
 			parsed_text = mp.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+			if(printops.use_unicode_signs) gsub(" ", " ", parsed_text);
 			if(po.base == BASE_CUSTOM) {
 				CALCULATOR->setCustomOutputBase(nr_base);
 			}
@@ -4329,6 +4333,7 @@ void ViewThread::run() {
 		m.format(printops);
 		result_text = m.print(printops, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
 		if(complex_angle_form) replace_result_cis(result_text);
+		if(printops.use_unicode_signs) gsub(" ", " ", result_text);
 
 		if(result_text == _("aborted")) {
 			*printops.is_approximate = false;
@@ -5461,7 +5466,7 @@ void load_preferences() {
 	printops.twos_complement = true;
 	printops.hexadecimal_twos_complement = false;
 	printops.division_sign = DIVISION_SIGN_SLASH;
-	printops.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
+	printops.multiplication_sign = MULTIPLICATION_SIGN_X;
 	printops.allow_factorization = false;
 	printops.spell_out_logical_operators = true;
 	printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
@@ -5767,7 +5772,9 @@ void load_preferences() {
 						CALCULATOR->useDecimalPoint(evalops.parse_options.comma_as_separator);
 					}
 				} else if(svar == "multiplication_sign") {
-					if(v >= MULTIPLICATION_SIGN_ASTERISK && v <= MULTIPLICATION_SIGN_X) printops.multiplication_sign = (MultiplicationSign) v;
+					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && version_numbers[1] > 10)) {
+						if(v >= MULTIPLICATION_SIGN_ASTERISK && v <= MULTIPLICATION_SIGN_ALTDOT) printops.multiplication_sign = (MultiplicationSign) v;
+					}
 				} else if(svar == "division_sign") {
 					if(v >= DIVISION_SIGN_SLASH && v <= DIVISION_SIGN_DIVISION) printops.division_sign = (DivisionSign) v;
 				} else if(svar == "indicate_infinite_series") {
