@@ -1,8 +1,14 @@
+2019-05-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support for +, -, (, ) superscripts
+	* Use × (U+00D7) as default multiplication sign
+
 2019-05-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Syntax highlighting using colors in qalc
 	* Remove space around division in unit expression
 	* Enable Unicode by default
+	* Use Unicode superscript for units (when placed separately and negative exponents are disabled)
 
 2019-05-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
