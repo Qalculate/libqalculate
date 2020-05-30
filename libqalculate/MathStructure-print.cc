@@ -2941,11 +2941,14 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			break;
 		}
 		case STRUCT_NEGATE: {
+			bool b_num = !po.preserve_format && colorize && tagtype == TAG_TYPE_TERMINAL && (CHILD(0).isNumber() || (CHILD(0).isDivision() && po.division_sign == DIVISION_SIGN_SLASH && CHILD(0)[0].isInteger() && CHILD(0)[1].isInteger()) || (CHILD(0).isInverse() && po.division_sign == DIVISION_SIGN_SLASH && CHILD(0)[0].isInteger()));
+			if(b_num) print_str += (colorize == 2 ? "\033[0;96m" : "\033[0;36m");
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) print_str += SIGN_MINUS;
-			else print_str = "-";
+			else print_str += "-";
 			ips_n.depth++;
 			ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
-			print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
+			print_str += CHILD(0).print(po, !b_num && format, b_num ? 0 : colorize, tagtype, ips_n);
+			if(b_num) print_str += "\033[0m";
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
@@ -3013,32 +3016,39 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			ips_n.depth++;
 			ips_n.division_depth++;
 			ips_n.wrap = false;
-			print_str = m_one.print(po, ips_n);
-			if(po.spacious) print_str += " ";
+			bool b_num = !po.preserve_format && po.division_sign == DIVISION_SIGN_SLASH && CHILD(0).isInteger();
+			if(b_num && colorize && tagtype == TAG_TYPE_TERMINAL) print_str += (colorize == 2 ? "\033[0;96m" : "\033[0;36m");
+			print_str += m_one.print(po, !b_num && format, b_num ? 0 : colorize, tagtype, ips_n);
 			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION, po.can_display_unicode_string_arg))) {
+				if(po.spacious && !b_num) print_str += " ";
 				print_str += SIGN_DIVISION;
+				if(po.spacious && !b_num) print_str += " ";
 			} else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION_SLASH, po.can_display_unicode_string_arg))) {
-				print_str += SIGN_DIVISION_SLASH;
+				print_str += " " SIGN_DIVISION_SLASH " ";
 			} else {
+				if(po.spacious && !b_num) print_str += " ";
 				print_str += "/";
+				if(po.spacious && !b_num) print_str += " ";
 			}
-			if(po.spacious) print_str += " ";
-			if(!po.preserve_format && CHILD(0).isNumber() && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+			if(b_num && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 				PrintOptions po2 = po;
 				po2.number_fraction_format = FRACTION_FRACTIONAL;
 				ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
-				print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
+				print_str += CHILD(0).print(po, false, 0, tagtype, ips_n);
 			} else {
 				ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
-				print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
+				print_str += CHILD(0).print(po, !b_num && format, b_num ? 0 : colorize, tagtype, ips_n);
 			}
+			if(b_num && colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
 			break;
 		}
 		case STRUCT_DIVISION: {
 			ips_n.depth++;
 			ips_n.division_depth++;
+			bool b_num = !po.preserve_format && CHILD(0).isInteger() && CHILD(1).isInteger();
+			bool b_num2 = b_num && po.division_sign == DIVISION_SIGN_SLASH;
 			bool b_units = false;
-			if(po.place_units_separately && !po.preserve_format) {
+			if(!b_num && po.place_units_separately && !po.preserve_format) {
 				b_units = true;
 				if(CHILD(0).isMultiplication()) {
 					for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
@@ -3063,55 +3073,40 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					}
 				}
 			}
-			if(b_units) {
-				if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str = (colorize == 2 ? "\033[0;92m" : "\033[0;32m");
-				ips_n.wrap = false;
-				print_str += CHILD(0).print(po, false, false, tagtype, ips_n);
-				if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION, po.can_display_unicode_string_arg))) {
-					print_str += SIGN_DIVISION;
-				} else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION_SLASH, po.can_display_unicode_string_arg))) {
-					if(po.spacious) print_str += " ";
-					print_str += SIGN_DIVISION_SLASH;
-					if(po.spacious) print_str += " ";
-				} else {
-					print_str += "/";
-				}
-				ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, true);
-				print_str += CHILD(1).print(po, false, false, tagtype, ips_n);
-				if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
-				break;
+			if(colorize && tagtype == TAG_TYPE_TERMINAL) {
+				if(b_units) print_str += (colorize == 2 ? "\033[0;92m" : "\033[0;32m");
+				else if(b_num2) print_str += (colorize == 2 ? "\033[0;96m" : "\033[0;36m");
 			}
-			if(!po.preserve_format && CHILD(0).isNumber() && CHILD(1).isNumber() && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+			if(b_num && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
 				PrintOptions po2 = po;
 				po2.number_fraction_format = FRACTION_FRACTIONAL;
 				ips_n.wrap = CHILD(0).needsParenthesis(po2, ips_n, *this, 1, true, true);
-				print_str = CHILD(0).print(po2, format, colorize, tagtype, ips_n);
-				if(po.spacious) print_str += " ";
-				if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION, po.can_display_unicode_string_arg))) {
-					print_str += SIGN_DIVISION;
-				} else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION_SLASH, po.can_display_unicode_string_arg))) {
-					print_str += SIGN_DIVISION_SLASH;
-				} else {
-					print_str += "/";
-				}
-				if(po.spacious) print_str += " ";
-				ips_n.wrap = CHILD(1).needsParenthesis(po2, ips_n, *this, 2, true, true);
-				print_str += CHILD(1).print(po2, format, colorize, tagtype, ips_n);
+				print_str += CHILD(0).print(po2, !b_units && !b_num2 && format, (b_units || b_num2) ? 0 : colorize, tagtype, ips_n);
 			} else {
-				ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
-				print_str = CHILD(0).print(po, format, colorize, tagtype, ips_n);
-				if(po.spacious) print_str += " ";
-				if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION, po.can_display_unicode_string_arg))) {
-					print_str += SIGN_DIVISION;
-				} else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION_SLASH, po.can_display_unicode_string_arg))) {
-					print_str += SIGN_DIVISION_SLASH;
-				} else {
-					print_str += "/";
-				}
-				if(po.spacious) print_str += " ";
-				ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, true);
-				print_str += CHILD(1).print(po, format, colorize, tagtype, ips_n);
+				ips_n.wrap = !b_units && CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
+				print_str += CHILD(0).print(po, !b_units && !b_num2 && format, (b_units || b_num2) ? 0 : colorize, tagtype, ips_n);
 			}
+			if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION, po.can_display_unicode_string_arg))) {
+				if(po.spacious && !b_units && !b_num2) print_str += " ";
+				print_str += SIGN_DIVISION;
+				if(po.spacious && !b_units && !b_num2) print_str += " ";
+			} else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION_SLASH, po.can_display_unicode_string_arg))) {
+				print_str += " " SIGN_DIVISION_SLASH " ";
+			} else {
+				if(po.spacious && !b_units && !b_num2) print_str += " ";
+				print_str += "/";
+				if(po.spacious && !b_units && !b_num2) print_str += " ";
+			}
+			if(b_num && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
+				PrintOptions po2 = po;
+				po2.number_fraction_format = FRACTION_FRACTIONAL;
+				ips_n.wrap = CHILD(1).needsParenthesis(po2, ips_n, *this, 2, true, true);
+				print_str += CHILD(1).print(po2, !b_units && !b_num2 && format, (b_units || b_num2) ? 0 : colorize, tagtype, ips_n);
+			} else {
+				ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, true);
+				print_str += CHILD(1).print(po, !b_units && !b_num2 && format, (b_units || b_num2) ? 0 : colorize, tagtype, ips_n);
+			}
+			if((b_units || b_num2) && colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
 			break;
 		}
 		case STRUCT_POWER: {
