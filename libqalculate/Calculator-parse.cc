@@ -339,7 +339,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 	while(true) {
 		// Unicode powers 0 and 4-9 use three chars and begin with \xe2\x81
 		size_t ui = str.find("\xe2\x81", prev_ui == string::npos ? 0 : prev_ui);
-		if(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -71)))) ui = string::npos;
+		if(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -66 || str[ui + 2] == -68)))) ui = string::npos;
 		// Unicode powers 1-3 use two chars and begin with \xc2
 		size_t ui2 = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
 		if(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = string::npos;
@@ -349,7 +349,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 			for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
 				if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
 					ui = str.find("\xe2\x81", q_end[ui3] + 1);
-					if(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -71)))) ui = string::npos;
+					if(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -66 || str[ui + 2] != -68)))) ui = string::npos;
 					ui2 = str.find('\xc2', q_end[ui3] + 1);
 					if(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = string::npos;
 					if(ui2 != string::npos && (ui == string::npos || ui2 < ui)) ui = ui2;
@@ -381,6 +381,10 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 			else if(str[ui + 2] == -73) str.replace(ui, 3, ui == prev_ui ? "7)" : "^(7)");
 			else if(str[ui + 2] == -72) str.replace(ui, 3, ui == prev_ui ? "8)" : "^(8)");
 			else if(str[ui + 2] == -71) str.replace(ui, 3, ui == prev_ui ? "9)" : "^(9)");
+			else if(str[ui + 2] == -70) str.replace(ui, 3, ui == prev_ui ? "+)" : "^(+)");
+			else if(str[ui + 2] == -69) str.replace(ui, 3, ui == prev_ui ? "-)" : "^(-)");
+			else if(str[ui + 2] == -67) str.replace(ui, 3, ui == prev_ui ? "()" : "^(()");
+			else if(str[ui + 2] == -66) str.replace(ui, 3, ui == prev_ui ? "))" : "^())");
 		}
 		if(ui == prev_ui) {
 			str.erase(prev_ui - space_n - 1, 1);
