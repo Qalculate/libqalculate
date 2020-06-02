@@ -1,3 +1,7 @@
+2019-06-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix use of equals sign in qalc command line arguments (e.g. "qalc --base=16")
+
 2019-05-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Support for +, -, (, ) superscripts

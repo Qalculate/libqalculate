@@ -121,11 +121,10 @@ enum {
 
 #ifdef _WIN32
 #	define DO_FORMAT (force_color > 0 || (force_color != 0 && !cfile && colorize && interactive_mode))
-#	define DO_COLOR (force_color > 0 || (force_color != 0 && !cfile && colorize && interactive_mode) ? (colorize == 2 ? 2 : 1) : 0)
 #else
 #	define DO_FORMAT (force_color > 0 || (force_color != 0 && !cfile && interactive_mode))
-#	define DO_COLOR (force_color > 0 || (force_color != 0 && !cfile && colorize && interactive_mode) ? (colorize == 2 ? 2 : 1) : 0)
 #endif
+#define DO_COLOR (force_color >= 0 ? force_color : (!cfile && colorize && interactive_mode ? colorize : 0))
 
 bool contains_unicode_char(const char *str) {
 	for(int i = strlen(str) - 1; i >= 0; i--) {
@@ -1706,9 +1705,9 @@ int main(int argc, char *argv[]) {
 			calc_arg += " ";
 		} else {
 			svar = argv[i];
-			size_t i2 = svar.find_first_of(NUMBERS);
-			if(i2 != string::npos && i2 != 0) {
-				svalue = svar.substr(i2);
+			size_t i2 = svar.find_first_of(NUMBERS "=");
+			if(i2 != string::npos && i2 != 0 && svar[0] != '+' && (svar[i2] == '=' || i2 == 2) && (svar[i2] != '=' || i2 != svar.length() - 1)) {
+				svalue = svar.substr(svar[i2] == '=' ? i2 + 1 : i2);
 				svar = svar.substr(0, i2);
 			}
 		}
@@ -1776,17 +1775,17 @@ int main(int argc, char *argv[]) {
 			string set_base_str = "base ";
 			if(!svalue.empty()) {
 				set_base_str += svalue;
-			} else {
+			} else if(i + 1 < argc) {
 				i++;
-				if(i < argc) {
-					set_base_str += argv[i];
-				}
+				set_base_str += argv[i];
 			}
 			set_option_strings.push_back(set_base_str);
 		} else if(!calc_arg_begun && (svar == "-c" || svar == "-color" || svar == "--color")) {
-			force_color = 1;
-		} else if(!calc_arg_begun && svar == "+c") {
-			force_color = 0;
+			if(!svalue.empty()) {
+				force_color = s2i(svalue);
+			} else {
+				force_color = 1;
+			}
 		} else if(!calc_arg_begun && svar == "-p") {
 			programmers_mode = true;
 			string set_base_str = "base ";
@@ -1814,30 +1813,42 @@ int main(int argc, char *argv[]) {
 			return 0;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-interactive") == 0 || strcmp(argv[i], "--interactive") == 0 || strcmp(argv[i], "-i") == 0)) {
 			interactive_mode = true;
-		} else if(!calc_arg_begun && (strcmp(argv[i], "-list") == 0 || strcmp(argv[i], "--list") == 0 || strcmp(argv[i], "-l") == 0)) {
+		} else if(!calc_arg_begun && (svar == "-list" || svar == "--list" || svar == "-l")) {
 			list_type = 0;
-			if(i + 1 < argc && strlen(argv[i + 1]) > 0 && argv[i + 1][0] != '-' && argv[i + 1][0] != '+') {
+			if(!svalue.empty()) {
+				search_str = svalue;
+				remove_blank_ends(search_str);
+			} else if(i + 1 < argc && strlen(argv[i + 1]) > 0 && argv[i + 1][0] != '-' && argv[i + 1][0] != '+') {
 				i++;
 				search_str = argv[i];
 				remove_blank_ends(search_str);
 			}
-		} else if(!calc_arg_begun && strcmp(argv[i], "--list-functions") == 0) {
+		} else if(!calc_arg_begun && svar == "--list-functions") {
 			list_type = 'f';
-			if(i + 1 < argc && strlen(argv[i + 1]) > 0 && argv[i + 1][0] != '-' && argv[i + 1][0] != '+') {
+			if(!svalue.empty()) {
+				search_str = svalue;
+				remove_blank_ends(search_str);
+			} else if(i + 1 < argc && strlen(argv[i + 1]) > 0 && argv[i + 1][0] != '-' && argv[i + 1][0] != '+') {
 				i++;
 				search_str = argv[i];
 				remove_blank_ends(search_str);
 			}
-		} else if(!calc_arg_begun && strcmp(argv[i], "--list-units") == 0) {
+		} else if(!calc_arg_begun && svar == "--list-units") {
 			list_type = 'u';
-			if(i + 1 < argc && strlen(argv[i + 1]) > 0 && argv[i + 1][0] != '-' && argv[i + 1][0] != '+') {
+			if(!svalue.empty()) {
+				search_str = svalue;
+				remove_blank_ends(search_str);
+			} else if(i + 1 < argc && strlen(argv[i + 1]) > 0 && argv[i + 1][0] != '-' && argv[i + 1][0] != '+') {
 				i++;
 				search_str = argv[i];
 				remove_blank_ends(search_str);
 			}
-		} else if(!calc_arg_begun && strcmp(argv[i], "--list-variables") == 0) {
+		} else if(!calc_arg_begun && svar == "--list-variables") {
 			list_type = 'v';
-			if(i + 1 < argc && strlen(argv[i + 1]) > 0 && argv[i + 1][0] != '-' && argv[i + 1][0] != '+') {
+			if(!svalue.empty()) {
+				search_str = svalue;
+				remove_blank_ends(search_str);
+			} else if(i + 1 < argc && strlen(argv[i + 1]) > 0 && argv[i + 1][0] != '-' && argv[i + 1][0] != '+') {
 				i++;
 				search_str = argv[i];
 				remove_blank_ends(search_str);
@@ -1854,22 +1865,30 @@ int main(int argc, char *argv[]) {
 			load_datasets = false;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-nodefs") == 0 || strcmp(argv[i], "-n") == 0)) {
 			load_global_defs = false;
-		} else if(!calc_arg_begun && (strcmp(argv[i], "-time") == 0 || strcmp(argv[i], "--time") == 0 || strcmp(argv[i], "-m") == 0)) {
-			i++;
-			if(i < argc) {
+		} else if(!calc_arg_begun && (svar == "-time" || svar == "--time" || svar == "-m")) {
+			if(!svalue.empty()) {
+				i_maxtime += strtol(svalue.c_str(), NULL, 10);
+				if(i_maxtime < 0) i_maxtime = 0;
+			} else if(i + 1 < argc) {
+				i++;
 				i_maxtime += strtol(argv[i], NULL, 10);
 				if(i_maxtime < 0) i_maxtime = 0;
 			}
-		} else if(!calc_arg_begun && (strcmp(argv[i], "-set") == 0 || strcmp(argv[i], "--set") == 0 || strcmp(argv[i], "-s") == 0)) {
-			i++;
-			if(i < argc) {
+		} else if(!calc_arg_begun && (svar == "-set" || svar == "--set" || svar == "-s")) {
+			if(!svalue.empty()) {
+				set_option_strings.push_back(svalue);
+			} else if(i + 1 < argc) {
+				i++;
 				set_option_strings.push_back(argv[i]);
 			} else {
 				puts(_("No option and value specified for set command."));
 			}
-		} else if(!calc_arg_begun && (strcmp(argv[i], "-file") == 0 || strcmp(argv[i], "-f") == 0 || strcmp(argv[i], "--file") == 0)) {
-			i++;
-			if(i < argc) {
+		} else if(!calc_arg_begun && (svar == "-file" || svar == "-f" || svar == "--file")) {
+			if(!svalue.empty()) {
+				command_file = svalue;
+				remove_blank_ends(svalue);
+			} else if(i + 1 < argc) {
+				i++;
 				command_file = argv[i];
 				remove_blank_ends(command_file);
 			} else {
