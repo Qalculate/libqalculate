@@ -1125,6 +1125,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			// search for variable, function, unit, prefix names
 			bool p_mode = false;
 			void *best_p_object = NULL;
+			const string *best_p_name = NULL;
 			Prefix *best_p = NULL;
 			size_t best_pl = 0;
 			size_t best_pnl = 0;
@@ -1537,7 +1538,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						}
 						case 'u': {
 							replace_text_by_unit_place:
-							if(str.length() > str_index + name_length && is_in("23", str[str_index + name_length]) && (str.length() == str_index + name_length + 1 || is_not_in(NUMBER_ELEMENTS, str[str_index + name_length + 1])) && *name != SIGN_DEGREE && !((Unit*) object)->isCurrency()) {
+							if(str.length() > str_index + name_length && is_in("23", str[str_index + name_length]) && (str.length() == str_index + name_length + 1 || is_not_in(NUMBER_ELEMENTS, str[str_index + name_length + 1])) && (!name || *name != SIGN_DEGREE) && !((Unit*) object)->isCurrency()) {
 								str.insert(str_index + name_length, 1, POWER_CH);
 							}
 							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
@@ -1581,6 +1582,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 											p_mode = true;
 											best_p = p;
 											best_p_object = ufvl[ufv_index2];
+											best_p_name = name;
 											best_pl = name_length + name_length_old;
 											best_pnl = name_length_old;
 											index = -1;
@@ -1614,6 +1616,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 												p_mode = true;
 												best_p = p;
 												best_p_object = ufv[2][index][ufv_index2];
+												best_p_name = name;
 												best_pl = name_length + name_length_old;
 												best_pnl = name_length_old;
 												index = -1;
@@ -1644,6 +1647,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			}
 			if(!moved_forward && p_mode) {
 				object = best_p_object;
+				name = best_p_name;
 				p = best_p;
 				str.erase(str_index, best_pnl);
 				name_length = best_pl - best_pnl;
