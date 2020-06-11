@@ -306,6 +306,21 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				}
 			}
 		}
+	} else if(mstruct.isMultiplication() && mstruct.size() >= 2) {
+		bool b_pi = false;
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(mstruct[i].isVariable() && mstruct[i].variable()->id() == VARIABLE_ID_PI) {
+				b_pi = !b_pi;
+				if(!b_pi) break;
+			} else if(!mstruct[i].representsInteger()) {
+				b_pi = false;
+				break;
+			}
+		}
+		if(b_pi) {
+			mstruct.clear();
+			b = true;
+		}
 	} else if(mstruct.isAddition()) {
 		size_t i = 0;
 		bool b_negate = false;
@@ -794,6 +809,21 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					mstruct[0].number() = nr_frac;
 				}
 			}
+		}
+	} else if(mstruct.isMultiplication() && mstruct.size() >= 2) {
+		bool b_pi = false;
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(mstruct[i].isVariable() && mstruct[i].variable()->id() == VARIABLE_ID_PI) {
+				b_pi = !b_pi;
+				if(!b_pi) break;
+			} else if(!mstruct[i].representsInteger()) {
+				b_pi = false;
+				break;
+			}
+		}
+		if(b_pi) {
+			mstruct.clear();
+			b = true;
 		}
 	} else if(mstruct.isAddition()) {
 		size_t i = 0;
