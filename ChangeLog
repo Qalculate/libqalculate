@@ -1,3 +1,12 @@
+2019-06-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix placement (last) of constant of definite integral
+	* sin(x*pi) and tan(x*pi) equals zero if x represents an integer
+
+2019-06-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault when parsing an expression that contains a prefix with more than one letter and a unit exponent (2 or 3) without exponentiation operator, e.g. dam3
+
 2019-06-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix use of equals sign in qalc command line arguments (e.g. "qalc --base=16")

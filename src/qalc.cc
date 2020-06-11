@@ -732,8 +732,8 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "color", _("color"))) {
 		int v = -1;
 		// light color
-		if(svalue == "2" || EQUALS_IGNORECASE_AND_LOCAL(svar, "light", _("light"))) v = 2;
-		else if(svalue == "1" || EQUALS_IGNORECASE_AND_LOCAL(svar, "default", _("default"))) v = 1;
+		if(svalue == "2" || EQUALS_IGNORECASE_AND_LOCAL(svalue, "light", _("light"))) v = 2;
+		else if(svalue == "1" || EQUALS_IGNORECASE_AND_LOCAL(svalue, "default", _("default"))) v = 1;
 		else v = s2b(svalue);
 		if(v < 0 || v > 2) {
 			PUTS_UNICODE(_("Illegal value."));
@@ -5574,7 +5574,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {3, 10, 0};
+	int version_numbers[] = {3, 11, 0};
 
 	if(file) {
 		char line[10000];

@@ -97,23 +97,31 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			return sortCompare(mstruct1[0], mstruct2[0], parent, po);
 		}
 	}
-	if(parent.isAddition() && po.sort_options.minus_last) {
-		// -a+b=b-a
-		bool m1 = mstruct1.hasNegativeSign(), m2 = mstruct2.hasNegativeSign();
-		if(m1 && !m2) {
-			return 1;
-		} else if(m2 && !m1) {
-			return -1;
+	if(parent.isAddition()) {
+
+		// always place constant of definite integral last
+		if(mstruct1.isVariable() && mstruct1.variable() == CALCULATOR->getVariableById(VARIABLE_ID_C)) return 1;
+		if(mstruct2.isVariable() && mstruct2.variable() == CALCULATOR->getVariableById(VARIABLE_ID_C)) return -1;
+
+		if(po.sort_options.minus_last) {
+			// -a+b=b-a
+			bool m1 = mstruct1.hasNegativeSign(), m2 = mstruct2.hasNegativeSign();
+			if(m1 && !m2) {
+				return 1;
+			} else if(m2 && !m1) {
+				return -1;
+			}
 		}
-	}
-	if(parent.isAddition() && (mstruct1.isUnit() || (mstruct1.isMultiplication() && mstruct1.size() == 2 && mstruct1[1].isUnit())) && (mstruct2.isUnit() || (mstruct2.isMultiplication() && mstruct2.size() == 2 && mstruct2[1].isUnit()))) {
-		Unit *u1, *u2;
-		if(mstruct1.isUnit()) u1 = mstruct1.unit();
-		else u1 = mstruct1[1].unit();
-		if(mstruct2.isUnit()) u2 = mstruct2.unit();
-		else u2 = mstruct2[1].unit();
-		if(u1->isParentOf(u2)) return 1;
-		if(u2->isParentOf(u1)) return -1;
+
+		if((mstruct1.isUnit() || (mstruct1.isMultiplication() && mstruct1.size() == 2 && mstruct1[1].isUnit())) && (mstruct2.isUnit() || (mstruct2.isMultiplication() && mstruct2.size() == 2 && mstruct2[1].isUnit()))) {
+			Unit *u1, *u2;
+			if(mstruct1.isUnit()) u1 = mstruct1.unit();
+			else u1 = mstruct1[1].unit();
+			if(mstruct2.isUnit()) u2 = mstruct2.unit();
+			else u2 = mstruct2[1].unit();
+			if(u1->isParentOf(u2)) return 1;
+			if(u2->isParentOf(u1)) return -1;
+		}
 	}
 	bool isdiv1 = false, isdiv2 = false;
 	if(!po.negative_exponents) {
@@ -179,9 +187,6 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			}
 		}
 	}
-	// always place constant of definite integral last
-	if(mstruct1.isVariable() && mstruct1.variable() == CALCULATOR->getVariableById(VARIABLE_ID_C)) return 1;
-	if(mstruct2.isVariable() && mstruct2.variable() == CALCULATOR->getVariableById(VARIABLE_ID_C)) return -1;
 	if(mstruct1.type() != mstruct2.type()) {
 		if(mstruct1.isVariable() && mstruct2.isSymbolic()) {
 			if(parent.isMultiplication()) {
@@ -2788,7 +2793,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 	int namelen_this = namelen(*this, po, ips, &abbr_this);
 	int namelen_prev = namelen(parent[index - 2], po, ips, &abbr_prev);
 	switch(t) {
-		case STRUCT_MULTIPLICATION: {return MULTIPLICATION_SIGN_OPERATOR;}
+		case STRUCT_MULTIPLICATION: {break;}
 		case STRUCT_INVERSE: {}
 		case STRUCT_DIVISION: {if(flat_division) return MULTIPLICATION_SIGN_OPERATOR; return MULTIPLICATION_SIGN_SPACE;}
 		case STRUCT_ADDITION: {return MULTIPLICATION_SIGN_OPERATOR;}
@@ -2832,7 +2837,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		default: {return MULTIPLICATION_SIGN_OPERATOR;}
 	}
 	switch(m_type) {
-		case STRUCT_MULTIPLICATION: {return MULTIPLICATION_SIGN_OPERATOR;}
+		case STRUCT_MULTIPLICATION: {return MULTIPLICATION_SIGN_SPACE;}
 		case STRUCT_INVERSE: {}
 		case STRUCT_DIVISION: {return MULTIPLICATION_SIGN_SPACE;}
 		case STRUCT_ADDITION: {return MULTIPLICATION_SIGN_OPERATOR;}
