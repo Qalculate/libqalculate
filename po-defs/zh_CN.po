@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-08 11:30+0200\n"
+"POT-Creation-Date: 2020-06-19 10:09+0200\n"
 "PO-Revision-Date: 2007-08-04 23:40+0800\n"
 "Last-Translator: Roy Qu <royqh1979@gmail.com>\n"
 "Language-Team: Simplified Chinese\n"
@@ -5501,7 +5501,7 @@ msgstr ""
 "根据指定的规模参数Sigma和下限返回Rayleigh尾分布在x点的密度概率p(x)。(用"
 "Gnumeric)"
 
-#: ../data/functions.xml.in.h:616 ../data/variables.xml.in.h:204
+#: ../data/functions.xml.in.h:616 ../data/variables.xml.in.h:205
 msgid "Date &amp; Time"
 msgstr "日期与时间"
 
@@ -5778,7 +5778,8 @@ msgstr ""
 #: ../data/functions.xml.in.h:677
 msgid ""
 "Returns the lunar phase, as a number between 0 and 1, for the specified "
-"date. 0 represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons."
+"date. This value corrresponds to an angle between 0 and 360 degrees. 0 "
+"represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons."
 msgstr ""
 
 #: ../data/functions.xml.in.h:678
@@ -5794,7 +5795,9 @@ msgid ""
 "Returns the date when the specified lunar phase occurs. The function "
 "searches forward beginning at the specified date. The lunar phase are "
 "specified as a number between 0 and 1, where 0 represents new moon, 0.5 full "
-"moon, and 0.25 and 0.75 quarter moons."
+"moon, and 0.25 and 0.75 quarter moons. Angle values are also allowed (e.g. π "
+"rad = 180° which corresponds to a value of 0.5). Values above 1, without "
+"unit, are interpreted as degrees."
 msgstr ""
 
 #: ../data/functions.xml.in.h:681
@@ -5802,7 +5805,7 @@ msgstr ""
 msgid "Start Date"
 msgstr "构造矩阵"
 
-#: ../data/functions.xml.in.h:682 ../data/variables.xml.in.h:197
+#: ../data/functions.xml.in.h:682 ../data/variables.xml.in.h:198
 msgid "Utilities"
 msgstr "工具"
 
@@ -6363,7 +6366,7 @@ msgid "Summation"
 msgstr "求和符号"
 
 #: ../data/functions.xml.in.h:814
-msgid "au:&#x3A3;,r:sum"
+msgid "au:&#x3A3;,au:&#x2211;,r:sum"
 msgstr ""
 
 #: ../data/functions.xml.in.h:815
@@ -10973,125 +10976,129 @@ msgid "Apery's Constant"
 msgstr "Apery常数"
 
 #: ../data/variables.xml.in.h:181
+msgid "Tau (2pi)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:182
 msgid "Base of Natural Logarithms (e)"
 msgstr "自然对数的底e"
 
-#: ../data/variables.xml.in.h:182
+#: ../data/variables.xml.in.h:183
 msgid "Archimedes' Constant (pi)"
 msgstr "圆周率(&#x3C0;)"
 
-#: ../data/variables.xml.in.h:183
+#: ../data/variables.xml.in.h:184
 msgid "Euler's Constant"
 msgstr "欧拉常数"
 
-#: ../data/variables.xml.in.h:184
+#: ../data/variables.xml.in.h:185
 msgid "Catalan's Constant"
 msgstr "Catalan常数"
 
-#: ../data/variables.xml.in.h:185
+#: ../data/variables.xml.in.h:186
 msgid "Special Numbers"
 msgstr "特殊数字"
 
-#: ../data/variables.xml.in.h:186
+#: ../data/variables.xml.in.h:187
 msgid "Imaginary i (sqrt -1)"
 msgstr "虚数i(sqrt -1)"
 
-#: ../data/variables.xml.in.h:187
+#: ../data/variables.xml.in.h:188
 msgid "Positive Infinity"
 msgstr "正无穷"
 
-#: ../data/variables.xml.in.h:188
+#: ../data/variables.xml.in.h:189
 msgid "a:&#x221E;,r:plus_infinity,r:infinity"
 msgstr ""
 
-#: ../data/variables.xml.in.h:189
+#: ../data/variables.xml.in.h:190
 msgid "Negative Infinity"
 msgstr "负无穷"
 
-#: ../data/variables.xml.in.h:190
+#: ../data/variables.xml.in.h:191
 msgid "r:minus_infinity"
 msgstr ""
 
-#: ../data/variables.xml.in.h:191
+#: ../data/variables.xml.in.h:192
 msgid "Undefined"
 msgstr "未定义的"
 
-#: ../data/variables.xml.in.h:192
+#: ../data/variables.xml.in.h:193
 msgid "r:undefined"
 msgstr ""
 
-#: ../data/variables.xml.in.h:193
+#: ../data/variables.xml.in.h:194
 msgid "False"
 msgstr "假"
 
-#: ../data/variables.xml.in.h:194
+#: ../data/variables.xml.in.h:195
 msgid "r:false,r:no"
 msgstr ""
 
-#: ../data/variables.xml.in.h:195
+#: ../data/variables.xml.in.h:196
 msgid "True"
 msgstr "真"
 
-#: ../data/variables.xml.in.h:196
+#: ../data/variables.xml.in.h:197
 msgid "r:true,r:yes"
 msgstr ""
 
-#: ../data/variables.xml.in.h:198
+#: ../data/variables.xml.in.h:199
 #, fuzzy
 msgid "Precision"
 msgstr "回归分析"
 
-#: ../data/variables.xml.in.h:199
+#: ../data/variables.xml.in.h:200
 #, fuzzy
 msgid "r:precision"
 msgstr "表达式"
 
-#: ../data/variables.xml.in.h:200
+#: ../data/variables.xml.in.h:201
 msgid "System Uptime"
 msgstr ""
 
-#: ../data/variables.xml.in.h:201
+#: ../data/variables.xml.in.h:202
 #, fuzzy
 msgid "r:uptime"
 msgstr "第一个日期"
 
-#: ../data/variables.xml.in.h:202
+#: ../data/variables.xml.in.h:203
 msgid "Unknowns"
 msgstr "未知数"
 
-#: ../data/variables.xml.in.h:203
+#: ../data/variables.xml.in.h:204
 msgid "n (integer)"
 msgstr "n（整数）"
 
-#: ../data/variables.xml.in.h:205
+#: ../data/variables.xml.in.h:206
 msgid "Today"
 msgstr ""
 
-#: ../data/variables.xml.in.h:206
+#: ../data/variables.xml.in.h:207
 msgid "r:today"
 msgstr ""
 
-#: ../data/variables.xml.in.h:207
+#: ../data/variables.xml.in.h:208
 msgid "Tomorrow"
 msgstr ""
 
-#: ../data/variables.xml.in.h:208
+#: ../data/variables.xml.in.h:209
 msgid "r:tomorrow"
 msgstr ""
 
-#: ../data/variables.xml.in.h:209
+#: ../data/variables.xml.in.h:210
 msgid "Yesterday"
 msgstr ""
 
-#: ../data/variables.xml.in.h:210
+#: ../data/variables.xml.in.h:211
 msgid "r:yesterday"
 msgstr ""
 
-#: ../data/variables.xml.in.h:211
+#: ../data/variables.xml.in.h:212
 msgid "Now (date and time)"
 msgstr ""
 
-#: ../data/variables.xml.in.h:212
+#: ../data/variables.xml.in.h:213
 msgid "r:now"
 msgstr ""
 
