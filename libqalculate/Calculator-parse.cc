@@ -530,6 +530,13 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 
 }
 
+void replace_internal_operators(string &str) {
+	gsub("\a", " xor ", str);
+	gsub("\b", SIGN_PLUSMINUS, str);
+	gsub("\x1c", "∠", str);
+	remove_blank_ends(str);
+}
+
 void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &parseoptions) {
 
 	ParseOptions po = parseoptions;
@@ -1774,8 +1781,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 
 	// check that string contains characters other than operators and whitespace
 	if(str.find_first_not_of(OPERATORS "\a%\x1c" SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == string::npos)) {
-		gsub("\a", str.find_first_of("%" OPERATORS) != string::npos ? " xor " : "xor", str);
-		gsub("\x1c", "∠", str);
+		replace_internal_operators(str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
 	}
@@ -3033,7 +3039,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		while(i != string::npos && i + 1 != str.length()) {
 			if(i < 1) {
 				if(i < 1 && str.find_first_not_of(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS EXPS) == string::npos) {
-					gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", str);
+					replace_internal_operators(str);
 					error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 					return b;
 				}
@@ -3199,8 +3205,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 
 	// Check if only operators are left
 	if(str.find_first_not_of(OPERATORS INTERNAL_OPERATORS SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find_first_of("(|)") == string::npos)) {
-		gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", str);
-		gsub("\x1c", "∠", str);
+		replace_internal_operators(str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
 	}
@@ -3224,6 +3229,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			break;
 		} else if(is_in(OPERATORS INTERNAL_OPERATORS, str[i]) && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
 			if(str[i] == '\a') error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
+			else if(str[i] == '\b') error(false, _("Misplaced operator(s) \"%s\" ignored"), SIGN_PLUSMINUS, NULL);
 			else if(str[i] == '\x1c') error(false, _("Misplaced operator(s) \"%s\" ignored"), "∠", NULL);
 			else error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
