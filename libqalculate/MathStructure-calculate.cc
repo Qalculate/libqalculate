@@ -2518,6 +2518,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							MERGE_APPROX_AND_PREC(mstruct)
 							calculateRaiseExponent(eo);
 							return 1;
+						} else if(CHILD(1).number().isNegative() && CHILD(1).number().isFraction() && mstruct.number().isIntegerDivisible(CHILD(0).number())) {
+							if(mstruct.number().divide(CHILD(0).number())) {
+								mstruct.numberUpdated();
+								CHILD(1).number()++;
+								calculateMultiply(mstruct, eo);
+								return 1;
+							}
 						}
 					}
 					// x^a*0=0 (keep units and check if not matrix and not undefined)
