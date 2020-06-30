@@ -10681,7 +10681,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				// number is zero
 				expo = 0;
 			} else if(length > 0 && (po.restrict_fraction_length || po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
-				if(po.number_fraction_format == FRACTION_FRACTIONAL) {
+				if(po.number_fraction_format >= FRACTION_FRACTIONAL) {
 					// restricted fraction format: exponent = length - 1 if exponent >= precision; increase precision if possible to avoid lengthening of the output
 					long int precexp = i_precision_base;
 					if(precision < 8 && precexp > precision + 2) precexp = precision + 2;

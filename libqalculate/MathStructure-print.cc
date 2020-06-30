@@ -1915,12 +1915,23 @@ void MathStructure::format(const PrintOptions &po) {
 	}
 }
 
+bool is_unit_multiadd(const MathStructure &m) {
+	for(size_t i = 0; i < m.size(); i++) {
+		if(!is_unit_multiexp(m[i]) && (!m[i].isMultiplication() || m[i].size() <= 1 || !m[i][0].isNumber() || !is_unit_multiexp(m[i][1]))) return false;
+	}
+	return true;
+}
+
 void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, size_t pindex, bool recursive, MathStructure *top_parent) {
 
 	if(recursive) {
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CALCULATOR->aborted()) break;
-			if(!po.preserve_format && i == 1 && m_type == STRUCT_POWER && po.number_fraction_format < FRACTION_FRACTIONAL && CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().isInteger() && CHILD(1).number().numeratorIsLessThan(10) && CHILD(1).number().numeratorIsGreaterThan(-10) && CHILD(1).number().denominatorIsLessThan(10)) {
+			if(po.number_fraction_format == FRACTION_COMBINED && (m_type == STRUCT_FUNCTION || m_type == STRUCT_POWER || (m_type == STRUCT_ADDITION && (!po.place_units_separately || !is_unit_multiadd(*this))) || (m_type == STRUCT_MULTIPLICATION && SIZE > 1 && (!po.place_units_separately || !CHILD(0).isNumber() || !is_unit_multiexp(CHILD(1)))))) {
+				PrintOptions po2 = po;
+				po2.number_fraction_format = FRACTION_FRACTIONAL;
+				CHILD(i).formatsub(po2, this, i + 1, true, top_parent);
+			} else if(!po.preserve_format && i == 1 && m_type == STRUCT_POWER && po.number_fraction_format < FRACTION_FRACTIONAL && CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().isInteger() && CHILD(1).number().numeratorIsLessThan(10) && CHILD(1).number().numeratorIsGreaterThan(-10) && CHILD(1).number().denominatorIsLessThan(10)) {
 				// always display rational number exponents with small numerator and denominator as fraction (e.g. 5^(2/3) instead of 5^0.666...)
 				PrintOptions po2 = po;
 				po2.number_fraction_format = FRACTION_FRACTIONAL;
@@ -2032,6 +2043,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 		}
 		case STRUCT_MULTIPLICATION: {
 			if(po.preserve_format) break;
+
 			if(CHILD(0).isNegate()) {
 				if(CHILD(0)[0].isOne()) {
 					// (-1)x=-(x)
@@ -2313,6 +2325,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					}
 				}
 			}
+
 			if((o_number.isNegative() || ((parent || po.interval_display != INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) && o_number.isInterval() && o_number.isNonPositive())) && (po.base != BASE_CUSTOM || !CALCULATOR->customOutputBase().isNegative())) {
 				if((((po.base != 2 || !po.twos_complement) && (po.base != 16 || !po.hexadecimal_twos_complement)) || !o_number.isInteger()) && (!o_number.isMinusInfinity() || (parent && parent->isAddition()))) {
 					// a=-(-a), if a is a negative number (or a is interval from negative value to 0), and not using two's complement and not using negative number base
@@ -2320,30 +2333,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					transform(STRUCT_NEGATE);
 					formatsub(po, parent, pindex, true, top_parent);
 				}
-			} else if(po.number_fraction_format == FRACTION_COMBINED && po.base > BASE_FP16 && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (!po.show_ending_zeroes || !po.restrict_to_parent_precision || po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26 || ((!top_parent || !top_parent->isApproximate()) && !isApproximate()) || (o_number.denominatorIsLessThan(10) && o_number < 10 && o_number > -10))) {
-				// mixed fraction format (e.g. 5/3=1+2/3); only used is number is non-integer rational, and current mode does not dictate showing ending zeroes of approximate number, and number base is not sexagesimal
-				if(o_number.isFraction()) {
-					// split number in numerator and denominator, if numerator < denominator
-					Number num(o_number.numerator());
-					Number den(o_number.denominator());
-					clear(true);
-					if(num.isOne()) {
-						m_type = STRUCT_INVERSE;
-					} else {
-						m_type = STRUCT_DIVISION;
-						APPEND_NEW(num);
-					}
-					APPEND_NEW(den);
-				} else {
-					// split number in integer part, numerator and denominator, if numerator > denominator
-					Number frac(o_number);
-					frac.frac();
-					MathStructure *num = new MathStructure(frac.numerator());
-					num->transform(STRUCT_DIVISION, frac.denominator());
-					o_number.trunc();
-					add_nocopy(num);
-				}
-			} else if((force_fraction || po.number_fraction_format == FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS || po.number_fraction_format == FRACTION_DECIMAL_EXACT) && po.base > BASE_FP16 && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (force_fraction || !o_number.isApproximate())) {
+			} else if((force_fraction || po.number_fraction_format >= FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS || po.number_fraction_format == FRACTION_DECIMAL_EXACT) && po.base > BASE_FP16 && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (force_fraction || !o_number.isApproximate())) {
 				// split rational number in numerator and denominator, if display of fractions is requested for rational numbers and number base is not sexagesimal and number is not approximate
 
 				InternalPrintStruct ips_n;
@@ -2373,6 +2363,9 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 
 				// test if numerator and denominator is displayed exact using current mode
 				Number num(o_number.numerator());
+				if(po.number_fraction_format == FRACTION_COMBINED) {
+					num.mod(o_number.denominator());
+				}
 				Number den(o_number.denominator());
 				if(isApproximate()) {
 					num.setApproximate();
@@ -2382,15 +2375,42 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				if(!approximately_displayed || po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26) {
 					den.print(po2, ips_n);
 					if(!approximately_displayed || po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26) {
-						// both numerator and denominator is displayed exact: split up number
-						clear(true);
-						if(num.isOne()) {
-							m_type = STRUCT_INVERSE;
-						} else {
-							m_type = STRUCT_DIVISION;
-							APPEND_NEW(num);
+						if(po.number_fraction_format == FRACTION_COMBINED && !o_number.isFraction()) {
+							// mixed fraction format (e.g. 5/3=1+2/3)
+							Number nr_int(o_number);
+							nr_int.trunc();
+							if(isApproximate()) nr_int.setApproximate();
+							nr_int.print(po2, ips_n);
+							if(!approximately_displayed || po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26) {
+								set(nr_int);
+								MathStructure *mterm;
+								if(num.isOne()) {
+									mterm = new MathStructure(den);
+									mterm->transform(STRUCT_INVERSE);
+								} else {
+									mterm = new MathStructure(num);
+									mterm->transform(STRUCT_DIVISION, den);
+								}
+								add_nocopy(mterm);
+								break;
+							} else {
+								approximately_displayed = false;
+								num = o_number.numerator();
+								if(isApproximate()) num.setApproximate();
+								num.print(po2, ips_n);
+							}
 						}
-						APPEND_NEW(den);
+						if(!approximately_displayed || po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26) {
+							// both numerator and denominator is displayed exact: split up number
+							clear(true);
+							if(num.isOne()) {
+								m_type = STRUCT_INVERSE;
+							} else {
+								m_type = STRUCT_DIVISION;
+								APPEND_NEW(num);
+							}
+							APPEND_NEW(den);
+						}
 					}
 				}
 			} else if(o_number.hasImaginaryPart()) {
@@ -2589,7 +2609,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_DIVISION: {return po.excessive_parenthesis;}
 				case STRUCT_INVERSE: {return flat_division && po.excessive_parenthesis;}
 				case STRUCT_ADDITION: {return true;}
-				case STRUCT_POWER: {return true;}
+				case STRUCT_POWER: {return po.excessive_parenthesis;}
 				case STRUCT_NEGATE: {return true;}
 				case STRUCT_BITWISE_AND: {return true;}
 				case STRUCT_BITWISE_OR: {return true;}
