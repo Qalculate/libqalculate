@@ -723,7 +723,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	PrintOptions printops = po;
 	EvaluationOptions evalops = eo;
 	MathStructure mstruct;
-	bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false, do_expand = false, do_binary_prefixes = false, complex_angle_form = false;
+	bool do_bases = false, do_factors = false, do_pfe = false, do_calendars = false, do_expand = false, do_binary_prefixes = false, complex_angle_form = false;
 
 	string to_str = parseComments(str, evalops.parse_options);
 	if(!to_str.empty() && str.empty()) {stopControl(); if(parsed_expression) {*parsed_expression = "";} return "";}
@@ -823,7 +823,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			} else if(to_str == "cis") {
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction"))) {
-				do_fraction = true;
+				printops.number_fraction_format = FRACTION_COMBINED;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "factors", _("factors")) || equalsIgnoreCase(to_str, "factor")) {
 				evalops.structuring = STRUCTURING_FACTORIZE;
 				do_factors = true;
@@ -982,10 +982,6 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		printops.base = BASE_HEXADECIMAL;
 		str += print(mstruct, 0, printops);
 		goto after_print;
-	} else if(do_fraction) {
-		// handle "to fraction"
-		if(mstruct.isNumber()) printops.number_fraction_format = FRACTION_COMBINED;
-		else printops.number_fraction_format = FRACTION_FRACTIONAL;
 	} else if(do_binary_prefixes) {
 		// b? in front of unit expression: use binary prefixes
 		printops.use_unit_prefixes = true;

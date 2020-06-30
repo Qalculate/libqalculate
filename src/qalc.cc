@@ -1150,7 +1150,7 @@ void set_option(string str) {
 		if(v < 0 || v > FRACTION_COMBINED + 1) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
-			printops.restrict_fraction_length = (v == FRACTION_FRACTIONAL);
+			printops.restrict_fraction_length = (v == FRACTION_FRACTIONAL || v == FRACTION_COMBINED);
 			if(v == 4) v = FRACTION_FRACTIONAL;
 			printops.number_fraction_format = (NumberFractionFormat) v;
 			automatic_fraction = false;
@@ -2881,8 +2881,7 @@ int main(int argc, char *argv[]) {
 				NumberFractionFormat save_format = printops.number_fraction_format;
 				bool save_rfl = printops.restrict_fraction_length;
 				printops.restrict_fraction_length = false;
-				if(mstruct->isNumber()) printops.number_fraction_format = FRACTION_COMBINED;
-				else printops.number_fraction_format = FRACTION_FRACTIONAL;
+				printops.number_fraction_format = FRACTION_COMBINED;
 				setResult(NULL, false);
 				printops.restrict_fraction_length = save_rfl;
 				printops.number_fraction_format = save_format;
@@ -4812,7 +4811,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	if(i_maxtime < 0) return;
 
 	string str, str_conv;
-	bool do_bases = programmers_mode, do_factors = false, do_expand = false, do_fraction = false, do_pfe = false, do_calendars = false, do_binary_prefixes = false;
+	bool do_bases = programmers_mode, do_factors = false, do_expand = false, do_pfe = false, do_calendars = false, do_binary_prefixes = false;
 	avoid_recalculation = false;
 	if(!interactive_mode) goto_input = false;
 
@@ -4828,6 +4827,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	bool b_units_saved = evalops.parse_options.units_enabled;
 	AutoPostConversion save_auto_post_conversion = evalops.auto_post_conversion;
 	MixedUnitsConversion save_mixed_units_conversion = evalops.mixed_units_conversion;
+	NumberFractionFormat save_format = printops.number_fraction_format;
+	bool save_rfl = printops.restrict_fraction_length;
 	Number save_cbase;
 	bool custom_base_set = false;
 
@@ -4916,7 +4917,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					printops.time_zone = TIME_ZONE_CUSTOM;
 					printops.custom_time_zone = 60;
 				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction")) || to_str == "frac") {
-					do_fraction = true;
+					printops.restrict_fraction_length = false;
+					printops.number_fraction_format = FRACTION_COMBINED;
 				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "factors", _("factors")) || to_str == "factor") {
 					do_factors = true;
 				}  else if(equalsIgnoreCase(to_str, "partial fraction") || equalsIgnoreCase(to_str, _("partial fraction")) || to_str == "partial") {
@@ -5271,6 +5273,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		printops.use_prefixes_for_all_units = save_allu;
 		printops.use_all_prefixes = save_all;
 		printops.use_denominator_prefix = save_den;
+		printops.restrict_fraction_length = save_rfl;
+		printops.number_fraction_format = save_format;
 		CALCULATOR->useBinaryPrefixes(save_bin);
 		return;
 	}
@@ -5371,15 +5375,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		}
 		PUTS_UNICODE(base_str.c_str());
 		if(goto_input) printf("\n");
-	} else if(do_fraction) {
-		NumberFractionFormat save_format = printops.number_fraction_format;
-		bool save_rfl = printops.restrict_fraction_length;
-		printops.restrict_fraction_length = false;
-		if(((!do_stack || stack_index == 0) && mstruct->isNumber()) || (do_stack && stack_index != 0 && CALCULATOR->getRPNRegister(stack_index + 1)->isNumber())) printops.number_fraction_format = FRACTION_COMBINED;
-		else printops.number_fraction_format = FRACTION_FRACTIONAL;
-		setResult(NULL, (!do_stack || stack_index == 0), goto_input, do_stack ? stack_index : 0);
-		printops.restrict_fraction_length = save_rfl;
-		printops.number_fraction_format = save_format;
 	} else {
 		if(do_binary_prefixes) {
 			int i = 0;
@@ -5413,6 +5408,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	printops.use_prefixes_for_all_units = save_allu;
 	printops.use_all_prefixes = save_all;
 	printops.use_denominator_prefix = save_den;
+	printops.restrict_fraction_length = save_rfl;
+	printops.number_fraction_format = save_format;
 	CALCULATOR->useBinaryPrefixes(save_bin);
 
 }
@@ -5660,7 +5657,7 @@ void load_preferences() {
 				} else if(svar == "number_fraction_format") {
 					if(v >= FRACTION_DECIMAL && v <= FRACTION_COMBINED) {
 						printops.number_fraction_format = (NumberFractionFormat) v;
-						printops.restrict_fraction_length = (v == FRACTION_FRACTIONAL);
+						printops.restrict_fraction_length = (v >= FRACTION_FRACTIONAL);
 					} else if(v == FRACTION_COMBINED + 1) {
 						printops.number_fraction_format = FRACTION_FRACTIONAL;
 						printops.restrict_fraction_length = false;
