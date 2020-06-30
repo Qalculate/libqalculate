@@ -2504,29 +2504,6 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							return 1;
 						}
 					}
-					if(mstruct.isNumber() && CHILD(1).isNumber() && !CHILD(1).number().includesInfinity() && CHILD(0).isNumber() && CHILD(0).number().isRational() && !CHILD(0).number().isZero() && mstruct.number().isRational()) {
-						if(CHILD(0).isInteger() && mstruct.number().denominator() == CHILD(0).number().numerator()) {
-							// n^a*m/n=n^(a-1)*m
-							CHILD(1).number()--;
-							MERGE_APPROX_AND_PREC(mstruct)
-							calculateRaiseExponent(eo);
-							if(!mstruct.number().numeratorIsOne()) calculateMultiply(mstruct.number().numerator(), eo, mparent, index_this);
-							return 1;
-						} else if(mstruct.number().denominator() == CHILD(0).number().numerator() && mstruct.number().numerator() == CHILD(0).number().denominator()) {
-							// (n/m)^a*m/n=(n/m)^(a-1)
-							CHILD(1).number()--;
-							MERGE_APPROX_AND_PREC(mstruct)
-							calculateRaiseExponent(eo);
-							return 1;
-						} else if(CHILD(1).number().isNegative() && CHILD(1).number().isFraction() && mstruct.number().isIntegerDivisible(CHILD(0).number())) {
-							if(mstruct.number().divide(CHILD(0).number())) {
-								mstruct.numberUpdated();
-								CHILD(1).number()++;
-								calculateMultiply(mstruct, eo);
-								return 1;
-							}
-						}
-					}
 					// x^a*0=0 (keep units and check if not matrix and not undefined)
 					if(mstruct.isZero() && (!eo.keep_zero_units || containsType(STRUCT_UNIT, false, true, true) <= 0 || (CHILD(0).isUnit() && CHILD(0).unit() == CALCULATOR->getRadUnit()) || (CHILD(0).isFunction() && CHILD(0).representsNumber(false))) && !representsUndefined(true, true, !eo.assume_denominators_nonzero) && representsNonMatrix()) {
 						clear(true);
@@ -2931,6 +2908,23 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					return 1;
 				}
 			} else {
+				if(o_number.isRational() && mstruct.number().isNegative() && mstruct.number().isFraction() && mstruct.number().numerator() * -2 >= mstruct.number().denominator()) {
+					// a^(-b)=a^(-b+1)/a
+					Number nmul(o_number);
+					nmul.recip();
+					mstruct.number()++;
+					calculateRaise(mstruct, eo);
+					calculateMultiply(nmul, eo);
+					return 1;
+				}
+				if(o_number.isRational() && mstruct.number().isPositive() && mstruct.number().isFraction() && mstruct.number().numerator() * 2 > mstruct.number().denominator()) {
+					// a^b=a^(b-1)*a
+					Number nmul(o_number);
+					mstruct.number()--;
+					calculateRaise(mstruct, eo);
+					calculateMultiply(nmul, eo);
+					return 1;
+				}
 				Number exp_num(mstruct.number().numerator());
 				if(!exp_num.isOne() && !exp_num.isMinusOne() && o_number.isPositive() && test_if_numerator_not_too_large(o_number, exp_num)) {
 					// a^(n/d)=(a^n)^(1/d)
