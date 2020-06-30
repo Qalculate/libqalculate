@@ -1561,6 +1561,46 @@ bool simplify_ln(MathStructure &mstruct) {
 	return b_ret;
 }
 
+bool simplify_roots(MathStructure &mstruct, const EvaluationOptions &eo) {
+	bool b_ret = false;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(simplify_roots(mstruct[i], eo)) {
+			mstruct.childUpdated(i + 1);
+			b_ret = true;
+		}
+	}
+	if(mstruct.isMultiplication() && mstruct.size() >= 2 && mstruct[0].isNumber() && mstruct[0].number().isRational()) {
+		for(size_t i = 1; i < mstruct.size(); i++) {
+			if(mstruct[i].isPower() && mstruct[i][1].isNumber() && !mstruct[i][1].number().includesInfinity() && mstruct[i][0].isNumber() && mstruct[i][0].number().isRational() && !mstruct[i][0].number().isZero()) {
+				if(mstruct[0].number().denominator() == mstruct[i][0].number().numerator() && mstruct[0].number().numerator() == mstruct[i][0].number().denominator()) {
+					// (n/m)^a*m/n=(n/m)^(a-1)
+					mstruct[i][1].number()--;
+					mstruct.childUpdated(i + 1);
+					mstruct.delChild(1, true);
+					return true;
+				} else if(mstruct[i][1].number().isNegative() && mstruct[0].number().isIntegerDivisible(mstruct[i][0].number())) {
+					if(mstruct[0].number().divide(mstruct[i][0].number())) {
+						mstruct[0].numberUpdated();
+						mstruct.childUpdated(1);
+						mstruct[i][1].number()++;
+						if(mstruct[0].isOne()) {mstruct.delChild(1, true); return true;}
+						b_ret = true;
+					}
+				} else if(mstruct[i][1].number().isPositive() && !mstruct[0].number().isInteger() && mstruct[0].number().denominator().isIntegerDivisible(mstruct[i][0].number())) {
+					if(mstruct[0].number().multiply(mstruct[i][0].number())) {
+						mstruct[0].numberUpdated();
+						mstruct.childUpdated(1);
+						mstruct[i][1].number()--;
+						if(mstruct[0].isOne()) {mstruct.delChild(1, true); return true;}
+						b_ret = true;
+					}
+				}
+			}
+		}
+	}
+	return b_ret;
+}
+
 // Convert complex numbers from rectangular form
 bool MathStructure::complexToExponentialForm(const EvaluationOptions &eo) {
 	if(m_type == STRUCT_NUMBER && o_number.hasImaginaryPart()) {
@@ -2016,9 +2056,9 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 				// calculate each side of comparisons separately
 				if(eval_comparison_sides(*this, feo)) {
-					if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
+					if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_roots(*this, eo);}
 					structure(eo.structuring, eo2, false);
-					if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
+					if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_roots(*this, eo);}
 					clean_multiplications(*this);
 				} else if(!CALCULATOR->aborted()) {
 					CALCULATOR->error(false, _("Calculation of uncertainty propagation partially failed (using interval arithmetic instead when necessary)."), NULL);
@@ -2142,10 +2182,10 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					}
 					if(b_failed && munc.countTotalChildren(false) < 50) {
 						if(one_prepended && munc.isMultiplication() && munc[0].isOne()) munc.delChild(1, true);
-						if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_ln(munc);}
+						if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_ln(munc); simplify_roots(*this, eo); simplify_roots(munc, eo);}
 						structure(eo.structuring, eo2, false);
 						munc.structure(eo.structuring, eo2, false);
-						if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_ln(munc);}
+						if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_ln(munc); simplify_roots(*this, eo); simplify_roots(munc, eo);}
 						clean_multiplications(*this);
 						clean_multiplications(munc);
 						transformById(FUNCTION_ID_UNCERTAINTY);
@@ -2156,9 +2196,9 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					}
 					if(!b_failed) {
 						CALCULATOR->endTemporaryStopMessages(true);
-						if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
+						if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_roots(*this, eo);}
 						structure(eo.structuring, eo2, false);
-						if(eo.structuring != STRUCTURING_NONE) simplify_ln(*this);
+						if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_roots(*this, eo);}
 						clean_multiplications(*this);
 						return *this;
 					}
@@ -2291,12 +2331,14 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 		if(eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS || eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES) convert_to_default_angle_unit(*this, eo);
 		simplify_ln(*this);
+		simplify_roots(*this, eo);
 
 		if(eo.keep_zero_units) remove_add_zero_unit(*this);
 
 		structure(eo.structuring, eo2, false);
 
 		simplify_ln(*this);
+		simplify_roots(*this, eo);
 
 	}
 
