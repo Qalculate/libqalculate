@@ -1,3 +1,21 @@
+2019-07-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Only apply PrintOptions::negative_exponents to units
+	* Always use negative exponents instead of division when all units have negative exponents
+	* Use middle dot instead of multiplication x in unit expressions
+	* Case insensitive sorting of units, variables and functions
+	* Add more references in qalc to the GUI manual
+
+2019-06-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+	
+	* Normalize numbers with fractional exponents, e.g. sqrt(a)^-b=sqrt(a)^b/a, a^(-2/3)=a^(1/3)/a, a^(2/3)=a^(-1/3)*a, and simplify roots with rational multipliers after evaluation
+	* Improvements for mixed fractions
+	* Avoid excessive parentheses with negated powers
+
+2019-06-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix plus-minus sign in misplaced character/operators error messages
+
 2019-06-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix placement (last) of constant of definite integral

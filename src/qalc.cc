@@ -1760,7 +1760,9 @@ int main(int argc, char *argv[]) {
 			fputs("\n\t-v, -version\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("show application version and exit"));
 			puts("");
-			PUTS_UNICODE(_("The program will start in interactive mode if no expression and no file is specified (or interactive mode is explicitly selected)."));
+			FPUTS_UNICODE(_("The program will start in interactive mode if no expression and no file is specified (or interactive mode is explicitly selected)."), stdout); fputs(" ", stdout); PUTS_UNICODE(_("Type help in interactive mode for information about available commands."));
+			puts("");
+			PUTS_UNICODE(_("For more information about mathematical expression, different options, and a complete list of functions, variables and units, see the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html)."));
 			puts("");
 			return 0;
 		} else if(!calc_arg_begun && strcmp(argv[i], "-u8") == 0) {
@@ -3800,7 +3802,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("excessive parentheses"), "expar", "", printops.excessive_parenthesis);
 				STR_AND_TABS_BOOL(_("minus last"), "minlast", _("Always place negative values last."), printops.sort_options.minus_last);
 				STR_AND_TABS_3(_("multiplication sign"), "mulsign", "", printops.multiplication_sign, "*", SIGN_MULTIDOT, SIGN_MULTIPLICATION, SIGN_MIDDLEDOT);
-				STR_AND_TABS_BOOL(_("show negative exponents"), "negexp", _("Use negative exponents instead of division in result (x/y = xy^-1)."), printops.negative_exponents);
+				STR_AND_TABS_BOOL(_("show negative exponents"), "negexp", _("Use negative exponents instead of division for units in result (m/s = m*s^-1)."), printops.negative_exponents);
 				STR_AND_TABS_BOOL(_("short multiplication"), "shortmul", "", printops.short_multiplication);
 				STR_AND_TABS_BOOL(_("spacious"), "space", _("Add extra space around operators."), printops.spacious);
 				STR_AND_TABS_BOOL(_("spell out logical"), "spellout", "", printops.spell_out_logical_operators);
