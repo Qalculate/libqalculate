@@ -2626,8 +2626,14 @@ int main(int argc, char *argv[]) {
 				expression_calculation_updated();
 			}
 		//qalc command
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to"))) {
-			str = str.substr(ispace + 1, slen - (ispace + 1));
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to")) || (str.length() > 2 && str[0] == '-' && str[1] == '>') || (str.length() > 3 && (unsigned char) str[0] >= '\xe2' && ((str[1] == '\x86' && str[2] == '\x92') || (str[1] == '\x9e' && (unsigned char) str[2] >= 0x94 && (unsigned char) str[2] <= 0xbf)))) {
+			if(!scom.empty() && (EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to")))) {
+				str = str.substr(ispace + 1, slen - (ispace + 1));
+			} else if(str[0] == '-') {
+				str = str.substr(2, slen - 2);
+			} else {
+				str = str.substr(3, slen - 3);
+			}
 			remove_blank_ends(str);
 			string str1, str2;
 			size_t ispace2 = str.find_first_of(SPACES);
@@ -4114,7 +4120,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Equivalent to set approximation try exact."));
 				puts("");
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to")) || str == "->" || str == "→" || (str.length() == 3 && str[0] == '\xe2' && str[1] == '\x9e' && (unsigned char) str[2] >= 0x94 && (unsigned char) str[2] <= 0xbf)) {
 				INIT_SCREEN_CHECK
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("Converts units or changes number base in current result."));
