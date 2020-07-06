@@ -1144,7 +1144,21 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
 }
 bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const {
 	if(str.empty()) return false;
-	size_t i = str.length() - 1, i2 = i;
+	size_t i = str.rfind("->");
+	if(i != string::npos && (allow_empty_from || i != 0)) return true;
+	i = str.rfind("→");
+	if(i != string::npos && (allow_empty_from || i != 0)) return true;
+	i = str.rfind(SIGN_MINUS ">");
+	if(i != string::npos && (allow_empty_from || i != 0)) return true;
+	i = str.length() - 1;
+	while(i != 0) {
+		// dingbat arrows
+		i = str.rfind("\xe2\x9e", i - 1);
+		if(i == string::npos) break;
+		if((i != 0 || allow_empty_from) && (unsigned char) str[i + 2] >= 0x94 && (unsigned char) str[i + 2] <= 0xbf) return true;
+	}
+	i = str.length() - 1;
+	size_t i2 = i;
 	int l = 2;
 	while(i != 0) {
 		i2 = str.rfind(_("to"), i - 1);
@@ -1159,7 +1173,21 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const
 bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const EvaluationOptions &eo) const {
 	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
 	if(str.empty()) return false;
-	size_t i = 0, i2 = i;
+	size_t i = str.rfind("->");
+	if(i != string::npos && (allow_empty_from || i != 0)) return true;
+	i = str.rfind("→");
+	if(i != string::npos && (allow_empty_from || i != 0)) return true;
+	i = str.rfind(SIGN_MINUS ">");
+	if(i != string::npos && (allow_empty_from || i != 0)) return true;
+	i = str.length() - 1;
+	while(i != 0) {
+		// dingbat arrows
+		i = str.rfind("\xe2\x9e", i - 1);
+		if(i == string::npos) break;
+		if((i != 0 || allow_empty_from) && (unsigned char) str[i + 2] >= 0x94 && (unsigned char) str[i + 2] <= 0xbf) return true;
+	}
+	i = str.length() - 1;
+	size_t i2 = i;
 	int l = 2;
 	while(true) {
 		i2 = str.find(_("to"), i);
@@ -1176,17 +1204,34 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
 	to_str = "";
 	if(str.empty()) return false;
-	size_t i = 0, i2 = i;
+	size_t i, i2, l_arrow = 2;
+	if(allow_empty_from) i = 0;
+	else i = 1;
+	size_t i_arrow = str.find("->", i);
+	i2 = str.find("→", i);
+	if(i2 != string::npos && i2 < i_arrow) {i_arrow = i2; l_arrow = 3;}
+	i2 = str.find(SIGN_MINUS ">", i);
+	if(i2 != string::npos && i2 < i_arrow) {i_arrow = i2; l_arrow = 4;}
+	while(true) {
+		// dingbat arrows
+		i = str.find("\xe2\x9e", i); 
+		if(i == string::npos || (i_arrow != string::npos && i > i_arrow) || i >= str.length() - 2) break;
+		if((unsigned char) str[i + 2] >= 0x94 && (unsigned char) str[i + 2] <= 0xbf) {i_arrow = i; l_arrow = 3; break;}
+		i += 2;
+	}
+	i = 0;
 	int l = 2;
 	while(true) {
 		i2 = str.find(_("to"), i);
 		i = str.find("to", i);
-		if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("to")); i = i2;}
-		else l = 2;
+		l = 2;
+		bool b_arrow = false;
+		if(i2 != string::npos && (i == string::npos || i2 < i)) {l = strlen(_("to")); i = i2;}
+		if(i_arrow != string::npos && (i == string::npos || i_arrow < i)) {l = l_arrow; i = i_arrow; b_arrow = true;}
 		if(i == string::npos) break;
-		if(((i > 0 && is_in(SPACES, str[i - 1])) || (allow_empty_from && i == 0)) && i + l < str.length() && is_in(SPACES, str[i + l])) {
+		if(b_arrow || (((i > 0 && is_in(SPACES, str[i - 1])) || (allow_empty_from && i == 0)) && i + l < str.length() && is_in(SPACES, str[i + l]))) {
 			to_str = str.substr(i + l , str.length() - i - l);
-			if(to_str.empty()) return false;
+			if(!b_arrow && to_str.empty()) return false;
 			remove_blank_ends(to_str);
 			if(!to_str.empty()) {
 				if(to_str.rfind(SIGN_MINUS, 0) == 0) {

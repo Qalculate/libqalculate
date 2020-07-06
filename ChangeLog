@@ -1,3 +1,7 @@
+2019-07-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support use of right arrow (including "->") as alternative to "to" for conversion (e.g. 5m->ft)
+
 2019-07-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Only apply PrintOptions::negative_exponents to units
