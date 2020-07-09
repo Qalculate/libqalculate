@@ -2575,7 +2575,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 	switch(parent.type()) {
 		case STRUCT_MULTIPLICATION: {
 			switch(m_type) {
-				case STRUCT_MULTIPLICATION: {return po.excessive_parenthesis;}
+				case STRUCT_MULTIPLICATION: {return po.excessive_parenthesis || (index > 1 && SIZE > 0 && !is_unit_multiexp(*this));}
 				case STRUCT_DIVISION: {return flat_division && (index < parent.size() || po.excessive_parenthesis);}
 				case STRUCT_INVERSE: {return flat_division;}
 				case STRUCT_ADDITION: {return true;}
@@ -2859,7 +2859,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 	if(par_prev && par) return MULTIPLICATION_SIGN_NONE;
 	if(par_prev) {
 		// (a)*u=(a) u
-		if(isUnit_exp()) return MULTIPLICATION_SIGN_SPACE;
+		if(is_unit_multiexp(*this)) return MULTIPLICATION_SIGN_SPACE;
 		if(isUnknown_exp()) {
 			// (a)*"xy"=(a) "xy", (a)*"xy"^b=(a) "xy"^b, (a)*x=(a)x, (a)*x^b=ax^b
 			return (namelen(isPower() ? CHILD(0) : *this, po, ips, NULL) > 1 ? MULTIPLICATION_SIGN_SPACE : MULTIPLICATION_SIGN_NONE);
@@ -2950,9 +2950,9 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		default: {return MULTIPLICATION_SIGN_OPERATOR;}
 	}
 	switch(m_type) {
-		case STRUCT_MULTIPLICATION: {return MULTIPLICATION_SIGN_SPACE;}
-		case STRUCT_INVERSE: {}
-		case STRUCT_DIVISION: {return MULTIPLICATION_SIGN_SPACE;}
+		case STRUCT_MULTIPLICATION: {if(SIZE > 0) {return CHILD(0).neededMultiplicationSign(po, ips, parent, index, par, par_prev, flat_division, flat_power);} return MULTIPLICATION_SIGN_OPERATOR;}
+		case STRUCT_INVERSE: {if(flat_division) {return m_one.neededMultiplicationSign(po, ips, parent, index, par, par_prev, flat_division, flat_power);} return MULTIPLICATION_SIGN_SPACE;}
+		case STRUCT_DIVISION: {if(flat_division) {return CHILD(0).neededMultiplicationSign(po, ips, parent, index, par, par_prev, flat_division, flat_power);} return MULTIPLICATION_SIGN_SPACE;}
 		case STRUCT_ADDITION: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_POWER: {return CHILD(0).neededMultiplicationSign(po, ips, parent, index, par, par_prev, flat_division, flat_power);}
 		case STRUCT_NEGATE: {return MULTIPLICATION_SIGN_OPERATOR;}
