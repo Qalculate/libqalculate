@@ -1042,6 +1042,7 @@ string rnd_number(bool use_par = true, bool only_integers = false, bool only_pos
 	}
 	if(allow_complex && !only_integers && rand() % 10 == 0) {str += 'i'; par = true;}
 	else if(allow_interval && rand() % 2 == 0 && str.find(".") == string::npos) {str += "+/-4E-8"; /*str += rnd_number(false, true, true, false, false);*/}
+	if(str.find_first_not_of("-0.i") == string::npos) return rnd_number(use_par, only_integers, only_positive, allow_complex, allow_interval);
 	if(par && use_par) {str += ')'; str.insert(0, "(");}
 	return str;
 }
@@ -1155,11 +1156,14 @@ string rnd_operator(int &par, bool allow_pow = true) {
 		case 3: return str + "*";
 		case 4: return str + "/";
 		case 5: {
-			switch(rand() % 4 + 1) {
+			switch(rand() % 8 + 1) {
 				case 1: return str + "^";
 				case 2: return str + "^2" + rnd_operator(par, false);
 				case 3: return str + "^3" + rnd_operator(par, false);
 				case 4: return str + "^-1" + rnd_operator(par, false);
+				case 5: return str + "^(1/2)" + rnd_operator(par, false);
+				case 6: return str + "^(1/3)" + rnd_operator(par, false);
+				default: {return str + "^(" + rnd_number(true, true) + "/" + rnd_number(true, true) + ")" + rnd_operator(par, false);}
 			}
 		}
 	}
@@ -1852,19 +1856,19 @@ int main(int argc, char *argv[]) {
 	new Calculator(true);
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
-	CALCULATOR->setPrecision(100);
+	CALCULATOR->setPrecision(8);
 
 	CALCULATOR->useIntervalArithmetic();
 	PrintOptions po = CALCULATOR->messagePrintOptions();
-	/*po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	po.show_ending_zeroes = true;
 	po.number_fraction_format = FRACTION_FRACTIONAL;
-	po.restrict_fraction_length = true;*/
-	po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+	po.restrict_fraction_length = true;
+	/*po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	po.show_ending_zeroes = false;
 	po.number_fraction_format = FRACTION_DECIMAL;
 	po.restrict_fraction_length = true;
-	po.min_exp = 1;
+	po.min_exp = 1;*/
 	//po.max_decimals = 1;
 	//po.use_max_decimals = true;
 	CALCULATOR->setMessagePrintOptions(po);
@@ -1999,7 +2003,7 @@ int main(int argc, char *argv[]) {
 	cout << successes << ":" << imaginary << endl;
 	return 0;*/
 
-	Number nr;
+	/*Number nr;
 	for(long int i = 0; i < 1000000L; i++) {
 		nr.set(rnd_number(false, false, false, false, false));
 		if(i % 2 == 1) nr.exp2(rand() % 2200 - 1100);
@@ -2015,7 +2019,7 @@ int main(int argc, char *argv[]) {
 		if(!test_float(nr)) return 0;
 	}
 
-	return 0;
+	return 0;*/
 
 	v = new KnownVariable("", "v", m_zero);
 
@@ -2031,7 +2035,7 @@ int main(int argc, char *argv[]) {
 		cout << mstruct.print() << endl;
 		if(mstruct.isAborted()) break;*/
 		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
-		rnd_test(evalops, 4, true, false, false, false, false, false);
+		rnd_test(evalops, 4, false, false, false, false, false, false);
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;

@@ -1145,11 +1145,11 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
 bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const {
 	if(str.empty()) return false;
 	size_t i = str.rfind("->");
-	if(i != string::npos && (allow_empty_from || i != 0)) return true;
+	if(i != string::npos && (allow_empty_from || i > 0)) return true;
 	i = str.rfind("→");
-	if(i != string::npos && (allow_empty_from || i != 0)) return true;
+	if(i != string::npos && (allow_empty_from || i > 0)) return true;
 	i = str.rfind(SIGN_MINUS ">");
-	if(i != string::npos && (allow_empty_from || i != 0)) return true;
+	if(i != string::npos && (allow_empty_from || i > 0)) return true;
 	i = str.length() - 1;
 	while(i != 0) {
 		// dingbat arrows
@@ -1174,11 +1174,11 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const
 	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
 	if(str.empty()) return false;
 	size_t i = str.rfind("->");
-	if(i != string::npos && (allow_empty_from || i != 0)) return true;
+	if(i != string::npos && (allow_empty_from || i > 0)) return true;
 	i = str.rfind("→");
-	if(i != string::npos && (allow_empty_from || i != 0)) return true;
+	if(i != string::npos && (allow_empty_from || i > 0)) return true;
 	i = str.rfind(SIGN_MINUS ">");
-	if(i != string::npos && (allow_empty_from || i != 0)) return true;
+	if(i != string::npos && (allow_empty_from || i > 0)) return true;
 	i = str.length() - 1;
 	while(i != 0) {
 		// dingbat arrows
@@ -1204,9 +1204,8 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
 	to_str = "";
 	if(str.empty()) return false;
-	size_t i, i2, l_arrow = 2;
+	size_t i = 1, i2, l_arrow = 2;
 	if(allow_empty_from) i = 0;
-	else i = 1;
 	size_t i_arrow = str.find("->", i);
 	i2 = str.find("→", i);
 	if(i2 != string::npos && i2 < i_arrow) {i_arrow = i2; l_arrow = 3;}
@@ -1217,7 +1216,7 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 		i = str.find("\xe2\x9e", i); 
 		if(i == string::npos || (i_arrow != string::npos && i > i_arrow) || i >= str.length() - 2) break;
 		if((unsigned char) str[i + 2] >= 0x94 && (unsigned char) str[i + 2] <= 0xbf) {i_arrow = i; l_arrow = 3; break;}
-		i += 2;
+		i += 3;
 	}
 	i = 0;
 	int l = 2;

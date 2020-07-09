@@ -1577,22 +1577,46 @@ bool simplify_roots(MathStructure &mstruct, const EvaluationOptions &eo) {
 					mstruct[i][1].number()--;
 					mstruct.childUpdated(i + 1);
 					mstruct.delChild(1, true);
-					return true;
+					b_ret = true;
+					break;
 				} else if(mstruct[i][1].number().isNegative() && mstruct[0].number().isIntegerDivisible(mstruct[i][0].number())) {
 					if(mstruct[0].number().divide(mstruct[i][0].number())) {
 						mstruct[0].numberUpdated();
 						mstruct.childUpdated(1);
 						mstruct[i][1].number()++;
-						if(mstruct[0].isOne()) {mstruct.delChild(1, true); return true;}
 						b_ret = true;
+						if(mstruct[0].isOne()) {mstruct.delChild(1); break;}
 					}
 				} else if(mstruct[i][1].number().isPositive() && !mstruct[0].number().isInteger() && mstruct[0].number().denominator().isIntegerDivisible(mstruct[i][0].number())) {
 					if(mstruct[0].number().multiply(mstruct[i][0].number())) {
 						mstruct[0].numberUpdated();
 						mstruct.childUpdated(1);
 						mstruct[i][1].number()--;
-						if(mstruct[0].isOne()) {mstruct.delChild(1, true); return true;}
 						b_ret = true;
+						if(mstruct[0].isOne()) {mstruct.delChild(1, true); break;}
+					}
+				}
+			}
+		}
+	}
+	if(mstruct.isMultiplication()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(mstruct[i].isPower()) {
+				for(size_t i2 = i + 1; i2 < mstruct.size();) {
+					if(mstruct[i2].isPower() && mstruct[i][0] == mstruct[i2][0]) {
+						if(!eo.allow_complex && !mstruct[i][0].representsNonNegative(true) && (!mstruct[i][1].representsInteger() || !mstruct[i2][1].representsInteger())) {
+							break;
+						}
+						mstruct[i][1].add(mstruct[i2][1], true);
+						mstruct[i][1].calculateAddLast(eo);
+						mstruct.delChild(i2 + 1);
+						if(mstruct.size() == 1) {
+							mstruct.setToChild(1, true);
+							return true;
+						}
+						b_ret = true;
+					} else {
+						i2++;
 					}
 				}
 			}
