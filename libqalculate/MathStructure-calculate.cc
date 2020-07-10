@@ -1158,6 +1158,15 @@ bool addablePower(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	return eo.allow_complex && mstruct[1].isNumber() && mstruct[1].number().isRational() && mstruct[1].number().denominatorIsEven();
 }
 
+int cmp_num_abs_2_to_den(const Number &nr) {
+	mpz_t z_num;
+	mpz_init(z_num);
+	mpz_mul_ui(z_num, mpq_numref(nr.internalRational()), 2);
+	int i = mpz_cmpabs(z_num, mpq_denref(nr.internalRational()));
+	mpz_clear(z_num);
+	return i;
+}
+
 int MathStructure::merge_multiplication(MathStructure &mstruct, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this, size_t index_mstruct, bool reversed, bool do_append) {
 	// test if two factors can be merged
 	if(mstruct.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
@@ -2107,13 +2116,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 										b2n = true;
 									}
 									if(b1n && !b2m && !b2n) {
-										if(CHILD(1)[0].number().numerator() * -2 < CHILD(1)[0].number().denominator()) return -1;
+										if(cmp_num_abs_2_to_den(CHILD(1)[0].number()) < 0) return -1;
 									} else if(b2n && !b1m && !b1n) {
-										if(mstruct[1][0].number().numerator() * -2 < mstruct[1][0].number().denominator()) return -1;
+										if(cmp_num_abs_2_to_den(mstruct[1][0].number()) < 0) return -1;
 									} else if(b1n && b2m && CHILD(1)[0].number().isPositive()) {
-										if(CHILD(1)[0].number().numerator() * 2 <= CHILD(1)[0].number().denominator()) return -1;
+										if(cmp_num_abs_2_to_den(CHILD(1)[0].number()) <= 0) return -1;
 									} else if(b2n && b1m && mstruct[1][0].number().isPositive()) {
-										if(mstruct[1][0].number().numerator() * 2 <= mstruct[1][0].number().denominator()) return -1;
+										if(cmp_num_abs_2_to_den(mstruct[1][0].number()) <= 0) return -1;
 									}
 								}
 								MathStructure mstruct2(CHILD(1));
@@ -2937,7 +2946,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		}
 		if(!o_number.isMinusOne() && !o_number.isOne() && mstruct.number().isRational() && !mstruct.isInteger()) {
 			if(o_number.isRational() && !o_number.isZero() && mstruct.number().isFraction()) {
-				if(mstruct.number().isNegative() && mstruct.number().numerator() * -2 >= mstruct.number().denominator()) {
+				if(mstruct.number().isNegative() && cmp_num_abs_2_to_den(mstruct.number()) >= 0) {
 					// a^(-b)=a^(-b+1)/a
 					Number nmul(o_number);
 					nmul.recip();
@@ -2945,7 +2954,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					calculateRaise(mstruct, eo);
 					calculateMultiply(nmul, eo);
 					return 1;
-				} else if(mstruct.number().isPositive() && mstruct.number().numerator() * 2 > mstruct.number().denominator()) {
+				} else if(mstruct.number().isPositive() && cmp_num_abs_2_to_den(mstruct.number()) > 0) {
 					// a^b=a^(b-1)*a
 					Number nmul(o_number);
 					mstruct.number()--;
