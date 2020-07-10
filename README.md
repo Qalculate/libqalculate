@@ -101,171 +101,183 @@ Other software using libqalculate include
 
 ## Examples
 
-###Arithmetics
+### Arithmetics
 
-5^2 = 25
+5^2 _= 25_
 
-sqrt(4) = 4^(0.5) = 4^(1/2) = 2
+sqrt(4) = 4^(0.5) = 4^(1/2) _= 2_
 
-sqrt(32) = 4 × √(2) _(in exact mode)_
+sqrt(32) _= 4 × √(2) (in exact mode)_
 
-cbrt(27) = root(27, 3) = 27^(1/3) = 3
+cbrt(27) = root(27, 3) = 27^(1/3) _= 3_
 
-cbrt(-27) = -3 _(real root)_
+cbrt(-27) _= -3 (real root)_
 
-(-27)^(1/3) ≈ 1.5 + 2.5980762i _(principal root)_
+(-27)^(1/3) _≈ 1.5 + 2.5980762i (principal root)_
 
-log2(4) = log(4, 2) = 2
+log2(4) = log(4, 2) _= 2_
 
-log10(100) = log(100, 10) = 2
+log10(100) = log(100, 10) _= 2_
 
-ln(25) = log(25, e) ≈ 3.2188758
+ln(25) = log(25, e) _≈ 3.2188758_
 
-5! = 1 × 2 × 3 × 4 × 5 = 120
+5! _= 1 × 2 × 3 × 4 × 5 = 120_
 
-sum(x, 1, 5) = 1 + 2 + 3 + 4 + 5 = 15
+sum(x, 1, 5) _= 1 + 2 + 3 + 4 + 5 = 15_
 
-sum(\i^2+sin(\i), 1, 5, \i) = 1^2 + sin(1) + 2^2 + sin(2) + ... ≈ 55.176162
+sum(\i^2+sin(\i), 1, 5, \i) _= 1^2 + sin(1) + 2^2 + sin(2) + ... ≈ 55.176162_
 
-product(x, 1, 5) = 1 × 2 × 3 × 4 × 5 = 120
+product(x, 1, 5) _= 1 × 2 × 3 × 4 × 5 = 120_
 
-###Units
+5\2 = 5//2 = trunc(5 / 2) _= 2_
 
-20 miles / 2h to km/h = 16.09344 km/h
+5 mod 3 = mod(5, 3) _= 2_
 
-1.74 to ft = 1.74 m to ft ≈ 5 ft + 8.5039370 in
+52 to factors _= 2^2 × 13_
 
-1.74 m to -ft ≈ 5.7086614 ft
+25/4 × 3/5 to fraction _= 3 + 3/4_
 
-5 J × 523 s × 15 mph = 17.535144 kJ·m
+gcd(63, 27) _= 9_
 
-5 J × 523 s × 15 mph to base = 17.535144 Mg·m^3/s^2
+### Units
 
-5 m/s to s/m = 0.2 s/m
+20 miles / 2h to km/h _= 16.09344 km/h_
 
-500 € to $ ≈ 566.25
+1.74 to ft = 1.74 m to ft _≈ 5 ft + 8.5039370 in_
 
-###Physical constants
+1.74 m to -ft _≈ 5.7086614 ft_
 
-k_e / G × a_0 = (coulombs_constant / newtonian_constant) × bohr_radius ≈ 7.126e9 kg·H·m^−1
+5 J × 523 s × 15 mph _= 17.535144 kJ·m_
 
-5 ns × rydberg to c ≈ 6.0793194E-8c
+5 J × 523 s × 15 mph to base _= 17.535144 Mg·m^3/s^2_
 
-###Uncertainty and interval arithmetic
+5 m/s to s/m _= 0.2 s/m_
+
+500 € to $ _≈ 566.25_
+
+### Physical constants
+
+k_e / G × a_0 = (coulombs_constant / newtonian_constant) × bohr_radius _≈ 7.126e9 kg·H·m^−1_
+
+5 ns × rydberg to c _≈ 6.0793194E-8c_
+
+### Uncertainty and interval arithmetic
 
 _"±" can be replaced with "+/-"_
 _result with interval arithmetic activated is shown in parenthesis_
 
-sin(5±0.2)^2/2±0.3 ≈ 0.460±0.088 _(0.46±0.12)_
+sin(5±0.2)^2/2±0.3 _≈ 0.460±0.088 _(0.46±0.12)_
 
-(2±0.02 J)/(523±5 W) ≈ 3.824±0.053 ms _(3.825±0.075 ms)_
+(2±0.02 J)/(523±5 W) _≈ 3.824±0.053 ms (3.825±0.075 ms)_
 
-interval(−2, 5)^2 ≈ intervall(−8.2500000, 12.750000) _(intervall(0, 25))_
+interval(−2, 5)^2 _≈ intervall(−8.2500000, 12.750000) (intervall(0, 25))_
 
-###Algebra
+### Algebra
 
-(5x^2 + 2)/(x − 3) = 5x + 15 + 47∕(x − 3)
+(5x^2 + 2)/(x − 3) _= 5x + 15 + 47∕(x − 3)_
 
-(\a + \b)(\a − \b) = ("a" + "b")("a" − "b") = 'a'^2 − 'b'^2
+(\a + \b)(\a − \b) = ("a" + "b")("a" − "b") = _'a'^2 − 'b'^2_
 
-(x + 2)(x − 3)^3 = x^4 − 7x^3 + 9x^2 + 27x − 54
+(x + 2)(x − 3)^3 _= x^4 − 7x^3 + 9x^2 + 27x − 54_
 
-factorize x^4 − 7x^3 + 9x^2 + 27x − 54 = x^4 − 7x^3 + 9x^2 + 27x − 54 to factors = (x + 2)(x − 3)^3
+factorize x^4 − 7x^3 + 9x^2 + 27x − 54 = x^4 − 7x^3 + 9x^2 + 27x − 54 to factors _= (x + 2)(x − 3)^3_
 
-1/(x^2+2x−3) to partial fraction = 1/(4x − 4) − 1/(4x + 12)
+gcd(25x, 5x^2) _= 5x_
+
+1/(x^2+2x−3) to partial fraction _= 1/(4x − 4) − 1/(4x + 12)_
 
 x+x^2+4 = 16
-	= x = 3 eller x = −4
+_= x = 3 eller x = −4_
 
 cylinder(20cm, x) = 20L (calculates the height of a 20 L cylinder with radius of 20 cm)
-	= x = (1 ∕ (2π)) m
-	= x ≈ 16 cm
+_= x = (1 ∕ (2π)) m_
+_= x ≈ 16 cm_
 
 asin(sqrt(x)) = 0.2
-	= x = sin(0.2)^2
-	= x ≈ 0.039469503
+_= x = sin(0.2)^2_
+_= x ≈ 0.039469503_
 
-solve2(5x=2y^2, sqrt(y)=2, x, y) = 32/5
+solve2(5x=2y^2, sqrt(y)=2, x, y) _= 32/5_
 
-multisolve(\[5x=2y+32, y=2z, z=2x\], \[x, y, z\]) = \[−32∕3, −128∕3, −64/3\]
-
-
-###Calculus
-
-diff(6x^2) = 12x
-
-diff(sinh(x^2)/(5x) + 3xy/sqrt(x)) = (2∕5) × cosh(x^2) − sinh(x^2)∕(5x^2) + (3y)∕(2 × √(x))
-
-integrate(6x^2) = 2x^3 + C
-
-integrate(6x^2, 1, 5) = 248
-
-integrate(sinh(x^2)/(5x) + 3xy/sqrt(x)) = 2x × √(x) × y + Shi(x^2) ∕ 10 + C
-
-integrate(sinh(x^2)/(5x) + 3xy/sqrt(x), 1, 2) ≈ 3.6568542y + 0.87600760
+multisolve(\[5x=2y+32, y=2z, z=2x\], \[x, y, z\]) _= \[−32∕3, −128∕3, −64/3\]_
 
 
-###Time and date
+### Calculus
 
-10:31 + 8:30 to time = 19:01
+diff(6x^2) _= 12x_
 
-10h 31min + 8h 30min to time = 19:01
+diff(sinh(x^2)/(5x) + 3xy/sqrt(x)) _= (2∕5) × cosh(x^2) − sinh(x^2)∕(5x^2) + (3y)∕(2 × √(x))_
 
-now to utc = "2020-07-10T07:50:40Z"
+integrate(6x^2) _= 2x^3 + C_
 
-"2020-07-10T07:50CET" to utc+8 = "2020-07-10T14:50:00+08:00"
+integrate(6x^2, 1, 5) _= 248_
 
-"2020−05−20" + 523d = "2021-10-25"
+integrate(sinh(x^2)/(5x) + 3xy/sqrt(x)) _= 2x × √(x) × y + Shi(x^2) ∕ 10 + C_
 
-addDays(2020-05-20, 523) = "2021-10-25"
+integrate(sinh(x^2)/(5x) + 3xy/sqrt(x), 1, 2) _≈ 3.6568542y + 0.87600760_
 
-today − 5 days = "2020-07-05"
 
-"2020-10-05" − today = 87 d
+### Time and date
 
-days(today, 2020-10-05) = 87
+10:31 + 8:30 to time _= 19:01_
 
-timestamp(2020−05−20) = 1 589 925 600
+10h 31min + 8h 30min to time _= 19:01_
 
-stamptodate(1 589 925 600) = "2020−05−20T00:00:00"
+now to utc _= "2020-07-10T07:50:40Z"_
 
-"2020-05-20" to calendars (returns date in Hebrew, Islamic, Persian, Indian, Chinese, Julian, Coptic, and Ethiopian calendars)
+"2020-07-10T07:50CET" to utc+8 _= "2020-07-10T14:50:00+08:00"_
+
+"2020−05−20" + 523d _= "2021-10-25"_
+
+addDays(2020-05-20, 523) _= "2021-10-25"_
+
+today − 5 days _= "2020-07-05"_
+
+"2020-10-05" − today _= 87 d_
+
+days(today, 2020-10-05) _= 87_
+
+timestamp(2020−05−20) _= 1 589 925 600_
+
+stamptodate(1 589 925 600) _= "2020−05−20T00:00:00"_
+
+"2020-05-20" to calendars _(returns date in Hebrew, Islamic, Persian, Indian, Chinese, Julian, Coptic, and Ethiopian calendars)_
 
 Time units:
 https://qalculate.github.io/manual/qalculate-definitions-units.html#qalculate-definitions-units-1-Time
 Data and time functions:
 https://qalculate.github.io/manual/qalculate-definitions-functions.html#qalculate-definitions-functions-1-Date--Time
 
-###Number bases
+### Number bases
 
-52 to bin = 0011 0100
+52 to bin _= 0011 0100_
 
-52 to bin16 = 0000 0000 0011 0100
+52 to bin16 _= 0000 0000 0011 0100_
 
-52 to oct = 064
+52 to oct _= 064_
 
-52 to hex = 0x34
+52 to hex _= 0x34_
 
-0x34 = hex(34) = base(34, 16) = 52
+0x34 = hex(34) = base(34, 16) _= 52_
 
-523<<2&250 to bin = 0010 1000
+523<<2&250 to bin _= 0010 1000_
 
-52.345 to float ≈ 0100 0010 0101 0001 0110 0001 0100 1000
+52.345 to float _≈ 0100 0010 0101 0001 0110 0001 0100 1000_
 
-float(01000010010100010110000101001000) = 1715241/32768 ≈ 52.345001
+float(01000010010100010110000101001000) _= 1715241/32768 ≈ 52.345001_
 
-flaotError(52.345) ≈ 1.2207031e-6
+flaotError(52.345) _≈ 1.2207031e-6_
 
-52.34 to sexa = 52°20′24″
+52.34 to sexa _= 52°20′24″_
 
-1978 to roman = MCMLXXVIII
+1978 to roman _= MCMLXXVIII_
 
-52 to base 32 = 1K
+52 to base 32 _= 1K_
 
-sqrt(32) to base sqrt(2) ≈ 100000
+sqrt(32) to base sqrt(2) _≈ 100000_
 
-0xD8 to unicode = Ø
+0xD8 to unicode _= Ø_
 
-code(Ø) to hex = 0xD8
+code(Ø) to hex _= 0xD8_
 
 
