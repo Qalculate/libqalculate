@@ -1150,23 +1150,24 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const
 	if(i != string::npos && (allow_empty_from || i > 0)) return true;
 	i = str.rfind(SIGN_MINUS ">");
 	if(i != string::npos && (allow_empty_from || i > 0)) return true;
-	i = str.length() - 1;
-	while(i != 0) {
+	i = allow_empty_from ? 0 : 1;
+	while(true) {
 		// dingbat arrows
-		i = str.rfind("\xe2\x9e", i - 1);
-		if(i == string::npos) break;
-		if((i != 0 || allow_empty_from) && (unsigned char) str[i + 2] >= 0x94 && (unsigned char) str[i + 2] <= 0xbf) return true;
+		i = str.find("\xe2\x9e", i);
+		if(i == string::npos || i >= str.length() - 2) break;
+		if((unsigned char) str[i + 2] >= 0x94 && (unsigned char) str[i + 2] <= 0xbf) return true;
 	}
-	i = str.length() - 1;
+	i = allow_empty_from ? 0 : 1;
 	size_t i2 = i;
 	int l = 2;
-	while(i != 0) {
-		i2 = str.rfind(_("to"), i - 1);
-		i = str.rfind("to", i - 1);
-		if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("to")); i = i2;}
+	while(true) {
+		i2 = str.find(_("to"), i);
+		i = str.find("to", i);
+		if(i2 != string::npos && (i == string::npos || i2 < i)) {l = strlen(_("to")); i = i2;}
 		else l = 2;
 		if(i == string::npos) break;
 		if(((i > 0 && is_in(SPACES, str[i - 1])) || (allow_empty_from && i == 0)) && i + l < str.length() && is_in(SPACES, str[i + l])) return true;
+		i++;
 	}
 	return false;
 }
@@ -1179,20 +1180,20 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const
 	if(i != string::npos && (allow_empty_from || i > 0)) return true;
 	i = str.rfind(SIGN_MINUS ">");
 	if(i != string::npos && (allow_empty_from || i > 0)) return true;
-	i = str.length() - 1;
-	while(i != 0) {
+	i = allow_empty_from ? 0 : 1;
+	while(true) {
 		// dingbat arrows
-		i = str.rfind("\xe2\x9e", i - 1);
-		if(i == string::npos) break;
-		if((i != 0 || allow_empty_from) && (unsigned char) str[i + 2] >= 0x94 && (unsigned char) str[i + 2] <= 0xbf) return true;
+		i = str.find("\xe2\x9e", i);
+		if(i == string::npos || i >= str.length() - 2) break;
+		if((unsigned char) str[i + 2] >= 0x94 && (unsigned char) str[i + 2] <= 0xbf) return true;
 	}
-	i = str.length() - 1;
+	i = allow_empty_from ? 0 : 1;
 	size_t i2 = i;
 	int l = 2;
 	while(true) {
 		i2 = str.find(_("to"), i);
 		i = str.find("to", i);
-		if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("to")); i = i2;}
+		if(i2 != string::npos && (i == string::npos || i2 < i)) {l = strlen(_("to")); i = i2;}
 		else l = 2;
 		if(i == string::npos) break;
 		if(((i > 0 && is_in(SPACES, str[i - 1])) || (allow_empty_from && i == 0)) && i + l < str.length() && is_in(SPACES, str[i + l])) return true;

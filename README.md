@@ -99,4 +99,173 @@ Other software using libqalculate include
    * Several customization options
 * and more...
 
+## Examples
+
+###Arithmetics
+
+5^2 = 25
+
+sqrt(4) = 4^(0.5) = 4^(1/2) = 2
+
+sqrt(32) = 4 × √(2) _(in exact mode)_
+
+cbrt(27) = root(27, 3) = 27^(1/3) = 3
+
+cbrt(-27) = -3 _(real root)_
+
+(-27)^(1/3) ≈ 1.5 + 2.5980762i _(principal root)_
+
+log2(4) = log(4, 2) = 2
+
+log10(100) = log(100, 10) = 2
+
+ln(25) = log(25, e) ≈ 3.2188758
+
+5! = 1 × 2 × 3 × 4 × 5 = 120
+
+sum(x, 1, 5) = 1 + 2 + 3 + 4 + 5 = 15
+
+sum(\i^2+sin(\i), 1, 5, \i) = 1^2 + sin(1) + 2^2 + sin(2) + ... ≈ 55.176162
+
+product(x, 1, 5) = 1 × 2 × 3 × 4 × 5 = 120
+
+###Units
+
+20 miles / 2h to km/h = 16.09344 km/h
+
+1.74 to ft = 1.74 m to ft ≈ 5 ft + 8.5039370 in
+
+1.74 m to -ft ≈ 5.7086614 ft
+
+5 J × 523 s × 15 mph = 17.535144 kJ·m
+
+5 J × 523 s × 15 mph to base = 17.535144 Mg·m^3/s^2
+
+5 m/s to s/m = 0.2 s/m
+
+500 € to $ ≈ 566.25
+
+###Physical constants
+
+k_e / G × a_0 = (coulombs_constant / newtonian_constant) × bohr_radius ≈ 7.126e9 kg·H·m^−1
+
+5 ns × rydberg to c ≈ 6.0793194E-8c
+
+###Uncertainty and interval arithmetic
+
+_"±" can be replaced with "+/-"_
+_result with interval arithmetic activated is shown in parenthesis_
+
+sin(5±0.2)^2/2±0.3 ≈ 0.460±0.088 _(0.46±0.12)_
+
+(2±0.02 J)/(523±5 W) ≈ 3.824±0.053 ms _(3.825±0.075 ms)_
+
+interval(−2, 5)^2 ≈ intervall(−8.2500000, 12.750000) _(intervall(0, 25))_
+
+###Algebra
+
+(5x^2 + 2)/(x − 3) = 5x + 15 + 47∕(x − 3)
+
+(\a + \b)(\a − \b) = ("a" + "b")("a" − "b") = 'a'^2 − 'b'^2
+
+(x + 2)(x − 3)^3 = x^4 − 7x^3 + 9x^2 + 27x − 54
+
+factorize x^4 − 7x^3 + 9x^2 + 27x − 54 = x^4 − 7x^3 + 9x^2 + 27x − 54 to factors = (x + 2)(x − 3)^3
+
+1/(x^2+2x−3) to partial fraction = 1/(4x − 4) − 1/(4x + 12)
+
+x+x^2+4 = 16
+	= x = 3 eller x = −4
+
+cylinder(20cm, x) = 20L (calculates the height of a 20 L cylinder with radius of 20 cm)
+	= x = (1 ∕ (2π)) m
+	= x ≈ 16 cm
+
+asin(sqrt(x)) = 0.2
+	= x = sin(0.2)^2
+	= x ≈ 0.039469503
+
+solve2(5x=2y^2, sqrt(y)=2, x, y) = 32/5
+
+multisolve(\[5x=2y+32, y=2z, z=2x\], \[x, y, z\]) = \[−32∕3, −128∕3, −64/3\]
+
+
+###Calculus
+
+diff(6x^2) = 12x
+
+diff(sinh(x^2)/(5x) + 3xy/sqrt(x)) = (2∕5) × cosh(x^2) − sinh(x^2)∕(5x^2) + (3y)∕(2 × √(x))
+
+integrate(6x^2) = 2x^3 + C
+
+integrate(6x^2, 1, 5) = 248
+
+integrate(sinh(x^2)/(5x) + 3xy/sqrt(x)) = 2x × √(x) × y + Shi(x^2) ∕ 10 + C
+
+integrate(sinh(x^2)/(5x) + 3xy/sqrt(x), 1, 2) ≈ 3.6568542y + 0.87600760
+
+
+###Time and date
+
+10:31 + 8:30 to time = 19:01
+
+10h 31min + 8h 30min to time = 19:01
+
+now to utc = "2020-07-10T07:50:40Z"
+
+"2020-07-10T07:50CET" to utc+8 = "2020-07-10T14:50:00+08:00"
+
+"2020−05−20" + 523d = "2021-10-25"
+
+addDays(2020-05-20, 523) = "2021-10-25"
+
+today − 5 days = "2020-07-05"
+
+"2020-10-05" − today = 87 d
+
+days(today, 2020-10-05) = 87
+
+timestamp(2020−05−20) = 1 589 925 600
+
+stamptodate(1 589 925 600) = "2020−05−20T00:00:00"
+
+"2020-05-20" to calendars (returns date in Hebrew, Islamic, Persian, Indian, Chinese, Julian, Coptic, and Ethiopian calendars)
+
+Time units:
+https://qalculate.github.io/manual/qalculate-definitions-units.html#qalculate-definitions-units-1-Time
+Data and time functions:
+https://qalculate.github.io/manual/qalculate-definitions-functions.html#qalculate-definitions-functions-1-Date--Time
+
+###Number bases
+
+52 to bin = 0011 0100
+
+52 to bin16 = 0000 0000 0011 0100
+
+52 to oct = 064
+
+52 to hex = 0x34
+
+0x34 = hex(34) = base(34, 16) = 52
+
+523<<2&250 to bin = 0010 1000
+
+52.345 to float ≈ 0100 0010 0101 0001 0110 0001 0100 1000
+
+float(01000010010100010110000101001000) = 1715241/32768 ≈ 52.345001
+
+flaotError(52.345) ≈ 1.2207031e-6
+
+52.34 to sexa = 52°20′24″
+
+1978 to roman = MCMLXXVIII
+
+52 to base 32 = 1K
+
+sqrt(32) to base sqrt(2) ≈ 100000
+
+0xD8 to unicode = Ø
+
+code(Ø) to hex = 0xD8
+
 
