@@ -1,4 +1,4 @@
-.TH QALC 1 "7 July 2020"
+.TH QALC 1 "11 July 2020"
 .SH NAME
 qalc \- Powerful and easy to use command line calculator
 .SH SYNOPSIS
@@ -58,7 +58,7 @@ displays a list of all or matching units.
 displays a list of all or matching variables.
 .PP
 .TP 8
-.B \-m, \-\-time \fIMILLISECONDS\fP
+.B \-m, \-\-time \fImilliseconds\fP
 terminate calculation and display of result after specified amount of time
 .PP
 .TP 8
@@ -107,12 +107,948 @@ switch unicode support on/off
 show application version and exit
 .PP
 The program will start in interactive mode if no expression and no file is
-specified (or interactive mode is explicitly selected). Type \fIhelp\fP in
-interactive mode to get more information about available commands.
+specified (or interactive mode is explicitly selected).
+.SH "COMMANDS"
+.PP
+.TP 8
+.B approximate
+Equivalent to set approximation try exact.
+.PP
+.TP 8
+.B assume \fIassumptions\fP
+Set default assumptions for unknown variables (unknown, non-zero, positive, negative, non-positive, non-negative +
+number, real, rational, integer).
+.PP
+.TP 8
+.B base \fIbase\fP
+Sets the result number base (equivalent to set base).
+.PP
+.TP 8
+.B delete \fIname\fP
+Removes the user-defined variable or function with the specified name.
+.br
+Example: delete var1.
+.PP
+.TP 8
+.B exact
+Equivalent to set approximation exact.
+.PP
+.TP 8
+.B exrates
+Downloads current exchange rates from the Internet.
+.PP
+.TP 8
+.B factor
+Factorizes the current result.
+.PP
+.TP 8
+.B find, list \fI[name]\fP
+Displays a list of variables, functions and units.
+Enter with argument 'currencies', 'functions', 'variables' or 'units' to show a list of all currencies, functions, variables or units. Enter a search term to find matching variables, functions, and/or units. If command is called with no argument all user-definied objects are listed.
+.br
+Example: list functions.
+.br
+Example: find dinar.
+.br
+Example: find variables planck.
+.PP
+.TP 8
+.B function \fIname expression\fP
+Creates a function with the specified name and expression. Use '\\x', '\\y', '\\z', '\\a', etc. for arguments in the expression.
+.br
+Example: function func1 5*\\x.
+.PP
+.TP 8
+.B info
+Displays information about a function, variable or unit.
+.br
+Example: info sin.
+.PP
+.TP 8
+.B mode
+Displays the current mode.
+.PP
+.TP 8
+.B partial fraction
+Applies partial fraction decomposition to the current result.
+.PP
+.TP 8
+.B save, store \fIname [category] [title]\fP
+Saves the current result in a variable with the specified name. You may optionally also provide a category (default "Temporary") and a title.
+If name equals "mode" or "definitions", the current mode and definitions, respectively, will be saved.
+.br
+Example: store var1.
+.PP
+.TP 8
+.B save definitions
+.PP
+.TP 8
+.B save mode
+.PP
+.TP 8
+.B set \fIoption value\fP
+.PP
+.TP 8
+.B expand
+Expands the current result.
+.PP
+.TP 8
+.B to, convert \fIunit/"to"-command\fP
+.PP
+.TP 8
+.B variable \fIname expression\fP
+Create a variables with the specified name and expression.
+.br
+Example: variable var1 pi / 2.
+.PP
+.TP 8
+.B quit/exit
+Terminates the program.
+.PP
+Commands for RPN mode:
+.PP
+.TP 8
+.B rpn \fIstate\fP
+(De)activates the Reverse Polish Notation stack and syntax. "syntax" activates only the RPN syntax and "stack" enables the RPN stack.
+.PP
+.TP 8
+.B stack
+Displays the RPN stack.
+.PP
+.TP 8
+.B clear stack
+Clears the entire RPN stack.
+.PP
+.TP 8
+.B copy \fI[index]\fP
+Duplicates a value on the RPN stack to the top of the stack. If no index is specified, the top of the stack is duplicated. Index 1 is the top of stack and negative index values counts from the bottom of the stack.
+.PP
+.TP 8
+.B move \fIindex 1 index 2\fP
+Changes the position of a value on the RPN stack. Index 1 is the top of stack and negative index values counts from the bottom of the stack.
+.br
+Example: move 2 4
+.PP
+.TP 8
+.B pop \fI[index]\fP
+Removes the top of the RPN stack or the value at the specified index. Index 1 is the top of stack and negative index values counts from the bottom of the stack.
+.PP
+.TP 8
+.B rotate \fI[direction]\fP
+Rotates the RPN stack up (default) or down.
+.PP
+.TP 8
+.B swap \fI[index 1] [index 2]\fP
+Swaps position of values on the RPN stack. If no index is specified, the values on the top of the stack (index 1 and index 2) will be swapped and if only one index is specified, the value at this index will be swapped with the top value. Index 1 is the top of stack and negative index values counts from the bottom of the stack.
+.br
+Example: swap 2 4
+.SH "SETTINGS"
+These settings are changed using the \fIset\fP command (e.g. set base 16) or the \fI\-s, \-\-set\fP command line option (e.g. qalc -s "base 16"). Possible values are shown in parenthesis. 1 and 0 can be used instead of on and off. If the value is left out, a value of 1 is generally assumed. The default value is marked with '*'.
+.PP
+Algebraic mode:
+.PP
+.TP 8
+.B algebra mode, alg \fI(1* = expand, 2 = factorize)\fP
+Determines if the expression is factorized or not after calculation.
+.PP
+.TP 8
+.B assume nonzero denominators, nzd \fI(on*, off)\fP
+Determines if unknown values will be assumed non-zero (x/x=1).
+.PP
+.TP 8
+.B warn nonzero denominators, warnnzd \fI(on*, off)\fP
+Display a message after a value has been assumed non-zero.
+.PP
+.TP 8
+.B assumptions, ass \fI(unknown*, non-zero, positive, negative, non-positive, non-negative + number, real*, rational, integer)\fP
+Default assumptions for unknown variables.
+.PP
+Calculation:
+.PP
+.TP 8
+.B angle unit, angle \fI(0 = none, 1* = radians, 2 = degrees, 3 = gradians)\fP
+Default angle unit for trigonometric functions.
+.PP
+.TP 8
+.B approximation, appr \fI(0 = exact, 1* = try exact, 2 = approximate)\fP
+How approximate variables and calculations are handled. In exact mode approximate values will not be calculated.
+.PP
+.TP 8
+.B interval arithmetic, ia \fI(on*, off)\fP
+If activated, interval arithmetic determines the final precision of calculations (avoids wrong results after loss of significance) with
+approximate functions and/or irrational numbers.
+.PP
+.TP 8
+.B interval calculation, ic \fI(1* = variance formula, 2 = interval arithmetic)\fP
+Determines the method used for interval calculation / uncertainty propagation.
+.PP
+.TP 8
+.B precision, prec \fI(> 0) 8*\fP
+Specifies the default number of significant digits displayed and determines the precision used for approximate calculations.
+.PP
+Enabled Objects
+.PP
+.TP 8
+.B calculate functions, calcfunc \fI(on*, off)\fP
+.PP
+.TP 8
+.B calculate variables, calcvar \fI(on*, off)\fP
+.PP
+.TP 8
+.B complex numbers, cplx \fI(on*, off)\fP
+.PP
+.TP 8
+.B functions, func \fI(on*, off)\fP
+.PP
+.TP 8
+.B infinite numbers, inf \fI(on*, off)\fP
+.PP
+.TP 8
+.B units \fI(on*, off)\fP
+.PP
+.TP 8
+.B unknowns \fI(on, off*)\fP
+Interprete undefined symbols in expressions as unknown variables.
+.PP
+.TP 8
+.B variables, var \fI(on*, off)\fP
+.PP
+.TP 8
+.B variable units, varunit \fI(on*, off)\fP
+If activated physical constants include units (e.g. c = 299 792 458 m∕s).
+.PP
+Generic Display Options.PP
+.TP 8
+.B abbreviations, abbr \fI(on*, off)\fP
+Use abbreviated names for units and variables.
+.PP
+.TP 8
+.B color \fI(0 = off, 1* = default, 2 = light)\fP
+Use colors to highlight different elements of expressions and results.
+.PP
+.TP 8
+.B division sign, divsign \fI(0* = /, 1 = division slash, 2 = division sign)\fP
+.PP
+.TP 8
+.B excessive parentheses, expar \fI(on, off*)\fP
+.PP
+.TP 8
+.B minus last, minlast \fI(on, off*)\fP
+Always place negative values last.
+.PP
+.TP 8
+.B multiplication sign, mulsign \fI(0 = *, 1 = multiplication dot, 2* = multiplication x, 3 = middle dot)\fP
+.PP
+.TP 8
+.B short multiplication, shortmul \fI(on*, off)\fP
+.PP
+.TP 8
+.B spacious, space \fI(on*, off)\fP
+Add extra space around operators.
+.PP
+.TP 8
+.B spell out logical, spellout \fI(on*, off)\fP
+.PP
+.TP 8
+.B unicode, uni \fI(on*, off)\fP
+Display Unicode characters.
+.PP
+Numerical Display
+.PP
+.TP 8
+.B base \fI(-1114112 - 1114112, bin, oct, dec*, hex, sexa, time, roman)\fP
+.PP
+.TP 8
+.B base display, basedisp \fI(0 = none, 1* = normal, 2 = alternative)\fP
+.PP
+.TP 8
+.B complex form, cplxform \fI(0* = rectangular, 1 = exponential, 2 = polar, 3 = cis, 4 = angle)\fP
+.PP
+.TP 8
+.B decimal comma \fI(locale*, off, on)\fP
+Determines the default decimal separator.
+.PP
+.TP 8
+.B digit grouping, group \fI(0* = off, 1 = standard, 2 = locale)\fP
+.PP
+.TP 8
+.B fractions, fr \fI(0* = off, 1 = exact, 2 = on, 3 = mixed, 4 = long)\fP
+Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denonimator.
+.PP
+.TP 8
+.B hexadecimal two's, hextwos \fI(on, off*)\fP
+Enables two's complement representation for display of negative hexadecimal numbers.
+.PP
+.TP 8
+.B imaginary j, imgj \fI(on, off*)\fP
+Use 'j' (instead of 'i') as default symbol for the imaginary unit.
+.PP
+.TP 8
+.B interval display, ivdisp \fI(0* = adaptive, 1 = significant, 2 = interval, 3 = plusminus, 4 = midpoint, 5 = upper, 6 = lower)\fP
+.PP
+.TP 8
+.B lowercase e, lowe \fI(on, off*)\fP
+Use lowercase e for E-notation (5e2 = 5 * 10^2).
+.PP
+.TP 8
+.B lowercase numbers, lownum \fI(on, off*)\fP
+Use lowercase letters for number bases > 10.
+.PP
+.TP 8
+.B max decimals, maxdeci \fI(off*, >= 0)\fP
+.PP
+.TP 8
+.B min decimals, mindeci \fI(off*, >= 0)\fP
+.PP
+.TP 8
+.B round to even, rndeven \fI(on, off*)\fP
+Determines whether halfway numbers are rounded upwards or towards the nearest even integer.
+.PP
+.TP 8
+.B scientific notation, exp \fI(0 = off, -1 = auto*, -3 = engineering, 1 = pure, 3 = scientific, >= 0)\fP
+Determines how scientific notation are used (e.g. 5 543 000 = 5.543E6).
+.PP
+.TP 8
+.B show ending zeroes, zeroes \fI(on*, off)\fP
+If actived, zeroes are kept at the end of approximate numbers.
+.PP
+.TP 8
+.B two's complement, twos \fI(on*, off)\fP
+Enables two's complement representation for display of negative binary numbers.
+.PP
+Parsing
+.PP
+.TP 8
+.B caret as xor, xor^ \fI(on, off*)\fP
+Use ^ as bitwise exclusive OR operator.
+.PP
+.TP 8
+.B decimal comma \fI(locale*, off, on)\fP
+Determines the default decimal separator.
+.PP
+.TP 8
+.B ignore comma \fI(on, off*)\fP
+Allows use of ',' as thousands separator.
+.PP
+.TP 8
+.B ignore dot \fI(on, off*)\fP
+Allows use of '.' as thousands separator.
+.PP
+.TP 8
+.B imaginary j, imgj \fI(on, off*)\fP
+Use 'j' (instead of 'i') as default symbol for the imaginary unit.
+.PP
+.TP 8
+.B input base, inbase \fI(-1114112 - 1114112, bin, oct, dec*, hex, roman)\fP
+.PP
+.TP 8
+.B limit implicit multiplication, limimpl \fI(on, off*)\fP
+.PP
+.TP 8
+.B parsing mode, parse \fI(0* = adaptive, 1 = implicit first, 2 = conventional)\fP
+.PP
+.TP 8
+.B read precision, readprec \fI(0* = off, 1 = always, 2 = when decimals)\fP
+If activated, numbers be interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005).
+rpn syntax, rpnsyn
+.PP
+Units
+.PP
+.TP 8
+.B all prefixes, allpref \fI(on, off*)\fP
+Enables automatic use of hecto, deca, deci, and centi.
+.PP
+.TP 8
+.B autoconversion, conv \fI(none, optimal*, base, optimalsi, mixed)\fP
+Controls automatic unit conversion of the result. 'optimalsi' always converts non-SI units, while 'optimal' only converts to more optimal unit
+expressions, with less units and exponents.
+.PP
+.TP 8
+.B binary prefixes, binpref \fI(on, off*)\fP
+If activated, binary prefixes are used by default for information units.
+.PP
+.TP 8
+.B currency conversion, curconv \fI(on*, off)\fP
+Enables automatic conversion to the local currency when optimal unit conversion is enabled.
+.PP
+.TP 8
+.B denominator prefixes, denpref \fI(on*, off)\fP
+Enables automatic use of prefixes in the denominator of unit expressions.
+.PP
+.TP 8
+.B place units separately, unitsep \fI(on*, off)\fP
+If activated, units are separated from variables at the end of the result.
+.PP
+.TP 8
+.B prefixes, pref \fI(on*, off)\fP
+Enables automatic use of prefixes in the result.
+.PP
+.TP 8
+.B show negative exponents, negexp \fI(on, off*)\fP
+Use negative exponents instead of division for units in result (m/s = m*s^-1).
+.PP
+.TP 8
+.B sync units, sync \fI(on*, off)\fP
+.PP
+.TP 8
+.B update exchange rates, upxrates \fI(-1 = ask*, 0 = never, > 0 = days)\fP
+.PP
+Other
+.PP
+.TP 8
+.B ignore locale \fI(yes, no*)\fP
+Ignore system language and use English (requires restart).
+.PP
+.TP 8
+.B rpn \fI(on, off*)\fP
+Activates the Reverse Polish Notation stack.
+.PP
+.TP 8
+.B save definitions \fI(yes*, no)\fP
+Save functions, units, and variables on exit.
+.PP
+.TP 8
+.B save mode \fI(yes*, no)\fP
+Save settings on exit.
+.SH "SYNTAX"
+Mathematical entities:
+.RS
+.PP
+.B Numbers
+.br
+These are the regular numbers composed by digits 0-9 and a decimal sign — a dot, or a comma if it is the default decimal point in the locale/language used. If comma is used as decimal sign, the dot is still kept as an alternative decimal sign, if not explicitely deactivated. Numbers include integers, real numbers, and complex numbers. The imaginary part of complex numbers are written with as regular number followed by the special variable "i" (can be changed to a "j"), which represents the square root of -1. Spaces between digits are ignored ("5  5 = 55"). "E" (or "e") can be considered as a shortcut for writing many zeroes and is equivalent to multiplication by 10 raised to the power of the right-hand value (e.g. "5E3 = 5000"). Sexagesimal numbers (and time) can be entered directly using colons (e.g. "5:30 = 5.5"). A number immediately preceeded "0b", "0o", "0d" or "0x" are interpreted as a number with base 2, 8, 12 or 16, respectively (e.g. "0x3f = 63").
+.PP
+.B Intervals
+.br
+A number interval can be entered using the interval() function, the uncertainty() function, or using "±" or "+/-" (e.g. 5±1 = uncertainty(5, 0.2) = interval(4, 6)). If the read precision option is activated, decimal numbers are interpreted as an interval between the numbers that are normally rounded to the entered number (e.g. 1.1 = 1.1±0.05). If interval calculation using variance formula is activated (default), the interval represents the standard uncertainty (deviation) of the value.
+.PP
+.B Vectors and Matrices
+.br
+A matrix is a two-dimensional rectangular array of mathematical objects. Vectors are matrices with only one row or column, and thus one-dimensional sequences of objects. Vectors and matrices are generated by various functions, or using syntax in the form of [1, 2, 3, 4] and [[1, 2], [3, 4]].
+.PP
+.B Variables/Constants
+.br
+See the list of variables in the GUI manual or using the command .I list variables
+.PP
+.B Functions
+.br
+See the list of functions in the GUI manual or using the command .I list functions
+.PP
+.B Units and Prefixes
+.br
+See the list of units and prefixes in the GUI manual or using the command .I list units.
+Abbreviated, plural and singular forms of unit names and prefixes are generally allowed. Prefixes must be put immediately before the unit to be interpreted as prefixes (eg. 5 mm = 0.005 m, but 5 m m = 5 m^2). For convenience units allow the power operator to be left out (e.g. 5 m2 = 5 m^2), with currencies excluded.
+.PP
+.B Unknowns
+.br
+Unknowns are text strings without any associated value. These are temporary unknown variables with default assumptions. Unknowns can also be explicitly entered by placing a backslash (\\) before a single character (e.g. 5\\a + 2\\b) or using quotation mark before and after a text string (e.g. 5 "apples" + 2 "bananas"). If unknowns are activated characters without any associated variable, function or unit in an expression, will be regarded as an unknown variable.
+.PP
+.B Date and Time
+.br
+Date/time values are specified using quoted text string (quotation marks are not needed for function arguments), using standard date and time format (YYYY-MM-DDTHH:MM:SS). Some local formats are also supported, but not recommended. The local time zone are used, unless a time zone is specified at the end of the time string (Z/UTC/GMT or +/-HH:MM). Date/time supports a small subset of arithmetic operations. The time units represents calender time, instead of average values, when added or subtracted to a date.
+.PP
+.B Text
+.br
+This category represent a number of different function argument types, such as regular text and file names. They can, but do not need to be put in quotes except when containing the argument separator.
+.PP
+.B Comments
+.br
+All text after a hashtag (e.g. (5*2)/2 #calculating triangle area) is treated as a comment, which are added to the history.
+.RE
+.PP
+Operations and operators (word operators such as AND must be surrounded by space):
+.RS
+.PP
+.B Addition (+)
+.PP
+.B Subtraction (-)
+.PP 
+.B Multiplication (*)
+.PP
+.B Division (/)
+.PP
+.B Modulo (%, mod)
+.br
+Returns the remainder after division.
+.PP
+.B Integer Division (//, div)
+.br
+Rounds the result of division towards zero.
+.PP
+.B Exponentiation (^, **)
+.br
+Note that x^y^z equals x^(y^z), and not (x^y)^z. Note also that for non-integer exponents with negative bases, the principal root is returned and not the real root ((-8)^(1/3) equals 1 + 1.73i, and not -2). To calculate the real root for negative values, use the cbrt() and root() functions.
+.PP
+.B 10^x (E)
+.PP
+.B Parenthesis ((, ))
+.PP
+.B Logical operators (!, ||, OR, &&, AND)
+.br
+Primarily used in conjunction with comparisons.
+.PP
+.B Bitwise operators (~, |, &, <<, >>, XOR)
+.PP
+.B Comparison operators (=, !=, <, <=, >, >=)
+.br
+Returns 1 if expression is true and 0 if false. The x variable is isolated if the expression does not evaluate as true or false. Primarily used for equations and inequalities.
+.RE
+.PP
+.B Evaluation priority order:
+parenthesis, 10^x, exponentiation, functions, bitwise NOT, logical NOT, multiplication/division/modulo, addition/subtraction, bitwise NOT, bitwise shift, comparisons, bitwise AND, bitwise XOR, bitwise OR, logical AND, logical OR.
+.PP
+The evaluation of \fIshort/implicit multiplication\fP without any multiplication sign (e.g. 5x, 5(2+3)), differs depending on the parsing mode. In the \fIconventional mode\fP implicit multiplication does not differ from explicit multiplication (12/2(1+2) = 12/2*3 = 18, 5x/5y = 5 * x/5 * y = xy). In the parse \fIimplicit multiplication first\fP mode, implicit multiplication is parsed before explicit multiplication (12/2(1+2) = 12/(2 * 3) = 2, 5x/5y = (5 * x)/(5 * y) = x/y). The default \fIadaptive mode\fP works as the parse implicit multiplication first mode, unless spaces are found (1/5x = 1/(5 * x), but 1/5 x = (1/5) * x). In the adaptive mode unit expressions are parsed separately (5 m/5 m/s = (5 * m)/(5 * (m/s)) = 1 s). Function arguments without parentheses are an exception, where implicit multiplication in front of variables and units is parsed first regardless of mode (sqrt 2x = sqrt(2x)).
+.PP
+The \fI"to"-operator\fP is used for unit conversion and manipulation of how the result is presented. Place " to " or a right arrow (e.g. "->") followed by one of expressions/commands the below, at the end of an expression.
+.PP
+.TP 8
+.B Unit conversion
+- a unit or unit expression (e.g. meter or km/h)
+.br
+prepend with ? to request the optimal prefix
+.br
+prepend with b? to request the optimal binary prefix
+.br
+prepend with + or - to force/disable use of mixed units
+.br
+- a variable or physical constant (e.g. c)
+.br
+- base (convert to base units)
+.br
+- optimal (convert to optimal unit)
+.br
+- mixed (convert to mixed units, e.g. hours + minutes)
+.PP
+.TP 8
+.B Number base conversion
+- bin, binary (show as binary number)
+.br
+- bin# (show as binary number with specified number of bits)
+.br
+- oct, octal (show as octal number)
+.br
+- duo, duodecimal (show as duodecimal number)
+.br
+- hex, hexadecimal (show as hexadecimal number)
+.br
+- hex# (show as hexadecimal number with specified number of bits)
+.br
+- sex, sexagesimal (show as sexagesimal number)
+.br
+- bijective (shown in bijective base-26)
+.br
+- fp16, fp32, fp64, fp80, fp128 (show in binary floating-point format)
+.br
+- roman (show as roman numerals)
+.br
+- time (show in time format)
+.br
+- unicode
+.br
+- base # (show in specified number base)
+.br
+- bases (show as binary, octal, decimal and hexadecimal number)
+.br
+.PP
+.TP 8
+.B Complex format
+- rectangular, cartesian (show complex numbers in rectangular form)
+.br
+- exponential (show complex numbers in exponential form)
+.br
+- polar (show complex numbers in polar form)
+.br
+- cis (show complex numbers in cis form)
+.br
+- angle, phasor (show complex numbers in angle/phasor notation)
+.PP
+.TP 8
+.B Time and date conversion
+- UTC (show date and time in UTC time zone)
+.br
+- UTC+/-hh[:mm] (show date and time in specified time zone)
+.br
+- calendars
+.PP
+.TP 8
+.B Other conversion commands
+- fraction (show result as mixed fraction)
+.br
+- factors (factorize result)
+.SH EXAMPLES
+.B Basic functions and operators
+.PP
+.TP 8
+sqrt(4)
+= 4^(0.5)
+.br
+= 4^(1/2)
+.br
+= 2
+.PP
+.TP 8
+sqrt(32)
+= 4 * √(2) \fI(in exact mode)\fP
+.PP
+.TP 8
+cbrt(27)
+= root(27, 3)
+.br
+= 27^(1/3)
+.br
+= 3
+.PP
+.TP 8
+cbrt(-27)
+= -3 \fI(real root)\fP
+.PP
+.TP 8
+(-27)^(1/3)
+= 1.5 + 2.5980762i \fI(principal root)\fP
+.PP
+.TP 8
+log2(4)
+= log(4, 2)
+.br
+= 2
+.PP
+.TP 8
+log10(100)
+= log(100, 10)
+.br
+= 2
+.PP
+.TP 8
+ln(25)
+= log(25, e)
+.br
+= 3.2188758
+.PP
+.TP 8
+5!
+= 1 * 2 * 3 * 4 * 5
+.br
+= 120
+.PP
+.TP 8
+5\\2
+= 5//2
+.br
+= trunc(5/2)
+.br
+= 2
+.PP
+.TP 8
+5 mod 3
+= mod(5, 3)
+.br
+= 2
+.PP
+.TP 8
+52 to factors
+= 2^2 * 13
+.PP
+.TP 8
+25/4 * 3/5 to fraction
+= 3 + 3/4
+.PP
+.TP 8
+gcd(63, 27)
+= 9
+.PP
+.TP 8
+sin(pi/2)
+= 1
+.PP
+.TP 8
+sum(x, 1, 5)
+= 1 + 2 + 3 + 4 + 5 = 15
+.PP
+.TP 8
+sum(\i^2+sin(\i), 1, 5, \i)
+= 1^2 + sin(1) + 2^2 + sin(2) + ... = 55.176162
+.PP
+.TP 8
+product(x, 1, 5)
+= 1 * 2 * 3 * 4 * 5 = 120
+.PP
+.TP 8
+var1:=5
+store value 5 in variable var1
+.PP
+.TP 8
+5^2 #this is a comment
+= 25
+.PP
+.TP 8
+sinh(0.5) where sinh()=cosh()
+= cosh(0.5) = 1.1276260
+.PP
+.B Units
+.PP
+.TP 8
+5 dm3 to L
+= 5 L
+.PP
+.TP 8
+20 miles / 2h to km/h
+= 16.09344 km/h
+.PP
+.TP 8
+1.74 to ft = 1.74 m to ft
+= 5 ft + 8.5039370 in
+.PP
+.TP 8
+1.74 m to -ft
+= 5.7086614 ft
+.PP
+.TP 8
+5 J * 523 s * 15 mph
+= 17.535144 kJ*m
+.PP
+.TP 8
+5 J * 523 s * 15 mph to base
+= 17535.144 kg*m^3/s^2
+.PP
+.TP 8
+5 m/s to s/m
+= 0.2 s/m
+.PP
+.TP 8
+500 EUR to USD
+= 566.25
+.PP
+.B Physical constants
+.PP
+.TP 8
+k_e / G * a_0
+= (coulombs_constant / newtonian_constant) * bohr_radius 
+.br
+= 7.126e9 kg·H·m^-1
+.PP
+.TP 8
+5 ns * rydberg to c
+= 6.0793194E-8c
+.PP
+.TP 8
+atom(Hg, weight) + atom(C, weight) * 4 to g
+= 4.129e-22 g
+.PP
+.B Uncertainty and interval arithmetic
+.br
+.I result with interval arithmetic activated is shown in parenthesis
+.PP
+.TP 8
+sin(5+/-0.2)^2/2+/-0.3
+= 0.460±0.088 (0.46+/-0.12)
+.PP
+.TP 8
+(2+/-0.02 J)/(523+/-5 W)
+= 3.824+/-0.053 ms (3.82+/-±0.075 ms)
+.PP
+.TP 8
+interval(-2, 5)^2
+= intervall(-8.2500000, 12.750000) (intervall(0, 25))
+.PP
+.B Algebra
+.PP
+.TP 8
+(5x^2 + 2)/(x - 3)
+= 5x + 15 + 47/(x - 3)
+.PP
+.TP 8
+(\\a + \\b)(\\a - \\b) = ("a" + "b")("a" - "b")
+= 'a'^2 - 'b'^2
+.PP
+.TP 8
+(x + 2)(x - 3)^ 
+= x^4 - 7x^3 + 9x^2 + 27x - 54
+.PP
+.TP 8
+cos(x)+3y^2 where x=pi and y=2
+= 11
+.PP
+.TP 8
+factorize x^4 - 7x^3 + 9x^2 + 27x - 54
+= x^4 - 7x^3 + 9x^2 + 27x - 54 to factors
+.br
+= (x + 2)(x - 3)^3
+.PP
+.TP 8
+gcd(25x, 5x^2)
+= 5x
+.PP
+.TP 8
+1/(x^2+2x-3) to partial fraction
+= 1/(4x - 4) - 1/(4x + 12)
+.PP
+.TP 8
+x+x^2+4 = 16
+x = 3 or x = -4
+.PP
+.TP 8
+x^3 = 27 m^3 where x>0
+x = 3 m
+.PP
+.TP 8
+cylinder(20cm, x) = 20L \fI(calculates the height of a 20 L cylinder with radius of 20 cm)\fP
+x = (1 / (2π)) m
+.br
+x = 16 cm
+.PP
+.TP 8
+asin(sqrt(x)) = 0.2
+x = sin(0.2)^2
+.br
+x = 0.039469503
+.PP
+.TP 8
+x^2 > 25x
+= x > 25 or x < 0
+.PP
+.TP 8
+solve2(5x=2y^2, sqrt(y)=2, x, y)
+= 32/5
+.PP
+.TP 8
+multisolve([5x=2y+32, y=2z, z=2x], [x, y, z])
+= [-32/3, -128/3, -64/3]
+.PP
+.B Calculus
+.PP
+.TP 8
+diff(6x^2)
+= 12x
+.PP
+.TP 8
+diff(sinh(x^2)/(5x) + 3xy/sqrt(x))
+= (2/5) * cosh(x^2) - sinh(x^2)/(5x^2) + (3y)/(2 * √(x))
+.PP
+.TP 8
+integrate(6x^2)
+= 2x^3 + C
+.PP
+.TP 8
+integrate(6x^2, 1, 5)
+= 248
+.PP
+.TP 8
+integrate(sinh(x^2)/(5x) + 3xy/sqrt(x))
+= 2x * √(x) * y + Shi(x^2) / 10 + C
+.PP
+.TP 8
+integrate(sinh(x^2)/(5x) + 3xy/sqrt(x), 1, 2)
+= 3.6568542y + 0.87600760
+.PP
+.B Time and date
+.PP
+.TP 8
+10:31 + 8:30 to time
+= 19:01
+.PP
+.TP 8
+10h 31min + 8h 30min to time
+= 19:01
+.PP
+.TP 8
+now to utc
+= "2020-07-10T07:50:40Z"
+.PP
+.TP 8
+"2020-07-10T07:50CET" to utc+8
+= "2020-07-10T14:50:00+08:00"
+.PP
+.TP 8
+"2020-05-20" + 523d
+= addDays(2020-05-20, 523)
+.br
+= "2021-10-25"
+.PP
+.TP 8
+today - 5 days
+= "2020-07-05"
+.PP
+.TP 8
+"2020-10-05" - today
+= days(today, 2020-10-05)
+.br
+= 87
+.PP
+.TP 8
+timestamp(2020-05-20)
+= 1 589 925 600
+.PP
+.TP 8
+stamptodate(1 589 925 600)
+= "2020-05-20T00:00:00"
+.PP
+.TP 8
+"2020-05-20" to calendars
+returns date in Hebrew, Islamic, Persian, Indian, Chinese, Julian, Coptic, and Ethiopian calendars
+.PP
+.B Number bases
+.PP
+.TP 8
+52 to bin
+= 0011 0100
+.PP
+.TP 8
+52 to bin16
+= 0000 0000 0011 0100
+.PP
+.TP 8
+52 to oct
+= 064
+.PP
+.TP 8
+52 to hex
+= 0x34
+.PP
+.TP 8
+0x34
+= hex(34)
+.br
+= base(34, 16) 
+.br
+= 52
+.PP
+.TP 8
+523<<2&250 to bin
+= 0010 1000
+.PP
+.TP 8
+52.345 to float
+= 0100 0010 0101 0001 0110 0001 0100 1000
+.PP
+.TP 8
+float(01000010010100010110000101001000)
+= 1715241/32768
+.br
+= 52.345001
+.PP
+.TP 8
+flaotError(52.345)
+= 1.2207031e-6
+.PP
+.TP 8
+52.34 to sexa
+= 52°20'24"
+.PP
+.TP 8
+1978 to roman
+= MCMLXXVIII
+.PP
+.TP 8
+52 to base 32
+= 1K
+.PP
+.TP 8
+sqrt(32) to base sqrt(2)
+= 100000
 .SH "SEE ALSO"
 The manual of the graphical user interface at
 .I https://qalculate.github.io/manual/index.html
-(describes the syntax and elements supported in mathematical expressions, and
+(includes more details about the syntax and elements supported in mathematical expressions, and various options, and
 includes a complete list of functions, variables and units)
 .SH BUGS
 Please report any bugs at 

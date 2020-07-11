@@ -99,11 +99,9 @@ Other software using libqalculate include
    * Several customization options
 * and more...
 
-## Examples
+## Examples (expressions)
 
-### Arithmetics
-
-5^2 _= 25_
+### Basic functions and operators
 
 sqrt(4) = 4^(0.5) = 4^(1/2) _= 2_
 
@@ -123,12 +121,6 @@ ln(25) = log(25, e) _≈ 3.2188758_
 
 5! _= 1 × 2 × 3 × 4 × 5 = 120_
 
-sum(x, 1, 5) _= 1 + 2 + 3 + 4 + 5 = 15_
-
-sum(\i^2+sin(\i), 1, 5, \i) _= 1^2 + sin(1) + 2^2 + sin(2) + ... ≈ 55.176162_
-
-product(x, 1, 5) _= 1 × 2 × 3 × 4 × 5 = 120_
-
 5\2 = 5//2 = trunc(5 / 2) _= 2_
 
 5 mod 3 = mod(5, 3) _= 2_
@@ -139,7 +131,24 @@ product(x, 1, 5) _= 1 × 2 × 3 × 4 × 5 = 120_
 
 gcd(63, 27) _= 9_
 
+sin(pi/2) _= 1_
+
+sum(x, 1, 5) _= 1 + 2 + 3 + 4 + 5 = 15_
+
+sum(\i^2+sin(\i), 1, 5, \i) _= 1^2 + sin(1) + 2^2 + sin(2) + ... ≈ 55.176162_
+
+product(x, 1, 5) _= 1 × 2 × 3 × 4 × 5 = 120_
+
+var1:=5
+var1 × 2 _= 10_
+
+5^2 #this is a comment _= 25_
+
+sinh(0.5) where sinh()=cosh() _= cosh(0.5) ≈ 1.1276260_
+
 ### Units
+
+5 dm3 to L _= 5 L_
 
 20 miles / 2h to km/h _= 16.09344 km/h_
 
@@ -149,7 +158,7 @@ gcd(63, 27) _= 9_
 
 5 J × 523 s × 15 mph _= 17.535144 kJ·m_
 
-5 J × 523 s × 15 mph to base _= 17.535144 Mg·m^3/s^2_
+5 J × 523 s × 15 mph to base _= 17535.144 kg·m³/s²_
 
 5 m/s to s/m _= 0.2 s/m_
 
@@ -157,16 +166,17 @@ gcd(63, 27) _= 9_
 
 ### Physical constants
 
-k_e / G × a_0 = (coulombs_constant / newtonian_constant) × bohr_radius _≈ 7.126e9 kg·H·m^−1_
+k\_e / G × a\_0 = (coulombs\_constant / newtonian\_constant) × bohr\_radius _≈ 7.126e9 kg·H·m^−1_
 
 5 ns × rydberg to c _≈ 6.0793194E-8c_
 
+atom(Hg, weight) + atom(C, weight) × 4 to g _≈ 4.129e-22 g_
+
 ### Uncertainty and interval arithmetic
 
-_"±" can be replaced with "+/-"_
-_result with interval arithmetic activated is shown in parenthesis_
+_"±" can be replaced with "+/-"; result with interval arithmetic activated is shown in parenthesis_
 
-sin(5±0.2)^2/2±0.3 _≈ 0.460±0.088 _(0.46±0.12)_
+sin(5±0.2)^2/2±0.3 _≈ 0.460±0.088 (0.46±0.12)_
 
 (2±0.02 J)/(523±5 W) _≈ 3.824±0.053 ms (3.825±0.075 ms)_
 
@@ -174,11 +184,13 @@ interval(−2, 5)^2 _≈ intervall(−8.2500000, 12.750000) (intervall(0, 25))_
 
 ### Algebra
 
-(5x^2 + 2)/(x − 3) _= 5x + 15 + 47∕(x − 3)_
+(5x^2 + 2)/(x − 3) _= 5x + 15 + 47/(x − 3)_
 
 (\a + \b)(\a − \b) = ("a" + "b")("a" − "b") = _'a'^2 − 'b'^2_
 
 (x + 2)(x − 3)^3 _= x^4 − 7x^3 + 9x^2 + 27x − 54_
+
+cos(x)+3y^2 where x=pi and y=2 _= 11_
 
 factorize x^4 − 7x^3 + 9x^2 + 27x − 54 = x^4 − 7x^3 + 9x^2 + 27x − 54 to factors _= (x + 2)(x − 3)^3_
 
@@ -187,35 +199,39 @@ gcd(25x, 5x^2) _= 5x_
 1/(x^2+2x−3) to partial fraction _= 1/(4x − 4) − 1/(4x + 12)_
 
 x+x^2+4 = 16
-_= x = 3 eller x = −4_
+_= x = 3 or x = −4_
+
+x^3 = 27 m^3 where x>0
+_= x = 3 m_
 
 cylinder(20cm, x) = 20L (calculates the height of a 20 L cylinder with radius of 20 cm)
-_= x = (1 ∕ (2π)) m_
+_= x = (1 / (2π)) m_
 _= x ≈ 16 cm_
 
 asin(sqrt(x)) = 0.2
 _= x = sin(0.2)^2_
 _= x ≈ 0.039469503_
 
+x^2 > 25x
+_= x > 25 or x < 0_
+
 solve2(5x=2y^2, sqrt(y)=2, x, y) _= 32/5_
 
-multisolve(\[5x=2y+32, y=2z, z=2x\], \[x, y, z\]) _= \[−32∕3, −128∕3, −64/3\]_
-
+multisolve(\[5x=2y+32, y=2z, z=2x\], \[x, y, z\]) _= \[−32/3, −128/3, −64/3\]_
 
 ### Calculus
 
 diff(6x^2) _= 12x_
 
-diff(sinh(x^2)/(5x) + 3xy/sqrt(x)) _= (2∕5) × cosh(x^2) − sinh(x^2)∕(5x^2) + (3y)∕(2 × √(x))_
+diff(sinh(x^2)/(5x) + 3xy/sqrt(x)) _= (2/5) × cosh(x^2) − sinh(x^2)/(5x^2) + (3y)/(2 × √(x))_
 
 integrate(6x^2) _= 2x^3 + C_
 
 integrate(6x^2, 1, 5) _= 248_
 
-integrate(sinh(x^2)/(5x) + 3xy/sqrt(x)) _= 2x × √(x) × y + Shi(x^2) ∕ 10 + C_
+integrate(sinh(x^2)/(5x) + 3xy/sqrt(x)) _= 2x × √(x) × y + Shi(x^2) / 10 + C_
 
 integrate(sinh(x^2)/(5x) + 3xy/sqrt(x), 1, 2) _≈ 3.6568542y + 0.87600760_
-
 
 ### Time and date
 
@@ -227,26 +243,17 @@ now to utc _= "2020-07-10T07:50:40Z"_
 
 "2020-07-10T07:50CET" to utc+8 _= "2020-07-10T14:50:00+08:00"_
 
-"2020−05−20" + 523d _= "2021-10-25"_
-
-addDays(2020-05-20, 523) _= "2021-10-25"_
+"2020−05−20" + 523d = addDays(2020-05-20, 523) _= "2021-10-25"_
 
 today − 5 days _= "2020-07-05"_
 
-"2020-10-05" − today _= 87 d_
-
-days(today, 2020-10-05) _= 87_
+"2020-10-05" − today = days(today, 2020-10-05) _= 87 d_
 
 timestamp(2020−05−20) _= 1 589 925 600_
 
 stamptodate(1 589 925 600) _= "2020−05−20T00:00:00"_
 
 "2020-05-20" to calendars _(returns date in Hebrew, Islamic, Persian, Indian, Chinese, Julian, Coptic, and Ethiopian calendars)_
-
-Time units:
-https://qalculate.github.io/manual/qalculate-definitions-units.html#qalculate-definitions-units-1-Time
-Data and time functions:
-https://qalculate.github.io/manual/qalculate-definitions-functions.html#qalculate-definitions-functions-1-Date--Time
 
 ### Number bases
 
@@ -280,4 +287,6 @@ sqrt(32) to base sqrt(2) _≈ 100000_
 
 code(Ø) to hex _= 0xD8_
 
+
+_For more details about the syntax, and available functions, units, and variables, please consult the manual (https://qalculate.github.io/manual/)_
 
