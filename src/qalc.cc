@@ -1762,7 +1762,11 @@ int main(int argc, char *argv[]) {
 			puts("");
 			FPUTS_UNICODE(_("The program will start in interactive mode if no expression and no file is specified (or interactive mode is explicitly selected)."), stdout); fputs(" ", stdout); PUTS_UNICODE(_("Type help in interactive mode for information about available commands."));
 			puts("");
-			PUTS_UNICODE(_("For more information about mathematical expression, different options, and a complete list of functions, variables and units, see the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html)."));
+#ifdef _WIN32
+			PUTS_UNICODE(_("For more information about mathematical expression and different options, and a complete list of functions, variables and units, see the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html)."));
+#else
+			PUTS_UNICODE(_("For more information about mathematical expression and different options, please consult the man page, or the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html), which also includes a complete list of functions, variables and units."));
+#endif
 			puts("");
 			return 0;
 		} else if(!calc_arg_begun && strcmp(argv[i], "-u8") == 0) {
@@ -3094,7 +3098,6 @@ int main(int argc, char *argv[]) {
 				default: {str += "*"; break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("show negative exponents"), "negexp"); str += b2oo(printops.negative_exponents, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("short multiplication"), "shortmul"); str += b2oo(printops.short_multiplication, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("spacious"), "space"); str += b2oo(printops.spacious, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("spell out logical"), "spellout"); str += b2oo(printops.spell_out_logical_operators, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -3272,6 +3275,7 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("denominator prefixes"), "denpref"); str += b2oo(printops.use_denominator_prefix, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("place units separately"), "unitsep"); str += b2oo(printops.place_units_separately, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("prefixes"), "pref"); str += b2oo(printops.use_unit_prefixes, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("show negative exponents"), "negexp"); str += b2oo(printops.negative_exponents, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("sync units"), "sync"); str += b2oo(evalops.sync_units, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("update exchange rates"), "upxrates");
 			switch(auto_update_exchange_rates) {
@@ -3334,7 +3338,11 @@ int main(int argc, char *argv[]) {
 			CHECK_IF_SCREEN_FILLED_PUTS(_("Type info NAME for information about a function, variable or unit (example: info sin)."));
 			CHECK_IF_SCREEN_FILLED_PUTS(_("When a line begins with '/', the following text is always interpreted as a command."));
 			CHECK_IF_SCREEN_FILLED_PUTS("");
-			CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about mathematical expression, different options, and a complete list of functions, variables and units, see the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html)."));
+#ifdef _WIN32
+			CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about mathematical expression and different options, and a complete list of functions, variables and units, see the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html)."));
+#else
+			CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about mathematical expression and different options, please consult the man page, or the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html), which also includes a complete list of functions, variables and units."));
+#endif
 			puts("");
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "list", _("list"))) {
@@ -3808,7 +3816,6 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("excessive parentheses"), "expar", "", printops.excessive_parenthesis);
 				STR_AND_TABS_BOOL(_("minus last"), "minlast", _("Always place negative values last."), printops.sort_options.minus_last);
 				STR_AND_TABS_3(_("multiplication sign"), "mulsign", "", printops.multiplication_sign, "*", SIGN_MULTIDOT, SIGN_MULTIPLICATION, SIGN_MIDDLEDOT);
-				STR_AND_TABS_BOOL(_("show negative exponents"), "negexp", _("Use negative exponents instead of division for units in result (m/s = m*s^-1)."), printops.negative_exponents);
 				STR_AND_TABS_BOOL(_("short multiplication"), "shortmul", "", printops.short_multiplication);
 				STR_AND_TABS_BOOL(_("spacious"), "space", _("Add extra space around operators."), printops.spacious);
 				STR_AND_TABS_BOOL(_("spell out logical"), "spellout", "", printops.spell_out_logical_operators);
@@ -3865,31 +3872,31 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_SET(_("max decimals"), "maxdeci");
 				str += "(";
 				str += _("off");
-				if(printops.max_decimals < 0) str += "*";
+				if(printops.max_decimals < 0 || !printops.use_max_decimals) str += "*";
 				str += ", >= 0)";
-				if(printops.max_decimals >= 0) {str += " "; str += i2s(printops.max_decimals); str += "*";}
+				if(printops.max_decimals >= 0 && printops.use_max_decimals) {str += " "; str += i2s(printops.max_decimals); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_SET(_("min decimals"), "mindeci");
 				str += "(";
 				str += _("off");
-				if(printops.min_decimals < 0) str += "*";
+				if(printops.min_decimals < 0 || !printops.use_min_decimals) str += "*";
 				str += ", >= 0)";
-				if(printops.min_decimals >= 0) {str += " "; str += i2s(printops.min_decimals); str += "*";}
+				if(printops.min_decimals >= 0 && printops.use_min_decimals) {str += " "; str += i2s(printops.min_decimals); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("repeating decimals"), "repdeci", _("If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'."), printops.indicate_infinite_series);
 				STR_AND_TABS_BOOL(_("round to even"), "rndeven", _("Determines whether halfway numbers are rounded upwards or towards the nearest even integer."), printops.round_halfway_to_even);
 				STR_AND_TABS_SET(_("scientific notation"), "exp");
 				SET_DESCRIPTION(_("Determines how scientific notation are used (e.g. 5 543 000 = 5.543E6)."));
-				str += "(";
+				str += "(0 = ";
 				str += _("off");
 				if(printops.min_exp == EXP_NONE) str += "*";
-				str += ", "; str += _("auto");
+				str += ", -1 = "; str += _("auto");
 				if(printops.min_exp == EXP_PRECISION) str += "*";
-				str += ", "; str += _("engineering");
+				str += ", -3 = "; str += _("engineering");
 				if(printops.min_exp == EXP_BASE_3) str += "*";
-				str += ", "; str += _("pure");
+				str += ", 1 = "; str += _("pure");
 				if(printops.min_exp == EXP_PURE) str += "*";
-				str += ", "; str += _("scientific");
+				str += ", 3 = "; str += _("scientific");
 				if(printops.min_exp == EXP_SCIENTIFIC) str += "*";
 				str += ", >= 0)";
 				if(printops.min_exp != EXP_NONE && printops.min_exp != EXP_NONE && printops.min_exp != EXP_PRECISION && printops.min_exp != EXP_BASE_3 && printops.min_exp != EXP_PURE && printops.min_exp != EXP_SCIENTIFIC) {str += " "; str += i2s(printops.min_exp); str += "*";}
@@ -3966,6 +3973,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("denominator prefixes"), "denpref", _("Enables automatic use of prefixes in the denominator of unit expressions."), printops.use_denominator_prefix);
 				STR_AND_TABS_BOOL(_("place units separately"), "unitsep", _("If activated, units are separated from variables at the end of the result."), printops.place_units_separately);
 				STR_AND_TABS_BOOL(_("prefixes"), "pref", _("Enables automatic use of prefixes in the result."), printops.use_unit_prefixes);
+				STR_AND_TABS_BOOL(_("show negative exponents"), "negexp", _("Use negative exponents instead of division for units in result (m/s = m*s^-1)."), printops.negative_exponents);
 				STR_AND_TABS_BOOL(_("sync units"), "sync", "", evalops.sync_units);
 				STR_AND_TABS_SET(_("update exchange rates"), "upxrates");
 				str += "(-1 = "; str += _("ask"); if(auto_update_exchange_rates < 0) str += "*";
