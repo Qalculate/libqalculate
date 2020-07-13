@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-11 19:13+0200\n"
+"POT-Creation-Date: 2020-07-12 06:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -730,7 +730,7 @@ msgid "simplify"
 msgstr ""
 
 #: ../src/qalc.cc:989 ../src/qalc.cc:2991 ../src/qalc.cc:3007
-#: ../src/qalc.cc:3323 ../src/qalc.cc:3736 ../src/qalc.cc:3759
+#: ../src/qalc.cc:3309 ../src/qalc.cc:3736 ../src/qalc.cc:3759
 #: ../src/qalc.cc:5030 ../libqalculate/Calculator-calculate.cc:904
 msgid "expand"
 msgstr ""
@@ -744,12 +744,12 @@ msgstr ""
 msgid "ignore locale"
 msgstr ""
 
-#: ../src/qalc.cc:1032 ../src/qalc.cc:3293 ../src/qalc.cc:3321
+#: ../src/qalc.cc:1032 ../src/qalc.cc:3293 ../src/qalc.cc:3322
 #: ../src/qalc.cc:3991
 msgid "save mode"
 msgstr ""
 
-#: ../src/qalc.cc:1041 ../src/qalc.cc:3292 ../src/qalc.cc:3320
+#: ../src/qalc.cc:1041 ../src/qalc.cc:3292 ../src/qalc.cc:3321
 #: ../src/qalc.cc:3990
 msgid "save definitions"
 msgstr ""
@@ -1074,11 +1074,11 @@ msgid ""
 "conversion)"
 msgstr ""
 
-#: ../src/qalc.cc:1754 ../src/qalc.cc:3322
+#: ../src/qalc.cc:1754 ../src/qalc.cc:3323
 msgid "OPTION"
 msgstr ""
 
-#: ../src/qalc.cc:1754 ../src/qalc.cc:3322
+#: ../src/qalc.cc:1754 ../src/qalc.cc:3323
 msgid "VALUE"
 msgstr ""
 
@@ -1148,21 +1148,21 @@ msgid "Illegal character, '%c', in expression."
 msgstr ""
 
 #. The qalc command "set" as in "set precision 10". The original text string for commands is kept in addition to the translation.
-#: ../src/qalc.cc:2179 ../src/qalc.cc:3322 ../src/qalc.cc:3740
+#: ../src/qalc.cc:2179 ../src/qalc.cc:3323 ../src/qalc.cc:3740
 msgid "set"
 msgstr ""
 
 #. qalc command
-#: ../src/qalc.cc:2183 ../src/qalc.cc:3319 ../src/qalc.cc:4020
+#: ../src/qalc.cc:2183 ../src/qalc.cc:3320 ../src/qalc.cc:4020
 msgid "save"
 msgstr ""
 
-#: ../src/qalc.cc:2183 ../src/qalc.cc:3319 ../src/qalc.cc:4020
+#: ../src/qalc.cc:2183 ../src/qalc.cc:3320 ../src/qalc.cc:4020
 msgid "store"
 msgstr ""
 
 #. qalc command
-#: ../src/qalc.cc:2186 ../src/qalc.cc:2994 ../src/qalc.cc:3317
+#: ../src/qalc.cc:2186 ../src/qalc.cc:2994 ../src/qalc.cc:3318
 #: ../src/qalc.cc:4046
 msgid "mode"
 msgstr ""
@@ -1198,7 +1198,7 @@ msgid "variable"
 msgstr ""
 
 #. qalc command
-#: ../src/qalc.cc:2328 ../src/qalc.cc:3315 ../src/qalc.cc:4033
+#: ../src/qalc.cc:2328 ../src/qalc.cc:3316 ../src/qalc.cc:4033
 #: ../libqalculate/Function.cc:2178
 msgid "function"
 msgstr ""
@@ -1234,7 +1234,7 @@ msgid "stack"
 msgstr ""
 
 #. qalc command
-#: ../src/qalc.cc:2437 ../src/qalc.cc:3310 ../src/qalc.cc:4065
+#: ../src/qalc.cc:2437 ../src/qalc.cc:3311 ../src/qalc.cc:4065
 msgid "exrates"
 msgstr ""
 
@@ -1343,14 +1343,14 @@ msgid "factors"
 msgstr ""
 
 #. qalc command
-#: ../src/qalc.cc:2902 ../src/qalc.cc:2988 ../src/qalc.cc:3318
+#: ../src/qalc.cc:2902 ../src/qalc.cc:2988 ../src/qalc.cc:3319
 #: ../src/qalc.cc:3732 ../src/qalc.cc:4940
 #: ../libqalculate/Calculator-calculate.cc:830
 msgid "partial fraction"
 msgstr ""
 
 #. qalc command
-#: ../src/qalc.cc:2985 ../src/qalc.cc:3313 ../src/qalc.cc:3728
+#: ../src/qalc.cc:2985 ../src/qalc.cc:3314 ../src/qalc.cc:3728
 msgid "factor"
 msgstr ""
 
@@ -1411,38 +1411,38 @@ msgstr ""
 msgid "ASSUMPTIONS"
 msgstr ""
 
-#: ../src/qalc.cc:3307 ../src/qalc.cc:3314 ../src/qalc.cc:3315
-#: ../src/qalc.cc:3319 ../src/qalc.cc:3325
+#: ../src/qalc.cc:3307 ../src/qalc.cc:3315 ../src/qalc.cc:3316
+#: ../src/qalc.cc:3320 ../src/qalc.cc:3325
 msgid "NAME"
 msgstr ""
 
-#: ../src/qalc.cc:3314 ../src/qalc.cc:3350 ../src/qalc.cc:4050
+#: ../src/qalc.cc:3315 ../src/qalc.cc:3350 ../src/qalc.cc:4050
 msgid "find"
 msgstr ""
 
 #. qalc command
-#: ../src/qalc.cc:3314 ../src/qalc.cc:3348 ../src/qalc.cc:3350
+#: ../src/qalc.cc:3315 ../src/qalc.cc:3348 ../src/qalc.cc:3350
 #: ../src/qalc.cc:4050
 msgid "list"
 msgstr ""
 
-#: ../src/qalc.cc:3315 ../src/qalc.cc:3325
+#: ../src/qalc.cc:3316 ../src/qalc.cc:3325
 msgid "EXPRESSION"
 msgstr ""
 
 #. qalc command
-#: ../src/qalc.cc:3316 ../src/qalc.cc:3376 ../src/qalc.cc:4059
+#: ../src/qalc.cc:3317 ../src/qalc.cc:3376 ../src/qalc.cc:4059
 #: ../libqalculate/Calculator-definitions.cc:2917
 #: ../libqalculate/DataSet.cc:368 ../libqalculate/DataSet.cc:395
 #: ../libqalculate/DataSet.cc:1070
 msgid "info"
 msgstr ""
 
-#: ../src/qalc.cc:3319
+#: ../src/qalc.cc:3320
 msgid "CATEGORY"
 msgstr ""
 
-#: ../src/qalc.cc:3319
+#: ../src/qalc.cc:3320
 msgid "TITLE"
 msgstr ""
 
@@ -1968,7 +1968,9 @@ msgid "Equivalent to set approximation try exact."
 msgstr ""
 
 #: ../src/qalc.cc:4134
-msgid "Converts units or changes number base in current result."
+msgid ""
+"Converts the current result (equivalent to using \"to\" at the end of an "
+"expression)."
 msgstr ""
 
 #: ../src/qalc.cc:4136

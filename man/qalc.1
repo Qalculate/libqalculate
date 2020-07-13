@@ -1,4 +1,4 @@
-.TH QALC 1 "11 July 2020"
+.TH QALC 1 "13 July 2020"
 .SH NAME
 qalc \- Powerful and easy to use command line calculator
 .SH SYNOPSIS
@@ -134,6 +134,10 @@ Example: delete var1.
 Equivalent to set approximation exact.
 .PP
 .TP 8
+.B expand
+Expands the current result.
+.PP
+.TP 8
 .B exrates
 Downloads current exchange rates from the Internet.
 .PP
@@ -157,6 +161,9 @@ Example: find variables planck.
 Creates a function with the specified name and expression. Use '\\x', '\\y', '\\z', '\\a', etc. for arguments in the expression.
 .br
 Example: function func1 5*\\x.
+.PP
+.TP 8
+.B help \fI[command]\fP
 .PP
 .TP 8
 .B info
@@ -189,11 +196,11 @@ Example: store var1.
 .B set \fIoption value\fP
 .PP
 .TP 8
-.B expand
-Expands the current result.
-.PP
-.TP 8
-.B to, convert \fIunit/"to"-command\fP
+.B to, convert, -> \fIunit/"to"-command\fP
+Converts the previous result. Equivalent to using "to" at the end of an expression.
+Example: to m/s
+.br
+Example: to bin
 .PP
 .TP 8
 .B variable \fIname expression\fP
@@ -242,6 +249,8 @@ Rotates the RPN stack up (default) or down.
 Swaps position of values on the RPN stack. If no index is specified, the values on the top of the stack (index 1 and index 2) will be swapped and if only one index is specified, the value at this index will be swapped with the top value. Index 1 is the top of stack and negative index values counts from the bottom of the stack.
 .br
 Example: swap 2 4
+.PP
+When a line begins with '/', the text that follows is always interpreted as a command.
 .SH "SETTINGS"
 These settings are changed using the \fIset\fP command (e.g. set base 16) or the \fI\-s, \-\-set\fP command line option (e.g. qalc -s "base 16"). Possible values are shown in parenthesis. 1 and 0 can be used instead of on and off. If the value is left out, a value of 1 is generally assumed. The default value is marked with '*'.
 .PP
@@ -675,11 +684,17 @@ prepend with + or - to force/disable use of mixed units
 - fraction (show result as mixed fraction)
 .br
 - factors (factorize result)
+.PP
+Similarily \fIwhere\fP (or alternatively "/.") can be used at the end (but before "to"), for variable assignments, function replacements, etc. (e.g. "x+y where x=1 and y=2", "x^2=4 where x>0", and "sin(5) where sin()=cos()").
 .SH EXAMPLES
+Note that semicolon can be replaced with comma, if comma is not used as decimal or thousands separator.
+.PP
 .B Basic functions and operators
 .PP
 .TP 8
-sqrt(4)
+sqrt 4
+= sqrt(4)
+.br
 = 4^(0.5)
 .br
 = 4^(1/2)
@@ -687,19 +702,17 @@ sqrt(4)
 = 2
 .PP
 .TP 8
-sqrt(32)
-= 4 * √(2) \fI(in exact mode)\fP
+sqrt(25; 16; 9; 4)
+= [5; 4; 3; 2]
 .PP
 .TP 8
-cbrt(27)
-= root(27, 3)
-.br
-= 27^(1/3)
-.br
-= 3
+sqrt(32)
+= 4 * sqrt(2) \fI(in exact mode)\fP
 .PP
 .TP 8
 cbrt(-27)
+= root(-27; 3)
+.br
 = -3 \fI(real root)\fP
 .PP
 .TP 8
@@ -707,22 +720,16 @@ cbrt(-27)
 = 1.5 + 2.5980762i \fI(principal root)\fP
 .PP
 .TP 8
-log2(4)
-= log(4, 2)
-.br
-= 2
-.PP
-.TP 8
-log10(100)
-= log(100, 10)
-.br
-= 2
-.PP
-.TP 8
-ln(25)
-= log(25, e)
+ln 25
+= log(25; e)
 .br
 = 3.2188758
+.PP
+.TP 8
+log2(4)/log10(100)
+= log(4; 2)/log(100; 10)
+.br
+= 1
 .PP
 .TP 8
 5!
@@ -731,7 +738,7 @@ ln(25)
 = 120
 .PP
 .TP 8
-5\\2
+5\\2 \fI(integer division)\fP
 = 5//2
 .br
 = trunc(5/2)
@@ -740,7 +747,7 @@ ln(25)
 .PP
 .TP 8
 5 mod 3
-= mod(5, 3)
+= mod(5; 3)
 .br
 = 2
 .PP
@@ -753,23 +760,23 @@ ln(25)
 = 3 + 3/4
 .PP
 .TP 8
-gcd(63, 27)
+gcd(63; 27)
 = 9
 .PP
 .TP 8
-sin(pi/2)
-= 1
+sin(pi/2) - cos(pi)
+= 2
 .PP
 .TP 8
-sum(x, 1, 5)
+sum(x; 1; 5)
 = 1 + 2 + 3 + 4 + 5 = 15
 .PP
 .TP 8
-sum(\i^2+sin(\i), 1, 5, \i)
+sum(\i^2+sin(\i); 1; 5; \i)
 = 1^2 + sin(1) + 2^2 + sin(2) + ... = 55.176162
 .PP
 .TP 8
-product(x, 1, 5)
+product(x; 1; 5)
 = 1 * 2 * 3 * 4 * 5 = 120
 .PP
 .TP 8
@@ -784,10 +791,17 @@ store value 5 in variable var1
 sinh(0.5) where sinh()=cosh()
 = cosh(0.5) = 1.1276260
 .PP
+.PP
+.TP 8
+plot(x^2; -5; 5)
+plots the function y=x^2 from -5 to 5
+.PP
 .B Units
 .PP
 .TP 8
 5 dm3 to L
+= 25 dm^3 to L
+.br
 = 5 L
 .PP
 .TP 8
@@ -803,20 +817,28 @@ sinh(0.5) where sinh()=cosh()
 = 5.7086614 ft
 .PP
 .TP 8
-5 J * 523 s * 15 mph
-= 17.535144 kJ*m
+100 lbf * 60 mph to hp
+= 16 hp
 .PP
 .TP 8
-5 J * 523 s * 15 mph to base
-= 17535.144 kg*m^3/s^2
+50 Ω * 2 A
+= 100 V
+.PP
+.TP 8
+50 Ω * 2 A to base 
+= 100 kg*m^2*s^-3*A^-1
+.PP
+.TP 8
+10 N / 5 Pa
+= (10 N)/(5 Pa) = 2 m^2
 .PP
 .TP 8
 5 m/s to s/m
 = 0.2 s/m
 .PP
 .TP 8
-500 EUR to USD
-= 566.25
+500 EUR - 20% to USD
+= 451.04 USD
 .PP
 .B Physical constants
 .PP
@@ -824,15 +846,23 @@ sinh(0.5) where sinh()=cosh()
 k_e / G * a_0
 = (coulombs_constant / newtonian_constant) * bohr_radius 
 .br
-= 7.126e9 kg·H·m^-1
+= 7.126e9 kg*H*m^-1
+.PP
+.TP 8
+planck ∕ (compton_wavelength * c)
+= 9.1093837e-31 kg
 .PP
 .TP 8
 5 ns * rydberg to c
 = 6.0793194E-8c
 .PP
 .TP 8
-atom(Hg, weight) + atom(C, weight) * 4 to g
+atom(Hg; weight) + atom(C; weight) * 4 to g
 = 4.129e-22 g
+.PP
+.TP 8
+(G * planet(earth; mass) * planet(mars; mass))/(54.6e6 km)^2
+= 8.58e16 N \fI(gravitational attraction between earth and mars)\fP
 .PP
 .B Uncertainty and interval arithmetic
 .br
@@ -847,8 +877,8 @@ sin(5+/-0.2)^2/2+/-0.3
 = 3.824+/-0.053 ms (3.82+/-±0.075 ms)
 .PP
 .TP 8
-interval(-2, 5)^2
-= intervall(-8.2500000, 12.750000) (intervall(0, 25))
+interval(-2; 5)^2
+= intervall(-8.2500000; 12.750000) (intervall(0; 25))
 .PP
 .B Algebra
 .PP
@@ -875,7 +905,7 @@ factorize x^4 - 7x^3 + 9x^2 + 27x - 54
 = (x + 2)(x - 3)^3
 .PP
 .TP 8
-gcd(25x, 5x^2)
+gcd(25x; 5x^2)
 = 5x
 .PP
 .TP 8
@@ -891,10 +921,10 @@ x^3 = 27 m^3 where x>0
 x = 3 m
 .PP
 .TP 8
-cylinder(20cm, x) = 20L \fI(calculates the height of a 20 L cylinder with radius of 20 cm)\fP
-x = (1 / (2π)) m
+cylinder(20cm; x) = 20L
+x = (1 / (2pi)) m
 .br
-x = 16 cm
+x = 16 cm \fI(height of 20 L cylinder with radius 20 cm)\fP
 .PP
 .TP 8
 asin(sqrt(x)) = 0.2
@@ -907,12 +937,12 @@ x^2 > 25x
 = x > 25 or x < 0
 .PP
 .TP 8
-solve2(5x=2y^2, sqrt(y)=2, x, y)
+solve2(5x=2y^2; sqrt(y)=2; x; y)
 = 32/5
 .PP
 .TP 8
-multisolve([5x=2y+32, y=2z, z=2x], [x, y, z])
-= [-32/3, -128/3, -64/3]
+multisolve([5x=2y+32; y=2z; z=2x]; [x; y; z])
+= [-32/3; -128/3; -64/3]
 .PP
 .B Calculus
 .PP
@@ -922,23 +952,81 @@ diff(6x^2)
 .PP
 .TP 8
 diff(sinh(x^2)/(5x) + 3xy/sqrt(x))
-= (2/5) * cosh(x^2) - sinh(x^2)/(5x^2) + (3y)/(2 * √(x))
+= (2/5) * cosh(x^2) - sinh(x^2)/(5x^2) + (3y)/(2 * sqrt(x))
 .PP
 .TP 8
 integrate(6x^2)
 = 2x^3 + C
 .PP
 .TP 8
-integrate(6x^2, 1, 5)
+integrate(6x^2; 1; 5)
 = 248
 .PP
 .TP 8
 integrate(sinh(x^2)/(5x) + 3xy/sqrt(x))
-= 2x * √(x) * y + Shi(x^2) / 10 + C
+= 2x * sqrt(x) * y + Shi(x^2) / 10 + C
 .PP
 .TP 8
-integrate(sinh(x^2)/(5x) + 3xy/sqrt(x), 1, 2)
+integrate(sinh(x^2)/(5x) + 3xy/sqrt(x); 1; 2)
 = 3.6568542y + 0.87600760
+.PP
+.B Matrices and vectors
+.PP
+.TP 8
+((1; 2; 3); (4; 5; 6))
+= [[1; 2; 3]; [4; 5; 6]] \fI(2x3 matrix)\fP
+.PP
+.TP 8
+(1; 2; 3) * 2 - 2
+= [1 * 2 - 2; 2 * 2 - 2; 3 * 2 - 2]
+.br
+= [0; 2; 4]
+.PP
+.TP 8
+(1; 2; 3) * (4; 5; 6)
+= 32 \fI(dot product)\fP
+.PP
+.TP 8
+cross((1; 2; 3); (4; 5; 6))
+= [-3; 6; -3] \fI(cross product)\fP
+.PP
+.TP 8
+((1; 2; 3); (4; 5; 6)) * ((7; 8); (9; 10); (11; 12))
+= [[58; 64]; [139; 154]]
+.PP
+.TP 8
+hadamard([[1; 2; 3]; [4; 5; 6]]; [[7; 8; 9]; [10; 11; 12]])
+= [[7; 16; 27]; [40; 55; 72]] \fI(hadamard product)\fP
+.PP
+.TP 8
+((1; 2); (3; 4))^-1
+= inverse([[1; 2]; [3; 4]])
+.br
+= [[-2; 1]; [1.5; -0.5]]
+.PP
+.B Statistics
+.PP
+.TP 8
+mean(5; 6; 4; 2; 3; 7)
+= 4.5
+.PP
+.TP 8
+stdev(5; 6; 4; 2; 3; 7)
+= 1.87
+.PP
+.TP 8
+quartile((5; 6; 4; 2; 3; 7); 1)
+= percentile([5; 6; 4; 2; 3; 7]; 25)
+.br
+= 2.9166667
+.PP
+.TP 8
+normdist(7; 5)
+= 0.053990967
+.PP
+.TP 8
+spearman(column(load(test.csv); 1); column(load(test.csv); 2)) 
+= -0.33737388 \fI(depends on the data in the CSV file)\fP
 .PP
 .B Time and date
 .PP
@@ -960,7 +1048,7 @@ now to utc
 .PP
 .TP 8
 "2020-05-20" + 523d
-= addDays(2020-05-20, 523)
+= addDays(2020-05-20; 523)
 .br
 = "2021-10-25"
 .PP
@@ -970,7 +1058,7 @@ today - 5 days
 .PP
 .TP 8
 "2020-10-05" - today
-= days(today, 2020-10-05)
+= days(today; 2020-10-05)
 .br
 = 87
 .PP
@@ -1008,7 +1096,7 @@ returns date in Hebrew, Islamic, Persian, Indian, Chinese, Julian, Coptic, and E
 0x34
 = hex(34)
 .br
-= base(34, 16) 
+= base(34; 16) 
 .br
 = 52
 .PP
