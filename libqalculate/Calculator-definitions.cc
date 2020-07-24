@@ -3262,12 +3262,102 @@ bool Calculator::exportCSV(const MathStructure &mstruct, const char *file_name, 
 }
 
 bool Calculator::loadExchangeRates() {
+
 	xmlDocPtr doc = NULL;
 	xmlNodePtr cur = NULL;
 	xmlChar *value;
 	bool global_file = false;
 	string currency, rate, sdate;
-	string filename = buildPath(getLocalDataDir(), "eurofxref-daily.xml");
+
+	unordered_map<Unit*, bool> cunits;
+
+	string filename = buildPath(getLocalDataDir(), "custom_exchange_rates");
+	ifstream cfile(filename.c_str());
+	if(cfile.is_open()) {
+		char linebuffer[1000];
+		string sbuffer, s1, s2;
+		string nr1, nr2;
+		Unit *u1, *u2;
+		while((cfile.rdstate() & std::ifstream::eofbit) == 0) {
+			cfile.getline(linebuffer, 1000);
+			if((cfile.rdstate() & std::ifstream::failbit) != 0) break;
+			sbuffer = linebuffer;
+			size_t i = sbuffer.find("=");
+			if(i != string::npos && i > 0 && i < sbuffer.length() - 1) {
+				s1 = sbuffer.substr(0, i);
+				s2 = sbuffer.substr(i + 1, sbuffer.length() - (i + 1));
+				remove_blanks(s1);
+				remove_blanks(s2);
+				if(!s1.empty() && !s2.empty()) {
+					i = s1.find_first_not_of(ILLEGAL_IN_UNITNAMES);
+					if(i == 0) {
+						i = s1.find_first_of(ILLEGAL_IN_UNITNAMES);
+						if(i == string::npos) {
+							nr1 = "1";
+						} else {
+							nr1 = s1.substr(i, s1.length() - i);
+							if(i == 0) s1 = "";
+							else s1 = s1.substr(0, i);
+						}
+					} else {
+						if(i == s1.length() - 1) nr1 = "1";
+						else nr1 = s1.substr(0, i);
+						s1 = s1.substr(i, s1.length() - i);
+					}
+					i = s2.find_first_not_of(ILLEGAL_IN_UNITNAMES);
+					if(i == 0) {
+						i = s2.find_first_of(ILLEGAL_IN_UNITNAMES);
+						if(i == string::npos) {
+							nr2 = "1";
+						} else {
+							nr2 = s2.substr(i, s2.length() - i);
+							if(i == 0) s2 = "";
+							else s2 = s2.substr(0, i);
+						}
+					} else {
+						if(i == s2.length() - 1) nr2 = "1";
+						else nr2 = s2.substr(0, i);
+						s2 = s2.substr(i, s2.length() - i);
+					}
+				}
+				if(!s1.empty() && !s2.empty()) {
+					u2 = CALCULATOR->getActiveUnit(s2);
+					if(!u2) {
+						u2 = addUnit(new AliasUnit(_("Currency"), s2, "", "", "", u_euro, "1", 1, "", false, true));
+					}
+					if(u2 && u2->isCurrency()) {
+						u1 = CALCULATOR->getActiveUnit(s1);
+						if(!u1) {
+							u1 = addUnit(new AliasUnit(_("Currency"), s1, "", "", "", u2, nr1 == "1" ? nr2 : nr2 + string("/") + nr1, 1, "", false, true));
+							u1->setApproximate();
+							u1->setPrecision(-2);
+							u1->setChanged(false);
+							cunits[u1] = true;
+						} else if(u1->isCurrency()) {
+							if(u1 == u_euro) {
+								((AliasUnit*) u2)->setBaseUnit(u1);
+								((AliasUnit*) u2)->setExpression(nr2 == "1" ? nr1 : nr1 + string("/") + nr2);
+								u2->setApproximate();
+								u2->setPrecision(-2);
+								u2->setChanged(false);
+								cunits[u2] = true;
+							} else {
+								((AliasUnit*) u1)->setBaseUnit(u2);
+								((AliasUnit*) u1)->setExpression(nr1 == "1" ? nr2 : nr2 + string("/") + nr1);
+								u1->setApproximate();
+								u1->setPrecision(-2);
+								u1->setChanged(false);
+								cunits[u1] = true;
+							}
+						}
+					}
+				}
+			}
+		}
+		cfile.close();
+	}
+
+	filename = buildPath(getLocalDataDir(), "eurofxref-daily.xml");
 	if(fileExists(filename)) {
 		doc = xmlParseFile(filename.c_str());
 	} else {
@@ -3338,7 +3428,12 @@ bool Calculator::loadExchangeRates() {
 					if(!u) {
 						u = addUnit(new AliasUnit(_("Currency"), currency, "", "", "", u_euro, rate, 1, "", false, true));
 					} else if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
-						((AliasUnit*) u)->setExpression(rate);
+						if(cunits.find(u) != cunits.end()) {
+							u = NULL;
+						} else {
+							((AliasUnit*) u)->setBaseUnit(u_euro);
+							((AliasUnit*) u)->setExpression(rate);
+						}
 					}
 					if(u) {
 						u->setApproximate();
@@ -3399,62 +3494,74 @@ bool Calculator::loadExchangeRates() {
 		}
 	}
 
-	filename = getExchangeRatesFileName(2);
-	ifstream file2(filename.c_str());
-	if(file2.is_open()) {
-		std::stringstream ssbuffer2;
-		ssbuffer2 << file2.rdbuf();
-		string sbuffer = ssbuffer2.str();
-		size_t i = sbuffer.find("\"amount\":");
-		if(i != string::npos) {
-			i = sbuffer.find("\"", i + 9);
+	if(cunits.find(u_btc) != cunits.end()) {
+		filename = getExchangeRatesFileName(2);
+		ifstream file2(filename.c_str());
+		if(file2.is_open()) {
+			std::stringstream ssbuffer2;
+			ssbuffer2 << file2.rdbuf();
+			string sbuffer = ssbuffer2.str();
+			size_t i = sbuffer.find("\"amount\":");
 			if(i != string::npos) {
-				size_t i2 = sbuffer.find("\"", i + 1);
-				((AliasUnit*) u_btc)->setExpression(sbuffer.substr(i + 1, i2 - (i + 1)));
-			}
-		}
-		file2.close();
-		struct stat stats;
-		if(stat(filename.c_str(), &stats) == 0) {
-			exchange_rates_time[1] = stats.st_mtime;
-			if(exchange_rates_time[1] > exchange_rates_check_time[1]) exchange_rates_check_time[1] = exchange_rates_time[1];
-		}
-	} else {
-		exchange_rates_time[1] = ((time_t) 1531087L) * 1000;
-		if(exchange_rates_time[1] > exchange_rates_check_time[1]) exchange_rates_check_time[1] = exchange_rates_time[1];
-	}
-
-	filename = getExchangeRatesFileName(4);
-	ifstream file3(filename.c_str());
-	if(file3.is_open()) {
-		std::stringstream ssbuffer3;
-		ssbuffer3 << file3.rdbuf();
-		string sbuffer = ssbuffer3.str();
-		size_t i = sbuffer.find("\"Cur_OfficialRate\":");
-		if(i != string::npos) {
-			i = sbuffer.find_first_of(NUMBER_ELEMENTS, i + 19);
-			if(i != string::npos) {
-				size_t i2 = sbuffer.find_first_not_of(NUMBER_ELEMENTS, i);
-				if(i2 == string::npos) i2 = sbuffer.length();
-				((AliasUnit*) priv->u_byn)->setExpression(sbuffer.substr(i, i2 - i));
-			}
-		}
-		i = sbuffer.find("\"Date\":");
-		if(i != string::npos) {
-			i = sbuffer.find("\"", i + 7);
-			if(i != string::npos) {
-				size_t i2 = sbuffer.find("\"", i + 1);
-				QalculateDateTime qdate;
-				if(qdate.set(sbuffer.substr(i + 1, i2 - (i + 1)))) {
-					priv->exchange_rates_time2[0] = (time_t) qdate.timestamp().ulintValue();
-					if(priv->exchange_rates_time2[0] > priv->exchange_rates_check_time2[0]) priv->exchange_rates_check_time2[0] = priv->exchange_rates_time2[0];
+				i = sbuffer.find("\"", i + 9);
+				if(i != string::npos) {
+					size_t i2 = sbuffer.find("\"", i + 1);
+					((AliasUnit*) u_btc)->setBaseUnit(u_euro);
+					((AliasUnit*) u_btc)->setExpression(sbuffer.substr(i + 1, i2 - (i + 1)));
+					u_btc->setApproximate();
+					u_btc->setPrecision(-2);
+					u_btc->setChanged(false);
 				}
 			}
+			file2.close();
+			struct stat stats;
+			if(stat(filename.c_str(), &stats) == 0) {
+				exchange_rates_time[1] = stats.st_mtime;
+				if(exchange_rates_time[1] > exchange_rates_check_time[1]) exchange_rates_check_time[1] = exchange_rates_time[1];
+			}
+		} else {
+			exchange_rates_time[1] = ((time_t) 1531087L) * 1000;
+			if(exchange_rates_time[1] > exchange_rates_check_time[1]) exchange_rates_check_time[1] = exchange_rates_time[1];
 		}
-		file3.close();
-	} else {
-		priv->exchange_rates_time2[0] = ((time_t) 1531087L) * 1000;
-		if(priv->exchange_rates_time2[0] > priv->exchange_rates_check_time2[0]) priv->exchange_rates_check_time2[0] = priv->exchange_rates_time2[0];
+	}
+
+	if(cunits.find(priv->u_byn) != cunits.end()) {
+		filename = getExchangeRatesFileName(4);
+		ifstream file3(filename.c_str());
+		if(file3.is_open()) {
+			std::stringstream ssbuffer3;
+			ssbuffer3 << file3.rdbuf();
+			string sbuffer = ssbuffer3.str();
+			size_t i = sbuffer.find("\"Cur_OfficialRate\":");
+			if(i != string::npos) {
+				i = sbuffer.find_first_of(NUMBER_ELEMENTS, i + 19);
+				if(i != string::npos) {
+					size_t i2 = sbuffer.find_first_not_of(NUMBER_ELEMENTS, i);
+					if(i2 == string::npos) i2 = sbuffer.length();
+					((AliasUnit*) priv->u_byn)->setBaseUnit(u_euro);
+					((AliasUnit*) priv->u_byn)->setExpression(sbuffer.substr(i, i2 - i));
+					priv->u_byn->setApproximate();
+					priv->u_byn->setPrecision(-2);
+					priv->u_byn->setChanged(false);
+				}
+			}
+			i = sbuffer.find("\"Date\":");
+			if(i != string::npos) {
+				i = sbuffer.find("\"", i + 7);
+				if(i != string::npos) {
+					size_t i2 = sbuffer.find("\"", i + 1);
+					QalculateDateTime qdate;
+					if(qdate.set(sbuffer.substr(i + 1, i2 - (i + 1)))) {
+						priv->exchange_rates_time2[0] = (time_t) qdate.timestamp().ulintValue();
+						if(priv->exchange_rates_time2[0] > priv->exchange_rates_check_time2[0]) priv->exchange_rates_check_time2[0] = priv->exchange_rates_time2[0];
+					}
+				}
+			}
+			file3.close();
+		} else {
+			priv->exchange_rates_time2[0] = ((time_t) 1531087L) * 1000;
+			if(priv->exchange_rates_time2[0] > priv->exchange_rates_check_time2[0]) priv->exchange_rates_check_time2[0] = priv->exchange_rates_time2[0];
+		}
 	}
 
 	Unit *u_usd = getUnit("USD");
@@ -3527,8 +3634,12 @@ bool Calculator::loadExchangeRates() {
 								u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
 								if(u) u->setHidden(true);
 							} else {
-								((AliasUnit*) u)->setBaseUnit(u_usd);
-								((AliasUnit*) u)->setExpression(rate);
+								if(cunits.find(u) != cunits.end()) {
+									u = NULL;
+								} else {
+									((AliasUnit*) u)->setBaseUnit(u_usd);
+									((AliasUnit*) u)->setExpression(rate);
+								}
 							}
 							if(u) {
 								u->setApproximate();
@@ -3585,8 +3696,12 @@ bool Calculator::loadExchangeRates() {
 						u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
 						if(u) u->setHidden(true);
 					} else {
-						((AliasUnit*) u)->setBaseUnit(u_usd);
-						((AliasUnit*) u)->setExpression(rate);
+						if(cunits.find(u) != cunits.end()) {
+							u = NULL;
+						} else {
+							((AliasUnit*) u)->setBaseUnit(u_usd);
+							((AliasUnit*) u)->setExpression(rate);
+						}
 					}
 					if(u) {
 						u->setApproximate();
