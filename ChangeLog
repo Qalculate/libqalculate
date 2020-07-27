@@ -1,8 +1,20 @@
-2019-07-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-07-26 VicSanRoPe <?>
+
+	* Spanish translation
+
+2020-07-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Load custom exchange rates from LOCAL_DATA_DIR/custom_exchange_rates, with one "x ABC = y DEF" (e.g. "1USD=70.86RUB") on each row
+
+2020-07-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Extend man page with commands, settings, syntax, and examples sections
+
+2020-07-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Support use of right arrow (including "->") as alternative to "to" for conversion (e.g. 5m->ft)
 
-2019-07-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-07-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Only apply PrintOptions::negative_exponents to units
 	* Always use negative exponents instead of division when all units have negative exponents
@@ -10,181 +22,181 @@
 	* Case insensitive sorting of units, variables and functions
 	* Add more references in qalc to the GUI manual
 
-2019-06-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-06-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 	
 	* Normalize numbers with fractional exponents, e.g. sqrt(a)^-b=sqrt(a)^b/a, a^(-2/3)=a^(1/3)/a, a^(2/3)=a^(-1/3)*a, and simplify roots with rational multipliers after evaluation
 	* Improvements for mixed fractions
 	* Avoid excessive parentheses with negated powers
 
-2019-06-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-06-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix plus-minus sign in misplaced character/operators error messages
 
-2019-06-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-06-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix placement (last) of constant of definite integral
 	* sin(x*pi) and tan(x*pi) equals zero if x represents an integer
 
-2019-06-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-06-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault when parsing an expression that contains a prefix with more than one letter and a unit exponent (2 or 3) without exponentiation operator, e.g. dam3
 
-2019-06-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-06-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix use of equals sign in qalc command line arguments (e.g. "qalc --base=16")
 
-2019-05-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-05-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Support for +, -, (, ) superscripts
 	* Use × (U+00D7) as default multiplication sign
 
-2019-05-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-05-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Syntax highlighting using colors in qalc
 	* Remove space around division in unit expression
 	* Enable Unicode by default
 	* Use Unicode superscript for units (when placed separately and negative exponents are disabled)
 
-2019-05-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-05-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Support N-Ary Summation symbol, in addition to sigma, for sum() function
 
-2019-05-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-05-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Allow multiple "to"-conversions in one expression (e.g. "5 m/s to hex to ft to h = 0xE6AF.1E*ft∕h)
 	* Support specification of number of bits for hexadecimal "to" conversion (4 to hex16 = 0004)
 
-2019-05-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-05-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Divide value with time units by hours if time format is used
 	* Fix sexagesimal, and time format, output when 3rd section is rounded to 60
 	* Show decimals, in 3rd section, with sexagesimal base and time format
 	* Improved handling of intervals for sexagesimal base and time format
 
-2019-05-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-05-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* If argument 2 in replace() is vector and argument 3 is not, evaluate argument 3 and test if vector, e.g. replace(x+y+z,[x,y,z],multisolve([x+y=2,x+z=3,y+z=4],[x,y,z]))
 
-2019-05-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-05-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Show warning for ambiguous implicit expression (e.g. 6/2(1+2)) in adaptive parsing mode
 	* Fix use of comma as AND in "where" expression
 
-2019-05-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-05-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Option to compile definitions into binary (--enable-compiled-definitions, requires GIO)
 
-2019-04-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-04-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Tau (2pi) variable
 
-2019-04-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-04-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Interpret text after hashtag (#) in expression as comments
 
-2019-04-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-04-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Accept angle (value with angle unit or value > 1 and < 360) in nextlunarphase()
 
-2019-04-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-04-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix removal of default angle unit from trigonometric functions in output when factor is one
 
-2019-04-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-04-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix automatic conversion to Newton
 	* Fix display of fraction in exact decimal fraction mode when indicate repeating decimals is active (in GUI)
 	* Fix display of repeating decimals (do not add additional whitespace when Unicode is off)
 	* Fix x^2=25m^2 where x>0 (was evaluated as false), and similar in exact mode
 
-2019-04-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-04-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault with empty sin() or sinh() in equation
 
-2019-04-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-04-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault when running qalc in non-interactive mode and gnuplot is missing (issue #184)
 
-2019-04-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-04-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix nextlunarphase(), for values > 0.8 and < 0.2 (issue #183)
 
-2019-03-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-03-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault during calculation of atan(acos(x)), atan(asin(x)), and asin(atan(x)) when angle unit is deg or gra
 
-2019-03-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-03-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix order of prime factors
 
-2019-03-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-03-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add persistent parameter, with default true value if qalc is started in non-interactive mode (avoids immediate closing of plot window), to plot() function
 
-2019-02-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-02-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix max decimals option for intervals displayed with significant digits (was used as both max and min)
 
-2019-02-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-02-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add "Number of decimals" and "Round halfway to even" (default away from zero) arguments to round() function
 
-2019-02-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-02-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Restore A and B (case insensitive) digits in input of duodecimal number
 	* Use 0d as prefix for input of duodecimal numbers
 	* Always interpret expression as duodecimal if it contains duodecimal Unicode characters
 
-2019-02-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-02-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* IEEE 754 floating point (binary) conversion - functions float(), floatBits(), floatError(), floatParts(), and floatValue(), and "to" conversion using  binary16/fp16, binary32/fp32/float, binary64/fp64/double, fp80, and binary128/fp128
 	* Support specification of number of bits for binary "to" conversion (4 to bin16 = 0000 0000 0000 0100)
 	* Fix rounding with max decimals in some cases
 
-2019-02-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-02-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault in solve() with AND and OR in solution
 
-2019-02-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-02-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Modify behavior of floor(), ceil(), trunc and round() - mark result as exact, allow approximate calculation of argument in exact mode, return interval when appropriate (e.g. floor(interval(1.5,2.5))=interval(1, 2))
 	* Increase input buffer length (maximum length of line) in qalc
 
-2019-01-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-01-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Write interval using significant digits in CSV file
 
-2019-01-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-01-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix 1kOhm||1kOhm (and similar)
 
-2019-01-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-01-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not include pregenerated reference documentation in source package and move documentation generation from autogen.sh to Makefile
 
-2019-01-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-01-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix sign of real part when multiplying complex number by infinity
 
-2019-01-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-01-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault when simplifying sin((infinity-i)+(-infinity+i)) and similar
 
-2019-01-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-01-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Rename IdentityFunction class to avoid crash in Cantor because of conflict with Poppler library class with same name
 
-2019-01-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-01-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix integral of asin(x)^-2
 	* Fix integral of a^(b+cx)/x (where a<0)
 	* Fix integrate(1/(a+b*i*x^(1/3)),c,0)
 
-2019-01-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-01-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Retrieve exchange rate for BYN (Belarusian ruble) from nbrb.by
 
-2019-01-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-01-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault when solving sqrt(x)!=-1 and similar
 
