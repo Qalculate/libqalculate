@@ -1855,6 +1855,7 @@ int main(int argc, char *argv[]) {
 
 	new Calculator(true);
 	CALCULATOR->loadGlobalDefinitions();
+	return 0;
 	CALCULATOR->loadLocalDefinitions();
 	CALCULATOR->setPrecision(8);
 

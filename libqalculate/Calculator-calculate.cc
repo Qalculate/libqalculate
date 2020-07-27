@@ -1185,7 +1185,7 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const
 		// dingbat arrows
 		i = str.find("\xe2\x9e", i);
 		if(i == string::npos || i >= str.length() - 2) break;
-		if((unsigned char) str[i + 2] >= 0x94 && (unsigned char) str[i + 2] <= 0xbf) return true;
+		if((unsigned char) str[i + 2] >= 148 && (unsigned char) str[i + 2] <= 191) return true;
 	}
 	i = allow_empty_from ? 0 : 1;
 	size_t i2 = i;
@@ -1216,7 +1216,7 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 		// dingbat arrows
 		i = str.find("\xe2\x9e", i); 
 		if(i == string::npos || (i_arrow != string::npos && i > i_arrow) || i >= str.length() - 2) break;
-		if((unsigned char) str[i + 2] >= 0x94 && (unsigned char) str[i + 2] <= 0xbf) {i_arrow = i; l_arrow = 3; break;}
+		if((unsigned char) str[i + 2] >= 148 && (unsigned char) str[i + 2] <= 191) {i_arrow = i; l_arrow = 3; break;}
 		i += 3;
 	}
 	i = 0;

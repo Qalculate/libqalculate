@@ -12,8 +12,8 @@ In a terminal window in the top source code directory run
 * `./autogen.sh` *(not required if using a release source tarball, only if using the git version)*
 * `./configure`
 * `make`
-* `make install` (as root)
-* `ldconfig` (if necessary, as root)
+* `make install` *(as root, e.g. `sudo make install`)*
+* `ldconfig` *(if necessary, as root)*
 If libqalculate is installed in /usr/local (default) you may need to add /usr/local/lib to the library path of the system (add /usr/local/lib to a file under /etc/ld.so.conf.d/ and run ldconfig).
 
 ## Requirements
@@ -131,7 +131,7 @@ log2(4)/log10(100) _= log(4; 2)/log(100; 10) = 1_
 
 gcd(63; 27) _= 9_
 
-sin(pi/2) − cos(pi) _= 2_
+sin(pi/2) − cos(pi) _= sin(90 deg) − cos(180 deg) = 2_
 
 sum(x; 1; 5) _= 1 + 2 + 3 + 4 + 5 = 15_
 
@@ -170,6 +170,8 @@ plot(x^2; −5; 5) _(plots the function y=x^2 from -5 to 5)_
 
 500 € − 20% to $ _≈ $451.04_
 
+500 megabit/s × 2 h to b?byte _≈ 419.09516 gibibytes_
+
 ### Physical constants
 
 k\_e / G × a\_0 _= (coulombs\_constant / newtonian\_constant) × bohr\_radius ≈ 7.126e9 kg·H·m^−1_
@@ -200,9 +202,9 @@ interval(−2; 5)^2 _≈ intervall(−8.2500000; 12.750000) (intervall(0; 25))_
 
 (x + 2)(x − 3)^3 _= x^4 − 7x^3 + 9x^2 + 27x − 54_
 
-cos(x)+3y^2 where x=pi and y=2 _= 11_
-
 factorize x^4 − 7x^3 + 9x^2 + 27x − 54 _= x^4 − 7x^3 + 9x^2 + 27x − 54 to factors = (x + 2)(x − 3)^3_
+
+cos(x)+3y^2 where x=pi and y=2 _= 11_
 
 gcd(25x; 5x^2) _= 5x_
 
@@ -211,8 +213,8 @@ gcd(25x; 5x^2) _= 5x_
 x+x^2+4 = 16
 _= x = 3 or x = −4_
 
-x^3 = 27 m^3 where x>0
-_= x = 3 m_
+x^2/(5 m) − hypot(x; 4 m) = 2 m where x>0
+_x ≈ 7.1340411 m_
 
 cylinder(20cm; x) = 20L _(calculates the height of a 20 L cylinder with radius of 20 cm)_
 _= x = (1 / (2π)) m_
@@ -225,9 +227,13 @@ _= x ≈ 0.039469503_
 x^2 > 25x
 _= x > 25 or x < 0_
 
+solve(x = y+ln(y); y) _= lambertw(e^x)_
+
 solve2(5x=2y^2; sqrt(y)=2; x; y) _= 32/5_
 
 multisolve(\[5x=2y+32; y=2z; z=2x\]; \[x; y; z\]) _= \[−32/3; −128/3; −64/3\]_
+
+dsolve(diff(y; x) − 2y = 4x; 5) _= 6e^(2x) − 2x − 1_
 
 ### Calculus
 
@@ -242,6 +248,8 @@ integrate(6x^2; 1; 5) _= 248_
 integrate(sinh(x^2)/(5x) + 3xy/sqrt(x)) _= 2x × √(x) × y + Shi(x^2) / 10 + C_
 
 integrate(sinh(x^2)/(5x) + 3xy/sqrt(x); 1; 2) _≈ 3.6568542y + 0.87600760_
+
+limit(ln(1 + 4x)/(3^x − 1); 0) _= 4 / ln(3)_
 
 ### Matrices and vectors
 
@@ -289,7 +297,7 @@ today − 5 days _= "2020-07-05"_
 
 timestamp(2020-05-20) _= 1 589 925 600_
 
-stamptodate(1 589 925 600) _= "2020−05−20T00:00:00"_
+stamptodate(1 589 925 600) _= "2020-05-20T00:00:00"_
 
 "2020-05-20" to calendars _(returns date in Hebrew, Islamic, Persian, Indian, Chinese, Julian, Coptic, and Ethiopian calendars)_
 

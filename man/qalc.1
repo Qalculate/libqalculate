@@ -765,6 +765,8 @@ gcd(63; 27)
 .PP
 .TP 8
 sin(pi/2) - cos(pi)
+= sin(90 deg) - cos(180 deg)
+.br
 = 2
 .PP
 .TP 8
@@ -840,6 +842,10 @@ plots the function y=x^2 from -5 to 5
 500 EUR - 20% to USD
 = 451.04 USD
 .PP
+.TP 8
+500 megabit/s * 2 h to b?byte
+= 419.09516 gibibytes
+.PP
 .B Physical constants
 .PP
 .TP 8
@@ -891,18 +897,18 @@ interval(-2; 5)^2
 = 'a'^2 - 'b'^2
 .PP
 .TP 8
-(x + 2)(x - 3)^ 
+(x + 2)(x - 3)^3
 = x^4 - 7x^3 + 9x^2 + 27x - 54
-.PP
-.TP 8
-cos(x)+3y^2 where x=pi and y=2
-= 11
 .PP
 .TP 8
 factorize x^4 - 7x^3 + 9x^2 + 27x - 54
 = x^4 - 7x^3 + 9x^2 + 27x - 54 to factors
 .br
 = (x + 2)(x - 3)^3
+.PP
+.TP 8
+cos(x)+3y^2 where x=pi and y=2
+= 11
 .PP
 .TP 8
 gcd(25x; 5x^2)
@@ -917,8 +923,8 @@ x+x^2+4 = 16
 x = 3 or x = -4
 .PP
 .TP 8
-x^3 = 27 m^3 where x>0
-x = 3 m
+x^2/(5 m) - hypot(x; 4 m) = 2 m where x>0
+x = 7.1340411 m
 .PP
 .TP 8
 cylinder(20cm; x) = 20L
@@ -937,12 +943,20 @@ x^2 > 25x
 = x > 25 or x < 0
 .PP
 .TP 8
+solve(x = y+ln(y); y)
+= lambertw(e^x)
+.PP
+.TP 8
 solve2(5x=2y^2; sqrt(y)=2; x; y)
 = 32/5
 .PP
 .TP 8
 multisolve([5x=2y+32; y=2z; z=2x]; [x; y; z])
 = [-32/3; -128/3; -64/3]
+.PP
+.TP 8
+dsolve(diff(y; x) - 2y = 4x; 5)
+= 6e^(2x) - 2x - 1
 .PP
 .B Calculus
 .PP
@@ -969,6 +983,10 @@ integrate(sinh(x^2)/(5x) + 3xy/sqrt(x))
 .TP 8
 integrate(sinh(x^2)/(5x) + 3xy/sqrt(x); 1; 2)
 = 3.6568542y + 0.87600760
+.PP
+.TP 8
+limit(ln(1 + 4x)/(3^x - 1); 0)
+= 4 / ln(3)
 .PP
 .B Matrices and vectors
 .PP

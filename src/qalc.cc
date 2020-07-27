@@ -2630,7 +2630,7 @@ int main(int argc, char *argv[]) {
 				expression_calculation_updated();
 			}
 		//qalc command
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to")) || (str.length() > 2 && str[0] == '-' && str[1] == '>') || (str.length() > 3 && (unsigned char) str[0] >= '\xe2' && ((str[1] == '\x86' && str[2] == '\x92') || (str[1] == '\x9e' && (unsigned char) str[2] >= 0x94 && (unsigned char) str[2] <= 0xbf)))) {
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to")) || (str.length() > 2 && str[0] == '-' && str[1] == '>') || (str.length() > 3 && str[0] == '\xe2' && ((str[1] == '\x86' && str[2] == '\x92') || (str[1] == '\x9e' && (unsigned char) str[2] >= 148 && (unsigned char) str[2] <= 191)))) {
 			if(!scom.empty() && (EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to")))) {
 				str = str.substr(ispace + 1, slen - (ispace + 1));
 			} else if(str[0] == '-') {
@@ -5587,7 +5587,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {3, 11, 0};
+	int version_numbers[] = {3, 12, 0};
 
 	if(file) {
 		char line[10000];

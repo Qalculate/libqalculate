@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-12 06:04+0200\n"
+"POT-Creation-Date: 2020-07-27 09:40+0200\n"
 "PO-Revision-Date: 2006-05-04 12:29+0200\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -269,7 +269,7 @@ msgstr "Okänt antagande."
 msgid "or"
 msgstr "eller"
 
-#: ../src/qalc.cc:561 ../libqalculate/Calculator-definitions.cc:3828
+#: ../src/qalc.cc:561 ../libqalculate/Calculator-definitions.cc:3943
 #, c-format
 msgid "It has been %s day(s) since the exchange rates last were updated."
 msgstr "Det var %s dag(ar) sedan växelkurserna senast updaterades."
@@ -2698,9 +2698,11 @@ msgstr "Gradenheten saknas. Skapar en för nuvarande session."
 
 #: ../libqalculate/Calculator.cc:1703 ../libqalculate/Calculator.cc:1704
 #: ../libqalculate/Calculator.cc:1708
-#: ../libqalculate/Calculator-definitions.cc:3339
-#: ../libqalculate/Calculator-definitions.cc:3527
-#: ../libqalculate/Calculator-definitions.cc:3585
+#: ../libqalculate/Calculator-definitions.cc:3326
+#: ../libqalculate/Calculator-definitions.cc:3331
+#: ../libqalculate/Calculator-definitions.cc:3429
+#: ../libqalculate/Calculator-definitions.cc:3634
+#: ../libqalculate/Calculator-definitions.cc:3696
 msgid "Currency"
 msgstr "Valuta"
 
@@ -2759,19 +2761,19 @@ msgstr "kolumn"
 msgid "Column "
 msgstr "Kolumn"
 
-#: ../libqalculate/Calculator-definitions.cc:3704
-#: ../libqalculate/Calculator-definitions.cc:3705
-#: ../libqalculate/Calculator-definitions.cc:3709
-#: ../libqalculate/Calculator-definitions.cc:3712
-#: ../libqalculate/Calculator-definitions.cc:3744
-#: ../libqalculate/Calculator-definitions.cc:3745
-#: ../libqalculate/Calculator-definitions.cc:3748
-#: ../libqalculate/Calculator-definitions.cc:3767
-#: ../libqalculate/Calculator-definitions.cc:3768
-#: ../libqalculate/Calculator-definitions.cc:3771
-#: ../libqalculate/Calculator-definitions.cc:3791
-#: ../libqalculate/Calculator-definitions.cc:3792
-#: ../libqalculate/Calculator-definitions.cc:3795
+#: ../libqalculate/Calculator-definitions.cc:3819
+#: ../libqalculate/Calculator-definitions.cc:3820
+#: ../libqalculate/Calculator-definitions.cc:3824
+#: ../libqalculate/Calculator-definitions.cc:3827
+#: ../libqalculate/Calculator-definitions.cc:3859
+#: ../libqalculate/Calculator-definitions.cc:3860
+#: ../libqalculate/Calculator-definitions.cc:3863
+#: ../libqalculate/Calculator-definitions.cc:3882
+#: ../libqalculate/Calculator-definitions.cc:3883
+#: ../libqalculate/Calculator-definitions.cc:3886
+#: ../libqalculate/Calculator-definitions.cc:3906
+#: ../libqalculate/Calculator-definitions.cc:3907
+#: ../libqalculate/Calculator-definitions.cc:3910
 #, c-format
 msgid "Failed to download exchange rates from %s: %s."
 msgstr "Misslyckades med att ladda ner växelkurser från %s: %s."
