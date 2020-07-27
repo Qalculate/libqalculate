@@ -264,7 +264,7 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The package name for gettext])
 
 dnl Please keep this in alphabetical order
-ALL_LINGUAS="fr nl sv zh_CN"
+ALL_LINGUAS="es fr nl sv zh_CN"
 AM_GNU_GETTEXT(external)
 AM_GNU_GETTEXT_VERSION([0.19.8])
 
