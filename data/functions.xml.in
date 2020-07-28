@@ -694,6 +694,14 @@
         <_title>Variable</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="totient">
+      <_title>Euler's Totient Function</_title>
+      <_description>Counts the positive integers up to a given integer n that are relatively prime to n.</_description>
+      <_names>r:totient,au:&#x3C6;,phi</_names>
+      <argument index="1">
+        <_title>n</_title>
+      </argument>
+    </builtin_function>
     <function>
       <_title>Fibonacci Number</_title>
       <_names>r:fibonacci</_names>
