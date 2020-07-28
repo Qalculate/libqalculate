@@ -624,6 +624,82 @@ int BernoulliFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	FR_FUNCTION(bernoulli)
 }
 
+long int itotient(long int n) {
+	long int result = n;
+	long int pmax = (long int) ::sqrtl(LONG_MAX);
+	for(long int p = 2; p <= pmax && p * p <= n; ++p) {
+		if(n % p == 0) {
+			while(n % p == 0) n /= p;
+			result -= result / p;
+		}
+	}
+	if(n > 1) result -= result / n;
+	return result;
+}
+bool ntotient(Number &result) {
+	if(result.isZero()) return true;
+	Number n(result);
+	Number p(2, 1);
+	Number p_square(4, 1);
+	Number nsub;
+	while(p_square <= n) {
+		if(CALCULATOR->aborted()) return false;
+		if(n.isIntegerDivisible(p)) {
+			while(n.isIntegerDivisible(p)) n.iquo(p);
+			nsub = result; nsub.iquo(p);
+			result -= nsub;
+		}
+		p++;
+		p_square = p;
+		if(!p_square.square()) return false;
+	}
+	if(n > 1) {
+		nsub = result; nsub.iquo(n);
+		result -= nsub;
+	}
+	return true;
+}
+
+TotientFunction::TotientFunction() : MathFunction("totient", 1, 1) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+}
+int TotientFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	bool overflow = false;
+	long int i = vargs[0].number().lintValue(&overflow);
+	if(!overflow) {
+		mstruct.set(itotient(i < 0 ? -i : i), 1L, 0L);
+		return 1;
+	}
+	Number n(vargs[0].number());
+	n.abs();
+	if(n.isZero()) {mstruct.clear(); return 1;}
+	vector<Number> factors;
+	if(!n.factorize(factors)) return 0;
+	Number result(1, 1), ngcd, ngcdt, nfactor;
+	for(size_t index = 0; index < factors.size(); index++) {
+		n = factors[index];
+		overflow = false;
+		i = n.lintValue(&overflow);
+		if(!overflow) n = itotient(i);
+		else if(!ntotient(n)) return 0;
+		if(index > 0) {
+			ngcd = factors[index];
+			if(!ngcd.gcd(nfactor)) return 0;
+			ngcdt = ngcd;
+			i = ngcdt.lintValue(&overflow);
+			if(!overflow) ngcdt = itotient(i);
+			else if(!ntotient(ngcdt)) return 0;
+			if(!ngcd.divide(ngcdt)) return 0;
+			if(!result.multiply(n) || !result.multiply(ngcd) || !nfactor.multiply(factors[index])) return 0;
+		} else {
+			nfactor = factors[index];
+			result = n;
+		}
+	}
+	mstruct = result;
+	return 1;
+}
+
 PolynomialUnitFunction::PolynomialUnitFunction() : MathFunction("punit", 1, 2) {
 	RATIONAL_POLYNOMIAL_ARGUMENT(1)
 	setArgumentDefinition(2, new SymbolicArgument());
