@@ -1373,6 +1373,15 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							}
 							set_function:
 							MathFunction *f = (MathFunction*) object;
+							if(str_index + name_length + 2 < str.length() && str[str_index + name_length] == POWER_CH && (f->id() == FUNCTION_ID_SIN || f->id() == FUNCTION_ID_COS || f->id() == FUNCTION_ID_TAN || f->id() == FUNCTION_ID_SINH || f->id() == FUNCTION_ID_COSH || f->id() == FUNCTION_ID_TANH) && str[str_index + name_length + 1] == MINUS_CH && str[str_index + name_length + 2] == '1' && (str_index + name_length + 3 == str.length() || is_not_in(NUMBER_ELEMENTS, str[str_index + name_length + 3]))) {
+								name_length += 3;
+								if(f->id() == FUNCTION_ID_SIN) f = f_asin;
+								else if(f->id() == FUNCTION_ID_COS) f = f_acos;
+								else if(f->id() == FUNCTION_ID_TAN) f = f_atan;
+								else if(f->id() == FUNCTION_ID_SINH) f = f_asinh;
+								else if(f->id() == FUNCTION_ID_COSH) f = f_acosh;
+								else if(f->id() == FUNCTION_ID_TANH) f = f_atanh;
+							}
 							int i4 = -1;
 							size_t i6;
 							if(f->args() == 0) {
@@ -1434,6 +1443,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								size_t i5 = 1;
 								int arg_i = f->args();
 								i6 = 0;
+								cout << str.substr(str_index + name_length) << endl;
 								while(!b) {
 									if(i6 + str_index + name_length >= str.length()) {
 										b = true;
@@ -1456,7 +1466,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										} else if(!b_comma_before && !b_power_before && c == ' ' && arg_i <= 1) {
 											//if(i5 < 2) b_space_first = true;
 											if(i5 == 2) b = true;
-										} else if(!b_comma_before && i5 == 2 && arg_i <= 1 && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH) {
+										} else if(!b_comma_before && i5 == 2 && arg_i <= 1 && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH && (!b_power_before || (c != MINUS_CH && c != PLUS_CH))) {
 											b = true;
 										} else if(c == COMMA_CH) {
 											if(i5 == 2) arg_i--;
@@ -1472,6 +1482,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								}
 								if(b && i5 >= 2) {
 									stmp2 = str.substr(str_index + name_length, i6 - 1);
+									cout << "A:" << stmp2 << endl;
 									stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 									if(b_unended_function && unended_function) {
 										po.unended_function = unended_function;
@@ -1518,6 +1529,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								}
 								if(b) {
 									stmp2 = str.substr(str_index + name_length + i9, i6 - (str_index + name_length + i9));
+									cout << stmp2 << endl;
 									stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 									if(b_unended_function && unended_function) {
 										po.unended_function = unended_function;

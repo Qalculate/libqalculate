@@ -1770,12 +1770,12 @@ int RadiansToDefaultAngleUnitFunction::calculate(MathStructure &mstruct, const M
 	switch(eo.parse_options.angle_unit) {
 		case ANGLE_UNIT_DEGREES: {
 			mstruct *= 180;
-	    		mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			break;
 		}
 		case ANGLE_UNIT_GRADIANS: {
 			mstruct *= 200;
-	    		mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 			break;
 		}
 		case ANGLE_UNIT_RADIANS: {
