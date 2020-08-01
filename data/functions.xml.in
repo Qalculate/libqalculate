@@ -1195,15 +1195,15 @@
     </builtin_function>
     <builtin_function name="asin">
       <_title>Inverse Sine</_title>
-      <_names>r:asin</_names>
+      <_names>r:arcsin, r:asin</_names>
     </builtin_function>
     <builtin_function name="acos">
       <_title>Inverse Cosine</_title>
-      <_names>r:acos</_names>
+      <_names>r:arccos, r:acos</_names>
     </builtin_function>
     <builtin_function name="atan">
       <_title>Inverse Tangent</_title>
-      <_names>r:atan</_names>
+      <_names>r:arctan, r:atan</_names>
     </builtin_function>
     <builtin_function name="sinh">
       <_title>Hyperbolic Sine</_title>
@@ -1219,19 +1219,19 @@
     </builtin_function>
     <builtin_function name="asinh">
       <_title>Inverse Hyperbolic Sine</_title>
-      <_names>r:asinh</_names>
+      <_names>r:arsinh, r:asinh</_names>
     </builtin_function>
     <builtin_function name="acosh">
       <_title>Inverse Hyperbolic Cosine</_title>
-      <_names>r:acosh</_names>
+      <_names>r:arcosh, r:acosh</_names>
     </builtin_function>
     <builtin_function name="atanh">
       <_title>Inverse Hyperbolic Tangent</_title>
-      <_names>r:atanh</_names>
+      <_names>r:artanh, r:atanh</_names>
     </builtin_function>
     <builtin_function name="atan2">
       <_title>Four-quadrant Inverse Tangent</_title>
-      <_names>r:atan2</_names>
+      <_names>r:atan2, arctan2</_names>
       <_description>Computes the principal value of the argument function applied to the complex number x+iy.</_description>
       <argument index="1">
         <_title>Y</_title>
@@ -1251,6 +1251,14 @@
         <_title>Radians</_title>
       </argument>
     </builtin_function>
+    <function>
+      <_title>Default Angle Unit to Radians</_title>
+      <_names>r:deftorad</_names>
+      <expression>\x/radtodef(1)</expression>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+    </function>
     <function>
       <_title>Secant</_title>
       <_names>r:sec</_names>
@@ -1307,7 +1315,7 @@
     </function>
     <function>
       <_title>Inverse Secant</_title>
-      <_names>r:asec</_names>
+      <_names>r:arcsec, r:asec</_names>
       <expression>radtodef(0.5pi+i*ln(sqrt(1-1\x^2)+i/\x))</expression>
       <argument type="number" index="1">
         <test>false</test>
@@ -1315,7 +1323,7 @@
     </function>
     <function>
       <_title>Inverse Cosecant</_title>
-      <_names>r:acsc</_names>
+      <_names>r:arcscs, r:acsc</_names>
       <expression>radtodef(-i*ln(sqrt(1-1\x^2)+i/\x))</expression>
       <argument type="number" index="1">
         <test>false</test>
@@ -1323,7 +1331,7 @@
     </function>
     <function>
       <_title>Inverse Cotangent</_title>
-      <_names>r:acot</_names>
+      <_names>r:arccot, r:acot</_names>
       <expression>radtodef(i/2*(ln((\x-i)/\x)-ln((\x+i)/\x)))</expression>
       <argument type="number" index="1">
         <test>false</test>
@@ -1331,7 +1339,7 @@
     </function>
     <function>
       <_title>Inverse Hyperbolic Secant</_title>
-      <_names>r:asech</_names>
+      <_names>r:arsech, r:asech</_names>
       <expression>ln(sqrt(1/\x-1)*sqrt(1/\x+1)+1/\x)</expression>
       <argument type="number" index="1">
         <test>false</test>
@@ -1339,7 +1347,7 @@
     </function>
     <function>
       <_title>Inverse Hyperbolic Cosecant</_title>
-      <_names>r:acsch</_names>
+      <_names>r:arcsch, r:acsch</_names>
       <expression>ln(sqrt(1+1/\x^2)+1/\x)</expression>
       <argument type="number" index="1">
         <test>false</test>
@@ -1347,7 +1355,7 @@
     </function>
     <function>
       <_title>Inverse Hyperbolic Cotangent</_title>
-      <_names>r:acoth</_names>
+      <_names>r:arcoth, r:acoth</_names>
       <expression>(ln(1+1/\x)-ln(1-1/\x))/2</expression>
       <argument type="number" index="1">
         <test>false</test>
