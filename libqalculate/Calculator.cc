@@ -1706,10 +1706,13 @@ void Calculator::addBuiltinUnits() {
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
-	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "2.7391", 1, "", false, true, true));
+	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "1/2.7391", 1, "", false, true, true));
 	priv->u_byn->setApproximate();
 	priv->u_byn->setPrecision(-2);
 	priv->u_byn->setChanged(false);
+	Unit *u = addUnit(new AliasUnit(_("Currency"), "BYR", "", "", "Belarusian Ruble p. (obsolete)", priv->u_byn, "0.0001", 1, "", false, true, true));
+	u->setHidden(true);
+	u->setChanged(false);
 	u_second = NULL;
 	u_minute = NULL;
 	u_hour = NULL;

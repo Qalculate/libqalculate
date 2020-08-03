@@ -495,7 +495,7 @@ bool Calculator::loadLocalDefinitions() {
 					}
 
 #define ITEM_INIT_DTH \
-					hidden = false;\
+					hidden = -1;\
 					title = ""; best_title = false; next_best_title = false;\
 					description = ""; best_description = false; next_best_description = false;\
 					if(fulfilled_translation > 0) require_translation = false; \
@@ -561,7 +561,7 @@ bool Calculator::loadLocalDefinitions() {
 					} else {\
 						item->setTitle(title);\
 					}\
-					item->setHidden(hidden);
+					if(hidden >= 0) item->setHidden(hidden);
 
 #define ITEM_SET_SHORT_NAME\
 					if(!name.empty() && unitNameIsValid(name, version_numbers, is_user_defs)) {\
@@ -728,7 +728,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	}
 
 	int exponent = 1, litmp = 0, mix_priority = 0, mix_min = 0;
-	bool active = false, hidden = false, b = false, require_translation = false, use_with_prefixes = false, use_with_prefixes_set = false;
+	bool active = false, b = false, require_translation = false, use_with_prefixes = false, use_with_prefixes_set = false;
+	int hidden = -1;
 	Number nr;
 	ExpressionItem *item;
 	MathFunction *f;
@@ -1814,7 +1815,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						au->setPrecision(prec);
 						if(b) au->setApproximate(true);
 						au->setUncertainty(suncertainty, unc_rel);
-						au->setHidden(hidden);
+						if(hidden >= 0) au->setHidden(hidden);
 						au->setSystem(usystem);
 						if(use_with_prefixes_set) {
 							au->setUseWithPrefixesByDefault(use_with_prefixes);
@@ -3494,7 +3495,7 @@ bool Calculator::loadExchangeRates() {
 		}
 	}
 
-	if(cunits.find(u_btc) != cunits.end()) {
+	if(cunits.find(u_btc) == cunits.end()) {
 		filename = getExchangeRatesFileName(2);
 		ifstream file2(filename.c_str());
 		if(file2.is_open()) {
@@ -3523,9 +3524,12 @@ bool Calculator::loadExchangeRates() {
 			exchange_rates_time[1] = ((time_t) 1531087L) * 1000;
 			if(exchange_rates_time[1] > exchange_rates_check_time[1]) exchange_rates_check_time[1] = exchange_rates_time[1];
 		}
+	} else {
+		exchange_rates_time[1] = ((time_t) 1531087L) * 1000;
+		if(exchange_rates_time[1] > exchange_rates_check_time[1]) exchange_rates_check_time[1] = exchange_rates_time[1];
 	}
 
-	if(cunits.find(priv->u_byn) != cunits.end()) {
+	if(cunits.find(priv->u_byn) == cunits.end()) {
 		filename = getExchangeRatesFileName(4);
 		ifstream file3(filename.c_str());
 		if(file3.is_open()) {
@@ -3539,7 +3543,7 @@ bool Calculator::loadExchangeRates() {
 					size_t i2 = sbuffer.find_first_not_of(NUMBER_ELEMENTS, i);
 					if(i2 == string::npos) i2 = sbuffer.length();
 					((AliasUnit*) priv->u_byn)->setBaseUnit(u_euro);
-					((AliasUnit*) priv->u_byn)->setExpression(sbuffer.substr(i, i2 - i));
+					((AliasUnit*) priv->u_byn)->setExpression(string("1/") + sbuffer.substr(i, i2 - i));
 					priv->u_byn->setApproximate();
 					priv->u_byn->setPrecision(-2);
 					priv->u_byn->setChanged(false);
@@ -3562,6 +3566,9 @@ bool Calculator::loadExchangeRates() {
 			priv->exchange_rates_time2[0] = ((time_t) 1531087L) * 1000;
 			if(priv->exchange_rates_time2[0] > priv->exchange_rates_check_time2[0]) priv->exchange_rates_check_time2[0] = priv->exchange_rates_time2[0];
 		}
+	} else {
+		priv->exchange_rates_time2[0] = ((time_t) 1531087L) * 1000;
+		if(priv->exchange_rates_time2[0] > priv->exchange_rates_check_time2[0]) priv->exchange_rates_check_time2[0] = priv->exchange_rates_time2[0];
 	}
 
 	Unit *u_usd = getUnit("USD");
