@@ -1443,7 +1443,6 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								size_t i5 = 1;
 								int arg_i = f->args();
 								i6 = 0;
-								cout << str.substr(str_index + name_length) << endl;
 								while(!b) {
 									if(i6 + str_index + name_length >= str.length()) {
 										b = true;
@@ -1482,7 +1481,6 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								}
 								if(b && i5 >= 2) {
 									stmp2 = str.substr(str_index + name_length, i6 - 1);
-									cout << "A:" << stmp2 << endl;
 									stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 									if(b_unended_function && unended_function) {
 										po.unended_function = unended_function;
@@ -1529,7 +1527,6 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								}
 								if(b) {
 									stmp2 = str.substr(str_index + name_length + i9, i6 - (str_index + name_length + i9));
-									cout << stmp2 << endl;
 									stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 									if(b_unended_function && unended_function) {
 										po.unended_function = unended_function;
