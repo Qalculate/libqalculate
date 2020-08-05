@@ -2335,6 +2335,16 @@
         <exponent>-1</exponent>
       </part>
     </unit>
+    <unit type="alias">
+      <_title>Kilometer per Hour</_title>
+      <hidden>true</hidden>
+      <_names>a-c-r:kph</_names>
+      <base>
+        <unit>km_p_h</unit>
+        <relation>1</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
     <unit type="composite">
       <_title>Nautical Mile per Hour</_title>
       <names>r:nautical_mile_p_h</names>

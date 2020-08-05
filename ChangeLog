@@ -1,3 +1,14 @@
+2020-08-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add kph (km/h)
+
+2020-08-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix BYN exchange rate (was inverted)
+	* Fix BYR exchange rate
+	* Fix updating of BYN and BTC exchange rates
+	* Fix update date for exchange rates not from ECB
+
 2020-08-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add arcsin, arccos, arsinh, arcosh, etc. as names for inverse trigonometric and hyperbolic functions
