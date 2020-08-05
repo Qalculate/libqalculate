@@ -3520,12 +3520,9 @@ bool Calculator::loadExchangeRates() {
 				exchange_rates_time[1] = stats.st_mtime;
 				if(exchange_rates_time[1] > exchange_rates_check_time[1]) exchange_rates_check_time[1] = exchange_rates_time[1];
 			}
-		} else {
-			exchange_rates_time[1] = ((time_t) 1531087L) * 1000;
-			if(exchange_rates_time[1] > exchange_rates_check_time[1]) exchange_rates_check_time[1] = exchange_rates_time[1];
 		}
 	} else {
-		exchange_rates_time[1] = ((time_t) 1531087L) * 1000;
+		exchange_rates_time[1] = exchange_rates_time[0];
 		if(exchange_rates_time[1] > exchange_rates_check_time[1]) exchange_rates_check_time[1] = exchange_rates_time[1];
 	}
 
@@ -3562,12 +3559,9 @@ bool Calculator::loadExchangeRates() {
 				}
 			}
 			file3.close();
-		} else {
-			priv->exchange_rates_time2[0] = ((time_t) 1531087L) * 1000;
-			if(priv->exchange_rates_time2[0] > priv->exchange_rates_check_time2[0]) priv->exchange_rates_check_time2[0] = priv->exchange_rates_time2[0];
 		}
 	} else {
-		priv->exchange_rates_time2[0] = ((time_t) 1531087L) * 1000;
+		priv->exchange_rates_time2[0] = exchange_rates_time[0];
 		if(priv->exchange_rates_time2[0] > priv->exchange_rates_check_time2[0]) priv->exchange_rates_check_time2[0] = priv->exchange_rates_time2[0];
 	}
 
