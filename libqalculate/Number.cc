@@ -65,38 +65,48 @@ int char2val(const char &c, const int &base) {
 
 void insert_thousands_separator(string &str, const PrintOptions &po) {
 	if(po.digit_grouping != DIGIT_GROUPING_NONE && (po.digit_grouping != DIGIT_GROUPING_LOCALE || !CALCULATOR->local_digit_group_separator.empty())) {
-		size_t i_deci = str.find(po.decimalpoint());
-		size_t i;
-		if(i_deci != string::npos) {
-			i = i_deci;
-			// no separator is currently used among decimals
-			/*i += 5 + po.decimalpoint().length();
-			while(i < str.length()) {
-				str.insert(i, po.thousandsseparator());
-				i += 5 + po.thousandsseparator().length();
-			}
-			i = i_deci;*/
-		} else {
-			i = str.length();
-		}
 		size_t group_size = 3, i_format = 0;
 		if(po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_format.size() > i_format) {
 			if(CALCULATOR->local_digit_group_format[i_format] == CHAR_MAX) return;
 			if(CALCULATOR->local_digit_group_format[i_format] > 0) group_size = CALCULATOR->local_digit_group_format[i_format];
 		}
+		size_t i_deci = str.find(po.decimalpoint());
+		size_t i;
+		if(i_deci != string::npos) {
+			if((po.digit_grouping != DIGIT_GROUPING_LOCALE || (group_size == 3 && (CALCULATOR->local_digit_group_separator == " " || CALCULATOR->local_digit_group_separator == " ") && CALCULATOR->local_digit_group_format.size() <= 1)) && i_deci + po.decimalpoint().length() < str.length() - 4) {
+				i = i_deci + 3 + po.decimalpoint().length();
+				while(i < str.length()) {
+#ifndef _WIN32
+					// do not use thin space on Windows
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
+						str.insert(i, " ");
+						i += 3 + strlen(" ");
+					} else {
+#endif
+						str.insert(i, " ");
+						i += 4;
+#ifndef _WIN32
+					}
+#endif
+				}
+			}
+			i = i_deci;
+		} else {
+			i = str.length();
+		}
 		if(po.digit_grouping == DIGIT_GROUPING_LOCALE || i > group_size + 1) {
 			while(i > group_size) {
 				i -= group_size;
 				if(po.digit_grouping != DIGIT_GROUPING_LOCALE) {
-#ifdef _WIN32
+#ifndef _WIN32
 					// do not use thin space on Windows
-					str.insert(i, " ");
-#else
 					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
 						// thin space is preferred
 						str.insert(i, " ");
 					} else {
+#endif
 						str.insert(i, " ");
+#ifndef _WIN32
 					}
 #endif
 				} else {

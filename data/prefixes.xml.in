@@ -131,4 +131,14 @@
     <abbreviation>Ei</abbreviation>
     <exponent>60</exponent>
   </prefix>
+  <prefix type="binary">
+    <_name>zebi</_name>
+    <abbreviation>Zi</abbreviation>
+    <exponent>70</exponent>
+  </prefix>
+  <prefix type="binary">
+    <_name>yobi</_name>
+    <abbreviation>Yi</abbreviation>
+    <exponent>80</exponent>
+  </prefix>
 </QALCULATE>

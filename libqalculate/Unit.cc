@@ -100,7 +100,6 @@ void Unit::setSystem(string s_system) {
 			b_use_with_prefixes = true;
 		} else if(ssystem == "CGS" || ssystem == "cgs" || ssystem == "Cgs") {
 			b_si = false;
-			b_use_with_prefixes = true;
 		} else {
 			b_si = false;
 		}
@@ -940,8 +939,10 @@ string CompositeUnit::print(bool plural_, bool short_, bool use_unicode, bool (*
 					str += "(";
 				}
 			} else {
-//				if(i > 0) str += "*";
-				if(i > 0) str += " ";
+				if(i > 0) {
+					if(use_unicode && (!can_display_unicode_string_function || (*can_display_unicode_string_function) (SIGN_MIDDLEDOT, can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
+					else str += " ";
+				}
 			}
 			if(plural_ && i == 0 && units[i]->firstBaseExponent() > 0) {
 				str += units[i]->print(true, short_, use_unicode, can_display_unicode_string_function, can_display_unicode_string_arg);
@@ -950,13 +951,21 @@ string CompositeUnit::print(bool plural_, bool short_, bool use_unicode, bool (*
 			}
 			if(b) {
 				if(units[i]->firstBaseExponent() != -1) {
-					str += "^";
-					str += i2s(-units[i]->firstBaseExponent());
+					if(use_unicode && units[i]->firstBaseExponent() == -2 && (!can_display_unicode_string_function || (*can_display_unicode_string_function) (SIGN_POWER_2, can_display_unicode_string_arg))) str += SIGN_POWER_2;
+					else if(use_unicode && units[i]->firstBaseExponent() == -3 && (!can_display_unicode_string_function || (*can_display_unicode_string_function) (SIGN_POWER_3, can_display_unicode_string_arg))) str += SIGN_POWER_3;
+					else {
+						str += "^";
+						str += i2s(-units[i]->firstBaseExponent());
+					}
 				}
 			} else {
 				if(units[i]->firstBaseExponent() != 1) {
-					str += "^";
-					str += i2s(units[i]->firstBaseExponent());
+					if(use_unicode && units[i]->firstBaseExponent() == 2 && (!can_display_unicode_string_function || (*can_display_unicode_string_function) (SIGN_POWER_2, can_display_unicode_string_arg))) str += SIGN_POWER_2;
+					else if(use_unicode && units[i]->firstBaseExponent() == 3 && (!can_display_unicode_string_function || (*can_display_unicode_string_function) (SIGN_POWER_3, can_display_unicode_string_arg))) str += SIGN_POWER_3;
+					else {
+						str += "^";
+						str += i2s(units[i]->firstBaseExponent());
+					}
 				}
 			}
 		}
