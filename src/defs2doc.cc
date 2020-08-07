@@ -523,12 +523,15 @@ void print_unit(Unit *u) {
 			}
 			case SUBTYPE_ALIAS_UNIT: {
 				AliasUnit *au = (AliasUnit*) u;
-				if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) base_unit = fix(((CompositeUnit*) au->firstBaseUnit())->print(false, true, printops.use_unicode_signs));
-				else base_unit = au->firstBaseUnit()->preferredDisplayName(printops.abbreviate_names, printops.use_unicode_signs).name;
+				base_unit = au->firstBaseUnit()->print(false, printops.abbreviate_names, printops.use_unicode_signs);
 				if(au->firstBaseExponent() != 1) {
 					if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {base_unit.insert(0, 1, '('); base_unit += ")";}
-					base_unit += POWER;
-					base_unit += i2s(au->firstBaseExponent());
+					if(printops.use_unicode_signs && au->firstBaseExponent() == 2) base_unit += SIGN_POWER_2;
+					else if(printops.use_unicode_signs && au->firstBaseExponent() == 3) base_unit += SIGN_POWER_3;
+					else {
+						base_unit += POWER;
+						base_unit += i2s(au->firstBaseExponent());
+					}
 				}
 				bool is_relative = false;
 				if(au->baseUnit() == CALCULATOR->u_euro && au->isBuiltin()) {

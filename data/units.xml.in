@@ -356,7 +356,7 @@
       <_title>Plane Angle</_title>
       <unit type="composite">
         <hidden>true</hidden>
-        <_title>Meter per Meter</_title>
+        <title>Meter per Meter</title>
         <names>r:m_p_m</names>
         <part>
           <unit>m</unit>
@@ -432,7 +432,7 @@
       <_title>Solid Angle</_title>
       <unit type="composite">
         <hidden>true</hidden>
-        <_title>Square Meter per Square Meter</_title>
+        <title>Square Meter per Square Meter</title>
         <names>r:sqm_p_sqm</names>
         <part>
           <unit>m</unit>
@@ -447,7 +447,7 @@
       </unit>
       <unit type="composite">
         <hidden>true</hidden>
-        <_title>Square Degree</_title>
+        <title>Square Degree</title>
         <names>r:sqdeg</names>
         <part>
           <unit>deg</unit>
@@ -1025,7 +1025,8 @@
     <category>
       <_title>Electric Charge</_title>
       <unit type="composite">
-        <_title>Ampere Second</_title>
+        <hidden>true</hidden>
+        <title>Ampere Second</title>
         <names>r:A_s</names>
         <part>
           <unit>A</unit>
@@ -1205,7 +1206,7 @@
       </unit>
       <unit type="alias">
         <system>SI</system>
-        <_title>Farad</_title>	
+        <_title>Farad</_title>
         <_names>ar:F,farad,p:farads</_names>
         <base>
           <unit>C_p_V</unit>
@@ -1217,8 +1218,9 @@
     <category>
       <_title>Electric Resistance</_title>
       <unit type="composite">
+        <hidden>true</hidden>
         <system>SI</system>
-        <_title>Volt per Ampere</_title>
+        <title>Volt per Ampere</title>
         <names>r:V_p_A</names>
         <part>
           <unit>V</unit>
@@ -1233,7 +1235,7 @@
       </unit>
       <unit type="alias">
         <system>SI</system>
-        <_title>Ohm</_title>	
+        <_title>Ohm</_title>
         <_names>au:&#x3A9;,r:ohm,p:ohms</_names>
         <base>
           <unit>V_p_A</unit>
@@ -1265,7 +1267,8 @@
     <category>
       <_title>Electric Conductance</_title>
       <unit type="composite">
-        <_title>Ampere per Volt</_title>
+        <hidden>true</hidden>
+        <title>Ampere per Volt</title>
         <names>r:A_p_V</names>
         <part>
           <unit>A</unit>
@@ -1348,7 +1351,8 @@
     <category>
       <_title>Inductance</_title>
       <unit type="composite">
-        <_title>Weber per Ampere</_title>
+        <hidden>true</hidden>
+        <title>Weber per Ampere</title>
         <names>r:Wb_p_A</names>
         <part>
           <unit>Wb</unit>
@@ -1488,7 +1492,8 @@
     <category>
       <_title>Catalytic Activity</_title>
       <unit type="composite">
-        <_title>Reciprocal Seconds Mole</_title>
+        <hidden>true</hidden>
+        <title>Reciprocal Seconds Mole</title>
         <names>r:recs_mol</names>
         <part>
           <unit>mol</unit>
@@ -1572,7 +1577,8 @@
     <category>
       <_title>Luminous Flux</_title>
       <unit type="composite">
-        <_title>Candela Steradian</_title>
+        <hidden>true</hidden>
+        <title>Candela Steradian</title>
         <names>r:cd_sr</names>
         <part>
           <unit>cd</unit>
@@ -1599,7 +1605,8 @@
     <category>
       <_title>Illuminance</_title>
       <unit type="composite">
-        <_title>Lumen per Meter Squared</_title>
+        <hidden>true</hidden>
+        <title>Lumen per Meter Squared</title>
         <names>r:lm_p_sqm</names>
         <part>
           <unit>lm</unit>
@@ -1614,7 +1621,7 @@
       </unit>
       <unit type="composite">
         <hidden>true</hidden>
-        <_title>Lumen per Foot Squared</_title>
+        <title>Lumen per Foot Squared</title>
         <names>r:lm_p_sqft</names>
         <part>
           <unit>lm</unit>
@@ -1705,7 +1712,7 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
-	<part>
+        <part>
           <unit>s</unit>
           <prefix>0</prefix>
           <exponent>-1</exponent>
@@ -1724,7 +1731,7 @@
           <prefix>0</prefix>
           <exponent>-2</exponent>
         </part>
-	<part>
+        <part>
           <unit>s</unit>
           <prefix>0</prefix>
           <exponent>-1</exponent>
@@ -1996,7 +2003,7 @@
       </unit>
       <unit type="composite">
         <hidden>true</hidden>
-        <_title>Miles per Gallon</_title>
+        <title>Miles per Gallon</title>
         <system>US</system>
         <names>r:mile_p_gal</names>
         <part>
@@ -2338,7 +2345,7 @@
     <unit type="alias">
       <_title>Kilometer per Hour</_title>
       <hidden>true</hidden>
-      <_names>a-c-r:kph</_names>
+      <_names>a-c-r:kph,a-c-r:kmph</_names>
       <base>
         <unit>km_p_h</unit>
         <relation>1</relation>
@@ -2370,7 +2377,7 @@
     </unit>
     <unit type="composite">
       <hidden>true</hidden>
-      <_title>Miles per Hour</_title>
+      <title>Miles per Hour</title>
       <system>Imperial/US</system>
       <names>r:mile_p_h</names>
       <part>
@@ -2441,6 +2448,7 @@
         </part>
       </unit>
       <unit type="alias">
+        <system>CGS</system>
         <_title>Galileo</_title>
         <_names>ar:Gal,galileo,p:galileos</_names>
         <base>
@@ -2448,6 +2456,7 @@
           <relation>1/100</relation>
           <exponent>1</exponent>
         </base>
+        <use_with_prefixes>true</use_with_prefixes>
       </unit>
       <unit type="alias">
         <_title>Gee</_title>
@@ -2501,12 +2510,14 @@
           <relation>1000/(4*pi)</relation>
           <exponent>1</exponent>
         </base>
+        <use_with_prefixes>true</use_with_prefixes>
       </unit>
     </category>
     <category>
       <_title>Magnetic Flux</_title>
       <unit type="composite">
-        <_title>Volt Seconds</_title>
+        <hidden>true</hidden>
+        <title>Volt Seconds</title>
         <names>r:V_s</names>
         <part>
           <unit>V</unit>
@@ -2543,7 +2554,8 @@
     <category>
       <_title>Magnetic Flux Density</_title>
       <unit type="composite">
-        <_title>Weber per Meter Squared</_title>
+        <hidden>true</hidden>
+        <title>Weber per Meter Squared</title>
         <names>r:Wb_p_sqm</names>
         <part>
           <unit>Wb</unit>
@@ -2575,6 +2587,7 @@
           <relation>0.0001</relation>
           <exponent>1</exponent>
         </base>
+        <use_with_prefixes>true</use_with_prefixes>
       </unit>
       <unit type="composite">
         <_title>Atomic Unit of Magnetic Flux Density</_title>
@@ -2638,7 +2651,8 @@
   <category>
     <_title>Force</_title>
     <unit type="composite">
-      <_title>Meter Kilogram per Second Squared</_title>
+      <hidden>true</hidden>
+      <title>Meter Kilogram per Second Squared</title>
       <names>r:m_kg_p_sqs</names>
       <part>
         <unit>m</unit>
@@ -2688,7 +2702,7 @@
     </unit>
     <unit type="composite">
       <hidden>true</hidden>
-      <_title>Pound Foot per Second Squared</_title>
+      <title>Pound Foot per Second Squared</title>
       <names>r:lb_ft_p_sqs</names>
       <part>
         <unit>lb</unit>
@@ -2837,7 +2851,8 @@
     <category>
       <_title>Pressure</_title>
       <unit type="composite">
-        <_title>Newton per Meter Squared</_title>
+        <hidden>true</hidden>
+        <title>Newton per Meter Squared</title>
         <names>r:N_p_sqm</names>
         <part>
           <unit>N</unit>
@@ -2851,7 +2866,7 @@
         </part>
       </unit>
       <unit type="composite">
-        <_title>Pound-force per Square Inch</_title>
+        <title>Pound-force per Square Inch</title>
         <system>Imperial/US</system>
         <hidden>true</hidden>
         <names>r:lbf_p_sqin</names>
@@ -2921,7 +2936,7 @@
       </unit>
       <unit type="alias">
         <_title>Torr</_title>
-        <_names>r:torr,p:torrs</_names>
+        <_names>ar:Torr,torr,p:torrs</_names>
         <base>
           <unit>atm</unit>
           <relation>1/760</relation>
@@ -2930,7 +2945,7 @@
       </unit>
       <unit type="alias">
         <_title>Millimeter of Mercury</_title>
-	<_names>ar:mmHg</_names>
+        <_names>ar:mmHg</_names>
         <base>
           <unit>atm</unit>
           <relation>1/760</relation>
@@ -2939,10 +2954,45 @@
       </unit>
       <unit type="alias">
         <_title>Inch of Mercury</_title>
-	<_names>ar:inHg</_names>
+        <_names>ar:inHg</_names>
         <base>
           <unit>mmHg</unit>
           <relation>25.4</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="composite">
+        <_title>Millitorr</_title>
+        <names>r:mTorr_c</names>
+        <part>
+          <unit>Torr</unit>
+          <prefix>-3</prefix>
+          <exponent>1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <system>CGS</system>
+        <title>Dyne per Square Centimetre</title>
+        <names>r:dyn_p_sqcm</names>
+        <hidden>true</hidden>
+        <part>
+          <unit>dyn</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>-2</prefix>
+          <exponent>-2</exponent>
+        </part>
+      </unit>
+      <unit type="alias">
+        <system>CGS</system>
+        <_title>Barye</_title>
+        <_names>ar:Ba,barye</_names>
+        <base>
+          <unit>dyn_p_sqcm</unit>
+          <relation>1</relation>
           <exponent>1</exponent>
         </base>
       </unit>
@@ -2974,6 +3024,16 @@
           <exponent>1</exponent>
         </base>
       </unit>
+      <unit type="composite">
+        <system>CGS</system>
+        <_title>Centipoise</_title>
+        <names>r:cP_c</names>
+        <part>
+          <unit>P</unit>
+          <prefix>-2</prefix>
+          <exponent>1</exponent>
+        </part>
+      </unit>
     </category>
     <category>
       <_title>Kinematic Viscosity</_title>
@@ -3000,6 +3060,16 @@
           <relation>0.0001</relation>
           <exponent>1</exponent>
         </base>
+      </unit>
+      <unit type="composite">
+        <system>CGS</system>
+        <_title>Centistokes</_title>
+        <names>r:cSt_c</names>
+        <part>
+          <unit>St</unit>
+          <prefix>-2</prefix>
+          <exponent>1</exponent>
+        </part>
       </unit>
     </category>
     <category>
@@ -3232,7 +3302,8 @@
     <category>
       <_title>Power</_title>
       <unit type="composite">
-        <_title>Joule per Second</_title>
+        <hidden>true</hidden>
+        <title>Joule per Second</title>
         <names>r:J_p_s</names>
         <part>
           <unit>J</unit>
@@ -3292,6 +3363,21 @@
           <inverse_relation>10*log(\x,10)</inverse_relation>
           <exponent>1</exponent>
         </base>
+      </unit>
+      <unit type="composite">
+        <system>CGS</system>
+        <_title>Erg per Seconds</_title>
+        <names>r:erg_p_s</names>
+        <part>
+          <unit>erg</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
       </unit>
     </category>
     <category>

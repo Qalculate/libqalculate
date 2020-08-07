@@ -3563,12 +3563,17 @@ int main(int argc, char *argv[]) {
 							case SUBTYPE_ALIAS_UNIT: {
 								AliasUnit *au = (AliasUnit*) item;
 								PRINT_AND_COLON_TABS_INFO(_("Base Unit"));
-								FPUTS_UNICODE(au->firstBaseUnit()->preferredDisplayName(printops.abbreviate_names, printops.use_unicode_signs).name.c_str(), stdout);
+								string base_unit = au->firstBaseUnit()->print(false, printops.abbreviate_names, printops.use_unicode_signs);
 								if(au->firstBaseExponent() != 1) {
-									fputs(POWER, stdout);
-									printf("%i", au->firstBaseExponent());
+									if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {base_unit.insert(0, 1, '('); base_unit += ")";}
+									if(printops.use_unicode_signs && au->firstBaseExponent() == 2) base_unit += SIGN_POWER_2;
+									else if(printops.use_unicode_signs && au->firstBaseExponent() == 3) base_unit += SIGN_POWER_3;
+									else {
+										base_unit += POWER;
+										base_unit += i2s(au->firstBaseExponent());
+									}
 								}
-								puts("");
+								PUTS_UNICODE(base_unit.c_str());
 								PRINT_AND_COLON_TABS_INFO(_("Relation"));
 								FPUTS_UNICODE(CALCULATOR->localizeExpression(au->expression()).c_str(), stdout);
 								bool is_relative = false;

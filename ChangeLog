@@ -1,6 +1,15 @@
+2020-08-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add binary prefixes zebi and yobi
+	* Hide composite SI units for which a specific name/symbol exist
+	* Do not use prefixes by default with most CGS units
+	* New composite units: cP, cStoke, mTorr, dyn/cm²
+	* Digit grouping after decimal separator (in groups of three, when space is used as separator)
+	* Use middle dot for multiplication and Unicode symbols for exponents 2 and 3 in composite units when Unicode is used
+
 2020-08-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Add kph (km/h)
+	* Add kph/kmph (km/h)
 
 2020-08-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
