@@ -15,6 +15,7 @@
 #include "util.h"
 #include "Calculator.h"
 #include "MathStructure.h"
+#include "MathStructure-support.h"
 #include "Prefix.h"
 #include "BuiltinFunctions.h"
 
@@ -1077,7 +1078,7 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	bool had_errors = false;
 	CALCULATOR->beginTemporaryStopMessages();
 	CALCULATOR->parse(&mstruct, base_expression_, po);
-	mstruct.eval(eo);
+	if(!is_unit_multiexp(mstruct)) mstruct.eval(eo);
 	if(CALCULATOR->endTemporaryStopMessages() > 0) had_errors = true;
 	if(mstruct.isUnit()) {
 		add(mstruct.unit(), 1, mstruct.prefix());
