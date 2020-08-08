@@ -512,6 +512,7 @@
       <_names>ar:g,gram,p:grams</_names>
     </unit>
     <unit type="composite">
+      <system>SI</system>
       <_title>Kilogram</_title>
       <names>r:kg_c</names>
       <part>
@@ -1129,7 +1130,8 @@
     <category>
       <_title>Electric Potential</_title>
       <unit type="composite">
-        <_title>Watt per Ampere</_title>
+        <hidden>true</hidden>
+        <title>Watt per Ampere</title>
         <names>r:W_p_A</names>
         <part>
           <unit>W</unit>
@@ -1219,7 +1221,6 @@
       <_title>Electric Resistance</_title>
       <unit type="composite">
         <hidden>true</hidden>
-        <system>SI</system>
         <title>Volt per Ampere</title>
         <names>r:V_p_A</names>
         <part>
@@ -1668,6 +1669,7 @@
     <category>
       <_title>Radiant Intensity</_title>
       <unit type="composite">
+        <system>SI</system>
         <_title>Watt per Steradian</_title>
         <names>r:W_p_sr</names>
         <part>
@@ -2613,17 +2615,18 @@
     <category>
       <_title>Magnetic Dipole Moment</_title>
       <unit type="composite">
-        <_title>Joule per Tesla</_title>
-        <names>r:J_T</names>
+        <system>SI</system>
+        <_title>Ampere Square Meter</_title>
+        <names>r:A_sqm</names>
         <part>
-          <unit>J</unit>
+          <unit>A</unit>
           <prefix>0</prefix>
           <exponent>1</exponent>
         </part>
         <part>
-          <unit>T</unit>
+          <unit>m</unit>
           <prefix>0</prefix>
-          <exponent>-1</exponent>
+          <exponent>2</exponent>
         </part>
       </unit>
       <unit type="composite">
@@ -2785,6 +2788,7 @@
     <category>
       <_title>Momentum</_title>
         <unit type="composite">
+        <system>SI</system>
         <_title>Kilogram Meter per Second</_title>
         <names>r:kg_m_p_s</names>
         <part>
@@ -3038,6 +3042,7 @@
     <category>
       <_title>Kinematic Viscosity</_title>
       <unit type="composite">
+        <system>SI</system>
         <_title>Square Meter per Second</_title>
         <names>r:sqm_p_s</names>
         <part>
@@ -3366,7 +3371,7 @@
       </unit>
       <unit type="composite">
         <system>CGS</system>
-        <_title>Erg per Seconds</_title>
+        <_title>Erg per Second</_title>
         <names>r:erg_p_s</names>
         <part>
           <unit>erg</unit>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-07 12:26+0200\n"
+"POT-Creation-Date: 2020-08-07 13:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -9163,7 +9163,7 @@ msgid "Magnetic Dipole Moment"
 msgstr ""
 
 #: ../data/units.xml.in.h:392
-msgid "Joule per Tesla"
+msgid "Ampere Square Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:393
@@ -9551,7 +9551,7 @@ msgid "ar:dBW"
 msgstr ""
 
 #: ../data/units.xml.in.h:489
-msgid "Erg per Seconds"
+msgid "Erg per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:490

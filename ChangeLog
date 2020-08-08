@@ -1,3 +1,8 @@
+2020-08-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix conversion to ratio
+	* Replace J/T with A*m^2
+
 2020-08-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add binary prefixes zebi and yobi

@@ -256,10 +256,12 @@ MathStructure Calculator::convert(const MathStructure &mstruct, KnownVariable *t
 	return mstruct_new;
 }
 MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units) {
-	if(!mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
 	CompositeUnit *cu = NULL;
 	if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) cu = (CompositeUnit*) to_unit;
 	if(cu && cu->countUnits() == 0) return mstruct;
+	int exp1, exp2;
+	bool b_ratio = cu && cu->countUnits() == 2 && cu->get(1, &exp1)->baseUnit() == cu->get(2, &exp2)->baseUnit() && exp1 == -exp2;
+	if(!b_ratio && !mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
 	MathStructure mstruct_new(mstruct);
 	size_t n_messages = messages.size();
 	if(to_unit->hasNonlinearRelationTo(to_unit->baseUnit()) && to_unit->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
@@ -284,7 +286,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 		if(!b_changed && !mstruct_new.equals(mstruct, true, true)) b_changed = true;
 	}
 
-	if(!mstruct_new.isPower() && !mstruct_new.isUnit() && !mstruct_new.isMultiplication()) {
+	if(mstruct_new.size() > 0 && !mstruct_new.isPower() && !mstruct_new.isUnit() && !mstruct_new.isMultiplication()) {
 		if(mstruct_new.size() > 0) {
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
 				if(aborted()) return mstruct;
@@ -309,7 +311,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 		eo2.keep_prefixes = true;
 		bool b = false;
 		if(eo.approximation == APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_TRY_EXACT;
-		if(mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL) || always_convert) {
+		if(mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL) || always_convert || b_ratio) {
 			b = true;
 		} else {
 			CompositeUnit *cu2 = cu;
@@ -360,12 +362,25 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				if(!mbak.containsType(STRUCT_UNIT)) mstruct_new = mbak;
 			}
 
+			bool b_eval = true;
 			if(cu) {
 				MathStructure mstruct_cu(cu->generateMathStructure(false, eo.keep_prefixes));
 				Prefix *p = NULL;
 				size_t i = 1;
 				Unit *u = cu->get(i, NULL, &p);
 				while(u) {
+					size_t i2 = i + 1;
+					if(b_eval) {
+						Unit *u2 = cu->get(i2);
+						while(u2) {
+							if(u2->baseUnit() == u->baseUnit()) {
+								b_eval = false;
+								break;
+							}
+							i2++;
+							u2 = cu->get(i2);
+						}
+					}
 					mstruct_new.setPrefixForUnit(u, p);
 					i++;
 					u = cu->get(i, NULL, &p);
@@ -377,7 +392,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 
 			eo2.sync_units = false;
 			eo2.keep_prefixes = true;
-			mstruct_new.eval(eo2);
+			if(b_eval) mstruct_new.eval(eo2);
 
 			cleanMessages(mstruct, n_messages + 1);
 
