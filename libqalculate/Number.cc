@@ -73,7 +73,7 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 		size_t i_deci = str.find(po.decimalpoint());
 		size_t i;
 		if(i_deci != string::npos) {
-			if((po.digit_grouping != DIGIT_GROUPING_LOCALE || (group_size == 3 && (CALCULATOR->local_digit_group_separator == " " || CALCULATOR->local_digit_group_separator == " ") && CALCULATOR->local_digit_group_format.size() <= 1)) && i_deci + po.decimalpoint().length() < str.length() - 4 && str.find("…") == string::npos && str.find("...") == string::npos) {
+			if(po.digit_grouping != DIGIT_GROUPING_LOCALE && i_deci + po.decimalpoint().length() < str.length() - 4 && str.find("…") == string::npos && str.find("...") == string::npos) {
 				i = i_deci + 3 + po.decimalpoint().length();
 				while(i < str.length()) {
 #ifndef _WIN32

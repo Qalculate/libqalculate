@@ -769,7 +769,7 @@ bool AliasUnit::containsRelativeTo(Unit *u) const {
 bool AliasUnit::hasNonlinearRelationToBase() const {return hasNonlinearRelationTo(baseUnit()) || baseUnit()->hasNonlinearRelationToBase();}
 bool AliasUnit::hasApproximateRelationToBase(bool check_variables, bool ignore_high_precision_intervals) const {return hasApproximateRelationTo(baseUnit(), check_variables, ignore_high_precision_intervals) || baseUnit()->hasApproximateRelationToBase(check_variables, ignore_high_precision_intervals);}
 
-AliasUnit_Composite::AliasUnit_Composite(Unit *alias, int exp, Prefix *prefix_) : AliasUnit("", alias->name(), alias->plural(false), alias->singular(false), "", alias, "", exp, "") {
+AliasUnit_Composite::AliasUnit_Composite(Unit *alias, int exp, Prefix *prefix_) : AliasUnit("", alias->referenceName(), "", "", "", alias, "", exp, "") {
 	prefixv = (Prefix*) prefix_;
 }
 AliasUnit_Composite::AliasUnit_Composite(const AliasUnit_Composite *unit) {
@@ -793,10 +793,11 @@ void AliasUnit_Composite::set(const ExpressionItem *item) {
 }
 string AliasUnit_Composite::print(bool plural_, bool short_, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
 	string str = "";
+	const ExpressionName *ename = &o_unit->preferredName(short_, use_unicode, plural_, false, can_display_unicode_string_function, can_display_unicode_string_arg);
 	if(prefixv) {
-		str += prefixv->name(short_, use_unicode, can_display_unicode_string_function, can_display_unicode_string_arg);
+		str += prefixv->name(ename->abbreviation, use_unicode, can_display_unicode_string_function, can_display_unicode_string_arg);
 	}
-	str += preferredName(short_, use_unicode, plural_, false, can_display_unicode_string_function, can_display_unicode_string_arg).name;
+	str += ename->name;
 	return str;
 }
 Prefix *AliasUnit_Composite::prefix() const {
@@ -965,7 +966,12 @@ string CompositeUnit::print(bool plural_, bool short_, bool use_unicode, bool (*
 					else if(use_unicode && units[i]->firstBaseExponent() == 3 && (!can_display_unicode_string_function || (*can_display_unicode_string_function) (SIGN_POWER_3, can_display_unicode_string_arg))) str += SIGN_POWER_3;
 					else {
 						str += "^";
-						str += i2s(units[i]->firstBaseExponent());
+						if(units[i]->firstBaseExponent() < 0 && (!can_display_unicode_string_function || (*can_display_unicode_string_function) (SIGN_MINUS, can_display_unicode_string_arg))) {
+							str += SIGN_MINUS;
+							str += i2s(-units[i]->firstBaseExponent());
+						} else {
+							str += i2s(units[i]->firstBaseExponent());
+						}
 					}
 				}
 			}

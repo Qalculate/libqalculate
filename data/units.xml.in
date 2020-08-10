@@ -997,7 +997,7 @@
       <unit type="alias">
         <system>CGS</system>
         <_title>Abampere</_title>
-        <_names>r:abampere,a:abA,a:aA,p:abamperes</_names>
+        <_names>r:abampere,a:abA,a:aA,p:abamperes,a:Bi,biot</_names>
         <base>
           <unit>A</unit>
           <relation>10</relation>
@@ -1193,7 +1193,8 @@
     <category>
       <_title>Capacitance</_title>
       <unit type="composite">
-        <_title>Coulomb per Volt</_title>
+        <hidden>true</hidden>
+        <title>Coulomb per Volt</title>
         <names>r:C_p_V</names>
         <part>
           <unit>C</unit>
@@ -1237,7 +1238,7 @@
       <unit type="alias">
         <system>SI</system>
         <_title>Ohm</_title>
-        <_names>au:&#x3A9;,r:ohm,p:ohms</_names>
+        <_names>au:&#x3A9;,r:ohm,p:ohms,auio:&#x2126;</_names>
         <base>
           <unit>V_p_A</unit>
           <relation>1</relation>
@@ -1285,7 +1286,7 @@
       <unit type="alias">
         <system>SI</system>
         <_title>Siemens</_title>
-        <_names>ar:S,siemens</_names>
+        <_names>ar:S,siemens,auio:&#x2127;</_names>
         <base>
           <unit>A_p_V</unit>
           <relation>1</relation>
@@ -1373,6 +1374,16 @@
         <base>
           <unit>Wb_p_A</unit>
           <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <system>CGS</system>
+        <_title>Abhenry</_title>
+        <_names>r:abenry,p:abhenrys,a:abH</_names>
+        <base>
+          <unit>H</unit>
+          <relation>1E-9</relation>
           <exponent>1</exponent>
         </base>
       </unit>

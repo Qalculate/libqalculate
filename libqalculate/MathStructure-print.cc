@@ -2266,7 +2266,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 		}
 		case STRUCT_POWER: {
 			if(po.preserve_format) break;
-			if(CHILD(1).isNegate() && (!po.negative_exponents || !CHILD(0).isUnit()) && (!CHILD(0).isVector() || !CHILD(1).isMinusOne())) {
+			if(CHILD(1).isNegate() && ((!po.negative_exponents && parent != NULL) || !CHILD(0).isUnit()) && (!CHILD(0).isVector() || !CHILD(1).isMinusOne())) {
 				if(CHILD(1)[0].isOne()) {
 					// f(a)^-1=1/f(a)
 					m_type = STRUCT_INVERSE;
@@ -2905,8 +2905,8 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_POWER: {
 			if(m_type == STRUCT_UNIT && parent[index - 2][0].isUnit()) {
 				namelen(parent[index - 2], po, ips, &abbr_prev);
-				if(!flat_power && !po.limit_implicit_multiplication && !abbr_prev && !abbr_this) return MULTIPLICATION_SIGN_SPACE;
 				if(po.place_units_separately) return MULTIPLICATION_SIGN_OPERATOR_SHORT;
+				else if(!flat_power && !po.limit_implicit_multiplication && !abbr_prev && !abbr_this) return MULTIPLICATION_SIGN_SPACE;
 				else return MULTIPLICATION_SIGN_OPERATOR;
 			}
 			break;
@@ -2929,11 +2929,10 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_SYMBOLIC: {break;}
 		case STRUCT_UNIT: {
 			if(m_type == STRUCT_UNIT) {
-				if(!po.limit_implicit_multiplication && !abbr_prev && !abbr_this) {
-					return MULTIPLICATION_SIGN_SPACE;
-				}
 				if(po.place_units_separately) {
 					return MULTIPLICATION_SIGN_OPERATOR_SHORT;
+				} else if(!po.limit_implicit_multiplication && !abbr_prev && !abbr_this) {
+					return MULTIPLICATION_SIGN_SPACE;
 				} else {
 					return MULTIPLICATION_SIGN_OPERATOR;
 				}
