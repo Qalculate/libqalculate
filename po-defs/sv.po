@@ -8658,7 +8658,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:201
 msgid "Electric Conductance"
-msgstr "Induktion"
+msgstr "Konduktans"
 
 #: ../data/units.xml.in.h:202
 msgid "Siemens"
@@ -8895,7 +8895,7 @@ msgstr "Einsteins per kvadratmeter per sekund"
 
 #: ../data/units.xml.in.h:260
 msgid "Microeinstein per Meter Squared per Second"
-msgstr "Kikroeinstein per kvadratmeter per sekund"
+msgstr "Mikroeinstein per kvadratmeter per sekund"
 
 #: ../data/units.xml.in.h:261
 msgid "Radiance"
@@ -10208,7 +10208,7 @@ msgstr "Deciljard"
 
 #: ../data/variables.xml.in.h:17
 msgid "-r:vigintillion"
-msgstr "deciljard,p:deciljarder"
+msgstr "deciljard,p:deciljarder,vigintillion"
 
 #: ../data/variables.xml.in.h:18
 msgid "Novemdecillion"
@@ -10216,7 +10216,7 @@ msgstr "Deciljon"
 
 #: ../data/variables.xml.in.h:19
 msgid "-r:novemdecillion"
-msgstr "deciljon,p:deciljoner"
+msgstr "deciljon,p:deciljoner,novemdecillion"
 
 #: ../data/variables.xml.in.h:20
 msgid "Octodecillion"
@@ -10224,7 +10224,7 @@ msgstr "Noniljard"
 
 #: ../data/variables.xml.in.h:21
 msgid "-r:octodecillion"
-msgstr "noniljard,p:noniljarder"
+msgstr "noniljard,p:noniljarder.octodecillion"
 
 #: ../data/variables.xml.in.h:22
 msgid "Septendecillion"
@@ -10232,7 +10232,7 @@ msgstr "Noniljon"
 
 #: ../data/variables.xml.in.h:23
 msgid "-r:septendecillion"
-msgstr "noniljon,p:noniljoner"
+msgstr "noniljon,p:noniljoner,septendecillion"
 
 #: ../data/variables.xml.in.h:24
 msgid "Sexdecillion"
@@ -10240,7 +10240,7 @@ msgstr "Oktiljard"
 
 #: ../data/variables.xml.in.h:25
 msgid "-r:sexdecillion"
-msgstr "oktiljard,p:oktiljarder"
+msgstr "oktiljard,p:oktiljarder,sexdecillion"
 
 #: ../data/variables.xml.in.h:26
 msgid "Quindecillion"
@@ -10248,7 +10248,7 @@ msgstr "Oktiljon"
 
 #: ../data/variables.xml.in.h:27
 msgid "-r:quindecillion"
-msgstr "oktiljon,p:oktiljoner"
+msgstr "oktiljon,p:oktiljoner,quindecillion"
 
 #: ../data/variables.xml.in.h:28
 msgid "Quattuordecillion"
@@ -10256,7 +10256,7 @@ msgstr "Septiljard"
 
 #: ../data/variables.xml.in.h:29
 msgid "-r:quattuordecillion"
-msgstr "septiljard,p:septiljarder"
+msgstr "septiljard,p:septiljarder,quattuordecillion"
 
 #: ../data/variables.xml.in.h:30
 msgid "Tredecillion"
@@ -10264,7 +10264,7 @@ msgstr "Septiljon"
 
 #: ../data/variables.xml.in.h:31
 msgid "-r:tredecillion"
-msgstr "septiljon,p:septiljoner"
+msgstr "septiljon,p:septiljoner,tredecillion"
 
 #: ../data/variables.xml.in.h:32
 msgid "Duodecillion"
@@ -10272,7 +10272,7 @@ msgstr "Sextiljard"
 
 #: ../data/variables.xml.in.h:33
 msgid "-r:duodecillion"
-msgstr "sextiljard,p:sextiljarder"
+msgstr "sextiljard,p:sextiljarder,duodecillion"
 
 #: ../data/variables.xml.in.h:34
 msgid "Undecillion"
@@ -10280,7 +10280,7 @@ msgstr "Sextiljon"
 
 #: ../data/variables.xml.in.h:35
 msgid "-r:undecillion"
-msgstr "sextiljon,p:sextiljoner"
+msgstr "sextiljon,p:sextiljoner,undecillion"
 
 #: ../data/variables.xml.in.h:36
 msgid "Decillion"
@@ -10288,7 +10288,7 @@ msgstr "Kvintiljard"
 
 #: ../data/variables.xml.in.h:37
 msgid "-r:decillion"
-msgstr "kvintiljard,p:kvintiljarder"
+msgstr "kvintiljard,p:kvintiljarder,decillion"
 
 #: ../data/variables.xml.in.h:38
 msgid "Nonillion"
@@ -10296,7 +10296,7 @@ msgstr "Kvintiljon"
 
 #: ../data/variables.xml.in.h:39
 msgid "-r:nonillion"
-msgstr "kvintiljon,p:kvintiljoner"
+msgstr "kvintiljon,p:kvintiljoner,nonillion"
 
 #: ../data/variables.xml.in.h:40
 msgid "Octillion"
@@ -10304,7 +10304,7 @@ msgstr "Kvadriljard"
 
 #: ../data/variables.xml.in.h:41
 msgid "-r:octillion"
-msgstr "kvadriljard,p:kvadriljarder"
+msgstr "kvadriljard,p:kvadriljarder,octillion"
 
 #: ../data/variables.xml.in.h:42
 msgid "Septillion"
@@ -10312,7 +10312,7 @@ msgstr "Kvadriljon"
 
 #: ../data/variables.xml.in.h:43
 msgid "-r:septillion"
-msgstr "kvadriljon,p:kvadriljoner"
+msgstr "kvadriljon,p:kvadriljoner,septillion"
 
 #: ../data/variables.xml.in.h:44
 msgid "Sextillion"
@@ -10320,7 +10320,7 @@ msgstr "Triljard"
 
 #: ../data/variables.xml.in.h:45
 msgid "-r:sextillion"
-msgstr "triljard,p:triljarder"
+msgstr "triljard,p:triljarder,sextillion"
 
 #: ../data/variables.xml.in.h:46
 msgid "Quintillion"
@@ -10328,7 +10328,7 @@ msgstr "Triljon"
 
 #: ../data/variables.xml.in.h:47
 msgid "-r:quintillion"
-msgstr "triljon,p:triljoner"
+msgstr "triljon,p:triljoner,quintillion"
 
 #: ../data/variables.xml.in.h:48
 msgid "Quadrillion"
@@ -10336,7 +10336,7 @@ msgstr "Biljard"
 
 #: ../data/variables.xml.in.h:49
 msgid "-r:quadrillion"
-msgstr "biljard,p:biljarder"
+msgstr "biljard,p:biljarder,quadrillion"
 
 #: ../data/variables.xml.in.h:50
 msgid "Trillion"
@@ -10344,7 +10344,7 @@ msgstr "Biljon"
 
 #: ../data/variables.xml.in.h:51
 msgid "-r:trillion"
-msgstr "biljon,p:biljoner"
+msgstr "biljon,p:biljoner,trillion"
 
 #: ../data/variables.xml.in.h:52
 msgid "Billion"
@@ -10352,7 +10352,7 @@ msgstr "Miljard"
 
 #: ../data/variables.xml.in.h:53
 msgid "-r:billion"
-msgstr "miljard,p:miljarder"
+msgstr "miljard,p:miljarder,billion"
 
 #: ../data/variables.xml.in.h:54
 msgid "Million"
@@ -10360,7 +10360,7 @@ msgstr "Miljon"
 
 #: ../data/variables.xml.in.h:55
 msgid "-r:million"
-msgstr "miljon,p:miljoner"
+msgstr "miljon,p:miljoner,million"
 
 #: ../data/variables.xml.in.h:56
 msgid "Thousand"
@@ -10368,7 +10368,7 @@ msgstr "Tusen"
 
 #: ../data/variables.xml.in.h:57
 msgid "-r:thousand"
-msgstr "tusen"
+msgstr "tusen,thousand"
 
 #: ../data/variables.xml.in.h:58
 msgid "Hundred"
@@ -10376,7 +10376,7 @@ msgstr "Hundra"
 
 #: ../data/variables.xml.in.h:59
 msgid "-r:hundred"
-msgstr "hundra"
+msgstr "hundra,hundred"
 
 #: ../data/variables.xml.in.h:60
 msgid "Physical Constants"

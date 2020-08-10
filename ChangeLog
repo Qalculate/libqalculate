@@ -1,3 +1,11 @@
+2020-08-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for ohm unicode symbol and inverted ohm (for siemens)
+	* Add biot (Bi) name for abampere
+	* Add abhenry (abH) unit
+	* Fix display of unit with negative exponent and factor 1 (do not display as division)
+	* Display multiplication of non-abbreviated and abbreviated similarily
+
 2020-08-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix conversion to ratio
@@ -9,7 +17,7 @@
 	* Hide composite SI units for which a specific name/symbol exist
 	* Do not use prefixes by default with most CGS units
 	* New composite units: cP, cStoke, mTorr, dyn/cm²
-	* Digit grouping after decimal separator (in groups of three, when space is used as separator)
+	* Digit grouping after decimal separator (in groups of three, with standard digit grouping)
 	* Use middle dot for multiplication and Unicode symbols for exponents 2 and 3 in composite units when Unicode is used
 
 2020-08-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
