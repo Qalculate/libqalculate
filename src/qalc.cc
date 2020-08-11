@@ -2236,13 +2236,18 @@ int main(int argc, char *argv[]) {
 				bool b = true;
 				if(!CALCULATOR->variableNameIsValid(name)) {
 					name = CALCULATOR->convertToValidVariableName(name);
-					size_t l = name.length() + strlen(_("Illegal name. Save as %s instead (default: no)?"));
-					char *cstr = (char*) malloc(sizeof(char) * (l + 1));
-					snprintf(cstr, l, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
-					if(!ask_question(cstr)) {
+					if(!CALCULATOR->variableNameIsValid(name)) {
+						PUTS_UNICODE(_("Illegal name."));
 						b = false;
+					} else {
+						size_t l = name.length() + strlen(_("Illegal name. Save as %s instead (default: no)?"));
+						char *cstr = (char*) malloc(sizeof(char) * (l + 1));
+						snprintf(cstr, l, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
+						if(!ask_question(cstr)) {
+							b = false;
+						}
+						free(cstr);
 					}
-					free(cstr);
 				}
 				if(b && CALCULATOR->variableNameTaken(name)) {
 					if(!ask_question(_("An unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"))) {
@@ -2296,13 +2301,18 @@ int main(int argc, char *argv[]) {
 			bool b = true;
 			if(!CALCULATOR->variableNameIsValid(name)) {
 				name = CALCULATOR->convertToValidVariableName(name);
-				size_t l = name.length() + strlen(_("Illegal name. Save as %s instead (default: no)?"));
-				char *cstr = (char*) malloc(sizeof(char) * (l + 1));
-				snprintf(cstr, l, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
-				if(!ask_question(cstr)) {
+				if(!CALCULATOR->variableNameIsValid(name)) {
+					PUTS_UNICODE(_("Illegal name."));
 					b = false;
+				} else {
+					size_t l = name.length() + strlen(_("Illegal name. Save as %s instead (default: no)?"));
+					char *cstr = (char*) malloc(sizeof(char) * (l + 1));
+					snprintf(cstr, l, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
+					if(!ask_question(cstr)) {
+						b = false;
+					}
+					free(cstr);
 				}
-				free(cstr);
 			}
 			if(b && CALCULATOR->variableNameTaken(name)) {
 				if(!ask_question(_("An unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"))) {
@@ -2353,13 +2363,18 @@ int main(int argc, char *argv[]) {
 			bool b = true;
 			if(!CALCULATOR->functionNameIsValid(name)) {
 				name = CALCULATOR->convertToValidFunctionName(name);
-				size_t l = name.length() + strlen(_("Illegal name. Save as %s instead (default: no)?"));
-				char *cstr = (char*) malloc(sizeof(char) * (l + 1));
-				snprintf(cstr, l, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
-				if(!ask_question(cstr)) {
+				if(!CALCULATOR->functionNameIsValid(name)) {
+					PUTS_UNICODE(_("Illegal name."));
 					b = false;
+				} else {
+					size_t l = name.length() + strlen(_("Illegal name. Save as %s instead (default: no)?"));
+					char *cstr = (char*) malloc(sizeof(char) * (l + 1));
+					snprintf(cstr, l, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
+					if(!ask_question(cstr)) {
+						b = false;
+					}
+					free(cstr);
 				}
-				free(cstr);
 			}
 			if(b && CALCULATOR->functionNameTaken(name)) {
 				if(!ask_question(_("An function with the same name already exists.\nDo you want to overwrite it (default: no)?"))) {
@@ -3314,7 +3329,7 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("factor")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("find"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("list"), stdout);  fputs(" [", stdout); FPUTS_UNICODE(_("NAME"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED;
 			FPUTS_UNICODE(_("function"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("EXPRESSION")); CHECK_IF_SCREEN_FILLED
-			PUTS_UNICODE(_("info")); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("info"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("NAME")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("mode")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("partial fraction")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("save"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("store"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("CATEGORY"), stdout); fputs("] [", stdout); FPUTS_UNICODE(_("TITLE"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
@@ -4212,7 +4227,21 @@ int main(int argc, char *argv[]) {
 #endif
 			break;
 		} else if(explicit_command) {
-			PUTS_UNICODE(_("Unknown command."));
+			if(!scom.empty() && ((canfetch && EQUALS_IGNORECASE_AND_LOCAL(scom, "exrates", _("exrates"))) || EQUALS_IGNORECASE_AND_LOCAL(scom, "stack", _("stack")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "exact", _("exact")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "approximate", _("approximate")) || str == "approx" || EQUALS_IGNORECASE_AND_LOCAL(scom, "factor", _("factor")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "simplify", _("simplify")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "expand", _("expand")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "mode", _("mode")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "quit", _("quit")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "exit", _("exit")))) {
+				BEGIN_BOLD(str)
+				str += scom;
+				END_BOLD(str)
+				snprintf(buffer, 1000, _("%s does not accept any arguments."), str.c_str());
+				PUTS_UNICODE(buffer)
+			} else if(scom.empty() && (EQUALS_IGNORECASE_AND_LOCAL(str, "set", _("set")) || EQUALS_IGNORECASE_AND_LOCAL(str, "save", _("save")) || EQUALS_IGNORECASE_AND_LOCAL(str, "store", _("store")) || EQUALS_IGNORECASE_AND_LOCAL(str, "variable", _("variable")) || EQUALS_IGNORECASE_AND_LOCAL(str, "function", _("function")) || EQUALS_IGNORECASE_AND_LOCAL(str, "delete", _("delete")) || EQUALS_IGNORECASE_AND_LOCAL(str, "assume", _("assume")) || EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(str, "rpn", _("rpn")) || EQUALS_IGNORECASE_AND_LOCAL(str, "move", _("move")) || EQUALS_IGNORECASE_AND_LOCAL(str, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to")) || EQUALS_IGNORECASE_AND_LOCAL(str, "find", _("find")) || EQUALS_IGNORECASE_AND_LOCAL(str, "info", _("info")))) {
+				BEGIN_BOLD(scom)
+				scom += str;
+				END_BOLD(scom)
+				snprintf(buffer, 1000, _("%s requires at least one argument."), scom.c_str());
+				PUTS_UNICODE(buffer)
+			} else {
+				PUTS_UNICODE(_("Unknown command."));
+			}
 			puts("");
 		} else {
 			size_t index = str.find_first_of(ID_WRAPS);
