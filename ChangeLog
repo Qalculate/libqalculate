@@ -1,3 +1,9 @@
+2020-08-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Show information about wrong number of arguments for explicit commands (using /)
+	* Fix help text for info command
+	* Fix variable command when illegal name cannot be converted to valid name
+
 2020-08-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add support for ohm unicode symbol and inverted ohm (for siemens)
