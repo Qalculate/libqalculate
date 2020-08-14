@@ -2770,7 +2770,7 @@
       <_title>Product of a sequence</_title>
       <_names>au:&#x3A0;,r:product</_names>
       <_description>Corresponds to the product symbol. Multiplies factors for each x ranging from the lower to the upper limit.</_description>
-      <example>$name(x^2, 1, 5) = 1^2 * 2^2 * 3^2 * 4^2 * 5^2 = 1440</example>
+      <example>$name(x^2, 1, 5) = 1^2 * 2^2 * 3^2 * 4^2 * 5^2 = 14400</example>
       <argument index="1">
         <_title>Factor expression</_title>
       </argument>
