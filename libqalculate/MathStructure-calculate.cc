@@ -1679,20 +1679,21 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
 					} else if(isMatrix() && mstruct.isVector()) {
-						// matrix multiplication (vector is treated as matrix with 1 row)
-						if(SIZE != mstruct.size() || CHILD(0).size() != 1) {
+						// matrix multiplication (vector is treated as matrix with 1 column)
+						if(CHILD(0).size() != mstruct.size()) {
 							CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(1).c_str(), i2s(CHILD(0).size()).c_str(), NULL);
 							return -1;
 						}
 						MathStructure msave(*this);
 						size_t rows = SIZE;
 						clearMatrix(true);
-						resizeMatrix(rows, mstruct.size(), m_zero);
+						resizeMatrix(rows, 1, m_zero);
 						MathStructure mtmp;
 						for(size_t index_r = 0; index_r < SIZE; index_r++) {
-							for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
-								CHILD(index_r)[index_c].set(msave[index_r][0]);
-								CHILD(index_r)[index_c].calculateMultiply(mstruct[index_c], eo);
+							for(size_t index_c = 0; index_c < msave[0].size(); index_c++) {
+								mtmp = msave[index_r][index_c];
+								mtmp.calculateMultiply(mstruct[index_c], eo);
+								CHILD(index_r)[0].calculateAdd(mtmp, eo, &CHILD(index_r), 0);
 							}
 						}
 						MERGE_APPROX_AND_PREC(mstruct)
