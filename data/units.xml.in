@@ -1380,7 +1380,7 @@
       <unit type="alias">
         <system>CGS</system>
         <_title>Abhenry</_title>
-        <_names>r:abenry,p:abhenrys,a:abH</_names>
+        <_names>r:abhenry,p:abhenrys,a:abH</_names>
         <base>
           <unit>H</unit>
           <relation>1E-9</relation>

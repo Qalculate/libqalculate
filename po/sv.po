@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-11 10:18+0200\n"
+"POT-Creation-Date: 2020-08-21 08:24+0200\n"
 "PO-Revision-Date: 2006-05-04 12:29+0200\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -73,7 +73,7 @@ msgid "relative uncertainty"
 msgstr "relativt fel"
 
 #: ../src/defs2doc.cc:453 ../src/qalc.cc:1500 ../src/qalc.cc:3659
-#: ../libqalculate/Function.cc:2144
+#: ../libqalculate/Function.cc:2147
 msgid "matrix"
 msgstr "matris"
 
@@ -265,7 +265,7 @@ msgstr "Okänt antagande."
 #: ../src/qalc.cc:440 ../src/qalc.cc:474 ../libqalculate/Calculator.cc:246
 #: ../libqalculate/Calculator.cc:474 ../libqalculate/DataSet.cc:1104
 #: ../libqalculate/DataSet.cc:1166 ../libqalculate/MathStructure-print.cc:3437
-#: ../libqalculate/Function.cc:2304 ../libqalculate/Function.cc:2320
+#: ../libqalculate/Function.cc:2307 ../libqalculate/Function.cc:2323
 msgid "or"
 msgstr "eller"
 
@@ -866,7 +866,7 @@ msgstr "polär"
 
 #: ../src/qalc.cc:1164 ../src/qalc.cc:2827 ../src/qalc.cc:3156
 #: ../src/qalc.cc:3871 ../src/qalc.cc:4990
-#: ../libqalculate/Calculator-calculate.cc:820 ../libqalculate/Function.cc:2245
+#: ../libqalculate/Calculator-calculate.cc:820 ../libqalculate/Function.cc:2248
 msgid "angle"
 msgstr "vinkel"
 
@@ -1229,13 +1229,13 @@ msgstr ""
 
 #. qalc command
 #: ../src/qalc.cc:2276 ../src/qalc.cc:3340 ../src/qalc.cc:4047
-#: ../src/qalc.cc:4237 ../libqalculate/Function.cc:2206
+#: ../src/qalc.cc:4237 ../libqalculate/Function.cc:2209
 msgid "variable"
 msgstr "variabel"
 
 #. qalc command
 #: ../src/qalc.cc:2338 ../src/qalc.cc:3331 ../src/qalc.cc:4053
-#: ../src/qalc.cc:4237 ../libqalculate/Function.cc:2178
+#: ../src/qalc.cc:4237 ../libqalculate/Function.cc:2181
 msgid "function"
 msgstr "funktion"
 
@@ -2985,21 +2985,21 @@ msgstr ""
 "Den andra matrisen måste ha lika många rader (var %s) som den första har "
 "kolumner (var %s) för matrismultiplikation."
 
-#: ../libqalculate/MathStructure-calculate.cc:6123
-#: ../libqalculate/MathStructure-calculate.cc:6164
-#: ../libqalculate/MathStructure-calculate.cc:6197
-#: ../libqalculate/MathStructure-calculate.cc:6264
-#: ../libqalculate/MathStructure-calculate.cc:6292
-#: ../libqalculate/MathStructure-calculate.cc:6311
-#: ../libqalculate/MathStructure-calculate.cc:6330
-#: ../libqalculate/MathStructure-calculate.cc:6349
-#: ../libqalculate/MathStructure-calculate.cc:6457
+#: ../libqalculate/MathStructure-calculate.cc:6124
+#: ../libqalculate/MathStructure-calculate.cc:6165
+#: ../libqalculate/MathStructure-calculate.cc:6198
+#: ../libqalculate/MathStructure-calculate.cc:6265
+#: ../libqalculate/MathStructure-calculate.cc:6293
+#: ../libqalculate/MathStructure-calculate.cc:6312
+#: ../libqalculate/MathStructure-calculate.cc:6331
+#: ../libqalculate/MathStructure-calculate.cc:6350
+#: ../libqalculate/MathStructure-calculate.cc:6458
 #: ../libqalculate/MathStructure-factor.cc:413
 #: ../libqalculate/MathStructure-factor.cc:1304
 msgid "This is a bug. Please report it."
 msgstr "Detta är en bug. Var vänlig rapportera felet."
 
-#: ../libqalculate/MathStructure-calculate.cc:6546
+#: ../libqalculate/MathStructure-calculate.cc:6547
 #: ../libqalculate/Function.cc:557
 msgid "No unknown variable/symbol was found."
 msgstr "Ingen okänd variabel/symbol hittades."
@@ -3246,55 +3246,55 @@ msgstr "en vektor med "
 msgid "a vector"
 msgstr "en vektor"
 
-#: ../libqalculate/Function.cc:2147
+#: ../libqalculate/Function.cc:2150
 msgid "a square matrix"
 msgstr "en kvadratisk matris"
 
-#: ../libqalculate/Function.cc:2149
+#: ../libqalculate/Function.cc:2152
 msgid "a matrix"
 msgstr "en matris"
 
-#: ../libqalculate/Function.cc:2164
+#: ../libqalculate/Function.cc:2167
 msgid "object"
 msgstr "objekt"
 
-#: ../libqalculate/Function.cc:2165
+#: ../libqalculate/Function.cc:2168
 msgid "a valid function, unit or variable name"
 msgstr "ett giltigt funktions, enhets eller variabelnamn"
 
-#: ../libqalculate/Function.cc:2179
+#: ../libqalculate/Function.cc:2182
 msgid "a valid function name"
 msgstr "ett giltigt funktionsnamn"
 
-#: ../libqalculate/Function.cc:2192
+#: ../libqalculate/Function.cc:2195
 msgid "unit"
 msgstr "enhet"
 
-#: ../libqalculate/Function.cc:2193
+#: ../libqalculate/Function.cc:2196
 msgid "a valid unit name"
 msgstr "ett giltigt enhetsnamn"
 
-#: ../libqalculate/Function.cc:2207
+#: ../libqalculate/Function.cc:2210
 msgid "a valid variable name"
 msgstr "ett giltigt variabelnamn"
 
-#: ../libqalculate/Function.cc:2220
+#: ../libqalculate/Function.cc:2223
 msgid "file"
 msgstr "fil"
 
-#: ../libqalculate/Function.cc:2221
+#: ../libqalculate/Function.cc:2224
 msgid "a valid file name"
 msgstr "ett giltigt filnamn"
 
-#: ../libqalculate/Function.cc:2234
+#: ../libqalculate/Function.cc:2237
 msgid "boolean"
 msgstr "boolskt värde"
 
-#: ../libqalculate/Function.cc:2235
+#: ../libqalculate/Function.cc:2238
 msgid "a boolean (0 or 1)"
 msgstr "ett boolskt värde (0 eller 1)"
 
-#: ../libqalculate/Function.cc:2246
+#: ../libqalculate/Function.cc:2249
 msgid "an angle or a number (using the default angle unit)"
 msgstr "en vinkel eller ett tal (som använder inställd vinkelenhet)"
 
@@ -3346,6 +3346,10 @@ msgstr ""
 #: ../libqalculate/Number.cc:897
 msgid "Too large exponent."
 msgstr "För stor exponent."
+
+#: ../libqalculate/Number.cc:927
+msgid "Misplaced decimal separator ignored"
+msgstr "Malplacerat decimaltecken ignorerades"
 
 #. only allow decimals after last ":"
 #: ../libqalculate/Number.cc:933

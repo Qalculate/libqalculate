@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-11 10:18+0200\n"
+"POT-Creation-Date: 2020-08-21 08:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -72,7 +72,7 @@ msgid "relative uncertainty"
 msgstr ""
 
 #: ../src/defs2doc.cc:453 ../src/qalc.cc:1500 ../src/qalc.cc:3659
-#: ../libqalculate/Function.cc:2144
+#: ../libqalculate/Function.cc:2147
 msgid "matrix"
 msgstr ""
 
@@ -264,7 +264,7 @@ msgstr ""
 #: ../src/qalc.cc:440 ../src/qalc.cc:474 ../libqalculate/Calculator.cc:246
 #: ../libqalculate/Calculator.cc:474 ../libqalculate/DataSet.cc:1104
 #: ../libqalculate/DataSet.cc:1166 ../libqalculate/MathStructure-print.cc:3437
-#: ../libqalculate/Function.cc:2304 ../libqalculate/Function.cc:2320
+#: ../libqalculate/Function.cc:2307 ../libqalculate/Function.cc:2323
 msgid "or"
 msgstr ""
 
@@ -863,7 +863,7 @@ msgstr ""
 
 #: ../src/qalc.cc:1164 ../src/qalc.cc:2827 ../src/qalc.cc:3156
 #: ../src/qalc.cc:3871 ../src/qalc.cc:4990
-#: ../libqalculate/Calculator-calculate.cc:820 ../libqalculate/Function.cc:2245
+#: ../libqalculate/Calculator-calculate.cc:820 ../libqalculate/Function.cc:2248
 msgid "angle"
 msgstr ""
 
@@ -1204,13 +1204,13 @@ msgstr ""
 
 #. qalc command
 #: ../src/qalc.cc:2276 ../src/qalc.cc:3340 ../src/qalc.cc:4047
-#: ../src/qalc.cc:4237 ../libqalculate/Function.cc:2206
+#: ../src/qalc.cc:4237 ../libqalculate/Function.cc:2209
 msgid "variable"
 msgstr ""
 
 #. qalc command
 #: ../src/qalc.cc:2338 ../src/qalc.cc:3331 ../src/qalc.cc:4053
-#: ../src/qalc.cc:4237 ../libqalculate/Function.cc:2178
+#: ../src/qalc.cc:4237 ../libqalculate/Function.cc:2181
 msgid "function"
 msgstr ""
 
@@ -2855,21 +2855,21 @@ msgid ""
 "(was %s) for matrix multiplication."
 msgstr ""
 
-#: ../libqalculate/MathStructure-calculate.cc:6123
-#: ../libqalculate/MathStructure-calculate.cc:6164
-#: ../libqalculate/MathStructure-calculate.cc:6197
-#: ../libqalculate/MathStructure-calculate.cc:6264
-#: ../libqalculate/MathStructure-calculate.cc:6292
-#: ../libqalculate/MathStructure-calculate.cc:6311
-#: ../libqalculate/MathStructure-calculate.cc:6330
-#: ../libqalculate/MathStructure-calculate.cc:6349
-#: ../libqalculate/MathStructure-calculate.cc:6457
+#: ../libqalculate/MathStructure-calculate.cc:6124
+#: ../libqalculate/MathStructure-calculate.cc:6165
+#: ../libqalculate/MathStructure-calculate.cc:6198
+#: ../libqalculate/MathStructure-calculate.cc:6265
+#: ../libqalculate/MathStructure-calculate.cc:6293
+#: ../libqalculate/MathStructure-calculate.cc:6312
+#: ../libqalculate/MathStructure-calculate.cc:6331
+#: ../libqalculate/MathStructure-calculate.cc:6350
+#: ../libqalculate/MathStructure-calculate.cc:6458
 #: ../libqalculate/MathStructure-factor.cc:413
 #: ../libqalculate/MathStructure-factor.cc:1304
 msgid "This is a bug. Please report it."
 msgstr ""
 
-#: ../libqalculate/MathStructure-calculate.cc:6546
+#: ../libqalculate/MathStructure-calculate.cc:6547
 #: ../libqalculate/Function.cc:557
 msgid "No unknown variable/symbol was found."
 msgstr ""
@@ -3101,55 +3101,55 @@ msgstr ""
 msgid "a vector"
 msgstr ""
 
-#: ../libqalculate/Function.cc:2147
+#: ../libqalculate/Function.cc:2150
 msgid "a square matrix"
 msgstr ""
 
-#: ../libqalculate/Function.cc:2149
+#: ../libqalculate/Function.cc:2152
 msgid "a matrix"
 msgstr ""
 
-#: ../libqalculate/Function.cc:2164
+#: ../libqalculate/Function.cc:2167
 msgid "object"
 msgstr ""
 
-#: ../libqalculate/Function.cc:2165
+#: ../libqalculate/Function.cc:2168
 msgid "a valid function, unit or variable name"
 msgstr ""
 
-#: ../libqalculate/Function.cc:2179
+#: ../libqalculate/Function.cc:2182
 msgid "a valid function name"
 msgstr ""
 
-#: ../libqalculate/Function.cc:2192
+#: ../libqalculate/Function.cc:2195
 msgid "unit"
 msgstr ""
 
-#: ../libqalculate/Function.cc:2193
+#: ../libqalculate/Function.cc:2196
 msgid "a valid unit name"
 msgstr ""
 
-#: ../libqalculate/Function.cc:2207
+#: ../libqalculate/Function.cc:2210
 msgid "a valid variable name"
 msgstr ""
 
-#: ../libqalculate/Function.cc:2220
+#: ../libqalculate/Function.cc:2223
 msgid "file"
 msgstr ""
 
-#: ../libqalculate/Function.cc:2221
+#: ../libqalculate/Function.cc:2224
 msgid "a valid file name"
 msgstr ""
 
-#: ../libqalculate/Function.cc:2234
+#: ../libqalculate/Function.cc:2237
 msgid "boolean"
 msgstr ""
 
-#: ../libqalculate/Function.cc:2235
+#: ../libqalculate/Function.cc:2238
 msgid "a boolean (0 or 1)"
 msgstr ""
 
-#: ../libqalculate/Function.cc:2246
+#: ../libqalculate/Function.cc:2249
 msgid "an angle or a number (using the default angle unit)"
 msgstr ""
 
@@ -3198,6 +3198,10 @@ msgstr ""
 
 #: ../libqalculate/Number.cc:897
 msgid "Too large exponent."
+msgstr ""
+
+#: ../libqalculate/Number.cc:927
+msgid "Misplaced decimal separator ignored"
 msgstr ""
 
 #. only allow decimals after last ":"

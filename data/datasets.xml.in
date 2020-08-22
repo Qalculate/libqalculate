@@ -39,7 +39,8 @@
         <_names>r:class</_names>
       </property>
       <property>
-        <_title>Weight</_title>
+        <_title>Atomic Mass</_title>
+        <_description>The property uses standard atomic weight, when determined, or the mass number.</_description>
 	<type>number</type>
 	<unit>u</unit>
 	<approximate>true</approximate>

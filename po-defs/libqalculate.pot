@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-07 13:28+0200\n"
+"POT-Creation-Date: 2020-08-22 08:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2079,146 +2079,152 @@ msgstr ""
 msgid "r:class"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:18 ../data/functions.xml.in.h:462
-msgid "Weight"
+#: ../data/datasets.xml.in.h:18 ../data/units.xml.in.h:131
+msgid "Atomic Mass"
 msgstr ""
 
 #: ../data/datasets.xml.in.h:19
-msgid "r:weight,mass"
+msgid ""
+"The property uses standard atomic weight, when determined, or the mass "
+"number."
 msgstr ""
 
 #: ../data/datasets.xml.in.h:20
-msgid "Boiling Point"
+msgid "r:weight,mass"
 msgstr ""
 
 #: ../data/datasets.xml.in.h:21
-msgid "r:boiling"
+msgid "Boiling Point"
 msgstr ""
 
 #: ../data/datasets.xml.in.h:22
-msgid "Melting Point"
+msgid "r:boiling"
 msgstr ""
 
 #: ../data/datasets.xml.in.h:23
+msgid "Melting Point"
+msgstr ""
+
+#: ../data/datasets.xml.in.h:24
 msgid "r:melting"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:24 ../data/units.xml.in.h:127
+#: ../data/datasets.xml.in.h:25 ../data/units.xml.in.h:127
 msgid "Density"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:25
+#: ../data/datasets.xml.in.h:26
 msgid "Density at STP (gases) or near room temperature"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:26
+#: ../data/datasets.xml.in.h:27
 msgid "r:density"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:27
+#: ../data/datasets.xml.in.h:28
 msgid "X Position"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:28
+#: ../data/datasets.xml.in.h:29
 msgid "r:x_pos"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:29
+#: ../data/datasets.xml.in.h:30
 msgid "Y Position"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:30
+#: ../data/datasets.xml.in.h:31
 msgid "r:y_pos"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:31
+#: ../data/datasets.xml.in.h:32
 msgid "Planets"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:32
+#: ../data/datasets.xml.in.h:33
 msgid "r:planet"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:33
+#: ../data/datasets.xml.in.h:34
 msgid "Planet"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:34
+#: ../data/datasets.xml.in.h:35
 msgid "Orbital Period (Year)"
 msgstr ""
 
 #. Orbital period for planet
-#: ../data/datasets.xml.in.h:36
+#: ../data/datasets.xml.in.h:37
 msgid "!datasets!r:year"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:37
+#: ../data/datasets.xml.in.h:38
 msgid "Average Orbital Speed"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:38
+#: ../data/datasets.xml.in.h:39
 msgid "r:speed"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:39
+#: ../data/datasets.xml.in.h:40
 msgid "Eccentricity"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:40
+#: ../data/datasets.xml.in.h:41
 msgid "r:eccentricity"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:41
+#: ../data/datasets.xml.in.h:42
 msgid "Inclination (to ecliptic)"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:42
+#: ../data/datasets.xml.in.h:43
 msgid "r:inclination"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:43
+#: ../data/datasets.xml.in.h:44
 msgid "Number of Satellites"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:44
+#: ../data/datasets.xml.in.h:45
 msgid "r:satellites"
 msgstr ""
 
 #. Planet mass
-#: ../data/datasets.xml.in.h:46
+#: ../data/datasets.xml.in.h:47
 msgid "!datasets!Mass"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:47
+#: ../data/datasets.xml.in.h:48
 msgid "r:mass"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:48
+#: ../data/datasets.xml.in.h:49
 msgid "Mean Density"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:49
+#: ../data/datasets.xml.in.h:50
 msgid "Surface Area"
 msgstr ""
 
 #. Surface area of planet
-#: ../data/datasets.xml.in.h:51
+#: ../data/datasets.xml.in.h:52
 msgid "!datasets!r:area"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:52
+#: ../data/datasets.xml.in.h:53
 msgid "Equatorial Gravity"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:53
+#: ../data/datasets.xml.in.h:54
 msgid "r:gravity"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:54
+#: ../data/datasets.xml.in.h:55
 msgid "Mean Surface Temperature"
 msgstr ""
 
-#: ../data/datasets.xml.in.h:55
+#: ../data/datasets.xml.in.h:56
 msgid "r:temperature"
 msgstr ""
 
@@ -4647,6 +4653,10 @@ msgid ""
 "Underweight &lt; 18.5&#10;Normal weight 18.5-25&#10;Overweight 25-30&#10;"
 "Obesity &gt; 30&#10;&#10;Note that you must use units for weight (ex. 59kg) "
 "and length (ex. 174cm)."
+msgstr ""
+
+#: ../data/functions.xml.in.h:462
+msgid "Weight"
 msgstr ""
 
 #: ../data/functions.xml.in.h:463
@@ -8144,10 +8154,6 @@ msgstr ""
 msgid "Gram per Cubic Centimeter"
 msgstr ""
 
-#: ../data/units.xml.in.h:131
-msgid "Atomic Mass"
-msgstr ""
-
 #: ../data/units.xml.in.h:132
 msgid "Gram per Mole"
 msgstr ""
@@ -8254,7 +8260,7 @@ msgid "Abampere"
 msgstr ""
 
 #: ../data/units.xml.in.h:165
-msgid "r:abampere,a:abA,a:aA,p:abamperes"
+msgid "r:abampere,a:abA,a:aA,p:abamperes,a:Bi,biot"
 msgstr ""
 
 #: ../data/units.xml.in.h:166
@@ -8322,123 +8328,123 @@ msgid "Electric Potential"
 msgstr ""
 
 #: ../data/units.xml.in.h:182
-msgid "Watt per Ampere"
-msgstr ""
-
-#: ../data/units.xml.in.h:183
 msgid "Volt"
 msgstr ""
 
-#: ../data/units.xml.in.h:184
+#: ../data/units.xml.in.h:183
 msgid "ar:V,volt,p:volts"
 msgstr ""
 
-#: ../data/units.xml.in.h:185
+#: ../data/units.xml.in.h:184
 msgid "Statvolt"
 msgstr ""
 
-#: ../data/units.xml.in.h:186
+#: ../data/units.xml.in.h:185
 msgid "r:statvolt,p:statvolts,a:statV"
 msgstr ""
 
-#: ../data/units.xml.in.h:187
+#: ../data/units.xml.in.h:186
 msgid "Abvolt"
 msgstr ""
 
-#: ../data/units.xml.in.h:188
+#: ../data/units.xml.in.h:187
 msgid "r:abvolt,p:abvolts,a:abV"
 msgstr ""
 
-#: ../data/units.xml.in.h:189
+#: ../data/units.xml.in.h:188
 msgid "Atomic Unit of Electric Potential"
 msgstr ""
 
-#: ../data/units.xml.in.h:190
+#: ../data/units.xml.in.h:189
 msgid "Capacitance"
 msgstr ""
 
-#: ../data/units.xml.in.h:191
-msgid "Coulomb per Volt"
-msgstr ""
-
-#: ../data/units.xml.in.h:192
+#: ../data/units.xml.in.h:190
 msgid "Farad"
 msgstr ""
 
-#: ../data/units.xml.in.h:193
+#: ../data/units.xml.in.h:191
 msgid "ar:F,farad,p:farads"
 msgstr ""
 
-#: ../data/units.xml.in.h:194
+#: ../data/units.xml.in.h:192
 msgid "Electric Resistance"
 msgstr ""
 
-#: ../data/units.xml.in.h:195
+#: ../data/units.xml.in.h:193
 msgid "Ohm"
 msgstr ""
 
-#: ../data/units.xml.in.h:196
-msgid "au:&#x3A9;,r:ohm,p:ohms"
+#: ../data/units.xml.in.h:194
+msgid "au:&#x3A9;,r:ohm,p:ohms,auio:&#x2126;"
 msgstr ""
 
-#: ../data/units.xml.in.h:197
+#: ../data/units.xml.in.h:195
 msgid "Abohm"
 msgstr ""
 
-#: ../data/units.xml.in.h:198
+#: ../data/units.xml.in.h:196
 msgid "r:abohm,p:abohms,au:ab&#x3A9;"
 msgstr ""
 
-#: ../data/units.xml.in.h:199
+#: ../data/units.xml.in.h:197
 msgid "Statohm"
 msgstr ""
 
-#: ../data/units.xml.in.h:200
+#: ../data/units.xml.in.h:198
 msgid "r:statohm,p:statohms,au:stat&#x3A9;"
 msgstr ""
 
-#: ../data/units.xml.in.h:201
+#: ../data/units.xml.in.h:199
 msgid "Electric Conductance"
 msgstr ""
 
-#: ../data/units.xml.in.h:202
+#: ../data/units.xml.in.h:200
 msgid "Siemens"
 msgstr ""
 
-#: ../data/units.xml.in.h:203
-msgid "ar:S,siemens"
+#: ../data/units.xml.in.h:201
+msgid "ar:S,siemens,auio:&#x2127;"
 msgstr ""
 
-#: ../data/units.xml.in.h:204
+#: ../data/units.xml.in.h:202
 msgid "Electric Field Strength"
 msgstr ""
 
-#: ../data/units.xml.in.h:205
+#: ../data/units.xml.in.h:203
 msgid "Volt per Meter"
 msgstr ""
 
-#: ../data/units.xml.in.h:206
+#: ../data/units.xml.in.h:204
 msgid "Atomic Unit of Electric Field"
 msgstr ""
 
-#: ../data/units.xml.in.h:207
+#: ../data/units.xml.in.h:205
 msgid "Permittivity"
 msgstr ""
 
-#: ../data/units.xml.in.h:208
+#: ../data/units.xml.in.h:206
 msgid "Farad per Meter"
 msgstr ""
 
-#: ../data/units.xml.in.h:209
+#: ../data/units.xml.in.h:207
 msgid "Inductance"
 msgstr ""
 
-#: ../data/units.xml.in.h:210
+#: ../data/units.xml.in.h:208
 msgid "Henry"
 msgstr ""
 
-#: ../data/units.xml.in.h:211
+#: ../data/units.xml.in.h:209
 msgid "ar:H,henry,p:henrys"
+msgstr ""
+
+#: ../data/units.xml.in.h:210
+msgid "Abhenry"
+msgstr ""
+
+#: ../data/units.xml.in.h:211
+msgid "r:abhenry,p:abhenrys,a:abH"
 msgstr ""
 
 #: ../data/units.xml.in.h:212

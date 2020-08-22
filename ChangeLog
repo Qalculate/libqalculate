@@ -1,3 +1,11 @@
+2020-08-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Transform vector to matrix with one column (column vector) for matrix arguments
+
+2020-08-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Treat vector as column vector for matrix multiplication (when 1st factor is a matrix and 2nd factor is a vector)
+
 2020-08-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Show information about wrong number of arguments for explicit commands (using /)
