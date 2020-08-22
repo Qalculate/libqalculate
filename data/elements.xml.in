@@ -1062,7 +1062,7 @@
   <object symbol="Hs" number="108">
     <_name>Hassium</_name>
     <class>5</class>
-    <weight>270</weight>
+    <weight>269</weight>
     <density>41</density>
     <x_pos>8</x_pos>
     <y_pos>7</y_pos>

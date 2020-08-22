@@ -2132,9 +2132,12 @@ MatrixArgument::MatrixArgument(const MatrixArgument *arg) {
 }
 MatrixArgument::~MatrixArgument() {}
 bool MatrixArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	//if(!value.isMatrix()) {
-		value.eval(eo);
-	//}
+	value.eval(eo);
+	if(!b_square && !value.isMatrix() && value.isVector() && value.size() > 0 && !value[0].isVector()) {
+		for(size_t i = 0; i < value.size(); i++) {
+			value[i].transform(STRUCT_VECTOR);
+		}
+	}
 	return value.isMatrix() && (!b_square || value.matrixIsSquare());
 }
 bool MatrixArgument::squareDemanded() const {return b_square;}

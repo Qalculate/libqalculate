@@ -3773,9 +3773,8 @@ msgid "r:bernoulli"
 msgstr ""
 
 #: ../data/functions.xml.in.h:219
-#, fuzzy
 msgid "Index (n)"
-msgstr "Index"
+msgstr ""
 
 #: ../data/functions.xml.in.h:220
 #, fuzzy
@@ -3833,9 +3832,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:231
-#, fuzzy
 msgid "Number of decimals"
-msgstr "Aantal monsters"
+msgstr "Aantal decimalen"
 
 #: ../data/functions.xml.in.h:232
 msgid "Round halfway to even"
@@ -4102,12 +4100,10 @@ msgid "Order"
 msgstr "Orde"
 
 #: ../data/functions.xml.in.h:290
-#, fuzzy
 msgid "Argument"
-msgstr "Argumenten"
+msgstr ""
 
 #: ../data/functions.xml.in.h:291
-#, fuzzy
 msgid "Airy Function"
 msgstr "Airy-functie"
 
@@ -5102,9 +5098,8 @@ msgid "Ceil"
 msgstr "Ceil"
 
 #: ../data/functions.xml.in.h:521
-#, fuzzy
 msgid "Number of values"
-msgstr "Aantal monsters"
+msgstr "Aantal waarden"
 
 #: ../data/functions.xml.in.h:522
 msgid "Normally Distributed Random Number"
@@ -5120,9 +5115,8 @@ msgid "Mean"
 msgstr "Gemiddelde"
 
 #: ../data/functions.xml.in.h:525
-#, fuzzy
 msgid "Standard deviation"
-msgstr "Gemiddelde afwijking"
+msgstr "Standaardafwijking"
 
 #: ../data/functions.xml.in.h:526
 #, fuzzy
@@ -5549,9 +5543,8 @@ msgid "Date &amp; Time"
 msgstr "Datum &amp; Tijd"
 
 #: ../data/functions.xml.in.h:621
-#, fuzzy
 msgid "Construct Date"
-msgstr "Matrix construeren"
+msgstr "Datum construeren"
 
 #: ../data/functions.xml.in.h:622
 #, fuzzy
@@ -6592,9 +6585,8 @@ msgid "r:diff,derivative"
 msgstr "diff,afgeleide"
 
 #: ../data/functions.xml.in.h:857
-#, fuzzy
 msgid "Variable value"
-msgstr "Variabele vector"
+msgstr "Variabele waarde"
 
 #: ../data/functions.xml.in.h:858
 msgid "Integrate"
@@ -8334,9 +8326,8 @@ msgid "Square Meter per Square Meter"
 msgstr "Vierkante meter per vierkante meter"
 
 #: ../data/units.xml.in.h:77
-#, fuzzy
 msgid "Square Degree"
-msgstr "Omtrek van vierkant"
+msgstr "Vierkante graad"
 
 #: ../data/units.xml.in.h:78
 msgid "Steradian"
@@ -8686,9 +8677,8 @@ msgid "Electric Charge"
 msgstr "Elektrische lading"
 
 #: ../data/units.xml.in.h:172
-#, fuzzy
 msgid "Ampere Second"
-msgstr "Gray per seconde"
+msgstr "Ampère seconde"
 
 #: ../data/units.xml.in.h:173
 msgid "Coulomb"
