@@ -1,3 +1,11 @@
+2020-09-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix conversion to some variables with units (e.g. c)
+
+2020-08-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Increase default precision in qalc to 10
+
 2020-08-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Transform vector to matrix with one column (column vector) for matrix arguments

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-22 08:33+0200\n"
+"POT-Creation-Date: 2020-09-01 09:10+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -616,7 +616,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:147
 msgid "Belarusian Ruble"
-msgstr "Vitrysk rubel"
+msgstr "Belarusisk rubel"
 
 #: ../data/currencies.xml.in.h:148
 msgid "ar:BYN"
@@ -624,11 +624,11 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:149
 msgid "Belarus"
-msgstr "Vitryssland"
+msgstr "Belarus, Vitryssland"
 
 #: ../data/currencies.xml.in.h:150
 msgid "Belarusian Ruble p. (obsolete)"
-msgstr "Vitrysk rubel p. (obsolet)"
+msgstr "Belarusisk rubel p. (obsolet)"
 
 #: ../data/currencies.xml.in.h:151
 msgid "ar:BYR"
@@ -2104,8 +2104,8 @@ msgid ""
 msgstr "Egenskapen använder standard atomvikt, när bestämd, eller masstalet."
 
 #: ../data/datasets.xml.in.h:20
-msgid "r:weight,mass"
-msgstr "vikt,massa"
+msgid "r:mass,r:weight"
+msgstr "massa"
 
 #: ../data/datasets.xml.in.h:21
 msgid "Boiling Point"
@@ -10991,6 +10991,9 @@ msgstr "Nu (datum och tid)"
 #: ../data/variables.xml.in.h:213
 msgid "r:now"
 msgstr ""
+
+#~ msgid "r:weight,mass"
+#~ msgstr "vikt,massa"
 
 #~ msgid "Atomic Weight (Mass)"
 #~ msgstr "Atommassa"

@@ -44,7 +44,7 @@
 	<type>number</type>
 	<unit>u</unit>
 	<approximate>true</approximate>
-        <_names>r:weight,mass</_names>
+        <_names>r:mass,r:weight</_names>
       </property>
       <property>
         <_title>Boiling Point</_title>

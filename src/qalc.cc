@@ -5559,6 +5559,8 @@ void load_preferences() {
 	evalops.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 	b_decimal_comma = -1;
 
+	CALCULATOR->setPrecision(10);
+
 	complex_angle_form = false;
 
 	ignore_locale = false;
@@ -5662,6 +5664,7 @@ void load_preferences() {
 				} else if(svar == "use_max_deci") {
 					printops.use_max_decimals = v;
 				} else if(svar == "precision") {
+					if(v == 8 && (version_numbers[0] < 3 || (version_numbers[0] == 3 && (version_numbers[1] < 12 || (version_numbers[1] == 12 && version_numbers[2] <= 1))))) v = 10;
 					CALCULATOR->setPrecision(v);
 				} else if(svar == "interval_arithmetic") {
 					if(version_numbers[0] >= 3) CALCULATOR->useIntervalArithmetic(v);

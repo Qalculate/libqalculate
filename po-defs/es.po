@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Qalculate!\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-22 08:30+0200\n"
+"POT-Creation-Date: 2020-09-01 09:11+0200\n"
 "PO-Revision-Date: 2020-07-22 22:07-0300\n"
 "Last-Translator: VicSanRoPe\n"
 "Language-Team: none\n"
@@ -2099,12 +2099,11 @@ msgstr "Masa atómica"
 #: ../data/datasets.xml.in.h:19
 msgid ""
 "The property uses standard atomic weight, when determined, or the mass "
-"number. The atomic weight is dimensionless, but for practical reasons the "
-"atomic mass unit is used here."
+"number."
 msgstr ""
 
 #: ../data/datasets.xml.in.h:20
-msgid "r:weight,mass"
+msgid "r:mass,r:weight"
 msgstr "masa"
 
 #: ../data/datasets.xml.in.h:21
@@ -11077,6 +11076,9 @@ msgstr "Ahora (fecha y tiempo)"
 #: ../data/variables.xml.in.h:213
 msgid "r:now"
 msgstr ""
+
+#~ msgid "r:weight,mass"
+#~ msgstr "masa"
 
 #, fuzzy
 #~ msgid "Atomic Weight (Mass)"
