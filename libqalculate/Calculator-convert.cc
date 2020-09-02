@@ -234,8 +234,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, KnownVariable *t
 	if(mstruct.contains(to_var, true) > 0) return mstruct;
 	size_t n_messages = messages.size();
 	if(b_var_units && !to_var->unit().empty() && to_var->isExpression()) {
+		beginTemporaryStopMessages();
 		CompositeUnit cu("", "temporary_composite_convert", "", to_var->unit());
-		if(cu.countUnits() > 0) {
+		if(!CALCULATOR->endTemporaryStopMessages() && cu.countUnits() > 0) {
 			AliasUnit au("", "temporary_alias_convert", "", "", "", &cu, to_var->expression());
 			bool unc_rel = false;
 			if(!to_var->uncertainty(&unc_rel).empty()) au.setUncertainty(to_var->uncertainty(), unc_rel);

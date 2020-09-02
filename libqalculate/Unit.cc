@@ -1062,6 +1062,26 @@ MathStructure CompositeUnit::generateMathStructure(bool make_division, bool set_
 	}
 	return mstruct;
 }
+void remove_times_one(MathStructure &m) {
+	if(m.isMultiplication() && m.size() >= 2) {
+		for(size_t i = 0; i < m.size();) {
+			remove_times_one(m[i]);
+			if(m[i].isOne()) {
+				m.delChild(i + 1);
+				if(m.size() == 1) {
+					m.setToChild(1, true);
+					break;
+				}
+			} else {
+				i++;
+			}
+		}
+	} else {
+		for(size_t i = 0; i < m.size(); i++) {
+			remove_times_one(m[i]);
+		}
+	}
+}
 void CompositeUnit::setBaseExpression(string base_expression_) {
 	clear();
 	if(base_expression_.empty()) {
@@ -1084,35 +1104,45 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	bool had_errors = false;
 	CALCULATOR->beginTemporaryStopMessages();
 	CALCULATOR->parse(&mstruct, base_expression_, po);
-	if(!is_unit_multiexp(mstruct)) mstruct.eval(eo);
-	if(CALCULATOR->endTemporaryStopMessages() > 0) had_errors = true;
-	if(mstruct.isUnit()) {
-		add(mstruct.unit(), 1, mstruct.prefix());
-	} else if(mstruct.isPower() && mstruct[0].isUnit() && mstruct[1].isInteger()) {
-		add(mstruct[0].unit(), mstruct[1].number().intValue(), mstruct[0].prefix());
-	} else if(mstruct.isMultiplication()) {
-		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(mstruct[i].isUnit()) {
-				add(mstruct[i].unit(), 1, mstruct[i].prefix());
-			} else if(mstruct[i].isPower() && mstruct[i][0].isUnit() && mstruct[i][1].isInteger()) {
-				add(mstruct[i][0].unit(), mstruct[i][1].number().intValue(), mstruct[i][0].prefix());
-			} else if(mstruct[i].isMultiplication()) {
-				for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
-					if(mstruct[i][i2].isUnit()) {
-						add(mstruct[i][i2].unit(), 1, mstruct[i][i2].prefix());
-					} else if(mstruct[i][i2].isPower() && mstruct[i][i2][0].isUnit() && mstruct[i][i2][1].isInteger()) {
-						add(mstruct[i][i2][0].unit(), mstruct[i][i2][1].number().intValue(), mstruct[i][i2][0].prefix());
-					} else {
-						had_errors = true;
+	remove_times_one(mstruct);
+	bool b_eval = !is_unit_multiexp(mstruct);
+	while(true) {
+		if(b_eval) mstruct.eval(eo);
+		if(mstruct.isUnit()) {
+			add(mstruct.unit(), 1, mstruct.prefix());
+		} else if(mstruct.isPower() && mstruct[0].isUnit() && mstruct[1].isInteger()) {
+			add(mstruct[0].unit(), mstruct[1].number().intValue(), mstruct[0].prefix());
+		} else if(mstruct.isMultiplication()) {
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				if(mstruct[i].isUnit()) {
+					add(mstruct[i].unit(), 1, mstruct[i].prefix());
+				} else if(mstruct[i].isPower() && mstruct[i][0].isUnit() && mstruct[i][1].isInteger()) {
+					add(mstruct[i][0].unit(), mstruct[i][1].number().intValue(), mstruct[i][0].prefix());
+				} else if(mstruct[i].isMultiplication()) {
+					for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
+						if(mstruct[i][i2].isUnit()) {
+							add(mstruct[i][i2].unit(), 1, mstruct[i][i2].prefix());
+						} else if(mstruct[i][i2].isPower() && mstruct[i][i2][0].isUnit() && mstruct[i][i2][1].isInteger()) {
+							add(mstruct[i][i2][0].unit(), mstruct[i][i2][1].number().intValue(), mstruct[i][i2][0].prefix());
+						} else {
+							had_errors = true;
+						}
 					}
+				} else {
+					had_errors = true;
 				}
-			} else {
-				had_errors = true;
 			}
+		} else {
+			had_errors = true;
 		}
-	} else {
-		had_errors = true;
+		if(had_errors && !b_eval) {
+			b_eval = true;
+			clear();
+		} else {
+			break;
+		}
 	}
+	if(CALCULATOR->endTemporaryStopMessages() > 0) had_errors = true;
 	if(had_errors) CALCULATOR->error(false, _("Error(s) in unitexpression."), NULL);
 	setChanged(true);
 }
