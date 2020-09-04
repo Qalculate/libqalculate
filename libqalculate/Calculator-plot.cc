@@ -319,6 +319,11 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 		plot += i2s(param->x_log_base);
 		plot += "\n";
 	}
+	if(param->y_log) {
+		plot += "set logscale y ";
+		plot += i2s(param->y_log_base);
+		plot += "\n";
+	}
 	if(param->show_all_borders) {
 		plot += "set border 15\n";
 	} else {
