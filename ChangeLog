@@ -1,6 +1,11 @@
-2020-09-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2020-09-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Fix conversion to some variables with units (e.g. c)
+	* Fix conversion from km/L to mpg (and similar)
+	* Do not use variable units in conversion when units are missing from the original value
+
+2020-09-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix logarithmic y scale
 
 2020-08-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
