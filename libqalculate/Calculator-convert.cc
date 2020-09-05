@@ -15,6 +15,7 @@
 #include "BuiltinFunctions.h"
 #include "util.h"
 #include "MathStructure.h"
+#include "MathStructure-support.h"
 #include "Unit.h"
 #include "Variable.h"
 #include "Function.h"
@@ -234,19 +235,32 @@ MathStructure Calculator::convert(const MathStructure &mstruct, KnownVariable *t
 	if(mstruct.contains(to_var, true) > 0) return mstruct;
 	size_t n_messages = messages.size();
 	if(b_var_units && !to_var->unit().empty() && to_var->isExpression()) {
-		beginTemporaryStopMessages();
-		CompositeUnit cu("", "temporary_composite_convert", "", to_var->unit());
-		if(!CALCULATOR->endTemporaryStopMessages() && cu.countUnits() > 0) {
-			AliasUnit au("", "temporary_alias_convert", "", "", "", &cu, to_var->expression());
-			bool unc_rel = false;
-			if(!to_var->uncertainty(&unc_rel).empty()) au.setUncertainty(to_var->uncertainty(), unc_rel);
-			au.setApproximate(to_var->isApproximate());
-			au.setPrecision(to_var->precision());
-			MathStructure mstruct_new(convert(mstruct, &au, eo, false, false));
-			if(mstruct_new.contains(&au)) {
-				mstruct_new.replace(&au, to_var);
-				return mstruct_new;
+		int b = mstruct.containsRepresentativeOfType(STRUCT_UNIT, true, true);
+		if(b > 0 || (b < 0 && b_var_units)) {
+			beginTemporaryStopMessages();
+			CompositeUnit cu("", "temporary_composite_convert", "", to_var->unit());
+			if(!CALCULATOR->endTemporaryStopMessages() && cu.countUnits() > 0) {
+				AliasUnit au("", "temporary_alias_convert", "", "", "", &cu, to_var->expression());
+				bool unc_rel = false;
+				if(!to_var->uncertainty(&unc_rel).empty()) au.setUncertainty(to_var->uncertainty(), unc_rel);
+				au.setApproximate(to_var->isApproximate());
+				au.setPrecision(to_var->precision());
+				MathStructure mstruct_new(convert(mstruct, &au, eo, false, false));
+				if(mstruct_new.contains(&au)) {
+					mstruct_new.replace(&au, to_var);
+					return mstruct_new;
+				}
 			}
+		} else {
+			MathStructure mstruct_new(mstruct);
+			bool b_var_units_bak = b_var_units;
+			b_var_units = false;
+			mstruct_new /= to_var->get();
+			b_var_units = b_var_units_bak;
+			mstruct_new.eval(eo);
+			mstruct_new.multiply(to_var, true);
+			cleanMessages(mstruct, n_messages + 1);
+			return mstruct_new;
 		}
 	}
 	MathStructure mstruct_new(mstruct);
@@ -328,6 +342,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 						break;
 					}
 					case STRUCT_MULTIPLICATION: {
+						flattenMultiplication(mstruct_new);
 						for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
 							if(aborted()) return mstruct;
 							if(mstruct_new.getChild(i)->isUnit() && cu2->containsRelativeTo(mstruct_new.getChild(i)->unit())) {
@@ -347,6 +362,15 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 					}
 					default: {}
 				}
+			}
+		}
+		if(!b) {
+			eo2.sync_units = true;
+			eo2.keep_prefixes = false;
+			mstruct_new.eval(eo2);
+			eo2.keep_prefixes = true;
+			if(mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL)) {
+				b = true;
 			}
 		}
 		if(b) {
