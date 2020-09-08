@@ -5,6 +5,16 @@ Qalculate! library and CLI
 
 Qalculate! is a multi-purpose cross-platform desktop calculator. It is simple to use but provides power and versatility normally reserved for complicated math packages, as well as useful tools for everyday needs (such as currency conversion and percent calculation). Features include a large library of customizable functions, unit calculations and conversion, symbolic calculations (including integrals and equations), arbitrary precision, uncertainty propagation, interval arithmetic, plotting, and a user-friendly interface (GTK+ and CLI).
 
+## Requirements
+* GMP and MPFR
+* libxml2
+* libcurl, icu, gettext (recommended)
+* iconv, readline (recommended for CLI)
+* Gnuplot (optional)
+* doxygen (for compilation of git version)
+
+For Linux distributions which provide separate development packages, these must installed for all the required libraries (e.g. libmpfr-dev) before compilation.
+
 ## Installation
 Instructions and download links for installers, binaries packages, and the source code of released versions of Qalculate! are available at https://qalculate.github.io/downloads.html.
 
@@ -14,15 +24,8 @@ In a terminal window in the top source code directory run
 * `make`
 * `make install` *(as root, e.g. `sudo make install`)*
 * `ldconfig` *(if necessary, as root)*
-If libqalculate is installed in /usr/local (default) you may need to add /usr/local/lib to the library path of the system (add /usr/local/lib to a file under /etc/ld.so.conf.d/ and run ldconfig).
 
-## Requirements
-* GMP and MPFR
-* libxml2
-* libcurl, icu, gettext (recommended)
-* iconv, readline (recommended for CLI)
-* Gnuplot (optional)
-* doxygen (for compilation of git version)
+If libqalculate is installed in /usr/local (default) you may need to add /usr/local/lib to the library path of the system (add /usr/local/lib to a file under /etc/ld.so.conf.d/ and run ldconfig).
 
 ## API Documentation
 The API documentation is included in the package and is installed in $docdir/libqalculate/html (usually /usr/share/doc/libqalculate/html). It is generated when running autogen.sh.
@@ -36,6 +39,8 @@ To calculate a single expression from the command line (non-interactive mode) en
 `qalc --help` shows information about command line options in non-interactive mode.
 
 If you run `qalc` without any mathematical expression the program will start in interactive mode, where you can enter multiple expressions with history and completion, manipulate the result and change settings. Type `help` in interactive mode for more information.
+
+A man page is also available (shown using the command `man qalc`).
 
 ## Other Applications
 The main user interface for libqalculate is qalculate-gtk (https://github.com/Qalculate/qalculate-gtk).
