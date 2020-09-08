@@ -13,7 +13,7 @@ Qalculate! is a multi-purpose cross-platform desktop calculator. It is simple to
 * Gnuplot (optional)
 * doxygen (for compilation of git version)
 
-For Linux distributions which provide separate development packages, these must installed for all the required libraries (e.g. libmpfr-dev) before compilation.
+For Linux distributions which provide separate development packages, these must be installed for all the required libraries (e.g. libmpfr-dev) before compilation.
 
 ## Installation
 Instructions and download links for installers, binaries packages, and the source code of released versions of Qalculate! are available at https://qalculate.github.io/downloads.html.

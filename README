@@ -19,7 +19,8 @@ and CLI).
 * doxygen (for compilation of git version)
 
 For Linux distributions which provide separate development packages, these must
-installed for all the required libraries (e.g. libmpfr-dev) before compilation.
+be installed for all the required libraries (e.g. libmpfr-dev) before
+compilation.
 
 2. Installation
 
