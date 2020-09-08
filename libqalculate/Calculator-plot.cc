@@ -272,6 +272,8 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 		plot += "\"\n";
 	}
 
+	plot += "set termoption noenhanced\n";
+
 	switch(param->legend_placement) {
 		case PLOT_LEGEND_NONE: {plot += "set nokey\n"; break;}
 		case PLOT_LEGEND_TOP_LEFT: {plot += "set key top left\n"; break;}
