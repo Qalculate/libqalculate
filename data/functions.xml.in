@@ -1282,7 +1282,7 @@
     <function>
       <_title>Cotangent</_title>
       <_names>r:cot</_names>
-      <expression>if(\x=pi/2*rad,0,1/tan(\x),1)</expression>
+      <expression>cos(\x)/sin(\x)</expression>
       <argument type="angle" index="1">
         <_title>Angle</_title>
         <test>false</test>
@@ -1308,7 +1308,7 @@
     <function>
       <_title>Hyperbolic Cotangent</_title>
       <_names>r:coth</_names>
-      <expression>if(\x=pi/2*i,0,1/tanh(\x),1)</expression>
+      <expression>cosh(\x)/sinh(\x)</expression>
       <argument type="number" index="1">
         <test>false</test>
       </argument>
