@@ -811,6 +811,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	nodes.resize(1);
 
 	Unit *u_usd = getUnit("USD");
+	Unit *u_gbp = getUnit("GBP");
+	bool b_remove_cent = false;
 
 	while(true) {
 		if(!in_unfinished) {
@@ -1838,7 +1840,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 								else i++;
 							}
 						}
-						if(au->countNames() == 0) {
+						if(au->countNames() == 0 || (b_remove_cent && au->firstBaseUnit() == u_usd && au->hasName("cent"))) {
 							au->destroy();
 							au = NULL;
 						} else {
@@ -2040,7 +2042,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						BUILTIN_NAMES_2
 					}
 					ITEM_SET_DTH
-					if(u == u_usd && !is_user_defs && !b_ignore_locale) {
+					if((u == u_usd || u == u_gbp) && !is_user_defs && !b_ignore_locale) {
 						struct lconv *lc = localeconv();
 						if(lc) {
 							string local_currency = lc->int_curr_symbol;
@@ -2048,12 +2050,16 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							if(!u->hasName(local_currency)) {
 								local_currency = lc->currency_symbol;
 								remove_blank_ends(local_currency);
-								if(local_currency == "$") {
+								if(u == u_usd && local_currency == "$") {
+									b_remove_cent = true;
 									size_t index = u->hasName("$");
 									if(index > 0) u->removeName(index);
 									index = u->hasName("dollar");
 									if(index > 0) u->removeName(index);
 									index = u->hasName("dollars");
+									if(index > 0) u->removeName(index);
+								} else if(u == u_gbp && local_currency == "£") {
+									size_t index = u->hasName("£");
 									if(index > 0) u->removeName(index);
 								}
 							}
