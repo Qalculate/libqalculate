@@ -1282,7 +1282,7 @@
     <function>
       <_title>Cotangent</_title>
       <_names>r:cot</_names>
-      <expression>1/tan(\x)</expression>
+      <expression>if(\x=pi/2*rad,0,1/tan(\x),1)</expression>
       <argument type="angle" index="1">
         <_title>Angle</_title>
         <test>false</test>
@@ -1308,7 +1308,7 @@
     <function>
       <_title>Hyperbolic Cotangent</_title>
       <_names>r:coth</_names>
-      <expression>1/tanh(\x)</expression>
+      <expression>if(\x=pi/2*i,0,1/tanh(\x),1)</expression>
       <argument type="number" index="1">
         <test>false</test>
       </argument>
@@ -1316,7 +1316,7 @@
     <function>
       <_title>Inverse Secant</_title>
       <_names>r:arcsec, r:asec</_names>
-      <expression>radtodef(0.5pi+i*ln(sqrt(1-1\x^2)+i/\x))</expression>
+      <expression>acos(1/\x)</expression>
       <argument type="number" index="1">
         <test>false</test>
       </argument>
@@ -1324,7 +1324,7 @@
     <function>
       <_title>Inverse Cosecant</_title>
       <_names>r:arcscs, r:acsc</_names>
-      <expression>radtodef(-i*ln(sqrt(1-1\x^2)+i/\x))</expression>
+      <expression>sin(1/\x)</expression>
       <argument type="number" index="1">
         <test>false</test>
       </argument>
@@ -1332,7 +1332,7 @@
     <function>
       <_title>Inverse Cotangent</_title>
       <_names>r:arccot, r:acot</_names>
-      <expression>radtodef(i/2*(ln((\x-i)/\x)-ln((\x+i)/\x)))</expression>
+      <expression>if(\x=0,radtodef(pi/2),atan(1/\x),1)</expression>
       <argument type="number" index="1">
         <test>false</test>
       </argument>
@@ -1340,7 +1340,7 @@
     <function>
       <_title>Inverse Hyperbolic Secant</_title>
       <_names>r:arsech, r:asech</_names>
-      <expression>ln(sqrt(1/\x-1)*sqrt(1/\x+1)+1/\x)</expression>
+      <expression>acosh(1/\x)</expression>
       <argument type="number" index="1">
         <test>false</test>
       </argument>
@@ -1348,7 +1348,7 @@
     <function>
       <_title>Inverse Hyperbolic Cosecant</_title>
       <_names>r:arcsch, r:acsch</_names>
-      <expression>ln(sqrt(1+1/\x^2)+1/\x)</expression>
+      <expression>if(\x=0,plus_infinity,asinh(1/\x),1)</expression>
       <argument type="number" index="1">
         <test>false</test>
       </argument>
@@ -1356,7 +1356,7 @@
     <function>
       <_title>Inverse Hyperbolic Cotangent</_title>
       <_names>r:arcoth, r:acoth</_names>
-      <expression>(ln(1+1/\x)-ln(1-1/\x))/2</expression>
+      <expression>if(\x=0,pi/2*i,atanh(1/\x),1)</expression>
       <argument type="number" index="1">
         <test>false</test>
       </argument>
