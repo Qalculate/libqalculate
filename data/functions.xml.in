@@ -1323,8 +1323,8 @@
     </function>
     <function>
       <_title>Inverse Cosecant</_title>
-      <_names>r:arcscs, r:acsc</_names>
-      <expression>sin(1/\x)</expression>
+      <_names>r:arccsc, r:acsc</_names>
+      <expression>asin(1/\x)</expression>
       <argument type="number" index="1">
         <test>false</test>
       </argument>

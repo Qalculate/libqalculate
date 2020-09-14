@@ -99,8 +99,6 @@ void Unit::setSystem(string s_system) {
 		if(ssystem == "SI" || ssystem == "si" || ssystem == "Si") {
 			b_si = true;
 			b_use_with_prefixes = true;
-		} else if(ssystem == "CGS" || ssystem == "cgs" || ssystem == "Cgs") {
-			b_si = false;
 		} else {
 			b_si = false;
 		}
@@ -1136,6 +1134,7 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 			had_errors = true;
 		}
 		if(had_errors && !b_eval) {
+			had_errors = false;
 			b_eval = true;
 			clear();
 		} else {

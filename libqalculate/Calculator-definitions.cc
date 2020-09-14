@@ -795,7 +795,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {3, 12, 1};
+	int version_numbers[] = {3, 13, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);
@@ -2047,6 +2047,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						if(lc) {
 							string local_currency = lc->int_curr_symbol;
 							remove_blank_ends(local_currency);
+							if(local_currency.length() > 3) local_currency = local_currency.substr(0, 3);
 							if(!u->hasName(local_currency)) {
 								local_currency = lc->currency_symbol;
 								remove_blank_ends(local_currency);
