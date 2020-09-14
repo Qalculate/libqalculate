@@ -1246,6 +1246,7 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 				}
 			}
 			str = str.substr(0, i);
+			remove_blank_ends(str);
 			return true;
 		}
 		i++;

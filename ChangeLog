@@ -1,3 +1,22 @@
+2020-09-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix cot(pi/2), coth(pi/2*i), arccot(0), arcsch(0), and arcoth(0), and simplify inverse sec, csc, and cot
+	* Show currencies in parsed expression using ISO 4217 code (e.g. USD instead dollar)
+	* Do not use "$", "dollar", and "dollars" for USD and remove cent, if symbol for local currency is "$"
+	* Do not use "£" as symbol for GBP if symbol for local currency is "£"
+
+2020-09-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use thin space on Windows 10
+	* Use B as abbreviation for byte instead of bel
+	* Show information for all matching objects (if there are multiple objects with the same name) with info command
+	* Show information about prefixes with the info command
+	* List prefixes with find command, "list prefixes", and --list-prefixes
+
+2020-09-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use "noenhanced" Gnuplot option (fixes plot titles with exponents with more than one character)
+
 2020-09-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix conversion from km/L to mpg (and similar)
@@ -5,7 +24,7 @@
 
 2020-09-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Fix logarithmic y scale
+	* Fix logarithmic y scale in plot
 
 2020-08-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

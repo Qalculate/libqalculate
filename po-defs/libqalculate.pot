@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-01 09:11+0200\n"
+"POT-Creation-Date: 2020-09-14 16:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4492,7 +4492,7 @@ msgid "Inverse Cosecant"
 msgstr ""
 
 #: ../data/functions.xml.in.h:427
-msgid "r:arcscs, r:acsc"
+msgid "r:arccsc, r:acsc"
 msgstr ""
 
 #: ../data/functions.xml.in.h:428
@@ -9725,7 +9725,7 @@ msgid "Bel"
 msgstr ""
 
 #: ../data/units.xml.in.h:531
-msgid "ar:B,bel,p:bels"
+msgid "r:bel,p:bels"
 msgstr ""
 
 #: ../data/units.xml.in.h:532
@@ -9733,162 +9733,166 @@ msgid "Decibel"
 msgstr ""
 
 #: ../data/units.xml.in.h:533
-msgid "Information"
+msgid "ar:dB,decibel,p:decibels"
 msgstr ""
 
 #: ../data/units.xml.in.h:534
-msgid "Bit"
+msgid "Information"
 msgstr ""
 
 #: ../data/units.xml.in.h:535
-msgid "r:bit,p:bits"
+msgid "Bit"
 msgstr ""
 
 #: ../data/units.xml.in.h:536
-msgid "Byte (8-bit)"
+msgid "r:bit,p:bits"
 msgstr ""
 
 #: ../data/units.xml.in.h:537
-msgid "r:byte,p:bytes,octet,p:octets"
+msgid "Byte (8-bit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:538
-msgid "Nibble"
+msgid "r:byte,a:B,p:bytes,octet,p:octets"
 msgstr ""
 
 #: ../data/units.xml.in.h:539
-msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets"
+msgid "Nibble"
 msgstr ""
 
 #: ../data/units.xml.in.h:540
-msgid "Tribble"
+msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets"
 msgstr ""
 
 #: ../data/units.xml.in.h:541
-msgid "r:tribble,p:tribbles"
+msgid "Tribble"
 msgstr ""
 
 #: ../data/units.xml.in.h:542
-msgid "Word (16-bit)"
+msgid "r:tribble,p:tribbles"
 msgstr ""
 
 #: ../data/units.xml.in.h:543
-msgid "r:word,p:words"
+msgid "Word (16-bit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:544
-msgid "Kilobyte"
+msgid "r:word,p:words"
 msgstr ""
 
 #: ../data/units.xml.in.h:545
-msgid "Kibibyte"
+msgid "Kilobyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:546
-msgid "Mebibyte"
+msgid "Kibibyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:547
-msgid "Gibibyte"
+msgid "Mebibyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:548
-msgid "Megabyte"
+msgid "Gibibyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:549
-msgid "Gigabyte"
+msgid "Megabyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:550
-msgid "Terabyte"
+msgid "Gigabyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:551
-msgid "Kilobit"
+msgid "Terabyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:552
-msgid "Kibibit"
+msgid "Kilobit"
 msgstr ""
 
 #: ../data/units.xml.in.h:553
-msgid "Mebibit"
+msgid "Kibibit"
 msgstr ""
 
 #: ../data/units.xml.in.h:554
-msgid "Gibibit"
+msgid "Mebibit"
 msgstr ""
 
 #: ../data/units.xml.in.h:555
-msgid "Megabit"
+msgid "Gibibit"
 msgstr ""
 
 #: ../data/units.xml.in.h:556
-msgid "Gigabit"
+msgid "Megabit"
 msgstr ""
 
 #: ../data/units.xml.in.h:557
-msgid "Terabit"
+msgid "Gigabit"
 msgstr ""
 
 #: ../data/units.xml.in.h:558
-msgid "Typography"
+msgid "Terabit"
 msgstr ""
 
 #: ../data/units.xml.in.h:559
-msgid "PostScript Point"
+msgid "Typography"
 msgstr ""
 
 #: ../data/units.xml.in.h:560
-msgid "ar:pt,a:pts,point,p:points"
+msgid "PostScript Point"
 msgstr ""
 
 #: ../data/units.xml.in.h:561
-msgid "PostScript Pica"
+msgid "ar:pt,a:pts,point,p:points"
 msgstr ""
 
 #: ../data/units.xml.in.h:562
-msgid "r:pica,p:picas"
+msgid "PostScript Pica"
 msgstr ""
 
 #: ../data/units.xml.in.h:563
-msgid "ATA Pica"
+msgid "r:pica,p:picas"
 msgstr ""
 
 #: ../data/units.xml.in.h:564
-msgid "r:ata_pica,p:ata_picas"
+msgid "ATA Pica"
 msgstr ""
 
 #: ../data/units.xml.in.h:565
-msgid "ATA Point"
+msgid "r:ata_pica,p:ata_picas"
 msgstr ""
 
 #: ../data/units.xml.in.h:566
-msgid "r:ata_point,a:ata_pt,p:ata_points"
+msgid "ATA Point"
 msgstr ""
 
 #: ../data/units.xml.in.h:567
-msgid "New Didot Point"
+msgid "r:ata_point,a:ata_pt,p:ata_points"
 msgstr ""
 
 #: ../data/units.xml.in.h:568
-msgid "r:new_didot"
+msgid "New Didot Point"
 msgstr ""
 
 #: ../data/units.xml.in.h:569
-msgid "Didot Point"
+msgid "r:new_didot"
 msgstr ""
 
 #: ../data/units.xml.in.h:570
-msgid "r:didot,a:dd"
+msgid "Didot Point"
 msgstr ""
 
 #: ../data/units.xml.in.h:571
-msgid "Cicero"
+msgid "r:didot,a:dd"
 msgstr ""
 
 #: ../data/units.xml.in.h:572
+msgid "Cicero"
+msgstr ""
+
+#: ../data/units.xml.in.h:573
 msgid "r:cicero"
 msgstr ""
 

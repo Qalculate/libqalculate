@@ -1309,6 +1309,12 @@ bool name_matches(ExpressionItem *item, const string &str) {
 	}
 	return false;
 }
+bool name_matches(Prefix *prefix, const string &str) {
+	if(str == prefix->unicodeName(false).substr(0, str.length())) return true;
+	if(str == prefix->shortName(false).substr(0, str.length())) return true;
+	if(equalsIgnoreCase(str, prefix->longName(false, false), 0, str.length(), 0)) return true;
+	return false;
+}
 bool country_matches(Unit *u, const string &str, size_t minlength = 0) {
 	const string &countries = u->countries();
 	size_t i = 0;
@@ -1375,17 +1381,29 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 		size_t i2 = 0;
 		if(list_type == 'v') i2 = 1;
 		else if(list_type == 'u' || list_type == 'c') i2 = 2;
-		for(; i2 <= 2; i2++) {
+		else if(list_type == 'p') i2 = 3;
+		for(; i2 <= 3; i2++) {
 			if(i2 == 0) i_end = CALCULATOR->functions.size();
 			else if(i2 == 1) i_end = CALCULATOR->variables.size();
 			else if(i2 == 2) i_end = CALCULATOR->units.size();
+			else if(i2 == 3) i_end = CALCULATOR->prefixes.size();
 			ExpressionItem *item = NULL;
 			string name_str, name_str2;
 			for(int i = 0; i < i_end; i++) {
 				if(i2 == 0) item = CALCULATOR->functions[i];
 				else if(i2 == 1) item = CALCULATOR->variables[i];
 				else if(i2 == 2) item = CALCULATOR->units[i];
-				if((!item->isHidden() || (i2 == 2 && ((Unit*) item)->isCurrency())) && item->isActive() && (i2 != 2 || (item->subtype() != SUBTYPE_COMPOSITE_UNIT)) && (list_type != 'c' || ((Unit*) item)->isCurrency())) {
+				if(i2 == 3) {
+					if(name_matches(CALCULATOR->prefixes[i], search_str)) {
+						Prefix *prefix = CALCULATOR->prefixes[i];
+						name_str = "";
+						if(printops.use_unicode_signs && !prefix->unicodeName(false).empty()) name_str += prefix->unicodeName(false);
+						if(!prefix->shortName(false, false).empty()) {if(!name_str.empty()) name_str += " / "; name_str += prefix->shortName(false, false);}
+						if(!prefix->longName(false, false).empty()) {if(!name_str.empty()) name_str += " / "; name_str += prefix->longName();}
+						if((int) name_str.length() > max_l) max_l = name_str.length();
+						name_list.push_front(name_str);
+					}
+				} else if((!item->isHidden() || (i2 == 2 && ((Unit*) item)->isCurrency())) && item->isActive() && (i2 != 2 || (item->subtype() != SUBTYPE_COMPOSITE_UNIT)) && (list_type != 'c' || ((Unit*) item)->isCurrency())) {
 					bool b_match = name_matches(item, search_str);
 					if(!b_match && title_matches(item, search_str, list_type == 'c' ? 0 : 3)) b_match = true;
 					if(!b_match && i2 == 2 && country_matches((Unit*) item, search_str, list_type == 'c' ? 0 : 3)) b_match = true;
@@ -1446,8 +1464,8 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 			puts("");
 			if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-			if(in_interactive) {CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
-			else {PUTS_UNICODE(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
+			if(in_interactive) {CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about a specific function, variable, unit, or prefix, please use the info command (in interactive mode)."));}
+			else {PUTS_UNICODE(_("For more information about a specific function, variable, unit, or prefix, please use the info command (in interactive mode)."));}
 			puts("");
 		}
 	} else if(list_type == 0) {
@@ -1577,8 +1595,8 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 		}
 		puts("");
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-		if(in_interactive) {CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
-		else {PUTS_UNICODE(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
+		if(in_interactive) {CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about a specific function, variable, unit, or prefix, please use the info command (in interactive mode)."));}
+		else {PUTS_UNICODE(_("For more information about a specific function, variable, unit, or prefix, please use the info command (in interactive mode)."));}
 		puts("");
 	} else {
 		int max_l = 0;
@@ -1588,14 +1606,23 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 		if(list_type == 'v') i_end = CALCULATOR->variables.size();
 		if(list_type == 'u') i_end = CALCULATOR->units.size();
 		if(list_type == 'c') i_end = CALCULATOR->units.size();
+		if(list_type == 'p') i_end = CALCULATOR->prefixes.size();
 		ExpressionItem *item = NULL;
 		string name_str, name_str2;
 		for(int i = 0; i < i_end; i++) {
 			if(list_type == 'f') item = CALCULATOR->functions[i];
-			if(list_type == 'v') item = CALCULATOR->variables[i];
-			if(list_type == 'u') item = CALCULATOR->units[i];
-			if(list_type == 'c') item = CALCULATOR->units[i];
-			if((!item->isHidden() || list_type == 'c') && item->isActive() && (list_type != 'u' || (item->subtype() != SUBTYPE_COMPOSITE_UNIT && ((Unit*) item)->baseUnit() != CALCULATOR->getUnitById(UNIT_ID_EURO))) && (list_type != 'c' || ((Unit*) item)->isCurrency())) {
+			else if(list_type == 'v') item = CALCULATOR->variables[i];
+			else if(list_type == 'u') item = CALCULATOR->units[i];
+			else if(list_type == 'c') item = CALCULATOR->units[i];
+			if(list_type == 'p') {
+				Prefix *prefix = CALCULATOR->prefixes[i];
+				name_str = "";
+				if(printops.use_unicode_signs && !prefix->unicodeName(false).empty()) name_str += prefix->unicodeName(false);
+				if(!prefix->shortName(false, false).empty()) {if(!name_str.empty()) name_str += " / "; name_str += prefix->shortName(false, false);}
+				if(!prefix->longName(false, false).empty()) {if(!name_str.empty()) name_str += " / "; name_str += prefix->longName();}
+				if((int) name_str.length() > max_l) max_l = name_str.length();
+				name_list.push_front(name_str);
+			} else if((!item->isHidden() || list_type == 'c') && item->isActive() && (list_type != 'u' || (item->subtype() != SUBTYPE_COMPOSITE_UNIT && ((Unit*) item)->baseUnit() != CALCULATOR->getUnitById(UNIT_ID_EURO))) && (list_type != 'c' || ((Unit*) item)->isCurrency())) {
 				const ExpressionName &ename1 = item->preferredInputName(false, false);
 				name_str = ename1.name;
 				size_t name_i = 1;
@@ -1645,8 +1672,8 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 		puts("");
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED}
-		if(in_interactive) {CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
-		else {PUTS_UNICODE(_("For more information about a specific function, variable or unit, please use the info command (in interactive mode)."));}
+		if(in_interactive) {CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about a specific function, variable, unit, or prefix, please use the info command (in interactive mode)."));}
+		else {PUTS_UNICODE(_("For more information about a specific function, variable, unit, or prefix, please use the info command (in interactive mode)."));}
 		puts("");
 	}
 }
@@ -1728,9 +1755,11 @@ int main(int argc, char *argv[]) {
 			fputs("\n\t-i, -interactive\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("start in interactive mode"));
 			fputs("\n\t-l, -list", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all user-defined or matching variables, functions and units"));
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all user-defined or matching variables, functions, units, and prefixes"));
 			fputs("\n\t--list-functions", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all or matching functions"));
+			fputs("\n\t--list-prefixes", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all or matching prefixes"));
 			fputs("\n\t--list-units", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all or matching units"));
 			fputs("\n\t--list-variables", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
@@ -1763,9 +1792,9 @@ int main(int argc, char *argv[]) {
 			FPUTS_UNICODE(_("The program will start in interactive mode if no expression and no file is specified (or interactive mode is explicitly selected)."), stdout); fputs(" ", stdout); PUTS_UNICODE(_("Type help in interactive mode for information about available commands."));
 			puts("");
 #ifdef _WIN32
-			PUTS_UNICODE(_("For more information about mathematical expression and different options, and a complete list of functions, variables and units, see the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html)."));
+			PUTS_UNICODE(_("For more information about mathematical expression and different options, and a complete list of functions, variables, and units, see the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html)."));
 #else
-			PUTS_UNICODE(_("For more information about mathematical expression and different options, please consult the man page, or the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html), which also includes a complete list of functions, variables and units."));
+			PUTS_UNICODE(_("For more information about mathematical expression and different options, please consult the man page, or the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html), which also includes a complete list of functions, variables, and units."));
 #endif
 			puts("");
 			return 0;
@@ -1851,6 +1880,16 @@ int main(int argc, char *argv[]) {
 			}
 		} else if(!calc_arg_begun && svar == "--list-variables") {
 			list_type = 'v';
+			if(!svalue.empty()) {
+				search_str = svalue;
+				remove_blank_ends(search_str);
+			} else if(i + 1 < argc && strlen(argv[i + 1]) > 0 && argv[i + 1][0] != '-' && argv[i + 1][0] != '+') {
+				i++;
+				search_str = argv[i];
+				remove_blank_ends(search_str);
+			}
+		} else if(!calc_arg_begun && svar == "--list-prefixes") {
+			list_type = 'p';
 			if(!svalue.empty()) {
 				search_str = svalue;
 				remove_blank_ends(search_str);
@@ -3350,13 +3389,13 @@ int main(int argc, char *argv[]) {
 			FPUTS_UNICODE(_("swap"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("INDEX 1"), stdout); fputs("] [", stdout); FPUTS_UNICODE(_("INDEX 2"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
 			CHECK_IF_SCREEN_FILLED_PUTS("");
 			CHECK_IF_SCREEN_FILLED_PUTS(_("Type help COMMAND for more information (example: help save)."));
-			CHECK_IF_SCREEN_FILLED_PUTS(_("Type info NAME for information about a function, variable or unit (example: info sin)."));
+			CHECK_IF_SCREEN_FILLED_PUTS(_("Type info NAME for information about a function, variable, unit, or prefix (example: info sin)."));
 			CHECK_IF_SCREEN_FILLED_PUTS(_("When a line begins with '/', the following text is always interpreted as a command."));
 			CHECK_IF_SCREEN_FILLED_PUTS("");
 #ifdef _WIN32
-			CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about mathematical expression and different options, and a complete list of functions, variables and units, see the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html)."));
+			CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about mathematical expression and different options, and a complete list of functions, variables, and units, see the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html)."));
 #else
-			CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about mathematical expression and different options, please consult the man page, or the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html), which also includes a complete list of functions, variables and units."));
+			CHECK_IF_SCREEN_FILLED_PUTS(_("For more information about mathematical expression and different options, please consult the man page, or the relevant sections in the manual of the graphical user interface (available at https://qalculate.github.io/manual/index.html), which also includes a complete list of functions, variables, and units."));
 #endif
 			puts("");
 		//qalc command
@@ -3379,11 +3418,13 @@ int main(int argc, char *argv[]) {
 			else if(EQUALS_IGNORECASE_AND_LOCAL(str1, "functions", _("functions"))) list_type = 'f';
 			else if(EQUALS_IGNORECASE_AND_LOCAL(str1, "variables", _("variables"))) list_type = 'v';
 			else if(EQUALS_IGNORECASE_AND_LOCAL(str1, "units", _("units"))) list_type = 'u';
+			else if(EQUALS_IGNORECASE_AND_LOCAL(str1, "prefixes", _("prefixes"))) list_type = 'p';
 			else if(!str2.empty()) {
 				if(equalsIgnoreCase(str, _("currencies"))) list_type = 'c';
 				else if(equalsIgnoreCase(str, _("functions"))) list_type = 'f';
 				else if(equalsIgnoreCase(str, _("variables"))) list_type = 'v';
 				else if(equalsIgnoreCase(str, _("units"))) list_type = 'u';
+				else if(equalsIgnoreCase(str, _("prefixes"))) list_type = 'p';
 				if(list_type != 0) str2 = "";
 			} else str2 = str;
 			list_defs(true, list_type, str2);
@@ -3396,172 +3437,252 @@ int main(int argc, char *argv[]) {
 			remove_blank_ends(str);
 			show_info:
 			ExpressionItem *item = CALCULATOR->getActiveExpressionItem(str);
-			if(!item) {
-				PUTS_UNICODE(_("No function, variable or unit with specified name exist."));
+			Prefix *prefix = CALCULATOR->getPrefix(str);
+			if(!item && !prefix) {
+				PUTS_UNICODE(_("No function, variable, unit, or prefix with specified name exist."));
 			} else {
-				switch(item->type()) {
-					case TYPE_FUNCTION: {
-						INIT_SCREEN_CHECK
-						CHECK_IF_SCREEN_FILLED_PUTS("");
-						MathFunction *f = (MathFunction*) item;
-						Argument *arg;
-						Argument default_arg;
-						string str2;
-						str = _("Function");
-						if(!f->title(false).empty()) {
-							str += ": ";
-							str += f->title();
-						}
-						CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-						CHECK_IF_SCREEN_FILLED_PUTS("");
-						const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs);
-						str = ename->name;
-						int iargs = f->maxargs();
-						if(iargs < 0) {
-							iargs = f->minargs() + 1;
-						}
-						str += "(";
-						if(iargs != 0) {
-							for(int i2 = 1; i2 <= iargs; i2++) {
-								if(i2 > f->minargs()) {
-									str += "[";
-								}
-								if(i2 > 1) {
-									str += CALCULATOR->getComma();
-									str += " ";
-								}
-								arg = f->getArgumentDefinition(i2);
-								if(arg && !arg->name().empty()) {
-									str2 = arg->name();
-								} else {
-									str2 = _("argument");
-									str2 += " ";
-									str2 += i2s(i2);
-								}
-								str += str2;
-								if(i2 > f->minargs()) {
-									str += "]";
-								}
-							}
-							if(f->maxargs() < 0) {
-								str += CALCULATOR->getComma();
-								str += " ...";
-							}
-						}
-						str += ")";
-						CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-						for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
-							if(&f->getName(i2) != ename) {
-								CHECK_IF_SCREEN_FILLED_PUTS(f->getName(i2).name.c_str());
-							}
-						}
-						if(f->subtype() == SUBTYPE_DATA_SET) {
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							snprintf(buffer, 1000, _("Retrieves data from the %s data set for a given object and property. If \"info\" is typed as property, all properties of the object will be listed."), f->title().c_str());
-							CHECK_IF_SCREEN_FILLED_PUTS(buffer);
-						}
-						if(!f->description().empty()) {
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							CHECK_IF_SCREEN_FILLED_PUTS(f->description().c_str());
-						}
-						if(!f->example(true).empty()) {
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							str = _("Example:"); str += " "; str += f->example(false, ename->name);
-							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-						}
-						if(f->subtype() == SUBTYPE_DATA_SET && !((DataSet*) f)->copyright().empty()) {
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							CHECK_IF_SCREEN_FILLED_PUTS(((DataSet*) f)->copyright().c_str());
-						}
-						if(iargs) {
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							CHECK_IF_SCREEN_FILLED_PUTS(_("Arguments"));
-							for(int i2 = 1; i2 <= iargs; i2++) {
-								arg = f->getArgumentDefinition(i2);
-								if(arg && !arg->name().empty()) {
-									str = arg->name();
-								} else {
-									str = i2s(i2);
-								}
+				INIT_SCREEN_CHECK
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				for(size_t i = 0; i < 2; i++) {
+					if(i == 1) item = CALCULATOR->getActiveExpressionItem(str, item);
+					if(!item) break;
+					switch(item->type()) {
+						case TYPE_FUNCTION: {
+							MathFunction *f = (MathFunction*) item;
+							Argument *arg;
+							Argument default_arg;
+							string str2;
+							str = _("Function");
+							if(!f->title(false).empty()) {
 								str += ": ";
-								if(arg) {
-									str2 = arg->printlong();
-								} else {
-									str2 = default_arg.printlong();
-								}
-								if(i2 > f->minargs()) {
-									str2 += " (";
-									//optional argument, in description
-									str2 += _("optional");
-									if(!f->getDefaultValue(i2).empty()) {
-										str2 += ", ";
-										//argument default, in description
-										str2 += _("default: ");
-										str2 += f->getDefaultValue(i2);
+								str += f->title();
+							}
+							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+							CHECK_IF_SCREEN_FILLED_PUTS("");
+							const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs);
+							str = ename->name;
+							int iargs = f->maxargs();
+							if(iargs < 0) {
+								iargs = f->minargs() + 1;
+							}
+							str += "(";
+							if(iargs != 0) {
+								for(int i2 = 1; i2 <= iargs; i2++) {
+									if(i2 > f->minargs()) {
+										str += "[";
 									}
-									str2 += ")";
+									if(i2 > 1) {
+										str += CALCULATOR->getComma();
+										str += " ";
+									}
+									arg = f->getArgumentDefinition(i2);
+									if(arg && !arg->name().empty()) {
+										str2 = arg->name();
+									} else {
+										str2 = _("argument");
+										str2 += " ";
+										str2 += i2s(i2);
+									}
+									str += str2;
+									if(i2 > f->minargs()) {
+										str += "]";
+									}
 								}
-								str += str2;
+								if(f->maxargs() < 0) {
+									str += CALCULATOR->getComma();
+									str += " ...";
+								}
+							}
+							str += ")";
+							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+							for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
+								if(&f->getName(i2) != ename) {
+									CHECK_IF_SCREEN_FILLED_PUTS(f->getName(i2).name.c_str());
+								}
+							}
+							if(f->subtype() == SUBTYPE_DATA_SET) {
+								CHECK_IF_SCREEN_FILLED_PUTS("");
+								snprintf(buffer, 1000, _("Retrieves data from the %s data set for a given object and property. If \"info\" is typed as property, all properties of the object will be listed."), f->title().c_str());
+								CHECK_IF_SCREEN_FILLED_PUTS(buffer);
+							}
+							if(!f->description().empty()) {
+								CHECK_IF_SCREEN_FILLED_PUTS("");
+								CHECK_IF_SCREEN_FILLED_PUTS(f->description().c_str());
+							}
+							if(!f->example(true).empty()) {
+								CHECK_IF_SCREEN_FILLED_PUTS("");
+								str = _("Example:"); str += " "; str += f->example(false, ename->name);
 								CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 							}
-						}
-						if(!f->condition().empty()) {
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							str = _("Requirement");
-							str += ": ";
-							str += f->printCondition();
-							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-						}
-						if(f->subtype() == SUBTYPE_DATA_SET) {
-							DataSet *ds = (DataSet*) f;
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							CHECK_IF_SCREEN_FILLED_PUTS(_("Properties"));
-							DataPropertyIter it;
-							DataProperty *dp = ds->getFirstProperty(&it);
-							while(dp) {
-								if(!dp->isHidden()) {
-									if(!dp->title(false).empty()) {
-										str = dp->title();
-										str += ": ";
+							if(f->subtype() == SUBTYPE_DATA_SET && !((DataSet*) f)->copyright().empty()) {
+								CHECK_IF_SCREEN_FILLED_PUTS("");
+								CHECK_IF_SCREEN_FILLED_PUTS(((DataSet*) f)->copyright().c_str());
+							}
+							if(iargs) {
+								CHECK_IF_SCREEN_FILLED_PUTS("");
+								CHECK_IF_SCREEN_FILLED_PUTS(_("Arguments"));
+								for(int i2 = 1; i2 <= iargs; i2++) {
+									arg = f->getArgumentDefinition(i2);
+									if(arg && !arg->name().empty()) {
+										str = arg->name();
+									} else {
+										str = i2s(i2);
 									}
-									for(size_t i = 1; i <= dp->countNames(); i++) {
-										if(i > 1) str += ", ";
-										str += dp->getName(i);
+									str += ": ";
+									if(arg) {
+										str2 = arg->printlong();
+									} else {
+										str2 = default_arg.printlong();
 									}
-									if(dp->isKey()) {
-										str += " (";
-										str += _("key");
-										str += ")";
+									if(i2 > f->minargs()) {
+										str2 += " (";
+										//optional argument, in description
+										str2 += _("optional");
+										if(!f->getDefaultValue(i2).empty()) {
+											str2 += ", ";
+											//argument default, in description
+											str2 += _("default: ");
+											str2 += f->getDefaultValue(i2);
+										}
+										str2 += ")";
 									}
-									if(!dp->description().empty()) {
-										str += "\n";
-										str += dp->description();
-									}
+									str += str2;
 									CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 								}
-								dp = ds->getNextProperty(&it);
 							}
-						}
-						if(f->subtype() == SUBTYPE_USER_FUNCTION) {
+							if(!f->condition().empty()) {
+								CHECK_IF_SCREEN_FILLED_PUTS("");
+								str = _("Requirement");
+								str += ": ";
+								str += f->printCondition();
+								CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+							}
+							if(f->subtype() == SUBTYPE_DATA_SET) {
+								DataSet *ds = (DataSet*) f;
+								CHECK_IF_SCREEN_FILLED_PUTS("");
+								CHECK_IF_SCREEN_FILLED_PUTS(_("Properties"));
+								DataPropertyIter it;
+								DataProperty *dp = ds->getFirstProperty(&it);
+								while(dp) {
+									if(!dp->isHidden()) {
+										if(!dp->title(false).empty()) {
+											str = dp->title();
+											str += ": ";
+										}
+										for(size_t i = 1; i <= dp->countNames(); i++) {
+											if(i > 1) str += ", ";
+											str += dp->getName(i);
+										}
+										if(dp->isKey()) {
+											str += " (";
+											str += _("key");
+											str += ")";
+										}
+										if(!dp->description().empty()) {
+											str += "\n";
+											str += dp->description();
+										}
+										CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+									}
+									dp = ds->getNextProperty(&it);
+								}
+							}
+							if(f->subtype() == SUBTYPE_USER_FUNCTION) {
+								CHECK_IF_SCREEN_FILLED_PUTS("");
+								str = _("Expression:"); str += " "; str += CALCULATOR->unlocalizeExpression(((UserFunction*) f)->formula());
+								CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+							}
 							CHECK_IF_SCREEN_FILLED_PUTS("");
-							str = _("Expression:"); str += " "; str += CALCULATOR->unlocalizeExpression(((UserFunction*) f)->formula());
-							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+							break;
 						}
-						CHECK_IF_SCREEN_FILLED_PUTS("");
-						break;
-					}
-					case TYPE_UNIT: {
-						puts("");
-						if(!item->title(false).empty()) {
-							PRINT_AND_COLON_TABS_INFO(_("Unit"));
-							FPUTS_UNICODE(item->title().c_str(), stdout);
-						} else {
-							FPUTS_UNICODE(_("Unit"), stdout);
+						case TYPE_UNIT: {
+							if(!item->title(false).empty()) {
+								PRINT_AND_COLON_TABS_INFO(_("Unit"));
+								FPUTS_UNICODE(item->title().c_str(), stdout);
+							} else {
+								FPUTS_UNICODE(_("Unit"), stdout);
+							}
+							CHECK_IF_SCREEN_FILLED_PUTS("");
+							PRINT_AND_COLON_TABS_INFO(_("Names"));
+							if(item->subtype() != SUBTYPE_COMPOSITE_UNIT) {
+								const ExpressionName *ename = &item->preferredName(true, printops.use_unicode_signs);
+								FPUTS_UNICODE(ename->name.c_str(), stdout);
+								for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
+									if(&item->getName(i2) != ename && !item->getName(i2).completion_only) {
+										fputs(" / ", stdout);
+										FPUTS_UNICODE(item->getName(i2).name.c_str(), stdout);
+									}
+								}
+							}
+							CHECK_IF_SCREEN_FILLED_PUTS("");
+							switch(item->subtype()) {
+								case SUBTYPE_BASE_UNIT: {
+									break;
+								}
+								case SUBTYPE_ALIAS_UNIT: {
+									AliasUnit *au = (AliasUnit*) item;
+									PRINT_AND_COLON_TABS_INFO(_("Base Unit"));
+									string base_unit = au->firstBaseUnit()->print(false, printops.abbreviate_names, printops.use_unicode_signs);
+									if(au->firstBaseExponent() != 1) {
+										if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {base_unit.insert(0, 1, '('); base_unit += ")";}
+										if(printops.use_unicode_signs && au->firstBaseExponent() == 2) base_unit += SIGN_POWER_2;
+										else if(printops.use_unicode_signs && au->firstBaseExponent() == 3) base_unit += SIGN_POWER_3;
+										else {
+											base_unit += POWER;
+											base_unit += i2s(au->firstBaseExponent());
+										}
+									}
+									CHECK_IF_SCREEN_FILLED_PUTS(base_unit.c_str());
+									PRINT_AND_COLON_TABS_INFO(_("Relation"));
+									FPUTS_UNICODE(CALCULATOR->localizeExpression(au->expression()).c_str(), stdout);
+									bool is_relative = false;
+									if(!au->uncertainty(&is_relative).empty()) {
+										CHECK_IF_SCREEN_FILLED_PUTS("");
+										if(is_relative) {PRINT_AND_COLON_TABS_INFO(_("Relative uncertainty"));}
+										else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
+										CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(au->uncertainty()).c_str())
+									} else if(item->isApproximate()) {
+										fputs(" (", stdout);
+										FPUTS_UNICODE(_("approximate"), stdout);
+										fputs(")", stdout);
+
+									}
+									if(!au->inverseExpression().empty()) {
+										CHECK_IF_SCREEN_FILLED_PUTS("");
+										PRINT_AND_COLON_TABS_INFO(_("Inverse Relation"));
+										FPUTS_UNICODE(CALCULATOR->localizeExpression(au->inverseExpression()).c_str(), stdout);
+										if(au->uncertainty().empty() && item->isApproximate()) {
+											fputs(" (", stdout);
+											FPUTS_UNICODE(_("approximate"), stdout);
+											fputs(")", stdout);
+										}
+									}
+									CHECK_IF_SCREEN_FILLED_PUTS("");
+									break;
+								}
+								case SUBTYPE_COMPOSITE_UNIT: {
+									PRINT_AND_COLON_TABS_INFO(_("Base Units"));
+									CHECK_IF_SCREEN_FILLED_PUTS(((CompositeUnit*) item)->print(false, true, printops.use_unicode_signs).c_str());
+									break;
+								}
+							}
+							if(!item->description().empty()) {
+								CHECK_IF_SCREEN_FILLED_PUTS("");
+								CHECK_IF_SCREEN_FILLED_PUTS(item->description().c_str());
+							}
+							CHECK_IF_SCREEN_FILLED_PUTS("");
+							break;
 						}
-						puts("");
-						PRINT_AND_COLON_TABS_INFO(_("Names"));
-						if(item->subtype() != SUBTYPE_COMPOSITE_UNIT) {
-							const ExpressionName *ename = &item->preferredName(true, printops.use_unicode_signs);
+						case TYPE_VARIABLE: {
+							if(!item->title(false).empty()) {
+								PRINT_AND_COLON_TABS_INFO(_("Variable"));
+								FPUTS_UNICODE(item->title().c_str(), stdout);
+							} else {
+								FPUTS_UNICODE(_("Variable"), stdout);
+							}
+							CHECK_IF_SCREEN_FILLED_PUTS("");
+							PRINT_AND_COLON_TABS_INFO(_("Names"));
+							const ExpressionName *ename = &item->preferredName(false, printops.use_unicode_signs);
 							FPUTS_UNICODE(ename->name.c_str(), stdout);
 							for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 								if(&item->getName(i2) != ename && !item->getName(i2).completion_only) {
@@ -3569,176 +3690,118 @@ int main(int argc, char *argv[]) {
 									FPUTS_UNICODE(item->getName(i2).name.c_str(), stdout);
 								}
 							}
-						}
-						puts("");
-						switch(item->subtype()) {
-							case SUBTYPE_BASE_UNIT: {
-								break;
-							}
-							case SUBTYPE_ALIAS_UNIT: {
-								AliasUnit *au = (AliasUnit*) item;
-								PRINT_AND_COLON_TABS_INFO(_("Base Unit"));
-								string base_unit = au->firstBaseUnit()->print(false, printops.abbreviate_names, printops.use_unicode_signs);
-								if(au->firstBaseExponent() != 1) {
-									if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {base_unit.insert(0, 1, '('); base_unit += ")";}
-									if(printops.use_unicode_signs && au->firstBaseExponent() == 2) base_unit += SIGN_POWER_2;
-									else if(printops.use_unicode_signs && au->firstBaseExponent() == 3) base_unit += SIGN_POWER_3;
-									else {
-										base_unit += POWER;
-										base_unit += i2s(au->firstBaseExponent());
-									}
-								}
-								PUTS_UNICODE(base_unit.c_str());
-								PRINT_AND_COLON_TABS_INFO(_("Relation"));
-								FPUTS_UNICODE(CALCULATOR->localizeExpression(au->expression()).c_str(), stdout);
-								bool is_relative = false;
-								if(!au->uncertainty(&is_relative).empty()) {
-									puts("");
-									if(is_relative) {PRINT_AND_COLON_TABS_INFO(_("Relative uncertainty"));}
-									else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
-									PUTS_UNICODE(CALCULATOR->localizeExpression(au->uncertainty()).c_str())
-								} else if(item->isApproximate()) {
-									fputs(" (", stdout);
-									FPUTS_UNICODE(_("approximate"), stdout);
-									fputs(")", stdout);
-
-								}
-								if(!au->inverseExpression().empty()) {
-									puts("");
-									PRINT_AND_COLON_TABS_INFO(_("Inverse Relation"));
-									FPUTS_UNICODE(CALCULATOR->localizeExpression(au->inverseExpression()).c_str(), stdout);
-									if(au->uncertainty().empty() && item->isApproximate()) {
-										fputs(" (", stdout);
-										FPUTS_UNICODE(_("approximate"), stdout);
-										fputs(")", stdout);
-									}
-								}
-								puts("");
-								break;
-							}
-							case SUBTYPE_COMPOSITE_UNIT: {
-								PRINT_AND_COLON_TABS_INFO(_("Base Units"));
-								PUTS_UNICODE(((CompositeUnit*) item)->print(false, true, printops.use_unicode_signs).c_str());
-								break;
-							}
-						}
-						if(!item->description().empty()) {
-							puts("");
-							PUTS_UNICODE(item->description().c_str());
-						}
-						puts("");
-						break;
-					}
-					case TYPE_VARIABLE: {
-						puts("");
-						if(!item->title(false).empty()) {
-							PRINT_AND_COLON_TABS_INFO(_("Variable"));
-							FPUTS_UNICODE(item->title().c_str(), stdout);
-						} else {
-							FPUTS_UNICODE(_("Variable"), stdout);
-						}
-						puts("");
-						PRINT_AND_COLON_TABS_INFO(_("Names"));
-						const ExpressionName *ename = &item->preferredName(false, printops.use_unicode_signs);
-						FPUTS_UNICODE(ename->name.c_str(), stdout);
-						for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
-							if(&item->getName(i2) != ename && !item->getName(i2).completion_only) {
-								fputs(" / ", stdout);
-								FPUTS_UNICODE(item->getName(i2).name.c_str(), stdout);
-							}
-						}
-						Variable *v = (Variable*) item;
-						string value;
-						if(is_answer_variable(v)) {
-							value = _("a previous result");
-						} else if(v->isKnown()) {
-							if(((KnownVariable*) v)->isExpression()) {
-								value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression());
-							} else {
-								if(((KnownVariable*) v)->get().isMatrix()) {
-									value = _("matrix");
-								} else if(((KnownVariable*) v)->get().isVector()) {
-									value = _("vector");
-								} else {
-									PrintOptions po;
-									po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
-									value = CALCULATOR->print(((KnownVariable*) v)->get(), 30, po);
-								}
-							}
-						} else {
-							if(((UnknownVariable*) v)->assumptions()) {
-								switch(((UnknownVariable*) v)->assumptions()->sign()) {
-									case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
-									case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
-									case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
-									case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
-									case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
-									default: {}
-								}
-								if(!value.empty() && ((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
-								switch(((UnknownVariable*) v)->assumptions()->type()) {
-									case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
-									case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
-									case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
-									case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
-									case ASSUMPTION_TYPE_NUMBER: {value += _("number"); break;}
-									case ASSUMPTION_TYPE_NONMATRIX: {value += _("non-matrix"); break;}
-									default: {}
-								}
-								if(value.empty()) value = _("unknown");
-							} else {
-								value = _("default assumptions");
-							}
-						}
-						puts("");
-						bool is_relative = false;
-						if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
-							PRINT_AND_COLON_TABS_INFO(_("Value"));
-							FPUTS_UNICODE(value.c_str(), stdout);
-							puts("");
-							if(is_relative) {PRINT_AND_COLON_TABS_INFO(_("Relative uncertainty"));}
-							else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
-							PUTS_UNICODE(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()).c_str())
-						} else {
-							string value_pre = _("Value");
-							STR_AND_COLON_TABS_INFO(value_pre);
-							value.insert(0, value_pre);
-							bool b_approx = item->isApproximate();
-							if(b_approx && v->isKnown()) {
+							Variable *v = (Variable*) item;
+							string value;
+							if(is_answer_variable(v)) {
+								value = _("a previous result");
+							} else if(v->isKnown()) {
 								if(((KnownVariable*) v)->isExpression()) {
-									b_approx = ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->getFunctionById(FUNCTION_ID_INTERVAL)->referenceName()) == string::npos;
+									value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression());
 								} else {
-									b_approx = ((KnownVariable*) v)->get().containsInterval(true, false, false, 0, true) <= 0;
+									if(((KnownVariable*) v)->get().isMatrix()) {
+										value = _("matrix");
+									} else if(((KnownVariable*) v)->get().isVector()) {
+										value = _("vector");
+									} else {
+										PrintOptions po;
+										po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+										value = CALCULATOR->print(((KnownVariable*) v)->get(), 30, po);
+									}
+								}
+							} else {
+								if(((UnknownVariable*) v)->assumptions()) {
+									switch(((UnknownVariable*) v)->assumptions()->sign()) {
+										case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
+										case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
+										case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
+										case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
+										case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
+										default: {}
+									}
+									if(!value.empty() && ((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
+									switch(((UnknownVariable*) v)->assumptions()->type()) {
+										case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
+										case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
+										case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
+										case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
+										case ASSUMPTION_TYPE_NUMBER: {value += _("number"); break;}
+										case ASSUMPTION_TYPE_NONMATRIX: {value += _("non-matrix"); break;}
+										default: {}
+									}
+									if(value.empty()) value = _("unknown");
+								} else {
+									value = _("default assumptions");
 								}
 							}
-							if(b_approx) {
-								value += " (";
-								value += _("approximate");
-								value += ")";
-							}
-							int tabs = 0;
-							for(size_t i = 0; i < value_pre.length(); i++) {
-								if(value_pre[i] == '\t') {
-									if(tabs == 0) tabs += (7 - ((i - 1) % 8));
-									else tabs += 7;
+							CHECK_IF_SCREEN_FILLED_PUTS("");
+							bool is_relative = false;
+							if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
+								PRINT_AND_COLON_TABS_INFO(_("Value"));
+								FPUTS_UNICODE(value.c_str(), stdout);
+								CHECK_IF_SCREEN_FILLED_PUTS("");
+								if(is_relative) {PRINT_AND_COLON_TABS_INFO(_("Relative uncertainty"));}
+								else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
+								CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()).c_str())
+							} else {
+								string value_pre = _("Value");
+								STR_AND_COLON_TABS_INFO(value_pre);
+								value.insert(0, value_pre);
+								bool b_approx = item->isApproximate();
+								if(b_approx && v->isKnown()) {
+									if(((KnownVariable*) v)->isExpression()) {
+										b_approx = ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->getFunctionById(FUNCTION_ID_INTERVAL)->referenceName()) == string::npos;
+									} else {
+										b_approx = ((KnownVariable*) v)->get().containsInterval(true, false, false, 0, true) <= 0;
+									}
 								}
+								if(b_approx) {
+									value += " (";
+									value += _("approximate");
+									value += ")";
+								}
+								int tabs = 0;
+								for(size_t i = 0; i < value_pre.length(); i++) {
+									if(value_pre[i] == '\t') {
+										if(tabs == 0) tabs += (7 - ((i - 1) % 8));
+										else tabs += 7;
+									}
+								}
+								INIT_COLS
+								addLineBreaks(value, cols, true, unicode_length(value_pre) + tabs, unicode_length(value_pre) + tabs);
+								CHECK_IF_SCREEN_FILLED_PUTS(value.c_str());
 							}
-							INIT_COLS
-							addLineBreaks(value, cols, true, unicode_length(value_pre) + tabs, unicode_length(value_pre) + tabs);
-							PUTS_UNICODE(value.c_str());
+							if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->unit().empty()) {
+								PRINT_AND_COLON_TABS_INFO(_("Unit"));
+								CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(((KnownVariable*) v)->unit()).c_str())
+							}
+							if(!item->description().empty()) {
+								fputs("\n", stdout);
+								FPUTS_UNICODE(item->description().c_str(), stdout);
+								fputs("\n", stdout);
+							}
+							CHECK_IF_SCREEN_FILLED_PUTS("");
+							break;
 						}
-						if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->unit().empty()) {
-							PRINT_AND_COLON_TABS_INFO(_("Unit"));
-							PUTS_UNICODE(CALCULATOR->localizeExpression(((KnownVariable*) v)->unit()).c_str())
-						}
-						if(!item->description().empty()) {
-							fputs("\n", stdout);
-							FPUTS_UNICODE(item->description().c_str(), stdout);
-							fputs("\n", stdout);
-						}
-						puts("");
-						break;
 					}
+				}
+				if(prefix) {
+					FPUTS_UNICODE(_("Prefix"), stdout);
+					CHECK_IF_SCREEN_FILLED_PUTS("");
+					PRINT_AND_COLON_TABS_INFO(_("Names"));
+					string names;
+					if(printops.use_unicode_signs && !prefix->unicodeName(false).empty()) names += prefix->unicodeName(false);
+					if(!prefix->shortName(false, false).empty()) {if(!names.empty()) names += " / "; names += prefix->shortName(false, false);}
+					if(!prefix->longName(false, false).empty()) {if(!names.empty()) names += " / "; names += prefix->longName();}
+					CHECK_IF_SCREEN_FILLED_PUTS(names.c_str());
+					PRINT_AND_COLON_TABS_INFO(_("Value"));
+					fputs(prefix->value().print().c_str(), stdout);
+					if(prefix->type() == PREFIX_BINARY) {
+						fputs(" (2^", stdout);
+						fputs(i2s(((BinaryPrefix*) prefix)->exponent()).c_str(), stdout);
+						fputs(")", stdout);
+					}
+					CHECK_IF_SCREEN_FILLED_PUTS("");
+					CHECK_IF_SCREEN_FILLED_PUTS("");
 				}
 			}
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "help", _("help"))) {
@@ -4069,8 +4132,8 @@ int main(int argc, char *argv[]) {
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "list", _("list")) || EQUALS_IGNORECASE_AND_LOCAL(str, "find", _("find"))) {
 				puts("");
-				PUTS_UNICODE(_("Displays a list of variables, functions and units."));
-				PUTS_UNICODE(_("Enter with argument 'currencies', 'functions', 'variables' or 'units' to show a list of all currencies, functions, variables or units. Enter a search term to find matching variables, functions, and/or units. If command is called with no argument all user-definied objects are listed."));
+				PUTS_UNICODE(_("Displays a list of variables, functions, units, and prefixes."));
+				PUTS_UNICODE(_("Enter with argument 'currencies', 'functions', 'variables', 'units', or 'prefixes' to show a list of all currencies, functions, variables, units, or prefixes. Enter a search term to find matching variables, functions, units, and/or prefixes. If command is called with no argument all user-definied objects are listed."));
 				puts("");
 				PUTS_UNICODE(_("Example: list functions."));
 				PUTS_UNICODE(_("Example: find dinar."));
@@ -4078,7 +4141,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "info", _("info"))) {
 				puts("");
-				PUTS_UNICODE(_("Displays information about a function, variable or unit."));
+				PUTS_UNICODE(_("Displays information about a function, variable, unit, or prefix."));
 				puts("");
 				PUTS_UNICODE(_("Example: info sin."));
 				puts("");
@@ -5624,7 +5687,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {3, 12, 1};
+	int version_numbers[] = {3, 13, 0};
 
 	if(file) {
 		char line[10000];
@@ -5664,7 +5727,7 @@ void load_preferences() {
 				} else if(svar == "use_max_deci") {
 					printops.use_max_decimals = v;
 				} else if(svar == "precision") {
-					if(v == 8 && (version_numbers[0] < 3 || (version_numbers[0] == 3 && (version_numbers[1] < 12 || (version_numbers[1] == 12 && version_numbers[2] <= 1))))) v = 10;
+					if(v == 8 && (version_numbers[0] < 3 || (version_numbers[0] == 3 && version_numbers[1] <= 12))) v = 10;
 					CALCULATOR->setPrecision(v);
 				} else if(svar == "interval_arithmetic") {
 					if(version_numbers[0] >= 3) CALCULATOR->useIntervalArithmetic(v);

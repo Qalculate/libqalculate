@@ -234,9 +234,9 @@ MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit, co
 MathStructure Calculator::convert(const MathStructure &mstruct, KnownVariable *to_var, const EvaluationOptions &eo) {
 	if(mstruct.contains(to_var, true) > 0) return mstruct;
 	size_t n_messages = messages.size();
-	if(b_var_units && !to_var->unit().empty() && to_var->isExpression()) {
+	if(!to_var->unit().empty() && to_var->isExpression()) {
 		int b = mstruct.containsRepresentativeOfType(STRUCT_UNIT, true, true);
-		if(b > 0 || (b < 0 && b_var_units)) {
+		if(b != 0 || (b < 0 && b_var_units)) {
 			beginTemporaryStopMessages();
 			CompositeUnit cu("", "temporary_composite_convert", "", to_var->unit());
 			if(!CALCULATOR->endTemporaryStopMessages() && cu.countUnits() > 0) {
@@ -248,10 +248,10 @@ MathStructure Calculator::convert(const MathStructure &mstruct, KnownVariable *t
 				MathStructure mstruct_new(convert(mstruct, &au, eo, false, false));
 				if(mstruct_new.contains(&au)) {
 					mstruct_new.replace(&au, to_var);
-					return mstruct_new;
+					if(b_var_units || !mstruct_new.containsType(STRUCT_UNIT, true)) return mstruct_new;
 				}
 			}
-		} else {
+		} else if(b_var_units) {
 			MathStructure mstruct_new(mstruct);
 			bool b_var_units_bak = b_var_units;
 			b_var_units = false;

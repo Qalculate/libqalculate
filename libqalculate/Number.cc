@@ -22,6 +22,9 @@
 #include <sstream>
 #include <string.h>
 #include "util.h"
+#ifdef _WIN32
+#	include <VersionHelpers.h>
+#endif
 
 using std::string;
 using std::cout;
@@ -76,18 +79,18 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 			if(po.digit_grouping != DIGIT_GROUPING_LOCALE && i_deci + po.decimalpoint().length() < str.length() - 4 && str.find("…") == string::npos && str.find("...") == string::npos) {
 				i = i_deci + 3 + po.decimalpoint().length();
 				while(i < str.length()) {
-#ifndef _WIN32
-					// do not use thin space on Windows
+#ifdef _WIN32
+					// do not use thin space on Windows < 10
+					if(IsWindows10OrGreater() && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
+#else
 					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
+#endif
 						str.insert(i, " ");
 						i += 3 + strlen(" ");
 					} else {
-#endif
 						str.insert(i, " ");
 						i += 4;
-#ifndef _WIN32
 					}
-#endif
 				}
 			}
 			i = i_deci;
@@ -98,17 +101,17 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 			while(i > group_size) {
 				i -= group_size;
 				if(po.digit_grouping != DIGIT_GROUPING_LOCALE) {
-#ifndef _WIN32
-					// do not use thin space on Windows
+#ifdef _WIN32
+					// do not use thin space on Windows < 10
+					if(IsWindows10OrGreater() && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
+#else
 					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
+#endif
 						// thin space is preferred
 						str.insert(i, " ");
 					} else {
-#endif
 						str.insert(i, " ");
-#ifndef _WIN32
 					}
-#endif
 				} else {
 					str.insert(i, CALCULATOR->local_digit_group_separator);
 				}
@@ -12244,11 +12247,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			size_t i_dp = str.find(po.decimalpoint());
 			if(i_dp != string::npos && ((infinite_series == 1 && i_dp + po.decimalpoint().length() + 2 < str.length() - infinite_series) || (infinite_series > 1 && i_dp + po.decimalpoint().length() < str.length() - infinite_series))) {
 #ifdef _WIN32
-				str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), " ");
+				if(IsWindows10OrGreater() && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
 #else
-				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), " ");
-				else str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), " ");
+				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
 #endif
+					str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), " ");
+				} else {
+					str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), " ");
+				}
 			}
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("…", po.can_display_unicode_string_arg))) str += "…";
 			else str += "...";

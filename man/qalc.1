@@ -43,11 +43,15 @@ start in interactive mode
 .PP
 .TP 8
 .B \-l, \-\-list \fI[search term]\fP
-displays a list of all user-defined or matching variables, functions and units.
+displays a list of all user-defined or matching variables, functions, units, and prefixes.
 .PP
 .TP 8
 .B \-\-list\-functions \fI[search term]\fP
 displays a list of all or matching functions.
+.PP
+.TP 8
+.B \-\-list\-prefixes \fI[search term]\fP
+displays a list of all or matching prefixes.
 .PP
 .TP 8
 .B \-\-list\-units \fI[search term]\fP
@@ -148,7 +152,7 @@ Factorizes the current result.
 .TP 8
 .B find, list \fI[name]\fP
 Displays a list of variables, functions and units.
-Enter with argument 'currencies', 'functions', 'variables' or 'units' to show a list of all currencies, functions, variables or units. Enter a search term to find matching variables, functions, and/or units. If command is called with no argument all user-definied objects are listed.
+Enter with argument 'currencies', 'functions', 'variables', 'units', or 'prefixes' to show a list of all currencies, functions, variables, units, or prefixes. Enter a search term to find matching variables, functions, units, and/or prefixes. If command is called with no argument all user-definied objects are listed.
 .br
 Example: list functions.
 .br
@@ -167,7 +171,7 @@ Example: function func1 5*\\x.
 .PP
 .TP 8
 .B info
-Displays information about a function, variable or unit.
+Displays information about a function, variable, unit, or prefix.
 .br
 Example: info sin.
 .PP
@@ -1155,7 +1159,7 @@ sqrt(32) to base sqrt(2)
 The manual of the graphical user interface at
 .I https://qalculate.github.io/manual/index.html
 (includes more details about the syntax and elements supported in mathematical expressions, and various options, and
-includes a complete list of functions, variables and units)
+includes a complete list of functions, variables, and units)
 .SH BUGS
 Please report any bugs at 
 .I https://github.com/Qalculate/libqalculate/issues
