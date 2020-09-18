@@ -887,7 +887,7 @@ void Number::set(string number, const ParseOptions &po) {
 			}
 			readprec++;
 			numbers_started = true;
-		} else if((number[index] == 'E' || number[index] == 'e') && base <= 10) {
+		} else if(numbers_started && (number[index] == 'E' || number[index] == 'e') && base <= 10 && index + 1 < number.length()) {
 			index++;
 			numbers_started = false;
 			bool exp_minus = false;

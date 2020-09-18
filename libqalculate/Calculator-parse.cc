@@ -1813,7 +1813,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		} else if(str[i] == SPACE_CH) {
 			// ignore whitespace
 			str.erase(i, 1);
-		} else if(!b_exp && BASE_2_10 && (str[i] == EXP_CH || str[i] == EXP2_CH)) {
+		} else if(had_non_sign && !b_exp && BASE_2_10 && (str[i] == EXP_CH || str[i] == EXP2_CH)) {
 			// scientific e-notation
 			b_exp = true;
 			had_non_sign = true;
@@ -1966,7 +1966,7 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 		} else {
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
 		}
-		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
+		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1) && (!BASE_2_10 || (str[0] != EXP_CH && str[0] != EXP2_CH))) {
 			return parseNumber(mstruct, str, po);
 		} else {
 			return parseOperators(mstruct, str, po);
@@ -1982,7 +1982,7 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 		} else {
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
 		}
-		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
+		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1) && (!BASE_2_10 || (str[0] != EXP_CH && str[0] != EXP2_CH))) {
 			if(s == OPERATION_EXP10 && po.read_precision == ALWAYS_READ_PRECISION) {
 				ParseOptions po2 = po;
 				po2.read_precision = READ_PRECISION_WHEN_DECIMALS;
@@ -3409,12 +3409,18 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		mstruct->transform(f_uncertainty);
 		mstruct->addChild_nocopy(mstruct2);
 		mstruct->addChild(m_zero);
-	} else if(BASE_2_10 && (i = str.find_first_of(EXPS, 1)) != string::npos && i + 1 != str.length() && str.find("\b") == string::npos) {
+	} else if(BASE_2_10 && (i = str.find_first_of(EXPS, 0)) != string::npos && i + 1 != str.length() && str.find("\b") == string::npos) {
 		// Parse scientific e-notation
-		str2 = str.substr(0, i);
+		if(i == 0) {
+			mstruct->set(1, 1, 0);
+			CALCULATOR->error(false, _("%s interpreted as 10^%s (1%s)"), str.c_str(), str.find_first_not_of(NUMBERS, 1) == string::npos ? str.substr(1, str.length() - 1).c_str() : (string("(") + str.substr(1, str.length() - 1) + string(")")).c_str(), str.c_str(), NULL);
+		} else {
+			str2 = str.substr(0, i);
+			parseAdd(str2, mstruct, po);
+		}
 		str = str.substr(i + 1, str.length() - (i + 1));
-		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_EXP10);
+		if(i == 0 && mstruct->isMultiplication() && mstruct->size() == 2 && (*mstruct)[0].isOne()) mstruct->setToChild(2);
 	} else if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos && i + 1 != str.length() && str.find(ID_WRAP_RIGHT_CH, i + 1) && str.find_first_not_of(PLUS MINUS, 0) != i) {
 		// Implicit multiplication
 		str2 = str.substr(0, i);
