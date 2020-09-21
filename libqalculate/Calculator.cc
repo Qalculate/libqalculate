@@ -1445,9 +1445,9 @@ void Calculator::addBuiltinVariables() {
 	v_percent->addName("%");
 	v_permille = (KnownVariable*) addVariable(new KnownVariable("", "permille", MathStructure(1, 1, -3), "Per Mille", false, true));
 	v_permyriad = (KnownVariable*) addVariable(new KnownVariable("", "permyriad", MathStructure(1, 1, -4), "Per Myriad", false, true));
-	v_x = (UnknownVariable*) addVariable(new UnknownVariable("", "x", "", true, false));
-	v_y = (UnknownVariable*) addVariable(new UnknownVariable("", "y", "", true, false));
-	v_z = (UnknownVariable*) addVariable(new UnknownVariable("", "z", "", true, false));
+	v_x = (UnknownVariable*) addVariable(new UnknownVariable("", "x", "", false, false));
+	v_y = (UnknownVariable*) addVariable(new UnknownVariable("", "y", "", false, false));
+	v_z = (UnknownVariable*) addVariable(new UnknownVariable("", "z", "", false, false));
 	v_C = new UnknownVariable("", "C", "", false, true);
 	v_C->setAssumptions(new Assumptions());
 	v_n = (UnknownVariable*) addVariable(new UnknownVariable("", "n", "", false, true));

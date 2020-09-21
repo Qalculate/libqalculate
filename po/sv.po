@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-14 16:32+0200\n"
+"POT-Creation-Date: 2020-09-19 10:02+0200\n"
 "PO-Revision-Date: 2006-05-04 12:29+0200\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -2360,10 +2360,10 @@ msgstr ""
 #: ../libqalculate/BuiltinFunctions-algebra.cc:359
 msgid ""
 "No equality or inequality to solve. The entered expression to solve is not "
-"correct (ex. \"x + 5 = 3\" is correct)"
+"correct (e.g. \"x + 5 = 3\" is correct)"
 msgstr ""
 "Ingen ekvation eller olikhet att lösa. Angett uttryck att lösa var inte "
-"korrekt (t ex \"x + 5 = 3\" är korrekt)"
+"korrekt (t.ex. \"x + 5 = 3\" är korrekt)"
 
 #: ../libqalculate/BuiltinFunctions-algebra.cc:406
 #, c-format
@@ -2863,6 +2863,10 @@ msgstr ""
 "Överblivna tecken i uttrycket \"%s\" (inte någon giltig variabel/funktion/"
 "enhet) ignorerades i talet \"%s\"."
 
+#: ../libqalculate/Calculator-parse.cc:2108
+msgid "Empty expression in parentheses interpreted as zero."
+msgstr "Tomt uttryck inom parentes tolkades som noll."
+
 #: ../libqalculate/Calculator-parse.cc:2198
 msgid "RPN syntax error. Values left at the end of the RPN expression."
 msgstr "RPN syntaxfel. Värden kvar i slutet av RPN uttryck."
@@ -2896,6 +2900,11 @@ msgid ""
 msgstr ""
 "Uttrycket är tvetydigt (var försiktigt när implicit multiplikation och "
 "division kombineras)."
+
+#: ../libqalculate/Calculator-parse.cc:3416
+#, c-format
+msgid "%s interpreted as 10^%s (1%s)"
+msgstr "%s tolkades som 10^%s (1%s)"
 
 #: ../libqalculate/Calculator-plot.cc:101
 #: ../libqalculate/Calculator-plot.cc:131

@@ -2105,7 +2105,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		str2 = str.substr(i + 1, i2 - (i + 1));
 		MathStructure *mstruct2 = new MathStructure();
 		if(str2.empty()) {
-			error(false, "Empty expression in parentheses interpreted as zero.", NULL);
+			error(false, _("Empty expression in parentheses interpreted as zero."), NULL);
 		} else {
 			parseOperators(mstruct2, str2, po);
 		}

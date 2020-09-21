@@ -1,3 +1,18 @@
+2020-09-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow scientific e-notation without preceding digit, e.g. E2=1E2, with warning message
+
+2020-09-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not save x, y, and z as user variables if global variables are not loaded
+
+2020-09-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Show information for all matching objects (if there are multiple objects with the same name) with info command
+	* Show information about prefixes with the info command and list prefixes with find command, "list prefixes", and --list-prefixes
+	* Use thin space on Windows 10
+	* Remove ending white-space from from expression when separating "to"-expression;
+
 2020-09-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix cot(pi/2), coth(pi/2*i), arccot(0), arcsch(0), and arcoth(0), and simplify inverse sec, csc, and cot
