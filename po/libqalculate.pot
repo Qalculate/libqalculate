@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-14 16:32+0200\n"
+"POT-Creation-Date: 2020-09-19 10:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2259,7 +2259,7 @@ msgstr ""
 #: ../libqalculate/BuiltinFunctions-algebra.cc:359
 msgid ""
 "No equality or inequality to solve. The entered expression to solve is not "
-"correct (ex. \"x + 5 = 3\" is correct)"
+"correct (e.g. \"x + 5 = 3\" is correct)"
 msgstr ""
 
 #: ../libqalculate/BuiltinFunctions-algebra.cc:406
@@ -2739,6 +2739,10 @@ msgid ""
 "\"%s\" was ignored."
 msgstr ""
 
+#: ../libqalculate/Calculator-parse.cc:2108
+msgid "Empty expression in parentheses interpreted as zero."
+msgstr ""
+
 #: ../libqalculate/Calculator-parse.cc:2198
 msgid "RPN syntax error. Values left at the end of the RPN expression."
 msgstr ""
@@ -2767,6 +2771,11 @@ msgstr ""
 msgid ""
 "The expression is ambiguous (be careful when combining implicit "
 "multiplication and division)."
+msgstr ""
+
+#: ../libqalculate/Calculator-parse.cc:3416
+#, c-format
+msgid "%s interpreted as 10^%s (1%s)"
 msgstr ""
 
 #: ../libqalculate/Calculator-plot.cc:101

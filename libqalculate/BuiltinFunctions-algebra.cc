@@ -356,7 +356,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 
 		if(itry == 1) {
 			if(ierror == 1) {
-				if(!dsolve) CALCULATOR->error(true, _("No equality or inequality to solve. The entered expression to solve is not correct (ex. \"x + 5 = 3\" is correct)"), NULL);
+				if(!dsolve) CALCULATOR->error(true, _("No equality or inequality to solve. The entered expression to solve is not correct (e.g. \"x + 5 = 3\" is correct)"), NULL);
 				return -1;
 			} else {
 				first_error = ierror;
