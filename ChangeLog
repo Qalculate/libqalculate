@@ -1,3 +1,11 @@
+2020-09-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve plot (and genvector()) speed for user functions
+	* Fix show information for multiple matching objects in qalc
+	* Add yr and annus names for year unit, röntgen name for roentgen (R) unit, and rem for roentgen equivalent man
+	* Add Rutherford (Rd), millirem (mrem), mrem/s, and erg/g units
+	* Show radioactivity in rem_radioactivity as suffix (subscript)
+
 2020-09-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Allow scientific e-notation without preceding digit, e.g. E2=1E2, with warning message

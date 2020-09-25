@@ -3436,15 +3436,16 @@ int main(int argc, char *argv[]) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
 			show_info:
-			ExpressionItem *item = CALCULATOR->getActiveExpressionItem(str);
-			Prefix *prefix = CALCULATOR->getPrefix(str);
+			string name = str;
+			ExpressionItem *item = CALCULATOR->getActiveExpressionItem(name);
+			Prefix *prefix = CALCULATOR->getPrefix(name);
 			if(!item && !prefix) {
 				PUTS_UNICODE(_("No function, variable, unit, or prefix with specified name exist."));
 			} else {
 				INIT_SCREEN_CHECK
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				for(size_t i = 0; i < 2; i++) {
-					if(i == 1) item = CALCULATOR->getActiveExpressionItem(str, item);
+					if(i == 1) item = CALCULATOR->getActiveExpressionItem(name, item);
 					if(!item) break;
 					switch(item->type()) {
 						case TYPE_FUNCTION: {
