@@ -805,6 +805,41 @@ MathStructure &MathStructure::cofactor(size_t r, size_t c, MathStructure &mstruc
 	return mstruct;
 }
 
+bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, const EvaluationOptions &eo) {
+	bool b_ret = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(calculate_userfunctions(m[i], x_mstruct, eo)) {
+			m.childUpdated(i + 1);
+			b_ret = true;
+		}
+	}
+	if(m.isFunction()) {
+		if(!m.contains(x_mstruct, true)) {
+			m.calculateFunctions(eo);
+			b_ret = true;
+		} else if(m.function()->subtype() == SUBTYPE_USER_FUNCTION && m.function()->condition().empty()) {
+			bool b = true;
+			for(size_t i = 0; i < ((UserFunction*) m.function())->countSubfunctions(); i++) {
+				if(((UserFunction*) m.function())->subfunctionPrecalculated(i + 1)) {
+					b = false;
+					break;
+				}
+			}
+			for(size_t i = 0; b && i < m.size(); i++) {
+				Argument *arg = m.function()->getArgumentDefinition(i + 1);
+				if(arg && arg->tests() && (arg->type() != ARGUMENT_TYPE_FREE || !arg->getCustomCondition().empty() || arg->rationalPolynomial() || arg->zeroForbidden() || (arg->handlesVector() && m[i].isVector())) && m[i].contains(x_mstruct, true)) {
+					b = false;
+					break;
+				}
+			}
+			if(b && m.calculateFunctions(eo, false)) {
+				calculate_userfunctions(m, x_mstruct, eo);
+				b_ret = true;
+			}
+		}
+	}
+	return b_ret;
+}
 MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, const EvaluationOptions &eo) const {
 	if(steps < 1) {
 		steps = 1;
@@ -826,11 +861,14 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 	}
 	y_vector.resizeVector(steps, m_zero);
 	if(x_vector) x_vector->resizeVector(steps, m_zero);
+	MathStructure mthis(*this);
+	mthis.unformat();
+	calculate_userfunctions(mthis, x_mstruct, eo);
 	for(int i = 0; i < steps; i++) {
 		if(x_vector) {
 			(*x_vector)[i] = x_value;
 		}
-		y_value = *this;
+		y_value = mthis;
 		y_value.replace(x_mstruct, x_value);
 		y_value.eval(eo);
 		y_vector[i] = y_value;
@@ -865,6 +903,9 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 		y_vector.resizeVector(steps, m_zero);
 		if(x_vector) x_vector->resizeVector(steps, m_zero);
 	}
+	MathStructure mthis(*this);
+	mthis.unformat();
+	calculate_userfunctions(mthis, x_mstruct, eo);
 	ComparisonResult cr = max.compare(x_value);
 	size_t i = 0;
 	while(COMPARISON_IS_EQUAL_OR_LESS(cr)) {
@@ -872,7 +913,7 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 			if(i >= x_vector->size()) x_vector->addChild(x_value);
 			else (*x_vector)[i] = x_value;
 		}
-		y_value = *this;
+		y_value = mthis;
 		y_value.replace(x_mstruct, x_value);
 		y_value.eval(eo);
 		if(i >= y_vector.size()) y_vector.addChild(y_value);
@@ -895,12 +936,15 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 	MathStructure y_value;
 	MathStructure y_vector;
 	y_vector.clearVector();
+	MathStructure mthis(*this);
+	mthis.unformat();
+	calculate_userfunctions(mthis, x_mstruct, eo);
 	for(size_t i = 1; i <= x_vector.countChildren(); i++) {
 		if(CALCULATOR->aborted()) {
 			y_vector.clearVector();
 			return y_vector;
 		}
-		y_value = *this;
+		y_value = mthis;
 		y_value.replace(x_mstruct, x_vector.getChild(i));
 		y_value.eval(eo);
 		y_vector.addChild(y_value);

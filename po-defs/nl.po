@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-14 16:32+0200\n"
+"POT-Creation-Date: 2020-09-25 09:48+0200\n"
 "PO-Revision-Date: 2007-05-18 15:47+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -8616,8 +8616,8 @@ msgid "Julian Year"
 msgstr "Juliaans jaar"
 
 #: ../data/units.xml.in.h:149
-msgid "r:year,p:years"
-msgstr "jaar,p:jaren"
+msgid "r:year,p:years,a:yr,annus"
+msgstr "jaar,p:jaren,annus,yr"
 
 #: ../data/units.xml.in.h:151
 msgid "r:month,p:months"
@@ -9991,9 +9991,8 @@ msgid "ar:dBW"
 msgstr ""
 
 #: ../data/units.xml.in.h:489
-#, fuzzy
 msgid "Erg per Second"
-msgstr "Gray per seconde"
+msgstr "Erg per seconde"
 
 #: ../data/units.xml.in.h:490
 msgid "Entropy"
@@ -10080,256 +10079,281 @@ msgid "ar:Ci,curie,p:curies"
 msgstr ""
 
 #: ../data/units.xml.in.h:511
-msgid "Absorbed Dose"
-msgstr "Absorptiedosis"
+msgid "Rutherford"
+msgstr ""
 
 #: ../data/units.xml.in.h:512
-msgid "Gray"
+msgid "ar:Rd,rutherford,p:rutherfords"
 msgstr ""
 
 #: ../data/units.xml.in.h:513
-msgid "ar:Gy,gray,p:grays"
-msgstr ""
+msgid "Absorbed Dose"
+msgstr "Absorptiedosis"
 
 #: ../data/units.xml.in.h:514
-msgid "Rad"
+msgid "Gray"
 msgstr ""
 
 #: ../data/units.xml.in.h:515
-msgid "r:rad_radioactivity"
+msgid "ar:Gy,gray,p:grays"
 msgstr ""
 
 #: ../data/units.xml.in.h:516
-msgid "Dose Equivalent"
-msgstr "Dosisequivalent"
+msgid "Rad"
+msgstr ""
 
 #: ../data/units.xml.in.h:517
-msgid "Sievert"
+msgid "r:rad_radioactivity"
 msgstr ""
 
 #: ../data/units.xml.in.h:518
-msgid "ar:Sv,sievert,p:sieverts"
-msgstr ""
+msgid "Dose Equivalent"
+msgstr "Dosisequivalent"
 
 #: ../data/units.xml.in.h:519
-msgid "Rem"
+msgid "Sievert"
 msgstr ""
 
 #: ../data/units.xml.in.h:520
-msgid "r:rem_radioactivity"
+msgid "ar:Sv,sievert,p:sieverts"
 msgstr ""
 
 #: ../data/units.xml.in.h:521
-msgid "Exposure"
-msgstr "Blootstelling"
-
-#: ../data/units.xml.in.h:522
-msgid "Coulomb per Kilogram"
-msgstr "Coulomb per kilogram"
-
-#: ../data/units.xml.in.h:523
-msgid "Roentgen"
+msgid "Roentgen Equivalent Man (Rem)"
 msgstr ""
 
+#: ../data/units.xml.in.h:522
+msgid "r:rem_radioactivity"
+msgstr ""
+
+#: ../data/units.xml.in.h:523
+#, fuzzy
+msgid "Millirem"
+msgstr "Miljoen"
+
 #: ../data/units.xml.in.h:524
-msgid "ar:R,roentgen,p:roentgens"
+msgid "r:millirem,a:mrem"
 msgstr ""
 
 #: ../data/units.xml.in.h:525
-msgid "Absorbed Dose Rate"
-msgstr "Absorptiesnelheid"
+msgid "Erg per Gram"
+msgstr "Erg per gram"
 
 #: ../data/units.xml.in.h:526
-msgid "Gray per Second"
-msgstr "Gray per seconde"
+msgid "Exposure"
+msgstr "Blootstelling"
 
 #: ../data/units.xml.in.h:527
-msgid "Ratio"
-msgstr "Verhouding"
+msgid "Coulomb per Kilogram"
+msgstr "Coulomb per kilogram"
 
 #: ../data/units.xml.in.h:528
-msgid "Neper"
+msgid "Roentgen"
 msgstr ""
 
 #: ../data/units.xml.in.h:529
-msgid "ar:Np,neper,p:nepers"
+msgid "ar:R,roentgen,r&#x00f6;ntgen,p:roentgens,p:r&#x00f6;ntgens"
 msgstr ""
 
 #: ../data/units.xml.in.h:530
+msgid "Absorbed Dose Rate"
+msgstr "Absorptiesnelheid"
+
+#: ../data/units.xml.in.h:531
+msgid "Gray per Second"
+msgstr "Gray per seconde"
+
+#: ../data/units.xml.in.h:532
+msgid "Millirem per hour"
+msgstr "Millirem per uur"
+
+#: ../data/units.xml.in.h:533
+msgid "Ratio"
+msgstr "Verhouding"
+
+#: ../data/units.xml.in.h:534
+msgid "Neper"
+msgstr ""
+
+#: ../data/units.xml.in.h:535
+msgid "ar:Np,neper,p:nepers"
+msgstr ""
+
+#: ../data/units.xml.in.h:536
 msgid "Bel"
 msgstr ""
 
-#: ../data/units.xml.in.h:531
+#: ../data/units.xml.in.h:537
 #, fuzzy
 msgid "r:bel,p:bels"
 msgstr "bar"
 
-#: ../data/units.xml.in.h:532
+#: ../data/units.xml.in.h:538
 msgid "Decibel"
 msgstr ""
 
-#: ../data/units.xml.in.h:533
+#: ../data/units.xml.in.h:539
 #, fuzzy
 msgid "ar:dB,decibel,p:decibels"
 msgstr "a:d,dag,p:dagen"
 
-#: ../data/units.xml.in.h:534
+#: ../data/units.xml.in.h:540
 msgid "Information"
 msgstr "Informatie"
 
-#: ../data/units.xml.in.h:535
+#: ../data/units.xml.in.h:541
 msgid "Bit"
 msgstr ""
 
-#: ../data/units.xml.in.h:536
+#: ../data/units.xml.in.h:542
 msgid "r:bit,p:bits"
 msgstr ""
 
-#: ../data/units.xml.in.h:537
+#: ../data/units.xml.in.h:543
 msgid "Byte (8-bit)"
 msgstr ""
 
-#: ../data/units.xml.in.h:538
+#: ../data/units.xml.in.h:544
 msgid "r:byte,a:B,p:bytes,octet,p:octets"
 msgstr ""
 
-#: ../data/units.xml.in.h:539
+#: ../data/units.xml.in.h:545
 msgid "Nibble"
 msgstr "Nibble"
 
-#: ../data/units.xml.in.h:540
+#: ../data/units.xml.in.h:546
 msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets"
 msgstr ""
 
-#: ../data/units.xml.in.h:541
+#: ../data/units.xml.in.h:547
 msgid "Tribble"
 msgstr ""
 
-#: ../data/units.xml.in.h:542
+#: ../data/units.xml.in.h:548
 msgid "r:tribble,p:tribbles"
 msgstr ""
 
-#: ../data/units.xml.in.h:543
+#: ../data/units.xml.in.h:549
 msgid "Word (16-bit)"
 msgstr ""
 
-#: ../data/units.xml.in.h:544
+#: ../data/units.xml.in.h:550
 msgid "r:word,p:words"
 msgstr "woord,p:woorden"
 
-#: ../data/units.xml.in.h:545
+#: ../data/units.xml.in.h:551
 msgid "Kilobyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:546
+#: ../data/units.xml.in.h:552
 msgid "Kibibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:547
+#: ../data/units.xml.in.h:553
 msgid "Mebibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:548
+#: ../data/units.xml.in.h:554
 msgid "Gibibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:549
+#: ../data/units.xml.in.h:555
 msgid "Megabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:550
+#: ../data/units.xml.in.h:556
 msgid "Gigabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:551
+#: ../data/units.xml.in.h:557
 msgid "Terabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:552
+#: ../data/units.xml.in.h:558
 msgid "Kilobit"
 msgstr ""
 
-#: ../data/units.xml.in.h:553
+#: ../data/units.xml.in.h:559
 msgid "Kibibit"
 msgstr ""
 
-#: ../data/units.xml.in.h:554
+#: ../data/units.xml.in.h:560
 msgid "Mebibit"
 msgstr ""
 
-#: ../data/units.xml.in.h:555
+#: ../data/units.xml.in.h:561
 msgid "Gibibit"
 msgstr ""
 
-#: ../data/units.xml.in.h:556
+#: ../data/units.xml.in.h:562
 msgid "Megabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:557
+#: ../data/units.xml.in.h:563
 msgid "Gigabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:558
+#: ../data/units.xml.in.h:564
 msgid "Terabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:559
+#: ../data/units.xml.in.h:565
 msgid "Typography"
 msgstr "Typografie"
 
-#: ../data/units.xml.in.h:560
+#: ../data/units.xml.in.h:566
 msgid "PostScript Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:561
+#: ../data/units.xml.in.h:567
 msgid "ar:pt,a:pts,point,p:points"
 msgstr ""
 
-#: ../data/units.xml.in.h:562
+#: ../data/units.xml.in.h:568
 msgid "PostScript Pica"
 msgstr ""
 
-#: ../data/units.xml.in.h:563
+#: ../data/units.xml.in.h:569
 msgid "r:pica,p:picas"
 msgstr ""
 
-#: ../data/units.xml.in.h:564
+#: ../data/units.xml.in.h:570
 msgid "ATA Pica"
 msgstr ""
 
-#: ../data/units.xml.in.h:565
+#: ../data/units.xml.in.h:571
 msgid "r:ata_pica,p:ata_picas"
 msgstr ""
 
-#: ../data/units.xml.in.h:566
+#: ../data/units.xml.in.h:572
 msgid "ATA Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:567
+#: ../data/units.xml.in.h:573
 msgid "r:ata_point,a:ata_pt,p:ata_points"
 msgstr ""
 
-#: ../data/units.xml.in.h:568
+#: ../data/units.xml.in.h:574
 msgid "New Didot Point"
 msgstr "Nieuwe Didot Point"
 
-#: ../data/units.xml.in.h:569
+#: ../data/units.xml.in.h:575
 msgid "r:new_didot"
 msgstr "nieuwe_didot"
 
-#: ../data/units.xml.in.h:570
+#: ../data/units.xml.in.h:576
 msgid "Didot Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:571
+#: ../data/units.xml.in.h:577
 msgid "r:didot,a:dd"
 msgstr ""
 
-#: ../data/units.xml.in.h:572
+#: ../data/units.xml.in.h:578
 msgid "Cicero"
 msgstr ""
 
-#: ../data/units.xml.in.h:573
+#: ../data/units.xml.in.h:579
 msgid "r:cicero"
 msgstr ""
 

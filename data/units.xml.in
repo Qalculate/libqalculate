@@ -894,7 +894,7 @@
     </unit>
     <unit type="alias">
       <_title>Julian Year</_title>
-      <_names>r:year,p:years</_names>
+      <_names>r:year,p:years,a:yr,annus</_names>
       <base>
         <unit>d</unit>
         <relation>365.25</relation>
@@ -3578,6 +3578,15 @@
         <exponent>1</exponent>
       </base>
     </unit>
+    <unit type="alias">
+      <_title>Rutherford</_title>
+      <_names>ar:Rd,rutherford,p:rutherfords</_names>
+      <base>
+        <unit>Bq</unit>
+        <relation>1E6</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
     <category>
       <_title>Absorbed Dose</_title>
       <unit type="alias">
@@ -3613,13 +3622,38 @@
         </base>
       </unit>
       <unit type="alias">
-        <_title>Rem</_title>
-        <_names>r:rem_radioactivity</_names>
+        <system>CGS</system>
+        <_title>Roentgen Equivalent Man (Rem)</_title>
+        <_names>ros:rem_radioactivity,a:rem</_names>
         <base>
           <unit>Sv</unit>
           <relation>1/100</relation>
           <exponent>1</exponent>
         </base>
+      </unit>
+      <unit type="composite">
+        <system>CGS</system>
+        <_title>Millirem</_title>
+        <names>r:mrem_c</names>
+        <part>
+          <unit>rem_radioactivity</unit>
+          <prefix>-3</prefix>
+          <exponent>1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <_title>Erg per Gram</_title>
+        <names>r:erg_p_g</names>
+        <part>
+          <unit>erg</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>g</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
       </unit>
     </category>
     <category>
@@ -3641,7 +3675,7 @@
       </unit>
       <unit type="alias">
         <_title>Roentgen</_title>
-        <_names>ar:R,roentgen,p:roentgens</_names>
+        <_names>ar:R,roentgen,r&#x00f6;ntgen,p:roentgens,p:r&#x00f6;ntgens</_names>
         <base>
           <unit>C_p_kg</unit>
           <relation>0.000258</relation>
@@ -3662,6 +3696,21 @@
         </part>
         <part>
           <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <system>CGS</system>
+        <_title>Millirem per hour</_title>
+        <names>r:mrem_p_h</names>
+        <part>
+          <unit>millirem</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>h</unit>
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
