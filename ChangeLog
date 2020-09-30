@@ -1,3 +1,7 @@
+2020-09-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add MC, MS, M+, M- commands and MR/MRC variable in qalc
+
 2020-09-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Improve plot (and genvector()) speed for user functions
