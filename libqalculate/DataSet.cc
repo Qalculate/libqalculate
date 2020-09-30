@@ -24,7 +24,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifdef COMPILED_DEFINITIONS
+#ifdef COMPILED_DEFINITIONS_GIO
 #	include <gio/gio.h>
 #endif
 
@@ -438,6 +438,10 @@ const string &DataSet::defaultDataFile() const {
 #else
 #	define FILE_SEPARATOR_CHAR '/'
 #endif
+#ifdef COMPILED_DEFINITIONS
+#	include "planets_xml.h"
+#	include "elements_xml.h"
+#endif
 bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	if(file_name) {
 	} else if(sfile.empty()) {
@@ -515,6 +519,18 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	while(localebase.length() < 2) localebase += " ";
 
 #ifdef COMPILED_DEFINITIONS
+	if(!is_user_defs && !isLocal()) {
+		if(strcmp(file_name, "/planets.xml") == 0) {
+			doc = xmlParseMemory(planets_xml, strlen(planets_xml));
+		} else if(strcmp(file_name, "/elements.xml") == 0) {
+			doc = xmlParseMemory(elements_xml, strlen(elements_xml));
+		} else {
+			doc = xmlParseFile(file_name);
+		}
+	} else {
+		doc = xmlParseFile(file_name);
+	}
+#elif COMPILED_DEFINITIONS_GIO
 	if(strstr(file_name, "resource:") == file_name) {
 		doc = NULL;
 		GFile *f = g_file_new_for_uri(file_name);
