@@ -49,7 +49,7 @@ protected:
 };
 
 MathStructure *mstruct, *parsed_mstruct;
-KnownVariable *vans[5];
+KnownVariable *vans[5], *v_memory;
 string result_text, parsed_text;
 bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit;
 int auto_update_exchange_rates;
@@ -1994,6 +1994,8 @@ int main(int argc, char *argv[]) {
 	vans[2] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "3", m_undefined, _("Answer 3"), false));
 	vans[3] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "4", m_undefined, _("Answer 4"), false));
 	vans[4] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "5", m_undefined, _("Answer 5"), false));
+	v_memory = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(CALCULATOR->temporaryCategory(), "MR", m_zero, _("Memory"), true, true));
+	v_memory->addName("MRC");
 
 	//load global definitions
 	if(load_global_defs) {
@@ -4952,6 +4954,15 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		str = expression_str;
 		string to_str = CALCULATOR->parseComments(str, evalops.parse_options);
 		if(!to_str.empty() && str.empty()) return;
+		if(str == "MC") {
+			str = "MR:=0";
+		} else if(str == "MS") {
+			str = "MR:=ans";
+		} else if(str == "M+") {
+			str = "MR:=MR+ans";
+		} else if(str == "M-" || str == "M−") {
+			str = "MR:=MR-ans";
+		}
 		string from_str = str;
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
 			remove_duplicate_blanks(to_str);
