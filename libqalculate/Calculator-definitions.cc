@@ -27,7 +27,7 @@
 #include <locale.h>
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
-#ifdef COMPILED_DEFINITIONS
+#ifdef COMPILED_DEFINITIONS_GIO
 #	include <gio/gio.h>
 #endif
 #include <unistd.h>
@@ -81,6 +81,48 @@ using std::queue;
 
 #define VERSION_BEFORE(i1, i2, i3) (version_numbers[0] < i1 || (version_numbers[0] == i1 && (version_numbers[1] < i2 || (version_numbers[1] == i2 && version_numbers[2] < i3))))
 
+#ifdef COMPILED_DEFINITIONS
+
+#	include "prefixes_xml.h"
+#	include "currencies_xml.h"
+#	include "units_xml.h"
+#	include "functions_xml.h"
+#	include "datasets_xml.h"
+#	include "variables_xml.h"
+
+bool Calculator::loadGlobalDefinitions() {
+	bool b = true;
+	if(!loadDefinitions(prefixes_xml, false)) b = false;
+	if(!loadDefinitions(currencies_xml, false)) b = false;
+	if(!loadDefinitions(units_xml, false)) b = false;
+	if(!loadDefinitions(functions_xml, false)) b = false;
+	if(!loadDefinitions(datasets_xml, false)) b = false;
+	if(!loadDefinitions(variables_xml, false)) b = false;
+	return b;
+}
+bool Calculator::loadGlobalDefinitions(string filename) {
+	return loadDefinitions(buildPath(getGlobalDefinitionsDir(), filename).c_str(), false);
+}
+bool Calculator::loadGlobalPrefixes() {
+	return loadDefinitions(prefixes_xml, false);
+}
+bool Calculator::loadGlobalCurrencies() {
+	return loadDefinitions(currencies_xml, false);
+}
+bool Calculator::loadGlobalUnits() {
+	bool b = loadDefinitions(currencies_xml, false);
+	return loadDefinitions(units_xml, false) && b;
+}
+bool Calculator::loadGlobalVariables() {
+	return loadDefinitions(variables_xml, false);
+}
+bool Calculator::loadGlobalFunctions() {
+	return loadDefinitions(functions_xml, false);
+}
+bool Calculator::loadGlobalDataSets() {
+	return loadDefinitions(datasets_xml, false);
+}
+#else
 bool Calculator::loadGlobalDefinitions() {
 	bool b = true;
 	if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "prefixes.xml").c_str(), false)) b = false;
@@ -113,6 +155,7 @@ bool Calculator::loadGlobalFunctions() {
 bool Calculator::loadGlobalDataSets() {
 	return loadGlobalDefinitions("datasets.xml");
 }
+#endif
 bool Calculator::loadLocalDefinitions() {
 	string homedir = buildPath(getLocalDataDir(), "definitions");
 	if(!dirExists(homedir)) {
@@ -747,7 +790,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	xmlChar *value, *lang, *value2;
 	int in_unfinished = 0;
 	bool done_something = false;
-#ifdef COMPILED_DEFINITIONS
+#ifdef COMPILED_DEFINITIONS_GIO
 	if(strstr(file_name, "resource:") == file_name) {
 		doc = NULL;
 		GFile *f = g_file_new_for_uri(file_name);
@@ -769,6 +812,12 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				}
 			}
 		}
+	} else {
+		doc = xmlParseFile(file_name);
+	}
+#elif COMPILED_DEFINITIONS
+	if(strlen(file_name) > 1 && file_name[0] == '<') {
+		doc = xmlParseMemory(file_name, strlen(file_name));
 	} else {
 		doc = xmlParseFile(file_name);
 	}
@@ -3288,6 +3337,11 @@ bool Calculator::exportCSV(const MathStructure &mstruct, const char *file_name, 
 	return true;
 }
 
+#ifdef COMPILED_DEFINITIONS
+#	include "eurofxref_daily_xml.h"
+#	include "rates_json.h"
+#endif
+
 bool Calculator::loadExchangeRates() {
 
 	xmlDocPtr doc = NULL;
@@ -3403,8 +3457,11 @@ bool Calculator::loadExchangeRates() {
 	if(doc) cur = xmlDocGetRootElement(doc);
 	if(!cur) {
 		if(doc) xmlFreeDoc(doc);
-		filename = buildPath(getGlobalDefinitionsDir(), "eurofxref-daily.xml");
 #ifdef COMPILED_DEFINITIONS
+		doc = xmlParseMemory(eurofxref_daily_xml, strlen(eurofxref_daily_xml));
+#else
+		filename = buildPath(getGlobalDefinitionsDir(), "eurofxref-daily.xml");
+#	ifdef COMPILED_DEFINITIONS_GIO
 		if(filename.find("resource:") == 0) {
 			GFile *f = g_file_new_for_uri(filename.c_str());
 			if(!f) return false;
@@ -3425,8 +3482,9 @@ bool Calculator::loadExchangeRates() {
 		} else {
 			doc = xmlParseFile(filename.c_str());
 		}
-#else
+#	else
 		doc = xmlParseFile(filename.c_str());
+#	endif
 #endif
 		if(!doc) return false;
 		cur = xmlDocGetRootElement(doc);
@@ -3605,8 +3663,11 @@ bool Calculator::loadExchangeRates() {
 	if(sbuffer.empty()) {
 		if(file.is_open()) file.close();
 		file.clear();
-		filename = buildPath(getGlobalDefinitionsDir(), "rates.json");
 #ifdef COMPILED_DEFINITIONS
+		sbuffer = rates_json;
+#else
+		filename = buildPath(getGlobalDefinitionsDir(), "rates.json");
+#	ifdef COMPILED_DEFINITIONS_GIO
 		if(filename.find("resource:") == 0) {
 			GFile *f = g_file_new_for_uri(filename.c_str());
 			if(!f) return true;
@@ -3620,14 +3681,15 @@ bool Calculator::loadExchangeRates() {
 			}
 			if(sbuffer.empty()) return true;
 		} else {
-#endif
+#	endif
 			file.open(filename.c_str());
 			if(!file.is_open()) return true;
 			std::stringstream ssbuffer;
 			ssbuffer << file.rdbuf();
 			sbuffer = ssbuffer.str();
-#ifdef COMPILED_DEFINITIONS
+#	ifdef COMPILED_DEFINITIONS_GIO
 		}
+#	endif
 #endif
 		string sname;
 		size_t i = sbuffer.find("\"currency_code\":");
@@ -3679,7 +3741,7 @@ bool Calculator::loadExchangeRates() {
 			}
 			i = sbuffer.find("\"currency_code\":", i);
 		}
-		file.close();
+		if(file.is_open()) file.close();
 		exchange_rates_time[2] = ((time_t) 1527199L) * 1000;
 		if(exchange_rates_time[2] > exchange_rates_check_time[2]) exchange_rates_check_time[2] = exchange_rates_time[2];
 	} else {
