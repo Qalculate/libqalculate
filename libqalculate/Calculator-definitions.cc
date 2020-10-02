@@ -30,6 +30,9 @@
 #ifdef COMPILED_DEFINITIONS_GIO
 #	include <gio/gio.h>
 #endif
+#ifdef COMPILED_DEFINITIONS
+#	include "definitions.h"
+#endif
 #include <unistd.h>
 #include <time.h>
 #include <utime.h>
@@ -82,8 +85,6 @@ using std::queue;
 #define VERSION_BEFORE(i1, i2, i3) (version_numbers[0] < i1 || (version_numbers[0] == i1 && (version_numbers[1] < i2 || (version_numbers[1] == i2 && version_numbers[2] < i3))))
 
 #ifdef COMPILED_DEFINITIONS
-
-#	include "definitions.h"
 
 bool Calculator::loadGlobalDefinitions() {
 	bool b = true;

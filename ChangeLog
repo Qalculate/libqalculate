@@ -1,3 +1,7 @@
+2020-10-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix rates.json not installed
+
 2020-09-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Compiled definitions without GIO

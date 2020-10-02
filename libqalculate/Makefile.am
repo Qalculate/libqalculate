@@ -13,7 +13,7 @@ libqalculate_compiled_def_sources = definitions.c
 endif
 
 if COMPILED_DEFINITIONS
-definitions.c: ${top_srcdir}/data/*.xml ${top_srcdir}/data/*.json
+definitions.c: ${top_srcdir}/data/currencies.xml ${top_srcdir}/data/datasets.xml ${top_srcdir}/data/elements.xml ${top_srcdir}/data/eurofxref-daily.xml ${top_srcdir}/data/functions.xml ${top_srcdir}/data/planets.xml ${top_srcdir}/data/prefixes.xml ${top_srcdir}/data/units.xml ${top_srcdir}/data/variables.xml ${top_srcdir}/data/rates.json
 	echo > $@ || (rm $@;exit 1)
 	for FILE in $+; do \
 		printf "const char * " >> $@ || (rm $@;exit 1); \
@@ -27,12 +27,15 @@ libqalculate_compiled_def_sources = definitions.c
 libqalculate_compiled_def_headers = definitions.h
 endif
 
+libqalculateincludedir = $(includedir)/libqalculate
+
 libqalculateinclude_HEADERS = \
 	Function.h Calculator.h DataSet.h Variable.h \
 	ExpressionItem.h Number.h MathStructure.h Prefix.h \
 	util.h includes.h Unit.h BuiltinFunctions.h \
-	QalculateDateTime.h qalculate.h \
-	$(libqalculate_compiled_def_headers)
+	QalculateDateTime.h qalculate.h
+
+noinst_HEADERS = MathStructure-support.h Calculator_p.h bernoulli_numbers.h $(libqalculate_compiled_def_headers)
 
 libqalculate_la_SOURCES = \
 	Function.cc Calculator.cc Calculator-plot.cc Calculator-parse.cc \
@@ -50,11 +53,6 @@ libqalculate_la_SOURCES = \
 	MathStructure-differentiate.cc MathStructure-calculate.cc MathStructure-eval.cc \
 	MathStructure-convert.cc MathStructure-decompose.cc MathStructure-limit.cc \
 	$(libqalculate_compiled_def_sources)
-
-
-libqalculateincludedir = $(includedir)/libqalculate
-
-noinst_HEADERS = MathStructure-support.h Calculator_p.h bernoulli_numbers.h
 
 libqalculate_la_LDFLAGS = -version-info $(QALCULATE_CURRENT):$(QALCULATE_REVISION):$(QALCULATE_AGE) -no-undefined
 
