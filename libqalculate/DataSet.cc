@@ -439,8 +439,7 @@ const string &DataSet::defaultDataFile() const {
 #	define FILE_SEPARATOR_CHAR '/'
 #endif
 #ifdef COMPILED_DEFINITIONS
-#	include "planets_xml.h"
-#	include "elements_xml.h"
+#	include "definitions.h"
 #endif
 bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	if(file_name) {
