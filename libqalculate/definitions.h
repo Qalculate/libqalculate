@@ -1,0 +1,11 @@
+extern const char * currencies_xml;
+extern const char * datasets_xml;
+extern const char * definitions_gresource_xml;
+extern const char * elements_xml;
+extern const char * eurofxref_daily_xml;
+extern const char * functions_xml;
+extern const char * planets_xml;
+extern const char * prefixes_xml;
+extern const char * units_xml;
+extern const char * variables_xml;
+extern const char * rates_json;
