@@ -310,7 +310,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 					if(!b_changed && !mstruct_new.equals(mstruct[i], true, true)) b_changed = true;
 				}
 			}
-			if(b_changed) {
+			if(b_changed && !b_ratio) {
 				mstruct_new.childrenUpdated();
 				EvaluationOptions eo2 = eo;
 				//eo2.calculate_functions = false;
@@ -326,7 +326,21 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 		eo2.keep_prefixes = true;
 		bool b = false;
 		if(eo.approximation == APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_TRY_EXACT;
-		if(mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL) || always_convert || b_ratio) {
+		if(mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL)) {
+			b = true;
+		} else if(b_ratio) {
+			int exp;
+			if(cu->get(1, &exp)->baseUnit()->referenceName() == "m") {
+				Unit *u = NULL;
+				if(exp == 1 || exp == -1) u = getRadUnit();
+				else if(exp == 2 || exp == -2) u = getActiveUnit("sr");
+				if(u) {
+					mstruct_new.convert(u, true, NULL, false, eo2, NULL);
+					if(mstruct_new.contains(u, false, false, false)) mstruct_new.replace(u, m_one, false, false);
+				}
+			}
+			b = true;
+		} else if(always_convert) {
 			b = true;
 		} else {
 			CompositeUnit *cu2 = cu;
@@ -447,6 +461,14 @@ MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const
 		//eo2.calculate_functions = false;
 		mstruct_new.eval(eo2);
 		cleanMessages(mstruct, n_messages + 1);
+	}
+	if(mstruct_new.contains(getRadUnit(), false, false, false)) {
+		Unit *u = getActiveUnit("m");
+		if(u) {
+			MathStructure m_p_m(u);
+			m_p_m.divide(u);
+			mstruct_new.replace(getRadUnit(), m_p_m, false, true);
+		}
 	}
 	return mstruct_new;
 }
