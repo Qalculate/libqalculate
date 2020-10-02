@@ -27,6 +27,9 @@
 #ifdef COMPILED_DEFINITIONS_GIO
 #	include <gio/gio.h>
 #endif
+#ifdef COMPILED_DEFINITIONS
+#	include "definitions.h"
+#endif
 
 using std::string;
 using std::vector;
@@ -433,13 +436,11 @@ void DataSet::setDefaultDataFile(string s_file) {
 const string &DataSet::defaultDataFile() const {
 	return sfile;
 }
+
 #ifdef _WIN32
 #	define FILE_SEPARATOR_CHAR '\\'
 #else
 #	define FILE_SEPARATOR_CHAR '/'
-#endif
-#ifdef COMPILED_DEFINITIONS
-#	include "definitions.h"
 #endif
 bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	if(file_name) {
