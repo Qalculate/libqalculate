@@ -83,12 +83,7 @@ using std::queue;
 
 #ifdef COMPILED_DEFINITIONS
 
-#	include "prefixes_xml.h"
-#	include "currencies_xml.h"
-#	include "units_xml.h"
-#	include "functions_xml.h"
-#	include "datasets_xml.h"
-#	include "variables_xml.h"
+#	include "definitions.h"
 
 bool Calculator::loadGlobalDefinitions() {
 	bool b = true;
@@ -3337,10 +3332,6 @@ bool Calculator::exportCSV(const MathStructure &mstruct, const char *file_name, 
 	return true;
 }
 
-#ifdef COMPILED_DEFINITIONS
-#	include "eurofxref_daily_xml.h"
-#	include "rates_json.h"
-#endif
 
 bool Calculator::loadExchangeRates() {
 
