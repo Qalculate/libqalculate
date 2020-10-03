@@ -6,14 +6,14 @@
 lib_LTLIBRARIES = libqalculate.la
 
 if COMPILED_DEFINITIONS_GIO
-definitions.c : $(top_srcdir)/data/definitions.gresource.xml $(top_srcdir)/data/*.xml
-	glib-compile-resources --generate-source --target=$@ --sourcedir=$(top_srcdir)/data $(top_srcdir)/data/definitions.gresource.xml
+definitions.c : $(top_srcdir)/data/definitions.gresource.xml ${top_builddir}/data/currencies.xml ${top_builddir}/data/datasets.xml ${top_builddir}/data/elements.xml ${top_builddir}/data/eurofxref-daily.xml ${top_builddir}/data/functions.xml ${top_builddir}/data/planets.xml ${top_builddir}/data/prefixes.xml ${top_builddir}/data/units.xml ${top_builddir}/data/variables.xml ${top_srcdir}/data/rates.json
+	glib-compile-resources --generate-source --target=$@ --sourcedir=$(top_builddir)/data $(top_srcdir)/data/definitions.gresource.xml
 
 libqalculate_compiled_def_sources = definitions.c
 endif
 
 if COMPILED_DEFINITIONS
-definitions.c: ${top_srcdir}/data/currencies.xml ${top_srcdir}/data/datasets.xml ${top_srcdir}/data/elements.xml ${top_srcdir}/data/eurofxref-daily.xml ${top_srcdir}/data/functions.xml ${top_srcdir}/data/planets.xml ${top_srcdir}/data/prefixes.xml ${top_srcdir}/data/units.xml ${top_srcdir}/data/variables.xml ${top_srcdir}/data/rates.json
+definitions.c: ${top_builddir}/data/currencies.xml ${top_builddir}/data/datasets.xml ${top_builddir}/data/elements.xml ${top_builddir}/data/eurofxref-daily.xml ${top_builddir}/data/functions.xml ${top_builddir}/data/planets.xml ${top_builddir}/data/prefixes.xml ${top_builddir}/data/units.xml ${top_builddir}/data/variables.xml ${top_srcdir}/data/rates.json
 	echo > $@ || (rm $@;exit 1)
 	for FILE in $+; do \
 		printf "const char * " >> $@ || (rm $@;exit 1); \
