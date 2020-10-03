@@ -3,24 +3,24 @@
 #
 
 EXTRA_DIST = \
-		$(top_srcdir)/docs/reference/Doxyfile
+		$(srcdir)/Doxyfile
 
 if HAVE_DOXYGEN
 
 referencedir = $(docdir)/reference/html
 reference_DATA = \
-		$(top_srcdir)/docs/reference/html/*.html \
-		$(top_srcdir)/docs/reference/html/*.png \
-		$(top_srcdir)/docs/reference/html/*.css \
-		$(top_srcdir)/docs/reference/html/*.js
+		$(builddir)/html/*.html \
+		$(builddir)/html/*.png \
+		$(builddir)/html/*.css \
+		$(builddir)/html/*.js
 
 .PHONY: docs
 docs:
-	$(DOXYGEN) Doxyfile
+	top_srcdir=$(top_srcdir) $(DOXYGEN) $(srcdir)/Doxyfile
 
-$(top_srcdir)/docs/reference/html/*.html:
-	$(DOXYGEN) Doxyfile
+$(builddir)/html/*.html: $(srcdir)/Doxyfile
+	top_srcdir=$(top_srcdir) $(DOXYGEN) $(srcdir)/Doxyfile
 
-$(top_srcdir)/docs/reference/html/*.png $(top_srcdir)/docs/reference/html/*.css $(top_srcdir)/docs/reference/html/*.js:
+$(builddir)/html/*.png $(builddir)/html/*.css $(builddir)/html/*.js:
 
 endif
