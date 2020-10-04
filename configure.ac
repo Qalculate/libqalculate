@@ -140,6 +140,11 @@ AS_IF([test "x$with_icu" = "xyes"], [
 	AC_SUBST(ICU_LIBS)
 ])
 
+AC_ARG_WITH([gnuplot-call], AS_HELP_STRING([--with-gnuplot-call], [support for calling out to an external gnuplot binary]), [], [with_gnuplot_call=yes])
+AS_IF([test "x$with_gnuplot_call" = "xyes"], [
+	AC_DEFINE([HAVE_GNUPLOT_CALL], [1], [Call to external gnuplot])
+])
+
 PKG_CHECK_MODULES(LIBXML, [libxml-2.0 >= 2.3.8])
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)

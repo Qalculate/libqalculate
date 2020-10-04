@@ -54,6 +54,7 @@ PlotDataParameters::PlotDataParameters() {
 }
 
 bool Calculator::canPlot() {
+#ifdef HAVE_GNUPLOT_CALL
 #ifdef _WIN32
 	LPSTR lpFilePart;
 	char filename[MAX_PATH];
@@ -62,6 +63,9 @@ bool Calculator::canPlot() {
 	FILE *pipe = popen("gnuplot - 2>/dev/null", "w");
 	if(!pipe) return false;
 	return pclose(pipe) == 0;
+#endif
+#else
+    return false;
 #endif
 }
 
