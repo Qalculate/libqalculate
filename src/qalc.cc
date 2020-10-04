@@ -1994,8 +1994,15 @@ int main(int argc, char *argv[]) {
 	vans[2] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "3", m_undefined, _("Answer 3"), false));
 	vans[3] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "4", m_undefined, _("Answer 4"), false));
 	vans[4] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "5", m_undefined, _("Answer 5"), false));
-	v_memory = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(CALCULATOR->temporaryCategory(), "MR", m_zero, _("Memory"), true, true));
-	v_memory->addName("MRC");
+	v_memory = new KnownVariable(CALCULATOR->temporaryCategory(), "", m_zero, _("Memory"), true, true);
+	ExpressionName ename;
+	ename.name = "MR";
+	ename.case_sensitive = true;
+	ename.abbreviation = true;
+	v_memory->addName(ename);
+	ename.name = "MRC";
+	v_memory->addName(ename);
+	CALCULATOR->addVariable(v_memory);
 
 	//load global definitions
 	if(load_global_defs) {
