@@ -55,17 +55,17 @@ PlotDataParameters::PlotDataParameters() {
 
 bool Calculator::canPlot() {
 #ifdef HAVE_GNUPLOT_CALL
-#ifdef _WIN32
+#	ifdef _WIN32
 	LPSTR lpFilePart;
 	char filename[MAX_PATH];
 	return SearchPath(NULL, "gnuplot", ".exe", MAX_PATH, filename, &lpFilePart);
-#else
+#	else
 	FILE *pipe = popen("gnuplot - 2>/dev/null", "w");
 	if(!pipe) return false;
 	return pclose(pipe) == 0;
-#endif
+#	endif
 #else
-    return false;
+	return false;
 #endif
 }
 
@@ -534,6 +534,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 
 	return invokeGnuplot(plot, commandline_extra, persistent);
 }
+#ifdef HAVE_GNUPLOT_CALL
 bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
 	FILE *pipe = NULL;
 	if(!b_gnuplot_open || !gnuplot_pipe || persistent || commandline_extra != gnuplot_cmdline) {
@@ -578,13 +579,19 @@ bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool p
 	}
 	return true;
 }
-bool Calculator::closeGnuplot() {
-	if(gnuplot_pipe) {
-#ifdef _WIN32
-		int rv = _pclose(gnuplot_pipe);
 #else
-		int rv = pclose(gnuplot_pipe);
+bool Calculator::invokeGnuplot(string, string, bool) {
+	return false;
+}
 #endif
+bool Calculator::closeGnuplot() {
+#ifdef HAVE_GNUPLOT_CALL
+	if(gnuplot_pipe) {
+#	ifdef _WIN32
+		int rv = _pclose(gnuplot_pipe);
+#	else
+		int rv = pclose(gnuplot_pipe);
+#	endif
 		gnuplot_pipe = NULL;
 		b_gnuplot_open = false;
 		return rv == 0;
@@ -592,6 +599,9 @@ bool Calculator::closeGnuplot() {
 	gnuplot_pipe = NULL;
 	b_gnuplot_open = false;
 	return true;
+#else
+	return false;
+#endif
 }
 bool Calculator::gnuplotOpen() {
 	return b_gnuplot_open && gnuplot_pipe;

@@ -124,7 +124,7 @@ AS_IF([test "x$enable_compiled_definitions" = "xyes"], [
 AM_CONDITIONAL(COMPILED_DEFINITIONS, [test "x$enable_compiled_definitions" = "xyes"])
 
 
-AC_ARG_WITH([libcurl], AS_HELP_STRING([--with-libcurl], [support for built-in retrieval of exchange rates]), [], [with_libcurl=yes])
+AC_ARG_WITH([libcurl], AS_HELP_STRING([--without-libcurl], [disable support for built-in retrieval of exchange rates]), [], [with_libcurl=yes])
 AS_IF([test "x$with_libcurl" = "xyes"], [
 	PKG_CHECK_MODULES([LIBCURL], [libcurl])
 	AC_DEFINE([HAVE_LIBCURL], [1], [Use libcurl])
@@ -132,7 +132,7 @@ AS_IF([test "x$with_libcurl" = "xyes"], [
 	AC_SUBST(LIBCURL_LIBS)
 ])
 
-AC_ARG_WITH([icu], AS_HELP_STRING([--with-icu], [support for case-insensitive unicode strings]), [], [with_icu=yes])
+AC_ARG_WITH([icu], AS_HELP_STRING([--without-icu], [disable support for case-insensitive unicode strings]), [], [with_icu=yes])
 AS_IF([test "x$with_icu" = "xyes"], [
 	PKG_CHECK_MODULES([ICU], [icu-uc])
 	AC_DEFINE([HAVE_ICU], [1], [Use icu])
@@ -140,7 +140,7 @@ AS_IF([test "x$with_icu" = "xyes"], [
 	AC_SUBST(ICU_LIBS)
 ])
 
-AC_ARG_WITH([gnuplot-call], AS_HELP_STRING([--with-gnuplot-call], [support for calling out to an external gnuplot binary]), [], [with_gnuplot_call=yes])
+AC_ARG_WITH([gnuplot-call], AS_HELP_STRING([--without-gnuplot-call], [disable support for invocation of external gnuplot binary (using popen)]), [], [with_gnuplot_call=yes])
 AS_IF([test "x$with_gnuplot_call" = "xyes"], [
 	AC_DEFINE([HAVE_GNUPLOT_CALL], [1], [Call to external gnuplot])
 ])
@@ -175,7 +175,7 @@ if test "x$enable_textport" = "xyes" ; then
 
   AC_MSG_CHECKING([whether to use readline])
   AC_ARG_WITH(readline,
-  [  --with-readline         turn on readline [default=yes, default tries -lncurses, -lcurses, -ltermcap]],
+  [  --with-readline         use readline in text port [[default=yes, default tries -lncurses, -lcurses, -ltermcap]] ],
     [case "${withval}" in
       yes) USE_READLINE="yes" ; AC_MSG_RESULT([yes]) ;;
       no) USE_READLINE="no" ; AC_MSG_RESULT([no]) ;;
