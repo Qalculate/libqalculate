@@ -26,7 +26,7 @@ using std::vector;
 using std::endl;
 using std::list;
 
-KnownVariable *vans[5];
+KnownVariable *vans[5], *v_memory;
 PrintOptions printops;
 EvaluationOptions evalops;
 
@@ -456,9 +456,21 @@ void print_variable(Variable *v) {
 		bool is_relative = false;
 		if(is_answer_variable(v)) {
 			value = _("a previous result");
+		} else if(v == v_memory) {
+			value = _("result of memory operations (MC, MS, M+, M−)");
 		} else if(v->isKnown()) {
 			if(v->id() == VARIABLE_ID_PRECISION) {
 				value = _("current precision");
+			} else if(v->id() == VARIABLE_ID_TODAY) {
+				value = _("current date");
+			} else if(v->id() == VARIABLE_ID_TOMORROW) {
+				value = _("tomorrow's date");
+			} else if(v->id() == VARIABLE_ID_YESTERDAY) {
+				value = _("yesterday's date");
+			} else if(v->id() == VARIABLE_ID_NOW) {
+				value = _("current date and time");
+			} else if(v->id() == VARIABLE_ID_UPTIME) {
+				value = _("current computer uptime");
 			} else if(((KnownVariable*) v)->isExpression()) {
 				value = fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->expression()), printops.use_unicode_signs);
 				if(!((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
@@ -481,7 +493,7 @@ void print_variable(Variable *v) {
 				} else if(((KnownVariable*) v)->get().isVector()) {
 					value = _("vector");
 				} else {
-					value = fix(CALCULATOR->print(((KnownVariable*) v)->get(), 30), printops.use_unicode_signs);
+					value = fix(CALCULATOR->print(((KnownVariable*) v)->get(), 30, printops), printops.use_unicode_signs);
 				}
 			}
 		} else {
@@ -615,6 +627,15 @@ int main(int, char *[]) {
 	vans[2] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "3", m_undefined, _("Answer 3"), false));
 	vans[3] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "4", m_undefined, _("Answer 4"), false));
 	vans[4] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "5", m_undefined, _("Answer 5"), false));
+	v_memory = new KnownVariable(CALCULATOR->temporaryCategory(), "", m_zero, _("Memory"), true, true);
+	ExpressionName ename;
+	ename.name = "MR";
+	ename.case_sensitive = true;
+	ename.abbreviation = true;
+	v_memory->addName(ename);
+	ename.name = "MRC";
+	v_memory->addName(ename);
+	CALCULATOR->addVariable(v_memory);
 
 	//load global definitions
 	if(!CALCULATOR->loadGlobalDefinitions()) {
@@ -622,6 +643,7 @@ int main(int, char *[]) {
 	}
 	printops.use_unicode_signs = true;
 	printops.multiplication_sign = MULTIPLICATION_SIGN_X;
+	printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 
 	generate_functions_tree_struct();
 	generate_variables_tree_struct();
