@@ -276,7 +276,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 	if(cu && cu->countUnits() == 0) return mstruct;
 	int exp1, exp2;
 	bool b_ratio = cu && cu->countUnits() == 2 && cu->get(1, &exp1)->baseUnit() == cu->get(2, &exp2)->baseUnit() && exp1 == -exp2;
-	if(!b_ratio && !mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
+	if(!b_ratio && to_unit->baseUnit() != getRadUnit() && !mstruct.containsType(STRUCT_UNIT, true)) {
+		return mstruct;
+	}
 	MathStructure mstruct_new(mstruct);
 	size_t n_messages = messages.size();
 	if(to_unit->hasNonlinearRelationTo(to_unit->baseUnit()) && to_unit->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
@@ -340,6 +342,10 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				}
 			}
 			b = true;
+		} else if(to_unit->baseUnit() == getRadUnit() && mstruct_new.contains(to_unit, true) < 1) {
+			mstruct_new.multiply(getRadUnit(), true);
+			if(to_unit->baseExponent() != 1) mstruct_new.last().raise(to_unit->baseExponent());
+			b = mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL) || always_convert;
 		} else if(always_convert) {
 			b = true;
 		} else {

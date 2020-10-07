@@ -2510,7 +2510,22 @@ int main(int argc, char *argv[]) {
 #endif
 			}
 			display_errors(false, cols);
-
+		} else if(str == "M+") {
+			if(mstruct) {
+				MathStructure m = v_memory->get();
+				m.calculateAdd(*mstruct, evalops);
+				v_memory->set(m);
+			}
+		} else if(str == "M-" || str == "M−") {
+			if(mstruct) {
+				MathStructure m = v_memory->get();
+				m.calculateSubtract(*mstruct, evalops);
+				v_memory->set(m);
+			}
+		} else if(str == "MS") {
+			if(mstruct) v_memory->set(*mstruct);
+		} else if(str == "MC") {
+			v_memory->set(m_zero);
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "stack", _("stack"))) {
 			if(CALCULATOR->RPNStackSize() == 0) {
@@ -3378,6 +3393,7 @@ int main(int argc, char *argv[]) {
 			FPUTS_UNICODE(_("find"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("list"), stdout);  fputs(" [", stdout); FPUTS_UNICODE(_("NAME"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED;
 			FPUTS_UNICODE(_("function"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("EXPRESSION")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("info"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("NAME")); CHECK_IF_SCREEN_FILLED
+			PUTS_UNICODE(_("MC/MS/M+/M- (memory operations)")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("mode")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("partial fraction")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("save"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("store"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("CATEGORY"), stdout); fputs("] [", stdout); FPUTS_UNICODE(_("TITLE"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
@@ -4961,15 +4977,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		str = expression_str;
 		string to_str = CALCULATOR->parseComments(str, evalops.parse_options);
 		if(!to_str.empty() && str.empty()) return;
-		if(str == "MC") {
-			str = "MR:=0";
-		} else if(str == "MS") {
-			str = "MR:=ans";
-		} else if(str == "M+") {
-			str = "MR:=MR+ans";
-		} else if(str == "M-" || str == "M−") {
-			str = "MR:=MR-ans";
-		}
 		string from_str = str;
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
 			remove_duplicate_blanks(to_str);

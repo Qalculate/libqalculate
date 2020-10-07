@@ -407,7 +407,8 @@ enum {
 	VARIABLE_ID_TODAY = 161,
 	VARIABLE_ID_TOMORROW = 162,
 	VARIABLE_ID_YESTERDAY = 163,
-	VARIABLE_ID_NOW = 164
+	VARIABLE_ID_NOW = 164,
+	VARIABLE_ID_UPTIME = 201
 };
 
 /// Dynamic variable for Pi
@@ -499,6 +500,7 @@ class UptimeVariable : public DynamicVariable {
 	UptimeVariable();
 	UptimeVariable(const UptimeVariable *variable);
 	ExpressionItem *copy() const;
+	int id() const {return VARIABLE_ID_UPTIME;}
 };
 
 #endif
