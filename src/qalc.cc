@@ -26,6 +26,7 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #	include <windows.h>
+#	include <VersionHelpers.h>
 #endif
 
 #include <libqalculate/MathStructure-support.h>
@@ -118,6 +119,8 @@ enum {
 };
 
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
+
+#define DO_WIN_FORMAT IsWindows10OrGreater()
 
 #ifdef _WIN32
 #	define DO_FORMAT (force_color > 0 || (force_color != 0 && !cfile && colorize && interactive_mode))
@@ -577,8 +580,8 @@ bool check_exchange_rates() {
 
 
 #ifdef HAVE_LIBREADLINE
-#	define CHECK_IF_SCREEN_FILLED if(check_sf) {rcount++; if(rcount + 2 >= rows) {FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n') {check_sf = false;} else {puts(""); rcount = 1;}}}
-#	define CHECK_IF_SCREEN_FILLED_PUTS_RP(x, rplus) {str_lb = x; int cr = 0; if(!cfile) {cr = addLineBreaks(str_lb, cols);} if(check_sf) {if(rcount + cr + 1 + rplus >= rows) {rcount += 2; while(rcount < rows) {puts(""); rcount++;} FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n') {check_sf = false;} else {rcount = 0; if(str_lb.empty() || str_lb[0] != '\n') {puts(""); rcount++;}}} if(check_sf) {rcount += cr;}} PUTS_UNICODE(str_lb.c_str());}
+#	define CHECK_IF_SCREEN_FILLED if(check_sf) {rcount++; if(rcount + 2 >= rows) {FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n' && sf_c != '\r') {check_sf = false;} else {puts(""); if(sf_c == '\r') {puts("");} rcount = 1;}}}
+#	define CHECK_IF_SCREEN_FILLED_PUTS_RP(x, rplus) {str_lb = x; int cr = 0; if(!cfile) {cr = addLineBreaks(str_lb, cols);} if(check_sf) {if(rcount + cr + 1 + rplus >= rows) {rcount += 2; while(rcount < rows) {puts(""); rcount++;} FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n' && sf_c != '\r') {check_sf = false;} else {rcount = 0; if(str_lb.empty() || str_lb[0] != '\n') {puts(""); if(sf_c == '\r') {puts("");} rcount++;}}} if(check_sf) {rcount += cr;}} PUTS_UNICODE(str_lb.c_str());}
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) CHECK_IF_SCREEN_FILLED_PUTS_RP(x, 0)
 #	define INIT_SCREEN_CHECK int rows = 0, cols = 0, rcount = 0; bool check_sf = (cfile == NULL); char sf_c; string str_lb; if(!cfile) rl_get_screen_size(&rows, &cols);
 #	define INIT_COLS int rows = 0, cols = 0; if(!cfile) rl_get_screen_size(&rows, &cols);
@@ -2123,6 +2126,14 @@ int main(int argc, char *argv[]) {
 		interactive_mode = true;
 		i_maxtime = 0;
 	}
+#ifdef _WIN32
+	DWORD outMode = 0;
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	if(DO_WIN_FORMAT) {
+		GetConsoleMode(hOut, &outMode);
+		SetConsoleMode(hOut, outMode | DISABLE_NEWLINE_AUTO_RETURN | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+	}
+#endif
 
 #ifdef HAVE_LIBREADLINE
 	rl_catch_signals = 1;
@@ -4364,6 +4375,13 @@ int main(int argc, char *argv[]) {
 
 	handle_exit();
 
+#ifdef _WIN32
+	if(DO_WIN_FORMAT) {
+		SetConsoleMode(hOut, outMode);
+		//SetConsoleOutputCP(codepage);
+	}
+#endif
+
 	return 0;
 
 }
@@ -4623,7 +4641,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 #else
 					if(read(STDIN_FILENO, &c, 1) == -1) c = 0;
 #endif
-					if(c == '\n') {
+					if(c == '\n' || c == '\r') {
 						on_abort_display();
 						has_printed = false;
 					}
@@ -4906,7 +4924,7 @@ void execute_command(int command_type, bool show_result) {
 #else
 					if(read(STDIN_FILENO, &c, 1) == -1) c = 0;
 #endif
-					if(c == '\n') {
+					if(c == '\n' || c == '\r') {
 						on_abort_command();
 					}
 				} else {
@@ -5350,7 +5368,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 #else
 					if(read(STDIN_FILENO, &c, 1) == -1) c = 0;
 #endif
-					if(c == '\n') {
+					if(c == '\n' || c == '\r') {
 						CALCULATOR->abort();
 						avoid_recalculation = true;
 						has_printed = false;
@@ -5670,7 +5688,7 @@ void load_preferences() {
 	first_time = false;
 	
 #ifdef _WIN32
-	colorize = 0;
+	colorize = DO_WIN_FORMAT;
 #else
 	colorize = 1;
 #endif
@@ -5739,7 +5757,13 @@ void load_preferences() {
 				} else if(svar == "ignore_locale") {
 					ignore_locale = v;
 				} else if(svar == "colorize") {
+#ifdef _WIN32
+					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && (version_numbers[1] > 13 || (version_numbers[1] == 13 && version_numbers[2] > 0))) || !DO_WIN_FORMAT) {
+						colorize = v;
+					}
+#else
 					colorize = v;
+#endif
 				} else if(svar == "fetch_exchange_rates_at_startup") {
 					if(auto_update_exchange_rates < 0 && v) auto_update_exchange_rates = 1;
 				} else if(svar == "auto_update_exchange_rates") {
