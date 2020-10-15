@@ -739,7 +739,11 @@ Unit *Calculator::getOptimalUnit(Unit *u, bool allow_only_div, bool convert_to_l
 									cu_mstruct.raise(b_exp);
 								}
 							}
-							cu_mstruct = convertToBaseUnits(cu_mstruct);
+							if(cu_mstruct.convertToBaseUnits(true, NULL, true)) {
+								beginTemporaryStopMessages();
+								cu_mstruct.eval();
+								endTemporaryStopMessages();
+							}
 							if(cu_mstruct.isMultiplication()) {
 								for(size_t i2 = 1; i2 <= cu_mstruct.countChildren(); i2++) {
 									bu = NULL;
@@ -820,7 +824,11 @@ Unit *Calculator::getOptimalUnit(Unit *u, bool allow_only_div, bool convert_to_l
 				MathStructure cu_mstruct = ((CompositeUnit*) u)->generateMathStructure();
 				if(minus) cu_mstruct *= best_u;
 				else cu_mstruct /= best_u;
-				cu_mstruct = convertToBaseUnits(cu_mstruct);
+				if(cu_mstruct.convertToBaseUnits(true, NULL, true)) {
+					beginTemporaryStopMessages();
+					cu_mstruct.eval();
+					endTemporaryStopMessages();
+				}
 				CompositeUnit *cu2 = new CompositeUnit("", "temporary_composite_convert_to_optimal_unit");
 				bool b = false;
 				for(size_t i = 1; i <= cu_mstruct.countChildren(); i++) {

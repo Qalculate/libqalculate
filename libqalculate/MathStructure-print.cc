@@ -3110,7 +3110,13 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					else print_str += "*";
 					if(po.spacious) print_str += " ";
 				} else if(i > 0) {
-					switch(CHILD(i).neededMultiplicationSign(po, ips_n, *this, i + 1, ips_n.wrap || (CHILD(i).isPower() && CHILD(i)[0].needsParenthesis(po, ips_n, CHILD(i), 1, true, true)), par_prev, true, true)) {
+					int i_sign = CHILD(i).neededMultiplicationSign(po, ips_n, *this, i + 1, ips_n.wrap || (CHILD(i).isPower() && CHILD(i)[0].needsParenthesis(po, ips_n, CHILD(i), 1, true, true)), par_prev, true, true);
+					if(i_sign == MULTIPLICATION_SIGN_NONE && CHILD(i).isPower() && CHILD(i)[0].isUnit() && po.use_unicode_signs && po.abbreviate_names && CHILD(i)[0].unit() == CALCULATOR->getDegUnit()) {
+						PrintOptions po2 = po;
+						po2.use_unicode_signs = false;
+						i_sign = CHILD(i).neededMultiplicationSign(po2, ips_n, *this, i + 1, ips_n.wrap || (CHILD(i).isPower() && CHILD(i)[0].needsParenthesis(po, ips_n, CHILD(i), 1, true, true)), par_prev, true, true);
+					}
+					switch(i_sign) {
 						case MULTIPLICATION_SIGN_SPACE: {print_str += " "; break;}
 						case MULTIPLICATION_SIGN_OPERATOR: {
 							if(po.spacious) {
@@ -3257,7 +3263,13 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				if(!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (s_super.c_str(), po.can_display_unicode_string_arg)) {
 					if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str = (colorize == 2 ? "\033[0;92m" : "\033[0;32m");
 					ips_n.wrap = false;
-					print_str += CHILD(0).print(po, false, false, tagtype, ips_n);
+					if(CHILD(0).isUnit() && po.use_unicode_signs && po.abbreviate_names && CHILD(0).unit() == CALCULATOR->getDegUnit()) {
+						PrintOptions po2 = po;
+						po2.use_unicode_signs = false;
+						print_str += CHILD(0).print(po2, false, false, tagtype, ips_n);
+					} else {
+						print_str += CHILD(0).print(po, false, false, tagtype, ips_n);
+					}
 					print_str += s_super;
 					if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
 					break;
@@ -3268,10 +3280,12 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
 			bool b_units = po.place_units_separately && !po.preserve_format && colorize && tagtype == TAG_TYPE_TERMINAL && CHILD(0).isUnit();
 			if(b_units) print_str = colorize == 2 ? "\033[0;92m" : "\033[0;32m";
-			print_str += CHILD(0).print(po, format, b_units ? 0 : colorize, tagtype, ips_n);
+			PrintOptions po2 = po;
+			if(CHILD(0).isUnit() && po.use_unicode_signs && po.abbreviate_names && CHILD(0).unit() == CALCULATOR->getDegUnit()) po2.use_unicode_signs = false;
+			print_str += CHILD(0).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
 			print_str += "^";
 			ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, true);
-			PrintOptions po2 = po;
+			po2.use_unicode_signs = po.use_unicode_signs;
 			po2.show_ending_zeroes = false;
 			print_str += CHILD(1).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
 			if(b_units) print_str += "\033[0m";
