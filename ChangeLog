@@ -1,3 +1,13 @@
+2020-10-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix parsing of "°²" and similar
+	* Do not use degree symbol when degree unit is base in exponentiation
+
+2020-10-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Activate formatting and coloring on Windows 10 (set ENABLE_VIRTUAL_TERMINAL_PROCESSING)
+	* Fix press enter to continue and to abort on Windows
+
 2020-10-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Define rad as a base unit for now (fixes issues with lumen) and add special case for conversion of rad and related units to length ratios (e.g. m/m)

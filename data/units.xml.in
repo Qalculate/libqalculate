@@ -411,7 +411,6 @@
     <category>
       <_title>Solid Angle</_title>
       <unit type="composite">
-        <hidden>true</hidden>
         <title>Square Degree</title>
         <names>r:sqdeg</names>
         <part>
@@ -3670,8 +3669,8 @@
         <_title>Millirem per hour</_title>
         <names>r:mrem_p_h</names>
         <part>
-          <unit>millirem</unit>
-          <prefix>0</prefix>
+          <unit>rem_radioactivity</unit>
+          <prefix>-3</prefix>
           <exponent>1</exponent>
         </part>
         <part>

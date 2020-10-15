@@ -339,10 +339,10 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 	while(true) {
 		// Unicode powers 0 and 4-9 use three chars and begin with \xe2\x81
 		size_t ui = str.find("\xe2\x81", prev_ui == string::npos ? 0 : prev_ui);
-		if(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -66 || str[ui + 2] == -68)))) ui = string::npos;
+		while(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -66 || str[ui + 2] == -68)))) ui = str.find("\xe2\x81", ui + 3);
 		// Unicode powers 1-3 use two chars and begin with \xc2
 		size_t ui2 = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
-		if(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = string::npos;
+		while(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = str.find('\xc2', ui2 + 2);
 		if(ui2 != string::npos && (ui == string::npos || ui2 < ui)) ui = ui2;
 		if(ui != string::npos) {
 			// check that found index is outside quotes
@@ -404,7 +404,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 	while(true) {
 		// three char Unicode fractions begin with \xe2\x85
 		size_t ui = str.find("\xe2\x85", prev_ui == string::npos ? 0 : prev_ui);
-		if(ui != string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = string::npos;
+		while(ui != string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = str.find("\xe2\x85", ui + 3);
 		if(ui != string::npos) {
 			// check that found index is outside quotes
 			for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
@@ -454,7 +454,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 	while(true) {
 		// two char Unicode fractions begin with \xc2
 		size_t ui = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
-		if(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = string::npos;
+		if(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = str.find('\xc2', ui + 2);
 		if(ui != string::npos) {
 			// check that found index is outside quotes
 			for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {

@@ -135,9 +135,20 @@ bool contains_unicode_char(const char *str) {
 	}
 	return false;
 }
-
-#define PUTS_UNICODE(x)				if(printops.use_unicode_signs || !contains_unicode_char(x)) {puts(x);} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
-#define FPUTS_UNICODE(x, y)			if(printops.use_unicode_signs || !contains_unicode_char(x)) {fputs(x, y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
+#ifdef _WIN32
+LPWSTR utf8wchar(const char *str) {
+	size_t len = strlen(str) + 1;
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0, str, len, NULL, 0);
+	LPWSTR wstr = (LPWSTR) LocalAlloc(LPTR, sizeof(WCHAR) * size_needed);
+	MultiByteToWideChar(CP_UTF8, 0, str, len, wstr, size_needed);
+	return wstr;
+}
+#	define PUTS_UNICODE(x)				if(!contains_unicode_char(x)) {puts(x);} else if(printops.use_unicode_signs) {fputws(utf8wchar(x), stdout); puts("");} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
+#	define FPUTS_UNICODE(x, y)			if(!contains_unicode_char(x)) {fputs(x, y);} else if(printops.use_unicode_signs) {fputws(utf8wchar(x), y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
+#else
+#	define PUTS_UNICODE(x)				if(printops.use_unicode_signs || !contains_unicode_char(x)) {puts(x);} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
+#	define FPUTS_UNICODE(x, y)			if(printops.use_unicode_signs || !contains_unicode_char(x)) {fputs(x, y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
+#endif
 
 void update_message_print_options() {
 	PrintOptions message_printoptions = printops;
@@ -4376,10 +4387,7 @@ int main(int argc, char *argv[]) {
 	handle_exit();
 
 #ifdef _WIN32
-	if(DO_WIN_FORMAT) {
-		SetConsoleMode(hOut, outMode);
-		//SetConsoleOutputCP(codepage);
-	}
+	if(DO_WIN_FORMAT) SetConsoleMode(hOut, outMode);
 #endif
 
 	return 0;

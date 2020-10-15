@@ -949,6 +949,10 @@ string CompositeUnit::print(bool plural_, bool short_, bool use_unicode, bool (*
 			} else {
 				str += units[i]->print(false, short_, use_unicode, can_display_unicode_string_function, can_display_unicode_string_arg);
 			}
+			if(short_ && use_unicode && units[i]->firstBaseExponent() != (b ? -1 : 1) && str == SIGN_DEGREE) {
+				str.erase(str.length() - strlen(SIGN_DEGREE), strlen(SIGN_DEGREE));
+				str += units[i]->print(plural_ && i == 0 && units[i]->firstBaseExponent() > 0, short_, false, can_display_unicode_string_function, can_display_unicode_string_arg);
+			}
 			if(b) {
 				if(units[i]->firstBaseExponent() != -1) {
 					if(use_unicode && units[i]->firstBaseExponent() == -2 && (!can_display_unicode_string_function || (*can_display_unicode_string_function) (SIGN_POWER_2, can_display_unicode_string_arg))) str += SIGN_POWER_2;
@@ -1080,6 +1084,19 @@ void remove_times_one(MathStructure &m) {
 		}
 	}
 }
+bool fix_division(MathStructure &m, const EvaluationOptions &eo) {
+	bool b_ret = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(fix_division(m[i], eo)) {
+			m.childUpdated(i + 1);
+			b_ret = true;
+		}
+	}
+	if(m.isPower() && !m[0].isUnit()) {
+		if(m.calculatesub(eo, eo, false)) b_ret = true;
+	}
+	return b_ret;
+}
 void CompositeUnit::setBaseExpression(string base_expression_) {
 	clear();
 	if(base_expression_.empty()) {
@@ -1103,6 +1120,7 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	CALCULATOR->beginTemporaryStopMessages();
 	CALCULATOR->parse(&mstruct, base_expression_, po);
 	remove_times_one(mstruct);
+	fix_division(mstruct, eo);
 	bool b_eval = !is_unit_multiexp(mstruct);
 	while(true) {
 		if(b_eval) mstruct.eval(eo);
