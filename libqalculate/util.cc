@@ -584,8 +584,6 @@ string getPackageDataDir() {
 string getGlobalDefinitionsDir() {
 #ifdef COMPILED_DEFINITIONS
 	return "";
-#elif COMPILED_DEFINITIONS_GIO
-	return "resource:///qalculate";
 #else
 #	ifndef WIN32
 	return string(PACKAGE_DATA_DIR) + "/qalculate";

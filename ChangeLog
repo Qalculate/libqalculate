@@ -1,3 +1,14 @@
+2020-10-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix date/time output includes (wrong) decimals (zeroes) in some cases (e.g. with nextlunarphase())
+	* Improve handling of ignore comma/dot option outside of calculated expression in qalc
+	* Set arguments for comb() and perm() as positive integers
+
+2020-10-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support for Unicode quotation marks
+	* Improved Unicode fraction handling
+
 2020-10-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix parsing of "°²" and similar

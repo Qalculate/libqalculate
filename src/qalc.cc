@@ -1486,6 +1486,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 		puts("");
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED;}
 		bool b_variables = false, b_functions = false, b_units = false;
+		ParseOptions pa = evalops.parse_options; pa.base = 10;
 		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 			Variable *v = CALCULATOR->variables[i];
 			if((v->isLocal() || v->hasChanged()) && v->isActive() && (!is_answer_variable(v) || !v->representsUndefined())) {
@@ -1505,7 +1506,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 				if(v->isKnown()) {
 					bool is_relative = false;
 					if(((KnownVariable*) v)->isExpression()) {
-						value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression());
+						value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression(), pa);
 						if(!((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
 							if(is_relative) {value += " ("; value += _("relative uncertainty"); value += ": ";}
 							else value += SIGN_PLUSMINUS;
@@ -1514,7 +1515,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 						}
 						if(!((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
 							value += " ";
-							value += CALCULATOR->localizeExpression(((KnownVariable*) v)->unit());
+							value += CALCULATOR->localizeExpression(((KnownVariable*) v)->unit(), pa);
 						}
 						if(value.length() > 40) {
 							value = value.substr(0, 30);
@@ -3070,8 +3071,9 @@ int main(int argc, char *argv[]) {
 					}
 				}
 				CALCULATOR->resetExchangeRatesUsed();
-				MathStructure mstruct_new(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), evalops));
-				if(check_exchange_rates()) mstruct->set(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), evalops));
+				ParseOptions pa = evalops.parse_options; pa.base = 10;
+				MathStructure mstruct_new(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, pa), evalops));
+				if(check_exchange_rates()) mstruct->set(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, pa), evalops));
 				else mstruct->set(mstruct_new);
 				result_action_executed();
 				printops.use_unit_prefixes = save_pre;
@@ -3491,6 +3493,7 @@ int main(int argc, char *argv[]) {
 			} else {
 				INIT_SCREEN_CHECK
 				CHECK_IF_SCREEN_FILLED_PUTS("");
+				ParseOptions pa = evalops.parse_options; pa.base = 10;
 				for(size_t i = 0; i < 2; i++) {
 					if(i == 1) item = CALCULATOR->getActiveExpressionItem(name, item);
 					if(!item) break;
@@ -3637,7 +3640,8 @@ int main(int argc, char *argv[]) {
 							}
 							if(f->subtype() == SUBTYPE_USER_FUNCTION) {
 								CHECK_IF_SCREEN_FILLED_PUTS("");
-								str = _("Expression:"); str += " "; str += CALCULATOR->unlocalizeExpression(((UserFunction*) f)->formula());
+								ParseOptions pa = evalops.parse_options; pa.base = 10;
+								str = _("Expression:"); str += " "; str += CALCULATOR->unlocalizeExpression(((UserFunction*) f)->formula(), pa);
 								CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 							}
 							CHECK_IF_SCREEN_FILLED_PUTS("");
@@ -3682,13 +3686,13 @@ int main(int argc, char *argv[]) {
 									}
 									CHECK_IF_SCREEN_FILLED_PUTS(base_unit.c_str());
 									PRINT_AND_COLON_TABS_INFO(_("Relation"));
-									FPUTS_UNICODE(CALCULATOR->localizeExpression(au->expression()).c_str(), stdout);
+									FPUTS_UNICODE(CALCULATOR->localizeExpression(au->expression(), pa).c_str(), stdout);
 									bool is_relative = false;
 									if(!au->uncertainty(&is_relative).empty()) {
 										CHECK_IF_SCREEN_FILLED_PUTS("");
 										if(is_relative) {PRINT_AND_COLON_TABS_INFO(_("Relative uncertainty"));}
 										else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
-										CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(au->uncertainty()).c_str())
+										CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(au->uncertainty(), pa).c_str())
 									} else if(item->isApproximate()) {
 										fputs(" (", stdout);
 										FPUTS_UNICODE(_("approximate"), stdout);
@@ -3698,7 +3702,7 @@ int main(int argc, char *argv[]) {
 									if(!au->inverseExpression().empty()) {
 										CHECK_IF_SCREEN_FILLED_PUTS("");
 										PRINT_AND_COLON_TABS_INFO(_("Inverse Relation"));
-										FPUTS_UNICODE(CALCULATOR->localizeExpression(au->inverseExpression()).c_str(), stdout);
+										FPUTS_UNICODE(CALCULATOR->localizeExpression(au->inverseExpression(), pa).c_str(), stdout);
 										if(au->uncertainty().empty() && item->isApproximate()) {
 											fputs(" (", stdout);
 											FPUTS_UNICODE(_("approximate"), stdout);
@@ -3744,7 +3748,8 @@ int main(int argc, char *argv[]) {
 								value = _("a previous result");
 							} else if(v->isKnown()) {
 								if(((KnownVariable*) v)->isExpression()) {
-									value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression());
+									ParseOptions pa = evalops.parse_options; pa.base = 10;
+									value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression(), pa);
 								} else {
 									if(((KnownVariable*) v)->get().isMatrix()) {
 										value = _("matrix");
@@ -3789,7 +3794,7 @@ int main(int argc, char *argv[]) {
 								CHECK_IF_SCREEN_FILLED_PUTS("");
 								if(is_relative) {PRINT_AND_COLON_TABS_INFO(_("Relative uncertainty"));}
 								else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
-								CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()).c_str())
+								CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty(), pa).c_str())
 							} else {
 								string value_pre = _("Value");
 								STR_AND_COLON_TABS_INFO(value_pre);
@@ -3820,7 +3825,7 @@ int main(int argc, char *argv[]) {
 							}
 							if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->unit().empty()) {
 								PRINT_AND_COLON_TABS_INFO(_("Unit"));
-								CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(((KnownVariable*) v)->unit()).c_str())
+								CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(((KnownVariable*) v)->unit(), pa).c_str())
 							}
 							if(!item->description().empty()) {
 								fputs("\n", stdout);
@@ -5739,7 +5744,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {3, 13, 0};
+	int version_numbers[] = {3, 14, 0};
 
 	if(file) {
 		char line[10000];

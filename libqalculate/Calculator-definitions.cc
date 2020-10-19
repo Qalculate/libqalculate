@@ -27,9 +27,6 @@
 #include <locale.h>
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
-#ifdef COMPILED_DEFINITIONS_GIO
-#	include <gio/gio.h>
-#endif
 #ifdef COMPILED_DEFINITIONS
 #	include "definitions.h"
 #endif
@@ -786,32 +783,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	xmlChar *value, *lang, *value2;
 	int in_unfinished = 0;
 	bool done_something = false;
-#ifdef COMPILED_DEFINITIONS_GIO
-	if(strstr(file_name, "resource:") == file_name) {
-		doc = NULL;
-		GFile *f = g_file_new_for_uri(file_name);
-		if(f) {
-			GFileInputStream *s = g_file_read(f, NULL, NULL);
-			if(s) {
-				int res, size = 1024;
-				char chars[1024];
-				xmlParserCtxtPtr ctxt;
-				res = g_input_stream_read(G_INPUT_STREAM(s), chars, 4, NULL, NULL);
-				if(res > 0) {
-					ctxt = xmlCreatePushParserCtxt(NULL, NULL, chars, res, file_name);
-					while((res = g_input_stream_read(G_INPUT_STREAM(s), chars, size, NULL, NULL)) > 0) {
-						xmlParseChunk(ctxt, chars, res, 0);
-					}
-					xmlParseChunk(ctxt, chars, 0, 1);
-					doc = ctxt->myDoc;
-					xmlFreeParserCtxt(ctxt);
-				}
-			}
-		}
-	} else {
-		doc = xmlParseFile(file_name);
-	}
-#elif COMPILED_DEFINITIONS
+#ifdef COMPILED_DEFINITIONS
 	if(strlen(file_name) > 1 && file_name[0] == '<') {
 		doc = xmlParseMemory(file_name, strlen(file_name));
 	} else {
@@ -840,7 +812,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {3, 13, 0};
+	int version_numbers[] = {3, 14, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);
@@ -3453,30 +3425,7 @@ bool Calculator::loadExchangeRates() {
 		doc = xmlParseMemory(eurofxref_daily_xml, strlen(eurofxref_daily_xml));
 #else
 		filename = buildPath(getGlobalDefinitionsDir(), "eurofxref-daily.xml");
-#	ifdef COMPILED_DEFINITIONS_GIO
-		if(filename.find("resource:") == 0) {
-			GFile *f = g_file_new_for_uri(filename.c_str());
-			if(!f) return false;
-			GFileInputStream *s = g_file_read(f, NULL, NULL);
-			if(!s) return false;
-			int res, size = 1024;
-			char chars[1024];
-			xmlParserCtxtPtr ctxt;
-			res = g_input_stream_read(G_INPUT_STREAM(s), chars, 4, NULL, NULL);
-			if(res <= 0) return false;
-			ctxt = xmlCreatePushParserCtxt(NULL, NULL, chars, res, filename.c_str());
-			while((res = g_input_stream_read(G_INPUT_STREAM(s), chars, size, NULL, NULL)) > 0) {
-				xmlParseChunk(ctxt, chars, res, 0);
-			}
-			xmlParseChunk(ctxt, chars, 0, 1);
-			doc = ctxt->myDoc;
-			xmlFreeParserCtxt(ctxt);
-		} else {
-			doc = xmlParseFile(filename.c_str());
-		}
-#	else
 		doc = xmlParseFile(filename.c_str());
-#	endif
 #endif
 		if(!doc) return false;
 		cur = xmlDocGetRootElement(doc);
@@ -3659,29 +3608,11 @@ bool Calculator::loadExchangeRates() {
 		sbuffer = rates_json;
 #else
 		filename = buildPath(getGlobalDefinitionsDir(), "rates.json");
-#	ifdef COMPILED_DEFINITIONS_GIO
-		if(filename.find("resource:") == 0) {
-			GFile *f = g_file_new_for_uri(filename.c_str());
-			if(!f) return true;
-			GFileInputStream *s = g_file_read(f, NULL, NULL);
-			if(!s) return true;
-			int res, size = 1024;
-			char chars[1025];
-			while((res = g_input_stream_read(G_INPUT_STREAM(s), chars, size, NULL, NULL)) > 0) {
-				chars[res] = '\0';
-				sbuffer += chars;
-			}
-			if(sbuffer.empty()) return true;
-		} else {
-#	endif
-			file.open(filename.c_str());
-			if(!file.is_open()) return true;
-			std::stringstream ssbuffer;
-			ssbuffer << file.rdbuf();
-			sbuffer = ssbuffer.str();
-#	ifdef COMPILED_DEFINITIONS_GIO
-		}
-#	endif
+		file.open(filename.c_str());
+		if(!file.is_open()) return true;
+		std::stringstream ssbuffer;
+		ssbuffer << file.rdbuf();
+		sbuffer = ssbuffer.str();
 #endif
 		string sname;
 		size_t i = sbuffer.find("\"currency_code\":");

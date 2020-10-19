@@ -287,6 +287,51 @@ string Calculator::parseComments(string &str, const ParseOptions &po, bool *doub
 }
 
 void Calculator::parseSigns(string &str, bool convert_to_internal_representation) const {
+
+	bool b_unicode = false;
+	for(size_t i = 0; i < str.length(); i++) {
+		if((unsigned char) str[i] >= 0xC0) {
+			b_unicode = true;
+			break;
+		}
+	}
+
+	if(b_unicode && str.find_first_of("\"\'") == string::npos) {
+		// replace unicode quotation marks
+		size_t ui = str.find("\xe2\x80");
+		bool b_double = false, b_single = false, b_angle = false;
+		while(ui != string::npos && ui + 2 < str.length()) {
+			if(str[ui + 2] >= -101 && str[ui + 2] <= -104) {
+				// single quotation marks
+				str.replace(ui, 3, "\'");
+				b_single = true;
+			} else if(str[ui + 2] >= -100 && str[ui + 2] <= -97) {
+				// double quotation marks
+				str.replace(ui, 3, "\"");
+				b_double = true;
+			} else if(str[ui + 2] == -70 || str[ui + 2] == -71) {
+				// single angle quotation marks
+				b_angle = true;
+				ui += 2;
+			} else {
+				ui += 2;
+			}
+			ui = str.find("\xe2\x80", ui + 1);
+		}
+		if(!b_single && b_angle) {
+			b_single = true;
+			gsub("‹", "\'", str);
+			gsub("›", "\'", str);
+		}
+		if(!b_double) {
+			gsub("«", "\"", str);
+			gsub("»", "\"", str);
+		} else if(!b_single) {
+			gsub("«", "\'", str);
+			gsub("»", "\'", str);
+		}
+	}
+
 	vector<size_t> q_begin;
 	vector<size_t> q_end;
 	// collect quoted ranges
@@ -308,198 +353,15 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 
 	// search and replace string alternatives
 	for(size_t i = 0; i < signs.size(); i++) {
-		size_t ui = str.find(signs[i]);
-		size_t ui2 = 0;
-		while(ui != string::npos) {
-			// check that found index is outside quotes
-			for(; ui2 < q_end.size(); ui2++) {
-				if(ui >= q_begin[ui2]) {
-					if(ui <= q_end[ui2]) {
-						ui = str.find(signs[i], q_end[ui2] + 1);
-						if(ui == string::npos) break;
-					}
-				} else {
-					break;
-				}
-			}
-			if(ui == string::npos) break;
-			// adjust quotion mark indeces
-			int index_shift = real_signs[i].length() - signs[i].length();
-			for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
-				q_begin[ui3] += index_shift;
-				q_end[ui3] += index_shift;
-			}
-			str.replace(ui, signs[i].length(), real_signs[i]);
-			ui = str.find(signs[i], ui + real_signs[i].length());
-		}
-	}
-
-	// replace Unicode exponents
-	size_t prev_ui = string::npos, space_n = 0;
-	while(true) {
-		// Unicode powers 0 and 4-9 use three chars and begin with \xe2\x81
-		size_t ui = str.find("\xe2\x81", prev_ui == string::npos ? 0 : prev_ui);
-		while(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -66 || str[ui + 2] == -68)))) ui = str.find("\xe2\x81", ui + 3);
-		// Unicode powers 1-3 use two chars and begin with \xc2
-		size_t ui2 = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
-		while(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = str.find('\xc2', ui2 + 2);
-		if(ui2 != string::npos && (ui == string::npos || ui2 < ui)) ui = ui2;
-		if(ui != string::npos) {
-			// check that found index is outside quotes
-			for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
-				if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
-					ui = str.find("\xe2\x81", q_end[ui3] + 1);
-					if(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -66 || str[ui + 2] != -68)))) ui = string::npos;
-					ui2 = str.find('\xc2', q_end[ui3] + 1);
-					if(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = string::npos;
-					if(ui2 != string::npos && (ui == string::npos || ui2 < ui)) ui = ui2;
-					if(ui == string::npos) break;
-				}
-			}
-		}
-		if(ui == string::npos) break;
-		int index_shift = (str[ui] == '\xc2' ? -2 : -3);
-		if(ui == prev_ui) index_shift += 1;
-		else index_shift += 4;
-		// adjust quotion mark indeces
-		for(size_t ui3 = 0; ui3 < q_begin.size(); ui3++) {
-			if(q_begin[ui3] >= ui) {
-				q_begin[ui3] += index_shift;
-				q_end[ui3] += index_shift;
-			}
-		}
-		// perform replacement; if next to previous Unicode power combine the powers
-		if(str[ui] == '\xc2') {
-			if(str[ui + 1] == -71) str.replace(ui, 2, ui == prev_ui ? "1)" : "^(1)");
-			else if(str[ui + 1] == -78) str.replace(ui, 2, ui == prev_ui ? "2)" : "^(2)");
-			else if(str[ui + 1] == -77) str.replace(ui, 2, ui == prev_ui ? "3)" : "^(3)");
-		} else {
-			if(str[ui + 2] == -80) str.replace(ui, 3, ui == prev_ui ? "0)" : "^(0)");
-			else if(str[ui + 2] == -76) str.replace(ui, 3, ui == prev_ui ? "4)" : "^(4)");
-			else if(str[ui + 2] == -75) str.replace(ui, 3, ui == prev_ui ? "5)" : "^(5)");
-			else if(str[ui + 2] == -74) str.replace(ui, 3, ui == prev_ui ? "6)" : "^(6)");
-			else if(str[ui + 2] == -73) str.replace(ui, 3, ui == prev_ui ? "7)" : "^(7)");
-			else if(str[ui + 2] == -72) str.replace(ui, 3, ui == prev_ui ? "8)" : "^(8)");
-			else if(str[ui + 2] == -71) str.replace(ui, 3, ui == prev_ui ? "9)" : "^(9)");
-			else if(str[ui + 2] == -70) str.replace(ui, 3, ui == prev_ui ? "+)" : "^(+)");
-			else if(str[ui + 2] == -69) str.replace(ui, 3, ui == prev_ui ? "-)" : "^(-)");
-			else if(str[ui + 2] == -67) str.replace(ui, 3, ui == prev_ui ? "()" : "^(()");
-			else if(str[ui + 2] == -66) str.replace(ui, 3, ui == prev_ui ? "))" : "^())");
-		}
-		if(ui == prev_ui) {
-			str.erase(prev_ui - space_n - 1, 1);
-			prev_ui = ui + 1;
-		} else {
-			prev_ui = ui + 4;
-		}
-		space_n = 0;
-		while(prev_ui + 1 < str.length() && str[prev_ui] == SPACE_CH) {
-			space_n++;
-			prev_ui++;
-		}
-	}
-
-	// replace Unicode fractions with three chars
-	prev_ui = string::npos;
-	while(true) {
-		// three char Unicode fractions begin with \xe2\x85
-		size_t ui = str.find("\xe2\x85", prev_ui == string::npos ? 0 : prev_ui);
-		while(ui != string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = str.find("\xe2\x85", ui + 3);
-		if(ui != string::npos) {
-			// check that found index is outside quotes
-			for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
-				if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
-					ui = str.find("\xe2\x85", q_end[ui3] + 1);
-					if(ui != string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = string::npos;
-					if(ui == string::npos) break;
-				}
-			}
-		}
-		if(ui == string::npos) break;
-		// check if previous non-whitespace character is a numeral digit
-		space_n = 0;
-		while(ui > 0 && ui - 1 - space_n != 0 && str[ui - 1 - space_n] == SPACE_CH) space_n++;
-		bool b_add = (ui > 0 && is_in(NUMBER_ELEMENTS, str[ui - 1 - space_n]));
-		int index_shift = (b_add ? 6 : 5) - 3;
-		if(str[ui + 2] == -110) index_shift++;
-		// adjust quotion mark indeces
-		for(size_t ui2 = 0; ui2 < q_begin.size(); ui2++) {
-			if(q_begin[ui2] >= ui) {
-				q_begin[ui2] += index_shift;
-				q_end[ui2] += index_shift;
-			}
-		}
-		// perform replacement; interpret as addition if previous character is a numeral digit
-		if(str[ui + 2] == -98) str.replace(ui, 3, b_add ? "+(7/8)" : "(7/8)");
-		else if(str[ui + 2] == -99) str.replace(ui, 3, b_add ? "+(5/8)" : "(5/8)");
-		else if(str[ui + 2] == -100) str.replace(ui, 3, b_add ? "+(3/8)" : "(3/8)");
-		else if(str[ui + 2] == -101) str.replace(ui, 3, b_add ? "+(1/8)" : "(1/8)");
-		else if(str[ui + 2] == -102) str.replace(ui, 3, b_add ? "+(5/6)" : "(5/6)");
-		else if(str[ui + 2] == -103) str.replace(ui, 3, b_add ? "+(1/6)" : "(1/6)");
-		else if(str[ui + 2] == -104) str.replace(ui, 3, b_add ? "+(4/5)" : "(4/5)");
-		else if(str[ui + 2] == -105) str.replace(ui, 3, b_add ? "+(3/5)" : "(3/5)");
-		else if(str[ui + 2] == -106) str.replace(ui, 3, b_add ? "+(2/5)" : "(2/5)");
-		else if(str[ui + 2] == -107) str.replace(ui, 3, b_add ? "+(1/5)" : "(1/5)");
-		else if(str[ui + 2] == -108) str.replace(ui, 3, b_add ? "+(2/3)" : "(2/3)");
-		else if(str[ui + 2] == -109) str.replace(ui, 3, b_add ? "+(1/3)" : "(1/3)");
-		else if(str[ui + 2] == -110) {str.replace(ui, 3, b_add ? "+(1/10)" : "(1/10)"); ui++;}
-		else if(str[ui + 2] == -111) str.replace(ui, 3, b_add ? "+(1/9)" : "(1/9)");
-		else if(str[ui + 2] == -112) str.replace(ui, 3, b_add ? "+(1/7)" : "(1/7)");
-		if(b_add) prev_ui = ui + 6;
-		else prev_ui = ui + 5;
-	}
-
-	// replace Unicode fractions with two chars
-	prev_ui = string::npos;
-	while(true) {
-		// two char Unicode fractions begin with \xc2
-		size_t ui = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
-		if(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = str.find('\xc2', ui + 2);
-		if(ui != string::npos) {
-			// check that found index is outside quotes
-			for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
-				if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
-					ui = str.find('\xc2', q_end[ui3] + 1);
-					if(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = string::npos;
-					if(ui == string::npos) break;
-				}
-			}
-		}
-		if(ui == string::npos) break;
-		// check if previous non-whitespace character is a numeral digit
-		space_n = 0;
-		while(ui > 0 && ui - 1 - space_n != 0 && str[ui - 1 - space_n] == SPACE_CH) space_n++;
-		bool b_add = (ui > 0 && is_in(NUMBER_ELEMENTS, str[ui - 1 - space_n]));
-		int index_shift = (b_add ? 6 : 5) - 2;
-		// adjust quotion mark indeces
-		for(size_t ui2 = 0; ui2 < q_begin.size(); ui2++) {
-			if(q_begin[ui2] >= ui) {
-				q_begin[ui2] += index_shift;
-				q_end[ui2] += index_shift;
-			}
-		}
-		// perform replacement; interpret as addition if previous character is a numeral digit
-		if(str[ui + 1] == -66) str.replace(ui, 2, b_add ? "+(3/4)" : "(3/4)");
-		else if(str[ui + 1] == -67) str.replace(ui, 2, b_add ? "+(1/2)" : "(1/2)");
-		else if(str[ui + 1] == -68) str.replace(ui, 2, b_add ? "+(1/4)" : "(1/4)");
-		if(b_add) prev_ui = ui + 6;
-		else prev_ui = ui + 5;
-	}
-
-	if(convert_to_internal_representation) {
-		// remove superfluous whitespace
-		remove_blank_ends(str);
-		remove_duplicate_blanks(str);
-		// replace operators with multiple chars with internal single character version
-		for(size_t i = 0; i < INTERNAL_SIGNS_COUNT; i += 2) {
-			size_t ui = str.find(internal_signs[i]);
+		if(b_unicode || signs[i][0] > 0) {
+			size_t ui = str.find(signs[i]);
 			size_t ui2 = 0;
 			while(ui != string::npos) {
 				// check that found index is outside quotes
 				for(; ui2 < q_end.size(); ui2++) {
 					if(ui >= q_begin[ui2]) {
 						if(ui <= q_end[ui2]) {
-							ui = str.find(internal_signs[i], q_end[ui2] + 1);
+							ui = str.find(signs[i], q_end[ui2] + 1);
 							if(ui == string::npos) break;
 						}
 					} else {
@@ -508,14 +370,219 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 				}
 				if(ui == string::npos) break;
 				// adjust quotion mark indeces
-				int index_shift = strlen(internal_signs[i + 1]) - strlen(internal_signs[i]);
+				int index_shift = real_signs[i].length() - signs[i].length();
 				for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
 					q_begin[ui3] += index_shift;
 					q_end[ui3] += index_shift;
 				}
-				// perform replacement and search for next occurrence
-				str.replace(ui, strlen(internal_signs[i]), internal_signs[i + 1]);
-				ui = str.find(internal_signs[i], ui + strlen(internal_signs[i + 1]));
+				str.replace(ui, signs[i].length(), real_signs[i]);
+				ui = str.find(signs[i], ui + real_signs[i].length());
+			}
+		}
+	}
+
+	if(b_unicode) {
+
+		// replace Unicode exponents
+		size_t prev_ui = string::npos, space_n = 0;
+		while(true) {
+			// Unicode powers 0 and 4-9 use three chars and begin with \xe2\x81
+			size_t ui = str.find("\xe2\x81", prev_ui == string::npos ? 0 : prev_ui);
+			while(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -66 || str[ui + 2] == -68)))) ui = str.find("\xe2\x81", ui + 3);
+			// Unicode powers 1-3 use two chars and begin with \xc2
+			size_t ui2 = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
+			while(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = str.find('\xc2', ui2 + 2);
+			if(ui2 != string::npos && (ui == string::npos || ui2 < ui)) ui = ui2;
+			if(ui != string::npos) {
+				// check that found index is outside quotes
+				for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
+					if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
+						ui = str.find("\xe2\x81", q_end[ui3] + 1);
+						if(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -66 || str[ui + 2] != -68)))) ui = string::npos;
+						ui2 = str.find('\xc2', q_end[ui3] + 1);
+						if(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = string::npos;
+						if(ui2 != string::npos && (ui == string::npos || ui2 < ui)) ui = ui2;
+						if(ui == string::npos) break;
+					}
+				}
+			}
+			if(ui == string::npos) break;
+			int index_shift = (str[ui] == '\xc2' ? -2 : -3);
+			if(ui == prev_ui) index_shift += 1;
+			else index_shift += 4;
+			// adjust quotion mark indeces
+			for(size_t ui3 = 0; ui3 < q_begin.size(); ui3++) {
+				if(q_begin[ui3] >= ui) {
+					q_begin[ui3] += index_shift;
+					q_end[ui3] += index_shift;
+				}
+			}
+			// perform replacement; if next to previous Unicode power combine the powers
+			if(str[ui] == '\xc2') {
+				if(str[ui + 1] == -71) str.replace(ui, 2, ui == prev_ui ? "1)" : "^(1)");
+				else if(str[ui + 1] == -78) str.replace(ui, 2, ui == prev_ui ? "2)" : "^(2)");
+				else if(str[ui + 1] == -77) str.replace(ui, 2, ui == prev_ui ? "3)" : "^(3)");
+			} else {
+				if(str[ui + 2] == -80) str.replace(ui, 3, ui == prev_ui ? "0)" : "^(0)");
+				else if(str[ui + 2] == -76) str.replace(ui, 3, ui == prev_ui ? "4)" : "^(4)");
+				else if(str[ui + 2] == -75) str.replace(ui, 3, ui == prev_ui ? "5)" : "^(5)");
+				else if(str[ui + 2] == -74) str.replace(ui, 3, ui == prev_ui ? "6)" : "^(6)");
+				else if(str[ui + 2] == -73) str.replace(ui, 3, ui == prev_ui ? "7)" : "^(7)");
+				else if(str[ui + 2] == -72) str.replace(ui, 3, ui == prev_ui ? "8)" : "^(8)");
+				else if(str[ui + 2] == -71) str.replace(ui, 3, ui == prev_ui ? "9)" : "^(9)");
+				else if(str[ui + 2] == -70) str.replace(ui, 3, ui == prev_ui ? "+)" : "^(+)");
+				else if(str[ui + 2] == -69) str.replace(ui, 3, ui == prev_ui ? "-)" : "^(-)");
+				else if(str[ui + 2] == -67) str.replace(ui, 3, ui == prev_ui ? "()" : "^(()");
+				else if(str[ui + 2] == -66) str.replace(ui, 3, ui == prev_ui ? "))" : "^())");
+			}
+			if(ui == prev_ui) {
+				str.erase(prev_ui - space_n - 1, 1);
+				prev_ui = ui + 1;
+			} else {
+				prev_ui = ui + 4;
+			}
+			space_n = 0;
+			while(prev_ui + 1 < str.length() && str[prev_ui] == SPACE_CH) {
+				space_n++;
+				prev_ui++;
+			}
+		}
+
+		// replace Unicode fractions with three chars
+		prev_ui = string::npos;
+		while(true) {
+			// three char Unicode fractions begin with \xe2\x85
+			size_t ui = str.find("\xe2\x85", prev_ui == string::npos ? 0 : prev_ui);
+			while(ui != string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = str.find("\xe2\x85", ui + 3);
+			if(ui != string::npos) {
+				// check that found index is outside quotes
+				for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
+					if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
+						ui = str.find("\xe2\x85", q_end[ui3] + 1);
+						if(ui != string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = string::npos;
+						if(ui == string::npos) break;
+					}
+				}
+			}
+			if(ui == string::npos) break;
+			// check if previous non-whitespace character is a numeral digit
+			space_n = 0;
+			while(ui > 0 && ui - 1 - space_n != 0 && str[ui - 1 - space_n] == SPACE_CH) space_n++;
+			bool b_add = (ui > 0 && is_in(NUMBER_ELEMENTS, str[ui - 1 - space_n]));
+			if(b_add) {
+				size_t ui2 = str.find_last_not_of(NUMBER_ELEMENTS, ui - space_n - 1);
+				if(ui2 == string::npos) ui2 = 0;
+				else ui2++;
+				str.insert(ui2, "(");
+				ui += 1;
+			}
+			int index_shift = (b_add ? 7 : 5) - 3;
+			if(str[ui + 2] == -110) index_shift++;
+			// adjust quotion mark indeces
+			for(size_t ui2 = 0; ui2 < q_begin.size(); ui2++) {
+				if(q_begin[ui2] >= ui) {
+					q_begin[ui2] += index_shift;
+					q_end[ui2] += index_shift;
+				}
+			}
+			// perform replacement; interpret as addition if previous character is a numeral digit
+			if(str[ui + 2] == -98) str.replace(ui, 3, b_add ? "+(7/8))" : "(7/8)");
+			else if(str[ui + 2] == -99) str.replace(ui, 3, b_add ? "+(5/8))" : "(5/8)");
+			else if(str[ui + 2] == -100) str.replace(ui, 3, b_add ? "+(3/8))" : "(3/8)");
+			else if(str[ui + 2] == -101) str.replace(ui, 3, b_add ? "+(1/8))" : "(1/8)");
+			else if(str[ui + 2] == -102) str.replace(ui, 3, b_add ? "+(5/6))" : "(5/6)");
+			else if(str[ui + 2] == -103) str.replace(ui, 3, b_add ? "+(1/6))" : "(1/6)");
+			else if(str[ui + 2] == -104) str.replace(ui, 3, b_add ? "+(4/5))" : "(4/5)");
+			else if(str[ui + 2] == -105) str.replace(ui, 3, b_add ? "+(3/5))" : "(3/5)");
+			else if(str[ui + 2] == -106) str.replace(ui, 3, b_add ? "+(2/5))" : "(2/5)");
+			else if(str[ui + 2] == -107) str.replace(ui, 3, b_add ? "+(1/5))" : "(1/5)");
+			else if(str[ui + 2] == -108) str.replace(ui, 3, b_add ? "+(2/3))" : "(2/3)");
+			else if(str[ui + 2] == -109) str.replace(ui, 3, b_add ? "+(1/3))" : "(1/3)");
+			else if(str[ui + 2] == -110) {str.replace(ui, 3, b_add ? "+(1/10))" : "(1/10)"); ui++;}
+			else if(str[ui + 2] == -111) str.replace(ui, 3, b_add ? "+(1/9))" : "(1/9)");
+			else if(str[ui + 2] == -112) str.replace(ui, 3, b_add ? "+(1/7))" : "(1/7)");
+			if(b_add) prev_ui = ui + 7;
+			else prev_ui = ui + 5;
+		}
+
+		// replace Unicode fractions with two chars
+		prev_ui = string::npos;
+		while(true) {
+			// two char Unicode fractions begin with \xc2
+			size_t ui = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
+			if(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = str.find('\xc2', ui + 2);
+			if(ui != string::npos) {
+				// check that found index is outside quotes
+				for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
+					if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
+						ui = str.find('\xc2', q_end[ui3] + 1);
+						if(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = string::npos;
+						if(ui == string::npos) break;
+					}
+				}
+			}
+			if(ui == string::npos) break;
+			// check if previous non-whitespace character is a numeral digit
+			space_n = 0;
+			while(ui > 0 && ui - 1 - space_n != 0 && str[ui - 1 - space_n] == SPACE_CH) space_n++;
+			bool b_add = (ui > 0 && is_in(NUMBER_ELEMENTS, str[ui - 1 - space_n]));
+			if(b_add) {
+				size_t ui2 = str.find_last_not_of(NUMBER_ELEMENTS, ui - space_n - 1);
+				if(ui2 == string::npos) ui2 = 0;
+				else ui2++;
+				str.insert(ui2, "(");
+				ui += 1;
+			}
+			int index_shift = (b_add ? 7 : 5) - 2;
+			// adjust quotion mark indeces
+			for(size_t ui2 = 0; ui2 < q_begin.size(); ui2++) {
+				if(q_begin[ui2] >= ui) {
+					q_begin[ui2] += index_shift;
+					q_end[ui2] += index_shift;
+				}
+			}
+			// perform replacement; interpret as addition if previous character is a numeral digit
+			if(str[ui + 1] == -66) str.replace(ui, 2, b_add ? "+(3/4))" : "(3/4)");
+			else if(str[ui + 1] == -67) str.replace(ui, 2, b_add ? "+(1/2))" : "(1/2)");
+			else if(str[ui + 1] == -68) str.replace(ui, 2, b_add ? "+(1/4))" : "(1/4)");
+			if(b_add) prev_ui = ui + 7;
+			else prev_ui = ui + 5;
+		}
+
+	}
+
+	if(convert_to_internal_representation) {
+		// remove superfluous whitespace
+		remove_blank_ends(str);
+		remove_duplicate_blanks(str);
+		// replace operators with multiple chars with internal single character version
+		for(size_t i = 0; i < INTERNAL_SIGNS_COUNT; i += 2) {
+			if(b_unicode || internal_signs[i][0] > 0) {
+				size_t ui = str.find(internal_signs[i]);
+				size_t ui2 = 0;
+				while(ui != string::npos) {
+					// check that found index is outside quotes
+					for(; ui2 < q_end.size(); ui2++) {
+						if(ui >= q_begin[ui2]) {
+							if(ui <= q_end[ui2]) {
+								ui = str.find(internal_signs[i], q_end[ui2] + 1);
+								if(ui == string::npos) break;
+							}
+						} else {
+							break;
+						}
+					}
+					if(ui == string::npos) break;
+					// adjust quotion mark indeces
+					int index_shift = strlen(internal_signs[i + 1]) - strlen(internal_signs[i]);
+					for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
+						q_begin[ui3] += index_shift;
+						q_end[ui3] += index_shift;
+					}
+					// perform replacement and search for next occurrence
+					str.replace(ui, strlen(internal_signs[i]), internal_signs[i + 1]);
+					ui = str.find(internal_signs[i], ui + strlen(internal_signs[i + 1]));
+				}
 			}
 		}
 	}
