@@ -6,7 +6,7 @@ dnl  ----------------------
 dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
-AC_INIT([libqalculate], [3.13.0])
+AC_INIT([libqalculate], [3.14.0])
 AC_CONFIG_SRCDIR(libqalculate/Calculator.cc)
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
@@ -107,15 +107,6 @@ AC_LANG([C++])
 
 AC_CHECK_HEADERS([unordered_map])
 AC_CHECK_FUNCS([pipe2])
-
-AC_ARG_ENABLE([gio_definitions], AS_HELP_STRING([--enable-gio-definitions], [compile definitions using gio]))
-AS_IF([test "x$enable_gio_definitions" = "xyes"], [
-	PKG_CHECK_MODULES([GIO], [gio-2.0])
-	AC_DEFINE([COMPILED_DEFINITIONS_GIO], [1], [Compile definitions using gio])
-	AC_SUBST(GIO_CFLAGS)
-	AC_SUBST(GIO_LIBS)
-])
-AM_CONDITIONAL(COMPILED_DEFINITIONS_GIO, [test "x$enable_gio_definitions" = "xyes"])
 
 AC_ARG_ENABLE([compiled_definitions], AS_HELP_STRING([--enable-compiled-definitions], [compile definitions]))
 AS_IF([test "x$enable_compiled_definitions" = "xyes"], [

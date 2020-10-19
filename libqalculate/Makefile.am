@@ -5,13 +5,6 @@
 
 lib_LTLIBRARIES = libqalculate.la
 
-if COMPILED_DEFINITIONS_GIO
-definitions.c : $(top_srcdir)/data/definitions.gresource.xml ${top_builddir}/data/currencies.xml ${top_builddir}/data/datasets.xml ${top_builddir}/data/elements.xml ${top_srcdir}/data/eurofxref-daily.xml ${top_builddir}/data/functions.xml ${top_builddir}/data/planets.xml ${top_builddir}/data/prefixes.xml ${top_builddir}/data/units.xml ${top_builddir}/data/variables.xml ${top_srcdir}/data/rates.json
-	glib-compile-resources --generate-source --target=$@ --sourcedir=$(top_builddir)/data $(top_srcdir)/data/definitions.gresource.xml
-
-libqalculate_compiled_def_sources = definitions.c
-endif
-
 if COMPILED_DEFINITIONS
 definitions.c: ${top_builddir}/data/currencies.xml ${top_builddir}/data/datasets.xml ${top_builddir}/data/elements.xml ${top_srcdir}/data/eurofxref-daily.xml ${top_builddir}/data/functions.xml ${top_builddir}/data/planets.xml ${top_builddir}/data/prefixes.xml ${top_builddir}/data/units.xml ${top_builddir}/data/variables.xml ${top_srcdir}/data/rates.json
 	echo > $@ || (rm $@;exit 1)
@@ -58,9 +51,9 @@ nodist_libqalculate_la_SOURCES = $(libqalculate_compiled_def_sources)
 libqalculate_la_LDFLAGS = -version-info $(QALCULATE_CURRENT):$(QALCULATE_REVISION):$(QALCULATE_AGE) -no-undefined
 
 libqalculate_la_LIBADD = \
-	@LIBCURL_LIBS@ @LIBXML_LIBS@ @ICU_LIBS@ @GIO_LIBS@ @LTLIBINTL@ @LTLIBICONV@
+	@LIBCURL_LIBS@ @LIBXML_LIBS@ @ICU_LIBS@ @LTLIBINTL@ @LTLIBICONV@
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
-	@LIBCURL_CFLAGS@  @LIBXML_CFLAGS@  @ICU_CFLAGS@ @GIO_CFLAGS@
+	@LIBCURL_CFLAGS@  @LIBXML_CFLAGS@  @ICU_CFLAGS@

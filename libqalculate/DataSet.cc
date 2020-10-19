@@ -24,9 +24,6 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifdef COMPILED_DEFINITIONS_GIO
-#	include <gio/gio.h>
-#endif
 #ifdef COMPILED_DEFINITIONS
 #	include "definitions.h"
 #endif
@@ -526,31 +523,6 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 			doc = xmlParseMemory(elements_xml, strlen(elements_xml));
 		} else {
 			doc = xmlParseFile(file_name);
-		}
-	} else {
-		doc = xmlParseFile(file_name);
-	}
-#elif COMPILED_DEFINITIONS_GIO
-	if(strstr(file_name, "resource:") == file_name) {
-		doc = NULL;
-		GFile *f = g_file_new_for_uri(file_name);
-		if(f) {
-			GFileInputStream *s = g_file_read(f, NULL, NULL);
-			if(s) {
-				int res, size = 1024;
-				char chars[1024];
-				xmlParserCtxtPtr ctxt;
-				res = g_input_stream_read(G_INPUT_STREAM(s), chars, 4, NULL, NULL);
-				if(res > 0) {
-					ctxt = xmlCreatePushParserCtxt(NULL, NULL, chars, res, file_name);
-					while((res = g_input_stream_read(G_INPUT_STREAM(s), chars, size, NULL, NULL)) > 0) {
-						xmlParseChunk(ctxt, chars, res, 0);
-					}
-					xmlParseChunk(ctxt, chars, 0, 1);
-					doc = ctxt->myDoc;
-					xmlFreeParserCtxt(ctxt);
-				}
-			}
 		}
 	} else {
 		doc = xmlParseFile(file_name);

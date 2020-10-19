@@ -535,6 +535,7 @@ string QalculateDateTime::toISOString() const {
 		Number nsect(n_sec);
 		nsect.trunc();
 		if(nsect.isLessThan(10)) str += "0";
+		nsect.setApproximate(false);
 		str += nsect.print();
 	}
 	return str;
