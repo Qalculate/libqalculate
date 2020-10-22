@@ -1196,6 +1196,50 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				}
 			}
 		} else if(is_not_in(NUMBERS INTERNAL_OPERATORS NOT_IN_NAMES, str[str_index])) {
+			// dx/dy derivative notation
+			if((str[str_index] == 'd' && is_not_number('d', base)) || (str[str_index] == -50 && str_index + 1 < str.length() && str[str_index + 1] == -108) || (str[str_index] == -16 && str_index + 3 < str.length() && str[str_index + 1] == -99 && str[str_index + 2] == -102 && str[str_index + 3] == -85)) {
+				size_t d_len = 1;
+				if(str[str_index] == -50) d_len = 2;
+				else if(str[str_index] == -16) d_len = 4;
+				if(str_index + (d_len * 2) + 1 < str.length() && (str[str_index + d_len] == '/' || (str[str_index + d_len + 1] == '/' && is_in("xyz", str[str_index + d_len]) && str_index + (d_len * 2) + 2 < str.length()))) {
+					size_t i_div = str_index + d_len;
+					if(str[str_index + d_len] != '/') i_div++;
+					bool b = true;
+					for(size_t i_d = 0; i_d < d_len; i_d++) {
+						if(str[i_div + 1 + i_d] != str[str_index + i_d]) {
+							b = false;
+							break;
+						}
+					}
+					if(b && is_in("xyz", str[i_div + d_len + 1]) && (str.length() == i_div + d_len + 2 || str[i_div + d_len + 2] == SPACE_CH || str[i_div + d_len + 2] == LEFT_PARENTHESIS_CH)) {
+						size_t i3 = i_div + d_len + 2;
+						if(i3 < str.length()) i3++;
+						int nr_of_p = 1;
+						size_t i7 = i3;
+						for(; i7 < str.length(); i7++) {
+							if(str[i7] == LEFT_PARENTHESIS_CH) {
+								nr_of_p++;
+							} else if(str[i7] == RIGHT_PARENTHESIS_CH) {
+								nr_of_p--;
+								if(nr_of_p == 0) break;
+							}
+						}
+						if(nr_of_p > 0) nr_of_p--;
+						if(i3 == i7) stmp2 = "";
+						else stmp2 = str.substr(i3, i7 - i3);
+						while(nr_of_p > 0) {stmp2 += ')'; nr_of_p--;}
+						stmp2 += COMMA_CH;
+						stmp2 += str[i_div + d_len + 1];
+						cout << stmp2 << endl;
+						stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+						stmp += i2s(parseAddId(f_diff, stmp2, po));
+						stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+						str.replace(str_index, i7 - str_index, stmp);
+						str_index += stmp.length() - 1;
+						continue;
+					}
+				}
+			}
 			// search for variable, function, unit, prefix names
 			bool p_mode = false;
 			void *best_p_object = NULL;
