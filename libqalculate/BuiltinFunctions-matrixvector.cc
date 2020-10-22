@@ -73,6 +73,23 @@ RankFunction::RankFunction() : MathFunction("rank", 1, 2) {
 	setDefaultValue(2, "1");
 }
 int RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	if(vargs[0].isMatrix()) {
+		MathStructure mvector;
+		mvector.clearVector();
+		size_t rows = vargs[0].size(), cols = vargs[0][0].size();
+		for(size_t i = 0; i < rows; i++) {
+			for(size_t i2 = 0; i2 < cols; i2++) {
+				mvector.addChild(vargs[0][i][i2]);
+			}
+		}
+		if(!mvector.rankVector(vargs[1].number().getBoolean())) return 0;
+		mstruct.clearMatrix();
+		mstruct.resizeMatrix(rows, cols, m_zero);
+		for(size_t i = 0; i < mvector.size(); i++) {
+			mstruct[i / cols][i % cols] = mvector[i];
+		}
+		return 1;
+	}
 	mstruct = vargs[0];
 	return mstruct.rankVector(vargs[1].number().getBoolean());
 }
@@ -374,6 +391,94 @@ int HadamardFunction::calculate(MathStructure &mstruct, const MathStructure &var
 			for(size_t i3 = 1; i3 < vargs.size(); i3++) mstruct[i] *= vargs[i3][i];
 		}
 	}
+	return 1;
+}
+bool matrix_to_rref(MathStructure &m, const EvaluationOptions &eo) {
+	size_t rows = m.rows();
+	size_t cols = m.columns();
+	size_t cur_row = 0;
+	for(size_t c = 0; c < cols; ) {
+		bool b = false;
+		for(size_t r = cur_row; r < rows; r++) {
+			if(m[r][c].representsNonZero()) {
+				if(r != cur_row) {
+					MathStructure *mrow = &m[r];
+					mrow->ref();
+					m.delChild(r + 1);
+					m.insertChild_nocopy(mrow, cur_row + 1);
+				}
+				for(r = 0; r < rows; r++) {
+					if(r != cur_row) {
+						if(m[r][c].representsNonZero()) {
+							MathStructure mmul(m[r][c]);
+							mmul.calculateDivide(m[cur_row][c], eo);
+							mmul.calculateNegate(eo);
+							for(size_t c2 = 0; c2 < cols; c2++) {
+								if(c2 == c) {
+									m[r][c2].clear(true);
+								} else {
+									MathStructure madd(m[cur_row][c2]);
+									madd.calculateMultiply(mmul, eo);
+									m[r][c2].calculateAdd(madd, eo);
+								}
+							}
+						} else if(!m[r][c].isZero()) {
+							return false;
+						}
+					}
+				}
+				for(size_t c2 = 0; c2 < cols; c2++) {
+					if(c2 != c) {
+						m[cur_row][c2].calculateDivide(m[cur_row][c], eo);
+					}
+				}
+				m[cur_row][c].set(1, 1, 0, true);
+				cur_row++;
+				b = true;
+				break;
+			} else if(!m[r][c].isZero()) {
+				return false;
+			}
+		}
+		if(cur_row == rows) break;
+		if(!b) c++;
+	}
+	return true;
+}
+RRefFunction::RRefFunction() : MathFunction("rref", 1) {
+	setArgumentDefinition(1, new MatrixArgument());
+}
+int RRefFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	// echelon matrix
+	MathStructure m(vargs[0]);
+	if(!matrix_to_rref(m, eo)) return false;
+	mstruct = m;
+	return 1;
+}
+MatrixRankFunction::MatrixRankFunction() : MathFunction("rk", 1) {
+	setArgumentDefinition(1, new MatrixArgument());
+}
+int MatrixRankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	MathStructure m(vargs[0]);
+	if(!matrix_to_rref(m, eo)) return false;
+	size_t rows = m.rows();
+	size_t cols = m.columns();
+	Number nr;
+	// count zero rows
+	for(size_t r = 0; r < rows; r++) {
+		bool b = false;
+		for(size_t c = 0; c < cols; c++) {
+			if(m[r][c].representsNonZero()) {
+				b = true;
+				break;
+			} else if(!m[r][c].isZero()) {
+				return false;
+			}
+		}
+		if(!b) break;
+		nr++;
+	}
+	mstruct = nr;
 	return 1;
 }
 EntrywiseFunction::EntrywiseFunction() : MathFunction("entrywise", 2) {

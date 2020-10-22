@@ -1491,6 +1491,8 @@ void Calculator::addBuiltinFunctions() {
 	f_magnitude = addFunction(new MagnitudeFunction());
 	f_hadamard = addFunction(new HadamardFunction());
 	f_entrywise = addFunction(new EntrywiseFunction());
+	addFunction(new RRefFunction());
+	addFunction(new MatrixRankFunction());
 
 	f_factorial = addFunction(new FactorialFunction());
 	f_factorial2 = addFunction(new DoubleFactorialFunction());
