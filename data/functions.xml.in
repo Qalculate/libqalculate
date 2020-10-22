@@ -304,6 +304,20 @@
         <_title>Matrix 2</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="rk">
+      <_title>Matrix Rank</_title>
+      <_names>r:rk</_names>
+      <argument index="1">
+        <_title>Matrix</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="rref">
+      <_title>Reduced Row Echelon Form</_title>
+      <_names>r:rref</_names>
+      <argument index="1">
+        <_title>Matrix</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="entrywise">
       <_title>Entrywise Function</_title>
       <_names>r:entrywise</_names>
