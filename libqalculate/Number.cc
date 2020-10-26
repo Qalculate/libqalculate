@@ -431,7 +431,7 @@ void Number::set(string number, const ParseOptions &po) {
 			case BASE_E: {base.e(); break;}
 			case BASE_SQRT2: {base.set(2); base.sqrt(); break;}
 			// Unicode base uses all 1114111 Unicode characters as digits
-			case BASE_UNICODE: {base.set(1114112L); break;}
+			case BASE_UNICODE: {base.set(32); base.exp2(); break;}
 			default: {base = CALCULATOR->customInputBase();}
 		}
 		// abs_base=number of digits used by the number base
@@ -443,6 +443,7 @@ void Number::set(string number, const ParseOptions &po) {
 		size_t i_dot = number.length();
 		vector<Number> digits;
 		bool b_minus = false;
+		string error_digits;
 		if(abs_base <= 62) {
 			// whitespace is ignored
 			remove_blanks(number);
@@ -478,7 +479,8 @@ void Number::set(string number, const ParseOptions &po) {
 				if(c >= 0) {
 					if(abs_base <= c && !abs_base.isFraction()) {
 						// digit value is higher than allowed by the base: show a warning, but use anyway
-						CALCULATOR->error(false, _("Digit \'%s\' is too high for number base."), number.substr(i, 1).c_str(), NULL);
+						if(!error_digits.empty()) error_digits += ", ";
+						error_digits += number.substr(i, 1);
 					}
 					digits.push_back(c);
 				}
@@ -528,7 +530,8 @@ void Number::set(string number, const ParseOptions &po) {
 					} else if(b_esc) {
 						// digit value found, check if value is allowed by base and show a warning if not (use anyway)
 						if(abs_base.isLessThanOrEqualTo(nrd)) {
-							CALCULATOR->error(false, _("Digit \'%s\' is too high for number base."), number.substr(i_prev, i - i_prev + 1).c_str(), NULL);
+							if(!error_digits.empty()) error_digits += ", ";
+							error_digits += number.substr(i_prev, i - i_prev + 1);
 						}
 						digits.push_back(nrd);
 
@@ -558,12 +561,14 @@ void Number::set(string number, const ParseOptions &po) {
 					}
 					if(abs_base.isLessThanOrEqualTo(c)) {
 						// digit value is higher than allowed by base: show a warning, but use anyway
-						CALCULATOR->error(false, _("Digit \'%s\' is too high for number base."), number.substr(i_prev, i - i_prev + 1).c_str(), NULL);
+						if(!error_digits.empty()) error_digits += ", ";
+						error_digits += number.substr(i_prev, i - i_prev + 1);
 					}
 					digits.push_back(c);
 				}
 			}
 		}
+		if(!error_digits.empty()) CALCULATOR->error(false, _("Digits (%s) are higher than expected for number base."), error_digits.c_str(), NULL);
 		clear();
 		if(i_dot > digits.size()) i_dot = digits.size();
 		Number nr_mul;
@@ -9890,6 +9895,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(((po.base < BASE_CUSTOM && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2))) && isReal()) {
 		// non-integer bases, negative bases, and bases > 62
 		Number base;
+		bool b_uni = false;
 		switch(po.base) {
 			case BASE_GOLDEN_RATIO: {
 				// golden ratio = (sqrt(5)+1)/2
@@ -9925,7 +9931,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			case BASE_E: {base.e(); break;}
 			case BASE_SQRT2: {base.set(2); base.sqrt(); break;}
 			// Unicode base uses all 1114111 Unicode characters as digits
-			case BASE_UNICODE: {base.set(1114112L); break;}
+			case BASE_UNICODE: {base.set(32); base.exp2(); b_uni = true; break;}
 			default: {base = CALCULATOR->customOutputBase();}
 		}
 		// negative non-integer bases, complex bases, and bases where absolute value is <= 1
@@ -9953,8 +9959,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		Number abs_base(base);
 		abs_base.abs();
-		// use unicode ditis for base 1114112
-		bool b_uni = (abs_base == 1114112L);
 		// use escaped digit value for absolute base > 62
 		bool b_num = abs_base > 62;
 		// digits are case sensitive for absolute base > 36

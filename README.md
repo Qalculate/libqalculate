@@ -40,7 +40,7 @@ To calculate a single expression from the command line (non-interactive mode) en
 
 If you run `qalc` without any mathematical expression the program will start in interactive mode, where you can enter multiple expressions with history and completion, manipulate the result and change settings. Type `help` in interactive mode for more information.
 
-A man page is also available (shown using the command `man qalc`).
+A man page is also available (shown using the command `man qalc`, or online at https://qalculate.github.io/manual/qalc.html).
 
 ## Other Applications
 The main user interface for libqalculate is qalculate-gtk (https://github.com/Qalculate/qalculate-gtk).

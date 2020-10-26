@@ -711,7 +711,7 @@ LoadFunction::LoadFunction() : MathFunction("load", 1, 3) {
 	setArgumentDefinition(2, arg);
 	setDefaultValue(2, "1");
 	setArgumentDefinition(3, new TextArgument());
-	setDefaultValue(3, ",");
+	setDefaultValue(3, "\",\"");
 }
 int LoadFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	string delim = vargs[2].symbol();
@@ -728,7 +728,7 @@ ExportFunction::ExportFunction() : MathFunction("export", 2, 3) {
 	setArgumentDefinition(1, new VectorArgument());
 	setArgumentDefinition(2, new FileArgument());
 	setArgumentDefinition(3, new TextArgument());
-	setDefaultValue(3, ",");
+	setDefaultValue(3, "\",\"");
 }
 int ExportFunction::calculate(MathStructure&, const MathStructure &vargs, const EvaluationOptions&) {
 	string delim = vargs[2].symbol();

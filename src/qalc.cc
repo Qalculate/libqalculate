@@ -4461,7 +4461,7 @@ void ViewThread::run() {
 			po.base = evalops.parse_options.base;
 			po.allow_non_usable = DO_FORMAT;
 			Number nr_base;
-			if(po.base == BASE_CUSTOM && (CALCULATOR->usesIntervalArithmetic() || CALCULATOR->customInputBase().isRational()) && (CALCULATOR->customInputBase().isInteger() || !CALCULATOR->customInputBase().isNegative()) && (CALCULATOR->customInputBase() > 1 || CALCULATOR->customInputBase() < -1) && CALCULATOR->customInputBase() >= -1114112L && CALCULATOR->customInputBase() <= 1114112L) {
+			if(po.base == BASE_CUSTOM && (CALCULATOR->usesIntervalArithmetic() || CALCULATOR->customInputBase().isRational()) && (CALCULATOR->customInputBase().isInteger() || !CALCULATOR->customInputBase().isNegative()) && (CALCULATOR->customInputBase() > 1 || CALCULATOR->customInputBase() < -1)) {
 				nr_base = CALCULATOR->customOutputBase();
 				CALCULATOR->setCustomOutputBase(CALCULATOR->customInputBase());
 			} else if(po.base == BASE_CUSTOM || (po.base < BASE_CUSTOM && !CALCULATOR->usesIntervalArithmetic() && po.base != BASE_UNICODE)) {
@@ -5002,6 +5002,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	bool save_rfl = printops.restrict_fraction_length;
 	Number save_cbase;
 	bool custom_base_set = false;
+	bool had_to_expression = false;
 
 	if(do_stack) {
 	} else {
@@ -5010,6 +5011,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		if(!to_str.empty() && str.empty()) return;
 		string from_str = str;
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
+			had_to_expression = true;
 			remove_duplicate_blanks(to_str);
 			string str_left;
 			string to_str1, to_str2;
@@ -5404,7 +5406,9 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		fix_to_struct(to_struct);
 		if(!to_struct.isZero()) {
 			mstruct->multiply(to_struct);
-			to_struct.format(printops);
+			PrintOptions po = printops;
+			po.negative_exponents = false;
+			to_struct.format(po);
 			if(to_struct.isMultiplication() && to_struct.size() >= 2) {
 				if(to_struct[0].isOne()) to_struct.delChild(1, true);
 				else if(to_struct[1].isOne()) to_struct.delChild(2, true);
@@ -5415,6 +5419,40 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			bool had_printed = has_printed;
 			goto calculation_wait;
 			if(had_printed) has_printed = true;
+		}
+	}
+	
+	// Always perform conversion to optimal (SI) unit when the expression is a number multiplied by a unit and input equals output
+	if(!rpn_mode && !avoid_recalculation && !had_to_expression && ((evalops.approximation == APPROXIMATION_EXACT && evalops.auto_post_conversion != POST_CONVERSION_NONE) || evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) && parsed_mstruct && mstruct && ((parsed_mstruct->isMultiplication() && parsed_mstruct->size() == 2 && (*parsed_mstruct)[0].isNumber() && (*parsed_mstruct)[1].isUnit_exp() && parsed_mstruct->equals(*mstruct)) || (parsed_mstruct->isNegate() && (*parsed_mstruct)[0].isMultiplication() && (*parsed_mstruct)[0].size() == 2 && (*parsed_mstruct)[0][0].isNumber() && (*parsed_mstruct)[0][1].isUnit_exp() && mstruct->isMultiplication() && mstruct->size() == 2 && (*mstruct)[1] == (*parsed_mstruct)[0][1] && (*mstruct)[0].isNumber() && (*parsed_mstruct)[0][0].number() == -(*mstruct)[0].number()) || (parsed_mstruct->isUnit_exp() && parsed_mstruct->equals(*mstruct)))) {
+		Unit *u = NULL;
+		MathStructure *munit = NULL;
+		if(mstruct->isMultiplication()) munit = &(*mstruct)[1];
+		else munit = mstruct;
+		if(munit->isUnit()) u = munit->unit();
+		else u = (*munit)[0].unit();
+		if(u && u->isCurrency()) {
+			if(evalops.local_currency_conversion && CALCULATOR->getLocalCurrency() && u != CALCULATOR->getLocalCurrency()) {
+				ApproximationMode abak = evalops.approximation;
+				if(evalops.approximation == APPROXIMATION_EXACT) evalops.approximation = APPROXIMATION_TRY_EXACT;
+				mstruct->set(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));
+				evalops.approximation = abak;
+			}
+		} else if(u && u->subtype() != SUBTYPE_BASE_UNIT && !u->isSIUnit()) {
+			MathStructure mbak(*mstruct);
+			if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) {
+				if(munit->isUnit() && u->referenceName() == "oF") {
+					u = CALCULATOR->getActiveUnit("oC");
+					if(u) mstruct->set(CALCULATOR->convert(*mstruct, u, evalops, true, false));
+				} else {
+					mstruct->set(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));
+				}
+			}
+			if(evalops.approximation == APPROXIMATION_EXACT && (evalops.auto_post_conversion != POST_CONVERSION_OPTIMAL || mstruct->equals(mbak))) {
+				evalops.approximation = APPROXIMATION_TRY_EXACT;
+				if(evalops.auto_post_conversion == POST_CONVERSION_BASE) mstruct->set(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
+				else mstruct->set(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));
+				evalops.approximation = APPROXIMATION_EXACT;
+			}
 		}
 	}
 

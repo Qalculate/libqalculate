@@ -17,10 +17,13 @@
 #include "MathStructure.h"
 #include "MathStructure-support.h"
 #include "Prefix.h"
+#include "Variable.h"
 #include "BuiltinFunctions.h"
 
 using std::string;
 using std::vector;
+using std::cout;
+using std::endl;
 
 Unit::Unit(string cat_, string name_, string plural_, string singular_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, "", title_, "", is_local, is_builtin, is_active) {
 	remove_blank_ends(plural_);
@@ -949,8 +952,8 @@ string CompositeUnit::print(bool plural_, bool short_, bool use_unicode, bool (*
 			} else {
 				str += units[i]->print(false, short_, use_unicode, can_display_unicode_string_function, can_display_unicode_string_arg);
 			}
-			if(short_ && use_unicode && units[i]->firstBaseExponent() != (b ? -1 : 1) && str == SIGN_DEGREE) {
-				str.erase(str.length() - strlen(SIGN_DEGREE), strlen(SIGN_DEGREE));
+			if(short_ && use_unicode && units[i]->firstBaseExponent() != (b ? -1 : 1) && str.length() >= 2 && str[str.length() - 1] == -80 && str[str.length() - 2] == -62) {
+				str.erase(str.length() - 2, 2);
 				str += units[i]->print(plural_ && i == 0 && units[i]->firstBaseExponent() > 0, short_, false, can_display_unicode_string_function, can_display_unicode_string_arg);
 			}
 			if(b) {
@@ -1097,6 +1100,28 @@ bool fix_division(MathStructure &m, const EvaluationOptions &eo) {
 	}
 	return b_ret;
 }
+bool replace_variables(MathStructure &m) {
+	bool b_ret = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(replace_variables(m[i])) {
+			m.childUpdated(i + 1);
+			b_ret = true;
+		}
+	}
+	if(m.isVariable() && m.variable()->isKnown()) {
+		Unit *u = CALCULATOR->getActiveUnit(m.variable()->referenceName() + "_unit");
+		if(!u) {
+			if(m.variable()->referenceName() == "bohr_radius") u = CALCULATOR->getActiveUnit("bohr_unit");
+			else if(m.variable()->referenceName() == "elementary_charge") u = CALCULATOR->getActiveUnit("e_unit");
+			else if(m.variable()->referenceName() == "electron_mass") u = CALCULATOR->getActiveUnit("electron_unit");
+		}
+		if(u) {
+			m.set(u, true);
+			b_ret = true;
+		}
+	}
+	return b_ret;
+}
 void CompositeUnit::setBaseExpression(string base_expression_) {
 	clear();
 	if(base_expression_.empty()) {
@@ -1112,13 +1137,18 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	eo.do_polynomial_division = false;
 	eo.isolate_x = false;
 	ParseOptions po;
-	po.variables_enabled = false;
+	po.variables_enabled = true;
 	po.functions_enabled = false;
 	po.unknowns_enabled = true;
 	MathStructure mstruct;
 	bool had_errors = false;
 	CALCULATOR->beginTemporaryStopMessages();
 	CALCULATOR->parse(&mstruct, base_expression_, po);
+	replace_variables(mstruct);
+	if(mstruct.containsType(STRUCT_VARIABLE, true)) {
+		po.variables_enabled = false;
+		CALCULATOR->parse(&mstruct, base_expression_, po);
+	}
 	remove_times_one(mstruct);
 	fix_division(mstruct, eo);
 	bool b_eval = !is_unit_multiexp(mstruct);

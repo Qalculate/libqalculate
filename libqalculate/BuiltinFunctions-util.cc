@@ -280,41 +280,101 @@ int UncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &
 	return 0;
 }
 
-AsciiFunction::AsciiFunction() : MathFunction("code", 1) {
+AsciiFunction::AsciiFunction() : MathFunction("code", 1, 3) {
 	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new TextArgument());
+	setDefaultValue(2, "UTF-32");
+	setArgumentDefinition(3, new BooleanArgument());
+	setDefaultValue(3, "1");
 }
 int AsciiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	if(vargs[0].symbol().empty()) {
 		return false;
 	}
 	const string &str = vargs[0].symbol();
-	mstruct.clear();
-	for(size_t i = 0; i < str.length(); i++) {
-		long int c = (unsigned char) str[i];
-		if((c & 0x80) != 0) {
-			if(c<0xe0) {
-				i++;
-				if(i >= str.length()) return false;
-				c = ((c & 0x1f) << 6) | (((unsigned char) str[i]) & 0x3f);
-			} else if(c<0xf0) {
-				i++;
-				if(i + 1 >= str.length()) return false;
-				c = (((c & 0xf) << 12) | ((((unsigned char) str[i]) & 0x3f) << 6)|(((unsigned char) str[i + 1]) & 0x3f));
-				i++;
+	int i_encoding = -1;
+	if(equalsIgnoreCase(vargs[1].symbol(), "UTF-32") || equalsIgnoreCase(vargs[1].symbol(), "UTF32") || equalsIgnoreCase(vargs[1].symbol(), "UTF−32") || vargs[1].symbol() == "2") i_encoding = 2;
+	else if(equalsIgnoreCase(vargs[1].symbol(), "UTF-16") || equalsIgnoreCase(vargs[1].symbol(), "UTF16") || equalsIgnoreCase(vargs[1].symbol(), "UTF−16") || vargs[1].symbol() == "1") i_encoding = 1;
+	else if(equalsIgnoreCase(vargs[1].symbol(), "UTF-8") || equalsIgnoreCase(vargs[1].symbol(), "UTF8") || equalsIgnoreCase(vargs[1].symbol(), "UTF−8") || equalsIgnoreCase(vargs[1].symbol(), "ascii") || vargs[1].symbol() == "0") i_encoding = 0;
+	switch(i_encoding) {
+		case 0: {
+			if(vargs[2].number().getBoolean() && str.length() > 1) {
+				mstruct.clearVector();
+				mstruct.resizeVector(str.length(), m_zero);
+				for(size_t i = 0; i < str.length(); i++) {
+					mstruct[i] = (long int) ((unsigned char) str[i]);
+				}
 			} else {
-				i++;
-				if(i + 2 >= str.length()) return false;
-				c = ((c & 7) << 18) | ((((unsigned char) str[i]) & 0x3f) << 12) | ((((unsigned char) str[i + 1]) & 0x3f) << 6) | (((unsigned char) str[i + 2]) & 0x3f);
-				i += 2;
+				Number nr;
+				for(size_t i = 0; i < str.length(); i++) {
+					if(i > 0) nr *= 0x100;
+					nr += (long int) ((unsigned char) str[i]);
+				}
+				mstruct = nr;
 			}
+			break;
 		}
-		if(mstruct.isZero()) {
-			mstruct.set(c, 1L, 0L);
-		} else if(mstruct.isVector()) {
-			mstruct.addChild(MathStructure(c, 1L, 0L));
-		} else {
-			mstruct.transform(STRUCT_VECTOR, MathStructure(c, 1L, 0L));
+		case 1: {}
+		case 2: {
+			mstruct.clear();
+			for(size_t i = 0; i < str.length(); i++) {
+				long int c = (unsigned char) str[i];
+				if((c & 0x80) != 0) {
+					if(c<0xe0) {
+						i++;
+						if(i >= str.length()) return false;
+						c = ((c & 0x1f) << 6) | (((unsigned char) str[i]) & 0x3f);
+					} else if(c<0xf0) {
+						i++;
+						if(i + 1 >= str.length()) return false;
+						c = (((c & 0xf) << 12) | ((((unsigned char) str[i]) & 0x3f) << 6)|(((unsigned char) str[i + 1]) & 0x3f));
+						i++;
+					} else {
+						i++;
+						if(i + 2 >= str.length()) return false;
+						c = ((c & 7) << 18) | ((((unsigned char) str[i]) & 0x3f) << 12) | ((((unsigned char) str[i + 1]) & 0x3f) << 6) | (((unsigned char) str[i + 2]) & 0x3f);
+						i += 2;
+					}
+				}
+				long int c_low = -1;
+				if(i_encoding == 1) {
+					if(c >= 0x10000L) {
+						c -= 0x10000L;
+						c_low = c % 0x400;
+						c_low += 0xDC00;
+						c /= 0x400;
+						c += 0xD800;
+					}
+				}
+				if(vargs[2].number().getBoolean()) {
+					if(mstruct.isZero() && c_low < 0) {
+						mstruct.set(c, 1L, 0L);
+					} else if(mstruct.isVector()) {
+						mstruct.addChild(MathStructure(c, 1L, 0L));
+					} else {
+						mstruct.transform(STRUCT_VECTOR, MathStructure(c, 1L, 0L));
+					}
+					if(c_low >= 0) mstruct.addChild(MathStructure(c_low, 1L, 0L));
+				} else if(i_encoding == 1) {
+					if(i > 0) mstruct.number() *= 0x10000L;
+					if(c_low < 0) {
+						mstruct.number() += c;
+					} else {
+						mstruct.number() += c;
+						mstruct.number() *= 0x10000L;
+						mstruct.number() += c_low;
+					}
+				} else {
+					if(i > 0) {
+						mstruct.number() *= 0x10000L;
+						mstruct.number() *= 0x10000L;
+					}
+					mstruct.number() += c;
+				}
+			}
+			break;
 		}
+		default: {return false;}
 	}
 	return 1;
 }

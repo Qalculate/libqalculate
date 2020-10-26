@@ -1,3 +1,23 @@
+2020-10-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix quoted degree symbol in function argument (e.g. code("°"))
+
+2020-10-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support for different character encodings in code() function
+	* Fix Unicode number base (multiply with 2^32 for each position)
+	* Fix default separator in load() and export()
+	* Always perform conversion to optimal (SI) unit when the expression is a number multiplied by a unit and input equals output
+
+2020-10-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add matrix rank (rk) and reduced row echelon form (rref) functions
+	* Add support for d/dx notation for derivatives, e.g. d/dx sin(x) = diff(sin(x))
+
+2020-10-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Replace variables with corresponding units (e.g. c with c_unit) in unit expressions
+
 2020-10-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix date/time output includes (wrong) decimals (zeroes) in some cases (e.g. with nextlunarphase())
