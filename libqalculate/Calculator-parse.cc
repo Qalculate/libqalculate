@@ -645,17 +645,16 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	const string *name = NULL;
 	string stmp, stmp2;
 
-	bool b_prime_quote = true;
-
 	// search for degree sign in epxressions (affects interpretation of ' and ")
 	size_t i_degree = str.find(SIGN_DEGREE);
-	if(i_degree != string::npos && i_degree < str.length() - strlen(SIGN_DEGREE) && is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBER_ELEMENTS, str[i_degree + strlen(SIGN_DEGREE)])) i_degree = string::npos;
+	if(i_degree != string::npos && i_degree + strlen(SIGN_DEGREE) < str.length() && is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBER_ELEMENTS, str[i_degree + strlen(SIGN_DEGREE)])) i_degree = string::npos;
 
 	if(base != -1 && base <= BASE_HEXADECIMAL) {
 		// replace single ' and " with prime and double prime (for ft/in or minutes/seconds of arc)
+		bool b_prime_quote = true;
+		size_t i_quote = str.find('\'', 0);
+		size_t i_dquote = str.find('\"', 0);
 		if(i_degree == string::npos) {
-			size_t i_quote = str.find('\'', 0);
-			size_t i_dquote = str.find('\"', 0);
 			if(i_quote == 0 || i_dquote == 0) {
 				b_prime_quote = false;
 			} else if((i_quote != string::npos && i_quote < str.length() - 1 && str.find('\'', i_quote + 1) != string::npos) || (i_quote != string::npos && i_dquote == i_quote + 1) || (i_dquote != string::npos && i_dquote < str.length() - 1 && str.find('\"', i_dquote + 1) != string::npos)) {
@@ -680,6 +679,24 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						}
 					}
 					i_dquote = str.find('\"', i_dquote + 2);
+				}
+			}
+		} else {
+			for(size_t i = 0; i < 2 && b_prime_quote; i++) {
+				if(i == 1) i_quote = i_dquote;
+				while(i_quote != string::npos) {
+					if(i_quote > 0 && (str[i_quote - 1] == LEFT_PARENTHESIS_CH || str[i_quote - 1] == COMMA_CH || is_in(SPACES, str[i_quote - 1]))) {
+						size_t i_bspace = 0;
+						if(str[i_quote - 1] == LEFT_PARENTHESIS_CH || str[i_quote - 1] == COMMA_CH || ((i_bspace = str.find_last_not_of(SPACES, i_quote - 1)) != string::npos && is_in(LEFT_PARENTHESIS COMMA, str[i_bspace]))) {
+							i_quote = str.find(i == 0 ? '\'' : '\"', i_quote + 1);
+							if(i_quote != string::npos) b_prime_quote = false;
+							break;
+						} else {
+							i_quote = str.find(i == 0 ? '\'' : '\"', i_quote + 1);
+						}
+					} else {
+						i_quote = str.find(i == 0 ? '\'' : '\"', i_quote + 1);
+					}
 				}
 			}
 		}
@@ -1230,7 +1247,6 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						while(nr_of_p > 0) {stmp2 += ')'; nr_of_p--;}
 						stmp2 += COMMA_CH;
 						stmp2 += str[i_div + d_len + 1];
-						cout << stmp2 << endl;
 						stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 						stmp += i2s(parseAddId(f_diff, stmp2, po));
 						stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;

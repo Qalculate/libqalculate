@@ -733,10 +733,12 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	Number base_save;
 	bool custom_base_set = false;
 	int save_bin = priv->use_binary_prefixes;
+	bool had_to_expression = false;
 	if(separateToExpression(from_str, to_str, evalops, true)) {
 		remove_duplicate_blanks(to_str);
 		string str_left;
 		string to_str1, to_str2;
+		had_to_expression = true;
 		while(true) {
 			CALCULATOR->separateToExpression(to_str, str_left, evalops, true);
 			remove_blank_ends(to_str);
@@ -912,7 +914,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 
 	// perform calculation
 	if(str_conv.empty() || hasToExpression(str_conv, false, evalops)) {
-		mstruct = calculate(str, evalops, parsed_expression ? &parsed_struct : NULL);
+		mstruct = calculate(str, evalops, &parsed_struct);
 	} else {
 		// handle case where conversion to units requested, but original expression and result does not contains any unit
 		MathStructure to_struct;
@@ -933,6 +935,37 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			parsed_struct.multiply(to_struct, true);
 			// recalculate
 			if(!to_struct.isZero()) mstruct = calculate(mstruct, evalops, str_conv);
+		}
+	}
+
+	// Always perform conversion to optimal (SI) unit when the expression is a number multiplied by a unit and input equals output
+	if(!had_to_expression && ((evalops.approximation == APPROXIMATION_EXACT && evalops.auto_post_conversion != POST_CONVERSION_NONE) || evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) && ((parsed_struct.isMultiplication() && parsed_struct.size() == 2 && parsed_struct[0].isNumber() && parsed_struct[1].isUnit_exp() && parsed_struct.equals(mstruct)) || (parsed_struct.isNegate() && parsed_struct[0].isMultiplication() && parsed_struct[0].size() == 2 && parsed_struct[0][0].isNumber() && parsed_struct[0][1].isUnit_exp() && mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[1] == parsed_struct[0][1] && mstruct[0].isNumber() && parsed_struct[0][0].number() == -mstruct[0].number()) || (parsed_struct.isUnit_exp() && parsed_struct.equals(mstruct)))) {
+		Unit *u = NULL;
+		MathStructure *munit = NULL;
+		if(mstruct.isMultiplication()) munit = &mstruct[1];
+		else munit = &mstruct;
+		if(munit->isUnit()) u = munit->unit();
+		else u = (*munit)[0].unit();
+		if(u && u->isCurrency()) {
+			if(evalops.local_currency_conversion && getLocalCurrency() && u != getLocalCurrency()) {
+				if(evalops.approximation == APPROXIMATION_EXACT) evalops.approximation = APPROXIMATION_TRY_EXACT;
+				mstruct.set(convertToOptimalUnit(mstruct, evalops, true));
+			}
+		} else if(u && u->subtype() != SUBTYPE_BASE_UNIT && !u->isSIUnit()) {
+			MathStructure mbak(mstruct);
+			if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) {
+				if(munit->isUnit() && u->referenceName() == "oF") {
+					u = getActiveUnit("oC");
+					if(u) mstruct.set(convert(mstruct, u, evalops, true, false));
+				} else {
+					mstruct.set(convertToOptimalUnit(mstruct, evalops, true));
+				}
+			}
+			if(evalops.approximation == APPROXIMATION_EXACT && (evalops.auto_post_conversion != POST_CONVERSION_OPTIMAL || mstruct.equals(mbak))) {
+				evalops.approximation = APPROXIMATION_TRY_EXACT;
+				if(evalops.auto_post_conversion == POST_CONVERSION_BASE) mstruct.set(convertToBaseUnits(mstruct, evalops));
+				else mstruct.set(convertToOptimalUnit(mstruct, evalops, true));
+			}
 		}
 	}
 
@@ -1052,7 +1085,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		po_parsed.hexadecimal_twos_complement = printops.hexadecimal_twos_complement;
 		po_parsed.base = evalops.parse_options.base;
 		Number nr_base;
-		if(po_parsed.base == BASE_CUSTOM && (usesIntervalArithmetic() || customInputBase().isRational()) && (customInputBase().isInteger() || !customInputBase().isNegative()) && (customInputBase() > 1 || customInputBase() < -1) && customInputBase() >= -1114112L && customInputBase() <= 1114112L) {
+		if(po_parsed.base == BASE_CUSTOM && (usesIntervalArithmetic() || customInputBase().isRational()) && (customInputBase().isInteger() || !customInputBase().isNegative()) && (customInputBase() > 1 || customInputBase() < -1)) {
 			nr_base = customOutputBase();
 			setCustomOutputBase(customInputBase());
 		} else if(po_parsed.base == BASE_CUSTOM || (po_parsed.base < BASE_CUSTOM && !usesIntervalArithmetic() && po_parsed.base != BASE_UNICODE)) {

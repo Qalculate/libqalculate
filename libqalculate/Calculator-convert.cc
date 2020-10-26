@@ -1235,7 +1235,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 			}
 		}
 		current_stage = MESSAGE_STAGE_CONVERSION;
-		if(to_struct) to_struct->set(cu.generateMathStructure());
+		if(to_struct) to_struct->set(cu.generateMathStructure(true));
 		if(cu.countUnits() > 0) {
 			mstruct.set(convert(mstruct_to_convert, &cu, eo2, false, false));
 			b = true;

@@ -1,8 +1,8 @@
 diff --git a/libqalculate/Calculator-definitions.cc b/libqalculate/Calculator-definitions.cc
-index 2e2a979..0fb2a18 100644
+index d53272a..2ece786 100644
 --- a/libqalculate/Calculator-definitions.cc
 +++ b/libqalculate/Calculator-definitions.cc
-@@ -700,12 +700,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
+@@ -736,12 +736,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
  	if(clocale) locale = clocale;
  #endif
  
@@ -17,17 +17,17 @@ index 2e2a979..0fb2a18 100644
  	int fulfilled_translation = 0;
  	string localebase;
 diff --git a/libqalculate/Makefile.am b/libqalculate/Makefile.am
-index f7865ec..609d4f5 100644
+index 3729a26..6d45f69 100644
 --- a/libqalculate/Makefile.am
 +++ b/libqalculate/Makefile.am
-@@ -63,4 +63,5 @@ libqalculate_la_LIBADD = \
+@@ -56,4 +56,5 @@ libqalculate_la_LIBADD = \
  AM_CPPFLAGS = \
  	-I$(top_srcdir) \
  	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 +	-std=c++11 \
- 	@LIBCURL_CFLAGS@  @LIBXML_CFLAGS@  @ICU_CFLAGS@ @GIO_CFLAGS@
+ 	@LIBCURL_CFLAGS@  @LIBXML_CFLAGS@  @ICU_CFLAGS@
 diff --git a/src/Makefile.am b/src/Makefile.am
-index f65d2b2..32e7cce 100644
+index 51e9cae..15b4b79 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -6,6 +6,7 @@ AM_CPPFLAGS = \
@@ -35,6 +35,6 @@ index f65d2b2..32e7cce 100644
  	-I$(top_srcdir) \
  	-I$(top_srcdir)/libqalculate \
 +	-std=c++11 \
- 	@LIBCURL_CFLAGS@ @LIBXML_CFLAGS@ @ICU_CFLAGS@ @GIO_CFLAGS@
+ 	@LIBCURL_CFLAGS@ @LIBXML_CFLAGS@ @ICU_CFLAGS@
  
  bin_PROGRAMS = @QALCULATE_TEXT@

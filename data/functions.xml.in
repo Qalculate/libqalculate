@@ -2361,8 +2361,15 @@
     <builtin_function name="code">
       <_title>Unicode Value</_title>
       <_names>r:code</_names>
+      <_description>Encodes a Unicode character or text string using the selected format. Supported encodings are UTF-8 (0), UTF-16 (1), and UTF-32 (2). If the third argument is true, each separate code unit (8, 16, or 32 bits depending on encoding) is placed in a vector.</_description>
       <argument index="1">
         <_title>Character</_title>
+      </argument>
+      <argument index="2">
+        <_title>Encoding</_title>
+      </argument>
+      <argument index="3">
+        <_title>Use vector</_title>
       </argument>
     </builtin_function>
     <builtin_function name="char">
