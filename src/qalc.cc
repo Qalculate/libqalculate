@@ -49,7 +49,7 @@ protected:
 	virtual void run();
 };
 
-MathStructure *mstruct, *parsed_mstruct;
+MathStructure *mstruct, *parsed_mstruct, displayed_mstruct;
 KnownVariable *vans[5], *v_memory;
 string result_text, parsed_text;
 bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit;
@@ -1291,6 +1291,50 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 	return l >= minlength;
 }
 
+int key_exact(int, int) {
+	if(evalops.approximation == APPROXIMATION_EXACT) {
+		if(automatic_fraction && printops.number_fraction_format == FRACTION_DECIMAL_EXACT) {
+			printops.number_fraction_format = FRACTION_DECIMAL;
+			automatic_fraction = false;
+		}
+		evalops.approximation = APPROXIMATION_TRY_EXACT;
+	} else {
+		if(printops.number_fraction_format == FRACTION_DECIMAL) {
+			automatic_fraction = true;
+			printops.number_fraction_format = FRACTION_DECIMAL_EXACT;
+		}
+		evalops.approximation = APPROXIMATION_EXACT;
+	}
+	if(expression_executed && interactive_mode) {
+		puts("");
+		expression_calculation_updated();
+		fputs("> ", stdout);
+	} else {
+		expression_calculation_updated();
+	}
+	return 1;
+}
+
+int key_fraction(int, int) {
+	if(printops.number_fraction_format == FRACTION_FRACTIONAL) {
+		printops.number_fraction_format = FRACTION_DECIMAL;
+	} else if(printops.number_fraction_format == FRACTION_COMBINED) {
+		printops.number_fraction_format = FRACTION_FRACTIONAL;
+	} else {
+		printops.number_fraction_format = FRACTION_COMBINED;
+	}
+	printops.restrict_fraction_length = (printops.number_fraction_format == FRACTION_FRACTIONAL || printops.number_fraction_format == FRACTION_COMBINED);
+	automatic_fraction = false;
+	if(expression_executed && interactive_mode) {
+		puts("");
+		result_format_updated();
+		fputs("> ", stdout);
+	} else {
+		result_format_updated();
+	}
+	return 1;
+}
+
 bool title_matches(ExpressionItem *item, const string &str, size_t minlength = 0) {
 	const string &title = item->title(true);
 	size_t i = 0;
@@ -2154,6 +2198,8 @@ int main(int argc, char *argv[]) {
 	rl_basic_word_break_characters = NOT_IN_NAMES NUMBERS;
 	rl_completion_entry_function = qalc_completion;
 	rl_bind_key('\t', rlcom_tab);
+	rl_bind_keyseq("\\C-e", key_exact);
+	rl_bind_keyseq("\\C-f", key_fraction);
 #endif
 
 	string scom;
@@ -4523,6 +4569,7 @@ void ViewThread::run() {
 		result_text = m.print(printops, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
 		if(complex_angle_form) replace_result_cis(result_text);
 		if(printops.use_unicode_signs) gsub(" ", " ", result_text);
+		displayed_mstruct = m;
 
 		if(result_text == _("aborted")) {
 			*printops.is_approximate = false;
@@ -4546,6 +4593,34 @@ static bool wait_for_key_press(int timeout_ms) {
 	FD_SET(STDIN_FILENO, &in_set);
 	return select(FD_SETSIZE, &in_set, NULL, NULL, &timeout) > 0;
 #endif
+}
+
+void add_equals(string &strout, bool b_exact, size_t *i_result_u = NULL, size_t *i_result = NULL) {
+	if(b_exact) {
+		strout += " = ";
+		if(i_result_u) *i_result_u = unicode_length_check(strout.c_str());
+		if(i_result) *i_result = strout.length();
+	} else {
+		if(printops.use_unicode_signs) {
+			strout += " " SIGN_ALMOST_EQUAL " ";
+			if(i_result_u) *i_result_u = unicode_length_check(strout.c_str());
+			if(i_result) *i_result = strout.length();
+		} else {
+			strout += " = ";
+			if(i_result_u) *i_result_u = unicode_length_check(strout.c_str());
+			if(i_result) *i_result = strout.length();
+			strout += _("approx.");
+			strout += " ";
+		}
+	}
+}
+
+bool contains_decimal(const MathStructure &m) {
+	if(m.isNumber()) return !m.number().isInteger();
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_decimal(m[i])) return true;
+	}
+	return false;
 }
 
 void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_index, bool register_moved, bool noprint) {
@@ -4701,9 +4776,9 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	if(stack_index != 0) {
 		RPNRegisterChanged(result_text, stack_index);
 	} else {
-		string strout;
+		string strout, sextra;
 		if(goto_input) strout += "  ";
-		size_t i_result = 0, i_result_u = 0;
+		size_t i_result = 0, i_result_u = 0, i_result2 = 0, i_result_u2 = 0;
 		if(!result_only) {
 			if(mstruct->isComparison()) strout += LEFT_PARENTHESIS;
 			if(update_parse) {
@@ -4712,22 +4787,72 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				strout += prev_result_text;
 			}
 			if(mstruct->isComparison()) strout += RIGHT_PARENTHESIS;
-			if(!(*printops.is_approximate) && !mstruct->isApproximate()) {
-				strout += " = ";
-				i_result_u = unicode_length_check(strout.c_str());
-				i_result = strout.length();
-			} else {
-				if(printops.use_unicode_signs) {
-					strout += " " SIGN_ALMOST_EQUAL " ";
-					i_result_u = unicode_length_check(strout.c_str());
-					i_result = strout.length();
-				} else {
-					strout += " = ";
-					i_result_u = unicode_length_check(strout.c_str());
-					i_result = strout.length();
-					strout += _("approx.");
-					strout += " ";
+			if(goto_input && printops.base == 10 && !mstruct->isApproximate() && (printops.number_fraction_format == FRACTION_DECIMAL_EXACT || printops.number_fraction_format == FRACTION_DECIMAL) && !mstruct->containsType(STRUCT_UNIT, false, false, false) && contains_decimal(displayed_mstruct)) {
+				
+				bool do_frac = false, do_mixed = false;
+				if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber() && (*mstruct)[0].number().isRational() && !(*mstruct)[0].number().isInteger() && (*mstruct)[0].number().denominatorIsLessThan(100) && (*mstruct)[0].number().numeratorIsLessThan(100) && (*mstruct)[0].number().numeratorIsGreaterThan(-100)) {
+					do_frac = true;
+				} else if(mstruct->isNumber() && mstruct->number().isRational() && !mstruct->number().isInteger() && mstruct->number().denominatorIsLessThan(100)) {
+					do_frac = mstruct->number().numeratorIsLessThan(100) && mstruct->number().numeratorIsGreaterThan(-100) && (!parsed_mstruct->isDivision() || (*parsed_mstruct)[1] != mstruct->number().denominator() || ((*parsed_mstruct)[0] != mstruct->number().numerator() && (!(*parsed_mstruct)[0].isNegate() || (*parsed_mstruct)[0][0] != -mstruct->number().numerator()))) && (!parsed_mstruct->isNegate() || !(*parsed_mstruct)[0].isDivision() || (*parsed_mstruct)[0][1] != mstruct->number().denominator() || (*parsed_mstruct)[0][0] != -mstruct->number().numerator());
+					do_mixed = !mstruct->number().isNegative() && !mstruct->number().isFraction();
+				} else if(mstruct->isAddition()) {
+					for(size_t i = 0; i < mstruct->size(); i++) {
+						if((*mstruct)[i].isMultiplication() && (*mstruct)[i].size() > 0 && (*mstruct)[i][0].isNumber()) {
+							if(!(*mstruct)[i][0].number().isRational() || (!(*mstruct)[i][0].number().isInteger() && (!(*mstruct)[i][0].number().denominatorIsLessThan(100) || !(*mstruct)[i][0].number().numeratorIsLessThan(100) || !(*mstruct)[i][0].number().numeratorIsGreaterThan(-100)))) {
+								do_frac = false;
+								break;
+							} else if(!(*mstruct)[i][0].number().isInteger()) {
+								do_frac = true;
+							}
+						} else if((*mstruct)[i].isNumber()) {
+							if(!(*mstruct)[i].number().isRational() || (!(*mstruct)[i].number().isInteger() && (!(*mstruct)[i].number().denominatorIsLessThan(100) || !(*mstruct)[i].number().numeratorIsLessThan(100) || !(*mstruct)[i].number().numeratorIsGreaterThan(-100)))) {
+								do_frac = false;
+								break;
+							} else if(!(*mstruct)[i].number().isInteger()) {
+								do_frac = true;
+							}
+						}
+					}
 				}
+				PrintOptions po = printops;
+				bool b_approx = false;
+				po.is_approximate = &b_approx;
+				if(do_frac) {
+					po.number_fraction_format = FRACTION_FRACTIONAL;
+					MathStructure m(*mstruct);
+					m.format(po);
+					if(!b_approx) {
+						if(sextra.empty()) add_equals(strout, true, &i_result_u, &i_result);
+						else add_equals(sextra, true);
+						sextra += m.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+						if(printops.use_unicode_signs) gsub(" ", " ", sextra);
+					}
+				}
+				if(do_mixed) {
+					b_approx = false;
+					po.number_fraction_format = FRACTION_COMBINED;
+					MathStructure m(*mstruct);
+					m.format(po);
+					if(m != *parsed_mstruct && !b_approx) {
+						if(sextra.empty()) add_equals(strout, true, &i_result_u, &i_result);
+						else add_equals(sextra, true);
+						sextra += m.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+						if(printops.use_unicode_signs) gsub(" ", " ", sextra);
+					}
+				}
+			}
+			if(sextra.empty()) {
+				add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u, &i_result);
+				i_result_u2 = i_result_u;
+				i_result2 = i_result;
+			} else {
+				strout += sextra;
+				if(i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols) {
+					strout[i_result - 1] = '\n';
+					strout.insert(i_result, "  ");
+					i_result_u = 2;
+				}
+				add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u2, &i_result2);
 			}
 		}
 		if(!result_only && mstruct->isComparison()) {
@@ -4738,10 +4863,10 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			strout += result_text.c_str();
 		}
 		if(goto_input) {
-			if(!result_only && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols) {
-				strout[i_result - 1] = '\n';
-				strout.insert(i_result, "  ");
-				i_result_u = 2;
+			if(!result_only && i_result_u2 > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols) {
+				strout[i_result2 - 1] = '\n';
+				strout.insert(i_result2, "  ");
+				if(i_result_u2 == i_result_u) i_result_u = 2;
 			}
 			addLineBreaks(strout, cols, true, result_only ? 2 : i_result_u, i_result);
 			strout += "\n";
