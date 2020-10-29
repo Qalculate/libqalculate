@@ -49,9 +49,10 @@ protected:
 	virtual void run();
 };
 
-MathStructure *mstruct, *parsed_mstruct, displayed_mstruct;
+MathStructure *mstruct, *parsed_mstruct;
 KnownVariable *vans[5], *v_memory;
 string result_text, parsed_text;
+vector<string> alt_results;
 bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit;
 int auto_update_exchange_rates;
 PrintOptions printops, saved_printops;
@@ -83,8 +84,7 @@ bool programmers_mode = false;
 int b_decimal_comma = -1;
 long int i_maxtime = 0;
 struct timeval t_end;
-
-bool automatic_fraction = false;
+bool automatic_fraction = true, saved_automatic_fraction = true;
 
 bool ignore_locale = false;
 
@@ -950,10 +950,6 @@ void set_option(string str) {
 		if(v < 0 || v > 2) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
-			if(automatic_fraction && printops.number_fraction_format == FRACTION_DECIMAL_EXACT && v != APPROXIMATION_EXACT) {
-				printops.number_fraction_format = FRACTION_DECIMAL;
-				automatic_fraction = false;
-			}
 			evalops.approximation = (ApproximationMode) v;
 			expression_calculation_updated();
 		}
@@ -1018,17 +1014,9 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value"));
 		} else if(v > 0) {
 			evalops.approximation = APPROXIMATION_EXACT;
-			if(printops.number_fraction_format == FRACTION_DECIMAL) {
-				automatic_fraction = true;
-				printops.number_fraction_format = FRACTION_DECIMAL_EXACT;
-			}
 			expression_calculation_updated();
 		} else {
 			evalops.approximation = APPROXIMATION_TRY_EXACT;
-			if(automatic_fraction && printops.number_fraction_format == FRACTION_DECIMAL_EXACT) {
-				printops.number_fraction_format = FRACTION_DECIMAL;
-				automatic_fraction = false;
-			}
 			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore locale", _("ignore locale"))) {
@@ -1154,6 +1142,7 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "fractions", _("fractions")) || svar == "fr") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = FRACTION_DECIMAL;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "auto", _("auto"))) v = -1;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact", _("exact"))) v = FRACTION_DECIMAL_EXACT;
 		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = FRACTION_FRACTIONAL;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "combined", _("combined")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = FRACTION_COMBINED;
@@ -1161,13 +1150,14 @@ void set_option(string str) {
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
-		if(v < 0 || v > FRACTION_COMBINED + 1) {
+		if(v > FRACTION_COMBINED + 1) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			printops.restrict_fraction_length = (v == FRACTION_FRACTIONAL || v == FRACTION_COMBINED);
-			if(v == 4) v = FRACTION_FRACTIONAL;
+			automatic_fraction = (v < 0);
+			if(v == FRACTION_COMBINED + 1) v = FRACTION_FRACTIONAL;
+			else if(v < 0) v = FRACTION_DECIMAL;
 			printops.number_fraction_format = (NumberFractionFormat) v;
-			automatic_fraction = false;
 			result_format_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "complex form", _("complex form")) || svar == "cplxform") {
@@ -1293,16 +1283,8 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 
 int key_exact(int, int) {
 	if(evalops.approximation == APPROXIMATION_EXACT) {
-		if(automatic_fraction && printops.number_fraction_format == FRACTION_DECIMAL_EXACT) {
-			printops.number_fraction_format = FRACTION_DECIMAL;
-			automatic_fraction = false;
-		}
 		evalops.approximation = APPROXIMATION_TRY_EXACT;
 	} else {
-		if(printops.number_fraction_format == FRACTION_DECIMAL) {
-			automatic_fraction = true;
-			printops.number_fraction_format = FRACTION_DECIMAL_EXACT;
-		}
 		evalops.approximation = APPROXIMATION_EXACT;
 	}
 	if(expression_executed && interactive_mode) {
@@ -2759,20 +2741,12 @@ int main(int argc, char *argv[]) {
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exact", _("exact"))) {
 			if(evalops.approximation != APPROXIMATION_EXACT) {
-				if(printops.number_fraction_format == FRACTION_DECIMAL) {
-					automatic_fraction = true;
-					printops.number_fraction_format = FRACTION_DECIMAL_EXACT;
-				}
 				evalops.approximation = APPROXIMATION_EXACT;
 				expression_calculation_updated();
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "approximate", _("approximate")) || str == "approx") {
 			if(evalops.approximation != APPROXIMATION_TRY_EXACT) {
-				if(automatic_fraction && printops.number_fraction_format == FRACTION_DECIMAL_EXACT) {
-					printops.number_fraction_format = FRACTION_DECIMAL;
-					automatic_fraction = false;
-				}
 				evalops.approximation = APPROXIMATION_TRY_EXACT;
 				expression_calculation_updated();
 			}
@@ -3302,11 +3276,15 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("fractions"), "fr");
-			switch(printops.number_fraction_format) {
-				case FRACTION_DECIMAL: {str += _("off"); break;}
-				case FRACTION_DECIMAL_EXACT: {str += _("exact"); break;}
-				case FRACTION_FRACTIONAL: {if(printops.restrict_fraction_length) {str += _("on");} else {str += _("long");} break;}
-				case FRACTION_COMBINED: {str += _("mixed"); break;}
+			if(automatic_fraction) {
+				str += _("auto");
+			} else {
+				switch(printops.number_fraction_format) {
+					case FRACTION_DECIMAL: {str += _("off"); break;}
+					case FRACTION_DECIMAL_EXACT: {str += _("exact"); break;}
+					case FRACTION_FRACTIONAL: {if(printops.restrict_fraction_length) {str += _("on");} else {str += _("long");} break;}
+					case FRACTION_COMBINED: {str += _("mixed"); break;}
+				}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("hexadecimal two's"), "hextwos"); str += b2oo(printops.hexadecimal_twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -3929,6 +3907,7 @@ int main(int argc, char *argv[]) {
 #define STR_AND_TABS_2b(s, sh, d, v, s0, s1) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(1"; if(v == 1) {str += "*";} str += " = "; str += s0; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s1; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_3(s, sh, d, v, s0, s1, s2, s3) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_4(s, sh, d, v, s0, s1, s2, s3, s4) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+#define STR_AND_TABS_5M(s, sh, d, v, sm, s0, s1, s2, s3, s4) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(-1"; if(v == -1) {str += "*";} str += " = "; str += sm; str += ", 0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_7(s, sh, d, v, s0, s1, s2, s3, s4, s5, s6) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ", 5"; if(v == 5) {str += "*";} str += " = "; str += s5; str += ", 6"; if(v == 6) {str += "*";} str += " = "; str += s6; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("Sets the value of an option."));
@@ -4044,8 +4023,9 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_2(_("digit grouping"), "group", "", printops.digit_grouping, _("off"), _("standard"), _("locale"));
 				int nff = printops.number_fraction_format;
-				if(!printops.restrict_fraction_length && printops.number_fraction_format == FRACTION_FRACTIONAL) nff = 4;
-				STR_AND_TABS_4(_("fractions"), "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denonimator."), nff, _("off"), _("exact"), _("on"), _("mixed"), _("long"));
+				if(automatic_fraction) nff = -1;
+				else if(!printops.restrict_fraction_length && printops.number_fraction_format == FRACTION_FRACTIONAL) nff = 4;
+				STR_AND_TABS_5M(_("fractions"), "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denonimator."), nff, _("auto"), _("off"), _("exact"), _("on"), _("mixed"), _("long"));
 				STR_AND_TABS_BOOL(_("hexadecimal two's"), "hextwos", _("Enables two's complement representation for display of negative hexadecimal numbers."), printops.twos_complement);
 				STR_AND_TABS_BOOL(_("imaginary j"), "imgj", _("Use 'j' (instead of 'i') as default symbol for the imaginary unit."), (CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0));
 				STR_AND_TABS_7(_("interval display"), "ivdisp", "", (adaptive_interval_display ? 0 : printops.interval_display + 1), _("adaptive"), _("significant"), _("interval"), _("plusminus"), _("midpoint"), _("upper"), _("lower"))
@@ -4486,17 +4466,124 @@ void replace_result_cis(string &resstr) {
 	gsub(" cis ", "∠", resstr);
 }
 
+bool contains_decimal(const MathStructure &m) {
+	if(m.isNumber()) return !m.number().isInteger();
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_decimal(m[i])) return true;
+	}
+	return false;
+}
+bool test_frac(const MathStructure &m, bool top_m = true, int limit = 1000) {
+	if(m.isNumber()) return m.number().isRational() && (limit < 0 || m.number().isInteger() || (m.number().denominatorIsLessThan(limit) && (top_m || (m.number().numeratorIsLessThan(limit) && m.number().numeratorIsGreaterThan(-limit)))));
+	for(size_t i = 0; i < m.size(); i++) {
+		if(!test_frac(m[i], top_m && m.isNegate(), limit)) return false;
+	}
+	return true;
+}
+
+void print_m(PrintOptions &po, string &str, MathStructure &m, MathStructure *mresult, MathStructure *mparse, bool only_cmp = false) {
+	if(!mparse) mparse = parsed_mstruct;
+	if(automatic_fraction && m.isComparison() && m.comparisonType() != COMPARISON_EQUALS && po.number_fraction_format == FRACTION_DECIMAL) {
+		po.number_fraction_format = FRACTION_DECIMAL_EXACT;
+		m.format(po);
+		str = m.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+		po.number_fraction_format = FRACTION_DECIMAL;
+	} else {
+		str = m.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+	}
+	if(complex_angle_form) replace_result_cis(str);
+	if(po.use_unicode_signs) gsub(" ", " ", str);
+	if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS && *po.is_approximate && po.use_unicode_signs) {
+		size_t ipos = str.find(" = ");
+		if(ipos != string::npos) {
+			str.replace(ipos + 1, 1, SIGN_ALMOST_EQUAL);
+			*po.is_approximate = false;
+		}
+	}
+	if(!result_only && !CALCULATOR->aborted() && automatic_fraction && (!only_cmp || (m.isComparison() && m.comparisonType() == COMPARISON_EQUALS)) && po.base == 10 && !mresult->isApproximate() && (po.number_fraction_format == FRACTION_DECIMAL_EXACT || po.number_fraction_format == FRACTION_DECIMAL) && mresult->containsType(STRUCT_UNIT, false, true, true) <= 0) {
+		bool do_frac = false, do_mixed = false;
+		MathStructure *mcmp = mresult;
+		if(contains_decimal(m)) {
+			if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS && (m[0].isSymbolic() || m[0].isVariable())) {
+				mcmp = mresult->getChild(2);
+			}
+			if(test_frac(*mcmp, !only_cmp)) {
+				do_frac = true;
+				if(mcmp == mresult && mparse) {
+					if(mcmp->isNumber() && mcmp->number().isRational()) {
+						do_frac = (!mparse->isDivision() || (*mparse)[1] != mcmp->number().denominator() || ((*mparse)[0] != mcmp->number().numerator() && (!(*mparse)[0].isNegate() || (*mparse)[0][0] != -mcmp->number().numerator()))) && (!mparse->isNegate() || !(*mparse)[0].isDivision() || (*mparse)[0][1] != mcmp->number().denominator() || (*mparse)[0][0] != -mcmp->number().numerator());
+						do_mixed = !mcmp->number().isNegative() && !mcmp->number().isFraction();
+					} else if(mresult->isFunction() && mparse->isFunction() && mresult->function() == mparse->function()) {
+						do_frac = false;
+					}
+				}
+			}
+		} else if(!only_cmp && mcmp->isNumber() && mcmp->number().isRational() && !mcmp->number().isNegative() && !mcmp->number().isFraction() && test_frac(*mcmp)) {
+			do_mixed = true;
+		}
+		bool *old_approx = po.is_approximate;
+		NumberFractionFormat old_fr = po.number_fraction_format;
+		bool b_approx = false;
+		po.is_approximate = &b_approx;
+		if(do_frac) {
+			po.number_fraction_format = FRACTION_FRACTIONAL;
+			MathStructure m2(*mcmp);
+			m2.format(po);
+			if(!b_approx) {
+				alt_results.push_back(m2.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL));
+				if(po.use_unicode_signs) gsub(" ", " ", alt_results.back());
+			}
+		}
+		if(do_mixed) {
+			b_approx = false;
+			po.number_fraction_format = FRACTION_COMBINED;
+			MathStructure m2(*mcmp);
+			m2.format(po);
+			if(m2 != *mparse && !b_approx) {
+				alt_results.push_back(m2.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL));
+				if(po.use_unicode_signs) gsub(" ", " ", alt_results.back());
+			}
+		}
+		if(m.isComparison() && !alt_results.empty()) {
+			size_t ipos = str.find(" = ");
+			if(ipos == string::npos) ipos = str.find(" " SIGN_ALMOST_EQUAL " ");
+			if(ipos != string::npos) {
+				for(size_t i = alt_results.size(); i > 0; i--) {
+					str.insert(ipos, alt_results[i - 1]);
+					str.insert(ipos, " = ");
+				}
+			}
+			alt_results.clear();
+		}
+		po.number_fraction_format = old_fr;
+		po.is_approximate = old_approx;
+	}
+}
+bool test_fr_unknowns(const MathStructure &m) {
+	if(m.isComparison()) {
+		return m[1].containsUnknowns();
+	} else if(m.isLogicalOr() || m.isLogicalAnd()) {
+		for(size_t i = 0; i < m.size(); i++) {
+			if(test_fr_unknowns(m[i])) return true;
+		}
+		return false;
+	}
+	return m.containsUnknowns();
+}
 void ViewThread::run() {
+
 	while(true) {
 
 		void *x = NULL;
 		if(!read(&x) || !x) break;
-		MathStructure m(*((MathStructure*) x));
+		MathStructure *mresult = (MathStructure*) x;
+		MathStructure m(*mresult);
 		x = NULL;
 		if(!read(&x)) break;
 		CALCULATOR->startControl();
-		if(x) {
-			PrintOptions po;
+		MathStructure *mparse = (MathStructure*) x;
+		PrintOptions po;
+		if(mparse) {
 			po.preserve_format = true;
 			po.show_ending_zeroes = false;
 			po.lower_case_e = printops.lower_case_e;
@@ -4528,20 +4615,22 @@ void ViewThread::run() {
 			po.restrict_to_parent_precision = false;
 			po.spell_out_logical_operators = printops.spell_out_logical_operators;
 			po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
-			MathStructure mp(*((MathStructure*) x));
+			MathStructure mp(*mparse);
 			read(&po.is_approximate);
 			mp.format(po);
 			parsed_text = mp.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
-			if(printops.use_unicode_signs) gsub(" ", " ", parsed_text);
+			if(po.use_unicode_signs) gsub(" ", " ", parsed_text);
 			if(po.base == BASE_CUSTOM) {
 				CALCULATOR->setCustomOutputBase(nr_base);
 			}
 		}
-		
-		printops.allow_non_usable = DO_FORMAT;
+
+		po = printops;
+
+		po.allow_non_usable = DO_FORMAT;
 
 		// convert time units to hours when using time format
-		if(printops.base == BASE_TIME) {
+		if(po.base == BASE_TIME) {
 			bool b = false;
 			if(m.isUnit() && m.unit()->baseUnit()->referenceName() == "s") {
 				b = true;
@@ -4564,19 +4653,111 @@ void ViewThread::run() {
 			}
 		}
 
+		if(automatic_fraction && test_fr_unknowns(m) && test_frac(m, false, -1)) {
+			po.number_fraction_format = FRACTION_FRACTIONAL;
+			po.restrict_fraction_length = true;
+		}
+		if(automatic_fraction && po.number_fraction_format == FRACTION_DECIMAL && (evalops.approximation == APPROXIMATION_EXACT || (m.isComparison() && m.comparisonType() != COMPARISON_EQUALS))) po.number_fraction_format = FRACTION_DECIMAL_EXACT;
+
 		m.removeDefaultAngleUnit(evalops);
-		m.format(printops);
-		result_text = m.print(printops, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
-		if(complex_angle_form) replace_result_cis(result_text);
-		if(printops.use_unicode_signs) gsub(" ", " ", result_text);
-		displayed_mstruct = m;
+		m.format(po);
+		
+		if(automatic_fraction && po.number_fraction_format == FRACTION_DECIMAL_EXACT && mresult->isNumber() && !mresult->number().isFraction() && !mresult->number().isNegative() && mparse && mparse->equals(m)) {
+			po.number_fraction_format = FRACTION_COMBINED;
+			m = *mresult;
+			m.removeDefaultAngleUnit(evalops);
+			m.format(po);
+		}
+		
+		alt_results.clear();
+		if(m.isLogicalOr()) {
+			bool b_approx = *po.is_approximate;
+			bool non_comparison = false;
+			InternalPrintStruct ips;
+			for(size_t i = 0; i < m.size(); i++) {
+				if(CALCULATOR->aborted()) {result_text = CALCULATOR->abortedMessage(); break;}
+				if(i == 0) {
+					result_text = "";
+				} else if(po.spell_out_logical_operators) {
+					result_text += " ";
+					result_text += _("or");
+					result_text += " ";
+				} else {
+					if(po.spacious) result_text += " ";
+					result_text += "||";
+					if(po.spacious) result_text += " ";
+				}
+				if(m[i].isLogicalAnd() && (po.preserve_format || m[i].size() != 2 || !m[i][0].isComparison() || !m[i][1].isComparison() || m[i][0].comparisonType() == COMPARISON_EQUALS || m[i][0].comparisonType() == COMPARISON_NOT_EQUALS || m[i][1].comparisonType() == COMPARISON_EQUALS || m[i][1].comparisonType() == COMPARISON_NOT_EQUALS || m[i][0][0] != m[i][1][0])) {
+					for(size_t i2 = 0; i2 < m[i].size(); i2++) {
+						if(CALCULATOR->aborted()) {result_text = CALCULATOR->abortedMessage(); break;}
+						if(i2 > 0) {
+							if(po.spell_out_logical_operators) {
+								result_text += " ";
+								result_text += _("and");
+								result_text += " ";
+							} else {
+								if(po.spacious) result_text += " ";
+								result_text += "&&";
+								if(po.spacious) result_text += " ";
+							}
+						}
+						bool b_wrap = m[i][i2].needsParenthesis(po, ips, m[i], i2 + 1, true, true);
+						string str;
+						print_m(po, str, m[i][i2], &m[i][i2], mparse, true);
+						if(b_wrap) result_text += "(";
+						result_text += str;
+						if(b_wrap) result_text += ")";
+						if(!m[i][i2].isComparison() || m[i][i2].comparisonType() != COMPARISON_EQUALS) non_comparison = true;
+					}
+				} else {
+					bool b_wrap = m[i].needsParenthesis(po, ips, m, i + 1, true, true);
+					string str;
+					print_m(po, str, m[i], &m[i], mparse, true);
+					if(b_wrap) result_text += "(";
+					result_text += str;
+					if(b_wrap) result_text += ")";
+					if(!m[i].isComparison() || m[i].comparisonType() != COMPARISON_EQUALS) non_comparison = true;
+				}
+			}
+			if(non_comparison) *po.is_approximate = b_approx;
+		} else if(m.isLogicalAnd() && (po.preserve_format || m.size() != 2 || !m[0].isComparison() || !m[1].isComparison() || m[0].comparisonType() == COMPARISON_EQUALS || m[0].comparisonType() == COMPARISON_NOT_EQUALS || m[1].comparisonType() == COMPARISON_EQUALS || m[1].comparisonType() == COMPARISON_NOT_EQUALS || m[0][0] != m[1][0])) {
+			bool b_approx = *po.is_approximate;
+			bool non_comparison = false;
+			InternalPrintStruct ips;
+			for(size_t i = 0; i < m.size(); i++) {
+				if(CALCULATOR->aborted()) {result_text = CALCULATOR->abortedMessage(); break;}
+				if(i == 0) {
+					result_text = "";
+				} else if(po.spell_out_logical_operators) {
+					result_text += " ";
+					result_text += _("and");
+					result_text += " ";
+				} else {
+					if(po.spacious) result_text += " ";
+					result_text += "&&";
+					if(po.spacious) result_text += " ";
+				}
+				bool b_wrap = m[i].needsParenthesis(po, ips, m, i + 1, true, true);
+				string str;
+				print_m(po, str, m[i], &m[i], mparse, true);
+				if(b_wrap) result_text += "(";
+				result_text += str;
+				if(b_wrap) result_text += ")";
+				if(!m[i].isComparison() || m[i].comparisonType() != COMPARISON_EQUALS) non_comparison = true;
+			}
+			if(non_comparison) *po.is_approximate = b_approx;
+		} else {
+			print_m(po, result_text, m, mresult, mparse);
+		}
 
 		if(result_text == _("aborted")) {
 			*printops.is_approximate = false;
 		}
 		b_busy = false;
 		CALCULATOR->stopControl();
+
 	}
+
 }
 
 static bool wait_for_key_press(int timeout_ms) {
@@ -4613,14 +4794,6 @@ void add_equals(string &strout, bool b_exact, size_t *i_result_u = NULL, size_t 
 			strout += " ";
 		}
 	}
-}
-
-bool contains_decimal(const MathStructure &m) {
-	if(m.isNumber()) return !m.number().isInteger();
-	for(size_t i = 0; i < m.size(); i++) {
-		if(contains_decimal(m[i])) return true;
-	}
-	return false;
 }
 
 void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_index, bool register_moved, bool noprint) {
@@ -4780,74 +4953,24 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		if(goto_input) strout += "  ";
 		size_t i_result = 0, i_result_u = 0, i_result2 = 0, i_result_u2 = 0;
 		if(!result_only) {
-			if(mstruct->isComparison()) strout += LEFT_PARENTHESIS;
+			if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) strout += LEFT_PARENTHESIS;
 			if(update_parse) {
 				strout += parsed_text;
 			} else {
 				strout += prev_result_text;
 			}
-			if(mstruct->isComparison()) strout += RIGHT_PARENTHESIS;
-			if(goto_input && printops.base == 10 && !mstruct->isApproximate() && (printops.number_fraction_format == FRACTION_DECIMAL_EXACT || printops.number_fraction_format == FRACTION_DECIMAL) && !mstruct->containsType(STRUCT_UNIT, false, false, false) && contains_decimal(displayed_mstruct)) {
-				
-				bool do_frac = false, do_mixed = false;
-				if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber() && (*mstruct)[0].number().isRational() && !(*mstruct)[0].number().isInteger() && (*mstruct)[0].number().denominatorIsLessThan(100) && (*mstruct)[0].number().numeratorIsLessThan(100) && (*mstruct)[0].number().numeratorIsGreaterThan(-100)) {
-					do_frac = true;
-				} else if(mstruct->isNumber() && mstruct->number().isRational() && !mstruct->number().isInteger() && mstruct->number().denominatorIsLessThan(100)) {
-					do_frac = mstruct->number().numeratorIsLessThan(100) && mstruct->number().numeratorIsGreaterThan(-100) && (!parsed_mstruct->isDivision() || (*parsed_mstruct)[1] != mstruct->number().denominator() || ((*parsed_mstruct)[0] != mstruct->number().numerator() && (!(*parsed_mstruct)[0].isNegate() || (*parsed_mstruct)[0][0] != -mstruct->number().numerator()))) && (!parsed_mstruct->isNegate() || !(*parsed_mstruct)[0].isDivision() || (*parsed_mstruct)[0][1] != mstruct->number().denominator() || (*parsed_mstruct)[0][0] != -mstruct->number().numerator());
-					do_mixed = !mstruct->number().isNegative() && !mstruct->number().isFraction();
-				} else if(mstruct->isAddition()) {
-					for(size_t i = 0; i < mstruct->size(); i++) {
-						if((*mstruct)[i].isMultiplication() && (*mstruct)[i].size() > 0 && (*mstruct)[i][0].isNumber()) {
-							if(!(*mstruct)[i][0].number().isRational() || (!(*mstruct)[i][0].number().isInteger() && (!(*mstruct)[i][0].number().denominatorIsLessThan(100) || !(*mstruct)[i][0].number().numeratorIsLessThan(100) || !(*mstruct)[i][0].number().numeratorIsGreaterThan(-100)))) {
-								do_frac = false;
-								break;
-							} else if(!(*mstruct)[i][0].number().isInteger()) {
-								do_frac = true;
-							}
-						} else if((*mstruct)[i].isNumber()) {
-							if(!(*mstruct)[i].number().isRational() || (!(*mstruct)[i].number().isInteger() && (!(*mstruct)[i].number().denominatorIsLessThan(100) || !(*mstruct)[i].number().numeratorIsLessThan(100) || !(*mstruct)[i].number().numeratorIsGreaterThan(-100)))) {
-								do_frac = false;
-								break;
-							} else if(!(*mstruct)[i].number().isInteger()) {
-								do_frac = true;
-							}
-						}
-					}
-				}
-				PrintOptions po = printops;
-				bool b_approx = false;
-				po.is_approximate = &b_approx;
-				if(do_frac) {
-					po.number_fraction_format = FRACTION_FRACTIONAL;
-					MathStructure m(*mstruct);
-					m.format(po);
-					if(!b_approx) {
-						if(sextra.empty()) add_equals(strout, true, &i_result_u, &i_result);
-						else add_equals(sextra, true);
-						sextra += m.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
-						if(printops.use_unicode_signs) gsub(" ", " ", sextra);
-					}
-				}
-				if(do_mixed) {
-					b_approx = false;
-					po.number_fraction_format = FRACTION_COMBINED;
-					MathStructure m(*mstruct);
-					m.format(po);
-					if(m != *parsed_mstruct && !b_approx) {
-						if(sextra.empty()) add_equals(strout, true, &i_result_u, &i_result);
-						else add_equals(sextra, true);
-						sextra += m.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
-						if(printops.use_unicode_signs) gsub(" ", " ", sextra);
-					}
-				}
+			if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) strout += RIGHT_PARENTHESIS;
+			for(size_t i = 0; i < alt_results.size(); i++) {
+				if(i == 0) add_equals(strout, true, &i_result_u, &i_result);
+				else add_equals(strout, true);
+				strout += alt_results[i];
 			}
-			if(sextra.empty()) {
+			if(alt_results.empty()) {
 				add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u, &i_result);
 				i_result_u2 = i_result_u;
 				i_result2 = i_result;
 			} else {
-				strout += sextra;
-				if(i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols) {
+				if(goto_input && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols) {
 					strout[i_result - 1] = '\n';
 					strout.insert(i_result, "  ");
 					i_result_u = 2;
@@ -4855,7 +4978,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u2, &i_result2);
 			}
 		}
-		if(!result_only && mstruct->isComparison()) {
+		if(!result_only && (mstruct->isComparison() || mstruct->isLogicalAnd() || (mstruct->isLogicalOr() && !goto_input))) {
 			strout += LEFT_PARENTHESIS;
 			strout += result_text.c_str();
 			strout += RIGHT_PARENTHESIS;
@@ -5770,6 +5893,7 @@ void set_saved_mode() {
 	saved_evalops = evalops;
 	saved_rpn_mode = rpn_mode;
 	saved_caret_as_xor = caret_as_xor;
+	saved_automatic_fraction = automatic_fraction;
 	saved_assumption_type = CALCULATOR->defaultAssumptions()->type();
 	saved_assumption_sign = CALCULATOR->defaultAssumptions()->sign();
 	saved_custom_output_base = CALCULATOR->customOutputBase();
@@ -5848,7 +5972,7 @@ void load_preferences() {
 
 	ignore_locale = false;
 
-	automatic_fraction = false;
+	automatic_fraction = true;
 
 	adaptive_interval_display = true;
 
@@ -5907,7 +6031,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {3, 14, 0};
+	int version_numbers[] = {3, 14, 1};
 
 	if(file) {
 		char line[10000];
@@ -5998,15 +6122,20 @@ void load_preferences() {
 				} else if(svar == "use_prefixes_for_currencies") {
 					printops.use_prefixes_for_currencies = v;
 				} else if(svar == "number_fraction_format") {
-					if(v >= FRACTION_DECIMAL && v <= FRACTION_COMBINED) {
-						printops.number_fraction_format = (NumberFractionFormat) v;
-						printops.restrict_fraction_length = (v >= FRACTION_FRACTIONAL);
-					} else if(v == FRACTION_COMBINED + 1) {
-						printops.number_fraction_format = FRACTION_FRACTIONAL;
-						printops.restrict_fraction_length = false;
+					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && (version_numbers[1] > 14 || (version_numbers[1] == 14 && version_numbers[2] > 0)))) {
+						if(v >= FRACTION_DECIMAL && v <= FRACTION_COMBINED) {
+							printops.number_fraction_format = (NumberFractionFormat) v;
+							printops.restrict_fraction_length = (v >= FRACTION_FRACTIONAL);
+							automatic_fraction = false;
+						} else if(v == FRACTION_COMBINED + 1) {
+							printops.number_fraction_format = FRACTION_FRACTIONAL;
+							printops.restrict_fraction_length = false;
+							automatic_fraction = false;
+						} else if(v < 0) {
+							printops.number_fraction_format = FRACTION_DECIMAL;
+							automatic_fraction = true;
+						}
 					}
-				} else if(svar == "automatic_number_fraction_format") {
-					automatic_fraction = v;
 				} else if(svar == "complex_number_form") {
 					if(v == COMPLEX_NUMBER_FORM_CIS + 1) {
 						evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
@@ -6254,8 +6383,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "min_exp=%i\n", saved_printops.min_exp);
 	fprintf(file, "negative_exponents=%i\n", saved_printops.negative_exponents);
 	fprintf(file, "sort_minus_last=%i\n", saved_printops.sort_options.minus_last);
-	fprintf(file, "number_fraction_format=%i\n", !saved_printops.restrict_fraction_length && saved_printops.number_fraction_format == FRACTION_FRACTIONAL ? FRACTION_COMBINED + 1 : saved_printops.number_fraction_format);
-	if(automatic_fraction) fprintf(file, "automatic_number_fraction_format=%i\n", automatic_fraction);
+	fprintf(file, "number_fraction_format=%i\n", saved_automatic_fraction ? -1 : (!saved_printops.restrict_fraction_length && saved_printops.number_fraction_format == FRACTION_FRACTIONAL ? FRACTION_COMBINED + 1 : saved_printops.number_fraction_format));
 	fprintf(file, "complex_number_form=%i\n", (saved_caf && saved_evalops.complex_number_form == COMPLEX_NUMBER_FORM_CIS) ? saved_evalops.complex_number_form + 1 : saved_evalops.complex_number_form);
 	fprintf(file, "use_prefixes=%i\n", saved_printops.use_unit_prefixes);
 	fprintf(file, "use_prefixes_for_all_units=%i\n", saved_printops.use_prefixes_for_all_units);
