@@ -40,6 +40,11 @@ bool is_answer_variable(Variable *v) {
 
 
 string fix(string str, bool replace_signs = false, bool b2 = false) {
+	if(printops.use_unicode_signs) {
+		gsub("<=", SIGN_GREATER_OR_EQUAL, str);
+		gsub(">=", SIGN_LESS_OR_EQUAL, str);
+		gsub("!=", SIGN_NOT_EQUAL, str);
+	}
 	gsub("&", "&amp;", str);
 	gsub("<", "&lt;", str);
 	gsub(">", "&gt;", str);
