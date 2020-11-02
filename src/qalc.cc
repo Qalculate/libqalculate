@@ -49,9 +49,9 @@ protected:
 	virtual void run();
 };
 
-MathStructure *mstruct, *parsed_mstruct;
+MathStructure *mstruct, *parsed_mstruct, mstruct_exact;
 KnownVariable *vans[5], *v_memory;
-string result_text, parsed_text;
+string result_text, parsed_text, original_expression;
 vector<string> alt_results;
 bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit;
 int auto_update_exchange_rates;
@@ -85,6 +85,7 @@ int b_decimal_comma = -1;
 long int i_maxtime = 0;
 struct timeval t_end;
 bool automatic_fraction = true, saved_automatic_fraction = true;
+bool dual_approximation = true, saved_dual_approximation = true;
 
 bool ignore_locale = false;
 
@@ -942,15 +943,22 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "approximation", _("approximation")) || svar == "appr" || svar == "approx") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact", _("exact"))) v = APPROXIMATION_EXACT;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "auto", _("auto")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "dual", _("dual"))) v = -1;
 		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "try exact", _("try exact")) || svalue == "try") v = APPROXIMATION_TRY_EXACT;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "approximate", _("approximate")) || svalue == "approx") v = APPROXIMATION_APPROXIMATE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
-		if(v < 0 || v > 2) {
+		if(v > 2) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
-			evalops.approximation = (ApproximationMode) v;
+			if(v < 0) {
+				evalops.approximation = APPROXIMATION_TRY_EXACT;
+				dual_approximation = true;
+			} else {
+				evalops.approximation = (ApproximationMode) v;
+				dual_approximation = false;
+			}
 			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval calculation", _("interval calculation")) || svar == "ic" || EQUALS_IGNORECASE_AND_LOCAL(svar, "uncertainty propagation", _("uncertainty propagation")) || svar == "up") {
@@ -1284,8 +1292,12 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 int key_exact(int, int) {
 	if(evalops.approximation == APPROXIMATION_EXACT) {
 		evalops.approximation = APPROXIMATION_TRY_EXACT;
-	} else {
+		dual_approximation = false;
+	} else if(dual_approximation) {
 		evalops.approximation = APPROXIMATION_EXACT;
+	} else {
+		evalops.approximation = APPROXIMATION_TRY_EXACT;
+		dual_approximation = true;
 	}
 	if(expression_executed && interactive_mode) {
 		puts("");
@@ -1298,15 +1310,20 @@ int key_exact(int, int) {
 }
 
 int key_fraction(int, int) {
-	if(printops.number_fraction_format == FRACTION_FRACTIONAL) {
+	if(automatic_fraction) {
+		automatic_fraction = false;
+		printops.number_fraction_format = FRACTION_COMBINED;
+	} else if(printops.number_fraction_format == FRACTION_FRACTIONAL) {
+		automatic_fraction = false;
 		printops.number_fraction_format = FRACTION_DECIMAL;
 	} else if(printops.number_fraction_format == FRACTION_COMBINED) {
+		automatic_fraction = false;
 		printops.number_fraction_format = FRACTION_FRACTIONAL;
 	} else {
-		printops.number_fraction_format = FRACTION_COMBINED;
+		automatic_fraction = true;
+		printops.number_fraction_format = FRACTION_DECIMAL;
 	}
 	printops.restrict_fraction_length = (printops.number_fraction_format == FRACTION_FRACTIONAL || printops.number_fraction_format == FRACTION_COMBINED);
-	automatic_fraction = false;
 	if(expression_executed && interactive_mode) {
 		puts("");
 		result_format_updated();
@@ -2007,6 +2024,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	mstruct = new MathStructure();
+	mstruct_exact.setUndefined();
 	parsed_mstruct = new MathStructure();
 
 	canfetch = CALCULATOR->canFetch();
@@ -2746,10 +2764,9 @@ int main(int argc, char *argv[]) {
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "approximate", _("approximate")) || str == "approx") {
-			if(evalops.approximation != APPROXIMATION_TRY_EXACT) {
-				evalops.approximation = APPROXIMATION_TRY_EXACT;
-				expression_calculation_updated();
-			}
+			if(evalops.approximation == APPROXIMATION_TRY_EXACT) dual_approximation = !dual_approximation;
+			evalops.approximation = APPROXIMATION_TRY_EXACT;
+			expression_calculation_updated();
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to")) || (str.length() > 2 && str[0] == '-' && str[1] == '>') || (str.length() > 3 && str[0] == '\xe2' && ((str[1] == '\x86' && str[2] == '\x92') || (str[1] == '\x9e' && (unsigned char) str[2] >= 148 && (unsigned char) str[2] <= 191)))) {
 			if(!scom.empty() && (EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to")))) {
@@ -3166,7 +3183,13 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("approximation"), "appr");
 			switch(evalops.approximation) {
 				case APPROXIMATION_EXACT: {str += _("exact"); break;}
-				case APPROXIMATION_TRY_EXACT: {str += _("try exact"); break;}
+				case APPROXIMATION_TRY_EXACT: {
+					if(dual_approximation) {
+						str += _("auto"); break;
+					} else {
+						str += _("try exact"); break;
+					}
+				}
 				default: {str += _("approximate"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -3609,6 +3632,11 @@ int main(int argc, char *argv[]) {
 									} else {
 										str2 = default_arg.printlong();
 									}
+									if(printops.use_unicode_signs) {
+										gsub(">=", SIGN_GREATER_OR_EQUAL, str2);
+										gsub("<=", SIGN_LESS_OR_EQUAL, str2);
+										gsub("!=", SIGN_NOT_EQUAL, str2);
+									}
 									if(i2 > f->minargs()) {
 										str2 += " (";
 										//optional argument, in description
@@ -3630,6 +3658,11 @@ int main(int argc, char *argv[]) {
 								str = _("Requirement");
 								str += ": ";
 								str += f->printCondition();
+								if(printops.use_unicode_signs) {
+									gsub(">=", SIGN_GREATER_OR_EQUAL, str);
+									gsub("<=", SIGN_LESS_OR_EQUAL, str);
+									gsub("!=", SIGN_NOT_EQUAL, str);
+								}
 								CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 							}
 							if(f->subtype() == SUBTYPE_DATA_SET) {
@@ -3906,6 +3939,7 @@ int main(int argc, char *argv[]) {
 #define STR_AND_TABS_2(s, sh, d, v, s0, s1, s2) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_2b(s, sh, d, v, s0, s1) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(1"; if(v == 1) {str += "*";} str += " = "; str += s0; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s1; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_3(s, sh, d, v, s0, s1, s2, s3) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+#define STR_AND_TABS_3M(s, sh, d, v, sm, s0, s1, s2) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(-1"; if(v == -1) {str += "*";} str += " = "; str += sm; str += ", 0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_4(s, sh, d, v, s0, s1, s2, s3, s4) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_5M(s, sh, d, v, sm, s0, s1, s2, s3, s4) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(-1"; if(v == -1) {str += "*";} str += " = "; str += sm; str += ", 0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_7(s, sh, d, v, s0, s1, s2, s3, s4, s5, s6) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ", 5"; if(v == 5) {str += "*";} str += " = "; str += s5; str += ", 6"; if(v == 6) {str += "*";} str += " = "; str += s6; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -3950,7 +3984,9 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Calculation"));
 
 				STR_AND_TABS_3(_("angle unit"), "angle", "Default angle unit for trigonometric functions.", evalops.parse_options.angle_unit, _("none"), _("radians"), _("degrees"), _("gradians"));
-				STR_AND_TABS_2(_("approximation"), "appr", _("How approximate variables and calculations are handled. In exact mode approximate values will not be calculated."), evalops.approximation, _("exact"), _("try exact"), _("approximate"));
+				int appr = evalops.approximation;
+				if(dual_approximation) appr = -1;
+				STR_AND_TABS_3M(_("approximation"), "appr", _("How approximate variables and calculations are handled. In exact mode approximate values will not be calculated."), appr, _("auto"), _("exact"), _("try exact"), _("approximate"));
 				STR_AND_TABS_BOOL(_("interval arithmetic"), "ia", _("If activated, interval arithmetic determines the final precision of calculations (avoids wrong results after loss of significance) with approximate functions and/or irrational numbers."), CALCULATOR->usesIntervalArithmetic());
 				STR_AND_TABS_2b(_("interval calculation"), "ic", _("Determines the method used for interval calculation / uncertainty propagation."), evalops.interval_calculation, _("variance formula"), _("interval arithmetic"));
 				STR_AND_TABS_SET(_("precision"), "prec");
@@ -4466,7 +4502,8 @@ void replace_result_cis(string &resstr) {
 	gsub(" cis ", "∠", resstr);
 }
 
-bool contains_decimal(const MathStructure &m) {
+bool contains_decimal(const MathStructure &m, bool test_orig = false) {
+	if(test_orig && !original_expression.empty()) return original_expression.find(DOT) != string::npos;
 	if(m.isNumber()) return !m.number().isInteger();
 	for(size_t i = 0; i < m.size(); i++) {
 		if(contains_decimal(m[i])) return true;
@@ -4503,23 +4540,23 @@ void print_m(PrintOptions &po, string &str, MathStructure &m, MathStructure *mre
 	if(!result_only && !CALCULATOR->aborted() && automatic_fraction && (!only_cmp || (m.isComparison() && m.comparisonType() == COMPARISON_EQUALS)) && po.base == 10 && !mresult->isApproximate() && (po.number_fraction_format == FRACTION_DECIMAL_EXACT || po.number_fraction_format == FRACTION_DECIMAL) && mresult->containsType(STRUCT_UNIT, false, true, true) <= 0) {
 		bool do_frac = false, do_mixed = false;
 		MathStructure *mcmp = mresult;
-		if(contains_decimal(m)) {
-			if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS && (m[0].isSymbolic() || m[0].isVariable())) {
-				mcmp = mresult->getChild(2);
-			}
-			if(test_frac(*mcmp, !only_cmp)) {
-				do_frac = true;
-				if(mcmp == mresult && mparse) {
-					if(mcmp->isNumber() && mcmp->number().isRational()) {
-						do_frac = (!mparse->isDivision() || (*mparse)[1] != mcmp->number().denominator() || ((*mparse)[0] != mcmp->number().numerator() && (!(*mparse)[0].isNegate() || (*mparse)[0][0] != -mcmp->number().numerator()))) && (!mparse->isNegate() || !(*mparse)[0].isDivision() || (*mparse)[0][1] != mcmp->number().denominator() || (*mparse)[0][0] != -mcmp->number().numerator());
-						do_mixed = !mcmp->number().isNegative() && !mcmp->number().isFraction();
-					} else if(mresult->isFunction() && mparse->isFunction() && mresult->function() == mparse->function()) {
-						do_frac = false;
+		if(!mparse || (!contains_decimal(*mparse, true) && !mparse->isNumber())) {
+			if(contains_decimal(m)) {
+				if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS && (m[0].isSymbolic() || m[0].isVariable())) {
+					mcmp = mresult->getChild(2);
+				}
+				if(test_frac(*mcmp, !only_cmp)) {
+					do_frac = true;
+					if(mcmp == mresult && mparse) {
+						if(mcmp->isNumber() && mcmp->number().isRational()) {
+							do_frac = (!mparse->isDivision() || (*mparse)[1] != mcmp->number().denominator() || ((*mparse)[0] != mcmp->number().numerator() && (!(*mparse)[0].isNegate() || (*mparse)[0][0] != -mcmp->number().numerator()))) && (!mparse->isNegate() || !(*mparse)[0].isDivision() || (*mparse)[0][1] != mcmp->number().denominator() || (*mparse)[0][0] != -mcmp->number().numerator());
+							do_mixed = !mcmp->number().isNegative() && !mcmp->number().isFraction();
+						} else if(mresult->isFunction() && mparse->isFunction() && mresult->function() == mparse->function()) {
+							do_frac = false;
+						}
 					}
 				}
 			}
-		} else if(!only_cmp && mcmp->isNumber() && mcmp->number().isRational() && !mcmp->number().isNegative() && !mcmp->number().isFraction() && test_frac(*mcmp)) {
-			do_mixed = true;
 		}
 		bool *old_approx = po.is_approximate;
 		NumberFractionFormat old_fr = po.number_fraction_format;
@@ -4653,11 +4690,16 @@ void ViewThread::run() {
 			}
 		}
 
-		if(automatic_fraction && test_fr_unknowns(m) && test_frac(m, false, -1)) {
+		bool do_exact = !mstruct_exact.isUndefined() && m.isApproximate();
+
+		if(automatic_fraction && !m.isApproximate() && mparse && mparse->isNumber()) {
+			po.number_fraction_format = FRACTION_COMBINED;
+		} else if(automatic_fraction && test_fr_unknowns(m) && test_frac(m, false, -1)) {
 			po.number_fraction_format = FRACTION_FRACTIONAL;
 			po.restrict_fraction_length = true;
+		} else if(automatic_fraction && po.number_fraction_format == FRACTION_DECIMAL && (evalops.approximation == APPROXIMATION_EXACT || (m.isComparison() && m.comparisonType() != COMPARISON_EQUALS))) {
+			po.number_fraction_format = FRACTION_DECIMAL_EXACT;
 		}
-		if(automatic_fraction && po.number_fraction_format == FRACTION_DECIMAL && (evalops.approximation == APPROXIMATION_EXACT || (m.isComparison() && m.comparisonType() != COMPARISON_EQUALS))) po.number_fraction_format = FRACTION_DECIMAL_EXACT;
 
 		m.removeDefaultAngleUnit(evalops);
 		m.format(po);
@@ -4748,6 +4790,20 @@ void ViewThread::run() {
 			if(non_comparison) *po.is_approximate = b_approx;
 		} else {
 			print_m(po, result_text, m, mresult, mparse);
+		}
+
+		if(do_exact) {
+			bool b_approx = false;
+			po.is_approximate = &b_approx;
+			MathStructure mexact(mstruct_exact);
+			po.number_fraction_format = FRACTION_FRACTIONAL;
+			po.restrict_fraction_length = true;
+			mexact.removeDefaultAngleUnit(evalops);
+			mexact.format(po);
+			string str = mexact.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+			if(!(*po.is_approximate)) {
+				alt_results.push_back(str);
+			}
 		}
 
 		if(result_text == _("aborted")) {
@@ -5225,6 +5281,15 @@ void execute_command(int command_type, bool show_result) {
 
 }
 
+bool test_simplified(const MathStructure &m) {
+	if(m.isFunction() || (m.isVariable() && m.variable()->isKnown())) return false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(!test_simplified(m[i])) return false;
+	}
+	if(m.isPower() && m[0].containsType(STRUCT_NUMBER)) return false;
+	return true;
+}
+
 void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates) {
 
 	if(i_maxtime < 0) return;
@@ -5562,29 +5627,34 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				}
 				if(f && f->minargs() > 0) {
 					do_mathoperation = true;
+					original_expression = "";
 					CALCULATOR->calculateRPN(f, 0, evalops, parsed_mstruct);
 				} else {
+					original_expression = str2;
 					CALCULATOR->RPNStackEnter(str2, 0, evalops, parsed_mstruct, NULL);
 				}
 			}
 		}
 	} else {
-		CALCULATOR->calculate(mstruct, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, &to_struct);
+		original_expression = CALCULATOR->unlocalizeExpression(str, evalops.parse_options);
+		CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
 	}
 
 	calculation_wait:
 
 	bool has_printed = false;
+	bool was_aborted;
+	long int i_timeleft = 0;
 
 	if(i_maxtime != 0) {
 #ifndef CLOCK_MONOTONIC
 		struct timeval tv;
 		gettimeofday(&tv, NULL);
-		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;
+		i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;
 #else
 		struct timespec tv;
 		clock_gettime(CLOCK_MONOTONIC, &tv);
-		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
+		i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
 #endif
 		while(CALCULATOR->busy() && i_timeleft > 0) {
 			sleep_ms(10);
@@ -5592,6 +5662,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		}
 		if(CALCULATOR->busy()) {
 			CALCULATOR->abort();
+			was_aborted = true;
 			i_maxtime = -1;
 			printf(_("aborted"));
 			printf("\n");
@@ -5633,6 +5704,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 #endif
 					if(c == '\n' || c == '\r') {
 						CALCULATOR->abort();
+						was_aborted = true;
 						avoid_recalculation = true;
 						has_printed = false;
 					}
@@ -5669,7 +5741,48 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			if(had_printed) has_printed = true;
 		}
 	}
-	
+
+	mstruct_exact.setUndefined();
+	if(dual_approximation && evalops.approximation == APPROXIMATION_TRY_EXACT && !result_only) {
+		if(!was_aborted && mstruct->isApproximate() && original_expression.find(DOT) == string::npos && !mstruct->containsType(STRUCT_COMPARISON) && (i_maxtime == 0 || i_timeleft > 0)) {
+			evalops.approximation = APPROXIMATION_EXACT;
+			evalops.expand = -2;
+			evalops.test_comparisons = false;
+			evalops.isolate_x = false;
+			CALCULATOR->beginTemporaryStopMessages();
+			if(!CALCULATOR->calculate(&mstruct_exact, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), i_maxtime != 0 ? i_timeleft : 1000, evalops) || mstruct_exact.isApproximate() || mstruct_exact.countTotalChildren() > 50) {
+				mstruct_exact.setUndefined();
+			} else if(test_simplified(mstruct_exact)) {
+				mstruct->set(mstruct_exact);
+				mstruct_exact.setUndefined();
+			} else if(mstruct_exact.isMultiplication()) {
+				size_t i = 0;
+				if(mstruct_exact[0].isNumber()) i++;
+				bool b = true;
+				for(; i < mstruct_exact.size(); i++) {
+					if(!mstruct_exact.isUnit_exp()) {
+						b = false;
+						break;
+					}
+				}
+				if(b) {
+					mstruct->set(mstruct_exact);
+					mstruct_exact.setUndefined();
+				}
+			} else {
+				MathStructure mtest(*parsed_mstruct);
+				mtest.unformat(evalops);
+				mtest.evalSort(true);
+				if(mstruct_exact.equals(mtest)) mstruct_exact.setUndefined();
+			}
+			CALCULATOR->endTemporaryStopMessages();
+			evalops.approximation = APPROXIMATION_TRY_EXACT;
+			evalops.expand = true;
+			evalops.test_comparisons = true;
+			evalops.isolate_x = true;
+		}
+	}
+
 	// Always perform conversion to optimal (SI) unit when the expression is a number multiplied by a unit and input equals output
 	if(!rpn_mode && !avoid_recalculation && !had_to_expression && ((evalops.approximation == APPROXIMATION_EXACT && evalops.auto_post_conversion != POST_CONVERSION_NONE) || evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) && parsed_mstruct && mstruct && ((parsed_mstruct->isMultiplication() && parsed_mstruct->size() == 2 && (*parsed_mstruct)[0].isNumber() && (*parsed_mstruct)[1].isUnit_exp() && parsed_mstruct->equals(*mstruct)) || (parsed_mstruct->isNegate() && (*parsed_mstruct)[0].isMultiplication() && (*parsed_mstruct)[0].size() == 2 && (*parsed_mstruct)[0][0].isNumber() && (*parsed_mstruct)[0][1].isUnit_exp() && mstruct->isMultiplication() && mstruct->size() == 2 && (*mstruct)[1] == (*parsed_mstruct)[0][1] && (*mstruct)[0].isNumber() && (*parsed_mstruct)[0][0].number() == -(*mstruct)[0].number()) || (parsed_mstruct->isUnit_exp() && parsed_mstruct->equals(*mstruct)))) {
 		Unit *u = NULL;
@@ -5894,6 +6007,7 @@ void set_saved_mode() {
 	saved_rpn_mode = rpn_mode;
 	saved_caret_as_xor = caret_as_xor;
 	saved_automatic_fraction = automatic_fraction;
+	saved_dual_approximation = dual_approximation;
 	saved_assumption_type = CALCULATOR->defaultAssumptions()->type();
 	saved_assumption_sign = CALCULATOR->defaultAssumptions()->sign();
 	saved_custom_output_base = CALCULATOR->customOutputBase();
@@ -5965,6 +6079,9 @@ void load_preferences() {
 	evalops.local_currency_conversion = true;
 	evalops.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 	b_decimal_comma = -1;
+
+	automatic_fraction = true;
+	dual_approximation = true;
 
 	CALCULATOR->setPrecision(10);
 
@@ -6276,8 +6393,14 @@ void load_preferences() {
 				} else if(svar == "round_halfway_to_even") {
 					printops.round_halfway_to_even = v;
 				} else if(svar == "approximation") {
-					if(v >= APPROXIMATION_EXACT && v <= APPROXIMATION_APPROXIMATE) {
-						evalops.approximation = (ApproximationMode) v;
+					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && (version_numbers[1] > 14 || (version_numbers[1] == 14 && version_numbers[2] > 0)))) {
+						if(v >= APPROXIMATION_EXACT && v <= APPROXIMATION_APPROXIMATE) {
+							evalops.approximation = (ApproximationMode) v;
+						} else if(v < 0) {
+							if(v == -2) evalops.approximation = APPROXIMATION_EXACT;
+							else evalops.approximation = APPROXIMATION_TRY_EXACT;
+							dual_approximation = true;
+						}
 					}
 				} else if(svar == "interval_calculation") {
 					if(v >= INTERVAL_CALCULATION_NONE && v <= INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC) {
@@ -6419,7 +6542,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "indicate_infinite_series=%i\n", saved_printops.indicate_infinite_series);
 	fprintf(file, "show_ending_zeroes=%i\n", saved_printops.show_ending_zeroes);
 	fprintf(file, "round_halfway_to_even=%i\n", saved_printops.round_halfway_to_even);
-	fprintf(file, "approximation=%i\n", saved_evalops.approximation);
+	fprintf(file, "approximation=%i\n", saved_dual_approximation ? (saved_evalops.approximation == APPROXIMATION_EXACT ? -2 : -1) : saved_evalops.approximation);
 	fprintf(file, "interval_calculation=%i\n", saved_evalops.interval_calculation);
 	fprintf(file, "in_rpn_mode=%i\n", saved_rpn_mode);
 	fprintf(file, "rpn_syntax=%i\n", saved_evalops.parse_options.rpn);
