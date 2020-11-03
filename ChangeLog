@@ -1,3 +1,19 @@
+2020-11-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Automatic/dual approximation in qalc
+
+2020-10-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Always place unit with prefix first
+
+2020-10-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use Unicode symbols for >=, <=, and != in function argument description and function condition (in qalc and defs2doc)
+
+2020-10-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Automatic fractions option (default), in qalc, which shows simple, mixed, and/or decimal fractions depending on format and contents of expression and result
+
 2020-10-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix quoted degree symbol in function argument (e.g. code("°"))
