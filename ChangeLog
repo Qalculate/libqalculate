@@ -1,6 +1,6 @@
 2020-11-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Automatic/dual approximation in qalc
+	* Automatic (default) and dual approximation in qalc
 
 2020-10-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -12,7 +12,7 @@
 
 2020-10-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Automatic fractions option (default), in qalc, which shows simple, mixed, and/or decimal fractions depending on format and contents of expression and result
+	* Automatic (default) and dual fractions options, in qalc, which shows simple, mixed, and/or decimal fractions depending on format and contents of expression and result
 
 2020-10-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
