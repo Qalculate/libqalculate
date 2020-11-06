@@ -1716,6 +1716,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					return -1;
 				}
 				default: {
+					if(!mstruct.representsScalar()) return -1;
 					// matrix/vector multiplied by scalar: multiply each element
 					for(size_t i = 0; i < SIZE; i++) {
 						CHILD(i).calculateMultiply(mstruct, eo);
