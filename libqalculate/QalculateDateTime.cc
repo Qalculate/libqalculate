@@ -202,6 +202,11 @@ QalculateDateTime prevLeapSecond(const QalculateDateTime &date) {
 
 int dateTimeZone(time_t rawtime) {
 	struct tm tmdate = *localtime(&rawtime);
+#ifdef _WIN32
+	TIME_ZONE_INFORMATION TimeZoneInfo;
+	GetTimeZoneInformation(&TimeZoneInfo);
+	return -(TimeZoneInfo.Bias + (tmdate.tm_isdst ? TimeZoneInfo.DaylightBias : TimeZoneInfo.StandardBias));
+#else
 	char buffer[10];
 	if(!strftime(buffer, 10, "%z", &tmdate)) {
 		return 0;
@@ -210,6 +215,7 @@ int dateTimeZone(time_t rawtime) {
 	int h = s2i(s.substr(0, 3));
 	int m = s2i(s.substr(3));
 	return h * 60 + m;
+#endif
 }
 int dateTimeZone(const QalculateDateTime &dt, bool b_utc) {
 	struct tm tmdate;
@@ -265,6 +271,9 @@ void QalculateDateTime::setToCurrentTime() {
 	gettimeofday(&tv, NULL);
 	Number nr(tv.tv_usec, 0, -6);
 	nr += tv.tv_sec;
+#ifdef _WIN32
+	nr += dateTimeZone(tv.tv_sec);
+#endif
 	set(nr);
 }
 bool QalculateDateTime::operator > (const QalculateDateTime &date2) const {
