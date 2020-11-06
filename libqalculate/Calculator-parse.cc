@@ -510,7 +510,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		while(true) {
 			// two char Unicode fractions begin with \xc2
 			size_t ui = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
-			if(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = str.find('\xc2', ui + 2);
+			while(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = str.find('\xc2', ui + 2);
 			if(ui != string::npos) {
 				// check that found index is outside quotes
 				for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
