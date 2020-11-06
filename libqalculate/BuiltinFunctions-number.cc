@@ -815,7 +815,21 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	else if(sdigits == "1") idigits = 1;
 	else if(sdigits == "2") idigits = 2;
 	else if(sdigits == "3" || sdigits == "Unicode" || sdigits == "unicode" || sdigits == "escaped") idigits = 3;
-	else idigits = -1;
+	else {
+		size_t i = sdigits.find(";");
+		if(i != string::npos && sdigits.find(";", i + 1) != string::npos) {
+			idigits = -3;
+		} else {
+			i = sdigits.find(",");
+			if(i != string::npos && sdigits.find(",", i + 1) != string::npos) idigits = -2;
+			else idigits = -1;
+		}
+		if(idigits < -1) {
+			remove_blanks(sdigits);
+			if(sdigits[0] == LEFT_VECTOR_WRAP_CH || sdigits[0] == LEFT_PARENTHESIS_CH) sdigits.erase(0, 1);
+			if(sdigits[sdigits.size() - 1] == RIGHT_VECTOR_WRAP_CH || sdigits[sdigits.size() - 1] == RIGHT_PARENTHESIS_CH) sdigits.erase(sdigits.size() - 1, 1);
+		}
+	}
 	if(vargs[1].isNumber() && idigits == 0) {
 		nbase = vargs[1].number();
 	} else {
@@ -844,29 +858,41 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			vector<Number> digits;
 			bool b_minus = false;
 			if(idigits < 0) {
-				unordered_map<string, long int> vdigits;
+				vector<unordered_map<string, long int>> vdigits;
 				string schar;
 				long int v = 0;
-				for(size_t i = 0; i < sdigits.length(); v++) {
-					size_t l = 1;
-					while(i + l < sdigits.length() && sdigits[i + l] <= 0 && (unsigned char) sdigits[i + l] < 0xC0) l++;
-					vdigits[sdigits.substr(i, l)] = v;
-					i += l;
+				size_t d_i = 0;
+				for(size_t i = 0; i < sdigits.length();) {
+					if((idigits == -2 && sdigits[i] == ',') || (idigits == -3 && sdigits[i] == ';')) {
+						d_i = 0; v++; i++;
+					} else {
+						size_t l = 1;
+						while(i + l < sdigits.length() && sdigits[i + l] <= 0 && (unsigned char) sdigits[i + l] < 0xC0) l++;
+						if(d_i == vdigits.size()) vdigits.resize(d_i + 1);
+						vdigits[d_i][sdigits.substr(i, l)] = v;
+						i += l;
+						if(idigits < -1) d_i++;
+						else v++;
+					}
 				}
 				remove_blanks(number);
 				i_dot = number.length();
 				for(size_t i = 0; i < number.length();) {
 					size_t l = 1;
 					while(i + l < number.length() && number[i + l] <= 0 && (unsigned char) number[i + l] < 0xC0) l++;
-					unordered_map<string, long int>::iterator it = vdigits.find(number.substr(i, l));
-					if(it == vdigits.end()) {
+					for(d_i = 0; d_i < vdigits.size(); d_i++) {
+						unordered_map<string, long int>::iterator it = vdigits[d_i].find(number.substr(i, l));
+						if(it != vdigits[d_i].end()) {
+							digits.push_back(it->second);
+							break;
+						}
+					}
+					if(d_i == vdigits.size()) {
 						if(l == 1 && (number[i] == CALCULATOR->getDecimalPoint()[0] || (!eo.parse_options.dot_as_separator && number[i] == '.'))) {
 							if(i_dot == number.length()) i_dot = digits.size();
 						} else {
 							CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), number.substr(i, l).c_str(), number.c_str(), format_and_print(mstruct).c_str(), NULL);
 						}
-					} else {
-						digits.push_back(it->second);
 					}
 					i += l;
 				}

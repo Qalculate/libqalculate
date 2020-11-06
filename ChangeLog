@@ -1,3 +1,7 @@
+2020-11-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support multiple equivalent custom digits, separated by semicolon (e.g. "0;aA1;bB2;cC3"), in base() function
+
 2020-11-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Automatic (default) and dual approximation in qalc
