@@ -259,6 +259,19 @@ Swaps position of values on the RPN stack. If no index is specified, the values 
 Example: swap 2 4
 .PP
 When a line begins with '/', the text that follows is always interpreted as a command.
+.SH "KEYBINDINGS"
+.PP
+.TP 8
+.B Tab
+shows a list of functions, variables, and units with names that begins with the current expression
+.PP
+.TP 8
+.B Ctrl+E
+switches between approximation modes (exact, try exact, auto)
+.PP
+.TP 8
+.B Ctrl+F
+switches between fraction modes (simple, decimal, auto)
 .SH "SETTINGS"
 These settings are changed using the \fIset\fP command (e.g. set base 16) or the \fI\-s, \-\-set\fP command line option (e.g. qalc -s "base 16"). Possible values are shown in parenthesis. 1 and 0 can be used instead of on and off. If the value is left out, a value of 1 is generally assumed. The default value is marked with '*'.
 .PP
@@ -287,7 +300,7 @@ Calculation:
 Default angle unit for trigonometric functions.
 .PP
 .TP 8
-.B approximation, appr \fI(0 = exact, 1* = try exact, 2 = approximate)\fP
+.B approximation, appr \fI(-1* = auto, 0 = exact, 1 = try exact, 2 = approximate, 3 = dual)\fP
 How approximate variables and calculations are handled. In exact mode approximate values will not be calculated.
 .PP
 .TP 8
@@ -389,7 +402,7 @@ Determines the default decimal separator.
 .B digit grouping, group \fI(0* = off, 1 = standard, 2 = locale)\fP
 .PP
 .TP 8
-.B fractions, fr \fI(-1* = auto, 0 = off, 1 = exact, 2 = on, 3 = mixed, 4 = long)\fP
+.B fractions, fr \fI(-1* = auto, 0 = off, 1 = exact, 2 = on, 3 = mixed, 4 = long, 5 = dual)\fP
 Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denonimator.
 .PP
 .TP 8

@@ -2025,6 +2025,11 @@ int main(int argc, char *argv[]) {
 	//load application specific preferences
 	load_preferences();
 
+	if(result_only) {
+		dual_approximation = 0;
+		dual_fraction = 0;
+	}
+
 	for(size_t i = 0; i < set_option_strings.size(); i++) {
 		set_option(set_option_strings[i]);
 	}
@@ -4579,7 +4584,7 @@ void print_m(PrintOptions &po, string &str, MathStructure &m, MathStructure *mre
 		}
 	}
 	// do not show simple fractions in auto modes if result includes units or expression contains decimals
-	if(!result_only && !CALCULATOR->aborted() && (b_cmp3 || ((dual_fraction || (dual_approximation && *po.is_approximate)) && (!only_cmp || (m.isComparison() && m.comparisonType() == COMPARISON_EQUALS)) && po.base == 10 && b_exact && (po.number_fraction_format == FRACTION_DECIMAL_EXACT || po.number_fraction_format == FRACTION_DECIMAL) && (dual_fraction > 0 || dual_approximation > 0 || mresult->containsType(STRUCT_UNIT, false, true, true) <= 0)))) {
+	if(!CALCULATOR->aborted() && (b_cmp3 || ((dual_fraction || (dual_approximation && *po.is_approximate)) && (!only_cmp || (m.isComparison() && m.comparisonType() == COMPARISON_EQUALS)) && po.base == 10 && b_exact && (po.number_fraction_format == FRACTION_DECIMAL_EXACT || po.number_fraction_format == FRACTION_DECIMAL) && (dual_fraction > 0 || dual_approximation > 0 || mresult->containsType(STRUCT_UNIT, false, true, true) <= 0)))) {
 		bool do_frac = false, do_mixed = false;
 		MathStructure *mcmp = mresult;
 		if(b_cmp3) {
@@ -4610,6 +4615,7 @@ void print_m(PrintOptions &po, string &str, MathStructure &m, MathStructure *mre
 		if(do_frac) {
 			po.number_fraction_format = FRACTION_FRACTIONAL;
 			MathStructure m2(*mcmp);
+			m.removeDefaultAngleUnit(evalops);
 			m2.format(po);
 			if(!b_approx) {
 				alt_results.push_back(m2.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL));
@@ -4620,6 +4626,7 @@ void print_m(PrintOptions &po, string &str, MathStructure &m, MathStructure *mre
 			b_approx = false;
 			po.number_fraction_format = FRACTION_COMBINED;
 			MathStructure m2(*mcmp);
+			m.removeDefaultAngleUnit(evalops);
 			m2.format(po);
 			if(m2 != *mparse && !b_approx) {
 				alt_results.push_back(m2.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL));
@@ -4654,6 +4661,13 @@ bool test_fr_unknowns(const MathStructure &m) {
 		return false;
 	}
 	return m.containsUnknowns();
+}
+bool test_power_func(const MathStructure &m) {
+	if(m.isFunction() || (m.isPower() && !m[0].containsType(STRUCT_UNIT, false, false, false) && !m[1].isInteger())) return true;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(test_power_func(m[i])) return true;
+	}
+	return false;
 }
 void ViewThread::run() {
 
@@ -4749,7 +4763,7 @@ void ViewThread::run() {
 		if(dual_fraction && !m.isApproximate() && mparse && mparse->isNumber()) {
 			po.number_fraction_format = FRACTION_COMBINED;
 		// with auto fractions show expressions with unknown variables/symbols only using simple fractions (if not parsed value contains decimals)
-		} else if(dual_fraction < 0 && !m.isApproximate() && test_fr_unknowns(m) && test_frac(m, false, -1) && (!mparse || !contains_decimal(*mparse, true))) {
+		} else if(dual_fraction < 0 && !m.isApproximate() && (test_fr_unknowns(m) || (m.containsType(STRUCT_ADDITION) && test_power_func(m))) && test_frac(m, false, -1) && (!mparse || !contains_decimal(*mparse, true))) {
 			po.number_fraction_format = FRACTION_FRACTIONAL;
 			po.restrict_fraction_length = true;
 		// with auto fractions and exact approximation (or inequality) do not show approximate decimal fractions
@@ -5086,27 +5100,27 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				strout += prev_result_text;
 			}
 			if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) strout += RIGHT_PARENTHESIS;
-			for(size_t i = 0; i < alt_results.size(); i++) {
-				if(i == 0) add_equals(strout, true, &i_result_u, &i_result);
-				else add_equals(strout, true);
-				if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) strout += LEFT_PARENTHESIS;
-				strout += alt_results[i];
-				if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) strout += RIGHT_PARENTHESIS;
-			}
-			if(alt_results.empty()) {
-				add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u, &i_result);
-				i_result_u2 = i_result_u;
-				i_result2 = i_result;
-			} else {
-				if(goto_input && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols) {
-					strout[i_result - 1] = '\n';
-					strout.insert(i_result, "  ");
-					i_result_u = 2;
-				}
-				add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u2, &i_result2);
-			}
 		}
-		if(!result_only && (mstruct->isComparison() || mstruct->isLogicalAnd() || (mstruct->isLogicalOr() && !goto_input))) {
+		for(size_t i = 0; i < alt_results.size(); i++) {
+			if(i != 0) add_equals(strout, true);
+			else if(!result_only) add_equals(strout, true, &i_result_u, &i_result);
+			if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) strout += LEFT_PARENTHESIS;
+			strout += alt_results[i];
+			if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) strout += RIGHT_PARENTHESIS;
+		}
+		if(!alt_results.empty()) {
+			if(!result_only && goto_input && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols) {
+				strout[i_result - 1] = '\n';
+				strout.insert(i_result, "  ");
+				i_result_u = 2;
+			}
+			add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u2, &i_result2);
+		} else if(!result_only) {
+			add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u, &i_result);
+			i_result_u2 = i_result_u;
+			i_result2 = i_result;
+		}
+		if((!result_only || !alt_results.empty()) && (mstruct->isComparison() || mstruct->isLogicalAnd() || (mstruct->isLogicalOr() && !goto_input))) {
 			strout += LEFT_PARENTHESIS;
 			strout += result_text.c_str();
 			strout += RIGHT_PARENTHESIS;
@@ -6018,13 +6032,13 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 #endif
 
 	mstruct_exact.setUndefined();
-	if(dual_approximation != 0 && !do_calendars && !do_bases && evalops.approximation == APPROXIMATION_TRY_EXACT && !result_only && !was_aborted && mstruct->isApproximate() && (dual_approximation > 0 || (!mstruct->containsType(STRUCT_UNIT, false, false, false) && !parsed_mstruct->containsType(STRUCT_UNIT, false, false, false) && original_expression.find(DOT) == string::npos))) {
+	if(dual_approximation != 0 && !do_calendars && !do_bases && evalops.approximation == APPROXIMATION_TRY_EXACT && !was_aborted && mstruct->isApproximate() && (dual_approximation > 0 || (!mstruct->containsType(STRUCT_UNIT, false, false, false) && !parsed_mstruct->containsType(STRUCT_UNIT, false, false, false) && original_expression.find(DOT) == string::npos)) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_SAVE) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_PLOT)) {
 		evalops.approximation = APPROXIMATION_EXACT;
 		evalops.expand = -2;
 		CALCULATOR->beginTemporaryStopMessages();
 		long int i_timeleft = 0;
 		SET_TIME_LEFT
-		if((i_maxtime != 0 && i_timeleft <= 0) || !CALCULATOR->calculate(&mstruct_exact, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), i_maxtime != 0 ? i_timeleft : 1000, evalops) || mstruct_exact.isApproximate() || mstruct_exact.countTotalChildren() > 50) {
+		if((i_maxtime != 0 && i_timeleft <= 0) || !CALCULATOR->calculate(&mstruct_exact, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), i_maxtime != 0 ? i_timeleft : 1000, evalops) || mstruct_exact.isApproximate() || (dual_approximation < 0 && ((mstruct_exact.isAddition() && mstruct_exact.size() > 10) || mstruct_exact.countTotalChildren() > 50))) {
 			mstruct_exact.setUndefined();
 		} else if(test_simplified(mstruct_exact)) {
 			mstruct->set(mstruct_exact);
@@ -6765,6 +6779,9 @@ bool save_preferences(bool mode) {
 	fprintf(file, "multiplication_sign=%i\n", printops.multiplication_sign);
 	fprintf(file, "division_sign=%i\n", printops.division_sign);
 	if(mode) {
+		int saved_df = 0, saved_da = 0;
+		if(result_only && dual_fraction == 0) saved_df = saved_dual_fraction;
+		if(result_only && dual_approximation == 0) saved_da = saved_dual_approximation;
 		if(programmers_mode) {
 			int saved_inbase = saved_evalops.parse_options.base;
 			int saved_outbase = saved_printops.base;
@@ -6776,6 +6793,8 @@ bool save_preferences(bool mode) {
 		} else {
 			set_saved_mode();
 		}
+		if(!saved_df != 0) saved_dual_fraction = saved_df;
+		if(!saved_da != 0) saved_dual_approximation = saved_da;
 	}
 	fprintf(file, "\n[Mode]\n");
 	fprintf(file, "min_deci=%i\n", saved_printops.min_decimals);

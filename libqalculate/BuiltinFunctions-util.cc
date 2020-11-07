@@ -763,16 +763,18 @@ int TitleFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	}
 	return 1;
 }
-SaveFunction::SaveFunction() : MathFunction("save", 2, 4) {
+SaveFunction::SaveFunction() : MathFunction("save", 2, 5) {
 	setArgumentDefinition(2, new TextArgument());
 	setArgumentDefinition(3, new TextArgument());
 	setArgumentDefinition(4, new TextArgument());
+	setArgumentDefinition(5, new BooleanArgument());
 	setDefaultValue(3, CALCULATOR->temporaryCategory());
 	setDefaultValue(4, "");
+	setDefaultValue(5, "0");
 }
 int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	mstruct.eval(eo);
+	if(vargs[4].number().getBoolean()) mstruct.eval(eo);
 	if(!CALCULATOR->variableNameIsValid(vargs[1].symbol())) {
 		CALCULATOR->error(true, _("Invalid variable name (%s)."), vargs[1].symbol().c_str(), NULL);
 		return -1;

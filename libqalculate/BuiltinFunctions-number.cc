@@ -815,17 +815,24 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	else if(sdigits == "1") idigits = 1;
 	else if(sdigits == "2") idigits = 2;
 	else if(sdigits == "3" || sdigits == "Unicode" || sdigits == "unicode" || sdigits == "escaped") idigits = 3;
+	else if(sdigits == "4" || sdigits == _("phoneword")) idigits = 4;
 	else {
-		size_t i = sdigits.find(";");
-		if(i != string::npos && sdigits.find(";", i + 1) != string::npos) {
-			idigits = -3;
+		size_t i = sdigits.find("|");
+		if(i != string::npos && sdigits.find("|", i + 1) != string::npos) {
+			idigits = -4;
 		} else {
-			i = sdigits.find(",");
-			if(i != string::npos && sdigits.find(",", i + 1) != string::npos) idigits = -2;
-			else idigits = -1;
+			i = sdigits.find(";");
+			if(i != string::npos && sdigits.find(";", i + 1) != string::npos) {
+				idigits = -3;
+			} else {
+				i = sdigits.find(",");
+				if(i != string::npos && sdigits.find(",", i + 1) != string::npos) idigits = -2;
+				else idigits = -1;
+			}
 		}
+		i = sdigits.find(" ");
+		if(i != string::npos && sdigits.find(" ", i + 1) != string::npos) remove_blanks(sdigits);
 		if(idigits < -1) {
-			remove_blanks(sdigits);
 			if(sdigits[0] == LEFT_VECTOR_WRAP_CH || sdigits[0] == LEFT_PARENTHESIS_CH) sdigits.erase(0, 1);
 			if(sdigits[sdigits.size() - 1] == RIGHT_VECTOR_WRAP_CH || sdigits[sdigits.size() - 1] == RIGHT_PARENTHESIS_CH) sdigits.erase(sdigits.size() - 1, 1);
 		}
@@ -863,7 +870,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				long int v = 0;
 				size_t d_i = 0;
 				for(size_t i = 0; i < sdigits.length();) {
-					if((idigits == -2 && sdigits[i] == ',') || (idigits == -3 && sdigits[i] == ';')) {
+					if((idigits == -2 && sdigits[i] == ',') || (idigits == -3 && sdigits[i] == ';') || (idigits == -4 && sdigits[i] == '|')) {
 						d_i = 0; v++; i++;
 					} else {
 						size_t l = 1;
@@ -875,7 +882,6 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						else v++;
 					}
 				}
-				remove_blanks(number);
 				i_dot = number.length();
 				for(size_t i = 0; i < number.length();) {
 					size_t l = 1;
@@ -890,9 +896,56 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					if(d_i == vdigits.size()) {
 						if(l == 1 && (number[i] == CALCULATOR->getDecimalPoint()[0] || (!eo.parse_options.dot_as_separator && number[i] == '.'))) {
 							if(i_dot == number.length()) i_dot = digits.size();
-						} else {
+						} else if(!is_in(SPACES, number[i])) {
 							CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), number.substr(i, l).c_str(), number.c_str(), format_and_print(mstruct).c_str(), NULL);
 						}
+					}
+					i += l;
+				}
+			} else if(idigits == 4 || idigits == 5) {
+				for(size_t i = 0; i < number.length();) {
+					size_t l = 1;
+					while(i + l < number.length() && number[i + l] <= 0 && (unsigned char) number[i + l] < 0xC0) l++;
+					char c = 0;
+					if(l == 1) {
+						c = number[i];
+					} else if(l == 2 && number[i] == -61) {
+						if(number[i + 1] >= -128 && number[i + 1] <= -122) c = 'A';
+						else if(number[i + 1] == -121) c = 'C';
+						else if(number[i + 1] >= -120 && number[i + 1] <= -117) c = 'E';
+						else if(number[i + 1] >= -116 && number[i + 1] <= -113) c = 'I';
+						//else if(number[i + 1] == -112) c = 'D';
+						else if(number[i + 1] == -111) c = 'N';
+						else if(number[i + 1] >= -110 && number[i + 1] <= -106) c = 'O';
+						else if(number[i + 1] == -104) c = 'O';
+						else if(number[i + 1] >= -103 && number[i + 1] <= -100) c = 'U';
+						else if(number[i + 1] == -99) c = 'Y';
+						//else if(number[i + 1] == -98) c = 'T';
+						else if(number[i + 1] == -97) c = 'S';
+						else if(number[i + 1] >= -96 && number[i + 1] <= -90) c = 'a';
+						else if(number[i + 1] == -89) c = 'c';
+						else if(number[i + 1] >= -88 && number[i + 1] <= -85) c = 'e';
+						else if(number[i + 1] >= -84 && number[i + 1] <= -81) c = 'i';
+						//else if(number[i + 1] == -80) c = 'd';
+						else if(number[i + 1] == -79) c = 'n';
+						else if(number[i + 1] >= -78 && number[i + 1] <= -74) c = 'o';
+						else if(number[i + 1] == -72) c = 'o';
+						else if(number[i + 1] >= -71 && number[i + 1] <= -68) c = 'u';
+						else if(number[i + 1] == -67) c = 'y';
+						//else if(number[i + 1] == -66) c = 't';
+						else if(number[i + 1] == -65) c = 'y';
+					}
+					if(c != 0) {
+						if(c == '0') digits.push_back(0);
+						else if(c == '1') digits.push_back(1);
+						else if(is_in("2abcABC", c)) digits.push_back(2);
+						else if(is_in("3defDEF", c)) digits.push_back(3);
+						else if(is_in("4ghiGHI", c)) digits.push_back(4);
+						else if(is_in("5jklJKL", c)) digits.push_back(5);
+						else if(is_in("6mnoMNO", c)) digits.push_back(6);
+						else if(is_in("7pqrsPQRS", c)) digits.push_back(7);
+						else if(is_in("8tuvTUV", c)) digits.push_back(8);
+						else if(is_in("9wxyzWXYZ", c)) digits.push_back(9);
 					}
 					i += l;
 				}
