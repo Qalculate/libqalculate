@@ -271,9 +271,6 @@ void QalculateDateTime::setToCurrentTime() {
 	gettimeofday(&tv, NULL);
 	Number nr(tv.tv_usec, 0, -6);
 	nr += tv.tv_sec;
-#ifdef _WIN32
-	nr += dateTimeZone(tv.tv_sec);
-#endif
 	set(nr);
 }
 bool QalculateDateTime::operator > (const QalculateDateTime &date2) const {
