@@ -204,6 +204,7 @@ bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index,
 	tmp_rpnindex = index;
 	tmp_rpn_mstruct = mstruct;
 	tmp_proc_registers = function_arguments;
+	tmp_tostruct = NULL;
 	if(!calculate_thread->write(false)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	while(msecs > 0 && b_busy) {

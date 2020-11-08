@@ -178,6 +178,7 @@ MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_u
 	bool had_msecs = msecs > 0;
 	tmp_evaluationoptions = eo;
 	tmp_proc_command = PROC_NO_COMMAND;
+	tmp_tostruct = NULL;
 	bool b_parse = false;
 	if(!calculate_thread->write(b_parse)) {calculate_thread->cancel(); return mstruct;}
 	void *x = (void*) &mstruct;
