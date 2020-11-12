@@ -832,9 +832,10 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		i = sdigits.find(" ");
 		if(i != string::npos && sdigits.find(" ", i + 1) != string::npos) remove_blanks(sdigits);
-		if(idigits < -1) {
-			if(sdigits[0] == LEFT_VECTOR_WRAP_CH || sdigits[0] == LEFT_PARENTHESIS_CH) sdigits.erase(0, 1);
-			if(sdigits[sdigits.size() - 1] == RIGHT_VECTOR_WRAP_CH || sdigits[sdigits.size() - 1] == RIGHT_PARENTHESIS_CH) sdigits.erase(sdigits.size() - 1, 1);
+		if(idigits == -2 || idigits == -3) {
+			if((sdigits[0] == LEFT_VECTOR_WRAP_CH && sdigits[sdigits.size() - 1] == RIGHT_VECTOR_WRAP_CH) || (sdigits[0] == LEFT_PARENTHESIS_CH && sdigits[sdigits.size() - 1] == RIGHT_PARENTHESIS_CH)) {
+				sdigits = sdigits.substr(1, sdigits.size() - 2);
+			}
 		}
 	}
 	if(vargs[1].isNumber() && idigits == 0) {

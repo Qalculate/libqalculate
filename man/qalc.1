@@ -263,7 +263,11 @@ When a line begins with '/', the text that follows is always interpreted as a co
 .PP
 .TP 8
 .B Tab
-shows a list of functions, variables, and units with names that begins with the current expression
+shows a list of functions, variables, and units that matches the last object in the current expression
+.PP
+.TP 8
+.B Ctrl+D
+terminates the program
 .PP
 .TP 8
 .B Ctrl+E
@@ -272,6 +276,10 @@ switches between approximation modes (exact, try exact, auto)
 .TP 8
 .B Ctrl+F
 switches between fraction modes (simple, decimal, auto)
+.PP
+.TP 8
+.B Ctrl+R
+saves the current result in a temporary variable
 .SH "SETTINGS"
 These settings are changed using the \fIset\fP command (e.g. set base 16) or the \fI\-s, \-\-set\fP command line option (e.g. qalc -s "base 16"). Possible values are shown in parenthesis. 1 and 0 can be used instead of on and off. If the value is left out, a value of 1 is generally assumed. The default value is marked with '*'.
 .PP
