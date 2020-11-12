@@ -1,6 +1,20 @@
+2020-11-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in Calculator::convertTimeOut(), and potentially Calculator::calculateRPN() (fixes conversion in the unit manager in qalculate-gtk)
+
+2020-11-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not ask before overwriting temporary variables in qalc
+	* Add Ctrl-R shortcut for store command in qalc
+
 2020-11-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
+	* Add "precalculate expression" argument (default false) to save() (this also changes the behaviour of ":=")
+	* Fix local time zone on Windows
+	* Fix matrix/vector multiplication when the matrix/vector is stored in an approximate variable
+	* Fix parsing of expression with multiple degree signs
 	* Support multiple equivalent custom digits, separated by semicolon (e.g. "0;aA1;bB2;cC3"), in base() function
+	* Phoneword digit set in base() function
 
 2020-11-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

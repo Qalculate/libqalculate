@@ -240,6 +240,7 @@ bool ask_question(const char *question, bool default_answer = false) {
 	while(true) {
 #ifdef HAVE_LIBREADLINE
 		char *rlbuffer = readline(" ");
+		if(!rlbuffer) return false;
 		string str = rlbuffer;
 		free(rlbuffer);
 #else
@@ -1310,13 +1311,9 @@ int key_exact(int, int) {
 		dual_approximation = -1;
 		PUTS_UNICODE(_("auto"));
 	}
-	if(expression_executed && interactive_mode) {
-		expression_calculation_updated();
-	} else {
-		expression_calculation_updated();
-	}
+	expression_calculation_updated();
 	fputs("> ", stdout);
-	return 1;
+	return 0;
 }
 
 int key_fraction(int, int) {
@@ -1339,13 +1336,73 @@ int key_fraction(int, int) {
 		PUTS_UNICODE(_("auto"));
 	}
 	printops.restrict_fraction_length = (printops.number_fraction_format == FRACTION_FRACTIONAL || printops.number_fraction_format == FRACTION_COMBINED);
-	if(expression_executed && interactive_mode) {
-		result_format_updated();
-	} else {
-		result_format_updated();
+	result_format_updated();
+	fputs("> ", stdout);
+	return 0;
+}
+
+int key_save(int, int) {
+	string name;
+	string cat = _("Temporary");
+	string title;
+	bool b = true;
+#ifdef HAVE_LIBREADLINE
+	rl_clear_visible_line();
+#endif
+	FPUTS_UNICODE(_("Name"), stdout);
+#ifdef HAVE_LIBREADLINE
+	char *rlbuffer = readline(": ");
+	if(!rlbuffer) return 1;
+	name = rlbuffer;
+	free(rlbuffer);
+#else
+	fputs(": ", stdout);
+	if(!fgets(buffer, 1000, stdin)) return 1;
+	name = buffer;
+#endif
+	remove_blank_ends(name);
+
+	if(!CALCULATOR->variableNameIsValid(name)) {
+		name = CALCULATOR->convertToValidVariableName(name);
+		if(!CALCULATOR->variableNameIsValid(name)) {
+			PUTS_UNICODE(_("Illegal name."));
+			b = false;
+		} else {
+			size_t l = name.length() + strlen(_("Illegal name. Save as %s instead (default: no)?"));
+			char *cstr = (char*) malloc(sizeof(char) * (l + 1));
+			snprintf(cstr, l, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
+			if(!ask_question(cstr)) {
+				b = false;
+			}
+			free(cstr);
+		}
+	}
+	Variable *v = NULL;
+	if(b) v = CALCULATOR->getActiveVariable(name);
+	if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != _("Temporary"))))) {
+		b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
+	}
+	if(b) {
+		if(v && v->isLocal() && v->isKnown()) {
+			if(!title.empty()) v->setTitle(title);
+			((KnownVariable*) v)->set(*mstruct);
+			if(v->countNames() == 0) {
+				ExpressionName ename(name);
+				ename.reference = true;
+				v->setName(ename, 1);
+			} else {
+				v->setName(name, 1);
+			}
+		} else {
+			CALCULATOR->addVariable(new KnownVariable(cat, name, *mstruct, title));
+		}
 	}
 	fputs("> ", stdout);
-	return 1;
+#ifdef HAVE_LIBREADLINE
+	rlbuffer = readline("");
+	if(rlbuffer) free(rlbuffer);
+#endif
+	return 0;
 }
 
 bool title_matches(ExpressionItem *item, const string &str, size_t minlength = 0) {
@@ -2216,9 +2273,12 @@ int main(int argc, char *argv[]) {
 	rl_readline_name = "qalc";
 	rl_basic_word_break_characters = NOT_IN_NAMES NUMBERS;
 	rl_completion_entry_function = qalc_completion;
-	rl_bind_key('\t', rlcom_tab);
-	rl_bind_keyseq("\\C-e", key_exact);
-	rl_bind_keyseq("\\C-f", key_fraction);
+	if(interactive_mode) {
+		rl_bind_key('\t', rlcom_tab);
+		rl_bind_keyseq("\\C-e", key_exact);
+		rl_bind_keyseq("\\C-f", key_fraction);
+		rl_bind_keyseq("\\C-r", key_save);
+	}
 #endif
 
 	string scom;
@@ -2385,13 +2445,12 @@ int main(int argc, char *argv[]) {
 						free(cstr);
 					}
 				}
-				if(b && CALCULATOR->variableNameTaken(name)) {
-					if(!ask_question(_("An unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"))) {
-						b = false;
-					}
+				Variable *v = NULL;
+				if(b) v = CALCULATOR->getActiveVariable(name);
+				if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != _("Temporary"))))) {
+					b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 				}
 				if(b) {
-					Variable *v = CALCULATOR->getActiveVariable(name);
 					if(v && v->isLocal() && v->isKnown()) {
 						if(catset) v->setCategory(cat);
 						if(!title.empty()) v->setTitle(title);
@@ -2450,13 +2509,12 @@ int main(int argc, char *argv[]) {
 					free(cstr);
 				}
 			}
-			if(b && CALCULATOR->variableNameTaken(name)) {
-				if(!ask_question(_("An unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"))) {
-					b = false;
-				}
+			Variable *v = NULL;
+			if(b) v = CALCULATOR->getActiveVariable(name);
+			if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != _("Temporary"))))) {
+				b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 			}
 			if(b) {
-				Variable *v = CALCULATOR->getActiveVariable(name);
 				if(v && v->isLocal() && v->isKnown()) {
 					((KnownVariable*) v)->set(expr);
 					if(v->countNames() == 0) {
@@ -4540,11 +4598,11 @@ bool contains_decimal(const MathStructure &m, bool test_orig = false) {
 	return false;
 }
 
-// test size of simple or combiend (if top value) fraction
-bool test_frac(const MathStructure &m, bool top_m = true, int limit = 1000) {
-	if(m.isNumber()) return m.number().isRational() && (limit < 0 || m.number().isInteger() || (m.number().denominatorIsLessThan(limit) && (top_m || (m.number().numeratorIsLessThan(limit) && m.number().numeratorIsGreaterThan(-limit)))));
+// test size of simple or combined (if top value) fraction
+bool test_frac(const MathStructure &m, bool test_combined = true, int limit = 1000) {
+	if(m.isNumber()) return m.number().isRational() && (limit < 0 || m.number().isInteger() || (m.number().denominatorIsLessThan(limit) && (test_combined || (m.number().numeratorIsLessThan(limit) && m.number().numeratorIsGreaterThan(-limit)))));
 	for(size_t i = 0; i < m.size(); i++) {
-		if(!test_frac(m[i], top_m && m.isNegate(), limit)) return false;
+		if(!test_frac(m[i], test_combined && m.isNegate(), limit)) return false;
 	}
 	return true;
 }
@@ -4573,7 +4631,7 @@ void print_m(PrintOptions &po, string &str, MathStructure &m, MathStructure *mre
 		}
 	}
 	bool b_cmp3 = false;
-	// with dual approximation, equalities contains three values
+	// with dual approximation, equalities contain three values
 	if(m.isComparison() && m.size() == 3 && m.comparisonType() == COMPARISON_EQUALS) {
 		if(m[2].isUndefined()) {
 			// the only unique value is exact
@@ -4599,7 +4657,7 @@ void print_m(PrintOptions &po, string &str, MathStructure &m, MathStructure *mre
 					do_frac = true;
 					if(mcmp == mresult && mparse) {
 						if(mcmp->isNumber() && mcmp->number().isRational()) {
-							do_frac = (!mparse->isDivision() || (*mparse)[1] != mcmp->number().denominator() || ((*mparse)[0] != mcmp->number().numerator() && (!(*mparse)[0].isNegate() || (*mparse)[0][0] != -mcmp->number().numerator()))) && (!mparse->isNegate() || !(*mparse)[0].isDivision() || (*mparse)[0][1] != mcmp->number().denominator() || (*mparse)[0][0] != -mcmp->number().numerator());
+							do_frac = (evalops.parse_options.base != po.base) || ((!mparse->isDivision() || (*mparse)[1] != mcmp->number().denominator() || ((*mparse)[0] != mcmp->number().numerator() && (!(*mparse)[0].isNegate() || (*mparse)[0][0] != -mcmp->number().numerator()))) && (!mparse->isNegate() || !(*mparse)[0].isDivision() || (*mparse)[0][1] != mcmp->number().denominator() || (*mparse)[0][0] != -mcmp->number().numerator()));
 							do_mixed = (dual_fraction != 0 || !do_frac) && !mcmp->number().isNegative() && !mcmp->number().isFraction();
 						} else if(mresult->isFunction() && mparse->isFunction() && mresult->function() == mparse->function()) {
 							do_frac = false;
@@ -4610,10 +4668,12 @@ void print_m(PrintOptions &po, string &str, MathStructure &m, MathStructure *mre
 		}
 		bool *old_approx = po.is_approximate;
 		NumberFractionFormat old_fr = po.number_fraction_format;
+		bool old_rfl = po.restrict_fraction_length;
 		bool b_approx = false;
 		po.is_approximate = &b_approx;
 		if(do_frac) {
 			po.number_fraction_format = FRACTION_FRACTIONAL;
+			po.restrict_fraction_length = true;
 			MathStructure m2(*mcmp);
 			m.removeDefaultAngleUnit(evalops);
 			m2.format(po);
@@ -4625,6 +4685,7 @@ void print_m(PrintOptions &po, string &str, MathStructure &m, MathStructure *mre
 		if(do_mixed) {
 			b_approx = false;
 			po.number_fraction_format = FRACTION_COMBINED;
+			po.restrict_fraction_length = true;
 			MathStructure m2(*mcmp);
 			m.removeDefaultAngleUnit(evalops);
 			m2.format(po);
@@ -4647,6 +4708,7 @@ void print_m(PrintOptions &po, string &str, MathStructure &m, MathStructure *mre
 		}
 		po.number_fraction_format = old_fr;
 		po.is_approximate = old_approx;
+		po.restrict_fraction_length = old_rfl;
 	}
 }
 
@@ -4760,7 +4822,7 @@ void ViewThread::run() {
 		bool do_exact = !mstruct_exact.isUndefined() && m.isApproximate();
 
 		// If parsed value is number (simple fractions are parsed as division) only show result as combined fraction
-		if(dual_fraction && !m.isApproximate() && mparse && mparse->isNumber()) {
+		if(dual_fraction && po.base == 10 && po.base == evalops.parse_options.base && !m.isApproximate() && mparse && mparse->isNumber()) {
 			po.number_fraction_format = FRACTION_COMBINED;
 		// with auto fractions show expressions with unknown variables/symbols only using simple fractions (if not parsed value contains decimals)
 		} else if(dual_fraction < 0 && !m.isApproximate() && (test_fr_unknowns(m) || (m.containsType(STRUCT_ADDITION) && test_power_func(m))) && test_frac(m, false, -1) && (!mparse || !contains_decimal(*mparse, true))) {
@@ -4791,16 +4853,15 @@ void ViewThread::run() {
 		m.removeDefaultAngleUnit(evalops);
 		m.format(po);
 
-		if(dual_fraction && po.number_fraction_format == FRACTION_DECIMAL_EXACT && !m.isApproximate() && mresult->isNumber() && !mresult->number().isFraction() && !mresult->number().isNegative() && mparse && mparse->equals(m)) {
+		if(dual_fraction && po.base == 10 && po.base == evalops.parse_options.base && po.number_fraction_format == FRACTION_DECIMAL_EXACT && !m.isApproximate() && mresult->isNumber() && !mresult->number().isFraction() && !mresult->number().isNegative() && mparse && mparse->equals(m)) {
 			po.number_fraction_format = FRACTION_COMBINED;
 			m = *mresult;
 			m.removeDefaultAngleUnit(evalops);
 			m.format(po);
 		}
 		if(m.isLogicalOr()) {
-			bool b_approx = *po.is_approximate;
-			bool non_comparison = false;
 			InternalPrintStruct ips;
+			bool b_approx = false;
 			for(size_t i = 0; i < m.size(); i++) {
 				if(CALCULATOR->aborted()) {result_text = CALCULATOR->abortedMessage(); break;}
 				if(i == 0) {
@@ -4834,7 +4895,8 @@ void ViewThread::run() {
 						if(b_wrap) result_text += "(";
 						result_text += str;
 						if(b_wrap) result_text += ")";
-						if(!m[i][i2].isComparison() || m[i][i2].comparisonType() != COMPARISON_EQUALS) non_comparison = true;
+						if(b_approx) *po.is_approximate = true;
+						b_approx = *po.is_approximate;
 					}
 				} else {
 					bool b_wrap = m[i].needsParenthesis(po, ips, m, i + 1, true, true);
@@ -4843,14 +4905,13 @@ void ViewThread::run() {
 					if(b_wrap) result_text += "(";
 					result_text += str;
 					if(b_wrap) result_text += ")";
-					if(!m[i].isComparison() || m[i].comparisonType() != COMPARISON_EQUALS) non_comparison = true;
+					if(b_approx) *po.is_approximate = true;
+					b_approx = *po.is_approximate;
 				}
 			}
-			if(non_comparison) *po.is_approximate = b_approx;
 		} else if(m.isLogicalAnd() && (po.preserve_format || m.size() != 2 || !m[0].isComparison() || !m[1].isComparison() || m[0].comparisonType() == COMPARISON_EQUALS || m[0].comparisonType() == COMPARISON_NOT_EQUALS || m[1].comparisonType() == COMPARISON_EQUALS || m[1].comparisonType() == COMPARISON_NOT_EQUALS || m[0][0] != m[1][0])) {
-			bool b_approx = *po.is_approximate;
-			bool non_comparison = false;
 			InternalPrintStruct ips;
+			bool b_approx = false;
 			for(size_t i = 0; i < m.size(); i++) {
 				if(CALCULATOR->aborted()) {result_text = CALCULATOR->abortedMessage(); break;}
 				if(i == 0) {
@@ -4870,12 +4931,13 @@ void ViewThread::run() {
 				if(b_wrap) result_text += "(";
 				result_text += str;
 				if(b_wrap) result_text += ")";
-				if(!m[i].isComparison() || m[i].comparisonType() != COMPARISON_EQUALS) non_comparison = true;
+				if(b_approx) *po.is_approximate = true;
+				b_approx = *po.is_approximate;
 			}
-			if(non_comparison) *po.is_approximate = b_approx;
 		} else {
 			print_m(po, result_text, m, mresult, mparse);
 			if(do_exact && (m.type() != STRUCT_COMPARISON || m.comparisonType() != COMPARISON_EQUALS)) {
+				bool *old_approx = po.is_approximate;
 				bool b_approx = false;
 				po.is_approximate = &b_approx;
 				MathStructure mexact(mstruct_exact);
@@ -4884,9 +4946,10 @@ void ViewThread::run() {
 				mexact.removeDefaultAngleUnit(evalops);
 				mexact.format(po);
 				string str = mexact.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
-				if(!(*po.is_approximate)) {
+				if(!b_approx) {
 					alt_results.push_back(str);
 				}
+				po.is_approximate = old_approx;
 			}
 		}
 
@@ -5377,7 +5440,7 @@ void execute_command(int command_type, bool show_result) {
 }
 
 bool test_simplified(const MathStructure &m) {
-	if(m.isFunction() || (m.isVariable() && m.variable()->isKnown())) return false;
+	if(m.isFunction() || (m.isVariable() && m.variable()->isKnown()) || (m.isUnit() && m.unit()->hasApproximateRelationToBase())) return false;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(!test_simplified(m[i])) return false;
 	}
@@ -6043,31 +6106,16 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		} else if(test_simplified(mstruct_exact)) {
 			mstruct->set(mstruct_exact);
 			mstruct_exact.setUndefined();
-		} else if(mstruct_exact.isMultiplication()) {
-			size_t i = 0;
-			if(mstruct_exact[0].isNumber()) i++;
-			bool b = true;
-			for(; i < mstruct_exact.size(); i++) {
-				if(!mstruct_exact.isUnit_exp()) {
-					b = false;
-					break;
-				}
-			}
-			if(b) {
-				mstruct->set(mstruct_exact);
-				mstruct_exact.setUndefined();
-			}
 		}
-		CALCULATOR->endTemporaryStopMessages();
 		evalops.approximation = APPROXIMATION_TRY_EXACT;
 		evalops.expand = true;
 		if(mstruct_exact.containsType(STRUCT_COMPARISON)) {
 			bool b = false;
 			MathStructure *mcmp = mstruct;
 			if(mcmp->isLogicalAnd() && mcmp->size() > 0) mcmp = &(*mcmp)[0];
-			if(mcmp->isComparison()) {
+			if(mcmp->isComparison() && (mcmp->comparisonType() == COMPARISON_EQUALS || dual_approximation > 0) && !(*mcmp)[0].isNumber()) {
 				if(mstruct_exact.isLogicalAnd() && mstruct_exact.size() > 0) mstruct_exact.setToChild(1);
-				if(mstruct_exact.isComparison() && (mstruct_exact.comparisonType() == COMPARISON_EQUALS || dual_approximation > 0) && mstruct_exact.comparisonType() == mcmp->comparisonType() && !mstruct_exact[0].isNumber() && mstruct_exact[0] == (*mcmp)[0]) {
+				if(mstruct_exact.isComparison() && mstruct_exact.comparisonType() == mcmp->comparisonType() && mstruct_exact[0] == (*mcmp)[0]) {
 					MathStructure mtest(mstruct_exact[1]);
 					SET_TIME_LEFT
 					if(i_maxtime == 0 || i_timeleft > 0) {
@@ -6080,10 +6128,10 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				} else if(mstruct_exact.isLogicalOr()) {
 					for(size_t i = 0; i < mstruct_exact.size(); i++) {
 						if(mstruct_exact[i].isLogicalAnd() && mstruct_exact[i].size() > 0) mstruct_exact[i].setToChild(1);
-						if(mstruct_exact[i].isComparison() && (mstruct_exact[i].comparisonType() == COMPARISON_EQUALS || dual_approximation > 0) && mstruct_exact[i].comparisonType() == mcmp->comparisonType() && !mstruct_exact[i][0].isNumber() && mstruct_exact[i][0] == (*mcmp)[0]) {
+						if(mstruct_exact[i].isComparison() && mstruct_exact[i].comparisonType() == mcmp->comparisonType() && mstruct_exact[i][0] == (*mcmp)[0]) {
 							MathStructure mtest(mstruct_exact[i][1]);
 							SET_TIME_LEFT
-							if(i_maxtime != 0 && i_timeleft <= 0) {b = false; break;}
+							if(i_maxtime != 0 && i_timeleft <= 0) break;
 							CALCULATOR->calculate(&mtest, i_maxtime ? i_timeleft : 1000 / mstruct_exact.size(), evalops);
 							if(comparison_compare(mtest, (*mcmp)[1])) {
 								mstruct_exact.setToChild(i + 1);
@@ -6100,26 +6148,25 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					for(size_t i = 0; i < mcmp->size() && b; i++) {
 						MathStructure *mcmpi = &(*mcmp)[i];
 						if(mcmpi->isLogicalAnd() && mcmpi->size() > 0) mcmpi = &(*mcmpi)[0];
-						if(mcmpi->isComparison()) {
-							for(size_t i2 = 0; i2 < mstruct_exact.size();) {
-								if(mstruct_exact[i2].isProtected()) {
-									i2++;
-								} else {
-									if(mstruct_exact[i2].isLogicalAnd() && mstruct_exact[i2].size() > 0) mstruct_exact[i2].setToChild(1);
-									if(mstruct_exact[i2].isComparison() && mstruct_exact[i2].comparisonType() == COMPARISON_EQUALS && mstruct_exact[i2].comparisonType() == mcmpi->comparisonType() && !mstruct_exact[i2][0].isNumber() && mstruct_exact[i2][0] == (*mcmpi)[0]) {
-										MathStructure mtest(mstruct_exact[i2][1]);
-										SET_TIME_LEFT
-										if(i_maxtime != 0 && i_timeleft <= 0) {b = false; break;}
-										CALCULATOR->calculate(&mtest, i_maxtime ? i_timeleft : 1000 / mstruct_exact.size(), evalops);
-										if(comparison_compare(mtest, (*mcmpi)[1])) {
-											if(!mtest.isApproximate()) {(*mcmpi)[1].set(mtest); mstruct_exact[i2][1].setUndefined();}
-											mstruct_exact[i2].setProtected();
-											break;
-										}
+						if(!mcmpi->isComparison() || mcmpi->comparisonType() != COMPARISON_EQUALS || (*mcmpi)[0].isNumber()) {b = false; break;}
+						for(size_t i2 = 0; i2 < mstruct_exact.size();) {
+							if(mstruct_exact[i2].isProtected()) {
+								i2++;
+							} else {
+								if(mstruct_exact[i2].isLogicalAnd() && mstruct_exact[i2].size() > 0) mstruct_exact[i2].setToChild(1);
+								if(mstruct_exact[i2].isComparison() && mstruct_exact[i2].comparisonType() == mcmpi->comparisonType() && mstruct_exact[i2][0] == (*mcmpi)[0]) {
+									MathStructure mtest(mstruct_exact[i2][1]);
+									SET_TIME_LEFT
+									if(i_maxtime != 0 && i_timeleft <= 0) {b = false; break;}
+									CALCULATOR->calculate(&mtest, i_maxtime ? i_timeleft : 1000 / mstruct_exact.size(), evalops);
+									if(comparison_compare(mtest, (*mcmpi)[1])) {
+										if(!mtest.isApproximate()) {(*mcmpi)[1].set(mtest); mstruct_exact[i2][1].setUndefined();}
+										mstruct_exact[i2].setProtected();
+										break;
 									}
-									if(mstruct_exact.size() <= mcmp->size()) {b = false; break;}
-									mstruct_exact.delChild(i2 + 1);
 								}
+								if(mstruct_exact.size() <= mcmp->size()) {b = false; break;}
+								mstruct_exact.delChild(i2 + 1);
 							}
 						}
 					}
@@ -6138,6 +6185,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			mtest.evalSort(true);
 			if(mstruct_exact.equals(mtest, true, true)) mstruct_exact.setUndefined();
 		}
+		CALCULATOR->endTemporaryStopMessages();
 	}
 
 	b_busy = false;
@@ -6439,7 +6487,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {3, 14, 1};
+	int version_numbers[] = {3, 15, 0};
 
 	if(file) {
 		char line[10000];
@@ -6793,8 +6841,8 @@ bool save_preferences(bool mode) {
 		} else {
 			set_saved_mode();
 		}
-		if(!saved_df != 0) saved_dual_fraction = saved_df;
-		if(!saved_da != 0) saved_dual_approximation = saved_da;
+		if(saved_df != 0) saved_dual_fraction = saved_df;
+		if(saved_da != 0) saved_dual_approximation = saved_da;
 	}
 	fprintf(file, "\n[Mode]\n");
 	fprintf(file, "min_deci=%i\n", saved_printops.min_decimals);
