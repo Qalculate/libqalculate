@@ -1,3 +1,7 @@
+2020-11-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add automatic and dual approximation and fraction options to Calculator::calculateAndPrint()
+
 2020-11-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault in Calculator::convertTimeOut(), and potentially Calculator::calculateRPN() (fixes conversion in the unit manager in qalculate-gtk)
