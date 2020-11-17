@@ -145,6 +145,20 @@ typedef enum {
 	MESSAGE_ERROR
 } MessageType;
 
+typedef enum {
+	AUTOMATIC_FRACTION_OFF,
+	AUTOMATIC_FRACTION_SINGLE,
+	AUTOMATIC_FRACTION_AUTO,
+	AUTOMATIC_FRACTION_DUAL
+} AutomaticFractionFormat;
+
+typedef enum {
+	AUTOMATIC_APPROXIMATION_OFF,
+	AUTOMATIC_APPROXIMATION_SINGLE,
+	AUTOMATIC_APPROXIMATION_AUTO,
+	AUTOMATIC_APPROXIMATION_DUAL
+} AutomaticApproximation;
+
 ///Message stages
 #define MESSAGE_STAGE_CONVERSION		-4
 #define MESSAGE_STAGE_CONVERSION_PARSING	-3
@@ -439,6 +453,7 @@ class Calculator {
 	*/
 	std::string calculateAndPrint(std::string str, int msecs = 10000, const EvaluationOptions &eo = default_user_evaluation_options, const PrintOptions &po = default_print_options);
 	std::string calculateAndPrint(std::string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, std::string *parsed_expression);
+	std::string calculateAndPrint(std::string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, AutomaticFractionFormat auto_fraction, AutomaticApproximation auto_approx = AUTOMATIC_APPROXIMATION_OFF, std::string *parsed_expression = NULL, int max_length = -1, bool *result_is_comparison = NULL);
 	int testCondition(std::string expression);
 	//@}
 

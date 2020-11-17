@@ -1791,7 +1791,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				if(CALCULATOR->aborted()) return false;
 				if(CHILD(0)[i].isMultiplication()) {
 					for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
-						if(CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().isReal() && CHILD(0)[i][i2][1].number().isNegative()) {
+						if(CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1].isNumber() && CHILD(0)[i][i2][1].number().isReal() && CHILD(0)[i][i2][1].number().isNegative() && CHILD(0)[i][i2][0].contains(x_var)) {
 							if(!mdiv.isUndefined()) b_multiple_div = true;
 							else mdiv = CHILD(0)[i][i2];
 							break;
