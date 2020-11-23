@@ -1,3 +1,21 @@
+2020-11-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix precision in output of expression after RPN operation in qalc
+
+2020-11-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not output Unicode cube root symbol (often has low legibility)
+	* Show cbrt(a) instead of a^(1/3) in result (when PrintOptions::halfexp_to_sqrt is true)
+
+2020-11-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix never ending loop with log-based unit in trigonometric function
+	* Use false/true instead of 0/1 for result of equality or inequality
+
+2020-11-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in isolate x with exponentiation factor without x in base
+
 2020-11-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add automatic and dual approximation and fraction options to Calculator::calculateAndPrint()

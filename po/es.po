@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-12 15:36+0100\n"
+"POT-Creation-Date: 2020-11-22 13:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -292,7 +292,8 @@ msgstr ""
 msgid "Unrecognized assumption."
 msgstr ""
 
-#: ../src/qalc.cc:456 ../src/qalc.cc:490 ../src/qalc.cc:4871
+#: ../src/qalc.cc:456 ../src/qalc.cc:490
+#: ../libqalculate/Calculator-calculate.cc:1003
 #: ../libqalculate/Calculator.cc:246 ../libqalculate/Calculator.cc:474
 #: ../libqalculate/DataSet.cc:1092 ../libqalculate/DataSet.cc:1154
 #: ../libqalculate/MathStructure-print.cc:3453 ../libqalculate/Function.cc:2307
@@ -328,9 +329,9 @@ msgstr ""
 #: ../src/qalc.cc:3128 ../src/qalc.cc:3134 ../src/qalc.cc:3335
 #: ../src/qalc.cc:3502 ../src/qalc.cc:3539 ../src/qalc.cc:4108
 #: ../src/qalc.cc:4247 ../src/qalc.cc:4403 ../src/qalc.cc:4501
-#: ../src/qalc.cc:5717 ../src/qalc.cc:5721
-#: ../libqalculate/Calculator-calculate.cc:843
-#: ../libqalculate/Calculator-calculate.cc:847
+#: ../src/qalc.cc:5294 ../src/qalc.cc:5298
+#: ../libqalculate/Calculator-calculate.cc:1524
+#: ../libqalculate/Calculator-calculate.cc:1528
 msgid "base"
 msgstr ""
 
@@ -345,49 +346,49 @@ msgstr ""
 
 #: ../src/qalc.cc:649 ../src/qalc.cc:2894 ../src/qalc.cc:3337
 #: ../src/qalc.cc:3462 ../src/qalc.cc:4120 ../src/qalc.cc:4220
-#: ../src/qalc.cc:5633 ../libqalculate/Calculator-calculate.cc:763
+#: ../src/qalc.cc:5210 ../libqalculate/Calculator-calculate.cc:1444
 msgid "roman"
 msgstr ""
 
 #: ../src/qalc.cc:650 ../src/qalc.cc:2899 ../src/qalc.cc:3338
-#: ../src/qalc.cc:3463 ../src/qalc.cc:5635
-#: ../libqalculate/Calculator-calculate.cc:765
+#: ../src/qalc.cc:3463 ../src/qalc.cc:5212
+#: ../libqalculate/Calculator-calculate.cc:1446
 msgid "bijective"
 msgstr ""
 
 #: ../src/qalc.cc:656 ../src/qalc.cc:2934 ../src/qalc.cc:3345
-#: ../src/qalc.cc:4118 ../src/qalc.cc:5649
-#: ../libqalculate/Calculator-calculate.cc:779
+#: ../src/qalc.cc:4118 ../src/qalc.cc:5226
+#: ../libqalculate/Calculator-calculate.cc:1460
 msgid "time"
 msgstr ""
 
-#: ../src/qalc.cc:657 ../src/qalc.cc:2869 ../src/qalc.cc:5623
-#: ../libqalculate/Calculator-calculate.cc:753
+#: ../src/qalc.cc:657 ../src/qalc.cc:2869 ../src/qalc.cc:5200
+#: ../libqalculate/Calculator-calculate.cc:1434
 msgid "hexadecimal"
 msgstr ""
 
-#: ../src/qalc.cc:664 ../src/qalc.cc:2889 ../src/qalc.cc:5631
-#: ../libqalculate/Calculator-calculate.cc:761
+#: ../src/qalc.cc:664 ../src/qalc.cc:2889 ../src/qalc.cc:5208
+#: ../libqalculate/Calculator-calculate.cc:1442
 msgid "duodecimal"
 msgstr ""
 
-#: ../src/qalc.cc:665 ../src/qalc.cc:2874 ../src/qalc.cc:5625
-#: ../libqalculate/Calculator-calculate.cc:755
+#: ../src/qalc.cc:665 ../src/qalc.cc:2874 ../src/qalc.cc:5202
+#: ../libqalculate/Calculator-calculate.cc:1436
 msgid "binary"
 msgstr ""
 
-#: ../src/qalc.cc:666 ../src/qalc.cc:2884 ../src/qalc.cc:5629
-#: ../libqalculate/Calculator-calculate.cc:759
+#: ../src/qalc.cc:666 ../src/qalc.cc:2884 ../src/qalc.cc:5206
+#: ../libqalculate/Calculator-calculate.cc:1440
 msgid "octal"
 msgstr ""
 
-#: ../src/qalc.cc:667 ../src/qalc.cc:2879 ../src/qalc.cc:5627
-#: ../libqalculate/Calculator-calculate.cc:757
+#: ../src/qalc.cc:667 ../src/qalc.cc:2879 ../src/qalc.cc:5204
+#: ../libqalculate/Calculator-calculate.cc:1438
 msgid "decimal"
 msgstr ""
 
 #: ../src/qalc.cc:668 ../src/qalc.cc:2904 ../src/qalc.cc:3339
-#: ../src/qalc.cc:5637 ../libqalculate/Calculator-calculate.cc:767
+#: ../src/qalc.cc:5214 ../libqalculate/Calculator-calculate.cc:1448
 msgid "sexagesimal"
 msgstr ""
 
@@ -755,15 +756,15 @@ msgid "optimalsi"
 msgstr ""
 
 #: ../src/qalc.cc:988 ../src/qalc.cc:3122 ../src/qalc.cc:3501
-#: ../src/qalc.cc:4245 ../src/qalc.cc:5713
-#: ../libqalculate/Calculator-calculate.cc:839
+#: ../src/qalc.cc:4245 ../src/qalc.cc:5290
+#: ../libqalculate/Calculator-calculate.cc:1520
 msgid "optimal"
 msgstr ""
 
 #: ../src/qalc.cc:990 ../src/qalc.cc:1161 ../src/qalc.cc:1324
 #: ../src/qalc.cc:3393 ../src/qalc.cc:3497 ../src/qalc.cc:4150
-#: ../src/qalc.cc:4251 ../src/qalc.cc:5750
-#: ../libqalculate/Calculator-calculate.cc:868
+#: ../src/qalc.cc:4251 ../src/qalc.cc:5327
+#: ../libqalculate/Calculator-calculate.cc:1549
 msgid "mixed"
 msgstr ""
 
@@ -783,13 +784,13 @@ msgstr ""
 
 #: ../src/qalc.cc:1012 ../src/qalc.cc:3210 ../src/qalc.cc:3226
 #: ../src/qalc.cc:3542 ../src/qalc.cc:4013 ../src/qalc.cc:4038
-#: ../src/qalc.cc:4494 ../src/qalc.cc:5782
-#: ../libqalculate/Calculator-calculate.cc:907
+#: ../src/qalc.cc:4494 ../src/qalc.cc:5359
+#: ../libqalculate/Calculator-calculate.cc:1588
 msgid "expand"
 msgstr ""
 
 #: ../src/qalc.cc:1013 ../src/qalc.cc:3225 ../src/qalc.cc:4038
-#: ../src/qalc.cc:5779 ../libqalculate/Calculator-calculate.cc:903
+#: ../src/qalc.cc:5356 ../libqalculate/Calculator-calculate.cc:1584
 msgid "factorize"
 msgstr ""
 
@@ -884,36 +885,37 @@ msgid "complex form"
 msgstr ""
 
 #: ../src/qalc.cc:1181 ../src/qalc.cc:2994 ../src/qalc.cc:3365
-#: ../src/qalc.cc:4133 ../src/qalc.cc:5698
-#: ../libqalculate/Calculator-calculate.cc:817
+#: ../src/qalc.cc:4133 ../src/qalc.cc:5275
+#: ../libqalculate/Calculator-calculate.cc:1498
 msgid "rectangular"
 msgstr ""
 
-#: ../src/qalc.cc:1181 ../src/qalc.cc:2994 ../src/qalc.cc:5698
-#: ../libqalculate/Calculator-calculate.cc:817
+#: ../src/qalc.cc:1181 ../src/qalc.cc:2994 ../src/qalc.cc:5275
+#: ../libqalculate/Calculator-calculate.cc:1498
 msgid "cartesian"
 msgstr ""
 
 #: ../src/qalc.cc:1182 ../src/qalc.cc:3006 ../src/qalc.cc:3366
-#: ../src/qalc.cc:4133 ../src/qalc.cc:5701
-#: ../libqalculate/Calculator-calculate.cc:819
+#: ../src/qalc.cc:4133 ../src/qalc.cc:5278
+#: ../libqalculate/Calculator-calculate.cc:1500
 msgid "exponential"
 msgstr ""
 
 #: ../src/qalc.cc:1183 ../src/qalc.cc:3018 ../src/qalc.cc:3367
-#: ../src/qalc.cc:4133 ../src/qalc.cc:5704
-#: ../libqalculate/Calculator-calculate.cc:821
+#: ../src/qalc.cc:4133 ../src/qalc.cc:5281
+#: ../libqalculate/Calculator-calculate.cc:1502
 msgid "polar"
 msgstr ""
 
 #: ../src/qalc.cc:1184 ../src/qalc.cc:3030 ../src/qalc.cc:3368
-#: ../src/qalc.cc:4133 ../src/qalc.cc:5707
-#: ../libqalculate/Calculator-calculate.cc:823 ../libqalculate/Function.cc:2248
+#: ../src/qalc.cc:4133 ../src/qalc.cc:5284
+#: ../libqalculate/Calculator-calculate.cc:1504
+#: ../libqalculate/Function.cc:2248
 msgid "angle"
 msgstr ""
 
-#: ../src/qalc.cc:1184 ../src/qalc.cc:3030 ../src/qalc.cc:5707
-#: ../libqalculate/Calculator-calculate.cc:823
+#: ../src/qalc.cc:1184 ../src/qalc.cc:3030 ../src/qalc.cc:5284
+#: ../libqalculate/Calculator-calculate.cc:1504
 msgid "phasor"
 msgstr ""
 
@@ -939,8 +941,8 @@ msgstr ""
 msgid "set"
 msgstr ""
 
-#: ../src/qalc.cc:1320 ../src/qalc.cc:3110 ../src/qalc.cc:5687
-#: ../libqalculate/Calculator-calculate.cc:828
+#: ../src/qalc.cc:1320 ../src/qalc.cc:3110 ../src/qalc.cc:5264
+#: ../libqalculate/Calculator-calculate.cc:1509
 msgid "fraction"
 msgstr ""
 
@@ -982,47 +984,47 @@ msgstr ""
 msgid "Year"
 msgstr ""
 
-#: ../src/qalc.cc:1471 ../libqalculate/Calculator-calculate.cc:990
+#: ../src/qalc.cc:1471 ../libqalculate/Calculator-calculate.cc:1717
 msgid "failed"
 msgstr ""
 
-#: ../src/qalc.cc:1472 ../libqalculate/Calculator-calculate.cc:991
+#: ../src/qalc.cc:1472 ../libqalculate/Calculator-calculate.cc:1718
 msgid "Gregorian:"
 msgstr ""
 
-#: ../src/qalc.cc:1473 ../libqalculate/Calculator-calculate.cc:992
+#: ../src/qalc.cc:1473 ../libqalculate/Calculator-calculate.cc:1719
 msgid "Hebrew:"
 msgstr ""
 
-#: ../src/qalc.cc:1474 ../libqalculate/Calculator-calculate.cc:993
+#: ../src/qalc.cc:1474 ../libqalculate/Calculator-calculate.cc:1720
 msgid "Islamic:"
 msgstr ""
 
-#: ../src/qalc.cc:1475 ../libqalculate/Calculator-calculate.cc:994
+#: ../src/qalc.cc:1475 ../libqalculate/Calculator-calculate.cc:1721
 msgid "Persian:"
 msgstr ""
 
-#: ../src/qalc.cc:1476 ../libqalculate/Calculator-calculate.cc:995
+#: ../src/qalc.cc:1476 ../libqalculate/Calculator-calculate.cc:1722
 msgid "Indian national:"
 msgstr ""
 
-#: ../src/qalc.cc:1477 ../libqalculate/Calculator-calculate.cc:996
+#: ../src/qalc.cc:1477 ../libqalculate/Calculator-calculate.cc:1723
 msgid "Chinese:"
 msgstr ""
 
-#: ../src/qalc.cc:1482 ../libqalculate/Calculator-calculate.cc:1000
+#: ../src/qalc.cc:1482 ../libqalculate/Calculator-calculate.cc:1727
 msgid "Julian:"
 msgstr ""
 
-#: ../src/qalc.cc:1483 ../libqalculate/Calculator-calculate.cc:1001
+#: ../src/qalc.cc:1483 ../libqalculate/Calculator-calculate.cc:1728
 msgid "Revised julian:"
 msgstr ""
 
-#: ../src/qalc.cc:1484 ../libqalculate/Calculator-calculate.cc:1002
+#: ../src/qalc.cc:1484 ../libqalculate/Calculator-calculate.cc:1729
 msgid "Coptic:"
 msgstr ""
 
-#: ../src/qalc.cc:1485 ../libqalculate/Calculator-calculate.cc:1003
+#: ../src/qalc.cc:1485 ../libqalculate/Calculator-calculate.cc:1730
 msgid "Ethiopian:"
 msgstr ""
 
@@ -1378,41 +1380,41 @@ msgstr ""
 #. "to"-operator
 #: ../src/qalc.cc:2851 ../src/qalc.cc:2852 ../src/qalc.cc:3558
 #: ../src/qalc.cc:4415 ../src/qalc.cc:4461 ../src/qalc.cc:4501
-#: ../libqalculate/Calculator-calculate.cc:1198
-#: ../libqalculate/Calculator-calculate.cc:1200
-#: ../libqalculate/Calculator-calculate.cc:1228
-#: ../libqalculate/Calculator-calculate.cc:1230
-#: ../libqalculate/Calculator-calculate.cc:1259
-#: ../libqalculate/Calculator-calculate.cc:1263
+#: ../libqalculate/Calculator-calculate.cc:1990
+#: ../libqalculate/Calculator-calculate.cc:1992
+#: ../libqalculate/Calculator-calculate.cc:2020
+#: ../libqalculate/Calculator-calculate.cc:2022
+#: ../libqalculate/Calculator-calculate.cc:2051
+#: ../libqalculate/Calculator-calculate.cc:2055
 #: ../libqalculate/Calculator.cc:297 ../libqalculate/Calculator.cc:525
 #: ../libqalculate/Calculator.cc:1323 ../libqalculate/Calculator.cc:1324
 msgid "to"
 msgstr ""
 
-#: ../src/qalc.cc:2981 ../src/qalc.cc:5680
-#: ../libqalculate/Calculator-calculate.cc:810
+#: ../src/qalc.cc:2981 ../src/qalc.cc:5257
+#: ../libqalculate/Calculator-calculate.cc:1491
 msgid "Time zone parsing failed."
 msgstr ""
 
-#: ../src/qalc.cc:3054 ../src/qalc.cc:5694
-#: ../libqalculate/Calculator-calculate.cc:835
+#: ../src/qalc.cc:3054 ../src/qalc.cc:5271
+#: ../libqalculate/Calculator-calculate.cc:1516
 msgid "bases"
 msgstr ""
 
-#: ../src/qalc.cc:3100 ../src/qalc.cc:5696
-#: ../libqalculate/Calculator-calculate.cc:837
+#: ../src/qalc.cc:3100 ../src/qalc.cc:5273
+#: ../libqalculate/Calculator-calculate.cc:1518
 msgid "calendars"
 msgstr ""
 
-#: ../src/qalc.cc:3118 ../src/qalc.cc:5690
-#: ../libqalculate/Calculator-calculate.cc:830
+#: ../src/qalc.cc:3118 ../src/qalc.cc:5267
+#: ../libqalculate/Calculator-calculate.cc:1511
 msgid "factors"
 msgstr ""
 
 #. qalc command
 #: ../src/qalc.cc:3120 ../src/qalc.cc:3207 ../src/qalc.cc:3553
-#: ../src/qalc.cc:4009 ../src/qalc.cc:5692
-#: ../libqalculate/Calculator-calculate.cc:833
+#: ../src/qalc.cc:4009 ../src/qalc.cc:5269
+#: ../libqalculate/Calculator-calculate.cc:1514
 msgid "partial fraction"
 msgstr ""
 
@@ -2248,61 +2250,56 @@ msgstr ""
 msgid "warning"
 msgstr ""
 
-#: ../src/qalc.cc:4884 ../src/qalc.cc:4921 ../libqalculate/Calculator.cc:241
-#: ../libqalculate/Calculator.cc:469
-#: ../libqalculate/MathStructure-print.cc:3433 ../libqalculate/Function.cc:1361
-#: ../libqalculate/Function.cc:1369 ../libqalculate/Function.cc:1802
-#: ../libqalculate/Function.cc:1964 ../libqalculate/Function.cc:1972
-msgid "and"
+#: ../src/qalc.cc:4686 ../src/qalc.cc:5774
+#: ../libqalculate/Calculator-calculate.cc:1771
+#: ../libqalculate/Calculator-calculate.cc:1791
+msgid "approx."
 msgstr ""
 
-#: ../src/qalc.cc:4956 ../src/qalc.cc:5016 ../src/qalc.cc:5346
-#: ../src/qalc.cc:5948 ../libqalculate/Calculator-calculate.cc:1802
+#: ../src/qalc.cc:4707 ../src/qalc.cc:5055 ../src/qalc.cc:5524
+#: ../libqalculate/Calculator-calculate.cc:1091
+#: ../libqalculate/Calculator-calculate.cc:2594
 #: ../libqalculate/MathStructure.cc:448
 #, c-format
 msgid "aborted"
 msgstr ""
 
-#: ../src/qalc.cc:4996 ../src/qalc.cc:6270
-msgid "approx."
-msgstr ""
-
-#: ../src/qalc.cc:5028
+#: ../src/qalc.cc:4719
 msgid "RPN Register Moved"
 msgstr ""
 
-#: ../src/qalc.cc:5084
-msgid "Processing (press Enter to abort)"
-msgstr ""
-
-#: ../src/qalc.cc:5363
-msgid "Factorizing (press Enter to abort)"
-msgstr ""
-
-#: ../src/qalc.cc:5367
-msgid "Expanding partial fractions…"
-msgstr ""
-
-#: ../src/qalc.cc:5371
-msgid "Expanding (press Enter to abort)"
-msgstr ""
-
-#: ../src/qalc.cc:5375 ../src/qalc.cc:5962
-msgid "Calculating (press Enter to abort)"
-msgstr ""
-
-#: ../src/qalc.cc:6224
+#: ../src/qalc.cc:4740 ../src/qalc.cc:5728
 msgid "RPN Operation"
 msgstr ""
 
-#: ../src/qalc.cc:6802
+#: ../src/qalc.cc:4777
+msgid "Processing (press Enter to abort)"
+msgstr ""
+
+#: ../src/qalc.cc:5072
+msgid "Factorizing (press Enter to abort)"
+msgstr ""
+
+#: ../src/qalc.cc:5076
+msgid "Expanding partial fractions…"
+msgstr ""
+
+#: ../src/qalc.cc:5080
+msgid "Expanding (press Enter to abort)"
+msgstr ""
+
+#: ../src/qalc.cc:5084 ../src/qalc.cc:5538
+msgid "Calculating (press Enter to abort)"
+msgstr ""
+
+#: ../src/qalc.cc:6306
 #, c-format
 msgid ""
 "Couldn't write preferences to\n"
 "%s"
 msgstr ""
 
-#: ../src/qalc.cc:6919
+#: ../src/qalc.cc:6423
 msgid "Couldn't write definitions"
 msgstr ""
 
@@ -2554,11 +2551,11 @@ msgstr ""
 #: ../libqalculate/BuiltinFunctions-util.cc:501
 #: ../libqalculate/BuiltinFunctions-util.cc:503
 #: ../libqalculate/BuiltinFunctions-util.cc:519
-#: ../libqalculate/Calculator-calculate.cc:1406
-#: ../libqalculate/Calculator-calculate.cc:1418
-#: ../libqalculate/Calculator-calculate.cc:1420
-#: ../libqalculate/Calculator-calculate.cc:1423
-#: ../libqalculate/Calculator-calculate.cc:1494
+#: ../libqalculate/Calculator-calculate.cc:2198
+#: ../libqalculate/Calculator-calculate.cc:2210
+#: ../libqalculate/Calculator-calculate.cc:2212
+#: ../libqalculate/Calculator-calculate.cc:2215
+#: ../libqalculate/Calculator-calculate.cc:2286
 #, c-format
 msgid "Original value (%s) was not found."
 msgstr ""
@@ -2622,26 +2619,35 @@ msgstr ""
 msgid "Stack is empty. Filling remaining function arguments with zeroes."
 msgstr ""
 
-#: ../libqalculate/Calculator-calculate.cc:1123
+#: ../libqalculate/Calculator-calculate.cc:1017
+#: ../libqalculate/Calculator-calculate.cc:1055
+#: ../libqalculate/Calculator.cc:241 ../libqalculate/Calculator.cc:469
+#: ../libqalculate/MathStructure-print.cc:3433 ../libqalculate/Function.cc:1361
+#: ../libqalculate/Function.cc:1369 ../libqalculate/Function.cc:1802
+#: ../libqalculate/Function.cc:1964 ../libqalculate/Function.cc:1972
+msgid "and"
+msgstr ""
+
+#: ../libqalculate/Calculator-calculate.cc:1915
 msgid "calculating..."
 msgstr ""
 
 #. "where"-operator
-#: ../libqalculate/Calculator-calculate.cc:1297
-#: ../libqalculate/Calculator-calculate.cc:1299
-#: ../libqalculate/Calculator-calculate.cc:1318
-#: ../libqalculate/Calculator-calculate.cc:1320
+#: ../libqalculate/Calculator-calculate.cc:2089
+#: ../libqalculate/Calculator-calculate.cc:2091
+#: ../libqalculate/Calculator-calculate.cc:2110
+#: ../libqalculate/Calculator-calculate.cc:2112
 #: ../libqalculate/Calculator.cc:1327
 msgid "where"
 msgstr ""
 
-#: ../libqalculate/Calculator-calculate.cc:1516
+#: ../libqalculate/Calculator-calculate.cc:2308
 #, c-format
 msgid "Unhandled \"where\" expression: %s"
 msgstr ""
 
-#: ../libqalculate/Calculator-calculate.cc:1754
-#: ../libqalculate/Calculator-calculate.cc:1801
+#: ../libqalculate/Calculator-calculate.cc:2546
+#: ../libqalculate/Calculator-calculate.cc:2593
 msgid "timed out"
 msgstr ""
 

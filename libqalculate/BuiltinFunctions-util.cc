@@ -769,7 +769,7 @@ SaveFunction::SaveFunction() : MathFunction("save", 2, 5) {
 	setArgumentDefinition(4, new TextArgument());
 	setArgumentDefinition(5, new BooleanArgument());
 	setDefaultValue(3, CALCULATOR->temporaryCategory());
-	setDefaultValue(4, "");
+	setDefaultValue(4, "\"\"");
 	setDefaultValue(5, "0");
 }
 int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {

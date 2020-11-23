@@ -3725,7 +3725,7 @@ int main(int argc, char *argv[]) {
 										str2 += " (";
 										//optional argument, in description
 										str2 += _("optional");
-										if(!f->getDefaultValue(i2).empty()) {
+										if(!f->getDefaultValue(i2).empty() && f->getDefaultValue(i2) != "\"\"") {
 											str2 += ", ";
 											//argument default, in description
 											str2 += _("default: ");
@@ -4599,7 +4599,8 @@ void ViewThread::run() {
 		MathStructure *mparse = (MathStructure*) x;
 		PrintOptions po;
 		if(mparse) {
-			po.preserve_format = true;
+			if(!read(&po.is_approximate)) break;
+			if(!read<bool>(&po.preserve_format)) break;
 			po.show_ending_zeroes = false;
 			po.lower_case_e = printops.lower_case_e;
 			po.lower_case_numbers = printops.lower_case_numbers;
@@ -4631,7 +4632,6 @@ void ViewThread::run() {
 			po.spell_out_logical_operators = printops.spell_out_logical_operators;
 			po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 			MathStructure mp(*mparse);
-			read(&po.is_approximate);
 			mp.format(po);
 			parsed_text = mp.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
 			if(po.use_unicode_signs) gsub(" ", " ", parsed_text);
@@ -4644,7 +4644,7 @@ void ViewThread::run() {
 
 		po.allow_non_usable = DO_FORMAT;
 
-		print_dual(*mresult, original_expression, mparse ? *mparse : parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_fraction > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+		print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_fraction > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
 
 		b_busy = false;
 		CALCULATOR->stopControl();
@@ -4661,7 +4661,7 @@ static bool wait_for_key_press(int timeout_ms) {
 	struct timeval timeout;
 
 	timeout.tv_sec = 0;
-	timeout.tv_usec = timeout_ms*1000;
+	timeout.tv_usec = timeout_ms * 1000;
 
 	FD_ZERO(&in_set);
 	FD_SET(STDIN_FILENO, &in_set);
@@ -4737,7 +4737,9 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		if(!view_thread->write((void *) parsed_mstruct)) {b_busy = false; view_thread->cancel(); return;}
 		bool *parsed_approx_p = &parsed_approx;
 		if(!view_thread->write(parsed_approx_p)) {b_busy = false; view_thread->cancel(); return;}
+		if(!view_thread->write(prev_result_text == _("RPN Operation") ? false : true)) {b_busy = false; view_thread->cancel(); return;}
 	} else {
+		if(printops.base != BASE_DECIMAL && dual_approximation <= 0) mstruct_exact.setUndefined();
 		if(!view_thread->write((void *) NULL)) {b_busy = false; view_thread->cancel(); return;}
 	}
 
@@ -5499,8 +5501,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
 	calculation_wait:
 
-	bool has_printed = false;
-	bool was_aborted;
+	int has_printed = 0;
 
 	if(i_maxtime != 0) {
 #ifndef CLOCK_MONOTONIC
@@ -5518,7 +5519,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		}
 		if(CALCULATOR->busy()) {
 			CALCULATOR->abort();
-			was_aborted = true;
+			avoid_recalculation = true;
 			i_maxtime = -1;
 			printf(_("aborted"));
 			printf("\n");
@@ -5536,7 +5537,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			if(!result_only) {
 				FPUTS_UNICODE(_("Calculating (press Enter to abort)"), stdout);
 				fflush(stdout);
-				has_printed = true;
+				has_printed = 1;
 			}
 		}
 #ifdef HAVE_LIBREADLINE
@@ -5560,12 +5561,12 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 #endif
 					if(c == '\n' || c == '\r') {
 						CALCULATOR->abort();
-						was_aborted = true;
 						avoid_recalculation = true;
-						has_printed = false;
+						has_printed = 0;
 					}
 				} else {
 					if(!result_only) {
+						has_printed++;
 						printf(".");
 						fflush(stdout);
 					}
@@ -5573,7 +5574,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				}
 			}
 		}
-		if(has_printed) printf("\n");
 	}
 
 	bool units_changed = false;
@@ -5594,10 +5594,11 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			parsed_mstruct->multiply(to_struct);
 			to_struct.clear();
 			CALCULATOR->calculate(mstruct, 0, evalops, CALCULATOR->unlocalizeExpression(str_conv, evalops.parse_options));
-			bool had_printed = has_printed;
+			int had_printed = has_printed;
+			if(has_printed) printf("\n");
 			units_changed = true;
 			goto calculation_wait;
-			if(had_printed) has_printed = true;
+			has_printed += had_printed;
 		}
 	}
 
@@ -5643,6 +5644,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	}
 
 	if(!avoid_recalculation && !do_mathoperation && check_exrates && check_exchange_rates()) {
+		if(has_printed) printf("\n");
 		b_busy = false;
 		execute_expression(goto_input, do_mathoperation, op, f, rpn_mode, do_stack ? stack_index : 0, false);
 		evalops.auto_post_conversion = save_auto_post_conversion;
@@ -5667,18 +5669,28 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	}
 
 	mstruct_exact.setUndefined();
-	if(!do_calendars && !do_bases && !was_aborted && !units_changed) {
+
+	if((!do_calendars || !mstruct->isDateTime()) && (dual_approximation > 0 || printops.base == BASE_DECIMAL) && !do_bases && !avoid_recalculation && !units_changed && i_maxtime >= 0) {
 		long int i_timeleft = 0;
 #ifndef CLOCK_MONOTONIC
 		if(i_maxtime) {struct timeval tv; gettimeofday(&tv, NULL); i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;}
 #else
 		if(i_maxtime) {struct timespec tv; clock_gettime(CLOCK_MONOTONIC, &tv); i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;}
 #endif
-		if(!i_maxtime) i_timeleft = mstruct->containsType(STRUCT_COMPARISON) ? 2000 : 1000;
+		if(i_maxtime) {
+			if(i_timeleft < i_maxtime / 2) i_timeleft = -1;
+			else i_timeleft -= 10;
+		} else {
+			if(has_printed > 10) i_timeleft = -1;
+			else if(has_printed) i_timeleft = 500;
+			else i_timeleft = mstruct->containsType(STRUCT_COMPARISON) ? 2000 : 1000;
+		}
 		if(i_timeleft > 0) {
 			calculate_dual_exact(mstruct_exact, mstruct, original_expression, parsed_mstruct, evalops, dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_approximation > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), i_timeleft, 5);
 		}
+		if(i_maxtime) {struct timespec tv; clock_gettime(CLOCK_MONOTONIC, &tv); i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;}
 	}
+	if(has_printed) printf("\n");
 
 	b_busy = false;
 

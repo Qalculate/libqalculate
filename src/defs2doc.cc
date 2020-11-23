@@ -386,7 +386,7 @@ void print_function(MathFunction *f) {
 				if(i2 > f->minargs()) {
 					str2 += " (";
 					str2 += _("optional");
-					if(!f->getDefaultValue(i2).empty()) {
+					if(!f->getDefaultValue(i2).empty() && f->getDefaultValue(i2) != "\"\"") {
 						str2 += ", ";
 						str2 += _("default: ");
 						str2 += f->getDefaultValue(i2);

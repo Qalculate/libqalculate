@@ -1053,7 +1053,7 @@
     </builtin_function>
     <builtin_function name="cbrt">
       <_title>Cube Root</_title>
-      <_names>au:&#x221B;,r:cbrt</_names>
+      <_names>r:cbrt,aou:&#x221B;</_names>
       <_description>Returns the third real root.</_description>
       <argument type="free" index="1">
         <_title>Value</_title>
