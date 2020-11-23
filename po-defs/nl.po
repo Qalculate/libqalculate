@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-23 11:34+0200\n"
+"POT-Creation-Date: 2020-11-19 15:36+0100\n"
 "PO-Revision-Date: 2007-05-18 15:47+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -3929,9 +3929,12 @@ msgid ""
 "are not real numbers by default uses digits 0-9 and A-Z.&#10;&#10;The set of "
 "digits used can be selected using the third argument (defaults to 0 for "
 "automatic selection). Set it to 1 for digits 0-9 and A-Z, 2 for 0-9, A-Z and "
-"a-z, and 3 for Unicode digits, or enter a text string with all digits placed "
-"in ascending order (e.g. \"0123456789\"). When the set of digits is manually "
-"selected, the specified expression is always converted to a single number."
+"a-z, 3 for Unicode digits, and 4 for phonewords (e.g. ABC=2, CDE=3, etc.), "
+"or enter a text string with all digits placed in ascending order (e.g. "
+"\"0123456789\") and optionally separated by semicolon (to enable multple "
+"equivalent digits, e.g. \"0;aA1;bB2;cC3\"). When the set of digits is "
+"manually selected, the specified expression is always converted to a single "
+"number."
 msgstr ""
 
 #: ../data/functions.xml.in.h:251
@@ -4328,8 +4331,9 @@ msgid "Cube Root"
 msgstr "Derdemachtswortel"
 
 #: ../data/functions.xml.in.h:343
-msgid "au:&#x221B;,r:cbrt"
-msgstr ""
+#, fuzzy
+msgid "r:cbrt,aou:&#x221B;"
+msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/functions.xml.in.h:344
 #, fuzzy

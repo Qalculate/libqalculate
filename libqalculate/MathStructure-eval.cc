@@ -1849,8 +1849,8 @@ void convert_log_units(MathStructure &m, const EvaluationOptions &eo) {
 	while(true) {
 		Unit *u = find_log_unit(m);
 		if(!u) break;
+		if(!m.convert(u, true, NULL, false, eo)) break;
 		CALCULATOR->error(false, "Log-based units were converted before calculation.", NULL);
-		m.convert(u, true, NULL, false, eo);
 	}
 }
 bool warn_ratio_units(MathStructure &m, bool top_level = true) {

@@ -2315,7 +2315,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				}
 				formatsub(po, parent, pindex, false, top_parent);
 				break;
-			} else if(po.exp_to_root && CHILD(0).representsNonNegative(true) && ((CHILD(1).isDivision() && CHILD(1)[0].isNumber() && CHILD(1)[0].number().isInteger() && CHILD(1)[1].isNumber() && CHILD(1)[1].number().isGreaterThan(1) && CHILD(1)[1].number().isLessThan(10) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1)[0].isOne())) || (CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().isInteger() && CHILD(1).number().denominatorIsLessThan(10) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1).number().numeratorIsOne())) || (CHILD(1).isInverse() && CHILD(1)[0].isNumber()  && CHILD(1)[0].number().isInteger() && CHILD(1)[0].number().isPositive() && CHILD(1)[0].number().isLessThan(10)))) {
+			} else if((po.exp_to_root || po.halfexp_to_sqrt) && CHILD(0).representsNonNegative(true) && ((CHILD(1).isDivision() && CHILD(1)[0].isNumber() && CHILD(1)[0].number().isInteger() && CHILD(1)[1].isNumber() && (CHILD(1)[1].number() == 3 || (po.exp_to_root && CHILD(1)[1].number().isGreaterThan(1) && CHILD(1)[1].number().isLessThan(10))) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1)[0].isOne())) || (CHILD(1).isNumber() && CHILD(1).number().isRational() && (CHILD(1).number().denominatorEquals(3) || (po.exp_to_root && !CHILD(1).number().isInteger() && CHILD(1).number().denominatorIsLessThan(10))) && ((!po.negative_exponents && (CHILD(0).countChildren() == 0 || CHILD(0).isFunction())) || CHILD(1).number().numeratorIsOne())) || (CHILD(1).isInverse() && CHILD(1)[0].isNumber() && (CHILD(1)[0].number() == 3 || (po.exp_to_root && CHILD(1)[0].number().isInteger() && CHILD(1)[0].number().isPositive() && CHILD(1)[0].number().isLessThan(10)))))) {
 				// f(a)^(b/c)=root(f(a),c)^b
 				Number nr_int, nr_num, nr_den;
 				if(CHILD(1).isNumber()) {
@@ -3611,7 +3611,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						argcount--;
 					} else if(CHILD(argcount - 1).isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS) == string::npos && CHILD(argcount - 1).number() == s2i(defstr)) {
 						argcount--;
-					} else if(CHILD(argcount - 1).isSymbolic() && arg && arg->type() == ARGUMENT_TYPE_TEXT && CHILD(argcount - 1).symbol() == defstr) {
+					} else if(CHILD(argcount - 1).isSymbolic() && arg && arg->type() == ARGUMENT_TYPE_TEXT && (CHILD(argcount - 1).symbol() == defstr || (defstr == "\"\"" && CHILD(argcount - 1).symbol().empty()))) {
 						argcount--;
 					} else {
 						break;

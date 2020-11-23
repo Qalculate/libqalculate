@@ -444,7 +444,7 @@ static const struct PrintOptions {
 	bool spacious;
 	/// Use parentheses even when not necessary. Default: false
 	bool excessive_parenthesis;
-	/// Transform raised to 1/2 to square root function. Default: true
+	/// Transform raised to 1/2 to square root and raised to 1/3 to cbrt function. Default: true
 	bool halfexp_to_sqrt;
 	/// Minimum number of decimals to display for numbers. Default: 0
 	int min_decimals;
