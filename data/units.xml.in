@@ -2040,7 +2040,7 @@
       <unit type="alias">
         <_title>Cup (U.S.)</_title>
         <system>US</system>
-        <_names>r:cup,p:cups</_names>
+        <_names>r-c:cup,p-c:cups</_names>
         <base>
           <unit>L</unit>
           <relation>0.2365882365</relation>

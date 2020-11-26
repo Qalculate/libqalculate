@@ -679,7 +679,7 @@
     </category>
     <builtin_function name="gcd">
       <_title>Greatest Common Divisor</_title>
-      <_names>r:gcd</_names>
+      <_names>rc:gcd,c:GCD</_names>
       <argument index="1">
         <_title>1st value</_title>
       </argument>
