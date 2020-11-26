@@ -4,766 +4,766 @@
     <_title>Currency</_title>
     <builtin_unit name="EUR">
       <_title>European Euro</_title>
-      <_names>ar:EUR,au:&#x20AC;,euro,p:euros</_names>
+      <_names>a-cr:EUR,au:&#x20AC;,euro,p:euros</_names>
       <_countries>Andorra, Austria, Belgium, Cyprus, Estonia, Finland, France, Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City</_countries>
     </builtin_unit>
     <builtin_unit name="USD">
       <_title>U.S. Dollar</_title>
-      <_names>a:$,ar:USD,dollar,p:dollars</_names>
+      <_names>a:$,a-cr:USD,dollar,p:dollars</_names>
       <_countries>United States, East Timor, Ecuador, El Salvador, Micronesia, Marshall Islands, Palau, Zimbabwe</_countries>
     </builtin_unit>
     <builtin_unit name="JPY">
       <_title>Japanese Yen</_title>
-      <_names>ar:JPY,au:&#xA5;,yen</_names>
+      <_names>a-cr:JPY,au:&#xA5;,yen</_names>
       <_countries>Japan</_countries>
     </builtin_unit>
     <builtin_unit name="DKK">
       <_title>Danish Krone</_title>
-      <_names>ar:DKK</_names>
+      <_names>a-cr:DKK</_names>
       <_countries>Denmark</_countries>
     </builtin_unit>
     <builtin_unit name="GBP">
       <_title>British Pound</_title>
-      <_names>ar:GBP,au:&#xA3;</_names>
+      <_names>a-cr:GBP,au:&#xA3;</_names>
       <_countries>United Kingdom</_countries>
     </builtin_unit>
     <builtin_unit name="THB">
       <_title>Thai Baht</_title>
-      <_names>ar:THB</_names>
+      <_names>a-cr:THB</_names>
       <_countries>Thailand</_countries>
     </builtin_unit>
     <builtin_unit name="SEK">
       <_title>Swedish Krona</_title>
-      <_names>ar:SEK</_names>
+      <_names>a-cr:SEK</_names>
       <_countries>Sweden</_countries>
     </builtin_unit>
     <builtin_unit name="CHF">
       <_title>Swiss Franc</_title>
-      <_names>ar:CHF</_names>
+      <_names>a-cr:CHF</_names>
       <_countries>Switzerland</_countries>
     </builtin_unit>
     <builtin_unit name="NOK">
       <_title>Norwegian Krone</_title>
-      <_names>ar:NOK</_names>
+      <_names>a-cr:NOK</_names>
       <_countries>Norway</_countries>
     </builtin_unit>
     <builtin_unit name="BGN">
       <_title>Bulgarian Lev</_title>
-      <_names>lev,ar:BGN</_names>
+      <_names>lev,a-cr:BGN</_names>
       <_countries>Bulgaria</_countries>
     </builtin_unit>
     <builtin_unit name="RUB">
       <_title>Russian Ruble</_title>
-      <_names>ar:RUB,au:&#x20BD;,ruble</_names>
+      <_names>a-cr:RUB,au:&#x20BD;,ruble</_names>
       <_countries>Russia</_countries>
     </builtin_unit>
     <builtin_unit name="PHP">
       <_title>Philippine Peso</_title>
-      <_names>ar:PHP,au:&#x20B1;</_names>
+      <_names>a-cr:PHP,au:&#x20B1;</_names>
       <_countries>Philippines</_countries>
     </builtin_unit>
     <builtin_unit name="MYR">
       <_title>Malaysian Ringgit</_title>
-      <_names>ar:MYR</_names>
+      <_names>a-cr:MYR</_names>
       <_countries>Malaysia</_countries>
     </builtin_unit>
     <builtin_unit name="HRK">
       <_title>Croatian Kuna</_title>
-      <_names>ar:HRK</_names>
+      <_names>a-cr:HRK</_names>
       <_countries>Croatia</_countries>
     </builtin_unit>
     <builtin_unit name="CNY">
       <_title>Chinese Yuan Renminbi</_title>
-      <_names>ar:CNY</_names>
+      <_names>a-cr:CNY</_names>
       <_countries>China</_countries>
     </builtin_unit>
     <builtin_unit name="IDR">
       <_title>Indonesian Rupiah</_title>
-      <_names>ar:IDR,rupiah</_names>
+      <_names>a-cr:IDR,rupiah</_names>
       <_countries>Indonesia</_countries>
     </builtin_unit>
     <builtin_unit name="CZK">
       <_title>Czech Koruna</_title>
-      <_names>ar:CZK,au-c:K&#x10D;</_names>
+      <_names>a-cr:CZK,au-c:K&#x10D;</_names>
       <_countries>Czech Republic</_countries>
     </builtin_unit>
      <builtin_unit name="HUF">
       <_title>Hungarian Forint</_title>
-      <_names>forint,ar:HUF</_names>
+      <_names>forint,a-cr:HUF</_names>
       <_countries>Hungary</_countries>
     </builtin_unit>
     <builtin_unit name="PLN">
       <_title>Polish Zloty</_title>
-      <_names>ar:PLN,au:z&#x0142;,zloty</_names>
+      <_names>a-cr:PLN,au:z&#x0142;,zloty</_names>
       <_countries>Poland</_countries>
     </builtin_unit>
     <builtin_unit name="RON">
       <_title>Romanian Leu</_title>
-      <_names>ar:RON</_names>
+      <_names>a-cr:RON</_names>
       <_countries>Romania</_countries>
     </builtin_unit>
     <builtin_unit name="TRY">
       <_title>Turkish New Lira</_title>
-      <_names>ar:TRY,au:&#x20BA;</_names>
+      <_names>a-cr:TRY,au:&#x20BA;</_names>
       <_countries>Turkey</_countries>
     </builtin_unit>
     <builtin_unit name="AUD">
       <_title>Australian Dollar</_title>
-      <_names>ar:AUD</_names>
+      <_names>a-cr:AUD</_names>
       <_countries>Australia</_countries>
     </builtin_unit>
     <builtin_unit name="CAD">
       <_title>Canadian Dollar</_title>
-      <_names>ar:CAD</_names>
+      <_names>a-cr:CAD</_names>
       <_countries>Canada</_countries>
     </builtin_unit>
     <builtin_unit name="HKD">
       <_title>Hong Kong Dollar</_title>
-      <_names>ar:HKD</_names>
+      <_names>a-cr:HKD</_names>
     </builtin_unit>
     <builtin_unit name="NZD">
       <_title>New Zealand Dollar</_title>
-      <_names>ar:NZD</_names>
+      <_names>a-cr:NZD</_names>
       <_countries>New Zealand</_countries>
     </builtin_unit>
     <builtin_unit name="SGD">
       <_title>Singapore Dollar</_title>
-      <_names>ar:SGD</_names>
+      <_names>a-cr:SGD</_names>
       <_countries>Singapore</_countries>
     </builtin_unit>
     <builtin_unit name="KRW">
       <_title>South Korean Won</_title>
-      <_names>ar:KRW,au:&#x20A9;,won</_names>
+      <_names>a-cr:KRW,au:&#x20A9;,won</_names>
       <_countries>South Korea</_countries>
     </builtin_unit>
     <builtin_unit name="ZAR">
       <_title>South African Rand</_title>
-      <_names>ar:ZAR</_names>
+      <_names>a-cr:ZAR</_names>
       <_countries>South Africa</_countries>
     </builtin_unit>
     <builtin_unit name="INR">
       <_title>Indian Rupee</_title>
-      <_names>ar:INR,au:&#x20B9;,rupee</_names>
+      <_names>a-cr:INR,au:&#x20B9;,rupee</_names>
       <_countries>India</_countries>
     </builtin_unit>
     <builtin_unit name="ILS">
       <_title>Israeli New Sheqel</_title>
-      <_names>ar:ILS,au:&#x20AA;,sheqel</_names>
+      <_names>a-cr:ILS,au:&#x20AA;,sheqel</_names>
       <_countries>Israel</_countries>
     </builtin_unit>
     <builtin_unit name="MXN">
       <_title>Mexican Peso</_title>
-      <_names>ar:MXN</_names>
+      <_names>a-cr:MXN</_names>
       <_countries>Mexico</_countries>
     </builtin_unit>
     <builtin_unit name="BRL">
       <_title>Brazilian Real</_title>
-      <_names>ar:BRL</_names>
+      <_names>a-cr:BRL</_names>
       <_countries>Brazil</_countries>
     </builtin_unit>
     <builtin_unit name="ISK">
       <_title>Icelandic Krónur</_title>
-      <_names>ar:ISK</_names>
+      <_names>a-cr:ISK</_names>
       <_countries>Iceland</_countries>
     </builtin_unit>
     <builtin_unit name="BTC">
       <_title>Bitcoin</_title>
-      <_names>ar:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins</_names>
+      <_names>a-cr:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins</_names>
     </builtin_unit>
     <builtin_unit name="KES">
       <_title>Kenya Shilling</_title>
-      <_names>ar:KES</_names>
+      <_names>a-cr:KES</_names>
       <_countries>Kenya</_countries>
     </builtin_unit>
     <builtin_unit name="AFN">
       <_title>Afghan Afghani</_title>
-      <_names>ar:AFN,aiu:&#x060B;</_names>
+      <_names>a-cr:AFN,aiu:&#x060B;</_names>
       <_countries>Afghanistan</_countries>
     </builtin_unit>
     <builtin_unit name="ALL">
       <_title>Albanian Lek</_title>
-      <_names>ar:ALL</_names>
+      <_names>a-cr:ALL</_names>
       <_countries>Albania</_countries>
     </builtin_unit>
     <builtin_unit name="DZD">
       <_title>Algerian Dinar</_title>
-      <_names>ar:DZD</_names>
+      <_names>a-cr:DZD</_names>
       <_countries>Algeria</_countries>
     </builtin_unit>
     <builtin_unit name="AOA">
       <_title>Angolan Kwanza</_title>
-      <_names>ar:AOA</_names>
+      <_names>a-cr:AOA</_names>
       <_countries>Angola</_countries>
     </builtin_unit>
     <builtin_unit name="XCD">
       <_title>Eastern Caribbean Dollar</_title>
-      <_names>ar:XCD</_names>
+      <_names>a-cr:XCD</_names>
       <_countries>Antigua and Barbuda, Dominica, Grenada, Montserrat, Saint Kitts and Nevis, Saint Lucia, Saint Vincent and the Grenadines, Anguilla</_countries>
     </builtin_unit>
     <builtin_unit name="ARS">
       <_title>Argentine Peso</_title>
-      <_names>ar:ARS</_names>
+      <_names>a-cr:ARS</_names>
       <_countries>Argentina</_countries>
     </builtin_unit>
     <builtin_unit name="AMD">
       <_title>Armenian Dram</_title>
-      <_names>ar:AMD,au:&#x058F;</_names>
+      <_names>a-cr:AMD,au:&#x058F;</_names>
       <_countries>Armenia</_countries>
     </builtin_unit>
     <builtin_unit name="AWG">
       <_title>Aruban Florin</_title>
-      <_names>ar:AWG</_names>
+      <_names>a-cr:AWG</_names>
       <_countries>Aruba</_countries>
     </builtin_unit>
     <builtin_unit name="ANG">
       <_title>Netherlands Antillean Guilder</_title>
-      <_names>ar:ANG</_names>
+      <_names>a-cr:ANG</_names>
       <_countries>Curaçao, Sint Maarten</_countries>
     </builtin_unit>
     <builtin_unit name="AZN">
       <_title>Azerbaijani Manat</_title>
-      <_names>ar:AZN,au:&#x20BC;</_names>
+      <_names>a-cr:AZN,au:&#x20BC;</_names>
       <_countries>Azerbaijan</_countries>
     </builtin_unit>
     <builtin_unit name="BSD">
       <_title>Bahamian Dollar</_title>
-      <_names>ar:BSD</_names>
+      <_names>a-cr:BSD</_names>
       <_countries>Bahamas</_countries>
     </builtin_unit>
     <builtin_unit name="BHD">
       <_title>Bahraini Dinar</_title>
-      <_names>ar:BHD</_names>
+      <_names>a-cr:BHD</_names>
       <_countries>Bahrain</_countries>
     </builtin_unit>
     <builtin_unit name="BDT">
       <_title>Bangladeshi Taka</_title>
-      <_names>ar:BDT,au:&#x09F3;</_names>
+      <_names>a-cr:BDT,au:&#x09F3;</_names>
       <_countries>Bangladesh</_countries>
     </builtin_unit>
     <builtin_unit name="BBD">
       <_title>Barbadian Dollar</_title>
-      <_names>ar:BBD</_names>
+      <_names>a-cr:BBD</_names>
       <_countries>Barbados</_countries>
     </builtin_unit>
     <builtin_unit name="BYN">
       <_title>Belarusian Ruble</_title>
-      <_names>ar:BYN</_names>
+      <_names>a-cr:BYN</_names>
       <_countries>Belarus</_countries>
     </builtin_unit>
     <builtin_unit name="BYR">
       <_title>Belarusian Ruble p. (obsolete)</_title>
-      <_names>ar:BYR</_names>
+      <_names>a-cr:BYR</_names>
     </builtin_unit>
     <builtin_unit name="BZD">
       <_title>Belize Dollar</_title>
-      <_names>ar:BZD</_names>
+      <_names>a-cr:BZD</_names>
       <_countries>Belize</_countries>
     </builtin_unit>
     <builtin_unit name="XOF">
       <_title>West African CFA Franc</_title>
-      <_names>ar:XOF,a:CFA</_names>
+      <_names>a-cr:XOF,a:CFA</_names>
       <_countries>Benin, Burkina Faso, Guinea-Bissau, Ivory Coast, Mali, Niger, Senegal, Togo</_countries>
     </builtin_unit>
     <builtin_unit name="BMD">
       <_title>Bermudian Dollar</_title>
-      <_names>ar:BMD</_names>
+      <_names>a-cr:BMD</_names>
       <_countries>Bermuda</_countries>
     </builtin_unit>
     <builtin_unit name="BOB">
       <_title>Bolivian Boliviano Bs</_title>
-      <_names>ar:BOB</_names>
+      <_names>a-cr:BOB</_names>
       <_countries>Bolivia</_countries>
     </builtin_unit>
     <builtin_unit name="BAM">
       <_title>Bosnia and Herzegovina Convertible Mark</_title>
-      <_names>ar:BAM</_names>
+      <_names>a-cr:BAM</_names>
       <_countries>Bosnia and Herzegovina</_countries>
     </builtin_unit>
     <builtin_unit name="BWP">
       <_title>Botswana Pula</_title>
-      <_names>ar:BWP</_names>
+      <_names>a-cr:BWP</_names>
       <_countries>Botswana</_countries>
     </builtin_unit>
     <builtin_unit name="BND">
       <_title>Brunei Dollar</_title>
-      <_names>ar:BND</_names>
+      <_names>a-cr:BND</_names>
       <_countries>Brunei</_countries>
     </builtin_unit>
     <builtin_unit name="BIF">
       <_title>Burundian Franc</_title>
-      <_names>ar:BIF</_names>
+      <_names>a-cr:BIF</_names>
       <_countries>Burundi</_countries>
     </builtin_unit>
     <builtin_unit name="KHR">
       <_title>Cambodian Riel</_title>
-      <_names>ar:KHR,aiu:&#x17DB;</_names>
+      <_names>a-cr:KHR,aiu:&#x17DB;</_names>
       <_countries>Cambodia</_countries>
     </builtin_unit>
     <builtin_unit name="XAF">
       <_title>Central African CFA Franc</_title>
-      <_names>ar:XAF,a:FCFA</_names>
+      <_names>a-cr:XAF,a:FCFA</_names>
       <_countries>Cameroon, Central African Republic, Chad, Republic of the Congo, Equatorial Guinea, Gabon</_countries>
     </builtin_unit>
     <builtin_unit name="CVE">
       <_title>Cape Verdean Escudo</_title>
-      <_names>ar:CVE</_names>
+      <_names>a-cr:CVE</_names>
       <_countries>Cape Verde</_countries>
     </builtin_unit>
     <builtin_unit name="KYD">
       <_title>Cayman Islands Dollar</_title>
-      <_names>ar:KYD</_names>
+      <_names>a-cr:KYD</_names>
       <_countries>Cayman Islands</_countries>
     </builtin_unit>
     <builtin_unit name="CLP">
       <_title>Chilean Peso</_title>
-      <_names>ar:CLP</_names>
+      <_names>a-cr:CLP</_names>
       <_countries>Chile</_countries>
     </builtin_unit>
     <builtin_unit name="COP">
       <_title>Colombian Peso</_title>
-      <_names>ar:COP</_names>
+      <_names>a-cr:COP</_names>
       <_countries>Colombia</_countries>
     </builtin_unit>
     <builtin_unit name="KMF">
       <_title>Comorian Franc</_title>
-      <_names>ar:KMF</_names>
+      <_names>a-cr:KMF</_names>
       <_countries>Comoros</_countries>
     </builtin_unit>
     <builtin_unit name="CDF">
       <_title>Democratic Republic of the Congo (Congolese Franc)</_title>
-      <_names>ar:CDF</_names>
+      <_names>a-cr:CDF</_names>
       <_countries>Democratic Republic of the Congo</_countries>
     </builtin_unit>
     <builtin_unit name="CRC">
       <_title>Costa Rican colón</_title>
-      <_names>ar:CRC</_names>
+      <_names>a-cr:CRC</_names>
       <_countries>Costa Rica</_countries>
     </builtin_unit>
     <builtin_unit name="CUP">
       <_title>Cuban Peso</_title>
-      <_names>ar:CUP</_names>
+      <_names>acr:CUP</_names>
       <_countries>Cuba</_countries>
     </builtin_unit>
     <builtin_unit name="DJF">
       <_title>Djiboutian Franc</_title>
-      <_names>ar:DJF</_names>
+      <_names>a-cr:DJF</_names>
       <_countries>Djibouti</_countries>
     </builtin_unit>
     <builtin_unit name="DOP">
       <_title>Dominican Peso</_title>
-      <_names>ar:DOP</_names>
+      <_names>a-cr:DOP</_names>
       <_countries>Dominican Republic</_countries>
     </builtin_unit>
     <builtin_unit name="EGP">
       <_title>Egyptian Pound</_title>
-      <_names>ar:EGP</_names>
+      <_names>a-cr:EGP</_names>
       <_countries>Egypt</_countries>
     </builtin_unit>
     <builtin_unit name="SVC">
       <_title>El Salvadoran Colon (obsolete)</_title>
-      <_names>ar:SVC</_names>
+      <_names>a-cr:SVC</_names>
     </builtin_unit>
     <builtin_unit name="ERN">
       <_title>Eritrean Nafka</_title>
-      <_names>ar:ERN</_names>
+      <_names>a-cr:ERN</_names>
       <_countries>Eritrea</_countries>
     </builtin_unit>
     <builtin_unit name="ETB">
       <_title>Ethiopian Birr</_title>
-      <_names>ar:ETB</_names>
+      <_names>a-cr:ETB</_names>
       <_countries>Ethiopia</_countries>
     </builtin_unit>
     <builtin_unit name="FKP">
       <_title>Falkland Islands Pound</_title>
-      <_names>ar:FKP</_names>
+      <_names>a-cr:FKP</_names>
       <_countries>Falkland Islands</_countries>
     </builtin_unit>
     <builtin_unit name="FJD">
       <_title>Fijian Dollar</_title>
-      <_names>ar:FJD</_names>
+      <_names>a-cr:FJD</_names>
       <_countries>Fiji</_countries>
     </builtin_unit>
     <builtin_unit name="XPF">
       <_title>CFP franc</_title>
-      <_names>ar:XPF</_names>
+      <_names>a-cr:XPF</_names>
       <_countries>French Polynesia, New Caledonia, Wallis and Futuna</_countries>
     </builtin_unit>
     <builtin_unit name="GMD">
       <_title>Gambian Dalasi</_title>
-      <_names>ar:GMD</_names>
+      <_names>a-cr:GMD</_names>
       <_countries>Gambia</_countries>
     </builtin_unit>
     <builtin_unit name="GEL">
       <_title>Georgian Lari</_title>
-      <_names>ar:GEL,au:&#x20BE;</_names>
+      <_names>a-cr:GEL,au:&#x20BE;</_names>
       <_countries>Georgia</_countries>
     </builtin_unit>
     <builtin_unit name="GHS">
       <_title>Ghanaian Cedi</_title>
-      <_names>ar:GHS,au:&#x20B5;</_names>
+      <_names>a-cr:GHS,au:&#x20B5;</_names>
       <_countries>Ghana</_countries>
     </builtin_unit>
     <builtin_unit name="GIP">
       <_title>Gibraltar Pound</_title>
-      <_names>ar:GIP</_names>
+      <_names>a-cr:GIP</_names>
       <_countries>Gibraltar</_countries>
     </builtin_unit>
     <builtin_unit name="GTQ">
       <_title>Guatemalan Quetzal</_title>
-      <_names>ar:GTQ</_names>
+      <_names>a-cr:GTQ</_names>
       <_countries>Guatemala</_countries>
     </builtin_unit>
     <builtin_unit name="GGP">
       <_title>Guernsey Pound</_title>
-      <_names>ar:GGP</_names>
+      <_names>a-cr:GGP</_names>
       <_countries>Guernsey</_countries>
     </builtin_unit>
     <builtin_unit name="GNF">
       <_title>Guinean Franc</_title>
-      <_names>ar:GNF</_names>
+      <_names>a-cr:GNF</_names>
       <_countries>Guinea</_countries>
     </builtin_unit>
     <builtin_unit name="GYD">
       <_title>Guyanese Dollar</_title>
-      <_names>ar:GYD</_names>
+      <_names>a-cr:GYD</_names>
       <_countries>Guyana</_countries>
     </builtin_unit>
     <builtin_unit name="HTG">
       <_title>Haitian Gourde</_title>
-      <_names>ar:HTG</_names>
+      <_names>a-cr:HTG</_names>
       <_countries>Haiti</_countries>
     </builtin_unit>
     <builtin_unit name="HNL">
       <_title>Honduran Lempira</_title>
-      <_names>ar:HNL</_names>
+      <_names>a-cr:HNL</_names>
       <_countries>Honduras</_countries>
     </builtin_unit>
     <builtin_unit name="IRR">
       <_title>Iranian Rial</_title>
-      <_names>ar:IRR,aiu:&#xFDFC;</_names>
+      <_names>a-cr:IRR,aiu:&#xFDFC;</_names>
       <_countries>Iran</_countries>
     </builtin_unit>
     <builtin_unit name="IQD">
       <_title>Iraqi Dinar</_title>
-      <_names>ar:IQD</_names>
+      <_names>a-cr:IQD</_names>
       <_countries>Iraq</_countries>
     </builtin_unit>
     <builtin_unit name="JMD">
       <_title>Jamaican Dollar</_title>
-      <_names>ar:JMD</_names>
+      <_names>a-cr:JMD</_names>
       <_countries>Jamaica</_countries>
     </builtin_unit>
     <builtin_unit name="JOD">
       <_title>Jordanian Dinar</_title>
-      <_names>ar:JOD</_names>
+      <_names>a-cr:JOD</_names>
       <_countries>Jordan</_countries>
     </builtin_unit>
     <builtin_unit name="KZT">
       <_title>Kazakhstani Tenge</_title>
-      <_names>ar:KZT,au:&#x20B8;</_names>
+      <_names>a-cr:KZT,au:&#x20B8;</_names>
       <_countries>Kazakhstan</_countries>
     </builtin_unit>
     <builtin_unit name="KPW">
       <_title>North Korean Won</_title>
-      <_names>ar:KPW</_names>
+      <_names>a-cr:KPW</_names>
       <_countries>North Korea</_countries>
     </builtin_unit>
     <builtin_unit name="KWD">
       <_title>Kuwaiti Dinar</_title>
-      <_names>ar:KWD</_names>
+      <_names>a-cr:KWD</_names>
       <_countries>Kuwait</_countries>
     </builtin_unit>
     <builtin_unit name="KGS">
       <_title>Kyrgyzstani Som</_title>
-      <_names>ar:KGS,au:&#x0441;</_names>
+      <_names>acr:KGS,au:&#x0441;</_names>
       <_countries>Kyrgyzstan</_countries>
     </builtin_unit>
     <builtin_unit name="LAK">
       <_title>Lao Kip</_title>
-      <_names>ar:LAK,au:&#x20AD;</_names>
+      <_names>a-cr:LAK,au:&#x20AD;</_names>
       <_countries>Laos</_countries>
     </builtin_unit>
     <builtin_unit name="LBP">
       <_title>Lebanese Pound</_title>
-      <_names>ar:LBP</_names>
+      <_names>a-cr:LBP</_names>
       <_countries>Lebanon</_countries>
     </builtin_unit>
     <builtin_unit name="LSL">
       <_title>Lesotho Loti</_title>
-      <_names>ar:LSL</_names>
+      <_names>a-cr:LSL</_names>
       <_countries>Lesotho</_countries>
     </builtin_unit>
     <builtin_unit name="LRD">
       <_title>Liberian Dollar</_title>
-      <_names>ar:LRD</_names>
+      <_names>a-cr:LRD</_names>
       <_countries>Liberia</_countries>
     </builtin_unit>
     <builtin_unit name="LYD">
       <_title>Libyan Dinar</_title>
-      <_names>ar:LYD</_names>
+      <_names>a-cr:LYD</_names>
       <_countries>Libya</_countries>
     </builtin_unit>
     <builtin_unit name="MOP">
       <_title>Macanese Pataca</_title>
-      <_names>ar:MOP</_names>
+      <_names>a-cr:MOP</_names>
       <_countries>Macau</_countries>
     </builtin_unit>
     <builtin_unit name="MKD">
       <_title>Macedonian Denar</_title>
-      <_names>ar:MKD</_names>
+      <_names>a-cr:MKD</_names>
       <_countries>Macedonia</_countries>
     </builtin_unit>
     <builtin_unit name="MGA">
       <_title>Malagasy Ariary</_title>
-      <_names>ar:MGA</_names>
+      <_names>a-cr:MGA</_names>
       <_countries>Madagascar</_countries>
     </builtin_unit>
     <builtin_unit name="MWK">
       <_title>Malawian Kwacha</_title>
-      <_names>ar:MWK</_names>
+      <_names>a-cr:MWK</_names>
       <_countries>Malawi</_countries>
     </builtin_unit>
     <builtin_unit name="MVR">
       <_title>Maldivian Rufiyaa</_title>
-      <_names>ar:MVR</_names>
+      <_names>a-cr:MVR</_names>
       <_countries>Maldives</_countries>
     </builtin_unit>
     <builtin_unit name="MRO">
       <_title>Mauritanian Ouguiya (obsolete)</_title>
-      <_names>ar:MRO</_names>
+      <_names>a-cr:MRO</_names>
     </builtin_unit>
     <builtin_unit name="MUR">
       <_title>Mauritian Rupee</_title>
-      <_names>ar:MUR</_names>
+      <_names>a-cr:MUR</_names>
       <_countries>Mauritius</_countries>
     </builtin_unit>
     <builtin_unit name="MDL">
       <_title>Moldovan Leu</_title>
-      <_names>ar:MDL</_names>
+      <_names>a-cr:MDL</_names>
       <_countries>Moldova</_countries>
     </builtin_unit>
     <builtin_unit name="MNT">
       <_title>Mongolian Tögrög</_title>
-      <_names>ar:MNT,au:&#x20AE;</_names>
+      <_names>a-cr:MNT,au:&#x20AE;</_names>
       <_countries>Mongolia</_countries>
     </builtin_unit>
     <builtin_unit name="MAD">
       <_title>Moroccan Dirham</_title>
-      <_names>ar:MAD</_names>
+      <_names>a-cr:MAD</_names>
       <_countries>Morocco</_countries>
     </builtin_unit>
     <builtin_unit name="MZN">
       <_title>Mozambican Metical</_title>
-      <_names>ar:MZN</_names>
+      <_names>a-cr:MZN</_names>
       <_countries>Mozambique</_countries>
     </builtin_unit>
     <builtin_unit name="MMK">
       <_title>Myanmar (Burmese Kyat)</_title>
-      <_names>ar:MMK</_names>
+      <_names>a-cr:MMK</_names>
       <_countries>Myanmar</_countries>
     </builtin_unit>
     <builtin_unit name="NAD">
       <_title>Namibian Dollar</_title>
-      <_names>ar:NAD</_names>
+      <_names>a-cr:NAD</_names>
       <_countries>Namibia</_countries>
     </builtin_unit>
     <builtin_unit name="NPR">
       <_title>Nepalese Rupee</_title>
-      <_names>ar:NPR</_names>
+      <_names>a-cr:NPR</_names>
       <_countries>Nepal</_countries>
     </builtin_unit>
     <builtin_unit name="NIO">
       <_title>Nicaraguan Córdoba</_title>
-      <_names>ar:NIO</_names>
+      <_names>a-cr:NIO</_names>
       <_countries>Nicaragua</_countries>
     </builtin_unit>
     <builtin_unit name="NGN">
       <_title>Nigerian Naira</_title>
-      <_names>ar:NGN,au:&#x20A6;</_names>
+      <_names>a-cr:NGN,au:&#x20A6;</_names>
       <_countries>Nigeria</_countries>
     </builtin_unit>
     <builtin_unit name="OMR">
       <_title>Omani Rial</_title>
-      <_names>ar:OMR</_names>
+      <_names>a-cr:OMR</_names>
       <_countries>Oman</_countries>
     </builtin_unit>
     <builtin_unit name="PKR">
       <_title>Pakistani Rupee</_title>
-      <_names>ar:PKR</_names>
+      <_names>a-cr:PKR</_names>
       <_countries>Pakistan</_countries>
     </builtin_unit>
     <builtin_unit name="PAB">
       <_title>Panamaian Balboa</_title>
-      <_names>ar:PAB</_names>
+      <_names>a-cr:PAB</_names>
       <_countries>Panama</_countries>
     </builtin_unit>
     <builtin_unit name="PGK">
       <_title>Papua New Guinean Kina</_title>
-      <_names>ar:PGK</_names>
+      <_names>a-cr:PGK</_names>
       <_countries>Papua New Guinea</_countries>
     </builtin_unit>
     <builtin_unit name="PYG">
       <_title>Paraguayan Guaraní</_title>
-      <_names>ar:PYG,au:&#x20B2;</_names>
+      <_names>a-cr:PYG,au:&#x20B2;</_names>
       <_countries>Paraguay</_countries>
     </builtin_unit>
     <builtin_unit name="PEN">
       <_title>Peruvian Sol</_title>
-      <_names>ar:PEN</_names>
+      <_names>a-cr:PEN</_names>
       <_countries>Peru</_countries>
     </builtin_unit>
     <builtin_unit name="QAR">
       <_title>Qatari Riyal</_title>
-      <_names>ar:QAR</_names>
+      <_names>a-cr:QAR</_names>
       <_countries>Qatar</_countries>
     </builtin_unit>
     <builtin_unit name="RWF">
       <_title>Rwandan Franc</_title>
-      <_names>ar:RWF</_names>
+      <_names>a-cr:RWF</_names>
       <_countries>Rwanda</_countries>
     </builtin_unit>
     <builtin_unit name="STD">
       <_title>São Tomé and Príncipe Dobra</_title>
-      <_names>ar:STD</_names>
+      <_names>a-cr:STD</_names>
       <_countries>Sao Tome and Principe</_countries>
     </builtin_unit>
     <builtin_unit name="SAR">
       <_title>Saudi Riyal</_title>
-      <_names>ar:SAR</_names>
+      <_names>a-cr:SAR</_names>
       <_countries>Saudi Arabia</_countries>
     </builtin_unit>
     <builtin_unit name="RSD">
       <_title>Serbian Dinar</_title>
-      <_names>ar:RSD</_names>
+      <_names>a-cr:RSD</_names>
       <_countries>Serbia</_countries>
     </builtin_unit>
     <builtin_unit name="SCR">
       <_title>Seychellois Rupee</_title>
-      <_names>ar:SCR</_names>
+      <_names>a-cr:SCR</_names>
       <_countries>Seychelles</_countries>
     </builtin_unit>
     <builtin_unit name="SLL">
       <_title>Sierra Leonean Leone</_title>
-      <_names>ar:SLL</_names>
+      <_names>a-cr:SLL</_names>
       <_countries>Sierra Leone</_countries>
     </builtin_unit>
     <builtin_unit name="SBD">
       <_title>Solomon Islands Dollar</_title>
-      <_names>ar:SBD</_names>
+      <_names>a-cr:SBD</_names>
       <_countries>Solomon Islands</_countries>
     </builtin_unit>
     <builtin_unit name="SOS">
       <_title>Somali Shilling</_title>
-      <_names>ar:SOS</_names>
+      <_names>a-cr:SOS</_names>
       <_countries>Somalia</_countries>
     </builtin_unit>
     <builtin_unit name="LKR">
       <_title>Sri Lankan Rupee</_title>
-      <_names>ar:LKR,au:&#x0BF9;</_names>
+      <_names>a-cr:LKR,au:&#x0BF9;</_names>
       <_countries>Sri Lanka</_countries>
     </builtin_unit>
     <builtin_unit name="SDG">
       <_title>Sudanese Pound</_title>
-      <_names>ar:SDG</_names>
+      <_names>a-cr:SDG</_names>
       <_countries>Sudan</_countries>
     </builtin_unit>
     <builtin_unit name="SRD">
       <_title>Surinamese Dollar</_title>
-      <_names>ar:SRD</_names>
+      <_names>a-cr:SRD</_names>
       <_countries>Suriname</_countries>
     </builtin_unit>
     <builtin_unit name="SZL">
       <_title>Swazi Lilangeni</_title>
-      <_names>ar:SZL</_names>
+      <_names>a-cr:SZL</_names>
       <_countries>Swaziland</_countries>
     </builtin_unit>
     <builtin_unit name="SYP">
       <_title>Syrian Pound</_title>
-      <_names>ar:SYP</_names>
+      <_names>a-cr:SYP</_names>
       <_countries>Syria</_countries>
     </builtin_unit>
     <builtin_unit name="TWD">
       <_title>New Taiwan Dollar</_title>
-      <_names>ar:TWD</_names>
+      <_names>a-cr:TWD</_names>
       <_countries>Taiwan</_countries>
     </builtin_unit>
     <builtin_unit name="TJS">
       <_title>Tajikistani Somoni</_title>
-      <_names>ar:TJS</_names>
+      <_names>a-cr:TJS</_names>
       <_countries>Tajikistan</_countries>
     </builtin_unit>
     <builtin_unit name="TZS">
       <_title>Tanzanian Shilling</_title>
-      <_names>ar:TZS</_names>
+      <_names>a-cr:TZS</_names>
       <_countries>Tanzania</_countries>
     </builtin_unit>
     <builtin_unit name="TOP">
       <_title>Tongan Paʻanga</_title>
-      <_names>ar:TOP</_names>
+      <_names>a-cr:TOP</_names>
       <_countries>Tonga</_countries>
     </builtin_unit>
     <builtin_unit name="TTD">
       <_title>Trinidad and Tobago dollar</_title>
-      <_names>ar:TTD</_names>
+      <_names>a-cr:TTD</_names>
       <_countries>Trinidad and Tobago</_countries>
     </builtin_unit>
     <builtin_unit name="TND">
       <_title>Tunisian Dinar</_title>
-      <_names>ar:TND</_names>
+      <_names>a-cr:TND</_names>
       <_countries>Tunisia</_countries>
     </builtin_unit>
     <builtin_unit name="TMT">
       <_title>Turkmenistan Manat</_title>
-      <_names>ar:TMT</_names>
+      <_names>a-cr:TMT</_names>
       <_countries>Turkmenistan</_countries>
     </builtin_unit>
     <builtin_unit name="UGX">
       <_title>Ugandan Shilling</_title>
-      <_names>ar:UGX</_names>
+      <_names>a-cr:UGX</_names>
       <_countries>Uganda</_countries>
     </builtin_unit>
     <builtin_unit name="UAH">
       <_title>Ukrainian Hryvnia</_title>
-      <_names>ar:UAH,au:&#x20B4;</_names>
+      <_names>a-cr:UAH,au:&#x20B4;</_names>
       <_countries>Ukraine</_countries>
     </builtin_unit>
     <builtin_unit name="AED">
       <_title>United Arab Emirates Dirham</_title>
-      <_names>ar:AED</_names>
+      <_names>a-cr:AED</_names>
       <_countries>United Arab Emirates</_countries>
     </builtin_unit>
     <builtin_unit name="UYU">
       <_title>Uruguayan Peso</_title>
-      <_names>ar:UYU</_names>
+      <_names>a-cr:UYU</_names>
       <_countries>Uruguay</_countries>
     </builtin_unit>
     <builtin_unit name="UZS">
       <_title>Uzbekistan Soʻm</_title>
-      <_names>ar:UZS</_names>
+      <_names>a-cr:UZS</_names>
       <_countries>Uzbekistan</_countries>
     </builtin_unit>
     <builtin_unit name="VUV">
       <_title>Vanuatu Vatu</_title>
-      <_names>ar:VUV</_names>
+      <_names>a-cr:VUV</_names>
       <_countries>Vanuatu</_countries>
     </builtin_unit>
     <builtin_unit name="VEF">
       <_title>Venezuelan Bolívar (obsolete)</_title>
-      <_names>ar:VEF</_names>
+      <_names>a-cr:VEF</_names>
     </builtin_unit>
     <builtin_unit name="VND">
       <_title>Vietnamese Đồng</_title>
-      <_names>ar:VND,au:&#x20AB;</_names>
+      <_names>a-cr:VND,au:&#x20AB;</_names>
       <_countries>Vietnam</_countries>
     </builtin_unit>
     <builtin_unit name="YER">
       <_title>Yemeni Rial</_title>
-      <_names>ar:YER</_names>
+      <_names>a-cr:YER</_names>
       <_countries>Yemen</_countries>
     </builtin_unit>
     <builtin_unit name="ZMK">
       <_title>Zambian Kwacha (obsolete)</_title>
-      <_names>ar:ZMK</_names>
+      <_names>a-cr:ZMK</_names>
     </builtin_unit>
     <unit type="alias">
       <_title>Euro Cent</_title>
@@ -786,7 +786,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Belgian Franc (obsolete)</_title>
-      <_names>ar:BEF</_names>
+      <_names>a-cr:BEF</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/40.3399</relation>
@@ -796,7 +796,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Greek Drachma (obsolete)</_title>
-      <_names>ar:GRD,au:&#x20AF;</_names>
+      <_names>a-cr:GRD,au:&#x20AF;</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/340.750</relation>
@@ -806,7 +806,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>French Franc (obsolete)</_title>
-      <_names>ar:FRF,au:&#x20A3;</_names>
+      <_names>a-cr:FRF,au:&#x20A3;</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/6.55957</relation>
@@ -816,7 +816,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Italian Lira (obsolete)</_title>
-      <_names>ar:ITL</_names>
+      <_names>a-cr:ITL</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/1936.27</relation>
@@ -826,7 +826,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Dutch Guilder (obsolete)</_title>
-      <_names>ar:NLG</_names>
+      <_names>a-cr:NLG</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/2.20371</relation>
@@ -836,7 +836,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Portuguese Escudo (obsolete)</_title>
-      <_names>ar:PTE</_names>
+      <_names>a-cr:PTE</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/200.482</relation>
@@ -846,7 +846,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Deutsche Mark (obsolete)</_title>
-      <_names>ar:DEM</_names>
+      <_names>a-cr:DEM</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/1.95583</relation>
@@ -856,7 +856,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Spanish Peseta (obsolete)</_title>
-      <_names>ar:ESP,au:&#x20A7;</_names>
+      <_names>a-cr:ESP,au:&#x20A7;</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/166.386</relation>
@@ -866,7 +866,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Irish Pound (obsolete)</_title>
-      <_names>ar:IEP</_names>
+      <_names>a-cr:IEP</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/0.787564</relation>
@@ -876,7 +876,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Luxembourg Franc (obsolete)</_title>
-      <_names>ar:LUF</_names>
+      <_names>a-cr:LUF</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/40.3399</relation>
@@ -886,7 +886,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Austrian Schilling (obsolete)</_title>
-      <_names>ar:ATS</_names>
+      <_names>a-cr:ATS</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/13.7603</relation>
@@ -896,7 +896,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Finnish Markka (obsolete)</_title>
-      <_names>ar:FIM</_names>
+      <_names>a-cr:FIM</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/5.94573</relation>
@@ -906,7 +906,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Slovenian Tolar (obsolete)</_title>
-      <_names>ar:SIT</_names>
+      <_names>a-cr:SIT</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/239.640</relation>
@@ -916,7 +916,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Cypriot Pound (obsolete)</_title>
-      <_names>ar:CYP</_names>
+      <_names>a-cr:CYP</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/0.585274</relation>
@@ -926,7 +926,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Estonian Kroon (obsolete)</_title>
-      <_names>ar:EEK</_names>
+      <_names>a-cr:EEK</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/15.6466</relation>
@@ -936,7 +936,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Slovak Koruna (obsolete)</_title>
-      <_names>ar:SKK</_names>
+      <_names>a-cr:SKK</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/30.1260</relation>
@@ -946,7 +946,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Maltese Lira (obsolete)</_title>
-      <_names>ar:MTL</_names>
+      <_names>a-cr:MTL</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/0.429300</relation>
@@ -956,7 +956,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Latvian Lats (obsolete)</_title>
-      <_names>ar:LVL</_names>
+      <_names>a-cr:LVL</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/0.702800</relation>
@@ -966,7 +966,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Lithuanian Litas (obsolete)</_title>
-      <_names>ar:LTL</_names>
+      <_names>a-cr:LTL</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/3.45280</relation>
