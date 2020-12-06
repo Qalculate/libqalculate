@@ -9724,12 +9724,13 @@ int from_float(Number &nr, string sbin, unsigned int bits, unsigned int expbits)
 	if(b_neg) nr.negate();
 	return 1;
 }
-string to_float(Number nr, unsigned int bits, unsigned int expbits, bool *approx) {
+string to_float(Number nr_pre, unsigned int bits, unsigned int expbits, bool *approx) {
 	if(expbits == 0) expbits = standard_expbits(bits);
 	else if(expbits > bits - 2) return "";
 	Number expbias(2);
 	expbias ^= (expbits - 1);
 	expbias--;
+	Number nr(nr_pre);
 	nr.intervalToMidValue();
 	string sbin = "0";
 	if(nr.isNegative()) {
@@ -9785,9 +9786,11 @@ string to_float(Number nr, unsigned int bits, unsigned int expbits, bool *approx
 		po.show_ending_zeroes = true;
 		po.round_halfway_to_even = true;
 		po.binary_bits = 1;
+		po.base_display = BASE_DISPLAY_NONE;
 		bool b_approx = false;
 		po.is_approximate = &b_approx;
 		string sfrac = nrfrac.print(po);
+		remove_blanks(sfrac);
 		if(subnormal && sfrac[0] == '1') {
 			sfrac = "";
 			nrexp = 1;
@@ -9813,6 +9816,7 @@ string to_float(Number nr, unsigned int bits, unsigned int expbits, bool *approx
 		po2.base_display = BASE_DISPLAY_NONE;
 		po2.binary_bits = expbits;
 		sbin += nrexp.print(po2);
+		remove_blanks(sbin);
 		if(sbin.length() < expbits + 1) sbin.insert(1, expbits + 1 - sbin.length(), '0');
 		if(bits == 80) sbin += sfrac[0];
 		sbin += sfrac.substr(2);
@@ -9834,13 +9838,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.iexp) *ips.iexp = 0;
 	if(po.is_approximate && isApproximate()) *po.is_approximate = true;
 	if(po.base == BASE_FP16 || po.base == BASE_FP128 || po.base == BASE_FP32 || po.base == BASE_FP64 || po.base == BASE_FP80) {
-		if(isInterval()) {
-			Number nr(*this);
-			nr.intervalToMidValue();
-			return nr.print(po, ips);
-		}
 		unsigned int bits = 0;
-		Number nr;
 		switch(po.base) {
 			case BASE_FP16: {bits = 16; break;}
 			case BASE_FP32: {bits = 32; break;}
@@ -9849,6 +9847,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			case BASE_FP128: {bits = 128; break;}
 		}
 		string str = to_float(*this, bits, 0, po.is_approximate);
+		if(str.empty()) {
+			PrintOptions po2(po);
+			po2.base = BASE_DECIMAL;
+			return print(po2, ips);
+		}
 		if(ips.minus) *ips.minus = false;
 		str = format_number_string(str, BASE_BINARY, po.base_display, false, true, po);
 		if(ips.num) *ips.num = str;

@@ -1,3 +1,13 @@
+2020-12-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix uninitialized PrintOptions::base_display and set default value to BASE_DISPLAY_NORMAL (fixes issues in floating point format output)
+	* Fix output of negative numbers with floating point format
+
+2020-11-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Make all currency codes, except CUP and KGS, ecase insensitive
+	* Make cup unit (avoid conflict with Cuban pesos) and gcd() function (avoid conflict with gigacandela) case sensitive
+
 2020-11-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix precision in output of expression after RPN operation in qalc
