@@ -27,7 +27,7 @@ msgstr "欧元"
 
 #: ../data/currencies.xml.in.h:3
 msgid "ar:EUR,au:&#x20AC;,euro,p:euros"
-msgstr "ar:EUR,au:&#x20AC;,欧元"
+msgstr "a:EUR,au:&#x20AC;,欧元"
 
 #: ../data/currencies.xml.in.h:4
 msgid ""
@@ -42,7 +42,7 @@ msgstr "美元"
 
 #: ../data/currencies.xml.in.h:6
 msgid "a:$,ar:USD,dollar,p:dollars"
-msgstr "a:$,ar:USD,美元"
+msgstr "a:$,a:USD,美元"
 
 #: ../data/currencies.xml.in.h:7
 msgid ""
@@ -56,7 +56,7 @@ msgstr "日元"
 
 #: ../data/currencies.xml.in.h:9
 msgid "ar:JPY,au:&#xA5;,yen"
-msgstr "ar:JPY,au:&#xA5;,日元"
+msgstr "a:JPY,au:&#xA5;,日元"
 
 #: ../data/currencies.xml.in.h:10
 msgid "Japan"
@@ -80,7 +80,7 @@ msgstr "英镑"
 
 #: ../data/currencies.xml.in.h:15
 msgid "ar:GBP,au:&#xA3;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:16
 msgid "United Kingdom"
@@ -153,7 +153,7 @@ msgstr "俄罗斯卢布"
 
 #: ../data/currencies.xml.in.h:33
 msgid "ar:RUB,au:&#x20BD;,ruble"
-msgstr "ar:RUB,au:&#x20BD;,卢布"
+msgstr "a:RUB,au:&#x20BD;,卢布"
 
 #: ../data/currencies.xml.in.h:34
 #, fuzzy
@@ -254,7 +254,7 @@ msgstr "波兰兹罗提"
 #: ../data/currencies.xml.in.h:57
 #, fuzzy
 msgid "ar:PLN,au:z&#x0142;,zloty"
-msgstr "ar:ITL,au:&#x20A4;,里拉"
+msgstr "a:ITL,au:&#x20A4;,里拉"
 
 #: ../data/currencies.xml.in.h:58
 msgid "Poland"
@@ -447,7 +447,7 @@ msgstr "奥地利先令"
 #: ../data/currencies.xml.in.h:103
 #, fuzzy
 msgid "ar:KES"
-msgstr "ar:KRW"
+msgstr "a:KRW"
 
 #: ../data/currencies.xml.in.h:104
 msgid "Kenya"
@@ -460,7 +460,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:106
 #, fuzzy
 msgid "ar:AFN,aiu:&#x060B;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:107
 msgid "Afghanistan"
@@ -539,7 +539,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:124
 #, fuzzy
 msgid "ar:AMD,au:&#x058F;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:125
 msgid "Armenia"
@@ -577,7 +577,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:133
 #, fuzzy
 msgid "ar:AZN,au:&#x20BC;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:134
 msgid "Azerbaijan"
@@ -616,7 +616,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:142
 #, fuzzy
 msgid "ar:BDT,au:&#x09F3;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:143
 msgid "Bangladesh"
@@ -766,7 +766,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:177
 #, fuzzy
 msgid "ar:KHR,aiu:&#x17DB;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:178
 msgid "Cambodia"
@@ -806,7 +806,7 @@ msgstr "加拿大元"
 #: ../data/currencies.xml.in.h:186
 #, fuzzy
 msgid "ar:KYD"
-msgstr "ar:KRW"
+msgstr "a:KRW"
 
 #: ../data/currencies.xml.in.h:187
 msgid "Cayman Islands"
@@ -846,7 +846,7 @@ msgstr "比利时法郎"
 #: ../data/currencies.xml.in.h:195
 #, fuzzy
 msgid "ar:KMF"
-msgstr "ar:KRW"
+msgstr "a:KRW"
 
 #: ../data/currencies.xml.in.h:196
 msgid "Comoros"
@@ -923,7 +923,7 @@ msgstr "塞浦路斯镑"
 #: ../data/currencies.xml.in.h:213
 #, fuzzy
 msgid "ar:EGP"
-msgstr "ar:EEK"
+msgstr "a:EEK"
 
 #: ../data/currencies.xml.in.h:214
 msgid "Egypt"
@@ -936,7 +936,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:216
 #, fuzzy
 msgid "ar:SVC"
-msgstr "tolar,ar:SIT"
+msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:217
 msgid "Eritrean Nafka"
@@ -945,7 +945,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:218
 #, fuzzy
 msgid "ar:ERN"
-msgstr "ar:EEK"
+msgstr "a:EEK"
 
 #: ../data/currencies.xml.in.h:219
 msgid "Eritrea"
@@ -958,7 +958,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:221
 #, fuzzy
 msgid "ar:ETB"
-msgstr "ar:EEK"
+msgstr "a:EEK"
 
 #: ../data/currencies.xml.in.h:222
 msgid "Ethiopia"
@@ -1009,7 +1009,7 @@ msgstr "加拿大元"
 #: ../data/currencies.xml.in.h:233
 #, fuzzy
 msgid "ar:GMD"
-msgstr "ar:GRD"
+msgstr "a:GRD"
 
 #: ../data/currencies.xml.in.h:234
 msgid "Gambia"
@@ -1022,7 +1022,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:236
 #, fuzzy
 msgid "ar:GEL,au:&#x20BE;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:237
 msgid "Georgia"
@@ -1035,7 +1035,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:239
 #, fuzzy
 msgid "ar:GHS,au:&#x20B5;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:240
 msgid "Ghana"
@@ -1048,7 +1048,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:242
 #, fuzzy
 msgid "ar:GIP"
-msgstr "ar:GRD"
+msgstr "a:GRD"
 
 #: ../data/currencies.xml.in.h:243
 msgid "Gibraltar"
@@ -1061,7 +1061,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:245
 #, fuzzy
 msgid "ar:GTQ"
-msgstr "ar:GRD"
+msgstr "a:GRD"
 
 #: ../data/currencies.xml.in.h:246
 msgid "Guatemala"
@@ -1075,7 +1075,7 @@ msgstr "爱尔兰镑"
 #: ../data/currencies.xml.in.h:248
 #, fuzzy
 msgid "ar:GGP"
-msgstr "ar:GRD"
+msgstr "a:GRD"
 
 #: ../data/currencies.xml.in.h:249
 msgid "Guernsey"
@@ -1089,7 +1089,7 @@ msgstr "比利时法郎"
 #: ../data/currencies.xml.in.h:251
 #, fuzzy
 msgid "ar:GNF"
-msgstr "ar:GRD"
+msgstr "a:GRD"
 
 #: ../data/currencies.xml.in.h:252
 msgid "Guinea"
@@ -1103,7 +1103,7 @@ msgstr "澳大利亚元"
 #: ../data/currencies.xml.in.h:254
 #, fuzzy
 msgid "ar:GYD"
-msgstr "ar:GRD"
+msgstr "a:GRD"
 
 #: ../data/currencies.xml.in.h:255
 msgid "Guyana"
@@ -1141,7 +1141,7 @@ msgstr "意大利里拉"
 #: ../data/currencies.xml.in.h:263
 #, fuzzy
 msgid "ar:IRR,aiu:&#xFDFC;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:264
 msgid "Iran"
@@ -1191,7 +1191,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:275
 #, fuzzy
 msgid "ar:KZT,au:&#x20B8;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:276
 msgid "Kazakhstan"
@@ -1205,7 +1205,7 @@ msgstr "韩元"
 #: ../data/currencies.xml.in.h:278
 #, fuzzy
 msgid "ar:KPW"
-msgstr "ar:KRW"
+msgstr "a:KRW"
 
 #: ../data/currencies.xml.in.h:279
 #, fuzzy
@@ -1219,7 +1219,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:281
 #, fuzzy
 msgid "ar:KWD"
-msgstr "ar:KRW"
+msgstr "a:KRW"
 
 #: ../data/currencies.xml.in.h:282
 msgid "Kuwait"
@@ -1232,7 +1232,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:284
 #, fuzzy
 msgid "ar:KGS,au:&#x0441;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:285
 msgid "Kyrgyzstan"
@@ -1245,7 +1245,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:287
 #, fuzzy
 msgid "ar:LAK,au:&#x20AD;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:288
 msgid "Laos"
@@ -1399,7 +1399,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:325
 #, fuzzy
 msgid "ar:MNT,au:&#x20AE;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:326
 msgid "Mongolia"
@@ -1485,7 +1485,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:346
 #, fuzzy
 msgid "ar:NGN,au:&#x20A6;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:347
 msgid "Nigeria"
@@ -1510,7 +1510,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:352
 #, fuzzy
 msgid "ar:PKR"
-msgstr "ar:PHP"
+msgstr "a:PHP"
 
 #: ../data/currencies.xml.in.h:353
 #, fuzzy
@@ -1524,7 +1524,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:355
 #, fuzzy
 msgid "ar:PAB"
-msgstr "ar:PHP"
+msgstr "a:PHP"
 
 #: ../data/currencies.xml.in.h:356
 msgid "Panama"
@@ -1537,7 +1537,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:358
 #, fuzzy
 msgid "ar:PGK"
-msgstr "ar:PHP"
+msgstr "a:PHP"
 
 #: ../data/currencies.xml.in.h:359
 msgid "Papua New Guinea"
@@ -1550,7 +1550,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:361
 #, fuzzy
 msgid "ar:PYG,au:&#x20B2;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:362
 msgid "Paraguay"
@@ -1563,7 +1563,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:364
 #, fuzzy
 msgid "ar:PEN"
-msgstr "ar:PHP"
+msgstr "a:PHP"
 
 #: ../data/currencies.xml.in.h:365
 msgid "Peru"
@@ -1601,7 +1601,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:373
 #, fuzzy
 msgid "ar:STD"
-msgstr "tolar,ar:SIT"
+msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:374
 msgid "Sao Tome and Principe"
@@ -1614,7 +1614,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:376
 #, fuzzy
 msgid "ar:SAR"
-msgstr "tolar,ar:SIT"
+msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:377
 msgid "Saudi Arabia"
@@ -1640,7 +1640,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:382
 #, fuzzy
 msgid "ar:SCR"
-msgstr "tolar,ar:SIT"
+msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:383
 msgid "Seychelles"
@@ -1653,7 +1653,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:385
 #, fuzzy
 msgid "ar:SLL"
-msgstr "tolar,ar:SIT"
+msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:386
 msgid "Sierra Leone"
@@ -1666,7 +1666,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:388
 #, fuzzy
 msgid "ar:SBD"
-msgstr "tolar,ar:SIT"
+msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:389
 msgid "Solomon Islands"
@@ -1680,7 +1680,7 @@ msgstr "奥地利先令"
 #: ../data/currencies.xml.in.h:391
 #, fuzzy
 msgid "ar:SOS"
-msgstr "tolar,ar:SIT"
+msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:392
 msgid "Somalia"
@@ -1693,7 +1693,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:394
 #, fuzzy
 msgid "ar:LKR,au:&#x0BF9;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:395
 msgid "Sri Lanka"
@@ -1706,7 +1706,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:397
 #, fuzzy
 msgid "ar:SDG"
-msgstr "tolar,ar:SIT"
+msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:398
 msgid "Sudan"
@@ -1720,7 +1720,7 @@ msgstr "新加坡元"
 #: ../data/currencies.xml.in.h:400
 #, fuzzy
 msgid "ar:SRD"
-msgstr "tolar,ar:SIT"
+msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:401
 #, fuzzy
@@ -1734,7 +1734,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:403
 #, fuzzy
 msgid "ar:SZL"
-msgstr "tolar,ar:SIT"
+msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:404
 msgid "Swaziland"
@@ -1748,7 +1748,7 @@ msgstr "塞浦路斯镑"
 #: ../data/currencies.xml.in.h:406
 #, fuzzy
 msgid "ar:SYP"
-msgstr "tolar,ar:SIT"
+msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:407
 msgid "Syria"
@@ -1762,7 +1762,7 @@ msgstr "新西兰元"
 #: ../data/currencies.xml.in.h:409
 #, fuzzy
 msgid "ar:TWD"
-msgstr "ar:TRY"
+msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:410
 msgid "Taiwan"
@@ -1775,7 +1775,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:412
 #, fuzzy
 msgid "ar:TJS"
-msgstr "ar:TRY"
+msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:413
 msgid "Tajikistan"
@@ -1789,7 +1789,7 @@ msgstr "奥地利先令"
 #: ../data/currencies.xml.in.h:415
 #, fuzzy
 msgid "ar:TZS"
-msgstr "ar:TRY"
+msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:416
 msgid "Tanzania"
@@ -1802,7 +1802,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:418
 #, fuzzy
 msgid "ar:TOP"
-msgstr "ar:TRY"
+msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:419
 msgid "Tonga"
@@ -1815,7 +1815,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:421
 #, fuzzy
 msgid "ar:TTD"
-msgstr "ar:TRY"
+msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:422
 msgid "Trinidad and Tobago"
@@ -1828,7 +1828,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:424
 #, fuzzy
 msgid "ar:TND"
-msgstr "ar:TRY"
+msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:425
 msgid "Tunisia"
@@ -1841,7 +1841,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:427
 #, fuzzy
 msgid "ar:TMT"
-msgstr "ar:TRY"
+msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:428
 msgid "Turkmenistan"
@@ -1867,7 +1867,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:433
 #, fuzzy
 msgid "ar:UAH,au:&#x20B4;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:434
 #, fuzzy
@@ -1938,7 +1938,7 @@ msgstr ""
 #: ../data/currencies.xml.in.h:450
 #, fuzzy
 msgid "ar:VND,au:&#x20AB;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:451
 msgid "Vietnam"
@@ -1971,7 +1971,7 @@ msgstr "欧元分"
 
 #: ../data/currencies.xml.in.h:458
 msgid "r:eurocent,p:eurocents"
-msgstr "r:欧元分"
+msgstr "欧元分"
 
 #: ../data/currencies.xml.in.h:459
 msgid "Cent (USD)"
@@ -1979,7 +1979,7 @@ msgstr "美分"
 
 #: ../data/currencies.xml.in.h:460
 msgid "au:&#xA2;,r:cent,p:cents"
-msgstr "au:&#xA2;,r:美分"
+msgstr "au:&#xA2;,美分"
 
 #: ../data/currencies.xml.in.h:461
 #, fuzzy
@@ -1998,7 +1998,7 @@ msgstr "希腊德拉马克"
 #: ../data/currencies.xml.in.h:464
 #, fuzzy
 msgid "ar:GRD,au:&#x20AF;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:465
 #, fuzzy
@@ -2008,7 +2008,7 @@ msgstr "法国法郎"
 #: ../data/currencies.xml.in.h:466
 #, fuzzy
 msgid "ar:FRF,au:&#x20A3;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:467
 #, fuzzy
@@ -2036,7 +2036,7 @@ msgstr "葡萄牙埃斯库多"
 #: ../data/currencies.xml.in.h:472
 #, fuzzy
 msgid "ar:PTE"
-msgstr "ar:PHP"
+msgstr "a:PHP"
 
 #: ../data/currencies.xml.in.h:473
 msgid "Deutsche Mark (obsolete)"
@@ -2055,7 +2055,7 @@ msgstr "西班牙比塞塔"
 #: ../data/currencies.xml.in.h:476
 #, fuzzy
 msgid "ar:ESP,au:&#x20A7;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:477
 #, fuzzy
@@ -2101,7 +2101,7 @@ msgstr "斯洛文尼亚Tolar"
 #: ../data/currencies.xml.in.h:486
 #, fuzzy
 msgid "ar:SIT"
-msgstr "tolar,ar:SIT"
+msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:487
 #, fuzzy
@@ -2119,7 +2119,7 @@ msgstr "爱沙尼亚克鲁恩"
 
 #: ../data/currencies.xml.in.h:490
 msgid "ar:EEK"
-msgstr "ar:EEK"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:491
 #, fuzzy
@@ -3820,7 +3820,7 @@ msgstr ""
 #: ../data/functions.xml.in.h:226
 #, fuzzy
 msgid "r:totient,au:&#x3C6;,phi"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/functions.xml.in.h:227
 msgid "n"
@@ -4159,7 +4159,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:301
 msgid "Riemann Zeta"
-msgstr "Riemann Zeta"
+msgstr ""
 
 #: ../data/functions.xml.in.h:302
 msgid "Calculates Hurwitz zeta function if the second argument is not 1."
@@ -4179,7 +4179,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:306
 msgid "Kronecker Delta"
-msgstr "Kronecker Delta"
+msgstr ""
 
 #: ../data/functions.xml.in.h:307
 msgid "r:kronecker"
@@ -4280,7 +4280,7 @@ msgstr "实部"
 #: ../data/functions.xml.in.h:330
 #, fuzzy
 msgid "r:re,au:&#x211C;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/functions.xml.in.h:331
 msgid "Complex number"
@@ -4293,7 +4293,7 @@ msgstr "虚部"
 #: ../data/functions.xml.in.h:333
 #, fuzzy
 msgid "r:im,au:&#x2111;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/functions.xml.in.h:334
 msgid "Principal Argument"
@@ -4336,7 +4336,7 @@ msgstr "立方根"
 #: ../data/functions.xml.in.h:343
 #, fuzzy
 msgid "r:cbrt,aou:&#x221B;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/functions.xml.in.h:344
 #, fuzzy
@@ -4399,7 +4399,7 @@ msgstr "Lambert W函数(&#x3c9;函数, Product Log)"
 
 #: ../data/functions.xml.in.h:358
 msgid "r:lambertw,productlog"
-msgstr "r:lambertw,productlog"
+msgstr ""
 
 #: ../data/functions.xml.in.h:359
 #, fuzzy
@@ -4604,7 +4604,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:408
 msgid "X"
-msgstr "X"
+msgstr ""
 
 #: ../data/functions.xml.in.h:409
 msgid "Cardinal Sine (Sinc Function)"
@@ -5215,7 +5215,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:546
 msgid "Sigma"
-msgstr "Sigma"
+msgstr ""
 
 #: ../data/functions.xml.in.h:547
 msgid "Means"
@@ -6289,7 +6289,7 @@ msgstr "逻辑"
 
 #: ../data/functions.xml.in.h:793
 msgid "For...Do"
-msgstr "For...Do"
+msgstr ""
 
 #: ../data/functions.xml.in.h:794
 msgid "r:for"
@@ -6317,7 +6317,7 @@ msgstr "Do函数"
 
 #: ../data/functions.xml.in.h:800
 msgid "If...Then...Else"
-msgstr "If...Then...Else"
+msgstr ""
 
 #: ../data/functions.xml.in.h:801
 msgid "r:if"
@@ -6487,7 +6487,7 @@ msgstr "多变量求解"
 
 #: ../data/functions.xml.in.h:837
 msgid "r:multisolve"
-msgstr "r:multisolve"
+msgstr ""
 
 #: ../data/functions.xml.in.h:838
 msgid "Equation vector"
@@ -6521,7 +6521,7 @@ msgstr "方程求解"
 #: ../data/functions.xml.in.h:845
 #, fuzzy
 msgid "r:dsolve"
-msgstr "r:multisolve"
+msgstr "multisolve"
 
 #: ../data/functions.xml.in.h:846
 msgid "Initial condition: function value (y)"
@@ -7837,7 +7837,7 @@ msgstr "息票债券"
 
 #: ../data/functions.xml.in.h:1132
 msgid "r:level_coupon"
-msgstr "r:level_coupon"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1133
 msgid "Calculates the value of a level-coupon bond."
@@ -8290,7 +8290,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:73
 msgid "r:turn,p:turns"
-msgstr "r:turn,p:turns"
+msgstr ""
 
 #: ../data/units.xml.in.h:74
 msgid "Solid Angle"
@@ -8468,7 +8468,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:118
 msgid "r:zentner"
-msgstr "r:zentner"
+msgstr ""
 
 #: ../data/units.xml.in.h:119
 msgid "Planck Mass"
@@ -8770,7 +8770,7 @@ msgstr ""
 #: ../data/units.xml.in.h:201
 #, fuzzy
 msgid "ar:S,siemens,auio:&#x2127;"
-msgstr "ar:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/units.xml.in.h:202
 msgid "Electric Field Strength"
@@ -9170,7 +9170,7 @@ msgstr "英里每加仑"
 
 #: ../data/units.xml.in.h:300
 msgid "a-cr:mpg"
-msgstr "a-cr:mpg"
+msgstr ""
 
 #: ../data/units.xml.in.h:301
 msgid "Cooking"
@@ -9572,7 +9572,7 @@ msgstr "磅力"
 
 #: ../data/units.xml.in.h:400
 msgid "ar:lbf,pound_force"
-msgstr "ar:lbf,pound_force"
+msgstr ""
 
 #: ../data/units.xml.in.h:401
 msgid "Poundal"
@@ -11370,3 +11370,4 @@ msgstr ""
 
 #~ msgid "Derive"
 #~ msgstr "求导"
+

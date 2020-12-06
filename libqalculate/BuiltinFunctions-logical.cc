@@ -173,7 +173,7 @@ int CircularShiftFunction::calculate(MathStructure &mstruct, const MathStructure
 	}
 	PrintOptions po;
 	po.base = BASE_BINARY;
-	po.base_display = BASE_DISPLAY_NORMAL;
+	po.base_display = BASE_DISPLAY_NONE;
 	po.binary_bits = bits;
 	string str = nr.print(po);
 	remove_blanks(str);

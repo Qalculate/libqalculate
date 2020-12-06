@@ -398,7 +398,7 @@ static const struct PrintOptions {
 	int min_exp;
 	/// Number base for displaying numbers. Default: 10
 	int base;
-	/// How prefixes for numbers in non-decimal bases will be displayed
+	/// How prefixes for numbers in non-decimal bases will be displayed. Default: BASE_DISPLAY_NORMAL
 	BaseDisplay base_display;
 	/// Use lower case for non-numeric characters for bases > 10. Default: false
 	bool lower_case_numbers;
