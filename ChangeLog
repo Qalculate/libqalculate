@@ -1,3 +1,8 @@
+2020-12-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Chain calculation parsing mode
+	* RPN syntax as parsing mode
+
 2020-12-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix uninitialized PrintOptions::base_display and set default value to BASE_DISPLAY_NORMAL (fixes issues in floating point format output)
