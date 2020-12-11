@@ -595,7 +595,10 @@ typedef enum {
 	/// In the "parse implicit multiplication first" mode, implicit multiplication is parsed before explicit multiplication (<quote>12/2(1+2) = 12/(2*3) = 2</quote>, <quote>5x/5y = (5*x)/(5*y) = x/y</quote>).
 	PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST,
 	/// In the conventional mode implicit multiplication does not differ from explicit multiplication (<quote>12/2(1+2) = 12/2*3 = 18</quote>, <quote>5x/5y = 5*x/5*y = xy</quote>).
-	PARSING_MODE_CONVENTIONAL
+	PARSING_MODE_CONVENTIONAL,
+	// as immediate execute mode in simple traditional calculators (e.g. 5+2*3=(5+2)*3=21)
+	PARSING_MODE_CHAIN_CALCULATION,
+	PARSING_MODE_RPN
 } ParsingMode;
 
 typedef enum {
@@ -617,7 +620,7 @@ static const struct ParseOptions {
 	bool unknowns_enabled;
 	/// If units will be parsed. Default: true
 	bool units_enabled;
-	/// If Reverse Polish Notation syntax will be used. Default: false
+	/// If Reverse Polish Notation syntax will be used. Default: false (deprecated, use parsing_mode = PARSING_MODE_RPN instead)
 	bool rpn;
 	/// Base of parsed numbers. Default: 10
 	int base;

@@ -72,6 +72,7 @@ string expression_str;
 bool expression_executed = false;
 bool avoid_recalculation = false;
 bool hide_parse_errors = false;
+ParsingMode nonrpn_parsing_mode = PARSING_MODE_ADAPTIVE, saved_parsing_mode;
 bool rpn_mode = false, saved_rpn_mode = false;
 bool caret_as_xor = false, saved_caret_as_xor = false;
 bool use_readline = true;
@@ -780,8 +781,19 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate functions", _("calculate functions")) || svar == "calcfunc") SET_BOOL_E(evalops.calculate_functions)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "sync units", _("sync units")) || svar == "sync") SET_BOOL_E(evalops.sync_units)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even")) || svar == "rndeven") SET_BOOL_D(printops.round_halfway_to_even)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn syntax", _("rpn syntax")) || svar == "rpnsyn") SET_BOOL_PF(evalops.parse_options.rpn)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn", _("rpn")) && svalue.find(" ") == string::npos) {SET_BOOL(rpn_mode) if(!rpn_mode) CALCULATOR->clearRPNStack();}
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn syntax", _("rpn syntax")) || svar == "rpnsyn") {
+		bool b = (evalops.parse_options.parsing_mode == PARSING_MODE_RPN);
+		SET_BOOL(b)
+		if(b != (evalops.parse_options.parsing_mode == PARSING_MODE_RPN)) {
+			if(b) {
+				nonrpn_parsing_mode = evalops.parse_options.parsing_mode;
+				evalops.parse_options.parsing_mode = PARSING_MODE_RPN;
+			} else {
+				evalops.parse_options.parsing_mode = nonrpn_parsing_mode;
+			}
+			expression_format_updated(false);
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn", _("rpn")) && svalue.find(" ") == string::npos) {SET_BOOL(rpn_mode) if(!rpn_mode) CALCULATOR->clearRPNStack();}
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "short multiplication", _("short multiplication")) || svar == "shortmul") SET_BOOL_D(printops.short_multiplication)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase e", _("lowercase e")) || svar == "lowe") SET_BOOL_D(printops.lower_case_e)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase numbers", _("lowercase numbers")) || svar == "lownum") SET_BOOL_D(printops.lower_case_numbers)
@@ -892,10 +904,12 @@ void set_option(string str) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "adaptive", _("adaptive"))) v = PARSING_MODE_ADAPTIVE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "implicit first", _("implicit first"))) v = PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "conventional", _("conventional"))) v = PARSING_MODE_CONVENTIONAL;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "chain", _("chain"))) v = PARSING_MODE_CHAIN_CALCULATION;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rpn", _("rpn"))) v = PARSING_MODE_RPN;
 		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
-		if(v < 0 || v > 2) {
+		if(v < PARSING_MODE_ADAPTIVE || v > PARSING_MODE_RPN) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			evalops.parse_options.parsing_mode = (ParsingMode) v;
@@ -2617,15 +2631,16 @@ int main(int argc, char *argv[]) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
 			if(EQUALS_IGNORECASE_AND_LOCAL(str, "syntax", _("syntax"))) {
-				if(!evalops.parse_options.rpn) {
-					evalops.parse_options.rpn = true;
+				if(evalops.parse_options.parsing_mode != PARSING_MODE_RPN) {
+					nonrpn_parsing_mode = evalops.parse_options.parsing_mode;
+					evalops.parse_options.parsing_mode = PARSING_MODE_RPN;
 					expression_format_updated(false);
 				}
 				rpn_mode = false;
 				CALCULATOR->clearRPNStack();
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "stack", _("stack"))) {
-				if(evalops.parse_options.rpn) {
-					evalops.parse_options.rpn = false;
+				if(evalops.parse_options.parsing_mode == PARSING_MODE_RPN) {
+					evalops.parse_options.parsing_mode = nonrpn_parsing_mode;
 					expression_format_updated(false);
 				}
 				rpn_mode = true;
@@ -2636,8 +2651,13 @@ int main(int argc, char *argv[]) {
 				} else {
 					rpn_mode = v;
 				}
-				if(evalops.parse_options.rpn != rpn_mode) {
-					evalops.parse_options.rpn = rpn_mode;
+				if((evalops.parse_options.parsing_mode == PARSING_MODE_RPN) != rpn_mode) {
+					if(rpn_mode) {
+						nonrpn_parsing_mode = evalops.parse_options.parsing_mode;
+						evalops.parse_options.parsing_mode = PARSING_MODE_RPN;
+					} else {
+						evalops.parse_options.parsing_mode = nonrpn_parsing_mode;
+					}
 					expression_format_updated(false);
 				}
 				if(!rpn_mode) CALCULATOR->clearRPNStack();
@@ -3477,6 +3497,8 @@ int main(int argc, char *argv[]) {
 				case PARSING_MODE_ADAPTIVE: {str += _("adaptive"); break;}
 				case PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST: {str += _("implicit first"); break;}
 				case PARSING_MODE_CONVENTIONAL: {str += _("conventional"); break;}
+				case PARSING_MODE_CHAIN_CALCULATION: {str += _("chain"); break;}
+				case PARSING_MODE_RPN: {str += _("rpn"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("read precision"), "readprec");
@@ -3486,7 +3508,7 @@ int main(int argc, char *argv[]) {
 				case READ_PRECISION_WHEN_DECIMALS: {str += _("when decimals"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("rpn syntax"), "rpnsyn"); str += b2oo(evalops.parse_options.rpn, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("rpn syntax"), "rpnsyn"); str += b2oo(evalops.parse_options.parsing_mode == PARSING_MODE_RPN, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Units"));
 
@@ -4230,9 +4252,9 @@ int main(int argc, char *argv[]) {
 				else if(evalops.parse_options.base > 2 && evalops.parse_options.base != BASE_OCTAL && evalops.parse_options.base != BASE_DECIMAL && evalops.parse_options.base != BASE_HEXADECIMAL) {str += " "; str += i2s(evalops.parse_options.base); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("limit implicit multiplication"), "limimpl", "", evalops.parse_options.limit_implicit_multiplication);
-				STR_AND_TABS_2(_("parsing mode"), "parse", _("See 'help parsing mode'."), evalops.parse_options.parsing_mode, _("adaptive"), _("implicit first"), _("conventional"));
+				STR_AND_TABS_4(_("parsing mode"), "parse", _("See 'help parsing mode'."), evalops.parse_options.parsing_mode, _("adaptive"), _("implicit first"), _("conventional"), _("chain"), _("rpn"));
 				STR_AND_TABS_2(_("read precision"), "readprec", _("If activated, numbers be interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005)."), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
-				STR_AND_TABS_BOOL(_("rpn syntax"), "rpnsyn", "", evalops.parse_options.rpn);
+				STR_AND_TABS_BOOL(_("rpn syntax"), "rpnsyn", "", (evalops.parse_options.parsing_mode == PARSING_MODE_RPN));
 
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Units"));
 
@@ -5849,6 +5871,7 @@ void set_saved_mode() {
 	saved_printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
 	saved_caf = complex_angle_form;
 	saved_evalops = evalops;
+	saved_parsing_mode = (evalops.parse_options.parsing_mode == PARSING_MODE_RPN ? nonrpn_parsing_mode : evalops.parse_options.parsing_mode);
 	saved_rpn_mode = rpn_mode;
 	saved_caret_as_xor = caret_as_xor;
 	saved_dual_fraction = dual_fraction;
@@ -6068,8 +6091,12 @@ void load_preferences() {
 					evalops.parse_options.limit_implicit_multiplication = v;
 					printops.limit_implicit_multiplication = v;
 				} else if(svar == "parsing_mode") {
-					if(v >= PARSING_MODE_ADAPTIVE && v <= PARSING_MODE_CONVENTIONAL) {
-						evalops.parse_options.parsing_mode = (ParsingMode) v;
+					if(v >= PARSING_MODE_ADAPTIVE && v <= PARSING_MODE_RPN) {
+						if(evalops.parse_options.parsing_mode == PARSING_MODE_RPN && v != PARSING_MODE_RPN) {
+							nonrpn_parsing_mode = (ParsingMode) v;
+						} else {
+							evalops.parse_options.parsing_mode = (ParsingMode) v;
+						}
 					}
 				} else if(svar == "place_units_separately") {
 					printops.place_units_separately = v;
@@ -6258,7 +6285,12 @@ void load_preferences() {
 				} else if(svar == "in_rpn_mode") {
 					rpn_mode = v;
 				} else if(svar == "rpn_syntax") {
-					evalops.parse_options.rpn = v;
+					if(v) {
+						nonrpn_parsing_mode = evalops.parse_options.parsing_mode;
+						evalops.parse_options.parsing_mode = PARSING_MODE_RPN;
+					} else {
+						evalops.parse_options.parsing_mode = nonrpn_parsing_mode;
+					}
 				} else if(svar == "default_assumption_type") {
 					if(v >= ASSUMPTION_TYPE_NONE && v <= ASSUMPTION_TYPE_INTEGER) {
 						if(v < ASSUMPTION_TYPE_NUMBER && version_numbers[0] < 1) v = ASSUMPTION_TYPE_NUMBER;
@@ -6403,9 +6435,9 @@ bool save_preferences(bool mode) {
 	else fprintf(file, "approximation=%i\n", saved_evalops.approximation);
 	fprintf(file, "interval_calculation=%i\n", saved_evalops.interval_calculation);
 	fprintf(file, "in_rpn_mode=%i\n", saved_rpn_mode);
-	fprintf(file, "rpn_syntax=%i\n", saved_evalops.parse_options.rpn);
+	fprintf(file, "rpn_syntax=%i\n", saved_evalops.parse_options.parsing_mode == PARSING_MODE_RPN);
 	fprintf(file, "limit_implicit_multiplication=%i\n", saved_evalops.parse_options.limit_implicit_multiplication);
-	fprintf(file, "parsing_mode=%i\n", saved_evalops.parse_options.parsing_mode);
+	fprintf(file, "parsing_mode=%i\n", saved_parsing_mode);
 	fprintf(file, "default_assumption_type=%i\n", CALCULATOR->defaultAssumptions()->type());
 	fprintf(file, "default_assumption_sign=%i\n", CALCULATOR->defaultAssumptions()->sign());
 

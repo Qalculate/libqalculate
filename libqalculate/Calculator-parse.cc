@@ -620,6 +620,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		return;
 	}
 
+	if(po.rpn) po.parsing_mode = PARSING_MODE_RPN;
+
 	MathStructure *unended_function = po.unended_function;
 	po.unended_function = NULL;
 
@@ -778,7 +780,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 	//remove spaces in numbers
 	size_t space_i = 0;
-	if(!po.rpn) {
+	if(po.parsing_mode != PARSING_MODE_RPN) {
 		space_i = str.find(SPACE_CH, 0);
 		while(space_i != string::npos) {
 			if(is_in(NUMBERS INTERNAL_NUMBER_CHARS DOT, str[space_i + 1]) && is_in(NUMBERS INTERNAL_NUMBER_CHARS DOT, str[space_i - 1])) {
@@ -921,7 +923,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	size_t i_mod = str.find("%");
 	if(i_mod != string::npos && !v_percent->hasName("%")) i_mod = string::npos;
 	while(i_mod != string::npos) {
-		if(po.rpn) {
+		if(po.parsing_mode == PARSING_MODE_RPN) {
 			if(i_mod == 0 || is_not_in(OPERATORS "\\" INTERNAL_OPERATORS SPACE, str[i_mod - 1])) {
 				str.replace(i_mod, 1, v_percent->referenceName());
 				i_mod += v_percent->referenceName().length() - 1;
@@ -933,7 +935,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		i_mod = str.find("%", i_mod + 1);
 	}
 
-	if(po.rpn) {
+	if(po.parsing_mode == PARSING_MODE_RPN) {
 		// add space between double operators in rpn mode in order to ensure that they are interpreted as two single operators
 		gsub("&&", "& &", str);
 		gsub("||", "| |", str);
@@ -973,7 +975,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					break;
 				}
 			}
-		} else if(str[str_index] == '\\' && str_index + 1 < str.length() && (is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBERS, str[str_index + 1]) || (!po.rpn && str_index > 0 && is_in(NUMBERS SPACE PLUS MINUS BITWISE_NOT NOT LEFT_PARENTHESIS, str[str_index + 1])))) {
+		} else if(str[str_index] == '\\' && str_index + 1 < str.length() && (is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBERS, str[str_index + 1]) || (po.parsing_mode != PARSING_MODE_RPN && str_index > 0 && is_in(NUMBERS SPACE PLUS MINUS BITWISE_NOT NOT LEFT_PARENTHESIS, str[str_index + 1])))) {
 			if(is_in(NUMBERS SPACE PLUS MINUS BITWISE_NOT NOT LEFT_PARENTHESIS, str[str_index + 1])) {
 				// replace \ followed by number with // for integer division
 				str.replace(str_index, 1, "//");
@@ -1057,12 +1059,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str_index = stmp.length() + i5 - stmp2.length();
 				}
 			}
-		} else if(!po.rpn && (str[str_index] == 'c' || str[str_index] == 'C') && str.length() > str_index + 6 && str[str_index + 5] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("compl", str, 5, str_index, base)) {
+		} else if(po.parsing_mode != PARSING_MODE_RPN && (str[str_index] == 'c' || str[str_index] == 'C') && str.length() > str_index + 6 && str[str_index + 5] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("compl", str, 5, str_index, base)) {
 			// interprate "compl" followed by space as bitwise not
 			str.replace(str_index, 6, BITWISE_NOT);
 		} else if(str[str_index] == SPACE_CH) {
 			size_t i = str.find(SPACE, str_index + 1);
-			if(po.rpn && i == string::npos) i = str.length();
+			if(po.parsing_mode == PARSING_MODE_RPN && i == string::npos) i = str.length();
 			if(i != string::npos) {
 				// replace text operators, surrounded by space, with default operator characters
 				i -= str_index + 1;
@@ -1107,7 +1109,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.replace(str_index + 1, il, "%");
 					str_index++;
 				} else if(i == 3 && (il = compare_name_no_case("div", str, 3, str_index + 1, base))) {
-					if(po.rpn) {
+					if(po.parsing_mode == PARSING_MODE_RPN) {
 						str.replace(str_index + 1, il, "\\");
 						str_index++;
 					} else {
@@ -1125,12 +1127,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.erase(str_index, 2);
 				} else {
 					size_t i;
-					if(po.rpn) i = str.find_first_not_of(NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
+					if(po.parsing_mode == PARSING_MODE_RPN) i = str.find_first_not_of(NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
 					else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
 					size_t name_length;
 					if(i == string::npos) {
 						i = str.length();
-					} else if(!po.rpn && is_not_in(ILLEGAL_IN_UNITNAMES, str[i]) && is_in("abcdefABCDEF", str[i - 1])) {
+					} else if(po.parsing_mode != PARSING_MODE_RPN && is_not_in(ILLEGAL_IN_UNITNAMES, str[i]) && is_in("abcdefABCDEF", str[i - 1])) {
 						size_t i2 = str.find_last_not_of("abcdefABCDEF", i - 1);
 						if(i2 != string::npos && i2 > str_index + 2 && is_in(SPACE, str[i2])) {
 							i = i2;
@@ -1154,7 +1156,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.erase(str_index, 2);
 				} else {
 					size_t i;
-					if(po.rpn) i = str.find_first_not_of(NUMBER_ELEMENTS, str_index + 2);
+					if(po.parsing_mode == PARSING_MODE_RPN) i = str.find_first_not_of(NUMBER_ELEMENTS, str_index + 2);
 					else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS, str_index + 2);
 					size_t name_length;
 					if(i == string::npos) i = str.length();
@@ -1175,7 +1177,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.erase(str_index, 2);
 				} else {
 					size_t i;
-					if(po.rpn) i = str.find_first_not_of(NUMBER_ELEMENTS DUODECIMAL_CHARS, str_index + 2);
+					if(po.parsing_mode == PARSING_MODE_RPN) i = str.find_first_not_of(NUMBER_ELEMENTS DUODECIMAL_CHARS, str_index + 2);
 					else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS DUODECIMAL_CHARS, str_index + 2);
 					size_t name_length;
 					if(i == string::npos) i = str.length();
@@ -1196,7 +1198,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.erase(str_index, 2);
 				} else {
 					size_t i;
-					if(po.rpn) i = str.find_first_not_of(NUMBER_ELEMENTS, str_index + 2);
+					if(po.parsing_mode == PARSING_MODE_RPN) i = str.find_first_not_of(NUMBER_ELEMENTS, str_index + 2);
 					else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS, str_index + 2);
 					size_t name_length;
 					if(i == string::npos) i = str.length();
@@ -1523,7 +1525,28 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								stmp += i2s(parseAddId(f, empty_string, po));
 								stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 								if(i4 < 0) i4 = name_length;
-							} else if(po.rpn && f->args() == 1 && str_index > 0 && str[str_index - 1] != LEFT_PARENTHESIS_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {
+							} else if(po.parsing_mode == PARSING_MODE_CHAIN_CALCULATION && f->minargs() == 1 && str_index > 0 && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos && str[i6] != LEFT_PARENTHESIS_CH && is_not_in(OPERATORS INTERNAL_OPERATORS, str[i6]) && (str_index + name_length >= str.length() || (i6 = str.find_first_not_of(SPACE, str_index + name_length)) == string::npos || is_in(OPERATORS INTERNAL_OPERATORS, str[i6]))) {
+								size_t i7 = str_index - 1;
+								int nr_of_p = 0;
+								while(true) {
+									if(str[i7] == LEFT_PARENTHESIS_CH) {
+										if(nr_of_p == 0) {i7++; break;}
+										nr_of_p--;
+									} else if(str[i7] == RIGHT_PARENTHESIS_CH) {
+										nr_of_p++;
+									}
+									if(i7 == 0) break;
+									i7--;
+								}
+								stmp2 = str.substr(i7, str_index - i7);
+								stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+								if(f->id() == FUNCTION_ID_VECTOR) stmp += i2s(parseAddVectorId(stmp2, po));
+								else stmp += i2s(parseAddId(f, stmp2, po));
+								stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+								str.replace(i7, str_index + name_length - i7, stmp);
+								str_index += name_length;
+								moved_forward = true;
+							} else if(po.parsing_mode == PARSING_MODE_RPN && f->args() == 1 && str_index > 0 && str[str_index - 1] != LEFT_PARENTHESIS_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {
 								size_t i7 = i6;
 								int nr_of_p = 0, nr_of_op = 0;
 								bool b_started = false;
@@ -1880,7 +1903,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		comma_i = str.find(COMMA, comma_i + 1);
 	}
 
-	if(po.rpn) {
+	if(po.parsing_mode == PARSING_MODE_RPN) {
 		size_t rpn_i = str.find(SPACE, 0);
 		while(rpn_i != string::npos) {
 			if(rpn_i == 0 || rpn_i + 1 == str.length() || is_in("~+-*/^\a\b\\\x1c", str[rpn_i - 1]) || (is_in("%&|", str[rpn_i - 1]) && str[rpn_i + 1] != str[rpn_i - 1]) || (is_in("!><=", str[rpn_i - 1]) && is_not_in("=<>", str[rpn_i + 1])) || (is_in(SPACE OPERATORS INTERNAL_OPERATORS, str[rpn_i + 1]) && (str[rpn_i - 1] == SPACE_CH || (str[rpn_i - 1] != str[rpn_i + 1] && is_not_in("!><=", str[rpn_i - 1]))))) {
@@ -2208,7 +2231,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 		}
 		if(i > 0 && is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS SPACE, str[i - 1]) && (!BASE_2_10 || (str[i - 1] != EXP_CH && str[i - 1] != EXP2_CH))) {
-			if(po.rpn) {
+			if(po.parsing_mode == PARSING_MODE_RPN) {
 				str.insert(i2 + 1, MULTIPLICATION);
 				str.insert(i, SPACE);
 				i++;
@@ -2216,7 +2239,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 		}
 		if(i2 + 1 < str.length() && is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS SPACE, str[i2 + 1]) && (!BASE_2_10 || (str[i2 + 1] != EXP_CH && str[i2 + 1] != EXP2_CH))) {
-			if(po.rpn) {
+			if(po.parsing_mode == PARSING_MODE_RPN) {
 				i3 = str.find(SPACE, i2 + 1);
 				if(i3 == string::npos) {
 					str += MULTIPLICATION;
@@ -2226,7 +2249,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				str.insert(i2 + 1, SPACE);
 			}
 		}
-		if(po.rpn && i > 0 && i2 + 1 == str.length() && is_not_in(PARENTHESISS SPACE, str[i - 1])) {
+		if(po.parsing_mode == PARSING_MODE_RPN && i > 0 && i2 + 1 == str.length() && is_not_in(PARENTHESISS SPACE, str[i - 1])) {
 			str += MULTIPLICATION_CH;
 		}
 		str2 = str.substr(i + 1, i2 - (i + 1));
@@ -2245,7 +2268,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 	bool b_abs_or = false, b_bit_or = false;
 	i = 0;
-	if(!po.rpn) {
+	if(po.parsing_mode != PARSING_MODE_RPN) {
 		// determine if | is used for absolute value
 		while(po.base != BASE_ROMAN_NUMERALS && (i = str.find('|', i)) != string::npos) {
 			if(i == 0 || i == str.length() - 1 || is_in(OPERATORS INTERNAL_OPERATORS SPACE, str[i - 1])) {b_abs_or = true; break;}
@@ -2298,7 +2321,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 		}
 	}
-	if(po.rpn) {
+	if(po.parsing_mode == PARSING_MODE_RPN) {
 		// parse operators with RPN syntax
 		i = 0;
 		i3 = 0;
@@ -2682,9 +2705,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			i3 = i;
 		}
 	}
-	if(po.rpn) remove_blanks(str);
+	if(po.parsing_mode == PARSING_MODE_RPN) remove_blanks(str);
+
 	i = 0;
 	i3 = 0;
+
 	// Parse && as logical and
 	if((i = str.find(LOGICAL_AND, 1)) != string::npos && i + 2 != str.length()) {
 		bool b = false, append = false;
@@ -2737,7 +2762,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		return true;
 	}*/
 	// Parse | as bitwise or
-	if(po.base != BASE_ROMAN_NUMERALS && (i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
+	if(po.parsing_mode != PARSING_MODE_CHAIN_CALCULATION && po.base != BASE_ROMAN_NUMERALS && (i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			str2 = str.substr(0, i);
@@ -2759,7 +2784,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		return true;
 	}
 	// Parse \a (internal single character substitution for xor operators) as bitwise xor
-	if((i = str.find('\a', 1)) != string::npos && i + 1 != str.length()) {
+	if(po.parsing_mode != PARSING_MODE_CHAIN_CALCULATION && (i = str.find('\a', 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
@@ -2767,7 +2792,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		return true;
 	}
 	// Parse & as bitwise and
-	if((i = str.find(BITWISE_AND, 1)) != string::npos && i + 1 != str.length()) {
+	if(po.parsing_mode != PARSING_MODE_CHAIN_CALCULATION && (i = str.find(BITWISE_AND, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			str2 = str.substr(0, i);
@@ -2864,55 +2889,261 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 		}
 	}
-	// Parse << and >> as bitwise shift
-	i = str.find(SHIFT_LEFT, 1);
-	i2 = str.find(SHIFT_RIGHT, 1);
-	if(i2 != string::npos && (i == string::npos || i2 < i)) i = i2;
-	if(i != string::npos && i + 2 != str.length()) {
-		MathStructure mstruct1, mstruct2;
-		bool b_neg = (str[i] == '>');
-		str2 = str.substr(0, i);
-		str = str.substr(i + 2, str.length() - (i + 2));
-		parseAdd(str2, &mstruct1, po);
-		if(po.base < 10 && po.base >= 2 && str.find_first_not_of(NUMBERS SPACE PLUS MINUS) == string::npos) {
-			for(i = 0; i < str.size(); i++) {
-				if(str[i] >= '0' && str[i] <= '9' && po.base <= str[i] - '0') {
-					ParseOptions po2 = po;
-					po2.base = BASE_DECIMAL;
-					parseAdd(str, &mstruct2, po2);
-					if(b_neg) {
-						if(po.preserve_format) mstruct2.transform(STRUCT_NEGATE);
-						else mstruct2.negate();
+
+	if(po.parsing_mode == PARSING_MODE_CHAIN_CALCULATION) {
+		char c_operator = 0, prev_operator = 0;
+		bool append = false;
+		while(true) {
+			i3 = str.find_first_not_of(OPERATORS INTERNAL_OPERATORS, 0);
+			if(i3 == string::npos) i = string::npos;
+			else i = str.find_first_of(PLUS MINUS MULTIPLICATION DIVISION POWER BITWISE_AND BITWISE_OR "<>%\x1c", i3);
+			i3 = str.find_first_not_of(OPERATORS INTERNAL_OPERATORS, i);
+			if(i3 == string::npos) i = string::npos;
+			if(c_operator == 0) {
+				if(i == string::npos) break;
+				str2 = str.substr(0, i); 
+				parseAdd(str2, mstruct, po);
+			} else {
+				if(i == string::npos) str2 = str;
+				else str2 = str.substr(0, i);
+				append = c_operator == prev_operator || ((c_operator == DIVISION_CH || c_operator == MULTIPLICATION_CH || c_operator == '%') && (prev_operator == DIVISION_CH || prev_operator == MULTIPLICATION_CH || prev_operator == '%')) || ((c_operator == PLUS_CH || c_operator == MINUS_CH) && (prev_operator == PLUS_CH || prev_operator == MINUS_CH));
+				switch(c_operator) {
+					case PLUS_CH: {
+						parseAdd(str2, mstruct, po, OPERATION_ADD, append);
+						break;
 					}
-					mstruct->set(f_shift, &mstruct1, &mstruct2, &m_one, NULL);
-					return true;
+					case MINUS_CH: {
+						parseAdd(str2, mstruct, po, OPERATION_SUBTRACT, append);
+						break;
+					}
+					case MULTIPLICATION_CH: {
+						parseAdd(str2, mstruct, po, OPERATION_MULTIPLY, append);
+						break;
+					}
+					case DIVISION_CH: {
+						if(str2[0] == DIVISION_CH) {
+							str2.erase(0, 1);
+							parseAdd(str2, mstruct, po, OPERATION_DIVIDE, append);
+							mstruct->transform(f_trunc);
+						} else {
+							parseAdd(str2, mstruct, po, OPERATION_DIVIDE, append);
+						}
+						break;
+					}
+					case '%': {
+						if(str2[0] == '%') {
+							str2.erase(0, 1);
+							MathStructure *mstruct2 = new MathStructure();
+							parseAdd(str2, mstruct2, po);
+							mstruct->transform(f_mod);
+							mstruct->addChild_nocopy(mstruct2);
+						} else {
+							MathStructure *mstruct2 = new MathStructure();
+							parseAdd(str2, mstruct2, po);
+							mstruct->transform(f_rem);
+							mstruct->addChild_nocopy(mstruct2);
+						}
+						break;
+					}
+					case POWER_CH: {
+						parseAdd(str2, mstruct, po, OPERATION_RAISE);
+						break;
+					}
+					case AND_CH: {
+						parseAdd(str2, mstruct, po, OPERATION_BITWISE_AND, append);
+						break;
+					}
+					case OR_CH: {
+						parseAdd(str2, mstruct, po, OPERATION_BITWISE_OR, append);
+						break;
+					}
+					case '<': {}
+					case '>': {
+						MathStructure mstruct2;
+						bool b_neg = (c_operator == '>');
+						str2.erase(0, 1);
+						bool b = false;
+						if(po.base < 10 && po.base >= 2 && str2.find_first_not_of(NUMBERS SPACE PLUS MINUS) == string::npos) {
+							for(i = 0; i < str2.size(); i++) {
+								if(str2[i] >= '0' && str2[i] <= '9' && po.base <= str2[i] - '0') {
+									ParseOptions po2 = po;
+									po2.base = BASE_DECIMAL;
+									parseAdd(str2, &mstruct2, po2);
+									if(b_neg) {
+										if(po.preserve_format) mstruct2.transform(STRUCT_NEGATE);
+										else mstruct2.negate();
+									}
+									mstruct->transform(f_shift);
+									mstruct->addChild(mstruct2);
+									mstruct->addChild(m_one);
+									b = true;
+									break;
+								}
+							}
+						}
+						if(!b) {
+							parseAdd(str2, &mstruct2, po);
+							if(b_neg) {
+								if(po.preserve_format) mstruct2.transform(STRUCT_NEGATE);
+								else mstruct2.negate();
+							}
+							mstruct->transform(f_shift);
+							mstruct->addChild(mstruct2);
+							mstruct->addChild(m_one);
+						}
+						break;
+					}
+					case '\x1c': {
+						if(parseAdd(str2, mstruct, po, OPERATION_MULTIPLY)) {
+							if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstruct->last().contains(getRadUnit(), false, true, true) <= 0 && mstruct->last().contains(getGraUnit(), false, true, true) <= 0 && mstruct->last().contains(getDegUnit(), false, true, true) <= 0) {
+								switch(po.angle_unit) {
+									case ANGLE_UNIT_DEGREES: {mstruct->last().multiply(getDegUnit()); break;}
+									case ANGLE_UNIT_GRADIANS: {mstruct->last().multiply(getGraUnit()); break;}
+									default: {}
+								}
+							}
+							mstruct->last().transform(priv->f_cis);
+						}
+						break;
+					}
 				}
 			}
+			if(i == string::npos) return true;
+			prev_operator = c_operator;
+			c_operator = str[i];
+			str = str.substr(i + 1);
 		}
-		parseAdd(str, &mstruct2, po);
-		if(b_neg) {
-			if(po.preserve_format) mstruct2.transform(STRUCT_NEGATE);
-			else mstruct2.negate();
-		}
-		mstruct->set(f_shift, &mstruct1, &mstruct2, &m_one, NULL);
-		return true;
 	}
 
-	// Parse addition and subtraction
-	if((i = str.find_first_of(PLUS MINUS, 1)) != string::npos && i + 1 != str.length()) {
-		bool b = false, c = false, append = false;
-		bool min = false;
-		while(i != string::npos && i + 1 != str.length()) {
-			if(is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS EXPS, str[i - 1])) {
-				str2 = str.substr(0, i);
-				if(!c && b) {
+	if(po.parsing_mode != PARSING_MODE_CHAIN_CALCULATION) {
+
+		// Parse << and >> as bitwise shift
+		i = str.find(SHIFT_LEFT, 1);
+		i2 = str.find(SHIFT_RIGHT, 1);
+		if(i2 != string::npos && (i == string::npos || i2 < i)) i = i2;
+		if(i != string::npos && i + 2 != str.length()) {
+			MathStructure mstruct1, mstruct2;
+			bool b_neg = (str[i] == '>');
+			str2 = str.substr(0, i);
+			str = str.substr(i + 2, str.length() - (i + 2));
+			parseAdd(str2, &mstruct1, po);
+			if(po.base < 10 && po.base >= 2 && str.find_first_not_of(NUMBERS SPACE PLUS MINUS) == string::npos) {
+				for(i = 0; i < str.size(); i++) {
+					if(str[i] >= '0' && str[i] <= '9' && po.base <= str[i] - '0') {
+						ParseOptions po2 = po;
+						po2.base = BASE_DECIMAL;
+						parseAdd(str, &mstruct2, po2);
+						if(b_neg) {
+							if(po.preserve_format) mstruct2.transform(STRUCT_NEGATE);
+							else mstruct2.negate();
+						}
+						mstruct->set(f_shift, &mstruct1, &mstruct2, &m_one, NULL);
+						return true;
+					}
+				}
+			}
+			parseAdd(str, &mstruct2, po);
+			if(b_neg) {
+				if(po.preserve_format) mstruct2.transform(STRUCT_NEGATE);
+				else mstruct2.negate();
+			}
+			mstruct->set(f_shift, &mstruct1, &mstruct2, &m_one, NULL);
+			return true;
+		}
+
+		// Parse addition and subtraction
+		if((i = str.find_first_of(PLUS MINUS, 1)) != string::npos && i + 1 != str.length()) {
+			bool b = false, c = false, append = false;
+			bool min = false;
+			while(i != string::npos && i + 1 != str.length()) {
+				if(is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS EXPS, str[i - 1])) {
+					str2 = str.substr(0, i);
+					if(!c && b) {
+						bool b_add;
+						if(min) {
+							b_add = parseAdd(str2, mstruct, po, OPERATION_SUBTRACT, append) && mstruct->isAddition();
+						} else {
+							b_add = parseAdd(str2, mstruct, po, OPERATION_ADD, append) && mstruct->isAddition();
+						}
+						append = true;
+						if(b_add) {
+							int i_neg = 0;
+							MathStructure *mstruct_a = get_out_of_negate(mstruct->last(), &i_neg);
+							MathStructure *mstruct_b = mstruct_a;
+							if(mstruct_a->isMultiplication() && mstruct_a->size() >= 2) mstruct_b = &mstruct_a->last();
+							if(mstruct_b->isVariable() && (mstruct_b->variable() == v_percent || mstruct_b->variable() == v_permille || mstruct_b->variable() == v_permyriad)) {
+								Variable *v = mstruct_b->variable();
+								bool b_neg = (i_neg % 2 == 1);
+								while(i_neg > 0) {
+									mstruct->last().setToChild(mstruct->last().size());
+									i_neg--;
+								}
+								if(mstruct->last().isVariable()) {
+									mstruct->last().multiply(m_one);
+									mstruct->last().swapChildren(1, 2);
+								}
+								if(mstruct->last().size() > 2) {
+									mstruct->last().delChild(mstruct->last().size());
+									mstruct->last().multiply(v);
+								}
+								if(mstruct->last()[0].isNumber()) {
+									if(b_neg) mstruct->last()[0].number().negate();
+									if(v == v_percent) mstruct->last()[0].number().add(100);
+									else if(v == v_permille) mstruct->last()[0].number().add(1000);
+									else mstruct->last()[0].number().add(10000);
+								} else {
+									if(b_neg && po.preserve_format) mstruct->last()[0].transform(STRUCT_NEGATE);
+									else if(b_neg) mstruct->last()[0].negate();
+									if(v == v_percent) mstruct->last()[0] += Number(100, 1);
+									else if(v == v_permille) mstruct->last()[0] += Number(1000, 1);
+									else mstruct->last()[0] += Number(10000, 1);
+									mstruct->last()[0].swapChildren(1, 2);
+								}
+								if(mstruct->size() == 2) {
+									mstruct->setType(STRUCT_MULTIPLICATION);
+								} else {
+									MathStructure *mpercent = &mstruct->last();
+									mpercent->ref();
+									mstruct->delChild(mstruct->size());
+									mstruct->multiply_nocopy(mpercent);
+								}
+							}
+						}
+					} else {
+						if(!b && str2.empty()) {
+							c = true;
+						} else {
+							parseAdd(str2, mstruct, po);
+							if(c && min) {
+								if(po.preserve_format) mstruct->transform(STRUCT_NEGATE);
+								else mstruct->negate();
+							}
+							c = false;
+						}
+						b = true;
+					}
+					min = str[i] == MINUS_CH;
+					str = str.substr(i + 1, str.length() - (i + 1));
+					i = str.find_first_of(PLUS MINUS, 1);
+				} else {
+					i = str.find_first_of(PLUS MINUS, i + 1);
+				}
+			}
+			if(b) {
+				if(c) {
+					b = parseAdd(str, mstruct, po);
+					if(min) {
+						if(po.preserve_format) mstruct->transform(STRUCT_NEGATE);
+						else mstruct->negate();
+					}
+					return b;
+				} else {
 					bool b_add;
 					if(min) {
-						b_add = parseAdd(str2, mstruct, po, OPERATION_SUBTRACT, append) && mstruct->isAddition();
+						b_add = parseAdd(str, mstruct, po, OPERATION_SUBTRACT, append) && mstruct->isAddition();
 					} else {
-						b_add = parseAdd(str2, mstruct, po, OPERATION_ADD, append) && mstruct->isAddition();
+						b_add = parseAdd(str, mstruct, po, OPERATION_ADD, append) && mstruct->isAddition();
 					}
-					append = true;
 					if(b_add) {
 						int i_neg = 0;
 						MathStructure *mstruct_a = get_out_of_negate(mstruct->last(), &i_neg);
@@ -2956,370 +3187,293 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							}
 						}
 					}
-				} else {
-					if(!b && str2.empty()) {
-						c = true;
-					} else {
-						parseAdd(str2, mstruct, po);
-						if(c && min) {
-							if(po.preserve_format) mstruct->transform(STRUCT_NEGATE);
-							else mstruct->negate();
-						}
-						c = false;
-					}
-					b = true;
 				}
-				min = str[i] == MINUS_CH;
-				str = str.substr(i + 1, str.length() - (i + 1));
-				i = str.find_first_of(PLUS MINUS, 1);
-			} else {
-				i = str.find_first_of(PLUS MINUS, i + 1);
+				return true;
 			}
 		}
-		if(b) {
-			if(c) {
-				b = parseAdd(str, mstruct, po);
-				if(min) {
-					if(po.preserve_format) mstruct->transform(STRUCT_NEGATE);
-					else mstruct->negate();
-				}
-				return b;
-			} else {
-				bool b_add;
-				if(min) {
-					b_add = parseAdd(str, mstruct, po, OPERATION_SUBTRACT, append) && mstruct->isAddition();
-				} else {
-					b_add = parseAdd(str, mstruct, po, OPERATION_ADD, append) && mstruct->isAddition();
-				}
-				if(b_add) {
-					int i_neg = 0;
-					MathStructure *mstruct_a = get_out_of_negate(mstruct->last(), &i_neg);
-					MathStructure *mstruct_b = mstruct_a;
-					if(mstruct_a->isMultiplication() && mstruct_a->size() >= 2) mstruct_b = &mstruct_a->last();
-					if(mstruct_b->isVariable() && (mstruct_b->variable() == v_percent || mstruct_b->variable() == v_permille || mstruct_b->variable() == v_permyriad)) {
-						Variable *v = mstruct_b->variable();
-						bool b_neg = (i_neg % 2 == 1);
-						while(i_neg > 0) {
-							mstruct->last().setToChild(mstruct->last().size());
-							i_neg--;
-						}
-						if(mstruct->last().isVariable()) {
-							mstruct->last().multiply(m_one);
-							mstruct->last().swapChildren(1, 2);
-						}
-						if(mstruct->last().size() > 2) {
-							mstruct->last().delChild(mstruct->last().size());
-							mstruct->last().multiply(v);
-						}
-						if(mstruct->last()[0].isNumber()) {
-							if(b_neg) mstruct->last()[0].number().negate();
-							if(v == v_percent) mstruct->last()[0].number().add(100);
-							else if(v == v_permille) mstruct->last()[0].number().add(1000);
-							else mstruct->last()[0].number().add(10000);
-						} else {
-							if(b_neg && po.preserve_format) mstruct->last()[0].transform(STRUCT_NEGATE);
-							else if(b_neg) mstruct->last()[0].negate();
-							if(v == v_percent) mstruct->last()[0] += Number(100, 1);
-							else if(v == v_permille) mstruct->last()[0] += Number(1000, 1);
-							else mstruct->last()[0] += Number(10000, 1);
-							mstruct->last()[0].swapChildren(1, 2);
-						}
-						if(mstruct->size() == 2) {
-							mstruct->setType(STRUCT_MULTIPLICATION);
-						} else {
-							MathStructure *mpercent = &mstruct->last();
-							mpercent->ref();
-							mstruct->delChild(mstruct->size());
-							mstruct->multiply_nocopy(mpercent);
-						}
-					}
-				}
-			}
-			return true;
-		}
-	}
 
-	// In adaptive parsing mode division might be handled differentiately depending on usage of whitespace characters, e.g. 5/2 m = (5/2)*m, 5/2m=5/(2m)
-	if(!po.rpn && po.parsing_mode == PARSING_MODE_ADAPTIVE && (i = str.find(DIVISION_CH, 1)) != string::npos && i + 1 != str.length()) {
-		while(i != string::npos && i + 1 != str.length()) {
-			bool b = false;
-			if(i > 2 && i < str.length() - 3 && str[i + 1] == ID_WRAP_LEFT_CH) {
-				i2 = i;
-				b = true;
-				bool had_unit = false, had_nonunit = false;
-				MathStructure *m_temp = NULL, *m_temp2 = NULL;
-				while(b) {
-					b = false;
-					size_t i4 = i2;
-					if(i2 > 2 && str[i2 - 1] == ID_WRAP_RIGHT_CH) {
-						b = true;
-					} else if(i2 > 4 && str[i2 - 3] == ID_WRAP_RIGHT_CH && str[i2 - 2] == POWER_CH && is_in(NUMBERS, str[i2 - 1])) {
-						b = true;
-						i4 -= 2;
-					}
-					if(!b) {
-						if((i2 > 1 && is_not_in(OPERATORS INTERNAL_OPERATORS MULTIPLICATION_2, str[i2 - 1])) || (i2 > 2 && str[i2 - 1] == MULTIPLICATION_2_CH && is_not_in(OPERATORS INTERNAL_OPERATORS, str[i2 - 2]))) had_nonunit = true;
-						break;
-					}
-					i2 = str.rfind(ID_WRAP_LEFT_CH, i4 - 2);
-					m_temp = NULL;
-					if(i2 != string::npos) {
-						int id = s2i(str.substr(i2 + 1, (i4 - 1) - (i2 + 1)));
-						if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp = priv->id_structs[id];
-					}
-					if(!m_temp || !m_temp->isUnit()) {
-						had_nonunit = true;
-						break;
-					}
-					had_unit = true;
-				}
-				i3 = i;
-				b = had_unit && had_nonunit;
-				had_unit = false;
-				while(b) {
-					size_t i4 = i3;
-					i3 = str.find(ID_WRAP_RIGHT_CH, i4 + 2);
-					m_temp2 = NULL;
-					if(i3 != string::npos) {
-						int id = s2i(str.substr(i4 + 2, (i3 - 1) - (i4 + 1)));
-						if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp2 = priv->id_structs[id];
-					}
-					if(!m_temp2 || !m_temp2->isUnit()) {
-						b = false;
-						break;
-					}
-					had_unit = true;
-					b = false;
-					if(i3 < str.length() - 3 && str[i3 + 1] == ID_WRAP_LEFT_CH) {
-						b = true;
-					} else if(i3 < str.length() - 5 && str[i3 + 3] == ID_WRAP_LEFT_CH && str[i3 + 1] == POWER_CH && is_in(NUMBERS, str[i3 + 2])) {
-						b = true;
-						i3 += 2;
-					}
-				}
-				b = had_unit;
-				if(b) {
-					if(i3 < str.length() - 2 && str[i3 + 1] == POWER_CH && is_in(NUMBERS, str[i3 + 2])) {
-						i3 += 2;
-						while(i3 < str.length() - 1 && is_in(NUMBERS, str[i3 + 1])) i3++;
-					}
-					if(i3 == str.length() - 1 || (str[i3 + 1] != POWER_CH && str[i3 + 1] != DIVISION_CH)) {
-						MathStructure *mstruct2 = new MathStructure();
-						str2 = str.substr(i2, i - i2);
-						parseAdd(str2, mstruct2, po);
-						str2 = str.substr(i + 1, i3 - i);
-						parseAdd(str2, mstruct2, po, OPERATION_DIVIDE);
-						str2 = ID_WRAP_LEFT;
-						str2 += i2s(addId(mstruct2));
-						str2 += ID_WRAP_RIGHT;
-						str.replace(i2, i3 - i2 + 1, str2);
-					} else {
-						b = false;
-					}
-				}
-			}
-			if(!b) {
-				i2 = str.find_last_not_of(NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS EXPS, i - 1);
-				if(i2 == string::npos || (i2 != i - 1 && str[i2] == MULTIPLICATION_2_CH)) b = true;
-				i2 = str.rfind(MULTIPLICATION_2_CH, i - 1);
-				if(i2 == string::npos) b = true;
-				if(b) {
-					i3 = str.find_first_of(MULTIPLICATION_2 "%" MULTIPLICATION DIVISION, i + 1);
-					if(i3 == string::npos || i3 == i + 1 || str[i3] != MULTIPLICATION_2_CH) b = false;
-					if(i3 < str.length() + 1 && (str[i3 + 1] == '%' || str[i3 + 1] == DIVISION_CH || str[i3 + 1] == MULTIPLICATION_CH || str[i3 + 1] == POWER_CH)) b = false;
-				}
-				if(b) {
-					if(i3 != string::npos) str[i3] = MULTIPLICATION_CH;
-					if(i2 != string::npos) str[i2] = MULTIPLICATION_CH;
-				} else {
-					if(str[i + 1] == MULTIPLICATION_2_CH) {
-						str.erase(i + 1, 1);
-					}
-					if(str[i - 1] == MULTIPLICATION_2_CH) {
-						str.erase(i - 1, 1);
-						i--;
-					}
-				}
-			}
-			i = str.find(DIVISION_CH, i + 1);
-		}
-	}
-	if(po.parsing_mode == PARSING_MODE_ADAPTIVE && !po.rpn) remove_blanks(str);
-
-	// In conventional parsing mode there is not difference between implicit and explicit multiplication
-	if(po.parsing_mode == PARSING_MODE_CONVENTIONAL) {
-		if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
+		// In adaptive parsing mode division might be handled differentiately depending on usage of whitespace characters, e.g. 5/2 m = (5/2)*m, 5/2m=5/(2m)
+		if(po.parsing_mode == PARSING_MODE_ADAPTIVE && (i = str.find(DIVISION_CH, 1)) != string::npos && i + 1 != str.length()) {
 			while(i != string::npos && i + 1 != str.length()) {
-				if(is_in(NUMBERS ID_WRAP_LEFT, str[i + 1])) {
-					str.insert(i + 1, 1, MULTIPLICATION_CH);
-					i++;
-				}
-				i = str.find(ID_WRAP_RIGHT_CH, i + 1);
-			}
-		}
-		if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos) {
-			while(i != string::npos) {
-				if(is_in(NUMBERS, str[i - 1])) {
-					str.insert(i, 1, MULTIPLICATION_CH);
-					i++;
-				}
-				i = str.find(ID_WRAP_LEFT_CH, i + 1);
-			}
-		}
-	}
-
-	// Parse explicit multiplication, division, and mod
-	if((i = str.find_first_of(MULTIPLICATION DIVISION "%", 0)) != string::npos && i + 1 != str.length()) {
-		bool b = false, append = false;
-		int type = 0;
-		while(i != string::npos && i + 1 != str.length()) {
-			if(i < 1) {
-				if(i < 1 && str.find_first_not_of(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS EXPS) == string::npos) {
-					replace_internal_operators(str);
-					error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
-					return b;
-				}
-				i = 1;
-				while(i < str.length() && is_in(MULTIPLICATION DIVISION "%", str[i])) {
-					i++;
-				}
-				string errstr = str.substr(0, i);
-				gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", errstr);
-				error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
-				str = str.substr(i, str.length() - i);
-				i = str.find_first_of(MULTIPLICATION DIVISION "%", 0);
-			} else {
-				str2 = str.substr(0, i);
-				if(b) {
-					switch(type) {
-						case 1: {
-							parseAdd(str2, mstruct, po, OPERATION_DIVIDE, append);
-							if(po.parsing_mode == PARSING_MODE_ADAPTIVE && !str2.empty() && str2[0] != LEFT_PARENTHESIS_CH) {
-								MathStructure *mden = NULL, *mnum = NULL;
-								if(po.preserve_format && mstruct->isDivision()) {
-									mden = &(*mstruct)[1];
-									mnum = &(*mstruct)[0];
-								} else if(!po.preserve_format && mstruct->isMultiplication() && mstruct->size() >= 2 && mstruct->last().isPower()) {
-									mden = &mstruct->last()[0];
-									mnum = &(*mstruct)[mstruct->size() - 2];
-								}
-								while(mnum && mnum->isMultiplication() && mnum->size() > 0) mnum = &mnum->last();
-								if(mden && mden->isMultiplication() && (mden->size() != 2 || !(*mden)[0].isNumber() || !(*mden)[1].isUnit_exp() || !mnum->isUnit_exp())) {
-									bool b_warn = str2[0] != ID_WRAP_LEFT_CH;
-									if(!b_warn && str2.length() > 2) {
-										size_t i3 = str2.find_first_not_of(NUMBERS, 1);
-										b_warn = (i3 != string::npos && i3 != str2.length() - 1);
-									}
-									if(b_warn) error(false, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
-								}
-							}
-							break;
-						}
-						case 2: {
-							MathStructure *mstruct2 = new MathStructure();
-							parseAdd(str2, mstruct2, po);
-							mstruct->transform(f_rem);
-							mstruct->addChild_nocopy(mstruct2);
-							break;
-						}
-						case 3: {
-							parseAdd(str2, mstruct, po, OPERATION_DIVIDE, append);
-							mstruct->transform(f_trunc);
-							break;
-						}
-						case 4: {
-							MathStructure *mstruct2 = new MathStructure();
-							parseAdd(str2, mstruct2, po);
-							mstruct->transform(f_mod);
-							mstruct->addChild_nocopy(mstruct2);
-							break;
-						}
-						default: {
-							parseAdd(str2, mstruct, po, OPERATION_MULTIPLY, append);
-						}
-					}
-					append = true;
-				} else {
-					parseAdd(str2, mstruct, po);
+				bool b = false;
+				if(i > 2 && i < str.length() - 3 && str[i + 1] == ID_WRAP_LEFT_CH) {
+					i2 = i;
 					b = true;
-				}
-				if(str[i] == DIVISION_CH) {
-					if(str[i + 1] == DIVISION_CH) {type = 3; i++;}
-					else type = 1;
-				} else if(str[i] == '%') {
-					if(str[i + 1] == '%') {type = 4; i++;}
-					else type = 2;
-				} else {
-					type = 0;
-				}
-				if(is_in(MULTIPLICATION DIVISION "%", str[i + 1])) {
-					i2 = 1;
-					while(i2 + i + 1 != str.length() && is_in(MULTIPLICATION DIVISION "%", str[i2 + i + 1])) {
-						i2++;
+					bool had_unit = false, had_nonunit = false;
+					MathStructure *m_temp = NULL, *m_temp2 = NULL;
+					while(b) {
+						b = false;
+						size_t i4 = i2;
+						if(i2 > 2 && str[i2 - 1] == ID_WRAP_RIGHT_CH) {
+							b = true;
+						} else if(i2 > 4 && str[i2 - 3] == ID_WRAP_RIGHT_CH && str[i2 - 2] == POWER_CH && is_in(NUMBERS, str[i2 - 1])) {
+							b = true;
+							i4 -= 2;
+						}
+						if(!b) {
+							if((i2 > 1 && is_not_in(OPERATORS INTERNAL_OPERATORS MULTIPLICATION_2, str[i2 - 1])) || (i2 > 2 && str[i2 - 1] == MULTIPLICATION_2_CH && is_not_in(OPERATORS INTERNAL_OPERATORS, str[i2 - 2]))) had_nonunit = true;
+							break;
+						}
+						i2 = str.rfind(ID_WRAP_LEFT_CH, i4 - 2);
+						m_temp = NULL;
+						if(i2 != string::npos) {
+							int id = s2i(str.substr(i2 + 1, (i4 - 1) - (i2 + 1)));
+							if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp = priv->id_structs[id];
+						}
+						if(!m_temp || !m_temp->isUnit()) {
+							had_nonunit = true;
+							break;
+						}
+						had_unit = true;
 					}
-					string errstr = str.substr(i, i2);
+					i3 = i;
+					b = had_unit && had_nonunit;
+					had_unit = false;
+					while(b) {
+						size_t i4 = i3;
+						i3 = str.find(ID_WRAP_RIGHT_CH, i4 + 2);
+						m_temp2 = NULL;
+						if(i3 != string::npos) {
+							int id = s2i(str.substr(i4 + 2, (i3 - 1) - (i4 + 1)));
+							if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp2 = priv->id_structs[id];
+						}
+						if(!m_temp2 || !m_temp2->isUnit()) {
+							b = false;
+							break;
+						}
+						had_unit = true;
+						b = false;
+						if(i3 < str.length() - 3 && str[i3 + 1] == ID_WRAP_LEFT_CH) {
+							b = true;
+						} else if(i3 < str.length() - 5 && str[i3 + 3] == ID_WRAP_LEFT_CH && str[i3 + 1] == POWER_CH && is_in(NUMBERS, str[i3 + 2])) {
+							b = true;
+							i3 += 2;
+						}
+					}
+					b = had_unit;
+					if(b) {
+						if(i3 < str.length() - 2 && str[i3 + 1] == POWER_CH && is_in(NUMBERS, str[i3 + 2])) {
+							i3 += 2;
+							while(i3 < str.length() - 1 && is_in(NUMBERS, str[i3 + 1])) i3++;
+						}
+						if(i3 == str.length() - 1 || (str[i3 + 1] != POWER_CH && str[i3 + 1] != DIVISION_CH)) {
+							MathStructure *mstruct2 = new MathStructure();
+							str2 = str.substr(i2, i - i2);
+							parseAdd(str2, mstruct2, po);
+							str2 = str.substr(i + 1, i3 - i);
+							parseAdd(str2, mstruct2, po, OPERATION_DIVIDE);
+							str2 = ID_WRAP_LEFT;
+							str2 += i2s(addId(mstruct2));
+							str2 += ID_WRAP_RIGHT;
+							str.replace(i2, i3 - i2 + 1, str2);
+						} else {
+							b = false;
+						}
+					}
+				}
+				if(!b) {
+					i2 = str.find_last_not_of(NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS EXPS, i - 1);
+					if(i2 == string::npos || (i2 != i - 1 && str[i2] == MULTIPLICATION_2_CH)) b = true;
+					i2 = str.rfind(MULTIPLICATION_2_CH, i - 1);
+					if(i2 == string::npos) b = true;
+					if(b) {
+						i3 = str.find_first_of(MULTIPLICATION_2 "%" MULTIPLICATION DIVISION, i + 1);
+						if(i3 == string::npos || i3 == i + 1 || str[i3] != MULTIPLICATION_2_CH) b = false;
+						if(i3 < str.length() + 1 && (str[i3 + 1] == '%' || str[i3 + 1] == DIVISION_CH || str[i3 + 1] == MULTIPLICATION_CH || str[i3 + 1] == POWER_CH)) b = false;
+					}
+					if(b) {
+						if(i3 != string::npos) str[i3] = MULTIPLICATION_CH;
+						if(i2 != string::npos) str[i2] = MULTIPLICATION_CH;
+					} else {
+						if(str[i + 1] == MULTIPLICATION_2_CH) {
+							str.erase(i + 1, 1);
+						}
+						if(str[i - 1] == MULTIPLICATION_2_CH) {
+							str.erase(i - 1, 1);
+							i--;
+						}
+					}
+				}
+				i = str.find(DIVISION_CH, i + 1);
+			}
+		}
+		if(po.parsing_mode == PARSING_MODE_ADAPTIVE) remove_blanks(str);
+
+		// In conventional parsing mode there is not difference between implicit and explicit multiplication
+		if(po.parsing_mode == PARSING_MODE_CONVENTIONAL) {
+			if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
+				while(i != string::npos && i + 1 != str.length()) {
+					if(is_in(NUMBERS ID_WRAP_LEFT, str[i + 1])) {
+						str.insert(i + 1, 1, MULTIPLICATION_CH);
+						i++;
+					}
+					i = str.find(ID_WRAP_RIGHT_CH, i + 1);
+				}
+			}
+			if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos) {
+				while(i != string::npos) {
+					if(is_in(NUMBERS, str[i - 1])) {
+						str.insert(i, 1, MULTIPLICATION_CH);
+						i++;
+					}
+					i = str.find(ID_WRAP_LEFT_CH, i + 1);
+				}
+			}
+		}
+
+		// Parse explicit multiplication, division, and mod
+		if((i = str.find_first_of(MULTIPLICATION DIVISION "%", 0)) != string::npos && i + 1 != str.length()) {
+			bool b = false, append = false;
+			int type = 0;
+			while(i != string::npos && i + 1 != str.length()) {
+				if(i < 1) {
+					if(i < 1 && str.find_first_not_of(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS EXPS) == string::npos) {
+						replace_internal_operators(str);
+						error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
+						return b;
+					}
+					i = 1;
+					while(i < str.length() && is_in(MULTIPLICATION DIVISION "%", str[i])) {
+						i++;
+					}
+					string errstr = str.substr(0, i);
 					gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", errstr);
 					error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
-					i += i2;
-				}
-				str = str.substr(i + 1, str.length() - (i + 1));
-				i = str.find_first_of(MULTIPLICATION DIVISION "%", 0);
-			}
-		}
-		if(b) {
-			switch(type) {
-				case 1: {
-					parseAdd(str, mstruct, po, OPERATION_DIVIDE, append);
-					if(po.parsing_mode == PARSING_MODE_ADAPTIVE && !str.empty() && str[0] != LEFT_PARENTHESIS_CH) {
-						MathStructure *mden = NULL, *mnum = NULL;
-						if(po.preserve_format && mstruct->isDivision()) {
-							mden = &(*mstruct)[1];
-							mnum = &(*mstruct)[0];
-						} else if(!po.preserve_format && mstruct->isMultiplication() && mstruct->size() >= 2 && mstruct->last().isPower()) {
-							mden = &mstruct->last()[0];
-							mnum = &(*mstruct)[mstruct->size() - 2];
-						}
-						while(mnum && mnum->isMultiplication() && mnum->size() > 0) mnum = &mnum->last();
-						if(mden && mden->isMultiplication() && (mden->size() != 2 || !(*mden)[0].isNumber() || !(*mden)[1].isUnit_exp() || !mnum->isUnit_exp())) {
-							bool b_warn = str[0] != ID_WRAP_LEFT_CH;
-							if(!b_warn && str.length() > 2) {
-								size_t i3 = str.find_first_not_of(NUMBERS, 1);
-								b_warn = (i3 != string::npos && i3 != str.length() - 1);
+					str = str.substr(i, str.length() - i);
+					i = str.find_first_of(MULTIPLICATION DIVISION "%", 0);
+				} else {
+					str2 = str.substr(0, i);
+					if(b) {
+						switch(type) {
+							case 1: {
+								parseAdd(str2, mstruct, po, OPERATION_DIVIDE, append);
+								if(po.parsing_mode == PARSING_MODE_ADAPTIVE && !str2.empty() && str2[0] != LEFT_PARENTHESIS_CH) {
+									MathStructure *mden = NULL, *mnum = NULL;
+									if(po.preserve_format && mstruct->isDivision()) {
+										mden = &(*mstruct)[1];
+										mnum = &(*mstruct)[0];
+									} else if(!po.preserve_format && mstruct->isMultiplication() && mstruct->size() >= 2 && mstruct->last().isPower()) {
+										mden = &mstruct->last()[0];
+										mnum = &(*mstruct)[mstruct->size() - 2];
+									}
+									while(mnum && mnum->isMultiplication() && mnum->size() > 0) mnum = &mnum->last();
+									if(mden && mden->isMultiplication() && (mden->size() != 2 || !(*mden)[0].isNumber() || !(*mden)[1].isUnit_exp() || !mnum->isUnit_exp())) {
+										bool b_warn = str2[0] != ID_WRAP_LEFT_CH;
+										if(!b_warn && str2.length() > 2) {
+											size_t i3 = str2.find_first_not_of(NUMBERS, 1);
+											b_warn = (i3 != string::npos && i3 != str2.length() - 1);
+										}
+										if(b_warn) error(false, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
+									}
+								}
+								break;
 							}
-							if(b_warn) error(false, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
+							case 2: {
+								MathStructure *mstruct2 = new MathStructure();
+								parseAdd(str2, mstruct2, po);
+								mstruct->transform(f_rem);
+								mstruct->addChild_nocopy(mstruct2);
+								break;
+							}
+							case 3: {
+								parseAdd(str2, mstruct, po, OPERATION_DIVIDE, append);
+								mstruct->transform(f_trunc);
+								break;
+							}
+							case 4: {
+								MathStructure *mstruct2 = new MathStructure();
+								parseAdd(str2, mstruct2, po);
+								mstruct->transform(f_mod);
+								mstruct->addChild_nocopy(mstruct2);
+								break;
+							}
+							default: {
+								parseAdd(str2, mstruct, po, OPERATION_MULTIPLY, append);
+							}
 						}
+						append = true;
+					} else {
+						parseAdd(str2, mstruct, po);
+						b = true;
 					}
-					break;
-				}
-				case 2: {
-					MathStructure *mstruct2 = new MathStructure();
-					parseAdd(str, mstruct2, po);
-					mstruct->transform(f_rem);
-					mstruct->addChild_nocopy(mstruct2);
-					break;
-				}
-				case 3: {
-					parseAdd(str, mstruct, po, OPERATION_DIVIDE, append);
-					mstruct->transform(f_trunc);
-					break;
-				}
-				case 4: {
-					MathStructure *mstruct2 = new MathStructure();
-					parseAdd(str, mstruct2, po);
-					mstruct->transform(f_mod);
-					mstruct->addChild_nocopy(mstruct2);
-					break;
-				}
-				default: {
-					parseAdd(str, mstruct, po, OPERATION_MULTIPLY, append);
+					if(str[i] == DIVISION_CH) {
+						if(str[i + 1] == DIVISION_CH) {type = 3; i++;}
+						else type = 1;
+					} else if(str[i] == '%') {
+						if(str[i + 1] == '%') {type = 4; i++;}
+						else type = 2;
+					} else {
+						type = 0;
+					}
+					if(is_in(MULTIPLICATION DIVISION "%", str[i + 1])) {
+						i2 = 1;
+						while(i2 + i + 1 != str.length() && is_in(MULTIPLICATION DIVISION "%", str[i2 + i + 1])) {
+							i2++;
+						}
+						string errstr = str.substr(i, i2);
+						gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", errstr);
+						error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
+						i += i2;
+					}
+					str = str.substr(i + 1, str.length() - (i + 1));
+					i = str.find_first_of(MULTIPLICATION DIVISION "%", 0);
 				}
 			}
-			return true;
+			if(b) {
+				switch(type) {
+					case 1: {
+						parseAdd(str, mstruct, po, OPERATION_DIVIDE, append);
+						if(po.parsing_mode == PARSING_MODE_ADAPTIVE && !str.empty() && str[0] != LEFT_PARENTHESIS_CH) {
+							MathStructure *mden = NULL, *mnum = NULL;
+							if(po.preserve_format && mstruct->isDivision()) {
+								mden = &(*mstruct)[1];
+								mnum = &(*mstruct)[0];
+							} else if(!po.preserve_format && mstruct->isMultiplication() && mstruct->size() >= 2 && mstruct->last().isPower()) {
+								mden = &mstruct->last()[0];
+								mnum = &(*mstruct)[mstruct->size() - 2];
+							}
+							while(mnum && mnum->isMultiplication() && mnum->size() > 0) mnum = &mnum->last();
+							if(mden && mden->isMultiplication() && (mden->size() != 2 || !(*mden)[0].isNumber() || !(*mden)[1].isUnit_exp() || !mnum->isUnit_exp())) {
+								bool b_warn = str[0] != ID_WRAP_LEFT_CH;
+								if(!b_warn && str.length() > 2) {
+									size_t i3 = str.find_first_not_of(NUMBERS, 1);
+									b_warn = (i3 != string::npos && i3 != str.length() - 1);
+								}
+								if(b_warn) error(false, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
+							}
+						}
+						break;
+					}
+					case 2: {
+						MathStructure *mstruct2 = new MathStructure();
+						parseAdd(str, mstruct2, po);
+						mstruct->transform(f_rem);
+						mstruct->addChild_nocopy(mstruct2);
+						break;
+					}
+					case 3: {
+						parseAdd(str, mstruct, po, OPERATION_DIVIDE, append);
+						mstruct->transform(f_trunc);
+						break;
+					}
+					case 4: {
+						MathStructure *mstruct2 = new MathStructure();
+						parseAdd(str, mstruct2, po);
+						mstruct->transform(f_mod);
+						mstruct->addChild_nocopy(mstruct2);
+						break;
+					}
+					default: {
+						parseAdd(str, mstruct, po, OPERATION_MULTIPLY, append);
+					}
+				}
+				return true;
+			}
 		}
 	}
 
 	// Parse \x1c (internal single substitution character for angle operator) for complex angle format
-	if((i = str.find('\x1c', 0)) != string::npos && i + 1 != str.length()) {
+	if((i = str.find('\x1c', 0)) != string::npos && i + 1 != str.length() && (po.parsing_mode != PARSING_MODE_CHAIN_CALCULATION || i == 0)) {
 		if(i != 0) str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		if(i != 0) parseAdd(str2, mstruct, po);
