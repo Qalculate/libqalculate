@@ -3784,7 +3784,7 @@ string Calculator::getExchangeRatesUrl(int index) {
 		case 2: {return "https://api.coinbase.com/v2/prices/spot?currency=EUR";}
 		//case 2: {return "http://www.mycurrency.net/US.json";}
 		case 3: {return "https://www.mycurrency.net/=US";}
-		case 4: {return "http://www.nbrb.by/api/exrates/rates/eur?parammode=2";}
+		case 4: {return "https://www.nbrb.by/api/exrates/rates/eur?parammode=2";}
 		default: {}
 	}
 	return "";
