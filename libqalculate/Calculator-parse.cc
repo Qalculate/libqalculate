@@ -1525,15 +1525,26 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								stmp += i2s(parseAddId(f, empty_string, po));
 								stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 								if(i4 < 0) i4 = name_length;
-							} else if(po.parsing_mode == PARSING_MODE_CHAIN_CALCULATION && f->minargs() == 1 && str_index > 0 && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos && str[i6] != LEFT_PARENTHESIS_CH && is_not_in(OPERATORS INTERNAL_OPERATORS, str[i6]) && (str_index + name_length >= str.length() || (i6 = str.find_first_not_of(SPACE, str_index + name_length)) == string::npos || is_in(OPERATORS INTERNAL_OPERATORS, str[i6]))) {
-								size_t i7 = str_index - 1;
+							} else if(po.parsing_mode == PARSING_MODE_CHAIN && f->minargs() == 1 && str_index > 0 && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos && str[i6] != LEFT_PARENTHESIS_CH && is_not_in(OPERATORS INTERNAL_OPERATORS, str[i6]) && (str_index + name_length >= str.length() || (str.find_first_not_of(SPACE, str_index + name_length) == string::npos || is_in(OPERATORS INTERNAL_OPERATORS, str[str.find_first_not_of(SPACE, str_index + name_length)])))) {
+								size_t i7 = i6;
 								int nr_of_p = 0;
 								while(true) {
 									if(str[i7] == LEFT_PARENTHESIS_CH) {
 										if(nr_of_p == 0) {i7++; break;}
 										nr_of_p--;
+										if(nr_of_p == 0) {break;}
 									} else if(str[i7] == RIGHT_PARENTHESIS_CH) {
+										if(nr_of_p == 0 && i7 != i6) {i7++; break;}
 										nr_of_p++;
+									} else if(nr_of_p == 0 && is_in(PLUS MINUS, str[i7])) {
+										if(i7 != 0) i6 = str.find_last_not_of(SPACE, i7 - 1);
+										if(i7 == 0 || is_not_in(OPERATORS INTERNAL_OPERATORS, str[i6])) {
+											i7++;
+											break;
+										}
+									} else if(nr_of_p == 0 && is_in("*/&|=><^%\x1c", str[i7])) {
+										i7++;
+										break;
 									}
 									if(i7 == 0) break;
 									i7--;
@@ -2762,7 +2773,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		return true;
 	}*/
 	// Parse | as bitwise or
-	if(po.parsing_mode != PARSING_MODE_CHAIN_CALCULATION && po.base != BASE_ROMAN_NUMERALS && (i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
+	if(po.parsing_mode != PARSING_MODE_CHAIN && po.base != BASE_ROMAN_NUMERALS && (i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			str2 = str.substr(0, i);
@@ -2784,7 +2795,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		return true;
 	}
 	// Parse \a (internal single character substitution for xor operators) as bitwise xor
-	if(po.parsing_mode != PARSING_MODE_CHAIN_CALCULATION && (i = str.find('\a', 1)) != string::npos && i + 1 != str.length()) {
+	if(po.parsing_mode != PARSING_MODE_CHAIN && (i = str.find('\a', 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
@@ -2792,7 +2803,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		return true;
 	}
 	// Parse & as bitwise and
-	if(po.parsing_mode != PARSING_MODE_CHAIN_CALCULATION && (i = str.find(BITWISE_AND, 1)) != string::npos && i + 1 != str.length()) {
+	if(po.parsing_mode != PARSING_MODE_CHAIN && (i = str.find(BITWISE_AND, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			str2 = str.substr(0, i);
@@ -2890,7 +2901,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 	}
 
-	if(po.parsing_mode == PARSING_MODE_CHAIN_CALCULATION) {
+	if(po.parsing_mode == PARSING_MODE_CHAIN) {
 		char c_operator = 0, prev_operator = 0;
 		bool append = false;
 		while(true) {
@@ -2908,12 +2919,51 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				else str2 = str.substr(0, i);
 				append = c_operator == prev_operator || ((c_operator == DIVISION_CH || c_operator == MULTIPLICATION_CH || c_operator == '%') && (prev_operator == DIVISION_CH || prev_operator == MULTIPLICATION_CH || prev_operator == '%')) || ((c_operator == PLUS_CH || c_operator == MINUS_CH) && (prev_operator == PLUS_CH || prev_operator == MINUS_CH));
 				switch(c_operator) {
+					case MINUS_CH: {}
 					case PLUS_CH: {
-						parseAdd(str2, mstruct, po, OPERATION_ADD, append);
-						break;
-					}
-					case MINUS_CH: {
-						parseAdd(str2, mstruct, po, OPERATION_SUBTRACT, append);
+						if(parseAdd(str2, mstruct, po, c_operator == PLUS_CH ? OPERATION_ADD : OPERATION_SUBTRACT, append)) {
+							int i_neg = 0;
+							MathStructure *mstruct_a = get_out_of_negate(mstruct->last(), &i_neg);
+							MathStructure *mstruct_b = mstruct_a;
+							if(mstruct_a->isMultiplication() && mstruct_a->size() >= 2) mstruct_b = &mstruct_a->last();
+							if(mstruct_b->isVariable() && (mstruct_b->variable() == v_percent || mstruct_b->variable() == v_permille || mstruct_b->variable() == v_permyriad)) {
+								Variable *v = mstruct_b->variable();
+								bool b_neg = (i_neg % 2 == 1);
+								while(i_neg > 0) {
+									mstruct->last().setToChild(mstruct->last().size());
+									i_neg--;
+								}
+								if(mstruct->last().isVariable()) {
+									mstruct->last().multiply(m_one);
+									mstruct->last().swapChildren(1, 2);
+								}
+								if(mstruct->last().size() > 2) {
+									mstruct->last().delChild(mstruct->last().size());
+									mstruct->last().multiply(v);
+								}
+								if(mstruct->last()[0].isNumber()) {
+									if(b_neg) mstruct->last()[0].number().negate();
+									if(v == v_percent) mstruct->last()[0].number().add(100);
+									else if(v == v_permille) mstruct->last()[0].number().add(1000);
+									else mstruct->last()[0].number().add(10000);
+								} else {
+									if(b_neg && po.preserve_format) mstruct->last()[0].transform(STRUCT_NEGATE);
+									else if(b_neg) mstruct->last()[0].negate();
+									if(v == v_percent) mstruct->last()[0] += Number(100, 1);
+									else if(v == v_permille) mstruct->last()[0] += Number(1000, 1);
+									else mstruct->last()[0] += Number(10000, 1);
+									mstruct->last()[0].swapChildren(1, 2);
+								}
+								if(mstruct->size() == 2) {
+									mstruct->setType(STRUCT_MULTIPLICATION);
+								} else {
+									MathStructure *mpercent = &mstruct->last();
+									mpercent->ref();
+									mstruct->delChild(mstruct->size());
+									mstruct->multiply_nocopy(mpercent);
+								}
+							}
+						}
 						break;
 					}
 					case MULTIPLICATION_CH: {
@@ -3015,7 +3065,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 	}
 
-	if(po.parsing_mode != PARSING_MODE_CHAIN_CALCULATION) {
+	if(po.parsing_mode != PARSING_MODE_CHAIN) {
 
 		// Parse << and >> as bitwise shift
 		i = str.find(SHIFT_LEFT, 1);
@@ -3473,7 +3523,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 
 	// Parse \x1c (internal single substitution character for angle operator) for complex angle format
-	if((i = str.find('\x1c', 0)) != string::npos && i + 1 != str.length() && (po.parsing_mode != PARSING_MODE_CHAIN_CALCULATION || i == 0)) {
+	if((i = str.find('\x1c', 0)) != string::npos && i + 1 != str.length() && (po.parsing_mode != PARSING_MODE_CHAIN || i == 0)) {
 		if(i != 0) str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		if(i != 0) parseAdd(str2, mstruct, po);

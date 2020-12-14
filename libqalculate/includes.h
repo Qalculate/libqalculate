@@ -597,7 +597,7 @@ typedef enum {
 	/// In the conventional mode implicit multiplication does not differ from explicit multiplication (<quote>12/2(1+2) = 12/2*3 = 18</quote>, <quote>5x/5y = 5*x/5*y = xy</quote>).
 	PARSING_MODE_CONVENTIONAL,
 	// as immediate execute mode in simple traditional calculators (e.g. 5+2*3=(5+2)*3=21)
-	PARSING_MODE_CHAIN_CALCULATION,
+	PARSING_MODE_CHAIN,
 	PARSING_MODE_RPN
 } ParsingMode;
 

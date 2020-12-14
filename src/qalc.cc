@@ -904,7 +904,7 @@ void set_option(string str) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "adaptive", _("adaptive"))) v = PARSING_MODE_ADAPTIVE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "implicit first", _("implicit first"))) v = PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "conventional", _("conventional"))) v = PARSING_MODE_CONVENTIONAL;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "chain", _("chain"))) v = PARSING_MODE_CHAIN_CALCULATION;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "chain", _("chain"))) v = PARSING_MODE_CHAIN;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rpn", _("rpn"))) v = PARSING_MODE_RPN;
 		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -3497,7 +3497,7 @@ int main(int argc, char *argv[]) {
 				case PARSING_MODE_ADAPTIVE: {str += _("adaptive"); break;}
 				case PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST: {str += _("implicit first"); break;}
 				case PARSING_MODE_CONVENTIONAL: {str += _("conventional"); break;}
-				case PARSING_MODE_CHAIN_CALCULATION: {str += _("chain"); break;}
+				case PARSING_MODE_CHAIN: {str += _("chain"); break;}
 				case PARSING_MODE_RPN: {str += _("rpn"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
