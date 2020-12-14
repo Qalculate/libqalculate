@@ -763,6 +763,26 @@ int TitleFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	}
 	return 1;
 }
+bool replace_variable(MathStructure &m, KnownVariable *v) {
+	if(m.isVariable()) {
+		if(m.variable() == v) {
+			m.set(v->get(), true);
+			return true;
+		} else if(m.variable()->isKnown() && m.contains(v, true, true)) {
+			m.set(v->get(), true);
+			replace_variable(m, v);
+			return true;
+		}
+	}
+	bool b_ret = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(replace_variable(m[i], v)) {
+			b_ret = true;
+			m.childUpdated(i + 1);
+		}
+	}
+	return b_ret;
+}
 SaveFunction::SaveFunction() : MathFunction("save", 2, 5) {
 	setArgumentDefinition(2, new TextArgument());
 	setArgumentDefinition(3, new TextArgument());
@@ -784,6 +804,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(v && v->isLocal() && v->isKnown()) {
 			if(!vargs[2].symbol().empty()) v->setCategory(vargs[2].symbol());
 			if(!vargs[3].symbol().empty()) v->setTitle(vargs[3].symbol());
+			replace_variable(mstruct, (KnownVariable*) v);
 			((KnownVariable*) v)->set(mstruct);
 			if(v->countNames() == 0) {
 				ExpressionName ename(vargs[1].symbol());
