@@ -5002,7 +5002,7 @@ void CommandThread::run() {
 		void *x = NULL;
 		if(!read(&x) || !x) break;
 		void *x2 = NULL;
-		if(!read(&x)) break;
+		if(!read(&x2)) break;
 		CALCULATOR->startControl();
 		switch(command_type) {
 			case COMMAND_FACTORIZE: {
