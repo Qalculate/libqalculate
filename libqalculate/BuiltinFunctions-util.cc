@@ -769,7 +769,7 @@ bool replace_variable(MathStructure &m, KnownVariable *v) {
 			m.set(v->get(), true);
 			return true;
 		} else if(m.variable()->isKnown() && m.contains(v, true, true)) {
-			m.set(v->get(), true);
+			m.set(((KnownVariable*) m.variable())->get(), true);
 			replace_variable(m, v);
 			return true;
 		}

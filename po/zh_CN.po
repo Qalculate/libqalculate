@@ -1327,7 +1327,7 @@ msgstr "function"
 #: ../src/qalc.cc:2574
 #, fuzzy
 msgid ""
-"An function with the same name already exists.\n"
+"A function with the same name already exists.\n"
 "Do you want to overwrite it (default: no)?"
 msgstr ""
 "同名的单位或变量已存在。\n"

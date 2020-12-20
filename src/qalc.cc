@@ -610,12 +610,12 @@ bool check_exchange_rates() {
 #	define CHECK_IF_SCREEN_FILLED_HEADING(x) puts(""); str = "\n"; BEGIN_UNDERLINED(str); BEGIN_BOLD(str); str += x; END_UNDERLINED(str); END_BOLD(str); PUTS_UNICODE(str.c_str());
 #endif
 
-#define SET_BOOL(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v;}}
-#define SET_BOOL_D(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v; result_display_updated();}}
-#define SET_BOOL_E(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v; expression_calculation_updated();}}
-#define SET_BOOL_PV(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v; expression_format_updated(v);}}
-#define SET_BOOL_PT(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v; expression_format_updated(true);}}
-#define SET_BOOL_PF(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v; expression_format_updated(false);}}
+#define SET_BOOL(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else if(x != v) {x = v;}}
+#define SET_BOOL_D(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else if(x != v) {x = v; result_display_updated();}}
+#define SET_BOOL_E(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else if(x != v) {x = v; expression_calculation_updated();}}
+#define SET_BOOL_PV(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else if(x != v) {x = v; expression_format_updated(v);}}
+#define SET_BOOL_PT(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else if(x != v) {x = v; expression_format_updated(true);}}
+#define SET_BOOL_PF(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else if(x != v) {x = v; expression_format_updated(false);}}
 
 void set_option(string str) {
 	remove_blank_ends(str);
@@ -640,6 +640,8 @@ void set_option(string str) {
 	if(svalue.empty()) {
 		empty_value = true;
 		svalue = "1";
+	} else {
+		gsub(SIGN_MINUS, "-", svalue);
 	}
 
 	set_option_place:
@@ -764,7 +766,7 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "infinite numbers", _("infinite numbers")) || svar == "inf") SET_BOOL_E(evalops.allow_infinite)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "show negative exponents", _("show negative exponents")) || svar == "negexp") SET_BOOL_D(printops.negative_exponents)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "minus last", _("minus last")) || svar == "minlast") {
-		{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(printops.sort_options.minus_last != v) {printops.sort_options.minus_last = v; result_display_updated();}}
+		{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else if(printops.sort_options.minus_last != v) {printops.sort_options.minus_last = v; result_display_updated();}}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assume nonzero denominators", _("assume nonzero denominators")) || svar == "nzd") SET_BOOL_E(evalops.assume_denominators_nonzero)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "warn nonzero denominators", _("warn nonzero denominators")) || svar == "warnnzd") SET_BOOL_E(evalops.warn_about_denominators_assumed_nonzero)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "prefixes", _("prefixes")) || svar == "pref") SET_BOOL_D(printops.use_unit_prefixes)
@@ -870,10 +872,10 @@ void set_option(string str) {
 			}
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "limit implicit multiplication", _("limit implicit multiplication")) || svar == "limimpl") {
-		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {printops.limit_implicit_multiplication = v; evalops.parse_options.limit_implicit_multiplication = v; expression_format_updated(true);}
+		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else {printops.limit_implicit_multiplication = v; evalops.parse_options.limit_implicit_multiplication = v; expression_format_updated(true);}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spacious", _("spacious")) || svar == "space") SET_BOOL_D(printops.spacious)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unicode", _("unicode")) || svar == "uni") {
-		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else {printops.use_unicode_signs = v; result_display_updated();}
+		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else {printops.use_unicode_signs = v; result_display_updated();}
 		enable_unicode = -1;
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "units", _("units")) || svar == "unit") SET_BOOL_PV(evalops.parse_options.units_enabled)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unknowns", _("unknowns")) || svar == "unknown") SET_BOOL_PV(evalops.parse_options.unknowns_enabled)
@@ -904,6 +906,7 @@ void set_option(string str) {
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "adaptive", _("adaptive"))) v = PARSING_MODE_ADAPTIVE;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "implicit first", _("implicit first"))) v = PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "conventional", _("conventional"))) v = PARSING_MODE_CONVENTIONAL;
+		// chain calculation mode (parsing mode)
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "chain", _("chain"))) v = PARSING_MODE_CHAIN;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rpn", _("rpn"))) v = PARSING_MODE_RPN;
 		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
@@ -1001,7 +1004,7 @@ void set_option(string str) {
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimalsi", _("optimalsi")) || svalue == "si") v = POST_CONVERSION_OPTIMAL_SI;
 		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimal", _("optimal"))) v = POST_CONVERSION_OPTIMAL;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "base", _("base"))) v = POST_CONVERSION_BASE;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = POST_CONVERSION_NONE;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = POST_CONVERSION_OPTIMAL + 1;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
@@ -1038,7 +1041,7 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "exact", _("exact"))) {
 		int v = s2b(svalue);
 		if(v < 0) {
-			PUTS_UNICODE(_("Illegal value"));
+			PUTS_UNICODE(_("Illegal value."));
 		} else if(v > 0) {
 			evalops.approximation = APPROXIMATION_EXACT;
 			expression_calculation_updated();
@@ -1049,7 +1052,7 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore locale", _("ignore locale"))) {
 		int v = s2b(svalue);
 		if(v < 0) {
-			PUTS_UNICODE(_("Illegal value"));
+			PUTS_UNICODE(_("Illegal value."));
 		} else if(v != ignore_locale) {
 			if(v > 0) {
 				ignore_locale = true;
@@ -1061,7 +1064,7 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save mode", _("save mode"))) {
 		int v = s2b(svalue);
 		if(v < 0) {
-			PUTS_UNICODE(_("Illegal value"));
+			PUTS_UNICODE(_("Illegal value."));
 		} else if(v > 0) {
 			save_mode_on_exit = true;
 		} else {
@@ -1070,7 +1073,7 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save definitions", _("save definitions")) || svar == "save defs") {
 		int v = s2b(svalue);
 		if(v < 0) {
-			PUTS_UNICODE(_("Illegal value"));
+			PUTS_UNICODE(_("Illegal value."));
 		} else if(v > 0) {
 			save_defs_on_exit = true;
 		} else {
@@ -1232,6 +1235,7 @@ void set_option(string str) {
 					remove_blank_ends(str);
 					svalue = str;
 					gsub("_", " ", svar);
+					gsub(SIGN_MINUS, "-", svalue);
 					goto set_option_place;
 				}
 			}
@@ -1357,7 +1361,7 @@ int key_fraction(int, int) {
 
 int key_save(int, int) {
 	string name;
-	string cat = _("Temporary");
+	string cat = CALCULATOR->temporaryCategory();
 	string title;
 	bool b = true;
 #ifdef HAVE_LIBREADLINE
@@ -1393,7 +1397,7 @@ int key_save(int, int) {
 	}
 	Variable *v = NULL;
 	if(b) v = CALCULATOR->getActiveVariable(name);
-	if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != _("Temporary"))))) {
+	if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != CALCULATOR->temporaryCategory())))) {
 		b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 	}
 	if(b) {
@@ -2136,13 +2140,13 @@ int main(int argc, char *argv[]) {
 	}
 
 	string ans_str = _("ans");
-	vans[0] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str, m_undefined, _("Last Answer"), false));
+	vans[0] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(CALCULATOR->temporaryCategory(), ans_str, m_undefined, _("Last Answer"), false));
 	vans[0]->addName(_("answer"));
 	vans[0]->addName(ans_str + "1");
-	vans[1] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "2", m_undefined, _("Answer 2"), false));
-	vans[2] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "3", m_undefined, _("Answer 3"), false));
-	vans[3] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "4", m_undefined, _("Answer 4"), false));
-	vans[4] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "5", m_undefined, _("Answer 5"), false));
+	vans[1] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(CALCULATOR->temporaryCategory(), ans_str + "2", m_undefined, _("Answer 2"), false));
+	vans[2] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(CALCULATOR->temporaryCategory(), ans_str + "3", m_undefined, _("Answer 3"), false));
+	vans[3] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(CALCULATOR->temporaryCategory(), ans_str + "4", m_undefined, _("Answer 4"), false));
+	vans[4] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(CALCULATOR->temporaryCategory(), ans_str + "5", m_undefined, _("Answer 5"), false));
 	v_memory = new KnownVariable(CALCULATOR->temporaryCategory(), "", m_zero, _("Memory"), true, true);
 	ExpressionName ename;
 	ename.name = "MR";
@@ -2424,7 +2428,7 @@ int main(int argc, char *argv[]) {
 				}
 				bool catset = false;
 				if(str.empty()) {
-					cat = _("Temporary");
+					cat = CALCULATOR->temporaryCategory();
 				} else {
 					if(str[0] == '\"') {
 						size_t i = str.find('\"', 1);
@@ -2461,7 +2465,7 @@ int main(int argc, char *argv[]) {
 				}
 				Variable *v = NULL;
 				if(b) v = CALCULATOR->getActiveVariable(name);
-				if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != _("Temporary"))))) {
+				if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != CALCULATOR->temporaryCategory())))) {
 					b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 				}
 				if(b) {
@@ -2525,7 +2529,7 @@ int main(int argc, char *argv[]) {
 			}
 			Variable *v = NULL;
 			if(b) v = CALCULATOR->getActiveVariable(name);
-			if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != _("Temporary"))))) {
+			if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != CALCULATOR->temporaryCategory())))) {
 				b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 			}
 			if(b) {
@@ -2585,11 +2589,16 @@ int main(int argc, char *argv[]) {
 				}
 			}
 			if(b && CALCULATOR->functionNameTaken(name)) {
-				if(!ask_question(_("An function with the same name already exists.\nDo you want to overwrite it (default: no)?"))) {
+				if(!ask_question(_("A function with the same name already exists.\nDo you want to overwrite it (default: no)?"))) {
 					b = false;
 				}
 			}
 			if(b) {
+				if(expr.find("\\") == string::npos) {
+					gsub("x", "\\x", expr);
+					gsub("y", "\\y", expr);
+					gsub("z", "\\z", expr);
+				}
 				MathFunction *f = CALCULATOR->getActiveFunction(name);
 				if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION) {
 					((UserFunction*) f)->setFormula(expr);
@@ -2647,7 +2656,7 @@ int main(int argc, char *argv[]) {
 			} else {
 				int v = s2b(str);
 				if(v < 0) {
-					PUTS_UNICODE(_("Illegal value"));
+					PUTS_UNICODE(_("Illegal value."));
 				} else {
 					rpn_mode = v;
 				}
@@ -2804,7 +2813,7 @@ int main(int argc, char *argv[]) {
 				} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "down", _("down"))) {
 					CALCULATOR->moveRPNRegister(CALCULATOR->RPNStackSize(), 1);
 				} else {
-					PUTS_UNICODE(_("Illegal value"));
+					PUTS_UNICODE(_("Illegal value."));
 				}
 			}
 		//qalc command
