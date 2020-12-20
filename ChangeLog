@@ -1,3 +1,8 @@
+2020-12-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix set conv mixed in qalc
+	* Use x, y, z as function arguments if '\' is not found in function expression of qalc function command
+
 2020-12-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix saving to an existing variable (using save() or ":=") of a value containing the very same variable

@@ -2912,7 +2912,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			if(i3 == string::npos) i = string::npos;
 			if(c_operator == 0) {
 				if(i == string::npos) break;
-				str2 = str.substr(0, i); 
+				str2 = str.substr(0, i);
 				parseAdd(str2, mstruct, po);
 			} else {
 				if(i == string::npos) str2 = str;

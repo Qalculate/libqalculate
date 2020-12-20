@@ -1306,7 +1306,7 @@ msgstr "function"
 
 #: ../src/qalc.cc:2574
 msgid ""
-"An function with the same name already exists.\n"
+"A function with the same name already exists.\n"
 "Do you want to overwrite it (default: no)?"
 msgstr ""
 "Une fonction portant le même nom existe déjà.\n"
