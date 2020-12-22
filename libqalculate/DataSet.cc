@@ -750,6 +750,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 				}
 				child = child->next;
 			}
+			if(is_user_defs) o->setUserModified(true);
 			if(!old_object) objects.push_back(o);
 		}
 		cur = cur->next;
@@ -839,6 +840,8 @@ int DataSet::saveObjects(const char *file_name, bool save_global) {
 	int returnvalue = 1;
 	if(do_save) {
 		returnvalue = xmlSaveFormatFile(filename.c_str(), doc, 1);
+	} else {
+		if(fileExists(filename)) remove(filename.c_str());
 	}
 	xmlFreeDoc(doc);
 	return returnvalue;
