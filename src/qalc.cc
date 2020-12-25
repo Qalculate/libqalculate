@@ -1315,7 +1315,13 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 	return l >= minlength;
 }
 
-int key_exact(int, int) {
+int key_exact(int i1, int i2) {
+#ifdef HAVE_LIBREADLINE
+	if(rl_end > 0) {
+		rl_point = rl_end;
+		return 0;
+	}
+#endif
 	FPUTS_UNICODE(_("set"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("approximation"), stdout); fputs(" ", stdout);
 	if(evalops.approximation == APPROXIMATION_EXACT) {
 		evalops.approximation = APPROXIMATION_TRY_EXACT;
@@ -1335,6 +1341,12 @@ int key_exact(int, int) {
 }
 
 int key_fraction(int, int) {
+#ifdef HAVE_LIBREADLINE
+	if(rl_end > 0) {
+		if(rl_point < rl_end) rl_point++;
+		return 0;
+	}
+#endif
 	FPUTS_UNICODE(_("set"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("fraction"), stdout); fputs(" ", stdout);
 	if(dual_fraction) {
 		dual_fraction = 0;
@@ -2295,7 +2307,7 @@ int main(int argc, char *argv[]) {
 		rl_bind_key('\t', rlcom_tab);
 		rl_bind_keyseq("\\C-e", key_exact);
 		rl_bind_keyseq("\\C-f", key_fraction);
-		rl_bind_keyseq("\\C-r", key_save);
+		rl_bind_keyseq("\\M-s", key_save);
 	}
 #endif
 
