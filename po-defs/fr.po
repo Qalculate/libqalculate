@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-19 15:38+0100\n"
+"POT-Creation-Date: 2020-12-22 12:46+0100\n"
 "PO-Revision-Date: 2020-12-02 13:25+0100\n"
 "Last-Translator: Polakrity\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -26,41 +26,41 @@ msgid "European Euro"
 msgstr "Euro"
 
 #: ../data/currencies.xml.in.h:3
-msgid "ar:EUR,au:&#x20AC;,euro,p:euros"
+msgid "a-cr:EUR,au:&#x20AC;,euro,p:euros"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:4
 msgid ""
-"Andorra, Austria, Belgium, Cyprus, Estonia, Finland, France, Germany, Greece, Ireland, "
-"Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Portugal, San Marino, Slovakia, "
-"Slovenia, Spain, Vatican City"
+"Andorra, Austria, Belgium, Cyprus, Estonia, Finland, France, Germany, "
+"Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, "
+"Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City"
 msgstr ""
-"Allemagne, Andorre, Autriche, Belgique, Chypre, Cité du Vatican, Espagne, Estonie, "
-"Finlande, France, Grèce, Irlande, Italie, Lettonie, Lituanie, Luxembourg, Malte, Pays-"
-"Bas, Portugal, Saint-Marin, Slovaquie, Slovénie"
+"Allemagne, Andorre, Autriche, Belgique, Chypre, Cité du Vatican, Espagne, "
+"Estonie, Finlande, France, Grèce, Irlande, Italie, Lettonie, Lituanie, "
+"Luxembourg, Malte, Pays-Bas, Portugal, Saint-Marin, Slovaquie, Slovénie"
 
 #: ../data/currencies.xml.in.h:5
 msgid "U.S. Dollar"
 msgstr "Dollar des États-Unis"
 
 #: ../data/currencies.xml.in.h:6
-msgid "a:$,ar:USD,dollar,p:dollars"
+msgid "a:$,a-cr:USD,dollar,p:dollars"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:7
 msgid ""
-"United States, East Timor, Ecuador, El Salvador, Micronesia, Marshall Islands, Palau, "
-"Zimbabwe"
+"United States, East Timor, Ecuador, El Salvador, Micronesia, Marshall "
+"Islands, Palau, Zimbabwe"
 msgstr ""
-"États-Unis, Équateur, Micronésie, Îles Marshall, Palaos, Salvador, Timor oriental, "
-"Zimbabwe"
+"États-Unis, Équateur, Micronésie, Îles Marshall, Palaos, Salvador, Timor "
+"oriental, Zimbabwe"
 
 #: ../data/currencies.xml.in.h:8
 msgid "Japanese Yen"
 msgstr "Yen japonais"
 
 #: ../data/currencies.xml.in.h:9
-msgid "ar:JPY,au:&#xA5;,yen"
+msgid "a-cr:JPY,au:&#xA5;,yen"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:10
@@ -72,7 +72,7 @@ msgid "Danish Krone"
 msgstr "Couronne danoise"
 
 #: ../data/currencies.xml.in.h:12
-msgid "ar:DKK"
+msgid "a-cr:DKK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:13
@@ -84,7 +84,7 @@ msgid "British Pound"
 msgstr "Livre britannique"
 
 #: ../data/currencies.xml.in.h:15
-msgid "ar:GBP,au:&#xA3;"
+msgid "a-cr:GBP,au:&#xA3;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:16
@@ -96,7 +96,7 @@ msgid "Thai Baht"
 msgstr "Baht thaïlandais"
 
 #: ../data/currencies.xml.in.h:18
-msgid "ar:THB"
+msgid "a-cr:THB"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:19
@@ -108,7 +108,7 @@ msgid "Swedish Krona"
 msgstr "Couronne suédoise"
 
 #: ../data/currencies.xml.in.h:21
-msgid "ar:SEK"
+msgid "a-cr:SEK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:22
@@ -120,7 +120,7 @@ msgid "Swiss Franc"
 msgstr "Franc suisse"
 
 #: ../data/currencies.xml.in.h:24
-msgid "ar:CHF"
+msgid "a-cr:CHF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:25
@@ -132,7 +132,7 @@ msgid "Norwegian Krone"
 msgstr "Couronne norvégienne"
 
 #: ../data/currencies.xml.in.h:27
-msgid "ar:NOK"
+msgid "a-cr:NOK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:28
@@ -144,7 +144,7 @@ msgid "Bulgarian Lev"
 msgstr "Lev bulgare"
 
 #: ../data/currencies.xml.in.h:30
-msgid "lev,ar:BGN"
+msgid "lev,a-cr:BGN"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:31
@@ -156,7 +156,8 @@ msgid "Russian Ruble"
 msgstr "Rouble russe"
 
 #: ../data/currencies.xml.in.h:33
-msgid "ar:RUB,au:&#x20BD;,ruble"
+#, fuzzy
+msgid "a-cr:RUB,au:&#x20BD;,ruble"
 msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:34
@@ -168,8 +169,9 @@ msgid "Philippine Peso"
 msgstr "Peso philippin"
 
 #: ../data/currencies.xml.in.h:36
-msgid "ar:PHP,au:&#x20B1;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:PHP,au:&#x20B1;"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:37
 msgid "Philippines"
@@ -180,7 +182,7 @@ msgid "Malaysian Ringgit"
 msgstr "Ringgit malais"
 
 #: ../data/currencies.xml.in.h:39
-msgid "ar:MYR"
+msgid "a-cr:MYR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:40
@@ -192,7 +194,7 @@ msgid "Croatian Kuna"
 msgstr "Kuna croate"
 
 #: ../data/currencies.xml.in.h:42
-msgid "ar:HRK"
+msgid "a-cr:HRK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:43
@@ -204,7 +206,7 @@ msgid "Chinese Yuan Renminbi"
 msgstr "Yuan ou renminbi chinois"
 
 #: ../data/currencies.xml.in.h:45
-msgid "ar:CNY"
+msgid "a-cr:CNY"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:46
@@ -216,7 +218,7 @@ msgid "Indonesian Rupiah"
 msgstr "Roupie indonésienne"
 
 #: ../data/currencies.xml.in.h:48
-msgid "ar:IDR,rupiah"
+msgid "a-cr:IDR,rupiah"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:49
@@ -228,7 +230,7 @@ msgid "Czech Koruna"
 msgstr "Couronne tchèque"
 
 #: ../data/currencies.xml.in.h:51
-msgid "ar:CZK,au-c:K&#x10D;"
+msgid "a-cr:CZK,au-c:K&#x10D;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:52
@@ -240,7 +242,7 @@ msgid "Hungarian Forint"
 msgstr "Forint hongrois"
 
 #: ../data/currencies.xml.in.h:54
-msgid "forint,ar:HUF"
+msgid "forint,a-cr:HUF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:55
@@ -252,7 +254,7 @@ msgid "Polish Zloty"
 msgstr "Zloty polonais"
 
 #: ../data/currencies.xml.in.h:57
-msgid "ar:PLN,au:z&#x0142;,zloty"
+msgid "a-cr:PLN,au:z&#x0142;,zloty"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:58
@@ -264,7 +266,7 @@ msgid "Romanian Leu"
 msgstr "Leu roumain"
 
 #: ../data/currencies.xml.in.h:60
-msgid "ar:RON"
+msgid "a-cr:RON"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:61
@@ -276,8 +278,9 @@ msgid "Turkish New Lira"
 msgstr "Nouvelle livre turque"
 
 #: ../data/currencies.xml.in.h:63
-msgid "ar:TRY,au:&#x20BA;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:TRY,au:&#x20BA;"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:64
 msgid "Turkey"
@@ -288,7 +291,7 @@ msgid "Australian Dollar"
 msgstr "Dollar australien"
 
 #: ../data/currencies.xml.in.h:66
-msgid "ar:AUD"
+msgid "a-cr:AUD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:67
@@ -300,7 +303,7 @@ msgid "Canadian Dollar"
 msgstr "Dollar canadien"
 
 #: ../data/currencies.xml.in.h:69
-msgid "ar:CAD"
+msgid "a-cr:CAD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:70
@@ -312,7 +315,7 @@ msgid "Hong Kong Dollar"
 msgstr "Dollar de Hong Kong"
 
 #: ../data/currencies.xml.in.h:72
-msgid "ar:HKD"
+msgid "a-cr:HKD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:73
@@ -320,7 +323,7 @@ msgid "New Zealand Dollar"
 msgstr "Dollar néo-zélandais"
 
 #: ../data/currencies.xml.in.h:74
-msgid "ar:NZD"
+msgid "a-cr:NZD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:75
@@ -332,7 +335,7 @@ msgid "Singapore Dollar"
 msgstr "Dollar de Singapour"
 
 #: ../data/currencies.xml.in.h:77
-msgid "ar:SGD"
+msgid "a-cr:SGD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:78
@@ -344,8 +347,9 @@ msgid "South Korean Won"
 msgstr "Won sud-corréen"
 
 #: ../data/currencies.xml.in.h:80
-msgid "ar:KRW,au:&#x20A9;,won"
-msgstr ""
+#, fuzzy
+msgid "a-cr:KRW,au:&#x20A9;,won"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:81
 msgid "South Korea"
@@ -356,7 +360,7 @@ msgid "South African Rand"
 msgstr "Rand sud-africain"
 
 #: ../data/currencies.xml.in.h:83
-msgid "ar:ZAR"
+msgid "a-cr:ZAR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:84
@@ -368,8 +372,9 @@ msgid "Indian Rupee"
 msgstr "Roupie indienne"
 
 #: ../data/currencies.xml.in.h:86
-msgid "ar:INR,au:&#x20B9;,rupee"
-msgstr ""
+#, fuzzy
+msgid "a-cr:INR,au:&#x20B9;,rupee"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:87
 msgid "India"
@@ -380,7 +385,7 @@ msgid "Israeli New Sheqel"
 msgstr "Shekel israélien"
 
 #: ../data/currencies.xml.in.h:89
-msgid "ar:ILS,au:&#x20AA;,sheqel"
+msgid "a-cr:ILS,au:&#x20AA;,sheqel"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:90
@@ -392,7 +397,7 @@ msgid "Mexican Peso"
 msgstr "Peso mexicain"
 
 #: ../data/currencies.xml.in.h:92
-msgid "ar:MXN"
+msgid "a-cr:MXN"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:93
@@ -404,7 +409,7 @@ msgid "Brazilian Real"
 msgstr "Réal brésilien"
 
 #: ../data/currencies.xml.in.h:95
-msgid "ar:BRL"
+msgid "a-cr:BRL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:96
@@ -416,7 +421,7 @@ msgid "Icelandic Krónur"
 msgstr "Couronne islandaise"
 
 #: ../data/currencies.xml.in.h:98
-msgid "ar:ISK"
+msgid "a-cr:ISK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:99
@@ -428,7 +433,7 @@ msgid "Bitcoin"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:101
-msgid "ar:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins"
+msgid "a-cr:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:102
@@ -436,7 +441,7 @@ msgid "Kenya Shilling"
 msgstr "Shilling kényan"
 
 #: ../data/currencies.xml.in.h:103
-msgid "ar:KES"
+msgid "a-cr:KES"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:104
@@ -448,7 +453,7 @@ msgid "Afghan Afghani"
 msgstr "Afghani afghan"
 
 #: ../data/currencies.xml.in.h:106
-msgid "ar:AFN,aiu:&#x060B;"
+msgid "a-cr:AFN,aiu:&#x060B;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:107
@@ -460,7 +465,7 @@ msgid "Albanian Lek"
 msgstr "Lek albanais"
 
 #: ../data/currencies.xml.in.h:109
-msgid "ar:ALL"
+msgid "a-cr:ALL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:110
@@ -472,7 +477,7 @@ msgid "Algerian Dinar"
 msgstr "Dinar algérien"
 
 #: ../data/currencies.xml.in.h:112
-msgid "ar:DZD"
+msgid "a-cr:DZD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:113
@@ -484,7 +489,7 @@ msgid "Angolan Kwanza"
 msgstr "Kwanza angolais"
 
 #: ../data/currencies.xml.in.h:115
-msgid "ar:AOA"
+msgid "a-cr:AOA"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:116
@@ -496,23 +501,23 @@ msgid "Eastern Caribbean Dollar"
 msgstr "Dollar des Caraïbes orientales"
 
 #: ../data/currencies.xml.in.h:118
-msgid "ar:XCD"
+msgid "a-cr:XCD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:119
 msgid ""
-"Antigua and Barbuda, Dominica, Grenada, Montserrat, Saint Kitts and Nevis, Saint Lucia, "
-"Saint Vincent and the Grenadines, Anguilla"
+"Antigua and Barbuda, Dominica, Grenada, Montserrat, Saint Kitts and Nevis, "
+"Saint Lucia, Saint Vincent and the Grenadines, Anguilla"
 msgstr ""
-"Anguilla, Antigua-et-Barbuda, Dominique, Grenade, Montserrat, Saint-Christophe-et-Niévès, "
-"Sainte-Lucie, Saint-Vincent-et-les-Grenadines"
+"Anguilla, Antigua-et-Barbuda, Dominique, Grenade, Montserrat, Saint-"
+"Christophe-et-Niévès, Sainte-Lucie, Saint-Vincent-et-les-Grenadines"
 
 #: ../data/currencies.xml.in.h:120
 msgid "Argentine Peso"
 msgstr "Peso argentin"
 
 #: ../data/currencies.xml.in.h:121
-msgid "ar:ARS"
+msgid "a-cr:ARS"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:122
@@ -524,7 +529,7 @@ msgid "Armenian Dram"
 msgstr "Dram arménien"
 
 #: ../data/currencies.xml.in.h:124
-msgid "ar:AMD,au:&#x058F;"
+msgid "a-cr:AMD,au:&#x058F;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:125
@@ -536,7 +541,7 @@ msgid "Aruban Florin"
 msgstr "Florin arubais"
 
 #: ../data/currencies.xml.in.h:127
-msgid "ar:AWG"
+msgid "a-cr:AWG"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:128
@@ -548,7 +553,7 @@ msgid "Netherlands Antillean Guilder"
 msgstr "Florin des Antilles néerlandaises"
 
 #: ../data/currencies.xml.in.h:130
-msgid "ar:ANG"
+msgid "a-cr:ANG"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:131
@@ -560,8 +565,9 @@ msgid "Azerbaijani Manat"
 msgstr "Manat azerbaïdjanais"
 
 #: ../data/currencies.xml.in.h:133
-msgid "ar:AZN,au:&#x20BC;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:AZN,au:&#x20BC;"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:134
 msgid "Azerbaijan"
@@ -572,7 +578,7 @@ msgid "Bahamian Dollar"
 msgstr "Dollar bahaméen"
 
 #: ../data/currencies.xml.in.h:136
-msgid "ar:BSD"
+msgid "a-cr:BSD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:137
@@ -584,7 +590,7 @@ msgid "Bahraini Dinar"
 msgstr "Dinar bahreïni"
 
 #: ../data/currencies.xml.in.h:139
-msgid "ar:BHD"
+msgid "a-cr:BHD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:140
@@ -596,7 +602,7 @@ msgid "Bangladeshi Taka"
 msgstr "Taka bangladais"
 
 #: ../data/currencies.xml.in.h:142
-msgid "ar:BDT,au:&#x09F3;"
+msgid "a-cr:BDT,au:&#x09F3;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:143
@@ -608,7 +614,7 @@ msgid "Barbadian Dollar"
 msgstr "Dollar de la Barbade"
 
 #: ../data/currencies.xml.in.h:145
-msgid "ar:BBD"
+msgid "a-cr:BBD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:146
@@ -620,7 +626,7 @@ msgid "Belarusian Ruble"
 msgstr "Rouble biélorusse"
 
 #: ../data/currencies.xml.in.h:148
-msgid "ar:BYN"
+msgid "a-cr:BYN"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:149
@@ -632,7 +638,7 @@ msgid "Belarusian Ruble p. (obsolete)"
 msgstr "Rouble biélorusse p. (obsolète)"
 
 #: ../data/currencies.xml.in.h:151
-msgid "ar:BYR"
+msgid "a-cr:BYR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:152
@@ -640,7 +646,7 @@ msgid "Belize Dollar"
 msgstr "Dollar bélizien"
 
 #: ../data/currencies.xml.in.h:153
-msgid "ar:BZD"
+msgid "a-cr:BZD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:154
@@ -652,19 +658,21 @@ msgid "West African CFA Franc"
 msgstr "Franc CFA"
 
 #: ../data/currencies.xml.in.h:156
-msgid "ar:XOF,a:CFA"
+msgid "a-cr:XOF,a:CFA"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:157
-msgid "Benin, Burkina Faso, Guinea-Bissau, Ivory Coast, Mali, Niger, Senegal, Togo"
-msgstr "Bénin, Burkina Faso, Côte d'Ivoire, Guinée-Bissau, Mali, Niger, Sénégal, Togo"
+msgid ""
+"Benin, Burkina Faso, Guinea-Bissau, Ivory Coast, Mali, Niger, Senegal, Togo"
+msgstr ""
+"Bénin, Burkina Faso, Côte d'Ivoire, Guinée-Bissau, Mali, Niger, Sénégal, Togo"
 
 #: ../data/currencies.xml.in.h:158
 msgid "Bermudian Dollar"
 msgstr "Dollar bermudien"
 
 #: ../data/currencies.xml.in.h:159
-msgid "ar:BMD"
+msgid "a-cr:BMD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:160
@@ -676,7 +684,7 @@ msgid "Bolivian Boliviano Bs"
 msgstr "Bolíviano bolivien"
 
 #: ../data/currencies.xml.in.h:162
-msgid "ar:BOB"
+msgid "a-cr:BOB"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:163
@@ -688,7 +696,7 @@ msgid "Bosnia and Herzegovina Convertible Mark"
 msgstr "Mark convertible de Bosnie-Herzégovine"
 
 #: ../data/currencies.xml.in.h:165
-msgid "ar:BAM"
+msgid "a-cr:BAM"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:166
@@ -700,7 +708,7 @@ msgid "Botswana Pula"
 msgstr "Pula du Botswana"
 
 #: ../data/currencies.xml.in.h:168
-msgid "ar:BWP"
+msgid "a-cr:BWP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:169
@@ -712,7 +720,7 @@ msgid "Brunei Dollar"
 msgstr "Dollar du Brunei"
 
 #: ../data/currencies.xml.in.h:171
-msgid "ar:BND"
+msgid "a-cr:BND"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:172
@@ -724,7 +732,7 @@ msgid "Burundian Franc"
 msgstr "Franc burundais"
 
 #: ../data/currencies.xml.in.h:174
-msgid "ar:BIF"
+msgid "a-cr:BIF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:175
@@ -736,7 +744,7 @@ msgid "Cambodian Riel"
 msgstr "Riel cambodgien"
 
 #: ../data/currencies.xml.in.h:177
-msgid "ar:KHR,aiu:&#x17DB;"
+msgid "a-cr:KHR,aiu:&#x17DB;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:178
@@ -748,21 +756,23 @@ msgid "Central African CFA Franc"
 msgstr "Franc CFA d’Afrique centrale"
 
 #: ../data/currencies.xml.in.h:180
-msgid "ar:XAF,a:FCFA"
+msgid "a-cr:XAF,a:FCFA"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:181
 msgid ""
-"Cameroon, Central African Republic, Chad, Republic of the Congo, Equatorial Guinea, Gabon"
+"Cameroon, Central African Republic, Chad, Republic of the Congo, Equatorial "
+"Guinea, Gabon"
 msgstr ""
-"Cameroun, Gabon, Guinée équatoriale, République centrafricaine, République du Congo, Tchad"
+"Cameroun, Gabon, Guinée équatoriale, République centrafricaine, République "
+"du Congo, Tchad"
 
 #: ../data/currencies.xml.in.h:182
 msgid "Cape Verdean Escudo"
 msgstr "Escudo cap-verdien"
 
 #: ../data/currencies.xml.in.h:183
-msgid "ar:CVE"
+msgid "a-cr:CVE"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:184
@@ -774,7 +784,7 @@ msgid "Cayman Islands Dollar"
 msgstr "Dollar des îles Caïmans"
 
 #: ../data/currencies.xml.in.h:186
-msgid "ar:KYD"
+msgid "a-cr:KYD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:187
@@ -786,7 +796,7 @@ msgid "Chilean Peso"
 msgstr "Peso chilien"
 
 #: ../data/currencies.xml.in.h:189
-msgid "ar:CLP"
+msgid "a-cr:CLP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:190
@@ -798,7 +808,7 @@ msgid "Colombian Peso"
 msgstr "Peso colombien"
 
 #: ../data/currencies.xml.in.h:192
-msgid "ar:COP"
+msgid "a-cr:COP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:193
@@ -810,7 +820,7 @@ msgid "Comorian Franc"
 msgstr "Franc comorien"
 
 #: ../data/currencies.xml.in.h:195
-msgid "ar:KMF"
+msgid "a-cr:KMF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:196
@@ -822,7 +832,7 @@ msgid "Democratic Republic of the Congo (Congolese Franc)"
 msgstr "Franc congolais"
 
 #: ../data/currencies.xml.in.h:198
-msgid "ar:CDF"
+msgid "a-cr:CDF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:199
@@ -834,7 +844,7 @@ msgid "Costa Rican colón"
 msgstr "Colon costaricain"
 
 #: ../data/currencies.xml.in.h:201
-msgid "ar:CRC"
+msgid "a-cr:CRC"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:202
@@ -846,7 +856,7 @@ msgid "Cuban Peso"
 msgstr "Peso cubain"
 
 #: ../data/currencies.xml.in.h:204
-msgid "ar:CUP"
+msgid "acr:CUP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:205
@@ -858,7 +868,7 @@ msgid "Djiboutian Franc"
 msgstr "Franc de Djibouti"
 
 #: ../data/currencies.xml.in.h:207
-msgid "ar:DJF"
+msgid "a-cr:DJF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:208
@@ -870,7 +880,7 @@ msgid "Dominican Peso"
 msgstr "Peso dominicain"
 
 #: ../data/currencies.xml.in.h:210
-msgid "ar:DOP"
+msgid "a-cr:DOP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:211
@@ -882,7 +892,7 @@ msgid "Egyptian Pound"
 msgstr "Livre égyptienne"
 
 #: ../data/currencies.xml.in.h:213
-msgid "ar:EGP"
+msgid "a-cr:EGP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:214
@@ -894,7 +904,7 @@ msgid "El Salvadoran Colon (obsolete)"
 msgstr "Colon salvadorien (obsolète)"
 
 #: ../data/currencies.xml.in.h:216
-msgid "ar:SVC"
+msgid "a-cr:SVC"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:217
@@ -902,7 +912,7 @@ msgid "Eritrean Nafka"
 msgstr "Nakfa érythréen"
 
 #: ../data/currencies.xml.in.h:218
-msgid "ar:ERN"
+msgid "a-cr:ERN"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:219
@@ -914,7 +924,7 @@ msgid "Ethiopian Birr"
 msgstr "Birr éthiopien"
 
 #: ../data/currencies.xml.in.h:221
-msgid "ar:ETB"
+msgid "a-cr:ETB"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:222
@@ -926,7 +936,7 @@ msgid "Falkland Islands Pound"
 msgstr "Livre des Îles Malouines"
 
 #: ../data/currencies.xml.in.h:224
-msgid "ar:FKP"
+msgid "a-cr:FKP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:225
@@ -938,7 +948,7 @@ msgid "Fijian Dollar"
 msgstr "Dollar de Fidji"
 
 #: ../data/currencies.xml.in.h:227
-msgid "ar:FJD"
+msgid "a-cr:FJD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:228
@@ -950,7 +960,7 @@ msgid "CFP franc"
 msgstr "Franc CFP"
 
 #: ../data/currencies.xml.in.h:230
-msgid "ar:XPF"
+msgid "a-cr:XPF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:231
@@ -962,7 +972,7 @@ msgid "Gambian Dalasi"
 msgstr "Dalasi gambien"
 
 #: ../data/currencies.xml.in.h:233
-msgid "ar:GMD"
+msgid "a-cr:GMD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:234
@@ -974,8 +984,9 @@ msgid "Georgian Lari"
 msgstr "Lari géorgien"
 
 #: ../data/currencies.xml.in.h:236
-msgid "ar:GEL,au:&#x20BE;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:GEL,au:&#x20BE;"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:237
 msgid "Georgia"
@@ -986,8 +997,9 @@ msgid "Ghanaian Cedi"
 msgstr "Cédi ghanéen"
 
 #: ../data/currencies.xml.in.h:239
-msgid "ar:GHS,au:&#x20B5;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:GHS,au:&#x20B5;"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:240
 msgid "Ghana"
@@ -998,7 +1010,7 @@ msgid "Gibraltar Pound"
 msgstr "Livre de Gibraltar"
 
 #: ../data/currencies.xml.in.h:242
-msgid "ar:GIP"
+msgid "a-cr:GIP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:243
@@ -1010,7 +1022,7 @@ msgid "Guatemalan Quetzal"
 msgstr "Quetzal guatémaltèque"
 
 #: ../data/currencies.xml.in.h:245
-msgid "ar:GTQ"
+msgid "a-cr:GTQ"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:246
@@ -1022,7 +1034,7 @@ msgid "Guernsey Pound"
 msgstr "Livre de Guernesey"
 
 #: ../data/currencies.xml.in.h:248
-msgid "ar:GGP"
+msgid "a-cr:GGP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:249
@@ -1034,7 +1046,7 @@ msgid "Guinean Franc"
 msgstr "Franc guinéen"
 
 #: ../data/currencies.xml.in.h:251
-msgid "ar:GNF"
+msgid "a-cr:GNF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:252
@@ -1046,7 +1058,7 @@ msgid "Guyanese Dollar"
 msgstr "Dollar guyanien"
 
 #: ../data/currencies.xml.in.h:254
-msgid "ar:GYD"
+msgid "a-cr:GYD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:255
@@ -1058,7 +1070,7 @@ msgid "Haitian Gourde"
 msgstr "Gourde haïtienne"
 
 #: ../data/currencies.xml.in.h:257
-msgid "ar:HTG"
+msgid "a-cr:HTG"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:258
@@ -1070,7 +1082,7 @@ msgid "Honduran Lempira"
 msgstr "Lempira hondurien"
 
 #: ../data/currencies.xml.in.h:260
-msgid "ar:HNL"
+msgid "a-cr:HNL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:261
@@ -1082,7 +1094,7 @@ msgid "Iranian Rial"
 msgstr "Rial iranien"
 
 #: ../data/currencies.xml.in.h:263
-msgid "ar:IRR,aiu:&#xFDFC;"
+msgid "a-cr:IRR,aiu:&#xFDFC;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:264
@@ -1094,7 +1106,7 @@ msgid "Iraqi Dinar"
 msgstr "Dinar irakien"
 
 #: ../data/currencies.xml.in.h:266
-msgid "ar:IQD"
+msgid "a-cr:IQD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:267
@@ -1106,7 +1118,7 @@ msgid "Jamaican Dollar"
 msgstr "Dollar jamaïcain"
 
 #: ../data/currencies.xml.in.h:269
-msgid "ar:JMD"
+msgid "a-cr:JMD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:270
@@ -1118,7 +1130,7 @@ msgid "Jordanian Dinar"
 msgstr "Dinar jordanien"
 
 #: ../data/currencies.xml.in.h:272
-msgid "ar:JOD"
+msgid "a-cr:JOD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:273
@@ -1130,8 +1142,9 @@ msgid "Kazakhstani Tenge"
 msgstr "Tenge kazakh"
 
 #: ../data/currencies.xml.in.h:275
-msgid "ar:KZT,au:&#x20B8;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:KZT,au:&#x20B8;"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:276
 msgid "Kazakhstan"
@@ -1142,7 +1155,7 @@ msgid "North Korean Won"
 msgstr "Won nord-coréen"
 
 #: ../data/currencies.xml.in.h:278
-msgid "ar:KPW"
+msgid "a-cr:KPW"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:279
@@ -1154,7 +1167,7 @@ msgid "Kuwaiti Dinar"
 msgstr "Dinar koweïtien"
 
 #: ../data/currencies.xml.in.h:281
-msgid "ar:KWD"
+msgid "a-cr:KWD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:282
@@ -1166,7 +1179,7 @@ msgid "Kyrgyzstani Som"
 msgstr "Som du Kirghizistan"
 
 #: ../data/currencies.xml.in.h:284
-msgid "ar:KGS,au:&#x0441;"
+msgid "acr:KGS,au:&#x0441;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:285
@@ -1178,8 +1191,9 @@ msgid "Lao Kip"
 msgstr "Kip laotien"
 
 #: ../data/currencies.xml.in.h:287
-msgid "ar:LAK,au:&#x20AD;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:LAK,au:&#x20AD;"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:288
 msgid "Laos"
@@ -1190,7 +1204,7 @@ msgid "Lebanese Pound"
 msgstr "Livre libanaise"
 
 #: ../data/currencies.xml.in.h:290
-msgid "ar:LBP"
+msgid "a-cr:LBP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:291
@@ -1202,7 +1216,7 @@ msgid "Lesotho Loti"
 msgstr "Loti du Lesotho"
 
 #: ../data/currencies.xml.in.h:293
-msgid "ar:LSL"
+msgid "a-cr:LSL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:294
@@ -1214,7 +1228,7 @@ msgid "Liberian Dollar"
 msgstr "Dollar libérien"
 
 #: ../data/currencies.xml.in.h:296
-msgid "ar:LRD"
+msgid "a-cr:LRD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:297
@@ -1226,7 +1240,7 @@ msgid "Libyan Dinar"
 msgstr "Dinar libyen"
 
 #: ../data/currencies.xml.in.h:299
-msgid "ar:LYD"
+msgid "a-cr:LYD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:300
@@ -1238,7 +1252,7 @@ msgid "Macanese Pataca"
 msgstr "Pataca de Macao"
 
 #: ../data/currencies.xml.in.h:302
-msgid "ar:MOP"
+msgid "a-cr:MOP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:303
@@ -1250,7 +1264,7 @@ msgid "Macedonian Denar"
 msgstr "Dinar macédonien"
 
 #: ../data/currencies.xml.in.h:305
-msgid "ar:MKD"
+msgid "a-cr:MKD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:306
@@ -1262,7 +1276,7 @@ msgid "Malagasy Ariary"
 msgstr "Ariary malgache"
 
 #: ../data/currencies.xml.in.h:308
-msgid "ar:MGA"
+msgid "a-cr:MGA"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:309
@@ -1274,7 +1288,7 @@ msgid "Malawian Kwacha"
 msgstr "Kwacha malawien"
 
 #: ../data/currencies.xml.in.h:311
-msgid "ar:MWK"
+msgid "a-cr:MWK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:312
@@ -1286,7 +1300,7 @@ msgid "Maldivian Rufiyaa"
 msgstr "Rufiyaa maldivien"
 
 #: ../data/currencies.xml.in.h:314
-msgid "ar:MVR"
+msgid "a-cr:MVR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:315
@@ -1298,7 +1312,7 @@ msgid "Mauritanian Ouguiya (obsolete)"
 msgstr "Ouguiya mauritanien (obsolète)"
 
 #: ../data/currencies.xml.in.h:317
-msgid "ar:MRO"
+msgid "a-cr:MRO"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:318
@@ -1306,7 +1320,7 @@ msgid "Mauritian Rupee"
 msgstr "Roupie mauricienne"
 
 #: ../data/currencies.xml.in.h:319
-msgid "ar:MUR"
+msgid "a-cr:MUR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:320
@@ -1318,7 +1332,7 @@ msgid "Moldovan Leu"
 msgstr "Leu moldave"
 
 #: ../data/currencies.xml.in.h:322
-msgid "ar:MDL"
+msgid "a-cr:MDL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:323
@@ -1330,7 +1344,7 @@ msgid "Mongolian Tögrög"
 msgstr "Tugrik mongol"
 
 #: ../data/currencies.xml.in.h:325
-msgid "ar:MNT,au:&#x20AE;"
+msgid "a-cr:MNT,au:&#x20AE;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:326
@@ -1342,7 +1356,7 @@ msgid "Moroccan Dirham"
 msgstr "Dirham marocain"
 
 #: ../data/currencies.xml.in.h:328
-msgid "ar:MAD"
+msgid "a-cr:MAD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:329
@@ -1354,7 +1368,7 @@ msgid "Mozambican Metical"
 msgstr "Metical mozambicain"
 
 #: ../data/currencies.xml.in.h:331
-msgid "ar:MZN"
+msgid "a-cr:MZN"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:332
@@ -1366,7 +1380,7 @@ msgid "Myanmar (Burmese Kyat)"
 msgstr "Kyat du Myanmar"
 
 #: ../data/currencies.xml.in.h:334
-msgid "ar:MMK"
+msgid "a-cr:MMK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:335
@@ -1378,7 +1392,7 @@ msgid "Namibian Dollar"
 msgstr "Dollar namibien"
 
 #: ../data/currencies.xml.in.h:337
-msgid "ar:NAD"
+msgid "a-cr:NAD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:338
@@ -1390,7 +1404,7 @@ msgid "Nepalese Rupee"
 msgstr "Roupie népalaise"
 
 #: ../data/currencies.xml.in.h:340
-msgid "ar:NPR"
+msgid "a-cr:NPR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:341
@@ -1402,7 +1416,7 @@ msgid "Nicaraguan Córdoba"
 msgstr "Cordoba nicaraguayen"
 
 #: ../data/currencies.xml.in.h:343
-msgid "ar:NIO"
+msgid "a-cr:NIO"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:344
@@ -1414,7 +1428,7 @@ msgid "Nigerian Naira"
 msgstr "Naira nigérian"
 
 #: ../data/currencies.xml.in.h:346
-msgid "ar:NGN,au:&#x20A6;"
+msgid "a-cr:NGN,au:&#x20A6;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:347
@@ -1426,7 +1440,7 @@ msgid "Omani Rial"
 msgstr "Rial omanais"
 
 #: ../data/currencies.xml.in.h:349
-msgid "ar:OMR"
+msgid "a-cr:OMR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:350
@@ -1438,7 +1452,7 @@ msgid "Pakistani Rupee"
 msgstr "Roupie pakistanaise"
 
 #: ../data/currencies.xml.in.h:352
-msgid "ar:PKR"
+msgid "a-cr:PKR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:353
@@ -1450,7 +1464,7 @@ msgid "Panamaian Balboa"
 msgstr "Balboa panaméen"
 
 #: ../data/currencies.xml.in.h:355
-msgid "ar:PAB"
+msgid "a-cr:PAB"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:356
@@ -1462,7 +1476,7 @@ msgid "Papua New Guinean Kina"
 msgstr "Kina de Papouasie-Nouvelle-Guinée"
 
 #: ../data/currencies.xml.in.h:358
-msgid "ar:PGK"
+msgid "a-cr:PGK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:359
@@ -1474,8 +1488,9 @@ msgid "Paraguayan Guaraní"
 msgstr "Guarani paraguayen"
 
 #: ../data/currencies.xml.in.h:361
-msgid "ar:PYG,au:&#x20B2;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:PYG,au:&#x20B2;"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:362
 msgid "Paraguay"
@@ -1486,7 +1501,7 @@ msgid "Peruvian Sol"
 msgstr "Sol péruvien"
 
 #: ../data/currencies.xml.in.h:364
-msgid "ar:PEN"
+msgid "a-cr:PEN"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:365
@@ -1498,7 +1513,7 @@ msgid "Qatari Riyal"
 msgstr "Rial qatari"
 
 #: ../data/currencies.xml.in.h:367
-msgid "ar:QAR"
+msgid "a-cr:QAR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:368
@@ -1510,7 +1525,7 @@ msgid "Rwandan Franc"
 msgstr "Franc rwandais"
 
 #: ../data/currencies.xml.in.h:370
-msgid "ar:RWF"
+msgid "a-cr:RWF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:371
@@ -1522,7 +1537,7 @@ msgid "São Tomé and Príncipe Dobra"
 msgstr "Dobra são-tomense"
 
 #: ../data/currencies.xml.in.h:373
-msgid "ar:STD"
+msgid "a-cr:STD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:374
@@ -1534,7 +1549,7 @@ msgid "Saudi Riyal"
 msgstr "Rial saoudien"
 
 #: ../data/currencies.xml.in.h:376
-msgid "ar:SAR"
+msgid "a-cr:SAR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:377
@@ -1546,7 +1561,7 @@ msgid "Serbian Dinar"
 msgstr "Dinar serbe"
 
 #: ../data/currencies.xml.in.h:379
-msgid "ar:RSD"
+msgid "a-cr:RSD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:380
@@ -1558,7 +1573,7 @@ msgid "Seychellois Rupee"
 msgstr "Roupie seychelloise"
 
 #: ../data/currencies.xml.in.h:382
-msgid "ar:SCR"
+msgid "a-cr:SCR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:383
@@ -1570,7 +1585,7 @@ msgid "Sierra Leonean Leone"
 msgstr "Leone de Sierra Leone"
 
 #: ../data/currencies.xml.in.h:385
-msgid "ar:SLL"
+msgid "a-cr:SLL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:386
@@ -1582,7 +1597,7 @@ msgid "Solomon Islands Dollar"
 msgstr "Dollar des îles Salomon"
 
 #: ../data/currencies.xml.in.h:388
-msgid "ar:SBD"
+msgid "a-cr:SBD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:389
@@ -1594,7 +1609,7 @@ msgid "Somali Shilling"
 msgstr "Shilling somalien"
 
 #: ../data/currencies.xml.in.h:391
-msgid "ar:SOS"
+msgid "a-cr:SOS"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:392
@@ -1606,8 +1621,9 @@ msgid "Sri Lankan Rupee"
 msgstr "Roupie sri lankaise"
 
 #: ../data/currencies.xml.in.h:394
-msgid "ar:LKR,au:&#x0BF9;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:LKR,au:&#x0BF9;"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:395
 msgid "Sri Lanka"
@@ -1618,7 +1634,7 @@ msgid "Sudanese Pound"
 msgstr "Livre soudanaise"
 
 #: ../data/currencies.xml.in.h:397
-msgid "ar:SDG"
+msgid "a-cr:SDG"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:398
@@ -1630,7 +1646,7 @@ msgid "Surinamese Dollar"
 msgstr "Dollar du Surinam"
 
 #: ../data/currencies.xml.in.h:400
-msgid "ar:SRD"
+msgid "a-cr:SRD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:401
@@ -1642,7 +1658,7 @@ msgid "Swazi Lilangeni"
 msgstr "Lilangeni du Swaziland"
 
 #: ../data/currencies.xml.in.h:403
-msgid "ar:SZL"
+msgid "a-cr:SZL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:404
@@ -1654,7 +1670,7 @@ msgid "Syrian Pound"
 msgstr "Livre syrienne"
 
 #: ../data/currencies.xml.in.h:406
-msgid "ar:SYP"
+msgid "a-cr:SYP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:407
@@ -1666,7 +1682,7 @@ msgid "New Taiwan Dollar"
 msgstr "Nouveau dollar de Taïwan"
 
 #: ../data/currencies.xml.in.h:409
-msgid "ar:TWD"
+msgid "a-cr:TWD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:410
@@ -1678,7 +1694,7 @@ msgid "Tajikistani Somoni"
 msgstr "Somoni tadjik"
 
 #: ../data/currencies.xml.in.h:412
-msgid "ar:TJS"
+msgid "a-cr:TJS"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:413
@@ -1690,7 +1706,7 @@ msgid "Tanzanian Shilling"
 msgstr "Shilling tanzanien"
 
 #: ../data/currencies.xml.in.h:415
-msgid "ar:TZS"
+msgid "a-cr:TZS"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:416
@@ -1702,7 +1718,7 @@ msgid "Tongan Paʻanga"
 msgstr "Pa’anga de Tonga"
 
 #: ../data/currencies.xml.in.h:418
-msgid "ar:TOP"
+msgid "a-cr:TOP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:419
@@ -1714,7 +1730,7 @@ msgid "Trinidad and Tobago dollar"
 msgstr "Dollar de Trinidad"
 
 #: ../data/currencies.xml.in.h:421
-msgid "ar:TTD"
+msgid "a-cr:TTD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:422
@@ -1726,7 +1742,7 @@ msgid "Tunisian Dinar"
 msgstr "Dinar tunisien"
 
 #: ../data/currencies.xml.in.h:424
-msgid "ar:TND"
+msgid "a-cr:TND"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:425
@@ -1738,7 +1754,7 @@ msgid "Turkmenistan Manat"
 msgstr "Manat turkmène"
 
 #: ../data/currencies.xml.in.h:427
-msgid "ar:TMT"
+msgid "a-cr:TMT"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:428
@@ -1750,7 +1766,7 @@ msgid "Ugandan Shilling"
 msgstr "Shilling ougandais"
 
 #: ../data/currencies.xml.in.h:430
-msgid "ar:UGX"
+msgid "a-cr:UGX"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:431
@@ -1762,8 +1778,9 @@ msgid "Ukrainian Hryvnia"
 msgstr "Hryvnia ukrainienne"
 
 #: ../data/currencies.xml.in.h:433
-msgid "ar:UAH,au:&#x20B4;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:UAH,au:&#x20B4;"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:434
 msgid "Ukraine"
@@ -1774,7 +1791,7 @@ msgid "United Arab Emirates Dirham"
 msgstr "Dirham des Émirats arabes unis"
 
 #: ../data/currencies.xml.in.h:436
-msgid "ar:AED"
+msgid "a-cr:AED"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:437
@@ -1786,7 +1803,7 @@ msgid "Uruguayan Peso"
 msgstr "Peso uruguayen"
 
 #: ../data/currencies.xml.in.h:439
-msgid "ar:UYU"
+msgid "a-cr:UYU"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:440
@@ -1798,7 +1815,7 @@ msgid "Uzbekistan Soʻm"
 msgstr "Som ouzbek"
 
 #: ../data/currencies.xml.in.h:442
-msgid "ar:UZS"
+msgid "a-cr:UZS"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:443
@@ -1810,7 +1827,7 @@ msgid "Vanuatu Vatu"
 msgstr "Vatu vanuatais"
 
 #: ../data/currencies.xml.in.h:445
-msgid "ar:VUV"
+msgid "a-cr:VUV"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:446
@@ -1822,7 +1839,7 @@ msgid "Venezuelan Bolívar (obsolete)"
 msgstr "Bolivar vénézuélien (obsolète)"
 
 #: ../data/currencies.xml.in.h:448
-msgid "ar:VEF"
+msgid "a-cr:VEF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:449
@@ -1830,8 +1847,9 @@ msgid "Vietnamese Đồng"
 msgstr "Dong vietnamien"
 
 #: ../data/currencies.xml.in.h:450
-msgid "ar:VND,au:&#x20AB;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:VND,au:&#x20AB;"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:451
 msgid "Vietnam"
@@ -1842,7 +1860,7 @@ msgid "Yemeni Rial"
 msgstr "Rial yéménite"
 
 #: ../data/currencies.xml.in.h:453
-msgid "ar:YER"
+msgid "a-cr:YER"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:454
@@ -1854,7 +1872,7 @@ msgid "Zambian Kwacha (obsolete)"
 msgstr "Kwacha zambien (obsolète)"
 
 #: ../data/currencies.xml.in.h:456
-msgid "ar:ZMK"
+msgid "a-cr:ZMK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:457
@@ -1878,7 +1896,7 @@ msgid "Belgian Franc (obsolete)"
 msgstr "Franc belge (obsolète)"
 
 #: ../data/currencies.xml.in.h:462
-msgid "ar:BEF"
+msgid "a-cr:BEF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:463
@@ -1886,23 +1904,25 @@ msgid "Greek Drachma (obsolete)"
 msgstr "Drachme grecque (obsolète"
 
 #: ../data/currencies.xml.in.h:464
-msgid "ar:GRD,au:&#x20AF;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:GRD,au:&#x20AF;"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:465
 msgid "French Franc (obsolete)"
 msgstr "Franc français (obsolète)"
 
 #: ../data/currencies.xml.in.h:466
-msgid "ar:FRF,au:&#x20A3;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:FRF,au:&#x20A3;"
+msgstr "a:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:467
 msgid "Italian Lira (obsolete)"
 msgstr "Lire italienne (obsolète)"
 
 #: ../data/currencies.xml.in.h:468
-msgid "ar:ITL"
+msgid "a-cr:ITL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:469
@@ -1910,7 +1930,7 @@ msgid "Dutch Guilder (obsolete)"
 msgstr "Florin néerlandais (obsolète)"
 
 #: ../data/currencies.xml.in.h:470
-msgid "ar:NLG"
+msgid "a-cr:NLG"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:471
@@ -1918,7 +1938,7 @@ msgid "Portuguese Escudo (obsolete)"
 msgstr "Escudo portugais (obsolète)"
 
 #: ../data/currencies.xml.in.h:472
-msgid "ar:PTE"
+msgid "a-cr:PTE"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:473
@@ -1926,7 +1946,7 @@ msgid "Deutsche Mark (obsolete)"
 msgstr "Deutsche Mark (obsolète)"
 
 #: ../data/currencies.xml.in.h:474
-msgid "ar:DEM"
+msgid "a-cr:DEM"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:475
@@ -1934,7 +1954,7 @@ msgid "Spanish Peseta (obsolete)"
 msgstr "Peseta espagnole (obsolète)"
 
 #: ../data/currencies.xml.in.h:476
-msgid "ar:ESP,au:&#x20A7;"
+msgid "a-cr:ESP,au:&#x20A7;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:477
@@ -1942,7 +1962,7 @@ msgid "Irish Pound (obsolete)"
 msgstr "Livre irlandaise (obsolète)"
 
 #: ../data/currencies.xml.in.h:478
-msgid "ar:IEP"
+msgid "a-cr:IEP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:479
@@ -1950,7 +1970,7 @@ msgid "Luxembourg Franc (obsolete)"
 msgstr "Franc luxembourgeois (obsolète)"
 
 #: ../data/currencies.xml.in.h:480
-msgid "ar:LUF"
+msgid "a-cr:LUF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:481
@@ -1958,7 +1978,7 @@ msgid "Austrian Schilling (obsolete)"
 msgstr "Shilling autrichien (obsolète)"
 
 #: ../data/currencies.xml.in.h:482
-msgid "ar:ATS"
+msgid "a-cr:ATS"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:483
@@ -1966,7 +1986,7 @@ msgid "Finnish Markka (obsolete)"
 msgstr "Markka finnois (obsolète)"
 
 #: ../data/currencies.xml.in.h:484
-msgid "ar:FIM"
+msgid "a-cr:FIM"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:485
@@ -1974,7 +1994,7 @@ msgid "Slovenian Tolar (obsolete)"
 msgstr "Tolar slovène (obsolète)"
 
 #: ../data/currencies.xml.in.h:486
-msgid "ar:SIT"
+msgid "a-cr:SIT"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:487
@@ -1982,7 +2002,7 @@ msgid "Cypriot Pound (obsolete)"
 msgstr "Livre chypriote (obsolète)"
 
 #: ../data/currencies.xml.in.h:488
-msgid "ar:CYP"
+msgid "a-cr:CYP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:489
@@ -1990,7 +2010,7 @@ msgid "Estonian Kroon (obsolete)"
 msgstr "Kroon estonienne (obsolète)"
 
 #: ../data/currencies.xml.in.h:490
-msgid "ar:EEK"
+msgid "a-cr:EEK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:491
@@ -1998,7 +2018,7 @@ msgid "Slovak Koruna (obsolete)"
 msgstr "Couronne slovaque (obsolète)"
 
 #: ../data/currencies.xml.in.h:492
-msgid "ar:SKK"
+msgid "a-cr:SKK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:493
@@ -2006,7 +2026,7 @@ msgid "Maltese Lira (obsolete)"
 msgstr "Lire maltaise (obsolète)"
 
 #: ../data/currencies.xml.in.h:494
-msgid "ar:MTL"
+msgid "a-cr:MTL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:495
@@ -2014,7 +2034,7 @@ msgid "Latvian Lats (obsolete)"
 msgstr "Lats letton (obsolète)"
 
 #: ../data/currencies.xml.in.h:496
-msgid "ar:LVL"
+msgid "a-cr:LVL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:497
@@ -2022,7 +2042,7 @@ msgid "Lithuanian Litas (obsolete)"
 msgstr "Litas lituanien (obsolète)"
 
 #: ../data/currencies.xml.in.h:498
-msgid "ar:LTL"
+msgid "a-cr:LTL"
 msgstr ""
 
 #: ../data/datasets.xml.in.h:1
@@ -2075,15 +2095,15 @@ msgstr ""
 
 #: ../data/datasets.xml.in.h:16
 msgid ""
-"A number representing an element group:&#10;1 Alkali Metal&#10;2 Alkaline-Earth "
-"Metal&#10;3 Lanthanide&#10;4 Actinide&#10;5 Transition Metal&#10;6 Metal&#10;7 "
-"Metalloid&#10;8 Polyatomic Non-Metal&#10;9 Diatomic Non-Metal&#10;10 Noble Gas&#10;11 "
-"Unknown chemical properties"
+"A number representing an element group:&#10;1 Alkali Metal&#10;2 Alkaline-"
+"Earth Metal&#10;3 Lanthanide&#10;4 Actinide&#10;5 Transition Metal&#10;6 "
+"Metal&#10;7 Metalloid&#10;8 Polyatomic Non-Metal&#10;9 Diatomic Non-"
+"Metal&#10;10 Noble Gas&#10;11 Unknown chemical properties"
 msgstr ""
-"Un nombre représente un groupe d'éléments :&#10;1 Métal alcalin&#10;2 Métal alcalino-"
-"terreux&#10;3 Lanthanide&#10;4 Actinide&#10;5 Métal de transition&#10;6 Métal&#10;7 "
-"Métalloïde&#10;8 Polyatomique (Non-métal)&#10;9 Diatomique (Non-métal)&#10;10 Gaz "
-"Noble&#10;11 Propriétés chimiques inconnues"
+"Un nombre représente un groupe d'éléments :&#10;1 Métal alcalin&#10;2 Métal "
+"alcalino-terreux&#10;3 Lanthanide&#10;4 Actinide&#10;5 Métal de "
+"transition&#10;6 Métal&#10;7 Métalloïde&#10;8 Polyatomique (Non-métal)&#10;9 "
+"Diatomique (Non-métal)&#10;10 Gaz Noble&#10;11 Propriétés chimiques inconnues"
 
 #: ../data/datasets.xml.in.h:17
 msgid "r:class"
@@ -2094,10 +2114,12 @@ msgid "Atomic Mass"
 msgstr "Masse atomique"
 
 #: ../data/datasets.xml.in.h:19
-msgid "The property uses standard atomic weight, when determined, or the mass number."
+msgid ""
+"The property uses standard atomic weight, when determined, or the mass "
+"number."
 msgstr ""
-"La propriété utilise le poids atomique standard, lorsqu'il est déterminé, ou le nombre de "
-"masse."
+"La propriété utilise le poids atomique standard, lorsqu'il est déterminé, ou "
+"le nombre de masse."
 
 #: ../data/datasets.xml.in.h:20
 msgid "r:mass,r:weight"
@@ -2742,13 +2764,15 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:9
 msgid ""
-"Returns a vector generated from a function with a variable (default x) running from min "
-"to max. The fourth argument is either the requested number of elements if the sixth "
-"argument is false (default) or the step between each value of the variable."
+"Returns a vector generated from a function with a variable (default x) "
+"running from min to max. The fourth argument is either the requested number "
+"of elements if the sixth argument is false (default) or the step between "
+"each value of the variable."
 msgstr ""
-"Retourne un vecteur généré par une fonction avec une variable (par défaut : x) parcourant "
-"des valeurs entre min et max. Le quatrième argument est soit le nombre d'éléments voulus "
-"si le sixième argument est faux (par défaut) ou le pas entre chaque valeur de la variable."
+"Retourne un vecteur généré par une fonction avec une variable (par défaut : "
+"x) parcourant des valeurs entre min et max. Le quatrième argument est soit "
+"le nombre d'éléments voulus si le sixième argument est faux (par défaut) ou "
+"le pas entre chaque valeur de la variable."
 
 #: ../data/functions.xml.in.h:10
 msgid "Function"
@@ -2803,10 +2827,11 @@ msgid "r:rank"
 msgstr ""
 
 #: ../data/functions.xml.in.h:23
-msgid "Returns a vector with values of elements replaced with their mutual ranks."
+msgid ""
+"Returns a vector with values of elements replaced with their mutual ranks."
 msgstr ""
-"Retourne un vecteur dont les valeurs des éléments ont été remplacées par leur rang "
-"respectif."
+"Retourne un vecteur dont les valeurs des éléments ont été remplacées par "
+"leur rang respectif."
 
 #: ../data/functions.xml.in.h:24
 msgid "Vector Limits"
@@ -2870,11 +2895,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:39
 msgid ""
-"Returns a matrix with specified dimensions and listed elements. Omitted elements are set "
-"to zero."
+"Returns a matrix with specified dimensions and listed elements. Omitted "
+"elements are set to zero."
 msgstr ""
-"Retourne une matrice avec les dimensions spécifiées et éléments listés. Les éléments omis "
-"sont fixés à zéro."
+"Retourne une matrice avec les dimensions spécifiées et éléments listés. Les "
+"éléments omis sont fixés à zéro."
 
 #: ../data/functions.xml.in.h:40
 msgid "Rows"
@@ -2894,7 +2919,9 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:44
 msgid "Puts each element of a matrix in vertical order in a vector."
-msgstr "Place chaque élément d'une matrice dans un vecteur en la parcourant verticalement."
+msgstr ""
+"Place chaque élément d'une matrice dans un vecteur en la parcourant "
+"verticalement."
 
 #: ../data/functions.xml.in.h:45
 msgid "Matrix"
@@ -3000,10 +3027,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:72
 msgid ""
-"Returns the element at specified position in a matrix (row and column) or vector (index)."
+"Returns the element at specified position in a matrix (row and column) or "
+"vector (index)."
 msgstr ""
-"Retourne l'élément à la position spécifiée dans une matrice (ligne et colonne) ou dans un "
-"vecteur (index)."
+"Retourne l'élément à la position spécifiée dans une matrice (ligne et "
+"colonne) ou dans un vecteur (index)."
 
 #: ../data/functions.xml.in.h:73
 msgid "Matrix/vector"
@@ -3034,9 +3062,12 @@ msgid "r:identity"
 msgstr ""
 
 #: ../data/functions.xml.in.h:80
-msgid "Returns the identity matrix of a matrix or with specified number of rows/columns."
+msgid ""
+"Returns the identity matrix of a matrix or with specified number of rows/"
+"columns."
 msgstr ""
-"Retourne la matrice identité ou une matrice avec le nombre indiqué de lignes/colonnes."
+"Retourne la matrice identité ou une matrice avec le nombre indiqué de lignes/"
+"colonnes."
 
 #: ../data/functions.xml.in.h:81
 msgid "Matrix or rows/columns"
@@ -3064,14 +3095,15 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:87
 msgid ""
-"Calculates the permanent of a matrix. The permanent differs from a determinant in that "
-"all signs in the expansion by minors are taken as positive."
+"Calculates the permanent of a matrix. The permanent differs from a "
+"determinant in that all signs in the expansion by minors are taken as "
+"positive."
 msgstr ""
-"Calcule le permanent d'une matrice. Le permanent diffère du déterminant du fait que tous "
-"les signes dans le développement en mineurs sont pris positifs."
+"Calcule le permanent d'une matrice. Le permanent diffère du déterminant du "
+"fait que tous les signes dans le développement en mineurs sont pris positifs."
 
 #: ../data/functions.xml.in.h:88
-msgid "Adjoint"
+msgid "Adjugate (Adjoint)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:89
@@ -3104,11 +3136,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:96
 msgid ""
-"Calculates the inverse of a matrix. The inverse is the matrix that multiplied by the "
-"original matrix equals the identity matrix (AB = BA = I)."
+"Calculates the inverse of a matrix. The inverse is the matrix that "
+"multiplied by the original matrix equals the identity matrix (AB = BA = I)."
 msgstr ""
-"Calcule l'inverse d'une matrice. L'inverse est la matrice qui multipliée par la matrice "
-"originale est égale à la matrice identité (AB = BA = I)."
+"Calcule l'inverse d'une matrice. L'inverse est la matrice qui multipliée par "
+"la matrice originale est égale à la matrice identité (AB = BA = I)."
 
 #: ../data/functions.xml.in.h:97
 msgid "Load CSV File"
@@ -3156,11 +3188,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:108
 msgid ""
-"Calculates the magnitude of a value. This function returns the same value as abs() for "
-"all values except vectors."
+"Calculates the magnitude of a value. This function returns the same value as "
+"abs() for all values except vectors."
 msgstr ""
-"Calcule la magnitude d'une valeur. Cette fonction retourne la même valeur que abs() pour "
-"toutes les valeurs sauf les vecteurs."
+"Calcule la magnitude d'une valeur. Cette fonction retourne la même valeur "
+"que abs() pour toutes les valeurs sauf les vecteurs."
 
 #: ../data/functions.xml.in.h:109
 msgid "Value"
@@ -3176,10 +3208,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:112
 msgid ""
-"Mulitplies each separate element in matrix 1 with the corresponding element in matrix 2."
+"Mulitplies each separate element in matrix 1 with the corresponding element "
+"in matrix 2."
 msgstr ""
-"Multiplie chaque élément séparé de la matrice 1 avec l'élément correspondant de la "
-"matrice 2."
+"Multiplie chaque élément séparé de la matrice 1 avec l'élément correspondant "
+"de la matrice 2."
 
 #: ../data/functions.xml.in.h:113
 msgid "Matrix 1"
@@ -3215,10 +3248,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:121
 msgid ""
-"Calculates a new matrix or vector using each separate element in matrix/vector 1 and the "
-"corresponding (in the same row and column) elements in matrix/vector 2. An unlimited "
-"number of matrices/vectors can be specified, with each matrix/vector argument followed by "
-"the corresponding variable used in the function argument."
+"Calculates a new matrix or vector using each separate element in matrix/"
+"vector 1 and the corresponding (in the same row and column) elements in "
+"matrix/vector 2. An unlimited number of matrices/vectors can be specified, "
+"with each matrix/vector argument followed by the corresponding variable used "
+"in the function argument."
 msgstr ""
 
 #: ../data/functions.xml.in.h:122
@@ -3259,13 +3293,13 @@ msgstr "Factorielle"
 
 #: ../data/functions.xml.in.h:131
 msgid ""
-"Calculates the factorial of an integer. Multiplies the argument with every lesser "
-"positive integer (n(n-1)(n-2)...2*1). Can also be entered as a number followed by one "
-"exclamation mark."
+"Calculates the factorial of an integer. Multiplies the argument with every "
+"lesser positive integer (n(n-1)(n-2)...2*1). Can also be entered as a number "
+"followed by one exclamation mark."
 msgstr ""
-"Calcule la factorielle d'un entier. Multiplie l'argument avec tous les entiers positifs "
-"plus petits : n(n-1)(n-2)...2*1. Peut aussi être entré comme un nombre suivi d'un point "
-"d'exclamation."
+"Calcule la factorielle d'un entier. Multiplie l'argument avec tous les "
+"entiers positifs plus petits : n(n-1)(n-2)...2*1. Peut aussi être entré "
+"comme un nombre suivi d'un point d'exclamation."
 
 #: ../data/functions.xml.in.h:132
 msgid "r:factorial"
@@ -3281,13 +3315,13 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:135
 msgid ""
-"Calculates the double factorial of an integer. Multiplies the argument with every second "
-"lesser positive integer (n(n-2)(n-4)...). Can also be entered as a number followed by two "
-"exclamation marks."
+"Calculates the double factorial of an integer. Multiplies the argument with "
+"every second lesser positive integer (n(n-2)(n-4)...). Can also be entered "
+"as a number followed by two exclamation marks."
 msgstr ""
-"Calcule la double factorielle d'un entier. Multiplie l'argument avec tous les deuxièmes "
-"entiers positifs plus petits : n(n-2)(n-4)... Peut aussi être entré comme un nombre suivi "
-"de deux points d'exclamation."
+"Calcule la double factorielle d'un entier. Multiplie l'argument avec tous "
+"les deuxièmes entiers positifs plus petits : n(n-2)(n-4)... Peut aussi être "
+"entré comme un nombre suivi de deux points d'exclamation."
 
 #: ../data/functions.xml.in.h:136
 msgid "Multifactorial"
@@ -3299,13 +3333,13 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:138
 msgid ""
-"Calculates the multifactorial of an integer. Multiplies the argument with every x lesser "
-"positive integer (n(n-x)(n-2x)...). Can also be entered as a number followed by three or "
-"more exclamation marks."
+"Calculates the multifactorial of an integer. Multiplies the argument with "
+"every x lesser positive integer (n(n-x)(n-2x)...). Can also be entered as a "
+"number followed by three or more exclamation marks."
 msgstr ""
-"Calcule la multifactorielle d'un entier. Multiplie l'argument avec tous les entiers "
-"positifs plus petits placés tous les x (n(n-x)(n-2x)...). Peut aussi être entré comme un "
-"nombre suivi de trois points d'exclamation ou plus."
+"Calcule la multifactorielle d'un entier. Multiplie l'argument avec tous les "
+"entiers positifs plus petits placés tous les x (n(n-x)(n-2x)...). Peut aussi "
+"être entré comme un nombre suivi de trois points d'exclamation ou plus."
 
 #: ../data/functions.xml.in.h:139
 msgid "Binomial Coefficient"
@@ -3325,11 +3359,13 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:143
 msgid ""
-"Calculates the hyperfactorial of an integer. Multiplies the argument raised by itself "
-"with every lesser positive integer raised by themselves (1^1 * 2^2 ... n^n)."
+"Calculates the hyperfactorial of an integer. Multiplies the argument raised "
+"by itself with every lesser positive integer raised by themselves (1^1 * "
+"2^2 ... n^n)."
 msgstr ""
-"Calcule l'hyperfactorielle d'un entier. Multiplie l'argument élevé à lui-même avec tous "
-"les entiers positifs plus petits élevés à eux-mêmes (1^1 * 2^2 ... n^n)."
+"Calcule l'hyperfactorielle d'un entier. Multiplie l'argument élevé à lui-"
+"même avec tous les entiers positifs plus petits élevés à eux-mêmes (1^1 * "
+"2^2 ... n^n)."
 
 #: ../data/functions.xml.in.h:144
 msgid "Superfactorial"
@@ -3341,11 +3377,13 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:146
 msgid ""
-"Calculates the superfactorial of an integer. Multiplies the factorial of the argument "
-"with the factorial of every lesser positive integer (1! * 2! ... n!)."
+"Calculates the superfactorial of an integer. Multiplies the factorial of the "
+"argument with the factorial of every lesser positive integer (1! * 2! ... "
+"n!)."
 msgstr ""
-"Calcule la superfactorielle d'un entier. Multiplie la factorielle de l'argument avec la "
-"factorielle de tous les entiers positifs plus petits (1! * 2! ... n!)."
+"Calcule la superfactorielle d'un entier. Multiplie la factorielle de "
+"l'argument avec la factorielle de tous les entiers positifs plus petits (1! "
+"* 2! ... n!)."
 
 #: ../data/functions.xml.in.h:147
 msgid "Permutations (Variations)"
@@ -3357,15 +3395,17 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:149
 msgid ""
-"Returns the number of possible arrangements of an ordered list with a number of objects "
-"to choose from and a list size. If there are three objects (1, 2 and 3) that is put in a "
-"list with two positions, the alternatives are [1, 2], [2, 1], [1, 3], [3, 1], [2, 3] and "
-"[3, 2], and thus the number of permutations is 6."
+"Returns the number of possible arrangements of an ordered list with a number "
+"of objects to choose from and a list size. If there are three objects (1, 2 "
+"and 3) that is put in a list with two positions, the alternatives are [1, "
+"2], [2, 1], [1, 3], [3, 1], [2, 3] and [3, 2], and thus the number of "
+"permutations is 6."
 msgstr ""
-"Retourne le nombre d'arrangements possibles d'une liste ordonnée avec un nombre d'objets "
-"à choisir et une taille de liste. Si il y a trois objets (1, 2 et 3) qui sont mis dans "
-"une liste à deux positions, les alternatives sont [1, 2], [2, 1], [1, 3], [3, 1], [2, 3] "
-"et [3, 2], et le nombre de permutations est donc 6."
+"Retourne le nombre d'arrangements possibles d'une liste ordonnée avec un "
+"nombre d'objets à choisir et une taille de liste. Si il y a trois objets (1, "
+"2 et 3) qui sont mis dans une liste à deux positions, les alternatives sont "
+"[1, 2], [2, 1], [1, 3], [3, 1], [2, 3] et [3, 2], et le nombre de "
+"permutations est donc 6."
 
 #: ../data/functions.xml.in.h:150
 msgid "Objects"
@@ -3385,15 +3425,15 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:154
 msgid ""
-"Returns the number of possible arrangements of an unordered list with a number of objects "
-"to choose from and a list size. If there are three objects (1, 2 and 3) that is put in a "
-"list with place for two, the alternatives are [1, 2], [1, 3], and [2, 3], and thus the "
-"number of combinations is 3."
+"Returns the number of possible arrangements of an unordered list with a "
+"number of objects to choose from and a list size. If there are three objects "
+"(1, 2 and 3) that is put in a list with place for two, the alternatives are "
+"[1, 2], [1, 3], and [2, 3], and thus the number of combinations is 3."
 msgstr ""
-"Retourne le nombre d'arrangements possibles d'une liste non ordonnée avec un nombre "
-"d'objets à choisir et une taille de liste. S'il y a trois objets (1,2 et 3) qui sont mis "
-"dans une liste à deux positions, les alternatives sont [1, 2], [1, 3], et [2, 3], et le "
-"nombre de combinaisons est donc 3."
+"Retourne le nombre d'arrangements possibles d'une liste non ordonnée avec un "
+"nombre d'objets à choisir et une taille de liste. S'il y a trois objets (1,2 "
+"et 3) qui sont mis dans une liste à deux positions, les alternatives sont "
+"[1, 2], [1, 3], et [2, 3], et le nombre de combinaisons est donc 3."
 
 #: ../data/functions.xml.in.h:155
 msgid "Derangements"
@@ -3405,15 +3445,15 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:157
 msgid ""
-"Returns the number of possible rearrangements of an ordered list, of a certain size, "
-"where none of the objects are on their original position. If the original list is [1, 2, "
-"3], the possible derangements are [2, 3, 1] and [3, 1, 2], and thus the number of "
-"derangements is 2."
+"Returns the number of possible rearrangements of an ordered list, of a "
+"certain size, where none of the objects are on their original position. If "
+"the original list is [1, 2, 3], the possible derangements are [2, 3, 1] and "
+"[3, 1, 2], and thus the number of derangements is 2."
 msgstr ""
-"Retourne le nombre de réarrangements possibles d'une liste non ordonnée, d'une certaine "
-"taille, où aucun des objets n'est à sa position initiale. Si la liste de départ est [1, "
-"2, 3], les réarrangements possibles sont [2, 3, 1] et [3, 1, 2]; le nombre de "
-"réarrangements est donc 2."
+"Retourne le nombre de réarrangements possibles d'une liste non ordonnée, "
+"d'une certaine taille, où aucun des objets n'est à sa position initiale. Si "
+"la liste de départ est [1, 2, 3], les réarrangements possibles sont [2, 3, "
+"1] et [3, 1, 2]; le nombre de réarrangements est donc 2."
 
 #: ../data/functions.xml.in.h:158
 msgid "Number of elements"
@@ -3641,7 +3681,7 @@ msgid "Greatest Common Divisor"
 msgstr "Plus grand diviseur commun"
 
 #: ../data/functions.xml.in.h:215
-msgid "r:gcd"
+msgid "rc:gcd,c:GCD"
 msgstr ""
 
 #: ../data/functions.xml.in.h:216
@@ -3665,7 +3705,9 @@ msgid "Bernoulli Number/Polynomial"
 msgstr ""
 
 #: ../data/functions.xml.in.h:221
-msgid "Returns the nth Bernoulli number or polynomial (if the second argument is non-zero)."
+msgid ""
+"Returns the nth Bernoulli number or polynomial (if the second argument is "
+"non-zero)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:222
@@ -3681,7 +3723,9 @@ msgid "Euler's Totient Function"
 msgstr ""
 
 #: ../data/functions.xml.in.h:225
-msgid "Counts the positive integers up to a given integer n that are relatively prime to n."
+msgid ""
+"Counts the positive integers up to a given integer n that are relatively "
+"prime to n."
 msgstr ""
 
 #: ../data/functions.xml.in.h:226
@@ -3718,11 +3762,12 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:234
 msgid ""
-"Round to nearest integer or decimal. If the second argument is zero, the value is rounded "
-"towards the nearest integer, otherwise the value is rounded to the corresponding number "
-"of digits to the right (if positive) or left (if negative) of the decimal point. If the "
-"third argument is true, halfway numbers are rounded toward the nearest even integer/"
-"digit, otherwise away from zero."
+"Round to nearest integer or decimal. If the second argument is zero, the "
+"value is rounded towards the nearest integer, otherwise the value is rounded "
+"to the corresponding number of digits to the right (if positive) or left (if "
+"negative) of the decimal point. If the third argument is true, halfway "
+"numbers are rounded toward the nearest even integer/digit, otherwise away "
+"from zero."
 msgstr ""
 
 #: ../data/functions.xml.in.h:235
@@ -3787,23 +3832,26 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:250
 msgid ""
-"Returns a value from an expression using the specified number base (radix). For bases "
-"between -62 and 62 full mathematical expressions (including operators and functions) are "
-"supported, while for other bases the specified expression is converted to a single number."
-"&#10;&#10;Bases ≤ 36 uses digits 0-9 and A-Z (case insensitive).&#10;&#10;Bases between "
-"37 and 62 uses case sensitive letters (0-9, A-Z, a-z) as digits ('z' equals 61).&#10;&#10;"
-"Bases over 62 use Unicode characters as digits, with the character code as value (e.g. "
-"'0' equals 48). Escaped characters are in this case supported (e.g. '\\0' = 0, '\\523' = "
-"523, '\\x7f' = 127).&#10;&#10;Negative bases use the same digits as the corresponding "
-"positive bases and the digits used for non-integer bases are determined by rounding the "
-"base away from zero. Bases that are not real numbers by default uses digits 0-9 and A-Z."
-"&#10;&#10;The set of digits used can be selected using the third argument (defaults to 0 "
-"for automatic selection). Set it to 1 for digits 0-9 and A-Z, 2 for 0-9, A-Z and a-z, 3 "
-"for Unicode digits, and 4 for phonewords (e.g. ABC=2, CDE=3, etc.), or enter a text "
-"string with all digits placed in ascending order (e.g. \"0123456789\") and optionally "
-"separated by semicolon (to enable multple equivalent digits, e.g. \"0;aA1;bB2;cC3\"). "
-"When the set of digits is manually selected, the specified expression is always converted "
-"to a single number."
+"Returns a value from an expression using the specified number base (radix). "
+"For bases between -62 and 62 full mathematical expressions (including "
+"operators and functions) are supported, while for other bases the specified "
+"expression is converted to a single number.&#10;&#10;Bases ≤ 36 uses digits "
+"0-9 and A-Z (case insensitive).&#10;&#10;Bases between 37 and 62 uses case "
+"sensitive letters (0-9, A-Z, a-z) as digits ('z' equals 61).&#10;&#10;Bases "
+"over 62 use Unicode characters as digits, with the character code as value "
+"(e.g. '0' equals 48). Escaped characters are in this case supported (e.g. "
+"'\\0' = 0, '\\523' = 523, '\\x7f' = 127).&#10;&#10;Negative bases use the "
+"same digits as the corresponding positive bases and the digits used for non-"
+"integer bases are determined by rounding the base away from zero. Bases that "
+"are not real numbers by default uses digits 0-9 and A-Z.&#10;&#10;The set of "
+"digits used can be selected using the third argument (defaults to 0 for "
+"automatic selection). Set it to 1 for digits 0-9 and A-Z, 2 for 0-9, A-Z and "
+"a-z, 3 for Unicode digits, and 4 for phonewords (e.g. ABC=2, CDE=3, etc.), "
+"or enter a text string with all digits placed in ascending order (e.g. "
+"\"0123456789\") and optionally separated by semicolon (to enable multple "
+"equivalent digits, e.g. \"0;aA1;bB2;cC3\"). When the set of digits is "
+"manually selected, the specified expression is always converted to a single "
+"number."
 msgstr ""
 
 #: ../data/functions.xml.in.h:251
@@ -3820,8 +3868,9 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:254
 msgid ""
-"Returns a value from a binary expression. If two's complement is true, numbers beginning "
-"with '1' is interpreted as negative binary numbers using two's complement."
+"Returns a value from a binary expression. If two's complement is true, "
+"numbers beginning with '1' is interpreted as negative binary numbers using "
+"two's complement."
 msgstr ""
 
 #: ../data/functions.xml.in.h:255
@@ -3874,9 +3923,9 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:267
 msgid ""
-"Returns a value from a hexadecimal expression. If two's complement is true, numbers "
-"beginning with 8 or higher is interpreted as negative hexadecimal numbers using two's "
-"complement."
+"Returns a value from a hexadecimal expression. If two's complement is true, "
+"numbers beginning with 8 or higher is interpreted as negative hexadecimal "
+"numbers using two's complement."
 msgstr ""
 
 #: ../data/functions.xml.in.h:268
@@ -3893,8 +3942,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:271
 msgid ""
-"Returns a value from an expression in bijective base-26. Conversion in the opposite "
-"direction is also supported."
+"Returns a value from an expression in bijective base-26. Conversion in the "
+"opposite direction is also supported."
 msgstr ""
 
 #: ../data/functions.xml.in.h:272
@@ -4083,8 +4132,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:318
 msgid ""
-"Discontinuous function also known as \"unit step function\". Returns 0 if x &lt; 0, 1 if "
-"x &gt; 0, and 1/2 if x = 0."
+"Discontinuous function also known as \"unit step function\". Returns 0 if x "
+"&lt; 0, 1 if x &gt; 0, and 1/2 if x = 0."
 msgstr ""
 
 #: ../data/functions.xml.in.h:319
@@ -4177,7 +4226,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:341
 msgid ""
-"Returns the principal square root (for positive values the positive root is returned)."
+"Returns the principal square root (for positive values the positive root is "
+"returned)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:342
@@ -4202,8 +4252,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:347
 msgid ""
-"Returns the real root. For negative values the degree must be odd. Complex values are not "
-"allowed."
+"Returns the real root. For negative values the degree must be odd. Complex "
+"values are not allowed."
 msgstr ""
 
 #: ../data/functions.xml.in.h:348 ../data/units.xml.in.h:64
@@ -4252,8 +4302,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:359
 msgid ""
-"Returns the inverse function for mx*e^x as ln() does for e^x. Only the principal branch "
-"and real valued results are currently supported."
+"Returns the inverse function for mx*e^x as ln() does for e^x. Only the "
+"principal branch and real valued results are currently supported."
 msgstr ""
 
 #: ../data/functions.xml.in.h:360
@@ -4442,7 +4492,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:406
 msgid ""
-"Computes the principal value of the argument function applied to the complex number x+iy."
+"Computes the principal value of the argument function applied to the complex "
+"number x+iy."
 msgstr ""
 
 #: ../data/functions.xml.in.h:407
@@ -4591,10 +4642,10 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:443
 msgid ""
-"Reads a number in a IEEE 754 floating-point format. The number will be read as a binary "
-"number, unless it contains digits other than 1 or 0. If the third argument (exponent "
-"bits) is set to zero, the standard number of exponent bits will be used (e.g. 8 for 32-"
-"bit format)."
+"Reads a number in a IEEE 754 floating-point format. The number will be read "
+"as a binary number, unless it contains digits other than 1 or 0. If the "
+"third argument (exponent bits) is set to zero, the standard number of "
+"exponent bits will be used (e.g. 8 for 32-bit format)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:444
@@ -4619,9 +4670,10 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:449
 msgid ""
-"Converts a value to a number in a IEEE 754 floating-point format and returns the number "
-"corresponding to the binary representation. If the third argument (exponent bits) is set "
-"to zero, the standard number of exponent bits will be used (e.g. 8 for 32-bit format)."
+"Converts a value to a number in a IEEE 754 floating-point format and returns "
+"the number corresponding to the binary representation. If the third argument "
+"(exponent bits) is set to zero, the standard number of exponent bits will be "
+"used (e.g. 8 for 32-bit format)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:450
@@ -4634,10 +4686,10 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:452
 msgid ""
-"Calculates the error (the difference between the original and the converted value) when "
-"converting a value to a IEEE 754 floating-point format. If the third argument (exponent "
-"bits) is set to zero, the standard number of exponent bits will be used (e.g. 8 for 32-"
-"bit format)."
+"Calculates the error (the difference between the original and the converted "
+"value) when converting a value to a IEEE 754 floating-point format. If the "
+"third argument (exponent bits) is set to zero, the standard number of "
+"exponent bits will be used (e.g. 8 for 32-bit format)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:453
@@ -4650,9 +4702,10 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:455
 msgid ""
-"Converts a value to a number in a IEEE 754 floating-point format and returns sign, "
-"exponent, and significand in vector. If the third argument (exponent bits) is set to "
-"zero, the standard number of exponent bits will be used (e.g. 8 for 32-bit format)."
+"Converts a value to a number in a IEEE 754 floating-point format and returns "
+"sign, exponent, and significand in vector. If the third argument (exponent "
+"bits) is set to zero, the standard number of exponent bits will be used (e."
+"g. 8 for 32-bit format)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:456
@@ -4665,9 +4718,9 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:458
 msgid ""
-"Returns the closest value that can be represented by a IEEE 754 floating-point format. If "
-"the third argument (exponent bits) is set to zero, the standard number of exponent bits "
-"will be used (e.g. 8 for 32-bit format)."
+"Returns the closest value that can be represented by a IEEE 754 floating-"
+"point format. If the third argument (exponent bits) is set to zero, the "
+"standard number of exponent bits will be used (e.g. 8 for 32-bit format)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:459
@@ -4696,15 +4749,17 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:465
 msgid ""
-"Calculates the Body Mass Index. The resulting BMI-value is sometimes interpreted as "
-"follows (although varies with age, sex, etc.):&#10;&#10;Underweight &lt; 18.5&#10;Normal "
-"weight 18.5-25&#10;Overweight 25-30&#10;Obesity &gt; 30&#10;&#10;Note that you must use "
-"units for weight (ex. 59kg) and length (ex. 174cm)."
+"Calculates the Body Mass Index. The resulting BMI-value is sometimes "
+"interpreted as follows (although varies with age, sex, etc.):&#10;&#10;"
+"Underweight &lt; 18.5&#10;Normal weight 18.5-25&#10;Overweight 25-30&#10;"
+"Obesity &gt; 30&#10;&#10;Note that you must use units for weight (ex. 59kg) "
+"and length (ex. 174cm)."
 msgstr ""
-"Calcule l'Indice de Masse Corporelle. L'IMC est parfois interprété de la façon suivante "
-"(bien qu'il varie selon l'âge, le sexe, etc.) :&#10;&#10;Maigreur &lt; 18.5&#10;"
-"Corpulence normale 18.5-25&#10;Surpoids 25-30&#10;Obésité &gt; 30&#10;&#10;Notez que vous "
-"devez utiliser des unités pour la masse (p. ex. 59kg) et la taille (p. ex. 174cm)."
+"Calcule l'Indice de Masse Corporelle. L'IMC est parfois interprété de la "
+"façon suivante (bien qu'il varie selon l'âge, le sexe, etc.) :&#10;&#10;"
+"Maigreur &lt; 18.5&#10;Corpulence normale 18.5-25&#10;Surpoids 25-30&#10;"
+"Obésité &gt; 30&#10;&#10;Notez que vous devez utiliser des unités pour la "
+"masse (p. ex. 59kg) et la taille (p. ex. 174cm)."
 
 #: ../data/functions.xml.in.h:466
 msgid "Weight"
@@ -4724,10 +4779,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:470
 msgid ""
-"Calculates RAID array disk capacity usable for data storage. If the combination of number "
-"of disks and RAID level is invalid, zero is returned. Supported RAID levels are 0, 1, 2, "
-"3, 4, 5, 6, 1+0/10, 0+1, 5+0/50, 6+0/60, and 1+6. Stripes are optional and only used for "
-"nested RAID levels (except 1+0)."
+"Calculates RAID array disk capacity usable for data storage. If the "
+"combination of number of disks and RAID level is invalid, zero is returned. "
+"Supported RAID levels are 0, 1, 2, 3, 4, 5, 6, 1+0/10, 0+1, 5+0/50, 6+0/60, "
+"and 1+6. Stripes are optional and only used for nested RAID levels (except "
+"1+0)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:471
@@ -4756,13 +4812,14 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:477
 msgid ""
-"Returns the estimated distance between the nearest and the farthest objects that are in "
-"acceptably sharp focus in a photo. Enter focal length (e.g. 50 mm) and distance (e.g. 5 "
-"m) with units, and f-stop without unit (2.8, 4.0, 5.6, etc.). Specify either a cicle of "
-"confusion diameter limit (e.g. 0.05 mm) or the sensor size of the camera - 0=\"35mm\", 1="
-"\"APS-H\", 2=\"APS-CN\" (Nikon, Pentax, Sony), 3=\"APS-C\" (Canon), 4=\"4/3\" (Fourt "
-"Thirds System), or 5='1\"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based on "
-"d/1500."
+"Returns the estimated distance between the nearest and the farthest objects "
+"that are in acceptably sharp focus in a photo. Enter focal length (e.g. 50 "
+"mm) and distance (e.g. 5 m) with units, and f-stop without unit (2.8, 4.0, "
+"5.6, etc.). Specify either a cicle of confusion diameter limit (e.g. 0.05 "
+"mm) or the sensor size of the camera - 0=\"35mm\", 1=\"APS-H\", 2=\"APS-CN"
+"\" (Nikon, Pentax, Sony), 3=\"APS-C\" (Canon), 4=\"4/3\" (Fourt Thirds "
+"System), or 5='1\"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based "
+"on d/1500."
 msgstr ""
 
 #: ../data/functions.xml.in.h:478
@@ -4791,8 +4848,9 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:484
 msgid ""
-"For gauges larger than 0000 (4/0), please use negative values (00=-1, 000=-2, 0000=-3, "
-"00000=-4, etc). For conversion to AWG, use an equation (e.g. awg(x) = 20 mm^2)."
+"For gauges larger than 0000 (4/0), please use negative values (00=-1, "
+"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e."
+"g. awg(x) = 20 mm^2)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:485
@@ -4805,8 +4863,9 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:487
 msgid ""
-"For gauges larger than 0000 (4/0), please use negative values (00=-1, 000=-2, 0000=-3, "
-"00000=-4, etc). For conversion to AWG, use an equation (e.g. awgd(x) = 5 mm)."
+"For gauges larger than 0000 (4/0), please use negative values (00=-1, "
+"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e."
+"g. awgd(x) = 5 mm)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:488
@@ -4953,11 +5012,12 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:525
 msgid ""
-"Generates a pseudo-random number. Returns a real number between 0 and 1, if ceil is zero "
-"(default), or an integer between 1 and (including) ceil."
+"Generates a pseudo-random number. Returns a real number between 0 and 1, if "
+"ceil is zero (default), or an integer between 1 and (including) ceil."
 msgstr ""
-"Génère un nombre pseudo-aléatoire. Retourne un nombre réel entre 0 et 1, si le plafond "
-"est zéro (valeur par défaut), ou un entier entre 1 et le plafond (inclusivement)."
+"Génère un nombre pseudo-aléatoire. Retourne un nombre réel entre 0 et 1, si "
+"le plafond est zéro (valeur par défaut), ou un entier entre 1 et le plafond "
+"(inclusivement)."
 
 #: ../data/functions.xml.in.h:526
 msgid "Ceil"
@@ -5249,8 +5309,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:598
 msgid ""
-"Returns the probability mass or cumulative distribution function of the binomial "
-"distribution."
+"Returns the probability mass or cumulative distribution function of the "
+"binomial distribution."
 msgstr ""
 
 #: ../data/functions.xml.in.h:599
@@ -5279,11 +5339,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:605
 msgid ""
-"Returns the probability density or cumulative distribution function of the exponential "
-"distribution."
+"Returns the probability density or cumulative distribution function of the "
+"exponential distribution."
 msgstr ""
-"Retourne la densité de probabilité p(x) au x choisi pour une distribution de Pareto avec "
-"l'exposant et l'échelle. (utilise Gnumeric)"
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: ../data/functions.xml.in.h:606
 msgid "Logistic Distribution"
@@ -5295,8 +5355,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:608
 msgid ""
-"Returns the probability density p(x) at x for a logistic distribution with scale "
-"parameter. (from Gnumeric)"
+"Returns the probability density p(x) at x for a logistic distribution with "
+"scale parameter. (from Gnumeric)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:609
@@ -5313,11 +5373,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:612
 msgid ""
-"Returns the probability density or cumulative distribution function of a normal "
-"distribution."
+"Returns the probability density or cumulative distribution function of a "
+"normal distribution."
 msgstr ""
-"Retourne la densité de probabilité p(x) au x choisi pour une distribution de Pareto avec "
-"l'exposant et l'échelle. (utilise Gnumeric)"
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: ../data/functions.xml.in.h:613
 msgid "Pareto Distribution"
@@ -5329,11 +5389,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:615
 msgid ""
-"Returns the probability density p(x) at x for a Pareto distribution with exponent and "
-"scale. (from Gnumeric)"
+"Returns the probability density p(x) at x for a Pareto distribution with "
+"exponent and scale. (from Gnumeric)"
 msgstr ""
-"Retourne la densité de probabilité p(x) au x choisi pour une distribution de Pareto avec "
-"l'exposant et l'échelle. (utilise Gnumeric)"
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: ../data/functions.xml.in.h:616
 msgid "Poisson Distribution"
@@ -5344,7 +5404,9 @@ msgid "r:poisson"
 msgstr ""
 
 #: ../data/functions.xml.in.h:618
-msgid "Returns the probability mass or cumulative distribution of the Poisson distribution."
+msgid ""
+"Returns the probability mass or cumulative distribution of the Poisson "
+"distribution."
 msgstr ""
 
 #: ../data/functions.xml.in.h:619
@@ -5361,11 +5423,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:622
 msgid ""
-"Returns the probability density p(x) at x for a Rayleigh distribution with scale "
-"parameter sigma. (from Gnumeric)"
+"Returns the probability density p(x) at x for a Rayleigh distribution with "
+"scale parameter sigma. (from Gnumeric)"
 msgstr ""
-"Retourne la densité de probabilité p(x) au x choisi pour une distribution de Rayleigh "
-"avec le paramètre d'échelle sigma. (utilise Gnumeric)"
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Rayleigh avec le paramètre d'échelle sigma. (utilise Gnumeric)"
 
 #: ../data/functions.xml.in.h:623
 msgid "Rayleigh Tail Distribution"
@@ -5377,8 +5439,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:625
 msgid ""
-"Returns the probability density p(x) at x for a Rayleigh tail distribution with scale "
-"parameter sigma and a lower limit. (from Gnumeric)"
+"Returns the probability density p(x) at x for a Rayleigh tail distribution "
+"with scale parameter sigma and a lower limit. (from Gnumeric)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:626 ../data/variables.xml.in.h:205
@@ -5395,10 +5457,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:629
 msgid ""
-"Returns a date. Available calendars gregorian (1), hebrew (2), islamic (3), persian (4), "
-"indian (5), chinese (6), julian (7), milankovic (8), coptic (9), ethiopian (10), egyptian "
-"(11). The Chinese year uses an epoch of 2697 BEC and chinese leap months are indicated by "
-"adding 12 to the month number (e.g. leap month 4 = 16)."
+"Returns a date. Available calendars gregorian (1), hebrew (2), islamic (3), "
+"persian (4), indian (5), chinese (6), julian (7), milankovic (8), coptic "
+"(9), ethiopian (10), egyptian (11). The Chinese year uses an epoch of 2697 "
+"BEC and chinese leap months are indicated by adding 12 to the month number "
+"(e.g. leap month 4 = 16)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:630
@@ -5447,13 +5510,14 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:641
 msgid ""
-"Returns the number of days between two dates.&#10;&#10;Basis is the type of day counting "
-"you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 "
-"or 4: European 30/360."
+"Returns the number of days between two dates.&#10;&#10;Basis is the type of "
+"day counting you want to use: 0: US 30/360, 1: real days (default), 2: real "
+"days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"Retourne le nombre de jours entre deux dates.&#10;&#10;La base est la manière de compter "
-"les jours que vous souhaitez utiliser : 0 : US 30/360, 1 : jours réels (par défaut), 2 : "
-"jours réels/360, 3 : jours réels/365 ou 4 : Européenne 30/360."
+"Retourne le nombre de jours entre deux dates.&#10;&#10;La base est la "
+"manière de compter les jours que vous souhaitez utiliser : 0 : US 30/360, "
+"1 : jours réels (par défaut), 2 : jours réels/360, 3 : jours réels/365 ou "
+"4 : Européenne 30/360."
 
 #: ../data/functions.xml.in.h:642
 msgid "First date"
@@ -5481,14 +5545,14 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:648
 msgid ""
-"Returns the number of years (fractional) between two dates.&#10;&#10;Basis is the type of "
-"day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: "
-"real days/365 or 4: European 30/360."
+"Returns the number of years (fractional) between two dates.&#10;&#10;Basis "
+"is the type of day counting you want to use: 0: US 30/360, 1: real days "
+"(default), 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"Retourne le nombre d'années (sous forme de fraction) entre deux dates.&#10;&#10;La base "
-"est la manière de compter les jours que vous souhaitez utiliser : 0 : US 30/360, 1 : "
-"jours réels (par défaut), 2 : jours réels/360, 3 : jours réels/365 ou 4 : Européenne "
-"30/360."
+"Retourne le nombre d'années (sous forme de fraction) entre deux dates.&#10;"
+"&#10;La base est la manière de compter les jours que vous souhaitez "
+"utiliser : 0 : US 30/360, 1 : jours réels (par défaut), 2 : jours réels/360, "
+"3 : jours réels/365 ou 4 : Européenne 30/360."
 
 #: ../data/functions.xml.in.h:649
 msgid "Week of Year"
@@ -5576,8 +5640,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:670
 msgid ""
-"Returns the local date and time represented by the specified Unix timestamp (seconds, "
-"excluding leap seconds, since 1970-01-01). Supports time units."
+"Returns the local date and time represented by the specified Unix timestamp "
+"(seconds, excluding leap seconds, since 1970-01-01). Supports time units."
 msgstr ""
 
 #: ../data/functions.xml.in.h:671
@@ -5630,8 +5694,9 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:683
 msgid ""
-"Adds a time value to a date. The value can be positive or negative, but must use a unit "
-"based on seconds (such as day and year). Fractions of days are truncated."
+"Adds a time value to a date. The value can be positive or negative, but must "
+"use a unit based on seconds (such as day and year). Fractions of days are "
+"truncated."
 msgstr ""
 
 #: ../data/functions.xml.in.h:684 ../data/units.xml.in.h:135
@@ -5648,9 +5713,9 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:687
 msgid ""
-"Returns the lunar phase, as a number between 0 and 1, for the specified date. This value "
-"corrresponds to an angle between 0 and 360 degrees. 0 represents new moon, 0.5 full moon, "
-"and 0.25 and 0.75 quarter moons."
+"Returns the lunar phase, as a number between 0 and 1, for the specified "
+"date. This value corrresponds to an angle between 0 and 360 degrees. 0 "
+"represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons."
 msgstr ""
 
 #: ../data/functions.xml.in.h:688
@@ -5663,11 +5728,12 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:690
 msgid ""
-"Returns the date when the specified lunar phase occurs. The function searches forward "
-"beginning at the specified date. The lunar phase are specified as a number between 0 and "
-"1, where 0 represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons. Angle "
-"values are also allowed (e.g. π rad = 180° which corresponds to a value of 0.5). Values "
-"above 1, without unit, are interpreted as degrees."
+"Returns the date when the specified lunar phase occurs. The function "
+"searches forward beginning at the specified date. The lunar phase are "
+"specified as a number between 0 and 1, where 0 represents new moon, 0.5 full "
+"moon, and 0.25 and 0.75 quarter moons. Angle values are also allowed (e.g. π "
+"rad = 180° which corresponds to a value of 0.5). Values above 1, without "
+"unit, are interpreted as degrees."
 msgstr ""
 
 #: ../data/functions.xml.in.h:691
@@ -5712,9 +5778,10 @@ msgstr "Permanent"
 
 #: ../data/functions.xml.in.h:701
 msgid ""
-"Plots one or more expressions or vectors. Use a vector for the first argument to plot "
-"multiple series. Only the first argument is used for vector series. It is also possible "
-"to plot a matrix where each row is a pair of x and y values."
+"Plots one or more expressions or vectors. Use a vector for the first "
+"argument to plot multiple series. Only the first argument is used for vector "
+"series. It is also possible to plot a matrix where each row is a pair of x "
+"and y values."
 msgstr ""
 
 #: ../data/functions.xml.in.h:702
@@ -5727,9 +5794,10 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:704
 msgid ""
-"Encodes a Unicode character or text string using the selected format. Supported encodings "
-"are UTF-8 (0), UTF-16 (1), and UTF-32 (2). If the third argument is true, each separate "
-"code unit (8, 16, or 32 bits depending on encoding) is placed in a vector."
+"Encodes a Unicode character or text string using the selected format. "
+"Supported encodings are UTF-8 (0), UTF-16 (1), and UTF-32 (2). If the third "
+"argument is true, each separate code unit (8, 16, or 32 bits depending on "
+"encoding) is placed in a vector."
 msgstr ""
 
 #: ../data/functions.xml.in.h:705
@@ -5790,11 +5858,12 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:719
 msgid ""
-"Replaces a certain value in an expression with a new value. The expression is calculated "
-"before the replacement if the fourth argument is true."
+"Replaces a certain value in an expression with a new value. The expression "
+"is calculated before the replacement if the fourth argument is true."
 msgstr ""
-"Remplace une certaine valeur dans une expression par une nouvelle valeur. L'expression "
-"est calculée avant le remplacement si le quatrième argument est vrai."
+"Remplace une certaine valeur dans une expression par une nouvelle valeur. "
+"L'expression est calculée avant le remplacement si le quatrième argument est "
+"vrai."
 
 #: ../data/functions.xml.in.h:720
 msgid "Expression"
@@ -5822,9 +5891,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:726
 msgid ""
-"Removes all units from an expression. The expression is calculated before the removal."
+"Removes all units from an expression. The expression is calculated before "
+"the removal."
 msgstr ""
-"Enlève toutes les unités de l'expression. L'expression est calculée avant la suppression."
+"Enlève toutes les unités de l'expression. L'expression est calculée avant la "
+"suppression."
 
 #: ../data/functions.xml.in.h:727
 msgid "Process Vector Elements"
@@ -6124,8 +6195,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:802
 msgid ""
-"Tests a condition and returns a value depending on the result. Vectors can be used for "
-"argument 1 and 2, instead of nested functions."
+"Tests a condition and returns a value depending on the result. Vectors can "
+"be used for argument 1 and 2, instead of nested functions."
 msgstr "Teste une condition et retourne une valeur en fonction du résultat."
 
 #: ../data/functions.xml.in.h:803
@@ -6170,9 +6241,9 @@ msgstr "Décalage de bits"
 
 #: ../data/functions.xml.in.h:813
 msgid ""
-"Applies logical or arithmetic bitwise shift to an integer. The second argument specifies "
-"the number of steps that each binary bit is shifted to the left (use negative values for "
-"right shift)."
+"Applies logical or arithmetic bitwise shift to an integer. The second "
+"argument specifies the number of steps that each binary bit is shifted to "
+"the left (use negative values for right shift)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:814
@@ -6193,9 +6264,9 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:818
 msgid ""
-"Applies bitwise NOT to an integer of specified bit width and signedness (use 1 for signed "
-"and 0 for unsigned). If bit width is zero, the smallest necessary number of bits (of 8, "
-"16, 32, 64, 128, ...) will be used."
+"Applies bitwise NOT to an integer of specified bit width and signedness (use "
+"1 for signed and 0 for unsigned). If bit width is zero, the smallest "
+"necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
 
 #: ../data/functions.xml.in.h:819
@@ -6216,11 +6287,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:823
 msgid ""
-"Applies circular bitwise shift to an integer of specified bit width and signedness (use 1 "
-"for signed and 0 for unsigned). The second argument specifies the number of steps that "
-"each binary bit is shifted to the left (use negative values for right shift). If bit "
-"width is zero, the smallest necessary number of bits (of 8, 16, 32, 64, 128, ...) will be "
-"used."
+"Applies circular bitwise shift to an integer of specified bit width and "
+"signedness (use 1 for signed and 0 for unsigned). The second argument "
+"specifies the number of steps that each binary bit is shifted to the left "
+"(use negative values for right shift). If bit width is zero, the smallest "
+"necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
 
 #: ../data/functions.xml.in.h:824
@@ -6241,11 +6312,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:828
 msgid ""
-"Corresponds to the summation symbol. Adds terms for each x ranging from the lower to the "
-"upper limit."
+"Corresponds to the summation symbol. Adds terms for each x ranging from the "
+"lower to the upper limit."
 msgstr ""
-"Correspond au symbole de la somme. Ajoute les termes pour chaque x allant de la limite "
-"inférieure à la limite supérieure."
+"Correspond au symbole de la somme. Ajoute les termes pour chaque x allant de "
+"la limite inférieure à la limite supérieure."
 
 #: ../data/functions.xml.in.h:829
 msgid "Term expression"
@@ -6269,11 +6340,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:834
 msgid ""
-"Corresponds to the product symbol. Multiplies factors for each x ranging from the lower "
-"to the upper limit."
+"Corresponds to the product symbol. Multiplies factors for each x ranging "
+"from the lower to the upper limit."
 msgstr ""
-"Correspond au symbole du produit. Multiplie les facteurs pour chaque x allant de la la "
-"limite inférieure à la limite supérieure."
+"Correspond au symbole du produit. Multiplie les facteurs pour chaque x "
+"allant de la la limite inférieure à la limite supérieure."
 
 #: ../data/functions.xml.in.h:835
 msgid "Factor expression"
@@ -6329,9 +6400,9 @@ msgstr "Condition initiale : argument valeur (x)"
 
 #: ../data/functions.xml.in.h:848
 msgid ""
-"Solves a differential equation and returns the value of y(x). The derivative in the "
-"equation should be in the format diff(y, x). Only first-order differential equations are "
-"currently supported."
+"Solves a differential equation and returns the value of y(x). The derivative "
+"in the equation should be in the format diff(y, x). Only first-order "
+"differential equations are currently supported."
 msgstr ""
 
 #: ../data/functions.xml.in.h:849
@@ -6344,8 +6415,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:851
 msgid ""
-"Solves two equations with two unknown variables. Returns the value of the first variable."
-msgstr "Résout deux équations à deux inconnues. Retourne la valeur de la première variable."
+"Solves two equations with two unknown variables. Returns the value of the "
+"first variable."
+msgstr ""
+"Résout deux équations à deux inconnues. Retourne la valeur de la première "
+"variable."
 
 #: ../data/functions.xml.in.h:852
 msgid "Equation 1"
@@ -6372,8 +6446,11 @@ msgid "r:linearfunction"
 msgstr ""
 
 #: ../data/functions.xml.in.h:858
-msgid "Finds the linear function for the straight line between two distinct points."
-msgstr "Trouve la fonction affine pour la ligne droite passant entre deux points distincts."
+msgid ""
+"Finds the linear function for the straight line between two distinct points."
+msgstr ""
+"Trouve la fonction affine pour la ligne droite passant entre deux points "
+"distincts."
 
 #: ../data/functions.xml.in.h:859
 msgid "x1"
@@ -6457,8 +6534,9 @@ msgstr "Limite"
 
 #: ../data/functions.xml.in.h:879
 msgid ""
-"Returns the two-sided limit of the function if direction is zero, limit from left (below) "
-"if direction is -1, or limit from right (above) if direction is +1."
+"Returns the two-sided limit of the function if direction is zero, limit from "
+"left (below) if direction is -1, or limit from right (above) if direction is "
+"+1."
 msgstr ""
 
 #: ../data/functions.xml.in.h:880
@@ -6851,11 +6929,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:977
 msgid ""
-"Calculates the volume of a 3-dimensional shape standing on a rectangular base and "
-"terminating in a point at the top."
+"Calculates the volume of a 3-dimensional shape standing on a rectangular "
+"base and terminating in a point at the top."
 msgstr ""
-"Calcule le volume d'une forme à trois dimensions basée sur un rectangle et se finissant "
-"en un point au sommet."
+"Calcule le volume d'une forme à trois dimensions basée sur un rectangle et "
+"se finissant en un point au sommet."
 
 #: ../data/functions.xml.in.h:978
 msgid "Length of base"
@@ -6927,11 +7005,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:995
 msgid ""
-"Calculates the area of a four-sided figure whose opposite sides are both parallel and "
-"equal in length."
+"Calculates the area of a four-sided figure whose opposite sides are both "
+"parallel and equal in length."
 msgstr ""
-"Calcule l'aire d'un parallélogramme (quadrilatère dont les côtés opposés sont parallèles "
-"et de même longueur)."
+"Calcule l'aire d'un parallélogramme (quadrilatère dont les côtés opposés "
+"sont parallèles et de même longueur)."
 
 #: ../data/functions.xml.in.h:996
 msgid "Parallelogram Perimeter"
@@ -6943,11 +7021,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:998
 msgid ""
-"Calculates the perimeter of a four-sided figure whose opposite sides are both parallel "
-"and equal in length."
+"Calculates the perimeter of a four-sided figure whose opposite sides are "
+"both parallel and equal in length."
 msgstr ""
-"Calcule le périmètre d'un parallélogramme (quadrilatère dont les côtés opposés sont "
-"parallèles et de même longueur)."
+"Calcule le périmètre d'un parallélogramme (quadrilatère dont les côtés "
+"opposés sont parallèles et de même longueur)."
 
 #: ../data/functions.xml.in.h:999
 msgid "Trapezoid"
@@ -6963,7 +7041,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1002
 msgid "Calculates the area of a four-sided figure with two parallel sides."
-msgstr "Calcule l'aire d'un trapèze (quadrilatère dont deux côtés sont parallèles)."
+msgstr ""
+"Calcule l'aire d'un trapèze (quadrilatère dont deux côtés sont parallèles)."
 
 #: ../data/functions.xml.in.h:1003
 msgid "Economics"
@@ -6983,15 +7062,17 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1007
 msgid ""
-"Calculates the demand elasticity. Also works for supply elasticity, income elasticity, "
-"cross-price elasticity, etc. Just replace demand with supply, or price with income...&#10;"
-"&#10;eg. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for "
-"the function \"Q = 100 - x^2\" where x is the default price variable."
+"Calculates the demand elasticity. Also works for supply elasticity, income "
+"elasticity, cross-price elasticity, etc. Just replace demand with supply, or "
+"price with income...&#10;&#10;eg. elasticity(100-x^2, 3) calculates the "
+"demand elasticity when the price is 3 for the function \"Q = 100 - x^2\" "
+"where x is the default price variable."
 msgstr ""
-"Calcule l'élasticité de la demande. Fonctionne également pour l'élasticité de l'offre, de "
-"revenu, de prix croisés, etc. Remplacez simplement demande par offre, ou prix par "
-"revenu...&#10;&#10;Ex. elasticity(100-x^2, 3) calcule l'élasticité de la demande quand le "
-"prix est 3 pour la fonction \"Q = 100 - x^2\" où x est la variable de prix par défaut."
+"Calcule l'élasticité de la demande. Fonctionne également pour l'élasticité "
+"de l'offre, de revenu, de prix croisés, etc. Remplacez simplement demande "
+"par offre, ou prix par revenu...&#10;&#10;Ex. elasticity(100-x^2, 3) calcule "
+"l'élasticité de la demande quand le prix est 3 pour la fonction \"Q = 100 - "
+"x^2\" où x est la variable de prix par défaut."
 
 #: ../data/functions.xml.in.h:1008
 msgid "Demand function"
@@ -7015,18 +7096,19 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1013
 msgid ""
-"Calculates the sum-of-years digits depreciation for an asset based on its cost, salvage "
-"value, anticipated life, and a particular period. This method accelerates the rate of the "
-"depreciation, so that more depreciation expense occurs in earlier periods than in later "
-"ones. The depreciable cost is the actual cost minus the salvage value. The useful life is "
-"the number of periods (typically years) over which the asset is depreciated."
+"Calculates the sum-of-years digits depreciation for an asset based on its "
+"cost, salvage value, anticipated life, and a particular period. This method "
+"accelerates the rate of the depreciation, so that more depreciation expense "
+"occurs in earlier periods than in later ones. The depreciable cost is the "
+"actual cost minus the salvage value. The useful life is the number of "
+"periods (typically years) over which the asset is depreciated."
 msgstr ""
-"Calcule la dépréciation d'un actif d'après son coût, sa valeur résiduelle, sa durée "
-"prévue et une période particulière. Cette méthode accélère le taux de dépréciation, ainsi "
-"les frais de dépréciation sont plus importants dans les premières périodes que dans les "
-"dernières. Le coût amortissable est la valeur réelle moins la valeur résiduelle. La vie "
-"utile est le nombre de périodes (typiquement années) pendant lesquelles les actifs sont "
-"dépréciés."
+"Calcule la dépréciation d'un actif d'après son coût, sa valeur résiduelle, "
+"sa durée prévue et une période particulière. Cette méthode accélère le taux "
+"de dépréciation, ainsi les frais de dépréciation sont plus importants dans "
+"les premières périodes que dans les dernières. Le coût amortissable est la "
+"valeur réelle moins la valeur résiduelle. La vie utile est le nombre de "
+"périodes (typiquement années) pendant lesquelles les actifs sont dépréciés."
 
 #: ../data/functions.xml.in.h:1014
 msgid "Cost"
@@ -7054,15 +7136,16 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1020
 msgid ""
-"Determines the straight line depreciation of an asset for a single period.&#10;&#10;Cost "
-"is the amount you paid for the asset. Salvage is the value of the asset at the end of the "
-"period. Life is the number of periods over which the asset is depreciated. SLN divides "
-"the cost evenly over the life of an asset."
+"Determines the straight line depreciation of an asset for a single period."
+"&#10;&#10;Cost is the amount you paid for the asset. Salvage is the value of "
+"the asset at the end of the period. Life is the number of periods over which "
+"the asset is depreciated. SLN divides the cost evenly over the life of an "
+"asset."
 msgstr ""
-"Calcule la dépréciation linéaire d'un actif pour une période.&#10;&#10;Le coût est le "
-"montant pour lequel vous avez payé pour l'actif. La valeur résiduelle est la valeur de "
-"l'actif à la fin de la période. La vie est le nombre de périodes pendant lesquelles "
-"l'actif est déprécié."
+"Calcule la dépréciation linéaire d'un actif pour une période.&#10;&#10;Le "
+"coût est le montant pour lequel vous avez payé pour l'actif. La valeur "
+"résiduelle est la valeur de l'actif à la fin de la période. La vie est le "
+"nombre de périodes pendant lesquelles l'actif est déprécié."
 
 #: ../data/functions.xml.in.h:1021
 msgid "Present Value"
@@ -7074,13 +7157,13 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1023
 msgid ""
-"Returns the present value of an investment.&#10;&#10;If type = 1 then the payment is made "
-"at the beginning of the period, If type = 0 (or omitted) it is made at the end of each "
-"period."
+"Returns the present value of an investment.&#10;&#10;If type = 1 then the "
+"payment is made at the beginning of the period, If type = 0 (or omitted) it "
+"is made at the end of each period."
 msgstr ""
-"Retourne la valeur actuelle d'un investissement.&#10;&#10;Si type = 1 alors le paiement "
-"est fait au début de la période, si type = 0 (ou omis) il est fait à la fin de chaque "
-"période."
+"Retourne la valeur actuelle d'un investissement.&#10;&#10;Si type = 1 alors "
+"le paiement est fait au début de la période, si type = 0 (ou omis) il est "
+"fait à la fin de chaque période."
 
 #: ../data/functions.xml.in.h:1024
 msgid "Interest rate"
@@ -7112,11 +7195,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1031
 msgid ""
-"Calculates the nominal interest rate from a given effective interest rate compounded at "
-"given intervals."
+"Calculates the nominal interest rate from a given effective interest rate "
+"compounded at given intervals."
 msgstr ""
-"Calcule le taux d'intérêt nominal pour un taux d'intérêt effectif donné composé à des "
-"intervalles donnés."
+"Calcule le taux d'intérêt nominal pour un taux d'intérêt effectif donné "
+"composé à des intervalles donnés."
 
 #: ../data/functions.xml.in.h:1032
 msgid "Effective interest rate"
@@ -7228,17 +7311,20 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1059
 msgid ""
-"Returns the amount of payment (negative) each period for a loan based on a constant "
-"interest rate and constant payments (each payment is equal amount).&#10;&#10;If type = 1 "
-"then the payment is made at the beginning of the period, If type = 0 (or omitted) it is "
-"made at the end of each period.&#10;&#10;Note that the interest rate here refers to the "
-"rate for each period and if you calculate with an annual rate, each period will be "
-"interpreted as a whole year. To get monthly payments divide the annual interest rate by "
-"12 and enter the total number of months (12 times number of year) in the periods field."
+"Returns the amount of payment (negative) each period for a loan based on a "
+"constant interest rate and constant payments (each payment is equal amount)."
+"&#10;&#10;If type = 1 then the payment is made at the beginning of the "
+"period, If type = 0 (or omitted) it is made at the end of each period.&#10;"
+"&#10;Note that the interest rate here refers to the rate for each period and "
+"if you calculate with an annual rate, each period will be interpreted as a "
+"whole year. To get monthly payments divide the annual interest rate by 12 "
+"and enter the total number of months (12 times number of year) in the "
+"periods field."
 msgstr ""
-"Retourne le montant des versements d'un emprunt basé sur un taux d'intérêt constant (tous "
-"les versements sont égaux).&#10;&#10;Si type = 1 alors le paiement est réalisé en début "
-"de période, si type = 0 (ou omis) il est fait en fin de chaque période."
+"Retourne le montant des versements d'un emprunt basé sur un taux d'intérêt "
+"constant (tous les versements sont égaux).&#10;&#10;Si type = 1 alors le "
+"paiement est réalisé en début de période, si type = 0 (ou omis) il est fait "
+"en fin de chaque période."
 
 #: ../data/functions.xml.in.h:1060
 msgid "Rate"
@@ -7254,13 +7340,15 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1063
 msgid ""
-"Calculates number of periods of an investment based on periodic constant payments and a "
-"constant interest rate.&#10;&#10;Type defines the due date. 1 for payment at the "
-"beginning of a period and 0 (default) for payment at the end of a period."
+"Calculates number of periods of an investment based on periodic constant "
+"payments and a constant interest rate.&#10;&#10;Type defines the due date. 1 "
+"for payment at the beginning of a period and 0 (default) for payment at the "
+"end of a period."
 msgstr ""
-"Calcule le nombre de périodes d'un investissement reposant sur des paiements périodiques "
-"constants et un taux d'intérêt constant..&#10;&#10;Le type définit l'échéance. 1 pour "
-"paiement en début de période et 0 (par défaut) pour paiement en fin de période."
+"Calcule le nombre de périodes d'un investissement reposant sur des paiements "
+"périodiques constants et un taux d'intérêt constant..&#10;&#10;Le type "
+"définit l'échéance. 1 pour paiement en début de période et 0 (par défaut) "
+"pour paiement en fin de période."
 
 #: ../data/functions.xml.in.h:1064
 msgid "Periods for investment to attain desired value"
@@ -7271,10 +7359,12 @@ msgid "r:g_duration"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1066
-msgid "Returns the number of periods needed for an investment to attain a desired value."
+msgid ""
+"Returns the number of periods needed for an investment to attain a desired "
+"value."
 msgstr ""
-"Retourne le nombre de périodes nécessaires à un investissement pour atteindre un valeur "
-"désirée."
+"Retourne le nombre de périodes nécessaires à un investissement pour "
+"atteindre un valeur désirée."
 
 #: ../data/functions.xml.in.h:1067
 msgid "Payment of an annuity going towards principal (PPMT)"
@@ -7286,13 +7376,13 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1069
 msgid ""
-"Calculates the amount of a payment of an annuity going towards principal.&#10;&#10;Type "
-"defines the due date. 1 for payment at the beginning of a period and 0 (default) for "
-"payment at the end of a period."
+"Calculates the amount of a payment of an annuity going towards principal."
+"&#10;&#10;Type defines the due date. 1 for payment at the beginning of a "
+"period and 0 (default) for payment at the end of a period."
 msgstr ""
-"Calcule le montant des versements d'une rente orientée vers le capital.&#10;&#10;Le type "
-"définit la date de paiement. 1 pour des paiements en début de période et 0 (par défaut) "
-"pour des paiements en fin de période."
+"Calcule le montant des versements d'une rente orientée vers le capital.&#10;"
+"&#10;Le type définit la date de paiement. 1 pour des paiements en début de "
+"période et 0 (par défaut) pour des paiements en fin de période."
 
 #: ../data/functions.xml.in.h:1070
 msgid "Desired future value"
@@ -7324,14 +7414,15 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1077
 msgid ""
-"Computes the future value of an investment. This is based on periodic, constant payments "
-"and a constant interest rate.&#10;&#10;If type = 1 then the payment is made at the "
-"beginning of the period, If type = 0 (or omitted) it is made at the end of each period."
+"Computes the future value of an investment. This is based on periodic, "
+"constant payments and a constant interest rate.&#10;&#10;If type = 1 then "
+"the payment is made at the beginning of the period, If type = 0 (or omitted) "
+"it is made at the end of each period."
 msgstr ""
-"Calcule la valeur future d'un investissement. Cela est basé sur des paiements constants "
-"périodiques et un taux d'intérêt constant.&#10;&#10;Si le type = 1 alors le paiement est "
-"effectué au début de chaque période; si le type = 0 (ou omis), il a lieu à la fin de "
-"chaque période."
+"Calcule la valeur future d'un investissement. Cela est basé sur des "
+"paiements constants périodiques et un taux d'intérêt constant.&#10;&#10;Si "
+"le type = 1 alors le paiement est effectué au début de chaque période; si le "
+"type = 0 (ou omis), il a lieu à la fin de chaque période."
 
 #: ../data/functions.xml.in.h:1078
 msgid "Return on continuously compounded interest"
@@ -7343,11 +7434,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1080
 msgid ""
-"Calculates the return on continuously compounded interest, given the principal, nominal "
-"rate and time in years."
+"Calculates the return on continuously compounded interest, given the "
+"principal, nominal rate and time in years."
 msgstr ""
-"Calcule le retour sur intérêt composé continument, étant donnés le taux nominal principal "
-"et la durée en années."
+"Calcule le retour sur intérêt composé continument, étant donnés le taux "
+"nominal principal et la durée en années."
 
 #: ../data/functions.xml.in.h:1081
 msgid "Principal"
@@ -7363,8 +7454,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1084
 msgid ""
-"Returns the value of an investment, given the principal, nominal interest rate, "
-"compounding frequency and time."
+"Returns the value of an investment, given the principal, nominal interest "
+"rate, compounding frequency and time."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1085
@@ -7381,13 +7472,13 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1088
 msgid ""
-"Calculates the amount of a payment of an annuity going towards interest.&#10;&#10;Type "
-"defines the due date. 1 for payment at the beginning of a period and 0 (default) for "
-"payment at the end of a period."
+"Calculates the amount of a payment of an annuity going towards interest.&#10;"
+"&#10;Type defines the due date. 1 for payment at the beginning of a period "
+"and 0 (default) for payment at the end of a period."
 msgstr ""
-"Calcule le montant des versements d'une rente orientée vers les intérêts.&#10;&#10;Le "
-"type définit la date de paiement. 1 pour des paiements en début de période et 0 (par "
-"défaut) pour des paiements en fin de période."
+"Calcule le montant des versements d'une rente orientée vers les intérêts."
+"&#10;&#10;Le type définit la date de paiement. 1 pour des paiements en début "
+"de période et 0 (par défaut) pour des paiements en fin de période."
 
 #: ../data/functions.xml.in.h:1089
 msgid "Interest rate for a fully invested security"
@@ -7399,14 +7490,14 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1091
 msgid ""
-"Returns the interest rate for a fully invested security.&#10;&#10;Basis is the type of "
-"day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: "
-"real days/365 or 4: European 30/360."
+"Returns the interest rate for a fully invested security.&#10;&#10;Basis is "
+"the type of day counting you want to use: 0: US 30/360 (default), 1: real "
+"days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"Retourne le taux d'intérêt pour une obligation entièrement investie. La base est les "
-"manière de compter les jours que vous souhaitez utiliser : 0 : US 30/360 (par défaut), "
-"1 : jours réels, 2: jours réels/360, 3: jours réels/365 or 4: Européenne 30/360.La date "
-"de contrat doit être antérieure à l'échéance."
+"Retourne le taux d'intérêt pour une obligation entièrement investie. La base "
+"est les manière de compter les jours que vous souhaitez utiliser : 0 : US "
+"30/360 (par défaut), 1 : jours réels, 2: jours réels/360, 3: jours réels/365 "
+"or 4: Européenne 30/360.La date de contrat doit être antérieure à l'échéance."
 
 #: ../data/functions.xml.in.h:1092
 msgid "Investment"
@@ -7425,8 +7516,11 @@ msgid "r:dollarfr"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1096
-msgid "Converts a decimal dollar price into a dollar price expressed as a fraction."
-msgstr "Convertit un prix en dollars décimaux en un prix en dollars sous forme de fraction."
+msgid ""
+"Converts a decimal dollar price into a dollar price expressed as a fraction."
+msgstr ""
+"Convertit un prix en dollars décimaux en un prix en dollars sous forme de "
+"fraction."
 
 #: ../data/functions.xml.in.h:1097
 msgid "Decimal dollar"
@@ -7446,9 +7540,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1101
 msgid ""
-"Converts a dollar price expressed as a fraction into a dollar price expressed as a "
-"decimal number."
-msgstr "Convertit en prix en dollars sous forme de fraction en un prix en dollars décimaux."
+"Converts a dollar price expressed as a fraction into a dollar price "
+"expressed as a decimal number."
+msgstr ""
+"Convertit en prix en dollars sous forme de fraction en un prix en dollars "
+"décimaux."
 
 #: ../data/functions.xml.in.h:1102
 msgid "Fractional dollar"
@@ -7464,15 +7560,16 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1105
 msgid ""
-"Returns the amount received at the maturity date for an invested security.&#10;&#10;Basis "
-"is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: "
-"real days/360, 3: real days/365 or 4: European 30/360. The settlement date must be before "
-"maturity date."
+"Returns the amount received at the maturity date for an invested security."
+"&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 "
+"(default), 1: real days, 2: real days/360, 3: real days/365 or 4: European "
+"30/360. The settlement date must be before maturity date."
 msgstr ""
-"Retourne le montant reçu à échéance pour un investissement en obligation. La base est les "
-"manière de compter les jours que vous souhaitez utiliser : 0 : US 30/360 (par défaut), "
-"1 : jours réels, 2: jours réels/360, 3: jours réels/365 or 4: Européenne 30/360.La date "
-"de contrat doit être antérieure à l'échéance."
+"Retourne le montant reçu à échéance pour un investissement en obligation. La "
+"base est les manière de compter les jours que vous souhaitez utiliser : 0 : "
+"US 30/360 (par défaut), 1 : jours réels, 2: jours réels/360, 3: jours "
+"réels/365 or 4: Européenne 30/360.La date de contrat doit être antérieure à "
+"l'échéance."
 
 #: ../data/functions.xml.in.h:1106
 msgid "Discount rate for a security"
@@ -7484,9 +7581,9 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1108
 msgid ""
-"Returns the discount rate for a security.&#10;&#10;Basis is the type of day counting you "
-"want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or "
-"4: European 30/360."
+"Returns the discount rate for a security.&#10;&#10;Basis is the type of day "
+"counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
+"days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1109
@@ -7499,14 +7596,15 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1111
 msgid ""
-"Returns the accrued interest for a security which pays interest at maturity date.&#10;"
-"&#10;Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real "
-"days, 2: real days/360, 3: real days/365 or 4: European 30/360."
+"Returns the accrued interest for a security which pays interest at maturity "
+"date.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
+"30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: "
+"European 30/360."
 msgstr ""
-"Retourne les intérêts cumulés d'une obligation dont le versement à lieu à échéance. La "
-"base est les manière de compter les jours que vous souhaitez utiliser : 0 : US 30/360 "
-"(par défaut), 1 : jours réels, 2: jours réels/360, 3: jours réels/365 or 4: Européenne "
-"30/360."
+"Retourne les intérêts cumulés d'une obligation dont le versement à lieu à "
+"échéance. La base est les manière de compter les jours que vous souhaitez "
+"utiliser : 0 : US 30/360 (par défaut), 1 : jours réels, 2: jours réels/360, "
+"3: jours réels/365 or 4: Européenne 30/360."
 
 #: ../data/functions.xml.in.h:1112
 msgid "Issue date"
@@ -7530,16 +7628,16 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1117
 msgid ""
-"Returns accrued interest for a security which pays periodic interest.&#10;&#10;Allowed "
-"frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is the type of day "
-"counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real "
-"days/365 or 4: European 30/360."
+"Returns accrued interest for a security which pays periodic interest.&#10;"
+"&#10;Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. "
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"Retourne les intérêts cumulés pour une obligation dont les versements sont périodiques."
-"&#10;&#10;Les fréquences autorisées sont 1 - annuelle, 2 - semestrielle ou 4 - "
-"trimestrielle. La base est les manière de compter les jours que vous souhaitez utiliser : "
-"0 : US 30/360 (par défaut), 1 : jours réels, 2: jours réels/360, 3: jours réels/365 or 4: "
-"Européenne 30/360."
+"Retourne les intérêts cumulés pour une obligation dont les versements sont "
+"périodiques.&#10;&#10;Les fréquences autorisées sont 1 - annuelle, 2 - "
+"semestrielle ou 4 - trimestrielle. La base est les manière de compter les "
+"jours que vous souhaitez utiliser : 0 : US 30/360 (par défaut), 1 : jours "
+"réels, 2: jours réels/360, 3: jours réels/365 or 4: Européenne 30/360."
 
 #: ../data/functions.xml.in.h:1118
 msgid "First interest"
@@ -7559,14 +7657,16 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1122
 msgid ""
-"Returns the number of coupons to be paid between the settlement and the maturity.&#10;"
-"&#10;Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real "
-"days, 2: real days/360, 3: real days/365 or 4: European 30/360."
+"Returns the number of coupons to be paid between the settlement and the "
+"maturity.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
+"30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: "
+"European 30/360."
 msgstr ""
-"Retourne le nombre de coupons à payer entre la date de transaction et l'échéance. La base "
-"est les manière de compter les jours que vous souhaitez utiliser : 0 : US 30/360 (par "
-"défaut), 1 : jours réels, 2: jours réels/360, 3: jours réels/365 or 4: Européenne 30/360."
-"La date de contrat doit être antérieure à l'échéance."
+"Retourne le nombre de coupons à payer entre la date de transaction et "
+"l'échéance. La base est les manière de compter les jours que vous souhaitez "
+"utiliser : 0 : US 30/360 (par défaut), 1 : jours réels, 2: jours réels/360, "
+"3: jours réels/365 or 4: Européenne 30/360.La date de contrat doit être "
+"antérieure à l'échéance."
 
 #: ../data/functions.xml.in.h:1123
 msgid "Price per $100 face value of a discounted security"
@@ -7578,15 +7678,16 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1125
 msgid ""
-"Calculates and returns the price per $100 face value of a discounted security. The "
-"security does not pay interest at maturity.&#10;&#10;Basis is the type of day counting "
-"you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 "
-"or 4: European 30/360."
+"Calculates and returns the price per $100 face value of a discounted "
+"security. The security does not pay interest at maturity.&#10;&#10;Basis is "
+"the type of day counting you want to use: 0: US 30/360 (default), 1: real "
+"days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"Calcule et retourne le prix par bon d'obligation de 100$ de valeur faciale. L'obligation "
-"ne paie pas d'intérêt à maturité.&#10;&#10;La base est la manière de compter les jours "
-"que vous souhaitez utiliser :  0: US 30/360 (par défaut), 1: jours réels, 2: jours "
-"réels/360, 3: jours réels/365 or 4: Européenne 30/360."
+"Calcule et retourne le prix par bon d'obligation de 100$ de valeur faciale. "
+"L'obligation ne paie pas d'intérêt à maturité.&#10;&#10;La base est la "
+"manière de compter les jours que vous souhaitez utiliser :  0: US 30/360 "
+"(par défaut), 1: jours réels, 2: jours réels/360, 3: jours réels/365 or 4: "
+"Européenne 30/360."
 
 #: ../data/functions.xml.in.h:1126
 msgid "Discount"
@@ -7602,14 +7703,16 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1129
 msgid ""
-"Calculates and returns the price per $100 face value of a security. The security pays "
-"interest at maturity.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
-"30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
+"Calculates and returns the price per $100 face value of a security. The "
+"security pays interest at maturity.&#10;&#10;Basis is the type of day "
+"counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
+"days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"Calcule et retourne le prix par obligation de 100$ de valeur faciale. L'obligation paie "
-"des intérêts à maturité.&#10;&#10;La base est la manière de compter les jours que vous "
-"souhaitez utiliser :  0: US 30/360 (par défaut), 1: jours réels, 2: jours réels/360, 3: "
-"jours réels/365 or 4: Européenne 30/360."
+"Calcule et retourne le prix par obligation de 100$ de valeur faciale. "
+"L'obligation paie des intérêts à maturité.&#10;&#10;La base est la manière "
+"de compter les jours que vous souhaitez utiliser :  0: US 30/360 (par "
+"défaut), 1: jours réels, 2: jours réels/360, 3: jours réels/365 or 4: "
+"Européenne 30/360."
 
 #: ../data/functions.xml.in.h:1130
 msgid "Annual yield"
@@ -8180,7 +8283,7 @@ msgid "Pound"
 msgstr ""
 
 #: ../data/units.xml.in.h:102
-msgid "ar:lb,pound,p:pounds"
+msgid "ar:lb,aou:&#x2114;,pound,p:pounds"
 msgstr ""
 
 #: ../data/units.xml.in.h:103
@@ -8609,7 +8712,8 @@ msgid "Degree Celsius"
 msgstr "Degré Celsius"
 
 #: ../data/units.xml.in.h:218
-msgid "ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius,p:celsius,centigrade,p:centigrades"
+msgid ""
+"ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius,p:celsius,centigrade,p:centigrades"
 msgstr ""
 
 #: ../data/units.xml.in.h:219
@@ -8901,7 +9005,7 @@ msgid "Liter"
 msgstr "Litre"
 
 #: ../data/units.xml.in.h:291
-msgid "ar:L,a:l,liter,p:liters,litre,p:litres"
+msgid "ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
 msgstr ""
 
 #: ../data/units.xml.in.h:292
@@ -8973,7 +9077,7 @@ msgid "Cup (U.S.)"
 msgstr ""
 
 #: ../data/units.xml.in.h:309
-msgid "r:cup,p:cups"
+msgid "r-c:cup,p-c:cups"
 msgstr ""
 
 #: ../data/units.xml.in.h:310

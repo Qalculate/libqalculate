@@ -1,7 +1,22 @@
+2020-12-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Change keybinding for store command to Ctrl+A
+	* Apply standard terminal action for keybindings (Ctrl+A, Ctrl+E, Ctrl+F) if current input is not empty
+	* Ask for name if store command is used without argument
+
+2020-12-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix saving of local data objects
+	* Add Unicode symbols (not used by default) for Ångström, Kelvin, liter, and pound
+
 2020-12-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix set conv mixed in qalc
 	* Use x, y, z as function arguments if '\' is not found in function expression of qalc function command
+
+2020-12-12 Juan Carlos Alonso <me@jcalonso.com>
+
+	* Fix BYN exchange rate url
 
 2020-12-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -19,7 +34,7 @@
 
 2020-11-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Make all currency codes, except CUP and KGS, ecase insensitive
+	* Make all currency codes, except CUP and KGS, case insensitive
 	* Make cup unit (avoid conflict with Cuban pesos) and gcd() function (avoid conflict with gigacandela) case sensitive
 
 2020-11-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
