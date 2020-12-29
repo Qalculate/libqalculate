@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-19 15:38+0100\n"
+"POT-Creation-Date: 2020-12-22 12:46+0100\n"
 "PO-Revision-Date: 2007-08-04 23:40+0800\n"
 "Last-Translator: Roy Qu <royqh1979@gmail.com>\n"
 "Language-Team: Simplified Chinese\n"
@@ -26,7 +26,8 @@ msgid "European Euro"
 msgstr "欧元"
 
 #: ../data/currencies.xml.in.h:3
-msgid "ar:EUR,au:&#x20AC;,euro,p:euros"
+#, fuzzy
+msgid "a-cr:EUR,au:&#x20AC;,euro,p:euros"
 msgstr "a:EUR,au:&#x20AC;,欧元"
 
 #: ../data/currencies.xml.in.h:4
@@ -41,7 +42,8 @@ msgid "U.S. Dollar"
 msgstr "美元"
 
 #: ../data/currencies.xml.in.h:6
-msgid "a:$,ar:USD,dollar,p:dollars"
+#, fuzzy
+msgid "a:$,a-cr:USD,dollar,p:dollars"
 msgstr "a:$,a:USD,美元"
 
 #: ../data/currencies.xml.in.h:7
@@ -55,7 +57,8 @@ msgid "Japanese Yen"
 msgstr "日元"
 
 #: ../data/currencies.xml.in.h:9
-msgid "ar:JPY,au:&#xA5;,yen"
+#, fuzzy
+msgid "a-cr:JPY,au:&#xA5;,yen"
 msgstr "a:JPY,au:&#xA5;,日元"
 
 #: ../data/currencies.xml.in.h:10
@@ -67,7 +70,7 @@ msgid "Danish Krone"
 msgstr "丹麦Kroner"
 
 #: ../data/currencies.xml.in.h:12
-msgid "ar:DKK"
+msgid "a-cr:DKK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:13
@@ -79,8 +82,9 @@ msgid "British Pound"
 msgstr "英镑"
 
 #: ../data/currencies.xml.in.h:15
-msgid "ar:GBP,au:&#xA3;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:GBP,au:&#xA3;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:16
 msgid "United Kingdom"
@@ -91,7 +95,7 @@ msgid "Thai Baht"
 msgstr "泰国Bat"
 
 #: ../data/currencies.xml.in.h:18
-msgid "ar:THB"
+msgid "a-cr:THB"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:19
@@ -103,7 +107,7 @@ msgid "Swedish Krona"
 msgstr "瑞典克郎"
 
 #: ../data/currencies.xml.in.h:21
-msgid "ar:SEK"
+msgid "a-cr:SEK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:22
@@ -115,7 +119,7 @@ msgid "Swiss Franc"
 msgstr "瑞士法郎"
 
 #: ../data/currencies.xml.in.h:24
-msgid "ar:CHF"
+msgid "a-cr:CHF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:25
@@ -127,7 +131,7 @@ msgid "Norwegian Krone"
 msgstr "挪威Kroner"
 
 #: ../data/currencies.xml.in.h:27
-msgid "ar:NOK"
+msgid "a-cr:NOK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:28
@@ -139,7 +143,7 @@ msgid "Bulgarian Lev"
 msgstr "保加利亚列弗"
 
 #: ../data/currencies.xml.in.h:30
-msgid "lev,ar:BGN"
+msgid "lev,a-cr:BGN"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:31
@@ -152,7 +156,8 @@ msgid "Russian Ruble"
 msgstr "俄罗斯卢布"
 
 #: ../data/currencies.xml.in.h:33
-msgid "ar:RUB,au:&#x20BD;,ruble"
+#, fuzzy
+msgid "a-cr:RUB,au:&#x20BD;,ruble"
 msgstr "a:RUB,au:&#x20BD;,卢布"
 
 #: ../data/currencies.xml.in.h:34
@@ -165,8 +170,9 @@ msgid "Philippine Peso"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:36
-msgid "ar:PHP,au:&#x20B1;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:PHP,au:&#x20B1;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:37
 msgid "Philippines"
@@ -177,7 +183,7 @@ msgid "Malaysian Ringgit"
 msgstr "马来西亚林吉特"
 
 #: ../data/currencies.xml.in.h:39
-msgid "ar:MYR"
+msgid "a-cr:MYR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:40
@@ -190,7 +196,7 @@ msgid "Croatian Kuna"
 msgstr "克罗地亚"
 
 #: ../data/currencies.xml.in.h:42
-msgid "ar:HRK"
+msgid "a-cr:HRK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:43
@@ -203,7 +209,7 @@ msgid "Chinese Yuan Renminbi"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:45
-msgid "ar:CNY"
+msgid "a-cr:CNY"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:46
@@ -215,7 +221,8 @@ msgid "Indonesian Rupiah"
 msgstr "印尼卢比"
 
 #: ../data/currencies.xml.in.h:48
-msgid "ar:IDR,rupiah"
+#, fuzzy
+msgid "a-cr:IDR,rupiah"
 msgstr "a:IDR"
 
 #: ../data/currencies.xml.in.h:49
@@ -228,8 +235,9 @@ msgid "Czech Koruna"
 msgstr "捷克克朗"
 
 #: ../data/currencies.xml.in.h:51
-msgid "ar:CZK,au-c:K&#x10D;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:CZK,au-c:K&#x10D;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:52
 msgid "Czech Republic"
@@ -240,7 +248,7 @@ msgid "Hungarian Forint"
 msgstr "匈牙利福林"
 
 #: ../data/currencies.xml.in.h:54
-msgid "forint,ar:HUF"
+msgid "forint,a-cr:HUF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:55
@@ -253,7 +261,7 @@ msgstr "波兰兹罗提"
 
 #: ../data/currencies.xml.in.h:57
 #, fuzzy
-msgid "ar:PLN,au:z&#x0142;,zloty"
+msgid "a-cr:PLN,au:z&#x0142;,zloty"
 msgstr "a:ITL,au:&#x20A4;,里拉"
 
 #: ../data/currencies.xml.in.h:58
@@ -265,7 +273,7 @@ msgid "Romanian Leu"
 msgstr "罗马尼亚新Leu"
 
 #: ../data/currencies.xml.in.h:60
-msgid "ar:RON"
+msgid "a-cr:RON"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:61
@@ -278,8 +286,9 @@ msgid "Turkish New Lira"
 msgstr "土耳其新里拉"
 
 #: ../data/currencies.xml.in.h:63
-msgid "ar:TRY,au:&#x20BA;"
-msgstr ""
+#, fuzzy
+msgid "a-cr:TRY,au:&#x20BA;"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:64
 msgid "Turkey"
@@ -290,7 +299,7 @@ msgid "Australian Dollar"
 msgstr "澳大利亚元"
 
 #: ../data/currencies.xml.in.h:66
-msgid "ar:AUD"
+msgid "a-cr:AUD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:67
@@ -303,7 +312,7 @@ msgid "Canadian Dollar"
 msgstr "加拿大元"
 
 #: ../data/currencies.xml.in.h:69
-msgid "ar:CAD"
+msgid "a-cr:CAD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:70
@@ -315,7 +324,7 @@ msgid "Hong Kong Dollar"
 msgstr "港币"
 
 #: ../data/currencies.xml.in.h:72
-msgid "ar:HKD"
+msgid "a-cr:HKD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:73
@@ -323,7 +332,7 @@ msgid "New Zealand Dollar"
 msgstr "新西兰元"
 
 #: ../data/currencies.xml.in.h:74
-msgid "ar:NZD"
+msgid "a-cr:NZD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:75
@@ -336,7 +345,7 @@ msgid "Singapore Dollar"
 msgstr "新加坡元"
 
 #: ../data/currencies.xml.in.h:77
-msgid "ar:SGD"
+msgid "a-cr:SGD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:78
@@ -349,8 +358,9 @@ msgid "South Korean Won"
 msgstr "韩元"
 
 #: ../data/currencies.xml.in.h:80
-msgid "ar:KRW,au:&#x20A9;,won"
-msgstr ""
+#, fuzzy
+msgid "a-cr:KRW,au:&#x20A9;,won"
+msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:81
 #, fuzzy
@@ -362,7 +372,7 @@ msgid "South African Rand"
 msgstr "南非兰特"
 
 #: ../data/currencies.xml.in.h:83
-msgid "ar:ZAR"
+msgid "a-cr:ZAR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:84
@@ -375,8 +385,9 @@ msgid "Indian Rupee"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:86
-msgid "ar:INR,au:&#x20B9;,rupee"
-msgstr ""
+#, fuzzy
+msgid "a-cr:INR,au:&#x20B9;,rupee"
+msgstr "a:RUB,au:&#x20BD;,卢布"
 
 #: ../data/currencies.xml.in.h:87
 #, fuzzy
@@ -388,8 +399,9 @@ msgid "Israeli New Sheqel"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:89
-msgid "ar:ILS,au:&#x20AA;,sheqel"
-msgstr ""
+#, fuzzy
+msgid "a-cr:ILS,au:&#x20AA;,sheqel"
+msgstr "ar:ITL,au:&#x20A4;,里拉"
 
 #: ../data/currencies.xml.in.h:90
 msgid "Israel"
@@ -400,7 +412,7 @@ msgid "Mexican Peso"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:92
-msgid "ar:MXN"
+msgid "a-cr:MXN"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:93
@@ -412,7 +424,7 @@ msgid "Brazilian Real"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:95
-msgid "ar:BRL"
+msgid "a-cr:BRL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:96
@@ -424,7 +436,7 @@ msgid "Icelandic Krónur"
 msgstr "冰岛克朗"
 
 #: ../data/currencies.xml.in.h:98
-msgid "ar:ISK"
+msgid "a-cr:ISK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:99
@@ -436,7 +448,7 @@ msgid "Bitcoin"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:101
-msgid "ar:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins"
+msgid "a-cr:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:102
@@ -446,7 +458,7 @@ msgstr "奥地利先令"
 
 #: ../data/currencies.xml.in.h:103
 #, fuzzy
-msgid "ar:KES"
+msgid "a-cr:KES"
 msgstr "a:KRW"
 
 #: ../data/currencies.xml.in.h:104
@@ -459,7 +471,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:106
 #, fuzzy
-msgid "ar:AFN,aiu:&#x060B;"
+msgid "a-cr:AFN,aiu:&#x060B;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:107
@@ -472,7 +484,7 @@ msgid "Albanian Lek"
 msgstr "罗马尼亚新Leu"
 
 #: ../data/currencies.xml.in.h:109
-msgid "ar:ALL"
+msgid "a-cr:ALL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:110
@@ -485,7 +497,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:112
 #, fuzzy
-msgid "ar:DZD"
+msgid "a-cr:DZD"
 msgstr "a:DEM,马克"
 
 #: ../data/currencies.xml.in.h:113
@@ -498,7 +510,7 @@ msgid "Angolan Kwanza"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:115
-msgid "ar:AOA"
+msgid "a-cr:AOA"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:116
@@ -511,7 +523,7 @@ msgid "Eastern Caribbean Dollar"
 msgstr "澳大利亚元"
 
 #: ../data/currencies.xml.in.h:118
-msgid "ar:XCD"
+msgid "a-cr:XCD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:119
@@ -525,7 +537,7 @@ msgid "Argentine Peso"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:121
-msgid "ar:ARS"
+msgid "a-cr:ARS"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:122
@@ -538,7 +550,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:124
 #, fuzzy
-msgid "ar:AMD,au:&#x058F;"
+msgid "a-cr:AMD,au:&#x058F;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:125
@@ -551,7 +563,7 @@ msgid "Aruban Florin"
 msgstr "匈牙利福林"
 
 #: ../data/currencies.xml.in.h:127
-msgid "ar:AWG"
+msgid "a-cr:AWG"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:128
@@ -563,7 +575,7 @@ msgid "Netherlands Antillean Guilder"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:130
-msgid "ar:ANG"
+msgid "a-cr:ANG"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:131
@@ -576,7 +588,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:133
 #, fuzzy
-msgid "ar:AZN,au:&#x20BC;"
+msgid "a-cr:AZN,au:&#x20BC;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:134
@@ -589,7 +601,7 @@ msgid "Bahamian Dollar"
 msgstr "加拿大元"
 
 #: ../data/currencies.xml.in.h:136
-msgid "ar:BSD"
+msgid "a-cr:BSD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:137
@@ -601,7 +613,7 @@ msgid "Bahraini Dinar"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:139
-msgid "ar:BHD"
+msgid "a-cr:BHD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:140
@@ -615,7 +627,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:142
 #, fuzzy
-msgid "ar:BDT,au:&#x09F3;"
+msgid "a-cr:BDT,au:&#x09F3;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:143
@@ -628,7 +640,7 @@ msgid "Barbadian Dollar"
 msgstr "加拿大元"
 
 #: ../data/currencies.xml.in.h:145
-msgid "ar:BBD"
+msgid "a-cr:BBD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:146
@@ -641,7 +653,7 @@ msgid "Belarusian Ruble"
 msgstr "俄罗斯卢布"
 
 #: ../data/currencies.xml.in.h:148
-msgid "ar:BYN"
+msgid "a-cr:BYN"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:149
@@ -654,7 +666,7 @@ msgid "Belarusian Ruble p. (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:151
-msgid "ar:BYR"
+msgid "a-cr:BYR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:152
@@ -663,7 +675,7 @@ msgid "Belize Dollar"
 msgstr "新加坡元"
 
 #: ../data/currencies.xml.in.h:153
-msgid "ar:BZD"
+msgid "a-cr:BZD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:154
@@ -676,7 +688,7 @@ msgid "West African CFA Franc"
 msgstr "南非兰特"
 
 #: ../data/currencies.xml.in.h:156
-msgid "ar:XOF,a:CFA"
+msgid "a-cr:XOF,a:CFA"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:157
@@ -690,7 +702,7 @@ msgid "Bermudian Dollar"
 msgstr "加拿大元"
 
 #: ../data/currencies.xml.in.h:159
-msgid "ar:BMD"
+msgid "a-cr:BMD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:160
@@ -702,7 +714,7 @@ msgid "Bolivian Boliviano Bs"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:162
-msgid "ar:BOB"
+msgid "a-cr:BOB"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:163
@@ -714,7 +726,7 @@ msgid "Bosnia and Herzegovina Convertible Mark"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:165
-msgid "ar:BAM"
+msgid "a-cr:BAM"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:166
@@ -726,7 +738,7 @@ msgid "Botswana Pula"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:168
-msgid "ar:BWP"
+msgid "a-cr:BWP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:169
@@ -739,7 +751,7 @@ msgid "Brunei Dollar"
 msgstr "加拿大元"
 
 #: ../data/currencies.xml.in.h:171
-msgid "ar:BND"
+msgid "a-cr:BND"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:172
@@ -752,7 +764,7 @@ msgid "Burundian Franc"
 msgstr "比利时法郎"
 
 #: ../data/currencies.xml.in.h:174
-msgid "ar:BIF"
+msgid "a-cr:BIF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:175
@@ -765,7 +777,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:177
 #, fuzzy
-msgid "ar:KHR,aiu:&#x17DB;"
+msgid "a-cr:KHR,aiu:&#x17DB;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:178
@@ -777,7 +789,7 @@ msgid "Central African CFA Franc"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:180
-msgid "ar:XAF,a:FCFA"
+msgid "a-cr:XAF,a:FCFA"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:181
@@ -791,7 +803,7 @@ msgid "Cape Verdean Escudo"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:183
-msgid "ar:CVE"
+msgid "a-cr:CVE"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:184
@@ -805,7 +817,7 @@ msgstr "加拿大元"
 
 #: ../data/currencies.xml.in.h:186
 #, fuzzy
-msgid "ar:KYD"
+msgid "a-cr:KYD"
 msgstr "a:KRW"
 
 #: ../data/currencies.xml.in.h:187
@@ -817,7 +829,7 @@ msgid "Chilean Peso"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:189
-msgid "ar:CLP"
+msgid "a-cr:CLP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:190
@@ -830,7 +842,7 @@ msgid "Colombian Peso"
 msgstr "组合"
 
 #: ../data/currencies.xml.in.h:192
-msgid "ar:COP"
+msgid "a-cr:COP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:193
@@ -845,7 +857,7 @@ msgstr "比利时法郎"
 
 #: ../data/currencies.xml.in.h:195
 #, fuzzy
-msgid "ar:KMF"
+msgid "a-cr:KMF"
 msgstr "a:KRW"
 
 #: ../data/currencies.xml.in.h:196
@@ -857,7 +869,7 @@ msgid "Democratic Republic of the Congo (Congolese Franc)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:198
-msgid "ar:CDF"
+msgid "a-cr:CDF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:199
@@ -869,7 +881,7 @@ msgid "Costa Rican colón"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:201
-msgid "ar:CRC"
+msgid "a-cr:CRC"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:202
@@ -881,7 +893,7 @@ msgid "Cuban Peso"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:204
-msgid "ar:CUP"
+msgid "acr:CUP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:205
@@ -895,7 +907,7 @@ msgstr "比利时法郎"
 
 #: ../data/currencies.xml.in.h:207
 #, fuzzy
-msgid "ar:DJF"
+msgid "a-cr:DJF"
 msgstr "a:DEM,马克"
 
 #: ../data/currencies.xml.in.h:208
@@ -908,7 +920,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:210
 #, fuzzy
-msgid "ar:DOP"
+msgid "a-cr:DOP"
 msgstr "a:DEM,马克"
 
 #: ../data/currencies.xml.in.h:211
@@ -922,7 +934,7 @@ msgstr "塞浦路斯镑"
 
 #: ../data/currencies.xml.in.h:213
 #, fuzzy
-msgid "ar:EGP"
+msgid "a-cr:EGP"
 msgstr "a:EEK"
 
 #: ../data/currencies.xml.in.h:214
@@ -935,7 +947,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:216
 #, fuzzy
-msgid "ar:SVC"
+msgid "a-cr:SVC"
 msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:217
@@ -944,7 +956,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:218
 #, fuzzy
-msgid "ar:ERN"
+msgid "a-cr:ERN"
 msgstr "a:EEK"
 
 #: ../data/currencies.xml.in.h:219
@@ -957,7 +969,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:221
 #, fuzzy
-msgid "ar:ETB"
+msgid "a-cr:ETB"
 msgstr "a:EEK"
 
 #: ../data/currencies.xml.in.h:222
@@ -969,7 +981,7 @@ msgid "Falkland Islands Pound"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:224
-msgid "ar:FKP"
+msgid "a-cr:FKP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:225
@@ -982,7 +994,7 @@ msgid "Fijian Dollar"
 msgstr "加拿大元"
 
 #: ../data/currencies.xml.in.h:227
-msgid "ar:FJD"
+msgid "a-cr:FJD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:228
@@ -994,7 +1006,7 @@ msgid "CFP franc"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:230
-msgid "ar:XPF"
+msgid "a-cr:XPF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:231
@@ -1008,7 +1020,7 @@ msgstr "加拿大元"
 
 #: ../data/currencies.xml.in.h:233
 #, fuzzy
-msgid "ar:GMD"
+msgid "a-cr:GMD"
 msgstr "a:GRD"
 
 #: ../data/currencies.xml.in.h:234
@@ -1021,7 +1033,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:236
 #, fuzzy
-msgid "ar:GEL,au:&#x20BE;"
+msgid "a-cr:GEL,au:&#x20BE;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:237
@@ -1034,7 +1046,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:239
 #, fuzzy
-msgid "ar:GHS,au:&#x20B5;"
+msgid "a-cr:GHS,au:&#x20B5;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:240
@@ -1047,7 +1059,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:242
 #, fuzzy
-msgid "ar:GIP"
+msgid "a-cr:GIP"
 msgstr "a:GRD"
 
 #: ../data/currencies.xml.in.h:243
@@ -1060,7 +1072,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:245
 #, fuzzy
-msgid "ar:GTQ"
+msgid "a-cr:GTQ"
 msgstr "a:GRD"
 
 #: ../data/currencies.xml.in.h:246
@@ -1074,7 +1086,7 @@ msgstr "爱尔兰镑"
 
 #: ../data/currencies.xml.in.h:248
 #, fuzzy
-msgid "ar:GGP"
+msgid "a-cr:GGP"
 msgstr "a:GRD"
 
 #: ../data/currencies.xml.in.h:249
@@ -1088,7 +1100,7 @@ msgstr "比利时法郎"
 
 #: ../data/currencies.xml.in.h:251
 #, fuzzy
-msgid "ar:GNF"
+msgid "a-cr:GNF"
 msgstr "a:GRD"
 
 #: ../data/currencies.xml.in.h:252
@@ -1102,7 +1114,7 @@ msgstr "澳大利亚元"
 
 #: ../data/currencies.xml.in.h:254
 #, fuzzy
-msgid "ar:GYD"
+msgid "a-cr:GYD"
 msgstr "a:GRD"
 
 #: ../data/currencies.xml.in.h:255
@@ -1114,7 +1126,7 @@ msgid "Haitian Gourde"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:257
-msgid "ar:HTG"
+msgid "a-cr:HTG"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:258
@@ -1126,7 +1138,7 @@ msgid "Honduran Lempira"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:260
-msgid "ar:HNL"
+msgid "a-cr:HNL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:261
@@ -1140,7 +1152,7 @@ msgstr "意大利里拉"
 
 #: ../data/currencies.xml.in.h:263
 #, fuzzy
-msgid "ar:IRR,aiu:&#xFDFC;"
+msgid "a-cr:IRR,aiu:&#xFDFC;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:264
@@ -1152,7 +1164,7 @@ msgid "Iraqi Dinar"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:266
-msgid "ar:IQD"
+msgid "a-cr:IQD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:267
@@ -1165,7 +1177,7 @@ msgid "Jamaican Dollar"
 msgstr "加拿大元"
 
 #: ../data/currencies.xml.in.h:269
-msgid "ar:JMD"
+msgid "a-cr:JMD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:270
@@ -1177,7 +1189,7 @@ msgid "Jordanian Dinar"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:272
-msgid "ar:JOD"
+msgid "a-cr:JOD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:273
@@ -1190,7 +1202,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:275
 #, fuzzy
-msgid "ar:KZT,au:&#x20B8;"
+msgid "a-cr:KZT,au:&#x20B8;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:276
@@ -1204,7 +1216,7 @@ msgstr "韩元"
 
 #: ../data/currencies.xml.in.h:278
 #, fuzzy
-msgid "ar:KPW"
+msgid "a-cr:KPW"
 msgstr "a:KRW"
 
 #: ../data/currencies.xml.in.h:279
@@ -1218,7 +1230,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:281
 #, fuzzy
-msgid "ar:KWD"
+msgid "a-cr:KWD"
 msgstr "a:KRW"
 
 #: ../data/currencies.xml.in.h:282
@@ -1231,7 +1243,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:284
 #, fuzzy
-msgid "ar:KGS,au:&#x0441;"
+msgid "acr:KGS,au:&#x0441;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:285
@@ -1244,7 +1256,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:287
 #, fuzzy
-msgid "ar:LAK,au:&#x20AD;"
+msgid "a-cr:LAK,au:&#x20AD;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:288
@@ -1256,7 +1268,7 @@ msgid "Lebanese Pound"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:290
-msgid "ar:LBP"
+msgid "a-cr:LBP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:291
@@ -1268,7 +1280,7 @@ msgid "Lesotho Loti"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:293
-msgid "ar:LSL"
+msgid "a-cr:LSL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:294
@@ -1281,7 +1293,7 @@ msgid "Liberian Dollar"
 msgstr "澳大利亚元"
 
 #: ../data/currencies.xml.in.h:296
-msgid "ar:LRD"
+msgid "a-cr:LRD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:297
@@ -1293,7 +1305,7 @@ msgid "Libyan Dinar"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:299
-msgid "ar:LYD"
+msgid "a-cr:LYD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:300
@@ -1305,7 +1317,7 @@ msgid "Macanese Pataca"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:302
-msgid "ar:MOP"
+msgid "a-cr:MOP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:303
@@ -1317,7 +1329,7 @@ msgid "Macedonian Denar"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:305
-msgid "ar:MKD"
+msgid "a-cr:MKD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:306
@@ -1329,7 +1341,7 @@ msgid "Malagasy Ariary"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:308
-msgid "ar:MGA"
+msgid "a-cr:MGA"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:309
@@ -1341,7 +1353,7 @@ msgid "Malawian Kwacha"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:311
-msgid "ar:MWK"
+msgid "a-cr:MWK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:312
@@ -1353,7 +1365,7 @@ msgid "Maldivian Rufiyaa"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:314
-msgid "ar:MVR"
+msgid "a-cr:MVR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:315
@@ -1365,7 +1377,7 @@ msgid "Mauritanian Ouguiya (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:317
-msgid "ar:MRO"
+msgid "a-cr:MRO"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:318
@@ -1373,7 +1385,7 @@ msgid "Mauritian Rupee"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:319
-msgid "ar:MUR"
+msgid "a-cr:MUR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:320
@@ -1385,7 +1397,7 @@ msgid "Moldovan Leu"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:322
-msgid "ar:MDL"
+msgid "a-cr:MDL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:323
@@ -1398,7 +1410,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:325
 #, fuzzy
-msgid "ar:MNT,au:&#x20AE;"
+msgid "a-cr:MNT,au:&#x20AE;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:326
@@ -1410,7 +1422,7 @@ msgid "Moroccan Dirham"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:328
-msgid "ar:MAD"
+msgid "a-cr:MAD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:329
@@ -1422,7 +1434,7 @@ msgid "Mozambican Metical"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:331
-msgid "ar:MZN"
+msgid "a-cr:MZN"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:332
@@ -1434,7 +1446,7 @@ msgid "Myanmar (Burmese Kyat)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:334
-msgid "ar:MMK"
+msgid "a-cr:MMK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:335
@@ -1447,7 +1459,7 @@ msgid "Namibian Dollar"
 msgstr "加拿大元"
 
 #: ../data/currencies.xml.in.h:337
-msgid "ar:NAD"
+msgid "a-cr:NAD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:338
@@ -1459,7 +1471,7 @@ msgid "Nepalese Rupee"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:340
-msgid "ar:NPR"
+msgid "a-cr:NPR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:341
@@ -1471,7 +1483,7 @@ msgid "Nicaraguan Córdoba"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:343
-msgid "ar:NIO"
+msgid "a-cr:NIO"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:344
@@ -1484,7 +1496,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:346
 #, fuzzy
-msgid "ar:NGN,au:&#x20A6;"
+msgid "a-cr:NGN,au:&#x20A6;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:347
@@ -1496,7 +1508,7 @@ msgid "Omani Rial"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:349
-msgid "ar:OMR"
+msgid "a-cr:OMR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:350
@@ -1509,7 +1521,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:352
 #, fuzzy
-msgid "ar:PKR"
+msgid "a-cr:PKR"
 msgstr "a:PHP"
 
 #: ../data/currencies.xml.in.h:353
@@ -1523,7 +1535,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:355
 #, fuzzy
-msgid "ar:PAB"
+msgid "a-cr:PAB"
 msgstr "a:PHP"
 
 #: ../data/currencies.xml.in.h:356
@@ -1536,7 +1548,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:358
 #, fuzzy
-msgid "ar:PGK"
+msgid "a-cr:PGK"
 msgstr "a:PHP"
 
 #: ../data/currencies.xml.in.h:359
@@ -1549,7 +1561,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:361
 #, fuzzy
-msgid "ar:PYG,au:&#x20B2;"
+msgid "a-cr:PYG,au:&#x20B2;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:362
@@ -1562,7 +1574,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:364
 #, fuzzy
-msgid "ar:PEN"
+msgid "a-cr:PEN"
 msgstr "a:PHP"
 
 #: ../data/currencies.xml.in.h:365
@@ -1574,7 +1586,7 @@ msgid "Qatari Riyal"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:367
-msgid "ar:QAR"
+msgid "a-cr:QAR"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:368
@@ -1587,7 +1599,7 @@ msgid "Rwandan Franc"
 msgstr "比利时法郎"
 
 #: ../data/currencies.xml.in.h:370
-msgid "ar:RWF"
+msgid "a-cr:RWF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:371
@@ -1600,7 +1612,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:373
 #, fuzzy
-msgid "ar:STD"
+msgid "a-cr:STD"
 msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:374
@@ -1613,7 +1625,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:376
 #, fuzzy
-msgid "ar:SAR"
+msgid "a-cr:SAR"
 msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:377
@@ -1625,7 +1637,7 @@ msgid "Serbian Dinar"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:379
-msgid "ar:RSD"
+msgid "a-cr:RSD"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:380
@@ -1639,7 +1651,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:382
 #, fuzzy
-msgid "ar:SCR"
+msgid "a-cr:SCR"
 msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:383
@@ -1652,7 +1664,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:385
 #, fuzzy
-msgid "ar:SLL"
+msgid "a-cr:SLL"
 msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:386
@@ -1665,7 +1677,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:388
 #, fuzzy
-msgid "ar:SBD"
+msgid "a-cr:SBD"
 msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:389
@@ -1679,7 +1691,7 @@ msgstr "奥地利先令"
 
 #: ../data/currencies.xml.in.h:391
 #, fuzzy
-msgid "ar:SOS"
+msgid "a-cr:SOS"
 msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:392
@@ -1692,7 +1704,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:394
 #, fuzzy
-msgid "ar:LKR,au:&#x0BF9;"
+msgid "a-cr:LKR,au:&#x0BF9;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:395
@@ -1705,7 +1717,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:397
 #, fuzzy
-msgid "ar:SDG"
+msgid "a-cr:SDG"
 msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:398
@@ -1719,7 +1731,7 @@ msgstr "新加坡元"
 
 #: ../data/currencies.xml.in.h:400
 #, fuzzy
-msgid "ar:SRD"
+msgid "a-cr:SRD"
 msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:401
@@ -1733,7 +1745,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:403
 #, fuzzy
-msgid "ar:SZL"
+msgid "a-cr:SZL"
 msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:404
@@ -1747,7 +1759,7 @@ msgstr "塞浦路斯镑"
 
 #: ../data/currencies.xml.in.h:406
 #, fuzzy
-msgid "ar:SYP"
+msgid "a-cr:SYP"
 msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:407
@@ -1761,7 +1773,7 @@ msgstr "新西兰元"
 
 #: ../data/currencies.xml.in.h:409
 #, fuzzy
-msgid "ar:TWD"
+msgid "a-cr:TWD"
 msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:410
@@ -1774,7 +1786,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:412
 #, fuzzy
-msgid "ar:TJS"
+msgid "a-cr:TJS"
 msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:413
@@ -1788,7 +1800,7 @@ msgstr "奥地利先令"
 
 #: ../data/currencies.xml.in.h:415
 #, fuzzy
-msgid "ar:TZS"
+msgid "a-cr:TZS"
 msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:416
@@ -1801,7 +1813,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:418
 #, fuzzy
-msgid "ar:TOP"
+msgid "a-cr:TOP"
 msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:419
@@ -1814,7 +1826,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:421
 #, fuzzy
-msgid "ar:TTD"
+msgid "a-cr:TTD"
 msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:422
@@ -1827,7 +1839,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:424
 #, fuzzy
-msgid "ar:TND"
+msgid "a-cr:TND"
 msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:425
@@ -1840,7 +1852,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:427
 #, fuzzy
-msgid "ar:TMT"
+msgid "a-cr:TMT"
 msgstr "a:TRY"
 
 #: ../data/currencies.xml.in.h:428
@@ -1853,7 +1865,7 @@ msgid "Ugandan Shilling"
 msgstr "奥地利先令"
 
 #: ../data/currencies.xml.in.h:430
-msgid "ar:UGX"
+msgid "a-cr:UGX"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:431
@@ -1866,7 +1878,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:433
 #, fuzzy
-msgid "ar:UAH,au:&#x20B4;"
+msgid "a-cr:UAH,au:&#x20B4;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:434
@@ -1879,7 +1891,7 @@ msgid "United Arab Emirates Dirham"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:436
-msgid "ar:AED"
+msgid "a-cr:AED"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:437
@@ -1891,7 +1903,7 @@ msgid "Uruguayan Peso"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:439
-msgid "ar:UYU"
+msgid "a-cr:UYU"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:440
@@ -1903,7 +1915,7 @@ msgid "Uzbekistan Soʻm"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:442
-msgid "ar:UZS"
+msgid "a-cr:UZS"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:443
@@ -1915,7 +1927,7 @@ msgid "Vanuatu Vatu"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:445
-msgid "ar:VUV"
+msgid "a-cr:VUV"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:446
@@ -1928,7 +1940,7 @@ msgid "Venezuelan Bolívar (obsolete)"
 msgstr "斯洛文尼亚Tolar"
 
 #: ../data/currencies.xml.in.h:448
-msgid "ar:VEF"
+msgid "a-cr:VEF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:449
@@ -1937,7 +1949,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:450
 #, fuzzy
-msgid "ar:VND,au:&#x20AB;"
+msgid "a-cr:VND,au:&#x20AB;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:451
@@ -1949,7 +1961,7 @@ msgid "Yemeni Rial"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:453
-msgid "ar:YER"
+msgid "a-cr:YER"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:454
@@ -1962,7 +1974,7 @@ msgid "Zambian Kwacha (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:456
-msgid "ar:ZMK"
+msgid "a-cr:ZMK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:457
@@ -1987,7 +1999,7 @@ msgid "Belgian Franc (obsolete)"
 msgstr "比利时法郎"
 
 #: ../data/currencies.xml.in.h:462
-msgid "ar:BEF"
+msgid "a-cr:BEF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:463
@@ -1997,7 +2009,7 @@ msgstr "希腊德拉马克"
 
 #: ../data/currencies.xml.in.h:464
 #, fuzzy
-msgid "ar:GRD,au:&#x20AF;"
+msgid "a-cr:GRD,au:&#x20AF;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:465
@@ -2007,7 +2019,7 @@ msgstr "法国法郎"
 
 #: ../data/currencies.xml.in.h:466
 #, fuzzy
-msgid "ar:FRF,au:&#x20A3;"
+msgid "a-cr:FRF,au:&#x20A3;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:467
@@ -2016,7 +2028,7 @@ msgid "Italian Lira (obsolete)"
 msgstr "意大利里拉"
 
 #: ../data/currencies.xml.in.h:468
-msgid "ar:ITL"
+msgid "a-cr:ITL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:469
@@ -2025,7 +2037,7 @@ msgid "Dutch Guilder (obsolete)"
 msgstr "荷兰盾"
 
 #: ../data/currencies.xml.in.h:470
-msgid "ar:NLG"
+msgid "a-cr:NLG"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:471
@@ -2035,7 +2047,7 @@ msgstr "葡萄牙埃斯库多"
 
 #: ../data/currencies.xml.in.h:472
 #, fuzzy
-msgid "ar:PTE"
+msgid "a-cr:PTE"
 msgstr "a:PHP"
 
 #: ../data/currencies.xml.in.h:473
@@ -2044,7 +2056,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:474
 #, fuzzy
-msgid "ar:DEM"
+msgid "a-cr:DEM"
 msgstr "a:DEM,马克"
 
 #: ../data/currencies.xml.in.h:475
@@ -2054,7 +2066,7 @@ msgstr "西班牙比塞塔"
 
 #: ../data/currencies.xml.in.h:476
 #, fuzzy
-msgid "ar:ESP,au:&#x20A7;"
+msgid "a-cr:ESP,au:&#x20A7;"
 msgstr "a:GBP,au:&#xA3;"
 
 #: ../data/currencies.xml.in.h:477
@@ -2063,7 +2075,7 @@ msgid "Irish Pound (obsolete)"
 msgstr "爱尔兰镑"
 
 #: ../data/currencies.xml.in.h:478
-msgid "ar:IEP"
+msgid "a-cr:IEP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:479
@@ -2072,7 +2084,7 @@ msgid "Luxembourg Franc (obsolete)"
 msgstr "卢森堡法郎"
 
 #: ../data/currencies.xml.in.h:480
-msgid "ar:LUF"
+msgid "a-cr:LUF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:481
@@ -2081,7 +2093,7 @@ msgid "Austrian Schilling (obsolete)"
 msgstr "奥地利先令"
 
 #: ../data/currencies.xml.in.h:482
-msgid "ar:ATS"
+msgid "a-cr:ATS"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:483
@@ -2090,7 +2102,7 @@ msgid "Finnish Markka (obsolete)"
 msgstr "芬兰马克"
 
 #: ../data/currencies.xml.in.h:484
-msgid "ar:FIM"
+msgid "a-cr:FIM"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:485
@@ -2100,7 +2112,7 @@ msgstr "斯洛文尼亚Tolar"
 
 #: ../data/currencies.xml.in.h:486
 #, fuzzy
-msgid "ar:SIT"
+msgid "a-cr:SIT"
 msgstr "tolar,a:SIT"
 
 #: ../data/currencies.xml.in.h:487
@@ -2109,7 +2121,7 @@ msgid "Cypriot Pound (obsolete)"
 msgstr "塞浦路斯镑"
 
 #: ../data/currencies.xml.in.h:488
-msgid "ar:CYP"
+msgid "a-cr:CYP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:489
@@ -2118,7 +2130,7 @@ msgid "Estonian Kroon (obsolete)"
 msgstr "爱沙尼亚克鲁恩"
 
 #: ../data/currencies.xml.in.h:490
-msgid "ar:EEK"
+msgid "a-cr:EEK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:491
@@ -2127,7 +2139,7 @@ msgid "Slovak Koruna (obsolete)"
 msgstr "斯洛伐克Koruna"
 
 #: ../data/currencies.xml.in.h:492
-msgid "ar:SKK"
+msgid "a-cr:SKK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:493
@@ -2136,7 +2148,7 @@ msgid "Maltese Lira (obsolete)"
 msgstr "马耳他里拉"
 
 #: ../data/currencies.xml.in.h:494
-msgid "ar:MTL"
+msgid "a-cr:MTL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:495
@@ -2145,7 +2157,7 @@ msgid "Latvian Lats (obsolete)"
 msgstr "拉脱维亚 Lats"
 
 #: ../data/currencies.xml.in.h:496
-msgid "ar:LVL"
+msgid "a-cr:LVL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:497
@@ -2154,7 +2166,7 @@ msgid "Lithuanian Litas (obsolete)"
 msgstr "立陶宛Litas"
 
 #: ../data/currencies.xml.in.h:498
-msgid "ar:LTL"
+msgid "a-cr:LTL"
 msgstr ""
 
 #: ../data/datasets.xml.in.h:1
@@ -3770,7 +3782,7 @@ msgid "Greatest Common Divisor"
 msgstr "最大公约数"
 
 #: ../data/functions.xml.in.h:215
-msgid "r:gcd"
+msgid "rc:gcd,c:GCD"
 msgstr ""
 
 #: ../data/functions.xml.in.h:216
@@ -8402,7 +8414,7 @@ msgid "Pound"
 msgstr "磅"
 
 #: ../data/units.xml.in.h:102
-msgid "ar:lb,pound,p:pounds"
+msgid "ar:lb,aou:&#x2114;,pound,p:pounds"
 msgstr ""
 
 #: ../data/units.xml.in.h:103
@@ -9133,7 +9145,7 @@ msgid "Liter"
 msgstr "升"
 
 #: ../data/units.xml.in.h:291
-msgid "ar:L,a:l,liter,p:liters,litre,p:litres"
+msgid "ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
 msgstr ""
 
 #: ../data/units.xml.in.h:292
@@ -9205,7 +9217,7 @@ msgid "Cup (U.S.)"
 msgstr ""
 
 #: ../data/units.xml.in.h:309
-msgid "r:cup,p:cups"
+msgid "r-c:cup,p-c:cups"
 msgstr ""
 
 #: ../data/units.xml.in.h:310
@@ -11282,9 +11294,6 @@ msgstr ""
 #~ msgid "Local Date Format"
 #~ msgstr "本地日期格式"
 
-#~ msgid "ar:ITL,au:&#x20A4;,lira"
-#~ msgstr "ar:ITL,au:&#x20A4;,里拉"
-
 #~ msgid "ar:ATS,schilling"
 #~ msgstr "a:ATS,先令"
 
@@ -11370,4 +11379,3 @@ msgstr ""
 
 #~ msgid "Derive"
 #~ msgstr "求导"
-

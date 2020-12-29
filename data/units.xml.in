@@ -55,7 +55,7 @@
     </unit>
     <unit type="alias">
       <_title>&#xC5;ngstr&#xF6;m</_title>
-      <_names>aru:&#xC5;,u:&#xE5;ngstr&#xF6;m,angstrom</_names>
+      <_names>aru:&#xC5;,aou:&#x212B;,u:&#xE5;ngstr&#xF6;m,angstrom</_names>
       <use_with_prefixes>true</use_with_prefixes>
       <base>
         <unit>m</unit>
@@ -570,7 +570,7 @@
     <unit type="alias">
       <_title>Pound</_title>
       <system>Imperial/US</system>
-      <_names>ar:lb,pound,p:pounds</_names>
+      <_names>ar:lb,aou:&#x2114;,pound,p:pounds</_names>
       <base>
         <unit>oz</unit>
         <relation>16</relation>
@@ -1376,7 +1376,7 @@
     <unit type="base">
       <system>SI</system>
       <_title>Kelvin</_title>
-      <_names>ar:K,kelvin,p:kelvins</_names>
+      <_names>ar:K,aou:&#x212A;,kelvin,p:kelvins</_names>
     </unit>
     <unit type="alias">
       <system>SI</system>
@@ -1903,7 +1903,7 @@
     </unit>
     <unit type="alias">
       <_title>Liter</_title>
-      <_names>ar:L,a:l,liter,p:liters,litre,p:litres</_names>
+      <_names>ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres</_names>
       <use_with_prefixes>true</use_with_prefixes>
       <base>
         <unit>m</unit>

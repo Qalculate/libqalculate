@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Qalculate!\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-03 08:45+0100\n"
+"POT-Creation-Date: 2020-12-22 12:46+0100\n"
 "PO-Revision-Date: 2020-07-22 22:07-0300\n"
 "Last-Translator: VicSanRoPe\n"
 "Language-Team: none\n"
@@ -8425,7 +8425,7 @@ msgid "Pound"
 msgstr "Libra"
 
 #: ../data/units.xml.in.h:102
-msgid "ar:lb,pound,p:pounds"
+msgid "ar:lb,aou:&#x2114;,pound,p:pounds"
 msgstr ""
 
 #: ../data/units.xml.in.h:103
@@ -9147,7 +9147,7 @@ msgid "Liter"
 msgstr "Litro"
 
 #: ../data/units.xml.in.h:291
-msgid "ar:L,a:l,liter,p:liters,litre,p:litres"
+msgid "ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
 msgstr ""
 
 #: ../data/units.xml.in.h:292

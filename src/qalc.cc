@@ -1372,6 +1372,12 @@ int key_fraction(int, int) {
 }
 
 int key_save(int, int) {
+#ifdef HAVE_LIBREADLINE
+	if(rl_end > 0) {
+		rl_point = 0;
+		return 0;
+	}
+#endif
 	string name;
 	string cat = CALCULATOR->temporaryCategory();
 	string title;
@@ -2307,7 +2313,7 @@ int main(int argc, char *argv[]) {
 		rl_bind_key('\t', rlcom_tab);
 		rl_bind_keyseq("\\C-e", key_exact);
 		rl_bind_keyseq("\\C-f", key_fraction);
-		rl_bind_keyseq("\\M-s", key_save);
+		rl_bind_keyseq("\\C-a", key_save);
 	}
 #endif
 
@@ -2406,8 +2412,25 @@ int main(int argc, char *argv[]) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			set_option(str);
 		//qalc command
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "save", _("save")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "store", _("store"))) {
-			str = str.substr(ispace + 1, slen - (ispace + 1));
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "save", _("save")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "store", _("store")) || EQUALS_IGNORECASE_AND_LOCAL(str, "store", _("store"))) {
+			if(scom.empty()) {
+				FPUTS_UNICODE(_("Name"), stdout);
+#ifdef HAVE_LIBREADLINE
+				char *rlbuffer = readline(": ");
+				if(!rlbuffer) {
+					str = "";
+				} else {
+					str = rlbuffer;
+					free(rlbuffer);
+				}
+#else
+				fputs(": ", stdout);
+				if(!fgets(buffer, 1000, stdin)) str = "";
+				else str = buffer;
+#endif
+			} else {
+				str = str.substr(ispace + 1, slen - (ispace + 1));
+			}
 			remove_blank_ends(str);
 			if(EQUALS_IGNORECASE_AND_LOCAL(str, "mode", _("mode"))) {
 				if(save_mode()) {
@@ -2417,7 +2440,7 @@ int main(int argc, char *argv[]) {
 				if(save_defs()) {
 					PUTS_UNICODE(_("definitions saved"));
 				}
-			} else {
+			} else if(!str.empty()) {
 				string name = str, cat, title;
 				if(str[0] == '\"') {
 					size_t i = str.find('\"', 1);
@@ -6035,7 +6058,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {3, 15, 0};
+	int version_numbers[] = {3, 16, 0};
 
 	if(file) {
 		char line[10000];
