@@ -1,3 +1,7 @@
+2021-01-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Modify behaviour of percent addition when first term is percentage (e.g. 10%+50%=60% instead of 10%+50%=15%)
+
 2020-12-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Change keybinding for store command to Ctrl+A
@@ -29,7 +33,7 @@
 
 2020-12-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Fix uninitialized PrintOptions::base_display and set default value to BASE_DISPLAY_NORMAL (fixes issues in floating point format output)
+	* Fix uninitialized PrintOptions::base_display and set default value to BASE_DISPLAY_NONE (fixes issues in floating point format output)
 	* Fix output of negative numbers with floating point format
 
 2020-11-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
