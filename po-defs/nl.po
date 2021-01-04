@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-22 12:46+0100\n"
+"POT-Creation-Date: 2021-01-03 15:07+0100\n"
 "PO-Revision-Date: 2007-05-18 15:47+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -8149,7 +8149,7 @@ msgid "&#xC5;ngstr&#xF6;m"
 msgstr ""
 
 #: ../data/units.xml.in.h:12
-msgid "aru:&#xC5;,u:&#xE5;ngstr&#xF6;m,angstrom"
+msgid "aru:&#xC5;,aou:&#x212B;,u:&#xE5;ngstr&#xF6;m,angstrom"
 msgstr ""
 
 #: ../data/units.xml.in.h:13
@@ -8930,7 +8930,7 @@ msgid "Kelvin"
 msgstr "Kelvin"
 
 #: ../data/units.xml.in.h:216
-msgid "ar:K,kelvin,p:kelvins"
+msgid "ar:K,aou:&#x212A;,kelvin,p:kelvins"
 msgstr ""
 
 #: ../data/units.xml.in.h:217

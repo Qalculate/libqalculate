@@ -324,7 +324,7 @@ Determines the method used for interval calculation / uncertainty propagation.
 .B precision, prec \fI(> 0) 10*\fP
 Specifies the default number of significant digits displayed and determines the precision used for approximate calculations.
 .PP
-Enabled Objects
+Enabled objects:
 .PP
 .TP 8
 .B calculate functions, calcfunc \fI(on*, off)\fP
@@ -355,7 +355,8 @@ Interprete undefined symbols in expressions as unknown variables.
 .B variable units, varunit \fI(on*, off)\fP
 If activated physical constants include units (e.g. c = 299 792 458 m∕s).
 .PP
-Generic Display Options.PP
+Generic display options:
+.PP
 .TP 8
 .B abbreviations, abbr \fI(on*, off)\fP
 Use abbreviated names for units and variables.
@@ -391,7 +392,7 @@ Add extra space around operators.
 .B unicode, uni \fI(on*, off)\fP
 Display Unicode characters.
 .PP
-Numerical Display
+Numerical display:
 .PP
 .TP 8
 .B base \fI(-1114112 - 1114112, bin, oct, dec*, hex, sexa, time, roman)\fP
@@ -454,7 +455,7 @@ If actived, zeroes are kept at the end of approximate numbers.
 .B two's complement, twos \fI(on*, off)\fP
 Enables two's complement representation for display of negative binary numbers.
 .PP
-Parsing
+Parsing:
 .PP
 .TP 8
 .B caret as xor, xor^ \fI(on, off*)\fP
@@ -483,14 +484,14 @@ Use 'j' (instead of 'i') as default symbol for the imaginary unit.
 .B limit implicit multiplication, limimpl \fI(on, off*)\fP
 .PP
 .TP 8
-.B parsing mode, parse \fI(0* = adaptive, 1 = implicit first, 2 = conventional, 3 = chain, 4 = rpn)\fP
+.B parsing mode, syntax \fI(0* = adaptive, 1 = implicit first, 2 = conventional, 3 = chain, 4 = rpn)\fP
+See syntax section.
 .PP
 .TP 8
 .B read precision, readprec \fI(0* = off, 1 = always, 2 = when decimals)\fP
 If activated, numbers be interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005).
-rpn syntax, rpnsyn
 .PP
-Units
+Units:
 .PP
 .TP 8
 .B all prefixes, allpref \fI(on, off*)\fP
@@ -531,7 +532,7 @@ Use negative exponents instead of division for units in result (m/s = m*s^-1).
 .TP 8
 .B update exchange rates, upxrates \fI(-1 = ask*, 0 = never, > 0 = days)\fP
 .PP
-Other
+Other:
 .PP
 .TP 8
 .B ignore locale \fI(yes, no*)\fP
@@ -636,6 +637,8 @@ Returns 1 if expression is true and 0 if false. The x variable is isolated if th
 parenthesis, 10^x, exponentiation, functions, bitwise NOT, logical NOT, multiplication/division/modulo, addition/subtraction, bitwise NOT, bitwise shift, comparisons, bitwise AND, bitwise XOR, bitwise OR, logical AND, logical OR.
 .PP
 The evaluation of \fIshort/implicit multiplication\fP without any multiplication sign (e.g. 5x, 5(2+3)), differs depending on the parsing mode. In the \fIconventional mode\fP implicit multiplication does not differ from explicit multiplication (12/2(1+2) = 12/2*3 = 18, 5x/5y = 5 * x/5 * y = xy). In the parse \fIimplicit multiplication first\fP mode, implicit multiplication is parsed before explicit multiplication (12/2(1+2) = 12/(2 * 3) = 2, 5x/5y = (5 * x)/(5 * y) = x/y). The default \fIadaptive mode\fP works as the parse implicit multiplication first mode, unless spaces are found (1/5x = 1/(5 * x), but 1/5 x = (1/5) * x). In the adaptive mode unit expressions are parsed separately (5 m/5 m/s = (5 * m)/(5 * (m/s)) = 1 s). Function arguments without parentheses are an exception, where implicit multiplication in front of variables and units is parsed first regardless of mode (sqrt 2x = sqrt(2x)).
+.PP
+In \fIchain mode\fP, expressions are calculated from left to right, ignoring standard order of operations, as the immediate execution mode of a traditional calculator (1+2*3 = (1+2)*3 = 9).
 .PP
 The \fI"to"-operator\fP is used for unit conversion and manipulation of how the result is presented. Place " to " or a right arrow (e.g. "->") followed by one of expressions/commands the below, at the end of an expression.
 .PP

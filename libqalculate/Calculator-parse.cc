@@ -620,7 +620,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		return;
 	}
 
-	if(po.rpn) po.parsing_mode = PARSING_MODE_RPN;
+	if(po.rpn) {po.parsing_mode = PARSING_MODE_RPN; po.rpn = false;}
 
 	MathStructure *unended_function = po.unended_function;
 	po.unended_function = NULL;
@@ -1615,7 +1615,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										char c = str[str_index + name_length + i6];
 										if(c == LEFT_PARENTHESIS_CH) {
 											if(i5 < 2) b = true;
-											else if(i5 == 2 && po.parsing_mode == PARSING_MODE_CONVENTIONAL && !b_power_before) b = true;
+											else if(i5 == 2 && po.parsing_mode >= PARSING_MODE_CONVENTIONAL && !b_power_before) b = true;
 											else i5++;
 										} else if(c == RIGHT_PARENTHESIS_CH) {
 											if(i5 <= 2) b = true;
@@ -1715,13 +1715,18 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						}
 						case 'u': {
 							replace_text_by_unit_place:
-							if(str.length() > str_index + name_length && is_in("23", str[str_index + name_length]) && (str.length() == str_index + name_length + 1 || is_not_in(NUMBER_ELEMENTS, str[str_index + name_length + 1])) && (!name || *name != SIGN_DEGREE) && !((Unit*) object)->isCurrency()) {
-								str.insert(str_index + name_length, 1, POWER_CH);
-							}
 							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 							stmp += i2s(addId(new MathStructure((Unit*) object, p)));
 							stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 							str.replace(str_index, name_length, stmp);
+							if(str.length() > str_index + stmp.length() && is_in("23", str[str_index + stmp.length()]) && (str.length() == str_index + stmp.length() + 1 || is_not_in(NUMBER_ELEMENTS, str[str_index + stmp.length() + 1])) && (!name || *name != SIGN_DEGREE) && !((Unit*) object)->isCurrency()) {
+								str.insert(str_index + stmp.length(), 1, POWER_CH);
+								if(po.parsing_mode == PARSING_MODE_CHAIN) {
+									str.insert(str_index + stmp.length() + 2, 1, RIGHT_PARENTHESIS_CH);
+									str.insert(str_index, 1, LEFT_PARENTHESIS_CH);
+									str_index++;
+								}
+							}
 							str_index += stmp.length();
 							moved_forward = true;
 							p = NULL;
@@ -2193,7 +2198,7 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 
 MathStructure *get_out_of_negate(MathStructure &mstruct, int *i_neg) {
 	if(mstruct.isNegate() || (mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne())) {
-		(*i_neg)++;
+		if(i_neg) (*i_neg)++;
 		return get_out_of_negate(mstruct.last(), i_neg);
 	}
 	return &mstruct;
@@ -2338,6 +2343,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		i3 = 0;
 		ParseOptions po2 = po;
 		po2.rpn = false;
+		po2.parsing_mode = PARSING_MODE_CONVENTIONAL;
 		vector<MathStructure*> mstack;
 		bool b = false;
 		char last_operator = 0;
@@ -3103,7 +3109,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 
 		// Parse addition and subtraction
 		if((i = str.find_first_of(PLUS MINUS, 1)) != string::npos && i + 1 != str.length()) {
-			bool b = false, c = false, append = false;
+			bool b = false, c = false, append = false, do_percent = true;
 			bool min = false;
 			while(i != string::npos && i + 1 != str.length()) {
 				if(is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS EXPS, str[i - 1])) {
@@ -3116,7 +3122,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							b_add = parseAdd(str2, mstruct, po, OPERATION_ADD, append) && mstruct->isAddition();
 						}
 						append = true;
-						if(b_add) {
+						if(b_add && do_percent) {
 							int i_neg = 0;
 							MathStructure *mstruct_a = get_out_of_negate(mstruct->last(), &i_neg);
 							MathStructure *mstruct_b = mstruct_a;
@@ -3164,6 +3170,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							c = true;
 						} else {
 							parseAdd(str2, mstruct, po);
+							MathStructure *mstruct_a = get_out_of_negate(*mstruct, NULL);
+							if((str2.length() < 3 || str2[0] != ID_WRAP_LEFT_CH || str2[str2.length() - 1] != ID_WRAP_RIGHT_CH || str.find(ID_WRAP_LEFT_CH, 1) != string::npos) && mstruct_a->isMultiplication()) mstruct_a = &mstruct_a->last();
+							if(mstruct_a->isVariable() && (mstruct_a->variable() == v_percent || mstruct_a->variable() == v_permille || mstruct_a->variable() == v_permyriad)) do_percent = false;
 							if(c && min) {
 								if(po.preserve_format) mstruct->transform(STRUCT_NEGATE);
 								else mstruct->negate();
@@ -3194,7 +3203,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					} else {
 						b_add = parseAdd(str, mstruct, po, OPERATION_ADD, append) && mstruct->isAddition();
 					}
-					if(b_add) {
+					if(b_add && do_percent) {
 						int i_neg = 0;
 						MathStructure *mstruct_a = get_out_of_negate(mstruct->last(), &i_neg);
 						MathStructure *mstruct_b = mstruct_a;
@@ -3350,7 +3359,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		if(po.parsing_mode == PARSING_MODE_ADAPTIVE) remove_blanks(str);
 
 		// In conventional parsing mode there is not difference between implicit and explicit multiplication
-		if(po.parsing_mode == PARSING_MODE_CONVENTIONAL) {
+		if(po.parsing_mode >= PARSING_MODE_CONVENTIONAL) {
 			if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
 				while(i != string::npos && i + 1 != str.length()) {
 					if(is_in(NUMBERS ID_WRAP_LEFT, str[i + 1])) {

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-22 12:46+0100\n"
+"POT-Creation-Date: 2021-01-03 15:08+0100\n"
 "PO-Revision-Date: 2007-08-04 23:40+0800\n"
 "Last-Translator: Roy Qu <royqh1979@gmail.com>\n"
 "Language-Team: Simplified Chinese\n"
@@ -8062,7 +8062,7 @@ msgid "&#xC5;ngstr&#xF6;m"
 msgstr ""
 
 #: ../data/units.xml.in.h:12
-msgid "aru:&#xC5;,u:&#xE5;ngstr&#xF6;m,angstrom"
+msgid "aru:&#xC5;,aou:&#x212B;,u:&#xE5;ngstr&#xF6;m,angstrom"
 msgstr ""
 
 #: ../data/units.xml.in.h:13
@@ -8842,7 +8842,7 @@ msgid "Kelvin"
 msgstr "开尔文"
 
 #: ../data/units.xml.in.h:216
-msgid "ar:K,kelvin,p:kelvins"
+msgid "ar:K,aou:&#x212A;,kelvin,p:kelvins"
 msgstr ""
 
 #: ../data/units.xml.in.h:217

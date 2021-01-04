@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Qalculate!\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-22 12:46+0100\n"
+"POT-Creation-Date: 2021-01-03 15:08+0100\n"
 "PO-Revision-Date: 2020-07-22 22:07-0300\n"
 "Last-Translator: VicSanRoPe\n"
 "Language-Team: none\n"
@@ -8075,7 +8075,7 @@ msgid "&#xC5;ngstr&#xF6;m"
 msgstr ""
 
 #: ../data/units.xml.in.h:12
-msgid "aru:&#xC5;,u:&#xE5;ngstr&#xF6;m,angstrom"
+msgid "aru:&#xC5;,aou:&#x212B;,u:&#xE5;ngstr&#xF6;m,angstrom"
 msgstr ""
 
 #: ../data/units.xml.in.h:13
@@ -8846,7 +8846,7 @@ msgid "Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:216
-msgid "ar:K,kelvin,p:kelvins"
+msgid "ar:K,aou:&#x212A;,kelvin,p:kelvins"
 msgstr ""
 
 #: ../data/units.xml.in.h:217

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-22 12:46+0100\n"
+"POT-Creation-Date: 2021-01-03 15:07+0100\n"
 "PO-Revision-Date: 2020-12-02 13:25+0100\n"
 "Last-Translator: Polakrity\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -156,9 +156,8 @@ msgid "Russian Ruble"
 msgstr "Rouble russe"
 
 #: ../data/currencies.xml.in.h:33
-#, fuzzy
 msgid "a-cr:RUB,au:&#x20BD;,ruble"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr "a-c:RUB,au:&#x20BD;,rouble"
 
 #: ../data/currencies.xml.in.h:34
 msgid "Russia"
@@ -169,9 +168,8 @@ msgid "Philippine Peso"
 msgstr "Peso philippin"
 
 #: ../data/currencies.xml.in.h:36
-#, fuzzy
 msgid "a-cr:PHP,au:&#x20B1;"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:37
 msgid "Philippines"
@@ -278,9 +276,8 @@ msgid "Turkish New Lira"
 msgstr "Nouvelle livre turque"
 
 #: ../data/currencies.xml.in.h:63
-#, fuzzy
 msgid "a-cr:TRY,au:&#x20BA;"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:64
 msgid "Turkey"
@@ -347,9 +344,8 @@ msgid "South Korean Won"
 msgstr "Won sud-corréen"
 
 #: ../data/currencies.xml.in.h:80
-#, fuzzy
 msgid "a-cr:KRW,au:&#x20A9;,won"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:81
 msgid "South Korea"
@@ -372,9 +368,8 @@ msgid "Indian Rupee"
 msgstr "Roupie indienne"
 
 #: ../data/currencies.xml.in.h:86
-#, fuzzy
 msgid "a-cr:INR,au:&#x20B9;,rupee"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:87
 msgid "India"
@@ -565,9 +560,8 @@ msgid "Azerbaijani Manat"
 msgstr "Manat azerbaïdjanais"
 
 #: ../data/currencies.xml.in.h:133
-#, fuzzy
 msgid "a-cr:AZN,au:&#x20BC;"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:134
 msgid "Azerbaijan"
@@ -984,9 +978,8 @@ msgid "Georgian Lari"
 msgstr "Lari géorgien"
 
 #: ../data/currencies.xml.in.h:236
-#, fuzzy
 msgid "a-cr:GEL,au:&#x20BE;"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:237
 msgid "Georgia"
@@ -997,9 +990,8 @@ msgid "Ghanaian Cedi"
 msgstr "Cédi ghanéen"
 
 #: ../data/currencies.xml.in.h:239
-#, fuzzy
 msgid "a-cr:GHS,au:&#x20B5;"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:240
 msgid "Ghana"
@@ -1142,9 +1134,8 @@ msgid "Kazakhstani Tenge"
 msgstr "Tenge kazakh"
 
 #: ../data/currencies.xml.in.h:275
-#, fuzzy
 msgid "a-cr:KZT,au:&#x20B8;"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:276
 msgid "Kazakhstan"
@@ -1191,9 +1182,8 @@ msgid "Lao Kip"
 msgstr "Kip laotien"
 
 #: ../data/currencies.xml.in.h:287
-#, fuzzy
 msgid "a-cr:LAK,au:&#x20AD;"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:288
 msgid "Laos"
@@ -1488,9 +1478,8 @@ msgid "Paraguayan Guaraní"
 msgstr "Guarani paraguayen"
 
 #: ../data/currencies.xml.in.h:361
-#, fuzzy
 msgid "a-cr:PYG,au:&#x20B2;"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:362
 msgid "Paraguay"
@@ -1621,9 +1610,8 @@ msgid "Sri Lankan Rupee"
 msgstr "Roupie sri lankaise"
 
 #: ../data/currencies.xml.in.h:394
-#, fuzzy
 msgid "a-cr:LKR,au:&#x0BF9;"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:395
 msgid "Sri Lanka"
@@ -1778,9 +1766,8 @@ msgid "Ukrainian Hryvnia"
 msgstr "Hryvnia ukrainienne"
 
 #: ../data/currencies.xml.in.h:433
-#, fuzzy
 msgid "a-cr:UAH,au:&#x20B4;"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:434
 msgid "Ukraine"
@@ -1847,9 +1834,8 @@ msgid "Vietnamese Đồng"
 msgstr "Dong vietnamien"
 
 #: ../data/currencies.xml.in.h:450
-#, fuzzy
 msgid "a-cr:VND,au:&#x20AB;"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:451
 msgid "Vietnam"
@@ -1904,18 +1890,16 @@ msgid "Greek Drachma (obsolete)"
 msgstr "Drachme grecque (obsolète"
 
 #: ../data/currencies.xml.in.h:464
-#, fuzzy
 msgid "a-cr:GRD,au:&#x20AF;"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:465
 msgid "French Franc (obsolete)"
 msgstr "Franc français (obsolète)"
 
 #: ../data/currencies.xml.in.h:466
-#, fuzzy
 msgid "a-cr:FRF,au:&#x20A3;"
-msgstr "a:RUB,au:&#x20BD;,rouble"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:467
 msgid "Italian Lira (obsolete)"
@@ -7933,7 +7917,7 @@ msgid "&#xC5;ngstr&#xF6;m"
 msgstr ""
 
 #: ../data/units.xml.in.h:12
-msgid "aru:&#xC5;,u:&#xE5;ngstr&#xF6;m,angstrom"
+msgid "aru:&#xC5;,aou:&#x212B;,u:&#xE5;ngstr&#xF6;m,angstrom"
 msgstr ""
 
 #: ../data/units.xml.in.h:13
@@ -8704,7 +8688,7 @@ msgid "Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:216
-msgid "ar:K,kelvin,p:kelvins"
+msgid "ar:K,aou:&#x212A;,kelvin,p:kelvins"
 msgstr ""
 
 #: ../data/units.xml.in.h:217
