@@ -357,9 +357,15 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			return -1;
 		}
 		case STRUCT_UNIT: {
-			if(mstruct1.prefix() && !mstruct2.prefix()) return -1;
-			if(mstruct2.prefix() && !mstruct1.prefix()) return 1;
+			bool p1 = mstruct1.prefix() && mstruct1.prefix() != CALCULATOR->getDecimalNullPrefix() && mstruct1.prefix() != CALCULATOR->getBinaryNullPrefix();
+			bool p2 = mstruct2.prefix() && mstruct2.prefix() != CALCULATOR->getDecimalNullPrefix() && mstruct2.prefix() != CALCULATOR->getBinaryNullPrefix();
+			if(p1 && !p2) return -1;
+			if(p2 && !p1) return 1;
 			if(mstruct1.unit() == mstruct2.unit()) return 0;
+			p1 = mstruct1.unit()->useWithPrefixesByDefault() || (po.use_prefixes_for_currencies && mstruct1.unit()->isCurrency());
+			p2 = mstruct2.unit()->useWithPrefixesByDefault() || (po.use_prefixes_for_currencies && mstruct2.unit()->isCurrency());
+			if(p1 && !p2) return -1;
+			if(p2 && !p1) return 1;
 			// sort units in alphabetical order
 			if(name_is_less(mstruct1.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct1.isPlural(), po.use_reference_names).name, mstruct2.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct2.isPlural(), po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name)) return -1;
 			return 1;
@@ -1960,6 +1966,7 @@ void separate_units(MathStructure &m, MathStructure *parent = NULL, size_t index
 		separate_units(m[i], &m, i + 1);
 	}
 }
+
 void MathStructure::format(const PrintOptions &po) {
 	if(!po.preserve_format) {
 		if(po.place_units_separately) {

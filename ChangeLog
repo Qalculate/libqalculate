@@ -1,3 +1,9 @@
+2021-01-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Always place units with prefixes before other units
+	* Improve prefixes when expression contains both units that do and units that do not use prefixes
+	* Fix kWh composite unit
+
 2021-01-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Modify behaviour of percent addition when first term is percentage (e.g. 10%+50%=60% instead of 10%+50%=15%)
