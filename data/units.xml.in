@@ -3099,7 +3099,7 @@
     </unit>
     <unit type="composite">
       <_title>Kilowatt Hour</_title>
-      <names>r:W_h</names>
+      <names>r:kW_h</names>
       <part>
         <unit>W</unit>
         <prefix>3</prefix>
