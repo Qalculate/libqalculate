@@ -2328,6 +2328,16 @@
         <_title>Start Date</_title>
       </argument>
     </builtin_function>
+    <function>
+      <_title>Days in Month</_title>
+      <_names>r:daysInMonth</_names>
+      <subfunction precalculate="true">month(\X{today})</subfunction>
+      <subfunction precalculate="true">year(\x)</subfunction>
+      <expression>if([\1=2,\1=4||\1=6||\1=9||\1=11],[if(\2%4=0&amp;&amp;(\2%100!=0||\2%400==0),29,28),30],31)</expression>
+      <argument type="date" index="1">
+        <_title>Date</_title>
+      </argument>
+    </function>
   </category>
   <category>
     <_title>Utilities</_title>
