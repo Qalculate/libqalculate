@@ -763,6 +763,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	return true;
 }
 int DataSet::saveObjects(const char *file_name, bool save_global) {
+	if(!b_loaded) return 1;
 	string str, filename;
 	if(!save_global && !file_name) {
 		recursiveMakeDir(getLocalDataDir());
@@ -906,7 +907,9 @@ const string &DataSet::getNextPropertyName(DataPropertyIter *it) {
 }
 
 void DataSet::addObject(DataObject *o) {
+	if(!objectsLoaded()) loadObjects();
 	objects.push_back(o);
+	b_loaded = true;
 }
 void DataSet::delObject(DataObject *o) {
 	for(size_t i = 0; i < objects.size(); i++) {
