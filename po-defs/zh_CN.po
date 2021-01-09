@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-03 15:08+0100\n"
+"POT-Creation-Date: 2021-01-09 06:59+0100\n"
 "PO-Revision-Date: 2007-08-04 23:40+0800\n"
 "Last-Translator: Roy Qu <royqh1979@gmail.com>\n"
 "Language-Team: Simplified Chinese\n"
@@ -2205,7 +2205,7 @@ msgstr "编号"
 msgid "!datasets!r:number"
 msgstr "编号"
 
-#: ../data/datasets.xml.in.h:13 ../data/functions.xml.in.h:751
+#: ../data/datasets.xml.in.h:13 ../data/functions.xml.in.h:753
 msgid "Name"
 msgstr "名称"
 
@@ -5874,46 +5874,55 @@ msgstr ""
 msgid "Start Date"
 msgstr "构造矩阵"
 
-#: ../data/functions.xml.in.h:692 ../data/variables.xml.in.h:198
+#: ../data/functions.xml.in.h:692
+#, fuzzy
+msgid "Days in Month"
+msgstr "月份中的第几天"
+
+#: ../data/functions.xml.in.h:693
+msgid "r:daysInMonth"
+msgstr ""
+
+#: ../data/functions.xml.in.h:694 ../data/variables.xml.in.h:198
 msgid "Utilities"
 msgstr "工具"
 
-#: ../data/functions.xml.in.h:693
+#: ../data/functions.xml.in.h:695
 msgid "Plot Functions and Vectors"
 msgstr ""
 
-#: ../data/functions.xml.in.h:694
-msgid "r:plot"
-msgstr ""
-
-#: ../data/functions.xml.in.h:695
-#, fuzzy
-msgid "Expression or vector"
-msgstr "矩阵或向量"
-
 #: ../data/functions.xml.in.h:696
-msgid "Minimum x value"
+msgid "r:plot"
 msgstr ""
 
 #: ../data/functions.xml.in.h:697
 #, fuzzy
+msgid "Expression or vector"
+msgstr "矩阵或向量"
+
+#: ../data/functions.xml.in.h:698
+msgid "Minimum x value"
+msgstr ""
+
+#: ../data/functions.xml.in.h:699
+#, fuzzy
 msgid "Maximum x value"
 msgstr "矩阵变量"
 
-#: ../data/functions.xml.in.h:698
+#: ../data/functions.xml.in.h:700
 msgid "Number of samples / Step size"
 msgstr "样本数量/步长"
 
-#: ../data/functions.xml.in.h:699
+#: ../data/functions.xml.in.h:701
 #, fuzzy
 msgid "X variable"
 msgstr "行变量"
 
-#: ../data/functions.xml.in.h:700
+#: ../data/functions.xml.in.h:702
 msgid "Persistent"
 msgstr ""
 
-#: ../data/functions.xml.in.h:701
+#: ../data/functions.xml.in.h:703
 msgid ""
 "Plots one or more expressions or vectors. Use a vector for the first "
 "argument to plot multiple series. Only the first argument is used for vector "
@@ -5921,16 +5930,16 @@ msgid ""
 "and y values."
 msgstr ""
 
-#: ../data/functions.xml.in.h:702
+#: ../data/functions.xml.in.h:704
 #, fuzzy
 msgid "Unicode Value"
 msgstr "极限值"
 
-#: ../data/functions.xml.in.h:703
+#: ../data/functions.xml.in.h:705
 msgid "r:code"
 msgstr ""
 
-#: ../data/functions.xml.in.h:704
+#: ../data/functions.xml.in.h:706
 msgid ""
 "Encodes a Unicode character or text string using the selected format. "
 "Supported encodings are UTF-8 (0), UTF-16 (1), and UTF-32 (2). If the third "
@@ -5938,66 +5947,66 @@ msgid ""
 "encoding) is placed in a vector."
 msgstr ""
 
-#: ../data/functions.xml.in.h:705
+#: ../data/functions.xml.in.h:707
 msgid "Character"
 msgstr "字符"
 
-#: ../data/functions.xml.in.h:706
+#: ../data/functions.xml.in.h:708
 #, fuzzy
 msgid "Encoding"
 msgstr "取整"
 
-#: ../data/functions.xml.in.h:707
+#: ../data/functions.xml.in.h:709
 #, fuzzy
 msgid "Use vector"
 msgstr "变量向量"
 
-#: ../data/functions.xml.in.h:708
+#: ../data/functions.xml.in.h:710
 #, fuzzy
 msgid "Unicode Character"
 msgstr "字符"
 
-#: ../data/functions.xml.in.h:709
+#: ../data/functions.xml.in.h:711
 msgid "r:char"
 msgstr ""
 
-#: ../data/functions.xml.in.h:710
+#: ../data/functions.xml.in.h:712
 msgid "Length of string"
 msgstr "字符串长度"
 
-#: ../data/functions.xml.in.h:711
+#: ../data/functions.xml.in.h:713
 msgid "r:len"
 msgstr ""
 
-#: ../data/functions.xml.in.h:712
+#: ../data/functions.xml.in.h:714
 msgid "Text"
 msgstr "文字"
 
-#: ../data/functions.xml.in.h:713
+#: ../data/functions.xml.in.h:715
 msgid "Concatenate Strings"
 msgstr "连接字符串"
 
-#: ../data/functions.xml.in.h:714
+#: ../data/functions.xml.in.h:716
 msgid "r:concatenate"
 msgstr ""
 
-#: ../data/functions.xml.in.h:715
+#: ../data/functions.xml.in.h:717
 msgid "Text string 1"
 msgstr "文字1"
 
-#: ../data/functions.xml.in.h:716
+#: ../data/functions.xml.in.h:718
 msgid "Text string 2"
 msgstr "文字2"
 
-#: ../data/functions.xml.in.h:717
+#: ../data/functions.xml.in.h:719
 msgid "Replace"
 msgstr "替换"
 
-#: ../data/functions.xml.in.h:718
+#: ../data/functions.xml.in.h:720
 msgid "r:replace"
 msgstr ""
 
-#: ../data/functions.xml.in.h:719
+#: ../data/functions.xml.in.h:721
 msgid ""
 "Replaces a certain value in an expression with a new value. The expression "
 "is calculated before the replacement if the fourth argument is true."
@@ -6005,433 +6014,433 @@ msgstr ""
 "使用新值替换表达式中的特定值。如果第四个参数是真，则在替换前首先对表达式 进行"
 "计算。"
 
-#: ../data/functions.xml.in.h:720
+#: ../data/functions.xml.in.h:722
 msgid "Expression"
 msgstr "表达式"
 
-#: ../data/functions.xml.in.h:721
+#: ../data/functions.xml.in.h:723
 msgid "Original value"
 msgstr "原始值"
 
-#: ../data/functions.xml.in.h:722
+#: ../data/functions.xml.in.h:724
 msgid "New value"
 msgstr "新值"
 
-#: ../data/functions.xml.in.h:723
+#: ../data/functions.xml.in.h:725
 msgid "Precalculate expression"
 msgstr "预先计算表达式"
 
-#: ../data/functions.xml.in.h:724
+#: ../data/functions.xml.in.h:726
 msgid "Strip Units"
 msgstr "剥离单位"
 
-#: ../data/functions.xml.in.h:725
+#: ../data/functions.xml.in.h:727
 msgid "r:nounit,strip_units"
 msgstr ""
 
-#: ../data/functions.xml.in.h:726
+#: ../data/functions.xml.in.h:728
 msgid ""
 "Removes all units from an expression. The expression is calculated before "
 "the removal."
 msgstr "从表达式中删除全部单位。在删除之前会先对表达式进行计算。"
 
-#: ../data/functions.xml.in.h:727
+#: ../data/functions.xml.in.h:729
 msgid "Process Vector Elements"
 msgstr "处理向量元素"
 
-#: ../data/functions.xml.in.h:728
+#: ../data/functions.xml.in.h:730
 msgid "r:process"
 msgstr ""
 
-#: ../data/functions.xml.in.h:729
+#: ../data/functions.xml.in.h:731
 msgid "Element variable"
 msgstr "元素变量"
 
-#: ../data/functions.xml.in.h:730
+#: ../data/functions.xml.in.h:732
 msgid "Index variable"
 msgstr "下标变量"
 
-#: ../data/functions.xml.in.h:731
+#: ../data/functions.xml.in.h:733
 msgid "Vector variable"
 msgstr "向量变量"
 
-#: ../data/functions.xml.in.h:732
+#: ../data/functions.xml.in.h:734
 msgid "Process Matrix Elements"
 msgstr "处理矩阵元素"
 
-#: ../data/functions.xml.in.h:733
+#: ../data/functions.xml.in.h:735
 msgid "r:processm"
 msgstr ""
 
-#: ../data/functions.xml.in.h:734
+#: ../data/functions.xml.in.h:736
 msgid "Row variable"
 msgstr "行变量"
 
-#: ../data/functions.xml.in.h:735
+#: ../data/functions.xml.in.h:737
 msgid "Column variable"
 msgstr "列标量"
 
-#: ../data/functions.xml.in.h:736
+#: ../data/functions.xml.in.h:738
 msgid "Matrix variable"
 msgstr "矩阵变量"
 
-#: ../data/functions.xml.in.h:737
+#: ../data/functions.xml.in.h:739
 msgid "Custom Sum of Elements"
 msgstr "元素的自定义和"
 
-#: ../data/functions.xml.in.h:738
+#: ../data/functions.xml.in.h:740
 msgid "r:csum"
 msgstr ""
 
-#: ../data/functions.xml.in.h:739
+#: ../data/functions.xml.in.h:741
 msgid "First element"
 msgstr "最后一个元素"
 
-#: ../data/functions.xml.in.h:740
+#: ../data/functions.xml.in.h:742
 msgid "Last element"
 msgstr "最后一个元素"
 
-#: ../data/functions.xml.in.h:741
+#: ../data/functions.xml.in.h:743
 msgid "Initial value"
 msgstr "初始值"
 
-#: ../data/functions.xml.in.h:742
+#: ../data/functions.xml.in.h:744
 msgid "Value variable"
 msgstr "值变量"
 
-#: ../data/functions.xml.in.h:743
+#: ../data/functions.xml.in.h:745
 msgid "Select Vector Elements"
 msgstr "选择矩阵元素"
 
-#: ../data/functions.xml.in.h:744
+#: ../data/functions.xml.in.h:746
 msgid "r:select"
 msgstr ""
 
-#: ../data/functions.xml.in.h:745
+#: ../data/functions.xml.in.h:747
 msgid "Condition"
 msgstr "条件"
 
-#: ../data/functions.xml.in.h:746
+#: ../data/functions.xml.in.h:748
 msgid "Select first match"
 msgstr "选择第一个匹配项"
 
-#: ../data/functions.xml.in.h:747
+#: ../data/functions.xml.in.h:749
 msgid "r:function"
 msgstr ""
 
-#: ../data/functions.xml.in.h:748
+#: ../data/functions.xml.in.h:750
 msgid "Arguments"
 msgstr "自变量"
 
-#: ../data/functions.xml.in.h:749
+#: ../data/functions.xml.in.h:751
 msgid "Title"
 msgstr "标题"
 
-#: ../data/functions.xml.in.h:750
+#: ../data/functions.xml.in.h:752
 msgid "r:title"
 msgstr ""
 
-#: ../data/functions.xml.in.h:752
+#: ../data/functions.xml.in.h:754
 msgid "Display Error"
 msgstr "显示错误"
 
-#: ../data/functions.xml.in.h:753
+#: ../data/functions.xml.in.h:755
 msgid "r:error"
 msgstr ""
 
-#: ../data/functions.xml.in.h:754
+#: ../data/functions.xml.in.h:756
 msgid "Message"
 msgstr "信息"
 
-#: ../data/functions.xml.in.h:755
+#: ../data/functions.xml.in.h:757
 msgid "Display Warning"
 msgstr "显示警告"
 
-#: ../data/functions.xml.in.h:756
+#: ../data/functions.xml.in.h:758
 msgid "r:warning"
 msgstr ""
 
-#: ../data/functions.xml.in.h:757
+#: ../data/functions.xml.in.h:759
 msgid "Display Message"
 msgstr "显示信息"
 
-#: ../data/functions.xml.in.h:758
+#: ../data/functions.xml.in.h:760
 msgid "r:message"
 msgstr ""
 
-#: ../data/functions.xml.in.h:759
+#: ../data/functions.xml.in.h:761
 msgid "Save as Variable"
 msgstr "作为变量保存"
 
-#: ../data/functions.xml.in.h:760
+#: ../data/functions.xml.in.h:762
 msgid "r:save"
 msgstr ""
 
-#: ../data/functions.xml.in.h:761
+#: ../data/functions.xml.in.h:763
 msgid "Category"
 msgstr "类别"
 
-#: ../data/functions.xml.in.h:762
+#: ../data/functions.xml.in.h:764
 msgid "RPN Stack Register"
 msgstr "RPN栈寄存器"
 
-#: ../data/functions.xml.in.h:763
+#: ../data/functions.xml.in.h:765
 msgid "r:register"
 msgstr ""
 
-#: ../data/functions.xml.in.h:764
+#: ../data/functions.xml.in.h:766
 msgid "Returns the value of a RPN stack register."
 msgstr "返回RPN栈寄存器的值。"
 
-#: ../data/functions.xml.in.h:765
+#: ../data/functions.xml.in.h:767
 msgid "Index"
 msgstr "下标"
 
-#: ../data/functions.xml.in.h:766
+#: ../data/functions.xml.in.h:768
 msgid "RPN Stack Vector"
 msgstr "RPN栈向量"
 
-#: ../data/functions.xml.in.h:767
+#: ../data/functions.xml.in.h:769
 msgid "r:stack"
 msgstr ""
 
-#: ../data/functions.xml.in.h:768
+#: ../data/functions.xml.in.h:770
 msgid "Returns the RPN stack as a vector."
 msgstr "将RPN栈作为向量返回。"
 
-#: ../data/functions.xml.in.h:769
+#: ../data/functions.xml.in.h:771
 msgid "Is Number"
 msgstr "是数字"
 
-#: ../data/functions.xml.in.h:770
+#: ../data/functions.xml.in.h:772
 msgid "r:isNumber"
 msgstr ""
 
-#: ../data/functions.xml.in.h:771
+#: ../data/functions.xml.in.h:773
 msgid "Is Real"
 msgstr "是实数"
 
-#: ../data/functions.xml.in.h:772
+#: ../data/functions.xml.in.h:774
 msgid "r:isReal"
 msgstr ""
 
-#: ../data/functions.xml.in.h:773
+#: ../data/functions.xml.in.h:775
 msgid "Is Rational"
 msgstr "是有理数"
 
-#: ../data/functions.xml.in.h:774
+#: ../data/functions.xml.in.h:776
 msgid "r:isRational"
 msgstr ""
 
-#: ../data/functions.xml.in.h:775
+#: ../data/functions.xml.in.h:777
 msgid "Is Integer"
 msgstr "是整数"
 
-#: ../data/functions.xml.in.h:776
+#: ../data/functions.xml.in.h:778
 msgid "r:isInteger"
 msgstr ""
 
-#: ../data/functions.xml.in.h:777
+#: ../data/functions.xml.in.h:779
 msgid "Represents Number"
 msgstr "代表数字"
 
-#: ../data/functions.xml.in.h:778
+#: ../data/functions.xml.in.h:780
 msgid "r:representsNumber"
 msgstr ""
 
-#: ../data/functions.xml.in.h:779
+#: ../data/functions.xml.in.h:781
 msgid "Represents Real"
 msgstr "代表实数"
 
-#: ../data/functions.xml.in.h:780
+#: ../data/functions.xml.in.h:782
 msgid "r:representsReal"
 msgstr ""
 
-#: ../data/functions.xml.in.h:781
+#: ../data/functions.xml.in.h:783
 msgid "Represents Rational"
 msgstr "代表有理数"
 
-#: ../data/functions.xml.in.h:782
+#: ../data/functions.xml.in.h:784
 msgid "r:representsRational"
 msgstr ""
 
-#: ../data/functions.xml.in.h:783
+#: ../data/functions.xml.in.h:785
 msgid "Represents Integer"
 msgstr "代表整数"
 
-#: ../data/functions.xml.in.h:784
+#: ../data/functions.xml.in.h:786
 msgid "r:representsInteger"
 msgstr ""
 
-#: ../data/functions.xml.in.h:785
+#: ../data/functions.xml.in.h:787
 #, fuzzy
 msgid "Interval"
 msgstr "积分"
 
-#: ../data/functions.xml.in.h:786
+#: ../data/functions.xml.in.h:788
 #, fuzzy
 msgid "r:interval"
 msgstr "积分"
 
-#: ../data/functions.xml.in.h:787
+#: ../data/functions.xml.in.h:789
 #, fuzzy
 msgid "Lower endpoint"
 msgstr "下限"
 
-#: ../data/functions.xml.in.h:788
+#: ../data/functions.xml.in.h:790
 #, fuzzy
 msgid "Upper endpoint"
 msgstr "上限"
 
-#: ../data/functions.xml.in.h:789
+#: ../data/functions.xml.in.h:791
 msgid "Uncertainty"
 msgstr ""
 
-#: ../data/functions.xml.in.h:790
+#: ../data/functions.xml.in.h:792
 msgid "r:uncertainty"
 msgstr ""
 
-#: ../data/functions.xml.in.h:791
+#: ../data/functions.xml.in.h:793
 msgid "Uncertainty is relative"
 msgstr ""
 
-#: ../data/functions.xml.in.h:792
+#: ../data/functions.xml.in.h:794
 msgid "Logical"
 msgstr "逻辑"
 
-#: ../data/functions.xml.in.h:793
+#: ../data/functions.xml.in.h:795
 msgid "For...Do"
 msgstr ""
 
-#: ../data/functions.xml.in.h:794
+#: ../data/functions.xml.in.h:796
 msgid "r:for"
 msgstr ""
 
-#: ../data/functions.xml.in.h:795
+#: ../data/functions.xml.in.h:797
 msgid "Initial value of counter"
 msgstr "计数器初始值"
 
-#: ../data/functions.xml.in.h:796
+#: ../data/functions.xml.in.h:798
 msgid "Counter variable"
 msgstr "计数器变量"
 
-#: ../data/functions.xml.in.h:797
+#: ../data/functions.xml.in.h:799
 msgid "For condition"
 msgstr "For条件"
 
-#: ../data/functions.xml.in.h:798
+#: ../data/functions.xml.in.h:800
 msgid "Counter update function"
 msgstr "计数器更新函数"
 
-#: ../data/functions.xml.in.h:799
+#: ../data/functions.xml.in.h:801
 msgid "Do function"
 msgstr "Do函数"
 
-#: ../data/functions.xml.in.h:800
+#: ../data/functions.xml.in.h:802
 msgid "If...Then...Else"
 msgstr ""
 
-#: ../data/functions.xml.in.h:801
+#: ../data/functions.xml.in.h:803
 msgid "r:if"
 msgstr ""
 
-#: ../data/functions.xml.in.h:802
+#: ../data/functions.xml.in.h:804
 #, fuzzy
 msgid ""
 "Tests a condition and returns a value depending on the result. Vectors can "
 "be used for argument 1 and 2, instead of nested functions."
 msgstr "对一个条件进行测试，并根据测试结果返回一个值。"
 
-#: ../data/functions.xml.in.h:803
+#: ../data/functions.xml.in.h:805
 msgid "Expression if condition is met"
 msgstr "条件满足时的表达式"
 
-#: ../data/functions.xml.in.h:804
+#: ../data/functions.xml.in.h:806
 msgid "Expression if condition is NOT met"
 msgstr "条件不满足时的表达式"
 
-#: ../data/functions.xml.in.h:805
+#: ../data/functions.xml.in.h:807
 msgid "Assume false if not true"
 msgstr ""
 
-#: ../data/functions.xml.in.h:806
+#: ../data/functions.xml.in.h:808
 msgid "Bitwise Exclusive OR"
 msgstr "按位排斥OR"
 
-#: ../data/functions.xml.in.h:807
+#: ../data/functions.xml.in.h:809
 msgid "r:xor"
 msgstr ""
 
-#: ../data/functions.xml.in.h:808
+#: ../data/functions.xml.in.h:810
 msgid "Value 1"
 msgstr "值1"
 
-#: ../data/functions.xml.in.h:809
+#: ../data/functions.xml.in.h:811
 msgid "Value 2"
 msgstr "值2"
 
-#: ../data/functions.xml.in.h:810
+#: ../data/functions.xml.in.h:812
 msgid "Logical Exclusive OR"
 msgstr "逻辑排斥OR"
 
-#: ../data/functions.xml.in.h:811
+#: ../data/functions.xml.in.h:813
 msgid "r:lxor"
 msgstr ""
 
-#: ../data/functions.xml.in.h:812
+#: ../data/functions.xml.in.h:814
 msgid "Bitwise Shift"
 msgstr "按位移位"
 
-#: ../data/functions.xml.in.h:813
+#: ../data/functions.xml.in.h:815
 msgid ""
 "Applies logical or arithmetic bitwise shift to an integer. The second "
 "argument specifies the number of steps that each binary bit is shifted to "
 "the left (use negative values for right shift)."
 msgstr ""
 
-#: ../data/functions.xml.in.h:814
+#: ../data/functions.xml.in.h:816
 msgid "r:shift"
 msgstr ""
 
-#: ../data/functions.xml.in.h:815
+#: ../data/functions.xml.in.h:817
 msgid "Steps"
 msgstr ""
 
-#: ../data/functions.xml.in.h:816
+#: ../data/functions.xml.in.h:818
 msgid "Arithmetic shift using two's complement"
 msgstr ""
 
-#: ../data/functions.xml.in.h:817
+#: ../data/functions.xml.in.h:819
 msgid "Bitwise Complement (Not)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:818
+#: ../data/functions.xml.in.h:820
 msgid ""
 "Applies bitwise NOT to an integer of specified bit width and signedness (use "
 "1 for signed and 0 for unsigned). If bit width is zero, the smallest "
 "necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
 
-#: ../data/functions.xml.in.h:819
+#: ../data/functions.xml.in.h:821
 msgid "r:bitcmp"
 msgstr ""
 
-#: ../data/functions.xml.in.h:820
+#: ../data/functions.xml.in.h:822
 #, fuzzy
 msgid "Bit Width"
 msgstr "宽度"
 
-#: ../data/functions.xml.in.h:821
+#: ../data/functions.xml.in.h:823
 #, fuzzy
 msgid "Signed Integer"
 msgstr "积分"
 
-#: ../data/functions.xml.in.h:822
+#: ../data/functions.xml.in.h:824
 #, fuzzy
 msgid "Bit Rotation"
 msgstr "是有理数"
 
-#: ../data/functions.xml.in.h:823
+#: ../data/functions.xml.in.h:825
 msgid ""
 "Applies circular bitwise shift to an integer of specified bit width and "
 "signedness (use 1 for signed and 0 for unsigned). The second argument "
@@ -6440,781 +6449,781 @@ msgid ""
 "necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
 
-#: ../data/functions.xml.in.h:824
+#: ../data/functions.xml.in.h:826
 msgid "r:bitrot"
 msgstr ""
 
-#: ../data/functions.xml.in.h:825
+#: ../data/functions.xml.in.h:827
 msgid "Algebra"
 msgstr "代数"
 
-#: ../data/functions.xml.in.h:826
+#: ../data/functions.xml.in.h:828
 msgid "Summation"
 msgstr "求和符号"
 
-#: ../data/functions.xml.in.h:827
+#: ../data/functions.xml.in.h:829
 msgid "au:&#x3A3;,au:&#x2211;,r:sum"
 msgstr ""
 
-#: ../data/functions.xml.in.h:828
+#: ../data/functions.xml.in.h:830
 #, fuzzy
 msgid ""
 "Corresponds to the summation symbol. Adds terms for each x ranging from the "
 "lower to the upper limit."
 msgstr "相当于求和符号&#x3A3;。将从上限到下限的每项x相加。"
 
-#: ../data/functions.xml.in.h:829
+#: ../data/functions.xml.in.h:831
 msgid "Term expression"
 msgstr "项表达式"
 
-#: ../data/functions.xml.in.h:830
+#: ../data/functions.xml.in.h:832
 msgid "Lower limit (i)"
 msgstr "下限(i)"
 
-#: ../data/functions.xml.in.h:831
+#: ../data/functions.xml.in.h:833
 msgid "Upper limit (n)"
 msgstr "上限(n)"
 
-#: ../data/functions.xml.in.h:832
+#: ../data/functions.xml.in.h:834
 msgid "Product of a sequence"
 msgstr "积"
 
-#: ../data/functions.xml.in.h:833
+#: ../data/functions.xml.in.h:835
 msgid "au:&#x3A0;,r:product"
 msgstr ""
 
-#: ../data/functions.xml.in.h:834
+#: ../data/functions.xml.in.h:836
 msgid ""
 "Corresponds to the product symbol. Multiplies factors for each x ranging "
 "from the lower to the upper limit."
 msgstr "相当于连乘符号&#x3A0;。将从上限到下限的每项x相乘。"
 
-#: ../data/functions.xml.in.h:835
+#: ../data/functions.xml.in.h:837
 msgid "Factor expression"
 msgstr "因子表达式"
 
-#: ../data/functions.xml.in.h:836
+#: ../data/functions.xml.in.h:838
 msgid "Solve for multiple variables"
 msgstr "多变量求解"
 
-#: ../data/functions.xml.in.h:837
+#: ../data/functions.xml.in.h:839
 msgid "r:multisolve"
 msgstr ""
 
-#: ../data/functions.xml.in.h:838
+#: ../data/functions.xml.in.h:840
 msgid "Equation vector"
 msgstr "方程向量"
 
-#: ../data/functions.xml.in.h:839
+#: ../data/functions.xml.in.h:841
 msgid "Variable vector"
 msgstr "变量向量"
 
-#: ../data/functions.xml.in.h:840
+#: ../data/functions.xml.in.h:842
 msgid "Solve equation"
 msgstr "方程求解"
 
-#: ../data/functions.xml.in.h:841
+#: ../data/functions.xml.in.h:843
 msgid "r:solve"
 msgstr ""
 
-#: ../data/functions.xml.in.h:842
+#: ../data/functions.xml.in.h:844
 msgid "Equation"
 msgstr "方程"
 
-#: ../data/functions.xml.in.h:843
+#: ../data/functions.xml.in.h:845
 msgid "With respect to"
 msgstr "关于"
 
-#: ../data/functions.xml.in.h:844
+#: ../data/functions.xml.in.h:846
 #, fuzzy
 msgid "Solve differential equation"
 msgstr "方程求解"
 
-#: ../data/functions.xml.in.h:845
+#: ../data/functions.xml.in.h:847
 #, fuzzy
 msgid "r:dsolve"
 msgstr "multisolve"
 
-#: ../data/functions.xml.in.h:846
+#: ../data/functions.xml.in.h:848
 msgid "Initial condition: function value (y)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:847
+#: ../data/functions.xml.in.h:849
 msgid "Initial condition: argument value (x)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:848
+#: ../data/functions.xml.in.h:850
 msgid ""
 "Solves a differential equation and returns the value of y(x). The derivative "
 "in the equation should be in the format diff(y, x). Only first-order "
 "differential equations are currently supported."
 msgstr ""
 
-#: ../data/functions.xml.in.h:849
+#: ../data/functions.xml.in.h:851
 msgid "Solve for two variables"
 msgstr "双变量求解"
 
-#: ../data/functions.xml.in.h:850
+#: ../data/functions.xml.in.h:852
 msgid "r:solve2"
 msgstr ""
 
-#: ../data/functions.xml.in.h:851
+#: ../data/functions.xml.in.h:853
 msgid ""
 "Solves two equations with two unknown variables. Returns the value of the "
 "first variable."
 msgstr "解由两个未知数和两个方程组成方程组。返回第一个变量的值。"
 
-#: ../data/functions.xml.in.h:852
+#: ../data/functions.xml.in.h:854
 msgid "Equation 1"
 msgstr "方程1"
 
-#: ../data/functions.xml.in.h:853
+#: ../data/functions.xml.in.h:855
 msgid "Equation 2"
 msgstr "方程"
 
-#: ../data/functions.xml.in.h:854
+#: ../data/functions.xml.in.h:856
 msgid "Variable 1"
 msgstr "变量1"
 
-#: ../data/functions.xml.in.h:855
+#: ../data/functions.xml.in.h:857
 msgid "Variable 2"
 msgstr "变量2"
 
-#: ../data/functions.xml.in.h:856
+#: ../data/functions.xml.in.h:858
 msgid "Find Linear Function"
 msgstr "寻找线性函数"
 
-#: ../data/functions.xml.in.h:857
+#: ../data/functions.xml.in.h:859
 msgid "r:linearfunction"
 msgstr ""
 
-#: ../data/functions.xml.in.h:858
+#: ../data/functions.xml.in.h:860
 msgid ""
 "Finds the linear function for the straight line between two distinct points."
 msgstr "寻找过两点直线段的线性函数"
 
-#: ../data/functions.xml.in.h:859
+#: ../data/functions.xml.in.h:861
 msgid "x1"
 msgstr ""
 
-#: ../data/functions.xml.in.h:860
+#: ../data/functions.xml.in.h:862
 msgid "y1"
 msgstr ""
 
-#: ../data/functions.xml.in.h:861
+#: ../data/functions.xml.in.h:863
 msgid "x2"
 msgstr ""
 
-#: ../data/functions.xml.in.h:862
+#: ../data/functions.xml.in.h:864
 msgid "y2"
 msgstr ""
 
-#: ../data/functions.xml.in.h:863
+#: ../data/functions.xml.in.h:865
 msgid "Calculus"
 msgstr "微积分"
 
-#: ../data/functions.xml.in.h:864
+#: ../data/functions.xml.in.h:866
 msgid "Differentiate"
 msgstr "百分位数"
 
-#: ../data/functions.xml.in.h:865
+#: ../data/functions.xml.in.h:867
 msgid "r:diff,derivative"
 msgstr "diff,导数"
 
-#: ../data/functions.xml.in.h:866
+#: ../data/functions.xml.in.h:868
 #, fuzzy
 msgid "Variable value"
 msgstr "变量向量"
 
-#: ../data/functions.xml.in.h:867
+#: ../data/functions.xml.in.h:869
 msgid "Integrate"
 msgstr "积分"
 
-#: ../data/functions.xml.in.h:868
+#: ../data/functions.xml.in.h:870
 msgid "r:integrate,integral,au:&#x222B;"
 msgstr "积分,au:&#x222B;"
 
-#: ../data/functions.xml.in.h:869
+#: ../data/functions.xml.in.h:871
 msgid "Variable of integration"
 msgstr "积分变量"
 
-#: ../data/functions.xml.in.h:870
+#: ../data/functions.xml.in.h:872
 #, fuzzy
 msgid "Force numerical integration"
 msgstr "积分变量"
 
-#: ../data/functions.xml.in.h:871
+#: ../data/functions.xml.in.h:873
 #, fuzzy
 msgid "Romberg Integration"
 msgstr "积分变量"
 
-#: ../data/functions.xml.in.h:872
+#: ../data/functions.xml.in.h:874
 msgid "r:romberg"
 msgstr ""
 
-#: ../data/functions.xml.in.h:873
+#: ../data/functions.xml.in.h:875
 #, fuzzy
 msgid "Min iterations"
 msgstr "均差"
 
-#: ../data/functions.xml.in.h:874
+#: ../data/functions.xml.in.h:876
 #, fuzzy
 msgid "Max iterations"
 msgstr "质量分数"
 
-#: ../data/functions.xml.in.h:875
+#: ../data/functions.xml.in.h:877
 #, fuzzy
 msgid "Monte Carlo Integration"
 msgstr "积分变量"
 
-#: ../data/functions.xml.in.h:876
+#: ../data/functions.xml.in.h:878
 msgid "r:montecarlo"
 msgstr ""
 
-#: ../data/functions.xml.in.h:877
+#: ../data/functions.xml.in.h:879
 #, fuzzy
 msgid "Number of samples"
 msgstr "样本数量"
 
-#: ../data/functions.xml.in.h:878
+#: ../data/functions.xml.in.h:880
 #, fuzzy
 msgid "Limit"
 msgstr "下限"
 
-#: ../data/functions.xml.in.h:879
+#: ../data/functions.xml.in.h:881
 msgid ""
 "Returns the two-sided limit of the function if direction is zero, limit from "
 "left (below) if direction is -1, or limit from right (above) if direction is "
 "+1."
 msgstr ""
 
-#: ../data/functions.xml.in.h:880
+#: ../data/functions.xml.in.h:882
 #, fuzzy
 msgid "r:limit"
 msgstr "下限"
 
-#: ../data/functions.xml.in.h:881
+#: ../data/functions.xml.in.h:883
 msgid "Value to approach"
 msgstr ""
 
-#: ../data/functions.xml.in.h:882
+#: ../data/functions.xml.in.h:884
 #, fuzzy
 msgid "Direction"
 msgstr "持续时间"
 
-#: ../data/functions.xml.in.h:883
+#: ../data/functions.xml.in.h:885
 msgid "Extreme Values"
 msgstr "极限值"
 
-#: ../data/functions.xml.in.h:884
+#: ../data/functions.xml.in.h:886
 msgid "r:extremum"
 msgstr ""
 
-#: ../data/functions.xml.in.h:885
+#: ../data/functions.xml.in.h:887
 #, fuzzy
 msgid "Named Integrals"
 msgstr "整数"
 
-#: ../data/functions.xml.in.h:886
+#: ../data/functions.xml.in.h:888
 msgid "Logarithmic Integral"
 msgstr ""
 
-#: ../data/functions.xml.in.h:887
+#: ../data/functions.xml.in.h:889
 msgid "rc:li,logint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:888
+#: ../data/functions.xml.in.h:890
 msgid "The integral of 1/ln(x)."
 msgstr ""
 
-#: ../data/functions.xml.in.h:889
+#: ../data/functions.xml.in.h:891
 #, fuzzy
 msgid "Exponential Integral"
 msgstr "e的乘方"
 
-#: ../data/functions.xml.in.h:890
+#: ../data/functions.xml.in.h:892
 msgid "rc:Ei,expint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:891
+#: ../data/functions.xml.in.h:893
 msgid "The integral of e^x/x."
 msgstr ""
 
-#: ../data/functions.xml.in.h:892
+#: ../data/functions.xml.in.h:894
 #, fuzzy
 msgid "Sine Integral"
 msgstr "积分"
 
-#: ../data/functions.xml.in.h:893
+#: ../data/functions.xml.in.h:895
 msgid "rc:Si,sinint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:894
+#: ../data/functions.xml.in.h:896
 msgid "The integral of sin(x)/x."
 msgstr ""
 
-#: ../data/functions.xml.in.h:895
+#: ../data/functions.xml.in.h:897
 #, fuzzy
 msgid "Cosine Integral"
 msgstr "是整数"
 
-#: ../data/functions.xml.in.h:896
+#: ../data/functions.xml.in.h:898
 msgid "rc:Ci,cosint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:897
+#: ../data/functions.xml.in.h:899
 msgid "The integral of cos(x)/x."
 msgstr ""
 
-#: ../data/functions.xml.in.h:898
+#: ../data/functions.xml.in.h:900
 #, fuzzy
 msgid "Hyperbolic Sine Integral"
 msgstr "双曲正弦"
 
-#: ../data/functions.xml.in.h:899
+#: ../data/functions.xml.in.h:901
 msgid "rc:Shi,sinhint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:900
+#: ../data/functions.xml.in.h:902
 msgid "The integral of sinh(x)/x."
 msgstr ""
 
-#: ../data/functions.xml.in.h:901
+#: ../data/functions.xml.in.h:903
 #, fuzzy
 msgid "Hyperbolic Cosine Integral"
 msgstr "双曲余弦"
 
-#: ../data/functions.xml.in.h:902
+#: ../data/functions.xml.in.h:904
 msgid "rc:Chi,coshint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:903
+#: ../data/functions.xml.in.h:905
 msgid "The integral of cosh(x)/x."
 msgstr ""
 
-#: ../data/functions.xml.in.h:904
+#: ../data/functions.xml.in.h:906
 #, fuzzy
 msgid "Fresnel Integral S"
 msgstr "是整数"
 
-#: ../data/functions.xml.in.h:905
+#: ../data/functions.xml.in.h:907
 msgid "r:fresnels"
 msgstr ""
 
-#: ../data/functions.xml.in.h:906
+#: ../data/functions.xml.in.h:908
 msgid "The integral of sin(pi*x^2/2)."
 msgstr ""
 
-#: ../data/functions.xml.in.h:907
+#: ../data/functions.xml.in.h:909
 #, fuzzy
 msgid "Fresnel Integral C"
 msgstr "是整数"
 
-#: ../data/functions.xml.in.h:908
+#: ../data/functions.xml.in.h:910
 msgid "r:fresnelc"
 msgstr ""
 
-#: ../data/functions.xml.in.h:909
-msgid "The integral of cos(pi*x^2/2)."
-msgstr ""
-
-#: ../data/functions.xml.in.h:910
-#, fuzzy
-msgid "Upper Incomplete Gamma Function"
-msgstr "&#x3B3;函数"
-
 #: ../data/functions.xml.in.h:911
-msgid "r:igamma"
+msgid "The integral of cos(pi*x^2/2)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:912
 #, fuzzy
-msgid "Lower Incomplete Gamma Function"
+msgid "Upper Incomplete Gamma Function"
 msgstr "&#x3B3;函数"
 
 #: ../data/functions.xml.in.h:913
-msgid "r:gammainc"
+msgid "r:igamma"
 msgstr ""
 
 #: ../data/functions.xml.in.h:914
+#, fuzzy
+msgid "Lower Incomplete Gamma Function"
+msgstr "&#x3B3;函数"
+
+#: ../data/functions.xml.in.h:915
+msgid "r:gammainc"
+msgstr ""
+
+#: ../data/functions.xml.in.h:916
 msgid "Geometry"
 msgstr "几何"
 
-#: ../data/functions.xml.in.h:915
+#: ../data/functions.xml.in.h:917
 msgid "Triangle"
 msgstr "三角形"
 
-#: ../data/functions.xml.in.h:916
+#: ../data/functions.xml.in.h:918
 msgid "Hypotenuse"
 msgstr "斜边"
 
-#: ../data/functions.xml.in.h:917
+#: ../data/functions.xml.in.h:919
 msgid "r:hypot"
 msgstr ""
 
-#: ../data/functions.xml.in.h:918
+#: ../data/functions.xml.in.h:920
 msgid "Side A"
 msgstr "边A"
 
-#: ../data/functions.xml.in.h:919
+#: ../data/functions.xml.in.h:921
 msgid "Side B"
 msgstr "边B"
 
-#: ../data/functions.xml.in.h:920
+#: ../data/functions.xml.in.h:922
 msgid "Triangle Area"
 msgstr "三角形面积"
 
-#: ../data/functions.xml.in.h:921
+#: ../data/functions.xml.in.h:923
 msgid "r:triangle"
 msgstr ""
 
-#: ../data/functions.xml.in.h:922
+#: ../data/functions.xml.in.h:924
 msgid "Height"
 msgstr "高度"
 
-#: ../data/functions.xml.in.h:923
+#: ../data/functions.xml.in.h:925
 msgid "Triangle Perimeter"
 msgstr "(直角)三角形周长"
 
-#: ../data/functions.xml.in.h:924
+#: ../data/functions.xml.in.h:926
 msgid "r:triangle_perimeter"
 msgstr ""
 
-#: ../data/functions.xml.in.h:925
+#: ../data/functions.xml.in.h:927
 msgid "Side C"
 msgstr "边C"
 
-#: ../data/functions.xml.in.h:926
+#: ../data/functions.xml.in.h:928
 msgid "Circle"
 msgstr "圆形"
 
-#: ../data/functions.xml.in.h:927
+#: ../data/functions.xml.in.h:929
 msgid "Circle Area"
 msgstr "圆面积"
 
-#: ../data/functions.xml.in.h:928
+#: ../data/functions.xml.in.h:930
 msgid "r:circle"
 msgstr ""
 
-#: ../data/functions.xml.in.h:929
+#: ../data/functions.xml.in.h:931
 msgid "Calculates the area of a circle using the radius"
 msgstr "使用半径计算圆面积"
 
-#: ../data/functions.xml.in.h:930
+#: ../data/functions.xml.in.h:932
 msgid "Radius"
 msgstr "半径"
 
-#: ../data/functions.xml.in.h:931
+#: ../data/functions.xml.in.h:933
 msgid "Circle Circumference"
 msgstr "圆周长"
 
-#: ../data/functions.xml.in.h:932
+#: ../data/functions.xml.in.h:934
 msgid "r:circumference"
 msgstr ""
 
-#: ../data/functions.xml.in.h:933
+#: ../data/functions.xml.in.h:935
 msgid "Cylinder"
 msgstr "圆柱"
 
-#: ../data/functions.xml.in.h:934
+#: ../data/functions.xml.in.h:936
 msgid "Cylinder Volume"
 msgstr "圆柱体积"
 
-#: ../data/functions.xml.in.h:935
+#: ../data/functions.xml.in.h:937
 msgid "r:cylinder"
 msgstr ""
 
-#: ../data/functions.xml.in.h:936
+#: ../data/functions.xml.in.h:938
 msgid "Surface Area of Cylinder"
 msgstr "圆柱体表面积"
 
-#: ../data/functions.xml.in.h:937
+#: ../data/functions.xml.in.h:939
 msgid "r:cylinder_sa"
 msgstr ""
 
-#: ../data/functions.xml.in.h:938
+#: ../data/functions.xml.in.h:940
 msgid "Cone"
 msgstr "圆锥"
 
-#: ../data/functions.xml.in.h:939
+#: ../data/functions.xml.in.h:941
 msgid "Cone Volume"
 msgstr "圆锥体积"
 
-#: ../data/functions.xml.in.h:940
+#: ../data/functions.xml.in.h:942
 msgid "r:cone"
 msgstr ""
 
-#: ../data/functions.xml.in.h:941
+#: ../data/functions.xml.in.h:943
 msgid "Surface Area of Cone"
 msgstr "圆锥表面积"
 
-#: ../data/functions.xml.in.h:942
+#: ../data/functions.xml.in.h:944
 msgid "r:cone_sa"
 msgstr ""
 
-#: ../data/functions.xml.in.h:943
+#: ../data/functions.xml.in.h:945
 msgid "Sphere"
 msgstr "球体"
 
-#: ../data/functions.xml.in.h:944
+#: ../data/functions.xml.in.h:946
 msgid "Sphere Volume"
 msgstr "球体积"
 
-#: ../data/functions.xml.in.h:945
+#: ../data/functions.xml.in.h:947
 msgid "r:sphere"
 msgstr ""
 
-#: ../data/functions.xml.in.h:946
+#: ../data/functions.xml.in.h:948
 msgid "Surface Area of Sphere"
 msgstr "球体表面积"
 
-#: ../data/functions.xml.in.h:947
+#: ../data/functions.xml.in.h:949
 msgid "r:sphere_sa"
 msgstr ""
 
-#: ../data/functions.xml.in.h:948
+#: ../data/functions.xml.in.h:950
 msgid "Square Area"
 msgstr "正方形面积"
 
-#: ../data/functions.xml.in.h:949
+#: ../data/functions.xml.in.h:951
 msgid "r:square"
 msgstr ""
 
-#: ../data/functions.xml.in.h:950
+#: ../data/functions.xml.in.h:952
 msgid "Length of side"
 msgstr "边长"
 
-#: ../data/functions.xml.in.h:951
+#: ../data/functions.xml.in.h:953
 msgid "Square Perimeter"
 msgstr "正方形周长"
 
-#: ../data/functions.xml.in.h:952
+#: ../data/functions.xml.in.h:954
 msgid "r:square_perimeter"
 msgstr ""
 
-#: ../data/functions.xml.in.h:953
+#: ../data/functions.xml.in.h:955
 msgid "Cube"
 msgstr "立方体"
 
-#: ../data/functions.xml.in.h:954
+#: ../data/functions.xml.in.h:956
 msgid "Cube Volume"
 msgstr "立方体体积"
 
-#: ../data/functions.xml.in.h:955
+#: ../data/functions.xml.in.h:957
 msgid "r:cube"
 msgstr ""
 
-#: ../data/functions.xml.in.h:956
+#: ../data/functions.xml.in.h:958
 msgid "Surface Area of Cube"
 msgstr "立方体表面积"
 
-#: ../data/functions.xml.in.h:957
+#: ../data/functions.xml.in.h:959
 msgid "r:cube_sa"
 msgstr ""
 
-#: ../data/functions.xml.in.h:958
+#: ../data/functions.xml.in.h:960
 msgid "Rectangle"
 msgstr "矩形"
 
-#: ../data/functions.xml.in.h:959
+#: ../data/functions.xml.in.h:961
 msgid "Rectangle Area"
 msgstr "矩形面积"
 
-#: ../data/functions.xml.in.h:960
+#: ../data/functions.xml.in.h:962
 msgid "r:rect"
 msgstr ""
 
-#: ../data/functions.xml.in.h:961
+#: ../data/functions.xml.in.h:963
 msgid "Width"
 msgstr "宽度"
 
-#: ../data/functions.xml.in.h:962
+#: ../data/functions.xml.in.h:964
 msgid "Rectangle Perimeter"
 msgstr "矩形周长"
 
-#: ../data/functions.xml.in.h:963
+#: ../data/functions.xml.in.h:965
 msgid "r:rect_perimeter"
 msgstr ""
 
-#: ../data/functions.xml.in.h:964
+#: ../data/functions.xml.in.h:966
 msgid "Prism"
 msgstr "棱柱"
 
-#: ../data/functions.xml.in.h:965
+#: ../data/functions.xml.in.h:967
 msgid "Volume of Rectangular Prism"
 msgstr "矩形棱柱体积"
 
-#: ../data/functions.xml.in.h:966
+#: ../data/functions.xml.in.h:968
 msgid "r:rectprism"
 msgstr ""
 
-#: ../data/functions.xml.in.h:967
+#: ../data/functions.xml.in.h:969
 msgid "Calculates the volume of a prism with rectangular base."
 msgstr "计算矩形棱柱的体积。"
 
-#: ../data/functions.xml.in.h:968
+#: ../data/functions.xml.in.h:970
 msgid "Surface Area of Rectangular Prism"
 msgstr " 矩形棱柱表面积"
 
-#: ../data/functions.xml.in.h:969
+#: ../data/functions.xml.in.h:971
 msgid "r:rectprism_sa"
 msgstr ""
 
-#: ../data/functions.xml.in.h:970
+#: ../data/functions.xml.in.h:972
 msgid "Calculates the surface area of a prism with rectangular base."
 msgstr "计算矩形棱柱的表面积"
 
-#: ../data/functions.xml.in.h:971
+#: ../data/functions.xml.in.h:973
 msgid "Volume of Triangular Prism"
 msgstr "三角棱柱体积"
 
-#: ../data/functions.xml.in.h:972
+#: ../data/functions.xml.in.h:974
 msgid "r:triangleprism"
 msgstr ""
 
-#: ../data/functions.xml.in.h:973
+#: ../data/functions.xml.in.h:975
 msgid "Calculates the volume of a prism with triangular base."
 msgstr "计算三角棱柱的体积。"
 
-#: ../data/functions.xml.in.h:974
+#: ../data/functions.xml.in.h:976
 msgid "Pyramid"
 msgstr "锥体"
 
-#: ../data/functions.xml.in.h:975
+#: ../data/functions.xml.in.h:977
 msgid "Pyramid Volume"
 msgstr "锥体体积"
 
-#: ../data/functions.xml.in.h:976
+#: ../data/functions.xml.in.h:978
 msgid "r:pyramid"
 msgstr ""
 
-#: ../data/functions.xml.in.h:977
+#: ../data/functions.xml.in.h:979
 msgid ""
 "Calculates the volume of a 3-dimensional shape standing on a rectangular "
 "base and terminating in a point at the top."
 msgstr "计算矩形锥体的体积。"
 
-#: ../data/functions.xml.in.h:978
+#: ../data/functions.xml.in.h:980
 msgid "Length of base"
 msgstr "底面长度"
 
-#: ../data/functions.xml.in.h:979
+#: ../data/functions.xml.in.h:981
 msgid "Width of base"
 msgstr "底面宽度"
 
-#: ../data/functions.xml.in.h:980
+#: ../data/functions.xml.in.h:982
 msgid "Volume of Regular Tetrahedron"
 msgstr "正四面体体积"
 
-#: ../data/functions.xml.in.h:981
+#: ../data/functions.xml.in.h:983
 msgid "r:tetrahedron"
 msgstr ""
 
-#: ../data/functions.xml.in.h:982
+#: ../data/functions.xml.in.h:984
 msgid "Surface Area of Regular Tetrahedron"
 msgstr "正四面体表面积"
 
-#: ../data/functions.xml.in.h:983
+#: ../data/functions.xml.in.h:985
 msgid "r:tetrahedron_sa"
 msgstr ""
 
-#: ../data/functions.xml.in.h:984
+#: ../data/functions.xml.in.h:986
 msgid "Height of Regular Tetrahedron"
 msgstr "正四面体的高度"
 
-#: ../data/functions.xml.in.h:985
+#: ../data/functions.xml.in.h:987
 msgid "r:tetrahedron_height"
 msgstr ""
 
-#: ../data/functions.xml.in.h:986
+#: ../data/functions.xml.in.h:988
 msgid "Volume of Square Pyramid"
 msgstr "方锥体体积"
 
-#: ../data/functions.xml.in.h:987
+#: ../data/functions.xml.in.h:989
 msgid "r:sqpyramid"
 msgstr ""
 
-#: ../data/functions.xml.in.h:988
+#: ../data/functions.xml.in.h:990
 msgid "Surface Area of Square Pyramid"
 msgstr "方锥体表面积"
 
-#: ../data/functions.xml.in.h:989
+#: ../data/functions.xml.in.h:991
 msgid "r:sqpyramid_sa"
 msgstr ""
 
-#: ../data/functions.xml.in.h:990
+#: ../data/functions.xml.in.h:992
 msgid "Height of Square Pyramid"
 msgstr "方角锥的高度"
 
-#: ../data/functions.xml.in.h:991
+#: ../data/functions.xml.in.h:993
 msgid "r:sqpyramid_height"
 msgstr ""
 
-#: ../data/functions.xml.in.h:992
+#: ../data/functions.xml.in.h:994
 msgid "Parallelogram"
 msgstr "平行四边形"
 
-#: ../data/functions.xml.in.h:993
+#: ../data/functions.xml.in.h:995
 msgid "Parallelogram Area"
 msgstr "平行四边形面积"
 
-#: ../data/functions.xml.in.h:994
+#: ../data/functions.xml.in.h:996
 msgid "r:parallelogram"
 msgstr ""
 
-#: ../data/functions.xml.in.h:995
+#: ../data/functions.xml.in.h:997
 msgid ""
 "Calculates the area of a four-sided figure whose opposite sides are both "
 "parallel and equal in length."
 msgstr "计算平行四边形的面积。"
 
-#: ../data/functions.xml.in.h:996
+#: ../data/functions.xml.in.h:998
 msgid "Parallelogram Perimeter"
 msgstr "平行四边形周长"
 
-#: ../data/functions.xml.in.h:997
+#: ../data/functions.xml.in.h:999
 msgid "r:parallelogram_perimeter"
 msgstr ""
 
-#: ../data/functions.xml.in.h:998
+#: ../data/functions.xml.in.h:1000
 msgid ""
 "Calculates the perimeter of a four-sided figure whose opposite sides are "
 "both parallel and equal in length."
 msgstr "计算平行四边形的周长。"
 
-#: ../data/functions.xml.in.h:999
+#: ../data/functions.xml.in.h:1001
 msgid "Trapezoid"
 msgstr "梯形"
 
-#: ../data/functions.xml.in.h:1000
+#: ../data/functions.xml.in.h:1002
 msgid "Trapezoid Area"
 msgstr "梯形面积"
 
-#: ../data/functions.xml.in.h:1001
+#: ../data/functions.xml.in.h:1003
 msgid "r:trapezoid"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1002
+#: ../data/functions.xml.in.h:1004
 msgid "Calculates the area of a four-sided figure with two parallel sides."
 msgstr "计算梯形的面积。"
 
-#: ../data/functions.xml.in.h:1003
+#: ../data/functions.xml.in.h:1005
 msgid "Economics"
 msgstr "经济学"
 
-#: ../data/functions.xml.in.h:1004
+#: ../data/functions.xml.in.h:1006
 msgid "Microeconomics"
 msgstr "微观经济学"
 
-#: ../data/functions.xml.in.h:1005
+#: ../data/functions.xml.in.h:1007
 msgid "Elasticity"
 msgstr "弹性"
 
-#: ../data/functions.xml.in.h:1006
+#: ../data/functions.xml.in.h:1008
 msgid "r:elasticity"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1007
+#: ../data/functions.xml.in.h:1009
 msgid ""
 "Calculates the demand elasticity. Also works for supply elasticity, income "
 "elasticity, cross-price elasticity, etc. Just replace demand with supply, or "
@@ -7226,27 +7235,27 @@ msgstr ""
 "性、交叉价格弹性等。 &#10;&#10;例如，表达式elasticity(100-x^2, 3)计算x为价格"
 "变量的函数\"Q = 100 - x^2\"，当价格为3时的 需求弹性。"
 
-#: ../data/functions.xml.in.h:1008
+#: ../data/functions.xml.in.h:1010
 msgid "Demand function"
 msgstr "需求函数"
 
-#: ../data/functions.xml.in.h:1009
+#: ../data/functions.xml.in.h:1011
 msgid "Price"
 msgstr "价格"
 
-#: ../data/functions.xml.in.h:1010
+#: ../data/functions.xml.in.h:1012
 msgid "Price variable"
 msgstr "价格变量"
 
-#: ../data/functions.xml.in.h:1011
+#: ../data/functions.xml.in.h:1013
 msgid "Sum-of-Years Digits Depreciation"
 msgstr "年数总和折旧"
 
-#: ../data/functions.xml.in.h:1012
+#: ../data/functions.xml.in.h:1014
 msgid "r:syd"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1013
+#: ../data/functions.xml.in.h:1015
 msgid ""
 "Calculates the sum-of-years digits depreciation for an asset based on its "
 "cost, salvage value, anticipated life, and a particular period. This method "
@@ -7259,31 +7268,31 @@ msgstr ""
 "方法加速折旧率，因此在早期的折旧支出比晚期要多。\"折旧成本\"是实际的成本 减去"
 "残值。\"寿命\"是指该资产折旧的周期数目(通常单位为年)。"
 
-#: ../data/functions.xml.in.h:1014
+#: ../data/functions.xml.in.h:1016
 msgid "Cost"
 msgstr "成本"
 
-#: ../data/functions.xml.in.h:1015
+#: ../data/functions.xml.in.h:1017
 msgid "Salvage value"
 msgstr "残值"
 
-#: ../data/functions.xml.in.h:1016
+#: ../data/functions.xml.in.h:1018
 msgid "Life"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1017
+#: ../data/functions.xml.in.h:1019
 msgid "Period"
 msgstr "周期"
 
-#: ../data/functions.xml.in.h:1018
+#: ../data/functions.xml.in.h:1020
 msgid "Straight Line Depreciation"
 msgstr "直线折旧"
 
-#: ../data/functions.xml.in.h:1019
+#: ../data/functions.xml.in.h:1021
 msgid "r:sln"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1020
+#: ../data/functions.xml.in.h:1022
 msgid ""
 "Determines the straight line depreciation of an asset for a single period."
 "&#10;&#10;Cost is the amount you paid for the asset. Salvage is the value of "
@@ -7295,15 +7304,15 @@ msgstr ""
 "产的花销。\"残值\"是此资产在周期 结束时的价值。\"寿命\"是指该资产折旧的周期数"
 "目。SLN将资产的价值 均摊到它的寿命上。"
 
-#: ../data/functions.xml.in.h:1021
+#: ../data/functions.xml.in.h:1023
 msgid "Present Value"
 msgstr "现值"
 
-#: ../data/functions.xml.in.h:1022
+#: ../data/functions.xml.in.h:1024
 msgid "r:pv"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1023
+#: ../data/functions.xml.in.h:1025
 msgid ""
 "Returns the present value of an investment.&#10;&#10;If type = 1 then the "
 "payment is made at the beginning of the period, If type = 0 (or omitted) it "
@@ -7312,149 +7321,149 @@ msgstr ""
 "返回一项投资的现值。&#10;&#10; \"类型\" 定义了到期日期。\"1\"代表在每个周期的"
 "开头支付; \"0\"(缺省值)代表在每个周期末尾支付。"
 
-#: ../data/functions.xml.in.h:1024
+#: ../data/functions.xml.in.h:1026
 msgid "Interest rate"
 msgstr "利率"
 
-#: ../data/functions.xml.in.h:1025
+#: ../data/functions.xml.in.h:1027
 msgid "Number of periods"
 msgstr "期数"
 
-#: ../data/functions.xml.in.h:1026
+#: ../data/functions.xml.in.h:1028
 msgid "Payment made each period"
 msgstr "每期支付"
 
-#: ../data/functions.xml.in.h:1027
+#: ../data/functions.xml.in.h:1029
 msgid "Future value"
 msgstr "未来值"
 
-#: ../data/functions.xml.in.h:1028
+#: ../data/functions.xml.in.h:1030
 msgid "Type"
 msgstr "类型"
 
-#: ../data/functions.xml.in.h:1029
+#: ../data/functions.xml.in.h:1031
 msgid "Nominal Interest Rate"
 msgstr "名义利率"
 
-#: ../data/functions.xml.in.h:1030
+#: ../data/functions.xml.in.h:1032
 msgid "r:nominal"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1031
+#: ../data/functions.xml.in.h:1033
 msgid ""
 "Calculates the nominal interest rate from a given effective interest rate "
 "compounded at given intervals."
 msgstr "根据在给定时间段内复合的给定有效利率计算名义利率。"
 
-#: ../data/functions.xml.in.h:1032
+#: ../data/functions.xml.in.h:1034
 msgid "Effective interest rate"
 msgstr "有效利率"
 
-#: ../data/functions.xml.in.h:1033
+#: ../data/functions.xml.in.h:1035
 msgid "Periods"
 msgstr "周期"
 
-#: ../data/functions.xml.in.h:1034
+#: ../data/functions.xml.in.h:1036
 msgid "Zero Coupon"
 msgstr "零息"
 
-#: ../data/functions.xml.in.h:1035
+#: ../data/functions.xml.in.h:1037
 msgid "r:zero_coupon"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1036
+#: ../data/functions.xml.in.h:1038
 msgid "Calculates the value of a zero-coupon (pure discount) bond."
 msgstr "计算零息债券(纯贴现债券)的值。"
 
-#: ../data/functions.xml.in.h:1037
+#: ../data/functions.xml.in.h:1039
 msgid "Face value"
 msgstr "票面价值"
 
-#: ../data/functions.xml.in.h:1038
+#: ../data/functions.xml.in.h:1040
 msgid "Treasury Bill Yield"
 msgstr "短期债券收益"
 
-#: ../data/functions.xml.in.h:1039
+#: ../data/functions.xml.in.h:1041
 msgid "r:tbillyield"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1040
+#: ../data/functions.xml.in.h:1042
 msgid "Returns the yield for a treasury bill."
 msgstr "返回短期债券的收益。"
 
-#: ../data/functions.xml.in.h:1041
+#: ../data/functions.xml.in.h:1043
 msgid "Settlement date"
 msgstr "结算日期"
 
-#: ../data/functions.xml.in.h:1042
+#: ../data/functions.xml.in.h:1044
 msgid "Maturity date"
 msgstr "到期日期"
 
-#: ../data/functions.xml.in.h:1043
+#: ../data/functions.xml.in.h:1045
 msgid "Price per $100 face value"
 msgstr "每$100票面价值的价格"
 
-#: ../data/functions.xml.in.h:1044
+#: ../data/functions.xml.in.h:1046
 msgid "Treasury Bill Price"
 msgstr "短期债券价格"
 
-#: ../data/functions.xml.in.h:1045
+#: ../data/functions.xml.in.h:1047
 msgid "r:tbillprice"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1046
+#: ../data/functions.xml.in.h:1048
 msgid "Returns the price per $100 value for a treasury bill."
 msgstr "返回一支短期债券每100美元面值的价格。"
 
-#: ../data/functions.xml.in.h:1047
+#: ../data/functions.xml.in.h:1049
 msgid "Discount rate"
 msgstr "贴现率"
 
-#: ../data/functions.xml.in.h:1048
+#: ../data/functions.xml.in.h:1050
 msgid "Treasury Bill Equivalent"
 msgstr "短期债券等价物"
 
-#: ../data/functions.xml.in.h:1049
+#: ../data/functions.xml.in.h:1051
 msgid "r:tbilleq"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1050
+#: ../data/functions.xml.in.h:1052
 msgid "Returns the bond equivalent for a treasury bill."
 msgstr "返回与一支短期债券等值的债券。"
 
-#: ../data/functions.xml.in.h:1051
+#: ../data/functions.xml.in.h:1053
 msgid "Interest paid on a given period of an investment (ISPMT)"
 msgstr "给定投资期内要支付的利息(ISPMT)"
 
-#: ../data/functions.xml.in.h:1052
+#: ../data/functions.xml.in.h:1054
 msgid "r:ispmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1053
+#: ../data/functions.xml.in.h:1055
 msgid "Calculates the interest paid on a given period of an investment."
 msgstr "计算一项投资在给定周期内支付的利息。"
 
-#: ../data/functions.xml.in.h:1054
+#: ../data/functions.xml.in.h:1056
 msgid "Periodic interest rate"
 msgstr "周期利率"
 
-#: ../data/functions.xml.in.h:1055
+#: ../data/functions.xml.in.h:1057
 msgid "Amortizement period"
 msgstr "偿还期"
 
-#: ../data/functions.xml.in.h:1056
+#: ../data/functions.xml.in.h:1058
 msgid "Present value"
 msgstr "现值"
 
-#: ../data/functions.xml.in.h:1057
+#: ../data/functions.xml.in.h:1059
 msgid "Payment for a loan"
 msgstr "贷款偿还"
 
-#: ../data/functions.xml.in.h:1058
+#: ../data/functions.xml.in.h:1060
 msgid "r:pmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1059
+#: ../data/functions.xml.in.h:1061
 #, fuzzy
 msgid ""
 "Returns the amount of payment (negative) each period for a loan based on a "
@@ -7471,19 +7480,19 @@ msgstr ""
 "型\" 定义了到期日期。\"1\"代表在每个周期的开头支付; \"0\"(缺省值)代表在每个周"
 "期末尾支付。"
 
-#: ../data/functions.xml.in.h:1060
+#: ../data/functions.xml.in.h:1062
 msgid "Rate"
 msgstr "利率"
 
-#: ../data/functions.xml.in.h:1061
+#: ../data/functions.xml.in.h:1063
 msgid "Periods of an investment"
 msgstr "投资的期数"
 
-#: ../data/functions.xml.in.h:1062
+#: ../data/functions.xml.in.h:1064
 msgid "r:nper"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1063
+#: ../data/functions.xml.in.h:1065
 msgid ""
 "Calculates number of periods of an investment based on periodic constant "
 "payments and a constant interest rate.&#10;&#10;Type defines the due date. 1 "
@@ -7493,29 +7502,29 @@ msgstr ""
 "计算基于周期性固定支付和固定利率的投资的周期数目。&#10;&#10;\"类型\" 定义了到"
 "期日期。\"1\"代表在每个周期的开头支付;\"0\"(缺省值)代表在 每个周期末尾支付。"
 
-#: ../data/functions.xml.in.h:1064
+#: ../data/functions.xml.in.h:1066
 msgid "Periods for investment to attain desired value"
 msgstr "要获得想要的值，需要的投资期数"
 
-#: ../data/functions.xml.in.h:1065
+#: ../data/functions.xml.in.h:1067
 msgid "r:g_duration"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1066
+#: ../data/functions.xml.in.h:1068
 msgid ""
 "Returns the number of periods needed for an investment to attain a desired "
 "value."
 msgstr "返回一项投资要得到想要的金额，所需要的期数。"
 
-#: ../data/functions.xml.in.h:1067
+#: ../data/functions.xml.in.h:1069
 msgid "Payment of an annuity going towards principal (PPMT)"
 msgstr "本金的年金支付额(PPMT)"
 
-#: ../data/functions.xml.in.h:1068
+#: ../data/functions.xml.in.h:1070
 msgid "r:ppmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1069
+#: ../data/functions.xml.in.h:1071
 msgid ""
 "Calculates the amount of a payment of an annuity going towards principal."
 "&#10;&#10;Type defines the due date. 1 for payment at the beginning of a "
@@ -7524,35 +7533,35 @@ msgstr ""
 "计算关于本金的年金支付额。&#10;&#10; \"类型\" 定义了到期日期。\"1\"代表在每个"
 "周期的开头支付; \"0\"(缺省值)代表在每个周期末尾支付。"
 
-#: ../data/functions.xml.in.h:1070
+#: ../data/functions.xml.in.h:1072
 msgid "Desired future value"
 msgstr "期望的未来价值"
 
-#: ../data/functions.xml.in.h:1071
+#: ../data/functions.xml.in.h:1073
 msgid "Effective Interest Rate"
 msgstr "有效利率"
 
-#: ../data/functions.xml.in.h:1072
+#: ../data/functions.xml.in.h:1074
 msgid "r:effect"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1073
+#: ../data/functions.xml.in.h:1075
 msgid "Calculates the effective interest for a given nominal rate."
 msgstr "根据给定的名义利率计算有效利息。"
 
-#: ../data/functions.xml.in.h:1074
+#: ../data/functions.xml.in.h:1076
 msgid "Nominal interest rate"
 msgstr "名义利率"
 
-#: ../data/functions.xml.in.h:1075
+#: ../data/functions.xml.in.h:1077
 msgid "Future Value"
 msgstr "未来值"
 
-#: ../data/functions.xml.in.h:1076
+#: ../data/functions.xml.in.h:1078
 msgid "r:fv"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1077
+#: ../data/functions.xml.in.h:1079
 msgid ""
 "Computes the future value of an investment. This is based on periodic, "
 "constant payments and a constant interest rate.&#10;&#10;If type = 1 then "
@@ -7563,51 +7572,51 @@ msgstr ""
 "&#10; \"type\"说明了到期日期。\"1\"代表在每个周期的开头支付; \"0\"(缺省值)代"
 "表在每个周期末尾支付。"
 
-#: ../data/functions.xml.in.h:1078
+#: ../data/functions.xml.in.h:1080
 msgid "Return on continuously compounded interest"
 msgstr "根据连续复合利率的回报"
 
-#: ../data/functions.xml.in.h:1079
+#: ../data/functions.xml.in.h:1081
 msgid "r:continuous"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1080
+#: ../data/functions.xml.in.h:1082
 msgid ""
 "Calculates the return on continuously compounded interest, given the "
 "principal, nominal rate and time in years."
 msgstr "根据给定的本金、名义利率和以年为单位的时间，计算连续复合利率的回报。"
 
-#: ../data/functions.xml.in.h:1081
+#: ../data/functions.xml.in.h:1083
 msgid "Principal"
 msgstr "本金"
 
-#: ../data/functions.xml.in.h:1082
+#: ../data/functions.xml.in.h:1084
 msgid "Compound"
 msgstr "复合值"
 
-#: ../data/functions.xml.in.h:1083
+#: ../data/functions.xml.in.h:1085
 msgid "r:compound"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1084
+#: ../data/functions.xml.in.h:1086
 msgid ""
 "Returns the value of an investment, given the principal, nominal interest "
 "rate, compounding frequency and time."
 msgstr "根据给定的本金、名义利率、复合频率和时间计算并返回投资的值。"
 
-#: ../data/functions.xml.in.h:1085
+#: ../data/functions.xml.in.h:1087
 msgid "Periods per year"
 msgstr "每年的期数"
 
-#: ../data/functions.xml.in.h:1086
+#: ../data/functions.xml.in.h:1088
 msgid "Payment of an annuity going towards interest (IPMT)"
 msgstr "利息的年金支付额(IPMT)"
 
-#: ../data/functions.xml.in.h:1087
+#: ../data/functions.xml.in.h:1089
 msgid "r:ipmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1088
+#: ../data/functions.xml.in.h:1090
 msgid ""
 "Calculates the amount of a payment of an annuity going towards interest.&#10;"
 "&#10;Type defines the due date. 1 for payment at the beginning of a period "
@@ -7616,15 +7625,15 @@ msgstr ""
 "计算关于本金的年金利息支付额.&#10;&#10; \"类型\" 定义了到期日期。\"1\"代表在"
 "每个周期的开头支付; \"0\"(缺省值)代表在每个周期末尾支付。"
 
-#: ../data/functions.xml.in.h:1089
+#: ../data/functions.xml.in.h:1091
 msgid "Interest rate for a fully invested security"
 msgstr "一项已充分投资证券的利率"
 
-#: ../data/functions.xml.in.h:1090
+#: ../data/functions.xml.in.h:1092
 msgid "r:intrate"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1091
+#: ../data/functions.xml.in.h:1093
 msgid ""
 "Returns the interest rate for a fully invested security.&#10;&#10;Basis is "
 "the type of day counting you want to use: 0: US 30/360 (default), 1: real "
@@ -7634,62 +7643,62 @@ msgstr ""
 "0: 美式 30/360 (缺省值),  1: 真实天数, 2: 真实天数/360,  3: 真实天数/365 or "
 "4: 欧式 30/360。"
 
-#: ../data/functions.xml.in.h:1092
+#: ../data/functions.xml.in.h:1094
 msgid "Investment"
 msgstr "投资"
 
-#: ../data/functions.xml.in.h:1093
+#: ../data/functions.xml.in.h:1095
 msgid "Redemption"
 msgstr "偿还"
 
-#: ../data/functions.xml.in.h:1094
+#: ../data/functions.xml.in.h:1096
 msgid "Dollar Fraction"
 msgstr "美元分数"
 
-#: ../data/functions.xml.in.h:1095
+#: ../data/functions.xml.in.h:1097
 msgid "r:dollarfr"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1096
+#: ../data/functions.xml.in.h:1098
 msgid ""
 "Converts a decimal dollar price into a dollar price expressed as a fraction."
 msgstr "将用小数表示的美元价格转化为用分数表示的价格。"
 
-#: ../data/functions.xml.in.h:1097
+#: ../data/functions.xml.in.h:1099
 msgid "Decimal dollar"
 msgstr "小数表示的美元"
 
-#: ../data/functions.xml.in.h:1098
+#: ../data/functions.xml.in.h:1100
 msgid "Denominator of fraction"
 msgstr "分数的分母"
 
-#: ../data/functions.xml.in.h:1099
+#: ../data/functions.xml.in.h:1101
 msgid "Dollar Decimal"
 msgstr "美元小数"
 
-#: ../data/functions.xml.in.h:1100
+#: ../data/functions.xml.in.h:1102
 msgid "r:dollarde"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1101
+#: ../data/functions.xml.in.h:1103
 msgid ""
 "Converts a dollar price expressed as a fraction into a dollar price "
 "expressed as a decimal number."
 msgstr "将用分数表示的美元价格转化为用小数表示的价格。"
 
-#: ../data/functions.xml.in.h:1102
+#: ../data/functions.xml.in.h:1104
 msgid "Fractional dollar"
 msgstr "分数表示的美元"
 
-#: ../data/functions.xml.in.h:1103
+#: ../data/functions.xml.in.h:1105
 msgid "Amount received at maturity for a security bond"
 msgstr "债券到期时获得的金额"
 
-#: ../data/functions.xml.in.h:1104
+#: ../data/functions.xml.in.h:1106
 msgid "r:received"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1105
+#: ../data/functions.xml.in.h:1107
 msgid ""
 "Returns the amount received at the maturity date for an invested security."
 "&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 "
@@ -7700,15 +7709,15 @@ msgstr ""
 "0: 美式 30/360 (缺省值),  1: 真实天数, 2: 真实天数/360,  3: 真实天数/365 or "
 "4: 欧式 30/360。"
 
-#: ../data/functions.xml.in.h:1106
+#: ../data/functions.xml.in.h:1108
 msgid "Discount rate for a security"
 msgstr "证券的贴现率"
 
-#: ../data/functions.xml.in.h:1107
+#: ../data/functions.xml.in.h:1109
 msgid "r:disc"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1108
+#: ../data/functions.xml.in.h:1110
 msgid ""
 "Returns the discount rate for a security.&#10;&#10;Basis is the type of day "
 "counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
@@ -7718,15 +7727,15 @@ msgstr ""
 "30/360 (缺省值),  1: 真实天数, 2: 真实天数/360,  3: 真实天数/365 or 4: 欧式 "
 "30/360。"
 
-#: ../data/functions.xml.in.h:1109
+#: ../data/functions.xml.in.h:1111
 msgid "Accrued interest of security paying at maturity"
 msgstr "到期时支付的证券应计利息"
 
-#: ../data/functions.xml.in.h:1110
+#: ../data/functions.xml.in.h:1112
 msgid "r:accrintm"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1111
+#: ../data/functions.xml.in.h:1113
 msgid ""
 "Returns the accrued interest for a security which pays interest at maturity "
 "date.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
@@ -7737,27 +7746,27 @@ msgstr ""
 "数计算类型：0: 美式 30/360 (缺省值),  1: 真实天数, 2: 真实天数/360,  3: 真实"
 "天数/365 or 4: 欧式 30/360。"
 
-#: ../data/functions.xml.in.h:1112
+#: ../data/functions.xml.in.h:1114
 msgid "Issue date"
 msgstr "发表日期"
 
-#: ../data/functions.xml.in.h:1113
+#: ../data/functions.xml.in.h:1115
 msgid "Annual rate of security"
 msgstr "证券年利率"
 
-#: ../data/functions.xml.in.h:1114
+#: ../data/functions.xml.in.h:1116
 msgid "Par value"
 msgstr "面值"
 
-#: ../data/functions.xml.in.h:1115
+#: ../data/functions.xml.in.h:1117
 msgid "Accrued interest of security with periodic interest payments"
 msgstr "分期支付的证券应计利息"
 
-#: ../data/functions.xml.in.h:1116
+#: ../data/functions.xml.in.h:1118
 msgid "r:accrint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1117
+#: ../data/functions.xml.in.h:1119
 msgid ""
 "Returns accrued interest for a security which pays periodic interest.&#10;"
 "&#10;Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. "
@@ -7768,23 +7777,23 @@ msgstr ""
 "2 - 半年付 或 4 - 季付。 \"基准\"是您想使用的天数计算类型：0: 美式 30/360 (缺"
 "省值),  1: 真实天数, 2: 真实天数/360,  3: 真实天数/365 or 4: 欧式 30/360。"
 
-#: ../data/functions.xml.in.h:1118
+#: ../data/functions.xml.in.h:1120
 msgid "First interest"
 msgstr "第一笔利息"
 
-#: ../data/functions.xml.in.h:1119
+#: ../data/functions.xml.in.h:1121
 msgid "Frequency"
 msgstr "频率"
 
-#: ../data/functions.xml.in.h:1120
+#: ../data/functions.xml.in.h:1122
 msgid "Number of coupons to be paid"
 msgstr "要支付的息票数量"
 
-#: ../data/functions.xml.in.h:1121
+#: ../data/functions.xml.in.h:1123
 msgid "r:coupnum"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1122
+#: ../data/functions.xml.in.h:1124
 msgid ""
 "Returns the number of coupons to be paid between the settlement and the "
 "maturity.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
@@ -7795,16 +7804,16 @@ msgstr ""
 "数计算类型：0: 美式 30/360 (缺省值),  1: 真实天数, 2: 真实天数/360,  3: 真实"
 "天数/365 or 4: 欧式 30/360。"
 
-#: ../data/functions.xml.in.h:1123
+#: ../data/functions.xml.in.h:1125
 #, fuzzy
 msgid "Price per $100 face value of a discounted security"
 msgstr "一支证券每$100票面价值的价格"
 
-#: ../data/functions.xml.in.h:1124
+#: ../data/functions.xml.in.h:1126
 msgid "r:pricedisc"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1125
+#: ../data/functions.xml.in.h:1127
 #, fuzzy
 msgid ""
 "Calculates and returns the price per $100 face value of a discounted "
@@ -7816,19 +7825,19 @@ msgstr ""
 "&#10; \"基准\"是您想使用的天数计算类型：0: 美式 30/360 (缺省值), 1: 真实天"
 "数, 2: 真实天数/360,  3: 真实天数/365 or 4: 欧式 30/360。"
 
-#: ../data/functions.xml.in.h:1126
+#: ../data/functions.xml.in.h:1128
 msgid "Discount"
 msgstr "贴现"
 
-#: ../data/functions.xml.in.h:1127
+#: ../data/functions.xml.in.h:1129
 msgid "Price per $100 face value of a security"
 msgstr "一支证券每$100票面价值的价格"
 
-#: ../data/functions.xml.in.h:1128
+#: ../data/functions.xml.in.h:1130
 msgid "r:pricemat"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1129
+#: ../data/functions.xml.in.h:1131
 msgid ""
 "Calculates and returns the price per $100 face value of a security. The "
 "security pays interest at maturity.&#10;&#10;Basis is the type of day "
@@ -7839,31 +7848,31 @@ msgstr ""
 "&#10; \"基准\"是您想使用的天数计算类型：0: 美式 30/360 (缺省值), 1: 真实天"
 "数, 2: 真实天数/360,  3: 真实天数/365 or 4: 欧式 30/360。"
 
-#: ../data/functions.xml.in.h:1130
+#: ../data/functions.xml.in.h:1132
 msgid "Annual yield"
 msgstr "年收益"
 
-#: ../data/functions.xml.in.h:1131
+#: ../data/functions.xml.in.h:1133
 msgid "Level-Coupon Bond"
 msgstr "息票债券"
 
-#: ../data/functions.xml.in.h:1132
+#: ../data/functions.xml.in.h:1134
 msgid "r:level_coupon"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1133
+#: ../data/functions.xml.in.h:1135
 msgid "Calculates the value of a level-coupon bond."
 msgstr "计算息票债券的值。"
 
-#: ../data/functions.xml.in.h:1134
+#: ../data/functions.xml.in.h:1136
 msgid "Coupon rate"
 msgstr "息票利率"
 
-#: ../data/functions.xml.in.h:1135
+#: ../data/functions.xml.in.h:1137
 msgid "Coupons per year"
 msgstr "息票数每年"
 
-#: ../data/functions.xml.in.h:1136
+#: ../data/functions.xml.in.h:1138
 msgid "Market interest rate"
 msgstr "市场利率"
 
