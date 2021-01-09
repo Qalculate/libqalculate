@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-04 09:19+0100\n"
+"POT-Creation-Date: 2021-01-09 07:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -292,8 +292,8 @@ msgstr ""
 #: ../src/qalc.cc:457 ../src/qalc.cc:491
 #: ../libqalculate/Calculator-calculate.cc:1003
 #: ../libqalculate/Calculator.cc:246 ../libqalculate/Calculator.cc:474
-#: ../libqalculate/DataSet.cc:1095 ../libqalculate/DataSet.cc:1157
-#: ../libqalculate/MathStructure-print.cc:3453 ../libqalculate/Function.cc:2307
+#: ../libqalculate/DataSet.cc:1098 ../libqalculate/DataSet.cc:1160
+#: ../libqalculate/MathStructure-print.cc:3460 ../libqalculate/Function.cc:2307
 #: ../libqalculate/Function.cc:2323
 msgid "or"
 msgstr ""
@@ -1505,7 +1505,7 @@ msgstr ""
 #: ../src/qalc.cc:3615 ../src/qalc.cc:3677 ../src/qalc.cc:4407
 #: ../src/qalc.cc:4571 ../libqalculate/Calculator-definitions.cc:2961
 #: ../libqalculate/DataSet.cc:368 ../libqalculate/DataSet.cc:395
-#: ../libqalculate/DataSet.cc:1061
+#: ../libqalculate/DataSet.cc:1064
 msgid "info"
 msgstr ""
 
@@ -2633,7 +2633,7 @@ msgstr ""
 #: ../libqalculate/Calculator-calculate.cc:1017
 #: ../libqalculate/Calculator-calculate.cc:1055
 #: ../libqalculate/Calculator.cc:241 ../libqalculate/Calculator.cc:469
-#: ../libqalculate/MathStructure-print.cc:3433 ../libqalculate/Function.cc:1361
+#: ../libqalculate/MathStructure-print.cc:3440 ../libqalculate/Function.cc:1361
 #: ../libqalculate/Function.cc:1369 ../libqalculate/Function.cc:1802
 #: ../libqalculate/Function.cc:1964 ../libqalculate/Function.cc:1972
 msgid "and"
@@ -2896,33 +2896,33 @@ msgstr ""
 msgid "Unable to load data objects in %s."
 msgstr ""
 
-#: ../libqalculate/DataSet.cc:1065
+#: ../libqalculate/DataSet.cc:1068
 msgid "data property"
 msgstr ""
 
-#: ../libqalculate/DataSet.cc:1067
+#: ../libqalculate/DataSet.cc:1070
 msgid "name of a data property"
 msgstr ""
 
-#: ../libqalculate/DataSet.cc:1075 ../libqalculate/DataSet.cc:1091
+#: ../libqalculate/DataSet.cc:1078 ../libqalculate/DataSet.cc:1094
 msgid "no properties available"
 msgstr ""
 
-#: ../libqalculate/DataSet.cc:1125
+#: ../libqalculate/DataSet.cc:1128
 #, c-format
 msgid ""
 "Data set \"%s\" has no object key that supports the provided argument type."
 msgstr ""
 
-#: ../libqalculate/DataSet.cc:1130
+#: ../libqalculate/DataSet.cc:1133
 msgid "data object"
 msgstr ""
 
-#: ../libqalculate/DataSet.cc:1133
+#: ../libqalculate/DataSet.cc:1136
 msgid "an object from"
 msgstr ""
 
-#: ../libqalculate/DataSet.cc:1160
+#: ../libqalculate/DataSet.cc:1163
 msgid "use"
 msgstr ""
 
@@ -3074,7 +3074,7 @@ msgid ""
 "number of data points"
 msgstr ""
 
-#: ../libqalculate/MathStructure-print.cc:3642
+#: ../libqalculate/MathStructure-print.cc:3649
 msgid "undefined"
 msgstr ""
 
