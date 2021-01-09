@@ -1,3 +1,11 @@
+2021-01-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix saving of local data objects (user data was deleted)
+
+2021-01-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add daysInMonth() function
+
 2021-01-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Always place units with prefixes before other units
