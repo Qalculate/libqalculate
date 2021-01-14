@@ -87,6 +87,7 @@ long int i_maxtime = 0;
 struct timeval t_end;
 int dual_fraction = -1, saved_dual_fraction = -1;
 int dual_approximation = -1, saved_dual_approximation = -1;
+bool tc_set = false;
 
 bool ignore_locale = false;
 
@@ -782,6 +783,22 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate variables", _("calculate variables")) || svar == "calcvar") SET_BOOL_E(evalops.calculate_variables)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate functions", _("calculate functions")) || svar == "calcfunc") SET_BOOL_E(evalops.calculate_functions)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "sync units", _("sync units")) || svar == "sync") SET_BOOL_E(evalops.sync_units)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "temperature calculation", _("temperature calculation")) || svar == "temp")  {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "relative", _("relative"))) v = TEMPERATURE_CALCULATION_RELATIVE;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "hybrid", _("hybrid"))) v = TEMPERATURE_CALCULATION_HYBRID;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "absolute", _("absolute"))) v = TEMPERATURE_CALCULATION_ABSOLUTE;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < 0 || v > 2) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			CALCULATOR->setTemperatureCalculation((TemperatureCalculation) v);
+			expression_calculation_updated();
+			tc_set = true;
+		}
+	}
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even")) || svar == "rndeven") SET_BOOL_D(printops.round_halfway_to_even)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn syntax", _("rpn syntax")) || svar == "rpnsyn") {
 		bool b = (evalops.parse_options.parsing_mode == PARSING_MODE_RPN);
@@ -3555,6 +3572,7 @@ int main(int argc, char *argv[]) {
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Units"));
 
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("all prefixes"), "allpref"); str += b2oo(printops.use_all_prefixes, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("autoconversion"), "conv");
 			switch(evalops.auto_post_conversion) {
@@ -3575,6 +3593,12 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("prefixes"), "pref"); str += b2oo(printops.use_unit_prefixes, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("show negative exponents"), "negexp"); str += b2oo(printops.negative_exponents, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("sync units"), "sync"); str += b2oo(evalops.sync_units, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("temperature calculation"), "temp");
+			switch(CALCULATOR->getTemperatureCalculation()) {
+				case TEMPERATURE_CALCULATION_RELATIVE: {str += _("relative"); break;}
+				case TEMPERATURE_CALCULATION_ABSOLUTE: {str += _("absolute"); break;}
+				default: {str += _("hybrid"); break;}
+			}
 			PRINT_AND_COLON_TABS(_("update exchange rates"), "upxrates");
 			switch(auto_update_exchange_rates) {
 				case -1: {str += _("ask"); break;}
@@ -4323,6 +4347,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("prefixes"), "pref", _("Enables automatic use of prefixes in the result."), printops.use_unit_prefixes);
 				STR_AND_TABS_BOOL(_("show negative exponents"), "negexp", _("Use negative exponents instead of division for units in result (m/s = m*s^-1)."), printops.negative_exponents);
 				STR_AND_TABS_BOOL(_("sync units"), "sync", "", evalops.sync_units);
+				STR_AND_TABS_2(_("temperature calculation"), "temp", _("Determines how expressions with temperature units are calculated (hybrid acts as absolute if the expression contains different temperature units, otherwise as relative)."), CALCULATOR->getTemperatureCalculation(), _("hybrid"), _("absolute"), _("relative"));
 				STR_AND_TABS_SET(_("update exchange rates"), "upxrates");
 				str += "(-1 = "; str += _("ask"); if(auto_update_exchange_rates < 0) str += "*";
 				str += ", 0 = "; str += _("never"); if(auto_update_exchange_rates == 0) str += "*";
@@ -6009,6 +6034,9 @@ void load_preferences() {
 
 	CALCULATOR->useIntervalArithmetic(true);
 
+	CALCULATOR->setTemperatureCalculation(TEMPERATURE_CALCULATION_HYBRID);
+	tc_set = false;
+
 	CALCULATOR->useBinaryPrefixes(0);
 
 	rpn_mode = false;
@@ -6233,6 +6261,9 @@ void load_preferences() {
 					evalops.calculate_functions = v;
 				} else if(svar == "sync_units") {
 					evalops.sync_units = v;
+				} else if(svar == "temperature_calculation") {
+					CALCULATOR->setTemperatureCalculation((TemperatureCalculation) v);
+					tc_set = true;
 				} else if(svar == "unknownvariables_enabled") {
 					evalops.parse_options.unknowns_enabled = v;
 				} else if(svar == "units_enabled") {
@@ -6471,6 +6502,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "calculate_functions=%i\n", saved_evalops.calculate_functions);
 	fprintf(file, "variable_units_enabled=%i\n", saved_variable_units_enabled);
 	fprintf(file, "sync_units=%i\n", saved_evalops.sync_units);
+	if(tc_set) fprintf(file, "temperature_calculation=%i\n", CALCULATOR->getTemperatureCalculation());
 	fprintf(file, "unknownvariables_enabled=%i\n", saved_evalops.parse_options.unknowns_enabled);
 	fprintf(file, "units_enabled=%i\n", saved_evalops.parse_options.units_enabled);
 	fprintf(file, "allow_complex=%i\n", saved_evalops.allow_complex);

@@ -1393,7 +1393,7 @@
     <unit type="alias">
       <_title>Degree Rankine</_title>
       <system>Imperial/US</system>
-      <_names>ar:oR,au:&#xB0;R,r:rankine</_names>
+      <_names>ar:oR,a:oRa,au:&#xB0;R,au:&#xB0;Ra,r:rankine</_names>
       <base>
         <unit>K</unit>
         <relation>5/9</relation>

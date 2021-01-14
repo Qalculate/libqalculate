@@ -1853,6 +1853,77 @@ void convert_log_units(MathStructure &m, const EvaluationOptions &eo) {
 		CALCULATOR->error(false, "Log-based units were converted before calculation.", NULL);
 	}
 }
+
+Unit *contains_temperature_unit(const MathStructure &m, bool only_cf = true, Unit *u_prev = NULL) {
+	if(m.isUnit()) {
+		if(!only_cf) {
+			if(m.unit() != u_prev && m.unit()->baseUnit() == CALCULATOR->getUnitById(UNIT_ID_KELVIN)) return m.unit();
+		} else if(m.unit() == CALCULATOR->getUnitById(UNIT_ID_CELSIUS) || m.unit() == CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT)) {
+			return m.unit();
+		}
+	}
+	if(m.isVariable() && m.variable()->isKnown()) {
+		return contains_temperature_unit(((KnownVariable*) m.variable())->get(), only_cf, u_prev);
+	}
+	if(m.isFunction() && m.function()->id() == FUNCTION_ID_STRIP_UNITS) return NULL;
+	for(size_t i = 0; i < m.size(); i++) {
+		Unit *u = contains_temperature_unit(m[i], only_cf, u_prev);
+		if(u) return u;
+	}
+	return NULL;
+}
+bool separate_temperature_units(MathStructure &m, const EvaluationOptions &eo) {
+	if(m.isVariable() && m.variable()->isKnown()) {
+		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
+		if(contains_temperature_unit(mvar, false)) {
+			if(mvar.isMultiplication()) {
+				bool b = false;
+				for(size_t i = 0; i < mvar.size(); i++) {
+					if(is_unit_multiexp(mvar[i])) {
+						b = true;
+					} else if(mvar[i].containsType(STRUCT_UNIT, false, true, true) != 0) {
+						b = false;
+						break;
+					}
+				}
+				if(!b) return false;
+				m.transformById(FUNCTION_ID_STRIP_UNITS);
+				for(size_t i = 0; i < mvar.size(); i++) {
+					if(is_unit_multiexp(mvar[i])) {
+						m.multiply(mvar[i], i);
+					}
+				}
+				m.unformat(eo);
+				return true;
+			}
+			if(eo.calculate_variables && ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) || (!m.variable()->isApproximate() && !mvar.containsInterval(true, false, false, 0, true)))) {
+				m.set(mvar);
+				m.unformat(eo);
+				return true;
+			}
+		}
+	}
+	if(m.isFunction() && m.function()->id() == FUNCTION_ID_STRIP_UNITS) return false;
+	bool b = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(separate_temperature_units(m[i], eo)) {
+			b = true;
+		}
+	}
+	return b;
+}
+void convert_temperature_units(MathStructure &m, const EvaluationOptions &eo) {
+	if(CALCULATOR->getTemperatureCalculation() == TEMPERATURE_CALCULATION_RELATIVE || !CALCULATOR->getUnitById(UNIT_ID_KELVIN)) return;
+	Unit *u = contains_temperature_unit(m, true);
+	if(!u) return;
+	if(CALCULATOR->getTemperatureCalculation() == TEMPERATURE_CALCULATION_HYBRID && !contains_temperature_unit(m, false, u)) return;
+	MathStructure *mp = &m;
+	if(m.isMultiplication() && m.size() == 2 && m[0].isMinusOne()) mp = &m[1];
+	if(mp->isUnit_exp()) return;
+	separate_temperature_units(m, eo);
+	m.convert(CALCULATOR->getUnitById(UNIT_ID_KELVIN), true, NULL, false, eo);
+}
+
 bool warn_ratio_units(MathStructure &m, bool top_level = true) {
 	if(!top_level && m.isUnit() && ((m.unit()->subtype() == SUBTYPE_BASE_UNIT && m.unit()->referenceName() == "Np") || (m.unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) m.unit())->baseUnit()->referenceName() == "Np"))) {
 		CALCULATOR->error(true, "Logarithmic ratio units is treated as other units and the result might not be as expected.", NULL);
@@ -1981,7 +2052,10 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(m_type == STRUCT_UNDEFINED || m_type == STRUCT_ABORTED || m_type == STRUCT_DATETIME || m_type == STRUCT_UNIT || m_type == STRUCT_SYMBOLIC || (m_type == STRUCT_VARIABLE && !o_variable->isKnown())) return *this;
 
-	if(eo.structuring != STRUCTURING_NONE && eo.sync_units) convert_log_units(*this, eo);
+	if(eo.structuring != STRUCTURING_NONE && eo.sync_units) {
+		convert_log_units(*this, eo);
+		convert_temperature_units(*this, eo);
+	}
 
 	EvaluationOptions feo = eo;
 	feo.structuring = STRUCTURING_NONE;

@@ -259,7 +259,7 @@ bool MathStructure::syncUnits(bool sync_nonlinear_relations, bool *found_nonline
 	for(size_t i = 0; i < alias_units.size(); i++) {
 		if(convert(alias_units[i], sync_nonlinear_relations, (found_nonlinear_relations || sync_nonlinear_relations) ? &fcr : NULL, calculate_new_functions, feo)) b = true;
 	}
-	if(b && sync_nonlinear_relations && fcr) CALCULATOR->error(false, _("Calculations involving conversion of units without proportional linear relationship (e.g. with multiple temperature units), might give unexpected results and is not recommended."), NULL);
+	if(b && sync_nonlinear_relations && fcr) CALCULATOR->error(false, _("Calculations involving conversion of units without proportional linear relationship might give unexpected results and is not recommended."), NULL);
 	if(fcr && found_nonlinear_relations) *found_nonlinear_relations = fcr;
 	return b;
 }
@@ -829,7 +829,7 @@ bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *fou
 							b_c = i;
 							break;
 						}
-					} else if(CHILD(i).isMultiplication()) {
+					} else if(CHILD(i).isMultiplication() && (CALCULATOR->getTemperatureCalculation() == TEMPERATURE_CALCULATION_RELATIVE || u != CALCULATOR->getUnitById(UNIT_ID_KELVIN))) {
 						b_c = -3;
 					}
 				}
@@ -848,7 +848,7 @@ bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *fou
 					}
 				}
 				if(convert_nonlinear_relations && b_c >= 0) {
-					if(flattenMultiplication(*this)) return convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
+					if((CALCULATOR->getTemperatureCalculation() == TEMPERATURE_CALCULATION_RELATIVE || u != CALCULATOR->getUnitById(UNIT_ID_KELVIN)) && flattenMultiplication(*this)) return convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
 					MathStructure mstruct(1, 1);
 					MathStructure mstruct2(1, 1);
 					if(SIZE == 2) {
@@ -970,15 +970,6 @@ bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *fou
 					}
 				}
 			}
-			/*if(m_type == STRUCT_MULTIPLICATION || m_type == STRUCT_POWER) {
-				for(size_t i = 0; i < SIZE; i++) {
-					if(CHILD(i).convert(u, false, found_nonlinear_relations, calculate_new_functions, feo, new_prefix)) {
-						CHILD_UPDATED(i);
-						b = true;
-					}
-				}
-				return b;
-			}*/
 		}
 		if(m_type == STRUCT_FUNCTION) {
 			if(o_function->id() == FUNCTION_ID_STRIP_UNITS) return b;

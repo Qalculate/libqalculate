@@ -1723,6 +1723,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						u = NULL;
 					} else {
 						if(!is_user_defs && u->referenceName() == "s") u_second = u;
+						else if(!is_user_defs && u->referenceName() == "K") priv->u_kelvin = u;
 						addUnit(u, true, is_user_defs);
 						u->setChanged(false);
 					}
@@ -1867,6 +1868,10 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 								else if(au->referenceName() == "month") u_month = au;
 								else if(au->referenceName() == "min") u_minute = au;
 								else if(au->referenceName() == "h") u_hour = au;
+							} else if(!is_user_defs && au->baseUnit() == priv->u_kelvin) {
+								if(au->referenceName() == "oR") priv->u_rankine = au;
+								else if(au->referenceName() == "oC") priv->u_celsius = au;
+								else if(au->referenceName() == "oF") priv->u_fahrenheit = au;
 							}
 							addUnit(au, true, is_user_defs);
 							au->setChanged(false);
@@ -2029,6 +2034,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							if(!unitNameIsValid(plural, version_numbers, is_user_defs)) {
 								plural = "";
 							}
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "system")) {
+							XML_DO_FROM_TEXT(child, u->setSystem)
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "use_with_prefixes")) {
 							XML_GET_TRUE_FROM_TEXT(child, use_with_prefixes)
 							use_with_prefixes_set = true;
