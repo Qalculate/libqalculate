@@ -172,6 +172,7 @@ Calculator::Calculator() {
 	priv->ids_i = 0;
 	priv->local_currency = NULL;
 	priv->use_binary_prefixes = 0;
+	priv->temperature_calculation = TEMPERATURE_CALCULATION_HYBRID;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -400,6 +401,7 @@ Calculator::Calculator(bool ignore_locale) {
 	priv->ids_i = 0;
 	priv->local_currency = NULL;
 	priv->use_binary_prefixes = 0;
+	priv->temperature_calculation = TEMPERATURE_CALCULATION_HYBRID;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -1029,6 +1031,12 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(const Number &exp10, const Nu
 		}
 	}
 	return p_prev;
+}
+void Calculator::setTemperatureCalculation(TemperatureCalculation temperature_calculation) {
+	priv->temperature_calculation = temperature_calculation;
+}
+TemperatureCalculation Calculator::getTemperatureCalculation() const {
+	return priv->temperature_calculation;
 }
 int Calculator::usesBinaryPrefixes() const {
 	return priv->use_binary_prefixes;
@@ -1715,6 +1723,10 @@ void Calculator::addBuiltinUnits() {
 	Unit *u = addUnit(new AliasUnit(_("Currency"), "BYR", "", "", "Belarusian Ruble p. (obsolete)", priv->u_byn, "0.0001", 1, "", false, true, true));
 	u->setHidden(true);
 	u->setChanged(false);
+	priv->u_kelvin = NULL;
+	priv->u_rankine = NULL;
+	priv->u_celsius = NULL;
+	priv->u_fahrenheit = NULL;
 	u_second = NULL;
 	u_minute = NULL;
 	u_hour = NULL;
@@ -2189,6 +2201,10 @@ Unit* Calculator::getUnit(string name_) {
 Unit* Calculator::getUnitById(int id) const {
 	switch(id) {
 		case UNIT_ID_EURO: {return u_euro;}
+		case UNIT_ID_KELVIN: {return priv->u_kelvin;}
+		case UNIT_ID_RANKINE: {return priv->u_rankine;}
+		case UNIT_ID_CELSIUS: {return priv->u_celsius;}
+		case UNIT_ID_FAHRENHEIT: {return priv->u_fahrenheit;}
 		case UNIT_ID_BYN: {return priv->u_byn;}
 		case UNIT_ID_BTC: {return u_btc;}
 		case UNIT_ID_SECOND: {return u_second;}

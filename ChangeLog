@@ -1,3 +1,7 @@
+2021-01-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Temperature calculation modes (absolute, relative, hybrid)
+
 2021-01-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix saving of local data objects (user data was deleted)

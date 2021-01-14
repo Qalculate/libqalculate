@@ -211,7 +211,11 @@ enum {
 	UNIT_ID_HOUR = 552,
 	UNIT_ID_DAY = 553,
 	UNIT_ID_MONTH = 554,
-	UNIT_ID_YEAR = 555
+	UNIT_ID_YEAR = 555,
+	UNIT_ID_KELVIN = 560,
+	UNIT_ID_RANKINE = 561,
+	UNIT_ID_CELSIUS = 562,
+	UNIT_ID_FAHRENHEIT = 563
 };
 
 enum {
@@ -228,6 +232,12 @@ enum {
 	NOBLE_GASES,
 	TRANSACTINIDES
 };
+
+typedef enum {
+	TEMPERATURE_CALCULATION_HYBRID,
+	TEMPERATURE_CALCULATION_ABSOLUTE,
+	TEMPERATURE_CALCULATION_RELATIVE
+} TemperatureCalculation;
 
 struct Element {
 	std::string symbol, name;
@@ -740,6 +750,9 @@ class Calculator {
 	MathStructure convertToCompositeUnit(const MathStructure &mstruct, CompositeUnit *cu, const EvaluationOptions &eo = default_user_evaluation_options, bool always_convert = true);
 	MathStructure convertToMixedUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_user_evaluation_options);
 	//@}
+
+	void setTemperatureCalculation(TemperatureCalculation temperature_calculation);
+	TemperatureCalculation getTemperatureCalculation() const;
 
 	/** Used by the UI to find unit category for a mathematical expression.*/
 	Unit *findMatchingUnit(const MathStructure &mstruct);

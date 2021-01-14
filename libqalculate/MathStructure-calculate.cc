@@ -5175,6 +5175,27 @@ bool MathStructure::factorizeUnits() {
 		}
 	}
 }
+int contains_temp_unit(const MathStructure &m, bool top = true) {
+	if(m.isUnit() && m.unit()->baseUnit() == CALCULATOR->getUnitById(UNIT_ID_KELVIN)) {
+		return 1;
+	} else if(m.isPower() && m[0].isUnit() && m[0].unit()->baseUnit() == CALCULATOR->getUnitById(UNIT_ID_KELVIN)) {
+		return 2;
+	} else if(top && m.isMultiplication()) {
+		bool b_unit = false;
+		int i_ret = 0;
+		for(size_t i = 0; i < m.size(); i++) {
+			if(!i_ret) {
+				i_ret = contains_temp_unit(m[i], false);
+				if(i_ret == 2 || (i_ret && b_unit)) return 2;
+				if(!i_ret && !b_unit && m[i].containsType(STRUCT_UNIT, false, false, false)) b_unit = true;
+			} else if(!b_unit && m[i].containsType(STRUCT_UNIT, false, false, false)) {
+				return 2;
+			}
+		}
+		return i_ret;
+	}
+	return 0;
+}
 
 bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo, bool recursive, MathStructure *mparent, size_t index_this) {
 
@@ -5225,12 +5246,23 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					EvaluationOptions eo2 = eo;
 					eo2.expand = -3;
 					eo2.combine_divisions = false;
+					int temp_unit_found = 0;
 					for(size_t i = 0; i < SIZE; i++) {
 						CHILD(i).calculatesub(eo2, feo, true, this, i);
 						CHILD(i).factorizeUnits();
+						if(temp_unit_found == 1) temp_unit_found++;
+						if(!temp_unit_found && CALCULATOR->getTemperatureCalculation() == TEMPERATURE_CALCULATION_RELATIVE) {
+							temp_unit_found = contains_temp_unit(CHILD(i));
+						}
+						if(temp_unit_found > 1) {
+							CHILD(i).replace(CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT), CALCULATOR->getUnitById(UNIT_ID_RANKINE));
+							CHILD(i).replace(CALCULATOR->getUnitById(UNIT_ID_CELSIUS), CALCULATOR->getUnitById(UNIT_ID_KELVIN));
+						}
 					}
 					CHILDREN_UPDATED;
+					if(temp_unit_found) CALCULATOR->beginTemporaryStopMessages();
 					syncUnits(true, NULL, true, feo);
+					if(temp_unit_found) CALCULATOR->endTemporaryStopMessages();
 				}
 				unformat(eo);
 				MERGE_RECURSE
