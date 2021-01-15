@@ -237,7 +237,7 @@ typedef enum {
 	TEMPERATURE_CALCULATION_HYBRID,
 	TEMPERATURE_CALCULATION_ABSOLUTE,
 	TEMPERATURE_CALCULATION_RELATIVE
-} TemperatureCalculation;
+} TemperatureCalculationMode;
 
 struct Element {
 	std::string symbol, name;
@@ -751,8 +751,8 @@ class Calculator {
 	MathStructure convertToMixedUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_user_evaluation_options);
 	//@}
 
-	void setTemperatureCalculation(TemperatureCalculation temperature_calculation);
-	TemperatureCalculation getTemperatureCalculation() const;
+	void setTemperatureCalculationMode(TemperatureCalculationMode temperature_calculation_mode);
+	TemperatureCalculationMode getTemperatureCalculationMode() const;
 
 	/** Used by the UI to find unit category for a mathematical expression.*/
 	Unit *findMatchingUnit(const MathStructure &mstruct);

@@ -5251,7 +5251,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 						CHILD(i).calculatesub(eo2, feo, true, this, i);
 						CHILD(i).factorizeUnits();
 						if(temp_unit_found == 1) temp_unit_found++;
-						if(!temp_unit_found && CALCULATOR->getTemperatureCalculation() == TEMPERATURE_CALCULATION_RELATIVE) {
+						if(!temp_unit_found && CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE) {
 							temp_unit_found = contains_temp_unit(CHILD(i));
 						}
 						if(temp_unit_found > 1) {

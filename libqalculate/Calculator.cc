@@ -1032,10 +1032,10 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(const Number &exp10, const Nu
 	}
 	return p_prev;
 }
-void Calculator::setTemperatureCalculation(TemperatureCalculation temperature_calculation) {
-	priv->temperature_calculation = temperature_calculation;
+void Calculator::setTemperatureCalculationMode(TemperatureCalculationMode temperature_calculation_mode) {
+	priv->temperature_calculation = temperature_calculation_mode;
 }
-TemperatureCalculation Calculator::getTemperatureCalculation() const {
+TemperatureCalculationMode Calculator::getTemperatureCalculationMode() const {
 	return priv->temperature_calculation;
 }
 int Calculator::usesBinaryPrefixes() const {

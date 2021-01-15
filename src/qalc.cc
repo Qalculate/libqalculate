@@ -79,7 +79,7 @@ bool use_readline = true;
 bool interactive_mode;
 int colorize = 0;
 int force_color = -1;
-bool ask_questions;
+bool ask_questions = false;
 bool canfetch = true;
 bool programmers_mode = false;
 int b_decimal_comma = -1;
@@ -794,7 +794,7 @@ void set_option(string str) {
 		if(v < 0 || v > 2) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
-			CALCULATOR->setTemperatureCalculation((TemperatureCalculation) v);
+			CALCULATOR->setTemperatureCalculationMode((TemperatureCalculationMode) v);
 			expression_calculation_updated();
 			tc_set = true;
 		}
@@ -1281,6 +1281,7 @@ void set_option(string str) {
 #define BEGIN_ITALIC(x) if(DO_FORMAT) {x += "\033[3m";}
 #define END_ITALIC(x) if(DO_FORMAT) {x += "\033[23m";}
 #define PUTS_BOLD(x) if(!DO_FORMAT) {str = x;} else {str = "\033[1m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
+#define PUTS_ITALIC(x) if(!DO_FORMAT) {str = x;} else {str = "\033[3m"; str += x; str += "\033[23m";} PUTS_UNICODE(str.c_str());
 #define PUTS_UNDERLINED(x) if(!DO_FORMAT) {str = x;} else {str = "\033[4m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
 
 bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t i2_end, size_t minlength) {
@@ -2727,15 +2728,7 @@ int main(int argc, char *argv[]) {
 		} else if(canfetch && EQUALS_IGNORECASE_AND_LOCAL(str, "exrates", _("exrates"))) {
 			CALCULATOR->fetchExchangeRates(15);
 			CALCULATOR->loadExchangeRates();
-			int cols = 0;
-			if(cfile) {
-#ifdef HAVE_LIBREADLINE
-				int rows = 0;
-				rl_get_screen_size(&rows, &cols);
-#else
-				cols = 80;
-#endif
-			}
+			INIT_COLS
 			display_errors(false, cols);
 		} else if(str == "M+") {
 			if(mstruct) {
@@ -3594,7 +3587,7 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("show negative exponents"), "negexp"); str += b2oo(printops.negative_exponents, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("sync units"), "sync"); str += b2oo(evalops.sync_units, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("temperature calculation"), "temp");
-			switch(CALCULATOR->getTemperatureCalculation()) {
+			switch(CALCULATOR->getTemperatureCalculationMode()) {
 				case TEMPERATURE_CALCULATION_RELATIVE: {str += _("relative"); break;}
 				case TEMPERATURE_CALCULATION_ABSOLUTE: {str += _("absolute"); break;}
 				default: {str += _("hybrid"); break;}
@@ -4347,7 +4340,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("prefixes"), "pref", _("Enables automatic use of prefixes in the result."), printops.use_unit_prefixes);
 				STR_AND_TABS_BOOL(_("show negative exponents"), "negexp", _("Use negative exponents instead of division for units in result (m/s = m*s^-1)."), printops.negative_exponents);
 				STR_AND_TABS_BOOL(_("sync units"), "sync", "", evalops.sync_units);
-				STR_AND_TABS_2(_("temperature calculation"), "temp", _("Determines how expressions with temperature units are calculated (hybrid acts as absolute if the expression contains different temperature units, otherwise as relative)."), CALCULATOR->getTemperatureCalculation(), _("hybrid"), _("absolute"), _("relative"));
+				STR_AND_TABS_2(_("temperature calculation"), "temp", _("Determines how expressions with temperature units are calculated (hybrid acts as absolute if the expression contains different temperature units, otherwise as relative)."), CALCULATOR->getTemperatureCalculationMode(), _("hybrid"), _("absolute"), _("relative"));
 				STR_AND_TABS_SET(_("update exchange rates"), "upxrates");
 				str += "(-1 = "; str += _("ask"); if(auto_update_exchange_rates < 0) str += "*";
 				str += ", 0 = "; str += _("never"); if(auto_update_exchange_rates == 0) str += "*";
@@ -5244,6 +5237,93 @@ void execute_command(int command_type, bool show_result) {
 
 }
 
+bool contains_temperature_unit_q(const MathStructure &m) {
+	if(m.isUnit()) {
+		return m.unit() == CALCULATOR->getUnitById(UNIT_ID_CELSIUS) || m.unit() == CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT);
+	}
+	if(m.isVariable() && m.variable()->isKnown()) {
+		return contains_temperature_unit_q(((KnownVariable*) m.variable())->get());
+	}
+	if(m.isFunction() && m.function()->id() == FUNCTION_ID_STRIP_UNITS) return false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_temperature_unit_q(m[i])) return true;
+	}
+	return false;
+}
+bool test_ask_tc(MathStructure &m) {
+	if(tc_set || CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE || !CALCULATOR->getUnitById(UNIT_ID_KELVIN) || !contains_temperature_unit_q(m)) return false;
+	MathStructure *mp = &m;
+	if(m.isMultiplication() && m.size() == 2 && m[0].isMinusOne()) mp = &m[1];
+	else if(m.isNegate()) mp = &m[0];
+	if(mp->isUnit_exp()) return false;
+	if(mp->isMultiplication() && mp->size() > 0 && mp->last().isUnit_exp()) {
+		bool b = false;
+		for(size_t i = 0; i < mp->size() - 1; i++) {
+			if(contains_temperature_unit_q((*mp)[i])) {b = true; break;}
+		}
+		if(!b) return false;
+	}
+	return true;
+}
+bool ask_tc() {
+	INIT_COLS
+	string str = _("The expression is ambiguous. Please select temperature calculation mode (the mode can later be changed using \"set temp\" command).");
+	addLineBreaks(str, cols, true);
+	PUTS_UNICODE(str.c_str());
+	puts("");
+	fputs("0 = ", stdout); FPUTS_UNICODE(_("Hybrid"), stdout); fputs(" (", stdout); FPUTS_UNICODE(_("default"), stdout); puts(")");
+	string s_eg = "(1 °C + 1 °C ≈ 2 °C, 1 °C + 5 °F ≈ 274 K + 258 K ≈ 532 K, 2 °C − 1 °C = 1 °C, 1 °C − 5 °F = 16 K, 1 °C + 1 K = 2 °C)";
+	if(!printops.use_unicode_signs) {gsub("°", "o", s_eg); gsub("≈", "=", s_eg);}
+	addLineBreaks(s_eg, cols, true);
+	PUTS_ITALIC(s_eg);
+	puts("");
+	fputs("1 = ", stdout); PUTS_UNICODE(_("Absolute"));
+	s_eg = "(1 °C + 1 °C ≈ 274 K + 274 K ≈ 548 K, 1 °C + 5 °F ≈ 274 K + 258 K ≈ 532 K, 2 °C − 1 °C = 1 K, 1 °C − 5 °F = 16 K, 1 °C + 1 K = 2 °C)";
+	if(!printops.use_unicode_signs) {gsub("°", "o", s_eg); gsub("≈", "=", s_eg);}
+	addLineBreaks(s_eg, cols, true);
+	PUTS_ITALIC(s_eg);
+	puts("");
+	fputs("2 = ", stdout); PUTS_UNICODE(_("Relative"));
+	s_eg = "(1 °C + 1 °C = 2 °C, 1 °C + 5 °F = 1 °C + 5 °R ≈ 277 K, 2 °C − 1 °C = 1 °C, 1 °C − 5 °F = 1 °C - 5 °R ≈ −2 °C, 1 °C + 1 K = 2 °C)";
+	if(!printops.use_unicode_signs) {gsub("°", "o", s_eg); gsub("≈", "=", s_eg);}
+	addLineBreaks(s_eg, cols, true);
+	PUTS_ITALIC(s_eg);
+	puts("");
+	FPUTS_UNICODE(_("Temperature calculation mode"), stdout);
+	tc_set = true;
+	while(true) {
+#ifdef HAVE_LIBREADLINE
+		char *rlbuffer = readline(": ");
+		if(!rlbuffer) return false;
+		string svalue = rlbuffer;
+		free(rlbuffer);
+#else
+		fputs(": ", stdout);
+		if(!fgets(buffer, 1000, stdin)) return false;
+		string svalue = buffer;
+#endif
+		remove_blank_ends(svalue);
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "relative", _("relative"))) v = TEMPERATURE_CALCULATION_RELATIVE;
+		else if(svalue.empty() || EQUALS_IGNORECASE_AND_LOCAL(svalue, "hybrid", _("hybrid"))) v = TEMPERATURE_CALCULATION_HYBRID;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "absolute", _("absolute"))) v = TEMPERATURE_CALCULATION_ABSOLUTE;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v >= 0 && v <= 2) {
+			if(v != CALCULATOR->getTemperatureCalculationMode()) {
+				CALCULATOR->setTemperatureCalculationMode((TemperatureCalculationMode) v);
+				return true;
+			}
+			break;
+		} else {
+			FPUTS_UNICODE(_("Temperature calculation mode"), stdout);
+		}
+	}
+	return false;
+}
+
+
 void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates) {
 
 	if(i_maxtime < 0) return;
@@ -5738,7 +5818,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		else mstruct->ref();
 	}
 
-	if(!avoid_recalculation && !do_mathoperation && check_exrates && check_exchange_rates()) {
+	if(!avoid_recalculation && !do_mathoperation && ((ask_questions && test_ask_tc(*parsed_mstruct) && ask_tc()) || (check_exrates && check_exchange_rates()))) {
 		if(has_printed) printf("\n");
 		b_busy = false;
 		execute_expression(goto_input, do_mathoperation, op, f, rpn_mode, do_stack ? stack_index : 0, false);
@@ -6034,7 +6114,7 @@ void load_preferences() {
 
 	CALCULATOR->useIntervalArithmetic(true);
 
-	CALCULATOR->setTemperatureCalculation(TEMPERATURE_CALCULATION_HYBRID);
+	CALCULATOR->setTemperatureCalculationMode(TEMPERATURE_CALCULATION_HYBRID);
 	tc_set = false;
 
 	CALCULATOR->useBinaryPrefixes(0);
@@ -6262,7 +6342,7 @@ void load_preferences() {
 				} else if(svar == "sync_units") {
 					evalops.sync_units = v;
 				} else if(svar == "temperature_calculation") {
-					CALCULATOR->setTemperatureCalculation((TemperatureCalculation) v);
+					CALCULATOR->setTemperatureCalculationMode((TemperatureCalculationMode) v);
 					tc_set = true;
 				} else if(svar == "unknownvariables_enabled") {
 					evalops.parse_options.unknowns_enabled = v;
@@ -6502,7 +6582,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "calculate_functions=%i\n", saved_evalops.calculate_functions);
 	fprintf(file, "variable_units_enabled=%i\n", saved_variable_units_enabled);
 	fprintf(file, "sync_units=%i\n", saved_evalops.sync_units);
-	if(tc_set) fprintf(file, "temperature_calculation=%i\n", CALCULATOR->getTemperatureCalculation());
+	if(tc_set) fprintf(file, "temperature_calculation=%i\n", CALCULATOR->getTemperatureCalculationMode());
 	fprintf(file, "unknownvariables_enabled=%i\n", saved_evalops.parse_options.unknowns_enabled);
 	fprintf(file, "units_enabled=%i\n", saved_evalops.parse_options.units_enabled);
 	fprintf(file, "allow_complex=%i\n", saved_evalops.allow_complex);

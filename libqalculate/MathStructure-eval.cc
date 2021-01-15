@@ -1912,15 +1912,57 @@ bool separate_temperature_units(MathStructure &m, const EvaluationOptions &eo) {
 	}
 	return b;
 }
+void separate_temperature_units2(MathStructure &m, const EvaluationOptions &eo) {
+	if(m.isMultiplication()) {
+		size_t i_unit = m.size();
+		for(size_t i = 0; i < m.size(); i++) {
+			separate_temperature_units2(m[i], eo);
+			if(m[i].isUnit_exp()) {
+				if(i_unit < 1 && ((m[i].isUnit() && m[i].unit()->baseUnit() == CALCULATOR->getUnitById(UNIT_ID_KELVIN)) || (m[i].isPower() && m[i][0].unit()->baseUnit() == CALCULATOR->getUnitById(UNIT_ID_KELVIN)))) {
+					if(i_unit == i - 1) {
+						m[i].multiply(m_one);
+						m[i].swapChildren(1, 2);
+					} else {
+						m[i - 1].ref();
+						m[i].multiply_nocopy(&m[i - 1]);
+						m.delChild(i);
+						i--;
+					}
+				}
+				i_unit = i;
+			} else if(i < m.size() && m[i].containsType(STRUCT_UNIT, false, true, true)) {
+				MathStructure mtest(m[i]);
+				CALCULATOR->beginTemporaryStopMessages();
+				mtest.eval(eo);
+				if(mtest.containsType(STRUCT_UNIT, false, true, true) > 0) {
+					i_unit = i;
+				}
+				CALCULATOR->endTemporaryStopMessages();
+			}
+		}
+	} else {
+		for(size_t i = 0; i < m.size(); i++) {
+			separate_temperature_units2(m[i], eo);
+		}
+	}
+}
 void convert_temperature_units(MathStructure &m, const EvaluationOptions &eo) {
-	if(CALCULATOR->getTemperatureCalculation() == TEMPERATURE_CALCULATION_RELATIVE || !CALCULATOR->getUnitById(UNIT_ID_KELVIN)) return;
+	if(CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE || !CALCULATOR->getUnitById(UNIT_ID_KELVIN)) return;
 	Unit *u = contains_temperature_unit(m, true);
 	if(!u) return;
-	if(CALCULATOR->getTemperatureCalculation() == TEMPERATURE_CALCULATION_HYBRID && !contains_temperature_unit(m, false, u)) return;
+	if(CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_HYBRID && !contains_temperature_unit(m, false, u)) return;
 	MathStructure *mp = &m;
 	if(m.isMultiplication() && m.size() == 2 && m[0].isMinusOne()) mp = &m[1];
 	if(mp->isUnit_exp()) return;
+	if(mp->isMultiplication() && mp->size() > 0 && mp->last().isUnit_exp()) {
+		bool b = false;
+		for(size_t i = 0; i < mp->size() - 1; i++) {
+			if(contains_temperature_unit((*mp)[i], true)) {b = true; break;}
+		}
+		if(!b) return;
+	}
 	separate_temperature_units(m, eo);
+	separate_temperature_units2(m, eo);
 	m.convert(CALCULATOR->getUnitById(UNIT_ID_KELVIN), true, NULL, false, eo);
 }
 
