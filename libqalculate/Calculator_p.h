@@ -70,7 +70,7 @@ class Calculator_p {
 		unordered_map<int, Variable*> id_variables;
 		unordered_map<int, Unit*> id_units;
 		time_t exchange_rates_time2[1], exchange_rates_check_time2[1];
-		TemperatureCalculation temperature_calculation;
+		TemperatureCalculationMode temperature_calculation;
 };
 
 class CalculateThread : public Thread {

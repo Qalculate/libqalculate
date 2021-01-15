@@ -829,7 +829,7 @@ bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *fou
 							b_c = i;
 							break;
 						}
-					} else if(CHILD(i).isMultiplication() && (CALCULATOR->getTemperatureCalculation() == TEMPERATURE_CALCULATION_RELATIVE || u != CALCULATOR->getUnitById(UNIT_ID_KELVIN))) {
+					} else if(CHILD(i).isMultiplication() && (CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE || u != CALCULATOR->getUnitById(UNIT_ID_KELVIN))) {
 						b_c = -3;
 					}
 				}
@@ -848,7 +848,7 @@ bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *fou
 					}
 				}
 				if(convert_nonlinear_relations && b_c >= 0) {
-					if((CALCULATOR->getTemperatureCalculation() == TEMPERATURE_CALCULATION_RELATIVE || u != CALCULATOR->getUnitById(UNIT_ID_KELVIN)) && flattenMultiplication(*this)) return convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
+					if((CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE || u != CALCULATOR->getUnitById(UNIT_ID_KELVIN)) && flattenMultiplication(*this)) return convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
 					MathStructure mstruct(1, 1);
 					MathStructure mstruct2(1, 1);
 					if(SIZE == 2) {
@@ -926,6 +926,7 @@ bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *fou
 							if(calculate_new_functions && mstruct.countFunctions() > mfc) mstruct.calculateFunctions(feo, true, false);
 							multiply(mstruct);
 						}
+						convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
 						return true;
 					}
 					return false;
