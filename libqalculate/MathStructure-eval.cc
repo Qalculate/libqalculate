@@ -1857,7 +1857,7 @@ void convert_log_units(MathStructure &m, const EvaluationOptions &eo) {
 Unit *contains_temperature_unit(const MathStructure &m, bool only_cf = true, Unit *u_prev = NULL) {
 	if(m.isUnit()) {
 		if(!only_cf) {
-			if(m.unit() != u_prev && m.unit()->baseUnit() == CALCULATOR->getUnitById(UNIT_ID_KELVIN)) return m.unit();
+			if(m.unit() != u_prev && (m.unit() == CALCULATOR->getUnitById(UNIT_ID_KELVIN) || m.unit()->containsRelativeTo(CALCULATOR->getUnitById(UNIT_ID_KELVIN)))) return m.unit();
 		} else if(m.unit() == CALCULATOR->getUnitById(UNIT_ID_CELSIUS) || m.unit() == CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT)) {
 			return m.unit();
 		}
@@ -1950,16 +1950,18 @@ void convert_temperature_units(MathStructure &m, const EvaluationOptions &eo) {
 	if(CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE || !CALCULATOR->getUnitById(UNIT_ID_KELVIN)) return;
 	Unit *u = contains_temperature_unit(m, true);
 	if(!u) return;
-	if(CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_HYBRID && !contains_temperature_unit(m, false, u)) return;
-	MathStructure *mp = &m;
-	if(m.isMultiplication() && m.size() == 2 && m[0].isMinusOne()) mp = &m[1];
-	if(mp->isUnit_exp()) return;
-	if(mp->isMultiplication() && mp->size() > 0 && mp->last().isUnit_exp()) {
-		bool b = false;
-		for(size_t i = 0; i < mp->size() - 1; i++) {
-			if(contains_temperature_unit((*mp)[i], true)) {b = true; break;}
+	if(!contains_temperature_unit(m, false, u)) {
+		if(CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_HYBRID) return;
+		MathStructure *mp = &m;
+		if(m.isMultiplication() && m.size() == 2 && m[0].isMinusOne()) mp = &m[1];
+		if(mp->isUnit_exp()) return;
+		if(mp->isMultiplication() && mp->size() > 0 && mp->last().isUnit_exp()) {
+			bool b = false;
+			for(size_t i = 0; i < mp->size() - 1; i++) {
+				if(contains_temperature_unit((*mp)[i], true)) {b = true; break;}
+			}
+			if(!b) return;
 		}
-		if(!b) return;
 	}
 	separate_temperature_units(m, eo);
 	separate_temperature_units2(m, eo);

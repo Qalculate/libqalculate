@@ -5176,9 +5176,9 @@ bool MathStructure::factorizeUnits() {
 	}
 }
 int contains_temp_unit(const MathStructure &m, bool top = true) {
-	if(m.isUnit() && m.unit()->baseUnit() == CALCULATOR->getUnitById(UNIT_ID_KELVIN)) {
+	if(m.isUnit() && (m.unit() == CALCULATOR->getUnitById(UNIT_ID_KELVIN) || m.unit()->containsRelativeTo(CALCULATOR->getUnitById(UNIT_ID_KELVIN)))) {
 		return 1;
-	} else if(m.isPower() && m[0].isUnit() && m[0].unit()->baseUnit() == CALCULATOR->getUnitById(UNIT_ID_KELVIN)) {
+	} else if(m.isPower() && m[0].isUnit() && (m[0].unit() == CALCULATOR->getUnitById(UNIT_ID_KELVIN) || m[0].unit()->containsRelativeTo(CALCULATOR->getUnitById(UNIT_ID_KELVIN)))) {
 		return 2;
 	} else if(top && m.isMultiplication()) {
 		bool b_unit = false;
@@ -5231,6 +5231,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				CHILD(1).calculatesub(eo, feo, true, this, 1);
 				CHILDREN_UPDATED;
 			}
+			if(eo.sync_units && m_type == STRUCT_POWER && CHILD(0).isUnit() && CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE && !CHILD(1).isOne()) {
+				if(CHILD(0).unit() == CALCULATOR->getUnitById(UNIT_ID_CELSIUS)) CHILD(0).setUnit(CALCULATOR->getUnitById(UNIT_ID_KELVIN));
+				else if(CHILD(0).unit() == CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT)) CHILD(0).setUnit(CALCULATOR->getUnitById(UNIT_ID_RANKINE));
+			}
 			if(CHILD(0).merge_power(CHILD(1), eo) >= 1) {
 				b = true;
 				setToChild(1, false, mparent, index_this + 1);
@@ -5274,6 +5278,26 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		case STRUCT_MULTIPLICATION: {
 
 			MERGE_RECURSE
+
+			if(eo.sync_units && CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE) {
+				int temp_unit_found = 0;
+				for(size_t i = 0; i < SIZE && temp_unit_found < 2; i++) {
+					if(!temp_unit_found && CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE) {
+						temp_unit_found = contains_temp_unit(CHILD(i), false);
+						if(temp_unit_found < 0) temp_unit_found = 2;
+					} else if(CHILD(i).isUnit_exp()) {
+						if(temp_unit_found) temp_unit_found = 2;
+						else temp_unit_found = -1;
+					}
+				}
+				if(temp_unit_found > 1) {
+					replace(CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT), CALCULATOR->getUnitById(UNIT_ID_RANKINE));
+					replace(CALCULATOR->getUnitById(UNIT_ID_CELSIUS), CALCULATOR->getUnitById(UNIT_ID_KELVIN));
+				}
+				if(temp_unit_found) CALCULATOR->beginTemporaryStopMessages();
+				syncUnits(true, NULL, true, feo);
+				if(temp_unit_found) CALCULATOR->endTemporaryStopMessages();
+			}
 			if(eo.sync_units && syncUnits(eo.sync_nonlinear_unit_relations, NULL, true, feo)) {
 				unformat(eo);
 				MERGE_RECURSE

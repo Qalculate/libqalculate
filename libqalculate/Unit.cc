@@ -192,12 +192,18 @@ bool Unit::hasNonlinearRelationTo(Unit *u) const {
 		if(subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			const CompositeUnit *cu = (CompositeUnit*) this;
 			for(size_t i = 1; i <= cu->countUnits(); i++) {
-				if(cu->get(i)->hasNonlinearRelationTo(u)) return true;
+				if(cu->get(i)->hasNonlinearRelationTo(u)) {
+					cout << u->name() << ":" << cu->get(i)->name() << endl;
+					return true;
+				}
 			}
 			return false;
 		}
 		if(ub2->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-			if(u->hasNonlinearRelationTo(ub2) && (((CompositeUnit*) ub2))->containsRelativeTo(u)) return true;
+			if(u->hasNonlinearRelationTo(ub2) && (((CompositeUnit*) ub2))->containsRelativeTo(baseUnit())) {
+				cout << u->name() << ":" << ub2->name() << endl;
+				return true;
+			}
 		}
 		return false;
 	}
@@ -221,7 +227,7 @@ bool Unit::hasApproximateRelationTo(Unit *u, bool check_variables, bool ignore_h
 			return false;
 		}
 		if(ub2->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-			if((((CompositeUnit*) ub2))->containsRelativeTo(u) && u->hasApproximateRelationTo(ub2, check_variables, ignore_high_precision_intervals)) return true;
+			if((((CompositeUnit*) ub2))->containsRelativeTo(baseUnit()) && u->hasApproximateRelationTo(ub2, check_variables, ignore_high_precision_intervals)) return true;
 		}
 		return false;
 	}
@@ -693,7 +699,7 @@ bool AliasUnit::hasNonlinearRelationTo(Unit *u) const {
 			return false;
 		}
 		if(ub2->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-			if(((CompositeUnit*) ub2)->containsRelativeTo(u) && (u->hasNonlinearRelationTo(ub2) || hasNonlinearRelationTo(ub))) return true;
+			if(((CompositeUnit*) ub2)->containsRelativeTo(baseUnit()) && (u->hasNonlinearRelationTo(ub2) || hasNonlinearRelationTo(ub))) return true;
 		}
 		return false;
 	}
@@ -737,7 +743,7 @@ bool AliasUnit::hasApproximateRelationTo(Unit *u, bool check_variables, bool ign
 			return false;
 		}
 		if(ub2->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-			if(((CompositeUnit*) ub2)->containsRelativeTo(u) && (u->hasApproximateRelationTo(ub2, check_variables, ignore_high_precision_intervals) || hasApproximateRelationTo(ub, check_variables, ignore_high_precision_intervals))) return true;
+			if(((CompositeUnit*) ub2)->containsRelativeTo(baseUnit()) && (u->hasApproximateRelationTo(ub2, check_variables, ignore_high_precision_intervals) || hasApproximateRelationTo(ub, check_variables, ignore_high_precision_intervals))) return true;
 		}
 		return false;
 	}

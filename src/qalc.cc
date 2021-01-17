@@ -5271,19 +5271,22 @@ bool ask_tc() {
 	addLineBreaks(str, cols, true);
 	PUTS_UNICODE(str.c_str());
 	puts("");
-	fputs("0 = ", stdout); FPUTS_UNICODE(_("Hybrid"), stdout); fputs(" (", stdout); FPUTS_UNICODE(_("default"), stdout); puts(")");
+	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("hybrid"); END_BOLD(str); str += " ("; str += _("default"); str += ")";
+	PUTS_UNICODE(str.c_str());
 	string s_eg = "(1 °C + 1 °C ≈ 2 °C, 1 °C + 5 °F ≈ 274 K + 258 K ≈ 532 K, 2 °C − 1 °C = 1 °C, 1 °C − 5 °F = 16 K, 1 °C + 1 K = 2 °C)";
 	if(!printops.use_unicode_signs) {gsub("°", "o", s_eg); gsub("≈", "=", s_eg);}
 	addLineBreaks(s_eg, cols, true);
 	PUTS_ITALIC(s_eg);
 	puts("");
-	fputs("1 = ", stdout); PUTS_UNICODE(_("Absolute"));
+	str = ""; BEGIN_BOLD(str); str += "1 = "; str += _("absolute"); END_BOLD(str);
+	PUTS_UNICODE(str.c_str());
 	s_eg = "(1 °C + 1 °C ≈ 274 K + 274 K ≈ 548 K, 1 °C + 5 °F ≈ 274 K + 258 K ≈ 532 K, 2 °C − 1 °C = 1 K, 1 °C − 5 °F = 16 K, 1 °C + 1 K = 2 °C)";
 	if(!printops.use_unicode_signs) {gsub("°", "o", s_eg); gsub("≈", "=", s_eg);}
 	addLineBreaks(s_eg, cols, true);
 	PUTS_ITALIC(s_eg);
 	puts("");
-	fputs("2 = ", stdout); PUTS_UNICODE(_("Relative"));
+	str = ""; BEGIN_BOLD(str); str += "2 = "; str += _("relative"); END_BOLD(str);
+	PUTS_UNICODE(str.c_str());
 	s_eg = "(1 °C + 1 °C = 2 °C, 1 °C + 5 °F = 1 °C + 5 °R ≈ 277 K, 2 °C − 1 °C = 1 °C, 1 °C − 5 °F = 1 °C - 5 °R ≈ −2 °C, 1 °C + 1 K = 2 °C)";
 	if(!printops.use_unicode_signs) {gsub("°", "o", s_eg); gsub("≈", "=", s_eg);}
 	addLineBreaks(s_eg, cols, true);
