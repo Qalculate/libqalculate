@@ -10898,7 +10898,7 @@ msgstr "r:minus_infinity"
 
 #: ../data/variables.xml.in.h:192
 msgid "Undefined"
-msgstr "未定义(undifined)"
+msgstr "未定义(undefined)"
 
 #: ../data/variables.xml.in.h:193
 msgid "r:undefined"
