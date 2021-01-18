@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: libqalculate 3.16\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-15 10:18+0100\n"
-"PO-Revision-Date: 2021-01-18 19:10+0800\n"
+"PO-Revision-Date: 2021-01-18 23:37+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
 "Language: zh_CHS\n"
@@ -2335,7 +2335,7 @@ msgstr "警告"
 #: ../libqalculate/Calculator-calculate.cc:1771
 #: ../libqalculate/Calculator-calculate.cc:1791
 msgid "approx."
-msgstr "约。"
+msgstr "约"
 
 #: ../src/qalc.cc:4795 ../src/qalc.cc:5143 ../src/qalc.cc:5702
 #: ../libqalculate/Calculator-calculate.cc:1091
