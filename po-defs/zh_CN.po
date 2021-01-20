@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-09 06:59+0100\n"
-"PO-Revision-Date: 2021-01-20 19:28+0800\n"
+"PO-Revision-Date: 2021-01-20 23:38+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
 "Language: zh_CHS\n"
@@ -5998,7 +5998,7 @@ msgstr "自变量"
 
 #: ../data/functions.xml.in.h:751
 msgid "Title"
-msgstr "标题"
+msgstr "显示名称"
 
 #: ../data/functions.xml.in.h:752
 msgid "r:title"
