@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: libqalculate 3.16\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-15 10:18+0100\n"
-"PO-Revision-Date: 2021-01-19 23:04+0800\n"
+"PO-Revision-Date: 2021-01-20 20:10+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
 "Language: zh_CHS\n"
@@ -45,7 +45,7 @@ msgstr "参数"
 #. optional argument, in description
 #: ../src/defs2doc.cc:388 ../src/qalc.cc:3809
 msgid "optional"
-msgstr "可选的"
+msgstr "可选"
 
 #. argument default, in description
 #: ../src/defs2doc.cc:391 ../src/qalc.cc:3813
@@ -288,7 +288,7 @@ msgstr "off"
 
 #: ../src/qalc.cc:261
 msgid "Please answer yes or no"
-msgstr "请回答yes或者no"
+msgstr "请回答yes或no"
 
 #: ../src/qalc.cc:293
 msgid "Unrecognized assumption."
@@ -586,7 +586,7 @@ msgstr "locale"
 
 #: ../src/qalc.cc:866 ../src/qalc.cc:3404 ../src/qalc.cc:4185
 msgid "spell out logical"
-msgstr "拼出逻辑"
+msgstr "拼出逻辑运算符"
 
 #: ../src/qalc.cc:867 ../src/qalc.cc:3531 ../src/qalc.cc:4291
 msgid "ignore dot"
@@ -1067,7 +1067,8 @@ msgstr "未找到匹配项。"
 msgid ""
 "For more information about a specific function, variable, unit, or prefix, "
 "please use the info command (in interactive mode)."
-msgstr "输入info 名称 以获取关于函数，变量或单位的信息。(例:info sin)"
+msgstr ""
+"使用info命令获取关于特定函数，变量，单位或前缀的更多信息。(例:info sin)"
 
 #: ../src/qalc.cc:1664
 msgid "Variables:"
@@ -1092,7 +1093,7 @@ msgstr "未定义局部变量，函数或单位。"
 
 #: ../src/qalc.cc:1925
 msgid "usage: qalc [options] [expression]"
-msgstr "用法:qalc [选项] [表达式]"
+msgstr "用法:qalc [options] [expression]"
 
 #: ../src/qalc.cc:1927
 msgid "where options are:"
@@ -1313,7 +1314,7 @@ msgid ""
 "Do you want to overwrite it (default: no)?"
 msgstr ""
 "同名的单位或变量已存在。\n"
-"您要覆盖它吗？"
+"您要覆盖它吗(默认否)？"
 
 #. qalc command
 #: ../src/qalc.cc:2670 ../src/qalc.cc:3622 ../src/qalc.cc:4406
@@ -1503,7 +1504,7 @@ msgstr "help"
 
 #: ../src/qalc.cc:3614
 msgid "Enter a mathematical expression or a command and press enter."
-msgstr "请输入一个数学表达式或命令。"
+msgstr "请输入一个数学表达式或命令后回车。"
 
 #: ../src/qalc.cc:3615
 msgid "Complete functions, units and variables with the tabulator key."
@@ -1674,7 +1675,7 @@ msgstr "分解当前结果。"
 
 #: ../src/qalc.cc:4093
 msgid "Applies partial fraction decomposition to the current result."
-msgstr "对当前结果应用部分分式分解。"
+msgstr "部分分式分解当前结果。"
 
 #: ../src/qalc.cc:4097
 msgid "Expands the current result."
@@ -1954,7 +1955,7 @@ msgstr ""
 msgid ""
 "If name equals \"mode\" or \"definitions\", the current mode and "
 "definitions, respectively, will be saved."
-msgstr "如果名称为 mode 或 definitions，将保存当前模式或定义。"
+msgstr "如果名称为“mode“或“definitions“，将相应地保存当前模式或定义。"
 
 #: ../src/qalc.cc:4391
 msgid "Example: store var1."
@@ -2444,7 +2445,7 @@ msgstr "无法分离%s。"
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed sign was "
 "therefore temporarily set as unknown."
-msgstr "按照当前的假设条件无法分离%s。 因此，假设符号暂时被设成了未知。"
+msgstr "按照当前的假设条件无法分离%s。 因此，假设的符号暂时被设成了未知。"
 
 #: ../libqalculate/BuiltinFunctions-algebra.cc:545
 #: ../libqalculate/BuiltinFunctions-algebra.cc:572
@@ -2453,7 +2454,8 @@ msgstr "按照当前的假设条件无法分离%s。 因此，假设符号暂时
 msgid ""
 "Was unable to isolate %s with the current assumptions. The assumed type and "
 "sign was therefore temporarily set as unknown."
-msgstr "按照当前的假设条件无法分离%s。 因此，假设类型和符号暂时被设成了未知。"
+msgstr ""
+"按照当前的假设条件无法分离%s。 因此，假设的类型和符号暂时被设成了未知。"
 
 #: ../libqalculate/BuiltinFunctions-algebra.cc:577
 #: ../libqalculate/BuiltinFunctions-algebra.cc:660
@@ -2501,7 +2503,7 @@ msgstr "未找到微分方程。"
 #: ../libqalculate/BuiltinFunctions-algebra.cc:1127
 #: ../libqalculate/BuiltinFunctions-algebra.cc:1133
 msgid "Unable to solve differential equation."
-msgstr "无法求解微分方程。"
+msgstr "无法解微分方程。"
 
 #: ../libqalculate/BuiltinFunctions-datetime.cc:34
 #: ../libqalculate/BuiltinFunctions-datetime.cc:68
@@ -2678,7 +2680,7 @@ msgstr "无效的变量名称(%s)。"
 msgid ""
 "A global unit or variable was deactivated. It will be restored after the new "
 "variable has been removed."
-msgstr "一个全局单位或变量已停用。移除新变量后将恢复。"
+msgstr "一个全局单位或变量已停用。其将在移除新变量后恢复。"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:832
 #, c-format
@@ -3063,7 +3065,7 @@ msgstr ""
 
 #: ../libqalculate/MathStructure-eval.cc:754
 msgid "Interval potentially calculated wide."
-msgstr "区间可能计算得很宽。"
+msgstr "区间可能计算过宽。"
 
 #: ../libqalculate/MathStructure-eval.cc:2204
 msgid ""
@@ -3201,7 +3203,7 @@ msgstr "非零"
 
 #: ../libqalculate/Function.cc:1364
 msgid "that is rational (polynomial)"
-msgstr "有理的(多项式的)"
+msgstr "有理(多项式的)"
 
 #: ../libqalculate/Function.cc:1372
 msgid "that fulfills the condition:"
@@ -3329,11 +3331,11 @@ msgstr "布尔值"
 
 #: ../libqalculate/Function.cc:2238
 msgid "a boolean (0 or 1)"
-msgstr "一个布尔值(0或者1)"
+msgstr "一个布尔值(0或1)"
 
 #: ../libqalculate/Function.cc:2249
 msgid "an angle or a number (using the default angle unit)"
-msgstr "一个角度或者数字(使用默认角度单位)"
+msgstr "一个角度或数字(使用默认角度单位)"
 
 #: ../libqalculate/Number.cc:280 ../libqalculate/Number.cc:10444
 msgid ""
@@ -3355,7 +3357,7 @@ msgstr "数字(%s)大于的数字进制所求。"
 msgid ""
 "Assuming the unusual practice of letting a last capital I mean 2 in a roman "
 "numeral."
-msgstr "假设一种不常见的情况:在罗马数字中，最后一个大写的\"I\"表示2。"
+msgstr "假设一种不常见的情况: 令罗马数字最后一个大写的\"I\"表示2。"
 
 #: ../libqalculate/Number.cc:707 ../libqalculate/Number.cc:734
 #: ../libqalculate/Number.cc:739
@@ -3373,7 +3375,7 @@ msgstr "未知的罗马数字:\"%c\""
 msgid ""
 "Errors in roman numerals: \"%s\". Interpreted as %s, which should be written "
 "as %s."
-msgstr "罗马数字中有错误:\"%s\"。已被解释成\"%s\"，它正确的写法是\"%s\"。"
+msgstr "罗马数字中有错误:\"%s\"。已解释为\"%s\"，它正确的写法是\"%s\"。"
 
 #: ../libqalculate/Number.cc:905
 msgid "Too large exponent."
@@ -3419,7 +3421,7 @@ msgstr "0^i的结果可能是未定义"
 #: ../libqalculate/Number.cc:6731 ../libqalculate/Number.cc:6880
 #: ../libqalculate/Number.cc:6992
 msgid "Interval calculated wide."
-msgstr "区间计算得宽。"
+msgstr "区间计算过宽。"
 
 #: ../libqalculate/Number.cc:5181 ../libqalculate/Number.cc:5407
 #: ../libqalculate/Number.cc:5494 ../libqalculate/Number.cc:5778
