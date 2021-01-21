@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-09 06:59+0100\n"
-"PO-Revision-Date: 2021-01-20 23:38+0800\n"
+"PO-Revision-Date: 2021-01-21 18:06+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
 "Language: zh_CHS\n"
@@ -2749,9 +2749,9 @@ msgid ""
 "of elements if the sixth argument is false (default) or the step between "
 "each value of the variable."
 msgstr ""
-"根据指定的自变量(默认为x)和数据范围，用指定函数的值生成一个向量并返回。如果第"
-"六个参数是假(默认值)，则第四个参数表示需要的元素个数；否则，第四个参数表示变"
-"量每个值之间的步长。"
+"根据给定的自变量(默认为x)和数据范围，用给定函数计算生成一个向量并返回。如果第"
+"六个参数为假(默认值)，则第四个参数表示生成的元素个数，否则表示变量的迭代步"
+"长。"
 
 #: ../data/functions.xml.in.h:10
 msgid "Function"
@@ -2808,7 +2808,7 @@ msgstr "-"
 #: ../data/functions.xml.in.h:23
 msgid ""
 "Returns a vector with values of elements replaced with their mutual ranks."
-msgstr "返回一个向量，其中元素的值替换为它们相互的排位。"
+msgstr "返回一个向量，其元素值为给定向量相应元素的相互排名。"
 
 #: ../data/functions.xml.in.h:24
 msgid "Vector Limits"
@@ -2820,7 +2820,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:26
 msgid "Returns a part of a vector between two positions."
-msgstr "返回一个向量两个位置之间的一部分。"
+msgstr "返回给定向量两个位置之间的部分。"
 
 #: ../data/functions.xml.in.h:27
 msgid "Lower limit"
@@ -2840,7 +2840,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:31
 msgid "Returns the number of elements in a vector."
-msgstr "返回一个向量内的元素数量。"
+msgstr "返回给定向量的元素数量。"
 
 #: ../data/functions.xml.in.h:32
 msgid "Merge Vectors"
@@ -2852,7 +2852,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:34
 msgid "Returns a vector with the elements from two vectors."
-msgstr "将两个向量合成一个并返回。"
+msgstr "将两个向量合并为一个向量并返回。"
 
 #: ../data/functions.xml.in.h:35
 msgid "Vector 1"
@@ -2874,7 +2874,8 @@ msgstr "-"
 msgid ""
 "Returns a matrix with specified dimensions and listed elements. Omitted "
 "elements are set to zero."
-msgstr "根据指定的维数和列出的元素返回一个矩阵。省略被设为零的元素。"
+msgstr ""
+"根据给定维数和元素生成一个矩阵并返回。其中省略(不够)的元素将被填充为零。"
 
 #: ../data/functions.xml.in.h:40
 msgid "Rows"
@@ -2894,7 +2895,7 @@ msgstr "matrix2vector"
 
 #: ../data/functions.xml.in.h:44
 msgid "Puts each element of a matrix in vertical order in a vector."
-msgstr "将按照垂直顺序将矩阵中的每个元素放到向量中。"
+msgstr "按垂直顺序将给定矩阵的每个元素放到向量中。"
 
 #: ../data/functions.xml.in.h:45
 msgid "Matrix"
@@ -2955,7 +2956,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:60
 msgid "Returns a row in a matrix as a vector."
-msgstr "将矩阵的一行作为向量返回。"
+msgstr "将矩阵的某行作为向量返回。"
 
 #: ../data/functions.xml.in.h:61
 msgid "Row"
@@ -2971,7 +2972,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:64
 msgid "Returns a column in a matrix as a vector."
-msgstr "将矩阵的一列作为向量返回。"
+msgstr "将矩阵的某列作为向量返回。"
 
 #: ../data/functions.xml.in.h:65
 msgid "Column"
@@ -2983,7 +2984,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:67
 msgid "Returns the number of elements in a matrix or vector."
-msgstr "返回一个矩阵或向量内的元素数目。"
+msgstr "返回给定矩阵或向量的元素数目。"
 
 #: ../data/functions.xml.in.h:68
 msgid "Matrix or vector"
@@ -3002,7 +3003,7 @@ msgstr "-"
 msgid ""
 "Returns the element at specified position in a matrix (row and column) or "
 "vector (index)."
-msgstr "返回矩阵(行和列)或向量(下标)指定位置上的元素。"
+msgstr "返回给定矩阵(行和列)或向量(下标)指定位置的元素。"
 
 #: ../data/functions.xml.in.h:73
 msgid "Matrix/vector"
@@ -3022,7 +3023,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:77
 msgid "Returns the transpose of a matrix."
-msgstr "返回矩阵的转置。"
+msgstr "返回给定矩阵的转置。"
 
 #: ../data/functions.xml.in.h:78
 msgid "Identity"
@@ -3036,7 +3037,7 @@ msgstr "-"
 msgid ""
 "Returns the identity matrix of a matrix or with specified number of rows/"
 "columns."
-msgstr "返回指定行/列数或与指定矩阵同阶的单位矩阵。"
+msgstr "返回与给定矩阵同阶或给定行/列数的单位矩阵。"
 
 #: ../data/functions.xml.in.h:81
 msgid "Matrix or rows/columns"
@@ -3068,7 +3069,7 @@ msgid ""
 "determinant in that all signs in the expansion by minors are taken as "
 "positive."
 msgstr ""
-"计算矩阵的积和式。积和式与行列式的不同之处在于，在展开时所有展开式前面的符号"
+"计算矩阵的积和式。积和式与行列式的不同之处在于，其展开时所有展开式前面的符号"
 "都为正。"
 
 #: ../data/functions.xml.in.h:88
@@ -3081,7 +3082,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:90
 msgid "Calculates the adjugate or adjoint of a matrix."
-msgstr "计算矩阵的伴随矩阵"
+msgstr "计算矩阵的伴随矩阵。"
 
 #: ../data/functions.xml.in.h:91
 msgid "Cofactor"
@@ -3093,7 +3094,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:93
 msgid "Calculates the cofactor of the element at specified position."
-msgstr "计算指定位置元素的余子式。"
+msgstr "计算给定位置元素的余子式。"
 
 #: ../data/functions.xml.in.h:94
 msgid "Matrix Inverse"
@@ -3107,8 +3108,7 @@ msgstr "-"
 msgid ""
 "Calculates the inverse of a matrix. The inverse is the matrix that "
 "multiplied by the original matrix equals the identity matrix (AB = BA = I)."
-msgstr ""
-"计算矩阵的逆。矩阵的逆是一个与原矩阵相乘等于单位矩阵的矩阵。(AB = BA = I)。"
+msgstr "计算矩阵的逆。即一个与原矩阵相乘等于单位矩阵的矩阵。(AB = BA = I)。"
 
 #: ../data/functions.xml.in.h:97
 msgid "Load CSV File"
@@ -3158,7 +3158,7 @@ msgstr "-"
 msgid ""
 "Calculates the magnitude of a value. This function returns the same value as "
 "abs() for all values except vectors."
-msgstr "计算一个值的大小。对于除向量以外的所有值，该函数返回的值与abs()相同。"
+msgstr "计算给定值的大小。对除向量外的值，此函数返回的值与abs()相同。"
 
 #: ../data/functions.xml.in.h:109
 msgid "Value"
@@ -3176,7 +3176,7 @@ msgstr "-"
 msgid ""
 "Mulitplies each separate element in matrix 1 with the corresponding element "
 "in matrix 2."
-msgstr "将矩阵1中的每个单独元素与矩阵2中的对应元素进行乘法运算。"
+msgstr "将矩阵一的每个元素与矩阵二的对应元素逐个相乘。"
 
 #: ../data/functions.xml.in.h:113
 msgid "Matrix 1"
@@ -3218,9 +3218,9 @@ msgid ""
 "with each matrix/vector argument followed by the corresponding variable used "
 "in the function argument."
 msgstr ""
-"使用矩阵/向量1中的每个独立元素和矩阵/向量2中相应的(同行同列)元素计算一个新的"
-"矩阵或向量。可以指定无限数量的矩阵/向量，每个矩阵/向量参数后面都跟着函数参数"
-"中使用的相应变量。"
+"用给定函数将矩阵/向量一的每个元素和矩阵/向量二对应的(同行同列)元素逐个计算得"
+"到一个新的矩阵/向量。也可以给定多个矩阵/向量，只需在每个矩阵/向量参数后面给出"
+"其参与函数计算的相应变量即可。"
 
 #: ../data/functions.xml.in.h:122
 msgid "Matrices/vectors and variables"
@@ -3236,7 +3236,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:125
 msgid "Calculates the norm/length of a vector."
-msgstr "计算向量的范数/长度。"
+msgstr "计算给定向量的范数/长度。"
 
 #: ../data/functions.xml.in.h:126
 msgid "Cross Product"
@@ -3264,7 +3264,8 @@ msgid ""
 "lesser positive integer (n(n-1)(n-2)...2*1). Can also be entered as a number "
 "followed by one exclamation mark."
 msgstr ""
-"计算整数的阶乘，即n(n-1)(n-2)...2*1。也可以用整数后面跟一个\"!\"来 表示。"
+"计算给定整数的阶乘。给定整数每小一的正整数累乘，即n(n-1)(n-2)...2*1。也可以用"
+"给定整数后面跟一个“!“来表示。"
 
 #: ../data/functions.xml.in.h:132
 msgid "r:factorial"
@@ -3284,7 +3285,8 @@ msgid ""
 "every second lesser positive integer (n(n-2)(n-4)...). Can also be entered "
 "as a number followed by two exclamation marks."
 msgstr ""
-"计算整数的双阶乘。即n(n-2)(n-4)....。也可以用整数后面连输两个\"!\"来 表示。"
+"计算给定整数的双阶乘。给定整数每小二的正整数累乘，即n(n-2)(n-4)...。也可以用"
+"整数后面跟两个”!“来表示。"
 
 #: ../data/functions.xml.in.h:136
 msgid "Multifactorial"
@@ -3300,8 +3302,8 @@ msgid ""
 "every x lesser positive integer (n(n-x)(n-2x)...). Can also be entered as a "
 "number followed by three or more exclamation marks."
 msgstr ""
-"计算整数的多阶乘，即n(n-x)(n-2x)...。也可以用在整数后面跟三个或多个\"!\"来表"
-"示。"
+"计算给定整数的多阶乘。给定整数每小x的正整数累乘，即n(n-x)(n-2x)...。也可以用"
+"整数后面跟三个或多个“!“来表示。"
 
 #: ../data/functions.xml.in.h:139
 msgid "Binomial Coefficient"
@@ -3324,7 +3326,9 @@ msgid ""
 "Calculates the hyperfactorial of an integer. Multiplies the argument raised "
 "by itself with every lesser positive integer raised by themselves (1^1 * "
 "2^2 ... n^n)."
-msgstr "计算整数的过度阶乘,即(1^1 * 2^2 ... n^n)。"
+msgstr ""
+"计算给定整数的过度阶乘，给定整数每小一的正整数幂指的累乘，即(1^1 * 2^2 ... "
+"n^n)。"
 
 #: ../data/functions.xml.in.h:144
 msgid "Superfactorial"
@@ -3339,7 +3343,8 @@ msgid ""
 "Calculates the superfactorial of an integer. Multiplies the factorial of the "
 "argument with the factorial of every lesser positive integer (1! * 2! ... "
 "n!)."
-msgstr "计算整数的超级阶乘，即1! * 2! ... n!。"
+msgstr ""
+"计算给定整数的超级阶乘，给定整数每小一的正整数阶乘的累乘，即1! * 2! ... n!。"
 
 #: ../data/functions.xml.in.h:147
 msgid "Permutations (Variations)"
@@ -3357,10 +3362,10 @@ msgid ""
 "2], [2, 1], [1, 3], [3, 1], [2, 3] and [3, 2], and thus the number of "
 "permutations is 6."
 msgstr ""
-"返回排列数，即从包含指定数量对象的集合中选择指定数量个元素生成有序列表，所能"
-"生成的所有不同有序列表的个数。例如，如果集合中有三个元素(1,2和3),从中任选两个"
-"元素生成有序列表，可能的列表为[1, 2]、[2, 1]、[1, 3]、[3, 1]、[2, 3]和[3, "
-"2]，因此排列数为6。"
+"返回排列数，即从含给定数量对象的集合中选择指定数量的元素生成有序列表，所能得"
+"到的不同有序列表的总数。例如，如果集合中有三个元素(1,2和3)，从中任选两个元素"
+"生成有序列表，可能的列表为[1, 2]、[2, 1]、[1, 3]、[3, 1]、[2, 3]和[3, 2]，因"
+"此其排列数为6。"
 
 #: ../data/functions.xml.in.h:150
 msgid "Objects"
@@ -3385,9 +3390,9 @@ msgid ""
 "(1, 2 and 3) that is put in a list with place for two, the alternatives are "
 "[1, 2], [1, 3], and [2, 3], and thus the number of combinations is 3."
 msgstr ""
-"返回组合数，即从包含指定数量对象的集合中选择指定数量个元素生成无序列表，所能"
-"生成的所有不同无序列表的个数。例如，如果集合中有三个元素(1,2和3)，从中任选两"
-"个元素生成有序列表，可能的列表为[1, 2]、[1, 3]和[2, 3]，因此组合数为3。"
+"返回组合数，即从含给定数量对象的集合中选择指定数量个元素生成无序列表，所能得"
+"到的不同无序列表的总数。例如，如果集合中有三个元素(1,2和3)，从中任选两个元素"
+"生成无序列表，可能的列表为[1, 2]、[1, 3]和[2, 3]，因此其组合数为3。"
 
 #: ../data/functions.xml.in.h:155
 msgid "Derangements"
@@ -3404,9 +3409,9 @@ msgid ""
 "the original list is [1, 2, 3], the possible derangements are [2, 3, 1] and "
 "[3, 1, 2], and thus the number of derangements is 2."
 msgstr ""
-"返回重排数，即对给定列表中的元素重新排列，并且限定每个元素都不能在原来的位置"
-"上，所得的列表数量。例如，如果原始列表为[1,2,3]，则可能的重排列表为[2, 3, 1]"
-"和[3, 1, 2]。因此重排数为2。"
+"返回重排数，即重新排列给定列表中的元素，并且限定每个元素都不能在原来的位置"
+"上，所能得的列表总量。例如，如果原始列表为[1,2,3]，则可能的重排列表为[2, 3, "
+"1]和[3, 1, 2]。因此其重排数为2。"
 
 #: ../data/functions.xml.in.h:158
 msgid "Number of elements"
@@ -3661,7 +3666,7 @@ msgstr "伯努利数/多项式"
 msgid ""
 "Returns the nth Bernoulli number or polynomial (if the second argument is "
 "non-zero)."
-msgstr "返回第n个伯努利数或多项式(如果第二个参数非零)。"
+msgstr "返回第n个伯努利数或多项式(如果第二个参数不为零)。"
 
 #: ../data/functions.xml.in.h:222
 msgid "r:bernoulli"
@@ -3722,10 +3727,9 @@ msgid ""
 "numbers are rounded toward the nearest even integer/digit, otherwise away "
 "from zero."
 msgstr ""
-"舍入到最接近的整数或小数。如果第二个参数为0，则将数值舍入到最接近的整数，否则"
-"将数值舍入到小数点右边(如果是正数)或左边(如果是负数)的相应位数。如果第三个参"
-"数为真，则半数(*.5)会被舍入到最接近的偶数整数/位数，否则会被舍入到小数点右边"
-"(如果是正数)或左边(如果是负数)的相应位数。"
+"舍入到最近的整数或小数。如果第二个参数为0，则将数值舍入到最接近的整数，否则将"
+"数值舍入到小数点右边(如果是正数)或左边(如果是负数)的相应位数。如果第三个参数"
+"为真，则中数会被舍入到最近的偶数整数/位数，否则会朝远离零的方向舍入。"
 
 #: ../data/functions.xml.in.h:235
 msgid "Number of decimals"
@@ -3810,19 +3814,18 @@ msgid ""
 "manually selected, the specified expression is always converted to a single "
 "number."
 msgstr ""
-"使用指定的数字进制(基数)从表达式中返回一个值。对于-62和62之间的进制，支持完整"
-"的数学表达式(包括运算符和函数)，而对于其他进制，指定的表达式将被换算为一个单"
-"一的数字。&#10;&#10;进制≤36使用数字0-9和A-Z(不区分大小写)。 &#10;&#10;37和62"
-"之间的进制使用大小写敏感的字母(0-9、A-Z、a-z)作为数字('z'等于61).&#10;&#10;超"
-"过62的进制使用Unicode字符作为数字，字符代码作为值(例如'0'等于48)。在这种情况"
-"下，支持转义字符(例如'\\0'=0，'\\523'=523，'\\x7f'=127).&#10;&#10;负数进制与"
-"相应的正数进制使用相同的数字，非整数进制使用的数字由从0开始的四舍五入决定。非"
-"实数的进制默认使用数字0-9和A-Z.&#10;&#10;使用的数字集可以使用第三个参数来选择"
-"(默认为0的自动选择)。将其设置为1代表数字0-9和A-Z，2代表0-9、A-Z和a-z，3代表"
-"Unicode数字，4代表电话字(phoneword，例如ABC=2、CDE=3等)，或者输入一个文本字符"
-"串，所有数字按升序排列(例如 \"0123456789\")，并可选择用分号分隔(以启用多个等"
-"效数字，例如 \"0;aA1;bB2;cC3\")。当手动选择一组数字时，指定的表达式总是被换算"
-"为单个数字。"
+"使用给定的数字进制(基数)从表达式中返回一个值。对于-62和62之间的进制，支持所有"
+"的数学表达式(包括运算符和函数)，而对于其他进制，给定的表达式将被换算为单独的"
+"数字。&#10;&#10;≤36的进制使用数字0-9和A-Z(不区分大小写)。&#10;&#10;37和62之间"
+"的进制使用区分大小写的字母(0-9、A-Z、a-z)作为数字('z'等于61)。&#10;&#10;超过"
+"62的进制使用Unicode字符作为数字，字符代码(ASCII)作为值(例如'0'等于48)。这种情"
+"况下支持转义字符(例如'\\0'=0，'\\523'=523，'\\x7f'=127).&#10;&#10;负数进制与"
+"相应的正数进制使用相同的数字，非整数进制使用的数字由远离0的舍入决定。非实数的"
+"进制默认使用数字0-9和A-Z。&#10;&#10;使用的数字集可以用第三个参数来指定(默认为"
+"0即自动选择)。将其设置为1代表数字0-9和A-Z，2代表0-9、A-Z和a-z，3代表Unicode数"
+"字，4代表电话字(phoneword，例如ABC=2、CDE=3等)，或者输入一个所有数字按升序排"
+"列的文本字符串(例如\"0123456789\")，而且可用分号分隔(以启用多个等效数字，例如"
+"\"0;aA1;bB2;cC3\")。当手动选择数字集时，给定的表达式总是被换算为单独的数字。"
 
 #: ../data/functions.xml.in.h:251
 msgid "Set of digits"
@@ -3842,8 +3845,8 @@ msgid ""
 "numbers beginning with '1' is interpreted as negative binary numbers using "
 "two's complement."
 msgstr ""
-"返回一个二进制表示的值。如果二的补码为真，则以'1'开头的数字将被解释为使用二的"
-"补码的负二进制数。"
+"返回一个二进制表示的值。如果二的补码为真，则以'1'开头的数字将被解释为用二的补"
+"码表示的负二进制数。"
 
 #: ../data/functions.xml.in.h:255
 msgid "Binary number"
@@ -3899,8 +3902,8 @@ msgid ""
 "numbers beginning with 8 or higher is interpreted as negative hexadecimal "
 "numbers using two's complement."
 msgstr ""
-"返回一个十六进制表示的值。如果二的补码为真，则以8开头的数字会被解释为为使用二"
-"的补码的负十六进制数。"
+"返回一个十六进制表示的值。如果二的补码为真，则以8开头的数字会被解释为为用二的"
+"补码表示的负十六进制数。"
 
 #: ../data/functions.xml.in.h:268
 msgid "Hexadecimal number"
@@ -3918,7 +3921,7 @@ msgstr "-"
 msgid ""
 "Returns a value from an expression in bijective base-26. Conversion in the "
 "opposite direction is also supported."
-msgstr "返回一个双射基-26(bijective base-26)表示的值。也支持相反方向的换算。"
+msgstr "返回一个双射基-26(bijective base-26)表示的值。也支持逆换算。"
 
 #: ../data/functions.xml.in.h:272
 msgid "Bijective base-26 number"
@@ -4122,7 +4125,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:321
 msgid "Returns 0 if x is non-zero, and infinity if x is zero."
-msgstr "如果x不为零，则返回0；如果x为零，则返回无穷大。"
+msgstr "如果x不为零，则返回0；否则返回无穷大。"
 
 #: ../data/functions.xml.in.h:322
 msgid "Ramp Function"
@@ -4230,7 +4233,7 @@ msgstr "-"
 msgid ""
 "Returns the real root. For negative values the degree must be odd. Complex "
 "values are not allowed."
-msgstr "返回实数根。对于负值，次数必须是奇数。不允许有复数值。"
+msgstr "返回实根。对于负值，次数必须是奇数。不允许复数值。"
 
 #: ../data/functions.xml.in.h:348 ../data/units.xml.in.h:64
 msgid "Degree"
@@ -4280,7 +4283,7 @@ msgstr "-"
 msgid ""
 "Returns the inverse function for mx*e^x as ln() does for e^x. Only the "
 "principal branch and real valued results are currently supported."
-msgstr "返回mx*e^x的反函数，就像ln()对e^x一样。目前只支持主分支和实数值结果。"
+msgstr "返回mx*e^x的反函数，就像ln()对于e^x一样。目前只支持主枝和实值结果。"
 
 #: ../data/functions.xml.in.h:360
 msgid "Branch"
@@ -4470,7 +4473,7 @@ msgstr "-"
 msgid ""
 "Computes the principal value of the argument function applied to the complex "
 "number x+iy."
-msgstr "计算应用于复数x+iy的参数函数的主值(辐角)。"
+msgstr "计算复数x+iy的(辐角)主值。"
 
 #: ../data/functions.xml.in.h:407
 msgid "Y"
@@ -4623,8 +4626,8 @@ msgid ""
 "third argument (exponent bits) is set to zero, the standard number of "
 "exponent bits will be used (e.g. 8 for 32-bit format)."
 msgstr ""
-"读取一个IEEE 754浮点格式的数字。如果第三个参数(指数位)设置为0，则使用标准指数"
-"位数(例如32位格式为8)。"
+"读取一个IEEE-754浮点格式的数字。如果第三个参数(指数位)为0，则使用标准指数位数"
+"(例如32位格式为8)。"
 
 #: ../data/functions.xml.in.h:444
 msgid "Floating-point number (binary)"
@@ -4653,8 +4656,8 @@ msgid ""
 "(exponent bits) is set to zero, the standard number of exponent bits will be "
 "used (e.g. 8 for 32-bit format)."
 msgstr ""
-"将一个值换算为IEEE-754浮点格式的数字，并返回其二进制表示。如果第三个参数(指数"
-"位)设置为0，则使用标准指数位数(例如32位格式为8)。"
+"将给定值换算为IEEE-754浮点格式，并返回其二进制表示。如果第三个参数(指数位)为"
+"0，则使用标准指数位数(例如32位格式为8)。"
 
 #: ../data/functions.xml.in.h:450
 msgid "IEEE 754 Floating-Point Error"
@@ -4671,8 +4674,8 @@ msgid ""
 "third argument (exponent bits) is set to zero, the standard number of "
 "exponent bits will be used (e.g. 8 for 32-bit format)."
 msgstr ""
-"计算将一个值换算为IEEE-754浮点格式时的误差(原始值和转换值之间的差值)，如果第"
-"三个参数(指数位)设置为0，则使用标准指数位数(例如32位格式为8)。"
+"计算将给定值换算为IEEE-754浮点格式时的误差(原始值和转换值之间的差值)，如果第"
+"三个参数(指数位)为0，则使用标准指数位数(例如32位格式为8)。"
 
 #: ../data/functions.xml.in.h:453
 msgid "IEEE 754 Floating-Point Components"
@@ -4689,8 +4692,8 @@ msgid ""
 "bits) is set to zero, the standard number of exponent bits will be used (e."
 "g. 8 for 32-bit format)."
 msgstr ""
-"将一个值换算为IEEE-754浮点格式的数字，并以向量形式返回符号、指数和有效位。如"
-"果第三个参数(指数位)设置为0，则使用标准指数位数(例如32位格式为8)。"
+"将给定值换算为IEEE-754浮点格式，并以向量形式返回其符号、指数和有效位。如果第"
+"三个参数(指数位)为0，则使用标准指数位数(例如32位格式为8)。"
 
 #: ../data/functions.xml.in.h:456
 msgid "IEEE 754 Floating-Point Value"
@@ -4706,8 +4709,8 @@ msgid ""
 "point format. If the third argument (exponent bits) is set to zero, the "
 "standard number of exponent bits will be used (e.g. 8 for 32-bit format)."
 msgstr ""
-"返回最接近IEEE 754浮点格式的值。如果第三个参数(指数位)设置为0，则使用标准指数"
-"位数(例如32位格式为8)。"
+"返回给定值最接近的IEEE-754浮点值。如果第三个参数(指数位)为0，则使用标准指数位"
+"数(例如32位格式为8)。"
 
 #: ../data/functions.xml.in.h:459
 msgid "Roman Number"
@@ -5011,8 +5014,8 @@ msgid ""
 "Generates a pseudo-random number. Returns a real number between 0 and 1, if "
 "ceil is zero (default), or an integer between 1 and (including) ceil."
 msgstr ""
-"产生一个伪随机数。如果顶部值为0(默认值)，返回一个在0与1之间的实数；否则返回一"
-"个在1与顶部值之间(包含顶部值)的整数。"
+"产生一个伪随机数。如果顶值为0(默认值)，返回一个在0与1之间的实数；否则返回一个"
+"在1与顶值之间(包含顶值)的整数。"
 
 #: ../data/functions.xml.in.h:526
 msgid "Ceil"
@@ -5064,15 +5067,15 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:538
 msgid "Returns an integer between (including) bottom and top."
-msgstr "返回在顶部和底部之间(含底部)的一个整数。"
+msgstr "返回在顶值和底值之间(含底值)的一个整数。"
 
 #: ../data/functions.xml.in.h:539
 msgid "Bottom"
-msgstr "底部"
+msgstr "底值"
 
 #: ../data/functions.xml.in.h:540
 msgid "Top"
-msgstr "顶部"
+msgstr "顶值"
 
 #: ../data/functions.xml.in.h:541
 msgid "Exponential Random Number"
@@ -5350,7 +5353,7 @@ msgstr "-"
 msgid ""
 "Returns the probability density p(x) at x for a logistic distribution with "
 "scale parameter. (from Gnumeric)"
-msgstr "根据指定的规模返回logistic分布在x点的密度概率p(x)。(用Gnumeric)"
+msgstr "根据给定规模参数返回Logistic分布在x点的密度概率p(x)。(用Gnumeric)"
 
 #: ../data/functions.xml.in.h:609
 msgid "Scale"
@@ -5382,7 +5385,7 @@ msgstr "-"
 msgid ""
 "Returns the probability density p(x) at x for a Pareto distribution with "
 "exponent and scale. (from Gnumeric)"
-msgstr "根据指定的指数和规模返回Pareto分布在x点的密度概率p(x)。(用Gnumeric)"
+msgstr "根据给定指数和规模返回Pareto分布在x点的密度概率p(x)。(用Gnumeric)"
 
 #: ../data/functions.xml.in.h:616
 msgid "Poisson Distribution"
@@ -5414,8 +5417,7 @@ msgstr "-"
 msgid ""
 "Returns the probability density p(x) at x for a Rayleigh distribution with "
 "scale parameter sigma. (from Gnumeric)"
-msgstr ""
-"根据指定的规模参数Sigma返回Rayleigh分布在x点的密度概率p(x)。(用Gnumeric)"
+msgstr "根据给定规模参数Sigma返回Rayleigh分布在x点的密度概率p(x)。(用Gnumeric)"
 
 #: ../data/functions.xml.in.h:623
 msgid "Rayleigh Tail Distribution"
@@ -5430,7 +5432,7 @@ msgid ""
 "Returns the probability density p(x) at x for a Rayleigh tail distribution "
 "with scale parameter sigma and a lower limit. (from Gnumeric)"
 msgstr ""
-"根据指定的规模参数Sigma和下限返回Rayleigh尾分布在x点的密度概率p(x)。(用"
+"根据给定规模参数Sigma和下限返回Rayleigh尾分布在x点的密度概率p(x)。(用"
 "Gnumeric)"
 
 #: ../data/functions.xml.in.h:626 ../data/variables.xml.in.h:205
@@ -5508,17 +5510,16 @@ msgid ""
 "day counting you want to use: 0: US 30/360, 1: real days (default), 2: real "
 "days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"返回两个日期之间的天数。&#10;&#10; \"基准\"是您想使用的天数计算类型：0: 美式 "
-"30/360 (默认值), 1: 真实天数, 2: 真实天数/360, 3: 真实天数/365 或者 4: 欧式 "
-"30/360。"
+"返回两个日期之间的天数。&#10;&#10;计算基准是您想使用的天数计算类型：0)美国 "
+"30/360，1)实际天数(默认值)，2)实际天数/360, 3)实际天数/365 或 4)欧洲 30/360。"
 
 #: ../data/functions.xml.in.h:642
 msgid "First date"
-msgstr "第一个日期"
+msgstr "日期一"
 
 #: ../data/functions.xml.in.h:643
 msgid "Second date"
-msgstr "第二个日期"
+msgstr "日期二"
 
 #: ../data/functions.xml.in.h:644
 msgid "Day counting basis"
@@ -5542,9 +5543,9 @@ msgid ""
 "is the type of day counting you want to use: 0: US 30/360, 1: real days "
 "(default), 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"返回两个日期之间的年数(分数值)。&#10;&#10; \"基准\"是您想使用的天数计算类型："
-"0: 美式 30/360 (默认值), 1: 真实天数, 2: 真实天数/360, 3: 真实天数/365 或者 "
-"4: 欧式 30/360。"
+"返回两个日期之间的年数(分数值)。&#10;&#10; 计算基准是您想使用的天数计算类型："
+"0)美国 30/360，1)实际天数(默认值)，2)实际天数/360, 3)实际天数/365 或 4)欧洲 "
+"30/360。"
 
 #: ../data/functions.xml.in.h:649
 msgid "Week of Year"
@@ -5635,8 +5636,8 @@ msgid ""
 "Returns the local date and time represented by the specified Unix timestamp "
 "(seconds, excluding leap seconds, since 1970-01-01). Supports time units."
 msgstr ""
-"返回指定的Unix时间戳所代表的本地日期和时间(秒，不包括1970-01-01以来的闰秒)。"
-"支持时间单位。"
+"返回给定Unix时间戳所代表的本地日期和时间(秒，不包括1970-01-01以来的闰秒)。支"
+"持时间单位。"
 
 #: ../data/functions.xml.in.h:671
 msgid "Timestamp"
@@ -5692,8 +5693,8 @@ msgid ""
 "use a unit based on seconds (such as day and year). Fractions of days are "
 "truncated."
 msgstr ""
-"将一个时间间隔值加到日期中。该值可正可负，但其单位必须基于秒(如日或者年)。日"
-"期的分数部分会被截取掉。"
+"将给定时间间隔值加到日期中。该值可正可负，但其单位必须基于秒(如日或者年)。日"
+"期的分数部分会被截去。"
 
 #: ../data/functions.xml.in.h:684 ../data/units.xml.in.h:135
 msgid "Time"
@@ -5713,7 +5714,7 @@ msgid ""
 "date. This value corrresponds to an angle between 0 and 360 degrees. 0 "
 "represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons."
 msgstr ""
-"返回指定日期的月相，以0到1之间的数字表示。该值对应于0到360度之间的角度。 0代"
+"返回给定日期的月相，以0到1之间的数字表示。该值对应于0到360度之间的角度。 0代"
 "表新月，0.5代表满月，以及0.25和0.75代表季月。"
 
 #: ../data/functions.xml.in.h:688
@@ -5733,9 +5734,9 @@ msgid ""
 "rad = 180° which corresponds to a value of 0.5). Values above 1, without "
 "unit, are interpreted as degrees."
 msgstr ""
-"返回指定月相发生的日期。函数从指定日期开始向前搜索。月相是在0和1之间的数字，0"
-"代表新月，0.5满月，0.25和0.75季月。角度值也是允许的(例如π rad=180°，对应的值"
-"是0.5)。超过1的没有单位的数值解释为度数。"
+"返回给定月相发生的日期。函数从给定日期开始向前搜索。月相是在0和1之间的数字，0"
+"代表新月，0.5满月，0.25和0.75季月。角度值同样也允许(例如π rad=180°，对应的值"
+"是0.5)。超过1的没有单位的数值将解释为度数。"
 
 #: ../data/functions.xml.in.h:691
 msgid "Start Date"
@@ -5755,7 +5756,7 @@ msgstr "工具"
 
 #: ../data/functions.xml.in.h:695
 msgid "Plot Functions and Vectors"
-msgstr "作函数和向量图"
+msgstr "函数和向量绘图"
 
 #: ../data/functions.xml.in.h:696
 msgid "r:plot"
@@ -5792,8 +5793,8 @@ msgid ""
 "series. It is also possible to plot a matrix where each row is a pair of x "
 "and y values."
 msgstr ""
-"绘制一个或多个表达式或向量。使用一个向量作为第一个参数来绘制多个系列。只有第"
-"一个参数用于向量系列。也可以绘制一个矩阵，其中每一行是一对x和y值。"
+"绘制一个或多个表达式或向量。使用向量作为第一个参数来绘制多个序列。只有第一个"
+"参数可以用向量。也可以绘制一个矩阵，其中每行是一对x和y值。"
 
 #: ../data/functions.xml.in.h:704
 msgid "Unicode Value"
@@ -5812,7 +5813,7 @@ msgid ""
 msgstr ""
 "使用选定的格式对Unicode字符或文本字符串进行编码。支持的编码是UTF-8 (0), "
 "UTF-16 (1), 和UTF-32 (2)。如果第三个参数为真，每个独立的编码单元(8、16或32"
-"位，取决于编码)都会被放在一个向量中。"
+"位，取决于编码)将被放在一个向量中。"
 
 #: ../data/functions.xml.in.h:707
 msgid "Character"
@@ -5848,7 +5849,7 @@ msgstr "文字"
 
 #: ../data/functions.xml.in.h:715
 msgid "Concatenate Strings"
-msgstr "连接字符串"
+msgstr "拼接字符串"
 
 #: ../data/functions.xml.in.h:716
 msgid "r:concatenate"
@@ -5875,7 +5876,7 @@ msgid ""
 "Replaces a certain value in an expression with a new value. The expression "
 "is calculated before the replacement if the fourth argument is true."
 msgstr ""
-"使用新值替换表达式中的特定值。如果第四个参数为真，则在替换前先对表达式进行计"
+"使用新值替换表达式中的特定值。如果第四个参数为真，将在替换前先对表达式进行计"
 "算。"
 
 #: ../data/functions.xml.in.h:722
@@ -5906,7 +5907,7 @@ msgstr "-"
 msgid ""
 "Removes all units from an expression. The expression is calculated before "
 "the removal."
-msgstr "从表达式中删除全部单位。在删除之前会先对表达式进行计算。"
+msgstr "从表达式中删除全部单位。删除前会先对表达式进行计算。"
 
 #: ../data/functions.xml.in.h:729
 msgid "Process Vector Elements"
@@ -5958,11 +5959,11 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:741
 msgid "First element"
-msgstr "最后一个元素"
+msgstr "首元素"
 
 #: ../data/functions.xml.in.h:742
 msgid "Last element"
-msgstr "最后一个元素"
+msgstr "尾元素"
 
 #: ../data/functions.xml.in.h:743
 msgid "Initial value"
@@ -5974,7 +5975,7 @@ msgstr "值变量"
 
 #: ../data/functions.xml.in.h:745
 msgid "Select Vector Elements"
-msgstr "选择矩阵元素"
+msgstr "选择向量元素"
 
 #: ../data/functions.xml.in.h:746
 msgid "r:select"
@@ -5986,7 +5987,7 @@ msgstr "条件"
 
 #: ../data/functions.xml.in.h:748
 msgid "Select first match"
-msgstr "选择第一个匹配项"
+msgstr "首匹配项"
 
 #: ../data/functions.xml.in.h:749
 msgid "r:function"
@@ -6178,7 +6179,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:797
 msgid "Initial value of counter"
-msgstr "计数器初始值"
+msgstr "计数器初值"
 
 #: ../data/functions.xml.in.h:798
 msgid "Counter variable"
@@ -6186,15 +6187,15 @@ msgstr "计数器变量"
 
 #: ../data/functions.xml.in.h:799
 msgid "For condition"
-msgstr "For条件"
+msgstr "循环条件"
 
 #: ../data/functions.xml.in.h:800
 msgid "Counter update function"
-msgstr "计数器更新函数"
+msgstr "计数器迭代函数"
 
 #: ../data/functions.xml.in.h:801
 msgid "Do function"
-msgstr "Do函数"
+msgstr "执行函数"
 
 #: ../data/functions.xml.in.h:802
 msgid "If...Then...Else"
@@ -6209,19 +6210,20 @@ msgid ""
 "Tests a condition and returns a value depending on the result. Vectors can "
 "be used for argument 1 and 2, instead of nested functions."
 msgstr ""
-"测试一个条件并根据结果返回一个值。参数1和参数2可以使用向量，而不是嵌套函数。"
+"测试给定条件并根据结果返回一个值。参数一和参数二可以使用向量，但不能用嵌套函"
+"数。"
 
 #: ../data/functions.xml.in.h:805
 msgid "Expression if condition is met"
-msgstr "条件满足时的表达式"
+msgstr "真表达式"
 
 #: ../data/functions.xml.in.h:806
 msgid "Expression if condition is NOT met"
-msgstr "条件不满足时的表达式"
+msgstr "假表达式"
 
 #: ../data/functions.xml.in.h:807
 msgid "Assume false if not true"
-msgstr "如果不为真，则假设为假"
+msgstr "非真即假"
 
 #: ../data/functions.xml.in.h:808
 msgid "Bitwise Exclusive OR"
@@ -6257,7 +6259,7 @@ msgid ""
 "argument specifies the number of steps that each binary bit is shifted to "
 "the left (use negative values for right shift)."
 msgstr ""
-"对一个整数进行逻辑或算术移位。第二个参数指定每个二进制位向左移的步数(右移时使"
+"对给定整数进行逻辑或算术移位。第二个参数指定每个二进制位向左移的步数(右移时使"
 "用负值)。"
 
 #: ../data/functions.xml.in.h:816
@@ -6270,7 +6272,7 @@ msgstr "步数"
 
 #: ../data/functions.xml.in.h:818
 msgid "Arithmetic shift using two's complement"
-msgstr "使用二进制补码的算术移位"
+msgstr "算术移位使用二进制补码"
 
 #: ../data/functions.xml.in.h:819
 msgid "Bitwise Complement (Not)"
@@ -6282,8 +6284,8 @@ msgid ""
 "1 for signed and 0 for unsigned). If bit width is zero, the smallest "
 "necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
-"对指定位宽和有符号整数进行按位取非(有符号用1，无符号用0)，如果位宽为0，则使用"
-"最小的位数(8, 16, 32, 64, 128, ...)。"
+"对固定位宽的有符号整数进行按位取非(有符号用1，无符号用0)，如果位宽为0，将使用"
+"尽可能小的位数(8, 16, 32, 64, 128, ...)。"
 
 #: ../data/functions.xml.in.h:821
 msgid "r:bitcmp"
@@ -6309,8 +6311,8 @@ msgid ""
 "(use negative values for right shift). If bit width is zero, the smallest "
 "necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
-"对指定位宽和有符号的整数进行循环移位(有符号用1，无符号用0)。第二个参数指定每"
-"个二进制位向左移动的步数(右移使用负值)。如果位宽为零，将使用最小的必要位数"
+"对固定位宽的有符号的整数进行循环移位(有符号用1，无符号用0)。第二个参数指定每"
+"个二进制位向左移动的步数(右移使用负值)。如果位宽为零，将使用尽可能小的位数"
 "(8、16、32、64、128...)。"
 
 #: ../data/functions.xml.in.h:826
@@ -6333,7 +6335,7 @@ msgstr "-"
 msgid ""
 "Corresponds to the summation symbol. Adds terms for each x ranging from the "
 "lower to the upper limit."
-msgstr "对应于求和符号。为每个x从下限的项加到上限的项。"
+msgstr "对应于求和符号。将从下限到上限的每项x累加。"
 
 #: ../data/functions.xml.in.h:831
 msgid "Term expression"
@@ -6359,7 +6361,7 @@ msgstr "-"
 msgid ""
 "Corresponds to the product symbol. Multiplies factors for each x ranging "
 "from the lower to the upper limit."
-msgstr "相当于连乘符号&#x3A0;。将从上限到下限的每项x相乘。"
+msgstr "对应于连乘符号&#x3A0;。将从上限到下限的每项x累乘。"
 
 #: ../data/functions.xml.in.h:837
 msgid "Factor expression"
@@ -6463,7 +6465,7 @@ msgstr "-"
 #: ../data/functions.xml.in.h:860
 msgid ""
 "Finds the linear function for the straight line between two distinct points."
-msgstr "寻找过两点直线段的线性函数"
+msgstr "寻找过两点的直线的线性函数"
 
 #: ../data/functions.xml.in.h:861
 msgid "x1"
@@ -6551,7 +6553,7 @@ msgid ""
 "left (below) if direction is -1, or limit from right (above) if direction is "
 "+1."
 msgstr ""
-"如果方向为零，返回函数的双面极限；如果方向为-1，返回左(下)极限；如果方向为"
+"如果方向为零，返回函数的两侧极限；如果方向为-1，返回左(下)极限；如果方向为"
 "+1，返回右(上)极限。"
 
 #: ../data/functions.xml.in.h:882
@@ -6920,7 +6922,7 @@ msgstr "计算矩形棱柱的表面积"
 
 #: ../data/functions.xml.in.h:973
 msgid "Volume of Triangular Prism"
-msgstr "三角棱柱体积"
+msgstr "三棱柱体积"
 
 #: ../data/functions.xml.in.h:974
 msgid "r:triangleprism"
@@ -6928,7 +6930,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:975
 msgid "Calculates the volume of a prism with triangular base."
-msgstr "计算三角棱柱的体积。"
+msgstr "计算三棱柱的体积。"
 
 #: ../data/functions.xml.in.h:976
 msgid "Pyramid"
@@ -6998,7 +7000,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:992
 msgid "Height of Square Pyramid"
-msgstr "方角锥的高度"
+msgstr "方锥体的高度"
 
 #: ../data/functions.xml.in.h:993
 msgid "r:sqpyramid_height"
@@ -7077,8 +7079,8 @@ msgid ""
 "where x is the default price variable."
 msgstr ""
 "计算需求弹性。将需求替换成供给、收入……等，也可以用它来计算供给弹性、收入弹"
-"性、交叉价格弹性等。 &#10;&#10;例如，表达式elasticity(100-x^2, 3)计算x为价格"
-"变量的函数\"Q = 100 - x^2\"，当价格为3时的 需求弹性。"
+"性、交叉价格弹性等。&#10;&#10;例如，表达式elasticity(100-x^2, 3)计算x为价格变"
+"量的函数\"Q = 100 - x^2\"价格为3时的需求弹性。"
 
 #: ../data/functions.xml.in.h:1010
 msgid "Demand function"
@@ -7109,7 +7111,7 @@ msgid ""
 "actual cost minus the salvage value. The useful life is the number of "
 "periods (typically years) over which the asset is depreciated."
 msgstr ""
-"根据一项资产的成本、残值、预期寿命和特定周期计算它的年数总和折旧(SOYD)。 这种"
+"根据一项资产的成本、残值、预期寿命和特定周期计算它的年数总和折旧(SOYD)。这种"
 "方法加速折旧率，因此在早期的折旧支出比晚期要多。\"折旧成本\"是实际的成本 减去"
 "残值。\"寿命\"是指该资产折旧的周期数目(通常单位为年)。"
 
@@ -7145,9 +7147,9 @@ msgid ""
 "the asset is depreciated. SLN divides the cost evenly over the life of an "
 "asset."
 msgstr ""
-"定义一项资产在单一周期内的直线折旧(SLN方法)。&#10;&#10; \"成本\"是您购买此资"
-"产的花销。\"残值\"是此资产在周期 结束时的价值。\"寿命\"是指该资产折旧的周期数"
-"目。SLN将资产的价值 均摊到它的寿命上。"
+"定义一项资产在单一周期内的直线折旧(SLN方法)。&#10;&#10;\"成本\"是您购买此资产"
+"的花销。\"残值\"是此资产在周期 结束时的价值。\"寿命\"是指该资产折旧的周期数"
+"目。SLN将资产的价值均摊到它的寿命上。"
 
 #: ../data/functions.xml.in.h:1023
 msgid "Present Value"
@@ -7163,8 +7165,8 @@ msgid ""
 "payment is made at the beginning of the period, If type = 0 (or omitted) it "
 "is made at the end of each period."
 msgstr ""
-"返回一项投资的现值。&#10;&#10; \"类型\" 定义了到期日期。\"1\"代表在每个周期的"
-"开头支付; \"0\"(默认值)代表在每个周期末尾支付。"
+"返回一项投资的现值。&#10;&#10;\"类型\"定义了到期日期。\"1\"代表在每个周期的开"
+"头支付; \"0\"(默认值)代表在每个周期末尾支付。"
 
 #: ../data/functions.xml.in.h:1026
 msgid "Interest rate"
@@ -7320,9 +7322,9 @@ msgid ""
 "and enter the total number of months (12 times number of year) in the "
 "periods field."
 msgstr ""
-"返回基于恒定利率和恒定还款额(每期还款额相等)的贷款每期的还款额(负数).&#10;"
+"返回基于恒定利率和恒定还款额(每期还款额相等)的贷款每期的还款额(负数)&#10;"
 "&#10;如果类型=1，那么还款是在期初进行的，如果类型=0(或省略)则是在每期结束时进"
-"行的.&#10;&#10;注意，这里的利率是指每期的利率，如果用年利率计算，每期将被解释"
+"行的&#10;&#10;注意，这里的利率是指每期的利率，如果用年利率计算，每期将被解释"
 "为全年。要得到月供，请将年利率除以12，并在期间栏中输入总月数(12乘以年数)。"
 
 #: ../data/functions.xml.in.h:1062
@@ -7344,8 +7346,8 @@ msgid ""
 "for payment at the beginning of a period and 0 (default) for payment at the "
 "end of a period."
 msgstr ""
-"计算基于周期性固定支付和固定利率的投资的周期数目。&#10;&#10;\"类型\" 定义了到"
-"期日期。\"1\"代表在每个周期的开头支付;\"0\"(默认值)代表在 每个周期末尾支付。"
+"计算基于周期性固定支付和固定利率的投资的周期数目。&#10;&#10;\"类型\"定义了到"
+"期日期。\"1\"代表在每个周期的开头支付;\"0\"(默认值)代表在每个周期末尾支付。"
 
 #: ../data/functions.xml.in.h:1066
 msgid "Periods for investment to attain desired value"
@@ -7375,8 +7377,8 @@ msgid ""
 "&#10;&#10;Type defines the due date. 1 for payment at the beginning of a "
 "period and 0 (default) for payment at the end of a period."
 msgstr ""
-"计算关于本金的年金支付额。&#10;&#10; \"类型\" 定义了到期日期。\"1\"代表在每个"
-"周期的开头支付; \"0\"(默认值)代表在每个周期末尾支付。"
+"计算关于本金的年金支付额。&#10;&#10;\"类型\"定义了到期日期。\"1\"代表在每个周"
+"期的开头支付；\"0\"(默认值)代表在每个周期末尾支付。"
 
 #: ../data/functions.xml.in.h:1072
 msgid "Desired future value"
@@ -7414,8 +7416,8 @@ msgid ""
 "it is made at the end of each period."
 msgstr ""
 "计算一项价值的未来价值。这是根据周期、固定支付和固定利率计算出来的。&#10;"
-"&#10; \"type\"说明了到期日期。\"1\"代表在每个周期的开头支付; \"0\"(默认值)代"
-"表在每个周期末尾支付。"
+"&#10;\"type\"说明了到期日期。\"1\"代表在每个周期的开头支付；\"0\"(默认值)代表"
+"在每个周期末尾支付。"
 
 #: ../data/functions.xml.in.h:1080
 msgid "Return on continuously compounded interest"
@@ -7484,9 +7486,9 @@ msgid ""
 "the type of day counting you want to use: 0: US 30/360 (default), 1: real "
 "days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"返回一支已充分投资的证券的利率。&#10;&#10; \"基准\"是您想使用的天数计算类型："
-"0: 美式 30/360 (默认值), 1: 真实天数, 2: 真实天数/360, 3: 真实天数/365 或者 "
-"4: 欧式 30/360。"
+"返回一支已充分投资的证券的利率。&#10;&#10;计算基准是您想使用的天数计算类型："
+"0)美国 30/360(默认值)，1)实际天数，2)实际天数/360，3)实际天数/365或4)欧洲 "
+"30/360。"
 
 #: ../data/functions.xml.in.h:1094
 msgid "Investment"
@@ -7550,9 +7552,9 @@ msgid ""
 "(default), 1: real days, 2: real days/360, 3: real days/365 or 4: European "
 "30/360. The settlement date must be before maturity date."
 msgstr ""
-"返回一支证券到期时可得到的金额。&#10;&#10; \"基准\"是您想使用的天数计算类型："
-"0: 美式 30/360 (默认值), 1: 真实天数, 2: 真实天数/360, 3: 真实天数/365 或者 "
-"4: 欧式 30/360。"
+"返回一支证券到期时可得到的金额。&#10;&#10;计算基准是您想使用的天数计算类型："
+"0)美国 30/360(默认值)，1)实际天数，2)实际天数/360，3)实际天数/365或4)欧洲 "
+"30/360。"
 
 #: ../data/functions.xml.in.h:1108
 msgid "Discount rate for a security"
@@ -7568,9 +7570,8 @@ msgid ""
 "counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
 "days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"返回一支证券的贴现率。&#10;&#10; \"基准\"是您想使用的天数计算类型：0: 美式 "
-"30/360 (默认值), 1: 真实天数, 2: 真实天数/360, 3: 真实天数/365 或者 4: 欧式 "
-"30/360。"
+"返回一支证券的贴现率。&#10;&#10;计算基准是您想使用的天数计算类型：0)美国 "
+"30/360(默认值)，1)实际天数，2)实际天数/360，3)实际天数/365或4)欧洲 30/360。"
 
 #: ../data/functions.xml.in.h:1111
 msgid "Accrued interest of security paying at maturity"
@@ -7587,9 +7588,9 @@ msgid ""
 "30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: "
 "European 30/360."
 msgstr ""
-"返回一个在到期时支付利息的证券的应计利息。&#10;&#10;  \"基准\"是您想使用的天"
-"数计算类型：0: 美式 30/360 (默认值), 1: 真实天数, 2: 真实天数/360, 3: 真实天"
-"数/365 或者 4: 欧式 30/360。"
+"返回一个在到期时支付利息的证券的应计利息。&#10;&#10;计算基准是您想使用的天数"
+"计算类型：0)美国 30/360(默认值)，1)实际天数，2)实际天数/360，3)实际天数/365或"
+"4)欧洲 30/360。"
 
 #: ../data/functions.xml.in.h:1114
 msgid "Issue date"
@@ -7619,8 +7620,8 @@ msgid ""
 "1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "返回一个定期支付利息的证券的应计利息。&#10;&#10; 允许的支付频率为：1 - 年付, "
-"2 - 半年付 或 4 - 季付。 \"基准\"是您想使用的天数计算类型：0: 美式 30/360 (默"
-"认值), 1: 真实天数, 2: 真实天数/360, 3: 真实天数/365 或者 4: 欧式 30/360。"
+"2 - 半年付 或 4 - 季付。计算基准是您想使用的天数计算类型：0)美国 30/360(默认"
+"值)，1)实际天数，2)实际天数/360，3)实际天数/365或4)欧洲 30/360。"
 
 #: ../data/functions.xml.in.h:1120
 msgid "First interest"
@@ -7645,9 +7646,9 @@ msgid ""
 "30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: "
 "European 30/360."
 msgstr ""
-"返回在结算日和到期日期之间要支付的期票数量。&#10;&#10; \"基准\"是您想使用的天"
-"数计算类型：0: 美式 30/360 (默认值), 1: 真实天数, 2: 真实天数/360, 3: 真实天"
-"数/365 或者 4: 欧式 30/360。"
+"返回在结算日和到期日期之间要支付的期票数量。&#10;&#10;计算基准是您想使用的天"
+"数计算类型：0)美国 30/360(默认值)，1)实际天数，2)实际天数/360，3)实际天数/365"
+"或4)欧洲 30/360。"
 
 #: ../data/functions.xml.in.h:1125
 msgid "Price per $100 face value of a discounted security"
@@ -7664,9 +7665,9 @@ msgid ""
 "the type of day counting you want to use: 0: US 30/360 (default), 1: real "
 "days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"计算并返回折价证券每100美元面值的价格。证券在到期时不支付利息。&#10;&#10;基础"
-"是你想使用的计日类型。0: US 30/360 (默认), 1: 真实天数, 2: 真实天数/360, 3: "
-"真实天数/365 或者 4: 欧洲30/360."
+"计算并返回折价证券每100美元面值的价格。证券在到期时不支付利息。&#10;&#10;计算"
+"基准是您想使用的天数计算类型：0)美国 30/360(默认值)，1)实际天数，2)实际天"
+"数/360，3)实际天数/365或4)欧洲 30/360。"
 
 #: ../data/functions.xml.in.h:1128
 msgid "Discount"
@@ -7674,7 +7675,7 @@ msgstr "贴现"
 
 #: ../data/functions.xml.in.h:1129
 msgid "Price per $100 face value of a security"
-msgstr "证券每$100票面价格"
+msgstr "证券每百美元票面价格"
 
 #: ../data/functions.xml.in.h:1130
 msgid "r:pricemat"
@@ -7687,9 +7688,9 @@ msgid ""
 "counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
 "days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"计算并返回一个债券每100美元票面价值的价格。此债券在到期时支付利息。&#10;"
-"&#10; \"基准\"是您想使用的天数计算类型：0: 美式 30/360 (默认值), 1: 真实天"
-"数, 2: 真实天数/360, 3: 真实天数/365 或者 4: 欧式 30/360。"
+"计算并返回一个债券每100美元票面价值的价格。此债券在到期时支付利息。&#10;&#10;"
+"计算基准是您想使用的天数计算类型：0)美国 30/360(默认值)，1)实际天数，2)实际天"
+"数/360，3)实际天数/365或4)欧洲 30/360。"
 
 #: ../data/functions.xml.in.h:1132
 msgid "Annual yield"
