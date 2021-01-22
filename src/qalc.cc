@@ -798,8 +798,7 @@ void set_option(string str) {
 			expression_calculation_updated();
 			tc_set = true;
 		}
-	}
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even")) || svar == "rndeven") SET_BOOL_D(printops.round_halfway_to_even)
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even")) || svar == "rndeven") SET_BOOL_D(printops.round_halfway_to_even)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn syntax", _("rpn syntax")) || svar == "rpnsyn") {
 		bool b = (evalops.parse_options.parsing_mode == PARSING_MODE_RPN);
 		SET_BOOL(b)
@@ -1024,6 +1023,8 @@ void set_option(string str) {
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = POST_CONVERSION_OPTIMAL + 1;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
+			if(v == 1) v = 3;
+			else if(v == 3) v = 1;
 		}
 		if(v == POST_CONVERSION_OPTIMAL + 1) {
 			v = POST_CONVERSION_NONE;

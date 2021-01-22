@@ -37,11 +37,9 @@ All names of a object is contained in one text string. The names are separated b
 
 All properties is off by default, except for names with only one sign which are interpreted as abbreviations by default, and for abbreviations which by default are case-sensitive. A property can be turned off by preceeding it with a minus '-'.
 
-The reference property tells that the name will be available to all users regardless of the language used. If a reference name is not included in the translated list of names, it is appended at the end by the program. The translator can inlcude the reference names to select the position of the name and change all properties except 'r', 'c' and 'u'. All untranslated first names has the reference property explicitely specified, so names can easily be distinguished from other text strings by the preceeding properties and colon.
+The reference property tells that the name will be available to all users regardless of the language used. If a reference name is not included in the translated list of names, it is appended at the end by the program. The translator can include the reference names to select the position of the name and change all properties except 'r', 'c' and 'u'. All untranslated first names has the reference property explicitely specified, so names can easily be distinguished from other text strings by the preceeding properties and colon.
 
 Most functions and variables have only one name. Units usually have an abbreviated name, a normal name and a name in plural form. Units should always have a name in plural form if it differs from the singular form.
-
-Names string that is the same translated as untranslated should preferably not be copied but left empty or replaced by "-" (so that it is marked as translated), to allow the size of the definitions data files to be reduced.
 
 Property names works like the names described above except that 'r' for reference is the only possible property.
 
@@ -62,9 +60,5 @@ The English version can only use the three character code for the Swedish curren
 msgid "-r:billion"
 msgstr "miljard,p:miljarder"
 The constants for large numbers follows two different systems in different countries. With the "short scale" billion means 1e9, while it with the "long scale" means 1e12. Therefore, these constants do not have any reference name. The short scale is used in most English-speaking countries, while in Sweden the long scale is used.
-
-msgid "r:sqrt"
-msgstr "-"
-The untranslated string is kept.
 
 qalc commands and options to commands in libqalculate/po/ follows the same principles as reference names, meaning that the untranslated message string is kept in addition to the translated.

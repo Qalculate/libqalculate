@@ -29,20 +29,29 @@ string& remove_blank_ends(string &str) {
 
 int main(int argc, char *argv[]) {
 	if(argc < 2) return 1;
-	ifstream cfile(argv[1]);
+	string sfile = argv[1];
+	ifstream cfile(sfile);
+	if(argc > 2) sfile = argv[2];
+	else sfile += ".fixed";
+	ofstream ofile(sfile);
 	int variant = 0;
-	if(argc > 2) {
-		variant = argv[2][0] - '0';
+	if(argc > 3) {
+		variant = argv[3][0] - '0';
 		if(variant < 0 || variant > 5) return 1;
 	}
 	if(cfile.is_open()) {
 		char linebuffer[1000];
-		string sbuffer, msgid, msgstr, sout;
-		while((cfile.rdstate() & std::ifstream::eofbit) == 0) {
-			cfile.getline(linebuffer, 1000);
-			sbuffer = linebuffer;
-			sout = sbuffer;
-			remove_blank_ends(sbuffer);
+		string sbuffer, sbuffer2, msgid, msgstr, sout;
+		while(!sbuffer2.empty() || (cfile.rdstate() & std::ifstream::eofbit) == 0) {
+			if(!sbuffer2.empty()) {
+				sbuffer = sbuffer2;
+				sbuffer2 = "";
+			} else {
+				cfile.getline(linebuffer, 1000);
+				sbuffer = linebuffer;
+				sout = sbuffer;
+				remove_blank_ends(sbuffer);
+			}
 			if(variant != 2 && variant != 5 && sbuffer.length() > 7 && sbuffer.substr(0, 7) == "msgid \"") {
 				if(sbuffer[7] == '\"') {
 					msgid = "";
@@ -50,11 +59,12 @@ int main(int argc, char *argv[]) {
 					while(true) {
 						cfile.getline(linebuffer, 1000);
 						sbuffer = linebuffer;
+						sbuffer2 = sbuffer;
+						remove_blank_ends(sbuffer2);
+						if(sbuffer2.empty() || sbuffer2[0] != '\"') break;
 						sout += "\n";
 						sout += sbuffer;
-						remove_blank_ends(sbuffer);
-						if(sbuffer.empty() || sbuffer[0] != '\"') break;
-						msgid += sbuffer.substr(1, sbuffer.length() - 2);
+						msgid += sbuffer2.substr(1, sbuffer2.length() - 2);
 					}
 				} else {
 					msgid = sbuffer.substr(7, sbuffer.length() - 8);
@@ -74,10 +84,10 @@ int main(int argc, char *argv[]) {
 				} else {
 					msgstr = sbuffer.substr(8, sbuffer.length() - 9);
 				}
-				if(!msgid.empty() && msgstr == msgid) {
+				if(!msgid.empty() && (msgstr == msgid || msgstr == "-")) {
 					if(variant == 3 || variant == 4) cout << msgstr << endl;
 					sout = "msgstr \"\"";
-				} else if(sout.find("\n") == string::npos && variant != 1 && variant != 4) {
+				} else if(sout.find("\n", 10) == string::npos && variant != 1 && variant != 4) {
 					size_t i = 0, i2 = 0;
 					while(true) {
 						i = msgstr.find(":", i);
@@ -106,7 +116,7 @@ int main(int argc, char *argv[]) {
 				}
 				msgid = "";
 			}
-			if(variant <= 2) cout << sout << endl;
+			if(variant <= 2) ofile << sout << endl;
 		}
 		cfile.close();
 	}

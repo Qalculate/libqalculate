@@ -6,10 +6,10 @@ dnl  ----------------------
 dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
-AC_INIT([libqalculate], [3.16.1])
+AC_INIT([libqalculate],[3.16.1])
 AC_CONFIG_SRCDIR(libqalculate/Calculator.cc)
 AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 AM_MAINTAINER_MODE
 
 AC_CONFIG_MACRO_DIRS([m4])
@@ -34,14 +34,15 @@ dnl  -------------------------------
 dnl | check for neccessary programs |------------------------------------------
 dnl  -------------------------------
 
-AC_ISC_POSIX
+AC_SEARCH_LIBS([strerror],[cposix])
 AC_PROG_CC
 AC_PROG_CXX
-AM_PROG_CC_STDC
 AC_PROG_LN_S
-AC_HEADER_STDC
-AC_PROG_INTLTOOL
-AM_PROG_LIBTOOL
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
+IT_PROG_INTLTOOL
+LT_INIT
 
 dnl  ------------------------------------
 dnl | check for compiler characteristics |-------------------------------------
@@ -288,23 +289,28 @@ AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "$PACKAGE_LOCALE_DIR",
 	[The directory in which qalculate's locale data will be stored])
 	 AC_MSG_RESULT("$PACKAGE_LOCALE_DIR")
 
-INTLTOOL_QALCULATE_DEFINITIONS_RULE='%.xml:       %.xml.in       $(INTLTOOL_MERGE) $(wildcard $(top_srcdir)/po-defs/*.po) ; LC_ALL=C $(INTLTOOL_MERGE) -x -u -c $(top_builddir)/po-defs/.intltool-merge-cache $(top_srcdir)/po-defs $< [$]@' 
+QALCULATE_PODEFS_RULE='%.po: $(top_srcdir)/po-defs/$@ $(top_srcdir)/po-defs/remove-untranslated.cc; $(top_builddir)/po-defs/fixpo $(top_srcdir)/po-defs/$@ $@'
+AC_SUBST(QALCULATE_PODEFS_RULE)
+
+INTLTOOL_QALCULATE_DEFINITIONS_RULE='%.xml:       %.xml.in      $(INTLTOOL_MERGE) $(wildcard $(top_builddir)/po-defs/fixed/*.po) ; LC_ALL=C $(INTLTOOL_MERGE) -x -u -c $(top_builddir)/po-defs/fixed/.intltool-merge-cache $(top_srcdir)/po-defs/fixed $< [$]@'
 AC_SUBST(INTLTOOL_QALCULATE_DEFINITIONS_RULE)
 
 dnl  --------
 dnl | output |-----------------------------------------------------------------
 dnl  --------
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
   Makefile
   src/Makefile
   libqalculate/Makefile
   data/Makefile
   po/Makefile.in
   po-defs/Makefile
+  po-defs/fixed/Makefile
   docs/Makefile
   docs/reference/Makefile
   man/Makefile
   libqalculate.pc
 ])
+AC_OUTPUT
 
