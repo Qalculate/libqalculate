@@ -1702,6 +1702,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						// dot product of two vectors: [a1, a2, a3, ..]*[b1, b2, b3, ...]=a1*b1+a2*b2+a3*b3+...
 						// dimension of the vectors must be equal
 						if(SIZE == mstruct.size()) {
+							if(SIZE == 0) {clear(true); return 1;}
 							for(size_t i = 0; i < SIZE; i++) {
 								mstruct[i].ref();
 								CHILD(i).multiply_nocopy(&mstruct[i], true);
@@ -4924,7 +4925,7 @@ int MathStructure::merge_bitwise_xor(MathStructure &mstruct, const EvaluationOpt
 
 #define MERGE_ALL(FUNC, TRY_LABEL) 	size_t i2, i3 = SIZE;\
 					bool do_abort = false; \
-					for(size_t i = 0; i < SIZE - 1; i++) {\
+					for(size_t i = 0; SIZE > 0 && i < SIZE - 1; i++) {\
 						i2 = i + 1;\
 						TRY_LABEL:\
 						for(; i2 < i; i2++) {\
