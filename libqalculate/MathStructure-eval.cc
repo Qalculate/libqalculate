@@ -1886,19 +1886,22 @@ bool separate_temperature_units(MathStructure &m, const EvaluationOptions &eo) {
 						break;
 					}
 				}
-				if(!b) return false;
-				m.transformById(FUNCTION_ID_STRIP_UNITS);
-				for(size_t i = 0; i < mvar.size(); i++) {
-					if(is_unit_multiexp(mvar[i])) {
-						m.multiply(mvar[i], i);
+				if(b) {
+					m.transformById(FUNCTION_ID_STRIP_UNITS);
+					for(size_t i = 0; i < mvar.size(); i++) {
+						if(is_unit_multiexp(mvar[i])) {
+							m.multiply(mvar[i], i);
+						}
 					}
+					m.unformat(eo);
+					separate_temperature_units(m, eo);
+					return true;
 				}
-				m.unformat(eo);
-				return true;
 			}
 			if(eo.calculate_variables && ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) || (!m.variable()->isApproximate() && !mvar.containsInterval(true, false, false, 0, true)))) {
 				m.set(mvar);
 				m.unformat(eo);
+				separate_temperature_units(m, eo);
 				return true;
 			}
 		}

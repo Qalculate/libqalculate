@@ -911,9 +911,9 @@ bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *fou
 					Unit *u1 = u;
 					if((!mstruct2.isOne() || !exp.isOne()) && (CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE && u->baseUnit() == CALCULATOR->getUnitById(UNIT_ID_KELVIN))) {
 						if(u2 == CALCULATOR->getUnitById(UNIT_ID_CELSIUS)) u2 = CALCULATOR->getUnitById(UNIT_ID_KELVIN);
-						else if(u2 == CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT)) u2 = CALCULATOR->getUnitById(UNIT_ID_RANKINE);
+						else if(u2 == CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT) && CALCULATOR->getUnitById(UNIT_ID_RANKINE)) u2 = CALCULATOR->getUnitById(UNIT_ID_RANKINE);
 						if(u1 == CALCULATOR->getUnitById(UNIT_ID_CELSIUS)) u1 = CALCULATOR->getUnitById(UNIT_ID_KELVIN);
-						else if(u1 == CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT)) u1 = CALCULATOR->getUnitById(UNIT_ID_RANKINE);
+						else if(u1 == CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT) && CALCULATOR->getUnitById(UNIT_ID_RANKINE)) u1 = CALCULATOR->getUnitById(UNIT_ID_RANKINE);
 					}
 					if(u1->convert(u2, mstruct, exp)) {
 						if(feo.approximation == APPROXIMATION_EXACT && !isApproximate() && (mstruct.isApproximate() || exp.isApproximate())) return false;

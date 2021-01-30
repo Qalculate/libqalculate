@@ -1,7 +1,7 @@
 /*
     Qalculate (CLI)
 
-    Copyright (C) 2003-2007, 2008, 2016  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2021  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -5252,7 +5252,7 @@ bool contains_temperature_unit_q(const MathStructure &m) {
 	return false;
 }
 bool test_ask_tc(MathStructure &m) {
-	if(tc_set || CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE || !CALCULATOR->getUnitById(UNIT_ID_KELVIN) || !contains_temperature_unit_q(m)) return false;
+	if(tc_set || !contains_temperature_unit_q(m)) return false;
 	MathStructure *mp = &m;
 	if(m.isMultiplication() && m.size() == 2 && m[0].isMinusOne()) mp = &m[1];
 	else if(m.isNegate()) mp = &m[0];

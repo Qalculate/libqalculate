@@ -193,7 +193,6 @@ bool Unit::hasNonlinearRelationTo(Unit *u) const {
 			const CompositeUnit *cu = (CompositeUnit*) this;
 			for(size_t i = 1; i <= cu->countUnits(); i++) {
 				if(cu->get(i)->hasNonlinearRelationTo(u)) {
-					cout << u->name() << ":" << cu->get(i)->name() << endl;
 					return true;
 				}
 			}
@@ -201,7 +200,6 @@ bool Unit::hasNonlinearRelationTo(Unit *u) const {
 		}
 		if(ub2->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			if(u->hasNonlinearRelationTo(ub2) && (((CompositeUnit*) ub2))->containsRelativeTo(baseUnit())) {
-				cout << u->name() << ":" << ub2->name() << endl;
 				return true;
 			}
 		}
@@ -770,7 +768,7 @@ bool AliasUnit::hasApproximateRelationTo(Unit *u, bool check_variables, bool ign
 	}
 }
 bool AliasUnit::containsRelativeTo(Unit *u) const {
-	if(u == this) return false;
+	if(!u || u == this) return false;
 	return baseUnit() == u->baseUnit() || baseUnit()->containsRelativeTo(u->baseUnit());
 }
 bool AliasUnit::hasNonlinearRelationToBase() const {return hasNonlinearRelationTo(baseUnit()) || baseUnit()->hasNonlinearRelationToBase();}
@@ -995,7 +993,7 @@ int CompositeUnit::subtype() const {
 	return SUBTYPE_COMPOSITE_UNIT;
 }
 bool CompositeUnit::containsRelativeTo(Unit *u) const {
-	if(u == this) return false;
+	if(!u || u == this) return false;
 	CompositeUnit *cu;
 	for(size_t i = 0; i < units.size(); i++) {
 		if(u == units[i] || u->baseUnit() == units[i]->baseUnit()) return true;
