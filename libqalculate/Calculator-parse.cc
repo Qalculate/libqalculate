@@ -1356,7 +1356,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									if(!p && po.units_enabled) {
 										name = &((Prefix*) ufvl[ufv_index])->longName();
 										name_length = name->length();
-										if(name_length >= unit_chars_left || name_length < found_function_name_length) {
+										if(name_length > unit_chars_left || name_length < found_function_name_length) {
 											name = NULL;
 										}
 									}
@@ -1394,7 +1394,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						}
 					}
 					case 0: {
-						if(po.units_enabled && ufv_index < unit_chars_left - 1 && vt3 < ufv[vt2][ufv_index].size()) {
+						if(po.units_enabled && vt3 < ufv[vt2][ufv_index].size()) {
 							object = ufv[vt2][ufv_index][vt3];
 							switch(ufv_i[vt2][ufv_index][vt3]) {
 								case 1: {
@@ -1405,6 +1405,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									break;
 								}
 								case 2: {
+									if(ufv_index >= unit_chars_left - 1) break;
 									ufvt = 'p';
 									name = &((Prefix*) object)->shortName();
 									name_length = name->length();
@@ -1412,6 +1413,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									break;
 								}
 								case 3: {
+									if(ufv_index >= unit_chars_left - 1) break;
 									ufvt = 'q';
 									name = &((Prefix*) object)->unicodeName();
 									name_length = name->length();
@@ -1735,10 +1737,34 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						case 'p': {}
 						case 'q': {}
 						case 'P': {
+							p = (Prefix*) object;
 							if(str_index + name_length == str.length() || is_in(NOT_IN_NAMES INTERNAL_OPERATORS, str[str_index + name_length])) {
+								if(ufvt == 'P') {
+									stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+									switch(p->type()) {
+										case PREFIX_DECIMAL: {
+											MathStructure *m_prefix = new MathStructure(10, 1, 0);
+											m_prefix->raise(Number(((DecimalPrefix*) p)->exponent(), 1));
+											stmp += i2s(addId(m_prefix));
+											break;
+										}
+										case PREFIX_BINARY: {
+											MathStructure *m_prefix = new MathStructure(2, 1, 0);
+											m_prefix->raise(Number(((BinaryPrefix*) p)->exponent(), 1));
+											stmp += i2s(addId(m_prefix));
+											break;
+										}
+										default: {
+											stmp += i2s(addId(new MathStructure(p->value())));
+										}
+									}
+									stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+									str.replace(str_index, name_length, stmp);
+									str_index += stmp.length();
+									moved_forward = true;
+								}
 								break;
 							}
-							p = (Prefix*) object;
 							str_index += name_length;
 							unit_chars_left = last_unit_char - str_index + 1;
 							size_t name_length_old = name_length;

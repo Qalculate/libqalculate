@@ -1,3 +1,7 @@
+2021-01-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow prefixes, with full name, without units (e.g. kilo = 10^3)
+
 2021-01-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Temperature calculation modes (absolute, relative, hybrid)

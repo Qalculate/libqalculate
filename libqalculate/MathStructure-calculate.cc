@@ -5232,9 +5232,9 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				CHILD(1).calculatesub(eo, feo, true, this, 1);
 				CHILDREN_UPDATED;
 			}
-			if(eo.sync_units && m_type == STRUCT_POWER && CHILD(0).isUnit() && CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE && !CHILD(1).isOne()) {
-				if(CHILD(0).unit() == CALCULATOR->getUnitById(UNIT_ID_CELSIUS)) CHILD(0).setUnit(CALCULATOR->getUnitById(UNIT_ID_KELVIN));
-				else if(CHILD(0).unit() == CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT)) CHILD(0).setUnit(CALCULATOR->getUnitById(UNIT_ID_RANKINE));
+			if(eo.sync_units && CHILD(0).isUnit() && CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE && !CHILD(1).isOne()) {
+				if(CHILD(0).unit() == CALCULATOR->getUnitById(UNIT_ID_CELSIUS) && CALCULATOR->getUnitById(UNIT_ID_KELVIN)) CHILD(0).setUnit(CALCULATOR->getUnitById(UNIT_ID_KELVIN));
+				else if(CHILD(0).unit() == CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT) && CALCULATOR->getUnitById(UNIT_ID_RANKINE)) CHILD(0).setUnit(CALCULATOR->getUnitById(UNIT_ID_RANKINE));
 			}
 			if(CHILD(0).merge_power(CHILD(1), eo) >= 1) {
 				b = true;
@@ -5260,8 +5260,8 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 							temp_unit_found = contains_temp_unit(CHILD(i));
 						}
 						if(temp_unit_found > 1) {
-							CHILD(i).replace(CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT), CALCULATOR->getUnitById(UNIT_ID_RANKINE));
-							CHILD(i).replace(CALCULATOR->getUnitById(UNIT_ID_CELSIUS), CALCULATOR->getUnitById(UNIT_ID_KELVIN));
+							if(CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT) && CALCULATOR->getUnitById(UNIT_ID_RANKINE)) CHILD(i).replace(CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT), CALCULATOR->getUnitById(UNIT_ID_RANKINE));
+							if(CALCULATOR->getUnitById(UNIT_ID_CELSIUS) && CALCULATOR->getUnitById(UNIT_ID_KELVIN)) CHILD(i).replace(CALCULATOR->getUnitById(UNIT_ID_CELSIUS), CALCULATOR->getUnitById(UNIT_ID_KELVIN));
 						}
 					}
 					CHILDREN_UPDATED;
