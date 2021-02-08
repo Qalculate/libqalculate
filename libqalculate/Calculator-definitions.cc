@@ -2796,6 +2796,12 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 								default: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "free");}
 							}
 							xmlNewProp(newnode, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
+							bool default_hv = arg->tests() && (arg->type() == ARGUMENT_TYPE_NUMBER == arg->type() == ARGUMENT_TYPE_INTEGER);
+							if(!default_hv && arg->handlesVector()) {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "handle_vector", (xmlChar*) "true");
+							} else if(default_hv && !arg->handlesVector()) {
+								xmlNewTextChild(newnode, NULL, (xmlChar*) "handle_vector", (xmlChar*) "false");
+							}
 							if(!arg->tests()) {
 								xmlNewTextChild(newnode, NULL, (xmlChar*) "test", (xmlChar*) "false");
 							}
