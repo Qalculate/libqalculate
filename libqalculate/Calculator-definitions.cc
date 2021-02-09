@@ -1,7 +1,7 @@
 /*
     Qalculate
 
-    Copyright (C) 2003-2007, 2008, 2016-2019  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2021  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -812,7 +812,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {3, 16, 1};
+	int version_numbers[] = {3, 17, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);
@@ -2796,7 +2796,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 								default: {xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "free");}
 							}
 							xmlNewProp(newnode, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
-							bool default_hv = arg->tests() && (arg->type() == ARGUMENT_TYPE_NUMBER == arg->type() == ARGUMENT_TYPE_INTEGER);
+							bool default_hv = arg->tests() && (arg->type() == ARGUMENT_TYPE_NUMBER || arg->type() == ARGUMENT_TYPE_INTEGER);
 							if(!default_hv && arg->handlesVector()) {
 								xmlNewTextChild(newnode, NULL, (xmlChar*) "handle_vector", (xmlChar*) "true");
 							} else if(default_hv && !arg->handlesVector()) {
