@@ -11,8 +11,7 @@ AC_CONFIG_SRCDIR(libqalculate/Calculator.cc)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h)
 AM_MAINTAINER_MODE
-
-AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_MACRO_DIR(m4)
 
 AC_ARG_ENABLE(textport, 
               [  --disable-textport	  Disable compiling the text port], 
@@ -37,7 +36,6 @@ dnl  -------------------------------
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_LN_S
-AC_CHECK_INCLUDES_DEFAULT
 AC_PROG_EGREP
 
 IT_PROG_INTLTOOL
