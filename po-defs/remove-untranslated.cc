@@ -30,10 +30,10 @@ string& remove_blank_ends(string &str) {
 int main(int argc, char *argv[]) {
 	if(argc < 2) return 1;
 	string sfile = argv[1];
-	ifstream cfile(sfile);
+	ifstream cfile(sfile.c_str());
 	if(argc > 2) sfile = argv[2];
 	else sfile += ".fixed";
-	ofstream ofile(sfile);
+	ofstream ofile(sfile.c_str());
 	int variant = 0;
 	if(argc > 3) {
 		variant = argv[3][0] - '0';
