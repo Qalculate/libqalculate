@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-09 06:57+0100\n"
+"POT-Creation-Date: 2021-02-15 15:39+0100\n"
 "PO-Revision-Date: 2007-05-18 15:47+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -8957,7 +8957,7 @@ msgid "Degree Rankine"
 msgstr "Graden Rankine"
 
 #: ../data/units.xml.in.h:220
-msgid "ar:oR,au:&#xB0;R,r:rankine"
+msgid "ar:oR,a:oRa,au:&#xB0;R,au:&#xB0;Ra,r:rankine"
 msgstr ""
 
 #: ../data/units.xml.in.h:221
