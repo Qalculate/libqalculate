@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-09 06:56+0100\n"
+"POT-Creation-Date: 2021-02-15 15:40+0100\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -8789,7 +8789,7 @@ msgid "Degree Rankine"
 msgstr "Grader Rankine"
 
 #: ../data/units.xml.in.h:220
-msgid "ar:oR,au:&#xB0;R,r:rankine"
+msgid "ar:oR,a:oRa,au:&#xB0;R,au:&#xB0;Ra,r:rankine"
 msgstr ""
 
 #: ../data/units.xml.in.h:221

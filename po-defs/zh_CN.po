@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-09 06:59+0100\n"
+"POT-Creation-Date: 2021-02-15 15:40+0100\n"
 "PO-Revision-Date: 2021-01-21 18:06+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -8699,8 +8699,8 @@ msgid "Degree Rankine"
 msgstr "兰金度"
 
 #: ../data/units.xml.in.h:220
-msgid "ar:oR,au:&#xB0;R,r:rankine"
-msgstr "ar:oR,au:&#xB0;R,兰金度,rankine"
+msgid "ar:oR,a:oRa,au:&#xB0;R,au:&#xB0;Ra,r:rankine"
+msgstr "ar:oR,a:oRa,au:&#xB0;R,au:&#xB0;Ra,兰金度,rankine"
 
 #: ../data/units.xml.in.h:221
 msgid "Degree Fahrenheit"
