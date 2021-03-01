@@ -1825,7 +1825,7 @@ bool remove_add_zero_unit(MathStructure &m) {
 	return false;
 }
 
-// Functions for handling log-bases units
+// Functions for handling log-based units
 Unit *find_log_unit(const MathStructure &m, bool toplevel = true) {
 	if(!toplevel && m.isUnit() && m.unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) m.unit())->hasNonlinearExpression() && (((AliasUnit*) m.unit())->expression().find("log") != string::npos || ((AliasUnit*) m.unit())->inverseExpression().find("log") != string::npos || ((AliasUnit*) m.unit())->expression().find("ln") != string::npos || ((AliasUnit*) m.unit())->inverseExpression().find("ln") != string::npos)) {
 		return ((AliasUnit*) m.unit())->firstBaseUnit();
@@ -1833,22 +1833,105 @@ Unit *find_log_unit(const MathStructure &m, bool toplevel = true) {
 	if(m.isMultiplication() && toplevel && m.last().isUnit()) {
 		Unit *u = find_log_unit(m.last(), false);
 		if(u) {
-			for(size_t i = 0; i < m.size(); i++) {
+			for(size_t i = 0; i < m.size() - 1; i++) {
 				if(m[i].containsType(STRUCT_UNIT, true)) return u;
 			}
 			return NULL;
 		}
 	}
+	if(m.isVariable() && m.variable()->isKnown()) {
+		return find_log_unit(((KnownVariable*) m.variable())->get(), toplevel);
+	}
+	if(m.isFunction() && m.function()->id() == FUNCTION_ID_STRIP_UNITS) return NULL;
 	for(size_t i = 0; i < m.size(); i++) {
 		Unit *u = find_log_unit(m[i], false);
 		if(u) return u;
 	}
 	return NULL;
 }
+bool separate_unit(MathStructure &m, Unit *u, const EvaluationOptions &eo) {
+	if(m.isVariable() && m.variable()->isKnown()) {
+		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
+		if(mvar.contains(u, false, true, true)) {
+			if(mvar.isMultiplication()) {
+				bool b = false;
+				for(size_t i = 0; i < mvar.size(); i++) {
+					if(is_unit_multiexp(mvar[i])) {
+						b = true;
+					} else if(mvar[i].containsType(STRUCT_UNIT, false, true, true) != 0) {
+						b = false;
+						break;
+					}
+				}
+				if(b) {
+					m.transformById(FUNCTION_ID_STRIP_UNITS);
+					for(size_t i = 0; i < mvar.size(); i++) {
+						if(is_unit_multiexp(mvar[i])) {
+							m.multiply(mvar[i], i);
+						}
+					}
+					m.unformat(eo);
+					separate_unit(m, u, eo);
+					return true;
+				}
+			}
+			if(eo.calculate_variables && ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) || (!m.variable()->isApproximate() && !mvar.containsInterval(true, false, false, 0, true)))) {
+				m.set(mvar);
+				m.unformat(eo);
+				separate_unit(m, u, eo);
+				return true;
+			}
+		}
+	}
+	if(m.isFunction() && m.function()->id() == FUNCTION_ID_STRIP_UNITS) return false;
+	bool b = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(separate_unit(m[i], u, eo)) {
+			b = true;
+		}
+	}
+	return b;
+}
+void separate_unit2(MathStructure &m, Unit *u, const EvaluationOptions &eo) {
+	if(m.isMultiplication()) {
+		size_t i_unit = m.size();
+		for(size_t i = 0; i < m.size(); i++) {
+			separate_unit2(m[i], u, eo);
+			if(m[i].isUnit_exp()) {
+				if(i_unit < 1 && ((m[i].isUnit() && m[i].unit() == u) || (m[i].isPower() && m[i][0].unit() == u))) {
+					if(i_unit == i - 1) {
+						m[i].multiply(m_one);
+						m[i].swapChildren(1, 2);
+					} else {
+						m[i - 1].ref();
+						m[i].multiply_nocopy(&m[i - 1]);
+						m.delChild(i);
+						i--;
+					}
+				}
+				i_unit = i;
+			} else if(i < m.size() && m[i].containsType(STRUCT_UNIT, false, true, true)) {
+				MathStructure mtest(m[i]);
+				CALCULATOR->beginTemporaryStopMessages();
+				mtest.eval(eo);
+				if(mtest.containsType(STRUCT_UNIT, false, true, true) > 0) {
+					i_unit = i;
+				}
+				CALCULATOR->endTemporaryStopMessages();
+			}
+		}
+	} else {
+		for(size_t i = 0; i < m.size(); i++) {
+			separate_unit2(m[i], u, eo);
+		}
+	}
+}
 void convert_log_units(MathStructure &m, const EvaluationOptions &eo) {
 	while(true) {
 		Unit *u = find_log_unit(m);
 		if(!u) break;
+		separate_unit(m, u, eo);
+		separate_unit2(m, u, eo);
 		if(!m.convert(u, true, NULL, false, eo)) break;
 		CALCULATOR->error(false, "Log-based units were converted before calculation.", NULL);
 	}
