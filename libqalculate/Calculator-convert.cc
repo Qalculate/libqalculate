@@ -271,6 +271,19 @@ MathStructure Calculator::convert(const MathStructure &mstruct, KnownVariable *t
 	cleanMessages(mstruct, n_messages + 1);
 	return mstruct_new;
 }
+long int count_unit_powers(const MathStructure &m) {
+	if(m.isPower() && m[0].isUnit() && m[1].isInteger()) {
+		long int exp = m[1].number().lintValue();
+		if(exp < 0) return -exp;
+		return exp;
+	}
+	if(m.isUnit()) return 1;
+	long int exp = 0;
+	for(size_t i = 0; i < m.size(); i++) {
+		exp += count_unit_powers(m[i]);
+	}
+	return exp;
+}
 MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units) {
 	CompositeUnit *cu = NULL;
 	if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) cu = (CompositeUnit*) to_unit;
@@ -395,45 +408,84 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 			}
 		}
 		if(b) {
+
 			eo2.approximation = eo.approximation;
 			eo2.sync_units = true;
 			eo2.keep_prefixes = false;
-			MathStructure mbak(mstruct_new);
-			mstruct_new.divide(MathStructure(to_unit, NULL));
-			mstruct_new.eval(eo2);
-			if(mstruct_new.containsType(STRUCT_UNIT)) {
-				mbak.inverse();
-				mbak.divide(MathStructure(to_unit, NULL));
-				mbak.eval(eo2);
-				if(!mbak.containsType(STRUCT_UNIT)) mstruct_new = mbak;
-			}
 
 			bool b_eval = true;
-			if(cu) {
-				MathStructure mstruct_cu(cu->generateMathStructure(false, eo.keep_prefixes));
-				Prefix *p = NULL;
-				size_t i = 1;
-				Unit *u = cu->get(i, NULL, &p);
-				while(u) {
-					size_t i2 = i + 1;
-					if(b_eval) {
-						Unit *u2 = cu->get(i2);
-						while(u2) {
-							if(u2->baseUnit() == u->baseUnit()) {
-								b_eval = false;
-								break;
-							}
-							i2++;
-							u2 = cu->get(i2);
+			if(to_unit != priv->u_celsius && to_unit != priv->u_fahrenheit) {
+				MathStructure mbak(mstruct_new);
+				mstruct_new.divide_nocopy(new MathStructure(to_unit, NULL));
+				mstruct_new.eval(eo2);
+				size_t n = count_unit_powers(mstruct_new);
+				int exp = 1;
+				if(n > 0) {
+					MathStructure mtest(mbak);
+					mtest.inverse();
+					mtest.divide_nocopy(new MathStructure(to_unit, NULL));
+					mtest.eval(eo2);
+					if(!mtest.containsType(STRUCT_UNIT)) {
+						mstruct_new = mtest;
+					} else if(!cu || (cu->countUnits() == 1 && (cu->get(1, &exp) && exp == 1))) {
+						mtest = mbak;
+						while(true) {
+							mtest.multiply_nocopy(new MathStructure(to_unit, NULL));
+							mtest.eval(eo2);
+							size_t ntest = count_unit_powers(mtest);
+							if(ntest >= n) break;
+							n = ntest;
+							if(exp == 1) exp = -1;
+							else exp--;
+							mstruct_new = mtest;
 						}
+						if(exp == 1) {
+							mtest = mstruct_new;
+							while(true) {
+								mtest.divide_nocopy(new MathStructure(to_unit, NULL));
+								mtest.eval(eo2);
+								size_t ntest = count_unit_powers(mtest);
+								if(ntest >= n) break;
+								n = ntest;
+								exp++;
+								mstruct_new = mtest;
+							}
+						}
+					} else {
+						exp = 1;
 					}
-					mstruct_new.setPrefixForUnit(u, p);
-					i++;
-					u = cu->get(i, NULL, &p);
 				}
-				mstruct_new.multiply(mstruct_cu);
-			} else {
-				mstruct_new.multiply(MathStructure(to_unit, eo.keep_prefixes ? decimal_null_prefix : NULL));
+				if(cu) {
+					MathStructure *mstruct_cu = new MathStructure(cu->generateMathStructure(false, eo.keep_prefixes));
+					Prefix *p = NULL;
+					size_t i = 1;
+					Unit *u = cu->get(i, NULL, &p);
+					while(u) {
+						size_t i2 = i + 1;
+						if(b_eval) {
+							Unit *u2 = cu->get(i2);
+							while(u2) {
+								if(u2->baseUnit() == u->baseUnit()) {
+									b_eval = false;
+									break;
+								}
+								i2++;
+								u2 = cu->get(i2);
+							}
+						}
+						mstruct_new.setPrefixForUnit(u, p);
+						i++;
+						u = cu->get(i, NULL, &p);
+					}
+					if(exp != 1) {
+						if(mstruct_cu->isPower()) (*mstruct_cu)[1].number() *= exp;
+						else mstruct_cu->raise(exp);
+					}
+					mstruct_new.multiply_nocopy(mstruct_cu);
+				} else {
+					mstruct_new.multiply_nocopy(new MathStructure(to_unit, eo.keep_prefixes ? decimal_null_prefix : NULL));
+					if(exp != 1) mstruct_new.last().raise(exp);
+				}
 			}
 
 			eo2.sync_units = false;
