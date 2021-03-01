@@ -2668,6 +2668,16 @@
         <_title>Uncertainty is relative</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="command">
+      <_title>External Command</_title>
+      <_names>r:command</_names>
+      <argument index="1">
+        <_title>Command</_title>
+      </argument>
+      <argument index="2">
+        <_title>Argument</_title>
+      </argument>
+    </builtin_function>
   </category>
   <category>
     <_title>Logical</_title>

@@ -846,6 +846,62 @@ int StackFunction::calculate(MathStructure &mstruct, const MathStructure&, const
 	return 1;
 }
 
+CommandFunction::CommandFunction() : MathFunction("command", 1, -1) {
+	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new Argument());
+}
+int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+#ifdef HAVE_GNUPLOT_CALL
+
+	FILE *pipe = NULL;
+	string commandline = vargs[0].symbol();
+	for(size_t i = 1; i < vargs.size(); i++) {
+		commandline += " ";
+		if(vargs[i].isSymbolic()) {
+			commandline += "\'";
+			commandline += vargs[i].symbol();
+			commandline += "\'";
+		} else {
+			MathStructure m(vargs[i]);
+			m.eval(eo);
+			commandline += "\'";
+			commandline += m.print(CALCULATOR->save_printoptions);
+			commandline += "\'";
+		}
+	}
+
+#ifdef _WIN32
+	pipe = _popen((commandline + " 2>nul").c_str(), "r");
+#else
+	pipe = popen((commandline + " 2>/dev/null").c_str(), "r");
+#endif
+
+	if(!pipe) {
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str());
+		return 0;
+	}
+
+	char buffer[1000];
+	string output;
+	while(fgets(buffer, sizeof(buffer), pipe) != NULL) {
+		output += buffer;
+	}
+
+	if(pclose(pipe) > 0 && output.empty()) {
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str());
+		return 0;
+	}
+
+	ParseOptions po;
+	CALCULATOR->parse(&mstruct, output, po);
+
+	return 1;
+
+#else
+	return 0;
+#endif
+}
+
 PlotFunction::PlotFunction() : MathFunction("plot", 1, 7) {
 	NumberArgument *arg = new NumberArgument();
 	arg->setComplexAllowed(false);

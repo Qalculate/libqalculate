@@ -1673,6 +1673,8 @@ void Calculator::addBuiltinFunctions() {
 	f_register = addFunction(new RegisterFunction());
 	f_stack = addFunction(new StackFunction());
 
+	addFunction(new CommandFunction());
+
 	f_diff = addFunction(new DeriveFunction());
 	f_integrate = addFunction(new IntegrateFunction());
 	addFunction(new RombergFunction());
