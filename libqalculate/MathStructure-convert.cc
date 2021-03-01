@@ -829,26 +829,9 @@ bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *fou
 							b_c = i;
 							break;
 						}
-					} else if(CHILD(i).isMultiplication() && (CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE || u->baseUnit() != CALCULATOR->getUnitById(UNIT_ID_KELVIN))) {
-						b_c = -3;
-					}
-				}
-				if(b_c == -3) {
-					for(size_t i = 0; i < SIZE; i++) {
-						if(CHILD(i).isMultiplication()) {
-							if(searchSubMultiplicationsForComplexRelations(u, CHILD(i))) {
-								if(!convert_nonlinear_relations) {
-									*found_nonlinear_relations = true;
-									break;
-								}
-								flattenMultiplication(*this);
-								return convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
-							}
-						}
 					}
 				}
 				if(convert_nonlinear_relations && b_c >= 0) {
-					if((CALCULATOR->getTemperatureCalculationMode() == TEMPERATURE_CALCULATION_RELATIVE || u->baseUnit() != CALCULATOR->getUnitById(UNIT_ID_KELVIN)) && flattenMultiplication(*this)) return convert(u, convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, new_prefix);
 					MathStructure mstruct(1, 1);
 					MathStructure mstruct2(1, 1);
 					if(SIZE == 2) {
