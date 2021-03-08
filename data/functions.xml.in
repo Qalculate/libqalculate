@@ -2017,7 +2017,7 @@
           <_title>Rate parameter</_title>
           <min>0</min>
         </argument>
-        <argument type="boolean" index="4">
+        <argument type="boolean" index="3">
           <_title>Cumulative</_title>
         </argument>
       </function>
@@ -2112,6 +2112,22 @@
         <argument type="number" index="3">
           <_title>Sigma</_title>
           <min include_equals="true">0</min>
+        </argument>
+      </function>
+      <function>
+        <_title>Chi-Square Distribution</_title>
+        <_names>r:chisqdist</_names>
+        <_description>Returns the probability density or cumulative distribution function of the chi-square distribution.</_description>
+        <expression>if(\Z{0},1-igamma(\y/2,\x/2)/gamma(\y/2),(\x^(\y/2-1)*e^(-\x/2)/(2^(\y/2)*gamma(\y/2))))</expression>
+        <argument type="free" index="1">
+          <_title>X</_title>
+        </argument>
+        <argument type="number" index="2">
+          <_title>Degrees of freedom</_title>
+          <min include_equals="true">0</min>
+        </argument>
+        <argument type="boolean" index="3">
+          <_title>Cumulative</_title>
         </argument>
       </function>
     </category>
@@ -3056,7 +3072,7 @@
       <function>
         <_title>Lower Incomplete Gamma Function</_title>
         <_names>r:gammainc</_names>
-        <expression>1-igamma(\x,\y)/gamma(\x)</expression>
+        <expression>gamma(\x)-igamma(\x,\y)</expression>
       </function>
     </category>
   </category>
