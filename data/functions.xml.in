@@ -2173,6 +2173,65 @@
           <_title>Cumulative</_title>
         </argument>
       </function>
+      <function>
+        <_title>Beta Distribution</_title>
+        <_names>r:betadist</_names>
+        <_description>Returns the probability density or cumulative distribution function of the beta distribution.</_description>
+        <expression>if(\A{0},betainc(\x,\y,\z)/beta(\y,\z),\x^(\y-1)*(1-\x)^(\z-1)/beta(\y,\z))</expression>
+        <argument type="number" index="1">
+          <_title>X</_title>
+          <min include_equals="true">0</min>
+          <max include_equals="true">1</max>
+        </argument>
+        <argument type="number" index="2">
+          <_title>Alpha</_title>
+          <min include_equals="false">0</min>
+        </argument>
+        <argument type="number" index="3">
+          <_title>Beta</_title>
+          <min include_equals="false">0</min>
+        </argument>
+        <argument type="boolean" index="4">
+          <_title>Cumulative</_title>
+        </argument>
+      </function>
+      <function>
+        <_title>Student's t-distribution</_title>
+        <_names>r:tdist</_names>
+        <_description>Returns the probability density or cumulative distribution function of the Student's t distribution.</_description>
+        <expression>if(\Z{0},1-betadist(\y/(\x^2+\y),\y/2,1/2,1)/2,gamma((\y+1)/2)/(sqrt(\y*pi)*gamma(\y/2))*(1+\x^2/\y)^(-(\y+1)/2))</expression>
+        <argument type="number" index="1">
+          <_title>X</_title>
+        </argument>
+        <argument type="integer" index="2">
+          <_title>Degrees of freedom</_title>
+          <min>1</min>
+        </argument>
+        <argument type="boolean" index="3">
+          <_title>Cumulative</_title>
+        </argument>
+      </function>
+      <function>
+        <_title>F-distribution</_title>
+        <_names>r:fdist</_names>
+        <_description>Returns the probability density or cumulative distribution function of the F-distribution.</_description>
+        <expression>if(\A{0},betadist(\y*\x/(\y*\x+\z),\y/2,\z/2,1),sqrt((\y*\x)^\y*\z^\z/(\y*\x+\z)^(\y+\z))/(\x*beta(\y/2,\z/2)))</expression>
+        <argument type="number" index="1">
+          <_title>X</_title>
+          <min include_equals="true">0</min>
+        </argument>
+        <argument type="integer" index="2">
+          <_title>Degrees of freedom (numerator)</_title>
+          <min>1</min>
+        </argument>
+        <argument type="integer" index="3">
+          <_title>Degrees of freedom (denominator)</_title>
+          <min>1</min>
+        </argument>
+        <argument type="boolean" index="4">
+          <_title>Cumulative</_title>
+        </argument>
+      </function>
     </category>
   </category>
   <category>
@@ -3011,10 +3070,10 @@
       <argument index="4">
         <_title>Min iterations</_title>
       </argument>
-      <argument index="4">
+      <argument index="5">
         <_title>Max iterations</_title>
       </argument>
-      <argument index="5">
+      <argument index="6">
         <_title>Variable of integration</_title>
       </argument>
     </builtin_function>
@@ -3117,6 +3176,10 @@
         <_names>r:gammainc</_names>
         <expression>gamma(\x)-igamma(\x,\y)</expression>
       </function>
+      <builtin_function name="betainc">
+        <_title>Incomplete Beta Function</_title>
+        <_names>r:betainc</_names>
+      </builtin_function>
     </category>
   </category>
   <category>
