@@ -1694,6 +1694,7 @@ void Calculator::addBuiltinFunctions() {
 	priv->f_fresnels = addFunction(new FresnelSFunction());
 	priv->f_fresnelc = addFunction(new FresnelCFunction());
 	f_igamma = addFunction(new IGammaFunction());
+	addFunction(new IncompleteBetaFunction());
 
 	if(canPlot()) f_plot = addFunction(new PlotFunction());
 	else f_plot = NULL;

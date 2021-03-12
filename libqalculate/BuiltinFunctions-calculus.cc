@@ -292,6 +292,215 @@ int IGammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	FR_FUNCTION_2(igamma)
 }
 
+
+bool betainc(Number &nvalue, const Number &nr_x, const Number &nr_a, const Number &nr_b) {
+
+	long int max_steps = 16;
+	long int min_steps = 6;
+	bool safety_measures = true;
+
+	Number R1[max_steps], R2[max_steps];
+	Number *Rp = &R1[0], *Rc = &R2[0];
+	Number h(nr_x);
+	Number acc, acc_i, c, ntmp, prevunc, prevunc_i, nunc, nunc_i;
+
+	nvalue.clear();
+
+	Number nr_am1(nr_a), nr_bm1(nr_b);
+	nr_am1--; nr_bm1--;
+	Number nrtmp;
+
+	Number mf(1, 1, 0);
+	if((!nrtmp.isZero() && !nrtmp.raise(nr_am1)) || !mf.multiply(nrtmp) || mf.includesInfinity()) return false;
+	Rp[0] = mf;
+
+	mf.set(1, 1, 0);
+	nrtmp = nr_x;
+	if(!mf.subtract(nr_x) || (!mf.isZero() && !mf.raise(nr_bm1)) || !nrtmp.raise(nr_am1) || !mf.multiply(nrtmp) || mf.includesInfinity()) return false;
+
+	if(!Rp[0].add(mf) || !Rp[0].multiply(nr_half) || !Rp[0].multiply(h)) return false;
+
+	for(long int i = 1; i < max_steps; i++) {
+
+		if(CALCULATOR->aborted()) break;
+
+		if(!h.multiply(nr_half)) return false;
+
+		c.clear();
+
+		long int ep = 1 << (i - 1);
+		ntmp.clear(); ntmp += h;
+		for(long int j = 1; j <= ep; j++){
+			if(CALCULATOR->aborted()) break;
+			mf.set(1, 1, 0);
+			nrtmp = ntmp;
+			if(!mf.subtract(ntmp) || (!mf.isZero() && !mf.raise(nr_bm1)) || (!nrtmp.isZero() && !nrtmp.raise(nr_am1)) || !mf.multiply(nrtmp) || mf.includesInfinity()) return false;
+			if(CALCULATOR->aborted()) break;
+			if(!c.add(mf)) return false;
+			ntmp += h; ntmp += h;
+		}
+		if(CALCULATOR->aborted()) break;
+
+		Rc[0] = h;
+		ntmp = Rp[0];
+		if(!ntmp.multiply(nr_half) || !Rc[0].multiply(c) || !Rc[0].add(ntmp)) return false;
+
+		for(long int j = 1; j <= i; ++j){
+			if(CALCULATOR->aborted()) break;
+			ntmp = 4;
+			ntmp ^= j;
+			Rc[j] = ntmp;
+			ntmp--; ntmp.recip();
+			if(!Rc[j].multiply(Rc[j - 1]) || !Rc[j].subtract(Rp[j - 1]) || !Rc[j].multiply(ntmp)) return false;
+		}
+		if(CALCULATOR->aborted()) break;
+
+		if(i >= min_steps - 1 && !Rp[i - 1].includesInfinity() && !Rc[i].includesInfinity()) {
+			if(Rp[i - 1].hasImaginaryPart()) nunc = Rp[i - 1].realPart();
+			else nunc = Rp[i - 1];
+			if(Rc[i].hasImaginaryPart()) nunc -= Rc[i].realPart();
+			else nunc -= Rc[i];
+			nunc.abs();
+			if(safety_measures) nunc *= 10;
+			nunc.intervalToMidValue();
+			if(Rp[i - 1].hasImaginaryPart() || Rc[i].hasImaginaryPart()) {
+				nunc_i = Rp[i - 1].imaginaryPart();
+				nunc_i -= Rc[i].imaginaryPart();
+				nunc_i.abs();
+			} else {
+				nunc_i.clear();
+			}
+			if(safety_measures) nunc_i *= 10;
+			nunc_i.intervalToMidValue();
+			long int prec = PRECISION + 1;
+			acc.set(1, 1, -prec);
+			ntmp = Rc[i - 1];
+			ntmp.intervalToMidValue();
+			if(ntmp.hasImaginaryPart()) {
+				if(ntmp.hasRealPart()) acc *= ntmp.realPart();
+			} else {
+				if(!ntmp.isZero()) acc *= ntmp;
+			}
+			acc.abs();
+			acc.intervalToMidValue();
+			nvalue = Rc[i - 1];
+			if(nunc <= acc) {
+				if(!nunc_i.isZero()) {
+					acc_i.set(1, 1, -prec);
+					if(ntmp.hasImaginaryPart()) acc_i *= ntmp.imaginaryPart();
+					acc_i.abs();
+					acc_i.intervalToMidValue();
+					if(nunc_i <= acc_i) {
+						if(!safety_measures) {
+							nunc.setImaginaryPart(nunc_i);
+							nvalue.setUncertainty(nunc);
+							return true;
+						}
+						if(!prevunc.isZero() || !prevunc_i.isZero() || (nunc.isZero() && nunc_i.isZero())) {
+							if(nunc <= prevunc && nunc_i <= prevunc_i) {
+								if(!ntmp.hasRealPart()) prevunc = acc;
+								if(!ntmp.hasImaginaryPart()) prevunc.setImaginaryPart(acc_i);
+								else prevunc.setImaginaryPart(prevunc_i);
+								nvalue.setUncertainty(prevunc);
+							} else {
+								acc.setImaginaryPart(acc_i);
+								nvalue.setUncertainty(acc);
+							}
+							return true;
+						}
+						prevunc = nunc;
+						prevunc_i = nunc_i;
+					} else {
+						prevunc.clear();
+						prevunc_i.clear();
+					}
+				} else {
+					if(!safety_measures) {
+						nvalue.setUncertainty(nunc);
+						return true;
+					}
+					if(!prevunc.isZero() || nunc.isZero()) {
+						if(!prevunc_i.isZero()) nunc.setImaginaryPart(prevunc_i);
+						if(!ntmp.isZero() && nunc <= prevunc) nvalue.setUncertainty(prevunc);
+						else nvalue.setUncertainty(acc);
+						return true;
+					}
+					prevunc = nunc;
+					prevunc_i = nunc_i;
+				}
+			} else {
+				prevunc.clear();
+				prevunc_i.clear();
+			}
+		}
+
+		Number *rt = Rp;
+		Rp = Rc;
+		Rc = rt;
+	}
+	if(!nunc.isZero() || !nunc_i.isZero()) {
+		acc.set(1, 1, -2);
+		ntmp = nvalue;
+		ntmp.intervalToMidValue();
+		if(ntmp.hasImaginaryPart()) {
+			if(ntmp.hasRealPart()) acc *= ntmp.realPart();
+		} else {
+			if(!ntmp.isZero()) acc *= ntmp;
+		}
+		acc.abs();
+		acc.intervalToMidValue();
+		if(nunc > acc) return false;
+		if(!ntmp.hasRealPart()) nunc = acc;
+		if(!nunc_i.isZero()) {
+			acc.set(1, 1, -2);
+			if(ntmp.hasImaginaryPart()) acc *= ntmp.imaginaryPart();
+			acc.abs();
+			acc.intervalToMidValue();
+			if(nunc_i > acc) return false;
+			if(ntmp.hasImaginaryPart()) nunc.setImaginaryPart(nunc_i);
+			else nunc.setImaginaryPart(acc);
+		}
+		if(safety_measures) nunc *= 10;
+		nvalue.setUncertainty(nunc);
+		return true;
+	}
+	return false;
+}
+
+IncompleteBetaFunction::IncompleteBetaFunction() : MathFunction("betainc", 3) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	setArgumentDefinition(3, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+}
+int IncompleteBetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isZero()) {
+		mstruct.clear();
+		return 1;
+	} else if(vargs[0].isOne()) {
+		mstruct = vargs[1];
+		mstruct.transformById(FUNCTION_ID_BETA);
+		mstruct.addChild(vargs[2]);
+		return 1;
+	} else if(vargs[1].isOne()) {
+		mstruct.set(1, 1, 0);
+		mstruct -= vargs[0];
+		mstruct ^= vargs[2];
+		mstruct.negate();
+		mstruct += m_one;
+		mstruct /= vargs[2];
+		return 1;
+	} else if(vargs[2].isOne()) {
+		mstruct = vargs[0];
+		mstruct ^= vargs[1];
+		mstruct += m_zero;
+		mstruct.last() ^= vargs[1];
+		mstruct.last().negate();
+		mstruct /= vargs[1];
+		return 1;
+	}
+	Number nr(vargs[0].number()); if(!betainc(nr, vargs[0].number(), vargs[1].number(), vargs[2].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
+}
+
 LimitFunction::LimitFunction() : MathFunction("limit", 2, 4) {
 	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setComplexAllowed(false);
