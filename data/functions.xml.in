@@ -2010,43 +2010,64 @@
         <_description>Returns the probability density or cumulative distribution function of the exponential distribution.</_description>
         <expression>if(\Z{0},1-e^(-\y*\x),\y*e^(-\y*\x))</expression>
         <argument type="number" index="1">
-          <_title>Value</_title>
+          <_title>X</_title>
           <min include_equals="true">0</min>
         </argument>
         <argument type="number" index="2">
-          <_title>Rate parameter</_title>
-          <min>0</min>
+          <_title>Rate (λ)</_title>
+          <min include_equals="false">0</min>
         </argument>
         <argument type="boolean" index="3">
           <_title>Cumulative</_title>
         </argument>
       </function>
       <function>
+        <_title>Exponential Inverse Cumulative Distribution</_title>
+        <_names>r:expinv</_names>
+        <expression>-ln(1-\x)/\y</expression>
+        <argument type="number" index="1">
+          <_title>P</_title>
+          <min include_equals="true">0</min>
+          <min include_equals="false">1</min>
+        </argument>
+        <argument type="number" index="2">
+          <_title>Rate (λ)</_title>
+          <min>0</min>
+        </argument>
+      </function>
+      <function>
         <_title>Logistic Distribution</_title>
         <_names>r:logistic</_names>
-        <_description>Returns the probability density p(x) at x for a logistic distribution with scale parameter. (from Gnumeric)</_description>
-        <expression>exp(-abs(\x)/\y)/(abs(\y)*(1+exp(-abs(\x)/\y))^2)</expression>
+        <_description>Returns the probability density or cumulative distribution function of the logistic distribution.</_description>
+        <expression>if(\A{0},1/(1+e^(-(\x-\Z{0})/\y)),e^(-(\x-\z)/\y)/(\y*(1+e^(-(\x-\z)/\y))^2)</expression>
         <argument type="free" index="1">
           <_title>X</_title>
         </argument>
         <argument type="number" index="2">
-          <_title>Scale</_title>
-          <min include_equals="true">0</min>
+          <_title>Scale (s)</_title>
+          <min include_equals="false">0</min>
+        </argument>
+        <argument type="number" index="3">
+          <_title>Location (μ)</_title>
+        </argument>
+        <argument type="boolean" index="4">
+          <_title>Cumulative</_title>
         </argument>
       </function>
       <function>
         <_title>Normal Distribution</_title>
         <_names>r:normdist</_names>
-        <_description>Returns the probability density or cumulative distribution function of a normal distribution.</_description>
+        <_description>Returns the probability density or cumulative distribution function of the normal distribution.</_description>
         <expression>if(\A{0},(1+erf((\x-\Y{0})/(\Z{1}*sqrt(2))))/2,1/\Z*1/(sqrt(2pi))×e^(−1/2×((\x−\Y)/\Z)^2))</expression>
         <argument type="free" index="1">
           <_title>Value</_title>
         </argument>
         <argument type="free" index="2">
-          <_title>Mean</_title>
+          <_title>Mean (μ)</_title>
         </argument>
         <argument type="free" index="3">
-          <_title>Standard deviation</_title>
+          <_title>Standard deviation (σ)</_title>
+          <condition>\x^2&gt;0</condition>
         </argument>
         <argument type="boolean" index="4">
           <_title>Cumulative</_title>
@@ -2055,30 +2076,36 @@
       <function>
         <_title>Pareto Distribution</_title>
         <_names>r:pareto</_names>
-        <_description>Returns the probability density p(x) at x for a Pareto distribution with exponent and scale. (from Gnumeric)</_description>
-        <expression>if(\x &lt; \z,0,(\y/\z)/(\x/\z)^(\y+1))</expression>
+        <_description>Returns the probability density or cumulative distribution function of the Pareto distribution.</_description>
+        <expression>if(\A{0},1-(\z/\x)^\y,\y*\z^\y/\x^(\y+1))</expression>
+        <condition>\x>=\z</condition>
         <argument type="free" index="1">
           <_title>X</_title>
         </argument>
         <argument type="number" index="2">
-          <_title>Exponent</_title>
-          <min include_equals="true">0</min>
+          <_title>Shape (α)</_title>
+          <min include_equals="false">0</min>
         </argument>
         <argument type="number" index="3">
-          <_title>Scale</_title>
-          <min include_equals="true">0</min>
+          <_title>Scale (x_m)</_title>
+          <min include_equals="false">0</min>
+        </argument>
+        <argument type="boolean" index="4">
+          <_title>Cumulative</_title>
         </argument>
       </function>
       <function>
         <_title>Poisson Distribution</_title>
         <_names>r:poisson</_names>
-        <_description>Returns the probability mass or cumulative distribution of the Poisson distribution.</_description>
-        <expression>if(\Z{0},sum((\y^"k"*e^(-\y))/("k"!),0,\x,"k"),(\y^\x*e^(-\y))/(\x!))</expression>
-        <argument type="free" index="1">
-          <_title>Number of events (x)</_title>
+        <_description>Returns the probability density or cumulative distribution function of the Poisson distribution.</_description>
+        <expression>if(\Z{0},e^(-\y)*sum((\y^"i")/("i"!),0,floor(\x),"i"),(\y^\x*e^(-\y))/(\x!))</expression>
+        <argument type="number" index="1">
+          <_title>X</_title>
+          <min include_equals="true">0</min>
         </argument>
-        <argument type="free" index="2">
-          <_title>Mean</_title>
+        <argument type="number" index="2">
+          <_title>Rate (λ)</_title>
+          <min include_equals="false">0</min>
         </argument>
         <argument type="boolean" index="3">
           <_title>Cumulative</_title>
@@ -2087,22 +2114,25 @@
       <function>
         <_title>Rayleigh Distribution</_title>
         <_names>r:rayleigh</_names>
-        <_description>Returns the probability density p(x) at x for a Rayleigh distribution with scale parameter sigma. (from Gnumeric)</_description>
-        <expression>if(\Z{0},1-exp(-\x^2/(2*\y^2)),\x/(\y^2)*exp(-\x^2/(2*\y^2)))</expression>
+        <_description>Returns the probability density or cumulative distribution function of the Rayleigh distribution.</_description>
+        <expression>if(\Z{0},1-e^(-\x^2/(2\y^2)),\x/\y^2*e^(-\x^2/(2\y^2)))</expression>
         <argument type="number" index="1">
           <_title>X</_title>
           <min include_equals="true">0</min>
         </argument>
         <argument type="number" index="2">
-          <_title>Sigma</_title>
-          <min include_equals="true">0</min>
+          <_title>Scale (σ)</_title>
+          <min include_equals="false">0</min>
+        </argument>
+        <argument type="boolean" index="3">
+          <_title>Cumulative</_title>
         </argument>
       </function>
       <function>
         <_title>Rayleigh Tail Distribution</_title>
         <_names>r:rayleightail</_names>
         <_description>Returns the probability density p(x) at x for a Rayleigh tail distribution with scale parameter sigma and a lower limit. (from Gnumeric)</_description>
-        <expression>if(\x &lt; \y,0,(\x/\z)/\z*exp(((\y/\z)+(\x/\z))*((\y/\z)-(\x/\z))/2))</expression>
+        <expression>if(\x&lt;\y,0,(\x/\z)/\z*exp(((\y/\z)+(\x/\z))*((\y/\z)-(\x/\z))/2))</expression>
         <argument type="free" index="1">
           <_title>X</_title>
         </argument>
@@ -2110,7 +2140,7 @@
           <_title>Lower limit</_title>
         </argument>
         <argument type="number" index="3">
-          <_title>Sigma</_title>
+          <_title>Scale (σ)</_title>
           <min include_equals="true">0</min>
         </argument>
       </function>
@@ -2124,11 +2154,11 @@
           <min include_equals="true">0</min>
         </argument>
         <argument type="number" index="2">
-          <_title>Shape</_title>
+          <_title>Shape (k)</_title>
           <min include_equals="false">0</min>
         </argument>
         <argument type="number" index="3">
-          <_title>Scale</_title>
+          <_title>Scale (θ)</_title>
           <min include_equals="false">0</min>
         </argument>
         <argument type="boolean" index="4">
@@ -2145,7 +2175,7 @@
           <min include_equals="true">0</min>
         </argument>
         <argument type="integer" index="2">
-          <_title>Degrees of freedom</_title>
+          <_title>Degrees of freedom (k)</_title>
           <min include_equals="true">1</min>
         </argument>
         <argument type="boolean" index="3">
@@ -2162,15 +2192,33 @@
           <min include_equals="true">0</min>
         </argument>
         <argument type="number" index="2">
-          <_title>Scale</_title>
+          <_title>Scale (λ)</_title>
           <min include_equals="false">0</min>
         </argument>
         <argument type="number" index="3">
-          <_title>Shape</_title>
+          <_title>Shape (k)</_title>
           <min include_equals="false">0</min>
         </argument>
         <argument type="boolean" index="4">
           <_title>Cumulative</_title>
+        </argument>
+      </function>
+      <function>
+        <_title>Weibull Inverse Cumulative Distribution</_title>
+        <_names>r:wblinv</_names>
+        <expression>\y(-ln(1-\x))^(1/\z)</expression>
+        <argument type="number" index="1">
+          <_title>P</_title>
+          <min include_equals="true">0</min>
+          <min include_equals="false">1</min>
+        </argument>
+        <argument type="number" index="2">
+          <_title>Scale (λ)</_title>
+          <min include_equals="false">0</min>
+        </argument>
+        <argument type="number" index="3">
+          <_title>Shape (k)</_title>
+          <min include_equals="false">0</min>
         </argument>
       </function>
       <function>
@@ -2184,11 +2232,11 @@
           <max include_equals="true">1</max>
         </argument>
         <argument type="number" index="2">
-          <_title>Alpha</_title>
+          <_title>Shape (α)</_title>
           <min include_equals="false">0</min>
         </argument>
         <argument type="number" index="3">
-          <_title>Beta</_title>
+          <_title>Shape (β)</_title>
           <min include_equals="false">0</min>
         </argument>
         <argument type="boolean" index="4">
