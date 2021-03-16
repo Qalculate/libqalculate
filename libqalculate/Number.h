@@ -471,6 +471,7 @@ class Number {
 		bool erf();
 		bool erfi();
 		bool erfc();
+		bool erfinv();
 		bool besselj(const Number &o);
 		bool bessely(const Number &o);
 
