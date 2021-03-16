@@ -5704,6 +5704,106 @@ bool Number::erfc() {
 	}
 	return true;
 }
+bool Number::erfinv() {
+
+	if(isOne()) {setPlusInfinity(); return true;}
+	if(isMinusOne()) {setMinusInfinity(); return true;}
+	if(isZero()) return true;
+	if(!isFraction()) return false;
+
+	Number nr_bak(*this);
+	if(!setToFloatingPoint()) return false;
+	mpfr_clear_flags();
+
+	mpfr_t r, r_div, x2, r2_exp, sqrt_pi, x;
+	mpfr_inits2(BIT_PRECISION + 10, r, r_div, r2_exp, sqrt_pi, x2, NULL);
+	mpfr_t f_test;
+	mpfr_inits2(BIT_PRECISION, f_test, x, NULL);
+	mpfr_const_pi(sqrt_pi, MPFR_RNDN);
+	mpfr_sqrt(sqrt_pi, sqrt_pi, MPFR_RNDN);
+
+	for(size_t i = 0; i < 2; i++) {
+		if(i == 0) mpfr_set(x, fl_value, MPFR_RNDD);
+		else mpfr_set(x, fu_value, MPFR_RNDU);
+		if(!mpfr_zero_p(x)) {
+			bool b_neg = mpfr_sgn(x) < 0;
+			if(b_neg) mpfr_neg(x, x, MPFR_RNDN);
+			/*double a[] = {0.886226899, -1.645349621, 0.914624893, -0.140543331};
+			double b[] = {1, -2.118377725, 1.442710462, -0.329097515, 0.012229801};
+			double c[] = {-1.970840454, -1.62490649, 3.429567803, 1.641345311};
+			double d[] = {1, 3.543889200, 1.637067800};*/
+			if(mpfr_cmp_d(x, 0.7) <= 0) {
+				// double x2 = z * z;
+				mpfr_mul(x2, x, x, MPFR_RNDN);
+				//r = x * (((a[3] * x2 + a[2]) * x2 + a[1]) * x2 + a[0]);
+				mpfr_mul_d(r, x2, -0.140543331, MPFR_RNDN);
+				mpfr_add_d(r, r, 0.914624893, MPFR_RNDN);
+				mpfr_mul(r, r, x2, MPFR_RNDN);
+				mpfr_add_d(r, r, -1.645349621, MPFR_RNDN);
+				mpfr_mul(r, r, x2, MPFR_RNDN);
+				mpfr_add_d(r, r, 0.886226899, MPFR_RNDN);
+				mpfr_mul(r, r, x, MPFR_RNDN);
+				//r /= (((b[4] * x2 + b[3]) * x2 + b[2]) * x2 + b[1])* x2 + b[0];
+				mpfr_mul_d(r_div, x2, 0.012229801, MPFR_RNDN);
+				mpfr_add_d(r_div, r_div, -0.329097515, MPFR_RNDN);
+				mpfr_mul(r_div, r_div, x2, MPFR_RNDN);
+				mpfr_add_d(r_div, r_div, 1.442710462, MPFR_RNDN);
+				mpfr_mul(r_div, r_div, x2, MPFR_RNDN);
+				mpfr_add_d(r_div, r_div, -2.118377725, MPFR_RNDN);
+				mpfr_mul(r_div, r_div, x2, MPFR_RNDN);
+				mpfr_add_ui(r_div, r_div, 1, MPFR_RNDN);
+				mpfr_div(r, r, r_div, MPFR_RNDN);
+			} else {
+				//double y = sqrt( -log((1 - z)/2));
+				mpfr_ui_sub(x2, 1, x, MPFR_RNDN);
+				mpfr_div_ui(x2, x2, 2, MPFR_RNDN);
+				mpfr_log(x2, x2, MPFR_RNDN);
+				mpfr_neg(x2, x2, MPFR_RNDN);
+				mpfr_sqrt(x2, x2, MPFR_RNDN);
+				//r = (((c[3] * y + c[2]) * y + c[1]) * y + c[0]);
+				mpfr_mul_d(r, x2, 1.641345311, MPFR_RNDN);
+				mpfr_add_d(r, r, 3.429567803, MPFR_RNDN);
+				mpfr_mul(r, r, x2, MPFR_RNDN);
+				mpfr_add_d(r, r, -1.62490649, MPFR_RNDN);
+				mpfr_mul(r, r, x2, MPFR_RNDN);
+				mpfr_add_d(r, r, -1.970840454, MPFR_RNDN);
+				//r /= ((d[2] * y + d[1]) * y + d[0]);
+				mpfr_mul_d(r_div, x2, 1.637067800, MPFR_RNDN);
+				mpfr_add_d(r_div, r_div, 3.543889200, MPFR_RNDN);
+				mpfr_mul(r_div, r_div, x2, MPFR_RNDN);
+				mpfr_add_ui(r_div, r_div, 1, MPFR_RNDN);
+				mpfr_div(r, r, r_div, MPFR_RNDN);
+			}
+
+			mpfr_erf(r_div, r, MPFR_RNDN);
+			mpfr_div(f_test, r_div, x, MPFR_RNDN);
+			while(mpfr_cmp_ui(f_test, 1) != 0) {
+				if(CALCULATOR->aborted()) {mpfr_clears(r, r_div, r2_exp, sqrt_pi, x2, x, NULL); set(nr_bak); return false;}
+				//r -= (erf(r) - x)/(2/sqrt(M_PI) *exp(-r * r));
+				mpfr_sub(r_div, r_div, x, MPFR_RNDN);
+				mpfr_mul(r2_exp, r, r, MPFR_RNDN);
+				mpfr_neg(r2_exp, r2_exp, MPFR_RNDN);
+				mpfr_exp(r2_exp, r2_exp, MPFR_RNDN);
+				mpfr_mul_ui(r2_exp, r2_exp, 2, MPFR_RNDN);
+				mpfr_div(r2_exp, r2_exp, sqrt_pi, MPFR_RNDN);
+				mpfr_div(r_div, r_div, r2_exp, MPFR_RNDN);
+				mpfr_sub(r, r, r_div, MPFR_RNDN);
+				mpfr_erf(r_div, r, MPFR_RNDN);
+				mpfr_div(f_test, r_div, x, MPFR_RNDN);
+			}
+			if(b_neg) mpfr_neg(r, r, MPFR_RNDN);
+			if(i == 0) mpfr_set(fl_value, r, MPFR_RNDD);
+			else mpfr_set(fu_value, r, MPFR_RNDU);
+		}
+	}
+	mpfr_clears(r, r_div, r2_exp, sqrt_pi, x2, x, NULL);
+	if(!testFloatResult()) {
+		set(nr_bak);
+		return false;
+	}
+	return true;
+}
+
 bool Number::airy() {
 	if(!isReal()) return false;
 	if(!isLessThanOrEqualTo(500) || !isGreaterThanOrEqualTo(-500)) return false;

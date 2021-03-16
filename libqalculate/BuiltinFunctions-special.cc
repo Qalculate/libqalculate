@@ -332,6 +332,15 @@ bool ErfcFunction::representsUndefined(const MathStructure&) const {return false
 int ErfcFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	FR_FUNCTION(erfc)
 }
+ErfinvFunction::ErfinvFunction() : MathFunction("erfinv", 1) {
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
+	arg->setMax(&nr_one);
+	arg->setMin(&nr_minus_one);
+	setArgumentDefinition(1, arg);
+}
+int ErfinvFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	FR_FUNCTION(erfinv)
+}
 
 LiFunction::LiFunction() : MathFunction("Li", 2) {
 	names[0].case_sensitive = true;

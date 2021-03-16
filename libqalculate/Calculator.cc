@@ -1589,6 +1589,7 @@ void Calculator::addBuiltinFunctions() {
 	f_erf = addFunction(new ErfFunction());
 	priv->f_erfi = addFunction(new ErfiFunction());
 	f_erfc = addFunction(new ErfcFunction());
+	addFunction(new ErfinvFunction());
 
 	f_total = addFunction(new TotalFunction());
 	f_percentile = addFunction(new PercentileFunction());

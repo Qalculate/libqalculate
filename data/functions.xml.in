@@ -886,6 +886,10 @@
       <_title>Imaginary Error Function</_title>
       <_names>r:erfi</_names>
     </builtin_function>
+    <builtin_function name="erfi">
+      <_title>Inverse Error Function</_title>
+      <_names>r:erfinv</_names>
+    </builtin_function>
     <builtin_function name="Li">
       <_title>Polylogarithm</_title>
       <_names>rc:Li,polylog</_names>
@@ -953,6 +957,16 @@
       <expression>ln(\x/(1-\x))</expression>
       <argument type="number" index="1">
         <_title>Value</_title>
+      </argument>
+    </function>
+    <function>
+      <_title>Probit Function</_title>
+      <_names>r:probit</_names>
+      <expression>sqrt(2)*erfinv(2\x-1)</expression>
+      <argument type="number" index="1">
+        <_title>Value</_title>
+        <min include_equals="true">0</min>
+        <max include_equals="true">1</max>
       </argument>
     </function>
     <function>
