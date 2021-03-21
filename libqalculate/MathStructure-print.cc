@@ -1362,6 +1362,23 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 								exp10 -= e2;
 							}
 							Prefix *p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp, po.use_all_prefixes));
+							if(p && p->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p)->exponent() < 0 && ((munit->isUnit() && munit->unit()->referenceName() == "t") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "t"))) {
+								Unit *u = (munit->isUnit() ? munit->unit() : (*munit)[0].unit());
+								if(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit()->referenceName() == "g" && ((AliasUnit*) u)->expression() == "1000000" && ((AliasUnit*) u)->firstBaseExponent() == 1) {
+									if(munit->isUnit()) {
+										CHILD(0).number() *= Number(1, 1, 6);
+										munit->setUnit(((AliasUnit*) u)->firstBaseUnit());
+										exp10 += 6;
+									} else {
+										Number nr(1, 1, 6);
+										nr ^= (*munit)[1].number();
+										CHILD(0).number() *= nr;
+										(*munit)[0].setUnit(((AliasUnit*) u)->firstBaseUnit());
+										exp10 += (*munit)[1].number() * 6;
+									}
+									p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp, po.use_all_prefixes));
+								}
+							}
 							if(p) {
 								Number test_exp(exp10);
 								if(use_binary_prefix) test_exp -= ((BinaryPrefix*) p)->exponent(exp);
@@ -1403,6 +1420,23 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 							exp10.intervalToMidValue();
 							exp10.floor();
 							Prefix *p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp2) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp2, po.use_all_prefixes));
+							if(p && p->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p)->exponent() < 0 && ((munit2->isUnit() && munit2->unit()->referenceName() == "t") || (munit2->isPower() && (*munit2)[0].unit()->referenceName() == "t"))) {
+								Unit *u = (munit2->isUnit() ? munit2->unit() : (*munit2)[0].unit());
+								if(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit()->referenceName() == "g" && ((AliasUnit*) u)->expression() == "1000000" && ((AliasUnit*) u)->firstBaseExponent() == 1) {
+									if(munit->isUnit()) {
+										CHILD(0).number() *= Number(1, 1, 6);
+										munit2->setUnit(((AliasUnit*) u)->firstBaseUnit());
+										exp10 += 6;
+									} else {
+										Number nr(1, 1, 6);
+										nr ^= (*munit2)[1].number();
+										CHILD(0).number() *= nr;
+										(*munit2)[0].setUnit(((AliasUnit*) u)->firstBaseUnit());
+										exp10 += (*munit2)[1].number() * 6;
+									}
+									p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp2) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp2, po.use_all_prefixes));
+								}
+							}
 							if(p) {
 								Number test_exp(exp10);
 								if(use_binary_prefix) test_exp -= ((BinaryPrefix*) p)->exponent(exp2);
