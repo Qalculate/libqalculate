@@ -1402,7 +1402,9 @@ int key_save(int, int) {
 	string title;
 	bool b = true;
 #ifdef HAVE_LIBREADLINE
+#if RL_VERSION_MAJOR >= 7
 	rl_clear_visible_line();
+#endif
 #endif
 	FPUTS_UNICODE(_("Name"), stdout);
 #ifdef HAVE_LIBREADLINE
@@ -3593,6 +3595,7 @@ int main(int argc, char *argv[]) {
 				case TEMPERATURE_CALCULATION_ABSOLUTE: {str += _("absolute"); break;}
 				default: {str += _("hybrid"); break;}
 			}
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("update exchange rates"), "upxrates");
 			switch(auto_update_exchange_rates) {
 				case -1: {str += _("ask"); break;}
@@ -5288,7 +5291,7 @@ bool ask_tc() {
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "2 = "; str += _("relative"); END_BOLD(str);
 	PUTS_UNICODE(str.c_str());
-	s_eg = "(1 °C + 1 °C = 2 °C, 1 °C + 5 °F = 1 °C + 5 °R ≈ 277 K, 2 °C − 1 °C = 1 °C, 1 °C − 5 °F = 1 °C - 5 °R ≈ −2 °C, 1 °C + 1 K = 2 °C)";
+	s_eg = "(1 °C + 1 °C = 2 °C, 1 °C + 5 °F = 1 °C + 5 °R ≈ 4 °C ≈ 277 K, 2 °C − 1 °C = 1 °C, 1 °C − 5 °F = 1 °C - 5 °R ≈ −2 °C, 1 °C + 1 K = 2 °C)";
 	if(!printops.use_unicode_signs) {gsub("°", "o", s_eg); gsub("≈", "=", s_eg);}
 	addLineBreaks(s_eg, cols, true);
 	PUTS_ITALIC(s_eg);

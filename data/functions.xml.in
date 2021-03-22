@@ -2266,7 +2266,7 @@
           <_title>X</_title>
         </argument>
         <argument type="integer" index="2">
-          <_title>Degrees of freedom</_title>
+          <_title>Degrees of freedom (v)</_title>
           <min>1</min>
         </argument>
         <argument type="boolean" index="3">
@@ -2289,6 +2289,26 @@
         <argument type="integer" index="3">
           <_title>Degrees of freedom (denominator)</_title>
           <min>1</min>
+        </argument>
+        <argument type="boolean" index="4">
+          <_title>Cumulative</_title>
+        </argument>
+      </function>
+      <function>
+        <_title>Cauchy Distribution</_title>
+        <_names>r:cauchydist</_names>
+        <_description>Returns the probability density or cumulative distribution function of the Cauchy distribution.</_description>
+        <expression>if(\A{0},1/pi*atan((\x-\y)/\z)+1/2,1/(pi*\z*(1+((\x-\y)/(\z))^2)))</expression>
+        <argument type="number" index="1">
+          <_title>X</_title>
+          <min include_equals="true">0</min>
+        </argument>
+        <argument type="number" index="2">
+          <_title>Location (x_0)</_title>
+        </argument>
+        <argument type="number" index="3">
+          <_title>Scale (γ)</_title>
+          <min include_equals="false">0</min>
         </argument>
         <argument type="boolean" index="4">
           <_title>Cumulative</_title>
