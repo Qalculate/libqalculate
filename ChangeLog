@@ -1,3 +1,39 @@
+2021-03-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for solving equalities and inequalities with error functions (erf(), erfc(), erfi(), erfinv())
+	* Add cauchydist() function
+
+2021-03-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Replace tonne with small prefix, with (kilo)gram (e.g. 5 kg instead of 5 mt)
+
+2021-03-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add erfinv() and probit() functions
+
+2021-03-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add functions for exponential and Weibull inverse cumulative distributions (expinv() and wblinv())
+	* Add cumulative parameter to all statistical distribution functions
+
+2021-03-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add incomplete beta function (betainc())
+	* betadist(), fdist(), and tdist() functions
+
+2021-03-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add chisqdist(), weibulldist, and gammadist() functions
+	* Fix gammainc() function
+
+2021-03-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add command() function (runs external command)
+	* Improve handling of expressions with log-based units
+	* Fix conversion to multiple units, of which one is a temperature unit, with relative temperature units activated (e.g. g/oC to g/oF)
+	* Improve conversion of expression with multiple units to a single unit (e.g. m/W to W)
+	* Fix compilation with readline version < 7
+
 2021-02-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Save handle_vector property
