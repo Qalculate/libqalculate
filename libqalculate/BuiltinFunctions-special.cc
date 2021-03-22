@@ -333,7 +333,7 @@ int ErfcFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	FR_FUNCTION(erfc)
 }
 ErfinvFunction::ErfinvFunction() : MathFunction("erfinv", 1) {
-	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false);
 	arg->setMax(&nr_one);
 	arg->setMin(&nr_minus_one);
 	setArgumentDefinition(1, arg);

@@ -4912,6 +4912,45 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 					return true;
 				}
+			} else if((CHILD(0).function()->id() == FUNCTION_ID_ERF || CHILD(0).function()->id() == FUNCTION_ID_ERFC || CHILD(0).function()->id() == FUNCTION_ID_ERFI) && CHILD(0).size() == 1) {
+				if(CHILD(0)[0].contains(x_var) && (ct_comp == COMPARISON_EQUALS || (CHILD(0)[0].representsReal() && CHILD(0).function()->id() != FUNCTION_ID_ERFI)) && CHILD(1).isNumber()) {
+					Number nr(CHILD(1).number());
+					if(CHILD(0).function()->id() == FUNCTION_ID_ERFC) {nr--; nr.negate();}
+					else if(CHILD(0).function()->id() == FUNCTION_ID_ERFI) {nr /= nr_minus_i;}
+					if(nr.isFraction()) {
+						if(CHILD(0).function()->id() != FUNCTION_ID_ERF) CHILD(1).set(nr, true);
+						if(CHILD(0).function()->id() == FUNCTION_ID_ERFI) {
+							CHILD(0).setToChild(1, true);
+							CHILD(0).calculateMultiply(nr_one_i, eo2);
+						} else {
+							CHILD(0).setToChild(1, true);
+						}
+						CHILD(1).transformById(FUNCTION_ID_ERFINV);
+						if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
+						isolate_x_sub(eo, eo2, x_var, morig);
+						return true;
+					} else if(ct_comp == COMPARISON_LESS) {
+						if(nr > 1) {set(1, 1, 0, true); return true;}
+						else if(nr <= -1) {clear(true); return true;}
+					} else if(ct_comp == COMPARISON_GREATER) {
+						if(nr < -1) {set(1, 1, 0, true); return true;}
+						else if(nr >= 1) {clear(true); return true;}
+					} else if(ct_comp == COMPARISON_EQUALS_LESS) {
+						if(nr >= 1) {set(1, 1, 0, true); return true;}
+						else if(nr < -1) {clear(true); return true;}
+					} else if(ct_comp == COMPARISON_EQUALS_GREATER) {
+						if(nr <= -1) {set(1, 1, 0, true); return true;}
+						else if(nr > 1) {clear(true); return true;}
+					}
+				}
+			} else if(CHILD(0).function()->id() == FUNCTION_ID_ERFINV && CHILD(0).size() == 1) {
+				if(CHILD(0)[0].contains(x_var) && CHILD(1).representsReal()) {
+					CHILD(0).setToChild(1, true);
+					CHILD(1).transformById(FUNCTION_ID_ERF);
+					if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
+					isolate_x_sub(eo, eo2, x_var, morig);
+					return true;
+				}
 			} else if((CHILD(0).function()->id() == FUNCTION_ID_TAN || CHILD(0).function()->id() == FUNCTION_ID_SIN || CHILD(0).function()->id() == FUNCTION_ID_COS) && CHILD(0).size() == 1 && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
 				MathFunction *f = CHILD(0).function();
 				CHILD(0).setToChild(1, true);
