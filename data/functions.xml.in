@@ -886,7 +886,7 @@
       <_title>Imaginary Error Function</_title>
       <_names>r:erfi</_names>
     </builtin_function>
-    <builtin_function name="erfi">
+    <builtin_function name="erfinv">
       <_title>Inverse Error Function</_title>
       <_names>r:erfinv</_names>
     </builtin_function>
