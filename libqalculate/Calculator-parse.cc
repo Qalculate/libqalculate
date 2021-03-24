@@ -649,7 +649,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 	// search for degree sign in epxressions (affects interpretation of ' and ")
 	size_t i_degree = str.find(SIGN_DEGREE);
-	if(i_degree != string::npos && i_degree + strlen(SIGN_DEGREE) < str.length() && is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBER_ELEMENTS, str[i_degree + strlen(SIGN_DEGREE)])) i_degree = string::npos;
+	if(i_degree != string::npos && i_degree + strlen(SIGN_DEGREE) < str.length() && is_in("CRF", str[i_degree + strlen(SIGN_DEGREE)])) {
+		i_degree = string::npos;
+	}
 
 	if(base != -1 && base <= BASE_HEXADECIMAL) {
 		// replace single ' and " with prime and double prime (for ft/in or minutes/seconds of arc)

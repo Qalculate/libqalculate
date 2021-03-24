@@ -1079,3 +1079,231 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 
 }
 
+GeographicDistanceFunction::GeographicDistanceFunction() : MathFunction("geodistance", 4, 4) {
+}
+int GeographicDistanceFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	MathStructure m(vargs);
+	m[0].eval(eo); m[1].eval(eo); m[2].eval(eo); m[3].eval(eo);
+	Number nr_pi; nr_pi.pi();
+	Number ln1, la1, ln2, la2;
+	bool reverse = false;
+	for(size_t i = 0; i < 4; i++) {
+		if(i == 2) reverse = false;
+		if(m[i].isSymbolic()) {
+			string s = m[i].symbol();
+			remove_blank_ends(s);
+			bool neg = false;
+			if(!s.empty()) {
+				if((i == 0 || i == 2) && (s[s.length() - 1] == 'W' || s[s.length() - 1] == 'E')) {
+					reverse = true;
+				}
+				if(s[s.length() - 1] == 'N' || s[s.length() - 1] == 'E') {
+					s.erase(s.length() - 1, 1);
+				} else if(s[s.length() - 1] == 'S' || s[s.length() - 1] == 'W') {
+					s.erase(s.length() - 1, 1);
+					neg = true;
+				}
+			}
+			CALCULATOR->parse(&m[i], s, eo.parse_options);
+			if(neg) m[i].negate();
+			m[i].eval(eo);
+		}
+		if(m[i].isNumber()) {
+			m[i].number() *= nr_pi; m[i].number() /= 180;
+		} else {
+			m[i] /= CALCULATOR->getRadUnit();
+			m[i].eval(eo);
+			if(!m[i].isNumber()) return 0;
+		}
+		if(!m[i].number().isReal()) return 0;
+		int prec = m[i].number().precision(true);
+		if(prec < 0 || prec >= 15) m[i].number().intervalToMidValue();
+		if(reverse) {
+			if(i == 0) ln1 = m[i].number();
+			if(i == 1) la1 = m[i].number();
+			if(i == 2) ln2 = m[i].number();
+			if(i == 3) la2 = m[i].number();
+		} else {
+			if(i == 0) la1 = m[i].number();
+			if(i == 1) ln1 = m[i].number();
+			if(i == 2) la2 = m[i].number();
+			if(i == 3) ln2 = m[i].number();
+		}
+	}
+	if(la1 > nr_pi || ln1 > nr_pi || la2 > nr_pi || ln2 > nr_pi) return 0;
+	nr_pi.negate();
+	if(la1 < nr_pi || ln1 < nr_pi || la2 < nr_pi || ln2 < nr_pi) return 0;
+	nr_pi.negate();
+	if(la1.isInterval()) {
+		mstruct = la1.lowerEndPoint(); mstruct *= CALCULATOR->getRadUnit();
+		mstruct.transform(this);
+		mstruct.addChild(ln1); mstruct.last() *= CALCULATOR->getRadUnit();
+		mstruct.addChild(la2); mstruct.last() *= CALCULATOR->getRadUnit();
+		mstruct.addChild(ln2); mstruct.last() *= CALCULATOR->getRadUnit();
+		MathStructure m2(la1.upperEndPoint()); m2 *= CALCULATOR->getRadUnit();
+		m2.transform(this);
+		m2.addChild(ln1); mstruct.last() *= CALCULATOR->getRadUnit();
+		m2.addChild(la2); mstruct.last() *= CALCULATOR->getRadUnit();
+		m2.addChild(ln2); mstruct.last() *= CALCULATOR->getRadUnit();
+		mstruct.transformById(FUNCTION_ID_INTERVAL);
+		mstruct.addChild(m2);
+		return 1;
+	}
+	if(ln1.isInterval()) {
+		mstruct = la1; mstruct *= CALCULATOR->getRadUnit();
+		mstruct.transform(this);
+		mstruct.addChild(ln1.lowerEndPoint()); mstruct.last() *= CALCULATOR->getRadUnit();
+		mstruct.addChild(la2); mstruct.last() *= CALCULATOR->getRadUnit();
+		mstruct.addChild(ln2); mstruct.last() *= CALCULATOR->getRadUnit();
+		MathStructure m2(la1); m2 *= CALCULATOR->getRadUnit();
+		m2.transform(this);
+		m2.addChild(ln1.upperEndPoint()); mstruct.last() *= CALCULATOR->getRadUnit();
+		m2.addChild(la2); mstruct.last() *= CALCULATOR->getRadUnit();
+		m2.addChild(ln2); mstruct.last() *= CALCULATOR->getRadUnit();
+		mstruct.transformById(FUNCTION_ID_INTERVAL);
+		mstruct.addChild(m2);
+		return 1;
+	}
+	if(la2.isInterval()) {
+		mstruct = la1; mstruct *= CALCULATOR->getRadUnit();
+		mstruct.transform(this);
+		mstruct.addChild(ln1); mstruct.last() *= CALCULATOR->getRadUnit();
+		mstruct.addChild(la2.lowerEndPoint()); mstruct.last() *= CALCULATOR->getRadUnit();
+		mstruct.addChild(ln2); mstruct.last() *= CALCULATOR->getRadUnit();
+		MathStructure m2(la1); m2 *= CALCULATOR->getRadUnit();
+		m2.transform(this);
+		m2.addChild(ln1); mstruct.last() *= CALCULATOR->getRadUnit();
+		m2.addChild(la2.upperEndPoint()); mstruct.last() *= CALCULATOR->getRadUnit();
+		m2.addChild(ln2); mstruct.last() *= CALCULATOR->getRadUnit();
+		mstruct.transformById(FUNCTION_ID_INTERVAL);
+		mstruct.addChild(m2);
+		return 1;
+	}
+	if(ln2.isInterval()) {
+		mstruct = la1; mstruct *= CALCULATOR->getRadUnit();
+		mstruct.transform(this);
+		mstruct.addChild(ln1); mstruct.last() *= CALCULATOR->getRadUnit();
+		mstruct.addChild(la2); mstruct.last() *= CALCULATOR->getRadUnit();
+		mstruct.addChild(ln2.lowerEndPoint()); mstruct.last() *= CALCULATOR->getRadUnit();
+		MathStructure m2(la1); m2 *= CALCULATOR->getRadUnit();
+		m2.transform(this);
+		m2.addChild(ln1); mstruct.last() *= CALCULATOR->getRadUnit();
+		m2.addChild(la2); mstruct.last() *= CALCULATOR->getRadUnit();
+		m2.addChild(ln2.upperEndPoint()); mstruct.last() *= CALCULATOR->getRadUnit();
+		mstruct.transformById(FUNCTION_ID_INTERVAL);
+		mstruct.addChild(m2);
+		return 1;
+	}
+	if(ln1 == ln2 && la1 == la2) {
+		mstruct.clear();
+		Unit *unit_meter = CALCULATOR->getUnit("m");
+		if(unit_meter) mstruct *= unit_meter;
+		return 1;
+	}
+	bool b_failed = false;
+	CALCULATOR->beginTemporaryStopIntervalArithmetic();
+	Number a(6378137L), b("6356752.314245"), f("298.257223563");
+	f.recip();
+	Number p1mf(1, 1, 0); p1mf -= f;
+	Number tanU1(la1);
+	Number tanU2(la2);
+	if(b_failed || !tanU1.tan() || !tanU1.multiply(p1mf) || !tanU2.tan() || !tanU2.multiply(p1mf)) b_failed = true;
+	Number cosU1(tanU1);
+	Number cosU2(tanU2);
+	if(b_failed || !cosU1.square() || !cosU1.add(1) || !cosU1.sqrt() || !cosU1.recip() || !cosU2.square() || !cosU2.add(1) || !cosU2.sqrt() || !cosU2.recip()) b_failed = true;
+	Number sinU1(tanU1);
+	Number sinU2(tanU2);
+	if(!sinU1.multiply(cosU1) || !sinU2.multiply(cosU2)) b_failed = true;
+	Number sinU1U2(sinU1);
+	if(b_failed || !sinU1U2.multiply(sinU2)) b_failed = true;
+	Number L(ln1); L -= ln2;
+	Number lambda(L);
+	Number tmp, sin_sigma, cos_sigma(1, 1, 0), sigma, sin_a, cos2a(1, 1, 0), cos2sm(1, 1, 0), C, tmp2;
+	bool antipodal = false;
+	tmp = L; tmp.abs();
+	if(tmp > nr_pi / 2) antipodal = true;
+	if(!antipodal) {
+		tmp = la1; tmp -= la2; tmp.abs();
+		if(tmp < nr_pi / 2) antipodal = true;
+	}
+	if(antipodal) {cos_sigma.set(-1 ,1 ,0); sigma = nr_pi;}
+	Number prec(1, 1, -12);
+	for(size_t i = 0; !b_failed; i++) {
+		if(CALCULATOR->aborted()) {CALCULATOR->endTemporaryStopIntervalArithmetic(); return 0;}
+		sin_sigma = lambda;
+		tmp = cosU1;
+		if(!sin_sigma.cos() || !sin_sigma.multiply(cosU2) || !sin_sigma.multiply(sinU1) || !tmp.multiply(sinU2) || !sin_sigma.negate() || !sin_sigma.add(tmp) || !sin_sigma.square()) {b_failed = true; break;}
+		tmp = lambda;
+		if(!tmp.sin() || !tmp.multiply(cosU2) || !tmp.square() || !sin_sigma.add(tmp)) {b_failed = true; break;}
+		tmp = sin_sigma;
+		if(!tmp.abs()) {b_failed = true; break;}
+		tmp = tmp2; tmp2++;
+		if(tmp.isOne()) break;
+		if(!sin_sigma.sqrt()) {b_failed = true; break;}
+		cos_sigma = lambda;
+		if(!cos_sigma.cos() || !cos_sigma.multiply(cosU1) || !cos_sigma.multiply(cosU2) || !cos_sigma.add(sinU1U2)) {b_failed = true; break;}
+		sigma = sin_sigma;
+		if(!sigma.atan2(cos_sigma)) {b_failed = true; break;}
+		sin_a = lambda;
+		if(!sin_a.sin() || !sin_a.divide(sin_sigma) || !sin_a.multiply(cosU2) || !sin_a.multiply(cosU1)) {b_failed = true; break;}
+		cos2a = sin_a;
+		if(!cos2a.square() || !cos2a.negate() || !cos2a.add(1)) {b_failed = true; break;}
+		if(cos2a.isNonZero()) {
+			cos2sm = sinU1U2;
+			if(!cos2sm.divide(cos2a) || !cos2sm.multiply(-2) || !cos2sm.add(cos_sigma)) {b_failed = true; break;}
+		} else {
+			cos2sm.clear();
+		}
+		C = cos2a;
+		if(!C.multiply(-3) || !C.add(4) || !C.multiply(f) || !C.add(4) || !C.multiply(cos2a) || !C.multiply(f) || !C.divide(16)) {b_failed = true; break;}
+		tmp = lambda;
+		lambda = cos2sm;
+		if(!lambda.square() || !lambda.multiply(2) || !lambda.add(-1) || !lambda.multiply(cos_sigma) || !lambda.multiply(C) || !lambda.add(cos2sm) || !lambda.multiply(sin_sigma) || !lambda.multiply(C) || !lambda.add(sigma) || !lambda.multiply(sin_a) || !lambda.multiply(f) || !C.negate() || !C.add(1) || !lambda.multiply(C) || !lambda.add(L)) {b_failed = true; break;}
+		tmp2 = lambda;
+		if(!tmp2.abs()) {b_failed = true; break;}
+		if(antipodal && !tmp2.subtract(nr_pi)) {b_failed = true; break;}
+		if(tmp2 > nr_pi) {b_failed = true; break;}
+		tmp -= lambda; tmp.abs();
+		if(tmp < prec) break;
+		if(i > 200) {b_failed = true; break;}
+	}
+	if(!b_failed) {
+		Number b2(b);
+		Number u2(a);
+		if(!u2.square() || !b2.square() || !u2.subtract(b2) || !u2.divide(b2) || !u2.multiply(cos2a)) return 0;
+		Number A(u2);
+		if(!A.multiply(-175) || !A.add(320) || !A.multiply(u2) || !A.add(-768) || !A.multiply(u2) || !A.add(4096) || !A.multiply(u2) || !A.divide(16384) || !A.add(1)) b_failed = true;
+		Number B(u2);
+		if(b_failed || !B.multiply(-47) || !B.add(74) || !B.multiply(u2) || !B.add(-128) || !B.multiply(u2) || !B.add(256) || !B.multiply(u2) || !B.divide(1024)) b_failed = true;
+		Number cos2sm2(cos2sm);
+		if(b_failed || !cos2sm2.square()) b_failed = true;
+		Number sigma_delta(cos2sm2);
+		tmp = sin_sigma;
+		if(b_failed || !sigma_delta.multiply(4) || !sigma_delta.add(-3) || !tmp.square() || !tmp.multiply(4) || !tmp.add(-3) || !sigma_delta.multiply(tmp) || !sigma_delta.multiply(cos2sm) || !sigma_delta.multiply(B) || !sigma_delta.divide(-6) || !cos2sm2.multiply(2) || !cos2sm2.add(-1) || !cos2sm2.multiply(cos_sigma) || !sigma_delta.add(cos2sm2) || !sigma_delta.multiply(B) || !sigma_delta.divide(4) || !sigma_delta.add(cos2sm) || !sigma_delta.multiply(sin_sigma) || !sigma_delta.multiply(B)) b_failed = true;
+		Number s(sigma);
+		if(b_failed || !s.subtract(sigma_delta) || !s.multiply(A) || !s.multiply(b)) b_failed = true;
+		if(!b_failed) {
+			if(s > 1000000L) s.setUncertainty(nr_half);
+			else s.setRelativeUncertainty(Number(1, 2, -6));
+			mstruct = s;
+			Unit *unit_meter = CALCULATOR->getUnit("m");
+			if(unit_meter) mstruct *= unit_meter;
+		}
+	}
+	if(b_failed) {
+		Number a(ln2);
+		if(!a.subtract(ln1) || !a.divide(2) || !a.sin() || !a.square()) {CALCULATOR->endTemporaryStopIntervalArithmetic(); return 0;}
+		tmp = la1; if(!tmp.cos() || !a.multiply(tmp)) {CALCULATOR->endTemporaryStopIntervalArithmetic(); return 0;}
+		tmp = la2; if(!tmp.cos() || !a.multiply(tmp)) {CALCULATOR->endTemporaryStopIntervalArithmetic(); return 0;}
+		tmp = la2; if(!tmp.subtract(la1) || !tmp.divide(2) || !tmp.sin() || !tmp.square() || !a.add(tmp)) {CALCULATOR->endTemporaryStopIntervalArithmetic(); return 0;}
+		Number d(a);
+		if(!d.sqrt() || !a.negate() || !a.add(1) || !a.sqrt() || !d.atan2(a) || !d.multiply(2) || !d.multiply(6371) || !d.multiply(1000)) {CALCULATOR->endTemporaryStopIntervalArithmetic(); return 0;}
+		d.setRelativeUncertainty(Number(6, 1, -3));
+		mstruct = d;
+		Unit *unit_meter = CALCULATOR->getUnit("m");
+		if(unit_meter) mstruct *= unit_meter;
+	}
+	CALCULATOR->endTemporaryStopIntervalArithmetic();
+	return 1;
+}
+

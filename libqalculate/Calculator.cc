@@ -1697,6 +1697,8 @@ void Calculator::addBuiltinFunctions() {
 	f_igamma = addFunction(new IGammaFunction());
 	addFunction(new IncompleteBetaFunction());
 
+	addFunction(new GeographicDistanceFunction());
+
 	if(canPlot()) f_plot = addFunction(new PlotFunction());
 	else f_plot = NULL;
 
