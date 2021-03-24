@@ -1470,6 +1470,23 @@
         <_title>Roman number</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="geodistance">
+      <_title>Distance Between GPS Coordinates</_title>
+      <_names>r:geodistance,gpsdistance</_names>
+      <_description>Calculates the distance between two geodetic coordinates using Vincenty's formulae (with datum WGS 84), or, in case of failure, the Harvesine forumla. Each coordinate can be specified using a numerical value (representing decimal degrees), an angle (e.g. with degree unit), or a text string ending with N, S, E, or W (S represents negative latitude, W represents negative longitude).</_description>
+      <argument index="1">
+        <_title>Latitude 1</_title>
+      </argument>
+      <argument index="2">
+        <_title>Longitude 1</_title>
+      </argument>
+      <argument index="3">
+        <_title>Latitude 2</_title>
+      </argument>
+      <argument index="4">
+        <_title>Longitude 2</_title>
+      </argument>
+    </builtin_function>
     <function>
       <_title>Body Mass Index (BMI)</_title>
       <_names>-r:bmi</_names>
