@@ -1365,17 +1365,10 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 							if(p && p->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p)->exponent() < 0 && ((munit->isUnit() && munit->unit()->referenceName() == "t") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "t"))) {
 								Unit *u = (munit->isUnit() ? munit->unit() : (*munit)[0].unit());
 								if(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit()->referenceName() == "g" && ((AliasUnit*) u)->expression() == "1000000" && ((AliasUnit*) u)->firstBaseExponent() == 1) {
-									if(munit->isUnit()) {
-										CHILD(0).number() *= Number(1, 1, 6);
-										munit->setUnit(((AliasUnit*) u)->firstBaseUnit());
-										exp10 += 6;
-									} else {
-										Number nr(1, 1, 6);
-										nr ^= (*munit)[1].number();
-										CHILD(0).number() *= nr;
-										(*munit)[0].setUnit(((AliasUnit*) u)->firstBaseUnit());
-										exp10 += (*munit)[1].number() * 6;
-									}
+									CHILD(0).number() *= Number(1, 1, 6) ^ exp;
+									if(munit->isUnit()) munit->setUnit(((AliasUnit*) u)->firstBaseUnit());
+									else (*munit)[0].setUnit(((AliasUnit*) u)->firstBaseUnit());
+									exp10 += exp * 6;
 									p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp, po.use_all_prefixes));
 								}
 							}
@@ -1423,17 +1416,10 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 							if(p && p->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p)->exponent() < 0 && ((munit2->isUnit() && munit2->unit()->referenceName() == "t") || (munit2->isPower() && (*munit2)[0].unit()->referenceName() == "t"))) {
 								Unit *u = (munit2->isUnit() ? munit2->unit() : (*munit2)[0].unit());
 								if(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit()->referenceName() == "g" && ((AliasUnit*) u)->expression() == "1000000" && ((AliasUnit*) u)->firstBaseExponent() == 1) {
-									if(munit->isUnit()) {
-										CHILD(0).number() *= Number(1, 1, 6);
-										munit2->setUnit(((AliasUnit*) u)->firstBaseUnit());
-										exp10 += 6;
-									} else {
-										Number nr(1, 1, 6);
-										nr ^= (*munit2)[1].number();
-										CHILD(0).number() *= nr;
-										(*munit2)[0].setUnit(((AliasUnit*) u)->firstBaseUnit());
-										exp10 += (*munit2)[1].number() * 6;
-									}
+									CHILD(0).number() *= Number(1, 1, 6) ^ exp2;
+									if(munit2->isUnit()) munit2->setUnit(((AliasUnit*) u)->firstBaseUnit());
+									else (*munit2)[0].setUnit(((AliasUnit*) u)->firstBaseUnit());
+									exp10 += exp2 * 6;
 									p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp2) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp2, po.use_all_prefixes));
 								}
 							}
@@ -2455,14 +2441,14 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				}
 			}
 
-			if((o_number.isNegative() || ((parent || po.interval_display != INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) && o_number.isInterval() && o_number.isNonPositive())) && (po.base != BASE_CUSTOM || !CALCULATOR->customOutputBase().isNegative()) && (po.base > BASE_FP16 || po.base < BASE_FP80)) {
+			if((o_number.isNegative() || ((parent || po.interval_display != INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) && o_number.isInterval() && o_number.isNonPositive())) && (po.base != BASE_CUSTOM || !CALCULATOR->customOutputBase().isNegative()) && (po.base > BASE_FP16 || po.base < BASE_FP80) && (po.base < BASE_LATITUDE || po.base > BASE_LONGITUDE_2)) {
 				if((((po.base != 2 || !po.twos_complement) && (po.base != 16 || !po.hexadecimal_twos_complement)) || !o_number.isInteger()) && (!o_number.isMinusInfinity() || (parent && parent->isAddition()))) {
 					// a=-(-a), if a is a negative number (or a is interval from negative value to 0), and not using two's complement and not using negative number base
 					o_number.negate();
 					transform(STRUCT_NEGATE);
 					formatsub(po, parent, pindex, true, top_parent);
 				}
-			} else if((force_fraction || po.number_fraction_format >= FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS || po.number_fraction_format == FRACTION_DECIMAL_EXACT) && po.base > BASE_FP16 && po.base != BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (force_fraction || !o_number.isApproximate())) {
+			} else if((force_fraction || po.number_fraction_format >= FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS || po.number_fraction_format == FRACTION_DECIMAL_EXACT) && po.base > BASE_FP16 && po.base < BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (force_fraction || !o_number.isApproximate())) {
 				// split rational number in numerator and denominator, if display of fractions is requested for rational numbers and number base is not sexagesimal and number is not approximate
 
 				InternalPrintStruct ips_n;
@@ -3129,7 +3115,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
-			if(po.base == BASE_SEXAGESIMAL && SIZE == 2 && CHILD(0).isNumber() && CHILD(1).isUnit() && CHILD(1).unit() == CALCULATOR->getDegUnit()) {
+			if(po.base >= BASE_SEXAGESIMAL && SIZE == 2 && CHILD(0).isNumber() && CHILD(1).isUnit() && CHILD(1).unit() == CALCULATOR->getDegUnit()) {
 				print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
 				break;
 			}

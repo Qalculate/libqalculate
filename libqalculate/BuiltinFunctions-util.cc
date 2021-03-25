@@ -1284,6 +1284,7 @@ int GeographicDistanceFunction::calculate(MathStructure &mstruct, const MathStru
 		if(b_failed || !s.subtract(sigma_delta) || !s.multiply(A) || !s.multiply(b)) b_failed = true;
 		if(!b_failed) {
 			if(s > 1000000L) s.setUncertainty(nr_half);
+			else if(s < 1000) s.setUncertainty(Number(1, 2, -3));
 			else s.setRelativeUncertainty(Number(1, 2, -6));
 			mstruct = s;
 			Unit *unit_meter = CALCULATOR->getUnit("m");

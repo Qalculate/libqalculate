@@ -10399,7 +10399,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(ips.num) *ips.num = str;
 		return str;
 	}
-	if((po.base == BASE_SEXAGESIMAL || po.base == BASE_TIME) && isReal()) {
+	if((po.base >= BASE_SEXAGESIMAL || po.base == BASE_TIME) && isReal()) {
 		// sexagesimal base or time format
 
 		Number nr(*this);
@@ -10433,44 +10433,50 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			po2.use_max_decimals = true;
 			return print(po2, ips);
 		}
-		nr2.setApproximate(false);
-		nr2 *= 60;
-		nr2.trunc();
-
-		// third section: trunc((fractional part of (fractional part * 60)) * 60)
-		Number nr3(nr);
-		nr3.frac();
-		nr3 *= 60;
-		nr3.frac();
-		nr3.intervalToPrecision();
-		if(!nr3.isInterval()) {
-			nr3 *= 60;
-		} else if(!nr2.isInterval()) {
-			nr2 = nr;
-			nr2.frac();
-			nr2.intervalToPrecision();
+		string str3;
+		if(po.base == BASE_SEXAGESIMAL_2 || po.base == BASE_LATITUDE_2 || po.base == BASE_LONGITUDE_2) {
+			nr2 *= 60;
+		} else {
 			nr2.setApproximate(false);
 			nr2 *= 60;
-			nr2.round(po.round_halfway_to_even);
-		}
+			nr2.trunc();
 
-		po2.min_exp = 0;
-		string str3;
-		// do not show zero seconds in time format
-		if(!nr3.isInterval() && (!nr3.isZero() || po.base == BASE_SEXAGESIMAL)) {
-			str3 = nr3.print(po2);
-			// if 3rd section is rounded to 60, set to zero and increment 2nd section
-			if(str3.length() >= 2 && str3.substr(0, 2) == "60") {
-				str3[1] = '0';
-				str3.erase(0, 1);
-				nr2++;
-				if(nr2 == 60) {nr2.clear(); nr1++;}
+			// third section: trunc((fractional part of (fractional part * 60)) * 60)
+			Number nr3(nr);
+			nr3.frac();
+			nr3 *= 60;
+			nr3.frac();
+			nr3.intervalToPrecision();
+			if(!nr3.isInterval()) {
+				nr3 *= 60;
+				if(po.base == BASE_SEXAGESIMAL_3 || po.base == BASE_LATITUDE || po.base == BASE_LONGITUDE) nr3.round(po.round_halfway_to_even);
+			} else if(!nr2.isInterval()) {
+				nr2 = nr;
+				nr2.frac();
+				nr2.intervalToPrecision();
+				nr2.setApproximate(false);
+				nr2 *= 60;
+				nr2.round(po.round_halfway_to_even);
+			}
+
+			po2.min_exp = 0;
+			// do not show zero seconds in time format
+			if(!nr3.isInterval() && (!nr3.isZero() || po.base >= BASE_SEXAGESIMAL)) {
+				str3 = nr3.print(po2);
+				// if 3rd section is rounded to 60, set to zero and increment 2nd section
+				if(str3.length() >= 2 && str3.substr(0, 2) == "60") {
+					str3[1] = '0';
+					str3.erase(0, 1);
+					nr2++;
+					if(nr2 == 60) {nr2.clear(); nr1++;}
+				}
 			}
 		}
+
 		po2.min_exp = po.min_exp;
 		string str = nr1.print(po2);
 		po2.min_exp = 0;
-		if(po.base == BASE_SEXAGESIMAL) {
+		if(po.base != BASE_TIME) {
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DEGREE, po.can_display_unicode_string_arg))) {
 				str += SIGN_DEGREE;
 			} else {
@@ -10485,8 +10491,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				str += "0";
 			}
 		}
-		str += nr2.printNumerator(10, false);
-		if(po.base == BASE_SEXAGESIMAL) {
+		if(po.base == BASE_SEXAGESIMAL_2 || po.base == BASE_LATITUDE_2 || po.base == BASE_LONGITUDE_2) str += nr2.print(po2);
+		else str += nr2.printNumerator(10, false);
+		if(po.base != BASE_TIME) {
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("′", po.can_display_unicode_string_arg))) {
 				str += "′";
 			} else {
@@ -10501,7 +10508,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 			}
 			str += str3;
-			if(po.base == BASE_SEXAGESIMAL) {
+			if(po.base != BASE_TIME) {
 				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("″", po.can_display_unicode_string_arg))) {
 					str += "″";
 				} else {
@@ -10510,11 +10517,19 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		// add sign
-		if(ips.minus) {
-			*ips.minus = neg;
-		} else if(neg) {
-			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str.insert(0, SIGN_MINUS);
-			else str.insert(0, "-");
+		if(po.base == BASE_LONGITUDE || po.base == BASE_LONGITUDE_2) {
+			if(neg) str += " W";
+			else str += " E";
+		} else if(po.base == BASE_LATITUDE || po.base == BASE_LATITUDE_2) {
+			if(neg) str += " S";
+			else str += " N";
+		} else {
+			if(ips.minus) {
+				*ips.minus = neg;
+			} else if(neg) {
+				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str.insert(0, SIGN_MINUS);
+				else str.insert(0, "-");
+			}
 		}
 		if(ips.num) *ips.num = str;
 
@@ -10533,7 +10548,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 	if(po.base == BASE_CUSTOM) base = CALCULATOR->customOutputBase().intValue();
 	else if(po.base <= 1 && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_TIME) base = 10;
-	else if(po.base > 36 && po.base != BASE_SEXAGESIMAL) base = 36;
+	else if(po.base > 36 && po.base < BASE_SEXAGESIMAL) base = 36;
 	else base = po.base;
 
 	if(po.base == BASE_ROMAN_NUMERALS) {

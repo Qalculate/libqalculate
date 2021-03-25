@@ -122,6 +122,7 @@ enum {
 };
 
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
+#define EQUALS_IGNORECASE_AND_LOCAL_NR(x,y,z,a)	(equalsIgnoreCase(x, y a) || (x.length() == strlen(z) + strlen(a) && equalsIgnoreCase(x.substr(0, strlen(z)), z) && equalsIgnoreCase(x.substr(strlen(z)), a)))
 
 #define DO_WIN_FORMAT IsWindows10OrGreater()
 
@@ -670,6 +671,12 @@ void set_option(string str) {
 		else if(equalsIgnoreCase(svalue, "oct") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "octal", _("octal"))) v = BASE_OCTAL;
 		else if(equalsIgnoreCase(svalue, "dec") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "decimal", _("decimal"))) v = BASE_DECIMAL;
 		else if(equalsIgnoreCase(svalue, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "sexagesimal", _("sexagesimal"))) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
+		else if(equalsIgnoreCase(svalue, "sexa2") || EQUALS_IGNORECASE_AND_LOCAL_NR(svalue, "sexagesimal", _("sexagesimal"), "2")) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL_2;}
+		else if(equalsIgnoreCase(svalue, "sexa3") || EQUALS_IGNORECASE_AND_LOCAL_NR(svalue, "sexagesimal", _("sexagesimal"), "3")) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL_3;}
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "latitude", _("latitude"))) {if(b_in) v = 0; else v = BASE_LATITUDE;}
+		else if(EQUALS_IGNORECASE_AND_LOCAL_NR(svalue, "latitude", _("latitude"), "2")) {if(b_in) v = 0; else v = BASE_LATITUDE_2;}
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "longitude", _("longitude"))) {if(b_in) v = 0; else v = BASE_LONGITUDE;}
+		else if(EQUALS_IGNORECASE_AND_LOCAL_NR(svalue, "longitude", _("longitude"), "2")) {if(b_in) v = 0; else v = BASE_LONGITUDE_2;}
 		else if(!b_in && !b_out && (index = svalue.find_first_of(SPACES)) != string::npos) {
 			str = svalue;
 			svalue = str.substr(index + 1, str.length() - (index + 1));
@@ -2983,6 +2990,36 @@ int main(int argc, char *argv[]) {
 				printops.base = BASE_SEXAGESIMAL;
 				setResult(NULL, false);
 				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "sexa2") || EQUALS_IGNORECASE_AND_LOCAL_NR(str, "sexagesimal", _("sexagesimal"), "2")) {
+				int save_base = printops.base;
+				printops.base = BASE_SEXAGESIMAL_2;
+				setResult(NULL, false);
+				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "sexa3") || EQUALS_IGNORECASE_AND_LOCAL_NR(str, "sexagesimal", _("sexagesimal"), "3")) {
+				int save_base = printops.base;
+				printops.base = BASE_SEXAGESIMAL_3;
+				setResult(NULL, false);
+				printops.base = save_base;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "longitude", _("longitude"))) {
+				int save_base = printops.base;
+				printops.base = BASE_LONGITUDE;
+				setResult(NULL, false);
+				printops.base = save_base;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL_NR(str, "longitude", _("longitude"), "2")) {
+				int save_base = printops.base;
+				printops.base = BASE_LONGITUDE_2;
+				setResult(NULL, false);
+				printops.base = save_base;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "latitude", _("latitude"))) {
+				int save_base = printops.base;
+				printops.base = BASE_LATITUDE;
+				setResult(NULL, false);
+				printops.base = save_base;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL_NR(str, "latitude", _("latitude"), "2")) {
+				int save_base = printops.base;
+				printops.base = BASE_LATITUDE_2;
+				setResult(NULL, false);
+				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "fp32") || equalsIgnoreCase(str, "binary32") || equalsIgnoreCase(str, "float")) {
 				int save_base = printops.base;
 				printops.base = BASE_FP32;
@@ -3414,6 +3451,12 @@ int main(int argc, char *argv[]) {
 				case BASE_ROMAN_NUMERALS: {str += _("roman"); break;}
 				case BASE_BIJECTIVE_26: {str += _("bijective"); break;}
 				case BASE_SEXAGESIMAL: {str += _("sexagesimal"); break;}
+				case BASE_SEXAGESIMAL_2: {str += _("sexagesimal"); str += " (2)"; break;}
+				case BASE_SEXAGESIMAL_3: {str += _("sexagesimal"); str += " (3)"; break;}
+				case BASE_LATITUDE: {str += _("latitude"); break;}
+				case BASE_LATITUDE_2: {str += _("latitude"); str += " (2)"; break;}
+				case BASE_LONGITUDE: {str += _("longitude"); break;}
+				case BASE_LONGITUDE_2: {str += _("longitude"); str += " (2)"; break;}
 				case BASE_FP16: {str += "fp16"; break;}
 				case BASE_FP32: {str += "fp32"; break;}
 				case BASE_FP64: {str += "fp64"; break;}
@@ -4200,7 +4243,7 @@ int main(int argc, char *argv[]) {
 				str += ", "; str += _("hex");
 				if(printops.base == BASE_HEXADECIMAL) str += "*";
 				str += ", "; str += _("sexa");
-				if(printops.base == BASE_SEXAGESIMAL) str += "*";
+				if(printops.base >= BASE_SEXAGESIMAL) str += "*";
 				str += ", "; str += _("time");
 				if(printops.base == BASE_TIME) str += "*";
 				str += ", "; str += _("roman");
@@ -4520,7 +4563,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- duo / duodecimal (show as duodecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex / hexadecimal (show as hexadecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex# (show as hexadecimal number with specified number of bits)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- sex / sexagesimal (show as sexagesimal number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- sexa / sexa2 / sexagesimal / longitude / latitude (show as sexagesimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bijective (shown in bijective base-26)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- fp16, fp32, fp64, fp80, fp128 (show in binary floating-point format)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- roman (show as roman numerals)"));
@@ -5393,8 +5436,20 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					printops.base = BASE_ROMAN_NUMERALS;
 				} else if(equalsIgnoreCase(to_str, "bijective") || equalsIgnoreCase(to_str, _("bijective"))) {
 					printops.base = BASE_BIJECTIVE_26;
-				} else if(equalsIgnoreCase(to_str, "sexa") || equalsIgnoreCase(to_str, "sexagesimal") || equalsIgnoreCase(to_str, _("sexagesimal"))) {
+				} else if(equalsIgnoreCase(to_str, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "sexagesimal", _("sexagesimal"))) {
 					printops.base = BASE_SEXAGESIMAL;
+				} else if(equalsIgnoreCase(to_str, "sexa2") || EQUALS_IGNORECASE_AND_LOCAL_NR(to_str, "sexagesimal", _("sexagesimal"), "2")) {
+					printops.base = BASE_SEXAGESIMAL_2;
+				} else if(equalsIgnoreCase(to_str, "sexa3") || EQUALS_IGNORECASE_AND_LOCAL_NR(to_str, "sexagesimal", _("sexagesimal"), "3")) {
+					printops.base = BASE_SEXAGESIMAL_3;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "longitude", _("longitude"))) {
+					printops.base = BASE_LONGITUDE;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL_NR(to_str, "longitude", _("longitude"), "2")) {
+					printops.base = BASE_LONGITUDE_2;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "latitude", _("latitude"))) {
+					printops.base = BASE_LATITUDE;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL_NR(to_str, "latitude", _("latitude"), "2")) {
+					printops.base = BASE_LATITUDE_2;
 				} else if(equalsIgnoreCase(to_str, "fp32") || equalsIgnoreCase(to_str, "binary32") || equalsIgnoreCase(to_str, "float")) {
 					printops.base = BASE_FP32;
 				} else if(equalsIgnoreCase(to_str, "fp64") || equalsIgnoreCase(to_str, "binary64") || equalsIgnoreCase(to_str, "double")) {
