@@ -61,16 +61,31 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 		Number last_nonobsolete_nr = nr;
 		Number nr_one(1, 1);
 		Number nr_ten(10, 1);
-		while(eo.mixed_units_conversion > MIXED_UNITS_CONVERSION_DOWNWARDS && nr.isGreaterThan(nr_one)) {
+		MixedUnitsConversion muc = eo.mixed_units_conversion;
+		while(muc > MIXED_UNITS_CONVERSION_DOWNWARDS && nr.isGreaterThan(nr_one)) {
 			Unit *best_u = NULL;
 			Number best_nr;
 			int best_priority = 0;
+			if(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseExponent() == 1 && ((AliasUnit*) u)->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT) {
+				size_t idiv = ((AliasUnit*) u)->expression().find("1" DIVISION);
+				if(idiv == 0 && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS, 2) == string::npos) {
+					if((((AliasUnit*) u)->mixWithBase() > 0 || (((AliasUnit*) u)->mixWithBase() == 0 && (muc == MIXED_UNITS_CONVERSION_FORCE_INTEGER || muc == MIXED_UNITS_CONVERSION_FORCE_ALL))) && (((AliasUnit*) u)->mixWithBaseMinimum() <= 1 || nr.isGreaterThanOrEqualTo(((AliasUnit*) u)->mixWithBaseMinimum()))) {
+						best_u = ((AliasUnit*) u)->firstBaseUnit();
+						MathStructure mstruct_nr(nr);
+						MathStructure m_exp(m_one);
+						((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
+						mstruct_nr.eval(eo);
+						if(!mstruct_nr.isNumber() || !m_exp.isOne() || !mstruct_nr.number().isLessThan(nr) || !mstruct_nr.number().isGreaterThanOrEqualTo(nr_one)) best_u = NULL;
+						else best_nr = mstruct_nr.number();
+					}
+				}
+			}
 			for(size_t i = 0; i < units.size(); i++) {
 				Unit *ui = units[i];
 				if(ui->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ui)->firstBaseUnit() == u  && ((AliasUnit*) ui)->firstBaseExponent() == 1) {
 					AliasUnit *aui = (AliasUnit*) ui;
 					int priority_i = aui->mixWithBase();
-					if(((priority_i > 0 && (!best_u || priority_i <= best_priority)) || (best_priority == 0 && priority_i == 0 && ((eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && aui->expression().find_first_not_of(NUMBERS) == string::npos) || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL))) && (aui->mixWithBaseMinimum() <= 1 || nr.isGreaterThanOrEqualTo(aui->mixWithBaseMinimum()))) {
+					if(((priority_i > 0 && (!best_u || priority_i <= best_priority)) || (best_priority == 0 && priority_i == 0 && ((muc == MIXED_UNITS_CONVERSION_FORCE_INTEGER && aui->expression().find_first_not_of(NUMBERS) == string::npos) || muc == MIXED_UNITS_CONVERSION_FORCE_ALL))) && (aui->mixWithBaseMinimum() <= 1 || nr.isGreaterThanOrEqualTo(aui->mixWithBaseMinimum()))) {
 						MathStructure mstruct_nr(nr);
 						MathStructure m_exp(m_one);
 						aui->convertFromFirstBaseUnit(mstruct_nr, m_exp);
@@ -84,6 +99,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 				}
 			}
 			if(!best_u) break;
+			if(best_priority != 0 && muc > MIXED_UNITS_CONVERSION_DEFAULT) muc = MIXED_UNITS_CONVERSION_DEFAULT;
 			u = best_u;
 			nr = best_nr;
 			if(accept_obsolete || best_priority <= 1) {
@@ -98,31 +114,74 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 			mstruct_new[0].set(last_nonobsolete_nr);
 			mstruct_new[1].set(u, p);
 		}
-		while(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT && ((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() != 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos)) && !nr.isInteger() && !nr.isZero()) {
+		while((u->subtype() == SUBTYPE_BASE_UNIT || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT && ((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() != 0 || muc == MIXED_UNITS_CONVERSION_FORCE_ALL || muc == MIXED_UNITS_CONVERSION_FORCE_INTEGER))) && !nr.isInteger() && nr.isNonZero()) {
 			Number int_nr(nr);
 			int_nr.intervalToMidValue();
 			int_nr.trunc();
-			if(eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP && int_nr.isZero()) break;
+			if(muc == MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP && int_nr.isZero()) break;
 			nr -= int_nr;
-			MathStructure mstruct_nr(nr);
-			MathStructure m_exp(m_one);
-			((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
-			mstruct_nr.eval(eo);
-			while(!accept_obsolete && ((AliasUnit*) u)->firstBaseUnit()->subtype() == SUBTYPE_ALIAS_UNIT && abs(((AliasUnit*) ((AliasUnit*) u)->firstBaseUnit())->mixWithBase()) > 1) {
-				u = ((AliasUnit*) u)->firstBaseUnit();
-				if(((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() != 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos))) {
-					((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
-					mstruct_nr.eval(eo);
-					if(!mstruct_nr.isNumber() || !m_exp.isOne()) break;
-				} else {
-					mstruct_nr.setUndefined();
-					break;
+			bool b = false;
+			Number best_nr;
+			Unit *best_u = NULL;
+			bool non_int = false;
+			if(u->subtype() == SUBTYPE_ALIAS_UNIT && (muc == MIXED_UNITS_CONVERSION_FORCE_ALL || (((AliasUnit*) u)->expression().find_first_not_of(NUMBERS)))) {
+				MathStructure mstruct_nr(nr);
+				MathStructure m_exp(m_one);
+				((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
+				mstruct_nr.eval(eo);
+				while(!accept_obsolete && ((AliasUnit*) u)->firstBaseUnit()->subtype() == SUBTYPE_ALIAS_UNIT && abs(((AliasUnit*) ((AliasUnit*) u)->firstBaseUnit())->mixWithBase()) > 1) {
+					u = ((AliasUnit*) u)->firstBaseUnit();
+					if(((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() != 0 || muc == MIXED_UNITS_CONVERSION_FORCE_ALL || (muc == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos))) {
+						((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
+						mstruct_nr.eval(eo);
+						if(!mstruct_nr.isNumber() || !m_exp.isOne()) break;
+					} else {
+						mstruct_nr.setUndefined();
+						break;
+					}
+				}
+				if(mstruct_nr.isNumber() && m_exp.isOne()) {
+					if(mstruct_nr.number().isLessThanOrEqualTo(nr)) {
+						if(muc == MIXED_UNITS_CONVERSION_FORCE_ALL) {
+							best_u = ((AliasUnit*) u)->firstBaseUnit();
+							best_nr = mstruct_nr.number();
+							non_int = true;
+						}
+					} else {
+						u = ((AliasUnit*) u)->firstBaseUnit();
+						nr = mstruct_nr.number();
+						b = true;
+						if(((AliasUnit*) u)->mixWithBase() != 0 && muc > MIXED_UNITS_CONVERSION_DEFAULT) muc = MIXED_UNITS_CONVERSION_DEFAULT;
+					}
 				}
 			}
-			if(!mstruct_nr.isNumber() || !m_exp.isOne()) break;
-			if(eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL && mstruct_nr.number().isLessThanOrEqualTo(nr)) break;
-			u = ((AliasUnit*) u)->firstBaseUnit();
-			nr = mstruct_nr.number();
+			if(!b) {
+				Number best_nr;
+				int best_priority = 0;
+				for(size_t i = 0; i < units.size(); i++) {
+					Unit *ui = units[i];
+					if(ui->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ui)->firstBaseUnit() == u && ((AliasUnit*) ui)->firstBaseExponent() == 1) {
+						AliasUnit *aui = (AliasUnit*) ui;
+						int priority_i = aui->mixWithBase();
+						if(aui->expression().find("1" DIVISION) == 0 && aui->expression().find_first_not_of(NUMBERS DIVISION, 2) == string::npos && ((priority_i > 0 && (!best_u || priority_i <= best_priority)) || (best_priority == 0 && priority_i == 0 && (muc == MIXED_UNITS_CONVERSION_FORCE_INTEGER || muc == MIXED_UNITS_CONVERSION_FORCE_ALL)))) {
+							MathStructure mstruct_nr(nr);
+							MathStructure m_exp(m_one);
+							aui->convertFromFirstBaseUnit(mstruct_nr, m_exp);
+							mstruct_nr.eval(eo);
+							if(mstruct_nr.isNumber() && m_exp.isOne() && mstruct_nr.number().isGreaterThan(nr) && mstruct_nr.number().isGreaterThanOrEqualTo(nr_one) && (!best_u || non_int || mstruct_nr.number().isLessThan(best_nr))) {
+								non_int = false;
+								best_u = ui;
+								best_nr = mstruct_nr.number();
+								best_priority = priority_i;
+							}
+						}
+					}
+				}
+				if(!best_u) break;
+				if(best_priority != 0 && muc > MIXED_UNITS_CONVERSION_DEFAULT) muc = MIXED_UNITS_CONVERSION_DEFAULT;
+				u = best_u;
+				nr = best_nr;
+			}
 			MathStructure mstruct_term;
 			if(negated) {
 				Number pos_nr(nr);

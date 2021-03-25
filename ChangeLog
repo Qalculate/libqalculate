@@ -1,3 +1,13 @@
+2021-03-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add sexagesimal variants (sexa2, sexa3, longitude, longitude2, latitude, latitude2)
+
+2021-03-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add function for distance between GPS coordinates (geodistance)
+	* Loosen rules for parsing " and ' as arcminutes and arcseconds
+	* Do not append degrees at end of sexagesimal output
+
 2021-03-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add support for solving equalities and inequalities with error functions (erf(), erfc(), erfi(), erfinv())
