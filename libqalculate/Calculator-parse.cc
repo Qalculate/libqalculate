@@ -937,6 +937,42 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		i_mod = str.find("%", i_mod + 1);
 	}
 
+	size_t i_dx = str.find("dx", 4);
+	while(i_dx != string::npos) {
+		i_dx++;
+		if(i_dx == str.length() - 1 || is_in(NUMBERS NOT_IN_NAMES, str[i_dx + 1])) {
+			size_t l_dx = 2;
+			if(i_dx > 4 && str[i_dx - 2] == SPACE_CH) l_dx++;
+			if(str[i_dx - l_dx] == DIVISION_CH) {
+				l_dx++;
+				if(i_dx - l_dx > 0 && str[i_dx - l_dx] == SPACE_CH) l_dx++;
+				if(i_dx - l_dx > 0 && str[i_dx - l_dx] == RIGHT_PARENTHESIS_CH) {
+					size_t i_par = 1;
+					size_t i_d = 0;
+					for(i_d = i_dx - l_dx - 1; i_d > 0; i_d--) {
+						if(str[i_d] == RIGHT_PARENTHESIS_CH) {
+							i_par++;
+						} else if(str[i_d] == LEFT_PARENTHESIS_CH) {
+							i_par--;
+							if(i_par == 0) break;
+						}
+					}
+					if(i_par == 0) {
+						i_d--;
+						if(i_d > 0 && str[i_d] == SPACE_CH) i_d--;
+						if(str[i_d] == 'd') {
+							i_dx += (str[i_d + 1] == SPACE_CH ? 2 : 3);
+							str.replace(i_d, str[i_d + 1] == SPACE_CH ? 2 : 1, "diff");
+							str.replace(i_dx - l_dx, l_dx + 1, COMMA "x" RIGHT_PARENTHESIS);
+							i_dx += 2;
+						}
+					}
+				}
+			}
+		}
+		i_dx = str.find("dx", i_dx + 1);
+	}
+
 	if(po.parsing_mode == PARSING_MODE_RPN) {
 		// add space between double operators in rpn mode in order to ensure that they are interpreted as two single operators
 		gsub("&&", "& &", str);
