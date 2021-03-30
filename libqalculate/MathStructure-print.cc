@@ -2448,7 +2448,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					transform(STRUCT_NEGATE);
 					formatsub(po, parent, pindex, true, top_parent);
 				}
-			} else if((force_fraction || po.number_fraction_format >= FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS || po.number_fraction_format == FRACTION_DECIMAL_EXACT) && po.base > BASE_FP16 && po.base < BASE_SEXAGESIMAL && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (force_fraction || !o_number.isApproximate())) {
+			} else if((force_fraction || po.number_fraction_format >= FRACTION_FRACTIONAL || po.base == BASE_ROMAN_NUMERALS || po.number_fraction_format == FRACTION_DECIMAL_EXACT) && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && o_number.isRational() && !o_number.isInteger() && (force_fraction || !o_number.isApproximate())) {
 				// split rational number in numerator and denominator, if display of fractions is requested for rational numbers and number base is not sexagesimal and number is not approximate
 
 				InternalPrintStruct ips_n;
@@ -3115,7 +3115,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
-			if(po.base >= BASE_SEXAGESIMAL && SIZE == 2 && CHILD(0).isNumber() && CHILD(1).isUnit() && CHILD(1).unit() == CALCULATOR->getDegUnit()) {
+			if(BASE_IS_SEXAGESIMAL(po.base) && SIZE == 2 && CHILD(0).isNumber() && CHILD(1).isUnit() && CHILD(1).unit() == CALCULATOR->getDegUnit()) {
 				print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
 				break;
 			}

@@ -10399,7 +10399,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(ips.num) *ips.num = str;
 		return str;
 	}
-	if((po.base >= BASE_SEXAGESIMAL || po.base == BASE_TIME) && isReal()) {
+	if((BASE_IS_SEXAGESIMAL(po.base) || po.base == BASE_TIME) && isReal()) {
 		// sexagesimal base or time format
 
 		Number nr(*this);
@@ -10449,7 +10449,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			nr3.intervalToPrecision();
 			if(!nr3.isInterval()) {
 				nr3 *= 60;
-				if(po.base == BASE_SEXAGESIMAL_3 || po.base == BASE_LATITUDE || po.base == BASE_LONGITUDE) nr3.round(po.round_halfway_to_even);
+				if((po.base == BASE_SEXAGESIMAL_3 || po.base == BASE_LATITUDE || po.base == BASE_LONGITUDE) && !nr3.isInteger()) {
+					nr3.round(po.round_halfway_to_even);
+					if(po.is_approximate) *po.is_approximate = true;
+				}
 			} else if(!nr2.isInterval()) {
 				nr2 = nr;
 				nr2.frac();
@@ -10461,7 +10464,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 			po2.min_exp = 0;
 			// do not show zero seconds in time format
-			if(!nr3.isInterval() && (!nr3.isZero() || po.base >= BASE_SEXAGESIMAL)) {
+			if(!nr3.isInterval() && (!nr3.isZero() || BASE_IS_SEXAGESIMAL(po.base))) {
 				str3 = nr3.print(po2);
 				// if 3rd section is rounded to 60, set to zero and increment 2nd section
 				if(str3.length() >= 2 && str3.substr(0, 2) == "60") {
@@ -10548,7 +10551,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 	if(po.base == BASE_CUSTOM) base = CALCULATOR->customOutputBase().intValue();
 	else if(po.base <= 1 && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_TIME) base = 10;
-	else if(po.base > 36 && po.base < BASE_SEXAGESIMAL) base = 36;
+	else if(po.base > 36 && !BASE_IS_SEXAGESIMAL(po.base)) base = 36;
 	else base = po.base;
 
 	if(po.base == BASE_ROMAN_NUMERALS) {

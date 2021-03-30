@@ -124,7 +124,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 			Number best_nr;
 			Unit *best_u = NULL;
 			bool non_int = false;
-			if(u->subtype() == SUBTYPE_ALIAS_UNIT && (muc == MIXED_UNITS_CONVERSION_FORCE_ALL || (((AliasUnit*) u)->expression().find_first_not_of(NUMBERS)))) {
+			if(u->subtype() == SUBTYPE_ALIAS_UNIT && (muc == MIXED_UNITS_CONVERSION_FORCE_ALL || (((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos))) {
 				MathStructure mstruct_nr(nr);
 				MathStructure m_exp(m_one);
 				((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
@@ -488,7 +488,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 						mstruct_new = mtest;
 					} else if(!cu || (cu->countUnits() == 1 && (cu->get(1, &exp) && exp == 1))) {
 						mtest = mbak;
-						while(true) {
+						while(exp > -10) {
 							mtest.multiply_nocopy(new MathStructure(to_unit, NULL));
 							mtest.eval(eo2);
 							size_t ntest = count_unit_powers(mtest);
@@ -500,7 +500,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 						}
 						if(exp == 1) {
 							mtest = mstruct_new;
-							while(true) {
+							while(exp < 10) {
 								mtest.divide_nocopy(new MathStructure(to_unit, NULL));
 								mtest.eval(eo2);
 								size_t ntest = count_unit_powers(mtest);

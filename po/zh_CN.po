@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate 3.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-22 10:21+0100\n"
+"POT-Creation-Date: 2021-03-30 10:29+0200\n"
 "PO-Revision-Date: 2021-01-20 20:10+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -20,12 +20,12 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "X-Generator: Gtranslator 3.38.0\n"
 
-#: ../src/defs2doc.cc:333 ../src/qalc.cc:3750 ../libqalculate/Function.cc:222
+#: ../src/defs2doc.cc:333 ../src/qalc.cc:3793 ../libqalculate/Function.cc:222
 #: ../libqalculate/Function.cc:1375
 msgid "argument"
 msgstr "参数"
 
-#: ../src/defs2doc.cc:356 ../src/qalc.cc:3773
+#: ../src/defs2doc.cc:356 ../src/qalc.cc:3816
 #, c-format
 msgid ""
 "Retrieves data from the %s data set for a given object and property. If "
@@ -34,37 +34,37 @@ msgstr ""
 "从数据集 %s 中为给定的标量和属性读取数据。如果将\"info\"作为属性，则将列出对"
 "象的全部属性。"
 
-#: ../src/defs2doc.cc:363 ../src/qalc.cc:3782
+#: ../src/defs2doc.cc:363 ../src/qalc.cc:3825
 msgid "Example:"
 msgstr "例如:"
 
-#: ../src/defs2doc.cc:371 ../src/qalc.cc:3791
+#: ../src/defs2doc.cc:371 ../src/qalc.cc:3834
 msgid "Arguments"
 msgstr "参数"
 
 #. optional argument, in description
-#: ../src/defs2doc.cc:388 ../src/qalc.cc:3813
+#: ../src/defs2doc.cc:388 ../src/qalc.cc:3856
 msgid "optional"
 msgstr "可选"
 
 #. argument default, in description
-#: ../src/defs2doc.cc:391 ../src/qalc.cc:3817
+#: ../src/defs2doc.cc:391 ../src/qalc.cc:3860
 msgid "default: "
 msgstr "默认:"
 
-#: ../src/defs2doc.cc:404 ../src/qalc.cc:3828
+#: ../src/defs2doc.cc:404 ../src/qalc.cc:3871
 msgid "Requirement"
 msgstr "要求"
 
-#: ../src/defs2doc.cc:413 ../src/qalc.cc:3841
+#: ../src/defs2doc.cc:413 ../src/qalc.cc:3884
 msgid "Properties"
 msgstr "属性"
 
-#: ../src/defs2doc.cc:429 ../src/qalc.cc:3856
+#: ../src/defs2doc.cc:429 ../src/qalc.cc:3899
 msgid "key"
 msgstr "键"
 
-#: ../src/defs2doc.cc:461 ../src/qalc.cc:3975
+#: ../src/defs2doc.cc:461 ../src/qalc.cc:4018
 msgid "a previous result"
 msgstr "之前的结果"
 
@@ -96,91 +96,91 @@ msgstr "当前日期和时间"
 msgid "current computer uptime"
 msgstr "计算机当前运行时间"
 
-#: ../src/defs2doc.cc:480 ../src/defs2doc.cc:579 ../src/qalc.cc:1682
+#: ../src/defs2doc.cc:480 ../src/defs2doc.cc:579 ../src/qalc.cc:1689
 msgid "relative uncertainty"
 msgstr "相对不确定度"
 
-#: ../src/defs2doc.cc:495 ../src/qalc.cc:1704 ../src/qalc.cc:3982
+#: ../src/defs2doc.cc:495 ../src/qalc.cc:1711 ../src/qalc.cc:4025
 #: ../libqalculate/Function.cc:2147
 msgid "matrix"
 msgstr "matrix"
 
-#: ../src/defs2doc.cc:497 ../src/qalc.cc:1706 ../src/qalc.cc:3984
+#: ../src/defs2doc.cc:497 ../src/qalc.cc:1713 ../src/qalc.cc:4027
 #: ../libqalculate/Function.cc:2083
 msgid "vector"
 msgstr "vector"
 
-#: ../src/defs2doc.cc:505 ../src/qalc.cc:284 ../src/qalc.cc:730
-#: ../src/qalc.cc:1723 ../src/qalc.cc:3310 ../src/qalc.cc:3994
-#: ../src/qalc.cc:4135 ../src/qalc.cc:4371
+#: ../src/defs2doc.cc:505 ../src/qalc.cc:285 ../src/qalc.cc:737
+#: ../src/qalc.cc:1730 ../src/qalc.cc:3347 ../src/qalc.cc:4037
+#: ../src/qalc.cc:4178 ../src/qalc.cc:4414
 msgid "positive"
 msgstr "positive"
 
-#: ../src/defs2doc.cc:506 ../src/qalc.cc:290 ../src/qalc.cc:731
-#: ../src/qalc.cc:1724 ../src/qalc.cc:3311 ../src/qalc.cc:3995
-#: ../src/qalc.cc:4139 ../src/qalc.cc:4375
+#: ../src/defs2doc.cc:506 ../src/qalc.cc:291 ../src/qalc.cc:738
+#: ../src/qalc.cc:1731 ../src/qalc.cc:3348 ../src/qalc.cc:4038
+#: ../src/qalc.cc:4182 ../src/qalc.cc:4418
 msgid "non-positive"
 msgstr "non-positive"
 
-#: ../src/defs2doc.cc:507 ../src/qalc.cc:288 ../src/qalc.cc:732
-#: ../src/qalc.cc:1725 ../src/qalc.cc:3312 ../src/qalc.cc:3996
-#: ../src/qalc.cc:4137 ../src/qalc.cc:4373
+#: ../src/defs2doc.cc:507 ../src/qalc.cc:289 ../src/qalc.cc:739
+#: ../src/qalc.cc:1732 ../src/qalc.cc:3349 ../src/qalc.cc:4039
+#: ../src/qalc.cc:4180 ../src/qalc.cc:4416
 msgid "negative"
 msgstr "negative"
 
-#: ../src/defs2doc.cc:508 ../src/qalc.cc:286 ../src/qalc.cc:733
-#: ../src/qalc.cc:1726 ../src/qalc.cc:3313 ../src/qalc.cc:3997
-#: ../src/qalc.cc:4141 ../src/qalc.cc:4377
+#: ../src/defs2doc.cc:508 ../src/qalc.cc:287 ../src/qalc.cc:740
+#: ../src/qalc.cc:1733 ../src/qalc.cc:3350 ../src/qalc.cc:4040
+#: ../src/qalc.cc:4184 ../src/qalc.cc:4420
 msgid "non-negative"
 msgstr "non-negative"
 
-#: ../src/defs2doc.cc:509 ../src/qalc.cc:282 ../src/qalc.cc:734
-#: ../src/qalc.cc:1727 ../src/qalc.cc:3314 ../src/qalc.cc:3998
-#: ../src/qalc.cc:4133 ../src/qalc.cc:4369
+#: ../src/defs2doc.cc:509 ../src/qalc.cc:283 ../src/qalc.cc:741
+#: ../src/qalc.cc:1734 ../src/qalc.cc:3351 ../src/qalc.cc:4041
+#: ../src/qalc.cc:4176 ../src/qalc.cc:4412
 msgid "non-zero"
 msgstr "non-zero"
 
-#: ../src/defs2doc.cc:514 ../src/qalc.cc:280 ../src/qalc.cc:739
-#: ../src/qalc.cc:1732 ../src/qalc.cc:3319 ../src/qalc.cc:4003
-#: ../src/qalc.cc:4149 ../src/qalc.cc:4385 ../libqalculate/Function.cc:1939
+#: ../src/defs2doc.cc:514 ../src/qalc.cc:281 ../src/qalc.cc:746
+#: ../src/qalc.cc:1739 ../src/qalc.cc:3356 ../src/qalc.cc:4046
+#: ../src/qalc.cc:4192 ../src/qalc.cc:4428 ../libqalculate/Function.cc:1939
 msgid "integer"
 msgstr "integer"
 
-#: ../src/defs2doc.cc:515 ../src/qalc.cc:278 ../src/qalc.cc:740
-#: ../src/qalc.cc:1733 ../src/qalc.cc:3320 ../src/qalc.cc:4004
-#: ../src/qalc.cc:4147 ../src/qalc.cc:4383
+#: ../src/defs2doc.cc:515 ../src/qalc.cc:279 ../src/qalc.cc:747
+#: ../src/qalc.cc:1740 ../src/qalc.cc:3357 ../src/qalc.cc:4047
+#: ../src/qalc.cc:4190 ../src/qalc.cc:4426
 msgid "rational"
 msgstr "rational"
 
-#: ../src/defs2doc.cc:516 ../src/qalc.cc:274 ../src/qalc.cc:741
-#: ../src/qalc.cc:1734 ../src/qalc.cc:3321 ../src/qalc.cc:4005
-#: ../src/qalc.cc:4145 ../src/qalc.cc:4381
+#: ../src/defs2doc.cc:516 ../src/qalc.cc:275 ../src/qalc.cc:748
+#: ../src/qalc.cc:1741 ../src/qalc.cc:3358 ../src/qalc.cc:4048
+#: ../src/qalc.cc:4188 ../src/qalc.cc:4424
 msgid "real"
 msgstr "real"
 
-#: ../src/defs2doc.cc:517 ../src/qalc.cc:742 ../src/qalc.cc:1735
-#: ../src/qalc.cc:3322 ../src/qalc.cc:4006
+#: ../src/defs2doc.cc:517 ../src/qalc.cc:749 ../src/qalc.cc:1742
+#: ../src/qalc.cc:3359 ../src/qalc.cc:4049
 msgid "complex"
 msgstr "complex"
 
-#: ../src/defs2doc.cc:518 ../src/qalc.cc:276 ../src/qalc.cc:743
-#: ../src/qalc.cc:1736 ../src/qalc.cc:3323 ../src/qalc.cc:4007
-#: ../src/qalc.cc:4143 ../src/qalc.cc:4379 ../libqalculate/Function.cc:1778
+#: ../src/defs2doc.cc:518 ../src/qalc.cc:277 ../src/qalc.cc:750
+#: ../src/qalc.cc:1743 ../src/qalc.cc:3360 ../src/qalc.cc:4050
+#: ../src/qalc.cc:4186 ../src/qalc.cc:4422 ../libqalculate/Function.cc:1778
 msgid "number"
 msgstr "number"
 
-#: ../src/defs2doc.cc:519 ../src/qalc.cc:744 ../src/qalc.cc:1737
-#: ../src/qalc.cc:3324 ../src/qalc.cc:4008
+#: ../src/defs2doc.cc:519 ../src/qalc.cc:751 ../src/qalc.cc:1744
+#: ../src/qalc.cc:3361 ../src/qalc.cc:4051
 msgid "non-matrix"
 msgstr "non-matrix"
 
-#: ../src/defs2doc.cc:522 ../src/qalc.cc:268 ../src/qalc.cc:747
-#: ../src/qalc.cc:1740 ../src/qalc.cc:3327 ../src/qalc.cc:4011
-#: ../src/qalc.cc:4131 ../src/qalc.cc:4367
+#: ../src/defs2doc.cc:522 ../src/qalc.cc:269 ../src/qalc.cc:754
+#: ../src/qalc.cc:1747 ../src/qalc.cc:3364 ../src/qalc.cc:4054
+#: ../src/qalc.cc:4174 ../src/qalc.cc:4410
 msgid "unknown"
 msgstr "unknown"
 
-#: ../src/defs2doc.cc:524 ../src/qalc.cc:1742 ../src/qalc.cc:4013
+#: ../src/defs2doc.cc:524 ../src/qalc.cc:1749 ../src/qalc.cc:4056
 msgid "default assumptions"
 msgstr "默认假设"
 
@@ -189,15 +189,15 @@ msgid "variable precision"
 msgstr "变量精度"
 
 #. qalc command
-#: ../src/defs2doc.cc:534 ../src/defs2doc.cc:586 ../src/qalc.cc:983
-#: ../src/qalc.cc:1698 ../src/qalc.cc:1715 ../src/qalc.cc:2920
-#: ../src/qalc.cc:3352 ../src/qalc.cc:3623 ../src/qalc.cc:3925
-#: ../src/qalc.cc:3935 ../src/qalc.cc:4039 ../src/qalc.cc:4160
-#: ../src/qalc.cc:4497 ../src/qalc.cc:4586
+#: ../src/defs2doc.cc:534 ../src/defs2doc.cc:586 ../src/qalc.cc:990
+#: ../src/qalc.cc:1705 ../src/qalc.cc:1722 ../src/qalc.cc:2927
+#: ../src/qalc.cc:3389 ../src/qalc.cc:3666 ../src/qalc.cc:3968
+#: ../src/qalc.cc:3978 ../src/qalc.cc:4082 ../src/qalc.cc:4203
+#: ../src/qalc.cc:4540 ../src/qalc.cc:4631
 msgid "approximate"
 msgstr "approximate"
 
-#: ../src/defs2doc.cc:623 ../src/qalc.cc:2181
+#: ../src/defs2doc.cc:623 ../src/qalc.cc:2188
 msgid "ans"
 msgstr "ans"
 
@@ -208,31 +208,31 @@ msgstr "ans"
 msgid "Temporary"
 msgstr "临时"
 
-#: ../src/defs2doc.cc:624 ../src/qalc.cc:2182
+#: ../src/defs2doc.cc:624 ../src/qalc.cc:2189
 msgid "Last Answer"
 msgstr "上一答案"
 
-#: ../src/defs2doc.cc:625 ../src/qalc.cc:2183
+#: ../src/defs2doc.cc:625 ../src/qalc.cc:2190
 msgid "answer"
 msgstr "answer"
 
-#: ../src/defs2doc.cc:627 ../src/qalc.cc:2185
+#: ../src/defs2doc.cc:627 ../src/qalc.cc:2192
 msgid "Answer 2"
 msgstr "答案二"
 
-#: ../src/defs2doc.cc:628 ../src/qalc.cc:2186
+#: ../src/defs2doc.cc:628 ../src/qalc.cc:2193
 msgid "Answer 3"
 msgstr "答案三"
 
-#: ../src/defs2doc.cc:629 ../src/qalc.cc:2187
+#: ../src/defs2doc.cc:629 ../src/qalc.cc:2194
 msgid "Answer 4"
 msgstr "答案四"
 
-#: ../src/defs2doc.cc:630 ../src/qalc.cc:2188
+#: ../src/defs2doc.cc:630 ../src/qalc.cc:2195
 msgid "Answer 5"
 msgstr "答案五"
 
-#: ../src/defs2doc.cc:631 ../src/qalc.cc:2189
+#: ../src/defs2doc.cc:631 ../src/qalc.cc:2196
 msgid "Memory"
 msgstr "存值"
 
@@ -247,72 +247,72 @@ msgstr "载入全局定义失败！\n"
 msgid "Uncategorized"
 msgstr "未分类"
 
-#: ../src/qalc.cc:186 ../src/qalc.cc:254 ../src/qalc.cc:4108
+#: ../src/qalc.cc:187 ../src/qalc.cc:255 ../src/qalc.cc:4151
 #: ../libqalculate/util.cc:175
 msgid "yes"
 msgstr "yes"
 
-#: ../src/qalc.cc:187 ../src/qalc.cc:256 ../src/qalc.cc:4108
+#: ../src/qalc.cc:188 ../src/qalc.cc:257 ../src/qalc.cc:4151
 #: ../libqalculate/util.cc:176
 msgid "no"
 msgstr "no"
 
-#: ../src/qalc.cc:188 ../libqalculate/util.cc:183
+#: ../src/qalc.cc:189 ../libqalculate/util.cc:183
 msgid "true"
 msgstr "true"
 
-#: ../src/qalc.cc:189 ../libqalculate/util.cc:184
+#: ../src/qalc.cc:190 ../libqalculate/util.cc:184
 msgid "false"
 msgstr "false"
 
-#: ../src/qalc.cc:190 ../src/qalc.cc:854 ../src/qalc.cc:874 ../src/qalc.cc:1195
-#: ../src/qalc.cc:1236 ../src/qalc.cc:1381 ../src/qalc.cc:3451
-#: ../src/qalc.cc:3469 ../src/qalc.cc:3528 ../src/qalc.cc:4107
-#: ../src/qalc.cc:4227 ../src/qalc.cc:4236 ../src/qalc.cc:4287
+#: ../src/qalc.cc:191 ../src/qalc.cc:861 ../src/qalc.cc:881 ../src/qalc.cc:1202
+#: ../src/qalc.cc:1243 ../src/qalc.cc:1388 ../src/qalc.cc:3494
+#: ../src/qalc.cc:3512 ../src/qalc.cc:3571 ../src/qalc.cc:4150
+#: ../src/qalc.cc:4270 ../src/qalc.cc:4279 ../src/qalc.cc:4330
 #: ../libqalculate/util.cc:191
 msgid "on"
 msgstr "on"
 
-#: ../src/qalc.cc:191 ../src/qalc.cc:852 ../src/qalc.cc:873 ../src/qalc.cc:1103
-#: ../src/qalc.cc:1167 ../src/qalc.cc:1179 ../src/qalc.cc:1192
-#: ../src/qalc.cc:1234 ../src/qalc.cc:1377 ../src/qalc.cc:3383
-#: ../src/qalc.cc:3450 ../src/qalc.cc:3455 ../src/qalc.cc:3467
-#: ../src/qalc.cc:3497 ../src/qalc.cc:3504 ../src/qalc.cc:3511
-#: ../src/qalc.cc:3527 ../src/qalc.cc:3563 ../src/qalc.cc:4107
-#: ../src/qalc.cc:4182 ../src/qalc.cc:4225 ../src/qalc.cc:4231
-#: ../src/qalc.cc:4236 ../src/qalc.cc:4244 ../src/qalc.cc:4251
-#: ../src/qalc.cc:4261 ../src/qalc.cc:4285 ../src/qalc.cc:4320
+#: ../src/qalc.cc:192 ../src/qalc.cc:859 ../src/qalc.cc:880 ../src/qalc.cc:1110
+#: ../src/qalc.cc:1174 ../src/qalc.cc:1186 ../src/qalc.cc:1199
+#: ../src/qalc.cc:1241 ../src/qalc.cc:1384 ../src/qalc.cc:3420
+#: ../src/qalc.cc:3493 ../src/qalc.cc:3498 ../src/qalc.cc:3510
+#: ../src/qalc.cc:3540 ../src/qalc.cc:3547 ../src/qalc.cc:3554
+#: ../src/qalc.cc:3570 ../src/qalc.cc:3606 ../src/qalc.cc:4150
+#: ../src/qalc.cc:4225 ../src/qalc.cc:4268 ../src/qalc.cc:4274
+#: ../src/qalc.cc:4279 ../src/qalc.cc:4287 ../src/qalc.cc:4294
+#: ../src/qalc.cc:4304 ../src/qalc.cc:4328 ../src/qalc.cc:4363
 #: ../libqalculate/util.cc:192
 msgid "off"
 msgstr "off"
 
-#: ../src/qalc.cc:261
+#: ../src/qalc.cc:262
 msgid "Please answer yes or no"
 msgstr "请回答yes或no"
 
-#: ../src/qalc.cc:293
+#: ../src/qalc.cc:294
 msgid "Unrecognized assumption."
 msgstr "无法识别的假设。"
 
-#: ../src/qalc.cc:458 ../src/qalc.cc:492
+#: ../src/qalc.cc:459 ../src/qalc.cc:493
 #: ../libqalculate/Calculator-calculate.cc:1003
 #: ../libqalculate/Calculator.cc:247 ../libqalculate/Calculator.cc:476
 #: ../libqalculate/DataSet.cc:1098 ../libqalculate/DataSet.cc:1160
-#: ../libqalculate/MathStructure-print.cc:3494 ../libqalculate/Function.cc:2307
+#: ../libqalculate/MathStructure-print.cc:3484 ../libqalculate/Function.cc:2307
 #: ../libqalculate/Function.cc:2323
 msgid "or"
 msgstr "或"
 
-#: ../src/qalc.cc:579 ../libqalculate/Calculator-definitions.cc:3968
+#: ../src/qalc.cc:580 ../libqalculate/Calculator-definitions.cc:3968
 #, c-format
 msgid "It has been %s day(s) since the exchange rates last were updated."
 msgstr "距上一次汇率更新已超过%s天了。"
 
-#: ../src/qalc.cc:584
+#: ../src/qalc.cc:585
 msgid "Do you wish to update the exchange rates now?"
 msgstr "您想现在更新汇率吗？"
 
-#: ../src/qalc.cc:598 ../src/qalc.cc:599
+#: ../src/qalc.cc:599 ../src/qalc.cc:600
 msgid ""
 "\n"
 "Press Enter to continue."
@@ -320,676 +320,699 @@ msgstr ""
 "\n"
 "按回车键继续"
 
-#: ../src/qalc.cc:614 ../src/qalc.cc:615 ../src/qalc.cc:616 ../src/qalc.cc:617
-#: ../src/qalc.cc:618 ../src/qalc.cc:619 ../src/qalc.cc:759 ../src/qalc.cc:770
-#: ../src/qalc.cc:795 ../src/qalc.cc:843 ../src/qalc.cc:860 ../src/qalc.cc:880
-#: ../src/qalc.cc:891 ../src/qalc.cc:894 ../src/qalc.cc:912 ../src/qalc.cc:932
-#: ../src/qalc.cc:958 ../src/qalc.cc:972 ../src/qalc.cc:988 ../src/qalc.cc:1010
-#: ../src/qalc.cc:1037 ../src/qalc.cc:1053 ../src/qalc.cc:1062
-#: ../src/qalc.cc:1073 ../src/qalc.cc:1085 ../src/qalc.cc:1094
-#: ../src/qalc.cc:1114 ../src/qalc.cc:1120 ../src/qalc.cc:1144
-#: ../src/qalc.cc:1203 ../src/qalc.cc:1225 ../src/qalc.cc:1241
-#: ../src/qalc.cc:2715 ../src/qalc.cc:2864
+#: ../src/qalc.cc:615 ../src/qalc.cc:616 ../src/qalc.cc:617 ../src/qalc.cc:618
+#: ../src/qalc.cc:619 ../src/qalc.cc:620 ../src/qalc.cc:766 ../src/qalc.cc:777
+#: ../src/qalc.cc:802 ../src/qalc.cc:850 ../src/qalc.cc:867 ../src/qalc.cc:887
+#: ../src/qalc.cc:898 ../src/qalc.cc:901 ../src/qalc.cc:919 ../src/qalc.cc:939
+#: ../src/qalc.cc:965 ../src/qalc.cc:979 ../src/qalc.cc:995 ../src/qalc.cc:1017
+#: ../src/qalc.cc:1044 ../src/qalc.cc:1060 ../src/qalc.cc:1069
+#: ../src/qalc.cc:1080 ../src/qalc.cc:1092 ../src/qalc.cc:1101
+#: ../src/qalc.cc:1121 ../src/qalc.cc:1127 ../src/qalc.cc:1151
+#: ../src/qalc.cc:1210 ../src/qalc.cc:1232 ../src/qalc.cc:1248
+#: ../src/qalc.cc:2722 ../src/qalc.cc:2871
 msgid "Illegal value."
 msgstr "非法数值。"
 
 #. qalc command
-#: ../src/qalc.cc:649 ../src/qalc.cc:1022 ../src/qalc.cc:2692
-#: ../src/qalc.cc:3205 ../src/qalc.cc:3211 ../src/qalc.cc:3412
-#: ../src/qalc.cc:3581 ../src/qalc.cc:3625 ../src/qalc.cc:4194
-#: ../src/qalc.cc:4332 ../src/qalc.cc:4489 ../src/qalc.cc:4593
-#: ../src/qalc.cc:5476 ../src/qalc.cc:5480
-#: ../libqalculate/Calculator-calculate.cc:1524
-#: ../libqalculate/Calculator-calculate.cc:1528
+#: ../src/qalc.cc:650 ../src/qalc.cc:1029 ../src/qalc.cc:2699
+#: ../src/qalc.cc:3242 ../src/qalc.cc:3248 ../src/qalc.cc:3449
+#: ../src/qalc.cc:3624 ../src/qalc.cc:3668 ../src/qalc.cc:4237
+#: ../src/qalc.cc:4375 ../src/qalc.cc:4532 ../src/qalc.cc:4638
+#: ../src/qalc.cc:5533 ../src/qalc.cc:5537
+#: ../libqalculate/Calculator-calculate.cc:1538
+#: ../libqalculate/Calculator-calculate.cc:1542
 msgid "base"
 msgstr "base"
 
-#: ../src/qalc.cc:649 ../src/qalc.cc:651 ../src/qalc.cc:3537
-#: ../src/qalc.cc:4298
+#: ../src/qalc.cc:650 ../src/qalc.cc:652 ../src/qalc.cc:3580
+#: ../src/qalc.cc:4341
 msgid "input base"
 msgstr "输入进制"
 
-#: ../src/qalc.cc:649 ../src/qalc.cc:652
+#: ../src/qalc.cc:650 ../src/qalc.cc:653
 msgid "output base"
 msgstr "输出进制"
 
-#: ../src/qalc.cc:653 ../src/qalc.cc:2971 ../src/qalc.cc:3414
-#: ../src/qalc.cc:3539 ../src/qalc.cc:4206 ../src/qalc.cc:4306
-#: ../src/qalc.cc:5392 ../libqalculate/Calculator-calculate.cc:1444
+#: ../src/qalc.cc:654 ../src/qalc.cc:2978 ../src/qalc.cc:3451
+#: ../src/qalc.cc:3582 ../src/qalc.cc:4249 ../src/qalc.cc:4349
+#: ../src/qalc.cc:5437 ../libqalculate/Calculator-calculate.cc:1446
 msgid "roman"
 msgstr "roman"
 
-#: ../src/qalc.cc:654 ../src/qalc.cc:2976 ../src/qalc.cc:3415
-#: ../src/qalc.cc:3540 ../src/qalc.cc:5394
-#: ../libqalculate/Calculator-calculate.cc:1446
+#: ../src/qalc.cc:655 ../src/qalc.cc:2983 ../src/qalc.cc:3452
+#: ../src/qalc.cc:3583 ../src/qalc.cc:5439
+#: ../libqalculate/Calculator-calculate.cc:1448
 msgid "bijective"
 msgstr "bijective"
 
-#: ../src/qalc.cc:660 ../src/qalc.cc:3011 ../src/qalc.cc:3422
-#: ../src/qalc.cc:4204 ../src/qalc.cc:5408
-#: ../libqalculate/Calculator-calculate.cc:1460
+#: ../src/qalc.cc:661 ../src/qalc.cc:3048 ../src/qalc.cc:3465
+#: ../src/qalc.cc:4247 ../src/qalc.cc:5465
+#: ../libqalculate/Calculator-calculate.cc:1474
 msgid "time"
 msgstr "time"
 
-#: ../src/qalc.cc:661 ../src/qalc.cc:2946 ../src/qalc.cc:5382
-#: ../libqalculate/Calculator-calculate.cc:1434
+#: ../src/qalc.cc:662 ../src/qalc.cc:2953 ../src/qalc.cc:5427
+#: ../libqalculate/Calculator-calculate.cc:1436
 msgid "hexadecimal"
 msgstr "hexadecimal"
 
-#: ../src/qalc.cc:668 ../src/qalc.cc:2966 ../src/qalc.cc:5390
-#: ../libqalculate/Calculator-calculate.cc:1442
+#: ../src/qalc.cc:669 ../src/qalc.cc:2973 ../src/qalc.cc:5435
+#: ../libqalculate/Calculator-calculate.cc:1444
 msgid "duodecimal"
 msgstr "duodecimal"
 
-#: ../src/qalc.cc:669 ../src/qalc.cc:2951 ../src/qalc.cc:5384
-#: ../libqalculate/Calculator-calculate.cc:1436
+#: ../src/qalc.cc:670 ../src/qalc.cc:2958 ../src/qalc.cc:5429
+#: ../libqalculate/Calculator-calculate.cc:1438
 msgid "binary"
 msgstr "binary"
 
-#: ../src/qalc.cc:670 ../src/qalc.cc:2961 ../src/qalc.cc:5388
-#: ../libqalculate/Calculator-calculate.cc:1440
+#: ../src/qalc.cc:671 ../src/qalc.cc:2968 ../src/qalc.cc:5433
+#: ../libqalculate/Calculator-calculate.cc:1442
 msgid "octal"
 msgstr "octal"
 
-#: ../src/qalc.cc:671 ../src/qalc.cc:2956 ../src/qalc.cc:5386
-#: ../libqalculate/Calculator-calculate.cc:1438
+#: ../src/qalc.cc:672 ../src/qalc.cc:2963 ../src/qalc.cc:5431
+#: ../libqalculate/Calculator-calculate.cc:1440
 msgid "decimal"
 msgstr "decimal"
 
-#: ../src/qalc.cc:672 ../src/qalc.cc:2981 ../src/qalc.cc:3416
-#: ../src/qalc.cc:5396 ../libqalculate/Calculator-calculate.cc:1448
+#: ../src/qalc.cc:673 ../src/qalc.cc:674 ../src/qalc.cc:675 ../src/qalc.cc:2988
+#: ../src/qalc.cc:2993 ../src/qalc.cc:2998 ../src/qalc.cc:3453
+#: ../src/qalc.cc:3454 ../src/qalc.cc:3455 ../src/qalc.cc:5441
+#: ../src/qalc.cc:5443 ../src/qalc.cc:5445
+#: ../libqalculate/Calculator-calculate.cc:1450
+#: ../libqalculate/Calculator-calculate.cc:1452
+#: ../libqalculate/Calculator-calculate.cc:1454
 msgid "sexagesimal"
 msgstr "sexagesimal"
 
-#: ../src/qalc.cc:682 ../src/qalc.cc:834 ../src/qalc.cc:3433
-#: ../src/qalc.cc:4218
+#: ../src/qalc.cc:676 ../src/qalc.cc:677 ../src/qalc.cc:3013
+#: ../src/qalc.cc:3018 ../src/qalc.cc:3456 ../src/qalc.cc:3457
+#: ../src/qalc.cc:5451 ../src/qalc.cc:5453
+#: ../libqalculate/Calculator-calculate.cc:1460
+#: ../libqalculate/Calculator-calculate.cc:1462
+#, fuzzy
+msgid "latitude"
+msgstr "相对"
+
+#: ../src/qalc.cc:678 ../src/qalc.cc:679 ../src/qalc.cc:3003
+#: ../src/qalc.cc:3008 ../src/qalc.cc:3458 ../src/qalc.cc:3459
+#: ../src/qalc.cc:5447 ../src/qalc.cc:5449
+#: ../libqalculate/Calculator-calculate.cc:1456
+#: ../libqalculate/Calculator-calculate.cc:1458
+#, fuzzy
+msgid "longitude"
+msgstr "long"
+
+#: ../src/qalc.cc:689 ../src/qalc.cc:841 ../src/qalc.cc:3476
+#: ../src/qalc.cc:4261
 msgid "base display"
 msgstr "进制显示"
 
-#: ../src/qalc.cc:712
+#: ../src/qalc.cc:719
 msgid "Illegal base."
 msgstr "非法进制"
 
-#: ../src/qalc.cc:720 ../src/qalc.cc:748 ../src/qalc.cc:3328
-#: ../src/qalc.cc:4128
+#: ../src/qalc.cc:727 ../src/qalc.cc:755 ../src/qalc.cc:3365
+#: ../src/qalc.cc:4171
 msgid "assumptions"
 msgstr "假设"
 
-#: ../src/qalc.cc:751 ../src/qalc.cc:3572 ../src/qalc.cc:4324
+#: ../src/qalc.cc:758 ../src/qalc.cc:3615 ../src/qalc.cc:4367
 msgid "all prefixes"
 msgstr "所有前缀"
 
-#: ../src/qalc.cc:752 ../src/qalc.cc:3381 ../src/qalc.cc:4182
+#: ../src/qalc.cc:759 ../src/qalc.cc:3418 ../src/qalc.cc:4225
 msgid "color"
 msgstr "color"
 
 #. light color
-#: ../src/qalc.cc:755 ../src/qalc.cc:3384 ../src/qalc.cc:4182
+#: ../src/qalc.cc:762 ../src/qalc.cc:3421 ../src/qalc.cc:4225
 msgid "light"
 msgstr "light"
 
-#: ../src/qalc.cc:756 ../src/qalc.cc:3385 ../src/qalc.cc:4182
-#: ../src/qalc.cc:5278
+#: ../src/qalc.cc:763 ../src/qalc.cc:3422 ../src/qalc.cc:4225
+#: ../src/qalc.cc:5323
 msgid "default"
 msgstr "default"
 
-#: ../src/qalc.cc:764 ../src/qalc.cc:3370 ../src/qalc.cc:4171
+#: ../src/qalc.cc:771 ../src/qalc.cc:3407 ../src/qalc.cc:4214
 msgid "complex numbers"
 msgstr "复数"
 
-#: ../src/qalc.cc:765 ../src/qalc.cc:3395 ../src/qalc.cc:4184
+#: ../src/qalc.cc:772 ../src/qalc.cc:3432 ../src/qalc.cc:4227
 msgid "excessive parentheses"
 msgstr "富余括号"
 
-#: ../src/qalc.cc:766 ../src/qalc.cc:3371 ../src/qalc.cc:3684
-#: ../src/qalc.cc:3690 ../src/qalc.cc:4172
+#: ../src/qalc.cc:773 ../src/qalc.cc:3408 ../src/qalc.cc:3727
+#: ../src/qalc.cc:3733 ../src/qalc.cc:4215
 msgid "functions"
 msgstr "函数"
 
-#: ../src/qalc.cc:767 ../src/qalc.cc:3372 ../src/qalc.cc:4173
+#: ../src/qalc.cc:774 ../src/qalc.cc:3409 ../src/qalc.cc:4216
 msgid "infinite numbers"
 msgstr "无穷数"
 
-#: ../src/qalc.cc:768 ../src/qalc.cc:3590 ../src/qalc.cc:4345
+#: ../src/qalc.cc:775 ../src/qalc.cc:3633 ../src/qalc.cc:4388
 msgid "show negative exponents"
 msgstr "显示负指数"
 
-#: ../src/qalc.cc:769 ../src/qalc.cc:3396 ../src/qalc.cc:4185
+#: ../src/qalc.cc:776 ../src/qalc.cc:3433 ../src/qalc.cc:4228
 msgid "minus last"
 msgstr "减号后置"
 
-#: ../src/qalc.cc:771 ../src/qalc.cc:3306 ../src/qalc.cc:4125
+#: ../src/qalc.cc:778 ../src/qalc.cc:3343 ../src/qalc.cc:4168
 msgid "assume nonzero denominators"
 msgstr "假设非零分母"
 
-#: ../src/qalc.cc:772 ../src/qalc.cc:3307 ../src/qalc.cc:4126
+#: ../src/qalc.cc:779 ../src/qalc.cc:3344 ../src/qalc.cc:4169
 msgid "warn nonzero denominators"
 msgstr "警告非零分母"
 
-#: ../src/qalc.cc:773 ../src/qalc.cc:3589 ../src/qalc.cc:3687
-#: ../src/qalc.cc:3693 ../src/qalc.cc:4344
+#: ../src/qalc.cc:780 ../src/qalc.cc:3632 ../src/qalc.cc:3730
+#: ../src/qalc.cc:3736 ../src/qalc.cc:4387
 msgid "prefixes"
 msgstr "前缀"
 
-#: ../src/qalc.cc:774 ../src/qalc.cc:3585 ../src/qalc.cc:4340
+#: ../src/qalc.cc:781 ../src/qalc.cc:3628 ../src/qalc.cc:4383
 msgid "binary prefixes"
 msgstr "二进制前缀"
 
-#: ../src/qalc.cc:781 ../src/qalc.cc:3587 ../src/qalc.cc:4342
+#: ../src/qalc.cc:788 ../src/qalc.cc:3630 ../src/qalc.cc:4385
 msgid "denominator prefixes"
 msgstr "分母前缀"
 
-#: ../src/qalc.cc:782 ../src/qalc.cc:3588 ../src/qalc.cc:4343
+#: ../src/qalc.cc:789 ../src/qalc.cc:3631 ../src/qalc.cc:4386
 msgid "place units separately"
 msgstr "分置单位"
 
-#: ../src/qalc.cc:783 ../src/qalc.cc:3369 ../src/qalc.cc:4170
+#: ../src/qalc.cc:790 ../src/qalc.cc:3406 ../src/qalc.cc:4213
 msgid "calculate variables"
 msgstr "计算变量"
 
-#: ../src/qalc.cc:784 ../src/qalc.cc:3368 ../src/qalc.cc:4169
+#: ../src/qalc.cc:791 ../src/qalc.cc:3405 ../src/qalc.cc:4212
 msgid "calculate functions"
 msgstr "计算函数"
 
-#: ../src/qalc.cc:785 ../src/qalc.cc:3591 ../src/qalc.cc:4346
+#: ../src/qalc.cc:792 ../src/qalc.cc:3634 ../src/qalc.cc:4389
 msgid "sync units"
 msgstr "同步单位"
 
-#: ../src/qalc.cc:786 ../src/qalc.cc:3592 ../src/qalc.cc:4347
+#: ../src/qalc.cc:793 ../src/qalc.cc:3635 ../src/qalc.cc:4390
 msgid "temperature calculation"
 msgstr "温度计算"
 
-#: ../src/qalc.cc:788 ../src/qalc.cc:3594 ../src/qalc.cc:4347
-#: ../src/qalc.cc:5292 ../src/qalc.cc:5314
+#: ../src/qalc.cc:795 ../src/qalc.cc:3637 ../src/qalc.cc:4390
+#: ../src/qalc.cc:5337 ../src/qalc.cc:5359
 msgid "relative"
 msgstr "相对"
 
-#: ../src/qalc.cc:789 ../src/qalc.cc:3596 ../src/qalc.cc:4347
-#: ../src/qalc.cc:5278 ../src/qalc.cc:5315
+#: ../src/qalc.cc:796 ../src/qalc.cc:3639 ../src/qalc.cc:4390
+#: ../src/qalc.cc:5323 ../src/qalc.cc:5360
 msgid "hybrid"
 msgstr "混杂"
 
-#: ../src/qalc.cc:790 ../src/qalc.cc:3595 ../src/qalc.cc:4347
-#: ../src/qalc.cc:5285 ../src/qalc.cc:5316
+#: ../src/qalc.cc:797 ../src/qalc.cc:3638 ../src/qalc.cc:4390
+#: ../src/qalc.cc:5330 ../src/qalc.cc:5361
 msgid "absolute"
 msgstr "绝对"
 
-#: ../src/qalc.cc:801 ../src/qalc.cc:3508 ../src/qalc.cc:4257
+#: ../src/qalc.cc:808 ../src/qalc.cc:3551 ../src/qalc.cc:4300
 msgid "round to even"
 msgstr "舍入为偶数"
 
-#: ../src/qalc.cc:802
+#: ../src/qalc.cc:809
 msgid "rpn syntax"
 msgstr "逆波兰语法"
 
 #. qalc command
-#: ../src/qalc.cc:814 ../src/qalc.cc:927 ../src/qalc.cc:2695
-#: ../src/qalc.cc:3558 ../src/qalc.cc:3610 ../src/qalc.cc:3648
-#: ../src/qalc.cc:4319 ../src/qalc.cc:4359 ../src/qalc.cc:4439
-#: ../src/qalc.cc:4568 ../src/qalc.cc:4593
+#: ../src/qalc.cc:821 ../src/qalc.cc:934 ../src/qalc.cc:2702
+#: ../src/qalc.cc:3601 ../src/qalc.cc:3653 ../src/qalc.cc:3691
+#: ../src/qalc.cc:4362 ../src/qalc.cc:4402 ../src/qalc.cc:4482
+#: ../src/qalc.cc:4613 ../src/qalc.cc:4638
 msgid "rpn"
 msgstr "rpn"
 
-#: ../src/qalc.cc:815 ../src/qalc.cc:3405 ../src/qalc.cc:4187
+#: ../src/qalc.cc:822 ../src/qalc.cc:3442 ../src/qalc.cc:4230
 msgid "short multiplication"
 msgstr "短乘法"
 
-#: ../src/qalc.cc:816 ../src/qalc.cc:3491 ../src/qalc.cc:4240
+#: ../src/qalc.cc:823 ../src/qalc.cc:3534 ../src/qalc.cc:4283
 msgid "lowercase e"
 msgstr "小写字母e"
 
-#: ../src/qalc.cc:817 ../src/qalc.cc:3492 ../src/qalc.cc:4241
+#: ../src/qalc.cc:824 ../src/qalc.cc:3535 ../src/qalc.cc:4284
 msgid "lowercase numbers"
 msgstr "小写数字"
 
-#: ../src/qalc.cc:818 ../src/qalc.cc:3475 ../src/qalc.cc:3536
-#: ../src/qalc.cc:4238 ../src/qalc.cc:4297
+#: ../src/qalc.cc:825 ../src/qalc.cc:3518 ../src/qalc.cc:3579
+#: ../src/qalc.cc:4281 ../src/qalc.cc:4340
 msgid "imaginary j"
 msgstr "虚数单位j"
 
-#: ../src/qalc.cc:836 ../src/qalc.cc:853 ../src/qalc.cc:907 ../src/qalc.cc:1018
-#: ../src/qalc.cc:1046 ../src/qalc.cc:3301 ../src/qalc.cc:3337
-#: ../src/qalc.cc:3358 ../src/qalc.cc:3435 ../src/qalc.cc:3577
-#: ../src/qalc.cc:4156 ../src/qalc.cc:4218 ../src/qalc.cc:4328
+#: ../src/qalc.cc:843 ../src/qalc.cc:860 ../src/qalc.cc:914 ../src/qalc.cc:1025
+#: ../src/qalc.cc:1053 ../src/qalc.cc:3338 ../src/qalc.cc:3374
+#: ../src/qalc.cc:3395 ../src/qalc.cc:3478 ../src/qalc.cc:3620
+#: ../src/qalc.cc:4199 ../src/qalc.cc:4261 ../src/qalc.cc:4371
 msgid "none"
 msgstr "none"
 
-#: ../src/qalc.cc:837 ../src/qalc.cc:3436 ../src/qalc.cc:4218
+#: ../src/qalc.cc:844 ../src/qalc.cc:3479 ../src/qalc.cc:4261
 msgid "normal"
 msgstr "normal"
 
-#: ../src/qalc.cc:838 ../src/qalc.cc:3437 ../src/qalc.cc:4218
+#: ../src/qalc.cc:845 ../src/qalc.cc:3480 ../src/qalc.cc:4261
 msgid "alternative"
 msgstr "alternative"
 
-#: ../src/qalc.cc:848 ../src/qalc.cc:3520 ../src/qalc.cc:4275
+#: ../src/qalc.cc:855 ../src/qalc.cc:3563 ../src/qalc.cc:4318
 msgid "two's complement"
 msgstr "二的补码"
 
-#: ../src/qalc.cc:849 ../src/qalc.cc:3474 ../src/qalc.cc:4237
+#: ../src/qalc.cc:856 ../src/qalc.cc:3517 ../src/qalc.cc:4280
 msgid "hexadecimal two's"
 msgstr "十六进制二的补码"
 
-#: ../src/qalc.cc:850 ../src/qalc.cc:3453 ../src/qalc.cc:4231
+#: ../src/qalc.cc:857 ../src/qalc.cc:3496 ../src/qalc.cc:4274
 msgid "digit grouping"
 msgstr "数字分节"
 
-#: ../src/qalc.cc:854 ../src/qalc.cc:3456 ../src/qalc.cc:4231
+#: ../src/qalc.cc:861 ../src/qalc.cc:3499 ../src/qalc.cc:4274
 msgid "standard"
 msgstr "standard"
 
-#: ../src/qalc.cc:855 ../src/qalc.cc:875 ../src/qalc.cc:3449
-#: ../src/qalc.cc:3457 ../src/qalc.cc:3526 ../src/qalc.cc:4223
-#: ../src/qalc.cc:4231 ../src/qalc.cc:4283
+#: ../src/qalc.cc:862 ../src/qalc.cc:882 ../src/qalc.cc:3492
+#: ../src/qalc.cc:3500 ../src/qalc.cc:3569 ../src/qalc.cc:4266
+#: ../src/qalc.cc:4274 ../src/qalc.cc:4326
 msgid "locale"
 msgstr "locale"
 
-#: ../src/qalc.cc:865 ../src/qalc.cc:3407 ../src/qalc.cc:4189
+#: ../src/qalc.cc:872 ../src/qalc.cc:3444 ../src/qalc.cc:4232
 msgid "spell out logical"
 msgstr "拼出逻辑运算符"
 
-#: ../src/qalc.cc:866 ../src/qalc.cc:3534 ../src/qalc.cc:4295
+#: ../src/qalc.cc:873 ../src/qalc.cc:3577 ../src/qalc.cc:4338
 msgid "ignore dot"
 msgstr "ignore dot"
 
-#: ../src/qalc.cc:867 ../src/qalc.cc:3531 ../src/qalc.cc:4292
+#: ../src/qalc.cc:874 ../src/qalc.cc:3574 ../src/qalc.cc:4335
 msgid "ignore comma"
 msgstr "ignore comma"
 
-#: ../src/qalc.cc:871 ../src/qalc.cc:3448 ../src/qalc.cc:3525
-#: ../src/qalc.cc:4220 ../src/qalc.cc:4280
+#: ../src/qalc.cc:878 ../src/qalc.cc:3491 ../src/qalc.cc:3568
+#: ../src/qalc.cc:4263 ../src/qalc.cc:4323
 msgid "decimal comma"
 msgstr "decimal comma"
 
-#: ../src/qalc.cc:890 ../src/qalc.cc:3551 ../src/qalc.cc:4318
+#: ../src/qalc.cc:897 ../src/qalc.cc:3594 ../src/qalc.cc:4361
 msgid "limit implicit multiplication"
 msgstr "限制隐式乘法"
 
-#: ../src/qalc.cc:892 ../src/qalc.cc:3406 ../src/qalc.cc:4188
+#: ../src/qalc.cc:899 ../src/qalc.cc:3443 ../src/qalc.cc:4231
 msgid "spacious"
 msgstr "富余空格"
 
-#: ../src/qalc.cc:893 ../src/qalc.cc:3408 ../src/qalc.cc:4190
+#: ../src/qalc.cc:900 ../src/qalc.cc:3445 ../src/qalc.cc:4233
 msgid "unicode"
 msgstr "统一码"
 
-#: ../src/qalc.cc:896 ../src/qalc.cc:3373 ../src/qalc.cc:3686
-#: ../src/qalc.cc:3692 ../src/qalc.cc:4174
+#: ../src/qalc.cc:903 ../src/qalc.cc:3410 ../src/qalc.cc:3729
+#: ../src/qalc.cc:3735 ../src/qalc.cc:4217
 msgid "units"
 msgstr "units"
 
-#: ../src/qalc.cc:897 ../src/qalc.cc:3374 ../src/qalc.cc:4175
+#: ../src/qalc.cc:904 ../src/qalc.cc:3411 ../src/qalc.cc:4218
 msgid "unknowns"
 msgstr "unknowns"
 
-#: ../src/qalc.cc:898 ../src/qalc.cc:3375 ../src/qalc.cc:3685
-#: ../src/qalc.cc:3691 ../src/qalc.cc:4176
+#: ../src/qalc.cc:905 ../src/qalc.cc:3412 ../src/qalc.cc:3728
+#: ../src/qalc.cc:3734 ../src/qalc.cc:4219
 msgid "variables"
 msgstr "变量"
 
-#: ../src/qalc.cc:899 ../src/qalc.cc:3380 ../src/qalc.cc:4181
+#: ../src/qalc.cc:906 ../src/qalc.cc:3417 ../src/qalc.cc:4224
 msgid "abbreviations"
 msgstr "缩写"
 
-#: ../src/qalc.cc:900 ../src/qalc.cc:3519 ../src/qalc.cc:4274
+#: ../src/qalc.cc:907 ../src/qalc.cc:3562 ../src/qalc.cc:4317
 msgid "show ending zeroes"
 msgstr "显示尾部零"
 
-#: ../src/qalc.cc:901 ../src/qalc.cc:3507 ../src/qalc.cc:4256
+#: ../src/qalc.cc:908 ../src/qalc.cc:3550 ../src/qalc.cc:4299
 msgid "repeating decimals"
 msgstr "循环小数"
 
-#: ../src/qalc.cc:902 ../src/qalc.cc:3332 ../src/qalc.cc:4156
+#: ../src/qalc.cc:909 ../src/qalc.cc:3369 ../src/qalc.cc:4199
 msgid "angle unit"
 msgstr "角度单位"
 
-#: ../src/qalc.cc:904 ../src/qalc.cc:3334 ../src/qalc.cc:3335
+#: ../src/qalc.cc:911 ../src/qalc.cc:3371 ../src/qalc.cc:3372
 msgid "rad"
 msgstr "rad"
 
-#: ../src/qalc.cc:904 ../src/qalc.cc:4156
+#: ../src/qalc.cc:911 ../src/qalc.cc:4199
 msgid "radians"
 msgstr "弧度"
 
-#: ../src/qalc.cc:905
+#: ../src/qalc.cc:912
 msgid "deg"
 msgstr "deg"
 
-#: ../src/qalc.cc:905 ../src/qalc.cc:4156
+#: ../src/qalc.cc:912 ../src/qalc.cc:4199
 msgid "degrees"
 msgstr "度数"
 
-#: ../src/qalc.cc:906 ../src/qalc.cc:3336
+#: ../src/qalc.cc:913 ../src/qalc.cc:3373
 msgid "gra"
 msgstr "gra"
 
-#: ../src/qalc.cc:906 ../src/qalc.cc:4156
+#: ../src/qalc.cc:913 ../src/qalc.cc:4199
 msgid "gradians"
 msgstr "梯度"
 
-#: ../src/qalc.cc:919 ../src/qalc.cc:3524 ../src/qalc.cc:4279
+#: ../src/qalc.cc:926 ../src/qalc.cc:3567 ../src/qalc.cc:4322
 msgid "caret as xor"
 msgstr "插入符作异或"
 
-#: ../src/qalc.cc:920 ../src/qalc.cc:3552 ../src/qalc.cc:4319
-#: ../src/qalc.cc:4555
+#: ../src/qalc.cc:927 ../src/qalc.cc:3595 ../src/qalc.cc:4362
+#: ../src/qalc.cc:4600
 msgid "parsing mode"
 msgstr "解析模式"
 
-#: ../src/qalc.cc:922 ../src/qalc.cc:1127 ../src/qalc.cc:3478
-#: ../src/qalc.cc:3554 ../src/qalc.cc:4239 ../src/qalc.cc:4319
-#: ../src/qalc.cc:4563
+#: ../src/qalc.cc:929 ../src/qalc.cc:1134 ../src/qalc.cc:3521
+#: ../src/qalc.cc:3597 ../src/qalc.cc:4282 ../src/qalc.cc:4362
+#: ../src/qalc.cc:4608
 msgid "adaptive"
 msgstr "自适应"
 
-#: ../src/qalc.cc:923 ../src/qalc.cc:3555 ../src/qalc.cc:4319
-#: ../src/qalc.cc:4560
+#: ../src/qalc.cc:930 ../src/qalc.cc:3598 ../src/qalc.cc:4362
+#: ../src/qalc.cc:4605
 msgid "implicit first"
 msgstr "隐式优先"
 
-#: ../src/qalc.cc:924 ../src/qalc.cc:3556 ../src/qalc.cc:4319
-#: ../src/qalc.cc:4557
+#: ../src/qalc.cc:931 ../src/qalc.cc:3599 ../src/qalc.cc:4362
+#: ../src/qalc.cc:4602
 msgid "conventional"
 msgstr "常规"
 
 #. chain calculation mode (parsing mode)
-#: ../src/qalc.cc:926 ../src/qalc.cc:3557 ../src/qalc.cc:4319
-#: ../src/qalc.cc:4571
+#: ../src/qalc.cc:933 ../src/qalc.cc:3600 ../src/qalc.cc:4362
+#: ../src/qalc.cc:4616
 msgid "chain"
 msgstr "链式"
 
-#: ../src/qalc.cc:937 ../src/qalc.cc:1937 ../src/qalc.cc:3599
-#: ../src/qalc.cc:4348
+#: ../src/qalc.cc:944 ../src/qalc.cc:1944 ../src/qalc.cc:3642
+#: ../src/qalc.cc:4391
 msgid "update exchange rates"
 msgstr "更新汇率"
 
-#: ../src/qalc.cc:938 ../src/qalc.cc:3602 ../src/qalc.cc:4350
+#: ../src/qalc.cc:945 ../src/qalc.cc:3645 ../src/qalc.cc:4393
 msgid "never"
 msgstr "从不"
 
-#: ../src/qalc.cc:940 ../src/qalc.cc:3601 ../src/qalc.cc:4349
+#: ../src/qalc.cc:947 ../src/qalc.cc:3644 ../src/qalc.cc:4392
 msgid "ask"
 msgstr "询问"
 
-#: ../src/qalc.cc:948 ../src/qalc.cc:3397 ../src/qalc.cc:4186
+#: ../src/qalc.cc:955 ../src/qalc.cc:3434 ../src/qalc.cc:4229
 msgid "multiplication sign"
 msgstr "乘号"
 
-#: ../src/qalc.cc:963 ../src/qalc.cc:3388 ../src/qalc.cc:4183
+#: ../src/qalc.cc:970 ../src/qalc.cc:3425 ../src/qalc.cc:4226
 msgid "division sign"
 msgstr "除号"
 
-#: ../src/qalc.cc:977 ../src/qalc.cc:1344 ../src/qalc.cc:3340
-#: ../src/qalc.cc:4160
+#: ../src/qalc.cc:984 ../src/qalc.cc:1351 ../src/qalc.cc:3377
+#: ../src/qalc.cc:4203
 msgid "approximation"
 msgstr "近似"
 
 #. qalc command
-#: ../src/qalc.cc:979 ../src/qalc.cc:1059 ../src/qalc.cc:1194
-#: ../src/qalc.cc:1351 ../src/qalc.cc:2914 ../src/qalc.cc:3342
-#: ../src/qalc.cc:3468 ../src/qalc.cc:3627 ../src/qalc.cc:4160
-#: ../src/qalc.cc:4236 ../src/qalc.cc:4493 ../src/qalc.cc:4586
+#: ../src/qalc.cc:986 ../src/qalc.cc:1066 ../src/qalc.cc:1201
+#: ../src/qalc.cc:1358 ../src/qalc.cc:2921 ../src/qalc.cc:3379
+#: ../src/qalc.cc:3511 ../src/qalc.cc:3670 ../src/qalc.cc:4203
+#: ../src/qalc.cc:4279 ../src/qalc.cc:4536 ../src/qalc.cc:4631
 msgid "exact"
 msgstr "exact"
 
-#: ../src/qalc.cc:980 ../src/qalc.cc:1104 ../src/qalc.cc:1193
-#: ../src/qalc.cc:1355 ../src/qalc.cc:1385 ../src/qalc.cc:3345
-#: ../src/qalc.cc:3462 ../src/qalc.cc:3512 ../src/qalc.cc:4160
-#: ../src/qalc.cc:4236 ../src/qalc.cc:4263
+#: ../src/qalc.cc:987 ../src/qalc.cc:1111 ../src/qalc.cc:1200
+#: ../src/qalc.cc:1362 ../src/qalc.cc:1392 ../src/qalc.cc:3382
+#: ../src/qalc.cc:3505 ../src/qalc.cc:3555 ../src/qalc.cc:4203
+#: ../src/qalc.cc:4279 ../src/qalc.cc:4306
 msgid "auto"
 msgstr "auto"
 
-#: ../src/qalc.cc:981 ../src/qalc.cc:1198 ../src/qalc.cc:3347
-#: ../src/qalc.cc:3464 ../src/qalc.cc:4160 ../src/qalc.cc:4236
+#: ../src/qalc.cc:988 ../src/qalc.cc:1205 ../src/qalc.cc:3384
+#: ../src/qalc.cc:3507 ../src/qalc.cc:4203 ../src/qalc.cc:4279
 msgid "dual"
 msgstr "dual"
 
-#: ../src/qalc.cc:982 ../src/qalc.cc:1348 ../src/qalc.cc:3349
-#: ../src/qalc.cc:4160
+#: ../src/qalc.cc:989 ../src/qalc.cc:1355 ../src/qalc.cc:3386
+#: ../src/qalc.cc:4203
 msgid "try exact"
 msgstr "try exact"
 
-#: ../src/qalc.cc:1002 ../src/qalc.cc:3356 ../src/qalc.cc:4162
+#: ../src/qalc.cc:1009 ../src/qalc.cc:3393 ../src/qalc.cc:4205
 msgid "interval calculation"
 msgstr "区间计算"
 
-#: ../src/qalc.cc:1002
+#: ../src/qalc.cc:1009
 msgid "uncertainty propagation"
 msgstr "误差传递"
 
-#: ../src/qalc.cc:1004 ../src/qalc.cc:3359 ../src/qalc.cc:4162
+#: ../src/qalc.cc:1011 ../src/qalc.cc:3396 ../src/qalc.cc:4205
 msgid "variance formula"
 msgstr "方差公式"
 
-#: ../src/qalc.cc:1004
+#: ../src/qalc.cc:1011
 msgid "variance"
 msgstr "方差"
 
-#: ../src/qalc.cc:1005 ../src/qalc.cc:1151 ../src/qalc.cc:3355
-#: ../src/qalc.cc:3360 ../src/qalc.cc:4161 ../src/qalc.cc:4162
+#: ../src/qalc.cc:1012 ../src/qalc.cc:1158 ../src/qalc.cc:3392
+#: ../src/qalc.cc:3397 ../src/qalc.cc:4204 ../src/qalc.cc:4205
 msgid "interval arithmetic"
 msgstr "区间运算"
 
-#: ../src/qalc.cc:1015 ../src/qalc.cc:3573 ../src/qalc.cc:4325
+#: ../src/qalc.cc:1022 ../src/qalc.cc:3616 ../src/qalc.cc:4368
 msgid "autoconversion"
 msgstr "自动换算"
 
-#: ../src/qalc.cc:1019 ../src/qalc.cc:3199
+#: ../src/qalc.cc:1026 ../src/qalc.cc:3236
 msgid "best"
 msgstr "best"
 
-#: ../src/qalc.cc:1020 ../src/qalc.cc:3582 ../src/qalc.cc:4334
+#: ../src/qalc.cc:1027 ../src/qalc.cc:3625 ../src/qalc.cc:4377
 msgid "optimalsi"
 msgstr "optimalsi"
 
-#: ../src/qalc.cc:1021 ../src/qalc.cc:3199 ../src/qalc.cc:3580
-#: ../src/qalc.cc:4330 ../src/qalc.cc:5472
-#: ../libqalculate/Calculator-calculate.cc:1520
+#: ../src/qalc.cc:1028 ../src/qalc.cc:3236 ../src/qalc.cc:3623
+#: ../src/qalc.cc:4373 ../src/qalc.cc:5529
+#: ../libqalculate/Calculator-calculate.cc:1534
 msgid "optimal"
 msgstr "optimal"
 
-#: ../src/qalc.cc:1023 ../src/qalc.cc:1196 ../src/qalc.cc:1373
-#: ../src/qalc.cc:3470 ../src/qalc.cc:3576 ../src/qalc.cc:4236
-#: ../src/qalc.cc:4336 ../src/qalc.cc:5509
-#: ../libqalculate/Calculator-calculate.cc:1549
+#: ../src/qalc.cc:1030 ../src/qalc.cc:1203 ../src/qalc.cc:1380
+#: ../src/qalc.cc:3513 ../src/qalc.cc:3619 ../src/qalc.cc:4279
+#: ../src/qalc.cc:4379 ../src/qalc.cc:5566
+#: ../libqalculate/Calculator-calculate.cc:1563
 msgid "mixed"
 msgstr "mixed"
 
-#: ../src/qalc.cc:1043 ../src/qalc.cc:3586 ../src/qalc.cc:4341
+#: ../src/qalc.cc:1050 ../src/qalc.cc:3629 ../src/qalc.cc:4384
 msgid "currency conversion"
 msgstr "货币换算"
 
-#: ../src/qalc.cc:1044 ../src/qalc.cc:3299 ../src/qalc.cc:4124
+#: ../src/qalc.cc:1051 ../src/qalc.cc:3336 ../src/qalc.cc:4167
 msgid "algebra mode"
 msgstr "代数模式"
 
 #. qalc command
-#: ../src/qalc.cc:1047 ../src/qalc.cc:3287 ../src/qalc.cc:4099
-#: ../src/qalc.cc:4586
+#: ../src/qalc.cc:1054 ../src/qalc.cc:3324 ../src/qalc.cc:4142
+#: ../src/qalc.cc:4631
 msgid "simplify"
 msgstr "simplify"
 
-#: ../src/qalc.cc:1047 ../src/qalc.cc:3287 ../src/qalc.cc:3303
-#: ../src/qalc.cc:3628 ../src/qalc.cc:4099 ../src/qalc.cc:4124
-#: ../src/qalc.cc:4586 ../src/qalc.cc:5541
-#: ../libqalculate/Calculator-calculate.cc:1588
+#: ../src/qalc.cc:1054 ../src/qalc.cc:3324 ../src/qalc.cc:3340
+#: ../src/qalc.cc:3671 ../src/qalc.cc:4142 ../src/qalc.cc:4167
+#: ../src/qalc.cc:4631 ../src/qalc.cc:5598
+#: ../libqalculate/Calculator-calculate.cc:1602
 msgid "expand"
 msgstr "expand"
 
-#: ../src/qalc.cc:1048 ../src/qalc.cc:3302 ../src/qalc.cc:4124
-#: ../src/qalc.cc:5538 ../libqalculate/Calculator-calculate.cc:1584
+#: ../src/qalc.cc:1055 ../src/qalc.cc:3339 ../src/qalc.cc:4167
+#: ../src/qalc.cc:5595 ../libqalculate/Calculator-calculate.cc:1598
 msgid "factorize"
 msgstr "factorize"
 
-#: ../src/qalc.cc:1070 ../src/qalc.cc:3609 ../src/qalc.cc:4358
+#: ../src/qalc.cc:1077 ../src/qalc.cc:3652 ../src/qalc.cc:4401
 msgid "ignore locale"
 msgstr "ignore locale"
 
-#: ../src/qalc.cc:1082 ../src/qalc.cc:3612 ../src/qalc.cc:3642
-#: ../src/qalc.cc:4361
+#: ../src/qalc.cc:1089 ../src/qalc.cc:3655 ../src/qalc.cc:3685
+#: ../src/qalc.cc:4404
 msgid "save mode"
 msgstr "save mode"
 
-#: ../src/qalc.cc:1091 ../src/qalc.cc:3611 ../src/qalc.cc:3641
-#: ../src/qalc.cc:4360
+#: ../src/qalc.cc:1098 ../src/qalc.cc:3654 ../src/qalc.cc:3684
+#: ../src/qalc.cc:4403
 msgid "save definitions"
 msgstr "save definitions"
 
-#: ../src/qalc.cc:1100 ../src/qalc.cc:3509 ../src/qalc.cc:4258
+#: ../src/qalc.cc:1107 ../src/qalc.cc:3552 ../src/qalc.cc:4301
 msgid "scientific notation"
 msgstr "科学计数法"
 
-#: ../src/qalc.cc:1105 ../src/qalc.cc:3513 ../src/qalc.cc:4267
+#: ../src/qalc.cc:1112 ../src/qalc.cc:3556 ../src/qalc.cc:4310
 msgid "pure"
 msgstr "pure"
 
-#: ../src/qalc.cc:1106 ../src/qalc.cc:3514 ../src/qalc.cc:4269
+#: ../src/qalc.cc:1113 ../src/qalc.cc:3557 ../src/qalc.cc:4312
 msgid "scientific"
 msgstr "scientific"
 
-#: ../src/qalc.cc:1107 ../src/qalc.cc:3515 ../src/qalc.cc:4265
+#: ../src/qalc.cc:1114 ../src/qalc.cc:3558 ../src/qalc.cc:4308
 msgid "engineering"
 msgstr "engineering"
 
-#: ../src/qalc.cc:1116 ../src/qalc.cc:3364 ../src/qalc.cc:4163
+#: ../src/qalc.cc:1123 ../src/qalc.cc:3401 ../src/qalc.cc:4206
 msgid "precision"
 msgstr "精度"
 
-#: ../src/qalc.cc:1125 ../src/qalc.cc:3476 ../src/qalc.cc:4239
+#: ../src/qalc.cc:1132 ../src/qalc.cc:3519 ../src/qalc.cc:4282
 msgid "interval display"
 msgstr "区间显示"
 
-#: ../src/qalc.cc:1128 ../src/qalc.cc:3481 ../src/qalc.cc:4239
+#: ../src/qalc.cc:1135 ../src/qalc.cc:3524 ../src/qalc.cc:4282
 msgid "significant"
 msgstr "significant"
 
-#: ../src/qalc.cc:1129 ../src/qalc.cc:3482 ../src/qalc.cc:4239
+#: ../src/qalc.cc:1136 ../src/qalc.cc:3525 ../src/qalc.cc:4282
 msgid "interval"
 msgstr "interval"
 
-#: ../src/qalc.cc:1130 ../src/qalc.cc:3483 ../src/qalc.cc:4239
+#: ../src/qalc.cc:1137 ../src/qalc.cc:3526 ../src/qalc.cc:4282
 msgid "plusminus"
 msgstr "plusminus"
 
-#: ../src/qalc.cc:1131 ../src/qalc.cc:3484 ../src/qalc.cc:4239
+#: ../src/qalc.cc:1138 ../src/qalc.cc:3527 ../src/qalc.cc:4282
 msgid "midpoint"
 msgstr "midpoint"
 
-#: ../src/qalc.cc:1132 ../src/qalc.cc:3486 ../src/qalc.cc:4239
+#: ../src/qalc.cc:1139 ../src/qalc.cc:3529 ../src/qalc.cc:4282
 msgid "upper"
 msgstr "upper"
 
-#: ../src/qalc.cc:1133 ../src/qalc.cc:3485 ../src/qalc.cc:4239
+#: ../src/qalc.cc:1140 ../src/qalc.cc:3528 ../src/qalc.cc:4282
 msgid "lower"
 msgstr "lower"
 
-#: ../src/qalc.cc:1158 ../src/qalc.cc:3376 ../src/qalc.cc:4177
+#: ../src/qalc.cc:1165 ../src/qalc.cc:3413 ../src/qalc.cc:4220
 msgid "variable units"
 msgstr "变量单位"
 
-#: ../src/qalc.cc:1165 ../src/qalc.cc:3493 ../src/qalc.cc:4242
+#: ../src/qalc.cc:1172 ../src/qalc.cc:3536 ../src/qalc.cc:4285
 msgid "max decimals"
 msgstr "最大小数"
 
-#: ../src/qalc.cc:1177 ../src/qalc.cc:3500 ../src/qalc.cc:4249
+#: ../src/qalc.cc:1184 ../src/qalc.cc:3543 ../src/qalc.cc:4292
 msgid "min decimals"
 msgstr "最小小数"
 
-#: ../src/qalc.cc:1190 ../src/qalc.cc:3460 ../src/qalc.cc:4236
+#: ../src/qalc.cc:1197 ../src/qalc.cc:3503 ../src/qalc.cc:4279
 msgid "fractions"
 msgstr "分数"
 
-#: ../src/qalc.cc:1196
+#: ../src/qalc.cc:1203
 msgid "combined"
 msgstr "合并"
 
-#: ../src/qalc.cc:1197 ../src/qalc.cc:3469 ../src/qalc.cc:4236
+#: ../src/qalc.cc:1204 ../src/qalc.cc:3512 ../src/qalc.cc:4279
 msgid "long"
 msgstr "long"
 
-#: ../src/qalc.cc:1214 ../src/qalc.cc:3440 ../src/qalc.cc:4219
+#: ../src/qalc.cc:1221 ../src/qalc.cc:3483 ../src/qalc.cc:4262
 msgid "complex form"
 msgstr "复数形式"
 
-#: ../src/qalc.cc:1216 ../src/qalc.cc:3071 ../src/qalc.cc:3442
-#: ../src/qalc.cc:4219 ../src/qalc.cc:5457
-#: ../libqalculate/Calculator-calculate.cc:1498
+#: ../src/qalc.cc:1223 ../src/qalc.cc:3108 ../src/qalc.cc:3485
+#: ../src/qalc.cc:4262 ../src/qalc.cc:5514
+#: ../libqalculate/Calculator-calculate.cc:1512
 msgid "rectangular"
 msgstr "rectangular"
 
-#: ../src/qalc.cc:1216 ../src/qalc.cc:3071 ../src/qalc.cc:5457
-#: ../libqalculate/Calculator-calculate.cc:1498
+#: ../src/qalc.cc:1223 ../src/qalc.cc:3108 ../src/qalc.cc:5514
+#: ../libqalculate/Calculator-calculate.cc:1512
 msgid "cartesian"
 msgstr "cartesian"
 
-#: ../src/qalc.cc:1217 ../src/qalc.cc:3083 ../src/qalc.cc:3443
-#: ../src/qalc.cc:4219 ../src/qalc.cc:5460
-#: ../libqalculate/Calculator-calculate.cc:1500
+#: ../src/qalc.cc:1224 ../src/qalc.cc:3120 ../src/qalc.cc:3486
+#: ../src/qalc.cc:4262 ../src/qalc.cc:5517
+#: ../libqalculate/Calculator-calculate.cc:1514
 msgid "exponential"
 msgstr "exponential"
 
-#: ../src/qalc.cc:1218 ../src/qalc.cc:3095 ../src/qalc.cc:3444
-#: ../src/qalc.cc:4219 ../src/qalc.cc:5463
-#: ../libqalculate/Calculator-calculate.cc:1502
+#: ../src/qalc.cc:1225 ../src/qalc.cc:3132 ../src/qalc.cc:3487
+#: ../src/qalc.cc:4262 ../src/qalc.cc:5520
+#: ../libqalculate/Calculator-calculate.cc:1516
 msgid "polar"
 msgstr "polar"
 
-#: ../src/qalc.cc:1219 ../src/qalc.cc:3107 ../src/qalc.cc:3445
-#: ../src/qalc.cc:4219 ../src/qalc.cc:5466
-#: ../libqalculate/Calculator-calculate.cc:1504
+#: ../src/qalc.cc:1226 ../src/qalc.cc:3144 ../src/qalc.cc:3488
+#: ../src/qalc.cc:4262 ../src/qalc.cc:5523
+#: ../libqalculate/Calculator-calculate.cc:1518
 #: ../libqalculate/Function.cc:2248
 msgid "angle"
 msgstr "angle"
 
-#: ../src/qalc.cc:1219 ../src/qalc.cc:3107 ../src/qalc.cc:5466
-#: ../libqalculate/Calculator-calculate.cc:1504
+#: ../src/qalc.cc:1226 ../src/qalc.cc:3144 ../src/qalc.cc:5523
+#: ../libqalculate/Calculator-calculate.cc:1518
 msgid "phasor"
 msgstr "phasor"
 
-#: ../src/qalc.cc:1232 ../src/qalc.cc:3561 ../src/qalc.cc:4320
+#: ../src/qalc.cc:1239 ../src/qalc.cc:3604 ../src/qalc.cc:4363
 msgid "read precision"
 msgstr "读取精度"
 
-#: ../src/qalc.cc:1235 ../src/qalc.cc:3564 ../src/qalc.cc:4320
+#: ../src/qalc.cc:1242 ../src/qalc.cc:3607 ../src/qalc.cc:4363
 msgid "always"
 msgstr "always"
 
-#: ../src/qalc.cc:1236 ../src/qalc.cc:3565 ../src/qalc.cc:4320
+#: ../src/qalc.cc:1243 ../src/qalc.cc:3608 ../src/qalc.cc:4363
 msgid "when decimals"
 msgstr "when decimals"
 
-#: ../src/qalc.cc:1268
+#: ../src/qalc.cc:1275
 msgid "Unrecognized option."
 msgstr "无法识别的选项。"
 
 #. The qalc command "set" as in "set precision 10". The original text string for commands is kept in addition to the translation.
-#: ../src/qalc.cc:1344 ../src/qalc.cc:1369 ../src/qalc.cc:2432
-#: ../src/qalc.cc:3643 ../src/qalc.cc:4103 ../src/qalc.cc:4593
+#: ../src/qalc.cc:1351 ../src/qalc.cc:1376 ../src/qalc.cc:2439
+#: ../src/qalc.cc:3686 ../src/qalc.cc:4146 ../src/qalc.cc:4638
 msgid "set"
 msgstr "set"
 
-#: ../src/qalc.cc:1369 ../src/qalc.cc:3187 ../src/qalc.cc:5446
-#: ../libqalculate/Calculator-calculate.cc:1509
+#: ../src/qalc.cc:1376 ../src/qalc.cc:3224 ../src/qalc.cc:5503
+#: ../libqalculate/Calculator-calculate.cc:1523
 msgid "fraction"
 msgstr "分数"
 
-#: ../src/qalc.cc:1409 ../src/qalc.cc:1669 ../src/qalc.cc:2438
+#: ../src/qalc.cc:1416 ../src/qalc.cc:1676 ../src/qalc.cc:2445
 msgid "Name"
 msgstr "名称"
 
-#: ../src/qalc.cc:1425 ../src/qalc.cc:2510 ../src/qalc.cc:2574
-#: ../src/qalc.cc:2635
+#: ../src/qalc.cc:1432 ../src/qalc.cc:2517 ../src/qalc.cc:2581
+#: ../src/qalc.cc:2642
 msgid "Illegal name."
 msgstr "非法名称。"
 
-#: ../src/qalc.cc:1428 ../src/qalc.cc:1430 ../src/qalc.cc:2513
-#: ../src/qalc.cc:2515 ../src/qalc.cc:2577 ../src/qalc.cc:2579
-#: ../src/qalc.cc:2638 ../src/qalc.cc:2640
+#: ../src/qalc.cc:1435 ../src/qalc.cc:1437 ../src/qalc.cc:2520
+#: ../src/qalc.cc:2522 ../src/qalc.cc:2584 ../src/qalc.cc:2586
+#: ../src/qalc.cc:2645 ../src/qalc.cc:2647
 #, c-format
 msgid "Illegal name. Save as %s instead (default: no)?"
 msgstr "非法文件名。是<b>否</b>另存为%s？"
 
-#: ../src/qalc.cc:1440 ../src/qalc.cc:2525 ../src/qalc.cc:2589
+#: ../src/qalc.cc:1447 ../src/qalc.cc:2532 ../src/qalc.cc:2596
 msgid ""
 "A unit or variable with the same name already exists.\n"
 "Do you want to overwrite it (default: no)?"
@@ -997,233 +1020,233 @@ msgstr ""
 "同名的单位或变量已存在。\n"
 "您要覆盖它吗(默认否)？"
 
-#: ../src/qalc.cc:1527
+#: ../src/qalc.cc:1534
 msgid "Calendar"
 msgstr "日历"
 
-#: ../src/qalc.cc:1527
+#: ../src/qalc.cc:1534
 msgid "Day"
 msgstr "日"
 
-#: ../src/qalc.cc:1527
+#: ../src/qalc.cc:1534
 msgid "Month"
 msgstr "月"
 
-#: ../src/qalc.cc:1527
+#: ../src/qalc.cc:1534
 msgid "Year"
 msgstr "年"
 
-#: ../src/qalc.cc:1528 ../libqalculate/Calculator-calculate.cc:1717
+#: ../src/qalc.cc:1535 ../libqalculate/Calculator-calculate.cc:1731
 msgid "failed"
 msgstr "失败了"
 
-#: ../src/qalc.cc:1529 ../libqalculate/Calculator-calculate.cc:1718
+#: ../src/qalc.cc:1536 ../libqalculate/Calculator-calculate.cc:1732
 msgid "Gregorian:"
 msgstr "格里高利历(公历/阳历):"
 
-#: ../src/qalc.cc:1530 ../libqalculate/Calculator-calculate.cc:1719
+#: ../src/qalc.cc:1537 ../libqalculate/Calculator-calculate.cc:1733
 msgid "Hebrew:"
 msgstr "希伯来历(犹太历):"
 
-#: ../src/qalc.cc:1531 ../libqalculate/Calculator-calculate.cc:1720
+#: ../src/qalc.cc:1538 ../libqalculate/Calculator-calculate.cc:1734
 msgid "Islamic:"
 msgstr "伊斯兰历(回历/Hijri):"
 
-#: ../src/qalc.cc:1532 ../libqalculate/Calculator-calculate.cc:1721
+#: ../src/qalc.cc:1539 ../libqalculate/Calculator-calculate.cc:1735
 msgid "Persian:"
 msgstr "波斯历(Solar Hijri):"
 
-#: ../src/qalc.cc:1533 ../libqalculate/Calculator-calculate.cc:1722
+#: ../src/qalc.cc:1540 ../libqalculate/Calculator-calculate.cc:1736
 msgid "Indian national:"
 msgstr "印度国历:"
 
-#: ../src/qalc.cc:1534 ../libqalculate/Calculator-calculate.cc:1723
+#: ../src/qalc.cc:1541 ../libqalculate/Calculator-calculate.cc:1737
 msgid "Chinese:"
 msgstr "中国历(农历/阴历):"
 
-#: ../src/qalc.cc:1539 ../libqalculate/Calculator-calculate.cc:1727
+#: ../src/qalc.cc:1546 ../libqalculate/Calculator-calculate.cc:1741
 msgid "Julian:"
 msgstr "儒略历:"
 
-#: ../src/qalc.cc:1540 ../libqalculate/Calculator-calculate.cc:1728
+#: ../src/qalc.cc:1547 ../libqalculate/Calculator-calculate.cc:1742
 msgid "Revised julian:"
 msgstr "修订儒略历:"
 
-#: ../src/qalc.cc:1541 ../libqalculate/Calculator-calculate.cc:1729
+#: ../src/qalc.cc:1548 ../libqalculate/Calculator-calculate.cc:1743
 msgid "Coptic:"
 msgstr "科普特历(Coptic):"
 
-#: ../src/qalc.cc:1542 ../libqalculate/Calculator-calculate.cc:1730
+#: ../src/qalc.cc:1549 ../libqalculate/Calculator-calculate.cc:1744
 msgid "Ethiopian:"
 msgstr "埃塞俄比亚历:"
 
-#: ../src/qalc.cc:1621 ../libqalculate/BuiltinFunctions-matrixvector.cc:672
+#: ../src/qalc.cc:1628 ../libqalculate/BuiltinFunctions-matrixvector.cc:672
 #: ../libqalculate/BuiltinFunctions-matrixvector.cc:702
 msgid "No matching item found."
 msgstr "未找到匹配项。"
 
-#: ../src/qalc.cc:1652 ../src/qalc.cc:1653 ../src/qalc.cc:1784
-#: ../src/qalc.cc:1785 ../src/qalc.cc:1861 ../src/qalc.cc:1862
+#: ../src/qalc.cc:1659 ../src/qalc.cc:1660 ../src/qalc.cc:1791
+#: ../src/qalc.cc:1792 ../src/qalc.cc:1868 ../src/qalc.cc:1869
 msgid ""
 "For more information about a specific function, variable, unit, or prefix, "
 "please use the info command (in interactive mode)."
 msgstr ""
 "使用info命令获取关于特定函数，变量，单位或前缀的更多信息。(例:info sin)"
 
-#: ../src/qalc.cc:1667
+#: ../src/qalc.cc:1674
 msgid "Variables:"
 msgstr "变量:"
 
-#: ../src/qalc.cc:1670 ../src/qalc.cc:4019 ../src/qalc.cc:4026
-#: ../src/qalc.cc:4076
+#: ../src/qalc.cc:1677 ../src/qalc.cc:4062 ../src/qalc.cc:4069
+#: ../src/qalc.cc:4119
 msgid "Value"
 msgstr "值"
 
-#: ../src/qalc.cc:1758
+#: ../src/qalc.cc:1765
 msgid "Functions:"
 msgstr "函数:"
 
-#: ../src/qalc.cc:1772
+#: ../src/qalc.cc:1779
 msgid "Units:"
 msgstr "单位:"
 
-#: ../src/qalc.cc:1779
+#: ../src/qalc.cc:1786
 msgid "No local variables, functions or units have been defined."
 msgstr "未定义局部变量，函数或单位。"
 
-#: ../src/qalc.cc:1928
+#: ../src/qalc.cc:1935
 msgid "usage: qalc [options] [expression]"
 msgstr "用法:qalc [options] [expression]"
 
-#: ../src/qalc.cc:1930
+#: ../src/qalc.cc:1937
 msgid "where options are:"
 msgstr "可用选项有:"
 
-#: ../src/qalc.cc:1931 ../src/qalc.cc:1967 ../src/qalc.cc:3625
+#: ../src/qalc.cc:1938 ../src/qalc.cc:1974 ../src/qalc.cc:3668
 msgid "BASE"
 msgstr "BASE"
 
-#: ../src/qalc.cc:1932
+#: ../src/qalc.cc:1939
 msgid "set the number base for results and, optionally, expressions"
 msgstr "设置结果以及表达式(可选)的进制"
 
-#: ../src/qalc.cc:1934
+#: ../src/qalc.cc:1941
 msgid "use colors to hightlight different elements of expressions and results"
 msgstr "使用颜色突出显示表达式和结果的不同元素"
 
-#: ../src/qalc.cc:1939
+#: ../src/qalc.cc:1946
 msgid "FILE"
 msgstr "FILE"
 
-#: ../src/qalc.cc:1940
+#: ../src/qalc.cc:1947
 msgid "execute commands from a file first"
 msgstr "首先执行指定文件中的命令"
 
-#: ../src/qalc.cc:1942
+#: ../src/qalc.cc:1949
 msgid "start in interactive mode"
 msgstr "以交互模式启动"
 
-#: ../src/qalc.cc:1943 ../src/qalc.cc:1945 ../src/qalc.cc:1947
-#: ../src/qalc.cc:1949 ../src/qalc.cc:1951
+#: ../src/qalc.cc:1950 ../src/qalc.cc:1952 ../src/qalc.cc:1954
+#: ../src/qalc.cc:1956 ../src/qalc.cc:1958
 msgid "SEARCH TERM"
 msgstr "SEARCH TERM"
 
-#: ../src/qalc.cc:1944
+#: ../src/qalc.cc:1951
 msgid ""
 "displays a list of all user-defined or matching variables, functions, units, "
 "and prefixes"
 msgstr "显示所有用户定义的或匹配的变量、函数、单位和前缀列表"
 
-#: ../src/qalc.cc:1946
+#: ../src/qalc.cc:1953
 msgid "displays a list of all or matching functions"
 msgstr "显示所有或匹配的函数列表"
 
-#: ../src/qalc.cc:1948
+#: ../src/qalc.cc:1955
 msgid "displays a list of all or matching prefixes"
 msgstr "显示所有或匹配的前缀的表"
 
-#: ../src/qalc.cc:1950
+#: ../src/qalc.cc:1957
 msgid "displays a list of all or matching units"
 msgstr "显示所有或匹配的单位列表"
 
-#: ../src/qalc.cc:1952
+#: ../src/qalc.cc:1959
 msgid "displays a list of all or matching variables"
 msgstr "显示所有或匹配的变量列表"
 
-#: ../src/qalc.cc:1953
+#: ../src/qalc.cc:1960
 msgid "MILLISECONDS"
 msgstr "MILLISECONDS"
 
-#: ../src/qalc.cc:1954
+#: ../src/qalc.cc:1961
 msgid ""
 "terminate calculation and display of result after specified amount of time"
 msgstr "在指定时间后终止计算并显示结果"
 
-#: ../src/qalc.cc:1956
+#: ../src/qalc.cc:1963
 msgid "do not load any functions, units, or variables from file"
 msgstr "不载入文件中的函数、单位和变量定义"
 
-#: ../src/qalc.cc:1958
+#: ../src/qalc.cc:1965
 msgid "do not load any global currencies from file"
 msgstr "不载入文件中的全局货币定义"
 
-#: ../src/qalc.cc:1960
+#: ../src/qalc.cc:1967
 msgid "do not load any global data sets from file"
 msgstr "不载入文件中的全局数据集"
 
-#: ../src/qalc.cc:1962
+#: ../src/qalc.cc:1969
 msgid "do not load any global functions from file"
 msgstr "不载入文件中的全局函数定义"
 
-#: ../src/qalc.cc:1964
+#: ../src/qalc.cc:1971
 msgid "do not load any global units from file"
 msgstr "不载入文件中的全局单位定义"
 
-#: ../src/qalc.cc:1966
+#: ../src/qalc.cc:1973
 msgid "do not load any global variables from file"
 msgstr "不载入文件中的全局变量定义"
 
-#: ../src/qalc.cc:1968
+#: ../src/qalc.cc:1975
 msgid ""
 "start in programming mode (same as -b \"BASE BASE\" -s \"xor^\", with base "
 "conversion)"
 msgstr "以编程模式启动(与 -b \"BASE BASE\" -s \"xor^\" 相同，含进制换算)"
 
-#: ../src/qalc.cc:1969 ../src/qalc.cc:3643
+#: ../src/qalc.cc:1976 ../src/qalc.cc:3686
 msgid "OPTION"
 msgstr "OPTION"
 
-#: ../src/qalc.cc:1969 ../src/qalc.cc:3643
+#: ../src/qalc.cc:1976 ../src/qalc.cc:3686
 msgid "VALUE"
 msgstr "VALUE"
 
-#: ../src/qalc.cc:1970
+#: ../src/qalc.cc:1977
 msgid "as set command in interactive program session (e.g. -set \"base 16\")"
 msgstr "与在交互程序会话下使用set命令的作用一致 (例如， -set \"base 16\")"
 
-#: ../src/qalc.cc:1972
+#: ../src/qalc.cc:1979
 msgid "reduce output to just the result of the input expression"
 msgstr "限制输出，仅输出输入表达式的结果"
 
-#: ../src/qalc.cc:1974
+#: ../src/qalc.cc:1981
 msgid "switch unicode support on/off"
 msgstr "打开/关闭Unicode支持"
 
-#: ../src/qalc.cc:1976
+#: ../src/qalc.cc:1983
 msgid "show application version and exit"
 msgstr "显示应用程序版本并退出"
 
-#: ../src/qalc.cc:1978
+#: ../src/qalc.cc:1985
 msgid ""
 "The program will start in interactive mode if no expression and no file is "
 "specified (or interactive mode is explicitly selected)."
 msgstr "如果未指定表达式，程序将以交互模式启动。"
 
-#: ../src/qalc.cc:1978
+#: ../src/qalc.cc:1985
 msgid "Type help in interactive mode for information about available commands."
 msgstr "以交互方式键入 help，以获取有关可用命令的信息。"
 
-#: ../src/qalc.cc:1981 ../src/qalc.cc:3662
+#: ../src/qalc.cc:1988 ../src/qalc.cc:3705
 msgid ""
 "For more information about mathematical expression and different options, "
 "and a complete list of functions, variables, and units, see the relevant "
@@ -1233,7 +1256,7 @@ msgstr ""
 "有关数学表达式和不同选项以及函数，变量和单位的完整列表的更多信息，请参见用户"
 "图形界面手册中的相关部分(位于https://qalculate.github.io/manual/index.html)。"
 
-#: ../src/qalc.cc:1983 ../src/qalc.cc:3664
+#: ../src/qalc.cc:1990 ../src/qalc.cc:3707
 msgid ""
 "For more information about mathematical expression and different options, "
 "please consult the man page, or the relevant sections in the manual of the "
@@ -1245,70 +1268,70 @@ msgstr ""
 "(位于https://qalculate.github.io/manual/index.html)，该手册页也包括函数，变量"
 "和单位的完整列表。"
 
-#: ../src/qalc.cc:2115
+#: ../src/qalc.cc:2122
 msgid "No option and value specified for set command."
 msgstr "set命令中未指定选项或数值。"
 
-#: ../src/qalc.cc:2126
+#: ../src/qalc.cc:2133
 msgid "No file specified."
 msgstr "未指定文件。"
 
-#: ../src/qalc.cc:2208
+#: ../src/qalc.cc:2215
 msgid "Failed to load global definitions!"
 msgstr "载入全局定义失败！"
 
-#: ../src/qalc.cc:2254
+#: ../src/qalc.cc:2261
 #, c-format
 msgid "Could not open \"%s\".\n"
 msgstr "无法打开\"%s\".\n"
 
-#: ../src/qalc.cc:2300 ../src/qalc.cc:2365 ../src/qalc.cc:4606
+#: ../src/qalc.cc:2307 ../src/qalc.cc:2372 ../src/qalc.cc:4651
 #, c-format
 msgid "Illegal character, '%c', in expression."
 msgstr "表达式中有非法字符\"%c\"。"
 
 #. qalc command
-#: ../src/qalc.cc:2436 ../src/qalc.cc:3640 ../src/qalc.cc:4390
-#: ../src/qalc.cc:4593
+#: ../src/qalc.cc:2443 ../src/qalc.cc:3683 ../src/qalc.cc:4433
+#: ../src/qalc.cc:4638
 msgid "save"
 msgstr "save"
 
-#: ../src/qalc.cc:2436 ../src/qalc.cc:3640 ../src/qalc.cc:4390
-#: ../src/qalc.cc:4593
+#: ../src/qalc.cc:2443 ../src/qalc.cc:3683 ../src/qalc.cc:4433
+#: ../src/qalc.cc:4638
 msgid "store"
 msgstr "store"
 
 #. qalc command
-#: ../src/qalc.cc:2456 ../src/qalc.cc:3290 ../src/qalc.cc:3638
-#: ../src/qalc.cc:4416 ../src/qalc.cc:4586
+#: ../src/qalc.cc:2463 ../src/qalc.cc:3327 ../src/qalc.cc:3681
+#: ../src/qalc.cc:4459 ../src/qalc.cc:4631
 msgid "mode"
 msgstr "mode"
 
-#: ../src/qalc.cc:2458
+#: ../src/qalc.cc:2465
 msgid "mode saved"
 msgstr "模式已保存"
 
-#: ../src/qalc.cc:2460
+#: ../src/qalc.cc:2467
 msgid "definitions"
 msgstr "定义"
 
-#: ../src/qalc.cc:2462
+#: ../src/qalc.cc:2469
 msgid "definitions saved"
 msgstr "定义已保存"
 
 #. qalc command
-#: ../src/qalc.cc:2545 ../src/qalc.cc:3645 ../src/qalc.cc:4397
-#: ../src/qalc.cc:4593 ../libqalculate/Function.cc:2209
+#: ../src/qalc.cc:2552 ../src/qalc.cc:3688 ../src/qalc.cc:4440
+#: ../src/qalc.cc:4638 ../libqalculate/Function.cc:2209
 msgid "variable"
 msgstr "variable"
 
 #. qalc command
-#: ../src/qalc.cc:2606 ../src/qalc.cc:3635 ../src/qalc.cc:4403
-#: ../src/qalc.cc:4593 ../libqalculate/Function.cc:2181
+#: ../src/qalc.cc:2613 ../src/qalc.cc:3678 ../src/qalc.cc:4446
+#: ../src/qalc.cc:4638 ../libqalculate/Function.cc:2181
 msgid "function"
 msgstr "function"
 
-#: ../src/qalc.cc:2648
+#: ../src/qalc.cc:2655
 msgid ""
 "A function with the same name already exists.\n"
 "Do you want to overwrite it (default: no)?"
@@ -1317,407 +1340,407 @@ msgstr ""
 "您要覆盖它吗(默认否)？"
 
 #. qalc command
-#: ../src/qalc.cc:2673 ../src/qalc.cc:3626 ../src/qalc.cc:4410
-#: ../src/qalc.cc:4593
+#: ../src/qalc.cc:2680 ../src/qalc.cc:3669 ../src/qalc.cc:4453
+#: ../src/qalc.cc:4638
 msgid "delete"
 msgstr "delete"
 
-#: ../src/qalc.cc:2684
+#: ../src/qalc.cc:2691
 msgid "No user-defined variable or function with the specified name exist."
 msgstr "没有指定名称的用户定义变量或函数"
 
 #. qalc command
-#: ../src/qalc.cc:2688 ../src/qalc.cc:3624 ../src/qalc.cc:4363
-#: ../src/qalc.cc:4593
+#: ../src/qalc.cc:2695 ../src/qalc.cc:3667 ../src/qalc.cc:4406
+#: ../src/qalc.cc:4638
 msgid "assume"
 msgstr "assume"
 
-#: ../src/qalc.cc:2698
+#: ../src/qalc.cc:2705
 msgid "syntax"
 msgstr "语法"
 
 #. qalc command
-#: ../src/qalc.cc:2706 ../src/qalc.cc:2753 ../src/qalc.cc:3649
-#: ../src/qalc.cc:4455 ../src/qalc.cc:4586
+#: ../src/qalc.cc:2713 ../src/qalc.cc:2760 ../src/qalc.cc:3692
+#: ../src/qalc.cc:4498 ../src/qalc.cc:4631
 msgid "stack"
 msgstr "stack"
 
 #. qalc command
-#: ../src/qalc.cc:2731 ../src/qalc.cc:3630 ../src/qalc.cc:4435
-#: ../src/qalc.cc:4586
+#: ../src/qalc.cc:2738 ../src/qalc.cc:3673 ../src/qalc.cc:4478
+#: ../src/qalc.cc:4631
 msgid "exrates"
 msgstr "exrates"
 
-#: ../src/qalc.cc:2755 ../src/qalc.cc:2773 ../src/qalc.cc:2782
-#: ../src/qalc.cc:2815 ../src/qalc.cc:2844 ../src/qalc.cc:2853
-#: ../src/qalc.cc:2870 ../src/qalc.cc:2877 ../src/qalc.cc:2895
-#: ../src/qalc.cc:2902
+#: ../src/qalc.cc:2762 ../src/qalc.cc:2780 ../src/qalc.cc:2789
+#: ../src/qalc.cc:2822 ../src/qalc.cc:2851 ../src/qalc.cc:2860
+#: ../src/qalc.cc:2877 ../src/qalc.cc:2884 ../src/qalc.cc:2902
+#: ../src/qalc.cc:2909
 msgid "The RPN stack is empty."
 msgstr "RPN栈为空。"
 
 #. qalc command
-#: ../src/qalc.cc:2771 ../src/qalc.cc:2780 ../src/qalc.cc:3655
-#: ../src/qalc.cc:4459
+#: ../src/qalc.cc:2778 ../src/qalc.cc:2787 ../src/qalc.cc:3698
+#: ../src/qalc.cc:4502
 msgid "swap"
 msgstr "swap"
 
-#: ../src/qalc.cc:2775 ../src/qalc.cc:2784 ../src/qalc.cc:2817
-#: ../src/qalc.cc:2846 ../src/qalc.cc:2855
+#: ../src/qalc.cc:2782 ../src/qalc.cc:2791 ../src/qalc.cc:2824
+#: ../src/qalc.cc:2853 ../src/qalc.cc:2862
 msgid "The RPN stack only contains one value."
 msgstr "RPN栈为空。"
 
-#: ../src/qalc.cc:2803 ../src/qalc.cc:2836 ../src/qalc.cc:2884
-#: ../src/qalc.cc:2908
+#: ../src/qalc.cc:2810 ../src/qalc.cc:2843 ../src/qalc.cc:2891
+#: ../src/qalc.cc:2915
 msgid "The specified RPN stack index does not exist."
 msgstr "指定的RPN栈索引不存在。"
 
 #. qalc command
-#: ../src/qalc.cc:2813 ../src/qalc.cc:3652 ../src/qalc.cc:4481
-#: ../src/qalc.cc:4593
+#: ../src/qalc.cc:2820 ../src/qalc.cc:3695 ../src/qalc.cc:4524
+#: ../src/qalc.cc:4638
 msgid "move"
 msgstr "move"
 
 #. qalc command
-#: ../src/qalc.cc:2842 ../src/qalc.cc:2851 ../src/qalc.cc:3654
-#: ../src/qalc.cc:4477
+#: ../src/qalc.cc:2849 ../src/qalc.cc:2858 ../src/qalc.cc:3697
+#: ../src/qalc.cc:4520
 msgid "rotate"
 msgstr "rotate"
 
-#: ../src/qalc.cc:2859
+#: ../src/qalc.cc:2866
 msgid "up"
 msgstr "上"
 
-#: ../src/qalc.cc:2861
+#: ../src/qalc.cc:2868
 msgid "down"
 msgstr "下"
 
 #. qalc command
-#: ../src/qalc.cc:2868 ../src/qalc.cc:2875 ../src/qalc.cc:3651
-#: ../src/qalc.cc:4469
+#: ../src/qalc.cc:2875 ../src/qalc.cc:2882 ../src/qalc.cc:3694
+#: ../src/qalc.cc:4512
 msgid "copy"
 msgstr "copy"
 
 #. qalc command
-#: ../src/qalc.cc:2890 ../src/qalc.cc:3650 ../src/qalc.cc:4445
+#: ../src/qalc.cc:2897 ../src/qalc.cc:3693 ../src/qalc.cc:4488
 msgid "clear stack"
 msgstr "clear stack"
 
 #. qalc command
-#: ../src/qalc.cc:2893 ../src/qalc.cc:2900 ../src/qalc.cc:3653
-#: ../src/qalc.cc:4449
+#: ../src/qalc.cc:2900 ../src/qalc.cc:2907 ../src/qalc.cc:3696
+#: ../src/qalc.cc:4492
 msgid "pop"
 msgstr "pop"
 
 #. qalc command
-#: ../src/qalc.cc:2928 ../src/qalc.cc:2929 ../src/qalc.cc:3644
-#: ../src/qalc.cc:4501 ../src/qalc.cc:4593
+#: ../src/qalc.cc:2935 ../src/qalc.cc:2936 ../src/qalc.cc:3687
+#: ../src/qalc.cc:4544 ../src/qalc.cc:4638
 msgid "convert"
 msgstr "convert"
 
 #. "to"-operator
-#: ../src/qalc.cc:2928 ../src/qalc.cc:2929 ../src/qalc.cc:3644
-#: ../src/qalc.cc:4501 ../src/qalc.cc:4547 ../src/qalc.cc:4593
-#: ../libqalculate/Calculator-calculate.cc:1990
-#: ../libqalculate/Calculator-calculate.cc:1992
-#: ../libqalculate/Calculator-calculate.cc:2020
-#: ../libqalculate/Calculator-calculate.cc:2022
-#: ../libqalculate/Calculator-calculate.cc:2051
-#: ../libqalculate/Calculator-calculate.cc:2055
+#: ../src/qalc.cc:2935 ../src/qalc.cc:2936 ../src/qalc.cc:3687
+#: ../src/qalc.cc:4544 ../src/qalc.cc:4592 ../src/qalc.cc:4638
+#: ../libqalculate/Calculator-calculate.cc:2004
+#: ../libqalculate/Calculator-calculate.cc:2006
+#: ../libqalculate/Calculator-calculate.cc:2034
+#: ../libqalculate/Calculator-calculate.cc:2036
+#: ../libqalculate/Calculator-calculate.cc:2065
+#: ../libqalculate/Calculator-calculate.cc:2069
 #: ../libqalculate/Calculator.cc:298 ../libqalculate/Calculator.cc:527
 #: ../libqalculate/Calculator.cc:1331 ../libqalculate/Calculator.cc:1332
 msgid "to"
 msgstr "to"
 
-#: ../src/qalc.cc:3058 ../src/qalc.cc:5439
-#: ../libqalculate/Calculator-calculate.cc:1491
+#: ../src/qalc.cc:3095 ../src/qalc.cc:5496
+#: ../libqalculate/Calculator-calculate.cc:1505
 msgid "Time zone parsing failed."
 msgstr "时区解析失败。"
 
-#: ../src/qalc.cc:3131 ../src/qalc.cc:5453
-#: ../libqalculate/Calculator-calculate.cc:1516
+#: ../src/qalc.cc:3168 ../src/qalc.cc:5510
+#: ../libqalculate/Calculator-calculate.cc:1530
 msgid "bases"
 msgstr "进制"
 
-#: ../src/qalc.cc:3177 ../src/qalc.cc:5455
-#: ../libqalculate/Calculator-calculate.cc:1518
+#: ../src/qalc.cc:3214 ../src/qalc.cc:5512
+#: ../libqalculate/Calculator-calculate.cc:1532
 msgid "calendars"
 msgstr "日历"
 
-#: ../src/qalc.cc:3195 ../src/qalc.cc:5449
-#: ../libqalculate/Calculator-calculate.cc:1511
+#: ../src/qalc.cc:3232 ../src/qalc.cc:5506
+#: ../libqalculate/Calculator-calculate.cc:1525
 msgid "factors"
 msgstr "因子"
 
 #. qalc command
-#: ../src/qalc.cc:3197 ../src/qalc.cc:3284 ../src/qalc.cc:3639
-#: ../src/qalc.cc:4095 ../src/qalc.cc:5451
-#: ../libqalculate/Calculator-calculate.cc:1514
+#: ../src/qalc.cc:3234 ../src/qalc.cc:3321 ../src/qalc.cc:3682
+#: ../src/qalc.cc:4138 ../src/qalc.cc:5508
+#: ../libqalculate/Calculator-calculate.cc:1528
 msgid "partial fraction"
 msgstr "partial fraction"
 
 #. qalc command
-#: ../src/qalc.cc:3281 ../src/qalc.cc:3633 ../src/qalc.cc:4091
-#: ../src/qalc.cc:4586
+#: ../src/qalc.cc:3318 ../src/qalc.cc:3676 ../src/qalc.cc:4134
+#: ../src/qalc.cc:4631
 msgid "factor"
 msgstr "factor"
 
-#: ../src/qalc.cc:3295 ../src/qalc.cc:4122
+#: ../src/qalc.cc:3332 ../src/qalc.cc:4165
 msgid "Algebraic Mode"
 msgstr "代数模式"
 
-#: ../src/qalc.cc:3330 ../src/qalc.cc:4154
+#: ../src/qalc.cc:3367 ../src/qalc.cc:4197
 msgid "Calculation"
 msgstr "计算"
 
-#: ../src/qalc.cc:3361
+#: ../src/qalc.cc:3398
 msgid "simplified"
 msgstr "简化"
 
-#: ../src/qalc.cc:3366 ../src/qalc.cc:4167
+#: ../src/qalc.cc:3403 ../src/qalc.cc:4210
 msgid "Enabled Objects"
 msgstr "启用对象"
 
-#: ../src/qalc.cc:3378 ../src/qalc.cc:4179
+#: ../src/qalc.cc:3415 ../src/qalc.cc:4222
 msgid "Generic Display Options"
 msgstr "通用显示选项"
 
-#: ../src/qalc.cc:3410 ../src/qalc.cc:4192
+#: ../src/qalc.cc:3447 ../src/qalc.cc:4235
 msgid "Numerical Display"
 msgstr "数值显示"
 
-#: ../src/qalc.cc:3522 ../src/qalc.cc:4277
+#: ../src/qalc.cc:3565 ../src/qalc.cc:4320
 msgid "Parsing"
 msgstr "解析"
 
-#: ../src/qalc.cc:3569 ../src/qalc.cc:4322
+#: ../src/qalc.cc:3612 ../src/qalc.cc:4365
 msgid "Units"
 msgstr "单位"
 
-#: ../src/qalc.cc:3607 ../src/qalc.cc:4356
+#: ../src/qalc.cc:3650 ../src/qalc.cc:4399
 msgid "Other"
 msgstr "其他"
 
 #. qalc command
-#: ../src/qalc.cc:3615 ../src/qalc.cc:4087
+#: ../src/qalc.cc:3658 ../src/qalc.cc:4130
 msgid "help"
 msgstr "help"
 
-#: ../src/qalc.cc:3618
+#: ../src/qalc.cc:3661
 msgid "Enter a mathematical expression or a command and press enter."
 msgstr "请输入一个数学表达式或命令后回车。"
 
-#: ../src/qalc.cc:3619
+#: ../src/qalc.cc:3662
 msgid "Complete functions, units and variables with the tabulator key."
 msgstr "使用tab键补全函数、命令和单位。"
 
-#: ../src/qalc.cc:3621
+#: ../src/qalc.cc:3664
 msgid "Available commands are:"
 msgstr "候选命令有:"
 
-#: ../src/qalc.cc:3624
+#: ../src/qalc.cc:3667
 msgid "ASSUMPTIONS"
 msgstr "ASSUMPTIONS"
 
-#: ../src/qalc.cc:3626 ../src/qalc.cc:3634 ../src/qalc.cc:3635
-#: ../src/qalc.cc:3636 ../src/qalc.cc:3640 ../src/qalc.cc:3645
+#: ../src/qalc.cc:3669 ../src/qalc.cc:3677 ../src/qalc.cc:3678
+#: ../src/qalc.cc:3679 ../src/qalc.cc:3683 ../src/qalc.cc:3688
 msgid "NAME"
 msgstr "NAME"
 
-#: ../src/qalc.cc:3634 ../src/qalc.cc:3670 ../src/qalc.cc:4420
-#: ../src/qalc.cc:4593
+#: ../src/qalc.cc:3677 ../src/qalc.cc:3713 ../src/qalc.cc:4463
+#: ../src/qalc.cc:4638
 msgid "find"
 msgstr "find"
 
 #. qalc command
-#: ../src/qalc.cc:3634 ../src/qalc.cc:3668 ../src/qalc.cc:3670
-#: ../src/qalc.cc:4420
+#: ../src/qalc.cc:3677 ../src/qalc.cc:3711 ../src/qalc.cc:3713
+#: ../src/qalc.cc:4463
 msgid "list"
 msgstr "list"
 
-#: ../src/qalc.cc:3635 ../src/qalc.cc:3645
+#: ../src/qalc.cc:3678 ../src/qalc.cc:3688
 msgid "EXPRESSION"
 msgstr "EXPRESSION"
 
 #. qalc command
-#: ../src/qalc.cc:3636 ../src/qalc.cc:3698 ../src/qalc.cc:4429
-#: ../src/qalc.cc:4593 ../libqalculate/Calculator-definitions.cc:2974
+#: ../src/qalc.cc:3679 ../src/qalc.cc:3741 ../src/qalc.cc:4472
+#: ../src/qalc.cc:4638 ../libqalculate/Calculator-definitions.cc:2974
 #: ../libqalculate/DataSet.cc:368 ../libqalculate/DataSet.cc:395
 #: ../libqalculate/DataSet.cc:1064
 msgid "info"
 msgstr "info"
 
-#: ../src/qalc.cc:3637
+#: ../src/qalc.cc:3680
 msgid "MC/MS/M+/M- (memory operations)"
 msgstr "MC/MS/M+/M- (存值操作)"
 
-#: ../src/qalc.cc:3640
+#: ../src/qalc.cc:3683
 msgid "CATEGORY"
 msgstr "CATEGORY"
 
-#: ../src/qalc.cc:3640
+#: ../src/qalc.cc:3683
 msgid "TITLE"
 msgstr "TITLE"
 
-#: ../src/qalc.cc:3644
+#: ../src/qalc.cc:3687
 msgid "UNIT or \"TO\" COMMAND"
 msgstr "UNIT 或 \"TO\" COMMAND"
 
 #. qalc command
-#: ../src/qalc.cc:3646 ../src/qalc.cc:4551 ../src/qalc.cc:4578
-#: ../src/qalc.cc:4586
+#: ../src/qalc.cc:3689 ../src/qalc.cc:4596 ../src/qalc.cc:4623
+#: ../src/qalc.cc:4631
 msgid "quit"
 msgstr "quit"
 
-#: ../src/qalc.cc:3646 ../src/qalc.cc:4551 ../src/qalc.cc:4578
-#: ../src/qalc.cc:4586
+#: ../src/qalc.cc:3689 ../src/qalc.cc:4596 ../src/qalc.cc:4623
+#: ../src/qalc.cc:4631
 msgid "exit"
 msgstr "exit"
 
-#: ../src/qalc.cc:3647
+#: ../src/qalc.cc:3690
 msgid "Commands for RPN mode:"
 msgstr "RPN模式的命令:"
 
-#: ../src/qalc.cc:3648
+#: ../src/qalc.cc:3691
 msgid "STATE"
 msgstr "STATE"
 
-#: ../src/qalc.cc:3651 ../src/qalc.cc:3653
+#: ../src/qalc.cc:3694 ../src/qalc.cc:3696
 msgid "INDEX"
 msgstr "INDEX"
 
-#: ../src/qalc.cc:3652 ../src/qalc.cc:3655
+#: ../src/qalc.cc:3695 ../src/qalc.cc:3698
 msgid "INDEX 1"
 msgstr "INDEX 1"
 
-#: ../src/qalc.cc:3652 ../src/qalc.cc:3655
+#: ../src/qalc.cc:3695 ../src/qalc.cc:3698
 msgid "INDEX 2"
 msgstr "INDEX 2"
 
-#: ../src/qalc.cc:3654
+#: ../src/qalc.cc:3697
 msgid "DIRECTION"
 msgstr "DIRECTION"
 
-#: ../src/qalc.cc:3657
+#: ../src/qalc.cc:3700
 msgid "Type help COMMAND for more information (example: help save)."
 msgstr "输入“help COMMAND“以获取更多帮助(例如:help save)"
 
-#: ../src/qalc.cc:3658
+#: ../src/qalc.cc:3701
 msgid ""
 "Type info NAME for information about a function, variable, unit, or prefix "
 "(example: info sin)."
 msgstr "输入“info NAME“以获取关于函数，变量或单位的信息。(例:info sin)"
 
-#: ../src/qalc.cc:3659
+#: ../src/qalc.cc:3702
 msgid ""
 "When a line begins with '/', the following text is always interpreted as a "
 "command."
 msgstr "以 / 开头的行后的文本始终被解释为命令。"
 
-#: ../src/qalc.cc:3683 ../src/qalc.cc:3689
+#: ../src/qalc.cc:3726 ../src/qalc.cc:3732
 msgid "currencies"
 msgstr "货币"
 
-#: ../src/qalc.cc:3709
+#: ../src/qalc.cc:3752
 msgid "No function, variable, unit, or prefix with specified name exist."
 msgstr "未找到指定名称的函数、变量或单位。"
 
-#: ../src/qalc.cc:3723
+#: ../src/qalc.cc:3766
 msgid "Function"
 msgstr "函数"
 
-#: ../src/qalc.cc:3871
+#: ../src/qalc.cc:3914
 msgid "Expression:"
 msgstr "表达式:"
 
-#: ../src/qalc.cc:3879 ../src/qalc.cc:3882 ../src/qalc.cc:4054
+#: ../src/qalc.cc:3922 ../src/qalc.cc:3925 ../src/qalc.cc:4097
 msgid "Unit"
 msgstr "单位"
 
-#: ../src/qalc.cc:3885 ../src/qalc.cc:3963 ../src/qalc.cc:4070
+#: ../src/qalc.cc:3928 ../src/qalc.cc:4006 ../src/qalc.cc:4113
 msgid "Names"
 msgstr "名称"
 
-#: ../src/qalc.cc:3903
+#: ../src/qalc.cc:3946
 msgid "Base Unit"
 msgstr "基准"
 
-#: ../src/qalc.cc:3915
+#: ../src/qalc.cc:3958
 msgid "Relation"
 msgstr "关系"
 
-#: ../src/qalc.cc:3920 ../src/qalc.cc:4022
+#: ../src/qalc.cc:3963 ../src/qalc.cc:4065
 msgid "Relative uncertainty"
 msgstr "相对不确定度"
 
-#: ../src/qalc.cc:3921 ../src/qalc.cc:4023
+#: ../src/qalc.cc:3964 ../src/qalc.cc:4066
 msgid "Uncertainty"
 msgstr "不确定度"
 
-#: ../src/qalc.cc:3931
+#: ../src/qalc.cc:3974
 msgid "Inverse Relation"
 msgstr "逆关系"
 
-#: ../src/qalc.cc:3943
+#: ../src/qalc.cc:3986
 msgid "Base Units"
 msgstr "基本单位"
 
-#: ../src/qalc.cc:3957 ../src/qalc.cc:3960
+#: ../src/qalc.cc:4000 ../src/qalc.cc:4003
 msgid "Variable"
 msgstr "变量"
 
-#: ../src/qalc.cc:4068
+#: ../src/qalc.cc:4111
 msgid "Prefix"
 msgstr "前缀"
 
-#: ../src/qalc.cc:4093
+#: ../src/qalc.cc:4136
 msgid "Factorizes the current result."
 msgstr "分解当前结果。"
 
-#: ../src/qalc.cc:4097
+#: ../src/qalc.cc:4140
 msgid "Applies partial fraction decomposition to the current result."
 msgstr "部分分式分解当前结果。"
 
-#: ../src/qalc.cc:4101
+#: ../src/qalc.cc:4144
 msgid "Expands the current result."
 msgstr "展开当前结果。"
 
-#: ../src/qalc.cc:4117
+#: ../src/qalc.cc:4160
 msgid "Sets the value of an option."
 msgstr "设置选项的值。"
 
-#: ../src/qalc.cc:4118
+#: ../src/qalc.cc:4161
 msgid "Example: set base 16."
 msgstr "例: set base 16。"
 
-#: ../src/qalc.cc:4120
+#: ../src/qalc.cc:4163
 msgid ""
 "Available options and accepted values are (the current value is marked with "
 "'*'):"
 msgstr "可用的选项和可接受的值有(当前值标记为*):"
 
-#: ../src/qalc.cc:4124
+#: ../src/qalc.cc:4167
 msgid "Determines if the expression is factorized or not after calculation."
 msgstr "确定是否分解计算后的表达式。"
 
-#: ../src/qalc.cc:4125
+#: ../src/qalc.cc:4168
 msgid "Determines if unknown values will be assumed non-zero (x/x=1)."
 msgstr "确定是否将未知值假定为非零(x/x=1)。"
 
-#: ../src/qalc.cc:4126
+#: ../src/qalc.cc:4169
 msgid "Display a message after a value has been assumed non-zero."
 msgstr "在假定某值非零后显示一条消息。"
 
-#: ../src/qalc.cc:4129
+#: ../src/qalc.cc:4172
 msgid "Default assumptions for unknown variables."
 msgstr "未知变量的默认假设。"
 
-#: ../src/qalc.cc:4160
+#: ../src/qalc.cc:4203
 msgid ""
 "How approximate variables and calculations are handled. In exact mode "
 "approximate values will not be calculated."
 msgstr "如何处理近似变量和计算。精确模式下不计算近似值。"
 
-#: ../src/qalc.cc:4161
+#: ../src/qalc.cc:4204
 msgid ""
 "If activated, interval arithmetic determines the final precision of "
 "calculations (avoids wrong results after loss of significance) with "
@@ -1726,72 +1749,72 @@ msgstr ""
 "如果激活该功能，则区间运算将使用近似函数与/或无理数来确定最终的计算精度(避免"
 "在有效位丢失后得出错误的结果)。"
 
-#: ../src/qalc.cc:4162
+#: ../src/qalc.cc:4205
 msgid ""
 "Determines the method used for interval calculation / uncertainty "
 "propagation."
 msgstr "确定用于区间计算/误差传递的方法。"
 
-#: ../src/qalc.cc:4164
+#: ../src/qalc.cc:4207
 msgid ""
 "Specifies the default number of significant digits displayed and determines "
 "the precision used for approximate calculations."
 msgstr "指定显示的默认有效位数，并确定用于近似计算的精度。"
 
-#: ../src/qalc.cc:4175
+#: ../src/qalc.cc:4218
 msgid "Interprete undefined symbols in expressions as unknown variables."
 msgstr "将表达式中未定义的符号解释为未知变量。"
 
-#: ../src/qalc.cc:4177
+#: ../src/qalc.cc:4220
 msgid ""
 "If activated physical constants include units (e.g. c = 299 792 458 m∕s)."
 msgstr "若要激活的物理常数包含单位(例: c = 299 792 458 m∕s)."
 
-#: ../src/qalc.cc:4181
+#: ../src/qalc.cc:4224
 msgid "Use abbreviated names for units and variables."
 msgstr "单位和变量使用缩写名称。"
 
-#: ../src/qalc.cc:4182
+#: ../src/qalc.cc:4225
 msgid "Use colors to highlight different elements of expressions and results."
 msgstr "使用颜色突出显示表达式和结果的不同元素。"
 
-#: ../src/qalc.cc:4185
+#: ../src/qalc.cc:4228
 msgid "Always place negative values last."
 msgstr "总是将负值放在末尾。"
 
-#: ../src/qalc.cc:4188
+#: ../src/qalc.cc:4231
 msgid "Add extra space around operators."
 msgstr "在运算符周围添加额外的空格。"
 
-#: ../src/qalc.cc:4190
+#: ../src/qalc.cc:4233
 msgid "Display Unicode characters."
 msgstr "显示Unicode字符。"
 
-#: ../src/qalc.cc:4194 ../src/qalc.cc:4298
+#: ../src/qalc.cc:4237 ../src/qalc.cc:4341
 msgid "bin"
 msgstr "bin"
 
-#: ../src/qalc.cc:4196 ../src/qalc.cc:4300
+#: ../src/qalc.cc:4239 ../src/qalc.cc:4343
 msgid "oct"
 msgstr "oct"
 
-#: ../src/qalc.cc:4198 ../src/qalc.cc:4302
+#: ../src/qalc.cc:4241 ../src/qalc.cc:4345
 msgid "dec"
 msgstr "dec"
 
-#: ../src/qalc.cc:4200 ../src/qalc.cc:4304
+#: ../src/qalc.cc:4243 ../src/qalc.cc:4347
 msgid "hex"
 msgstr "hex"
 
-#: ../src/qalc.cc:4202
+#: ../src/qalc.cc:4245
 msgid "sexa"
 msgstr "sexa"
 
-#: ../src/qalc.cc:4221 ../src/qalc.cc:4281
+#: ../src/qalc.cc:4264 ../src/qalc.cc:4324
 msgid "Determines the default decimal separator."
 msgstr "确定默认的小数分隔符。"
 
-#: ../src/qalc.cc:4236
+#: ../src/qalc.cc:4279
 msgid ""
 "Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). "
 "'long' removes limits on the size of the numerator and denonimator."
@@ -1799,66 +1822,66 @@ msgstr ""
 "确定如何显示有理数(例: 5/4 = 1 + 1/4 = 1.25)。long 去除了对分子和分母大小的限"
 "制。"
 
-#: ../src/qalc.cc:4237
+#: ../src/qalc.cc:4280
 msgid ""
 "Enables two's complement representation for display of negative hexadecimal "
 "numbers."
 msgstr "启用以二的补码表示法显示负十六进制数。"
 
-#: ../src/qalc.cc:4238 ../src/qalc.cc:4297
+#: ../src/qalc.cc:4281 ../src/qalc.cc:4340
 msgid "Use 'j' (instead of 'i') as default symbol for the imaginary unit."
 msgstr "使用j(而不是i)作为虚数单位的默认符号。"
 
-#: ../src/qalc.cc:4240
+#: ../src/qalc.cc:4283
 msgid "Use lowercase e for E-notation (5e2 = 5 * 10^2)."
 msgstr "使用小写字母e表示E符号(5e2 = 5 * 10^2)。"
 
-#: ../src/qalc.cc:4241
+#: ../src/qalc.cc:4284
 msgid "Use lowercase letters for number bases > 10."
 msgstr "对于大于10的数字进制使用小写字母。"
 
-#: ../src/qalc.cc:4256
+#: ../src/qalc.cc:4299
 msgid ""
 "If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'."
 msgstr "如果激活，则1/6将显示为0.1 666...，否则显示为0.166667。"
 
-#: ../src/qalc.cc:4257
+#: ../src/qalc.cc:4300
 msgid ""
 "Determines whether halfway numbers are rounded upwards or towards the "
 "nearest even integer."
 msgstr "确定中间数是向上舍入还是向最近的偶数整数舍入。"
 
-#: ../src/qalc.cc:4259
+#: ../src/qalc.cc:4302
 msgid "Determines how scientific notation are used (e.g. 5 543 000 = 5.543E6)."
 msgstr "确定如何使用科学计数法(例: 5 543 000 = 5.543E6)."
 
-#: ../src/qalc.cc:4274
+#: ../src/qalc.cc:4317
 msgid "If actived, zeroes are kept at the end of approximate numbers."
 msgstr "如果激活，在近似数字末尾的零将保留。"
 
-#: ../src/qalc.cc:4275
+#: ../src/qalc.cc:4318
 msgid ""
 "Enables two's complement representation for display of negative binary "
 "numbers."
 msgstr "启用以二的补码显示负二进制数。"
 
-#: ../src/qalc.cc:4279
+#: ../src/qalc.cc:4322
 msgid "Use ^ as bitwise exclusive OR operator."
 msgstr "使用^作为按位异或运算符。"
 
-#: ../src/qalc.cc:4292
+#: ../src/qalc.cc:4335
 msgid "Allows use of ',' as thousands separator."
 msgstr "允许使用 , 作为千位分隔符。"
 
-#: ../src/qalc.cc:4295
+#: ../src/qalc.cc:4338
 msgid "Allows use of '.' as thousands separator."
 msgstr "允许使用 . 作为千位分隔符。"
 
-#: ../src/qalc.cc:4319
+#: ../src/qalc.cc:4362
 msgid "See 'help parsing mode'."
 msgstr "请参阅 help parsing mode。"
 
-#: ../src/qalc.cc:4320
+#: ../src/qalc.cc:4363
 msgid ""
 "If activated, numbers be interpreted as approximate with precision equal to "
 "the number of significant digits (3.20 = 3.20+/-0.005)."
@@ -1866,11 +1889,11 @@ msgstr ""
 "如果激活，数字将被解释为近似值，并且精度等于有效数字的位数(3.20 = "
 "3.20+/-0.005)。"
 
-#: ../src/qalc.cc:4324
+#: ../src/qalc.cc:4367
 msgid "Enables automatic use of hecto, deca, deci, and centi."
 msgstr "启用自动使用百、十、分和厘前缀。"
 
-#: ../src/qalc.cc:4326
+#: ../src/qalc.cc:4369
 msgid ""
 "Controls automatic unit conversion of the result. 'optimalsi' always "
 "converts non-SI units, while 'optimal' only converts to more optimal unit "
@@ -1879,38 +1902,38 @@ msgstr ""
 "控制结果的自动单位换算。最优国际单位(optimalsi)指始终换算非SI单位，而最优单位"
 "(optimal)仅换算为含更少单位和指数的更优单位表达式。"
 
-#: ../src/qalc.cc:4340
+#: ../src/qalc.cc:4383
 msgid ""
 "If activated, binary prefixes are used by default for information units."
 msgstr "如果激活，则默认情况下将二进制前缀用于信息单位。"
 
-#: ../src/qalc.cc:4341
+#: ../src/qalc.cc:4384
 msgid ""
 "Enables automatic conversion to the local currency when optimal unit "
 "conversion is enabled."
 msgstr "最佳单位换算开启时，启用自动换算为本地货币的功能。"
 
-#: ../src/qalc.cc:4342
+#: ../src/qalc.cc:4385
 msgid ""
 "Enables automatic use of prefixes in the denominator of unit expressions."
 msgstr "允许在单位表达式的分母中自动使用前缀。"
 
-#: ../src/qalc.cc:4343
+#: ../src/qalc.cc:4386
 msgid ""
 "If activated, units are separated from variables at the end of the result."
 msgstr "如果激活，则在结果末尾将单位与变量分开。"
 
-#: ../src/qalc.cc:4344
+#: ../src/qalc.cc:4387
 msgid "Enables automatic use of prefixes in the result."
 msgstr "启用在结果中自动使用前缀。"
 
-#: ../src/qalc.cc:4345
+#: ../src/qalc.cc:4388
 msgid ""
 "Use negative exponents instead of division for units in result (m/s = "
 "m*s^-1)."
 msgstr "在结果的单位中使用负指数而非除法(m/s = m*s^-1)。"
 
-#: ../src/qalc.cc:4347
+#: ../src/qalc.cc:4390
 msgid ""
 "Determines how expressions with temperature units are calculated (hybrid "
 "acts as absolute if the expression contains different temperature units, "
@@ -1919,31 +1942,31 @@ msgstr ""
 "确定带有温度单位的表达式的计算方式(如果表达式包含不同的温度单位，则混杂式作为"
 "绝对式，否则作为相对式)。"
 
-#: ../src/qalc.cc:4351
+#: ../src/qalc.cc:4394
 msgid "days"
 msgstr "天数"
 
-#: ../src/qalc.cc:4358
+#: ../src/qalc.cc:4401
 msgid "Ignore system language and use English (requires restart)."
 msgstr "忽略系统语言并使用英语(需要重新启动)。"
 
-#: ../src/qalc.cc:4359
+#: ../src/qalc.cc:4402
 msgid "Activates the Reverse Polish Notation stack."
 msgstr "激活逆波兰式栈。"
 
-#: ../src/qalc.cc:4360
+#: ../src/qalc.cc:4403
 msgid "Save functions, units, and variables on exit."
 msgstr "在退出时保存函数，单位和变量。"
 
-#: ../src/qalc.cc:4361
+#: ../src/qalc.cc:4404
 msgid "Save settings on exit."
 msgstr "在退出时保存设置。"
 
-#: ../src/qalc.cc:4365
+#: ../src/qalc.cc:4408
 msgid "Set default assumptions for unknown variables."
 msgstr "设置关于未知数的默认假设。"
 
-#: ../src/qalc.cc:4392
+#: ../src/qalc.cc:4435
 msgid ""
 "Saves the current result in a variable with the specified name. You may "
 "optionally also provide a category (default \"Temporary\") and a title."
@@ -1951,53 +1974,53 @@ msgstr ""
 "将当前结果保存在指定的变量中。您可以同时为它指定一个类别(默认为\"临时\")和标"
 "题。"
 
-#: ../src/qalc.cc:4393
+#: ../src/qalc.cc:4436
 msgid ""
 "If name equals \"mode\" or \"definitions\", the current mode and "
 "definitions, respectively, will be saved."
 msgstr "如果名称为“mode“或“definitions“，将相应地保存当前模式或定义。"
 
-#: ../src/qalc.cc:4395
+#: ../src/qalc.cc:4438
 msgid "Example: store var1."
 msgstr "例如: store var1。"
 
-#: ../src/qalc.cc:4399
+#: ../src/qalc.cc:4442
 msgid "Create a variables with the specified name and expression."
 msgstr "创建具有指定名称和表达式的变量。"
 
-#: ../src/qalc.cc:4401
+#: ../src/qalc.cc:4444
 msgid "Example: variable var1 pi / 2."
 msgstr "例如: variable var1 pi / 2。"
 
-#: ../src/qalc.cc:4405
+#: ../src/qalc.cc:4448
 msgid "Creates a function with the specified name and expression."
 msgstr "创建具有指定名称和表达式的函数。"
 
-#: ../src/qalc.cc:4406
+#: ../src/qalc.cc:4449
 msgid "Use '\\x', '\\y', '\\z', '\\a', etc. for arguments in the expression."
 msgstr "在表达式中使用 \\x、\\y、\\z、\\a 作为参数。"
 
-#: ../src/qalc.cc:4408
+#: ../src/qalc.cc:4451
 msgid "Example: function func1 5*\\x."
 msgstr "例如: function func1 5*\\x."
 
-#: ../src/qalc.cc:4412
+#: ../src/qalc.cc:4455
 msgid "Removes the user-defined variable or function with the specified name."
 msgstr "删除指定名称的用户定义的变量或函数。"
 
-#: ../src/qalc.cc:4414
+#: ../src/qalc.cc:4457
 msgid "Example: delete var1."
 msgstr "例如: delete var1."
 
-#: ../src/qalc.cc:4418
+#: ../src/qalc.cc:4461
 msgid "Displays the current mode."
 msgstr "显示当前模式。"
 
-#: ../src/qalc.cc:4422
+#: ../src/qalc.cc:4465
 msgid "Displays a list of variables, functions, units, and prefixes."
 msgstr "显示变量，函数，单位和前缀的列表。"
 
-#: ../src/qalc.cc:4423
+#: ../src/qalc.cc:4466
 msgid ""
 "Enter with argument 'currencies', 'functions', 'variables', 'units', or "
 "'prefixes' to show a list of all currencies, functions, variables, units, or "
@@ -2009,63 +2032,63 @@ msgstr ""
 "函数、变量、单位或前缀的列表。输入一个搜索词来查找匹配的变量、函数、单位和/或"
 "前缀。如果调用命令时没有参数，所有用户定义的对象都会被列出。"
 
-#: ../src/qalc.cc:4425
+#: ../src/qalc.cc:4468
 msgid "Example: list functions."
 msgstr "例如: info functions."
 
-#: ../src/qalc.cc:4426
+#: ../src/qalc.cc:4469
 msgid "Example: find dinar."
 msgstr "例如: find binar."
 
-#: ../src/qalc.cc:4427
+#: ../src/qalc.cc:4470
 msgid "Example: find variables planck."
 msgstr "例如: find variables planck."
 
-#: ../src/qalc.cc:4431
+#: ../src/qalc.cc:4474
 msgid "Displays information about a function, variable, unit, or prefix."
 msgstr "显示关于函数，变量或单位的信息。"
 
-#: ../src/qalc.cc:4433
+#: ../src/qalc.cc:4476
 msgid "Example: info sin."
 msgstr "例如: info sin."
 
-#: ../src/qalc.cc:4437
+#: ../src/qalc.cc:4480
 msgid "Downloads current exchange rates from the Internet."
 msgstr "从互联网上下载最新汇率。"
 
-#: ../src/qalc.cc:4441
+#: ../src/qalc.cc:4484
 msgid "(De)activates the Reverse Polish Notation stack and syntax."
 msgstr "(取消)激活逆波兰式栈和语法。"
 
-#: ../src/qalc.cc:4443
+#: ../src/qalc.cc:4486
 msgid ""
 "\"syntax\" activates only the RPN syntax and \"stack\" enables the RPN stack."
 msgstr "”syntax“仅激活RPN语法，“stack“启用RPN堆栈。"
 
-#: ../src/qalc.cc:4447
+#: ../src/qalc.cc:4490
 msgid "Clears the entire RPN stack."
 msgstr "清空整个RPN栈。"
 
-#: ../src/qalc.cc:4451
+#: ../src/qalc.cc:4494
 msgid "Removes the top of the RPN stack or the value at the specified index."
 msgstr "删除RPN栈的顶部或指定索引处的值。"
 
-#: ../src/qalc.cc:4453 ../src/qalc.cc:4465 ../src/qalc.cc:4475
-#: ../src/qalc.cc:4485
+#: ../src/qalc.cc:4496 ../src/qalc.cc:4508 ../src/qalc.cc:4518
+#: ../src/qalc.cc:4528
 msgid ""
 "Index 1 is the top of stack and negative index values counts from the bottom "
 "of the stack."
 msgstr "索引 1 是栈的顶部，负索引值从堆栈的底部开始计数。"
 
-#: ../src/qalc.cc:4457
+#: ../src/qalc.cc:4500
 msgid "Displays the RPN stack."
 msgstr "显示RPN(逆波兰式)栈"
 
-#: ../src/qalc.cc:4461
+#: ../src/qalc.cc:4504
 msgid "Swaps position of values on the RPN stack."
 msgstr "交换值在RPN栈上的位置。"
 
-#: ../src/qalc.cc:4463
+#: ../src/qalc.cc:4506
 msgid ""
 "If no index is specified, the values on the top of the stack (index 1 and "
 "index 2) will be swapped and if only one index is specified, the value at "
@@ -2074,195 +2097,206 @@ msgstr ""
 "如果未指定索引，则将交换栈顶部的值(索引1和索引2)，如果仅指定一个索引，则该索"
 "引处的值将与顶部值交换。"
 
-#: ../src/qalc.cc:4467
+#: ../src/qalc.cc:4510
 msgid "Example: swap 2 4"
 msgstr "例如: swap 2 4."
 
-#: ../src/qalc.cc:4471
+#: ../src/qalc.cc:4514
 msgid "Duplicates a value on the RPN stack to the top of the stack."
 msgstr "将RPN栈上的值复制到栈的顶部。"
 
-#: ../src/qalc.cc:4473
+#: ../src/qalc.cc:4516
 msgid "If no index is specified, the top of the stack is duplicated."
 msgstr "如果未指定索引，则重复栈的顶部。"
 
-#: ../src/qalc.cc:4479
+#: ../src/qalc.cc:4522
 msgid "Rotates the RPN stack up (default) or down."
 msgstr "向上(默认)或向下循环RPN栈。"
 
-#: ../src/qalc.cc:4483
+#: ../src/qalc.cc:4526
 msgid "Changes the position of a value on the RPN stack."
 msgstr "更改值在RPN栈上的位置。"
 
-#: ../src/qalc.cc:4487
+#: ../src/qalc.cc:4530
 msgid "Example: move 2 4"
 msgstr "例如: move 2 4"
 
-#: ../src/qalc.cc:4491
+#: ../src/qalc.cc:4534
 msgid "Sets the result number base (equivalent to set base)."
 msgstr "设置结果进制(相当于 set base)。"
 
-#: ../src/qalc.cc:4495
+#: ../src/qalc.cc:4538
 msgid "Equivalent to set approximation exact."
 msgstr "相当于 set approximation exact。"
 
-#: ../src/qalc.cc:4499
+#: ../src/qalc.cc:4542
 msgid "Equivalent to set approximation try exact."
 msgstr "相当于 set approximation try exact。"
 
-#: ../src/qalc.cc:4504
+#: ../src/qalc.cc:4547
 msgid ""
 "Converts the current result (equivalent to using \"to\" at the end of an "
 "expression)."
 msgstr "换算当前结果(相当于在表达式末尾使用 to)。"
 
-#: ../src/qalc.cc:4506
+#: ../src/qalc.cc:4549
 msgid "Possible values:"
 msgstr "可能的值:"
 
-#: ../src/qalc.cc:4508
+#: ../src/qalc.cc:4551
 msgid "- a unit or unit expression (e.g. meter or km/h)"
 msgstr "- 单位或单位表达式(例: meter 或 km/h)"
 
-#: ../src/qalc.cc:4509
+#: ../src/qalc.cc:4552
 msgid "prepend with ? to request the optimal prefix"
 msgstr "前置 ? 以用最优前缀"
 
-#: ../src/qalc.cc:4510
+#: ../src/qalc.cc:4553
 msgid "prepend with b? to request the optimal binary prefix"
 msgstr "前置 ?b 以用二进制前缀"
 
-#: ../src/qalc.cc:4511
+#: ../src/qalc.cc:4554
 msgid "prepend with + or - to force/disable use of mixed units"
 msgstr "前置 +/- 来使用/禁用混合单位"
 
-#: ../src/qalc.cc:4512
+#: ../src/qalc.cc:4555
 msgid "- a variable or physical constant (e.g. c)"
 msgstr "- 变量或物理常数(例: c)"
 
-#: ../src/qalc.cc:4513
+#: ../src/qalc.cc:4556
 msgid "- base (convert to base units)"
 msgstr "- base (换算为基本单位)"
 
-#: ../src/qalc.cc:4514
+#: ../src/qalc.cc:4557
 msgid "- optimal (convert to optimal unit)"
 msgstr "- optimal (换算为最优单位)"
 
-#: ../src/qalc.cc:4515
+#: ../src/qalc.cc:4558
 msgid "- mixed (convert to mixed units, e.g. hours + minutes)"
 msgstr "- mixed (换算为混合单位,例: hours + minutes)"
 
-#: ../src/qalc.cc:4517
+#: ../src/qalc.cc:4560
 msgid "- bin / binary (show as binary number)"
 msgstr "- bin / binary (显示为二进制数)"
 
-#: ../src/qalc.cc:4518
+#: ../src/qalc.cc:4561
 msgid "- bin# (show as binary number with specified number of bits)"
 msgstr "- bin# (显示为指定位数的二进制数)"
 
-#: ../src/qalc.cc:4519
+#: ../src/qalc.cc:4562
 msgid "- oct / octal (show as octal number)"
 msgstr "- oct / octal (显示为八进制数)"
 
-#: ../src/qalc.cc:4520
+#: ../src/qalc.cc:4563
 msgid "- duo / duodecimal (show as duodecimal number)"
 msgstr "- duo / duodecimal (显示为十二进制数)"
 
-#: ../src/qalc.cc:4521
+#: ../src/qalc.cc:4564
 msgid "- hex / hexadecimal (show as hexadecimal number)"
 msgstr "- hex / hexadecimal (显示为十六进制数)"
 
-#: ../src/qalc.cc:4522
+#: ../src/qalc.cc:4565
 msgid "- hex# (show as hexadecimal number with specified number of bits)"
 msgstr "- hex# (显示为指定位数的十六进制数)"
 
-#: ../src/qalc.cc:4523
-msgid "- sex / sexagesimal (show as sexagesimal number)"
+#: ../src/qalc.cc:4566
+#, fuzzy
+msgid "- sexa / sexa2 / sexagesimal (show as sexagesimal number)"
 msgstr "- sex / sexagesimal (显示为六十进制数)"
 
-#: ../src/qalc.cc:4524
+#: ../src/qalc.cc:4567
+#, fuzzy
+msgid "- latitude / latitude2 (show as sexagesimal longitude)"
+msgstr "- sex / sexagesimal (显示为六十进制数)"
+
+#: ../src/qalc.cc:4568
+#, fuzzy
+msgid "- longitude / longitude2 (show as sexagesimal longitude)"
+msgstr "- sex / sexagesimal (显示为六十进制数)"
+
+#: ../src/qalc.cc:4569
 msgid "- bijective (shown in bijective base-26)"
 msgstr "- bijective (以 bijective base-26 显示)"
 
-#: ../src/qalc.cc:4525
+#: ../src/qalc.cc:4570
 msgid "- fp16, fp32, fp64, fp80, fp128 (show in binary floating-point format)"
 msgstr "- fp16, fp32, fp64, fp80, fp128 (以二进制浮点格式显示)"
 
-#: ../src/qalc.cc:4526
+#: ../src/qalc.cc:4571
 msgid "- roman (show as roman numerals)"
 msgstr "- roman (显示为罗马数字)"
 
-#: ../src/qalc.cc:4527
+#: ../src/qalc.cc:4572
 msgid "- time (show in time format)"
 msgstr "- time (以时间格式显示)"
 
-#: ../src/qalc.cc:4528
+#: ../src/qalc.cc:4573
 msgid "- unicode"
 msgstr "- unicode"
 
-#: ../src/qalc.cc:4529
+#: ../src/qalc.cc:4574
 msgid "- base # (show in specified number base)"
 msgstr "- base # (以指定进制显示)"
 
-#: ../src/qalc.cc:4530
+#: ../src/qalc.cc:4575
 msgid "- bases (show as binary, octal, decimal and hexadecimal number)"
 msgstr "- bases (显示为二进制，八进制，十进制和十六进制数)"
 
-#: ../src/qalc.cc:4532
+#: ../src/qalc.cc:4577
 msgid "- rectangular / cartesian (show complex numbers in rectangular form)"
 msgstr "- rectangular / cartesian (以矩形形式显示复数)"
 
-#: ../src/qalc.cc:4533
+#: ../src/qalc.cc:4578
 msgid "- exponential (show complex numbers in exponential form)"
 msgstr "- exponential (以指数形式显示复数)"
 
-#: ../src/qalc.cc:4534
+#: ../src/qalc.cc:4579
 msgid "- polar (show complex numbers in polar form)"
 msgstr "- polar (以极坐标形式显示复数)"
 
-#: ../src/qalc.cc:4535
+#: ../src/qalc.cc:4580
 msgid "- cis (show complex numbers in cis form)"
 msgstr "- cis (以纯虚数指数形式显示复数)"
 
-#: ../src/qalc.cc:4536
+#: ../src/qalc.cc:4581
 msgid "- angle / phasor (show complex numbers in angle/phasor notation)"
 msgstr "- angle / phasor (以角/相量记号显示复数)"
 
-#: ../src/qalc.cc:4538
+#: ../src/qalc.cc:4583
 msgid "- fraction (show result as mixed fraction)"
 msgstr "- fraction (结果显示为混合分数)"
 
-#: ../src/qalc.cc:4539
+#: ../src/qalc.cc:4584
 msgid "- factors (factorize result)"
 msgstr "- factors (将结果分解)"
 
-#: ../src/qalc.cc:4541
+#: ../src/qalc.cc:4586
 msgid "- UTC (show date and time in UTC time zone)"
 msgstr "- UTC (显示UTC时区的日期和时间)"
 
-#: ../src/qalc.cc:4542
+#: ../src/qalc.cc:4587
 msgid "- UTC+/-hh[:mm] (show date and time in specified time zone)"
 msgstr "- UTC+/-hh[:mm] (显示指定时区的日期和时间)"
 
-#: ../src/qalc.cc:4543
+#: ../src/qalc.cc:4588
 msgid "- calendars"
 msgstr "- calendars"
 
-#: ../src/qalc.cc:4545
+#: ../src/qalc.cc:4590
 msgid "Example: to ?g"
 msgstr "例如: to ?g"
 
-#: ../src/qalc.cc:4548
+#: ../src/qalc.cc:4593
 msgid ""
 "This command can also be typed directly at the end of the mathematical "
 "expression (e.g. 5 ft + 2 in to meter)."
 msgstr "也可以在数学表达式的结尾直接键入此命令(例: 5 ft + 2 in to meter)."
 
-#: ../src/qalc.cc:4553
+#: ../src/qalc.cc:4598
 msgid "Terminates this program."
 msgstr "终止此程序。"
 
-#: ../src/qalc.cc:4558
+#: ../src/qalc.cc:4603
 msgid ""
 "Implicit multiplication does not differ from explicit multiplication "
 "(\"12/2(1+2) = 12/2*3 = 18\", \"5x/5y = 5*x/5*y = xy\")."
@@ -2270,7 +2304,7 @@ msgstr ""
 "不区分隐式乘法与显式乘法(\"12/2(1+2) = 12/2*3 = 18\", \"5x/5y = 5*x/5*y = xy"
 "\")。"
 
-#: ../src/qalc.cc:4561
+#: ../src/qalc.cc:4606
 msgid ""
 "Implicit multiplication is parsed before explicit multiplication "
 "(\"12/2(1+2) = 12/(2*3) = 2\", \"5x/5y = (5*x)/(5*y) = x/y\")."
@@ -2278,7 +2312,7 @@ msgstr ""
 "隐式乘法先于显式乘法解析(\"12/2(1+2) = 12/(2*3) = 2\", \"5x/5y = (5*x)/(5*y) "
 "= x/y\")。"
 
-#: ../src/qalc.cc:4564
+#: ../src/qalc.cc:4609
 msgid ""
 "The default adaptive mode works as the \"implicit first\" mode, unless "
 "spaces are found (\"1/5x = 1/(5*x)\", but \"1/5 x = (1/5)*x\"). In the "
@@ -2289,7 +2323,7 @@ msgstr ""
 "\"1/5 x = (1/5)*x\")。在自适应模式下，将分别解析单位表达式(\"5 m/5 m/s = "
 "(5*m)/(5*(m/s)) = 1 s\")。"
 
-#: ../src/qalc.cc:4566
+#: ../src/qalc.cc:4611
 msgid ""
 "Function arguments without parentheses are an exception, where implicit "
 "multiplication in front of variables and units is parsed first regardless of "
@@ -2298,94 +2332,94 @@ msgstr ""
 "不带括号的函数参数是一个例外，无论任何模式都首先解析变量和单位前面的隐式乘法"
 "(\"sqrt 2x = sqrt(2x)\")."
 
-#: ../src/qalc.cc:4569
+#: ../src/qalc.cc:4614
 msgid ""
 "Parse expressions using reverse Polish notation (\"1 2 3+* = 1*(2+3) = 5\")"
 msgstr "使用逆波兰式解析表达式(\"1 2 3+* = 1*(2+3) = 5\")。"
 
-#: ../src/qalc.cc:4572
+#: ../src/qalc.cc:4617
 msgid ""
 "Perform operations from left to right, as the immediate execution mode of a "
 "traditional calculator (\"1+2*3 = (1+2)*3 = 9\")"
 msgstr ""
 "可作传统计算器用的立即执行模式，从左到右执行操作(\"1+2*3 = (1+2)*3 = 9\")"
 
-#: ../src/qalc.cc:4591
+#: ../src/qalc.cc:4636
 #, c-format
 msgid "%s does not accept any arguments."
 msgstr "%s 不接受任何参数。"
 
-#: ../src/qalc.cc:4597
+#: ../src/qalc.cc:4642
 #, c-format
 msgid "%s requires at least one argument."
 msgstr "%s 至少需要一个参数。"
 
-#: ../src/qalc.cc:4600
+#: ../src/qalc.cc:4645
 msgid "Unknown command."
 msgstr "未知的命令。"
 
-#: ../src/qalc.cc:4656
+#: ../src/qalc.cc:4701
 msgid "error"
 msgstr "错误"
 
-#: ../src/qalc.cc:4658
+#: ../src/qalc.cc:4703
 msgid "warning"
 msgstr "警告"
 
-#: ../src/qalc.cc:4778 ../src/qalc.cc:5956
-#: ../libqalculate/Calculator-calculate.cc:1771
-#: ../libqalculate/Calculator-calculate.cc:1791
+#: ../src/qalc.cc:4823 ../src/qalc.cc:6013
+#: ../libqalculate/Calculator-calculate.cc:1785
+#: ../libqalculate/Calculator-calculate.cc:1805
 msgid "approx."
 msgstr "约"
 
-#: ../src/qalc.cc:4799 ../src/qalc.cc:5147 ../src/qalc.cc:5706
+#: ../src/qalc.cc:4844 ../src/qalc.cc:5192 ../src/qalc.cc:5763
 #: ../libqalculate/Calculator-calculate.cc:1091
-#: ../libqalculate/Calculator-calculate.cc:2594
+#: ../libqalculate/Calculator-calculate.cc:2608
 #: ../libqalculate/MathStructure.cc:448
 #, c-format
 msgid "aborted"
 msgstr "已中止"
 
-#: ../src/qalc.cc:4811
+#: ../src/qalc.cc:4856
 msgid "RPN Register Moved"
 msgstr "RPN寄存器已移动"
 
-#: ../src/qalc.cc:4832 ../src/qalc.cc:5910
+#: ../src/qalc.cc:4877 ../src/qalc.cc:5967
 msgid "RPN Operation"
 msgstr "RPN操作"
 
-#: ../src/qalc.cc:4869
+#: ../src/qalc.cc:4914
 msgid "Processing (press Enter to abort)"
 msgstr "正在处理(按回车键中止)"
 
-#: ../src/qalc.cc:5164
+#: ../src/qalc.cc:5209
 msgid "Factorizing (press Enter to abort)"
 msgstr "正在分解因式(按回车键中止)"
 
-#: ../src/qalc.cc:5168
+#: ../src/qalc.cc:5213
 msgid "Expanding partial fractions…"
 msgstr "展开部分分式…"
 
-#: ../src/qalc.cc:5172
+#: ../src/qalc.cc:5217
 msgid "Expanding (press Enter to abort)"
 msgstr "展开中(按回车键中止)"
 
-#: ../src/qalc.cc:5176 ../src/qalc.cc:5720
+#: ../src/qalc.cc:5221 ../src/qalc.cc:5777
 msgid "Calculating (press Enter to abort)"
 msgstr "计算中(按回车键中止)"
 
-#: ../src/qalc.cc:5274
+#: ../src/qalc.cc:5319
 msgid ""
 "The expression is ambiguous. Please select temperature calculation mode (the "
 "mode can later be changed using \"set temp\" command)."
 msgstr ""
 "该表达式有歧义。请选择温度计算模式(以后可以使用“set temp”命令更改该模式)。"
 
-#: ../src/qalc.cc:5299 ../src/qalc.cc:5327
+#: ../src/qalc.cc:5344 ../src/qalc.cc:5372
 msgid "Temperature calculation mode"
 msgstr "温度计算模式"
 
-#: ../src/qalc.cc:6504
+#: ../src/qalc.cc:6561
 #, c-format
 msgid ""
 "Couldn't write preferences to\n"
@@ -2394,7 +2428,7 @@ msgstr ""
 "无法将偏好设置写入\n"
 "%s"
 
-#: ../src/qalc.cc:6622
+#: ../src/qalc.cc:6679
 msgid "Couldn't write definitions"
 msgstr "无法写定义"
 
@@ -2651,11 +2685,11 @@ msgstr "浮点下溢"
 #: ../libqalculate/BuiltinFunctions-util.cc:501
 #: ../libqalculate/BuiltinFunctions-util.cc:503
 #: ../libqalculate/BuiltinFunctions-util.cc:519
-#: ../libqalculate/Calculator-calculate.cc:2198
-#: ../libqalculate/Calculator-calculate.cc:2210
 #: ../libqalculate/Calculator-calculate.cc:2212
-#: ../libqalculate/Calculator-calculate.cc:2215
-#: ../libqalculate/Calculator-calculate.cc:2286
+#: ../libqalculate/Calculator-calculate.cc:2224
+#: ../libqalculate/Calculator-calculate.cc:2226
+#: ../libqalculate/Calculator-calculate.cc:2229
+#: ../libqalculate/Calculator-calculate.cc:2300
 #, c-format
 msgid "Original value (%s) was not found."
 msgstr "未找到原始值(%s)。"
@@ -2728,32 +2762,32 @@ msgstr "栈为空。用零填充其余的函数参数。"
 #: ../libqalculate/Calculator-calculate.cc:1017
 #: ../libqalculate/Calculator-calculate.cc:1055
 #: ../libqalculate/Calculator.cc:242 ../libqalculate/Calculator.cc:471
-#: ../libqalculate/MathStructure-print.cc:3474 ../libqalculate/Function.cc:1361
+#: ../libqalculate/MathStructure-print.cc:3464 ../libqalculate/Function.cc:1361
 #: ../libqalculate/Function.cc:1369 ../libqalculate/Function.cc:1802
 #: ../libqalculate/Function.cc:1964 ../libqalculate/Function.cc:1972
 msgid "and"
 msgstr "且"
 
-#: ../libqalculate/Calculator-calculate.cc:1915
+#: ../libqalculate/Calculator-calculate.cc:1929
 msgid "calculating..."
 msgstr "正在计算..."
 
 #. "where"-operator
-#: ../libqalculate/Calculator-calculate.cc:2089
-#: ../libqalculate/Calculator-calculate.cc:2091
-#: ../libqalculate/Calculator-calculate.cc:2110
-#: ../libqalculate/Calculator-calculate.cc:2112
+#: ../libqalculate/Calculator-calculate.cc:2103
+#: ../libqalculate/Calculator-calculate.cc:2105
+#: ../libqalculate/Calculator-calculate.cc:2124
+#: ../libqalculate/Calculator-calculate.cc:2126
 #: ../libqalculate/Calculator.cc:1335
 msgid "where"
 msgstr "where"
 
-#: ../libqalculate/Calculator-calculate.cc:2308
+#: ../libqalculate/Calculator-calculate.cc:2322
 #, c-format
 msgid "Unhandled \"where\" expression: %s"
 msgstr "未处理的“where”表达式: %s"
 
-#: ../libqalculate/Calculator-calculate.cc:2546
-#: ../libqalculate/Calculator-calculate.cc:2593
+#: ../libqalculate/Calculator-calculate.cc:2560
+#: ../libqalculate/Calculator-calculate.cc:2607
 msgid "timed out"
 msgstr "已超时"
 
@@ -2790,8 +2824,8 @@ msgstr "弧度单位丢失。自动为本会话创建了一个。"
 msgid "Degrees unit is missing. Creating one for this session."
 msgstr "角度单位丢失。自动为本会话创建了一个。"
 
-#: ../libqalculate/Calculator.cc:1718 ../libqalculate/Calculator.cc:1719
-#: ../libqalculate/Calculator.cc:1723 ../libqalculate/Calculator.cc:1727
+#: ../libqalculate/Calculator.cc:1720 ../libqalculate/Calculator.cc:1721
+#: ../libqalculate/Calculator.cc:1725 ../libqalculate/Calculator.cc:1729
 #: ../libqalculate/Calculator-definitions.cc:3384
 #: ../libqalculate/Calculator-definitions.cc:3389
 #: ../libqalculate/Calculator-definitions.cc:3468
@@ -2800,28 +2834,28 @@ msgstr "角度单位丢失。自动为本会话创建了一个。"
 msgid "Currency"
 msgstr "货币"
 
-#: ../libqalculate/Calculator.cc:2669
+#: ../libqalculate/Calculator.cc:2671
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
 "the variable will be lost."
 msgstr "在名称中不再允许使用\"%s\"。请修改名称\"%s\"，否则此变量将被遗弃。"
 
-#: ../libqalculate/Calculator.cc:2687
+#: ../libqalculate/Calculator.cc:2689
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the function will be lost."
 msgstr "在名称中不再允许使用\"%s\"。请修改名称\"%s\"，否则此函数将被遗弃。"
 
-#: ../libqalculate/Calculator.cc:2704
+#: ../libqalculate/Calculator.cc:2706
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the unit will be lost."
 msgstr "在名称中不再允许使用\"%s\"。请修改名称\"%s\"，否则此单位将被遗弃。"
 
-#: ../libqalculate/Calculator.cc:2911
+#: ../libqalculate/Calculator.cc:2913
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "名称\"%s\"已被使用。替换为\"%s\"。"
@@ -2867,80 +2901,80 @@ msgid "Failed to download exchange rates from %s: %s."
 msgstr "从%s下载汇率失败:%s。"
 
 #. ignore operators
-#: ../libqalculate/Calculator-parse.cc:1986
-#: ../libqalculate/Calculator-parse.cc:2039
-#: ../libqalculate/Calculator-parse.cc:2043
-#: ../libqalculate/Calculator-parse.cc:3417
-#: ../libqalculate/Calculator-parse.cc:3426
-#: ../libqalculate/Calculator-parse.cc:3500
-#: ../libqalculate/Calculator-parse.cc:3584
-#: ../libqalculate/Calculator-parse.cc:3606
-#: ../libqalculate/Calculator-parse.cc:3607
-#: ../libqalculate/Calculator-parse.cc:3608
+#: ../libqalculate/Calculator-parse.cc:2024
+#: ../libqalculate/Calculator-parse.cc:2077
+#: ../libqalculate/Calculator-parse.cc:2081
+#: ../libqalculate/Calculator-parse.cc:3455
+#: ../libqalculate/Calculator-parse.cc:3464
+#: ../libqalculate/Calculator-parse.cc:3538
+#: ../libqalculate/Calculator-parse.cc:3622
+#: ../libqalculate/Calculator-parse.cc:3644
+#: ../libqalculate/Calculator-parse.cc:3645
+#: ../libqalculate/Calculator-parse.cc:3646
 #, c-format
 msgid "Misplaced operator(s) \"%s\" ignored"
 msgstr "已忽略错置的运算符\"%s\"。"
 
 #. ignore operators
-#: ../libqalculate/Calculator-parse.cc:2035
-#: ../libqalculate/Calculator-parse.cc:3609
+#: ../libqalculate/Calculator-parse.cc:2073
+#: ../libqalculate/Calculator-parse.cc:3647
 #, c-format
 msgid "Misplaced '%c' ignored"
 msgstr "已忽略错置的\"%c\"。"
 
-#: ../libqalculate/Calculator-parse.cc:2077 ../libqalculate/Function.cc:1519
+#: ../libqalculate/Calculator-parse.cc:2115 ../libqalculate/Function.cc:1519
 #: ../libqalculate/Function.cc:1550
 #, c-format
 msgid "Internal id %s does not exist."
 msgstr "内部id %s不存在。"
 
-#: ../libqalculate/Calculator-parse.cc:2097
+#: ../libqalculate/Calculator-parse.cc:2135
 #, c-format
 msgid "\"%s\" is not a valid variable/function/unit."
 msgstr "\"%s\"不是合法的变量/函数/单位。"
 
-#: ../libqalculate/Calculator-parse.cc:2112
+#: ../libqalculate/Calculator-parse.cc:2150
 #, c-format
 msgid ""
 "Trailing characters \"%s\" (not a valid variable/function/unit) in number "
 "\"%s\" was ignored."
 msgstr "尾部字符\"%s\"不是合法的变量/函数/单位(在数字\"%s\"中)，已被忽略。"
 
-#: ../libqalculate/Calculator-parse.cc:2300
+#: ../libqalculate/Calculator-parse.cc:2338
 msgid "Empty expression in parentheses interpreted as zero."
 msgstr "括号中的空表达式解释为零。"
 
-#: ../libqalculate/Calculator-parse.cc:2391
+#: ../libqalculate/Calculator-parse.cc:2429
 msgid "RPN syntax error. Values left at the end of the RPN expression."
 msgstr "RPN语法错误。在逆波兰式末尾有多余值。"
 
-#: ../libqalculate/Calculator-parse.cc:2394
-#: ../libqalculate/Calculator-parse.cc:2485
+#: ../libqalculate/Calculator-parse.cc:2432
+#: ../libqalculate/Calculator-parse.cc:2523
 msgid "Unused stack values."
 msgstr "栈内还有值未被使用。"
 
-#: ../libqalculate/Calculator-parse.cc:2527
-#: ../libqalculate/Calculator-parse.cc:2735
+#: ../libqalculate/Calculator-parse.cc:2565
+#: ../libqalculate/Calculator-parse.cc:2773
 #, c-format
 msgid "RPN syntax error. Operator '%c' not supported."
 msgstr "RPN语法错误。不支持运算符'%c'。"
 
-#: ../libqalculate/Calculator-parse.cc:2573
+#: ../libqalculate/Calculator-parse.cc:2611
 msgid "RPN syntax error. Stack is empty."
 msgstr "RPN语法错误。栈内是空的。"
 
-#: ../libqalculate/Calculator-parse.cc:2594
+#: ../libqalculate/Calculator-parse.cc:2632
 msgid "RPN syntax error. Operator ignored as there where only one stack value."
 msgstr "RPN语法错误。栈内只有一个值，因此运算符已被忽略。"
 
-#: ../libqalculate/Calculator-parse.cc:3451
-#: ../libqalculate/Calculator-parse.cc:3527
+#: ../libqalculate/Calculator-parse.cc:3489
+#: ../libqalculate/Calculator-parse.cc:3565
 msgid ""
 "The expression is ambiguous (be careful when combining implicit "
 "multiplication and division)."
 msgstr "表达式有歧义(将隐式乘法和除法结合使用时要仔细)。"
 
-#: ../libqalculate/Calculator-parse.cc:3782
+#: ../libqalculate/Calculator-parse.cc:3820
 #, c-format
 msgid "%s interpreted as 10^%s (1%s)"
 msgstr "%s被解释为10^%s(1%s)"
@@ -3172,7 +3206,7 @@ msgid ""
 "number of data points"
 msgstr "所选的最小值、最大值和步长得不到一个正的、有限的数据点数。"
 
-#: ../libqalculate/MathStructure-print.cc:3683
+#: ../libqalculate/MathStructure-print.cc:3673
 msgid "undefined"
 msgstr "未定义"
 
@@ -3343,7 +3377,7 @@ msgstr "一个布尔值(0或1)"
 msgid "an angle or a number (using the default angle unit)"
 msgstr "一个角度或数字(使用默认角度单位)"
 
-#: ../libqalculate/Number.cc:280 ../libqalculate/Number.cc:10545
+#: ../libqalculate/Number.cc:280 ../libqalculate/Number.cc:10563
 msgid ""
 "Cannot display numbers greater than 9999 or less than -9999 as roman "
 "numerals."
@@ -3450,11 +3484,11 @@ msgstr "该值对于浮点位数(%s)过大。"
 msgid "Unsupported base"
 msgstr "不支持的进制"
 
-#: ../libqalculate/Number.cc:10542
+#: ../libqalculate/Number.cc:10560
 msgid "Can only display rational numbers as roman numerals."
 msgstr "只能将有理数显示为罗马数字。"
 
-#: ../libqalculate/Number.cc:11029 ../libqalculate/Number.cc:11037
+#: ../libqalculate/Number.cc:11047 ../libqalculate/Number.cc:11055
 msgid "infinity"
 msgstr "无穷"
 
