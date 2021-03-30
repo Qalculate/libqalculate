@@ -1,3 +1,7 @@
+2021-03-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for d(f(x))/dx syntax (equivalent to diff(f(x),x))
+
 2021-03-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add sexagesimal variants (sexa2, sexa3, longitude, longitude2, latitude, latitude2)

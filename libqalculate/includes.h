@@ -31,7 +31,7 @@
 #include <stdint.h>
 
 #define QALCULATE_MAJOR_VERSION (3)
-#define QALCULATE_MINOR_VERSION (17)
+#define QALCULATE_MINOR_VERSION (18)
 #define QALCULATE_MICRO_VERSION (0)
 
 static std::string empty_string;
@@ -327,6 +327,8 @@ typedef enum {
 #define BASE_FP64		-32
 #define BASE_FP128		-33
 #define BASE_FP80		-34
+
+#define BASE_IS_SEXAGESIMAL(x) ((x >= BASE_SEXAGESIMAL && x <= BASE_SEXAGESIMAL_3) || (x >= BASE_LATITUDE && x <= BASE_LONGITUDE_2))
 
 #define EXP_BASE_3		-3
 #define EXP_PRECISION		-1

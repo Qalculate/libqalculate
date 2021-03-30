@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="3.15.0">
+<QALCULATE version="3.18.0">
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="vector">
@@ -1473,7 +1473,7 @@
     <builtin_function name="geodistance">
       <_title>Distance Between GPS Coordinates</_title>
       <_names>r:geodistance,gpsdistance</_names>
-      <_description>Calculates the distance between two geodetic coordinates using Vincenty's formulae (with datum WGS 84), or, in case of failure, the Harvesine forumla. Each coordinate can be specified using a numerical value (representing decimal degrees), an angle (e.g. with degree unit), or a text string ending with N, S, E, or W (S represents negative latitude, W represents negative longitude).</_description>
+      <_description>Calculates the distance between two geodetic coordinates using Vincenty's formulae (with datum WGS 84), or, in case of failure, the Haversine forumla. Each coordinate can be specified using a numerical value (representing decimal degrees), an angle (e.g. with degree unit), or a text string ending with N, S, E, or W (S for negative latitude, W for negative longitude).</_description>
       <argument index="1">
         <_title>Latitude 1</_title>
       </argument>
@@ -2019,15 +2019,15 @@
         <_description>Returns the probability mass or cumulative distribution function of the binomial distribution.</_description>
         <expression>if(\A{0},sum(binomial(\y,"i")*\z^"i"*(1-\z)^(\y-"i"),0,\x,"i"),binomial(\y,\x)*\z^\x*(1-\z)^(\y-\x))</expression>
         <argument type="integer" index="1">
-          <_title>Number of successes</_title>
+          <_title>Number of successes (k)</_title>
           <min>0</min>
         </argument>
         <argument type="integer" index="2">
-          <_title>Number of trials</_title>
+          <_title>Number of trials (n)</_title>
           <min>0</min>
         </argument>
         <argument type="number" index="3">
-          <_title>Probability</_title>
+          <_title>Probability (p)</_title>
           <min include_equals="true">0</min>
           <max include_equals="true">1</max>
         </argument>
@@ -2059,7 +2059,7 @@
         <argument type="number" index="1">
           <_title>P</_title>
           <min include_equals="true">0</min>
-          <min include_equals="false">1</min>
+          <max include_equals="false">1</max>
         </argument>
         <argument type="number" index="2">
           <_title>Rate (λ)</_title>
@@ -2130,9 +2130,9 @@
         <_names>r:poisson</_names>
         <_description>Returns the probability density or cumulative distribution function of the Poisson distribution.</_description>
         <expression>if(\Z{0},e^(-\y)*sum((\y^"i")/("i"!),0,floor(\x),"i"),(\y^\x*e^(-\y))/(\x!))</expression>
-        <argument type="number" index="1">
+        <argument type="integer" index="1">
           <_title>X</_title>
-          <min include_equals="true">0</min>
+          <min>0</min>
         </argument>
         <argument type="number" index="2">
           <_title>Rate (λ)</_title>
@@ -2241,7 +2241,7 @@
         <argument type="number" index="1">
           <_title>P</_title>
           <min include_equals="true">0</min>
-          <min include_equals="false">1</min>
+          <max include_equals="false">1</max>
         </argument>
         <argument type="number" index="2">
           <_title>Scale (λ)</_title>
