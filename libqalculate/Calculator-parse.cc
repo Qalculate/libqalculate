@@ -2130,6 +2130,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 
 	// handle non-digits if number base is 2-10 or duodecimal
 	size_t itmp;
+	long int mulexp = 0;
 	if((BASE_2_10 || po.base == BASE_DUODECIMAL) && (itmp = str.find_first_not_of(po.base == BASE_DUODECIMAL ? NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS MINUS DUODECIMAL_CHARS : NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS EXPS MINUS, 0)) != string::npos) {
 		if(itmp == 0) {
 			error(true, _("\"%s\" is not a valid variable/function/unit."), str.c_str(), NULL);
@@ -2145,6 +2146,9 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 				}
 			}
 			return false;
+		} else if(po.base == BASE_DECIMAL && itmp == str.length() - 1 && (str[itmp] == 'k' || str[itmp] == 'K')) {
+			mulexp = 3;
+			str.erase(itmp, str.length() - itmp);
 		} else {
 			string stmp = str.substr(itmp, str.length() - itmp);
 			error(true, _("Trailing characters \"%s\" (not a valid variable/function/unit) in number \"%s\" was ignored."), stmp.c_str(), str.c_str(), NULL);
@@ -2177,6 +2181,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 	} else {
 		mstruct->set(nr);
 	}
+	if(mulexp != 0) mstruct->multiply(Number(1, 1, mulexp));
 	if(po.preserve_format) {
 		// handle multiple - in front of the number (treated as a single sign if po.preserve_format is false)
 		while(minus_count > 0) {
