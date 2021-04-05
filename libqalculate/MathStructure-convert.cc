@@ -259,7 +259,7 @@ bool MathStructure::syncUnits(bool sync_nonlinear_relations, bool *found_nonline
 	for(size_t i = 0; i < alias_units.size(); i++) {
 		if(convert(alias_units[i], sync_nonlinear_relations, (found_nonlinear_relations || sync_nonlinear_relations) ? &fcr : NULL, calculate_new_functions, feo)) b = true;
 	}
-	if(b && sync_nonlinear_relations && fcr) CALCULATOR->error(false, _("Calculations involving conversion of units without proportional linear relationship might give unexpected results and is not recommended."), NULL);
+	//if(b && sync_nonlinear_relations && fcr) CALCULATOR->error(false, _("Calculations involving conversion of units without proportional linear relationship might give unexpected results and is not recommended."), NULL);
 	if(fcr && found_nonlinear_relations) *found_nonlinear_relations = fcr;
 	return b;
 }

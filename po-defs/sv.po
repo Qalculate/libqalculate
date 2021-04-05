@@ -8423,7 +8423,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:46
 msgid "ar:pc,parsec,p:parsecs"
-msgstr "a:pc,parsek,p:parseks"
+msgstr "a:pc,parsek,p:parseks,parsec"
 
 #: ../data/units.xml.in.h:47
 msgid "Pied du roi (French Royal Foot)"

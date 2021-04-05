@@ -10449,7 +10449,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			nr3.intervalToPrecision();
 			if(!nr3.isInterval()) {
 				nr3 *= 60;
-				if((po.base == BASE_SEXAGESIMAL_3 || po.base == BASE_LATITUDE || po.base == BASE_LONGITUDE) && !nr3.isInteger()) {
+				if(po.base == BASE_SEXAGESIMAL_3 && !nr3.isInteger()) {
 					nr3.round(po.round_halfway_to_even);
 					if(po.is_approximate) *po.is_approximate = true;
 				}
@@ -10486,13 +10486,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				str += "o";
 			}
 		}
-		if(po.base == BASE_TIME) {
-			// hour, minus, seconds is separated by colons
-			str += ":";
-			if(nr2.isLessThan(10)) {
-				// always use two digits for second and third sections of time output
-				str += "0";
-			}
+		// hour, minus, seconds is separated by colons
+		if(po.base == BASE_TIME) str += ":";
+		if((po.base == BASE_TIME || po.base == BASE_LATITUDE || po.base == BASE_LONGITUDE) && nr2.isLessThan(10)) {
+			// always use two digits for second and third sections of time output
+			str += "0";
 		}
 		if(po.base == BASE_SEXAGESIMAL_2 || po.base == BASE_LATITUDE_2 || po.base == BASE_LONGITUDE_2) str += nr2.print(po2);
 		else str += nr2.printNumerator(10, false);
@@ -10504,8 +10502,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 		if(!str3.empty()) {
-			if(po.base == BASE_TIME) {
-				str += ":";
+			if(po.base == BASE_TIME) str += ":";
+			if(po.base == BASE_TIME || po.base == BASE_LATITUDE || po.base == BASE_LONGITUDE) {
 				if(str3.length() == 1 || str3.find(po.decimalpoint()) == 1) {
 					str += "0";
 				}
@@ -10521,11 +10519,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		// add sign
 		if(po.base == BASE_LONGITUDE || po.base == BASE_LONGITUDE_2) {
-			if(neg) str += " W";
-			else str += " E";
+			if(neg) str += "W";
+			else str += "E";
 		} else if(po.base == BASE_LATITUDE || po.base == BASE_LATITUDE_2) {
-			if(neg) str += " S";
-			else str += " N";
+			if(neg) str += "S";
+			else str += "N";
 		} else {
 			if(ips.minus) {
 				*ips.minus = neg;

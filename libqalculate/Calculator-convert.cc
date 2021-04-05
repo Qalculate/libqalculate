@@ -75,8 +75,12 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 						MathStructure m_exp(m_one);
 						((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
 						mstruct_nr.eval(eo);
-						if(!mstruct_nr.isNumber() || !m_exp.isOne() || !mstruct_nr.number().isLessThan(nr) || !mstruct_nr.number().isGreaterThanOrEqualTo(nr_one)) best_u = NULL;
-						else best_nr = mstruct_nr.number();
+						if(!mstruct_nr.isNumber() || !m_exp.isOne() || !mstruct_nr.number().isLessThan(nr) || !mstruct_nr.number().isGreaterThanOrEqualTo(nr_one)) {
+							best_u = NULL;
+						} else {
+							best_nr = mstruct_nr.number();
+							best_priority = ((AliasUnit*) u)->mixWithBase();
+						}
 					}
 				}
 			}
@@ -148,10 +152,10 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 							non_int = true;
 						}
 					} else {
+						if(((AliasUnit*) u)->mixWithBase() != 0 && muc > MIXED_UNITS_CONVERSION_DEFAULT) muc = MIXED_UNITS_CONVERSION_DEFAULT;
 						u = ((AliasUnit*) u)->firstBaseUnit();
 						nr = mstruct_nr.number();
 						b = true;
-						if(((AliasUnit*) u)->mixWithBase() != 0 && muc > MIXED_UNITS_CONVERSION_DEFAULT) muc = MIXED_UNITS_CONVERSION_DEFAULT;
 					}
 				}
 			}
