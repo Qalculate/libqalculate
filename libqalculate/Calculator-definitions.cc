@@ -3965,7 +3965,8 @@ bool Calculator::checkExchangeRatesDate(unsigned int n_days, bool force_check, b
 		if(i <= 2 && (i != 2 || n != 4)) time(&exchange_rates_check_time[i]);
 		else if(i > 2) time(&priv->exchange_rates_check_time2[i - 3]);
 	}
-	if(send_warning) error(false, _("It has been %s day(s) since the exchange rates last were updated."), i2s((int) floor(difftime(time(NULL), extime) / 86400)).c_str(), NULL);
+	int days = (int) floor(difftime(time(NULL), extime) / 86400);
+	if(send_warning) error(false, _n("It has been %s day since the exchange rates last were updated.", "It has been %s days since the exchange rates last were updated.", days), i2s(days).c_str(), NULL);
 	return false;
 }
 void Calculator::setExchangeRatesWarningEnabled(bool enable) {

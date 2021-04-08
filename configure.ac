@@ -269,6 +269,10 @@ ALL_LINGUAS="es fr nl sv zh_CN"
 AM_GNU_GETTEXT(external)
 AM_GNU_GETTEXT_VERSION([0.19.8])
 
+if test "$USE_NLS" = yes; then
+	AC_DEFINE([ENABLE_NLS], [1], [Define to 1 if translation of program messages to the user's native language is requested.])
+fi
+
 dnl AM_GLIB_GNU_GETTEXT sets $DATADIRNAME
 AC_MSG_CHECKING(locale directory)
 if test "x$prefix" = "xNONE"; then

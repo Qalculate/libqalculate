@@ -577,7 +577,8 @@ bool check_exchange_rates() {
 	bool b = false;
 	if(auto_update_exchange_rates < 0) {
 		string ask_str;
-		int cx = snprintf(buffer, 1000, _("It has been %s day(s) since the exchange rates last were updated."), i2s((int) floor(difftime(time(NULL), CALCULATOR->getExchangeRatesTime(i)) / 86400)).c_str());
+		int days = (int) floor(difftime(time(NULL), CALCULATOR->getExchangeRatesTime(i)) / 86400);
+		int cx = snprintf(buffer, 1000, _n("It has been %s day since the exchange rates last were updated.", "It has been %s days since the exchange rates last were updated.", days), i2s(days).c_str());
 		if(cx >= 0 && cx < 1000) {
 			ask_str = buffer;
 			ask_str += "\n";
