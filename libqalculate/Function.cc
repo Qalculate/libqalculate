@@ -348,7 +348,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 						}
 						vargs.childUpdated(vargs.size());
 					} else {
-						CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str(), NULL);
+						CALCULATOR->error(false, _n("Additional arguments for function %s() were ignored. Function can only use %s argument.", "Additional arguments for function %s() were ignored. Function can only use %s arguments.", maxargs()), name().c_str(), i2s(maxargs()).c_str(), NULL);
 					}
 					start_pos = str_index + 1;
 				}
@@ -410,7 +410,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			}
 			vargs.childUpdated(vargs.size());
 		} else {
-			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str(), NULL);
+			CALCULATOR->error(false, _n("Additional arguments for function %s() were ignored. Function can only use %s argument.", "Additional arguments for function %s() were ignored. Function can only use %s arguments.", maxargs()), name().c_str(), i2s(maxargs()).c_str(), NULL);
 		}
 	}
 	if(unended_function && !unended_function->isFunction()) {
@@ -471,7 +471,7 @@ void MathFunction::setArgumentDefinition(size_t index, Argument *argdef) {
 bool MathFunction::testArgumentCount(int itmp) {
 	if(itmp >= minargs()) {
 		if(itmp > maxargs() && maxargs() >= 0 && (maxargs() > 1 || !getArgumentDefinition(1) || !getArgumentDefinition(1)->handlesVector())) {
-			CALCULATOR->error(false, _("Additional arguments for function %s() was ignored. Function can only use %s argument(s)."), name().c_str(), i2s(maxargs()).c_str(), NULL);
+			CALCULATOR->error(false, _n("Additional arguments for function %s() were ignored. Function can only use %s argument.", "Additional arguments for function %s() were ignored. Function can only use %s arguments.", maxargs()), name().c_str(), i2s(maxargs()).c_str(), NULL);
 		}
 		return true;
 	}
@@ -492,9 +492,9 @@ bool MathFunction::testArgumentCount(int itmp) {
 		}
 	}
 	if(b) {
-		CALCULATOR->error(true, _("You need at least %s argument(s) (%s) in function %s()."), i2s(minargs()).c_str(), str.c_str(), name().c_str(), NULL);
+		CALCULATOR->error(true, _n("You need at least %s argument (%s) in function %s().", "You need at least %s arguments (%s) in function %s().", minargs()), i2s(minargs()).c_str(), str.c_str(), name().c_str(), NULL);
 	} else {
-		CALCULATOR->error(true, _("You need at least %s argument(s) in function %s()."), i2s(minargs()).c_str(), name().c_str(), NULL);
+		CALCULATOR->error(true, _n("You need at least %s argument in function %s().", "You need at least %s arguments in function %s().", minargs()), i2s(minargs()).c_str(), name().c_str(), NULL);
 	}
 	return false;
 }
