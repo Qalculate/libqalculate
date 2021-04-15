@@ -473,15 +473,15 @@ IncompleteBetaFunction::IncompleteBetaFunction() : MathFunction("betainc", 3) {
 	setArgumentDefinition(3, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
 }
 int IncompleteBetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].isZero()) {
+	if(vargs[0].number().isZero()) {
 		mstruct.clear();
 		return 1;
-	} else if(vargs[0].isOne()) {
+	} else if(vargs[0].number().isOne()) {
 		mstruct = vargs[1];
 		mstruct.transformById(FUNCTION_ID_BETA);
 		mstruct.addChild(vargs[2]);
 		return 1;
-	} else if(vargs[1].isOne()) {
+	} else if(vargs[1].number().isOne()) {
 		mstruct.set(1, 1, 0);
 		mstruct -= vargs[0];
 		mstruct ^= vargs[2];
@@ -489,13 +489,131 @@ int IncompleteBetaFunction::calculate(MathStructure &mstruct, const MathStructur
 		mstruct += m_one;
 		mstruct /= vargs[2];
 		return 1;
-	} else if(vargs[2].isOne()) {
+	} else if(vargs[2].number().isOne()) {
 		mstruct = vargs[0];
 		mstruct ^= vargs[1];
 		mstruct += m_zero;
 		mstruct.last() ^= vargs[1];
 		mstruct.last().negate();
 		mstruct /= vargs[1];
+		return 1;
+	}
+	if(vargs[1].number().isInteger() && vargs[2].number().isInteger() && vargs[1].number().isPositive() && vargs[2].number().isPositive()) {
+		if(vargs[0].number().isInterval() && vargs[0].number() <= 1 && vargs[0].number() >= -1) {
+			mstruct = vargs[0].number().lowerEndPoint();
+			mstruct.transform(this);
+			mstruct.addChild(vargs[1]);
+			mstruct.addChild(vargs[2]);
+			mstruct.transformById(FUNCTION_ID_INTERVAL);
+			mstruct.addChild(vargs[0].number().upperEndPoint());
+			mstruct.last().transform(this);
+			mstruct.last().addChild(vargs[1]);
+			mstruct.last().addChild(vargs[2]);
+			if(!vargs[0].number().isNonZero()) {
+				mstruct.transformById(FUNCTION_ID_INTERVAL);
+				mstruct.insertChild(m_zero, 1);
+			}
+			return 1;
+		}
+		//sum(binomial(p+q−1;\i)*x^\i*(1−x)^((p+q−1)−\i);p;p+q−1;\i)
+		Number n(vargs[1].number()); n += vargs[2].number(); n--;
+		Number i(vargs[1].number());
+		Number v, v_i, x_m1(1, 1, 0), x_i, x_m1_i;
+		x_m1 -= vargs[0].number();
+		while(i <= n) {
+			if(CALCULATOR->aborted()) return 0;
+			x_i = vargs[0].number(); x_m1_i = x_m1;
+			if(!v_i.binomial(n, i) || !x_i.raise(i) || !x_m1_i.raise(n - i) || !v_i.multiply(x_i) || !v_i.multiply(x_m1_i)) return 0;
+			v += v_i;
+			i++;
+		}
+		mstruct = v;
+		mstruct *= vargs[1];
+		mstruct.last().transformById(FUNCTION_ID_BETA);
+		mstruct.last().addChild(vargs[2]);
+		return 1;
+	} else if(vargs[0].number().isNonNegative() && vargs[0].number().isFraction() && !vargs[1].number().isInterval() && (!vargs[1].number().isInteger() || vargs[1].number().isPositive()) && !vargs[2].number().isInterval()) {
+		if(vargs[0].number().isInterval()) {
+			mstruct = vargs[0].number().lowerEndPoint();
+			mstruct.transform(this);
+			mstruct.addChild(vargs[1]);
+			mstruct.addChild(vargs[2]);
+			mstruct.transformById(FUNCTION_ID_INTERVAL);
+			mstruct.addChild(vargs[0].number().upperEndPoint());
+			mstruct.last().transform(this);
+			mstruct.last().addChild(vargs[1]);
+			mstruct.last().addChild(vargs[2]);
+			return 1;
+		}
+		Number x(vargs[0].number()), p(vargs[1].number()), q(vargs[2].number());
+		Number nr_prec(1, 1, -(PRECISION + 10));
+		Number nr_add;
+		if(x > nr_half && (!q.isInteger() || q.isPositive())) {
+			Number term_i;
+			Number term, term_prev;
+			Number w(1, 1, 0);
+			if(!w.subtract(x) || !w.multiply(2)) return 0;
+			Number w_pow(w);
+			if(!w_pow.raise(q)) return 0;
+			Number w_mul;
+			Number div_q(q);
+			Number twopowq(2, 1, 0);
+			if(!twopowq.raise(q)) return 0;
+			Number i(1, 1, 0);
+			Number num_p(1, 1, 0);
+			Number div_fac(1, 1, 0);
+			Number nr_pmul;
+			while(true) {
+				if(CALCULATOR->aborted()) return 0;
+				term_prev = term;
+				term_i = num_p;
+				w_mul.set(1, 1, 0);
+				if(!w_mul.subtract(w_pow) || !term_i.multiply(w_mul) || !term_i.divide(div_q) || !term_i.divide(div_fac) || !term_i.divide(twopowq) || !term.add(term_i)) return 0;
+				term_i.abs();
+				if(term_i < nr_prec) {
+					term.setUncertainty(term_i);
+					break;
+				}
+				div_q++;
+				nr_pmul = i;
+				if(!w_pow.multiply(w) || !nr_pmul.subtract(p) || !num_p.multiply(nr_pmul) || !div_fac.multiply(i) || !twopowq.multiply(2)) return 0;
+				i++;
+			}
+			nr_add = term;
+			x.set(1, 2, 0);
+		}
+		Number nr(x);
+		Number term_i;
+		Number term(1, 1, 0), term_prev;
+		Number div_p(p);
+		Number i(1, 1, 0);
+		Number num_q(1, 1, 0);
+		Number div_fac(1, 1, 0);
+		if(!nr.raise(p) || !term.divide(div_p)) return 0;
+		div_p++;
+		num_q -= q;
+		Number nr_qmul;
+		Number x_pow(x);
+		nr_prec /= nr;
+		while(true) {
+			if(CALCULATOR->aborted()) return 0;
+			term_prev = term;
+			term_i = num_q;
+			if(!term_i.divide(div_p) || !term_i.divide(div_fac) || !term_i.multiply(x_pow) || !term.add(term_i)) return 0;
+			term_i.abs();
+			if(term_i < nr_prec) {
+				term.setUncertainty(term_i);
+				break;
+			}
+			PrintOptions po;
+			po.preserve_precision = true;
+			po.preserve_format = true;
+			i++; div_p++;
+			nr_qmul = i;
+			if(!nr_qmul.subtract(q) || !num_q.multiply(nr_qmul) || !div_fac.multiply(i) || !x_pow.multiply(x)) return 0;
+		}
+		if(!nr.multiply(term) || !nr.add(nr_add)) return 0;
+		mstruct.set(nr);
 		return 1;
 	}
 	Number nr(vargs[0].number()); if(!betainc(nr, vargs[0].number(), vargs[1].number(), vargs[2].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
