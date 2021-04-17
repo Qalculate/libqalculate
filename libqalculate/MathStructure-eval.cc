@@ -530,7 +530,7 @@ bool calculate_differentiable_functions(MathStructure &m, const EvaluationOption
 }
 bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive, bool do_unformat, int i_type) {
 	if(m.isFunction() && m.function() != eo.protected_function) {
-		if((i_type <= 0 && !function_differentiable(m.function())) || (i_type >= 0 && !contains_interval_variable(m, i_type))) {
+		if((i_type <= 0 && (!function_differentiable(m.function()) || (m.function()->id() == FUNCTION_ID_INCOMPLETE_BETA && m.size() == 3 && (m[1].containsInterval(true, false, false, 1, true) || m[2].containsInterval(true, false, false, 1, true))))) || (i_type >= 0 && !contains_interval_variable(m, i_type))) {
 			if(m.calculateFunctions(eo, false, do_unformat)) {
 				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
 				return true;

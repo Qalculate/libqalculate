@@ -7869,6 +7869,143 @@ bool Number::igamma(const Number &o) {
 	return true;
 #endif
 }
+bool Number::betainc(const Number &p, const Number &q, bool regularized) {
+	if(isZero()) return p.isPositive() && q.isPositive();
+	if(!isNonZero() && (!p.isPositive() || !q.isPositive())) return false;
+	if(isOne()) {
+		if(regularized) return true;
+		Number gy(p), gx(q), gxy(p);
+		if(!gxy.add(q) || !gy.gamma() || !gx.gamma() || !gxy.gamma() || !gx.multiply(gy) || !gx.divide(gxy)) return false;
+		set(gx, true);
+		return true;
+	}
+	if(p.isOne()) return negate() && add(1) && raise(q) && negate() && add(1) && (regularized || divide(q));
+	if(q.isOne() && p.isPositive()) return raise(p) && (regularized || divide(p));
+	if(!isReal() || !p.isReal() || !q.isReal()) return false;
+	if(p.isInteger() && q.isInteger() && p.isPositive() && q.isPositive()) {
+		if(isInterval() && isLessThan(1) && isGreaterThan(-1)) {
+			Number nr_low(lowerEndPoint()), nr_high(upperEndPoint());
+			if(!nr_low.betainc(p, q, regularized) || !nr_high.betainc(p, q, regularized)) return false;
+			if(!isNonZero() && nr_low.isPositive() && nr_high.isPositive()) {
+				if(nr_low > nr_high) nr_high.clear();
+				else nr_low.clear();
+			}
+			return setInterval(nr_low, nr_high);
+		}
+		//sum(binomial(p+q−1;\i)*x^\i*(1−x)^((p+q−1)−\i);p;p+q−1;\i)
+		Number n(p); n += q; n--;
+		Number i(p);
+		Number v, v_i, x_m1(1, 1, 0), x_i, x_m1_i;
+		x_m1 -= *this;
+		while(i <= n) {
+			if(CALCULATOR->aborted()) return false;
+			x_i = *this; x_m1_i = x_m1;
+			if(!v_i.binomial(n, i) || !x_i.raise(i) || !x_m1_i.raise(n - i) || !v_i.multiply(x_i) || !v_i.multiply(x_m1_i)) return false;
+			v += v_i;
+			i++;
+		}
+		if(!regularized) {
+			Number gy(p), gx(q), gxy(p);
+			if(!gxy.add(q) || !gy.gamma() || !gx.gamma() || !gxy.gamma() || !v.multiply(gx) || !v.multiply(gy) || !v.divide(gxy)) return false;
+		}
+		set(v);
+		return true;
+	}
+	if(isNonNegative() && isFraction() && !p.isInterval() && (!p.isInteger() || p.isPositive()) && !q.isInterval()) {
+		if(isInterval()) {
+			Number nr_low(lowerEndPoint()), nr_high(upperEndPoint());
+			if(!nr_low.betainc(p, q, regularized) || !nr_high.betainc(p, q, regularized)) return false;
+			return setInterval(nr_low, nr_high);
+		}
+		int precbak = PRECISION;
+		Number nr_prec(1, 1, -(PRECISION + 20));
+		betainc_begin:
+		Number x(*this);
+		Number nr_add;
+		if(x > nr_half && (!q.isInteger() || q.isPositive())) {
+			Number term_i;
+			Number term, term_prev;
+			Number w(1, 1, 0);
+			if(!w.subtract(x) || !w.multiply(2)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
+			Number w_pow(w);
+			if(!w_pow.raise(q)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
+			Number w_mul;
+			Number div_q(q);
+			Number twopowq(2, 1, 0);
+			if(!twopowq.raise(q)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
+			Number i(1, 1, 0);
+			Number num_p(1, 1, 0);
+			Number div_fac(1, 1, 0);
+			Number nr_pmul;
+			while(true) {
+				if(CALCULATOR->aborted()) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
+				term_prev = term;
+				term_i = num_p;
+				w_mul.set(1, 1, 0);
+				if(!w_mul.subtract(w_pow) || !term_i.multiply(w_mul) || !term_i.divide(div_q) || !term_i.divide(div_fac) || !term_i.divide(twopowq) || !term.add(term_i)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
+				term_i /= term_prev;
+				term_i.abs();
+				if(term_i < nr_prec) {
+					term.setUncertainty(term_i);
+					nr_add = term;
+					x.set(1, 2, 0);
+					break;
+				}
+				int prec = term.precision(true);
+				if(prec >= 0 && prec < precbak) {
+					if(PRECISION < 100000L) {
+						CALCULATOR->setPrecision(PRECISION * 10);
+						goto betainc_begin;
+					}
+					break;
+				}
+				div_q++;
+				nr_pmul = i;
+				if(!w_pow.multiply(w) || !nr_pmul.subtract(p) || !num_p.multiply(nr_pmul) || !div_fac.multiply(i) || !twopowq.multiply(2)) return false;
+				i++;
+			}
+			if(precbak != PRECISION) CALCULATOR->setPrecision(precbak);
+		}
+		Number nr(x);
+		Number term_i;
+		Number term(1, 1, 0), term_prev;
+		Number div_p(p);
+		Number i(1, 1, 0);
+		Number num_q(1, 1, 0);
+		Number div_fac(1, 1, 0);
+		if(!nr.raise(p) || !term.divide(div_p)) return false;
+		div_p++;
+		num_q -= q;
+		Number nr_qmul;
+		Number x_pow(x);
+		while(true) {
+			if(CALCULATOR->aborted()) return false;
+			term_prev = term;
+			term_i = num_q;
+			if(!term_i.divide(div_p) || !term_i.divide(div_fac) || !term_i.multiply(x_pow) || !term.add(term_i)) return false;
+			term_i /= term_prev;
+			term_i.abs();
+			if(term_i < nr_prec) {
+				term.setUncertainty(term_i);
+				break;
+			}
+			PrintOptions po;
+			po.preserve_precision = true;
+			po.preserve_format = true;
+			i++; div_p++;
+			nr_qmul = i;
+			if(!nr_qmul.subtract(q) || !num_q.multiply(nr_qmul) || !div_fac.multiply(i) || !x_pow.multiply(x)) return false;
+		}
+		if(!nr.multiply(term) || !nr.add(nr_add)) return false;
+		if(regularized) {
+			Number gy(p), gx(q), gxy(p);
+			if(!gxy.add(q) || !gy.gamma() || !gx.gamma() || !gxy.gamma() || !nr.divide(gx) || !nr.divide(gy) || !nr.multiply(gxy)) return false;
+		}
+		set(nr);
+		return true;
+	}
+	return false;
+}
 bool Number::fresnels() {
 	if(hasImaginaryPart()) return false;
 	if(isZero()) return true;

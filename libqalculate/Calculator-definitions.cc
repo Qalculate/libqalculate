@@ -953,7 +953,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 								if(farg) {
 									XML_DO_FROM_TEXT(child2, nr.set);
 									farg->setMin(&nr);
-									XML_GET_FALSE_FROM_PROP(child, "include_equals", b)
+									XML_GET_FALSE_FROM_PROP(child2, "include_equals", b)
 									farg->setIncludeEqualsMin(b);
 								} else if(iarg) {
 									XML_GET_STRING_FROM_TEXT(child2, stmp);
@@ -964,7 +964,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 								if(farg) {
 									XML_DO_FROM_TEXT(child2, nr.set);
 									farg->setMax(&nr);
-									XML_GET_FALSE_FROM_PROP(child, "include_equals", b)
+									XML_GET_FALSE_FROM_PROP(child2, "include_equals", b)
 									farg->setIncludeEqualsMax(b);
 								} else if(iarg) {
 									XML_GET_STRING_FROM_TEXT(child2, stmp);
