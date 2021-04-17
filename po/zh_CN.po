@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: libqalculate 3.16\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-08 10:11+0200\n"
-"PO-Revision-Date: 2021-01-20 20:10+0800\n"
+"PO-Revision-Date: 2021-04-17 21:03+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
 "Language: zh_CHS\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
-"X-Generator: Gtranslator 3.38.0\n"
+"X-Generator: Gtranslator 40.0\n"
 
 #: ../src/defs2doc.cc:333 ../src/qalc.cc:3794 ../libqalculate/Function.cc:222
 #: ../libqalculate/Function.cc:1375
@@ -412,18 +412,16 @@ msgstr "sexagesimal"
 #: ../src/qalc.cc:5452 ../src/qalc.cc:5454
 #: ../libqalculate/Calculator-calculate.cc:1460
 #: ../libqalculate/Calculator-calculate.cc:1462
-#, fuzzy
 msgid "latitude"
-msgstr "相对"
+msgstr "纬度"
 
 #: ../src/qalc.cc:679 ../src/qalc.cc:680 ../src/qalc.cc:3004
 #: ../src/qalc.cc:3009 ../src/qalc.cc:3459 ../src/qalc.cc:3460
 #: ../src/qalc.cc:5448 ../src/qalc.cc:5450
 #: ../libqalculate/Calculator-calculate.cc:1456
 #: ../libqalculate/Calculator-calculate.cc:1458
-#, fuzzy
 msgid "longitude"
-msgstr "long"
+msgstr "经度"
 
 #: ../src/qalc.cc:690 ../src/qalc.cc:842 ../src/qalc.cc:3477
 #: ../src/qalc.cc:4262
@@ -2201,19 +2199,16 @@ msgid "- hex# (show as hexadecimal number with specified number of bits)"
 msgstr "- hex# (显示为指定位数的十六进制数)"
 
 #: ../src/qalc.cc:4567
-#, fuzzy
 msgid "- sexa / sexa2 / sexagesimal (show as sexagesimal number)"
-msgstr "- sex / sexagesimal (显示为六十进制数)"
+msgstr "- sexa / sexa2 / sexagesimal (显示为六十进制数)"
 
 #: ../src/qalc.cc:4568
-#, fuzzy
 msgid "- latitude / latitude2 (show as sexagesimal longitude)"
-msgstr "- sex / sexagesimal (显示为六十进制数)"
+msgstr "- latitude / latitude2 (显示为六十进制纬度)"
 
 #: ../src/qalc.cc:4569
-#, fuzzy
 msgid "- longitude / longitude2 (show as sexagesimal longitude)"
-msgstr "- sex / sexagesimal (显示为六十进制数)"
+msgstr "- longitude / longitude2 (显示为六十进制经度)"
 
 #: ../src/qalc.cc:4570
 msgid "- bijective (shown in bijective base-26)"
@@ -2726,7 +2721,7 @@ msgstr "寄存器%s不存在。返回零。"
 #: ../libqalculate/BuiltinFunctions-util.cc:891
 #, c-format
 msgid "Failed to run external command (%s)."
-msgstr ""
+msgstr "外部命令(%s)运行失败。"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:957
 #: ../libqalculate/BuiltinFunctions-util.cc:971
