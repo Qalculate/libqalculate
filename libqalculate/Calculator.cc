@@ -1696,6 +1696,7 @@ void Calculator::addBuiltinFunctions() {
 	priv->f_fresnelc = addFunction(new FresnelCFunction());
 	f_igamma = addFunction(new IGammaFunction());
 	addFunction(new IncompleteBetaFunction());
+	addFunction(new InverseIncompleteBetaFunction());
 
 	addFunction(new GeographicDistanceFunction());
 

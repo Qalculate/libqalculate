@@ -27,7 +27,7 @@ using std::vector;
 using std::endl;
 
 bool function_differentiable(MathFunction *o_function) {
-	return (o_function->id() == FUNCTION_ID_SQRT || o_function->id() == FUNCTION_ID_ROOT || o_function->id() == FUNCTION_ID_CBRT || o_function->id() == FUNCTION_ID_LOG || o_function->id() == FUNCTION_ID_LOGN || o_function->id() == FUNCTION_ID_ARG || o_function->id() == FUNCTION_ID_GAMMA || o_function->id() == FUNCTION_ID_BETA || o_function->id() == FUNCTION_ID_ABS || o_function->id() == FUNCTION_ID_FACTORIAL || o_function->id() == FUNCTION_ID_BESSELJ || o_function->id() == FUNCTION_ID_BESSELY || o_function->id() == FUNCTION_ID_ERF || o_function->id() == FUNCTION_ID_ERFI || o_function->id() == FUNCTION_ID_ERFC || o_function->id() == FUNCTION_ID_LOGINT || o_function->id() == FUNCTION_ID_POLYLOG || o_function->id() == FUNCTION_ID_EXPINT || o_function->id() == FUNCTION_ID_SININT || o_function->id() == FUNCTION_ID_COSINT || o_function->id() == FUNCTION_ID_SINHINT || o_function->id() == FUNCTION_ID_COSHINT || o_function->id() == FUNCTION_ID_FRESNEL_C || o_function->id() == FUNCTION_ID_FRESNEL_S || o_function->id() == FUNCTION_ID_ABS || o_function->id() == FUNCTION_ID_SIGNUM || o_function->id() == FUNCTION_ID_HEAVISIDE || o_function->id() == FUNCTION_ID_LAMBERT_W || o_function->id() == FUNCTION_ID_SINC || o_function->id() == FUNCTION_ID_SIN || o_function->id() == FUNCTION_ID_COS || o_function->id() == FUNCTION_ID_TAN || o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN || o_function->id() == FUNCTION_ID_SINH || o_function->id() == FUNCTION_ID_COSH || o_function->id() == FUNCTION_ID_TANH || o_function->id() == FUNCTION_ID_ASINH || o_function->id() == FUNCTION_ID_ACOSH || o_function->id() == FUNCTION_ID_ATANH || o_function->id() == FUNCTION_ID_STRIP_UNITS);
+	return (o_function->id() == FUNCTION_ID_SQRT || o_function->id() == FUNCTION_ID_ROOT || o_function->id() == FUNCTION_ID_CBRT || o_function->id() == FUNCTION_ID_LOG || o_function->id() == FUNCTION_ID_LOGN || o_function->id() == FUNCTION_ID_ARG || o_function->id() == FUNCTION_ID_GAMMA || o_function->id() == FUNCTION_ID_BETA || o_function->id() == FUNCTION_ID_INCOMPLETE_BETA || o_function->id() == FUNCTION_ID_ABS || o_function->id() == FUNCTION_ID_FACTORIAL || o_function->id() == FUNCTION_ID_BESSELJ || o_function->id() == FUNCTION_ID_BESSELY || o_function->id() == FUNCTION_ID_ERF || o_function->id() == FUNCTION_ID_ERFI || o_function->id() == FUNCTION_ID_ERFC || o_function->id() == FUNCTION_ID_LOGINT || o_function->id() == FUNCTION_ID_POLYLOG || o_function->id() == FUNCTION_ID_EXPINT || o_function->id() == FUNCTION_ID_SININT || o_function->id() == FUNCTION_ID_COSINT || o_function->id() == FUNCTION_ID_SINHINT || o_function->id() == FUNCTION_ID_COSHINT || o_function->id() == FUNCTION_ID_FRESNEL_C || o_function->id() == FUNCTION_ID_FRESNEL_S || o_function->id() == FUNCTION_ID_ABS || o_function->id() == FUNCTION_ID_SIGNUM || o_function->id() == FUNCTION_ID_HEAVISIDE || o_function->id() == FUNCTION_ID_LAMBERT_W || o_function->id() == FUNCTION_ID_SINC || o_function->id() == FUNCTION_ID_SIN || o_function->id() == FUNCTION_ID_COS || o_function->id() == FUNCTION_ID_TAN || o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN || o_function->id() == FUNCTION_ID_SINH || o_function->id() == FUNCTION_ID_COSH || o_function->id() == FUNCTION_ID_TANH || o_function->id() == FUNCTION_ID_ASINH || o_function->id() == FUNCTION_ID_ACOSH || o_function->id() == FUNCTION_ID_ATANH || o_function->id() == FUNCTION_ID_STRIP_UNITS);
 }
 
 bool is_differentiable(const MathStructure &m) {
@@ -255,6 +255,22 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				} else {
 					multiply_nocopy(m2);
 				}
+			} else if(o_function->id() == FUNCTION_ID_INCOMPLETE_BETA && SIZE == 3 && CHILD(0).containsRepresentativeOf(x_var, true, true) != 0 && CHILD(1).containsRepresentativeOf(x_var, true, true) == 0 && CHILD(2).containsRepresentativeOf(x_var, true, true) == 0) {
+				// beta(f,a,b)')=f^(a-1)*(1-f)^(b-1)*f'
+				MathStructure *m1 = new MathStructure(CHILD(0));
+				MathStructure *m2 = new MathStructure(CHILD(0));
+				CHILD(1).ref();
+				m1->raise_nocopy(&CHILD(1));
+				m1->last() += nr_minus_one;
+				m2->negate();
+				m2->add(m_one);
+				CHILD(2).ref();
+				m2->raise_nocopy(&CHILD(2));
+				m2->last() += nr_minus_one;
+				SET_CHILD_MAP(0)
+				differentiate(x_var, eo);
+				multiply_nocopy(m1);
+				multiply_nocopy(m2);
 			} else if(o_function->id() == FUNCTION_ID_ARG && SIZE == 1) {
 				// arg(x)'=f'*-pi*dirac(f)
 				MathStructure mstruct(CHILD(0));
