@@ -426,15 +426,10 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 		int itmp2 = itmp;
 		while(itmp2 < maxargs()) {
 			arg = getArgumentDefinition(itmp2 + 1);
-			if(arg) {
-				MathStructure *mstruct = new MathStructure();
-				arg->parse(mstruct, default_values[itmp2 - minargs()]);
-				vargs.addChild_nocopy(mstruct);
-			} else {
-				MathStructure *mstruct = new MathStructure();
-				CALCULATOR->parse(mstruct, default_values[itmp2 - minargs()]);
-				vargs.addChild_nocopy(mstruct);
-			}
+			MathStructure *mstruct = new MathStructure();
+			if(arg) arg->parse(mstruct, default_values[itmp2 - minargs()]);
+			else CALCULATOR->parse(mstruct, default_values[itmp2 - minargs()]);
+			vargs.addChild_nocopy(mstruct);
 			itmp2++;
 		}
 	}

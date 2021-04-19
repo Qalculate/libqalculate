@@ -1137,3 +1137,80 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 1;
 }
 
+NewtonRaphsonFunction::NewtonRaphsonFunction() : MathFunction("newtonraphson", 2, 5) {
+	setArgumentDefinition(2, new NumberArgument());
+	setArgumentDefinition(3, new SymbolicArgument());
+	setDefaultValue(3, "undefined");
+	setArgumentDefinition(4, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT));
+	setDefaultValue(4, "-10");
+	setArgumentDefinition(5, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
+	setDefaultValue(5, "1000");
+}
+int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	MathStructure mfunc(vargs[0]);
+	cout << mfunc << endl;
+	if(mfunc.isComparison() && mfunc.comparisonType() == COMPARISON_EQUALS) {
+		mfunc[1].ref();
+		mfunc[0].subtract_nocopy(&mfunc[1]);
+		mfunc.setToChild(1);
+	}
+	bool compare_with_1 = false;
+	CALCULATOR->beginTemporaryStopMessages();
+	MathStructure mdiff(mfunc);
+	mdiff.differentiate(vargs[2], eo);
+	if(mdiff.containsFunction(CALCULATOR->getFunctionById(FUNCTION_ID_DIFFERENTIATE))) return false;
+	mfunc /= mdiff;
+	mfunc.eval(eo);
+	CALCULATOR->endTemporaryStopMessages();
+	Number nr_prec(1, 1, vargs[3].number() <= 0 ? -(PRECISION - vargs[3].number().intValue()) : -vargs[3].number().intValue());
+	int precbak = PRECISION;
+	nrf_begin:
+	Number x0(vargs[1].number());
+	Number x_i, x_itest;
+	MathStructure x_if;
+	x_i = x0;
+	unsigned int iter = 0;
+	unsigned int max_iter = vargs[4].number().uintValue();
+	while(true) {
+		if(CALCULATOR->aborted()) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
+		x_if = mfunc;
+		x_if.replace(vargs[2], x_i);
+		x_if.eval(eo);
+		if(!x_if.isNumber()) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
+		if(x_if.isZero() && x_i.isZero()) break;
+		if(iter > 0) x_itest = x_if.number();
+		if((iter > 0 && !compare_with_1 && !x_itest.divide(x_i)) || !x_itest.abs() || !x_i.subtract(x_if.number())) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
+		if(iter > 0) {
+			if(x_itest < nr_prec) {
+				x_i.setUncertainty(x_if.number());
+				break;
+			}
+			if(!x_i.isNonZero() && x_i < nr_prec && x_if.number() < nr_prec) {
+				x_i.setUncertainty(x_if.number());
+				break;
+			}
+			if(!compare_with_1 && iter > 10 && x_i < 1 && x_itest > Number(9, 10)) {
+				compare_with_1 = true;
+			}
+			int prec = x_i.precision(true);
+			if(!x_i.isNonZero() || (prec >= 0 && prec < precbak && PRECISION * 5 < 1000)) {
+				if(!compare_with_1 && x_i < 1 && x_itest > Number(9, 10)) {
+					compare_with_1 = true;
+				}
+				CALCULATOR->setPrecision(PRECISION * 10 > 1000 ? 1000 : PRECISION * 10);
+				goto nrf_begin;
+			}
+		}
+		iter++;
+		if(iter > max_iter) {
+			x_i.setUncertainty(x_if.number());
+			int prec = x_i.precision(true);
+			if(prec < 5) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
+			break;
+		}
+	}
+	if(precbak != PRECISION) CALCULATOR->setPrecision(precbak);
+	mstruct = x_i;
+	return 1;
+}
+

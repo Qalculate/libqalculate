@@ -2214,6 +2214,24 @@
         </argument>
       </function>
       <function>
+        <_title>Inverse of Chi-Square Cumulative Distribution</_title>
+        <_names>r:chisqdistinv</_names>
+        <subfunction precalculate="true">(probit(\x)+sqrt(2*\y-1)^2)/2</subfunction>
+        <expression>newtonraphson(1-igamma(\y/2,"x"/2)/gamma(\y/2)=\x,if(\1&lt;=0,1e-6,\1),"x")</expression>
+        <argument type="number" index="1">
+          <_title>P</_title>
+          <min include_equals="true">0</min>
+          <max include_equals="false">1</max>
+        </argument>
+        <argument type="integer" index="2">
+          <_title>Degrees of freedom (k)</_title>
+          <min include_equals="true">1</min>
+        </argument>
+        <argument type="boolean" index="3">
+          <_title>Cumulative</_title>
+        </argument>
+      </function>
+      <function>
         <_title>Weibull Distribution</_title>
         <_names>r:weibulldist</_names>
         <_description>Returns the probability density or cumulative distribution function of the Weibull distribution.</_description>
@@ -3113,6 +3131,25 @@
       </argument>
       <_description>Solves a differential equation and returns the value of y(x). The derivative in the equation should be in the format diff(y, x). Only first-order differential equations are currently supported.</_description>
       <example>$name(2 * diff(y, x) - y = 4x, 5, 2) = 21e^(x/2) / e - 4x - 8</example>
+    </builtin_function>
+    <builtin_function name="newtonraphson">
+      <_title>Solve using Newton's Method</_title>
+      <_names>r:newtonraphson</_names>
+      <argument index="1">
+        <_title>Equation</_title>
+      </argument>
+      <argument index="2">
+        <_title>Initial estimate</_title>
+      </argument>
+      <argument index="3">
+        <_title>Variable</_title>
+      </argument>
+      <argument index="4">
+        <_title>Precision</_title>
+      </argument>
+      <argument index="5">
+        <_title>Max iterations</_title>
+      </argument>
     </builtin_function>
     <function>
       <_title>Solve for two variables</_title>

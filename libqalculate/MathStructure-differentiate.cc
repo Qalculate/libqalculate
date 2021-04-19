@@ -27,7 +27,7 @@ using std::vector;
 using std::endl;
 
 bool function_differentiable(MathFunction *o_function) {
-	return (o_function->id() == FUNCTION_ID_SQRT || o_function->id() == FUNCTION_ID_ROOT || o_function->id() == FUNCTION_ID_CBRT || o_function->id() == FUNCTION_ID_LOG || o_function->id() == FUNCTION_ID_LOGN || o_function->id() == FUNCTION_ID_ARG || o_function->id() == FUNCTION_ID_GAMMA || o_function->id() == FUNCTION_ID_BETA || o_function->id() == FUNCTION_ID_INCOMPLETE_BETA || o_function->id() == FUNCTION_ID_ABS || o_function->id() == FUNCTION_ID_FACTORIAL || o_function->id() == FUNCTION_ID_BESSELJ || o_function->id() == FUNCTION_ID_BESSELY || o_function->id() == FUNCTION_ID_ERF || o_function->id() == FUNCTION_ID_ERFI || o_function->id() == FUNCTION_ID_ERFC || o_function->id() == FUNCTION_ID_LOGINT || o_function->id() == FUNCTION_ID_POLYLOG || o_function->id() == FUNCTION_ID_EXPINT || o_function->id() == FUNCTION_ID_SININT || o_function->id() == FUNCTION_ID_COSINT || o_function->id() == FUNCTION_ID_SINHINT || o_function->id() == FUNCTION_ID_COSHINT || o_function->id() == FUNCTION_ID_FRESNEL_C || o_function->id() == FUNCTION_ID_FRESNEL_S || o_function->id() == FUNCTION_ID_ABS || o_function->id() == FUNCTION_ID_SIGNUM || o_function->id() == FUNCTION_ID_HEAVISIDE || o_function->id() == FUNCTION_ID_LAMBERT_W || o_function->id() == FUNCTION_ID_SINC || o_function->id() == FUNCTION_ID_SIN || o_function->id() == FUNCTION_ID_COS || o_function->id() == FUNCTION_ID_TAN || o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN || o_function->id() == FUNCTION_ID_SINH || o_function->id() == FUNCTION_ID_COSH || o_function->id() == FUNCTION_ID_TANH || o_function->id() == FUNCTION_ID_ASINH || o_function->id() == FUNCTION_ID_ACOSH || o_function->id() == FUNCTION_ID_ATANH || o_function->id() == FUNCTION_ID_STRIP_UNITS);
+	return (o_function->id() == FUNCTION_ID_SQRT || o_function->id() == FUNCTION_ID_ROOT || o_function->id() == FUNCTION_ID_CBRT || o_function->id() == FUNCTION_ID_LOG || o_function->id() == FUNCTION_ID_LOGN || o_function->id() == FUNCTION_ID_ARG || o_function->id() == FUNCTION_ID_GAMMA || o_function->id() == FUNCTION_ID_I_GAMMA || o_function->id() == FUNCTION_ID_BETA || o_function->id() == FUNCTION_ID_INCOMPLETE_BETA || o_function->id() == FUNCTION_ID_ABS || o_function->id() == FUNCTION_ID_FACTORIAL || o_function->id() == FUNCTION_ID_BESSELJ || o_function->id() == FUNCTION_ID_BESSELY || o_function->id() == FUNCTION_ID_ERF || o_function->id() == FUNCTION_ID_ERFI || o_function->id() == FUNCTION_ID_ERFC || o_function->id() == FUNCTION_ID_LOGINT || o_function->id() == FUNCTION_ID_POLYLOG || o_function->id() == FUNCTION_ID_EXPINT || o_function->id() == FUNCTION_ID_SININT || o_function->id() == FUNCTION_ID_COSINT || o_function->id() == FUNCTION_ID_SINHINT || o_function->id() == FUNCTION_ID_COSHINT || o_function->id() == FUNCTION_ID_FRESNEL_C || o_function->id() == FUNCTION_ID_FRESNEL_S || o_function->id() == FUNCTION_ID_ABS || o_function->id() == FUNCTION_ID_SIGNUM || o_function->id() == FUNCTION_ID_HEAVISIDE || o_function->id() == FUNCTION_ID_LAMBERT_W || o_function->id() == FUNCTION_ID_SINC || o_function->id() == FUNCTION_ID_SIN || o_function->id() == FUNCTION_ID_COS || o_function->id() == FUNCTION_ID_TAN || o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN || o_function->id() == FUNCTION_ID_SINH || o_function->id() == FUNCTION_ID_COSH || o_function->id() == FUNCTION_ID_TANH || o_function->id() == FUNCTION_ID_ASINH || o_function->id() == FUNCTION_ID_ACOSH || o_function->id() == FUNCTION_ID_ATANH || o_function->id() == FUNCTION_ID_STRIP_UNITS);
 }
 
 bool is_differentiable(const MathStructure &m) {
@@ -287,6 +287,19 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				multiply(mstruct2);
 				mstruct.differentiate(x_var, eo);
 				multiply(mstruct);
+			} else if(o_function->id() == FUNCTION_ID_I_GAMMA && SIZE == 2 && CHILD(0).containsRepresentativeOf(x_var, true, true) == 0) {
+				// igamma(a,f)'=-e^(-f)*f^(a-1)*f'
+				MathStructure mstruct(CHILD(1));
+				mstruct.raise(CHILD(0));
+				mstruct[1] += nr_minus_one;
+				MathStructure mstruct2(CALCULATOR->getVariableById(VARIABLE_ID_E));
+				mstruct2 ^= CHILD(1);
+				mstruct2[1].negate();
+				SET_CHILD_MAP(1);
+				differentiate(x_var, eo);
+				multiply(mstruct);
+				multiply(mstruct2);
+				negate();
 			} else if(o_function->id() == FUNCTION_ID_FACTORIAL && SIZE == 1) {
 				// (f!)'=gamma(f+1)'=(f+1)'*digamma(f+1)
 				MathStructure mstruct(CHILD(0));
