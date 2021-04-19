@@ -3640,7 +3640,11 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						argcount--;
 					} else if(CHILD(argcount - 1).isVariable() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr == CHILD(argcount - 1).variable()->referenceName()) {
 						argcount--;
-					} else if(CHILD(argcount - 1).isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS) == string::npos && CHILD(argcount - 1).number() == s2i(defstr)) {
+					} else if(CHILD(argcount - 1).isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS, defstr[0] == '-' && defstr.size() > 1 ? 1 : 0) == string::npos && CHILD(argcount - 1).number() == s2i(defstr)) {
+						argcount--;
+					} else if(defstr[0] == '-' && CHILD(argcount - 1).isNegate() && CHILD(argcount - 1)[0].isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS, 1) == string::npos && CHILD(argcount - 1)[0].number() == -s2i(defstr)) {
+						argcount--;
+					} else if(defstr[0] == '-' && CHILD(argcount - 1).isMultiplication() && CHILD(argcount - 1).size() == 2 && (CHILD(argcount - 1)[0].isMinusOne() || (CHILD(argcount - 1)[0].isNegate() && CHILD(argcount - 1)[0][0].isOne())) && CHILD(argcount - 1)[1].isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS, 1) == string::npos && CHILD(argcount - 1)[1].number() == -s2i(defstr)) {
 						argcount--;
 					} else if(CHILD(argcount - 1).isSymbolic() && arg && arg->type() == ARGUMENT_TYPE_TEXT && (CHILD(argcount - 1).symbol() == defstr || (defstr == "\"\"" && CHILD(argcount - 1).symbol().empty()))) {
 						argcount--;

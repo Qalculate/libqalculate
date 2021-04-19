@@ -533,7 +533,6 @@ int InverseIncompleteBetaFunction::calculate(MathStructure &mstruct, const MathS
 			goto iibf;
 		}
 		if(!x_ip1.betainc(vargs[1].number(), vargs[2].number(), true)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
-		x_itest = x_i;
 		if(!x_ip1.subtract(vargs[0].number()) || !x_ip1.divide(xip) || !x_ip1.divide(xiq) || !x_ip1.multiply(beta)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
 		x_itest = x_ip1;
 		if(!x_itest.divide(x_i) || !x_itest.abs() || !x_i.subtract(x_ip1)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
@@ -542,8 +541,8 @@ int InverseIncompleteBetaFunction::calculate(MathStructure &mstruct, const MathS
 			break;
 		}
 		int prec = x_i.precision(true);
-		if(prec >= 0 && prec < precbak && PRECISION < 100000L) {
-			CALCULATOR->setPrecision(PRECISION * 10);
+		if(prec >= 0 && prec < precbak && PRECISION * 5 < 1000) {
+			CALCULATOR->setPrecision(PRECISION * 10 > 1000 ? 1000 : PRECISION * 10);
 			goto iibf_begin;
 		}
 	}

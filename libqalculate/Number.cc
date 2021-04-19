@@ -7919,53 +7919,60 @@ bool Number::betainc(const Number &p, const Number &q, bool regularized) {
 		}
 		int precbak = PRECISION;
 		Number nr_prec(1, 1, -(PRECISION + 20));
+		Number nr_mul(1, 1, 0);
 		betainc_begin:
-		Number x(*this);
+		if(regularized) {
+			Number gy(q), gxy(p); nr_mul.set(p);
+			if(!gxy.add(q) || !gy.gamma() || !nr_mul.gamma() || !gxy.gamma() || !nr_mul.multiply(gy) || !nr_mul.divide(gxy) || !nr_mul.recip()) return false;
+		}
 		Number nr_add;
-		if(x > nr_half && (!q.isInteger() || q.isPositive())) {
+		Number x(*this);
+		if(isGreaterThan(nr_half) && (!q.isInteger() || q.isPositive())) {
 			Number term_i;
 			Number term, term_prev;
 			Number w(1, 1, 0);
-			if(!w.subtract(x) || !w.multiply(2)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
+			if(!w.subtract(x) || !w.multiply(2)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return false;}
 			Number w_pow(w);
-			if(!w_pow.raise(q)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
+			if(!w_pow.raise(q)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return false;}
 			Number w_mul;
 			Number div_q(q);
 			Number twopowq(2, 1, 0);
-			if(!twopowq.raise(q)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
+			if(!twopowq.raise(q)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return false;}
 			Number i(1, 1, 0);
 			Number num_p(1, 1, 0);
 			Number div_fac(1, 1, 0);
 			Number nr_pmul;
 			while(true) {
-				if(CALCULATOR->aborted()) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
+				if(CALCULATOR->aborted()) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return false;}
 				term_prev = term;
 				term_i = num_p;
 				w_mul.set(1, 1, 0);
-				if(!w_mul.subtract(w_pow) || !term_i.multiply(w_mul) || !term_i.divide(div_q) || !term_i.divide(div_fac) || !term_i.divide(twopowq) || !term.add(term_i)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
-				term_i /= term_prev;
-				term_i.abs();
-				if(term_i < nr_prec) {
-					term.setUncertainty(term_i);
-					nr_add = term;
-					x.set(1, 2, 0);
-					break;
+				if(!term_i.multiply(nr_mul) || !w_mul.subtract(w_pow) || !term_i.multiply(w_mul) || !term_i.divide(div_q) || !term_i.divide(div_fac) || !term_i.divide(twopowq) || !term.add(term_i)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return false;}
+				if(!term_prev.isZero()) {
+					term_prev.recip();
+					term_prev *= term_i;
+					term_prev.abs();
+					if(term_prev < nr_prec) {
+						term.setUncertainty(term_i);
+						int prec = term.precision(true);
+						if(prec >= 0 && prec < 5) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return false;}
+						nr_add = term;
+						x.set(1, 2, 0);
+						break;
+					}
 				}
 				int prec = term.precision(true);
-				if(prec >= 0 && prec < precbak) {
-					if(PRECISION < 100000L) {
-						CALCULATOR->setPrecision(PRECISION * 10);
-						goto betainc_begin;
-					}
-					break;
+				if(prec >= 0 && prec < precbak && PRECISION * 5 < 5000) {
+					CALCULATOR->setPrecision(PRECISION * 10 > 5000 ? 5000 : PRECISION * 10);
+					goto betainc_begin;
 				}
 				div_q++;
 				nr_pmul = i;
 				if(!w_pow.multiply(w) || !nr_pmul.subtract(p) || !num_p.multiply(nr_pmul) || !div_fac.multiply(i) || !twopowq.multiply(2)) return false;
 				i++;
 			}
-			if(precbak != PRECISION) CALCULATOR->setPrecision(precbak);
 		}
+		betainc_begin2:
 		Number nr(x);
 		Number term_i;
 		Number term(1, 1, 0), term_prev;
@@ -7973,34 +7980,41 @@ bool Number::betainc(const Number &p, const Number &q, bool regularized) {
 		Number i(1, 1, 0);
 		Number num_q(1, 1, 0);
 		Number div_fac(1, 1, 0);
-		if(!nr.raise(p) || !term.divide(div_p)) return false;
+		if(!nr.raise(p) || !nr_mul.multiply(nr) || !term.multiply(nr_mul) || !term.divide(div_p)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return false;}
 		div_p++;
 		num_q -= q;
 		Number nr_qmul;
 		Number x_pow(x);
 		while(true) {
-			if(CALCULATOR->aborted()) return false;
+			if(CALCULATOR->aborted()) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return false;}
 			term_prev = term;
 			term_i = num_q;
-			if(!term_i.divide(div_p) || !term_i.divide(div_fac) || !term_i.multiply(x_pow) || !term.add(term_i)) return false;
-			term_i /= term_prev;
-			term_i.abs();
-			if(term_i < nr_prec) {
+			if(!term_i.multiply(nr_mul) || !term_i.divide(div_p) || !term_i.divide(div_fac) || !term_i.multiply(x_pow) || !term.add(term_i)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return false;}
+			term_prev.recip();
+			term_prev *= term_i;
+			term_prev.abs();
+			if(term_prev < nr_prec) {
 				term.setUncertainty(term_i);
+				int prec = term.precision(true);
+				if(prec >= 0 && prec < 5) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return false;}
 				break;
 			}
-			PrintOptions po;
-			po.preserve_precision = true;
-			po.preserve_format = true;
+			int prec = term.precision(true);
+			if(prec >= 0 && prec < precbak && PRECISION * 5 < 5000) {
+				CALCULATOR->setPrecision(PRECISION * 10 > 5000 ? 5000 : PRECISION * 10);
+				if(regularized) {
+					Number gy(q), gxy(p); nr_mul.set(p);
+					if(!gxy.add(q) || !gy.gamma() || !nr_mul.gamma() || !gxy.gamma() || !nr_mul.multiply(gy) || !nr_mul.divide(gxy) || !nr_mul.recip()) return false;
+				}
+				goto betainc_begin2;
+			}
 			i++; div_p++;
 			nr_qmul = i;
-			if(!nr_qmul.subtract(q) || !num_q.multiply(nr_qmul) || !div_fac.multiply(i) || !x_pow.multiply(x)) return false;
+			if(!nr_qmul.subtract(q) || !num_q.multiply(nr_qmul) || !div_fac.multiply(i) || !x_pow.multiply(x)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return false;}
 		}
-		if(!nr.multiply(term) || !nr.add(nr_add)) return false;
-		if(regularized) {
-			Number gy(p), gx(q), gxy(p);
-			if(!gxy.add(q) || !gy.gamma() || !gx.gamma() || !gxy.gamma() || !nr.divide(gx) || !nr.divide(gy) || !nr.multiply(gxy)) return false;
-		}
+		if(precbak != PRECISION) CALCULATOR->setPrecision(precbak);
+		nr = term;
+		if(!nr.add(nr_add)) return false;
 		set(nr);
 		return true;
 	}

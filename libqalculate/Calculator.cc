@@ -1684,6 +1684,7 @@ void Calculator::addBuiltinFunctions() {
 	f_multisolve = addFunction(new SolveMultipleFunction());
 	f_dsolve = addFunction(new DSolveFunction());
 	f_limit = addFunction(new LimitFunction());
+	addFunction(new NewtonRaphsonFunction());
 
 	f_li = addFunction(new liFunction());
 	f_Li = addFunction(new LiFunction());
