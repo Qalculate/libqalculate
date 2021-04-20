@@ -212,10 +212,10 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 	return is - str_index;
 }
 
-const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c"};
-#define INTERNAL_SIGNS_COUNT 8
+const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊻", "\x1f"};
+#define INTERNAL_SIGNS_COUNT 14
 #define INTERNAL_NUMBER_CHARS "\b"
-#define INTERNAL_OPERATORS "\a\b%\x1c"
+#define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f"
 #define DUODECIMAL_CHARS "EXABab"
 
 string Calculator::parseComments(string &str, const ParseOptions &po, bool *double_tag) {
@@ -601,7 +601,37 @@ void replace_internal_operators(string &str) {
 	gsub("\a", " xor ", str);
 	gsub("\b", SIGN_PLUSMINUS, str);
 	gsub("\x1c", "∠", str);
+	gsub("\x1d", " nand ", str);
+	gsub("\x1e", " nor ", str);
+	gsub("\x1f", " xor ", str);
 	remove_blank_ends(str);
+}
+
+bool has_boolean_variable(const MathStructure &m) {
+	if(m.isVariable()) return !m.variable()->isKnown() && ((UnknownVariable*) m.variable())->representsBoolean();
+	else if(m.isSymbolic()) return m.representsBoolean();
+	for(size_t i = 0; i < m.size(); i++) {
+		if(has_boolean_variable(m[i])) return true;
+	}
+	return false;
+}
+bool is_boolean_algebra_expression(const MathStructure &m, bool top = true) {
+	if(top && !has_boolean_variable(m)) return false;
+	if(m.size() == 0 && !m.representsBoolean()) return false;
+	if(m.size() > 0 && (m.type() < STRUCT_BITWISE_AND || m.type() > STRUCT_COMPARISON)) return false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(!is_boolean_algebra_expression(m[i], false)) return false;
+	}
+	return true;
+}
+void bitwise_to_logical(MathStructure &m) {
+	if(m.isBitwiseOr()) m.setType(STRUCT_LOGICAL_OR);
+	else if(m.isBitwiseXor()) m.setType(STRUCT_LOGICAL_XOR);
+	else if(m.isBitwiseAnd()) m.setType(STRUCT_LOGICAL_AND);
+	else if(m.isBitwiseNot()) m.setType(STRUCT_LOGICAL_NOT);
+	for(size_t i = 0; i < m.size(); i++) {
+		bitwise_to_logical(m[i]);
+	}
 }
 
 void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &parseoptions) {
@@ -930,7 +960,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				str.replace(i_mod, 1, v_percent->referenceName());
 				i_mod += v_percent->referenceName().length() - 1;
 			}
-		} else if(i_mod == 0 || i_mod == str.length() - 1 || (is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMA OPERATORS "%\a\b", str[i_mod + 1]) && str[i_mod + 1] != BITWISE_NOT_CH && str[i_mod + 1] != NOT_CH) || is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMA OPERATORS "\a\b", str[i_mod - 1])) {
+		} else if(i_mod == 0 || i_mod == str.length() - 1 || (is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMA OPERATORS "%\a\b\x1d\x1e\x1f", str[i_mod + 1]) && str[i_mod + 1] != BITWISE_NOT_CH && str[i_mod + 1] != NOT_CH) || is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMA OPERATORS "\a\b\x1d\x1e\x1f", str[i_mod - 1])) {
 			str.replace(i_mod, 1, v_percent->referenceName());
 			i_mod += v_percent->referenceName().length() - 1;
 		}
@@ -1139,6 +1169,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str_index++;
 				} else if(i == 6 && (il = compare_name_no_case("bitand", str, 6, str_index + 1, base))) {
 					str.replace(str_index + 1, il, BITWISE_AND);
+					str_index++;
+				} else if(i == 4 && (il = compare_name_no_case("nand", str, 4, str_index + 1, base))) {
+					str.replace(str_index + 1, il, "\x1d");
+					str_index++;
+				} else if(i == 3 && (il = compare_name_no_case("nor", str, 3, str_index + 1, base))) {
+					str.replace(str_index + 1, il, "\x1e");
 					str_index++;
 				} else if(i == 3 && (il = compare_name_no_case("mod", str, 3, str_index + 1, base))) {
 					str.replace(str_index + 1, il, "\%\%");
@@ -1986,7 +2022,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	if(po.parsing_mode == PARSING_MODE_RPN) {
 		size_t rpn_i = str.find(SPACE, 0);
 		while(rpn_i != string::npos) {
-			if(rpn_i == 0 || rpn_i + 1 == str.length() || is_in("~+-*/^\a\b\\\x1c", str[rpn_i - 1]) || (is_in("%&|", str[rpn_i - 1]) && str[rpn_i + 1] != str[rpn_i - 1]) || (is_in("!><=", str[rpn_i - 1]) && is_not_in("=<>", str[rpn_i + 1])) || (is_in(SPACE OPERATORS INTERNAL_OPERATORS, str[rpn_i + 1]) && (str[rpn_i - 1] == SPACE_CH || (str[rpn_i - 1] != str[rpn_i + 1] && is_not_in("!><=", str[rpn_i - 1]))))) {
+			if(rpn_i == 0 || rpn_i + 1 == str.length() || is_in("~+-*/^\a\b\\\x1c\x1d\x1e\x1f", str[rpn_i - 1]) || (is_in("%&|", str[rpn_i - 1]) && str[rpn_i + 1] != str[rpn_i - 1]) || (is_in("!><=", str[rpn_i - 1]) && is_not_in("=<>", str[rpn_i + 1])) || (is_in(SPACE OPERATORS INTERNAL_OPERATORS, str[rpn_i + 1]) && (str[rpn_i - 1] == SPACE_CH || (str[rpn_i - 1] != str[rpn_i + 1] && is_not_in("!><=", str[rpn_i - 1]))))) {
 				str.erase(rpn_i, 1);
 			} else {
 				rpn_i++;
@@ -2009,6 +2045,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 	parseOperators(mstruct, str, po);
 
+	if(is_boolean_algebra_expression(*mstruct)) {
+		bitwise_to_logical(*mstruct);
+	}
+
 }
 
 #define BASE_2_10 ((po.base >= 2 && po.base <= 10) || (po.base < BASE_CUSTOM && po.base != BASE_UNICODE && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && priv->custom_input_base_i <= 10))
@@ -2019,7 +2059,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 	if(str.empty()) return false;
 
 	// check that string contains characters other than operators and whitespace
-	if(str.find_first_not_of(OPERATORS "\a%\x1c" SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == string::npos)) {
+	if(str.find_first_not_of(OPERATORS "\a%\x1c\x1d\x1e\x1f" SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == string::npos)) {
 		replace_internal_operators(str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
@@ -2073,6 +2113,18 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
 		} else if(str[i] == '\a') {
+			// ignore operators
+			error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
+			str.erase(i, 1);
+		} else if(str[i] == '\x1d') {
+			// ignore operators
+			error(false, _("Misplaced operator(s) \"%s\" ignored"), "nand", NULL);
+			str.erase(i, 1);
+		} else if(str[i] == '\x1e') {
+			// ignore operators
+			error(false, _("Misplaced operator(s) \"%s\" ignored"), "nor", NULL);
+			str.erase(i, 1);
+		} else if(str[i] == '\x1f') {
 			// ignore operators
 			error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
 			str.erase(i, 1);
@@ -2418,7 +2470,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		char last_operator = 0;
 		char last_operator2 = 0;
 		while(true) {
-			i = str.find_first_of(OPERATORS "\a%\x1c" SPACE "\\", i3 + 1);
+			i = str.find_first_of(OPERATORS "\a%\x1c\x1d\x1e\x1f" SPACE "\\", i3 + 1);
 			if(i == string::npos) {
 				if(!b) {
 					parseAdd(str, mstruct, po2);
@@ -2543,6 +2595,23 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 								}
 								case '\a': {
 									mstack[mstack.size() - 2]->transform_nocopy(STRUCT_BITWISE_XOR, mstack.back());
+									mstack.pop_back();
+									break;
+								}
+								case '\x1d': {
+									mstack[mstack.size() - 2]->transform_nocopy(STRUCT_LOGICAL_AND, mstack.back());
+									mstack[mstack.size() - 2]->transform(STRUCT_LOGICAL_NOT);
+									mstack.pop_back();
+									break;
+								}
+								case '\x1e': {
+									mstack[mstack.size() - 2]->transform_nocopy(STRUCT_LOGICAL_OR, mstack.back());
+									mstack[mstack.size() - 2]->transform(STRUCT_LOGICAL_NOT);
+									mstack.pop_back();
+									break;
+								}
+								case '\x1f': {
+									mstack[mstack.size() - 2]->transform_nocopy(STRUCT_LOGICAL_XOR, mstack.back());
 									mstack.pop_back();
 									break;
 								}
@@ -2754,6 +2823,23 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							mstack.pop_back();
 							break;
 						}
+						case '\x1d': {
+							mstack[mstack.size() - 2]->transform_nocopy(STRUCT_LOGICAL_AND, mstack.back());
+							mstack[mstack.size() - 2]->transform(STRUCT_LOGICAL_NOT);
+							mstack.pop_back();
+							break;
+						}
+						case '\x1e': {
+							mstack[mstack.size() - 2]->transform_nocopy(STRUCT_LOGICAL_OR, mstack.back());
+							mstack[mstack.size() - 2]->transform(STRUCT_LOGICAL_NOT);
+							mstack.pop_back();
+							break;
+						}
+						case '\x1f': {
+							mstack[mstack.size() - 2]->transform_nocopy(STRUCT_LOGICAL_XOR, mstack.back());
+							mstack.pop_back();
+							break;
+						}
 						case '%': {
 							if(i + 1 < str.length() && str[i + 1] == '%') {
 								mstack[mstack.size() - 2]->transform(f_mod);
@@ -2818,6 +2904,50 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		return true;
 	}
+	if((i = str.find('\x1d', 1)) != string::npos && i + 1 != str.length()) {
+		bool b = false, append = false;
+		while(i != string::npos && i + 1 != str.length()) {
+			str2 = str.substr(0, i);
+			str = str.substr(i + 1, str.length() - (i + 1));
+			if(b) {
+				parseAdd(str2, mstruct, po, OPERATION_LOGICAL_AND, append);
+				append = true;
+			} else {
+				parseAdd(str2, mstruct, po);
+				b = true;
+			}
+			i = str.find('\x1d', 1);
+		}
+		if(b) {
+			parseAdd(str, mstruct, po, OPERATION_LOGICAL_AND, append);
+		} else {
+			parseAdd(str, mstruct, po);
+		}
+		mstruct->transform(STRUCT_LOGICAL_NOT);
+		return true;
+	}
+	if((i = str.find('\x1e', 1)) != string::npos && i + 1 != str.length()) {
+		bool b = false, append = false;
+		while(i != string::npos && i + 1 != str.length()) {
+			str2 = str.substr(0, i);
+			str = str.substr(i + 1, str.length() - (i + 1));
+			if(b) {
+				parseAdd(str2, mstruct, po, OPERATION_LOGICAL_OR, append);
+				append = true;
+			} else {
+				parseAdd(str2, mstruct, po);
+				b = true;
+			}
+			i = str.find('\x1e', 1);
+		}
+		if(b) {
+			parseAdd(str, mstruct, po, OPERATION_LOGICAL_OR, append);
+		} else {
+			parseAdd(str, mstruct, po);
+		}
+		mstruct->transform(STRUCT_LOGICAL_NOT);
+		return true;
+	}
 	// Parse || as logical or
 	if(po.base != BASE_ROMAN_NUMERALS && (i = str.find(LOGICAL_OR, 1)) != string::npos && i + 2 != str.length()) {
 		bool b = false, append = false;
@@ -2840,13 +2970,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		return true;
 	}
-	/*if((i = str.find(LOGICAL_XOR, 1)) != string::npos && i + strlen(LOGICAL_XOR) != str.length()) {
+	if((i = str.find('\x1f', 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i);
-		str = str.substr(i + strlen(LOGICAL_XOR), str.length() - (i + strlen(LOGICAL_XOR)));
+		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_LOGICAL_XOR);
 		return true;
-	}*/
+	}
 	// Parse | as bitwise or
 	if(po.parsing_mode != PARSING_MODE_CHAIN && po.base != BASE_ROMAN_NUMERALS && (i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
@@ -3466,6 +3596,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					}
 					string errstr = str.substr(0, i);
 					gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", errstr);
+					gsub("\x1d", str.find_first_of(OPERATORS "%") != string::npos ? " nand " : "nand", errstr);
+					gsub("\x1e", str.find_first_of(OPERATORS "%") != string::npos ? " nor " : "nor", errstr);
 					error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
 					str = str.substr(i, str.length() - i);
 					i = str.find_first_of(MULTIPLICATION DIVISION "%", 0);
@@ -3540,6 +3672,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						}
 						string errstr = str.substr(i, i2);
 						gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", errstr);
+						gsub("\x1d", str.find_first_of(OPERATORS "%") != string::npos ? " nand " : "nand", errstr);
+						gsub("\x1e", str.find_first_of(OPERATORS "%") != string::npos ? " nor " : "nor", errstr);
+						gsub("\x1f", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", errstr);
 						error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
 						i += i2;
 					}
@@ -3649,6 +3784,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			if(str[i] == '\a') error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
 			else if(str[i] == '\b') error(false, _("Misplaced operator(s) \"%s\" ignored"), SIGN_PLUSMINUS, NULL);
 			else if(str[i] == '\x1c') error(false, _("Misplaced operator(s) \"%s\" ignored"), "∠", NULL);
+			else if(str[i] == '\x1d') error(false, _("Misplaced operator(s) \"%s\" ignored"), "nand", NULL);
+			else if(str[i] == '\x1e') error(false, _("Misplaced operator(s) \"%s\" ignored"), "nor", NULL);
+			else if(str[i] == '\x1f') error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
 			else error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
 		} else {

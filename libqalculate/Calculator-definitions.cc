@@ -1503,6 +1503,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						XML_GET_STRING_FROM_TEXT(child, stmp);
 						if(!((UnknownVariable*) v)->assumptions()) ((UnknownVariable*) v)->setAssumptions(new Assumptions());
 						if(stmp == "integer") ((UnknownVariable*) v)->assumptions()->setType(ASSUMPTION_TYPE_INTEGER);
+						else if(stmp == "boolean") ((UnknownVariable*) v)->assumptions()->setType(ASSUMPTION_TYPE_BOOLEAN);
 						else if(stmp == "rational") ((UnknownVariable*) v)->assumptions()->setType(ASSUMPTION_TYPE_RATIONAL);
 						else if(stmp == "real") ((UnknownVariable*) v)->assumptions()->setType(ASSUMPTION_TYPE_REAL);
 						else if(stmp == "complex") ((UnknownVariable*) v)->assumptions()->setType(ASSUMPTION_TYPE_COMPLEX);
@@ -2419,6 +2420,10 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "integer");
 									break;
 								}
+								case ASSUMPTION_TYPE_BOOLEAN: {
+									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "boolean");
+									break;
+								}
 								case ASSUMPTION_TYPE_RATIONAL: {
 									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "rational");
 									break;
@@ -2444,30 +2449,32 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 									break;
 								}
 							}
-							switch(((UnknownVariable*) variables[i])->assumptions()->sign()) {
-								case ASSUMPTION_SIGN_NONZERO: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-zero");
-									break;
-								}
-								case ASSUMPTION_SIGN_NONPOSITIVE: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-positive");
-									break;
-								}
-								case ASSUMPTION_SIGN_NEGATIVE: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "negative");
-									break;
-								}
-								case ASSUMPTION_SIGN_NONNEGATIVE: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-negative");
-									break;
-								}
-								case ASSUMPTION_SIGN_POSITIVE: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "positive");
-									break;
-								}
-								case ASSUMPTION_SIGN_UNKNOWN: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "unknown");
-									break;
+							if(((UnknownVariable*) variables[i])->assumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) {
+								switch(((UnknownVariable*) variables[i])->assumptions()->sign()) {
+									case ASSUMPTION_SIGN_NONZERO: {
+										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-zero");
+										break;
+									}
+									case ASSUMPTION_SIGN_NONPOSITIVE: {
+										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-positive");
+										break;
+									}
+									case ASSUMPTION_SIGN_NEGATIVE: {
+										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "negative");
+										break;
+									}
+									case ASSUMPTION_SIGN_NONNEGATIVE: {
+										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-negative");
+										break;
+									}
+									case ASSUMPTION_SIGN_POSITIVE: {
+										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "positive");
+										break;
+									}
+									case ASSUMPTION_SIGN_UNKNOWN: {
+										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "unknown");
+										break;
+									}
 								}
 							}
 						}
