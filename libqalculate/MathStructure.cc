@@ -747,6 +747,7 @@ bool MathStructure::representsBoolean() const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return o_number.isOne() || o_number.isZero();}
 		case STRUCT_VARIABLE: {return o_variable->representsBoolean();}
+		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isBoolean();}
 		case STRUCT_FUNCTION: {return (function_value && function_value->representsBoolean()) || o_function->representsBoolean(*this);}
 		case STRUCT_MULTIPLICATION: {
 			for(size_t i = 0; i < SIZE; i++) {

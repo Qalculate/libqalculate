@@ -1986,7 +1986,7 @@ msgstr "dagar"
 
 #: ../src/qalc.cc:4402
 msgid "Ignore system language and use English (requires restart)."
-msgstr "Bortse från systemspråket och använd englelska (kräver omstart)."
+msgstr "Bortse från systemspråket och använd engelska (kräver omstart)."
 
 #: ../src/qalc.cc:4403
 msgid "Activates the Reverse Polish Notation stack."

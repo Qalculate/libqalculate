@@ -40,7 +40,8 @@ typedef enum {
 	ASSUMPTION_TYPE_COMPLEX = 3,
 	ASSUMPTION_TYPE_REAL = 4,
 	ASSUMPTION_TYPE_RATIONAL = 5,
-	ASSUMPTION_TYPE_INTEGER = 6
+	ASSUMPTION_TYPE_INTEGER = 6,
+	ASSUMPTION_TYPE_BOOLEAN = 7
 } AssumptionType;
 
 /// Signedness assumption.
@@ -93,6 +94,7 @@ class Assumptions {
 	bool isNonNegative();
 	bool isNonPositive();
 	bool isInteger();
+	bool isBoolean();
 	bool isNumber();
 	bool isRational();
 	bool isReal();
@@ -231,6 +233,7 @@ class UnknownVariable : public Variable {
 	virtual bool representsNonComplex(bool = false);
 	virtual bool representsComplex(bool = false);
 	virtual bool representsNonZero(bool = false);
+	virtual bool representsBoolean();
 	virtual bool representsNonMatrix();
 	virtual bool representsScalar();
 

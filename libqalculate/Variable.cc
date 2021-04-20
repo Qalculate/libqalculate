@@ -26,9 +26,10 @@ Assumptions::~Assumptions() {}
 
 bool Assumptions::isPositive() {return i_sign == ASSUMPTION_SIGN_POSITIVE || (fmin && (fmin->isPositive() || (!b_incl_min && fmin->isNonNegative())));}
 bool Assumptions::isNegative() {return i_sign == ASSUMPTION_SIGN_NEGATIVE || (fmax && (fmax->isNegative() || (!b_incl_max && fmax->isNonPositive())));}
-bool Assumptions::isNonNegative() {return i_sign == ASSUMPTION_SIGN_NONNEGATIVE || i_sign == ASSUMPTION_SIGN_POSITIVE || (fmin && fmin->isNonNegative());}
+bool Assumptions::isNonNegative() {return i_type == ASSUMPTION_TYPE_BOOLEAN || i_sign == ASSUMPTION_SIGN_NONNEGATIVE || i_sign == ASSUMPTION_SIGN_POSITIVE || (fmin && fmin->isNonNegative());}
 bool Assumptions::isNonPositive() {return i_sign == ASSUMPTION_SIGN_NONPOSITIVE || i_sign == ASSUMPTION_SIGN_NEGATIVE || (fmax && fmax->isNonPositive());}
 bool Assumptions::isInteger() {return i_type >= ASSUMPTION_TYPE_INTEGER;}
+bool Assumptions::isBoolean() {return i_type == ASSUMPTION_TYPE_BOOLEAN;}
 bool Assumptions::isNumber() {return i_type >= ASSUMPTION_TYPE_NUMBER || fmin || fmax;}
 bool Assumptions::isRational() {return i_type >= ASSUMPTION_TYPE_RATIONAL;}
 bool Assumptions::isReal() {return i_type >= ASSUMPTION_TYPE_REAL || (fmin && !fmin->hasImaginaryPart()) || (fmax && !fmax->hasImaginaryPart());}
@@ -41,10 +42,10 @@ AssumptionType Assumptions::type() {return i_type;}
 AssumptionSign Assumptions::sign() {return i_sign;}
 void Assumptions::setType(AssumptionType ant) {
 	i_type = ant;
-	if(i_type <= ASSUMPTION_TYPE_COMPLEX && i_sign != ASSUMPTION_SIGN_NONZERO) {
+	if(i_type == ASSUMPTION_TYPE_BOOLEAN && (i_type <= ASSUMPTION_TYPE_COMPLEX && i_sign != ASSUMPTION_SIGN_NONZERO)) {
 		i_sign = ASSUMPTION_SIGN_UNKNOWN;
 	}
-	if(i_type <= ASSUMPTION_TYPE_NONMATRIX) {
+	if(i_type <= ASSUMPTION_TYPE_NONMATRIX || i_type == ASSUMPTION_TYPE_BOOLEAN) {
 		if(fmax) delete fmax;
 		if(fmin) delete fmin;
 	}
@@ -243,6 +244,11 @@ bool UnknownVariable::representsNonZero(bool b) {
 	if(!b && mstruct) return mstruct->representsNonZero(false);
 	if(o_assumption) return o_assumption->isNonZero();
 	return CALCULATOR->defaultAssumptions()->isNonZero();
+}
+bool UnknownVariable::representsBoolean() {
+	if(mstruct) return mstruct->representsBoolean();
+	if(o_assumption) return o_assumption->isBoolean();
+	return CALCULATOR->defaultAssumptions()->isBoolean();
 }
 bool UnknownVariable::representsNonMatrix() {
 	if(o_assumption) return o_assumption->isNonMatrix();

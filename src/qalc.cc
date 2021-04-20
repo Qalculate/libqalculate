@@ -274,6 +274,8 @@ void set_assumption(const string &str, bool last_of_two = false) {
 		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_RATIONAL);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "integer", _("integer")) || str == "int") {
 		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_INTEGER);
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "boolean", _("boolean")) || str == "bool") {
+		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_BOOLEAN);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "non-zero", _("non-zero")) || str == "nz") {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONZERO);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "positive", _("positive")) || str == "pos") {
@@ -728,17 +730,20 @@ void set_option(string str) {
 			set_assumption(svalue, false);
 		}
 		string value;
-		switch(CALCULATOR->defaultAssumptions()->sign()) {
-			case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
-			case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
-			case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
-			case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
-			case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
-			default: {}
+		if(CALCULATOR->defaultAssumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) {
+			switch(CALCULATOR->defaultAssumptions()->sign()) {
+				case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
+				case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
+				case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
+				case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
+				case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
+				default: {}
+			}
 		}
 		if(!value.empty() && CALCULATOR->defaultAssumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
 		switch(CALCULATOR->defaultAssumptions()->type()) {
 			case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
+			case ASSUMPTION_TYPE_BOOLEAN: {value += _("boolean"); break;}
 			case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
 			case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
 			case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
@@ -1732,17 +1737,20 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 
 				} else {
 					if(((UnknownVariable*) v)->assumptions()) {
-						switch(((UnknownVariable*) v)->assumptions()->sign()) {
-							case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
-							case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
-							case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
-							case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
-							case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
-							default: {}
+						if(((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) {
+							switch(((UnknownVariable*) v)->assumptions()->sign()) {
+								case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
+								case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
+								case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
+								case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
+								case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
+								default: {}
+							}
 						}
 						if(!value.empty() && ((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
 						switch(((UnknownVariable*) v)->assumptions()->type()) {
 							case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
+							case ASSUMPTION_TYPE_BOOLEAN: {value += _("boolean"); break;}
 							case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
 							case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
 							case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
@@ -3347,17 +3355,20 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("assume nonzero denominators"), "nzd"); str += b2oo(evalops.assume_denominators_nonzero, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("warn nonzero denominators"), "warnnzd"); str += b2oo(evalops.warn_about_denominators_assumed_nonzero, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			string value;
-			switch(CALCULATOR->defaultAssumptions()->sign()) {
-				case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
-				case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
-				case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
-				case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
-				case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
-				default: {}
+			if(CALCULATOR->defaultAssumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) {
+				switch(CALCULATOR->defaultAssumptions()->sign()) {
+					case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
+					case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
+					case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
+					case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
+					case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
+					default: {}
+				}
 			}
 			if(!value.empty() && CALCULATOR->defaultAssumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
 			switch(CALCULATOR->defaultAssumptions()->type()) {
 				case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
+				case ASSUMPTION_TYPE_BOOLEAN: {value += _("boolean"); break;}
 				case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
 				case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
 				case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
@@ -4037,17 +4048,20 @@ int main(int argc, char *argv[]) {
 								}
 							} else {
 								if(((UnknownVariable*) v)->assumptions()) {
-									switch(((UnknownVariable*) v)->assumptions()->sign()) {
-										case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
-										case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
-										case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
-										case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
-										case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
-										default: {}
+									if(((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) {
+										switch(((UnknownVariable*) v)->assumptions()->sign()) {
+											case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
+											case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
+											case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
+											case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
+											case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
+											default: {}
+										}
 									}
 									if(!value.empty() && ((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
 									switch(((UnknownVariable*) v)->assumptions()->type()) {
 										case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
+										case ASSUMPTION_TYPE_BOOLEAN: {value += _("boolean"); break;}
 										case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
 										case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
 										case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
@@ -4195,7 +4209,9 @@ int main(int argc, char *argv[]) {
 				if(ass->type() == ASSUMPTION_TYPE_RATIONAL) str += "*";
 				str += ", "; str += _("integer");
 				if(ass->type() == ASSUMPTION_TYPE_INTEGER) str += "*";
-				 str += ")";
+				str += ", "; str += _("boolean");
+				if(ass->type() == ASSUMPTION_TYPE_BOOLEAN) str += "*";
+				str += ")";
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Calculation"));
@@ -4431,6 +4447,8 @@ int main(int argc, char *argv[]) {
 				if(ass->type() == ASSUMPTION_TYPE_RATIONAL) str += "*";
 				str += ", "; str += _("integer");
 				if(ass->type() == ASSUMPTION_TYPE_INTEGER) str += "*";
+				str += ", "; str += _("boolean");
+				if(ass->type() == ASSUMPTION_TYPE_BOOLEAN) str += "*";
 				str += ")";
 				PUTS_UNICODE(str.c_str());
 				puts("");
@@ -6594,7 +6612,7 @@ void load_preferences() {
 						evalops.parse_options.parsing_mode = nonrpn_parsing_mode;
 					}
 				} else if(svar == "default_assumption_type") {
-					if(v >= ASSUMPTION_TYPE_NONE && v <= ASSUMPTION_TYPE_INTEGER) {
+					if(v >= ASSUMPTION_TYPE_NONE && v <= ASSUMPTION_TYPE_BOOLEAN) {
 						if(v < ASSUMPTION_TYPE_NUMBER && version_numbers[0] < 1) v = ASSUMPTION_TYPE_NUMBER;
 						if(v == ASSUMPTION_TYPE_COMPLEX && version_numbers[0] < 2) v = ASSUMPTION_TYPE_NUMBER;
 						CALCULATOR->defaultAssumptions()->setType((AssumptionType) v);
@@ -6742,7 +6760,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "limit_implicit_multiplication=%i\n", saved_evalops.parse_options.limit_implicit_multiplication);
 	fprintf(file, "parsing_mode=%i\n", saved_parsing_mode);
 	fprintf(file, "default_assumption_type=%i\n", CALCULATOR->defaultAssumptions()->type());
-	fprintf(file, "default_assumption_sign=%i\n", CALCULATOR->defaultAssumptions()->sign());
+	if(CALCULATOR->defaultAssumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) fprintf(file, "default_assumption_sign=%i\n", CALCULATOR->defaultAssumptions()->sign());
 
 	fclose(file);
 	return true;
