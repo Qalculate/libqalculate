@@ -58,6 +58,7 @@ int auto_update_exchange_rates;
 PrintOptions printops, saved_printops;
 bool complex_angle_form = false, saved_caf = false;
 EvaluationOptions evalops, saved_evalops;
+bool dot_question_asked = false;
 Number saved_custom_output_base, saved_custom_input_base;
 AssumptionType saved_assumption_type;
 AssumptionSign saved_assumption_sign;
@@ -112,6 +113,10 @@ void expression_calculation_updated();
 bool display_errors(bool goto_input = false, int cols = 0);
 void replace_result_cis(string &resstr);
 
+#ifdef _WIN32
+	UINT initial_code_page;
+#endif
+
 FILE *cfile;
 
 enum {
@@ -139,20 +144,9 @@ bool contains_unicode_char(const char *str) {
 	}
 	return false;
 }
-#ifdef _WIN32
-LPWSTR utf8wchar(const char *str) {
-	size_t len = strlen(str) + 1;
-	int size_needed = MultiByteToWideChar(CP_UTF8, 0, str, len, NULL, 0);
-	LPWSTR wstr = (LPWSTR) LocalAlloc(LPTR, sizeof(WCHAR) * size_needed);
-	MultiByteToWideChar(CP_UTF8, 0, str, len, wstr, size_needed);
-	return wstr;
-}
-#	define PUTS_UNICODE(x)				if(!contains_unicode_char(x)) {puts(x);} else if(printops.use_unicode_signs) {fputws(utf8wchar(x), stdout); puts("");} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
-#	define FPUTS_UNICODE(x, y)			if(!contains_unicode_char(x)) {fputs(x, y);} else if(printops.use_unicode_signs) {fputws(utf8wchar(x), y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
-#else
-#	define PUTS_UNICODE(x)				if(printops.use_unicode_signs || !contains_unicode_char(x)) {puts(x);} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
-#	define FPUTS_UNICODE(x, y)			if(printops.use_unicode_signs || !contains_unicode_char(x)) {fputs(x, y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
-#endif
+
+#define PUTS_UNICODE(x)		if(printops.use_unicode_signs || !contains_unicode_char(x)) {puts(x);} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
+#define FPUTS_UNICODE(x, y)	if(printops.use_unicode_signs || !contains_unicode_char(x)) {fputs(x, y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
 
 void update_message_print_options() {
 	PrintOptions message_printoptions = printops;
@@ -871,8 +865,10 @@ void set_option(string str) {
 			result_display_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spell out logical", _("spell out logical")) || svar == "spellout") SET_BOOL_D(printops.spell_out_logical_operators)
-	else if((EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore dot", _("ignore dot")) || svar == "nodot") && CALCULATOR->getDecimalPoint() != DOT) SET_BOOL_PF(evalops.parse_options.dot_as_separator)
-	else if((EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore comma", _("ignore comma")) || svar == "nocomma") && CALCULATOR->getDecimalPoint() != COMMA) {
+	else if((EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore dot", _("ignore dot")) || svar == "nodot") && CALCULATOR->getDecimalPoint() != DOT) {
+		SET_BOOL_PF(evalops.parse_options.dot_as_separator)
+		dot_question_asked = true;
+	} else if((EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore comma", _("ignore comma")) || svar == "nocomma") && CALCULATOR->getDecimalPoint() != COMMA) {
 		SET_BOOL(evalops.parse_options.comma_as_separator)
 		CALCULATOR->useDecimalPoint(evalops.parse_options.comma_as_separator);
 		expression_format_updated(false);
@@ -899,7 +895,16 @@ void set_option(string str) {
 		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else {printops.limit_implicit_multiplication = v; evalops.parse_options.limit_implicit_multiplication = v; expression_format_updated(true);}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spacious", _("spacious")) || svar == "space") SET_BOOL_D(printops.spacious)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unicode", _("unicode")) || svar == "uni") {
-		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else {printops.use_unicode_signs = v; result_display_updated();}
+		int v = s2b(svalue);
+		if(v < 0) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			printops.use_unicode_signs = v; result_display_updated();
+#ifdef _WIN32
+			if(printops.use_unicode_signs) SetConsoleOutputCP(65001);
+			else SetConsoleOutputCP(initial_code_page);
+#endif
+		}
 		enable_unicode = -1;
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "units", _("units")) || svar == "unit") SET_BOOL_PV(evalops.parse_options.units_enabled)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unknowns", _("unknowns")) || svar == "unknown") SET_BOOL_PV(evalops.parse_options.unknowns_enabled)
@@ -1885,11 +1890,7 @@ int main(int argc, char *argv[]) {
 	result_only = false;
 	bool load_units = true, load_functions = true, load_variables = true, load_currencies = true, load_datasets = true;
 	load_global_defs = true;
-#ifdef _WIN32
-	printops.use_unicode_signs = false;
-#else
 	printops.use_unicode_signs = true;
-#endif
 	fetch_exchange_rates_at_startup = false;
 	char list_type = 'n';
 	string search_str;
@@ -2330,6 +2331,8 @@ int main(int argc, char *argv[]) {
 		GetConsoleMode(hOut, &outMode);
 		SetConsoleMode(hOut, outMode | DISABLE_NEWLINE_AUTO_RETURN | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 	}
+	initial_code_page = GetConsoleOutputCP();
+	if(printops.use_unicode_signs) SetConsoleOutputCP(65001);
 #endif
 
 #ifdef HAVE_LIBREADLINE
@@ -5376,6 +5379,75 @@ bool ask_tc() {
 	return false;
 }
 
+bool test_ask_dot(const string &str) {
+	if(dot_question_asked || CALCULATOR->getDecimalPoint() == DOT) return false;
+	size_t i = 0;
+	while(true) {
+		i = str.find(DOT, i);
+		if(i == string::npos) return false;
+		i = str.find_first_not_of(SPACES, i + 1);
+		if(i == string::npos) return false;
+		if(is_in(NUMBERS, str[i])) return true;
+	}
+	return false;
+}
+
+bool ask_dot() {
+	INIT_COLS
+	string str = _("Please select interpretation of dots (\".\").");
+	addLineBreaks(str, cols, true);
+	PUTS_UNICODE(str.c_str());
+	puts("");
+	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("Both dot and comma as decimal separators"); END_BOLD(str);
+	if(!evalops.parse_options.dot_as_separator) {str += " ("; str += _("default"); str += ")";}
+	PUTS_UNICODE(str.c_str());
+	string s_eg = "(1.2 = 1,2)";
+	PUTS_ITALIC(s_eg);
+	puts("");
+	str = ""; BEGIN_BOLD(str); str += "1 = "; str += _("Dot as thousands separator"); END_BOLD(str);
+	if(evalops.parse_options.dot_as_separator) {str += " ("; str += _("default"); str += ")";}
+	PUTS_UNICODE(str.c_str());
+	s_eg = "(1.000.000 = 1000000)";
+	PUTS_ITALIC(s_eg);
+	puts("");
+	str = ""; BEGIN_BOLD(str); str += "2 = "; str += _("Only dot as decimal separator"); END_BOLD(str);
+	PUTS_UNICODE(str.c_str());
+	s_eg = "(1.2 + root(16, 4) = 3.2)";
+	PUTS_ITALIC(s_eg);
+	puts("");
+	FPUTS_UNICODE(_("Dot interpretation"), stdout);
+	dot_question_asked = true;
+#ifdef HAVE_LIBREADLINE
+	char *rlbuffer = readline(": ");
+	if(!rlbuffer) return false;
+	string svalue = rlbuffer;
+	free(rlbuffer);
+#else
+	fputs(": ", stdout);
+	if(!fgets(buffer, 1000, stdin)) return false;
+	string svalue = buffer;
+#endif
+	remove_blank_ends(svalue);
+	int v = -1;
+	if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+		v = s2i(svalue);
+	}
+	bool das = evalops.parse_options.dot_as_separator;
+	if(v == 2) {
+		evalops.parse_options.dot_as_separator = false;
+		evalops.parse_options.comma_as_separator = false;
+		CALCULATOR->useDecimalPoint(false);
+		return true;
+	} else if(v == 1) {
+		evalops.parse_options.dot_as_separator = true;
+		return !das;
+	} else if(v == 0) {
+		evalops.parse_options.dot_as_separator = false;
+		return das;
+	}
+	return false;
+}
+
 
 void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates) {
 
@@ -5410,6 +5482,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		string to_str = CALCULATOR->parseComments(str, evalops.parse_options);
 		if(!to_str.empty() && str.empty()) return;
 		string from_str = str;
+		if(test_ask_dot(from_str)) ask_dot();
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
 			had_to_expression = true;
 			remove_duplicate_blanks(to_str);
@@ -6121,11 +6194,7 @@ void load_preferences() {
 	printops.number_fraction_format = FRACTION_DECIMAL;
 	printops.restrict_fraction_length = false;
 	printops.abbreviate_names = true;
-#ifdef _WIN32
-	printops.use_unicode_signs = false;
-#else
 	printops.use_unicode_signs = true;
-#endif
 	printops.use_unit_prefixes = true;
 	printops.spacious = true;
 	printops.short_multiplication = true;
@@ -6159,6 +6228,7 @@ void load_preferences() {
 	evalops.warn_about_denominators_assumed_nonzero = true;
 	evalops.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 	evalops.parse_options.dot_as_separator = CALCULATOR->default_dot_as_separator;
+	dot_question_asked = false;
 	evalops.parse_options.comma_as_separator = false;
 	evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_DEFAULT;
 	evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
@@ -6442,7 +6512,9 @@ void load_preferences() {
 					evalops.local_currency_conversion = v;
 				} else if(svar == "use_unicode_signs") {
 #ifdef _WIN32
-					printops.use_unicode_signs = v;
+					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && version_numbers[1] > 18) || (version_numbers[0] == 3 && version_numbers[1] == 18 && version_numbers[1] > 0)) {
+						printops.use_unicode_signs = v;
+					}
 #else
 					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && version_numbers[1] > 10)) {
 						printops.use_unicode_signs = v;
@@ -6467,7 +6539,13 @@ void load_preferences() {
 					if(v == 0) CALCULATOR->useDecimalPoint(evalops.parse_options.comma_as_separator);
 					else if(v > 0) CALCULATOR->useDecimalComma();
 				} else if(svar == "dot_as_separator") {
-					evalops.parse_options.dot_as_separator = v;
+					if(v < 0 || (CALCULATOR->default_dot_as_separator == v && (version_numbers[0] < 3 || (version_numbers[0] == 3 && version_numbers[1] < 19) || (version_numbers[0] == 3 && version_numbers[1] == 18 && version_numbers[2] < 1)))) {
+						evalops.parse_options.dot_as_separator = CALCULATOR->default_dot_as_separator;
+						dot_question_asked = false;
+					} else {
+						evalops.parse_options.dot_as_separator = v;
+						dot_question_asked = true;
+					}
 				} else if(svar == "comma_as_separator") {
 					evalops.parse_options.comma_as_separator = v;
 					if(CALCULATOR->getDecimalPoint() != COMMA) {
@@ -6563,7 +6641,7 @@ bool save_preferences(bool mode) {
 		return false;
 	}
 	fprintf(file, "\n[General]\n");
-	fprintf(file, "version=%s\n", VERSION);
+	fprintf(file, "version=%s\n", "3.18.1");
 	fprintf(file, "save_mode_on_exit=%i\n", save_mode_on_exit);
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
 	fprintf(file, "ignore_locale=%i\n", ignore_locale);
@@ -6582,7 +6660,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "spell_out_logical_operators=%i\n", printops.spell_out_logical_operators);
 	fprintf(file, "digit_grouping=%i\n", printops.digit_grouping);
 	fprintf(file, "decimal_comma=%i\n", b_decimal_comma);
-	fprintf(file, "dot_as_separator=%i\n", evalops.parse_options.dot_as_separator);
+	fprintf(file, "dot_as_separator=%i\n", dot_question_asked ? evalops.parse_options.dot_as_separator : -1);
 	fprintf(file, "comma_as_separator=%i\n", evalops.parse_options.comma_as_separator);
 	fprintf(file, "multiplication_sign=%i\n", printops.multiplication_sign);
 	fprintf(file, "division_sign=%i\n", printops.division_sign);
