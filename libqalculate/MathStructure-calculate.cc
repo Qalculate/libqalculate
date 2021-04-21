@@ -4679,38 +4679,13 @@ int MathStructure::merge_logical_xor(MathStructure &mstruct, const EvaluationOpt
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
 	}
-	if(isLogicalNot() && CHILD(0) == mstruct) {
+	if((isLogicalNot() && CHILD(0) == mstruct) || (mstruct.isLogicalNot() && equals(mstruct[0]))) {
 		set(1, 1, 0, true);
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
 	}
-	if(mstruct.isLogicalNot() && equals(mstruct[0])) {
-		set(1, 1, 0, true);
-		MERGE_APPROX_AND_PREC(mstruct)
-		return 1;
-	}
-	bool bp1 = representsNonZero();
-	bool bp2 = mstruct.representsNonZero();
-	if(bp1 && bp2) {
-		clear(true);
-		MERGE_APPROX_AND_PREC(mstruct)
-		return 1;
-	}
-	bool bn1 = isZero();
-	bool bn2 = mstruct.isZero();
-	if(bn1 && bn2) {
-		clear(true);
-		MERGE_APPROX_AND_PREC(mstruct)
-		return 1;
-	}
-	if((bn1 && bp2) || (bp1 && bn2)) {
-		set(1, 1, 0, true);
-		MERGE_APPROX_AND_PREC(mstruct)
-		return 1;
-	}
-	return -1;
 
-	/*int b0, b1;
+	int b0, b1;
 	if(isZero()) {
 		b0 = 0;
 	} else if(representsNonZero(true)) {
@@ -4736,22 +4711,16 @@ int MathStructure::merge_logical_xor(MathStructure &mstruct, const EvaluationOpt
 		return 1;
 	} else if(b0 == 0) {
 		set(mstruct, true);
-		add(m_zero, OPERATION_NOT_EQUALS);
-		calculatesub(eo, eo, false);
 		return 1;
 	} else if(b0 == 1) {
 		set(mstruct, true);
-		add(m_zero, OPERATION_EQUALS);
-		calculatesub(eo, eo, false);
+		transform(STRUCT_LOGICAL_NOT);
 		return 1;
 	} else if(b1 == 0) {
-		add(m_zero, OPERATION_NOT_EQUALS);
-		calculatesub(eo, eo, false);
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
 	} else if(b1 == 1) {
-		add(m_zero, OPERATION_EQUALS);
-		calculatesub(eo, eo, false);
+		transform(STRUCT_LOGICAL_NOT);
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
 	}
@@ -4767,7 +4736,7 @@ int MathStructure::merge_logical_xor(MathStructure &mstruct, const EvaluationOpt
 	add_nocopy(mstruct2, OPERATION_LOGICAL_OR);
 	calculatesub(eo, eo, false);
 
-	return 1;*/
+	return 1;
 
 }
 
@@ -4787,26 +4756,26 @@ int MathStructure::merge_bitwise_and(MathStructure &mstruct, const EvaluationOpt
 		}
 		return -1;
 	}
-	if(equals(mstruct, true, true)) {
+	if(equals(mstruct, true, true) && representsScalar() && mstruct.representsScalar()) {
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 2;
 	}
-	if(mstruct.isZero()) {
+	if(mstruct.isZero() && representsScalar()) {
 		if(isZero()) return 2;
 		clear(true);
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 3;
 	}
-	if(isZero()) {
+	if(isZero() && mstruct.representsScalar()) {
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 2;
 	}
-	if(isBitwiseNot() && CHILD(0) == mstruct) {
+	if((isBitwiseNot() || isLogicalNot()) && CHILD(0) == mstruct && mstruct.representsScalar()) {
 		clear(true);
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 3;
 	}
-	if(mstruct.isBitwiseNot() && equals(mstruct[0])) {
+	if((mstruct.isBitwiseNot() || mstruct.isLogicalNot()) && equals(mstruct[0]) && representsScalar()) {
 		clear(true);
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 3;
@@ -4878,16 +4847,16 @@ int MathStructure::merge_bitwise_or(MathStructure &mstruct, const EvaluationOpti
 		}
 		return -1;
 	}
-	if(equals(mstruct, true, true)) {
+	if(equals(mstruct, true, true) && representsScalar() && mstruct.representsScalar()) {
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 2;
 	}
-	if(mstruct.isZero()) {
+	if(mstruct.isZero() && representsScalar()) {
 		clear(true);
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 3;
 	}
-	if(isZero()) {
+	if(isZero() && mstruct.representsScalar()) {
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 2;
 	}
@@ -4957,6 +4926,11 @@ int MathStructure::merge_bitwise_xor(MathStructure &mstruct, const EvaluationOpt
 			return 1;
 		}
 		return -1;
+	}
+	if(equals(mstruct) && representsScalar() && mstruct.representsScalar()) {
+		clear(true);
+		MERGE_APPROX_AND_PREC(mstruct)
+		return 1;
 	}
 	switch(m_type) {
 		case STRUCT_VECTOR: {
@@ -5522,6 +5496,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		}
 		case STRUCT_LOGICAL_AND: {
 			if(recursive) {
+				bool comp = false;
 				for(size_t i = 0; i < SIZE; i++) {
 					CHILD(i).calculatesub(eo, feo, true, this, i);
 					CHILD_UPDATED(i)
@@ -5530,10 +5505,30 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 						b = true;
 						break;
 					}
-					if(!CHILD(i).representsBoolean()) CHILD(i).transform(COMPARISON_NOT_EQUALS, m_zero);
-
+					if(!comp && CHILD(i).isComparison()) comp = true;
 				}
 				if(b) break;
+				if(comp) {
+					for(size_t i = 0; i < SIZE; i++) {
+						if(CHILD(i).isLogicalNot() || !CHILD(i).representsBoolean()) {
+							if(CHILD(i).isLogicalNot()) {
+								CHILD(i).setType(STRUCT_COMPARISON);
+								CHILD(i).setComparisonType(COMPARISON_EQUALS);
+								CHILD(i).addChild(m_zero);
+							} else {
+								CHILD(i).transform(COMPARISON_NOT_EQUALS, m_zero);
+							}
+							CHILD(i).calculatesub(eo, feo, true, this, i);
+							CHILD_UPDATED(i)
+							if(CHILD(i).isZero()) {
+								clear(true);
+								b = true;
+								break;
+							}
+						}
+					}
+					if(b) break;
+				}
 			}
 			MERGE_ALL(merge_logical_and, try_logand)
 			if(SIZE == 1) {
@@ -5559,6 +5554,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			bool isResistance = false;
 			// calculate resistance || resistance as parallel resistor (?)
 			if(recursive) {
+				bool comp = false;
 				for(size_t i = 0; i < SIZE; i++) {
 					CHILD(i).calculatesub(eo, feo, true, this, i);
 					CHILD_UPDATED(i)
@@ -5567,9 +5563,30 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 						b = true;
 						break;
 					}
-					if(!CHILD(i).representsBoolean()) CHILD(i).transform(COMPARISON_NOT_EQUALS, m_zero);
+					if(!comp && CHILD(i).isComparison()) comp = true;
 				}
 				if(b) break;
+				if(comp) {
+					for(size_t i = 0; i < SIZE; i++) {
+						if(CHILD(i).isLogicalNot() || !CHILD(i).representsBoolean()) {
+							if(CHILD(i).isLogicalNot()) {
+								CHILD(i).setType(STRUCT_COMPARISON);
+								CHILD(i).setComparisonType(COMPARISON_EQUALS);
+								CHILD(i).addChild(m_zero);
+							} else {
+								CHILD(i).transform(COMPARISON_NOT_EQUALS, m_zero);
+							}
+							CHILD(i).calculatesub(eo, feo, true, this, i);
+							CHILD_UPDATED(i)
+							if(CHILD(i).representsNonZero()) {
+								set(1, 1, 0, true);
+								b = true;
+								break;
+							}
+						}
+					}
+					if(b) break;
+				}
 			}
 			switch(CHILD(0).type()) {
 				case STRUCT_MULTIPLICATION: {
@@ -5620,15 +5637,42 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		}
 		case STRUCT_LOGICAL_XOR: {
 			if(recursive) {
-				CHILD(0).calculatesub(eo, feo, true, this, 0);
-				CHILD(1).calculatesub(eo, feo, true, this, 1);
-				if(!CHILD(0).representsBoolean()) CHILD(0).transform(COMPARISON_NOT_EQUALS, m_zero);
-				if(!CHILD(1).representsBoolean()) CHILD(1).transform(COMPARISON_NOT_EQUALS, m_zero);
-				CHILDREN_UPDATED;
+				bool comp = false;
+				for(size_t i = 0; i < SIZE; i++) {
+					CHILD(i).calculatesub(eo, feo, true, this, i);
+					CHILD_UPDATED(i)
+					if(!comp && CHILD(i).isComparison()) comp = true;
+				}
+				if(b) break;
+				if(comp) {
+					for(size_t i = 0; i < SIZE; i++) {
+						if(CHILD(i).isLogicalNot() || !CHILD(i).representsBoolean()) {
+							if(CHILD(i).isLogicalNot()) {
+								CHILD(i).setType(STRUCT_COMPARISON);
+								CHILD(i).setComparisonType(COMPARISON_EQUALS);
+								CHILD(i).addChild(m_zero);
+							} else {
+								CHILD(i).transform(COMPARISON_NOT_EQUALS, m_zero);
+							}
+							CHILD(i).calculatesub(eo, feo, true, this, i);
+							CHILD_UPDATED(i)
+						}
+					}
+					if(b) break;
+				}
 			}
 			if(CHILD(0).merge_logical_xor(CHILD(1), eo) >= 1) {
-				b = true;
-				setToChild(1, false, mparent, index_this + 1);
+				if(CHILD(0).representsBoolean() || (mparent && !mparent->isMultiplication() && mparent->representsBoolean())) {
+					setToChild(1, false, mparent, index_this + 1);
+				} else if(CHILD(0).representsNonZero()) {
+					set(1, 1, 0, true);
+				} else if(CHILD(0).isZero()) {
+					clear(true);
+				} else {
+					APPEND(m_zero);
+					m_type = STRUCT_COMPARISON;
+					ct_comp = COMPARISON_NOT_EQUALS;
+				}
 			}
 			break;
 		}
@@ -5672,7 +5716,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				SET_CHILD_MAP(0)
 				calculatesub(eo, feo, false);
 				b = true;
-			} else if(CHILD(0).representsBoolean()) {
+			} else if(!CHILD(0).representsBoolean() && !CHILD(0).isUnknown()) {
 				m_type = STRUCT_COMPARISON;
 				ct_comp = COMPARISON_EQUALS;
 				APPEND(m_zero)
@@ -6308,10 +6352,10 @@ bool MathStructure::calculateLogicalOrIndex(size_t index, const EvaluationOption
 		if(SIZE == 1) {
 			if(CHILD(0).representsBoolean() || (mparent && !mparent->isMultiplication() && mparent->representsBoolean())) {
 				setToChild(1, false, mparent, index_this + 1);
-			} else if(CHILD(0).representsPositive()) {
+			} else if(CHILD(0).representsNonZero()) {
 				clear(true);
 				o_number.setTrue();
-			} else if(CHILD(0).representsNonPositive()) {
+			} else if(CHILD(0).isZero()) {
 				clear(true);
 				o_number.setFalse();
 			} else {
@@ -6345,10 +6389,10 @@ bool MathStructure::calculateLogicalXorLast(const EvaluationOptions &eo, MathStr
 	if(CHILD(0).merge_logical_xor(CHILD(1), eo, this, 0, 1) >= 1) {
 		if(CHILD(0).representsBoolean() || (mparent && !mparent->isMultiplication() && mparent->representsBoolean())) {
 			setToChild(1, false, mparent, index_this + 1);
-		} else if(CHILD(0).representsPositive()) {
+		} else if(CHILD(0).representsNonZero()) {
 			clear(true);
 			o_number.setTrue();
-		} else if(CHILD(0).representsNonPositive()) {
+		} else if(CHILD(0).isZero()) {
 			clear(true);
 			o_number.setFalse();
 		} else {
@@ -6382,10 +6426,10 @@ bool MathStructure::calculateLogicalAndIndex(size_t index, const EvaluationOptio
 		if(SIZE == 1) {
 			if(CHILD(0).representsBoolean() || (mparent && !mparent->isMultiplication() && mparent->representsBoolean())) {
 				setToChild(1, false, mparent, index_this + 1);
-			} else if(CHILD(0).representsPositive()) {
+			} else if(CHILD(0).representsNonZero()) {
 				clear(true);
 				o_number.setTrue();
-			} else if(CHILD(0).representsNonPositive()) {
+			} else if(CHILD(0).isZero()) {
 				clear(true);
 				o_number.setFalse();
 			} else {
@@ -6430,11 +6474,11 @@ bool MathStructure::calculateNegate(const EvaluationOptions &eo, MathStructure *
 	return calculateMultiplyIndex(0, eo, true, mparent, index_this);
 }
 bool MathStructure::calculateBitwiseNot(const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
-	transform(STRUCT_LOGICAL_NOT);
+	transform(STRUCT_BITWISE_NOT);
 	return calculatesub(eo, eo, false, mparent, index_this);
 }
 bool MathStructure::calculateLogicalNot(const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
-	transform(STRUCT_BITWISE_NOT);
+	transform(STRUCT_LOGICAL_NOT);
 	return calculatesub(eo, eo, false, mparent, index_this);
 }
 bool MathStructure::calculateRaiseExponent(const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {

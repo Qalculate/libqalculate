@@ -75,50 +75,8 @@ int BitXorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 XorFunction::XorFunction() : MathFunction("lxor", 2) {
 }
 int XorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	int b0, b1;
-	if(vargs[0].representsNonPositive(true)) {
-		b0 = 0;
-	} else if(vargs[0].representsPositive(true)) {
-		b0 = 1;
-	} else {
-		b0 = -1;
-	}
-	if(vargs[1].representsNonPositive(true)) {
-		b1 = 0;
-	} else if(vargs[1].representsPositive(true)) {
-		b1 = 1;
-	} else {
-		b1 = -1;
-	}
-	if((b0 == 1 && b1 == 0) || (b0 == 0 && b1 == 1)) {
-		mstruct = m_one;
-		return 1;
-	} else if(b0 >= 0 && b1 >= 0) {
-		return 1;
-	} else if(b0 == 0) {
-		mstruct = vargs[1];
-		mstruct.add(m_zero, OPERATION_GREATER);
-		return 1;
-	} else if(b0 == 1) {
-		mstruct = vargs[1];
-		mstruct.add(m_zero, OPERATION_EQUALS_LESS);
-		return 1;
-	} else if(b1 == 0) {
-		mstruct = vargs[0];
-		mstruct.add(m_zero, OPERATION_GREATER);
-		return 1;
-	} else if(b1 == 1) {
-		mstruct = vargs[0];
-		mstruct.add(m_zero, OPERATION_EQUALS_LESS);
-		return 1;
-	}
-	mstruct = vargs[1];
-	mstruct.setLogicalNot();
-	mstruct.add(vargs[0], OPERATION_LOGICAL_AND);
-	MathStructure mstruct2(vargs[0]);
-	mstruct2.setLogicalNot();
-	mstruct2.add(vargs[1], OPERATION_LOGICAL_AND);
-	mstruct.add(mstruct2, OPERATION_LOGICAL_OR);
+	mstruct = vargs[0];
+	mstruct.transform(STRUCT_LOGICAL_XOR, vargs[1]);
 	return 1;
 }
 
