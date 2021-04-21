@@ -212,8 +212,8 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 	return is - str_index;
 }
 
-const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊻", "\x1f"};
-#define INTERNAL_SIGNS_COUNT 14
+const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f"};
+#define INTERNAL_SIGNS_COUNT 12
 #define INTERNAL_NUMBER_CHARS "\b"
 #define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f"
 #define DUODECIMAL_CHARS "EXABab"
@@ -615,12 +615,50 @@ bool has_boolean_variable(const MathStructure &m) {
 	}
 	return false;
 }
-bool is_boolean_algebra_expression(const MathStructure &m, bool top = true) {
-	if(top && !has_boolean_variable(m)) return false;
+bool is_boolean_algebra_expression2(const MathStructure &m, bool *bitfound = NULL) {
+	if(!bitfound) {
+		bool bitf = false;
+		return is_boolean_algebra_expression2(m, &bitf) && bitf;
+	}
+	if(!(*bitfound) && (m.type() == STRUCT_BITWISE_AND || m.type() == STRUCT_BITWISE_OR)) *bitfound = true;
+	if(m.isUnknown()) return true;
+	if(m.size() > 0) {
+		if(m.type() < STRUCT_BITWISE_AND || m.type() >= STRUCT_COMPARISON) return false;
+		for(size_t i = 0; i < m.size(); i++) {
+			if(!is_boolean_algebra_expression2(m[i], bitfound)) return false;
+		}
+	} else if(!m.representsBoolean()) {
+		return false;
+	}
+	return true;
+}
+bool is_boolean_algebra_expression3(const MathStructure &m, bool *bitfound = NULL) {
+	if(!bitfound) {
+		bool bitf = false;
+		return is_boolean_algebra_expression3(m, &bitf) && bitf;
+	}
+	if(m.isUnknown()) return true;
+	if(m.size() > 0) {
+		if(m.type() == STRUCT_LOGICAL_AND || m.type() == STRUCT_LOGICAL_OR || m.type() == STRUCT_LOGICAL_XOR) *bitfound = true;
+		else if(m.type() != STRUCT_LOGICAL_NOT && m.type() != STRUCT_BITWISE_NOT && m.type() != STRUCT_BITWISE_XOR) return false;
+		for(size_t i = 0; i < m.size(); i++) {
+			if(!is_boolean_algebra_expression3(m[i], bitfound)) return false;
+		}
+	} else if(!m.representsBoolean()) {
+		return false;
+	}
+	return true;
+}
+bool is_boolean_algebra_expression(const MathStructure &m, int ascii_bitwise, bool top = true) {
+	if(top && !has_boolean_variable(m)) {
+		if(!ascii_bitwise && is_boolean_algebra_expression2(m)) return true;
+		if(ascii_bitwise != 1 && is_boolean_algebra_expression3(m)) return true;
+		return false;
+	}
 	if(m.size() == 0 && !m.representsBoolean()) return false;
 	if(m.size() > 0 && (m.type() < STRUCT_BITWISE_AND || m.type() > STRUCT_COMPARISON)) return false;
 	for(size_t i = 0; i < m.size(); i++) {
-		if(!is_boolean_algebra_expression(m[i], false)) return false;
+		if(!is_boolean_algebra_expression(m[i], false, false)) return false;
 	}
 	return true;
 }
@@ -739,6 +777,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			gsub("\"", "″", str);
 		}
 	}
+
+	int ascii_bitwise = 0;
+	if(str.find_first_of(BITWISE_AND BITWISE_OR LOGICAL_NOT) != string::npos) ascii_bitwise = 1;
 
 	// replace alternative strings (primarily operators) with default ascii versions
 	parseSigns(str, true);
@@ -1130,6 +1171,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		} else if(po.parsing_mode != PARSING_MODE_RPN && (str[str_index] == 'c' || str[str_index] == 'C') && str.length() > str_index + 6 && str[str_index + 5] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("compl", str, 5, str_index, base)) {
 			// interprate "compl" followed by space as bitwise not
 			str.replace(str_index, 6, BITWISE_NOT);
+			ascii_bitwise = true;
+		} else if(po.parsing_mode != PARSING_MODE_RPN && (str[str_index] == 'n' || str[str_index] == 'N') && str.length() > str_index + 4 && str[str_index + 3] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("not", str, 3, str_index, base)) {
+			// interprate "NOT" followed by space as logical not
+			str.replace(str_index, 6, LOGICAL_NOT);
+			ascii_bitwise = true;
 		} else if(str[str_index] == SPACE_CH) {
 			size_t i = str.find(SPACE, str_index + 1);
 			if(po.parsing_mode == PARSING_MODE_RPN && i == string::npos) i = str.length();
@@ -1151,30 +1197,39 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str_index++;
 				} else if(and_str_len > 0 && i == and_str_len && (il = compare_name_no_case(and_str, str, and_str_len, str_index + 1, base))) {
 					str.replace(str_index + 1, il, LOGICAL_AND);
+					if(!ascii_bitwise) ascii_bitwise = 2;
 					str_index += 2;
 				} else if(i == AND_str_len && (il = compare_name_no_case(AND_str, str, AND_str_len, str_index + 1, base))) {
 					str.replace(str_index + 1, il, LOGICAL_AND);
+					if(!ascii_bitwise) ascii_bitwise = 2;
 					str_index += 2;
 				} else if(or_str_len > 0 && i == or_str_len && (il = compare_name_no_case(or_str, str, or_str_len, str_index + 1, base))) {
 					str.replace(str_index + 1, il, LOGICAL_OR);
+					if(!ascii_bitwise) ascii_bitwise = 2;
 					str_index += 2;
 				} else if(i == OR_str_len && (il = compare_name_no_case(OR_str, str, OR_str_len, str_index + 1, base))) {
 					str.replace(str_index + 1, il, LOGICAL_OR);
+					if(!ascii_bitwise) ascii_bitwise = 2;
 					str_index += 2;
 				} else if(i == XOR_str_len && (il = compare_name_no_case(XOR_str, str, XOR_str_len, str_index + 1, base))) {
 					str.replace(str_index + 1, il, "\a");
+					if(!ascii_bitwise) ascii_bitwise = 2;
 					str_index++;
 				} else if(i == 5 && (il = compare_name_no_case("bitor", str, 5, str_index + 1, base))) {
 					str.replace(str_index + 1, il, BITWISE_OR);
+					ascii_bitwise = true;
 					str_index++;
 				} else if(i == 6 && (il = compare_name_no_case("bitand", str, 6, str_index + 1, base))) {
 					str.replace(str_index + 1, il, BITWISE_AND);
+					ascii_bitwise = true;
 					str_index++;
 				} else if(i == 4 && (il = compare_name_no_case("nand", str, 4, str_index + 1, base))) {
 					str.replace(str_index + 1, il, "\x1d");
+					if(!ascii_bitwise) ascii_bitwise = 2;
 					str_index++;
 				} else if(i == 3 && (il = compare_name_no_case("nor", str, 3, str_index + 1, base))) {
 					str.replace(str_index + 1, il, "\x1e");
+					if(!ascii_bitwise) ascii_bitwise = 2;
 					str_index++;
 				} else if(i == 3 && (il = compare_name_no_case("mod", str, 3, str_index + 1, base))) {
 					str.replace(str_index + 1, il, "\%\%");
@@ -2045,9 +2100,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 	parseOperators(mstruct, str, po);
 
-	if(is_boolean_algebra_expression(*mstruct)) {
+	//if(is_boolean_algebra_expression(*mstruct, ascii_bitwise)) {
 		bitwise_to_logical(*mstruct);
-	}
+	//}
 
 }
 
