@@ -4707,6 +4707,23 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			}
 			break;
 		}
+		case STRUCT_LOGICAL_NOT: {
+			if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
+				if(CHILD(1).isOne()) {
+					CHILD(0).setToChild(1, true);
+					CHILD(1).clear(true);
+					return true;
+				}
+				if(CHILD(1).isZero()) {
+					CHILD(0).setToChild(1, true);
+					CHILD(1).clear(true);
+					if(ct_comp == COMPARISON_NOT_EQUALS) ct_comp = COMPARISON_EQUALS;
+					else ct_comp = COMPARISON_NOT_EQUALS;
+					return true;
+				}
+			}
+			break;
+		}
 		case STRUCT_FUNCTION: {
 			if(CHILD(0).function()->id() == FUNCTION_ID_ROOT && VALID_ROOT(CHILD(0))) {
 				if(CHILD(0)[0].contains(x_var)) {

@@ -1685,6 +1685,7 @@ void Calculator::addBuiltinFunctions() {
 	f_dsolve = addFunction(new DSolveFunction());
 	f_limit = addFunction(new LimitFunction());
 	addFunction(new NewtonRaphsonFunction());
+	addFunction(new SecantMethodFunction());
 
 	f_li = addFunction(new liFunction());
 	f_Li = addFunction(new LiFunction());

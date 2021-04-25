@@ -257,6 +257,9 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				}
 			} else if(o_function->id() == FUNCTION_ID_INCOMPLETE_BETA && SIZE == 3 && CHILD(0).containsRepresentativeOf(x_var, true, true) != 0 && CHILD(1).containsRepresentativeOf(x_var, true, true) == 0 && CHILD(2).containsRepresentativeOf(x_var, true, true) == 0) {
 				// beta(f,a,b)')=f^(a-1)*(1-f)^(b-1)*f'
+				MathStructure *mbeta = new MathStructure(*this);
+				mbeta->setFunctionId(FUNCTION_ID_BETA);
+				mbeta->delChild(1);
 				MathStructure *m1 = new MathStructure(CHILD(0));
 				MathStructure *m2 = new MathStructure(CHILD(0));
 				CHILD(1).ref();
@@ -271,6 +274,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				differentiate(x_var, eo);
 				multiply_nocopy(m1);
 				multiply_nocopy(m2);
+				divide_nocopy(mbeta);
 			} else if(o_function->id() == FUNCTION_ID_ARG && SIZE == 1) {
 				// arg(x)'=f'*-pi*dirac(f)
 				MathStructure mstruct(CHILD(0));

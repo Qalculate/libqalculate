@@ -496,59 +496,68 @@ int InverseIncompleteBetaFunction::calculate(MathStructure &mstruct, const MathS
 		x0 *= vargs[1].number();
 		x0 /= vargs[2].number();
 	}
+	x0.setToFloatingPoint();
 	Number prev_xip1_retry;
 	int prev_retry = 0;
 	Number retry_div(100, 1, 0);
+	int ret = 0;
 	iibf_begin:
+	CALCULATOR->beginTemporaryStopMessages();
 	Number x_i, x_ip1, x_itest;
 	Number beta(vargs[1].number()), gy(vargs[2].number()), gxy(vargs[1].number());
-	if(!gxy.add(vargs[2].number()) || !gy.gamma() || !beta.gamma() || !gxy.gamma() || !beta.multiply(gy) || !beta.divide(gxy)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
-	Number pm1(vargs[1].number()); pm1--;
-	Number qm1(vargs[2].number()); qm1--;
-	Number xip, xiq;
-	iibf:
-	x_i = x0;
-	while(true) {
-		if(CALCULATOR->aborted()) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
-		xip = x_i;
-		xiq.set(1, 1, 0);
-		if(!xiq.subtract(x_i) || !xip.raise(pm1) || !xiq.raise(qm1)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
-		x_ip1 = x_i;
-		if(x_ip1.isNegative() || !x_ip1.isFraction()) {
-			x_ip1.abs();
-			if(prev_retry != 0 && ((prev_retry < 0 && prev_xip1_retry < x_ip1) || (prev_retry > 0 && prev_xip1_retry > x_ip1))) {
-				if(prev_retry < 0) x0 *= retry_div;
-				x0.negate();
-				x0++;
-				x0 /= retry_div;
-				x0.negate();
-				x0++;
-				prev_retry = 1;
-			} else {
-				if(prev_retry > 0) {retry_div.sqrt(); retry_div.intervalToMidValue();}
-				prev_retry = -1;
-				x0 /= retry_div;
+	if(!gxy.add(vargs[2].number()) || !gy.gamma() || !beta.gamma() || !gxy.gamma() || !beta.multiply(gy) || !beta.divide(gxy)) {
+	} else {
+		Number pm1(vargs[1].number()); pm1--;
+		Number qm1(vargs[2].number()); qm1--;
+		Number xip, xiq;
+		iibf:
+		x_i = x0;
+		while(true) {
+			if(CALCULATOR->aborted()) break;
+			xip = x_i;
+			xiq.set(1, 1, 0);
+			if(!xiq.subtract(x_i) || !xip.raise(pm1) || !xiq.raise(qm1)) break;
+			x_ip1 = x_i;
+			if(x_ip1.isNegative() || !x_ip1.isFraction()) {
+				x_ip1.abs();
+				if(prev_retry != 0 && ((prev_retry < 0 && prev_xip1_retry < x_ip1) || (prev_retry > 0 && prev_xip1_retry > x_ip1))) {
+					if(prev_retry < 0) x0 *= retry_div;
+					x0.negate();
+					x0++;
+					x0 /= retry_div;
+					x0.negate();
+					x0++;
+					prev_retry = 1;
+				} else {
+					if(prev_retry > 0) {retry_div.sqrt(); retry_div.intervalToMidValue();}
+					prev_retry = -1;
+					x0 /= retry_div;
+				}
+				prev_xip1_retry = x_ip1;
+				CALCULATOR->endTemporaryStopMessages();
+				goto iibf;
 			}
-			prev_xip1_retry = x_ip1;
-			goto iibf;
-		}
-		if(!x_ip1.betainc(vargs[1].number(), vargs[2].number(), true)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
-		if(!x_ip1.subtract(vargs[0].number()) || !x_ip1.divide(xip) || !x_ip1.divide(xiq) || !x_ip1.multiply(beta)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
-		x_itest = x_ip1;
-		if(!x_itest.divide(x_i) || !x_itest.abs() || !x_i.subtract(x_ip1)) {if(precbak != PRECISION) {CALCULATOR->setPrecision(precbak);} return 0;}
-		if(x_itest < nr_prec) {
-			x_i.setUncertainty(x_ip1);
-			break;
-		}
-		int prec = x_i.precision(true);
-		if(prec >= 0 && prec < precbak && PRECISION * 5 < 1000) {
-			CALCULATOR->setPrecision(PRECISION * 10 > 1000 ? 1000 : PRECISION * 10);
-			goto iibf_begin;
+			if(!x_ip1.betainc(vargs[1].number(), vargs[2].number(), true)) break;
+			if(!x_ip1.subtract(vargs[0].number()) || !x_ip1.divide(xip) || !x_ip1.divide(xiq) || !x_ip1.multiply(beta)) break;
+			x_itest = x_ip1;
+			if(!x_itest.divide(x_i) || !x_itest.abs() || !x_i.subtract(x_ip1)) break;
+			if(x_itest < nr_prec) {
+				x_i.setUncertainty(x_ip1);
+				ret = 1;
+				break;
+			}
+			int prec = x_i.precision(true);
+			if(prec >= 0 && prec < precbak && PRECISION * 5 < 1000) {
+				CALCULATOR->setPrecision(PRECISION * 10 > 1000 ? 1000 : PRECISION * 10);
+				CALCULATOR->endTemporaryStopMessages();
+				goto iibf_begin;
+			}
 		}
 	}
 	if(precbak != PRECISION) CALCULATOR->setPrecision(precbak);
-	mstruct = x_i;
-	return 1;
+	CALCULATOR->endTemporaryStopMessages(true);
+	if(ret == 1) mstruct = x_i;
+	return ret;
 }
 
 IncompleteBetaFunction::IncompleteBetaFunction() : MathFunction("betainc", 3) {

@@ -5948,6 +5948,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					if(ct_comp == COMPARISON_EQUALS) clear(true);
 					else set(1, 1, 0, true);
 					b = true;
+				} else if((CHILD(0).representsBoolean() && ((CHILD(1).isNumber() && CHILD(1).number().isNonZero() && COMPARISON_IS_NOT_EQUAL(CHILD(1).number().compare(nr_one))) || CHILD(1).representsNegative())) || (CHILD(1).representsBoolean() && ((CHILD(0).isNumber() && CHILD(0).number().isNonZero() && COMPARISON_IS_NOT_EQUAL(CHILD(0).number().compare(nr_one))) || CHILD(0).representsNegative()))) {
+					if(ct_comp == COMPARISON_EQUALS) clear(true);
+					else set(1, 1, 0, true);
+					b = true;
 				}
 			}
 			if(b) break;
