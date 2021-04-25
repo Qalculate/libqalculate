@@ -42,7 +42,7 @@ AssumptionType Assumptions::type() {return i_type;}
 AssumptionSign Assumptions::sign() {return i_sign;}
 void Assumptions::setType(AssumptionType ant) {
 	i_type = ant;
-	if(i_type == ASSUMPTION_TYPE_BOOLEAN && (i_type <= ASSUMPTION_TYPE_COMPLEX && i_sign != ASSUMPTION_SIGN_NONZERO)) {
+	if(i_type == ASSUMPTION_TYPE_BOOLEAN || (i_type <= ASSUMPTION_TYPE_COMPLEX && i_sign != ASSUMPTION_SIGN_NONZERO)) {
 		i_sign = ASSUMPTION_SIGN_UNKNOWN;
 	}
 	if(i_type <= ASSUMPTION_TYPE_NONMATRIX || i_type == ASSUMPTION_TYPE_BOOLEAN) {

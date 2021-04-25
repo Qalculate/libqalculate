@@ -113,10 +113,6 @@ void expression_calculation_updated();
 bool display_errors(bool goto_input = false, int cols = 0);
 void replace_result_cis(string &resstr);
 
-#ifdef _WIN32
-	UINT initial_code_page;
-#endif
-
 FILE *cfile;
 
 enum {
@@ -145,8 +141,20 @@ bool contains_unicode_char(const char *str) {
 	return false;
 }
 
-#define PUTS_UNICODE(x)		if(printops.use_unicode_signs || !contains_unicode_char(x)) {puts(x);} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
-#define FPUTS_UNICODE(x, y)	if(printops.use_unicode_signs || !contains_unicode_char(x)) {fputs(x, y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
+#ifdef _WIN32
+LPWSTR utf8wchar(const char *str) {
+	size_t len = strlen(str) + 1;
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0, str, len, NULL, 0);
+	LPWSTR wstr = (LPWSTR) LocalAlloc(LPTR, sizeof(WCHAR) * size_needed);
+	MultiByteToWideChar(CP_UTF8, 0, str, len, wstr, size_needed);
+	return wstr;
+}
+#	define PUTS_UNICODE(x)		if(!contains_unicode_char(x)) {puts(x);} else if(printops.use_unicode_signs) {fputws(utf8wchar(x), stdout); puts("");} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
+#	define FPUTS_UNICODE(x, y)	if(!contains_unicode_char(x)) {fputs(x, y);} else if(printops.use_unicode_signs) {fputws(utf8wchar(x), y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
+#else
+#	define PUTS_UNICODE(x)		if(printops.use_unicode_signs || !contains_unicode_char(x)) {puts(x);} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
+#	define FPUTS_UNICODE(x, y)	if(printops.use_unicode_signs || !contains_unicode_char(x)) {fputs(x, y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
+#endif
 
 void update_message_print_options() {
 	PrintOptions message_printoptions = printops;
@@ -905,10 +913,6 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			printops.use_unicode_signs = v; result_display_updated();
-#ifdef _WIN32
-			if(printops.use_unicode_signs) SetConsoleOutputCP(65001);
-			else SetConsoleOutputCP(initial_code_page);
-#endif
 		}
 		enable_unicode = -1;
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "units", _("units")) || svar == "unit") SET_BOOL_PV(evalops.parse_options.units_enabled)
@@ -1898,7 +1902,11 @@ int main(int argc, char *argv[]) {
 	result_only = false;
 	bool load_units = true, load_functions = true, load_variables = true, load_currencies = true, load_datasets = true;
 	load_global_defs = true;
+#ifdef _WIN32
+	printops.use_unicode_signs = false;
+#else
 	printops.use_unicode_signs = true;
+#endif
 	fetch_exchange_rates_at_startup = false;
 	char list_type = 'n';
 	string search_str;
@@ -2339,8 +2347,6 @@ int main(int argc, char *argv[]) {
 		GetConsoleMode(hOut, &outMode);
 		SetConsoleMode(hOut, outMode | DISABLE_NEWLINE_AUTO_RETURN | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 	}
-	initial_code_page = GetConsoleOutputCP();
-	if(printops.use_unicode_signs) SetConsoleOutputCP(65001);
 #endif
 
 #ifdef HAVE_LIBREADLINE
@@ -6212,7 +6218,11 @@ void load_preferences() {
 	printops.number_fraction_format = FRACTION_DECIMAL;
 	printops.restrict_fraction_length = false;
 	printops.abbreviate_names = true;
+#ifdef _WIN32
+	printops.use_unicode_signs = false;
+#else
 	printops.use_unicode_signs = true;
+#endif
 	printops.use_unit_prefixes = true;
 	printops.spacious = true;
 	printops.short_multiplication = true;
@@ -6530,9 +6540,7 @@ void load_preferences() {
 					evalops.local_currency_conversion = v;
 				} else if(svar == "use_unicode_signs") {
 #ifdef _WIN32
-					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && version_numbers[1] > 18) || (version_numbers[0] == 3 && version_numbers[1] == 18 && version_numbers[1] > 0)) {
-						printops.use_unicode_signs = v;
-					}
+					printops.use_unicode_signs = v;
 #else
 					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && version_numbers[1] > 10)) {
 						printops.use_unicode_signs = v;

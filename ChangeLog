@@ -1,3 +1,34 @@
+2021-04-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* secantsolve() function for solving equations using secant method
+	* normdistinv() function
+
+2021-04-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Inverse of chi-square cumulative distribution
+	* Improve simplification of logical expressions (boolean alebra)
+	* Add boolean assumptions type for unknown variables
+	* Add nand and nor operators
+	* Add spelled out version of logical not operator ("not")
+	* Interpret bitwise operators as logical in some cases
+
+2021-04-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* newtonsolve() function for solving equations using Newton's method
+
+2021-04-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve betainc() function and return regularized version
+	* Add inverse incomplete beta function (betaincinv())
+	* Add inverse functions for F-distribution and Student's t-distribution
+	* Fix cumulative t-distribution for X < 0
+	* Fix include_equals parameter for max and min of function arguments
+
+2021-04-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add plural forms to translated messages
+	* Set ENABLE_NLS outside of gettext macros
+
 2021-04-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add support for number suffix k (e.g. 2k = 2000)

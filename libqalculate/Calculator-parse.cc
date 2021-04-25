@@ -1174,7 +1174,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			ascii_bitwise = true;
 		} else if(po.parsing_mode != PARSING_MODE_RPN && (str[str_index] == 'n' || str[str_index] == 'N') && str.length() > str_index + 4 && str[str_index + 3] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("not", str, 3, str_index, base)) {
 			// interprate "NOT" followed by space as logical not
-			str.replace(str_index, 6, LOGICAL_NOT);
+			str.replace(str_index, 4, LOGICAL_NOT);
 			ascii_bitwise = true;
 		} else if(str[str_index] == SPACE_CH) {
 			size_t i = str.find(SPACE, str_index + 1);
@@ -1230,6 +1230,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				} else if(i == 3 && (il = compare_name_no_case("nor", str, 3, str_index + 1, base))) {
 					str.replace(str_index + 1, il, "\x1e");
 					if(!ascii_bitwise) ascii_bitwise = 2;
+					str_index++;
+				} else if(i == 3 && (il = compare_name_no_case("not", str, 3, str_index + 1, base))) {
+					str.replace(str_index + 1, il + 1, LOGICAL_NOT);
+					ascii_bitwise = true;
 					str_index++;
 				} else if(i == 3 && (il = compare_name_no_case("mod", str, 3, str_index + 1, base))) {
 					str.replace(str_index + 1, il, "\%\%");
@@ -2100,9 +2104,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 	parseOperators(mstruct, str, po);
 
-	//if(is_boolean_algebra_expression(*mstruct, ascii_bitwise)) {
+	if(is_boolean_algebra_expression(*mstruct, ascii_bitwise)) {
 		bitwise_to_logical(*mstruct);
-	//}
+	}
 
 }
 
