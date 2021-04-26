@@ -2354,6 +2354,7 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 					mstruct2->transform(STRUCT_NEGATE);
 					mstruct->add_nocopy(mstruct2, OPERATION_ADD, append);
 				} else {
+					if(s == OPERATION_MULTIPLY && (mstruct->isVector() && mstruct2->isVector() && mstruct->size() == mstruct2->size() && !mstruct->isMatrix() && !mstruct2->isMatrix())) error(true, _("Please use the cross(), dot(), and hadamard() functions for vector multiplication."), NULL);
 					mstruct->add_nocopy(mstruct2, s, append);
 				}
 			}
@@ -2369,6 +2370,7 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 				mstruct2->transform(STRUCT_NEGATE);
 				mstruct->add_nocopy(mstruct2, OPERATION_ADD, append);
 			} else {
+				if(s == OPERATION_MULTIPLY && mstruct->isVector() && mstruct2->isVector() && mstruct->size() == mstruct2->size() && !mstruct->isMatrix() && !mstruct2->isMatrix()) error(true, _("Please use the cross(), dot(), and hadamard() functions for vector multiplication."), NULL);
 				mstruct->add_nocopy(mstruct2, s, append);
 			}
 		}
