@@ -341,6 +341,19 @@
       </argument>
     </function>
     <function>
+      <_title>Dot Product</_title>
+      <_names>r:dot</_names>
+      <_description>Calculates the dot product of two vectors.</_description>
+      <expression>sum(element(\x,"i")*element(\y,"i"),1,dimension(\x),"i")</expression>
+      <condition>dimension(\x)==dimension(\y)</condition>
+      <argument type="vector" index="1">
+        <_title>Vector 1</_title>
+      </argument>
+      <argument type="vector" index="2">
+        <_title>Vector 2</_title>
+      </argument>
+    </function>
+    <function>
       <_title>Cross Product</_title>
       <_names>r:cross</_names>
       <_description>Calculates the cross product of two 3-dimensional vectors.</_description>

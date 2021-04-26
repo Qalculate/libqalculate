@@ -1699,9 +1699,10 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
 					} else {
+						CALCULATOR->error(true, _("Please use the cross(), dot(), and hadamard() functions for vector multiplication."), NULL);
 						// dot product of two vectors: [a1, a2, a3, ..]*[b1, b2, b3, ...]=a1*b1+a2*b2+a3*b3+...
 						// dimension of the vectors must be equal
-						if(SIZE == mstruct.size()) {
+						/*if(SIZE == mstruct.size()) {
 							if(SIZE == 0) {clear(true); return 1;}
 							for(size_t i = 0; i < SIZE; i++) {
 								mstruct[i].ref();
@@ -1712,7 +1713,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							MERGE_APPROX_AND_PREC(mstruct)
 							calculatesub(eo, eo, false, mparent, index_this);
 							return 1;
-						}
+						}*/
 					}
 					return -1;
 				}
