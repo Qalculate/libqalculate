@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-24 13:12+0700\n"
-"PO-Revision-Date: 2021-04-27 21:16+0700\n"
+"PO-Revision-Date: 2021-04-27 22:37+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -7574,11 +7574,11 @@ msgstr "Ценовая переменная"
 
 #: ../data/functions.xml.in.h:1083
 msgid "Sum-of-Years Digits Depreciation"
-msgstr ""
+msgstr "Годовая сумма амортизации"
 
 #: ../data/functions.xml.in.h:1084
 msgid "r:syd"
-msgstr ""
+msgstr "гса"
 
 #: ../data/functions.xml.in.h:1085
 msgid ""
@@ -7589,30 +7589,38 @@ msgid ""
 "actual cost minus the salvage value. The useful life is the number of "
 "periods (typically years) over which the asset is depreciated."
 msgstr ""
+"Вычисляет сумму амортизации по сумме лет для актива на основе его стоимости, "
+"ликвидационной стоимости, ожидаемого срока службы и определённого периода. "
+"Этот метод увеличивает скорость амортизации, так что амортизационные расходы "
+"в более ранние периоды возникают больше, чем в более поздние. Амортизируемая "
+"стоимость - это фактическая стоимость за вычетом ликвидационной стоимости. "
+"Срок полезного использования - это количество периодов (обычно лет), в"
+" течение "
+"которых актив амортизируется."
 
 #: ../data/functions.xml.in.h:1086
 msgid "Cost"
-msgstr ""
+msgstr "Стоимость"
 
 #: ../data/functions.xml.in.h:1087
 msgid "Salvage value"
-msgstr ""
+msgstr "Стоимость утилизации"
 
 #: ../data/functions.xml.in.h:1088
 msgid "Life"
-msgstr ""
+msgstr "Срок службы"
 
 #: ../data/functions.xml.in.h:1089
 msgid "Period"
-msgstr ""
+msgstr "Период"
 
 #: ../data/functions.xml.in.h:1090
 msgid "Straight Line Depreciation"
-msgstr ""
+msgstr "Линейный способ начисления амортизации"
 
 #: ../data/functions.xml.in.h:1091
 msgid "r:sln"
-msgstr ""
+msgstr "лна"
 
 #: ../data/functions.xml.in.h:1092
 msgid ""
@@ -7622,131 +7630,139 @@ msgid ""
 "the asset is depreciated. SLN divides the cost evenly over the life of an "
 "asset."
 msgstr ""
+"Определяет амортизацию актива за один период линейным способе начисления."
+"&#10;&#10;Стоимость - это сумма, которую вы заплатили за актив. Утилизация -"
+" это "
+"стоимость актива на конец периода. Срок службы - это количество периодов, в "
+"течение которых актив амортизируется. ЛНА/SLN распределяет стоимость поровну "
+"в течение срока службы актива."
 
 #: ../data/functions.xml.in.h:1093
 msgid "Present Value"
-msgstr ""
+msgstr "Текущая стоимость"
 
 #: ../data/functions.xml.in.h:1094
 msgid "r:pv"
-msgstr ""
+msgstr "тс"
 
 #: ../data/functions.xml.in.h:1095
 msgid ""
 "Returns the present value of an investment.&#10;&#10;If type = 1 then the "
 "payment is made at the beginning of the period, If type = 0 (or omitted) it "
 "is made at the end of each period."
-msgstr ""
+msgstr "Возвращает текущую стоимость инвестиции."
 
 #: ../data/functions.xml.in.h:1096
 msgid "Interest rate"
-msgstr ""
+msgstr "Процентная ставка"
 
 #: ../data/functions.xml.in.h:1097
 msgid "Number of periods"
-msgstr ""
+msgstr "Количество периодов"
 
 #: ../data/functions.xml.in.h:1098
 msgid "Payment made each period"
-msgstr ""
+msgstr "Выплата за каждый период"
 
 #: ../data/functions.xml.in.h:1099
 msgid "Future value"
-msgstr ""
+msgstr "Будущая стоимость"
 
 #: ../data/functions.xml.in.h:1100
 msgid "Type"
-msgstr ""
+msgstr "Тип"
 
 #: ../data/functions.xml.in.h:1101
 msgid "Nominal Interest Rate"
-msgstr ""
+msgstr "Номинальная процентная ставка"
 
 #: ../data/functions.xml.in.h:1102
 msgid "r:nominal"
-msgstr ""
+msgstr "нпс,номинал"
 
 #: ../data/functions.xml.in.h:1103
 msgid ""
 "Calculates the nominal interest rate from a given effective interest rate "
 "compounded at given intervals."
 msgstr ""
+"Вычисляет номинальную процентную ставку на основе заданной эффективной "
+"процентной ставки, составляемой на заданных базовых периодах."
 
 #: ../data/functions.xml.in.h:1104
 msgid "Effective interest rate"
-msgstr ""
+msgstr "Эффективная процентная ставка"
 
 #: ../data/functions.xml.in.h:1105
 msgid "Periods"
-msgstr ""
+msgstr "Базовые периоды"
 
 #: ../data/functions.xml.in.h:1106
 msgid "Zero Coupon"
-msgstr ""
+msgstr "Дисконтная облигация"
 
 #: ../data/functions.xml.in.h:1107
 msgid "r:zero_coupon"
-msgstr ""
+msgstr "дисконтная_облигация"
 
 #: ../data/functions.xml.in.h:1108
 msgid "Calculates the value of a zero-coupon (pure discount) bond."
-msgstr ""
+msgstr "Вычисляет стоимость облигации с нулевым купоном (чистой дисконтом)."
 
 #: ../data/functions.xml.in.h:1109
 msgid "Face value"
-msgstr ""
+msgstr "Номинальная стоимость"
 
 #: ../data/functions.xml.in.h:1110
 msgid "Treasury Bill Yield"
-msgstr ""
+msgstr "Доходность казначейских векселей"
 
 #: ../data/functions.xml.in.h:1111
 msgid "r:tbillyield"
-msgstr ""
+msgstr "дкв"
 
 #: ../data/functions.xml.in.h:1112
 msgid "Returns the yield for a treasury bill."
-msgstr ""
+msgstr "Возвращает доходность казначейского векселя."
 
 #: ../data/functions.xml.in.h:1113
 msgid "Settlement date"
-msgstr ""
+msgstr "Дата расчётов"
 
 #: ../data/functions.xml.in.h:1114
 msgid "Maturity date"
-msgstr ""
+msgstr "Дата погашения"
 
 #: ../data/functions.xml.in.h:1115
 msgid "Price per $100 face value"
-msgstr ""
+msgstr "Цена за 100 долларов США номиналом"
 
 #: ../data/functions.xml.in.h:1116
 msgid "Treasury Bill Price"
-msgstr ""
+msgstr "Цена казначейского векселя"
 
 #: ../data/functions.xml.in.h:1117
 msgid "r:tbillprice"
-msgstr ""
+msgstr "цкв"
 
 #: ../data/functions.xml.in.h:1118
 msgid "Returns the price per $100 value for a treasury bill."
-msgstr ""
+msgstr "Возвращает цену за 100 долларов казначейского векселя."
 
 #: ../data/functions.xml.in.h:1119
 msgid "Discount rate"
-msgstr ""
+msgstr "Учётная ставка"
 
 #: ../data/functions.xml.in.h:1120
 msgid "Treasury Bill Equivalent"
-msgstr ""
+msgstr "Эквивалент казначейского векселя"
 
 #: ../data/functions.xml.in.h:1121
 msgid "r:tbilleq"
-msgstr ""
+msgstr "экв"
 
 #: ../data/functions.xml.in.h:1122
 msgid "Returns the bond equivalent for a treasury bill."
-msgstr ""
+msgstr "Возвращает эквивалент облигации для казначейского векселя."
 
 #: ../data/functions.xml.in.h:1123
 msgid "Interest paid on a given period of an investment (ISPMT)"
@@ -7844,27 +7860,28 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1142
 msgid "Desired future value"
-msgstr ""
+msgstr "Желаемая будущая стоимость"
 
 #: ../data/functions.xml.in.h:1143
 msgid "Effective Interest Rate"
-msgstr ""
+msgstr "Эффективная процентная ставка"
 
 #: ../data/functions.xml.in.h:1144
 msgid "r:effect"
-msgstr ""
+msgstr "эпс"
 
 #: ../data/functions.xml.in.h:1145
 msgid "Calculates the effective interest for a given nominal rate."
 msgstr ""
+"Вычисляет эффективную процентную ставку для заданной номинальной ставки."
 
 #: ../data/functions.xml.in.h:1146
 msgid "Nominal interest rate"
-msgstr ""
+msgstr "Номинальная процентная ставка"
 
 #: ../data/functions.xml.in.h:1147
 msgid "Future Value"
-msgstr ""
+msgstr "Будущая стоимость"
 
 #: ../data/functions.xml.in.h:1148
 msgid "r:fv"
@@ -8152,7 +8169,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1208
 msgid "Market interest rate"
-msgstr ""
+msgstr "Рыночная процентная ставка"
 
 #: ../data/planets.xml.in.h:1
 msgid "Earth"
@@ -8193,115 +8210,115 @@ msgstr "Уран"
 
 #: ../data/prefixes.xml.in.h:1
 msgid "yocto"
-msgstr ""
+msgstr "иокто"
 
 #: ../data/prefixes.xml.in.h:2
 msgid "zepto"
-msgstr ""
+msgstr "зепто"
 
 #: ../data/prefixes.xml.in.h:3
 msgid "atto"
-msgstr ""
+msgstr "атто"
 
 #: ../data/prefixes.xml.in.h:4
 msgid "femto"
-msgstr ""
+msgstr "фемто"
 
 #: ../data/prefixes.xml.in.h:5
 msgid "pico"
-msgstr ""
+msgstr "пико"
 
 #: ../data/prefixes.xml.in.h:6
 msgid "nano"
-msgstr ""
+msgstr "нано"
 
 #: ../data/prefixes.xml.in.h:7
 msgid "micro"
-msgstr ""
+msgstr "микро"
 
 #: ../data/prefixes.xml.in.h:8
 msgid "milli"
-msgstr ""
+msgstr "милли"
 
 #: ../data/prefixes.xml.in.h:9
 msgid "centi"
-msgstr ""
+msgstr "санти"
 
 #: ../data/prefixes.xml.in.h:10
 msgid "deci"
-msgstr ""
+msgstr "деци"
 
 #: ../data/prefixes.xml.in.h:11
 msgid "deca"
-msgstr ""
+msgstr "дека"
 
 #: ../data/prefixes.xml.in.h:12
 msgid "hecto"
-msgstr ""
+msgstr "гекто"
 
 #: ../data/prefixes.xml.in.h:13
 msgid "kilo"
-msgstr ""
+msgstr "кило"
 
 #: ../data/prefixes.xml.in.h:14
 msgid "mega"
-msgstr ""
+msgstr "мега"
 
 #: ../data/prefixes.xml.in.h:15
 msgid "giga"
-msgstr ""
+msgstr "гига"
 
 #: ../data/prefixes.xml.in.h:16
 msgid "tera"
-msgstr ""
+msgstr "тера"
 
 #: ../data/prefixes.xml.in.h:17
 msgid "peta"
-msgstr ""
+msgstr "пета"
 
 #: ../data/prefixes.xml.in.h:18
 msgid "exa"
-msgstr ""
+msgstr "экса"
 
 #: ../data/prefixes.xml.in.h:19
 msgid "zetta"
-msgstr ""
+msgstr "зетта"
 
 #: ../data/prefixes.xml.in.h:20
 msgid "yotta"
-msgstr ""
+msgstr "иотта"
 
 #: ../data/prefixes.xml.in.h:21
 msgid "kibi"
-msgstr ""
+msgstr "киби"
 
 #: ../data/prefixes.xml.in.h:22
 msgid "mebi"
-msgstr ""
+msgstr "меби"
 
 #: ../data/prefixes.xml.in.h:23
 msgid "gibi"
-msgstr ""
+msgstr "гиби"
 
 #: ../data/prefixes.xml.in.h:24
 msgid "tebi"
-msgstr ""
+msgstr "теби"
 
 #: ../data/prefixes.xml.in.h:25
 msgid "pebi"
-msgstr ""
+msgstr "пеби"
 
 #: ../data/prefixes.xml.in.h:26
 msgid "exbi"
-msgstr ""
+msgstr "эксби"
 
 #: ../data/prefixes.xml.in.h:27
 msgid "zebi"
-msgstr ""
+msgstr "зеби"
 
 #: ../data/prefixes.xml.in.h:28
 msgid "yobi"
-msgstr ""
+msgstr "йоби"
 
 #. Unit category
 #: ../data/units.xml.in.h:2
@@ -8338,7 +8355,7 @@ msgstr "Морская миля"
 
 #: ../data/units.xml.in.h:10
 msgid "r:nautical_mile,p:nautical_miles"
-msgstr ""
+msgstr "морская_миля,p:морских_миль"
 
 #: ../data/units.xml.in.h:11
 msgid "&#xC5;ngstr&#xF6;m"
@@ -8350,11 +8367,11 @@ msgstr "au:&#xC5;,ангстрем"
 
 #: ../data/units.xml.in.h:13
 msgid "U.S. Survey Inch"
-msgstr ""
+msgstr "Геодезический дюйм"
 
 #: ../data/units.xml.in.h:14
 msgid "ar:US_in,US_inch,p:US_inches"
-msgstr ""
+msgstr "геодезический_дюйм,p:геодезических_дюйма,p:геодезических_дюймов"
 
 #: ../data/units.xml.in.h:15
 msgid "Inch"
@@ -8362,43 +8379,43 @@ msgstr "Дюйм"
 
 #: ../data/units.xml.in.h:16
 msgid "ar:in,inch,p:inches"
-msgstr ""
+msgstr "дюйм,p:дюйма,p:дюймов"
 
 #: ../data/units.xml.in.h:17
 msgid "Hand"
-msgstr ""
+msgstr "Ладонь"
 
 #: ../data/units.xml.in.h:18
 msgid "r:hand,p:hands"
-msgstr ""
+msgstr "ладонь,p:ладони,p:ладоней"
 
 #: ../data/units.xml.in.h:19
 msgid "Foot"
-msgstr ""
+msgstr "Фут"
 
 #: ../data/units.xml.in.h:20
 msgid "ar:ft,foot,p:feet"
-msgstr ""
+msgstr "фут,p:фута,p:футов"
 
 #: ../data/units.xml.in.h:21
 msgid "U.S. Survey Foot"
-msgstr ""
+msgstr "Геодезический фут"
 
 #: ../data/units.xml.in.h:22
 msgid "ar:US_ft,US_foot,p:US_feet"
-msgstr ""
+msgstr "геодезический_фут,p:геодезических_фута,p:геодезических_футов"
 
 #: ../data/units.xml.in.h:23
 msgid "Link"
-msgstr ""
+msgstr "Звено"
 
 #: ../data/units.xml.in.h:24
 msgid "ar:li,link,p:links"
-msgstr ""
+msgstr "линк,звено,p:звена,p:звеньев"
 
 #: ../data/units.xml.in.h:25
 msgid "Yard"
-msgstr ""
+msgstr "Ярд"
 
 #: ../data/units.xml.in.h:26
 msgid "ar:yd,yard,p:yards"
@@ -8889,23 +8906,23 @@ msgstr "Герц"
 
 #: ../data/units.xml.in.h:159
 msgid "ar:Hz,hertz"
-msgstr ""
+msgstr "a:Гц,герц"
 
 #: ../data/units.xml.in.h:160
 msgid "Electricity"
-msgstr ""
+msgstr "Электричество"
 
 #: ../data/units.xml.in.h:161
 msgid "Electric Current"
-msgstr ""
+msgstr "Электрический ток"
 
 #: ../data/units.xml.in.h:162
 msgid "Ampere"
-msgstr ""
+msgstr "Ампер"
 
 #: ../data/units.xml.in.h:163
 msgid "ar:A,ampere,p:amperes"
-msgstr ""
+msgstr "a:А,ампер,p:ампера"
 
 #: ../data/units.xml.in.h:164
 msgid "Abampere"
@@ -8917,23 +8934,23 @@ msgstr ""
 
 #: ../data/units.xml.in.h:166
 msgid "Current Density"
-msgstr ""
+msgstr "Плотность тока"
 
 #: ../data/units.xml.in.h:167
 msgid "Ampere per Meter Squared"
-msgstr ""
+msgstr "Ампер на квадратный сантиметр"
 
 #: ../data/units.xml.in.h:168
 msgid "Electric Charge"
-msgstr ""
+msgstr "Электрический заряд"
 
 #: ../data/units.xml.in.h:169
 msgid "Coulomb"
-msgstr ""
+msgstr "Кулон"
 
 #: ../data/units.xml.in.h:170
 msgid "ar:C,coulomb,p:coulombs"
-msgstr ""
+msgstr "a:Кл,кулон,p:кулона"
 
 #: ../data/units.xml.in.h:171
 msgid "Abcoulomb"
