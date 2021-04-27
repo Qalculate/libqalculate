@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-24 13:12+0700\n"
-"PO-Revision-Date: 2021-04-26 10:19+0700\n"
+"PO-Revision-Date: 2021-04-27 21:16+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -36,9 +36,9 @@ msgid ""
 "Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, "
 "Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City"
 msgstr ""
-"Андорра, Австрия, Бельгия, Кипр, Эстония, Финляндия, Франция, Германия, "
-"Греция, Ирландия, Италия, Латвия, Литва, Люксембург, Мальта, Нидерланды, "
-"Португалия, Сан-Марино, Словакия, Словения, Испания, Ватикан"
+"Австрия, Андорра,  Бельгия, Ватикан, Германия, Греция, Ирландия, Испания, "
+"Италия, Кипр, Латвия, Литва, Люксембург, Мальта, Нидерланды, Португалия, "
+"Сан-Марино, Словакия, Словения, Финляндия, Франция, Эстония"
 
 #: ../data/currencies.xml.in.h:5
 msgid "U.S. Dollar"
@@ -53,8 +53,8 @@ msgid ""
 "United States, East Timor, Ecuador, El Salvador, Micronesia, Marshall "
 "Islands, Palau, Zimbabwe"
 msgstr ""
-"США, Восточный Тимор, Эквадор, Сальвадор, Микронезия, Маршалловы Острова, "
-"Палау, Зимбабве"
+"Восточный Тимор, Зимбабве, Маршалловы Острова, Микронезия, Палау,"
+"Сальвадор, США, Эквадор,"
 
 #: ../data/currencies.xml.in.h:8
 msgid "Japanese Yen"
@@ -158,7 +158,7 @@ msgstr "Российский рубль"
 
 #: ../data/currencies.xml.in.h:33
 msgid "a-cr:RUB,au:&#x20BD;,ruble"
-msgstr "a-c:RUB,au:&#x20BD;,рубль,p:рублей"
+msgstr "a-c:RUB,au:&#x20BD;,рубль,p:рублей,p:рубля"
 
 #: ../data/currencies.xml.in.h:34
 msgid "Russia"
@@ -430,7 +430,7 @@ msgstr "Биткойн"
 
 #: ../data/currencies.xml.in.h:101
 msgid "a-cr:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins"
-msgstr "a-c:BTC,au:&#x20BF;,a:XBT,биткойн,p:биткойнов"
+msgstr "a-c:BTC,au:&#x20BF;,a:XBT,биткойн,p:биткойнов,p:биткойна"
 
 #: ../data/currencies.xml.in.h:102
 msgid "Kenya Shilling"
@@ -505,8 +505,8 @@ msgid ""
 "Antigua and Barbuda, Dominica, Grenada, Montserrat, Saint Kitts and Nevis, "
 "Saint Lucia, Saint Vincent and the Grenadines, Anguilla"
 msgstr ""
-"Антигуа и Барбуда, Доминика, Гренада, Монтсеррат, Сент-Китс и Невис, Сент-"
-"Люсия, Сент-Винсент и Гренадины, Ангилья"
+"Ангилья, Антигуа и Барбуда, Гренада, Доминика, Монтсеррат, Сент-Люсия,"
+"Сент-Винсент и Гренадины, Сент-Китс и Невис,"
 
 #: ../data/currencies.xml.in.h:120
 msgid "Argentine Peso"
@@ -960,7 +960,7 @@ msgstr "a-c:XPF"
 
 #: ../data/currencies.xml.in.h:231
 msgid "French Polynesia, New Caledonia, Wallis and Futuna"
-msgstr "Французская Полинезия, Новая Каледония, Уоллис и Футуна"
+msgstr "Новая Каледония, Уоллис и Футуна, Французская Полинезия"
 
 #: ../data/currencies.xml.in.h:232
 msgid "Gambian Dalasi"
@@ -1336,7 +1336,7 @@ msgstr "Монгольский тугрик"
 
 #: ../data/currencies.xml.in.h:325
 msgid "a-cr:MNT,au:&#x20AE;"
-msgstr "a-c:MNT,au:&#x20AE;,тугрик,p:тугриков"
+msgstr "a-c:MNT,au:&#x20AE;,тугрик,p:тугриков,p:тугрика"
 
 #: ../data/currencies.xml.in.h:326
 msgid "Mongolia"
@@ -3132,7 +3132,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:97
 msgid "Load CSV File"
-msgstr "Загрузить файл типа CSV"
+msgstr "Загрузить файл формата CSV"
 
 #: ../data/functions.xml.in.h:98
 msgid "r:load"
@@ -3180,7 +3180,7 @@ msgid ""
 "abs() for all values except vectors."
 msgstr ""
 "Вычисляет значение по модулю или модуль вектора. Эта функция возвращает то "
-"же значение, что и abs(), кроме векторов."
+"же значение, что и abs(), для всех значений кроме векторов."
 
 #: ../data/functions.xml.in.h:109
 msgid "Value"
@@ -3245,7 +3245,7 @@ msgstr ""
 "Вычислят новую матрицу или вектор, используя каждый отдельный элемент в "
 "матрице/векторе 1 и соответствующие (в той же строке и столбце) элементы в "
 "матрице/векторе 2. Можно указать неограниченное количество матриц/векторов с "
-"указанием используемой в аргументе функции имени соответствующей переменной "
+"указанием имени переменной, используемой в аргументе соответствующей функции, "
 "после каждого аргумента матрицы/вектора."
 
 #: ../data/functions.xml.in.h:122
@@ -3313,7 +3313,7 @@ msgid ""
 "as a number followed by two exclamation marks."
 msgstr ""
 "Вычисляет двойной факториал целого числа. Умножает аргумент на каждое "
-"уменьшенной на 2 положительное целое число (n (n-2) (n-3)...). Также можно "
+"уменьшенное на 2 положительное целое число (n (n-2) (n-3)...). Также можно "
 "ввести число с двумя восклицательными знаками."
 
 #: ../data/functions.xml.in.h:136
@@ -3331,7 +3331,7 @@ msgid ""
 "number followed by three or more exclamation marks."
 msgstr ""
 "Вычисляет k-мультифакториал целого числа. Умножает аргумент на каждое "
-"уменьшенной на k положительное целое число (n (n-k) (n-2k)...). Также можно "
+"уменьшенное на k положительное целое число (n (n-k) (n-2k)...). Также можно "
 "ввести число с тремя и более восклицательными знаками."
 
 #: ../data/functions.xml.in.h:139
@@ -3358,7 +3358,7 @@ msgid ""
 msgstr ""
 "Вычисляет гиперфакториал целого числа. Умножает аргумент, возведённый в "
 "степень, равную ему самому, на каждое меньшее положительное целое число, "
-"возведённый в степень, равную ему самому (1^1 * 2^2 ... n^n)."
+"возведённое в степень, равное ему самому (1^1 * 2^2 ... n^n)."
 
 #: ../data/functions.xml.in.h:144
 msgid "Superfactorial"
