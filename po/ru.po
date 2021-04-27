@@ -601,7 +601,7 @@ msgstr "дополнительный код"
 
 #: ../src/qalc.cc:856 ../src/qalc.cc:3532 ../src/qalc.cc:4300
 msgid "hexadecimal two's"
-msgstr "шестнадцатеричные двойки "
+msgstr "шестнадцатеричные двойки"
 
 #: ../src/qalc.cc:857 ../src/qalc.cc:3511 ../src/qalc.cc:4294
 msgid "digit grouping"
@@ -718,12 +718,12 @@ msgstr ""
 #: ../src/qalc.cc:941 ../src/qalc.cc:3613 ../src/qalc.cc:4382
 #: ../src/qalc.cc:4627
 msgid "implicit first"
-msgstr "неявный первый "
+msgstr "неявный первый"
 
 #: ../src/qalc.cc:942 ../src/qalc.cc:3614 ../src/qalc.cc:4382
 #: ../src/qalc.cc:4624
 msgid "conventional"
-msgstr "общепринятый "
+msgstr "общепринятый"
 
 #. chain calculation mode (parsing mode)
 #: ../src/qalc.cc:944 ../src/qalc.cc:3615 ../src/qalc.cc:4382
@@ -1153,7 +1153,7 @@ msgstr "ФАЙЛ"
 
 #: ../src/qalc.cc:1957
 msgid "execute commands from a file first"
-msgstr "вначале выполнить команды из файла "
+msgstr "вначале выполнить команды из файла"
 
 #: ../src/qalc.cc:1959
 msgid "start in interactive mode"
@@ -1895,8 +1895,7 @@ msgstr ""
 #: ../src/qalc.cc:4303
 msgid "Use lowercase e for E-notation (5e2 = 5 * 10^2)."
 msgstr ""
-"Использовать строчную букву «e» для экспоненциальной записи (5e2 = 5 * 10 ^ "
-"2)."
+"Использовать строчную букву «e» для экспоненциальной записи (5e2 = 5 * 10^2)."
 
 #: ../src/qalc.cc:4304
 msgid "Use lowercase letters for number bases > 10."
@@ -2435,7 +2434,7 @@ msgid ""
 "adaptive mode unit expressions are parsed separately (\"5 m/5 m/s = (5*m)/"
 "(5*(m/s)) = 1 s\")."
 msgstr ""
-"Адаптивный режим по умолчанию работает как режим «неявный первый»,  если не "
+"Адаптивный режим по умолчанию работает как режим «неявный первый», если не "
 "обнаружены пробелы («1/5x = 1/(5 * x)», но «1/5 x = (1/5) * x»). В "
 "адаптивном режиме единичные выражения анализируются отдельно («5 м/5 м/с = "
 "(5*м)/(5*(м/с)) = 1 с»)."
@@ -3048,7 +3047,7 @@ msgstr "столбец"
 
 #: ../libqalculate/Calculator-definitions.cc:3275
 msgid "Column "
-msgstr "Столбец"
+msgstr "Столбец "
 
 #: ../libqalculate/Calculator-definitions.cc:3851
 #: ../libqalculate/Calculator-definitions.cc:3852
