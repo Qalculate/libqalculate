@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-24 13:12+0700\n"
-"PO-Revision-Date: 2021-04-27 22:37+0700\n"
+"PO-Revision-Date: 2021-04-28 07:29+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -3380,11 +3380,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:147
 msgid "Permutations (Variations)"
-msgstr "Размещение (варианты)"
+msgstr "Размещения"
 
 #: ../data/functions.xml.in.h:148
 msgid "r:perm,variations"
-msgstr "r:разм,варианты"
+msgstr "разм"
 
 #: ../data/functions.xml.in.h:149
 msgid ""
@@ -3394,7 +3394,7 @@ msgid ""
 "2], [2, 1], [1, 3], [3, 1], [2, 3] and [3, 2], and thus the number of "
 "permutations is 6."
 msgstr ""
-"Количество размещений из n по k.Размещением из n по k называется "
+"Количество размещений из n по k. Размещением из n по k называется "
 "упорядоченный набор из k различных элементов из некоторого множества "
 "различных n элементов.Если есть три объекта (1, 2 и 3), которые размещены в "
 "список с двумя позициями, то варианты размещений следующие: [1, 2], [2, 1], "
@@ -8419,135 +8419,137 @@ msgstr "Ярд"
 
 #: ../data/units.xml.in.h:26
 msgid "ar:yd,yard,p:yards"
-msgstr ""
+msgstr "ярд,p:ярда,p:ярдов"
 
 #: ../data/units.xml.in.h:27
 msgid "Rod (pole/perch)"
-msgstr ""
+msgstr "Род (поль/перч)"
 
 #: ../data/units.xml.in.h:28
 msgid "ar:rd,rod,p:rods"
-msgstr ""
+msgstr "род"
 
 #: ../data/units.xml.in.h:29
 msgid "Fathom"
-msgstr ""
+msgstr "Морская сажень"
 
 #: ../data/units.xml.in.h:30
 msgid "r:fathom,p:fathoms"
-msgstr ""
+msgstr "фатом,фадом,фэсом"
 
 #: ../data/units.xml.in.h:31
 msgid "Chain"
-msgstr ""
+msgstr "Мерная цепь"
 
 #: ../data/units.xml.in.h:32
 msgid "ar:ch,chain,p:chains"
-msgstr ""
+msgstr "чейн,цепь"
 
 #: ../data/units.xml.in.h:33
 msgid "Furlong"
-msgstr ""
+msgstr "Фурлонг"
 
 #: ../data/units.xml.in.h:34
 msgid "ar:fur,furlong,p:furlongs"
-msgstr ""
+msgstr "фурлонг,фарлонг"
 
 #: ../data/units.xml.in.h:35
 msgid "Mile"
-msgstr ""
+msgstr "Миля"
 
 #: ../data/units.xml.in.h:36
 msgid "ar:mi,mile,p:miles"
-msgstr ""
+msgstr "миля,p:мили,p:миль"
 
 #: ../data/units.xml.in.h:37
 msgid "U.S. Survey Mile"
-msgstr ""
+msgstr "Американская статутная (стандартная сухопутная) миля"
 
 #: ../data/units.xml.in.h:38
 msgid "ar:US_mi,US_mile,p:US_miles"
-msgstr ""
+msgstr "ст_миля,p:ст_мили,p:ст_миль"
 
 #: ../data/units.xml.in.h:39
 msgid "Mil (1/1000 in)"
-msgstr ""
+msgstr "Мил (1/1000 дюйма)"
 
 #: ../data/units.xml.in.h:40
 msgid "r:mil,p:mils"
-msgstr ""
+msgstr "мил"
 
 #: ../data/units.xml.in.h:41
 msgid "Astronomical Unit"
-msgstr ""
+msgstr "Астрономическая единица"
 
 #: ../data/units.xml.in.h:42
 msgid "ar:AU,astronomical_unit,p:astronomical_units"
 msgstr ""
+"a:а_е,астрономическая_единица,p:астрономических_единицы,p:астрономических_един"
+"иц"
 
 #: ../data/units.xml.in.h:43
 msgid "Light Year"
-msgstr ""
+msgstr "Световой год"
 
 #: ../data/units.xml.in.h:44
 msgid "ar:ly,lightyear,p:lightyears"
-msgstr ""
+msgstr "a:св_год,световой_год,p:световых_года,p:световых_лет"
 
 #: ../data/units.xml.in.h:45
 msgid "Parsec"
-msgstr ""
+msgstr "Парсек"
 
 #: ../data/units.xml.in.h:46
 msgid "ar:pc,parsec,p:parsecs"
-msgstr ""
+msgstr "a:пк,парсек"
 
 #: ../data/units.xml.in.h:47
 msgid "Pied du roi (French Royal Foot)"
-msgstr ""
+msgstr "Pied du roi (Французский королевский фут)"
 
 #: ../data/units.xml.in.h:48
 msgid "r:pied_du_roi"
-msgstr ""
+msgstr "фркорфут"
 
 #: ../data/units.xml.in.h:49
 msgid "Pouce (French Royal Inch)"
-msgstr ""
+msgstr "Французский королевский дюйм"
 
 #: ../data/units.xml.in.h:50
 msgid "r:pouce"
-msgstr ""
+msgstr "фркордюйм"
 
 #: ../data/units.xml.in.h:51
 msgid "Ligne"
-msgstr ""
+msgstr "«Французская» линия"
 
 #: ../data/units.xml.in.h:52
 msgid "r:ligne"
-msgstr ""
+msgstr "линия"
 
 #: ../data/units.xml.in.h:53
 msgid "Toise"
-msgstr ""
+msgstr "Туаз"
 
 #: ../data/units.xml.in.h:54
 msgid "r:toise"
-msgstr ""
+msgstr "туаз"
 
 #: ../data/units.xml.in.h:55
 msgid "Planck Length"
-msgstr ""
+msgstr "Планковская длина"
 
 #: ../data/units.xml.in.h:56
 msgid "Bohr (Atomic Unit of Length)"
-msgstr ""
+msgstr "Бор (атомная единица длины)"
 
 #: ../data/units.xml.in.h:57
 msgid "Electronvolt Distance"
-msgstr ""
+msgstr "Электронвольтное расстояние"
 
 #: ../data/units.xml.in.h:58
 msgid "Natural Unit of Length"
-msgstr ""
+msgstr "Естественная единица длины"
 
 #. Unit category
 #: ../data/units.xml.in.h:60
@@ -8568,67 +8570,67 @@ msgstr "a:рад,радиан"
 
 #: ../data/units.xml.in.h:65
 msgid "ar:deg,au:&#xB0;,degree,p:degrees"
-msgstr ""
+msgstr "а:гр,au:&#xB0;,градус,p:градуса,p:градусов"
 
 #: ../data/units.xml.in.h:66
 msgid "Gradian (Gon)"
-msgstr ""
+msgstr "Град (гон)"
 
 #: ../data/units.xml.in.h:67
 msgid "ar:gra,gradian,p:gradians,gon,p:gons"
-msgstr ""
+msgstr "град"
 
 #: ../data/units.xml.in.h:68
 msgid "Arcminute"
-msgstr ""
+msgstr "Угловая минута"
 
 #: ../data/units.xml.in.h:69
 msgid "ar:arcmin,arcminute,p:arcminutes"
-msgstr ""
+msgstr "а:углмин"
 
 #: ../data/units.xml.in.h:70
 msgid "Arcsecond"
-msgstr ""
+msgstr "Угловая секунда"
 
 #: ../data/units.xml.in.h:71
 msgid "ar:arcsec,arcsecond,p:arcseconds"
-msgstr ""
+msgstr "а:углсек"
 
 #: ../data/units.xml.in.h:72
 msgid "Turn"
-msgstr ""
+msgstr "Оборот"
 
 #: ../data/units.xml.in.h:73
 msgid "r:turn,p:turns"
-msgstr ""
+msgstr "a:об,оборот,цикл,круг"
 
 #: ../data/units.xml.in.h:74
 msgid "Solid Angle"
-msgstr ""
+msgstr "Телесный угол"
 
 #: ../data/units.xml.in.h:75
 msgid "Steradian"
-msgstr ""
+msgstr "Стерадиан"
 
 #: ../data/units.xml.in.h:76
 msgid "ar:sr,steradian,p:steradians"
-msgstr ""
+msgstr "a:ср,cтерадиан,p:стерадиана"
 
 #: ../data/units.xml.in.h:77
 msgid "Angular Acceleration"
-msgstr ""
+msgstr "Угловое ускорение"
 
 #: ../data/units.xml.in.h:78
 msgid "Radians per Second Squared"
-msgstr ""
+msgstr "Радианы в секунду в квадрате"
 
 #: ../data/units.xml.in.h:79
 msgid "Angular Velocity"
-msgstr ""
+msgstr "Угловая скорость"
 
 #: ../data/units.xml.in.h:80
 msgid "Radians per Second"
-msgstr ""
+msgstr "Радианы в секунду"
 
 #. Unit category
 #: ../data/units.xml.in.h:82
@@ -8641,79 +8643,79 @@ msgstr "Грамм"
 
 #: ../data/units.xml.in.h:84
 msgid "ar:g,gram,p:grams"
-msgstr ""
+msgstr "a:г,грамм,p:грамма,p:граммов"
 
 #: ../data/units.xml.in.h:85
 msgid "Kilogram"
-msgstr ""
+msgstr "Килограмм"
 
 #: ../data/units.xml.in.h:86
 msgid "Hectogram"
-msgstr ""
+msgstr "Гектограмм"
 
 #: ../data/units.xml.in.h:87
 msgid "Metric Ton (Tonne)"
-msgstr ""
+msgstr "Тонна (метрическая тонна)"
 
 #: ../data/units.xml.in.h:88
 msgid "ar:t,tonne,p:tonnes,ton,p:tons"
-msgstr ""
+msgstr "a:т,тонна,p:тонны,p:тонн"
 
 #: ../data/units.xml.in.h:89
 msgid "Grain"
-msgstr ""
+msgstr "Гран (тройский гран)"
 
 #: ../data/units.xml.in.h:90
 msgid "ar:gr,grain,p:grains"
-msgstr ""
+msgstr "гран"
 
 #: ../data/units.xml.in.h:91
 msgid "Pennyweight"
-msgstr ""
+msgstr "Пеннивейт (вес пенни)"
 
 #: ../data/units.xml.in.h:92
 msgid "ar:pwt,pennyweight,p:pennyweights"
-msgstr ""
+msgstr "пеннивейт"
 
 #: ../data/units.xml.in.h:93
 msgid "Ounce (troy)"
-msgstr ""
+msgstr "Тройская унция"
 
 #: ../data/units.xml.in.h:94
 msgid "ar:oz_t,troy_ounce,p:troy_ounces"
-msgstr ""
+msgstr "тройская_унция,p:тройская_унции,p:тройская_унций"
 
 #: ../data/units.xml.in.h:95
 msgid "Pound (troy)"
-msgstr ""
+msgstr "Тройский фунт"
 
 #: ../data/units.xml.in.h:96
 msgid "ar:lb_t,troy_pound,p:troy_pounds"
-msgstr ""
+msgstr "тройский_фунт,p:тройских_фунта,p:тройских_фунтов"
 
 #: ../data/units.xml.in.h:97
 msgid "Dram"
-msgstr ""
+msgstr "Тройская драхма"
 
 #: ../data/units.xml.in.h:98
 msgid "ar:dr,dram,p:drams"
-msgstr ""
+msgstr "драхма"
 
 #: ../data/units.xml.in.h:99
 msgid "Ounce"
-msgstr ""
+msgstr "Унция"
 
 #: ../data/units.xml.in.h:100
 msgid "ar:oz,ounce,p:ounces"
-msgstr ""
+msgstr "унция,p:унции,p:унций"
 
 #: ../data/units.xml.in.h:101
 msgid "Pound"
-msgstr ""
+msgstr "Фунт"
 
 #: ../data/units.xml.in.h:102
 msgid "ar:lb,aou:&#x2114;,pound,p:pounds"
-msgstr ""
+msgstr "фунт,aou:&#x2114;,p:фунта,p:фунтов"
 
 #: ../data/units.xml.in.h:103
 msgid "Short Hundredweight (Cental)"
@@ -8757,11 +8759,11 @@ msgstr ""
 
 #: ../data/units.xml.in.h:113
 msgid "Carat"
-msgstr ""
+msgstr "Карат"
 
 #: ../data/units.xml.in.h:114
 msgid "r:carat,p:carats"
-msgstr ""
+msgstr "a:кар,карат"
 
 #: ../data/units.xml.in.h:115
 msgid "Pfund"
@@ -8789,7 +8791,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:121
 msgid "Electronvolt Mass"
-msgstr ""
+msgstr "Электронвольтная масса"
 
 #: ../data/units.xml.in.h:122
 msgid "Atomic Mass Unit"
@@ -8893,7 +8895,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:155
 msgid "Electronvolt Time"
-msgstr ""
+msgstr "Электронвольтное время"
 
 #. Unit category
 #: ../data/units.xml.in.h:157
@@ -8926,11 +8928,11 @@ msgstr "a:А,ампер,p:ампера"
 
 #: ../data/units.xml.in.h:164
 msgid "Abampere"
-msgstr ""
+msgstr "Абампер (СГС)"
 
 #: ../data/units.xml.in.h:165
 msgid "r:abampere,a:abA,a:aA,p:abamperes,a:Bi,biot"
-msgstr ""
+msgstr "абампер,a:абА,био,a:abA,a:aA,a:Bi,biot"
 
 #: ../data/units.xml.in.h:166
 msgid "Current Density"
@@ -8954,79 +8956,79 @@ msgstr "a:Кл,кулон,p:кулона"
 
 #: ../data/units.xml.in.h:171
 msgid "Abcoulomb"
-msgstr ""
+msgstr "Абкулон (электромагнитная единица СГС)"
 
 #: ../data/units.xml.in.h:172
 msgid "r:abcoulomb,p:abcoulombs,a:abC,a:aC"
-msgstr ""
+msgstr "абкулон,a:абКл,a:emu,a:abC,a:aC"
 
 #: ../data/units.xml.in.h:173
 msgid "Statcoulomb (Franklin)"
-msgstr ""
+msgstr "Cтаткулон (франклин, электростатическая единица СГС)"
 
 #: ../data/units.xml.in.h:174
 msgid "r:statcoulomb,p:statcoulombs,a:statC,franklin,a:Fr,p:franklins"
-msgstr ""
+msgstr "франклин,a:Фр,a:statC;a:Fr;a:esu"
 
 #: ../data/units.xml.in.h:175
 msgid "Planck Charge"
-msgstr ""
+msgstr "Планковский заряд"
 
 #: ../data/units.xml.in.h:176
 msgid "Atomic Unit of Charge"
-msgstr ""
+msgstr "Атомная единица заряда"
 
 #: ../data/units.xml.in.h:177
 msgid "Electric Charge Density"
-msgstr ""
+msgstr "Плотность электрического заряда"
 
 #: ../data/units.xml.in.h:178
 msgid "Coulomb per Cubic Meter"
-msgstr ""
+msgstr "Кулон на кубический метр"
 
 #: ../data/units.xml.in.h:179
 msgid "Electric Flux Density"
-msgstr ""
+msgstr "Плотность электрического потока"
 
 #: ../data/units.xml.in.h:180
 msgid "Coulomb per Meter Squared"
-msgstr ""
+msgstr "Кулон на квадратный метр"
 
 #: ../data/units.xml.in.h:181
 msgid "Electric Potential"
-msgstr ""
+msgstr "Электрический потенциал"
 
 #: ../data/units.xml.in.h:182
 msgid "Volt"
-msgstr ""
+msgstr "Вольт"
 
 #: ../data/units.xml.in.h:183
 msgid "ar:V,volt,p:volts"
-msgstr ""
+msgstr "a:В,вольт,p:вольта"
 
 #: ../data/units.xml.in.h:184
 msgid "Statvolt"
-msgstr ""
+msgstr "Статвольт (СГС)"
 
 #: ../data/units.xml.in.h:185
 msgid "r:statvolt,p:statvolts,a:statV"
-msgstr ""
+msgstr "статвольт,a:статВ,a:statV"
 
 #: ../data/units.xml.in.h:186
 msgid "Abvolt"
-msgstr ""
+msgstr "Абвольт (СГС)"
 
 #: ../data/units.xml.in.h:187
 msgid "r:abvolt,p:abvolts,a:abV"
-msgstr ""
+msgstr "абвольт,a:абВ,a:abV"
 
 #: ../data/units.xml.in.h:188
 msgid "Atomic Unit of Electric Potential"
-msgstr ""
+msgstr "Атомная единица электрического потенциала"
 
 #: ../data/units.xml.in.h:189
 msgid "Capacitance"
-msgstr ""
+msgstr "Ёмкость"
 
 #: ../data/units.xml.in.h:190
 msgid "Farad"
@@ -9050,152 +9052,152 @@ msgstr "au:&#x3A9;,c:Ом,auio:&#x2126;"
 
 #: ../data/units.xml.in.h:195
 msgid "Abohm"
-msgstr ""
+msgstr "АбОм (СГСМ)"
 
 #: ../data/units.xml.in.h:196
 msgid "r:abohm,p:abohms,au:ab&#x3A9;"
-msgstr ""
+msgstr "ac:абОм,au:ab&#x3A9;"
 
 #: ../data/units.xml.in.h:197
 msgid "Statohm"
-msgstr ""
+msgstr "СтатОм (СГСЭ)"
 
 #: ../data/units.xml.in.h:198
 msgid "r:statohm,p:statohms,au:stat&#x3A9;"
-msgstr ""
+msgstr "ac:статОм,au:stat&#x3A9;"
 
 #: ../data/units.xml.in.h:199
 msgid "Electric Conductance"
-msgstr ""
+msgstr "Электрическая проводимость (кондактанс)"
 
 #: ../data/units.xml.in.h:200
 msgid "Siemens"
-msgstr ""
+msgstr "Сименс"
 
 #: ../data/units.xml.in.h:201
 msgid "ar:S,siemens,auio:&#x2127;"
-msgstr ""
+msgstr "ac:См,сименс,auio:&#x2127;,siemens"
 
 #: ../data/units.xml.in.h:202
 msgid "Electric Field Strength"
-msgstr ""
+msgstr "Напряжённость электрического поля"
 
 #: ../data/units.xml.in.h:203
 msgid "Volt per Meter"
-msgstr ""
+msgstr "Вольт на метр"
 
 #: ../data/units.xml.in.h:204
 msgid "Atomic Unit of Electric Field"
-msgstr ""
+msgstr "Атомная единица электрического поля"
 
 #: ../data/units.xml.in.h:205
 msgid "Permittivity"
-msgstr ""
+msgstr "Диэлектрическая проницаемость"
 
 #: ../data/units.xml.in.h:206
 msgid "Farad per Meter"
-msgstr ""
+msgstr "Фарад на метр"
 
 #: ../data/units.xml.in.h:207
 msgid "Inductance"
-msgstr ""
+msgstr "Индуктивность"
 
 #: ../data/units.xml.in.h:208
 msgid "Henry"
-msgstr ""
+msgstr "Генри"
 
 #: ../data/units.xml.in.h:209
 msgid "ar:H,henry,p:henrys"
-msgstr ""
+msgstr "a:Гн,генри"
 
 #: ../data/units.xml.in.h:210
 msgid "Abhenry"
-msgstr ""
+msgstr "Абгенри (СГСМ)"
 
 #: ../data/units.xml.in.h:211
 msgid "r:abhenry,p:abhenrys,a:abH"
-msgstr ""
+msgstr "абгенри,ac:абГн,a:abH"
 
 #: ../data/units.xml.in.h:212
 msgid "Permeability"
-msgstr ""
+msgstr "Магнитная проницаемость"
 
 #: ../data/units.xml.in.h:213
 msgid "Henry per Meter"
-msgstr ""
+msgstr "Генри на метр"
 
 #: ../data/units.xml.in.h:214
 msgid "Temperature"
-msgstr ""
+msgstr "Температура"
 
 #: ../data/units.xml.in.h:215
 msgid "Kelvin"
-msgstr ""
+msgstr "Кельвин"
 
 #: ../data/units.xml.in.h:216
 msgid "ar:K,aou:&#x212A;,kelvin,p:kelvins"
-msgstr ""
+msgstr "a:К,aou:&#x212A;,кельвин"
 
 #: ../data/units.xml.in.h:217
 msgid "Degree Celsius"
-msgstr ""
+msgstr "Градус Цельсия"
 
 #: ../data/units.xml.in.h:218
 msgid ""
 "ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius,p:celsius,centigrade,p:centigrades"
-msgstr ""
+msgstr "au:&#xB0;C,au:&#x2103;,r:цельсия"
 
 #: ../data/units.xml.in.h:219
 msgid "Degree Rankine"
-msgstr ""
+msgstr "Градус Ранкина"
 
 #: ../data/units.xml.in.h:220
 msgid "ar:oR,a:oRa,au:&#xB0;R,au:&#xB0;Ra,r:rankine"
-msgstr ""
+msgstr "a:oRa,au:&#xB0;R,au:&#xB0;Ra,ранкин"
 
 #: ../data/units.xml.in.h:221
 msgid "Degree Fahrenheit"
-msgstr ""
+msgstr "Градус Фаренгейта"
 
 #: ../data/units.xml.in.h:222
 msgid "ar:oF,au:&#xB0;F,au:&#x2109;,r:fahrenheit"
-msgstr ""
+msgstr "au:&#xB0;F,au:&#x2109;,фаренгейт"
 
 #: ../data/units.xml.in.h:223
 msgid "Planck Temperature"
-msgstr ""
+msgstr "Планковская температура"
 
 #: ../data/units.xml.in.h:224
 msgid "Electronvolt Temperature"
-msgstr ""
+msgstr "Электронвольтная температура"
 
 #: ../data/units.xml.in.h:225
 msgid "Substance"
-msgstr ""
+msgstr "Вещество"
 
 #: ../data/units.xml.in.h:226
 msgid "Mole"
-msgstr ""
+msgstr "Моль"
 
 #: ../data/units.xml.in.h:227
 msgid "ar:mol,mole,p:moles"
-msgstr ""
+msgstr "моль"
 
 #: ../data/units.xml.in.h:228
 msgid "Einstein"
-msgstr ""
+msgstr "Эйнштейн"
 
 #: ../data/units.xml.in.h:229
 msgid "r:einstein,p:einsteins"
-msgstr ""
+msgstr "a:Э,эйнштейн"
 
 #: ../data/units.xml.in.h:230
 msgid "Substance Concentration"
-msgstr ""
+msgstr "Концентрация (плотность) вещества"
 
 #: ../data/units.xml.in.h:231
 msgid "Mole per Cubic Meter"
-msgstr ""
+msgstr "Моль на кубический метр"
 
 #: ../data/units.xml.in.h:232
 msgid "Catalytic Activity"
@@ -9914,8 +9916,9 @@ msgid "Kilogram Meter per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:411
+#, fuzzy
 msgid "Electronvolt Momentum"
-msgstr ""
+msgstr "Электронвольтный импульс"
 
 #: ../data/units.xml.in.h:412
 msgid "Natural Unit of Momentum"
