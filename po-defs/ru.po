@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-04-28 21:47+0700\n"
+"PO-Revision-Date: 2021-04-28 23:19+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -9410,159 +9410,163 @@ msgstr "a:да,декар,p:декара"
 
 #: ../data/units.xml.in.h:275
 msgid "Barn"
-msgstr ""
+msgstr "Барн"
 
 #: ../data/units.xml.in.h:276
 msgid "ar:b,barn,p:barns"
-msgstr ""
+msgstr "a:б,a:бн,барн"
 
 #: ../data/units.xml.in.h:277
 msgid "Rood"
-msgstr ""
+msgstr "Руд"
 
 #: ../data/units.xml.in.h:278
 msgid "r:rood,p:roods"
-msgstr ""
+msgstr "руд,p:руда"
 
 #: ../data/units.xml.in.h:279
 msgid "Acre"
-msgstr ""
+msgstr "Акр"
 
 #: ../data/units.xml.in.h:280
 msgid "r:acre,p:acres"
-msgstr ""
+msgstr "акр,p:акра,p:акров"
 
 #: ../data/units.xml.in.h:281
 msgid "Section"
 msgstr ""
+"Секция (район/участок города, по номинальной площади равный одной квадратной"
+" миле)"
 
 #: ../data/units.xml.in.h:282
 msgid "r:section,p:sections"
-msgstr ""
+msgstr "секция,p:секции,p:секций"
 
 #: ../data/units.xml.in.h:283
 msgid "Township"
-msgstr ""
+msgstr "Тауншип (район, по номинальной площади равный шести секциям)"
 
 #: ../data/units.xml.in.h:284
 msgid "r:township,p:townships"
-msgstr ""
+msgstr "тауншип"
 
 #: ../data/units.xml.in.h:285
 msgid "Square Foot"
-msgstr ""
+msgstr "Квадратный фут"
 
 #: ../data/units.xml.in.h:286
 msgid "Square Inch"
-msgstr ""
+msgstr "Квадратный дюйм"
 
 #: ../data/units.xml.in.h:287
 msgid "Square Mile"
-msgstr ""
+msgstr "Квадратная миля"
 
 #: ../data/units.xml.in.h:288
 msgid "Volume"
-msgstr ""
+msgstr "Объём"
 
 #: ../data/units.xml.in.h:289
 msgid "Cubic Meter"
-msgstr ""
+msgstr "Кубический метр"
 
 #: ../data/units.xml.in.h:290
 msgid "Liter"
-msgstr ""
+msgstr "Литр"
 
 #: ../data/units.xml.in.h:291
 msgid "ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
-msgstr ""
+msgstr "a:л,aou:&#x2113;,литр,p:литра,p:литров"
 
 #: ../data/units.xml.in.h:292
 msgid "Milliliter"
-msgstr ""
+msgstr "Миллилитр"
 
 #: ../data/units.xml.in.h:293
 msgid "Centiliter"
-msgstr ""
+msgstr "Сантилитр"
 
 #: ../data/units.xml.in.h:294
 msgid "Deciliter"
-msgstr ""
+msgstr "Децилитр"
 
 #: ../data/units.xml.in.h:295
 msgid "Cubic Inch"
-msgstr ""
+msgstr "Кубический дюйм"
 
 #: ../data/units.xml.in.h:296
 msgid "Fuel Economy"
-msgstr ""
+msgstr "Расход топлива"
 
 #: ../data/units.xml.in.h:297
 msgid "Liter per Kilometer"
-msgstr ""
+msgstr "Литр на километр"
 
 #: ../data/units.xml.in.h:298
 msgid "Kilometer per Liter"
-msgstr ""
+msgstr "Километр на литр "
 
 #: ../data/units.xml.in.h:299
 msgid "Miles per Gallon"
-msgstr ""
+msgstr "Миль на галлон"
 
 #: ../data/units.xml.in.h:300
 msgid "a-cr:mpg"
-msgstr ""
+msgstr "миль_галлон"
 
 #: ../data/units.xml.in.h:301
 msgid "Cooking"
-msgstr ""
+msgstr "Кулинария"
 
 #: ../data/units.xml.in.h:302
 msgid "Teaspoon"
-msgstr ""
+msgstr "Чайная ложка"
 
 #: ../data/units.xml.in.h:303
 msgid "r:teaspoon,p:teaspoons"
-msgstr ""
+msgstr "a:чл,a:чложка,чайная_ложка,p:чайных_ложки,p:чайных_ложек"
 
 #: ../data/units.xml.in.h:304
 msgid "Dessertspoon"
-msgstr ""
+msgstr "Десертная ложка"
 
 #: ../data/units.xml.in.h:305
 msgid "r:dessertspoon,p:dessertspoons"
-msgstr ""
+msgstr "десертнаяложка,p:десертныеложки,p:десертныхложек"
 
 #: ../data/units.xml.in.h:306
 msgid "Tablespoon"
-msgstr ""
+msgstr "Столовая ложка"
 
 #: ../data/units.xml.in.h:307
 msgid "r:tablespoon,p:tablespoons"
-msgstr ""
+msgstr "a:стл,a:стложка,столоваяложка,p:столовыеложк,p:столовыхложек"
 
 #: ../data/units.xml.in.h:308
 msgid "Cup (U.S.)"
-msgstr ""
+msgstr "Мерный стакан (США)"
 
 #: ../data/units.xml.in.h:309
 msgid "r-c:cup,p-c:cups"
-msgstr ""
+msgstr "стакан_сша,стакан_ам,амстакан"
 
 #: ../data/units.xml.in.h:310
 msgid "Imperial Capacity"
-msgstr ""
+msgstr "Британская имперская система мер для жидкостей"
 
 #: ../data/units.xml.in.h:311
 msgid "Imperial Fluid Ounce"
-msgstr ""
+msgstr "Британская имперская унция жидкая"
 
 #: ../data/units.xml.in.h:312
 msgid "ar:UK_fl_oz,imperial_fluid_ounce,p:imperial_fluid_ounces"
 msgstr ""
+"британская_имперская_унция,a:UK_fl_oz,imperial_fluid_ounce,p:imperial_fluid_ou"
+"nces"
 
 #: ../data/units.xml.in.h:313
 msgid "Imperial Gill"
-msgstr ""
+msgstr "Британский имперский джилл (гилл)"
 
 #: ../data/units.xml.in.h:314
 msgid "ar:UK_gi,imperial_gill,p:imperial_gills"
@@ -9570,7 +9574,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:315
 msgid "Imperial Pint"
-msgstr ""
+msgstr "Британская имперская пинта"
 
 #: ../data/units.xml.in.h:316
 msgid "ar:UK_pt,imperial_pint,p:imperial_pints"
@@ -9578,7 +9582,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:317
 msgid "Imperial Quart"
-msgstr ""
+msgstr "Британская имперская кварта"
 
 #: ../data/units.xml.in.h:318
 msgid "ar:UK_qt,imperial_quart,p:imperial_quarts"
@@ -9586,7 +9590,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:319
 msgid "Imperial Gallon"
-msgstr ""
+msgstr "Британский имперский галлон"
 
 #: ../data/units.xml.in.h:320
 msgid "ar:UK_gal,imperial_gallon,p:imperial_gallons"
@@ -9594,7 +9598,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:321
 msgid "Imperial Minim"
-msgstr ""
+msgstr "Британский имперский миним аптекарский"
 
 #: ../data/units.xml.in.h:322
 msgid "r:imperial_minim,p:imperial_minims"
@@ -9602,7 +9606,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:323
 msgid "Imperial Fluid Scuple"
-msgstr ""
+msgstr "Британский имперский жидкий скрупул"
 
 #: ../data/units.xml.in.h:324
 msgid "r:imperial_fluid_scuple,p:imperial_fluid_scuples"
@@ -9610,7 +9614,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:325
 msgid "Imperial Fluid Drachm"
-msgstr ""
+msgstr "Британская имперская драхма жидкая"
 
 #: ../data/units.xml.in.h:326
 msgid "ar:UK_fl_dr,imperial_fluid_drachm,p:imperial_fluid_drachms"
@@ -9618,7 +9622,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:327
 msgid "Imperial Bushel"
-msgstr ""
+msgstr "Британский имперский бушель"
 
 #: ../data/units.xml.in.h:328
 msgid "ar:UK_bu,imperial_bushel,p:imperial_bushels"
@@ -9626,11 +9630,11 @@ msgstr ""
 
 #: ../data/units.xml.in.h:329
 msgid "U.S. Capacity"
-msgstr ""
+msgstr "Американская система мер для жидкостей"
 
 #: ../data/units.xml.in.h:330
 msgid "U.S. Fluid Ounce"
-msgstr ""
+msgstr "Американская унция жидкая"
 
 #: ../data/units.xml.in.h:331
 msgid "ar:fl_oz,fluid_ounce,p:fluid_ounces"
@@ -9638,7 +9642,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:332
 msgid "U.S. Gill"
-msgstr ""
+msgstr "Американский джилл (гилл)"
 
 #: ../data/units.xml.in.h:333
 msgid "ar:gi,gill,p:gills"
@@ -9646,7 +9650,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:334
 msgid "U.S. Liquid Pints"
-msgstr ""
+msgstr "Американская жидкая пинта"
 
 #: ../data/units.xml.in.h:335
 msgid "ar:liq_pt,liquid_pint,p:liquid_pints"
@@ -9654,7 +9658,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:336
 msgid "U.S. Liquid Quarts"
-msgstr ""
+msgstr "Американская жидкая кварта"
 
 #: ../data/units.xml.in.h:337
 msgid "ar:liq_qt,liquid_quart,p:liquid_quarts"
@@ -9662,7 +9666,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:338
 msgid "U.S. Minim"
-msgstr ""
+msgstr "Американский миним аптекарский"
 
 #: ../data/units.xml.in.h:339
 msgid "r:minim,p:minims"
@@ -9670,7 +9674,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:340
 msgid "U.S. Fluid Drachm"
-msgstr ""
+msgstr "Американская драхма жидкая"
 
 #: ../data/units.xml.in.h:341
 msgid "ar:fl_dr,fluid_drachm,p:fluid_drachms"
@@ -9678,7 +9682,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:342
 msgid "U.S. Dry Pint"
-msgstr ""
+msgstr "Американская сухая пинта"
 
 #: ../data/units.xml.in.h:343
 msgid "ar:dry_pt,dry_pint,p:dry_pints"
@@ -9686,7 +9690,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:344
 msgid "U.S. Dry Quart"
-msgstr ""
+msgstr "Американская сухая кварта"
 
 #: ../data/units.xml.in.h:345
 msgid "ar:dry_qt,dry_quart,p:dry_quarts"
@@ -9694,43 +9698,43 @@ msgstr ""
 
 #: ../data/units.xml.in.h:346
 msgid "U.S. Peck"
-msgstr ""
+msgstr "Американский пек"
 
 #: ../data/units.xml.in.h:347
 msgid "ar:pk,peck,p:pecks"
-msgstr ""
+msgstr "пек"
 
 #: ../data/units.xml.in.h:348
 msgid "U.S. Bushel"
-msgstr ""
+msgstr "Американский бушель"
 
 #: ../data/units.xml.in.h:349
 msgid "ar:bu,bushel,p:bushels"
-msgstr ""
+msgstr "бушель"
 
 #: ../data/units.xml.in.h:350
 msgid "U.S. Gallon"
-msgstr ""
+msgstr "Американский галлон"
 
 #: ../data/units.xml.in.h:351
 msgid "ar:gal,gallon,p:gallons"
-msgstr ""
+msgstr "галлон,p:галлона"
 
 #: ../data/units.xml.in.h:352
 msgid "U.S. Barrel (oil)"
-msgstr ""
+msgstr "Баррель (американский нефтяной)"
 
 #: ../data/units.xml.in.h:353
 msgid "ar:bbl,barrel,p:barrels"
-msgstr ""
+msgstr "баррель,p:барреля,p:баррелей"
 
 #: ../data/units.xml.in.h:354
 msgid "Specific Volume"
-msgstr ""
+msgstr "Удельный объём"
 
 #: ../data/units.xml.in.h:355
 msgid "Cubic Meter per Kilogram"
-msgstr ""
+msgstr "Кубический метр на килограмм"
 
 #: ../data/units.xml.in.h:356
 msgid "Speed"
