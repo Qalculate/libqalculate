@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-04-29 01:04+0700\n"
+"PO-Revision-Date: 2021-04-29 18:29+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -8088,10 +8088,9 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1185
 msgid "r:received"
-msgstr ""
+msgstr "получено"
 
 #: ../data/functions.xml.in.h:1186
-#, fuzzy
 msgid ""
 "Returns the amount received at the maturity date for an invested security."
 "&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 "
@@ -8102,9 +8101,9 @@ msgstr ""
 "&#10;&#10;Basis - это тип подсчёта дней, который вы хотите использовать: "
 "0: 30/360 долларов США (по умолчанию), "
 "1: реальные дни, "
-"2: реальные дни / 360, "
-"3: реальные дни / 365 или "
-"4: европейские 30/360. Дата расчета должна быть раньше срока погашения."
+"2: реальные дни/360, "
+"3: реальные дни/365 или "
+"4: европейские 30/360. Дата расчёта должна быть раньше срока погашения."
 
 #: ../data/functions.xml.in.h:1187
 msgid "Discount rate for a security"
@@ -8120,21 +8119,18 @@ msgid ""
 "counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
 "days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"Возвращает учётную ставку по ценной бумаге."
-"&#10;&#10;Basis - это тип подсчёта дней, который "
-"вы хотите использовать: "
-"0: 30/360 долларов США (по умолчанию), "
-"1: реальные дни, 2: реальные дни / 360, "
-"3: реальные дни/365 или "
-"4: европейские 30/360."
+"Возвращает учётную ставку по ценной бумаге. &#10;&#10;Система "
+"подсчёта дней - это тип подсчёта дней, который вы хотите использовать: 0: "
+"30/360 для США, 1: реальные дни (по умолчанию), 2: реальные дни/360, 3: "
+"реальные дни/365 или 4: 30/360 для Европы."
 
 #: ../data/functions.xml.in.h:1190
 msgid "Accrued interest of security paying at maturity"
-msgstr ""
+msgstr "Начисленные проценты по ценной бумаге, выплачиваемые в конце срока"
 
 #: ../data/functions.xml.in.h:1191
 msgid "r:accrintm"
-msgstr ""
+msgstr "начпроццбкон"
 
 #: ../data/functions.xml.in.h:1192
 msgid ""
@@ -8143,26 +8139,32 @@ msgid ""
 "30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: "
 "European 30/360."
 msgstr ""
+"Возвращает накопленные проценты по ценной бумаге, по которой проценты "
+"выплачиваются в дату погашения. &#10;&#10;Система "
+"подсчёта дней - это тип подсчёта дней, который вы хотите использовать: 0: "
+"30/360 для США, 1: реальные дни (по умолчанию), 2: реальные дни/360, 3: "
+"реальные дни/365 или 4: 30/360 для Европы."
 
 #: ../data/functions.xml.in.h:1193
 msgid "Issue date"
-msgstr ""
+msgstr "Дата выпуска"
 
 #: ../data/functions.xml.in.h:1194
 msgid "Annual rate of security"
-msgstr ""
+msgstr "Годовая ставка обеспечения"
 
 #: ../data/functions.xml.in.h:1195
 msgid "Par value"
-msgstr ""
+msgstr "Номинальная стоимость"
 
 #: ../data/functions.xml.in.h:1196
 msgid "Accrued interest of security with periodic interest payments"
 msgstr ""
+"Начисленные проценты по ценной бумаге с периодической выплатой процентов"
 
 #: ../data/functions.xml.in.h:1197
 msgid "r:accrint"
-msgstr ""
+msgstr "начпроц"
 
 #: ../data/functions.xml.in.h:1198
 msgid ""
@@ -8171,22 +8173,27 @@ msgid ""
 "Basis is the type of day counting you want to use: 0: US 30/360 (default), "
 "1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
+"Возвращает накопленные проценты по ценным бумагам, по которым "
+"периодически выплачиваются проценты. &#10;&#10;Система "
+"подсчёта дней - это тип подсчёта дней, который вы хотите использовать: 0: "
+"30/360 для США, 1: реальные дни (по умолчанию), 2: реальные дни/360, 3: "
+"реальные дни/365 или 4: 30/360 для Европы."
 
 #: ../data/functions.xml.in.h:1199
 msgid "First interest"
-msgstr ""
+msgstr "Дата первой выплаты"
 
 #: ../data/functions.xml.in.h:1200
 msgid "Frequency"
-msgstr ""
+msgstr "Частота"
 
 #: ../data/functions.xml.in.h:1201
 msgid "Number of coupons to be paid"
-msgstr ""
+msgstr "Количество купонов к оплате"
 
 #: ../data/functions.xml.in.h:1202
 msgid "r:coupnum"
-msgstr ""
+msgstr "колкуп"
 
 #: ../data/functions.xml.in.h:1203
 msgid ""
@@ -8195,14 +8202,20 @@ msgid ""
 "30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: "
 "European 30/360."
 msgstr ""
+"Возвращает количество купонов, подлежащих выплате между расчётом и "
+"сроком погашения. &#10;&#10;Система "
+"подсчёта дней - это тип подсчёта дней, который вы хотите использовать: 0: "
+"30/360 для США, 1: реальные дни (по умолчанию), 2: реальные дни/360, 3: "
+"реальные дни/365 или 4: 30/360 для Европы."
 
 #: ../data/functions.xml.in.h:1204
 msgid "Price per $100 face value of a discounted security"
 msgstr ""
+"Цена за 100 долларов США номинальной стоимости ценной бумаги со скидкой"
 
 #: ../data/functions.xml.in.h:1205
 msgid "r:pricedisc"
-msgstr ""
+msgstr "ценаскид"
 
 #: ../data/functions.xml.in.h:1206
 msgid ""
@@ -8211,18 +8224,24 @@ msgid ""
 "the type of day counting you want to use: 0: US 30/360 (default), 1: real "
 "days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
+"Рассчитывает и возвращает цену за 100 долларов США номинальной стоимости "
+"ценных бумаг со скидкой. При наступлении срока погашения по ценной бумаге "
+"проценты не выплачиваются. &#10;&#10;Система "
+"подсчёта дней - это тип подсчёта дней, который вы хотите использовать: 0: "
+"30/360 для США, 1: реальные дни (по умолчанию), 2: реальные дни/360, 3: "
+"реальные дни/365 или 4: 30/360 для Европы."
 
 #: ../data/functions.xml.in.h:1207
 msgid "Discount"
-msgstr ""
+msgstr "Скидка"
 
 #: ../data/functions.xml.in.h:1208
 msgid "Price per $100 face value of a security"
-msgstr ""
+msgstr "Цена за 100 долларов США номинальной стоимости ценной бумаги"
 
 #: ../data/functions.xml.in.h:1209
 msgid "r:pricemat"
-msgstr ""
+msgstr "ценацб"
 
 #: ../data/functions.xml.in.h:1210
 msgid ""
@@ -8231,30 +8250,36 @@ msgid ""
 "counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
 "days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
+"Рассчитывает и возвращает цену за 100 долларов США номинальной стоимости "
+"ценной бумаги. По ценной бумаге проценты выплачиваются при наступлении "
+"срока погашения. &#10;&#10;Система "
+"подсчёта дней - это тип подсчёта дней, который вы хотите использовать: 0: "
+"30/360 для США, 1: реальные дни (по умолчанию), 2: реальные дни/360, 3: "
+"реальные дни/365 или 4: 30/360 для Европы."
 
 #: ../data/functions.xml.in.h:1211
 msgid "Annual yield"
-msgstr ""
+msgstr "Годовая доходность"
 
 #: ../data/functions.xml.in.h:1212
 msgid "Level-Coupon Bond"
-msgstr ""
+msgstr "Облигация с уровневым купоном"
 
 #: ../data/functions.xml.in.h:1213
 msgid "r:level_coupon"
-msgstr ""
+msgstr "уровневый_купон"
 
 #: ../data/functions.xml.in.h:1214
 msgid "Calculates the value of a level-coupon bond."
-msgstr ""
+msgstr "Вычисляет стоимость облигации с уровневым купоном."
 
 #: ../data/functions.xml.in.h:1215
 msgid "Coupon rate"
-msgstr ""
+msgstr "Купонная ставка"
 
 #: ../data/functions.xml.in.h:1216
 msgid "Coupons per year"
-msgstr ""
+msgstr "Купонов в год"
 
 #: ../data/functions.xml.in.h:1217
 msgid "Market interest rate"
