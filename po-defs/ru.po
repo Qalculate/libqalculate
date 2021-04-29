@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-04-29 21:14+0700\n"
+"PO-Revision-Date: 2021-04-29 21:23+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -10670,7 +10670,7 @@ msgstr "PostScript пункт (1/72 дюйма)"
 
 #: ../data/units.xml.in.h:566
 msgid "ar:pt,a:pts,point,p:points"
-msgstr "ar:pt,a:pts,пункт,p:пункты"
+msgstr "a:pt,a:pts,пункт,p:пункты"
 
 #: ../data/units.xml.in.h:567
 msgid "PostScript Pica"
@@ -10678,31 +10678,31 @@ msgstr "PostScript пайка"
 
 #: ../data/units.xml.in.h:568
 msgid "r:pica,p:picas"
-msgstr "r:пайка,p:пайки"
+msgstr "пайка,p:пайки"
 
 #: ../data/units.xml.in.h:569
 msgid "ATA Pica"
-msgstr "Англо-саксонская пайка"
+msgstr "Пайка Хоукса"
 
 #: ../data/units.xml.in.h:570
 msgid "r:ata_pica,p:ata_picas"
-msgstr ""
+msgstr "пайка_хоукс,p:ata_picas"
 
 #: ../data/units.xml.in.h:571
 msgid "ATA Point"
-msgstr ""
+msgstr "Пункт Хоукса"
 
 #: ../data/units.xml.in.h:572
 msgid "r:ata_point,a:ata_pt,p:ata_points"
-msgstr ""
+msgstr "пункт_хоукс,a:ata_pt,p:ata_points"
 
 #: ../data/units.xml.in.h:573
 msgid "New Didot Point"
-msgstr ""
+msgstr "Новый пункт Дидо"
 
 #: ../data/units.xml.in.h:574
 msgid "r:new_didot"
-msgstr ""
+msgstr "новый_дидо"
 
 #: ../data/units.xml.in.h:575
 msgid "Didot Point"
@@ -10710,7 +10710,7 @@ msgstr "Пункт Дидо"
 
 #: ../data/units.xml.in.h:576
 msgid "r:didot,a:dd"
-msgstr "r:дидо,a:dd"
+msgstr "дидо,a:dd"
 
 #: ../data/units.xml.in.h:577
 msgid "Cicero"
