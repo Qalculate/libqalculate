@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-04-28 21:41+0700\n"
+"PO-Revision-Date: 2021-04-29 22:24+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -784,7 +784,7 @@ msgstr "попробуй точно"
 
 #: ../src/qalc.cc:1024 ../src/qalc.cc:3414 ../src/qalc.cc:4231
 msgid "interval calculation"
-msgstr "расчет интервала"
+msgstr "расчёт интервала"
 
 #: ../src/qalc.cc:1024
 msgid "uncertainty propagation"
@@ -2506,7 +2506,7 @@ msgstr "Регистр ПОЛИЗ перемещён"
 
 #: ../src/qalc.cc:4905 ../src/qalc.cc:6065
 msgid "RPN Operation"
-msgstr "ПОЛИЗ Операция"
+msgstr "ПОЛИЗ операция"
 
 #: ../src/qalc.cc:4942
 msgid "Processing (press Enter to abort)"
