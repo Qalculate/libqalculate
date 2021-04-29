@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-04-29 21:23+0700\n"
+"PO-Revision-Date: 2021-04-29 21:37+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -1868,7 +1868,7 @@ msgstr "Евроцент"
 
 #: ../data/currencies.xml.in.h:458
 msgid "r:eurocent,p:eurocents"
-msgstr "r:евроцент,p:евроценты"
+msgstr "евроцент,p:евроценты"
 
 #: ../data/currencies.xml.in.h:459
 msgid "Cent (USD)"
@@ -2041,7 +2041,7 @@ msgstr "Элементы"
 
 #: ../data/datasets.xml.in.h:4
 msgid "r:atom"
-msgstr "r:атом"
+msgstr "атом"
 
 #. Object argument for chemical elements data set
 #: ../data/datasets.xml.in.h:6
@@ -2054,7 +2054,7 @@ msgstr "Символ"
 
 #: ../data/datasets.xml.in.h:8
 msgid "r:symbol"
-msgstr "r:символ"
+msgstr "символ"
 
 #. Chemical elements number
 #: ../data/datasets.xml.in.h:10
@@ -2072,7 +2072,7 @@ msgstr "Имя"
 
 #: ../data/datasets.xml.in.h:14
 msgid "r:name"
-msgstr "r:имя"
+msgstr "имя"
 
 #: ../data/datasets.xml.in.h:15
 msgid "Classification"
@@ -2093,7 +2093,7 @@ msgstr ""
 
 #: ../data/datasets.xml.in.h:17
 msgid "r:class"
-msgstr "r:class"
+msgstr "class"
 
 #: ../data/datasets.xml.in.h:18 ../data/units.xml.in.h:131
 msgid "Atomic Mass"
@@ -2109,7 +2109,7 @@ msgstr ""
 
 #: ../data/datasets.xml.in.h:20
 msgid "r:mass,r:weight"
-msgstr "r:масса,r:вес"
+msgstr "масса,вес"
 
 #: ../data/datasets.xml.in.h:21
 msgid "Boiling Point"
@@ -2117,7 +2117,7 @@ msgstr "Точка кипения"
 
 #: ../data/datasets.xml.in.h:22
 msgid "r:boiling"
-msgstr "r:кипение"
+msgstr "кипение"
 
 #: ../data/datasets.xml.in.h:23
 msgid "Melting Point"
@@ -2125,7 +2125,7 @@ msgstr "Точка плавления"
 
 #: ../data/datasets.xml.in.h:24
 msgid "r:melting"
-msgstr "r:плавление"
+msgstr "плавление"
 
 #: ../data/datasets.xml.in.h:25 ../data/units.xml.in.h:127
 msgid "Density"
@@ -2138,7 +2138,7 @@ msgstr ""
 
 #: ../data/datasets.xml.in.h:27
 msgid "r:density"
-msgstr "r:плотность"
+msgstr "плотность"
 
 #: ../data/datasets.xml.in.h:28
 msgid "X Position"
@@ -2146,7 +2146,7 @@ msgstr "Позиция X"
 
 #: ../data/datasets.xml.in.h:29
 msgid "r:x_pos"
-msgstr "r:x_поз"
+msgstr "x_поз"
 
 #: ../data/datasets.xml.in.h:30
 msgid "Y Position"
@@ -2154,7 +2154,7 @@ msgstr "Позиция Y"
 
 #: ../data/datasets.xml.in.h:31
 msgid "r:y_pos"
-msgstr "r:y_поз"
+msgstr "y_поз"
 
 #: ../data/datasets.xml.in.h:32
 msgid "Planets"
@@ -2162,7 +2162,7 @@ msgstr "Планеты"
 
 #: ../data/datasets.xml.in.h:33
 msgid "r:planet"
-msgstr "r:планета"
+msgstr "планета"
 
 #: ../data/datasets.xml.in.h:34
 msgid "Planet"
@@ -2183,7 +2183,7 @@ msgstr "Средняя орбитальная скорость"
 
 #: ../data/datasets.xml.in.h:39
 msgid "r:speed"
-msgstr "r:скорость"
+msgstr "скорость"
 
 #: ../data/datasets.xml.in.h:40
 msgid "Eccentricity"
@@ -2191,7 +2191,7 @@ msgstr "Эксцентриситет"
 
 #: ../data/datasets.xml.in.h:41
 msgid "r:eccentricity"
-msgstr "r:эксцентриситет"
+msgstr "эксцентриситет"
 
 #: ../data/datasets.xml.in.h:42
 msgid "Inclination (to ecliptic)"
@@ -2199,7 +2199,7 @@ msgstr "Наклонение (к эклиптике)"
 
 #: ../data/datasets.xml.in.h:43
 msgid "r:inclination"
-msgstr "r:наклонение"
+msgstr "наклонение"
 
 #: ../data/datasets.xml.in.h:44
 msgid "Number of Satellites"
@@ -2207,7 +2207,7 @@ msgstr "Количество спутников"
 
 #: ../data/datasets.xml.in.h:45
 msgid "r:satellites"
-msgstr "r:спутники"
+msgstr "спутники"
 
 #. Planet mass
 #: ../data/datasets.xml.in.h:47
@@ -2216,7 +2216,7 @@ msgstr "Масса"
 
 #: ../data/datasets.xml.in.h:48
 msgid "r:mass"
-msgstr "r:масса"
+msgstr "масса"
 
 #: ../data/datasets.xml.in.h:49
 msgid "Mean Density"
@@ -2237,7 +2237,7 @@ msgstr "Экваториальная гравитация"
 
 #: ../data/datasets.xml.in.h:54
 msgid "r:gravity"
-msgstr "r:гравитация"
+msgstr "гравитация"
 
 #: ../data/datasets.xml.in.h:55
 msgid "Mean Surface Temperature"
@@ -2245,7 +2245,7 @@ msgstr "Средняя температура поверхности"
 
 #: ../data/datasets.xml.in.h:56
 msgid "r:temperature"
-msgstr "r:температура"
+msgstr "температура"
 
 #: ../data/elements.xml.in.h:1
 msgid "Hydrogen"
@@ -2730,7 +2730,7 @@ msgstr "Создать вектор"
 
 #: ../data/functions.xml.in.h:3
 msgid "r:vector"
-msgstr "r:вектор"
+msgstr "вектор"
 
 #: ../data/functions.xml.in.h:4
 msgid "Returns a vector with listed elements."
@@ -2747,7 +2747,7 @@ msgstr "Генерировать вектор"
 
 #: ../data/functions.xml.in.h:8
 msgid "r:genvector"
-msgstr "r:генвектор"
+msgstr "генвектор"
 
 #: ../data/functions.xml.in.h:9
 msgid ""
@@ -2791,7 +2791,7 @@ msgstr "Сортировка"
 
 #: ../data/functions.xml.in.h:17
 msgid "r:sort"
-msgstr "r:сортировка"
+msgstr "сортировка"
 
 #: ../data/functions.xml.in.h:18
 msgid "Returns a sorted vector."
@@ -2811,7 +2811,7 @@ msgstr "Ранг"
 
 #: ../data/functions.xml.in.h:22
 msgid "r:rank"
-msgstr "r:ранг"
+msgstr "ранг"
 
 #: ../data/functions.xml.in.h:23
 msgid ""
@@ -2826,7 +2826,7 @@ msgstr "Границы вектора"
 
 #: ../data/functions.xml.in.h:25
 msgid "r:limits"
-msgstr "r:границы"
+msgstr "границы"
 
 #: ../data/functions.xml.in.h:26
 msgid "Returns a part of a vector between two positions."
@@ -2846,7 +2846,7 @@ msgstr "Размерность"
 
 #: ../data/functions.xml.in.h:30
 msgid "r:dimension"
-msgstr "r:размерность"
+msgstr "размерность"
 
 #: ../data/functions.xml.in.h:31
 msgid "Returns the number of elements in a vector."
@@ -2858,7 +2858,7 @@ msgstr "Слияние векторов"
 
 #: ../data/functions.xml.in.h:33
 msgid "r:mergevectors"
-msgstr "r:слияниевекторов"
+msgstr "слияниевекторов"
 
 #: ../data/functions.xml.in.h:34
 msgid "Returns a vector with the elements from two vectors."
@@ -2878,7 +2878,7 @@ msgstr "Создать матрицу"
 
 #: ../data/functions.xml.in.h:38
 msgid "r:matrix"
-msgstr "r:матрица"
+msgstr "матрица"
 
 #: ../data/functions.xml.in.h:39
 msgid ""
@@ -2902,7 +2902,7 @@ msgstr "Преобразовать матрицу в вектор"
 
 #: ../data/functions.xml.in.h:43
 msgid "r:matrix2vector"
-msgstr "r:матрицаввектор"
+msgstr "матрицаввектор"
 
 #: ../data/functions.xml.in.h:44
 msgid "Puts each element of a matrix in vertical order in a vector."
@@ -2919,7 +2919,7 @@ msgstr "Область матрицы"
 #. Matrix area
 #: ../data/functions.xml.in.h:48
 msgid "r:area"
-msgstr "r:область"
+msgstr "область"
 
 #: ../data/functions.xml.in.h:49
 msgid "Returns a part of a matrix."
@@ -2943,7 +2943,7 @@ msgstr "Конечный столбец"
 
 #: ../data/functions.xml.in.h:54
 msgid "r:rows"
-msgstr "r:строки"
+msgstr "строки"
 
 #: ../data/functions.xml.in.h:55
 msgid "Returns the number of rows in a matrix."
@@ -2951,7 +2951,7 @@ msgstr "Возвращает количество строк в матрице."
 
 #: ../data/functions.xml.in.h:56
 msgid "r:columns"
-msgstr "r:столбцы"
+msgstr "столбцы"
 
 #: ../data/functions.xml.in.h:57
 msgid "Returns the number of columns in a matrix."
@@ -2963,7 +2963,7 @@ msgstr "Извлечь строку как вектор"
 
 #: ../data/functions.xml.in.h:59
 msgid "r:row"
-msgstr "r:строка"
+msgstr "строка"
 
 #: ../data/functions.xml.in.h:60
 msgid "Returns a row in a matrix as a vector."
@@ -2979,7 +2979,7 @@ msgstr "Извлечь столбец как вектор"
 
 #: ../data/functions.xml.in.h:63
 msgid "r:column"
-msgstr "r:столбец"
+msgstr "столбец"
 
 #: ../data/functions.xml.in.h:64
 msgid "Returns a column in a matrix as a vector."
@@ -2991,7 +2991,7 @@ msgstr "Столбец"
 
 #: ../data/functions.xml.in.h:66
 msgid "r:elements"
-msgstr "r:элементы"
+msgstr "элементы"
 
 #: ../data/functions.xml.in.h:67
 msgid "Returns the number of elements in a matrix or vector."
@@ -3008,7 +3008,7 @@ msgstr "Элемент"
 
 #: ../data/functions.xml.in.h:71
 msgid "r:element"
-msgstr "r:элемент"
+msgstr "элемент"
 
 #: ../data/functions.xml.in.h:72
 msgid ""
@@ -3032,7 +3032,7 @@ msgstr "Транспонировать"
 
 #: ../data/functions.xml.in.h:76
 msgid "r:transpose"
-msgstr "r:транспонировать"
+msgstr "транспонировать"
 
 #: ../data/functions.xml.in.h:77
 msgid "Returns the transpose of a matrix."
@@ -3044,7 +3044,7 @@ msgstr "Единичная матрица"
 
 #: ../data/functions.xml.in.h:79
 msgid "r:identity"
-msgstr "r:единичная"
+msgstr "единичная"
 
 #: ../data/functions.xml.in.h:80
 msgid ""
@@ -3064,7 +3064,7 @@ msgstr "Определитель"
 
 #: ../data/functions.xml.in.h:83
 msgid "r:det"
-msgstr "r:det"
+msgstr "det"
 
 #: ../data/functions.xml.in.h:84
 msgid "Calculates the determinant of a matrix."
@@ -3076,7 +3076,7 @@ msgstr "Перманент"
 
 #: ../data/functions.xml.in.h:86
 msgid "r:permanent"
-msgstr "r:перманент"
+msgstr "перманент"
 
 #: ../data/functions.xml.in.h:87
 msgid ""
@@ -3094,7 +3094,7 @@ msgstr "Присоеднённая (сопряженная) матрица"
 
 #: ../data/functions.xml.in.h:89
 msgid "r:adj"
-msgstr "r:adj"
+msgstr "adj"
 
 #: ../data/functions.xml.in.h:90
 msgid "Calculates the adjugate or adjoint of a matrix."
@@ -3106,7 +3106,7 @@ msgstr "Кофактор"
 
 #: ../data/functions.xml.in.h:92
 msgid "r:cofactor"
-msgstr "r:кофактор"
+msgstr "кофактор"
 
 #: ../data/functions.xml.in.h:93
 msgid "Calculates the cofactor of the element at specified position."
@@ -3120,7 +3120,7 @@ msgstr "Обратная матрица"
 
 #: ../data/functions.xml.in.h:95
 msgid "r:inverse"
-msgstr "r:обратная"
+msgstr "обратная"
 
 #: ../data/functions.xml.in.h:96
 msgid ""
@@ -3136,7 +3136,7 @@ msgstr "Загрузить файл формата CSV"
 
 #: ../data/functions.xml.in.h:98
 msgid "r:load"
-msgstr "r:загрузить"
+msgstr "загрузить"
 
 #: ../data/functions.xml.in.h:99
 msgid "Returns a matrix imported from a CSV data file."
@@ -3160,7 +3160,7 @@ msgstr "Экспорт в файл типа CSV"
 
 #: ../data/functions.xml.in.h:104
 msgid "r:export"
-msgstr "r:экспорт"
+msgstr "экспорт"
 
 #: ../data/functions.xml.in.h:105
 msgid "Exports a matrix to a CSV data file."
@@ -3172,7 +3172,7 @@ msgstr "Модуль"
 
 #: ../data/functions.xml.in.h:107
 msgid "r:magnitude"
-msgstr "r:модуль"
+msgstr "модуль"
 
 #: ../data/functions.xml.in.h:108
 msgid ""
@@ -3216,7 +3216,7 @@ msgstr "Ранг матрицы"
 
 #: ../data/functions.xml.in.h:116
 msgid "r:rk"
-msgstr "r:рнг"
+msgstr "рнг"
 
 #: ../data/functions.xml.in.h:117
 msgid "Reduced Row Echelon Form"
@@ -3224,7 +3224,7 @@ msgstr "Приведённый ступенчатый вид по строкам
 
 #: ../data/functions.xml.in.h:118
 msgid "r:rref"
-msgstr "r:псвс"
+msgstr "псвс"
 
 #: ../data/functions.xml.in.h:119
 msgid "Entrywise Function"
@@ -3232,7 +3232,7 @@ msgstr "Поэлементная функция"
 
 #: ../data/functions.xml.in.h:120
 msgid "r:entrywise"
-msgstr "r:поэлементная"
+msgstr "поэлементная"
 
 #: ../data/functions.xml.in.h:121
 msgid ""
@@ -3258,7 +3258,7 @@ msgstr "Норма (длина)"
 
 #: ../data/functions.xml.in.h:124
 msgid "r:norm"
-msgstr "r:норма"
+msgstr "норма"
 
 #: ../data/functions.xml.in.h:125
 msgid "Calculates the norm/length of a vector."
@@ -3308,7 +3308,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:135
 msgid "r:factorial"
-msgstr "r:факториал"
+msgstr "факториал"
 
 #: ../data/functions.xml.in.h:136
 msgid "Double Factorial"
@@ -3316,7 +3316,7 @@ msgstr "Двойной факториал"
 
 #: ../data/functions.xml.in.h:137
 msgid "r:factorial2"
-msgstr "r:факториал2"
+msgstr "факториал2"
 
 #: ../data/functions.xml.in.h:138
 msgid ""
@@ -3334,7 +3334,7 @@ msgstr "Мультифакториал"
 
 #: ../data/functions.xml.in.h:140
 msgid "r:multifactorial"
-msgstr "r:мультифакториал"
+msgstr "мультифакториал"
 
 #: ../data/functions.xml.in.h:141
 msgid ""
@@ -3352,7 +3352,7 @@ msgstr "Биномиальный коэффициент"
 
 #: ../data/functions.xml.in.h:143
 msgid "r:binomial"
-msgstr "r:бином"
+msgstr "бином"
 
 #: ../data/functions.xml.in.h:144
 msgid "Hyperfactorial"
@@ -3360,7 +3360,7 @@ msgstr "Гиперфакториал"
 
 #: ../data/functions.xml.in.h:145
 msgid "r:hyperfactorial"
-msgstr "r:гиперфакториал"
+msgstr "гиперфакториал"
 
 #: ../data/functions.xml.in.h:146
 msgid ""
@@ -3378,7 +3378,7 @@ msgstr "Cуперфакториал"
 
 #: ../data/functions.xml.in.h:148
 msgid "r:superfactorial"
-msgstr "r:суперфакториал"
+msgstr "суперфакториал"
 
 #: ../data/functions.xml.in.h:149
 msgid ""
@@ -3449,7 +3449,7 @@ msgstr "Беспорядок"
 
 #: ../data/functions.xml.in.h:159
 msgid "r:derangements"
-msgstr "r:беспорядок"
+msgstr "беспорядок"
 
 #: ../data/functions.xml.in.h:160
 msgid ""
@@ -3506,7 +3506,7 @@ msgstr "Числитель"
 
 #: ../data/functions.xml.in.h:172
 msgid "r:numerator"
-msgstr "r:числитель"
+msgstr "числитель"
 
 #: ../data/functions.xml.in.h:173
 msgid "Denominator"
@@ -3514,7 +3514,7 @@ msgstr "Знаменатель"
 
 #: ../data/functions.xml.in.h:174
 msgid "r:denominator"
-msgstr "r:знаменатель"
+msgstr "знаменатель"
 
 #: ../data/functions.xml.in.h:175
 msgid "Remainder"
@@ -3522,7 +3522,7 @@ msgstr "Остаток"
 
 #: ../data/functions.xml.in.h:176
 msgid "r:rem"
-msgstr "r:ост"
+msgstr "ост"
 
 #: ../data/functions.xml.in.h:177
 msgid "Modulus"
@@ -3530,7 +3530,7 @@ msgstr "Остаток"
 
 #: ../data/functions.xml.in.h:178
 msgid "r:mod"
-msgstr "r:mod"
+msgstr "mod"
 
 #: ../data/functions.xml.in.h:179
 msgid "Integer Division"
@@ -3538,7 +3538,7 @@ msgstr "Целочисленное деление"
 
 #: ../data/functions.xml.in.h:180
 msgid "r:div"
-msgstr "r:дел"
+msgstr "дел"
 
 #: ../data/functions.xml.in.h:181
 msgid "Negate"
@@ -3546,7 +3546,7 @@ msgstr "Отрицание"
 
 #: ../data/functions.xml.in.h:182
 msgid "r:neg"
-msgstr "r:отр"
+msgstr "отр"
 
 #: ../data/functions.xml.in.h:183
 msgid "Reciprocal"
@@ -3554,7 +3554,7 @@ msgstr "Обратное число"
 
 #: ../data/functions.xml.in.h:184
 msgid "r:inv"
-msgstr "r:обр"
+msgstr "обр"
 
 #: ../data/functions.xml.in.h:185
 msgid "Multiply"
@@ -3562,7 +3562,7 @@ msgstr "Умножение"
 
 #: ../data/functions.xml.in.h:186
 msgid "r:multiply"
-msgstr "r:умножить"
+msgstr "умножить"
 
 #: ../data/functions.xml.in.h:187
 msgid "Factors"
@@ -3602,7 +3602,7 @@ msgstr "Возведение в степень"
 
 #: ../data/functions.xml.in.h:196
 msgid "r:raise"
-msgstr "r:степень"
+msgstr "степень"
 
 #: ../data/functions.xml.in.h:197
 msgid "Base"
@@ -3622,7 +3622,7 @@ msgstr "Коэффициент"
 
 #: ../data/functions.xml.in.h:201
 msgid "r:coeff"
-msgstr "r:коэфф."
+msgstr "коэфф"
 
 #: ../data/functions.xml.in.h:202
 msgid "Polynomial"
@@ -3634,7 +3634,7 @@ msgstr "Ведущий коэффициент"
 
 #: ../data/functions.xml.in.h:204
 msgid "r:lcoeff"
-msgstr "r:ведкоэфф"
+msgstr "ведкоэфф"
 
 #: ../data/functions.xml.in.h:205
 msgid "Trailing Coefficient"
@@ -3642,7 +3642,7 @@ msgstr "Конечный коэффициент"
 
 #: ../data/functions.xml.in.h:206
 msgid "r:tcoeff"
-msgstr "r:конкоэфф"
+msgstr "конкоэфф"
 
 #: ../data/functions.xml.in.h:207
 msgid "Polynomial Degree"
@@ -3650,7 +3650,7 @@ msgstr "Степень многочлена"
 
 #: ../data/functions.xml.in.h:208
 msgid "r:degree"
-msgstr "r:степень"
+msgstr "степень"
 
 #: ../data/functions.xml.in.h:209
 msgid "Lowest Degree (Valuation)"
@@ -3658,7 +3658,7 @@ msgstr "Минимальная степень (Оценка)"
 
 #: ../data/functions.xml.in.h:210
 msgid "r:ldegree"
-msgstr "r:минстепень"
+msgstr "минстепень"
 
 #: ../data/functions.xml.in.h:211
 msgid "Content Part"
@@ -3666,7 +3666,7 @@ msgstr "Содержание многочлена"
 
 #: ../data/functions.xml.in.h:212
 msgid "r:pcontent"
-msgstr "r:мсодержание"
+msgstr "мсодержание"
 
 #: ../data/functions.xml.in.h:213
 msgid "Primitive Part"
@@ -3674,15 +3674,17 @@ msgstr "Примитивный многочлен"
 
 #: ../data/functions.xml.in.h:214
 msgid "r:primpart"
-msgstr "r:мприм"
+msgstr "мприм"
 
 #: ../data/functions.xml.in.h:215
+#, fuzzy
 msgid "Unit Part"
-msgstr ""
+msgstr "Знак ведущего коэффициента"
 
 #: ../data/functions.xml.in.h:216
+#, fuzzy
 msgid "r:punit"
-msgstr ""
+msgstr "звк"
 
 #: ../data/functions.xml.in.h:217
 msgid "Greatest Common Divisor"
@@ -3706,7 +3708,7 @@ msgstr "Наименьшее общее кратное"
 
 #: ../data/functions.xml.in.h:222
 msgid "r:lcm"
-msgstr "r:нод"
+msgstr "нод"
 
 #: ../data/functions.xml.in.h:223
 msgid "Bernoulli Number/Polynomial"
@@ -3753,7 +3755,7 @@ msgstr "Число Фибоначчи"
 
 #: ../data/functions.xml.in.h:232
 msgid "r:fibonacci"
-msgstr "r:фибоначчи"
+msgstr "фибоначчи"
 
 #: ../data/functions.xml.in.h:233
 msgid "Returns the n-th term of the Fibonacci sequence."
@@ -3769,7 +3771,7 @@ msgstr "Округлить"
 
 #: ../data/functions.xml.in.h:236
 msgid "r:round"
-msgstr "r:округлить"
+msgstr "округлить"
 
 #: ../data/functions.xml.in.h:237
 msgid ""
@@ -3801,7 +3803,7 @@ msgstr "Округлить в меньшую сторону"
 
 #: ../data/functions.xml.in.h:241
 msgid "r:floor"
-msgstr "r:пол"
+msgstr "пол"
 
 #: ../data/functions.xml.in.h:242
 msgid "Round Upwards"
@@ -3809,7 +3811,7 @@ msgstr "Округлить в большую сторону"
 
 #: ../data/functions.xml.in.h:243
 msgid "r:ceil"
-msgstr "r:потолок"
+msgstr "потолок"
 
 #: ../data/functions.xml.in.h:244
 msgid "Round Towards Zero"
@@ -4338,7 +4340,7 @@ msgstr "Квадрат"
 
 #: ../data/functions.xml.in.h:357
 msgid "r:sq"
-msgstr "r:кв"
+msgstr "кв"
 
 #: ../data/functions.xml.in.h:358
 msgid "Exponential (e^x)"
@@ -4346,7 +4348,7 @@ msgstr "Экспонента (e^x)"
 
 #: ../data/functions.xml.in.h:359
 msgid "r:exp"
-msgstr "r:эксп"
+msgstr "эксп"
 
 #: ../data/functions.xml.in.h:360
 msgid "Natural Logarithm"
@@ -4354,7 +4356,7 @@ msgstr "Натуральный логарифм"
 
 #: ../data/functions.xml.in.h:361
 msgid "r:ln"
-msgstr "r:ln"
+msgstr "ln"
 
 #: ../data/functions.xml.in.h:362
 msgid "Base-N Logarithm"
@@ -4362,7 +4364,7 @@ msgstr "Логарифм по основанию N"
 
 #: ../data/functions.xml.in.h:363
 msgid "r:log"
-msgstr "r:log"
+msgstr "log"
 
 #: ../data/functions.xml.in.h:364
 msgid "Lambert W Function (Omega Function, Product Log)"
@@ -11495,7 +11497,7 @@ msgstr "Ложь"
 
 #: ../data/variables.xml.in.h:195
 msgid "r:false,r:no"
-msgstr "r:ложь,r:нет"
+msgstr "ложь,нет"
 
 #: ../data/variables.xml.in.h:196
 msgid "True"
@@ -11503,11 +11505,11 @@ msgstr "Истина"
 
 #: ../data/variables.xml.in.h:197
 msgid "r:true,r:yes"
-msgstr "r:истина,r:да"
+msgstr "истина,да"
 
 #: ../data/variables.xml.in.h:200
 msgid "r:precision"
-msgstr "r:точность"
+msgstr "точность"
 
 #: ../data/variables.xml.in.h:201
 msgid "System Uptime"
@@ -11515,7 +11517,7 @@ msgstr "Аптайм — время непрерывной работы вычи
 
 #: ../data/variables.xml.in.h:202
 msgid "r:uptime"
-msgstr "r:аптайм"
+msgstr "аптайм"
 
 #: ../data/variables.xml.in.h:203
 msgid "Unknowns"
@@ -11531,7 +11533,7 @@ msgstr "Сегодня"
 
 #: ../data/variables.xml.in.h:207
 msgid "r:today"
-msgstr "r:сегодня"
+msgstr "сегодня"
 
 #: ../data/variables.xml.in.h:208
 msgid "Tomorrow"
@@ -11539,7 +11541,7 @@ msgstr "Завтра"
 
 #: ../data/variables.xml.in.h:209
 msgid "r:tomorrow"
-msgstr "r:завтра"
+msgstr "завтра"
 
 #: ../data/variables.xml.in.h:210
 msgid "Yesterday"
@@ -11547,7 +11549,7 @@ msgstr "Вчера"
 
 #: ../data/variables.xml.in.h:211
 msgid "r:yesterday"
-msgstr "r:вчера"
+msgstr "вчера"
 
 #: ../data/variables.xml.in.h:212
 msgid "Now (date and time)"
@@ -11555,4 +11557,4 @@ msgstr "Сейчас (дата и время)"
 
 #: ../data/variables.xml.in.h:213
 msgid "r:now"
-msgstr "r:сейчас"
+msgstr "сейчас"
