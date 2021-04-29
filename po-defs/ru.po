@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-04-29 18:29+0700\n"
+"PO-Revision-Date: 2021-04-29 21:14+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -6944,7 +6944,7 @@ msgstr "Неизвестная переменная 2"
 
 #: ../data/functions.xml.in.h:934
 msgid "Find Linear Function"
-msgstr ""
+msgstr "линфункция"
 
 #: ../data/functions.xml.in.h:935
 msgid "r:linearfunction"
@@ -9653,7 +9653,7 @@ msgstr "Британский имперский джилл (гилл)"
 
 #: ../data/units.xml.in.h:314
 msgid "ar:UK_gi,imperial_gill,p:imperial_gills"
-msgstr ""
+msgstr "a:брит_джи,британский_джилл,имперский_джилл,британский_имперский_джилл"
 
 #: ../data/units.xml.in.h:315
 msgid "Imperial Pint"
@@ -9661,7 +9661,7 @@ msgstr "Британская имперская пинта"
 
 #: ../data/units.xml.in.h:316
 msgid "ar:UK_pt,imperial_pint,p:imperial_pints"
-msgstr ""
+msgstr "a:брит_пт,британская_пинта,имперская_пинта,британская_имперская_пинта"
 
 #: ../data/units.xml.in.h:317
 msgid "Imperial Quart"
@@ -9670,6 +9670,7 @@ msgstr "Британская имперская кварта"
 #: ../data/units.xml.in.h:318
 msgid "ar:UK_qt,imperial_quart,p:imperial_quarts"
 msgstr ""
+"a:брит_кв,британская_кварта,имперская_кварта,британская_имперская_кварта"
 
 #: ../data/units.xml.in.h:319
 msgid "Imperial Gallon"
@@ -9678,6 +9679,7 @@ msgstr "Британский имперский галлон"
 #: ../data/units.xml.in.h:320
 msgid "ar:UK_gal,imperial_gallon,p:imperial_gallons"
 msgstr ""
+"a:брит_гал,британский_галлон,имперский_галлон,британский_имперский_галлон"
 
 #: ../data/units.xml.in.h:321
 msgid "Imperial Minim"
@@ -9686,6 +9688,7 @@ msgstr "Британский имперский миним аптекарски�
 #: ../data/units.xml.in.h:322
 msgid "r:imperial_minim,p:imperial_minims"
 msgstr ""
+"a:брит_миним,британский_миним,имперский_миним,британский_имперский_миним"
 
 #: ../data/units.xml.in.h:323
 msgid "Imperial Fluid Scuple"
@@ -9694,6 +9697,8 @@ msgstr "Британский имперский жидкий скрупул"
 #: ../data/units.xml.in.h:324
 msgid "r:imperial_fluid_scuple,p:imperial_fluid_scuples"
 msgstr ""
+"a:брит_скрупул,британский_скрупул,имперский_скрупул,британский_имперский_скруп"
+"ул"
 
 #: ../data/units.xml.in.h:325
 msgid "Imperial Fluid Drachm"
@@ -9702,6 +9707,7 @@ msgstr "Британская имперская драхма жидкая"
 #: ../data/units.xml.in.h:326
 msgid "ar:UK_fl_dr,imperial_fluid_drachm,p:imperial_fluid_drachms"
 msgstr ""
+"a:брит_драхма,британская_драхма,имперская_драхма,британская_имперская_драхма"
 
 #: ../data/units.xml.in.h:327
 msgid "Imperial Bushel"
@@ -9710,6 +9716,7 @@ msgstr "Британский имперский бушель"
 #: ../data/units.xml.in.h:328
 msgid "ar:UK_bu,imperial_bushel,p:imperial_bushels"
 msgstr ""
+"a:брит_бушель,британский_бушель,имперский_бушель,британский_имперский_бушель"
 
 #: ../data/units.xml.in.h:329
 msgid "U.S. Capacity"
@@ -9721,7 +9728,7 @@ msgstr "Американская унция жидкая"
 
 #: ../data/units.xml.in.h:331
 msgid "ar:fl_oz,fluid_ounce,p:fluid_ounces"
-msgstr ""
+msgstr "унция"
 
 #: ../data/units.xml.in.h:332
 msgid "U.S. Gill"
@@ -9729,7 +9736,7 @@ msgstr "Американский джилл (гилл)"
 
 #: ../data/units.xml.in.h:333
 msgid "ar:gi,gill,p:gills"
-msgstr ""
+msgstr "джилл"
 
 #: ../data/units.xml.in.h:334
 msgid "U.S. Liquid Pints"
@@ -9737,7 +9744,7 @@ msgstr "Американская жидкая пинта"
 
 #: ../data/units.xml.in.h:335
 msgid "ar:liq_pt,liquid_pint,p:liquid_pints"
-msgstr ""
+msgstr "пинта"
 
 #: ../data/units.xml.in.h:336
 msgid "U.S. Liquid Quarts"
@@ -9745,7 +9752,7 @@ msgstr "Американская жидкая кварта"
 
 #: ../data/units.xml.in.h:337
 msgid "ar:liq_qt,liquid_quart,p:liquid_quarts"
-msgstr ""
+msgstr "кварта"
 
 #: ../data/units.xml.in.h:338
 msgid "U.S. Minim"
@@ -9753,7 +9760,7 @@ msgstr "Американский миним аптекарский"
 
 #: ../data/units.xml.in.h:339
 msgid "r:minim,p:minims"
-msgstr ""
+msgstr "миним"
 
 #: ../data/units.xml.in.h:340
 msgid "U.S. Fluid Drachm"
@@ -9761,7 +9768,7 @@ msgstr "Американская драхма жидкая"
 
 #: ../data/units.xml.in.h:341
 msgid "ar:fl_dr,fluid_drachm,p:fluid_drachms"
-msgstr ""
+msgstr "драхма"
 
 #: ../data/units.xml.in.h:342
 msgid "U.S. Dry Pint"
@@ -9769,7 +9776,7 @@ msgstr "Американская сухая пинта"
 
 #: ../data/units.xml.in.h:343
 msgid "ar:dry_pt,dry_pint,p:dry_pints"
-msgstr ""
+msgstr "сухая_пинта"
 
 #: ../data/units.xml.in.h:344
 msgid "U.S. Dry Quart"
@@ -9777,7 +9784,7 @@ msgstr "Американская сухая кварта"
 
 #: ../data/units.xml.in.h:345
 msgid "ar:dry_qt,dry_quart,p:dry_quarts"
-msgstr ""
+msgstr "сухая_кварта"
 
 #: ../data/units.xml.in.h:346
 msgid "U.S. Peck"
