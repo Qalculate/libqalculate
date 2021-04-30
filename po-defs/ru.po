@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-04-30 09:35+0700\n"
+"PO-Revision-Date: 2021-04-30 10:04+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -2059,12 +2059,12 @@ msgstr "символ"
 #. Chemical elements number
 #: ../data/datasets.xml.in.h:10
 msgid "!datasets!Number"
-msgstr "Числа"
+msgstr "Номер"
 
 #. Chemical elements number
 #: ../data/datasets.xml.in.h:12
 msgid "!datasets!r:number"
-msgstr "число"
+msgstr "номер"
 
 #: ../data/datasets.xml.in.h:13 ../data/functions.xml.in.h:817
 msgid "Name"
