@@ -5945,7 +5945,7 @@ msgstr "-"
 #: ../data/functions.xml.in.h:740
 msgid ""
 "Returns the lunar phase, as a number between 0 and 1, for the specified "
-"date. This value corrresponds to an angle between 0 and 360 degrees. 0 "
+"date. This value corresponds to an angle between 0 and 360 degrees. 0 "
 "represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons."
 msgstr ""
 "返回给定日期的月相，以0到1之间的数字表示。该值对应于0到360度之间的角度。 0代"
