@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-04-29 22:18+0700\n"
+"PO-Revision-Date: 2021-04-30 09:35+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -6946,11 +6946,11 @@ msgstr "Неизвестная переменная 2"
 
 #: ../data/functions.xml.in.h:934
 msgid "Find Linear Function"
-msgstr "линфункция"
+msgstr "Найти линейную функцию"
 
 #: ../data/functions.xml.in.h:935
 msgid "r:linearfunction"
-msgstr "Найти линейную функцию"
+msgstr "линфункция"
 
 #: ../data/functions.xml.in.h:936
 msgid ""
