@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-04-29 22:24+0700\n"
+"PO-Revision-Date: 2021-05-02 12:50+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -197,7 +197,7 @@ msgstr "приблизительно"
 
 #: ../src/defs2doc.cc:623 ../src/qalc.cc:2206
 msgid "ans"
-msgstr "ans"
+msgstr "отв"
 
 #: ../src/defs2doc.cc:624 ../src/defs2doc.cc:627 ../src/defs2doc.cc:628
 #: ../src/defs2doc.cc:629 ../src/defs2doc.cc:630
@@ -861,12 +861,12 @@ msgstr "игнорировать локаль"
 #: ../src/qalc.cc:1104 ../src/qalc.cc:3676 ../src/qalc.cc:3706
 #: ../src/qalc.cc:4430
 msgid "save mode"
-msgstr "save mode"
+msgstr "сохранить режим"
 
 #: ../src/qalc.cc:1113 ../src/qalc.cc:3675 ../src/qalc.cc:3705
 #: ../src/qalc.cc:4429
 msgid "save definitions"
-msgstr "save definitions"
+msgstr "сохранить определения"
 
 #: ../src/qalc.cc:1122 ../src/qalc.cc:3573 ../src/qalc.cc:4327
 msgid "scientific notation"
@@ -1321,7 +1321,7 @@ msgstr "Недопустимый символ «%c» в выражении."
 #: ../src/qalc.cc:2461 ../src/qalc.cc:3704 ../src/qalc.cc:4461
 #: ../src/qalc.cc:4666
 msgid "save"
-msgstr "save"
+msgstr "сохранить"
 
 #: ../src/qalc.cc:2461 ../src/qalc.cc:3704 ../src/qalc.cc:4461
 #: ../src/qalc.cc:4666
@@ -1522,7 +1522,7 @@ msgstr "Вычисление"
 
 #: ../src/qalc.cc:3419
 msgid "simplified"
-msgstr "опрощено"
+msgstr "упрощено"
 
 #: ../src/qalc.cc:3424 ../src/qalc.cc:4236
 msgid "Enabled Objects"
@@ -2538,7 +2538,7 @@ msgstr ""
 
 #: ../src/qalc.cc:5372 ../src/qalc.cc:5400
 msgid "Temperature calculation mode"
-msgstr "Режим расчета температуры"
+msgstr "Режим расчёта температуры"
 
 #: ../src/qalc.cc:5421
 msgid "Please select interpretation of dots (\".\")."
