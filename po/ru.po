@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-05-02 13:45+0700\n"
+"PO-Revision-Date: 2021-05-02 20:02+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -2368,7 +2368,7 @@ msgstr "- полярный (показывать комплексные числ
 
 #: ../src/qalc.cc:4608
 msgid "- cis (show complex numbers in cis form)"
-msgstr "- cis (показывать комплексные числа в сисоидной-форме)"
+msgstr "- cis (показывать комплексные числа в сисоидной форме)"
 
 #: ../src/qalc.cc:4609
 msgid "- angle / phasor (show complex numbers in angle/phasor notation)"
