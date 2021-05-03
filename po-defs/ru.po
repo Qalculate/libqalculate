@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-05-03 16:59+0700\n"
+"PO-Revision-Date: 2021-05-03 17:17+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -5199,7 +5199,7 @@ msgstr "randnorm"
 
 #: ../data/functions.xml.in.h:544
 msgid "Mean"
-msgstr "Математическое ожидание (средние)"
+msgstr "Математическое ожидание (среднее)"
 
 #: ../data/functions.xml.in.h:545
 msgid "Standard deviation"
@@ -6776,7 +6776,7 @@ msgstr "Суммирование"
 
 #: ../data/functions.xml.in.h:896
 msgid "au:&#x3A3;,au:&#x2211;,r:sum"
-msgstr "сумма"
+msgstr "сумма,au:&#x3A3;,au:&#x2211;"
 
 #: ../data/functions.xml.in.h:897
 msgid ""
