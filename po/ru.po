@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-05-02 20:02+0700\n"
+"PO-Revision-Date: 2021-05-03 17:53+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -3730,7 +3730,7 @@ msgstr "Апрель"
 
 #: ../libqalculate/QalculateDateTime.cc:29
 msgid "May"
-msgstr "МАй"
+msgstr "Май"
 
 #: ../libqalculate/QalculateDateTime.cc:29
 msgid "June"
