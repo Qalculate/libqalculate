@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-05-03 17:17+0700\n"
+"PO-Revision-Date: 2021-05-03 21:27+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -4712,7 +4712,7 @@ msgstr "Разное"
 
 #: ../data/functions.xml.in.h:448
 msgid "IEEE 754 Floating-Point"
-msgstr "Число с плавающей точкой в формате IEEE 754"
+msgstr "Число с плавающей запятой в формате IEEE 754"
 
 #: ../data/functions.xml.in.h:449
 msgid "r:float"
