@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-28 08:36+0700\n"
-"PO-Revision-Date: 2021-04-30 10:22+0700\n"
+"PO-Revision-Date: 2021-05-03 21:27+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -4712,7 +4712,7 @@ msgstr "Разное"
 
 #: ../data/functions.xml.in.h:448
 msgid "IEEE 754 Floating-Point"
-msgstr "Число с плавающей точкой в формате IEEE 754"
+msgstr "Число с плавающей запятой в формате IEEE 754"
 
 #: ../data/functions.xml.in.h:449
 msgid "r:float"
@@ -5199,7 +5199,7 @@ msgstr "randnorm"
 
 #: ../data/functions.xml.in.h:544
 msgid "Mean"
-msgstr "Математическое ожидание (средние)"
+msgstr "Математическое ожидание (среднее)"
 
 #: ../data/functions.xml.in.h:545
 msgid "Standard deviation"
@@ -6412,7 +6412,7 @@ msgstr "выбрать"
 
 #: ../data/functions.xml.in.h:811
 msgid "Condition"
-msgstr "Усло ие"
+msgstr "Условие"
 
 #: ../data/functions.xml.in.h:812
 msgid "Select first match"
@@ -6776,7 +6776,7 @@ msgstr "Суммирование"
 
 #: ../data/functions.xml.in.h:896
 msgid "au:&#x3A3;,au:&#x2211;,r:sum"
-msgstr "сумма"
+msgstr "сумма,au:&#x3A3;,au:&#x2211;"
 
 #: ../data/functions.xml.in.h:897
 msgid ""
@@ -11085,67 +11085,67 @@ msgstr "Масса альфа частицы (ядро атома гелия) (�
 
 #: ../data/variables.xml.in.h:92
 msgid "Particle Mass in MeV*c^(-2)"
-msgstr "Масса частицы в МэВ*c^(-2)"
+msgstr "Масса частицы в МэВ/c&#x00B2;"
 
 #: ../data/variables.xml.in.h:93
 msgid "Electron Mass (in MeV/c^2)"
-msgstr "Масса электрона (в МэВ*c^(-2))"
+msgstr "Масса электрона (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:94
 msgid "Neutron Mass (in MeV/c^2)"
-msgstr "Масса нейтрона (в МэВ*c^(-2))"
+msgstr "Масса нейтрона (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:95
 msgid "Proton Mass (in MeV/c^2)"
-msgstr "Масса протона (в МэВ*c^(-2))"
+msgstr "Масса протона (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:96
 msgid "Tau Mass (in MeV/c^2)"
-msgstr "Масса таона (тау-лептона) (в МэВ*c^(-2))"
+msgstr "Масса таона (тау-лептона) (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:97
 msgid "Muon Mass (in MeV/c^2)"
-msgstr "Масса мюона (в МэВ*c^(-2))"
+msgstr "Масса мюона (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:98
 msgid "Alpha Particle Mass (in MeV/c^2)"
-msgstr "Масса альфа частицы (ядро атома гелия) (в МэВ*c^(-2))"
+msgstr "Масса альфа частицы (ядро атома гелия) (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:99
 msgid "Up Quark Mass (in MeV/c^2)"
-msgstr "Масса u-кварка (в МэВ*c^(-2))"
+msgstr "Масса u-кварка (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:100
 msgid "Down Quark Mass (in MeV/c^2)"
-msgstr "Масса d-кварка (в МэВ*c^(-2))"
+msgstr "Масса d-кварка (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:101
 msgid "Charm Quark Mass (in MeV/c^2)"
-msgstr "Масса c-кварка (в МэВ*c^(-2))"
+msgstr "Масса c-кварка (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:102
 msgid "Strange Quark Mass (in MeV/c^2)"
-msgstr "Масса s-кварка (в МэВ*c^(-2))"
+msgstr "Масса s-кварка (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:103
 msgid "Top Quark Mass (in MeV/c^2)"
-msgstr "Масса t-кварка (в МэВ*c^(-2))"
+msgstr "Масса t-кварка (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:104
 msgid "Bottom Quark Mass (in MeV/c^2)"
-msgstr "Масса b-кварка (в МэВ*c^(-2))"
+msgstr "Масса b-кварка (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:105
 msgid "Higgs Boson Mass (in MeV/c^2)"
-msgstr "Масса бозона Хиггса (в МэВ*c^(-2))"
+msgstr "Масса бозона Хиггса (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:106
 msgid "W Boson Mass (in MeV/c^2)"
-msgstr "Масса W-бозона (в МэВ*c^(-2))"
+msgstr "Масса W-бозона (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:107
 msgid "Z Boson Mass (in MeV/c^2)"
-msgstr "Масса Z-бозона (в МэВ*c^(-2))"
+msgstr "Масса Z-бозона (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:108
 msgid "Particle Mass in kg"
