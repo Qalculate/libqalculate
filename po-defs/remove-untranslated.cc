@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) {
 			if(!sbuffer2.empty()) {
 				sbuffer = sbuffer2;
 				sbuffer2 = "";
+				sout = sbuffer;
 			} else {
 				cfile.getline(linebuffer, 1000);
 				sbuffer = linebuffer;
