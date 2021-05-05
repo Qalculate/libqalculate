@@ -1476,35 +1476,24 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								}
 								case 'p': {
 									if(!p && po.units_enabled) {
-										name = &((Prefix*) ufvl[ufv_index])->shortName();
+										name = &((Prefix*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).name;
 										name_length = name->length();
 										if(name_length >= unit_chars_left || name_length < found_function_name_length) {
 											name = NULL;
 										}
+										case_sensitive = ((Prefix*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).case_sensitive;
 									}
-									case_sensitive = true;
 									break;
 								}
 								case 'P': {
 									if(!p && po.units_enabled) {
-										name = &((Prefix*) ufvl[ufv_index])->longName();
+										name = &((Prefix*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).name;
 										name_length = name->length();
 										if(name_length > unit_chars_left || name_length < found_function_name_length) {
 											name = NULL;
 										}
+										case_sensitive = ((Prefix*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).case_sensitive;
 									}
-									case_sensitive = false;
-									break;
-								}
-								case 'q': {
-									if(!p && po.units_enabled) {
-										name = &((Prefix*) ufvl[ufv_index])->unicodeName();
-										name_length = name->length();
-										if(name_length >= unit_chars_left || name_length < found_function_name_length) {
-											name = NULL;
-										}
-									}
-									case_sensitive = true;
 									break;
 								}
 							}
@@ -1529,30 +1518,18 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					case 0: {
 						if(po.units_enabled && vt3 < ufv[vt2][ufv_index].size()) {
 							object = ufv[vt2][ufv_index][vt3];
-							switch(ufv_i[vt2][ufv_index][vt3]) {
-								case 1: {
-									ufvt = 'P';
-									name = &((Prefix*) object)->longName();
-									name_length = name->length();
-									case_sensitive = false;
-									break;
-								}
-								case 2: {
-									if(ufv_index >= unit_chars_left - 1) break;
+							if(((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).abbreviation) {
+								if(ufv_index < unit_chars_left - 1) {
 									ufvt = 'p';
-									name = &((Prefix*) object)->shortName();
+									name = &((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
 									name_length = name->length();
-									case_sensitive = true;
-									break;
+									case_sensitive = ((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
 								}
-								case 3: {
-									if(ufv_index >= unit_chars_left - 1) break;
-									ufvt = 'q';
-									name = &((Prefix*) object)->unicodeName();
-									name_length = name->length();
-									case_sensitive = true;
-									break;
-								}
+							} else {
+								ufvt = 'P';
+								name = &((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
+								name_length = name->length();
+								case_sensitive = ((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
 							}
 							vt3++;
 							break;
@@ -1868,7 +1845,6 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							break;
 						}
 						case 'p': {}
-						case 'q': {}
 						case 'P': {
 							p = (Prefix*) object;
 							if(str_index + name_length == str.length() || is_in(NOT_IN_NAMES INTERNAL_OPERATORS, str[str_index + name_length])) {

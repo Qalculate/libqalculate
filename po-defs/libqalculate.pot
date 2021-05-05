@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-28 08:36+0700\n"
+"POT-Creation-Date: 2021-05-05 11:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7918,115 +7918,115 @@ msgid "Uranus"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:1
-msgid "yocto"
+msgid "ar:y,r:yocto"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:2
-msgid "zepto"
+msgid "ar:z,r:zepto"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:3
-msgid "atto"
+msgid "ar:a,r:atto"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:4
-msgid "femto"
+msgid "ar:f,r:femto"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:5
-msgid "pico"
+msgid "ar:p,r:pico"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:6
-msgid "nano"
+msgid "ar:n,r:nano"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:7
-msgid "micro"
+msgid "aur:&#x3BC;,ar:u,r:micro"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:8
-msgid "milli"
+msgid "ar:m,r:milli"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:9
-msgid "centi"
+msgid "ar:c,r:centi"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:10
-msgid "deci"
+msgid "ar:d,r:deci"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:11
-msgid "deca"
+msgid "ar:da,r:deca"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:12
-msgid "hecto"
+msgid "ar:h,r:hecto"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:13
-msgid "kilo"
+msgid "ar:k,r:kilo"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:14
-msgid "mega"
+msgid "ar:M,r:mega"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:15
-msgid "giga"
+msgid "ar:G,r:giga"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:16
-msgid "tera"
+msgid "ar:T,r:tera"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:17
-msgid "peta"
+msgid "ar:P,r:peta"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:18
-msgid "exa"
+msgid "ar:E,r:exa"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:19
-msgid "zetta"
+msgid "ar:z,r:zetta"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:20
-msgid "yotta"
+msgid "ar:Y,r:yotta"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:21
-msgid "kibi"
+msgid "ar:Ki,r:kibi"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:22
-msgid "mebi"
+msgid "ar:Mi,r:mebi"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:23
-msgid "gibi"
+msgid "ar:Gi,r:gibi"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:24
-msgid "tebi"
+msgid "ar:Ti,r:tebi"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:25
-msgid "pebi"
+msgid "ar:Pi,r:pebi"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:26
-msgid "exbi"
+msgid "ar:Ei,r:exbi"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:27
-msgid "zebi"
+msgid "ar:Zi,r:zebi"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:28
-msgid "yobi"
+msgid "ar:Yi,r:yobi"
 msgstr ""
 
 #. Unit category

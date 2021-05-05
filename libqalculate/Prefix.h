@@ -15,6 +15,7 @@
 
 #include <libqalculate/includes.h>
 #include <libqalculate/Number.h>
+#include <libqalculate/ExpressionItem.h>
 
 /** @file */
 
@@ -32,7 +33,7 @@ Prefixes can have up to free different three names -- a long name, a short name 
  */
 class Prefix {
   protected:
-	std::string l_name, s_name, u_name;
+	std::vector<ExpressionName> names;
   public:
 	/** Create a prefix.
 	*
@@ -86,6 +87,87 @@ class Prefix {
 	* @returns A preferred name.
  	*/
 	const std::string &name(bool short_default = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	const std::string &referenceName() const;
+	/** Returns the name that best fulfils provided criterias. If two names are equally preferred, the one with lowest index is returned.
+	*
+	* @param abbreviation If an abbreviated name is preferred.
+	* @param use_unicode If a name with unicode characters can be displayed/is preferred (prioritized if false).
+	* @param plural If a name in plural form is preferred.
+	* @param reference If a reference name is preferred (ignored if false).
+	* @param can_display_unicode_string_function Function that tests if the unicode characters in a name can be displayed. If the function returns false, the name will be rejected.
+	* @param can_display_unicode_string_arg Argument to pass to the above test function.
+	* @returns The preferred name.
+	*/
+	const ExpressionName &preferredName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	/** Returns the name that best fulfils provided criterias and is suitable for user input. If two names are equally preferred, the one with lowest index is returned.
+	*
+	* @param abbreviation If an abbreviated name is preferred.
+	* @param use_unicode If a name with unicode characters can be displayed/is preferred (prioritized if false).
+	* @param plural If a name in plural form is preferred.
+	* @param reference If a reference name is preferred (ignored if false).
+	* @param can_display_unicode_string_function Function that tests if the unicode characters in a name can be displayed. If the function returns false, the name will be rejected.
+	* @param can_display_unicode_string_arg Argument to pass to the above test function.
+	* @returns The preferred name.
+	*/
+	const ExpressionName &preferredInputName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	/** Returns the name that best fulfils provided criterias and is suitable for display. If two names are equally preferred, the one with lowest index is returned.
+	*
+	* @param abbreviation If an abbreviated name is preferred.
+	* @param use_unicode If a name with unicode characters can be displayed/is preferred (prioritized if false).
+	* @param can_display_unicode_string_function Function that tests if the unicode characters in a name can be displayed. If the function returns false, the name will be rejected.
+	* @param can_display_unicode_string_arg Argument to pass to the above test function.
+	* @returns The preferred name.
+	*/
+	const ExpressionName &preferredDisplayName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	/** Returns name for an index (starting at one). All functions can be traversed by starting at index one and increasing the index until empty_expression_name is returned.
+	*
+	* @param index Index of name.
+	* @returns Name for index or empty_expression_name if not found.
+	*/
+	const ExpressionName &getName(size_t index) const;
+	/** Changes a name. If a name for the provided index is not present, it is added (equivalent to addName(ename, index)).
+	*
+	* @param ename The new name.
+	* @param index Index of name to change.
+	*/
+	void setName(const ExpressionName &ename, size_t index = 1);
+	/** Changes the text string of a name. If a name for the provided index is not present, it is added (equivalent to addName(sname, index)).
+	*
+	* @param sname The new name text string.
+	* @param index Index of name to change.
+	*/
+	void setName(std::string sname, size_t index);
+	void addName(const ExpressionName &ename, size_t index = 0);
+	void addName(std::string sname, size_t index = 0);
+	size_t countNames() const;
+	/** Removes all names. */
+	void clearNames();
+	/** Removes all names that are not used for reference (ExpressionName.reference = true). */
+	void clearNonReferenceNames();
+	void removeName(size_t index);
+	/** Checks if the prefix has a name with a specific text string.
+	*
+	* @param sname A text string to look for (not case sensitive)
+	* @param case_sensitive If the name is case sensitive.
+	* @returns Index of the name with the given text string or zero if such a name was not found.
+	*/
+	size_t hasName(const std::string &sname, bool case_sensitive = true) const;
+	/** Checks if the prefix has a name with a specific case sensitive text string.
+	*
+	* @param sname A text string to look for (case sensitive)
+	* @returns Index of the name with the given text string or zero if such a name was not found.
+	*/
+	size_t hasNameCaseSensitive(const std::string &sname) const;
+	/** Searches for a name with specific properties.
+	*
+	* @param abbreviation If the name must be abbreviated. 1=true, 0=false, -1=ignore.
+	* @param use_unicode If the name must have unicode characters. 1=true, 0=false, -1=ignore.
+	* @param plural If the name must be in plural form. 1=true, 0=false, -1=ignore.
+	* @param can_display_unicode_string_function Function that tests if the unicode characters in a name can be displayed. If the function returns false, the name will be rejected.
+	* @param can_display_unicode_string_arg Argument to pass to the above test function.
+	* @returns The first found name with the specified properties or empty_expression_name if none found.
+	*/
+	const ExpressionName &findName(int abbreviation = -1, int use_unicode = -1, int plural = -1, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	/** Returns the value of the prefix.
 	*
 	* @param nexp The power of the prefixed unit.
