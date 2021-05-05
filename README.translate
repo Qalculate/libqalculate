@@ -13,6 +13,8 @@ Data sets: Categories, titles, names, descriptions, property titles, property na
 Functions: Categories, titles, names, descriptions and argument titles
 Variables/constants: Categories, titles and names
 Units: Categories, titles and names
+Currencies: Categories, titles, countries, and names
+Prefixes: Names
 
 To distinguish equal text strings with different meaning (for example "Mercury" as a planet and as a chemical element), some text strings is preceded by "!type!" (for example "!units!" for units). Everything between and including a exclamation mark in the beginning and the second exclamation mark is not displayed in the application. Translators do not need include to include "!type!" in the translation.
 

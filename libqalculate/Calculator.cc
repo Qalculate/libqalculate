@@ -860,7 +860,7 @@ Prefix *Calculator::getPrefix(size_t index) const {
 }
 Prefix *Calculator::getPrefix(string name_) const {
 	for(size_t i = 0; i < prefixes.size(); i++) {
-		if(prefixes[i]->shortName(false) == name_ || prefixes[i]->longName(false) == name_ || prefixes[i]->unicodeName(false) == name_) {
+		if(prefixes[i]->hasName(name_, true)) {
 			return prefixes[i];
 		}
 	}
@@ -1169,35 +1169,30 @@ Prefix *Calculator::addPrefix(Prefix *p) {
 void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
 	size_t l2;
 	if(!new_item) delPrefixUFV(p);
-	if(!p->longName(false).empty()) {
-		l2 = p->longName(false).length();
+	for(size_t i2 = 1; i2 <= p->countNames(); i2++) {
+		const ExpressionName &ename = p->getName(i2);
+		l2 = ename.name.length();
 		if(l2 > UFV_LENGTHS) {
 			size_t i = 0, l;
 			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
 				l = 0;
 				if(it != ufvl.end()) {
-					if(ufvl_t[i] == 'v')
-						l = ((Variable*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'f')
-						l = ((MathFunction*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'u')
-						l = ((Unit*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'p')
-						l = ((Prefix*) (*it))->shortName(false).length();
-					else if(ufvl_t[i] == 'P')
-						l = ((Prefix*) (*it))->longName(false).length();
-					else if(ufvl_t[i] == 'q')
-						l = ((Prefix*) (*it))->unicodeName(false).length();
+					if(ufvl_t[i] == 'v') l = ((Variable*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'f') l = ((MathFunction*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'u') l = ((Unit*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'p' || ufvl_t[i] == 'P') l = ((Prefix*) (*it))->getName(ufvl_i[i]).name.length();
 				}
 				if(it == ufvl.end()) {
 					ufvl.push_back((void*) p);
-					ufvl_t.push_back('P');
-					ufvl_i.push_back(1);
+					if(ename.abbreviation) ufvl_t.push_back('p');
+					else ufvl_t.push_back('P');
+					ufvl_i.push_back(i2);
 					break;
 				} else if(l <= l2) {
 					ufvl.insert(it, (void*) p);
-					ufvl_t.insert(ufvl_t.begin() + i, 'P');
-					ufvl_i.insert(ufvl_i.begin() + i, 1);
+					if(ename.abbreviation) ufvl_t.insert(ufvl_t.begin() + i, 'p');
+					else ufvl_t.insert(ufvl_t.begin() + i, 'P');
+					ufvl_i.insert(ufvl_i.begin() + i, i2);
 					break;
 				}
 				i++;
@@ -1205,85 +1200,7 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
 		} else if(l2 > 0) {
 			l2--;
 			ufv[0][l2].push_back((void*) p);
-			ufv_i[0][l2].push_back(1);
-		}
-	}
-	if(!p->shortName(false).empty()) {
-		l2 = p->shortName(false).length();
-		if(l2 > UFV_LENGTHS) {
-			size_t i = 0, l;
-			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
-				l = 0;
-				if(it != ufvl.end()) {
-					if(ufvl_t[i] == 'v')
-						l = ((Variable*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'f')
-						l = ((MathFunction*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'u')
-						l = ((Unit*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'p')
-						l = ((Prefix*) (*it))->shortName(false).length();
-					else if(ufvl_t[i] == 'P')
-						l = ((Prefix*) (*it))->longName(false).length();
-					else if(ufvl_t[i] == 'q')
-						l = ((Prefix*) (*it))->unicodeName(false).length();
-				}
-				if(it == ufvl.end()) {
-					ufvl.push_back((void*) p);
-					ufvl_t.push_back('p');
-					ufvl_i.push_back(1);
-					break;
-				} else if(l <= l2) {
-					ufvl.insert(it, (void*) p);
-					ufvl_t.insert(ufvl_t.begin() + i, 'p');
-					ufvl_i.insert(ufvl_i.begin() + i, 1);
-					break;
-				}
-				i++;
-			}
-		} else if(l2 > 0) {
-			l2--;
-			ufv[0][l2].push_back((void*) p);
-			ufv_i[0][l2].push_back(2);
-		}
-	}
-	if(!p->unicodeName(false).empty()) {
-		l2 = p->unicodeName(false).length();
-		if(l2 > UFV_LENGTHS) {
-			size_t i = 0, l;
-			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
-				l = 0;
-				if(it != ufvl.end()) {
-					if(ufvl_t[i] == 'v')
-						l = ((Variable*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'f')
-						l = ((MathFunction*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'u')
-						l = ((Unit*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'p')
-						l = ((Prefix*) (*it))->shortName(false).length();
-					else if(ufvl_t[i] == 'P')
-						l = ((Prefix*) (*it))->longName(false).length();
-					else if(ufvl_t[i] == 'q')
-						l = ((Prefix*) (*it))->unicodeName(false).length();
-				}
-				if(it == ufvl.end()) {
-					ufvl.push_back((void*) p);
-					ufvl_t.push_back('q');
-					ufvl_i.push_back(1);
-					break;
-				} else if(l <= l2) {
-					ufvl.insert(it, (void*) p);
-					ufvl_t.insert(ufvl_t.begin() + i, 'q');
-					ufvl_i.insert(ufvl_i.begin() + i, 1);
-					break;
-				}
-				i++;
-			}
-		} else if(l2 > 0) {
-			l2--;
-			ufv[0][l2].push_back((void*) p);
-			ufv_i[0][l2].push_back(3);
+			ufv_i[0][l2].push_back(i2);
 		}
 	}
 }
@@ -2365,18 +2282,10 @@ void Calculator::nameChanged(ExpressionItem *item, bool new_item) {
 			size_t i = 0, l = 0;
 			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
 				if(it != ufvl.end()) {
-					if(ufvl_t[i] == 'v')
-						l = ((Variable*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'f')
-						l = ((MathFunction*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'u')
-						l = ((Unit*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'p')
-						l = ((Prefix*) (*it))->shortName(false).length();
-					else if(ufvl_t[i] == 'P')
-						l = ((Prefix*) (*it))->longName(false).length();
-					else if(ufvl_t[i] == 'q')
-						l = ((Prefix*) (*it))->unicodeName(false).length();
+					if(ufvl_t[i] == 'v') l = ((Variable*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'f') l = ((MathFunction*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'u') l = ((Unit*) (*it))->getName(ufvl_i[i]).name.length();
+					else if(ufvl_t[i] == 'p' || ufvl_t[i] == 'P') l = ((Prefix*) (*it))->getName(ufvl_i[i]).name.length();
 				}
 				if(it == ufvl.end()) {
 					ufvl.push_back((void*) item);
@@ -2390,8 +2299,8 @@ void Calculator::nameChanged(ExpressionItem *item, bool new_item) {
 				} else {
 					if(l < l2
 					|| (item->type() == TYPE_VARIABLE && l == l2 && ufvl_t[i] == 'v')
-					|| (item->type() == TYPE_FUNCTION && l == l2 && (ufvl_t[i] != 'p' && ufvl_t[i] != 'P' && ufvl_t[i] != 'q'))
-					|| (item->type() == TYPE_UNIT && l == l2 && (ufvl_t[i] != 'p' && ufvl_t[i] != 'P' && ufvl_t[i] != 'q' && ufvl_t[i] != 'f'))
+					|| (item->type() == TYPE_FUNCTION && l == l2 && (ufvl_t[i] != 'p' && ufvl_t[i] != 'P'))
+					|| (item->type() == TYPE_UNIT && l == l2 && (ufvl_t[i] != 'p' && ufvl_t[i] != 'P' && ufvl_t[i] != 'f'))
 					) {
 						ufvl.insert(it, (void*) item);
 						switch(item->type()) {
