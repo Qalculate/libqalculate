@@ -4128,10 +4128,3 @@ msgstr "Вкл."
 #: ../libqalculate/util.cc:189
 msgid "Off"
 msgstr "Выкл."
-
-#~ msgid ""
-#~ "Calculations involving conversion of units without proportional linear "
-#~ "relationship might give unexpected results and is not recommended."
-#~ msgstr ""
-#~ "Расчеты, включающие преобразование единиц без пропорциональной линейной "
-#~ "зависимости, могут дать неожиданные результаты и не рекомендуются."
