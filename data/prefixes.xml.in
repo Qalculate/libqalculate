@@ -1,144 +1,115 @@
 <?xml version="1.0"?>
-<QALCULATE version="0.9.4">
+<QALCULATE version="3.19.0">
   <prefix type="decimal">
-    <_name>yocto</_name>
-    <abbreviation>y</abbreviation>
+    <_names>ar:y,r:yocto</_names>
     <exponent>-24</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>zepto</_name>
-    <abbreviation>z</abbreviation>
+    <_names>ar:z,r:zepto</_names>
     <exponent>-21</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>atto</_name>
-    <abbreviation>a</abbreviation>
+    <_names>ar:a,r:atto</_names>
     <exponent>-18</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>femto</_name>
-    <abbreviation>f</abbreviation>
+    <_names>ar:f,r:femto</_names>
     <exponent>-15</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>pico</_name>
-    <abbreviation>p</abbreviation>
+    <_names>ar:p,r:pico</_names>
     <exponent>-12</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>nano</_name>
-    <abbreviation>n</abbreviation>
+    <_names>ar:n,r:nano</_names>
     <exponent>-9</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>micro</_name>
-    <abbreviation>u</abbreviation>
-    <unicode>&#x3BC;</unicode>
+    <_names>aur:&#x3BC;,ar:u,r:micro</_names>
     <exponent>-6</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>milli</_name>
-    <abbreviation>m</abbreviation>
+    <_names>ar:m,r:milli</_names>
     <exponent>-3</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>centi</_name>
-    <abbreviation>c</abbreviation>
+    <_names>ar:c,r:centi</_names>
     <exponent>-2</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>deci</_name>
-    <abbreviation>d</abbreviation>
+    <_names>ar:d,r:deci</_names>
     <exponent>-1</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>deca</_name>
-    <abbreviation>da</abbreviation>
+    <_names>ar:da,r:deca</_names>
     <exponent>1</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>hecto</_name>
-    <abbreviation>h</abbreviation>
+    <_names>ar:h,r:hecto</_names>
     <exponent>2</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>kilo</_name>
-    <abbreviation>k</abbreviation>
+    <_names>ar:k,r:kilo</_names>
     <exponent>3</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>mega</_name>
-    <abbreviation>M</abbreviation>
+    <_names>ar:M,r:mega</_names>
     <exponent>6</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>giga</_name>
-    <abbreviation>G</abbreviation>
+    <_names>ar:G,r:giga</_names>
     <exponent>9</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>tera</_name>
-    <abbreviation>T</abbreviation>
+    <_names>ar:T,r:tera</_names>
     <exponent>12</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>peta</_name>
-    <abbreviation>P</abbreviation>
+    <_names>ar:P,r:peta</_names>
     <exponent>15</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>exa</_name>
-    <abbreviation>E</abbreviation>
+    <_names>ar:E,r:exa</_names>
     <exponent>18</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>zetta</_name>
-    <abbreviation>Z</abbreviation>
+    <_names>ar:z,r:zetta</_names>
     <exponent>21</exponent>
   </prefix>
   <prefix type="decimal">
-    <_name>yotta</_name>
-    <abbreviation>Y</abbreviation>
+    <_names>ar:Y,r:yotta</_names>
     <exponent>24</exponent>
   </prefix>
   <prefix type="binary">
-    <_name>kibi</_name>
-    <abbreviation>Ki</abbreviation>
+    <_names>ar:Ki,r:kibi</_names>
     <exponent>10</exponent>
   </prefix>
   <prefix type="binary">
-    <_name>mebi</_name>
-    <abbreviation>Mi</abbreviation>
+    <_names>ar:Mi,r:mebi</_names>
     <exponent>20</exponent>
   </prefix>
   <prefix type="binary">
-    <_name>gibi</_name>
-    <abbreviation>Gi</abbreviation>
+    <_names>ar:Gi,r:gibi</_names>
     <exponent>30</exponent>
   </prefix>
   <prefix type="binary">
-    <_name>tebi</_name>
-    <abbreviation>Ti</abbreviation>
+    <_names>ar:Ti,r:tebi</_names>
     <exponent>40</exponent>
   </prefix>
   <prefix type="binary">
-    <_name>pebi</_name>
-    <abbreviation>Pi</abbreviation>
+    <_names>ar:Pi,r:pebi</_names>
     <exponent>50</exponent>
   </prefix>
   <prefix type="binary">
-    <_name>exbi</_name>
-    <abbreviation>Ei</abbreviation>
+    <_names>ar:Ei,r:exbi</_names>
     <exponent>60</exponent>
   </prefix>
   <prefix type="binary">
-    <_name>zebi</_name>
-    <abbreviation>Zi</abbreviation>
+    <_names>ar:Zi,r:zebi</_names>
     <exponent>70</exponent>
   </prefix>
   <prefix type="binary">
-    <_name>yobi</_name>
-    <abbreviation>Yi</abbreviation>
+    <_names>ar:Yi,r:yobi</_names>
     <exponent>80</exponent>
   </prefix>
 </QALCULATE>

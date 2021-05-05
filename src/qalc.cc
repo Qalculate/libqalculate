@@ -1516,10 +1516,18 @@ bool name_matches(ExpressionItem *item, const string &str) {
 	}
 	return false;
 }
-bool name_matches(Prefix *prefix, const string &str) {
-	if(str == prefix->unicodeName(false).substr(0, str.length())) return true;
-	if(str == prefix->shortName(false).substr(0, str.length())) return true;
-	if(equalsIgnoreCase(str, prefix->longName(false, false), 0, str.length(), 0)) return true;
+bool name_matches(Prefix *item, const string &str) {
+	for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
+		if(item->getName(i2).case_sensitive) {
+			if(str == item->getName(i2).name.substr(0, str.length())) {
+				return true;
+			}
+		} else {
+			if(equalsIgnoreCase(str, item->getName(i2).name, 0, str.length(), 0)) {
+				return true;
+			}
+		}
+	}
 	return false;
 }
 bool country_matches(Unit *u, const string &str, size_t minlength = 0) {
@@ -1603,11 +1611,21 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 				if(i2 == 3) {
 					if(name_matches(CALCULATOR->prefixes[i], search_str)) {
 						Prefix *prefix = CALCULATOR->prefixes[i];
-						name_str = "";
-						if(printops.use_unicode_signs && !prefix->unicodeName(false).empty()) name_str += prefix->unicodeName(false);
-						if(!prefix->shortName(false, false).empty()) {if(!name_str.empty()) name_str += " / "; name_str += prefix->shortName(false, false);}
-						if(!prefix->longName(false, false).empty()) {if(!name_str.empty()) name_str += " / "; name_str += prefix->longName();}
+						const ExpressionName &ename1 = prefix->preferredInputName(false, false);
+						name_str = ename1.name;
+						size_t name_i = 1;
+						while(true) {
+							const ExpressionName &ename = prefix->getName(name_i);
+							if(ename == empty_expression_name) break;
+							if(ename != ename1 && !ename.avoid_input && !ename.plural && (!ename.unicode || printops.use_unicode_signs) && !ename.completion_only) {
+								name_str += " / ";
+								name_str += ename.name;
+							}
+							name_i++;
+						}
 						if((int) name_str.length() > max_l) max_l = name_str.length();
+						name_list.push_front(name_str);
+						name_str = "";
 						name_list.push_front(name_str);
 					}
 				} else if((!item->isHidden() || (i2 == 2 && ((Unit*) item)->isCurrency())) && item->isActive() && (i2 != 2 || (item->subtype() != SUBTYPE_COMPOSITE_UNIT)) && (list_type != 'c' || ((Unit*) item)->isCurrency())) {
@@ -1827,10 +1845,18 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 			else if(list_type == 'c') item = CALCULATOR->units[i];
 			if(list_type == 'p') {
 				Prefix *prefix = CALCULATOR->prefixes[i];
-				name_str = "";
-				if(printops.use_unicode_signs && !prefix->unicodeName(false).empty()) name_str += prefix->unicodeName(false);
-				if(!prefix->shortName(false, false).empty()) {if(!name_str.empty()) name_str += " / "; name_str += prefix->shortName(false, false);}
-				if(!prefix->longName(false, false).empty()) {if(!name_str.empty()) name_str += " / "; name_str += prefix->longName();}
+				const ExpressionName &ename1 = prefix->preferredInputName(false, false);
+				name_str = ename1.name;
+				size_t name_i = 1;
+				while(true) {
+					const ExpressionName &ename = prefix->getName(name_i);
+					if(ename == empty_expression_name) break;
+					if(ename != ename1 && !ename.avoid_input && !ename.plural && (!ename.unicode || printops.use_unicode_signs) && !ename.completion_only) {
+						name_str += " / ";
+						name_str += ename.name;
+					}
+					name_i++;
+				}
 				if((int) name_str.length() > max_l) max_l = name_str.length();
 				name_list.push_front(name_str);
 			} else if((!item->isHidden() || list_type == 'c') && item->isActive() && (list_type != 'u' || (item->subtype() != SUBTYPE_COMPOSITE_UNIT && ((Unit*) item)->baseUnit() != CALCULATOR->getUnitById(UNIT_ID_EURO))) && (list_type != 'c' || ((Unit*) item)->isCurrency())) {
@@ -4135,11 +4161,15 @@ int main(int argc, char *argv[]) {
 					FPUTS_UNICODE(_("Prefix"), stdout);
 					CHECK_IF_SCREEN_FILLED_PUTS("");
 					PRINT_AND_COLON_TABS_INFO(_("Names"));
-					string names;
-					if(printops.use_unicode_signs && !prefix->unicodeName(false).empty()) names += prefix->unicodeName(false);
-					if(!prefix->shortName(false, false).empty()) {if(!names.empty()) names += " / "; names += prefix->shortName(false, false);}
-					if(!prefix->longName(false, false).empty()) {if(!names.empty()) names += " / "; names += prefix->longName();}
-					CHECK_IF_SCREEN_FILLED_PUTS(names.c_str());
+					const ExpressionName *ename = &prefix->preferredName(true, printops.use_unicode_signs);
+					FPUTS_UNICODE(ename->name.c_str(), stdout);
+					for(size_t i2 = 1; i2 <= prefix->countNames(); i2++) {
+						if(&prefix->getName(i2) != ename && !prefix->getName(i2).completion_only) {
+							fputs(" / ", stdout);
+							FPUTS_UNICODE(prefix->getName(i2).name.c_str(), stdout);
+						}
+					}
+					CHECK_IF_SCREEN_FILLED_PUTS("");
 					PRINT_AND_COLON_TABS_INFO(_("Value"));
 					fputs(prefix->value().print().c_str(), stdout);
 					if(prefix->type() == PREFIX_BINARY) {
@@ -5441,33 +5471,39 @@ bool ask_dot() {
 	puts("");
 	FPUTS_UNICODE(_("Dot interpretation"), stdout);
 	dot_question_asked = true;
+	while(true) {
 #ifdef HAVE_LIBREADLINE
-	char *rlbuffer = readline(": ");
-	if(!rlbuffer) return false;
-	string svalue = rlbuffer;
-	free(rlbuffer);
+		char *rlbuffer = readline(": ");
+		if(!rlbuffer) return false;
+		string svalue = rlbuffer;
+		free(rlbuffer);
 #else
-	fputs(": ", stdout);
-	if(!fgets(buffer, 1000, stdin)) return false;
-	string svalue = buffer;
+		fputs(": ", stdout);
+		if(!fgets(buffer, 1000, stdin)) return false;
+		string svalue = buffer;
 #endif
-	remove_blank_ends(svalue);
-	int v = -1;
-	if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
-		v = s2i(svalue);
-	}
-	bool das = evalops.parse_options.dot_as_separator;
-	if(v == 2) {
-		evalops.parse_options.dot_as_separator = false;
-		evalops.parse_options.comma_as_separator = false;
-		CALCULATOR->useDecimalPoint(false);
-		return true;
-	} else if(v == 1) {
-		evalops.parse_options.dot_as_separator = true;
-		return !das;
-	} else if(v == 0) {
-		evalops.parse_options.dot_as_separator = false;
-		return das;
+		remove_blank_ends(svalue);
+		int v = -1;
+		if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		} else if(svalue.empty()) {
+			v = 0;
+		}
+		bool das = evalops.parse_options.dot_as_separator;
+		if(v == 2) {
+			evalops.parse_options.dot_as_separator = false;
+			evalops.parse_options.comma_as_separator = false;
+			CALCULATOR->useDecimalPoint(false);
+			return true;
+		} else if(v == 1) {
+			evalops.parse_options.dot_as_separator = true;
+			return !das;
+		} else if(v == 0) {
+			evalops.parse_options.dot_as_separator = false;
+			return das;
+		} else {
+			FPUTS_UNICODE(_("Dot interpretation"), stdout);
+		}
 	}
 	return false;
 }
@@ -6565,7 +6601,7 @@ void load_preferences() {
 					if(v == 0) CALCULATOR->useDecimalPoint(evalops.parse_options.comma_as_separator);
 					else if(v > 0) CALCULATOR->useDecimalComma();
 				} else if(svar == "dot_as_separator") {
-					if(v < 0 || (CALCULATOR->default_dot_as_separator == v && (version_numbers[0] < 3 || (version_numbers[0] == 3 && version_numbers[1] < 19) || (version_numbers[0] == 3 && version_numbers[1] == 18 && version_numbers[2] < 1)))) {
+					if(v < 0 || (CALCULATOR->default_dot_as_separator == v && (version_numbers[0] < 3 || (version_numbers[0] == 3 && version_numbers[1] < 18) || (version_numbers[0] == 3 && version_numbers[1] == 18 && version_numbers[2] < 1)))) {
 						evalops.parse_options.dot_as_separator = CALCULATOR->default_dot_as_separator;
 						dot_question_asked = false;
 					} else {
