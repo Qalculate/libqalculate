@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-05 11:09+0200\n"
+"POT-Creation-Date: 2021-05-11 18:21+0200\n"
 "PO-Revision-Date: 2021-04-17 21:25+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -8185,7 +8185,7 @@ msgid "ar:E,r:exa"
 msgstr "艾"
 
 #: ../data/prefixes.xml.in.h:19
-msgid "ar:z,r:zetta"
+msgid "ar:Z,r:zetta"
 msgstr "泽"
 
 #: ../data/prefixes.xml.in.h:20

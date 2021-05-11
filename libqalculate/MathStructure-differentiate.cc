@@ -256,7 +256,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 					multiply_nocopy(m2);
 				}
 			} else if(o_function->id() == FUNCTION_ID_INCOMPLETE_BETA && SIZE == 3 && CHILD(0).containsRepresentativeOf(x_var, true, true) != 0 && CHILD(1).containsRepresentativeOf(x_var, true, true) == 0 && CHILD(2).containsRepresentativeOf(x_var, true, true) == 0) {
-				// beta(f,a,b)')=f^(a-1)*(1-f)^(b-1)*f'
+				// betainc(f,a,b)'=f^(a-1)*(1-f)^(b-1)*f'/beta(a,b)
 				MathStructure *mbeta = new MathStructure(*this);
 				mbeta->setFunctionId(FUNCTION_ID_BETA);
 				mbeta->delChild(1);

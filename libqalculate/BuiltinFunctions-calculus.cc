@@ -289,6 +289,61 @@ bool IGammaFunction::representsReal(const MathStructure &vargs, bool) const {ret
 bool IGammaFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 2 && (vargs[1].representsNonNegative() || (vargs[0].representsInteger() && vargs[0].representsNonNegative()));}
 bool IGammaFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 2 && (vargs[1].representsNonZero() || vargs[0].representsPositive());}
 int IGammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[1].isZero() && vargs[0].number().realPartIsPositive()) {
+		mstruct = vargs[0];
+		mstruct.transformById(FUNCTION_ID_GAMMA);
+		return 1;
+	} else if(vargs[0].isOne()) {
+		mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_E));
+		mstruct ^= vargs[1];
+		mstruct.last().negate();
+		return 1;
+#if MPFR_VERSION_MAJOR < 4
+	} else {
+#else
+	} else if(eo.approximation == APPROXIMATION_EXACT) {
+#endif
+		if(vargs[0].number() == nr_half) {
+			mstruct = vargs[1];
+			mstruct ^= nr_half;
+			mstruct.transformById(FUNCTION_ID_ERFC);
+			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			mstruct.last() ^= nr_half;
+			return 1;
+		} else if(vargs[0].number().isTwo() && !vargs[1].isApproximate()) {
+			mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_E));
+			mstruct ^= vargs[1];
+			mstruct.last().negate();
+			mstruct *= vargs[1];
+			mstruct.last() += m_one;
+			return 1;
+		} else if(vargs[0].number().isInteger() && !vargs[1].isApproximate() && vargs[0].number() > 2 && vargs[0].number() < 1000) {
+			Number s_fac(vargs[0].number());
+			s_fac.subtract(1);
+			s_fac.factorial();
+			if(!s_fac.isApproximate()) {
+				Number nr_fac(1, 1, 0);
+				Number nr_i(1, 1, 0);
+				Number nr_x;
+				Number nr(1, 1, 0);
+				bool b = true;
+				while(nr_i < vargs[0].number()) {
+					if(CALCULATOR->aborted()) {b = false; break;}
+					nr_x = vargs[1].number();
+					if(!nr_x.raise(nr_i) || !nr_fac.multiply(nr_i) || !nr_x.divide(nr_fac) || nr_x.isApproximate() || !nr.add(nr_x)) {b = false; break;}
+					nr_i++;
+				}
+				if(b) {
+					mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_E));
+					mstruct ^= vargs[1];
+					mstruct.last().negate();
+					mstruct *= s_fac;
+					mstruct *= nr;
+					return 1;
+				}
+			}
+		}
+	}
 	FR_FUNCTION_2(igamma)
 }
 
