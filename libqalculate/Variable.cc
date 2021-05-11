@@ -29,7 +29,7 @@ bool Assumptions::isNegative() {return i_sign == ASSUMPTION_SIGN_NEGATIVE || (fm
 bool Assumptions::isNonNegative() {return i_type == ASSUMPTION_TYPE_BOOLEAN || i_sign == ASSUMPTION_SIGN_NONNEGATIVE || i_sign == ASSUMPTION_SIGN_POSITIVE || (fmin && fmin->isNonNegative());}
 bool Assumptions::isNonPositive() {return i_sign == ASSUMPTION_SIGN_NONPOSITIVE || i_sign == ASSUMPTION_SIGN_NEGATIVE || (fmax && fmax->isNonPositive());}
 bool Assumptions::isInteger() {return i_type >= ASSUMPTION_TYPE_INTEGER;}
-bool Assumptions::isBoolean() {return i_type == ASSUMPTION_TYPE_BOOLEAN;}
+bool Assumptions::isBoolean() {return i_type == ASSUMPTION_TYPE_BOOLEAN || (i_type == ASSUMPTION_TYPE_INTEGER && fmin && fmax && fmin->isZero() && fmax->isOne());}
 bool Assumptions::isNumber() {return i_type >= ASSUMPTION_TYPE_NUMBER || fmin || fmax;}
 bool Assumptions::isRational() {return i_type >= ASSUMPTION_TYPE_RATIONAL;}
 bool Assumptions::isReal() {return i_type >= ASSUMPTION_TYPE_REAL || (fmin && !fmin->hasImaginaryPart()) || (fmax && !fmax->hasImaginaryPart());}
@@ -52,7 +52,7 @@ void Assumptions::setType(AssumptionType ant) {
 }
 void Assumptions::setSign(AssumptionSign as) {
 	i_sign = as;
-	if(i_type <= ASSUMPTION_TYPE_COMPLEX && i_sign != ASSUMPTION_SIGN_NONZERO && i_sign != ASSUMPTION_SIGN_UNKNOWN) {
+	if((i_type == ASSUMPTION_TYPE_BOOLEAN && i_sign != ASSUMPTION_SIGN_UNKNOWN) || (i_type <= ASSUMPTION_TYPE_COMPLEX && i_sign != ASSUMPTION_SIGN_NONZERO && i_sign != ASSUMPTION_SIGN_UNKNOWN)) {
 		i_type = ASSUMPTION_TYPE_REAL;
 	}
 }
@@ -64,7 +64,7 @@ void Assumptions::setMin(const Number *nmin) {
 		}
 		return;
 	}
-	if(i_type <= ASSUMPTION_TYPE_NONMATRIX) i_type = ASSUMPTION_TYPE_NUMBER;
+	if(i_type <= ASSUMPTION_TYPE_COMPLEX || i_type == ASSUMPTION_TYPE_BOOLEAN) i_type = ASSUMPTION_TYPE_REAL;
 	if(!fmin) {
 		fmin = new Number(*nmin);
 	} else {
@@ -87,7 +87,7 @@ void Assumptions::setMax(const Number *nmax) {
 		}
 		return;
 	}
-	if(i_type <= ASSUMPTION_TYPE_NONMATRIX) i_type = ASSUMPTION_TYPE_NUMBER;
+	if(i_type <= ASSUMPTION_TYPE_COMPLEX || i_type == ASSUMPTION_TYPE_BOOLEAN) i_type = ASSUMPTION_TYPE_REAL;
 	if(!fmax) {
 		fmax = new Number(*nmax);
 	} else {
