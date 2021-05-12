@@ -4716,7 +4716,6 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 				if(CHILD(1).isZero()) {
 					CHILD(0).setToChild(1, true);
-					CHILD(1).clear(true);
 					if(ct_comp == COMPARISON_NOT_EQUALS) ct_comp = COMPARISON_EQUALS;
 					else ct_comp = COMPARISON_NOT_EQUALS;
 					return true;

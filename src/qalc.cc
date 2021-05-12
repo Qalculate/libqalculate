@@ -2237,6 +2237,15 @@ int main(int argc, char *argv[]) {
 	vans[2] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(CALCULATOR->temporaryCategory(), ans_str + "3", m_undefined, _("Answer 3"), false));
 	vans[3] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(CALCULATOR->temporaryCategory(), ans_str + "4", m_undefined, _("Answer 4"), false));
 	vans[4] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(CALCULATOR->temporaryCategory(), ans_str + "5", m_undefined, _("Answer 5"), false));
+	if(ans_str != "ans") {
+		ans_str = "ans";
+		vans[0]->addName(ans_str);
+		vans[0]->addName(ans_str + "1");
+		vans[1]->addName(ans_str + "2");
+		vans[2]->addName(ans_str + "3");
+		vans[3]->addName(ans_str + "4");
+		vans[4]->addName(ans_str + "5");
+	}
 	v_memory = new KnownVariable(CALCULATOR->temporaryCategory(), "", m_zero, _("Memory"), true, true);
 	ExpressionName ename;
 	ename.name = "MR";

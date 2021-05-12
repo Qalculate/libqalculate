@@ -487,7 +487,10 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 						if(i == 1 || ct2 == COMPARISON_RESULT_UNKNOWN) ct = COMPARISON_RESULT_EQUAL;
 						else ct = y_vectors[serie].getChild(i - 1)->number().compare(y_vectors[serie].getChild(i)->number());
 						if((ct == COMPARISON_RESULT_GREATER || ct == COMPARISON_RESULT_LESS) && (ct1 == COMPARISON_RESULT_GREATER || ct1 == COMPARISON_RESULT_LESS) && (ct2 == COMPARISON_RESULT_GREATER || ct2 == COMPARISON_RESULT_LESS) && ct1 != ct2 && ct != ct2) {
-							if(last_index2 != string::npos) plot_data.insert(last_index2 + 1, "  \n");
+							if(last_index2 != string::npos) {
+								plot_data.insert(last_index2 + 1, "  \n");
+								last_index += 3;
+							}
 						}
 					}
 					if(b_imagzero_x) plot_data += y_vectors[serie].getChild(i)->number().realPart().print(po);
