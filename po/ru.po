@@ -4022,7 +4022,7 @@ msgstr "Земля"
 
 #: ../libqalculate/QalculateDateTime.cc:35
 msgid "Metal"
-msgstr "Метал"
+msgstr "Металл"
 
 #: ../libqalculate/QalculateDateTime.cc:35
 msgid "Water"
