@@ -202,7 +202,7 @@ const ExpressionName &ExpressionItem::preferredName(bool abbreviation, bool use_
 			if(names[i].unicode) index = i;
 		}
 	}
-	if(use_unicode && names[index].unicode && can_display_unicode_string_function && !((*can_display_unicode_string_function) (names[index].name.c_str(), can_display_unicode_string_arg))) {
+	if(use_unicode && index >= 0 && names[index].unicode && can_display_unicode_string_function && !((*can_display_unicode_string_function) (names[index].name.c_str(), can_display_unicode_string_arg))) {
 		return preferredName(abbreviation, false, plural, reference, can_display_unicode_string_function, can_display_unicode_string_arg);
 	}
 	if(index >= 0) return names[index];
@@ -235,7 +235,7 @@ const ExpressionName &ExpressionItem::preferredInputName(bool abbreviation, bool
 			if(names[i].unicode) index = i;
 		}
 	}
-	if(use_unicode && names[index].unicode && can_display_unicode_string_function && !((*can_display_unicode_string_function) (names[index].name.c_str(), can_display_unicode_string_arg))) {
+	if(use_unicode && index >= 0 && names[index].unicode && can_display_unicode_string_function && !((*can_display_unicode_string_function) (names[index].name.c_str(), can_display_unicode_string_arg))) {
 		return preferredInputName(abbreviation, false, plural, reference, can_display_unicode_string_function, can_display_unicode_string_arg);
 	}
 	if(index >= 0) return names[index];
