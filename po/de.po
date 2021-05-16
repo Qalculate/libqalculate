@@ -29,6 +29,8 @@ msgid ""
 "Retrieves data from the %s data set for a given object and property. If "
 "\"info\" is typed as property, all properties of the object will be listed."
 msgstr ""
+"Ruft Daten aus dem %s-Datensatz für ein angegebenes Objekt und eine Eigenschaft ab. Wenn "
+"\"info" als Eigenschaft eingegeben wird, werden alle Eigenschaften des Objekts aufgelistet."
 
 #: ../src/defs2doc.cc:363 ../src/qalc.cc:3846
 msgid "Example:"
