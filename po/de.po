@@ -874,7 +874,7 @@ msgstr "wissenschaftlich"
 
 #: ../src/qalc.cc:1129 ../src/qalc.cc:3579 ../src/qalc.cc:4334
 msgid "engineering"
-msgstr "Entwicklung"
+msgstr "technisch"
 
 #: ../src/qalc.cc:1138 ../src/qalc.cc:3422 ../src/qalc.cc:4232
 msgid "precision"
@@ -1426,7 +1426,7 @@ msgstr "hoch"
 
 #: ../src/qalc.cc:2886
 msgid "down"
-msgstr "unter"
+msgstr "runter"
 
 #. qalc command
 #: ../src/qalc.cc:2893 ../src/qalc.cc:2900 ../src/qalc.cc:3715
