@@ -35,6 +35,7 @@ dnl  -------------------------------
 
 AC_PROG_CC
 AC_PROG_CXX
+AX_PROG_CXX_FOR_BUILD
 AC_PROG_LN_S
 AC_PROG_EGREP
 
