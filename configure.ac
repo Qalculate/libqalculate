@@ -133,6 +133,9 @@ AC_ARG_WITH([gnuplot-call], AS_HELP_STRING([--without-gnuplot-call], [disable su
 AS_IF([test "x$with_gnuplot_call" = "xyes"], [
 	AC_DEFINE([HAVE_GNUPLOT_CALL], [1], [Call to external gnuplot])
 ])
+AS_IF([test "x$with_gnuplot_call" = "xbyo"], [
+	AC_DEFINE([HAVE_BYO_GNUPLOT], [1], [Call to gnuplot using a provided function])
+])
 
 PKG_CHECK_MODULES(LIBXML, [libxml-2.0 >= 2.3.8])
 AC_SUBST(LIBXML_CFLAGS)
