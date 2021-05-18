@@ -3294,7 +3294,7 @@ msgstr "Комбинаторика"
 
 #: ../data/functions.xml.in.h:133
 msgid "Factorial"
-msgstr "Factorial"
+msgstr "Факториал"
 
 #: ../data/functions.xml.in.h:134
 msgid ""
