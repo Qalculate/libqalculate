@@ -4261,7 +4261,7 @@ int main(int argc, char *argv[]) {
 
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Calculation"));
 
-				STR_AND_TABS_3(_("angle unit"), "angle", "Default angle unit for trigonometric functions.", evalops.parse_options.angle_unit, _("none"), _("radians"), _("degrees"), _("gradians"));
+				STR_AND_TABS_3(_("angle unit"), "angle", _("Default angle unit for trigonometric functions."), evalops.parse_options.angle_unit, _("none"), _("radians"), _("degrees"), _("gradians"));
 				int appr = evalops.approximation;
 				if(dual_approximation < 0) appr = -1;
 				else if(dual_approximation > 0) appr = 3;
