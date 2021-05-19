@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-05 10:56+0200\n"
+"POT-Creation-Date: 2021-05-19 07:52+0200\n"
 "PO-Revision-Date: 2020-12-02 13:25+0100\n"
 "Last-Translator: Polakrity\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -8190,8 +8190,9 @@ msgid "ar:E,r:exa"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:19
-msgid "ar:z,r:zetta"
-msgstr ""
+#, fuzzy
+msgid "ar:Z,r:zetta"
+msgstr "a:Zi,zébi"
 
 #: ../data/prefixes.xml.in.h:20
 msgid "ar:Y,r:yotta"
