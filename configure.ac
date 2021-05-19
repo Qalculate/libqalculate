@@ -35,6 +35,7 @@ dnl  -------------------------------
 
 AC_PROG_CC
 AC_PROG_CXX
+AX_PROG_CXX_FOR_BUILD
 AC_PROG_LN_S
 AC_PROG_EGREP
 
@@ -132,6 +133,9 @@ AS_IF([test "x$with_icu" = "xyes"], [
 AC_ARG_WITH([gnuplot-call], AS_HELP_STRING([--without-gnuplot-call], [disable support for invocation of external gnuplot binary (using popen)]), [], [with_gnuplot_call=yes])
 AS_IF([test "x$with_gnuplot_call" = "xyes"], [
 	AC_DEFINE([HAVE_GNUPLOT_CALL], [1], [Call to external gnuplot])
+])
+AS_IF([test "x$with_gnuplot_call" = "xbyo"], [
+	AC_DEFINE([HAVE_BYO_GNUPLOT], [1], [Call to gnuplot using a provided function])
 ])
 
 PKG_CHECK_MODULES(LIBXML, [libxml-2.0 >= 2.3.8])
