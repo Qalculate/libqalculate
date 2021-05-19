@@ -238,8 +238,9 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 #else
 #	ifdef HAVE_BYO_GNUPLOT
 	homedir = qalc_gnuplot_data_dir();
-#	endif
+#	else
 	return false;
+#	endif
 #endif
 
 	string commandline_extra;
