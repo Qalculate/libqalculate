@@ -1,3 +1,35 @@
+2021-05-19 leveltrauma <rhade_tm@t-online.de>
+
+	* German translation
+
+2021-05-19 Noah <33094578+coolreader18@users.noreply.github.com>
+
+	* Add "BYO Gnuplot" functionality
+
+2021-05-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Integration of x^a*b^(cx^d) (when a is not an integer)
+
+2021-05-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Exact calculation of igamma() in some cases
+
+2021-05-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Make prefix names more flexible (as other objects), primarily for translations
+
+2021-05-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix handling of translated definitions with more than one row (primarily translated function descriptions)
+
+2021-04-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add dot() function for vector dot product and disable dot product using multiplication operator or implicit multiplication
+
+2021-04-25 Damir Islamov <damir@clearscale.net>
+
+	* Russian translation
+
 2021-04-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* secantsolve() function for solving equations using secant method
@@ -6,7 +38,7 @@
 2021-04-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Inverse of chi-square cumulative distribution
-	* Improve simplification of logical expressions (boolean alebra)
+	* Improve simplification of logical expressions (boolean algebra)
 	* Add boolean assumptions type for unknown variables
 	* Add nand and nor operators
 	* Add spelled out version of logical not operator ("not")

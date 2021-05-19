@@ -6043,9 +6043,76 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 					}
 				} else if(CHILD(1).isPower() && ((CHILD(1)[0].isNumber() && !CHILD(1)[0].number().isOne()) || (!CHILD(1)[0].isNumber() && CHILD(1)[0].containsRepresentativeOf(x_var, true, true) == 0))) {
 					MathStructure mexp(1, 1, 0);
-					if(CHILD(0).isPower() && CHILD(0)[0] == x_var && CHILD(0)[1].isInteger()) mexp = CHILD(0)[1];
-					else if(CHILD(0) != x_var) CANNOT_INTEGRATE;
 					MathStructure madd, mmul, mpow;
+					if(CHILD(0).isPower() && CHILD(0)[0] == x_var) {
+						mexp = CHILD(0)[1];
+						if(!mexp.isInteger()) {
+							if(integrate_info(CHILD(1)[1], x_var, madd, mmul, mpow, false, false)) {
+								if(!madd.isZero()) {
+									madd ^= CHILD(1)[0];
+									madd.swapChildren(1, 2);
+								}
+								if(mpow.isOne() && CHILD(1)[0].isVariable() && CHILD(1)[0].variable()->id() == VARIABLE_ID_E) {
+									setToChild(1, true);
+									setToChild(2, true);
+									if(mmul.isMinusOne()) {
+										add(m_one);
+										transformById(FUNCTION_ID_I_GAMMA);
+										addChild(x_var);
+										negate();
+										if(!madd.isZero()) multiply(madd);
+										return true;
+									} else {
+										add(m_one);
+										transformById(FUNCTION_ID_I_GAMMA);
+										addChild(x_var);
+										CHILD(1) *= mmul;
+										CHILD(1).negate();
+										multiply(x_var);
+										LAST ^= mexp;
+										multiply(x_var);
+										LAST *= mmul;
+										LAST.negate();
+										LAST ^= mexp;
+										LAST.last().negate();
+										divide(mmul);
+										if(!madd.isZero()) multiply(madd);
+										return true;
+									}
+								} else {
+									MathStructure mlog(1, 1, 0);
+									if(!CHILD(1)[0].isVariable() || CHILD(1)[0].variable()->id() != VARIABLE_ID_E) mlog.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(1)[0], NULL);
+									setToChild(1, true);
+									setToChild(2, true);
+									add(m_one);
+									if(!mpow.isOne()) divide(mpow);
+									transformById(FUNCTION_ID_I_GAMMA);
+									addChild(x_var);
+									if(!mpow.isOne()) CHILD(1) ^= mpow;
+									if(!mmul.isOne()) CHILD(1) *= mmul;
+									if(!mlog.isOne()) CHILD(1) *= mlog;
+									CHILD(1).negate();
+									multiply(x_var);
+									LAST ^= mexp;
+									LAST.last() += m_one;
+									multiply(x_var);
+									if(!mpow.isOne()) LAST ^= mpow;
+									if(!mmul.isOne()) LAST *= mmul;
+									if(!mlog.isOne()) LAST *= mlog;
+									LAST.negate();
+									LAST ^= mexp;
+									LAST.last() += m_one;
+									LAST.last().negate();
+									if(!mpow.isOne()) LAST.last().divide(mpow);
+									negate();
+									if(!mpow.isOne()) divide(mpow);
+									if(!madd.isZero()) multiply(madd);
+									return true;
+								}
+							}
+							CANNOT_INTEGRATE;
+						}
+					} else if(CHILD(0) != x_var) CANNOT_INTEGRATE;
 					if(mexp.number() < 100 && mexp.number() > -100 && integrate_info(CHILD(1)[1], x_var, madd, mmul, mpow, false, false) && mpow.isInteger()) {
 						bool b_e = CHILD(1)[0].isVariable() && CHILD(1)[0].variable()->id() == VARIABLE_ID_E;
 						if(b_e || CHILD(1)[0].isNumber() || warn_about_assumed_not_value(CHILD(1)[0], m_one, eo)) {

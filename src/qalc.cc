@@ -1726,7 +1726,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 						}
 						if(!((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
 							value += " ";
-							value += CALCULATOR->localizeExpression(((KnownVariable*) v)->unit(), pa);
+							value += ((KnownVariable*) v)->unit();
 						}
 						if(value.length() > 40) {
 							value = value.substr(0, 30);
@@ -4152,9 +4152,9 @@ int main(int argc, char *argv[]) {
 								addLineBreaks(value, cols, true, unicode_length(value_pre) + tabs, unicode_length(value_pre) + tabs);
 								CHECK_IF_SCREEN_FILLED_PUTS(value.c_str());
 							}
-							if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->unit().empty()) {
+							if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
 								PRINT_AND_COLON_TABS_INFO(_("Unit"));
-								CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(((KnownVariable*) v)->unit(), pa).c_str())
+								CHECK_IF_SCREEN_FILLED_PUTS(((KnownVariable*) v)->unit().c_str())
 							}
 							if(!item->description().empty()) {
 								fputs("\n", stdout);
@@ -5502,6 +5502,7 @@ bool ask_dot() {
 		if(v == 2) {
 			evalops.parse_options.dot_as_separator = false;
 			evalops.parse_options.comma_as_separator = false;
+			b_decimal_comma = false;
 			CALCULATOR->useDecimalPoint(false);
 			return true;
 		} else if(v == 1) {
@@ -6378,7 +6379,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {3, 18, 0};
+	int version_numbers[] = {3, 19, 0};
 
 	if(file) {
 		char line[10000];
@@ -6712,7 +6713,7 @@ bool save_preferences(bool mode) {
 		return false;
 	}
 	fprintf(file, "\n[General]\n");
-	fprintf(file, "version=%s\n", "3.18.1");
+	fprintf(file, "version=%s\n", VERSION);
 	fprintf(file, "save_mode_on_exit=%i\n", save_mode_on_exit);
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
 	fprintf(file, "ignore_locale=%i\n", ignore_locale);
