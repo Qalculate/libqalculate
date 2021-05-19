@@ -539,9 +539,9 @@ static string getGnuplotTempDir() {
 	return homedir;
 }
 bool Calculator::invokeGnuplot(vector<std::pair<string, string>> data_files, string commands, string commandline_extra, bool persistent) {
-	for (auto [fname, data] : data_files) {
-		FILE* fdata = fopen(fname.c_str(), "w+");
-		fputs(data.c_str(), fdata);
+	for(size_t i = 0; i < data_files.size(); i++) {
+		FILE* fdata = fopen(data_files[i].first.c_str(), "w+");
+		fputs(data_files[i].second.c_str(), fdata);
 		fflush(fdata);
 		fclose(fdata);
 	}

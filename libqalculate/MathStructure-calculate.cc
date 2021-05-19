@@ -3987,12 +3987,12 @@ int MathStructure::merge_logical_and(MathStructure &mstruct, const EvaluationOpt
 	if(isLogicalNot() && CHILD(0) == mstruct) {
 		clear(true);
 		MERGE_APPROX_AND_PREC(mstruct)
-		return 3;
+		return 1;
 	}
 	if(mstruct.isLogicalNot() && equals(mstruct[0])) {
 		clear(true);
 		MERGE_APPROX_AND_PREC(mstruct)
-		return 3;
+		return 1;
 	}
 
 	if(CALCULATOR->aborted()) return -1;
@@ -4334,17 +4334,18 @@ int MathStructure::merge_logical_or(MathStructure &mstruct, const EvaluationOpti
 		return 3;
 	}
 	if(equals(mstruct, true, true)) {
+		MERGE_APPROX_AND_PREC(mstruct)
 		return 2;
 	}
 	if(isLogicalNot() && CHILD(0) == mstruct) {
 		set(1, 1, 0, true);
 		MERGE_APPROX_AND_PREC(mstruct)
-		return 3;
+		return 1;
 	}
 	if(mstruct.isLogicalNot() && equals(mstruct[0])) {
 		set(1, 1, 0, true);
 		MERGE_APPROX_AND_PREC(mstruct)
-		return 3;
+		return 1;
 	}
 	if(isLogicalAnd()) {
 		if(mstruct.isLogicalAnd()) {
@@ -4689,14 +4690,14 @@ int MathStructure::merge_logical_xor(MathStructure &mstruct, const EvaluationOpt
 	int b0, b1;
 	if(isZero()) {
 		b0 = 0;
-	} else if(representsNonZero(true)) {
+	} else if(representsNonZero()) {
 		b0 = 1;
 	} else {
 		b0 = -1;
 	}
 	if(mstruct.isZero()) {
 		b1 = 0;
-	} else if(mstruct.representsNonZero(true)) {
+	} else if(mstruct.representsNonZero()) {
 		b1 = 1;
 	} else {
 		b1 = -1;
@@ -4725,6 +4726,7 @@ int MathStructure::merge_logical_xor(MathStructure &mstruct, const EvaluationOpt
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
 	}
+
 	MathStructure *mstruct2 = new MathStructure(*this);
 	add(mstruct, OPERATION_LOGICAL_AND);
 	LAST.calculateLogicalNot(eo);
@@ -4762,7 +4764,6 @@ int MathStructure::merge_bitwise_and(MathStructure &mstruct, const EvaluationOpt
 		return 2;
 	}
 	if(mstruct.isZero() && representsScalar()) {
-		if(isZero()) return 2;
 		clear(true);
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 3;
@@ -4774,12 +4775,12 @@ int MathStructure::merge_bitwise_and(MathStructure &mstruct, const EvaluationOpt
 	if((isBitwiseNot() || isLogicalNot()) && CHILD(0) == mstruct && mstruct.representsScalar()) {
 		clear(true);
 		MERGE_APPROX_AND_PREC(mstruct)
-		return 3;
+		return 1;
 	}
 	if((mstruct.isBitwiseNot() || mstruct.isLogicalNot()) && equals(mstruct[0]) && representsScalar()) {
 		clear(true);
 		MERGE_APPROX_AND_PREC(mstruct)
-		return 3;
+		return 1;
 	}
 	switch(m_type) {
 		case STRUCT_VECTOR: {
@@ -4853,13 +4854,12 @@ int MathStructure::merge_bitwise_or(MathStructure &mstruct, const EvaluationOpti
 		return 2;
 	}
 	if(mstruct.isZero() && representsScalar()) {
-		clear(true);
-		MERGE_APPROX_AND_PREC(mstruct)
-		return 3;
-	}
-	if(isZero() && mstruct.representsScalar()) {
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 2;
+	}
+	if(isZero() && mstruct.representsScalar()) {
+		set_nocopy(mstruct, true);
+		return 3;
 	}
 	switch(m_type) {
 		case STRUCT_VECTOR: {
@@ -5663,6 +5663,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				}
 			}
 			if(CHILD(0).merge_logical_xor(CHILD(1), eo) >= 1) {
+				ERASE(1)
 				if(CHILD(0).representsBoolean() || (mparent && !mparent->isMultiplication() && mparent->representsBoolean())) {
 					setToChild(1, false, mparent, index_this + 1);
 				} else if(CHILD(0).representsNonZero()) {
@@ -5674,6 +5675,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					m_type = STRUCT_COMPARISON;
 					ct_comp = COMPARISON_NOT_EQUALS;
 				}
+				b = true;
 			}
 			break;
 		}
@@ -6358,11 +6360,9 @@ bool MathStructure::calculateLogicalOrIndex(size_t index, const EvaluationOption
 			if(CHILD(0).representsBoolean() || (mparent && !mparent->isMultiplication() && mparent->representsBoolean())) {
 				setToChild(1, false, mparent, index_this + 1);
 			} else if(CHILD(0).representsNonZero()) {
-				clear(true);
-				o_number.setTrue();
+				set(1, 1, 0, true);
 			} else if(CHILD(0).isZero()) {
 				clear(true);
-				o_number.setFalse();
 			} else {
 				APPEND(m_zero);
 				m_type = STRUCT_COMPARISON;
@@ -6392,14 +6392,13 @@ bool MathStructure::calculateLogicalXorLast(const EvaluationOptions &eo, MathStr
 		return false;
 	}
 	if(CHILD(0).merge_logical_xor(CHILD(1), eo, this, 0, 1) >= 1) {
+		ERASE(1)
 		if(CHILD(0).representsBoolean() || (mparent && !mparent->isMultiplication() && mparent->representsBoolean())) {
 			setToChild(1, false, mparent, index_this + 1);
 		} else if(CHILD(0).representsNonZero()) {
-			clear(true);
-			o_number.setTrue();
+			set(1, 1, 0, true);
 		} else if(CHILD(0).isZero()) {
 			clear(true);
-			o_number.setFalse();
 		} else {
 			APPEND(m_zero);
 			m_type = STRUCT_COMPARISON;
@@ -6432,11 +6431,9 @@ bool MathStructure::calculateLogicalAndIndex(size_t index, const EvaluationOptio
 			if(CHILD(0).representsBoolean() || (mparent && !mparent->isMultiplication() && mparent->representsBoolean())) {
 				setToChild(1, false, mparent, index_this + 1);
 			} else if(CHILD(0).representsNonZero()) {
-				clear(true);
-				o_number.setTrue();
+				set(1, 1, 0, true);
 			} else if(CHILD(0).isZero()) {
 				clear(true);
-				o_number.setFalse();
 			} else {
 				APPEND(m_zero);
 				m_type = STRUCT_COMPARISON;
