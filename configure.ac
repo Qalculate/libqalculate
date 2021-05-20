@@ -6,7 +6,7 @@ dnl  ----------------------
 dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
-AC_INIT([libqalculate],[3.18.0])
+AC_INIT([libqalculate],[3.19.0])
 AC_CONFIG_SRCDIR(libqalculate/Calculator.cc)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h)
@@ -35,6 +35,7 @@ dnl  -------------------------------
 
 AC_PROG_CC
 AC_PROG_CXX
+AX_PROG_CXX_FOR_BUILD
 AC_PROG_LN_S
 AC_PROG_EGREP
 
@@ -78,7 +79,7 @@ AC_DEFINE([HAVE_PTHREADS],1,
 dnl libtool versioning for libqalculate
 
 dnl increment if the interface has additions, changes, removals.
-QALCULATE_CURRENT=33
+QALCULATE_CURRENT=34
 
 dnl increment any time the source changes; set to 
 dnl  0 if you increment CURRENT
@@ -87,7 +88,7 @@ QALCULATE_REVISION=0
 dnl increment if any interfaces have been added; set to 0
 dnl  if any interfaces have been removed. removal has 
 dnl  precedence over adding, so set to 0 if both happened.
-QALCULATE_AGE=12
+QALCULATE_AGE=13
 
 AC_SUBST(QALCULATE_CURRENT)
 AC_SUBST(QALCULATE_REVISION)
@@ -132,6 +133,9 @@ AS_IF([test "x$with_icu" = "xyes"], [
 AC_ARG_WITH([gnuplot-call], AS_HELP_STRING([--without-gnuplot-call], [disable support for invocation of external gnuplot binary (using popen)]), [], [with_gnuplot_call=yes])
 AS_IF([test "x$with_gnuplot_call" = "xyes"], [
 	AC_DEFINE([HAVE_GNUPLOT_CALL], [1], [Call to external gnuplot])
+])
+AS_IF([test "x$with_gnuplot_call" = "xbyo"], [
+	AC_DEFINE([HAVE_BYO_GNUPLOT], [1], [Call to gnuplot using a provided function])
 ])
 
 PKG_CHECK_MODULES(LIBXML, [libxml-2.0 >= 2.3.8])
@@ -265,7 +269,7 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The package name for gettext])
 
 dnl Please keep this in alphabetical order
-ALL_LINGUAS="es fr nl ru sv zh_CN"
+ALL_LINGUAS="de es fr nl ru sv zh_CN"
 AM_GNU_GETTEXT(external)
 AM_GNU_GETTEXT_VERSION([0.19.8])
 

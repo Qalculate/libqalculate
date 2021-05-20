@@ -488,7 +488,7 @@ void print_variable(Variable *v) {
 				}
 				if(!((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
 					value += " ";
-					value += fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->unit()));
+					value += fix(((KnownVariable*) v)->unit());
 				}
 			} else {
 				if(((KnownVariable*) v)->get().isMatrix()) {

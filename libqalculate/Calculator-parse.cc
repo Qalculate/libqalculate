@@ -213,7 +213,7 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 }
 
 const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f"};
-#define INTERNAL_SIGNS_COUNT 12
+#define INTERNAL_SIGNS_COUNT 14
 #define INTERNAL_NUMBER_CHARS "\b"
 #define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f"
 #define DUODECIMAL_CHARS "EXABab"
@@ -1171,11 +1171,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		} else if(po.parsing_mode != PARSING_MODE_RPN && (str[str_index] == 'c' || str[str_index] == 'C') && str.length() > str_index + 6 && str[str_index + 5] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("compl", str, 5, str_index, base)) {
 			// interprate "compl" followed by space as bitwise not
 			str.replace(str_index, 6, BITWISE_NOT);
-			ascii_bitwise = true;
+			ascii_bitwise = 1;
 		} else if(po.parsing_mode != PARSING_MODE_RPN && (str[str_index] == 'n' || str[str_index] == 'N') && str.length() > str_index + 4 && str[str_index + 3] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("not", str, 3, str_index, base)) {
 			// interprate "NOT" followed by space as logical not
 			str.replace(str_index, 4, LOGICAL_NOT);
-			ascii_bitwise = true;
+			ascii_bitwise = 1;
 		} else if(str[str_index] == SPACE_CH) {
 			size_t i = str.find(SPACE, str_index + 1);
 			if(po.parsing_mode == PARSING_MODE_RPN && i == string::npos) i = str.length();
@@ -1217,11 +1217,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str_index++;
 				} else if(i == 5 && (il = compare_name_no_case("bitor", str, 5, str_index + 1, base))) {
 					str.replace(str_index + 1, il, BITWISE_OR);
-					ascii_bitwise = true;
+					ascii_bitwise = 1;
 					str_index++;
 				} else if(i == 6 && (il = compare_name_no_case("bitand", str, 6, str_index + 1, base))) {
 					str.replace(str_index + 1, il, BITWISE_AND);
-					ascii_bitwise = true;
+					ascii_bitwise = 1;
 					str_index++;
 				} else if(i == 4 && (il = compare_name_no_case("nand", str, 4, str_index + 1, base))) {
 					str.replace(str_index + 1, il, "\x1d");
@@ -1233,7 +1233,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str_index++;
 				} else if(i == 3 && (il = compare_name_no_case("not", str, 3, str_index + 1, base))) {
 					str.replace(str_index + 1, il + 1, LOGICAL_NOT);
-					ascii_bitwise = true;
+					ascii_bitwise = 1;
 					str_index++;
 				} else if(i == 3 && (il = compare_name_no_case("mod", str, 3, str_index + 1, base))) {
 					str.replace(str_index + 1, il, "\%\%");
