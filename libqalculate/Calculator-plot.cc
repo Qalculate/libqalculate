@@ -65,7 +65,11 @@ bool Calculator::canPlot() {
 	return pclose(pipe) == 0;
 #	endif
 #else
+#	ifdef HAVE_BYO_GNUPLOT
+	return true;
+#	else
 	return false;
+#	endif
 #endif
 }
 
@@ -168,10 +172,76 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	return y_vector;
 }
 
+#ifdef HAVE_GNUPLOT_CALL
+bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
+	FILE *pipe = NULL;
+	if(!b_gnuplot_open || !gnuplot_pipe || persistent || commandline_extra != gnuplot_cmdline) {
+		if(!persistent) {
+			closeGnuplot();
+		}
+		string commandline = "gnuplot";
+		if(persistent) {
+			commandline += " -persist";
+		}
+		commandline += commandline_extra;
+#ifdef _WIN32
+		commandline += " - 2>nul";
+		pipe = _popen(commandline.c_str(), "w");
+#else
+		commandline += " - 2>/dev/null";
+		pipe = popen(commandline.c_str(), "w");
+#endif
+		if(!pipe) {
+			error(true, _("Failed to invoke gnuplot. Make sure that you have gnuplot installed in your path."), NULL);
+			return false;
+		}
+		if(!persistent && pipe) {
+			gnuplot_pipe = pipe;
+			b_gnuplot_open = true;
+			gnuplot_cmdline = commandline_extra;
+		}
+	} else {
+		pipe = gnuplot_pipe;
+	}
+	if(!pipe) {
+		return false;
+	}
+	if(!persistent) {
+		fputs("clear\n", pipe);
+		fputs("reset\n", pipe);
+	}
+	fputs(commands.c_str(), pipe);
+	fflush(pipe);
+	if(persistent) {
+		return pclose(pipe) == 0;
+	}
+	return true;
+}
+#else
+#	ifdef HAVE_BYO_GNUPLOT
+bool qalc_invoke_gnuplot(vector<std::pair<string, string>>, string, string, bool);
+string qalc_gnuplot_data_dir();
+#	else
+bool Calculator::invokeGnuplot(string, string, bool) {
+	return false;
+}
+#	endif
+#endif
+
+
 bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent, int msecs) {
 
-	string homedir = getLocalTmpDir();
+	string homedir;
+#ifdef HAVE_GNUPLOT_CALL
+	homedir = getLocalTmpDir();
 	recursiveMakeDir(homedir);
+#else
+#	ifdef HAVE_BYO_GNUPLOT
+	homedir = qalc_gnuplot_data_dir();
+#	else
+	return false;
+#	endif
+#endif
 
 	string commandline_extra;
 	string title;
@@ -430,19 +500,25 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 	po.interval_display = INTERVAL_DISPLAY_MIDPOINT;
 	po.decimalpoint_sign = ".";
 	po.comma_sign = ",";
+#ifndef HAVE_GNUPLOT_CALL
+	vector<std::pair<string, string>> data_files;
+#endif
 	for(size_t serie = 0; serie < y_vectors.size(); serie++) {
 		if(!y_vectors[serie].isUndefined()) {
 			string filename = "gnuplot_data";
 			filename += i2s(serie + 1);
+#ifdef HAVE_GNUPLOT_CALL
 			string filepath = buildPath(homedir, filename);
 			FILE *fdata = fopen(filepath.c_str(), "w+");
 			if(!fdata) {
 				error(true, _("Could not create temporary file %s"), filepath.c_str(), NULL);
 				return false;
 			}
+#else
+			filename = buildPath(homedir, filename);
+#endif
 			plot_data = "";
 			int non_numerical = 0, non_real = 0;
-			//string str = "";
 			if(msecs > 0) startControl(msecs);
 			ComparisonResult ct1 = COMPARISON_RESULT_EQUAL, ct2 = COMPARISON_RESULT_EQUAL;
 			size_t last_index = string::npos, last_index2 = string::npos;
@@ -507,7 +583,9 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 				ct1 = ct2;
 				ct2 = ct;
 				if(aborted()) {
+#ifdef HAVE_GNUPLOT_CALL
 					fclose(fdata);
+#endif
 					if(msecs > 0) {
 						error(true, _("It took too long to generate the plot data."), NULL);
 						stopControl();
@@ -516,77 +594,24 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 				}
 			}
 			if(msecs > 0) stopControl();
-			/*if(non_numerical > 0 || non_real > 0) {
-				string stitle;
-				if(serie < pdps.size() && !pdps[serie]->title.empty()) {
-					stitle = pdps[serie]->title.c_str();
-				} else {
-					stitle = i2s(serie).c_str();
-				}
-				if(non_numerical > 0) {
-					error(true, _("Series %s contains non-numerical data (\"%s\" first of %s) which can not be properly plotted."), stitle.c_str(), str.c_str(), i2s(non_numerical).c_str(), NULL);
-				} else {
-					error(true, _("Series %s contains non-real data (\"%s\" first of %s) which can not be properly plotted."), stitle.c_str(), str.c_str(), i2s(non_real).c_str(), NULL);
-				}
-			}*/
+#ifdef HAVE_GNUPLOT_CALL
 			fputs(plot_data.c_str(), fdata);
 			fflush(fdata);
 			fclose(fdata);
+#else
+			data_files.push_back(std::make_pair(filename, plot_data));
+#endif
 		}
 	}
-
-	return invokeGnuplot(plot, commandline_extra, persistent);
-}
 #ifdef HAVE_GNUPLOT_CALL
-bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
-	FILE *pipe = NULL;
-	if(!b_gnuplot_open || !gnuplot_pipe || persistent || commandline_extra != gnuplot_cmdline) {
-		if(!persistent) {
-			closeGnuplot();
-		}
-		string commandline = "gnuplot";
-		if(persistent) {
-			commandline += " -persist";
-		}
-		commandline += commandline_extra;
-#ifdef _WIN32
-		commandline += " - 2>nul";
-		pipe = _popen(commandline.c_str(), "w");
+	return invokeGnuplot(plot, commandline_extra, persistent);
 #else
-		commandline += " - 2>/dev/null";
-		pipe = popen(commandline.c_str(), "w");
-#endif
-		if(!pipe) {
-			error(true, _("Failed to invoke gnuplot. Make sure that you have gnuplot installed in your path."), NULL);
-			return false;
-		}
-		if(!persistent && pipe) {
-			gnuplot_pipe = pipe;
-			b_gnuplot_open = true;
-			gnuplot_cmdline = commandline_extra;
-		}
-	} else {
-		pipe = gnuplot_pipe;
-	}
-	if(!pipe) {
-		return false;
-	}
-	if(!persistent) {
-		fputs("clear\n", pipe);
-		fputs("reset\n", pipe);
-	}
-	fputs(commands.c_str(), pipe);
-	fflush(pipe);
-	if(persistent) {
-		return pclose(pipe) == 0;
-	}
-	return true;
-}
-#else
-bool Calculator::invokeGnuplot(string, string, bool) {
+#	ifdef HAVE_BYO_GNUPLOT
+	return qalc_invoke_gnuplot(data_files, plot, commandline_extra, persistent);
+#	endif
 	return false;
-}
 #endif
+}
 bool Calculator::closeGnuplot() {
 #ifdef HAVE_GNUPLOT_CALL
 	if(gnuplot_pipe) {
@@ -603,10 +628,13 @@ bool Calculator::closeGnuplot() {
 	b_gnuplot_open = false;
 	return true;
 #else
+#	ifdef HAVE_BYO_GNUPLOT
+	return true;
+#	else
 	return false;
+#	endif
 #endif
 }
 bool Calculator::gnuplotOpen() {
 	return b_gnuplot_open && gnuplot_pipe;
 }
-

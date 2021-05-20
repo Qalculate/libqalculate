@@ -800,7 +800,7 @@ string AliasUnit_Composite::print(bool plural_, bool short_, bool use_unicode, b
 	string str = "";
 	const ExpressionName *ename = &o_unit->preferredName(short_, use_unicode, plural_, false, can_display_unicode_string_function, can_display_unicode_string_arg);
 	if(prefixv) {
-		str += prefixv->name(ename->abbreviation, use_unicode, can_display_unicode_string_function, can_display_unicode_string_arg);
+		str += prefixv->preferredName(ename->abbreviation, use_unicode, plural_, false, can_display_unicode_string_function, can_display_unicode_string_arg).name;
 	}
 	str += ename->name;
 	return str;

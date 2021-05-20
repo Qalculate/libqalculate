@@ -16,6 +16,7 @@
 #include "util.h"
 #include "Calculator.h"
 #include "MathStructure.h"
+#include "MathStructure-support.h"
 #include "Number.h"
 #include "BuiltinFunctions.h"
 #include <libxml/xmlmemory.h>
@@ -265,23 +266,37 @@ const MathStructure *DataProperty::getUnitStruct() {
 string DataProperty::getInputString(const string &valuestr) {
 	string str;
 	if(b_brackets && valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') {
-		str = valuestr.substr(1, valuestr.length() - 2);
+		str = CALCULATOR->localizeExpression(valuestr.substr(1, valuestr.length() - 2));
 	} else {
-		str = valuestr;
+		str = CALCULATOR->localizeExpression(valuestr);
 	}
 	if(!sunit.empty()) {
 		str += " ";
-		str += sunit;
+		if(!CALCULATOR->getIgnoreLocale() && strncmp(setlocale(LC_MESSAGES, NULL), "ru", 2) == 0) {
+			MathStructure m(*getUnitStruct());
+			m.format(CALCULATOR->messagePrintOptions());
+			if(m.isMultiplication() && m.size() >= 2 && m[0].isOne()) m.delChild(1, true);
+			str += m.print(CALCULATOR->messagePrintOptions());
+		} else {
+			str += CALCULATOR->localizeExpression(sunit);
+		}
 	}
 	return str;
 }
 string DataProperty::getDisplayString(const string &valuestr) {
-	string str = valuestr;
 	if(!sunit.empty()) {
+		string str = CALCULATOR->localizeExpression(valuestr);
 		str += " ";
-		str += sunit;
+		if(!CALCULATOR->getIgnoreLocale() && strncmp(setlocale(LC_MESSAGES, NULL), "ru", 2) == 0) {
+			MathStructure m(*getUnitStruct());
+			m.format(CALCULATOR->messagePrintOptions());
+			if(m.isMultiplication() && m.size() >= 2 && m[0].isOne()) m.delChild(1, true);
+			return str + m.print(CALCULATOR->messagePrintOptions());
+		} else {
+			return str + CALCULATOR->localizeExpression(sunit);
+		}
 	}
-	return str;
+	return CALCULATOR->localizeExpression(valuestr);
 }
 MathStructure *DataProperty::generateStruct(const string &valuestr, int is_approximate) {
 	MathStructure *mstruct = NULL;
