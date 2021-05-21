@@ -704,7 +704,10 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(mstruct.isVector()) return -1;
 	MathStructure mstructv2 = vargs[1];
 	mstructv2.eval(eo);
-	if(mstructv2.isVector()) return -2;
+	if(mstructv2.isVector()) {
+		mstruct.transform(STRUCT_VECTOR, mstructv2);
+		return -3;
+	}
 	if(mstruct.isPower()) {
 		if((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
 			MathStructure mstruct2;

@@ -533,9 +533,11 @@
         <expression>trunc(\x/\y)</expression>
         <argument type="free" index="1">
           <_title>Numerator</_title>
+          <handle_vector>true</handle_vector>
         </argument>
         <argument type="free" index="2">
           <_title>Denominator</_title>
+          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
@@ -585,9 +587,11 @@
         <expression>\x/\y</expression>
         <argument type="free" index="1">
           <_title>Numerator</_title>
+          <handle_vector>true</handle_vector>
         </argument>
         <argument type="free" index="2">
           <_title>Denominator</_title>
+          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
