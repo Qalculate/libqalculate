@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the libqalculate package.
 #
 # Damir Islamov <damir@secretlaboratory.ru>, 2021.
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: libqalculate\n"
+"Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
 "POT-Creation-Date: 2021-05-19 07:47+0200\n"
-"PO-Revision-Date: 2021-05-03 21:31+0700\n"
+"PO-Revision-Date: 2021-05-19 22:23+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -601,7 +601,7 @@ msgstr "дополнительный код"
 
 #: ../src/qalc.cc:864 ../src/qalc.cc:3573 ../src/qalc.cc:4345
 msgid "hexadecimal two's"
-msgstr "шестнадцатеричные двойки"
+msgstr "дополнительный код для шестнадцатеричных чисел"
 
 #: ../src/qalc.cc:865 ../src/qalc.cc:3552 ../src/qalc.cc:4339
 msgid "digit grouping"
@@ -780,7 +780,7 @@ msgstr "двойной"
 #: ../src/qalc.cc:1004 ../src/qalc.cc:1370 ../src/qalc.cc:3442
 #: ../src/qalc.cc:4268
 msgid "try exact"
-msgstr "попробуй точно"
+msgstr "пробовать точно"
 
 #: ../src/qalc.cc:1024 ../src/qalc.cc:3449 ../src/qalc.cc:4270
 msgid "interval calculation"
@@ -809,7 +809,7 @@ msgstr "автоперевод"
 
 #: ../src/qalc.cc:1041 ../src/qalc.cc:3289
 msgid "best"
-msgstr "лучший"
+msgstr "лучшее"
 
 #: ../src/qalc.cc:1042 ../src/qalc.cc:3681 ../src/qalc.cc:4442
 msgid "optimalsi"
