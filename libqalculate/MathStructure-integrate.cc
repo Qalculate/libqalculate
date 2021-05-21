@@ -6047,7 +6047,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 					if(CHILD(0).isPower() && CHILD(0)[0] == x_var) {
 						mexp = CHILD(0)[1];
 						if(!mexp.isInteger()) {
-							if(integrate_info(CHILD(1)[1], x_var, madd, mmul, mpow, false, false)) {
+							if(!definite_integral && integrate_info(CHILD(1)[1], x_var, madd, mmul, mpow, false, false)) {
 								if(!madd.isZero()) {
 									madd ^= CHILD(1)[0];
 									madd.swapChildren(1, 2);

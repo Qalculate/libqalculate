@@ -2288,6 +2288,17 @@ bool Number::isZero() const {
 	else if(n_type == NUMBER_TYPE_RATIONAL) return mpz_sgn(mpq_numref(r_value)) == 0;
 	return false;
 }
+bool Number::isNonInteger() const {
+	if(!isInterval()) return !isInteger();
+	mpfr_t fu_test, fl_test;
+	mpfr_init2(fu_test, mpfr_get_prec(fu_value));
+	mpfr_init2(fl_test, mpfr_get_prec(fl_value));
+	mpfr_floor(fu_test, fu_value);
+	mpfr_floor(fl_test, fl_value);
+	bool b_ret = mpfr_equal_p(fu_test, fl_test) && !mpfr_equal_p(fl_test, fl_value);
+	mpfr_clears(fu_test, fl_test, NULL);
+	return b_ret;
+}
 bool Number::isNonZero() const {
 	if(i_value && i_value->isNonZero()) return true;
 	if(n_type == NUMBER_TYPE_FLOAT) return !mpfr_zero_p(fu_value) && mpfr_sgn(fu_value) == mpfr_sgn(fl_value);
@@ -7870,9 +7881,9 @@ bool Number::igamma(const Number &o) {
 #endif
 }
 bool Number::betainc(const Number &p, const Number &q, bool regularized) {
-	if(isZero()) return p.isPositive() && q.isPositive();
-	if(!isNonZero() && (!p.isPositive() || !q.isPositive())) return false;
-	if(isOne()) {
+	if(isZero()) return p.realPartIsPositive();
+	if(!isNonZero() && !p.realPartIsPositive()) return false;
+	if(isOne() && q.realPartIsPositive()) {
 		if(regularized) return true;
 		Number gy(p), gx(q), gxy(p);
 		if(!gxy.add(q) || !gy.gamma() || !gx.gamma() || !gxy.gamma() || !gx.multiply(gy) || !gx.divide(gxy)) return false;
@@ -7880,7 +7891,9 @@ bool Number::betainc(const Number &p, const Number &q, bool regularized) {
 		return true;
 	}
 	if(p.isOne()) return negate() && add(1) && raise(q) && negate() && add(1) && (regularized || divide(q));
-	if(q.isOne() && p.isPositive()) return raise(p) && (regularized || divide(p));
+	if(q.isOne() && p.realPartIsPositive()) return raise(p) && (regularized || divide(p));
+	if(p.isNonPositive() && p.isInteger() && (q.isNonPositive() || q.isNonInteger() || q > -p)) {set(1, 1, 0, true); return true;}
+	if(q.isNonPositive() && q.isInteger()) {clear(true); return true;}
 	if(!isReal() || !p.isReal() || !q.isReal()) return false;
 	if(p.isInteger() && q.isInteger() && p.isPositive() && q.isPositive()) {
 		if(isInterval() && isLessThan(1) && isGreaterThan(-1)) {

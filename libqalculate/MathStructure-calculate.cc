@@ -6884,23 +6884,25 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 			for(size_t i = 0; i < SIZE; i++) {
 				arg = o_function->getArgumentDefinition(i + 1);
 				if(arg && arg->handlesVector()) {
-					if(!CHILD(i).isVector()) {
+					if(!CHILD(i).isVector() && !CHILD(i).representsScalar()) {
 						CHILD(i).calculatesub(eo, eo, false);
-						if(!CHILD(i).isVector()) return false;
+						CHILD_UPDATED(i);
 					}
-					// calculate the function separately for each child of vector
-					bool b = false;
-					for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-						CHILD(i)[i2].transform(o_function);
-						for(size_t i3 = 0; i3 < SIZE; i3++) {
-							if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
-							else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
+					if(CHILD(i).isVector()) {
+						// calculate the function separately for each child of vector
+						bool b = false;
+						for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+							CHILD(i)[i2].transform(o_function);
+							for(size_t i3 = 0; i3 < SIZE; i3++) {
+								if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
+								else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
+							}
+							if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
+							CHILD(i).childUpdated(i2 + 1);
 						}
-						if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
-						CHILD(i).childUpdated(i2 + 1);
+						SET_CHILD_MAP(i);
+						return b;
 					}
-					SET_CHILD_MAP(i);
-					return b;
 				}
 			}
 			return false;

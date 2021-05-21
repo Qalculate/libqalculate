@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-19 07:47+0200\n"
+"POT-Creation-Date: 2021-05-19 09:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2619,15 +2619,15 @@ msgstr ""
 
 #: ../libqalculate/BuiltinFunctions-calculus.cc:781
 #: ../libqalculate/BuiltinFunctions-calculus.cc:813
-#: ../libqalculate/MathStructure-integrate.cc:7365
-#: ../libqalculate/MathStructure-integrate.cc:7385
-#: ../libqalculate/MathStructure-integrate.cc:7420
-#: ../libqalculate/MathStructure-integrate.cc:7444
-#: ../libqalculate/MathStructure-integrate.cc:7494
-#: ../libqalculate/MathStructure-integrate.cc:7533
-#: ../libqalculate/MathStructure-integrate.cc:7729
-#: ../libqalculate/MathStructure-integrate.cc:7783
-#: ../libqalculate/MathStructure-integrate.cc:7825
+#: ../libqalculate/MathStructure-integrate.cc:7362
+#: ../libqalculate/MathStructure-integrate.cc:7382
+#: ../libqalculate/MathStructure-integrate.cc:7417
+#: ../libqalculate/MathStructure-integrate.cc:7441
+#: ../libqalculate/MathStructure-integrate.cc:7491
+#: ../libqalculate/MathStructure-integrate.cc:7530
+#: ../libqalculate/MathStructure-integrate.cc:7726
+#: ../libqalculate/MathStructure-integrate.cc:7780
+#: ../libqalculate/MathStructure-integrate.cc:7822
 msgid "Unable to integrate the expression."
 msgstr ""
 
@@ -2715,7 +2715,7 @@ msgstr ""
 
 #: ../libqalculate/BuiltinFunctions-util.cc:997
 #: ../libqalculate/BuiltinFunctions-util.cc:1043
-#: ../libqalculate/Calculator-plot.cc:141
+#: ../libqalculate/Calculator-plot.cc:143
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr ""
 
@@ -2726,7 +2726,7 @@ msgstr ""
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1008
 #: ../libqalculate/BuiltinFunctions-util.cc:1054
-#: ../libqalculate/Calculator-plot.cc:111
+#: ../libqalculate/Calculator-plot.cc:113
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr ""
 
@@ -2969,25 +2969,30 @@ msgstr ""
 msgid "%s interpreted as 10^%s (1%s)"
 msgstr ""
 
-#: ../libqalculate/Calculator-plot.cc:107
-#: ../libqalculate/Calculator-plot.cc:137
-#: ../libqalculate/Calculator-plot.cc:167
-#: ../libqalculate/Calculator-plot.cc:509
+#: ../libqalculate/Calculator-plot.cc:109
+#: ../libqalculate/Calculator-plot.cc:139
+#: ../libqalculate/Calculator-plot.cc:169
+#: ../libqalculate/Calculator-plot.cc:588
 msgid "It took too long to generate the plot data."
 msgstr ""
 
-#: ../libqalculate/Calculator-plot.cc:200
-msgid "No extension in file name. Saving as PNG image."
-msgstr ""
-
-#: ../libqalculate/Calculator-plot.cc:219
-msgid "Unknown extension in file name. Saving as PNG image."
-msgstr ""
-
-#: ../libqalculate/Calculator-plot.cc:566
+#: ../libqalculate/Calculator-plot.cc:195
 msgid ""
 "Failed to invoke gnuplot. Make sure that you have gnuplot installed in your "
 "path."
+msgstr ""
+
+#: ../libqalculate/Calculator-plot.cc:265
+msgid "No extension in file name. Saving as PNG image."
+msgstr ""
+
+#: ../libqalculate/Calculator-plot.cc:284
+msgid "Unknown extension in file name. Saving as PNG image."
+msgstr ""
+
+#: ../libqalculate/Calculator-plot.cc:512
+#, c-format
+msgid "Could not create temporary file %s"
 msgstr ""
 
 #: ../libqalculate/DataSet.cc:407
@@ -3048,7 +3053,7 @@ msgstr ""
 #: ../libqalculate/MathStructure-calculate.cc:95
 #: ../libqalculate/MathStructure-calculate.cc:117
 #: ../libqalculate/MathStructure-calculate.cc:148
-#: ../libqalculate/MathStructure-integrate.cc:7157
+#: ../libqalculate/MathStructure-integrate.cc:7154
 #, c-format
 msgid "To avoid division by zero, the following must be true: %s."
 msgstr ""
@@ -3103,12 +3108,12 @@ msgid ""
 "combinations."
 msgstr ""
 
-#: ../libqalculate/MathStructure-integrate.cc:7739
-#: ../libqalculate/MathStructure-integrate.cc:7814
+#: ../libqalculate/MathStructure-integrate.cc:7736
+#: ../libqalculate/MathStructure-integrate.cc:7811
 msgid "Unable to integrate the expression exact."
 msgstr ""
 
-#: ../libqalculate/MathStructure-integrate.cc:7778
+#: ../libqalculate/MathStructure-integrate.cc:7775
 msgid "Definite integral was approximated."
 msgstr ""
 

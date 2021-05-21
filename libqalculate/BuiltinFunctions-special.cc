@@ -209,14 +209,23 @@ int DigammaFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	FR_FUNCTION(digamma)
 }
 BetaFunction::BetaFunction() : MathFunction("beta", 2, 2, SIGN_CAPITAL_BETA) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
-	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+	arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(2, arg);
 }
 int BetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isVector() || vargs[1].isVector()) return 0;
 	MathStructure m1(vargs[0]);
 	MathStructure m2(vargs[1]);
 	m1.eval(eo);
 	m2.eval(eo);
+	if(m1.isVector() || m2.isVector()) {
+		mstruct.setVector(&m1, &m2, NULL);
+		return -3;
+	}
 	if(!m1.isNumber() && m2.isInteger() && m2.number().isPositive() && m2.number() <= 13) {
 		mstruct = m1;
 		Number i(m2.number());

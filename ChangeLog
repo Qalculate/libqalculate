@@ -10,6 +10,10 @@
 
 	* Integration of x^a*b^(cx^d) (when a is not an integer)
 
+2021-05-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Localize data property values
+
 2021-05-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Exact calculation of igamma() in some cases
