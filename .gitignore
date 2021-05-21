@@ -28,3 +28,6 @@ po/stamp-it
 src/.*
 src/qalc
 stamp-h1
+lokalize-scripts/
+main.lqa
+libqalculate.lokalize

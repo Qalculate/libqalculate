@@ -26,7 +26,7 @@
 
 	* Add dot() function for vector dot product and disable dot product using multiplication operator or implicit multiplication
 
-2021-04-25 Damir Islamov <damir@clearscale.net>
+2021-04-25 Damir Islamov <damir@secretlaboratory.ru>
 
 	* Russian translation
 
