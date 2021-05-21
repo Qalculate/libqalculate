@@ -1738,7 +1738,7 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		FR_FUNCTION_2(atan2)
 	} else {
 		MathStructure new_nr(vargs[0]);
-		if(!new_nr.number().divide(vargs[1].number())) return -1;
+		if(!new_nr.number().divide(vargs[1].number())) return 0;
 		if(vargs[1].number().isNegative() && vargs[0].number().isNonZero()) {
 			if(vargs[0].number().isNegative()) {
 				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);

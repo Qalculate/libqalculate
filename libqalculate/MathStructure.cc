@@ -807,7 +807,7 @@ bool MathStructure::representsInteger(bool allow_units) const {
 }
 bool MathStructure::representsNonInteger(bool allow_units) const {
 	switch(m_type) {
-		case STRUCT_NUMBER: {return !o_number.isInteger();}
+		case STRUCT_NUMBER: {return o_number.isNonInteger();}
 		case STRUCT_VARIABLE: {return o_variable->representsNonInteger(allow_units);}
 		case STRUCT_FUNCTION: {return (function_value && function_value->representsNonInteger(allow_units));}
 		case STRUCT_UNIT: {return false;}

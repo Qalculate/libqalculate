@@ -11,4 +11,4 @@ fixpo$(BUILD_EXEEXT): remove-untranslated.cc
 	$(LINK_FOR_BUILD.cpp) $^ $(LOADLIBES_FOR_BUILD) $(LDLIBS_FOR_BUILD) -o $@
 
 EXTRA_DIST = \
-	POTFILES.in es.po fr.po nl.po ru.po sv.po zh_CN.po
+	remove-untranslated.cc POTFILES.in es.po fr.po nl.po ru.po sv.po zh_CN.po

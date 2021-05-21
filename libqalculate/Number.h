@@ -275,6 +275,7 @@ class Number {
 		Number integer() const;
 		bool isRational() const;
 		bool isReal() const;
+		bool isNonInteger() const;
 		bool isFraction() const;
 		bool isZero() const;
 		bool isNonZero() const;
