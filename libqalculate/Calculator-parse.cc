@@ -2740,7 +2740,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						mstack.back()->multiply(m_one);
 						if(po.preserve_format) mstack.back()->swapChildren(1, 2);
 					} else {
-						error(false, _("RPN syntax error. Operator ignored as there where only one stack value."), NULL);
+						error(false, _("RPN syntax error. Operator ignored as there were only one stack value."), NULL);
 					}
 				} else {
 					switch(str[i]) {
