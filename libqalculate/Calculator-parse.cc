@@ -2238,7 +2238,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			str.erase(itmp, str.length() - itmp);
 		} else {
 			string stmp = str.substr(itmp, str.length() - itmp);
-			error(true, _("Trailing characters \"%s\" (not a valid variable/function/unit) in number \"%s\" was ignored."), stmp.c_str(), str.c_str(), NULL);
+			error(true, _("Trailing characters \"%s\" (not a valid variable/function/unit) in number \"%s\" were ignored."), stmp.c_str(), str.c_str(), NULL);
 			str.erase(itmp, str.length() - itmp);
 		}
 	}

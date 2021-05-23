@@ -744,7 +744,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 				if(msolve.comparisonType() == COMPARISON_EQUALS) {
 					mstruct.addChild(msolve[1]);
 				} else {
-					CALCULATOR->error(true, _("Inequalities is not allowed in %s()."), preferredName().name.c_str(), NULL);
+					CALCULATOR->error(true, _("Inequalities are not allowed in %s()."), preferredName().name.c_str(), NULL);
 					return 0;
 				}
 			}
