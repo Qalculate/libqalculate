@@ -7733,7 +7733,7 @@ bool MathStructure::integrate(const MathStructure &lower_limit, const MathStruct
 		}
 		CALCULATOR->endTemporaryStopMessages();
 		if(mstruct.containsInterval() && eo.approximation == APPROXIMATION_EXACT) {
-			CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
+			CALCULATOR->error(false, _("Unable to integrate the expression exactly."), NULL);
 			if(simplify_first) {
 				set(mstruct);
 				replace(x_var, x_var_pre);
@@ -7808,7 +7808,7 @@ bool MathStructure::integrate(const MathStructure &lower_limit, const MathStruct
 				return true;
 			}
 		}
-		CALCULATOR->error(false, _("Unable to integrate the expression exact."), NULL);
+		CALCULATOR->error(false, _("Unable to integrate the expression exactly."), NULL);
 		if(simplify_first) {
 			set(mbak);
 			replace(x_var, x_var_pre);
