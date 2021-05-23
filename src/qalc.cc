@@ -1982,7 +1982,7 @@ int main(int argc, char *argv[]) {
 			fputs("\n\t-b, -base", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("set the number base for results and, optionally, expressions"));
 			fputs("\n\t-c, -color\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("use colors to hightlight different elements of expressions and results"));
+			fputs("\t", stdout); PUTS_UNICODE(_("use colors to highlight different elements of expressions and results"));
 #ifdef HAVE_LIBCURL
 			fputs("\n\t-e, -exrates\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("update exchange rates"));
@@ -4280,7 +4280,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("functions"), "func", "", evalops.parse_options.functions_enabled);
 				STR_AND_TABS_BOOL(_("infinite numbers"), "inf", "", evalops.allow_infinite);
 				STR_AND_TABS_BOOL(_("units"), "", "", evalops.parse_options.units_enabled);
-				STR_AND_TABS_BOOL(_("unknowns"), "", _("Interprete undefined symbols in expressions as unknown variables."), evalops.parse_options.unknowns_enabled);
+				STR_AND_TABS_BOOL(_("unknowns"), "", _("Interpret undefined symbols in expressions as unknown variables."), evalops.parse_options.unknowns_enabled);
 				STR_AND_TABS_BOOL(_("variables"), "var", "", evalops.parse_options.variables_enabled);
 				STR_AND_TABS_BOOL(_("variable units"), "varunit", _("If activated physical constants include units (e.g. c = 299 792 458 m∕s)."), CALCULATOR->variableUnitsEnabled());
 
@@ -4341,7 +4341,7 @@ int main(int argc, char *argv[]) {
 				if(dual_fraction < 0) nff = -1;
 				else if(dual_fraction > 0) nff = 5;
 				else if(!printops.restrict_fraction_length && printops.number_fraction_format == FRACTION_FRACTIONAL) nff = 4;
-				STR_AND_TABS_6M(_("fractions"), "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denonimator."), nff, _("auto"), _("off"), _("exact"), _("on"), _("mixed"), _("long"), _("dual"));
+				STR_AND_TABS_6M(_("fractions"), "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denominator."), nff, _("auto"), _("off"), _("exact"), _("on"), _("mixed"), _("long"), _("dual"));
 				STR_AND_TABS_BOOL(_("hexadecimal two's"), "hextwos", _("Enables two's complement representation for display of negative hexadecimal numbers."), printops.twos_complement);
 				STR_AND_TABS_BOOL(_("imaginary j"), "imgj", _("Use 'j' (instead of 'i') as default symbol for the imaginary unit."), (CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0));
 				STR_AND_TABS_7(_("interval display"), "ivdisp", "", (adaptive_interval_display ? 0 : printops.interval_display + 1), _("adaptive"), _("significant"), _("interval"), _("plusminus"), _("midpoint"), _("upper"), _("lower"))
@@ -4364,7 +4364,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("repeating decimals"), "repdeci", _("If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'."), printops.indicate_infinite_series);
 				STR_AND_TABS_BOOL(_("round to even"), "rndeven", _("Determines whether halfway numbers are rounded upwards or towards the nearest even integer."), printops.round_halfway_to_even);
 				STR_AND_TABS_SET(_("scientific notation"), "exp");
-				SET_DESCRIPTION(_("Determines how scientific notation are used (e.g. 5 543 000 = 5.543E6)."));
+				SET_DESCRIPTION(_("Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6)."));
 				str += "(0 = ";
 				str += _("off");
 				if(printops.min_exp == EXP_NONE) str += "*";
@@ -4425,7 +4425,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("limit implicit multiplication"), "limimpl", "", evalops.parse_options.limit_implicit_multiplication);
 				STR_AND_TABS_4(_("parsing mode"), "syntax", _("See 'help parsing mode'."), evalops.parse_options.parsing_mode, _("adaptive"), _("implicit first"), _("conventional"), _("chain"), _("rpn"));
-				STR_AND_TABS_2(_("read precision"), "readprec", _("If activated, numbers be interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005)."), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
+				STR_AND_TABS_2(_("read precision"), "readprec", _("If activated, numbers are interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005)."), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
 
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Units"));
 
@@ -4506,7 +4506,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "variable", _("variable"))) {
 				puts("");
-				PUTS_UNICODE(_("Create a variables with the specified name and expression."));
+				PUTS_UNICODE(_("Create a variable with the specified name and expression."));
 				puts("");
 				PUTS_UNICODE(_("Example: variable var1 pi / 2."));
 				puts("");
@@ -4560,7 +4560,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Removes the top of the RPN stack or the value at the specified index."));
 				puts("");
-				PUTS_UNICODE(_("Index 1 is the top of stack and negative index values counts from the bottom of the stack."));
+				PUTS_UNICODE(_("Index 1 is the top of stack and negative index values count from the bottom of the stack."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "stack", _("stack"))) {
 				puts("");
@@ -4572,7 +4572,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 				FPUTS_UNICODE(_("If no index is specified, the values on the top of the stack (index 1 and index 2) will be swapped and if only one index is specified, the value at this index will be swapped with the top value."), stdout);
 				fputs(" ", stdout);
-				PUTS_UNICODE(_("Index 1 is the top of stack and negative index values counts from the bottom of the stack."));
+				PUTS_UNICODE(_("Index 1 is the top of stack and negative index values count from the bottom of the stack."));
 				puts("");
 				PUTS_UNICODE(_("Example: swap 2 4"));
 				puts("");
@@ -4582,7 +4582,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 				FPUTS_UNICODE(_("If no index is specified, the top of the stack is duplicated."), stdout);
 				fputs(" ", stdout);
-				PUTS_UNICODE(_("Index 1 is the top of stack and negative index values counts from the bottom of the stack."));
+				PUTS_UNICODE(_("Index 1 is the top of stack and negative index values count from the bottom of the stack."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rotate", _("rotate"))) {
 				puts("");
@@ -4592,7 +4592,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Changes the position of a value on the RPN stack."));
 				puts("");
-				PUTS_UNICODE(_("Index 1 is the top of stack and negative index values counts from the bottom of the stack."));
+				PUTS_UNICODE(_("Index 1 is the top of stack and negative index values count from the bottom of the stack."));
 				puts("");
 				PUTS_UNICODE(_("Example: move 2 4"));
 				puts("");
