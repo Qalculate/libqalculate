@@ -642,7 +642,7 @@ parenthesis, 10^x, exponentiation, functions, bitwise NOT, logical NOT, multipli
 .PP
 The evaluation of \fIshort/implicit multiplication\fP without any multiplication sign (e.g. 5x, 5(2+3)), differs depending on the parsing mode. In the \fIconventional mode\fP implicit multiplication does not differ from explicit multiplication (12/2(1+2) = 12/2*3 = 18, 5x/5y = 5 * x/5 * y = xy). In the parse \fIimplicit multiplication first\fP mode, implicit multiplication is parsed before explicit multiplication (12/2(1+2) = 12/(2 * 3) = 2, 5x/5y = (5 * x)/(5 * y) = x/y). The default \fIadaptive mode\fP works as the parse implicit multiplication first mode, unless spaces are found (1/5x = 1/(5 * x), but 1/5 x = (1/5) * x). In the adaptive mode unit expressions are parsed separately (5 m/5 m/s = (5 * m)/(5 * (m/s)) = 1 s). Function arguments without parentheses are an exception, where implicit multiplication in front of variables and units is parsed first regardless of mode (sqrt 2x = sqrt(2x)).
 .PP
-In \fIchain mode\fP, expressions are calculated from left to right, ignoring standard order of operations, as the immediate execution mode of a traditional calculator (1+2*3 = (1+2)*3 = 9).
+In \fIchain mode\fP, expressions are calculated from left to right, ignoring standard order of operations, like the immediate execution mode of a traditional calculator (1+2*3 = (1+2)*3 = 9).
 .PP
 The \fI"to"-operator\fP is used for unit conversion and manipulation of how the result is presented. Place " to " or a right arrow (e.g. "->") followed by one of expressions/commands the below, at the end of an expression.
 .PP
