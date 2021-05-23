@@ -2238,7 +2238,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			str.erase(itmp, str.length() - itmp);
 		} else {
 			string stmp = str.substr(itmp, str.length() - itmp);
-			error(true, _("Trailing characters \"%s\" (not a valid variable/function/unit) in number \"%s\" was ignored."), stmp.c_str(), str.c_str(), NULL);
+			error(true, _("Trailing characters \"%s\" (not a valid variable/function/unit) in number \"%s\" were ignored."), stmp.c_str(), str.c_str(), NULL);
 			str.erase(itmp, str.length() - itmp);
 		}
 	}
@@ -2740,7 +2740,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						mstack.back()->multiply(m_one);
 						if(po.preserve_format) mstack.back()->swapChildren(1, 2);
 					} else {
-						error(false, _("RPN syntax error. Operator ignored as there where only one stack value."), NULL);
+						error(false, _("RPN syntax error. Operator ignored as there were only one stack value."), NULL);
 					}
 				} else {
 					switch(str[i]) {
