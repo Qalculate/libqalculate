@@ -4391,7 +4391,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								}
 							}
 						}
-						if(warn_complex) CALCULATOR->error(false, _("Only one or two of the roots where calculated for %s."), format_and_print(mbak).c_str(), NULL);
+						if(warn_complex) CALCULATOR->error(false, _("Only one or two of the roots were calculated for %s."), format_and_print(mbak).c_str(), NULL);
 					} else {
 						MathStructure *mposcheck = NULL;
 						bool b_test = false;

@@ -1982,7 +1982,7 @@ int main(int argc, char *argv[]) {
 			fputs("\n\t-b, -base", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("set the number base for results and, optionally, expressions"));
 			fputs("\n\t-c, -color\n", stdout);
-			fputs("\t", stdout); PUTS_UNICODE(_("use colors to hightlight different elements of expressions and results"));
+			fputs("\t", stdout); PUTS_UNICODE(_("use colors to highlight different elements of expressions and results"));
 #ifdef HAVE_LIBCURL
 			fputs("\n\t-e, -exrates\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("update exchange rates"));
@@ -4280,7 +4280,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("functions"), "func", "", evalops.parse_options.functions_enabled);
 				STR_AND_TABS_BOOL(_("infinite numbers"), "inf", "", evalops.allow_infinite);
 				STR_AND_TABS_BOOL(_("units"), "", "", evalops.parse_options.units_enabled);
-				STR_AND_TABS_BOOL(_("unknowns"), "", _("Interprete undefined symbols in expressions as unknown variables."), evalops.parse_options.unknowns_enabled);
+				STR_AND_TABS_BOOL(_("unknowns"), "", _("Interpret undefined symbols in expressions as unknown variables."), evalops.parse_options.unknowns_enabled);
 				STR_AND_TABS_BOOL(_("variables"), "var", "", evalops.parse_options.variables_enabled);
 				STR_AND_TABS_BOOL(_("variable units"), "varunit", _("If activated physical constants include units (e.g. c = 299 792 458 m∕s)."), CALCULATOR->variableUnitsEnabled());
 
@@ -4341,7 +4341,7 @@ int main(int argc, char *argv[]) {
 				if(dual_fraction < 0) nff = -1;
 				else if(dual_fraction > 0) nff = 5;
 				else if(!printops.restrict_fraction_length && printops.number_fraction_format == FRACTION_FRACTIONAL) nff = 4;
-				STR_AND_TABS_6M(_("fractions"), "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denonimator."), nff, _("auto"), _("off"), _("exact"), _("on"), _("mixed"), _("long"), _("dual"));
+				STR_AND_TABS_6M(_("fractions"), "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denominator."), nff, _("auto"), _("off"), _("exact"), _("on"), _("mixed"), _("long"), _("dual"));
 				STR_AND_TABS_BOOL(_("hexadecimal two's"), "hextwos", _("Enables two's complement representation for display of negative hexadecimal numbers."), printops.twos_complement);
 				STR_AND_TABS_BOOL(_("imaginary j"), "imgj", _("Use 'j' (instead of 'i') as default symbol for the imaginary unit."), (CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0));
 				STR_AND_TABS_7(_("interval display"), "ivdisp", "", (adaptive_interval_display ? 0 : printops.interval_display + 1), _("adaptive"), _("significant"), _("interval"), _("plusminus"), _("midpoint"), _("upper"), _("lower"))
