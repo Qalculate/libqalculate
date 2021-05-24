@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
-"Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
-"POT-Creation-Date: 2021-05-19 07:47+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-05-24 08:27+0700\n"
 "PO-Revision-Date: 2021-05-19 22:23+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -1143,7 +1143,7 @@ msgid "set the number base for results and, optionally, expressions"
 msgstr "задать основание чисел для результатов и выражений (необязательно)"
 
 #: ../src/qalc.cc:1985
-msgid "use colors to hightlight different elements of expressions and results"
+msgid "use colors to highlight different elements of expressions and results"
 msgstr ""
 "использовать цвета для выделения различных элементов выражений и результатов"
 
@@ -1779,7 +1779,7 @@ msgstr "Предположения по умолчанию для неизвес
 
 #: ../src/qalc.cc:4264
 msgid "Default angle unit for trigonometric functions."
-msgstr ""
+msgstr "Единица измерения углов по умолчанию для тригонометрических функций."
 
 #: ../src/qalc.cc:4268
 msgid ""
@@ -1817,7 +1817,7 @@ msgstr ""
 "точность, используемую для приблизительных вычислений."
 
 #: ../src/qalc.cc:4283
-msgid "Interprete undefined symbols in expressions as unknown variables."
+msgid "Interpret undefined symbols in expressions as unknown variables."
 msgstr ""
 "Интерпретирует неопределённые символы в выражениях как неизвестные "
 "переменные."
@@ -1877,10 +1877,10 @@ msgstr "Определяет десятичный разделитель по у
 #: ../src/qalc.cc:4344
 msgid ""
 "Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). "
-"'long' removes limits on the size of the numerator and denonimator."
+"'long' removes limits on the size of the numerator and denominator."
 msgstr ""
 "Определяет, как отображаются рациональные числа (например, 5/4 = 1 + 1/4 = "
-"1,25). 'long' снимает ограничения на размер числителя и знаменателя."
+"1,25). «длинные» снимает ограничения на размер числителя и знаменателя."
 
 #: ../src/qalc.cc:4345
 msgid ""
@@ -1921,7 +1921,7 @@ msgstr ""
 "ближайшего чётного целого числа."
 
 #: ../src/qalc.cc:4367
-msgid "Determines how scientific notation are used (e.g. 5 543 000 = 5.543E6)."
+msgid "Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6)."
 msgstr ""
 "Определяет, как используется научная запись (например, 5 543 000 = 5,543E6)."
 
@@ -1957,7 +1957,7 @@ msgstr "См. 'help parsing mode'."
 
 #: ../src/qalc.cc:4428
 msgid ""
-"If activated, numbers be interpreted as approximate with precision equal to "
+"If activated, numbers are interpreted as approximate with precision equal to "
 "the number of significant digits (3.20 = 3.20+/-0.005)."
 msgstr ""
 "Если этот параметр активирован, числа интерпретируются как приблизительные с "
@@ -2076,8 +2076,8 @@ msgid "Example: store var1."
 msgstr "Например: store var1."
 
 #: ../src/qalc.cc:4509
-msgid "Create a variables with the specified name and expression."
-msgstr "Создать переменные с указанным именем и выражением."
+msgid "Create a variable with the specified name and expression."
+msgstr "Создать переменную с указанным именем и выражением."
 
 #: ../src/qalc.cc:4511
 msgid "Example: variable var1 pi / 2."
@@ -2174,11 +2174,11 @@ msgstr "Удаляет верхнюю часть стека ПОЛИЗ или з
 #: ../src/qalc.cc:4563 ../src/qalc.cc:4575 ../src/qalc.cc:4585
 #: ../src/qalc.cc:4595
 msgid ""
-"Index 1 is the top of stack and negative index values counts from the bottom "
+"Index 1 is the top of stack and negative index values count from the bottom "
 "of the stack."
 msgstr ""
-"Индекс 1 - это верх стека, а отрицательные значения индекса отсчитываются "
-"снизу стека."
+"Индекс 1 - это верх стека, а отрицательные значения индекса отсчитываются от "
+"низа стека."
 
 #: ../src/qalc.cc:4567
 msgid "Displays the RPN stack."
@@ -2679,7 +2679,7 @@ msgstr "Невозможно изолировать %s."
 
 #: ../libqalculate/BuiltinFunctions-algebra.cc:747
 #, c-format
-msgid "Inequalities is not allowed in %s()."
+msgid "Inequalities are not allowed in %s()."
 msgstr "Неравенства не допускаются в %s()."
 
 #: ../libqalculate/BuiltinFunctions-algebra.cc:1089
@@ -2793,21 +2793,21 @@ msgstr "Сравнение не удалось."
 msgid "Unsolvable comparison in %s()."
 msgstr "Неразрешимое сравнение в %s()."
 
-#: ../libqalculate/BuiltinFunctions-calculus.cc:686
+#: ../libqalculate/BuiltinFunctions-calculus.cc:710
 msgid "Unable to find limit."
 msgstr "Невозможно найти предел."
 
-#: ../libqalculate/BuiltinFunctions-calculus.cc:781
-#: ../libqalculate/BuiltinFunctions-calculus.cc:813
-#: ../libqalculate/MathStructure-integrate.cc:7365
-#: ../libqalculate/MathStructure-integrate.cc:7385
-#: ../libqalculate/MathStructure-integrate.cc:7420
-#: ../libqalculate/MathStructure-integrate.cc:7444
-#: ../libqalculate/MathStructure-integrate.cc:7494
-#: ../libqalculate/MathStructure-integrate.cc:7533
-#: ../libqalculate/MathStructure-integrate.cc:7729
-#: ../libqalculate/MathStructure-integrate.cc:7783
-#: ../libqalculate/MathStructure-integrate.cc:7825
+#: ../libqalculate/BuiltinFunctions-calculus.cc:805
+#: ../libqalculate/BuiltinFunctions-calculus.cc:837
+#: ../libqalculate/MathStructure-integrate.cc:7362
+#: ../libqalculate/MathStructure-integrate.cc:7382
+#: ../libqalculate/MathStructure-integrate.cc:7417
+#: ../libqalculate/MathStructure-integrate.cc:7441
+#: ../libqalculate/MathStructure-integrate.cc:7491
+#: ../libqalculate/MathStructure-integrate.cc:7530
+#: ../libqalculate/MathStructure-integrate.cc:7726
+#: ../libqalculate/MathStructure-integrate.cc:7780
+#: ../libqalculate/MathStructure-integrate.cc:7822
 msgid "Unable to integrate the expression."
 msgstr "Невозможно интегрировать выражение."
 
@@ -2897,7 +2897,7 @@ msgstr "Вектор"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:997
 #: ../libqalculate/BuiltinFunctions-util.cc:1043
-#: ../libqalculate/Calculator-plot.cc:141
+#: ../libqalculate/Calculator-plot.cc:143
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr ""
 "Невозможно создать график для данных с текущими минимальным и максимальным "
@@ -2910,7 +2910,7 @@ msgstr "Частота дискретизации должна быть поло
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1008
 #: ../libqalculate/BuiltinFunctions-util.cc:1054
-#: ../libqalculate/Calculator-plot.cc:111
+#: ../libqalculate/Calculator-plot.cc:113
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr ""
 "Невозможно создать график для данных с текущими минимальным и максимальным "
@@ -3113,7 +3113,7 @@ msgstr "«%s» не является допустимой переменной/�
 #, c-format
 msgid ""
 "Trailing characters \"%s\" (not a valid variable/function/unit) in number "
-"\"%s\" was ignored."
+"\"%s\" were ignored."
 msgstr ""
 "Завершающие символы «%s» (недопустимая переменная/функция/единица измерения) "
 "в числе «%s» были проигнорированы."
@@ -3152,7 +3152,7 @@ msgid "RPN syntax error. Stack is empty."
 msgstr "Ошибка синтаксиса ПОЛИЗ. Стек пустой."
 
 #: ../libqalculate/Calculator-parse.cc:2743
-msgid "RPN syntax error. Operator ignored as there where only one stack value."
+msgid "RPN syntax error. Operator ignored as there were only one stack value."
 msgstr ""
 "Ошибка синтаксиса ПОЛИЗ. Оператор игнорируется, так как в стеке только одно "
 "значение."
@@ -3171,28 +3171,33 @@ msgstr ""
 msgid "%s interpreted as 10^%s (1%s)"
 msgstr "%s интерпретируется как 10^%s (1%s)"
 
-#: ../libqalculate/Calculator-plot.cc:107
-#: ../libqalculate/Calculator-plot.cc:137
-#: ../libqalculate/Calculator-plot.cc:167
-#: ../libqalculate/Calculator-plot.cc:509
+#: ../libqalculate/Calculator-plot.cc:109
+#: ../libqalculate/Calculator-plot.cc:139
+#: ../libqalculate/Calculator-plot.cc:169
+#: ../libqalculate/Calculator-plot.cc:590
 msgid "It took too long to generate the plot data."
 msgstr "Создание графика данных заняло слишком много времени."
 
-#: ../libqalculate/Calculator-plot.cc:200
-msgid "No extension in file name. Saving as PNG image."
-msgstr "В имени файла нет расширения. Сохранение в формате PNG."
-
-#: ../libqalculate/Calculator-plot.cc:219
-msgid "Unknown extension in file name. Saving as PNG image."
-msgstr "Неизвестное расширение в имени файла. Сохранение в формате PNG."
-
-#: ../libqalculate/Calculator-plot.cc:566
+#: ../libqalculate/Calculator-plot.cc:195
 msgid ""
 "Failed to invoke gnuplot. Make sure that you have gnuplot installed in your "
 "path."
 msgstr ""
 "Не удалось вызвать gnuplot. Убедитесь, что gnuplot установлен и находится по "
 "переменной окружения PATH."
+
+#: ../libqalculate/Calculator-plot.cc:267
+msgid "No extension in file name. Saving as PNG image."
+msgstr "В имени файла нет расширения. Сохранение в формате PNG."
+
+#: ../libqalculate/Calculator-plot.cc:286
+msgid "Unknown extension in file name. Saving as PNG image."
+msgstr "Неизвестное расширение в имени файла. Сохранение в формате PNG."
+
+#: ../libqalculate/Calculator-plot.cc:514
+#, c-format
+msgid "Could not create temporary file %s"
+msgstr "Не удалось создать временный файл %s"
 
 #: ../libqalculate/DataSet.cc:407
 #, c-format
@@ -3254,7 +3259,7 @@ msgstr "Требуемое предположение: %s."
 #: ../libqalculate/MathStructure-calculate.cc:95
 #: ../libqalculate/MathStructure-calculate.cc:117
 #: ../libqalculate/MathStructure-calculate.cc:148
-#: ../libqalculate/MathStructure-integrate.cc:7157
+#: ../libqalculate/MathStructure-integrate.cc:7154
 #, c-format
 msgid "To avoid division by zero, the following must be true: %s."
 msgstr "Чтобы избежать деления на ноль, должно выполняться следующее: %s."
@@ -3318,12 +3323,12 @@ msgstr ""
 "только ограниченное количество комбинаций элементов. Повторите факторизацию, "
 "чтобы попробовать другие случайные комбинации."
 
-#: ../libqalculate/MathStructure-integrate.cc:7739
-#: ../libqalculate/MathStructure-integrate.cc:7814
-msgid "Unable to integrate the expression exact."
+#: ../libqalculate/MathStructure-integrate.cc:7736
+#: ../libqalculate/MathStructure-integrate.cc:7811
+msgid "Unable to integrate the expression exactly."
 msgstr "Невозможно точно интегрировать выражение."
 
-#: ../libqalculate/MathStructure-integrate.cc:7778
+#: ../libqalculate/MathStructure-integrate.cc:7775
 msgid "Definite integral was approximated."
 msgstr "Был аппроксимирован определённый интеграл."
 
@@ -3348,7 +3353,7 @@ msgstr "Не все комплексные корни вычислены для 
 
 #: ../libqalculate/MathStructure-isolatex.cc:4394
 #, c-format
-msgid "Only one or two of the roots where calculated for %s."
+msgid "Only one or two of the roots were calculated for %s."
 msgstr "Только один или два корня вычислены для %s."
 
 #: ../libqalculate/MathStructure-limit.cc:967
@@ -3589,7 +3594,7 @@ msgstr "логическое (0 или 1)"
 msgid "an angle or a number (using the default angle unit)"
 msgstr "угол или число (с использованием единицы угла по умолчанию)"
 
-#: ../libqalculate/Number.cc:280 ../libqalculate/Number.cc:10730
+#: ../libqalculate/Number.cc:280 ../libqalculate/Number.cc:10743
 msgid ""
 "Cannot display numbers greater than 9999 or less than -9999 as roman "
 "numerals."
@@ -3660,53 +3665,53 @@ msgstr "Исключение деления с плавающей запятой
 msgid "Floating point range exception"
 msgstr "Исключение деления с плавающей запятой интервала"
 
-#: ../libqalculate/Number.cc:3667
+#: ../libqalculate/Number.cc:3678
 msgid "Division by zero."
 msgstr "Деление на ноль."
 
 #. 0^0
-#: ../libqalculate/Number.cc:3673
+#: ../libqalculate/Number.cc:3684
 msgid "0^0 might be considered undefined"
 msgstr "0^0 можно считать неопределённым"
 
-#: ../libqalculate/Number.cc:3680
+#: ../libqalculate/Number.cc:3691
 msgid "The result of 0^i is possibly undefined"
 msgstr "Результат 0^i, возможно, не определён"
 
-#: ../libqalculate/Number.cc:3729 ../libqalculate/Number.cc:6259
-#: ../libqalculate/Number.cc:6370 ../libqalculate/Number.cc:6694
-#: ../libqalculate/Number.cc:6702 ../libqalculate/Number.cc:6735
-#: ../libqalculate/Number.cc:6832 ../libqalculate/Number.cc:6981
-#: ../libqalculate/Number.cc:7093
+#: ../libqalculate/Number.cc:3740 ../libqalculate/Number.cc:6270
+#: ../libqalculate/Number.cc:6381 ../libqalculate/Number.cc:6705
+#: ../libqalculate/Number.cc:6713 ../libqalculate/Number.cc:6746
+#: ../libqalculate/Number.cc:6843 ../libqalculate/Number.cc:6992
+#: ../libqalculate/Number.cc:7104
 msgid "Interval calculated wide."
 msgstr "Интервал рассчитывается широким."
 
-#: ../libqalculate/Number.cc:5181 ../libqalculate/Number.cc:5407
-#: ../libqalculate/Number.cc:5494 ../libqalculate/Number.cc:5879
-#: ../libqalculate/Number.cc:5965 ../libqalculate/Number.cc:6051
-#: ../libqalculate/Number.cc:7298 ../libqalculate/Number.cc:7316
-#: ../libqalculate/Number.cc:7335 ../libqalculate/Number.cc:7671
-#: ../libqalculate/Number.cc:7718 ../libqalculate/Number.cc:7863
-#: ../libqalculate/Number.cc:8365 ../libqalculate/Number.cc:8521
-#: ../libqalculate/Number.cc:8953 ../libqalculate/Number.cc:9348
+#: ../libqalculate/Number.cc:5192 ../libqalculate/Number.cc:5418
+#: ../libqalculate/Number.cc:5505 ../libqalculate/Number.cc:5890
+#: ../libqalculate/Number.cc:5976 ../libqalculate/Number.cc:6062
+#: ../libqalculate/Number.cc:7309 ../libqalculate/Number.cc:7327
+#: ../libqalculate/Number.cc:7346 ../libqalculate/Number.cc:7682
+#: ../libqalculate/Number.cc:7729 ../libqalculate/Number.cc:7874
+#: ../libqalculate/Number.cc:8378 ../libqalculate/Number.cc:8534
+#: ../libqalculate/Number.cc:8966 ../libqalculate/Number.cc:9361
 #, c-format
 msgid "%s() lacks proper support interval arithmetic."
 msgstr "%s() не поддерживает корректно арифметику интервалов."
 
-#: ../libqalculate/Number.cc:9958
+#: ../libqalculate/Number.cc:9971
 #, c-format
 msgid "The value is too high for the number of floating point bits (%s)."
 msgstr "Значение слишком велико для количества бит плавающей запятой (%s)."
 
-#: ../libqalculate/Number.cc:10212
+#: ../libqalculate/Number.cc:10225
 msgid "Unsupported base"
 msgstr "Неподдерживаемое основание"
 
-#: ../libqalculate/Number.cc:10727
+#: ../libqalculate/Number.cc:10740
 msgid "Can only display rational numbers as roman numerals."
 msgstr "Римскими цифрами можно отображать только рациональные числа."
 
-#: ../libqalculate/Number.cc:11214 ../libqalculate/Number.cc:11222
+#: ../libqalculate/Number.cc:11227 ../libqalculate/Number.cc:11235
 msgid "infinity"
 msgstr "бесконечность"
 
@@ -4126,7 +4131,3 @@ msgstr "Вкл."
 #: ../libqalculate/util.cc:189
 msgid "Off"
 msgstr "Выкл."
-
-#, c-format
-#~ msgid "Could not create temporary file %s"
-#~ msgstr "Не удалось создать временный файл %s"
