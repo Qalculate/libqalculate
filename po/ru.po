@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-24 08:27+0700\n"
+"POT-Creation-Date: 2021-05-24 15:08+0200\n"
 "PO-Revision-Date: 2021-05-19 22:23+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -298,9 +298,10 @@ msgstr "логическое"
 msgid "Unrecognized assumption."
 msgstr "Не распознанное предположение."
 
+#. logical operator
 #: ../src/qalc.cc:463 ../src/qalc.cc:497
 #: ../libqalculate/Calculator-calculate.cc:1003
-#: ../libqalculate/Calculator.cc:247 ../libqalculate/Calculator.cc:476
+#: ../libqalculate/Calculator.cc:253 ../libqalculate/Calculator.cc:482
 #: ../libqalculate/DataSet.cc:1113 ../libqalculate/DataSet.cc:1175
 #: ../libqalculate/MathStructure-print.cc:3484 ../libqalculate/Function.cc:2302
 #: ../libqalculate/Function.cc:2318
@@ -1474,8 +1475,8 @@ msgstr "перевести"
 #: ../libqalculate/Calculator-calculate.cc:2036
 #: ../libqalculate/Calculator-calculate.cc:2065
 #: ../libqalculate/Calculator-calculate.cc:2069
-#: ../libqalculate/Calculator.cc:298 ../libqalculate/Calculator.cc:527
-#: ../libqalculate/Calculator.cc:1248 ../libqalculate/Calculator.cc:1249
+#: ../libqalculate/Calculator.cc:304 ../libqalculate/Calculator.cc:533
+#: ../libqalculate/Calculator.cc:1254 ../libqalculate/Calculator.cc:1255
 msgid "to"
 msgstr "к"
 
@@ -2462,8 +2463,8 @@ msgstr ""
 
 #: ../src/qalc.cc:4684
 msgid ""
-"Perform operations from left to right, as the immediate execution mode of a "
-"traditional calculator (\"1+2*3 = (1+2)*3 = 9\")"
+"Perform operations from left to right, like the immediate execution mode of "
+"a traditional calculator (\"1+2*3 = (1+2)*3 = 9\")"
 msgstr ""
 "Выполнение операций слева направо, как в режиме немедленного выполнения "
 "традиционного калькулятора («1+2*3 = (1+2)*3 = 9»)"
@@ -2921,9 +2922,10 @@ msgstr ""
 msgid "Stack is empty. Filling remaining function arguments with zeroes."
 msgstr "Стек пуст. Заполнение оставшихся аргументов функции нулями."
 
+#. logical operator
 #: ../libqalculate/Calculator-calculate.cc:1017
 #: ../libqalculate/Calculator-calculate.cc:1055
-#: ../libqalculate/Calculator.cc:242 ../libqalculate/Calculator.cc:471
+#: ../libqalculate/Calculator.cc:247 ../libqalculate/Calculator.cc:477
 #: ../libqalculate/MathStructure-print.cc:3464 ../libqalculate/Function.cc:1356
 #: ../libqalculate/Function.cc:1364 ../libqalculate/Function.cc:1797
 #: ../libqalculate/Function.cc:1959 ../libqalculate/Function.cc:1967
@@ -2939,7 +2941,7 @@ msgstr "расчёт..."
 #: ../libqalculate/Calculator-calculate.cc:2105
 #: ../libqalculate/Calculator-calculate.cc:2124
 #: ../libqalculate/Calculator-calculate.cc:2126
-#: ../libqalculate/Calculator.cc:1252
+#: ../libqalculate/Calculator.cc:1258
 msgid "where"
 msgstr "где"
 
@@ -2953,43 +2955,47 @@ msgstr "Необработанное выражение «где»: %s"
 msgid "timed out"
 msgstr "время вышло"
 
-#: ../libqalculate/Calculator.cc:234 ../libqalculate/Calculator.cc:463
+#. division operator
+#: ../libqalculate/Calculator.cc:235 ../libqalculate/Calculator.cc:469
 msgid "per"
 msgstr "на"
 
-#: ../libqalculate/Calculator.cc:236 ../libqalculate/Calculator.cc:465
+#. multiplication operator
+#: ../libqalculate/Calculator.cc:238 ../libqalculate/Calculator.cc:471
 msgid "times"
 msgstr "умножить"
 
-#: ../libqalculate/Calculator.cc:238 ../libqalculate/Calculator.cc:467
+#. addition operator
+#: ../libqalculate/Calculator.cc:241 ../libqalculate/Calculator.cc:473
 msgid "plus"
 msgstr "плюс"
 
-#: ../libqalculate/Calculator.cc:240 ../libqalculate/Calculator.cc:469
+#. subtraction operator
+#: ../libqalculate/Calculator.cc:244 ../libqalculate/Calculator.cc:475
 msgid "minus"
 msgstr "минус"
 
-#: ../libqalculate/Calculator.cc:614
+#: ../libqalculate/Calculator.cc:620
 msgid "Gradians unit is missing. Creating one for this session."
 msgstr ""
 "Единица измерения Градианы (грады) отсутствует. Создаю её для текущего "
 "сеанса."
 
-#: ../libqalculate/Calculator.cc:615 ../libqalculate/Calculator.cc:623
-#: ../libqalculate/Calculator.cc:631
+#: ../libqalculate/Calculator.cc:621 ../libqalculate/Calculator.cc:629
+#: ../libqalculate/Calculator.cc:637
 msgid "Angle/Plane Angle"
 msgstr "Угол/Плоский угол"
 
-#: ../libqalculate/Calculator.cc:622
+#: ../libqalculate/Calculator.cc:628
 msgid "Radians unit is missing. Creating one for this session."
 msgstr "Единица измерения Радианы отсутствует. Создаю её для текущего сеанса."
 
-#: ../libqalculate/Calculator.cc:630
+#: ../libqalculate/Calculator.cc:636
 msgid "Degrees unit is missing. Creating one for this session."
 msgstr "Единица измерения Градусы отсутствует. Создаю её для текущего сеанса."
 
-#: ../libqalculate/Calculator.cc:1640 ../libqalculate/Calculator.cc:1641
-#: ../libqalculate/Calculator.cc:1645 ../libqalculate/Calculator.cc:1649
+#: ../libqalculate/Calculator.cc:1646 ../libqalculate/Calculator.cc:1647
+#: ../libqalculate/Calculator.cc:1651 ../libqalculate/Calculator.cc:1655
 #: ../libqalculate/Calculator-definitions.cc:3410
 #: ../libqalculate/Calculator-definitions.cc:3415
 #: ../libqalculate/Calculator-definitions.cc:3494
@@ -2998,7 +3004,7 @@ msgstr "Единица измерения Градусы отсутствует.
 msgid "Currency"
 msgstr "Валюта"
 
-#: ../libqalculate/Calculator.cc:2583
+#: ../libqalculate/Calculator.cc:2589
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
@@ -3007,7 +3013,7 @@ msgstr ""
 "«%s» больше не допускается в именах. Измените имя «%s», иначе переменная "
 "будет потеряна."
 
-#: ../libqalculate/Calculator.cc:2601
+#: ../libqalculate/Calculator.cc:2607
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -3016,7 +3022,7 @@ msgstr ""
 "«%s» больше не допускается в именах. Измените имя \"%s\", иначе функция "
 "будет потеряна."
 
-#: ../libqalculate/Calculator.cc:2618
+#: ../libqalculate/Calculator.cc:2624
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -3025,7 +3031,7 @@ msgstr ""
 "«%s» больше не допускается в именах. Измените имя «%s», иначе единица "
 "измерения будет потеряна."
 
-#: ../libqalculate/Calculator.cc:2825
+#: ../libqalculate/Calculator.cc:2831
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "Имя «%s» уже используется. Замена на «%s»."
@@ -3071,45 +3077,47 @@ msgid "Failed to download exchange rates from %s: %s."
 msgstr "Не удалось загрузить курсы валют из %s: %s."
 
 #. ignore operators
-#: ../libqalculate/Calculator-parse.cc:2099
-#: ../libqalculate/Calculator-parse.cc:2152
-#: ../libqalculate/Calculator-parse.cc:2156
-#: ../libqalculate/Calculator-parse.cc:2160
-#: ../libqalculate/Calculator-parse.cc:2164
-#: ../libqalculate/Calculator-parse.cc:2168
-#: ../libqalculate/Calculator-parse.cc:3627
+#: ../libqalculate/Calculator-parse.cc:2106
+#: ../libqalculate/Calculator-parse.cc:2159
+#: ../libqalculate/Calculator-parse.cc:2163
+#: ../libqalculate/Calculator-parse.cc:2167
+#: ../libqalculate/Calculator-parse.cc:2171
+#: ../libqalculate/Calculator-parse.cc:2175
+#: ../libqalculate/Calculator-parse.cc:2179
 #: ../libqalculate/Calculator-parse.cc:3638
-#: ../libqalculate/Calculator-parse.cc:3715
-#: ../libqalculate/Calculator-parse.cc:3799
-#: ../libqalculate/Calculator-parse.cc:3821
-#: ../libqalculate/Calculator-parse.cc:3822
-#: ../libqalculate/Calculator-parse.cc:3823
-#: ../libqalculate/Calculator-parse.cc:3824
-#: ../libqalculate/Calculator-parse.cc:3825
-#: ../libqalculate/Calculator-parse.cc:3826
+#: ../libqalculate/Calculator-parse.cc:3649
+#: ../libqalculate/Calculator-parse.cc:3727
+#: ../libqalculate/Calculator-parse.cc:3828
+#: ../libqalculate/Calculator-parse.cc:3850
+#: ../libqalculate/Calculator-parse.cc:3851
+#: ../libqalculate/Calculator-parse.cc:3852
+#: ../libqalculate/Calculator-parse.cc:3853
+#: ../libqalculate/Calculator-parse.cc:3854
+#: ../libqalculate/Calculator-parse.cc:3855
+#: ../libqalculate/Calculator-parse.cc:3856
 #, c-format
 msgid "Misplaced operator(s) \"%s\" ignored"
 msgstr "Неуместные операторы «%s» игнорируются"
 
 #. ignore operators
-#: ../libqalculate/Calculator-parse.cc:2148
-#: ../libqalculate/Calculator-parse.cc:3827
+#: ../libqalculate/Calculator-parse.cc:2155
+#: ../libqalculate/Calculator-parse.cc:3857
 #, c-format
 msgid "Misplaced '%c' ignored"
 msgstr "Неуместный символ «%c» игнорируется"
 
-#: ../libqalculate/Calculator-parse.cc:2202 ../libqalculate/Function.cc:1514
+#: ../libqalculate/Calculator-parse.cc:2213 ../libqalculate/Function.cc:1514
 #: ../libqalculate/Function.cc:1545
 #, c-format
 msgid "Internal id %s does not exist."
 msgstr "Внутренний идентификатор %s не существует."
 
-#: ../libqalculate/Calculator-parse.cc:2223
+#: ../libqalculate/Calculator-parse.cc:2234
 #, c-format
 msgid "\"%s\" is not a valid variable/function/unit."
 msgstr "«%s» не является допустимой переменной/функцией/единицей измерения."
 
-#: ../libqalculate/Calculator-parse.cc:2241
+#: ../libqalculate/Calculator-parse.cc:2252
 #, c-format
 msgid ""
 "Trailing characters \"%s\" (not a valid variable/function/unit) in number "
@@ -3118,8 +3126,8 @@ msgstr ""
 "Завершающие символы «%s» (недопустимая переменная/функция/единица измерения) "
 "в числе «%s» были проигнорированы."
 
-#: ../libqalculate/Calculator-parse.cc:2333
-#: ../libqalculate/Calculator-parse.cc:2349
+#: ../libqalculate/Calculator-parse.cc:2344
+#: ../libqalculate/Calculator-parse.cc:2360
 #: ../libqalculate/MathStructure-calculate.cc:1702
 msgid ""
 "Please use the cross(), dot(), and hadamard() functions for vector "
@@ -3128,37 +3136,37 @@ msgstr ""
 "Используйте функции векторноепроизведение(), векторноепроизведение() и "
 "адамар() для умножения векторов."
 
-#: ../libqalculate/Calculator-parse.cc:2432
+#: ../libqalculate/Calculator-parse.cc:2443
 msgid "Empty expression in parentheses interpreted as zero."
 msgstr "Пустое выражение в скобках интерпретируется как ноль."
 
-#: ../libqalculate/Calculator-parse.cc:2523
+#: ../libqalculate/Calculator-parse.cc:2534
 msgid "RPN syntax error. Values left at the end of the RPN expression."
 msgstr "Ошибка синтаксиса ПОЛИЗ. В конце выражения ПОЛИЗ остались значения."
 
-#: ../libqalculate/Calculator-parse.cc:2526
-#: ../libqalculate/Calculator-parse.cc:2617
+#: ../libqalculate/Calculator-parse.cc:2537
+#: ../libqalculate/Calculator-parse.cc:2628
 msgid "Unused stack values."
 msgstr "Неиспользуемые значения стека."
 
-#: ../libqalculate/Calculator-parse.cc:2676
-#: ../libqalculate/Calculator-parse.cc:2901
+#: ../libqalculate/Calculator-parse.cc:2687
+#: ../libqalculate/Calculator-parse.cc:2912
 #, c-format
 msgid "RPN syntax error. Operator '%c' not supported."
 msgstr "Ошибка синтаксиса ПОЛИЗ. Оператор '%c' не поддерживается."
 
-#: ../libqalculate/Calculator-parse.cc:2722
+#: ../libqalculate/Calculator-parse.cc:2733
 msgid "RPN syntax error. Stack is empty."
 msgstr "Ошибка синтаксиса ПОЛИЗ. Стек пустой."
 
-#: ../libqalculate/Calculator-parse.cc:2743
-msgid "RPN syntax error. Operator ignored as there were only one stack value."
+#: ../libqalculate/Calculator-parse.cc:2754
+msgid "RPN syntax error. Operator ignored as there was only one stack value."
 msgstr ""
 "Ошибка синтаксиса ПОЛИЗ. Оператор игнорируется, так как в стеке только одно "
 "значение."
 
-#: ../libqalculate/Calculator-parse.cc:3663
-#: ../libqalculate/Calculator-parse.cc:3742
+#: ../libqalculate/Calculator-parse.cc:3674
+#: ../libqalculate/Calculator-parse.cc:3754
 msgid ""
 "The expression is ambiguous (be careful when combining implicit "
 "multiplication and division)."
@@ -3166,7 +3174,7 @@ msgstr ""
 "Выражение неоднозначное (будьте осторожны при сочетании неявного умножения и "
 "деления)."
 
-#: ../libqalculate/Calculator-parse.cc:4000
+#: ../libqalculate/Calculator-parse.cc:4030
 #, c-format
 msgid "%s interpreted as 10^%s (1%s)"
 msgstr "%s интерпретируется как 10^%s (1%s)"
@@ -3274,21 +3282,21 @@ msgstr ""
 "Вторая матрица должна иметь столько же строк (было %s), сколько столбцов в "
 "первой (было %s) для умножения матриц."
 
-#: ../libqalculate/MathStructure-calculate.cc:6352
-#: ../libqalculate/MathStructure-calculate.cc:6391
-#: ../libqalculate/MathStructure-calculate.cc:6423
-#: ../libqalculate/MathStructure-calculate.cc:6488
-#: ../libqalculate/MathStructure-calculate.cc:6516
-#: ../libqalculate/MathStructure-calculate.cc:6535
-#: ../libqalculate/MathStructure-calculate.cc:6554
-#: ../libqalculate/MathStructure-calculate.cc:6573
-#: ../libqalculate/MathStructure-calculate.cc:6681
+#: ../libqalculate/MathStructure-calculate.cc:6342
+#: ../libqalculate/MathStructure-calculate.cc:6381
+#: ../libqalculate/MathStructure-calculate.cc:6413
+#: ../libqalculate/MathStructure-calculate.cc:6478
+#: ../libqalculate/MathStructure-calculate.cc:6506
+#: ../libqalculate/MathStructure-calculate.cc:6525
+#: ../libqalculate/MathStructure-calculate.cc:6544
+#: ../libqalculate/MathStructure-calculate.cc:6563
+#: ../libqalculate/MathStructure-calculate.cc:6671
 #: ../libqalculate/MathStructure-factor.cc:413
 #: ../libqalculate/MathStructure-factor.cc:1304
 msgid "This is a bug. Please report it."
 msgstr "Это ошибка. Пожалуйста, сообщите об этом."
 
-#: ../libqalculate/MathStructure-calculate.cc:6770
+#: ../libqalculate/MathStructure-calculate.cc:6760
 #: ../libqalculate/Function.cc:552
 msgid "No unknown variable/symbol was found."
 msgstr "Неизвестных переменных/символов не найдено"

@@ -1246,7 +1246,34 @@ bool MathStructure::representsUndefined(bool include_childs, bool include_infini
 }
 bool MathStructure::representsNonMatrix() const {
 	switch(m_type) {
-		case STRUCT_VECTOR: {return !isMatrix();}
+		case STRUCT_VECTOR: {
+			if(SIZE == 0) return true;
+			size_t n = 0;
+			for(size_t i = 0; i < SIZE; i++) {
+				if(CHILD(i).isVariable() && CHILD(i).variable()->isKnown()) {
+					if(((KnownVariable*) CHILD(i).variable())->get().isVector()) {
+						if(n == 0) {
+							n = ((KnownVariable*) CHILD(i).variable())->get().size();
+							if(n == 0) return true;
+						} else if(((KnownVariable*) CHILD(i).variable())->get().size() != n) {
+							return true;
+						}
+					} else if(CHILD(i).variable()->representsScalar()) {
+						return true;
+					}
+				} else if(CHILD(i).isVector()) {
+					if(n == 0) {
+						n = CHILD(i).size();
+						if(n == 0) return true;
+					} else if(CHILD(i).size() != n) {
+						return true;
+					}
+				} else if(CHILD(i).representsScalar()) {
+					return true;
+				}
+			}
+			return false;
+		}
 		case STRUCT_POWER: {return CHILD(0).representsNonMatrix();}
 		case STRUCT_VARIABLE: {return o_variable->representsNonMatrix();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonMatrix();}
