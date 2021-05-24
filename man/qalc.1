@@ -23,7 +23,7 @@ set the number base for results and, optionally, expressions
 .PP
 .TP 8
 .B \-c, \-\-color
-use colors to hightlight different elements of expressions and results
+use colors to highlight different elements of expressions and results
 .PP
 .TP 8
 .B \-e, \-\-exrates
@@ -212,7 +212,7 @@ Example: to bin
 .PP
 .TP 8
 .B variable \fIname expression\fP
-Create a variables with the specified name and expression.
+Create a variable with the specified name and expression.
 .br
 Example: variable var1 pi / 2.
 .PP
@@ -236,17 +236,17 @@ Clears the entire RPN stack.
 .PP
 .TP 8
 .B copy \fI[index]\fP
-Duplicates a value on the RPN stack to the top of the stack. If no index is specified, the top of the stack is duplicated. Index 1 is the top of stack and negative index values counts from the bottom of the stack.
+Duplicates a value on the RPN stack to the top of the stack. If no index is specified, the top of the stack is duplicated. Index 1 is the top of stack and negative index values count from the bottom of the stack.
 .PP
 .TP 8
 .B move \fIindex 1 index 2\fP
-Changes the position of a value on the RPN stack. Index 1 is the top of stack and negative index values counts from the bottom of the stack.
+Changes the position of a value on the RPN stack. Index 1 is the top of stack and negative index values count from the bottom of the stack.
 .br
 Example: move 2 4
 .PP
 .TP 8
 .B pop \fI[index]\fP
-Removes the top of the RPN stack or the value at the specified index. Index 1 is the top of stack and negative index values counts from the bottom of the stack.
+Removes the top of the RPN stack or the value at the specified index. Index 1 is the top of stack and negative index values count from the bottom of the stack.
 .PP
 .TP 8
 .B rotate \fI[direction]\fP
@@ -254,7 +254,7 @@ Rotates the RPN stack up (default) or down.
 .PP
 .TP 8
 .B swap \fI[index 1] [index 2]\fP
-Swaps position of values on the RPN stack. If no index is specified, the values on the top of the stack (index 1 and index 2) will be swapped and if only one index is specified, the value at this index will be swapped with the top value. Index 1 is the top of stack and negative index values counts from the bottom of the stack.
+Swaps position of values on the RPN stack. If no index is specified, the values on the top of the stack (index 1 and index 2) will be swapped and if only one index is specified, the value at this index will be swapped with the top value. Index 1 is the top of stack and negative index values count from the bottom of the stack.
 .br
 Example: swap 2 4
 .PP
@@ -346,7 +346,7 @@ Enabled objects:
 .PP
 .TP 8
 .B unknowns \fI(on, off*)\fP
-Interprete undefined symbols in expressions as unknown variables.
+Interpret undefined symbols in expressions as unknown variables.
 .PP
 .TP 8
 .B variables, var \fI(on*, off)\fP
@@ -445,7 +445,7 @@ Determines whether halfway numbers are rounded upwards or towards the nearest ev
 .PP
 .TP 8
 .B scientific notation, exp \fI(0 = off, -1 = auto*, -3 = engineering, 1 = pure, 3 = scientific, >= 0)\fP
-Determines how scientific notation are used (e.g. 5 543 000 = 5.543E6).
+Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6).
 .PP
 .TP 8
 .B show ending zeroes, zeroes \fI(on*, off)\fP
@@ -489,7 +489,7 @@ See syntax section.
 .PP
 .TP 8
 .B read precision, readprec \fI(0* = off, 1 = always, 2 = when decimals)\fP
-If activated, numbers be interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005).
+If activated, numbers are interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005).
 .PP
 Units:
 .PP
@@ -961,7 +961,7 @@ x+x^2+4 = 16
 x = 3 or x = -4
 .PP
 .TP 8
-x^2/(5 m) - hypot(x; 4 m) = 2 m where x>0
+x^2/(5 m) - hypot(x; 4 m) = 2 m where x > 0
 x = 7.1340411 m
 .PP
 .TP 8
