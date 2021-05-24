@@ -4681,7 +4681,7 @@ int main(int argc, char *argv[]) {
 				PUTS_UNICODE(_("Parse expressions using reverse Polish notation (\"1 2 3+* = 1*(2+3) = 5\")"));
 				puts("");
 				PUTS_BOLD(_("chain"));
-				PUTS_UNICODE(_("Perform operations from left to right, as the immediate execution mode of a traditional calculator (\"1+2*3 = (1+2)*3 = 9\")"));
+				PUTS_UNICODE(_("Perform operations from left to right, like the immediate execution mode of a traditional calculator (\"1+2*3 = (1+2)*3 = 9\")"));
 				puts("");
 			} else {
 				goto show_info;
