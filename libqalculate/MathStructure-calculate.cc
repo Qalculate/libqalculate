@@ -1698,7 +1698,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						}
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
-					} else {
+					} else if(representsNonMatrix() && mstruct.representsNonMatrix()) {
 						CALCULATOR->error(true, _("Please use the cross(), dot(), and hadamard() functions for vector multiplication."), NULL);
 						// dot product of two vectors: [a1, a2, a3, ..]*[b1, b2, b3, ...]=a1*b1+a2*b2+a3*b3+...
 						// dimension of the vectors must be equal
@@ -3301,24 +3301,14 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						return 1;
 					}
 					return -1;
-				} else {
-					// vector multiplication: do v^n=v^(n-1)*v
-					if(mstruct.number().isMinusOne()) {
-						return -1;
+				} /*else if(representsNonMatrix()) {
+					// element-wise power
+					for(size_t i = 0; i < SIZE; i++) {
+						CHILD(i).calculateRaise(mstruct, eo);
 					}
-					Number nr(mstruct.number());
-					if(nr.isNegative()) {
-						nr++;
-					} else {
-						nr--;
-					}
-					MathStructure msave(*this);
-					calculateMultiply(msave, eo);
-					calculateRaise(nr, eo);
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 1;
-				}
-
+				}*/
 			}
 			goto default_power_merge;
 		}
@@ -6796,7 +6786,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 					CHILD_UPDATED(i);
 				}
 				if(arg->handlesVector()) {
-					if(arg->tests() && !CHILD(i).isVector() && !CHILD(i).representsScalar()) {
+					if((arg->tests() || (o_function->subtype() == SUBTYPE_USER_FUNCTION && CHILD(i).containsType(STRUCT_VECTOR, false, true, false) > 0)) && !CHILD(i).isVector() && !CHILD(i).representsScalar()) {
 						CHILD(i).eval(eo);
 						CHILD_UPDATED(i);
 					}

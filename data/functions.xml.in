@@ -727,7 +727,7 @@
     </builtin_function>
     <builtin_function name="totient">
       <_title>Euler's Totient Function</_title>
-      <_description>Counts the positive integers up to a given integer n that are prime relative to n.</_description>
+      <_description>Counts the positive integers up to a given integer n that are relatively prime to n.</_description>
       <_names>r:totient,au:&#x3C6;,phi</_names>
       <argument index="1">
         <_title>n</_title>

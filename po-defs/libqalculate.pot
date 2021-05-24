@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-24 08:46+0700\n"
+"POT-Creation-Date: 2021-05-24 06:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3654,8 +3654,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:228
 msgid ""
-"Counts the positive integers up to a given integer n that are prime relative "
-"to n."
+"Counts the positive integers up to a given integer n that are relatively "
+"prime to n."
 msgstr ""
 
 #: ../data/functions.xml.in.h:229
