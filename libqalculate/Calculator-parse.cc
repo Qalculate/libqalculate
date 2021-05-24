@@ -215,7 +215,7 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f"};
 #define INTERNAL_SIGNS_COUNT 14
 #define INTERNAL_NUMBER_CHARS "\b"
-#define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f"
+#define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f\x16"
 #define DUODECIMAL_CHARS "EXABab"
 
 string Calculator::parseComments(string &str, const ParseOptions &po, bool *double_tag) {
@@ -604,6 +604,7 @@ void replace_internal_operators(string &str) {
 	gsub("\x1d", " nand ", str);
 	gsub("\x1e", " nor ", str);
 	gsub("\x1f", " xor ", str);
+	gsub("\x16", DOT, str);
 	remove_blank_ends(str);
 }
 
@@ -1001,7 +1002,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				str.replace(i_mod, 1, v_percent->referenceName());
 				i_mod += v_percent->referenceName().length() - 1;
 			}
-		} else if(i_mod == 0 || i_mod == str.length() - 1 || (is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMA OPERATORS "%\a\b\x1d\x1e\x1f", str[i_mod + 1]) && str[i_mod + 1] != BITWISE_NOT_CH && str[i_mod + 1] != NOT_CH) || is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMA OPERATORS "\a\b\x1d\x1e\x1f", str[i_mod - 1])) {
+		} else if(i_mod == 0 || i_mod == str.length() - 1 || (is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMA OPERATORS "%\a\b\x1d\x1e\x1f\x16", str[i_mod + 1]) && str[i_mod + 1] != BITWISE_NOT_CH && str[i_mod + 1] != NOT_CH) || is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMA OPERATORS "\a\b\x1d\x1e\x1f\x16", str[i_mod - 1])) {
 			str.replace(i_mod, 1, v_percent->referenceName());
 			i_mod += v_percent->referenceName().length() - 1;
 		}
@@ -1346,6 +1347,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.replace(str_index, name_length, stmp);
 					str_index += stmp.length() - 1;
 				}
+			}
+		} else if(str[str_index] == DOT_CH && !po.rpn && str_index > 0 && str_index < str.length() - 1 && is_not_number(str[str_index - 1], base) && is_not_number(str[str_index + 1], base)) {
+			size_t i1 = str.find_last_not_of(SPACE, str_index - 1);
+			size_t i2 = str.find_first_not_of(SPACE, str_index + 1);
+			if(i1 != string::npos && i2 != string::npos && is_not_number(str[i1], base) && is_not_number(str[i2], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i1]) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i2])) {
+				str[str_index] = '\x16';
 			}
 		} else if(is_not_in(NUMBERS INTERNAL_OPERATORS NOT_IN_NAMES, str[str_index])) {
 			// dx/dy derivative notation
@@ -2057,7 +2064,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	if(po.parsing_mode == PARSING_MODE_RPN) {
 		size_t rpn_i = str.find(SPACE, 0);
 		while(rpn_i != string::npos) {
-			if(rpn_i == 0 || rpn_i + 1 == str.length() || is_in("~+-*/^\a\b\\\x1c\x1d\x1e\x1f", str[rpn_i - 1]) || (is_in("%&|", str[rpn_i - 1]) && str[rpn_i + 1] != str[rpn_i - 1]) || (is_in("!><=", str[rpn_i - 1]) && is_not_in("=<>", str[rpn_i + 1])) || (is_in(SPACE OPERATORS INTERNAL_OPERATORS, str[rpn_i + 1]) && (str[rpn_i - 1] == SPACE_CH || (str[rpn_i - 1] != str[rpn_i + 1] && is_not_in("!><=", str[rpn_i - 1]))))) {
+			if(rpn_i == 0 || rpn_i + 1 == str.length() || is_in("~+-*/^\a\b\\\x1c\x1d\x1e\x1f\x16", str[rpn_i - 1]) || (is_in("%&|", str[rpn_i - 1]) && str[rpn_i + 1] != str[rpn_i - 1]) || (is_in("!><=", str[rpn_i - 1]) && is_not_in("=<>", str[rpn_i + 1])) || (is_in(SPACE OPERATORS INTERNAL_OPERATORS, str[rpn_i + 1]) && (str[rpn_i - 1] == SPACE_CH || (str[rpn_i - 1] != str[rpn_i + 1] && is_not_in("!><=", str[rpn_i - 1]))))) {
 				str.erase(rpn_i, 1);
 			} else {
 				rpn_i++;
@@ -2094,7 +2101,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 	if(str.empty()) return false;
 
 	// check that string contains characters other than operators and whitespace
-	if(str.find_first_not_of(OPERATORS "\a%\x1c\x1d\x1e\x1f" SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == string::npos)) {
+	if(str.find_first_not_of(OPERATORS "\a%\x1c\x1d\x1e\x1f\x16" SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == string::npos)) {
 		replace_internal_operators(str);
 		error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 		return false;
@@ -2162,6 +2169,10 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		} else if(str[i] == '\x1f') {
 			// ignore operators
 			error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
+			str.erase(i, 1);
+		} else if(str[i] == '\x16') {
+			// ignore operators
+			error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT, NULL);
 			str.erase(i, 1);
 		} else if(str[i] == '\x1c') {
 			// ignore operators
@@ -2507,7 +2518,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		char last_operator = 0;
 		char last_operator2 = 0;
 		while(true) {
-			i = str.find_first_of(OPERATORS "\a%\x1c\x1d\x1e\x1f" SPACE "\\", i3 + 1);
+			i = str.find_first_of(OPERATORS "\a%\x1c\x1d\x1e\x1f\x16" SPACE "\\", i3 + 1);
 			if(i == string::npos) {
 				if(!b) {
 					parseAdd(str, mstruct, po2);
@@ -3712,6 +3723,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						gsub("\x1d", str.find_first_of(OPERATORS "%") != string::npos ? " nand " : "nand", errstr);
 						gsub("\x1e", str.find_first_of(OPERATORS "%") != string::npos ? " nor " : "nor", errstr);
 						gsub("\x1f", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", errstr);
+						gsub("\x16", DOT, errstr);
 						error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
 						i += i2;
 					}
@@ -3772,6 +3784,23 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 	}
 
+	// Parse \x16 (internal vector dot operator)
+	if((i = str.find('\x16', 1)) != string::npos && i + 1 != str.length()) {
+		str2 = str.substr(0, i);
+		str = str.substr(i + 1, str.length() - (i + 1));
+		parseAdd(str2, mstruct, po);
+		MathStructure *mstruct2 = new MathStructure();
+		parseAdd(str, mstruct2, po);
+		MathFunction *f = getActiveFunction("dot");
+		if(f && !mstruct->representsScalar() && !mstruct2->representsScalar()) {
+			mstruct->transform(f);
+			mstruct->addChild_nocopy(mstruct2);
+		} else {
+			mstruct->multiply_nocopy(mstruct2);
+		}
+		return true;
+	}
+
 	// Parse \x1c (internal single substitution character for angle operator) for complex angle format
 	if((i = str.find('\x1c', 0)) != string::npos && i + 1 != str.length() && (po.parsing_mode != PARSING_MODE_CHAIN || i == 0)) {
 		if(i != 0) str2 = str.substr(0, i);
@@ -3824,6 +3853,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			else if(str[i] == '\x1d') error(false, _("Misplaced operator(s) \"%s\" ignored"), "nand", NULL);
 			else if(str[i] == '\x1e') error(false, _("Misplaced operator(s) \"%s\" ignored"), "nor", NULL);
 			else if(str[i] == '\x1f') error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
+			else if(str[i] == '\x16') error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT, NULL);
 			else error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
 		} else {

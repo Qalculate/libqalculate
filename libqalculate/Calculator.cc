@@ -231,19 +231,25 @@ Calculator::Calculator() {
 	addStringAlternative("¬", BITWISE_NOT);
 	addStringAlternative(SIGN_MICRO, "μ");
 
+	//division operator
 	per_str = _("per");
 	per_str_len = per_str.length();
+	//multiplication operator
 	times_str = _("times");
 	times_str_len = times_str.length();
+	//addition operator
 	plus_str = _("plus");
 	plus_str_len = plus_str.length();
+	//subtraction operator
 	minus_str = _("minus");
 	minus_str_len = minus_str.length();
+	//logical operator
 	and_str = _("and");
 	if(and_str == "and") and_str = "";
 	and_str_len = and_str.length();
 	AND_str = "AND";
 	AND_str_len = AND_str.length();
+	//logical operator
 	or_str = _("or");
 	if(or_str == "or") or_str = "";
 	or_str_len = or_str.length();
