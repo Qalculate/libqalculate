@@ -268,16 +268,19 @@ bool ask_question(const char *question, bool default_answer = false) {
 }
 
 void set_assumption(const string &str, bool last_of_two = false) {
+	//assumptions
 	if(EQUALS_IGNORECASE_AND_LOCAL(str, "unknown", _("unknown")) || str == "0") {
 		if(!last_of_two) {
 			CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_UNKNOWN);
 		} else {
 			CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 		}
+	//real number
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "real", _("real"))) {
 		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_REAL);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "number", _("number")) || str == "num") {
 		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
+	//rational number
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rational", _("rational")) || str == "rat") {
 		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_RATIONAL);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "integer", _("integer")) || str == "int") {
@@ -286,10 +289,12 @@ void set_assumption(const string &str, bool last_of_two = false) {
 		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_BOOLEAN);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "non-zero", _("non-zero")) || str == "nz") {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONZERO);
+	//positive number
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "positive", _("positive")) || str == "pos") {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_POSITIVE);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "non-negative", _("non-negative")) || str == "nneg") {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NONNEGATIVE);
+	//negative number
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "negative", _("negative")) || str == "neg") {
 		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_NEGATIVE);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "non-positive", _("non-positive")) || str == "npos") {
@@ -652,11 +657,14 @@ void set_option(string str) {
 	}
 
 	set_option_place:
+	//number base
 	if(EQUALS_IGNORECASE_AND_LOCAL(svar, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(svar, "input base", _("input base")) || svar == "inbase" || EQUALS_IGNORECASE_AND_LOCAL(svar, "output base", _("output base")) || svar == "outbase") {
 		int v = 0;
 		bool b_in = EQUALS_IGNORECASE_AND_LOCAL(svar, "input base", _("input base")) || svar == "inbase";
 		bool b_out = EQUALS_IGNORECASE_AND_LOCAL(svar, "output base", _("output base")) || svar == "outbase";
+		//roman numerals
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "roman", _("roman"))) v = BASE_ROMAN_NUMERALS;
+		//number base
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "bijective", _("bijective")) || str == "b26" || str == "B26") v = BASE_BIJECTIVE_26;
 		else if(equalsIgnoreCase(svalue, "fp32") || equalsIgnoreCase(svalue, "binary32") || equalsIgnoreCase(svalue, "float")) {if(b_in) v = 0; else v = BASE_FP32;}
 		else if(equalsIgnoreCase(svalue, "fp64") || equalsIgnoreCase(svalue, "binary64") || equalsIgnoreCase(svalue, "double")) {if(b_in) v = 0; else v = BASE_FP64;}
@@ -672,8 +680,10 @@ void set_option(string str) {
 		else if(svalue == "sqrt(2)" || svalue == "sqrt 2" || svalue == "sqrt2" || svalue == "√2") v = BASE_SQRT2;
 		else if(equalsIgnoreCase(svalue, "unicode")) v = BASE_UNICODE;
 		else if(equalsIgnoreCase(svalue, "duo") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "duodecimal", _("duodecimal"))) v = 12;
+		//number base
 		else if(equalsIgnoreCase(svalue, "bin") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "binary", _("binary"))) v = BASE_BINARY;
 		else if(equalsIgnoreCase(svalue, "oct") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "octal", _("octal"))) v = BASE_OCTAL;
+		//number base
 		else if(equalsIgnoreCase(svalue, "dec") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "decimal", _("decimal"))) v = BASE_DECIMAL;
 		else if(equalsIgnoreCase(svalue, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "sexagesimal", _("sexagesimal"))) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
 		else if(equalsIgnoreCase(svalue, "sexa2") || EQUALS_IGNORECASE_AND_LOCAL_NR(svalue, "sexagesimal", _("sexagesimal"), "2")) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL_2;}
@@ -754,6 +764,7 @@ void set_option(string str) {
 			case ASSUMPTION_TYPE_BOOLEAN: {value += _("boolean"); break;}
 			case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
 			case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
+			//complex number
 			case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
 			case ASSUMPTION_TYPE_NUMBER: {value += _("number"); break;}
 			case ASSUMPTION_TYPE_NONMATRIX: {value += _("non-matrix"); break;}
@@ -785,6 +796,7 @@ void set_option(string str) {
 		{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else if(printops.sort_options.minus_last != v) {printops.sort_options.minus_last = v; result_display_updated();}}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assume nonzero denominators", _("assume nonzero denominators")) || svar == "nzd") SET_BOOL_E(evalops.assume_denominators_nonzero)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "warn nonzero denominators", _("warn nonzero denominators")) || svar == "warnnzd") SET_BOOL_E(evalops.warn_about_denominators_assumed_nonzero)
+	//unit prefixes
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "prefixes", _("prefixes")) || svar == "pref") SET_BOOL_D(printops.use_unit_prefixes)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "binary prefixes", _("binary prefixes")) || svar == "binpref") {
 		bool b = CALCULATOR->usesBinaryPrefixes() > 0;
@@ -800,8 +812,11 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "sync units", _("sync units")) || svar == "sync") SET_BOOL_E(evalops.sync_units)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "temperature calculation", _("temperature calculation")) || svar == "temp")  {
 		int v = -1;
+		//temperature calculation mode
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "relative", _("relative"))) v = TEMPERATURE_CALCULATION_RELATIVE;
+		//temperature calculation mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "hybrid", _("hybrid"))) v = TEMPERATURE_CALCULATION_HYBRID;
+		//temperature calculation mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "absolute", _("absolute"))) v = TEMPERATURE_CALCULATION_ABSOLUTE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -848,8 +863,11 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "base display", _("base display")) || svar == "basedisp") {
 		int v = -1;
+		//base display mode
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = BASE_DISPLAY_NONE;
+		//base display mode
 		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "normal", _("normal"))) v = BASE_DISPLAY_NORMAL;
+		//base display mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "alternative", _("alternative"))) v = BASE_DISPLAY_ALTERNATIVE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -865,8 +883,11 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "digit grouping", _("digit grouping")) || svar =="group") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = DIGIT_GROUPING_NONE;
+		//digit grouping mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = DIGIT_GROUPING_NONE;
-		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "standard", _("standard")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = DIGIT_GROUPING_STANDARD;
+		//digit grouping mode
+		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "standard", _("standard"))
+		 || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = DIGIT_GROUPING_STANDARD;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "locale", _("locale"))) v = DIGIT_GROUPING_LOCALE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -906,6 +927,7 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "limit implicit multiplication", _("limit implicit multiplication")) || svar == "limimpl") {
 		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else {printops.limit_implicit_multiplication = v; evalops.parse_options.limit_implicit_multiplication = v; expression_format_updated(true);}
+	//extra space next to operators
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spacious", _("spacious")) || svar == "space") SET_BOOL_D(printops.spacious)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unicode", _("unicode")) || svar == "uni") {
 		int v = s2b(svalue);
@@ -916,6 +938,7 @@ void set_option(string str) {
 		}
 		enable_unicode = -1;
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "units", _("units")) || svar == "unit") SET_BOOL_PV(evalops.parse_options.units_enabled)
+	//automatic unknown variables
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unknowns", _("unknowns")) || svar == "unknown") SET_BOOL_PV(evalops.parse_options.unknowns_enabled)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "variables", _("variables")) || svar == "var") SET_BOOL_PV(evalops.parse_options.variables_enabled)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "abbreviations", _("abbreviations")) || svar == "abbr" || svar == "abbrev") SET_BOOL_D(printops.abbreviate_names)
@@ -923,9 +946,13 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "repeating decimals", _("repeating decimals")) || svar == "repdeci") SET_BOOL_D(printops.indicate_infinite_series)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "angle unit", _("angle unit")) || svar == "angle") {
 		int v = -1;
+		//angle unit
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rad", _("rad")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "radians", _("radians"))) v = ANGLE_UNIT_RADIANS;
+		//angle unit
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "deg", _("deg")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "degrees", _("degrees"))) v = ANGLE_UNIT_DEGREES;
+		//angle unit
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "gra", _("gra")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "gradians", _("gradians"))) v = ANGLE_UNIT_GRADIANS;
+		//no angle unit
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = ANGLE_UNIT_NONE;
 		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -941,8 +968,11 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "caret as xor", _("caret as xor")) || equalsIgnoreCase(svar, "xor^")) SET_BOOL_PT(caret_as_xor)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "parsing mode", _("parsing mode")) || svar == "parse" || svar == "syntax") {
 		int v = -1;
+		//parsing mode
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "adaptive", _("adaptive"))) v = PARSING_MODE_ADAPTIVE;
+		//parsing mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "implicit first", _("implicit first"))) v = PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST;
+		//parsing mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "conventional", _("conventional"))) v = PARSING_MODE_CONVENTIONAL;
 		// chain calculation mode (parsing mode)
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "chain", _("chain"))) v = PARSING_MODE_CHAIN;
@@ -957,8 +987,10 @@ void set_option(string str) {
 			expression_format_updated(true);
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "update exchange rates", _("update exchange rates")) || svar == "upxrates") {
+		//exchange rates updates
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "never", _("never"))) {
 			auto_update_exchange_rates = 0;
+		//exchange rates updates
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "ask", _("ask"))) {
 			auto_update_exchange_rates = -1;
 		} else {
@@ -998,10 +1030,15 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "approximation", _("approximation")) || svar == "appr" || svar == "approx") {
 		int v = -1;
+		//approximation mode
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact", _("exact"))) v = APPROXIMATION_EXACT;
+		//automatic
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "auto", _("auto"))) v = -1;
+		//approximation mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "dual", _("dual"))) v = APPROXIMATION_APPROXIMATE + 1;
+		//approximation mode
 		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "try exact", _("try exact")) || svalue == "try") v = APPROXIMATION_TRY_EXACT;
+		//approximation mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "approximate", _("approximate")) || svalue == "approx") v = APPROXIMATION_APPROXIMATE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -1037,12 +1074,16 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "autoconversion", _("autoconversion")) || svar == "conv") {
 		int v = -1;
 		MixedUnitsConversion muc = MIXED_UNITS_CONVERSION_DEFAULT;
+		//no unit conversion
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) {v = POST_CONVERSION_NONE;  muc = MIXED_UNITS_CONVERSION_NONE;}
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "best", _("best"))) v = POST_CONVERSION_OPTIMAL_SI;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimalsi", _("optimalsi")) || svalue == "si") v = POST_CONVERSION_OPTIMAL_SI;
+		//optimal units
 		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimal", _("optimal"))) v = POST_CONVERSION_OPTIMAL;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "base", _("base"))) v = POST_CONVERSION_BASE;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = POST_CONVERSION_OPTIMAL + 1;
+		//base units
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "base", _c("units", "base"))) v = POST_CONVERSION_BASE;
+		//mixed units
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _c("units", "mixed"))) v = POST_CONVERSION_OPTIMAL + 1;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 			if(v == 1) v = 3;
@@ -1065,8 +1106,11 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "currency conversion", _("currency conversion")) || svar == "curconv") SET_BOOL_E(evalops.local_currency_conversion)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "algebra mode", _("algebra mode")) || svar == "alg") {
 		int v = -1;
+		//algebra mode
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = STRUCTURING_NONE;
+		//algebra mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "simplify", _("simplify")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "expand", _("expand"))) v = STRUCTURING_SIMPLIFY;
+		//algebra mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "factorize", _("factorize")) || svalue == "factor") v = STRUCTURING_FACTORIZE;
 		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -1146,12 +1190,18 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval display", _("interval display")) || svar == "ivdisp") {
 		int v = -1;
+		//interval display mode
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "adaptive", _("adaptive"))) v = 0;
+		//interval display mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "significant", _("significant"))) v = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS + 1;
+		//interval display mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "interval", _("interval"))) v = INTERVAL_DISPLAY_INTERVAL + 1;
 		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "plusminus", _("plusminus"))) v = INTERVAL_DISPLAY_PLUSMINUS + 1;
+		//interval display mode: midpoint number in range
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "midpoint", _("midpoint"))) v = INTERVAL_DISPLAY_MIDPOINT + 1;
+		//interval display mode: upper number in range
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "upper", _("upper"))) v = INTERVAL_DISPLAY_UPPER + 1;
+		//interval display mode: lower number in range
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "lower", _("lower"))) v = INTERVAL_DISPLAY_LOWER + 1;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -1213,10 +1263,14 @@ void set_option(string str) {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = FRACTION_DECIMAL;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "auto", _("auto"))) v = -1;
+		//fraction mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact", _("exact"))) v = FRACTION_DECIMAL_EXACT;
 		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = FRACTION_FRACTIONAL;
+		//fraction mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "combined", _("combined")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = FRACTION_COMBINED;
+		//fraction mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "long", _("long"))) v = FRACTION_COMBINED + 1;
+		//fraction mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "dual", _("dual"))) v = FRACTION_COMBINED + 2;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -1235,10 +1289,15 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "complex form", _("complex form")) || svar == "cplxform") {
 		int v = -1;
+		//complex form
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "cartesian", _("cartesian")) || svalue == "rect") v = COMPLEX_NUMBER_FORM_RECTANGULAR;
+		//complex form
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exponential", _("exponential")) || svalue == "exp") v = COMPLEX_NUMBER_FORM_EXPONENTIAL;
+		//complex form
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "polar", _("polar"))) v = COMPLEX_NUMBER_FORM_POLAR;
+		//complex form
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "angle", _("angle")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "phasor", _("phasor"))) v = COMPLEX_NUMBER_FORM_CIS + 1;
+		//complex form
 		else if(svar == "cis") v = COMPLEX_NUMBER_FORM_CIS;
 		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
@@ -1392,6 +1451,7 @@ int key_fraction(int, int) {
 	if(dual_fraction) {
 		dual_fraction = 0;
 		printops.number_fraction_format = FRACTION_COMBINED;
+		//fraction mode
 		PUTS_UNICODE(_("mixed"));
 	} else if(printops.number_fraction_format == FRACTION_FRACTIONAL) {
 		dual_fraction = 0;
@@ -1979,6 +2039,7 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("usage: qalc [options] [expression]"));
 			printf("\n");
 			PUTS_UNICODE(_("where options are:"));
+			//number base
 			fputs("\n\t-b, -base", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("set the number base for results and, optionally, expressions"));
 			fputs("\n\t-c, -color\n", stdout);
@@ -3218,6 +3279,7 @@ int main(int argc, char *argv[]) {
 				hide_parse_errors = false;
 				evalops.complex_number_form = cnf_bak;
 				complex_angle_form = caf_bak;
+			//number bases
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "bases", _("bases"))) {
 				int save_base = printops.base;
 				string save_result_text = result_text;
@@ -3292,7 +3354,8 @@ int main(int argc, char *argv[]) {
 				if(check_exchange_rates()) mstruct->set(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));
 				else mstruct->set(mstruct_new);
 				result_action_executed();
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base"))) {
+			//base units
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "base", _c("units", "base"))) {
 				CALCULATOR->resetExchangeRatesUsed();
 				MathStructure mstruct_new(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
 				if(check_exchange_rates()) mstruct->set(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
@@ -3529,6 +3592,7 @@ int main(int argc, char *argv[]) {
 				default: {str += i2s(printops.base);}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			//number bases
 			PRINT_AND_COLON_TABS(_("base display"), "basedisp");
 			switch(printops.base_display) {
 				case BASE_DISPLAY_NONE: {str += _("none"); break;}
@@ -3672,12 +3736,12 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("autoconversion"), "conv");
 			switch(evalops.auto_post_conversion) {
 				case POST_CONVERSION_NONE: {
-					if(evalops.mixed_units_conversion > MIXED_UNITS_CONVERSION_NONE) {str += _("mixed");}
+					if(evalops.mixed_units_conversion > MIXED_UNITS_CONVERSION_NONE) {str += _c("units", "mixed");}
 					else {str += _("none");}
 					break;
 				}
 				case POST_CONVERSION_OPTIMAL: {str += _("optimal"); break;}
-				case POST_CONVERSION_BASE: {str += _("base"); break;}
+				case POST_CONVERSION_BASE: {str += _c("units", "base"); break;}
 				case POST_CONVERSION_OPTIMAL_SI: {str += _("optimalsi"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -4437,11 +4501,11 @@ int main(int argc, char *argv[]) {
 				if(evalops.auto_post_conversion == POST_CONVERSION_NONE && evalops.mixed_units_conversion == MIXED_UNITS_CONVERSION_NONE) str += "*";
 				str += ", "; str +=  _("optimal");
 				if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) str += "*";
-				str += ", "; str += _("base");
+				str += ", "; str += _c("units", "base");
 				if(evalops.auto_post_conversion == POST_CONVERSION_BASE) str += "*";
 				str += ", "; str += _("optimalsi");
 				if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL_SI) str += "*";
-				str += ", "; str += _("mixed");
+				str += ", "; str += _c("units", "mixed");
 				if(evalops.auto_post_conversion == POST_CONVERSION_NONE && evalops.mixed_units_conversion > MIXED_UNITS_CONVERSION_NONE) str += "*";
 				str += ")";
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -5674,7 +5738,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					evalops.parse_options.units_enabled = true;
 					evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
 					str_conv = "";
-				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "base", _("base"))) {
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "base", _c("units", "base"))) {
 					evalops.parse_options.units_enabled = true;
 					evalops.auto_post_conversion = POST_CONVERSION_BASE;
 					str_conv = "";
@@ -5707,7 +5771,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 							CALCULATOR->setCustomOutputBase(m.number());
 						}
 					}
-				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _("mixed"))) {
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _c("units", "mixed"))) {
 					evalops.auto_post_conversion = POST_CONVERSION_NONE;
 					evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
 				} else {

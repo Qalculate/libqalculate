@@ -1535,7 +1535,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				evalops.parse_options.units_enabled = true;
 				evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
 				str_conv = "";
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "base", _("base"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "base", _c("units", "base"))) {
 				evalops.parse_options.units_enabled = true;
 				evalops.auto_post_conversion = POST_CONVERSION_BASE;
 				str_conv = "";
@@ -1560,7 +1560,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 						setCustomOutputBase(m.number());
 					}
 				}
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _("mixed"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _c("units", "mixed"))) {
 				evalops.parse_options.units_enabled = true;
 				evalops.auto_post_conversion = POST_CONVERSION_NONE;
 				evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
