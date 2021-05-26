@@ -1098,7 +1098,8 @@
         <_title>Value</_title>
       </argument>
       <argument type="free" index="2">
-        <_title>Degree</_title>
+        <!--nth root argument; remove "!root!" in translation-->
+        <_title>!root!Degree</_title>
       </argument>
     </builtin_function>
     <builtin_function name="sq">
