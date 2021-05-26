@@ -18,6 +18,7 @@
 #include "MathStructure.h"
 #include "MathStructure-support.h"
 #include "Number.h"
+#include "Unit.h"
 #include "BuiltinFunctions.h"
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
@@ -272,14 +273,8 @@ string DataProperty::getInputString(const string &valuestr) {
 	}
 	if(!sunit.empty()) {
 		str += " ";
-		if(!CALCULATOR->getIgnoreLocale() && strncmp(setlocale(LC_MESSAGES, NULL), "ru", 2) == 0) {
-			MathStructure m(*getUnitStruct());
-			m.format(CALCULATOR->messagePrintOptions());
-			if(m.isMultiplication() && m.size() >= 2 && m[0].isOne()) m.delChild(1, true);
-			str += m.print(CALCULATOR->messagePrintOptions());
-		} else {
-			str += CALCULATOR->localizeExpression(sunit);
-		}
+		CompositeUnit cu("", "", "", sunit);
+		str += cu.print(false, true, CALCULATOR->messagePrintOptions().use_unicode_signs, CALCULATOR->messagePrintOptions().can_display_unicode_string_function, CALCULATOR->messagePrintOptions().can_display_unicode_string_arg);
 	}
 	return str;
 }
@@ -287,14 +282,8 @@ string DataProperty::getDisplayString(const string &valuestr) {
 	if(!sunit.empty()) {
 		string str = CALCULATOR->localizeExpression(valuestr);
 		str += " ";
-		if(!CALCULATOR->getIgnoreLocale() && strncmp(setlocale(LC_MESSAGES, NULL), "ru", 2) == 0) {
-			MathStructure m(*getUnitStruct());
-			m.format(CALCULATOR->messagePrintOptions());
-			if(m.isMultiplication() && m.size() >= 2 && m[0].isOne()) m.delChild(1, true);
-			return str + m.print(CALCULATOR->messagePrintOptions());
-		} else {
-			return str + CALCULATOR->localizeExpression(sunit);
-		}
+		CompositeUnit cu("", "", "", sunit);
+		return str + cu.print(false, true, CALCULATOR->messagePrintOptions().use_unicode_signs, CALCULATOR->messagePrintOptions().can_display_unicode_string_function, CALCULATOR->messagePrintOptions().can_display_unicode_string_arg);
 	}
 	return CALCULATOR->localizeExpression(valuestr);
 }
