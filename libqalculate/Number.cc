@@ -67,7 +67,7 @@ int char2val(const char &c, const int &base) {
 }
 
 void insert_thousands_separator(string &str, const PrintOptions &po) {
-	if(po.digit_grouping != DIGIT_GROUPING_NONE && (po.digit_grouping != DIGIT_GROUPING_LOCALE || !CALCULATOR->local_digit_group_separator.empty())) {
+	if(po.digit_grouping != DIGIT_GROUPING_NONE && (po.digit_grouping != DIGIT_GROUPING_LOCALE || !CALCULATOR->local_digit_group_separator.empty() || CALCULATOR->getIgnoreLocale())) {
 		size_t group_size = 3, i_format = 0;
 		if(po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_format.size() > i_format) {
 			if(CALCULATOR->local_digit_group_format[i_format] == CHAR_MAX) return;
@@ -100,7 +100,7 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 		if(po.digit_grouping == DIGIT_GROUPING_LOCALE || i > group_size + 1) {
 			while(i > group_size) {
 				i -= group_size;
-				if(po.digit_grouping != DIGIT_GROUPING_LOCALE) {
+				if(po.digit_grouping != DIGIT_GROUPING_LOCALE || CALCULATOR->local_digit_group_separator.empty()) {
 #ifdef _WIN32
 					// do not use thin space on Windows < 10
 					if(IsWindows10OrGreater() && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
