@@ -4058,19 +4058,24 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		parseAdd(str, mstruct2, po);
 		mstruct->transform(priv->f_power);
 		mstruct->addChild_nocopy(mstruct2);
-	} else if((i = str.find("\b", 1)) != string::npos && i + 1 != str.length()) {
+	} else if((i = str.find("\b", 1)) != string::npos) {
 		// Parse uncertainty (using \b as internal single substitution character for +/-)
 		str2 = str.substr(0, i);
-		str = str.substr(i + 1, str.length() - (i + 1));
 		MathStructure *mstruct2 = new MathStructure;
 		if(po.read_precision != DONT_READ_PRECISION) {
 			ParseOptions po2 = po;
 			po2.read_precision = DONT_READ_PRECISION;
 			parseAdd(str2, mstruct, po2);
-			parseAdd(str, mstruct2, po2);
+			if(i + 1 != str.length()) {
+				str = str.substr(i + 1, str.length() - (i + 1));
+				parseAdd(str, mstruct2, po2);
+			}
 		} else {
 			parseAdd(str2, mstruct, po);
-			parseAdd(str, mstruct2, po);
+			if(i + 1 != str.length()) {
+				str = str.substr(i + 1, str.length() - (i + 1));
+				parseAdd(str, mstruct2, po);
+			}
 		}
 		mstruct->transform(f_uncertainty);
 		mstruct->addChild_nocopy(mstruct2);
