@@ -208,7 +208,29 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 					return 0;
 				}
 				case STRUCT_VECTOR: {
-					if(SIZE == mstruct.size()) {
+					 if(SIZE > 0 && mstruct.isMatrix() && mstruct.columns() == 1 && (!isMatrix() || SIZE == mstruct.size())) {
+					 	if(!isMatrix()) {
+						 	// row vector + column vector = matrix
+							for(size_t i = 0; i < SIZE; i++) {
+								CHILD(i).transform(STRUCT_VECTOR);
+								for(size_t i2 = 1; i2 < mstruct.size(); i2++) {
+									CHILD(i).addChild(CHILD(i)[0]);
+								}
+								for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
+									CHILD(i)[i2] += mstruct[i2][0];
+								}
+							}
+						} else {
+							for(size_t i = 0; i < SIZE; i++) {
+								for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+									CHILD(i)[i2] += mstruct[i][0];
+								}
+							}
+						}
+						return 1;
+					} else if(mstruct.size() > 0 && isMatrix() && columns() == 1 && (!mstruct.isMatrix() || SIZE == mstruct.size())) {
+						return 0;
+					} else if(SIZE == mstruct.size()) {
 						// [a1,a2,a3,...]+[b1,b2,b3,...]=[a1+b1,a2+b2,a3+b3,...]
 						for(size_t i = 0; i < SIZE; i++) {
 							CHILD(i).calculateAdd(mstruct[i], eo, this, i);
@@ -216,6 +238,16 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 						MERGE_APPROX_AND_PREC(mstruct)
 						CHILDREN_UPDATED
 						return 1;
+					} else if(isMatrix() && columns() == mstruct.size()) {
+						
+						for(size_t i = 0; i < SIZE; i++) {
+							CHILD(i).calculateAdd(mstruct, eo, this, i);
+						}
+						MERGE_APPROX_AND_PREC(mstruct)
+						CHILDREN_UPDATED
+						return 1;
+					} else if(mstruct.isMatrix() && mstruct.columns() == SIZE) {
+						return 0;
 					}
 				}
 				default: {

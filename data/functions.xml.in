@@ -340,19 +340,44 @@
         <test>false</test>
       </argument>
     </function>
-    <function>
+    <builtin_function name="dot">
       <_title>Dot Product</_title>
       <_names>r:dot</_names>
       <_description>Calculates the dot product of two vectors.</_description>
-      <expression>sum(element(\x,"i")*element(\y,"i"),1,dimension(\x),"i")</expression>
-      <condition>dimension(\x)==dimension(\y)</condition>
-      <argument type="vector" index="1">
+      <argument index="1">
         <_title>Vector 1</_title>
       </argument>
-      <argument type="vector" index="2">
+      <argument index="2">
         <_title>Vector 2</_title>
       </argument>
-    </function>
+    </builtin_function>
+    <builtin_function name="times">
+      <_title>Element-wise Multiplication</_title>
+      <_names>r:multiply,times</_names>
+      <argument index="1">
+        <_title>Factors</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="rdivide">
+      <_title>Element-wise Right Division</_title>
+      <_names>r:divide,rdivide</_names>
+      <argument index="1">
+        <_title>Numerator</_title>
+      </argument>
+      <argument index="2">
+        <_title>Denominator</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="pow">
+      <_title>Element-wise Power</_title>
+      <_names>r:pow,r:raise,power</_names>
+      <argument index="1">
+        <_title>Base</_title>
+      </argument>
+      <argument index="2">
+        <_title>Exponent</_title>
+      </argument>
+    </builtin_function>
     <function>
       <_title>Cross Product</_title>
       <_names>r:cross</_names>
@@ -558,53 +583,11 @@
         </argument>
       </function>
       <function>
-        <_title>Multiply</_title>
-        <_names>r:multiply</_names>
-        <expression>product(element(\x,"x"),1,dimension(\x),"x")</expression>
-        <argument type="vector" index="1">
-          <_title>Factors</_title>
-        </argument>
-      </function>
-      <function>
-        <_title>Add</_title>
-        <_names>r:add</_names>
-        <expression>total(\x)</expression>
-        <argument type="vector" index="1">
-          <_title>Terms</_title>
-        </argument>
-      </function>
-      <function>
         <_title>Subtract</_title>
         <_names>r:subtract</_names>
-        <expression>csum(2,-1,element(\x,1),"y"-"x","x","y",\x)</expression>
+        <expression>element(\x,1)-sum(element(\x,"i"),2,elements(\x))</expression>
         <argument type="vector" index="1">
           <_title>Terms</_title>
-        </argument>
-      </function>
-      <function>
-        <_title>Divide</_title>
-        <_names>r:divide</_names>
-        <expression>\x/\y</expression>
-        <argument type="free" index="1">
-          <_title>Numerator</_title>
-          <handle_vector>true</handle_vector>
-        </argument>
-        <argument type="free" index="2">
-          <_title>Denominator</_title>
-          <handle_vector>true</handle_vector>
-        </argument>
-      </function>
-      <function>
-        <_title>Raise</_title>
-        <_names>r:raise</_names>
-        <expression>\x^\y</expression>
-        <argument type="free" index="1">
-          <_title>Base</_title>
-          <handle_vector>true</handle_vector>
-        </argument>
-        <argument type="free" index="2">
-          <_title>Exponent</_title>
-          <handle_vector>true</handle_vector>
         </argument>
       </function>
     </category>
@@ -1192,19 +1175,6 @@
       </argument>
     </function>
     <function>
-      <_title>X raised to the power Y</_title>
-      <_names>r:pow</_names>
-      <expression>\x^\y</expression>
-      <argument type="free" index="1">
-        <_title>Base</_title>
-        <handle_vector>true</handle_vector>
-      </argument>
-      <argument type="free" index="2">
-        <_title>Exponent</_title>
-        <handle_vector>true</handle_vector>
-      </argument>
-    </function>
-    <function>
       <_title>Square root (x * pi)</_title>
       <_names>r:sqrtpi</_names>
       <_description>Returns the non-negative square root of x * pi</_description>
@@ -1586,7 +1556,7 @@
       <_title>Descriptive Statistics</_title>
       <builtin_function name="total">
         <_title>Sum (total)</_title>
-        <_names>r:total</_names>
+        <_names>r:total,r:add</_names>
         <argument index="1">
           <_title>Data</_title>
         </argument>
