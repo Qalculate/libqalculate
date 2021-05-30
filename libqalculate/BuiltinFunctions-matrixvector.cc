@@ -528,6 +528,247 @@ int EntrywiseFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	return 1;
 }
 
+DotProductFunction::DotProductFunction() : MathFunction("dot", 2) {
+	setArgumentDefinition(1, new VectorArgument("", false));
+	setArgumentDefinition(2, new VectorArgument("", false));
+}
+int DotProductFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	MathStructure m2(vargs[1]);
+	bool b_eval = false;
+	if(!mstruct.isVector() && !mstruct.representsScalar()) {mstruct.eval(eo); b_eval = true;}
+	if(!m2.isVector() && !m2.representsScalar()) {m2.eval(eo); b_eval = true;}
+	if(mstruct.representsScalar() || m2.representsScalar()) {
+		mstruct *= m2;
+		return 1;
+	}
+	if(mstruct.isVector() && m2.isVector()) {
+		if(mstruct.size() == m2.size()) {
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				mstruct[i] *= m2[i];
+			}
+			mstruct.setType(STRUCT_ADDITION);
+			return 1;
+		}
+	}
+	if(!b_eval) return 0;
+	mstruct.transform(STRUCT_VECTOR, m2);
+	return -3;
+}
+
+EntrywiseMultiplicationFunction::EntrywiseMultiplicationFunction() : MathFunction("times", 1) {
+	setArgumentDefinition(1, new VectorArgument(""));
+}
+int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].size() == 0) {mstruct.clear(); return 1;}
+	if(vargs[0].size() == 1) {mstruct = vargs[0][0]; return 1;}
+	if(vargs[0].size() > 2) {
+		mstruct = vargs[0][0];
+		bool b_scalar = mstruct.representsScalar();
+		for(size_t index = 1; index < vargs[0].size(); index++) {
+			if(CALCULATOR->aborted()) return 0;
+			if(b_scalar || vargs[0][index].representsScalar()) {
+				mstruct.multiply(vargs[0][index], true);
+				if(b_scalar) b_scalar = mstruct.representsScalar();
+			} else {
+				mstruct.transform(STRUCT_VECTOR, vargs[0][index]);
+				mstruct.transform(this);
+			}
+		}
+		return 1;
+	}
+	mstruct = vargs[0][0];
+	MathStructure m2(vargs[0][1]);
+	bool b_eval = false;
+	if(!mstruct.isVector() && !mstruct.representsScalar()) {mstruct.eval(eo); b_eval = true;}
+	if(!m2.isVector() && !m2.representsScalar()) {m2.eval(eo); b_eval = true;}
+	if(mstruct.representsScalar() || m2.representsScalar()) {
+		mstruct *= m2;
+		return 1;
+	}
+	if(mstruct.isVector() && m2.isVector()) {
+		if(mstruct.isMatrix()) {
+			if(m2.isMatrix()) {
+				if(mstruct.size() == m2.size()) {
+					if(mstruct[0].size() == m2[0].size()) {
+						for(size_t i = 0; i < mstruct.size(); i++) {
+							for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+								mstruct[i][i2] *= m2[i][i2];
+							}
+						}
+						return 1;
+					} else if(mstruct[0].size() == 1) {
+						for(size_t i = 0; i < m2.size(); i++) {
+							for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+								m2[i][i2] *= mstruct[i][0];
+							}
+						}
+						mstruct = m2;
+						return 1;
+					} else if(m2[0].size() == 1) {
+						for(size_t i = 0; i < mstruct.size(); i++) {
+							for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+								mstruct[i][i2] *= m2[i][0];
+							}
+						}
+						return 1;
+					}
+				}
+			} else if(mstruct.columns() == 1) {
+				for(size_t i = 0; i < m2.size(); i++) {
+					m2[i].transform(STRUCT_VECTOR);
+					for(size_t i2 = 1; i2 < mstruct.size(); i2++) {
+						m2[i].addChild(m2[i][0]);
+					}
+					for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
+						m2[i][i2] *= mstruct[i2][0];
+					}
+				}
+				mstruct = m2;
+				return 1;
+			}
+		} else if(m2.isMatrix() && m2.columns() == 1) {
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				mstruct[i].transform(STRUCT_VECTOR);
+				for(size_t i2 = 1; i2 < m2.size(); i2++) {
+					mstruct[i].addChild(mstruct[i][0]);
+				}
+				for(size_t i2 = 0; i2 < m2.size(); i2++) {
+					mstruct[i][i2] *= m2[i2][0];
+				}
+			}
+			return 1;
+		} else if(mstruct.size() == m2.size()) {
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				mstruct[i] *= m2[i];
+			}
+			return 1;
+		}
+	}
+	if(!b_eval) return 0;
+	mstruct.transform(STRUCT_VECTOR, m2);
+	return -1;
+}
+EntrywiseDivisionFunction::EntrywiseDivisionFunction() : MathFunction("rdivide", 2) {
+}
+int EntrywiseDivisionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	MathStructure m2(vargs[1]);
+	bool b_eval = false;
+	if(!mstruct.isVector() && !mstruct.representsScalar()) {mstruct.eval(eo); b_eval = true;}
+	if(!m2.isVector() && !m2.representsScalar()) {m2.eval(eo); b_eval = true;}
+	if(m2.representsScalar()) {
+		mstruct /= m2;
+		return 1;
+	}
+	if(m2.isVector()) {
+		if(mstruct.representsScalar()) {
+			mstruct.inverse();
+			if(m2.isMatrix()) {
+				for(size_t i = 0; i < m2.size(); i++) {
+					for(size_t i2 = 0; i2 < m2[i].size(); i2++) {
+						m2[i][i2] *= mstruct;
+					}
+				}
+			} else {
+				for(size_t i = 0; i < m2.size(); i++) {
+					m2[i] *= mstruct;
+				}
+			}
+			mstruct = m2;
+			return 1;
+		}
+		if(mstruct.isVector()) {
+			if(mstruct.isMatrix()) {
+				if(m2.isMatrix()) {
+					if(mstruct[0].size() == m2[0].size()) {
+						for(size_t i = 0; i < mstruct.size(); i++) {
+							for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+								mstruct[i][i2] /= m2[i][i2];
+							}
+						}
+						return 1;
+					} else if(mstruct[0].size() == 1) {
+						for(size_t i = 0; i < m2.size(); i++) {
+							for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+								m2[i][i2] /= mstruct[i][0];
+							}
+						}
+						mstruct = m2;
+						return 1;
+					} else if(m2[0].size() == 1) {
+						for(size_t i = 0; i < mstruct.size(); i++) {
+							for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+								mstruct[i][i2] /= m2[i][0];
+							}
+						}
+						return 1;
+					}
+				} else if(mstruct.columns() == 1) {
+					for(size_t i = 0; i < m2.size(); i++) {
+						m2[i].transform(STRUCT_VECTOR);
+						for(size_t i2 = 1; i2 < mstruct.size(); i2++) {
+							m2[i].addChild(m2[i][0]);
+						}
+						for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
+							m2[i][i2] /= mstruct[i2][0];
+						}
+					}
+					mstruct = m2;
+					return 1;
+				}
+			} else if(m2.isMatrix() && m2.columns() == 1) {
+				for(size_t i = 0; i < mstruct.size(); i++) {
+					mstruct[i].transform(STRUCT_VECTOR);
+					for(size_t i2 = 1; i2 < m2.size(); i2++) {
+						mstruct[i].addChild(mstruct[i][0]);
+					}
+					for(size_t i2 = 0; i2 < m2.size(); i2++) {
+						mstruct[i][i2] /= m2[i2][0];
+					}
+				}
+				return 1;
+			} else if(mstruct.size() == m2.size()) {
+				for(size_t i = 0; i < mstruct.size(); i++) {
+					mstruct[i] /= m2[i];
+				}
+				return 1;
+			}
+		}
+	}
+	if(!b_eval) return 0;
+	mstruct.transform(STRUCT_VECTOR, m2);
+	return -3;
+}
+EntrywisePowerFunction::EntrywisePowerFunction() : MathFunction("pow", 2) {
+	Argument *arg = new Argument();
+	arg->setHandleVector(true);
+	setArgumentDefinition(2, arg);
+}
+int EntrywisePowerFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	bool b_eval = false;
+	if(!mstruct.isVector() && !mstruct.representsScalar()) {mstruct.eval(eo); b_eval = true;}
+	if(mstruct.representsScalar()) {
+		mstruct ^= vargs[1];
+		return 1;
+	}
+	if(mstruct.isMatrix()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+				mstruct[i][i2] ^= vargs[1];
+			}
+		}
+		return 1;
+	} else if(mstruct.isVector()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			mstruct[i] ^= vargs[1];
+		}
+		return 1;
+	}
+	return (b_eval ? -1 : 0);
+}
+
 bool process_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, size_t index);
 bool process_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, size_t index) {
 	if(mprocess == vargs[1]) {

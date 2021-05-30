@@ -214,7 +214,8 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_MINUS, MINUS);
 	addStringAlternative("–", MINUS);
 	addStringAlternative(SIGN_PLUS, PLUS);
-	addStringAlternative(SIGN_NOT_EQUAL, " " NOT EQUALS);
+	addStringAlternative(SIGN_NOT_EQUAL, NOT EQUALS);
+	addStringAlternative("~=", NOT EQUALS);
 	addStringAlternative(SIGN_GREATER_OR_EQUAL, GREATER EQUALS);
 	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);
 	addStringAlternative(";", COMMA);
@@ -449,7 +450,8 @@ Calculator::Calculator(bool ignore_locale) {
 	addStringAlternative(SIGN_MINUS, MINUS);
 	addStringAlternative("–", MINUS);
 	addStringAlternative(SIGN_PLUS, PLUS);
-	addStringAlternative(SIGN_NOT_EQUAL, " " NOT EQUALS);
+	addStringAlternative(SIGN_NOT_EQUAL, NOT EQUALS);
+	addStringAlternative("~=", NOT EQUALS);
 	addStringAlternative(SIGN_GREATER_OR_EQUAL, GREATER EQUALS);
 	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);
 	addStringAlternative(";", COMMA);
@@ -1424,6 +1426,10 @@ void Calculator::addBuiltinFunctions() {
 	f_entrywise = addFunction(new EntrywiseFunction());
 	addFunction(new RRefFunction());
 	addFunction(new MatrixRankFunction());
+	priv->f_dot = addFunction(new DotProductFunction());
+	priv->f_times = addFunction(new EntrywiseMultiplicationFunction());
+	priv->f_rdivide = addFunction(new EntrywiseDivisionFunction());
+	priv->f_power = addFunction(new EntrywisePowerFunction());
 
 	f_factorial = addFunction(new FactorialFunction());
 	f_factorial2 = addFunction(new DoubleFactorialFunction());

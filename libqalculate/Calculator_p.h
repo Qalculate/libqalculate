@@ -63,7 +63,7 @@ class Calculator_p {
 		long int custom_input_base_i;
 		Unit *local_currency;
 		int use_binary_prefixes;
-		MathFunction *f_cis, *f_erfi, *f_fresnels, *f_fresnelc;
+		MathFunction *f_cis, *f_erfi, *f_fresnels, *f_fresnelc, *f_dot, *f_times, *f_rdivide, *f_power;
 		Unit *u_byn;
 		Unit *u_kelvin, *u_rankine, *u_celsius, *u_fahrenheit;
 		unordered_map<int, MathFunction*> id_functions;
