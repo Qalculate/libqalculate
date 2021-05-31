@@ -3815,7 +3815,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 	}
 
-	// Parse \x16 (internal vector dot operator)
+	// Parse internal operators dot product and element-wise functions
 	if((i = str.find_first_of("\x16\x17\x18", 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i);
 		char op = str[i];
@@ -3824,13 +3824,16 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		MathStructure *mstruct2 = new MathStructure();
 		parseAdd(str, mstruct2, po);
 		if(!mstruct->representsScalar() || !mstruct2->representsScalar()) {
-			if(op == '\x17') mstruct->transform(priv->f_times);
-			else if(op == '\x18') mstruct->transform(priv->f_rdivide);
-			else mstruct->transform(priv->f_dot);
-			mstruct->addChild_nocopy(mstruct2);
+			if(op == '\x17') {
+				mstruct->transform_nocopy(STRUCT_VECTOR, mstruct2);
+				mstruct->transform(priv->f_times);
+			} else {
+				if(op == '\x18') mstruct->transform(priv->f_rdivide);
+				else mstruct->transform(priv->f_dot);
+				mstruct->addChild_nocopy(mstruct2);
+			}
 		} else {
-			if(op == POWER_CH) mstruct->raise_nocopy(mstruct2);
-			else if(op == DIVISION_CH) mstruct->divide_nocopy(mstruct2);
+			if(op == '\x18') mstruct->divide_nocopy(mstruct2);
 			else mstruct->multiply_nocopy(mstruct2);
 		}
 		return true;
@@ -3887,7 +3890,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			str.erase(i, 1);
 		} else if(str[i] == BITWISE_NOT_CH || str[i] == LOGICAL_NOT_CH) {
 			break;
-		} else if(is_in(OPERATORS INTERNAL_OPERATORS, str[i]) && str[i] != '\x1a' && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
+		} else if(is_in(OPERATORS INTERNAL_OPERATORS, str[i]) && str[i] != '\x19' && str[i] != '\x1a' && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
 			if(str[i] == '\a') error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
 			else if(str[i] == '\b') error(false, _("Misplaced operator(s) \"%s\" ignored"), SIGN_PLUSMINUS, NULL);
 			else if(str[i] == '\x1c') error(false, _("Misplaced operator(s) \"%s\" ignored"), "∠", NULL);
@@ -3897,7 +3900,6 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			else if(str[i] == '\x16') error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT, NULL);
 			else if(str[i] == '\x17') error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT MULTIPLICATION, NULL);
 			else if(str[i] == '\x18') error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT DIVISION, NULL);
-			else if(str[i] == '\x19') error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT POWER, NULL);
 			else error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
 		} else {
@@ -3942,7 +3944,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
-			if(str[i + 1] != POWER_CH && str[i + 1] != '\b') {
+			if(str[i + 1] != POWER_CH && str[i + 1] != '\x19' && str[i + 1] != '\b') {
 				str2 = str.substr(0, i + 1);
 				str = str.substr(i + 1, str.length() - (i + 1));
 				if(b) {
@@ -4016,7 +4018,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos) {
 		bool b = false, append = false;
 		while(i != string::npos) {
-			if(str[i - 1] != POWER_CH && (i < 2 || str[i - 1] != MINUS_CH || str[i - 2] != POWER_CH) && str[i - 1] != '\b') {
+			if(str[i - 1] != POWER_CH && str[i - 1] != '\x19' && (i < 2 || str[i - 1] != MINUS_CH || (str[i - 2] != POWER_CH && str[i - 2] != '\x19')) && str[i - 1] != '\b') {
 				str2 = str.substr(0, i);
 				str = str.substr(i, str.length() - i);
 				if(b) {
@@ -4051,13 +4053,18 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		parseAdd(str2, mstruct, po);
 		parseAdd(str, mstruct, po, OPERATION_RAISE);
 	} else if((i = str.find('\x19', 1)) != string::npos && i + 1 != str.length()) {
+		// Parse element-wise exponentiation
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
 		MathStructure *mstruct2 = new MathStructure();
 		parseAdd(str, mstruct2, po);
-		mstruct->transform(priv->f_power);
-		mstruct->addChild_nocopy(mstruct2);
+		if(!mstruct->representsScalar() || !mstruct2->representsScalar()) {
+			mstruct->transform(priv->f_power);
+			mstruct->addChild_nocopy(mstruct2);
+		} else {
+			mstruct->raise_nocopy(mstruct2);
+		}
 	} else if((i = str.find("\b", 1)) != string::npos) {
 		// Parse uncertainty (using \b as internal single substitution character for +/-)
 		str2 = str.substr(0, i);
