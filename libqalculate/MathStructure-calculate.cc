@@ -208,29 +208,52 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 					return 0;
 				}
 				case STRUCT_VECTOR: {
-					 if(SIZE > 0 && mstruct.isMatrix() && mstruct.columns() == 1 && (!isMatrix() || SIZE == mstruct.size())) {
-					 	if(!isMatrix()) {
-						 	// row vector + column vector = matrix
+					bool b1 = isMatrix();
+					bool b2 = mstruct.isMatrix();
+					if(!b1 && !representsNonMatrix()) return -1;
+					if(!b2 && !mstruct.representsNonMatrix()) return -1;
+					if(SIZE > 0 && b2 && mstruct.columns() == 1 && (!b1 || SIZE == mstruct.size())) {
+						if(!b1) {
+							// row vector + column vector = matrix
+							transform(STRUCT_VECTOR);
+							for(size_t i = 1; i < mstruct.size(); i++) {
+								APPEND(CHILD(0));
+							}
 							for(size_t i = 0; i < SIZE; i++) {
-								CHILD(i).transform(STRUCT_VECTOR);
-								for(size_t i2 = 1; i2 < mstruct.size(); i2++) {
-									CHILD(i).addChild(CHILD(i)[0]);
-								}
-								for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
-									CHILD(i)[i2] += mstruct[i2][0];
+								for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+									CHILD(i)[i2].calculateAdd(mstruct[i][0], eo, &CHILD(i), i2);
 								}
 							}
 						} else {
 							for(size_t i = 0; i < SIZE; i++) {
 								for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-									CHILD(i)[i2] += mstruct[i][0];
+									CHILD(i)[i2].calculateAdd(mstruct[i][0], eo, &CHILD(i), i2);
 								}
 							}
 						}
 						return 1;
-					} else if(mstruct.size() > 0 && isMatrix() && columns() == 1 && (!mstruct.isMatrix() || SIZE == mstruct.size())) {
-						return 0;
-					} else if(SIZE == mstruct.size()) {
+					} else if(mstruct.size() > 0 && b1 && columns() == 1 && (!b2 || SIZE == mstruct.size())) {
+						if(!b2) {
+							for(size_t i = 0; i < SIZE; i++) {
+								for(size_t i2 = 1; i2 < mstruct.size(); i2++) {
+									CHILD(i).addChild(CHILD(i)[0]);
+								}
+								for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+									CHILD(i)[i2].calculateAdd(mstruct[i2], eo, &CHILD(i), i2);
+								}
+							}
+						} else {
+							for(size_t i = 0; i < mstruct.size(); i++) {
+								for(size_t i2 = 1; i2 < mstruct[i].size(); i2++) {
+									CHILD(i).addChild(CHILD(i)[0]);
+								}
+								for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+									CHILD(i)[i2].calculateAdd(mstruct[i][i2], eo, &CHILD(i), i2);
+								}
+							}
+						}
+						return 1;
+					} else if(!b1 && !b2 && SIZE == mstruct.size()) {
 						// [a1,a2,a3,...]+[b1,b2,b3,...]=[a1+b1,a2+b2,a3+b3,...]
 						for(size_t i = 0; i < SIZE; i++) {
 							CHILD(i).calculateAdd(mstruct[i], eo, this, i);
@@ -238,16 +261,34 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 						MERGE_APPROX_AND_PREC(mstruct)
 						CHILDREN_UPDATED
 						return 1;
-					} else if(isMatrix() && columns() == mstruct.size()) {
-						
+					} else if(b1 && b2 && SIZE == mstruct.size() && CHILD(0).size() == mstruct[0].size()) {
+						// [[a1,a2,...],[a3,a4,...],...]+[[b1,b2,...],[b3,b4,...],...]=[[a1+b1,a2+b2,...],[a3+b3,a4+b4,...],...]
+						for(size_t i = 0; i < SIZE; i++) {
+							for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+								CHILD(i).calculateAdd(mstruct[i][i2], eo, &CHILD(i), i2);
+							}
+						}
+						MERGE_APPROX_AND_PREC(mstruct)
+						CHILDREN_UPDATED
+						return 1;
+					} else if(b1 && !b2 && columns() == mstruct.size()) {
 						for(size_t i = 0; i < SIZE; i++) {
 							CHILD(i).calculateAdd(mstruct, eo, this, i);
 						}
 						MERGE_APPROX_AND_PREC(mstruct)
 						CHILDREN_UPDATED
 						return 1;
-					} else if(mstruct.isMatrix() && mstruct.columns() == SIZE) {
-						return 0;
+					} else if(b2 && !b1 && mstruct.columns() == SIZE) {
+						transform(STRUCT_VECTOR);
+						for(size_t i = 1; i < mstruct.size(); i++) {
+							APPEND(CHILD(0));
+						}
+						for(size_t i = 0; i < SIZE; i++) {
+							CHILD(i).calculateAdd(mstruct[i], eo, this, i);
+						}
+						MERGE_APPROX_AND_PREC(mstruct)
+						CHILDREN_UPDATED
+						return 1;
 					}
 				}
 				default: {
