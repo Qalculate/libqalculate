@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-25 02:11-0600\n"
-"PO-Revision-Date: 2021-05-25 09:48-0600\n"
+"PO-Revision-Date: 2021-06-06 21:41-0600\n"
 "Last-Translator: Alex Henrie <alexhenrie24@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
 "Language: ca\n"
@@ -1196,27 +1196,27 @@ msgstr ""
 
 #: ../src/qalc.cc:2007
 msgid "do not load any functions, units, or variables from file"
-msgstr "no carregis cap funció, unitat o variable del fitxer"
+msgstr "no carreguis cap funció, unitat o variable del fitxer"
 
 #: ../src/qalc.cc:2009
 msgid "do not load any global currencies from file"
-msgstr "no carregis cap moneda global del fitxer"
+msgstr "no carreguis cap moneda global del fitxer"
 
 #: ../src/qalc.cc:2011
 msgid "do not load any global data sets from file"
-msgstr "no carregis cap conjunt de dades global del fitxer"
+msgstr "no carreguis cap conjunt de dades global del fitxer"
 
 #: ../src/qalc.cc:2013
 msgid "do not load any global functions from file"
-msgstr "no carregis cap funció global del fitxer"
+msgstr "no carreguis cap funció global del fitxer"
 
 #: ../src/qalc.cc:2015
 msgid "do not load any global units from file"
-msgstr "no carregis cap unitat global del fitxer"
+msgstr "no carreguis cap unitat global del fitxer"
 
 #: ../src/qalc.cc:2017
 msgid "do not load any global variables from file"
-msgstr "no carregis cap variable global del fitxer"
+msgstr "no carreguis cap variable global del fitxer"
 
 #: ../src/qalc.cc:2019
 msgid ""
@@ -1237,7 +1237,7 @@ msgstr "VALOR"
 #: ../src/qalc.cc:2021
 msgid "as set command in interactive program session (e.g. -set \"base 16\")"
 msgstr ""
-"com ordre set en sessió de programa interactiva (per exemple -set \"base "
+"com l'ordre set en sessió de programa interactiva (per exemple -set \"base "
 "16\")"
 
 #: ../src/qalc.cc:2023
@@ -1294,7 +1294,7 @@ msgstr ""
 
 #: ../src/qalc.cc:2166
 msgid "No option and value specified for set command."
-msgstr "No s'ha especificat cap opció o valor per a la ordre set."
+msgstr "No s'ha especificat cap opció o valor per a l'ordre set."
 
 #: ../src/qalc.cc:2177
 msgid "No file specified."
@@ -2072,7 +2072,7 @@ msgstr "Crea una funció amb el nom i expressió especificats."
 
 #: ../src/qalc.cc:4516
 msgid "Use '\\x', '\\y', '\\z', '\\a', etc. for arguments in the expression."
-msgstr "Usa '\\x', '\\y', '\\z', '\\a' etc. pels arguments en la expressió."
+msgstr "Usa '\\x', '\\y', '\\z', '\a' etc. pels arguments en l'expressió."
 
 #: ../src/qalc.cc:4518
 msgid "Example: function func1 5*\\x."
@@ -2298,7 +2298,7 @@ msgstr "- longitude / longitude2 (mostra com a longitud sexagesimal)"
 
 #: ../src/qalc.cc:4636
 msgid "- bijective (shown in bijective base-26)"
-msgstr "- bijective (mostra en base 26 bijectiu)"
+msgstr "- bijective (mostra en base 26 bijectiva)"
 
 #: ../src/qalc.cc:4637
 msgid "- fp16, fp32, fp64, fp80, fp128 (show in binary floating-point format)"
@@ -2474,7 +2474,7 @@ msgstr "avortat"
 
 #: ../src/qalc.cc:4923
 msgid "RPN Register Moved"
-msgstr "Registre NPI movit"
+msgstr "Registre NPI mogut"
 
 #: ../src/qalc.cc:4944 ../src/qalc.cc:6111
 msgid "RPN Operation"
@@ -3575,7 +3575,8 @@ msgstr ""
 #: ../libqalculate/Number.cc:380
 #, c-format
 msgid "Character '%s' was ignored in the number \"%s\" in bijective base-26."
-msgstr "S'ha ignorat el caràcter '%s' en el nombre \"%s\" en base 26 bijectiu."
+msgstr ""
+"S'ha ignorat el caràcter '%s' en el nombre \"%s\" en base 26 bijectiva."
 
 #: ../libqalculate/Number.cc:571
 #, c-format
