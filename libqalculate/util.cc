@@ -359,8 +359,12 @@ bool equalsIgnoreCase(const string &str1, const string &str2) {
 			}
 			if(!isequal) {
 				char *gstr1 = utf8_strdown(str1.c_str() + (sizeof(char) * i1));
+				if(!gstr1) return false;
 				char *gstr2 = utf8_strdown(str2.c_str() + (sizeof(char) * i2));
-				if(!gstr1 || !gstr2) return false;
+				if(!gstr2) {
+					free(gstr1);
+					return false;
+				}
 				bool b = strcmp(gstr1, gstr2) == 0;
 				free(gstr1);
 				free(gstr2);
@@ -402,8 +406,12 @@ bool equalsIgnoreCase(const string &str1, const char *str2) {
 			}
 			if(!isequal) {
 				char *gstr1 = utf8_strdown(str1.c_str() + (sizeof(char) * i1));
+				if(!gstr1) return false;
 				char *gstr2 = utf8_strdown(str2 + (sizeof(char) * i2));
-				if(!gstr1 || !gstr2) return false;
+				if(!gstr2) {
+					free(gstr1);
+					return false;
+				}
 				bool b = strcmp(gstr1, gstr2) == 0;
 				free(gstr1);
 				free(gstr2);
@@ -759,6 +767,8 @@ char *utf8_strdown(const char *str, int l) {
 		ucasemap_utf8ToLower(ucm, buffer, outlength, str, inlength, &err);
 		if(U_SUCCESS(err)) {
 			return buffer;
+		} else {
+			free(buffer);
 		}
 	}
 	return NULL;
