@@ -2381,6 +2381,9 @@ Variable* Calculator::getVariableById(int id) const {
 		case VARIABLE_ID_Z: {return v_z;}
 		case VARIABLE_ID_N: {return v_n;}
 		case VARIABLE_ID_C: {return v_C;}
+		case VARIABLE_ID_PERCENT: {return v_percent;}
+		case VARIABLE_ID_PERMILLE: {return v_permille;}
+		case VARIABLE_ID_PERMYRIAD: {return v_permyriad;}
 		case VARIABLE_ID_UNDEFINED: {return v_undef;}
 	}
 	unordered_map<int, Variable*>::iterator it = priv->id_variables.find(id);
