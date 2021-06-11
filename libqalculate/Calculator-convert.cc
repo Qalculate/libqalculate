@@ -1197,7 +1197,10 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 				bool b = false;
 				child_updated = false;
 				for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
-					if(aborted()) return mstruct_old;
+					if(aborted()) {
+						delete cu;
+						return mstruct_old;
+					}
 					if(mstruct_new.getChild(i)->isUnit()) {
 						b = true;
 						cu->add(mstruct_new.getChild(i)->unit());
