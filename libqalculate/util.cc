@@ -759,6 +759,8 @@ char *utf8_strdown(const char *str, int l) {
 		ucasemap_utf8ToLower(ucm, buffer, outlength, str, inlength, &err);
 		if(U_SUCCESS(err)) {
 			return buffer;
+		} else {
+			free(buffer);
 		}
 	}
 	return NULL;
