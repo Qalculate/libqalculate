@@ -850,7 +850,10 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			eo2.approximation = APPROXIMATION_TRY_EXACT;
 			CALCULATOR->beginTemporaryStopMessages();
 			mstruct2.eval(eo2);
-			if(mstruct2.isVector() || mstruct2.isNumber()) {
+			if(mstruct2.isNumber() && (mstruct2.number() > 62 || mstruct2.number() < -62)) {
+				idigits = 3;
+				CALCULATOR->endTemporaryStopMessages();
+			} else if(mstruct2.isVector()) {
 				mstruct = mstruct2;
 				CALCULATOR->endTemporaryStopMessages(true);
 				if(mstruct.isVector()) return -2;
