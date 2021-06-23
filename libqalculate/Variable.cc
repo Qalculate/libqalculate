@@ -339,6 +339,7 @@ void KnownVariable::set(const MathStructure &o) {
 	setChanged(true);
 }
 void KnownVariable::set(string expression_) {
+	if(b_expression && sexpression == expression_) return;
 	if(mstruct) delete mstruct;
 	if(mstruct_alt) delete mstruct_alt;
 	mstruct = NULL;

@@ -16,7 +16,7 @@ Units: Categories, titles and names
 Currencies: Categories, titles, countries, and names
 Prefixes: Names
 
-To distinguish equal text strings with different meaning (for example "Mercury" as a planet and as a chemical element), some text strings is preceded by "!type!" (for example "!units!" for units). Everything between and including a exclamation mark in the beginning and the second exclamation mark is not displayed in the application. Translators do not need include to include "!type!" in the translation.
+To distinguish equal text strings with different meaning (for example "Mercury" as a planet and as a chemical element), some text strings is preceded by "!type!" (for example "!units!" for units). Everything between and including a exclamation mark in the beginning and the second exclamation mark is not displayed in the application. Translators do not need to include "!type!" in the translation.
 
 Names require some special considerations from the translator. The names are used to reference an object in a mathematical expression and to display them in a result. An object can have any number of names but each must be fully unique, with the exception that functions can have names used by other types of objects (for example "min" is used as a name for the minute unit but also for a function returning smallest value in a vector). The translation does not need to have the same number of names as the the untranslated object.
 

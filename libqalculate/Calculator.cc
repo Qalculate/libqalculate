@@ -221,7 +221,7 @@ Calculator::Calculator() {
 	addStringAlternative(";", COMMA);
 	addStringAlternative("\t", SPACE);
 	addStringAlternative("\n", SPACE);
-	addStringAlternative(" ", SPACE);
+	addStringAlternative(THIN_SPACE, SPACE);
 	addStringAlternative(" ", SPACE);
 	addStringAlternative(" ", SPACE);
 	addStringAlternative("**", POWER);
@@ -230,7 +230,6 @@ Calculator::Calculator() {
 	addStringAlternative("∧", BITWISE_AND);
 	addStringAlternative("∨", BITWISE_OR);
 	addStringAlternative("¬", BITWISE_NOT);
-	addStringAlternative(SIGN_MICRO, "μ");
 
 	//division operator
 	per_str = _("per");
@@ -281,7 +280,7 @@ Calculator::Calculator() {
 #endif
 	local_digit_group_separator = lc->thousands_sep;
 	if((local_digit_group_separator.length() == 1 && local_digit_group_separator[0] < 0) || local_digit_group_separator == " ") local_digit_group_separator = " ";
-	else if(local_digit_group_separator == " ") local_digit_group_separator = " ";
+	else if(local_digit_group_separator == " ") local_digit_group_separator = THIN_SPACE;
 	local_digit_group_format = lc->grouping;
 	remove_blank_ends(local_digit_group_format);
 	default_dot_as_separator = (local_digit_group_separator == ".");
@@ -457,7 +456,7 @@ Calculator::Calculator(bool ignore_locale) {
 	addStringAlternative(";", COMMA);
 	addStringAlternative("\t", SPACE);
 	addStringAlternative("\n", SPACE);
-	addStringAlternative(" ", SPACE);
+	addStringAlternative(THIN_SPACE, SPACE);
 	addStringAlternative(" ", SPACE);
 	addStringAlternative(" ", SPACE);
 	addStringAlternative("**", POWER);
@@ -466,7 +465,6 @@ Calculator::Calculator(bool ignore_locale) {
 	addStringAlternative("∧", BITWISE_AND);
 	addStringAlternative("∨", BITWISE_OR);
 	addStringAlternative("¬", BITWISE_NOT);
-	addStringAlternative(SIGN_MICRO, "μ");
 
 	per_str = _("per");
 	per_str_len = per_str.length();
@@ -511,7 +509,7 @@ Calculator::Calculator(bool ignore_locale) {
 #endif
 	local_digit_group_separator = lc->thousands_sep;
 	if((local_digit_group_separator.length() == 1 && local_digit_group_separator[0] < 0) || local_digit_group_separator == " ") local_digit_group_separator = " ";
-	else if(local_digit_group_separator == " ") local_digit_group_separator = " ";
+	else if(local_digit_group_separator == " ") local_digit_group_separator = THIN_SPACE;
 	local_digit_group_format = lc->grouping;
 	remove_blank_ends(local_digit_group_format);
 	default_dot_as_separator = (local_digit_group_separator == ".");

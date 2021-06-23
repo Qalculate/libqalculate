@@ -474,7 +474,8 @@ class Calculator {
 	//@{
 	/** Calls MathStructure::format(po) and MathStructure::print(po). The process is aborted after msecs milliseconds.
 	*/
-	std::string print(const MathStructure &mstruct, int milliseconds = 100000, const PrintOptions &op = default_print_options);
+	std::string print(const MathStructure &mstruct, int milliseconds = 100000, const PrintOptions &po = default_print_options);
+	std::string print(const MathStructure &mstruct, int milliseconds, const PrintOptions &po, bool format, int colorize = 0, int tagtype = TAG_TYPE_HTML);
 	///Deprecated: use print() instead
 	std::string printMathStructureTimeOut(const MathStructure &mstruct, int milliseconds = 100000, const PrintOptions &op = default_print_options);
 
