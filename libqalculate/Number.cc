@@ -81,12 +81,12 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 				while(i < str.length()) {
 #ifdef _WIN32
 					// do not use thin space on Windows < 10
-					if(IsWindows10OrGreater() && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
+					if(IsWindows10OrGreater() && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) {
 #else
-					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) {
 #endif
-						str.insert(i, " ");
-						i += 3 + strlen(" ");
+						str.insert(i, THIN_SPACE);
+						i += 3 + strlen(THIN_SPACE);
 					} else {
 						str.insert(i, " ");
 						i += 4;
@@ -103,12 +103,12 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 				if(po.digit_grouping != DIGIT_GROUPING_LOCALE || CALCULATOR->local_digit_group_separator.empty()) {
 #ifdef _WIN32
 					// do not use thin space on Windows < 10
-					if(IsWindows10OrGreater() && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
+					if(IsWindows10OrGreater() && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) {
 #else
-					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) {
 #endif
 						// thin space is preferred
-						str.insert(i, " ");
+						str.insert(i, THIN_SPACE);
 					} else {
 						str.insert(i, " ");
 					}
@@ -145,7 +145,7 @@ string format_number_string(string cl_str, int base, BaseDisplay base_display, b
 			l = bits;
 		}
 		// place binary digits in groups of four
-		if(base == 2 && base_display == BASE_DISPLAY_NORMAL) {
+		if(base == 2 && (base_display == BASE_DISPLAY_NORMAL || base_display == BASE_DISPLAY_SUFFIX)) {
 			for(int i = (int) l - 4; i > 0; i -= 4) {
 				cl_str.insert(i, 1, ' ');
 			}
@@ -12080,10 +12080,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(po.spacious) str += " ";
 				str += i2s(base);
 				str += "^";
-				if(neg_bexp) {
-					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str += SIGN_MINUS;
-					else str = "-";
-				}
+				if(neg_bexp) str += "-";
 				str += str_bexp;
 				if(ips.depth > 0) {
 					str.insert(0, "(");
@@ -12553,11 +12550,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			size_t i_dp = str.find(po.decimalpoint());
 			if(i_dp != string::npos && ((infinite_series == 1 && i_dp + po.decimalpoint().length() + 2 < str.length() - infinite_series) || (infinite_series > 1 && i_dp + po.decimalpoint().length() < str.length() - infinite_series))) {
 #ifdef _WIN32
-				if(IsWindows10OrGreater() && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
+				if(IsWindows10OrGreater() && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) {
 #else
-				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (" ", po.can_display_unicode_string_arg))) {
+				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) {
 #endif
-					str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), " ");
+					str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), THIN_SPACE);
 				} else {
 					str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), " ");
 				}
