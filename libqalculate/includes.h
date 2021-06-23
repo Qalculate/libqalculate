@@ -372,7 +372,8 @@ typedef enum {
 typedef enum {
 	BASE_DISPLAY_NONE,
 	BASE_DISPLAY_NORMAL,
-	BASE_DISPLAY_ALTERNATIVE
+	BASE_DISPLAY_ALTERNATIVE,
+	BASE_DISPLAY_SUFFIX
 } BaseDisplay;
 
 typedef enum {
@@ -783,6 +784,8 @@ extern Calculator *calculator;
 #define SIGN_CAPITAL_BETA		"Β"
 #define SIGN_INFINITY			"∞"
 #define SIGN_PLUSMINUS			"±"
+
+#define THIN_SPACE " "
 
 #define ID_WRAP_LEFT_CH		'{'
 #define ID_WRAP_RIGHT_CH	'}'

@@ -51,7 +51,7 @@ EXTRA_LOCALE_CATEGORIES =
 # context.  Possible values are "yes" and "no".  Set this to yes if the
 # package uses functions taking also a message context, like pgettext(), or
 # if in $(XGETTEXT_OPTIONS) you define keywords with a context argument.
-USE_MSGCTXT = no
+USE_MSGCTXT = yes
 
 # These options get passed to msgmerge.
 # Useful options are in particular:

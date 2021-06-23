@@ -5404,7 +5404,7 @@ void execute_command(int command_type, bool show_result) {
 	b_busy = false;
 
 	if(!command_aborted) {
-		if(mfactor2) mstruct_exact.set(*mfactor2);
+		if(mfactor2) {mstruct_exact.set(*mfactor2); mfactor2->unref();}
 		mstruct->unref();
 		mstruct = mfactor;
 		switch(command_type) {
