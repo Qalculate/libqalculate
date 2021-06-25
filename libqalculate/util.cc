@@ -479,7 +479,7 @@ string getLocalDir() {
 #	endif
 #else
 	const char *homedir;
-	if((homedir == getenv("QALCULATE_USER_DIR")) != NULL) {
+	if((homedir = getenv("QALCULATE_USER_DIR")) != NULL) {
 		return homedir;
 	}
 	if((homedir = getenv("XDG_CONFIG_HOME")) == NULL) {
@@ -505,7 +505,7 @@ string getLocalDataDir() {
 #	endif
 #else
 	const char *homedir;
-	if((homedir == getenv("QALCULATE_USER_DIR")) != NULL) {
+	if((homedir = getenv("QALCULATE_USER_DIR")) != NULL) {
 		return homedir;
 	}
 	if((homedir = getenv("XDG_DATA_HOME")) == NULL) {
@@ -533,7 +533,7 @@ string getLocalTmpDir() {
 #	endif
 #else
 	const char *homedir;
-	if((homedir == getenv("QALCULATE_USER_DIR")) != NULL) {
+	if((homedir = getenv("QALCULATE_USER_DIR")) != NULL) {
 		return homedir;
 	}
 	if((homedir = getenv("XDG_CACHE_HOME")) == NULL) {
