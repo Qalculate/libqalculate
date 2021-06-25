@@ -2829,7 +2829,7 @@
       </argument>
     </builtin_function>
     <builtin_function name="save">
-      <_title>Save as Variable</_title>
+      <_title>Save as Variable or Function</_title>
       <_names>r:save</_names>
       <argument index="1">
         <_title>Value</_title>

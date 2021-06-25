@@ -795,9 +795,79 @@ SaveFunction::SaveFunction() : MathFunction("save", 2, 5) {
 int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	if(vargs[4].number().getBoolean()) mstruct.eval(eo);
+	size_t i = vargs[1].symbol().find(LEFT_PARENTHESIS);
+	if(i != string::npos) {
+		string name = vargs[1].symbol().substr(0, i);
+		if(!CALCULATOR->functionNameIsValid(name)) {
+			CALCULATOR->error(true, _("Invalid function name (%s)."), name.c_str(), NULL);
+			if(vargs[4].number().getBoolean()) return -1;
+			return 0;
+		}
+		string sarg = vargs[1].symbol().substr(i, vargs[1].symbol().length() - i);
+		sarg.insert(0, CALCULATOR->getFunctionById(FUNCTION_ID_VECTOR)->referenceName());
+		MathStructure marg;
+		CALCULATOR->parse(&marg, sarg, eo.parse_options);
+		if(marg.size() == 0) {
+			MathStructure m("x", true);
+			if(!mstruct.contains(m, true) && mstruct.contains(CALCULATOR->getVariableById(VARIABLE_ID_X), true)) {
+				if(mstruct.replace(CALCULATOR->getVariableById(VARIABLE_ID_X), m)) {
+					m.set("y", false, true);
+					if(mstruct.replace(CALCULATOR->getVariableById(VARIABLE_ID_Y), m)) {
+						m.set("z", false, true);
+						mstruct.replace(CALCULATOR->getVariableById(VARIABLE_ID_Z), m);
+					}
+				}
+			}
+		} else {
+			string sarg = "x";
+			MathStructure m(sarg, true);
+			for(i = 0; i < marg.size(); i++) {
+				mstruct.replace(marg[i], m);
+				if(sarg[0] == 'z') sarg[0] = 'a';
+				else sarg[0]++;
+				m.set(sarg, true);
+			}
+		}
+		string expr = mstruct.print(CALCULATOR->save_printoptions);
+		char carg = 'x';
+		string sarg_new = "\\x", sarg2 = "\'x\'"; sarg = "\"x\"";
+		for(i = 0; i < marg.size() || expr.find(sarg) != string::npos || expr.find(sarg2) != string::npos; i++) {
+			gsub(sarg, sarg_new, expr);
+			gsub(sarg2, sarg_new, expr);
+			if(carg == 'z') carg = 'a';
+			else carg++;
+			sarg[1] = carg;
+			sarg2[1] = carg;
+			sarg_new[1] = carg;
+		}
+		if(CALCULATOR->functionNameTaken(vargs[1].symbol())) {
+			MathFunction *f = CALCULATOR->getActiveFunction(vargs[1].symbol());
+			if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION) {
+				if(!vargs[2].symbol().empty()) f->setCategory(vargs[2].symbol());
+				if(!vargs[3].symbol().empty()) f->setTitle(vargs[3].symbol());
+				((UserFunction*) f)->setFormula(expr, marg.size() == 0 ? -1 : marg.size());
+				if(f->countNames() == 0) {
+					ExpressionName ename(name);
+					ename.reference = true;
+					f->setName(ename, 1);
+				} else {
+					f->setName(name, 1);
+				}
+			} else {
+				CALCULATOR->error(false, _("A global function was deactivated. It will be restored after the new function has been removed."), NULL);
+				CALCULATOR->addFunction(new UserFunction(vargs[2].symbol(), name, expr, true, marg.size() == 0 ? -1 : marg.size(), vargs[3].symbol()));
+			}
+		} else {
+			CALCULATOR->addFunction(new UserFunction(vargs[2].symbol(), name, expr, true, marg.size() == 0 ? -1 : marg.size(), vargs[3].symbol()));
+		}
+		mstruct = expr;
+		CALCULATOR->saveFunctionCalled();
+		return 1;
+	}
 	if(!CALCULATOR->variableNameIsValid(vargs[1].symbol())) {
 		CALCULATOR->error(true, _("Invalid variable name (%s)."), vargs[1].symbol().c_str(), NULL);
-		return -1;
+		if(vargs[4].number().getBoolean()) return -1;
+		return 0;
 	}
 	if(CALCULATOR->variableNameTaken(vargs[1].symbol())) {
 		Variable *v = CALCULATOR->getActiveVariable(vargs[1].symbol());
