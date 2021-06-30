@@ -321,10 +321,7 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			if(!mstruct1.number().hasImaginaryPart() && !mstruct2.number().hasImaginaryPart()) {
 				// real numbers
 				ComparisonResult cmp;
-				// if the numbers are factors with different signs, place smallest number first (the one with the negative sign)
-				if(parent.isMultiplication() && mstruct2.number().isNegative() != mstruct1.number().isNegative()) cmp = mstruct2.number().compare(mstruct1.number());
-				// otherwise, place largest number first
-				else cmp = mstruct1.number().compare(mstruct2.number());
+				cmp = mstruct1.number().compare(mstruct2.number());
 				if(cmp == COMPARISON_RESULT_LESS) return inc_order ? 1 : -1;
 				else if(cmp == COMPARISON_RESULT_GREATER) return inc_order ? -1 : 1;
 				return 0;
@@ -3085,8 +3082,10 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					if(po.base == BASE_DECIMAL) print_str += "10";
 					else if(po.base >= 2 && po.base <= 36) print_str += i2s(po.base);
 					print_str += "<sup>";
-					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) print_str += SIGN_MINUS;
-					else print_str += "-";
+					if(exp_minus) {
+						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) print_str += SIGN_MINUS;
+						else print_str += "-";
+					}
 					print_str += exp;
 					print_str += "</sup>";
 				} else if(BASE_IS_SEXAGESIMAL(po.base) || po.base == BASE_TIME) {
@@ -3209,6 +3208,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				break;
 			}
 			ips_n.depth++;
+			bool flat_power = !format || tagtype != TAG_TYPE_HTML || ips_n.power_depth != 0;
 			if(!po.preserve_format && SIZE == 2 && (CHILD(0).isNumber() || (CHILD(0).isNegate() && CHILD(0)[0].isNumber())) && CHILD(1).isFunction() && CHILD(1).size() == 1 && CHILD(1).function()->id() == FUNCTION_ID_CIS && CHILD(1).function()->referenceName() == "cis") {
 				ips_n.wrap = false;
 				print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
@@ -3232,11 +3232,11 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					else print_str += "*";
 					if(po.spacious) print_str += " ";
 				} else if(i > 0) {
-					int i_sign = CHILD(i).neededMultiplicationSign(po, ips_n, *this, i + 1, ips_n.wrap || (CHILD(i).isPower() && CHILD(i)[0].needsParenthesis(po, ips_n, CHILD(i), 1, true, true)), par_prev, true, true);
+					int i_sign = CHILD(i).neededMultiplicationSign(po, ips_n, *this, i + 1, ips_n.wrap || (CHILD(i).isPower() && CHILD(i)[0].needsParenthesis(po, ips_n, CHILD(i), 1, true, true)), par_prev, true, flat_power);
 					if(i_sign == MULTIPLICATION_SIGN_NONE && CHILD(i).isPower() && CHILD(i)[0].isUnit() && po.use_unicode_signs && po.abbreviate_names && CHILD(i)[0].unit() == CALCULATOR->getDegUnit()) {
 						PrintOptions po2 = po;
 						po2.use_unicode_signs = false;
-						i_sign = CHILD(i).neededMultiplicationSign(po2, ips_n, *this, i + 1, ips_n.wrap || (CHILD(i).isPower() && CHILD(i)[0].needsParenthesis(po, ips_n, CHILD(i), 1, true, true)), par_prev, true, true);
+						i_sign = CHILD(i).neededMultiplicationSign(po2, ips_n, *this, i + 1, ips_n.wrap || (CHILD(i).isPower() && CHILD(i)[0].needsParenthesis(po, ips_n, CHILD(i), 1, true, true)), par_prev, true, flat_power);
 					}
 					switch(i_sign) {
 						case MULTIPLICATION_SIGN_SPACE: {print_str += " "; break;}
