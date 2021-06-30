@@ -549,7 +549,8 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 				mstruct->setApproximate(true, true);
 			}
 			if(!mexp.isOne()) mstruct->raise(mexp);
-			mvalue.multiply_nocopy(mstruct, true);
+			if(mvalue.isOne()) mvalue.set_nocopy(*mstruct);
+			else mvalue.multiply_nocopy(mstruct, true);
 		}
 	}
 	return mvalue;
@@ -640,7 +641,8 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 			mstruct->setApproximate(true, true);
 		}
 		if(!mexp.isOne()) mstruct->raise(mexp);
-		mvalue.multiply_nocopy(mstruct, true);
+		if(mvalue.isOne()) mvalue.set_nocopy(*mstruct);
+		else mvalue.multiply_nocopy(mstruct, true);
 	}
 	if(i_exp != 1) mexp.multiply(i_exp);
 	return mvalue;

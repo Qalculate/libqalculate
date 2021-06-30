@@ -379,6 +379,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 				}
 				str.replace(ui, signs[i].length(), real_signs[i]);
 				ui = str.find(signs[i], ui + real_signs[i].length());
+				if(!b_unicode && real_signs[i][0] < 0) b_unicode = true;
 			}
 		}
 	}

@@ -6163,10 +6163,9 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			execute_command(do_pfe ? COMMAND_EXPAND_PARTIAL_FRACTIONS : (do_expand ? COMMAND_EXPAND : COMMAND_FACTORIZE), false);
 			mstruct = save_mstruct;
 		} else {
-			if(mstruct->isInteger() && !parsed_mstruct->isNumber()) {
-				prepend_mstruct = *mstruct;
-			}
+			if(do_factors && mstruct->isInteger() && !parsed_mstruct->isNumber()) prepend_mstruct = *mstruct;
 			execute_command(do_pfe ? COMMAND_EXPAND_PARTIAL_FRACTIONS : (do_expand ? COMMAND_EXPAND : COMMAND_FACTORIZE), false);
+			if(!prepend_mstruct.isUndefined() && mstruct->isInteger()) prepend_mstruct.setUndefined();
 		}
 	}
 
