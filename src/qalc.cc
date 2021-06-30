@@ -49,7 +49,7 @@ protected:
 	virtual void run();
 };
 
-MathStructure *mstruct, *parsed_mstruct, mstruct_exact;
+MathStructure *mstruct, *parsed_mstruct, mstruct_exact, prepend_mstruct;
 KnownVariable *vans[5], *v_memory;
 string result_text, parsed_text, original_expression;
 vector<string> alt_results;
@@ -2278,6 +2278,7 @@ int main(int argc, char *argv[]) {
 
 	mstruct = new MathStructure();
 	mstruct_exact.setUndefined();
+	prepend_mstruct.setUndefined();
 	parsed_mstruct = new MathStructure();
 
 	canfetch = CALCULATOR->canFetch();
@@ -3603,9 +3604,9 @@ int main(int argc, char *argv[]) {
 			//number bases
 			PRINT_AND_COLON_TABS(_("base display"), "basedisp");
 			switch(printops.base_display) {
-				case BASE_DISPLAY_NONE: {str += _("none"); break;}
 				case BASE_DISPLAY_NORMAL: {str += _("normal"); break;}
 				case BASE_DISPLAY_ALTERNATIVE: {str += _("alternative"); break;}
+				default: {str += _("none"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("complex form"), "cplxform");
@@ -4922,6 +4923,12 @@ void ViewThread::run() {
 
 		print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_fraction > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
 
+		if(!prepend_mstruct.isUndefined() && !CALCULATOR->aborted()) {
+			prepend_mstruct.format(po);
+			po.min_exp = 0;
+			alt_results.insert(alt_results.begin(), prepend_mstruct.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL));
+		}
+
 		b_busy = false;
 		CALCULATOR->stopControl();
 
@@ -6125,7 +6132,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
 	mstruct_exact.setUndefined();
 
-	if((!do_calendars || !mstruct->isDateTime()) && (dual_approximation > 0 || printops.base == BASE_DECIMAL) && !do_bases && !avoid_recalculation && !units_changed && i_maxtime >= 0) {
+	if((!rpn_mode || (!do_stack && !do_mathoperation)) && (!do_calendars || !mstruct->isDateTime()) && (dual_approximation > 0 || printops.base == BASE_DECIMAL) && !do_bases && !avoid_recalculation && !units_changed && i_maxtime >= 0) {
 		long int i_timeleft = 0;
 #ifndef CLOCK_MONOTONIC
 		if(i_maxtime) {struct timeval tv; gettimeofday(&tv, NULL); i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;}
@@ -6156,6 +6163,9 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			execute_command(do_pfe ? COMMAND_EXPAND_PARTIAL_FRACTIONS : (do_expand ? COMMAND_EXPAND : COMMAND_FACTORIZE), false);
 			mstruct = save_mstruct;
 		} else {
+			if(mstruct->isInteger() && !parsed_mstruct->isNumber()) {
+				prepend_mstruct = *mstruct;
+			}
 			execute_command(do_pfe ? COMMAND_EXPAND_PARTIAL_FRACTIONS : (do_expand ? COMMAND_EXPAND : COMMAND_FACTORIZE), false);
 		}
 	}
@@ -6262,7 +6272,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		}
 		setResult(NULL, (!do_stack || stack_index == 0), goto_input, do_stack ? stack_index : 0);
 	}
-	
+	prepend_mstruct.setUndefined();
+
 	evalops.auto_post_conversion = save_auto_post_conversion;
 	evalops.mixed_units_conversion = save_mixed_units_conversion;
 	evalops.parse_options.units_enabled = b_units_saved;
