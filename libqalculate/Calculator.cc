@@ -225,6 +225,7 @@ Calculator::Calculator() {
 	addStringAlternative(" ", SPACE);
 	addStringAlternative(" ", SPACE);
 	addStringAlternative("**", POWER);
+	addStringAlternative("^^", "⊻");
 	addStringAlternative("↊", "X");
 	addStringAlternative("↋", "E");
 	addStringAlternative("∧", BITWISE_AND);
@@ -460,6 +461,7 @@ Calculator::Calculator(bool ignore_locale) {
 	addStringAlternative(" ", SPACE);
 	addStringAlternative(" ", SPACE);
 	addStringAlternative("**", POWER);
+	addStringAlternative("^^", "⊻");
 	addStringAlternative("↊", "X");
 	addStringAlternative("↋", "E");
 	addStringAlternative("∧", BITWISE_AND);
