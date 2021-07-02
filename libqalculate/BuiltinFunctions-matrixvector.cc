@@ -347,7 +347,8 @@ MagnitudeFunction::MagnitudeFunction() : MathFunction("magnitude", 1) {
 int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	if(mstruct.isVector()) {
-		mstruct ^= nr_two;
+		mstruct.transform(STRUCT_FUNCTION, mstruct);
+		mstruct.setFunctionId(FUNCTION_ID_DOT_PRODUCT);
 		mstruct.raise(nr_half);
 		return 1;
 	} else if(mstruct.representsScalar()) {
@@ -356,7 +357,8 @@ int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	}
 	mstruct.eval(eo);
 	if(mstruct.isVector()) {
-		mstruct ^= nr_two;
+		mstruct.transform(STRUCT_FUNCTION, mstruct);
+		mstruct.setFunctionId(FUNCTION_ID_DOT_PRODUCT);
 		mstruct.raise(nr_half);
 		return 1;
 	}
