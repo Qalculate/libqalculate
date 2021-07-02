@@ -3164,7 +3164,7 @@ msgstr "Magnitud"
 
 #: ../data/functions.xml.in.h:107
 msgid "r:magnitude"
-msgstr "magnutud"
+msgstr "magnitud"
 
 #: ../data/functions.xml.in.h:108
 msgid ""
