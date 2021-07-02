@@ -3667,7 +3667,7 @@
       </unit>
       <unit type="composite">
         <system>CGS</system>
-        <_title>Millirem per hour</_title>
+        <_title>Millirem per Hour</_title>
         <names>r:mrem_p_h</names>
         <part>
           <unit>rem_radioactivity</unit>

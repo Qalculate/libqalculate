@@ -347,9 +347,14 @@ MagnitudeFunction::MagnitudeFunction() : MathFunction("magnitude", 1) {
 int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	if(mstruct.isVector()) {
-		mstruct.transform(STRUCT_FUNCTION, mstruct);
-		mstruct.setFunctionId(FUNCTION_ID_DOT_PRODUCT);
-		mstruct.raise(nr_half);
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(!mstruct[i].representsReal(true)) mstruct[i].transformById(FUNCTION_ID_ABS);
+			mstruct[i] ^= 2;
+		}
+		if(mstruct.size() == 0) mstruct.clear(true);
+		else if(mstruct.size() == 1) mstruct.setToChild(1, true);
+		else mstruct.setType(STRUCT_ADDITION);
+		mstruct ^= nr_half;
 		return 1;
 	} else if(mstruct.representsScalar()) {
 		mstruct.transformById(FUNCTION_ID_ABS);
@@ -357,14 +362,60 @@ int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	}
 	mstruct.eval(eo);
 	if(mstruct.isVector()) {
-		mstruct.transform(STRUCT_FUNCTION, mstruct);
-		mstruct.setFunctionId(FUNCTION_ID_DOT_PRODUCT);
-		mstruct.raise(nr_half);
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			mstruct[i] ^= 2;
+		}
+		if(mstruct.size() == 0) mstruct.clear(true);
+		else if(mstruct.size() == 1) mstruct.setToChild(1, true);
+		else mstruct.setType(STRUCT_ADDITION);
+		mstruct ^= nr_half;
 		return 1;
 	}
 	mstruct = vargs[0];
 	mstruct.transformById(FUNCTION_ID_ABS);
 	return 1;
+}
+NormFunction::NormFunction() : MathFunction("norm", 1, 2) {
+	setArgumentDefinition(1, new VectorArgument("", false, false));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	setDefaultValue(2, "2");
+}
+int NormFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	if(mstruct.isVector()) {
+		bool b_even = vargs[1].representsEven();
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(!b_even || !mstruct[i].representsReal(true)) mstruct[i].transformById(FUNCTION_ID_ABS);
+			mstruct[i] ^= vargs[1];
+		}
+		if(mstruct.size() == 0) mstruct.clear(true);
+		else if(mstruct.size() == 1) mstruct.setToChild(1, true);
+		else mstruct.setType(STRUCT_ADDITION);
+		mstruct ^= vargs[1];
+		mstruct.last().inverse();
+		return 1;
+	} else if(mstruct.representsScalar()) {
+		mstruct.transformById(FUNCTION_ID_ABS);
+		return 1;
+	}
+	mstruct.eval(eo);
+	if(mstruct.isVector()) {
+		bool b_even = vargs[1].representsEven();
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(!b_even || !mstruct[i].representsReal(true)) mstruct[i].transformById(FUNCTION_ID_ABS);
+			mstruct[i] ^= vargs[1];
+		}
+		if(mstruct.size() == 0) mstruct.clear(true);
+		else if(mstruct.size() == 1) mstruct.setToChild(1, true);
+		else mstruct.setType(STRUCT_ADDITION);
+		mstruct ^= vargs[1];
+		mstruct.last().inverse();
+		return 1;
+	} else if(mstruct.representsScalar()) {
+		mstruct.transformById(FUNCTION_ID_ABS);
+		return 1;
+	}
+	return -1;
 }
 HadamardFunction::HadamardFunction() : MathFunction("hadamard", 1, -1) {
 	setArgumentDefinition(1, new VectorArgument());
