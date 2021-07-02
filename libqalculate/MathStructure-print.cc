@@ -2947,7 +2947,10 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_LOGICAL_XOR: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_LOGICAL_NOT: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_COMPARISON: {return MULTIPLICATION_SIGN_OPERATOR;}
-		case STRUCT_FUNCTION: {return MULTIPLICATION_SIGN_OPERATOR;}
+		case STRUCT_FUNCTION: {
+			if(o_function->id() == FUNCTION_ID_ABS && SIZE == 1 && !po.preserve_format) return MULTIPLICATION_SIGN_SPACE;
+			return MULTIPLICATION_SIGN_OPERATOR;
+		}
 		case STRUCT_VECTOR: {break;}
 		case STRUCT_NUMBER: {break;}
 		case STRUCT_VARIABLE: {break;}
@@ -2990,7 +2993,10 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_LOGICAL_XOR: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_LOGICAL_NOT: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_COMPARISON: {return MULTIPLICATION_SIGN_OPERATOR;}
-		case STRUCT_FUNCTION: {return MULTIPLICATION_SIGN_OPERATOR;}
+		case STRUCT_FUNCTION: {
+			if(o_function->id() == FUNCTION_ID_ABS && SIZE == 1 && !po.preserve_format) return MULTIPLICATION_SIGN_SPACE;
+			return MULTIPLICATION_SIGN_OPERATOR;
+		}
 		case STRUCT_VECTOR: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_NUMBER: {
 			if(t == STRUCT_VARIABLE && parent[index - 2].variable() == CALCULATOR->getVariableById(VARIABLE_ID_I)) return MULTIPLICATION_SIGN_NONE;
@@ -3688,13 +3694,14 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			print_str += ename->name;
 			if(ename->suffix) {
 				size_t i = string::npos;
-				if(!po.use_reference_names && !po.preserve_format) print_str.rfind('_');
+				if(!po.use_reference_names && !po.preserve_format) i = print_str.rfind('_');
 				if(i != string::npos && i + 5 <= print_str.length() && print_str.substr(print_str.length() - 4, 4) == "unit") {
 					if(i + 5 == print_str.length()) {
-						if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) print_str = sub_suffix_html(print_str.substr(0, i));
+						print_str = print_str.substr(0, i);
 						if(po.hide_underscore_spaces) gsub("_", " ", print_str);
 					} else {
 						print_str = print_str.substr(0, print_str.length() - 4);
+						if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) print_str = sub_suffix_html(print_str);
 					}
 				} else if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
 					print_str = sub_suffix_html(print_str);
@@ -3714,20 +3721,20 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		}
 		case STRUCT_VARIABLE: {
 			const ExpressionName *ename = &o_variable->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
-			if(ename->suffix && format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
-				print_str += sub_suffix_html(ename->name);
-			} else {
-				print_str += ename->name;
-				if(ename->suffix && !po.preserve_format && !po.use_reference_names) {
-					size_t i = print_str.rfind('_');
-					if(i != string::npos && i + 9 <= print_str.length() && print_str.substr(print_str.length() - 8, 8) == "constant") {
-						if(i + 9 == print_str.length()) {
-							print_str = print_str.substr(0, i);
-							if(po.hide_underscore_spaces) gsub("_", " ", print_str);
-						} else {
-							print_str = print_str.substr(0, print_str.length() - 8);
-						}
+			print_str += ename->name;
+			if(ename->suffix) {
+				size_t i = string::npos;
+				if(!po.use_reference_names && !po.preserve_format) i = print_str.rfind('_');
+				if(i != string::npos && i + 9 <= print_str.length() && print_str.substr(print_str.length() - 8, 8) == "constant") {
+					if(i + 9 == print_str.length()) {
+						print_str = print_str.substr(0, i);
+						if(po.hide_underscore_spaces) gsub("_", " ", print_str);
+					} else {
+						print_str = print_str.substr(0, print_str.length() - 8);
+						if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) print_str = sub_suffix_html(print_str);
 					}
+				} else if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
+					print_str = sub_suffix_html(print_str);
 				}
 			}
 			if(po.hide_underscore_spaces && !ename->suffix) {
@@ -3754,7 +3761,12 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		}
 		case STRUCT_FUNCTION: {
 			ips_n.depth++;
-			if(o_function->id() == FUNCTION_ID_UNCERTAINTY && SIZE == 3 && CHILD(2).isZero()) {
+			if(o_function->id() == FUNCTION_ID_ABS && SIZE == 1 && !po.preserve_format) {
+				print_str += "|";
+				print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
+				print_str += "|";
+				break;
+			} else if(o_function->id() == FUNCTION_ID_UNCERTAINTY && SIZE == 3 && CHILD(2).isZero()) {
 				MathStructure *mmid = NULL, *munc = NULL;
 				if(o_function->id() == FUNCTION_ID_UNCERTAINTY) {
 					mmid = &CHILD(0);

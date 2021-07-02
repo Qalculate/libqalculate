@@ -330,16 +330,17 @@
         <_title>Matrices/vectors and variables</_title>
       </argument>
     </builtin_function>
-    <function>
+    <builtin_function name="norm">
       <_title>Norm (length)</_title>
       <_names>r:norm</_names>
       <_description>Calculates the norm/length of a vector.</_description>
-      <expression>abs(dot(\x,\x)^(1/2))</expression>
-      <argument type="vector" index="1">
+      <argument index="1">
         <_title>Vector</_title>
-        <test>false</test>
       </argument>
-    </function>
+      <argument index="2">
+        <_title>Exponent (p)</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="dot">
       <_title>Dot Product</_title>
       <_names>r:dot</_names>
