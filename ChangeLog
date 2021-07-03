@@ -1,6 +1,7 @@
 2021-07-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Avoid use of right-to-left Unicode symbols (do not present the currency symbols for IRR and AFN to the user)
+	* Do not try to load data objects from global definitions dir if data set is local
 
 2021-07-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
