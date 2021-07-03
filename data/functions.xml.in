@@ -1082,8 +1082,8 @@
         <_title>Value</_title>
       </argument>
       <argument type="free" index="2">
-        <!--nth root argument; remove "!root!" in translation-->
-        <_title>!root!Degree</_title>
+        <!--nth root argument-->
+        <_title>Degree (n)</_title>
       </argument>
     </builtin_function>
     <builtin_function name="sq">
@@ -2832,6 +2832,7 @@
     <builtin_function name="save">
       <_title>Save as Variable or Function</_title>
       <_names>r:save</_names>
+      <_description>Stores a value in a variable or saves an expression as a function.&#10;&#10;A function is created if the name includes parentheses (e.g. "f()"). Optionally the function arguments can be specified in the name (e.g. "save(a+b,f(a,b))"). Otherwise the function arguments is expected to be referred to in the expression using \x, \y, \z ,\a , \b..., or x, y, z (e.g. "save(x+y,f())").&#10;&#10;If a function was created, the processed function expression is returned as a text string, otherwise the value is returned.&#10;&#10;The ":=" operator (e.g. var1:=10) is a shortcut for this function.</_description>
       <argument index="1">
         <_title>Value</_title>
       </argument>

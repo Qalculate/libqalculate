@@ -1,4 +1,40 @@
-2021-05-23 leveltrauma <rhade_tm@t-online.de>
+2021-07-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Avoid use of right-to-left Unicode symbols (do not present the currency symbols for IRR and AFN to the user)
+
+2021-07-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix norm() and magnitude()
+	* Add a second argument, p, to norm()
+	* Output abs(x) as |x|
+
+2021-06-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for "^^" as XOR operator
+	* always check for "user" directory (regardless of compile time options), on Windows
+	* Output both original and factorized integer, in qalc
+	* Improved HTML output
+
+2021-06-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for function creation in save() (e.g. func1():=\x*\y^2, or func1(\a,\b):=\a*\b^2)
+	* QALCULATE_USER_DIR environment variable
+
+2021-06-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Always return exact result in base() function, in exact mode
+
+2021-05-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Interpret "(10-134)±" as "(10-134)±0" instead of "(10-134)*0" (and similar)
+	* Add operators (".'", ".*", "./", ".^") and functions (replace multiply(), divide(), and pow()) for transpose, element-wise multiplication, division, and power
+	* Modify behaviour of addition with column vector, and addition of row vector to matrix
+
+2021-05-23 Alex Henrie <alexhenrie24@gmail.com>
+
+	* Catalan translation
+
+2021-05-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Vector dot product operator (".")
 
