@@ -2948,7 +2948,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		case STRUCT_LOGICAL_NOT: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_COMPARISON: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_FUNCTION: {
-			if(o_function->id() == FUNCTION_ID_ABS && SIZE == 1 && !po.preserve_format) return MULTIPLICATION_SIGN_SPACE;
+			if(parent[index - 2].function()->id() == FUNCTION_ID_ABS && parent[index - 2].size() == 1 && !po.preserve_format) break;
 			return MULTIPLICATION_SIGN_OPERATOR;
 		}
 		case STRUCT_VECTOR: {break;}
