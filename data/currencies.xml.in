@@ -177,7 +177,7 @@
     </builtin_unit>
     <builtin_unit name="AFN">
       <_title>Afghan Afghani</_title>
-      <_names>a-cr:AFN,aiu:&#x060B;</_names>
+      <_names>a-cr:AFN,aio:&#x060B;</_names>
       <_countries>Afghanistan</_countries>
     </builtin_unit>
     <builtin_unit name="ALL">
@@ -440,7 +440,7 @@
     </builtin_unit>
     <builtin_unit name="IRR">
       <_title>Iranian Rial</_title>
-      <_names>a-cr:IRR,aiu:&#xFDFC;</_names>
+      <_names>a-cr:IRR,aio:&#xFDFC;</_names>
       <_countries>Iran</_countries>
     </builtin_unit>
     <builtin_unit name="IQD">

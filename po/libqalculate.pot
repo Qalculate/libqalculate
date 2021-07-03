@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-01 10:12+0700\n"
+"POT-Creation-Date: 2021-07-03 10:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -308,7 +308,7 @@ msgstr ""
 #: ../libqalculate/Calculator-calculate.cc:1003
 #: ../libqalculate/Calculator.cc:254 ../libqalculate/Calculator.cc:484
 #: ../libqalculate/DataSet.cc:1102 ../libqalculate/DataSet.cc:1164
-#: ../libqalculate/MathStructure-print.cc:3636 ../libqalculate/Function.cc:2302
+#: ../libqalculate/MathStructure-print.cc:3642 ../libqalculate/Function.cc:2302
 #: ../libqalculate/Function.cc:2318
 msgid "or"
 msgstr ""
@@ -1146,8 +1146,8 @@ msgstr ""
 msgid "Ethiopian:"
 msgstr ""
 
-#: ../src/qalc.cc:1729 ../libqalculate/BuiltinFunctions-matrixvector.cc:1013
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1043
+#: ../src/qalc.cc:1729 ../libqalculate/BuiltinFunctions-matrixvector.cc:1066
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1096
 msgid "No matching item found."
 msgstr ""
 
@@ -2658,22 +2658,22 @@ msgstr ""
 msgid "Element %s does not exist in vector."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:376
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:380
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:500
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:504
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:429
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:433
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:553
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:557
 #, c-format
 msgid "%s() requires that all matrices/vectors have the same dimensions."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:985
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1038
 msgid ""
 "The number of requested elements in generate vector function must be a "
 "positive integer."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1008
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1025
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1061
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1078
 msgid "Comparison failed."
 msgstr ""
 
@@ -2820,7 +2820,7 @@ msgstr ""
 #: ../libqalculate/Calculator-calculate.cc:1017
 #: ../libqalculate/Calculator-calculate.cc:1055
 #: ../libqalculate/Calculator.cc:248 ../libqalculate/Calculator.cc:479
-#: ../libqalculate/MathStructure-print.cc:3615 ../libqalculate/Function.cc:1356
+#: ../libqalculate/MathStructure-print.cc:3621 ../libqalculate/Function.cc:1356
 #: ../libqalculate/Function.cc:1364 ../libqalculate/Function.cc:1797
 #: ../libqalculate/Function.cc:1959 ../libqalculate/Function.cc:1967
 msgid "and"
@@ -2886,8 +2886,8 @@ msgstr ""
 msgid "Degrees unit is missing. Creating one for this session."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:1652 ../libqalculate/Calculator.cc:1653
-#: ../libqalculate/Calculator.cc:1657 ../libqalculate/Calculator.cc:1661
+#: ../libqalculate/Calculator.cc:1653 ../libqalculate/Calculator.cc:1654
+#: ../libqalculate/Calculator.cc:1658 ../libqalculate/Calculator.cc:1662
 #: ../libqalculate/Calculator-definitions.cc:3410
 #: ../libqalculate/Calculator-definitions.cc:3415
 #: ../libqalculate/Calculator-definitions.cc:3494
@@ -2896,28 +2896,28 @@ msgstr ""
 msgid "Currency"
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:2599
+#: ../libqalculate/Calculator.cc:2600
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
 "the variable will be lost."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:2617
+#: ../libqalculate/Calculator.cc:2618
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the function will be lost."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:2634
+#: ../libqalculate/Calculator.cc:2635
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the unit will be lost."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:2841
+#: ../libqalculate/Calculator.cc:2842
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr ""
@@ -3280,7 +3280,7 @@ msgid ""
 "number of data points"
 msgstr ""
 
-#: ../libqalculate/MathStructure-print.cc:3851
+#: ../libqalculate/MathStructure-print.cc:3863
 msgid "undefined"
 msgstr ""
 
