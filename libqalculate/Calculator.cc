@@ -2166,6 +2166,19 @@ Unit* Calculator::getActiveUnit(string name_) {
 	}
 	return NULL;
 }
+Unit* Calculator::getGlobalUnit(string name_) {
+	if(name_.empty()) return NULL;
+	for(size_t i = 0; i < units.size(); i++) {
+		Unit *u = units[i];
+		if(u->isActive() && !u->isLocal()) {
+			for(size_t i2 = 1; i2 <= u->countNames(); i2++) {
+				const ExpressionName &ename = u->getName(i2);
+				if(ename.reference && name_ == ename.name) return u;
+			}
+		}
+	}
+	return NULL;
+}
 Unit* Calculator::getLocalCurrency() {
 	if(priv->local_currency) return priv->local_currency;
 	struct lconv *lc = localeconv();
@@ -2400,6 +2413,19 @@ Variable* Calculator::getActiveVariable(string name_) {
 	}
 	return NULL;
 }
+Variable* Calculator::getGlobalVariable(string name_) {
+	if(name_.empty()) return NULL;
+	for(size_t i = 0; i < variables.size(); i++) {
+		Variable *v = variables[i];
+		if(v->isActive() && !v->isLocal()) {
+			for(size_t i2 = 1; i2 <= v->countNames(); i2++) {
+				const ExpressionName &ename = v->getName(i2);
+				if(ename.reference && name_ == ename.name) return v;
+			}
+		}
+	}
+	return NULL;
+}
 ExpressionItem* Calculator::addExpressionItem(ExpressionItem *item, bool force) {
 	switch(item->type()) {
 		case TYPE_VARIABLE: {
@@ -2537,6 +2563,19 @@ MathFunction* Calculator::getActiveFunction(string name_) {
 	for(size_t i = 0; i < functions.size(); i++) {
 		if(functions[i]->isActive() && functions[i]->hasName(name_)) {
 			return functions[i];
+		}
+	}
+	return NULL;
+}
+MathFunction* Calculator::getGlobalFunction(string name_) {
+	if(name_.empty()) return NULL;
+	for(size_t i = 0; i < functions.size(); i++) {
+		MathFunction *f = functions[i];
+		if(f->isActive() && !f->isLocal()) {
+			for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
+				const ExpressionName &ename = f->getName(i2);
+				if(ename.reference && name_ == ename.name) return f;
+			}
 		}
 	}
 	return NULL;
