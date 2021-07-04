@@ -1,3 +1,8 @@
+2021-07-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for "a perm b" (= perm(a,b)), "a comb b" (= comb(a,b)), "a dot b" (= "a.b"), "a cross b" (= cross(a,b)), and Unicode cross product symbol
+	* Add Calculator::getGlobalFunction(), Calculator::getGlobalUnit(), and Calculator::getGlobalVariable(), for more efficient retrieval of objects
+
 2021-07-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Avoid use of right-to-left Unicode symbols (do not present the currency symbols for IRR and AFN to the user)

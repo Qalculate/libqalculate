@@ -5865,7 +5865,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					case '<': {CALCULATOR->calculateRPN(OPERATION_LESS, 0, evalops, parsed_mstruct); break;}
 					case '=': {CALCULATOR->calculateRPN(OPERATION_EQUALS, 0, evalops, parsed_mstruct); break;}
 					case '\\': {
-						MathFunction *fdiv = CALCULATOR->getActiveFunction("div");
+						MathFunction *fdiv = CALCULATOR->getGlobalFunction("div");
 						if(fdiv) {
 							CALCULATOR->calculateRPN(fdiv, 0, evalops, parsed_mstruct);
 							break;
@@ -5893,7 +5893,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					CALCULATOR->calculateRPN(OPERATION_EQUALS, 0, evalops, parsed_mstruct);
 					do_mathoperation = true;
 				} else if(str2 == "//") {
-					MathFunction *fdiv = CALCULATOR->getActiveFunction("div");
+					MathFunction *fdiv = CALCULATOR->getGlobalFunction("div");
 					if(fdiv) {
 						CALCULATOR->calculateRPN(fdiv, 0, evalops, parsed_mstruct);
 						do_mathoperation = true;
@@ -6083,7 +6083,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			MathStructure mbak(*mstruct);
 			if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) {
 				if(munit->isUnit() && u->referenceName() == "oF") {
-					u = CALCULATOR->getActiveUnit("oC");
+					u = CALCULATOR->getGlobalUnit("oC");
 					if(u) mstruct->set(CALCULATOR->convert(*mstruct, u, evalops, true, false));
 				} else {
 					mstruct->set(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));
