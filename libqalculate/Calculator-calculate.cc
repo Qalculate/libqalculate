@@ -894,10 +894,10 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 
 	if(po.spell_out_logical_operators && test_parsed_comparison(mparse)) {
 		if(m.isZero()) {
-			Variable *v = CALCULATOR->getActiveVariable("false");
+			Variable *v = CALCULATOR->getGlobalVariable("false");
 			if(v) m.set(v);
 		} else if(m.isOne()) {
-			Variable *v = CALCULATOR->getActiveVariable("true");
+			Variable *v = CALCULATOR->getGlobalVariable("true");
 			if(v) m.set(v);
 		}
 	}
@@ -918,7 +918,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 			}
 		}
 		if(b) {
-			Unit *u = CALCULATOR->getActiveUnit("h");
+			Unit *u = CALCULATOR->getGlobalUnit("h");
 			if(u) {
 				m.divide(u);
 				m.eval(evalops);

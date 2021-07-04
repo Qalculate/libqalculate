@@ -900,6 +900,7 @@ class Calculator {
 	Unit* getUnit(std::string name_);
 	Unit* getUnitById(int id) const;
 	Unit* getActiveUnit(std::string name_);
+	Unit* getGlobalUnit(std::string refname_);
 	Unit* getCompositeUnit(std::string internal_name_);
 	Unit* getLocalCurrency();
 	void setLocalCurrency(Unit *u);
@@ -924,6 +925,7 @@ class Calculator {
 	Variable* getVariable(std::string name_);
 	Variable* getVariableById(int id) const;
 	Variable* getActiveVariable(std::string name_);
+	Variable* getGlobalVariable(std::string refname_);
 	ExpressionItem *addExpressionItem(ExpressionItem *item, bool force = true);
 	MathFunction* addFunction(MathFunction *f, bool force = true, bool check_names = true);
 	DataSet* addDataSet(DataSet *dc, bool force = true, bool check_names = true);
@@ -932,6 +934,7 @@ class Calculator {
 	MathFunction* getFunction(std::string name_);
 	MathFunction* getFunctionById(int id) const;
 	MathFunction* getActiveFunction(std::string name_);
+	MathFunction* getGlobalFunction(std::string refname_);
 	/** Returns variable for an index (starting at zero). All variables can be traversed by starting at index zero and increasing the index until NULL is returned.
 	*
 	* @param index Index of variable.
