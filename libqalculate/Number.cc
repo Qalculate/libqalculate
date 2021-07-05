@@ -10034,6 +10034,7 @@ string to_float(Number nr_pre, unsigned int bits, unsigned int expbits, bool *ap
 		nrexp.log(2);
 		nrexp.intervalToMidValue();
 		nrexp.floor();
+		nrexp.setApproximate(false);
 		bool rerun = false;
 		tofloat_afterexp:
 		if(nrexp > expbias) {
@@ -10098,6 +10099,7 @@ string to_float(Number nr_pre, unsigned int bits, unsigned int expbits, bool *ap
 		po2.min_exp = 0;
 		po2.base_display = BASE_DISPLAY_NONE;
 		po2.binary_bits = expbits;
+		po2.show_ending_zeroes = false;
 		sbin += nrexp.print(po2);
 		remove_blanks(sbin);
 		if(sbin.length() < expbits + 1) sbin.insert(1, expbits + 1 - sbin.length(), '0');

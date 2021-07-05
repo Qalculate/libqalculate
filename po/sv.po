@@ -3192,7 +3192,7 @@ msgid ""
 "The expression is ambiguous (be careful when combining implicit "
 "multiplication and division)."
 msgstr ""
-"Uttrycket är tvetydigt (var försiktigt när implicit multiplikation och "
+"Uttrycket är tvetydigt (var försiktig när implicit multiplikation och "
 "division kombineras)."
 
 #: ../libqalculate/Calculator-parse.cc:4095

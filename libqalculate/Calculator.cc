@@ -646,13 +646,48 @@ bool Calculator::utf8_pos_is_valid_in_name(char *pos) {
 		return false;
 	}
 	if((unsigned char) pos[0] >= 0xC0) {
-		string str;
-		str += pos[0];
-		while((unsigned char) pos[1] >= 0x80 && (unsigned char) pos[1] < 0xC0) {
-			str += pos[1];
-			pos++;
+		size_t l = 1;
+		while((unsigned char) pos[l] >= 0x80 && (unsigned char) pos[l] < 0xC0) {
+			l++;
 		}
-		return str != SIGN_DIVISION && str != SIGN_DIVISION_SLASH && str != SIGN_MULTIPLICATION && str != SIGN_MULTIDOT && str != SIGN_SMALLCIRCLE && str != SIGN_MULTIBULLET && str != SIGN_MINUS && str != SIGN_PLUS && str != SIGN_NOT_EQUAL && str != SIGN_GREATER_OR_EQUAL && str != SIGN_LESS_OR_EQUAL;
+		if(l == 3 && pos[0] == '\xe2') {
+			if(pos[1] == '\x80') {
+				// thin space
+				if(pos[2] == '\x89') return false;
+				// quotation marks
+				if((pos[2] >= -104 && pos[2] <= -97) || pos[2] == -70 || pos[2] == -71) return false;
+				// operator
+				if(pos[2] == '\xa2') return false;
+			} else if(pos[1] == '\x81') {
+				// exponents
+				if(pos[2] == -80 || (pos[2] >= -76 && pos[2] <= -69) || pos[2] == -67 || pos[2] == -66) return false;
+			} else if(pos[1] == '\x85') {
+				// fractions
+				if(pos[2] >= -112 && pos[2] <= -98) return false;
+			} else if(pos[1] == '\x88') {
+				// operators
+				if(pos[2] == '\x95' || pos[2] == '\x99' || pos[2] == '\x92') return false;
+			} else if(pos[1] == '\x89') {
+				// inequalities
+				if(pos[2] == '\xa0' || pos[2] == '\xa5' || pos[2] == '\xa4') return false;
+			} else if(pos[1] == '\x8b') {
+				// operator
+				if(pos[2] == '\x85') return false;
+			}
+		} else if(l == 3 && pos[0] == '\xef') {
+			if(pos[1] == '\xbc' && pos[2] == '\x8b') return false;
+		} else if(l == 2 && pos[0] == '\xc2') {
+			// exponents
+			if(pos[1] == -71 || pos[1] == -77 || pos[1] == -78) return false;
+			// fractions
+			if(pos[1] == -66 || pos[1] == -67 || pos[1] == -68) return false;
+			// operators
+			if(pos[1] == '\xb1' || pos[1] == '\xb7') return false;
+		} else if(l == 2 && pos[0] == '\xc3') {
+			// operators
+			if(pos[1] == '\x97' || pos[1] == '\xb7') return false;
+		}
+		pos += (l - 1);
 	}
 	return true;
 }
