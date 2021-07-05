@@ -3072,11 +3072,13 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		case STRUCT_NUMBER: {
 			if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str = (colorize == 2 ? "\033[0;96m" : "\033[0;36m");
 			else if(colorize && tagtype == TAG_TYPE_HTML) print_str = (colorize == 2 ? "<span style=\"color:#AAFFFF\">" : "<span style=\"color:#005858\">");
-			if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0 && !po.lower_case_e) {
+			if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
 				std::string exp;
 				bool exp_minus = false;
-				ips_n.exp = &exp;
-				ips_n.exp_minus = &exp_minus;
+				if(!po.lower_case_e) {
+					ips_n.exp = &exp;
+					ips_n.exp_minus = &exp_minus;
+				}
 				print_str += o_number.print(po, ips_n);
 				if(!exp.empty()) {
 					if(po.spacious) print_str += " ";
@@ -3095,8 +3097,10 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					print_str += exp;
 					print_str += "</sup>";
 				} else if(BASE_IS_SEXAGESIMAL(po.base) || po.base == BASE_TIME) {
-					gsub("E", "e", print_str);
-					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) gsub("-", SIGN_MINUS, print_str);
+					if(!po.lower_case_e) {
+						gsub("E", "e", print_str);
+						if(po.use_unicode_signs && (!po.can_display_unicode_string_function ||(*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) gsub("-", SIGN_MINUS, print_str);
+					}
 				} else if(po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX) {
 					int base = po.base;
 					if(base <= BASE_FP16 && base >= BASE_FP80) base = BASE_BINARY;

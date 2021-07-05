@@ -303,7 +303,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		size_t ui = str.find("\xe2\x80");
 		bool b_double = false, b_single = false, b_angle = false;
 		while(ui != string::npos && ui + 2 < str.length()) {
-			if(str[ui + 2] >= -101 && str[ui + 2] <= -104) {
+			if(str[ui + 2] >= -104 && str[ui + 2] <= -101) {
 				// single quotation marks
 				str.replace(ui, 3, "\'");
 				b_single = true;
