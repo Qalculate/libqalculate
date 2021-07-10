@@ -531,6 +531,7 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
 		MathStructure *exp = new MathStructure(1, 1, 0);
 		MathStructure *mstruct = new MathStructure(1, 1, 0);
 		Unit *u_m = m.unit();
+		KnownVariable *v = NULL;
 		if(u_m->subtype() == SUBTYPE_ALIAS_UNIT && do_intervals) {
 			for(size_t i = 0; i < units->size(); i++) {
 				if((*units)[i] == u_m) {
@@ -546,9 +547,10 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
 					Number nmid(mstruct->number());
 					nmid.intervalToMidValue();
 					nmid.setApproximate(false);
-					KnownVariable *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
+					v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
 					mstruct->set(v);
 					vars->push_back(v);
+					v->ref();
 					v->destroy();
 					u_m = ((AliasUnit*) u_m)->firstBaseUnit();
 				} else {
@@ -577,10 +579,18 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
 			} else {
 				mstruct->unref();
 			}
+			if(v && v->refcount() == 1) {
+				v->unref();
+				vars->pop_back();
+			}
 			return true;
 		} else {
 			exp->unref();
 			mstruct->unref();
+			if(v) {
+				v->unref();
+				vars->pop_back();
+			}
 			return false;
 		}
 	} else {

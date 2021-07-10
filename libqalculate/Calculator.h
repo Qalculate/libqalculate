@@ -375,12 +375,12 @@ class Calculator {
 	DecimalPrefix *decimal_null_prefix;
 	BinaryPrefix *binary_null_prefix;
 
-  	bool place_currency_code_before, place_currency_sign_before;
+	bool place_currency_code_before, place_currency_sign_before;
 	bool place_currency_code_before_negative, place_currency_sign_before_negative;
 	bool default_dot_as_separator;
 	std::string local_digit_group_separator, local_digit_group_format;
 
-  	bool b_busy;
+	bool b_busy;
 	std::string expression_to_calculate;
 	EvaluationOptions tmp_evaluationoptions;
 	MathStructure *tmp_parsedstruct;
@@ -497,6 +497,9 @@ class Calculator {
 	bool isControlled(void) const;
 	std::string abortedMessage(void) const;
 	std::string timedOutString(void) const;
+
+	std::string logicalORString(void) const;
+	std::string logicalANDString(void) const;
 
 	///Deprecated: use startControl()
 	void startPrintControl(int milliseconds = 0);

@@ -480,7 +480,7 @@ string getLocalDir() {
 	if(dirExists(str)) return str;
 	char path[MAX_PATH];
 	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
-	string str = path;
+	str = path;
 	return str + "\\Qalculate";
 #	endif
 #else
@@ -508,7 +508,7 @@ string getLocalDataDir() {
 	if(dirExists(str)) return str;
 	char path[MAX_PATH];
 	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
-	string str = path;
+	str = path;
 	return str + "\\Qalculate";
 #	endif
 #else
@@ -529,15 +529,15 @@ string getLocalTmpDir() {
 	string str(exepath);
 	str.resize(str.find_last_of('\\'));
 #	ifdef WIN_PORTABLE
-	str += "\\tmp"
+	str += "\\tmp";
 	_mkdir(str.c_str());
 	return str;
 #	else
-	str += "\\user"
+	str += "\\user";
 	if(dirExists(str)) return str;
 	char path[MAX_PATH];
 	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
-	string str = path;
+	str = path;
 	str += "\\cache";
 	_mkdir(str.c_str());
 	return str + "\\Qalculate";
