@@ -681,6 +681,262 @@ void bitwise_to_logical(MathStructure &m) {
 	}
 }
 
+string Calculator::localizeExpression(string str, const ParseOptions &po) const {
+	if((DOT_STR == DOT && COMMA_STR == COMMA && !po.comma_as_separator) || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return str;
+	int base = po.base;
+	if(base == BASE_CUSTOM) {
+		base = (int) priv->custom_input_base_i;
+	} else if(base == BASE_BIJECTIVE_26) {
+		base = 36;
+	} else if(base == BASE_GOLDEN_RATIO || base == BASE_SUPER_GOLDEN_RATIO || base == BASE_SQRT2) {
+		base = 2;
+	} else if(base == BASE_PI) {
+		base = 4;
+	} else if(base == BASE_E) {
+		base = 3;
+	} else if(base == BASE_DUODECIMAL) {
+		base = -12;
+	} else if(base < 2 || base > 36) {
+		base = -1;
+	}
+	vector<size_t> q_begin;
+	vector<size_t> q_end;
+	size_t i3 = 0;
+	while(true) {
+		i3 = str.find_first_of("\"\'", i3);
+		if(i3 == string::npos) {
+			break;
+		}
+		q_begin.push_back(i3);
+		i3 = str.find(str[i3], i3 + 1);
+		if(i3 == string::npos) {
+			q_end.push_back(str.length() - 1);
+			break;
+		}
+		q_end.push_back(i3);
+		i3++;
+	}
+	if(COMMA_STR != COMMA || po.comma_as_separator) {
+		bool b_alt_comma = po.comma_as_separator && COMMA_STR == COMMA;
+		size_t ui = str.find(COMMA);
+		size_t ui2 = 0;
+		while(ui != string::npos) {
+			for(; ui2 < q_end.size(); ui2++) {
+				if(ui >= q_begin[ui2]) {
+					if(ui <= q_end[ui2]) {
+						ui = str.find(COMMA, q_end[ui2] + 1);
+						if(ui == string::npos) break;
+					}
+				} else {
+					break;
+				}
+			}
+			str.replace(ui, strlen(COMMA), b_alt_comma ? ";" : COMMA_STR);
+			ui = str.find(COMMA, ui + (b_alt_comma ? 1 : COMMA_STR.length()));
+		}
+	}
+	if(DOT_STR != DOT) {
+		size_t ui = str.find(DOT);
+		size_t ui2 = 0;
+		while(ui != string::npos) {
+			for(; ui2 < q_end.size(); ui2++) {
+				if(ui >= q_begin[ui2]) {
+					if(ui <= q_end[ui2]) {
+						ui = str.find(DOT, q_end[ui2] + 1);
+						if(ui == string::npos) break;
+					}
+				} else {
+					break;
+				}
+			}
+			if(!po.rpn && ui > 0 && ui < str.length() - 1 && is_not_number(str[ui - 1], base) && is_not_number(str[ui + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui - 1]) && (str[ui + 1] == POWER_CH || str[ui + 1] == MULTIPLICATION_CH || str[ui + 1] == DIVISION_CH || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui + 1]))) {
+				ui = str.find(DOT, ui + 1);
+			} else {
+				str.replace(ui, strlen(DOT), DOT_STR);
+				ui = str.find(DOT, ui + DOT_STR.length());
+			}
+		}
+	}
+	return str;
+}
+string Calculator::unlocalizeExpression(string str, const ParseOptions &po) const {
+	if((DOT_STR == DOT && COMMA_STR == COMMA && !po.comma_as_separator) || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return str;
+	int base = po.base;
+	if(base == BASE_CUSTOM) {
+		base = (int) priv->custom_input_base_i;
+	} else if(base == BASE_BIJECTIVE_26) {
+		base = 36;
+	} else if(base == BASE_GOLDEN_RATIO || base == BASE_SUPER_GOLDEN_RATIO || base == BASE_SQRT2) {
+		base = 2;
+	} else if(base == BASE_PI) {
+		base = 4;
+	} else if(base == BASE_E) {
+		base = 3;
+	} else if(base == BASE_DUODECIMAL) {
+		base = -12;
+	} else if(base < 2 || base > 36) {
+		base = -1;
+	}
+	vector<size_t> q_begin;
+	vector<size_t> q_end;
+	size_t i3 = 0;
+	while(true) {
+		i3 = str.find_first_of("\"\'", i3);
+		if(i3 == string::npos) {
+			break;
+		}
+		q_begin.push_back(i3);
+		i3 = str.find(str[i3], i3 + 1);
+		if(i3 == string::npos) {
+			q_end.push_back(str.length() - 1);
+			break;
+		}
+		q_end.push_back(i3);
+		i3++;
+	}
+	if(DOT_STR != DOT) {
+		bool comma_argsep = false;
+		if(!po.dot_as_separator && DOT_STR == COMMA) {
+			size_t ui = 0;
+			size_t ui2 = 0;
+			while(true) {
+				ui = str.find_first_of(RIGHT_VECTOR_WRAP RIGHT_PARENTHESIS, ui);
+				for(; ui2 < q_end.size(); ui2++) {
+					if(ui >= q_begin[ui2]) {
+						if(ui <= q_end[ui2]) {
+							ui = str.find_first_of(RIGHT_VECTOR_WRAP RIGHT_PARENTHESIS, q_end[ui2] + 1);
+							if(ui == string::npos) break;
+						}
+					} else {
+						break;
+					}
+				}
+				if(ui == string::npos || ui == str.length() - 1) break;
+				ui = str.find_first_not_of(SPACES, ui + 1);
+				if(ui == string::npos) break;
+				if(str[ui] == COMMA_CH) {
+					comma_argsep = true;
+					break;
+				}
+			}
+		}
+		if(!comma_argsep && DOT_STR == COMMA && str.find(COMMA_STR) == string::npos && base > 0 && base <= 10) {
+			bool b_vector = (!po.dot_as_separator && str.find(LEFT_VECTOR_WRAP) != string::npos);
+			bool b_dot = (str.find(DOT) != string::npos);
+			size_t ui = str.find_first_of(b_vector ? DOT COMMA : COMMA);
+			size_t ui2 = 0;
+			while(ui != string::npos) {
+				for(; ui2 < q_end.size(); ui2++) {
+					if(ui >= q_begin[ui2]) {
+						if(ui <= q_end[ui2]) {
+							ui = str.find_first_of(b_vector ? DOT COMMA : COMMA, q_end[ui2] + 1);
+							if(ui == string::npos) break;
+						}
+					} else {
+						break;
+					}
+				}
+				if(ui == string::npos) break;
+				if(ui > 0) {
+					size_t ui3 = str.find_last_not_of(SPACES, ui - 1);
+					if(ui3 != string::npos && ((str[ui3] > 'a' && str[ui3] < 'z') || (str[ui3] > 'A' && str[ui3] < 'Z')) && is_not_number(str[ui3], base)) return str;
+				}
+				if(ui != str.length() - 1) {
+					size_t ui3 = str.find_first_not_of(SPACES, ui + 1);
+					if(ui3 != string::npos && is_not_number(str[ui3], base)) return str;
+					if(b_vector || !b_dot) {
+						ui3 = str.find_first_not_of(SPACES NUMBERS, ui3 + 1);
+						if(ui3 != string::npos && (str[ui3] == COMMA_CH || (b_vector && str[ui3] == DOT_CH))) return str;
+					}
+				}
+				ui = str.find(b_vector ? DOT COMMA : COMMA, ui + 1);
+			}
+		}
+		if(po.dot_as_separator) {
+			size_t ui = str.find(DOT);
+			size_t ui2 = 0;
+			while(ui != string::npos) {
+				for(; ui2 < q_end.size(); ui2++) {
+					if(ui >= q_begin[ui2]) {
+						if(ui <= q_end[ui2]) {
+							ui = str.find(DOT, q_end[ui2] + 1);
+							if(ui == string::npos) break;
+						}
+					} else {
+						break;
+					}
+				}
+				if(ui == string::npos) break;
+				if(!po.rpn && ui > 0 && ui < str.length() - 1 && is_not_number(str[ui - 1], base) && is_not_number(str[ui + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui - 1]) && (str[ui + 1] == POWER_CH || str[ui + 1] == MULTIPLICATION_CH || str[ui + 1] == DIVISION_CH || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui + 1]))) {
+					ui = str.find(DOT, ui + 1);
+				} else {
+					str.replace(ui, strlen(DOT), SPACE);
+					ui = str.find(DOT, ui + strlen(SPACE));
+				}
+			}
+		}
+		if(!comma_argsep) {
+			size_t ui2 = 0;
+			size_t ui = str.find(DOT_STR);
+			while(ui != string::npos) {
+				for(; ui2 < q_end.size(); ui2++) {
+					if(ui >= q_begin[ui2]) {
+						if(ui <= q_end[ui2]) {
+							ui = str.find(DOT_STR, q_end[ui2] + 1);
+							if(ui == string::npos) break;
+						}
+					} else {
+						break;
+					}
+				}
+				if(ui == string::npos) break;
+				str.replace(ui, DOT_STR.length(), DOT);
+				ui = str.find(DOT_STR, ui + strlen(DOT));
+			}
+		}
+	}
+	if(COMMA_STR != COMMA || po.comma_as_separator) {
+		bool b_alt_comma = po.comma_as_separator && COMMA_STR == COMMA;
+		if(po.comma_as_separator) {
+			size_t ui = str.find(COMMA);
+			size_t ui2 = 0;
+			while(ui != string::npos) {
+				for(; ui2 < q_end.size(); ui2++) {
+					if(ui >= q_begin[ui2]) {
+						if(ui <= q_end[ui2]) {
+							ui = str.find(COMMA, q_end[ui2] + 1);
+							if(ui == string::npos) break;
+						}
+					} else {
+						break;
+					}
+				}
+				if(ui == string::npos) break;
+				str.erase(ui, strlen(COMMA));
+				ui = str.find(COMMA, ui);
+			}
+		}
+		size_t ui2 = 0;
+		size_t ui = str.find(b_alt_comma ? ";" : COMMA_STR);
+		while(ui != string::npos) {
+			for(; ui2 < q_end.size(); ui2++) {
+				if(ui >= q_begin[ui2]) {
+					if(ui <= q_end[ui2]) {
+						ui = str.find(b_alt_comma ? ";" : COMMA_STR, q_end[ui2] + 1);
+						if(ui == string::npos) break;
+					}
+				} else {
+					break;
+				}
+			}
+			if(ui == string::npos) break;
+			str.replace(ui, b_alt_comma ? 1 : COMMA_STR.length(), COMMA);
+			ui = str.find(b_alt_comma ? ";" : COMMA_STR, ui + strlen(COMMA));
+		}
+	}
+	return str;
+}
+
 void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &parseoptions) {
 
 	ParseOptions po = parseoptions;
@@ -1018,7 +1274,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				str.replace(i_mod, 1, v_percent->referenceName());
 				i_mod += v_percent->referenceName().length() - 1;
 			}
-		} else if(i_mod == 0 || i_mod == str.length() - 1 || (is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_mod + 1]) && str[i_mod + 1] != BITWISE_NOT_CH && str[i_mod + 1] != NOT_CH) || is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_mod - 1])) {
+		} else if(i_mod == 0 || i_mod == str.length() - 1 || (is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_mod + 1]) && str[i_mod + 1] != BITWISE_NOT_CH && str[i_mod + 1] != NOT_CH && str[i_mod + 1] != '%') || (is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_mod - 1]) && str[i_mod - 1] != '%')) {
 			str.replace(i_mod, 1, v_percent->referenceName());
 			i_mod += v_percent->referenceName().length() - 1;
 		}
@@ -3883,9 +4139,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				else mstruct->transform(priv->f_dot);
 				mstruct->addChild_nocopy(mstruct2);
 			}
+		} else if(op == '\x18') {
+			if(po.preserve_format) mstruct->transform_nocopy(STRUCT_DIVISION, mstruct2);
+			else mstruct->divide_nocopy(mstruct2);
 		} else {
-			if(op == '\x18') mstruct->divide_nocopy(mstruct2);
-			else mstruct->multiply_nocopy(mstruct2);
+			mstruct->multiply_nocopy(mstruct2);
 		}
 		return true;
 	}
