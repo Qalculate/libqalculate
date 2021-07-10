@@ -610,11 +610,11 @@ Operations and operators (word operators such as AND must be surrounded by space
 .PP
 .B Division (/)
 .PP
-.B Modulo (%, mod)
+.B Remainder (%, rem) and modulo (%%, mod)
 .br
 Returns the remainder after division.
 .PP
-.B Integer Division (//, div)
+.B Integer division (//, div)
 .br
 Rounds the result of division towards zero.
 .PP
@@ -626,19 +626,25 @@ Note that x^y^z equals x^(y^z), and not (x^y)^z. Note also that for non-integer 
 .PP
 .B Parenthesis ((, ))
 .PP
-.B Logical operators (!, ||, OR, &&, AND)
-.br
-Primarily used in conjunction with comparisons.
+.B Logical operators (!, NOT, ||, OR, &&, AND, XOR, NOR, NAND)
 .PP
 .B Bitwise operators (~, |, &, <<, >>, XOR)
 .PP
 .B Comparison operators (=, !=, <, <=, >, >=)
 .br
 Returns 1 if expression is true and 0 if false. The x variable is isolated if the expression does not evaluate as true or false. Primarily used for equations and inequalities.
+.PP
+.B Dot product (.)
+.PP
+.B Element-wise operators (.*, ./, .^)
+.PP
+.B Save operator (:=)
+.br
+Saves the expression to the right of the operator as a variable or function (e.g. var1:=5, func1():=x+y).
 .RE
 .PP
 .B Evaluation priority order:
-parenthesis, 10^x, exponentiation, functions, bitwise NOT, logical NOT, multiplication/division/modulo, addition/subtraction, bitwise NOT, bitwise shift, comparisons, bitwise AND, bitwise XOR, bitwise OR, logical AND, logical OR.
+parenthesis, 10^x, exponentiation, functions, bitwise NOT, logical NOT, multiplication/division/remainder, addition/subtraction, bitwise NOT, bitwise shift, comparisons, bitwise AND, bitwise XOR, bitwise OR, logical AND, logical OR.
 .PP
 The evaluation of \fIshort/implicit multiplication\fP without any multiplication sign (e.g. 5x, 5(2+3)), differs depending on the parsing mode. In the \fIconventional mode\fP implicit multiplication does not differ from explicit multiplication (12/2(1+2) = 12/2*3 = 18, 5x/5y = 5 * x/5 * y = xy). In the parse \fIimplicit multiplication first\fP mode, implicit multiplication is parsed before explicit multiplication (12/2(1+2) = 12/(2 * 3) = 2, 5x/5y = (5 * x)/(5 * y) = x/y). The default \fIadaptive mode\fP works as the parse implicit multiplication first mode, unless spaces are found (1/5x = 1/(5 * x), but 1/5 x = (1/5) * x). In the adaptive mode unit expressions are parsed separately (5 m/5 m/s = (5 * m)/(5 * (m/s)) = 1 s). Function arguments without parentheses are an exception, where implicit multiplication in front of variables and units is parsed first regardless of mode (sqrt 2x = sqrt(2x)).
 .PP

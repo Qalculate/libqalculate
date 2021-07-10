@@ -10461,7 +10461,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:542
 msgid "r:bit,p:bits"
-msgstr "bit,p:bitar,p:bits"
+msgstr "bit,p:bits"
 
 #: ../data/units.xml.in.h:543
 msgid "Byte (8-bit)"
