@@ -1996,7 +1996,7 @@ msgstr ""
 "Определяет, как используется научная запись (например, 5 543 000 = 5,543E6)."
 
 #: ../src/qalc.cc:4455
-msgid "If actived, zeroes are kept at the end of approximate numbers."
+msgid "If activated, zeroes are kept at the end of approximate numbers."
 msgstr ""
 "Если этот параметр активирован, в конце приблизительных чисел сохраняются "
 "нули."
@@ -2386,7 +2386,7 @@ msgstr ""
 "- sexa / sexa2 / шестидесятеричное (показать как шестидесятеричное число)"
 
 #: ../src/qalc.cc:4707
-msgid "- latitude / latitude2 (show as sexagesimal longitude)"
+msgid "- latitude / latitude2 (show as sexagesimal latitude)"
 msgstr "- широта / latitude2 (показать шестидесятеричную широту)"
 
 #: ../src/qalc.cc:4708
