@@ -1982,7 +1982,7 @@ msgstr ""
 "Determina com s'usa la notació científica (per exemple 5 543 000 = 5.543E6)."
 
 #: ../src/qalc.cc:4455
-msgid "If actived, zeroes are kept at the end of approximate numbers."
+msgid "If activated, zeroes are kept at the end of approximate numbers."
 msgstr ""
 "Si està activat, es conserven els zeros al final de nombres aproximats."
 
@@ -2358,7 +2358,7 @@ msgid "- sexa / sexa2 / sexagesimal (show as sexagesimal number)"
 msgstr "- sexa / sexa2 / sexagesimal (mostra com a nombre sexagesimal)"
 
 #: ../src/qalc.cc:4707
-msgid "- latitude / latitude2 (show as sexagesimal longitude)"
+msgid "- latitude / latitude2 (show as sexagesimal latitude)"
 msgstr "- latitude / latitude2 (mostra com a latitud sexagesimal)"
 
 #: ../src/qalc.cc:4708
