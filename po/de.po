@@ -2000,7 +2000,7 @@ msgstr ""
 "543 000 = 5,543E6)."
 
 #: ../src/qalc.cc:4455
-msgid "If actived, zeroes are kept at the end of approximate numbers."
+msgid "If activated, zeroes are kept at the end of approximate numbers."
 msgstr "Wenn aktiviert, werden Nullen am Ende von Näherungswerten beibehalten."
 
 #: ../src/qalc.cc:4456
@@ -2385,8 +2385,8 @@ msgid "- sexa / sexa2 / sexagesimal (show as sexagesimal number)"
 msgstr "- sexa / sexa2 / sexagesimal (als sexagesimale Zahl anzeigen)"
 
 #: ../src/qalc.cc:4707
-msgid "- latitude / latitude2 (show as sexagesimal longitude)"
-msgstr "- latitude / latitude2 (Anzeige als sexagesimaler Längengrad)"
+msgid "- latitude / latitude2 (show as sexagesimal latitude)"
+msgstr "- latitude / latitude2 (Anzeige als sexagesimaler Breitengrad)"
 
 #: ../src/qalc.cc:4708
 msgid "- longitude / longitude2 (show as sexagesimal longitude)"

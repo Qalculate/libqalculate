@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: Qalculate!\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-03 10:23+0200\n"
-"PO-Revision-Date: 2020-07-22 22:07-0300\n"
+"PO-Revision-Date: 2021-07-11 18:00-0300\n"
 "Last-Translator: VicSanRoPe\n"
 "Language-Team: none\n"
 "Language: es\n"
@@ -2101,6 +2101,8 @@ msgid ""
 "The property uses standard atomic weight, when determined, or the mass "
 "number."
 msgstr ""
+"La propiedad usa peso atómico estándar, cuando determinado, o el número "
+"másico."
 
 #: ../data/datasets.xml.in.h:20
 msgid "r:mass,r:weight"
@@ -3270,14 +3272,12 @@ msgid "r:dot"
 msgstr ""
 
 #: ../data/functions.xml.in.h:129
-#, fuzzy
 msgid "Calculates the dot product of two vectors."
-msgstr "Calcula el producto cruz dedos vectores tridimensionales."
+msgstr "Calcula el producto escalar de dos vectores."
 
 #: ../data/functions.xml.in.h:130
-#, fuzzy
 msgid "Element-wise Multiplication"
-msgstr "Función por cada elemento"
+msgstr "Multiplicación por cada elemento"
 
 #: ../data/functions.xml.in.h:131
 msgid "r:multiply,times"
@@ -3288,9 +3288,8 @@ msgid "Factors"
 msgstr "Factores"
 
 #: ../data/functions.xml.in.h:133
-#, fuzzy
 msgid "Element-wise Right Division"
-msgstr "División entera"
+msgstr "División derecha por cada elemento"
 
 #: ../data/functions.xml.in.h:134
 msgid "r:divide,rdivide"
@@ -3305,9 +3304,8 @@ msgid "Denominator"
 msgstr "Denominador"
 
 #: ../data/functions.xml.in.h:137
-#, fuzzy
 msgid "Element-wise Power"
-msgstr "Elementos"
+msgstr "Potencia por cada elemento"
 
 #: ../data/functions.xml.in.h:138
 msgid "r:pow,r:raise,power"
@@ -3726,6 +3724,8 @@ msgid ""
 "Counts the positive integers up to a given integer n that are relatively "
 "prime to n."
 msgstr ""
+"Cuenta los enteros positivos hasta el enterno n dado, que son primos "
+"relativos de n."
 
 #: ../data/functions.xml.in.h:228
 msgid "r:totient,au:&#x3C6;,phi"
@@ -3874,11 +3874,13 @@ msgstr ""
 "reales por defecto usan los dígitos 0-9 a A-Z.&#10;&#10;El conjunto de "
 "dígitos usados pueden ser seleccionados usando el tercer argumento (por "
 "defecto 0 para selección automática). Defínelo a 1 para los dígitos 0-9 y A-"
-"Z, 2 para 0-9, A-Z y a-z, 3 para dígitos Unicode, y 4 para phonewords, o "
-"ingrese una cadena de texto con todos los dígitos colocados en orden "
-"ascendente (ej. \"0123456789\" o \"0;aA1;bB2;cC3\"). Cuando el conjunto de "
-"dígitos es seleccionado manualmente, la expresión especificada siempre es "
-"convertida a un solo número."
+"Z, 2 para 0-9, A-Z y a-z, 3 para dígitos Unicode, y 4 para phonewords (ej. "
+"ABC=2, CDE=3, etc.), o ingrese una cadena de texto con todos los dígitos "
+"colocados en orden ascendente y opcionalmente separados por un punto y coma "
+"(para permitir múltiples dígitos equivalentes, ej. \"0123456789\" o "
+"\"0;aA1;bB2;cC3\"). Cuando el conjunto de dígitos es seleccionado "
+"manualmente, la expresión especificada siempre es convertida a un solo "
+"número."
 
 #: ../data/functions.xml.in.h:253
 msgid "Set of digits"
@@ -4814,7 +4816,7 @@ msgstr "Número romano"
 
 #: ../data/functions.xml.in.h:468
 msgid "Distance Between GPS Coordinates"
-msgstr ""
+msgstr "Distancia entre coordenadas GPS"
 
 #: ../data/functions.xml.in.h:469
 msgid "r:geodistance,gpsdistance"
@@ -4828,6 +4830,12 @@ msgid ""
 "decimal degrees), an angle (e.g. with degree unit), or a text string ending "
 "with N, S, E, or W (S for negative latitude, W for negative longitude)."
 msgstr ""
+"Calcula la distancia entre dos coordenadas geodéticas usando las fórmulas "
+"de Vincenty (con WGS 84), o en caso de fallo, la formula de Haversine."
+"Cada coordenada puede especificarsse usando un valor numérico "
+"(representando grados decimales), un ángulo (ej. con unidad de grados), "
+"o una cadena de texto que termine en N, S, E, o W (S para latitud "
+"negativa, W para longitud negativa)."
 
 #: ../data/functions.xml.in.h:471
 msgid "Latitude 1"
@@ -5536,9 +5544,8 @@ msgid "Standard deviation (σ)"
 msgstr "Desviación estándar (σ)"
 
 #: ../data/functions.xml.in.h:632
-#, fuzzy
 msgid "Inverse Normal Cumulative Distribution"
-msgstr "Distribución acumulativa inversa de Weibull"
+msgstr "Distribución normal acumulativa inversa"
 
 #: ../data/functions.xml.in.h:633
 msgid "r:normdistinv"
@@ -5665,9 +5672,8 @@ msgid "Degrees of freedom (k)"
 msgstr "Grado de libertad (k)"
 
 #: ../data/functions.xml.in.h:658
-#, fuzzy
 msgid "Inverse of Chi-Square Cumulative Distribution"
-msgstr "Distribución acumulativa inversa de Weibull"
+msgstr "Distribución chi cuadrado acumulativa inversa"
 
 #: ../data/functions.xml.in.h:659
 msgid "r:chisqdistinv"
@@ -5742,9 +5748,8 @@ msgid "Degrees of freedom (v)"
 msgstr "Grado de libertad (v)"
 
 #: ../data/functions.xml.in.h:674
-#, fuzzy
 msgid "Inverse Cumulative Student's t-distribution"
-msgstr "Distribución acumulativa inversa de Weibull"
+msgstr "Distribución t de Student acumulativa inversa"
 
 #: ../data/functions.xml.in.h:675
 msgid "r:tdistinv"
@@ -5775,9 +5780,8 @@ msgid "Degrees of freedom (denominator)"
 msgstr "Grado de libertad (denominador)"
 
 #: ../data/functions.xml.in.h:681
-#, fuzzy
 msgid "Inverse Cumulative F-distribution"
-msgstr "Distribución acumulativa inversa de Weibull"
+msgstr "Distribución F acumulativa inversa"
 
 #: ../data/functions.xml.in.h:682
 msgid "r:fdistinv"
@@ -5801,7 +5805,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:686
 msgid "Location (x_0)"
-msgstr ""
+msgstr "Ubicación (x_0)"
 
 #: ../data/functions.xml.in.h:687
 msgid "Scale (γ)"
@@ -6197,20 +6201,23 @@ msgid ""
 "argument is true, each separate code unit (8, 16, or 32 bits depending on "
 "encoding) is placed in a vector."
 msgstr ""
+"Codifica un carácter o cadena de texto Unicode usando el formato "
+"seleccionado. Las codificaciones soportadas son UTF-8 (0), UTF-16 (1), y "
+"UTF-32 (2). Si el tercer argumento es verdadero, cada unidad de código "
+"separada (8, 16, o 32 dependiendo de la codificación) es colocada en un "
+"vector"
 
 #: ../data/functions.xml.in.h:769
 msgid "Character"
 msgstr "Carácter"
 
 #: ../data/functions.xml.in.h:770
-#, fuzzy
 msgid "Encoding"
-msgstr "Redondeo"
+msgstr "Codificación"
 
 #: ../data/functions.xml.in.h:771
-#, fuzzy
 msgid "Use vector"
-msgstr "vector"
+msgstr "Usar vector"
 
 #: ../data/functions.xml.in.h:772
 msgid "Unicode Character"
@@ -6554,7 +6561,7 @@ msgstr "Incertidumbre es relativa"
 
 #: ../data/functions.xml.in.h:856
 msgid "External Command"
-msgstr ""
+msgstr "Comando externo"
 
 #: ../data/functions.xml.in.h:857
 msgid "r:command"
@@ -6562,7 +6569,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:858
 msgid "Command"
-msgstr ""
+msgstr "Comando"
 
 #: ../data/functions.xml.in.h:859
 msgid "Logical"
@@ -6836,16 +6843,15 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:916
 msgid "Solve using Newton's Method"
-msgstr ""
+msgstr "Resolver usando el método de Newton"
 
 #: ../data/functions.xml.in.h:917
 msgid "r:newtonsolve"
 msgstr ""
 
 #: ../data/functions.xml.in.h:918
-#, fuzzy
 msgid "Initial estimate"
-msgstr "Valor inicial"
+msgstr "Estimación inicial"
 
 #: ../data/functions.xml.in.h:919 ../data/variables.xml.in.h:199
 msgid "Precision"
@@ -6857,21 +6863,19 @@ msgstr "Iteraciones máximas"
 
 #: ../data/functions.xml.in.h:921
 msgid "Solve using Secant Method"
-msgstr ""
+msgstr "Resolver usando el método de secante"
 
 #: ../data/functions.xml.in.h:922
 msgid "r:secantsolve"
 msgstr ""
 
 #: ../data/functions.xml.in.h:923
-#, fuzzy
 msgid "Initial estimate 1"
-msgstr "Valor inicial"
+msgstr "Estimación inicial 1"
 
 #: ../data/functions.xml.in.h:924
-#, fuzzy
 msgid "Initial estimate 2"
-msgstr "Valor inicial"
+msgstr "Estimación inicial 2"
 
 #: ../data/functions.xml.in.h:925
 msgid "Solve for two variables"
@@ -7908,9 +7912,9 @@ msgid ""
 "it is made at the end of each period."
 msgstr ""
 "Calcula el valor futuro de una inversión. Esto se basa en pagos constantes "
-"periódicos y en una tasa de interés constante.&#10;&#10;Tipo define la fecha "
-"de vencimiento: 1 para pago al comienzo de un período y cero "
-"(predeterminado) para pago al final de un período."
+"periódicos y en una tasa de interés constante.&#10;&#10;Si tipo = 1, el pago "
+"se hace al comienzo de un período. Si tipo = 0 (o omitido) es hecho al final "
+"de un período."
 
 #: ../data/functions.xml.in.h:1157
 msgid "Return on continuously compounded interest"
@@ -8401,7 +8405,7 @@ msgstr "Metro"
 
 #: ../data/units.xml.in.h:4
 msgid "ar:m,meter,p:meters,metre,p:metres"
-msgstr ""
+msgstr "metro,p:metros"
 
 #: ../data/units.xml.in.h:5
 msgid "Kilometer"
@@ -8425,7 +8429,7 @@ msgstr "Milla náutica"
 
 #: ../data/units.xml.in.h:10
 msgid "r:nautical_mile,p:nautical_miles"
-msgstr ""
+msgstr "milla,p:millas"
 
 #: ../data/units.xml.in.h:11
 msgid "&#xC5;ngstr&#xF6;m"
@@ -8449,7 +8453,7 @@ msgstr "Pulgada"
 
 #: ../data/units.xml.in.h:16
 msgid "ar:in,inch,p:inches"
-msgstr ""
+msgstr "pulgada,p:pulgadas"
 
 #: ../data/units.xml.in.h:17
 msgid "Hand"
@@ -8465,7 +8469,7 @@ msgstr "Pie"
 
 #: ../data/units.xml.in.h:20
 msgid "ar:ft,foot,p:feet"
-msgstr ""
+msgstr "pie,p:pie"
 
 #: ../data/units.xml.in.h:21
 msgid "U.S. Survey Foot"
@@ -8489,7 +8493,7 @@ msgstr "Yarda"
 
 #: ../data/units.xml.in.h:26
 msgid "ar:yd,yard,p:yards"
-msgstr ""
+msgstr "yarda,p:yardas"
 
 #: ../data/units.xml.in.h:27
 msgid "Rod (pole/perch)"
@@ -8529,7 +8533,7 @@ msgstr "Milla"
 
 #: ../data/units.xml.in.h:36
 msgid "ar:mi,mile,p:miles"
-msgstr ""
+msgstr "milla,p:millas"
 
 #: ../data/units.xml.in.h:37
 msgid "U.S. Survey Mile"
@@ -8634,7 +8638,7 @@ msgstr "Radián"
 
 #: ../data/units.xml.in.h:63
 msgid "ar:rad,radian,p:radians"
-msgstr ""
+msgstr "radián,p:radianes"
 
 #. angle unit
 #: ../data/units.xml.in.h:65
@@ -8643,7 +8647,7 @@ msgstr "Grado"
 
 #: ../data/units.xml.in.h:66
 msgid "ar:deg,au:&#xB0;,degree,p:degrees"
-msgstr ""
+msgstr "grado,p;grados"
 
 #: ../data/units.xml.in.h:67
 msgid "Gradian (Gon)"
@@ -8651,7 +8655,7 @@ msgstr "Gradián (Gon)"
 
 #: ../data/units.xml.in.h:68
 msgid "ar:gra,gradian,p:gradians,gon,p:gons"
-msgstr ""
+msgstr "gradián,p:gradianes"
 
 #: ../data/units.xml.in.h:69
 msgid "Arcminute"
@@ -8659,7 +8663,7 @@ msgstr "Arcominuto"
 
 #: ../data/units.xml.in.h:70
 msgid "ar:arcmin,arcminute,p:arcminutes"
-msgstr ""
+msgstr "arcominuto,p:arcominutos"
 
 #: ../data/units.xml.in.h:71
 msgid "Arcsecond"
@@ -8667,7 +8671,7 @@ msgstr "Arcosegundo"
 
 #: ../data/units.xml.in.h:72
 msgid "ar:arcsec,arcsecond,p:arcseconds"
-msgstr ""
+msgstr "arcosegundo,p:arcosegundos"
 
 #: ../data/units.xml.in.h:73
 msgid "Turn"
@@ -8687,7 +8691,7 @@ msgstr "Estereorradián"
 
 #: ../data/units.xml.in.h:77
 msgid "ar:sr,steradian,p:steradians"
-msgstr ""
+msgstr "estereorradián,p:estereorradianes"
 
 #: ../data/units.xml.in.h:78
 msgid "Angular Acceleration"
@@ -8716,7 +8720,7 @@ msgstr "Gramo"
 
 #: ../data/units.xml.in.h:85
 msgid "ar:g,gram,p:grams"
-msgstr ""
+msgstr "gramo,p:gramos"
 
 #: ../data/units.xml.in.h:86
 msgid "Kilogram"
@@ -8732,7 +8736,7 @@ msgstr "Tonelada métrica"
 
 #: ../data/units.xml.in.h:89
 msgid "ar:t,tonne,p:tonnes,ton,p:tons"
-msgstr ""
+msgstr "tonelada,p:toneladas"
 
 #: ../data/units.xml.in.h:90
 msgid "Grain"
@@ -8744,7 +8748,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:92
 msgid "Pennyweight"
-msgstr "Pennyweight"
+msgstr ""
 
 #: ../data/units.xml.in.h:93
 msgid "ar:pwt,pennyweight,p:pennyweights"
@@ -8780,7 +8784,7 @@ msgstr "Onza"
 
 #: ../data/units.xml.in.h:101
 msgid "ar:oz,ounce,p:ounces"
-msgstr ""
+msgstr "onza,p:onzas"
 
 #: ../data/units.xml.in.h:102
 msgid "Pound"
@@ -8788,7 +8792,7 @@ msgstr "Libra"
 
 #: ../data/units.xml.in.h:103
 msgid "ar:lb,aou:&#x2114;,pound,p:pounds"
-msgstr ""
+msgstr "libra,p:libras"
 
 #: ../data/units.xml.in.h:104
 msgid "Short Hundredweight (Cental)"
@@ -8912,19 +8916,19 @@ msgstr "Kilogramo por kilogramo"
 
 #: ../data/units.xml.in.h:138
 msgid "ar:s,second,p:seconds"
-msgstr ""
+msgstr "segundo,p:segundos"
 
 #: ../data/units.xml.in.h:140
 msgid "ar:min,minute,p:minutes"
-msgstr ""
+msgstr "minuto,p:minutos"
 
 #: ../data/units.xml.in.h:142
 msgid "ar:h,hour,p:hours"
-msgstr ""
+msgstr "hora,p:horas"
 
 #: ../data/units.xml.in.h:144
 msgid "ar:d,day,p:days"
-msgstr ""
+msgstr "día,p:días"
 
 #: ../data/units.xml.in.h:145
 msgid "Week"
@@ -8932,7 +8936,7 @@ msgstr "Semana"
 
 #: ../data/units.xml.in.h:146
 msgid "r:week,p:weeks"
-msgstr ""
+msgstr "semana,p:semana"
 
 #: ../data/units.xml.in.h:147
 msgid "Fortnight"
@@ -8948,11 +8952,11 @@ msgstr "Año juliano"
 
 #: ../data/units.xml.in.h:150
 msgid "r:year,p:years,a:yr,annus"
-msgstr ""
+msgstr "año,p:años"
 
 #: ../data/units.xml.in.h:152
 msgid "r:month,p:months"
-msgstr ""
+msgstr "mes,p:meses"
 
 #: ../data/units.xml.in.h:153
 msgid "Planck Time"
@@ -8979,9 +8983,11 @@ msgstr "Frecuencia"
 msgid "Hertz"
 msgstr "Hercio"
 
+# Some people use the english names of electrical units :(
+# ... personal experience
 #: ../data/units.xml.in.h:160
 msgid "ar:Hz,hertz"
-msgstr ""
+msgstr "hercio,p:hercios,hertz"
 
 #: ../data/units.xml.in.h:161
 msgid "Electricity"
@@ -8997,7 +9003,7 @@ msgstr "Amperio"
 
 #: ../data/units.xml.in.h:164
 msgid "ar:A,ampere,p:amperes"
-msgstr ""
+msgstr "amperio,p:amperios,ampere"
 
 #: ../data/units.xml.in.h:165
 msgid "Abampere"
@@ -9025,7 +9031,7 @@ msgstr "Culombio"
 
 #: ../data/units.xml.in.h:171
 msgid "ar:C,coulomb,p:coulombs"
-msgstr ""
+msgstr "culombio,p:culombios,coulomb"
 
 #: ../data/units.xml.in.h:172
 msgid "Abcoulomb"
@@ -9077,7 +9083,7 @@ msgstr "Voltio"
 
 #: ../data/units.xml.in.h:184
 msgid "ar:V,volt,p:volts"
-msgstr ""
+msgstr "voltio,p:voltios,volt"
 
 #: ../data/units.xml.in.h:185
 msgid "Statvolt"
@@ -9109,7 +9115,7 @@ msgstr "Faradio"
 
 #: ../data/units.xml.in.h:192
 msgid "ar:F,farad,p:farads"
-msgstr ""
+msgstr "faradio,p:faradios,farad"
 
 #: ../data/units.xml.in.h:193
 msgid "Electric Resistance"
@@ -9121,7 +9127,7 @@ msgstr "Ohmio"
 
 #: ../data/units.xml.in.h:195
 msgid "au:&#x3A9;,r:ohm,p:ohms,auio:&#x2126;"
-msgstr ""
+msgstr "ohm,p:ohmios"
 
 #: ../data/units.xml.in.h:196
 msgid "Abohm"
@@ -9181,11 +9187,11 @@ msgstr "Henrio"
 
 #: ../data/units.xml.in.h:210
 msgid "ar:H,henry,p:henrys"
-msgstr ""
+msgstr "henrio,p:henrio,henry"
 
 #: ../data/units.xml.in.h:211
 msgid "Abhenry"
-msgstr ""
+msgstr "Abhenrio"
 
 #: ../data/units.xml.in.h:212
 msgid "r:abhenry,p:abhenrys,a:abH"
@@ -9434,7 +9440,7 @@ msgstr "Hectárea"
 
 #: ../data/units.xml.in.h:273
 msgid "ar:ha,hectare,p:hectares"
-msgstr ""
+msgstr "hectárea,p:hectáreas"
 
 #: ../data/units.xml.in.h:274
 msgid "Decare"
@@ -9510,7 +9516,7 @@ msgstr "Litro"
 
 #: ../data/units.xml.in.h:292
 msgid "ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
-msgstr ""
+msgstr "litro,p:litros"
 
 #: ../data/units.xml.in.h:293
 msgid "Milliliter"
@@ -10010,7 +10016,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:417
 msgid "ar:Pa,pascal,p:pascals"
-msgstr ""
+msgstr "pascal,p:pascales"
 
 #: ../data/units.xml.in.h:418
 msgid "Kilogram-force per Square Centimetre"
@@ -10030,7 +10036,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:422
 msgid "r:bar,p:bars"
-msgstr ""
+msgstr "bar,p:bares"
 
 #: ../data/units.xml.in.h:423
 msgid "Atmosphere"
@@ -10038,7 +10044,7 @@ msgstr "Atmósfera"
 
 #: ../data/units.xml.in.h:424
 msgid "ar:atm,atmosphere,p:atmospheres"
-msgstr ""
+msgstr "atmósfera,p:atmósferas"
 
 #: ../data/units.xml.in.h:425
 msgid "Torr"
@@ -10066,11 +10072,11 @@ msgstr ""
 
 #: ../data/units.xml.in.h:431
 msgid "Millitorr"
-msgstr ""
+msgstr "Militorr"
 
 #: ../data/units.xml.in.h:432
 msgid "Barye"
-msgstr ""
+msgstr "Baria"
 
 #: ../data/units.xml.in.h:433
 msgid "ar:Ba,barye"
@@ -10134,7 +10140,7 @@ msgstr "Julio"
 
 #: ../data/units.xml.in.h:448
 msgid "ar:J,joule,p:joules"
-msgstr ""
+msgstr "julio,p:julios"
 
 #: ../data/units.xml.in.h:449
 msgid "Watt Hour"
@@ -10266,7 +10272,7 @@ msgstr "Vatio"
 
 #: ../data/units.xml.in.h:481
 msgid "ar:W,watt,p:watts"
-msgstr ""
+msgstr "vatio,p:vatios"
 
 #: ../data/units.xml.in.h:482
 msgid "Horse Power"
@@ -10302,7 +10308,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:490
 msgid "Erg per Second"
-msgstr "Erg por segundo"
+msgstr "Ergio por segundo"
 
 #: ../data/units.xml.in.h:491
 msgid "Entropy"
@@ -10389,9 +10395,8 @@ msgid "ar:Ci,curie,p:curies"
 msgstr ""
 
 #: ../data/units.xml.in.h:512
-#, fuzzy
 msgid "Rutherford"
-msgstr "Rutherfordio"
+msgstr ""
 
 #: ../data/units.xml.in.h:513
 msgid "ar:Rd,rutherford,p:rutherfords"
@@ -10434,18 +10439,16 @@ msgid "Roentgen Equivalent Man (Rem)"
 msgstr ""
 
 #: ../data/units.xml.in.h:523
-#, fuzzy
 msgid "ros:rem_radioactivity,a:rem"
-msgstr "Radioactividad"
+msgstr ""
 
 #: ../data/units.xml.in.h:524
-#, fuzzy
 msgid "Millirem"
-msgstr "Milímetro"
+msgstr "Milirem"
 
 #: ../data/units.xml.in.h:525
 msgid "Erg per Gram"
-msgstr "Erg por gramo"
+msgstr "Ergio por gramo"
 
 #: ../data/units.xml.in.h:526
 msgid "Exposure"
@@ -10473,7 +10476,7 @@ msgstr "Grays por segundo"
 
 #: ../data/units.xml.in.h:532
 msgid "Millirem per Hour"
-msgstr "Millirem por hora"
+msgstr "Milirem por hora"
 
 #: ../data/units.xml.in.h:533
 msgid "Ratio"
@@ -10501,7 +10504,7 @@ msgstr "Decibelio"
 
 #: ../data/units.xml.in.h:539
 msgid "ar:dB,decibel,p:decibels"
-msgstr ""
+msgstr "decibelio,p:decibelios"
 
 #: ../data/units.xml.in.h:540
 msgid "Information"
@@ -10690,7 +10693,7 @@ msgstr "Por ciento"
 #: ../data/variables.xml.in.h:8
 #, no-c-format
 msgid "a:%,r:percent"
-msgstr ""
+msgstr "porciento"
 
 #: ../data/variables.xml.in.h:9
 msgid "Large Numbers"
@@ -10718,7 +10721,7 @@ msgstr "1E303"
 
 #: ../data/variables.xml.in.h:15
 msgid "-r:centillion"
-msgstr ""
+msgstr "(1E303)"
 
 #: ../data/variables.xml.in.h:16
 msgid "Vigintillion"
@@ -10726,7 +10729,7 @@ msgstr "Mil decillones"
 
 #: ../data/variables.xml.in.h:17
 msgid "-r:vigintillion"
-msgstr ""
+msgstr "(1E63)"
 
 #: ../data/variables.xml.in.h:18
 msgid "Novemdecillion"
@@ -10734,7 +10737,7 @@ msgstr "Decillón"
 
 #: ../data/variables.xml.in.h:19
 msgid "-r:novemdecillion"
-msgstr ""
+msgstr "decillón"
 
 #: ../data/variables.xml.in.h:20
 msgid "Octodecillion"
@@ -10742,7 +10745,7 @@ msgstr "Mil nonillones"
 
 #: ../data/variables.xml.in.h:21
 msgid "-r:octodecillion"
-msgstr ""
+msgstr "(1E57)"
 
 #: ../data/variables.xml.in.h:22
 msgid "Septendecillion"
@@ -10750,7 +10753,7 @@ msgstr "Nonillón"
 
 #: ../data/variables.xml.in.h:23
 msgid "-r:septendecillion"
-msgstr ""
+msgstr "nonillón"
 
 #: ../data/variables.xml.in.h:24
 msgid "Sexdecillion"
@@ -10758,7 +10761,7 @@ msgstr "Mil octillones"
 
 #: ../data/variables.xml.in.h:25
 msgid "-r:sexdecillion"
-msgstr ""
+msgstr "(1E51)"
 
 #: ../data/variables.xml.in.h:26
 msgid "Quindecillion"
@@ -10766,7 +10769,7 @@ msgstr "Octillón"
 
 #: ../data/variables.xml.in.h:27
 msgid "-r:quindecillion"
-msgstr ""
+msgstr "octillón"
 
 #: ../data/variables.xml.in.h:28
 msgid "Quattuordecillion"
@@ -10774,7 +10777,7 @@ msgstr "Mil septillones"
 
 #: ../data/variables.xml.in.h:29
 msgid "-r:quattuordecillion"
-msgstr ""
+msgstr "(1E45)"
 
 #: ../data/variables.xml.in.h:30
 msgid "Tredecillion"
@@ -10782,7 +10785,7 @@ msgstr "Septillón"
 
 #: ../data/variables.xml.in.h:31
 msgid "-r:tredecillion"
-msgstr ""
+msgstr "septillón"
 
 #: ../data/variables.xml.in.h:32
 msgid "Duodecillion"
@@ -10790,7 +10793,7 @@ msgstr "Mil sextillones"
 
 #: ../data/variables.xml.in.h:33
 msgid "-r:duodecillion"
-msgstr ""
+msgstr "(1E39)"
 
 #: ../data/variables.xml.in.h:34
 msgid "Undecillion"
@@ -10798,7 +10801,7 @@ msgstr "Sextillón"
 
 #: ../data/variables.xml.in.h:35
 msgid "-r:undecillion"
-msgstr ""
+msgstr "sextillón"
 
 #: ../data/variables.xml.in.h:36
 msgid "Decillion"
@@ -10806,7 +10809,7 @@ msgstr "Mil quintillones"
 
 #: ../data/variables.xml.in.h:37
 msgid "-r:decillion"
-msgstr ""
+msgstr "(1E33)"
 
 #: ../data/variables.xml.in.h:38
 msgid "Nonillion"
@@ -10814,7 +10817,7 @@ msgstr "Quintillón"
 
 #: ../data/variables.xml.in.h:39
 msgid "-r:nonillion"
-msgstr ""
+msgstr "quintillón"
 
 #: ../data/variables.xml.in.h:40
 msgid "Octillion"
@@ -10822,7 +10825,7 @@ msgstr "Mil cuatrillones"
 
 #: ../data/variables.xml.in.h:41
 msgid "-r:octillion"
-msgstr ""
+msgstr "(1E27)"
 
 #: ../data/variables.xml.in.h:42
 msgid "Septillion"
@@ -10830,15 +10833,15 @@ msgstr "Cuatrillón"
 
 #: ../data/variables.xml.in.h:43
 msgid "-r:septillion"
-msgstr ""
+msgstr "cuatrillón"
 
 #: ../data/variables.xml.in.h:44
 msgid "Sextillion"
-msgstr "Mil trillones"
+msgstr "Trillardo"
 
 #: ../data/variables.xml.in.h:45
 msgid "-r:sextillion"
-msgstr ""
+msgstr "trillardo"
 
 #: ../data/variables.xml.in.h:46
 msgid "Quintillion"
@@ -10846,15 +10849,15 @@ msgstr "Trillón"
 
 #: ../data/variables.xml.in.h:47
 msgid "-r:quintillion"
-msgstr ""
+msgstr "trillón"
 
 #: ../data/variables.xml.in.h:48
 msgid "Quadrillion"
-msgstr "Mil billones"
+msgstr "Billardo"
 
 #: ../data/variables.xml.in.h:49
 msgid "-r:quadrillion"
-msgstr ""
+msgstr "billardo"
 
 #: ../data/variables.xml.in.h:50
 msgid "Trillion"
@@ -10862,15 +10865,15 @@ msgstr "Billón"
 
 #: ../data/variables.xml.in.h:51
 msgid "-r:trillion"
-msgstr ""
+msgstr "billón"
 
 #: ../data/variables.xml.in.h:52
 msgid "Billion"
-msgstr "Mil millones"
+msgstr "Millardo"
 
 #: ../data/variables.xml.in.h:53
 msgid "-r:billion"
-msgstr ""
+msgstr "millardo"
 
 #: ../data/variables.xml.in.h:54
 msgid "Million"
@@ -10878,7 +10881,7 @@ msgstr "Millón"
 
 #: ../data/variables.xml.in.h:55
 msgid "-r:million"
-msgstr ""
+msgstr "millón"
 
 #: ../data/variables.xml.in.h:56
 msgid "Thousand"
@@ -11414,7 +11417,7 @@ msgstr "Infinito positivo"
 
 #: ../data/variables.xml.in.h:189
 msgid "a:&#x221E;,r:plus_infinity,r:infinity"
-msgstr ""
+msgstr "infinito,másinfinito"
 
 #: ../data/variables.xml.in.h:190
 msgid "Negative Infinity"
@@ -11422,7 +11425,7 @@ msgstr "Infinito negativo"
 
 #: ../data/variables.xml.in.h:191
 msgid "r:minus_infinity"
-msgstr ""
+msgstr "menosinfinito"
 
 #: ../data/variables.xml.in.h:192
 msgid "Undefined"
@@ -11430,7 +11433,7 @@ msgstr "Indefinido"
 
 #: ../data/variables.xml.in.h:193
 msgid "r:undefined"
-msgstr ""
+msgstr "indefinido"
 
 #: ../data/variables.xml.in.h:194
 msgid "False"
@@ -11438,7 +11441,7 @@ msgstr "Falso"
 
 #: ../data/variables.xml.in.h:195
 msgid "r:false,r:no"
-msgstr ""
+msgstr "falso"
 
 #: ../data/variables.xml.in.h:196
 msgid "True"
@@ -11446,7 +11449,7 @@ msgstr "Verdadero"
 
 #: ../data/variables.xml.in.h:197
 msgid "r:true,r:yes"
-msgstr ""
+msgstr "verdadero"
 
 #: ../data/variables.xml.in.h:200
 msgid "r:precision"
@@ -11474,7 +11477,7 @@ msgstr "Hoy"
 
 #: ../data/variables.xml.in.h:207
 msgid "r:today"
-msgstr ""
+msgstr "hoy"
 
 #: ../data/variables.xml.in.h:208
 msgid "Tomorrow"
@@ -11482,7 +11485,7 @@ msgstr "Mañana"
 
 #: ../data/variables.xml.in.h:209
 msgid "r:tomorrow"
-msgstr ""
+msgstr "mañana"
 
 #: ../data/variables.xml.in.h:210
 msgid "Yesterday"
@@ -11490,7 +11493,7 @@ msgstr "Ayer"
 
 #: ../data/variables.xml.in.h:211
 msgid "r:yesterday"
-msgstr ""
+msgstr "ayer"
 
 #: ../data/variables.xml.in.h:212
 msgid "Now (date and time)"
@@ -11498,7 +11501,7 @@ msgstr "Ahora (fecha y tiempo)"
 
 #: ../data/variables.xml.in.h:213
 msgid "r:now"
-msgstr ""
+msgstr "ahora"
 
 #~ msgid "Multiply"
 #~ msgstr "Multiplicar"
