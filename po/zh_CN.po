@@ -1937,7 +1937,7 @@ msgid "Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6)."
 msgstr "确定如何使用科学计数法(例: 5 543 000 = 5.543E6)."
 
 #: ../src/qalc.cc:4455
-msgid "If actived, zeroes are kept at the end of approximate numbers."
+msgid "If activated, zeroes are kept at the end of approximate numbers."
 msgstr "如果激活，在近似数字末尾的零将保留。"
 
 #: ../src/qalc.cc:4456
