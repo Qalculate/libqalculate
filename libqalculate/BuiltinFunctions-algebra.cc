@@ -723,6 +723,9 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 		}
 	}
 
+	MathStructure mv; mv.clearVector();
+	MathStructure mand; mand.resizeVector(eorder.size(), mv);
+
 	for(size_t i = 0; i < eorder.size(); i++) {
 		MathStructure msolve(vargs[0][eorder[i]]);
 		EvaluationOptions eo2 = eo;
@@ -731,7 +734,6 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 			msolve.replace(vargs[1][i2], mstruct[i2]);
 		}
 		msolve.eval(eo2);
-
 		if(msolve.isComparison()) {
 			if(msolve[0] != vargs[1][i]) {
 				if(!b) {
@@ -750,15 +752,67 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 			}
 		} else if(msolve.isLogicalOr()) {
 			for(size_t i2 = 0; i2 < msolve.size(); i2++) {
-				if(!msolve[i2].isComparison() || msolve[i2].comparisonType() != COMPARISON_EQUALS || msolve[i2][0] != vargs[1][i]) {
+				if(msolve[i2].isLogicalAnd()) {
+					size_t i_solve = 0;
+					for(size_t i4 = 0; i4 < msolve[i2].size(); i4++) {
+						if(!b && msolve[i2][i4].isComparison() && msolve[i2][i4].comparisonType() == COMPARISON_EQUALS && msolve[i2][i4][0] == vargs[1][i]) {
+							msolve[i2][i4].setToChild(2, true);
+							i_solve = i4;
+							b = true;
+						} else if(msolve[i2][i4].isComparison()) {
+							bool b2 = false;
+							for(size_t i3 = 0; i3 < vargs[1].size(); i3++) {
+								if(msolve[i2][i4][0] == vargs[1][i3]) {
+									mand[i3].addChild(msolve[i2][i4]);
+									b2 = true;
+									break;
+								}
+							}
+							if(!b2) {b = false; break;}
+						} else {
+							b = false;
+							break;
+						}
+					}
+					if(!b) {
+						CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
+						return 0;
+					}
+					msolve[i2].setToChild(i_solve + 1, true);
+				} else if(msolve[i2].isComparison() && msolve[i2].comparisonType() == COMPARISON_EQUALS && msolve[i2][0] == vargs[1][i]) {
+					msolve[i2].setToChild(2, true);
+				} else {
 					CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
 					return 0;
-				} else {
-					msolve[i2].setToChild(2, true);
 				}
 			}
 			msolve.setType(STRUCT_VECTOR);
 			mstruct.addChild(msolve);
+		} else if(msolve.isLogicalAnd() && msolve[0].isComparison()) {
+			bool b = false;
+			for(size_t i2 = 0; i2 < msolve.size(); i2++) {
+				if(!b && msolve[i2].isComparison() && msolve[i2].comparisonType() == COMPARISON_EQUALS && msolve[i2][0] == vargs[1][i]) {
+					mstruct.addChild(msolve[i2][1]);
+					b = true;
+				} else if(msolve[i2].isComparison()) {
+					bool b2 = false;
+					for(size_t i3 = 0; i3 < vargs[1].size(); i3++) {
+						if(msolve[i2][0] == vargs[1][i3]) {
+							mand[i3].addChild(msolve[i2]);
+							b2 = true;
+							break;
+						}
+					}
+					if(!b2) {b = false; break;}
+				} else {
+					b = false;
+					break;
+				}
+			}
+			if(!b) {
+				CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
+				return 0;
+			}
 		} else {
 			CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
 			return 0;
@@ -767,6 +821,34 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 			for(size_t i3 = 0; i3 <= i; i3++) {
 				if(i2 != i3) {
 					mstruct[i2].replace(vargs[1][i3], mstruct[i3]);
+				}
+			}
+		}
+	}
+
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(mstruct[i].isVector()) {
+			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+				for(size_t i3 = 0; i3 < mand[i].size(); i3++) {
+					mand[i][i3][0] = mstruct[i][i2];
+					CALCULATOR->beginTemporaryStopMessages();
+					mand[i][i3].eval(eo);
+					CALCULATOR->endTemporaryStopMessages();
+					if(!mand[i][i3].isOne()) {
+						CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
+						return 0;
+					}
+				}
+			}
+		} else {
+			for(size_t i3 = 0; i3 < mand[i].size(); i3++) {
+				mand[i][i3][0] = mstruct[i];
+				CALCULATOR->beginTemporaryStopMessages();
+				mand[i][i3].eval(eo);
+				CALCULATOR->endTemporaryStopMessages();
+				if(!mand[i][i3].isOne()) {
+					CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
+					return 0;
 				}
 			}
 		}
