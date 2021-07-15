@@ -731,7 +731,16 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 		EvaluationOptions eo2 = eo;
 		eo2.isolate_var = &vargs[1][i];
 		for(size_t i2 = 0; i2 < i; i2++) {
-			msolve.replace(vargs[1][i2], mstruct[i2]);
+			size_t index = eorder[i2];
+			if(mstruct[index].isVector()) {
+				msolve.transform(STRUCT_LOGICAL_OR);
+				for(size_t i4 = 1; i4 < mstruct[index].size(); i4++) msolve.addChild(msolve[0]);
+				for(size_t i4 = 0; i4 < mstruct[index].size(); i4++) {
+					msolve[i4].replace(vargs[1][index], mstruct[index][i4]);
+				}
+			} else {
+				msolve.replace(vargs[1][index], mstruct[index]);
+			}
 		}
 		msolve.eval(eo2);
 		if(msolve.isComparison()) {
@@ -754,6 +763,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 			for(size_t i2 = 0; i2 < msolve.size(); i2++) {
 				if(msolve[i2].isLogicalAnd()) {
 					size_t i_solve = 0;
+					b = false;
 					for(size_t i4 = 0; i4 < msolve[i2].size(); i4++) {
 						if(!b && msolve[i2][i4].isComparison() && msolve[i2][i4].comparisonType() == COMPARISON_EQUALS && msolve[i2][i4][0] == vargs[1][i]) {
 							msolve[i2][i4].setToChild(2, true);
@@ -789,7 +799,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 			msolve.setType(STRUCT_VECTOR);
 			mstruct.addChild(msolve);
 		} else if(msolve.isLogicalAnd() && msolve[0].isComparison()) {
-			bool b = false;
+			b = false;
 			for(size_t i2 = 0; i2 < msolve.size(); i2++) {
 				if(!b && msolve[i2].isComparison() && msolve[i2].comparisonType() == COMPARISON_EQUALS && msolve[i2][0] == vargs[1][i]) {
 					mstruct.addChild(msolve[i2][1]);
@@ -820,7 +830,19 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 		for(size_t i2 = 0; i2 < i; i2++) {
 			for(size_t i3 = 0; i3 <= i; i3++) {
 				if(i2 != i3) {
-					mstruct[i2].replace(vargs[1][i3], mstruct[i3]);
+					size_t index1 = eorder[i2];
+					size_t index2 = eorder[i3];
+					if(mstruct[index2].isVector()) {
+						MathStructure m;
+						m.clearVector();
+						m.resizeVector(mstruct[index2].size(), mstruct[index1]);
+						for(size_t i4 = 0; i4 < mstruct[index2].size(); i4++) {
+							m[i4].replace(vargs[1][index2], mstruct[index2][i4]);
+						}
+						m.flattenVector(mstruct[index1]);
+					} else {
+						mstruct[index1].replace(vargs[1][index2], mstruct[index2]);
+					}
 				}
 			}
 		}
@@ -838,6 +860,17 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 						CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
 						return 0;
 					}
+				}
+				for(size_t i3 = i2 + 1; i3 < mstruct[i].size();) {
+					if(mstruct[i][i2].compare(mstruct[i][i3]) == COMPARISON_RESULT_EQUAL) {
+						mstruct[i].delChild(i3 + 1);
+					} else {
+						i3++;
+					}
+				}
+				if(mstruct[i].size() == 1) {
+					mstruct[i].setToChild(1, true);
+					break;
 				}
 			}
 		} else {

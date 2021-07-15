@@ -1,3 +1,7 @@
+2021-07-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix handling of OR and AND in multisolve()
+
 2021-07-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault after failure to convert approximate unit (cal_fifteen and cal_th)

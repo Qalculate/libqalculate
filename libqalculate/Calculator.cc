@@ -827,21 +827,31 @@ ExpressionItem *Calculator::getActiveExpressionItem(ExpressionItem *item) {
 	}
 	return NULL;
 }
-ExpressionItem *Calculator::getActiveExpressionItem(string name, ExpressionItem *item) {
-	if(name.empty()) return NULL;
-	for(size_t index = 0; index < variables.size(); index++) {
-		if(variables[index] != item && variables[index]->isActive() && variables[index]->hasName(name)) {
-			return variables[index];
+ExpressionItem *Calculator::getActiveExpressionItem(string name_, ExpressionItem *item) {
+	if(name_.empty()) return NULL;
+	size_t l = name_.length();
+	if(l > UFV_LENGTHS) {
+		for(size_t i = 0; i < ufvl.size(); i++) {
+			if(ufvl_t[i] == 'f' || ufvl_t[i] == 'v' || ufvl_t[i] == 'u') {
+				if(ufvl[i] != item) {
+					const ExpressionName &ename = ((ExpressionItem*) ufvl[i])->getName(ufvl_i[i]);
+					if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+						return (ExpressionItem*) ufvl[i];
+					}
+				}
+			}
 		}
-	}
-	for(size_t index = 0; index < functions.size(); index++) {
-		if(functions[index] != item && functions[index]->isActive() && functions[index]->hasName(name)) {
-			return functions[index];
-		}
-	}
-	for(size_t i = 0; i < units.size(); i++) {
-		if(units[i] != item && units[i]->isActive() && units[i]->hasName(name)) {
-			return units[i];
+	} else {
+		l--;
+		for(size_t i2 = 1; i2 <= 3; i2++) {
+			for(size_t i = 0; i < ufv[i2][l].size(); i++) {
+				if(ufv[i2][l][i] != item) {
+					const ExpressionName &ename = ((ExpressionItem*) ufv[i2][l][i])->getName(ufv_i[i2][l][i]);
+					if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+						return (ExpressionItem*) ufv[i2][l][i];
+					}
+				}
+			}
 		}
 	}
 	return NULL;
@@ -1994,21 +2004,22 @@ Unit* Calculator::getUnitById(int id) const {
 }
 Unit* Calculator::getActiveUnit(string name_) {
 	if(name_.empty()) return NULL;
-	for(size_t i = 0; i < units.size(); i++) {
-		if(units[i]->isActive() && units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT && units[i]->hasName(name_)) {
-			return units[i];
+	size_t l = name_.length();
+	if(l > UFV_LENGTHS) {
+		for(size_t i = 0; i < ufvl.size(); i++) {
+			if(ufvl_t[i] == 'u') {
+				const ExpressionName &ename = ((ExpressionItem*) ufvl[i])->getName(ufvl_i[i]);
+				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+					return (Unit*) ufvl[i];
+				}
+			}
 		}
-	}
-	return NULL;
-}
-Unit* Calculator::getGlobalUnit(string name_) {
-	if(name_.empty()) return NULL;
-	for(size_t i = 0; i < units.size(); i++) {
-		Unit *u = units[i];
-		if(u->isActive() && !u->isLocal()) {
-			for(size_t i2 = 1; i2 <= u->countNames(); i2++) {
-				const ExpressionName &ename = u->getName(i2);
-				if(ename.reference && name_ == ename.name) return u;
+	} else {
+		l--;
+		for(size_t i = 0; i < ufv[2][l].size(); i++) {
+			const ExpressionName &ename = ((ExpressionItem*) ufv[2][l][i])->getName(ufv_i[2][l][i]);
+			if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+				return (Unit*) ufv[2][l][i];
 			}
 		}
 	}
@@ -2241,21 +2252,22 @@ Variable* Calculator::getVariableById(int id) const {
 }
 Variable* Calculator::getActiveVariable(string name_) {
 	if(name_.empty()) return NULL;
-	for(size_t i = 0; i < variables.size(); i++) {
-		if(variables[i]->isActive() && variables[i]->hasName(name_)) {
-			return variables[i];
+	size_t l = name_.length();
+	if(l > UFV_LENGTHS) {
+		for(size_t i = 0; i < ufvl.size(); i++) {
+			if(ufvl_t[i] == 'v') {
+				const ExpressionName &ename = ((ExpressionItem*) ufvl[i])->getName(ufvl_i[i]);
+				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+					return (Variable*) ufvl[i];
+				}
+			}
 		}
-	}
-	return NULL;
-}
-Variable* Calculator::getGlobalVariable(string name_) {
-	if(name_.empty()) return NULL;
-	for(size_t i = 0; i < variables.size(); i++) {
-		Variable *v = variables[i];
-		if(v->isActive() && !v->isLocal()) {
-			for(size_t i2 = 1; i2 <= v->countNames(); i2++) {
-				const ExpressionName &ename = v->getName(i2);
-				if(ename.reference && name_ == ename.name) return v;
+	} else {
+		l--;
+		for(size_t i = 0; i < ufv[3][l].size(); i++) {
+			const ExpressionName &ename = ((ExpressionItem*) ufv[3][l][i])->getName(ufv_i[3][l][i]);
+			if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+				return (Variable*) ufv[3][l][i];
 			}
 		}
 	}
@@ -2395,21 +2407,22 @@ MathFunction* Calculator::getFunctionById(int id) const {
 }
 MathFunction* Calculator::getActiveFunction(string name_) {
 	if(name_.empty()) return NULL;
-	for(size_t i = 0; i < functions.size(); i++) {
-		if(functions[i]->isActive() && functions[i]->hasName(name_)) {
-			return functions[i];
+	size_t l = name_.length();
+	if(l > UFV_LENGTHS) {
+		for(size_t i = 0; i < ufvl.size(); i++) {
+			if(ufvl_t[i] == 'f') {
+				const ExpressionName &ename = ((ExpressionItem*) ufvl[i])->getName(ufvl_i[i]);
+				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+					return (MathFunction*) ufvl[i];
+				}
+			}
 		}
-	}
-	return NULL;
-}
-MathFunction* Calculator::getGlobalFunction(string name_) {
-	if(name_.empty()) return NULL;
-	for(size_t i = 0; i < functions.size(); i++) {
-		MathFunction *f = functions[i];
-		if(f->isActive() && !f->isLocal()) {
-			for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
-				const ExpressionName &ename = f->getName(i2);
-				if(ename.reference && name_ == ename.name) return f;
+	} else {
+		l--;
+		for(size_t i = 0; i < ufv[1][l].size(); i++) {
+			const ExpressionName &ename = ((ExpressionItem*) ufv[1][l][i])->getName(ufv_i[1][l][i]);
+			if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+				return (MathFunction*) ufv[1][l][i];
 			}
 		}
 	}

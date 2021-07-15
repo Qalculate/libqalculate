@@ -1528,7 +1528,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 		}
 		size_t i = str.find(ID_WRAP_LEFT, pars);
 		if(i == string::npos || i >= str.length() - pars) {
-			mstruct->set(str.substr(pars, str.length() - pars * 2), false, true);
+			mstruct->set(pars == 0 ? str : str.substr(pars, str.length() - pars * 2), false, true);
 			return;
 		}
 		string str2 = str.substr(pars, str.length() - pars * 2);
