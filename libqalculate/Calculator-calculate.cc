@@ -894,10 +894,10 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 
 	if(po.spell_out_logical_operators && test_parsed_comparison(mparse)) {
 		if(m.isZero()) {
-			Variable *v = CALCULATOR->getGlobalVariable("false");
+			Variable *v = CALCULATOR->getActiveVariable("false");
 			if(v) m.set(v);
 		} else if(m.isOne()) {
-			Variable *v = CALCULATOR->getGlobalVariable("true");
+			Variable *v = CALCULATOR->getActiveVariable("true");
 			if(v) m.set(v);
 		}
 	}
@@ -918,7 +918,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 			}
 		}
 		if(b) {
-			Unit *u = CALCULATOR->getGlobalUnit("h");
+			Unit *u = CALCULATOR->getActiveUnit("h");
 			if(u) {
 				m.divide(u);
 				m.eval(evalops);
@@ -1655,6 +1655,9 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) {
 				if(munit->isUnit() && u->referenceName() == "oF") {
 					u = getActiveUnit("oC");
+					if(u) mstruct.set(convert(mstruct, u, evalops, true, false));
+				} else if(munit->isUnit() && u->referenceName() == "oC") {
+					u = getActiveUnit("oF");
 					if(u) mstruct.set(convert(mstruct, u, evalops, true, false));
 				} else {
 					mstruct.set(convertToOptimalUnit(mstruct, evalops, true));

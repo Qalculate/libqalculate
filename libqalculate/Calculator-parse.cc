@@ -216,6 +216,7 @@ const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", 
 #define INTERNAL_SIGNS_COUNT 16
 #define INTERNAL_NUMBER_CHARS "\b"
 #define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f\x15\x16\x17\x18\x19\x1a"
+#define INTERNAL_OPERATORS_TWO "\a\b%\x1c\x1d\x1e\x1f\x15\x16\x17\x18\x19"
 #define INTERNAL_OPERATORS_NOPM "\a%\x1c\x1d\x1e\x1f\x15\x16\x17\x18\x19\x1a"
 #define INTERNAL_OPERATORS_NOMOD "\a\b\x1c\x1d\x1e\x1f\x15\x16\x17\x18\x19\x1a"
 #define DUODECIMAL_CHARS "EXABab"
@@ -1502,8 +1503,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str_index++;
 				} else if(i == 4 && po.functions_enabled && ((il = compare_name_no_case("perm", str, 4, str_index + 1, base)) || (il = compare_name_no_case("comb", str, 4, str_index + 1, base)))) {
 					MathFunction *f = NULL;
-					if(str[str_index + 1] == 'p' || str[str_index + 1] == 'P') f = CALCULATOR->getGlobalFunction("perm");
-					else f = CALCULATOR->getGlobalFunction("comb");
+					if(str[str_index + 1] == 'p' || str[str_index + 1] == 'P') f = CALCULATOR->getActiveFunction("perm");
+					else f = CALCULATOR->getActiveFunction("comb");
 					if(f) {
 						int i_par = 0;
 						size_t i2 = str_index + 2 + il;
@@ -3698,7 +3699,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			bool b = false, c = false, append = false, do_percent = true;
 			bool min = false;
 			while(i != string::npos && i + 1 != str.length()) {
-				if(is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS EXPS, str[i - 1])) {
+				if(is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS_TWO EXPS, str[i - 1])) {
 					str2 = str.substr(0, i);
 					if(!c && b) {
 						bool b_add;
@@ -4126,7 +4127,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		MathStructure *mstruct2 = new MathStructure();
 		parseAdd(str, mstruct2, po);
 		if(op == '\x15') {
-			MathFunction *f = getGlobalFunction("cross");
+			MathFunction *f = getActiveFunction("cross");
 			if(f) mstruct->transform(f);
 			else mstruct->transform(STRUCT_MULTIPLICATION);
 			mstruct->addChild_nocopy(mstruct2);
@@ -4145,12 +4146,6 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		} else {
 			mstruct->multiply_nocopy(mstruct2);
 		}
-		return true;
-	}
-	if(str[str.length() - 1] == '\x1a') {
-		str.erase(str.length() - 1, 1);
-		parseAdd(str, mstruct, po);
-		mstruct->transform(f_transpose);
 		return true;
 	}
 
@@ -4199,7 +4194,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			str.erase(i, 1);
 		} else if(str[i] == BITWISE_NOT_CH || str[i] == LOGICAL_NOT_CH) {
 			break;
-		} else if(is_in(OPERATORS INTERNAL_OPERATORS, str[i]) && str[i] != '\x19' && str[i] != '\x1a' && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
+		} else if(is_in(OPERATORS INTERNAL_OPERATORS_TWO, str[i]) && str[i] != '\x19' && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
 			if(str[i] == '\a') error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
 			else if(str[i] == '\b') error(false, _("Misplaced operator(s) \"%s\" ignored"), SIGN_PLUSMINUS, NULL);
 			else if(str[i] == '\x1c') error(false, _("Misplaced operator(s) \"%s\" ignored"), "∠", NULL);
@@ -4254,7 +4249,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
-			if(str[i + 1] != POWER_CH && str[i + 1] != '\x19' && str[i + 1] != '\b') {
+			if(str[i + 1] != POWER_CH && str[i + 1] != '\x19' && str[i + 1] != '\x1a' && str[i + 1] != '\b') {
 				str2 = str.substr(0, i + 1);
 				str = str.substr(i + 1, str.length() - (i + 1));
 				if(b) {
@@ -4328,7 +4323,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos) {
 		bool b = false, append = false;
 		while(i != string::npos) {
-			if(str[i - 1] != POWER_CH && str[i - 1] != '\x19' && (i < 2 || str[i - 1] != MINUS_CH || (str[i - 2] != POWER_CH && str[i - 2] != '\x19')) && str[i - 1] != '\b') {
+			if(str[i - 1] != POWER_CH && str[i - 1] != '\x19' && str[i - 1] != '\x1a' && (i < 2 || str[i - 1] != MINUS_CH || (str[i - 2] != POWER_CH && str[i - 2] != '\x19' && str[i - 2] != '\x1a')) && str[i - 1] != '\b') {
 				str2 = str.substr(0, i);
 				str = str.substr(i, str.length() - i);
 				if(b) {
@@ -4356,6 +4351,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			return true;
 		}
 	}
+
 	if((i = str.find(POWER_CH, 1)) != string::npos && i + 1 != str.length()) {
 		// Parse exponentiation (^)
 		str2 = str.substr(0, i);
@@ -4375,6 +4371,10 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		} else {
 			mstruct->raise_nocopy(mstruct2);
 		}
+	} else if(!str.empty() && str[str.length() - 1] == '\x1a') {
+		str.erase(str.length() - 1, 1);
+		parseAdd(str, mstruct, po);
+		mstruct->transform(f_transpose);
 	} else if((i = str.find("\b", 1)) != string::npos) {
 		// Parse uncertainty (using \b as internal single substitution character for +/-)
 		str2 = str.substr(0, i);

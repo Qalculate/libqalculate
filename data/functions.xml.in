@@ -586,7 +586,7 @@
       <function>
         <_title>Subtract</_title>
         <_names>r:subtract</_names>
-        <expression>element(\x,1)-sum(element(\x,"i"),2,elements(\x))</expression>
+        <expression>element(\x,1)*2-total(\x)</expression>
         <argument type="vector" index="1">
           <_title>Terms</_title>
         </argument>

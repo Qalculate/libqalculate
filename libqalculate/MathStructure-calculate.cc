@@ -212,7 +212,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 					bool b2 = mstruct.isMatrix();
 					if(!b1 && !representsNonMatrix()) return -1;
 					if(!b2 && !mstruct.representsNonMatrix()) return -1;
-					if(SIZE > 0 && b2 && mstruct.columns() == 1 && (!b1 || SIZE == mstruct.size())) {
+					if(b2 && mstruct.columns() == 1 && (!b1 || SIZE == mstruct.size())) {
 						if(!b1) {
 							// row vector + column vector = matrix
 							transform(STRUCT_VECTOR);
@@ -232,7 +232,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 							}
 						}
 						return 1;
-					} else if(mstruct.size() > 0 && b1 && columns() == 1 && (!b2 || SIZE == mstruct.size())) {
+					} else if(b1 && columns() == 1 && (!b2 || SIZE == mstruct.size())) {
 						if(!b2) {
 							for(size_t i = 0; i < SIZE; i++) {
 								for(size_t i2 = 1; i2 < mstruct.size(); i2++) {
@@ -265,7 +265,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 						// [[a1,a2,...],[a3,a4,...],...]+[[b1,b2,...],[b3,b4,...],...]=[[a1+b1,a2+b2,...],[a3+b3,a4+b4,...],...]
 						for(size_t i = 0; i < SIZE; i++) {
 							for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-								CHILD(i).calculateAdd(mstruct[i][i2], eo, &CHILD(i), i2);
+								CHILD(i)[i2].calculateAdd(mstruct[i][i2], eo, &CHILD(i), i2);
 							}
 						}
 						MERGE_APPROX_AND_PREC(mstruct)
