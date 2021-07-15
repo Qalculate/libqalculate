@@ -8405,7 +8405,7 @@ msgstr "Metro"
 
 #: ../data/units.xml.in.h:4
 msgid "ar:m,meter,p:meters,metre,p:metres"
-msgstr "metro,p:metros"
+msgstr "a:m,metro,p:metros"
 
 #: ../data/units.xml.in.h:5
 msgid "Kilometer"
@@ -8429,7 +8429,7 @@ msgstr "Milla náutica"
 
 #: ../data/units.xml.in.h:10
 msgid "r:nautical_mile,p:nautical_miles"
-msgstr "milla,p:millas"
+msgstr "milla_náutica,p:millas_náutica"
 
 #: ../data/units.xml.in.h:11
 msgid "&#xC5;ngstr&#xF6;m"
@@ -8493,7 +8493,7 @@ msgstr "Yarda"
 
 #: ../data/units.xml.in.h:26
 msgid "ar:yd,yard,p:yards"
-msgstr "yarda,p:yardas"
+msgstr "a:yd,yarda,p:yardas"
 
 #: ../data/units.xml.in.h:27
 msgid "Rod (pole/perch)"
@@ -8638,7 +8638,7 @@ msgstr "Radián"
 
 #: ../data/units.xml.in.h:63
 msgid "ar:rad,radian,p:radians"
-msgstr "radián,p:radianes"
+msgstr "a:rad,radián,p:radianes"
 
 #. angle unit
 #: ../data/units.xml.in.h:65
@@ -8647,7 +8647,7 @@ msgstr "Grado"
 
 #: ../data/units.xml.in.h:66
 msgid "ar:deg,au:&#xB0;,degree,p:degrees"
-msgstr "grado,p;grados"
+msgstr "au:&#xB0;,grado,p;grados"
 
 #: ../data/units.xml.in.h:67
 msgid "Gradian (Gon)"
@@ -8655,7 +8655,7 @@ msgstr "Gradián (Gon)"
 
 #: ../data/units.xml.in.h:68
 msgid "ar:gra,gradian,p:gradians,gon,p:gons"
-msgstr "gradián,p:gradianes"
+msgstr "a:gra,gradián,p:gradianes"
 
 #: ../data/units.xml.in.h:69
 msgid "Arcminute"
@@ -8663,7 +8663,7 @@ msgstr "Arcominuto"
 
 #: ../data/units.xml.in.h:70
 msgid "ar:arcmin,arcminute,p:arcminutes"
-msgstr "arcominuto,p:arcominutos"
+msgstr "a:arcmin,arcominuto,p:arcominutos"
 
 #: ../data/units.xml.in.h:71
 msgid "Arcsecond"
@@ -8671,7 +8671,7 @@ msgstr "Arcosegundo"
 
 #: ../data/units.xml.in.h:72
 msgid "ar:arcsec,arcsecond,p:arcseconds"
-msgstr "arcosegundo,p:arcosegundos"
+msgstr "a:arcseg,arcosegundo,p:arcosegundos"
 
 #: ../data/units.xml.in.h:73
 msgid "Turn"
@@ -8691,7 +8691,7 @@ msgstr "Estereorradián"
 
 #: ../data/units.xml.in.h:77
 msgid "ar:sr,steradian,p:steradians"
-msgstr "estereorradián,p:estereorradianes"
+msgstr "a:sr,estereorradián,p:estereorradianes"
 
 #: ../data/units.xml.in.h:78
 msgid "Angular Acceleration"
@@ -8720,7 +8720,7 @@ msgstr "Gramo"
 
 #: ../data/units.xml.in.h:85
 msgid "ar:g,gram,p:grams"
-msgstr "gramo,p:gramos"
+msgstr "a:g,gramo,p:gramos"
 
 #: ../data/units.xml.in.h:86
 msgid "Kilogram"
@@ -8736,7 +8736,7 @@ msgstr "Tonelada métrica"
 
 #: ../data/units.xml.in.h:89
 msgid "ar:t,tonne,p:tonnes,ton,p:tons"
-msgstr "tonelada,p:toneladas"
+msgstr "a:t,tonelada,p:toneladas"
 
 #: ../data/units.xml.in.h:90
 msgid "Grain"
@@ -8784,7 +8784,7 @@ msgstr "Onza"
 
 #: ../data/units.xml.in.h:101
 msgid "ar:oz,ounce,p:ounces"
-msgstr "onza,p:onzas"
+msgstr "a:oz,onza,p:onzas"
 
 #: ../data/units.xml.in.h:102
 msgid "Pound"
@@ -8792,7 +8792,7 @@ msgstr "Libra"
 
 #: ../data/units.xml.in.h:103
 msgid "ar:lb,aou:&#x2114;,pound,p:pounds"
-msgstr "libra,p:libras"
+msgstr "a:lb,aou:&#x2114;,libra,p:libras"
 
 #: ../data/units.xml.in.h:104
 msgid "Short Hundredweight (Cental)"
@@ -8916,19 +8916,19 @@ msgstr "Kilogramo por kilogramo"
 
 #: ../data/units.xml.in.h:138
 msgid "ar:s,second,p:seconds"
-msgstr "segundo,p:segundos"
+msgstr "a:s,segundo,p:segundos"
 
 #: ../data/units.xml.in.h:140
 msgid "ar:min,minute,p:minutes"
-msgstr "minuto,p:minutos"
+msgstr "a:min,minuto,p:minutos"
 
 #: ../data/units.xml.in.h:142
 msgid "ar:h,hour,p:hours"
-msgstr "hora,p:horas"
+msgstr "a:h,hora,p:horas"
 
 #: ../data/units.xml.in.h:144
 msgid "ar:d,day,p:days"
-msgstr "día,p:días"
+msgstr "a:d,día,p:días"
 
 #: ../data/units.xml.in.h:145
 msgid "Week"
@@ -8987,7 +8987,7 @@ msgstr "Hercio"
 # ... personal experience
 #: ../data/units.xml.in.h:160
 msgid "ar:Hz,hertz"
-msgstr "hercio,p:hercios,hertz"
+msgstr "a:Hz,hercio,p:hercios,hertz"
 
 #: ../data/units.xml.in.h:161
 msgid "Electricity"
@@ -9003,7 +9003,7 @@ msgstr "Amperio"
 
 #: ../data/units.xml.in.h:164
 msgid "ar:A,ampere,p:amperes"
-msgstr "amperio,p:amperios,ampere"
+msgstr "a:A,amperio,p:amperios,ampere"
 
 #: ../data/units.xml.in.h:165
 msgid "Abampere"
@@ -9031,7 +9031,7 @@ msgstr "Culombio"
 
 #: ../data/units.xml.in.h:171
 msgid "ar:C,coulomb,p:coulombs"
-msgstr "culombio,p:culombios,coulomb"
+msgstr "a:C,culombio,p:culombios,coulomb"
 
 #: ../data/units.xml.in.h:172
 msgid "Abcoulomb"
@@ -9083,7 +9083,7 @@ msgstr "Voltio"
 
 #: ../data/units.xml.in.h:184
 msgid "ar:V,volt,p:volts"
-msgstr "voltio,p:voltios,volt"
+msgstr "a:V,voltio,p:voltios,volt"
 
 #: ../data/units.xml.in.h:185
 msgid "Statvolt"
@@ -9115,7 +9115,7 @@ msgstr "Faradio"
 
 #: ../data/units.xml.in.h:192
 msgid "ar:F,farad,p:farads"
-msgstr "faradio,p:faradios,farad"
+msgstr "a:F,faradio,p:faradios,farad"
 
 #: ../data/units.xml.in.h:193
 msgid "Electric Resistance"
@@ -9127,7 +9127,7 @@ msgstr "Ohmio"
 
 #: ../data/units.xml.in.h:195
 msgid "au:&#x3A9;,r:ohm,p:ohms,auio:&#x2126;"
-msgstr "ohm,p:ohmios"
+msgstr "au:&#x3A9;,ohmio,p:ohmios,auio:&#x2126;"
 
 #: ../data/units.xml.in.h:196
 msgid "Abohm"
@@ -9187,7 +9187,7 @@ msgstr "Henrio"
 
 #: ../data/units.xml.in.h:210
 msgid "ar:H,henry,p:henrys"
-msgstr "henrio,p:henrio,henry"
+msgstr "a:H,henrio,p:henrio,henry"
 
 #: ../data/units.xml.in.h:211
 msgid "Abhenry"
@@ -9440,7 +9440,7 @@ msgstr "Hectárea"
 
 #: ../data/units.xml.in.h:273
 msgid "ar:ha,hectare,p:hectares"
-msgstr "hectárea,p:hectáreas"
+msgstr "a:ha,hectárea,p:hectáreas"
 
 #: ../data/units.xml.in.h:274
 msgid "Decare"
@@ -9516,7 +9516,7 @@ msgstr "Litro"
 
 #: ../data/units.xml.in.h:292
 msgid "ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
-msgstr "litro,p:litros"
+msgstr "a:L,a:l,aou:&#x2113;,litro,p:litros"
 
 #: ../data/units.xml.in.h:293
 msgid "Milliliter"
@@ -10016,7 +10016,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:417
 msgid "ar:Pa,pascal,p:pascals"
-msgstr "pascal,p:pascales"
+msgstr "a:Pa,pascal,p:pascales"
 
 #: ../data/units.xml.in.h:418
 msgid "Kilogram-force per Square Centimetre"
@@ -10044,7 +10044,7 @@ msgstr "Atmósfera"
 
 #: ../data/units.xml.in.h:424
 msgid "ar:atm,atmosphere,p:atmospheres"
-msgstr "atmósfera,p:atmósferas"
+msgstr "a:atm,atmósfera,p:atmósferas"
 
 #: ../data/units.xml.in.h:425
 msgid "Torr"
@@ -10140,7 +10140,7 @@ msgstr "Julio"
 
 #: ../data/units.xml.in.h:448
 msgid "ar:J,joule,p:joules"
-msgstr "julio,p:julios"
+msgstr "a:J,julio,p:julios,joule"
 
 #: ../data/units.xml.in.h:449
 msgid "Watt Hour"
@@ -10504,7 +10504,7 @@ msgstr "Decibelio"
 
 #: ../data/units.xml.in.h:539
 msgid "ar:dB,decibel,p:decibels"
-msgstr "decibelio,p:decibelios"
+msgstr "a:dB,decibelio,p:decibelios"
 
 #: ../data/units.xml.in.h:540
 msgid "Information"
@@ -10693,7 +10693,7 @@ msgstr "Por ciento"
 #: ../data/variables.xml.in.h:8
 #, no-c-format
 msgid "a:%,r:percent"
-msgstr "porciento"
+msgstr "a:%,porciento"
 
 #: ../data/variables.xml.in.h:9
 msgid "Large Numbers"

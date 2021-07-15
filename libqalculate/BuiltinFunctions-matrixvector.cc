@@ -343,6 +343,7 @@ int InverseFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	return mstruct.invertMatrix(eo);
 }
 MagnitudeFunction::MagnitudeFunction() : MathFunction("magnitude", 1) {
+	setArgumentDefinition(1, new VectorArgument("", false, false));
 }
 int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
@@ -363,6 +364,7 @@ int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	mstruct.eval(eo);
 	if(mstruct.isVector()) {
 		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(!mstruct[i].representsReal(true)) mstruct[i].transformById(FUNCTION_ID_ABS);
 			mstruct[i] ^= 2;
 		}
 		if(mstruct.size() == 0) mstruct.clear(true);

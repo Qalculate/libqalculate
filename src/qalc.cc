@@ -273,7 +273,11 @@ bool ask_question(const char *question, bool default_answer = false) {
 
 void set_assumption(const string &str, bool last_of_two = false) {
 	//assumptions
-	if(EQUALS_IGNORECASE_AND_LOCAL(str, "unknown", _("unknown")) || str == "0") {
+	if(EQUALS_IGNORECASE_AND_LOCAL(str, "none", _("none")) || str == "0") {
+		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
+		CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_UNKNOWN);
+	//assumptions
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "unknown", _("unknown"))) {
 		if(!last_of_two) {
 			CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_UNKNOWN);
 		} else {
@@ -283,6 +287,9 @@ void set_assumption(const string &str, bool last_of_two = false) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "real", _("real"))) {
 		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_REAL);
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "number", _("number")) || str == "num") {
+		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
+	//complex number
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "complex", _("complex")) || str == "cplx") {
 		CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 	//rational number
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rational", _("rational")) || str == "rat") {
@@ -743,7 +750,7 @@ void set_option(string str) {
 			printops.base = v;
 			result_format_updated();
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assumptions", _("assumptions")) || svar == "ass") {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assumptions", _("assumptions")) || svar == "ass" || svar == "asm") {
 		size_t i = svalue.find_first_of(SPACES);
 		if(i != string::npos) {
 			set_assumption(svalue.substr(0, i), false);
@@ -3490,7 +3497,7 @@ int main(int argc, char *argv[]) {
 				default: {}
 			}
 			if(value.empty()) value = _("unknown");
-			PRINT_AND_COLON_TABS(_("assumptions"), "ass"); str += value; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("assumptions"), "asm"); str += value; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Calculation"));
 
@@ -4304,7 +4311,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("assume nonzero denominators"), "nzd", _("Determines if unknown values will be assumed non-zero (x/x=1)."), evalops.assume_denominators_nonzero);
 				STR_AND_TABS_BOOL(_("warn nonzero denominators"), "warnnzd", _("Display a message after a value has been assumed non-zero."), evalops.warn_about_denominators_assumed_nonzero);
 				Assumptions *ass = CALCULATOR->defaultAssumptions();
-				STR_AND_TABS_SET(_("assumptions"), "ass");
+				STR_AND_TABS_SET(_("assumptions"), "asm");
 				SET_DESCRIPTION(_("Default assumptions for unknown variables."));
 			 	str += "(";
 				str += _("unknown");
@@ -5865,7 +5872,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					case '<': {CALCULATOR->calculateRPN(OPERATION_LESS, 0, evalops, parsed_mstruct); break;}
 					case '=': {CALCULATOR->calculateRPN(OPERATION_EQUALS, 0, evalops, parsed_mstruct); break;}
 					case '\\': {
-						MathFunction *fdiv = CALCULATOR->getGlobalFunction("div");
+						MathFunction *fdiv = CALCULATOR->getActiveFunction("div");
 						if(fdiv) {
 							CALCULATOR->calculateRPN(fdiv, 0, evalops, parsed_mstruct);
 							break;
@@ -5893,7 +5900,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					CALCULATOR->calculateRPN(OPERATION_EQUALS, 0, evalops, parsed_mstruct);
 					do_mathoperation = true;
 				} else if(str2 == "//") {
-					MathFunction *fdiv = CALCULATOR->getGlobalFunction("div");
+					MathFunction *fdiv = CALCULATOR->getActiveFunction("div");
 					if(fdiv) {
 						CALCULATOR->calculateRPN(fdiv, 0, evalops, parsed_mstruct);
 						do_mathoperation = true;
@@ -6083,7 +6090,10 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			MathStructure mbak(*mstruct);
 			if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) {
 				if(munit->isUnit() && u->referenceName() == "oF") {
-					u = CALCULATOR->getGlobalUnit("oC");
+					u = CALCULATOR->getActiveUnit("oC");
+					if(u) mstruct->set(CALCULATOR->convert(*mstruct, u, evalops, true, false));
+				} else if(munit->isUnit() && u->referenceName() == "oC") {
+					u = CALCULATOR->getActiveUnit("oF");
 					if(u) mstruct->set(CALCULATOR->convert(*mstruct, u, evalops, true, false));
 				} else {
 					mstruct->set(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));

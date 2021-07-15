@@ -549,7 +549,6 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
 					nmid.setApproximate(false);
 					v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
 					mstruct->set(v);
-					vars->push_back(v);
 					v->ref();
 					v->destroy();
 					u_m = ((AliasUnit*) u_m)->firstBaseUnit();
@@ -579,18 +578,15 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
 			} else {
 				mstruct->unref();
 			}
-			if(v && v->refcount() == 1) {
-				v->unref();
-				vars->pop_back();
+			if(v) {
+				if(v->refcount() == 1) v->unref();
+				else vars->push_back(v);
 			}
 			return true;
 		} else {
 			exp->unref();
 			mstruct->unref();
-			if(v) {
-				v->unref();
-				vars->pop_back();
-			}
+			if(v) v->unref();
 			return false;
 		}
 	} else {
