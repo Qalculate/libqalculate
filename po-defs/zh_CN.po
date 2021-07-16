@@ -11311,7 +11311,7 @@ msgstr "昨天"
 
 #: ../data/variables.xml.in.h:211
 msgid "r:yesterday"
-msgstr "明天"
+msgstr "昨天"
 
 #: ../data/variables.xml.in.h:212
 msgid "Now (date and time)"
