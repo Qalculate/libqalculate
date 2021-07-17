@@ -3333,7 +3333,6 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			ips_n.division_depth++;
 			bool b_num = !po.preserve_format && CHILD(0).isInteger() && CHILD(1).isInteger();
 			bool b_num2 = b_num && (po.division_sign == DIVISION_SIGN_SLASH || (tagtype != TAG_TYPE_TERMINAL && po.division_sign == DIVISION_SIGN_DIVISION_SLASH));
-			cout << b_num2 << endl;
 			bool b_units = false;
 			if(!b_num && po.place_units_separately && !po.preserve_format) {
 				b_units = true;
