@@ -732,6 +732,7 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
 					break;
 				}
 			}
+			if(ui == string::npos) break;
 			str.replace(ui, strlen(COMMA), b_alt_comma ? ";" : COMMA_STR);
 			ui = str.find(COMMA, ui + (b_alt_comma ? 1 : COMMA_STR.length()));
 		}
@@ -750,6 +751,7 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
 					break;
 				}
 			}
+			if(ui == string::npos) break;
 			if(!po.rpn && ui > 0 && ui < str.length() - 1 && is_not_number(str[ui - 1], base) && is_not_number(str[ui + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui - 1]) && (str[ui + 1] == POWER_CH || str[ui + 1] == MULTIPLICATION_CH || str[ui + 1] == DIVISION_CH || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui + 1]))) {
 				ui = str.find(DOT, ui + 1);
 			} else {
