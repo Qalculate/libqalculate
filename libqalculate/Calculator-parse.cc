@@ -2043,7 +2043,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								bool b = false, b_unended_function = false, b_comma_before = false, b_power_before = false;
 								//bool b_space_first = false;
 								size_t i5 = 1;
-								int arg_i = f->args();
+								size_t icand = 0;
+								int arg_i = 1;
 								i6 = 0;
 								while(!b) {
 									if(i6 + str_index + name_length >= str.length()) {
@@ -2064,13 +2065,21 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										} else if(c == POWER_CH) {
 											if(i5 < 2) i5 = 2;
 											b_power_before = true;
-										} else if(!b_comma_before && !b_power_before && c == ' ' && arg_i <= 1) {
+										} else if(arg_i > 0 && !b_comma_before && !b_power_before && c == ' ' && (arg_i >= f->args() || arg_i >= f->minargs())) {
 											//if(i5 < 2) b_space_first = true;
-											if(i5 == 2) b = true;
-										} else if(!b_comma_before && i5 == 2 && arg_i <= 1 && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH && (!b_power_before || (c != MINUS_CH && c != PLUS_CH))) {
-											b = true;
+											if(i5 == 2) {
+												if(arg_i >= f->args()) b = true;
+												else icand = i6 + 1;
+											}
+										} else if(arg_i > 0 && !b_comma_before && i5 == 2 && (arg_i >= f->args() || arg_i >= f->minargs()) && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH && (!b_power_before || (c != MINUS_CH && c != PLUS_CH))) {
+											if(arg_i >= f->args()) b = true;
+											else icand = i6 + 1;
 										} else if(c == COMMA_CH) {
-											if(i5 == 2) arg_i--;
+											if(i5 == 2) {
+												if(f->args() == 1 && (!f->getArgumentDefinition(1) || f->getArgumentDefinition(1)->type() != ARGUMENT_TYPE_VECTOR)) b = true;
+												icand = 0;
+												arg_i++;
+											}
 											b_comma_before = true;
 											if(i5 < 2) i5 = 2;
 										} else if(i5 < 2) {
@@ -2081,6 +2090,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									}
 									i6++;
 								}
+								if(icand > 0) i6 = icand;
 								if(b && i5 >= 2) {
 									stmp2 = str.substr(str_index + name_length, i6 - 1);
 									stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
