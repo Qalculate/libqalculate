@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-03 10:23+0200\n"
-"PO-Revision-Date: 2021-05-05 19:14+0700\n"
+"POT-Creation-Date: 2021-07-20 15:05+0700\n"
+"PO-Revision-Date: 2021-07-20 15:21+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 20.12.0\n"
 
 #: ../data/currencies.xml.in.h:1
@@ -449,9 +449,8 @@ msgid "Afghan Afghani"
 msgstr "Афганский афгани"
 
 #: ../data/currencies.xml.in.h:106
-#, fuzzy
 msgid "a-cr:AFN,aio:&#x060B;"
-msgstr "a-c:AFN,aiu:&#x060B;афгани"
+msgstr "a-c:AFN,aio:&#x060B;афгани"
 
 #: ../data/currencies.xml.in.h:107
 msgid "Afghanistan"
@@ -3267,9 +3266,8 @@ msgid "Calculates the norm/length of a vector."
 msgstr "Вычисляет норму/длину вектора."
 
 #: ../data/functions.xml.in.h:126
-#, fuzzy
 msgid "Exponent (p)"
-msgstr "Показатель"
+msgstr "Показатель (p)"
 
 #: ../data/functions.xml.in.h:127
 msgid "Dot Product"
@@ -6463,182 +6461,204 @@ msgid "r:save"
 msgstr "сохранить"
 
 #: ../data/functions.xml.in.h:825
+msgid ""
+"Stores a value in a variable or saves an expression as a function.&#10;&#10;"
+"A function is created if the name includes parentheses (e.g. \"f()\"). "
+"Optionally the function arguments can be specified in the name (e.g. \"save(a"
+"+b,f(a,b))\"). Otherwise the function arguments is expected to be referred "
+"to in the expression using \\x, \\y, \\z ,\\a , \\b..., or x, y, z (e.g. "
+"\"save(x+y,f())\").&#10;&#10;If a function was created, the processed "
+"function expression is returned as a text string, otherwise the value is "
+"returned.&#10;&#10;The \":=\" operator (e.g. var1:=10) is a shortcut for "
+"this function."
+msgstr ""
+"Сохраняет значение в переменной или сохраняет выражение как"
+" функцию.&#10;&#10;Функция создается, если в названии есть круглые скобки"
+" (например, «f()»). При желании аргументы функции могут быть указаны в имени"
+" (например, «save(a+b,f(a,b))»). В противном случае ожидается, что аргументы"
+" функции будут упоминаться в выражении с использованием \\x, \\y, \\z, \\a,"
+" \\b ... или x, y, z (например, «save(x+y,f())»).&#10;&#10;Если функция была"
+" создана, обработанное выражение функции возвращается в виде текстовой"
+" строки, в противном случае возвращается значение.&#10;&#10;Оператор «:=»"
+" (например, var1:=10) является сокращением для этой функции."
+
+#: ../data/functions.xml.in.h:826
 msgid "Category"
 msgstr "Категория"
 
-#: ../data/functions.xml.in.h:826
+#: ../data/functions.xml.in.h:827
 msgid "RPN Stack Register"
 msgstr "Регистр стека ПОЛИЗ"
 
-#: ../data/functions.xml.in.h:827
+#: ../data/functions.xml.in.h:828
 msgid "r:register"
 msgstr "регистр"
 
-#: ../data/functions.xml.in.h:828
+#: ../data/functions.xml.in.h:829
 msgid "Returns the value of a RPN stack register."
 msgstr "Возвращает значение регистра стека ПОЛИЗ."
 
-#: ../data/functions.xml.in.h:829
+#: ../data/functions.xml.in.h:830
 msgid "Index"
 msgstr "Индекс"
 
-#: ../data/functions.xml.in.h:830
+#: ../data/functions.xml.in.h:831
 msgid "RPN Stack Vector"
 msgstr "Вектор стека ПОЛИЗ"
 
-#: ../data/functions.xml.in.h:831
+#: ../data/functions.xml.in.h:832
 msgid "r:stack"
 msgstr "стек"
 
-#: ../data/functions.xml.in.h:832
+#: ../data/functions.xml.in.h:833
 msgid "Returns the RPN stack as a vector."
 msgstr "Возвращает стек ПОЛИЗ как вектор."
 
-#: ../data/functions.xml.in.h:833
+#: ../data/functions.xml.in.h:834
 msgid "Is Number"
 msgstr "Это число?"
 
-#: ../data/functions.xml.in.h:834
+#: ../data/functions.xml.in.h:835
 msgid "r:isNumber"
 msgstr "этоЧисло"
 
-#: ../data/functions.xml.in.h:835
+#: ../data/functions.xml.in.h:836
 msgid "Is Real"
 msgstr "Это вещественное число?"
 
-#: ../data/functions.xml.in.h:836
+#: ../data/functions.xml.in.h:837
 msgid "r:isReal"
 msgstr "этоВещественное"
 
-#: ../data/functions.xml.in.h:837
+#: ../data/functions.xml.in.h:838
 msgid "Is Rational"
 msgstr "Это рациональное число (дробь)?"
 
-#: ../data/functions.xml.in.h:838
+#: ../data/functions.xml.in.h:839
 msgid "r:isRational"
 msgstr "этоДробь"
 
-#: ../data/functions.xml.in.h:839
+#: ../data/functions.xml.in.h:840
 msgid "Is Integer"
 msgstr "Это целое число?"
 
-#: ../data/functions.xml.in.h:840
+#: ../data/functions.xml.in.h:841
 msgid "r:isInteger"
 msgstr "этоЦелое"
 
-#: ../data/functions.xml.in.h:841
+#: ../data/functions.xml.in.h:842
 msgid "Represents Number"
 msgstr "Представляет число"
 
-#: ../data/functions.xml.in.h:842
+#: ../data/functions.xml.in.h:843
 msgid "r:representsNumber"
 msgstr "представляетЧисло"
 
-#: ../data/functions.xml.in.h:843
+#: ../data/functions.xml.in.h:844
 msgid "Represents Real"
 msgstr "Представляет действительное число"
 
-#: ../data/functions.xml.in.h:844
+#: ../data/functions.xml.in.h:845
 msgid "r:representsReal"
 msgstr "представляетДействительноеЧисло"
 
-#: ../data/functions.xml.in.h:845
+#: ../data/functions.xml.in.h:846
 msgid "Represents Rational"
 msgstr "Представляет рациональное число"
 
-#: ../data/functions.xml.in.h:846
+#: ../data/functions.xml.in.h:847
 msgid "r:representsRational"
 msgstr "представляетРациональноеЧисло"
 
-#: ../data/functions.xml.in.h:847
+#: ../data/functions.xml.in.h:848
 msgid "Represents Integer"
 msgstr "Представляет целое число"
 
-#: ../data/functions.xml.in.h:848
+#: ../data/functions.xml.in.h:849
 msgid "r:representsInteger"
 msgstr "представляетЦелоеЧисло"
 
-#: ../data/functions.xml.in.h:849
+#: ../data/functions.xml.in.h:850
 msgid "Interval"
 msgstr "Интервал"
 
-#: ../data/functions.xml.in.h:850
+#: ../data/functions.xml.in.h:851
 msgid "r:interval"
 msgstr "интервал"
 
-#: ../data/functions.xml.in.h:851
+#: ../data/functions.xml.in.h:852
 msgid "Lower endpoint"
 msgstr "Нижний конец"
 
-#: ../data/functions.xml.in.h:852
+#: ../data/functions.xml.in.h:853
 msgid "Upper endpoint"
 msgstr "Верхний конец"
 
-#: ../data/functions.xml.in.h:853
+#: ../data/functions.xml.in.h:854
 msgid "Uncertainty"
 msgstr "Неопределённость"
 
-#: ../data/functions.xml.in.h:854
+#: ../data/functions.xml.in.h:855
 msgid "r:uncertainty"
 msgstr "неопределённость"
 
-#: ../data/functions.xml.in.h:855
+#: ../data/functions.xml.in.h:856
 msgid "Uncertainty is relative"
 msgstr "Неопределённость относительная"
 
-#: ../data/functions.xml.in.h:856
+#: ../data/functions.xml.in.h:857
 msgid "External Command"
 msgstr "Внешняя команда"
 
-#: ../data/functions.xml.in.h:857
+#: ../data/functions.xml.in.h:858
 msgid "r:command"
 msgstr "команда,запустить"
 
-#: ../data/functions.xml.in.h:858
+#: ../data/functions.xml.in.h:859
 msgid "Command"
 msgstr "Команда"
 
-#: ../data/functions.xml.in.h:859
+#: ../data/functions.xml.in.h:860
 msgid "Logical"
 msgstr "Логические"
 
-#: ../data/functions.xml.in.h:860
+#: ../data/functions.xml.in.h:861
 msgid "For...Do"
 msgstr "Для...Делать"
 
-#: ../data/functions.xml.in.h:861
+#: ../data/functions.xml.in.h:862
 msgid "r:for"
 msgstr "для"
 
-#: ../data/functions.xml.in.h:862
+#: ../data/functions.xml.in.h:863
 msgid "Initial value of counter"
 msgstr "Начальное значение счетчика"
 
-#: ../data/functions.xml.in.h:863
+#: ../data/functions.xml.in.h:864
 msgid "Counter variable"
 msgstr "Переменная счетчика"
 
-#: ../data/functions.xml.in.h:864
+#: ../data/functions.xml.in.h:865
 msgid "For condition"
 msgstr "Условие «Для»"
 
-#: ../data/functions.xml.in.h:865
+#: ../data/functions.xml.in.h:866
 msgid "Counter update function"
 msgstr "Функция обновления счетчика"
 
-#: ../data/functions.xml.in.h:866
+#: ../data/functions.xml.in.h:867
 msgid "Do function"
 msgstr "Функция «Делать»"
 
-#: ../data/functions.xml.in.h:867
+#: ../data/functions.xml.in.h:868
 msgid "If...Then...Else"
 msgstr "Если...То...Иначе"
 
-#: ../data/functions.xml.in.h:868
+#: ../data/functions.xml.in.h:869
 msgid "r:if"
 msgstr "если"
 
-#: ../data/functions.xml.in.h:869
+#: ../data/functions.xml.in.h:870
 msgid ""
 "Tests a condition and returns a value depending on the result. Vectors can "
 "be used for argument 1 and 2, instead of nested functions."
@@ -6646,47 +6666,47 @@ msgstr ""
 "Проверяет условие и возвращает значение в зависимости от результата. Векторы "
 "могут использоваться для аргументов 1 и 2 вместо вложенных функций."
 
-#: ../data/functions.xml.in.h:870
+#: ../data/functions.xml.in.h:871
 msgid "Expression if condition is met"
 msgstr "Выражение, если условие выполнено"
 
-#: ../data/functions.xml.in.h:871
+#: ../data/functions.xml.in.h:872
 msgid "Expression if condition is NOT met"
 msgstr "Выражение, если условие НЕ выполнено"
 
-#: ../data/functions.xml.in.h:872
+#: ../data/functions.xml.in.h:873
 msgid "Assume false if not true"
 msgstr "Предполагать ложь, если не истина"
 
-#: ../data/functions.xml.in.h:873
+#: ../data/functions.xml.in.h:874
 msgid "Bitwise Exclusive OR"
 msgstr "Побитовое исключающее ИЛИ"
 
-#: ../data/functions.xml.in.h:874
+#: ../data/functions.xml.in.h:875
 msgid "r:xor"
 msgstr "xor"
 
-#: ../data/functions.xml.in.h:875
+#: ../data/functions.xml.in.h:876
 msgid "Value 1"
 msgstr "Значение 1"
 
-#: ../data/functions.xml.in.h:876
+#: ../data/functions.xml.in.h:877
 msgid "Value 2"
 msgstr "Значение 2"
 
-#: ../data/functions.xml.in.h:877
+#: ../data/functions.xml.in.h:878
 msgid "Logical Exclusive OR"
 msgstr "Логическое исключающее ИЛИ"
 
-#: ../data/functions.xml.in.h:878
+#: ../data/functions.xml.in.h:879
 msgid "r:lxor"
 msgstr "lxor"
 
-#: ../data/functions.xml.in.h:879
+#: ../data/functions.xml.in.h:880
 msgid "Bitwise Shift"
 msgstr "Побитовый сдвиг"
 
-#: ../data/functions.xml.in.h:880
+#: ../data/functions.xml.in.h:881
 msgid ""
 "Applies logical or arithmetic bitwise shift to an integer. The second "
 "argument specifies the number of steps that each binary bit is shifted to "
@@ -6696,23 +6716,23 @@ msgstr ""
 "Второй аргумент указывает количество шагов, на которые каждый двоичный бит "
 "сдвигается влево (используйте отрицательные значения для сдвига вправо)."
 
-#: ../data/functions.xml.in.h:881
+#: ../data/functions.xml.in.h:882
 msgid "r:shift"
 msgstr "сдвиг"
 
-#: ../data/functions.xml.in.h:882
+#: ../data/functions.xml.in.h:883
 msgid "Steps"
 msgstr "Шаги"
 
-#: ../data/functions.xml.in.h:883
+#: ../data/functions.xml.in.h:884
 msgid "Arithmetic shift using two's complement"
 msgstr "Арифметический сдвиг с использованием дополнительного кода"
 
-#: ../data/functions.xml.in.h:884
+#: ../data/functions.xml.in.h:885
 msgid "Bitwise Complement (Not)"
 msgstr "Побитовое дополнение (НЕ)"
 
-#: ../data/functions.xml.in.h:885
+#: ../data/functions.xml.in.h:886
 msgid ""
 "Applies bitwise NOT to an integer of specified bit width and signedness (use "
 "1 for signed and 0 for unsigned). If bit width is zero, the smallest "
@@ -6723,23 +6743,23 @@ msgstr ""
 "равна нулю, минимально необходимое количество бит (из 8, 16, 32, 64, "
 "128, ...) будет использоваться."
 
-#: ../data/functions.xml.in.h:886
+#: ../data/functions.xml.in.h:887
 msgid "r:bitcmp"
 msgstr "битдоп,не"
 
-#: ../data/functions.xml.in.h:887
+#: ../data/functions.xml.in.h:888
 msgid "Bit Width"
 msgstr "Разрядность"
 
-#: ../data/functions.xml.in.h:888
+#: ../data/functions.xml.in.h:889
 msgid "Signed Integer"
 msgstr "Знаковое целое"
 
-#: ../data/functions.xml.in.h:889
+#: ../data/functions.xml.in.h:890
 msgid "Bit Rotation"
 msgstr "Битовая ротация"
 
-#: ../data/functions.xml.in.h:890
+#: ../data/functions.xml.in.h:891
 msgid ""
 "Applies circular bitwise shift to an integer of specified bit width and "
 "signedness (use 1 for signed and 0 for unsigned). The second argument "
@@ -6754,23 +6774,23 @@ msgstr ""
 "Если разрядность равна нулю, будет использоваться наименьшее необходимое "
 "количество бит (из 8, 16, 32, 64, 128, ...)."
 
-#: ../data/functions.xml.in.h:891
+#: ../data/functions.xml.in.h:892
 msgid "r:bitrot"
 msgstr "битрот"
 
-#: ../data/functions.xml.in.h:892
+#: ../data/functions.xml.in.h:893
 msgid "Algebra"
 msgstr "Алгебра"
 
-#: ../data/functions.xml.in.h:893
+#: ../data/functions.xml.in.h:894
 msgid "Summation"
 msgstr "Суммирование"
 
-#: ../data/functions.xml.in.h:894
+#: ../data/functions.xml.in.h:895
 msgid "au:&#x3A3;,au:&#x2211;,r:sum"
 msgstr "сумма,au:&#x3A3;,au:&#x2211;"
 
-#: ../data/functions.xml.in.h:895
+#: ../data/functions.xml.in.h:896
 msgid ""
 "Corresponds to the summation symbol. Adds terms for each x ranging from the "
 "lower to the upper limit."
@@ -6778,27 +6798,27 @@ msgstr ""
 "Соответствует символу суммирования. Складывает слагаемые для каждого x в "
 "диапазоне от нижнего предела до верхнего."
 
-#: ../data/functions.xml.in.h:896
+#: ../data/functions.xml.in.h:897
 msgid "Term expression"
 msgstr "Выражение слагаемого"
 
-#: ../data/functions.xml.in.h:897
+#: ../data/functions.xml.in.h:898
 msgid "Lower limit (i)"
 msgstr "Нижний предел (i)"
 
-#: ../data/functions.xml.in.h:898
+#: ../data/functions.xml.in.h:899
 msgid "Upper limit (n)"
 msgstr "Верхний предел (n)"
 
-#: ../data/functions.xml.in.h:899
+#: ../data/functions.xml.in.h:900
 msgid "Product of a sequence"
 msgstr "Произведение последовательности"
 
-#: ../data/functions.xml.in.h:900
+#: ../data/functions.xml.in.h:901
 msgid "au:&#x3A0;,r:product"
 msgstr "произведение,произв"
 
-#: ../data/functions.xml.in.h:901
+#: ../data/functions.xml.in.h:902
 msgid ""
 "Corresponds to the product symbol. Multiplies factors for each x ranging "
 "from the lower to the upper limit."
@@ -6806,59 +6826,59 @@ msgstr ""
 "Соответствует символу произведения. Перемножает множители для каждого x в "
 "диапазоне от нижнего предела до верхнего."
 
-#: ../data/functions.xml.in.h:902
+#: ../data/functions.xml.in.h:903
 msgid "Factor expression"
 msgstr "Выражение множителя"
 
-#: ../data/functions.xml.in.h:903
+#: ../data/functions.xml.in.h:904
 msgid "Solve for multiple variables"
 msgstr "Решить систему уравнений с несколькими неизвестными"
 
-#: ../data/functions.xml.in.h:904
+#: ../data/functions.xml.in.h:905
 msgid "r:multisolve"
 msgstr "систуравн"
 
-#: ../data/functions.xml.in.h:905
+#: ../data/functions.xml.in.h:906
 msgid "Equation vector"
 msgstr "Вектор уравнений"
 
-#: ../data/functions.xml.in.h:906
+#: ../data/functions.xml.in.h:907
 msgid "Variable vector"
 msgstr "Вектор неизвестных"
 
-#: ../data/functions.xml.in.h:907
+#: ../data/functions.xml.in.h:908
 msgid "Solve equation"
 msgstr "Решить уравнение"
 
-#: ../data/functions.xml.in.h:908
+#: ../data/functions.xml.in.h:909
 msgid "r:solve"
 msgstr "решить"
 
-#: ../data/functions.xml.in.h:909
+#: ../data/functions.xml.in.h:910
 msgid "Equation"
 msgstr "Уравнение"
 
-#: ../data/functions.xml.in.h:910
+#: ../data/functions.xml.in.h:911
 msgid "With respect to"
 msgstr "В отношении"
 
-#: ../data/functions.xml.in.h:911
+#: ../data/functions.xml.in.h:912
 msgid "Solve differential equation"
 msgstr "Решить дифференциальное уравнение"
 
-#: ../data/functions.xml.in.h:912
+#: ../data/functions.xml.in.h:913
 msgid "r:dsolve"
 msgstr "дифур"
 
-#: ../data/functions.xml.in.h:913
+#: ../data/functions.xml.in.h:914
 msgid "Initial condition: function value (y)"
 msgstr "Начальное условие: значение функции (y)"
 
-#: ../data/functions.xml.in.h:914
+#: ../data/functions.xml.in.h:915
 msgid "Initial condition: argument value (x)"
 msgstr "Начальное условие: значение аргумента (x)"
 
-#: ../data/functions.xml.in.h:915
+#: ../data/functions.xml.in.h:916
 msgid ""
 "Solves a differential equation and returns the value of y(x). The derivative "
 "in the equation should be in the format diff(y, x). Only first-order "
@@ -6868,51 +6888,51 @@ msgstr ""
 "уравнении должна быть в формате diff(y, x). В настоящее время поддерживаются "
 "только дифференциальные уравнения первого порядка."
 
-#: ../data/functions.xml.in.h:916
+#: ../data/functions.xml.in.h:917
 msgid "Solve using Newton's Method"
 msgstr "Решить уравнение с помощью метода Ньютона"
 
-#: ../data/functions.xml.in.h:917
+#: ../data/functions.xml.in.h:918
 msgid "r:newtonsolve"
 msgstr "newtonsolve"
 
-#: ../data/functions.xml.in.h:918
+#: ../data/functions.xml.in.h:919
 msgid "Initial estimate"
 msgstr "Начальное приближение"
 
-#: ../data/functions.xml.in.h:919 ../data/variables.xml.in.h:199
+#: ../data/functions.xml.in.h:920 ../data/variables.xml.in.h:199
 msgid "Precision"
 msgstr "Точность"
 
-#: ../data/functions.xml.in.h:920
+#: ../data/functions.xml.in.h:921
 msgid "Max iterations"
 msgstr "Максимальное количество итераций"
 
-#: ../data/functions.xml.in.h:921
+#: ../data/functions.xml.in.h:922
 msgid "Solve using Secant Method"
 msgstr "Решить уравнение с помощью метода секущих (хорд)"
 
-#: ../data/functions.xml.in.h:922
+#: ../data/functions.xml.in.h:923
 msgid "r:secantsolve"
 msgstr "secantsolve"
 
-#: ../data/functions.xml.in.h:923
+#: ../data/functions.xml.in.h:924
 msgid "Initial estimate 1"
 msgstr "Начальное приближение 1"
 
-#: ../data/functions.xml.in.h:924
+#: ../data/functions.xml.in.h:925
 msgid "Initial estimate 2"
 msgstr "Начальное приближение 2"
 
-#: ../data/functions.xml.in.h:925
+#: ../data/functions.xml.in.h:926
 msgid "Solve for two variables"
 msgstr "Решить систему уравнений для двух переменных"
 
-#: ../data/functions.xml.in.h:926
+#: ../data/functions.xml.in.h:927
 msgid "r:solve2"
 msgstr "решить2"
 
-#: ../data/functions.xml.in.h:927
+#: ../data/functions.xml.in.h:928
 msgid ""
 "Solves two equations with two unknown variables. Returns the value of the "
 "first variable."
@@ -6920,113 +6940,113 @@ msgstr ""
 "Решает систему из двух уравнений с двумя неизвестными переменными. "
 "Возвращает значение первой переменной."
 
-#: ../data/functions.xml.in.h:928
+#: ../data/functions.xml.in.h:929
 msgid "Equation 1"
 msgstr "Уравнение 1"
 
-#: ../data/functions.xml.in.h:929
+#: ../data/functions.xml.in.h:930
 msgid "Equation 2"
 msgstr "Уравнение 2"
 
-#: ../data/functions.xml.in.h:930
+#: ../data/functions.xml.in.h:931
 msgid "Variable 1"
 msgstr "Неизвестная переменная 1"
 
-#: ../data/functions.xml.in.h:931
+#: ../data/functions.xml.in.h:932
 msgid "Variable 2"
 msgstr "Неизвестная переменная 2"
 
-#: ../data/functions.xml.in.h:932
+#: ../data/functions.xml.in.h:933
 msgid "Find Linear Function"
 msgstr "Найти линейную функцию"
 
-#: ../data/functions.xml.in.h:933
+#: ../data/functions.xml.in.h:934
 msgid "r:linearfunction"
 msgstr "линфункция"
 
-#: ../data/functions.xml.in.h:934
+#: ../data/functions.xml.in.h:935
 msgid ""
 "Finds the linear function for the straight line between two distinct points."
 msgstr ""
 "Находит линейную функцию для прямой линии, проходящую через две разные точки."
 
-#: ../data/functions.xml.in.h:935
+#: ../data/functions.xml.in.h:936
 msgid "x1"
 msgstr "x1"
 
-#: ../data/functions.xml.in.h:936
+#: ../data/functions.xml.in.h:937
 msgid "y1"
 msgstr "y1"
 
-#: ../data/functions.xml.in.h:937
+#: ../data/functions.xml.in.h:938
 msgid "x2"
 msgstr "x2"
 
-#: ../data/functions.xml.in.h:938
+#: ../data/functions.xml.in.h:939
 msgid "y2"
 msgstr "y2"
 
-#: ../data/functions.xml.in.h:939
+#: ../data/functions.xml.in.h:940
 msgid "Calculus"
 msgstr "Исчисление"
 
-#: ../data/functions.xml.in.h:940
+#: ../data/functions.xml.in.h:941
 msgid "Differentiate"
 msgstr "Дифференцирование"
 
-#: ../data/functions.xml.in.h:941
+#: ../data/functions.xml.in.h:942
 msgid "r:diff,derivative"
 msgstr "дифф,производная"
 
-#: ../data/functions.xml.in.h:942
+#: ../data/functions.xml.in.h:943
 msgid "Variable value"
 msgstr "Значение переменной"
 
-#: ../data/functions.xml.in.h:943
+#: ../data/functions.xml.in.h:944
 msgid "Integrate"
 msgstr "Интегрирование"
 
-#: ../data/functions.xml.in.h:944
+#: ../data/functions.xml.in.h:945
 msgid "r:integrate,integral,au:&#x222B;"
 msgstr "интегрировать,интеграл,интегрирование,integrate,integral,au:&#x222B;"
 
-#: ../data/functions.xml.in.h:945
+#: ../data/functions.xml.in.h:946
 msgid "Variable of integration"
 msgstr "Переменная интегрирования"
 
-#: ../data/functions.xml.in.h:946
+#: ../data/functions.xml.in.h:947
 msgid "Force numerical integration"
 msgstr "Использовать численное интегрирование"
 
-#: ../data/functions.xml.in.h:947
+#: ../data/functions.xml.in.h:948
 msgid "Romberg Integration"
 msgstr "Интегрирование методом Ромберга"
 
-#: ../data/functions.xml.in.h:948
+#: ../data/functions.xml.in.h:949
 msgid "r:romberg"
 msgstr "ромберг"
 
-#: ../data/functions.xml.in.h:949
+#: ../data/functions.xml.in.h:950
 msgid "Min iterations"
 msgstr "Минимальное количество итераций"
 
-#: ../data/functions.xml.in.h:950
+#: ../data/functions.xml.in.h:951
 msgid "Monte Carlo Integration"
 msgstr "Интегрирование методом Монте-Карло"
 
-#: ../data/functions.xml.in.h:951
+#: ../data/functions.xml.in.h:952
 msgid "r:montecarlo"
 msgstr "монтекарло"
 
-#: ../data/functions.xml.in.h:952
+#: ../data/functions.xml.in.h:953
 msgid "Number of samples"
 msgstr "Объём выборки"
 
-#: ../data/functions.xml.in.h:953
+#: ../data/functions.xml.in.h:954
 msgid "Limit"
 msgstr "Предел"
 
-#: ../data/functions.xml.in.h:954
+#: ../data/functions.xml.in.h:955
 msgid ""
 "Returns the two-sided limit of the function if direction is zero, limit from "
 "left (below) if direction is -1, or limit from right (above) if direction is "
@@ -7036,411 +7056,411 @@ msgstr ""
 "ограничение слева (внизу), если направление равно -1, или ограничение справа "
 "(вверху), если направление равно +1."
 
-#: ../data/functions.xml.in.h:955
+#: ../data/functions.xml.in.h:956
 msgid "r:limit"
 msgstr "предел,lim"
 
-#: ../data/functions.xml.in.h:956
+#: ../data/functions.xml.in.h:957
 msgid "Value to approach"
 msgstr "Значение аргумента"
 
-#: ../data/functions.xml.in.h:957
+#: ../data/functions.xml.in.h:958
 msgid "Direction"
 msgstr "Направление"
 
-#: ../data/functions.xml.in.h:958
+#: ../data/functions.xml.in.h:959
 msgid "Extreme Values"
 msgstr "Положения экстремумов"
 
-#: ../data/functions.xml.in.h:959
+#: ../data/functions.xml.in.h:960
 msgid "r:extremum"
 msgstr "экстремум"
 
-#: ../data/functions.xml.in.h:960
+#: ../data/functions.xml.in.h:961
 msgid "Named Integrals"
 msgstr "Именные интегралы"
 
-#: ../data/functions.xml.in.h:961
+#: ../data/functions.xml.in.h:962
 msgid "Logarithmic Integral"
 msgstr "Интегральный логарифм"
 
-#: ../data/functions.xml.in.h:962
+#: ../data/functions.xml.in.h:963
 msgid "rc:li,logint"
 msgstr "c:li,logint"
 
-#: ../data/functions.xml.in.h:963
+#: ../data/functions.xml.in.h:964
 msgid "The integral of 1/ln(x)."
 msgstr "Интеграл функции 1/ln(x)."
 
-#: ../data/functions.xml.in.h:964
+#: ../data/functions.xml.in.h:965
 msgid "Exponential Integral"
 msgstr "Интегральная показательная функция"
 
-#: ../data/functions.xml.in.h:965
+#: ../data/functions.xml.in.h:966
 msgid "rc:Ei,expint"
 msgstr "c:Ei,expint"
 
-#: ../data/functions.xml.in.h:966
+#: ../data/functions.xml.in.h:967
 msgid "The integral of e^x/x."
 msgstr "Интеграл функции e^x/x."
 
-#: ../data/functions.xml.in.h:967
+#: ../data/functions.xml.in.h:968
 msgid "Sine Integral"
 msgstr "Интегральный синус"
 
-#: ../data/functions.xml.in.h:968
+#: ../data/functions.xml.in.h:969
 msgid "rc:Si,sinint"
 msgstr "c:Si,sinint"
 
-#: ../data/functions.xml.in.h:969
+#: ../data/functions.xml.in.h:970
 msgid "The integral of sin(x)/x."
 msgstr "Интеграл функции sin(x)/x."
 
-#: ../data/functions.xml.in.h:970
+#: ../data/functions.xml.in.h:971
 msgid "Cosine Integral"
 msgstr "Интегральный косинус"
 
-#: ../data/functions.xml.in.h:971
+#: ../data/functions.xml.in.h:972
 msgid "rc:Ci,cosint"
 msgstr "c:Ci,cosint"
 
-#: ../data/functions.xml.in.h:972
+#: ../data/functions.xml.in.h:973
 msgid "The integral of cos(x)/x."
 msgstr "Интеграл функции cos(x)/x."
 
-#: ../data/functions.xml.in.h:973
+#: ../data/functions.xml.in.h:974
 msgid "Hyperbolic Sine Integral"
 msgstr "Интегральный гиперболический синус"
 
-#: ../data/functions.xml.in.h:974
+#: ../data/functions.xml.in.h:975
 msgid "rc:Shi,sinhint"
 msgstr "c:Shi,shint"
 
-#: ../data/functions.xml.in.h:975
+#: ../data/functions.xml.in.h:976
 msgid "The integral of sinh(x)/x."
 msgstr "Интеграл функции sh(x)/x."
 
-#: ../data/functions.xml.in.h:976
+#: ../data/functions.xml.in.h:977
 msgid "Hyperbolic Cosine Integral"
 msgstr "Интегральный гиперболический косинус"
 
-#: ../data/functions.xml.in.h:977
+#: ../data/functions.xml.in.h:978
 msgid "rc:Chi,coshint"
 msgstr "c:Chi,chint"
 
-#: ../data/functions.xml.in.h:978
+#: ../data/functions.xml.in.h:979
 msgid "The integral of cosh(x)/x."
 msgstr "Интеграл функции ch(x)/x."
 
-#: ../data/functions.xml.in.h:979
+#: ../data/functions.xml.in.h:980
 msgid "Fresnel Integral S"
 msgstr "Интеграл Френеля S"
 
-#: ../data/functions.xml.in.h:980
+#: ../data/functions.xml.in.h:981
 msgid "r:fresnels"
 msgstr "френельs"
 
-#: ../data/functions.xml.in.h:981
+#: ../data/functions.xml.in.h:982
 msgid "The integral of sin(pi*x^2/2)."
 msgstr "Интеграл функции sin(pi*x^2/2)."
 
-#: ../data/functions.xml.in.h:982
+#: ../data/functions.xml.in.h:983
 msgid "Fresnel Integral C"
 msgstr "Интеграл Френеля C"
 
-#: ../data/functions.xml.in.h:983
+#: ../data/functions.xml.in.h:984
 msgid "r:fresnelc"
 msgstr "френельc,френельс"
 
-#: ../data/functions.xml.in.h:984
+#: ../data/functions.xml.in.h:985
 msgid "The integral of cos(pi*x^2/2)."
 msgstr "Интеграл функции cos(pi*x^2/2)."
 
-#: ../data/functions.xml.in.h:985
+#: ../data/functions.xml.in.h:986
 msgid "Upper Incomplete Gamma Function"
 msgstr "Верхняя неполная гамма-функция"
 
-#: ../data/functions.xml.in.h:986
+#: ../data/functions.xml.in.h:987
 msgid "r:igamma"
 msgstr "нгамма"
 
-#: ../data/functions.xml.in.h:987
+#: ../data/functions.xml.in.h:988
 msgid "Lower Incomplete Gamma Function"
 msgstr "Нижняя неполная гамма-функция"
 
-#: ../data/functions.xml.in.h:988
+#: ../data/functions.xml.in.h:989
 msgid "r:gammainc"
 msgstr "гамман"
 
-#: ../data/functions.xml.in.h:989
+#: ../data/functions.xml.in.h:990
 msgid "Regularized Incomplete Beta Function"
 msgstr "Регуляризованная"
 
-#: ../data/functions.xml.in.h:990
+#: ../data/functions.xml.in.h:991
 msgid "r:betainc"
 msgstr "бетан"
 
-#: ../data/functions.xml.in.h:991
+#: ../data/functions.xml.in.h:992
 msgid "Inverse Regularized Incomplete Beta Function"
 msgstr "Обратная регуляризованная неполная бета-функция"
 
-#: ../data/functions.xml.in.h:992
+#: ../data/functions.xml.in.h:993
 msgid "r:betaincinv"
 msgstr "бетанобр"
 
-#: ../data/functions.xml.in.h:993
+#: ../data/functions.xml.in.h:994
 msgid "Geometry"
 msgstr "Геометрия"
 
-#: ../data/functions.xml.in.h:994
+#: ../data/functions.xml.in.h:995
 msgid "Triangle"
 msgstr "Треугольник"
 
-#: ../data/functions.xml.in.h:995
+#: ../data/functions.xml.in.h:996
 msgid "Hypotenuse"
 msgstr "Гипотенуза"
 
-#: ../data/functions.xml.in.h:996
+#: ../data/functions.xml.in.h:997
 msgid "r:hypot"
 msgstr "гипот"
 
-#: ../data/functions.xml.in.h:997
+#: ../data/functions.xml.in.h:998
 msgid "Side A"
 msgstr "Сторона A"
 
-#: ../data/functions.xml.in.h:998
+#: ../data/functions.xml.in.h:999
 msgid "Side B"
 msgstr "Сторона B"
 
-#: ../data/functions.xml.in.h:999
+#: ../data/functions.xml.in.h:1000
 msgid "Triangle Area"
 msgstr "Площадь треугольника"
 
-#: ../data/functions.xml.in.h:1000
+#: ../data/functions.xml.in.h:1001
 msgid "r:triangle"
 msgstr "треугольник"
 
-#: ../data/functions.xml.in.h:1001
+#: ../data/functions.xml.in.h:1002
 msgid "Height"
 msgstr "Высота"
 
-#: ../data/functions.xml.in.h:1002
+#: ../data/functions.xml.in.h:1003
 msgid "Triangle Perimeter"
 msgstr "Периметр треугольника"
 
-#: ../data/functions.xml.in.h:1003
+#: ../data/functions.xml.in.h:1004
 msgid "r:triangle_perimeter"
 msgstr "треугольник_периметр"
 
-#: ../data/functions.xml.in.h:1004
+#: ../data/functions.xml.in.h:1005
 msgid "Side C"
 msgstr "Сторона C"
 
-#: ../data/functions.xml.in.h:1005
+#: ../data/functions.xml.in.h:1006
 msgid "Circle"
 msgstr "Круг"
 
-#: ../data/functions.xml.in.h:1006
+#: ../data/functions.xml.in.h:1007
 msgid "Circle Area"
 msgstr "Площадь круга"
 
-#: ../data/functions.xml.in.h:1007
+#: ../data/functions.xml.in.h:1008
 msgid "r:circle"
 msgstr "круг"
 
-#: ../data/functions.xml.in.h:1008
+#: ../data/functions.xml.in.h:1009
 msgid "Calculates the area of a circle using the radius"
 msgstr "Вычисляет площадь круга с использованием радиуса."
 
-#: ../data/functions.xml.in.h:1009
+#: ../data/functions.xml.in.h:1010
 msgid "Radius"
 msgstr "Радиус"
 
-#: ../data/functions.xml.in.h:1010
+#: ../data/functions.xml.in.h:1011
 msgid "Circle Circumference"
 msgstr "Окружность круга"
 
-#: ../data/functions.xml.in.h:1011
+#: ../data/functions.xml.in.h:1012
 msgid "r:circumference"
 msgstr "окружность"
 
-#: ../data/functions.xml.in.h:1012
+#: ../data/functions.xml.in.h:1013
 msgid "Cylinder"
 msgstr "Цилиндр"
 
-#: ../data/functions.xml.in.h:1013
+#: ../data/functions.xml.in.h:1014
 msgid "Cylinder Volume"
 msgstr "Объём цилиндра"
 
-#: ../data/functions.xml.in.h:1014
+#: ../data/functions.xml.in.h:1015
 msgid "r:cylinder"
 msgstr "цилиндр"
 
-#: ../data/functions.xml.in.h:1015
+#: ../data/functions.xml.in.h:1016
 msgid "Surface Area of Cylinder"
 msgstr "Площадь поверхности цилиндра"
 
-#: ../data/functions.xml.in.h:1016
+#: ../data/functions.xml.in.h:1017
 msgid "r:cylinder_sa"
 msgstr "цилиндр_пл"
 
-#: ../data/functions.xml.in.h:1017
+#: ../data/functions.xml.in.h:1018
 msgid "Cone"
 msgstr "Конус"
 
-#: ../data/functions.xml.in.h:1018
+#: ../data/functions.xml.in.h:1019
 msgid "Cone Volume"
 msgstr "Объём конуса"
 
-#: ../data/functions.xml.in.h:1019
+#: ../data/functions.xml.in.h:1020
 msgid "r:cone"
 msgstr "конус"
 
-#: ../data/functions.xml.in.h:1020
+#: ../data/functions.xml.in.h:1021
 msgid "Surface Area of Cone"
 msgstr "Площадь поверхности конуса"
 
-#: ../data/functions.xml.in.h:1021
+#: ../data/functions.xml.in.h:1022
 msgid "r:cone_sa"
 msgstr "конус_пл"
 
-#: ../data/functions.xml.in.h:1022
+#: ../data/functions.xml.in.h:1023
 msgid "Sphere"
 msgstr "Сфера"
 
-#: ../data/functions.xml.in.h:1023
+#: ../data/functions.xml.in.h:1024
 msgid "Sphere Volume"
 msgstr "Объём сферы"
 
-#: ../data/functions.xml.in.h:1024
+#: ../data/functions.xml.in.h:1025
 msgid "r:sphere"
 msgstr "сфера"
 
-#: ../data/functions.xml.in.h:1025
+#: ../data/functions.xml.in.h:1026
 msgid "Surface Area of Sphere"
 msgstr "Площадь поверхности сферы"
 
-#: ../data/functions.xml.in.h:1026
+#: ../data/functions.xml.in.h:1027
 msgid "r:sphere_sa"
 msgstr "сфера_пл"
 
-#: ../data/functions.xml.in.h:1027
+#: ../data/functions.xml.in.h:1028
 msgid "Square Area"
 msgstr "Площадь квадрата"
 
-#: ../data/functions.xml.in.h:1028
+#: ../data/functions.xml.in.h:1029
 msgid "r:square"
 msgstr "квадрат"
 
-#: ../data/functions.xml.in.h:1029
+#: ../data/functions.xml.in.h:1030
 msgid "Length of side"
 msgstr "Длина стороны"
 
-#: ../data/functions.xml.in.h:1030
+#: ../data/functions.xml.in.h:1031
 msgid "Square Perimeter"
 msgstr "Периметр квадрата"
 
-#: ../data/functions.xml.in.h:1031
+#: ../data/functions.xml.in.h:1032
 msgid "r:square_perimeter"
 msgstr "квадрат_периметр"
 
-#: ../data/functions.xml.in.h:1032
+#: ../data/functions.xml.in.h:1033
 msgid "Cube"
 msgstr "Куб"
 
-#: ../data/functions.xml.in.h:1033
+#: ../data/functions.xml.in.h:1034
 msgid "Cube Volume"
 msgstr "Объём куба"
 
-#: ../data/functions.xml.in.h:1034
+#: ../data/functions.xml.in.h:1035
 msgid "r:cube"
 msgstr "куб"
 
-#: ../data/functions.xml.in.h:1035
+#: ../data/functions.xml.in.h:1036
 msgid "Surface Area of Cube"
 msgstr "Площадь поверхности куба"
 
-#: ../data/functions.xml.in.h:1036
+#: ../data/functions.xml.in.h:1037
 msgid "r:cube_sa"
 msgstr "куб_пл"
 
-#: ../data/functions.xml.in.h:1037
+#: ../data/functions.xml.in.h:1038
 msgid "Rectangle"
 msgstr "Прямоугольник"
 
-#: ../data/functions.xml.in.h:1038
+#: ../data/functions.xml.in.h:1039
 msgid "Rectangle Area"
 msgstr "Площадь прямоугольника"
 
-#: ../data/functions.xml.in.h:1039
+#: ../data/functions.xml.in.h:1040
 msgid "r:rect"
 msgstr "прям,прямоугольник"
 
-#: ../data/functions.xml.in.h:1040
+#: ../data/functions.xml.in.h:1041
 msgid "Width"
 msgstr "Ширина"
 
-#: ../data/functions.xml.in.h:1041
+#: ../data/functions.xml.in.h:1042
 msgid "Rectangle Perimeter"
 msgstr "Периметр прямоугольника"
 
-#: ../data/functions.xml.in.h:1042
+#: ../data/functions.xml.in.h:1043
 msgid "r:rect_perimeter"
 msgstr "прям_периметр,прямоугольник_периметр"
 
-#: ../data/functions.xml.in.h:1043
+#: ../data/functions.xml.in.h:1044
 msgid "Prism"
 msgstr "Призма"
 
-#: ../data/functions.xml.in.h:1044
+#: ../data/functions.xml.in.h:1045
 msgid "Volume of Rectangular Prism"
 msgstr "Объём прямоугольной призмы"
 
-#: ../data/functions.xml.in.h:1045
+#: ../data/functions.xml.in.h:1046
 msgid "r:rectprism"
 msgstr "прпризма"
 
-#: ../data/functions.xml.in.h:1046
+#: ../data/functions.xml.in.h:1047
 msgid "Calculates the volume of a prism with rectangular base."
 msgstr "Вычисляет объём призмы с прямоугольным основанием."
 
-#: ../data/functions.xml.in.h:1047
+#: ../data/functions.xml.in.h:1048
 msgid "Surface Area of Rectangular Prism"
 msgstr "Площадь поверхности прямоугольной призмы"
 
-#: ../data/functions.xml.in.h:1048
+#: ../data/functions.xml.in.h:1049
 msgid "r:rectprism_sa"
 msgstr "прпризма_пл"
 
-#: ../data/functions.xml.in.h:1049
+#: ../data/functions.xml.in.h:1050
 msgid "Calculates the surface area of a prism with rectangular base."
 msgstr "Вычисляет площадь поверхности призмы с прямоугольным основанием."
 
-#: ../data/functions.xml.in.h:1050
+#: ../data/functions.xml.in.h:1051
 msgid "Volume of Triangular Prism"
 msgstr "Объём треугольной призмы"
 
-#: ../data/functions.xml.in.h:1051
+#: ../data/functions.xml.in.h:1052
 msgid "r:triangleprism"
 msgstr "трпризма"
 
-#: ../data/functions.xml.in.h:1052
+#: ../data/functions.xml.in.h:1053
 msgid "Calculates the volume of a prism with triangular base."
 msgstr "Вычисляет объём призмы с треугольным основанием."
 
-#: ../data/functions.xml.in.h:1053
+#: ../data/functions.xml.in.h:1054
 msgid "Pyramid"
 msgstr "Пирамида"
 
-#: ../data/functions.xml.in.h:1054
+#: ../data/functions.xml.in.h:1055
 msgid "Pyramid Volume"
 msgstr "Объём пирамиды"
 
-#: ../data/functions.xml.in.h:1055
+#: ../data/functions.xml.in.h:1056
 msgid "r:pyramid"
 msgstr "пирамида"
 
-#: ../data/functions.xml.in.h:1056
+#: ../data/functions.xml.in.h:1057
 msgid ""
 "Calculates the volume of a 3-dimensional shape standing on a rectangular "
 "base and terminating in a point at the top."
@@ -7448,75 +7468,75 @@ msgstr ""
 "Вычисляет объём трехмерной фигуры, стоящей на прямоугольном основании и "
 "заканчивающейся точкой наверху."
 
-#: ../data/functions.xml.in.h:1057
+#: ../data/functions.xml.in.h:1058
 msgid "Length of base"
 msgstr "Длина основания"
 
-#: ../data/functions.xml.in.h:1058
+#: ../data/functions.xml.in.h:1059
 msgid "Width of base"
 msgstr "Ширина основания"
 
-#: ../data/functions.xml.in.h:1059
+#: ../data/functions.xml.in.h:1060
 msgid "Volume of Regular Tetrahedron"
 msgstr "Объём правильного тетраэдра"
 
-#: ../data/functions.xml.in.h:1060
+#: ../data/functions.xml.in.h:1061
 msgid "r:tetrahedron"
 msgstr "тетраэдр"
 
-#: ../data/functions.xml.in.h:1061
+#: ../data/functions.xml.in.h:1062
 msgid "Surface Area of Regular Tetrahedron"
 msgstr "Площадь поверхности правильного тетраэдра"
 
-#: ../data/functions.xml.in.h:1062
+#: ../data/functions.xml.in.h:1063
 msgid "r:tetrahedron_sa"
 msgstr "тетраэдр_пл"
 
-#: ../data/functions.xml.in.h:1063
+#: ../data/functions.xml.in.h:1064
 msgid "Height of Regular Tetrahedron"
 msgstr "Высота правильного тетраэдра"
 
-#: ../data/functions.xml.in.h:1064
+#: ../data/functions.xml.in.h:1065
 msgid "r:tetrahedron_height"
 msgstr "тетраэдр_высота"
 
-#: ../data/functions.xml.in.h:1065
+#: ../data/functions.xml.in.h:1066
 msgid "Volume of Square Pyramid"
 msgstr "Объём квадратной пирамиды"
 
-#: ../data/functions.xml.in.h:1066
+#: ../data/functions.xml.in.h:1067
 msgid "r:sqpyramid"
 msgstr "квпирамида"
 
-#: ../data/functions.xml.in.h:1067
+#: ../data/functions.xml.in.h:1068
 msgid "Surface Area of Square Pyramid"
 msgstr "Площадь поверхности квадратной пирамиды"
 
-#: ../data/functions.xml.in.h:1068
+#: ../data/functions.xml.in.h:1069
 msgid "r:sqpyramid_sa"
 msgstr "квпирамида_пл"
 
-#: ../data/functions.xml.in.h:1069
+#: ../data/functions.xml.in.h:1070
 msgid "Height of Square Pyramid"
 msgstr "Высота квадратной пирамиды"
 
-#: ../data/functions.xml.in.h:1070
+#: ../data/functions.xml.in.h:1071
 msgid "r:sqpyramid_height"
 msgstr "квпирамида_высота"
 
-#: ../data/functions.xml.in.h:1071
+#: ../data/functions.xml.in.h:1072
 msgid "Parallelogram"
 msgstr "Параллелограмм"
 
-#: ../data/functions.xml.in.h:1072
+#: ../data/functions.xml.in.h:1073
 msgid "Parallelogram Area"
 msgstr "Площадь параллелограмма"
 
-#: ../data/functions.xml.in.h:1073
+#: ../data/functions.xml.in.h:1074
 msgid "r:parallelogram"
 msgstr "параллелограмм"
 
-#: ../data/functions.xml.in.h:1074
+#: ../data/functions.xml.in.h:1075
 msgid ""
 "Calculates the area of a four-sided figure whose opposite sides are both "
 "parallel and equal in length."
@@ -7524,15 +7544,15 @@ msgstr ""
 "Вычисляет площадь четырёхугольной фигуры, противоположные стороны которой "
 "параллельны и равны по длине."
 
-#: ../data/functions.xml.in.h:1075
+#: ../data/functions.xml.in.h:1076
 msgid "Parallelogram Perimeter"
 msgstr "Периметр параллелограмма"
 
-#: ../data/functions.xml.in.h:1076
+#: ../data/functions.xml.in.h:1077
 msgid "r:parallelogram_perimeter"
 msgstr "параллелограмм_периметр"
 
-#: ../data/functions.xml.in.h:1077
+#: ../data/functions.xml.in.h:1078
 msgid ""
 "Calculates the perimeter of a four-sided figure whose opposite sides are "
 "both parallel and equal in length."
@@ -7540,40 +7560,40 @@ msgstr ""
 "Вычисляет периметр четырёхугольной фигуры, противоположные стороны которой "
 "параллельны и равны по длине."
 
-#: ../data/functions.xml.in.h:1078
+#: ../data/functions.xml.in.h:1079
 msgid "Trapezoid"
 msgstr "Трапеция"
 
-#: ../data/functions.xml.in.h:1079
+#: ../data/functions.xml.in.h:1080
 msgid "Trapezoid Area"
 msgstr "Площадь трапеции"
 
-#: ../data/functions.xml.in.h:1080
+#: ../data/functions.xml.in.h:1081
 msgid "r:trapezoid"
 msgstr "трапеция"
 
-#: ../data/functions.xml.in.h:1081
+#: ../data/functions.xml.in.h:1082
 msgid "Calculates the area of a four-sided figure with two parallel sides."
 msgstr ""
 "Вычисляет площадь четырёхугольной фигуры с двумя параллельными сторонами."
 
-#: ../data/functions.xml.in.h:1082
+#: ../data/functions.xml.in.h:1083
 msgid "Economics"
 msgstr "Экономика"
 
-#: ../data/functions.xml.in.h:1083
+#: ../data/functions.xml.in.h:1084
 msgid "Microeconomics"
 msgstr "Микроэкономика"
 
-#: ../data/functions.xml.in.h:1084
+#: ../data/functions.xml.in.h:1085
 msgid "Elasticity"
 msgstr "Эластичность"
 
-#: ../data/functions.xml.in.h:1085
+#: ../data/functions.xml.in.h:1086
 msgid "r:elasticity"
 msgstr "эластичность"
 
-#: ../data/functions.xml.in.h:1086
+#: ../data/functions.xml.in.h:1087
 msgid ""
 "Calculates the demand elasticity. Also works for supply elasticity, income "
 "elasticity, cross-price elasticity, etc. Just replace demand with supply, or "
@@ -7587,27 +7607,27 @@ msgstr ""
 "эластичность(100-x^2, 3) вычисляет эластичность спроса при цене 3 для "
 "функции «Q = 100 - x^2», где x - ценовая переменная по умолчанию."
 
-#: ../data/functions.xml.in.h:1087
+#: ../data/functions.xml.in.h:1088
 msgid "Demand function"
 msgstr "Функция спроса"
 
-#: ../data/functions.xml.in.h:1088
+#: ../data/functions.xml.in.h:1089
 msgid "Price"
 msgstr "Цена"
 
-#: ../data/functions.xml.in.h:1089
+#: ../data/functions.xml.in.h:1090
 msgid "Price variable"
 msgstr "Ценовая переменная"
 
-#: ../data/functions.xml.in.h:1090
+#: ../data/functions.xml.in.h:1091
 msgid "Sum-of-Years Digits Depreciation"
 msgstr "Годовая сумма амортизации"
 
-#: ../data/functions.xml.in.h:1091
+#: ../data/functions.xml.in.h:1092
 msgid "r:syd"
 msgstr "гса"
 
-#: ../data/functions.xml.in.h:1092
+#: ../data/functions.xml.in.h:1093
 msgid ""
 "Calculates the sum-of-years digits depreciation for an asset based on its "
 "cost, salvage value, anticipated life, and a particular period. This method "
@@ -7624,31 +7644,31 @@ msgstr ""
 "Срок полезного использования - это количество периодов (обычно лет), в "
 "течение которых актив амортизируется."
 
-#: ../data/functions.xml.in.h:1093
+#: ../data/functions.xml.in.h:1094
 msgid "Cost"
 msgstr "Стоимость"
 
-#: ../data/functions.xml.in.h:1094
+#: ../data/functions.xml.in.h:1095
 msgid "Salvage value"
 msgstr "Стоимость утилизации"
 
-#: ../data/functions.xml.in.h:1095
+#: ../data/functions.xml.in.h:1096
 msgid "Life"
 msgstr "Срок службы"
 
-#: ../data/functions.xml.in.h:1096
+#: ../data/functions.xml.in.h:1097
 msgid "Period"
 msgstr "Период"
 
-#: ../data/functions.xml.in.h:1097
+#: ../data/functions.xml.in.h:1098
 msgid "Straight Line Depreciation"
 msgstr "Линейный способ начисления амортизации"
 
-#: ../data/functions.xml.in.h:1098
+#: ../data/functions.xml.in.h:1099
 msgid "r:sln"
 msgstr "лна"
 
-#: ../data/functions.xml.in.h:1099
+#: ../data/functions.xml.in.h:1100
 msgid ""
 "Determines the straight line depreciation of an asset for a single period."
 "&#10;&#10;Cost is the amount you paid for the asset. Salvage is the value of "
@@ -7662,15 +7682,15 @@ msgstr ""
 "периодов, в течение которых актив амортизируется. ЛНА/SLN распределяет "
 "стоимость поровну в течение срока службы актива."
 
-#: ../data/functions.xml.in.h:1100
+#: ../data/functions.xml.in.h:1101
 msgid "Present Value"
 msgstr "Текущая стоимость"
 
-#: ../data/functions.xml.in.h:1101
+#: ../data/functions.xml.in.h:1102
 msgid "r:pv"
 msgstr "тс"
 
-#: ../data/functions.xml.in.h:1102
+#: ../data/functions.xml.in.h:1103
 msgid ""
 "Returns the present value of an investment.&#10;&#10;If type = 1 then the "
 "payment is made at the beginning of the period. If type = 0 (or omitted) it "
@@ -7680,35 +7700,35 @@ msgstr ""
 "производится в начале периода. Если type = 0 (или опущено), это делается в "
 "конце каждого периода."
 
-#: ../data/functions.xml.in.h:1103
+#: ../data/functions.xml.in.h:1104
 msgid "Interest rate"
 msgstr "Процентная ставка"
 
-#: ../data/functions.xml.in.h:1104
+#: ../data/functions.xml.in.h:1105
 msgid "Number of periods"
 msgstr "Количество периодов"
 
-#: ../data/functions.xml.in.h:1105
+#: ../data/functions.xml.in.h:1106
 msgid "Payment made each period"
 msgstr "Выплата за каждый период"
 
-#: ../data/functions.xml.in.h:1106
+#: ../data/functions.xml.in.h:1107
 msgid "Future value"
 msgstr "Будущая стоимость"
 
-#: ../data/functions.xml.in.h:1107
+#: ../data/functions.xml.in.h:1108
 msgid "Type"
 msgstr "Тип"
 
-#: ../data/functions.xml.in.h:1108
+#: ../data/functions.xml.in.h:1109
 msgid "Nominal Interest Rate"
 msgstr "Номинальная процентная ставка"
 
-#: ../data/functions.xml.in.h:1109
+#: ../data/functions.xml.in.h:1110
 msgid "r:nominal"
 msgstr "нпс,номинал"
 
-#: ../data/functions.xml.in.h:1110
+#: ../data/functions.xml.in.h:1111
 msgid ""
 "Calculates the nominal interest rate from a given effective interest rate "
 "compounded at given intervals."
@@ -7716,116 +7736,116 @@ msgstr ""
 "Вычисляет номинальную процентную ставку на основе заданной эффективной "
 "процентной ставки, составляемой на заданных базовых периодах."
 
-#: ../data/functions.xml.in.h:1111
+#: ../data/functions.xml.in.h:1112
 msgid "Effective interest rate"
 msgstr "Эффективная процентная ставка"
 
-#: ../data/functions.xml.in.h:1112
+#: ../data/functions.xml.in.h:1113
 msgid "Periods"
 msgstr "Базовые периоды"
 
-#: ../data/functions.xml.in.h:1113
+#: ../data/functions.xml.in.h:1114
 msgid "Zero Coupon"
 msgstr "Дисконтная облигация"
 
-#: ../data/functions.xml.in.h:1114
+#: ../data/functions.xml.in.h:1115
 msgid "r:zero_coupon"
 msgstr "дисконтная_облигация"
 
-#: ../data/functions.xml.in.h:1115
+#: ../data/functions.xml.in.h:1116
 msgid "Calculates the value of a zero-coupon (pure discount) bond."
 msgstr "Вычисляет стоимость облигации с нулевым купоном (чистой дисконтом)."
 
-#: ../data/functions.xml.in.h:1116
+#: ../data/functions.xml.in.h:1117
 msgid "Face value"
 msgstr "Номинальная стоимость"
 
-#: ../data/functions.xml.in.h:1117
+#: ../data/functions.xml.in.h:1118
 msgid "Treasury Bill Yield"
 msgstr "Доходность казначейских векселей"
 
-#: ../data/functions.xml.in.h:1118
+#: ../data/functions.xml.in.h:1119
 msgid "r:tbillyield"
 msgstr "дкв"
 
-#: ../data/functions.xml.in.h:1119
+#: ../data/functions.xml.in.h:1120
 msgid "Returns the yield for a treasury bill."
 msgstr "Возвращает доходность казначейского векселя."
 
-#: ../data/functions.xml.in.h:1120
+#: ../data/functions.xml.in.h:1121
 msgid "Settlement date"
 msgstr "Дата расчётов"
 
-#: ../data/functions.xml.in.h:1121
+#: ../data/functions.xml.in.h:1122
 msgid "Maturity date"
 msgstr "Дата погашения"
 
-#: ../data/functions.xml.in.h:1122
+#: ../data/functions.xml.in.h:1123
 msgid "Price per $100 face value"
 msgstr "Цена за 100 долларов США номиналом"
 
-#: ../data/functions.xml.in.h:1123
+#: ../data/functions.xml.in.h:1124
 msgid "Treasury Bill Price"
 msgstr "Цена казначейского векселя"
 
-#: ../data/functions.xml.in.h:1124
+#: ../data/functions.xml.in.h:1125
 msgid "r:tbillprice"
 msgstr "цкв"
 
-#: ../data/functions.xml.in.h:1125
+#: ../data/functions.xml.in.h:1126
 msgid "Returns the price per $100 value for a treasury bill."
 msgstr "Возвращает цену за 100 долларов казначейского векселя."
 
-#: ../data/functions.xml.in.h:1126
+#: ../data/functions.xml.in.h:1127
 msgid "Discount rate"
 msgstr "Учётная ставка"
 
-#: ../data/functions.xml.in.h:1127
+#: ../data/functions.xml.in.h:1128
 msgid "Treasury Bill Equivalent"
 msgstr "Эквивалент казначейского векселя"
 
-#: ../data/functions.xml.in.h:1128
+#: ../data/functions.xml.in.h:1129
 msgid "r:tbilleq"
 msgstr "экв"
 
-#: ../data/functions.xml.in.h:1129
+#: ../data/functions.xml.in.h:1130
 msgid "Returns the bond equivalent for a treasury bill."
 msgstr "Возвращает эквивалент облигации для казначейского векселя."
 
-#: ../data/functions.xml.in.h:1130
+#: ../data/functions.xml.in.h:1131
 msgid "Interest paid on a given period of an investment (ISPMT)"
 msgstr "Проценты, уплаченные за определённый период инвестиций (ISPMT)"
 
-#: ../data/functions.xml.in.h:1131
+#: ../data/functions.xml.in.h:1132
 msgid "r:ispmt"
 msgstr "пуоп"
 
-#: ../data/functions.xml.in.h:1132
+#: ../data/functions.xml.in.h:1133
 msgid "Calculates the interest paid on a given period of an investment."
 msgstr "Вычисляет проценты, выплачиваемые за определённый период инвестиций."
 
-#: ../data/functions.xml.in.h:1133
+#: ../data/functions.xml.in.h:1134
 msgid "Periodic interest rate"
 msgstr "Периодическая процентная ставка"
 
-#: ../data/functions.xml.in.h:1134
+#: ../data/functions.xml.in.h:1135
 msgid "Amortizement period"
 msgstr "Срок погашения"
 
-#: ../data/functions.xml.in.h:1135
+#: ../data/functions.xml.in.h:1136
 #, fuzzy
 msgid "Present value"
 msgstr "Текущая стоимость"
 
-#: ../data/functions.xml.in.h:1136
+#: ../data/functions.xml.in.h:1137
 msgid "Payment for a loan"
 msgstr "Оплата кредита"
 
-#: ../data/functions.xml.in.h:1137
+#: ../data/functions.xml.in.h:1138
 msgid "r:pmt"
 msgstr "плкр"
 
-#: ../data/functions.xml.in.h:1138
+#: ../data/functions.xml.in.h:1139
 msgid ""
 "Returns the amount of payment (negative) each period for a loan based on a "
 "constant interest rate and constant payments (each payment is equal amount)."
@@ -7847,19 +7867,19 @@ msgstr ""
 "ежемесячный платёж, разделите годовой платёж  на 12 и введите общее "
 "количество месяцев (12-кратное количество лет) в поле периодов."
 
-#: ../data/functions.xml.in.h:1139
+#: ../data/functions.xml.in.h:1140
 msgid "Rate"
 msgstr "Ставка"
 
-#: ../data/functions.xml.in.h:1140
+#: ../data/functions.xml.in.h:1141
 msgid "Periods of an investment"
 msgstr "Периоды вложения "
 
-#: ../data/functions.xml.in.h:1141
+#: ../data/functions.xml.in.h:1142
 msgid "r:nper"
 msgstr "перинв"
 
-#: ../data/functions.xml.in.h:1142
+#: ../data/functions.xml.in.h:1143
 msgid ""
 "Calculates number of periods of an investment based on periodic constant "
 "payments and a constant interest rate.&#10;&#10;Type defines the due date. 1 "
@@ -7871,15 +7891,15 @@ msgstr ""
 "срок погашения. 1 для выплаты в начале периода и 0 (по умолчанию) для "
 "выплаты в конце периода."
 
-#: ../data/functions.xml.in.h:1143
+#: ../data/functions.xml.in.h:1144
 msgid "Periods for investment to attain desired value"
 msgstr "Сроки инвестиций достижения желаемой стоимости"
 
-#: ../data/functions.xml.in.h:1144
+#: ../data/functions.xml.in.h:1145
 msgid "r:g_duration"
 msgstr "г_инв"
 
-#: ../data/functions.xml.in.h:1145
+#: ../data/functions.xml.in.h:1146
 msgid ""
 "Returns the number of periods needed for an investment to attain a desired "
 "value."
@@ -7887,15 +7907,15 @@ msgstr ""
 "Возвращает количество периодов, необходимых для того, чтобы инвестиции "
 "достигли желаемой стоимости."
 
-#: ../data/functions.xml.in.h:1146
+#: ../data/functions.xml.in.h:1147
 msgid "Payment of an annuity going towards principal (PPMT)"
 msgstr "Оплата периодического платежа в счёт основной суммы долга (ОСПЛТ)"
 
-#: ../data/functions.xml.in.h:1147
+#: ../data/functions.xml.in.h:1148
 msgid "r:ppmt"
 msgstr "ОСПЛТ"
 
-#: ../data/functions.xml.in.h:1148
+#: ../data/functions.xml.in.h:1149
 msgid ""
 "Calculates the amount of a payment of an annuity going towards principal."
 "&#10;&#10;Type defines the due date. 1 for payment at the beginning of a "
@@ -7905,36 +7925,36 @@ msgstr ""
 "&#10;&#10;Тип определяет срок выполнения. 1 для оплаты в начале периода и 0 "
 "(по умолчанию) для оплаты в конце периода."
 
-#: ../data/functions.xml.in.h:1149
+#: ../data/functions.xml.in.h:1150
 msgid "Desired future value"
 msgstr "Желаемая будущая стоимость"
 
-#: ../data/functions.xml.in.h:1150
+#: ../data/functions.xml.in.h:1151
 msgid "Effective Interest Rate"
 msgstr "Эффективная процентная ставка"
 
-#: ../data/functions.xml.in.h:1151
+#: ../data/functions.xml.in.h:1152
 msgid "r:effect"
 msgstr "эпс"
 
-#: ../data/functions.xml.in.h:1152
+#: ../data/functions.xml.in.h:1153
 msgid "Calculates the effective interest for a given nominal rate."
 msgstr ""
 "Вычисляет эффективную процентную ставку для заданной номинальной ставки."
 
-#: ../data/functions.xml.in.h:1153
+#: ../data/functions.xml.in.h:1154
 msgid "Nominal interest rate"
 msgstr "Номинальная процентная ставка"
 
-#: ../data/functions.xml.in.h:1154
+#: ../data/functions.xml.in.h:1155
 msgid "Future Value"
 msgstr "Будущая стоимость"
 
-#: ../data/functions.xml.in.h:1155
+#: ../data/functions.xml.in.h:1156
 msgid "r:fv"
 msgstr "a:БС,a:ПС"
 
-#: ../data/functions.xml.in.h:1156
+#: ../data/functions.xml.in.h:1157
 msgid ""
 "Computes the future value of an investment. This is based on periodic, "
 "constant payments and a constant interest rate.&#10;&#10;If type = 1 then "
@@ -7946,15 +7966,15 @@ msgstr ""
 "то платёж производится в начале периода, если type = 0 (или опущен), он "
 "производится в конец каждого периода."
 
-#: ../data/functions.xml.in.h:1157
+#: ../data/functions.xml.in.h:1158
 msgid "Return on continuously compounded interest"
 msgstr "Процентный доход"
 
-#: ../data/functions.xml.in.h:1158
+#: ../data/functions.xml.in.h:1159
 msgid "r:continuous"
 msgstr "постоянно"
 
-#: ../data/functions.xml.in.h:1159
+#: ../data/functions.xml.in.h:1160
 msgid ""
 "Calculates the return on continuously compounded interest, given the "
 "principal, nominal rate and time in years."
@@ -7962,19 +7982,19 @@ msgstr ""
 "Рассчитывает доходность непрерывно начисленных процентов с учётом основной "
 "суммы долга, номинальной ставки и времени в годах."
 
-#: ../data/functions.xml.in.h:1160
+#: ../data/functions.xml.in.h:1161
 msgid "Principal"
 msgstr "Исходная сумма"
 
-#: ../data/functions.xml.in.h:1161
+#: ../data/functions.xml.in.h:1162
 msgid "Compound"
 msgstr "Наращенная сумма"
 
-#: ../data/functions.xml.in.h:1162
+#: ../data/functions.xml.in.h:1163
 msgid "r:compound"
 msgstr "наращеннаясумма,наращенная_сумма"
 
-#: ../data/functions.xml.in.h:1163
+#: ../data/functions.xml.in.h:1164
 msgid ""
 "Returns the value of an investment, given the principal, nominal interest "
 "rate, compounding frequency and time."
@@ -7982,19 +8002,19 @@ msgstr ""
 "Возвращает стоимость инвестиции с учётом основной суммы, номинальной "
 "процентной ставки, частоты начисления процентов и времени."
 
-#: ../data/functions.xml.in.h:1164
+#: ../data/functions.xml.in.h:1165
 msgid "Periods per year"
 msgstr "Периоды в годах"
 
-#: ../data/functions.xml.in.h:1165
+#: ../data/functions.xml.in.h:1166
 msgid "Payment of an annuity going towards interest (IPMT)"
 msgstr "Выплата аннуитета в счёт процентов (васп)"
 
-#: ../data/functions.xml.in.h:1166
+#: ../data/functions.xml.in.h:1167
 msgid "r:ipmt"
 msgstr "васп"
 
-#: ../data/functions.xml.in.h:1167
+#: ../data/functions.xml.in.h:1168
 msgid ""
 "Calculates the amount of a payment of an annuity going towards interest.&#10;"
 "&#10;Type defines the due date. 1 for payment at the beginning of a period "
@@ -8004,15 +8024,15 @@ msgstr ""
 "&#10;Тип определяет срок выполнения. 1 для выплаты в начале периода и 0 (по "
 "умолчанию) для выплаты в конце периода."
 
-#: ../data/functions.xml.in.h:1168
+#: ../data/functions.xml.in.h:1169
 msgid "Interest rate for a fully invested security"
 msgstr "Процентная ставка за полностью инвестированную ценную бумагу"
 
-#: ../data/functions.xml.in.h:1169
+#: ../data/functions.xml.in.h:1170
 msgid "r:intrate"
 msgstr "прствк"
 
-#: ../data/functions.xml.in.h:1170
+#: ../data/functions.xml.in.h:1171
 msgid ""
 "Returns the interest rate for a fully invested security.&#10;&#10;Basis is "
 "the type of day counting you want to use: 0: US 30/360 (default), 1: real "
@@ -8023,46 +8043,46 @@ msgstr ""
 "30/360 долларов США (по умолчанию), 1: реальные дни, 2: реальные дни / 360, "
 "3: реальные дни / 365 или 4: европейские дни 30/360."
 
-#: ../data/functions.xml.in.h:1171
+#: ../data/functions.xml.in.h:1172
 msgid "Investment"
 msgstr "Выкуп"
 
-#: ../data/functions.xml.in.h:1172
+#: ../data/functions.xml.in.h:1173
 msgid "Redemption"
 msgstr "Выкуп"
 
-#: ../data/functions.xml.in.h:1173
+#: ../data/functions.xml.in.h:1174
 msgid "Dollar Fraction"
 msgstr "Доля доллара"
 
-#: ../data/functions.xml.in.h:1174
+#: ../data/functions.xml.in.h:1175
 msgid "r:dollarfr"
 msgstr "долядоллар"
 
-#: ../data/functions.xml.in.h:1175
+#: ../data/functions.xml.in.h:1176
 msgid ""
 "Converts a decimal dollar price into a dollar price expressed as a fraction."
 msgstr ""
 "Преобразует десятичную долларовую цену в долларовую цену, выраженную в виде "
 "дроби."
 
-#: ../data/functions.xml.in.h:1176
+#: ../data/functions.xml.in.h:1177
 msgid "Decimal dollar"
 msgstr "Десятичная запись доллара"
 
-#: ../data/functions.xml.in.h:1177
+#: ../data/functions.xml.in.h:1178
 msgid "Denominator of fraction"
 msgstr "Знаменатель дроби"
 
-#: ../data/functions.xml.in.h:1178
+#: ../data/functions.xml.in.h:1179
 msgid "Dollar Decimal"
 msgstr "Доллар десятичный"
 
-#: ../data/functions.xml.in.h:1179
+#: ../data/functions.xml.in.h:1180
 msgid "r:dollarde"
 msgstr "долларде"
 
-#: ../data/functions.xml.in.h:1180
+#: ../data/functions.xml.in.h:1181
 msgid ""
 "Converts a dollar price expressed as a fraction into a dollar price "
 "expressed as a decimal number."
@@ -8070,20 +8090,20 @@ msgstr ""
 "Преобразует долларовую цену, выраженную в виде дроби, в долларовую цену, "
 "выраженную в виде десятичного числа."
 
-#: ../data/functions.xml.in.h:1181
+#: ../data/functions.xml.in.h:1182
 msgid "Fractional dollar"
 msgstr "Дробный доллар"
 
-#: ../data/functions.xml.in.h:1182
+#: ../data/functions.xml.in.h:1183
 msgid "Amount received at maturity for a security bond"
 msgstr ""
 "Сумма, полученная при наступлении срока погашения по гарантийному залогу"
 
-#: ../data/functions.xml.in.h:1183
+#: ../data/functions.xml.in.h:1184
 msgid "r:received"
 msgstr "получено"
 
-#: ../data/functions.xml.in.h:1184
+#: ../data/functions.xml.in.h:1185
 msgid ""
 "Returns the amount received at the maturity date for an invested security."
 "&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 "
@@ -8096,15 +8116,15 @@ msgstr ""
 "реальные дни/365 или 4: европейские 30/360. Дата расчёта должна быть раньше "
 "срока погашения."
 
-#: ../data/functions.xml.in.h:1185
+#: ../data/functions.xml.in.h:1186
 msgid "Discount rate for a security"
 msgstr "Учётная ставка по ценной бумаге"
 
-#: ../data/functions.xml.in.h:1186
+#: ../data/functions.xml.in.h:1187
 msgid "r:disc"
 msgstr "уч"
 
-#: ../data/functions.xml.in.h:1187
+#: ../data/functions.xml.in.h:1188
 msgid ""
 "Returns the discount rate for a security.&#10;&#10;Basis is the type of day "
 "counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
@@ -8115,15 +8135,15 @@ msgstr ""
 "1: реальные дни (по умолчанию), 2: реальные дни/360, 3: реальные дни/365 или "
 "4: 30/360 для Европы."
 
-#: ../data/functions.xml.in.h:1188
+#: ../data/functions.xml.in.h:1189
 msgid "Accrued interest of security paying at maturity"
 msgstr "Начисленные проценты по ценной бумаге, выплачиваемые в конце срока"
 
-#: ../data/functions.xml.in.h:1189
+#: ../data/functions.xml.in.h:1190
 msgid "r:accrintm"
 msgstr "начпроццбкон"
 
-#: ../data/functions.xml.in.h:1190
+#: ../data/functions.xml.in.h:1191
 msgid ""
 "Returns the accrued interest for a security which pays interest at maturity "
 "date.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
@@ -8136,28 +8156,28 @@ msgstr ""
 "реальные дни (по умолчанию), 2: реальные дни/360, 3: реальные дни/365 или 4: "
 "30/360 для Европы."
 
-#: ../data/functions.xml.in.h:1191
+#: ../data/functions.xml.in.h:1192
 msgid "Issue date"
 msgstr "Дата выпуска"
 
-#: ../data/functions.xml.in.h:1192
+#: ../data/functions.xml.in.h:1193
 msgid "Annual rate of security"
 msgstr "Годовая ставка обеспечения"
 
-#: ../data/functions.xml.in.h:1193
+#: ../data/functions.xml.in.h:1194
 msgid "Par value"
 msgstr "Номинальная стоимость"
 
-#: ../data/functions.xml.in.h:1194
+#: ../data/functions.xml.in.h:1195
 msgid "Accrued interest of security with periodic interest payments"
 msgstr ""
 "Начисленные проценты по ценной бумаге с периодической выплатой процентов"
 
-#: ../data/functions.xml.in.h:1195
+#: ../data/functions.xml.in.h:1196
 msgid "r:accrint"
 msgstr "начпроц"
 
-#: ../data/functions.xml.in.h:1196
+#: ../data/functions.xml.in.h:1197
 msgid ""
 "Returns accrued interest for a security which pays periodic interest.&#10;"
 "&#10;Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. "
@@ -8170,23 +8190,23 @@ msgstr ""
 "умолчанию), 2: реальные дни/360, 3: реальные дни/365 или 4: 30/360 для "
 "Европы."
 
-#: ../data/functions.xml.in.h:1197
+#: ../data/functions.xml.in.h:1198
 msgid "First interest"
 msgstr "Дата первой выплаты"
 
-#: ../data/functions.xml.in.h:1198
+#: ../data/functions.xml.in.h:1199
 msgid "Frequency"
 msgstr "Частота"
 
-#: ../data/functions.xml.in.h:1199
+#: ../data/functions.xml.in.h:1200
 msgid "Number of coupons to be paid"
 msgstr "Количество купонов к оплате"
 
-#: ../data/functions.xml.in.h:1200
+#: ../data/functions.xml.in.h:1201
 msgid "r:coupnum"
 msgstr "колкуп"
 
-#: ../data/functions.xml.in.h:1201
+#: ../data/functions.xml.in.h:1202
 msgid ""
 "Returns the number of coupons to be paid between the settlement and the "
 "maturity.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
@@ -8198,16 +8218,16 @@ msgstr ""
 "вы хотите использовать: 0: 30/360 для США, 1: реальные дни (по умолчанию), "
 "2: реальные дни/360, 3: реальные дни/365 или 4: 30/360 для Европы."
 
-#: ../data/functions.xml.in.h:1202
+#: ../data/functions.xml.in.h:1203
 msgid "Price per $100 face value of a discounted security"
 msgstr ""
 "Цена за 100 долларов США номинальной стоимости ценной бумаги со скидкой"
 
-#: ../data/functions.xml.in.h:1203
+#: ../data/functions.xml.in.h:1204
 msgid "r:pricedisc"
 msgstr "ценаскид"
 
-#: ../data/functions.xml.in.h:1204
+#: ../data/functions.xml.in.h:1205
 msgid ""
 "Calculates and returns the price per $100 face value of a discounted "
 "security. The security does not pay interest at maturity.&#10;&#10;Basis is "
@@ -8221,19 +8241,19 @@ msgstr ""
 "реальные дни (по умолчанию), 2: реальные дни/360, 3: реальные дни/365 или 4: "
 "30/360 для Европы."
 
-#: ../data/functions.xml.in.h:1205
+#: ../data/functions.xml.in.h:1206
 msgid "Discount"
 msgstr "Скидка"
 
-#: ../data/functions.xml.in.h:1206
+#: ../data/functions.xml.in.h:1207
 msgid "Price per $100 face value of a security"
 msgstr "Цена за 100 долларов США номинальной стоимости ценной бумаги"
 
-#: ../data/functions.xml.in.h:1207
+#: ../data/functions.xml.in.h:1208
 msgid "r:pricemat"
 msgstr "ценацб"
 
-#: ../data/functions.xml.in.h:1208
+#: ../data/functions.xml.in.h:1209
 msgid ""
 "Calculates and returns the price per $100 face value of a security. The "
 "security pays interest at maturity.&#10;&#10;Basis is the type of day "
@@ -8246,31 +8266,31 @@ msgstr ""
 "вы хотите использовать: 0: 30/360 для США, 1: реальные дни (по умолчанию), "
 "2: реальные дни/360, 3: реальные дни/365 или 4: 30/360 для Европы."
 
-#: ../data/functions.xml.in.h:1209
+#: ../data/functions.xml.in.h:1210
 msgid "Annual yield"
 msgstr "Годовая доходность"
 
-#: ../data/functions.xml.in.h:1210
+#: ../data/functions.xml.in.h:1211
 msgid "Level-Coupon Bond"
 msgstr "Облигация с уровневым купоном"
 
-#: ../data/functions.xml.in.h:1211
+#: ../data/functions.xml.in.h:1212
 msgid "r:level_coupon"
 msgstr "уровневый_купон"
 
-#: ../data/functions.xml.in.h:1212
+#: ../data/functions.xml.in.h:1213
 msgid "Calculates the value of a level-coupon bond."
 msgstr "Вычисляет стоимость облигации с уровневым купоном."
 
-#: ../data/functions.xml.in.h:1213
+#: ../data/functions.xml.in.h:1214
 msgid "Coupon rate"
 msgstr "Купонная ставка"
 
-#: ../data/functions.xml.in.h:1214
+#: ../data/functions.xml.in.h:1215
 msgid "Coupons per year"
 msgstr "Купонов в год"
 
-#: ../data/functions.xml.in.h:1215
+#: ../data/functions.xml.in.h:1216
 msgid "Market interest rate"
 msgstr "Рыночная процентная ставка"
 
@@ -10523,9 +10543,8 @@ msgid "Gray per Second"
 msgstr "грей в секунду"
 
 #: ../data/units.xml.in.h:532
-#, fuzzy
 msgid "Millirem per Hour"
-msgstr "миллибэр в час"
+msgstr "Миллибэр в час"
 
 #: ../data/units.xml.in.h:533
 msgid "Ratio"
