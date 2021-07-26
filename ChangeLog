@@ -1,3 +1,14 @@
+2021-07-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Stop parsing function after minimum number of arguments under the same conditions as after maximum number of arguments, when there are no more argument and parentheses are not used (e.g. log 64 / log 2 = log(64)/log(2))
+	* Stop parsing function that only takes one argument at argument separator, if parentheses are not used
+
+2021-07-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Change "assumptions" abbreviation to "asm"
+	* Set both type and sign if assumptions are set to "none" or zero, and set type to number for "complex"
+	* Convert Celcius to Farenheit if no calculation was performed
+
 2021-07-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix handling of OR and AND in multisolve()
