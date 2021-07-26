@@ -804,6 +804,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			return 0;
 		}
 		string sarg = vargs[1].symbol().substr(i, vargs[1].symbol().length() - i);
+		gsub(";", ",", sarg);
 		sarg.insert(0, CALCULATOR->getFunctionById(FUNCTION_ID_VECTOR)->referenceName());
 		MathStructure marg;
 		CALCULATOR->parse(&marg, sarg, eo.parse_options);
@@ -825,7 +826,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				mstruct.replace(marg[i], m);
 				if(sarg[0] == 'z') sarg[0] = 'a';
 				else sarg[0]++;
-				m.set(sarg, true);
+				m.set(sarg, false, true);
 			}
 		}
 		string expr = mstruct.print(CALCULATOR->save_printoptions);
