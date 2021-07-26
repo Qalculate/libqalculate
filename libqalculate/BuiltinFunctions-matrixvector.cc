@@ -635,11 +635,19 @@ int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const Mat
 	mstruct = vargs[0][0];
 	MathStructure m2(vargs[0][1]);
 	bool b_eval = false;
-	if(!mstruct.isVector() && !mstruct.representsScalar()) {mstruct.eval(eo); b_eval = true;}
-	if(!m2.isVector() && !m2.representsScalar()) {m2.eval(eo); b_eval = true;}
 	if(mstruct.representsScalar() || m2.representsScalar()) {
 		mstruct *= m2;
 		return 1;
+	}
+	if(!mstruct.isVector() || (!mstruct.isMatrix() && !mstruct.representsNonMatrix())) {
+		mstruct.eval(eo);
+		if(mstruct.representsScalar()) {mstruct *= m2; return 1;}
+		b_eval = true;
+	}
+	if(!m2.isVector() || (!m2.isMatrix() && !m2.representsNonMatrix())) {
+		m2.eval(eo);
+		if(m2.representsScalar()) {mstruct *= m2; return 1;}
+		b_eval = true;
 	}
 	if(mstruct.isVector() && m2.isVector()) {
 		if(mstruct.isMatrix()) {
@@ -671,7 +679,7 @@ int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const Mat
 						return 1;
 					}
 				}
-			} else if(mstruct.columns() == 1 && m2.representsNonMatrix()) {
+			} else if(mstruct.columns() == 1) {
 				for(size_t i = 0; i < mstruct.size(); i++) {
 					for(size_t i2 = 1; i2 < m2.size(); i2++) {
 						mstruct[i].addChild(mstruct[i][0]);
@@ -682,7 +690,7 @@ int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const Mat
 				}
 				return 1;
 			}
-		} else if(mstruct.representsNonMatrix()) {
+		} else {
 			if(m2.isMatrix() && m2.columns() == 1) {
 				mstruct.transform(STRUCT_VECTOR);
 				for(size_t i = 1; i < m2.size(); i++) {
@@ -694,7 +702,7 @@ int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const Mat
 					}
 				}
 				return 1;
-			} else if(mstruct.size() == m2.size() && m2.representsNonMatrix()) {
+			} else if(mstruct.size() == m2.size()) {
 				for(size_t i = 0; i < mstruct.size(); i++) {
 					mstruct[i] *= m2[i];
 				}
@@ -712,11 +720,19 @@ int EntrywiseDivisionFunction::calculate(MathStructure &mstruct, const MathStruc
 	mstruct = vargs[0];
 	MathStructure m2(vargs[1]);
 	bool b_eval = false;
-	if(!mstruct.isVector() && !mstruct.representsScalar()) {mstruct.eval(eo); b_eval = true;}
-	if(!m2.isVector() && !m2.representsScalar()) {m2.eval(eo); b_eval = true;}
-	if(m2.representsScalar()) {
+	if(mstruct.representsScalar() || m2.representsScalar()) {
 		mstruct /= m2;
 		return 1;
+	}
+	if(!mstruct.isVector() || (!mstruct.isMatrix() && !mstruct.representsNonMatrix())) {
+		mstruct.eval(eo);
+		if(mstruct.representsScalar()) {mstruct /= m2; return 1;}
+		b_eval = true;
+	}
+	if(!m2.isVector() || (!m2.isMatrix() && !m2.representsNonMatrix())) {
+		m2.eval(eo);
+		if(m2.representsScalar()) {mstruct /= m2; return 1;}
+		b_eval = true;
 	}
 	if(m2.isVector()) {
 		if(mstruct.representsScalar()) {
@@ -733,7 +749,7 @@ int EntrywiseDivisionFunction::calculate(MathStructure &mstruct, const MathStruc
 					}
 				}
 				return 1;
-			} else if(m2.representsNonMatrix()) {
+			} else {
 				mstruct.resizeVector(m2.size(), m);
 				for(size_t i = 0; i < m2.size(); i++) {
 					mstruct[i] /= m2[i];
@@ -771,7 +787,7 @@ int EntrywiseDivisionFunction::calculate(MathStructure &mstruct, const MathStruc
 							return 1;
 						}
 					}
-				} else if(mstruct.columns() == 1 && m2.representsNonMatrix()) {
+				} else if(mstruct.columns() == 1) {
 					for(size_t i = 0; i < mstruct.size(); i++) {
 						for(size_t i2 = 1; i2 < m2.size(); i2++) {
 							mstruct[i].addChild(mstruct[i][0]);
@@ -782,7 +798,7 @@ int EntrywiseDivisionFunction::calculate(MathStructure &mstruct, const MathStruc
 					}
 					return 1;
 				}
-			} else if(mstruct.representsNonMatrix()) {
+			} else {
 				if(m2.isMatrix() && m2.columns() == 1) {
 					mstruct.transform(STRUCT_VECTOR);
 					for(size_t i = 1; i < m2.size(); i++) {
@@ -794,7 +810,7 @@ int EntrywiseDivisionFunction::calculate(MathStructure &mstruct, const MathStruc
 						}
 					}
 					return 1;
-				} else if(mstruct.size() == m2.size() && m2.representsNonMatrix()) {
+				} else if(mstruct.size() == m2.size()) {
 					for(size_t i = 0; i < mstruct.size(); i++) {
 						mstruct[i] /= m2[i];
 					}
@@ -813,8 +829,14 @@ int EntrywisePowerFunction::calculate(MathStructure &mstruct, const MathStructur
 	mstruct = vargs[0];
 	MathStructure m2(vargs[1]);
 	bool b_eval = false;
-	if(!mstruct.isVector() && !mstruct.representsScalar()) {mstruct.eval(eo); b_eval = true;}
-	if(!m2.isVector() && !m2.representsScalar()) {m2.eval(eo); b_eval = true;}
+	if(!mstruct.representsScalar() && (!mstruct.isVector() || (!mstruct.isMatrix() && !mstruct.representsNonMatrix()))) {
+		mstruct.eval(eo);
+		b_eval = true;
+	}
+	if(!m2.representsScalar() && (!m2.isVector() || (!m2.isMatrix() && !m2.representsNonMatrix()))) {
+		m2.eval(eo);
+		b_eval = true;
+	}
 	if(m2.representsScalar()) {
 		if(mstruct.representsScalar()) {
 			mstruct ^= m2;
@@ -827,7 +849,7 @@ int EntrywisePowerFunction::calculate(MathStructure &mstruct, const MathStructur
 					}
 				}
 				return 1;
-			} else if(mstruct.representsNonMatrix()) {
+			} else {
 				for(size_t i = 0; i < mstruct.size(); i++) {
 					mstruct[i] ^= m2;
 				}
@@ -850,7 +872,7 @@ int EntrywisePowerFunction::calculate(MathStructure &mstruct, const MathStructur
 					}
 				}
 				return 1;
-			} else if(m2.representsNonMatrix()) {
+			} else {
 				mstruct.resizeVector(m2.size(), m);
 				for(size_t i = 0; i < m2.size(); i++) {
 					mstruct[i] ^= m2[i];
@@ -887,7 +909,7 @@ int EntrywisePowerFunction::calculate(MathStructure &mstruct, const MathStructur
 							return 1;
 						}
 					}
-				} else if(m2.representsNonMatrix() && mstruct.columns() == 1) {
+				} else if(mstruct.columns() == 1) {
 					for(size_t i = 0; i < mstruct.size(); i++) {
 						for(size_t i2 = 1; i2 < m2.size(); i2++) {
 							mstruct[i].addChild(mstruct[i][0]);
@@ -898,7 +920,7 @@ int EntrywisePowerFunction::calculate(MathStructure &mstruct, const MathStructur
 					}
 					return 1;
 				}
-			} else if(mstruct.representsNonMatrix()) {
+			} else {
 				if(m2.isMatrix() && m2.columns() == 1) {
 					mstruct.transform(STRUCT_VECTOR);
 					for(size_t i = 1; i < m2.size(); i++) {
@@ -910,7 +932,7 @@ int EntrywisePowerFunction::calculate(MathStructure &mstruct, const MathStructur
 						}
 					}
 					return 1;
-				} else if(mstruct.size() == m2.size() && m2.representsNonMatrix()) {
+				} else if(mstruct.size() == m2.size()) {
 					for(size_t i = 0; i < mstruct.size(); i++) {
 						mstruct[i] ^= m2[i];
 					}
@@ -968,7 +990,6 @@ int ProcessFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	return 1;
 
 }
-
 
 bool process_matrix_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, size_t rindex, size_t cindex);
 bool process_matrix_replace(MathStructure &mprocess, const MathStructure &mstruct, const MathStructure &vargs, size_t rindex, size_t cindex) {
