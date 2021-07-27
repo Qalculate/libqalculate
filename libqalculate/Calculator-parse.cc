@@ -615,6 +615,24 @@ void replace_internal_operators(string &str) {
 	gsub("\x19", DOT POWER, str);
 	gsub("\x1a", DOT "\'", str);
 	remove_blank_ends(str);
+	remove_duplicate_blanks(str);
+}
+const char *internal_operator_replacement(char c) {
+	switch(c) {
+		case '\a': return "xor";
+		case '\b': return SIGN_PLUSMINUS;
+		case '\x1c': return "∠";
+		case '\x1d': return "nand";
+		case '\x1e': return "nor";
+		case '\x1f': return "xor";
+		case '\x15': return "cross";
+		case '\x16': return DOT;
+		case '\x17': return DOT MULTIPLICATION;
+		case '\x18': return DOT DIVISION;
+		case '\x19': return DOT POWER;
+		case '\x1a': return DOT "\'";
+	}
+	return "";
 }
 
 bool has_boolean_variable(const MathStructure &m) {
@@ -752,7 +770,7 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
 				}
 			}
 			if(ui == string::npos) break;
-			if(!po.rpn && ui > 0 && ui < str.length() - 1 && is_not_number(str[ui - 1], base) && is_not_number(str[ui + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui - 1]) && (str[ui + 1] == POWER_CH || str[ui + 1] == MULTIPLICATION_CH || str[ui + 1] == DIVISION_CH || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui + 1]))) {
+			if(!po.rpn && ui > 0 && ui < str.length() - 1 && is_not_number(str[ui - 1], base) && is_not_number(str[ui + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui - 1]) && (str[ui + 1] == '\'' || str[ui + 1] == POWER_CH || str[ui + 1] == MULTIPLICATION_CH || str[ui + 1] == DIVISION_CH || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui + 1]))) {
 				ui = str.find(DOT, ui + 1);
 			} else {
 				str.replace(ui, strlen(DOT), DOT_STR);
@@ -870,7 +888,7 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 					}
 				}
 				if(ui == string::npos) break;
-				if(!po.rpn && ui > 0 && ui < str.length() - 1 && is_not_number(str[ui - 1], base) && is_not_number(str[ui + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui - 1]) && (str[ui + 1] == POWER_CH || str[ui + 1] == MULTIPLICATION_CH || str[ui + 1] == DIVISION_CH || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui + 1]))) {
+				if(!po.rpn && ui > 0 && ui < str.length() - 1 && is_not_number(str[ui - 1], base) && is_not_number(str[ui + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui - 1]) && (str[ui + 1] == '\'' || str[ui + 1] == POWER_CH || str[ui + 1] == MULTIPLICATION_CH || str[ui + 1] == DIVISION_CH || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui + 1]))) {
 					ui = str.find(DOT, ui + 1);
 				} else {
 					str.replace(ui, strlen(DOT), SPACE);
@@ -2065,14 +2083,14 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										} else if(c == POWER_CH) {
 											if(i5 < 2) i5 = 2;
 											b_power_before = true;
-										} else if(arg_i > 0 && !b_comma_before && !b_power_before && c == ' ' && (arg_i >= f->args() || arg_i >= f->minargs())) {
+										} else if(!b_comma_before && !b_power_before && c == ' ' && ((arg_i >= f->args() && f->args() >= 0) || arg_i >= f->minargs())) {
 											//if(i5 < 2) b_space_first = true;
 											if(i5 == 2) {
-												if(arg_i >= f->args()) b = true;
+												if(arg_i >= f->args() && f->args() >= 0) b = true;
 												else icand = i6 + 1;
 											}
-										} else if(arg_i > 0 && !b_comma_before && i5 == 2 && (arg_i >= f->args() || arg_i >= f->minargs()) && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH && (!b_power_before || (c != MINUS_CH && c != PLUS_CH))) {
-											if(arg_i >= f->args()) b = true;
+										} else if(!b_comma_before && i5 == 2 && ((arg_i >= f->args() && f->args() >= 0) || arg_i >= f->minargs()) && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH && (!b_power_before || (c != MINUS_CH && c != PLUS_CH))) {
+											if(arg_i >= f->args() && f->args() >= 0) b = true;
 											else icand = i6 + 1;
 										} else if(c == COMMA_CH) {
 											if(i5 == 2) {
@@ -2486,49 +2504,9 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			// ignore operators
 			error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
-		} else if(str[i] == '\a') {
+		} else if(str[i] == '\a' || (str[i] <= '\x1f' && str[i] >= '\x1c') || (str[i] <= '\x1a' && str[i] >= '\x15')) {
 			// ignore operators
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
-			str.erase(i, 1);
-		} else if(str[i] == '\x1d') {
-			// ignore operators
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), "nand", NULL);
-			str.erase(i, 1);
-		} else if(str[i] == '\x1e') {
-			// ignore operators
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), "nor", NULL);
-			str.erase(i, 1);
-		} else if(str[i] == '\x1f') {
-			// ignore operators
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
-			str.erase(i, 1);
-		} else if(str[i] == '\x15') {
-			// ignore operators
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), "cross", NULL);
-			str.erase(i, 1);
-		} else if(str[i] == '\x16') {
-			// ignore operators
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT, NULL);
-			str.erase(i, 1);
-		} else if(str[i] == '\x17') {
-			// ignore operators
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT MULTIPLICATION, NULL);
-			str.erase(i, 1);
-		} else if(str[i] == '\x18') {
-			// ignore operators
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT DIVISION, NULL);
-			str.erase(i, 1);
-		} else if(str[i] == '\x19') {
-			// ignore operators
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT POWER, NULL);
-			str.erase(i, 1);
-		} else if(str[i] == '\x1a') {
-			// ignore operators
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT "\'", NULL);
-			str.erase(i, 1);
-		} else if(str[i] == '\x1c') {
-			// ignore operators
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), "∠", NULL);
+			error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]), NULL);
 			str.erase(i, 1);
 		} else if(str[i] == '\b') {
 			// +/-
@@ -4207,16 +4185,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		} else if(str[i] == BITWISE_NOT_CH || str[i] == LOGICAL_NOT_CH) {
 			break;
 		} else if(is_in(OPERATORS INTERNAL_OPERATORS_TWO, str[i]) && str[i] != '\x19' && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
-			if(str[i] == '\a') error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
-			else if(str[i] == '\b') error(false, _("Misplaced operator(s) \"%s\" ignored"), SIGN_PLUSMINUS, NULL);
-			else if(str[i] == '\x1c') error(false, _("Misplaced operator(s) \"%s\" ignored"), "∠", NULL);
-			else if(str[i] == '\x1d') error(false, _("Misplaced operator(s) \"%s\" ignored"), "nand", NULL);
-			else if(str[i] == '\x1e') error(false, _("Misplaced operator(s) \"%s\" ignored"), "nor", NULL);
-			else if(str[i] == '\x1f') error(false, _("Misplaced operator(s) \"%s\" ignored"), "xor", NULL);
-			else if(str[i] == '\x15') error(false, _("Misplaced operator(s) \"%s\" ignored"), "cross", NULL);
-			else if(str[i] == '\x16') error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT, NULL);
-			else if(str[i] == '\x17') error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT MULTIPLICATION, NULL);
-			else if(str[i] == '\x18') error(false, _("Misplaced operator(s) \"%s\" ignored"), DOT DIVISION, NULL);
+			if(str[i] < ' ') error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]), NULL);
 			else error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
 		} else {
