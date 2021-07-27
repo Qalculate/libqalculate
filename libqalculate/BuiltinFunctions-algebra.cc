@@ -736,10 +736,10 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 				msolve.transform(STRUCT_LOGICAL_OR);
 				for(size_t i4 = 1; i4 < mstruct[index].size(); i4++) msolve.addChild(msolve[0]);
 				for(size_t i4 = 0; i4 < mstruct[index].size(); i4++) {
-					msolve[i4].replace(vargs[1][index], mstruct[index][i4]);
+					msolve[i4].replace(vargs[1][i2], mstruct[index][i4]);
 				}
 			} else {
-				msolve.replace(vargs[1][index], mstruct[index]);
+				msolve.replace(vargs[1][i2], mstruct[index]);
 			}
 		}
 		msolve.eval(eo2);
@@ -831,7 +831,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 			for(size_t i3 = 0; i3 <= i; i3++) {
 				if(i2 != i3) {
 					size_t index1 = eorder[i2];
-					size_t index2 = eorder[i3];
+					size_t index2 = i3;
 					if(mstruct[index2].isVector()) {
 						MathStructure m;
 						m.clearVector();
@@ -862,7 +862,8 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 					}
 				}
 				for(size_t i3 = i2 + 1; i3 < mstruct[i].size();) {
-					if(mstruct[i][i2].compare(mstruct[i][i3]) == COMPARISON_RESULT_EQUAL) {
+					ComparisonResult cr = mstruct[i][i2].compare(mstruct[i][i3]);
+					if(cr == COMPARISON_RESULT_EQUAL || cr == COMPARISON_RESULT_EQUAL_LIMITS) {
 						mstruct[i].delChild(i3 + 1);
 					} else {
 						i3++;

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-20 15:05+0700\n"
+"POT-Creation-Date: 2021-07-26 10:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -322,7 +322,7 @@ msgstr ""
 #: ../libqalculate/Calculator-calculate.cc:1003
 #: ../libqalculate/Calculator.cc:254 ../libqalculate/Calculator.cc:484
 #: ../libqalculate/Calculator.cc:619 ../libqalculate/DataSet.cc:1102
-#: ../libqalculate/DataSet.cc:1164 ../libqalculate/MathStructure-print.cc:3653
+#: ../libqalculate/DataSet.cc:1164 ../libqalculate/MathStructure-print.cc:3665
 #: ../libqalculate/Function.cc:2302 ../libqalculate/Function.cc:2318
 msgid "or"
 msgstr ""
@@ -1148,8 +1148,8 @@ msgstr ""
 msgid "Ethiopian:"
 msgstr ""
 
-#: ../src/qalc.cc:1736 ../libqalculate/BuiltinFunctions-matrixvector.cc:1068
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1098
+#: ../src/qalc.cc:1736 ../libqalculate/BuiltinFunctions-matrixvector.cc:1089
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1119
 msgid "No matching item found."
 msgstr ""
 
@@ -2570,7 +2570,7 @@ msgstr ""
 #: ../libqalculate/BuiltinFunctions-algebra.cc:823
 #: ../libqalculate/BuiltinFunctions-algebra.cc:827
 #: ../libqalculate/BuiltinFunctions-algebra.cc:860
-#: ../libqalculate/BuiltinFunctions-algebra.cc:883
+#: ../libqalculate/BuiltinFunctions-algebra.cc:884
 #, c-format
 msgid "Unable to isolate %s."
 msgstr ""
@@ -2580,14 +2580,14 @@ msgstr ""
 msgid "Inequalities are not allowed in %s()."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-algebra.cc:1204
-#: ../libqalculate/BuiltinFunctions-algebra.cc:1209
+#: ../libqalculate/BuiltinFunctions-algebra.cc:1205
+#: ../libqalculate/BuiltinFunctions-algebra.cc:1210
 msgid "No differential equation found."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-algebra.cc:1213
-#: ../libqalculate/BuiltinFunctions-algebra.cc:1242
-#: ../libqalculate/BuiltinFunctions-algebra.cc:1248
+#: ../libqalculate/BuiltinFunctions-algebra.cc:1214
+#: ../libqalculate/BuiltinFunctions-algebra.cc:1243
+#: ../libqalculate/BuiltinFunctions-algebra.cc:1249
 msgid "Unable to solve differential equation."
 msgstr ""
 
@@ -2672,14 +2672,14 @@ msgstr ""
 msgid "%s() requires that all matrices/vectors have the same dimensions."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1040
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1061
 msgid ""
 "The number of requested elements in generate vector function must be a "
 "positive integer."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1063
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1080
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1084
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1101
 msgid "Comparison failed."
 msgstr ""
 
@@ -2762,57 +2762,57 @@ msgstr ""
 msgid "Invalid function name (%s)."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:857
+#: ../libqalculate/BuiltinFunctions-util.cc:858
 msgid ""
 "A global function was deactivated. It will be restored after the new "
 "function has been removed."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:868
+#: ../libqalculate/BuiltinFunctions-util.cc:869
 #, c-format
 msgid "Invalid variable name (%s)."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:887
+#: ../libqalculate/BuiltinFunctions-util.cc:888
 msgid ""
 "A global unit or variable was deactivated. It will be restored after the new "
 "variable has been removed."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:902
+#: ../libqalculate/BuiltinFunctions-util.cc:903
 #, c-format
 msgid "Register %s does not exist. Returning zero."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:950
-#: ../libqalculate/BuiltinFunctions-util.cc:961
+#: ../libqalculate/BuiltinFunctions-util.cc:951
+#: ../libqalculate/BuiltinFunctions-util.cc:962
 #, c-format
 msgid "Failed to run external command (%s)."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1027
-#: ../libqalculate/BuiltinFunctions-util.cc:1041
+#: ../libqalculate/BuiltinFunctions-util.cc:1028
+#: ../libqalculate/BuiltinFunctions-util.cc:1042
 msgid "Matrix"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1052
-#: ../libqalculate/BuiltinFunctions-util.cc:1102
+#: ../libqalculate/BuiltinFunctions-util.cc:1053
+#: ../libqalculate/BuiltinFunctions-util.cc:1103
 msgid "Vector"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1067
-#: ../libqalculate/BuiltinFunctions-util.cc:1113
+#: ../libqalculate/BuiltinFunctions-util.cc:1068
+#: ../libqalculate/BuiltinFunctions-util.cc:1114
 #: ../libqalculate/Calculator-plot.cc:143
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1069
-#: ../libqalculate/BuiltinFunctions-util.cc:1115
+#: ../libqalculate/BuiltinFunctions-util.cc:1070
+#: ../libqalculate/BuiltinFunctions-util.cc:1116
 msgid "Sampling rate must be a positive integer."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1078
-#: ../libqalculate/BuiltinFunctions-util.cc:1124
+#: ../libqalculate/BuiltinFunctions-util.cc:1079
+#: ../libqalculate/BuiltinFunctions-util.cc:1125
 #: ../libqalculate/Calculator-plot.cc:113
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr ""
@@ -2827,7 +2827,7 @@ msgstr ""
 #: ../libqalculate/Calculator-calculate.cc:1055
 #: ../libqalculate/Calculator.cc:248 ../libqalculate/Calculator.cc:479
 #: ../libqalculate/Calculator.cc:620
-#: ../libqalculate/MathStructure-print.cc:3632 ../libqalculate/Function.cc:1356
+#: ../libqalculate/MathStructure-print.cc:3644 ../libqalculate/Function.cc:1356
 #: ../libqalculate/Function.cc:1364 ../libqalculate/Function.cc:1797
 #: ../libqalculate/Function.cc:1959 ../libqalculate/Function.cc:1967
 msgid "and"
@@ -2970,104 +2970,85 @@ msgid "Failed to download exchange rates from %s: %s."
 msgstr ""
 
 #. ignore operators
-#: ../libqalculate/Calculator-parse.cc:2438
-#: ../libqalculate/Calculator-parse.cc:2491
-#: ../libqalculate/Calculator-parse.cc:2495
-#: ../libqalculate/Calculator-parse.cc:2499
-#: ../libqalculate/Calculator-parse.cc:2503
-#: ../libqalculate/Calculator-parse.cc:2507
-#: ../libqalculate/Calculator-parse.cc:2511
-#: ../libqalculate/Calculator-parse.cc:2515
-#: ../libqalculate/Calculator-parse.cc:2519
-#: ../libqalculate/Calculator-parse.cc:2523
-#: ../libqalculate/Calculator-parse.cc:2527
-#: ../libqalculate/Calculator-parse.cc:2531
-#: ../libqalculate/Calculator-parse.cc:3990
-#: ../libqalculate/Calculator-parse.cc:3999
-#: ../libqalculate/Calculator-parse.cc:4073
+#: ../libqalculate/Calculator-parse.cc:2456
+#: ../libqalculate/Calculator-parse.cc:2509
+#: ../libqalculate/Calculator-parse.cc:3968
+#: ../libqalculate/Calculator-parse.cc:3977
+#: ../libqalculate/Calculator-parse.cc:4051
+#: ../libqalculate/Calculator-parse.cc:4166
 #: ../libqalculate/Calculator-parse.cc:4188
-#: ../libqalculate/Calculator-parse.cc:4210
-#: ../libqalculate/Calculator-parse.cc:4211
-#: ../libqalculate/Calculator-parse.cc:4212
-#: ../libqalculate/Calculator-parse.cc:4213
-#: ../libqalculate/Calculator-parse.cc:4214
-#: ../libqalculate/Calculator-parse.cc:4215
-#: ../libqalculate/Calculator-parse.cc:4216
-#: ../libqalculate/Calculator-parse.cc:4217
-#: ../libqalculate/Calculator-parse.cc:4218
-#: ../libqalculate/Calculator-parse.cc:4219
 #, c-format
 msgid "Misplaced operator(s) \"%s\" ignored"
 msgstr ""
 
 #. ignore operators
-#: ../libqalculate/Calculator-parse.cc:2487
-#: ../libqalculate/Calculator-parse.cc:4220
+#: ../libqalculate/Calculator-parse.cc:2505
+#: ../libqalculate/Calculator-parse.cc:4189
 #, c-format
 msgid "Misplaced '%c' ignored"
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:2565 ../libqalculate/Function.cc:1514
+#: ../libqalculate/Calculator-parse.cc:2543 ../libqalculate/Function.cc:1514
 #: ../libqalculate/Function.cc:1545
 #, c-format
 msgid "Internal id %s does not exist."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:2586
+#: ../libqalculate/Calculator-parse.cc:2564
 #, c-format
 msgid "\"%s\" is not a valid variable/function/unit."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:2604
+#: ../libqalculate/Calculator-parse.cc:2582
 #, c-format
 msgid ""
 "Trailing characters \"%s\" (not a valid variable/function/unit) in number "
 "\"%s\" were ignored."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:2696
-#: ../libqalculate/Calculator-parse.cc:2712
+#: ../libqalculate/Calculator-parse.cc:2674
+#: ../libqalculate/Calculator-parse.cc:2690
 #: ../libqalculate/MathStructure-calculate.cc:1775
 msgid ""
 "Please use the cross(), dot(), and hadamard() functions for vector "
 "multiplication."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:2795
+#: ../libqalculate/Calculator-parse.cc:2773
 msgid "Empty expression in parentheses interpreted as zero."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:2886
+#: ../libqalculate/Calculator-parse.cc:2864
 msgid "RPN syntax error. Values left at the end of the RPN expression."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:2889
-#: ../libqalculate/Calculator-parse.cc:2980
+#: ../libqalculate/Calculator-parse.cc:2867
+#: ../libqalculate/Calculator-parse.cc:2958
 msgid "Unused stack values."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:3039
-#: ../libqalculate/Calculator-parse.cc:3264
+#: ../libqalculate/Calculator-parse.cc:3017
+#: ../libqalculate/Calculator-parse.cc:3242
 #, c-format
 msgid "RPN syntax error. Operator '%c' not supported."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:3085
+#: ../libqalculate/Calculator-parse.cc:3063
 msgid "RPN syntax error. Stack is empty."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:3106
+#: ../libqalculate/Calculator-parse.cc:3084
 msgid "RPN syntax error. Operator ignored as there was only one stack value."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:4024
-#: ../libqalculate/Calculator-parse.cc:4100
+#: ../libqalculate/Calculator-parse.cc:4002
+#: ../libqalculate/Calculator-parse.cc:4078
 msgid ""
 "The expression is ambiguous (be careful when combining implicit "
 "multiplication and division)."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:4416
+#: ../libqalculate/Calculator-parse.cc:4385
 #, c-format
 msgid "%s interpreted as 10^%s (1%s)"
 msgstr ""
@@ -3289,7 +3270,7 @@ msgid ""
 "number of data points"
 msgstr ""
 
-#: ../libqalculate/MathStructure-print.cc:3872
+#: ../libqalculate/MathStructure-print.cc:3884
 msgid "undefined"
 msgstr ""
 
