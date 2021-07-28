@@ -6,8 +6,8 @@ math packages, as well as useful tools for everyday needs (such as currency
 conversion and percent calculation). Features include a large library of
 customizable functions, unit calculations and conversion, symbolic calculations
 (including integrals and equations), arbitrary precision, uncertainty
-propagation, interval arithmetic, plotting, and a user-friendly interface (GTK+
-and CLI).
+propagation, interval arithmetic, plotting, and a user-friendly interface (GTK+,
+Qt, and CLI).
 
 1. Requirements
 
@@ -63,8 +63,9 @@ A man page is also available (shown using the command "man qalc", or online at h
 
 5. Other Applications
 
-The main user interface for libqalculate is qalculate-gtk
-(https://github.com/Qalculate/qalculate-gtk).
+The main user interfaces for libqalculate are
+qalculate-gtk (https://github.com/Qalculate/qalculate-gtk) and
+qalculate-qt (https://github.com/Qalculate/qalculate-qt).
 
 Other software using libqalculate include
 * KDE Plasma Workspace (https://www.kde.org/workspaces/plasmadesktop/)

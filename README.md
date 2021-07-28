@@ -3,7 +3,7 @@ Qalculate! library and CLI
 
 ![Image of qalc](http://qalculate.github.io/images/qalc.png)
 
-Qalculate! is a multi-purpose cross-platform desktop calculator. It is simple to use but provides power and versatility normally reserved for complicated math packages, as well as useful tools for everyday needs (such as currency conversion and percent calculation). Features include a large library of customizable functions, unit calculations and conversion, symbolic calculations (including integrals and equations), arbitrary precision, uncertainty propagation, interval arithmetic, plotting, and a user-friendly interface (GTK+ and CLI).
+Qalculate! is a multi-purpose cross-platform desktop calculator. It is simple to use but provides power and versatility normally reserved for complicated math packages, as well as useful tools for everyday needs (such as currency conversion and percent calculation). Features include a large library of customizable functions, unit calculations and conversion, symbolic calculations (including integrals and equations), arbitrary precision, uncertainty propagation, interval arithmetic, plotting, and a user-friendly interface (GTK+, Qt, and CLI).
 
 ## Requirements
 * GMP and MPFR
@@ -43,7 +43,9 @@ If you run `qalc` without any mathematical expression the program will start in 
 A man page is also available (shown using the command `man qalc`, or online at https://qalculate.github.io/manual/qalc.html).
 
 ## Other Applications
-The main user interface for libqalculate is qalculate-gtk (https://github.com/Qalculate/qalculate-gtk).
+The main user interfaces for libqalculate are
+qalculate-gtk (https://github.com/Qalculate/qalculate-gtk) and
+qalculate-qt (https://github.com/Qalculate/qalculate-qt).
 
 Other software using libqalculate include
 * KDE Plasma Workspace (https://www.kde.org/workspaces/plasmadesktop/)
