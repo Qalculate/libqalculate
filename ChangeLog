@@ -7,7 +7,7 @@
 
 	* Change "assumptions" abbreviation to "asm"
 	* Set both type and sign if assumptions are set to "none" or zero, and set type to number for "complex"
-	* Convert Celcius to Farenheit if no calculation was performed
+	* Convert Celsius to Fahrenheit if no calculation was performed
 
 2021-07-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -15,7 +15,7 @@
 
 2021-07-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Fix segfault after failure to convert approximate unit (cal_fifteen and cal_th)
+	* Fix segfault after failure to convert approximate unit (e.g. cal_fifteen)
 
 2021-07-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
