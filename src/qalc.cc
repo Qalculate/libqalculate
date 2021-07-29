@@ -5496,15 +5496,16 @@ bool ask_tc() {
 	puts("");
 	FPUTS_UNICODE(_("Temperature calculation mode"), stdout);
 	tc_set = true;
+	bool b_ret = false;
 	while(true) {
 #ifdef HAVE_LIBREADLINE
 		char *rlbuffer = readline(": ");
-		if(!rlbuffer) return false;
+		if(!rlbuffer) {b_ret = false; break;}
 		string svalue = rlbuffer;
 		free(rlbuffer);
 #else
 		fputs(": ", stdout);
-		if(!fgets(buffer, 1000, stdin)) return false;
+		if(!fgets(buffer, 1000, stdin)) {b_ret = false; break;}
 		string svalue = buffer;
 #endif
 		remove_blank_ends(svalue);
@@ -5518,14 +5519,16 @@ bool ask_tc() {
 		if(v >= 0 && v <= 2) {
 			if(v != CALCULATOR->getTemperatureCalculationMode()) {
 				CALCULATOR->setTemperatureCalculationMode((TemperatureCalculationMode) v);
-				return true;
+				b_ret = true;
+				break;
 			}
 			break;
 		} else {
 			FPUTS_UNICODE(_("Temperature calculation mode"), stdout);
 		}
 	}
-	return false;
+	if(!interactive_mode) save_preferences(false);
+	return b_ret;
 }
 
 bool test_ask_dot(const string &str) {
@@ -5566,15 +5569,16 @@ bool ask_dot() {
 	puts("");
 	FPUTS_UNICODE(_("Dot interpretation"), stdout);
 	dot_question_asked = true;
+	bool b_ret = false;
 	while(true) {
 #ifdef HAVE_LIBREADLINE
 		char *rlbuffer = readline(": ");
-		if(!rlbuffer) return false;
+		if(!rlbuffer) {b_ret = false; break;}
 		string svalue = rlbuffer;
 		free(rlbuffer);
 #else
 		fputs(": ", stdout);
-		if(!fgets(buffer, 1000, stdin)) return false;
+		if(!fgets(buffer, 1000, stdin)) {b_ret = false; break;}
 		string svalue = buffer;
 #endif
 		remove_blank_ends(svalue);
@@ -5590,18 +5594,22 @@ bool ask_dot() {
 			evalops.parse_options.comma_as_separator = false;
 			b_decimal_comma = false;
 			CALCULATOR->useDecimalPoint(false);
-			return true;
+			b_ret = true;
+			break;
 		} else if(v == 1) {
 			evalops.parse_options.dot_as_separator = true;
-			return !das;
+			b_ret = !das;
+			break;
 		} else if(v == 0) {
 			evalops.parse_options.dot_as_separator = false;
-			return das;
+			b_ret = das;
+			break;
 		} else {
 			FPUTS_UNICODE(_("Dot interpretation"), stdout);
 		}
 	}
-	return false;
+	if(!interactive_mode) save_preferences(false);
+	return b_ret;
 }
 
 
@@ -5638,7 +5646,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		string to_str = CALCULATOR->parseComments(str, evalops.parse_options);
 		if(!to_str.empty() && str.empty()) return;
 		string from_str = str;
-		if(test_ask_dot(from_str)) ask_dot();
+		if(ask_questions && test_ask_dot(from_str)) ask_dot();
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
 			had_to_expression = true;
 			remove_duplicate_blanks(to_str);
@@ -6905,8 +6913,8 @@ bool save_preferences(bool mode) {
 	fprintf(file, "rpn_syntax=%i\n", saved_evalops.parse_options.parsing_mode == PARSING_MODE_RPN);
 	fprintf(file, "limit_implicit_multiplication=%i\n", saved_evalops.parse_options.limit_implicit_multiplication);
 	fprintf(file, "parsing_mode=%i\n", saved_parsing_mode);
-	fprintf(file, "default_assumption_type=%i\n", CALCULATOR->defaultAssumptions()->type());
-	if(CALCULATOR->defaultAssumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) fprintf(file, "default_assumption_sign=%i\n", CALCULATOR->defaultAssumptions()->sign());
+	fprintf(file, "default_assumption_type=%i\n", saved_assumption_type);
+	if(saved_assumption_type != ASSUMPTION_TYPE_BOOLEAN) fprintf(file, "default_assumption_sign=%i\n", saved_assumption_sign);
 
 	fclose(file);
 	return true;
