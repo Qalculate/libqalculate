@@ -1,3 +1,8 @@
+2021-07-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Save answer to dot and temperature questions in non-interactive mode and do not show the questions in non-interactive terse mode
+	* Fix saving of sub functions with default values
+
 2021-07-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Stop parsing function after minimum number of arguments under the same conditions as after maximum number of arguments, when there are no more argument and parentheses are not used (e.g. log 64 / log 2 = log(64)/log(2))

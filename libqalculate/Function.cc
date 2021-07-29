@@ -64,6 +64,7 @@ using std::endl;
 class MathFunction_p {
 	public:
 		unordered_map<size_t, Argument*> argdefs;
+		std::vector<std::string> v_subs_calc;
 };
 
 MathFunction::MathFunction(string name_, int argc_, int max_argc_, string cat_, string title_, string descr_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
@@ -779,13 +780,18 @@ ExpressionItem *UserFunction::copy() const {
 void UserFunction::set(const ExpressionItem *item) {
 	if(item->type() == TYPE_FUNCTION && item->subtype() == SUBTYPE_USER_FUNCTION) {
 		sformula = ((UserFunction*) item)->formula();
-		sformula_calc = ((UserFunction*) item)->internalFormula();
 		v_subs.clear();
 		v_precalculate.clear();
 		for(size_t i = 1; i <= ((UserFunction*) item)->countSubfunctions(); i++) {
 			v_subs.push_back(((UserFunction*) item)->getSubfunction(i));
 			v_precalculate.push_back(((UserFunction*) item)->subfunctionPrecalculated(i));
 		}
+		if(!v_subs.empty()) {
+			bool b = hasChanged();
+			setFormula(sformula);
+			setChanged(b);
+		}
+		sformula_calc = ((UserFunction*) item)->internalFormula();
 	}
 	MathFunction::set(item);
 }
@@ -903,7 +909,13 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(i_args < 0) {
 			i_args = minargs();
 		}
-
+		if(priv->v_subs_calc.size() != v_subs.size()) {
+			size_t i = priv->v_subs_calc.size();
+			if(priv->v_subs_calc.size() > v_subs.size()) {i = 0; priv->v_subs_calc.clear();}
+			for(; i < v_subs.size(); i++) {
+				priv->v_subs_calc.push_back(v_subs[i]);
+			}
+		}
 		for(int i = 0; i < i_args; i++) {
 			MathStructure *mv = new MathStructure(vargs[i]);
 			Argument *arg = getArgumentDefinition(i + 1);
@@ -925,10 +937,10 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						pos += svar.length();
 						count++;
 					}
-					for(size_t i2 = 0; i2 < v_subs.size(); i2++) {
+					for(size_t i2 = 0; i2 < priv->v_subs_calc.size(); i2++) {
 						pos = 0;
 						size_t c2 = 0;
-						while((pos = v_subs[i2].find(svar, pos)) != string::npos) {
+						while((pos = priv->v_subs_calc[i2].find(svar, pos)) != string::npos) {
 							pos += svar.length();
 							c2++;
 						}
@@ -968,9 +980,9 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 		}
 
-		for(size_t i = 0; i < v_subs.size(); i++) {
+		for(size_t i = 0; i < priv->v_subs_calc.size(); i++) {
 			if(subfunctionPrecalculated(i + 1)) {
-				string str = v_subs[i];
+				string str = priv->v_subs_calc[i];
 				for(int i3 = 0; i3 < i_args; i3++) {
 					svar = '\\';
 					if('x' + i3 > 'z') {
@@ -1047,7 +1059,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						if(i2 != 0 && stmp[i2 - 1] == '\\') {
 							i2 += svar.size();
 						} else {
-							stmp.replace(i2, svar.size(), string("(") + v_subs[i] + ")");
+							stmp.replace(i2, svar.size(), string("(") + priv->v_subs_calc[i] + ")");
 						}
 					} else {
 						break;
@@ -1125,11 +1137,15 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 	setChanged(true);
 	sformula = new_formula;
 	default_values.clear();
+	priv->v_subs_calc.clear();
 	if(sformula.empty() && v_subs.empty()) {
 		sformula_calc = new_formula;
 		argc = 0;
 		max_argc = 0;
 		return;
+	}
+	for(size_t sub_i = 0; sub_i < v_subs.size(); sub_i++) {
+		priv->v_subs_calc.push_back(v_subs[sub_i]);
 	}
 	if(argc_ < 0) {
 		argc_ = 0, max_argc_ = 0;
@@ -1177,13 +1193,13 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 						new_formula.replace(i2, 2, svar);
 					}
 				}
-				for(size_t sub_i = 0; sub_i < v_subs.size(); sub_i++) {
+				for(size_t sub_i = 0; sub_i < priv->v_subs_calc.size(); sub_i++) {
 					i2 = 0;
-					while((i2 = v_subs[sub_i].find(svar_o, i2 + 1)) != string::npos) {
-						if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
+					while((i2 = priv->v_subs_calc[sub_i].find(svar_o, i2 + 1)) != string::npos) {
+						if(i2 > 0 && priv->v_subs_calc[sub_i][i2 - 1] == '\\') {
 							i2++;
 						} else {
-							v_subs[sub_i].replace(i2, 2, svar);
+							priv->v_subs_calc[sub_i].replace(i2, 2, svar);
 						}
 					}
 				}
@@ -1195,17 +1211,17 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 				}
 			} else {
 				b = false;
-				for(size_t sub_i = 0; sub_i < v_subs.size(); sub_i++) {
+				for(size_t sub_i = 0; sub_i < priv->v_subs_calc.size(); sub_i++) {
 					before_find_in_vsubs_set_formula:
-					if(i < 24 && (i2 = v_subs[sub_i].find(svar_o, i4)) != string::npos) {
-						if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
+					if(i < 24 && (i2 = priv->v_subs_calc[sub_i].find(svar_o, i4)) != string::npos) {
+						if(i2 > 0 && priv->v_subs_calc[sub_i][i2 - 1] == '\\') {
 							i4 = i2 + 2;
 							goto before_find_in_vsubs_set_formula;
 						}
 						i3 = 0;
-						if(v_subs[sub_i].length() > i2 + 2 && v_subs[sub_i][i2 + 2] == ID_WRAP_LEFT_CH) {
-							if((i3 = v_subs[sub_i].find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
-								svar_v = v_subs[sub_i].substr(i2 + 3, i3 - (i2 + 3));
+						if(priv->v_subs_calc[sub_i].length() > i2 + 2 && priv->v_subs_calc[sub_i][i2 + 2] == ID_WRAP_LEFT_CH) {
+							if((i3 = priv->v_subs_calc[sub_i].find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
+								svar_v = priv->v_subs_calc[sub_i].substr(i2 + 3, i3 - (i2 + 3));
 								i3 -= i2 + 1;
 							} else i3 = 0;
 						}
@@ -1214,18 +1230,18 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 						} else {
 							default_values.push_back("0");
 						}
-						v_subs[sub_i].replace(i2, 2 + i3, svar);
-						while((i2 = v_subs[sub_i].find(svar_o, i2 + 1)) != string::npos) {
-							if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
+						priv->v_subs_calc[sub_i].replace(i2, 2 + i3, svar);
+						while((i2 = priv->v_subs_calc[sub_i].find(svar_o, i2 + 1)) != string::npos) {
+							if(i2 > 0 && priv->v_subs_calc[sub_i][i2 - 1] == '\\') {
 								i2++;
 							} else {
-								v_subs[sub_i].replace(i2, 2, svar);
+								priv->v_subs_calc[sub_i].replace(i2, 2, svar);
 							}
 						}
 						optionals = true;
 						b = true;
-					} else if((i2 = v_subs[sub_i].find(svar, i5)) != string::npos) {
-						if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
+					} else if((i2 = priv->v_subs_calc[sub_i].find(svar, i5)) != string::npos) {
+						if(i2 > 0 && priv->v_subs_calc[sub_i][i2 - 1] == '\\') {
 							i5 = i2 + 2;
 							goto before_find_in_vsubs_set_formula;
 						}
@@ -1288,6 +1304,7 @@ void UserFunction::delSubfunction(size_t index) {
 	if(index > 0 && index <= v_subs.size()) {
 		setChanged(true);
 		v_subs.erase(v_subs.begin() + (index - 1));
+		if(index <= priv->v_subs_calc.size()) priv->v_subs_calc.erase(priv->v_subs_calc.begin() + (index - 1));
 	}
 	if(index > 0 && index <= v_precalculate.size()) {
 		setChanged(true);
@@ -1297,6 +1314,7 @@ void UserFunction::delSubfunction(size_t index) {
 void UserFunction::clearSubfunctions() {
 	setChanged(true);
 	v_subs.clear();
+	priv->v_subs_calc.clear();
 	v_precalculate.clear();
 }
 void UserFunction::setSubfunctionPrecalculated(size_t index, bool precalculate) {
