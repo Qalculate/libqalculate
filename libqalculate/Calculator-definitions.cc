@@ -360,6 +360,9 @@ bool Calculator::loadLocalDefinitions() {
 			if(ename.reference) { \
 				if(names_i == string::npos) {ename.name = default_names.substr(i3, default_names.length() - i3);} \
 				else {ename.name = default_names.substr(i3, names_i - i3);} \
+				if(!case_set) { \
+					ename.case_sensitive = ename.abbreviation || text_length_is_one(ename.name); \
+				} \
 				remove_blank_ends(ename.name); \
 				size_t i4 = x->hasName(ename.name, ename.case_sensitive); \
 				if(i4 > 0) { \
