@@ -2776,7 +2776,7 @@ msgstr "григорианский"
 
 #: ../libqalculate/BuiltinFunctions-datetime.cc:35
 msgid "milankovic"
-msgstr "циклы Миланковича"
+msgstr "миланковича"
 
 #: ../libqalculate/BuiltinFunctions-datetime.cc:36
 msgid "julian"
