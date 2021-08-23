@@ -559,7 +559,7 @@ Mathematical entities:
 .PP
 .B Numbers
 .br
-These are the regular numbers composed by digits 0-9 and a decimal sign — a dot, or a comma if it is the default decimal point in the locale/language used. If comma is used as decimal sign, the dot is still kept as an alternative decimal sign, if not explicitely deactivated. Numbers include integers, real numbers, and complex numbers. The imaginary part of complex numbers are written with as regular number followed by the special variable "i" (can be changed to a "j"), which represents the square root of -1. Spaces between digits are ignored ("5  5 = 55"). "E" (or "e") can be considered as a shortcut for writing many zeroes and is equivalent to multiplication by 10 raised to the power of the right-hand value (e.g. "5E3 = 5000"). Sexagesimal numbers (and time) can be entered directly using colons (e.g. "5:30 = 5.5"). A number immediately preceeded "0b", "0o", "0d" or "0x" are interpreted as a number with base 2, 8, 12 or 16, respectively (e.g. "0x3f = 63").
+These are the regular numbers composed by digits 0-9 and a decimal sign — a dot, or a comma if it is the default decimal point in the locale/language used. If comma is used as decimal sign, the dot is still kept as an alternative decimal sign, if not explicitly deactivated. Numbers include integers, real numbers, and complex numbers. The imaginary part of complex numbers are written with as regular number followed by the special variable "i" (can be changed to a "j"), which represents the square root of -1. Spaces between digits are ignored ("5  5 = 55"). "E" (or "e") can be considered as a shortcut for writing many zeroes and is equivalent to multiplication by 10 raised to the power of the right-hand value (e.g. "5E3 = 5000"). Sexagesimal numbers (and time) can be entered directly using colons (e.g. "5:30 = 5.5"). A number immediately preceded "0b", "0o", "0d" or "0x" are interpreted as a number with base 2, 8, 12 or 16, respectively (e.g. "0x3f = 63").
 .PP
 .B Intervals
 .br
@@ -588,7 +588,7 @@ Unknowns are text strings without any associated value. These are temporary unkn
 .PP
 .B Date and Time
 .br
-Date/time values are specified using quoted text string (quotation marks are not needed for function arguments), using standard date and time format (YYYY-MM-DDTHH:MM:SS). Some local formats are also supported, but not recommended. The local time zone are used, unless a time zone is specified at the end of the time string (Z/UTC/GMT or +/-HH:MM). Date/time supports a small subset of arithmetic operations. The time units represents calender time, instead of average values, when added or subtracted to a date.
+Date/time values are specified using quoted text string (quotation marks are not needed for function arguments), using standard date and time format (YYYY-MM-DDTHH:MM:SS). Some local formats are also supported, but not recommended. The local time zone are used, unless a time zone is specified at the end of the time string (Z/UTC/GMT or +/-HH:MM). Date/time supports a small subset of arithmetic operations. The time units represents calendar time, instead of average values, when added or subtracted to a date.
 .PP
 .B Text
 .br
@@ -729,7 +729,7 @@ prepend with + or - to force/disable use of mixed units
 .br
 - factors (factorize result)
 .PP
-Similarily \fIwhere\fP (or alternatively "/.") can be used at the end (but before "to"), for variable assignments, function replacements, etc. (e.g. "x+y where x=1 and y=2", "x^2=4 where x>0", and "sin(5) where sin()=cos()").
+Similarly \fIwhere\fP (or alternatively "/.") can be used at the end (but before "to"), for variable assignments, function replacements, etc. (e.g. "x+y where x=1 and y=2", "x^2=4 where x>0", and "sin(5) where sin()=cos()").
 .SH EXAMPLES
 Note that semicolon can be replaced with comma, if comma is not used as decimal or thousands separator.
 .PP
