@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: libqalculate 3.16\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-26 10:25+0200\n"
-"PO-Revision-Date: 2021-04-17 21:03+0800\n"
+"PO-Revision-Date: 2021-08-23 10:33+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
 "Language: zh_CHS\n"
@@ -335,7 +335,7 @@ msgstr "或"
 #, c-format
 msgid "It has been %s day since the exchange rates last were updated."
 msgid_plural "It has been %s days since the exchange rates last were updated."
-msgstr[0] "距上一次汇率更新已超过%s天了。"
+msgstr[0] "距上一次汇率更新已超过%s天。"
 
 #: ../src/qalc.cc:606
 msgid "Do you wish to update the exchange rates now?"
@@ -492,7 +492,7 @@ msgstr "复数"
 
 #: ../src/qalc.cc:802 ../src/qalc.cc:3567 ../src/qalc.cc:4372
 msgid "excessive parentheses"
-msgstr "富余括号"
+msgstr "冗余括号"
 
 #: ../src/qalc.cc:803 ../src/qalc.cc:3543 ../src/qalc.cc:3863
 #: ../src/qalc.cc:3869 ../src/qalc.cc:4360
@@ -563,7 +563,7 @@ msgstr "相对"
 #: ../src/qalc.cc:829 ../src/qalc.cc:3775 ../src/qalc.cc:4535
 #: ../src/qalc.cc:5476 ../src/qalc.cc:5513
 msgid "hybrid"
-msgstr "混杂"
+msgstr "混和"
 
 #. temperature calculation mode
 #: ../src/qalc.cc:831 ../src/qalc.cc:3774 ../src/qalc.cc:4535
@@ -661,7 +661,7 @@ msgstr "限制隐式乘法"
 #. extra space next to operators
 #: ../src/qalc.cc:942 ../src/qalc.cc:3578 ../src/qalc.cc:4376
 msgid "spacious"
-msgstr "富余空格"
+msgstr "冗余空格"
 
 #: ../src/qalc.cc:943 ../src/qalc.cc:3580 ../src/qalc.cc:4378
 msgid "unicode"
@@ -688,7 +688,7 @@ msgstr "缩写"
 
 #: ../src/qalc.cc:956 ../src/qalc.cc:3698 ../src/qalc.cc:4462
 msgid "show ending zeroes"
-msgstr "显示尾部零"
+msgstr "显示尾零"
 
 #: ../src/qalc.cc:957 ../src/qalc.cc:3686 ../src/qalc.cc:4444
 msgid "repeating decimals"
@@ -863,7 +863,6 @@ msgstr "optimal"
 #: ../src/qalc.cc:1095 ../src/qalc.cc:3374 ../src/qalc.cc:3760
 #: ../src/qalc.cc:4520 ../src/qalc.cc:5763
 #: ../libqalculate/Calculator-calculate.cc:1538
-#, fuzzy
 msgctxt "units"
 msgid "base"
 msgstr "base"
@@ -871,7 +870,6 @@ msgstr "base"
 #. mixed units
 #: ../src/qalc.cc:1097 ../src/qalc.cc:3755 ../src/qalc.cc:4524
 #: ../src/qalc.cc:5796 ../libqalculate/Calculator-calculate.cc:1563
-#, fuzzy
 msgctxt "units"
 msgid "mixed"
 msgstr "mixed"
@@ -1815,7 +1813,7 @@ msgstr "未知变量的默认假设。"
 
 #: ../src/qalc.cc:4344
 msgid "Default angle unit for trigonometric functions."
-msgstr ""
+msgstr "三角函数中使用的默认角度单位。"
 
 #: ../src/qalc.cc:4348
 msgid ""
@@ -2287,7 +2285,6 @@ msgid "- sexa / sexa2 / sexagesimal (show as sexagesimal number)"
 msgstr "- sexa / sexa2 / sexagesimal (显示为六十进制数)"
 
 #: ../src/qalc.cc:4714
-#, fuzzy
 msgid "- latitude / latitude2 (show as sexagesimal latitude)"
 msgstr "- latitude / latitude2 (显示为六十进制纬度)"
 
@@ -2502,25 +2499,23 @@ msgstr "温度计算模式"
 
 #: ../src/qalc.cc:5546
 msgid "Please select interpretation of dots (\".\")."
-msgstr ""
+msgstr "请选择对点号(“.”)的解释。"
 
 #: ../src/qalc.cc:5550
 msgid "Both dot and comma as decimal separators"
-msgstr ""
+msgstr "将点号和逗号均作为小数分隔符"
 
 #: ../src/qalc.cc:5556
-#, fuzzy
 msgid "Dot as thousands separator"
-msgstr "允许使用 , 作为千位分隔符。"
+msgstr "将点号作为千位分隔符"
 
 #: ../src/qalc.cc:5562
-#, fuzzy
 msgid "Only dot as decimal separator"
-msgstr "确定默认的小数分隔符。"
+msgstr "仅将点号作为小数分隔符"
 
 #: ../src/qalc.cc:5567 ../src/qalc.cc:5601
 msgid "Dot interpretation"
-msgstr ""
+msgstr "点号解释"
 
 #: ../src/qalc.cc:6804
 #, c-format
@@ -2813,16 +2808,15 @@ msgid "Object %s does not exist."
 msgstr "对象%s不存在。"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:802
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid function name (%s)."
-msgstr "一个合法的函数名"
+msgstr "非法的函数名(%s)。"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:858
-#, fuzzy
 msgid ""
 "A global function was deactivated. It will be restored after the new "
 "function has been removed."
-msgstr "一个全局单位或变量已停用。其将在移除新变量后恢复。"
+msgstr "一个全局函数已被停用。其将在移除新函数后恢复。"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:869
 #, c-format
@@ -2833,7 +2827,7 @@ msgstr "无效的变量名称(%s)。"
 msgid ""
 "A global unit or variable was deactivated. It will be restored after the new "
 "variable has been removed."
-msgstr "一个全局单位或变量已停用。其将在移除新变量后恢复。"
+msgstr "一个全局单位或变量已被停用。其将在移除新变量后恢复。"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:903
 #, c-format
@@ -3068,7 +3062,7 @@ msgstr "尾部字符\"%s\"不是合法的变量/函数/单位(在数字\"%s\"中
 msgid ""
 "Please use the cross(), dot(), and hadamard() functions for vector "
 "multiplication."
-msgstr ""
+msgstr "请使用 cross()，dot() 和 hadamard() 作向量乘法。"
 
 #: ../libqalculate/Calculator-parse.cc:2773
 msgid "Empty expression in parentheses interpreted as zero."
