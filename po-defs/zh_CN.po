@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-26 09:57+0200\n"
-"PO-Revision-Date: 2021-04-17 21:25+0800\n"
+"PO-Revision-Date: 2021-08-23 09:54+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
 "Language: zh_CHS\n"
@@ -2039,7 +2039,7 @@ msgstr "元素"
 
 #: ../data/datasets.xml.in.h:4
 msgid "r:atom"
-msgstr "原子"
+msgstr "-"
 
 #. Object argument for chemical elements data set
 #: ../data/datasets.xml.in.h:6
@@ -2052,17 +2052,17 @@ msgstr "符号"
 
 #: ../data/datasets.xml.in.h:8
 msgid "r:symbol"
-msgstr "符号"
+msgstr "-"
 
 #. Chemical elements number
 #: ../data/datasets.xml.in.h:10
 msgid "!datasets!Number"
-msgstr "数字"
+msgstr "序数"
 
 #. Chemical elements number
 #: ../data/datasets.xml.in.h:12
 msgid "!datasets!r:number"
-msgstr "数字"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:13 ../data/functions.xml.in.h:815
 msgid "Name"
@@ -2070,11 +2070,11 @@ msgstr "名称"
 
 #: ../data/datasets.xml.in.h:14
 msgid "r:name"
-msgstr "名称"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:15
 msgid "Classification"
-msgstr "分类"
+msgstr "类别"
 
 #: ../data/datasets.xml.in.h:16
 msgid ""
@@ -2083,13 +2083,13 @@ msgid ""
 "Metal&#10;7 Metalloid&#10;8 Polyatomic Non-Metal&#10;9 Diatomic Non-"
 "Metal&#10;10 Noble Gas&#10;11 Unknown chemical properties"
 msgstr ""
-"一个代表元素族的数字: &#10;1 碱金属&#10;2 硷土金属 &#10;3 镧系元素&#10;4 锕系"
+"一个代表元素族的数字: &#10;1 碱金属&#10;2 碱土金属 &#10;3 镧系元素&#10;4 锕系"
 "元素 &#10;5 过渡金属元素&#10;6 金属&#10;7 半金属元素 &#10;8 多原子非金属 "
 "&#10;9 双原子非金属&#10;10 稀有气体&#10;11 未知化学性质"
 
 #: ../data/datasets.xml.in.h:17
 msgid "r:class"
-msgstr "分类"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:18 ../data/units.xml.in.h:132
 msgid "Atomic Mass"
@@ -2103,7 +2103,7 @@ msgstr "该属性使用确定的标准原子量或质量数。"
 
 #: ../data/datasets.xml.in.h:20
 msgid "r:mass,r:weight"
-msgstr "质量,重量"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:21
 msgid "Boiling Point"
@@ -2111,7 +2111,7 @@ msgstr "沸点"
 
 #: ../data/datasets.xml.in.h:22
 msgid "r:boiling"
-msgstr "沸点"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:23
 msgid "Melting Point"
@@ -2119,7 +2119,7 @@ msgstr "熔点"
 
 #: ../data/datasets.xml.in.h:24
 msgid "r:melting"
-msgstr "熔点"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:25 ../data/units.xml.in.h:128
 msgid "Density"
@@ -2131,7 +2131,7 @@ msgstr "STP(气体)或接近室温时的密度"
 
 #: ../data/datasets.xml.in.h:27
 msgid "r:density"
-msgstr "密度"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:28
 msgid "X Position"
@@ -2139,7 +2139,7 @@ msgstr "横坐标"
 
 #: ../data/datasets.xml.in.h:29
 msgid "r:x_pos"
-msgstr "横坐标"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:30
 msgid "Y Position"
@@ -2147,7 +2147,7 @@ msgstr "纵坐标"
 
 #: ../data/datasets.xml.in.h:31
 msgid "r:y_pos"
-msgstr "纵坐标"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:32
 msgid "Planets"
@@ -2155,7 +2155,7 @@ msgstr "行星"
 
 #: ../data/datasets.xml.in.h:33
 msgid "r:planet"
-msgstr "行星"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:34
 msgid "Planet"
@@ -2168,7 +2168,7 @@ msgstr "轨道周期(年)"
 #. Orbital period for planet
 #: ../data/datasets.xml.in.h:37
 msgid "!datasets!r:year"
-msgstr "年"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:38
 msgid "Average Orbital Speed"
@@ -2176,7 +2176,7 @@ msgstr "平均归到速度"
 
 #: ../data/datasets.xml.in.h:39
 msgid "r:speed"
-msgstr "速度"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:40
 msgid "Eccentricity"
@@ -2184,7 +2184,7 @@ msgstr "偏心率"
 
 #: ../data/datasets.xml.in.h:41
 msgid "r:eccentricity"
-msgstr "偏心率"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:42
 msgid "Inclination (to ecliptic)"
@@ -2192,7 +2192,7 @@ msgstr "倾角(至黄道)"
 
 #: ../data/datasets.xml.in.h:43
 msgid "r:inclination"
-msgstr "倾角"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:44
 msgid "Number of Satellites"
@@ -2200,7 +2200,7 @@ msgstr "卫星个数"
 
 #: ../data/datasets.xml.in.h:45
 msgid "r:satellites"
-msgstr "卫星"
+msgstr "-"
 
 #. Planet mass
 #: ../data/datasets.xml.in.h:47
@@ -2209,7 +2209,7 @@ msgstr "质量"
 
 #: ../data/datasets.xml.in.h:48
 msgid "r:mass"
-msgstr "质量"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:49
 msgid "Mean Density"
@@ -2222,7 +2222,7 @@ msgstr "表面积"
 #. Surface area of planet
 #: ../data/datasets.xml.in.h:52
 msgid "!datasets!r:area"
-msgstr "面积"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:53
 msgid "Equatorial Gravity"
@@ -2230,7 +2230,7 @@ msgstr "赤道重力"
 
 #: ../data/datasets.xml.in.h:54
 msgid "r:gravity"
-msgstr "重力"
+msgstr "-"
 
 #: ../data/datasets.xml.in.h:55
 msgid "Mean Surface Temperature"
@@ -2238,7 +2238,7 @@ msgstr "平均表面温度"
 
 #: ../data/datasets.xml.in.h:56
 msgid "r:temperature"
-msgstr "温度"
+msgstr "-"
 
 #: ../data/elements.xml.in.h:1
 msgid "Hydrogen"
@@ -2891,7 +2891,7 @@ msgstr "矩阵转向量"
 
 #: ../data/functions.xml.in.h:43
 msgid "r:matrix2vector"
-msgstr "matrix2vector"
+msgstr "-"
 
 #: ../data/functions.xml.in.h:44
 msgid "Puts each element of a matrix in vertical order in a vector."
@@ -3247,19 +3247,16 @@ msgid "Dot Product"
 msgstr "点积"
 
 #: ../data/functions.xml.in.h:128
-#, fuzzy
 msgid "r:dot"
 msgstr "-"
 
 #: ../data/functions.xml.in.h:129
-#, fuzzy
 msgid "Calculates the dot product of two vectors."
-msgstr "计算两个三维向量的向量积"
+msgstr "计算两个向量的点积"
 
 #: ../data/functions.xml.in.h:130
-#, fuzzy
 msgid "Element-wise Multiplication"
-msgstr "逐项函数"
+msgstr "逐项相乘"
 
 #: ../data/functions.xml.in.h:131
 msgid "r:multiply,times"
@@ -3270,9 +3267,8 @@ msgid "Factors"
 msgstr "因子"
 
 #: ../data/functions.xml.in.h:133
-#, fuzzy
 msgid "Element-wise Right Division"
-msgstr "整数除法"
+msgstr "逐项右除"
 
 #: ../data/functions.xml.in.h:134
 msgid "r:divide,rdivide"
@@ -3287,14 +3283,12 @@ msgid "Denominator"
 msgstr "取分母"
 
 #: ../data/functions.xml.in.h:137
-#, fuzzy
 msgid "Element-wise Power"
-msgstr "元素"
+msgstr "逐项幂乘"
 
 #: ../data/functions.xml.in.h:138
-#, fuzzy
 msgid "r:pow,r:raise,power"
-msgstr "ar:hp,horsepower,匹"
+msgstr "-"
 
 #: ../data/functions.xml.in.h:139
 msgid "Base"
@@ -4803,9 +4797,9 @@ msgid ""
 "Obesity &gt; 30&#10;&#10;Note that you must use units for weight (ex. 59kg) "
 "and length (ex. 174cm)."
 msgstr ""
-"计算体质指数(Body Mass Index, 简称BMI)。所得BMI结果的参考意义如下：&#10;&#10;"
+"计算体质指数(Body Mass Index，简称BMI)。所得BMI结果的参考含义如下：&#10;&#10;"
 "体重过轻 &lt; 18.5&#10;体重正常 18.5-25&#10;体重过重 25-30&#10;肥胖 &gt; "
-"30&#10;&#10;注意您必须使用 重量和长度单位(如，59kg和174cm)。"
+"30&#10;&#10;注意您必须使用重量和长度单位(如，59kg和174cm)。"
 
 #: ../data/functions.xml.in.h:478
 msgid "Weight"
@@ -4894,7 +4888,7 @@ msgstr "弥散圆或传感器尺寸"
 
 #: ../data/functions.xml.in.h:494
 msgid "American Wire Gauge Cross-Section Area"
-msgstr "美国线规横截面积"
+msgstr "美制线规横截面积"
 
 #: ../data/functions.xml.in.h:495
 msgid "r:awg"
@@ -4911,7 +4905,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:497
 msgid "American Wire Gauge Diameter"
-msgstr "美国线规直径"
+msgstr "美制线规直径"
 
 #: ../data/functions.xml.in.h:498
 msgid "r:awgd"
@@ -5461,9 +5455,8 @@ msgid "Standard deviation (σ)"
 msgstr "标准差（σ）"
 
 #: ../data/functions.xml.in.h:632
-#, fuzzy
 msgid "Inverse Normal Cumulative Distribution"
-msgstr "韦伯逆累积分布"
+msgstr "逆正态累积分布"
 
 #: ../data/functions.xml.in.h:633
 msgid "r:normdistinv"
@@ -5489,7 +5482,7 @@ msgstr "形状参数（α）"
 
 #: ../data/functions.xml.in.h:638
 msgid "Scale (x_m)"
-msgstr "形状参数（x_m）"
+msgstr "尺度参数（x_m）"
 
 #: ../data/functions.xml.in.h:639
 msgid "Poisson Distribution"
@@ -5521,7 +5514,7 @@ msgstr "返回瑞利分布的概率密度或累积分布函数。"
 
 #: ../data/functions.xml.in.h:645
 msgid "Scale (σ)"
-msgstr "形状参数（σ）"
+msgstr "尺度参数（σ）"
 
 #: ../data/functions.xml.in.h:646
 msgid "Rayleigh Tail Distribution"
@@ -5580,9 +5573,8 @@ msgid "Degrees of freedom (k)"
 msgstr "自由度（k）"
 
 #: ../data/functions.xml.in.h:658
-#, fuzzy
 msgid "Inverse of Chi-Square Cumulative Distribution"
-msgstr "韦伯逆累积分布"
+msgstr "逆累积卡方分布"
 
 #: ../data/functions.xml.in.h:659
 msgid "r:chisqdistinv"
@@ -5651,9 +5643,8 @@ msgid "Degrees of freedom (v)"
 msgstr "自由度（v）"
 
 #: ../data/functions.xml.in.h:674
-#, fuzzy
 msgid "Inverse Cumulative Student's t-distribution"
-msgstr "韦伯逆累积分布"
+msgstr "逆累积学生t分布"
 
 #: ../data/functions.xml.in.h:675
 msgid "r:tdistinv"
@@ -5682,9 +5673,8 @@ msgid "Degrees of freedom (denominator)"
 msgstr "自由度（分母）"
 
 #: ../data/functions.xml.in.h:681
-#, fuzzy
 msgid "Inverse Cumulative F-distribution"
-msgstr "韦伯逆累积分布"
+msgstr "逆累积F分布"
 
 #: ../data/functions.xml.in.h:682
 msgid "r:fdistinv"
@@ -6311,9 +6301,8 @@ msgid "r:message"
 msgstr "-"
 
 #: ../data/functions.xml.in.h:823
-#, fuzzy
 msgid "Save as Variable or Function"
-msgstr "保存为变量"
+msgstr "保存为变量或函数"
 
 #: ../data/functions.xml.in.h:824
 msgid "r:save"
@@ -6331,6 +6320,12 @@ msgid ""
 "returned.&#10;&#10;The \":=\" operator (e.g. var1:=10) is a shortcut for "
 "this function."
 msgstr ""
+"将值存储在变量中或将表达式保存为函数。&#10;&#10;若名称包含括号（例如，”f()“）"
+"其将创建为函数。此外函数参数可以设置在名称中（例如，“save(a+b,f(a,b))”）。否"
+"则（例如，“save(x+y,f())”）函数参数将以\\x，\\y，\\z，\\a，\\b...，或x，y，z"
+"的形式在函数中被引用。&#10;&#10;如果成功创建为函数，处理好的函数表达式将返回"
+"为字符串，否则会返回为值。&#10;&#10;“:=”运算符（例如，var1:=10）是此函数的语"
+"法糖。"
 
 #: ../data/functions.xml.in.h:826
 msgid "Category"
@@ -6729,17 +6724,15 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:917
 msgid "Solve using Newton's Method"
-msgstr ""
+msgstr "牛顿法求解"
 
 #: ../data/functions.xml.in.h:918
-#, fuzzy
 msgid "r:newtonsolve"
 msgstr "-"
 
 #: ../data/functions.xml.in.h:919
-#, fuzzy
 msgid "Initial estimate"
-msgstr "初始值"
+msgstr "初始估值"
 
 #: ../data/functions.xml.in.h:920 ../data/variables.xml.in.h:199
 msgid "Precision"
@@ -6751,22 +6744,19 @@ msgstr "最大迭代"
 
 #: ../data/functions.xml.in.h:922
 msgid "Solve using Secant Method"
-msgstr ""
+msgstr "割线法求解"
 
 #: ../data/functions.xml.in.h:923
-#, fuzzy
 msgid "r:secantsolve"
 msgstr "-"
 
 #: ../data/functions.xml.in.h:924
-#, fuzzy
 msgid "Initial estimate 1"
-msgstr "初始值"
+msgstr "初始估值一"
 
 #: ../data/functions.xml.in.h:925
-#, fuzzy
 msgid "Initial estimate 2"
-msgstr "初始值"
+msgstr "初始估值二"
 
 #: ../data/functions.xml.in.h:926
 msgid "Solve for two variables"
@@ -7041,9 +7031,8 @@ msgid "r:betainc"
 msgstr "-"
 
 #: ../data/functions.xml.in.h:992
-#, fuzzy
 msgid "Inverse Regularized Incomplete Beta Function"
-msgstr "不完全贝塔函数"
+msgstr "逆正则化不完全贝塔函数"
 
 #: ../data/functions.xml.in.h:993
 msgid "r:betaincinv"
@@ -8196,35 +8185,35 @@ msgstr "尧"
 
 #: ../data/prefixes.xml.in.h:21
 msgid "ar:Ki,r:kibi"
-msgstr ""
+msgstr "-"
 
 #: ../data/prefixes.xml.in.h:22
 msgid "ar:Mi,r:mebi"
-msgstr ""
+msgstr "-"
 
 #: ../data/prefixes.xml.in.h:23
 msgid "ar:Gi,r:gibi"
-msgstr ""
+msgstr "-"
 
 #: ../data/prefixes.xml.in.h:24
 msgid "ar:Ti,r:tebi"
-msgstr ""
+msgstr "-"
 
 #: ../data/prefixes.xml.in.h:25
 msgid "ar:Pi,r:pebi"
-msgstr ""
+msgstr "-"
 
 #: ../data/prefixes.xml.in.h:26
 msgid "ar:Ei,r:exbi"
-msgstr ""
+msgstr "-"
 
 #: ../data/prefixes.xml.in.h:27
 msgid "ar:Zi,r:zebi"
-msgstr ""
+msgstr "-"
 
 #: ../data/prefixes.xml.in.h:28
 msgid "ar:Yi,r:yobi"
-msgstr ""
+msgstr "-"
 
 #. Unit category
 #: ../data/units.xml.in.h:2
