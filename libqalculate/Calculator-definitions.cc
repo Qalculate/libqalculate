@@ -737,7 +737,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	string locale;
 #ifdef _WIN32
 	WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
-	if(LCIDToLocaleName(LOCALE_USER_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
+	if(GetUserDefaultLocaleName(LOCALE_CUSTOM_UI_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
 	gsub("-", "_", locale);
 #else
 	char *clocale = setlocale(LC_MESSAGES, NULL);

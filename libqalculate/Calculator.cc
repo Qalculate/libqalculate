@@ -143,26 +143,11 @@ Calculator::Calculator() {
 	b_ignore_locale = false;
 
 #ifdef ENABLE_NLS
-	if(!b_ignore_locale) {
-		bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
-		bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	}
+	bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
+	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 #endif
 
-	if(b_ignore_locale) {
-		char *current_lc_monetary = setlocale(LC_MONETARY, "");
-		if(current_lc_monetary) saved_locale = strdup(current_lc_monetary);
-		else saved_locale = NULL;
-		setlocale(LC_ALL, "C");
-		if(saved_locale) {
-			setlocale(LC_MONETARY, saved_locale);
-			free(saved_locale);
-			saved_locale = NULL;
-		}
-	} else {
-		setlocale(LC_ALL, "");
-	}
-
+	setlocale(LC_ALL, "");
 
 	gmp_randinit_default(randstate);
 	gmp_randseed_ui(randstate, (unsigned long int) time(NULL));
@@ -378,24 +363,27 @@ Calculator::Calculator(bool ignore_locale) {
 
 	b_ignore_locale = ignore_locale;
 
-#ifdef ENABLE_NLS
-	if(!b_ignore_locale) {
-		bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
-		bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	}
-#endif
-
 	if(b_ignore_locale) {
 		char *current_lc_monetary = setlocale(LC_MONETARY, "");
 		if(current_lc_monetary) saved_locale = strdup(current_lc_monetary);
 		else saved_locale = NULL;
 		setlocale(LC_ALL, "C");
+#ifdef ENABLE_NLS
+#	ifdef _WIN32
+		bindtextdomain(GETTEXT_PACKAGE, "NULL");
+		bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+#	endif
+#endif
 		if(saved_locale) {
 			setlocale(LC_MONETARY, saved_locale);
 			free(saved_locale);
 			saved_locale = NULL;
 		}
 	} else {
+#ifdef ENABLE_NLS
+		bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
+		bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+#endif
 		setlocale(LC_ALL, "");
 	}
 
