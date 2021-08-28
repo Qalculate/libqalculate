@@ -58,7 +58,7 @@ int auto_update_exchange_rates;
 PrintOptions printops, saved_printops;
 bool complex_angle_form = false, saved_caf = false;
 EvaluationOptions evalops, saved_evalops;
-bool dot_question_asked = false;
+bool dot_question_asked = false, implicit_question_asked = false;
 Number saved_custom_output_base, saved_custom_input_base;
 AssumptionType saved_assumption_type;
 AssumptionSign saved_assumption_sign;
@@ -110,7 +110,7 @@ void result_action_executed();
 void result_prefix_changed(Prefix *prefix = NULL);
 void expression_format_updated(bool reparse);
 void expression_calculation_updated();
-bool display_errors(bool goto_input = false, int cols = 0);
+bool display_errors(bool goto_input = false, int cols = 0, bool *implicit_warning = NULL);
 void replace_result_cis(string &resstr);
 
 FILE *cfile;
@@ -995,6 +995,7 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			evalops.parse_options.parsing_mode = (ParsingMode) v;
+			if(evalops.parse_options.parsing_mode <= PARSING_MODE_CONVENTIONAL) implicit_question_asked = true;
 			expression_format_updated(true);
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "update exchange rates", _("update exchange rates")) || svar == "upxrates") {
@@ -4835,29 +4836,36 @@ void RPNRegisterAdded(string, int = 0) {}
 void RPNRegisterRemoved(int) {}
 void RPNRegisterChanged(string, int) {}
 
-bool display_errors(bool goto_input, int cols) {
+bool display_errors(bool goto_input, int cols, bool *implicit_warning) {
 	if(!CALCULATOR->message()) return false;
 	while(true) {
-		if(!hide_parse_errors || (CALCULATOR->message()->stage() != MESSAGE_STAGE_PARSING && CALCULATOR->message()->stage() != MESSAGE_STAGE_CONVERSION_PARSING)) {
-			MessageType mtype = CALCULATOR->message()->type();
-			string str;
-			if(goto_input) str += "  ";
-			if(DO_COLOR && mtype == MESSAGE_ERROR) str += (DO_COLOR == 2 ? "\033[0;91m" : "\033[0;31m");
-			if(DO_COLOR && mtype == MESSAGE_WARNING) str += (DO_COLOR == 2 ? "\033[0;94m" : "\033[0;34m");
-			if(mtype == MESSAGE_ERROR) {
-				str += _("error"); str += ": ";
-			} else if(mtype == MESSAGE_WARNING) {
-				str += _("warning"); str += ": ";
+		if(CALCULATOR->message()->category() == MESSAGE_CATEGORY_IMPLICIT_MULTIPLICATION && (implicit_question_asked || implicit_warning)) {
+			if(!implicit_question_asked) {
+				*implicit_warning = true;
+				CALCULATOR->clearMessages();
 			}
-			size_t indent = 0;
-			if(!str.empty()) indent = unicode_length_check(str.c_str());
-			else if(goto_input) indent = 2;
-			if(DO_COLOR && (mtype == MESSAGE_ERROR || mtype == MESSAGE_WARNING)) str += "\033[0m";
-			BEGIN_ITALIC(str)
-			str += CALCULATOR->message()->message();
-			END_ITALIC(str)
-			if(cols) addLineBreaks(str, cols, true, indent, str.length());
-			PUTS_UNICODE(str.c_str())
+		} else {
+			if(!hide_parse_errors || (CALCULATOR->message()->stage() != MESSAGE_STAGE_PARSING && CALCULATOR->message()->stage() != MESSAGE_STAGE_CONVERSION_PARSING)) {
+				MessageType mtype = CALCULATOR->message()->type();
+				string str;
+				if(goto_input) str += "  ";
+				if(DO_COLOR && mtype == MESSAGE_ERROR) str += (DO_COLOR == 2 ? "\033[0;91m" : "\033[0;31m");
+				if(DO_COLOR && mtype == MESSAGE_WARNING) str += (DO_COLOR == 2 ? "\033[0;94m" : "\033[0;34m");
+				if(mtype == MESSAGE_ERROR) {
+					str += _("error"); str += ": ";
+				} else if(mtype == MESSAGE_WARNING) {
+					str += _("warning"); str += ": ";
+				}
+				size_t indent = 0;
+				if(!str.empty()) indent = unicode_length_check(str.c_str());
+				else if(goto_input) indent = 2;
+				if(DO_COLOR && (mtype == MESSAGE_ERROR || mtype == MESSAGE_WARNING)) str += "\033[0m";
+				BEGIN_ITALIC(str)
+				str += CALCULATOR->message()->message();
+				END_ITALIC(str)
+				if(cols) addLineBreaks(str, cols, true, indent, str.length());
+				PUTS_UNICODE(str.c_str())
+			}
 		}
 		if(!CALCULATOR->nextMessage()) break;
 	}
@@ -4977,6 +4985,70 @@ void add_equals(string &strout, bool b_exact, size_t *i_result_u = NULL, size_t 
 			strout += " ";
 		}
 	}
+}
+
+
+bool ask_implicit() {
+	INIT_COLS
+	string str = _("Please select interpretation of expressions with implicit multiplication.");
+	addLineBreaks(str, cols, true);
+	PUTS_UNICODE(str.c_str());
+	puts("");
+	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("Adaptive"); END_BOLD(str);
+	str += " ("; str += _("default"); str += ")";
+	PUTS_UNICODE(str.c_str());
+	string s_eg = "1/2x = 1/(2x); 1/2 x = (1/2)x";
+	PUTS_ITALIC(s_eg);
+	puts("");
+	str = ""; BEGIN_BOLD(str); str += "1 = "; str += _("Implicit multiplication first"); END_BOLD(str);
+	PUTS_UNICODE(str.c_str());
+	s_eg = "1/2x = 1/(2x)";
+	PUTS_ITALIC(s_eg);
+	puts("");
+	str = ""; BEGIN_BOLD(str); str += "2 = "; str += _("Conventional"); END_BOLD(str);
+	PUTS_UNICODE(str.c_str());
+	s_eg = "1/2x = (1/2)x";
+	PUTS_ITALIC(s_eg);
+	puts("");
+	FPUTS_UNICODE(_("Parsing mode"), stdout);
+	implicit_question_asked = true;
+	ParsingMode pm_bak = evalops.parse_options.parsing_mode;
+	while(true) {
+#ifdef HAVE_LIBREADLINE
+		char *rlbuffer = readline(": ");
+		if(!rlbuffer) break;
+		string svalue = rlbuffer;
+		free(rlbuffer);
+#else
+		fputs(": ", stdout);
+		if(!fgets(buffer, 1000, stdin)) {b_ret = false; break;}
+		string svalue = buffer;
+#endif
+		remove_blank_ends(svalue);
+		int v = -1;
+		if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		} else if(svalue.empty()) {
+			v = 0;
+		}
+		if(v == 2) {
+			evalops.parse_options.parsing_mode = PARSING_MODE_CONVENTIONAL;
+			break;
+		} else if(v == 1) {
+			evalops.parse_options.parsing_mode = PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST;
+			break;
+		} else if(v == 0) {
+			evalops.parse_options.parsing_mode = PARSING_MODE_ADAPTIVE;
+			break;
+		} else {
+			FPUTS_UNICODE(_("Parsing mode"), stdout);
+		}
+	}
+	if(!interactive_mode) {
+		saved_evalops.parse_options.parsing_mode = evalops.parse_options.parsing_mode;
+		save_preferences(false);
+	}
+	return pm_bak != evalops.parse_options.parsing_mode;
 }
 
 void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_index, bool register_moved, bool noprint) {
@@ -5130,7 +5202,15 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 #endif
 	}
 
-	if(!result_only) display_errors(goto_input, cols);
+	bool implicit_warning = false;
+	if(!result_only) display_errors(goto_input, cols, ask_questions && evalops.parse_options.parsing_mode <= PARSING_MODE_CONVENTIONAL && update_parse && stack_index == 0 && !noprint ? &implicit_warning : NULL);
+
+	if(implicit_warning && ask_implicit()) {
+		b_busy = false;
+		printf("\n");
+		execute_expression();
+		return;
+	}
 
 	if(stack_index != 0) {
 		RPNRegisterChanged(result_text, stack_index);
@@ -5611,7 +5691,6 @@ bool ask_dot() {
 	if(!interactive_mode) save_preferences(false);
 	return b_ret;
 }
-
 
 void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates) {
 
@@ -6389,6 +6468,7 @@ void load_preferences() {
 	printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 
 	evalops.parse_options.parsing_mode = PARSING_MODE_ADAPTIVE;
+	implicit_question_asked = false;
 	evalops.approximation = APPROXIMATION_TRY_EXACT;
 	evalops.sync_units = true;
 	evalops.structuring = STRUCTURING_SIMPLIFY;
@@ -6563,6 +6643,8 @@ void load_preferences() {
 							evalops.parse_options.parsing_mode = (ParsingMode) v;
 						}
 					}
+				} else if(svar == "implicit_question_asked") {
+					implicit_question_asked = true;
 				} else if(svar == "place_units_separately") {
 					printops.place_units_separately = v;
 				} else if(svar == "variable_units_enabled") {
@@ -6836,6 +6918,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "comma_as_separator=%i\n", evalops.parse_options.comma_as_separator);
 	fprintf(file, "multiplication_sign=%i\n", printops.multiplication_sign);
 	fprintf(file, "division_sign=%i\n", printops.division_sign);
+	if(implicit_question_asked) fprintf(file, "implicit_question_asked=%i\n", implicit_question_asked);
 	if(mode) {
 		int saved_df = 0, saved_da = 0;
 		if(result_only && dual_fraction == 0) saved_df = saved_dual_fraction;

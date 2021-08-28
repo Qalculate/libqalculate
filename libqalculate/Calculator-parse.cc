@@ -3999,7 +3999,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 											size_t i3 = str2.find_first_not_of(NUMBERS, 1);
 											b_warn = (i3 != string::npos && i3 != str2.length() - 1);
 										}
-										if(b_warn) error(false, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
+										if(b_warn) error(false, MESSAGE_CATEGORY_IMPLICIT_MULTIPLICATION, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
 									}
 								}
 								break;
@@ -4075,7 +4075,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 									size_t i3 = str.find_first_not_of(NUMBERS, 1);
 									b_warn = (i3 != string::npos && i3 != str.length() - 1);
 								}
-								if(b_warn) error(false, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
+								if(b_warn) error(false, MESSAGE_CATEGORY_IMPLICIT_MULTIPLICATION, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
 							}
 						}
 						break;
@@ -4247,10 +4247,10 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		if(b) {
 			parseAdd(str, mstruct, po, OPERATION_MULTIPLY, append);
-			if(po.parsing_mode == PARSING_MODE_ADAPTIVE && mstruct->isMultiplication() && mstruct->size() >= 2 && !(*mstruct)[0].inParentheses()) {
+			if(mstruct->isMultiplication() && mstruct->size() >= 2 && !(*mstruct)[0].inParentheses()) {
 				Unit *u1 = NULL; Prefix *p1 = NULL;
 				bool b_plus = false;
-				// In adaptive parsing mode, parse 5m 2cm as 5m+2cm, 5ft 2in as 5ft+2in, and similar
+				// Parse 5m 2cm as 5m+2cm, 5ft 2in as 5ft+2in, and similar
 				if((*mstruct)[0].isMultiplication() && (*mstruct)[0].size() == 2 && (*mstruct)[0][0].isNumber() && (*mstruct)[0][1].isUnit()) {u1 = (*mstruct)[0][1].unit(); p1 = (*mstruct)[0][1].prefix();}
 				if(u1 && u1->subtype() == SUBTYPE_BASE_UNIT && (u1->referenceName() == "m" || (!p1 && u1->referenceName() == "L")) && (!p1 || (p1->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p1)->exponent() <= 3 && ((DecimalPrefix*) p1)->exponent() > -3))) {
 					b_plus = true;
