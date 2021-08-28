@@ -167,9 +167,10 @@ typedef enum {
 #define MESSAGE_STAGE_UNSET			0
 
 ///Message categories
-#define MESSAGE_CATEGORY_NONE		0
-#define MESSAGE_CATEGORY_PARSING	1
-#define MESSAGE_CATEGORY_WIDE_INTERVAL	10
+#define MESSAGE_CATEGORY_NONE				0
+#define MESSAGE_CATEGORY_PARSING			1
+#define MESSAGE_CATEGORY_WIDE_INTERVAL			10
+#define MESSAGE_CATEGORY_IMPLICIT_MULTIPLICATION	11
 
 
 /// A message with information to the user. Primarily used for errors and warnings.
