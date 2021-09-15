@@ -6003,7 +6003,7 @@ msgstr "годдень"
 
 #: ../data/functions.xml.in.h:723
 msgid "Current Time"
-msgstr "Секущее время"
+msgstr "Текущее время"
 
 #: ../data/functions.xml.in.h:724
 msgid "r:time"
