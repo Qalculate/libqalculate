@@ -1754,6 +1754,28 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		CHILD(1).transformById(FUNCTION_ID_CIS);
 		CHILD_UPDATED(1)
 		return true;
+	} else if(representsComplex(true)) {
+		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
+		CALCULATOR->beginTemporaryStopMessages();
+		EvaluationOptions eo2 = eo;
+		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+		marg.eval(eo2);
+		if(!marg.isFunction() || marg.function()->id() != FUNCTION_ID_ARG) {
+			CALCULATOR->endTemporaryStopMessages(true);
+			MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
+			mabs.eval(eo2);
+			switch(eo2.parse_options.angle_unit) {
+				case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
+				case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
+				default: {break;}
+			}
+			set(marg, true);
+			transformById(FUNCTION_ID_CIS);
+			multiply(mabs);
+			evalSort(true);
+			return true;
+		}
+		CALCULATOR->endTemporaryStopMessages();
 	}
 	bool b = false;
 	for(size_t i = 0; i < SIZE; i++) {
