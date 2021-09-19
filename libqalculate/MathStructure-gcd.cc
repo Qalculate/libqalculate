@@ -795,7 +795,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 
 	if(combine_divisions) {
 
-		MathStructure divs, nums, numleft, mleft;
+		MathStructure divs, nums, numleft, mleft, nrdivs, nrnums;
 
 		EvaluationOptions eo2 = eo;
 		eo2.do_polynomial_division = false;
@@ -810,21 +810,23 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 			if(mstruct[i].isMultiplication()) {
 				MathStructure div, num(1, 1, 0);
 				bool b_num = false;
+				bool b_rat_m = true;
 				for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
 					if(mstruct[i][i2].isPower() && mstruct[i][i2][1].isInteger() && mstruct[i][i2][1].number().isNegative()) {
-						bool b_rat = mstruct[i][i2][0].isRationalPolynomial();
-						if(!b_rat && mstruct[i][i2][0].isAddition() && mstruct[i][i2][0].size() > 1) {
-							b_rat = true;
-							for(size_t i3 = 0; i3 < mstruct[i][i2][0].size(); i3++) {
-								if(!mstruct[i][i2][0][i3].representsZero(true) && !mstruct[i][i2][0][i3].isRationalPolynomial()) {
-									b_rat = false;
-									break;
+						if(b_rat_m) {
+							bool b_rat = mstruct[i][i2][0].isRationalPolynomial();
+							if(!b_rat && mstruct[i][i2][0].isAddition() && mstruct[i][i2][0].size() > 1) {
+								b_rat = true;
+								for(size_t i3 = 0; i3 < mstruct[i][i2][0].size(); i3++) {
+									if(!mstruct[i][i2][0][i3].representsZero(true) && !mstruct[i][i2][0][i3].isRationalPolynomial()) {
+										b_rat = false;
+										break;
+									}
 								}
 							}
-						}
-						if(!b_rat) {
-							div.clear();
-							break;
+							if(!b_rat) {
+								b_rat_m = false;
+							}
 						}
 						bool b_minone = mstruct[i][i2][1].isMinusOne();
 						if(b_minone) {
@@ -836,25 +838,25 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 							else div.multiply(mstruct[i][i2], true);
 							mstruct[i][i2][1].number().negate();
 						}
-					} else if(mstruct[i][i2].isRationalPolynomial() || mstruct[i][i2].representsZero(true)) {
+					} else {
+						if(b_rat_m && !mstruct[i][i2].isRationalPolynomial() && !mstruct[i][i2].representsZero(true)) b_rat_m = false;
 						if(!b_num) {b_num = true; num = mstruct[i][i2];}
 						else num.multiply(mstruct[i][i2], true);
-					} else {
-						div.clear();
-						break;
 					}
 				}
 				if(!div.isZero()) {
 					bool b_found = false;
-					for(size_t i3 = 0; i3 < divs.size(); i3++) {
-						if(divs[i3] == div) {
+					for(size_t i3 = 0; i3 < (b_rat_m ? divs.size() : nrdivs.size()); i3++) {
+						if((b_rat_m && divs[i3] == div) || (!b_rat_m && nrdivs[i3] == div)) {
 							if(!num.representsZero(true)) {
 								if(num.isAddition()) {
 									for(size_t i4 = 0; i4 < num.size(); i4++) {
-										nums[i3].add(num[i4], true);
+										if(b_rat_m) nums[i3].add(num[i4], true);
+										else nrnums[i3].add(num[i4], true);
 									}
 								} else {
-									nums[i3].add(num, true);
+									if(b_rat_m) nums[i3].add(num, true);
+									else nrnums[i3].add(num, true);
 								}
 							}
 							b_found = true;
@@ -864,8 +866,13 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 					}
 					if(!b_found && (eo.assume_denominators_nonzero || div.representsNonZero(true)) && !div.representsZero(true)) {
 						if(!num.representsZero(true)) {
-							divs.addChild(div);
-							nums.addChild(num);
+							if(b_rat_m) {
+								divs.addChild(div);
+								nums.addChild(num);
+							} else {
+								nrdivs.addChild(div);
+								nrnums.addChild(num);
+							}
 						}
 						b = true;
 					}
@@ -881,26 +888,31 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 						}
 					}
 				}
-				if(b_rat) {
-					bool b_minone = mstruct[i][1].isMinusOne();
-					if(!b_minone) mstruct[i][1].number().negate();
-					bool b_found = false;
-					for(size_t i3 = 0; i3 < divs.size(); i3++) {
-						if((b_minone && divs[i3] == mstruct[i][0]) || (!b_minone && divs[i3] == mstruct[i])) {
-							nums[i3].add(m_one, true);
-							b_found = true;
-							b = true;
-							break;
-						}
+				bool b_minone = mstruct[i][1].isMinusOne();
+				if(!b_minone) mstruct[i][1].number().negate();
+				bool b_found = false;
+				for(size_t i3 = 0; i3 < (b_rat ? divs.size() : nrdivs.size()); i3++) {
+					if((b_minone && ((b_rat && divs[i3] == mstruct[i][0]) || (!b_rat && nrdivs[i3] == mstruct[i][0]))) || (!b_minone && ((b_rat && divs[i3] == mstruct[i]) || (!b_rat && nrdivs[i3] == mstruct[i])))) {
+						if(b_rat) nums[i3].add(m_one, true);
+						else nrnums[i3].add(m_one, true);
+						b_found = true;
+						b = true;
+						break;
 					}
-					if(!b_found && (eo.assume_denominators_nonzero || mstruct[i][0].representsNonZero(true)) && !mstruct[i][0].representsZero(true)) {
+				}
+				if(!b_found && (eo.assume_denominators_nonzero || mstruct[i][0].representsNonZero(true)) && !mstruct[i][0].representsZero(true)) {
+					if(b_rat) {
 						if(b_minone) divs.addChild(mstruct[i][0]);
 						else divs.addChild(mstruct[i]);
 						nums.addChild(m_one);
-						b = true;
+					} else {
+						if(b_minone) nrdivs.addChild(mstruct[i][0]);
+						else nrdivs.addChild(mstruct[i]);
+						nrnums.addChild(m_one);
 					}
-					if(!b_minone) mstruct[i][1].number().negate();
+					b = true;
 				}
+				if(!b_minone) mstruct[i][1].number().negate();
 			}
 			if(!b) {
 				if(i_run <= 1 && mstruct[i].isRationalPolynomial()) numleft.addChild(mstruct[i]);
@@ -920,11 +932,34 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 			}
 		}
 
-		if(divs.size() == 0) {
+		bool b_ret = false;
+		for(size_t i = 0; i < nrdivs.size(); i++) {
+			bool b = false;
+			if(nrnums[i].isAddition()) {
+				MathStructure factor_mstruct(1, 1, 0);
+				MathStructure mnew;
+				if(factorize_find_multiplier(nrnums[i], mnew, factor_mstruct) && !factor_mstruct.isZero() && !mnew.isZero()) {
+					mnew.evalSort(true);
+					if(mnew == nrdivs[i]) {
+						nrnums[i].set(factor_mstruct);
+						b = true;
+					}
+				}
+			}
+			if(b) {
+				b_ret = true;
+			} else {
+				if(nrdivs[i].isPower() && nrdivs[i][1].isNumber()) nrdivs[i][1].number().negate();
+				else nrdivs[i] ^= nr_minus_one;
+				nrnums[i] *= nrdivs[i];
+			}
+			mleft.addChild(nrnums[i]);
+		}
+
+		if(!b_ret && divs.size() == 0) {
 			if(mstruct.size() == 1) mstruct.setToChild(1);
 			return false;
 		}
-		bool b_ret = false;
 		if(divs.size() > 1 || numleft.size() > 0) b_ret = true;
 
 		/*divs.setType(STRUCT_VECTOR);
