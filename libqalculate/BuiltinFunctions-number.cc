@@ -1444,7 +1444,22 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				return 1;
 			}
 		}
-		if(mstruct.isPower() && mstruct[0].representsComplex() && mstruct[1].representsInteger()) {
+		if(mstruct.isMultiplication()) {
+			bool b = true;
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				if(!mstruct.representsNonZero()) {
+					b = false;
+				}
+			}
+			if(b) {
+				for(size_t i = 0; i < mstruct.size(); i++) {
+					mstruct[i].transform(this);
+				}
+				mstruct.setType(STRUCT_ADDITION);
+				return 1;
+			}
+		}
+		if(mstruct.isPower() && mstruct[0].representsNonZero() && mstruct[1].representsInteger()) {
 			mstruct.setType(STRUCT_MULTIPLICATION);
 			mstruct[0].transform(STRUCT_FUNCTION);
 			mstruct[0].setFunction(this);

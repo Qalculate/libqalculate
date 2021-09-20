@@ -1641,7 +1641,9 @@ bool MathStructure::complexToExponentialForm(const EvaluationOptions &eo) {
 		if(!mabs.isOne()) multiply(mabs);
 		evalSort(false);
 		return true;
-	} else if(representsComplex(true)) {
+	} else if(representsReal(true)) {
+		return false;
+	} else {
 		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		marg *= nr_one_i;
 		CALCULATOR->beginTemporaryStopMessages();
@@ -1722,7 +1724,9 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		CHILD_UPDATED(1)
 		evalSort(true);
 		return true;
-	} else if(representsComplex(true)) {
+	} else if(representsReal(true)) {
+		return false;
+	} else {
 		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		CALCULATOR->beginTemporaryStopMessages();
 		EvaluationOptions eo2 = eo;
@@ -1798,7 +1802,9 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		CHILD(1).transformById(FUNCTION_ID_CIS);
 		CHILD_UPDATED(1)
 		return true;
-	} else if(representsComplex(true)) {
+	} else if(representsReal(true)) {
+		return false;
+	} else {
 		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		CALCULATOR->beginTemporaryStopMessages();
 		EvaluationOptions eo2 = eo;
