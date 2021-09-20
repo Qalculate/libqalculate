@@ -1641,6 +1641,25 @@ bool MathStructure::complexToExponentialForm(const EvaluationOptions &eo) {
 		if(!mabs.isOne()) multiply(mabs);
 		evalSort(false);
 		return true;
+	} else if(representsComplex(true)) {
+		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
+		marg *= nr_one_i;
+		CALCULATOR->beginTemporaryStopMessages();
+		EvaluationOptions eo2 = eo;
+		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+		eo2.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
+		marg.eval(eo2);
+		if(!marg.isFunction() || marg.function()->id() != FUNCTION_ID_ARG) {
+			CALCULATOR->endTemporaryStopMessages(true);
+			MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
+			set(CALCULATOR->getVariableById(VARIABLE_ID_E), true);
+			raise(marg);
+			mabs.eval(eo2);
+			if(!mabs.isOne()) multiply(mabs);
+			evalSort(false);
+			return true;
+		}
+		CALCULATOR->endTemporaryStopMessages();
 	}
 	if(m_type == STRUCT_POWER) return false;
 	bool b = false;
@@ -1703,6 +1722,31 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		CHILD_UPDATED(1)
 		evalSort(true);
 		return true;
+	} else if(representsComplex(true)) {
+		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
+		CALCULATOR->beginTemporaryStopMessages();
+		EvaluationOptions eo2 = eo;
+		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+		marg.eval(eo2);
+		if(!marg.isFunction() || marg.function()->id() != FUNCTION_ID_ARG) {
+			CALCULATOR->endTemporaryStopMessages(true);
+			MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
+			mabs.eval(eo2);
+			switch(eo2.parse_options.angle_unit) {
+				case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
+				case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
+				case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg.multiply(CALCULATOR->getRadUnit(), true);} break;}
+				default: {break;}
+			}
+			set(marg, true);
+			transformById(FUNCTION_ID_SIN);
+			multiply(nr_one_i);
+			add_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_COS), &marg, NULL));
+			if(!mabs.isOne()) multiply(mabs);
+			evalSort(true);
+			return true;
+		}
+		CALCULATOR->endTemporaryStopMessages();
 	}
 	if(m_type == STRUCT_POWER || m_type == STRUCT_FUNCTION) return false;
 	bool b = false;

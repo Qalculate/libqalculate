@@ -1478,6 +1478,15 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			}
 			CALCULATOR->endTemporaryEnableIntervalArithmetic();
 		}
+		if(mstruct.isPower() && mstruct[0].isMinusOne() && mstruct[1].representsFraction() && mstruct[1].representsPositive()) {
+			mstruct[0] = CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			mstruct.setType(STRUCT_MULTIPLICATION);
+			return true;
+		} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne() && mstruct[1].isPower() && mstruct[1][0].isMinusOne() && mstruct[1][1].representsFraction() && mstruct[1][1].representsPositive()) {
+			mstruct[1][0] = CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			mstruct[1].setType(STRUCT_MULTIPLICATION);
+			return true;
+		}
 		MathStructure m_im(CALCULATOR->getFunctionById(FUNCTION_ID_IM), &mstruct, NULL);
 		CALCULATOR->beginTemporaryStopMessages();
 		m_im.eval(eo);
