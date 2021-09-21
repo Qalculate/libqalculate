@@ -1828,8 +1828,22 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		CALCULATOR->endTemporaryStopMessages();
 	}
 	bool b = false;
+	size_t i_cis = SIZE;
 	for(size_t i = 0; i < SIZE; i++) {
-		if(CHILD(i).complexToCisForm(eo)) {b = true; CHILD_UPDATED(i);}
+		if(CHILD(i).complexToCisForm(eo)) {
+			b = true; CHILD_UPDATED(i);
+			if(i_cis == SIZE) i_cis = i;
+			else i_cis = SIZE + 1;
+		}
+	}
+	if(b && SIZE >= 2 && isMultiplication() && i_cis < SIZE && CHILD(i_cis).isMultiplication() && CHILD(i_cis).size() == 2 && CHILD(i_cis).last().isFunction() && CHILD(i_cis).last().function()->id() == FUNCTION_ID_CIS && CHILD(i_cis)[0].isOne()) {
+		CHILD(i_cis).setToChild(2, true);
+		if(SIZE > 2) {
+			MathStructure *m_cis = &CHILD(i_cis);
+			m_cis->ref();
+			ERASE(i_cis)
+			multiply_nocopy(m_cis);
+		}
 	}
 	return b;
 }
