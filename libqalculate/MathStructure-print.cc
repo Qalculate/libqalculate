@@ -3230,8 +3230,8 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				break;
 			}
 			ips_n.depth++;
-			if(!po.preserve_format && SIZE == 2 && (CHILD(0).isNumber() || (CHILD(0).isNegate() && CHILD(0)[0].isNumber())) && CHILD(1).isFunction() && CHILD(1).size() == 1 && CHILD(1).function()->id() == FUNCTION_ID_CIS && CHILD(1).function()->referenceName() == "cis") {
-				ips_n.wrap = false;
+			if(!po.preserve_format && SIZE == 2 && CHILD(1).isFunction() && CHILD(1).size() == 1 && CHILD(1).function()->id() == FUNCTION_ID_CIS && CHILD(1).function()->referenceName() == "cis") {
+				ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, flat_power);
 				print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
 				print_str += " ";
 				print_str += "cis";
