@@ -127,7 +127,7 @@ int EvenFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 
 bool represents_imaginary(const MathStructure &m, bool allow_units = true) {
 	switch(m.type()) {
-		case STRUCT_NUMBER: {return m.number().imaginaryPartIsNonZero() && !m.number().hasRealPart();}
+		case STRUCT_NUMBER: {return m.number().hasImaginaryPart() && !m.number().hasRealPart();}
 		case STRUCT_VARIABLE: {return m.variable()->isKnown() && represents_imaginary(((KnownVariable*) m.variable())->get(), allow_units);}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < m.size(); i++) {
@@ -141,8 +141,7 @@ bool represents_imaginary(const MathStructure &m, bool allow_units = true) {
 			bool c = false;
 			for(size_t i = 0; i < m.size(); i++) {
 				if(represents_imaginary(m[i])) {
-					if(c) c = false;
-					else c = true;
+					c = !c;
 				} else if(!m[i].representsReal(allow_units)) {
 					return false;
 				}
@@ -255,18 +254,17 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			if(m_re.isZero()) {
 				mstruct = m_im;
 				mstruct.transform(this);
-			} else if(m_im.isZero()) {
-				mstruct = m_re;
-				mstruct.transform(this);
-			} else {
+				CALCULATOR->endTemporaryStopMessages(true);
+				return 1;
+			} else if(!m_im.isZero()) {
 				m_re ^= nr_two;
 				m_im ^= nr_two;
 				mstruct = m_re;
 				mstruct += m_im;
 				mstruct ^= nr_half;
+				CALCULATOR->endTemporaryStopMessages(true);
+				return 1;
 			}
-			CALCULATOR->endTemporaryStopMessages(true);
-			return 1;
 		}
 	}
 	CALCULATOR->endTemporaryStopMessages();
@@ -1202,6 +1200,29 @@ int ImFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		num.rem(4);
 		if(num == 3 || num == -1) mstruct.negate();
 		return 1;
+	} else if(mstruct.isPower() && mstruct[1].isNumber() && mstruct[1].number().denominatorIsTwo() && mstruct[0].isNumber() && !mstruct[0].number().hasRealPart() && mstruct[0].number().imaginaryPartIsNonZero()) {
+		Number nbase(mstruct[0].number().imaginaryPart());
+		bool b_neg = nbase.isNegative();
+		if(b_neg) nbase.negate();
+		mstruct[0].set(nbase, true);
+		mstruct[0].divide(nr_two);
+		if(!mstruct[1].number().numeratorIsOne()) {
+			Number nexp(mstruct[1].number());
+			mstruct[1].number() /= nexp.numerator();
+			if(nexp.isNegative()) {
+				mstruct.inverse();
+				b_neg = !b_neg;
+				mstruct *= nr_half;
+			}
+			nexp.trunc();
+			mstruct *= nbase;
+			mstruct.last().raise(nexp);
+			nexp /= 2;
+			nexp.trunc();
+			if(nexp.isOdd()) b_neg = !b_neg;
+		}
+		if(b_neg) mstruct.negate();
+		return 1;
 	} else if(mstruct.isMultiplication() && mstruct.size() > 0) {
 		if(mstruct[0].isNumber()) {
 			Number nr = mstruct[0].number();
@@ -1301,6 +1322,29 @@ int ReFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	} else if(mstruct.isPower() && mstruct[1].isNumber() && mstruct[1].number().denominatorIsTwo() && mstruct[0].representsNegative()) {
 		mstruct.clear(true);
 		return 1;
+	} else if(mstruct.isPower() && mstruct[1].isNumber() && mstruct[1].number().denominatorIsTwo() && mstruct[0].isNumber() && !mstruct[0].number().hasRealPart() && mstruct[0].number().imaginaryPartIsNonZero()) {
+		Number nbase(mstruct[0].number().imaginaryPart());
+		bool b_neg = nbase.isNegative();
+		if(b_neg) nbase.negate();
+		mstruct[0].set(nbase, true);
+		mstruct[0].divide(nr_two);
+		if(!mstruct[1].number().numeratorIsOne()) {
+			Number nexp(mstruct[1].number());
+			mstruct[1].number() /= nexp.numerator();
+			if(nexp.isNegative()) {
+				mstruct.inverse();
+				b_neg = !b_neg;
+				mstruct *= nr_half;
+			}
+			nexp.trunc();
+			mstruct *= nbase;
+			mstruct.last().raise(nexp);
+			nexp /= 2;
+			nexp.trunc();
+			if(nexp.isOdd()) b_neg = !b_neg;
+		}
+		if(b_neg) mstruct.negate();
+		return 1;
 	} else if(mstruct.isMultiplication() && mstruct.size() > 0) {
 		if(mstruct[0].isNumber()) {
 			Number nr = mstruct[0].number();
@@ -1382,6 +1426,18 @@ bool ReFunction::representsEven(const MathStructure &vargs, bool allow_units) co
 bool ReFunction::representsOdd(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsOdd(allow_units);}
 bool ReFunction::representsUndefined(const MathStructure&) const {return false;}
 
+bool represents_imre(const MathStructure &m) {
+	switch(m.type()) {
+		case STRUCT_NUMBER: {return m.number().imaginaryPartIsNonZero() && m.number().realPartIsNonZero();}
+		case STRUCT_VARIABLE: {return m.variable()->isKnown() && represents_imre(((KnownVariable*) m.variable())->get());}
+		case STRUCT_POWER: {
+			return m[1].isNumber() && m[1].number().isRational() && !m[1].number().isInteger() && (m[0].representsComplex() || (!m[1].number().denominatorIsTwo() && m[0].representsNegative()));
+		}
+		default: {return false;}
+	}
+	return false;
+}
+
 ArgFunction::ArgFunction() : MathFunction("arg", 1) {
 	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setHandleVector(true);
@@ -1443,10 +1499,19 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			}
 		}
 		if(mstruct.isMultiplication()) {
-			bool b = true;
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				if(!mstruct.representsNonZero()) {
-					b = false;
+			bool b = false;
+			if(mstruct.size() == 2) {
+				if(represents_imre(mstruct[0])) {
+					b = mstruct[1].representsComplex();
+				} else if(represents_imre(mstruct[1])) {
+					b = mstruct[0].representsComplex();
+				}
+			} else {
+				b = true;
+				for(size_t i = 0; i < mstruct.size(); i++) {
+					if(!represents_imre(mstruct[i])) {
+						b = false;
+					}
 				}
 			}
 			if(b) {
@@ -1497,6 +1562,8 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			return true;
 		} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne() && mstruct[1].isPower() && mstruct[1][0].isMinusOne() && mstruct[1][1].representsFraction() && mstruct[1][1].representsPositive()) {
 			mstruct[1][0] = CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			mstruct[1][1].negate();
+			mstruct[1][1] += m_one;
 			mstruct[1].setType(STRUCT_MULTIPLICATION);
 			return true;
 		}
