@@ -734,6 +734,48 @@ Number dos_count_points(const MathStructure &m, bool b_unknown) {
 	return nr;
 }
 
+void replace_fracpow(MathStructure &mstruct, vector<UnknownVariable*> &uv) {
+	if(mstruct.isFunction()) return;
+	if(mstruct.isPower() && mstruct[1].isNumber() && mstruct[1].number().isRational() && !mstruct[1].number().isInteger() && !mstruct[0].containsInterval()) {
+		if(!mstruct[1].number().numeratorIsOne()) {
+			Number num(mstruct[1].number().numerator());
+			mstruct[1].number().divide(num);
+			mstruct.raise(num);
+			replace_fracpow(mstruct[0], uv);
+			return;
+		}
+		for(size_t i = 0; i < uv.size(); i++) {
+			if(uv[i]->interval() == mstruct) {
+				mstruct.set(uv[i], true);
+				return;
+			}
+		}
+		UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(mstruct) + RIGHT_PARENTHESIS);
+		var->setInterval(mstruct);
+		mstruct.set(var, true);
+		uv.push_back(var);
+		return;
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		replace_fracpow(mstruct[i], uv);
+	}
+}
+
+void restore_fracpow(MathStructure &mstruct, UnknownVariable *uv, const EvaluationOptions &eo) {
+	if(mstruct.isPower() && mstruct[0].isVariable() && mstruct[0].variable() == uv && mstruct[1].isInteger()) {
+		mstruct[0].set(uv->interval(), true);
+		if(mstruct[0][1].number().numeratorIsOne()) {
+			mstruct[0][1].number() *= mstruct[1].number();
+			mstruct.setToChild(1, true);
+		}
+	} else if(mstruct.isVariable() && mstruct.variable() == uv) {
+		mstruct.set(uv->interval(), true);
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		restore_fracpow(mstruct[i], uv, eo);
+	}
+}
+
 bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool combine_divisions, bool only_gcd, bool combine_only, bool recursive, bool limit_size, int i_run) {
 
 	if(!eo.expand || !eo.assume_denominators_nonzero) return false;
@@ -790,10 +832,31 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 				return true;
 			}
 		}
+	} else if(mstruct.isPower() && mstruct[0].isAddition() && mstruct[0].size() == 2 && mstruct[0][0].isPower() && mstruct[0][0][0].isNumber() && mstruct[0][0][1] == nr_half && (mstruct[0][1].isMinusOne() || mstruct[0][1].isOne())) {
+		Number nr(mstruct[0][0][0].number());
+		nr--;
+		nr.recip();
+		mstruct.setToChild(1, true);
+		mstruct[1].number().negate();
+		mstruct.calculateMultiply(nr, eo);
+		return true;
 	}
 	if(!mstruct.isAddition() && !mstruct.isMultiplication()) return false;
 
 	if(combine_divisions) {
+
+		if(!combine_only && i_run == 1) {
+			vector<UnknownVariable*> uv;
+			replace_fracpow(mstruct, uv);
+			if(uv.size() > 0) {
+				bool b = do_simplification(mstruct, eo, combine_divisions, only_gcd, combine_only, recursive, limit_size, i_run);
+				for(size_t i = 0; i < uv.size(); i++) {
+					restore_fracpow(mstruct, uv[i], eo);
+					uv[i]->destroy();
+				}
+				return b;
+			}
+		}
 
 		MathStructure divs, nums, numleft, mleft, nrdivs, nrnums;
 

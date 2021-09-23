@@ -820,6 +820,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 			if(b_approx) {
 				results_v.pop_back();
 			} else {
+				if(cplx_angle) replace_result_cis(results_v.back());
 				if(po.use_unicode_signs) gsub(" ", " ", results_v.back());
 			}
 		}
@@ -835,6 +836,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 				if(b_approx) {
 					results_v.pop_back();
 				} else {
+					if(cplx_angle) replace_result_cis(results_v.back());
 					if(po.use_unicode_signs) gsub(" ", " ", results_v.back());
 				}
 			}
@@ -1081,6 +1083,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 			mexact2.format(po);
 			mexact2.removeDefaultAngleUnit(evalops);
 			string str = mexact2.print(po, format, colorize, tagtype);
+			if(cplx_angle) replace_result_cis(str);
 			if(!b_approx) {
 				results_v.push_back(str);
 			}
