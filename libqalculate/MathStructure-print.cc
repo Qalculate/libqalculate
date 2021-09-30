@@ -395,7 +395,12 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 					int i2 = sortCompare(mstruct1[i], mstruct2[i], parent, po);
 					if(i2 != 0) return i2;
 				}
+				if(mstruct1.size() > mstruct2.size()) return 1;
 				return 0;
+			}
+			if(parent.isMultiplication() && !po.preserve_format) {
+				if(mstruct1.function()->id() == FUNCTION_ID_CIS) return 1;
+				if(mstruct2.function()->id() == FUNCTION_ID_CIS) return -1;
 			}
 			// sort functions in alphabetical order
 			if(name_is_less(mstruct1.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names).name, mstruct2.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name)) return -1;
@@ -2063,6 +2068,35 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 	}
 	switch(m_type) {
 		case STRUCT_ADDITION: {
+			if(po.preserve_format) break;
+			for(size_t i = 0; i < SIZE - 1; i++) {
+				if(CHILD(i).isDivision() || CHILD(i).isInverse()) {
+					size_t iden = 0;
+					if(CHILD(i).isDivision()) iden = 1;
+					if(CHILD(i)[iden].isInteger()) {
+						for(size_t i2 = i + 1; i2 < SIZE;) {
+							if(CHILD(i2).isDivision() || CHILD(i2).isInverse()) {
+								size_t iden2 = 0;
+								if(CHILD(i2).isDivision()) iden2 = 1;
+								if(CHILD(i2)[iden2] == CHILD(i)[iden]) {
+									if(CHILD(i)[iden].isInverse()) {
+										CHILD(i)[iden].setType(STRUCT_DIVISION);
+										CHILD(i)[iden].insertChild(m_one, 1);
+										iden = 1;
+									}
+									CHILD(i)[0].add(CHILD(i2).isDivision() ? CHILD(i2)[0] : m_one, true);
+									ERASE(i2)
+								} else {
+									i2++;
+								}
+							} else {
+								i2++;
+							}
+						}
+					}
+				}
+			}
+			if(SIZE == 1) SET_CHILD_MAP(0)
 			break;
 		}
 		case STRUCT_NEGATE: {
@@ -2195,7 +2229,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				}
 			}
 
-			if(b) {
+			if(b && (!LAST.isFunction() || LAST.function()->id() != FUNCTION_ID_CIS)) {
 				MathStructure *den = new MathStructure();
 				MathStructure *num = new MathStructure();
 				num->setUndefined();
