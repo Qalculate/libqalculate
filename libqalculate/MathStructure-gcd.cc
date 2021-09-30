@@ -734,14 +734,14 @@ Number dos_count_points(const MathStructure &m, bool b_unknown) {
 	return nr;
 }
 
-void replace_fracpow(MathStructure &mstruct, vector<UnknownVariable*> &uv) {
+void replace_fracpow(MathStructure &mstruct, vector<UnknownVariable*> &uv, bool b_top = true) {
 	if(mstruct.isFunction()) return;
-	if(mstruct.isPower() && mstruct[1].isNumber() && mstruct[1].number().isRational() && !mstruct[1].number().isInteger() && !mstruct[0].containsInterval()) {
+	if(!b_top && mstruct.isPower() && mstruct[1].isNumber() && mstruct[1].number().isRational() && !mstruct[1].number().isInteger() && mstruct[0].isRationalPolynomial()) {
 		if(!mstruct[1].number().numeratorIsOne()) {
 			Number num(mstruct[1].number().numerator());
 			mstruct[1].number().divide(num);
 			mstruct.raise(num);
-			replace_fracpow(mstruct[0], uv);
+			replace_fracpow(mstruct[0], uv, false);
 			return;
 		}
 		for(size_t i = 0; i < uv.size(); i++) {
@@ -757,37 +757,61 @@ void replace_fracpow(MathStructure &mstruct, vector<UnknownVariable*> &uv) {
 		return;
 	}
 	for(size_t i = 0; i < mstruct.size(); i++) {
-		replace_fracpow(mstruct[i], uv);
+		replace_fracpow(mstruct[i], uv, false);
 	}
 }
-
-void restore_fracpow(MathStructure &mstruct, UnknownVariable *uv, const EvaluationOptions &eo) {
+bool restore_fracpow(MathStructure &mstruct, UnknownVariable *uv, const EvaluationOptions &eo, bool b_eval) {
 	if(mstruct.isPower() && mstruct[0].isVariable() && mstruct[0].variable() == uv && mstruct[1].isInteger()) {
 		mstruct[0].set(uv->interval(), true);
 		if(mstruct[0][1].number().numeratorIsOne()) {
 			mstruct[0][1].number() *= mstruct[1].number();
 			mstruct.setToChild(1, true);
 		}
+		return true;
 	} else if(mstruct.isVariable() && mstruct.variable() == uv) {
 		mstruct.set(uv->interval(), true);
+		return true;
 	}
+	bool b_ret = false;
 	for(size_t i = 0; i < mstruct.size(); i++) {
-		restore_fracpow(mstruct[i], uv, eo);
+		b_ret = restore_fracpow(mstruct[i], uv, eo, b_eval) || b_ret;
 	}
+	if(b_ret && b_eval) return mstruct.calculatesub(eo, eo, false);
+	return false;
 }
 
 bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool combine_divisions, bool only_gcd, bool combine_only, bool recursive, bool limit_size, int i_run) {
 
-	if(!eo.expand || !eo.assume_denominators_nonzero) return false;
+	if(!eo.expand || !eo.assume_denominators_nonzero || mstruct.size() == 0) return false;
+
+	if(!combine_only && combine_divisions && i_run == 1) {
+		bool b_ret = do_simplification(mstruct, eo, combine_divisions, only_gcd, combine_only, recursive, limit_size, -1);
+		vector<UnknownVariable*> uv;
+		replace_fracpow(mstruct, uv);
+		if(uv.size() > 0) {
+			MathStructure mbak(mstruct);
+			mstruct.evalSort(true);
+			bool b = do_simplification(mstruct, eo, combine_divisions, only_gcd, combine_only, recursive, limit_size, -1) && mbak != mstruct;
+			EvaluationOptions eo2 = eo;
+			eo2.expand = false;
+			for(size_t i = 0; i < uv.size(); i++) {
+				restore_fracpow(mstruct, uv[i], eo2, b);
+				uv[i]->destroy();
+			}
+			mstruct.evalSort(true);
+			if(b) b_ret = true;
+		}
+		return b_ret;
+	}
 
 	if(recursive) {
 		bool b = false;
 		for(size_t i = 0; i < mstruct.size(); i++) {
-			b = do_simplification(mstruct[i], eo, combine_divisions, only_gcd || (!mstruct.isComparison() && !mstruct.isLogicalAnd() && !mstruct.isLogicalOr()), combine_only, true, limit_size) || b;
+			b = do_simplification(mstruct[i], eo, combine_divisions, only_gcd || (!mstruct.isComparison() && !mstruct.isLogicalAnd() && !mstruct.isLogicalOr()), combine_only, true, limit_size, i_run) || b;
 			if(CALCULATOR->aborted()) return b;
 		}
 		if(b) mstruct.calculatesub(eo, eo, false);
-		return do_simplification(mstruct, eo, combine_divisions, only_gcd, combine_only, false, limit_size) || b;
+		return do_simplification(mstruct, eo, combine_divisions, only_gcd, combine_only, false, limit_size, i_run) || b;
 	}
 	if(mstruct.isPower() && mstruct[1].isNumber() && mstruct[1].number().isRational() && !mstruct[1].number().isInteger() && mstruct[0].isAddition() && mstruct[0].isRationalPolynomial()) {
 		MathStructure msqrfree(mstruct[0]);
@@ -832,37 +856,16 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 				return true;
 			}
 		}
-	} else if(mstruct.isPower() && mstruct[0].isAddition() && mstruct[0].size() == 2 && mstruct[0][0].isPower() && mstruct[0][0][0].isNumber() && mstruct[0][0][1] == nr_half && (mstruct[0][1].isMinusOne() || mstruct[0][1].isOne())) {
-		Number nr(mstruct[0][0][0].number());
-		nr--;
-		nr.recip();
-		mstruct.setToChild(1, true);
-		mstruct[1].number().negate();
-		mstruct.calculateMultiply(nr, eo);
-		return true;
 	}
 	if(!mstruct.isAddition() && !mstruct.isMultiplication()) return false;
 
 	if(combine_divisions) {
 
-		if(!combine_only && i_run == 1) {
-			vector<UnknownVariable*> uv;
-			replace_fracpow(mstruct, uv);
-			if(uv.size() > 0) {
-				bool b = do_simplification(mstruct, eo, combine_divisions, only_gcd, combine_only, recursive, limit_size, i_run);
-				for(size_t i = 0; i < uv.size(); i++) {
-					restore_fracpow(mstruct, uv[i], eo);
-					uv[i]->destroy();
-				}
-				return b;
-			}
-		}
-
-		MathStructure divs, nums, numleft, mleft, nrdivs, nrnums;
-
 		EvaluationOptions eo2 = eo;
 		eo2.do_polynomial_division = false;
 		eo2.keep_zero_units = false;
+
+		MathStructure divs, nums, numleft, mleft, nrdivs, nrnums;
 
 		if(!mstruct.isAddition()) mstruct.transform(STRUCT_ADDITION);
 
@@ -1361,6 +1364,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 				}
 			}
 		}
+
 		for(size_t i = 0; i < mleft.size(); i++) {
 			if(i == 0 && mstruct.isZero()) mstruct = mleft[i];
 			else mstruct.calculateAdd(mleft[i], eo);
