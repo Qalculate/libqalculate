@@ -201,9 +201,9 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		return 1;
 	}
 	mstruct = vargs[0];
-	mstruct.eval(eo);
 	if(mstruct.isVector()) {
 		for(size_t i = 0; i < mstruct.size(); i++) {
+			mstruct[i].eval(eo);
 			if(!mstruct[i].isNumber() && vargs[3].isZero()) {
 				return -1;
 			}
@@ -222,6 +222,7 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		mstruct = vargs[2];
 		return 1;
 	}
+	mstruct.eval(eo);
 	if(mstruct.isNumber()) {
 		int result = mstruct.number().getBoolean();
 		if(result > 0) {

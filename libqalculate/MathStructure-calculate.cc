@@ -1442,8 +1442,8 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			}
 			case STRUCT_MULTIPLICATION: {
 				Number nr;
-				vector<Number> nrs;
-				vector<size_t> reducables;
+				size_t i_reducable = mnum->size();
+				bool b_pow = false;
 				for(size_t i = 0; i < mnum->size(); i++) {
 					switch((*mnum)[i].type()) {
 						case STRUCT_ADDITION: {break;}
@@ -1452,8 +1452,8 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								if((*mnum)[i][1].number().isPositive()) {
 									nr.set((*mnum)[i][1].number());
 									if(reducable((*mnum)[i][0], *mden, nr)) {
-										nrs.push_back(nr);
-										reducables.push_back(i);
+										i_reducable = i;
+										b_pow = true;
 									}
 								}
 								break;
@@ -1462,13 +1462,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						default: {
 							nr.set(1, 1, 0);
 							if(reducable((*mnum)[i], *mden, nr)) {
-								nrs.push_back(nr);
-								reducables.push_back(i);
+								i_reducable = i;
 							}
 						}
 					}
+					if(i_reducable <= i) break;
 				}
-				if(reducables.size() > 0) {
+				if(i_reducable < mnum->size()) {
 					if(!b_nonzero && eo.warn_about_denominators_assumed_nonzero && !warn_about_denominators_assumed_nonzero(*mden, eo)) break;
 					if(mnum == this) {
 						mstruct.ref();
@@ -1478,38 +1478,29 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						PREPEND_REF(&mstruct);
 					}
 					size_t i_erased = 0;
-					for(size_t i = 0; i < reducables.size(); i++) {
-						switch(CHILD(0)[reducables[i] - i_erased].type()) {
-							case STRUCT_POWER: {
-								if(CHILD(0)[reducables[i] - i_erased][1].isNumber() && CHILD(0)[reducables[i] - i_erased][1].number().isReal()) {
-									reduce(CHILD(0)[reducables[i] - i_erased][0], CHILD(1)[0], nrs[i], eo);
-									if(nrs[i] == CHILD(0)[reducables[i] - i_erased][1].number()) {
-										CHILD(0).delChild(reducables[i] - i_erased + 1);
-										i_erased++;
-									} else {
-										CHILD(0)[reducables[i] - i_erased][1].number() -= nrs[i];
-										if(CHILD(0)[reducables[i] - i_erased][1].number().isOne()) {
-											CHILD(0)[reducables[i] - i_erased].setToChild(1, true, &CHILD(0), reducables[i] - i_erased + 1);
-										} else {
-											CHILD(0)[reducables[i] - i_erased].calculateRaiseExponent(eo);
-										}
-										CHILD(0).calculateMultiplyIndex(reducables[i] - i_erased, eo, true);
-									}
-									break;
-								}
+					if(b_pow) {
+						reduce(CHILD(0)[i_reducable][0], CHILD(1)[0], nr, eo);
+						if(nr == CHILD(0)[i_reducable][1].number()) {
+							CHILD(0).delChild(i_reducable + 1);
+							i_erased++;
+						} else {
+							CHILD(0)[i_reducable][1].number() -= nr;
+							if(CHILD(0)[i_reducable][1].number().isOne()) {
+								CHILD(0)[i_reducable].setToChild(1, true, &CHILD(0), i_reducable + 1);
+							} else {
+								CHILD(0)[i_reducable].calculateRaiseExponent(eo);
 							}
-							default: {
-								reduce(CHILD(0)[reducables[i] - i_erased], CHILD(1)[0], nrs[i], eo);
-								if(nrs[i].isOne()) {
-									CHILD(0).delChild(reducables[i] - i_erased + 1);
-									i_erased++;
-								} else {
-									MathStructure mexp(1, 1);
-									mexp.number() -= nrs[i];
-									CHILD(0)[reducables[i] - i_erased].calculateRaise(mexp, eo);
-									CHILD(0).calculateMultiplyIndex(reducables[i] - i_erased, eo, true);
-								}
-							}
+							CHILD(0).calculateMultiplyIndex(i_reducable, eo, true);
+						}
+					} else {
+						reduce(CHILD(0)[i_reducable], CHILD(1)[0], nr, eo);
+						if(nr.isOne()) {
+							CHILD(0).delChild(i_reducable + 1);
+						} else {
+							MathStructure mexp(1, 1);
+							mexp.number() -= nr;
+							CHILD(0)[i_reducable].calculateRaise(mexp, eo);
+							CHILD(0).calculateMultiplyIndex(i_reducable, eo, true);
 						}
 					}
 					if(CHILD(0).size() == 0) {
@@ -3389,6 +3380,16 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			if(mstruct.isNumber() && mstruct.number().isInteger() && containsType(STRUCT_DATETIME, false, true, false) <= 0) {
 				if(eo.reduce_divisions && mstruct.number().isMinusOne()) {
 					// 1/(a1+a2+...)
+					if(SIZE == 2 && CHILD(0).isPower() && CHILD(0)[0].isNumber() && CHILD(0)[1] == nr_half && CHILD(1).isNumber() && !containsInterval()) {
+						// 1/(sqrt(a)+b)
+						Number nr(CHILD(1).number());
+						if(nr.square() && nr.negate() && nr.add(CHILD(0)[0].number()) && nr.recip()) {
+							CHILD(1).number().negate();
+							calculateMultiply(nr, eo);
+							MERGE_APPROX_AND_PREC(mstruct)
+							return 1;
+						}
+					}
 					int bnum = -1, bden = -1;
 					// count difference between number of negative and positive terms
 					int inegs = 0;

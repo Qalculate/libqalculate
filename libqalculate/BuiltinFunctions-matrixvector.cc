@@ -1108,8 +1108,7 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 				i++;
 			}
 		} else if(vargs[3].number().getBoolean() > 0) {
-			MathStructure msave(mstruct[i]);
-			mstruct = msave;
+			mstruct.setToChild(i + 1);
 			return 1;
 		} else {
 			i++;

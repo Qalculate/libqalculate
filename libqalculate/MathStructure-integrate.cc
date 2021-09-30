@@ -6454,7 +6454,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 								minteg_2.calculateFunctions(eo2);
 								minteg_2.calculatesub(eo2, eo2, true);
 								combine_ln(minteg_2, x_var, eo2);
-								do_simplification(minteg_2, eo2, true, false, false, true, true);
+								//do_simplification(minteg_2, eo2, true, false, false, true, true);
 							}
 							if(minteg_2.countTotalChildren() < 100 && minteg_2.integrate(x_var, eo, false, use_abs, definite_integral, true, max_part_depth - 1, parent_parts) > 0) {
 								int cui = contains_unsolved_integrate(minteg_2, this, parent_parts);
