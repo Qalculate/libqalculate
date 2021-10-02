@@ -4328,14 +4328,14 @@ int MathStructure::merge_logical_and(MathStructure &mstruct, const EvaluationOpt
 					return -1;
 				}
 			}
-		} else if(eo.test_comparisons && comparisonType() == COMPARISON_EQUALS && !CHILD(0).isNumber() && !CHILD(0).containsInterval() && CHILD(1).isNumber() && mstruct.contains(CHILD(0))) {
+		} else if(eo.test_comparisons && comparisonType() == COMPARISON_EQUALS && !CHILD(0).isNumber() && !CHILD(0).containsInterval() && (CHILD(1).isNumber() || eo.isolate_x) && mstruct.contains(CHILD(0)) && !CHILD(1).contains(CHILD(0)) && !CHILD(1).contains(mstruct[0])) {
 			mstruct.calculateReplace(CHILD(0), CHILD(1), eo);
 			if(eo.isolate_x) {mstruct.isolate_x(eo, eo); mstruct.calculatesub(eo, eo, true);}
 			mstruct.ref();
 			add_nocopy(&mstruct, OPERATION_LOGICAL_AND);
 			calculateLogicalAndLast(eo);
 			return 1;
-		} else if(eo.test_comparisons && mstruct.comparisonType() == COMPARISON_EQUALS && !mstruct[0].isNumber() && !mstruct[0].containsInterval() && mstruct[1].isNumber() && contains(mstruct[0])) {
+		} else if(eo.test_comparisons && mstruct.comparisonType() == COMPARISON_EQUALS && !mstruct[0].isNumber() && !mstruct[0].containsInterval() && (mstruct[1].isNumber() || eo.isolate_x) && contains(mstruct[0]) && !mstruct[1].contains(mstruct[0]) && !mstruct[1].contains(CHILD(0))) {
 			calculateReplace(mstruct[0], mstruct[1], eo);
 			if(eo.isolate_x) {isolate_x(eo, eo); calculatesub(eo, eo, true);}
 			mstruct.ref();
@@ -4697,14 +4697,14 @@ int MathStructure::merge_logical_or(MathStructure &mstruct, const EvaluationOpti
 					return -1;
 				}
 			}
-		} else if(eo.test_comparisons && comparisonType() == COMPARISON_NOT_EQUALS && !CHILD(0).isNumber() && !CHILD(0).containsInterval() && CHILD(1).isNumber() && mstruct.contains(CHILD(0))) {
+		} else if(eo.test_comparisons && comparisonType() == COMPARISON_NOT_EQUALS && !CHILD(0).isNumber() && !CHILD(0).containsInterval() && (CHILD(1).isNumber() || eo.isolate_x) && mstruct.contains(CHILD(0)) && !CHILD(1).contains(CHILD(0)) && !CHILD(1).contains(mstruct[0])) {
 			mstruct.calculateReplace(CHILD(0), CHILD(1), eo);
 			if(eo.isolate_x) {mstruct.isolate_x(eo, eo); mstruct.calculatesub(eo, eo, true);}
 			mstruct.ref();
 			add_nocopy(&mstruct, OPERATION_LOGICAL_OR);
 			calculateLogicalOrLast(eo);
 			return 1;
-		} else if(eo.test_comparisons && mstruct.comparisonType() == COMPARISON_NOT_EQUALS && !mstruct[0].isNumber() && !mstruct[0].containsInterval() && mstruct[1].isNumber() && contains(mstruct[0])) {
+		} else if(eo.test_comparisons && mstruct.comparisonType() == COMPARISON_NOT_EQUALS && !mstruct[0].isNumber() && !mstruct[0].containsInterval() && (mstruct[1].isNumber() || eo.isolate_x) && contains(mstruct[0]) && !mstruct[1].contains(mstruct[0]) && !mstruct[1].contains(CHILD(0))) {
 			calculateReplace(mstruct[0], mstruct[1], eo);
 			if(eo.isolate_x) {isolate_x(eo, eo); calculatesub(eo, eo, true);}
 			mstruct.ref();
@@ -5173,6 +5173,13 @@ bool test_var_int(const MathStructure &mstruct, bool *v = NULL) {
 			if(mstruct.number().isInterval()) {
 				Number nr_int(mstruct.number());
 				nr_int.round();
+				if(nr_int.isInterval()) {
+					Number nr_int2(mstruct.number());
+					nr_int = mstruct.number();
+					nr_int.floor();
+					nr_int2.ceil();
+					return nr_int2 == nr_int + 1 && (mstruct.number() < nr_int || mstruct.number() > nr_int) && (mstruct.number() < nr_int2 || mstruct.number() > nr_int2);
+				}
 				return mstruct.number() < nr_int || mstruct.number() > nr_int;
 			}
 			if(mstruct.isApproximate()) {
